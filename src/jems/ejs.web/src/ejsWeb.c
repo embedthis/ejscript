@@ -27,7 +27,7 @@ static int requestWorker(EjsRequest *req, MprEvent *event)
     
     argv[0] = (EjsObj*) req->app;
     argv[1] = (EjsObj*) req;
-    ejsRunFunctionBySlot(ejs, ejs->webType, ES_ejs_web_Web_workerHelper, 2, argv);
+    ejsRunFunctionBySlot(ejs, S(Web), ES_ejs_web_Web_workerHelper, 2, argv);
     //  MOB - does this need to send a readable event / NOTIFY ... READABLE
     return 0; 
 }
@@ -104,7 +104,7 @@ static int configureWebTypes(Ejs *ejs)
         ejs->hasError = 1;
         return MPR_ERR_CANT_INITIALIZE;
     }
-    ejs->webType = type;
+    ejsSetSpecialType(ejs, S_Web, type);
 
     ejsBindMethod(ejs, type, ES_ejs_web_Web_worker, req_worker);
 

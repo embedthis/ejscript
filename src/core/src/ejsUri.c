@@ -28,7 +28,7 @@ static EjsUri *castToUri(Ejs *ejs, EjsObj *arg)
 {
     EjsUri  *up;
 
-    up = ejsCreateObj(ejs, ejs->uriType, 0);
+    up = ejsCreateObj(ejs, ST(Uri), 0);
     if (ejsIsString(ejs, arg)) {
         up->uri = httpCreateUri(up, ejsToMulti(ejs, arg), 0);
 
@@ -81,33 +81,33 @@ static EjsObj *coerceUriOperands(Ejs *ejs, EjsUri *lhs, int opcode,  EjsObj *rhs
     case EJS_OP_COMPARE_LE: case EJS_OP_COMPARE_LT:
     case EJS_OP_COMPARE_GE: case EJS_OP_COMPARE_GT:
         if (ejsIsNull(ejs, rhs) || ejsIsUndefined(ejs, rhs)) {
-            return (EjsObj*) ((opcode == EJS_OP_COMPARE_EQ) ? ejs->falseValue: ejs->trueValue);
+            return (EjsObj*) ((opcode == EJS_OP_COMPARE_EQ) ? S(false): S(true));
         }
         uri = lhs->uri;
         ustr = httpFormatUri(uri->scheme, uri->host, uri->port, uri->path, uri->reference, uri->query, 0);
         return ejsInvokeOperator(ejs, (EjsObj*) ejsCreateStringFromAsc(ejs, ustr), opcode, rhs);
 
     case EJS_OP_COMPARE_STRICTLY_NE:
-        return (EjsObj*) ejs->trueValue;
+        return (EjsObj*) S(true);
 
     case EJS_OP_COMPARE_STRICTLY_EQ:
-        return (EjsObj*) ejs->falseValue;
+        return (EjsObj*) S(false);
 
     case EJS_OP_COMPARE_NOT_ZERO:
     case EJS_OP_COMPARE_TRUE:
-        return (EjsObj*) ejs->trueValue;
+        return (EjsObj*) S(true);
 
     case EJS_OP_COMPARE_ZERO:
     case EJS_OP_COMPARE_FALSE:
-        return (EjsObj*) ejs->falseValue;
+        return (EjsObj*) S(false);
 
     case EJS_OP_COMPARE_UNDEFINED:
     case EJS_OP_COMPARE_NULL:
-        return (EjsObj*) ejs->falseValue;
+        return (EjsObj*) S(false);
 
     default:
         ejsThrowTypeError(ejs, "Opcode %d not valid for type %@", opcode, TYPE(lhs)->qname.name);
-        return ejs->undefinedValue;
+        return S(undefined);
     }
     return 0;
 }
@@ -129,7 +129,7 @@ static EjsObj *invokeUriOperator(Ejs *ejs, EjsUri *lhs, int opcode,  EjsUri *rhs
     case EJS_OP_COMPARE_STRICTLY_EQ:
     case EJS_OP_COMPARE_EQ:
         if (lhs == rhs || (lhs->uri == rhs->uri)) {
-            return (EjsObj*) ejs->trueValue;
+            return (EjsObj*) S(true);
         }
         return (EjsObj*) ejsCreateBoolean(ejs,  same(ejs, lhs->uri, rhs->uri, 1));
 
@@ -154,17 +154,17 @@ static EjsObj *invokeUriOperator(Ejs *ejs, EjsUri *lhs, int opcode,  EjsUri *rhs
         Unary operators
      */
     case EJS_OP_COMPARE_NOT_ZERO:
-        return (EjsObj*) ((lhs->uri->path) ? ejs->trueValue: ejs->falseValue);
+        return (EjsObj*) ((lhs->uri->path) ? S(true): S(false));
 
     case EJS_OP_COMPARE_ZERO:
-        return (EjsObj*) ((lhs->uri->path == 0) ? ejs->trueValue: ejs->falseValue);
+        return (EjsObj*) ((lhs->uri->path == 0) ? S(true): S(false));
 
 
     case EJS_OP_COMPARE_UNDEFINED:
     case EJS_OP_COMPARE_NULL:
     case EJS_OP_COMPARE_FALSE:
     case EJS_OP_COMPARE_TRUE:
-        return (EjsObj*) ejs->falseValue;
+        return (EjsObj*) S(false);
 
     /*  
         Binary operators
@@ -236,7 +236,7 @@ static EjsObj *uri_basename(Ejs *ejs, EjsUri *up, int argc, EjsObj **argv)
     np = cloneUri(ejs, up, 0);
     path = np->uri->path;
     if (path == 0) {
-        return (EjsObj*) ejs->emptyString;
+        return (EjsObj*) S(empty);
     }
     len = (int) strlen(path);
     if (path[len - 1] == '/') {
@@ -329,7 +329,7 @@ static EjsObj *uri_dirname(Ejs *ejs, EjsUri *up, int argc, EjsObj **argv)
     np = cloneUri(ejs, up, 0);
     path = np->uri->path;
     if (path == 0) {
-        return (EjsObj*) ejs->emptyString;
+        return (EjsObj*) S(empty);
     }
     len = (int) strlen(path);
     if (path[len - 1] == '/') {
@@ -400,7 +400,7 @@ static EjsObj *uri_set_extension(Ejs *ejs, EjsUri *up, int argc, EjsObj **argv)
  */
 static EjsObj *uri_hasExtension(Ejs *ejs, EjsUri *up, int argc, EjsObj **argv)
 {
-    return (EjsObj*) ((up->uri->ext) ? ejs->trueValue : ejs->falseValue);
+    return (EjsObj*) ((up->uri->ext) ? S(true) : S(false));
 }
 
 
@@ -410,7 +410,7 @@ static EjsObj *uri_hasExtension(Ejs *ejs, EjsUri *up, int argc, EjsObj **argv)
  */
 static EjsObj *uri_hasHost(Ejs *ejs, EjsUri *up, int argc, EjsObj **argv)
 {
-    return (EjsObj*) ((up->uri->host) ? ejs->trueValue : ejs->falseValue);
+    return (EjsObj*) ((up->uri->host) ? S(true) : S(false));
 }
 
 
@@ -420,7 +420,7 @@ static EjsObj *uri_hasHost(Ejs *ejs, EjsUri *up, int argc, EjsObj **argv)
  */
 static EjsObj *uri_hasPort(Ejs *ejs, EjsUri *up, int argc, EjsObj **argv)
 {
-    return (EjsObj*) ((up->uri->port > 0) ? ejs->trueValue : ejs->falseValue);
+    return (EjsObj*) ((up->uri->port > 0) ? S(true) : S(false));
 }
 
 
@@ -430,7 +430,7 @@ static EjsObj *uri_hasPort(Ejs *ejs, EjsUri *up, int argc, EjsObj **argv)
  */
 static EjsObj *uri_hasQuery(Ejs *ejs, EjsUri *up, int argc, EjsObj **argv)
 {
-    return (EjsObj*) ((up->uri->query) ? ejs->trueValue : ejs->falseValue);
+    return (EjsObj*) ((up->uri->query) ? S(true) : S(false));
 }
 
 
@@ -440,7 +440,7 @@ static EjsObj *uri_hasQuery(Ejs *ejs, EjsUri *up, int argc, EjsObj **argv)
  */
 static EjsObj *uri_hasReference(Ejs *ejs, EjsUri *up, int argc, EjsObj **argv)
 {
-    return (EjsObj*) ((up->uri->reference) ? ejs->trueValue : ejs->falseValue);
+    return (EjsObj*) ((up->uri->reference) ? S(true) : S(false));
 }
 
 
@@ -450,7 +450,7 @@ static EjsObj *uri_hasReference(Ejs *ejs, EjsUri *up, int argc, EjsObj **argv)
  */
 static EjsObj *uri_hasScheme(Ejs *ejs, EjsUri *up, int argc, EjsObj **argv)
 {
-    return (EjsObj*) ((up->uri->scheme) ? ejs->trueValue : ejs->falseValue);
+    return (EjsObj*) ((up->uri->scheme) ? S(true) : S(false));
 }
 
 
@@ -464,7 +464,7 @@ static EjsObj *uri_host(Ejs *ejs, EjsUri *up, int argc, EjsObj **argv)
 #if UNUSED
         return (EjsObj*) ejsCreateStringFromAsc(ejs, "localhost");
 #else
-        return ejs->nullValue;
+        return S(null);
 #endif
     }    
     return (EjsObj*) ejsCreateStringFromAsc(ejs, up->uri->host);
@@ -487,7 +487,7 @@ static EjsObj *uri_set_host(Ejs *ejs, EjsUri *up, int argc, EjsObj **argv)
  */
 static EjsObj *uri_isAbsolute(Ejs *ejs, EjsUri *up, int argc, EjsObj **argv)
 {
-    return (EjsObj*) ((up->uri->path[0] == '/') ? ejs->trueValue : ejs->falseValue);
+    return (EjsObj*) ((up->uri->path[0] == '/') ? S(true) : S(false));
 }
 
 
@@ -500,7 +500,7 @@ static EjsObj *uri_isDir(Ejs *ejs, EjsUri *up, int argc, EjsObj **argv)
     HttpUri     *uri;
 
     uri = up->uri;
-    return (EjsObj*) ((uri->path[strlen(uri->path) - 1] == '/') ? ejs->trueValue : ejs->falseValue);
+    return (EjsObj*) ((uri->path[strlen(uri->path) - 1] == '/') ? S(true) : S(false));
 }
 
 
@@ -624,7 +624,7 @@ static EjsObj *uri_port(Ejs *ejs, EjsUri *up, int argc, EjsObj **argv)
     uri = up->uri;
     if (uri->port == 0) {
         if (uri->host == 0) {
-            return ejs->nullValue;
+            return S(null);
         }
         if (uri->scheme == 0 || strcmp(uri->scheme, "http") == 0) {
             return (EjsObj*) ejsCreateNumber(ejs, 80);
@@ -681,12 +681,12 @@ static EjsObj *uri_resolve(Ejs *ejs, EjsUri *up, int argc, EjsObj **argv)
 #if UNUSED
     int         relative;
 
-    relative = (argc >= 2 && argv[1] == ejs->falseValue) ? 0 : 1;
+    relative = (argc >= 2 && argv[1] == S(false)) ? 0 : 1;
 #endif
 
     uri = up->uri;
     target = toHttpUri(ejs, argv[0], 0);
-    result = ejsCreateObj(ejs, ejs->uriType, 0);
+    result = ejsCreateObj(ejs, ST(Uri), 0);
     uri = httpResolveUri(uri, 1, &target, 0);
     if (up->uri == uri) {
         uri = httpCloneUri(uri, 0);
@@ -705,7 +705,7 @@ static EjsObj *uri_relative(Ejs *ejs, EjsUri *up, int argc, EjsObj **argv)
     HttpUri     *baseUri;
 
     baseUri = toHttpUri(ejs, argv[0], 0);
-    result = ejsCreateObj(ejs, ejs->uriType, 0);
+    result = ejsCreateObj(ejs, ST(Uri), 0);
     result->uri = httpGetRelativeUri(baseUri, up->uri, 1);
     return (EjsObj*) result;
 }
@@ -721,7 +721,7 @@ static EjsObj *uri_scheme(Ejs *ejs, EjsUri *up, int argc, EjsObj **argv)
 #if UNUSED
         return (EjsObj*) ejsCreateStringFromAsc(ejs, "http");
 #else
-        return ejs->nullValue;
+        return S(null);
 #endif
     }
     return (EjsObj*) ejsCreateStringFromAsc(ejs, up->uri->scheme);
@@ -757,7 +757,7 @@ static EjsObj *uri_set_query(Ejs *ejs, EjsUri *up, int argc, EjsObj **argv)
 {
     cchar    *value;
 
-    value = (argv[0] == ejs->nullValue) ? "" : ejsToMulti(ejs, argv[0]);
+    value = ejsIsNull(ejs, argv[0]) ? "" : ejsToMulti(ejs, argv[0]);
     up->uri->query = sclone(value);
     return 0;
 }
@@ -781,7 +781,7 @@ static EjsObj *uri_set_reference(Ejs *ejs, EjsUri *up, int argc, EjsObj **argv)
 {
     cchar    *value;
 
-    value = (argv[0] == ejs->nullValue) ? "" : ejsToMulti(ejs, argv[0]);
+    value = ejsIsNull(ejs, argv[0]) ? "" : ejsToMulti(ejs, argv[0]);
     up->uri->reference = sclone(value);
     return 0;
 }
@@ -797,8 +797,8 @@ static EjsObj *uri_same(Ejs *ejs, EjsUri *up, int argc, EjsObj **argv)
     int     exact;
 
     other = (EjsUri*) argv[0];
-    exact = (argc == 2 && argv[1] == (EjsObj*) ejs->trueValue);
-    return (EjsObj*) (same(ejs, up->uri, other->uri, exact) ? ejs->trueValue: ejs->falseValue);
+    exact = (argc == 2 && argv[1] == (EjsObj*) S(true));
+    return (EjsObj*) (same(ejs, up->uri, other->uri, exact) ? S(true): S(false));
 }
 
 
@@ -829,8 +829,8 @@ static EjsObj *uri_template(Ejs *ejs, EjsUri *up, int argc, EjsObj **argv)
                 value = 0;
                 for (i = 0; i < options->length; i++) {
                     obj = options->data[i];
-                    if ((value = ejsGetPropertyByName(ejs, obj, N(NULL, token))) != 0 && value != ejs->nullValue && 
-                            value != ejs->undefinedValue) {
+                    if ((value = ejsGetPropertyByName(ejs, obj, N(NULL, token))) != 0 && !ejsIsNull(ejs, value) && 
+                            !ejsIsUndefined(ejs, value)) {
                         str = ejsToMulti(ejs, value);
                         if (str && *str) {
                             mprPutStringToBuf(buf, str);
@@ -840,7 +840,7 @@ static EjsObj *uri_template(Ejs *ejs, EjsUri *up, int argc, EjsObj **argv)
                         }
                     }
                 }
-                if (value == 0 || value == ejs->undefinedValue || value == ejs->nullValue) {
+                if (value == 0 || ejsIsUndefined(ejs, value) || ejsIsNull(ejs, value)) {
                     if (cp >= &pattern[2] && cp[-2] == '/') {
                         mprAdjustBufEnd(buf, -1);
                     }
@@ -926,7 +926,7 @@ static EjsObj *completeUri(Ejs *ejs, EjsUri *up, EjsObj *missing, int includeQue
     if (missing == 0 || ejsIsNull(ejs, missing) || ejsIsUndefined(ejs, missing)) {
         missingUri = 0;
     } else if (ejsGetPropertyCount(ejs, missing) > 0) {
-        missingUri = ejsCreateObj(ejs, ejs->uriType, 0);
+        missingUri = ejsCreateObj(ejs, ST(Uri), 0);
         missingUri->uri = createHttpUriFromHash(ejs, missing, 1);
     } else {
         missingUri = ejsToUri(ejs, missing);
@@ -1105,7 +1105,7 @@ EjsUri *ejsCreateUri(Ejs *ejs, EjsString *path)
 {
     EjsUri      *up;
 
-    if ((up = ejsCreateObj(ejs, ejs->uriType, 0)) == NULL) {
+    if ((up = ejsCreateObj(ejs, ST(Uri), 0)) == NULL) {
         return 0;
     }
     uri_constructor(ejs, up, 1, (EjsObj**) &path);
@@ -1118,8 +1118,7 @@ EjsUri *ejsCreateUriFromMulti(Ejs *ejs, cchar *path)
     EjsUri      *up;
     EjsObj      *arg;
 
-    up = ejsCreateObj(ejs, ejs->uriType, 0);
-    if (up == 0) {
+    if ((up = ejsCreateObj(ejs, ST(Uri), 0)) == 0) {
         return 0;
     }
     arg = (EjsObj*) ejsCreateStringFromAsc(ejs, path);
@@ -1133,7 +1132,7 @@ EjsUri *ejsCreateUriFromParts(Ejs *ejs, cchar *scheme, cchar *host, int port, cc
 {
     EjsUri      *up;
 
-    if ((up = ejsCreateObj(ejs, ejs->uriType, 0)) == 0) {
+    if ((up = ejsCreateObj(ejs, ST(Uri), 0)) == 0) {
         return 0;
     }
     up->uri = httpCreateUriFromParts(scheme, host, port, path, reference, query, complete);
@@ -1154,8 +1153,8 @@ void ejsConfigureUriType(Ejs *ejs)
     EjsType     *type;
     EjsPot      *prototype;
 
-    type = ejs->uriType = ejsConfigureNativeType(ejs, N("ejs", "Uri"), sizeof(EjsUri), (MprManager) manageUri, 
-        EJS_OBJ_HELPERS);
+    type = ejsConfigureNativeType(ejs, N("ejs", "Uri"), sizeof(EjsUri), manageUri, EJS_OBJ_HELPERS);
+    ejsSetSpecialType(ejs, S_Uri, type);
     prototype = type->prototype;
 
     type->helpers.clone = (EjsCloneHelper) cloneUri;

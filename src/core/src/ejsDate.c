@@ -35,15 +35,15 @@ static EjsObj *castDate(Ejs *ejs, EjsDate *dp, EjsType *type)
 {
     struct tm   tm;
 
-    switch (type->id) {
+    switch (type->sid) {
 
-    case ES_Boolean:
-        return (EjsObj*) ejs->trueValue;
+    case S_Boolean:
+        return (EjsObj*) S(true);
 
-    case ES_Number:
+    case S_Number:
         return (EjsObj*) ejsCreateNumber(ejs, (MprNumber) dp->value);
 
-    case ES_String:
+    case S_String:
         /*
             Format:  Tue Jul 15 2011 10:53:23 GMT-0700 (PDT)
          */
@@ -78,9 +78,9 @@ static EjsObj *coerceDateOperands(Ejs *ejs, EjsObj *lhs, int opcode, EjsObj *rhs
      */
     case EJS_OP_ADD:
         if (ejsIsUndefined(ejs, rhs)) {
-            return (EjsObj*) ejs->nanValue;
+            return (EjsObj*) S(nan);
         } else if (ejsIsNull(ejs, rhs)) {
-            rhs = (EjsObj*) ejs->zeroValue;
+            rhs = (EjsObj*) S(zero);
         } else if (ejsIsBoolean(ejs, rhs) || ejsIsNumber(ejs, rhs)) {
             return ejsInvokeOperator(ejs, (EjsObj*) ejsToNumber(ejs, lhs), opcode, rhs);
         } else {
@@ -101,10 +101,10 @@ static EjsObj *coerceDateOperands(Ejs *ejs, EjsObj *lhs, int opcode, EjsObj *rhs
         return ejsInvokeOperator(ejs, (EjsObj*) ejsToNumber(ejs, lhs), opcode, rhs);
 
     case EJS_OP_COMPARE_STRICTLY_NE:
-        return (EjsObj*) ejs->trueValue;
+        return (EjsObj*) S(true);
 
     case EJS_OP_COMPARE_STRICTLY_EQ:
-        return (EjsObj*) ejs->falseValue;
+        return (EjsObj*) S(false);
 
     /*
         Unary operators
@@ -114,19 +114,19 @@ static EjsObj *coerceDateOperands(Ejs *ejs, EjsObj *lhs, int opcode, EjsObj *rhs
 
     case EJS_OP_COMPARE_NOT_ZERO:
     case EJS_OP_COMPARE_TRUE:
-        return (EjsObj*) (((EjsDate*) lhs)->value ? ejs->trueValue : ejs->falseValue);
+        return (EjsObj*) (((EjsDate*) lhs)->value ? S(true) : S(false));
 
     case EJS_OP_COMPARE_ZERO:
     case EJS_OP_COMPARE_FALSE:
-        return (EjsObj*) (((EjsDate*) lhs)->value ? ejs->falseValue: ejs->trueValue);
+        return (EjsObj*) (((EjsDate*) lhs)->value ? S(false): S(true));
 
     case EJS_OP_COMPARE_UNDEFINED:
     case EJS_OP_COMPARE_NULL:
-        return (EjsObj*) ejs->falseValue;
+        return (EjsObj*) S(false);
 
     default:
         ejsThrowTypeError(ejs, "Opcode %d not valid for type %@", opcode, TYPE(lhs)->qname.name);
-        return ejs->undefinedValue;
+        return S(undefined);
     }
     return 0;
 }
@@ -137,7 +137,7 @@ static EjsObj *invokeDateOperator(Ejs *ejs, EjsDate *lhs, int opcode, EjsDate *r
     EjsObj      *result;
 
     if (rhs == 0 || TYPE(lhs) != TYPE(rhs)) {
-        if (!ejsIsA(ejs, (EjsObj*) lhs, ejs->dateType) || !ejsIsA(ejs, (EjsObj*) rhs, ejs->dateType)) {
+        if (!ejsIs(lhs, Date) || !ejsIs(rhs, Date)) {
             if ((result = coerceDateOperands(ejs, (EjsObj*) lhs, opcode, (EjsObj*) rhs)) != 0) {
                 return result;
             }
@@ -164,16 +164,16 @@ static EjsObj *invokeDateOperator(Ejs *ejs, EjsDate *lhs, int opcode, EjsDate *r
         return (EjsObj*) ejsCreateBoolean(ejs, lhs->value >= rhs->value);
 
     case EJS_OP_COMPARE_NOT_ZERO:
-        return (EjsObj*) ((lhs->value) ? ejs->trueValue: ejs->falseValue);
+        return (EjsObj*) ((lhs->value) ? S(true): S(false));
 
     case EJS_OP_COMPARE_ZERO:
-        return (EjsObj*) ((lhs->value == 0) ? ejs->trueValue: ejs->falseValue);
+        return (EjsObj*) ((lhs->value == 0) ? S(true): S(false));
 
     case EJS_OP_COMPARE_UNDEFINED:
     case EJS_OP_COMPARE_NULL:
     case EJS_OP_COMPARE_FALSE:
     case EJS_OP_COMPARE_TRUE:
-        return (EjsObj*) ejs->falseValue;
+        return (EjsObj*) S(false);
 
     /*
         Unary operators
@@ -995,7 +995,7 @@ static EjsObj *date_toJSON(Ejs *ejs, EjsDate *dp, int argc, EjsObj **argv)
  */
 static EjsObj *date_toString(Ejs *ejs, EjsDate *dp, int argc, EjsObj **argv)
 {
-    return castDate(ejs, dp, ejs->stringType);
+    return castDate(ejs, dp, ST(String));
 }
 
 
@@ -1072,7 +1072,7 @@ EjsDate *ejsCreateDate(Ejs *ejs, MprTime value)
 {
     EjsDate *vp;
 
-    vp = ejsCreateObj(ejs, ejs->dateType, 0);
+    vp = ejsCreateObj(ejs, S(Date), 0);
     if (vp != 0) {
         vp->value = value;
     }
@@ -1085,7 +1085,8 @@ void ejsConfigureDateType(Ejs *ejs)
     EjsType     *type;
     EjsPot      *prototype;
 
-    type = ejs->dateType = ejsConfigureNativeType(ejs, N("ejs", "Date"), sizeof(EjsDate), NULL, EJS_OBJ_HELPERS);
+    type = ejsConfigureNativeType(ejs, N("ejs", "Date"), sizeof(EjsDate), NULL, EJS_OBJ_HELPERS);
+    ejsSetSpecialType(ejs, S_Date, type);
     prototype = type->prototype;
 
     type->helpers.cast = (EjsCastHelper) castDate;

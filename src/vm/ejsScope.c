@@ -272,7 +272,7 @@ void ejsShowBlockScope(Ejs *ejs, EjsBlock *block)
 
     mprLog(6, "\n  Block scope");
     for (; block; block = block->scope) {
-        mprLog(6, "    Block \"%s\" 0x%08x", ejsGetName(block), block);
+        mprLog(6, "    Block \"%s\" 0x%08x", mprGetName(block), block);
         namespaces = &block->namespaces;
         if (namespaces) {
             for (nextNsp = 0; (nsp = (EjsNamespace*) mprGetNextItem(namespaces, &nextNsp)) != 0; ) {
@@ -294,7 +294,7 @@ void ejsShowCurrentScope(Ejs *ejs)
 
     mprLog(6, "\n  Current scope");
     for (block = ejs->state->bp; block; block = block->scope) {
-        mprLog(6, "    Block \"%s\" 0x%08x", ejsGetName(block), block);
+        mprLog(6, "    Block \"%s\" 0x%08x", mprGetName(block), block);
         namespaces = &block->namespaces;
         if (namespaces) {
             for (nextNsp = 0; (nsp = (EjsNamespace*) mprGetNextItem(namespaces, &nextNsp)) != 0; ) {

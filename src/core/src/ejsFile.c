@@ -519,7 +519,7 @@ static EjsObj *readFileBytes(Ejs *ejs, EjsFile *fp, int argc, EjsObj **argv)
         ejsThrowIOError(ejs, "Can't read from file: %s", fp->path);
         return 0;
     } else if (totalRead == 0) {
-        return ejs->nullValue;
+        return S(null);
     }
     ejsSetByteArrayPositions(ejs, result, 0, totalRead);
     return (EjsObj*) result;
@@ -530,7 +530,7 @@ static EjsObj *readFileBytes(Ejs *ejs, EjsFile *fp, int argc, EjsObj **argv)
     Read data as a string
     function readString(count: Number = -1): String
  */
-static EjsObj *readFileString(Ejs *ejs, EjsFile *fp, int argc, EjsObj **argv)
+static EjsString *readFileString(Ejs *ejs, EjsFile *fp, int argc, EjsObj **argv)
 {
     EjsString       *result;
     MprPath         info;
@@ -574,7 +574,7 @@ static EjsObj *readFileString(Ejs *ejs, EjsFile *fp, int argc, EjsObj **argv)
         ejsThrowIOError(ejs, "Can't read from file: %s", fp->path);
         return 0;
     }
-    return (EjsObj*) ejsInternString(ejs, result);
+    return ejsInternString(result);
 }
 
 
@@ -582,7 +582,7 @@ static EjsObj *readFileString(Ejs *ejs, EjsFile *fp, int argc, EjsObj **argv)
     Read data bytes from a file. If offset is < 0, then append to the write position.
     function read(buffer: ByteArray, offset: Number = 0, count: Number = -1): Number
  */
-static EjsObj *readFile(Ejs *ejs, EjsFile *fp, int argc, EjsObj **argv)
+static EjsNumber *readFile(Ejs *ejs, EjsFile *fp, int argc, EjsObj **argv)
 {
     EjsByteArray    *buffer;
     MprPath         info;
@@ -625,10 +625,10 @@ static EjsObj *readFile(Ejs *ejs, EjsFile *fp, int argc, EjsObj **argv)
     if (totalRead < 0) {
         return 0;
     } else if (totalRead == 0) {
-        return (EjsObj*) ejs->zeroValue;
+        return S(zero);
     }
     ejsSetByteArrayPositions(ejs, buffer, -1, offset + totalRead);
-    return (EjsObj*) ejsCreateNumber(ejs, (MprNumber) totalRead);
+    return ejsCreateNumber(ejs, (MprNumber) totalRead);
 }
 
 
@@ -649,7 +649,7 @@ static EjsObj *getFileSize(Ejs *ejs, EjsFile *fp, int argc, EjsObj **argv)
     } else {
 #endif
     if (mprGetPathInfo(fp->path, &info) < 0) {
-        return (EjsObj*) ejs->minusOneValue;
+        return (EjsObj*) S(minusOne);
     }
     return (EjsObj*) ejsCreateNumber(ejs, (MprNumber) info.size);
 }
@@ -697,15 +697,15 @@ EjsObj *writeFile(Ejs *ejs, EjsFile *fp, int argc, EjsObj **argv)
     for (i = 0; i < args->length; i++) {
         vp = ejsGetProperty(ejs, (EjsObj*) args, i);
         mprAssert(vp);
-        switch (TYPE(vp)->id) {
-        case ES_ByteArray:
+        switch (TYPE(vp)->sid) {
+        case S_ByteArray:
             ap = (EjsByteArray*) vp;
             //  MOB ENCODING
             buf = (cchar*) &ap->value[ap->readPosition];
             len = ap->writePosition - ap->readPosition;
             break;
 
-        case ES_String:
+        case S_String:
             buf = awtom(((EjsString*) vp)->value, &len);
             break;
 
@@ -825,7 +825,7 @@ EjsFile *ejsCreateFile(Ejs *ejs, cchar *path)
 
     mprAssert(path && *path);
 
-    fp = ejsCreateObj(ejs, ejs->fileType, 0);
+    fp = ejsCreateObj(ejs, ST(File), 0);
     if (fp == 0) {
         return 0;
     }
@@ -842,7 +842,7 @@ EjsFile *ejsCreateFileFromFd(Ejs *ejs, int fd, cchar *name, int mode)
     mprAssert(fd >= 0);
     mprAssert(name);
 
-    if ((fp = ejsCreateObj(ejs, ejs->fileType, 0)) == NULL) {
+    if ((fp = ejsCreateObj(ejs, ST(File), 0)) == NULL) {
         return NULL;
     }
     fp->perms = EJS_FILE_PERMS;
@@ -888,7 +888,9 @@ void ejsConfigureFileType(Ejs *ejs)
     EjsType     *type;
     EjsPot      *prototype;
 
-    type = ejs->fileType = ejsConfigureNativeType(ejs, N("ejs", "File"), sizeof(EjsFile), manageFile, EJS_OBJ_HELPERS);
+    type = ejsConfigureNativeType(ejs, N("ejs", "File"), sizeof(EjsFile), manageFile, EJS_OBJ_HELPERS);
+    ejsSetSpecialType(ejs, S_File, type);
+
     type->numericIndicies = 1;
     type->virtualSlots = 1;
     prototype = type->prototype;

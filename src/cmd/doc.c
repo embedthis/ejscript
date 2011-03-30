@@ -2268,7 +2268,7 @@ static void out(EjsMod *mp, char *fmt, ...)
 static EjsString *fmtModule(Ejs *ejs, EjsString *name)
 {
     if (ejsCompareMulti(ejs, name, EJS_DEFAULT_MODULE) == 0) {
-        return ejs->emptyString;
+        return S(empty);
     }
     return name;
 }

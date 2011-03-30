@@ -1369,10 +1369,13 @@ static EcNode *parseParenListExpression(EcCompiler *cp)
  */
 static EcNode *parseFunctionExpression(EcCompiler *cp)
 {
+    Ejs         *ejs;
     EcState     *state;
     EcNode      *np, *funRef;
 
     ENTER(cp);
+
+    ejs = cp->ejs;
     state = cp->state;
 
     if (getToken(cp) != T_FUNCTION) {
@@ -1388,7 +1391,7 @@ static EcNode *parseFunctionExpression(EcCompiler *cp)
     if (np->qname.name == 0) {
         np->qname.name = ejsSprintf(cp->ejs, "--fun_%d-%d--", np->seqno, (int) mprGetTime());
     }
-    np->qname.space = state->inFunction ? cp->ejs->emptyString : cp->fileState->nspace;
+    np->qname.space = state->inFunction ? S(empty): cp->fileState->nspace;
 
     np = parseFunctionSignature(cp, np);
     if (np == 0) {
@@ -1470,10 +1473,12 @@ static EcNode *parseFunctionExpressionBody(EcCompiler *cp)
  */
 static EcNode *parseObjectLiteral(EcCompiler *cp)
 {
+    Ejs     *ejs;
     EcNode  *typeNode, *np;
 
     ENTER(cp);
 
+    ejs = cp->ejs;
     np = createNode(cp, N_OBJECT_LITERAL, NULL);
     if (getToken(cp) != T_LBRACE) {
         return LEAVE(cp, unexpected(cp));
@@ -1485,7 +1490,7 @@ static EcNode *parseObjectLiteral(EcCompiler *cp)
         getToken(cp);
         typeNode = parseNullableTypeExpression(cp);
     } else {
-        typeNode = createNode(cp, N_QNAME, cp->ejs->objectType->qname.name);
+        typeNode = createNode(cp, N_QNAME, ST(Object)->qname.name);
     }
     np->objectLiteral.typeNode = linkNode(np, typeNode);
     np->objectLiteral.isArray = 0;
@@ -1702,10 +1707,12 @@ static EcNode *parseFieldName(EcCompiler *cp)
  */
 static EcNode *parseArrayLiteral(EcCompiler *cp)
 {
+    Ejs         *ejs;
     EcNode      *np, *typeNode;
 
     ENTER(cp);
 
+    ejs = cp->ejs;
     np = createNode(cp, N_OBJECT_LITERAL, NULL);
     np->objectLiteral.isArray = 1;
 
@@ -1726,7 +1733,7 @@ static EcNode *parseArrayLiteral(EcCompiler *cp)
         }
         if (np) {
             if (typeNode == 0) {
-                typeNode = createNode(cp, N_QNAME, cp->ejs->arrayType->qname.name);
+                typeNode = createNode(cp, N_QNAME, ST(Array)->qname.name);
             }
             np->objectLiteral.typeNode = linkNode(np, typeNode);
         }
@@ -1951,10 +1958,10 @@ struct EcNode *parseXMLInitializer(EcCompiler *cp)
     np = createNode(cp, N_LITERAL, NULL);
     np->literal.data = mprCreateBuf(0, 0);
 
-    if (ejs->xmlType == 0) {
+    if (ST(XML) == 0) {
         return LEAVE(cp, parseError(cp, "No XML support configured"));
     }
-    np->literal.var = (EjsObj*) ejsCreateObj(ejs, ejs->xmlType, 0);
+    np->literal.var = (EjsObj*) ejsCreateObj(ejs, ST(XML), 0);
 
     switch (peekToken(cp)) {
     case T_XML_COMMENT_START:
@@ -2322,9 +2329,9 @@ static EcNode *parseThisExpression(EcCompiler *cp)
  */
 static EcNode *parsePrimaryExpression(EcCompiler *cp)
 {
+    Ejs         *ejs;
     EcNode      *np, *qualifier, *name;
     EjsObj      *vp;
-    Ejs         *ejs;
     int         tid;
 
     ENTER(cp);
@@ -2368,7 +2375,7 @@ static EcNode *parsePrimaryExpression(EcCompiler *cp)
             np = createNode(cp, N_QNAME, tokenString(cp));
         } else {
             np = createNode(cp, N_LITERAL, tokenString(cp));
-            np->literal.var = cp->ejs->nullValue;
+            np->literal.var = S(null);
         }
         break;
 
@@ -2378,7 +2385,7 @@ static EcNode *parsePrimaryExpression(EcCompiler *cp)
             np = createNode(cp, N_QNAME, tokenString(cp));
         } else {
             np = createNode(cp, N_LITERAL, tokenString(cp));
-            np->literal.var = cp->ejs->undefinedValue;
+            np->literal.var = S(undefined);
         }
         break;
 
@@ -4472,9 +4479,12 @@ static EcNode *parseNullableTypeExpression(EcCompiler *cp)
  */
 static EcNode *parseTypeExpression(EcCompiler *cp)
 {
+    Ejs         *ejs;
     EcNode      *np;
 
     ENTER(cp);
+
+    ejs = cp->ejs;
 
     switch (peekToken(cp)) {
 #if UNUSED
@@ -4497,7 +4507,7 @@ static EcNode *parseTypeExpression(EcCompiler *cp)
 
     case T_MUL:
         getToken(cp);
-        np = createNode(cp, N_QNAME, cp->ejs->objectType->qname.name);
+        np = createNode(cp, N_QNAME, ST(Object)->qname.name);
         np->name.isType = 1;
         break;
 
@@ -7713,14 +7723,16 @@ static EcNode *parseParameterInit(EcCompiler *cp, EcNode *args)
  */
 static EcNode *parseParameter(EcCompiler *cp, bool rest)
 {
+    Ejs         *ejs;
     EcNode      *np, *parameter;
 
     ENTER(cp);
 
+    ejs = cp->ejs;
     np = parseParameterKind(cp);
     parameter = parseTypedPattern(cp);
     if (parameter) {
-        parameter->qname.space = cp->ejs->emptyString;
+        parameter->qname.space = S(empty);
     }
     np = appendNode(np, parameter);
     if (parameter) {
@@ -7818,15 +7830,18 @@ static EcNode *parseRestParameter(EcCompiler *cp)
  */
 static EcNode *parseResultType(EcCompiler *cp)
 {
+    Ejs         *ejs;
     EcNode      *np;
 
     ENTER(cp);
+
+    ejs = cp->ejs;
 
     if (peekToken(cp) == T_COLON) {
         getToken(cp);
         if (peekToken(cp) == T_VOID) {
             getToken(cp);
-            np = createNode(cp, N_QNAME, cp->ejs->voidType->qname.name);
+            np = createNode(cp, N_QNAME, ST(Void)->qname.name);
             np->name.isType = 1;
 
         } else {
@@ -8004,12 +8019,14 @@ static EcNode *parseSuperInitializer(EcCompiler *cp)
  */
 static EcNode *parseFunctionBody(EcCompiler *cp, EcNode *fun)
 {
+    Ejs         *ejs;
     EcNode      *np, *end, *ret;
 
     ENTER(cp);
 
+    ejs = cp->ejs;
     cp->state->inFunction = 1;
-    cp->state->nspace = cp->ejs->emptyString;
+    cp->state->nspace = S(empty);
 
     if (peekToken(cp) == T_LBRACE) {
         np = parseBlock(cp);
@@ -9977,12 +9994,14 @@ static void addAscToLiteral(EcCompiler *cp, EcNode *np, cchar *str, ssize count)
  */
 void ecResetInput(EcCompiler *cp)
 {
+    Ejs         *ejs;
     EcToken     *tp;
 
+    ejs = cp->ejs;
     cp->stream->flags &= ~EC_STREAM_EOL;
     cp->error = 0;
     cp->ejs->exception = 0;
-    cp->ejs->result = cp->ejs->undefinedValue;
+    cp->ejs->result = S(undefined);
     while ((tp = cp->putback) != 0 && (tp->tokenId == T_EOF || tp->tokenId == T_NOP)) {
         ecGetToken(cp);
     }
@@ -10031,10 +10050,13 @@ void ecSetCertFile(EcCompiler *cp, cchar *certFile)
 
 static EjsString *tokenString(EcCompiler *cp)
 {
+    Ejs     *ejs;
+
+    ejs = cp->ejs;
     if (cp->token) {
         return ejsCreateString(cp->ejs, cp->token->text, cp->token->length);
     }
-    return cp->ejs->emptyString;
+    return S(empty);
 }
 
 

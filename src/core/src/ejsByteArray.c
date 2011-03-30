@@ -42,16 +42,16 @@ static int putDouble(EjsByteArray *ap, double value);
 /*
     Cast the object operand to a primitive type
  */
-static EjsObj *castByteArrayVar(Ejs *ejs, EjsByteArray *vp, EjsType *type)
+static EjsAny *castByteArrayVar(Ejs *ejs, EjsByteArray *vp, EjsType *type)
 {
-    switch (type->id) {
-    case ES_Boolean:
-        return (EjsObj*) ejs->trueValue;
+    switch (type->sid) {
+    case S_Boolean:
+        return S(true);
 
-    case ES_Number:
-        return (EjsObj*) ejs->zeroValue;
+    case S_Number:
+        return S(zero);
 
-    case ES_String:
+    case S_String:
         return ba_toString(ejs, vp, 0, 0);
 
     default:
@@ -95,7 +95,7 @@ static int deleteByteArrayProperty(struct Ejs *ejs, EjsByteArray *ap, int slot)
             ap->writePosition = ap->length - 1;
         }
     }
-    if (ejsSetProperty(ejs, ap, slot, ejs->undefinedValue) < 0) {
+    if (ejsSetProperty(ejs, ap, slot, S(undefined)) < 0) {
         return EJS_ERR;
     }
     return 0;
@@ -147,11 +147,11 @@ static EjsObj *coerceByteArrayOperands(Ejs *ejs, EjsObj *lhs, int opcode,  EjsOb
 
     case EJS_OP_AND: case EJS_OP_DIV: case EJS_OP_MUL: case EJS_OP_OR: case EJS_OP_REM:
     case EJS_OP_SHL: case EJS_OP_SHR: case EJS_OP_SUB: case EJS_OP_USHR: case EJS_OP_XOR:
-        return ejsInvokeOperator(ejs, (EjsObj*) ejs->zeroValue, opcode, rhs);
+        return ejsInvokeOperator(ejs, (EjsObj*) S(zero), opcode, rhs);
 
     case EJS_OP_COMPARE_EQ: case EJS_OP_COMPARE_NE:
         if (ejsIsNull(ejs, rhs) || ejsIsUndefined(ejs, rhs)) {
-            return (EjsObj*) ((opcode == EJS_OP_COMPARE_EQ) ? ejs->falseValue: ejs->trueValue);
+            return (EjsObj*) ((opcode == EJS_OP_COMPARE_EQ) ? S(false): S(true));
         } else if (ejsIsNumber(ejs, rhs)) {
             return ejsInvokeOperator(ejs, (EjsObj*) ejsToNumber(ejs, lhs), opcode, rhs);
         }
@@ -168,13 +168,13 @@ static EjsObj *coerceByteArrayOperands(Ejs *ejs, EjsObj *lhs, int opcode,  EjsOb
     case EJS_OP_COMPARE_UNDEFINED:
     case EJS_OP_COMPARE_NOT_ZERO:
     case EJS_OP_COMPARE_NULL:
-        return (EjsObj*) ejs->trueValue;
+        return (EjsObj*) S(true);
 
     case EJS_OP_COMPARE_STRICTLY_EQ:
     case EJS_OP_COMPARE_FALSE:
     case EJS_OP_COMPARE_TRUE:
     case EJS_OP_COMPARE_ZERO:
-        return (EjsObj*) ejs->falseValue;
+        return (EjsObj*) S(false);
 
     /*
         Unary operators
@@ -184,7 +184,7 @@ static EjsObj *coerceByteArrayOperands(Ejs *ejs, EjsObj *lhs, int opcode,  EjsOb
 
     default:
         ejsThrowTypeError(ejs, "Opcode %d not valid for type %@", opcode, TYPE(lhs)->qname.name);
-        return ejs->undefinedValue;
+        return S(undefined);
     }
     return 0;
 }
@@ -214,24 +214,24 @@ static EjsObj *invokeByteArrayOperator(Ejs *ejs, EjsObj *lhs, int opcode,  EjsOb
         Unary operators
      */
     case EJS_OP_COMPARE_NOT_ZERO:
-        return (EjsObj*) ejs->trueValue;
+        return (EjsObj*) S(true);
 
     case EJS_OP_COMPARE_UNDEFINED:
     case EJS_OP_COMPARE_NULL:
     case EJS_OP_COMPARE_FALSE:
     case EJS_OP_COMPARE_TRUE:
     case EJS_OP_COMPARE_ZERO:
-        return (EjsObj*) ejs->falseValue;
+        return (EjsObj*) S(false);
 
     case EJS_OP_LOGICAL_NOT: case EJS_OP_NOT: case EJS_OP_NEG:
-        return (EjsObj*) ejs->oneValue;
+        return (EjsObj*) S(one);
 
     /*
         Binary operators
      */
     case EJS_OP_DIV: case EJS_OP_MUL: case EJS_OP_REM:
     case EJS_OP_SHR: case EJS_OP_USHR: case EJS_OP_XOR:
-        return (EjsObj*) ejs->zeroValue;
+        return S(zero);
 
     default:
         ejsThrowTypeError(ejs, "Opcode %d not implemented for type %@", opcode, TYPE(lhs)->qname.name);
@@ -306,7 +306,7 @@ static EjsObj *ba_on(Ejs *ejs, EjsByteArray *ap, int argc, EjsObj **argv)
  */
 static EjsObj *ba_async(Ejs *ejs, EjsByteArray *ap, int argc, EjsObj **argv)
 {
-    return ap->async ? (EjsObj*) ejs->trueValue : (EjsObj*) ejs->falseValue;
+    return ap->async ? (EjsObj*) S(true) : (EjsObj*) S(false);
 }
 
 
@@ -316,7 +316,7 @@ static EjsObj *ba_async(Ejs *ejs, EjsByteArray *ap, int argc, EjsObj **argv)
  */
 static EjsObj *ba_setAsync(Ejs *ejs, EjsByteArray *ap, int argc, EjsObj **argv)
 {
-    ap->async = (argv[0] == (EjsObj*) ejs->trueValue);
+    ap->async = (argv[0] == (EjsObj*) S(true));
     return 0;
 }
 
@@ -585,7 +585,7 @@ static EjsObj *ba_setLength(Ejs *ejs, EjsByteArray *ap, int argc, EjsObj **argv)
  */
 static EjsObj *ba_resizable(Ejs *ejs, EjsByteArray *ap, int argc, EjsObj **argv)
 {
-    return ap->resizable ? (EjsObj*) ejs->trueValue : (EjsObj*) ejs->falseValue;
+    return ap->resizable ? (EjsObj*) S(true) : (EjsObj*) S(false);
 }
 
 
@@ -621,7 +621,7 @@ static EjsObj *ba_read(Ejs *ejs, EjsByteArray *ap, int argc, EjsObj **argv)
     }
     if (getInput(ejs, ap, 1) <= 0) {
         /* eof */
-        return (EjsObj*) ejs->nullValue;
+        return (EjsObj*) S(null);
     }
     count = min(availableBytes(ap), count);
     for (i = 0; i < count; i++) {
@@ -645,7 +645,7 @@ static EjsObj *ba_readBoolean(Ejs *ejs, EjsByteArray *ap, int argc, EjsObj **arg
 
     if (getInput(ejs, ap, 1) <= 0) {
         /* eof */
-        return (EjsObj*) ejs->nullValue;
+        return (EjsObj*) S(null);
     }
     result = ap->value[ap->readPosition];
     adjustReadPosition(ap, 1);
@@ -663,7 +663,7 @@ static EjsObj *ba_readByte(Ejs *ejs, EjsByteArray *ap, int argc, EjsObj **argv)
 
     if (getInput(ejs, ap, 1) <= 0) {
         /* eof */
-        return (EjsObj*) ejs->nullValue;
+        return (EjsObj*) S(null);
     }
     result = ap->value[ap->readPosition];
     adjustReadPosition(ap, 1);
@@ -684,7 +684,7 @@ static EjsObj *ba_readDate(Ejs *ejs, EjsByteArray *ap, int argc, EjsObj **argv)
             ejsThrowIOError(ejs, "Premanture eof");
             return 0;
         }
-        return (EjsObj*) ejs->nullValue;
+        return (EjsObj*) S(null);
     }
     value = * (double*) &ap->value[ap->readPosition];
     value = swapDouble(ap, value);
@@ -706,7 +706,7 @@ static EjsObj *ba_readDouble(Ejs *ejs, EjsByteArray *ap, int argc, EjsObj **argv
             ejsThrowIOError(ejs, "Premanture eof");
             return 0;
         }
-        return (EjsObj*) ejs->nullValue;
+        return (EjsObj*) S(null);
     }
 #if OLD
     value = * (double*) &ap->value[ap->readPosition];
@@ -732,7 +732,7 @@ static EjsObj *ba_readInteger(Ejs *ejs, EjsByteArray *ap, int argc, EjsObj **arg
             ejsThrowIOError(ejs, "Premanture eof");
             return 0;
         }
-        return (EjsObj*) ejs->nullValue;
+        return (EjsObj*) S(null);
     }
     value = * (int*) &ap->value[ap->readPosition];
     value = swap32(ap, value);
@@ -754,7 +754,7 @@ static EjsObj *ba_readLong(Ejs *ejs, EjsByteArray *ap, int argc, EjsObj **argv)
             ejsThrowIOError(ejs, "Premanture eof");
             return 0;
         }
-        return (EjsObj*) ejs->nullValue;
+        return (EjsObj*) S(null);
     }
     value = * (int64*) &ap->value[ap->readPosition];
     value = swap64(ap, value);
@@ -806,7 +806,7 @@ static EjsObj *ba_readShort(Ejs *ejs, EjsByteArray *ap, int argc, EjsObj **argv)
     int     value;
 
     if (getInput(ejs, ap, EJS_SIZE_SHORT) <= 0) {
-        return (EjsObj*) ejs->nullValue;
+        return (EjsObj*) S(null);
     }
     value = * (short*) &ap->value[ap->readPosition];
     value = swap16(ap, value);
@@ -830,12 +830,12 @@ static EjsObj *ba_readString(Ejs *ejs, EjsByteArray *ap, int argc, EjsObj **argv
 
     if (count < 0) {
         if (getInput(ejs, ap, 1) < 0) {
-            return (EjsObj*) ejs->nullValue;
+            return (EjsObj*) S(null);
         }
         count = availableBytes(ap);
 
     } else if (getInput(ejs, ap, count) < 0) {
-        return (EjsObj*) ejs->nullValue;
+        return (EjsObj*) S(null);
     }
     count = min(count, availableBytes(ap));
     //  MOB - UNICODE ENCODING
@@ -931,29 +931,29 @@ EjsNumber *ejsWriteToByteArray(Ejs *ejs, EjsByteArray *ap, int argc, EjsObj **ar
         if (vp == 0) {
             continue;
         }
-        switch (TYPE(vp)->id) {
-        case ES_Boolean:
+        switch (TYPE(vp)->sid) {
+        case S_Boolean:
             if (!ejsMakeRoomInByteArray(ejs, ap, EJS_SIZE_BOOLEAN)) {
                 return 0;
             }
             wrote += putByte(ap, ejsGetBoolean(ejs, vp));
             break;
 
-        case ES_Date:
+        case S_Date:
             if (!ejsMakeRoomInByteArray(ejs, ap, EJS_SIZE_DOUBLE)) {
                 return 0;
             }
             wrote += putNumber(ap, (MprNumber) ((EjsDate*) vp)->value);
             break;
 
-        case ES_Number:
+        case S_Number:
             if (!ejsMakeRoomInByteArray(ejs, ap, EJS_SIZE_DOUBLE)) {
                 return 0;
             }
             wrote += putNumber(ap, ejsGetNumber(ejs, vp));
             break;
 
-        case ES_String:
+        case S_String:
             if (!ejsMakeRoomInByteArray(ejs, ap, ((EjsString*) vp)->length)) {
                 return 0;
             }
@@ -966,7 +966,7 @@ EjsNumber *ejsWriteToByteArray(Ejs *ejs, EjsByteArray *ap, int argc, EjsObj **ar
             wrote += putString(ap, sp, sp->length);
             break;
 
-        case ES_ByteArray:
+        case S_ByteArray:
             bp = (EjsByteArray*) vp;
             len = availableBytes(bp);
             if (!ejsMakeRoomInByteArray(ejs, ap, len)) {
@@ -1367,7 +1367,7 @@ EjsByteArray *ejsCreateByteArray(Ejs *ejs, ssize size)
     /*
         No need to invoke constructor
      */
-    ap = ejsCreateObj(ejs, ejs->byteArrayType, 0);
+    ap = ejsCreateObj(ejs, ST(ByteArray), 0);
     if (ap == 0) {
         return 0;
     }
@@ -1404,8 +1404,8 @@ void ejsConfigureByteArrayType(Ejs *ejs)
     EjsHelpers  *helpers;
     EjsPot      *prototype;
 
-    type = ejs->byteArrayType = ejsConfigureNativeType(ejs, N("ejs", "ByteArray"), sizeof(EjsByteArray), 
-        (MprManager) manageByteArray, EJS_OBJ_HELPERS);
+    type = ejsConfigureNativeType(ejs, N("ejs", "ByteArray"), sizeof(EjsByteArray), manageByteArray, EJS_OBJ_HELPERS);
+    ejsSetSpecialType(ejs, S_ByteArray, type);
     type->numericIndicies = 1;
     type->virtualSlots = 1;
     prototype = type->prototype;

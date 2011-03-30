@@ -527,12 +527,13 @@ static void genContinue(EcCompiler *cp, EcNode *np)
 
 static void genDelete(EcCompiler *cp, EcNode *np)
 {
+    Ejs         *ejs;
     EcNode      *left, *lright;
 
     ENTER(cp);
-
     mprAssert(np);
 
+    ejs = cp->ejs;
     left = np->left;
     mprAssert(left);
 
@@ -549,7 +550,7 @@ static void genDelete(EcCompiler *cp, EcNode *np)
         } else {
             /* delete obj[expr] */
             ecEncodeOpcode(cp, EJS_OP_LOAD_STRING);
-            ecEncodeConst(cp, cp->ejs->emptyString);
+            ecEncodeConst(cp, S(empty));
             processNode(cp, lright);
             ecEncodeOpcode(cp, EJS_OP_DELETE_NAME_EXPR);
             popStack(cp, 2);
@@ -1079,7 +1080,7 @@ static void genCallSequence(EcCompiler *cp, EcNode *np)
 #if UNUSED
                 ejsIsTypeSubType(ejs, state->currentClass, (EjsType*) lookup->originalObj) && 
 #endif
-                lookup->obj != (EjsObj*) ejs->objectType) {
+                lookup->obj != ST(Object)) {
             /*
                 Calling a static method from within a class or subclass. So we can use "this".
              */
@@ -1236,7 +1237,7 @@ static void genCall(EcCompiler *cp, EcNode *np)
      */
     hasResult = 0;
     if (fun && ejsIsFunction(ejs, fun)) {
-        if (fun->resultType && fun->resultType != ejs->voidType) {
+        if (fun->resultType && fun->resultType != ST(Void)) {
             hasResult = 1;
 
         } else if (fun->hasReturn || ejsIsType(ejs, fun)) {
@@ -1562,12 +1563,14 @@ static void genDirectives(EcCompiler *cp, EcNode *np, bool saveResult)
  */
 static void genDot(EcCompiler *cp, EcNode *np, EcNode **rightMost)
 {
+    Ejs         *ejs;
     EcState     *state;
     EcNode      *left, *right;
     int         put;
 
     ENTER(cp);
 
+    ejs = cp->ejs;
     state = cp->state;
     state->onLeft = 0;
     left = np->left;
@@ -1629,7 +1632,7 @@ static void genDot(EcCompiler *cp, EcNode *np, EcNode **rightMost)
         state->currentObjectNode = 0;
         state->needsValue = 1;
         ecEncodeOpcode(cp, EJS_OP_LOAD_STRING);
-        ecEncodeConst(cp, cp->ejs->emptyString);
+        ecEncodeConst(cp, S(empty));
         pushStack(cp, 1);
         if (right->kind == N_LITERAL) {
             genLiteral(cp, right);
@@ -1652,12 +1655,14 @@ static void genDot(EcCompiler *cp, EcNode *np, EcNode **rightMost)
 
 static void genEndFunction(EcCompiler *cp, EcNode *np)
 {
+    Ejs             *ejs;
     EjsFunction     *fun;
 
     ENTER(cp);
 
     mprAssert(np);
 
+    ejs = cp->ejs;
     fun = cp->state->currentFunction;
     
     if (cp->lastOpcode != EJS_OP_RETURN_VALUE && cp->lastOpcode != EJS_OP_RETURN) {
@@ -1679,7 +1684,7 @@ static void genEndFunction(EcCompiler *cp, EcNode *np)
                 ecEncodeOpcode(cp, EJS_OP_RETURN);
             }
 
-        } else if (fun->resultType == cp->ejs->voidType) {
+        } else if (fun->resultType == ST(Void)) {
             ecEncodeOpcode(cp, EJS_OP_RETURN);
 
         } else {
@@ -1992,6 +1997,7 @@ static void genFor(EcCompiler *cp, EcNode *np)
  */
 static void genForIn(EcCompiler *cp, EcNode *np)
 {
+    Ejs         *ejs;
     EcNode      *iterVar, *iterGet;
     EcCodeGen   *outerBlock, *code;
     EcState     *state;
@@ -2002,6 +2008,7 @@ static void genForIn(EcCompiler *cp, EcNode *np)
     mprAssert(cp->state->code->stackCount >= 0);
     mprAssert(np->kind == N_FOR_IN);
 
+    ejs = cp->ejs;
     state = cp->state;
     outerBlock = state->code;
     code = state->code = allocCodeBuffer(cp);
@@ -2072,7 +2079,7 @@ static void genForIn(EcCompiler *cp, EcNode *np)
         pushStack(cp, 1);
         //  TODO space is not used with numericIndicies
         ecEncodeOpcode(cp, EJS_OP_LOAD_STRING);
-        ecEncodeConst(cp, cp->ejs->emptyString);
+        ecEncodeConst(cp, S(empty));
         pushStack(cp, 1);
     }
 
@@ -2126,7 +2133,7 @@ static void genForIn(EcCompiler *cp, EcNode *np)
         Note: we have a zero length handler (noop)
      */
     handlerStart = ecGetCodeOffset(cp);
-    addException(cp, tryStart, tryEnd, cp->ejs->stopIterationType, handlerStart, handlerStart, 0, startMark,
+    addException(cp, tryStart, tryEnd, ST(StopIteration), handlerStart, handlerStart, 0, startMark,
         EJS_EX_CATCH | EJS_EX_ITERATION);
 
     /*
@@ -2183,7 +2190,7 @@ static void genDefaultParameterCode(EcCompiler *cp, EcNode *np, EjsFunction *fun
     if (fun->rest) {
         buffers[count - 1] = state->code = allocCodeBuffer(cp);
         ecEncodeOpcode(cp, EJS_OP_NEW_ARRAY);
-        ecEncodeGlobal(cp, (EjsObj*) ejs->arrayType, ejs->arrayType->qname);
+        ecEncodeGlobal(cp, (EjsObj*) ST(Array), ST(Array)->qname);
         ecEncodeNum(cp, 0);
         pushStack(cp, 1);
         //  MOB -- convenience routine
@@ -2543,12 +2550,12 @@ static void genLiteral(EcCompiler *cp, EcNode *np)
     EjsString       *pattern, *data;
     Ejs             *ejs;
     int64           n;
-    int             id;
+    int             sid;
 
     ENTER(cp);
     ejs = cp->ejs;
 
-    if (TYPE(np->literal.var) == ejs->xmlType) {
+    if (TYPE(np->literal.var) == ST(XML)) {
         ecEncodeOpcode(cp, EJS_OP_LOAD_XML);
         data = ejsCreateString(ejs, mprGetBufStart(np->literal.data), mprGetBufLength(np->literal.data) / sizeof(MprChar));
         ecEncodeConst(cp, data);
@@ -2560,10 +2567,10 @@ static void genLiteral(EcCompiler *cp, EcNode *np)
     /*
         Map Numbers to the configured real type
      */
-    id = TYPE(np->literal.var)->id;
+    sid = TYPE(np->literal.var)->sid;
 
-    switch (id) {
-    case ES_Boolean:
+    switch (sid) {
+    case S_Boolean:
         bp = (EjsBoolean*) np->literal.var;
         if (bp->value) {
             ecEncodeOpcode(cp, EJS_OP_LOAD_TRUE);
@@ -2572,7 +2579,7 @@ static void genLiteral(EcCompiler *cp, EcNode *np)
         }
         break;
 
-    case ES_Number:
+    case S_Number:
         /*
             These are signed values
          */
@@ -2591,28 +2598,28 @@ static void genLiteral(EcCompiler *cp, EcNode *np)
         }
         break;
 
-    case ES_Namespace:
+    case S_Namespace:
         ecEncodeOpcode(cp, EJS_OP_LOAD_NAMESPACE);
         nsp = (EjsNamespace*) np->literal.var;
         ecEncodeConst(cp, nsp->value);
         break;
 
-    case ES_Null:
+    case S_Null:
         ecEncodeOpcode(cp, EJS_OP_LOAD_NULL);
         break;
 
-    case ES_String:
+    case S_String:
         ecEncodeOpcode(cp, EJS_OP_LOAD_STRING);
         ecEncodeConst(cp, ((EjsString*) np->literal.var));
         break;
 
-    case ES_RegExp:
+    case S_RegExp:
         ecEncodeOpcode(cp, EJS_OP_LOAD_REGEXP);
         pattern = (EjsString*) ejsRegExpToString(cp->ejs, (EjsRegExp*) np->literal.var);
         ecEncodeConst(cp, pattern);
         break;
 
-    case ES_Void:
+    case S_Void:
         ecEncodeOpcode(cp, EJS_OP_LOAD_UNDEFINED);
         break;
 
@@ -2737,8 +2744,10 @@ static void genObjectLiteral(EcCompiler *cp, EcNode *np)
 
 static void genField(EcCompiler *cp, EcNode *np)
 {
+    Ejs         *ejs;
     EcNode      *fieldName;
 
+    ejs = cp->ejs;
     fieldName = np->field.fieldName;
 
     if (np->field.index >= 0) {
@@ -2756,7 +2765,7 @@ static void genField(EcCompiler *cp, EcNode *np)
 
     } else if (fieldName->kind == N_LITERAL) {
         ecEncodeOpcode(cp, EJS_OP_LOAD_STRING);
-        ecEncodeConst(cp, cp->ejs->emptyString);
+        ecEncodeConst(cp, S(empty));
         pushStack(cp, 1);
         genLiteral(cp, fieldName);
 
@@ -2845,16 +2854,18 @@ static void genPragmas(EcCompiler *cp, EcNode *np)
  */
 static void genReturn(EcCompiler *cp, EcNode *np)
 {
+    Ejs             *ejs;
     EjsFunction     *fun;
 
     ENTER(cp);
 
+    ejs = cp->ejs;
     if (cp->state->captureFinally) {
         ecEncodeOpcode(cp, EJS_OP_FINALLY);
     }
     if (np->left) {
         fun = cp->state->currentFunction;
-        if (fun->resultType == NULL || fun->resultType != cp->ejs->voidType) {
+        if (fun->resultType == NULL || fun->resultType != ST(Void)) {
             cp->state->needsValue = 1;
             processNode(cp, np->left);
             cp->state->needsValue = 0;
@@ -3138,16 +3149,18 @@ static void genThrow(EcCompiler *cp, EcNode *np)
  */
 static void genTry(EcCompiler *cp, EcNode *np)
 {
-    EjsFunction *fun;
-    EcNode      *child, *arg;
-    EcCodeGen   *saveCode;
-    EcState     *state;
-    EjsType     *catchType;
-    uint        tryStart, tryEnd, handlerStart, handlerEnd;
-    int         next, len, numStack;
+    Ejs             *ejs;
+    EjsFunction     *fun;
+    EcNode          *child, *arg;
+    EcCodeGen       *saveCode;
+    EcState         *state;
+    EjsType         *catchType;
+    uint            tryStart, tryEnd, handlerStart, handlerEnd;
+    int             next, len, numStack;
 
     ENTER(cp);
 
+    ejs = cp->ejs;
     state = cp->state;
     fun = state->currentFunction;
     mprAssert(fun);
@@ -3273,7 +3286,7 @@ static void genTry(EcCompiler *cp, EcNode *np)
                 catchType = (EjsType*) arg->typeNode->lookup.ref;
             }
             if (catchType == 0) {
-                catchType = cp->ejs->voidType;
+                catchType = ST(Void);
             }
             ecAddNameConstant(cp, catchType->qname);
             addException(cp, tryStart, tryEnd, catchType, handlerStart, handlerEnd, np->exception.numBlocks, numStack, 
@@ -3288,7 +3301,7 @@ static void genTry(EcCompiler *cp, EcNode *np)
         handlerStart = ecGetCodeOffset(cp);
         copyCodeBuffer(cp, state->code, np->exception.finallyBlock->code);
         handlerEnd = ecGetCodeOffset(cp);
-        addException(cp, tryStart, tryEnd, cp->ejs->voidType, handlerStart, handlerEnd, np->exception.numBlocks, numStack, 
+        addException(cp, tryStart, tryEnd, ST(Void), handlerStart, handlerEnd, np->exception.numBlocks, numStack, 
             EJS_EX_FINALLY);
     }
     LEAVE(cp);
@@ -4525,7 +4538,7 @@ static void setFunctionCode(EcCompiler *cp, EjsFunction *fun, EcCodeGen *code)
     next = 0;
     while ((ex = (EjsEx*) mprGetNextItem(code->exceptions, &next)) != 0) {
         ejsAddException(cp->ejs, fun, ex->tryStart, ex->tryEnd, ex->catchType, ex->handlerStart, 
-                        ex->handlerEnd, ex->numBlocks, ex->numStack, ex->flags, -1);
+            ex->handlerEnd, ex->numBlocks, ex->numStack, ex->flags, -1);
     }
 }
 

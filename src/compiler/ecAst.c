@@ -462,7 +462,7 @@ static void astCatch(EcCompiler *cp, EcNode *np)
 
     ejs = cp->ejs;
     block = ejsCreateBlock(cp->ejs, 0);
-    ejsSetName(block, MPR_NAME("catch"));
+    mprSetName(block, MPR_NAME("catch"));
     addScope(cp, block);
     processAstNode(cp, np->left);
     removeScope(cp);
@@ -478,7 +478,8 @@ static EjsType *defineClass(EcCompiler *cp, EcNode *np)
     EcNode          *constructorNode;
     EjsName         qname;
     EjsNamespace    *nsp;
-    int             fatt, attributes, slotNum;
+    EjsType         *tp;
+    int             fatt, attributes, slotNum, sid;
     
     mprAssert(np->kind == N_CLASS);
 
@@ -498,7 +499,22 @@ static EjsType *defineClass(EcCompiler *cp, EcNode *np)
     if (np->klass.isInterface) {
         attributes |= EJS_TYPE_INTERFACE;
     }
-    type = ejsCreateType(ejs, np->qname, state->currentModule, NULL, NULL, sizeof(EjsPot), slotNum, 0, 0, attributes);
+    sid = -1;
+    if (ejs->empty) {
+        for (sid = 0; sid < EJS_MAX_SPECIAL; sid++) {
+            tp = ejs->values[sid];
+            if (tp && ejsIsType(ejs, tp)) {
+                //  MOB -- should be a function for this
+                if (np->qname.name == tp->qname.name && np->qname.space == tp->qname.space) {
+                    break;
+                }
+            }
+        }
+        if (sid >= EJS_MAX_SPECIAL) {
+            sid = -1;
+        }
+    }
+    type = ejsCreateType(ejs, np->qname, state->currentModule, NULL, NULL, sizeof(EjsPot), -1, 0, 0, attributes);
     if (type == 0) {
         astError(cp, np, "Can't create type %s", type->qname.name);
         return 0;
@@ -523,7 +539,7 @@ static EjsType *defineClass(EcCompiler *cp, EcNode *np)
     /*
         Define a property for the type in global
      */
-    slotNum = ejsDefineProperty(ejs, ejs->global, slotNum, np->qname, ejs->typeType, attributes, type);
+    slotNum = ejsDefineProperty(ejs, ejs->global, slotNum, np->qname, ST(Type), attributes, type);
     if (slotNum < 0) {
         astError(cp, np, "Can't install type %s",  np->qname.name);
         return 0;
@@ -537,13 +553,13 @@ static EjsType *defineClass(EcCompiler *cp, EcNode *np)
         qname.name = ejsCreateStringFromAsc(ejs, mprAsprintf("-%@-", type->qname.name));
         qname.space = ejsCreateStringFromAsc(ejs, EJS_INIT_NAMESPACE);
         fatt = EJS_TRAIT_HIDDEN | EJS_PROP_STATIC;
-        ejsDefineProperty(ejs, (EjsObj*) type, 0, qname, ejs->functionType, fatt, ejs->nullValue);
+        ejsDefineProperty(ejs, (EjsObj*) type, 0, qname, ST(Function), fatt, S(null));
         constructorNode = np->klass.constructor;
         if (constructorNode && !constructorNode->function.isDefault) {
             type->hasConstructor = 1;
         }
 #if MOB
-        ejsDefineProperty(ejs, (EjsObj*) type, 1, EN("prototype"), ejs->objectType, fatt, type->prototype);
+        ejsDefineProperty(ejs, (EjsObj*) type, 1, EN("prototype"), ST(Object), fatt, type->prototype);
 #endif
     }
     return type;
@@ -626,7 +642,7 @@ static void bindClass(EcCompiler *cp, EcNode *np)
             Create the static initializer function. Code gen will fill out the code
          */
         mp = state->currentModule;
-        fun = ejsCreateFunction(ejs, np->qname.name, NULL, -1, 0, 0, 0, cp->ejs->voidType, EJS_FUN_INITIALIZER, mp, NULL, 
+        fun = ejsCreateFunction(ejs, np->qname.name, NULL, -1, 0, 0, 0, ST(Void), EJS_FUN_INITIALIZER, mp, NULL, 
             cp->fileState->strict);
         np->klass.initializer = fun;
         //  MOB -- better to use DefineProperty and set traits for initializer
@@ -1417,18 +1433,18 @@ static void astFunction(EcCompiler *cp, EcNode *np)
      */
     if (cp->phase >= EC_PHASE_BIND) {
         if (!np->function.hasReturn && (np->function.resultType != 0)) {
-            if (fun->resultType == 0 || fun->resultType != ejs->voidType) {
+            if (fun->resultType == 0 || fun->resultType != ST(Void)) {
                 /*
                     Native classes have no body defined in script, so we can't verify whether or not it has 
                     an appropriate return.
                  */
                 if (!(state->currentClass && state->currentClass->isInterface) && !(np->attributes & EJS_PROP_NATIVE)) {
                     /*
-                        When building slots for the core VM (empty mode), we can't test ejs->voidType as this won't equal
-                        the parsed Void class
+                        When building slots for the core VM (empty mode), we can't test ST(Void) as this won't equal
+                        the parsed Void class.
+                        MOB - is this still true?
                      */
-                    if (ejs->initialized || fun->resultType == 0 || 
-                            fun->resultType->qname.name != ejs->voidType->qname.name) {
+                    if (ejs->initialized || fun->resultType == 0 || fun->resultType->qname.name != ST(Void)->qname.name) {
                         astError(cp, np, "Function \"%@\" must return a value",  np->qname.name);
                     }
                 }
@@ -1513,7 +1529,7 @@ static void astForIn(EcCompiler *cp, EcNode *np)
         
 #else
         np->forInLoop.iterNext->qname = N("public", "next");
-        rc = resolveName(cp, np->forInLoop.iterNext, (EjsObj*) ejs->iteratorType->prototype, np->forInLoop.iterNext->qname);
+        rc = resolveName(cp, np->forInLoop.iterNext, (EjsObj*) ST(Iterator)->prototype, np->forInLoop.iterNext->qname);
         np->forInLoop.iterNext->lookup.bind = 0;
 #endif
     }
@@ -1528,7 +1544,7 @@ static EjsObj *evalNode(EcCompiler *cp, EcNode *np)
 {
     Ejs         *ejs;
     EjsModule   *mp;
-    EjsObj      *result;
+    EjsObj      *result, *config;
     int         saveDebug;
 
     ejs = cp->ejs;
@@ -1554,8 +1570,9 @@ static EjsObj *evalNode(EcCompiler *cp, EcNode *np)
         return 0;
     }
     /*  Install the Config object as a local variable in the initializer function */
-    ejsDefineProperty(ejs, mp->initializer->activation, 0, EN("Config"), ejs->typeType, 0, (EjsObj*) ejs->configType);
-    ejsSetPropertyName(ejs, (EjsObj*) ejs->configType, ES_Config_Legacy, EN("Legacy"));
+    config = ejsGetPropertyByName(ejs, ejs->global, N("ejs", "Config"));
+    ejsDefineProperty(ejs, mp->initializer->activation, 0, EN("Config"), ST(Type), 0, config);
+    ejsSetPropertyName(ejs, config, ES_Config_Legacy, EN("Legacy"));
     result = ejsRunInitializer(ejs, mp);
     cp->debug = saveDebug;
     mprAssert(ejs->result == 0 || (MPR_GET_GEN(MPR_GET_MEM(ejs->result)) != MPR->heap.dead));
@@ -1891,7 +1908,7 @@ static void astBindName(EcCompiler *cp, EcNode *np)
                     Ugly (but effective) hack just for XML to discriminate between length and length()
                     TODO - refactor away
                  */
-                if (type == ejs->xmlType || type == ejs->xmlListType) {
+                if (type == ST(XML) || type == ST(XMLList)) {
                     if (np->parent == 0 || np->parent->parent == 0 || np->parent->parent->kind != N_CALL) {
                         lookup->bind = 0;
                     }
@@ -2087,7 +2104,7 @@ static void astReturn(EcCompiler *cp, EcNode *np)
         fun = state->currentFunction;
         if (fun->hasReturn) {
             if (np->left) {
-                if (fun->resultType && fun->resultType == ejs->voidType) {
+                if (fun->resultType && fun->resultType == ST(Void)) {
                     /*
                         Allow block-less function expressions where a return node was generated by the parser.
                      */
@@ -2097,8 +2114,8 @@ static void astReturn(EcCompiler *cp, EcNode *np)
                 }
 
             } else {
-                if (fun->resultType && fun->resultType != ejs->voidType) {
-                    if (! (!ejs->initialized && fun->resultType->qname.name == ejs->voidType->qname.name)) {
+                if (fun->resultType && fun->resultType != ST(Void)) {
+                    if (! (!ejs->initialized && fun->resultType->qname.name == ST(Void)->qname.name)) {
                         astError(cp, np, "Return in function \"%@\" must return a value", functionNode->qname.name);
                     }
                 }
@@ -2841,7 +2858,7 @@ static void astInitVar(EcCompiler *cp, EcNode *np)
                 /*
                     Erase the value incase being run in the ejs shell. Must not prematurely define values.
                  */
-                ejsSetProperty(ejs, state->varBlock, slotNum, ejs->undefinedValue);
+                ejsSetProperty(ejs, state->varBlock, slotNum, S(undefined));
             }
         }
     }
@@ -2977,7 +2994,7 @@ static EjsFunction *createModuleInitializer(EcCompiler *cp, EcNode *np, EjsModul
     ejs = cp->ejs;
     
     //  MOB - name shold be EJS_INITIALIZER_NAME
-    fun = ejsCreateFunction(ejs, mp->name, 0, -1, 0, 0, 0, ejs->voidType, EJS_FUN_MODULE_INITIALIZER, mp, mp->scope, 
+    fun = ejsCreateFunction(ejs, mp->name, 0, -1, 0, 0, 0, ST(Void), EJS_FUN_MODULE_INITIALIZER, mp, mp->scope, 
         cp->state->strict);
     if (fun == 0) {
         astError(cp, np, "Can't create initializer function");
@@ -3375,7 +3392,7 @@ static void fixupClass(EcCompiler *cp, EjsType *type)
                 qname.name = np->klass.extends;
                 baseType = (EjsType*) getTypeProperty(cp, ejs->global, qname);
             } else {
-                if (! (!ejs->initialized && type->qname.name == ejs->objectType->qname.name)) {
+                if (! (!ejs->initialized && type->qname.name == ST(Object)->qname.name)) {
                     baseType = (EjsType*) getTypeProperty(cp, ejs->global, N(EJS_EJS_NAMESPACE, "Object"));
                 }
             }
@@ -3397,7 +3414,7 @@ static void fixupClass(EcCompiler *cp, EjsType *type)
         }
     }
     if (baseType == 0) {
-        if (! (!ejs->initialized && type->qname.name == ejs->objectType->qname.name) && !np->klass.isInterface) {
+        if (! (!ejs->initialized && type->qname.name == ST(Object)->qname.name) && !np->klass.isInterface) {
             astError(cp, np, "Can't find base type for %s", type->qname.name);
             SET_VISITED(type, 0);
             LEAVE(cp);
@@ -3473,7 +3490,7 @@ static void fixupClass(EcCompiler *cp, EjsType *type)
     if (ejs->empty) {
         typeType = (EjsType*) getTypeProperty(cp, ejs->global, N(EJS_EJS_NAMESPACE, "Type"));
     } else {
-        typeType = ejs->typeType;
+        typeType = ST(Type);
     }
     if (typeType == 0) {
         astError(cp, 0, "Can't find Type class");
@@ -3653,7 +3670,7 @@ static int resolveName(EcCompiler *cp, EcNode *np, EjsObj *vp, EjsName qname)
         lookup->nthBlock = 0;
     }
     mprAssert(lookup->ref);    
-    if (lookup->ref == ejs->nullValue) {
+    if (lookup->ref == S(null)) {
         lookup->ref = 0;
     }
 
@@ -3936,7 +3953,7 @@ int ecLookupScope(EcCompiler *cp, EjsName name)
 
     ejs = cp->ejs;
     if (name.space == NULL) {
-        name.space = ejs->emptyString;
+        name.space = S(empty);
     }
     lookup = &cp->lookup;
     state = ejs->state;
@@ -4009,7 +4026,7 @@ int ecLookupVar(EcCompiler *cp, EjsObj *obj, EjsName name)
     ejs = cp->ejs;
     lookup = &cp->lookup;
     if (name.space == NULL) {
-        name.space = ejs->emptyString;
+        name.space = S(empty);
     }
     memset(lookup, 0, sizeof(*lookup));
 

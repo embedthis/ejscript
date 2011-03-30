@@ -34,7 +34,7 @@ static EjsObj *debug_breakpoint(Ejs *ejs, EjsObj *unused, int argc, EjsObj **arg
  */
 static EjsObj *debug_mode(Ejs *ejs, EjsObj *unused, int argc, EjsObj **argv)
 {
-    return mprGetDebugMode() ? ejs->trueValue : ejs->falseValue;
+    return mprGetDebugMode() ? S(true) : S(false);
 }
 
 
@@ -43,7 +43,7 @@ static EjsObj *debug_mode(Ejs *ejs, EjsObj *unused, int argc, EjsObj **argv)
  */
 static EjsObj *debug_set_mode(Ejs *ejs, EjsObj *unused, int argc, EjsObj **argv)
 {
-    mprSetDebugMode(argv[0] == ejs->trueValue);
+    mprSetDebugMode(argv[0] == S(true));
     return 0;
 }
 

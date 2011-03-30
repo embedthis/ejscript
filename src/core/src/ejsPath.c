@@ -16,7 +16,7 @@ static cchar *getPathString(Ejs *ejs, EjsObj *vp);
 
 static EjsObj *castPath(Ejs *ejs, EjsPath *fp, EjsType *type)
 {
-    if (type->id == ES_String) {
+    if (type->sid == S_String) {
         return (EjsObj*) ejsCreateStringFromAsc(ejs, fp->value);
     }
     return (ejs->potHelpers.cast)(ejs, (EjsObj*) fp, type);
@@ -49,31 +49,31 @@ static EjsObj *coercePathOperands(Ejs *ejs, EjsPath *lhs, int opcode,  EjsObj *r
     case EJS_OP_COMPARE_LE: case EJS_OP_COMPARE_LT:
     case EJS_OP_COMPARE_GE: case EJS_OP_COMPARE_GT:
         if (ejsIsNull(ejs, rhs) || ejsIsUndefined(ejs, rhs)) {
-            return (EjsObj*) ((opcode == EJS_OP_COMPARE_EQ) ? ejs->falseValue: ejs->trueValue);
+            return (EjsObj*) ((opcode == EJS_OP_COMPARE_EQ) ? S(false): S(true));
         }
         return ejsInvokeOperator(ejs, (EjsObj*) ejsCreateStringFromAsc(ejs, lhs->value), opcode, rhs);
 
     case EJS_OP_COMPARE_STRICTLY_NE:
-        return (EjsObj*) ejs->trueValue;
+        return (EjsObj*) S(true);
 
     case EJS_OP_COMPARE_STRICTLY_EQ:
-        return (EjsObj*) ejs->falseValue;
+        return (EjsObj*) S(false);
 
     case EJS_OP_COMPARE_NOT_ZERO:
     case EJS_OP_COMPARE_TRUE:
-        return (EjsObj*) ejs->trueValue;
+        return (EjsObj*) S(true);
 
     case EJS_OP_COMPARE_ZERO:
     case EJS_OP_COMPARE_FALSE:
-        return (EjsObj*) ejs->falseValue;
+        return (EjsObj*) S(false);
 
     case EJS_OP_COMPARE_UNDEFINED:
     case EJS_OP_COMPARE_NULL:
-        return (EjsObj*) ejs->falseValue;
+        return (EjsObj*) S(false);
 
     default:
         ejsThrowTypeError(ejs, "Opcode %d not valid for type %@", opcode, TYPE(lhs)->qname.name);
-        return ejs->undefinedValue;
+        return S(undefined);
     }
     return 0;
 }
@@ -95,7 +95,7 @@ static EjsObj *invokePathOperator(Ejs *ejs, EjsPath *lhs, int opcode,  EjsPath *
     case EJS_OP_COMPARE_STRICTLY_EQ:
     case EJS_OP_COMPARE_EQ:
         if (lhs == rhs || (lhs->value == rhs->value)) {
-            return (EjsObj*) ejs->trueValue;
+            return (EjsObj*) S(true);
         }
         return (EjsObj*) ejsCreateBoolean(ejs,  scmp(lhs->value, rhs->value) == 0);
 
@@ -119,17 +119,17 @@ static EjsObj *invokePathOperator(Ejs *ejs, EjsPath *lhs, int opcode,  EjsPath *
         Unary operators
      */
     case EJS_OP_COMPARE_NOT_ZERO:
-        return (EjsObj*) ((lhs->value) ? ejs->trueValue: ejs->falseValue);
+        return (EjsObj*) ((lhs->value) ? S(true): S(false));
 
     case EJS_OP_COMPARE_ZERO:
-        return (EjsObj*) ((lhs->value == 0) ? ejs->trueValue: ejs->falseValue);
+        return (EjsObj*) ((lhs->value == 0) ? S(true): S(false));
 
 
     case EJS_OP_COMPARE_UNDEFINED:
     case EJS_OP_COMPARE_NULL:
     case EJS_OP_COMPARE_FALSE:
     case EJS_OP_COMPARE_TRUE:
-        return (EjsObj*) ejs->falseValue;
+        return S(false);
 
     /*
         Binary operators
@@ -183,7 +183,7 @@ static EjsObj *getAccessedDate(Ejs *ejs, EjsPath *fp, int argc, EjsObj **argv)
 
     mprGetPathInfo(fp->value, &info);
     if (!info.valid) {
-        return (EjsObj*) ejs->nullValue;
+        return (EjsObj*) S(null);
     }
     return (EjsObj*) ejsCreateDate(ejs, ((MprTime) info.atime) * 1000);
 }
@@ -284,7 +284,7 @@ static EjsObj *getCreatedDate(Ejs *ejs, EjsPath *fp, int argc, EjsObj **argv)
 
     mprGetPathInfo(fp->value, &info);
     if (!info.valid) {
-        return (EjsObj*) ejs->nullValue;
+        return (EjsObj*) S(null);
     }
     return (EjsObj*) ejsCreateDate(ejs, ((MprTime) info.ctime) * 1000);
 }
@@ -321,7 +321,7 @@ static EjsObj *getPathExtension(Ejs *ejs, EjsPath *fp, int argc, EjsObj **argv)
     char    *ext;
 
     if ((ext = mprGetPathExtension(fp->value)) == 0) {
-        return (EjsObj*) ejs->emptyString;
+        return (EjsObj*) S(empty);
     }
     return (EjsObj*) ejsCreateStringFromAsc(ejs, ext);
 }
@@ -469,7 +469,7 @@ static EjsObj *pathHasDrive(Ejs *ejs, EjsPath *fp, int argc, EjsObj **argv)
  */
 static EjsObj *isPathAbsolute(Ejs *ejs, EjsPath *fp, int argc, EjsObj **argv)
 {
-    return (EjsObj*) (mprIsAbsPath(fp->value) ? ejs->trueValue: ejs->falseValue);
+    return (EjsObj*) (mprIsAbsPath(fp->value) ? S(true): S(false));
 }
 
 
@@ -518,7 +518,7 @@ static EjsObj *isPathRegular(Ejs *ejs, EjsPath *fp, int argc, EjsObj **argv)
  */
 static EjsObj *isPathRelative(Ejs *ejs, EjsPath *fp, int argc, EjsObj **argv)
 {
-    return (EjsObj*) (mprIsRelPath(fp->value) ? ejs->trueValue: ejs->falseValue);
+    return (EjsObj*) (mprIsRelPath(fp->value) ? S(true): S(false));
 }
 
 
@@ -581,7 +581,7 @@ static EjsObj *pathLinkTarget(Ejs *ejs, EjsPath *fp, int argc, EjsObj **argv)
     char    *path;
 
     if ((path = mprGetPathLink(fp->value)) == 0) {
-        return (EjsObj*) ejs->nullValue;
+        return (EjsObj*) S(null);
     }
     return (EjsObj*) ejsCreatePathFromAsc(ejs, mprGetPathLink(fp->value));
 }
@@ -644,7 +644,7 @@ static EjsObj *makePathLink(Ejs *ejs, EjsPath *fp, int argc, EjsObj **argv)
     int     hard;
 
     target = ((EjsPath*) argv[0])->value;
-    hard = (argc >= 2) ? (argv[1] == (EjsObj*) ejs->trueValue) : 0;
+    hard = (argc >= 2) ? (argv[1] == (EjsObj*) S(true)) : 0;
     if (mprMakeLink(fp->value, target, hard) < 0) {
         ejsThrowIOError(ejs, "Can't make link");
     }
@@ -704,7 +704,7 @@ static EjsObj *getModifiedDate(Ejs *ejs, EjsPath *fp, int argc, EjsObj **argv)
 
     mprGetPathInfo(fp->value, &info);
     if (!info.valid) {
-        return (EjsObj*) ejs->nullValue;
+        return (EjsObj*) S(null);
     }
     return (EjsObj*) ejsCreateDate(ejs, ((MprTime) info.mtime) * 1000);
 }
@@ -758,8 +758,7 @@ static EjsObj *getPerms(Ejs *ejs, EjsPath *fp, int argc, EjsObj **argv)
     MprPath     info;
 
     if (mprGetPathInfo(fp->value, &info) < 0) {
-        return (EjsObj*) ejs->nullValue;
-        return 0;
+        return (EjsObj*) S(null);
     }
     return (EjsObj*) ejsCreateNumber(ejs, info.perms);
 }
@@ -794,7 +793,7 @@ static EjsObj *getPortablePath(Ejs *ejs, EjsPath *fp, int argc, EjsObj **argv)
     char    *path;
     int     lower;
 
-    lower = (argc >= 1 && argv[0] == (EjsObj*) ejs->trueValue);
+    lower = (argc >= 1 && argv[0] == (EjsObj*) S(true));
     path = mprGetPortablePath(fp->value);
     if (lower) {
         path = slower(path);
@@ -1065,9 +1064,9 @@ static EjsObj *isPathSame(Ejs *ejs, EjsPath *fp, int argc, EjsObj **argv)
     } else if (ejsIsPath(ejs, argv[0])) {
         other = ((EjsPath*) (argv[0]))->value;
     } else {
-        return (EjsObj*) ejs->falseValue;
+        return (EjsObj*) S(false);
     }
-    return (EjsObj*) (mprSamePath(fp->value, other) ? ejs->trueValue : ejs->falseValue);
+    return (EjsObj*) (mprSamePath(fp->value, other) ? S(true) : S(false));
 }
 
 
@@ -1095,7 +1094,7 @@ static EjsObj *pathSeparator(Ejs *ejs, EjsPath *fp, int argc, EjsObj **argv)
 static EjsObj *getPathFileSize(Ejs *ejs, EjsPath *fp, int argc, EjsObj **argv)
 {
     if (mprGetPathInfo(fp->value, &fp->info) < 0) {
-        return (EjsObj*) ejs->minusOneValue;
+        return (EjsObj*) S(minusOne);
     }
     return (EjsObj*) ejsCreateNumber(ejs, (MprNumber) fp->info.size);
 }
@@ -1224,8 +1223,7 @@ EjsPath *ejsCreatePath(Ejs *ejs, EjsString *path)
 {
     EjsPath     *fp;
 
-    fp = ejsCreateObj(ejs, ejs->pathType, 0);
-    if (fp == 0) {
+    if ((fp = ejsCreateObj(ejs, ST(Path), 0)) == 0) {
         return 0;
     }
     pathConstructor(ejs, fp, 1, (EjsObj**) &path);
@@ -1253,8 +1251,8 @@ void ejsConfigurePathType(Ejs *ejs)
     EjsType     *type;
     EjsPot      *prototype;
 
-    type = ejs->pathType = ejsConfigureNativeType(ejs, N("ejs", "Path"), sizeof(EjsPath), managePath, EJS_OBJ_HELPERS);
-    ejs->pathType = type;
+    type = ejsConfigureNativeType(ejs, N("ejs", "Path"), sizeof(EjsPath), managePath, EJS_OBJ_HELPERS);
+    ejsSetSpecialType(ejs, S_Path, type);
     prototype = type->prototype;
 
     type->helpers.cast = (EjsCastHelper) castPath;

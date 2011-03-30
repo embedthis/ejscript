@@ -152,6 +152,12 @@ MAIN(ejscMain, int argc, char **argv)
                     app->modules = mprCreateList(-1, 0);
                 }
                 modules = sclone(argv[++nextArg]);
+#if MACOSX
+                //  FIX FOR XCODE MANGLING COMMAND LINE ARGS
+                if (modules[0] == ' ') {
+                    modules[0] = '\0';                    
+                }
+#endif
                 name = stok(modules, " \t,", &tok);
                 while (name != NULL) {
                     require(name);

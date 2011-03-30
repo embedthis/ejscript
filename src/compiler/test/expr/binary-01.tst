@@ -13,6 +13,7 @@ assert(new Square is Rectangle)
 assert(new Square is Shape)
 assert(new Square is Shape)
 assert(new Circle is Shape)
+breakpoint()
 assert(!(new Circle is Rectangle))
 
 user = { 

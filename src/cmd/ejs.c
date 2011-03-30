@@ -382,7 +382,7 @@ static int interpretCommands(EcCompiler *cp, cchar *cmd)
         cp->uid = 0;
         if (ecCompile(cp, 1, tmpArgv) < 0) {
             mprRawLog(0, "%s", cp->errorMsg);
-            ejs->result = ejs->undefinedValue;
+            ejs->result = S(undefined);
             err++;
         }
         if (!err && cp->errorCount == 0) {
@@ -390,12 +390,12 @@ static int interpretCommands(EcCompiler *cp, cchar *cmd)
                 ejsReportError(ejs, "Error in script");
             }
         }
-        if (!ejs->exception && ejs->result != ejs->undefinedValue) {
+        if (!ejs->exception && ejs->result != S(undefined)) {
             if (ejsIsDate(ejs, ejs->result) || ejsIsType(ejs, ejs->result)) {
                 if ((result = (EjsString*) ejsToString(ejs, ejs->result)) != 0) {
                     mprPrintf("%@\n", result);
                 }
-            } else if (ejs->result != ejs->nullValue) {
+            } else if (ejs->result != S(null)) {
                 if ((result = (EjsString*) ejsToJSON(ejs, ejs->result, NULL)) != 0) {
                     mprPrintf("%@\n", result);
                 }

@@ -317,7 +317,7 @@ static void createClassSection(EcCompiler *cp, EjsPot *block, int slotNum, EjsPo
         }
     }
     ecEncodeNum(cp, attributes);
-    ecEncodeNum(cp, (cp->bind) ? slotNum: -1);
+    ecEncodeNum(cp, (cp->bind) ? type->sid: -1);
 
     mprAssert(type != type->baseType);
     //  MOB -- refactor
@@ -600,8 +600,7 @@ static void createPropertySection(EcCompiler *cp, EjsPot *block, int slotNum, Ej
     mprLog(7, "    global property section %@", qname.name);
 
     if (trait->type) {
-        if (trait->type == ejs->namespaceType || 
-                (!ejs->initialized && trait->type->qname.name == ejs->namespaceType->qname.name)){
+        if (trait->type == ST(Namespace) || (!ejs->initialized && trait->type->qname.name == ST(Namespace)->qname.name)){
             attributes |= EJS_PROP_HAS_VALUE;
         }
     }

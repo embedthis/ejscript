@@ -20,11 +20,7 @@ static EjsFunction *createFunction(Ejs *ejs, EjsType *type, int numProp)
 {
     EjsFunction     *fun;
 
-    /*
-        Note: Functions are not pooled, frames are.
-     */
-    fun = (EjsFunction*) ejsCreatePot(ejs, ejs->functionType, 0);
-    if (fun == 0) {
+    if ((fun = (EjsFunction*) ejsCreatePot(ejs, ST(Function), 0)) == 0) {
         return 0;
     }
     fun->block.pot.isFunction = 1;
@@ -40,15 +36,15 @@ static EjsFunction *createFunction(Ejs *ejs, EjsType *type, int numProp)
  */
 static EjsAny *castFunction(Ejs *ejs, EjsFunction *vp, EjsType *type)
 {
-    switch (type->id) {
-    case ES_String:
+    switch (type->sid) {
+    case S_String:
         return ejsCreateStringFromAsc(ejs, "[function Function]");
 
-    case ES_Number:
-        return ejs->nanValue;
+    case S_Number:
+        return S(nan);
 
-    case ES_Boolean:
-        return ejs->trueValue;
+    case S_Boolean:
+        return S(true);
             
     default:
         ejsThrowTypeError(ejs, "Can't cast type \"%@\"", type->qname.name);
@@ -89,7 +85,7 @@ EjsFunction *ejsCloneFunction(Ejs *ejs, EjsFunction *src, int deep)
     if (src->activation) {
         dest->activation = ejsClonePot(ejs, src->activation, 0);
     }
-    ejsCopyName(dest, src);
+    mprCopyName(dest, src);
     return dest;
 }
 
@@ -157,7 +153,7 @@ static EjsObj *fun_applyFunction(Ejs *ejs, EjsFunction *fun, int argc, EjsObj **
     mprAssert(ejsIsArray(ejs, args));
 
     save = fun->boundThis;
-    thisObj = (argv[0] == ejs->nullValue) ? fun->boundThis: argv[0];
+    thisObj = (argv[0] == S(null)) ? fun->boundThis: argv[0];
     result =  ejsRunFunction(ejs, fun, thisObj, args->length, args->data);
     fun->boundThis = save;
     return result;
@@ -217,7 +213,7 @@ static EjsNumber *fun_length(Ejs *ejs, EjsFunction *fun, int argc, EjsObj **argv
 static EjsString *fun_name(Ejs *ejs, EjsFunction *fun, int argc, EjsObj **argv)
 {
     if (fun->name && fun->name->value[0] == '-') {
-        return ejs->emptyString;
+        return S(empty);
     }
     return fun->name;
 }
@@ -438,7 +434,7 @@ int ejsSetFunctionCode(Ejs *ejs, EjsFunction *fun, EjsModule *module, cuchar *by
 
 static EjsObj *nopFunction(Ejs *ejs, EjsObj *obj, int argc, EjsObj **argv)
 {
-    return ejs->undefinedValue;
+    return S(undefined);
 }
 
 
@@ -465,8 +461,8 @@ EjsPot *ejsCreateActivation(Ejs *ejs, EjsFunction *fun, int numProp)
 {
     EjsPot  *activation;
 
-    activation = ejsCreatePot(ejs, ejs->objectType, numProp);
-    ejsCopyName(activation, fun);
+    activation = ejsCreatePot(ejs, ST(Object), numProp);
+    mprCopyName(activation, fun);
     return activation;
 }
 
@@ -477,13 +473,13 @@ EjsFunction *ejsCreateSimpleFunction(Ejs *ejs, EjsString *name, int attributes)
 {
     EjsFunction     *fun;
 
-    if ((fun = ejsCreateObj(ejs, ejs->functionType, 0)) == NULL) {
+    if ((fun = ejsCreateObj(ejs, ST(Function), 0)) == NULL) {
         return 0;
     }
     fun->name = name;
     fun->block.pot.isBlock = 1;
     fun->block.pot.isFunction = 1;
-    ejsCopyName(fun, fun->name);
+    mprCopyName(fun, fun->name);
     setFunctionAttributes(fun, attributes);
     return fun;
 }
@@ -572,16 +568,16 @@ void ejsCreateFunctionType(Ejs *ejs)
     EjsHelpers      *helpers;
     EjsFunction     *nop;
 
-    type = ejs->functionType = ejsCreateNativeType(ejs, N("ejs", "Function"), ES_Function, sizeof(EjsFunction), 
-        ejsManageFunction, EJS_POT_HELPERS);
+    type = ejsCreateNativeType(ejs, N("ejs", "Function"), S_Function, sizeof(EjsFunction), ejsManageFunction, 
+        EJS_POT_HELPERS);
 
     helpers = &type->helpers;
     helpers->create = (EjsCreateHelper) createFunction;
     helpers->cast   = (EjsCastHelper) castFunction;
     helpers->clone  = (EjsCloneHelper) ejsCloneFunction;
 
-    nop = ejs->nopFunction = ejsCreateFunction(ejs, ejsCreateStringFromAsc(ejs, "nop"), NULL, 0, -1, 0, 0, NULL, 
-        EJS_PROP_NATIVE, NULL, NULL, 0);
+    nop = ejsCreateFunction(ejs, ejsCreateStringFromAsc(ejs, "nop"), NULL, 0, -1, 0, 0, NULL, EJS_PROP_NATIVE, NULL, NULL,0);
+    ejsSetSpecial(ejs, S_nop, nop);
     nop->body.proc = (EjsFun) nopFunction;
     nop->isNativeProc = 1;
 }
@@ -592,7 +588,7 @@ void ejsConfigureFunctionType(Ejs *ejs)
     EjsType     *type;
     EjsPot      *prototype;
 
-    type = ejs->functionType;
+    type = ST(Function);
     prototype = type->prototype;
 
     ejsBindConstructor(ejs, type, (EjsProc) fun_Function);

@@ -114,7 +114,7 @@ static int initializeModule(Ejs *ejs, EjsModule *mp)
         if (nativeModule && (nativeModule->callback)(ejs) < 0) {
             return MPR_ERR_CANT_INITIALIZE;
         }
-        if (ejs->hasError || ejs->errorType == 0 || mprHasMemError(ejs)) {
+        if (ejs->hasError || ST(Error) == 0 || mprHasMemError(ejs)) {
             if (!ejs->exception) {
                 ejsThrowIOError(ejs, "Initialization error for %s (%d, %d)", mp->path, ejs->hasError, mprHasMemError(ejs));
             }
@@ -447,7 +447,7 @@ static int loadBlockSection(Ejs *ejs, EjsModule *mp)
         return MPR_ERR_CANT_READ;
     }
     bp = ejsCreateBlock(ejs, numSlot);
-    ejsSetName(bp, MPR_NAME("block"));
+    mprSetName(bp, MPR_NAME("block"));
     current = getCurrentBlock(mp);
 
     /*
@@ -460,7 +460,7 @@ static int loadBlockSection(Ejs *ejs, EjsModule *mp)
             return MPR_ERR_CANT_CREATE;
         }
     }
-    slotNum = ejsDefineProperty(ejs, current, slotNum, qname, ejs->blockType, 0, (EjsObj*) bp);
+    slotNum = ejsDefineProperty(ejs, current, slotNum, qname, ST(Block), 0, (EjsObj*) bp);
     if (slotNum < 0) {
         return MPR_ERR_CANT_WRITE;
     }
@@ -486,18 +486,17 @@ static int loadEndBlockSection(Ejs *ejs, EjsModule *mp)
 
 static int loadClassSection(Ejs *ejs, EjsModule *mp)
 {
-    EjsType         *type, *baseType, *iface, *nativeType;
+    EjsType         *type, *baseType, *iface;
     EjsTypeFixup    *fixup, *ifixup;
     EjsName         qname, baseClassName, ifaceClassName;
-    int             attributes, numTypeProp, numInstanceProp, slotNum, numInterfaces, i;
+    int             attributes, numTypeProp, numInstanceProp, sid, numInterfaces, i, slotNum;
 
     fixup = 0;
     ifixup = 0;
     
     qname = ejsModuleReadName(ejs, mp);
-//    mprAssert(strcmp(qname.name->value, "Record") != 0);
     attributes = ejsModuleReadInt(ejs, mp);
-    slotNum = ejsModuleReadInt(ejs, mp);
+    sid = ejsModuleReadInt(ejs, mp);
     ejsModuleReadType(ejs, mp, &baseType, &fixup, &baseClassName, 0);
     numTypeProp = ejsModuleReadInt(ejs, mp);
     numInstanceProp = ejsModuleReadInt(ejs, mp);
@@ -515,17 +514,21 @@ static int loadClassSection(Ejs *ejs, EjsModule *mp)
     if (fixup || (baseType && baseType->needFixup)) {
         attributes |= EJS_TYPE_FIXUP;
     }
-    type = nativeType = 0;
+    type = 0;
     if (!ejs->empty) {
         //  MOB -- PROP_NATIVE never seems to be set in ecModuleWrite for classes.
         if (attributes & EJS_PROP_NATIVE) {
-            type = nativeType = (EjsType*) ejsGetPropertyByName(ejs, ejs->coreTypes, qname);
+#if UNUSED
+            type = ejsGetPropertyByName(ejs, ejs->coreTypes, qname);
+#else
+            type = ejs->values[sid];
+#endif
             if (type == 0) {
                 mprLog(1, "WARNING: can't find native type \"%@\"", qname.name);
             }
         } else {
 #if BLD_DEBUG
-            if (ejsLookupProperty(ejs, ejs->coreTypes, qname) >= 0) {
+            if (ejs->values[sid]) {
                 mprError("WARNING: type \"%@\" defined as a native type but not declared as native", qname.name);
             }
 #endif
@@ -534,16 +537,18 @@ static int loadClassSection(Ejs *ejs, EjsModule *mp)
     if (attributes & EJS_TYPE_FIXUP) {
         baseType = 0;
         if (fixup == 0) {
-            fixup = createFixup(ejs, mp, (baseType) ? baseType->qname : ejs->objectType->qname, -1);
+            fixup = createFixup(ejs, mp, (baseType) ? baseType->qname : ST(Object)->qname, -1);
         }
     }
-    mprLog(9, "    Load %@ class %@ for module %@ at slot %d", qname.space, qname.name, mp->name, slotNum);
+    mprLog(9, "    Load %@ class %@ for module %@ at sid %d", qname.space, qname.name, mp->name, sid);
 
+#if UNUSED
     if (slotNum < 0) {
         slotNum = ejsGetPropertyCount(ejs, ejs->global);
     }
+#endif
     if (type == 0) {
-        type = ejsCreateType(ejs, qname, mp, baseType, NULL, sizeof(EjsPot), slotNum, numTypeProp, numInstanceProp, 
+        type = ejsCreateType(ejs, qname, mp, baseType, NULL, sizeof(EjsPot), -1, numTypeProp, numInstanceProp, 
             attributes);
         if (type == 0) {
             ejsThrowInternalError(ejs, "Can't create class %@", qname.name);
@@ -594,7 +599,7 @@ static int loadClassSection(Ejs *ejs, EjsModule *mp)
         BUILTIN(type) = 1;
     }
 #endif
-    slotNum = ejsDefineProperty(ejs, ejs->global, slotNum, qname, ejs->typeType, attributes, (EjsObj*) type);
+    slotNum = ejsDefineProperty(ejs, ejs->global, -1, qname, ST(Type), attributes, (EjsObj*) type);
     if (slotNum < 0) {
         ejsThrowMemoryError(ejs);
         return MPR_ERR_MEMORY;
@@ -757,7 +762,7 @@ static int loadFunctionSection(Ejs *ejs, EjsModule *mp)
             mp->initializer = fun;
             slotNum = -1;
         } else {
-            slotNum = ejsDefineProperty(ejs, block, slotNum, qname, ejs->functionType, attributes, (EjsObj*) fun);
+            slotNum = ejsDefineProperty(ejs, block, slotNum, qname, ST(Function), attributes, (EjsObj*) fun);
             if (slotNum < 0) {
                 return MPR_ERR_MEMORY;
             }
@@ -1519,7 +1524,7 @@ int ejsModuleReadType(Ejs *ejs, EjsModule *mp, EjsType **typeRef, EjsTypeFixup *
         slot = t >> 2;
         if (0 <= slot && slot < ejsGetPropertyCount(ejs, ejs->global)) {
             type = ejsGetProperty(ejs, ejs->global, slot);
-            if (type && (EjsObj*) type != ejs->nullValue) {
+            if (type && (EjsObj*) type != S(null)) {
                 qname = type->qname;
             }
         }
@@ -1546,7 +1551,7 @@ int ejsModuleReadType(Ejs *ejs, EjsModule *mp, EjsType **typeRef, EjsTypeFixup *
         }
         break;
     }
-    if ((EjsObj*) type == ejs->nullValue) {
+    if (type == S(null)) {
         type = 0;
     }
     if (type) {

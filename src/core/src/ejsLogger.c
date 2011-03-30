@@ -39,7 +39,7 @@ static EjsFile *logger_nativeStream(Ejs *ejs, EjsObj *unused, int argc, EjsObj *
             ejs->nativeStream = ejsCreateFileFromFd(ejs, fd, "mpr-logger", O_WRONLY);
             return ejs->nativeStream;
         } else {
-            ejs->nativeStream = (EjsFile*) ejs->nullValue;
+            ejs->nativeStream = (EjsFile*) S(null);
         }
     }
     return ejs->nativeStream;

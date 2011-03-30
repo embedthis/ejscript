@@ -23,11 +23,11 @@ static EjsAny *castRegExp(Ejs *ejs, EjsRegExp *rp, EjsType *type)
 {
     char    *flags;
 
-    switch (type->id) {
-    case ES_Boolean:
-        return ejs->trueValue;
+    switch (type->sid) {
+    case S_Boolean:
+        return S(true);
 
-    case ES_String:
+    case S_String:
         flags = makeFlags(rp);
         return ejsSprintf(ejs, "/%w/%s", rp->pattern, flags);
 
@@ -106,7 +106,7 @@ static EjsObj *regex_exec(Ejs *ejs, EjsRegExp *rp, int argc, EjsObj **argv)
     count = pcre_exec(rp->compiled, NULL, str->value, (int) str->length, start, 0, matches, sizeof(matches) / sizeof(int));
     if (count < 0) {
         rp->endLastMatch = 0;
-        return (EjsObj*) ejs->nullValue;
+        return (EjsObj*) S(null);
     }
     results = ejsCreateArray(ejs, count);
     for (index = 0, i = 0; i < count; i++, index += 2) {
@@ -153,7 +153,7 @@ static EjsObj *regex_getSource(Ejs *ejs, EjsRegExp *rp, int argc, EjsObj **argv)
 static EjsObj *regex_matched(Ejs *ejs, EjsRegExp *rp, int argc, EjsObj **argv)
 {
     if (rp->matched == 0) {
-        return (EjsObj*) ejs->nullValue;
+        return (EjsObj*) S(null);
     }
     return (EjsObj*) rp->matched;
 }
@@ -181,15 +181,15 @@ static EjsObj *regex_test(Ejs *ejs, EjsRegExp *rp, int argc, EjsObj **argv)
     count = pcre_exec(rp->compiled, NULL, str->value, (int) str->length, rp->endLastMatch, 0, 0, 0);
     if (count < 0) {
         rp->endLastMatch = 0;
-        return (EjsObj*) ejs->falseValue;
+        return (EjsObj*) S(false);
     }
-    return (EjsObj*) ejs->trueValue;
+    return (EjsObj*) S(true);
 }
 
 
 EjsString *ejsRegExpToString(Ejs *ejs, EjsRegExp *rp)
 {
-    return (EjsString*) castRegExp(ejs, rp, ejs->stringType);
+    return (EjsString*) castRegExp(ejs, rp, ST(String));
 }
 
 /*********************************** Factory **********************************/
@@ -208,7 +208,7 @@ EjsRegExp *ejsCreateRegExp(Ejs *ejs, EjsString *pattern)
         ejsThrowArgError(ejs, "Bad regular expression pattern. Must start with '/'");
         return 0;
     }
-    rp = ejsCreateObj(ejs, ejs->regExpType, 0);
+    rp = ejsCreateObj(ejs, ST(RegExp), 0);
     if (rp != 0) {
         /*
             Strip off flags for passing to pcre_compile2
@@ -324,8 +324,7 @@ void ejsCreateRegExpType(Ejs *ejs)
 {
     EjsType     *type;
 
-    type = ejsCreateNativeType(ejs, N("ejs", "RegExp"), ES_RegExp, sizeof(EjsRegExp), manageRegExp, EJS_OBJ_HELPERS);
-    ejs->regExpType = type;
+    type = ejsCreateNativeType(ejs, N("ejs", "RegExp"), S_RegExp, sizeof(EjsRegExp), manageRegExp, EJS_OBJ_HELPERS);
     type->helpers.cast = (EjsCastHelper) castRegExp;
 }
 
@@ -338,7 +337,7 @@ void ejsConfigureRegExpType(Ejs *ejs)
 #if UNUSED
     type = ejsConfigureNativeType(ejs, N("ejs", "RegExp"), sizeof(EjsRegExp), manageRegExp, EJS_OBJ_HELPERS);
 #endif
-    type = ejs->regExpType;
+    type = ST(RegExp);
     prototype = type->prototype;
 
     ejsBindConstructor(ejs, type, (EjsProc) regex_Constructor);

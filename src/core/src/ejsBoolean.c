@@ -18,11 +18,11 @@ static EjsObj *castBooleanVar(Ejs *ejs, EjsBoolean *vp, EjsType *type)
 {
     mprAssert(ejsIsBoolean(ejs, vp));
 
-    switch (type->id) {
-    case ES_Number:
-        return (EjsObj*) ((vp->value) ? ejs->oneValue: ejs->zeroValue);
+    switch (type->sid) {
+    case S_Number:
+        return ((vp->value) ? S(one): S(zero));
 
-    case ES_String:
+    case S_String:
         return (EjsObj*) ejsCreateStringFromAsc(ejs, (vp->value) ? "true" : "false");
 
     default:
@@ -41,7 +41,7 @@ static EjsObj *coerceBooleanOperands(Ejs *ejs, EjsObj *lhs, int opcode, EjsObj *
 
     case EJS_OP_ADD:
         if (ejsIsUndefined(ejs, rhs)) {
-            return (EjsObj*) ejs->nanValue;
+            return (EjsObj*) S(nan);
         } else if (ejsIsNull(ejs, rhs) || ejsIsNumber(ejs, rhs) || ejsIsDate(ejs, rhs)) {
             return ejsInvokeOperator(ejs, (EjsObj*) ejsToNumber(ejs, lhs), opcode, rhs);
         } else {
@@ -62,10 +62,10 @@ static EjsObj *coerceBooleanOperands(Ejs *ejs, EjsObj *lhs, int opcode, EjsObj *
         return ejsInvokeOperator(ejs, (EjsObj*) ejsToNumber(ejs, lhs), opcode, rhs);
 
     case EJS_OP_COMPARE_STRICTLY_NE:
-        return (EjsObj*) ejs->trueValue;
+        return (EjsObj*) S(true);
 
     case EJS_OP_COMPARE_STRICTLY_EQ:
-        return (EjsObj*) ejs->falseValue;
+        return (EjsObj*) S(false);
 
     /*
         Unary operators
@@ -75,19 +75,19 @@ static EjsObj *coerceBooleanOperands(Ejs *ejs, EjsObj *lhs, int opcode, EjsObj *
 
     case EJS_OP_COMPARE_NOT_ZERO:
     case EJS_OP_COMPARE_TRUE:
-        return (EjsObj*) (((EjsBoolean*) lhs)->value ? ejs->trueValue: ejs->falseValue);
+        return (EjsObj*) (((EjsBoolean*) lhs)->value ? S(true): S(false));
 
     case EJS_OP_COMPARE_ZERO:
     case EJS_OP_COMPARE_FALSE:
-        return (EjsObj*) (((EjsBoolean*) lhs)->value ? ejs->falseValue : ejs->trueValue);
+        return (EjsObj*) (((EjsBoolean*) lhs)->value ? S(false) : S(true));
 
     case EJS_OP_COMPARE_UNDEFINED:
     case EJS_OP_COMPARE_NULL:
-        return (EjsObj*) ejs->falseValue;
+        return (EjsObj*) S(false);
 
     default:
         ejsThrowTypeError(ejs, "Opcode %d not valid for type %@", opcode, TYPE(lhs)->qname.name);
-        return ejs->undefinedValue;
+        return S(undefined);
     }
 }
 
@@ -100,7 +100,7 @@ static EjsObj *invokeBooleanOperator(Ejs *ejs, EjsBoolean *lhs, int opcode, EjsB
     EjsObj      *result;
 
     if (rhs == 0 || TYPE(lhs) != TYPE(rhs)) {
-        if (!ejsIsA(ejs, (EjsObj*) lhs, ejs->booleanType) || !ejsIsA(ejs, (EjsObj*) rhs, ejs->booleanType)) {
+        if (!ejsIs(lhs, Boolean) || !ejsIs(rhs, Boolean)) {
             if ((result = coerceBooleanOperands(ejs, (EjsObj*) lhs, opcode, (EjsObj*) rhs)) != 0) {
                 return result;
             }
@@ -113,38 +113,38 @@ static EjsObj *invokeBooleanOperator(Ejs *ejs, EjsBoolean *lhs, int opcode, EjsB
     switch (opcode) {
 
     case EJS_OP_COMPARE_EQ: case EJS_OP_COMPARE_STRICTLY_EQ:
-        return (EjsObj*) ((lhs->value == rhs->value) ? ejs->trueValue: ejs->falseValue);
+        return (EjsObj*) ((lhs->value == rhs->value) ? S(true): S(false));
 
     case EJS_OP_COMPARE_NE: case EJS_OP_COMPARE_STRICTLY_NE:
-        return (EjsObj*) ((lhs->value != rhs->value) ? ejs->trueValue: ejs->falseValue);
+        return (EjsObj*) ((lhs->value != rhs->value) ? S(true): S(false));
 
     case EJS_OP_COMPARE_LT:
-        return (EjsObj*) ((lhs->value < rhs->value) ? ejs->trueValue: ejs->falseValue);
+        return (EjsObj*) ((lhs->value < rhs->value) ? S(true): S(false));
 
     case EJS_OP_COMPARE_LE:
-        return (EjsObj*) ((lhs->value <= rhs->value) ? ejs->trueValue: ejs->falseValue);
+        return (EjsObj*) ((lhs->value <= rhs->value) ? S(true): S(false));
 
     case EJS_OP_COMPARE_GT:
-        return (EjsObj*) ((lhs->value > rhs->value) ? ejs->trueValue: ejs->falseValue);
+        return (EjsObj*) ((lhs->value > rhs->value) ? S(true): S(false));
 
     case EJS_OP_COMPARE_GE:
-        return (EjsObj*) ((lhs->value >= rhs->value) ? ejs->trueValue: ejs->falseValue);
+        return (EjsObj*) ((lhs->value >= rhs->value) ? S(true): S(false));
 
     case EJS_OP_COMPARE_NOT_ZERO:
-        return (EjsObj*) ((lhs->value) ? ejs->trueValue: ejs->falseValue);
+        return (EjsObj*) ((lhs->value) ? S(true): S(false));
 
     case EJS_OP_COMPARE_ZERO:
-        return (EjsObj*) ((lhs->value == 0) ? ejs->trueValue: ejs->falseValue);
+        return (EjsObj*) ((lhs->value == 0) ? S(true): S(false));
 
     case EJS_OP_COMPARE_UNDEFINED:
     case EJS_OP_COMPARE_NULL:
-        return (EjsObj*) ejs->falseValue;
+        return (EjsObj*) S(false);
 
     case EJS_OP_COMPARE_FALSE:
-        return (EjsObj*) ((lhs->value) ? ejs->falseValue: ejs->trueValue);
+        return (EjsObj*) ((lhs->value) ? S(false): S(true));
 
     case EJS_OP_COMPARE_TRUE:
-        return (EjsObj*) ((lhs->value) ? ejs->trueValue: ejs->falseValue);
+        return (EjsObj*) ((lhs->value) ? S(true): S(false));
 
     /*
         Unary operators
@@ -221,7 +221,7 @@ static EjsObj *booleanConstructor(Ejs *ejs, EjsBoolean *bp, int argc, EjsObj **a
 
 EjsBoolean *ejsCreateBoolean(Ejs *ejs, int value)
 {
-    return (EjsBoolean*) ((value) ? ejs->trueValue : ejs->falseValue);
+    return (EjsBoolean*) ((value) ? S(true) : S(false));
 }
 
 
@@ -230,8 +230,7 @@ void ejsCreateBooleanType(Ejs *ejs)
     EjsType     *type;
     EjsBoolean  *vp;
 
-    type = ejsCreateNativeType(ejs, N("ejs", "Boolean"), ES_Boolean, sizeof(EjsBoolean), NULL, EJS_OBJ_HELPERS);
-    ejs->booleanType = type;
+    type = ejsCreateNativeType(ejs, N("ejs", "Boolean"), S_Boolean, sizeof(EjsBoolean), NULL, EJS_OBJ_HELPERS);
     type->immutable = 1;
     type->helpers.cast = (EjsCastHelper) castBooleanVar;
     type->helpers.invokeOperator = (EjsInvokeOperatorHelper) invokeBooleanOperator;
@@ -241,11 +240,11 @@ void ejsCreateBooleanType(Ejs *ejs)
      */
     vp = ejsCreateObj(ejs, type, 0);
     vp->value = 1;
-    ejs->trueValue = (EjsObj*) vp;
+    ejsSetSpecial(ejs, S_true, vp);
 
     vp = ejsCreateObj(ejs, type, 0);
     vp->value = 0;
-    ejs->falseValue = (EjsObj*) vp;
+    ejsSetSpecial(ejs, S_false, vp);
 }
 
 
@@ -254,13 +253,13 @@ void ejsConfigureBooleanType(Ejs *ejs)
     EjsType     *type;
     EjsPot      *prototype;
 
-    type = ejs->booleanType;
+    type = ST(Boolean);
     prototype = type->prototype;
 
     ejsBindConstructor(ejs, type, (EjsProc) booleanConstructor);
     ejsSetProperty(ejs, ejs->global, ES_boolean, type);
-    ejsSetProperty(ejs, ejs->global, ES_true, ejs->trueValue);
-    ejsSetProperty(ejs, ejs->global, ES_false, ejs->falseValue);
+    ejsSetProperty(ejs, ejs->global, ES_true, S(true));
+    ejsSetProperty(ejs, ejs->global, ES_false, S(false));
 }
 
 

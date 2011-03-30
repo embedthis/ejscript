@@ -359,7 +359,7 @@ static void lstFunction(EjsMod *mp, EjsModule *module, EjsObj *block, int slotNu
     }
 
     resultType = fun->resultType;
-    mprFprintf(mp->file,  ") : %@\n", resultType ? resultType->qname.name : ejs->voidType->qname.name);
+    mprFprintf(mp->file,  ") : %@\n", resultType ? resultType->qname.name : ST(Void)->qname.name);
 
     /*
         Repeat the args
@@ -430,7 +430,7 @@ void lstException(EjsMod *mp, EjsModule *module, EjsFunction *fun)
         mprFprintf(mp->file,
             "%-3d %-10s %5d   %5d      %5d        %5d       %@\n",
             i, exKind, ex->tryStart, ex->tryEnd, ex->handlerStart, ex->handlerEnd,
-            ex->catchType ? ex->catchType->qname.name : ejs->emptyString);
+            ex->catchType ? ex->catchType->qname.name : S(empty));
     }
     mprFprintf(mp->file, "\n");
 }
@@ -742,22 +742,26 @@ static void interp(EjsMod *mp, EjsModule *module, EjsFunction *fun)
 
 static void lstVarSlot(EjsMod *mp, EjsModule *module, EjsName *qname, EjsTrait *trait, int slotNum)
 {
+    Ejs         *ejs;
     EjsString   *space;
 
     mprAssert(slotNum >= 0);
     mprAssert(qname);
 
-    space = mapSpace(mp->ejs, qname->space);
+    ejs = mp->ejs;
+    space = mapSpace(ejs, qname->space);
 
     if (qname->name == 0 || qname->name->value[0] == '\0') {
         mprFprintf(mp->file, "%04d    <inherited>\n", slotNum);
 
     } else if (trait && trait->type) {
-        if (trait->type == mp->ejs->functionType) {
+        if (trait->type == ST(Function)) {
             mprFprintf(mp->file, "%04d    %@ function %@\n", slotNum, space, qname->name);
 
-        } else if (trait->type == mp->ejs->functionType) {
+#if UNUSED
+        } else if (trait->type == ejs->functionType) {
             mprFprintf(mp->file, "%04d    %@ class %@\n", slotNum, space, qname->name);
+#endif
 
         } else {
             mprFprintf(mp->file, "%04d    %@ var %@: %@\n", slotNum, space, qname->name, trait->type->qname.name);

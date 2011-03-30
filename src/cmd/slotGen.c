@@ -99,10 +99,10 @@ static int createSlotFile(EjsMod *bp, EjsModule *mp, MprFile *file)
     mprFprintf(file, "\n/*\n   Slots for the \"%@\" module \n */\n", mp->name);
 
     slotNum = ejsGetPropertyCount(ejs, ejs->global);
-    type = ejsCreateType(ejs, N(EJS_EJS_NAMESPACE, EJS_GLOBAL), NULL, NULL, NULL, sizeof(EjsType), slotNum, 
+    type = ejsCreateType(ejs, N(EJS_EJS_NAMESPACE, EJS_GLOBAL), NULL, NULL, NULL, sizeof(EjsType), -1, 
         ejsGetPropertyCount(ejs, ejs->global), 0, 0);
     type->constructor.block = *(EjsBlock*) ejs->global;
-    SET_TYPE(type, ejs->typeType);
+    SET_TYPE(type, ST(Type));
     type->constructor.block.pot.isType = 1;
 
     if (genType(bp, file, mp, type, mp->firstGlobal, mp->lastGlobal, 1) < 0) {
@@ -261,7 +261,7 @@ static int genType(EjsMod *bp, MprFile *file, EjsModule *mp, EjsType *type, int 
         if (trait == 0 || qname.name == 0) {
             continue;
         }
-        if (trait->type != ejs->functionType) {
+        if (trait->type != ST(Function)) {
             continue;
         }
         vp = ejsGetProperty(ejs, (EjsObj*) type, slotNum);

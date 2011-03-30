@@ -233,7 +233,7 @@ EjsConstants *ejsCreateConstants(Ejs *ejs, int count, ssize size)
     if ((constants->index = mprAlloc(count * sizeof(EjsString*))) == NULL) {
         return 0;
     }
-    constants->index[0] = ejs->emptyString;
+    constants->index[0] = S(empty);
     constants->indexCount = 1;
 #if UNUSED
     //  MOB -- get another solution for hold/release
@@ -770,8 +770,7 @@ int ejsModuleReadInt(Ejs *ejs, EjsModule *mp)
 int64 ejsModuleReadNum(Ejs *ejs, EjsModule *mp)
 {
     int64   t;
-    int     c;
-    int     sign, shift;
+    int     c, sign, shift;
 
     mprAssert(ejs);
     mprAssert(mp);

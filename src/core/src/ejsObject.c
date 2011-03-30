@@ -41,7 +41,7 @@ static EjsObj *obj_prototype(Ejs *ejs, EjsObj *obj, int argc, EjsObj **argv)
 
     if (ejs->compiling) {
         mprAssert(0);
-        prototype = ejs->undefinedValue;
+        prototype = S(undefined);
         
     } else if (ejsIsType(ejs, obj)) {
         prototype = ((EjsType*) obj)->prototype;
@@ -56,7 +56,7 @@ static EjsObj *obj_prototype(Ejs *ejs, EjsObj *obj, int argc, EjsObj **argv)
             prototype = type->prototype;
         }
     } else {
-        prototype = ejs->undefinedValue;
+        prototype = S(undefined);
     }
     return (EjsObj*) prototype;
 }
@@ -72,7 +72,7 @@ static EjsObj *obj_set_prototype(Ejs *ejs, EjsObj *obj, int argc, EjsObj **argv)
 
     if (ejs->compiling) {
         mprAssert(0);
-        return ejs->undefinedValue;
+        return S(undefined);
     }
     prototype = (EjsPot*) argv[0];
     if (ejsIsType(ejs, obj)) {
@@ -103,7 +103,7 @@ static EjsObj *obj_clone(Ejs *ejs, EjsObj *obj, int argc, EjsObj **argv)
 {
     bool    deep;
 
-    deep = (argc == 1 && argv[0] == (EjsObj*) ejs->trueValue);
+    deep = (argc == 1 && argv[0] == (EjsObj*) S(true));
     return ejsClone(ejs, obj, deep);
 }
 
@@ -184,7 +184,7 @@ static EjsObj *obj_defineProperty(Ejs *ejs, EjsObj *unused, int argc, EjsObj **a
         return NULL;
     }
     qname.name = (EjsString*) argv[1];
-    qname.space = ejs->emptyString;
+    qname.space = S(empty);
     options = argv[2];
     value = 0;
     set = get = 0;
@@ -202,12 +202,12 @@ static EjsObj *obj_defineProperty(Ejs *ejs, EjsObj *unused, int argc, EjsObj **a
     type = ejsGetPropertyByName(ejs, options, EN("type"));
 
     if ((configurable = ejsGetPropertyByName(ejs, options, EN("configurable"))) != 0) {
-        if (configurable == (EjsObj*) ejs->falseValue) {
+        if (configurable == (EjsObj*) S(false)) {
             attributes |= EJS_TRAIT_FIXED;
         }
     }
     if ((enumerable = ejsGetPropertyByName(ejs, options, EN("enumerable"))) != 0) {
-        if (enumerable == (EjsObj*) ejs->falseValue) {
+        if (enumerable == (EjsObj*) S(false)) {
             attributes |= EJS_TRAIT_HIDDEN;
         }
     }
@@ -248,7 +248,7 @@ static EjsObj *obj_defineProperty(Ejs *ejs, EjsObj *unused, int argc, EjsObj **a
         value = (EjsObj*) get;
     }
     if ((writable = ejsGetPropertyByName(ejs, options, EN("writable"))) != 0) {
-        if (writable == (EjsObj*) ejs->falseValue) {
+        if (writable == (EjsObj*) S(false)) {
             attributes |= EJS_TRAIT_READONLY;
         }
     }
@@ -399,16 +399,16 @@ static EjsObj *obj_getOwnPropertyDescriptor(Ejs *ejs, EjsObj *unused, int argc, 
 
     obj = argv[0];
     //  MOB - ugly
-    qname.space = ejs->emptyString;
+    qname.space = S(empty);
     qname.name = (EjsString*) argv[1];
     if ((slotNum = ejsLookupVarWithNamespaces(ejs, obj, qname, &lookup)) < 0) {
-        return (EjsObj*) ejs->falseValue;
+        return (EjsObj*) S(false);
     }
     trait = ejsGetPropertyTraits(ejs, obj, slotNum);
     result = ejsCreateEmptyPot(ejs);
     value = ejsGetVarByName(ejs, obj, qname, &lookup);
     if (value == 0) {
-        value = ejs->nullValue;
+        value = S(null);
     }
     type = (trait) ? trait->type: 0;
     if (trait && trait->attributes & EJS_TRAIT_GETTER) {
@@ -427,7 +427,7 @@ static EjsObj *obj_getOwnPropertyDescriptor(Ejs *ejs, EjsObj *unused, int argc, 
         ejsCreateBoolean(ejs, !trait || !(trait->attributes & EJS_TRAIT_HIDDEN)));
     qn = ejsGetPropertyName(ejs, obj, slotNum);
     ejsSetPropertyByName(ejs, result, EN("namespace"), qn.space);
-    ejsSetPropertyByName(ejs, result, EN("type"), type ? (EjsObj*) type : ejs->nullValue);
+    ejsSetPropertyByName(ejs, result, EN("type"), type ? (EjsObj*) type : S(null));
     ejsSetPropertyByName(ejs, result, EN("writable"), 
         ejsCreateBoolean(ejs, !trait || !(trait->attributes & EJS_TRAIT_READONLY)));
     return result;
@@ -453,10 +453,10 @@ static EjsObj *obj_getOwnPropertyNames(Ejs *ejs, EjsObj *unused, int argc, EjsOb
     if (argc > 0) {
         options = argv[1];
         if ((arg = ejsGetPropertyByName(ejs, options, EN("includeBases"))) != 0) {
-            includeBases = (arg == (EjsObj*) ejs->trueValue);
+            includeBases = (arg == (EjsObj*) S(true));
         }
         if ((arg = ejsGetPropertyByName(ejs, options, EN("excludeFunctions"))) != 0) {
-            excludeFunctions = (arg == (EjsObj*) ejs->trueValue);
+            excludeFunctions = (arg == (EjsObj*) S(true));
         }
     }
     if ((result = ejsCreateArray(ejs, 0)) == 0) {
@@ -514,7 +514,7 @@ static EjsObj *obj_hasOwnProperty(Ejs *ejs, EjsObj *obj, int argc, EjsObj **argv
     EjsLookup   lookup;
     int         slotNum;
 
-    qname.space = ejs->emptyString;
+    qname.space = S(empty);
     qname.name = (EjsString*) argv[0];
     slotNum = ejsLookupVarWithNamespaces(ejs, obj, qname, &lookup);
     return (EjsObj*) ejsCreateBoolean(ejs, slotNum >= 0);
@@ -572,7 +572,7 @@ static EjsObj *obj_isPrototypeOf(Ejs *ejs, EjsObj *prototype, int argc, EjsObj *
     EjsObj  *obj;
     
     obj = argv[0];
-    return (prototype == ((EjsObj*) TYPE(obj)->prototype)) ? ejs->trueValue : ejs->falseValue;
+    return (prototype == ((EjsObj*) TYPE(obj)->prototype)) ? S(true) : S(false);
 }
 
 
@@ -684,10 +684,10 @@ static EjsObj *obj_propertyIsEnumerable(Ejs *ejs, EjsObj *obj, int argc, EjsObj 
 
     mprAssert(argc == 1 || argc == 2);
 
-    qname.space = ejs->emptyString;
+    qname.space = S(empty);
     qname.name = (EjsString*) argv[0];
     if ((slotNum = ejsLookupVarWithNamespaces(ejs, obj, qname, &lookup)) < 0) {
-        return (EjsObj*) ejs->falseValue;
+        return (EjsObj*) S(false);
     }
     trait = ejsGetPropertyTraits(ejs, obj, slotNum);
     return (EjsObj*) ejsCreateBoolean(ejs, !trait || !(trait->attributes & EJS_TRAIT_HIDDEN));
@@ -723,25 +723,26 @@ EjsString *ejsObjToString(Ejs *ejs, EjsObj *vp, int argc, EjsObj **argv)
     if (ejsIsString(ejs, vp)) {
         return (EjsString*) vp;
     }
-    return (ejs->objHelpers.cast)(ejs, vp, ejs->stringType);
+    return (ejs->objHelpers.cast)(ejs, vp, ST(String));
 }
 
 
 /************************************************** Reflection **********************************************/
 /*
-    Get the base class of the object.
+    Get the base class of a type object.
 
     function getBaseType(obj: Type): Type
  */
-static EjsObj *obj_getBaseType(Ejs *ejs, EjsObj *unused, int argc, EjsObj **argv)
+static EjsType *obj_getBaseType(Ejs *ejs, EjsObj *unused, int argc, EjsObj **argv)
 {
     EjsObj      *vp;
 
     vp = argv[0];
     if (ejsIsType(ejs, vp)) {
-        return (EjsObj*) (((EjsType*) vp)->baseType);
+        return (((EjsType*) vp)->baseType);
     }
-    return (EjsObj*) ejs->nullValue;
+    //  MOB - should this throw?
+    return S(null);
 }
 
 
@@ -757,9 +758,9 @@ static EjsObj *obj_isPrototype(Ejs *ejs, EjsObj *unused, int argc, EjsObj **argv
 /*
     function isType(obj: Object): Boolean
  */
-static EjsObj *obj_isType(Ejs *ejs, EjsObj *unused, int argc, EjsObj **argv)
+static EjsBoolean *obj_isType(Ejs *ejs, EjsObj *unused, int argc, EjsObj **argv)
 {
-    return (EjsObj*) ejsCreateBoolean(ejs, ejsIsType(ejs, argv[0]));
+    return ejsCreateBoolean(ejs, ejsIsType(ejs, argv[0]));
 }
 
 
@@ -768,13 +769,14 @@ static EjsObj *obj_isType(Ejs *ejs, EjsObj *unused, int argc, EjsObj **argv)
 
     function getType(obj: Object): Type
  */
-static EjsObj *obj_getType(Ejs *ejs, EjsObj *unused, int argc, EjsObj **argv)
+static EjsType *obj_getType(Ejs *ejs, EjsObj *unused, int argc, EjsObj **argv)
 {
     EjsObj      *obj;
 
     obj = argv[0];
-    return (EjsObj*) TYPE(obj);
+    return TYPE(obj);
 }
+
 
 //  MOB - move out of here
 /*
@@ -785,11 +787,11 @@ EjsString *ejsGetTypeName(Ejs *ejs, EjsAny *obj)
     EjsType     *type;
 
     if (obj == 0) {
-        return ejs->undefinedValue;
+        return S(undefined);
     }
     type = (EjsType*) TYPE(obj);
     if (type == 0) {
-        return ejs->nullValue;
+        return S(null);
     }
     return type->qname.name;
 }
@@ -798,10 +800,10 @@ EjsString *ejsGetTypeName(Ejs *ejs, EjsAny *obj)
 /*
     function getTypeName(obj): String
  */
-static EjsObj *obj_getTypeName(Ejs *ejs, EjsObj *obj, int argc, EjsObj **argv)
+static EjsString *obj_getTypeName(Ejs *ejs, EjsObj *obj, int argc, EjsObj **argv)
 {
     mprAssert(argc >= 1);
-    return (EjsObj*) ejsGetTypeName(ejs, argv[0]);
+    return ejsGetTypeName(ejs, argv[0]);
 }
 
 
@@ -810,18 +812,18 @@ static EjsObj *obj_getTypeName(Ejs *ejs, EjsObj *obj, int argc, EjsObj **argv)
 
     function getName(obj: Object): String
  */
-static EjsObj *obj_getName(Ejs *ejs, EjsObj *unused, int argc, EjsObj **argv)
+static EjsString *obj_getName(Ejs *ejs, EjsObj *unused, int argc, EjsObj **argv)
 {
     EjsObj      *obj;
 
     obj = argv[0];
 
     if (ejsIsType(ejs, obj)) {
-        return (EjsObj*) ((EjsType*) obj)->qname.name;
+        return ((EjsType*) obj)->qname.name;
     } else if (ejsIsFunction(ejs, obj)) {
-        return (EjsObj*) ((EjsFunction*) obj)->name;
+        return ((EjsFunction*) obj)->name;
     }
-    return (EjsObj*) ejs->emptyString;
+    return S(empty);
 }
 
 /*********************************** Globals **********************************/
@@ -843,10 +845,10 @@ EjsString *ejsGetTypeOf(Ejs *ejs, EjsAny *vp)
 {
     cchar   *word;
 
-    if (vp == ejs->undefinedValue) {
+    if (vp == S(undefined)) {
         word = "undefined";
 
-    } else if (vp == ejs->nullValue) {
+    } else if (ejsIsNull(ejs, vp)) {
         /* Yea - I know, ECMAScript is broken */
         word = "object";
 
@@ -879,7 +881,7 @@ void ejsConfigureObjectType(Ejs *ejs)
     EjsPot      *prototype;
     EjsFunction *fun;
 
-    type = ejs->objectType;
+    type = ST(Object);
     prototype = type->prototype;
 
     ejsBindMethod(ejs, type, ES_Object_create, obj_create);

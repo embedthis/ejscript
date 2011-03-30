@@ -79,7 +79,7 @@ static EjsAny *createException(Ejs *ejs, EjsType *type, cchar* fmt, va_list fmtA
         mprAssert(argv[0]);
         return 0;
     }
-    if (ejs->errorType->constructor.body.proc) {
+    if (ST(Error)->constructor.body.proc) {
         error = (EjsError*) ejsCreateInstance(ejs, type, 1, argv);
     } else {
         error = ejsCreateObj(ejs, type, 0);
@@ -100,7 +100,7 @@ EjsAny *ejsCreateException(Ejs *ejs, int slot, cchar *fmt, va_list fmtArgs)
     }
     type = (ejs->initialized) ? ejsGetProperty(ejs, ejs->global, slot) : NULL;
     if (type == 0) {
-        type = ejs->errorType;
+        type = ST(Error);
     }
     error = createException(ejs, type, fmt, fmtArgs);
     if (error) {
@@ -276,7 +276,7 @@ EjsArray *ejsCaptureStack(Ejs *ejs, int uplevels)
                     ejsSetPropertyByName(ejs, frame, EN("lineno"), ejsCreateNumber(ejs, lineNumber));
                     ejsSetPropertyByName(ejs, frame, EN("code"), ejsCreateString(ejs, source, wlen(source)));
                 } else {
-                    ejsSetPropertyByName(ejs, frame, EN("filename"), ejs->undefinedValue);
+                    ejsSetPropertyByName(ejs, frame, EN("filename"), ST(undefined));
                 }
                 ejsSetPropertyByName(ejs, frame, EN("func"), fp->function.name);
                 ejsSetProperty(ejs, stack, index++, frame);
@@ -295,7 +295,7 @@ EjsArray *ejsCaptureStack(Ejs *ejs, int uplevels)
 cchar *ejsGetErrorMsg(Ejs *ejs, int withStack)
 {
     EjsString   *str, *tag, *msg, *message;
-    EjsObj      *stack, *error, *saveException;
+    EjsAny      *stack, *error, *saveException;
     char        *buf, *stackStr;
 
     error = ejs->exception;
@@ -305,7 +305,7 @@ cchar *ejsGetErrorMsg(Ejs *ejs, int withStack)
 
     if (error) {
         tag = TYPE(error)->qname.name;
-        if (ejsIsA(ejs, error, ejs->errorType)) {
+        if (ejsIs(error, Error)) {
             message = ejsGetProperty(ejs, error, ES_Error_message);
             if (withStack && ejs->initialized) {
                 saveException = ejs->exception;
@@ -314,24 +314,24 @@ cchar *ejsGetErrorMsg(Ejs *ejs, int withStack)
                 ejs->exception = saveException;
             }
 
-        } else if (ejsIsString(ejs, error)) {
+        } else if (ejsIs(error, String)) {
             tag = ejsCreateStringFromAsc(ejs, "Error");
             message = (EjsString*) error;
 
-        } else if (ejsIsNumber(ejs, error)) {
+        } else if (ejsIs(error, Number)) {
             tag = ejsCreateStringFromAsc(ejs, "Error");
             message = (EjsString*) error;
             
-        } else if (error == (EjsObj*) ejs->stopIterationType) {
+        } else if (error == ST(StopIteration)) {
             message = ejsCreateStringFromAsc(ejs, "Uncaught StopIteration exception");
         }
     }
-    if (message == ejs->nullValue || message == 0) {
+    if (message == S(null) || message == 0) {
         msg = ejsCreateStringFromAsc(ejs, "Exception");
     } else{
         msg = ejsToString(ejs, message);
     }
-    if (ejsIsA(ejs, error, ejs->errorType)) {
+    if (ejsIs(error, Error)) {
         stackStr = (stack) ? ejsToMulti(ejs, stack) : 0;
         if (stackStr && *stackStr) {
             buf = mprAsprintf("%@: %@\nStack:\n%s", tag, msg, (stack) ? ejsToMulti(ejs, stack) : "");
@@ -339,11 +339,11 @@ cchar *ejsGetErrorMsg(Ejs *ejs, int withStack)
             buf = mprAsprintf("%@: %@", tag, msg);
         }
 
-    } else if (message && ejsIsString(ejs, message)){
+    } else if (message && ejsIs(message, String)){
         buf = mprAsprintf("%@: %@", tag, msg);
 
-    } else if (message && ejsIsNumber(ejs, message)){
-        buf = mprAsprintf("%@: %g", tag, msg);
+    } else if (message && ejsIs(message, Number)){
+        buf = mprAsprintf("%@: %g", tag, ((EjsNumber*) msg)->value);
         
     } else if (error) {
         EjsObj *saveException = ejs->exception;

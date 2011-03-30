@@ -30,7 +30,7 @@ EjsObj *ejsThrowStopIteration(Ejs *ejs)
 #if FUTURE
     ejs->exception = ejs->iterator;
 #else
-    ejs->exception = (EjsObj*) ejs->stopIterationType;
+    ejs->exception = ST(StopIteration);
 #endif
     ejsAttention(ejs);
     return ejs->exception;
@@ -67,7 +67,7 @@ EjsIterator *ejsCreateIterator(Ejs *ejs, EjsAny *obj, EjsProc nativeNext, bool d
 {
     EjsIterator     *ip;
 
-    ip = ejsCreateObj(ejs, ejs->iteratorType, 0);
+    ip = ejsCreateObj(ejs, ST(Iterator), 0);
     if (ip) {
         ip->index = 0;
         ip->indexVar = 0;
@@ -97,15 +97,14 @@ void ejsCreateIteratorType(Ejs *ejs)
 {
     EjsType     *type;
 
-    type = ejs->iteratorType = ejsCreateNativeType(ejs, N(EJS_ITERATOR_NAMESPACE, "Iterator"), 
-        ES_iterator_Iterator, sizeof(EjsIterator), (MprManager) manageIterator, EJS_OBJ_HELPERS);
-
-    //  MOB - check this is used
-    ejs->iterator = ejsCreateObj(ejs, type, 0);
-
-    //  MOB - surely stop iteration could be an instance?
-    type = ejs->stopIterationType = ejsCreateNativeType(ejs, N(EJS_ITERATOR_NAMESPACE, "StopIteration"), 
-        ES_iterator_StopIteration, sizeof(EjsError), (MprManager) manageIterator, EJS_OBJ_HELPERS);
+    if (ST(Iterator) == 0) {
+        type = ejsCreateNativeType(ejs, N(EJS_ITERATOR_NAMESPACE, "Iterator"), S_Iterator, sizeof(EjsIterator), 
+            manageIterator, EJS_OBJ_HELPERS);
+    }
+    if (ST(StopIteration) == 0) {
+        type = ejsCreateNativeType(ejs, N(EJS_ITERATOR_NAMESPACE, "StopIteration"), 
+            S_StopIteration, sizeof(EjsError), (MprManager) manageIterator, EJS_OBJ_HELPERS);
+    }
 }
 
 
@@ -114,7 +113,7 @@ void ejsConfigureIteratorType(Ejs *ejs)
     EjsType     *type;
     EjsPot      *prototype;
 
-    type = ejs->iteratorType;
+    type = ST(Iterator);
     prototype = type->prototype;
     ejsBindMethod(ejs, prototype, ES_iterator_Iterator_next, (EjsProc) nextIterator);
 }

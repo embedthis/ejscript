@@ -54,11 +54,11 @@ static EjsObj *readCache(Ejs *ejs, EjsCache *cp, int argc, EjsObj **argv)
     vp = ejsGetPropertyByName(ejs, cp->cache, ejsName(&qname, domain, key));
     if (vp == 0) {
         ejsUnlockVm(ejs);
-        return ejs->nullValue;
+        return S(null);
     }
     vp = ejsDeserialize(ejs, (EjsString*) vp);
-    if (vp == ejs->undefinedValue) {
-        vp = (EjsObj*) ejs->emptyStringValue;
+    if (ejsIsUndefined(ejs, vp) {
+        vp = S(empty);
     }
     ejsUnlockVm(ejs);
     return vp;

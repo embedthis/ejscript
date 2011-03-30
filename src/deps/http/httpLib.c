@@ -4051,7 +4051,7 @@ HttpLoc *httpLookupBestLocation(HttpHost *host, cchar *uri)
     if (uri) {
         for (next = 0; (loc = mprGetNextItem(host->locations, &next)) != 0; ) {
             rc = sncmp(loc->prefix, uri, loc->prefixLen);
-            if (rc == 0 /* UNUSED MOB && uri[loc->prefixLen] == '/' */) {
+            if (rc == 0) {
                 return loc;
             }
         }
@@ -5291,13 +5291,14 @@ void httpSetLocationPrefix(HttpLoc *loc, cchar *uri)
 
     loc->prefix = sclone(uri);
     loc->prefixLen = (int) strlen(loc->prefix);
-
+#if UNUSED
     /*
         Always strip trailing "/". Note this is a Uri and not a path.
      */
     if (loc->prefixLen > 0 && loc->prefix[loc->prefixLen - 1] == '/') {
         loc->prefix[--loc->prefixLen] = '\0';
     }
+#endif
 }
 
 
@@ -12434,7 +12435,8 @@ static int processContentData(HttpQueue *q)
             key = mprUriDecode(up->id);
             data = mprUriDecode(data);
             httpSetFormVar(conn, key, data);
-#if UNUSED
+
+            //  MOB - I think PHP needs to actually get the data if using --upload and --form
             if (packet == 0) {
                 packet = httpCreatePacket(HTTP_BUFSIZE);
             }
@@ -12443,9 +12445,11 @@ static int processContentData(HttpQueue *q)
                     Need to add www-form-urlencoding separators
                  */
                 mprPutCharToBuf(packet->content, '&');
+            } else {
+                conn->rx->mimeType = sclone("application/x-www-form-urlencoded");
+
             }
             mprPutFmtToBuf(packet->content, "%s=%s", up->id, data);
-#endif
         }
     }
     if (up->clientFilename) {

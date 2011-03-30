@@ -71,7 +71,7 @@ EjsAny *ejsDeserialize(Ejs *ejs, EjsString *str)
         return 0;
     }
     if (str->length == 0) {
-        return ejs->emptyString;
+        return S(empty);
     }
     js.next = js.data = str->value;
     js.end = &js.data[str->length];
@@ -318,7 +318,7 @@ static EjsObj *parseLiteralInner(Ejs *ejs, MprBuf *buf, JsonState *js)
     } else if (tid == TOK_LBRACE) {
         obj = ejsCreateEmptyPot(ejs);
     } else {
-        return ejsParse(ejs, token, ES_String);
+        return ejsParse(ejs, token, S_String);
     }
     if (obj == 0) {
         ejsThrowMemoryError(ejs);
@@ -347,7 +347,7 @@ static EjsObj *parseLiteralInner(Ejs *ejs, MprBuf *buf, JsonState *js)
             
         } else if (isArray) {
             tid = getNextJsonToken(buf, &value, js);
-            vp = ejsParse(ejs, value, (tid == TOK_QID) ? ES_String: -1);
+            vp = ejsParse(ejs, value, (tid == TOK_QID) ? S_String: -1);
             mprAssert(vp);
             
         } else {
@@ -367,9 +367,9 @@ static EjsObj *parseLiteralInner(Ejs *ejs, MprBuf *buf, JsonState *js)
                     vp = ejsCreateString(ejs, value, strlen(value));
                 } else {
                     if (mcmp(value, "null") == 0) {
-                        vp = ejs->nullValue;
+                        vp = S(null);
                     } else if (mcmp(value, "undefined") == 0) {
-                        vp = ejs->undefinedValue;
+                        vp = S(undefined);
                     } else {
                         vp = ejsParse(ejs, value, -1);
                     }
@@ -442,7 +442,7 @@ EjsString *ejsSerialize(Ejs *ejs, EjsAny *vp, EjsObj *options)
     if (options) {
         json.options = options;
         if ((arg = ejsGetPropertyByName(ejs, options, EN("baseClasses"))) != 0) {
-            json.baseClasses = (arg == (EjsObj*) ejs->trueValue);
+            json.baseClasses = (arg == (EjsObj*) S(true));
         }
         if ((arg = ejsGetPropertyByName(ejs, options, EN("depth"))) != 0) {
             json.depth = ejsGetInt(ejs, arg);
@@ -464,13 +464,13 @@ EjsString *ejsSerialize(Ejs *ejs, EjsAny *vp, EjsObj *options)
             }
         }
         if ((arg = ejsGetPropertyByName(ejs, options, EN("hidden"))) != 0) {
-            json.hidden = (arg == (EjsObj*) ejs->trueValue);
+            json.hidden = (arg == (EjsObj*) S(true));
         }
         if ((arg = ejsGetPropertyByName(ejs, options, EN("namespaces"))) != 0) {
-            json.namespaces = (arg == (EjsObj*) ejs->trueValue);
+            json.namespaces = (arg == (EjsObj*) S(true));
         }
         if ((arg = ejsGetPropertyByName(ejs, options, EN("pretty"))) != 0) {
-            json.pretty = (arg == (EjsObj*) ejs->trueValue);
+            json.pretty = (arg == (EjsObj*) S(true));
         }
         json.replacer = ejsGetPropertyByName(ejs, options, EN("replacer"));
         if (!ejsIsFunction(ejs, json.replacer)) {
@@ -500,7 +500,7 @@ static EjsString *serialize(Ejs *ejs, EjsAny *vp, Json *json)
         All others just use toString.
      */
     count = ejsGetPropertyCount(ejs, vp);
-    if (count == 0 && TYPE(vp) != ejs->objectType && TYPE(vp) != ejs->arrayType) {
+    if (count == 0 && TYPE(vp) != ST(Object) && TYPE(vp) != ST(Array)) {
         //  MOB OPT - need some flag for this test.
         if (ejsIsNull(ejs, vp) || ejsIsUndefined(ejs, vp) || ejsIsBoolean(ejs, vp) || ejsIsNumber(ejs, vp) || 
                 ejsIsString(ejs, vp)) {
@@ -541,7 +541,7 @@ static EjsString *serialize(Ejs *ejs, EjsAny *vp, Json *json)
             if (isArray) {
                 itos(key, sizeof(key), slotNum, 10);
                 qname.name = ejsCreateStringFromAsc(ejs, key);
-                qname.space = ejs->emptyString;
+                qname.space = S(empty);
             } else {
                 qname = ejsGetPropertyName(ejs, vp, slotNum);
             }
@@ -556,7 +556,7 @@ static EjsString *serialize(Ejs *ejs, EjsAny *vp, Json *json)
             }
             if (!isArray) {
                 if (json->namespaces) {
-                    if (qname.space != ejs->emptyString) {
+                    if (qname.space != S(empty)) {
                         mprPutFmtToWideBuf(json->buf, "\"%@\"::", qname.space);
                     }
                 }

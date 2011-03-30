@@ -356,7 +356,7 @@ EjsString *ejsToString(Ejs *ejs, EjsAny *vp)
     if (vp == 0 || ejsIsString(ejs, vp)) {
         return (EjsString*) vp;
     }
-    return (EjsString*) ejsCast(ejs, vp, ejs->stringType);
+    return ejsCast(ejs, vp, ST(String));
 }
 
 
@@ -370,7 +370,7 @@ EjsNumber *ejsToNumber(Ejs *ejs, EjsAny *vp)
         return (EjsNumber*) vp;
     }
     if (TYPE(vp)->helpers.cast) {
-        return (EjsNumber*) (TYPE(vp)->helpers.cast)(ejs, vp, ejs->numberType);
+        return (TYPE(vp)->helpers.cast)(ejs, vp, ST(Number));
     }
     ejsThrowInternalError(ejs, "CastVar helper not defined for type \"%@\"", TYPE(vp)->qname.name);
     return 0;
@@ -387,7 +387,7 @@ EjsBoolean *ejsToBoolean(Ejs *ejs, EjsAny *vp)
         return (EjsBoolean*) vp;
     }
     if (TYPE(vp)->helpers.cast) {
-        return (EjsBoolean*) (TYPE(vp)->helpers.cast)(ejs, vp, ejs->booleanType);
+        return (TYPE(vp)->helpers.cast)(ejs, vp, ST(Boolean));
     }
     ejsThrowInternalError(ejs, "CastVar helper not defined for type \"%@\"", TYPE(vp)->qname.name);
     return 0;
@@ -403,7 +403,7 @@ EjsPath *ejsToPath(Ejs *ejs, EjsAny *vp)
     if (vp == 0 || ejsIsPath(ejs, vp)) {
         return (EjsPath*) vp;
     }
-    return (EjsPath*) ejsCast(ejs, vp, ejs->pathType);
+    return ejsCast(ejs, vp, ST(Path));
 }
 
 
@@ -416,7 +416,7 @@ EjsUri *ejsToUri(Ejs *ejs, EjsAny *vp)
     if (vp == 0 || ejsIsUri(ejs, vp)) {
         return (EjsUri*) vp;
     }
-    return (EjsUri*) ejsCast(ejs, vp, ejs->uriType);
+    return ejsCast(ejs, vp, ST(Uri));
 }
 
 
@@ -464,21 +464,21 @@ static EjsObj *castObj(Ejs *ejs, EjsObj *obj, EjsType *type)
     if (type->hasMeta) {
         return ejsRunFunctionByName(ejs, type, N(EJS_META_NAMESPACE, "cast"), type, 1, &obj);
     }
-    switch (type->id) {
-    case ES_Boolean:
+    switch (type->sid) {
+    case S_Boolean:
         return (EjsObj*) ejsCreateBoolean(ejs, 1);
 
-    case ES_Number:
+    case S_Number:
         str = ejsToString(ejs, obj);
         if (str == 0) {
             ejsThrowMemoryError(ejs);
             return 0;
         }
-        return ejsParse(ejs, str->value, ES_Number);
+        return ejsParse(ejs, str->value, S_Number);
 
-    case ES_String:
+    case S_String:
         if (!ejsIsType(ejs, obj) && !ejsIsPrototype(ejs, obj)) {
-            if (ejsLookupVar(ejs, obj, EN("toString"), &lookup) >= 0 && lookup.obj != ejs->objectType->prototype) {
+            if (ejsLookupVar(ejs, obj, EN("toString"), &lookup) >= 0 && lookup.obj != ST(Object)->prototype) {
                 fun = ejsGetProperty(ejs, lookup.obj, lookup.slotNum);
                 if (fun && ejsIsFunction(ejs, fun) && fun->body.proc != (EjsFun) ejsObjToString) {
                     result = ejsRunFunction(ejs, fun, obj, 0, NULL);
@@ -515,7 +515,7 @@ static EjsObj *cloneObj(Ejs *ejs, EjsObj *obj, bool deep)
 /*
     Cast the operands depending on the operation code
  */
-EjsObj *ejsCoerceOperands(Ejs *ejs, EjsObj *lhs, int opcode, EjsObj *rhs)
+EjsAny *ejsCoerceOperands(Ejs *ejs, EjsObj *lhs, int opcode, EjsObj *rhs)
 {
     switch (opcode) {
 
@@ -523,38 +523,38 @@ EjsObj *ejsCoerceOperands(Ejs *ejs, EjsObj *lhs, int opcode, EjsObj *rhs)
         Binary operators
      */
     case EJS_OP_ADD:
-        return ejsInvokeOperator(ejs, (EjsObj*) ejsToString(ejs, lhs), opcode, rhs);
+        return ejsInvokeOperator(ejs, ejsToString(ejs, lhs), opcode, rhs);
 
     case EJS_OP_AND: case EJS_OP_DIV: case EJS_OP_MUL: case EJS_OP_OR: case EJS_OP_REM:
     case EJS_OP_SHL: case EJS_OP_SHR: case EJS_OP_SUB: case EJS_OP_USHR: case EJS_OP_XOR:
-        return ejsInvokeOperator(ejs, (EjsObj*) ejs->zeroValue, opcode, rhs);
+        return ejsInvokeOperator(ejs, S(zero), opcode, rhs);
 
     case EJS_OP_COMPARE_EQ:  case EJS_OP_COMPARE_NE:
         if (ejsIsNull(ejs, rhs) || ejsIsUndefined(ejs, rhs)) {
-            return (EjsObj*) ((opcode == EJS_OP_COMPARE_EQ) ? ejs->falseValue: ejs->trueValue);
+            return ((opcode == EJS_OP_COMPARE_EQ) ? S(false): S(true));
         } else if (ejsIsNumber(ejs, rhs)) {
-            return ejsInvokeOperator(ejs, (EjsObj*) ejsToNumber(ejs, lhs), opcode, rhs);
+            return ejsInvokeOperator(ejs, ejsToNumber(ejs, lhs), opcode, rhs);
         }
-        return ejsInvokeOperator(ejs, (EjsObj*) ejsToString(ejs, lhs), opcode, rhs);
+        return ejsInvokeOperator(ejs, ejsToString(ejs, lhs), opcode, rhs);
 
     case EJS_OP_COMPARE_LE: case EJS_OP_COMPARE_LT:
     case EJS_OP_COMPARE_GE: case EJS_OP_COMPARE_GT:
         if (ejsIsNumber(ejs, rhs)) {
-            return ejsInvokeOperator(ejs, (EjsObj*) ejsToNumber(ejs, lhs), opcode, rhs);
+            return ejsInvokeOperator(ejs, ejsToNumber(ejs, lhs), opcode, rhs);
         }
-        return ejsInvokeOperator(ejs, (EjsObj*) ejsToString(ejs, lhs), opcode, rhs);
+        return ejsInvokeOperator(ejs, ejsToString(ejs, lhs), opcode, rhs);
 
     case EJS_OP_COMPARE_STRICTLY_NE:
     case EJS_OP_COMPARE_UNDEFINED:
     case EJS_OP_COMPARE_NOT_ZERO:
     case EJS_OP_COMPARE_NULL:
-        return (EjsObj*) ejs->trueValue;
+        return S(true);
 
     case EJS_OP_COMPARE_STRICTLY_EQ:
     case EJS_OP_COMPARE_FALSE:
     case EJS_OP_COMPARE_TRUE:
     case EJS_OP_COMPARE_ZERO:
-        return (EjsObj*) ejs->falseValue;
+        return S(false);
 
     /* Unary operators */
     case EJS_OP_LOGICAL_NOT: case EJS_OP_NOT:
@@ -562,7 +562,7 @@ EjsObj *ejsCoerceOperands(Ejs *ejs, EjsObj *lhs, int opcode, EjsObj *rhs)
 
     default:
         ejsThrowTypeError(ejs, "Opcode %d not valid for type %@", opcode, TYPE(lhs)->qname.name);
-        return ejs->undefinedValue;
+        return S(undefined);
     }
     return 0;
 }
@@ -591,17 +591,17 @@ EjsAny *ejsInvokeOperatorDefault(Ejs *ejs, EjsAny *lhs, int opcode, EjsAny *rhs)
     /* Unary operators */
 
     case EJS_OP_COMPARE_NOT_ZERO:
-        return ejs->trueValue;
+        return S(true);
 
     case EJS_OP_COMPARE_UNDEFINED:
     case EJS_OP_COMPARE_NULL:
     case EJS_OP_COMPARE_FALSE:
     case EJS_OP_COMPARE_TRUE:
     case EJS_OP_COMPARE_ZERO:
-        return ejs->falseValue;
+        return S(false);
 
     case EJS_OP_LOGICAL_NOT: case EJS_OP_NOT: case EJS_OP_NEG:
-        return ejs->oneValue;
+        return S(one);
 
     /* Binary operators */
 
@@ -642,7 +642,7 @@ static int deletePropertyByName(Ejs *ejs, EjsObj *obj, EjsName qname)
 
 static EjsObj *getProperty(Ejs *ejs, EjsObj *obj, int slotNum)
 {
-    if (obj == 0 || obj == ejs->nullValue || obj == ejs->undefinedValue) {
+    if (obj == 0 || obj == S(null) || obj == S(undefined)) {
         ejsThrowReferenceError(ejs, "Object is null");
         return NULL;
     }
@@ -680,7 +680,7 @@ static int lookupProperty(struct Ejs *ejs, EjsObj *obj, EjsName qname)
 
 static int setProperty(Ejs *ejs, EjsObj *obj, int slotNum, EjsObj *value)
 {
-    if (obj == 0 || obj == ejs->nullValue || obj == ejs->undefinedValue) {
+    if (obj == 0 || obj == S(null) || obj == S(undefined)) {
         ejsThrowReferenceError(ejs, "Object is null");
         return EJS_ERR;
     }
@@ -691,7 +691,7 @@ static int setProperty(Ejs *ejs, EjsObj *obj, int slotNum, EjsObj *value)
 
 static int setPropertyName(Ejs *ejs, EjsObj *obj, int slotNum, EjsName qname)
 {
-    if (obj == 0 || obj == ejs->nullValue || obj == ejs->undefinedValue) {
+    if (obj == 0 || obj == S(null) || obj == S(undefined)) {
         ejsThrowReferenceError(ejs, "Object is null");
         return EJS_ERR;
     }
@@ -702,7 +702,7 @@ static int setPropertyName(Ejs *ejs, EjsObj *obj, int slotNum, EjsName qname)
 
 static int setPropertyTraits(Ejs *ejs, EjsObj *obj, int slot, EjsType *type, int attributes)
 {
-    if (obj == 0 || obj == ejs->nullValue || obj == ejs->undefinedValue) {
+    if (obj == 0 || obj == S(null) || obj == S(undefined)) {
         ejsThrowReferenceError(ejs, "Object is null");
         return EJS_ERR;
     }
@@ -741,7 +741,7 @@ EjsName ejsEmptyName(Ejs *ejs, cchar *name)
     EjsName     n;
 
     n.name = ejsCreateStringFromAsc(ejs, name);
-    n.space = ejs->emptyString;
+    n.space = S(empty);
     return n;
 }
 
@@ -751,7 +751,7 @@ EjsName ejsEmptyWideName(Ejs *ejs, MprChar *name)
     EjsName     n;
 
     n.name = ejsCreateString(ejs, name, strlen(name));
-    n.space = ejs->emptyString;
+    n.space = S(empty);
     return n;
 }
 
@@ -788,62 +788,62 @@ EjsName ejsWideName(Ejs *ejs, MprChar *space, MprChar *name)
 EjsAny *ejsParse(Ejs *ejs, MprChar *str, int preferredType)
 {
     MprChar     *buf;
-    int         type;
+    int         sid;
 
     mprAssert(str);
 
     buf = str;
-    type = preferredType;
+    sid = preferredType;
 
     //  MOB unicode
     while (isspace((int) *buf)) {
         buf++;
     }    
-    if (preferredType == ES_Void || preferredType < 0) {
+    if (preferredType == S_Void || preferredType < 0) {
         if (*buf == '-' || *buf == '+') {
-            type = ejs->numberType->id;
+            sid = S_Number;
 
         } else if (*buf == '/') {
-            type = ES_RegExp;
+            sid = S_RegExp;
 
         } else if (!isdigit((int) *buf) && *buf != '.') {
             if (mcmp(buf, "true") == 0) {
-                return ejs->trueValue;
+                return S(true);
 
             } else if (mcmp(buf, "false") == 0) {
-                return ejs->falseValue;
+                return S(false);
             }
-            type = ES_String;
+            sid = S_String;
 
             if (mcmp(buf, "true") == 0 || mcmp(buf, "false") == 0) {
-                type = ES_Boolean;
+                sid = S_Boolean;
             } else {
-                type = ES_String;
+                sid = S_String;
             }
 
         } else {
-            type = ES_Number;
+            sid = S_Number;
         }
     }
-    switch (type) {
-    case ES_Object:
-    case ES_Void:
-    case ES_Null:
+    switch (sid) {
+    case S_Object:
+    case S_Void:
+    case S_Null:
     default:
         break;
 
-    case ES_Number:
+    case S_Number:
         return ejsCreateNumber(ejs, parseNumber(ejs, buf));
 
-    case ES_Boolean:
+    case S_Boolean:
         return ejsCreateBoolean(ejs, parseBoolean(ejs, buf));
 
 #if BLD_FEATURE_PCRE
-    case ES_RegExp:
+    case S_RegExp:
         return ejsCreateRegExp(ejs, ejsCreateString(ejs, buf, -1));
 #endif
 
-    case ES_String:
+    case S_String:
         if (mcmp(buf, "null") == 0) {
             return ejsCreateNull(ejs);
 
@@ -894,7 +894,7 @@ static MprNumber parseNumber(Ejs *ejs, MprChar *str)
         str++;
     }
     if (*str != '.' && !isdigit((int) *str)) {
-        return ejs->nanValue->value;
+        return ((EjsNumber*) S(nan))->value;
     }
     /*
         Floatng format: [DIGITS].[DIGITS][(e|E)[+|-]DIGITS]
@@ -969,7 +969,7 @@ MprNumber ejsGetNumber(Ejs *ejs, EjsAny *vp)
 {
     mprAssert(vp);
     if (!ejsIsNumber(ejs, vp)) {
-        if ((vp = ejsCast(ejs, vp, ejs->numberType)) == 0) {
+        if ((vp = ejsCast(ejs, vp, ST(Number))) == 0) {
             return 0;
         }
     }
@@ -982,7 +982,7 @@ bool ejsGetBoolean(Ejs *ejs, EjsAny *vp)
 {
     mprAssert(vp);
     if (!ejsIsBoolean(ejs, vp)) {
-        if ((vp = ejsCast(ejs, vp, ejs->booleanType)) == 0) {
+        if ((vp = ejsCast(ejs, vp, ST(Boolean))) == 0) {
             return 0;
         }
     }
@@ -995,7 +995,7 @@ int ejsGetInt(Ejs *ejs, EjsAny *vp)
 {
     mprAssert(vp);
     if (!ejsIsNumber(ejs, vp)) {
-        if ((vp = ejsCast(ejs, vp, ejs->numberType)) == 0) {
+        if ((vp = ejsCast(ejs, vp, S(Number))) == 0) {
             return 0;
         }
     }
@@ -1008,7 +1008,7 @@ double ejsGetDouble(Ejs *ejs, EjsAny *vp)
 {
     mprAssert(vp);
     if (!ejsIsNumber(ejs, vp)) {
-        if ((vp = ejsCast(ejs, vp, ejs->numberType)) == 0) {
+        if ((vp = ejsCast(ejs, vp, S(Number))) == 0) {
             return 0;
         }
     }

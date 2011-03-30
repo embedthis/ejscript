@@ -215,7 +215,7 @@ static int compileInner(EcCompiler *cp, int argc, char **argv)
         MOB -- why ?
      */
     block = ejsCreateBlock(ejs, 0);
-    ejsSetName(block, "Compiler");
+    mprSetName(block, "Compiler");
     ejsPushBlock(ejs, block);
     
     /*

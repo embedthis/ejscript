@@ -96,10 +96,10 @@ static EjsObj *createCookies(Ejs *ejs, EjsRequest *req)
         return (EjsObj*) req->cookies;
     }
     if (req->conn == 0) {
-        return ejs->nullValue;
+        return S(null);
     }
     if ((cookieHeader = mprLookupHash(req->conn->rx->headers, "cookie")) == 0) {
-        req->cookies = (EjsObj*) ejs->nullValue;
+        req->cookies = S(null);
     } else {
         argv[0] = (EjsObj*) ejsCreateStringFromAsc(ejs, cookieHeader);
         req->cookies = ejsRunFunctionByName(ejs, ejs->global, N("ejs.web", "parseCookies"), ejs->global, 1, (EjsObj**) argv);
@@ -127,11 +127,11 @@ static EjsObj *createFiles(Ejs *ejs, EjsRequest *req)
 
     if (req->files == 0) {
         if (req->conn == 0) {
-            return ejs->nullValue;
+            return S(null);
         }
         conn = req->conn;
         if (conn->rx->files == 0) {
-            return ejs->nullValue;
+            return S(null);
         }
         req->files = files = (EjsObj*) ejsCreateEmptyPot(ejs);
         for (index = 0, hp = 0; (hp = mprGetNextHash(conn->rx->files, hp)) != 0; index++) {
@@ -198,7 +198,7 @@ static int fillResponseHeaders(EjsRequest *req)
             n = ejsGetPropertyName(ejs, req->responseHeaders, i);
             vp = ejsGetProperty(ejs, req->responseHeaders, i);
             if (n.name && vp && req->conn) {
-                if (vp != ejs->nullValue && vp != ejs->undefinedValue) {
+                if (!ejsIsNull(ejs, vp) && !ejsIsUndefined(ejs, vp)) {
                     value = ejsToMulti(ejs, vp);
                     httpSetSimpleHeader(req->conn, ejsToMulti(ejs, n.name), value);
                 }
@@ -254,7 +254,7 @@ static EjsSession *getSession(Ejs *ejs, EjsRequest *req, int create)
 static EjsObj *createString(Ejs *ejs, cchar *value)
 {
     if (value == 0) {
-        return ejs->nullValue;
+        return S(null);
     }
     return (EjsObj*) ejsCreateStringFromAsc(ejs, value);
 }
@@ -262,7 +262,7 @@ static EjsObj *createString(Ejs *ejs, cchar *value)
 
 static int getDefaultInt(Ejs *ejs, EjsObj *value, int defaultValue)
 {
-    if (value == 0 || value == ejs->nullValue) {
+    if (value == 0 || ejsIsNull(ejs, value)) {
         return defaultValue;
     }
     return ejsGetInt(ejs, value);
@@ -271,7 +271,7 @@ static int getDefaultInt(Ejs *ejs, EjsObj *value, int defaultValue)
 
 static cchar *getDefaultString(Ejs *ejs, EjsObj *value, cchar *defaultValue)
 {
-    if (value == 0 || value == ejs->nullValue) {
+    if (value == 0 || ejsIsNull(ejs, value)) {
         return defaultValue;
     }
     return ejsToMulti(ejs, value);
@@ -290,7 +290,7 @@ static cchar *getRequestString(Ejs *ejs, EjsObj *value)
 static EjsObj *mapNull(Ejs *ejs, EjsObj *value)
 {
     if (value == 0) {
-        return ejs->nullValue;
+        return S(null);
     }
     return value;
 }
@@ -388,7 +388,7 @@ static void *getRequestProperty(Ejs *ejs, EjsRequest *req, int slotNum)
                 uri = mprAsprintf("%s://%s:%d%s/", scheme, ip, port, conn->rx->scriptName);
                 req->absHome = (EjsObj*) ejsCreateUriFromMulti(ejs, uri);
             } else {
-                req->absHome = ejs->nullValue;
+                req->absHome = S(null);
             }
         }
         return req->absHome;
@@ -406,10 +406,10 @@ static void *getRequestProperty(Ejs *ejs, EjsRequest *req, int slotNum)
         return ejsCreateBoolean(ejs, !req->dontAutoFinalize);
 
     case ES_ejs_web_Request_config:
-        value = ejs->objectType->helpers.getProperty(ejs, (EjsObj*) req, slotNum);
-        if (value == (EjsObj*) ejs->nullValue) {
+        value = ST(Object)->helpers.getProperty(ejs, (EjsObj*) req, slotNum);
+        if (ejsIsNull(ejs, value)) {
             /* Default to App.config */
-            value = ejsGetProperty(ejs, (EjsObj*) ejs->appType, ES_App_config);
+            value = ejsGetProperty(ejs, ST(App), ES_App_config);
         }
         return mapNull(ejs, value);
 
@@ -420,12 +420,12 @@ static void *getRequestProperty(Ejs *ejs, EjsRequest *req, int slotNum)
         if (conn) {
             createHeaders(ejs, req);
             return mapNull(ejs, ejsGetPropertyByName(ejs, req->headers, EN("content-type")));
-        } else return ejs->nullValue;
+        } else return S(null);
 
     case ES_ejs_web_Request_cookies:
         if (conn) {
             return createCookies(ejs, req);
-        } else return ejs->nullValue;
+        } else return S(null);
 
     case ES_ejs_web_Request_dir:
         return req->dir;
@@ -446,7 +446,7 @@ static void *getRequestProperty(Ejs *ejs, EjsRequest *req, int slotNum)
                 req->filename = ejsCreatePathFromAsc(ejs, pathInfo);
             }
         }
-        return req->filename ? (EjsObj*) req->filename : (EjsObj*) ejs->nullValue;
+        return req->filename ? (EjsObj*) req->filename : S(null);
 
     case ES_ejs_web_Request_files:
         return createFiles(ejs, req);
@@ -458,7 +458,7 @@ static void *getRequestProperty(Ejs *ejs, EjsRequest *req, int slotNum)
         if (req->home == 0) {
             if (conn) {
                 req->home = ejsCreateUriFromMulti(ejs, makeRelativeHome(ejs, req));
-            } else return ejs->nullValue;
+            } else return S(null);
         }
         return req->home;
 
@@ -480,7 +480,7 @@ static void *getRequestProperty(Ejs *ejs, EjsRequest *req, int slotNum)
 
     case ES_ejs_web_Request_log:
         if (req->log == 0) {
-            req->log = ejsGetProperty(ejs, ejs->appType, ES_App_log);
+            req->log = ejsGetProperty(ejs, ST(App), ES_App_log);
         }
         return req->log;
 
@@ -498,7 +498,7 @@ static void *getRequestProperty(Ejs *ejs, EjsRequest *req, int slotNum)
                 req->originalUri = (EjsObj*) ejsCreateUriFromParts(ejs, scheme, getHost(conn, req), req->server->port, 
                     conn->rx->uri, conn->rx->parsedUri->query, conn->rx->parsedUri->reference, 0);
             } else {
-                return ejs->nullValue;
+                return S(null);
             }
         }
         return req->originalUri;
@@ -513,7 +513,7 @@ static void *getRequestProperty(Ejs *ejs, EjsRequest *req, int slotNum)
         if (req->port == 0) {
             if (req->server) {
                 req->port = (EjsObj*) ejsCreateNumber(ejs, req->server->port);
-            } else return ejs->nullValue;
+            } else return S(null);
         }
         return req->port;
 
@@ -551,7 +551,7 @@ static void *getRequestProperty(Ejs *ejs, EjsRequest *req, int slotNum)
         return req->scheme;
 
     case ES_ejs_web_Request_scriptName:
-        return req->scriptName ? req->scriptName : (EjsObj*) ejs->emptyString;
+        return req->scriptName ? req->scriptName : S(empty);
 
     case ES_ejs_web_Request_server:
         return req->server;
@@ -560,7 +560,7 @@ static void *getRequestProperty(Ejs *ejs, EjsRequest *req, int slotNum)
         if (req->session == 0) {
             req->session = getSession(ejs, req, 1);
         }
-        return req->session ? (EjsObj*) req->session : (EjsObj*) ejs->nullValue;
+        return req->session ? (EjsObj*) req->session : S(null);
 
     case ES_ejs_web_Request_sessionID:
         if (!req->probedSession) {
@@ -570,12 +570,12 @@ static void *getRequestProperty(Ejs *ejs, EjsRequest *req, int slotNum)
         if (req->session) {
             return createString(ejs, req->session->id);
         }
-        return ejs->nullValue;
+        return S(null);
 
     case ES_ejs_web_Request_status:
         if (conn) {
             return ejsCreateNumber(ejs, conn->tx->status);
-        } else return ejs->nullValue;
+        } else return S(null);
 
     case ES_ejs_web_Request_uri:
         if (req->uri == 0) {
@@ -605,7 +605,7 @@ static void *getRequestProperty(Ejs *ejs, EjsRequest *req, int slotNum)
 
     default:
         if (slotNum < req->pot.numProp) {
-            return ejs->objectType->helpers.getProperty(ejs, (EjsObj*) req, slotNum);
+            return ST(Object)->helpers.getProperty(ejs, (EjsObj*) req, slotNum);
         }
     }
     return 0;
@@ -659,7 +659,7 @@ static int setRequestProperty(Ejs *ejs, EjsRequest *req, int slotNum,  EjsObj *v
     switch (slotNum) {
     default:
     case ES_ejs_web_Request_config:
-        return ejs->objectType->helpers.setProperty(ejs, (EjsObj*) req, slotNum, value);
+        return ST(Object)->helpers.setProperty(ejs, (EjsObj*) req, slotNum, value);
 
     case ES_ejs_web_Request_absHome:
         req->absHome = (EjsObj*) ejsToUri(ejs, value);
@@ -725,7 +725,7 @@ static int setRequestProperty(Ejs *ejs, EjsRequest *req, int slotNum,  EjsObj *v
         break;
 
     case ES_ejs_web_Request_responded:
-        req->responded = (value == ejs->trueValue);
+        req->responded = (value == S(true));
         break;
 
     case ES_ejs_web_Request_responseHeaders:
@@ -834,7 +834,7 @@ static int setRequestProperty(Ejs *ejs, EjsRequest *req, int slotNum,  EjsObj *v
  */
 static EjsObj *req_async(Ejs *ejs, EjsRequest *req, int argc, EjsObj **argv)
 {
-    return ejs->trueValue;
+    return S(true);
 }
 
 
@@ -843,7 +843,7 @@ static EjsObj *req_async(Ejs *ejs, EjsRequest *req, int argc, EjsObj **argv)
  */
 static EjsObj *req_set_async(Ejs *ejs, EjsRequest *req, int argc, EjsObj **argv)
 {
-    if (argv[0] != ejs->trueValue) {
+    if (argv[0] != S(true)) {
         ejsThrowIOError(ejs, "Request only supports async mode");
     }
     return 0;
@@ -919,7 +919,7 @@ static EjsObj *req_finalized(Ejs *ejs, EjsRequest *req, int argc, EjsObj **argv)
     if (req->conn && req->conn->tx) {
         return (EjsObj*) ejsCreateBoolean(ejs, req->conn->tx->finalized);
     }
-    return ejs->falseValue;
+    return S(false);
 }
 
 
@@ -963,7 +963,7 @@ static EjsObj *req_header(Ejs *ejs, EjsRequest *req, int argc, EjsObj **argv)
             }
         }
     }
-    return (value) ? value : (EjsObj*) ejs->nullValue;
+    return (value) ? value : S(null);
 }
 
 
@@ -1034,7 +1034,7 @@ static EjsObj *req_read(Ejs *ejs, EjsRequest *req, int argc, EjsObj **argv)
     if (nbytes == 0) {
         if (httpIsEof(req->conn)) {
             //  MOB -- should this set req->conn to zero?
-            return (EjsObj*) ejs->nullValue;
+            return S(null);
         }
     }
     ba->writePosition += nbytes;
@@ -1055,7 +1055,7 @@ static EjsObj *req_setHeader(Ejs *ejs, EjsRequest *req, int argc, EjsObj **argv)
     if (!connOk(ejs, req, 1)) return 0;
     key = ejsToMulti(ejs, argv[0]);
     value = (EjsString*) argv[1];
-    overwrite = argc < 3 || argv[2] == (EjsObj*) ejs->trueValue;
+    overwrite = argc < 3 || argv[2] == S(true);
     createResponseHeaders(ejs, req);
     if (!overwrite) {
         if ((old = ejsGetPropertyByName(ejs, req->responseHeaders, EN(key))) != 0) {
@@ -1134,15 +1134,15 @@ static EjsObj *req_write(Ejs *ejs, EjsRequest *req, int argc, EjsObj **argv)
     }
     for (i = 0; i < args->length; i++) {
         data = args->data[i];
-        switch (TYPE(data)->id) {
-        case ES_String:
+        switch (TYPE(data)->sid) {
+        case S_String:
             s = (EjsString*) data;
             if ((written = httpWriteBlock(q, s->value, s->length)) != s->length) {
                 err++;
             }
             break;
 
-        case ES_ByteArray:
+        case S_ByteArray:
             ba = (EjsByteArray*) data;
             //  MOB -- not updating the read position
             //  MOB ba->readPosition += len;
@@ -1197,12 +1197,12 @@ static EjsObj *req_writeFile(Ejs *ejs, EjsRequest *req, int argc, EjsObj **argv)
     trans = conn->tx;
 
     if (rx->ranges || conn->secure || trans->chunkSize > 0) {
-        return ejs->falseValue;
+        return S(false);
     }
     path = (EjsPath*) argv[0];
     if (mprGetPathInfo(path->value, &info) < 0) {
         ejsThrowIOError(ejs, "Cannot open %s", path->value);
-        return ejs->falseValue;
+        return S(false);
     }
     httpSetSendConnector(req->conn, path->value);
 
@@ -1211,7 +1211,7 @@ static EjsObj *req_writeFile(Ejs *ejs, EjsRequest *req, int argc, EjsObj **argv)
     trans->length = trans->entityLength = (int) info.size;
     httpPutForService(conn->writeq, packet, 0);
     httpFinalize(req->conn);
-    return ejs->trueValue;
+    return S(true);
 }
 
 
@@ -1236,7 +1236,7 @@ EjsRequest *ejsCloneRequest(Ejs *ejs, EjsRequest *req, bool deep)
     HttpConn    *conn;
     EjsRequest  *nreq;
 
-    if ((nreq = ejsAlloc(ejs, ejs->requestType, 0)) == 0) {
+    if ((nreq = ejsAlloc(ejs, ST(Request), 0)) == 0) {
         ejsThrowMemoryError(ejs);
         return 0;
     }
@@ -1353,8 +1353,8 @@ void ejsConfigureRequestType(Ejs *ejs)
     EjsHelpers  *helpers;
     EjsPot      *prototype;
 
-    type = ejs->requestType = ejsConfigureNativeType(ejs, N("ejs.web", "Request"), sizeof(EjsRequest), manageRequest,
-        EJS_POT_HELPERS);
+    type = ejsConfigureNativeType(ejs, N("ejs.web", "Request"), sizeof(EjsRequest), manageRequest, EJS_POT_HELPERS);
+    ejsSetSpecialType(ejs, S_Request, type);
 
     helpers = &type->helpers;
     helpers->getProperty = (EjsGetPropertyHelper) getRequestProperty;

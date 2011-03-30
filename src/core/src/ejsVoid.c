@@ -15,20 +15,20 @@
 
 static EjsObj *castVoid(Ejs *ejs, EjsVoid *vp, EjsType *type)
 {
-    switch (type->id) {
-    case ES_Boolean:
-        return (EjsObj*) ejs->falseValue;
+    switch (type->sid) {
+    case S_Boolean:
+        return (EjsObj*) S(false);
 
-    case ES_Number:
-        return (EjsObj*) ejs->nanValue;
+    case S_Number:
+        return S(nan);
 
-    case ES_Object:
+    case S_Object:
         return (EjsObj*) vp;
 
-    case ES_String:
+    case S_String:
         return (EjsObj*) ejsCreateStringFromAsc(ejs, "undefined");
 
-    case ES_Uri:
+    case S_Uri:
         return (EjsObj*) ejsCreateUriFromMulti(ejs, "undefined");
             
     default:
@@ -51,32 +51,32 @@ static EjsObj *coerceVoidOperands(Ejs *ejs, EjsVoid *lhs, int opcode, EjsVoid *r
 
     case EJS_OP_AND: case EJS_OP_DIV: case EJS_OP_MUL: case EJS_OP_OR: case EJS_OP_REM:
     case EJS_OP_SHL: case EJS_OP_SHR: case EJS_OP_SUB: case EJS_OP_USHR: case EJS_OP_XOR:
-        return ejsInvokeOperator(ejs, (EjsObj*) ejs->nanValue, opcode, (EjsObj*) rhs);
+        return ejsInvokeOperator(ejs, (EjsObj*) S(nan), opcode, (EjsObj*) rhs);
 
     /*
      *  Comparision
      */
     case EJS_OP_COMPARE_LE: case EJS_OP_COMPARE_LT:
     case EJS_OP_COMPARE_GE: case EJS_OP_COMPARE_GT:
-        return (EjsObj*) ejs->falseValue;
+        return (EjsObj*) S(false);
 
     case EJS_OP_COMPARE_NE:
         if (ejsIsNull(ejs, rhs)) {
-            return (EjsObj*) ejs->falseValue;
+            return (EjsObj*) S(false);
         }
-        return (EjsObj*) ejs->trueValue;
+        return (EjsObj*) S(true);
 
     case EJS_OP_COMPARE_STRICTLY_NE:
-        return (EjsObj*) ejs->trueValue;
+        return (EjsObj*) S(true);
 
     case EJS_OP_COMPARE_EQ:
         if (ejsIsNull(ejs, rhs)) {
-            return (EjsObj*) ejs->trueValue;
+            return (EjsObj*) S(true);
         }
-        return (EjsObj*) ejs->falseValue;
+        return (EjsObj*) S(false);
 
     case EJS_OP_COMPARE_STRICTLY_EQ:
-        return (EjsObj*) ejs->falseValue;
+        return (EjsObj*) S(false);
 
     /*
      *  Unary operators
@@ -87,16 +87,16 @@ static EjsObj *coerceVoidOperands(Ejs *ejs, EjsVoid *lhs, int opcode, EjsVoid *r
     case EJS_OP_COMPARE_UNDEFINED:
     case EJS_OP_COMPARE_NOT_ZERO:
     case EJS_OP_COMPARE_NULL:
-        return (EjsObj*) ejs->trueValue;
+        return (EjsObj*) S(true);
 
     case EJS_OP_COMPARE_FALSE:
     case EJS_OP_COMPARE_TRUE:
     case EJS_OP_COMPARE_ZERO:
-        return (EjsObj*) ejs->falseValue;
+        return (EjsObj*) S(false);
 
     default:
         ejsThrowTypeError(ejs, "Opcode %d not valid for type %@", opcode, TYPE(lhs)->qname.name);
-        return ejs->undefinedValue;
+        return S(undefined);
     }
     return 0;
 }
@@ -123,27 +123,27 @@ static EjsObj *invokeVoidOperator(Ejs *ejs, EjsVoid *lhs, int opcode, EjsVoid *r
     case EJS_OP_COMPARE_UNDEFINED:
     case EJS_OP_COMPARE_NOT_ZERO:
     case EJS_OP_COMPARE_NULL:
-        return (EjsObj*) ejs->trueValue;
+        return (EjsObj*) S(true);
 
     case EJS_OP_COMPARE_NE: case EJS_OP_COMPARE_STRICTLY_NE:
     case EJS_OP_COMPARE_LT: case EJS_OP_COMPARE_GT:
     case EJS_OP_COMPARE_FALSE:
     case EJS_OP_COMPARE_TRUE:
     case EJS_OP_COMPARE_ZERO:
-        return (EjsObj*) ejs->falseValue;
+        return (EjsObj*) S(false);
 
     /*
      *  Unary operators
      */
     case EJS_OP_LOGICAL_NOT: case EJS_OP_NOT: case EJS_OP_NEG:
-        return (EjsObj*) ejs->nanValue;
+        return (EjsObj*) S(nan);
 
     /*
      *  Binary operators
      */
     case EJS_OP_ADD: case EJS_OP_AND: case EJS_OP_DIV: case EJS_OP_MUL: case EJS_OP_OR: case EJS_OP_REM:
     case EJS_OP_SHL: case EJS_OP_SHR: case EJS_OP_SUB: case EJS_OP_USHR: case EJS_OP_XOR:
-        return (EjsObj*) ejs->nanValue;
+        return (EjsObj*) S(nan);
 
     default:
         ejsThrowTypeError(ejs, "Opcode %d not implemented for type %@", opcode, TYPE(lhs)->qname.name);
@@ -175,7 +175,7 @@ static EjsObj *getVoidProperty(Ejs *ejs, EjsVoid *unused, int slotNum)
  */
 EjsVoid *ejsCreateUndefined(Ejs *ejs)
 {
-    return (EjsVoid*) ejs->undefinedValue;
+    return (EjsVoid*) S(undefined);
 }
 
 
@@ -184,15 +184,14 @@ void ejsCreateVoidType(Ejs *ejs)
     EjsType     *type;
 
     //  MOB -- should not be a Void type. Should be "NULL" == void
-    type = ejsCreateNativeType(ejs, N("ejs", "Void"), ES_Void, sizeof(EjsVoid), NULL, EJS_OBJ_HELPERS);
-    ejs->voidType = type;
+    type = ejsCreateNativeType(ejs, N("ejs", "Void"), S_Void, sizeof(EjsVoid), NULL, EJS_OBJ_HELPERS);
 
     type->helpers.cast             = (EjsCastHelper) castVoid;
     type->helpers.invokeOperator   = (EjsInvokeOperatorHelper) invokeVoidOperator;
     type->helpers.getProperty      = (EjsGetPropertyHelper) getVoidProperty;
 
-    ejs->undefinedValue = ejsCreateObj(ejs, type, 0);
-    mprSetName(ejs->undefinedValue, "undefined");
+    ejsSetSpecial(ejs, S_undefined, ejsCreateObj(ejs, type, 0));
+    mprSetName(S(undefined), "undefined");
 }
 
 
@@ -201,11 +200,11 @@ void ejsConfigureVoidType(Ejs *ejs)
     EjsType     *type;
     EjsPot      *prototype;
 
-    type = ejs->voidType;
+    type = ST(Void);
     prototype = type->prototype;
 
     ejsSetProperty(ejs, ejs->global, ES_void, type);
-    ejsSetProperty(ejs, ejs->global, ES_undefined, ejs->undefinedValue);
+    ejsSetProperty(ejs, ejs->global, ES_undefined, S(undefined));
     ejsBindMethod(ejs, prototype, ES_Void_iterator_get, getVoidIterator);
     ejsBindMethod(ejs, prototype, ES_Void_iterator_getValues, getVoidIterator);
 }

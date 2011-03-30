@@ -16,10 +16,9 @@ void ejsCreateConfigType(Ejs *ejs)
     char        version[16];
 
     //  MOB -- Config should just be converted back to a non-native type
-    type = ejsCreateNativeType(ejs, N("ejs", "Config"), ES_Config, sizeof(EjsObj), ejsManagePot, EJS_POT_HELPERS);
-    ejs->configType = type;
+    type = ejsCreateNativeType(ejs, N("ejs", "Config"), -1, sizeof(EjsObj), ejsManagePot, EJS_POT_HELPERS);
 
-    ejsSetProperty(ejs, type, ES_Config_Debug, BLD_DEBUG ? ejs->trueValue: ejs->falseValue);
+    ejsSetProperty(ejs, type, ES_Config_Debug, BLD_DEBUG ? S(true): S(false));
     ejsSetProperty(ejs, type, ES_Config_CPU, ejsCreateStringFromAsc(ejs, BLD_HOST_CPU));
     ejsSetProperty(ejs, type, ES_Config_OS, ejsCreateStringFromAsc(ejs, BLD_OS));
     ejsSetProperty(ejs, type, ES_Config_Product, ejsCreateStringFromAsc(ejs, BLD_PRODUCT));

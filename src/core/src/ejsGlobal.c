@@ -22,7 +22,7 @@ static EjsObj *g_assert(Ejs *ejs, EjsObj *vp, int argc, EjsObj **argv)
     mprAssert(argc == 1);
 
     if (! ejsIsBoolean(ejs, argv[0])) {
-        b = (EjsBoolean*) ejsCast(ejs, argv[0], ejs->booleanType);
+        b = (EjsBoolean*) ejsCast(ejs, argv[0], ST(Boolean));
     } else {
         b = (EjsBoolean*) argv[0];
     }
@@ -50,7 +50,7 @@ static EjsObj *g_blend(Ejs *ejs, EjsObj *unused, int argc, EjsObj **argv)
     EjsObj      *src, *dest;
     int         overwrite;
 
-    overwrite = (argc == 3) ? (argv[2] == (EjsObj*) ejs->trueValue) : 1;
+    overwrite = (argc == 3) ? (argv[2] == (EjsObj*) S(true)) : 1;
     dest = argv[0];
     src = argv[1];
     ejsBlendObject(ejs, dest, src, overwrite);
@@ -118,7 +118,7 @@ static EjsObj *g_eval(Ejs *ejs, EjsObj *unused, int argc, EjsObj **argv)
     cchar       *cache;
 
     script = (EjsString*) argv[0];
-    if (argc < 2 || argv[1] == ejs->nullValue) {
+    if (argc < 2 || ejsIsNull(ejs, argv[1])) {
         cache = NULL;
     } else {
         cache = ejsToMulti(ejs, argv[1]);
@@ -174,7 +174,7 @@ static EjsObj *input(Ejs *ejs, EjsObj *unused, int argc, EjsObj **argv)
         mprPutCharToBuf(buf, c);
     }
     if (c == EOF && mprGetBufLength(buf) == 0) {
-        return (EjsObj*) ejs->nullValue;
+        return (EjsObj*) S(null);
     }
     mprAddNullToBuf(buf);
     return (EjsObj*) ejsCreateStringFromAsc(ejs, mprGetBufStart(buf));
@@ -279,7 +279,7 @@ static EjsObj *g_parse(Ejs *ejs, EjsObj *unused, int argc, EjsObj **argv)
         ejsThrowArgError(ejs, "PreferredType argument is not a type");
         return 0;
     }
-    preferred = (argc == 2) ? ((EjsType*) argv[1])->id : -1;
+    preferred = (argc == 2) ? ((EjsType*) argv[1])->sid : -1;
     return ejsParse(ejs, input->value, preferred);
 }
 
@@ -307,11 +307,11 @@ static EjsObj *g_parseInt(Ejs *ejs, EjsObj *unused, int argc, EjsObj **argv)
     if (*str == '-' || *str == '+' || isdigit((int) *str)) {
         n = (MprNumber) stoi(str, radix, &err);
         if (err) {
-            return (EjsObj*) ejs->nanValue;
+            return S(nan);
         }
         return (EjsObj*) ejsCreateNumber(ejs, n);
     }
-    return (EjsObj*) ejs->nanValue;
+    return S(nan);
 }
 
 
@@ -377,18 +377,15 @@ void ejsCreateGlobalBlock(Ejs *ejs)
     block->pot.shortScope = 1;
     SET_DYNAMIC(block, 1);
     mprSetName(block, "global");
-#if BLD_DEBUG
-    ejs->globalBlock = block;
-#endif
-    
+
     /*  
         Create the standard namespaces. Order matters here. This is the (reverse) order of lookup.
         Empty is first to maximize speed of searching dynamic properties. Ejs second to maximize builtin lookups.
      */
-    ejs->iteratorSpace  = ejsDefineReservedNamespace(ejs, block, NULL, EJS_ITERATOR_NAMESPACE);
-    ejs->publicSpace    = ejsDefineReservedNamespace(ejs, block, NULL, EJS_PUBLIC_NAMESPACE);
-    ejs->ejsSpace       = ejsDefineReservedNamespace(ejs, block, NULL, EJS_EJS_NAMESPACE);
-    ejs->emptySpace     = ejsDefineReservedNamespace(ejs, block, NULL, EJS_EMPTY_NAMESPACE);
+    ejsSetSpecial(ejs, S_iteratorSpace, ejsDefineReservedNamespace(ejs, block, NULL, EJS_ITERATOR_NAMESPACE));
+    ejsSetSpecial(ejs, S_publicSpace, ejsDefineReservedNamespace(ejs, block, NULL, EJS_PUBLIC_NAMESPACE));
+    ejsSetSpecial(ejs, S_ejsSpace, ejsDefineReservedNamespace(ejs, block, NULL, EJS_EJS_NAMESPACE));
+    ejsSetSpecial(ejs, S_emptySpace, ejsDefineReservedNamespace(ejs, block, NULL, EJS_EMPTY_NAMESPACE));
 }
 
 

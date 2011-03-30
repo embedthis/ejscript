@@ -34,7 +34,7 @@ static EjsArray *createArray(Ejs *ejs, EjsType *type, int numProp)
 {
     EjsArray     *ap;
 
-    ap = (EjsArray*) ejsCreatePot(ejs, ejs->arrayType, 0);
+    ap = (EjsArray*) ejsCreatePot(ejs, S(Array), 0);
     if (ap == 0) {
         return 0;
     }
@@ -54,20 +54,21 @@ static EjsArray *createArray(Ejs *ejs, EjsType *type, int numProp)
  */
 static EjsAny *castArray(Ejs *ejs, EjsArray *vp, EjsType *type)
 {
-    switch (type->id) {
-    case ES_Boolean:
-        return ejs->trueValue;
+    switch (type->sid) {
+    case S_Boolean:
+        return S(true);
 
-    case ES_Number:
-        return ejs->zeroValue;
+    case S_Number:
+        return S(zero);
 
-    case ES_String:
+    case S_String:
         return arrayToString(ejs, vp, 0, 0);
 
     default:
         ejsThrowTypeError(ejs, "Can't cast to this type");
         return 0;
     }
+    return 0;
 }
 
 
@@ -125,7 +126,7 @@ static int deleteArrayProperty(Ejs *ejs, EjsArray *ap, int slot)
         return EJS_ERR;
     }
 #else
-    if (ejsSetProperty(ejs, ap, slot, ejs->undefinedValue) < 0) {
+    if (ejsSetProperty(ejs, ap, slot, S(undefined)) < 0) {
         return EJS_ERR;
     }
 #endif
@@ -163,7 +164,7 @@ static int getArrayPropertyCount(Ejs *ejs, EjsArray *ap)
 static EjsObj *getArrayProperty(Ejs *ejs, EjsArray *ap, int slotNum)
 {
     if (slotNum < 0 || slotNum >= ap->length) {
-        return ejs->undefinedValue;
+        return S(undefined);
     }
     return ap->data[slotNum];
 }
@@ -182,7 +183,7 @@ static EjsObj *getArrayPropertyByName(Ejs *ejs, EjsArray *ap, EjsName qname)
     }
 
     /* The "length" property is a method getter */
-    if (qname.name == ejs->lengthString) {
+    if (qname.name == S(length)) {
         return 0;
     }
     slotNum = (ejs->potHelpers.lookupProperty)(ejs, ap, qname);
@@ -225,11 +226,11 @@ static EjsObj *coerceArrayOperands(Ejs *ejs, EjsObj *lhs, int opcode, EjsObj *rh
 
     case EJS_OP_AND: case EJS_OP_DIV: case EJS_OP_MUL: case EJS_OP_OR: case EJS_OP_REM:
     case EJS_OP_SHL: case EJS_OP_SHR: case EJS_OP_SUB: case EJS_OP_USHR: case EJS_OP_XOR:
-        return ejsInvokeOperator(ejs, ejs->zeroValue, opcode, rhs);
+        return ejsInvokeOperator(ejs, S(zero), opcode, rhs);
 
     case EJS_OP_COMPARE_EQ: case EJS_OP_COMPARE_NE:
         if (ejsIsNull(ejs, rhs) || ejsIsUndefined(ejs, rhs)) {
-            return ((opcode == EJS_OP_COMPARE_EQ) ? ejs->falseValue: ejs->trueValue);
+            return ((opcode == EJS_OP_COMPARE_EQ) ? S(false): S(true));
         } else if (ejsIsNumber(ejs, rhs)) {
             return ejsInvokeOperator(ejs, ejsToNumber(ejs, lhs), opcode, rhs);
         }
@@ -246,13 +247,13 @@ static EjsObj *coerceArrayOperands(Ejs *ejs, EjsObj *lhs, int opcode, EjsObj *rh
     case EJS_OP_COMPARE_UNDEFINED:
     case EJS_OP_COMPARE_NOT_ZERO:
     case EJS_OP_COMPARE_NULL:
-        return ejs->trueValue;
+        return S(true);
 
     case EJS_OP_COMPARE_STRICTLY_EQ:
     case EJS_OP_COMPARE_FALSE:
     case EJS_OP_COMPARE_TRUE:
     case EJS_OP_COMPARE_ZERO:
-        return ejs->falseValue;
+        return S(false);
 
     /*
         Unary operators
@@ -262,7 +263,7 @@ static EjsObj *coerceArrayOperands(Ejs *ejs, EjsObj *lhs, int opcode, EjsObj *rh
 
     default:
         ejsThrowTypeError(ejs, "Opcode %d not valid for type %@", opcode, TYPE(lhs)->qname.name);
-        return ejs->undefinedValue;
+        return S(undefined);
     }
     return 0;
 }
@@ -292,24 +293,24 @@ static EjsAny *invokeArrayOperator(Ejs *ejs, EjsObj *lhs, int opcode, EjsObj *rh
         Unary operators
      */
     case EJS_OP_COMPARE_NOT_ZERO:
-        return ejs->trueValue;
+        return S(true);
 
     case EJS_OP_COMPARE_UNDEFINED:
     case EJS_OP_COMPARE_NULL:
     case EJS_OP_COMPARE_FALSE:
     case EJS_OP_COMPARE_TRUE:
     case EJS_OP_COMPARE_ZERO:
-        return ejs->falseValue;
+        return S(false);
 
     case EJS_OP_LOGICAL_NOT: case EJS_OP_NOT: case EJS_OP_NEG:
-        return ejs->oneValue;
+        return S(one);
 
     /*
         Binary operators
      */
     case EJS_OP_DIV: case EJS_OP_MUL: case EJS_OP_REM:
     case EJS_OP_SHR: case EJS_OP_USHR: case EJS_OP_XOR:
-        return ejs->zeroValue;
+        return S(zero);
 
     /*
         Operator overload
@@ -360,7 +361,7 @@ static int setArrayPropertyByName(Ejs *ejs, EjsArray *ap, EjsName qname, EjsObj 
 
     if (!isdigit((int) qname.name->value[0])) { 
         /* The "length" property is a method getter */
-        if (qname.name == ejs->lengthString) {
+        if (qname.name == S(length)) {
             setArrayLength(ejs, ap, 1, &value);
             return ES_Array_length;
         }
@@ -611,7 +612,7 @@ static EjsArray *compactArray(Ejs *ejs, EjsArray *ap, int argc, EjsObj **argv)
     data = ap->data;
     src = dest = &data[0];
     for (i = 0; i < ap->length; i++, src++) {
-        if (*src == 0 || *src == ejs->undefinedValue || *src == ejs->nullValue) {
+        if (*src == 0 || ejsIsUndefined(ejs, *src) || ejsIsNull(ejs, *src)) {
             continue;
         }
         *dest++ = *src;
@@ -619,7 +620,7 @@ static EjsArray *compactArray(Ejs *ejs, EjsArray *ap, int argc, EjsObj **argv)
     oldLen = ap->length;
     ap->length = (int) (dest - &data[0]);
     for (i = ap->length; i < oldLen; i++) {
-        *dest++ = ejs->undefinedValue;
+        *dest++ = S(undefined);
     }
     return ap;
 }
@@ -698,7 +699,7 @@ static EjsNumber *nextArrayKey(Ejs *ejs, EjsIterator *ip, int argc, EjsObj **arg
     for (; ip->index < ap->length; ip->index++) {
         vp = data[ip->index];
         mprAssert(vp);
-        if (vp == ejs->undefinedValue) {
+        if (ejsIsUndefined(ejs, vp)) {
             continue;
         }
         return ejsCreateNumber(ejs, ip->index++);
@@ -738,7 +739,7 @@ static EjsObj *nextArrayValue(Ejs *ejs, EjsIterator *ip, int argc, EjsObj **argv
     for (; ip->index < ap->length; ip->index++) {
         vp = data[ip->index];
         mprAssert(vp);
-        if (vp == ejs->undefinedValue) {
+        if (ejsIsUndefined(ejs, vp)) {
             continue;
         }
         ip->index++;
@@ -843,7 +844,7 @@ static EjsNumber *indexOfArray(Ejs *ejs, EjsArray *ap, int argc, EjsObj **argv)
         start += ap->length;
     }
     if (start >= ap->length) {
-        return ejs->minusOneValue;
+        return S(minusOne);
     }
     if (start < 0) {
         start = 0;
@@ -853,7 +854,7 @@ static EjsNumber *indexOfArray(Ejs *ejs, EjsArray *ap, int argc, EjsObj **argv)
             return ejsCreateNumber(ejs, i);
         }
     }
-    return ejs->minusOneValue;
+    return S(minusOne);
 }
 
 
@@ -916,7 +917,7 @@ static EjsString *joinArray(Ejs *ejs, EjsArray *ap, int argc, EjsObj **argv)
     int             i;
 
     sep = (argc == 1) ? (EjsString*) argv[0] : NULL;
-    result = ejs->emptyString;
+    result = S(empty);
     for (i = 0; i < ap->length; i++) {
         vp = ap->data[i];
         if (vp == 0 || ejsIsUndefined(ejs, vp) || ejsIsNull(ejs, vp)) {
@@ -954,14 +955,14 @@ static EjsNumber *lastArrayIndexOf(Ejs *ejs, EjsArray *ap, int argc, EjsObj **ar
         start = ap->length - 1;
     }
     if (start < 0) {
-        return ejs->minusOneValue;
+        return S(minusOne);
     }
     for (i = start; i >= 0; i--) {
         if (compareArrayElement(ejs, ap->data[i], element)) {
             return ejsCreateNumber(ejs, i);
         }
     }
-    return ejs->minusOneValue;
+    return S(minusOne);
 }
 
 
@@ -1017,7 +1018,7 @@ static EjsObj *setArrayLength(Ejs *ejs, EjsArray *ap, int argc, EjsObj **argv)
 static EjsObj *popArray(Ejs *ejs, EjsArray *ap, int argc, EjsObj **argv)
 {
     if (ap->length == 0) {
-        return ejs->undefinedValue;
+        return S(undefined);
     }
     return ap->data[--ap->length];
 }
@@ -1090,7 +1091,7 @@ static EjsObj *shiftArray(Ejs *ejs, EjsArray *ap, int argc, EjsObj **argv)
     int         i;
 
     if (ap->length == 0) {
-        return ejs->undefinedValue;
+        return S(undefined);
     }
     data = ap->data;
     result = data[0];
@@ -1260,7 +1261,7 @@ static EjsArray *sortArray(Ejs *ejs, EjsArray *ap, int argc, EjsObj **argv)
         return ap;
     }
     compare = (EjsFunction*) ((argc >= 1) ? argv[0]: NULL);
-    if (compare == ejs->nullValue) {
+    if (compare == S(null)) {
         compare = 0;
     }
     if (compare && !ejsIsFunction(ejs, compare)) {
@@ -1395,7 +1396,7 @@ static EjsString *arrayToString(Ejs *ejs, EjsArray *ap, int argc, EjsObj **argv)
     EjsObj              *vp;
     int             i, rc;
 
-    result = ejs->emptyString;
+    result = S(empty);
     if (result == 0) {
         ejsThrowMemoryError(ejs);
         return 0;
@@ -1407,7 +1408,7 @@ static EjsString *arrayToString(Ejs *ejs, EjsArray *ap, int argc, EjsObj **argv)
         if (i > 0) {
             result = ejsCatString(ejs, result, comma);
         }
-        if (vp != 0 && vp != ejs->undefinedValue && vp != ejs->nullValue) {
+        if (vp != 0 && !ejsIsUndefined(ejs, vp) && !ejsIsNull(ejs, vp)) {
             result = ejsCatString(ejs, result, ejsToString(ejs, vp));
         }
         if (rc < 0) {
@@ -1529,7 +1530,7 @@ static int growArray(Ejs *ejs, EjsArray *ap, int len)
         }
         dp = &ap->data[ap->length];
         for (i = ap->length; i < count; i++) {
-            *dp++ = ejs->undefinedValue;
+            *dp++ = S(undefined);
         }
     } else {
         mprNop(ITOP(size));
@@ -1715,7 +1716,7 @@ EjsArray *ejsCreateArray(Ejs *ejs, int size)
     /*
         No need to invoke constructor
      */
-    ap = (EjsArray*) ejsCreatePot(ejs, ejs->arrayType, 0);
+    ap = (EjsArray*) ejsCreatePot(ejs, S(Array), 0);
     if (ap != 0) {
         ap->length = 0;
         if (size > 0 && growArray(ejs, ap, size) < 0) {
@@ -1753,12 +1754,9 @@ void ejsCreateArrayType(Ejs *ejs)
     EjsType         *type;
     EjsHelpers      *helpers;
 
-    type = ejsCreateNativeType(ejs, N("ejs", "Array"), ES_Array, sizeof(EjsArray), manageArray, EJS_POT_HELPERS);
-    ejs->arrayType = type;
+    type = ejsCreateNativeType(ejs, N("ejs", "Array"), S_Array, sizeof(EjsArray), manageArray, EJS_POT_HELPERS);
     type->numericIndicies = 1;
     type->virtualSlots = 1;
-
-    ejs->lengthString = ejsCreateStringFromAsc(ejs, "length");
 
     helpers = &type->helpers;
     helpers->cast = (EjsCastHelper) castArray;
@@ -1773,6 +1771,8 @@ void ejsCreateArrayType(Ejs *ejs)
     helpers->lookupProperty = (EjsLookupPropertyHelper) lookupArrayProperty;
     helpers->setProperty = (EjsSetPropertyHelper) setArrayProperty;
     helpers->setPropertyByName = (EjsSetPropertyByNameHelper) setArrayPropertyByName;
+
+    ejsSetSpecial(ejs, S_length, ejsCreateStringFromAsc(ejs, "length"));
 }
 
 
@@ -1781,7 +1781,7 @@ void ejsConfigureArrayType(Ejs *ejs)
     EjsType     *type;
     EjsPot      *prototype;
 
-    type = ejs->arrayType;
+    type = ST(Array);
     prototype = type->prototype;
 
     /*

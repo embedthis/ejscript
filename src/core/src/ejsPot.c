@@ -25,7 +25,7 @@ static void removeHashEntry(Ejs *ejs, EjsPot *obj, EjsName qname);
 
 EjsAny *ejsCreateEmptyPot(Ejs *ejs)
 {
-    return ejsCreatePot(ejs, ejs->objectType, 0);
+    return ejsCreatePot(ejs, ST(Object), 0);
 }
 
 
@@ -65,7 +65,7 @@ EjsAny *ejsClonePot(Ejs *ejs, EjsAny *vp, bool deep)
     if (dest->numProp > EJS_HASH_MIN_PROP) {
         ejsMakeHash(ejs, dest);
     }
-    ejsCopyName(dest, src);
+    mprCopyName(dest, src);
     return dest;
 }
 
@@ -86,7 +86,7 @@ static EjsObj *prepareAccessors(Ejs *ejs, EjsObj *obj, int slotNum, int64 *attri
             }
         } else {
             /* No existing getter, must define a dummy getter - will not be called */
-            fun = (EjsFunction*) ejsCloneFunction(ejs, ejs->nopFunction, 0);
+            fun = (EjsFunction*) ejsCloneFunction(ejs, S(nop), 0);
             fun->setter = (EjsFunction*) value;
         }
         value = (EjsObj*) fun;
@@ -137,7 +137,7 @@ static int definePotProperty(Ejs *ejs, EjsObj *obj, int slotNum, EjsName qname, 
         value = prepareAccessors(ejs, obj, slotNum, &attributes, value);
     }
     if (value) {
-        if (ejsSetProperty(ejs, obj, slotNum, value ? value: ejs->nullValue) < 0) {
+        if (ejsSetProperty(ejs, obj, slotNum, value ? value: S(null)) < 0) {
             return EJS_ERR;
         }
     }
@@ -196,7 +196,7 @@ static int deletePotProperty(Ejs *ejs, EjsPot *obj, int slotNum)
         removeHashEntry(ejs, obj, qname);
     }
     sp = &obj->properties->slots[slotNum];
-    sp->value.ref = ejs->undefinedValue;
+    sp->value.ref = S(undefined);
     sp->trait.type = 0;
     sp->trait.attributes = EJS_TRAIT_DELETED | EJS_TRAIT_HIDDEN;
     return 0;
@@ -362,9 +362,9 @@ int ejsGetSlot(Ejs *ejs, EjsPot *obj, int slotNum)
         //  MOB - should this be here or only in the VM. probably only in the VM.
         //  MOB -- or move this routine to the VM
         if (!DYNAMIC(obj)) {
-            if (obj == ejs->nullValue) {
+            if (ejsIsNull(ejs, obj)) {
                 ejsThrowReferenceError(ejs, "Object is null");
-            } else if (obj == ejs->undefinedValue) {
+            } else if (ejsIsUndefined(ejs, obj)) {
                 ejsThrowReferenceError(ejs, "Object is undefined");
             } else {
                 ejsThrowReferenceError(ejs, "Object is not extendable");
@@ -551,7 +551,7 @@ int ejsInsertPotProperties(Ejs *ejs, EjsPot *obj, int incr, int offset)
 static int growSlots(Ejs *ejs, EjsPot *obj, int slotCount)
 {
     EjsProperties   *props;
-    ssize          size;
+    ssize           size;
     int             factor, oldSize;
 
     mprAssert(obj);
@@ -562,12 +562,11 @@ static int growSlots(Ejs *ejs, EjsPot *obj, int slotCount)
     props = obj->properties;
     oldSize = props ? props->size : 0;
     
-    if (obj == ejs->global) {
+    if (obj == (EjsPot*) ejs->global) {
         if (slotCount > 500) { //MOB
             mprGetAppDir();
         }
     }
-
     if (slotCount > oldSize) {
         if (slotCount > EJS_LOTSA_PROP) {
             factor = max(oldSize / 4, EJS_ROUND_PROP);
@@ -650,11 +649,11 @@ void ejsZeroSlots(Ejs *ejs, EjsSlot *slots, int count)
     if (slots) {
         //  TODO OPT. If hashChans were biased by +1 and NULL was allowed for names, then a simple zero would suffice.
         for (sp = &slots[count - 1]; sp >= slots; sp--) {
-            sp->value.ref = ejs->nullValue;
+            sp->value.ref = S(null);
             sp->hashChain = -1;
             //  MOB -- why set names to this. Better to set to null?
-            sp->qname.name = ejs->emptyString;
-            sp->qname.space = ejs->emptyString;
+            sp->qname.name = S(empty);
+            sp->qname.space = S(empty);
             sp->trait.type = 0;
             sp->trait.attributes = 0;
         }
@@ -957,8 +956,8 @@ static void removeHashEntry(Ejs *ejs, EjsPot *obj, EjsName qname)
             sp = &obj->properties->slots[slotNum];
             if (CMP_QNAME(&sp->qname, &qname)) {
                 //  MOB -- would null be better
-                sp->qname.name = ejs->emptyString;
-                sp->qname.space = ejs->emptyString;
+                sp->qname.name = S(empty);
+                sp->qname.space = S(empty);
                 sp->hashChain = -1;
                 return;
             }
@@ -980,8 +979,8 @@ static void removeHashEntry(Ejs *ejs, EjsPot *obj, EjsName qname)
                 buckets[index] = obj->properties->slots[slotNum].hashChain;
             }
             //  MOB -- null would be better
-            sp->qname.name = ejs->emptyString;
-            sp->qname.space = ejs->emptyString;
+            sp->qname.name = S(empty);
+            sp->qname.space = S(empty);
             sp->hashChain = -1;
             return;
         }
@@ -1001,7 +1000,7 @@ int ejsCompactPot(Ejs *ejs, EjsPot *obj)
 
     src = dest = slots = obj->properties->slots;
     for (removed = i = 0; i < obj->numProp; i++, src++) {
-        if (src->value.ref == 0 || src->value.ref == ejs->undefinedValue || src->value.ref == ejs->nullValue) {
+        if (src->value.ref == 0 || ejsIsUndefined(ejs, src->value.ref) || ejsIsNull(ejs, src->value.ref)) {
             removed++;
             continue;
         }

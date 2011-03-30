@@ -65,15 +65,15 @@ static EjsObj *app_chdir(Ejs *ejs, EjsObj *unused, int argc, EjsObj **argv)
     Get an environment var
     function getenv(key: String): String
  */
-static EjsObj *app_getenv(Ejs *ejs, EjsObj *app, int argc, EjsObj **argv)
+static EjsAny *app_getenv(Ejs *ejs, EjsObj *app, int argc, EjsObj **argv)
 {
     cchar   *value;
 
     value = getenv(ejsToMulti(ejs, argv[0]));
     if (value == 0) {
-        return (EjsObj*) ejs->nullValue;
+        return S(null);
     }
-    return (EjsObj*) ejsCreateStringFromAsc(ejs, value);
+    return ejsCreateStringFromAsc(ejs, value);
 }
 
 
@@ -135,7 +135,7 @@ static EjsObj *app_exit(Ejs *ejs, EjsObj *unused, int argc, EjsObj **argv)
         return 0;
     }
     status = argc >= 1 ? ejsGetInt(ejs, argv[0]) : 0;
-    how = ejsToMulti(ejs, argc >= 2 ? ejsToString(ejs, argv[1]): ejs->emptyString);
+    how = ejsToMulti(ejs, argc >= 2 ? ejsToString(ejs, argv[1]): S(empty));
 
     if (scmp(how, "default") == 0) {
         mode = MPR_EXIT_DEFAULT;
@@ -261,9 +261,11 @@ void ejsConfigureAppType(Ejs *ejs)
 {
     EjsType     *type;
 
-    type = ejs->appType = ejsGetTypeByName(ejs, N("ejs", "App"));
+    type = ejsGetTypeByName(ejs, N("ejs", "App"));
     mprAssert(type);
-
+#if UNUSED
+    ejsSetSpecialType(ejs, S_App, type);
+#endif
     ejsSetProperty(ejs, type, ES_App__inputStream, ejsCreateFileFromFd(ejs, 0, "stdin", O_RDONLY));
     ejsSetProperty(ejs, type, ES_App__outputStream, ejsCreateFileFromFd(ejs, 1, "stdout", O_WRONLY));
     ejsSetProperty(ejs, type, ES_App__errorStream, ejsCreateFileFromFd(ejs, 2, "stderr", O_WRONLY));

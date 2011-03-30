@@ -43,7 +43,7 @@ static EjsFrame *allocFrame(Ejs *ejs, int numProp)
         return 0;
     }
     mprSetManager(obj, manageFrame);
-    SET_TYPE(obj, ejs->frameType);
+    SET_TYPE(obj, ST(Frame));
     return (EjsFrame*) obj;
 }
 
@@ -55,7 +55,7 @@ EjsFrame *ejsCreateCompilerFrame(Ejs *ejs, EjsFunction *fun)
 {
     EjsFrame    *fp;
 
-    fp = ejsCreateObj(ejs, ejs->frameType, 0);
+    fp = ejsCreateObj(ejs, ST(Frame), 0);
     if (fp == 0) {
         return 0;
     }
@@ -140,7 +140,7 @@ EjsFrame *ejsCreateFrame(Ejs *ejs, EjsFunction *fun, EjsObj *thisObj, int argc, 
             frame->function.block.pot.properties->slots[i].value.ref = argv[i];
         }
     }
-    ejsCopyName(frame, fun);
+    mprCopyName(frame, fun);
     return frame;
 }
 
@@ -149,8 +149,7 @@ void ejsCreateFrameType(Ejs *ejs)
 {
     EjsType     *type;
 
-    type = ejs->frameType = ejsCreateNativeType(ejs, N("ejs", "Frame"), ES_Frame, sizeof(EjsFrame), manageFrame, 
-        EJS_POT_HELPERS);
+    type = ejsCreateNativeType(ejs, N("ejs", "Frame"), S_Frame, sizeof(EjsFrame), manageFrame, EJS_POT_HELPERS);
     type->constructor.block.pot.shortScope = 1;
 }
 

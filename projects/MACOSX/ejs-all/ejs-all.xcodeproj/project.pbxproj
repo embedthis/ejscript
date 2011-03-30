@@ -1853,7 +1853,7 @@
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 			shellPath = /bin/sh;
-			shellScript = "export BIN_DIR=$BUILT_PRODUCTS_DIR\nexport DYLD_LIBRARY_PATH=$BUILT_PRODUCTS_DIR\necho make -C $SRC/core TRACE=1 xmodules\nmake -C $SRC/core TRACE=1 xmodules && cp $OUT/modules/*.mod $BUILT_PRODUCTS_DIR || exit 255\necho make -C $SRC/jems TRACE=1 xmodules\nmake -C $SRC/jems TRACE=1 xmodules && cp $OUT/modules/*.mod $BUILT_PRODUCTS_DIR || exit 255\necho make -C $SRC/jems/ejs.mvc TRACE=1 compile\nmake -C $SRC/jems/ejs.mvc TRACE=1 compile && cp $OUT/bin/mvc $BUILT_PRODUCTS_DIR || exit 255\n";
+			shellScript = "export BIN_DIR=$BUILT_PRODUCTS_DIR\nexport DYLD_LIBRARY_PATH=$BUILT_PRODUCTS_DIR\necho make -C $SRC/core TRACE=1 xmodules\nmake -C $SRC/core TRACE=1 xmodules && cp $OUT/modules/*.mod $BUILT_PRODUCTS_DIR || exit 255\necho make -C $SRC/jems TRACE=1 xmodules\necho MOB make -C $SRC/jems TRACE=1 xmodules && cp $OUT/modules/*.mod $BUILT_PRODUCTS_DIR || exit 255\necho make -C $SRC/jems/ejs.mvc TRACE=1 compile\necho MOB make -C $SRC/jems/ejs.mvc TRACE=1 compile && cp $OUT/bin/mvc $BUILT_PRODUCTS_DIR || exit 255\n";
 			showEnvVarsInLog = 0;
 		};
 		C97A5EC511E81E9B00BB0981 /* ShellScript */ = {

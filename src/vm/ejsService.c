@@ -38,6 +38,9 @@ static EjsService *createService()
     sp->nativeModules = mprCreateHash(-1, MPR_HASH_STATIC_KEYS);
     sp->mutex = mprCreateLock();
     sp->vmlist = mprCreateList(-1, MPR_LIST_STATIC_VALUES);
+#if XXX || 1
+    sp->intern = ejsCreateIntern(sp);
+#endif
     ejsInitCompiler(sp);
     return sp;
 }
@@ -50,8 +53,13 @@ static void manageEjsService(EjsService *sp, int flags)
         mprMark(sp->mutex);
         mprMark(sp->vmlist);
         mprMark(sp->nativeModules);
-
+#if XXX || 1
+        mprMark(sp->intern);
+#endif
     } else if (flags & MPR_MANAGE_FREE) {
+#if XXX || 1
+        ejsDestroyIntern(sp->intern);
+#endif
         sp->mutex = NULL;
     }
 }
@@ -81,7 +89,9 @@ Ejs *ejsCreate(MprDispatcher *dispatcher, cchar *searchPath, MprList *require, i
     if ((ejs->state = mprAllocZeroed(sizeof(EjsState))) == 0) {
         return 0;
     }
+#if XXX
     ejs->intern = ejsCreateIntern(ejs);
+#endif
     ejs->empty = require && mprGetListLength(require) == 0;
     ejs->mutex = mprCreateLock(ejs);
     ejs->argc = argc;
@@ -161,7 +171,9 @@ void ejsDestroy(Ejs *ejs)
         }
         mprRemoveItem(sp->vmlist, ejs);
         ejs->service = 0;
+#if XXX
         ejsDestroyIntern(ejs->intern);
+#endif
         ejs->result = 0;
         mprDestroyDispatcher(ejs->dispatcher);
     }
@@ -182,7 +194,9 @@ static void manageEjs(Ejs *ejs, int flags)
         mprMark(ejs->global);
         mprMark(ejs->name);
         mprMark(ejs->applications);
+#if UNUSED
         mprMark(ejs->coreTypes);
+#endif
         mprMark(ejs->doc);
         mprMark(ejs->errorMsg);
         mprMark(ejs->exception);
@@ -193,7 +207,9 @@ static void manageEjs(Ejs *ejs, int flags)
         mprMark(ejs->dispatcher);
         mprMark(ejs->workers);
         mprMark(ejs->modules);
+#if XXX
         mprMark(ejs->intern);
+#endif
 
         /*
             Mark active call stack
@@ -261,6 +277,7 @@ static void markValues(Ejs *ejs)
     for (i = 0; i < EJS_MAX_SPECIAL; i++) {
         mprMark(ejs->values[i]);
     }
+#if UNUSED
     mprMark(ejs->commaProtString);
     mprMark(ejs->ejsSpace);
     mprMark(ejs->emptySpace);
@@ -288,6 +305,7 @@ static void markValues(Ejs *ejs)
     mprAssert(ejs->undefinedValue == 0 || (MPR_GET_GEN(MPR_GET_MEM(ejs->undefinedValue)) != MPR->heap.dead));
     mprMark(ejs->zeroValue);
     mprMark(ejs->nopFunction);
+#endif
 }
 
 
@@ -306,8 +324,24 @@ void ejsClonePotHelpers(Ejs *ejs, EjsType *type)
 
 void ejsCloneBlockHelpers(Ejs *ejs, EjsType *type)
 {
-    type->helpers = ejs->blockType->helpers;
+    type->helpers = ST(Block)->helpers;
     type->isPot = 1;
+}
+
+
+static void cloneTypes(Ejs *ejs)
+{
+    Ejs         *master;
+
+    if ((master = ejs->service->master) != 0 && master != ejs) {
+        ejs->values[S_Iterator] = master->values[S_Iterator];
+        ejs->values[S_StopIteration] = master->values[S_StopIteration];
+#if MOB
+        ejs->values[S_String] = master->values[S_String];
+        ejs->values[S_Type] = master->values[S_Type];
+        ejs->values[S_Object] = master->values[S_Object];
+#endif
+    }
 }
 
 
@@ -321,6 +355,7 @@ static int defineTypes(Ejs *ejs)
         Create the essential bootstrap types: Object, Type and the global object, these are the foundation.
         All types are instances of Type. Order matters here.
      */
+    cloneTypes(ejs);
     ejsBootstrapTypes(ejs);
     ejsCreateArrayType(ejs);
     ejsCreateBlockType(ejs);
@@ -709,7 +744,7 @@ int ejsSendEventv(Ejs *ejs, EjsObj *emitter, cchar *name, EjsAny *thisObj, int a
         argv = args;
         av = mprAlloc((argc + 2) * sizeof(EjsObj*));
         av[0] = (EjsObj*) ejsCreateStringFromAsc(ejs, name);
-        av[1] = thisObj ? thisObj : ejs->nullValue;
+        av[1] = thisObj ? thisObj : S(null);
         for (i = 0; i < argc; i++) {
             av[i + 2] = argv[i];
         }
@@ -1000,18 +1035,31 @@ void ejsLoadHttpService(Ejs *ejs)
 }
 
 
-void ejsSetSpecial(Ejs *ejs, int index, EjsAny *value)
+void ejsSetSpecial(Ejs *ejs, int sid, EjsAny *value)
 {
-    mprAssert(index < EJS_MAX_SPECIAL);
-    ejs->values[index] = value;
+    mprAssert(sid < EJS_MAX_SPECIAL);
+    
+    if (0 <= sid && sid < EJS_MAX_SPECIAL) {
+        mprAssert(ejs->values[sid] == 0);
+        ejs->values[sid] = value;
+    }
 }
 
 
-EjsAny *ejsGetSpecial(Ejs *ejs, int index)
+EjsAny *ejsGetSpecial(Ejs *ejs, int sid)
 {
-    mprAssert(index < EJS_MAX_SPECIAL);
-    return ejs->values[index];
+    mprAssert(0 <= sid && sid < EJS_MAX_SPECIAL);
+    return ejs->values[sid];
 }
+
+
+void ejsSetSpecialType(Ejs *ejs, int sid, EjsType *type)
+{
+    mprAssert(0 <= sid && sid < EJS_MAX_SPECIAL);
+    type->sid = sid;
+    ejs->values[sid] = type;
+}
+
 
 void ejsDisableExit(Ejs *ejs)
 {

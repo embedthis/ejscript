@@ -54,25 +54,25 @@ static EjsObj *castXml(Ejs *ejs, EjsXML *xml, EjsType *type)
 
     mprAssert(ejsIsXML(ejs, xml));
 
-    if (type == ejs->xmlListType) {
+    if (type == ST(XMLList)) {
         return (EjsObj*) xml;
     }
 
-    switch (type->id) {
-    case ES_Object:
+    switch (type->sid) {
+    case S_Object:
 
-    case ES_Boolean:
+    case S_Boolean:
         return (EjsObj*) ejsCreateBoolean(ejs, 1);
 
-    case ES_Number:
-        result = castXml(ejs, xml, ejs->stringType);
+    case S_Number:
+        result = castXml(ejs, xml, ST(String));
         result = (EjsObj*) ejsToNumber(ejs, result);
         return result;
 
-    case ES_String:
+    case S_String:
         if (xml->kind == EJS_XML_ELEMENT) {
             if (xml->elements == 0) {
-                return (EjsObj*) ejs->emptyString;
+                return (EjsObj*) S(empty);
             }
             if (xml->elements && mprGetListLength(xml->elements) == 1) {
                 //  TODO - what about PI and comments?
@@ -321,13 +321,13 @@ static int setXmlPropertyAttributeByName(Ejs *ejs, EjsXML *xml, EjsName qname, E
     if (ejsIsXML(ejs, xvalue) && xvalue->kind == EJS_XML_LIST) {
         str = 0;
         for (next = 0; (elt = mprGetNextItem(xvalue->elements, &next)) != 0; ) {
-            sv = (EjsString*) ejsCast(ejs, (EjsObj*) elt, ejs->stringType);
+            sv = (EjsString*) ejsCast(ejs, (EjsObj*) elt, ST(String));
             str = mrejoin(str, NULL, " ", sv->value, NULL);
         }
         value = (EjsObj*) ejsCreateString(ejs, str, -1);
 
     } else {
-        value = ejsCast(ejs, value, ejs->stringType);
+        value = ejsCast(ejs, value, ST(String));
     }
     mprAssert(ejsIsString(ejs, value));
 
@@ -388,7 +388,7 @@ static EjsXML *createValueNode(Ejs *ejs, EjsXML *elt, EjsObj *value)
     if (ejsIsXML(ejs, value)) {
         return (EjsXML*) value;
     }
-    if ((str = (EjsString*) ejsCast(ejs, value, ejs->stringType)) == NULL) {
+    if ((str = (EjsString*) ejsCast(ejs, value, ST(String))) == NULL) {
         return 0;
     }
     if (mprGetListLength(elt->elements) == 1) {
@@ -426,7 +426,7 @@ static int setXmlPropertyByName(Ejs *ejs, EjsXML *xml, EjsName qname, EjsObj *va
     last = 0;
     lastElt = 0;
 
-    mprLog(9, "XMLSet %@.%@ = \"%@\"", xml->qname.name, qname.name, ejsCast(ejs, value, ejs->stringType));
+    mprLog(9, "XMLSet %@.%@ = \"%@\"", xml->qname.name, qname.name, ejsCast(ejs, value, ST(String)));
 
     if (isdigit((int) qname.name->value[0]) && allDigitsForXml(qname.name)) {
         ejsThrowTypeError(ejs, "Integer indicies for set are not allowed");
@@ -449,13 +449,13 @@ static int setXmlPropertyByName(Ejs *ejs, EjsXML *xml, EjsName qname, EjsObj *va
             value = (EjsObj*) ejsDeepCopyXML(ejs, xvalue);
 
         } else if (xvalue->kind == EJS_XML_TEXT || xvalue->kind == EJS_XML_ATTRIBUTE) {
-            value = ejsCast(ejs, originalValue, ejs->stringType);
+            value = ejsCast(ejs, originalValue, ST(String));
 
         } else {
             value = (EjsObj*) ejsDeepCopyXML(ejs, xvalue);
         }
     } else {
-        value = ejsCast(ejs, value, ejs->stringType);
+        value = ejsCast(ejs, value, ST(String));
     }
     if (qname.name->value[0] == '@') {
         return setXmlPropertyAttributeByName(ejs, xml, qname, value);
@@ -665,7 +665,7 @@ static EjsObj *xmlConstructor(Ejs *ejs, EjsXML *thisObj, int argc, EjsObj **argv
             Called as a function - cast the arg
          */
         if (argc > 0){
-            if ((arg = ejsCast(ejs, argv[0], ejs->stringType)) == 0) {
+            if ((arg = ejsCast(ejs, argv[0], ST(String))) == 0) {
                 return 0;
             }
         }
@@ -681,7 +681,7 @@ static EjsObj *xmlConstructor(Ejs *ejs, EjsXML *thisObj, int argc, EjsObj **argv
     if (ejsIsNull(ejs, arg) || ejsIsUndefined(ejs, arg)) {
         return (EjsObj*) thisObj;
     }
-    arg = ejsCast(ejs, argv[0], ejs->stringType);
+    arg = ejsCast(ejs, argv[0], ST(String));
     if (arg && ejsIsString(ejs, arg)) {
         str = ((EjsString*) arg)->value;
         if (str == 0) {
@@ -819,7 +819,7 @@ static EjsString *xmlToJson(Ejs *ejs, EjsObj *vp, int argc, EjsObj **argv)
  */
 static EjsObj *xmlToString(Ejs *ejs, EjsObj *obj, int argc, EjsObj **argv)
 {
-    return (TYPE(obj)->helpers.cast)(ejs, obj, ejs->stringType);
+    return (TYPE(obj)->helpers.cast)(ejs, obj, ST(String));
 }
 
 
@@ -854,14 +854,14 @@ static EjsObj *setLength(Ejs *ejs, EjsXML *xml, int argc, EjsObj **argv)
 
     if (length < ap->length) {
         for (i = length; i < ap->length; i++) {
-            if (ejsSetProperty(ejs, ap, i, ejs->undefinedValue) < 0) {
+            if (ejsSetProperty(ejs, ap, i, S(undefined)) < 0) {
                 //  TODO - DIAG
                 return 0;
             }
         }
 
     } else if (length > ap->length) {
-        if (ejsSetProperty(ejs, ap, length - 1, ejs->undefinedValue) < 0) {
+        if (ejsSetProperty(ejs, ap, length - 1, S(undefined)) < 0) {
             //  TODO - DIAG
             return 0;
         }
@@ -878,7 +878,7 @@ static EjsObj *setLength(Ejs *ejs, EjsXML *xml, int argc, EjsObj **argv)
  */
 static EjsObj *xml_parent(Ejs *ejs, EjsXML *xml, int argc, EjsObj **argv)
 {
-    return (xml->parent && xml != xml->parent) ? (EjsObj*) xml->parent : (EjsObj*) ejs->nullValue;
+    return (xml->parent && xml != xml->parent) ? (EjsObj*) xml->parent : (EjsObj*) S(null);
 }
 
 /********************************** Support **********************************/
@@ -1002,7 +1002,7 @@ EjsXML *ejsCreateXML(Ejs *ejs, int kind, EjsName qname, EjsXML *parent, EjsStrin
 {
     EjsXML      *xml;
 
-    if ((xml = (EjsXML*) ejsAlloc(ejs, ejs->xmlType, 0)) == NULL) {
+    if ((xml = (EjsXML*) ejsAlloc(ejs, ST(XML), 0)) == NULL) {
         return 0;
     }
     if (qname.name) {
@@ -1074,8 +1074,7 @@ void ejsCreateXMLType(Ejs *ejs)
 {
     EjsType     *type;
 
-    type = ejsCreateNativeType(ejs, N("ejs", "XML"), ES_XML, sizeof(EjsXML), ejsManageXML, EJS_OBJ_HELPERS);
-    ejs->xmlType = type;
+    type = ejsCreateNativeType(ejs, N("ejs", "XML"), S_XML, sizeof(EjsXML), ejsManageXML, EJS_OBJ_HELPERS);
 
     /*
         Must not bind as XML uses get/setPropertyByName to defer to user XML elements over XML methods
@@ -1098,7 +1097,7 @@ void ejsConfigureXMLType(Ejs *ejs)
     EjsType     *type;
     EjsPot      *prototype;
 
-    type = ejs->xmlType;
+    type = ST(XML);
     prototype = type->prototype;
 
     ejsBindConstructor(ejs, type, (EjsProc) xmlConstructor);

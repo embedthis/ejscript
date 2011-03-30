@@ -211,17 +211,17 @@ static EjsObj *startWorker(Ejs *ejs, EjsWorker *outsideWorker, int timeout)
         return 0;
     }
     if (timeout == 0) {
-        return ejs->undefinedValue;
+        return S(undefined);
     } 
     if (timeout < 0) {
         timeout = MAXINT;
     }
     if (join(ejs, (EjsObj*) outsideWorker, timeout) < 0) {
-        return ejs->undefinedValue;
+        return S(undefined);
     }
     result = (EjsObj*) ejsToJSON(inside, inside->result, NULL);
     if (result == 0) {
-        return ejs->nullValue;
+        return S(null);
     }
     return ejsDeserialize(ejs, (EjsString*) result);
 }
@@ -269,7 +269,7 @@ static int reapJoins(Ejs *ejs, EjsObj *workers)
     completed = 0;
     joined = 0;
 
-    if (workers == 0 || workers == ejs->nullValue) {
+    if (workers == 0 || ejsIsNull(ejs, workers)) {
         /* Join all */
         count = mprGetListLength(ejs->workers);
         for (i = 0; i < count; i++) {
@@ -293,7 +293,7 @@ static int reapJoins(Ejs *ejs, EjsObj *workers)
         if (completed == set->length) {
             joined = 1;
         }
-    } else if (TYPE(workers) == ejs->workerType) {
+    } else if (TYPE(workers) == ST(Worker)) {
         /* Join one worker */
         worker = (EjsWorker*) workers;
         if (worker->state >= EJS_WORKER_COMPLETE) {
@@ -355,7 +355,7 @@ static EjsObj *workerJoin(Ejs *ejs, EjsWorker *unused, int argc, EjsObj **argv)
     timeout = (argc == 2) ? ejsGetInt(ejs, argv[1]) : MAXINT;
     mprAssert(!MPR->marking);
 
-    return (join(ejs, workers, timeout) == 0) ? (EjsObj*) ejs->trueValue: (EjsObj*) ejs->falseValue;
+    return (join(ejs, workers, timeout) == 0) ? S(true): S(false);
 }
 
 
@@ -421,7 +421,7 @@ static EjsObj *workerLookup(Ejs *ejs, EjsObj *unused, int argc, EjsObj **argv)
         }
     }
     unlock(ejs);
-    return ejs->nullValue;
+    return S(null);
 }
 
 
@@ -447,12 +447,14 @@ static int doMessage(Message *msg, MprEvent *mprEvent)
 
     switch (msg->callbackSlot) {
     case ES_Worker_onerror:
-        event = ejsCreateObj(ejs, ejs->errorEventType, 0);
+        event = ejsCreateObj(ejs, ST(ErrorEvent), 0);
         break;
+            
     case ES_Worker_onclose:
     case ES_Worker_onmessage:
-        event = ejsCreateObj(ejs, ejs->eventType, 0);
+        event = ejsCreateObj(ejs, ST(Event), 0);
         break;
+            
     default:
         mprAssert(msg->callbackSlot == 0);
         return 0;
@@ -466,12 +468,12 @@ static int doMessage(Message *msg, MprEvent *mprEvent)
     }
     if (msg->stack) {
         ejsSetProperty(ejs, event, ES_ErrorEvent_stack, msg->stack);
-        if ((frame = ejsGetProperty(ejs, msg->stack, 0)) != 0 && frame != ejs->undefinedValue) {
+        if ((frame = ejsGetProperty(ejs, msg->stack, 0)) != 0 && !ejsIsUndefined(ejs, frame)) {
             ejsSetProperty(ejs, event, ES_ErrorEvent_filename, ejsGetPropertyByName(ejs, frame, EN("filename")));
             ejsSetProperty(ejs, event, ES_ErrorEvent_lineno, ejsGetPropertyByName(ejs, frame, EN("lineno")));
         }
     }
-    if (callback == 0 || callback == ejs->nullValue) {
+    if (callback == 0 || ejsIsNull(ejs, callback)) {
         if (msg->callbackSlot == ES_Worker_onmessage) {
             mprLog(6, "Discard message as no onmessage handler defined for worker");
             
@@ -533,7 +535,7 @@ static EjsObj *workerPreeval(Ejs *ejs, EjsWorker *worker, int argc, EjsObj **arg
     //  MOB - first arg was "ejs"
     result = (EjsObj*) ejsToJSON(inside, inside->result, NULL);
     if (result == 0) {
-        return ejs->nullValue;
+        return S(null);
     }
     return ejsDeserialize(ejs, (EjsString*) result);
 }
@@ -567,7 +569,7 @@ static EjsObj *workerPreload(Ejs *ejs, EjsWorker *worker, int argc, EjsObj **arg
     }
     result = (EjsObj*) ejsToJSON(inside, inside->result, NULL);
     if (result == 0) {
-        return ejs->nullValue;
+        return S(null);
     }
     return ejsDeserialize(ejs, (EjsString*) result);
 }
@@ -735,9 +737,9 @@ static EjsObj *workerWaitForMessage(Ejs *ejs, EjsWorker *worker, int argc, EjsOb
 
     if (worker->gotMessage) {
         worker->gotMessage = 0;
-        return (EjsObj*) ejs->trueValue;
+        return (EjsObj*) S(true);
     } else {
-        return (EjsObj*) ejs->trueValue;
+        return (EjsObj*) S(true);
     }
 }
 
@@ -797,7 +799,7 @@ static void handleError(Ejs *ejs, EjsWorker *worker, EjsObj *exception, int thro
 
 EjsWorker *ejsCreateWorker(Ejs *ejs)
 {
-    return ejsCreateObj(ejs, ejs->workerType, 0);
+    return ejsCreateObj(ejs, ST(Worker), 0);
 }
 
 
@@ -831,8 +833,8 @@ void ejsConfigureWorkerType(Ejs *ejs)
     EjsType     *type;
     EjsPot      *prototype;
 
-    type = ejs->workerType = ejsConfigureNativeType(ejs, N("ejs", "Worker"), sizeof(EjsWorker), (MprManager) manageWorker, 
-        EJS_POT_HELPERS);
+    type = ejsConfigureNativeType(ejs, N("ejs", "Worker"), sizeof(EjsWorker), manageWorker, EJS_POT_HELPERS);
+    ejsSetSpecialType(ejs, S_Worker, type);
     prototype = type->prototype;
 
     ejsBindConstructor(ejs, type, (EjsProc) workerConstructor);
@@ -848,8 +850,11 @@ void ejsConfigureWorkerType(Ejs *ejs)
     ejsBindMethod(ejs, prototype, ES_Worker_terminate, (EjsProc) workerTerminate);
     ejsBindMethod(ejs, prototype, ES_Worker_waitForMessage, (EjsProc) workerWaitForMessage);
 
-    ejs->eventType = ejsGetTypeByName(ejs, N("ejs", "Event"));
-    ejs->errorEventType = ejsGetTypeByName(ejs, N("ejs", "ErrorEvent"));
+    //  MOB - is this used?
+    ejsSetSpecial(ejs, S_Event, ejsGetTypeByName(ejs, N("ejs", "Event")));
+
+    //  MOB - is this used?
+    ejsSetSpecial(ejs, S_ErrorEvent, ejsGetTypeByName(ejs, N("ejs", "ErrorEvent")));
 }
 
 /*

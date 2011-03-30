@@ -14,7 +14,7 @@
  */
 static EjsObj *gc_enabled(Ejs *ejs, EjsObj *thisObj, int argc, EjsObj **argv)
 {
-    return (EjsObj*) ((mprGetMpr()->heap.enabled) ? ejs->trueValue: ejs->falseValue);
+    return (EjsObj*) ((mprGetMpr()->heap.enabled) ? S(true): S(false));
 }
 
 

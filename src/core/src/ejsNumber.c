@@ -18,15 +18,15 @@
  */
 static EjsObj *castNumber(Ejs *ejs, EjsNumber *vp, EjsType *type)
 {
-    switch (type->id) {
-    case ES_Boolean:
-        return (EjsObj*) ((vp->value) ? ejs->trueValue : ejs->falseValue);
+    switch (type->sid) {
+    case S_Boolean:
+        return (EjsObj*) ((vp->value) ? S(true) : S(false));
 
-    case ES_String:
+    case S_String:
         //  MOB OPT. mprDtoa does a sclone.
         return (EjsObj*) ejsCreateStringFromAsc(ejs, mprDtoa(vp->value, 0, 0, 0));
 
-    case ES_Number:
+    case S_Number:
         return (EjsObj*) vp;
             
     default:
@@ -49,13 +49,13 @@ static EjsObj *coerceNumberOperands(Ejs *ejs, EjsObj *lhs, int opcode, EjsObj *r
 {
     switch (opcode) {
     /*
-     *  Binary operators
+        Binary operators
      */
     case EJS_OP_ADD:
         if (ejsIsUndefined(ejs, rhs)) {
-            return (EjsObj*) ejs->nanValue;
+            return S(nan);;
         } else if (ejsIsNull(ejs, rhs)) {
-            return (EjsObj*) lhs;
+            return lhs;
         } else if (ejsIsBoolean(ejs, rhs) || ejsIsDate(ejs, rhs)) {
             return ejsInvokeOperator(ejs, lhs, opcode, (EjsObj*) ejsToNumber(ejs, rhs));
         } else {
@@ -71,7 +71,7 @@ static EjsObj *coerceNumberOperands(Ejs *ejs, EjsObj *lhs, int opcode, EjsObj *r
     case EJS_OP_COMPARE_LE: case EJS_OP_COMPARE_LT:
     case EJS_OP_COMPARE_GE: case EJS_OP_COMPARE_GT:
         if (ejsIsNull(ejs, rhs) || ejsIsUndefined(ejs, rhs)) {
-            return (EjsObj*) ((opcode == EJS_OP_COMPARE_EQ) ? ejs->falseValue: ejs->trueValue);
+            return (EjsObj*) ((opcode == EJS_OP_COMPARE_EQ) ? S(false): S(true));
         } else if (ejsIsNumber(ejs, rhs)) {
             return ejsInvokeOperator(ejs, (EjsObj*) ejsToNumber(ejs, lhs), opcode, rhs);
         } else if (ejsIsString(ejs, rhs)) {
@@ -80,10 +80,10 @@ static EjsObj *coerceNumberOperands(Ejs *ejs, EjsObj *lhs, int opcode, EjsObj *r
         return ejsInvokeOperator(ejs, lhs, opcode, (EjsObj*) ejsToNumber(ejs, rhs));
 
     case EJS_OP_COMPARE_STRICTLY_NE:
-        return (EjsObj*) ejs->trueValue;
+        return (EjsObj*) S(true);
 
     case EJS_OP_COMPARE_STRICTLY_EQ:
-        return (EjsObj*) ejs->falseValue;
+        return (EjsObj*) S(false);
 
     /*
      *  Unary operators
@@ -93,19 +93,19 @@ static EjsObj *coerceNumberOperands(Ejs *ejs, EjsObj *lhs, int opcode, EjsObj *r
 
     case EJS_OP_COMPARE_NOT_ZERO:
     case EJS_OP_COMPARE_TRUE:
-        return (EjsObj*) (((EjsNumber*) lhs)->value ? ejs->trueValue : ejs->falseValue);
+        return (EjsObj*) (((EjsNumber*) lhs)->value ? S(true) : S(false));
 
     case EJS_OP_COMPARE_ZERO:
     case EJS_OP_COMPARE_FALSE:
-        return (EjsObj*) (((EjsNumber*) lhs)->value ? ejs->falseValue: ejs->trueValue);
+        return (EjsObj*) (((EjsNumber*) lhs)->value ? S(false): S(true));
 
     case EJS_OP_COMPARE_UNDEFINED:
     case EJS_OP_COMPARE_NULL:
-        return (EjsObj*) ejs->falseValue;
+        return (EjsObj*) S(false);
 
     default:
         ejsThrowTypeError(ejs, "Opcode %d not valid for type %@", opcode, TYPE(lhs)->qname.name);
-        return ejs->undefinedValue;
+        return S(undefined);
     }
     return 0;
 }
@@ -118,7 +118,7 @@ static EjsObj *invokeNumberOperator(Ejs *ejs, EjsNumber *lhs, int opcode, EjsNum
     mprAssert(lhs);
     
     if (rhs == 0 || TYPE(lhs) != TYPE(rhs)) {
-        if (!ejsIsA(ejs, (EjsObj*) lhs, ejs->numberType) || !ejsIsA(ejs, (EjsObj*) rhs, ejs->numberType)) {
+        if (!ejsIs(lhs, Number) || !ejsIs(rhs, Number)) {
             if ((result = coerceNumberOperands(ejs, (EjsObj*) lhs, opcode, (EjsObj*) rhs)) != 0) {
                 return result;
             }
@@ -131,37 +131,37 @@ static EjsObj *invokeNumberOperator(Ejs *ejs, EjsNumber *lhs, int opcode, EjsNum
     switch (opcode) {
 
     case EJS_OP_COMPARE_EQ: case EJS_OP_COMPARE_STRICTLY_EQ:
-        return (EjsObj*) ((lhs->value == rhs->value) ? ejs->trueValue: ejs->falseValue);
+        return (EjsObj*) ((lhs->value == rhs->value) ? S(true): S(false));
 
     case EJS_OP_COMPARE_NE: case EJS_OP_COMPARE_STRICTLY_NE:
-        return (EjsObj*) ((lhs->value != rhs->value) ? ejs->trueValue: ejs->falseValue);
+        return (EjsObj*) ((lhs->value != rhs->value) ? S(true): S(false));
 
     case EJS_OP_COMPARE_LT:
-        return (EjsObj*) ((lhs->value < rhs->value) ? ejs->trueValue: ejs->falseValue);
+        return (EjsObj*) ((lhs->value < rhs->value) ? S(true): S(false));
 
     case EJS_OP_COMPARE_LE:
-        return (EjsObj*) ((lhs->value <= rhs->value) ? ejs->trueValue: ejs->falseValue);
+        return (EjsObj*) ((lhs->value <= rhs->value) ? S(true): S(false));
 
     case EJS_OP_COMPARE_GT:
-        return (EjsObj*) ((lhs->value > rhs->value) ? ejs->trueValue: ejs->falseValue);
+        return (EjsObj*) ((lhs->value > rhs->value) ? S(true): S(false));
 
     case EJS_OP_COMPARE_GE:
-        return (EjsObj*) ((lhs->value >= rhs->value) ? ejs->trueValue: ejs->falseValue);
+        return (EjsObj*) ((lhs->value >= rhs->value) ? S(true): S(false));
 
     /*
      *  Unary operators
      */
     case EJS_OP_COMPARE_NOT_ZERO:
-        return (EjsObj*) ((lhs->value) ? ejs->trueValue: ejs->falseValue);
+        return (EjsObj*) ((lhs->value) ? S(true): S(false));
 
     case EJS_OP_COMPARE_ZERO:
-        return (EjsObj*) ((lhs->value == 0) ? ejs->trueValue: ejs->falseValue);
+        return (EjsObj*) ((lhs->value == 0) ? S(true): S(false));
 
     case EJS_OP_COMPARE_UNDEFINED:
     case EJS_OP_COMPARE_NULL:
     case EJS_OP_COMPARE_FALSE:
     case EJS_OP_COMPARE_TRUE:
-        return (EjsObj*) ejs->falseValue;
+        return (EjsObj*) S(false);
 
     case EJS_OP_NEG:
         return (EjsObj*) ejsCreateNumber(ejs, -lhs->value);
@@ -284,12 +284,11 @@ static EjsObj *integral(Ejs *ejs, EjsNumber *np, int argc, EjsObj **argv)
  */
 static EjsObj *isFinite(Ejs *ejs, EjsNumber *np, int argc, EjsObj **argv)
 {
-    if (np->value == ejs->nanValue->value || 
-            np->value == ejs->infinityValue->value || 
-            np->value == ejs->negativeInfinityValue->value) {
-        return (EjsObj*) ejs->falseValue;
+    if (np->value == ((EjsNumber*) S(nan))->value || np->value == ((EjsNumber*) S(infinity))->value || 
+            np->value == ((EjsNumber*) S(negativeInfinity))->value) {
+        return (EjsObj*) S(false);
     }
-    return (EjsObj*) ejs->trueValue;
+    return (EjsObj*) S(true);
 }
 
 
@@ -298,7 +297,7 @@ static EjsObj *isFinite(Ejs *ejs, EjsNumber *np, int argc, EjsObj **argv)
  */
 static EjsObj *isNaN(Ejs *ejs, EjsNumber *np, int argc, EjsObj **argv)
 {
-    return (EjsObj*) (mprIsNan(np->value) ? ejs->trueValue : ejs->falseValue);
+    return (EjsObj*) (mprIsNan(np->value) ? S(true) : S(false));
 }
 
 
@@ -364,7 +363,7 @@ static EjsObj *getNumberIterator(Ejs *ejs, EjsObj *np, int argc, EjsObj **argv)
  */
 static EjsObj *numberToString(Ejs *ejs, EjsObj *vp, int argc, EjsObj **argv)
 {
-    return castNumber(ejs, (EjsNumber*) vp, ejs->stringType);
+    return castNumber(ejs, (EjsNumber*) vp, ST(String));
 }
 
 
@@ -407,14 +406,13 @@ EjsNumber *ejsCreateNumber(Ejs *ejs, MprNumber value)
     EjsNumber   *vp;
 
     if (value == 0) {
-        return ejs->zeroValue;
+        return S(zero);
     } else if (value == 1) {
-        return ejs->oneValue;
+        return S(one);
     } else if (value == -1) {
-        return ejs->minusOneValue;
+        return S(minusOne);
     }
-    vp = ejsCreateObj(ejs, ejs->numberType, 0);
-    if (vp != 0) {
+    if ((vp = ejsCreateObj(ejs, ST(Number), 0)) != 0) {
         vp->value = value;
     }
     return vp;
@@ -423,35 +421,48 @@ EjsNumber *ejsCreateNumber(Ejs *ejs, MprNumber value)
 
 void ejsCreateNumberType(Ejs *ejs)
 {
+    EjsNumber   *np;
     EjsType     *type;
     static int  zero = 0;
 
-    type = ejsCreateNativeType(ejs, N("ejs", "Number"), ES_Number, sizeof(EjsNumber), NULL, EJS_OBJ_HELPERS);
-    ejs->numberType = type;
+    type = ejsCreateNativeType(ejs, N("ejs", "Number"), S_Number, sizeof(EjsNumber), NULL, EJS_OBJ_HELPERS);
     type->immutable = 1;
 
     type->helpers.cast = (EjsCastHelper) castNumber;
     type->helpers.clone = (EjsCloneHelper) cloneNumber;
     type->helpers.invokeOperator = (EjsInvokeOperatorHelper) invokeNumberOperator;
 
-    ejs->zeroValue = ejsCreateObj(ejs, ejs->numberType, 0);
-    ejs->zeroValue->value = 0;
-    ejs->oneValue = ejsCreateObj(ejs, ejs->numberType, 0);
-    ejs->oneValue->value = 1;
-    ejs->minusOneValue = ejsCreateObj(ejs, ejs->numberType, 0);
-    ejs->minusOneValue->value = -1;
+    np = ejsCreateObj(ejs, type, 0);
+    np->value = 0;
+    ejsSetSpecial(ejs, S_zero, np);
 
-    ejs->infinityValue = ejsCreateObj(ejs, ejs->numberType, 0);
-    ejs->infinityValue->value = 1.0 / zero;
-    ejs->negativeInfinityValue = ejsCreateObj(ejs, ejs->numberType, 0);
-    ejs->negativeInfinityValue->value = -1.0 / zero;
-    ejs->nanValue = ejsCreateObj(ejs, ejs->numberType, 0);
-    ejs->nanValue->value = 0.0 / zero;
+    np = ejsCreateObj(ejs, type, 0);
+    np->value = 1;
+    ejsSetSpecial(ejs, S_one, np);
 
-    ejs->maxValue = ejsCreateObj(ejs, ejs->numberType, 0);
-    ejs->maxValue->value = 1.7976931348623157e+308;
-    ejs->minValue = ejsCreateObj(ejs, ejs->numberType, 0);
-    ejs->minValue->value = 5e-324;
+    np = ejsCreateObj(ejs, type, 0);
+    np->value = -1;
+    ejsSetSpecial(ejs, S_minusOne, np);
+
+    np = ejsCreateObj(ejs, type, 0);
+    np->value = 1.0 / zero;
+    ejsSetSpecial(ejs, S_infinity, np);
+
+    np = ejsCreateObj(ejs, type, 0);
+    np->value = -1.0 / zero;
+    ejsSetSpecial(ejs, S_negativeInfinity, np);
+
+    np = ejsCreateObj(ejs, type, 0);
+    np->value = 0.0 / zero;
+    ejsSetSpecial(ejs, S_nan, np);
+
+    np = ejsCreateObj(ejs, type, 0);
+    np->value = 1.7976931348623157e+308;
+    ejsSetSpecial(ejs, S_max, np);
+
+    np = ejsCreateObj(ejs, type, 0);
+    np->value = 5e-324;
+    ejsSetSpecial(ejs, S_min, np);
 }
 
 
@@ -460,29 +471,29 @@ void ejsConfigureNumberType(Ejs *ejs)
     EjsType    *type;
     EjsPot     *prototype;
 
-    type = ejs->numberType;
+    type = ST(Number);
     prototype = type->prototype;
 
-    ejsBindConstructor(ejs, type, (EjsProc) numberConstructor);
+    ejsBindConstructor(ejs, type, numberConstructor);
     ejsBindMethod(ejs, prototype, ES_Number_iterator_get, getNumberIterator);
     ejsBindMethod(ejs, prototype, ES_Number_iterator_getValues, getNumberIterator);
-    ejsBindMethod(ejs, prototype, ES_Number_integral, (EjsProc) integral);
-    ejsBindMethod(ejs, prototype, ES_Number_isFinite, (EjsProc) isFinite);
-    ejsBindMethod(ejs, prototype, ES_Number_isNaN, (EjsProc) isNaN);
-    ejsBindMethod(ejs, prototype, ES_Number_toExponential, (EjsProc) toExponential);
-    ejsBindMethod(ejs, prototype, ES_Number_toFixed, (EjsProc) toFixed);
-    ejsBindMethod(ejs, prototype, ES_Number_toPrecision, (EjsProc) toPrecision);
+    ejsBindMethod(ejs, prototype, ES_Number_integral, integral);
+    ejsBindMethod(ejs, prototype, ES_Number_isFinite, isFinite);
+    ejsBindMethod(ejs, prototype, ES_Number_isNaN, isNaN);
+    ejsBindMethod(ejs, prototype, ES_Number_toExponential, toExponential);
+    ejsBindMethod(ejs, prototype, ES_Number_toFixed, toFixed);
+    ejsBindMethod(ejs, prototype, ES_Number_toPrecision, toPrecision);
     ejsBindMethod(ejs, prototype, ES_Number_toString, numberToString);
 
-    ejsSetProperty(ejs, type, ES_Number_MaxValue, ejs->maxValue);
-    ejsSetProperty(ejs, type, ES_Number_MinValue, ejs->minValue);
-    ejsSetProperty(ejs, type, ES_Number_NEGATIVE_INFINITY, ejs->negativeInfinityValue);
-    ejsSetProperty(ejs, type, ES_Number_POSITIVE_INFINITY, ejs->infinityValue);
-    ejsSetProperty(ejs, type, ES_Number_NaN, ejs->nanValue);
+    ejsSetProperty(ejs, type, ES_Number_MaxValue, S(max));
+    ejsSetProperty(ejs, type, ES_Number_MinValue, S(min));
+    ejsSetProperty(ejs, type, ES_Number_NEGATIVE_INFINITY, S(negativeInfinity));
+    ejsSetProperty(ejs, type, ES_Number_POSITIVE_INFINITY, S(infinity));
+    ejsSetProperty(ejs, type, ES_Number_NaN, S(nan));
 
-    ejsSetProperty(ejs, ejs->global, ES_NegativeInfinity, ejs->negativeInfinityValue);
-    ejsSetProperty(ejs, ejs->global, ES_Infinity, ejs->infinityValue);
-    ejsSetProperty(ejs, ejs->global, ES_NaN, ejs->nanValue);
+    ejsSetProperty(ejs, ejs->global, ES_NegativeInfinity, S(negativeInfinity));
+    ejsSetProperty(ejs, ejs->global, ES_Infinity, S(infinity));
+    ejsSetProperty(ejs, ejs->global, ES_NaN, S(nan));
     ejsSetProperty(ejs, ejs->global, ES_double, type);
 #if ES_num
     ejsSetProperty(ejs, ejs->global, ES_num, type);

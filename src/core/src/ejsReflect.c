@@ -38,7 +38,7 @@ static EjsObj *ref_base(Ejs *ejs, EjsReflect *rp, int argc, EjsObj **argv)
         return (EjsObj*) (((EjsType*) vp)->baseType);
     }
     if (vp->type == 0) {
-        return ejs->nullValue;
+        return S(null);
     }
     return (EjsObj*) vp->type;
 }
@@ -64,7 +64,7 @@ static EjsObj *ref_type(Ejs *ejs, EjsReflect *rp, int argc, EjsObj **argv)
 
     vp = rp->subject;
     if (vp->type == 0) {
-        return ejs->nullValue;
+        return S(null);
     }
     return (EjsObj*) vp->type;
 }
@@ -78,11 +78,11 @@ EjsObj *ejsGetTypeName(Ejs *ejs, EjsObj *vp)
     EjsType     *type;
 
     if (vp == 0) {
-        return ejs->undefinedValue;
+        return S(undefined);
     }
     type = (EjsType*) vp->type;
     if (type == 0) {
-        return ejs->nullValue;
+        return S(null);
     }
     return (EjsObj*) ejsCreateStringFromAsc(ejs, type->qname.name);
 }
@@ -99,7 +99,7 @@ static EjsObj *ref_name(Ejs *ejs, EjsReflect *rp, int argc, EjsObj **argv)
 
     type = (EjsType*) rp->subject;
     if (!ejsIsType(ejs, type)) {
-        return (EjsObj*) ejs->emptyString;
+        return (EjsObj*) S(empty);
     }
     return (EjsObj*) ejsCreateStringFromAsc(ejs, type->qname.name);
 }
@@ -121,10 +121,10 @@ static EjsObj *ref_typeOf(Ejs *ejs, EjsObj *obj, int argc, EjsObj **argv)
  */
 EjsObj *ejsGetTypeOf(Ejs *ejs, EjsObj *vp)
 {
-    if (vp == ejs->undefinedValue) {
+    if (vp == S(undefined)) {
         return (EjsObj*) ejsCreateStringFromAsc(ejs, "undefined");
 
-    } else if (vp == ejs->nullValue) {
+    } else if (ejsIsNull(vp)) {
         /* Yea - I know, ECMAScript is broken */
         return (EjsObj*) ejsCreateStringFromAsc(ejs, "object");
 

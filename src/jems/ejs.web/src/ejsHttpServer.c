@@ -27,7 +27,7 @@ static EjsObj *hs_address(Ejs *ejs, EjsHttpServer *sp, int argc, EjsObj **argv)
     if (sp->ip) {
         return (EjsObj*) ejsCreateStringFromAsc(ejs, sp->ip);
     } 
-    return ejs->nullValue;
+    return S(null);
 }
 
 
@@ -55,7 +55,7 @@ static EjsObj *hs_accept(Ejs *ejs, EjsHttpServer *sp, int argc, EjsObj **argv)
  */
 static EjsObj *hs_async(Ejs *ejs, EjsHttpServer *sp, int argc, EjsObj **argv)
 {
-    return (sp->async) ? (EjsObj*) ejs->trueValue : (EjsObj*) ejs->falseValue;
+    return (sp->async) ? S(true): S(false);
 }
 
 
@@ -146,7 +146,7 @@ static EjsObj *hs_setLimits(Ejs *ejs, EjsHttpServer *sp, int argc, EjsObj **argv
  */
 static EjsObj *hs_isSecure(Ejs *ejs, EjsHttpServer *sp, int argc, EjsObj **argv)
 {
-    return sp->ssl ? (EjsObj*) ejs->trueValue : (EjsObj*) ejs->falseValue;
+    return sp->ssl ? S(true): S(false);
 }
 
 
@@ -162,13 +162,13 @@ static EjsObj *hs_listen(Ejs *ejs, EjsHttpServer *sp, int argc, EjsObj **argv)
     EjsObj      *endpoint;
     EjsPath     *root;
 
-    endpoint = (argc >= 1) ? argv[0] : ejs->nullValue;
+    endpoint = (argc >= 1) ? argv[0] : S(null);
 
     if (sp->server) {
         httpDestroyServer(sp->server);
         sp->server = 0;
     }
-    if (endpoint == ejs->nullValue) {
+    if (ejsIsNull(ejs, endpoint)) {
         mprAddRoot(sp);
         if (ejs->loc) {
             ejs->loc->context = sp;
@@ -176,13 +176,13 @@ static EjsObj *hs_listen(Ejs *ejs, EjsHttpServer *sp, int argc, EjsObj **argv)
             ejsThrowStateError(ejs, "Can't find web server context for Ejscript. Check EjsStartup directive");
             return 0;
         }
-        return (EjsObj*) ejs->nullValue;
+        return S(null);
     }
     if (ejs->loc) {
         mprAddRoot(sp);
         /* Being called hosted - ignore endpoint value */
         ejs->loc->context = sp;
-        return (EjsObj*) ejs->nullValue;
+        return S(null);
     }
     address = ejsToString(ejs, endpoint);
     mprParseIp(address->value, &sp->ip, &sp->port, 80);
@@ -232,7 +232,7 @@ static EjsObj *hs_listen(Ejs *ejs, EjsHttpServer *sp, int argc, EjsObj **argv)
         sp->server = 0;
         return 0;
     }
-    return ejs->nullValue;
+    return S(null);
 }
 
 
@@ -244,7 +244,7 @@ static EjsObj *hs_name(Ejs *ejs, EjsHttpServer *sp, int argc, EjsObj **argv)
     if (sp->name) {
         return (EjsObj*) ejsCreateStringFromAsc(ejs, sp->name);
     }
-    return (EjsObj*) ejs->nullValue;
+    return S(null);
 }
 
 
@@ -299,10 +299,10 @@ static EjsObj *hs_secure(Ejs *ejs, EjsHttpServer *sp, int argc, EjsObj **argv)
         ejsThrowStateError(ejs, "Can't load SSL provider");
         return 0;
     }
-    if (argv[0] != ejs->nullValue) {
+    if (!ejsIsNull(ejs, argv[0])) {
         mprSetSslKeyFile(sp->ssl, ejsToMulti(ejs, argv[0]));
     }
-    if (argv[1] != ejs->nullValue) {
+    if (!ejsIsNull(ejs, argv[1])) {
         mprSetSslCertFile(sp->ssl, ejsToMulti(ejs, argv[1]));
     }
 
@@ -794,7 +794,8 @@ void ejsConfigureHttpServerType(Ejs *ejs)
     EjsPot      *prototype;
 
     type = ejsConfigureNativeType(ejs, N("ejs.web", "HttpServer"), sizeof(EjsHttpServer), manageHttpServer, EJS_POT_HELPERS);
-    ejs->httpServerType = type;
+    ejsSetSpecialType(ejs, S_HttpServer, type);
+    
     type->helpers.create = (EjsCreateHelper) createHttpServer;
 
     prototype = type->prototype;

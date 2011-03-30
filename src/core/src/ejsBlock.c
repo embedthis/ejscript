@@ -95,7 +95,7 @@ void ejsInheritBaseClassNamespaces(Ejs *ejs, EjsType *type, EjsType *baseType)
     if (baseNamespaces) {
         for (next = 0; ((nsp = (EjsNamespace*) mprGetNextItem(baseNamespaces, &next)) != 0); ) {
             //  MOB -- must be a better way to do this?
-            if (ejsContainsString(ejs, nsp->value, ejs->commaProtString)) {
+            if (ejsContainsString(ejs, nsp->value, S(commaProt))) {
                 for (i = 0; ((existing = (EjsNamespace*) mprGetNextItem(&block->namespaces, &i)) != 0); ) {
                     if (existing->value == nsp->value) {
                         break;
@@ -118,7 +118,7 @@ EjsBlock *ejsCreateBlock(Ejs *ejs, int size)
 {
     EjsBlock        *block;
 
-    block = (EjsBlock*) ejsCreatePot(ejs, ejs->blockType, size);
+    block = (EjsBlock*) ejsCreatePot(ejs, S(Block), size);
     if (block == 0) {
         return 0;
     }
@@ -179,12 +179,11 @@ void ejsCreateBlockType(Ejs *ejs)
 {
     EjsType     *type;
 
-    type = ejsCreateNativeType(ejs, N("ejs", "Block"), ES_Block, sizeof(EjsBlock), ejsManageBlock, EJS_POT_HELPERS);
-    ejs->blockType = type;
+    type = ejsCreateNativeType(ejs, N("ejs", "Block"), S_Block, sizeof(EjsBlock), ejsManageBlock, EJS_POT_HELPERS);
     type->constructor.block.pot.shortScope = 1;
 
     type->helpers.clone = (EjsCloneHelper) ejsCloneBlock;
-    ejs->commaProtString = ejsCreateStringFromAsc(ejs, ",protected");
+    ejsSetSpecial(ejs, S_commaProt, ejsCreateStringFromAsc(ejs, ",protected"));
 }
 
 

@@ -34,8 +34,8 @@ static EjsObj *getSessionProperty(Ejs *ejs, EjsSession *sp, int slotNum)
     if (vp) {
         vp = ejsDeserialize(ejs, (EjsString*) vp);
     }
-    if (vp == ejs->undefinedValue) {
-        vp = (EjsObj*) ejs->emptyString;
+    if (ejsIsUndefined(ejs, vp)) {
+        vp = S(empty);
     }
     noteSessionActivity(ejs, sp);
     mprUnlock(sessionLock);
@@ -50,13 +50,13 @@ static EjsObj *getSessionPropertyByName(Ejs *ejs, EjsSession *sp, EjsName qname)
 
     mprLock(sessionLock);
 
-    qname.space = ejs->emptyString;
+    qname.space = S(empty);
     slotNum = ejs->potHelpers.lookupProperty(ejs, sp, qname);
     if (slotNum < 0) {
         /*  
             Return empty string so that web pages can access session values without having to test for null/undefined
          */
-        vp = (EjsObj*) ejs->emptyString;
+        vp = S(empty);
     } else {
         vp = ejs->potHelpers.getProperty(ejs, (EjsObj*) sp, slotNum);
         if (vp) {
@@ -184,7 +184,7 @@ EjsSession *ejsCreateSession(Ejs *ejs, EjsRequest *req, int timeout, bool secure
     }
     now = mprGetTime();
 
-    if ((session = ejsCreateObj(ejs, ejs->sessionType, 0)) == 0) {
+    if ((session = ejsCreateObj(ejs, ST(Session), 0)) == 0) {
         return 0;
     }
     session->timeout = timeout;
@@ -331,7 +331,7 @@ static void sessionTimer(EjsHttpServer *server, MprEvent *event)
             if ((session = ejsGetProperty(ejs, (EjsObj*) sessions, i)) == 0) {
                 continue;
             }
-            if (TYPE(session) == ejs->sessionType) {
+            if (TYPE(session) == ST(Session)) {
                 mprLog(7, "Check session %s timeout %d, expires %d secs", session->id, 
                    session->timeout / MPR_TICKS_PER_SEC,
                    (int) (session->expire - now) / MPR_TICKS_PER_SEC);
@@ -374,8 +374,8 @@ void ejsConfigureSessionType(Ejs *ejs)
     EjsType         *type;
     EjsHelpers      *helpers;
 
-    type = ejs->sessionType = ejsConfigureNativeType(ejs, N("ejs.web", "Session"), sizeof(EjsSession), manageSession, 
-        EJS_POT_HELPERS);
+    type = ejsConfigureNativeType(ejs, N("ejs.web", "Session"), sizeof(EjsSession), manageSession, EJS_POT_HELPERS);
+    ejsSetSpecialType(ejs, S_Session, type);
     mprAssert(type->mutex == 0);
     if (sessionLock == 0) {
         sessionLock = type->mutex = mprCreateLock();

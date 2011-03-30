@@ -3,21 +3,21 @@
   "description": "Ejscript CommonJS module loader support",
   "version": "2.0.0",
   "categories": [
-    "ejs",
-    "commonjs"
+    undefined,
+    undefined
   ],
   "author": "Embedthis (http://www.embedthis.com) <dev@embedthis.com>",
   "contributors": [
-    "Embedthis (http://www.embedthis.com) <dev@embedthis.com>"
+    undefined
   ],
   "bugReports": "dev@embedthis.com",
   "license": [
-    "GPLv2 (http://www.ejscript.org/products/ejs/doc/licenses/gpl.html)"
+    undefined
   ],
   "stability": "prototype",
   "location": "http://hg.embedthis.com/ejs",
   "keywords": [
-    "commonjs"
+    undefined
   ],
   "dependencies": [
     [

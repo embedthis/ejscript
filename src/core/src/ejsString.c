@@ -14,12 +14,12 @@ static int internHashSizes[] = {
      389, 769, 1543, 3079, 6151, 12289, 24593, 49157, 98317, 196613, 0
 };
 
+/*
+    XXX 
+    Intern locking
+ */
 static MprSpin      internLock;
 static MprSpin      *ispin = &internLock;
-
-/*
-    FUTURE - this locking is for when the intern array works over all interpreters
- */
 #define ilock()     mprSpinLock(ispin);
 #define iunlock()   mprSpinUnlock(ispin);
 
@@ -27,7 +27,7 @@ static MprSpin      *ispin = &internLock;
 
 static EjsString *buildString(Ejs *ejs, EjsString *result, MprChar *str, ssize len);
 static ssize indexof(MprChar *str, ssize len, EjsString *pattern, ssize patternLength, int dir);
-static void linkString(Ejs *ejs, EjsString *head, EjsString *sp);
+static void linkString(EjsString *head, EjsString *sp);
 static void manageIntern(EjsIntern *intern, int flags);
 static int rebuildIntern(EjsIntern *intern);
 static void unlinkString(EjsString *sp);
@@ -36,37 +36,34 @@ static void unlinkString(EjsString *sp);
 /*
     Cast the string operand to a primitive type
  */
-static EjsObj *castString(Ejs *ejs, EjsString *sp, EjsType *type)
+static EjsAny *castString(Ejs *ejs, EjsString *sp, EjsType *type)
 {
-    EjsObj  *result;
-
     mprAssert(sp);
     mprAssert(type);
 
-    if (type == ejs->pathType) {
+    if (type == ST(Path)) {
         return (EjsObj*) ejsCreatePath(ejs, sp);
-    } else if (type == ejs->uriType) {
+    } else if (type == ST(Uri)) {
         return (EjsObj*) ejsCreateUri(ejs, sp);
     }
-    switch (type->id) {
-    case ES_Boolean:
-        if (sp != ejs->emptyString) {
-            return (EjsObj*) ejs->trueValue;
+    switch (type->sid) {
+    case S_Boolean:
+        if (sp != S(empty)) {
+            return (EjsObj*) S(true);
         }
-        return (EjsObj*) ejs->falseValue;
+        return (EjsObj*) S(false);
 
-    case ES_Number:
-        return (EjsObj*) ejsParse(ejs, sp->value, ES_Number);
+    case S_Number:
+        return ejsParse(ejs, sp->value, S_Number);
 
-    case ES_RegExp:
+    case S_RegExp:
         if (sp && sp->value[0] == '/') {
             return (EjsObj*) ejsCreateRegExp(ejs, sp);
         }
-        result = (EjsObj*) ejsCreateRegExp(ejs, ejsSprintf(ejs, "/%@/", sp));
-        return result;
+        return ejsCreateRegExp(ejs, ejsSprintf(ejs, "/%@/", sp));
 
-    case ES_String:
-        return (EjsObj*) sp;
+    case S_String:
+        return sp;
 
     default:
         ejsThrowTypeError(ejs, "Can't cast to required type");
@@ -89,7 +86,7 @@ static EjsString *cloneString(Ejs *ejs, EjsString *sp, bool deep)
 static EjsObj *getStringProperty(Ejs *ejs, EjsString *sp, int index)
 {
     if (index < 0 || index >= sp->length) {
-        return (EjsObj*) ejs->emptyString;
+        return (EjsObj*) S(empty);
         return 0;
     }
     return (EjsObj*) ejsCreateString(ejs, &sp->value[index], 1);
@@ -127,10 +124,10 @@ static EjsAny *coerceStringOperands(Ejs *ejs, EjsAny *lhs, int opcode,  EjsAny *
         return ejsInvokeOperator(ejs, lhs, opcode, ejsToString(ejs, rhs));
 
     case EJS_OP_COMPARE_STRICTLY_NE:
-        return ejs->trueValue;
+        return S(true);
 
     case EJS_OP_COMPARE_STRICTLY_EQ:
-        return ejs->falseValue;
+        return S(false);
 
     /*
         Unary operators
@@ -144,19 +141,19 @@ static EjsAny *coerceStringOperands(Ejs *ejs, EjsAny *lhs, int opcode,  EjsAny *
 
     case EJS_OP_COMPARE_NOT_ZERO:
     case EJS_OP_COMPARE_TRUE:
-        return (((EjsString*) lhs) ? ejs->trueValue : ejs->falseValue);
+        return (((EjsString*) lhs) ? S(true) : S(false));
 
     case EJS_OP_COMPARE_ZERO:
     case EJS_OP_COMPARE_FALSE:
-        return (((EjsString*) lhs) ? ejs->falseValue: ejs->trueValue);
+        return (((EjsString*) lhs) ? S(false): S(true));
 
     case EJS_OP_COMPARE_UNDEFINED:
     case EJS_OP_COMPARE_NULL:
-        return ejs->falseValue;
+        return S(false);
 
     default:
         ejsThrowTypeError(ejs, "Opcode %d not valid for type %@", opcode, TYPE(lhs)->qname.name);
-        return ejs->undefinedValue;
+        return S(undefined);
     }
     return 0;
 }
@@ -167,7 +164,7 @@ static EjsAny *invokeStringOperator(Ejs *ejs, EjsString *lhs, int opcode, EjsStr
     EjsAny  *result, *arg;
 
     if (rhs == 0 || TYPE(lhs) != TYPE(rhs)) {
-        if (!ejsIsA(ejs, lhs, ejs->stringType) || !ejsIsA(ejs, rhs, ejs->stringType)) {
+        if (!ejsIs(lhs, String) || !ejsIs(rhs, String)) {
             if ((result = coerceStringOperands(ejs, lhs, opcode, rhs)) != 0) {
                 return result;
             }
@@ -182,18 +179,18 @@ static EjsAny *invokeStringOperator(Ejs *ejs, EjsString *lhs, int opcode, EjsStr
         //  MOB -- should use lhs == rhs
         if (lhs->value == rhs->value) {
             mprAssert(lhs == rhs);
-            return ejs->trueValue;
+            return S(true);
         }
-        return ejs->falseValue;
+        return S(false);
 
     case EJS_OP_COMPARE_NE:
     case EJS_OP_COMPARE_STRICTLY_NE:
         //  MOB -- should use lhs == rhs
         if (lhs->value != rhs->value) {
             mprAssert(lhs != rhs);
-            return ejs->trueValue;
+            return S(true);
         }
-        return ejs->falseValue;
+        return S(false);
 
     case EJS_OP_COMPARE_LT:
         return ejsCreateBoolean(ejs, 
@@ -215,17 +212,17 @@ static EjsAny *invokeStringOperator(Ejs *ejs, EjsString *lhs, int opcode, EjsStr
         Unary operators
      */
     case EJS_OP_COMPARE_NOT_ZERO:
-        return ((lhs) ? ejs->trueValue: ejs->falseValue);
+        return ((lhs) ? S(true): S(false));
 
     case EJS_OP_COMPARE_ZERO:
-        return ((lhs == 0) ? ejs->trueValue: ejs->falseValue);
+        return ((lhs == 0) ? S(true): S(false));
 
 
     case EJS_OP_COMPARE_UNDEFINED:
     case EJS_OP_COMPARE_NULL:
     case EJS_OP_COMPARE_FALSE:
     case EJS_OP_COMPARE_TRUE:
-        return ejs->falseValue;
+        return S(false);
 
     /*
         Binary operators
@@ -301,7 +298,7 @@ static EjsString *stringConstructor(Ejs *ejs, EjsString *sp, int argc, EjsObj **
             return ejsToString(ejs, ejsGetProperty(ejs, (EjsObj*) args, 0));
         }
     }
-    return ejsInternString(ejs, sp);
+    return ejsInternString(sp);
 }
 
 
@@ -349,7 +346,7 @@ static EjsObj *charAt(Ejs *ejs, EjsString *sp, int argc, EjsObj **argv)
     mprAssert(argc == 1 && ejsIsNumber(ejs, argv[0]));
     index = ejsGetInt(ejs, argv[0]);
     if (index < 0 || index >= sp->length) {
-        return (EjsObj*) ejs->emptyString;
+        return (EjsObj*) S(empty);
     }
     return (EjsObj*) ejsCreateString(ejs, &sp->value[index], 1);
 }
@@ -361,7 +358,7 @@ static EjsObj *charAt(Ejs *ejs, EjsString *sp, int argc, EjsObj **argv)
     function charCodeAt(index: Number = 0): Number
  */
 
-static EjsObj *charCodeAt(Ejs *ejs, EjsString *sp, int argc, EjsObj **argv)
+static EjsNumber *charCodeAt(Ejs *ejs, EjsString *sp, int argc, EjsObj **argv)
 {
     int     index;
 
@@ -370,9 +367,10 @@ static EjsObj *charCodeAt(Ejs *ejs, EjsString *sp, int argc, EjsObj **argv)
         index = (int) sp->length -1 ;
     }
     if (index < 0 || index >= sp->length) {
-        return (EjsObj*) ejs->nanValue;;
+        //  MOB - should this return nan or -1?
+        return S(nan);
     }
-    return (EjsObj*) ejsCreateNumber(ejs, (uchar) sp->value[index]);
+    return ejsCreateNumber(ejs, (uchar) sp->value[index]);
 }
 
 
@@ -445,7 +443,7 @@ static EjsObj *endsWith(Ejs *ejs, EjsString *sp, int argc, EjsObj **argv)
     pattern = (EjsString*) argv[0];
     len = pattern->length;
     if (len > sp->length) {
-        return (EjsObj*) ejs->falseValue;
+        return (EjsObj*) S(false);
     }
     return (EjsObj*) ejsCreateBoolean(ejs, wncmp(&sp->value[sp->length - len], pattern->value, len) == 0);
 }
@@ -514,7 +512,7 @@ static EjsObj *formatString(Ejs *ejs, EjsString *sp, int argc, EjsObj **argv)
             if (nextArg < args->length) {
                 value = ejsGetProperty(ejs, (EjsObj*) args, nextArg);
             } else {
-                value = ejs->nullValue;
+                value = S(null);
             }
             buf = 0;
             //  MOB - OPT
@@ -562,7 +560,7 @@ static EjsObj *formatString(Ejs *ejs, EjsString *sp, int argc, EjsObj **argv)
     if (sp->length > last) {
         result = buildString(ejs, result, &sp->value[last], sp->length - last);
     }
-    return (EjsObj*) ejsInternString(ejs, result);
+    return (EjsObj*) ejsInternString(result);
 }
 
 
@@ -590,7 +588,7 @@ static EjsObj *fromCharCode(Ejs *ejs, EjsString *unused, int argc, EjsObj **argv
     }
     result->value[i] = '\0';
     result->length = args->length;
-    return (EjsObj*) ejsInternString(ejs, result);
+    return (EjsObj*) ejsInternString(result);
 }
 
 
@@ -702,7 +700,7 @@ static EjsObj *indexOf(Ejs *ejs, EjsString *sp, int argc,  EjsObj **argv)
     }
     index = indexof(&sp->value[start], sp->length - start, pattern, patternLength, 1);
     if (index < 0) {
-        return (EjsObj*) ejs->minusOneValue;
+        return (EjsObj*) S(minusOne);
     }
     return (EjsObj*) ejsCreateNumber(ejs, (MprNumber) (index + start));
 }
@@ -713,14 +711,14 @@ static EjsObj *isAlpha(Ejs *ejs, EjsString *sp, int argc,  EjsObj **argv)
     MprChar     *cp;
 
     if (sp->length == 0) {
-        return (EjsObj*) ejs->falseValue;
+        return (EjsObj*) S(false);
     }
     for (cp = sp->value; cp < &sp->value[sp->length]; cp++) {
         if (*cp & 0x80 || !isalpha((int) *cp)) {
-            return (EjsObj*) ejs->falseValue;
+            return (EjsObj*) S(false);
         }
     }
-    return (EjsObj*) ejs->trueValue;
+    return (EjsObj*) S(true);
 }
 
 
@@ -729,14 +727,14 @@ static EjsObj *isAlphaNum(Ejs *ejs, EjsString *sp, int argc,  EjsObj **argv)
     MprChar     *cp;
 
     if (sp->length == 0) {
-        return (EjsObj*) ejs->falseValue;
+        return (EjsObj*) S(false);
     }
     for (cp = sp->value; cp < &sp->value[sp->length]; cp++) {
         if (*cp & 0x80 || !isalnum((int) *cp)) {
-            return (EjsObj*) ejs->falseValue;
+            return (EjsObj*) S(false);
         }
     }
-    return (EjsObj*) ejs->trueValue;
+    return (EjsObj*) S(true);
 }
 
 
@@ -745,14 +743,14 @@ static EjsObj *isDigit(Ejs *ejs, EjsString *sp, int argc,  EjsObj **argv)
     MprChar     *cp;
 
     if (sp->length == 0) {
-        return (EjsObj*) ejs->falseValue;
+        return (EjsObj*) S(false);
     }
     for (cp = sp->value; cp < &sp->value[sp->length]; cp++) {
         if (*cp & 0x80 || !isdigit((int) *cp)) {
-            return (EjsObj*) ejs->falseValue;
+            return (EjsObj*) S(false);
         }
     }
-    return (EjsObj*) ejs->trueValue;
+    return (EjsObj*) S(true);
 }
 
 
@@ -761,14 +759,14 @@ static EjsObj *isLower(Ejs *ejs, EjsString *sp, int argc,  EjsObj **argv)
     MprChar     *cp;
 
     if (sp->length == 0) {
-        return (EjsObj*) ejs->falseValue;
+        return (EjsObj*) S(false);
     }
     for (cp = sp->value; cp < &sp->value[sp->length]; cp++) {
         if (!islower((int) *cp)) {
-            return (EjsObj*) ejs->falseValue;
+            return (EjsObj*) S(false);
         }
     }
-    return (EjsObj*) ejs->trueValue;
+    return (EjsObj*) S(true);
 }
 
 
@@ -777,14 +775,14 @@ static EjsObj *isSpace(Ejs *ejs, EjsString *sp, int argc,  EjsObj **argv)
     MprChar     *cp;
 
     if (sp->length == 0) {
-        return (EjsObj*) ejs->falseValue;
+        return (EjsObj*) S(false);
     }
     for (cp = sp->value; cp < &sp->value[sp->length]; cp++) {
         if (*cp & 0x80 || !isspace((int) *cp)) {
-            return (EjsObj*) ejs->falseValue;
+            return (EjsObj*) S(false);
         }
     }
-    return (EjsObj*) ejs->trueValue;
+    return (EjsObj*) S(true);
 }
 
 
@@ -793,14 +791,14 @@ static EjsObj *isUpper(Ejs *ejs, EjsString *sp, int argc,  EjsObj **argv)
     MprChar     *cp;
 
     if (sp->length == 0) {
-        return (EjsObj*) ejs->falseValue;
+        return (EjsObj*) S(false);
     }
     for (cp = sp->value; cp < &sp->value[sp->length]; cp++) {
         if (!isupper((int) *cp)) {
-            return (EjsObj*) ejs->falseValue;
+            return (EjsObj*) S(false);
         }
     }
-    return (EjsObj*) ejs->trueValue;
+    return (EjsObj*) S(true);
 }
 
 
@@ -832,7 +830,7 @@ static EjsObj *lastIndexOf(Ejs *ejs, EjsString *sp, int argc,  EjsObj **argv)
     }
     index = indexof(sp->value, sp->length, pattern, patternLength, -1);
     if (index < 0) {
-        return (EjsObj*) ejs->minusOneValue;
+        return (EjsObj*) S(minusOne);
     }
     return (EjsObj*) ejsCreateNumber(ejs, (MprNumber) index);
 }
@@ -876,7 +874,7 @@ static EjsObj *match(Ejs *ejs, EjsString *sp, int argc, EjsObj **argv)
         }
     } while (rp->global);
     if (results == NULL) {
-        return (EjsObj*) ejs->nullValue;
+        return (EjsObj*) S(null);
     }
     return (EjsObj*) results;
 }
@@ -919,7 +917,7 @@ static EjsObj *printable(Ejs *ejs, EjsString *sp, int argc, EjsObj **argv)
     }
     result->value[j] = '\0';
     result->length = j;
-    return (EjsObj*) ejsInternString(ejs, result);
+    return (EjsObj*) ejsInternString(result);
 }
 
 
@@ -935,7 +933,7 @@ static EjsObj *quote(Ejs *ejs, EjsString *sp, int argc, EjsObj **argv)
     result->value[sp->length + 1] = '"';
     result->value[sp->length + 2] = '\0';
     result->length = sp->length + 2;
-    return (EjsObj*) ejsInternString(ejs, result);
+    return (EjsObj*) ejsInternString(result);
 }
 
 
@@ -983,7 +981,7 @@ static EjsObj *removeCharsFromString(Ejs *ejs, EjsString *sp, int argc, EjsObj *
         result->value[j] = sp->value[i];
     }
     result->value[j] = '\0';
-    return (EjsObj*) ejsInternString(ejs, result);
+    return (EjsObj*) ejsInternString(result);
 }
 
 
@@ -1152,7 +1150,7 @@ static EjsObj *replace(Ejs *ejs, EjsString *sp, int argc, EjsObj **argv)
         ejsThrowTypeError(ejs, "Wrong argument type");
         return 0;
     }
-    return (EjsObj*) ejsInternString(ejs, result);
+    return (EjsObj*) ejsInternString(result);
 }
 
 
@@ -1172,7 +1170,7 @@ static EjsString *reverseString(Ejs *ejs, EjsString *sp, int argc, EjsObj **argv
     for (i = sp->length - 1; i >= 0; i--) {
         *cp++ = sp->value[i];
     }
-    return ejsInternString(ejs, rp);
+    return ejsInternString(rp);
 }
 
 
@@ -1197,7 +1195,7 @@ static EjsNumber *searchString(Ejs *ejs, EjsString *sp, int argc, EjsObj **argv)
         rp = (EjsRegExp*) argv[0];
         count = pcre_exec(rp->compiled, NULL, sp->value, (int) sp->length, 0, 0, matches, sizeof(matches) / sizeof(int));
         if (count < 0) {
-            return ejs->minusOneValue;
+            return S(minusOne);
         }
         return ejsCreateNumber(ejs, matches[0]);
 
@@ -1265,7 +1263,7 @@ static EjsObj *sliceString(Ejs *ejs, EjsString *sp, int argc, EjsObj **argv)
     }
     result->value[j] = '\0';
     result->length = j;
-    return (EjsObj*) ejsInternString(ejs, result);
+    return (EjsObj*) ejsInternString(result);
 }
 
 
@@ -1409,7 +1407,7 @@ static EjsObj *toCamel(Ejs *ejs, EjsString *sp, int argc, EjsObj **argv)
     }
     memcpy(result->value, sp->value, sp->length * sizeof(MprChar));
     result->value[0] = tolower((int) sp->value[0]);
-    return (EjsObj*) ejsInternString(ejs, result);
+    return (EjsObj*) ejsInternString(result);
 }
 
 
@@ -1469,7 +1467,7 @@ static EjsObj *toPascal(Ejs *ejs, EjsString *sp, int argc, EjsObj **argv)
     }
     memcpy(result->value, sp->value, sp->length * sizeof(MprChar));
     result->value[0] = toupper((int) sp->value[0]);
-    return (EjsObj*) ejsInternString(ejs, result);
+    return (EjsObj*) ejsInternString(result);
 }
 
 
@@ -1530,7 +1528,7 @@ static EjsObj *tokenize(Ejs *ejs, EjsString *sp, int argc, EjsObj **argv)
             break;
 
         case 'd':
-            ejsSetProperty(ejs, result, -1, ejsParse(ejs, buf, ES_Number));
+            ejsSetProperty(ejs, result, -1, ejsParse(ejs, buf, S_Number));
             while (*buf && !isspace((int) *buf)) {
                 buf++;
             }
@@ -1841,7 +1839,7 @@ EjsString *ejsCatString(Ejs *ejs, EjsString *dest, EjsString *src)
     }
     memcpy(result->value, dest->value, dest->length * sizeof(MprChar));
     memcpy(&result->value[dest->length], src->value, src->length * sizeof(MprChar));
-    return ejsInternString(ejs, result);
+    return ejsInternString(result);
 }
 
 
@@ -1871,7 +1869,7 @@ EjsString *ejsCatStrings(Ejs *ejs, EjsString *src, ...)
         result->length += src->length;
     }
     va_end(args);
-    return ejsInternString(ejs, result);
+    return ejsInternString(result);
 }
 
 
@@ -2117,10 +2115,10 @@ int ejsContainsString(Ejs *ejs, EjsString *sp, EjsString *pat)
 char *ejsToMulti(Ejs *ejs, EjsAny *ev)
 {
     if (ev == 0) {
-        ev = ejs->emptyString;
+        ev = S(empty);
     }
     if (!ejsIsString(ejs, ev)) {
-        if ((ev = ejsCast(ejs, ev, ejs->stringType)) == 0) {
+        if ((ev = ejsCast(ejs, ev, ST(String))) == 0) {
             return "";
         }
     }
@@ -2155,14 +2153,14 @@ EjsString *ejsSubstring(Ejs *ejs, EjsString *src, ssize start, ssize len)
         len = src->length - start;
     }
     if ((start + len) > src->length || start < 0) {
-        return ejs->emptyString;
+        return S(empty);
     }
     len = min(len, src->length);
     if ((result = ejsCreateBareString(ejs, len)) == NULL) {
         return NULL;
     }
     memcpy(result->value, &src->value[start], len);
-    return ejsInternString(ejs, result);
+    return ejsInternString(result);
 }
 
 
@@ -2178,7 +2176,7 @@ EjsString *ejsToLower(Ejs *ejs, EjsString *sp)
     for (i = 0; i < sp->length; i++) {
         result->value[i] = tolower((int) sp->value[i]);
     }
-    return ejsInternString(ejs, result);
+    return ejsInternString(result);
 }
 
 
@@ -2194,7 +2192,7 @@ EjsString *ejsToUpper(Ejs *ejs, EjsString *sp)
     for (i = 0; i < sp->length; i++) {
         result->value[i] = toupper((int) sp->value[i]);
     }
-    return ejsInternString(ejs, result);
+    return ejsInternString(result);
 }
 
 
@@ -2241,7 +2239,7 @@ EjsString *ejsTrimString(Ejs *ejs, EjsString *sp, cchar *pat, int flags)
     }
     result = ejsCreateBareString(ejs, sp->length - trimmed);
     memcpy(result->value, start, result->length);
-    return ejsInternString(ejs, result);
+    return ejsInternString(result);
 }
 #endif
 
@@ -2255,7 +2253,7 @@ EjsString *ejsTruncateString(Ejs *ejs, EjsString *sp, ssize len)
     len = min(len, sp->length);
     result = ejsCreateBareString(ejs, len);
     memcpy(result->value, sp->value, len);
-    return ejsInternString(ejs, result);
+    return ejsInternString(result);
 }
 
 
@@ -2263,16 +2261,19 @@ EjsString *ejsTruncateString(Ejs *ejs, EjsString *sp, ssize len)
 /*
     Intern a unicode string. Lookup a string and return an interned string (this may be an existing interned string)
  */
-EjsString *ejsInternString(Ejs *ejs, EjsString *str)
+EjsString *ejsInternString(EjsString *str)
 {
     EjsString   *head, *sp;
+    EjsIntern   *ip;
     int         index, i, step;
 
-    ilock();
+    ip = ((EjsService*) MPR->ejsService)->intern;
     step = 0;
-    ejs->intern->accesses++;
-    index = whash(str->value, str->length) % ejs->intern->size;
-    if ((head = &ejs->intern->buckets[index]) != NULL) {
+
+    ilock();
+    ip->accesses++;
+    index = whash(str->value, str->length) % ip->size;
+    if ((head = &ip->buckets[index]) != NULL) {
         for (sp = head->next; sp != head; sp = sp->next, step++) {
             if (sp->length == str->length) {
                 for (i = 0; i < sp->length && i < str->length; i++) {
@@ -2281,7 +2282,7 @@ EjsString *ejsInternString(Ejs *ejs, EjsString *str)
                     }
                 }
                 if (i == sp->length && i == str->length) {
-                    ejs->intern->reuse++;
+                    ip->reuse++;
                     /* Revive incase almost stale or dead */
                     mprRevive(sp);
                     iunlock();
@@ -2290,11 +2291,11 @@ EjsString *ejsInternString(Ejs *ejs, EjsString *str)
             }
         }
     }
-    linkString(ejs, head, str);
+    linkString(head, str);
     iunlock();
     if (step > EJS_MAX_COLLISIONS) {
         /*  Remake the entire hash - should not happen often */
-        rebuildIntern(ejs->intern);
+        rebuildIntern(ip);
     }
     return str;
 }
@@ -2306,16 +2307,19 @@ EjsString *ejsInternString(Ejs *ejs, EjsString *str)
 EjsString *ejsInternWide(Ejs *ejs, MprChar *value, ssize len)
 {
     EjsString   *head, *sp;
+    EjsIntern   *ip;
     ssize       i, end;
     int         index, step;
 
     mprAssert(0 <= len && len < MAXINT);
 
-    ilock();
+    ip = ejs->service->intern;
     step = 0;
-    ejs->intern->accesses++;
-    index = whash(value, len) % ejs->intern->size;
-    if ((head = &ejs->intern->buckets[index]) != NULL) {
+
+    ilock();
+    ip->accesses++;
+    index = whash(value, len) % ip->size;
+    if ((head = &ip->buckets[index]) != NULL) {
         for (sp = head->next; sp != head; sp = sp->next, step++) {
             if (sp->length == len) {
                 end = min(sp->length, len);
@@ -2325,7 +2329,7 @@ EjsString *ejsInternWide(Ejs *ejs, MprChar *value, ssize len)
                     }
                 }
                 if (i == sp->length) {
-                    ejs->intern->reuse++;
+                    ip->reuse++;
                     /* Revive incase almost stale or dead */
                     mprRevive(sp);
                     iunlock();
@@ -2334,7 +2338,7 @@ EjsString *ejsInternWide(Ejs *ejs, MprChar *value, ssize len)
             }
         }
     }
-    if ((sp = ejsAlloc(ejs, ejs->stringType, (len + 1) * sizeof(MprChar))) != NULL) {
+    if ((sp = ejsAlloc(ejs, ST(String), (len + 1) * sizeof(MprChar))) != NULL) {
         memcpy(sp->value, value, len * sizeof(MprChar));
         sp->value[len] = 0;
 #if UNUSED
@@ -2347,11 +2351,11 @@ EjsString *ejsInternWide(Ejs *ejs, MprChar *value, ssize len)
 #endif
     }
     sp->length = len;
-    linkString(ejs, head, sp);
+    linkString(head, sp);
     iunlock();
     if (step > EJS_MAX_COLLISIONS) {
         /*  Remake the entire hash - should not happen often */
-        rebuildIntern(ejs->intern);
+        rebuildIntern(ip);
     }
     return sp;
 }
@@ -2360,17 +2364,20 @@ EjsString *ejsInternWide(Ejs *ejs, MprChar *value, ssize len)
 EjsString *ejsInternAsc(Ejs *ejs, cchar *value, ssize len)
 {
     EjsString   *head, *sp;
+    EjsIntern   *ip;
     ssize       i, end;
     int         index, step;
 
     mprAssert(0 <= len && len < MAXINT);
 
     step = 0;
+    ip = ejs->service->intern;
+
     ilock();
-    ejs->intern->accesses++;
-    mprAssert(ejs->intern->size > 0);
-    index = shash(value, len) % ejs->intern->size;
-    if ((head = &ejs->intern->buckets[index]) != NULL) {
+    ip->accesses++;
+    mprAssert(ip->size > 0);
+    index = shash(value, len) % ip->size;
+    if ((head = &ip->buckets[index]) != NULL) {
         for (sp = head->next; sp != head; sp = sp->next, step++) {
             if (sp->length == len) {
                 end = min(len, sp->length);
@@ -2380,7 +2387,7 @@ EjsString *ejsInternAsc(Ejs *ejs, cchar *value, ssize len)
                     }
                 }
                 if (i == sp->length) {
-                    ejs->intern->reuse++;
+                    ip->reuse++;
                     /* Revive incase almost stale or dead */
                     mprRevive(sp);
 #if UNUSED
@@ -2397,7 +2404,7 @@ EjsString *ejsInternAsc(Ejs *ejs, cchar *value, ssize len)
             }
         }
     }
-    if ((sp = ejsAlloc(ejs, ejs->stringType, (len + 1) * sizeof(MprChar))) != NULL) {
+    if ((sp = ejsAlloc(ejs, ST(String), (len + 1) * sizeof(MprChar))) != NULL) {
 #if BLD_CHAR_LEN > 1
         for (i = 0; i < len; i++) {
             sp->value[i] = value[i];
@@ -2409,11 +2416,11 @@ EjsString *ejsInternAsc(Ejs *ejs, cchar *value, ssize len)
         sp->value[len] = 0;
     }
     sp->length = len;
-    linkString(ejs, head, sp);
+    linkString(head, sp);
     iunlock();
     if (step > EJS_MAX_COLLISIONS) {
         /*  Remake the entire hash - should not happen often */
-        rebuildIntern(ejs->intern);
+        rebuildIntern(ip);
     }
     return sp;
 }
@@ -2442,14 +2449,14 @@ EjsString *ejsInternMulti(Ejs *ejs, cchar *value, ssize len)
         Have to convert the multibyte string to unicode before comparision. Convert into an EjsString to it is ready
         to intern if not found.
      */
-    if ((src = ejsAlloc(ejs, ejs->stringType, (len + 1) * sizeof(MprChar))) != NULL) {
+    if ((src = ejsAlloc(ejs, ST(String), (len + 1) * sizeof(MprChar))) != NULL) {
         src->length = mtow(src->value, len + 1, value, len);
         value = src->value;
     }
     ilock();
-    ejs->intern->accesses++;
-    index = whash(value, len) % ejs->intern->size;
-    if ((head = &ejs->intern->buckets[index]) != NULL) {
+    ip->accesses++;
+    index = whash(value, len) % ip->size;
+    if ((head = &ip->buckets[index]) != NULL) {
         for (sp = head->next; sp != head; sp = sp->next) {
             end = min(len, sp->length);
             for (i = 0; i < end && value[i]; i++) {
@@ -2458,7 +2465,7 @@ EjsString *ejsInternMulti(Ejs *ejs, cchar *value, ssize len)
                 }
             }
             if (i == sp->length && value[i] == 0) {
-                ejs->intern->reuse++;
+                ip->reuse++;
                 /* Revive incase almost stale or dead */
                 mprRevive(sp);
                 iunlock();
@@ -2466,11 +2473,11 @@ EjsString *ejsInternMulti(Ejs *ejs, cchar *value, ssize len)
             }
         }
     }
-    linkString(ejs, head, src);
+    linkString(head, src);
     iunlock();
     if (step > EJS_MAX_COLLISIONS) {
         /*  Remake the entire hash - should not happen often */
-        rebuildIntern(ejs->intern);
+        rebuildIntern(ip);
     }
     return sp;
 }
@@ -2520,7 +2527,7 @@ static int rebuildIntern(EjsIntern *intern)
             for (sp = head->next; sp != head; sp = next) {
                 next = sp->next;
                 sp->next = sp->prev = sp;
-                ejsInternString(intern->ejs, sp);
+                ejsInternString(sp);
             }
         }
     }
@@ -2531,7 +2538,7 @@ static int rebuildIntern(EjsIntern *intern)
 /*
     Must be called locked
  */
-static void linkString(Ejs *ejs, EjsString *head, EjsString *sp)
+static void linkString(EjsString *head, EjsString *sp)
 {
     mprAssert(sp != head);
     mprAssert(sp->next == NULL || sp->next == sp);
@@ -2607,7 +2614,7 @@ EjsString *ejsCreateBareString(Ejs *ejs, ssize len)
     EjsString   *sp;
     
     mprAssert(0 <= len && len < MAXINT);
-    if ((sp = ejsAlloc(ejs, ejs->stringType, (len + 1) * sizeof(MprChar))) != NULL) {
+    if ((sp = ejsAlloc(ejs, ST(String), (len + 1) * sizeof(MprChar))) != NULL) {
         sp->length = len;
         sp->value[0] = 0;
         sp->value[len] = 0;
@@ -2621,7 +2628,7 @@ EjsString *ejsCreateNonInternedString(Ejs *ejs, MprChar *value, ssize len)
     EjsString   *sp;
     
     mprAssert(0 <= len && len < MAXINT);
-    if ((sp = ejsAlloc(ejs, ejs->stringType, (len + 1) * sizeof(MprChar))) != NULL) {
+    if ((sp = ejsAlloc(ejs, ST(String), (len + 1) * sizeof(MprChar))) != NULL) {
         memcpy(sp->value, value, (len + 1) * sizeof(MprChar));
         sp->length = len;
         sp->value[len] = 0;
@@ -2643,12 +2650,14 @@ void ejsManageString(EjsString *sp, int flags)
 }
 
 
-EjsIntern *ejsCreateIntern(Ejs *ejs)
+EjsIntern *ejsCreateIntern(EjsService *sp)
 {
     EjsIntern   *intern;
     
     intern = mprAllocObj(EjsIntern, manageIntern);
+#if XXX
     intern->ejs = ejs;
+#endif
     return intern;
 }
 
@@ -2691,8 +2700,13 @@ void ejsInitStringType(Ejs *ejs, EjsType *type)
     if (firstTime) {
         mprInitSpinLock(&internLock);
         firstTime = 0;
+#if XXX || 1
+        rebuildIntern(ejs->service->intern);
+#endif
     }
-    rebuildIntern(ejs->intern);
+#if XXX
+    rebuildIntern(ejs->service->intern);
+#endif
     ejsCloneObjHelpers(ejs, type);
     type->mutex = mprCreateLock();
     type->helpers.cast = (EjsCastHelper) castString;
@@ -2709,7 +2723,7 @@ void ejsInitStringType(Ejs *ejs, EjsType *type)
     /*
         Standard string values. Create here so modules do not have to export these strings
      */
-    ejs->emptyString = (EjsString*) ejsCreateStringFromAsc(ejs, "");
+    ejsSetSpecial(ejs, S_empty, ejsCreateStringFromAsc(ejs, ""));
 
 #if UNUSED
     ejsSetSpecial(ejs, -1, ejsCreateStringFromAsc(ejs, EJS_BLOCK_NAMESPACE));
@@ -2739,7 +2753,7 @@ void ejsConfigureStringType(Ejs *ejs)
     EjsType     *type;
     EjsPot      *prototype;
 
-    type = ejs->stringType;
+    type = ST(String);
     prototype = type->prototype;
 
     ejsSetProperty(ejs, ejs->global, ES_string, type);

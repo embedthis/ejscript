@@ -669,7 +669,7 @@ static EjsVar *getVar(void *handle, int collection, int field)
     case ES_ejs_web_Request_authGroup:
     case ES_ejs_web_Request_authUser:
         //  TODO 
-        return (EjsVar*) ejs->undefinedValue;
+        return S(undefined);
 
     case ES_ejs_web_Request_authType:
         return createString(ejs, getHeader(handle, "AUTH_TYPE"));
@@ -745,14 +745,14 @@ static EjsVar *getVar(void *handle, int collection, int field)
         if ((s = (char*) getHeader(handle, "SERVER_PORT")) != 0) {
             return (EjsVar*) ejsCreateNumber(ejs, (MprNumber) mprAtoi(s, 10));
         } else {
-            return (EjsVar*) ejs->nullValue;
+            return S(null);
         }
 
     case ES_ejs_web_Request_sessionID:
         if (ereq->session) {
             return createString(ejs, ereq->session->id);
         } else {
-            return ejs->nullValue;
+            return S(null);
         }
 
     case ES_ejs_web_Request_software:
@@ -761,10 +761,10 @@ static EjsVar *getVar(void *handle, int collection, int field)
     default: 
         if (ereq->obj.slots) {
             //  TODO - must add this for lookup and set also
-            return (ejs->objectType->helpers->getProperty)(ejs, (EjsVar*) ereq, field);
+            return (ST(Object)e->helpers->getProperty)(ejs, (EjsVar*) ereq, field);
         }
     }
-    return (EjsVar*) ejs->nullValue;
+    return S(null);
 }
 
 #endif
