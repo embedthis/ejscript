@@ -321,15 +321,15 @@ static int setXmlPropertyAttributeByName(Ejs *ejs, EjsXML *xml, EjsName qname, E
     if (ejsIsXML(ejs, xvalue) && xvalue->kind == EJS_XML_LIST) {
         str = 0;
         for (next = 0; (elt = mprGetNextItem(xvalue->elements, &next)) != 0; ) {
-            sv = (EjsString*) ejsCast(ejs, (EjsObj*) elt, ST(String));
+            sv = (EjsString*) ejsCast(ejs, (EjsObj*) elt, String);
             str = mrejoin(str, NULL, " ", sv->value, NULL);
         }
         value = (EjsObj*) ejsCreateString(ejs, str, -1);
 
     } else {
-        value = ejsCast(ejs, value, ST(String));
+        value = ejsCast(ejs, value, String);
     }
-    mprAssert(ejsIsString(ejs, value));
+    mprAssert(ejsIs(ejs, value, String));
 
     /*
         Find the first attribute that matches. Delete all other attributes of the same name.
@@ -364,7 +364,7 @@ static int setXmlPropertyAttributeByName(Ejs *ejs, EjsXML *xml, EjsName qname, E
     /*
         Not found. Create a new attribute node
      */
-    mprAssert(ejsIsString(ejs, value));
+    mprAssert(ejsIs(ejs, value, String));
     qn.space = NULL;
     qn.name = ejsSubstring(ejs, qname.name, 1, -1);
     attribute = ejsCreateXML(ejs, EJS_XML_ATTRIBUTE, qn, xml, (EjsString*) value);
@@ -388,7 +388,7 @@ static EjsXML *createValueNode(Ejs *ejs, EjsXML *elt, EjsObj *value)
     if (ejsIsXML(ejs, value)) {
         return (EjsXML*) value;
     }
-    if ((str = (EjsString*) ejsCast(ejs, value, ST(String))) == NULL) {
+    if ((str = (EjsString*) ejsCast(ejs, value, String)) == NULL) {
         return 0;
     }
     if (mprGetListLength(elt->elements) == 1) {
@@ -426,7 +426,7 @@ static int setXmlPropertyByName(Ejs *ejs, EjsXML *xml, EjsName qname, EjsObj *va
     last = 0;
     lastElt = 0;
 
-    mprLog(9, "XMLSet %@.%@ = \"%@\"", xml->qname.name, qname.name, ejsCast(ejs, value, ST(String)));
+    mprLog(9, "XMLSet %@.%@ = \"%@\"", xml->qname.name, qname.name, ejsCast(ejs, value, String));
 
     if (isdigit((int) qname.name->value[0]) && allDigitsForXml(qname.name)) {
         ejsThrowTypeError(ejs, "Integer indicies for set are not allowed");
@@ -449,13 +449,14 @@ static int setXmlPropertyByName(Ejs *ejs, EjsXML *xml, EjsName qname, EjsObj *va
             value = (EjsObj*) ejsDeepCopyXML(ejs, xvalue);
 
         } else if (xvalue->kind == EJS_XML_TEXT || xvalue->kind == EJS_XML_ATTRIBUTE) {
-            value = ejsCast(ejs, originalValue, ST(String));
+            value = ejsCast(ejs, originalValue, String);
 
         } else {
             value = (EjsObj*) ejsDeepCopyXML(ejs, xvalue);
         }
     } else {
-        value = ejsCast(ejs, value, ST(String));
+        //  MOB - change all these to use ejsToString()
+        value = ejsCast(ejs, value, String);
     }
     if (qname.name->value[0] == '@') {
         return setXmlPropertyAttributeByName(ejs, xml, qname, value);
@@ -665,7 +666,7 @@ static EjsObj *xmlConstructor(Ejs *ejs, EjsXML *thisObj, int argc, EjsObj **argv
             Called as a function - cast the arg
          */
         if (argc > 0){
-            if ((arg = ejsCast(ejs, argv[0], ST(String))) == 0) {
+            if ((arg = ejsCast(ejs, argv[0], String)) == 0) {
                 return 0;
             }
         }
@@ -678,11 +679,11 @@ static EjsObj *xmlConstructor(Ejs *ejs, EjsXML *thisObj, int argc, EjsObj **argv
     arg = argv[0];
     mprAssert(arg);
 
-    if (ejsIsNull(ejs, arg) || ejsIsUndefined(ejs, arg)) {
+    if (!ejsIsDefined(ejs, arg)) {
         return (EjsObj*) thisObj;
     }
-    arg = ejsCast(ejs, argv[0], ST(String));
-    if (arg && ejsIsString(ejs, arg)) {
+    arg = ejsCast(ejs, argv[0], String);
+    if (arg && ejsIs(ejs, arg, String)) {
         str = ((EjsString*) arg)->value;
         if (str == 0) {
             return 0;
@@ -715,7 +716,7 @@ static EjsObj *loadXml(Ejs *ejs, EjsXML *xml, int argc, EjsObj **argv)
     MprXml      *xp;
     cchar       *filename;
 
-    mprAssert(argc == 1 && ejsIsString(ejs, argv[0]));
+    mprAssert(argc == 1 && ejsIs(ejs, argv[0], String));
 
     filename = ejsToMulti(ejs, argv[0]);
     file = mprOpenFile(filename, O_RDONLY, 0664);
@@ -747,7 +748,7 @@ static EjsObj *saveXml(Ejs *ejs, EjsXML *xml, int argc, EjsObj **argv)
     char        *filename;
     ssize       bytes, len;
 
-    if (argc != 1 || !ejsIsString(ejs, argv[0])) {
+    if (argc != 1 || !ejsIs(ejs, argv[0], String)) {
         ejsThrowArgError(ejs, "Bad args. Usage: save(filename);");
         return 0;
     }

@@ -362,9 +362,9 @@ int ejsGetSlot(Ejs *ejs, EjsPot *obj, int slotNum)
         //  MOB - should this be here or only in the VM. probably only in the VM.
         //  MOB -- or move this routine to the VM
         if (!DYNAMIC(obj)) {
-            if (ejsIsNull(ejs, obj)) {
+            if (ejsIs(ejs, obj, null)) {
                 ejsThrowReferenceError(ejs, "Object is null");
-            } else if (ejsIsUndefined(ejs, obj)) {
+            } else if (ejsIs(ejs, obj, undefined)) {
                 ejsThrowReferenceError(ejs, "Object is undefined");
             } else {
                 ejsThrowReferenceError(ejs, "Object is not extendable");
@@ -1000,7 +1000,7 @@ int ejsCompactPot(Ejs *ejs, EjsPot *obj)
 
     src = dest = slots = obj->properties->slots;
     for (removed = i = 0; i < obj->numProp; i++, src++) {
-        if (src->value.ref == 0 || ejsIsUndefined(ejs, src->value.ref) || ejsIsNull(ejs, src->value.ref)) {
+        if (!ejsIsDefined(ejs, src->value.ref)) {
             removed++;
             continue;
         }
@@ -1009,6 +1009,12 @@ int ejsCompactPot(Ejs *ejs, EjsPot *obj)
     obj->numProp -= removed;
     ejsMakeHash(ejs, obj);
     return obj->numProp;
+}
+
+
+bool ejsMatchName(Ejs *ejs, EjsName *a, EjsName *b)
+{
+    return a->name == b->name && a->space == b->space;
 }
 
 

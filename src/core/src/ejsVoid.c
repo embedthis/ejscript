@@ -44,7 +44,7 @@ static EjsObj *coerceVoidOperands(Ejs *ejs, EjsVoid *lhs, int opcode, EjsVoid *r
     switch (opcode) {
 
     case EJS_OP_ADD:
-        if (!ejsIsNumber(ejs, rhs)) {
+        if (!ejsIs(ejs, rhs, Number)) {
             return ejsInvokeOperator(ejs, (EjsObj*) ejsToString(ejs, (EjsObj*) lhs), opcode, (EjsObj*) rhs);
         }
         /* Fall through */
@@ -61,7 +61,7 @@ static EjsObj *coerceVoidOperands(Ejs *ejs, EjsVoid *lhs, int opcode, EjsVoid *r
         return (EjsObj*) S(false);
 
     case EJS_OP_COMPARE_NE:
-        if (ejsIsNull(ejs, rhs)) {
+        if (ejsIs(ejs, rhs, null)) {
             return (EjsObj*) S(false);
         }
         return (EjsObj*) S(true);
@@ -70,7 +70,7 @@ static EjsObj *coerceVoidOperands(Ejs *ejs, EjsVoid *lhs, int opcode, EjsVoid *r
         return (EjsObj*) S(true);
 
     case EJS_OP_COMPARE_EQ:
-        if (ejsIsNull(ejs, rhs)) {
+        if (ejsIs(ejs, rhs, null)) {
             return (EjsObj*) S(true);
         }
         return (EjsObj*) S(false);

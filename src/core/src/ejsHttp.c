@@ -37,7 +37,7 @@ static EjsObj *httpConstructor(Ejs *ejs, EjsHttp *hp, int argc, EjsObj **argv)
     httpPrepClientConn(hp->conn, 0);
     httpSetConnNotifier(hp->conn, httpNotify);
     httpSetConnContext(hp->conn, hp);
-    if (argc == 1 && ejsIsNull(ejs, argv[0])) {
+    if (argc == 1 && ejsIs(ejs, argv[0], null)) {
         hp->uri = httpUriToString(((EjsUri*) argv[0])->uri, 1);
     }
     hp->method = sclone("GET");
@@ -248,7 +248,7 @@ static EjsObj *http_form(Ejs *ejs, EjsHttp *hp, int argc, EjsObj **argv)
 {
     EjsObj  *data;
 
-    if (argc == 2 && !ejsIsNull(ejs, argv[1])) {
+    if (argc == 2 && !ejsIs(ejs, argv[1], null)) {
         /*
             Prep here to reset the state. The ensures the current headers will be preserved.
             Users may have called setHeader to define custom headers. Users must call reset if they want to clear 
@@ -625,7 +625,7 @@ static EjsObj *http_set_retries(Ejs *ejs, EjsHttp *hp, int argc, EjsObj **argv)
  */
 static EjsObj *http_setCredentials(Ejs *ejs, EjsHttp *hp, int argc, EjsObj **argv)
 {
-    if (ejsIsNull(ejs, argv[0])) {
+    if (ejsIs(ejs, argv[0], null)) {
         httpResetCredentials(hp->conn);
     } else {
         httpSetCredentials(hp->conn, ejsToMulti(ejs, argv[0]), ejsToMulti(ejs, argv[1]));
@@ -712,7 +712,7 @@ static void setupTrace(Ejs *ejs, HttpTrace *trace, int dir, EjsObj *options)
     }
     tp->size = getNumOption(ejs, options, "size");
     if ((extensions = (EjsArray*) ejsGetPropertyByName(ejs, options, EN("include"))) != 0) {
-        if (!ejsIsArray(ejs, extensions)) {
+        if (!ejsIs(ejs, extensions, Array)) {
             ejsThrowArgError(ejs, "include is not an array");
             return;
         }
@@ -724,7 +724,7 @@ static void setupTrace(Ejs *ejs, HttpTrace *trace, int dir, EjsObj *options)
         }
     }
     if ((extensions = (EjsArray*) ejsGetPropertyByName(ejs, options, EN("exclude"))) != 0) {
-        if (!ejsIsArray(ejs, extensions)) {
+        if (!ejsIs(ejs, extensions, Array)) {
             ejsThrowArgError(ejs, "exclude is not an array");
             return;
         }
@@ -884,11 +884,11 @@ static EjsObj *startHttpRequest(Ejs *ejs, EjsHttp *hp, char *method, int argc, E
     hp->requestContentCount = 0;
     mprFlushBuf(hp->responseContent);
 
-    if (argc >= 1 && !ejsIsNull(ejs, argv[0])) {
+    if (argc >= 1 && !ejsIs(ejs, argv[0], null)) {
         uriObj = (EjsUri*) argv[0];
         hp->uri = httpUriToString(uriObj->uri, 1);
     }
-    if (argc == 2 && ejsIsArray(ejs, argv[1])) {
+    if (argc == 2 && ejsIs(ejs, argv[1], Array)) {
         args = (EjsArray*) argv[1];
         if (args->length > 0) {
             data = ejsCreateByteArray(ejs, -1);
@@ -1123,7 +1123,7 @@ static void prepForm(Ejs *ejs, EjsHttp *hp, char *prefix, EjsObj *data)
         if (vp == 0) {
             continue;
         }
-        if (ejsGetPropertyCount(ejs, vp) > 0 && !ejsIsArray(ejs, vp)) {
+        if (ejsGetPropertyCount(ejs, vp) > 0 && !ejsIs(ejs, vp, Array)) {
             if (prefix) {
                 newPrefix = mprAsprintf("%s.%@", prefix, qname.name);
                 prepForm(ejs, hp, newPrefix, vp);
@@ -1132,7 +1132,7 @@ static void prepForm(Ejs *ejs, EjsHttp *hp, char *prefix, EjsObj *data)
             }
         } else {
             key = ejsToMulti(ejs, qname.name);
-            if (ejsIsArray(ejs, vp)) {
+            if (ejsIs(ejs, vp, Array)) {
                 value = ejsToJSON(ejs, vp, NULL);
             } else {
                 value = ejsToString(ejs, vp);

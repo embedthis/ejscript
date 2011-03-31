@@ -45,10 +45,10 @@ static EjsObj *app_chdir(Ejs *ejs, EjsObj *unused, int argc, EjsObj **argv)
 
     mprAssert(argc == 1);
 
-    if (ejsIsPath(ejs, argv[0])) {
+    if (ejsIs(ejs, argv[0], Path)) {
         path = ((EjsPath*) argv[0])->value;
 
-    } else if (ejsIsString(ejs, argv[0])) {
+    } else if (ejsIs(ejs, argv[0], String)) {
         path = ejsToMulti(ejs, argv[0]);
 
     } else {
@@ -263,9 +263,7 @@ void ejsConfigureAppType(Ejs *ejs)
 
     type = ejsGetTypeByName(ejs, N("ejs", "App"));
     mprAssert(type);
-#if UNUSED
-    ejsSetSpecialType(ejs, S_App, type);
-#endif
+
     ejsSetProperty(ejs, type, ES_App__inputStream, ejsCreateFileFromFd(ejs, 0, "stdin", O_RDONLY));
     ejsSetProperty(ejs, type, ES_App__outputStream, ejsCreateFileFromFd(ejs, 1, "stdout", O_WRONLY));
     ejsSetProperty(ejs, type, ES_App__errorStream, ejsCreateFileFromFd(ejs, 2, "stderr", O_WRONLY));

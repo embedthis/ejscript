@@ -12,7 +12,7 @@ module ejs {
         integral (not double) then some of these routines may not be relevant.
         @stability evolving
      */
-    native final class Number {
+    final class Number {
 
         use default namespace public
 

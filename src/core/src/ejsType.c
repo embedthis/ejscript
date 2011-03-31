@@ -19,11 +19,10 @@ static int fixupTypeImplements(Ejs *ejs, EjsType *type, int makeRoom);
 static int inheritProperties(Ejs *ejs, EjsType *type, EjsPot *obj, int destOffset, EjsPot *baseBlock, int srcOffset, 
     int count, bool resetScope);
 static void manageType(EjsType *type, int flags);
-static void setAttributes(EjsType *type, int64 attributes);
 
 /******************************************************************************/
 /*
-    Copy a type. 
+    Copy a type
 
     function copy(type: Object): Object
  */
@@ -181,9 +180,7 @@ static void createBootPrototype(Ejs *ejs, int sid, cchar *name)
     //  MOB - won't work for unicode-16
     mprSetName(type, name);
     mprSetName(type->prototype, name);
-#if UNUSED
-    ejsSetPropertyByName(ejs, ejs->coreTypes, type->qname, type);
-#endif
+    ejsSetPropertyByName(ejs, ejs->service->foundation, type->qname, type);
 }
 
 /*
@@ -213,10 +210,10 @@ int ejsBootstrapTypes(Ejs *ejs)
 
         memset(&protostub, 0, sizeof(protostub));
         ST(Object)->prototype = &protostub;
-#if UNUSED
-        ejs->coreTypes = ejsCreateEmptyPot(ejs);
-        mprSetName(ejs->coreTypes, "coreTypes");
-#endif
+
+        ejs->service->foundation = ejsCreateEmptyPot(ejs);
+        mprSetName(ejs->service->foundation, "foundation");
+
         createBootPrototype(ejs, S_Type, "Type");
         createBootPrototype(ejs, S_Object, "Object");
         createBootPrototype(ejs, S_String, "String");
@@ -255,6 +252,7 @@ EjsType *ejsCreateType(Ejs *ejs, EjsName qname, EjsModule *up, EjsType *baseType
     if ((type = createTypeVar(ejs, ST(Type), numTypeProp)) == 0) {
         return 0;
     }
+    mprSetName(type, "type");
     type->manager = ejsManagePot;
     type->sid = sid;
     type->qname = qname;
@@ -262,8 +260,7 @@ EjsType *ejsCreateType(Ejs *ejs, EjsName qname, EjsModule *up, EjsType *baseType
     type->module = up;
     type->baseType = baseType;
     type->instanceSize = instanceSize;
-    setAttributes(type, attributes);
-    mprSetName(type, "type");
+    ejsSetTypeAttributes(type, attributes);
 
     if (prototype) {
         type->prototype = prototype;
@@ -296,10 +293,8 @@ EjsType *ejsCreateNativeType(Ejs *ejs, EjsName qname, int sid, int instanceSize,
         ejs->hasError = 1;
         return 0;
     }
-#if UNUSED
-    //  MOB - are coreTypes really needed? - should be able to lookup via ST()
-    ejsSetPropertyByName(ejs, ejs->coreTypes, type->qname, type);
-#endif
+    ejsSetPropertyByName(ejs, ejs->service->foundation, type->qname, type);
+
     type->manager = manager ? (MprManager) manager : (MprManager) defaultManager;
     if (helpers == EJS_POT_HELPERS) {
         ejsClonePotHelpers(ejs, type);
@@ -336,7 +331,7 @@ EjsType *ejsConfigureType(Ejs *ejs, EjsType *type, EjsModule *up, EjsType *baseT
     int64 attributes)
 {
     type->module = up;
-    setAttributes(type, attributes);
+    ejsSetTypeAttributes(type, attributes);
 
     if (numTypeProp > 0 && ejsGrowPot(ejs, &type->constructor.block.pot, numTypeProp) < 0) {
         return 0;
@@ -395,7 +390,7 @@ EjsType *ejsCreateArchetype(Ejs *ejs, EjsFunction *fun, EjsPot *prototype)
     OPT - should be able to just read in the attributes without having to stuff some in var and some in type.
     Should eliminate all the specific fields and just use BIT MASKS.
  */
-static void setAttributes(EjsType *type, int64 attributes)
+void ejsSetTypeAttributes(EjsType *type, int64 attributes)
 {
     if (attributes & EJS_TYPE_CALLS_SUPER) {
         type->callsSuper = 1;
@@ -484,7 +479,7 @@ static int inheritProperties(Ejs *ejs, EjsType *type, EjsPot *obj, int destOffse
         }
     }
     for (i = destOffset; i < (destOffset + count); i++) {
-        if ((vp = ejsGetProperty(ejs, obj, i)) != 0 && !ejsIsNull(ejs, vp) && !ejsIsFunction(ejs, vp)) {
+        if ((vp = ejsGetProperty(ejs, obj, i)) != 0 && !ejsIs(ejs, vp, null) && !ejsIsFunction(ejs, vp)) {
             if (ejsIsType(ejs, vp)) {
                 ejsSetProperty(ejs, obj, i, S(null));
             }
@@ -834,16 +829,10 @@ bool ejsIsTypeSubType(Ejs *ejs, EjsType *target, EjsType *type)
      */
     for (tp = target; tp; tp = tp->baseType) {
         /*
-            Testing sid permits cross-interp type matching for standard types
+            All strings are interned, so this will test equality of types even across interpreters.
+            This permits using code from another interpreter.
          */
-        if (tp == type || (tp->sid > 0 && tp->sid == type->sid)) {
-            return 1;
-        }
         if (tp->qname.name == type->qname.name && tp->qname.space == type->qname.space) {
-            /* 
-                Support cross interp type comparisions. SIDs may be different but with a common intern space, type names
-                will be identical
-             */
             return 1;
         }
     }
@@ -852,7 +841,7 @@ bool ejsIsTypeSubType(Ejs *ejs, EjsType *target, EjsType *type)
      */
     if (target->implements) {
         for (next = 0; (iface = mprGetNextItem(target->implements, &next)) != 0; ) {
-            if (iface == type) {
+            if (iface->qname.name == type->qname.name && iface->qname.space == type->qname.space) {
                 return 1;
             }
         }

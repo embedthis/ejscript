@@ -150,16 +150,16 @@ static EjsObj *coerceByteArrayOperands(Ejs *ejs, EjsObj *lhs, int opcode,  EjsOb
         return ejsInvokeOperator(ejs, (EjsObj*) S(zero), opcode, rhs);
 
     case EJS_OP_COMPARE_EQ: case EJS_OP_COMPARE_NE:
-        if (ejsIsNull(ejs, rhs) || ejsIsUndefined(ejs, rhs)) {
+        if (ejsIs(ejs, rhs, null) || ejsIs(ejs, rhs, undefined)) {
             return (EjsObj*) ((opcode == EJS_OP_COMPARE_EQ) ? S(false): S(true));
-        } else if (ejsIsNumber(ejs, rhs)) {
+        } else if (ejsIs(ejs, rhs, Number)) {
             return ejsInvokeOperator(ejs, (EjsObj*) ejsToNumber(ejs, lhs), opcode, rhs);
         }
         return ejsInvokeOperator(ejs, (EjsObj*) ejsToString(ejs, lhs), opcode, rhs);
 
     case EJS_OP_COMPARE_LE: case EJS_OP_COMPARE_LT:
     case EJS_OP_COMPARE_GE: case EJS_OP_COMPARE_GT:
-        if (ejsIsNumber(ejs, rhs)) {
+        if (ejsIs(ejs, rhs, Number)) {
             return ejsInvokeOperator(ejs, (EjsObj*) ejsToNumber(ejs, lhs), opcode, rhs);
         }
         return ejsInvokeOperator(ejs, (EjsObj*) ejsToString(ejs, lhs), opcode, rhs);
@@ -250,7 +250,7 @@ static int setByteArrayProperty(struct Ejs *ejs, EjsByteArray *ap, int slotNum, 
     if (slotNum >= ap->length && ejsGrowByteArray(ejs, ap, slotNum + 1) < 0) {
         return EJS_ERR;
     }
-    if (ejsIsNumber(ejs, value)) {
+    if (ejsIs(ejs, value, Number)) {
         ap->value[slotNum] = ejsGetInt(ejs, value);
     } else {
         ap->value[slotNum] = ejsGetInt(ejs, ejsToNumber(ejs, value));
@@ -451,7 +451,7 @@ static EjsObj *setEndian(Ejs *ejs, EjsByteArray *ap, int argc, EjsObj **argv)
 {
     int     endian;
 
-    mprAssert(argc == 1 && ejsIsNumber(ejs, argv[0]));
+    mprAssert(argc == 1 && ejsIs(ejs, argv[0], Number));
 
     endian = ejsGetInt(ejs, argv[0]);
     if (endian != 0 && endian != 1) {
@@ -473,7 +473,7 @@ static EjsObj *nextByteArrayKey(Ejs *ejs, EjsIterator *ip, int argc, EjsObj **ar
     EjsByteArray    *ap;
 
     ap = (EjsByteArray*) ip->target;
-    if (!ejsIsByteArray(ejs, ap)) {
+    if (!ejsIs(ejs, ap, ByteArray)) {
         ejsThrowReferenceError(ejs, "Wrong type");
         return 0;
     }
@@ -507,7 +507,7 @@ static EjsObj *nextByteArrayValue(Ejs *ejs, EjsIterator *ip, int argc, EjsObj **
     EjsByteArray    *ap;
 
     ap = (EjsByteArray*) ip->target;
-    if (!ejsIsByteArray(ejs, ap)) {
+    if (!ejsIs(ejs, ap, ByteArray)) {
         ejsThrowReferenceError(ejs, "Wrong type");
         return 0;
     }
@@ -562,8 +562,8 @@ static EjsObj *ba_getLength(Ejs *ejs, EjsByteArray *ap, int argc, EjsObj **argv)
  */
 static EjsObj *ba_setLength(Ejs *ejs, EjsByteArray *ap, int argc, EjsObj **argv)
 {
-    mprAssert(argc == 1 && ejsIsNumber(ejs, argv[0]));
-    mprAssert(ejsIsByteArray(ejs, ap));
+    mprAssert(argc == 1 && ejsIs(ejs, argv[0], Number));
+    mprAssert(ejsIs(ejs, ap, ByteArray));
 
     ap->length = ejsGetInt(ejs, argv[0]);
     if (ap->readPosition >= ap->length) {
@@ -781,7 +781,7 @@ static EjsObj *ba_setReadPosition(Ejs *ejs, EjsByteArray *ap, int argc, EjsObj *
 {
     int     pos;
 
-    mprAssert(argc == 1 && ejsIsNumber(ejs, argv[0]));
+    mprAssert(argc == 1 && ejsIs(ejs, argv[0], Number));
 
     pos = ejsGetInt(ejs, argv[0]);
     if (pos < 0 || pos > ap->length) {
@@ -908,15 +908,15 @@ EjsNumber *ejsWriteToByteArray(Ejs *ejs, EjsByteArray *ap, int argc, EjsObj **ar
     ssize           len, wrote;
     int             i;
 
-    mprAssert(argc == 1 && ejsIsArray(ejs, argv[0]));
+    mprAssert(argc == 1 && ejsIs(ejs, argv[0], Array));
 
     /*
         Unwrap nested arrays
      */
     args = (EjsArray*) argv[0];
-    while (args && ejsIsArray(ejs, args) && args->length == 1) {
+    while (ejsIs(ejs, args, Array) && args->length == 1) {
         vp = ejsGetProperty(ejs, args, 0);
-        if (!ejsIsArray(ejs, vp)) {
+        if (!ejsIs(ejs, vp, Array)) {
             break;
         }
         args = (EjsArray*) vp;
@@ -1092,7 +1092,7 @@ static EjsObj *ba_setWritePosition(Ejs *ejs, EjsByteArray *ap, int argc, EjsObj 
 {
     int     pos;
 
-    mprAssert(argc == 1 && ejsIsNumber(ejs, argv[0]));
+    mprAssert(argc == 1 && ejsIs(ejs, argv[0], Number));
 
     pos = ejsGetInt(ejs, argv[0]);
     if (pos < 0 || pos > ap->length) {

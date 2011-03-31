@@ -33,7 +33,7 @@ module ejs {
         Iterator is a helper class to implement iterators.
         @hide
      */
-    iterator native final class Iterator {
+    iterator final class Iterator {
 
         use default namespace public
 
@@ -49,7 +49,7 @@ module ejs {
         StopIteration class. Iterators throw the StopIteration class instance to signal the end of iteration in for/in loops.
         @spec ejs
      */
-    iterator native final class StopIteration {}
+    iterator final class StopIteration {}
 
 }
 

@@ -66,7 +66,7 @@ EjsAny *ejsDeserialize(Ejs *ejs, EjsString *str)
     EjsObj      *obj;
     JsonState   js;
 
-    if (!ejsIsString(ejs, str)) {
+    if (!ejsIs(ejs, str, String)) {
         ejsThrowSyntaxError(ejs, "Object is not a string");
         return 0;
     }
@@ -448,11 +448,11 @@ EjsString *ejsSerialize(Ejs *ejs, EjsAny *vp, EjsObj *options)
             json.depth = ejsGetInt(ejs, arg);
         }
         if ((arg = ejsGetPropertyByName(ejs, options, EN("indent"))) != 0) {
-            if (ejsIsString(ejs, arg)) {
+            if (ejsIs(ejs, arg, String)) {
                json.indent = (char*) ejsToMulti(ejs, arg);
                 //  MOB - get another solution to hold
                 mprHold(json.indent);
-            } else if (ejsIsNumber(ejs, arg)) {
+            } else if (ejsIs(ejs, arg, Number)) {
                 i = ejsGetInt(ejs, arg);
                 if (0 <= i && i < MPR_MAX_STRING) {
                     json.indent = mprAlloc(i + 1);
@@ -502,8 +502,8 @@ static EjsString *serialize(Ejs *ejs, EjsAny *vp, Json *json)
     count = ejsGetPropertyCount(ejs, vp);
     if (count == 0 && TYPE(vp) != ST(Object) && TYPE(vp) != ST(Array)) {
         //  MOB OPT - need some flag for this test.
-        if (ejsIsNull(ejs, vp) || ejsIsUndefined(ejs, vp) || ejsIsBoolean(ejs, vp) || ejsIsNumber(ejs, vp) || 
-                ejsIsString(ejs, vp)) {
+        if (ejsIs(ejs, vp, null) || ejsIs(ejs, vp, undefined) || ejsIs(ejs, vp, Boolean) || ejsIs(ejs, vp, Number) || 
+                ejsIs(ejs, vp, String)) {
             return ejsToString(ejs, vp);
         } else {
             return ejsStringToJSON(ejs, vp);
@@ -515,7 +515,7 @@ static EjsString *serialize(Ejs *ejs, EjsAny *vp, Json *json)
         json->buf = mprCreateBuf(0, 0);
         mprAddRoot(json->buf);
     }
-    isArray = ejsIsArray(ejs, vp);
+    isArray = ejsIs(ejs, vp, Array);
     mprPutCharToWideBuf(json->buf, isArray ? '[' : '{');
     if (json->pretty || json->indent) {
         mprPutCharToWideBuf(json->buf, '\n');
@@ -586,7 +586,7 @@ static EjsString *serialize(Ejs *ejs, EjsAny *vp, Json *json)
 #endif
                 sv = (EjsString*) ejsRunFunction(ejs, fn, pp, 1, &json->options);
             }
-            if (sv == 0 || !ejsIsString(ejs, sv)) {
+            if (sv == 0 || !ejsIs(ejs, sv, String)) {
                 if (ejs->exception) {
                     ejsThrowTypeError(ejs, "Can't serialize property %@", qname.name);
                     SET_VISITED(obj, 0);

@@ -478,7 +478,6 @@ static EjsType *defineClass(EcCompiler *cp, EcNode *np)
     EcNode          *constructorNode;
     EjsName         qname;
     EjsNamespace    *nsp;
-    EjsType         *tp;
     int             fatt, attributes, slotNum, sid;
     
     mprAssert(np->kind == N_CLASS);
@@ -486,42 +485,39 @@ static EjsType *defineClass(EcCompiler *cp, EcNode *np)
     ejs = cp->ejs;
     state = cp->state;
     type = np->klass.ref;
-    
-    if ((slotNum = ecLookupVar(cp, ejs->global, np->qname)) >= 0) {
-        if (cp->fileState->strict) {
-            astError(cp, np, "%s Class %s is already defined.", np->qname.space, np->qname.name);
-            return 0;
-        }
-    } else {
-        slotNum = ejsGetPropertyCount(ejs, ejs->global);
+    sid = -1;
+
+    if ((slotNum = ecLookupVar(cp, ejs->global, np->qname)) >= 0 && cp->fileState->strict) {
+        astError(cp, np, "%N Class is already defined.", np->qname);
+        return 0;
+    }
+    if (ejs->empty) {
+        type = ejsGetPropertyByName(ejs, ejs->service->foundation, np->qname);
+    }
+    if (np->attributes & EJS_PROP_NATIVE) {
+        astWarn(cp, np, "Native attribute on class %s is not required, ignoring.", np->qname.name);
     }
     attributes = np->attributes | EJS_TYPE_FIXUP;
     if (np->klass.isInterface) {
         attributes |= EJS_TYPE_INTERFACE;
     }
-    sid = -1;
-    if (ejs->empty) {
-        for (sid = 0; sid < EJS_MAX_SPECIAL; sid++) {
-            tp = ejs->values[sid];
-            if (tp && ejsIsType(ejs, tp)) {
-                //  MOB -- should be a function for this
-                if (np->qname.name == tp->qname.name && np->qname.space == tp->qname.space) {
-                    break;
-                }
-            }
-        }
-        if (sid >= EJS_MAX_SPECIAL) {
-            sid = -1;
-        }
-    }
-    type = ejsCreateType(ejs, np->qname, state->currentModule, NULL, NULL, sizeof(EjsPot), -1, 0, 0, attributes);
     if (type == 0) {
-        astError(cp, np, "Can't create type %s", type->qname.name);
-        return 0;
+        type = ejsCreateType(ejs, np->qname, state->currentModule, NULL, NULL, sizeof(EjsPot), sid, 0, 0, attributes);
+        if (type == 0) {
+            astError(cp, np, "Can't create type %s", type->qname.name);
+            return 0;
+        }
+        ejsClonePotHelpers(ejs, type);
+        
+    } else {
+        ejsSetTypeAttributes(type, attributes);
+        type->module = state->currentModule;
+        /*
+            type->instanceSize = sizeof(EjsPot);
+         */
     }
     type->typeData = np;
     np->klass.ref = type;
-    ejsClonePotHelpers(ejs, type);
 
     nsp = ejsDefineReservedNamespace(ejs, (EjsBlock*) type, &type->qname, EJS_PROTECTED_NAMESPACE);
 #if UNUSED
@@ -1439,12 +1435,11 @@ static void astFunction(EcCompiler *cp, EcNode *np)
                     an appropriate return.
                  */
                 if (!(state->currentClass && state->currentClass->isInterface) && !(np->attributes & EJS_PROP_NATIVE)) {
-                    /*
-                        When building slots for the core VM (empty mode), we can't test ST(Void) as this won't equal
-                        the parsed Void class.
-                        MOB - is this still true?
-                     */
+#if UNUSED
                     if (ejs->initialized || fun->resultType == 0 || fun->resultType->qname.name != ST(Void)->qname.name) {
+#else
+                    if (ejs->initialized || fun->resultType == 0 || fun->resultType != ST(Void)) {
+#endif
                         astError(cp, np, "Function \"%@\" must return a value",  np->qname.name);
                     }
                 }
@@ -1572,7 +1567,9 @@ static EjsObj *evalNode(EcCompiler *cp, EcNode *np)
     /*  Install the Config object as a local variable in the initializer function */
     config = ejsGetPropertyByName(ejs, ejs->global, N("ejs", "Config"));
     ejsDefineProperty(ejs, mp->initializer->activation, 0, EN("Config"), ST(Type), 0, config);
+#if UNUSED
     ejsSetPropertyName(ejs, config, ES_Config_Legacy, EN("Legacy"));
+#endif
     result = ejsRunInitializer(ejs, mp);
     cp->debug = saveDebug;
     mprAssert(ejs->result == 0 || (MPR_GET_GEN(MPR_GET_MEM(ejs->result)) != MPR->heap.dead));
@@ -2436,7 +2433,7 @@ static void astUseNamespace(EcCompiler *cp, EcNode *np)
                 namespace = (EjsNamespace*) np->lookup.ref;
                 if (namespace) {
                     np->namespaceRef->value = namespace->value;
-                    if (!ejsIsNamespace(ejs, namespace)) {
+                    if (!ejsIs(ejs, namespace, Namespace)) {
                         astError(cp, np, "The variable \"%s\" is not a namespace", np->qname.name);
                     } else {
                         np->namespaceRef = namespace;
@@ -3556,7 +3553,7 @@ static EjsNamespace *resolveNamespace(EcCompiler *cp, EcNode *np, EjsBlock *bloc
     qname.name = np->qname.space;
     qname.space = 0;
     nspace = (EjsNamespace*) getTypeProperty(cp, 0, qname);
-    if (nspace == 0 || !ejsIsNamespace(ejs, nspace)) {
+    if (nspace == 0 || !ejsIs(ejs, nspace, Namespace)) {
         nspace = lookupNamespace(cp->ejs, np->qname.space);
     }
     if (nspace == 0 && cp->state->nspace == np->qname.space) {

@@ -48,7 +48,7 @@ static EjsObj *coercePathOperands(Ejs *ejs, EjsPath *lhs, int opcode,  EjsObj *r
     case EJS_OP_COMPARE_EQ: case EJS_OP_COMPARE_NE:
     case EJS_OP_COMPARE_LE: case EJS_OP_COMPARE_LT:
     case EJS_OP_COMPARE_GE: case EJS_OP_COMPARE_GT:
-        if (ejsIsNull(ejs, rhs) || ejsIsUndefined(ejs, rhs)) {
+        if (!ejsIsDefined(ejs, rhs)) {
             return (EjsObj*) ((opcode == EJS_OP_COMPARE_EQ) ? S(false): S(true));
         }
         return ejsInvokeOperator(ejs, (EjsObj*) ejsCreateStringFromAsc(ejs, lhs->value), opcode, rhs);
@@ -336,7 +336,7 @@ static EjsObj *nextPathKey(Ejs *ejs, EjsIterator *ip, int argc, EjsObj **argv)
     EjsPath     *fp;
 
     fp = (EjsPath*) ip->target;
-    if (!ejsIsPath(ejs, fp)) {
+    if (!ejsIs(ejs, fp, Path)) {
         ejsThrowReferenceError(ejs, "Wrong type");
         return 0;
     }
@@ -369,7 +369,7 @@ static EjsObj *nextPathValue(Ejs *ejs, EjsIterator *ip, int argc, EjsObj **argv)
     MprDirEntry *dp;
 
     fp = (EjsPath*) ip->target;
-    if (!ejsIsPath(ejs, fp)) {
+    if (!ejsIs(ejs, fp, Path)) {
         ejsThrowReferenceError(ejs, "Wrong type");
         return 0;
     }
@@ -816,7 +816,7 @@ static EjsObj *readBytes(Ejs *ejs, EjsPath *fp, int argc, EjsObj **argv)
     char            buffer[MPR_BUFSIZE];
     int             bytes, offset, rc;
 
-    mprAssert(argc == 1 && ejsIsString(ejs, argv[0]));
+    mprAssert(argc == 1 && ejsIs(ejs, argv[0], String));
     path = ejsToMulti(ejs, argv[0]);
 
     file = mprOpenFile(path, O_RDONLY | O_BINARY, 0);
@@ -865,7 +865,7 @@ static EjsObj *readLines(Ejs *ejs, EjsPath *fp, int argc, EjsObj **argv)
     char        *start, *end, *cp, buffer[MPR_BUFSIZE];
     int         bytes, rc, lineno;
 
-    mprAssert(argc == 1 && ejsIsString(ejs, argv[0]));
+    mprAssert(argc == 1 && ejsIs(ejs, argv[0], String));
     path = ejsToMulti(ejs, argv[0]);
 
     result = ejsCreateArray(ejs, 0);
@@ -935,7 +935,7 @@ static EjsObj *readFileAsString(Ejs *ejs, EjsPath *fp, int argc, EjsObj **argv)
     char        buffer[MPR_BUFSIZE];
     int         bytes;
 
-    mprAssert(argc == 1 && ejsIsString(ejs, argv[0]));
+    mprAssert(argc == 1 && ejsIs(ejs, argv[0], String));
     path = ejsToMulti(ejs, argv[0]);
 
     file = mprOpenFile(path, O_RDONLY | O_BINARY, 0);
@@ -1015,7 +1015,7 @@ static EjsObj *renamePathFile(Ejs *ejs, EjsPath *fp, int argc, EjsObj **argv)
 {
     cchar    *to;
 
-    mprAssert(argc == 1 && ejsIsString(ejs, argv[0]));
+    mprAssert(argc == 1 && ejsIs(ejs, argv[0], String));
     to = ejsToMulti(ejs, argv[0]);
     unlink((char*) to);
     if (rename(fp->value, to) < 0) {
@@ -1059,9 +1059,9 @@ static EjsObj *isPathSame(Ejs *ejs, EjsPath *fp, int argc, EjsObj **argv)
 {
     cchar   *other;
 
-    if (ejsIsString(ejs, argv[0])) {
+    if (ejsIs(ejs, argv[0], String)) {
         other = ejsToMulti(ejs, argv[0]);
-    } else if (ejsIsPath(ejs, argv[0])) {
+    } else if (ejsIs(ejs, argv[0], Path)) {
         other = ((EjsPath*) (argv[0]))->value;
     } else {
         return (EjsObj*) S(false);
@@ -1206,9 +1206,9 @@ static EjsObj *writeToFile(Ejs *ejs, EjsPath *fp, int argc, EjsObj **argv)
 
 static cchar *getPathString(Ejs *ejs, EjsObj *vp)
 {
-    if (ejsIsString(ejs, vp)) {
+    if (ejsIs(ejs, vp, String)) {
         return (char*) ejsToMulti(ejs, vp);
-    } else if (ejsIsPath(ejs, vp)) {
+    } else if (ejsIs(ejs, vp, Path)) {
         return ((EjsPath*) vp)->value;
     }
     ejsThrowIOError(ejs, "Bad path");

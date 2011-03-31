@@ -16,7 +16,7 @@
  */
 static EjsObj *castBooleanVar(Ejs *ejs, EjsBoolean *vp, EjsType *type)
 {
-    mprAssert(ejsIsBoolean(ejs, vp));
+    mprAssert(ejsIs(ejs, vp, Boolean));
 
     switch (type->sid) {
     case S_Number:
@@ -40,9 +40,9 @@ static EjsObj *coerceBooleanOperands(Ejs *ejs, EjsObj *lhs, int opcode, EjsObj *
     switch (opcode) {
 
     case EJS_OP_ADD:
-        if (ejsIsUndefined(ejs, rhs)) {
+        if (ejsIs(ejs, rhs, undefined)) {
             return (EjsObj*) S(nan);
-        } else if (ejsIsNull(ejs, rhs) || ejsIsNumber(ejs, rhs) || ejsIsDate(ejs, rhs)) {
+        } else if (ejsIs(ejs, rhs, null) || ejsIs(ejs, rhs, Number) || ejsIs(ejs, rhs, Date)) {
             return ejsInvokeOperator(ejs, (EjsObj*) ejsToNumber(ejs, lhs), opcode, rhs);
         } else {
             return ejsInvokeOperator(ejs, (EjsObj*) ejsToString(ejs, lhs), opcode, rhs);
@@ -56,7 +56,7 @@ static EjsObj *coerceBooleanOperands(Ejs *ejs, EjsObj *lhs, int opcode, EjsObj *
     case EJS_OP_COMPARE_LE: case EJS_OP_COMPARE_LT:
     case EJS_OP_COMPARE_GE: case EJS_OP_COMPARE_GT:
     case EJS_OP_COMPARE_EQ: case EJS_OP_COMPARE_NE:
-        if (ejsIsString(ejs, rhs)) {
+        if (ejsIs(ejs, rhs, String)) {
             return ejsInvokeOperator(ejs, (EjsObj*) ejsToString(ejs, lhs), opcode, rhs);
         }
         return ejsInvokeOperator(ejs, (EjsObj*) ejsToNumber(ejs, lhs), opcode, rhs);
@@ -100,7 +100,7 @@ static EjsObj *invokeBooleanOperator(Ejs *ejs, EjsBoolean *lhs, int opcode, EjsB
     EjsObj      *result;
 
     if (rhs == 0 || TYPE(lhs) != TYPE(rhs)) {
-        if (!ejsIs(lhs, Boolean) || !ejsIs(rhs, Boolean)) {
+        if (!ejsIs(ejs, lhs, Boolean) || !ejsIs(ejs, rhs, Boolean)) {
             if ((result = coerceBooleanOperands(ejs, (EjsObj*) lhs, opcode, (EjsObj*) rhs)) != 0) {
                 return result;
             }

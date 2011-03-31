@@ -119,33 +119,29 @@ static EjsObj *ref_typeOf(Ejs *ejs, EjsObj *obj, int argc, EjsObj **argv)
 /*
     Get the ecma "typeof" value for an object. Unfortunately, typeof is pretty lame.
  */
-EjsObj *ejsGetTypeOf(Ejs *ejs, EjsObj *vp)
+EjsString *ejsGetTypeOf(Ejs *ejs, EjsObj *vp)
 {
     if (vp == S(undefined)) {
-        return (EjsObj*) ejsCreateStringFromAsc(ejs, "undefined");
+        return ejsCreateStringFromAsc(ejs, "undefined");
 
-    } else if (ejsIsNull(vp)) {
+    } else if (ejsIs(ejs, vp, null)) {
         /* Yea - I know, ECMAScript is broken */
-        return (EjsObj*) ejsCreateStringFromAsc(ejs, "object");
+        return ejsCreateStringFromAsc(ejs, "object");
 
-    } if (ejsIsBoolean(ejs, vp)) {
-        return (EjsObj*) ejsCreateStringFromAsc(ejs, "boolean");
+    } if (ejsIs(ejs, vp, Boolean)) {
+        return ejsCreateStringFromAsc(ejs, "boolean");
 
-    } else if (ejsIsNumber(ejs, vp)) {
-        return (EjsObj*) ejsCreateStringFromAsc(ejs, "number");
+    } else if (ejsIs(ejs, vp, Number)) {
+        return ejsCreateStringFromAsc(ejs, "number");
 
-    } else if (ejsIsString(ejs, vp)) {
-        return (EjsObj*) ejsCreateStringFromAsc(ejs, "string");
+    } else if (ejsIs(ejs, vp, String)) {
+        return ejsCreateStringFromAsc(ejs, "string");
 
-    } else if (ejsIsFunction(ejs, vp)) {
-        return (EjsObj*) ejsCreateStringFromAsc(ejs, "function");
-               
-    } else if (ejsIsType(ejs, vp)) {
-        /* Pretend it is a constructor function */
-        return (EjsObj*) ejsCreateStringFromAsc(ejs, "function");
+    } else if (ejsIs(ejs, vp, Function)) {
+        return ejsCreateStringFromAsc(ejs, "function");
                
     } else {
-        return (EjsObj*) ejsCreateStringFromAsc(ejs, "object");
+        return ejsCreateStringFromAsc(ejs, "object");
     }
 }
 

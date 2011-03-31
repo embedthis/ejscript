@@ -498,9 +498,9 @@ static char *makeHighlight(EcCompiler *cp, MprChar *source, int col)
 
 void ecErrorv(EcCompiler *cp, cchar *severity, EcLocation *loc, cchar *fmt, va_list args)
 {
-    cchar       *appName;
-    char        *pointer, *errorMsg, *msg;
-    int         errCode;
+    cchar   *appName;
+    char    *pointer, *errorMsg, *msg;
+    int     errCode;
 
     errCode = 0;
     appName = mprGetAppName(cp);

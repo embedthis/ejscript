@@ -583,9 +583,6 @@ typedef struct Ejs {
     //  MOB - what is this for?
     void                *userData;          /**< User data */
 
-#if UNUSED
-    EjsObj              *coreTypes;         /**< Core type instances */
-#endif
     MprHashTable        *doc;               /**< Documentation */
     void                *sqlite;            /**< Sqlite context information */
 
@@ -724,9 +721,19 @@ typedef struct EjsPot {
     int             numProp;                    /** Number of properties */
 } EjsPot;
 
-#define POT(ejs, ptr)  (TYPE(ptr)->isPot)
-
-#define ejsIsPot(ejs, obj) (obj && POT(ejs, obj))
+#define POT(ptr)  (TYPE(ptr)->isPot)
+#if DOXYGEN
+    /** 
+        Determine if a variable is a Pot.
+        @description This call tests if the variable is a Pot.
+        @param obj Object to test
+        @returns True if the variable is based on EjsPot
+        @ingroup EjsPot
+     */
+    extern bool ejsIsPot(Ejs *ejs, EjsAny *obj);
+#else
+#define ejsIsPot(ejs, obj) (obj && POT(obj))
+#endif
 
 /** 
     Allocate a new variable
@@ -751,7 +758,7 @@ extern EjsAny *ejsAlloc(Ejs *ejs, struct EjsType *type, ssize extra);
         of the variable.
     @ingroup EjsAny
  */
-extern EjsAny *ejsCast(Ejs *ejs, EjsAny *obj, struct EjsType *type);
+extern EjsAny *ejsCastType(Ejs *ejs, EjsAny *obj, struct EjsType *type);
 
 /** 
     Clone a variable
@@ -1068,6 +1075,7 @@ extern EjsObj   *ejsToSource(Ejs *ejs, EjsObj *obj, int argc, void *argv);
 extern EjsString *ejsObjToString(Ejs *ejs, EjsObj *vp, int argc, EjsObj **argv);
 extern EjsString *ejsObjToJSON(Ejs *ejs, EjsObj *vp, int argc, EjsObj **argv);
 extern int ejsBlendObject(Ejs *ejs, EjsObj *dest, EjsObj *src, int overwrite);
+extern bool ejsMatchName(Ejs *ejs, EjsName *a, EjsName *b);
 
 /********************************************** String ********************************************/
 /** 
@@ -1172,13 +1180,6 @@ extern EjsString *ejsSerialize(Ejs *ejs, EjsAny *obj, EjsObj *options);
     @ingroup MOB
  */
 extern EjsString *ejsToString(Ejs *ejs, EjsAny *obj);
-
-#if DOXYGEN
-    bool ejsIsString(Ejs *ejs, EjsAny *obj);
-#else
-    #define ejsIsString(ejs, obj) (obj && TYPE(obj)->sid == S_String)
-#endif
-
 extern EjsString *ejsStringToJSON(Ejs *ejs, EjsObj *obj);
 
 /** 
@@ -1190,7 +1191,7 @@ extern EjsString *ejsStringToJSON(Ejs *ejs, EjsObj *obj);
         stored in the data field. Array extends EjsObj and has all the capabilities of EjsObj.
     @stability Evolving
     @defgroup EjsArray EjsArray
-    @see EjsArray ejsCreateArray ejsIsArray
+    @see EjsArray ejsCreateArray
  */
 typedef struct EjsArray {
     EjsPot          pot;                /**< Property storage */
@@ -1222,18 +1223,6 @@ extern int ejsLookupItem(Ejs *ejs, EjsArray *lp, EjsAny *item);
 extern int ejsRemoveItem(Ejs *ejs, EjsArray *ap, EjsAny *item);
 extern int ejsRemoveLastItem(Ejs *ejs, EjsArray *ap);
 extern int ejsRemoveItemAtPos(Ejs *ejs, EjsArray *ap, int index);
-
-#if DOXYGEN
-    /** 
-        Determine if a variable is an array
-        @param obj Object to test
-        @return True if the variable is an array
-        @ingroup EjsArray
-     */
-    extern bool ejsIsArray(Ejs *ejs, EjsAny *obj);
-#else
-    #define ejsIsArray(ejs, obj) (obj && TYPE(obj)->sid == S_Array)
-#endif
 
 /************************************************ Block ********************************************************/
 
@@ -1485,7 +1474,7 @@ typedef struct EjsFunction {
     extern bool ejsIsInitializer(Ejs *ejs, EjsAny *obj);
 #else
     //  MOB OPT
-    #define ejsIsFunction(ejs, obj)       (obj && POT(ejs, obj) && ((EjsPot*) obj)->isFunction)
+    #define ejsIsFunction(ejs, obj)       (obj && POT(obj) && ((EjsPot*) obj)->isFunction)
     #define ejsIsNativeFunction(ejs, obj) (ejsIsFunction(ejs, obj) && (((EjsFunction*) (obj))->isNativeProc))
     #define ejsIsInitializer(ejs, obj)    (ejsIsFunction(ejs, obj) && (((EjsFunction*) (obj))->isInitializer)
 #endif
@@ -1616,7 +1605,7 @@ extern int ejsFreeze(Ejs *ejs, int freeze);
         these are referenced as ejs->trueValue and ejs->falseValue.
     @stability Evolving
     @defgroup EjsBoolean EjsBoolean
-    @see EjsBoolean ejsCreateBoolean ejsIsBoolean ejsGetBoolean
+    @see EjsBoolean ejsCreateBoolean ejsGetBoolean
  */
 typedef struct EjsBoolean {
     EjsObj  obj;                /**< Base object */
@@ -1643,18 +1632,6 @@ extern EjsBoolean *ejsCreateBoolean(Ejs *ejs, int value);
     @ingroup EjsBoolean
  */
 extern EjsBoolean *ejsToBoolean(Ejs *ejs, EjsAny *obj);
-
-#if DOXYGEN
-    /** 
-        Determine if a variable is a boolean
-        @param obj Object to test
-        @return True if the variable is a boolean
-        @ingroup EjsBoolean
-     */
-    extern bool ejsIsBoolean(Ejs *ejs, EjsAny *obj);
-#else
-    #define ejsIsBoolean(ejs, obj) (obj && TYPE(obj)->sid == S_Boolean)
-#endif
 
 /** 
     Get the C boolean value from a boolean object
@@ -1698,7 +1675,7 @@ extern bool ejsGetBoolean(Ejs *ejs, EjsAny *obj);
     method will put a stream into async mode. Events will then be issued for close, eof, read and write events.
     @stability Evolving
     @defgroup EjsByteArray EjsByteArray
-    @see EjsByteArray ejsIsByteArray ejsCreateByteArray ejsSetByteArrayPositions ejsCopyToByteArray
+    @see EjsByteArray ejsCreateByteArray ejsSetByteArrayPositions ejsCopyToByteArray
  */
 typedef struct EjsByteArray {
     EjsObj          obj;                /**< Base object */
@@ -1716,18 +1693,6 @@ typedef struct EjsByteArray {
     EjsObj          *listeners;         /**< Event listeners in async mode */
 #endif
 } EjsByteArray;
-
-#if DOXYGEN
-    /** 
-        Determine if a variable is a byte array
-        @param obj Object to test
-        @return True if the variable is a byte array
-        @ingroup EjsByteArray
-     */
-    extern bool ejsIsByteArray(Ejs *ejs, EjsAny *obj);
-#else
-    #define ejsIsByteArray(ejs, obj) (obj && TYPE(obj)->sid == S_ByteArray)
-#endif
 
 /** 
     Create a byte array
@@ -1808,18 +1773,6 @@ typedef struct EjsDate {
     EjsObj          obj;                /**< Object base */
     MprTime         value;              /**< Time in milliseconds since "1970/01/01 GMT" */
 } EjsDate;
-
-#if DOXYGEN
-    /** 
-        Determine if a variable is a Date
-        @param obj Object to test
-        @return True if the variable is a date
-        @ingroup EjsDate
-     */
-    bool ejsIsDate(Ejs *ejs, EjsAny *obj);
-#else
-    #define ejsIsDate(ejs, obj) (obj && TYPE(obj)->sid == S_Date)
-#endif
 
 /** 
     Create a new date instance
@@ -2021,7 +1974,7 @@ extern EjsError *ejsThrowTypeError(Ejs *ejs, cchar *fmt, ...) PRINTF_ATTRIBUTE(2
     and deleting files, and for accessing and modifying information about the file.
     @stability Prototype
     @defgroup EjsFile EjsFile 
-    @see EjsFile ejsCreateFile ejsIsFile
+    @see EjsFile ejsCreateFile
  */
 typedef struct EjsFile {
     EjsObj          obj;                /**< Base object */
@@ -2052,26 +2005,12 @@ extern EjsFile *ejsCreateFile(Ejs *ejs, cchar *filename);
 
 extern EjsFile *ejsCreateFileFromFd(Ejs *ejs, int fd, cchar *name, int mode);
 
-#if DOXYGEN
-    /** 
-        Determine if a variable is a File
-        @param ejs Ejs reference returned from #ejsCreate
-        @param obj Object to test
-        @return True if the variable is a File
-        @ingroup File
-     */
-    extern bool ejsIsFile(Ejs *ejs, EjsAny *obj);
-#else
-    #define ejsIsFile(ejs, obj) (obj && TYPE(obj)->sid == S_File)
-#endif
-
-
 /**
     Path class
     @description The Path class provides file path name services.
     @stability Prototype
     @defgroup EjsPath EjsPath 
-    @see EjsFile ejsCreatePath ejsIsPath
+    @see EjsFile ejsCreatePath
  */
 typedef struct EjsPath {
     EjsObj          obj;                /**< Base object */
@@ -2098,19 +2037,6 @@ typedef struct EjsPath {
 extern EjsPath *ejsCreatePath(Ejs *ejs, EjsString *path);
 extern EjsPath *ejsCreatePathFromAsc(Ejs *ejs, cchar *path);
 
-#if DOXYGEN
-    /** 
-        Determine if a variable is a Path
-        @param ejs Ejs reference returned from #ejsCreate
-        @param obj Object to test
-        @return True if the variable is a Path
-        @ingroup EjsPath
-     */
-    extern bool ejsIsPath(Ejs *ejs, EjsAny *obj);
-#else
-    #define ejsIsPath(ejs, obj) (obj && TYPE(obj)->sid == S_Path)
-#endif
-
 //  MOB DOC
 extern EjsPath *ejsToPath(Ejs *ejs, EjsAny *obj);
 
@@ -2120,7 +2046,7 @@ extern EjsPath *ejsToPath(Ejs *ejs, EjsAny *obj);
     @description The Uri class provides file path name services.
     @stability Prototype
     @defgroup EjsUri EjsUri 
-    @see EjsFile ejsCreateUri ejsIsUri
+    @see EjsFile ejsCreateUri
  */
 typedef struct EjsUri {
     EjsObj      obj;            /**< Base object */
@@ -2140,21 +2066,7 @@ extern EjsUri *ejsCreateUri(Ejs *ejs, EjsString *uri);
 extern EjsUri *ejsCreateUriFromMulti(Ejs *ejs, cchar *uri);
 extern EjsUri *ejsCreateUriFromParts(Ejs *ejs, cchar *scheme, cchar *host, int port, cchar *path, cchar *query, 
         cchar *reference, int complete);
-
-#if DOXYGEN
-    /** 
-        Determine if a variable is a Uri
-        @param ejs Ejs reference returned from #ejsCreate
-        @param obj Object to test
-        @return True if the variable is a Uri
-        @ingroup EjsUri
-     */
-    extern bool ejsIsUri(Ejs *ejs, EjsAny *obj);
-    extern cchar *ejsGetUri(Ejs *ejs, EjsAny *obj);
-#else
-    #define ejsIsUri(ejs, obj) (obj && TYPE(obj)->sid == S_Uri)
-    extern cchar *ejsGetUri(Ejs *ejs, EjsAny *obj);
-#endif
+extern cchar *ejsGetUri(Ejs *ejs, EjsAny *obj);
 
 //  MOB DOC
 extern EjsUri *ejsToUri(Ejs *ejs, EjsAny *obj);
@@ -2164,7 +2076,7 @@ extern EjsUri *ejsToUri(Ejs *ejs, EjsAny *obj);
     @description The FileSystem class provides file system services.
     @stability Prototype
     @defgroup EjsFileSystem EjsFileSystem 
-    @see EjsFile ejsCreateFile ejsIsFile
+    @see EjsFile ejsCreateFile
  */
 typedef struct EjsFileSystem {
     EjsObj          obj;                /**< Base object */
@@ -2182,23 +2094,8 @@ typedef struct EjsFileSystem {
     @ingroup EjsPath
  */
 extern EjsFileSystem *ejsCreateFileSystem(Ejs *ejs, cchar *path);
-
-#if DOXYGEN
-    /**
-        Determine if a variable is a Path
-        @param obj Object to test
-        @return True if the variable is a FileSystem
-        @ingroup EjsFileSystem
-     */
-    extern bool ejsIsFileSystem(Ejs *ejs, EjsAny *obj);
-#else
-    #define ejsIsFileSystem(ejs, obj) (obj && TYPE(obj)->sid == S_FileSystem)
-#endif
-
-
 extern EjsObj *ejsCreateGlobal(Ejs *ejs);
 extern void ejsFreezeGlobal(Ejs *ejs);
-
 
 /** 
     Http Class
@@ -2208,7 +2105,7 @@ extern void ejsFreezeGlobal(Ejs *ejs);
         PUT, DELETE, OPTIONS, and TRACE. It also supports Keep-Alive and SSL connections. 
     @stability Prototype
     @defgroup EjsHttp EjsHttp
-    @see EjsHttp ejsCreateHttp ejsIsHttp
+    @see EjsHttp ejsCreateHttp
  */
 typedef struct EjsHttp {
     EjsObj          obj;                        /**< Base object */
@@ -2239,12 +2136,6 @@ typedef struct EjsHttp {
  */
 extern EjsHttp *ejsCreateHttp(Ejs *ejs);
 
-//  MOB - fix up this pattern do don't need both define and function
-#if DOXYGEN
-    extern bool ejsIsHttp(Ejs *ejs, EjsAny *obj);
-#else
-    #define ejsIsHttpType(ejs, obj) (obj && TYPE(obj)->sid == S_Http)
-#endif
 extern void ejsSetHttpLimits(Ejs *ejs, HttpLimits *limits, EjsObj *obj, int server);
 extern void ejsGetHttpLimits(Ejs *ejs, EjsObj *obj, HttpLimits *limits, int server);
 
@@ -2288,7 +2179,7 @@ extern EjsIterator *ejsCreateIterator(Ejs *ejs, EjsAny *target, EjsFun next, boo
     @description Namespaces are used to qualify names into discrete spaces.
     @stability Evolving
     @defgroup EjsNamespace EjsNamespace
-    @see EjsNamespace ejsIsNamespace ejsCreateNamespace ejsLookupNamespace ejsDefineReservedNamespace 
+    @see EjsNamespace ejsCreateNamespace ejsLookupNamespace ejsDefineReservedNamespace 
         ejsCreateReservedNamespace ejsFormatReservedNamespace 
  */
 typedef struct EjsNamespace {
@@ -2306,18 +2197,6 @@ typedef struct EjsNamespace {
  */
 extern EjsNamespace *ejsCreateNamespace(Ejs *ejs, EjsString *name);
 
-#if DOXYGEN
-    /**
-        Determine if a variable is a namespace
-        @param obj Object to test
-        @return True if the variable is a namespace
-        @ingroup EjsNamespace
-     */
-    extern bool ejsIsNamespace(Ejs *ejs, EjsAny *obj)
-#else
-    #define ejsIsNamespace(ejs, obj) (obj && TYPE(obj)->sid == S_Namespace)
-#endif
-
 extern EjsNamespace *ejsDefineReservedNamespace(Ejs *ejs, EjsBlock *block, EjsName *typeName, cchar *name);
 extern EjsNamespace *ejsCreateReservedNamespace(Ejs *ejs, EjsName *typeName, EjsString *name);
 extern EjsString *ejsFormatReservedNamespace(Ejs *ejs, EjsName *typeName, EjsString *spaceName);
@@ -2332,12 +2211,6 @@ extern EjsString *ejsFormatReservedNamespace(Ejs *ejs, EjsName *typeName, EjsStr
  */
 typedef EjsObj EjsNull;
 
-/** 
-    Determine if a variable is a null
-    @return True if a variable is a null
-    @ingroup EjsNull
- */
-#define ejsIsNull(ejs, obj) (obj == S(null))
 extern EjsNull *ejsCreateNull(Ejs *ejs);
 
 /** 
@@ -2347,7 +2220,7 @@ extern EjsNull *ejsCreateNull(Ejs *ejs);
         or int64. 
     @stability Evolving
     @defgroup EjsNumber EjsNumber
-    @see EjsNumber ejsToNumber ejsCreateNumber ejsIsNumber ejsGetNumber ejsGetInt ejsGetDouble ejsIsInfinite ejsIsNan
+    @see EjsNumber ejsToNumber ejsCreateNumber ejsGetNumber ejsGetInt ejsGetDouble ejsIsInfinite ejsIsNan
  */
 typedef struct EjsNumber {
     EjsObj      obj;                /**< Base object */
@@ -2404,7 +2277,7 @@ extern EjsString *ejsGetTypeOf(struct Ejs *ejs, EjsAny *obj);
     @description The regular expression class provides string pattern matching and substitution.
     @stability Evolving
     @defgroup EjsRegExp EjsRegExp
-    @see EjsRegExp ejsCreateRegExp ejsIsRegExp
+    @see EjsRegExp ejsCreateRegExp
  */
 typedef struct EjsRegExp {
     EjsObj          obj;                /**< Base object */
@@ -2432,23 +2305,12 @@ extern EjsRegExp *ejsCreateRegExp(Ejs *ejs, EjsString *pattern);
 
 EjsString *ejsRegExpToString(Ejs *ejs, EjsRegExp *rp);
 
-#if DOXYGEN
-    /** 
-        Determine if the variable is a regular expression
-        @return True if the variable is a regular expression
-        @ingroup EjsRegExp
-     */
-    extern bool ejsIsRegExp(Ejs *ejs, EjsAny *obj);
-#else
-    #define ejsIsRegExp(ejs, obj) (obj && TYPE(obj)->sid == S_RegExp)
-#endif
-
 /**
     Socket Class
     @description
     @stability Prototype
     @defgroup EjsSocket EjsSocket
-    @see EjsSocket ejsCreateSocket ejsIsSocket
+    @see EjsSocket ejsCreateSocket
  */
 typedef struct EjsSocket {
     EjsObj          obj;                /**< Base object */
@@ -2469,13 +2331,6 @@ typedef struct EjsSocket {
     @ingroup EjsSocket
  */
 extern EjsSocket *ejsCreateSocket(Ejs *ejs);
-
-#if DOXYGEN
-    extern bool ejsIsSocket(Ejs *ejs, EjsAny *obj);
-#else
-    #define ejsIsSocket(ejs, obj) (obj && TYPE(obj)->sid == S_Socket)
-#endif
-
 
 /** 
     Timer Class
@@ -2540,8 +2395,6 @@ typedef EjsObj EjsVoid;
 
 extern EjsVoid *ejsCreateUndefined(Ejs *ejs);
 
-#define ejsIsUndefined(ejs, obj) (obj == S(undefined))
-
 /*  
     Xml tag state
  */
@@ -2592,7 +2445,6 @@ typedef struct EjsXML {
     int             flags;
 } EjsXML;
 
-
 #if DOXYGEN
     /** 
         Determine if a variable is an XML object
@@ -2602,7 +2454,7 @@ typedef struct EjsXML {
      */
     extern boolean ejsIsXML(Ejs *ejs, EjsAny *obj);
 #else
-    #define ejsIsXML(ejs, obj) (obj && ((TYPE(obj)->sid == S_XML) || TYPE(obj)->sid == S_XMLList))
+    #define ejsIsXML(ejs, obj) (ejsIs(ejs, obj, XML) || ejsIs(ejs, obj, XMLList))
 #endif
 
 extern EjsXML *ejsCreateXML(Ejs *ejs, int kind, EjsName name, EjsXML *parent, EjsString *value);
@@ -2630,19 +2482,6 @@ extern int ejsSendEventv(Ejs *ejs, EjsObj *emitter, cchar *name, EjsAny *thisObj
 extern int ejsSendEvent(Ejs *ejs, EjsObj *emitter, cchar *name, EjsAny *thisObj, EjsAny *arg);
 
 /************************************ Accessors **************************************/
-
-/** 
-    Determine if a variable is a number
-    @param obj Object to examine
-    @return True if the variable is a number
-    @ingroup EjsNumber
- */
-#if DOXYGEN
-    bool ejsIsNumber(Ejs *ejs, EjsAny *obj);
-#else
-    #define ejsIsNumber(ejs, obj) (obj && TYPE(obj)->sid == S_Number)
-#endif
-
 /** 
     Get the numeric value stored in a EjsNumber object
     @param ejs Ejs reference returned from #ejsCreate
@@ -2805,7 +2644,13 @@ extern EjsType *ejsCreateArchetype(Ejs *ejs, struct EjsFunction *fun, EjsPot *pr
 //  XX
 extern int ejsDefineGlobalFunction(Ejs *ejs, EjsString *name, EjsFun fn);
 
-#define ejsIs(obj, name) (obj && ejs->values[S_ ## name] == TYPE(obj))
+/*
+    WARNING: this macros assumes an "ejs" variable in scope. This is done because it is such a pervasive idiom, the
+    assumption is worth the benefit.
+ */
+#define ejsIs(ejs, obj, name) (obj && ejs->values[S_ ## name] == TYPE(obj))
+#define ejsIsDefined(ejs, obj) (!ejsIs(ejs, obj, null) && !ejsIs(ejs, obj, undefined))
+#define ejsCast(ejs, obj, name) ejsCastType(ejs, obj, ST(name))
 
 /** 
     Test if an variable is an instance of a given type
@@ -2893,6 +2738,7 @@ extern void     ejsSetTypeName(Ejs *ejs, EjsType *type, EjsName qname);
 extern void     ejsTypeNeedsFixup(Ejs *ejs, EjsType *type);
 extern int      ejsGetTypeSize(Ejs *ejs, EjsType *type);
 extern EjsPot   *ejsGetPrototype(Ejs *ejs, EjsAny *obj);
+extern void     ejsSetTypeAttributes(EjsType *type, int64 attributes);
 
 /******************************** Private Prototypes **********************************/
 
@@ -3039,6 +2885,7 @@ typedef struct EjsService {
     uint            dontExit: 1;        /**< Prevent App.exit() from exiting */
 #if XXX || 1
     EjsIntern       *intern;            /**< Interned Unicode string hash - shared over all interps */
+    EjsObj          *foundation;        /**< Foundational native types */
     EjsAny          *values[EJS_MAX_SPECIAL];
 #endif
     MprMutex        *mutex;             /**< Multithread locking */

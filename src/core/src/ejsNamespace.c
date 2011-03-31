@@ -35,7 +35,7 @@ static EjsObj *invokeNamespaceOperator(Ejs *ejs, EjsNamespace *lhs, int opCode, 
 
     switch (opCode) {
     case EJS_OP_COMPARE_EQ:
-        if (ejsIsNull(ejs, rhs) || ejsIsUndefined(ejs, rhs)) {
+        if (!ejsIsDefined(ejs, rhs)) {
             return (EjsObj*) ((opCode == EJS_OP_COMPARE_EQ) ? S(false): S(true));
         }
         boolResult = ejsCompareString(ejs, lhs->value, rhs->value) == 0;
@@ -46,7 +46,7 @@ static EjsObj *invokeNamespaceOperator(Ejs *ejs, EjsNamespace *lhs, int opCode, 
         break;
 
     case EJS_OP_COMPARE_NE:
-        if (ejsIsNull(ejs, rhs) || ejsIsUndefined(ejs, rhs)) {
+        if (!ejsIsDefined(ejs, rhs)) {
             return (EjsObj*) ((opCode == EJS_OP_COMPARE_EQ) ? S(false): S(true));
         }
         boolResult = !(ejsCompareString(ejs, lhs->value, rhs->value) == 0);

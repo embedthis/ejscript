@@ -720,7 +720,7 @@ static EjsString *toLocaleString(Ejs *ejs, EjsObj *vp, int argc, EjsObj **argv)
 
 EjsString *ejsObjToString(Ejs *ejs, EjsObj *vp, int argc, EjsObj **argv)
 {
-    if (ejsIsString(ejs, vp)) {
+    if (ejsIs(ejs, vp, String)) {
         return (EjsString*) vp;
     }
     return (ejs->objHelpers.cast)(ejs, vp, ST(String));
@@ -848,24 +848,20 @@ EjsString *ejsGetTypeOf(Ejs *ejs, EjsAny *vp)
     if (vp == S(undefined)) {
         word = "undefined";
 
-    } else if (ejsIsNull(ejs, vp)) {
+    } else if (ejsIs(ejs, vp, null)) {
         /* Yea - I know, ECMAScript is broken */
         word = "object";
 
-    } if (ejsIsBoolean(ejs, vp)) {
+    } else if (ejsIs(ejs, vp, Boolean)) {
         word = "boolean";
 
-    } else if (ejsIsNumber(ejs, vp)) {
+    } else if (ejsIs(ejs, vp, Number)) {
         word = "number";
 
-    } else if (ejsIsString(ejs, vp)) {
+    } else if (ejsIs(ejs, vp, String)) {
         word = "string";
 
-    } else if (ejsIsFunction(ejs, vp)) {
-        word = "function";
-               
-    } else if (ejsIsType(ejs, vp)) {
-        /* Pretend it is a constructor function */
+    } else if (ejsIs(ejs, vp, Function)) {
         word = "function";
                
     } else {

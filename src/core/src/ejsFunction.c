@@ -105,7 +105,7 @@ static EjsFunction *fun_Function(Ejs *ejs, EjsFunction *fun, int argc, void *arg
     
     mprAssert(argc > 1);
     args = (EjsArray*) argv[1];
-    mprAssert(ejsIsArray(ejs, args));
+    mprAssert(ejsIs(ejs, args, Array));
 
     if (args->length <= 0) {
         ejsThrowArgError(ejs, "Missing function body");
@@ -150,7 +150,7 @@ static EjsObj *fun_applyFunction(Ejs *ejs, EjsFunction *fun, int argc, EjsObj **
     
     mprAssert(argc > 1);
     args = (EjsArray*) argv[1];
-    mprAssert(ejsIsArray(ejs, args));
+    mprAssert(ejsIs(ejs, args, Array));
 
     save = fun->boundThis;
     thisObj = (argv[0] == S(null)) ? fun->boundThis: argv[0];
@@ -170,7 +170,7 @@ static EjsObj *fun_bindFunction(Ejs *ejs, EjsFunction *fun, int argc, EjsObj **a
     fun->boundThis = argv[0];
     if (argc == 2) {
         fun->boundArgs = (EjsArray*) argv[1];
-        mprAssert(ejsIsArray(ejs, fun->boundArgs));
+        mprAssert(ejsIs(ejs, fun->boundArgs, Array));
     }
     return 0;
 }

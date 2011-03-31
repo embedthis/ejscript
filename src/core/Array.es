@@ -17,7 +17,7 @@ module ejs {
         indexed location within a list.
         @stability evolving
      */
-    dynamic native class Array {
+    dynamic class Array {
 
         use default namespace public
 

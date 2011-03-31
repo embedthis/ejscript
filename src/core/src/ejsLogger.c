@@ -54,7 +54,7 @@ static EjsObj *logger_set_nativeStream(Ejs *ejs, EjsObj *unused, int argc, EjsOb
     EjsFile  *stream;
 
     stream = (EjsFile*) argv[0];
-    if (!ejsIsFile(ejs, stream)) {
+    if (!ejsIs(ejs, stream, File)) {
         ejsThrowError(ejs, "Argument is not a file stream");
         return 0;
     }

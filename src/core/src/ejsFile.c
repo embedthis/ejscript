@@ -114,7 +114,7 @@ static int setFileProperty(Ejs *ejs, EjsFile *fp, int slotNum, EjsObj *value)
         ejsThrowIOError(ejs, "File is not opened for writing");
         return 0;
     }
-    c = ejsIsNumber(ejs, value) ? ejsGetInt(ejs, value) : ejsGetInt(ejs, ejsToNumber(ejs, value));
+    c = ejsIs(ejs, value, Number) ? ejsGetInt(ejs, value) : ejsGetInt(ejs, ejsToNumber(ejs, value));
 
     offset = mprSeekFile(fp->file, SEEK_CUR, 0);
     if (slotNum < 0) {
@@ -155,7 +155,7 @@ static int ejsGetNumOption(Ejs *ejs, EjsObj *options, cchar *field, int defaultV
         return 0;
     }
     num = ejsToNumber(ejs, vp);
-    if (!ejsIsNumber(ejs, num)) {
+    if (!ejsIs(ejs, num, Number)) {
         ejsThrowArgError(ejs, "Bad option type for field \"%s\"", field);
         return 0;
     }
@@ -177,7 +177,7 @@ static cchar *getStrOption(Ejs *ejs, EjsObj *options, cchar *field, cchar *defau
         return 0;
     }
     str = ejsToString(ejs, vp);
-    if (!ejsIsString(ejs, str)) {
+    if (!ejsIs(ejs, str, String)) {
         ejsThrowArgError(ejs, "Bad option type for field \"%s\"", field);
         return 0;
     }
@@ -199,9 +199,9 @@ static EjsObj *fileConstructor(Ejs *ejs, EjsFile *fp, int argc, EjsObj **argv)
         return 0;
     }
     pp = argv[0];
-    if (ejsIsPath(ejs, pp)) {
+    if (ejsIs(ejs, pp, Path)) {
         path = ((EjsPath*) pp)->value;
-    } else if (ejsIsString(ejs, pp)) {
+    } else if (ejsIs(ejs, pp, String)) {
         path = ejsToMulti(ejs, pp);
     } else {
         ejsThrowIOError(ejs, "Bad path");
@@ -269,7 +269,7 @@ static EjsObj *nextKey(Ejs *ejs, EjsIterator *ip, int argc, EjsObj **argv)
     EjsFile     *fp;
 
     fp = (EjsFile*) ip->target;
-    if (!ejsIsFile(ejs, fp)) {
+    if (!ejsIs(ejs, fp, File)) {
         ejsThrowReferenceError(ejs, "Wrong type");
         return 0;
     }
@@ -301,7 +301,7 @@ static EjsObj *nextValue(Ejs *ejs, EjsIterator *ip, int argc, EjsObj **argv)
     EjsFile     *fp;
 
     fp = (EjsFile*) ip->target;
-    if (!ejsIsFile(ejs, fp)) {
+    if (!ejsIs(ejs, fp, File)) {
         ejsThrowReferenceError(ejs, "Wrong type");
         return 0;
     }
@@ -375,7 +375,7 @@ static EjsObj *setFilePosition(Ejs *ejs, EjsFile *fp, int argc, EjsObj **argv)
 {
     long        pos;
 
-    mprAssert(argc == 1 && ejsIsNumber(ejs, argv[0]));
+    mprAssert(argc == 1 && ejsIs(ejs, argv[0], Number));
     pos = ejsGetInt(ejs, argv[0]);
 
     if (fp->file == 0) {
@@ -415,13 +415,13 @@ static EjsObj *openFile(Ejs *ejs, EjsFile *fp, int argc, EjsObj **argv)
         return 0;
     }
     options = argv[0];
-    if (argc == 0 || ejsIsNull(ejs, options) || ejsIsUndefined(ejs, options)) {
+    if (argc == 0 || ejsIs(ejs, options, null) || ejsIs(ejs, options, undefined)) {
         omode = O_RDONLY | O_BINARY;
         perms = EJS_FILE_PERMS;
         fp->mode = FILE_READ;
         mode = "r";
     } else {
-        if (ejsIsString(ejs, options)) {
+        if (ejsIs(ejs, options, String)) {
             mode = ejsToMulti(ejs, options);
             perms = EJS_FILE_PERMS;
         } else {
@@ -488,7 +488,7 @@ static EjsObj *readFileBytes(Ejs *ejs, EjsFile *fp, int argc, EjsObj **argv)
         ejsThrowArgError(ejs, "Bad args");
         return 0;
     } else {
-        mprAssert(argc == 1 && ejsIsNumber(ejs, argv[0]));
+        mprAssert(argc == 1 && ejsIs(ejs, argv[0], Number));
         count = ejsGetInt(ejs, argv[0]);
     }
     if (fp->file == 0) {
@@ -544,7 +544,7 @@ static EjsString *readFileString(Ejs *ejs, EjsFile *fp, int argc, EjsObj **argv)
         ejsThrowArgError(ejs, "Bad args");
         return 0;
     } else {
-        mprAssert(argc == 1 && ejsIsNumber(ejs, argv[0]));
+        mprAssert(argc == 1 && ejsIs(ejs, argv[0], Number));
         count = ejsGetInt(ejs, argv[0]);
     }
     if (fp->file == 0) {
@@ -684,7 +684,7 @@ EjsObj *writeFile(Ejs *ejs, EjsFile *fp, int argc, EjsObj **argv)
     ssize           len, written;
     int             i;
 
-    mprAssert(argc == 1 && ejsIsArray(ejs, argv[0]));
+    mprAssert(argc == 1 && ejsIs(ejs, argv[0], Array));
 
     args = (EjsArray*) argv[0];
 

@@ -11,7 +11,7 @@ module ejs {
         @spec ejs
         @hide
      */
-    final native class XMLList {
+    final class XMLList {
 
         use default namespace public
 

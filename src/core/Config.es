@@ -11,7 +11,7 @@ module ejs {
         @spec ejs
         @stability evolving
      */
-    enumerable native class Config {
+    enumerable class Config {
 
         use default namespace public
 

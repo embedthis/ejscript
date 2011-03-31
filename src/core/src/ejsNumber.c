@@ -52,11 +52,11 @@ static EjsObj *coerceNumberOperands(Ejs *ejs, EjsObj *lhs, int opcode, EjsObj *r
         Binary operators
      */
     case EJS_OP_ADD:
-        if (ejsIsUndefined(ejs, rhs)) {
-            return S(nan);;
-        } else if (ejsIsNull(ejs, rhs)) {
+        if (ejsIs(ejs, rhs, undefined)) {
+            return S(nan);
+        } else if (ejsIs(ejs, rhs, null)) {
             return lhs;
-        } else if (ejsIsBoolean(ejs, rhs) || ejsIsDate(ejs, rhs)) {
+        } else if (ejsIs(ejs, rhs, Boolean) || ejsIs(ejs, rhs, Date)) {
             return ejsInvokeOperator(ejs, lhs, opcode, (EjsObj*) ejsToNumber(ejs, rhs));
         } else {
             return ejsInvokeOperator(ejs, (EjsObj*) ejsToString(ejs, lhs), opcode, rhs);
@@ -70,11 +70,11 @@ static EjsObj *coerceNumberOperands(Ejs *ejs, EjsObj *lhs, int opcode, EjsObj *r
     case EJS_OP_COMPARE_EQ: case EJS_OP_COMPARE_NE:
     case EJS_OP_COMPARE_LE: case EJS_OP_COMPARE_LT:
     case EJS_OP_COMPARE_GE: case EJS_OP_COMPARE_GT:
-        if (ejsIsNull(ejs, rhs) || ejsIsUndefined(ejs, rhs)) {
+        if (!ejsIsDefined(ejs, rhs)) {
             return (EjsObj*) ((opcode == EJS_OP_COMPARE_EQ) ? S(false): S(true));
-        } else if (ejsIsNumber(ejs, rhs)) {
+        } else if (ejsIs(ejs, rhs, Number)) {
             return ejsInvokeOperator(ejs, (EjsObj*) ejsToNumber(ejs, lhs), opcode, rhs);
-        } else if (ejsIsString(ejs, rhs)) {
+        } else if (ejsIs(ejs, rhs, String)) {
             return ejsInvokeOperator(ejs, (EjsObj*) ejsToString(ejs, lhs), opcode, rhs);
         }
         return ejsInvokeOperator(ejs, lhs, opcode, (EjsObj*) ejsToNumber(ejs, rhs));
@@ -118,7 +118,7 @@ static EjsObj *invokeNumberOperator(Ejs *ejs, EjsNumber *lhs, int opcode, EjsNum
     mprAssert(lhs);
     
     if (rhs == 0 || TYPE(lhs) != TYPE(rhs)) {
-        if (!ejsIs(lhs, Number) || !ejsIs(rhs, Number)) {
+        if (!ejsIs(ejs, lhs, Number) || !ejsIs(ejs, rhs, Number)) {
             if ((result = coerceNumberOperands(ejs, (EjsObj*) lhs, opcode, (EjsObj*) rhs)) != 0) {
                 return result;
             }
@@ -246,7 +246,7 @@ static EjsObj *nextNumber(Ejs *ejs, EjsIterator *ip, int argc, EjsObj **argv)
     EjsNumber   *np;
 
     np = (EjsNumber*) ip->target;
-    if (!ejsIsNumber(ejs, np)) {
+    if (!ejsIs(ejs, np, Number)) {
         ejsThrowReferenceError(ejs, "Wrong type");
         return 0;
     }

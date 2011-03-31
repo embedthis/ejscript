@@ -20,7 +20,7 @@ static EjsString *system_run(Ejs *ejs, EjsObj *unused, int argc, EjsObj **argv)
     char        *err, *output;
     int         status;
 
-    mprAssert(argc == 1 && ejsIsString(ejs, argv[0]));
+    mprAssert(argc == 1 && ejsIs(ejs, argv[0], String));
 
     cmd = mprCreateCmd(ejs->dispatcher);
     ejs->result = cmd;
@@ -46,7 +46,7 @@ static EjsObj *system_runx(Ejs *ejs, EjsObj *unused, int argc, EjsObj **argv)
     char        *err;
     int         status;
 
-    mprAssert(argc == 1 && ejsIsString(ejs, argv[0]));
+    mprAssert(argc == 1 && ejsIs(ejs, argv[0], String));
 
     cmd = mprCreateCmd(ejs->dispatcher);
     ejs->result = cmd;
@@ -68,7 +68,7 @@ static EjsNumber *system_daemon(Ejs *ejs, EjsObj *unused, int argc, EjsObj **arg
     MprCmd      *cmd;
     int         status, pid;
 
-    mprAssert(argc == 1 && ejsIsString(ejs, argv[0]));
+    mprAssert(argc == 1 && ejsIs(ejs, argv[0], String));
 
     cmd = mprCreateCmd(ejs->dispatcher);
     ejs->result = cmd;

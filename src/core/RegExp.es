@@ -47,7 +47,7 @@ module ejs {
         </table>
         @spec evolving
      */
-    native final class RegExp {
+    final class RegExp {
 
         use default namespace public
 

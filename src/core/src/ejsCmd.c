@@ -382,7 +382,7 @@ static bool setCmdArgs(Ejs *ejs, EjsCmd *cmd, int argc, EjsObj **argv)
     char        *command;
     int         i;
 
-    if (ejsIsArray(ejs, cmd->command)) {
+    if (ejsIs(ejs, cmd->command, Array)) {
         ap = (EjsArray*) cmd->command;
         if ((cmd->argv = mprAlloc(sizeof(void*) * (ap->length + 1))) == 0) {
             ejsThrowMemoryError(ejs);
@@ -572,15 +572,15 @@ static EjsNumber *cmd_write(Ejs *ejs, EjsCmd *cmd, int argc, EjsObj **argv)
     ssize           len;
     int             i, wrote;
 
-    mprAssert(argc == 1 && ejsIsArray(ejs, argv[0]));
+    mprAssert(argc == 1 && ejsIs(ejs, argv[0], Array));
 
     /*
         Unwrap nested arrays
      */
     args = (EjsArray*) argv[0];
-    while (args && ejsIsArray(ejs, args) && args->length == 1) {
+    while (ejsIs(ejs, args, Array) && args->length == 1) {
         vp = ejsGetProperty(ejs, args, 0);
-        if (!ejsIsArray(ejs, vp)) {
+        if (!ejsIs(ejs, vp, Array)) {
             break;
         }
         args = (EjsArray*) vp;
@@ -591,7 +591,7 @@ static EjsNumber *cmd_write(Ejs *ejs, EjsCmd *cmd, int argc, EjsObj **argv)
         if ((vp = ejsGetProperty(ejs, args, i)) == 0) {
             continue;
         }
-        if (ejsIsByteArray(ejs, vp)) {
+        if (ejsIs(ejs, vp, ByteArray)) {
             bp = (EjsByteArray*) vp;
             len = bp->writePosition - bp->readPosition;
             wrote += mprWriteCmd(cmd->mc, MPR_CMD_STDIN, (char*) &bp->value[bp->readPosition], len);

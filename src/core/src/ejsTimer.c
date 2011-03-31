@@ -17,9 +17,9 @@
 static EjsObj *timer_constructor(Ejs *ejs, EjsTimer *tp, int argc, EjsObj **argv)
 {
     mprAssert(argc >= 2);
-    mprAssert(ejsIsNumber(ejs, argv[0]));
+    mprAssert(ejsIs(ejs, argv[0], Number));
     mprAssert(ejsIsFunction(ejs, argv[1]));
-    mprAssert(ejsIsArray(ejs, argv[2]));
+    mprAssert(ejsIs(ejs, argv[2], Array));
 
     tp->period = ejsGetInt(ejs, argv[0]);
     tp->callback = (EjsFunction*) argv[1];
@@ -45,7 +45,7 @@ static EjsObj *timer_get_drift(Ejs *ejs, EjsTimer *tp, int argc, EjsObj **argv)
  */
 static EjsObj *timer_set_drift(Ejs *ejs, EjsTimer *tp, int argc, EjsObj **argv)
 {
-    mprAssert(argc == 1 && ejsIsBoolean(ejs, argv[0]));
+    mprAssert(argc == 1 && ejsIs(ejs, argv[0], Boolean));
     tp->drift = ejsGetBoolean(ejs, argv[0]);
     return 0;
 }
@@ -86,7 +86,7 @@ static EjsObj *timer_get_period(Ejs *ejs, EjsTimer *tp, int argc, EjsObj **argv)
  */
 static EjsObj *timer_set_period(Ejs *ejs, EjsTimer *tp, int argc, EjsObj **argv)
 {
-    mprAssert(argc == 1 && ejsIsNumber(ejs, argv[0]));
+    mprAssert(argc == 1 && ejsIs(ejs, argv[0], Number));
 
     tp->period = ejsGetInt(ejs, argv[0]);
     return 0;
@@ -108,7 +108,7 @@ static EjsObj *timer_get_repeat(Ejs *ejs, EjsTimer *tp, int argc, EjsObj **argv)
  */
 static EjsObj *timer_set_repeat(Ejs *ejs, EjsTimer *tp, int argc, EjsObj **argv)
 {
-    mprAssert(argc == 1 && ejsIsBoolean(ejs, argv[0]));
+    mprAssert(argc == 1 && ejsIs(ejs, argv[0], Boolean));
 
     tp->repeat = ejsGetBoolean(ejs, argv[0]);
     if (tp->event) {

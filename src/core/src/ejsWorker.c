@@ -57,7 +57,7 @@ static EjsObj *workerConstructor(Ejs *ejs, EjsWorker *worker, int argc, EjsObj *
     if (options) {
         search = ejsGetPropertyByName(ejs, options, EN("search"));
         value = ejsGetPropertyByName(ejs, options, EN("name"));
-        if (ejsIsString(ejs, value)) {
+        if (ejsIs(ejs, value, String)) {
             name = ejsToMulti(ejs, value);
         }
     }
@@ -100,7 +100,7 @@ static EjsObj *workerConstructor(Ejs *ejs, EjsWorker *worker, int argc, EjsObj *
      */
     ns = ejsDefineReservedNamespace(wejs, wejs->global, NULL, EJS_WORKER_NAMESPACE);
 
-    if (argc > 0 && ejsIsPath(ejs, argv[0])) {
+    if (argc > 0 && ejsIs(ejs, argv[0], Path)) {
         addWorker(ejs, worker);
         worker->scriptFile = sclone(((EjsPath*) argv[0])->value);
         worker->state = EJS_WORKER_STARTED;
@@ -234,7 +234,7 @@ static EjsObj *workerEval(Ejs *ejs, EjsWorker *worker, int argc, EjsObj **argv)
 {
     int     timeout;
 
-    mprAssert(ejsIsString(ejs, argv[0]));
+    mprAssert(ejsIs(ejs, argv[0], String));
 
     worker->scriptLiteral = (EjsString*) argv[0];
     timeout = argc == 2 ? ejsGetInt(ejs, argv[1]): MAXINT;
@@ -269,7 +269,7 @@ static int reapJoins(Ejs *ejs, EjsObj *workers)
     completed = 0;
     joined = 0;
 
-    if (workers == 0 || ejsIsNull(ejs, workers)) {
+    if (workers == 0 || ejsIs(ejs, workers, null)) {
         /* Join all */
         count = mprGetListLength(ejs->workers);
         for (i = 0; i < count; i++) {
@@ -281,7 +281,7 @@ static int reapJoins(Ejs *ejs, EjsObj *workers)
         if (completed == count) {
             joined = 1;
         }
-    } else if (ejsIsArray(ejs, workers)) {
+    } else if (ejsIs(ejs, workers, Array)) {
         /* Join a set */
         set = (EjsArray*) workers;
         for (i = 0; i < set->length; i++) {
@@ -395,7 +395,7 @@ static EjsObj *workerLoad(Ejs *ejs, EjsWorker *worker, int argc, EjsObj **argv)
 {
     int     timeout;
 
-    mprAssert(argc == 0 || ejsIsPath(ejs, argv[0]));
+    mprAssert(argc == 0 || ejsIs(ejs, argv[0], Path));
 
     worker->scriptFile = sclone(((EjsPath*) argv[0])->value);
     timeout = argc == 2 ? ejsGetInt(ejs, argv[1]): 0;
@@ -468,17 +468,17 @@ static int doMessage(Message *msg, MprEvent *mprEvent)
     }
     if (msg->stack) {
         ejsSetProperty(ejs, event, ES_ErrorEvent_stack, msg->stack);
-        if ((frame = ejsGetProperty(ejs, msg->stack, 0)) != 0 && !ejsIsUndefined(ejs, frame)) {
+        if ((frame = ejsGetProperty(ejs, msg->stack, 0)) != 0 && !ejsIs(ejs, frame, undefined)) {
             ejsSetProperty(ejs, event, ES_ErrorEvent_filename, ejsGetPropertyByName(ejs, frame, EN("filename")));
             ejsSetProperty(ejs, event, ES_ErrorEvent_lineno, ejsGetPropertyByName(ejs, frame, EN("lineno")));
         }
     }
-    if (callback == 0 || ejsIsNull(ejs, callback)) {
+    if (callback == 0 || ejsIs(ejs, callback, null)) {
         if (msg->callbackSlot == ES_Worker_onmessage) {
             mprLog(6, "Discard message as no onmessage handler defined for worker");
             
         } else if (msg->callbackSlot == ES_Worker_onerror) {
-            if (msg->message && ejsIsString(ejs, msg->message)) {
+            if (ejsIs(ejs, msg->message, String)) {
                 ejsThrowError(ejs, "Exception in Worker: %@", ejsToString(ejs, msg->message));
             } else {
                 ejsThrowError(ejs, "Exception in Worker: %s", ejsGetErrorMsg(worker->pair->ejs, 1));
@@ -551,7 +551,7 @@ static EjsObj *workerPreload(Ejs *ejs, EjsWorker *worker, int argc, EjsObj **arg
     EjsWorker   *insideWorker;
     EjsObj      *result;
 
-    mprAssert(argc > 0 && ejsIsPath(ejs, argv[0]));
+    mprAssert(argc > 0 && ejsIs(ejs, argv[0], Path));
     mprAssert(!worker->inside);
 
     if (worker->state > EJS_WORKER_BEGIN) {

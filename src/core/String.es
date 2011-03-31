@@ -11,7 +11,7 @@ module ejs {
         for: comparison, concatenation, copying, searching, conversion, matching, replacement, and, subsetting.
         @spec evolving
      */
-    native final class String {
+    final class String {
 
         use default namespace public
 

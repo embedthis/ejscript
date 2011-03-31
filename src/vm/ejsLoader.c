@@ -489,14 +489,14 @@ static int loadClassSection(Ejs *ejs, EjsModule *mp)
     EjsType         *type, *baseType, *iface;
     EjsTypeFixup    *fixup, *ifixup;
     EjsName         qname, baseClassName, ifaceClassName;
-    int             attributes, numTypeProp, numInstanceProp, sid, numInterfaces, i, slotNum;
+    int             attributes, numTypeProp, numInstanceProp, numInterfaces, i, slotNum;
 
     fixup = 0;
     ifixup = 0;
     
     qname = ejsModuleReadName(ejs, mp);
     attributes = ejsModuleReadInt(ejs, mp);
-    sid = ejsModuleReadInt(ejs, mp);
+    slotNum = ejsModuleReadInt(ejs, mp);
     ejsModuleReadType(ejs, mp, &baseType, &fixup, &baseClassName, 0);
     numTypeProp = ejsModuleReadInt(ejs, mp);
     numInstanceProp = ejsModuleReadInt(ejs, mp);
@@ -514,33 +514,34 @@ static int loadClassSection(Ejs *ejs, EjsModule *mp)
     if (fixup || (baseType && baseType->needFixup)) {
         attributes |= EJS_TYPE_FIXUP;
     }
+
+#if UNUSED
     type = 0;
     if (!ejs->empty) {
         //  MOB -- PROP_NATIVE never seems to be set in ecModuleWrite for classes.
         if (attributes & EJS_PROP_NATIVE) {
-#if UNUSED
-            type = ejsGetPropertyByName(ejs, ejs->coreTypes, qname);
-#else
-            type = ejs->values[sid];
-#endif
-            if (type == 0) {
+            if ((type = ejsGetPropertyByName(ejs, ejs->service->foundation, qname)) == 0) {
                 mprLog(1, "WARNING: can't find native type \"%@\"", qname.name);
             }
         } else {
 #if BLD_DEBUG
-            if (ejs->values[sid]) {
-                mprError("WARNING: type \"%@\" defined as a native type but not declared as native", qname.name);
+            if (ejsLookupProperty(ejs, ejs->service->foundation, qname) >= 0) {
+                mprError("WARNING: native type \"%@\" is provided but not declared as native", qname.name);
             }
 #endif
         }
     }
+#else
+    type = ejsGetPropertyByName(ejs, ejs->service->foundation, qname);
+#endif
+
     if (attributes & EJS_TYPE_FIXUP) {
         baseType = 0;
         if (fixup == 0) {
             fixup = createFixup(ejs, mp, (baseType) ? baseType->qname : ST(Object)->qname, -1);
         }
     }
-    mprLog(9, "    Load %@ class %@ for module %@ at sid %d", qname.space, qname.name, mp->name, sid);
+    mprLog(9, "    Load %@ class %@ for module %@ at slotNum %d", qname.space, qname.name, mp->name, slotNum);
 
 #if UNUSED
     if (slotNum < 0) {
@@ -599,7 +600,7 @@ static int loadClassSection(Ejs *ejs, EjsModule *mp)
         BUILTIN(type) = 1;
     }
 #endif
-    slotNum = ejsDefineProperty(ejs, ejs->global, -1, qname, ST(Type), attributes, (EjsObj*) type);
+    slotNum = ejsDefineProperty(ejs, ejs->global, slotNum, qname, ST(Type), attributes, (EjsObj*) type);
     if (slotNum < 0) {
         ejsThrowMemoryError(ejs);
         return MPR_ERR_MEMORY;
@@ -1329,7 +1330,7 @@ static char *searchForModule(Ejs *ejs, cchar *moduleName, int minVersion, int ma
          */
         for (i = 0; i < ejs->search->length; i++) {
             dir = ejsGetProperty(ejs, ejs->search, i);
-            if (!ejsIsPath(ejs, dir)) {
+            if (!ejsIs(ejs, dir, Path)) {
                 continue;
             }
             filename = mprJoinPath(dir->value, name);
@@ -1343,7 +1344,7 @@ static char *searchForModule(Ejs *ejs, cchar *moduleName, int minVersion, int ma
          */
         for (i = 0; i < ejs->search->length; i++) {
             dir = ejsGetProperty(ejs, ejs->search, i);
-            if (!ejsIsPath(ejs, dir)) {
+            if (!ejsIs(ejs, dir, Path)) {
                 continue;
             }
             filename = mprJoinPath(dir->value, slash);
@@ -1358,7 +1359,7 @@ static char *searchForModule(Ejs *ejs, cchar *moduleName, int minVersion, int ma
         basename = mprGetPathBase(slash);
         for (i = 0; i < ejs->search->length; i++) {
             dir = ejsGetProperty(ejs, ejs->search, i);
-            if (!ejsIsPath(ejs, dir)) {
+            if (!ejsIs(ejs, dir, Path)) {
                 continue;
             }
             filename = mprJoinPath(dir->value, basename);

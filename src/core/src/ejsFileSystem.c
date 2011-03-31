@@ -18,7 +18,7 @@ static EjsObj *fileSystemConstructor(Ejs *ejs, EjsFileSystem *fp, int argc, EjsO
 {
     cchar   *path;
 
-    mprAssert(argc == 1 && ejsIsString(ejs, argv[0]));
+    mprAssert(argc == 1 && ejsIs(ejs, argv[0], String));
 
     path = ejsToMulti(ejs, argv[0]);
     fp->path = mprGetNormalizedPath(path);
@@ -108,7 +108,7 @@ static EjsObj *setNewline(Ejs *ejs, EjsFileSystem *fp, int argc, EjsObj **argv)
 {
     cchar   *nl;
 
-    mprAssert(ejsIsString(ejs, argv[0]));
+    mprAssert(ejsIs(ejs, argv[0], String));
     nl = ejsToMulti(ejs, (EjsString*) argv[0]);
     mprSetPathNewline(fp->path, nl);
     return 0;
@@ -147,7 +147,7 @@ static EjsObj *getSeparators(Ejs *ejs, EjsFileSystem *fp, int argc, EjsObj **arg
  */
 static EjsObj *setSeparators(Ejs *ejs, EjsFileSystem *fp, int argc, EjsObj **argv)
 {
-    mprAssert(argc == 1 && ejsIsString(ejs, argv[0]));
+    mprAssert(argc == 1 && ejsIs(ejs, argv[0], String));
     mprSetPathSeparators(fp->path, ejsToMulti(ejs, argv[0]));
     return 0;
 }

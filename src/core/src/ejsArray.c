@@ -229,16 +229,16 @@ static EjsObj *coerceArrayOperands(Ejs *ejs, EjsObj *lhs, int opcode, EjsObj *rh
         return ejsInvokeOperator(ejs, S(zero), opcode, rhs);
 
     case EJS_OP_COMPARE_EQ: case EJS_OP_COMPARE_NE:
-        if (ejsIsNull(ejs, rhs) || ejsIsUndefined(ejs, rhs)) {
+        if (!ejsIsDefined(ejs, rhs)) {
             return ((opcode == EJS_OP_COMPARE_EQ) ? S(false): S(true));
-        } else if (ejsIsNumber(ejs, rhs)) {
+        } else if (ejsIs(ejs, rhs, Number)) {
             return ejsInvokeOperator(ejs, ejsToNumber(ejs, lhs), opcode, rhs);
         }
         return ejsInvokeOperator(ejs, ejsToString(ejs, lhs), opcode, rhs);
 
     case EJS_OP_COMPARE_LE: case EJS_OP_COMPARE_LT:
     case EJS_OP_COMPARE_GE: case EJS_OP_COMPARE_GT:
-        if (ejsIsNumber(ejs, rhs)) {
+        if (ejsIs(ejs, rhs, Number)) {
             return ejsInvokeOperator(ejs, ejsToNumber(ejs, lhs), opcode, rhs);
         }
         return ejsInvokeOperator(ejs, ejsToString(ejs, lhs), opcode, rhs);
@@ -518,7 +518,7 @@ static EjsArray *arrayConstructor(Ejs *ejs, EjsArray *ap, int argc, EjsObj **arg
     EjsObj      *arg0, **src, **dest;
     int         size, i;
 
-    mprAssert(argc == 1 && ejsIsArray(ejs, argv[0]));
+    mprAssert(argc == 1 && ejsIs(ejs, argv[0], Array));
 
     args = (EjsArray*) argv[0];
     if (args->length == 0) {
@@ -527,7 +527,7 @@ static EjsArray *arrayConstructor(Ejs *ejs, EjsArray *ap, int argc, EjsObj **arg
     size = 0;
     arg0 = getArrayProperty(ejs, args, 0);
 
-    if (args->length == 1 && ejsIsNumber(ejs, arg0)) {
+    if (args->length == 1 && ejsIs(ejs, arg0, Number)) {
         /*
             x = new Array(size);
          */
@@ -592,7 +592,7 @@ static EjsArray *cloneArrayMethod(Ejs *ejs, EjsArray *ap, int argc, EjsObj **arg
 {
     bool    deep;
 
-    mprAssert(argc == 0 || ejsIsBoolean(ejs, argv[0]));
+    mprAssert(argc == 0 || ejsIs(ejs, argv[0], Boolean));
 
     deep = (argc == 1) ? ((EjsBoolean*) argv[0])->value : 0;
     return ejsCloneArray(ejs, ap, deep);
@@ -612,7 +612,7 @@ static EjsArray *compactArray(Ejs *ejs, EjsArray *ap, int argc, EjsObj **argv)
     data = ap->data;
     src = dest = &data[0];
     for (i = 0; i < ap->length; i++, src++) {
-        if (*src == 0 || ejsIsUndefined(ejs, *src) || ejsIsNull(ejs, *src)) {
+        if (*src == 0 || !ejsIsDefined(ejs, *src)) {
             continue;
         }
         *dest++ = *src;
@@ -638,7 +638,7 @@ static EjsArray *concatArray(Ejs *ejs, EjsArray *ap, int argc, EjsObj **argv)
     EjsObj          *vp, **src, **dest;
     int         i, k, next;
 
-    mprAssert(argc == 1 && ejsIsArray(ejs, argv[0]));
+    mprAssert(argc == 1 && ejsIs(ejs, argv[0], Array));
 
     args = ((EjsArray*) argv[0]);
 
@@ -658,7 +658,7 @@ static EjsArray *concatArray(Ejs *ejs, EjsArray *ap, int argc, EjsObj **argv)
      */
     for (i = 0; i < args->length; i++) {
         vp = args->data[i];
-        if (ejsIsArray(ejs, vp)) {
+        if (ejsIs(ejs, vp, Array)) {
             vpa = (EjsArray*) vp;
             if (growArray(ejs, newArray, next + vpa->length) < 0) {
                 ejsThrowMemoryError(ejs);
@@ -690,7 +690,7 @@ static EjsNumber *nextArrayKey(Ejs *ejs, EjsIterator *ip, int argc, EjsObj **arg
     EjsObj      *vp, **data;
 
     ap = (EjsArray*) ip->target;
-    if (!ejsIsArray(ejs, ap)) {
+    if (!ejsIs(ejs, ap, Array)) {
         ejsThrowReferenceError(ejs, "Wrong type");
         return 0;
     }
@@ -699,7 +699,7 @@ static EjsNumber *nextArrayKey(Ejs *ejs, EjsIterator *ip, int argc, EjsObj **arg
     for (; ip->index < ap->length; ip->index++) {
         vp = data[ip->index];
         mprAssert(vp);
-        if (ejsIsUndefined(ejs, vp)) {
+        if (ejsIs(ejs, vp, undefined)) {
             continue;
         }
         return ejsCreateNumber(ejs, ip->index++);
@@ -730,7 +730,7 @@ static EjsObj *nextArrayValue(Ejs *ejs, EjsIterator *ip, int argc, EjsObj **argv
     EjsObj          *vp, **data;
 
     ap = (EjsArray*) ip->target;
-    if (!ejsIsArray(ejs, ap)) {
+    if (!ejsIs(ejs, ap, Array)) {
         ejsThrowReferenceError(ejs, "Wrong type");
         return 0;
     }
@@ -739,7 +739,7 @@ static EjsObj *nextArrayValue(Ejs *ejs, EjsIterator *ip, int argc, EjsObj **argv
     for (; ip->index < ap->length; ip->index++) {
         vp = data[ip->index];
         mprAssert(vp);
-        if (ejsIsUndefined(ejs, vp)) {
+        if (ejsIs(ejs, vp, undefined)) {
             continue;
         }
         ip->index++;
@@ -796,7 +796,7 @@ static EjsObj *findAll(Ejs *ejs, EjsArray *ap, int argc, EjsObj **argv)
         funArgs[1] = ejsCreateNumber(ejs, i);             /* element index */
         funArgs[2] = ap;                                  /* Array */
         result = (EjsBoolean*) ejsRunFunction(ejs, (EjsFunction*) argv[0], 0, 3, funArgs);
-        if (result == 0 || !ejsIsBoolean(ejs, result) || !result->value) {
+        if (result == 0 || !ejsIs(ejs, result, Boolean) || !result->value) {
             setArrayProperty(ejs, elements, elements->length, ap->obj.properties.slots[i]);
         }
     }
@@ -813,10 +813,10 @@ static bool compareArrayElement(Ejs *ejs, EjsObj *v1, EjsObj *v2)
     if (TYPE(v1) != TYPE(v2)) {
         return 0;
     }
-    if (ejsIsNumber(ejs, v1)) {
+    if (ejsIs(ejs, v1, Number)) {
         return ((EjsNumber*) v1)->value == ((EjsNumber*) v2)->value;
     }
-    if (ejsIsString(ejs, v1)) {
+    if (ejsIs(ejs, v1, String)) {
         return (EjsString*) v1 == (EjsString*) v2;
     }
     return 0;
@@ -870,7 +870,7 @@ static EjsArray *insertArray(Ejs *ejs, EjsArray *ap, int argc, EjsObj **argv)
     EjsObj          **src, **dest;
     int         i, pos, delta, oldLen, endInsert;
 
-    mprAssert(argc == 2 && ejsIsArray(ejs, argv[1]));
+    mprAssert(argc == 2 && ejsIs(ejs, argv[1], Array));
 
     pos = ejsGetInt(ejs, argv[0]);
     if (pos < 0) {
@@ -920,7 +920,7 @@ static EjsString *joinArray(Ejs *ejs, EjsArray *ap, int argc, EjsObj **argv)
     result = S(empty);
     for (i = 0; i < ap->length; i++) {
         vp = ap->data[i];
-        if (vp == 0 || ejsIsUndefined(ejs, vp) || ejsIsNull(ejs, vp)) {
+        if (!ejsIsDefined(ejs, vp)) {
             continue;
         }
         if (i > 0 && sep) {
@@ -988,8 +988,8 @@ static EjsObj *setArrayLength(Ejs *ejs, EjsArray *ap, int argc, EjsObj **argv)
     EjsObj      **data, **dest;
     int     length;
 
-    mprAssert(argc == 1 && ejsIsNumber(ejs, argv[0]));
-    mprAssert(ejsIsArray(ejs, ap));
+    mprAssert(argc == 1 && ejsIs(ejs, argv[0], Number));
+    mprAssert(ejsIs(ejs, ap, Array));
 
     length = (int) ((EjsNumber*) argv[0])->value;
     if (length < 0) {
@@ -1036,7 +1036,7 @@ static EjsNumber *pushArray(Ejs *ejs, EjsArray *ap, int argc, EjsObj **argv)
     EjsObj      **src, **dest;
     int         i, oldLen;
 
-    mprAssert(argc == 1 && ejsIsArray(ejs, argv[0]));
+    mprAssert(argc == 1 && ejsIs(ejs, argv[0], Array));
 
     args = (EjsArray*) argv[0];
     oldLen = ap->length;
@@ -1207,7 +1207,7 @@ static int partition(Ejs *ejs, EjsArray *array, EjsFunction *compare, int direct
             argv[0] = array;
             argv[2] = ejsCreateNumber(ejs, i);
             result = ejsRunFunction(ejs, compare, NULL, 3, argv);
-            if (!ejsIsNumber(ejs, result)) {
+            if (!ejsIs(ejs, result, Number)) {
                 return 0;
             }
             order = ejsGetInt(ejs, result);
@@ -1408,7 +1408,7 @@ static EjsString *arrayToString(Ejs *ejs, EjsArray *ap, int argc, EjsObj **argv)
         if (i > 0) {
             result = ejsCatString(ejs, result, comma);
         }
-        if (vp != 0 && !ejsIsUndefined(ejs, vp) && !ejsIsNull(ejs, vp)) {
+        if (ejsIsDefined(ejs, vp)) {
             result = ejsCatString(ejs, result, ejsToString(ejs, vp));
         }
         if (rc < 0) {
@@ -1457,7 +1457,7 @@ static EjsArray *unshiftArray(Ejs *ejs, EjsArray *ap, int argc, EjsObj **argv)
     EjsObj          **src, **dest;
     int         i, delta, oldLen, endInsert;
 
-    mprAssert(argc == 1 && ejsIsArray(ejs, argv[0]));
+    mprAssert(argc == 1 && ejsIs(ejs, argv[0], Array));
 
     args = (EjsArray*) argv[0];
     if (args->length <= 0) {

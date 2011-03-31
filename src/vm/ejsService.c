@@ -38,9 +38,7 @@ static EjsService *createService()
     sp->nativeModules = mprCreateHash(-1, MPR_HASH_STATIC_KEYS);
     sp->mutex = mprCreateLock();
     sp->vmlist = mprCreateList(-1, MPR_LIST_STATIC_VALUES);
-#if XXX || 1
     sp->intern = ejsCreateIntern(sp);
-#endif
     ejsInitCompiler(sp);
     return sp;
 }
@@ -53,13 +51,11 @@ static void manageEjsService(EjsService *sp, int flags)
         mprMark(sp->mutex);
         mprMark(sp->vmlist);
         mprMark(sp->nativeModules);
-#if XXX || 1
         mprMark(sp->intern);
-#endif
+        mprMark(sp->foundation);
+
     } else if (flags & MPR_MANAGE_FREE) {
-#if XXX || 1
         ejsDestroyIntern(sp->intern);
-#endif
         sp->mutex = NULL;
     }
 }
@@ -89,9 +85,6 @@ Ejs *ejsCreate(MprDispatcher *dispatcher, cchar *searchPath, MprList *require, i
     if ((ejs->state = mprAllocZeroed(sizeof(EjsState))) == 0) {
         return 0;
     }
-#if XXX
-    ejs->intern = ejsCreateIntern(ejs);
-#endif
     ejs->empty = require && mprGetListLength(require) == 0;
     ejs->mutex = mprCreateLock(ejs);
     ejs->argc = argc;
@@ -171,9 +164,6 @@ void ejsDestroy(Ejs *ejs)
         }
         mprRemoveItem(sp->vmlist, ejs);
         ejs->service = 0;
-#if XXX
-        ejsDestroyIntern(ejs->intern);
-#endif
         ejs->result = 0;
         mprDestroyDispatcher(ejs->dispatcher);
     }
@@ -194,9 +184,6 @@ static void manageEjs(Ejs *ejs, int flags)
         mprMark(ejs->global);
         mprMark(ejs->name);
         mprMark(ejs->applications);
-#if UNUSED
-        mprMark(ejs->coreTypes);
-#endif
         mprMark(ejs->doc);
         mprMark(ejs->errorMsg);
         mprMark(ejs->exception);
@@ -207,10 +194,6 @@ static void manageEjs(Ejs *ejs, int flags)
         mprMark(ejs->dispatcher);
         mprMark(ejs->workers);
         mprMark(ejs->modules);
-#if XXX
-        mprMark(ejs->intern);
-#endif
-
         /*
             Mark active call stack
          */
@@ -485,7 +468,7 @@ void ejsSetSearchPath(Ejs *ejs, EjsArray *paths)
 {
     mprAssert(ejs);
     mprAssert(paths && paths);
-    mprAssert(ejsIsArray(ejs, paths));
+    mprAssert(ejsIs(ejs, paths, Array));
 
     ejs->search = paths;
 }
@@ -680,11 +663,11 @@ int ejsAddObserver(Ejs *ejs, EjsObj **emitterPtr, EjsObj *name, EjsObj *listener
     emitter = *emitterPtr;
 
     argv[1] = listener;
-    if (ejsIsArray(ejs, name)) {
+    if (ejsIs(ejs, name, Array)) {
         list = (EjsArray*) name;
         for (i = 0; i < list->length; i++) {
             name = ejsGetProperty(ejs, list, i);
-            if (!ejsIsNull(ejs, name)) {
+            if (!ejsIs(ejs, name, null)) {
                 argv[0] = name;
                 ejsRunFunctionBySlot(ejs, emitter, ES_Emitter_on, 2, argv);
             }
@@ -716,11 +699,11 @@ int ejsRemoveObserver(Ejs *ejs, EjsObj *emitter, EjsObj *name, EjsObj *listener)
 
     if (emitter) {
         argv[1] = listener;
-        if (ejsIsArray(ejs, name)) {
+        if (ejsIs(ejs, name, Array)) {
             list = (EjsArray*) name;
             for (i = 0; i < list->length; i++) {
                 name = ejsGetProperty(ejs, list, i);
-                if (!ejsIsNull(ejs, name)) {
+                if (!ejsIs(ejs, name, null)) {
                     argv[0] = name;
                     ejsRunFunctionBySlot(ejs, emitter, ES_Emitter_off, 2, argv);
                 }

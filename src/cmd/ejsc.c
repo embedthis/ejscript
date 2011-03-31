@@ -287,8 +287,10 @@ MAIN(ejscMain, int argc, char **argv)
             optionally also save to module files.
          */
         if (ecCompile(cp, argc - nextArg, &argv[nextArg]) < 0) {
-            mprRawLog(0, "%s\n", cp->errorMsg);
             err++;
+        }
+        if (cp->warningCount > 0 || cp->errorCount > 0) {
+            mprRawLog(0, "%s\n", cp->errorMsg);
         }
     }
     if (cp->errorCount > 0) {
@@ -303,9 +305,6 @@ static void manageApp(App *app, int flags)
 {
     if (flags & MPR_MANAGE_MARK) {
         mprMark(app->compiler);
-#if UNUSED
-        mprMark(app->ejsService);
-#endif
         mprMark(app->ejs);
         mprMark(app->modules);
     }

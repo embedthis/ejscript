@@ -21,8 +21,8 @@ static EjsObj *g_assert(Ejs *ejs, EjsObj *vp, int argc, EjsObj **argv)
 
     mprAssert(argc == 1);
 
-    if (! ejsIsBoolean(ejs, argv[0])) {
-        b = (EjsBoolean*) ejsCast(ejs, argv[0], ST(Boolean));
+    if (! ejsIs(ejs, argv[0], Boolean)) {
+        b = (EjsBoolean*) ejsCast(ejs, argv[0], Boolean);
     } else {
         b = (EjsBoolean*) argv[0];
     }
@@ -84,14 +84,14 @@ static EjsObj *error(Ejs *ejs, EjsObj *unused, int argc, EjsObj **argv)
     EjsObj      *args, *vp;
     int         rc, i, count;
 
-    mprAssert(argc == 1 && ejsIsArray(ejs, argv[0]));
+    mprAssert(argc == 1 && ejsIs(ejs, argv[0], Array));
 
     args = argv[0];
     count = ejsGetPropertyCount(ejs, args);
 
     for (i = 0; i < count; i++) {
         if ((vp = ejsGetProperty(ejs, args, i)) != 0) {
-            if (!ejsIsString(ejs, vp)) {
+            if (!ejsIs(ejs, vp, String)) {
                 vp = (EjsObj*) ejsToJSON(ejs, vp, NULL);
             }
             if (ejs->exception) {
@@ -118,7 +118,7 @@ static EjsObj *g_eval(Ejs *ejs, EjsObj *unused, int argc, EjsObj **argv)
     cchar       *cache;
 
     script = (EjsString*) argv[0];
-    if (argc < 2 || ejsIsNull(ejs, argv[1])) {
+    if (argc < 2 || ejsIs(ejs, argv[1], null)) {
         cache = NULL;
     } else {
         cache = ejsToMulti(ejs, argv[1]);
@@ -244,7 +244,7 @@ int ejsBlendObject(Ejs *ejs, EjsObj *dest, EjsObj *src, int overwrite)
         }
         name = ejsGetPropertyName(ejs, src, i);
         /* NOTE: treats arrays as primitive types */
-        if (!ejsIsArray(ejs, vp) && !ejsIsXML(ejs, vp) && ejsGetPropertyCount(ejs, vp) > 0) {
+        if (!ejsIs(ejs, vp, Array) && !ejsIsXML(ejs, vp) && ejsGetPropertyCount(ejs, vp) > 0) {
             if ((dp = ejsGetPropertyByName(ejs, dest, name)) == 0 || ejsGetPropertyCount(ejs, dp) == 0) {
                 ejsSetPropertyByName(ejs, dest, name, ejsClonePot(ejs, (EjsObj*) vp, 1));
             } else {
@@ -328,14 +328,14 @@ static EjsObj *g_printLine(Ejs *ejs, EjsObj *unused, int argc, EjsObj **argv)
     ssize       rc;
     int         i, count;
 
-    mprAssert(argc == 1 && ejsIsArray(ejs, argv[0]));
+    mprAssert(argc == 1 && ejsIs(ejs, argv[0], Array));
 
     args = argv[0];
     count = ejsGetPropertyCount(ejs, args);
 
     for (i = 0; i < count; i++) {
         if ((vp = ejsGetProperty(ejs, args, i)) != 0) {
-            s  = (ejsIsString(ejs, vp)) ? (EjsString*) vp : (EjsString*) ejsToString(ejs, vp);
+            s  = (ejsIs(ejs, vp, String)) ? (EjsString*) vp : (EjsString*) ejsToString(ejs, vp);
             if (ejs->exception) {
                 return 0;
             }

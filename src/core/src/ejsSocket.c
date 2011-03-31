@@ -122,11 +122,11 @@ static EjsObj *sock_connect(Ejs *ejs, EjsSocket *sp, int argc, EjsObj **argv)
     char            *cp;
 
     address = (EjsString*) argv[0];
-    if (ejsIsNumber(ejs, address)) {
+    if (ejsIs(ejs, address, Number)) {
         sp->address = sclone("127.0.0.1");
         sp->port = (int) ((EjsNumber*) address)->value;
     } else {
-        if (!ejsIsString(ejs, address)) {
+        if (!ejsIs(ejs, address, String)) {
             address = ejsToString(ejs, (EjsObj*) address);
         }
         sp->address = ejsToMulti(ejs, address);
@@ -167,11 +167,11 @@ static EjsObj *sock_listen(Ejs *ejs, EjsSocket *sp, int argc, EjsObj **argv)
     char        *cp;
 
     address = (EjsString*) argv[0];
-    if (ejsIsNumber(ejs, address)) {
+    if (ejsIs(ejs, address, Number)) {
         sp->address = sclone("");
         sp->port = (int) ((EjsNumber*) address)->value;
     } else {
-        if (!ejsIsString(ejs, address)) {
+        if (!ejsIs(ejs, address, String)) {
             address = ejsToString(ejs, (EjsObj*) address);
         }
         sp->address = ejsToMulti(ejs, address);

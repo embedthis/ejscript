@@ -12,7 +12,7 @@ module ejs {
         @spec ejs
         @spec evolving
      */
-    native final class Void {
+    final class Void {
 
         /* WARNING: Do not add properties here. Null must have no properties beyond those inherited by Object */
 

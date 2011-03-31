@@ -3,21 +3,21 @@
   "description": "Ejscript CouchDB database support",
   "version": "2.0.0",
   "categories": [
-    undefined,
-    undefined
+    "undefined",
+    "undefined"
   ],
   "author": "Embedthis (http://www.embedthis.com) <dev@embedthis.com>",
   "contributors": [
-    undefined
+    "undefined"
   ],
   "bugReports": "dev@embedthis.com",
   "license": [
-    undefined
+    "undefined"
   ],
   "stability": "prototype",
   "location": "http://hg.embedthis.com/ejs",
   "keywords": [
-    undefined
+    "undefined"
   ],
   "dependencies": [
     [

@@ -13,8 +13,7 @@ module ejs {
         @hide
         @stability prototype
      */
-    native final class Namespace {
-    }
+    final class Namespace { }
 }
 
 /*

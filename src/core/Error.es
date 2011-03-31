@@ -16,8 +16,7 @@ module ejs {
         the call stack for an outer handler to process.
         @stability evolving
      */
-    //  MOB -- make this not a native class
-    native dynamic class Error {
+    dynamic class Error {
 
         use default namespace public
 
@@ -92,7 +91,7 @@ module ejs {
         @spec ejs
         @stability evolving
      */
-    native dynamic class ArgError extends Error {
+    dynamic class ArgError extends Error {
         /**
             ArgError constructor.
             @params message Message to use when defining the Error.message property
@@ -106,7 +105,7 @@ module ejs {
         @spec ejs
         @stability evolving
      */
-    native dynamic class ArithmeticError extends Error {
+    dynamic class ArithmeticError extends Error {
         /**
             ArithmeticError constructor.
             @params message Message to use when defining the Error.message property
@@ -119,7 +118,7 @@ module ejs {
         @spec ejs
         @stability evolving
      */
-    native dynamic class AssertError extends Error {
+    dynamic class AssertError extends Error {
         /**
             AssertError constructor.
             @params message Message to use when defining the Error.message property
@@ -134,7 +133,7 @@ module ejs {
         @spec ejs
         @stability evolving
      */
-    native dynamic class InstructionError extends Error {
+    dynamic class InstructionError extends Error {
         /**
             InstructionError constructor.
             @params message Message to use when defining the Error.message property
@@ -148,7 +147,7 @@ module ejs {
         @spec ejs
         @stability evolving
      */
-    native dynamic class IOError extends Error {
+    dynamic class IOError extends Error {
         /**
             IOError constructor.
             @params message Message to use when defining the Error.message property
@@ -162,7 +161,7 @@ module ejs {
         @stability evolving
         @hide
      */
-    native dynamic class InternalError extends Error {
+    dynamic class InternalError extends Error {
         /**
             InternalError constructor.
             @params message Message to use when defining the Error.message property
@@ -176,7 +175,7 @@ module ejs {
         @spec ejs
         @stability evolving
      */
-    native dynamic class MemoryError extends Error {
+    dynamic class MemoryError extends Error {
         /**
             MemoryError constructor.
             @params message Message to use when defining the Error.message property
@@ -193,7 +192,7 @@ module ejs {
         @stability evolving
         @hide
      */
-    native dynamic class OutOfBoundsError extends Error {
+    dynamic class OutOfBoundsError extends Error {
         /**
             OutOfBoundsError constructor.
             @params message Message to use when defining the Error.message property
@@ -206,7 +205,7 @@ module ejs {
         invoked on an object whose type does not define that method.
         @stability evolving
      */
-    native dynamic class ReferenceError extends Error {
+    dynamic class ReferenceError extends Error {
         /**
             ReferenceError constructor.
             @params message Message to use when defining the Error.message property
@@ -220,7 +219,7 @@ module ejs {
         @spec ejs
         @stability evolving
      */
-    native dynamic class ResourceError extends Error {
+    dynamic class ResourceError extends Error {
         /**
             ResourceError constructor.
             @params message Message to use when defining the Error.message property
@@ -236,7 +235,7 @@ module ejs {
         @stability evolving
         @hide
      */
-    native dynamic class SecurityError extends Error {
+    dynamic class SecurityError extends Error {
         /**
             SecurityError constructor.
             @params message Message to use when defining the Error.message property
@@ -250,7 +249,7 @@ module ejs {
         @spec ejs
         @stability evolving
      */
-    native dynamic class StateError extends Error {
+    dynamic class StateError extends Error {
         /**
             StateError constructor.
             @params message Message to use when defining the Error.message property
@@ -263,7 +262,7 @@ module ejs {
         purpose, e.g. a regular expression containing invalid characters.
         @stability evolving
      */
-    native dynamic class SyntaxError extends Error {
+    dynamic class SyntaxError extends Error {
         /**
             SyntaxError constructor.
             @params message Message to use when defining the Error.message property
@@ -277,7 +276,7 @@ module ejs {
         creation or when an object cannot be instantiated given the values passed into "new".
         @stability evolving
      */
-    native dynamic class TypeError extends Error {
+    dynamic class TypeError extends Error {
         /**
             TypeError constructor.
             @params message Message to use when defining the Error.message property
@@ -291,7 +290,7 @@ module ejs {
         @stability prototype
         @hide
      */
-    native dynamic class URIError extends Error {
+    dynamic class URIError extends Error {
         /**
             URIError constructor.
             @params message Message to use when defining the Error.message property

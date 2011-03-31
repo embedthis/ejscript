@@ -11,7 +11,7 @@ module ejs {
         @spec ejs
         @stability evolving
      */
-    native final class Null {
+    final class Null {
 
         /* WARNING: Do not add properties here. Null must have no properties beyond those inherited by Object */
 

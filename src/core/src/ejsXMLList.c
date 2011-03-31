@@ -306,9 +306,10 @@ static EjsObj *invokeOperator(Ejs *ejs, EjsXML *lhs, int opCode,  EjsXML *rhs)
     default:
         /*
             Cast to strings and re-invoke
+            MOB - change to ejsToString
          */
-        l = ejsCast(ejs, (EjsObj*) lhs, ST(String));
-        r = ejsCast(ejs, (EjsObj*) rhs, ST(String));
+        l = ejsCast(ejs, lhs, String);
+        r = ejsCast(ejs, rhs, String);
         return ejsInvokeOperator(ejs, l, opCode, r);
     }
     return (EjsObj*) ejsCreateBoolean(ejs, boolResult);
@@ -452,12 +453,12 @@ static int updateElement(Ejs *ejs, EjsXML *list, EjsXML *elt, int index, EjsObj 
 
     if (!ejsIsXML(ejs, value)) {
         /* Not XML or XMLList -- convert to string */
-        value = ejsCast(ejs, value, ST(String));                //  TODO - seem to be doing this in too many places
+        value = ejsCast(ejs, value, String);                //  TODO - seem to be doing this in too many places
     }
     mprSetItem(list->elements, index, value);
 
     if (elt->kind == EJS_XML_ATTRIBUTE) {
-        mprAssert(ejsIsString(ejs, value));
+        mprAssert(ejsIs(ejs, value, String));
         i = mprLookupItem(elt->parent->elements, elt);
         mprAssert(i >= 0);
         ejsSetXML(ejs, elt->parent, i, elt);
@@ -482,7 +483,7 @@ static int updateElement(Ejs *ejs, EjsXML *list, EjsXML *elt, int index, EjsObj 
             mprAssert(index >= 0);
             mprSetItem(elt->parent->elements, index, value);
             ((EjsXML*) value)->parent = elt->parent;
-            if (ejsIsString(ejs, value)) {
+            if (ejsIs(ejs, value, String)) {
                 node = ejsCreateXML(ejs, EJS_XML_TEXT, N(NULL, NULL), list, (EjsString*) value);
                 mprSetItem(list->elements, index, node);
             } else {
@@ -656,7 +657,7 @@ static EjsObj *xmlListConstructor(Ejs *ejs, EjsObj *thisObj, int argc, EjsObj **
         if (ejsIsObject(vp)) {
             /* Convert DOM to XML. Not implemented */;
 
-        } else if (ejsIsString(ejs, vp)) {
+        } else if (ejsIs(ejs, vp, String)) {
             str = ((EjsString*) vp)->value;
             if (str == 0) {
                 return 0;

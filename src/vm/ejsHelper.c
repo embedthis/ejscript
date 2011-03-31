@@ -40,7 +40,7 @@ EjsAny *ejsAlloc(Ejs *ejs, EjsType *type, ssize extra)
     Cast the variable to a given target type.
     @return Returns a variable with the result of the cast or null if an exception is thrown.
  */
-EjsAny *ejsCast(Ejs *ejs, EjsAny *vp, EjsType *targetType)
+EjsAny *ejsCastType(Ejs *ejs, EjsAny *vp, EjsType *targetType)
 {
     EjsType     *type;
 
@@ -353,10 +353,10 @@ int ejsSetPropertyTraits(Ejs *ejs, EjsAny *vp, int slot, EjsType *type, int attr
  */
 EjsString *ejsToString(Ejs *ejs, EjsAny *vp)
 {
-    if (vp == 0 || ejsIsString(ejs, vp)) {
+    if (vp == 0 || ejsIs(ejs, vp, String)) {
         return (EjsString*) vp;
     }
-    return ejsCast(ejs, vp, ST(String));
+    return ejsCast(ejs, vp, String);
 }
 
 
@@ -366,7 +366,7 @@ EjsString *ejsToString(Ejs *ejs, EjsAny *vp)
  */
 EjsNumber *ejsToNumber(Ejs *ejs, EjsAny *vp)
 {
-    if (vp == 0 || ejsIsNumber(ejs, vp)) {
+    if (vp == 0 || ejsIs(ejs, vp, Number)) {
         return (EjsNumber*) vp;
     }
     if (TYPE(vp)->helpers.cast) {
@@ -383,7 +383,7 @@ EjsNumber *ejsToNumber(Ejs *ejs, EjsAny *vp)
  */
 EjsBoolean *ejsToBoolean(Ejs *ejs, EjsAny *vp)
 {
-    if (vp == 0 || ejsIsBoolean(ejs, vp)) {
+    if (vp == 0 || ejsIs(ejs, vp, Boolean)) {
         return (EjsBoolean*) vp;
     }
     if (TYPE(vp)->helpers.cast) {
@@ -400,10 +400,10 @@ EjsBoolean *ejsToBoolean(Ejs *ejs, EjsAny *vp)
  */
 EjsPath *ejsToPath(Ejs *ejs, EjsAny *vp)
 {
-    if (vp == 0 || ejsIsPath(ejs, vp)) {
+    if (vp == 0 || ejsIs(ejs, vp, Path)) {
         return (EjsPath*) vp;
     }
-    return ejsCast(ejs, vp, ST(Path));
+    return ejsCast(ejs, vp, Path);
 }
 
 
@@ -413,10 +413,10 @@ EjsPath *ejsToPath(Ejs *ejs, EjsAny *vp)
  */
 EjsUri *ejsToUri(Ejs *ejs, EjsAny *vp)
 {
-    if (vp == 0 || ejsIsUri(ejs, vp)) {
+    if (vp == 0 || ejsIs(ejs, vp, Uri)) {
         return (EjsUri*) vp;
     }
-    return ejsCast(ejs, vp, ST(Uri));
+    return ejsCast(ejs, vp, Uri);
 }
 
 
@@ -530,16 +530,16 @@ EjsAny *ejsCoerceOperands(Ejs *ejs, EjsObj *lhs, int opcode, EjsObj *rhs)
         return ejsInvokeOperator(ejs, S(zero), opcode, rhs);
 
     case EJS_OP_COMPARE_EQ:  case EJS_OP_COMPARE_NE:
-        if (ejsIsNull(ejs, rhs) || ejsIsUndefined(ejs, rhs)) {
+        if (ejsIs(ejs, rhs, null) || ejsIs(ejs, rhs, undefined)) {
             return ((opcode == EJS_OP_COMPARE_EQ) ? S(false): S(true));
-        } else if (ejsIsNumber(ejs, rhs)) {
+        } else if (ejsIs(ejs, rhs, Number)) {
             return ejsInvokeOperator(ejs, ejsToNumber(ejs, lhs), opcode, rhs);
         }
         return ejsInvokeOperator(ejs, ejsToString(ejs, lhs), opcode, rhs);
 
     case EJS_OP_COMPARE_LE: case EJS_OP_COMPARE_LT:
     case EJS_OP_COMPARE_GE: case EJS_OP_COMPARE_GT:
-        if (ejsIsNumber(ejs, rhs)) {
+        if (ejsIs(ejs, rhs, Number)) {
             return ejsInvokeOperator(ejs, ejsToNumber(ejs, lhs), opcode, rhs);
         }
         return ejsInvokeOperator(ejs, ejsToString(ejs, lhs), opcode, rhs);
@@ -968,12 +968,12 @@ static MprNumber parseNumber(Ejs *ejs, MprChar *str)
 MprNumber ejsGetNumber(Ejs *ejs, EjsAny *vp)
 {
     mprAssert(vp);
-    if (!ejsIsNumber(ejs, vp)) {
-        if ((vp = ejsCast(ejs, vp, ST(Number))) == 0) {
+    if (!ejsIs(ejs, vp, Number)) {
+        if ((vp = ejsCast(ejs, vp, Number)) == 0) {
             return 0;
         }
     }
-    mprAssert(ejsIsNumber(ejs, vp));
+    mprAssert(ejsIs(ejs, vp, Number));
     return (vp) ? ((EjsNumber*) (vp))->value: 0;
 }
 
@@ -981,12 +981,12 @@ MprNumber ejsGetNumber(Ejs *ejs, EjsAny *vp)
 bool ejsGetBoolean(Ejs *ejs, EjsAny *vp)
 {
     mprAssert(vp);
-    if (!ejsIsBoolean(ejs, vp)) {
-        if ((vp = ejsCast(ejs, vp, ST(Boolean))) == 0) {
+    if (!ejsIs(ejs, vp, Boolean)) {
+        if ((vp = ejsCast(ejs, vp, Boolean)) == 0) {
             return 0;
         }
     }
-    mprAssert(ejsIsBoolean(ejs, vp));
+    mprAssert(ejsIs(ejs, vp, Boolean));
     return (vp) ? ((EjsBoolean*) (vp))->value: 0;
 }
 
@@ -994,12 +994,12 @@ bool ejsGetBoolean(Ejs *ejs, EjsAny *vp)
 int ejsGetInt(Ejs *ejs, EjsAny *vp)
 {
     mprAssert(vp);
-    if (!ejsIsNumber(ejs, vp)) {
-        if ((vp = ejsCast(ejs, vp, S(Number))) == 0) {
+    if (!ejsIs(ejs, vp, Number)) {
+        if ((vp = ejsCast(ejs, vp, Number)) == 0) {
             return 0;
         }
     }
-    mprAssert(ejsIsNumber(ejs, vp));
+    mprAssert(ejsIs(ejs, vp, Number));
     return (vp) ? ((int) (((EjsNumber*) (vp))->value)): 0;
 }
 
@@ -1007,12 +1007,12 @@ int ejsGetInt(Ejs *ejs, EjsAny *vp)
 double ejsGetDouble(Ejs *ejs, EjsAny *vp)
 {
     mprAssert(vp);
-    if (!ejsIsNumber(ejs, vp)) {
-        if ((vp = ejsCast(ejs, vp, S(Number))) == 0) {
+    if (!ejsIs(ejs, vp, Number)) {
+        if ((vp = ejsCast(ejs, vp, Number)) == 0) {
             return 0;
         }
     }
-    mprAssert(ejsIsNumber(ejs, vp));
+    mprAssert(ejsIs(ejs, vp, Number));
     return (vp) ? ((double) (((EjsNumber*) (vp))->value)): 0;
 }
 

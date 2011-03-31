@@ -317,7 +317,11 @@ static void createClassSection(EcCompiler *cp, EjsPot *block, int slotNum, EjsPo
         }
     }
     ecEncodeNum(cp, attributes);
-    ecEncodeNum(cp, (cp->bind) ? type->sid: -1);
+#if UNUSED
+    ecEncodeNum(cp, type->sid);
+#else
+    ecEncodeNum(cp, (cp->bind) ? slotNum : -1);
+#endif
 
     mprAssert(type != type->baseType);
     //  MOB -- refactor
@@ -616,7 +620,7 @@ static void createPropertySection(EcCompiler *cp, EjsPot *block, int slotNum, Ej
     }
 
     if (attributes & EJS_PROP_HAS_VALUE) {
-        if (vp && ejsIsNamespace(ejs, vp)) {
+        if (vp && ejsIs(ejs, vp, Namespace)) {
             ecEncodeConst(cp, ((EjsNamespace*) vp)->value);
         } else {
             ecEncodeConst(cp, 0);

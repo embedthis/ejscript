@@ -10,7 +10,7 @@ module ejs {
         Boolean class. The Boolean class is used to create two immutable boolean values: "true" and "false".
         @stability stable
      */
-    native final class Boolean {
+    final class Boolean {
         /**
             Boolean constructor. Construct a Boolean object and initialize its value. Since Boolean values are 
             immutable, this constructor will return a reference to either the "true" or "false" values.

@@ -305,7 +305,7 @@ cchar *ejsGetErrorMsg(Ejs *ejs, int withStack)
 
     if (error) {
         tag = TYPE(error)->qname.name;
-        if (ejsIs(error, Error)) {
+        if (ejsIs(ejs, error, Error)) {
             message = ejsGetProperty(ejs, error, ES_Error_message);
             if (withStack && ejs->initialized) {
                 saveException = ejs->exception;
@@ -314,11 +314,11 @@ cchar *ejsGetErrorMsg(Ejs *ejs, int withStack)
                 ejs->exception = saveException;
             }
 
-        } else if (ejsIs(error, String)) {
+        } else if (ejsIs(ejs, error, String)) {
             tag = ejsCreateStringFromAsc(ejs, "Error");
             message = (EjsString*) error;
 
-        } else if (ejsIs(error, Number)) {
+        } else if (ejsIs(ejs, error, Number)) {
             tag = ejsCreateStringFromAsc(ejs, "Error");
             message = (EjsString*) error;
             
@@ -331,7 +331,7 @@ cchar *ejsGetErrorMsg(Ejs *ejs, int withStack)
     } else{
         msg = ejsToString(ejs, message);
     }
-    if (ejsIs(error, Error)) {
+    if (ejsIs(ejs, error, Error)) {
         stackStr = (stack) ? ejsToMulti(ejs, stack) : 0;
         if (stackStr && *stackStr) {
             buf = mprAsprintf("%@: %@\nStack:\n%s", tag, msg, (stack) ? ejsToMulti(ejs, stack) : "");
@@ -339,10 +339,10 @@ cchar *ejsGetErrorMsg(Ejs *ejs, int withStack)
             buf = mprAsprintf("%@: %@", tag, msg);
         }
 
-    } else if (message && ejsIs(message, String)){
+    } else if (message && ejsIs(ejs, message, String)){
         buf = mprAsprintf("%@: %@", tag, msg);
 
-    } else if (message && ejsIs(message, Number)){
+    } else if (message && ejsIs(ejs, message, Number)){
         buf = mprAsprintf("%@: %g", tag, ((EjsNumber*) msg)->value);
         
     } else if (error) {

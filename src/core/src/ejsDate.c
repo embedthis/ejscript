@@ -77,11 +77,11 @@ static EjsObj *coerceDateOperands(Ejs *ejs, EjsObj *lhs, int opcode, EjsObj *rhs
         Binary operators
      */
     case EJS_OP_ADD:
-        if (ejsIsUndefined(ejs, rhs)) {
+        if (ejsIs(ejs, rhs, undefined)) {
             return (EjsObj*) S(nan);
-        } else if (ejsIsNull(ejs, rhs)) {
+        } else if (ejsIs(ejs, rhs, null)) {
             rhs = (EjsObj*) S(zero);
-        } else if (ejsIsBoolean(ejs, rhs) || ejsIsNumber(ejs, rhs)) {
+        } else if (ejsIs(ejs, rhs, Boolean) || ejsIs(ejs, rhs, Number)) {
             return ejsInvokeOperator(ejs, (EjsObj*) ejsToNumber(ejs, lhs), opcode, rhs);
         } else {
             return ejsInvokeOperator(ejs, (EjsObj*) ejsToString(ejs, lhs), opcode, rhs);
@@ -95,7 +95,7 @@ static EjsObj *coerceDateOperands(Ejs *ejs, EjsObj *lhs, int opcode, EjsObj *rhs
     case EJS_OP_COMPARE_EQ: case EJS_OP_COMPARE_NE:
     case EJS_OP_COMPARE_LE: case EJS_OP_COMPARE_LT:
     case EJS_OP_COMPARE_GE: case EJS_OP_COMPARE_GT:
-        if (ejsIsString(ejs, rhs)) {
+        if (ejsIs(ejs, rhs, String)) {
             return ejsInvokeOperator(ejs, (EjsObj*) ejsToString(ejs, lhs), opcode, rhs);
         }
         return ejsInvokeOperator(ejs, (EjsObj*) ejsToNumber(ejs, lhs), opcode, rhs);
@@ -137,7 +137,7 @@ static EjsObj *invokeDateOperator(Ejs *ejs, EjsDate *lhs, int opcode, EjsDate *r
     EjsObj      *result;
 
     if (rhs == 0 || TYPE(lhs) != TYPE(rhs)) {
-        if (!ejsIs(lhs, Date) || !ejsIs(rhs, Date)) {
+        if (!ejsIs(ejs, lhs, Date) || !ejsIs(ejs, rhs, Date)) {
             if ((result = coerceDateOperands(ejs, (EjsObj*) lhs, opcode, (EjsObj*) rhs)) != 0) {
                 return result;
             }
@@ -263,7 +263,7 @@ static EjsObj *date_Date(Ejs *ejs, EjsDate *date, int argc, EjsObj **argv)
     struct tm   tm;
     int         year;
 
-    mprAssert(argc == 1 && ejsIsArray(ejs, argv[0]));
+    mprAssert(argc == 1 && ejsIs(ejs, argv[0], Array));
 
     args = (EjsArray*) argv[0];
 
@@ -273,16 +273,16 @@ static EjsObj *date_Date(Ejs *ejs, EjsDate *date, int argc, EjsObj **argv)
 
     } else if (args->length == 1) {
         vp = ejsGetProperty(ejs, (EjsObj*) args, 0);
-        if (ejsIsNumber(ejs, vp)) {
+        if (ejsIs(ejs, vp, Number)) {
             /* Milliseconds */
             date->value = ejsGetNumber(ejs, vp);
 
-        } else if (ejsIsString(ejs, vp)) {
+        } else if (ejsIs(ejs, vp, String)) {
             if (mprParseTime(&date->value, ejsToMulti(ejs, vp), MPR_LOCAL_TIMEZONE, NULL) < 0) {
                 ejsThrowArgError(ejs, "Can't parse date string: %@", ejsToString(ejs, vp));
                 return 0;
             }
-        } else if (ejsIsDate(ejs, vp)) {
+        } else if (ejsIs(ejs, vp, Date)) {
             date->value = ((EjsDate*) vp)->value;
 
         } else {

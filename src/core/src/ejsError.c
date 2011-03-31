@@ -27,7 +27,7 @@ static EjsObj *castError(Ejs *ejs, EjsError *error, EjsType *type)
 
     case S_String:
         stack = (EjsString*) ejsRunFunctionBySlot(ejs, (EjsObj*) error, ES_Error_formatStack, 0, NULL);
-        us = ejsIsString(ejs, stack) ? stack : S(empty);
+        us = ejsIs(ejs, stack, String) ? stack : S(empty);
         msg = ejsGetProperty(ejs, error, ES_Error_message);
         if ((buf = mprAsprintf("%@ Exception: %@\nStack:\n%@\n", TYPE(error)->qname.name, msg, us)) == NULL) {
             ejsThrowMemoryError(ejs);

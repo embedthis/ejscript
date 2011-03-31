@@ -10,7 +10,7 @@ module ejs {
         reference to the code to execute, the execution scope and possibly a bound "this" reference.
         @stability evolving
      */
-    native class Function {
+    class Function {
 
         use default namespace public
 

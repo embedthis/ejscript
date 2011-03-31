@@ -10,7 +10,7 @@ module ejs {
         objects, providing information about base classes, serialization and deserialization and iteration. 
         @stability evolving
      */
-    dynamic native class Object implements Iterable {
+    dynamic class Object implements Iterable {
 
         use default namespace public
 

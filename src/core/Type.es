@@ -17,7 +17,7 @@ module ejs {
         @spec ejs
         @stability evolving
      */
-    native final class Type { }
+    final class Type { }
 }
 
 /*

@@ -280,13 +280,13 @@ mprAssert(ejs->result == 0 || (MPR_GET_GEN(MPR_GET_MEM(ejs->result)) != MPR->hea
                                 ejsThrowTypeError(ejs, "Unacceptable null or undefined return value");
                                 BREAK;
                             } else if (FRAME->function.castNulls) {
-                                ejs->result = ejsCast(ejs, ejs->result, type);
+                                ejs->result = ejsCastType(ejs, ejs->result, type);
                                 if (ejs->exception) {
                                     BREAK;
                                 }
                             }
                         } else {
-                            ejs->result = ejsCast(ejs, ejs->result, type);
+                            ejs->result = ejsCastType(ejs, ejs->result, type);
                             if (ejs->exception) {
                                 BREAK;
                             }
@@ -696,7 +696,7 @@ mprAssert(ejs->result == 0 || (MPR_GET_GEN(MPR_GET_MEM(ejs->result)) != MPR->hea
             mark = FRAME->pc - 1;
             qname.name = ejsToString(ejs, pop(ejs));
             v1 = pop(ejs);
-            if (ejsIsNamespace(ejs, v1)) {
+            if (ejsIs(ejs, v1, Namespace)) {
                 qname.space = ((EjsNamespace*) v1)->value;
             } else {
                 qname.space = ejsToString(ejs, v1);
@@ -848,13 +848,13 @@ mprAssert(ejs->result == 0 || (MPR_GET_GEN(MPR_GET_MEM(ejs->result)) != MPR->hea
                 ejsThrowReferenceError(ejs, "Object reference is null");
                 BREAK;
             }
-            if (TYPE(vp)->numericIndicies && ejsIsNumber(ejs, v1)) {
+            if (TYPE(vp)->numericIndicies && ejsIs(ejs, v1, Number)) {
                 vp = ejsGetProperty(ejs, vp, ejsGetInt(ejs, v1));
                 push(vp == 0 ? S(null) : vp);
                 BREAK;
             } else {
                 qname.name = ejsToString(ejs, v1);
-                if (ejsIsNamespace(ejs, v2)) {
+                if (ejsIs(ejs, v2, Namespace)) {
                     qname.space = ((EjsNamespace*) v2)->value;
                 } else {
                     qname.space = ejsToString(ejs, v2);
@@ -1028,7 +1028,7 @@ mprAssert(ejs->result == 0 || (MPR_GET_GEN(MPR_GET_MEM(ejs->result)) != MPR->hea
             //  MOB -- all these toStrings can cause a function to run which can cause a GC???
             qname.name = ejsToString(ejs, pop(ejs));
             v1 = pop(ejs);
-            if (ejsIsNamespace(ejs, v1)) {
+            if (ejsIs(ejs, v1, Namespace)) {
                 qname.space = ((EjsNamespace*) v1)->value;
             } else {
                 qname.space = ejsToString(ejs, v1);
@@ -1067,12 +1067,12 @@ mprAssert(ejs->result == 0 || (MPR_GET_GEN(MPR_GET_MEM(ejs->result)) != MPR->hea
             obj = pop(ejs);
             value = pop(ejs);
             //  MOB -- cleanup this too - push into storeProperty
-            if (TYPE(obj)->numericIndicies && ejsIsNumber(ejs, v1)) {
+            if (TYPE(obj)->numericIndicies && ejsIs(ejs, v1, Number)) {
                 ejsSetProperty(ejs, obj, ejsGetInt(ejs, v1), value);
             } else {
                 //  MOB -- all these toStrings can cause a function to run which can cause a GC???
                 qname.name = ejsToString(ejs, v1);
-                if (ejsIsNamespace(ejs, v2)) {
+                if (ejsIs(ejs, v2, Namespace)) {
                     qname.space = ((EjsNamespace*) v2)->value;
                 } else {
                     qname.space = ejsToString(ejs, v2);
@@ -1794,13 +1794,13 @@ mprAssert(ejs->result == 0 || (MPR_GET_GEN(MPR_GET_MEM(ejs->result)) != MPR->hea
          */
         commonBoolBranchCode:
             v1 = pop(ejs);
-            if (v1 == 0 || !ejsIsBoolean(ejs, v1)) {
-                v1 = ejsCast(ejs, v1, ST(Boolean));
+            if (v1 == 0 || !ejsIs(ejs, v1, Boolean)) {
+                v1 = ejsCast(ejs, v1, Boolean);
                 if (ejs->exception) {
                     BREAK;
                 }
             }
-            if (!ejsIsBoolean(ejs, v1)) {
+            if (!ejsIs(ejs, v1, Boolean)) {
                 ejsThrowTypeError(ejs, "Result of a comparision must be boolean");
                 BREAK;
             }
@@ -1939,7 +1939,7 @@ mprAssert(ejs->result == 0 || (MPR_GET_GEN(MPR_GET_MEM(ejs->result)) != MPR->hea
             v2 = pop(ejs);
             v1 = pop(ejs);
             result = evalBinaryExpr(ejs, v1, opcode, v2);
-            if (!ejsIsBoolean(ejs, result)) {
+            if (!ejsIs(ejs, result, Boolean)) {
                 ejsThrowTypeError(ejs, "Result of a comparision must be boolean");
             } else if (((EjsBoolean*) result)->value) {
                 SET_PC(FRAME, &FRAME->pc[offset]);
@@ -2127,7 +2127,7 @@ mprAssert(ejs->result == 0 || (MPR_GET_GEN(MPR_GET_MEM(ejs->result)) != MPR->hea
          */
         CASE (EJS_OP_LOGICAL_NOT):
             v1 = pop(ejs);
-            v1 = ejsCast(ejs, v1, ST(Boolean));
+            v1 = ejsCast(ejs, v1, Boolean);
             result = ejsInvokeOperator(ejs, v1, opcode, 0);
             push(result);
             BREAK;
@@ -2272,7 +2272,7 @@ ejsFreeze(ejs, frozen);
         CASE (EJS_OP_DELETE_NAME_EXPR):
             qname.name = ejsToString(ejs, pop(ejs));
             v1 = pop(ejs);
-            if (ejsIsNamespace(ejs, v1)) {
+            if (ejsIs(ejs, v1, Namespace)) {
                 qname.space = ((EjsNamespace*) v1)->value;
             } else {
                 qname.space = ejsToString(ejs, v1);
@@ -2301,7 +2301,7 @@ ejsFreeze(ejs, frozen);
         CASE (EJS_OP_DELETE_SCOPED_NAME_EXPR):
             qname.name = ejsToString(ejs, pop(ejs));
             v1 = pop(ejs);
-            if (ejsIsNamespace(ejs, v1)) {
+            if (ejsIs(ejs, v1, Namespace)) {
                 qname.space = ((EjsNamespace*) v1)->value;
             } else {
                 qname.space = ejsToString(ejs, v1);
@@ -2365,7 +2365,7 @@ ejsFreeze(ejs, frozen);
                 ejsThrowTypeError(ejs, "Not a type");
             } else {
                 v1 = pop(ejs);
-                push(ejsCast(ejs, v1, type));
+                push(ejsCastType(ejs, v1, type));
             }
             BREAK;
 
@@ -2376,7 +2376,7 @@ ejsFreeze(ejs, frozen);
                 Stack after         [result]
          */
         CASE (EJS_OP_CAST_BOOLEAN):
-            v1 = ejsCast(ejs, pop(ejs), ST(Boolean));
+            v1 = ejsCast(ejs, pop(ejs), Boolean);
             push(v1);
             BREAK;
 
@@ -2463,13 +2463,13 @@ static void storePropertyToSlot(Ejs *ejs, EjsObj *thisObj, EjsAny *obj, int slot
                         ejsThrowTypeError(ejs, "Unacceptable null or undefined value");
                         return;
                     } else if (trait->attributes & EJS_TRAIT_CAST_NULLS) {
-                        value = ejsCast(ejs, value, trait->type);
+                        value = ejsCastType(ejs, value, trait->type);
                         if (ejs->exception) {
                             return;
                         }
                     }
                 } else {
-                    value = ejsCast(ejs, value, trait->type);
+                    value = ejsCastType(ejs, value, trait->type);
                     if (ejs->exception) {
                         return;
                     }
@@ -2847,7 +2847,7 @@ static int validateArgs(Ejs *ejs, EjsFunction *fun, int argc, void *args)
                     continue;
                 }
             }
-            newArg = ejsCast(ejs, argv[i], trait->type);
+            newArg = ejsCastType(ejs, argv[i], trait->type);
             if (ejs->exception) {
                 ejsClearException(ejs);
                 badArgType(ejs, activation, trait, i);
@@ -3568,7 +3568,7 @@ static void callFunction(Ejs *ejs, EjsFunction *fun, EjsAny *thisObj, int argc, 
         } 
     } 
     if (fun->boundArgs) {
-        mprAssert(ejsIsArray(ejs, fun->boundArgs));
+        mprAssert(ejsIs(ejs, fun->boundArgs, Array));
         count = fun->boundArgs->length;
         sp = &state->stack[1 - argc];
         for (i = argc - 1; i >= 0; i--) {
