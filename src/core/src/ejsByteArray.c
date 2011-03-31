@@ -150,7 +150,7 @@ static EjsObj *coerceByteArrayOperands(Ejs *ejs, EjsObj *lhs, int opcode,  EjsOb
         return ejsInvokeOperator(ejs, (EjsObj*) S(zero), opcode, rhs);
 
     case EJS_OP_COMPARE_EQ: case EJS_OP_COMPARE_NE:
-        if (ejsIs(ejs, rhs, null) || ejsIs(ejs, rhs, undefined)) {
+        if (!ejsIsDefined(ejs, rhs)) {
             return (EjsObj*) ((opcode == EJS_OP_COMPARE_EQ) ? S(false): S(true));
         } else if (ejsIs(ejs, rhs, Number)) {
             return ejsInvokeOperator(ejs, (EjsObj*) ejsToNumber(ejs, lhs), opcode, rhs);

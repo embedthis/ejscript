@@ -80,7 +80,7 @@ static EjsObj *coerceUriOperands(Ejs *ejs, EjsUri *lhs, int opcode,  EjsObj *rhs
     case EJS_OP_COMPARE_EQ: case EJS_OP_COMPARE_NE:
     case EJS_OP_COMPARE_LE: case EJS_OP_COMPARE_LT:
     case EJS_OP_COMPARE_GE: case EJS_OP_COMPARE_GT:
-        if (ejsIs(ejs, rhs, null) || ejsIs(ejs, rhs, undefined)) {
+        if (!ejsIsDefined(ejs, rhs)) {
             return (EjsObj*) ((opcode == EJS_OP_COMPARE_EQ) ? S(false): S(true));
         }
         uri = lhs->uri;
@@ -757,7 +757,7 @@ static EjsObj *uri_set_query(Ejs *ejs, EjsUri *up, int argc, EjsObj **argv)
 {
     cchar    *value;
 
-    value = ejsIs(ejs, argv[0], null) ? "" : ejsToMulti(ejs, argv[0]);
+    value = ejsIs(ejs, argv[0], Null) ? "" : ejsToMulti(ejs, argv[0]);
     up->uri->query = sclone(value);
     return 0;
 }
@@ -781,7 +781,7 @@ static EjsObj *uri_set_reference(Ejs *ejs, EjsUri *up, int argc, EjsObj **argv)
 {
     cchar    *value;
 
-    value = ejsIs(ejs, argv[0], null) ? "" : ejsToMulti(ejs, argv[0]);
+    value = ejsIs(ejs, argv[0], Null) ? "" : ejsToMulti(ejs, argv[0]);
     up->uri->reference = sclone(value);
     return 0;
 }

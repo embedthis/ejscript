@@ -104,7 +104,7 @@ static EjsObj *filter_write(Ejs *ejs, EjsObj *filter, int argc, EjsObj *argv)
     int         available, room;
 
     data = argv[0];
-    mprAssert(ejsIsByteArray(data);
+    mprAssert(ejsIs(ejs, data, ByteArray);
     q = filter->q;
 
     available = availableBytes(data);

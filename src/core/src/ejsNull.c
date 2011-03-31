@@ -62,7 +62,7 @@ static EjsObj *coerceNullOperands(Ejs *ejs, EjsObj *lhs, int opcode, EjsObj *rhs
         break;
 
     case EJS_OP_COMPARE_NE:
-        if (ejsIs(ejs, rhs, undefined)) {
+        if (ejsIs(ejs, rhs, Void)) {
             return (EjsObj*) S(false);
         }
         return (EjsObj*) S(true);
@@ -71,7 +71,7 @@ static EjsObj *coerceNullOperands(Ejs *ejs, EjsObj *lhs, int opcode, EjsObj *rhs
         return (EjsObj*) S(true);
 
     case EJS_OP_COMPARE_EQ:
-        if (ejsIs(ejs, rhs, undefined)) {
+        if (ejsIs(ejs, rhs, Void)) {
             return (EjsObj*) S(true);
         }
         return (EjsObj*) S(false);

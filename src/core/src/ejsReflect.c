@@ -124,7 +124,7 @@ EjsString *ejsGetTypeOf(Ejs *ejs, EjsObj *vp)
     if (vp == S(undefined)) {
         return ejsCreateStringFromAsc(ejs, "undefined");
 
-    } else if (ejsIs(ejs, vp, null)) {
+    } else if (ejsIs(ejs, vp, Null)) {
         /* Yea - I know, ECMAScript is broken */
         return ejsCreateStringFromAsc(ejs, "object");
 

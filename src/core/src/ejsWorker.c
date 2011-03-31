@@ -269,7 +269,7 @@ static int reapJoins(Ejs *ejs, EjsObj *workers)
     completed = 0;
     joined = 0;
 
-    if (workers == 0 || ejsIs(ejs, workers, null)) {
+    if (workers == 0 || ejsIs(ejs, workers, Null)) {
         /* Join all */
         count = mprGetListLength(ejs->workers);
         for (i = 0; i < count; i++) {
@@ -468,12 +468,12 @@ static int doMessage(Message *msg, MprEvent *mprEvent)
     }
     if (msg->stack) {
         ejsSetProperty(ejs, event, ES_ErrorEvent_stack, msg->stack);
-        if ((frame = ejsGetProperty(ejs, msg->stack, 0)) != 0 && !ejsIs(ejs, frame, undefined)) {
+        if ((frame = ejsGetProperty(ejs, msg->stack, 0)) != 0 && !ejsIs(ejs, frame, Void)) {
             ejsSetProperty(ejs, event, ES_ErrorEvent_filename, ejsGetPropertyByName(ejs, frame, EN("filename")));
             ejsSetProperty(ejs, event, ES_ErrorEvent_lineno, ejsGetPropertyByName(ejs, frame, EN("lineno")));
         }
     }
-    if (callback == 0 || ejsIs(ejs, callback, null)) {
+    if (callback == 0 || ejsIs(ejs, callback, Null)) {
         if (msg->callbackSlot == ES_Worker_onmessage) {
             mprLog(6, "Discard message as no onmessage handler defined for worker");
             

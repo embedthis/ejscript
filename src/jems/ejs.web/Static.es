@@ -93,6 +93,7 @@ module ejs.web {
                 headers["Expires"] = when.toUTCString()
             }
         }
+//  MOB OPT cache request.method
         if (request.method == "GET" || request.method == "POST") {
             headers["Content-Length"] = filename.size
             if (request.config.web.nosend) {
@@ -119,6 +120,7 @@ module ejs.web {
         } else if (request.method == "HEAD") {
             /* No need to calculate the content */
             headers["Content-Length"] = filename.size
+            // request.setHeader("Content-Length", filename.size)
 
         } else {
             status = Http.BadMethod

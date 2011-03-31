@@ -415,7 +415,7 @@ static EjsObj *openFile(Ejs *ejs, EjsFile *fp, int argc, EjsObj **argv)
         return 0;
     }
     options = argv[0];
-    if (argc == 0 || ejsIs(ejs, options, null) || ejsIs(ejs, options, undefined)) {
+    if (argc == 0 || !ejsIsDefined(ejs, options)) {
         omode = O_RDONLY | O_BINARY;
         perms = EJS_FILE_PERMS;
         fp->mode = FILE_READ;

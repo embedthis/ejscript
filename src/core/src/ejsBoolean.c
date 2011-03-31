@@ -40,9 +40,9 @@ static EjsObj *coerceBooleanOperands(Ejs *ejs, EjsObj *lhs, int opcode, EjsObj *
     switch (opcode) {
 
     case EJS_OP_ADD:
-        if (ejsIs(ejs, rhs, undefined)) {
+        if (ejsIs(ejs, rhs, Void)) {
             return (EjsObj*) S(nan);
-        } else if (ejsIs(ejs, rhs, null) || ejsIs(ejs, rhs, Number) || ejsIs(ejs, rhs, Date)) {
+        } else if (ejsIs(ejs, rhs, Null) || ejsIs(ejs, rhs, Number) || ejsIs(ejs, rhs, Date)) {
             return ejsInvokeOperator(ejs, (EjsObj*) ejsToNumber(ejs, lhs), opcode, rhs);
         } else {
             return ejsInvokeOperator(ejs, (EjsObj*) ejsToString(ejs, lhs), opcode, rhs);

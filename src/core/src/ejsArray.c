@@ -699,7 +699,7 @@ static EjsNumber *nextArrayKey(Ejs *ejs, EjsIterator *ip, int argc, EjsObj **arg
     for (; ip->index < ap->length; ip->index++) {
         vp = data[ip->index];
         mprAssert(vp);
-        if (ejsIs(ejs, vp, undefined)) {
+        if (ejsIs(ejs, vp, Void)) {
             continue;
         }
         return ejsCreateNumber(ejs, ip->index++);
@@ -739,7 +739,7 @@ static EjsObj *nextArrayValue(Ejs *ejs, EjsIterator *ip, int argc, EjsObj **argv
     for (; ip->index < ap->length; ip->index++) {
         vp = data[ip->index];
         mprAssert(vp);
-        if (ejsIs(ejs, vp, undefined)) {
+        if (ejsIs(ejs, vp, Void)) {
             continue;
         }
         ip->index++;

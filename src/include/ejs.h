@@ -370,6 +370,7 @@ typedef struct EjsIntern {
 
 /********************************************** Special Values ******************************************/
 
+#define S_App                   0
 #define S_Array                 1
 #define S_Block                 2
 #define S_Boolean               3
@@ -399,16 +400,15 @@ typedef struct EjsIntern {
 #define S_XML                   41
 #define S_XMLList               42
 
+#define S_Request               43
+#define S_Session               44
+#define S_Web                   45
 
 #if UNUSED
-#define S_App                   0
 #define S_Config                5
 #define S_HttpServer            15
 #define S_Math                  17
-#define S_Request               31
-#define S_Session               32
 #define S_Socket                33
-#define S_Web                   39
 #endif
 
 #define S_commaProt             50
@@ -2648,15 +2648,16 @@ extern int ejsDefineGlobalFunction(Ejs *ejs, EjsString *name, EjsFun fn);
     WARNING: this macros assumes an "ejs" variable in scope. This is done because it is such a pervasive idiom, the
     assumption is worth the benefit.
  */
-#define ejsIs(ejs, obj, name) (obj && ejs->values[S_ ## name] == TYPE(obj))
-#define ejsIsDefined(ejs, obj) (!ejsIs(ejs, obj, null) && !ejsIs(ejs, obj, undefined))
+//  MOB - #define ejsIs(ejs, obj, name) (obj && ejs->values[S_ ## name] == TYPE(obj))
+#define ejsIs(ejs, obj, name) ejsIsA(ejs, obj, ejs->values[S_ ## name])
+#define ejsIsDefined(ejs, obj) (obj != 0 && !ejsIs(ejs, obj, Null) && !ejsIs(ejs, obj, Void))
 #define ejsCast(ejs, obj, name) ejsCastType(ejs, obj, ST(name))
 
 /** 
     Test if an variable is an instance of a given type
     @description Perform an "is a" test. This tests if a variable is a direct instance or subclass of a given base type.
     @param ejs Interpreter instance returned from #ejsCreate
-    @param target Target variable to test.
+    @param target Target object to test.
     @param type Type to compare with the target
     @return True if target is an instance of "type" or an instance of a subclass of "type".
     @ingroup EjsType

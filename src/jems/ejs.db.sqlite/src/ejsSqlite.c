@@ -56,7 +56,7 @@ static EjsObj *sqliteConstructor(Ejs *ejs, EjsSqlite *db, int argc, EjsObj **arg
     /*
         MOB - this will create a database if it doesn't exist. Should have more control over creating databases.
      */
-    if (ejsIsPath(ejs, options) || ejsIsString(ejs, options)) {
+    if (ejsIs(ejs, options, Path) || ejsIs(ejs, options, String)) {
         path = ejsToMulti(ejs, ejsToString(ejs, options));
     } else {
         path = ejsToMulti(ejs, ejsToString(ejs, ejsGetPropertyByName(ejs, options, EN("name"))));

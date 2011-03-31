@@ -530,7 +530,7 @@ EjsAny *ejsCoerceOperands(Ejs *ejs, EjsObj *lhs, int opcode, EjsObj *rhs)
         return ejsInvokeOperator(ejs, S(zero), opcode, rhs);
 
     case EJS_OP_COMPARE_EQ:  case EJS_OP_COMPARE_NE:
-        if (ejsIs(ejs, rhs, null) || ejsIs(ejs, rhs, undefined)) {
+        if (!ejsIsDefined(ejs, rhs)) {
             return ((opcode == EJS_OP_COMPARE_EQ) ? S(false): S(true));
         } else if (ejsIs(ejs, rhs, Number)) {
             return ejsInvokeOperator(ejs, ejsToNumber(ejs, lhs), opcode, rhs);

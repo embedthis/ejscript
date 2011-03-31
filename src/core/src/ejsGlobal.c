@@ -118,7 +118,7 @@ static EjsObj *g_eval(Ejs *ejs, EjsObj *unused, int argc, EjsObj **argv)
     cchar       *cache;
 
     script = (EjsString*) argv[0];
-    if (argc < 2 || ejsIs(ejs, argv[1], null)) {
+    if (argc < 2 || ejsIs(ejs, argv[1], Null)) {
         cache = NULL;
     } else {
         cache = ejsToMulti(ejs, argv[1]);

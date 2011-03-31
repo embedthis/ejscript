@@ -3029,11 +3029,20 @@ static EjsEx *findExceptionHandler(Ejs *ejs, int kind)
     for (i = 0; i < code->numHandlers; i++) {
         ex = code->handlers[i];
         if (ex->tryStart <= pc && pc < ex->handlerEnd && (ex->flags & kind)) {
+#if UNUSED
+            //  MOB surely S(iterator) is never thrown?
             if (ejs->exception == S(iterator) || kind == EJS_EX_FINALLY || ex->catchType == ST(Void)) {
                 return ex;
             }
-            /* MOB - This test is here because stopIteration throws a type and ejsIsA works only for instances */
-            if (ejs->exception == ex->catchType || ejsIsA(ejs, ejs->exception, ex->catchType)) {
+#endif
+            if (ejsIsType(ejs, ejs->exception) && ((EjsType*) ejs->exception)->sid == S_StopIteration) {
+                return ex;
+            }
+            mprAssert(ex->catchType);
+            if (kind == EJS_EX_FINALLY || ex->catchType->sid == S_Void) {
+                return ex;
+            }
+            if (ejsIsA(ejs, ejs->exception, ex->catchType)) {
                 return ex;
             }
         }

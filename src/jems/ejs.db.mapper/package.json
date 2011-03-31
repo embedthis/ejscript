@@ -3,21 +3,21 @@
   "description": "Ejscript SQL database interface",
   "version": "2.0.0",
   "categories": [
-    "undefined",
-    "undefined"
+    "ejs",
+    "database"
   ],
   "author": "Embedthis (http://www.embedthis.com) <dev@embedthis.com>",
   "contributors": [
-    "undefined"
+    "Embedthis (http://www.embedthis.com) <dev@embedthis.com>"
   ],
   "bugReports": "dev@embedthis.com",
   "license": [
-    "undefined"
+    "GPLv2 (http://www.ejscript.org/products/ejs/doc/licenses/gpl.html)"
   ],
   "stability": "prototype",
   "location": "http://hg.embedthis.com/ejs",
   "keywords": [
-    "undefined"
+    "db"
   ],
   "dependencies": [
     [

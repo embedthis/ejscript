@@ -362,9 +362,9 @@ int ejsGetSlot(Ejs *ejs, EjsPot *obj, int slotNum)
         //  MOB - should this be here or only in the VM. probably only in the VM.
         //  MOB -- or move this routine to the VM
         if (!DYNAMIC(obj)) {
-            if (ejsIs(ejs, obj, null)) {
+            if (ejsIs(ejs, obj, Null)) {
                 ejsThrowReferenceError(ejs, "Object is null");
-            } else if (ejsIs(ejs, obj, undefined)) {
+            } else if (ejsIs(ejs, obj, Void)) {
                 ejsThrowReferenceError(ejs, "Object is undefined");
             } else {
                 ejsThrowReferenceError(ejs, "Object is not extendable");

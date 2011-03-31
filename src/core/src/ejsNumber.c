@@ -52,9 +52,9 @@ static EjsObj *coerceNumberOperands(Ejs *ejs, EjsObj *lhs, int opcode, EjsObj *r
         Binary operators
      */
     case EJS_OP_ADD:
-        if (ejsIs(ejs, rhs, undefined)) {
+        if (ejsIs(ejs, rhs, Void)) {
             return S(nan);
-        } else if (ejsIs(ejs, rhs, null)) {
+        } else if (ejsIs(ejs, rhs, Null)) {
             return lhs;
         } else if (ejsIs(ejs, rhs, Boolean) || ejsIs(ejs, rhs, Date)) {
             return ejsInvokeOperator(ejs, lhs, opcode, (EjsObj*) ejsToNumber(ejs, rhs));

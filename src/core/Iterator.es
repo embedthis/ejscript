@@ -50,7 +50,6 @@ module ejs {
         @spec ejs
      */
     iterator final class StopIteration {}
-
 }
 
 

@@ -1,5 +1,5 @@
 /*
- *	Empty for-in loop
+  	Empty for-in loop
  */
 
 for (i in new Array) {

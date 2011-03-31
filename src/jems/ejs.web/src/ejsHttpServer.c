@@ -168,7 +168,7 @@ static EjsObj *hs_listen(Ejs *ejs, EjsHttpServer *sp, int argc, EjsObj **argv)
         httpDestroyServer(sp->server);
         sp->server = 0;
     }
-    if (ejsIsNull(ejs, endpoint)) {
+    if (ejsIs(ejs, endpoint, Null)) {
         mprAddRoot(sp);
         if (ejs->loc) {
             ejs->loc->context = sp;
@@ -218,11 +218,11 @@ static EjsObj *hs_listen(Ejs *ejs, EjsHttpServer *sp, int argc, EjsObj **argv)
      */
     host = mprGetFirstItem(server->hosts);
     root = ejsGetProperty(ejs, (EjsObj*) sp, ES_ejs_web_HttpServer_documentRoot);
-    if (ejsIsPath(ejs, root)) {
+    if (ejsIs(ejs, root, Path)) {
         httpSetHostDocumentRoot(host, root->value);
     }
     root = ejsGetProperty(ejs, (EjsObj*) sp, ES_ejs_web_HttpServer_serverRoot);
-    if (ejsIsPath(ejs, root)) {
+    if (ejsIs(ejs, root, Path)) {
         httpSetHostServerRoot(host, root->value);
     }
 
@@ -299,14 +299,14 @@ static EjsObj *hs_secure(Ejs *ejs, EjsHttpServer *sp, int argc, EjsObj **argv)
         ejsThrowStateError(ejs, "Can't load SSL provider");
         return 0;
     }
-    if (!ejsIsNull(ejs, argv[0])) {
+    if (!ejsIs(ejs, argv[0], Null)) {
         mprSetSslKeyFile(sp->ssl, ejsToMulti(ejs, argv[0]));
     }
-    if (!ejsIsNull(ejs, argv[1])) {
+    if (!ejsIs(ejs, argv[1], Null)) {
         mprSetSslCertFile(sp->ssl, ejsToMulti(ejs, argv[1]));
     }
 
-    if (argc >= 3 && ejsIsArray(ejs, argv[2])) {
+    if (argc >= 3 && ejsIs(ejs, argv[2], Array)) {
         protocols = (EjsArray*) argv[2];
         protoMask = 0;
         for (i = 0; i < protocols->length; i++) {
@@ -337,7 +337,7 @@ static EjsObj *hs_secure(Ejs *ejs, EjsHttpServer *sp, int argc, EjsObj **argv)
         }
         mprSetSslProtocols(sp->ssl, protoMask);
     }
-    if (argc >= 4 && ejsIsArray(ejs, argv[3])) {
+    if (argc >= 4 && ejsIs(ejs, argv[3], Array)) {
         mprSetSslCiphers(sp->ssl, ejsToMulti(ejs, argv[3]));
     }
     mprConfigureSsl(sp->ssl);
@@ -415,7 +415,7 @@ static void setHttpPipeline(Ejs *ejs, EjsHttpServer *sp)
         httpClearStages(loc, HTTP_STAGE_OUTGOING);
         for (i = 0; i < sp->outgoingStages->length; i++) {
             vs = ejsGetProperty(ejs, sp->outgoingStages, i);
-            if (vs && ejsIsString(ejs, vs)) {
+            if (vs && ejsIs(ejs, vs, String)) {
                 name = vs->value;
                 if (httpLookupStage(http, name) == 0) {
                     ejsThrowArgError(ejs, "Can't find pipeline stage name %s", name);
@@ -429,7 +429,7 @@ static void setHttpPipeline(Ejs *ejs, EjsHttpServer *sp)
         httpClearStages(loc, HTTP_STAGE_INCOMING);
         for (i = 0; i < sp->incomingStages->length; i++) {
             vs = ejsGetProperty(ejs, sp->incomingStages, i);
-            if (vs && ejsIsString(ejs, vs)) {
+            if (vs && ejsIs(ejs, vs, String)) {
                 name = vs->value;
                 if (httpLookupStage(http, name) == 0) {
                     ejsThrowArgError(ejs, "Can't find pipeline stage name %s", name);
@@ -577,7 +577,7 @@ static EjsHttpServer *getServerContext(HttpConn *conn)
     sp = (EjsHttpServer*) loc->context;
     ejs = sp->ejs;
     dirPath = ejsGetProperty(ejs, (EjsObj*) sp, ES_ejs_web_HttpServer_documentRoot);
-    dir = (dirPath && ejsIsPath(ejs, dirPath)) ? dirPath->value : conn->host->documentRoot;
+    dir = (dirPath && ejsIs(ejs, dirPath, Path)) ? dirPath->value : conn->host->documentRoot;
     if (sp->server == 0) {
         /* Don't set limits or pipeline. That will come from the embedding server */
         sp->server = conn->server;
@@ -601,7 +601,7 @@ static EjsRequest *createRequest(EjsHttpServer *sp, HttpConn *conn)
 
     ejs = sp->ejs;
     dirPath = ejsGetProperty(ejs, (EjsObj*) sp, ES_ejs_web_HttpServer_documentRoot);
-    dir = (dirPath && ejsIsPath(ejs, dirPath)) ? dirPath->value : ".";
+    dir = (dirPath && ejsIs(ejs, dirPath, Path)) ? dirPath->value : ".";
 
     req = ejsCreateRequest(ejs, sp, conn, dir);
     httpSetConnContext(conn, req);
@@ -794,8 +794,9 @@ void ejsConfigureHttpServerType(Ejs *ejs)
     EjsPot      *prototype;
 
     type = ejsConfigureNativeType(ejs, N("ejs.web", "HttpServer"), sizeof(EjsHttpServer), manageHttpServer, EJS_POT_HELPERS);
+#if UNUSED
     ejsSetSpecialType(ejs, S_HttpServer, type);
-    
+#endif
     type->helpers.create = (EjsCreateHelper) createHttpServer;
 
     prototype = type->prototype;

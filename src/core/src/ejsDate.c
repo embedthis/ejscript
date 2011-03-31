@@ -77,9 +77,9 @@ static EjsObj *coerceDateOperands(Ejs *ejs, EjsObj *lhs, int opcode, EjsObj *rhs
         Binary operators
      */
     case EJS_OP_ADD:
-        if (ejsIs(ejs, rhs, undefined)) {
+        if (ejsIs(ejs, rhs, Void)) {
             return (EjsObj*) S(nan);
-        } else if (ejsIs(ejs, rhs, null)) {
+        } else if (ejsIs(ejs, rhs, Null)) {
             rhs = (EjsObj*) S(zero);
         } else if (ejsIs(ejs, rhs, Boolean) || ejsIs(ejs, rhs, Number)) {
             return ejsInvokeOperator(ejs, (EjsObj*) ejsToNumber(ejs, lhs), opcode, rhs);

@@ -3,24 +3,24 @@
   "description": "Ejscript HTML page templating engine (ejspage)",
   "version": "2.0.0",
   "categories": [
-    undefined,
-    undefined,
-    undefined
+    "ejs",
+    "web",
+    "template"
   ],
   "author": "Embedthis (http://www.embedthis.com) <dev@embedthis.com>",
   "contributors": [
-    undefined
+    "Embedthis (http://www.embedthis.com) <dev@embedthis.com>"
   ],
   "bugReports": "dev@embedthis.com",
   "license": [
-    undefined
+    "GPLv2 (http://www.ejscript.org/products/ejs/doc/licenses/gpl.html)"
   ],
   "stability": "prototype",
   "location": "http://hg.embedthis.com/ejs",
   "keywords": [
-    undefined,
-    undefined,
-    undefined
+    "web",
+    "esp",
+    "template"
   ],
   "dependencies": [
     [

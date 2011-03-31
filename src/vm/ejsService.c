@@ -667,7 +667,7 @@ int ejsAddObserver(Ejs *ejs, EjsObj **emitterPtr, EjsObj *name, EjsObj *listener
         list = (EjsArray*) name;
         for (i = 0; i < list->length; i++) {
             name = ejsGetProperty(ejs, list, i);
-            if (!ejsIs(ejs, name, null)) {
+            if (!ejsIs(ejs, name, Null)) {
                 argv[0] = name;
                 ejsRunFunctionBySlot(ejs, emitter, ES_Emitter_on, 2, argv);
             }
@@ -703,7 +703,7 @@ int ejsRemoveObserver(Ejs *ejs, EjsObj *emitter, EjsObj *name, EjsObj *listener)
             list = (EjsArray*) name;
             for (i = 0; i < list->length; i++) {
                 name = ejsGetProperty(ejs, list, i);
-                if (!ejsIs(ejs, name, null)) {
+                if (!ejsIs(ejs, name, Null)) {
                     argv[0] = name;
                     ejsRunFunctionBySlot(ejs, emitter, ES_Emitter_off, 2, argv);
                 }

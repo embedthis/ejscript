@@ -96,7 +96,6 @@ s = "abcdef"
 assert(s.length == 6)
 
 
-
 // get
 count = 0
 for (i in "abc") {
@@ -290,10 +289,7 @@ assert(s.trimEnd() == " abc")
 assert(s.trimStart() == "abc ")
 
 // Times
-print("BEFORE TIMES")
-breakpoint()
 assert(" ".times(5) == "     ")
-print("AFTER TIMES")
 
 // Operators
 

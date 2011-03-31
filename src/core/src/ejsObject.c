@@ -848,7 +848,7 @@ EjsString *ejsGetTypeOf(Ejs *ejs, EjsAny *vp)
     if (vp == S(undefined)) {
         word = "undefined";
 
-    } else if (ejsIs(ejs, vp, null)) {
+    } else if (ejsIs(ejs, vp, Null)) {
         /* Yea - I know, ECMAScript is broken */
         word = "object";
 

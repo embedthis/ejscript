@@ -92,6 +92,8 @@ static void manageIterator(EjsIterator *ip, int flags)
 
 /*
     Create the Iterator and StopIteration types
+
+    MOB - who uses Iterator
  */
 void ejsCreateIteratorType(Ejs *ejs)
 {
@@ -112,10 +114,13 @@ void ejsConfigureIteratorType(Ejs *ejs)
 {
     EjsType     *type;
     EjsPot      *prototype;
+    static int once = 0;
 
-    type = ST(Iterator);
-    prototype = type->prototype;
-    ejsBindMethod(ejs, prototype, ES_iterator_Iterator_next, (EjsProc) nextIterator);
+    if (once++ == 0) {
+        type = ST(Iterator);
+        prototype = type->prototype;
+        ejsBindMethod(ejs, prototype, ES_iterator_Iterator_next, nextIterator);
+    }
 }
 
 

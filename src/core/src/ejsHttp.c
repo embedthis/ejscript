@@ -37,7 +37,7 @@ static EjsObj *httpConstructor(Ejs *ejs, EjsHttp *hp, int argc, EjsObj **argv)
     httpPrepClientConn(hp->conn, 0);
     httpSetConnNotifier(hp->conn, httpNotify);
     httpSetConnContext(hp->conn, hp);
-    if (argc == 1 && ejsIs(ejs, argv[0], null)) {
+    if (argc == 1 && ejsIs(ejs, argv[0], Null)) {
         hp->uri = httpUriToString(((EjsUri*) argv[0])->uri, 1);
     }
     hp->method = sclone("GET");
@@ -248,7 +248,7 @@ static EjsObj *http_form(Ejs *ejs, EjsHttp *hp, int argc, EjsObj **argv)
 {
     EjsObj  *data;
 
-    if (argc == 2 && !ejsIs(ejs, argv[1], null)) {
+    if (argc == 2 && !ejsIs(ejs, argv[1], Null)) {
         /*
             Prep here to reset the state. The ensures the current headers will be preserved.
             Users may have called setHeader to define custom headers. Users must call reset if they want to clear 
@@ -625,7 +625,7 @@ static EjsObj *http_set_retries(Ejs *ejs, EjsHttp *hp, int argc, EjsObj **argv)
  */
 static EjsObj *http_setCredentials(Ejs *ejs, EjsHttp *hp, int argc, EjsObj **argv)
 {
-    if (ejsIs(ejs, argv[0], null)) {
+    if (ejsIs(ejs, argv[0], Null)) {
         httpResetCredentials(hp->conn);
     } else {
         httpSetCredentials(hp->conn, ejsToMulti(ejs, argv[0]), ejsToMulti(ejs, argv[1]));
@@ -884,7 +884,7 @@ static EjsObj *startHttpRequest(Ejs *ejs, EjsHttp *hp, char *method, int argc, E
     hp->requestContentCount = 0;
     mprFlushBuf(hp->responseContent);
 
-    if (argc >= 1 && !ejsIs(ejs, argv[0], null)) {
+    if (argc >= 1 && !ejsIs(ejs, argv[0], Null)) {
         uriObj = (EjsUri*) argv[0];
         hp->uri = httpUriToString(uriObj->uri, 1);
     }

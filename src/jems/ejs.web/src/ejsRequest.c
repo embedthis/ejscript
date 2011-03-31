@@ -198,7 +198,7 @@ static int fillResponseHeaders(EjsRequest *req)
             n = ejsGetPropertyName(ejs, req->responseHeaders, i);
             vp = ejsGetProperty(ejs, req->responseHeaders, i);
             if (n.name && vp && req->conn) {
-                if (!ejsIsNull(ejs, vp) && !ejsIsUndefined(ejs, vp)) {
+                if (ejsIsDefined(ejs, vp)) {
                     value = ejsToMulti(ejs, vp);
                     httpSetSimpleHeader(req->conn, ejsToMulti(ejs, n.name), value);
                 }
@@ -262,7 +262,7 @@ static EjsObj *createString(Ejs *ejs, cchar *value)
 
 static int getDefaultInt(Ejs *ejs, EjsObj *value, int defaultValue)
 {
-    if (value == 0 || ejsIsNull(ejs, value)) {
+    if (value == 0 || ejsIs(ejs, value, Null)) {
         return defaultValue;
     }
     return ejsGetInt(ejs, value);
@@ -271,7 +271,7 @@ static int getDefaultInt(Ejs *ejs, EjsObj *value, int defaultValue)
 
 static cchar *getDefaultString(Ejs *ejs, EjsObj *value, cchar *defaultValue)
 {
-    if (value == 0 || ejsIsNull(ejs, value)) {
+    if (value == 0 || ejsIs(ejs, value, Null)) {
         return defaultValue;
     }
     return ejsToMulti(ejs, value);
@@ -407,7 +407,7 @@ static void *getRequestProperty(Ejs *ejs, EjsRequest *req, int slotNum)
 
     case ES_ejs_web_Request_config:
         value = ST(Object)->helpers.getProperty(ejs, (EjsObj*) req, slotNum);
-        if (ejsIsNull(ejs, value)) {
+        if (ejsIs(ejs, value, Null)) {
             /* Default to App.config */
             value = ejsGetProperty(ejs, ST(App), ES_App_config);
         }
@@ -644,7 +644,7 @@ static int lookupRequestProperty(Ejs *ejs, EjsRequest *req, EjsName qname)
 
 static int getNum(Ejs *ejs, EjsObj *vp)
 {
-    if (!ejsIsNumber(ejs, vp) && (vp = (EjsObj*) ejsToNumber(ejs, vp)) == 0) {
+    if (!ejsIs(ejs, vp, Number) && (vp = (EjsObj*) ejsToNumber(ejs, vp)) == 0) {
         return 0;
     }
     return (int) ((EjsNumber*) vp)->value;

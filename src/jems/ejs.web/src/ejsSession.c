@@ -34,7 +34,7 @@ static EjsObj *getSessionProperty(Ejs *ejs, EjsSession *sp, int slotNum)
     if (vp) {
         vp = ejsDeserialize(ejs, (EjsString*) vp);
     }
-    if (ejsIsUndefined(ejs, vp)) {
+    if (ejsIs(ejs, vp, Void)) {
         vp = S(empty);
     }
     noteSessionActivity(ejs, sp);
