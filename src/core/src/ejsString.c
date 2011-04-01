@@ -415,7 +415,7 @@ static EjsObj *containsString(Ejs *ejs, EjsString *sp, int argc, EjsObj **argv)
 
     if (ejsIs(ejs, pat, String)) {
         spat = (EjsString*) pat;
-        return (EjsObj*) ejsCreateBoolean(ejs, wcontains(sp->value, spat->value, spat->length) != 0);
+        return (EjsObj*) ejsCreateBoolean(ejs, wcontains(sp->value, spat->value, -1) != 0);
 
     } else if (ejsIs(ejs, pat, RegExp)) {
         EjsRegExp   *rp;

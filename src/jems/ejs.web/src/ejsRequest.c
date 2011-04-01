@@ -407,7 +407,7 @@ static void *getRequestProperty(Ejs *ejs, EjsRequest *req, int slotNum)
 
     case ES_ejs_web_Request_config:
         value = ST(Object)->helpers.getProperty(ejs, (EjsObj*) req, slotNum);
-        if (ejsIs(ejs, value, Null)) {
+        if (value == 0 || ejsIs(ejs, value, Null)) {
             /* Default to App.config */
             value = ejsGetProperty(ejs, ST(App), ES_App_config);
         }
@@ -1236,7 +1236,7 @@ EjsRequest *ejsCloneRequest(Ejs *ejs, EjsRequest *req, bool deep)
     HttpConn    *conn;
     EjsRequest  *nreq;
 
-    if ((nreq = ejsAlloc(ejs, ST(Request), 0)) == 0) {
+    if ((nreq = ejsCreatePot(ejs, ST(Request), 0)) == 0) {
         ejsThrowMemoryError(ejs);
         return 0;
     }

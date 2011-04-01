@@ -20,15 +20,18 @@ static int requestWorker(EjsRequest *req, MprEvent *event)
 {
     Ejs         *ejs;
     EjsObj      *argv[2];
-
+    HttpConn    *conn;
+    
     ejs = req->ejs;
     mprAssert(ejs);
     mprAssert(req->app);
     
+    conn = req->conn;
     argv[0] = (EjsObj*) req->app;
     argv[1] = (EjsObj*) req;
     ejsRunFunctionBySlot(ejs, S(Web), ES_ejs_web_Web_workerHelper, 2, argv);
-    //  MOB - does this need to send a readable event / NOTIFY ... READABLE
+    conn->dispatcher = conn->oldDispatcher;
+    httpEnableConnEvents(conn);
     return 0; 
 }
 
@@ -51,6 +54,7 @@ static EjsObj *req_worker(Ejs *ejs, EjsObj *web, int argc, EjsObj **argv)
     }
     conn = req->conn;
     conn->mark = nejs;
+    conn->oldDispatcher = conn->dispatcher;
     conn->newDispatcher = nejs->dispatcher;
     
     nejs->loc = ejs->loc;

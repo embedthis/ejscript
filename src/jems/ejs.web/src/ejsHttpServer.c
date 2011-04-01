@@ -637,6 +637,7 @@ static EjsRequest *createRequest(EjsHttpServer *sp, HttpConn *conn)
 
 /*
     Note: this may be called multiple times for async, long-running requests.
+    MOB -rename then
  */
 static void startEjs(HttpQueue *q)
 {

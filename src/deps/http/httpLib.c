@@ -2434,6 +2434,7 @@ static void manageConn(HttpConn *conn, int flags)
         mprMark(conn->stages);
         mprMark(conn->dispatcher);
         mprMark(conn->newDispatcher);
+        mprMark(conn->oldDispatcher);
         mprMark(conn->waitHandler);
         mprMark(conn->server);
         mprMark(conn->host);
@@ -2717,12 +2718,15 @@ void httpEnableConnEvents(HttpConn *conn)
     conn->lastActivity = conn->http->now;
 
     if (conn->state < HTTP_STATE_COMPLETE && conn->sock && !mprIsSocketEof(conn->sock)) {
+        //  MOB - why is lock needed
         lock(conn->http);
         if (conn->workerEvent) {
             event = conn->workerEvent;
             conn->workerEvent = 0;
             conn->dispatcher = conn->newDispatcher;
             mprQueueEvent(conn->dispatcher, event);
+            unlock(conn->http);
+            return;
         }
         if (tx) {
             if (tx->queue[HTTP_QUEUE_TRANS]->prevQ->count > 0) {
@@ -2792,6 +2796,7 @@ static HttpPacket *getPacket(HttpConn *conn, ssize *bytesToRead)
     } else {
         content = packet->content;
         mprResetBufIfEmpty(content);
+        mprAddNullToBuf(content);
         if (rx) {
             /*  
                 Don't read more than the remainingContent unless chunked. We do this to minimize requests split 
@@ -8600,7 +8605,7 @@ static void parseHeaders(HttpConn *conn, HttpPacket *packet)
     content = packet->content;
     conn->rx->headerPacket = packet;
     limits = conn->limits;
-    keepAlive = 0;
+    keepAlive = (conn->http10) ? 0 : 1;
 
     for (count = 0; content->start[0] != '\r' && !conn->connError; count++) {
         if (count >= limits->headerCount) {
@@ -9029,11 +9034,14 @@ static bool processParsed(HttpConn *conn)
 {
     if (!conn->rx->startAfterContent) {
         httpStartPipeline(conn);
-        if (conn->workerEvent) {
-            return 0;
-        }
     }
     httpSetState(conn, HTTP_STATE_CONTENT);
+    if (conn->workerEvent && !conn->rx->startAfterContent) {
+        if (conn->connError || conn->rx->remainingContent <= 0) {
+            httpSetState(conn, HTTP_STATE_RUNNING);
+        }
+        return 0;
+    }
     return 1;
 }
 
@@ -9134,11 +9142,11 @@ static bool processContent(HttpConn *conn, HttpPacket *packet)
         httpSendPacketToNext(q, httpCreateEndPacket());
         if (rx->startAfterContent) {
             httpStartPipeline(conn);
-            if (conn->workerEvent) {
-                return 0;
-            }
         }
         httpSetState(conn, HTTP_STATE_RUNNING);
+        if (conn->workerEvent) {
+            return 0;
+        }
         return 1;
     }
     httpServiceQueues(conn);
