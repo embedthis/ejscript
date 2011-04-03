@@ -2701,6 +2701,9 @@ static void writeEvent(HttpConn *conn)
 }
 
 
+/*
+    This can be called by any thread
+ */
 void httpEnableConnEvents(HttpConn *conn)
 {
     HttpTx      *tx;
@@ -2718,7 +2721,6 @@ void httpEnableConnEvents(HttpConn *conn)
     conn->lastActivity = conn->http->now;
 
     if (conn->state < HTTP_STATE_COMPLETE && conn->sock && !mprIsSocketEof(conn->sock)) {
-        //  MOB - why is lock needed
         lock(conn->http);
         if (conn->workerEvent) {
             event = conn->workerEvent;
@@ -10442,9 +10444,6 @@ int httpStartServer(HttpServer *server)
     }
     if (server->async && server->waitHandler ==  0) {
         //  MOB -- this really should be in server->listen->handler
-        //  MOB - add comment for who is using this. Ejs use seems to have server->dispatcher already set
-        //  MOB - does appweb have server->dispatcher == 0
-        mprAssert(server->dispatcher);
         server->waitHandler = mprCreateWaitHandler(server->sock->fd, MPR_SOCKET_READABLE, server->dispatcher,
             httpAcceptConn, server, (server->dispatcher) ? 0 : MPR_WAIT_NEW_DISPATCHER);
     } else {

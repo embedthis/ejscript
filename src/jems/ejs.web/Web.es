@@ -115,13 +115,10 @@ module ejs.web {
         static native function worker(app: Function, request: Request): Void
 
         private static function workerHelper(app: Function, request: Request): Void {
-print("WORK HELPER")
+print("Multithreaded request")
             try {
-print("BEFORE PROCESS")
                 process(app, request)
-print("AFTER PROCESS")
             } catch (e) {
-print("CATCH " + e)
                 request.writeError(Http.ServerError, e)
             }
         }

@@ -51,6 +51,7 @@ typedef struct EjsHttpServer {
     char            *name;                      /**< Server name */
     int             port;                       /**< Listening port */
     int             async;                      /**< Async mode */
+    int             cloned;                     /**< Server was cloned */
     EjsObj          *emitter;                   /**< Event emitter */
     EjsObj          *limits;                    /**< Limits object */
     EjsPot          *sessions;                  /**< Session cache */

@@ -752,7 +752,7 @@ static void manageHttpServer(EjsHttpServer *sp, int flags)
 #endif
         sp->sessions = 0;
         ejsStopSessionTimer(sp);
-        if (sp->server) {
+        if (sp->server && !sp->cloned) {
             httpDestroyServer(sp->server);
             sp->server = 0;
         }
@@ -784,6 +784,8 @@ EjsHttpServer *ejsCloneHttpServer(Ejs *ejs, EjsHttpServer *sp, bool deep)
     nsp->ejs = ejs;
     nsp->async = sp->async;
     nsp->server = sp->server;
+    nsp->name = sp->name;
+    nsp->cloned = 1;
     httpInitTrace(nsp->trace);
     return nsp;
 }

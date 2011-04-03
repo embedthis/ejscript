@@ -72,7 +72,7 @@ module ejs.web {
 
         /**
             The authorized public host name for the server. If defined, this name will be used in preference for 
-            request redirections. Defaults to the listening IP address if specified.
+            request redirections. If no name is defined, redirections will use to the listening IP address by default.
          */
         native function get name(): String 
         native function set name(hostname: String): Void
