@@ -1,0 +1,359 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml">
+<head>
+   <title>Class Cmd</title>
+
+   <link rel="stylesheet" type="text/css" href="doc.css" />
+</head>
+
+<body>
+<div class='body'>
+
+<div class="content">
+
+<a name='top'></a>
+<h1 class='className'>Cmd</h1>
+<div class='classBlock'>
+<table class='classHead' summary='Cmd'>
+   <tr><td><strong>Module</strong></td><td>ejs</td></tr>
+   <tr><td><strong>Definition</strong></td><td> class Cmd</td></tr>
+   <tr><td><strong>Inheritance</strong></td><td>Cmd <img src='images/inherit.gif' alt='inherit'/>        </td></tr>
+</table>
+
+<p class='classBrief'>Create an Cmd object.</p>
+
+<p class='classDescription'>If a command line is provided, the command is immediately started.</p>
+
+</div>
+
+
+<hr />
+<a name='Properties'></a>
+<h2 class='classSection'>Properties</h2>
+<table class='itemTable' summary='properties'>
+   <tr><th>Qualifiers</th><th>Property</th><th>Type</th><th width='95%'>Description</th></tr>
+<a name='error'></a>
+   <tr><td nowrap align='left'>public const get </td><td>error</td><td><a href='ejs-String.html'>String</a></td><td>Eommand error output data as a string. The first time this property is read, the error content will be read 
+and buffered.</td></tr>
+<a name='errorStream'></a>
+   <tr><td nowrap align='left'>public const get </td><td>errorStream</td><td><a href='ejs-Stream.html'>Stream</a></td><td>The error stream object for the command's standard error output. null</td></tr>
+<a name='pid'></a>
+   <tr><td nowrap align='left'>public const get </td><td>pid</td><td><a href='ejs-Number.html'>Number</a></td><td>Process ID of the the command. This is set to the process ID (PID) of the command. If no command has 
+started or the command has called <a href='#close,'>close,</a> the call with throw an exception.</td></tr>
+<a name='response'></a>
+   <tr><td nowrap align='left'>public const get </td><td>response</td><td><a href='ejs-String.html'>String</a></td><td>Command output data as a string. This is an alias for <a href='#readString()'>readString()</a> but it will cache the 
+output data and may be called multiple times. This reads from the command's standard output.</td></tr>
+<a name='status'></a>
+   <tr><td nowrap align='left'>public const get </td><td>status</td><td><a href='ejs-Number.html'>Number</a></td><td>Get the command exit status. This command will block until the command has completed. Use wait(0) to 
+test if the command has completed.</td></tr>
+</table>
+
+<p class='inheritedLink'><a href='ejs-Object.html#Properties'><i>Inherited Properties</i></a></p>
+
+<hr />
+<a name='Methods'></a>
+<h2 class='classSection'>Cmd Methods</h2>
+<table class='apiIndex' summary='methods'>
+   <tr><th>Qualifiers</th><th width='95%'>Method</th></tr>
+   <tr class='apiDef'><td class='apiType'>public const </td><td><a href='#close'><b>close</b></a>(): <a href='ejs-Void.html'>Void</a></tr><tr class='apiBrief'><td>&nbsp;</td><td>Close the connection to the command and free up all associated resources.</td></tr>
+   <tr class='apiDef'><td class='apiType'>public static const </td><td><a href='#daemon'><b>daemon</b></a>(cmdline: <a href='ejs-Object.html'>Object</a>, options: <a href='ejs-Object.html'>Object</a> = null): <a href='ejs-Number.html'>Number</a></tr><tr class='apiBrief'><td>&nbsp;</td><td>Start a command in the background as a daemon.</td></tr>
+   <tr class='apiDef'><td class='apiType'>public static const </td><td><a href='#exec'><b>exec</b></a>(cmdline: <a href='ejs-String.html'>String</a> = null , options: <a href='ejs-Object.html'>Object</a> = expression): <a href='ejs-Void.html'>Void</a></tr><tr class='apiBrief'><td>&nbsp;</td><td>Execute a new program by the current process.</td></tr>
+   <tr class='apiDef'><td class='apiType'>public const </td><td><a href='#finalize'><b>finalize</b></a>(): <a href='ejs-Void.html'>Void</a></tr><tr class='apiBrief'><td>&nbsp;</td><td>Signal the end of write data.</td></tr>
+   <tr class='apiDef'><td class='apiType'>public static const </td><td><a href='#kill'><b>kill</b></a>(pid: <a href='ejs-Number.html'>Number</a>, signal: <a href='ejs-Number.html'>Number</a> = 2): <a href='ejs-Boolean.html'>Boolean</a></tr><tr class='apiBrief'><td>&nbsp;</td><td>Kill the specified process.</td></tr>
+   <tr class='apiDef'><td class='apiType'>public const </td><td><a href='#on'><b>on</b></a>(name, listener: <a href='ejs-Function.html'>Function</a>): <a href='ejs-Void.html'>Void</a></tr><tr class='apiBrief'><td>&nbsp;</td><td>Add an observer to the stream for the named events.</td></tr>
+   <tr class='apiDef'><td class='apiType'>public const </td><td><a href='#read'><b>read</b></a>(buffer: <a href='ejs-ByteArray.html'>ByteArray</a>, offset: <a href='ejs-Number.html'>Number</a> = 0 , count: <a href='ejs-Number.html'>Number</a> = -1): <a href='ejs-Number.html'>Number</a></tr><tr class='apiBrief'><td>&nbsp;</td><td>Read a data from the stream.If no listener has been defined via <a href='#on(),'>on(),</a> this call will block if there is no data to be read.</td></tr>
+   <tr class='apiDef'><td class='apiType'>public const </td><td><a href='#readLines'><b>readLines</b></a>(count: <a href='ejs-Number.html'>Number</a> = -1): <a href='ejs-Array.html'>Array</a></tr><tr class='apiBrief'><td>&nbsp;</td><td>Read the data from the command as an array of lines.</td></tr>
+   <tr class='apiDef'><td class='apiType'>public const </td><td><a href='#readString'><b>readString</b></a>(count: <a href='ejs-Number.html'>Number</a> = -1): <a href='ejs-String.html'>String</a></tr><tr class='apiBrief'><td>&nbsp;</td><td>Read the data from the command output as a string.</td></tr>
+   <tr class='apiDef'><td class='apiType'>public const </td><td><a href='#readXml'><b>readXml</b></a>(): <a href='ejs-XML.html'>XML</a></tr><tr class='apiBrief'><td>&nbsp;</td><td>Read the command output as an XML document.</td></tr>
+   <tr class='apiDef'><td class='apiType'>public static const </td><td><a href='#run'><b>run</b></a>(command: <a href='ejs-Object.html'>Object</a>, data: <a href='ejs-Object.html'>Object</a> = null): <a href='ejs-String.html'>String</a></tr><tr class='apiBrief'><td>&nbsp;</td><td>Execute a command/program.</td></tr>
+   <tr class='apiDef'><td class='apiType'>public static const </td><td><a href='#sh'><b>sh</b></a>(command: <a href='ejs-Object.html'>Object</a>, data: <a href='ejs-Object.html'>Object</a> = null): <a href='ejs-String.html'>String</a></tr><tr class='apiBrief'><td>&nbsp;</td><td>Run a command using the system command shell and wait for completion.</td></tr>
+   <tr class='apiDef'><td class='apiType'>public const </td><td><a href='#start'><b>start</b></a>(cmdline: <a href='ejs-Object.html'>Object</a>, options: <a href='ejs-Object.html'>Object</a> = null): <a href='ejs-Void.html'>Void</a></tr><tr class='apiBrief'><td>&nbsp;</td><td>Start the command.</td></tr>
+   <tr class='apiDef'><td class='apiType'>public const </td><td><a href='#stop'><b>stop</b></a>(signal: <a href='ejs-Number.html'>Number</a> = 2): <a href='ejs-Boolean.html'>Boolean</a></tr><tr class='apiBrief'><td>&nbsp;</td><td>Stop the current command.</td></tr>
+   <tr class='apiDef'><td class='apiType'>public const </td><td><a href='#wait'><b>wait</b></a>(timeout: <a href='ejs-Number.html'>Number</a> = -1): <a href='ejs-Boolean.html'>Boolean</a></tr><tr class='apiBrief'><td>&nbsp;</td><td>Wait for a command to complete.</td></tr>
+   <tr class='apiDef'><td class='apiType'>public const </td><td><a href='#write'><b>write</b></a>(data: <a href='ejs-Array.html'>Array</a>): <a href='ejs-Number.html'>Number</a></tr><tr class='apiBrief'><td>&nbsp;</td><td>Write data to the stream.Call finalize() to signify the end of write data.</td></tr>
+</table>
+
+<p class='inheritedLink'><a href='ejs-Object.html#Methods'><i>Inherited Methods</i></a></p>
+
+<hr />
+<h2>Method Detail</h2>
+<a name='close'></a>
+<div class='api'>
+<div class='apiSig'>const   public  close(): <a href='ejs-Void.html'>Void</a>
+</div>
+<div class='apiDetail'>
+<p>Close the connection to the command and free up all associated resources.</p>
+<dl><dt>Description</dt><dd>It is not normally required to call 
+<a href='#close,'>close,</a> but it can be useful to force a command termination. After calling close, the command status and
+unread response data are not accessible.</dd></dl>
+</div>
+</div>
+<hr />
+<a name='daemon'></a>
+<div class='api'>
+<div class='apiSig'>static const   public  daemon(cmdline: <a href='ejs-Object.html'>Object</a>, options: <a href='ejs-Object.html'>Object</a> = null): <a href='ejs-Number.html'>Number</a>
+</div>
+<div class='apiDetail'>
+<p>Start a command in the background as a daemon.</p>
+<dl><dt>Description</dt><dd>No data can be written to the daemon's stdin.</dd></dl>
+<dl><dt>Parameters</dt>
+<dd><table class='parameters' summary ='parameters'>
+<tr class='param'><td class='param'>options: <a href='ejs-Object.html'>Object</a> </td><td>null [default: null]</td></tr></table></dd>
+</dl><dl><dt>Returns</dt>
+<dd>The process ID. This pid can be used with kill().</dd></dl>
+</div>
+</div>
+<hr />
+<a name='exec'></a>
+<div class='api'>
+<div class='apiSig'>static const   public  exec(cmdline: <a href='ejs-String.html'>String</a> = null , options: <a href='ejs-Object.html'>Object</a> = expression): <a href='ejs-Void.html'>Void</a>
+</div>
+<div class='apiDetail'>
+<p>Execute a new program by the current process.</p>
+<dl><dt>Description</dt><dd>This Replaces the current program with another without
+creating a new process.</dd></dl>
+<dl><dt>Parameters</dt>
+<dd><table class='parameters' summary ='parameters'>
+<tr class='param'><td class='param'>cmdline: <a href='ejs-String.html'>String</a> </td><td>Command line to use. The cmdline may be either a string or an array of strings. [default: null ]</td></tr><tr class='param'><td class='param'>options: <a href='ejs-Object.html'>Object</a> </td><td>Command options. Sames as options in <a href='#Cmd'>Cmd</a>.  [default: expression]</td></tr></table></dd>
+</dl><dl><dt>Throws</dt><dd>
+<a href='ejs-IOError.html'>IOError</a>: if the request was cannot be issued to the remote server.  
+</dd>
+</dl></div>
+</div>
+<hr />
+<a name='finalize'></a>
+<div class='api'>
+<div class='apiSig'>const   public  finalize(): <a href='ejs-Void.html'>Void</a>
+</div>
+<div class='apiDetail'>
+<p>Signal the end of write data.</p>
+<dl><dt>Description</dt><dd>The finalize() call must be invoked to properly signify the end of write data.</dd></dl>
+</div>
+</div>
+<hr />
+<a name='kill'></a>
+<div class='api'>
+<div class='apiSig'>static const   public  kill(pid: <a href='ejs-Number.html'>Number</a>, signal: <a href='ejs-Number.html'>Number</a> = 2): <a href='ejs-Boolean.html'>Boolean</a>
+</div>
+<div class='apiDetail'>
+<p>Kill the specified process.</p>
+<dl><dt>Parameters</dt>
+<dd><table class='parameters' summary ='parameters'>
+<tr class='param'><td class='param'>pid: <a href='ejs-Number.html'>Number</a> </td><td>Process ID of the process to kill.</td></tr><tr class='param'><td class='param'>signal: <a href='ejs-Number.html'>Number</a> </td><td>If pid is greater than zero, the signal is sent to the process whoes ID is pid. If pid is zero, the process is tested but no signal is sent. [default: 2]</td></tr></table></dd>
+</dl><dl><dt>Returns</dt>
+<dd>True if successful.</dd></dl>
+<dl><dt>Throws</dt><dd>
+<a href='ejs-IOError.html'>IOError</a>: if the pid is invalid or if the requesting process does not have sufficient privilege to send the signal.  
+</dd>
+</dl></div>
+</div>
+<hr />
+<a name='on'></a>
+<div class='api'>
+<div class='apiSig'>const   public  on(name, listener: <a href='ejs-Function.html'>Function</a>): <a href='ejs-Void.html'>Void</a>
+</div>
+<div class='apiDetail'>
+<p>Add an observer to the stream for the named events.</p>
+<dl><dt>Parameters</dt>
+<dd><table class='parameters' summary ='parameters'>
+<tr class='param'><td class='param'>name </td><td>Name of the event to listen for. The name may be an array of events.</td></tr></td></tr></table></dd>
+</dl><dl><dt>Events</dt>
+<dd><table class='parameters' summary ='events'>
+<td class='param'>readable</td><td>Issued when the stream becomes readable.</td></tr>
+<td class='param'>writable</td><td>Issued when the stream becomes writable.</td></tr>
+<td class='param'>close</td><td>Issued when stream is being closed.</td></tr>
+<td class='param'>readable</td><td>Issued when output data to read.</td></tr>
+<td class='param'>writable</td><td>Issued when the command can accept more write data.</td></tr>
+<td class='param'>complete</td><td>Issued when the command completes.</td></tr>
+<td class='param'>error</td><td>Issued if the <a href='#error'>error</a> stream is readable.  All events are called with the signature: function (event: String, cmd: Cmd): Void.</td></tr>
+</table></dd>
+</dl></div>
+</div>
+<hr />
+<a name='read'></a>
+<div class='api'>
+<div class='apiSig'>const   public  read(buffer: <a href='ejs-ByteArray.html'>ByteArray</a>, offset: <a href='ejs-Number.html'>Number</a> = 0 , count: <a href='ejs-Number.html'>Number</a> = -1): <a href='ejs-Number.html'>Number</a>
+</div>
+<div class='apiDetail'>
+<p>Read a data from the stream.If no listener has been defined via <a href='#on(),'>on(),</a> this call will block if there is no data to be read.</p>
+<dl><dt>Description</dt><dd>If data is available, the call will return immediately. 
+If no data is available and the stream is in sync mode, the call will block until data is available.
+If no data is available and the stream is in async mode, the call will not block and will return immediately.
+In this case a "readable" event will be issued when data is available for reading.</dd></dl>
+<dl><dt>Parameters</dt>
+<dd><table class='parameters' summary ='parameters'>
+<tr class='param'><td class='param'>buffer: <a href='ejs-ByteArray.html'>ByteArray</a> </td><td>Destination byte array for read data.</td></tr><tr class='param'><td class='param'>offset: <a href='ejs-Number.html'>Number</a> </td><td>Offset in the byte array to place the data. If the offset is -1, then data is appended to the buffer write <a href='#position'>position</a> which is then updated [default: 0 ]</td></tr><tr class='param'><td class='param'>count: <a href='ejs-Number.html'>Number</a> </td><td>Read up to this number of bytes. If -1, read as much as the buffer will hold up. If the  stream is of fixed and known length (such as a file) and the buffer is of sufficient size or is growable,  read the entire stream. [default: -1]</td></tr><tr class='param'><td class='param'>offset: <a href='ejs-Number.html'>Number</a> </td><td>null [default: 0 ]</td></tr><tr class='param'><td class='param'>count: <a href='ejs-Number.html'>Number</a> </td><td>null [default: -1]</td></tr></table></dd>
+</dl><dl><dt>Events</dt>
+<dd><table class='parameters' summary ='events'>
+<td class='param'>readable</td><td>Issued when there is new read data available.</td></tr>
+<td class='param'>writable</td><td>Issued when the stream becomes empty.</td></tr>
+</table></dd>
+</dl><dl><dt>Returns</dt>
+<dd>A count of the bytes actually read. Returns null on eof.</dd></dl>
+</div>
+</div>
+<hr />
+<a name='readLines'></a>
+<div class='api'>
+<div class='apiSig'>const   public  readLines(count: <a href='ejs-Number.html'>Number</a> = -1): <a href='ejs-Array.html'>Array</a>
+</div>
+<div class='apiDetail'>
+<p>Read the data from the command as an array of lines.</p>
+<dl><dt>Description</dt><dd>This reads from the command's standard output.</dd></dl>
+<dl><dt>Parameters</dt>
+<dd><table class='parameters' summary ='parameters'>
+<tr class='param'><td class='param'>count: <a href='ejs-Number.html'>Number</a> </td><td>Of linese to read. Returns the entire output contents if count is -1. [default: -1]</td></tr></table></dd>
+</dl><dl><dt>Returns</dt>
+<dd>A string containing count lines of data starting with the first line of output data.</dd></dl>
+<dl><dt>Throws</dt><dd>
+<a href='ejs-IOError.html'>IOError</a>: if an I/O error occurs.  
+</dd>
+</dl></div>
+</div>
+<hr />
+<a name='readString'></a>
+<div class='api'>
+<div class='apiSig'>const   public  readString(count: <a href='ejs-Number.html'>Number</a> = -1): <a href='ejs-String.html'>String</a>
+</div>
+<div class='apiDetail'>
+<p>Read the data from the command output as a string.</p>
+<dl><dt>Description</dt><dd>This reads from the command's standard output.</dd></dl>
+<dl><dt>Parameters</dt>
+<dd><table class='parameters' summary ='parameters'>
+<tr class='param'><td class='param'>count: <a href='ejs-Number.html'>Number</a> </td><td>Of bytes to read. Returns the entire output data contents if count is -1. [default: -1]</td></tr></table></dd>
+</dl><dl><dt>Returns</dt>
+<dd>A string of <a href='#count'>count</a> characters beginning at the start of the output data.</dd></dl>
+<dl><dt>Throws</dt><dd>
+<a href='ejs-IOError.html'>IOError</a>: if an I/O error occurs.  
+</dd>
+</dl></div>
+</div>
+<hr />
+<a name='readXml'></a>
+<div class='api'>
+<div class='apiSig'>const   public  readXml(): <a href='ejs-XML.html'>XML</a>
+</div>
+<div class='apiDetail'>
+<p>Read the command output as an XML document.</p>
+<dl><dt>Description</dt><dd>This reads from the command's standard output.</dd></dl>
+<dl><dt>Returns</dt>
+<dd>The output content as an XML object.</dd></dl>
+<dl><dt>Throws</dt><dd>
+<a href='ejs-IOError.html'>IOError</a>: if an I/O error occurs. 
+</dd>
+</dl></div>
+</div>
+<hr />
+<a name='run'></a>
+<div class='api'>
+<div class='apiSig'>static const   public  run(command: <a href='ejs-Object.html'>Object</a>, data: <a href='ejs-Object.html'>Object</a> = null): <a href='ejs-String.html'>String</a>
+</div>
+<div class='apiDetail'>
+<p>Execute a command/program.</p>
+<dl><dt>Description</dt><dd>The call blocks while executing the command.</dd></dl>
+<dl><dt>Parameters</dt>
+<dd><table class='parameters' summary ='parameters'>
+<tr class='param'><td class='param'>command: <a href='ejs-Object.html'>Object</a> </td><td>Command or program to execute.</td></tr><tr class='param'><td class='param'>data: <a href='ejs-Object.html'>Object</a> </td><td>Optional data to write to the command on it's standard input. [default: null]</td></tr></table></dd>
+</dl><dl><dt>Returns</dt>
+<dd>The command output from it's standard output.</dd></dl>
+<dl><dt>Throws</dt><dd>
+<a href='ejs-IOError.html'>IOError</a>: if the command exits with non-zero status. The exception object will contain the command's standard error output.   
+</dd>
+</dl></div>
+</div>
+<hr />
+<a name='sh'></a>
+<div class='api'>
+<div class='apiSig'>static const   public  sh(command: <a href='ejs-Object.html'>Object</a>, data: <a href='ejs-Object.html'>Object</a> = null): <a href='ejs-String.html'>String</a>
+</div>
+<div class='apiDetail'>
+<p>Run a command using the system command shell and wait for completion.</p>
+<dl><dt>Description</dt><dd>On Windows, this requires that
+/bin/sh.exe is installed (See Cygwin).</dd></dl>
+<dl><dt>Parameters</dt>
+<dd><table class='parameters' summary ='parameters'>
+<tr class='param'><td class='param'>command: <a href='ejs-Object.html'>Object</a> </td><td>The (optional) command line to initialize with. The command may be either a string or an array of arguments.</td></tr><tr class='param'><td class='param'>data: <a href='ejs-Object.html'>Object</a> </td><td>null [default: null]</td></tr></table></dd>
+</dl></div>
+</div>
+<hr />
+<a name='start'></a>
+<div class='api'>
+<div class='apiSig'>const   public  start(cmdline: <a href='ejs-Object.html'>Object</a>, options: <a href='ejs-Object.html'>Object</a> = null): <a href='ejs-Void.html'>Void</a>
+</div>
+<div class='apiDetail'>
+<p>Start the command.</p>
+<dl><dt>Parameters</dt>
+<dd><table class='parameters' summary ='parameters'>
+<tr class='param'><td class='param'>cmdline: <a href='ejs-Object.html'>Object</a> </td><td>Command line to use. The cmdline may be either a string or an array of strings.</td></tr><tr class='param'><td class='param'>options: <a href='ejs-Object.html'>Object</a> </td><td>Command options. Sames as options in <a href='#Cmd'>Cmd</a>.  [default: null]</td></tr></table></dd>
+</dl><dl><dt>Throws</dt><dd>
+<a href='ejs-IOError.html'>IOError</a>: if the request was cannot be issued to the remote server.  
+</dd>
+</dl></div>
+</div>
+<hr />
+<a name='stop'></a>
+<div class='api'>
+<div class='apiSig'>const   public  stop(signal: <a href='ejs-Number.html'>Number</a> = 2): <a href='ejs-Boolean.html'>Boolean</a>
+</div>
+<div class='apiDetail'>
+<p>Stop the current command.</p>
+<dl><dt>Description</dt><dd>After stopping, the command exit status and any response or error data are
+available for interrogation.</dd></dl>
+<dl><dt>Parameters</dt>
+<dd><table class='parameters' summary ='parameters'>
+<tr class='param'><td class='param'>signal: <a href='ejs-Number.html'>Number</a> </td><td>Signal to send the the active process. [default: 2]</td></tr></table></dd>
+</dl><dl><dt>Returns</dt>
+<dd>True if successful.</dd></dl>
+</div>
+</div>
+<hr />
+<a name='wait'></a>
+<div class='api'>
+<div class='apiSig'>const   public  wait(timeout: <a href='ejs-Number.html'>Number</a> = -1): <a href='ejs-Boolean.html'>Boolean</a>
+</div>
+<div class='apiDetail'>
+<p>Wait for a command to complete.</p>
+<dl><dt>Parameters</dt>
+<dd><table class='parameters' summary ='parameters'>
+<tr class='param'><td class='param'>timeout: <a href='ejs-Number.html'>Number</a> </td><td>Time in seconds to wait for the command to complete. If unspecified, the <a href='#timeout'>timeout</a> propoperty value is used instead. [default: -1]</td></tr></table></dd>
+</dl><dl><dt>Returns</dt>
+<dd>True if the request successfully completes.</dd></dl>
+</div>
+</div>
+<hr />
+<a name='write'></a>
+<div class='api'>
+<div class='apiSig'>const   public  write(data: <a href='ejs-Array.html'>Array</a>): <a href='ejs-Number.html'>Number</a>
+</div>
+<div class='apiDetail'>
+<p>Write data to the stream.Call finalize() to signify the end of write data.</p>
+<dl><dt>Description</dt><dd>If the stream can accept all the write data, the call returns immediately with the number of bytes written. 
+If writing more data than the stream can absorb in sync mode, the call will block until the data is written.
+If writing more data than the stream can absorb in async mode, the call will not block and will buffer the
+data and return immediately. Some streams will require a flush() call to actually send the data.
+A "writable" event will be issued when the stream can again absorb more data.Failure to call finalize() may prevent some commands 
+from exiting.</dd></dl>
+<dl><dt>Parameters</dt>
+<dd><table class='parameters' summary ='parameters'>
+<tr class='param'><td class='param'>data: <a href='ejs-Array.html'>Array</a> </td><td>Data to write.</td></tr></table></dd>
+</dl><dl><dt>Events</dt>
+<dd><table class='parameters' summary ='events'>
+<td class='param'>readable</td><td>Issued when data is written and a consumer can read without blocking.</td></tr>
+<td class='param'>writable</td><td>Issued when the stream becomes empty and it is ready to be written to.</td></tr>
+</table></dd>
+</dl><dl><dt>Returns</dt>
+<dd>A count of the bytes actually written.</dd></dl>
+<dl><dt>Throws</dt><dd>
+<a href='ejs-IOError.html'>IOError</a>: if there is an I/O error. 
+</dd>
+</dl></div>
+</div>
+<hr />
+<div class="terms">
+   <p class="terms">
+       <a href="http://www.embedthis.com/">       Embedthis Software LLC, 2003-2011. All rights reserved. Embedthis is a trademark of Embedthis Software LLC.</a>
+   </p>
+</div></div>
+</div>
+</body>
+</html>

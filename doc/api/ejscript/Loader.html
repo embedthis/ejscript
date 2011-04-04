@@ -42,26 +42,26 @@
    <tr><td nowrap align='center'></td><td>°p'</td><td>&nbsp;</td><td>null null</td></tr>
 </table>
 
-<p class='inheritedLink'><a href='-Object.html#Properties'><i>Inherited Properties</i></a></p>
+<p class='inheritedLink'><a href='ejs-Object.html#Properties'><i>Inherited Properties</i></a></p>
 
 <hr />
 <a name='Methods'></a>
 <h2 class='classSection'>Loader Methods</h2>
 <table class='apiIndex' summary='methods'>
    <tr><th>Qualifiers</th><th width='95%'>Method</th></tr>
-   <tr class='apiDef'><td class='apiType'>static const </td><td><a href='#load'><b>load</b></a>(id: <a href='-String.html'>String</a>, path: <a href='-Path.html'>Path</a>, config = expression , codeReader: <a href='-Function.html'>Function</a> = null): <a href='-Object.html'>Object</a></tr><tr class='apiBrief'><td>&nbsp;</td><td>Load a CommonJS module and return the exports object.</td></tr>
-   <tr class='apiDef'><td class='apiType'>static const </td><td><a href='#register'><b>register</b></a>(id, fn): <a href='-Function.html'>Function</a></tr><tr class='apiBrief'><td>&nbsp;</td><td>null</td></tr>
-   <tr class='apiDef'><td class='apiType'>static const </td><td><a href='#require'><b>require</b></a>(id: <a href='-String.html'>String</a>, config: <a href='-Object.html'>Object</a> = expression): <a href='-Object.html'>Object</a></tr><tr class='apiBrief'><td>&nbsp;</td><td>Load a CommonJS module.</td></tr>
-   <tr class='apiDef'><td class='apiType'>static const </td><td><a href='#setConfig'><b>setConfig</b></a>(newConfig): <a href='-Void.html'>Void</a></tr><tr class='apiBrief'><td>&nbsp;</td><td>Set the configuration options hash for require to use.</td></tr>
+   <tr class='apiDef'><td class='apiType'>static const </td><td><a href='#load'><b>load</b></a>(id: <a href='ejs-String.html'>String</a>, path: <a href='ejs-Path.html'>Path</a>, config = expression , codeReader: <a href='ejs-Function.html'>Function</a> = null): <a href='ejs-Object.html'>Object</a></tr><tr class='apiBrief'><td>&nbsp;</td><td>Load a CommonJS module and return the exports object.</td></tr>
+   <tr class='apiDef'><td class='apiType'>static const </td><td><a href='#register'><b>register</b></a>(id, fn): <a href='ejs-Function.html'>Function</a></tr><tr class='apiBrief'><td>&nbsp;</td><td>null</td></tr>
+   <tr class='apiDef'><td class='apiType'>static const </td><td><a href='#require'><b>require</b></a>(id: <a href='ejs-String.html'>String</a>, config: <a href='ejs-Object.html'>Object</a> = expression): <a href='ejs-Object.html'>Object</a></tr><tr class='apiBrief'><td>&nbsp;</td><td>Load a CommonJS module.</td></tr>
+   <tr class='apiDef'><td class='apiType'>static const </td><td><a href='#setConfig'><b>setConfig</b></a>(newConfig): <a href='ejs-Void.html'>Void</a></tr><tr class='apiBrief'><td>&nbsp;</td><td>Set the configuration options hash for require to use.</td></tr>
 </table>
 
-<p class='inheritedLink'><a href='-Object.html#Methods'><i>Inherited Methods</i></a></p>
+<p class='inheritedLink'><a href='ejs-Object.html#Methods'><i>Inherited Methods</i></a></p>
 
 <hr />
 <h2>Method Detail</h2>
 <a name='load'></a>
 <div class='api'>
-<div class='apiSig'>static const  load(id: <a href='-String.html'>String</a>, path: <a href='-Path.html'>Path</a>, config = expression , codeReader: <a href='-Function.html'>Function</a> = null): <a href='-Object.html'>Object</a>
+<div class='apiSig'>static const  load(id: <a href='ejs-String.html'>String</a>, path: <a href='ejs-Path.html'>Path</a>, config = expression , codeReader: <a href='ejs-Function.html'>Function</a> = null): <a href='ejs-Object.html'>Object</a>
 </div>
 <div class='apiDetail'>
 <p>Load a CommonJS module and return the exports object.</p>
@@ -69,7 +69,7 @@
 and cached as a byte-code module.</dd></dl>
 <dl><dt>Parameters</dt>
 <dd><table class='parameters' summary ='parameters'>
-<tr class='param'><td class='param'>id: <a href='-String.html'>String</a> </td><td>Unique name of the module to load. The id may be a unique ID, an absolute path, relative path or a  path fragment that is resolved relative to the App search path. Ids may or may not include a ".es" or  ".js" extension.</td></tr><tr class='param'><td class='param'>path: <a href='-Path.html'>Path</a> </td><td>Optional path to the physical file corresponding to the module. If the module source code has changed, it will be re-compiled and then cached.</td></tr><tr class='param'><td class='param'>codeReader: <a href='-Function.html'>Function</a> </td><td>Optional function to provide script code to use instead of reading from the path. [default: null]</td></tr><tr class='param'><td class='param'>config </td><td>null [default: expression ]</td></tr></table></dd>
+<tr class='param'><td class='param'>id: <a href='ejs-String.html'>String</a> </td><td>Unique name of the module to load. The id may be a unique ID, an absolute path, relative path or a  path fragment that is resolved relative to the App search path. Ids may or may not include a ".es" or  ".js" extension.</td></tr><tr class='param'><td class='param'>path: <a href='ejs-Path.html'>Path</a> </td><td>Optional path to the physical file corresponding to the module. If the module source code has changed, it will be re-compiled and then cached.</td></tr><tr class='param'><td class='param'>codeReader: <a href='ejs-Function.html'>Function</a> </td><td>Optional function to provide script code to use instead of reading from the path. [default: null]</td></tr><tr class='param'><td class='param'>config </td><td>null [default: expression ]</td></tr></table></dd>
 </dl><dl><dt>Returns</dt>
 <dd>A hash of exported properties.</dd></dl>
 </div>
@@ -77,14 +77,14 @@ and cached as a byte-code module.</dd></dl>
 <hr />
 <a name='require'></a>
 <div class='api'>
-<div class='apiSig'>static const  require(id: <a href='-String.html'>String</a>, config: <a href='-Object.html'>Object</a> = expression): <a href='-Object.html'>Object</a>
+<div class='apiSig'>static const  require(id: <a href='ejs-String.html'>String</a>, config: <a href='ejs-Object.html'>Object</a> = expression): <a href='ejs-Object.html'>Object</a>
 </div>
 <div class='apiDetail'>
 <p>Load a CommonJS module.</p>
 <dl><dt>Description</dt><dd>The module is loaded only once unless it is modified.</dd></dl>
 <dl><dt>Parameters</dt>
 <dd><table class='parameters' summary ='parameters'>
-<tr class='param'><td class='param'>id: <a href='-String.html'>String</a> </td><td>Name of the module to load. The id may be an absolute path, relative path or a path fragment that is resolved relative to the App search path. Ids may or may not include a ".es" or ".js" extension.</td></tr><tr class='param'><td class='param'>config: <a href='-Object.html'>Object</a> </td><td>null [default: expression]</td></tr></table></dd>
+<tr class='param'><td class='param'>id: <a href='ejs-String.html'>String</a> </td><td>Name of the module to load. The id may be an absolute path, relative path or a path fragment that is resolved relative to the App search path. Ids may or may not include a ".es" or ".js" extension.</td></tr><tr class='param'><td class='param'>config: <a href='ejs-Object.html'>Object</a> </td><td>null [default: expression]</td></tr></table></dd>
 </dl><dl><dt>Returns</dt>
 <dd>A hash of exported properties.</dd></dl>
 </div>
@@ -92,7 +92,7 @@ and cached as a byte-code module.</dd></dl>
 <hr />
 <a name='setConfig'></a>
 <div class='api'>
-<div class='apiSig'>static const  setConfig(newConfig): <a href='-Void.html'>Void</a>
+<div class='apiSig'>static const  setConfig(newConfig): <a href='ejs-Void.html'>Void</a>
 </div>
 <div class='apiDetail'>
 <p>Set the configuration options hash for require to use.</p>

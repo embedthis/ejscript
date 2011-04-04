@@ -2334,7 +2334,7 @@ static char *fmtType(Ejs *ejs, EjsName qname)
     }
     if (*namespace) {
         if (*namespace) {
-            mprSprintf(buf, sizeof(buf), "%N", namespace, qname.name);
+            mprSprintf(buf, sizeof(buf), "%s::%@", namespace, qname.name);
         } else {
             mprSprintf(buf, sizeof(buf), "%@", qname.name);
         }
