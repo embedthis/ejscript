@@ -1,9 +1,9 @@
 <?xml version='1.0' encoding='UTF-8' standalone='no'?>
-<doxygen xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="compound.xsd" version="1.5.8">
+<doxygen xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="compound.xsd" version="1.7.3">
   <compounddef id="struct_ejs_xml_tag_state" kind="struct" prot="public">
     <compoundname>EjsXmlTagState</compoundname>
       <sectiondef kind="public-attrib">
-      <memberdef kind="variable" id="struct_ejs_xml_tag_state_1e8efcd8d23344191f7aff2f4c0901fbd" prot="public" static="no" mutable="no">
+      <memberdef kind="variable" id="struct_ejs_xml_tag_state_1ae8efcd8d23344191f7aff2f4c0901fbd" prot="public" static="no" mutable="no">
         <type>EjsObj *</type>
         <definition>EjsObj* EjsXmlTagState::attributes</definition>
         <argsstring></argsstring>
@@ -14,9 +14,9 @@
         </detaileddescription>
         <inbodydescription>
         </inbodydescription>
-        <location file="/Users/mob/git/ejs/doc/api/ejs/staging/src/include/ejs.h" line="3215" bodyfile="/Users/mob/git/ejs/doc/api/ejs/staging/src/include/ejs.h" bodystart="3215" bodyend="-1"/>
+        <location file="/Users/mob/git/ejs/doc/api/ejs/staging/src/deps/ejs/ejs.h" line="3167" bodyfile="/Users/mob/git/ejs/doc/api/ejs/staging/src/deps/ejs/ejs.h" bodystart="3167" bodyend="-1"/>
       </memberdef>
-      <memberdef kind="variable" id="struct_ejs_xml_tag_state_11ee515ee13089908a5cd9d12b76bc5ef" prot="public" static="no" mutable="no">
+      <memberdef kind="variable" id="struct_ejs_xml_tag_state_1a1ee515ee13089908a5cd9d12b76bc5ef" prot="public" static="no" mutable="no">
         <type>EjsObj *</type>
         <definition>EjsObj* EjsXmlTagState::comments</definition>
         <argsstring></argsstring>
@@ -27,9 +27,9 @@
         </detaileddescription>
         <inbodydescription>
         </inbodydescription>
-        <location file="/Users/mob/git/ejs/doc/api/ejs/staging/src/include/ejs.h" line="3216" bodyfile="/Users/mob/git/ejs/doc/api/ejs/staging/src/include/ejs.h" bodystart="3216" bodyend="-1"/>
+        <location file="/Users/mob/git/ejs/doc/api/ejs/staging/src/deps/ejs/ejs.h" line="3168" bodyfile="/Users/mob/git/ejs/doc/api/ejs/staging/src/deps/ejs/ejs.h" bodystart="3168" bodyend="-1"/>
       </memberdef>
-      <memberdef kind="variable" id="struct_ejs_xml_tag_state_132f313083e2200f3fe69160d10c39b9c" prot="public" static="no" mutable="no">
+      <memberdef kind="variable" id="struct_ejs_xml_tag_state_1a32f313083e2200f3fe69160d10c39b9c" prot="public" static="no" mutable="no">
         <type>struct EjsXML *</type>
         <definition>struct EjsXML* EjsXmlTagState::obj</definition>
         <argsstring></argsstring>
@@ -40,18 +40,18 @@
         </detaileddescription>
         <inbodydescription>
         </inbodydescription>
-        <location file="/Users/mob/git/ejs/doc/api/ejs/staging/src/include/ejs.h" line="3213" bodyfile="/Users/mob/git/ejs/doc/api/ejs/staging/src/include/ejs.h" bodystart="3213" bodyend="-1"/>
+        <location file="/Users/mob/git/ejs/doc/api/ejs/staging/src/deps/ejs/ejs.h" line="3165" bodyfile="/Users/mob/git/ejs/doc/api/ejs/staging/src/deps/ejs/ejs.h" bodystart="3165" bodyend="-1"/>
       </memberdef>
       </sectiondef>
     <briefdescription>
     </briefdescription>
     <detaileddescription>
     </detaileddescription>
-    <location file="/Users/mob/git/ejs/doc/api/ejs/staging/src/include/ejs.h" line="3212" bodyfile="/Users/mob/git/ejs/doc/api/ejs/staging/src/include/ejs.h" bodystart="3212" bodyend="3217"/>
+    <location file="/Users/mob/git/ejs/doc/api/ejs/staging/src/deps/ejs/ejs.h" line="3164" bodyfile="/Users/mob/git/ejs/doc/api/ejs/staging/src/deps/ejs/ejs.h" bodystart="3164" bodyend="3169"/>
     <listofallmembers>
-      <member refid="struct_ejs_xml_tag_state_1e8efcd8d23344191f7aff2f4c0901fbd" prot="public" virt="non-virtual"><scope>EjsXmlTagState</scope><name>attributes</name></member>
-      <member refid="struct_ejs_xml_tag_state_11ee515ee13089908a5cd9d12b76bc5ef" prot="public" virt="non-virtual"><scope>EjsXmlTagState</scope><name>comments</name></member>
-      <member refid="struct_ejs_xml_tag_state_132f313083e2200f3fe69160d10c39b9c" prot="public" virt="non-virtual"><scope>EjsXmlTagState</scope><name>obj</name></member>
+      <member refid="struct_ejs_xml_tag_state_1ae8efcd8d23344191f7aff2f4c0901fbd" prot="public" virt="non-virtual"><scope>EjsXmlTagState</scope><name>attributes</name></member>
+      <member refid="struct_ejs_xml_tag_state_1a1ee515ee13089908a5cd9d12b76bc5ef" prot="public" virt="non-virtual"><scope>EjsXmlTagState</scope><name>comments</name></member>
+      <member refid="struct_ejs_xml_tag_state_1a32f313083e2200f3fe69160d10c39b9c" prot="public" virt="non-virtual"><scope>EjsXmlTagState</scope><name>obj</name></member>
     </listofallmembers>
   </compounddef>
 </doxygen>

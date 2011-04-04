@@ -1,20 +1,20 @@
 <?xml version='1.0' encoding='UTF-8' standalone='no'?>
-<doxygen xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="compound.xsd" version="1.5.8">
+<doxygen xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="compound.xsd" version="1.7.3">
   <compounddef id="group___ejs_reg_exp" kind="group">
     <compoundname>EjsRegExp</compoundname>
     <title>EjsRegExp</title>
       <sectiondef kind="func">
-      <memberdef kind="function" id="group___ejs_reg_exp_1g6900b595ab2e5b7a7feac913f79ccb36" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+      <memberdef kind="function" id="group___ejs_reg_exp_1gac9a6378d8053367d37657d26c816fa50" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
         <type>EjsRegExp *</type>
         <definition>EjsRegExp* ejsCreateRegExp</definition>
-        <argsstring>(Ejs *ejs, cchar *pattern)</argsstring>
+        <argsstring>(Ejs *ejs, EjsString *pattern)</argsstring>
         <name>ejsCreateRegExp</name>
         <param>
           <type>Ejs *</type>
           <declname>ejs</declname>
         </param>
         <param>
-          <type>cchar *</type>
+          <type>EjsString *</type>
           <declname>pattern</declname>
         </param>
         <briefdescription>
@@ -25,7 +25,7 @@
 <parametername>ejs</parametername>
 </parameternamelist>
 <parameterdescription>
-<para>Ejs reference returned from <ref refid="group___ejs_obj_1g50d9d774b3cddd1784d654326cddc237" kindref="member">ejsCreate</ref> </para></parameterdescription>
+<para>Ejs reference returned from <ref refid="group___ejs_1ga75cce70e794158ee54ddb800509060e0" kindref="member">ejsCreate</ref> </para></parameterdescription>
 </parameteritem>
 <parameteritem>
 <parameternamelist>
@@ -39,25 +39,7 @@
 </para>        </detaileddescription>
         <inbodydescription>
         </inbodydescription>
-        <location file="/Users/mob/git/ejs/doc/api/ejs/staging/src/include/ejs.h" line="2996"/>
-      </memberdef>
-      <memberdef kind="function" id="group___ejs_reg_exp_1ge100e3eccec81351fbae11e58839b3b8" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
-        <type>bool</type>
-        <definition>bool ejsIsRegExp</definition>
-        <argsstring>(EjsObj *vp)</argsstring>
-        <name>ejsIsRegExp</name>
-        <param>
-          <type>EjsObj *</type>
-          <declname>vp</declname>
-        </param>
-        <briefdescription>
-<para>Determine if the variable is a regular expression. </para>        </briefdescription>
-        <detaileddescription>
-<para><simplesect kind="return"><para>True if the variable is a regular expression </para></simplesect>
-</para>        </detaileddescription>
-        <inbodydescription>
-        </inbodydescription>
-        <location file="/Users/mob/git/ejs/doc/api/ejs/staging/src/include/ejs.h" line="3006"/>
+        <location file="/Users/mob/git/ejs/doc/api/ejs/staging/src/deps/ejs/ejs.h" line="3067"/>
       </memberdef>
       </sectiondef>
     <briefdescription>
@@ -65,7 +47,7 @@
     <detaileddescription>
 <para><simplesect kind="par"><title><bold>Description</bold>:</title><para>The regular expression class provides string pattern matching and substitution. </para></simplesect>
 <simplesect kind="par"><title><bold>API</bold> Stability:</title><para>Evolving</para></simplesect>
-<simplesect kind="see"><para><ref refid="group___ejs_reg_exp" kindref="compound">EjsRegExp</ref> <ref refid="group___ejs_reg_exp_1g6900b595ab2e5b7a7feac913f79ccb36" kindref="member">ejsCreateRegExp</ref> <ref refid="group___ejs_reg_exp_1ge100e3eccec81351fbae11e58839b3b8" kindref="member">ejsIsRegExp</ref> </para></simplesect>
+<simplesect kind="see"><para><ref refid="group___ejs_reg_exp" kindref="compound">EjsRegExp</ref> <ref refid="group___ejs_reg_exp_1gac9a6378d8053367d37657d26c816fa50" kindref="member">ejsCreateRegExp</ref> </para></simplesect>
 </para>    </detaileddescription>
   </compounddef>
 </doxygen>

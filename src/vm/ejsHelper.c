@@ -770,8 +770,8 @@ EjsName ejsWideName(Ejs *ejs, MprChar *space, MprChar *name)
 {
     EjsName     n;
 
-    n.name = ejsCreateString(ejs, name, -1);
-    n.space = ejsCreateString(ejs, space, -1);
+    n.name = ejsCreateString(ejs, name, wlen(name));
+    n.space = ejsCreateString(ejs, space, wlen(space));
     return n;
 }
 

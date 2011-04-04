@@ -1,20 +1,20 @@
 <?xml version='1.0' encoding='UTF-8' standalone='no'?>
-<doxygen xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="compound.xsd" version="1.5.8">
+<doxygen xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="compound.xsd" version="1.7.3">
   <compounddef id="group___ejs_uri" kind="group">
     <compoundname>EjsUri</compoundname>
     <title>EjsUri</title>
       <sectiondef kind="func">
-      <memberdef kind="function" id="group___ejs_uri_1gc27bb05f2a8b6c1cc0301a5d66cff42b" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+      <memberdef kind="function" id="group___ejs_uri_1gae6752aaa05bbde3fbd49c8426b131a70" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
         <type>EjsUri *</type>
         <definition>EjsUri* ejsCreateUri</definition>
-        <argsstring>(Ejs *ejs, cchar *uri)</argsstring>
+        <argsstring>(Ejs *ejs, EjsString *uri)</argsstring>
         <name>ejsCreateUri</name>
         <param>
           <type>Ejs *</type>
           <declname>ejs</declname>
         </param>
         <param>
-          <type>cchar *</type>
+          <type>EjsString *</type>
           <declname>uri</declname>
         </param>
         <briefdescription>
@@ -26,7 +26,7 @@
 <parametername>ejs</parametername>
 </parameternamelist>
 <parameterdescription>
-<para>Ejs reference returned from <ref refid="group___ejs_obj_1g50d9d774b3cddd1784d654326cddc237" kindref="member">ejsCreate</ref> </para></parameterdescription>
+<para>Ejs reference returned from <ref refid="group___ejs_1ga75cce70e794158ee54ddb800509060e0" kindref="member">ejsCreate</ref> </para></parameterdescription>
 </parameteritem>
 <parameteritem>
 <parameternamelist>
@@ -40,44 +40,7 @@
 </para>        </detaileddescription>
         <inbodydescription>
         </inbodydescription>
-        <location file="/Users/mob/git/ejs/doc/api/ejs/staging/src/include/ejs.h" line="2699"/>
-      </memberdef>
-      <memberdef kind="function" id="group___ejs_uri_1ga0c37d3ccb1815c72c703e2038a0d90d" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
-        <type>bool</type>
-        <definition>bool ejsIsUri</definition>
-        <argsstring>(Ejs *ejs, EjsObj *vp)</argsstring>
-        <name>ejsIsUri</name>
-        <param>
-          <type>Ejs *</type>
-          <declname>ejs</declname>
-        </param>
-        <param>
-          <type>EjsObj *</type>
-          <declname>vp</declname>
-        </param>
-        <briefdescription>
-<para>Determine if a variable is a Uri. </para>        </briefdescription>
-        <detaileddescription>
-<para><parameterlist kind="param"><parameteritem>
-<parameternamelist>
-<parametername>ejs</parametername>
-</parameternamelist>
-<parameterdescription>
-<para>Ejs reference returned from <ref refid="group___ejs_obj_1g50d9d774b3cddd1784d654326cddc237" kindref="member">ejsCreate</ref> </para></parameterdescription>
-</parameteritem>
-<parameteritem>
-<parameternamelist>
-<parametername>vp</parametername>
-</parameternamelist>
-<parameterdescription>
-<para>Variable to test </para></parameterdescription>
-</parameteritem>
-</parameterlist>
-<simplesect kind="return"><para>True if the variable is a Uri </para></simplesect>
-</para>        </detaileddescription>
-        <inbodydescription>
-        </inbodydescription>
-        <location file="/Users/mob/git/ejs/doc/api/ejs/staging/src/include/ejs.h" line="2711"/>
+        <location file="/Users/mob/git/ejs/doc/api/ejs/staging/src/deps/ejs/ejs.h" line="2828"/>
       </memberdef>
       </sectiondef>
     <briefdescription>
@@ -85,7 +48,7 @@
     <detaileddescription>
 <para><simplesect kind="par"><title><bold>Description</bold>:</title><para>The Uri class provides file path name services. </para></simplesect>
 <simplesect kind="par"><title><bold>API</bold> Stability:</title><para>Prototype</para></simplesect>
-<simplesect kind="see"><para><ref refid="group___ejs_file" kindref="compound">EjsFile</ref> <ref refid="group___ejs_uri_1gc27bb05f2a8b6c1cc0301a5d66cff42b" kindref="member">ejsCreateUri</ref> <ref refid="group___ejs_uri_1ga0c37d3ccb1815c72c703e2038a0d90d" kindref="member">ejsIsUri</ref> </para></simplesect>
+<simplesect kind="see"><para><ref refid="group___ejs_file" kindref="compound">EjsFile</ref> <ref refid="group___ejs_uri_1gae6752aaa05bbde3fbd49c8426b131a70" kindref="member">ejsCreateUri</ref> </para></simplesect>
 </para>    </detaileddescription>
   </compounddef>
 </doxygen>

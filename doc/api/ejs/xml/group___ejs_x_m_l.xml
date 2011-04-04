@@ -1,30 +1,38 @@
 <?xml version='1.0' encoding='UTF-8' standalone='no'?>
-<doxygen xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="compound.xsd" version="1.5.8">
+<doxygen xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="compound.xsd" version="1.7.3">
   <compounddef id="group___ejs_x_m_l" kind="group">
     <compoundname>EjsXML</compoundname>
     <title>EjsXML</title>
       <sectiondef kind="func">
-      <memberdef kind="function" id="group___ejs_x_m_l_1gfcf47f785585d764c86103ea746934f2" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+      <memberdef kind="function" id="group___ejs_x_m_l_1gae3cb29b339874d4ae21b3bb64d4a5a87" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
         <type>boolean</type>
         <definition>boolean ejsIsXML</definition>
-        <argsstring>(Ejs *ejs, EjsObj *vp)</argsstring>
+        <argsstring>(Ejs *ejs, EjsAny *obj)</argsstring>
         <name>ejsIsXML</name>
         <param>
           <type>Ejs *</type>
           <declname>ejs</declname>
         </param>
         <param>
-          <type>EjsObj *</type>
-          <declname>vp</declname>
+          <type>EjsAny *</type>
+          <declname>obj</declname>
         </param>
         <briefdescription>
 <para>Determine if a variable is an XML object. </para>        </briefdescription>
         <detaileddescription>
-<para><simplesect kind="return"><para>true if the variable is an XML or XMLList object </para></simplesect>
+<para><parameterlist kind="param"><parameteritem>
+<parameternamelist>
+<parametername>Object</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>to test </para></parameterdescription>
+</parameteritem>
+</parameterlist>
+<simplesect kind="return"><para>true if the variable is an XML or XMLList object </para></simplesect>
 </para>        </detaileddescription>
         <inbodydescription>
         </inbodydescription>
-        <location file="/Users/mob/git/ejs/doc/api/ejs/staging/src/include/ejs.h" line="3267"/>
+        <location file="/Users/mob/git/ejs/doc/api/ejs/staging/src/deps/ejs/ejs.h" line="3218"/>
       </memberdef>
       </sectiondef>
     <briefdescription>
@@ -32,7 +40,7 @@
     <detaileddescription>
 <para><simplesect kind="par"><title><bold>Description</bold>:</title><para>The XML class and API is based on ECMA-357 -- ECMAScript for XML (E4X). The XML class is a core class in the E4X specification; it provides the ability to load, parse and save XML documents. </para></simplesect>
 <simplesect kind="par"><title><bold>API</bold> Stability:</title><para>Evolving</para></simplesect>
-<simplesect kind="see"><para><ref refid="group___ejs_x_m_l" kindref="compound">EjsXML</ref> <ref refid="group___ejs_x_m_l_1gfcf47f785585d764c86103ea746934f2" kindref="member">ejsIsXML</ref> ejsConfigureXML ejsCreateXML ejsLoadXMLString ejsDeepCopyXML ejsXMLDescendants </para></simplesect>
+<simplesect kind="see"><para><ref refid="group___ejs_x_m_l" kindref="compound">EjsXML</ref> <ref refid="group___ejs_x_m_l_1gae3cb29b339874d4ae21b3bb64d4a5a87" kindref="member">ejsIsXML</ref> ejsConfigureXML ejsCreateXML ejsLoadXMLString ejsDeepCopyXML ejsXMLDescendants </para></simplesect>
 </para>    </detaileddescription>
   </compounddef>
 </doxygen>

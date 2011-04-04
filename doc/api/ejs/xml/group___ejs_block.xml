@@ -1,18 +1,22 @@
 <?xml version='1.0' encoding='UTF-8' standalone='no'?>
-<doxygen xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="compound.xsd" version="1.5.8">
+<doxygen xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="compound.xsd" version="1.7.3">
   <compounddef id="group___ejs_block" kind="group">
     <compoundname>EjsBlock</compoundname>
     <title>EjsBlock</title>
     <innerclass refid="struct_ejs_trait" prot="public">EjsTrait</innerclass>
       <sectiondef kind="func">
-      <memberdef kind="function" id="group___ejs_block_1g03d5847d1e77fbc981645bc303ff5b07" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+      <memberdef kind="function" id="group___ejs_block_1ga5534bcfc33909ecb2ee8f95dda0a506c" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
         <type>bool</type>
         <definition>bool ejsIsBlock</definition>
-        <argsstring>(EjsObj *vp)</argsstring>
+        <argsstring>(Ejs *ejs, EjsObj *obj)</argsstring>
         <name>ejsIsBlock</name>
         <param>
+          <type>Ejs *</type>
+          <declname>ejs</declname>
+        </param>
+        <param>
           <type>EjsObj *</type>
-          <declname>vp</declname>
+          <declname>obj</declname>
         </param>
         <briefdescription>
 <para>Determine if a variable is a block. </para>        </briefdescription>
@@ -20,17 +24,17 @@
 <para><simplesect kind="par"><title><bold>Description</bold>:</title><para>This call tests if the variable is a block. </para></simplesect>
 <parameterlist kind="param"><parameteritem>
 <parameternamelist>
-<parametername>vp</parametername>
+<parametername>obj</parametername>
 </parameternamelist>
 <parameterdescription>
-<para>Variable to test </para></parameterdescription>
+<para>Object to test </para></parameterdescription>
 </parameteritem>
 </parameterlist>
 <simplesect kind="return"><para>True if the variable is based on EjsBlock </para></simplesect>
 </para>        </detaileddescription>
         <inbodydescription>
         </inbodydescription>
-        <location file="/Users/mob/git/ejs/doc/api/ejs/staging/src/include/ejs.h" line="1849"/>
+        <location file="/Users/mob/git/ejs/doc/api/ejs/staging/src/deps/ejs/ejs.h" line="2029"/>
       </memberdef>
       </sectiondef>
     <briefdescription>
@@ -38,7 +42,7 @@
     <detaileddescription>
 <para><simplesect kind="par"><title><bold>Description</bold>:</title><para>The block class is the base class for all program code block scope objects. This is an internal class and not exposed to the script programmer. Blocks (including types) may describe their properties via traits. The traits store the property type and access attributes and are stored in EjsBlock which is a sub class of EjsObj. See ejsBlock.c for details. </para></simplesect>
 <simplesect kind="par"><title><bold>API</bold> Stability:</title><para>Evolving</para></simplesect>
-<simplesect kind="see"><para><ref refid="group___ejs_block" kindref="compound">EjsBlock</ref> <ref refid="group___ejs_block_1g03d5847d1e77fbc981645bc303ff5b07" kindref="member">ejsIsBlock</ref> <ref refid="group___ejs_type_1g2d265a2559f36be71d9948349f2fe9e7" kindref="member">ejsBindFunction</ref> </para></simplesect>
+<simplesect kind="see"><para><ref refid="group___ejs_block" kindref="compound">EjsBlock</ref> <ref refid="group___ejs_block_1ga5534bcfc33909ecb2ee8f95dda0a506c" kindref="member">ejsIsBlock</ref> <ref refid="group___ejs_type_1gab82b7d4399c850e420a2c5388c836cb5" kindref="member">ejsBindFunction</ref> </para></simplesect>
 </para>    </detaileddescription>
   </compounddef>
 </doxygen>

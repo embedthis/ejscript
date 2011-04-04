@@ -1,9 +1,9 @@
 <?xml version='1.0' encoding='UTF-8' standalone='no'?>
-<doxygen xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="compound.xsd" version="1.5.8">
+<doxygen xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="compound.xsd" version="1.7.3">
   <compounddef id="struct_ec_code_gen" kind="struct" prot="public">
     <compoundname>EcCodeGen</compoundname>
       <sectiondef kind="public-attrib">
-      <memberdef kind="variable" id="struct_ec_code_gen_1420ef8799a90ad9ee28c51bd921bb30a" prot="public" static="no" mutable="no">
+      <memberdef kind="variable" id="struct_ec_code_gen_1a420ef8799a90ad9ee28c51bd921bb30a" prot="public" static="no" mutable="no">
         <type>int</type>
         <definition>int EcCodeGen::blockCount</definition>
         <argsstring></argsstring>
@@ -14,9 +14,9 @@
         </detaileddescription>
         <inbodydescription>
         </inbodydescription>
-        <location file="/Users/mob/git/ejs/doc/api/ejs/staging/src/include/ejs.h" line="5542" bodyfile="/Users/mob/git/ejs/doc/api/ejs/staging/src/include/ejs.h" bodystart="5542" bodyend="-1"/>
+        <location file="/Users/mob/git/ejs/doc/api/ejs/staging/src/deps/ejs/ejs.h" line="4584" bodyfile="/Users/mob/git/ejs/doc/api/ejs/staging/src/deps/ejs/ejs.h" bodystart="4584" bodyend="-1"/>
       </memberdef>
-      <memberdef kind="variable" id="struct_ec_code_gen_19fc96c5a8b5ed6c5d97da3db24a36add" prot="public" static="no" mutable="no">
+      <memberdef kind="variable" id="struct_ec_code_gen_1a9fc96c5a8b5ed6c5d97da3db24a36add" prot="public" static="no" mutable="no">
         <type>int</type>
         <definition>int EcCodeGen::blockMark</definition>
         <argsstring></argsstring>
@@ -27,9 +27,9 @@
         </detaileddescription>
         <inbodydescription>
         </inbodydescription>
-        <location file="/Users/mob/git/ejs/doc/api/ejs/staging/src/include/ejs.h" line="5540" bodyfile="/Users/mob/git/ejs/doc/api/ejs/staging/src/include/ejs.h" bodystart="5540" bodyend="-1"/>
+        <location file="/Users/mob/git/ejs/doc/api/ejs/staging/src/deps/ejs/ejs.h" line="4582" bodyfile="/Users/mob/git/ejs/doc/api/ejs/staging/src/deps/ejs/ejs.h" bodystart="4582" bodyend="-1"/>
       </memberdef>
-      <memberdef kind="variable" id="struct_ec_code_gen_1db6a00cd7b07f441d4c8335f4b8821a4" prot="public" static="no" mutable="no">
+      <memberdef kind="variable" id="struct_ec_code_gen_1adb6a00cd7b07f441d4c8335f4b8821a4" prot="public" static="no" mutable="no">
         <type>int</type>
         <definition>int EcCodeGen::breakMark</definition>
         <argsstring></argsstring>
@@ -40,9 +40,9 @@
         </detaileddescription>
         <inbodydescription>
         </inbodydescription>
-        <location file="/Users/mob/git/ejs/doc/api/ejs/staging/src/include/ejs.h" line="5539" bodyfile="/Users/mob/git/ejs/doc/api/ejs/staging/src/include/ejs.h" bodystart="5539" bodyend="-1"/>
+        <location file="/Users/mob/git/ejs/doc/api/ejs/staging/src/deps/ejs/ejs.h" line="4581" bodyfile="/Users/mob/git/ejs/doc/api/ejs/staging/src/deps/ejs/ejs.h" bodystart="4581" bodyend="-1"/>
       </memberdef>
-      <memberdef kind="variable" id="struct_ec_code_gen_16fe9372eab4778c7abd091f17cf5dcfc" prot="public" static="no" mutable="no">
+      <memberdef kind="variable" id="struct_ec_code_gen_1a6fe9372eab4778c7abd091f17cf5dcfc" prot="public" static="no" mutable="no">
         <type>MprBuf *</type>
         <definition>MprBuf* EcCodeGen::buf</definition>
         <argsstring></argsstring>
@@ -53,9 +53,22 @@
         </detaileddescription>
         <inbodydescription>
         </inbodydescription>
-        <location file="/Users/mob/git/ejs/doc/api/ejs/staging/src/include/ejs.h" line="5535" bodyfile="/Users/mob/git/ejs/doc/api/ejs/staging/src/include/ejs.h" bodystart="5535" bodyend="-1"/>
+        <location file="/Users/mob/git/ejs/doc/api/ejs/staging/src/deps/ejs/ejs.h" line="4576" bodyfile="/Users/mob/git/ejs/doc/api/ejs/staging/src/deps/ejs/ejs.h" bodystart="4576" bodyend="-1"/>
       </memberdef>
-      <memberdef kind="variable" id="struct_ec_code_gen_1e8b8bc5fa1ffd4133c870abb31a2aa1f" prot="public" static="no" mutable="no">
+      <memberdef kind="variable" id="struct_ec_code_gen_1a8934db0b90298f24a9a2599c7ef5af11" prot="public" static="no" mutable="no">
+        <type>EjsDebug *</type>
+        <definition>EjsDebug* EcCodeGen::debug</definition>
+        <argsstring></argsstring>
+        <name>debug</name>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/Users/mob/git/ejs/doc/api/ejs/staging/src/deps/ejs/ejs.h" line="4579" bodyfile="/Users/mob/git/ejs/doc/api/ejs/staging/src/deps/ejs/ejs.h" bodystart="4579" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="variable" id="struct_ec_code_gen_1ae8b8bc5fa1ffd4133c870abb31a2aa1f" prot="public" static="no" mutable="no">
         <type>MprList *</type>
         <definition>MprList* EcCodeGen::exceptions</definition>
         <argsstring></argsstring>
@@ -66,9 +79,9 @@
         </detaileddescription>
         <inbodydescription>
         </inbodydescription>
-        <location file="/Users/mob/git/ejs/doc/api/ejs/staging/src/include/ejs.h" line="5537" bodyfile="/Users/mob/git/ejs/doc/api/ejs/staging/src/include/ejs.h" bodystart="5537" bodyend="-1"/>
+        <location file="/Users/mob/git/ejs/doc/api/ejs/staging/src/deps/ejs/ejs.h" line="4578" bodyfile="/Users/mob/git/ejs/doc/api/ejs/staging/src/deps/ejs/ejs.h" bodystart="4578" bodyend="-1"/>
       </memberdef>
-      <memberdef kind="variable" id="struct_ec_code_gen_1441804457a106b30881a0ea6605e1847" prot="public" static="no" mutable="no">
+      <memberdef kind="variable" id="struct_ec_code_gen_1a441804457a106b30881a0ea6605e1847" prot="public" static="no" mutable="no">
         <type>int</type>
         <definition>int EcCodeGen::jumpKinds</definition>
         <argsstring></argsstring>
@@ -79,9 +92,9 @@
         </detaileddescription>
         <inbodydescription>
         </inbodydescription>
-        <location file="/Users/mob/git/ejs/doc/api/ejs/staging/src/include/ejs.h" line="5538" bodyfile="/Users/mob/git/ejs/doc/api/ejs/staging/src/include/ejs.h" bodystart="5538" bodyend="-1"/>
+        <location file="/Users/mob/git/ejs/doc/api/ejs/staging/src/deps/ejs/ejs.h" line="4580" bodyfile="/Users/mob/git/ejs/doc/api/ejs/staging/src/deps/ejs/ejs.h" bodystart="4580" bodyend="-1"/>
       </memberdef>
-      <memberdef kind="variable" id="struct_ec_code_gen_130aca763eac354fa1cd70ce204f3bb05" prot="public" static="no" mutable="no">
+      <memberdef kind="variable" id="struct_ec_code_gen_1a30aca763eac354fa1cd70ce204f3bb05" prot="public" static="no" mutable="no">
         <type>MprList *</type>
         <definition>MprList* EcCodeGen::jumps</definition>
         <argsstring></argsstring>
@@ -92,9 +105,22 @@
         </detaileddescription>
         <inbodydescription>
         </inbodydescription>
-        <location file="/Users/mob/git/ejs/doc/api/ejs/staging/src/include/ejs.h" line="5536" bodyfile="/Users/mob/git/ejs/doc/api/ejs/staging/src/include/ejs.h" bodystart="5536" bodyend="-1"/>
+        <location file="/Users/mob/git/ejs/doc/api/ejs/staging/src/deps/ejs/ejs.h" line="4577" bodyfile="/Users/mob/git/ejs/doc/api/ejs/staging/src/deps/ejs/ejs.h" bodystart="4577" bodyend="-1"/>
       </memberdef>
-      <memberdef kind="variable" id="struct_ec_code_gen_1a82cd80366340c6a4d256e86b8a4a593" prot="public" static="no" mutable="no">
+      <memberdef kind="variable" id="struct_ec_code_gen_1ade316b9c1cbb490d943108ea3b22c4ed" prot="public" static="no" mutable="no">
+        <type>int</type>
+        <definition>int EcCodeGen::lastLineNumber</definition>
+        <argsstring></argsstring>
+        <name>lastLineNumber</name>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/Users/mob/git/ejs/doc/api/ejs/staging/src/deps/ejs/ejs.h" line="4585" bodyfile="/Users/mob/git/ejs/doc/api/ejs/staging/src/deps/ejs/ejs.h" bodystart="4585" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="variable" id="struct_ec_code_gen_1aa82cd80366340c6a4d256e86b8a4a593" prot="public" static="no" mutable="no">
         <type>int</type>
         <definition>int EcCodeGen::stackCount</definition>
         <argsstring></argsstring>
@@ -105,23 +131,25 @@
         </detaileddescription>
         <inbodydescription>
         </inbodydescription>
-        <location file="/Users/mob/git/ejs/doc/api/ejs/staging/src/include/ejs.h" line="5541" bodyfile="/Users/mob/git/ejs/doc/api/ejs/staging/src/include/ejs.h" bodystart="5541" bodyend="-1"/>
+        <location file="/Users/mob/git/ejs/doc/api/ejs/staging/src/deps/ejs/ejs.h" line="4583" bodyfile="/Users/mob/git/ejs/doc/api/ejs/staging/src/deps/ejs/ejs.h" bodystart="4583" bodyend="-1"/>
       </memberdef>
       </sectiondef>
     <briefdescription>
     </briefdescription>
     <detaileddescription>
     </detaileddescription>
-    <location file="/Users/mob/git/ejs/doc/api/ejs/staging/src/include/ejs.h" line="5534" bodyfile="/Users/mob/git/ejs/doc/api/ejs/staging/src/include/ejs.h" bodystart="5534" bodyend="5543"/>
+    <location file="/Users/mob/git/ejs/doc/api/ejs/staging/src/deps/ejs/ejs.h" line="4575" bodyfile="/Users/mob/git/ejs/doc/api/ejs/staging/src/deps/ejs/ejs.h" bodystart="4575" bodyend="4586"/>
     <listofallmembers>
-      <member refid="struct_ec_code_gen_1420ef8799a90ad9ee28c51bd921bb30a" prot="public" virt="non-virtual"><scope>EcCodeGen</scope><name>blockCount</name></member>
-      <member refid="struct_ec_code_gen_19fc96c5a8b5ed6c5d97da3db24a36add" prot="public" virt="non-virtual"><scope>EcCodeGen</scope><name>blockMark</name></member>
-      <member refid="struct_ec_code_gen_1db6a00cd7b07f441d4c8335f4b8821a4" prot="public" virt="non-virtual"><scope>EcCodeGen</scope><name>breakMark</name></member>
-      <member refid="struct_ec_code_gen_16fe9372eab4778c7abd091f17cf5dcfc" prot="public" virt="non-virtual"><scope>EcCodeGen</scope><name>buf</name></member>
-      <member refid="struct_ec_code_gen_1e8b8bc5fa1ffd4133c870abb31a2aa1f" prot="public" virt="non-virtual"><scope>EcCodeGen</scope><name>exceptions</name></member>
-      <member refid="struct_ec_code_gen_1441804457a106b30881a0ea6605e1847" prot="public" virt="non-virtual"><scope>EcCodeGen</scope><name>jumpKinds</name></member>
-      <member refid="struct_ec_code_gen_130aca763eac354fa1cd70ce204f3bb05" prot="public" virt="non-virtual"><scope>EcCodeGen</scope><name>jumps</name></member>
-      <member refid="struct_ec_code_gen_1a82cd80366340c6a4d256e86b8a4a593" prot="public" virt="non-virtual"><scope>EcCodeGen</scope><name>stackCount</name></member>
+      <member refid="struct_ec_code_gen_1a420ef8799a90ad9ee28c51bd921bb30a" prot="public" virt="non-virtual"><scope>EcCodeGen</scope><name>blockCount</name></member>
+      <member refid="struct_ec_code_gen_1a9fc96c5a8b5ed6c5d97da3db24a36add" prot="public" virt="non-virtual"><scope>EcCodeGen</scope><name>blockMark</name></member>
+      <member refid="struct_ec_code_gen_1adb6a00cd7b07f441d4c8335f4b8821a4" prot="public" virt="non-virtual"><scope>EcCodeGen</scope><name>breakMark</name></member>
+      <member refid="struct_ec_code_gen_1a6fe9372eab4778c7abd091f17cf5dcfc" prot="public" virt="non-virtual"><scope>EcCodeGen</scope><name>buf</name></member>
+      <member refid="struct_ec_code_gen_1a8934db0b90298f24a9a2599c7ef5af11" prot="public" virt="non-virtual"><scope>EcCodeGen</scope><name>debug</name></member>
+      <member refid="struct_ec_code_gen_1ae8b8bc5fa1ffd4133c870abb31a2aa1f" prot="public" virt="non-virtual"><scope>EcCodeGen</scope><name>exceptions</name></member>
+      <member refid="struct_ec_code_gen_1a441804457a106b30881a0ea6605e1847" prot="public" virt="non-virtual"><scope>EcCodeGen</scope><name>jumpKinds</name></member>
+      <member refid="struct_ec_code_gen_1a30aca763eac354fa1cd70ce204f3bb05" prot="public" virt="non-virtual"><scope>EcCodeGen</scope><name>jumps</name></member>
+      <member refid="struct_ec_code_gen_1ade316b9c1cbb490d943108ea3b22c4ed" prot="public" virt="non-virtual"><scope>EcCodeGen</scope><name>lastLineNumber</name></member>
+      <member refid="struct_ec_code_gen_1aa82cd80366340c6a4d256e86b8a4a593" prot="public" virt="non-virtual"><scope>EcCodeGen</scope><name>stackCount</name></member>
     </listofallmembers>
   </compounddef>
 </doxygen>

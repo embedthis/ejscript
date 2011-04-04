@@ -1,73 +1,20 @@
 <?xml version='1.0' encoding='UTF-8' standalone='no'?>
-<doxygen xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="compound.xsd" version="1.5.8">
+<doxygen xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="compound.xsd" version="1.7.3">
   <compounddef id="group___ejs_name" kind="group">
     <compoundname>EjsName</compoundname>
     <title>EjsName</title>
       <sectiondef kind="func">
-      <memberdef kind="function" id="group___ejs_name_1g39d2e825dc6f47acd0bcd48b125e78f7" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
-        <type>EjsName *</type>
-        <definition>EjsName* ejsAllocName</definition>
-        <argsstring>(MprCtx ctx, cchar *space, cchar *name)</argsstring>
-        <name>ejsAllocName</name>
+      <memberdef kind="function" id="group___ejs_name_1ga748364115d88f7579f2f47725bb0e449" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type>EjsName</type>
+        <definition>EjsName ejsEmptyWideName</definition>
+        <argsstring>(Ejs *ejs, MprChar *name)</argsstring>
+        <name>ejsEmptyWideName</name>
         <param>
-          <type>MprCtx</type>
-          <declname>ctx</declname>
+          <type>Ejs *</type>
+          <declname>ejs</declname>
         </param>
         <param>
-          <type>cchar *</type>
-          <declname>space</declname>
-        </param>
-        <param>
-          <type>cchar *</type>
-          <declname>name</declname>
-        </param>
-        <briefdescription>
-<para>Allocate and Initialize a Qualified Name structure. </para>        </briefdescription>
-        <detaileddescription>
-<para><simplesect kind="par"><title><bold>Description</bold>:</title><para>Create and initialize a qualified name structure using a name and namespace. </para></simplesect>
-<parameterlist kind="param"><parameteritem>
-<parameternamelist>
-<parametername>ctx</parametername>
-</parameternamelist>
-<parameterdescription>
-<para>Any memory context returned by mprAlloc </para></parameterdescription>
-</parameteritem>
-<parameteritem>
-<parameternamelist>
-<parametername>space</parametername>
-</parameternamelist>
-<parameterdescription>
-<para>Namespace string </para></parameterdescription>
-</parameteritem>
-<parameteritem>
-<parameternamelist>
-<parametername>name</parametername>
-</parameternamelist>
-<parameterdescription>
-<para>Name string </para></parameterdescription>
-</parameteritem>
-</parameterlist>
-<simplesect kind="return"><para>A reference to an allocated EjsName structure. Caller must free. </para></simplesect>
-</para>        </detaileddescription>
-        <inbodydescription>
-        </inbodydescription>
-        <location file="/Users/mob/git/ejs/doc/api/ejs/staging/src/include/ejs.h" line="1307"/>
-      </memberdef>
-      <memberdef kind="function" id="group___ejs_name_1geecb8458a156bed35038acffae182cf4" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
-        <type>EjsName *</type>
-        <definition>EjsName* ejsName</definition>
-        <argsstring>(struct EjsName *qname, cchar *space, cchar *name)</argsstring>
-        <name>ejsName</name>
-        <param>
-          <type>struct EjsName *</type>
-          <declname>qname</declname>
-        </param>
-        <param>
-          <type>cchar *</type>
-          <declname>space</declname>
-        </param>
-        <param>
-          <type>cchar *</type>
+          <type>MprChar *</type>
           <declname>name</declname>
         </param>
         <briefdescription>
@@ -100,7 +47,7 @@
 </para>        </detaileddescription>
         <inbodydescription>
         </inbodydescription>
-        <location file="/Users/mob/git/ejs/doc/api/ejs/staging/src/include/ejs.h" line="1294"/>
+        <location file="/Users/mob/git/ejs/doc/api/ejs/staging/src/deps/ejs/ejs.h" line="1403"/>
       </memberdef>
       </sectiondef>
     <briefdescription>
@@ -108,7 +55,7 @@
     <detaileddescription>
 <para><simplesect kind="par"><title><bold>Description</bold>:</title><para>All names in Ejscript consist of a property name and a name space. Namespaces provide discrete spaces to manage and minimize name conflicts. These names will soon be converted to unicode. </para></simplesect>
 <simplesect kind="par"><title><bold>API</bold> Stability:</title><para>Prototype</para></simplesect>
-<simplesect kind="see"><para><ref refid="group___ejs_name" kindref="compound">EjsName</ref> <ref refid="group___ejs_name_1geecb8458a156bed35038acffae182cf4" kindref="member">ejsName</ref> <ref refid="group___ejs_name_1g39d2e825dc6f47acd0bcd48b125e78f7" kindref="member">ejsAllocName</ref> ejsDupName ejsCopyName </para></simplesect>
+<simplesect kind="see"><para><ref refid="group___ejs_name" kindref="compound">EjsName</ref> ejsName ejsAllocName ejsDupName ejsCopyName </para></simplesect>
 </para>    </detaileddescription>
   </compounddef>
 </doxygen>

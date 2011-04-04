@@ -1,9 +1,22 @@
 <?xml version='1.0' encoding='UTF-8' standalone='no'?>
-<doxygen xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="compound.xsd" version="1.5.8">
+<doxygen xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="compound.xsd" version="1.7.3">
   <compounddef id="struct_ejs_file" kind="struct" prot="public">
     <compoundname>EjsFile</compoundname>
       <sectiondef kind="public-attrib">
-      <memberdef kind="variable" id="struct_ejs_file_1a01266cf22ddfc7ff74ead2bb53a49e5" prot="public" static="no" mutable="no">
+      <memberdef kind="variable" id="struct_ejs_file_1a40d59c2c4e48c03767f8786a04fdcced" prot="public" static="no" mutable="no">
+        <type>int</type>
+        <definition>int EjsFile::attached</definition>
+        <argsstring></argsstring>
+        <name>attached</name>
+        <briefdescription>
+<para>Attached to existing descriptor. </para>        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/Users/mob/git/ejs/doc/api/ejs/staging/src/deps/ejs/ejs.h" line="2750" bodyfile="/Users/mob/git/ejs/doc/api/ejs/staging/src/deps/ejs/ejs.h" bodystart="2750" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="variable" id="struct_ejs_file_1aa01266cf22ddfc7ff74ead2bb53a49e5" prot="public" static="no" mutable="no">
         <type>MprFile *</type>
         <definition>MprFile* EjsFile::file</definition>
         <argsstring></argsstring>
@@ -14,9 +27,9 @@
         </detaileddescription>
         <inbodydescription>
         </inbodydescription>
-        <location file="/Users/mob/git/ejs/doc/api/ejs/staging/src/include/ejs.h" line="2589" bodyfile="/Users/mob/git/ejs/doc/api/ejs/staging/src/include/ejs.h" bodystart="2589" bodyend="-1"/>
+        <location file="/Users/mob/git/ejs/doc/api/ejs/staging/src/deps/ejs/ejs.h" line="2744" bodyfile="/Users/mob/git/ejs/doc/api/ejs/staging/src/deps/ejs/ejs.h" bodystart="2744" bodyend="-1"/>
       </memberdef>
-      <memberdef kind="variable" id="struct_ejs_file_11fa1313d7306c82f1edea65cbe2b2388" prot="public" static="no" mutable="no">
+      <memberdef kind="variable" id="struct_ejs_file_1a1fa1313d7306c82f1edea65cbe2b2388" prot="public" static="no" mutable="no">
         <type>MprPath</type>
         <definition>MprPath EjsFile::info</definition>
         <argsstring></argsstring>
@@ -27,9 +40,9 @@
         </detaileddescription>
         <inbodydescription>
         </inbodydescription>
-        <location file="/Users/mob/git/ejs/doc/api/ejs/staging/src/include/ejs.h" line="2590" bodyfile="/Users/mob/git/ejs/doc/api/ejs/staging/src/include/ejs.h" bodystart="2590" bodyend="-1"/>
+        <location file="/Users/mob/git/ejs/doc/api/ejs/staging/src/deps/ejs/ejs.h" line="2745" bodyfile="/Users/mob/git/ejs/doc/api/ejs/staging/src/deps/ejs/ejs.h" bodystart="2745" bodyend="-1"/>
       </memberdef>
-      <memberdef kind="variable" id="struct_ejs_file_17eebd56860cf238343026a8b25c2f6be" prot="public" static="no" mutable="no">
+      <memberdef kind="variable" id="struct_ejs_file_1a7eebd56860cf238343026a8b25c2f6be" prot="public" static="no" mutable="no">
         <type>int</type>
         <definition>int EjsFile::mode</definition>
         <argsstring></argsstring>
@@ -40,9 +53,9 @@
         </detaileddescription>
         <inbodydescription>
         </inbodydescription>
-        <location file="/Users/mob/git/ejs/doc/api/ejs/staging/src/include/ejs.h" line="2593" bodyfile="/Users/mob/git/ejs/doc/api/ejs/staging/src/include/ejs.h" bodystart="2593" bodyend="-1"/>
+        <location file="/Users/mob/git/ejs/doc/api/ejs/staging/src/deps/ejs/ejs.h" line="2748" bodyfile="/Users/mob/git/ejs/doc/api/ejs/staging/src/deps/ejs/ejs.h" bodystart="2748" bodyend="-1"/>
       </memberdef>
-      <memberdef kind="variable" id="struct_ejs_file_1a0fce2236ad118d012ec37239695dcd2" prot="public" static="no" mutable="no">
+      <memberdef kind="variable" id="struct_ejs_file_1aa0fce2236ad118d012ec37239695dcd2" prot="public" static="no" mutable="no">
         <type>char *</type>
         <definition>char* EjsFile::modeString</definition>
         <argsstring></argsstring>
@@ -53,22 +66,22 @@
         </detaileddescription>
         <inbodydescription>
         </inbodydescription>
-        <location file="/Users/mob/git/ejs/doc/api/ejs/staging/src/include/ejs.h" line="2592" bodyfile="/Users/mob/git/ejs/doc/api/ejs/staging/src/include/ejs.h" bodystart="2592" bodyend="-1"/>
+        <location file="/Users/mob/git/ejs/doc/api/ejs/staging/src/deps/ejs/ejs.h" line="2747" bodyfile="/Users/mob/git/ejs/doc/api/ejs/staging/src/deps/ejs/ejs.h" bodystart="2747" bodyend="-1"/>
       </memberdef>
-      <memberdef kind="variable" id="struct_ejs_file_18b23be6acd53d8bde079e27983f922cc" prot="public" static="no" mutable="no">
+      <memberdef kind="variable" id="struct_ejs_file_1a8b23be6acd53d8bde079e27983f922cc" prot="public" static="no" mutable="no">
         <type>EjsObj</type>
         <definition>EjsObj EjsFile::obj</definition>
         <argsstring></argsstring>
         <name>obj</name>
         <briefdescription>
-<para>Extends Object. </para>        </briefdescription>
+<para>Base object. </para>        </briefdescription>
         <detaileddescription>
         </detaileddescription>
         <inbodydescription>
         </inbodydescription>
-        <location file="/Users/mob/git/ejs/doc/api/ejs/staging/src/include/ejs.h" line="2588" bodyfile="/Users/mob/git/ejs/doc/api/ejs/staging/src/include/ejs.h" bodystart="2588" bodyend="-1"/>
+        <location file="/Users/mob/git/ejs/doc/api/ejs/staging/src/deps/ejs/ejs.h" line="2743" bodyfile="/Users/mob/git/ejs/doc/api/ejs/staging/src/deps/ejs/ejs.h" bodystart="2743" bodyend="-1"/>
       </memberdef>
-      <memberdef kind="variable" id="struct_ejs_file_100ed29fa03ab2c88850d10d05a8a65cf" prot="public" static="no" mutable="no">
+      <memberdef kind="variable" id="struct_ejs_file_1a00ed29fa03ab2c88850d10d05a8a65cf" prot="public" static="no" mutable="no">
         <type>char *</type>
         <definition>char* EjsFile::path</definition>
         <argsstring></argsstring>
@@ -79,9 +92,9 @@
         </detaileddescription>
         <inbodydescription>
         </inbodydescription>
-        <location file="/Users/mob/git/ejs/doc/api/ejs/staging/src/include/ejs.h" line="2591" bodyfile="/Users/mob/git/ejs/doc/api/ejs/staging/src/include/ejs.h" bodystart="2591" bodyend="-1"/>
+        <location file="/Users/mob/git/ejs/doc/api/ejs/staging/src/deps/ejs/ejs.h" line="2746" bodyfile="/Users/mob/git/ejs/doc/api/ejs/staging/src/deps/ejs/ejs.h" bodystart="2746" bodyend="-1"/>
       </memberdef>
-      <memberdef kind="variable" id="struct_ejs_file_16d35bf5ef4f6eb7b40ff8f0c9e715814" prot="public" static="no" mutable="no">
+      <memberdef kind="variable" id="struct_ejs_file_1a6d35bf5ef4f6eb7b40ff8f0c9e715814" prot="public" static="no" mutable="no">
         <type>int</type>
         <definition>int EjsFile::perms</definition>
         <argsstring></argsstring>
@@ -92,22 +105,23 @@
         </detaileddescription>
         <inbodydescription>
         </inbodydescription>
-        <location file="/Users/mob/git/ejs/doc/api/ejs/staging/src/include/ejs.h" line="2594" bodyfile="/Users/mob/git/ejs/doc/api/ejs/staging/src/include/ejs.h" bodystart="2594" bodyend="-1"/>
+        <location file="/Users/mob/git/ejs/doc/api/ejs/staging/src/deps/ejs/ejs.h" line="2749" bodyfile="/Users/mob/git/ejs/doc/api/ejs/staging/src/deps/ejs/ejs.h" bodystart="2749" bodyend="-1"/>
       </memberdef>
       </sectiondef>
     <briefdescription>
     </briefdescription>
     <detaileddescription>
     </detaileddescription>
-    <location file="/Users/mob/git/ejs/doc/api/ejs/staging/src/include/ejs.h" line="2587" bodyfile="/Users/mob/git/ejs/doc/api/ejs/staging/src/include/ejs.h" bodystart="2587" bodyend="2601"/>
+    <location file="/Users/mob/git/ejs/doc/api/ejs/staging/src/deps/ejs/ejs.h" line="2742" bodyfile="/Users/mob/git/ejs/doc/api/ejs/staging/src/deps/ejs/ejs.h" bodystart="2742" bodyend="2757"/>
     <listofallmembers>
-      <member refid="struct_ejs_file_1a01266cf22ddfc7ff74ead2bb53a49e5" prot="public" virt="non-virtual"><scope>EjsFile</scope><name>file</name></member>
-      <member refid="struct_ejs_file_11fa1313d7306c82f1edea65cbe2b2388" prot="public" virt="non-virtual"><scope>EjsFile</scope><name>info</name></member>
-      <member refid="struct_ejs_file_17eebd56860cf238343026a8b25c2f6be" prot="public" virt="non-virtual"><scope>EjsFile</scope><name>mode</name></member>
-      <member refid="struct_ejs_file_1a0fce2236ad118d012ec37239695dcd2" prot="public" virt="non-virtual"><scope>EjsFile</scope><name>modeString</name></member>
-      <member refid="struct_ejs_file_18b23be6acd53d8bde079e27983f922cc" prot="public" virt="non-virtual"><scope>EjsFile</scope><name>obj</name></member>
-      <member refid="struct_ejs_file_100ed29fa03ab2c88850d10d05a8a65cf" prot="public" virt="non-virtual"><scope>EjsFile</scope><name>path</name></member>
-      <member refid="struct_ejs_file_16d35bf5ef4f6eb7b40ff8f0c9e715814" prot="public" virt="non-virtual"><scope>EjsFile</scope><name>perms</name></member>
+      <member refid="struct_ejs_file_1a40d59c2c4e48c03767f8786a04fdcced" prot="public" virt="non-virtual"><scope>EjsFile</scope><name>attached</name></member>
+      <member refid="struct_ejs_file_1aa01266cf22ddfc7ff74ead2bb53a49e5" prot="public" virt="non-virtual"><scope>EjsFile</scope><name>file</name></member>
+      <member refid="struct_ejs_file_1a1fa1313d7306c82f1edea65cbe2b2388" prot="public" virt="non-virtual"><scope>EjsFile</scope><name>info</name></member>
+      <member refid="struct_ejs_file_1a7eebd56860cf238343026a8b25c2f6be" prot="public" virt="non-virtual"><scope>EjsFile</scope><name>mode</name></member>
+      <member refid="struct_ejs_file_1aa0fce2236ad118d012ec37239695dcd2" prot="public" virt="non-virtual"><scope>EjsFile</scope><name>modeString</name></member>
+      <member refid="struct_ejs_file_1a8b23be6acd53d8bde079e27983f922cc" prot="public" virt="non-virtual"><scope>EjsFile</scope><name>obj</name></member>
+      <member refid="struct_ejs_file_1a00ed29fa03ab2c88850d10d05a8a65cf" prot="public" virt="non-virtual"><scope>EjsFile</scope><name>path</name></member>
+      <member refid="struct_ejs_file_1a6d35bf5ef4f6eb7b40ff8f0c9e715814" prot="public" virt="non-virtual"><scope>EjsFile</scope><name>perms</name></member>
     </listofallmembers>
   </compounddef>
 </doxygen>

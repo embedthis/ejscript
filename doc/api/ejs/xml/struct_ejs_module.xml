@@ -1,9 +1,9 @@
 <?xml version='1.0' encoding='UTF-8' standalone='no'?>
-<doxygen xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="compound.xsd" version="1.5.8">
+<doxygen xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="compound.xsd" version="1.7.3">
   <compounddef id="struct_ejs_module" kind="struct" prot="public">
     <compoundname>EjsModule</compoundname>
       <sectiondef kind="public-attrib">
-      <memberdef kind="variable" id="struct_ejs_module_1dfb30c36425beafe7f6ddceea892a2ec" prot="public" static="no" mutable="no">
+      <memberdef kind="variable" id="struct_ejs_module_1adfb30c36425beafe7f6ddceea892a2ec" prot="public" static="no" mutable="no">
         <type>int</type>
         <definition>int EjsModule::checksum</definition>
         <argsstring></argsstring>
@@ -14,9 +14,9 @@
         </detaileddescription>
         <inbodydescription>
         </inbodydescription>
-        <location file="/Users/mob/git/ejs/doc/api/ejs/staging/src/include/ejs.h" line="4242" bodyfile="/Users/mob/git/ejs/doc/api/ejs/staging/src/include/ejs.h" bodystart="4242" bodyend="-1"/>
+        <location file="/Users/mob/git/ejs/doc/api/ejs/staging/src/deps/ejs/ejs.h" line="4038" bodyfile="/Users/mob/git/ejs/doc/api/ejs/staging/src/deps/ejs/ejs.h" bodystart="4038" bodyend="-1"/>
       </memberdef>
-      <memberdef kind="variable" id="struct_ejs_module_13d7bcf2c5cad5b3d486880de2827ca16" prot="public" static="no" mutable="no">
+      <memberdef kind="variable" id="struct_ejs_module_1a3d7bcf2c5cad5b3d486880de2827ca16" prot="public" static="no" mutable="no">
         <type>struct EcCodeGen *</type>
         <definition>struct EcCodeGen* EjsModule::code</definition>
         <argsstring></argsstring>
@@ -27,9 +27,9 @@
         </detaileddescription>
         <inbodydescription>
         </inbodydescription>
-        <location file="/Users/mob/git/ejs/doc/api/ejs/staging/src/include/ejs.h" line="4251" bodyfile="/Users/mob/git/ejs/doc/api/ejs/staging/src/include/ejs.h" bodystart="4251" bodyend="-1"/>
+        <location file="/Users/mob/git/ejs/doc/api/ejs/staging/src/deps/ejs/ejs.h" line="4072" bodyfile="/Users/mob/git/ejs/doc/api/ejs/staging/src/deps/ejs/ejs.h" bodystart="4072" bodyend="-1"/>
       </memberdef>
-      <memberdef kind="variable" id="struct_ejs_module_161d7dfebb5ce7d1bd09b56ab7e8a034d" prot="public" static="no" mutable="no">
+      <memberdef kind="variable" id="struct_ejs_module_1a61d7dfebb5ce7d1bd09b56ab7e8a034d" prot="public" static="no" mutable="no">
         <type>uint</type>
         <definition>uint EjsModule::compiling</definition>
         <argsstring></argsstring>
@@ -41,9 +41,9 @@
         </detaileddescription>
         <inbodydescription>
         </inbodydescription>
-        <location file="/Users/mob/git/ejs/doc/api/ejs/staging/src/include/ejs.h" line="4266" bodyfile="/Users/mob/git/ejs/doc/api/ejs/staging/src/include/ejs.h" bodystart="4266" bodyend="-1"/>
+        <location file="/Users/mob/git/ejs/doc/api/ejs/staging/src/deps/ejs/ejs.h" line="4044" bodyfile="/Users/mob/git/ejs/doc/api/ejs/staging/src/deps/ejs/ejs.h" bodystart="4044" bodyend="-1"/>
       </memberdef>
-      <memberdef kind="variable" id="struct_ejs_module_1430b2fb1f5e0a588cde461e0749d5c8e" prot="public" static="no" mutable="no">
+      <memberdef kind="variable" id="struct_ejs_module_1a430b2fb1f5e0a588cde461e0749d5c8e" prot="public" static="no" mutable="no">
         <type>uint</type>
         <definition>uint EjsModule::configured</definition>
         <argsstring></argsstring>
@@ -55,11 +55,11 @@
         </detaileddescription>
         <inbodydescription>
         </inbodydescription>
-        <location file="/Users/mob/git/ejs/doc/api/ejs/staging/src/include/ejs.h" line="4267" bodyfile="/Users/mob/git/ejs/doc/api/ejs/staging/src/include/ejs.h" bodystart="4267" bodyend="-1"/>
+        <location file="/Users/mob/git/ejs/doc/api/ejs/staging/src/deps/ejs/ejs.h" line="4045" bodyfile="/Users/mob/git/ejs/doc/api/ejs/staging/src/deps/ejs/ejs.h" bodystart="4045" bodyend="-1"/>
       </memberdef>
-      <memberdef kind="variable" id="struct_ejs_module_1345a1de2ff1062693dc9be5994bd19ec" prot="public" static="no" mutable="no">
-        <type>EjsConst *</type>
-        <definition>EjsConst* EjsModule::constants</definition>
+      <memberdef kind="variable" id="struct_ejs_module_1a6e2489708384256562d87263c2bd2260" prot="public" static="no" mutable="no">
+        <type>EjsConstants *</type>
+        <definition>EjsConstants* EjsModule::constants</definition>
         <argsstring></argsstring>
         <name>constants</name>
         <briefdescription>
@@ -68,9 +68,9 @@
         </detaileddescription>
         <inbodydescription>
         </inbodydescription>
-        <location file="/Users/mob/git/ejs/doc/api/ejs/staging/src/include/ejs.h" line="4260" bodyfile="/Users/mob/git/ejs/doc/api/ejs/staging/src/include/ejs.h" bodystart="4260" bodyend="-1"/>
+        <location file="/Users/mob/git/ejs/doc/api/ejs/staging/src/deps/ejs/ejs.h" line="4040" bodyfile="/Users/mob/git/ejs/doc/api/ejs/staging/src/deps/ejs/ejs.h" bodystart="4040" bodyend="-1"/>
       </memberdef>
-      <memberdef kind="variable" id="struct_ejs_module_1281ad4ab54e08636763949407f22fe7f" prot="public" static="no" mutable="no">
+      <memberdef kind="variable" id="struct_ejs_module_1a281ad4ab54e08636763949407f22fe7f" prot="public" static="no" mutable="no">
         <type>MprList *</type>
         <definition>MprList* EjsModule::current</definition>
         <argsstring></argsstring>
@@ -81,11 +81,11 @@
         </detaileddescription>
         <inbodydescription>
         </inbodydescription>
-        <location file="/Users/mob/git/ejs/doc/api/ejs/staging/src/include/ejs.h" line="4258" bodyfile="/Users/mob/git/ejs/doc/api/ejs/staging/src/include/ejs.h" bodystart="4258" bodyend="-1"/>
+        <location file="/Users/mob/git/ejs/doc/api/ejs/staging/src/deps/ejs/ejs.h" line="4061" bodyfile="/Users/mob/git/ejs/doc/api/ejs/staging/src/deps/ejs/ejs.h" bodystart="4061" bodyend="-1"/>
       </memberdef>
-      <memberdef kind="variable" id="struct_ejs_module_11cd88ace43937fb57490464bbeabeb4d" prot="public" static="no" mutable="no">
-        <type>struct EjsFunction *</type>
-        <definition>struct EjsFunction* EjsModule::currentMethod</definition>
+      <memberdef kind="variable" id="struct_ejs_module_1a82924ef7d5b3247cda6a3651506378d7" prot="public" static="no" mutable="no">
+        <type>EjsFunction *</type>
+        <definition>EjsFunction* EjsModule::currentMethod</definition>
         <argsstring></argsstring>
         <name>currentMethod</name>
         <briefdescription>
@@ -94,9 +94,9 @@
         </detaileddescription>
         <inbodydescription>
         </inbodydescription>
-        <location file="/Users/mob/git/ejs/doc/api/ejs/staging/src/include/ejs.h" line="4264" bodyfile="/Users/mob/git/ejs/doc/api/ejs/staging/src/include/ejs.h" bodystart="4264" bodyend="-1"/>
+        <location file="/Users/mob/git/ejs/doc/api/ejs/staging/src/deps/ejs/ejs.h" line="4062" bodyfile="/Users/mob/git/ejs/doc/api/ejs/staging/src/deps/ejs/ejs.h" bodystart="4062" bodyend="-1"/>
       </memberdef>
-      <memberdef kind="variable" id="struct_ejs_module_119c46e3ec766caaf9c02872813474e6a" prot="public" static="no" mutable="no">
+      <memberdef kind="variable" id="struct_ejs_module_1a19c46e3ec766caaf9c02872813474e6a" prot="public" static="no" mutable="no">
         <type>MprList *</type>
         <definition>MprList* EjsModule::dependencies</definition>
         <argsstring></argsstring>
@@ -107,11 +107,11 @@
         </detaileddescription>
         <inbodydescription>
         </inbodydescription>
-        <location file="/Users/mob/git/ejs/doc/api/ejs/staging/src/include/ejs.h" line="4245" bodyfile="/Users/mob/git/ejs/doc/api/ejs/staging/src/include/ejs.h" bodystart="4245" bodyend="-1"/>
+        <location file="/Users/mob/git/ejs/doc/api/ejs/staging/src/deps/ejs/ejs.h" line="4059" bodyfile="/Users/mob/git/ejs/doc/api/ejs/staging/src/deps/ejs/ejs.h" bodystart="4059" bodyend="-1"/>
       </memberdef>
-      <memberdef kind="variable" id="struct_ejs_module_1c4c6eea4189634ccda368e725b42d168" prot="public" static="no" mutable="no">
-        <type>char *</type>
-        <definition>char* EjsModule::doc</definition>
+      <memberdef kind="variable" id="struct_ejs_module_1a0c9cad9eb5f153efdb518b00e489feea" prot="public" static="no" mutable="no">
+        <type>EjsString *</type>
+        <definition>EjsString* EjsModule::doc</definition>
         <argsstring></argsstring>
         <name>doc</name>
         <briefdescription>
@@ -120,9 +120,22 @@
         </detaileddescription>
         <inbodydescription>
         </inbodydescription>
-        <location file="/Users/mob/git/ejs/doc/api/ejs/staging/src/include/ejs.h" line="4276" bodyfile="/Users/mob/git/ejs/doc/api/ejs/staging/src/include/ejs.h" bodystart="4276" bodyend="-1"/>
+        <location file="/Users/mob/git/ejs/doc/api/ejs/staging/src/deps/ejs/ejs.h" line="4064" bodyfile="/Users/mob/git/ejs/doc/api/ejs/staging/src/deps/ejs/ejs.h" bodystart="4064" bodyend="-1"/>
       </memberdef>
-      <memberdef kind="variable" id="struct_ejs_module_11bf92a0bacba780aa7089b2c58124149" prot="public" static="no" mutable="no">
+      <memberdef kind="variable" id="struct_ejs_module_1a061f75a896e8c367f9a896e279d2ec8e" prot="public" static="no" mutable="no">
+        <type>Ejs *</type>
+        <definition>Ejs* EjsModule::ejs</definition>
+        <argsstring></argsstring>
+        <name>ejs</name>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/Users/mob/git/ejs/doc/api/ejs/staging/src/deps/ejs/ejs.h" line="4042" bodyfile="/Users/mob/git/ejs/doc/api/ejs/staging/src/deps/ejs/ejs.h" bodystart="4042" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="variable" id="struct_ejs_module_1a1bf92a0bacba780aa7089b2c58124149" prot="public" static="no" mutable="no">
         <type>MprFile *</type>
         <definition>MprFile* EjsModule::file</definition>
         <argsstring></argsstring>
@@ -133,9 +146,9 @@
         </detaileddescription>
         <inbodydescription>
         </inbodydescription>
-        <location file="/Users/mob/git/ejs/doc/api/ejs/staging/src/include/ejs.h" line="4246" bodyfile="/Users/mob/git/ejs/doc/api/ejs/staging/src/include/ejs.h" bodystart="4246" bodyend="-1"/>
+        <location file="/Users/mob/git/ejs/doc/api/ejs/staging/src/deps/ejs/ejs.h" line="4060" bodyfile="/Users/mob/git/ejs/doc/api/ejs/staging/src/deps/ejs/ejs.h" bodystart="4060" bodyend="-1"/>
       </memberdef>
-      <memberdef kind="variable" id="struct_ejs_module_154155c501e8116e2258246308872fdd5" prot="public" static="no" mutable="no">
+      <memberdef kind="variable" id="struct_ejs_module_1a54155c501e8116e2258246308872fdd5" prot="public" static="no" mutable="no">
         <type>int</type>
         <definition>int EjsModule::firstGlobal</definition>
         <argsstring></argsstring>
@@ -146,9 +159,9 @@
         </detaileddescription>
         <inbodydescription>
         </inbodydescription>
-        <location file="/Users/mob/git/ejs/doc/api/ejs/staging/src/include/ejs.h" line="4262" bodyfile="/Users/mob/git/ejs/doc/api/ejs/staging/src/include/ejs.h" bodystart="4262" bodyend="-1"/>
+        <location file="/Users/mob/git/ejs/doc/api/ejs/staging/src/deps/ejs/ejs.h" line="4066" bodyfile="/Users/mob/git/ejs/doc/api/ejs/staging/src/deps/ejs/ejs.h" bodystart="4066" bodyend="-1"/>
       </memberdef>
-      <memberdef kind="variable" id="struct_ejs_module_17441410f7f20da03996fdea47d6498c3" prot="public" static="no" mutable="no">
+      <memberdef kind="variable" id="struct_ejs_module_1a7441410f7f20da03996fdea47d6498c3" prot="public" static="no" mutable="no">
         <type>int</type>
         <definition>int EjsModule::flags</definition>
         <argsstring></argsstring>
@@ -159,9 +172,9 @@
         </detaileddescription>
         <inbodydescription>
         </inbodydescription>
-        <location file="/Users/mob/git/ejs/doc/api/ejs/staging/src/include/ejs.h" line="4275" bodyfile="/Users/mob/git/ejs/doc/api/ejs/staging/src/include/ejs.h" bodystart="4275" bodyend="-1"/>
+        <location file="/Users/mob/git/ejs/doc/api/ejs/staging/src/deps/ejs/ejs.h" line="4053" bodyfile="/Users/mob/git/ejs/doc/api/ejs/staging/src/deps/ejs/ejs.h" bodystart="4053" bodyend="-1"/>
       </memberdef>
-      <memberdef kind="variable" id="struct_ejs_module_112646b19a87f56117dbf24c6dbc116f6" prot="public" static="no" mutable="no">
+      <memberdef kind="variable" id="struct_ejs_module_1a12646b19a87f56117dbf24c6dbc116f6" prot="public" static="no" mutable="no">
         <type>MprList *</type>
         <definition>MprList* EjsModule::globalProperties</definition>
         <argsstring></argsstring>
@@ -172,9 +185,9 @@
         </detaileddescription>
         <inbodydescription>
         </inbodydescription>
-        <location file="/Users/mob/git/ejs/doc/api/ejs/staging/src/include/ejs.h" line="4252" bodyfile="/Users/mob/git/ejs/doc/api/ejs/staging/src/include/ejs.h" bodystart="4252" bodyend="-1"/>
+        <location file="/Users/mob/git/ejs/doc/api/ejs/staging/src/deps/ejs/ejs.h" line="4073" bodyfile="/Users/mob/git/ejs/doc/api/ejs/staging/src/deps/ejs/ejs.h" bodystart="4073" bodyend="-1"/>
       </memberdef>
-      <memberdef kind="variable" id="struct_ejs_module_14ebef31e7a9f5b76885c5c35d1d8f0d5" prot="public" static="no" mutable="no">
+      <memberdef kind="variable" id="struct_ejs_module_1a4ebef31e7a9f5b76885c5c35d1d8f0d5" prot="public" static="no" mutable="no">
         <type>uint</type>
         <definition>uint EjsModule::hasError</definition>
         <argsstring></argsstring>
@@ -186,9 +199,9 @@
         </detaileddescription>
         <inbodydescription>
         </inbodydescription>
-        <location file="/Users/mob/git/ejs/doc/api/ejs/staging/src/include/ejs.h" line="4273" bodyfile="/Users/mob/git/ejs/doc/api/ejs/staging/src/include/ejs.h" bodystart="4273" bodyend="-1"/>
+        <location file="/Users/mob/git/ejs/doc/api/ejs/staging/src/deps/ejs/ejs.h" line="4048" bodyfile="/Users/mob/git/ejs/doc/api/ejs/staging/src/deps/ejs/ejs.h" bodystart="4048" bodyend="-1"/>
       </memberdef>
-      <memberdef kind="variable" id="struct_ejs_module_18abbf3c00377b4c39b5809cb5a00f317" prot="public" static="no" mutable="no">
+      <memberdef kind="variable" id="struct_ejs_module_1a8abbf3c00377b4c39b5809cb5a00f317" prot="public" static="no" mutable="no">
         <type>uint</type>
         <definition>uint EjsModule::hasInitializer</definition>
         <argsstring></argsstring>
@@ -200,9 +213,9 @@
         </detaileddescription>
         <inbodydescription>
         </inbodydescription>
-        <location file="/Users/mob/git/ejs/doc/api/ejs/staging/src/include/ejs.h" line="4271" bodyfile="/Users/mob/git/ejs/doc/api/ejs/staging/src/include/ejs.h" bodystart="4271" bodyend="-1"/>
+        <location file="/Users/mob/git/ejs/doc/api/ejs/staging/src/deps/ejs/ejs.h" line="4049" bodyfile="/Users/mob/git/ejs/doc/api/ejs/staging/src/deps/ejs/ejs.h" bodystart="4049" bodyend="-1"/>
       </memberdef>
-      <memberdef kind="variable" id="struct_ejs_module_19a30ed807960aa16a14bda00b1d319d0" prot="public" static="no" mutable="no">
+      <memberdef kind="variable" id="struct_ejs_module_1a9a30ed807960aa16a14bda00b1d319d0" prot="public" static="no" mutable="no">
         <type>uint</type>
         <definition>uint EjsModule::hasNative</definition>
         <argsstring></argsstring>
@@ -214,9 +227,9 @@
         </detaileddescription>
         <inbodydescription>
         </inbodydescription>
-        <location file="/Users/mob/git/ejs/doc/api/ejs/staging/src/include/ejs.h" line="4270" bodyfile="/Users/mob/git/ejs/doc/api/ejs/staging/src/include/ejs.h" bodystart="4270" bodyend="-1"/>
+        <location file="/Users/mob/git/ejs/doc/api/ejs/staging/src/deps/ejs/ejs.h" line="4050" bodyfile="/Users/mob/git/ejs/doc/api/ejs/staging/src/deps/ejs/ejs.h" bodystart="4050" bodyend="-1"/>
       </memberdef>
-      <memberdef kind="variable" id="struct_ejs_module_134537aad02c0844bf4e4868ab14adeea" prot="public" static="no" mutable="no">
+      <memberdef kind="variable" id="struct_ejs_module_1a34537aad02c0844bf4e4868ab14adeea" prot="public" static="no" mutable="no">
         <type>uint</type>
         <definition>uint EjsModule::initialized</definition>
         <argsstring></argsstring>
@@ -228,9 +241,9 @@
         </detaileddescription>
         <inbodydescription>
         </inbodydescription>
-        <location file="/Users/mob/git/ejs/doc/api/ejs/staging/src/include/ejs.h" line="4272" bodyfile="/Users/mob/git/ejs/doc/api/ejs/staging/src/include/ejs.h" bodystart="4272" bodyend="-1"/>
+        <location file="/Users/mob/git/ejs/doc/api/ejs/staging/src/deps/ejs/ejs.h" line="4051" bodyfile="/Users/mob/git/ejs/doc/api/ejs/staging/src/deps/ejs/ejs.h" bodystart="4051" bodyend="-1"/>
       </memberdef>
-      <memberdef kind="variable" id="struct_ejs_module_1199a3c56836e73b019588503225db7d1" prot="public" static="no" mutable="no">
+      <memberdef kind="variable" id="struct_ejs_module_1a199a3c56836e73b019588503225db7d1" prot="public" static="no" mutable="no">
         <type>EjsFunction *</type>
         <definition>EjsFunction* EjsModule::initializer</definition>
         <argsstring></argsstring>
@@ -241,9 +254,9 @@
         </detaileddescription>
         <inbodydescription>
         </inbodydescription>
-        <location file="/Users/mob/git/ejs/doc/api/ejs/staging/src/include/ejs.h" line="4253" bodyfile="/Users/mob/git/ejs/doc/api/ejs/staging/src/include/ejs.h" bodystart="4253" bodyend="-1"/>
+        <location file="/Users/mob/git/ejs/doc/api/ejs/staging/src/deps/ejs/ejs.h" line="4041" bodyfile="/Users/mob/git/ejs/doc/api/ejs/staging/src/deps/ejs/ejs.h" bodystart="4041" bodyend="-1"/>
       </memberdef>
-      <memberdef kind="variable" id="struct_ejs_module_1f7b2e87022565d902a95736bf42577f7" prot="public" static="no" mutable="no">
+      <memberdef kind="variable" id="struct_ejs_module_1af7b2e87022565d902a95736bf42577f7" prot="public" static="no" mutable="no">
         <type>int</type>
         <definition>int EjsModule::lastGlobal</definition>
         <argsstring></argsstring>
@@ -254,9 +267,9 @@
         </detaileddescription>
         <inbodydescription>
         </inbodydescription>
-        <location file="/Users/mob/git/ejs/doc/api/ejs/staging/src/include/ejs.h" line="4263" bodyfile="/Users/mob/git/ejs/doc/api/ejs/staging/src/include/ejs.h" bodystart="4263" bodyend="-1"/>
+        <location file="/Users/mob/git/ejs/doc/api/ejs/staging/src/deps/ejs/ejs.h" line="4067" bodyfile="/Users/mob/git/ejs/doc/api/ejs/staging/src/deps/ejs/ejs.h" bodystart="4067" bodyend="-1"/>
       </memberdef>
-      <memberdef kind="variable" id="struct_ejs_module_1294b9706d8bef13094b9198593bf1a43" prot="public" static="no" mutable="no">
+      <memberdef kind="variable" id="struct_ejs_module_1a294b9706d8bef13094b9198593bf1a43" prot="public" static="no" mutable="no">
         <type>uint</type>
         <definition>uint EjsModule::loaded</definition>
         <argsstring></argsstring>
@@ -268,9 +281,9 @@
         </detaileddescription>
         <inbodydescription>
         </inbodydescription>
-        <location file="/Users/mob/git/ejs/doc/api/ejs/staging/src/include/ejs.h" line="4268" bodyfile="/Users/mob/git/ejs/doc/api/ejs/staging/src/include/ejs.h" bodystart="4268" bodyend="-1"/>
+        <location file="/Users/mob/git/ejs/doc/api/ejs/staging/src/deps/ejs/ejs.h" line="4046" bodyfile="/Users/mob/git/ejs/doc/api/ejs/staging/src/deps/ejs/ejs.h" bodystart="4046" bodyend="-1"/>
       </memberdef>
-      <memberdef kind="variable" id="struct_ejs_module_1792fed71bd239e1f2bab865ebcfe42b3" prot="public" static="no" mutable="no">
+      <memberdef kind="variable" id="struct_ejs_module_1a792fed71bd239e1f2bab865ebcfe42b3" prot="public" static="no" mutable="no">
         <type>EjsLoadState *</type>
         <definition>EjsLoadState* EjsModule::loadState</definition>
         <argsstring></argsstring>
@@ -281,9 +294,9 @@
         </detaileddescription>
         <inbodydescription>
         </inbodydescription>
-        <location file="/Users/mob/git/ejs/doc/api/ejs/staging/src/include/ejs.h" line="4244" bodyfile="/Users/mob/git/ejs/doc/api/ejs/staging/src/include/ejs.h" bodystart="4244" bodyend="-1"/>
+        <location file="/Users/mob/git/ejs/doc/api/ejs/staging/src/deps/ejs/ejs.h" line="4058" bodyfile="/Users/mob/git/ejs/doc/api/ejs/staging/src/deps/ejs/ejs.h" bodystart="4058" bodyend="-1"/>
       </memberdef>
-      <memberdef kind="variable" id="struct_ejs_module_189a4ae4a2d25f4df661e1e815952e90b" prot="public" static="no" mutable="no">
+      <memberdef kind="variable" id="struct_ejs_module_1a89a4ae4a2d25f4df661e1e815952e90b" prot="public" static="no" mutable="no">
         <type>int</type>
         <definition>int EjsModule::maxVersion</definition>
         <argsstring></argsstring>
@@ -294,9 +307,9 @@
         </detaileddescription>
         <inbodydescription>
         </inbodydescription>
-        <location file="/Users/mob/git/ejs/doc/api/ejs/staging/src/include/ejs.h" line="4241" bodyfile="/Users/mob/git/ejs/doc/api/ejs/staging/src/include/ejs.h" bodystart="4241" bodyend="-1"/>
+        <location file="/Users/mob/git/ejs/doc/api/ejs/staging/src/deps/ejs/ejs.h" line="4037" bodyfile="/Users/mob/git/ejs/doc/api/ejs/staging/src/deps/ejs/ejs.h" bodystart="4037" bodyend="-1"/>
       </memberdef>
-      <memberdef kind="variable" id="struct_ejs_module_1ee971fc8dd3d2574e3e152119f9a1d29" prot="public" static="no" mutable="no">
+      <memberdef kind="variable" id="struct_ejs_module_1aee971fc8dd3d2574e3e152119f9a1d29" prot="public" static="no" mutable="no">
         <type>int</type>
         <definition>int EjsModule::minVersion</definition>
         <argsstring></argsstring>
@@ -307,11 +320,11 @@
         </detaileddescription>
         <inbodydescription>
         </inbodydescription>
-        <location file="/Users/mob/git/ejs/doc/api/ejs/staging/src/include/ejs.h" line="4240" bodyfile="/Users/mob/git/ejs/doc/api/ejs/staging/src/include/ejs.h" bodystart="4240" bodyend="-1"/>
+        <location file="/Users/mob/git/ejs/doc/api/ejs/staging/src/deps/ejs/ejs.h" line="4036" bodyfile="/Users/mob/git/ejs/doc/api/ejs/staging/src/deps/ejs/ejs.h" bodystart="4036" bodyend="-1"/>
       </memberdef>
-      <memberdef kind="variable" id="struct_ejs_module_155ae637a25d266f49522e0f1e74dd7e9" prot="public" static="no" mutable="no">
-        <type>char *</type>
-        <definition>char* EjsModule::name</definition>
+      <memberdef kind="variable" id="struct_ejs_module_1a089c3c880fc499074d2206aaf3d20fba" prot="public" static="no" mutable="no">
+        <type>EjsString *</type>
+        <definition>EjsString* EjsModule::name</definition>
         <argsstring></argsstring>
         <name>name</name>
         <briefdescription>
@@ -320,22 +333,9 @@
         </detaileddescription>
         <inbodydescription>
         </inbodydescription>
-        <location file="/Users/mob/git/ejs/doc/api/ejs/staging/src/include/ejs.h" line="4236" bodyfile="/Users/mob/git/ejs/doc/api/ejs/staging/src/include/ejs.h" bodystart="4236" bodyend="-1"/>
+        <location file="/Users/mob/git/ejs/doc/api/ejs/staging/src/deps/ejs/ejs.h" line="4032" bodyfile="/Users/mob/git/ejs/doc/api/ejs/staging/src/deps/ejs/ejs.h" bodystart="4032" bodyend="-1"/>
       </memberdef>
-      <memberdef kind="variable" id="struct_ejs_module_16afe56ae175b6e3e7173efef7ef138ab" prot="public" static="no" mutable="no">
-        <type>int</type>
-        <definition>int EjsModule::nameToken</definition>
-        <argsstring></argsstring>
-        <name>nameToken</name>
-        <briefdescription>
-        </briefdescription>
-        <detaileddescription>
-        </detaileddescription>
-        <inbodydescription>
-        </inbodydescription>
-        <location file="/Users/mob/git/ejs/doc/api/ejs/staging/src/include/ejs.h" line="4261" bodyfile="/Users/mob/git/ejs/doc/api/ejs/staging/src/include/ejs.h" bodystart="4261" bodyend="-1"/>
-      </memberdef>
-      <memberdef kind="variable" id="struct_ejs_module_1eb0b8178717ec41bc7091c375f82f536" prot="public" static="no" mutable="no">
+      <memberdef kind="variable" id="struct_ejs_module_1aeb0b8178717ec41bc7091c375f82f536" prot="public" static="no" mutable="no">
         <type>uint</type>
         <definition>uint EjsModule::nativeLoaded</definition>
         <argsstring></argsstring>
@@ -347,9 +347,9 @@
         </detaileddescription>
         <inbodydescription>
         </inbodydescription>
-        <location file="/Users/mob/git/ejs/doc/api/ejs/staging/src/include/ejs.h" line="4269" bodyfile="/Users/mob/git/ejs/doc/api/ejs/staging/src/include/ejs.h" bodystart="4269" bodyend="-1"/>
+        <location file="/Users/mob/git/ejs/doc/api/ejs/staging/src/deps/ejs/ejs.h" line="4047" bodyfile="/Users/mob/git/ejs/doc/api/ejs/staging/src/deps/ejs/ejs.h" bodystart="4047" bodyend="-1"/>
       </memberdef>
-      <memberdef kind="variable" id="struct_ejs_module_1a9ef54f52922a4f517e6c3301191cf0a" prot="public" static="no" mutable="no">
+      <memberdef kind="variable" id="struct_ejs_module_1aa9ef54f52922a4f517e6c3301191cf0a" prot="public" static="no" mutable="no">
         <type>char *</type>
         <definition>char* EjsModule::path</definition>
         <argsstring></argsstring>
@@ -360,9 +360,9 @@
         </detaileddescription>
         <inbodydescription>
         </inbodydescription>
-        <location file="/Users/mob/git/ejs/doc/api/ejs/staging/src/include/ejs.h" line="4238" bodyfile="/Users/mob/git/ejs/doc/api/ejs/staging/src/include/ejs.h" bodystart="4238" bodyend="-1"/>
+        <location file="/Users/mob/git/ejs/doc/api/ejs/staging/src/deps/ejs/ejs.h" line="4065" bodyfile="/Users/mob/git/ejs/doc/api/ejs/staging/src/deps/ejs/ejs.h" bodystart="4065" bodyend="-1"/>
       </memberdef>
-      <memberdef kind="variable" id="struct_ejs_module_126e311e01b8074fe8d68eb2009e97a77" prot="public" static="no" mutable="no">
+      <memberdef kind="variable" id="struct_ejs_module_1a26e311e01b8074fe8d68eb2009e97a77" prot="public" static="no" mutable="no">
         <type>EjsBlock *</type>
         <definition>EjsBlock* EjsModule::scope</definition>
         <argsstring></argsstring>
@@ -373,9 +373,9 @@
         </detaileddescription>
         <inbodydescription>
         </inbodydescription>
-        <location file="/Users/mob/git/ejs/doc/api/ejs/staging/src/include/ejs.h" line="4259" bodyfile="/Users/mob/git/ejs/doc/api/ejs/staging/src/include/ejs.h" bodystart="4259" bodyend="-1"/>
+        <location file="/Users/mob/git/ejs/doc/api/ejs/staging/src/deps/ejs/ejs.h" line="4063" bodyfile="/Users/mob/git/ejs/doc/api/ejs/staging/src/deps/ejs/ejs.h" bodystart="4063" bodyend="-1"/>
       </memberdef>
-      <memberdef kind="variable" id="struct_ejs_module_1a3fa2e8386124d5eafcc9bb408b3ed99" prot="public" static="no" mutable="no">
+      <memberdef kind="variable" id="struct_ejs_module_1aa3fa2e8386124d5eafcc9bb408b3ed99" prot="public" static="no" mutable="no">
         <type>int</type>
         <definition>int EjsModule::version</definition>
         <argsstring></argsstring>
@@ -386,9 +386,9 @@
         </detaileddescription>
         <inbodydescription>
         </inbodydescription>
-        <location file="/Users/mob/git/ejs/doc/api/ejs/staging/src/include/ejs.h" line="4239" bodyfile="/Users/mob/git/ejs/doc/api/ejs/staging/src/include/ejs.h" bodystart="4239" bodyend="-1"/>
+        <location file="/Users/mob/git/ejs/doc/api/ejs/staging/src/deps/ejs/ejs.h" line="4035" bodyfile="/Users/mob/git/ejs/doc/api/ejs/staging/src/deps/ejs/ejs.h" bodystart="4035" bodyend="-1"/>
       </memberdef>
-      <memberdef kind="variable" id="struct_ejs_module_1d1ad967e80af8b644003e13bb1a9a4d5" prot="public" static="no" mutable="no">
+      <memberdef kind="variable" id="struct_ejs_module_1ad1ad967e80af8b644003e13bb1a9a4d5" prot="public" static="no" mutable="no">
         <type>uint</type>
         <definition>uint EjsModule::visited</definition>
         <argsstring></argsstring>
@@ -400,11 +400,11 @@
         </detaileddescription>
         <inbodydescription>
         </inbodydescription>
-        <location file="/Users/mob/git/ejs/doc/api/ejs/staging/src/include/ejs.h" line="4274" bodyfile="/Users/mob/git/ejs/doc/api/ejs/staging/src/include/ejs.h" bodystart="4274" bodyend="-1"/>
+        <location file="/Users/mob/git/ejs/doc/api/ejs/staging/src/deps/ejs/ejs.h" line="4052" bodyfile="/Users/mob/git/ejs/doc/api/ejs/staging/src/deps/ejs/ejs.h" bodystart="4052" bodyend="-1"/>
       </memberdef>
-      <memberdef kind="variable" id="struct_ejs_module_1887aac4b4aec6de40b41b412c31ddda9" prot="public" static="no" mutable="no">
-        <type>char *</type>
-        <definition>char* EjsModule::vname</definition>
+      <memberdef kind="variable" id="struct_ejs_module_1a50ba91e1765fe35a430ff19a8d358cd7" prot="public" static="no" mutable="no">
+        <type>EjsString *</type>
+        <definition>EjsString* EjsModule::vname</definition>
         <argsstring></argsstring>
         <name>vname</name>
         <briefdescription>
@@ -413,46 +413,46 @@
         </detaileddescription>
         <inbodydescription>
         </inbodydescription>
-        <location file="/Users/mob/git/ejs/doc/api/ejs/staging/src/include/ejs.h" line="4237" bodyfile="/Users/mob/git/ejs/doc/api/ejs/staging/src/include/ejs.h" bodystart="4237" bodyend="-1"/>
+        <location file="/Users/mob/git/ejs/doc/api/ejs/staging/src/deps/ejs/ejs.h" line="4034" bodyfile="/Users/mob/git/ejs/doc/api/ejs/staging/src/deps/ejs/ejs.h" bodystart="4034" bodyend="-1"/>
       </memberdef>
       </sectiondef>
     <briefdescription>
     </briefdescription>
     <detaileddescription>
     </detaileddescription>
-    <location file="/Users/mob/git/ejs/doc/api/ejs/staging/src/include/ejs.h" line="4235" bodyfile="/Users/mob/git/ejs/doc/api/ejs/staging/src/include/ejs.h" bodystart="4235" bodyend="4277"/>
+    <location file="/Users/mob/git/ejs/doc/api/ejs/staging/src/deps/ejs/ejs.h" line="4031" bodyfile="/Users/mob/git/ejs/doc/api/ejs/staging/src/deps/ejs/ejs.h" bodystart="4031" bodyend="4075"/>
     <listofallmembers>
-      <member refid="struct_ejs_module_1dfb30c36425beafe7f6ddceea892a2ec" prot="public" virt="non-virtual"><scope>EjsModule</scope><name>checksum</name></member>
-      <member refid="struct_ejs_module_13d7bcf2c5cad5b3d486880de2827ca16" prot="public" virt="non-virtual"><scope>EjsModule</scope><name>code</name></member>
-      <member refid="struct_ejs_module_161d7dfebb5ce7d1bd09b56ab7e8a034d" prot="public" virt="non-virtual"><scope>EjsModule</scope><name>compiling</name></member>
-      <member refid="struct_ejs_module_1430b2fb1f5e0a588cde461e0749d5c8e" prot="public" virt="non-virtual"><scope>EjsModule</scope><name>configured</name></member>
-      <member refid="struct_ejs_module_1345a1de2ff1062693dc9be5994bd19ec" prot="public" virt="non-virtual"><scope>EjsModule</scope><name>constants</name></member>
-      <member refid="struct_ejs_module_1281ad4ab54e08636763949407f22fe7f" prot="public" virt="non-virtual"><scope>EjsModule</scope><name>current</name></member>
-      <member refid="struct_ejs_module_11cd88ace43937fb57490464bbeabeb4d" prot="public" virt="non-virtual"><scope>EjsModule</scope><name>currentMethod</name></member>
-      <member refid="struct_ejs_module_119c46e3ec766caaf9c02872813474e6a" prot="public" virt="non-virtual"><scope>EjsModule</scope><name>dependencies</name></member>
-      <member refid="struct_ejs_module_1c4c6eea4189634ccda368e725b42d168" prot="public" virt="non-virtual"><scope>EjsModule</scope><name>doc</name></member>
-      <member refid="struct_ejs_module_11bf92a0bacba780aa7089b2c58124149" prot="public" virt="non-virtual"><scope>EjsModule</scope><name>file</name></member>
-      <member refid="struct_ejs_module_154155c501e8116e2258246308872fdd5" prot="public" virt="non-virtual"><scope>EjsModule</scope><name>firstGlobal</name></member>
-      <member refid="struct_ejs_module_17441410f7f20da03996fdea47d6498c3" prot="public" virt="non-virtual"><scope>EjsModule</scope><name>flags</name></member>
-      <member refid="struct_ejs_module_112646b19a87f56117dbf24c6dbc116f6" prot="public" virt="non-virtual"><scope>EjsModule</scope><name>globalProperties</name></member>
-      <member refid="struct_ejs_module_14ebef31e7a9f5b76885c5c35d1d8f0d5" prot="public" virt="non-virtual"><scope>EjsModule</scope><name>hasError</name></member>
-      <member refid="struct_ejs_module_18abbf3c00377b4c39b5809cb5a00f317" prot="public" virt="non-virtual"><scope>EjsModule</scope><name>hasInitializer</name></member>
-      <member refid="struct_ejs_module_19a30ed807960aa16a14bda00b1d319d0" prot="public" virt="non-virtual"><scope>EjsModule</scope><name>hasNative</name></member>
-      <member refid="struct_ejs_module_134537aad02c0844bf4e4868ab14adeea" prot="public" virt="non-virtual"><scope>EjsModule</scope><name>initialized</name></member>
-      <member refid="struct_ejs_module_1199a3c56836e73b019588503225db7d1" prot="public" virt="non-virtual"><scope>EjsModule</scope><name>initializer</name></member>
-      <member refid="struct_ejs_module_1f7b2e87022565d902a95736bf42577f7" prot="public" virt="non-virtual"><scope>EjsModule</scope><name>lastGlobal</name></member>
-      <member refid="struct_ejs_module_1294b9706d8bef13094b9198593bf1a43" prot="public" virt="non-virtual"><scope>EjsModule</scope><name>loaded</name></member>
-      <member refid="struct_ejs_module_1792fed71bd239e1f2bab865ebcfe42b3" prot="public" virt="non-virtual"><scope>EjsModule</scope><name>loadState</name></member>
-      <member refid="struct_ejs_module_189a4ae4a2d25f4df661e1e815952e90b" prot="public" virt="non-virtual"><scope>EjsModule</scope><name>maxVersion</name></member>
-      <member refid="struct_ejs_module_1ee971fc8dd3d2574e3e152119f9a1d29" prot="public" virt="non-virtual"><scope>EjsModule</scope><name>minVersion</name></member>
-      <member refid="struct_ejs_module_155ae637a25d266f49522e0f1e74dd7e9" prot="public" virt="non-virtual"><scope>EjsModule</scope><name>name</name></member>
-      <member refid="struct_ejs_module_16afe56ae175b6e3e7173efef7ef138ab" prot="public" virt="non-virtual"><scope>EjsModule</scope><name>nameToken</name></member>
-      <member refid="struct_ejs_module_1eb0b8178717ec41bc7091c375f82f536" prot="public" virt="non-virtual"><scope>EjsModule</scope><name>nativeLoaded</name></member>
-      <member refid="struct_ejs_module_1a9ef54f52922a4f517e6c3301191cf0a" prot="public" virt="non-virtual"><scope>EjsModule</scope><name>path</name></member>
-      <member refid="struct_ejs_module_126e311e01b8074fe8d68eb2009e97a77" prot="public" virt="non-virtual"><scope>EjsModule</scope><name>scope</name></member>
-      <member refid="struct_ejs_module_1a3fa2e8386124d5eafcc9bb408b3ed99" prot="public" virt="non-virtual"><scope>EjsModule</scope><name>version</name></member>
-      <member refid="struct_ejs_module_1d1ad967e80af8b644003e13bb1a9a4d5" prot="public" virt="non-virtual"><scope>EjsModule</scope><name>visited</name></member>
-      <member refid="struct_ejs_module_1887aac4b4aec6de40b41b412c31ddda9" prot="public" virt="non-virtual"><scope>EjsModule</scope><name>vname</name></member>
+      <member refid="struct_ejs_module_1adfb30c36425beafe7f6ddceea892a2ec" prot="public" virt="non-virtual"><scope>EjsModule</scope><name>checksum</name></member>
+      <member refid="struct_ejs_module_1a3d7bcf2c5cad5b3d486880de2827ca16" prot="public" virt="non-virtual"><scope>EjsModule</scope><name>code</name></member>
+      <member refid="struct_ejs_module_1a61d7dfebb5ce7d1bd09b56ab7e8a034d" prot="public" virt="non-virtual"><scope>EjsModule</scope><name>compiling</name></member>
+      <member refid="struct_ejs_module_1a430b2fb1f5e0a588cde461e0749d5c8e" prot="public" virt="non-virtual"><scope>EjsModule</scope><name>configured</name></member>
+      <member refid="struct_ejs_module_1a6e2489708384256562d87263c2bd2260" prot="public" virt="non-virtual"><scope>EjsModule</scope><name>constants</name></member>
+      <member refid="struct_ejs_module_1a281ad4ab54e08636763949407f22fe7f" prot="public" virt="non-virtual"><scope>EjsModule</scope><name>current</name></member>
+      <member refid="struct_ejs_module_1a82924ef7d5b3247cda6a3651506378d7" prot="public" virt="non-virtual"><scope>EjsModule</scope><name>currentMethod</name></member>
+      <member refid="struct_ejs_module_1a19c46e3ec766caaf9c02872813474e6a" prot="public" virt="non-virtual"><scope>EjsModule</scope><name>dependencies</name></member>
+      <member refid="struct_ejs_module_1a0c9cad9eb5f153efdb518b00e489feea" prot="public" virt="non-virtual"><scope>EjsModule</scope><name>doc</name></member>
+      <member refid="struct_ejs_module_1a061f75a896e8c367f9a896e279d2ec8e" prot="public" virt="non-virtual"><scope>EjsModule</scope><name>ejs</name></member>
+      <member refid="struct_ejs_module_1a1bf92a0bacba780aa7089b2c58124149" prot="public" virt="non-virtual"><scope>EjsModule</scope><name>file</name></member>
+      <member refid="struct_ejs_module_1a54155c501e8116e2258246308872fdd5" prot="public" virt="non-virtual"><scope>EjsModule</scope><name>firstGlobal</name></member>
+      <member refid="struct_ejs_module_1a7441410f7f20da03996fdea47d6498c3" prot="public" virt="non-virtual"><scope>EjsModule</scope><name>flags</name></member>
+      <member refid="struct_ejs_module_1a12646b19a87f56117dbf24c6dbc116f6" prot="public" virt="non-virtual"><scope>EjsModule</scope><name>globalProperties</name></member>
+      <member refid="struct_ejs_module_1a4ebef31e7a9f5b76885c5c35d1d8f0d5" prot="public" virt="non-virtual"><scope>EjsModule</scope><name>hasError</name></member>
+      <member refid="struct_ejs_module_1a8abbf3c00377b4c39b5809cb5a00f317" prot="public" virt="non-virtual"><scope>EjsModule</scope><name>hasInitializer</name></member>
+      <member refid="struct_ejs_module_1a9a30ed807960aa16a14bda00b1d319d0" prot="public" virt="non-virtual"><scope>EjsModule</scope><name>hasNative</name></member>
+      <member refid="struct_ejs_module_1a34537aad02c0844bf4e4868ab14adeea" prot="public" virt="non-virtual"><scope>EjsModule</scope><name>initialized</name></member>
+      <member refid="struct_ejs_module_1a199a3c56836e73b019588503225db7d1" prot="public" virt="non-virtual"><scope>EjsModule</scope><name>initializer</name></member>
+      <member refid="struct_ejs_module_1af7b2e87022565d902a95736bf42577f7" prot="public" virt="non-virtual"><scope>EjsModule</scope><name>lastGlobal</name></member>
+      <member refid="struct_ejs_module_1a294b9706d8bef13094b9198593bf1a43" prot="public" virt="non-virtual"><scope>EjsModule</scope><name>loaded</name></member>
+      <member refid="struct_ejs_module_1a792fed71bd239e1f2bab865ebcfe42b3" prot="public" virt="non-virtual"><scope>EjsModule</scope><name>loadState</name></member>
+      <member refid="struct_ejs_module_1a89a4ae4a2d25f4df661e1e815952e90b" prot="public" virt="non-virtual"><scope>EjsModule</scope><name>maxVersion</name></member>
+      <member refid="struct_ejs_module_1aee971fc8dd3d2574e3e152119f9a1d29" prot="public" virt="non-virtual"><scope>EjsModule</scope><name>minVersion</name></member>
+      <member refid="struct_ejs_module_1a089c3c880fc499074d2206aaf3d20fba" prot="public" virt="non-virtual"><scope>EjsModule</scope><name>name</name></member>
+      <member refid="struct_ejs_module_1aeb0b8178717ec41bc7091c375f82f536" prot="public" virt="non-virtual"><scope>EjsModule</scope><name>nativeLoaded</name></member>
+      <member refid="struct_ejs_module_1aa9ef54f52922a4f517e6c3301191cf0a" prot="public" virt="non-virtual"><scope>EjsModule</scope><name>path</name></member>
+      <member refid="struct_ejs_module_1a26e311e01b8074fe8d68eb2009e97a77" prot="public" virt="non-virtual"><scope>EjsModule</scope><name>scope</name></member>
+      <member refid="struct_ejs_module_1aa3fa2e8386124d5eafcc9bb408b3ed99" prot="public" virt="non-virtual"><scope>EjsModule</scope><name>version</name></member>
+      <member refid="struct_ejs_module_1ad1ad967e80af8b644003e13bb1a9a4d5" prot="public" virt="non-virtual"><scope>EjsModule</scope><name>visited</name></member>
+      <member refid="struct_ejs_module_1a50ba91e1765fe35a430ff19a8d358cd7" prot="public" virt="non-virtual"><scope>EjsModule</scope><name>vname</name></member>
     </listofallmembers>
   </compounddef>
 </doxygen>

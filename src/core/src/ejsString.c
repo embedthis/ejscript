@@ -2142,6 +2142,10 @@ EjsString *ejsSprintf(Ejs *ejs, cchar *fmt, ...)
 }
 
 
+/*
+    Get a substring from "src" starting at "start" of length "len"
+    If len < 0, use entire string.
+ */
 EjsString *ejsSubstring(Ejs *ejs, EjsString *src, ssize start, ssize len)
 {
     EjsString   *result;
@@ -2153,7 +2157,7 @@ EjsString *ejsSubstring(Ejs *ejs, EjsString *src, ssize start, ssize len)
     if (len < 0) {
         len = src->length - start;
     }
-    if ((start + len) > src->length || start < 0) {
+    if (len < 0 || (start + len) > src->length || start < 0) {
         return S(empty);
     }
     len = min(len, src->length);

@@ -1,10 +1,10 @@
 <?xml version='1.0' encoding='UTF-8' standalone='no'?>
-<doxygen xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="compound.xsd" version="1.5.8">
+<doxygen xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="compound.xsd" version="1.7.3">
   <compounddef id="group___ejs_error" kind="group">
     <compoundname>EjsError</compoundname>
     <title>EjsError ejsFormatStack ejsGetErrorMsg ejsHasException ejsThrowArgError ejsThrowAssertError</title>
       <sectiondef kind="func">
-      <memberdef kind="function" id="group___ejs_error_1g26516321557d20655ded73648c787e46" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+      <memberdef kind="function" id="group___ejs_error_1ga26516321557d20655ded73648c787e46" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
         <type>cchar *</type>
         <definition>cchar* ejsGetErrorMsg</definition>
         <argsstring>(Ejs *ejs, int withStack)</argsstring>
@@ -26,7 +26,7 @@
 <parametername>ejs</parametername>
 </parameternamelist>
 <parameterdescription>
-<para>Ejs reference returned from <ref refid="group___ejs_obj_1g50d9d774b3cddd1784d654326cddc237" kindref="member">ejsCreate</ref> </para></parameterdescription>
+<para>Ejs reference returned from <ref refid="group___ejs_1ga75cce70e794158ee54ddb800509060e0" kindref="member">ejsCreate</ref> </para></parameterdescription>
 </parameteritem>
 <parameteritem>
 <parameternamelist>
@@ -40,9 +40,9 @@
 </para>        </detaileddescription>
         <inbodydescription>
         </inbodydescription>
-        <location file="/Users/mob/git/ejs/doc/api/ejs/staging/src/include/ejs.h" line="2433"/>
+        <location file="/Users/mob/git/ejs/doc/api/ejs/staging/src/deps/ejs/ejs.h" line="2588"/>
       </memberdef>
-      <memberdef kind="function" id="group___ejs_error_1gba0d6e967d7b71217b76f8166baf7183" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+      <memberdef kind="function" id="group___ejs_error_1gaba0d6e967d7b71217b76f8166baf7183" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
         <type>bool</type>
         <definition>bool ejsHasException</definition>
         <argsstring>(Ejs *ejs)</argsstring>
@@ -59,19 +59,19 @@
 <parametername>ejs</parametername>
 </parameternamelist>
 <parameterdescription>
-<para>Ejs reference returned from <ref refid="group___ejs_obj_1g50d9d774b3cddd1784d654326cddc237" kindref="member">ejsCreate</ref> </para></parameterdescription>
+<para>Ejs reference returned from <ref refid="group___ejs_1ga75cce70e794158ee54ddb800509060e0" kindref="member">ejsCreate</ref> </para></parameterdescription>
 </parameteritem>
 </parameterlist>
 <simplesect kind="return"><para>True if an exception has been thrown </para></simplesect>
 </para>        </detaileddescription>
         <inbodydescription>
         </inbodydescription>
-        <location file="/Users/mob/git/ejs/doc/api/ejs/staging/src/include/ejs.h" line="2441"/>
+        <location file="/Users/mob/git/ejs/doc/api/ejs/staging/src/deps/ejs/ejs.h" line="2596"/>
       </memberdef>
-      <memberdef kind="function" id="group___ejs_error_1g728c0c3c7353c5ece9d9c8a7252eca57" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
-        <type>EjsObj *</type>
-        <definition>EjsObj* ejsThrowArgError</definition>
-        <argsstring>(Ejs *ejs, cchar *fmt,...)</argsstring>
+      <memberdef kind="function" id="group___ejs_error_1ga67a23e32760f2e9112ed7e309d70fedc" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type>EjsError *</type>
+        <definition>EjsError* ejsThrowArgError</definition>
+        <argsstring>(Ejs *ejs, cchar *fmt,...) PRINTF_ATTRIBUTE(2</argsstring>
         <name>ejsThrowArgError</name>
         <param>
           <type>Ejs *</type>
@@ -92,7 +92,7 @@
 <parametername>ejs</parametername>
 </parameternamelist>
 <parameterdescription>
-<para>Ejs reference returned from <ref refid="group___ejs_obj_1g50d9d774b3cddd1784d654326cddc237" kindref="member">ejsCreate</ref> </para></parameterdescription>
+<para>Ejs reference returned from <ref refid="group___ejs_1ga75cce70e794158ee54ddb800509060e0" kindref="member">ejsCreate</ref> </para></parameterdescription>
 </parameteritem>
 <parameteritem>
 <parameternamelist>
@@ -112,12 +112,12 @@
 </para>        </detaileddescription>
         <inbodydescription>
         </inbodydescription>
-        <location file="/Users/mob/git/ejs/doc/api/ejs/staging/src/include/ejs.h" line="2453"/>
+        <location file="/Users/mob/git/ejs/doc/api/ejs/staging/src/deps/ejs/ejs.h" line="2608"/>
       </memberdef>
-      <memberdef kind="function" id="group___ejs_error_1g2ed4b80af588982f4b5eaf4d10012447" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
-        <type>EjsObj *</type>
-        <definition>EjsObj* ejsThrowArithmeticError</definition>
-        <argsstring>(Ejs *ejs, cchar *fmt,...)</argsstring>
+      <memberdef kind="function" id="group___ejs_error_1gab781cc07a39d1a252282dc2f40a0ca8d" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type>EjsError *EjsError EjsError *</type>
+        <definition>EjsError* EjsError EjsError* ejsThrowArithmeticError</definition>
+        <argsstring>(Ejs *ejs, cchar *fmt,...) PRINTF_ATTRIBUTE(2</argsstring>
         <name>ejsThrowArithmeticError</name>
         <param>
           <type>Ejs *</type>
@@ -138,7 +138,7 @@
 <parametername>ejs</parametername>
 </parameternamelist>
 <parameterdescription>
-<para>Ejs reference returned from <ref refid="group___ejs_obj_1g50d9d774b3cddd1784d654326cddc237" kindref="member">ejsCreate</ref> </para></parameterdescription>
+<para>Ejs reference returned from <ref refid="group___ejs_1ga75cce70e794158ee54ddb800509060e0" kindref="member">ejsCreate</ref> </para></parameterdescription>
 </parameteritem>
 <parameteritem>
 <parameternamelist>
@@ -158,12 +158,12 @@
 </para>        </detaileddescription>
         <inbodydescription>
         </inbodydescription>
-        <location file="/Users/mob/git/ejs/doc/api/ejs/staging/src/include/ejs.h" line="2471"/>
+        <location file="/Users/mob/git/ejs/doc/api/ejs/staging/src/deps/ejs/ejs.h" line="2626"/>
       </memberdef>
-      <memberdef kind="function" id="group___ejs_error_1g841a5e9818d58b407f0845f72f31baea" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
-        <type>EjsObj *</type>
-        <definition>EjsObj* ejsThrowAssertError</definition>
-        <argsstring>(Ejs *ejs, cchar *fmt,...)</argsstring>
+      <memberdef kind="function" id="group___ejs_error_1ga8a397c9e2afa22fbf919f9927ddcb090" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type>EjsError *EjsError</type>
+        <definition>EjsError* EjsError ejsThrowAssertError</definition>
+        <argsstring>(Ejs *ejs, cchar *fmt,...) PRINTF_ATTRIBUTE(2</argsstring>
         <name>ejsThrowAssertError</name>
         <param>
           <type>Ejs *</type>
@@ -184,7 +184,7 @@
 <parametername>ejs</parametername>
 </parameternamelist>
 <parameterdescription>
-<para>Ejs reference returned from <ref refid="group___ejs_obj_1g50d9d774b3cddd1784d654326cddc237" kindref="member">ejsCreate</ref> </para></parameterdescription>
+<para>Ejs reference returned from <ref refid="group___ejs_1ga75cce70e794158ee54ddb800509060e0" kindref="member">ejsCreate</ref> </para></parameterdescription>
 </parameteritem>
 <parameteritem>
 <parameternamelist>
@@ -204,12 +204,12 @@
 </para>        </detaileddescription>
         <inbodydescription>
         </inbodydescription>
-        <location file="/Users/mob/git/ejs/doc/api/ejs/staging/src/include/ejs.h" line="2462"/>
+        <location file="/Users/mob/git/ejs/doc/api/ejs/staging/src/deps/ejs/ejs.h" line="2617"/>
       </memberdef>
-      <memberdef kind="function" id="group___ejs_error_1g287d5245d90a95dbc8db2e184672b3c2" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
-        <type>EjsObj *</type>
-        <definition>EjsObj* ejsThrowError</definition>
-        <argsstring>(Ejs *ejs, cchar *fmt,...)</argsstring>
+      <memberdef kind="function" id="group___ejs_error_1ga71e81f867dfe2d633f67fc7aa84768bf" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type>EjsError *EjsError EjsError *EjsError EjsError *</type>
+        <definition>EjsError* EjsError EjsError* EjsError EjsError* ejsThrowError</definition>
+        <argsstring>(Ejs *ejs, cchar *fmt,...) PRINTF_ATTRIBUTE(2</argsstring>
         <name>ejsThrowError</name>
         <param>
           <type>Ejs *</type>
@@ -230,7 +230,7 @@
 <parametername>ejs</parametername>
 </parameternamelist>
 <parameterdescription>
-<para>Ejs reference returned from <ref refid="group___ejs_obj_1g50d9d774b3cddd1784d654326cddc237" kindref="member">ejsCreate</ref> </para></parameterdescription>
+<para>Ejs reference returned from <ref refid="group___ejs_1ga75cce70e794158ee54ddb800509060e0" kindref="member">ejsCreate</ref> </para></parameterdescription>
 </parameteritem>
 <parameteritem>
 <parameternamelist>
@@ -250,12 +250,12 @@
 </para>        </detaileddescription>
         <inbodydescription>
         </inbodydescription>
-        <location file="/Users/mob/git/ejs/doc/api/ejs/staging/src/include/ejs.h" line="2489"/>
+        <location file="/Users/mob/git/ejs/doc/api/ejs/staging/src/deps/ejs/ejs.h" line="2644"/>
       </memberdef>
-      <memberdef kind="function" id="group___ejs_error_1g4e7cf341078092e2b455be68e0710b8a" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
-        <type>EjsObj *</type>
-        <definition>EjsObj* ejsThrowInstructionError</definition>
-        <argsstring>(Ejs *ejs, cchar *fmt,...)</argsstring>
+      <memberdef kind="function" id="group___ejs_error_1gae1ac57d424232251c0ecc6dde8cc4442" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type>EjsError *EjsError EjsError *EjsError</type>
+        <definition>EjsError* EjsError EjsError* EjsError ejsThrowInstructionError</definition>
+        <argsstring>(Ejs *ejs, cchar *fmt,...) PRINTF_ATTRIBUTE(2</argsstring>
         <name>ejsThrowInstructionError</name>
         <param>
           <type>Ejs *</type>
@@ -276,7 +276,7 @@
 <parametername>ejs</parametername>
 </parameternamelist>
 <parameterdescription>
-<para>Ejs reference returned from <ref refid="group___ejs_obj_1g50d9d774b3cddd1784d654326cddc237" kindref="member">ejsCreate</ref> </para></parameterdescription>
+<para>Ejs reference returned from <ref refid="group___ejs_1ga75cce70e794158ee54ddb800509060e0" kindref="member">ejsCreate</ref> </para></parameterdescription>
 </parameteritem>
 <parameteritem>
 <parameternamelist>
@@ -296,12 +296,12 @@
 </para>        </detaileddescription>
         <inbodydescription>
         </inbodydescription>
-        <location file="/Users/mob/git/ejs/doc/api/ejs/staging/src/include/ejs.h" line="2480"/>
+        <location file="/Users/mob/git/ejs/doc/api/ejs/staging/src/deps/ejs/ejs.h" line="2635"/>
       </memberdef>
-      <memberdef kind="function" id="group___ejs_error_1gb17c0d454663539ea9e4e37576e9d1ad" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
-        <type>EjsObj *</type>
-        <definition>EjsObj* ejsThrowInternalError</definition>
-        <argsstring>(Ejs *ejs, cchar *fmt,...)</argsstring>
+      <memberdef kind="function" id="group___ejs_error_1ga35418c824efaaf4fd4148474371ba39f" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type>EjsError *EjsError EjsError *EjsError EjsError *EjsError</type>
+        <definition>EjsError* EjsError EjsError* EjsError EjsError* EjsError ejsThrowInternalError</definition>
+        <argsstring>(Ejs *ejs, cchar *fmt,...) PRINTF_ATTRIBUTE(2</argsstring>
         <name>ejsThrowInternalError</name>
         <param>
           <type>Ejs *</type>
@@ -322,7 +322,7 @@
 <parametername>ejs</parametername>
 </parameternamelist>
 <parameterdescription>
-<para>Ejs reference returned from <ref refid="group___ejs_obj_1g50d9d774b3cddd1784d654326cddc237" kindref="member">ejsCreate</ref> </para></parameterdescription>
+<para>Ejs reference returned from <ref refid="group___ejs_1ga75cce70e794158ee54ddb800509060e0" kindref="member">ejsCreate</ref> </para></parameterdescription>
 </parameteritem>
 <parameteritem>
 <parameternamelist>
@@ -342,12 +342,12 @@
 </para>        </detaileddescription>
         <inbodydescription>
         </inbodydescription>
-        <location file="/Users/mob/git/ejs/doc/api/ejs/staging/src/include/ejs.h" line="2498"/>
+        <location file="/Users/mob/git/ejs/doc/api/ejs/staging/src/deps/ejs/ejs.h" line="2653"/>
       </memberdef>
-      <memberdef kind="function" id="group___ejs_error_1g77d16ceec4830daccf21493931c3647b" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
-        <type>EjsObj *</type>
-        <definition>EjsObj* ejsThrowIOError</definition>
-        <argsstring>(Ejs *ejs, cchar *fmt,...)</argsstring>
+      <memberdef kind="function" id="group___ejs_error_1gaa1111825d10dfbf61bc9a3817a7c0b54" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type>EjsError *EjsError EjsError *EjsError EjsError *EjsError EjsError *</type>
+        <definition>EjsError* EjsError EjsError* EjsError EjsError* EjsError EjsError* ejsThrowIOError</definition>
+        <argsstring>(Ejs *ejs, cchar *fmt,...) PRINTF_ATTRIBUTE(2</argsstring>
         <name>ejsThrowIOError</name>
         <param>
           <type>Ejs *</type>
@@ -368,7 +368,7 @@
 <parametername>ejs</parametername>
 </parameternamelist>
 <parameterdescription>
-<para>Ejs reference returned from <ref refid="group___ejs_obj_1g50d9d774b3cddd1784d654326cddc237" kindref="member">ejsCreate</ref> </para></parameterdescription>
+<para>Ejs reference returned from <ref refid="group___ejs_1ga75cce70e794158ee54ddb800509060e0" kindref="member">ejsCreate</ref> </para></parameterdescription>
 </parameteritem>
 <parameteritem>
 <parameternamelist>
@@ -388,11 +388,11 @@
 </para>        </detaileddescription>
         <inbodydescription>
         </inbodydescription>
-        <location file="/Users/mob/git/ejs/doc/api/ejs/staging/src/include/ejs.h" line="2507"/>
+        <location file="/Users/mob/git/ejs/doc/api/ejs/staging/src/deps/ejs/ejs.h" line="2662"/>
       </memberdef>
-      <memberdef kind="function" id="group___ejs_error_1g8397057f54899e31de1e6a16a90888f5" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
-        <type>EjsObj *</type>
-        <definition>EjsObj* ejsThrowMemoryError</definition>
+      <memberdef kind="function" id="group___ejs_error_1ga9611ee0bc81d929be44d1789284107b6" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type>EjsError *EjsError EjsError *EjsError EjsError *EjsError EjsError *EjsError</type>
+        <definition>EjsError* EjsError EjsError* EjsError EjsError* EjsError EjsError* EjsError ejsThrowMemoryError</definition>
         <argsstring>(Ejs *ejs)</argsstring>
         <name>ejsThrowMemoryError</name>
         <param>
@@ -407,18 +407,18 @@
 <parametername>ejs</parametername>
 </parameternamelist>
 <parameterdescription>
-<para>Ejs reference returned from <ref refid="group___ejs_obj_1g50d9d774b3cddd1784d654326cddc237" kindref="member">ejsCreate</ref> </para></parameterdescription>
+<para>Ejs reference returned from <ref refid="group___ejs_1ga75cce70e794158ee54ddb800509060e0" kindref="member">ejsCreate</ref> </para></parameterdescription>
 </parameteritem>
 </parameterlist>
 </para>        </detaileddescription>
         <inbodydescription>
         </inbodydescription>
-        <location file="/Users/mob/git/ejs/doc/api/ejs/staging/src/include/ejs.h" line="2514"/>
+        <location file="/Users/mob/git/ejs/doc/api/ejs/staging/src/deps/ejs/ejs.h" line="2669"/>
       </memberdef>
-      <memberdef kind="function" id="group___ejs_error_1g0f340392e88ad2bd7fba1d8b4c5b8d1a" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
-        <type>EjsObj *</type>
-        <definition>EjsObj* ejsThrowOutOfBoundsError</definition>
-        <argsstring>(Ejs *ejs, cchar *fmt,...)</argsstring>
+      <memberdef kind="function" id="group___ejs_error_1ga1a51a3befec6c884c067728399463cbe" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type>EjsError *</type>
+        <definition>EjsError* ejsThrowOutOfBoundsError</definition>
+        <argsstring>(Ejs *ejs, cchar *fmt,...) PRINTF_ATTRIBUTE(2</argsstring>
         <name>ejsThrowOutOfBoundsError</name>
         <param>
           <type>Ejs *</type>
@@ -439,7 +439,7 @@
 <parametername>ejs</parametername>
 </parameternamelist>
 <parameterdescription>
-<para>Ejs reference returned from <ref refid="group___ejs_obj_1g50d9d774b3cddd1784d654326cddc237" kindref="member">ejsCreate</ref> </para></parameterdescription>
+<para>Ejs reference returned from <ref refid="group___ejs_1ga75cce70e794158ee54ddb800509060e0" kindref="member">ejsCreate</ref> </para></parameterdescription>
 </parameteritem>
 <parameteritem>
 <parameternamelist>
@@ -459,12 +459,12 @@
 </para>        </detaileddescription>
         <inbodydescription>
         </inbodydescription>
-        <location file="/Users/mob/git/ejs/doc/api/ejs/staging/src/include/ejs.h" line="2523"/>
+        <location file="/Users/mob/git/ejs/doc/api/ejs/staging/src/deps/ejs/ejs.h" line="2678"/>
       </memberdef>
-      <memberdef kind="function" id="group___ejs_error_1g5a7fcf0e6f50be3f9338a22b2de2ef4a" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
-        <type>EjsObj *</type>
-        <definition>EjsObj* ejsThrowReferenceError</definition>
-        <argsstring>(Ejs *ejs, cchar *fmt,...)</argsstring>
+      <memberdef kind="function" id="group___ejs_error_1gaf766ce8323c32846ba6db77d8886b12e" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type>EjsError *EjsError</type>
+        <definition>EjsError* EjsError ejsThrowReferenceError</definition>
+        <argsstring>(Ejs *ejs, cchar *fmt,...) PRINTF_ATTRIBUTE(2</argsstring>
         <name>ejsThrowReferenceError</name>
         <param>
           <type>Ejs *</type>
@@ -485,7 +485,7 @@
 <parametername>ejs</parametername>
 </parameternamelist>
 <parameterdescription>
-<para>Ejs reference returned from <ref refid="group___ejs_obj_1g50d9d774b3cddd1784d654326cddc237" kindref="member">ejsCreate</ref> </para></parameterdescription>
+<para>Ejs reference returned from <ref refid="group___ejs_1ga75cce70e794158ee54ddb800509060e0" kindref="member">ejsCreate</ref> </para></parameterdescription>
 </parameteritem>
 <parameteritem>
 <parameternamelist>
@@ -505,12 +505,12 @@
 </para>        </detaileddescription>
         <inbodydescription>
         </inbodydescription>
-        <location file="/Users/mob/git/ejs/doc/api/ejs/staging/src/include/ejs.h" line="2532"/>
+        <location file="/Users/mob/git/ejs/doc/api/ejs/staging/src/deps/ejs/ejs.h" line="2687"/>
       </memberdef>
-      <memberdef kind="function" id="group___ejs_error_1g89a1a9b3b3af372c438c1220c2af988e" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
-        <type>EjsObj *</type>
-        <definition>EjsObj* ejsThrowResourceError</definition>
-        <argsstring>(Ejs *ejs, cchar *fmt,...)</argsstring>
+      <memberdef kind="function" id="group___ejs_error_1ga308871f59c91b37928b0fdae707bff23" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type>EjsError *EjsError EjsError *</type>
+        <definition>EjsError* EjsError EjsError* ejsThrowResourceError</definition>
+        <argsstring>(Ejs *ejs, cchar *fmt,...) PRINTF_ATTRIBUTE(2</argsstring>
         <name>ejsThrowResourceError</name>
         <param>
           <type>Ejs *</type>
@@ -531,7 +531,7 @@
 <parametername>ejs</parametername>
 </parameternamelist>
 <parameterdescription>
-<para>Ejs reference returned from <ref refid="group___ejs_obj_1g50d9d774b3cddd1784d654326cddc237" kindref="member">ejsCreate</ref> </para></parameterdescription>
+<para>Ejs reference returned from <ref refid="group___ejs_1ga75cce70e794158ee54ddb800509060e0" kindref="member">ejsCreate</ref> </para></parameterdescription>
 </parameteritem>
 <parameteritem>
 <parameternamelist>
@@ -551,12 +551,12 @@
 </para>        </detaileddescription>
         <inbodydescription>
         </inbodydescription>
-        <location file="/Users/mob/git/ejs/doc/api/ejs/staging/src/include/ejs.h" line="2541"/>
+        <location file="/Users/mob/git/ejs/doc/api/ejs/staging/src/deps/ejs/ejs.h" line="2696"/>
       </memberdef>
-      <memberdef kind="function" id="group___ejs_error_1g0ce5ad97f148ce6e0ad50009d08dec23" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
-        <type>EjsObj *</type>
-        <definition>EjsObj* ejsThrowStateError</definition>
-        <argsstring>(Ejs *ejs, cchar *fmt,...)</argsstring>
+      <memberdef kind="function" id="group___ejs_error_1ga39348531a560fcff201be77dfadcfabb" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type>EjsError *EjsError EjsError *EjsError</type>
+        <definition>EjsError* EjsError EjsError* EjsError ejsThrowStateError</definition>
+        <argsstring>(Ejs *ejs, cchar *fmt,...) PRINTF_ATTRIBUTE(2</argsstring>
         <name>ejsThrowStateError</name>
         <param>
           <type>Ejs *</type>
@@ -577,7 +577,7 @@
 <parametername>ejs</parametername>
 </parameternamelist>
 <parameterdescription>
-<para>Ejs reference returned from <ref refid="group___ejs_obj_1g50d9d774b3cddd1784d654326cddc237" kindref="member">ejsCreate</ref> </para></parameterdescription>
+<para>Ejs reference returned from <ref refid="group___ejs_1ga75cce70e794158ee54ddb800509060e0" kindref="member">ejsCreate</ref> </para></parameterdescription>
 </parameteritem>
 <parameteritem>
 <parameternamelist>
@@ -597,11 +597,11 @@
 </para>        </detaileddescription>
         <inbodydescription>
         </inbodydescription>
-        <location file="/Users/mob/git/ejs/doc/api/ejs/staging/src/include/ejs.h" line="2550"/>
+        <location file="/Users/mob/git/ejs/doc/api/ejs/staging/src/deps/ejs/ejs.h" line="2705"/>
       </memberdef>
-      <memberdef kind="function" id="group___ejs_error_1g1e0a863535a31f998de69e7814136e52" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
-        <type>EjsObj *</type>
-        <definition>EjsObj* ejsThrowStopIteration</definition>
+      <memberdef kind="function" id="group___ejs_error_1gaff59b5d407a80d260d9ea280fedc55bb" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type>EjsError *EjsError EjsError *EjsError EjsObj *</type>
+        <definition>EjsError* EjsError EjsError* EjsError EjsObj* ejsThrowStopIteration</definition>
         <argsstring>(Ejs *ejs)</argsstring>
         <name>ejsThrowStopIteration</name>
         <param>
@@ -616,18 +616,18 @@
 <parametername>ejs</parametername>
 </parameternamelist>
 <parameterdescription>
-<para>Ejs reference returned from <ref refid="group___ejs_obj_1g50d9d774b3cddd1784d654326cddc237" kindref="member">ejsCreate</ref> </para></parameterdescription>
+<para>Ejs reference returned from <ref refid="group___ejs_1ga75cce70e794158ee54ddb800509060e0" kindref="member">ejsCreate</ref> </para></parameterdescription>
 </parameteritem>
 </parameterlist>
 </para>        </detaileddescription>
         <inbodydescription>
         </inbodydescription>
-        <location file="/Users/mob/git/ejs/doc/api/ejs/staging/src/include/ejs.h" line="2557"/>
+        <location file="/Users/mob/git/ejs/doc/api/ejs/staging/src/deps/ejs/ejs.h" line="2712"/>
       </memberdef>
-      <memberdef kind="function" id="group___ejs_error_1g53d90d6cf4328f62db3d8d27df4ee6d0" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
-        <type>EjsObj *</type>
-        <definition>EjsObj* ejsThrowSyntaxError</definition>
-        <argsstring>(Ejs *ejs, cchar *fmt,...)</argsstring>
+      <memberdef kind="function" id="group___ejs_error_1ga2ebaca9277f277e04a61f2623819ad11" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type>EjsError *</type>
+        <definition>EjsError* ejsThrowSyntaxError</definition>
+        <argsstring>(Ejs *ejs, cchar *fmt,...) PRINTF_ATTRIBUTE(2</argsstring>
         <name>ejsThrowSyntaxError</name>
         <param>
           <type>Ejs *</type>
@@ -648,7 +648,7 @@
 <parametername>ejs</parametername>
 </parameternamelist>
 <parameterdescription>
-<para>Ejs reference returned from <ref refid="group___ejs_obj_1g50d9d774b3cddd1784d654326cddc237" kindref="member">ejsCreate</ref> </para></parameterdescription>
+<para>Ejs reference returned from <ref refid="group___ejs_1ga75cce70e794158ee54ddb800509060e0" kindref="member">ejsCreate</ref> </para></parameterdescription>
 </parameteritem>
 <parameteritem>
 <parameternamelist>
@@ -668,12 +668,12 @@
 </para>        </detaileddescription>
         <inbodydescription>
         </inbodydescription>
-        <location file="/Users/mob/git/ejs/doc/api/ejs/staging/src/include/ejs.h" line="2566"/>
+        <location file="/Users/mob/git/ejs/doc/api/ejs/staging/src/deps/ejs/ejs.h" line="2721"/>
       </memberdef>
-      <memberdef kind="function" id="group___ejs_error_1g2e69a566496d92803f39017fb9cba1d7" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
-        <type>EjsObj *</type>
-        <definition>EjsObj* ejsThrowTypeError</definition>
-        <argsstring>(Ejs *ejs, cchar *fmt,...)</argsstring>
+      <memberdef kind="function" id="group___ejs_error_1ga16b33ab7ad04447ccbcaa45b11a80270" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type>EjsError *EjsError</type>
+        <definition>EjsError* EjsError ejsThrowTypeError</definition>
+        <argsstring>(Ejs *ejs, cchar *fmt,...) PRINTF_ATTRIBUTE(2</argsstring>
         <name>ejsThrowTypeError</name>
         <param>
           <type>Ejs *</type>
@@ -694,7 +694,7 @@
 <parametername>ejs</parametername>
 </parameternamelist>
 <parameterdescription>
-<para>Ejs reference returned from <ref refid="group___ejs_obj_1g50d9d774b3cddd1784d654326cddc237" kindref="member">ejsCreate</ref> </para></parameterdescription>
+<para>Ejs reference returned from <ref refid="group___ejs_1ga75cce70e794158ee54ddb800509060e0" kindref="member">ejsCreate</ref> </para></parameterdescription>
 </parameteritem>
 <parameteritem>
 <parameternamelist>
@@ -714,7 +714,7 @@
 </para>        </detaileddescription>
         <inbodydescription>
         </inbodydescription>
-        <location file="/Users/mob/git/ejs/doc/api/ejs/staging/src/include/ejs.h" line="2575"/>
+        <location file="/Users/mob/git/ejs/doc/api/ejs/staging/src/deps/ejs/ejs.h" line="2730"/>
       </memberdef>
       </sectiondef>
     <briefdescription>

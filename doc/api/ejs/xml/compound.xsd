@@ -59,7 +59,7 @@
     <xsd:attribute name="ambiguityscope" type="xsd:string" />
   </xsd:complexType>
 
-  <xsd:complexType name="compoundRefType" mixed="true">
+  <xsd:complexType name="compoundRefType">
     <xsd:simpleContent>
       <xsd:extension base="xsd:string">
         <xsd:attribute name="refid" type="xsd:string" use="optional" />
@@ -69,7 +69,7 @@
     </xsd:simpleContent>
   </xsd:complexType>
 
-  <xsd:complexType name="reimplementType" mixed="true">
+  <xsd:complexType name="reimplementType">
     <xsd:simpleContent>
       <xsd:extension base="xsd:string">
         <xsd:attribute name="refid" type="xsd:string" />
@@ -77,7 +77,7 @@
     </xsd:simpleContent>
   </xsd:complexType>
 
-  <xsd:complexType name="incType" mixed="true">
+  <xsd:complexType name="incType">
     <xsd:simpleContent>
       <xsd:extension base="xsd:string">
         <xsd:attribute name="refid" type="xsd:string" />
@@ -86,7 +86,7 @@
     </xsd:simpleContent>
   </xsd:complexType>
 
-  <xsd:complexType name="refType" mixed="true">
+  <xsd:complexType name="refType">
     <xsd:simpleContent>
       <xsd:extension base="xsd:string">
         <xsd:attribute name="refid" type="xsd:string" />
@@ -95,12 +95,13 @@
     </xsd:simpleContent>
   </xsd:complexType>
 
-  <xsd:complexType name="refTextType" mixed="true">
+  <xsd:complexType name="refTextType">
     <xsd:simpleContent>
       <xsd:extension base="xsd:string">
        <xsd:attribute name="refid" type="xsd:string" />
        <xsd:attribute name="kindref" type="DoxRefKind" />
-       <xsd:attribute name="external" type="xsd:string" />
+       <xsd:attribute name="external" type="xsd:string" use="optional"/>
+       <xsd:attribute name="tooltip" type="xsd:string" use="optional"/>
       </xsd:extension>
     </xsd:simpleContent>
   </xsd:complexType>
@@ -163,6 +164,11 @@
     <xsd:attribute name="add" type="DoxBool" use="optional"/>
     <xsd:attribute name="remove" type="DoxBool" use="optional"/>
     <xsd:attribute name="raise" type="DoxBool" use="optional"/>
+    <!-- Objective-C 2.0 protocol method -->
+    <xsd:attribute name="optional" type="DoxBool" use="optional"/>
+    <xsd:attribute name="required" type="DoxBool" use="optional"/>
+    <!-- Objective-C 2.0 property accessor -->
+    <xsd:attribute name="accessor" type="DoxAccessor" use="optional"/>
   </xsd:complexType>
 
   <xsd:complexType name="descriptionType" mixed="true">
@@ -459,7 +465,10 @@
   <xsd:complexType name="docSimpleSectType">
     <xsd:sequence>
       <xsd:element name="title" type="docTitleType" minOccurs="0" />
-      <xsd:element name="para" type="docParaType" minOccurs="0" maxOccurs="unbounded" />
+      <xsd:sequence minOccurs="0" maxOccurs="unbounded">
+        <xsd:element name="para" type="docParaType" minOccurs="1" maxOccurs="unbounded" />
+        <xsd:element name="simplesectsep" type="docEmptyType" minOccurs="0"/>
+      </xsd:sequence>
     </xsd:sequence>
     <xsd:attribute name="kind" type="DoxSimpleSectKind" />
   </xsd:complexType>
@@ -568,7 +577,14 @@
 
   <xsd:complexType name="docParamNameList">
     <xsd:sequence>
+      <xsd:element name="parametertype" type="docParamType" minOccurs="0" maxOccurs="unbounded" />
       <xsd:element name="parametername" type="docParamName" minOccurs="0" maxOccurs="unbounded" />
+    </xsd:sequence>
+  </xsd:complexType>
+
+  <xsd:complexType name="docParamType" mixed="true">
+    <xsd:sequence>
+      <xsd:element name="ref" type="refTextType" minOccurs="0" maxOccurs="1" />
     </xsd:sequence>
   </xsd:complexType>
 
@@ -790,6 +806,14 @@
       <xsd:enumeration value="in"/>
       <xsd:enumeration value="out"/>
       <xsd:enumeration value="inout"/>
+    </xsd:restriction>
+  </xsd:simpleType>
+
+  <xsd:simpleType name="DoxAccessor">
+    <xsd:restriction base="xsd:string">
+      <xsd:enumeration value="retain"/>
+      <xsd:enumeration value="copy"/>
+      <xsd:enumeration value="assign"/>
     </xsd:restriction>
   </xsd:simpleType>
 

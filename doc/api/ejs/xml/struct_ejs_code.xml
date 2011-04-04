@@ -1,13 +1,13 @@
 <?xml version='1.0' encoding='UTF-8' standalone='no'?>
-<doxygen xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="compound.xsd" version="1.5.8">
+<doxygen xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="compound.xsd" version="1.7.3">
   <compounddef id="struct_ejs_code" kind="struct" prot="public">
     <compoundname>EjsCode</compoundname>
     <includes refid="ejs_8h" local="no">ejs.h</includes>
       <sectiondef kind="public-attrib">
-      <memberdef kind="variable" id="struct_ejs_code_140d6a7a1679bbb1befa8bc5eefa0bad8" prot="public" static="no" mutable="no">
-        <type>uchar *</type>
-        <definition>uchar* EjsCode::byteCode</definition>
-        <argsstring></argsstring>
+      <memberdef kind="variable" id="struct_ejs_code_1a412b7978db7263929ea3a0a744a576bf" prot="public" static="no" mutable="no">
+        <type>uchar</type>
+        <definition>uchar EjsCode::byteCode[0]</definition>
+        <argsstring>[0]</argsstring>
         <name>byteCode</name>
         <briefdescription>
 <para>Byte code. </para>        </briefdescription>
@@ -15,9 +15,9 @@
         </detaileddescription>
         <inbodydescription>
         </inbodydescription>
-        <location file="/Users/mob/git/ejs/doc/api/ejs/staging/src/include/ejs.h" line="1918" bodyfile="/Users/mob/git/ejs/doc/api/ejs/staging/src/include/ejs.h" bodystart="1918" bodyend="-1"/>
+        <location file="/Users/mob/git/ejs/doc/api/ejs/staging/src/deps/ejs/ejs.h" line="2153" bodyfile="/Users/mob/git/ejs/doc/api/ejs/staging/src/deps/ejs/ejs.h" bodystart="2153" bodyend="-1"/>
       </memberdef>
-      <memberdef kind="variable" id="struct_ejs_code_1b09c2c01aaed134f977f5b6441038936" prot="public" static="no" mutable="no">
+      <memberdef kind="variable" id="struct_ejs_code_1ab09c2c01aaed134f977f5b6441038936" prot="public" static="no" mutable="no">
         <type>int</type>
         <definition>int EjsCode::codeLen</definition>
         <argsstring></argsstring>
@@ -28,24 +28,37 @@
         </detaileddescription>
         <inbodydescription>
         </inbodydescription>
-        <location file="/Users/mob/git/ejs/doc/api/ejs/staging/src/include/ejs.h" line="1919" bodyfile="/Users/mob/git/ejs/doc/api/ejs/staging/src/include/ejs.h" bodystart="1919" bodyend="-1"/>
+        <location file="/Users/mob/git/ejs/doc/api/ejs/staging/src/deps/ejs/ejs.h" line="2149" bodyfile="/Users/mob/git/ejs/doc/api/ejs/staging/src/deps/ejs/ejs.h" bodystart="2149" bodyend="-1"/>
       </memberdef>
-      <memberdef kind="variable" id="struct_ejs_code_1c7d843374ff7e8431f3a833b0554c6d4" prot="public" static="no" mutable="no">
-        <type>struct EjsConst *</type>
-        <definition>struct EjsConst* EjsCode::constants</definition>
+      <memberdef kind="variable" id="struct_ejs_code_1a0499bc157c232a63c793ceba988e42ba" prot="public" static="no" mutable="no">
+        <type>EjsDebug *</type>
+        <definition>EjsDebug* EjsCode::debug</definition>
         <argsstring></argsstring>
-        <name>constants</name>
+        <name>debug</name>
         <briefdescription>
-<para>Constant pool. </para>        </briefdescription>
+<para>Source code debug information. </para>        </briefdescription>
         <detaileddescription>
-<para>Reference to module constant pool </para>        </detaileddescription>
+        </detaileddescription>
         <inbodydescription>
         </inbodydescription>
-        <location file="/Users/mob/git/ejs/doc/api/ejs/staging/src/include/ejs.h" line="1920" bodyfile="/Users/mob/git/ejs/doc/api/ejs/staging/src/include/ejs.h" bodystart="1920" bodyend="-1"/>
+        <location file="/Users/mob/git/ejs/doc/api/ejs/staging/src/deps/ejs/ejs.h" line="2147" bodyfile="/Users/mob/git/ejs/doc/api/ejs/staging/src/deps/ejs/ejs.h" bodystart="2147" bodyend="-1"/>
       </memberdef>
-      <memberdef kind="variable" id="struct_ejs_code_1cfc7f15ba5b176c8d31770d7f55467e1" prot="public" static="no" mutable="no">
-        <type>struct <ref refid="struct_ejs_ex" kindref="compound">EjsEx</ref> **</type>
-        <definition>struct EjsEx** EjsCode::handlers</definition>
+      <memberdef kind="variable" id="struct_ejs_code_1a53c3d15c89c16de4f4efd647ab9c95d6" prot="public" static="no" mutable="no">
+        <type>int</type>
+        <definition>int EjsCode::debugOffset</definition>
+        <argsstring></argsstring>
+        <name>debugOffset</name>
+        <briefdescription>
+<para>Offset in mod file for debug info. </para>        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/Users/mob/git/ejs/doc/api/ejs/staging/src/deps/ejs/ejs.h" line="2150" bodyfile="/Users/mob/git/ejs/doc/api/ejs/staging/src/deps/ejs/ejs.h" bodystart="2150" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="variable" id="struct_ejs_code_1a0dff046874256ed80599abc8323147ec" prot="public" static="no" mutable="no">
+        <type><ref refid="struct_ejs_ex" kindref="compound">EjsEx</ref> **</type>
+        <definition>EjsEx** EjsCode::handlers</definition>
         <argsstring></argsstring>
         <name>handlers</name>
         <briefdescription>
@@ -54,9 +67,35 @@
         </detaileddescription>
         <inbodydescription>
         </inbodydescription>
-        <location file="/Users/mob/git/ejs/doc/api/ejs/staging/src/include/ejs.h" line="1923" bodyfile="/Users/mob/git/ejs/doc/api/ejs/staging/src/include/ejs.h" bodystart="1923" bodyend="-1"/>
+        <location file="/Users/mob/git/ejs/doc/api/ejs/staging/src/deps/ejs/ejs.h" line="2148" bodyfile="/Users/mob/git/ejs/doc/api/ejs/staging/src/deps/ejs/ejs.h" bodystart="2148" bodyend="-1"/>
       </memberdef>
-      <memberdef kind="variable" id="struct_ejs_code_12b0bd63868d71736e564ff6f7978b379" prot="public" static="no" mutable="no">
+      <memberdef kind="variable" id="struct_ejs_code_1ad25f2d63e6424b52b04aecc57cfed1d5" prot="public" static="no" mutable="no">
+        <type>int</type>
+        <definition>int EjsCode::magic</definition>
+        <argsstring></argsstring>
+        <name>magic</name>
+        <briefdescription>
+<para>Debug magic id. </para>        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/Users/mob/git/ejs/doc/api/ejs/staging/src/deps/ejs/ejs.h" line="2145" bodyfile="/Users/mob/git/ejs/doc/api/ejs/staging/src/deps/ejs/ejs.h" bodystart="2145" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="variable" id="struct_ejs_code_1a18ac841b351fc008398aadc10d374d92" prot="public" static="no" mutable="no">
+        <type>struct EjsModule *</type>
+        <definition>struct EjsModule* EjsCode::module</definition>
+        <argsstring></argsstring>
+        <name>module</name>
+        <briefdescription>
+<para>Module owning this function. </para>        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/Users/mob/git/ejs/doc/api/ejs/staging/src/deps/ejs/ejs.h" line="2146" bodyfile="/Users/mob/git/ejs/doc/api/ejs/staging/src/deps/ejs/ejs.h" bodystart="2146" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="variable" id="struct_ejs_code_1a2b0bd63868d71736e564ff6f7978b379" prot="public" static="no" mutable="no">
         <type>int</type>
         <definition>int EjsCode::numHandlers</definition>
         <argsstring></argsstring>
@@ -67,9 +106,9 @@
         </detaileddescription>
         <inbodydescription>
         </inbodydescription>
-        <location file="/Users/mob/git/ejs/doc/api/ejs/staging/src/include/ejs.h" line="1921" bodyfile="/Users/mob/git/ejs/doc/api/ejs/staging/src/include/ejs.h" bodystart="1921" bodyend="-1"/>
+        <location file="/Users/mob/git/ejs/doc/api/ejs/staging/src/deps/ejs/ejs.h" line="2151" bodyfile="/Users/mob/git/ejs/doc/api/ejs/staging/src/deps/ejs/ejs.h" bodystart="2151" bodyend="-1"/>
       </memberdef>
-      <memberdef kind="variable" id="struct_ejs_code_142462a42fdd5fcc595f79d706b087167" prot="public" static="no" mutable="no">
+      <memberdef kind="variable" id="struct_ejs_code_1a42462a42fdd5fcc595f79d706b087167" prot="public" static="no" mutable="no">
         <type>int</type>
         <definition>int EjsCode::sizeHandlers</definition>
         <argsstring></argsstring>
@@ -80,7 +119,7 @@
         </detaileddescription>
         <inbodydescription>
         </inbodydescription>
-        <location file="/Users/mob/git/ejs/doc/api/ejs/staging/src/include/ejs.h" line="1922" bodyfile="/Users/mob/git/ejs/doc/api/ejs/staging/src/include/ejs.h" bodystart="1922" bodyend="-1"/>
+        <location file="/Users/mob/git/ejs/doc/api/ejs/staging/src/deps/ejs/ejs.h" line="2152" bodyfile="/Users/mob/git/ejs/doc/api/ejs/staging/src/deps/ejs/ejs.h" bodystart="2152" bodyend="-1"/>
       </memberdef>
       </sectiondef>
     <briefdescription>
@@ -89,26 +128,29 @@
 <para><simplesect kind="par"><title><bold>Description</bold>:</title><para>This structure describes a sequence of byte code for a function. It also defines a set of execption handlers pertaining to this byte code. </para></simplesect>
 </para>    </detaileddescription>
     <collaborationgraph>
-      <node id="44">
+      <node id="45">
         <label>EjsEx</label>
         <link refid="struct_ejs_ex"/>
       </node>
-      <node id="43">
+      <node id="44">
         <label>EjsCode</label>
         <link refid="struct_ejs_code"/>
-        <childnode refid="44" relation="usage">
+        <childnode refid="45" relation="usage">
           <edgelabel>handlers</edgelabel>
         </childnode>
       </node>
     </collaborationgraph>
-    <location file="/Users/mob/git/ejs/doc/api/ejs/staging/src/include/ejs.h" line="1917" bodyfile="/Users/mob/git/ejs/doc/api/ejs/staging/src/include/ejs.h" bodystart="1917" bodyend="1924"/>
+    <location file="/Users/mob/git/ejs/doc/api/ejs/staging/src/deps/ejs/ejs.h" line="2144" bodyfile="/Users/mob/git/ejs/doc/api/ejs/staging/src/deps/ejs/ejs.h" bodystart="2144" bodyend="2154"/>
     <listofallmembers>
-      <member refid="struct_ejs_code_140d6a7a1679bbb1befa8bc5eefa0bad8" prot="public" virt="non-virtual"><scope>EjsCode</scope><name>byteCode</name></member>
-      <member refid="struct_ejs_code_1b09c2c01aaed134f977f5b6441038936" prot="public" virt="non-virtual"><scope>EjsCode</scope><name>codeLen</name></member>
-      <member refid="struct_ejs_code_1c7d843374ff7e8431f3a833b0554c6d4" prot="public" virt="non-virtual"><scope>EjsCode</scope><name>constants</name></member>
-      <member refid="struct_ejs_code_1cfc7f15ba5b176c8d31770d7f55467e1" prot="public" virt="non-virtual"><scope>EjsCode</scope><name>handlers</name></member>
-      <member refid="struct_ejs_code_12b0bd63868d71736e564ff6f7978b379" prot="public" virt="non-virtual"><scope>EjsCode</scope><name>numHandlers</name></member>
-      <member refid="struct_ejs_code_142462a42fdd5fcc595f79d706b087167" prot="public" virt="non-virtual"><scope>EjsCode</scope><name>sizeHandlers</name></member>
+      <member refid="struct_ejs_code_1a412b7978db7263929ea3a0a744a576bf" prot="public" virt="non-virtual"><scope>EjsCode</scope><name>byteCode</name></member>
+      <member refid="struct_ejs_code_1ab09c2c01aaed134f977f5b6441038936" prot="public" virt="non-virtual"><scope>EjsCode</scope><name>codeLen</name></member>
+      <member refid="struct_ejs_code_1a0499bc157c232a63c793ceba988e42ba" prot="public" virt="non-virtual"><scope>EjsCode</scope><name>debug</name></member>
+      <member refid="struct_ejs_code_1a53c3d15c89c16de4f4efd647ab9c95d6" prot="public" virt="non-virtual"><scope>EjsCode</scope><name>debugOffset</name></member>
+      <member refid="struct_ejs_code_1a0dff046874256ed80599abc8323147ec" prot="public" virt="non-virtual"><scope>EjsCode</scope><name>handlers</name></member>
+      <member refid="struct_ejs_code_1ad25f2d63e6424b52b04aecc57cfed1d5" prot="public" virt="non-virtual"><scope>EjsCode</scope><name>magic</name></member>
+      <member refid="struct_ejs_code_1a18ac841b351fc008398aadc10d374d92" prot="public" virt="non-virtual"><scope>EjsCode</scope><name>module</name></member>
+      <member refid="struct_ejs_code_1a2b0bd63868d71736e564ff6f7978b379" prot="public" virt="non-virtual"><scope>EjsCode</scope><name>numHandlers</name></member>
+      <member refid="struct_ejs_code_1a42462a42fdd5fcc595f79d706b087167" prot="public" virt="non-virtual"><scope>EjsCode</scope><name>sizeHandlers</name></member>
     </listofallmembers>
   </compounddef>
 </doxygen>

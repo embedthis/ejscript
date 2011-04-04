@@ -1,9 +1,9 @@
 <?xml version='1.0' encoding='UTF-8' standalone='no'?>
-<doxygen xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="compound.xsd" version="1.5.8">
+<doxygen xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="compound.xsd" version="1.7.3">
   <compounddef id="struct_ejs_byte_array" kind="struct" prot="public">
     <compoundname>EjsByteArray</compoundname>
       <sectiondef kind="public-attrib">
-      <memberdef kind="variable" id="struct_ejs_byte_array_19e272123e0724a7c5e5942199ff14799" prot="public" static="no" mutable="no">
+      <memberdef kind="variable" id="struct_ejs_byte_array_1a9e272123e0724a7c5e5942199ff14799" prot="public" static="no" mutable="no">
         <type>int</type>
         <definition>int EjsByteArray::async</definition>
         <argsstring></argsstring>
@@ -14,9 +14,9 @@
         </detaileddescription>
         <inbodydescription>
         </inbodydescription>
-        <location file="/Users/mob/git/ejs/doc/api/ejs/staging/src/include/ejs.h" line="2282" bodyfile="/Users/mob/git/ejs/doc/api/ejs/staging/src/include/ejs.h" bodystart="2282" bodyend="-1"/>
+        <location file="/Users/mob/git/ejs/doc/api/ejs/staging/src/deps/ejs/ejs.h" line="2447" bodyfile="/Users/mob/git/ejs/doc/api/ejs/staging/src/deps/ejs/ejs.h" bodystart="2447" bodyend="-1"/>
       </memberdef>
-      <memberdef kind="variable" id="struct_ejs_byte_array_12726b5683842d750c82be0d73f0033ad" prot="public" static="no" mutable="no">
+      <memberdef kind="variable" id="struct_ejs_byte_array_1a2726b5683842d750c82be0d73f0033ad" prot="public" static="no" mutable="no">
         <type>EjsObj *</type>
         <definition>EjsObj* EjsByteArray::emitter</definition>
         <argsstring></argsstring>
@@ -27,9 +27,9 @@
         </detaileddescription>
         <inbodydescription>
         </inbodydescription>
-        <location file="/Users/mob/git/ejs/doc/api/ejs/staging/src/include/ejs.h" line="2280" bodyfile="/Users/mob/git/ejs/doc/api/ejs/staging/src/include/ejs.h" bodystart="2280" bodyend="-1"/>
+        <location file="/Users/mob/git/ejs/doc/api/ejs/staging/src/deps/ejs/ejs.h" line="2445" bodyfile="/Users/mob/git/ejs/doc/api/ejs/staging/src/deps/ejs/ejs.h" bodystart="2445" bodyend="-1"/>
       </memberdef>
-      <memberdef kind="variable" id="struct_ejs_byte_array_173264bfd149b2ecf99d9e9de34f67b01" prot="public" static="no" mutable="no">
+      <memberdef kind="variable" id="struct_ejs_byte_array_1a73264bfd149b2ecf99d9e9de34f67b01" prot="public" static="no" mutable="no">
         <type>int</type>
         <definition>int EjsByteArray::endian</definition>
         <argsstring></argsstring>
@@ -40,22 +40,9 @@
         </detaileddescription>
         <inbodydescription>
         </inbodydescription>
-        <location file="/Users/mob/git/ejs/doc/api/ejs/staging/src/include/ejs.h" line="2283" bodyfile="/Users/mob/git/ejs/doc/api/ejs/staging/src/include/ejs.h" bodystart="2283" bodyend="-1"/>
+        <location file="/Users/mob/git/ejs/doc/api/ejs/staging/src/deps/ejs/ejs.h" line="2448" bodyfile="/Users/mob/git/ejs/doc/api/ejs/staging/src/deps/ejs/ejs.h" bodystart="2448" bodyend="-1"/>
       </memberdef>
-      <memberdef kind="variable" id="struct_ejs_byte_array_1d0666c26ea644d492784ce29ed378d45" prot="public" static="no" mutable="no">
-        <type>bool</type>
-        <definition>bool EjsByteArray::growable</definition>
-        <argsstring></argsstring>
-        <name>growable</name>
-        <briefdescription>
-<para>Aray is growable. </para>        </briefdescription>
-        <detaileddescription>
-        </detaileddescription>
-        <inbodydescription>
-        </inbodydescription>
-        <location file="/Users/mob/git/ejs/doc/api/ejs/staging/src/include/ejs.h" line="2289" bodyfile="/Users/mob/git/ejs/doc/api/ejs/staging/src/include/ejs.h" bodystart="2289" bodyend="-1"/>
-      </memberdef>
-      <memberdef kind="variable" id="struct_ejs_byte_array_1ad2577f9623ff202c87d3c54c0c45a7c" prot="public" static="no" mutable="no">
+      <memberdef kind="variable" id="struct_ejs_byte_array_1aad2577f9623ff202c87d3c54c0c45a7c" prot="public" static="no" mutable="no">
         <type>int</type>
         <definition>int EjsByteArray::growInc</definition>
         <argsstring></argsstring>
@@ -66,11 +53,11 @@
         </detaileddescription>
         <inbodydescription>
         </inbodydescription>
-        <location file="/Users/mob/git/ejs/doc/api/ejs/staging/src/include/ejs.h" line="2285" bodyfile="/Users/mob/git/ejs/doc/api/ejs/staging/src/include/ejs.h" bodystart="2285" bodyend="-1"/>
+        <location file="/Users/mob/git/ejs/doc/api/ejs/staging/src/deps/ejs/ejs.h" line="2449" bodyfile="/Users/mob/git/ejs/doc/api/ejs/staging/src/deps/ejs/ejs.h" bodystart="2449" bodyend="-1"/>
       </memberdef>
-      <memberdef kind="variable" id="struct_ejs_byte_array_135df4a3bf416977a78906833935874d0" prot="public" static="no" mutable="no">
-        <type>int</type>
-        <definition>int EjsByteArray::length</definition>
+      <memberdef kind="variable" id="struct_ejs_byte_array_1a485788e27f81456bf4a56933f6bc5e28" prot="public" static="no" mutable="no">
+        <type>ssize</type>
+        <definition>ssize EjsByteArray::length</definition>
         <argsstring></argsstring>
         <name>length</name>
         <briefdescription>
@@ -79,37 +66,24 @@
         </detaileddescription>
         <inbodydescription>
         </inbodydescription>
-        <location file="/Users/mob/git/ejs/doc/api/ejs/staging/src/include/ejs.h" line="2284" bodyfile="/Users/mob/git/ejs/doc/api/ejs/staging/src/include/ejs.h" bodystart="2284" bodyend="-1"/>
+        <location file="/Users/mob/git/ejs/doc/api/ejs/staging/src/deps/ejs/ejs.h" line="2450" bodyfile="/Users/mob/git/ejs/doc/api/ejs/staging/src/deps/ejs/ejs.h" bodystart="2450" bodyend="-1"/>
       </memberdef>
-      <memberdef kind="variable" id="struct_ejs_byte_array_1fbcbdf8ca36b06823b224c05e9a583a0" prot="public" static="no" mutable="no">
-        <type>EjsObj *</type>
-        <definition>EjsObj* EjsByteArray::listeners</definition>
-        <argsstring></argsstring>
-        <name>listeners</name>
-        <briefdescription>
-<para>Event listeners in async mode. </para>        </briefdescription>
-        <detaileddescription>
-        </detaileddescription>
-        <inbodydescription>
-        </inbodydescription>
-        <location file="/Users/mob/git/ejs/doc/api/ejs/staging/src/include/ejs.h" line="2290" bodyfile="/Users/mob/git/ejs/doc/api/ejs/staging/src/include/ejs.h" bodystart="2290" bodyend="-1"/>
-      </memberdef>
-      <memberdef kind="variable" id="struct_ejs_byte_array_1f0b20276855492554558fb5175e63363" prot="public" static="no" mutable="no">
+      <memberdef kind="variable" id="struct_ejs_byte_array_1af0b20276855492554558fb5175e63363" prot="public" static="no" mutable="no">
         <type>EjsObj</type>
         <definition>EjsObj EjsByteArray::obj</definition>
         <argsstring></argsstring>
         <name>obj</name>
         <briefdescription>
-<para>Extends Object - Property storage (not used). </para>        </briefdescription>
+<para>Base object. </para>        </briefdescription>
         <detaileddescription>
         </detaileddescription>
         <inbodydescription>
         </inbodydescription>
-        <location file="/Users/mob/git/ejs/doc/api/ejs/staging/src/include/ejs.h" line="2279" bodyfile="/Users/mob/git/ejs/doc/api/ejs/staging/src/include/ejs.h" bodystart="2279" bodyend="-1"/>
+        <location file="/Users/mob/git/ejs/doc/api/ejs/staging/src/deps/ejs/ejs.h" line="2444" bodyfile="/Users/mob/git/ejs/doc/api/ejs/staging/src/deps/ejs/ejs.h" bodystart="2444" bodyend="-1"/>
       </memberdef>
-      <memberdef kind="variable" id="struct_ejs_byte_array_1aa06c82f020a92e05b8d91bf6c0154f7" prot="public" static="no" mutable="no">
-        <type>int</type>
-        <definition>int EjsByteArray::readPosition</definition>
+      <memberdef kind="variable" id="struct_ejs_byte_array_1a56f8fb8a8ac1b7289f74106a08b3a764" prot="public" static="no" mutable="no">
+        <type>ssize</type>
+        <definition>ssize EjsByteArray::readPosition</definition>
         <argsstring></argsstring>
         <name>readPosition</name>
         <briefdescription>
@@ -118,9 +92,22 @@
         </detaileddescription>
         <inbodydescription>
         </inbodydescription>
-        <location file="/Users/mob/git/ejs/doc/api/ejs/staging/src/include/ejs.h" line="2287" bodyfile="/Users/mob/git/ejs/doc/api/ejs/staging/src/include/ejs.h" bodystart="2287" bodyend="-1"/>
+        <location file="/Users/mob/git/ejs/doc/api/ejs/staging/src/deps/ejs/ejs.h" line="2451" bodyfile="/Users/mob/git/ejs/doc/api/ejs/staging/src/deps/ejs/ejs.h" bodystart="2451" bodyend="-1"/>
       </memberdef>
-      <memberdef kind="variable" id="struct_ejs_byte_array_1e7888d719484c26bac5f66ab57210748" prot="public" static="no" mutable="no">
+      <memberdef kind="variable" id="struct_ejs_byte_array_1ab3d7941fab93b1fb6f260fa069ceac40" prot="public" static="no" mutable="no">
+        <type>bool</type>
+        <definition>bool EjsByteArray::resizable</definition>
+        <argsstring></argsstring>
+        <name>resizable</name>
+        <briefdescription>
+<para>Aray is resizable. </para>        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/Users/mob/git/ejs/doc/api/ejs/staging/src/deps/ejs/ejs.h" line="2454" bodyfile="/Users/mob/git/ejs/doc/api/ejs/staging/src/deps/ejs/ejs.h" bodystart="2454" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="variable" id="struct_ejs_byte_array_1ae7888d719484c26bac5f66ab57210748" prot="public" static="no" mutable="no">
         <type>int</type>
         <definition>int EjsByteArray::swap</definition>
         <argsstring></argsstring>
@@ -131,9 +118,9 @@
         </detaileddescription>
         <inbodydescription>
         </inbodydescription>
-        <location file="/Users/mob/git/ejs/doc/api/ejs/staging/src/include/ejs.h" line="2286" bodyfile="/Users/mob/git/ejs/doc/api/ejs/staging/src/include/ejs.h" bodystart="2286" bodyend="-1"/>
+        <location file="/Users/mob/git/ejs/doc/api/ejs/staging/src/deps/ejs/ejs.h" line="2453" bodyfile="/Users/mob/git/ejs/doc/api/ejs/staging/src/deps/ejs/ejs.h" bodystart="2453" bodyend="-1"/>
       </memberdef>
-      <memberdef kind="variable" id="struct_ejs_byte_array_1ca374103530189fe5409dafca458bebd" prot="public" static="no" mutable="no">
+      <memberdef kind="variable" id="struct_ejs_byte_array_1aca374103530189fe5409dafca458bebd" prot="public" static="no" mutable="no">
         <type>uchar *</type>
         <definition>uchar* EjsByteArray::value</definition>
         <argsstring></argsstring>
@@ -144,11 +131,11 @@
         </detaileddescription>
         <inbodydescription>
         </inbodydescription>
-        <location file="/Users/mob/git/ejs/doc/api/ejs/staging/src/include/ejs.h" line="2281" bodyfile="/Users/mob/git/ejs/doc/api/ejs/staging/src/include/ejs.h" bodystart="2281" bodyend="-1"/>
+        <location file="/Users/mob/git/ejs/doc/api/ejs/staging/src/deps/ejs/ejs.h" line="2446" bodyfile="/Users/mob/git/ejs/doc/api/ejs/staging/src/deps/ejs/ejs.h" bodystart="2446" bodyend="-1"/>
       </memberdef>
-      <memberdef kind="variable" id="struct_ejs_byte_array_1df7060fd4fccee16f7da447fb07cf5cb" prot="public" static="no" mutable="no">
-        <type>int</type>
-        <definition>int EjsByteArray::writePosition</definition>
+      <memberdef kind="variable" id="struct_ejs_byte_array_1aa9b98d6be5df75df51d5dbbca57bb3c4" prot="public" static="no" mutable="no">
+        <type>ssize</type>
+        <definition>ssize EjsByteArray::writePosition</definition>
         <argsstring></argsstring>
         <name>writePosition</name>
         <briefdescription>
@@ -157,27 +144,26 @@
         </detaileddescription>
         <inbodydescription>
         </inbodydescription>
-        <location file="/Users/mob/git/ejs/doc/api/ejs/staging/src/include/ejs.h" line="2288" bodyfile="/Users/mob/git/ejs/doc/api/ejs/staging/src/include/ejs.h" bodystart="2288" bodyend="-1"/>
+        <location file="/Users/mob/git/ejs/doc/api/ejs/staging/src/deps/ejs/ejs.h" line="2452" bodyfile="/Users/mob/git/ejs/doc/api/ejs/staging/src/deps/ejs/ejs.h" bodystart="2452" bodyend="-1"/>
       </memberdef>
       </sectiondef>
     <briefdescription>
     </briefdescription>
     <detaileddescription>
     </detaileddescription>
-    <location file="/Users/mob/git/ejs/doc/api/ejs/staging/src/include/ejs.h" line="2278" bodyfile="/Users/mob/git/ejs/doc/api/ejs/staging/src/include/ejs.h" bodystart="2278" bodyend="2291"/>
+    <location file="/Users/mob/git/ejs/doc/api/ejs/staging/src/deps/ejs/ejs.h" line="2443" bodyfile="/Users/mob/git/ejs/doc/api/ejs/staging/src/deps/ejs/ejs.h" bodystart="2443" bodyend="2458"/>
     <listofallmembers>
-      <member refid="struct_ejs_byte_array_19e272123e0724a7c5e5942199ff14799" prot="public" virt="non-virtual"><scope>EjsByteArray</scope><name>async</name></member>
-      <member refid="struct_ejs_byte_array_12726b5683842d750c82be0d73f0033ad" prot="public" virt="non-virtual"><scope>EjsByteArray</scope><name>emitter</name></member>
-      <member refid="struct_ejs_byte_array_173264bfd149b2ecf99d9e9de34f67b01" prot="public" virt="non-virtual"><scope>EjsByteArray</scope><name>endian</name></member>
-      <member refid="struct_ejs_byte_array_1d0666c26ea644d492784ce29ed378d45" prot="public" virt="non-virtual"><scope>EjsByteArray</scope><name>growable</name></member>
-      <member refid="struct_ejs_byte_array_1ad2577f9623ff202c87d3c54c0c45a7c" prot="public" virt="non-virtual"><scope>EjsByteArray</scope><name>growInc</name></member>
-      <member refid="struct_ejs_byte_array_135df4a3bf416977a78906833935874d0" prot="public" virt="non-virtual"><scope>EjsByteArray</scope><name>length</name></member>
-      <member refid="struct_ejs_byte_array_1fbcbdf8ca36b06823b224c05e9a583a0" prot="public" virt="non-virtual"><scope>EjsByteArray</scope><name>listeners</name></member>
-      <member refid="struct_ejs_byte_array_1f0b20276855492554558fb5175e63363" prot="public" virt="non-virtual"><scope>EjsByteArray</scope><name>obj</name></member>
-      <member refid="struct_ejs_byte_array_1aa06c82f020a92e05b8d91bf6c0154f7" prot="public" virt="non-virtual"><scope>EjsByteArray</scope><name>readPosition</name></member>
-      <member refid="struct_ejs_byte_array_1e7888d719484c26bac5f66ab57210748" prot="public" virt="non-virtual"><scope>EjsByteArray</scope><name>swap</name></member>
-      <member refid="struct_ejs_byte_array_1ca374103530189fe5409dafca458bebd" prot="public" virt="non-virtual"><scope>EjsByteArray</scope><name>value</name></member>
-      <member refid="struct_ejs_byte_array_1df7060fd4fccee16f7da447fb07cf5cb" prot="public" virt="non-virtual"><scope>EjsByteArray</scope><name>writePosition</name></member>
+      <member refid="struct_ejs_byte_array_1a9e272123e0724a7c5e5942199ff14799" prot="public" virt="non-virtual"><scope>EjsByteArray</scope><name>async</name></member>
+      <member refid="struct_ejs_byte_array_1a2726b5683842d750c82be0d73f0033ad" prot="public" virt="non-virtual"><scope>EjsByteArray</scope><name>emitter</name></member>
+      <member refid="struct_ejs_byte_array_1a73264bfd149b2ecf99d9e9de34f67b01" prot="public" virt="non-virtual"><scope>EjsByteArray</scope><name>endian</name></member>
+      <member refid="struct_ejs_byte_array_1aad2577f9623ff202c87d3c54c0c45a7c" prot="public" virt="non-virtual"><scope>EjsByteArray</scope><name>growInc</name></member>
+      <member refid="struct_ejs_byte_array_1a485788e27f81456bf4a56933f6bc5e28" prot="public" virt="non-virtual"><scope>EjsByteArray</scope><name>length</name></member>
+      <member refid="struct_ejs_byte_array_1af0b20276855492554558fb5175e63363" prot="public" virt="non-virtual"><scope>EjsByteArray</scope><name>obj</name></member>
+      <member refid="struct_ejs_byte_array_1a56f8fb8a8ac1b7289f74106a08b3a764" prot="public" virt="non-virtual"><scope>EjsByteArray</scope><name>readPosition</name></member>
+      <member refid="struct_ejs_byte_array_1ab3d7941fab93b1fb6f260fa069ceac40" prot="public" virt="non-virtual"><scope>EjsByteArray</scope><name>resizable</name></member>
+      <member refid="struct_ejs_byte_array_1ae7888d719484c26bac5f66ab57210748" prot="public" virt="non-virtual"><scope>EjsByteArray</scope><name>swap</name></member>
+      <member refid="struct_ejs_byte_array_1aca374103530189fe5409dafca458bebd" prot="public" virt="non-virtual"><scope>EjsByteArray</scope><name>value</name></member>
+      <member refid="struct_ejs_byte_array_1aa9b98d6be5df75df51d5dbbca57bb3c4" prot="public" virt="non-virtual"><scope>EjsByteArray</scope><name>writePosition</name></member>
     </listofallmembers>
   </compounddef>
 </doxygen>

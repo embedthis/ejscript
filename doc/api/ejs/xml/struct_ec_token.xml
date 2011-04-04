@@ -1,35 +1,9 @@
 <?xml version='1.0' encoding='UTF-8' standalone='no'?>
-<doxygen xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="compound.xsd" version="1.5.8">
+<doxygen xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="compound.xsd" version="1.7.3">
   <compounddef id="struct_ec_token" kind="struct" prot="public">
     <compoundname>EcToken</compoundname>
       <sectiondef kind="public-attrib">
-      <memberdef kind="variable" id="struct_ec_token_1bce6f56d89a583deeb6ac1b1c8fbd46f" prot="public" static="no" mutable="no">
-        <type>int</type>
-        <definition>int EcToken::column</definition>
-        <argsstring></argsstring>
-        <name>column</name>
-        <briefdescription>
-        </briefdescription>
-        <detaileddescription>
-        </detaileddescription>
-        <inbodydescription>
-        </inbodydescription>
-        <location file="/Users/mob/git/ejs/doc/api/ejs/staging/src/include/ejs.h" line="5479" bodyfile="/Users/mob/git/ejs/doc/api/ejs/staging/src/include/ejs.h" bodystart="5479" bodyend="-1"/>
-      </memberdef>
-      <memberdef kind="variable" id="struct_ec_token_1075e1051d7d06625bdef34e4f6578b36" prot="public" static="no" mutable="no">
-        <type>char *</type>
-        <definition>char* EcToken::currentLine</definition>
-        <argsstring></argsstring>
-        <name>currentLine</name>
-        <briefdescription>
-        </briefdescription>
-        <detaileddescription>
-        </detaileddescription>
-        <inbodydescription>
-        </inbodydescription>
-        <location file="/Users/mob/git/ejs/doc/api/ejs/staging/src/include/ejs.h" line="5477" bodyfile="/Users/mob/git/ejs/doc/api/ejs/staging/src/include/ejs.h" bodystart="5477" bodyend="-1"/>
-      </memberdef>
-      <memberdef kind="variable" id="struct_ec_token_14a678f2401b78188136877b50bedeae0" prot="public" static="no" mutable="no">
+      <memberdef kind="variable" id="struct_ec_token_1a4a678f2401b78188136877b50bedeae0" prot="public" static="no" mutable="no">
         <type>int</type>
         <definition>int EcToken::eol</definition>
         <argsstring></argsstring>
@@ -40,22 +14,9 @@
         </detaileddescription>
         <inbodydescription>
         </inbodydescription>
-        <location file="/Users/mob/git/ejs/doc/api/ejs/staging/src/include/ejs.h" line="5480" bodyfile="/Users/mob/git/ejs/doc/api/ejs/staging/src/include/ejs.h" bodystart="5480" bodyend="-1"/>
+        <location file="/Users/mob/git/ejs/doc/api/ejs/staging/src/deps/ejs/ejs.h" line="5079" bodyfile="/Users/mob/git/ejs/doc/api/ejs/staging/src/deps/ejs/ejs.h" bodystart="5079" bodyend="-1"/>
       </memberdef>
-      <memberdef kind="variable" id="struct_ec_token_1a205389eb5ffc6879127b46d68050ee1" prot="public" static="no" mutable="no">
-        <type>char *</type>
-        <definition>char* EcToken::filename</definition>
-        <argsstring></argsstring>
-        <name>filename</name>
-        <briefdescription>
-        </briefdescription>
-        <detaileddescription>
-        </detaileddescription>
-        <inbodydescription>
-        </inbodydescription>
-        <location file="/Users/mob/git/ejs/doc/api/ejs/staging/src/include/ejs.h" line="5476" bodyfile="/Users/mob/git/ejs/doc/api/ejs/staging/src/include/ejs.h" bodystart="5476" bodyend="-1"/>
-      </memberdef>
-      <memberdef kind="variable" id="struct_ec_token_106b2dca1c4ba95cf15162c8bb19e675d" prot="public" static="no" mutable="no">
+      <memberdef kind="variable" id="struct_ec_token_1a06b2dca1c4ba95cf15162c8bb19e675d" prot="public" static="no" mutable="no">
         <type>int</type>
         <definition>int EcToken::groupMask</definition>
         <argsstring></argsstring>
@@ -66,22 +27,35 @@
         </detaileddescription>
         <inbodydescription>
         </inbodydescription>
-        <location file="/Users/mob/git/ejs/doc/api/ejs/staging/src/include/ejs.h" line="5467" bodyfile="/Users/mob/git/ejs/doc/api/ejs/staging/src/include/ejs.h" bodystart="5467" bodyend="-1"/>
+        <location file="/Users/mob/git/ejs/doc/api/ejs/staging/src/deps/ejs/ejs.h" line="5078" bodyfile="/Users/mob/git/ejs/doc/api/ejs/staging/src/deps/ejs/ejs.h" bodystart="5078" bodyend="-1"/>
       </memberdef>
-      <memberdef kind="variable" id="struct_ec_token_11b1447db2e728342da4ad6645f1e7b80" prot="public" static="no" mutable="no">
+      <memberdef kind="variable" id="struct_ec_token_1a2958a1ad8290ea72917dc55e15acd4c0" prot="public" static="no" mutable="no">
         <type>int</type>
-        <definition>int EcToken::lineNumber</definition>
+        <definition>int EcToken::length</definition>
         <argsstring></argsstring>
-        <name>lineNumber</name>
+        <name>length</name>
         <briefdescription>
         </briefdescription>
         <detaileddescription>
         </detaileddescription>
         <inbodydescription>
         </inbodydescription>
-        <location file="/Users/mob/git/ejs/doc/api/ejs/staging/src/include/ejs.h" line="5478" bodyfile="/Users/mob/git/ejs/doc/api/ejs/staging/src/include/ejs.h" bodystart="5478" bodyend="-1"/>
+        <location file="/Users/mob/git/ejs/doc/api/ejs/staging/src/deps/ejs/ejs.h" line="5074" bodyfile="/Users/mob/git/ejs/doc/api/ejs/staging/src/deps/ejs/ejs.h" bodystart="5074" bodyend="-1"/>
       </memberdef>
-      <memberdef kind="variable" id="struct_ec_token_1e36b7670e2db5c8c8282d9506c6b7fad" prot="public" static="no" mutable="no">
+      <memberdef kind="variable" id="struct_ec_token_1a9cfdfe6a3290f7fc5f9e0d4dec5b4b58" prot="public" static="no" mutable="no">
+        <type>EcLocation</type>
+        <definition>EcLocation EcToken::loc</definition>
+        <argsstring></argsstring>
+        <name>loc</name>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/Users/mob/git/ejs/doc/api/ejs/staging/src/deps/ejs/ejs.h" line="5080" bodyfile="/Users/mob/git/ejs/doc/api/ejs/staging/src/deps/ejs/ejs.h" bodystart="5080" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="variable" id="struct_ec_token_1ae36b7670e2db5c8c8282d9506c6b7fad" prot="public" static="no" mutable="no">
         <type>struct EcToken *</type>
         <definition>struct EcToken* EcToken::next</definition>
         <argsstring></argsstring>
@@ -92,22 +66,22 @@
         </detaileddescription>
         <inbodydescription>
         </inbodydescription>
-        <location file="/Users/mob/git/ejs/doc/api/ejs/staging/src/include/ejs.h" line="5483" bodyfile="/Users/mob/git/ejs/doc/api/ejs/staging/src/include/ejs.h" bodystart="5483" bodyend="-1"/>
+        <location file="/Users/mob/git/ejs/doc/api/ejs/staging/src/deps/ejs/ejs.h" line="5081" bodyfile="/Users/mob/git/ejs/doc/api/ejs/staging/src/deps/ejs/ejs.h" bodystart="5081" bodyend="-1"/>
       </memberdef>
-      <memberdef kind="variable" id="struct_ec_token_160dfe78af3694700f9230e340d001cc5" prot="public" static="no" mutable="no">
-        <type>EjsObj *</type>
-        <definition>EjsObj* EcToken::number</definition>
+      <memberdef kind="variable" id="struct_ec_token_1ad6b8dd955fb4aa932b325653c4851a91" prot="public" static="no" mutable="no">
+        <type>int</type>
+        <definition>int EcToken::size</definition>
         <argsstring></argsstring>
-        <name>number</name>
+        <name>size</name>
         <briefdescription>
         </briefdescription>
         <detaileddescription>
         </detaileddescription>
         <inbodydescription>
         </inbodydescription>
-        <location file="/Users/mob/git/ejs/doc/api/ejs/staging/src/include/ejs.h" line="5474" bodyfile="/Users/mob/git/ejs/doc/api/ejs/staging/src/include/ejs.h" bodystart="5474" bodyend="-1"/>
+        <location file="/Users/mob/git/ejs/doc/api/ejs/staging/src/deps/ejs/ejs.h" line="5075" bodyfile="/Users/mob/git/ejs/doc/api/ejs/staging/src/deps/ejs/ejs.h" bodystart="5075" bodyend="-1"/>
       </memberdef>
-      <memberdef kind="variable" id="struct_ec_token_10e1b0e055078671323244cd640122c94" prot="public" static="no" mutable="no">
+      <memberdef kind="variable" id="struct_ec_token_1a0e1b0e055078671323244cd640122c94" prot="public" static="no" mutable="no">
         <type>EcStream *</type>
         <definition>EcStream* EcToken::stream</definition>
         <argsstring></argsstring>
@@ -118,9 +92,9 @@
         </detaileddescription>
         <inbodydescription>
         </inbodydescription>
-        <location file="/Users/mob/git/ejs/doc/api/ejs/staging/src/include/ejs.h" line="5482" bodyfile="/Users/mob/git/ejs/doc/api/ejs/staging/src/include/ejs.h" bodystart="5482" bodyend="-1"/>
+        <location file="/Users/mob/git/ejs/doc/api/ejs/staging/src/deps/ejs/ejs.h" line="5082" bodyfile="/Users/mob/git/ejs/doc/api/ejs/staging/src/deps/ejs/ejs.h" bodystart="5082" bodyend="-1"/>
       </memberdef>
-      <memberdef kind="variable" id="struct_ec_token_1ec36d3954faf0f13f374bbb6cf237cf7" prot="public" static="no" mutable="no">
+      <memberdef kind="variable" id="struct_ec_token_1aec36d3954faf0f13f374bbb6cf237cf7" prot="public" static="no" mutable="no">
         <type>int</type>
         <definition>int EcToken::subId</definition>
         <argsstring></argsstring>
@@ -131,11 +105,11 @@
         </detaileddescription>
         <inbodydescription>
         </inbodydescription>
-        <location file="/Users/mob/git/ejs/doc/api/ejs/staging/src/include/ejs.h" line="5466" bodyfile="/Users/mob/git/ejs/doc/api/ejs/staging/src/include/ejs.h" bodystart="5466" bodyend="-1"/>
+        <location file="/Users/mob/git/ejs/doc/api/ejs/staging/src/deps/ejs/ejs.h" line="5077" bodyfile="/Users/mob/git/ejs/doc/api/ejs/staging/src/deps/ejs/ejs.h" bodystart="5077" bodyend="-1"/>
       </memberdef>
-      <memberdef kind="variable" id="struct_ec_token_1ae85c38142b3cc83b19ff76d54b85e8e" prot="public" static="no" mutable="no">
-        <type>uchar *</type>
-        <definition>uchar* EcToken::text</definition>
+      <memberdef kind="variable" id="struct_ec_token_1a73cd26e449ca04f54d7826a27e9c93ab" prot="public" static="no" mutable="no">
+        <type>MprChar *</type>
+        <definition>MprChar* EcToken::text</definition>
         <argsstring></argsstring>
         <name>text</name>
         <briefdescription>
@@ -144,35 +118,9 @@
         </detaileddescription>
         <inbodydescription>
         </inbodydescription>
-        <location file="/Users/mob/git/ejs/doc/api/ejs/staging/src/include/ejs.h" line="5470" bodyfile="/Users/mob/git/ejs/doc/api/ejs/staging/src/include/ejs.h" bodystart="5470" bodyend="-1"/>
+        <location file="/Users/mob/git/ejs/doc/api/ejs/staging/src/deps/ejs/ejs.h" line="5073" bodyfile="/Users/mob/git/ejs/doc/api/ejs/staging/src/deps/ejs/ejs.h" bodystart="5073" bodyend="-1"/>
       </memberdef>
-      <memberdef kind="variable" id="struct_ec_token_13ebbf7d7edf71ab5887d0ab734d9395b" prot="public" static="no" mutable="no">
-        <type>int</type>
-        <definition>int EcToken::textBufSize</definition>
-        <argsstring></argsstring>
-        <name>textBufSize</name>
-        <briefdescription>
-        </briefdescription>
-        <detaileddescription>
-        </detaileddescription>
-        <inbodydescription>
-        </inbodydescription>
-        <location file="/Users/mob/git/ejs/doc/api/ejs/staging/src/include/ejs.h" line="5472" bodyfile="/Users/mob/git/ejs/doc/api/ejs/staging/src/include/ejs.h" bodystart="5472" bodyend="-1"/>
-      </memberdef>
-      <memberdef kind="variable" id="struct_ec_token_12de17464a5e7e94ac8dd3289937dbe7c" prot="public" static="no" mutable="no">
-        <type>int</type>
-        <definition>int EcToken::textLen</definition>
-        <argsstring></argsstring>
-        <name>textLen</name>
-        <briefdescription>
-        </briefdescription>
-        <detaileddescription>
-        </detaileddescription>
-        <inbodydescription>
-        </inbodydescription>
-        <location file="/Users/mob/git/ejs/doc/api/ejs/staging/src/include/ejs.h" line="5471" bodyfile="/Users/mob/git/ejs/doc/api/ejs/staging/src/include/ejs.h" bodystart="5471" bodyend="-1"/>
-      </memberdef>
-      <memberdef kind="variable" id="struct_ec_token_1bb5990f4f7d8d459cf85217aae4896e7" prot="public" static="no" mutable="no">
+      <memberdef kind="variable" id="struct_ec_token_1abb5990f4f7d8d459cf85217aae4896e7" prot="public" static="no" mutable="no">
         <type>int</type>
         <definition>int EcToken::tokenId</definition>
         <argsstring></argsstring>
@@ -183,29 +131,25 @@
         </detaileddescription>
         <inbodydescription>
         </inbodydescription>
-        <location file="/Users/mob/git/ejs/doc/api/ejs/staging/src/include/ejs.h" line="5465" bodyfile="/Users/mob/git/ejs/doc/api/ejs/staging/src/include/ejs.h" bodystart="5465" bodyend="-1"/>
+        <location file="/Users/mob/git/ejs/doc/api/ejs/staging/src/deps/ejs/ejs.h" line="5076" bodyfile="/Users/mob/git/ejs/doc/api/ejs/staging/src/deps/ejs/ejs.h" bodystart="5076" bodyend="-1"/>
       </memberdef>
       </sectiondef>
     <briefdescription>
     </briefdescription>
     <detaileddescription>
     </detaileddescription>
-    <location file="/Users/mob/git/ejs/doc/api/ejs/staging/src/include/ejs.h" line="5464" bodyfile="/Users/mob/git/ejs/doc/api/ejs/staging/src/include/ejs.h" bodystart="5464" bodyend="5484"/>
+    <location file="/Users/mob/git/ejs/doc/api/ejs/staging/src/deps/ejs/ejs.h" line="5072" bodyfile="/Users/mob/git/ejs/doc/api/ejs/staging/src/deps/ejs/ejs.h" bodystart="5072" bodyend="5086"/>
     <listofallmembers>
-      <member refid="struct_ec_token_1bce6f56d89a583deeb6ac1b1c8fbd46f" prot="public" virt="non-virtual"><scope>EcToken</scope><name>column</name></member>
-      <member refid="struct_ec_token_1075e1051d7d06625bdef34e4f6578b36" prot="public" virt="non-virtual"><scope>EcToken</scope><name>currentLine</name></member>
-      <member refid="struct_ec_token_14a678f2401b78188136877b50bedeae0" prot="public" virt="non-virtual"><scope>EcToken</scope><name>eol</name></member>
-      <member refid="struct_ec_token_1a205389eb5ffc6879127b46d68050ee1" prot="public" virt="non-virtual"><scope>EcToken</scope><name>filename</name></member>
-      <member refid="struct_ec_token_106b2dca1c4ba95cf15162c8bb19e675d" prot="public" virt="non-virtual"><scope>EcToken</scope><name>groupMask</name></member>
-      <member refid="struct_ec_token_11b1447db2e728342da4ad6645f1e7b80" prot="public" virt="non-virtual"><scope>EcToken</scope><name>lineNumber</name></member>
-      <member refid="struct_ec_token_1e36b7670e2db5c8c8282d9506c6b7fad" prot="public" virt="non-virtual"><scope>EcToken</scope><name>next</name></member>
-      <member refid="struct_ec_token_160dfe78af3694700f9230e340d001cc5" prot="public" virt="non-virtual"><scope>EcToken</scope><name>number</name></member>
-      <member refid="struct_ec_token_10e1b0e055078671323244cd640122c94" prot="public" virt="non-virtual"><scope>EcToken</scope><name>stream</name></member>
-      <member refid="struct_ec_token_1ec36d3954faf0f13f374bbb6cf237cf7" prot="public" virt="non-virtual"><scope>EcToken</scope><name>subId</name></member>
-      <member refid="struct_ec_token_1ae85c38142b3cc83b19ff76d54b85e8e" prot="public" virt="non-virtual"><scope>EcToken</scope><name>text</name></member>
-      <member refid="struct_ec_token_13ebbf7d7edf71ab5887d0ab734d9395b" prot="public" virt="non-virtual"><scope>EcToken</scope><name>textBufSize</name></member>
-      <member refid="struct_ec_token_12de17464a5e7e94ac8dd3289937dbe7c" prot="public" virt="non-virtual"><scope>EcToken</scope><name>textLen</name></member>
-      <member refid="struct_ec_token_1bb5990f4f7d8d459cf85217aae4896e7" prot="public" virt="non-virtual"><scope>EcToken</scope><name>tokenId</name></member>
+      <member refid="struct_ec_token_1a4a678f2401b78188136877b50bedeae0" prot="public" virt="non-virtual"><scope>EcToken</scope><name>eol</name></member>
+      <member refid="struct_ec_token_1a06b2dca1c4ba95cf15162c8bb19e675d" prot="public" virt="non-virtual"><scope>EcToken</scope><name>groupMask</name></member>
+      <member refid="struct_ec_token_1a2958a1ad8290ea72917dc55e15acd4c0" prot="public" virt="non-virtual"><scope>EcToken</scope><name>length</name></member>
+      <member refid="struct_ec_token_1a9cfdfe6a3290f7fc5f9e0d4dec5b4b58" prot="public" virt="non-virtual"><scope>EcToken</scope><name>loc</name></member>
+      <member refid="struct_ec_token_1ae36b7670e2db5c8c8282d9506c6b7fad" prot="public" virt="non-virtual"><scope>EcToken</scope><name>next</name></member>
+      <member refid="struct_ec_token_1ad6b8dd955fb4aa932b325653c4851a91" prot="public" virt="non-virtual"><scope>EcToken</scope><name>size</name></member>
+      <member refid="struct_ec_token_1a0e1b0e055078671323244cd640122c94" prot="public" virt="non-virtual"><scope>EcToken</scope><name>stream</name></member>
+      <member refid="struct_ec_token_1aec36d3954faf0f13f374bbb6cf237cf7" prot="public" virt="non-virtual"><scope>EcToken</scope><name>subId</name></member>
+      <member refid="struct_ec_token_1a73cd26e449ca04f54d7826a27e9c93ab" prot="public" virt="non-virtual"><scope>EcToken</scope><name>text</name></member>
+      <member refid="struct_ec_token_1abb5990f4f7d8d459cf85217aae4896e7" prot="public" virt="non-virtual"><scope>EcToken</scope><name>tokenId</name></member>
     </listofallmembers>
   </compounddef>
 </doxygen>

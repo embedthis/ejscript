@@ -345,6 +345,9 @@ module ejs {
             }
         }
 
+        /**
+            Redirect the Application's logger based on an update App.config.log setting
+         */
         static function updateLog(): Void {
             let log = config.log
             if (log && log.enable) {

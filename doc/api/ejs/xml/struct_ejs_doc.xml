@@ -1,11 +1,11 @@
 <?xml version='1.0' encoding='UTF-8' standalone='no'?>
-<doxygen xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="compound.xsd" version="1.5.8">
+<doxygen xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="compound.xsd" version="1.7.3">
   <compounddef id="struct_ejs_doc" kind="struct" prot="public">
     <compoundname>EjsDoc</compoundname>
       <sectiondef kind="public-attrib">
-      <memberdef kind="variable" id="struct_ejs_doc_106f17999b969709a1ca3f73ad0c9bb22" prot="public" static="no" mutable="no">
-        <type>char *</type>
-        <definition>char* EjsDoc::brief</definition>
+      <memberdef kind="variable" id="struct_ejs_doc_1a5a0288218d63f2ddde1391275c8763a1" prot="public" static="no" mutable="no">
+        <type>MprChar *</type>
+        <definition>MprChar* EjsDoc::brief</definition>
         <argsstring></argsstring>
         <name>brief</name>
         <briefdescription>
@@ -14,9 +14,9 @@
         </detaileddescription>
         <inbodydescription>
         </inbodydescription>
-        <location file="/Users/mob/git/ejs/doc/api/ejs/staging/src/include/ejs.h" line="4295" bodyfile="/Users/mob/git/ejs/doc/api/ejs/staging/src/include/ejs.h" bodystart="4295" bodyend="-1"/>
+        <location file="/Users/mob/git/ejs/doc/api/ejs/staging/src/deps/ejs/ejs.h" line="4093" bodyfile="/Users/mob/git/ejs/doc/api/ejs/staging/src/deps/ejs/ejs.h" bodystart="4093" bodyend="-1"/>
       </memberdef>
-      <memberdef kind="variable" id="struct_ejs_doc_11e9311651d90b22e2898594d21763583" prot="public" static="no" mutable="no">
+      <memberdef kind="variable" id="struct_ejs_doc_1a1e9311651d90b22e2898594d21763583" prot="public" static="no" mutable="no">
         <type>int</type>
         <definition>int EjsDoc::cracked</definition>
         <argsstring></argsstring>
@@ -27,9 +27,9 @@
         </detaileddescription>
         <inbodydescription>
         </inbodydescription>
-        <location file="/Users/mob/git/ejs/doc/api/ejs/staging/src/include/ejs.h" line="4304" bodyfile="/Users/mob/git/ejs/doc/api/ejs/staging/src/include/ejs.h" bodystart="4304" bodyend="-1"/>
+        <location file="/Users/mob/git/ejs/doc/api/ejs/staging/src/deps/ejs/ejs.h" line="4110" bodyfile="/Users/mob/git/ejs/doc/api/ejs/staging/src/deps/ejs/ejs.h" bodystart="4110" bodyend="-1"/>
       </memberdef>
-      <memberdef kind="variable" id="struct_ejs_doc_1f933327a5a0ad33c684a740d9c451a9f" prot="public" static="no" mutable="no">
+      <memberdef kind="variable" id="struct_ejs_doc_1af933327a5a0ad33c684a740d9c451a9f" prot="public" static="no" mutable="no">
         <type>MprList *</type>
         <definition>MprList* EjsDoc::defaults</definition>
         <argsstring></argsstring>
@@ -40,9 +40,9 @@
         </detaileddescription>
         <inbodydescription>
         </inbodydescription>
-        <location file="/Users/mob/git/ejs/doc/api/ejs/staging/src/include/ejs.h" line="4308" bodyfile="/Users/mob/git/ejs/doc/api/ejs/staging/src/include/ejs.h" bodystart="4308" bodyend="-1"/>
+        <location file="/Users/mob/git/ejs/doc/api/ejs/staging/src/deps/ejs/ejs.h" line="4101" bodyfile="/Users/mob/git/ejs/doc/api/ejs/staging/src/deps/ejs/ejs.h" bodystart="4101" bodyend="-1"/>
       </memberdef>
-      <memberdef kind="variable" id="struct_ejs_doc_17171627fa5c2426070005c7ac0de2876" prot="public" static="no" mutable="no">
+      <memberdef kind="variable" id="struct_ejs_doc_1a7171627fa5c2426070005c7ac0de2876" prot="public" static="no" mutable="no">
         <type>int</type>
         <definition>int EjsDoc::deprecated</definition>
         <argsstring></argsstring>
@@ -53,11 +53,11 @@
         </detaileddescription>
         <inbodydescription>
         </inbodydescription>
-        <location file="/Users/mob/git/ejs/doc/api/ejs/staging/src/include/ejs.h" line="4302" bodyfile="/Users/mob/git/ejs/doc/api/ejs/staging/src/include/ejs.h" bodystart="4302" bodyend="-1"/>
+        <location file="/Users/mob/git/ejs/doc/api/ejs/staging/src/deps/ejs/ejs.h" line="4108" bodyfile="/Users/mob/git/ejs/doc/api/ejs/staging/src/deps/ejs/ejs.h" bodystart="4108" bodyend="-1"/>
       </memberdef>
-      <memberdef kind="variable" id="struct_ejs_doc_1a807ae5dcfd0f4332453402844422cef" prot="public" static="no" mutable="no">
-        <type>char *</type>
-        <definition>char* EjsDoc::description</definition>
+      <memberdef kind="variable" id="struct_ejs_doc_1a20b1d05ae450c931d8161f0202f1c9cf" prot="public" static="no" mutable="no">
+        <type>MprChar *</type>
+        <definition>MprChar* EjsDoc::description</definition>
         <argsstring></argsstring>
         <name>description</name>
         <briefdescription>
@@ -66,11 +66,11 @@
         </detaileddescription>
         <inbodydescription>
         </inbodydescription>
-        <location file="/Users/mob/git/ejs/doc/api/ejs/staging/src/include/ejs.h" line="4296" bodyfile="/Users/mob/git/ejs/doc/api/ejs/staging/src/include/ejs.h" bodystart="4296" bodyend="-1"/>
+        <location file="/Users/mob/git/ejs/doc/api/ejs/staging/src/deps/ejs/ejs.h" line="4094" bodyfile="/Users/mob/git/ejs/doc/api/ejs/staging/src/deps/ejs/ejs.h" bodystart="4094" bodyend="-1"/>
       </memberdef>
-      <memberdef kind="variable" id="struct_ejs_doc_17e412930e644cecebbf2c6038532fd55" prot="public" static="no" mutable="no">
-        <type>char *</type>
-        <definition>char* EjsDoc::docString</definition>
+      <memberdef kind="variable" id="struct_ejs_doc_1a4a146d5d86917f045c06b20e02893ebe" prot="public" static="no" mutable="no">
+        <type>EjsString *</type>
+        <definition>EjsString* EjsDoc::docString</definition>
         <argsstring></argsstring>
         <name>docString</name>
         <briefdescription>
@@ -79,9 +79,9 @@
         </detaileddescription>
         <inbodydescription>
         </inbodydescription>
-        <location file="/Users/mob/git/ejs/doc/api/ejs/staging/src/include/ejs.h" line="4294" bodyfile="/Users/mob/git/ejs/doc/api/ejs/staging/src/include/ejs.h" bodystart="4294" bodyend="-1"/>
+        <location file="/Users/mob/git/ejs/doc/api/ejs/staging/src/deps/ejs/ejs.h" line="4092" bodyfile="/Users/mob/git/ejs/doc/api/ejs/staging/src/deps/ejs/ejs.h" bodystart="4092" bodyend="-1"/>
       </memberdef>
-      <memberdef kind="variable" id="struct_ejs_doc_1734f92694712c0f65bf6e19aaf4a8847" prot="public" static="no" mutable="no">
+      <memberdef kind="variable" id="struct_ejs_doc_1a734f92694712c0f65bf6e19aaf4a8847" prot="public" static="no" mutable="no">
         <type>struct EjsDoc *</type>
         <definition>struct EjsDoc* EjsDoc::duplicate</definition>
         <argsstring></argsstring>
@@ -92,9 +92,9 @@
         </detaileddescription>
         <inbodydescription>
         </inbodydescription>
-        <location file="/Users/mob/git/ejs/doc/api/ejs/staging/src/include/ejs.h" line="4306" bodyfile="/Users/mob/git/ejs/doc/api/ejs/staging/src/include/ejs.h" bodystart="4306" bodyend="-1"/>
+        <location file="/Users/mob/git/ejs/doc/api/ejs/staging/src/deps/ejs/ejs.h" line="4100" bodyfile="/Users/mob/git/ejs/doc/api/ejs/staging/src/deps/ejs/ejs.h" bodystart="4100" bodyend="-1"/>
       </memberdef>
-      <memberdef kind="variable" id="struct_ejs_doc_19024df9edbcbe976d02d814082c47d7d" prot="public" static="no" mutable="no">
+      <memberdef kind="variable" id="struct_ejs_doc_1a9024df9edbcbe976d02d814082c47d7d" prot="public" static="no" mutable="no">
         <type>MprList *</type>
         <definition>MprList* EjsDoc::events</definition>
         <argsstring></argsstring>
@@ -105,11 +105,11 @@
         </detaileddescription>
         <inbodydescription>
         </inbodydescription>
-        <location file="/Users/mob/git/ejs/doc/api/ejs/staging/src/include/ejs.h" line="4311" bodyfile="/Users/mob/git/ejs/doc/api/ejs/staging/src/include/ejs.h" bodystart="4311" bodyend="-1"/>
+        <location file="/Users/mob/git/ejs/doc/api/ejs/staging/src/deps/ejs/ejs.h" line="4104" bodyfile="/Users/mob/git/ejs/doc/api/ejs/staging/src/deps/ejs/ejs.h" bodystart="4104" bodyend="-1"/>
       </memberdef>
-      <memberdef kind="variable" id="struct_ejs_doc_12c802411e6dbc75e727ce1fbaf99d2bd" prot="public" static="no" mutable="no">
-        <type>char *</type>
-        <definition>char* EjsDoc::example</definition>
+      <memberdef kind="variable" id="struct_ejs_doc_1a84b337279d268d646fa26d5a5de9d0cb" prot="public" static="no" mutable="no">
+        <type>MprChar *</type>
+        <definition>MprChar* EjsDoc::example</definition>
         <argsstring></argsstring>
         <name>example</name>
         <briefdescription>
@@ -118,9 +118,9 @@
         </detaileddescription>
         <inbodydescription>
         </inbodydescription>
-        <location file="/Users/mob/git/ejs/doc/api/ejs/staging/src/include/ejs.h" line="4297" bodyfile="/Users/mob/git/ejs/doc/api/ejs/staging/src/include/ejs.h" bodystart="4297" bodyend="-1"/>
+        <location file="/Users/mob/git/ejs/doc/api/ejs/staging/src/deps/ejs/ejs.h" line="4095" bodyfile="/Users/mob/git/ejs/doc/api/ejs/staging/src/deps/ejs/ejs.h" bodystart="4095" bodyend="-1"/>
       </memberdef>
-      <memberdef kind="variable" id="struct_ejs_doc_120584a48112f6327ed668e55342f4ad6" prot="public" static="no" mutable="no">
+      <memberdef kind="variable" id="struct_ejs_doc_1a20584a48112f6327ed668e55342f4ad6" prot="public" static="no" mutable="no">
         <type>int</type>
         <definition>int EjsDoc::hide</definition>
         <argsstring></argsstring>
@@ -131,9 +131,9 @@
         </detaileddescription>
         <inbodydescription>
         </inbodydescription>
-        <location file="/Users/mob/git/ejs/doc/api/ejs/staging/src/include/ejs.h" line="4303" bodyfile="/Users/mob/git/ejs/doc/api/ejs/staging/src/include/ejs.h" bodystart="4303" bodyend="-1"/>
+        <location file="/Users/mob/git/ejs/doc/api/ejs/staging/src/deps/ejs/ejs.h" line="4109" bodyfile="/Users/mob/git/ejs/doc/api/ejs/staging/src/deps/ejs/ejs.h" bodystart="4109" bodyend="-1"/>
       </memberdef>
-      <memberdef kind="variable" id="struct_ejs_doc_17b0c88e9accc4c7802361e64bb0dfe3a" prot="public" static="no" mutable="no">
+      <memberdef kind="variable" id="struct_ejs_doc_1a7b0c88e9accc4c7802361e64bb0dfe3a" prot="public" static="no" mutable="no">
         <type>MprList *</type>
         <definition>MprList* EjsDoc::options</definition>
         <argsstring></argsstring>
@@ -144,9 +144,9 @@
         </detaileddescription>
         <inbodydescription>
         </inbodydescription>
-        <location file="/Users/mob/git/ejs/doc/api/ejs/staging/src/include/ejs.h" line="4310" bodyfile="/Users/mob/git/ejs/doc/api/ejs/staging/src/include/ejs.h" bodystart="4310" bodyend="-1"/>
+        <location file="/Users/mob/git/ejs/doc/api/ejs/staging/src/deps/ejs/ejs.h" line="4103" bodyfile="/Users/mob/git/ejs/doc/api/ejs/staging/src/deps/ejs/ejs.h" bodystart="4103" bodyend="-1"/>
       </memberdef>
-      <memberdef kind="variable" id="struct_ejs_doc_1f636bb80468c57c164b76e29259abe2f" prot="public" static="no" mutable="no">
+      <memberdef kind="variable" id="struct_ejs_doc_1af636bb80468c57c164b76e29259abe2f" prot="public" static="no" mutable="no">
         <type>MprList *</type>
         <definition>MprList* EjsDoc::params</definition>
         <argsstring></argsstring>
@@ -157,11 +157,11 @@
         </detaileddescription>
         <inbodydescription>
         </inbodydescription>
-        <location file="/Users/mob/git/ejs/doc/api/ejs/staging/src/include/ejs.h" line="4309" bodyfile="/Users/mob/git/ejs/doc/api/ejs/staging/src/include/ejs.h" bodystart="4309" bodyend="-1"/>
+        <location file="/Users/mob/git/ejs/doc/api/ejs/staging/src/deps/ejs/ejs.h" line="4102" bodyfile="/Users/mob/git/ejs/doc/api/ejs/staging/src/deps/ejs/ejs.h" bodystart="4102" bodyend="-1"/>
       </memberdef>
-      <memberdef kind="variable" id="struct_ejs_doc_1c87bcc31c4b75638ba372c133ccff302" prot="public" static="no" mutable="no">
-        <type>char *</type>
-        <definition>char* EjsDoc::requires</definition>
+      <memberdef kind="variable" id="struct_ejs_doc_1a531d3aebc3333b2687733865c7ea5e63" prot="public" static="no" mutable="no">
+        <type>MprChar *</type>
+        <definition>MprChar* EjsDoc::requires</definition>
         <argsstring></argsstring>
         <name>requires</name>
         <briefdescription>
@@ -170,11 +170,11 @@
         </detaileddescription>
         <inbodydescription>
         </inbodydescription>
-        <location file="/Users/mob/git/ejs/doc/api/ejs/staging/src/include/ejs.h" line="4298" bodyfile="/Users/mob/git/ejs/doc/api/ejs/staging/src/include/ejs.h" bodystart="4298" bodyend="-1"/>
+        <location file="/Users/mob/git/ejs/doc/api/ejs/staging/src/deps/ejs/ejs.h" line="4096" bodyfile="/Users/mob/git/ejs/doc/api/ejs/staging/src/deps/ejs/ejs.h" bodystart="4096" bodyend="-1"/>
       </memberdef>
-      <memberdef kind="variable" id="struct_ejs_doc_1208a1ff5be29cf83bd672bfbd4bf4fc1" prot="public" static="no" mutable="no">
-        <type>char *</type>
-        <definition>char* EjsDoc::returns</definition>
+      <memberdef kind="variable" id="struct_ejs_doc_1a48ec5411c6c4fc95fa3f70d7060c22c2" prot="public" static="no" mutable="no">
+        <type>MprChar *</type>
+        <definition>MprChar* EjsDoc::returns</definition>
         <argsstring></argsstring>
         <name>returns</name>
         <briefdescription>
@@ -183,9 +183,9 @@
         </detaileddescription>
         <inbodydescription>
         </inbodydescription>
-        <location file="/Users/mob/git/ejs/doc/api/ejs/staging/src/include/ejs.h" line="4299" bodyfile="/Users/mob/git/ejs/doc/api/ejs/staging/src/include/ejs.h" bodystart="4299" bodyend="-1"/>
+        <location file="/Users/mob/git/ejs/doc/api/ejs/staging/src/deps/ejs/ejs.h" line="4097" bodyfile="/Users/mob/git/ejs/doc/api/ejs/staging/src/deps/ejs/ejs.h" bodystart="4097" bodyend="-1"/>
       </memberdef>
-      <memberdef kind="variable" id="struct_ejs_doc_16eb106f043f24614358eb27d2719d4b9" prot="public" static="no" mutable="no">
+      <memberdef kind="variable" id="struct_ejs_doc_1a6eb106f043f24614358eb27d2719d4b9" prot="public" static="no" mutable="no">
         <type>MprList *</type>
         <definition>MprList* EjsDoc::see</definition>
         <argsstring></argsstring>
@@ -196,11 +196,11 @@
         </detaileddescription>
         <inbodydescription>
         </inbodydescription>
-        <location file="/Users/mob/git/ejs/doc/api/ejs/staging/src/include/ejs.h" line="4312" bodyfile="/Users/mob/git/ejs/doc/api/ejs/staging/src/include/ejs.h" bodystart="4312" bodyend="-1"/>
+        <location file="/Users/mob/git/ejs/doc/api/ejs/staging/src/deps/ejs/ejs.h" line="4105" bodyfile="/Users/mob/git/ejs/doc/api/ejs/staging/src/deps/ejs/ejs.h" bodystart="4105" bodyend="-1"/>
       </memberdef>
-      <memberdef kind="variable" id="struct_ejs_doc_160621ebddfbc5dda9b1cc2f725726abb" prot="public" static="no" mutable="no">
-        <type>char *</type>
-        <definition>char* EjsDoc::spec</definition>
+      <memberdef kind="variable" id="struct_ejs_doc_1a451f06ab6abda02bf2c1a1255a428d2b" prot="public" static="no" mutable="no">
+        <type>MprChar *</type>
+        <definition>MprChar* EjsDoc::spec</definition>
         <argsstring></argsstring>
         <name>spec</name>
         <briefdescription>
@@ -209,11 +209,11 @@
         </detaileddescription>
         <inbodydescription>
         </inbodydescription>
-        <location file="/Users/mob/git/ejs/doc/api/ejs/staging/src/include/ejs.h" line="4301" bodyfile="/Users/mob/git/ejs/doc/api/ejs/staging/src/include/ejs.h" bodystart="4301" bodyend="-1"/>
+        <location file="/Users/mob/git/ejs/doc/api/ejs/staging/src/deps/ejs/ejs.h" line="4099" bodyfile="/Users/mob/git/ejs/doc/api/ejs/staging/src/deps/ejs/ejs.h" bodystart="4099" bodyend="-1"/>
       </memberdef>
-      <memberdef kind="variable" id="struct_ejs_doc_1015137db3159a60f15e57766e80dbd53" prot="public" static="no" mutable="no">
-        <type>char *</type>
-        <definition>char* EjsDoc::stability</definition>
+      <memberdef kind="variable" id="struct_ejs_doc_1a3f1b5128b798faec516ed9faceb58d11" prot="public" static="no" mutable="no">
+        <type>MprChar *</type>
+        <definition>MprChar* EjsDoc::stability</definition>
         <argsstring></argsstring>
         <name>stability</name>
         <briefdescription>
@@ -222,9 +222,9 @@
         </detaileddescription>
         <inbodydescription>
         </inbodydescription>
-        <location file="/Users/mob/git/ejs/doc/api/ejs/staging/src/include/ejs.h" line="4300" bodyfile="/Users/mob/git/ejs/doc/api/ejs/staging/src/include/ejs.h" bodystart="4300" bodyend="-1"/>
+        <location file="/Users/mob/git/ejs/doc/api/ejs/staging/src/deps/ejs/ejs.h" line="4098" bodyfile="/Users/mob/git/ejs/doc/api/ejs/staging/src/deps/ejs/ejs.h" bodystart="4098" bodyend="-1"/>
       </memberdef>
-      <memberdef kind="variable" id="struct_ejs_doc_10e458dee42d6a66b38ea0ddbd2b8f27d" prot="public" static="no" mutable="no">
+      <memberdef kind="variable" id="struct_ejs_doc_1a0e458dee42d6a66b38ea0ddbd2b8f27d" prot="public" static="no" mutable="no">
         <type>MprList *</type>
         <definition>MprList* EjsDoc::throws</definition>
         <argsstring></argsstring>
@@ -235,9 +235,9 @@
         </detaileddescription>
         <inbodydescription>
         </inbodydescription>
-        <location file="/Users/mob/git/ejs/doc/api/ejs/staging/src/include/ejs.h" line="4313" bodyfile="/Users/mob/git/ejs/doc/api/ejs/staging/src/include/ejs.h" bodystart="4313" bodyend="-1"/>
+        <location file="/Users/mob/git/ejs/doc/api/ejs/staging/src/deps/ejs/ejs.h" line="4106" bodyfile="/Users/mob/git/ejs/doc/api/ejs/staging/src/deps/ejs/ejs.h" bodystart="4106" bodyend="-1"/>
       </memberdef>
-      <memberdef kind="variable" id="struct_ejs_doc_106d4d0c00514eb228fd53070b60cd069" prot="public" static="no" mutable="no">
+      <memberdef kind="variable" id="struct_ejs_doc_1a06d4d0c00514eb228fd53070b60cd069" prot="public" static="no" mutable="no">
         <type><ref refid="struct_ejs_trait" kindref="compound">EjsTrait</ref> *</type>
         <definition>EjsTrait* EjsDoc::trait</definition>
         <argsstring></argsstring>
@@ -248,7 +248,7 @@
         </detaileddescription>
         <inbodydescription>
         </inbodydescription>
-        <location file="/Users/mob/git/ejs/doc/api/ejs/staging/src/include/ejs.h" line="4315" bodyfile="/Users/mob/git/ejs/doc/api/ejs/staging/src/include/ejs.h" bodystart="4315" bodyend="-1"/>
+        <location file="/Users/mob/git/ejs/doc/api/ejs/staging/src/deps/ejs/ejs.h" line="4107" bodyfile="/Users/mob/git/ejs/doc/api/ejs/staging/src/deps/ejs/ejs.h" bodystart="4107" bodyend="-1"/>
       </memberdef>
       </sectiondef>
     <briefdescription>
@@ -256,38 +256,38 @@
     <detaileddescription>
     </detaileddescription>
     <collaborationgraph>
-      <node id="50">
+      <node id="53">
         <label>EjsDoc</label>
-        <childnode refid="51" relation="usage">
+        <childnode refid="54" relation="usage">
           <edgelabel>trait</edgelabel>
         </childnode>
       </node>
-      <node id="51">
-        <label>EjsTrait</label>
+      <node id="54">
+        <label>EjsGetPropertyTraitsHelper</label>
         <link refid="struct_ejs_trait"/>
       </node>
     </collaborationgraph>
-    <location file="/Users/mob/git/ejs/doc/api/ejs/staging/src/include/ejs.h" line="4293" bodyfile="/Users/mob/git/ejs/doc/api/ejs/staging/src/include/ejs.h" bodystart="4293" bodyend="4316"/>
+    <location file="/Users/mob/git/ejs/doc/api/ejs/staging/src/deps/ejs/ejs.h" line="4091" bodyfile="/Users/mob/git/ejs/doc/api/ejs/staging/src/deps/ejs/ejs.h" bodystart="4091" bodyend="4111"/>
     <listofallmembers>
-      <member refid="struct_ejs_doc_106f17999b969709a1ca3f73ad0c9bb22" prot="public" virt="non-virtual"><scope>EjsDoc</scope><name>brief</name></member>
-      <member refid="struct_ejs_doc_11e9311651d90b22e2898594d21763583" prot="public" virt="non-virtual"><scope>EjsDoc</scope><name>cracked</name></member>
-      <member refid="struct_ejs_doc_1f933327a5a0ad33c684a740d9c451a9f" prot="public" virt="non-virtual"><scope>EjsDoc</scope><name>defaults</name></member>
-      <member refid="struct_ejs_doc_17171627fa5c2426070005c7ac0de2876" prot="public" virt="non-virtual"><scope>EjsDoc</scope><name>deprecated</name></member>
-      <member refid="struct_ejs_doc_1a807ae5dcfd0f4332453402844422cef" prot="public" virt="non-virtual"><scope>EjsDoc</scope><name>description</name></member>
-      <member refid="struct_ejs_doc_17e412930e644cecebbf2c6038532fd55" prot="public" virt="non-virtual"><scope>EjsDoc</scope><name>docString</name></member>
-      <member refid="struct_ejs_doc_1734f92694712c0f65bf6e19aaf4a8847" prot="public" virt="non-virtual"><scope>EjsDoc</scope><name>duplicate</name></member>
-      <member refid="struct_ejs_doc_19024df9edbcbe976d02d814082c47d7d" prot="public" virt="non-virtual"><scope>EjsDoc</scope><name>events</name></member>
-      <member refid="struct_ejs_doc_12c802411e6dbc75e727ce1fbaf99d2bd" prot="public" virt="non-virtual"><scope>EjsDoc</scope><name>example</name></member>
-      <member refid="struct_ejs_doc_120584a48112f6327ed668e55342f4ad6" prot="public" virt="non-virtual"><scope>EjsDoc</scope><name>hide</name></member>
-      <member refid="struct_ejs_doc_17b0c88e9accc4c7802361e64bb0dfe3a" prot="public" virt="non-virtual"><scope>EjsDoc</scope><name>options</name></member>
-      <member refid="struct_ejs_doc_1f636bb80468c57c164b76e29259abe2f" prot="public" virt="non-virtual"><scope>EjsDoc</scope><name>params</name></member>
-      <member refid="struct_ejs_doc_1c87bcc31c4b75638ba372c133ccff302" prot="public" virt="non-virtual"><scope>EjsDoc</scope><name>requires</name></member>
-      <member refid="struct_ejs_doc_1208a1ff5be29cf83bd672bfbd4bf4fc1" prot="public" virt="non-virtual"><scope>EjsDoc</scope><name>returns</name></member>
-      <member refid="struct_ejs_doc_16eb106f043f24614358eb27d2719d4b9" prot="public" virt="non-virtual"><scope>EjsDoc</scope><name>see</name></member>
-      <member refid="struct_ejs_doc_160621ebddfbc5dda9b1cc2f725726abb" prot="public" virt="non-virtual"><scope>EjsDoc</scope><name>spec</name></member>
-      <member refid="struct_ejs_doc_1015137db3159a60f15e57766e80dbd53" prot="public" virt="non-virtual"><scope>EjsDoc</scope><name>stability</name></member>
-      <member refid="struct_ejs_doc_10e458dee42d6a66b38ea0ddbd2b8f27d" prot="public" virt="non-virtual"><scope>EjsDoc</scope><name>throws</name></member>
-      <member refid="struct_ejs_doc_106d4d0c00514eb228fd53070b60cd069" prot="public" virt="non-virtual"><scope>EjsDoc</scope><name>trait</name></member>
+      <member refid="struct_ejs_doc_1a5a0288218d63f2ddde1391275c8763a1" prot="public" virt="non-virtual"><scope>EjsDoc</scope><name>brief</name></member>
+      <member refid="struct_ejs_doc_1a1e9311651d90b22e2898594d21763583" prot="public" virt="non-virtual"><scope>EjsDoc</scope><name>cracked</name></member>
+      <member refid="struct_ejs_doc_1af933327a5a0ad33c684a740d9c451a9f" prot="public" virt="non-virtual"><scope>EjsDoc</scope><name>defaults</name></member>
+      <member refid="struct_ejs_doc_1a7171627fa5c2426070005c7ac0de2876" prot="public" virt="non-virtual"><scope>EjsDoc</scope><name>deprecated</name></member>
+      <member refid="struct_ejs_doc_1a20b1d05ae450c931d8161f0202f1c9cf" prot="public" virt="non-virtual"><scope>EjsDoc</scope><name>description</name></member>
+      <member refid="struct_ejs_doc_1a4a146d5d86917f045c06b20e02893ebe" prot="public" virt="non-virtual"><scope>EjsDoc</scope><name>docString</name></member>
+      <member refid="struct_ejs_doc_1a734f92694712c0f65bf6e19aaf4a8847" prot="public" virt="non-virtual"><scope>EjsDoc</scope><name>duplicate</name></member>
+      <member refid="struct_ejs_doc_1a9024df9edbcbe976d02d814082c47d7d" prot="public" virt="non-virtual"><scope>EjsDoc</scope><name>events</name></member>
+      <member refid="struct_ejs_doc_1a84b337279d268d646fa26d5a5de9d0cb" prot="public" virt="non-virtual"><scope>EjsDoc</scope><name>example</name></member>
+      <member refid="struct_ejs_doc_1a20584a48112f6327ed668e55342f4ad6" prot="public" virt="non-virtual"><scope>EjsDoc</scope><name>hide</name></member>
+      <member refid="struct_ejs_doc_1a7b0c88e9accc4c7802361e64bb0dfe3a" prot="public" virt="non-virtual"><scope>EjsDoc</scope><name>options</name></member>
+      <member refid="struct_ejs_doc_1af636bb80468c57c164b76e29259abe2f" prot="public" virt="non-virtual"><scope>EjsDoc</scope><name>params</name></member>
+      <member refid="struct_ejs_doc_1a531d3aebc3333b2687733865c7ea5e63" prot="public" virt="non-virtual"><scope>EjsDoc</scope><name>requires</name></member>
+      <member refid="struct_ejs_doc_1a48ec5411c6c4fc95fa3f70d7060c22c2" prot="public" virt="non-virtual"><scope>EjsDoc</scope><name>returns</name></member>
+      <member refid="struct_ejs_doc_1a6eb106f043f24614358eb27d2719d4b9" prot="public" virt="non-virtual"><scope>EjsDoc</scope><name>see</name></member>
+      <member refid="struct_ejs_doc_1a451f06ab6abda02bf2c1a1255a428d2b" prot="public" virt="non-virtual"><scope>EjsDoc</scope><name>spec</name></member>
+      <member refid="struct_ejs_doc_1a3f1b5128b798faec516ed9faceb58d11" prot="public" virt="non-virtual"><scope>EjsDoc</scope><name>stability</name></member>
+      <member refid="struct_ejs_doc_1a0e458dee42d6a66b38ea0ddbd2b8f27d" prot="public" virt="non-virtual"><scope>EjsDoc</scope><name>throws</name></member>
+      <member refid="struct_ejs_doc_1a06d4d0c00514eb228fd53070b60cd069" prot="public" virt="non-virtual"><scope>EjsDoc</scope><name>trait</name></member>
     </listofallmembers>
   </compounddef>
 </doxygen>

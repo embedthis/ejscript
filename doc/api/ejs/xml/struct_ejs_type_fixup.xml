@@ -1,9 +1,9 @@
 <?xml version='1.0' encoding='UTF-8' standalone='no'?>
-<doxygen xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="compound.xsd" version="1.5.8">
+<doxygen xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="compound.xsd" version="1.7.3">
   <compounddef id="struct_ejs_type_fixup" kind="struct" prot="public">
     <compoundname>EjsTypeFixup</compoundname>
       <sectiondef kind="public-attrib">
-      <memberdef kind="variable" id="struct_ejs_type_fixup_16458287b739a03e35cff76b4747a8554" prot="public" static="no" mutable="no">
+      <memberdef kind="variable" id="struct_ejs_type_fixup_1a6458287b739a03e35cff76b4747a8554" prot="public" static="no" mutable="no">
         <type>int</type>
         <definition>int EjsTypeFixup::kind</definition>
         <argsstring></argsstring>
@@ -14,9 +14,9 @@
         </detaileddescription>
         <inbodydescription>
         </inbodydescription>
-        <location file="/Users/mob/git/ejs/doc/api/ejs/staging/src/include/ejs.h" line="4155" bodyfile="/Users/mob/git/ejs/doc/api/ejs/staging/src/include/ejs.h" bodystart="4155" bodyend="-1"/>
+        <location file="/Users/mob/git/ejs/doc/api/ejs/staging/src/deps/ejs/ejs.h" line="3960" bodyfile="/Users/mob/git/ejs/doc/api/ejs/staging/src/deps/ejs/ejs.h" bodystart="3960" bodyend="-1"/>
       </memberdef>
-      <memberdef kind="variable" id="struct_ejs_type_fixup_1f46543f827df6d29736c1391dafd7be4" prot="public" static="no" mutable="no">
+      <memberdef kind="variable" id="struct_ejs_type_fixup_1af46543f827df6d29736c1391dafd7be4" prot="public" static="no" mutable="no">
         <type>int</type>
         <definition>int EjsTypeFixup::slotNum</definition>
         <argsstring></argsstring>
@@ -27,9 +27,9 @@
         </detaileddescription>
         <inbodydescription>
         </inbodydescription>
-        <location file="/Users/mob/git/ejs/doc/api/ejs/staging/src/include/ejs.h" line="4156" bodyfile="/Users/mob/git/ejs/doc/api/ejs/staging/src/include/ejs.h" bodystart="4156" bodyend="-1"/>
+        <location file="/Users/mob/git/ejs/doc/api/ejs/staging/src/deps/ejs/ejs.h" line="3961" bodyfile="/Users/mob/git/ejs/doc/api/ejs/staging/src/deps/ejs/ejs.h" bodystart="3961" bodyend="-1"/>
       </memberdef>
-      <memberdef kind="variable" id="struct_ejs_type_fixup_17f92dfab2a8e1f36a93485292d5f9721" prot="public" static="no" mutable="no">
+      <memberdef kind="variable" id="struct_ejs_type_fixup_1a7f92dfab2a8e1f36a93485292d5f9721" prot="public" static="no" mutable="no">
         <type>EjsObj *</type>
         <definition>EjsObj* EjsTypeFixup::target</definition>
         <argsstring></argsstring>
@@ -40,9 +40,9 @@
         </detaileddescription>
         <inbodydescription>
         </inbodydescription>
-        <location file="/Users/mob/git/ejs/doc/api/ejs/staging/src/include/ejs.h" line="4157" bodyfile="/Users/mob/git/ejs/doc/api/ejs/staging/src/include/ejs.h" bodystart="4157" bodyend="-1"/>
+        <location file="/Users/mob/git/ejs/doc/api/ejs/staging/src/deps/ejs/ejs.h" line="3962" bodyfile="/Users/mob/git/ejs/doc/api/ejs/staging/src/deps/ejs/ejs.h" bodystart="3962" bodyend="-1"/>
       </memberdef>
-      <memberdef kind="variable" id="struct_ejs_type_fixup_17b0fae04b958c11ac71939615b834ff9" prot="public" static="no" mutable="no">
+      <memberdef kind="variable" id="struct_ejs_type_fixup_1a7b0fae04b958c11ac71939615b834ff9" prot="public" static="no" mutable="no">
         <type>EjsName</type>
         <definition>EjsName EjsTypeFixup::typeName</definition>
         <argsstring></argsstring>
@@ -53,9 +53,9 @@
         </detaileddescription>
         <inbodydescription>
         </inbodydescription>
-        <location file="/Users/mob/git/ejs/doc/api/ejs/staging/src/include/ejs.h" line="4158" bodyfile="/Users/mob/git/ejs/doc/api/ejs/staging/src/include/ejs.h" bodystart="4158" bodyend="-1"/>
+        <location file="/Users/mob/git/ejs/doc/api/ejs/staging/src/deps/ejs/ejs.h" line="3963" bodyfile="/Users/mob/git/ejs/doc/api/ejs/staging/src/deps/ejs/ejs.h" bodystart="3963" bodyend="-1"/>
       </memberdef>
-      <memberdef kind="variable" id="struct_ejs_type_fixup_1ec963e6da66a9ee16e6c02c24f695781" prot="public" static="no" mutable="no">
+      <memberdef kind="variable" id="struct_ejs_type_fixup_1aec963e6da66a9ee16e6c02c24f695781" prot="public" static="no" mutable="no">
         <type>int</type>
         <definition>int EjsTypeFixup::typeSlotNum</definition>
         <argsstring></argsstring>
@@ -66,20 +66,20 @@
         </detaileddescription>
         <inbodydescription>
         </inbodydescription>
-        <location file="/Users/mob/git/ejs/doc/api/ejs/staging/src/include/ejs.h" line="4159" bodyfile="/Users/mob/git/ejs/doc/api/ejs/staging/src/include/ejs.h" bodystart="4159" bodyend="-1"/>
+        <location file="/Users/mob/git/ejs/doc/api/ejs/staging/src/deps/ejs/ejs.h" line="3964" bodyfile="/Users/mob/git/ejs/doc/api/ejs/staging/src/deps/ejs/ejs.h" bodystart="3964" bodyend="-1"/>
       </memberdef>
       </sectiondef>
     <briefdescription>
     </briefdescription>
     <detaileddescription>
     </detaileddescription>
-    <location file="/Users/mob/git/ejs/doc/api/ejs/staging/src/include/ejs.h" line="4154" bodyfile="/Users/mob/git/ejs/doc/api/ejs/staging/src/include/ejs.h" bodystart="4153" bodyend="4160"/>
+    <location file="/Users/mob/git/ejs/doc/api/ejs/staging/src/deps/ejs/ejs.h" line="3959" bodyfile="/Users/mob/git/ejs/doc/api/ejs/staging/src/deps/ejs/ejs.h" bodystart="3958" bodyend="3965"/>
     <listofallmembers>
-      <member refid="struct_ejs_type_fixup_16458287b739a03e35cff76b4747a8554" prot="public" virt="non-virtual"><scope>EjsTypeFixup</scope><name>kind</name></member>
-      <member refid="struct_ejs_type_fixup_1f46543f827df6d29736c1391dafd7be4" prot="public" virt="non-virtual"><scope>EjsTypeFixup</scope><name>slotNum</name></member>
-      <member refid="struct_ejs_type_fixup_17f92dfab2a8e1f36a93485292d5f9721" prot="public" virt="non-virtual"><scope>EjsTypeFixup</scope><name>target</name></member>
-      <member refid="struct_ejs_type_fixup_17b0fae04b958c11ac71939615b834ff9" prot="public" virt="non-virtual"><scope>EjsTypeFixup</scope><name>typeName</name></member>
-      <member refid="struct_ejs_type_fixup_1ec963e6da66a9ee16e6c02c24f695781" prot="public" virt="non-virtual"><scope>EjsTypeFixup</scope><name>typeSlotNum</name></member>
+      <member refid="struct_ejs_type_fixup_1a6458287b739a03e35cff76b4747a8554" prot="public" virt="non-virtual"><scope>EjsTypeFixup</scope><name>kind</name></member>
+      <member refid="struct_ejs_type_fixup_1af46543f827df6d29736c1391dafd7be4" prot="public" virt="non-virtual"><scope>EjsTypeFixup</scope><name>slotNum</name></member>
+      <member refid="struct_ejs_type_fixup_1a7f92dfab2a8e1f36a93485292d5f9721" prot="public" virt="non-virtual"><scope>EjsTypeFixup</scope><name>target</name></member>
+      <member refid="struct_ejs_type_fixup_1a7b0fae04b958c11ac71939615b834ff9" prot="public" virt="non-virtual"><scope>EjsTypeFixup</scope><name>typeName</name></member>
+      <member refid="struct_ejs_type_fixup_1aec963e6da66a9ee16e6c02c24f695781" prot="public" virt="non-virtual"><scope>EjsTypeFixup</scope><name>typeSlotNum</name></member>
     </listofallmembers>
   </compounddef>
 </doxygen>

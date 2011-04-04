@@ -1,10 +1,10 @@
 <?xml version='1.0' encoding='UTF-8' standalone='no'?>
-<doxygen xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="compound.xsd" version="1.5.8">
+<doxygen xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="compound.xsd" version="1.7.3">
   <compounddef id="group___ejs_date" kind="group">
     <compoundname>EjsDate</compoundname>
     <title>EjsDate</title>
       <sectiondef kind="func">
-      <memberdef kind="function" id="group___ejs_date_1gd85120109dc8c4d6a399d5e81be3cc78" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+      <memberdef kind="function" id="group___ejs_date_1gad85120109dc8c4d6a399d5e81be3cc78" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
         <type>EjsDate *</type>
         <definition>EjsDate* ejsCreateDate</definition>
         <argsstring>(Ejs *ejs, MprTime value)</argsstring>
@@ -25,7 +25,7 @@
 <parametername>ejs</parametername>
 </parameternamelist>
 <parameterdescription>
-<para>Ejs reference returned from <ref refid="group___ejs_obj_1g50d9d774b3cddd1784d654326cddc237" kindref="member">ejsCreate</ref> </para></parameterdescription>
+<para>Ejs reference returned from <ref refid="group___ejs_1ga75cce70e794158ee54ddb800509060e0" kindref="member">ejsCreate</ref> </para></parameterdescription>
 </parameteritem>
 <parameteritem>
 <parameternamelist>
@@ -39,33 +39,7 @@
 </para>        </detaileddescription>
         <inbodydescription>
         </inbodydescription>
-        <location file="/Users/mob/git/ejs/doc/api/ejs/staging/src/include/ejs.h" line="2381"/>
-      </memberdef>
-      <memberdef kind="function" id="group___ejs_date_1gb2a17520c72680a81dc8cb56d806c944" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
-        <type>bool</type>
-        <definition>bool ejsIsDate</definition>
-        <argsstring>(EjsObj *vp)</argsstring>
-        <name>ejsIsDate</name>
-        <param>
-          <type>EjsObj *</type>
-          <declname>vp</declname>
-        </param>
-        <briefdescription>
-<para>Determine if a variable is a Date. </para>        </briefdescription>
-        <detaileddescription>
-<para><parameterlist kind="param"><parameteritem>
-<parameternamelist>
-<parametername>vp</parametername>
-</parameternamelist>
-<parameterdescription>
-<para>Variable to test </para></parameterdescription>
-</parameteritem>
-</parameterlist>
-<simplesect kind="return"><para>True if the variable is a date </para></simplesect>
-</para>        </detaileddescription>
-        <inbodydescription>
-        </inbodydescription>
-        <location file="/Users/mob/git/ejs/doc/api/ejs/staging/src/include/ejs.h" line="2369"/>
+        <location file="/Users/mob/git/ejs/doc/api/ejs/staging/src/deps/ejs/ejs.h" line="2547"/>
       </memberdef>
       </sectiondef>
     <briefdescription>
@@ -73,7 +47,7 @@
     <detaileddescription>
 <para><simplesect kind="par"><title><bold>Description</bold>:</title><para>The Date class is a general purpose class for working with dates and times. is a a primitive native type and extends EjsObj. It is still logically an Object, but implements Object properties and methods itself. </para></simplesect>
 <simplesect kind="par"><title><bold>API</bold> Stability:</title><para>Evolving</para></simplesect>
-<simplesect kind="see"><para><ref refid="group___ejs_date" kindref="compound">EjsDate</ref> EjsIsDate <ref refid="group___ejs_date_1gd85120109dc8c4d6a399d5e81be3cc78" kindref="member">ejsCreateDate</ref> </para></simplesect>
+<simplesect kind="see"><para><ref refid="group___ejs_date" kindref="compound">EjsDate</ref> EjsIsDate <ref refid="group___ejs_date_1gad85120109dc8c4d6a399d5e81be3cc78" kindref="member">ejsCreateDate</ref> </para></simplesect>
 </para>    </detaileddescription>
   </compounddef>
 </doxygen>

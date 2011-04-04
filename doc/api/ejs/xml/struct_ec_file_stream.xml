@@ -1,9 +1,9 @@
 <?xml version='1.0' encoding='UTF-8' standalone='no'?>
-<doxygen xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="compound.xsd" version="1.5.8">
+<doxygen xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="compound.xsd" version="1.7.3">
   <compounddef id="struct_ec_file_stream" kind="struct" prot="public">
     <compoundname>EcFileStream</compoundname>
       <sectiondef kind="public-attrib">
-      <memberdef kind="variable" id="struct_ec_file_stream_1c91aeb288666a4b9e4479c154a154c67" prot="public" static="no" mutable="no">
+      <memberdef kind="variable" id="struct_ec_file_stream_1ac91aeb288666a4b9e4479c154a154c67" prot="public" static="no" mutable="no">
         <type>MprFile *</type>
         <definition>MprFile* EcFileStream::file</definition>
         <argsstring></argsstring>
@@ -14,9 +14,9 @@
         </detaileddescription>
         <inbodydescription>
         </inbodydescription>
-        <location file="/Users/mob/git/ejs/doc/api/ejs/staging/src/include/ejs.h" line="5437" bodyfile="/Users/mob/git/ejs/doc/api/ejs/staging/src/include/ejs.h" bodystart="5437" bodyend="-1"/>
+        <location file="/Users/mob/git/ejs/doc/api/ejs/staging/src/deps/ejs/ejs.h" line="5049" bodyfile="/Users/mob/git/ejs/doc/api/ejs/staging/src/deps/ejs/ejs.h" bodystart="5049" bodyend="-1"/>
       </memberdef>
-      <memberdef kind="variable" id="struct_ec_file_stream_10c0b7ecd005dd4f25292f780d4ec56e9" prot="public" static="no" mutable="no">
+      <memberdef kind="variable" id="struct_ec_file_stream_1a0c0b7ecd005dd4f25292f780d4ec56e9" prot="public" static="no" mutable="no">
         <type>EcStream</type>
         <definition>EcStream EcFileStream::stream</definition>
         <argsstring></argsstring>
@@ -27,17 +27,17 @@
         </detaileddescription>
         <inbodydescription>
         </inbodydescription>
-        <location file="/Users/mob/git/ejs/doc/api/ejs/staging/src/include/ejs.h" line="5436" bodyfile="/Users/mob/git/ejs/doc/api/ejs/staging/src/include/ejs.h" bodystart="5436" bodyend="-1"/>
+        <location file="/Users/mob/git/ejs/doc/api/ejs/staging/src/deps/ejs/ejs.h" line="5048" bodyfile="/Users/mob/git/ejs/doc/api/ejs/staging/src/deps/ejs/ejs.h" bodystart="5048" bodyend="-1"/>
       </memberdef>
       </sectiondef>
     <briefdescription>
     </briefdescription>
     <detaileddescription>
     </detaileddescription>
-    <location file="/Users/mob/git/ejs/doc/api/ejs/staging/src/include/ejs.h" line="5435" bodyfile="/Users/mob/git/ejs/doc/api/ejs/staging/src/include/ejs.h" bodystart="5435" bodyend="5438"/>
+    <location file="/Users/mob/git/ejs/doc/api/ejs/staging/src/deps/ejs/ejs.h" line="5047" bodyfile="/Users/mob/git/ejs/doc/api/ejs/staging/src/deps/ejs/ejs.h" bodystart="5047" bodyend="5050"/>
     <listofallmembers>
-      <member refid="struct_ec_file_stream_1c91aeb288666a4b9e4479c154a154c67" prot="public" virt="non-virtual"><scope>EcFileStream</scope><name>file</name></member>
-      <member refid="struct_ec_file_stream_10c0b7ecd005dd4f25292f780d4ec56e9" prot="public" virt="non-virtual"><scope>EcFileStream</scope><name>stream</name></member>
+      <member refid="struct_ec_file_stream_1ac91aeb288666a4b9e4479c154a154c67" prot="public" virt="non-virtual"><scope>EcFileStream</scope><name>file</name></member>
+      <member refid="struct_ec_file_stream_1a0c0b7ecd005dd4f25292f780d4ec56e9" prot="public" virt="non-virtual"><scope>EcFileStream</scope><name>stream</name></member>
     </listofallmembers>
   </compounddef>
 </doxygen>

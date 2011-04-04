@@ -1,9 +1,9 @@
 <?xml version='1.0' encoding='UTF-8' standalone='no'?>
-<doxygen xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="compound.xsd" version="1.5.8">
+<doxygen xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="compound.xsd" version="1.7.3">
   <compounddef id="struct_ejs_worker" kind="struct" prot="public">
     <compoundname>EjsWorker</compoundname>
       <sectiondef kind="public-attrib">
-      <memberdef kind="variable" id="struct_ejs_worker_157247d2434f1bb3fc5466c4e07f412ae" prot="public" static="no" mutable="no">
+      <memberdef kind="variable" id="struct_ejs_worker_1a57247d2434f1bb3fc5466c4e07f412ae" prot="public" static="no" mutable="no">
         <type>int</type>
         <definition>int EjsWorker::complete</definition>
         <argsstring></argsstring>
@@ -14,9 +14,9 @@
         </detaileddescription>
         <inbodydescription>
         </inbodydescription>
-        <location file="/Users/mob/git/ejs/doc/api/ejs/staging/src/include/ejs.h" line="3188" bodyfile="/Users/mob/git/ejs/doc/api/ejs/staging/src/include/ejs.h" bodystart="3188" bodyend="-1"/>
+        <location file="/Users/mob/git/ejs/doc/api/ejs/staging/src/deps/ejs/ejs.h" line="3141" bodyfile="/Users/mob/git/ejs/doc/api/ejs/staging/src/deps/ejs/ejs.h" bodystart="3141" bodyend="-1"/>
       </memberdef>
-      <memberdef kind="variable" id="struct_ejs_worker_132f10f83148506a1965382c175aff584" prot="public" static="no" mutable="no">
+      <memberdef kind="variable" id="struct_ejs_worker_1a32f10f83148506a1965382c175aff584" prot="public" static="no" mutable="no">
         <type>Ejs *</type>
         <definition>Ejs* EjsWorker::ejs</definition>
         <argsstring></argsstring>
@@ -27,11 +27,11 @@
         </detaileddescription>
         <inbodydescription>
         </inbodydescription>
-        <location file="/Users/mob/git/ejs/doc/api/ejs/staging/src/include/ejs.h" line="3181" bodyfile="/Users/mob/git/ejs/doc/api/ejs/staging/src/include/ejs.h" bodystart="3181" bodyend="-1"/>
+        <location file="/Users/mob/git/ejs/doc/api/ejs/staging/src/deps/ejs/ejs.h" line="3134" bodyfile="/Users/mob/git/ejs/doc/api/ejs/staging/src/deps/ejs/ejs.h" bodystart="3134" bodyend="-1"/>
       </memberdef>
-      <memberdef kind="variable" id="struct_ejs_worker_1f8174a37eea196ffbdc1e686b9d1134c" prot="public" static="no" mutable="no">
-        <type>EjsObj *</type>
-        <definition>EjsObj* EjsWorker::event</definition>
+      <memberdef kind="variable" id="struct_ejs_worker_1a2363984008be02a7f210e2c32550e9f4" prot="public" static="no" mutable="no">
+        <type>EjsAny *</type>
+        <definition>EjsAny* EjsWorker::event</definition>
         <argsstring></argsstring>
         <name>event</name>
         <briefdescription>
@@ -40,9 +40,9 @@
         </detaileddescription>
         <inbodydescription>
         </inbodydescription>
-        <location file="/Users/mob/git/ejs/doc/api/ejs/staging/src/include/ejs.h" line="3182" bodyfile="/Users/mob/git/ejs/doc/api/ejs/staging/src/include/ejs.h" bodystart="3182" bodyend="-1"/>
+        <location file="/Users/mob/git/ejs/doc/api/ejs/staging/src/deps/ejs/ejs.h" line="3135" bodyfile="/Users/mob/git/ejs/doc/api/ejs/staging/src/deps/ejs/ejs.h" bodystart="3135" bodyend="-1"/>
       </memberdef>
-      <memberdef kind="variable" id="struct_ejs_worker_1d50790def8ff17926a396742044f30c8" prot="public" static="no" mutable="no">
+      <memberdef kind="variable" id="struct_ejs_worker_1ad50790def8ff17926a396742044f30c8" prot="public" static="no" mutable="no">
         <type>int</type>
         <definition>int EjsWorker::gotMessage</definition>
         <argsstring></argsstring>
@@ -53,9 +53,9 @@
         </detaileddescription>
         <inbodydescription>
         </inbodydescription>
-        <location file="/Users/mob/git/ejs/doc/api/ejs/staging/src/include/ejs.h" line="3189" bodyfile="/Users/mob/git/ejs/doc/api/ejs/staging/src/include/ejs.h" bodystart="3189" bodyend="-1"/>
+        <location file="/Users/mob/git/ejs/doc/api/ejs/staging/src/deps/ejs/ejs.h" line="3142" bodyfile="/Users/mob/git/ejs/doc/api/ejs/staging/src/deps/ejs/ejs.h" bodystart="3142" bodyend="-1"/>
       </memberdef>
-      <memberdef kind="variable" id="struct_ejs_worker_1f75f574e79b1d85eab545b6961e55286" prot="public" static="no" mutable="no">
+      <memberdef kind="variable" id="struct_ejs_worker_1af75f574e79b1d85eab545b6961e55286" prot="public" static="no" mutable="no">
         <type>int</type>
         <definition>int EjsWorker::inside</definition>
         <argsstring></argsstring>
@@ -66,9 +66,9 @@
         </detaileddescription>
         <inbodydescription>
         </inbodydescription>
-        <location file="/Users/mob/git/ejs/doc/api/ejs/staging/src/include/ejs.h" line="3187" bodyfile="/Users/mob/git/ejs/doc/api/ejs/staging/src/include/ejs.h" bodystart="3187" bodyend="-1"/>
+        <location file="/Users/mob/git/ejs/doc/api/ejs/staging/src/deps/ejs/ejs.h" line="3140" bodyfile="/Users/mob/git/ejs/doc/api/ejs/staging/src/deps/ejs/ejs.h" bodystart="3140" bodyend="-1"/>
       </memberdef>
-      <memberdef kind="variable" id="struct_ejs_worker_1198946ed4fa32ccc48e7be14bac810b8" prot="public" static="no" mutable="no">
+      <memberdef kind="variable" id="struct_ejs_worker_1a198946ed4fa32ccc48e7be14bac810b8" prot="public" static="no" mutable="no">
         <type>char *</type>
         <definition>char* EjsWorker::name</definition>
         <argsstring></argsstring>
@@ -79,22 +79,9 @@
         </detaileddescription>
         <inbodydescription>
         </inbodydescription>
-        <location file="/Users/mob/git/ejs/doc/api/ejs/staging/src/include/ejs.h" line="3180" bodyfile="/Users/mob/git/ejs/doc/api/ejs/staging/src/include/ejs.h" bodystart="3180" bodyend="-1"/>
+        <location file="/Users/mob/git/ejs/doc/api/ejs/staging/src/deps/ejs/ejs.h" line="3133" bodyfile="/Users/mob/git/ejs/doc/api/ejs/staging/src/deps/ejs/ejs.h" bodystart="3133" bodyend="-1"/>
       </memberdef>
-      <memberdef kind="variable" id="struct_ejs_worker_11b390586e9913c3f5cf265b2c29e0102" prot="public" static="no" mutable="no">
-        <type>EjsObj</type>
-        <definition>EjsObj EjsWorker::obj</definition>
-        <argsstring></argsstring>
-        <name>obj</name>
-        <briefdescription>
-<para>Logically extentends Object. </para>        </briefdescription>
-        <detaileddescription>
-        </detaileddescription>
-        <inbodydescription>
-        </inbodydescription>
-        <location file="/Users/mob/git/ejs/doc/api/ejs/staging/src/include/ejs.h" line="3179" bodyfile="/Users/mob/git/ejs/doc/api/ejs/staging/src/include/ejs.h" bodystart="3179" bodyend="-1"/>
-      </memberdef>
-      <memberdef kind="variable" id="struct_ejs_worker_1d281213c66907b3dee69dbfe6a7b3054" prot="public" static="no" mutable="no">
+      <memberdef kind="variable" id="struct_ejs_worker_1ad281213c66907b3dee69dbfe6a7b3054" prot="public" static="no" mutable="no">
         <type>struct EjsWorker *</type>
         <definition>struct EjsWorker* EjsWorker::pair</definition>
         <argsstring></argsstring>
@@ -105,9 +92,22 @@
         </detaileddescription>
         <inbodydescription>
         </inbodydescription>
-        <location file="/Users/mob/git/ejs/doc/api/ejs/staging/src/include/ejs.h" line="3183" bodyfile="/Users/mob/git/ejs/doc/api/ejs/staging/src/include/ejs.h" bodystart="3183" bodyend="-1"/>
+        <location file="/Users/mob/git/ejs/doc/api/ejs/staging/src/deps/ejs/ejs.h" line="3136" bodyfile="/Users/mob/git/ejs/doc/api/ejs/staging/src/deps/ejs/ejs.h" bodystart="3136" bodyend="-1"/>
       </memberdef>
-      <memberdef kind="variable" id="struct_ejs_worker_1bfafdcc7675631c37e1439059221a2dc" prot="public" static="no" mutable="no">
+      <memberdef kind="variable" id="struct_ejs_worker_1a943eee248f3776200cf13c92ee229c24" prot="public" static="no" mutable="no">
+        <type>EjsPot</type>
+        <definition>EjsPot EjsWorker::pot</definition>
+        <argsstring></argsstring>
+        <name>pot</name>
+        <briefdescription>
+<para>Property storage. </para>        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/Users/mob/git/ejs/doc/api/ejs/staging/src/deps/ejs/ejs.h" line="3132" bodyfile="/Users/mob/git/ejs/doc/api/ejs/staging/src/deps/ejs/ejs.h" bodystart="3132" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="variable" id="struct_ejs_worker_1abfafdcc7675631c37e1439059221a2dc" prot="public" static="no" mutable="no">
         <type>char *</type>
         <definition>char* EjsWorker::scriptFile</definition>
         <argsstring></argsstring>
@@ -118,11 +118,11 @@
         </detaileddescription>
         <inbodydescription>
         </inbodydescription>
-        <location file="/Users/mob/git/ejs/doc/api/ejs/staging/src/include/ejs.h" line="3184" bodyfile="/Users/mob/git/ejs/doc/api/ejs/staging/src/include/ejs.h" bodystart="3184" bodyend="-1"/>
+        <location file="/Users/mob/git/ejs/doc/api/ejs/staging/src/deps/ejs/ejs.h" line="3137" bodyfile="/Users/mob/git/ejs/doc/api/ejs/staging/src/deps/ejs/ejs.h" bodystart="3137" bodyend="-1"/>
       </memberdef>
-      <memberdef kind="variable" id="struct_ejs_worker_1400839516fd27fe2e7c9f63fa1b23ccb" prot="public" static="no" mutable="no">
-        <type>char *</type>
-        <definition>char* EjsWorker::scriptLiteral</definition>
+      <memberdef kind="variable" id="struct_ejs_worker_1a24221c9a986b2da60045a5a852ded4e5" prot="public" static="no" mutable="no">
+        <type>EjsString *</type>
+        <definition>EjsString* EjsWorker::scriptLiteral</definition>
         <argsstring></argsstring>
         <name>scriptLiteral</name>
         <briefdescription>
@@ -131,9 +131,9 @@
         </detaileddescription>
         <inbodydescription>
         </inbodydescription>
-        <location file="/Users/mob/git/ejs/doc/api/ejs/staging/src/include/ejs.h" line="3185" bodyfile="/Users/mob/git/ejs/doc/api/ejs/staging/src/include/ejs.h" bodystart="3185" bodyend="-1"/>
+        <location file="/Users/mob/git/ejs/doc/api/ejs/staging/src/deps/ejs/ejs.h" line="3138" bodyfile="/Users/mob/git/ejs/doc/api/ejs/staging/src/deps/ejs/ejs.h" bodystart="3138" bodyend="-1"/>
       </memberdef>
-      <memberdef kind="variable" id="struct_ejs_worker_148fdffcd3c341d886eaed339bb74480b" prot="public" static="no" mutable="no">
+      <memberdef kind="variable" id="struct_ejs_worker_1a48fdffcd3c341d886eaed339bb74480b" prot="public" static="no" mutable="no">
         <type>int</type>
         <definition>int EjsWorker::state</definition>
         <argsstring></argsstring>
@@ -144,40 +144,26 @@
         </detaileddescription>
         <inbodydescription>
         </inbodydescription>
-        <location file="/Users/mob/git/ejs/doc/api/ejs/staging/src/include/ejs.h" line="3186" bodyfile="/Users/mob/git/ejs/doc/api/ejs/staging/src/include/ejs.h" bodystart="3186" bodyend="-1"/>
-      </memberdef>
-      <memberdef kind="variable" id="struct_ejs_worker_13de9eaad1f237564bd9d810abde8c246" prot="public" static="no" mutable="no">
-        <type>int</type>
-        <definition>int EjsWorker::terminated</definition>
-        <argsstring></argsstring>
-        <name>terminated</name>
-        <briefdescription>
-<para>Worker has had terminate() called. </para>        </briefdescription>
-        <detaileddescription>
-        </detaileddescription>
-        <inbodydescription>
-        </inbodydescription>
-        <location file="/Users/mob/git/ejs/doc/api/ejs/staging/src/include/ejs.h" line="3190" bodyfile="/Users/mob/git/ejs/doc/api/ejs/staging/src/include/ejs.h" bodystart="3190" bodyend="-1"/>
+        <location file="/Users/mob/git/ejs/doc/api/ejs/staging/src/deps/ejs/ejs.h" line="3139" bodyfile="/Users/mob/git/ejs/doc/api/ejs/staging/src/deps/ejs/ejs.h" bodystart="3139" bodyend="-1"/>
       </memberdef>
       </sectiondef>
     <briefdescription>
     </briefdescription>
     <detaileddescription>
     </detaileddescription>
-    <location file="/Users/mob/git/ejs/doc/api/ejs/staging/src/include/ejs.h" line="3178" bodyfile="/Users/mob/git/ejs/doc/api/ejs/staging/src/include/ejs.h" bodystart="3178" bodyend="3191"/>
+    <location file="/Users/mob/git/ejs/doc/api/ejs/staging/src/deps/ejs/ejs.h" line="3131" bodyfile="/Users/mob/git/ejs/doc/api/ejs/staging/src/deps/ejs/ejs.h" bodystart="3131" bodyend="3143"/>
     <listofallmembers>
-      <member refid="struct_ejs_worker_157247d2434f1bb3fc5466c4e07f412ae" prot="public" virt="non-virtual"><scope>EjsWorker</scope><name>complete</name></member>
-      <member refid="struct_ejs_worker_132f10f83148506a1965382c175aff584" prot="public" virt="non-virtual"><scope>EjsWorker</scope><name>ejs</name></member>
-      <member refid="struct_ejs_worker_1f8174a37eea196ffbdc1e686b9d1134c" prot="public" virt="non-virtual"><scope>EjsWorker</scope><name>event</name></member>
-      <member refid="struct_ejs_worker_1d50790def8ff17926a396742044f30c8" prot="public" virt="non-virtual"><scope>EjsWorker</scope><name>gotMessage</name></member>
-      <member refid="struct_ejs_worker_1f75f574e79b1d85eab545b6961e55286" prot="public" virt="non-virtual"><scope>EjsWorker</scope><name>inside</name></member>
-      <member refid="struct_ejs_worker_1198946ed4fa32ccc48e7be14bac810b8" prot="public" virt="non-virtual"><scope>EjsWorker</scope><name>name</name></member>
-      <member refid="struct_ejs_worker_11b390586e9913c3f5cf265b2c29e0102" prot="public" virt="non-virtual"><scope>EjsWorker</scope><name>obj</name></member>
-      <member refid="struct_ejs_worker_1d281213c66907b3dee69dbfe6a7b3054" prot="public" virt="non-virtual"><scope>EjsWorker</scope><name>pair</name></member>
-      <member refid="struct_ejs_worker_1bfafdcc7675631c37e1439059221a2dc" prot="public" virt="non-virtual"><scope>EjsWorker</scope><name>scriptFile</name></member>
-      <member refid="struct_ejs_worker_1400839516fd27fe2e7c9f63fa1b23ccb" prot="public" virt="non-virtual"><scope>EjsWorker</scope><name>scriptLiteral</name></member>
-      <member refid="struct_ejs_worker_148fdffcd3c341d886eaed339bb74480b" prot="public" virt="non-virtual"><scope>EjsWorker</scope><name>state</name></member>
-      <member refid="struct_ejs_worker_13de9eaad1f237564bd9d810abde8c246" prot="public" virt="non-virtual"><scope>EjsWorker</scope><name>terminated</name></member>
+      <member refid="struct_ejs_worker_1a57247d2434f1bb3fc5466c4e07f412ae" prot="public" virt="non-virtual"><scope>EjsWorker</scope><name>complete</name></member>
+      <member refid="struct_ejs_worker_1a32f10f83148506a1965382c175aff584" prot="public" virt="non-virtual"><scope>EjsWorker</scope><name>ejs</name></member>
+      <member refid="struct_ejs_worker_1a2363984008be02a7f210e2c32550e9f4" prot="public" virt="non-virtual"><scope>EjsWorker</scope><name>event</name></member>
+      <member refid="struct_ejs_worker_1ad50790def8ff17926a396742044f30c8" prot="public" virt="non-virtual"><scope>EjsWorker</scope><name>gotMessage</name></member>
+      <member refid="struct_ejs_worker_1af75f574e79b1d85eab545b6961e55286" prot="public" virt="non-virtual"><scope>EjsWorker</scope><name>inside</name></member>
+      <member refid="struct_ejs_worker_1a198946ed4fa32ccc48e7be14bac810b8" prot="public" virt="non-virtual"><scope>EjsWorker</scope><name>name</name></member>
+      <member refid="struct_ejs_worker_1ad281213c66907b3dee69dbfe6a7b3054" prot="public" virt="non-virtual"><scope>EjsWorker</scope><name>pair</name></member>
+      <member refid="struct_ejs_worker_1a943eee248f3776200cf13c92ee229c24" prot="public" virt="non-virtual"><scope>EjsWorker</scope><name>pot</name></member>
+      <member refid="struct_ejs_worker_1abfafdcc7675631c37e1439059221a2dc" prot="public" virt="non-virtual"><scope>EjsWorker</scope><name>scriptFile</name></member>
+      <member refid="struct_ejs_worker_1a24221c9a986b2da60045a5a852ded4e5" prot="public" virt="non-virtual"><scope>EjsWorker</scope><name>scriptLiteral</name></member>
+      <member refid="struct_ejs_worker_1a48fdffcd3c341d886eaed339bb74480b" prot="public" virt="non-virtual"><scope>EjsWorker</scope><name>state</name></member>
     </listofallmembers>
   </compounddef>
 </doxygen>

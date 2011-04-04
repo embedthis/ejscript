@@ -1,23 +1,8 @@
 <?xml version='1.0' encoding='UTF-8' standalone='no'?>
-<doxygen xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="compound.xsd" version="1.5.8">
+<doxygen xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="compound.xsd" version="1.7.3">
   <compounddef id="group___ejs_null" kind="group">
     <compoundname>EjsNull</compoundname>
     <title>EjsNull</title>
-      <sectiondef kind="define">
-      <memberdef kind="define" id="group___ejs_null_1g41b7ac7cd23790f96b26463b383b61d7" prot="public" static="no">
-        <name>ejsIsNull</name>
-        <param><defname>vp</defname></param>
-        <initializer>ejsIs(vp, ES_Null)</initializer>
-        <briefdescription>
-<para>Determine if a variable is a null. </para>        </briefdescription>
-        <detaileddescription>
-<para><simplesect kind="return"><para>True if a variable is a null </para></simplesect>
-</para>        </detaileddescription>
-        <inbodydescription>
-        </inbodydescription>
-        <location file="/Users/mob/git/ejs/doc/api/ejs/staging/src/include/ejs.h" line="2903" bodyfile="/Users/mob/git/ejs/doc/api/ejs/staging/src/include/ejs.h" bodystart="2903" bodyend="-1"/>
-      </memberdef>
-      </sectiondef>
     <briefdescription>
 <para>Null Class. </para>    </briefdescription>
     <detaileddescription>

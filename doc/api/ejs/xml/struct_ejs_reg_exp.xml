@@ -1,9 +1,9 @@
 <?xml version='1.0' encoding='UTF-8' standalone='no'?>
-<doxygen xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="compound.xsd" version="1.5.8">
+<doxygen xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="compound.xsd" version="1.7.3">
   <compounddef id="struct_ejs_reg_exp" kind="struct" prot="public">
     <compoundname>EjsRegExp</compoundname>
       <sectiondef kind="public-attrib">
-      <memberdef kind="variable" id="struct_ejs_reg_exp_138113ddd232a0eab38a8733a2f312c0d" prot="public" static="no" mutable="no">
+      <memberdef kind="variable" id="struct_ejs_reg_exp_1a38113ddd232a0eab38a8733a2f312c0d" prot="public" static="no" mutable="no">
         <type>void *</type>
         <definition>void* EjsRegExp::compiled</definition>
         <argsstring></argsstring>
@@ -14,35 +14,35 @@
         </detaileddescription>
         <inbodydescription>
         </inbodydescription>
-        <location file="/Users/mob/git/ejs/doc/api/ejs/staging/src/include/ejs.h" line="2977" bodyfile="/Users/mob/git/ejs/doc/api/ejs/staging/src/include/ejs.h" bodystart="2977" bodyend="-1"/>
+        <location file="/Users/mob/git/ejs/doc/api/ejs/staging/src/deps/ejs/ejs.h" line="3048" bodyfile="/Users/mob/git/ejs/doc/api/ejs/staging/src/deps/ejs/ejs.h" bodystart="3048" bodyend="-1"/>
       </memberdef>
-      <memberdef kind="variable" id="struct_ejs_reg_exp_13fe4a32b5f2879681ccd5c1386d53e9b" prot="public" static="no" mutable="no">
+      <memberdef kind="variable" id="struct_ejs_reg_exp_1a3fe4a32b5f2879681ccd5c1386d53e9b" prot="public" static="no" mutable="no">
         <type>int</type>
         <definition>int EjsRegExp::endLastMatch</definition>
         <argsstring></argsstring>
         <name>endLastMatch</name>
         <briefdescription>
-<para>End of the last match (one past end). </para>        </briefdescription>
+<para>End of the last match (one past end) </para>        </briefdescription>
         <detaileddescription>
         </detaileddescription>
         <inbodydescription>
         </inbodydescription>
-        <location file="/Users/mob/git/ejs/doc/api/ejs/staging/src/include/ejs.h" line="2983" bodyfile="/Users/mob/git/ejs/doc/api/ejs/staging/src/include/ejs.h" bodystart="2983" bodyend="-1"/>
+        <location file="/Users/mob/git/ejs/doc/api/ejs/staging/src/deps/ejs/ejs.h" line="3054" bodyfile="/Users/mob/git/ejs/doc/api/ejs/staging/src/deps/ejs/ejs.h" bodystart="3054" bodyend="-1"/>
       </memberdef>
-      <memberdef kind="variable" id="struct_ejs_reg_exp_129d158952bb4802f6621fdfe50d74bec" prot="public" static="no" mutable="no">
+      <memberdef kind="variable" id="struct_ejs_reg_exp_1a29d158952bb4802f6621fdfe50d74bec" prot="public" static="no" mutable="no">
         <type>bool</type>
         <definition>bool EjsRegExp::global</definition>
         <argsstring></argsstring>
         <name>global</name>
         <briefdescription>
-<para>Search for pattern globally (multiple times). </para>        </briefdescription>
+<para>Search for pattern globally (multiple times) </para>        </briefdescription>
         <detaileddescription>
         </detaileddescription>
         <inbodydescription>
         </inbodydescription>
-        <location file="/Users/mob/git/ejs/doc/api/ejs/staging/src/include/ejs.h" line="2978" bodyfile="/Users/mob/git/ejs/doc/api/ejs/staging/src/include/ejs.h" bodystart="2978" bodyend="-1"/>
+        <location file="/Users/mob/git/ejs/doc/api/ejs/staging/src/deps/ejs/ejs.h" line="3049" bodyfile="/Users/mob/git/ejs/doc/api/ejs/staging/src/deps/ejs/ejs.h" bodystart="3049" bodyend="-1"/>
       </memberdef>
-      <memberdef kind="variable" id="struct_ejs_reg_exp_1554f78a11c645b36c1d4567ba476aadd" prot="public" static="no" mutable="no">
+      <memberdef kind="variable" id="struct_ejs_reg_exp_1a554f78a11c645b36c1d4567ba476aadd" prot="public" static="no" mutable="no">
         <type>bool</type>
         <definition>bool EjsRegExp::ignoreCase</definition>
         <argsstring></argsstring>
@@ -53,11 +53,11 @@
         </detaileddescription>
         <inbodydescription>
         </inbodydescription>
-        <location file="/Users/mob/git/ejs/doc/api/ejs/staging/src/include/ejs.h" line="2979" bodyfile="/Users/mob/git/ejs/doc/api/ejs/staging/src/include/ejs.h" bodystart="2979" bodyend="-1"/>
+        <location file="/Users/mob/git/ejs/doc/api/ejs/staging/src/deps/ejs/ejs.h" line="3050" bodyfile="/Users/mob/git/ejs/doc/api/ejs/staging/src/deps/ejs/ejs.h" bodystart="3050" bodyend="-1"/>
       </memberdef>
-      <memberdef kind="variable" id="struct_ejs_reg_exp_1487866d2284e60be4ce76fca881914d1" prot="public" static="no" mutable="no">
-        <type>struct EjsString *</type>
-        <definition>struct EjsString* EjsRegExp::matched</definition>
+      <memberdef kind="variable" id="struct_ejs_reg_exp_1a05f5974cc985035acbde8c1623030878" prot="public" static="no" mutable="no">
+        <type>EjsString *</type>
+        <definition>EjsString* EjsRegExp::matched</definition>
         <argsstring></argsstring>
         <name>matched</name>
         <briefdescription>
@@ -66,9 +66,9 @@
         </detaileddescription>
         <inbodydescription>
         </inbodydescription>
-        <location file="/Users/mob/git/ejs/doc/api/ejs/staging/src/include/ejs.h" line="2985" bodyfile="/Users/mob/git/ejs/doc/api/ejs/staging/src/include/ejs.h" bodystart="2985" bodyend="-1"/>
+        <location file="/Users/mob/git/ejs/doc/api/ejs/staging/src/deps/ejs/ejs.h" line="3056" bodyfile="/Users/mob/git/ejs/doc/api/ejs/staging/src/deps/ejs/ejs.h" bodystart="3056" bodyend="-1"/>
       </memberdef>
-      <memberdef kind="variable" id="struct_ejs_reg_exp_1cda7cae8de4179d1f352344df15d7727" prot="public" static="no" mutable="no">
+      <memberdef kind="variable" id="struct_ejs_reg_exp_1acda7cae8de4179d1f352344df15d7727" prot="public" static="no" mutable="no">
         <type>bool</type>
         <definition>bool EjsRegExp::multiline</definition>
         <argsstring></argsstring>
@@ -79,9 +79,22 @@
         </detaileddescription>
         <inbodydescription>
         </inbodydescription>
-        <location file="/Users/mob/git/ejs/doc/api/ejs/staging/src/include/ejs.h" line="2980" bodyfile="/Users/mob/git/ejs/doc/api/ejs/staging/src/include/ejs.h" bodystart="2980" bodyend="-1"/>
+        <location file="/Users/mob/git/ejs/doc/api/ejs/staging/src/deps/ejs/ejs.h" line="3051" bodyfile="/Users/mob/git/ejs/doc/api/ejs/staging/src/deps/ejs/ejs.h" bodystart="3051" bodyend="-1"/>
       </memberdef>
-      <memberdef kind="variable" id="struct_ejs_reg_exp_1e1d27614fa33b41bb9663baa5374e6f8" prot="public" static="no" mutable="no">
+      <memberdef kind="variable" id="struct_ejs_reg_exp_1a2d2318850dc356f0674b59b7a4d10d58" prot="public" static="no" mutable="no">
+        <type>EjsObj</type>
+        <definition>EjsObj EjsRegExp::obj</definition>
+        <argsstring></argsstring>
+        <name>obj</name>
+        <briefdescription>
+<para>Base object. </para>        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/Users/mob/git/ejs/doc/api/ejs/staging/src/deps/ejs/ejs.h" line="3046" bodyfile="/Users/mob/git/ejs/doc/api/ejs/staging/src/deps/ejs/ejs.h" bodystart="3046" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="variable" id="struct_ejs_reg_exp_1ae1d27614fa33b41bb9663baa5374e6f8" prot="public" static="no" mutable="no">
         <type>int</type>
         <definition>int EjsRegExp::options</definition>
         <argsstring></argsstring>
@@ -92,22 +105,22 @@
         </detaileddescription>
         <inbodydescription>
         </inbodydescription>
-        <location file="/Users/mob/git/ejs/doc/api/ejs/staging/src/include/ejs.h" line="2982" bodyfile="/Users/mob/git/ejs/doc/api/ejs/staging/src/include/ejs.h" bodystart="2982" bodyend="-1"/>
+        <location file="/Users/mob/git/ejs/doc/api/ejs/staging/src/deps/ejs/ejs.h" line="3053" bodyfile="/Users/mob/git/ejs/doc/api/ejs/staging/src/deps/ejs/ejs.h" bodystart="3053" bodyend="-1"/>
       </memberdef>
-      <memberdef kind="variable" id="struct_ejs_reg_exp_1793dcb1dd4c97991dcf3234a5f3e1674" prot="public" static="no" mutable="no">
-        <type>char *</type>
-        <definition>char* EjsRegExp::pattern</definition>
+      <memberdef kind="variable" id="struct_ejs_reg_exp_1abd3e0b450278d2bf27bd046476add519" prot="public" static="no" mutable="no">
+        <type>MprChar *</type>
+        <definition>MprChar* EjsRegExp::pattern</definition>
         <argsstring></argsstring>
         <name>pattern</name>
         <briefdescription>
-<para>Pattern to match with. </para>        </briefdescription>
+<para>Pattern to match. </para>        </briefdescription>
         <detaileddescription>
         </detaileddescription>
         <inbodydescription>
         </inbodydescription>
-        <location file="/Users/mob/git/ejs/doc/api/ejs/staging/src/include/ejs.h" line="2976" bodyfile="/Users/mob/git/ejs/doc/api/ejs/staging/src/include/ejs.h" bodystart="2976" bodyend="-1"/>
+        <location file="/Users/mob/git/ejs/doc/api/ejs/staging/src/deps/ejs/ejs.h" line="3047" bodyfile="/Users/mob/git/ejs/doc/api/ejs/staging/src/deps/ejs/ejs.h" bodystart="3047" bodyend="-1"/>
       </memberdef>
-      <memberdef kind="variable" id="struct_ejs_reg_exp_1ff979b4935d1a8ecbab91cb0a2c1bf03" prot="public" static="no" mutable="no">
+      <memberdef kind="variable" id="struct_ejs_reg_exp_1aff979b4935d1a8ecbab91cb0a2c1bf03" prot="public" static="no" mutable="no">
         <type>int</type>
         <definition>int EjsRegExp::startLastMatch</definition>
         <argsstring></argsstring>
@@ -118,9 +131,9 @@
         </detaileddescription>
         <inbodydescription>
         </inbodydescription>
-        <location file="/Users/mob/git/ejs/doc/api/ejs/staging/src/include/ejs.h" line="2984" bodyfile="/Users/mob/git/ejs/doc/api/ejs/staging/src/include/ejs.h" bodystart="2984" bodyend="-1"/>
+        <location file="/Users/mob/git/ejs/doc/api/ejs/staging/src/deps/ejs/ejs.h" line="3055" bodyfile="/Users/mob/git/ejs/doc/api/ejs/staging/src/deps/ejs/ejs.h" bodystart="3055" bodyend="-1"/>
       </memberdef>
-      <memberdef kind="variable" id="struct_ejs_reg_exp_17ad5d837154c9a97a41b4c08dee5fb94" prot="public" static="no" mutable="no">
+      <memberdef kind="variable" id="struct_ejs_reg_exp_1a7ad5d837154c9a97a41b4c08dee5fb94" prot="public" static="no" mutable="no">
         <type>bool</type>
         <definition>bool EjsRegExp::sticky</definition>
         <argsstring></argsstring>
@@ -131,39 +144,26 @@
         </detaileddescription>
         <inbodydescription>
         </inbodydescription>
-        <location file="/Users/mob/git/ejs/doc/api/ejs/staging/src/include/ejs.h" line="2981" bodyfile="/Users/mob/git/ejs/doc/api/ejs/staging/src/include/ejs.h" bodystart="2981" bodyend="-1"/>
-      </memberdef>
-      <memberdef kind="variable" id="struct_ejs_reg_exp_12bc2197aed7522daec99aa15a71c2e05" prot="public" static="no" mutable="no">
-        <type>EjsObj</type>
-        <definition>EjsObj EjsRegExp::var</definition>
-        <argsstring></argsstring>
-        <name>var</name>
-        <briefdescription>
-<para>Extends Object - Property storage. </para>        </briefdescription>
-        <detaileddescription>
-        </detaileddescription>
-        <inbodydescription>
-        </inbodydescription>
-        <location file="/Users/mob/git/ejs/doc/api/ejs/staging/src/include/ejs.h" line="2975" bodyfile="/Users/mob/git/ejs/doc/api/ejs/staging/src/include/ejs.h" bodystart="2975" bodyend="-1"/>
+        <location file="/Users/mob/git/ejs/doc/api/ejs/staging/src/deps/ejs/ejs.h" line="3052" bodyfile="/Users/mob/git/ejs/doc/api/ejs/staging/src/deps/ejs/ejs.h" bodystart="3052" bodyend="-1"/>
       </memberdef>
       </sectiondef>
     <briefdescription>
     </briefdescription>
     <detaileddescription>
     </detaileddescription>
-    <location file="/Users/mob/git/ejs/doc/api/ejs/staging/src/include/ejs.h" line="2974" bodyfile="/Users/mob/git/ejs/doc/api/ejs/staging/src/include/ejs.h" bodystart="2974" bodyend="2986"/>
+    <location file="/Users/mob/git/ejs/doc/api/ejs/staging/src/deps/ejs/ejs.h" line="3045" bodyfile="/Users/mob/git/ejs/doc/api/ejs/staging/src/deps/ejs/ejs.h" bodystart="3045" bodyend="3057"/>
     <listofallmembers>
-      <member refid="struct_ejs_reg_exp_138113ddd232a0eab38a8733a2f312c0d" prot="public" virt="non-virtual"><scope>EjsRegExp</scope><name>compiled</name></member>
-      <member refid="struct_ejs_reg_exp_13fe4a32b5f2879681ccd5c1386d53e9b" prot="public" virt="non-virtual"><scope>EjsRegExp</scope><name>endLastMatch</name></member>
-      <member refid="struct_ejs_reg_exp_129d158952bb4802f6621fdfe50d74bec" prot="public" virt="non-virtual"><scope>EjsRegExp</scope><name>global</name></member>
-      <member refid="struct_ejs_reg_exp_1554f78a11c645b36c1d4567ba476aadd" prot="public" virt="non-virtual"><scope>EjsRegExp</scope><name>ignoreCase</name></member>
-      <member refid="struct_ejs_reg_exp_1487866d2284e60be4ce76fca881914d1" prot="public" virt="non-virtual"><scope>EjsRegExp</scope><name>matched</name></member>
-      <member refid="struct_ejs_reg_exp_1cda7cae8de4179d1f352344df15d7727" prot="public" virt="non-virtual"><scope>EjsRegExp</scope><name>multiline</name></member>
-      <member refid="struct_ejs_reg_exp_1e1d27614fa33b41bb9663baa5374e6f8" prot="public" virt="non-virtual"><scope>EjsRegExp</scope><name>options</name></member>
-      <member refid="struct_ejs_reg_exp_1793dcb1dd4c97991dcf3234a5f3e1674" prot="public" virt="non-virtual"><scope>EjsRegExp</scope><name>pattern</name></member>
-      <member refid="struct_ejs_reg_exp_1ff979b4935d1a8ecbab91cb0a2c1bf03" prot="public" virt="non-virtual"><scope>EjsRegExp</scope><name>startLastMatch</name></member>
-      <member refid="struct_ejs_reg_exp_17ad5d837154c9a97a41b4c08dee5fb94" prot="public" virt="non-virtual"><scope>EjsRegExp</scope><name>sticky</name></member>
-      <member refid="struct_ejs_reg_exp_12bc2197aed7522daec99aa15a71c2e05" prot="public" virt="non-virtual"><scope>EjsRegExp</scope><name>var</name></member>
+      <member refid="struct_ejs_reg_exp_1a38113ddd232a0eab38a8733a2f312c0d" prot="public" virt="non-virtual"><scope>EjsRegExp</scope><name>compiled</name></member>
+      <member refid="struct_ejs_reg_exp_1a3fe4a32b5f2879681ccd5c1386d53e9b" prot="public" virt="non-virtual"><scope>EjsRegExp</scope><name>endLastMatch</name></member>
+      <member refid="struct_ejs_reg_exp_1a29d158952bb4802f6621fdfe50d74bec" prot="public" virt="non-virtual"><scope>EjsRegExp</scope><name>global</name></member>
+      <member refid="struct_ejs_reg_exp_1a554f78a11c645b36c1d4567ba476aadd" prot="public" virt="non-virtual"><scope>EjsRegExp</scope><name>ignoreCase</name></member>
+      <member refid="struct_ejs_reg_exp_1a05f5974cc985035acbde8c1623030878" prot="public" virt="non-virtual"><scope>EjsRegExp</scope><name>matched</name></member>
+      <member refid="struct_ejs_reg_exp_1acda7cae8de4179d1f352344df15d7727" prot="public" virt="non-virtual"><scope>EjsRegExp</scope><name>multiline</name></member>
+      <member refid="struct_ejs_reg_exp_1a2d2318850dc356f0674b59b7a4d10d58" prot="public" virt="non-virtual"><scope>EjsRegExp</scope><name>obj</name></member>
+      <member refid="struct_ejs_reg_exp_1ae1d27614fa33b41bb9663baa5374e6f8" prot="public" virt="non-virtual"><scope>EjsRegExp</scope><name>options</name></member>
+      <member refid="struct_ejs_reg_exp_1abd3e0b450278d2bf27bd046476add519" prot="public" virt="non-virtual"><scope>EjsRegExp</scope><name>pattern</name></member>
+      <member refid="struct_ejs_reg_exp_1aff979b4935d1a8ecbab91cb0a2c1bf03" prot="public" virt="non-virtual"><scope>EjsRegExp</scope><name>startLastMatch</name></member>
+      <member refid="struct_ejs_reg_exp_1a7ad5d837154c9a97a41b4c08dee5fb94" prot="public" virt="non-virtual"><scope>EjsRegExp</scope><name>sticky</name></member>
     </listofallmembers>
   </compounddef>
 </doxygen>

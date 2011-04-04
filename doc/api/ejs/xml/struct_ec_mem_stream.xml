@@ -1,9 +1,9 @@
 <?xml version='1.0' encoding='UTF-8' standalone='no'?>
-<doxygen xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="compound.xsd" version="1.5.8">
+<doxygen xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="compound.xsd" version="1.7.3">
   <compounddef id="struct_ec_mem_stream" kind="struct" prot="public">
     <compoundname>EcMemStream</compoundname>
       <sectiondef kind="public-attrib">
-      <memberdef kind="variable" id="struct_ec_mem_stream_199f357d99e713113e0434d53652178f3" prot="public" static="no" mutable="no">
+      <memberdef kind="variable" id="struct_ec_mem_stream_1a99f357d99e713113e0434d53652178f3" prot="public" static="no" mutable="no">
         <type>EcStream</type>
         <definition>EcStream EcMemStream::stream</definition>
         <argsstring></argsstring>
@@ -14,16 +14,16 @@
         </detaileddescription>
         <inbodydescription>
         </inbodydescription>
-        <location file="/Users/mob/git/ejs/doc/api/ejs/staging/src/include/ejs.h" line="5446" bodyfile="/Users/mob/git/ejs/doc/api/ejs/staging/src/include/ejs.h" bodystart="5446" bodyend="-1"/>
+        <location file="/Users/mob/git/ejs/doc/api/ejs/staging/src/deps/ejs/ejs.h" line="5057" bodyfile="/Users/mob/git/ejs/doc/api/ejs/staging/src/deps/ejs/ejs.h" bodystart="5057" bodyend="-1"/>
       </memberdef>
       </sectiondef>
     <briefdescription>
     </briefdescription>
     <detaileddescription>
     </detaileddescription>
-    <location file="/Users/mob/git/ejs/doc/api/ejs/staging/src/include/ejs.h" line="5445" bodyfile="/Users/mob/git/ejs/doc/api/ejs/staging/src/include/ejs.h" bodystart="5445" bodyend="5447"/>
+    <location file="/Users/mob/git/ejs/doc/api/ejs/staging/src/deps/ejs/ejs.h" line="5056" bodyfile="/Users/mob/git/ejs/doc/api/ejs/staging/src/deps/ejs/ejs.h" bodystart="5056" bodyend="5058"/>
     <listofallmembers>
-      <member refid="struct_ec_mem_stream_199f357d99e713113e0434d53652178f3" prot="public" virt="non-virtual"><scope>EcMemStream</scope><name>stream</name></member>
+      <member refid="struct_ec_mem_stream_1a99f357d99e713113e0434d53652178f3" prot="public" virt="non-virtual"><scope>EcMemStream</scope><name>stream</name></member>
     </listofallmembers>
   </compounddef>
 </doxygen>

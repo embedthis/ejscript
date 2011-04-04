@@ -1,9 +1,9 @@
 <?xml version='1.0' encoding='UTF-8' standalone='no'?>
-<doxygen xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="compound.xsd" version="1.5.8">
+<doxygen xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="compound.xsd" version="1.7.3">
   <compounddef id="struct_ejs_session" kind="struct" prot="public">
     <compoundname>EjsSession</compoundname>
       <sectiondef kind="public-attrib">
-      <memberdef kind="variable" id="struct_ejs_session_15e1a40a8af011aab2fb77aac20d055fb" prot="public" static="no" mutable="no">
+      <memberdef kind="variable" id="struct_ejs_session_1a5e1a40a8af011aab2fb77aac20d055fb" prot="public" static="no" mutable="no">
         <type>MprTime</type>
         <definition>MprTime EjsSession::expire</definition>
         <argsstring></argsstring>
@@ -14,9 +14,9 @@
         </detaileddescription>
         <inbodydescription>
         </inbodydescription>
-        <location file="/Users/mob/git/ejs/doc/api/ejs/staging/src/include/ejs.h" line="4592" bodyfile="/Users/mob/git/ejs/doc/api/ejs/staging/src/include/ejs.h" bodystart="4592" bodyend="-1"/>
+        <location file="/Users/mob/git/ejs/doc/api/ejs/staging/src/deps/ejs/ejs.h" line="4370" bodyfile="/Users/mob/git/ejs/doc/api/ejs/staging/src/deps/ejs/ejs.h" bodystart="4370" bodyend="-1"/>
       </memberdef>
-      <memberdef kind="variable" id="struct_ejs_session_1f8e2e5fa6a22410c0adaa22dca2884f5" prot="public" static="no" mutable="no">
+      <memberdef kind="variable" id="struct_ejs_session_1af8e2e5fa6a22410c0adaa22dca2884f5" prot="public" static="no" mutable="no">
         <type>cchar *</type>
         <definition>cchar* EjsSession::id</definition>
         <argsstring></argsstring>
@@ -27,9 +27,9 @@
         </detaileddescription>
         <inbodydescription>
         </inbodydescription>
-        <location file="/Users/mob/git/ejs/doc/api/ejs/staging/src/include/ejs.h" line="4593" bodyfile="/Users/mob/git/ejs/doc/api/ejs/staging/src/include/ejs.h" bodystart="4593" bodyend="-1"/>
+        <location file="/Users/mob/git/ejs/doc/api/ejs/staging/src/deps/ejs/ejs.h" line="4371" bodyfile="/Users/mob/git/ejs/doc/api/ejs/staging/src/deps/ejs/ejs.h" bodystart="4371" bodyend="-1"/>
       </memberdef>
-      <memberdef kind="variable" id="struct_ejs_session_165ce966ab5265cbbaac237f3bb53a5af" prot="public" static="no" mutable="no">
+      <memberdef kind="variable" id="struct_ejs_session_1a65ce966ab5265cbbaac237f3bb53a5af" prot="public" static="no" mutable="no">
         <type>int</type>
         <definition>int EjsSession::index</definition>
         <argsstring></argsstring>
@@ -40,22 +40,22 @@
         </detaileddescription>
         <inbodydescription>
         </inbodydescription>
-        <location file="/Users/mob/git/ejs/doc/api/ejs/staging/src/include/ejs.h" line="4595" bodyfile="/Users/mob/git/ejs/doc/api/ejs/staging/src/include/ejs.h" bodystart="4595" bodyend="-1"/>
+        <location file="/Users/mob/git/ejs/doc/api/ejs/staging/src/deps/ejs/ejs.h" line="4373" bodyfile="/Users/mob/git/ejs/doc/api/ejs/staging/src/deps/ejs/ejs.h" bodystart="4373" bodyend="-1"/>
       </memberdef>
-      <memberdef kind="variable" id="struct_ejs_session_13ea9c6c840eb181990ea2f1bdc8c9c5e" prot="public" static="no" mutable="no">
-        <type>EjsObj</type>
-        <definition>EjsObj EjsSession::obj</definition>
+      <memberdef kind="variable" id="struct_ejs_session_1a121ce8ed494d2ae175ea5046c57ec847" prot="public" static="no" mutable="no">
+        <type>EjsPot</type>
+        <definition>EjsPot EjsSession::pot</definition>
         <argsstring></argsstring>
-        <name>obj</name>
+        <name>pot</name>
         <briefdescription>
         </briefdescription>
         <detaileddescription>
         </detaileddescription>
         <inbodydescription>
         </inbodydescription>
-        <location file="/Users/mob/git/ejs/doc/api/ejs/staging/src/include/ejs.h" line="4591" bodyfile="/Users/mob/git/ejs/doc/api/ejs/staging/src/include/ejs.h" bodystart="4591" bodyend="-1"/>
+        <location file="/Users/mob/git/ejs/doc/api/ejs/staging/src/deps/ejs/ejs.h" line="4369" bodyfile="/Users/mob/git/ejs/doc/api/ejs/staging/src/deps/ejs/ejs.h" bodystart="4369" bodyend="-1"/>
       </memberdef>
-      <memberdef kind="variable" id="struct_ejs_session_16aef5ace193eccd837611685a3d25c52" prot="public" static="no" mutable="no">
+      <memberdef kind="variable" id="struct_ejs_session_1a6aef5ace193eccd837611685a3d25c52" prot="public" static="no" mutable="no">
         <type>int</type>
         <definition>int EjsSession::timeout</definition>
         <argsstring></argsstring>
@@ -66,20 +66,20 @@
         </detaileddescription>
         <inbodydescription>
         </inbodydescription>
-        <location file="/Users/mob/git/ejs/doc/api/ejs/staging/src/include/ejs.h" line="4594" bodyfile="/Users/mob/git/ejs/doc/api/ejs/staging/src/include/ejs.h" bodystart="4594" bodyend="-1"/>
+        <location file="/Users/mob/git/ejs/doc/api/ejs/staging/src/deps/ejs/ejs.h" line="4372" bodyfile="/Users/mob/git/ejs/doc/api/ejs/staging/src/deps/ejs/ejs.h" bodystart="4372" bodyend="-1"/>
       </memberdef>
       </sectiondef>
     <briefdescription>
     </briefdescription>
     <detaileddescription>
     </detaileddescription>
-    <location file="/Users/mob/git/ejs/doc/api/ejs/staging/src/include/ejs.h" line="4590" bodyfile="/Users/mob/git/ejs/doc/api/ejs/staging/src/include/ejs.h" bodystart="4589" bodyend="4596"/>
+    <location file="/Users/mob/git/ejs/doc/api/ejs/staging/src/deps/ejs/ejs.h" line="4368" bodyfile="/Users/mob/git/ejs/doc/api/ejs/staging/src/deps/ejs/ejs.h" bodystart="4368" bodyend="4374"/>
     <listofallmembers>
-      <member refid="struct_ejs_session_15e1a40a8af011aab2fb77aac20d055fb" prot="public" virt="non-virtual"><scope>EjsSession</scope><name>expire</name></member>
-      <member refid="struct_ejs_session_1f8e2e5fa6a22410c0adaa22dca2884f5" prot="public" virt="non-virtual"><scope>EjsSession</scope><name>id</name></member>
-      <member refid="struct_ejs_session_165ce966ab5265cbbaac237f3bb53a5af" prot="public" virt="non-virtual"><scope>EjsSession</scope><name>index</name></member>
-      <member refid="struct_ejs_session_13ea9c6c840eb181990ea2f1bdc8c9c5e" prot="public" virt="non-virtual"><scope>EjsSession</scope><name>obj</name></member>
-      <member refid="struct_ejs_session_16aef5ace193eccd837611685a3d25c52" prot="public" virt="non-virtual"><scope>EjsSession</scope><name>timeout</name></member>
+      <member refid="struct_ejs_session_1a5e1a40a8af011aab2fb77aac20d055fb" prot="public" virt="non-virtual"><scope>EjsSession</scope><name>expire</name></member>
+      <member refid="struct_ejs_session_1af8e2e5fa6a22410c0adaa22dca2884f5" prot="public" virt="non-virtual"><scope>EjsSession</scope><name>id</name></member>
+      <member refid="struct_ejs_session_1a65ce966ab5265cbbaac237f3bb53a5af" prot="public" virt="non-virtual"><scope>EjsSession</scope><name>index</name></member>
+      <member refid="struct_ejs_session_1a121ce8ed494d2ae175ea5046c57ec847" prot="public" virt="non-virtual"><scope>EjsSession</scope><name>pot</name></member>
+      <member refid="struct_ejs_session_1a6aef5ace193eccd837611685a3d25c52" prot="public" virt="non-virtual"><scope>EjsSession</scope><name>timeout</name></member>
     </listofallmembers>
   </compounddef>
 </doxygen>

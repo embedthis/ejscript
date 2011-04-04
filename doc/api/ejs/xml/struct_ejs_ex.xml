@@ -1,10 +1,10 @@
 <?xml version='1.0' encoding='UTF-8' standalone='no'?>
-<doxygen xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="compound.xsd" version="1.5.8">
+<doxygen xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="compound.xsd" version="1.7.3">
   <compounddef id="struct_ejs_ex" kind="struct" prot="public">
     <compoundname>EjsEx</compoundname>
     <includes refid="ejs_8h" local="no">ejs.h</includes>
       <sectiondef kind="public-attrib">
-      <memberdef kind="variable" id="struct_ejs_ex_17828edd37cb2f8e0f72a8abe84a1092c" prot="public" static="no" mutable="no">
+      <memberdef kind="variable" id="struct_ejs_ex_1a7828edd37cb2f8e0f72a8abe84a1092c" prot="public" static="no" mutable="no">
         <type>struct EjsType *</type>
         <definition>struct EjsType* EjsEx::catchType</definition>
         <argsstring></argsstring>
@@ -15,9 +15,9 @@
         </detaileddescription>
         <inbodydescription>
         </inbodydescription>
-        <location file="/Users/mob/git/ejs/doc/api/ejs/staging/src/include/ejs.h" line="1899" bodyfile="/Users/mob/git/ejs/doc/api/ejs/staging/src/include/ejs.h" bodystart="1899" bodyend="-1"/>
+        <location file="/Users/mob/git/ejs/doc/api/ejs/staging/src/deps/ejs/ejs.h" line="2084" bodyfile="/Users/mob/git/ejs/doc/api/ejs/staging/src/deps/ejs/ejs.h" bodystart="2084" bodyend="-1"/>
       </memberdef>
-      <memberdef kind="variable" id="struct_ejs_ex_187d151aba36a9e6b141e3c26a19e9506" prot="public" static="no" mutable="no">
+      <memberdef kind="variable" id="struct_ejs_ex_1a87d151aba36a9e6b141e3c26a19e9506" prot="public" static="no" mutable="no">
         <type>uint</type>
         <definition>uint EjsEx::flags</definition>
         <argsstring></argsstring>
@@ -28,9 +28,9 @@
         </detaileddescription>
         <inbodydescription>
         </inbodydescription>
-        <location file="/Users/mob/git/ejs/doc/api/ejs/staging/src/include/ejs.h" line="1900" bodyfile="/Users/mob/git/ejs/doc/api/ejs/staging/src/include/ejs.h" bodystart="1900" bodyend="-1"/>
+        <location file="/Users/mob/git/ejs/doc/api/ejs/staging/src/deps/ejs/ejs.h" line="2085" bodyfile="/Users/mob/git/ejs/doc/api/ejs/staging/src/deps/ejs/ejs.h" bodystart="2085" bodyend="-1"/>
       </memberdef>
-      <memberdef kind="variable" id="struct_ejs_ex_10d87e1294e4f3c9253deaab0322b6457" prot="public" static="no" mutable="no">
+      <memberdef kind="variable" id="struct_ejs_ex_1a0d87e1294e4f3c9253deaab0322b6457" prot="public" static="no" mutable="no">
         <type>uint</type>
         <definition>uint EjsEx::handlerEnd</definition>
         <argsstring></argsstring>
@@ -41,9 +41,9 @@
         </detaileddescription>
         <inbodydescription>
         </inbodydescription>
-        <location file="/Users/mob/git/ejs/doc/api/ejs/staging/src/include/ejs.h" line="1904" bodyfile="/Users/mob/git/ejs/doc/api/ejs/staging/src/include/ejs.h" bodystart="1904" bodyend="-1"/>
+        <location file="/Users/mob/git/ejs/doc/api/ejs/staging/src/deps/ejs/ejs.h" line="2089" bodyfile="/Users/mob/git/ejs/doc/api/ejs/staging/src/deps/ejs/ejs.h" bodystart="2089" bodyend="-1"/>
       </memberdef>
-      <memberdef kind="variable" id="struct_ejs_ex_1d7b33fe2f697cfbbf44e5769b5c5c678" prot="public" static="no" mutable="no">
+      <memberdef kind="variable" id="struct_ejs_ex_1ad7b33fe2f697cfbbf44e5769b5c5c678" prot="public" static="no" mutable="no">
         <type>uint</type>
         <definition>uint EjsEx::handlerStart</definition>
         <argsstring></argsstring>
@@ -54,9 +54,9 @@
         </detaileddescription>
         <inbodydescription>
         </inbodydescription>
-        <location file="/Users/mob/git/ejs/doc/api/ejs/staging/src/include/ejs.h" line="1903" bodyfile="/Users/mob/git/ejs/doc/api/ejs/staging/src/include/ejs.h" bodystart="1903" bodyend="-1"/>
+        <location file="/Users/mob/git/ejs/doc/api/ejs/staging/src/deps/ejs/ejs.h" line="2088" bodyfile="/Users/mob/git/ejs/doc/api/ejs/staging/src/deps/ejs/ejs.h" bodystart="2088" bodyend="-1"/>
       </memberdef>
-      <memberdef kind="variable" id="struct_ejs_ex_19001e876331edefed444af2b3d494491" prot="public" static="no" mutable="no">
+      <memberdef kind="variable" id="struct_ejs_ex_1a9001e876331edefed444af2b3d494491" prot="public" static="no" mutable="no">
         <type>uint</type>
         <definition>uint EjsEx::numBlocks</definition>
         <argsstring></argsstring>
@@ -67,9 +67,9 @@
         </detaileddescription>
         <inbodydescription>
         </inbodydescription>
-        <location file="/Users/mob/git/ejs/doc/api/ejs/staging/src/include/ejs.h" line="1905" bodyfile="/Users/mob/git/ejs/doc/api/ejs/staging/src/include/ejs.h" bodystart="1905" bodyend="-1"/>
+        <location file="/Users/mob/git/ejs/doc/api/ejs/staging/src/deps/ejs/ejs.h" line="2090" bodyfile="/Users/mob/git/ejs/doc/api/ejs/staging/src/deps/ejs/ejs.h" bodystart="2090" bodyend="-1"/>
       </memberdef>
-      <memberdef kind="variable" id="struct_ejs_ex_16223de535a61bc04b099739cb508dc57" prot="public" static="no" mutable="no">
+      <memberdef kind="variable" id="struct_ejs_ex_1a6223de535a61bc04b099739cb508dc57" prot="public" static="no" mutable="no">
         <type>uint</type>
         <definition>uint EjsEx::numStack</definition>
         <argsstring></argsstring>
@@ -80,9 +80,9 @@
         </detaileddescription>
         <inbodydescription>
         </inbodydescription>
-        <location file="/Users/mob/git/ejs/doc/api/ejs/staging/src/include/ejs.h" line="1906" bodyfile="/Users/mob/git/ejs/doc/api/ejs/staging/src/include/ejs.h" bodystart="1906" bodyend="-1"/>
+        <location file="/Users/mob/git/ejs/doc/api/ejs/staging/src/deps/ejs/ejs.h" line="2091" bodyfile="/Users/mob/git/ejs/doc/api/ejs/staging/src/deps/ejs/ejs.h" bodystart="2091" bodyend="-1"/>
       </memberdef>
-      <memberdef kind="variable" id="struct_ejs_ex_14dce233c5db38cfde56cd4adf525a5d8" prot="public" static="no" mutable="no">
+      <memberdef kind="variable" id="struct_ejs_ex_1a4dce233c5db38cfde56cd4adf525a5d8" prot="public" static="no" mutable="no">
         <type>uint</type>
         <definition>uint EjsEx::tryEnd</definition>
         <argsstring></argsstring>
@@ -93,9 +93,9 @@
         </detaileddescription>
         <inbodydescription>
         </inbodydescription>
-        <location file="/Users/mob/git/ejs/doc/api/ejs/staging/src/include/ejs.h" line="1902" bodyfile="/Users/mob/git/ejs/doc/api/ejs/staging/src/include/ejs.h" bodystart="1902" bodyend="-1"/>
+        <location file="/Users/mob/git/ejs/doc/api/ejs/staging/src/deps/ejs/ejs.h" line="2087" bodyfile="/Users/mob/git/ejs/doc/api/ejs/staging/src/deps/ejs/ejs.h" bodystart="2087" bodyend="-1"/>
       </memberdef>
-      <memberdef kind="variable" id="struct_ejs_ex_147bbb2fd50b22b520fab4cfc650b854f" prot="public" static="no" mutable="no">
+      <memberdef kind="variable" id="struct_ejs_ex_1a47bbb2fd50b22b520fab4cfc650b854f" prot="public" static="no" mutable="no">
         <type>uint</type>
         <definition>uint EjsEx::tryStart</definition>
         <argsstring></argsstring>
@@ -106,7 +106,7 @@
         </detaileddescription>
         <inbodydescription>
         </inbodydescription>
-        <location file="/Users/mob/git/ejs/doc/api/ejs/staging/src/include/ejs.h" line="1901" bodyfile="/Users/mob/git/ejs/doc/api/ejs/staging/src/include/ejs.h" bodystart="1901" bodyend="-1"/>
+        <location file="/Users/mob/git/ejs/doc/api/ejs/staging/src/deps/ejs/ejs.h" line="2086" bodyfile="/Users/mob/git/ejs/doc/api/ejs/staging/src/deps/ejs/ejs.h" bodystart="2086" bodyend="-1"/>
       </memberdef>
       </sectiondef>
     <briefdescription>
@@ -114,16 +114,16 @@
     <detaileddescription>
 <para><simplesect kind="par"><title><bold>Description</bold>:</title><para>Each exception handler has an exception handler record allocated that describes it. </para></simplesect>
 </para>    </detaileddescription>
-    <location file="/Users/mob/git/ejs/doc/api/ejs/staging/src/include/ejs.h" line="1897" bodyfile="/Users/mob/git/ejs/doc/api/ejs/staging/src/include/ejs.h" bodystart="1897" bodyend="1907"/>
+    <location file="/Users/mob/git/ejs/doc/api/ejs/staging/src/deps/ejs/ejs.h" line="2082" bodyfile="/Users/mob/git/ejs/doc/api/ejs/staging/src/deps/ejs/ejs.h" bodystart="2082" bodyend="2092"/>
     <listofallmembers>
-      <member refid="struct_ejs_ex_17828edd37cb2f8e0f72a8abe84a1092c" prot="public" virt="non-virtual"><scope>EjsEx</scope><name>catchType</name></member>
-      <member refid="struct_ejs_ex_187d151aba36a9e6b141e3c26a19e9506" prot="public" virt="non-virtual"><scope>EjsEx</scope><name>flags</name></member>
-      <member refid="struct_ejs_ex_10d87e1294e4f3c9253deaab0322b6457" prot="public" virt="non-virtual"><scope>EjsEx</scope><name>handlerEnd</name></member>
-      <member refid="struct_ejs_ex_1d7b33fe2f697cfbbf44e5769b5c5c678" prot="public" virt="non-virtual"><scope>EjsEx</scope><name>handlerStart</name></member>
-      <member refid="struct_ejs_ex_19001e876331edefed444af2b3d494491" prot="public" virt="non-virtual"><scope>EjsEx</scope><name>numBlocks</name></member>
-      <member refid="struct_ejs_ex_16223de535a61bc04b099739cb508dc57" prot="public" virt="non-virtual"><scope>EjsEx</scope><name>numStack</name></member>
-      <member refid="struct_ejs_ex_14dce233c5db38cfde56cd4adf525a5d8" prot="public" virt="non-virtual"><scope>EjsEx</scope><name>tryEnd</name></member>
-      <member refid="struct_ejs_ex_147bbb2fd50b22b520fab4cfc650b854f" prot="public" virt="non-virtual"><scope>EjsEx</scope><name>tryStart</name></member>
+      <member refid="struct_ejs_ex_1a7828edd37cb2f8e0f72a8abe84a1092c" prot="public" virt="non-virtual"><scope>EjsEx</scope><name>catchType</name></member>
+      <member refid="struct_ejs_ex_1a87d151aba36a9e6b141e3c26a19e9506" prot="public" virt="non-virtual"><scope>EjsEx</scope><name>flags</name></member>
+      <member refid="struct_ejs_ex_1a0d87e1294e4f3c9253deaab0322b6457" prot="public" virt="non-virtual"><scope>EjsEx</scope><name>handlerEnd</name></member>
+      <member refid="struct_ejs_ex_1ad7b33fe2f697cfbbf44e5769b5c5c678" prot="public" virt="non-virtual"><scope>EjsEx</scope><name>handlerStart</name></member>
+      <member refid="struct_ejs_ex_1a9001e876331edefed444af2b3d494491" prot="public" virt="non-virtual"><scope>EjsEx</scope><name>numBlocks</name></member>
+      <member refid="struct_ejs_ex_1a6223de535a61bc04b099739cb508dc57" prot="public" virt="non-virtual"><scope>EjsEx</scope><name>numStack</name></member>
+      <member refid="struct_ejs_ex_1a4dce233c5db38cfde56cd4adf525a5d8" prot="public" virt="non-virtual"><scope>EjsEx</scope><name>tryEnd</name></member>
+      <member refid="struct_ejs_ex_1a47bbb2fd50b22b520fab4cfc650b854f" prot="public" virt="non-virtual"><scope>EjsEx</scope><name>tryStart</name></member>
     </listofallmembers>
   </compounddef>
 </doxygen>

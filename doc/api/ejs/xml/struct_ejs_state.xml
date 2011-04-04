@@ -1,10 +1,10 @@
 <?xml version='1.0' encoding='UTF-8' standalone='no'?>
-<doxygen xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="compound.xsd" version="1.5.8">
+<doxygen xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="compound.xsd" version="1.7.3">
   <compounddef id="struct_ejs_state" kind="struct" prot="public">
     <compoundname>EjsState</compoundname>
     <includes refid="ejs_8h" local="no">ejs.h</includes>
       <sectiondef kind="public-attrib">
-      <memberdef kind="variable" id="struct_ejs_state_1ace9fda0d081b9174ea9dede15dc6415" prot="public" static="no" mutable="no">
+      <memberdef kind="variable" id="struct_ejs_state_1aace9fda0d081b9174ea9dede15dc6415" prot="public" static="no" mutable="no">
         <type>struct EjsBlock *</type>
         <definition>struct EjsBlock* EjsState::bp</definition>
         <argsstring></argsstring>
@@ -15,9 +15,9 @@
         </detaileddescription>
         <inbodydescription>
         </inbodydescription>
-        <location file="/Users/mob/git/ejs/doc/api/ejs/staging/src/include/ejs.h" line="3703" bodyfile="/Users/mob/git/ejs/doc/api/ejs/staging/src/include/ejs.h" bodystart="3703" bodyend="-1"/>
+        <location file="/Users/mob/git/ejs/doc/api/ejs/staging/src/deps/ejs/ejs.h" line="3599" bodyfile="/Users/mob/git/ejs/doc/api/ejs/staging/src/deps/ejs/ejs.h" bodystart="3599" bodyend="-1"/>
       </memberdef>
-      <memberdef kind="variable" id="struct_ejs_state_1f2ad0dcd0563cb78cb9b255d3bd3e251" prot="public" static="no" mutable="no">
+      <memberdef kind="variable" id="struct_ejs_state_1af2ad0dcd0563cb78cb9b255d3bd3e251" prot="public" static="no" mutable="no">
         <type>struct EjsFrame *</type>
         <definition>struct EjsFrame* EjsState::fp</definition>
         <argsstring></argsstring>
@@ -28,9 +28,23 @@
         </detaileddescription>
         <inbodydescription>
         </inbodydescription>
-        <location file="/Users/mob/git/ejs/doc/api/ejs/staging/src/include/ejs.h" line="3702" bodyfile="/Users/mob/git/ejs/doc/api/ejs/staging/src/include/ejs.h" bodystart="3702" bodyend="-1"/>
+        <location file="/Users/mob/git/ejs/doc/api/ejs/staging/src/deps/ejs/ejs.h" line="3598" bodyfile="/Users/mob/git/ejs/doc/api/ejs/staging/src/deps/ejs/ejs.h" bodystart="3598" bodyend="-1"/>
       </memberdef>
-      <memberdef kind="variable" id="struct_ejs_state_16fb164ef9b9ac014244344f7f0ccdcbc" prot="public" static="no" mutable="no">
+      <memberdef kind="variable" id="struct_ejs_state_1ab5fae2305ad2c17ec0ef020bf5ff9d65" prot="public" static="no" mutable="no">
+        <type>uint</type>
+        <definition>uint EjsState::frozen</definition>
+        <argsstring></argsstring>
+        <name>frozen</name>
+        <bitfield> 1</bitfield>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/Users/mob/git/ejs/doc/api/ejs/staging/src/deps/ejs/ejs.h" line="3605" bodyfile="/Users/mob/git/ejs/doc/api/ejs/staging/src/deps/ejs/ejs.h" bodystart="3605" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="variable" id="struct_ejs_state_1a6fb164ef9b9ac014244344f7f0ccdcbc" prot="public" static="no" mutable="no">
         <type>struct EjsNamespace *</type>
         <definition>struct EjsNamespace* EjsState::internal</definition>
         <argsstring></argsstring>
@@ -41,9 +55,9 @@
         </detaileddescription>
         <inbodydescription>
         </inbodydescription>
-        <location file="/Users/mob/git/ejs/doc/api/ejs/staging/src/include/ejs.h" line="3707" bodyfile="/Users/mob/git/ejs/doc/api/ejs/staging/src/include/ejs.h" bodystart="3707" bodyend="-1"/>
+        <location file="/Users/mob/git/ejs/doc/api/ejs/staging/src/deps/ejs/ejs.h" line="3603" bodyfile="/Users/mob/git/ejs/doc/api/ejs/staging/src/deps/ejs/ejs.h" bodystart="3603" bodyend="-1"/>
       </memberdef>
-      <memberdef kind="variable" id="struct_ejs_state_1b5ad299564ac02edc327ce5054d38d02" prot="public" static="no" mutable="no">
+      <memberdef kind="variable" id="struct_ejs_state_1ab5ad299564ac02edc327ce5054d38d02" prot="public" static="no" mutable="no">
         <type>struct <ref refid="struct_ejs_state" kindref="compound">EjsState</ref> *</type>
         <definition>struct EjsState* EjsState::prev</definition>
         <argsstring></argsstring>
@@ -54,11 +68,11 @@
         </detaileddescription>
         <inbodydescription>
         </inbodydescription>
-        <location file="/Users/mob/git/ejs/doc/api/ejs/staging/src/include/ejs.h" line="3706" bodyfile="/Users/mob/git/ejs/doc/api/ejs/staging/src/include/ejs.h" bodystart="3706" bodyend="-1"/>
+        <location file="/Users/mob/git/ejs/doc/api/ejs/staging/src/deps/ejs/ejs.h" line="3602" bodyfile="/Users/mob/git/ejs/doc/api/ejs/staging/src/deps/ejs/ejs.h" bodystart="3602" bodyend="-1"/>
       </memberdef>
-      <memberdef kind="variable" id="struct_ejs_state_12876064f510f1cd2aaa34458102a2e87" prot="public" static="no" mutable="no">
-        <type>struct EjsObj **</type>
-        <definition>struct EjsObj** EjsState::stack</definition>
+      <memberdef kind="variable" id="struct_ejs_state_1a2b2b4823bd590a840fab8bf87ea71759" prot="public" static="no" mutable="no">
+        <type>EjsObj **</type>
+        <definition>EjsObj** EjsState::stack</definition>
         <argsstring></argsstring>
         <name>stack</name>
         <briefdescription>
@@ -67,11 +81,11 @@
         </detaileddescription>
         <inbodydescription>
         </inbodydescription>
-        <location file="/Users/mob/git/ejs/doc/api/ejs/staging/src/include/ejs.h" line="3704" bodyfile="/Users/mob/git/ejs/doc/api/ejs/staging/src/include/ejs.h" bodystart="3704" bodyend="-1"/>
+        <location file="/Users/mob/git/ejs/doc/api/ejs/staging/src/deps/ejs/ejs.h" line="3600" bodyfile="/Users/mob/git/ejs/doc/api/ejs/staging/src/deps/ejs/ejs.h" bodystart="3600" bodyend="-1"/>
       </memberdef>
-      <memberdef kind="variable" id="struct_ejs_state_1e44d5a3fc8f4238ccf2cb0eb4f4206cc" prot="public" static="no" mutable="no">
-        <type>struct EjsObj **</type>
-        <definition>struct EjsObj** EjsState::stackBase</definition>
+      <memberdef kind="variable" id="struct_ejs_state_1ad5e8b127a7c0870c5761173bd4867896" prot="public" static="no" mutable="no">
+        <type>EjsObj **</type>
+        <definition>EjsObj** EjsState::stackBase</definition>
         <argsstring></argsstring>
         <name>stackBase</name>
         <briefdescription>
@@ -80,9 +94,9 @@
         </detaileddescription>
         <inbodydescription>
         </inbodydescription>
-        <location file="/Users/mob/git/ejs/doc/api/ejs/staging/src/include/ejs.h" line="3705" bodyfile="/Users/mob/git/ejs/doc/api/ejs/staging/src/include/ejs.h" bodystart="3705" bodyend="-1"/>
+        <location file="/Users/mob/git/ejs/doc/api/ejs/staging/src/deps/ejs/ejs.h" line="3601" bodyfile="/Users/mob/git/ejs/doc/api/ejs/staging/src/deps/ejs/ejs.h" bodystart="3601" bodyend="-1"/>
       </memberdef>
-      <memberdef kind="variable" id="struct_ejs_state_1bfba6e08ce6117e11d170c7d04416ffc" prot="public" static="no" mutable="no">
+      <memberdef kind="variable" id="struct_ejs_state_1abfba6e08ce6117e11d170c7d04416ffc" prot="public" static="no" mutable="no">
         <type>int</type>
         <definition>int EjsState::stackSize</definition>
         <argsstring></argsstring>
@@ -93,7 +107,20 @@
         </detaileddescription>
         <inbodydescription>
         </inbodydescription>
-        <location file="/Users/mob/git/ejs/doc/api/ejs/staging/src/include/ejs.h" line="3708" bodyfile="/Users/mob/git/ejs/doc/api/ejs/staging/src/include/ejs.h" bodystart="3708" bodyend="-1"/>
+        <location file="/Users/mob/git/ejs/doc/api/ejs/staging/src/deps/ejs/ejs.h" line="3604" bodyfile="/Users/mob/git/ejs/doc/api/ejs/staging/src/deps/ejs/ejs.h" bodystart="3604" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="variable" id="struct_ejs_state_1a3d050f1f78090dfb97cf4a0b0d5bf757" prot="public" static="no" mutable="no">
+        <type>EjsObj *</type>
+        <definition>EjsObj* EjsState::t1</definition>
+        <argsstring></argsstring>
+        <name>t1</name>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/Users/mob/git/ejs/doc/api/ejs/staging/src/deps/ejs/ejs.h" line="3606" bodyfile="/Users/mob/git/ejs/doc/api/ejs/staging/src/deps/ejs/ejs.h" bodystart="3606" bodyend="-1"/>
       </memberdef>
       </sectiondef>
     <briefdescription>
@@ -101,23 +128,25 @@
     <detaileddescription>
 <para>The VM Stacks grow forward in memory. A push is done by incrementing first, then storing. ie. *++top = value A pop is done by extraction then decrement. ie. value = *top-- </para>    </detaileddescription>
     <collaborationgraph>
-      <node id="123">
+      <node id="127">
         <label>EjsState</label>
         <link refid="struct_ejs_state"/>
-        <childnode refid="123" relation="usage">
+        <childnode refid="127" relation="usage">
           <edgelabel>prev</edgelabel>
         </childnode>
       </node>
     </collaborationgraph>
-    <location file="/Users/mob/git/ejs/doc/api/ejs/staging/src/include/ejs.h" line="3701" bodyfile="/Users/mob/git/ejs/doc/api/ejs/staging/src/include/ejs.h" bodystart="3701" bodyend="3709"/>
+    <location file="/Users/mob/git/ejs/doc/api/ejs/staging/src/deps/ejs/ejs.h" line="3597" bodyfile="/Users/mob/git/ejs/doc/api/ejs/staging/src/deps/ejs/ejs.h" bodystart="3597" bodyend="3607"/>
     <listofallmembers>
-      <member refid="struct_ejs_state_1ace9fda0d081b9174ea9dede15dc6415" prot="public" virt="non-virtual"><scope>EjsState</scope><name>bp</name></member>
-      <member refid="struct_ejs_state_1f2ad0dcd0563cb78cb9b255d3bd3e251" prot="public" virt="non-virtual"><scope>EjsState</scope><name>fp</name></member>
-      <member refid="struct_ejs_state_16fb164ef9b9ac014244344f7f0ccdcbc" prot="public" virt="non-virtual"><scope>EjsState</scope><name>internal</name></member>
-      <member refid="struct_ejs_state_1b5ad299564ac02edc327ce5054d38d02" prot="public" virt="non-virtual"><scope>EjsState</scope><name>prev</name></member>
-      <member refid="struct_ejs_state_12876064f510f1cd2aaa34458102a2e87" prot="public" virt="non-virtual"><scope>EjsState</scope><name>stack</name></member>
-      <member refid="struct_ejs_state_1e44d5a3fc8f4238ccf2cb0eb4f4206cc" prot="public" virt="non-virtual"><scope>EjsState</scope><name>stackBase</name></member>
-      <member refid="struct_ejs_state_1bfba6e08ce6117e11d170c7d04416ffc" prot="public" virt="non-virtual"><scope>EjsState</scope><name>stackSize</name></member>
+      <member refid="struct_ejs_state_1aace9fda0d081b9174ea9dede15dc6415" prot="public" virt="non-virtual"><scope>EjsState</scope><name>bp</name></member>
+      <member refid="struct_ejs_state_1af2ad0dcd0563cb78cb9b255d3bd3e251" prot="public" virt="non-virtual"><scope>EjsState</scope><name>fp</name></member>
+      <member refid="struct_ejs_state_1ab5fae2305ad2c17ec0ef020bf5ff9d65" prot="public" virt="non-virtual"><scope>EjsState</scope><name>frozen</name></member>
+      <member refid="struct_ejs_state_1a6fb164ef9b9ac014244344f7f0ccdcbc" prot="public" virt="non-virtual"><scope>EjsState</scope><name>internal</name></member>
+      <member refid="struct_ejs_state_1ab5ad299564ac02edc327ce5054d38d02" prot="public" virt="non-virtual"><scope>EjsState</scope><name>prev</name></member>
+      <member refid="struct_ejs_state_1a2b2b4823bd590a840fab8bf87ea71759" prot="public" virt="non-virtual"><scope>EjsState</scope><name>stack</name></member>
+      <member refid="struct_ejs_state_1ad5e8b127a7c0870c5761173bd4867896" prot="public" virt="non-virtual"><scope>EjsState</scope><name>stackBase</name></member>
+      <member refid="struct_ejs_state_1abfba6e08ce6117e11d170c7d04416ffc" prot="public" virt="non-virtual"><scope>EjsState</scope><name>stackSize</name></member>
+      <member refid="struct_ejs_state_1a3d050f1f78090dfb97cf4a0b0d5bf757" prot="public" virt="non-virtual"><scope>EjsState</scope><name>t1</name></member>
     </listofallmembers>
   </compounddef>
 </doxygen>

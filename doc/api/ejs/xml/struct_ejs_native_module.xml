@@ -1,9 +1,9 @@
 <?xml version='1.0' encoding='UTF-8' standalone='no'?>
-<doxygen xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="compound.xsd" version="1.5.8">
+<doxygen xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="compound.xsd" version="1.7.3">
   <compounddef id="struct_ejs_native_module" kind="struct" prot="public">
     <compoundname>EjsNativeModule</compoundname>
       <sectiondef kind="public-attrib">
-      <memberdef kind="variable" id="struct_ejs_native_module_1e5e965d852294ab316729e93c7fd71c9" prot="public" static="no" mutable="no">
+      <memberdef kind="variable" id="struct_ejs_native_module_1ae5e965d852294ab316729e93c7fd71c9" prot="public" static="no" mutable="no">
         <type>EjsNativeCallback</type>
         <definition>EjsNativeCallback EjsNativeModule::callback</definition>
         <argsstring></argsstring>
@@ -14,9 +14,9 @@
         </detaileddescription>
         <inbodydescription>
         </inbodydescription>
-        <location file="/Users/mob/git/ejs/doc/api/ejs/staging/src/include/ejs.h" line="4283" bodyfile="/Users/mob/git/ejs/doc/api/ejs/staging/src/include/ejs.h" bodystart="4283" bodyend="-1"/>
+        <location file="/Users/mob/git/ejs/doc/api/ejs/staging/src/deps/ejs/ejs.h" line="4081" bodyfile="/Users/mob/git/ejs/doc/api/ejs/staging/src/deps/ejs/ejs.h" bodystart="4081" bodyend="-1"/>
       </memberdef>
-      <memberdef kind="variable" id="struct_ejs_native_module_1aa43fe8bcefb86a79de675cfefbdd217" prot="public" static="no" mutable="no">
+      <memberdef kind="variable" id="struct_ejs_native_module_1aaa43fe8bcefb86a79de675cfefbdd217" prot="public" static="no" mutable="no">
         <type>int</type>
         <definition>int EjsNativeModule::checksum</definition>
         <argsstring></argsstring>
@@ -27,9 +27,9 @@
         </detaileddescription>
         <inbodydescription>
         </inbodydescription>
-        <location file="/Users/mob/git/ejs/doc/api/ejs/staging/src/include/ejs.h" line="4285" bodyfile="/Users/mob/git/ejs/doc/api/ejs/staging/src/include/ejs.h" bodystart="4285" bodyend="-1"/>
+        <location file="/Users/mob/git/ejs/doc/api/ejs/staging/src/deps/ejs/ejs.h" line="4083" bodyfile="/Users/mob/git/ejs/doc/api/ejs/staging/src/deps/ejs/ejs.h" bodystart="4083" bodyend="-1"/>
       </memberdef>
-      <memberdef kind="variable" id="struct_ejs_native_module_129e908cb0f7eb712e7ea1d6e160630b0" prot="public" static="no" mutable="no">
+      <memberdef kind="variable" id="struct_ejs_native_module_1a29e908cb0f7eb712e7ea1d6e160630b0" prot="public" static="no" mutable="no">
         <type>int</type>
         <definition>int EjsNativeModule::flags</definition>
         <argsstring></argsstring>
@@ -40,11 +40,11 @@
         </detaileddescription>
         <inbodydescription>
         </inbodydescription>
-        <location file="/Users/mob/git/ejs/doc/api/ejs/staging/src/include/ejs.h" line="4286" bodyfile="/Users/mob/git/ejs/doc/api/ejs/staging/src/include/ejs.h" bodystart="4286" bodyend="-1"/>
+        <location file="/Users/mob/git/ejs/doc/api/ejs/staging/src/deps/ejs/ejs.h" line="4084" bodyfile="/Users/mob/git/ejs/doc/api/ejs/staging/src/deps/ejs/ejs.h" bodystart="4084" bodyend="-1"/>
       </memberdef>
-      <memberdef kind="variable" id="struct_ejs_native_module_1a8d54e024451bee0e508602eb3de73fe" prot="public" static="no" mutable="no">
-        <type>cchar *</type>
-        <definition>cchar* EjsNativeModule::name</definition>
+      <memberdef kind="variable" id="struct_ejs_native_module_1afbcd2cec430fa87b3788fff296e2862d" prot="public" static="no" mutable="no">
+        <type>char *</type>
+        <definition>char* EjsNativeModule::name</definition>
         <argsstring></argsstring>
         <name>name</name>
         <briefdescription>
@@ -53,19 +53,19 @@
         </detaileddescription>
         <inbodydescription>
         </inbodydescription>
-        <location file="/Users/mob/git/ejs/doc/api/ejs/staging/src/include/ejs.h" line="4284" bodyfile="/Users/mob/git/ejs/doc/api/ejs/staging/src/include/ejs.h" bodystart="4284" bodyend="-1"/>
+        <location file="/Users/mob/git/ejs/doc/api/ejs/staging/src/deps/ejs/ejs.h" line="4082" bodyfile="/Users/mob/git/ejs/doc/api/ejs/staging/src/deps/ejs/ejs.h" bodystart="4082" bodyend="-1"/>
       </memberdef>
       </sectiondef>
     <briefdescription>
     </briefdescription>
     <detaileddescription>
     </detaileddescription>
-    <location file="/Users/mob/git/ejs/doc/api/ejs/staging/src/include/ejs.h" line="4282" bodyfile="/Users/mob/git/ejs/doc/api/ejs/staging/src/include/ejs.h" bodystart="4282" bodyend="4287"/>
+    <location file="/Users/mob/git/ejs/doc/api/ejs/staging/src/deps/ejs/ejs.h" line="4080" bodyfile="/Users/mob/git/ejs/doc/api/ejs/staging/src/deps/ejs/ejs.h" bodystart="4080" bodyend="4085"/>
     <listofallmembers>
-      <member refid="struct_ejs_native_module_1e5e965d852294ab316729e93c7fd71c9" prot="public" virt="non-virtual"><scope>EjsNativeModule</scope><name>callback</name></member>
-      <member refid="struct_ejs_native_module_1aa43fe8bcefb86a79de675cfefbdd217" prot="public" virt="non-virtual"><scope>EjsNativeModule</scope><name>checksum</name></member>
-      <member refid="struct_ejs_native_module_129e908cb0f7eb712e7ea1d6e160630b0" prot="public" virt="non-virtual"><scope>EjsNativeModule</scope><name>flags</name></member>
-      <member refid="struct_ejs_native_module_1a8d54e024451bee0e508602eb3de73fe" prot="public" virt="non-virtual"><scope>EjsNativeModule</scope><name>name</name></member>
+      <member refid="struct_ejs_native_module_1ae5e965d852294ab316729e93c7fd71c9" prot="public" virt="non-virtual"><scope>EjsNativeModule</scope><name>callback</name></member>
+      <member refid="struct_ejs_native_module_1aaa43fe8bcefb86a79de675cfefbdd217" prot="public" virt="non-virtual"><scope>EjsNativeModule</scope><name>checksum</name></member>
+      <member refid="struct_ejs_native_module_1a29e908cb0f7eb712e7ea1d6e160630b0" prot="public" virt="non-virtual"><scope>EjsNativeModule</scope><name>flags</name></member>
+      <member refid="struct_ejs_native_module_1afbcd2cec430fa87b3788fff296e2862d" prot="public" virt="non-virtual"><scope>EjsNativeModule</scope><name>name</name></member>
     </listofallmembers>
   </compounddef>
 </doxygen>

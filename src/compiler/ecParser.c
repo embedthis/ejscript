@@ -9585,7 +9585,7 @@ static void setNodeDoc(EcCompiler *cp, EcNode *np)
     ejs = cp->ejs;
 
     if (ejs->flags & EJS_FLAG_DOC && cp->doc) {
-        np->doc = cp->docToken;
+        np->doc = ejsCreateStringFromAsc(ejs, cp->docToken);
         cp->docToken = 0;
     }
 }
@@ -9635,9 +9635,9 @@ static void appendDocString(EcCompiler *cp, EcNode *np, EcNode *parameter, EcNod
             }
         }
         if (found) {
-            np->doc = ejsSprintf(ejs, "%s\n@default %@ %@", np->doc, parameter->qname.name, defaultValue);
+            np->doc = ejsSprintf(ejs, "%@\n@default %@ %@", np->doc, parameter->qname.name, defaultValue);
         } else {
-            np->doc = ejsSprintf(ejs, "%s\n@param %@\n@default %@ %@", np->doc, parameter->qname.name,
+            np->doc = ejsSprintf(ejs, "%@\n@param %@\n@default %@ %@", np->doc, parameter->qname.name,
                 parameter->qname.name, defaultValue);
         }
     }

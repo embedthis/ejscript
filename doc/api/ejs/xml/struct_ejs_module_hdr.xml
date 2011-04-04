@@ -1,11 +1,11 @@
 <?xml version='1.0' encoding='UTF-8' standalone='no'?>
-<doxygen xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="compound.xsd" version="1.5.8">
+<doxygen xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="compound.xsd" version="1.7.3">
   <compounddef id="struct_ejs_module_hdr" kind="struct" prot="public">
     <compoundname>EjsModuleHdr</compoundname>
       <sectiondef kind="public-attrib">
-      <memberdef kind="variable" id="struct_ejs_module_hdr_1480d88b741e99abaa5f4fd2ed1b7509b" prot="public" static="no" mutable="no">
-        <type>int</type>
-        <definition>int EjsModuleHdr::fileVersion</definition>
+      <memberdef kind="variable" id="struct_ejs_module_hdr_1ab13d66458ea452a6bb151adbfe5de331" prot="public" static="no" mutable="no">
+        <type>int32</type>
+        <definition>int32 EjsModuleHdr::fileVersion</definition>
         <argsstring></argsstring>
         <name>fileVersion</name>
         <briefdescription>
@@ -14,11 +14,11 @@
         </detaileddescription>
         <inbodydescription>
         </inbodydescription>
-        <location file="/Users/mob/git/ejs/doc/api/ejs/staging/src/include/ejs.h" line="4216" bodyfile="/Users/mob/git/ejs/doc/api/ejs/staging/src/include/ejs.h" bodystart="4216" bodyend="-1"/>
+        <location file="/Users/mob/git/ejs/doc/api/ejs/staging/src/deps/ejs/ejs.h" line="4022" bodyfile="/Users/mob/git/ejs/doc/api/ejs/staging/src/deps/ejs/ejs.h" bodystart="4022" bodyend="-1"/>
       </memberdef>
-      <memberdef kind="variable" id="struct_ejs_module_hdr_1c6f23cfbfc949549382a82fe139bc23f" prot="public" static="no" mutable="no">
-        <type>int</type>
-        <definition>int EjsModuleHdr::flags</definition>
+      <memberdef kind="variable" id="struct_ejs_module_hdr_1a4ebaa7ddeaec38ccc4c1b508a362251c" prot="public" static="no" mutable="no">
+        <type>int32</type>
+        <definition>int32 EjsModuleHdr::flags</definition>
         <argsstring></argsstring>
         <name>flags</name>
         <briefdescription>
@@ -27,11 +27,11 @@
         </detaileddescription>
         <inbodydescription>
         </inbodydescription>
-        <location file="/Users/mob/git/ejs/doc/api/ejs/staging/src/include/ejs.h" line="4217" bodyfile="/Users/mob/git/ejs/doc/api/ejs/staging/src/include/ejs.h" bodystart="4217" bodyend="-1"/>
+        <location file="/Users/mob/git/ejs/doc/api/ejs/staging/src/deps/ejs/ejs.h" line="4023" bodyfile="/Users/mob/git/ejs/doc/api/ejs/staging/src/deps/ejs/ejs.h" bodystart="4023" bodyend="-1"/>
       </memberdef>
-      <memberdef kind="variable" id="struct_ejs_module_hdr_1a978414dd8da3ae3c4e549dcd1efa9a0" prot="public" static="no" mutable="no">
-        <type>int</type>
-        <definition>int EjsModuleHdr::magic</definition>
+      <memberdef kind="variable" id="struct_ejs_module_hdr_1a440afdef1d29f09d065ba099d7b8a3d2" prot="public" static="no" mutable="no">
+        <type>int32</type>
+        <definition>int32 EjsModuleHdr::magic</definition>
         <argsstring></argsstring>
         <name>magic</name>
         <briefdescription>
@@ -40,18 +40,18 @@
         </detaileddescription>
         <inbodydescription>
         </inbodydescription>
-        <location file="/Users/mob/git/ejs/doc/api/ejs/staging/src/include/ejs.h" line="4215" bodyfile="/Users/mob/git/ejs/doc/api/ejs/staging/src/include/ejs.h" bodystart="4215" bodyend="-1"/>
+        <location file="/Users/mob/git/ejs/doc/api/ejs/staging/src/deps/ejs/ejs.h" line="4021" bodyfile="/Users/mob/git/ejs/doc/api/ejs/staging/src/deps/ejs/ejs.h" bodystart="4021" bodyend="-1"/>
       </memberdef>
       </sectiondef>
     <briefdescription>
     </briefdescription>
     <detaileddescription>
     </detaileddescription>
-    <location file="/Users/mob/git/ejs/doc/api/ejs/staging/src/include/ejs.h" line="4214" bodyfile="/Users/mob/git/ejs/doc/api/ejs/staging/src/include/ejs.h" bodystart="4214" bodyend="4218"/>
+    <location file="/Users/mob/git/ejs/doc/api/ejs/staging/src/deps/ejs/ejs.h" line="4020" bodyfile="/Users/mob/git/ejs/doc/api/ejs/staging/src/deps/ejs/ejs.h" bodystart="4020" bodyend="4024"/>
     <listofallmembers>
-      <member refid="struct_ejs_module_hdr_1480d88b741e99abaa5f4fd2ed1b7509b" prot="public" virt="non-virtual"><scope>EjsModuleHdr</scope><name>fileVersion</name></member>
-      <member refid="struct_ejs_module_hdr_1c6f23cfbfc949549382a82fe139bc23f" prot="public" virt="non-virtual"><scope>EjsModuleHdr</scope><name>flags</name></member>
-      <member refid="struct_ejs_module_hdr_1a978414dd8da3ae3c4e549dcd1efa9a0" prot="public" virt="non-virtual"><scope>EjsModuleHdr</scope><name>magic</name></member>
+      <member refid="struct_ejs_module_hdr_1ab13d66458ea452a6bb151adbfe5de331" prot="public" virt="non-virtual"><scope>EjsModuleHdr</scope><name>fileVersion</name></member>
+      <member refid="struct_ejs_module_hdr_1a4ebaa7ddeaec38ccc4c1b508a362251c" prot="public" virt="non-virtual"><scope>EjsModuleHdr</scope><name>flags</name></member>
+      <member refid="struct_ejs_module_hdr_1a440afdef1d29f09d065ba099d7b8a3d2" prot="public" virt="non-virtual"><scope>EjsModuleHdr</scope><name>magic</name></member>
     </listofallmembers>
   </compounddef>
 </doxygen>

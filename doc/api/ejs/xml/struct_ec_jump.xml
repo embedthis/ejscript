@@ -1,9 +1,9 @@
 <?xml version='1.0' encoding='UTF-8' standalone='no'?>
-<doxygen xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="compound.xsd" version="1.5.8">
+<doxygen xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="compound.xsd" version="1.7.3">
   <compounddef id="struct_ec_jump" kind="struct" prot="public">
     <compoundname>EcJump</compoundname>
       <sectiondef kind="public-attrib">
-      <memberdef kind="variable" id="struct_ec_jump_12f9a92df3821e4067a7ffb987ade954e" prot="public" static="no" mutable="no">
+      <memberdef kind="variable" id="struct_ec_jump_1a2f9a92df3821e4067a7ffb987ade954e" prot="public" static="no" mutable="no">
         <type>int</type>
         <definition>int EcJump::kind</definition>
         <argsstring></argsstring>
@@ -14,9 +14,9 @@
         </detaileddescription>
         <inbodydescription>
         </inbodydescription>
-        <location file="/Users/mob/git/ejs/doc/api/ejs/staging/src/include/ejs.h" line="5525" bodyfile="/Users/mob/git/ejs/doc/api/ejs/staging/src/include/ejs.h" bodystart="5525" bodyend="-1"/>
+        <location file="/Users/mob/git/ejs/doc/api/ejs/staging/src/deps/ejs/ejs.h" line="5097" bodyfile="/Users/mob/git/ejs/doc/api/ejs/staging/src/deps/ejs/ejs.h" bodystart="5097" bodyend="-1"/>
       </memberdef>
-      <memberdef kind="variable" id="struct_ec_jump_1ee89486a7ee987e9c79d40980378e835" prot="public" static="no" mutable="no">
+      <memberdef kind="variable" id="struct_ec_jump_1aee89486a7ee987e9c79d40980378e835" prot="public" static="no" mutable="no">
         <type>EcNode *</type>
         <definition>EcNode* EcJump::node</definition>
         <argsstring></argsstring>
@@ -27,9 +27,9 @@
         </detaileddescription>
         <inbodydescription>
         </inbodydescription>
-        <location file="/Users/mob/git/ejs/doc/api/ejs/staging/src/include/ejs.h" line="5527" bodyfile="/Users/mob/git/ejs/doc/api/ejs/staging/src/include/ejs.h" bodystart="5527" bodyend="-1"/>
+        <location file="/Users/mob/git/ejs/doc/api/ejs/staging/src/deps/ejs/ejs.h" line="5099" bodyfile="/Users/mob/git/ejs/doc/api/ejs/staging/src/deps/ejs/ejs.h" bodystart="5099" bodyend="-1"/>
       </memberdef>
-      <memberdef kind="variable" id="struct_ec_jump_1089a06fb32c9cd3a1e6a367ff408f7d9" prot="public" static="no" mutable="no">
+      <memberdef kind="variable" id="struct_ec_jump_1a089a06fb32c9cd3a1e6a367ff408f7d9" prot="public" static="no" mutable="no">
         <type>int</type>
         <definition>int EcJump::offset</definition>
         <argsstring></argsstring>
@@ -40,18 +40,18 @@
         </detaileddescription>
         <inbodydescription>
         </inbodydescription>
-        <location file="/Users/mob/git/ejs/doc/api/ejs/staging/src/include/ejs.h" line="5526" bodyfile="/Users/mob/git/ejs/doc/api/ejs/staging/src/include/ejs.h" bodystart="5526" bodyend="-1"/>
+        <location file="/Users/mob/git/ejs/doc/api/ejs/staging/src/deps/ejs/ejs.h" line="5098" bodyfile="/Users/mob/git/ejs/doc/api/ejs/staging/src/deps/ejs/ejs.h" bodystart="5098" bodyend="-1"/>
       </memberdef>
       </sectiondef>
     <briefdescription>
     </briefdescription>
     <detaileddescription>
     </detaileddescription>
-    <location file="/Users/mob/git/ejs/doc/api/ejs/staging/src/include/ejs.h" line="5524" bodyfile="/Users/mob/git/ejs/doc/api/ejs/staging/src/include/ejs.h" bodystart="5524" bodyend="5528"/>
+    <location file="/Users/mob/git/ejs/doc/api/ejs/staging/src/deps/ejs/ejs.h" line="5096" bodyfile="/Users/mob/git/ejs/doc/api/ejs/staging/src/deps/ejs/ejs.h" bodystart="5096" bodyend="5100"/>
     <listofallmembers>
-      <member refid="struct_ec_jump_12f9a92df3821e4067a7ffb987ade954e" prot="public" virt="non-virtual"><scope>EcJump</scope><name>kind</name></member>
-      <member refid="struct_ec_jump_1ee89486a7ee987e9c79d40980378e835" prot="public" virt="non-virtual"><scope>EcJump</scope><name>node</name></member>
-      <member refid="struct_ec_jump_1089a06fb32c9cd3a1e6a367ff408f7d9" prot="public" virt="non-virtual"><scope>EcJump</scope><name>offset</name></member>
+      <member refid="struct_ec_jump_1a2f9a92df3821e4067a7ffb987ade954e" prot="public" virt="non-virtual"><scope>EcJump</scope><name>kind</name></member>
+      <member refid="struct_ec_jump_1aee89486a7ee987e9c79d40980378e835" prot="public" virt="non-virtual"><scope>EcJump</scope><name>node</name></member>
+      <member refid="struct_ec_jump_1a089a06fb32c9cd3a1e6a367ff408f7d9" prot="public" virt="non-virtual"><scope>EcJump</scope><name>offset</name></member>
     </listofallmembers>
   </compounddef>
 </doxygen>

@@ -1,11 +1,11 @@
 <?xml version='1.0' encoding='UTF-8' standalone='no'?>
-<doxygen xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="compound.xsd" version="1.5.8">
+<doxygen xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="compound.xsd" version="1.7.3">
   <compounddef id="struct_ec_stream" kind="struct" prot="public">
     <compoundname>EcStream</compoundname>
       <sectiondef kind="public-attrib">
-      <memberdef kind="variable" id="struct_ec_stream_15f28b711d81489e3aae9aeb626bb12ea" prot="public" static="no" mutable="no">
-        <type>char *</type>
-        <definition>char* EcStream::buf</definition>
+      <memberdef kind="variable" id="struct_ec_stream_1a7652fe8e475a218e6702441bfd328586" prot="public" static="no" mutable="no">
+        <type>MprChar *</type>
+        <definition>MprChar* EcStream::buf</definition>
         <argsstring></argsstring>
         <name>buf</name>
         <briefdescription>
@@ -14,22 +14,9 @@
         </detaileddescription>
         <inbodydescription>
         </inbodydescription>
-        <location file="/Users/mob/git/ejs/doc/api/ejs/staging/src/include/ejs.h" line="5418" bodyfile="/Users/mob/git/ejs/doc/api/ejs/staging/src/include/ejs.h" bodystart="5418" bodyend="-1"/>
+        <location file="/Users/mob/git/ejs/doc/api/ejs/staging/src/deps/ejs/ejs.h" line="5036" bodyfile="/Users/mob/git/ejs/doc/api/ejs/staging/src/deps/ejs/ejs.h" bodystart="5036" bodyend="-1"/>
       </memberdef>
-      <memberdef kind="variable" id="struct_ec_stream_105475b638811108059a8d114ad6669f1" prot="public" static="no" mutable="no">
-        <type>int</type>
-        <definition>int EcStream::column</definition>
-        <argsstring></argsstring>
-        <name>column</name>
-        <briefdescription>
-        </briefdescription>
-        <detaileddescription>
-        </detaileddescription>
-        <inbodydescription>
-        </inbodydescription>
-        <location file="/Users/mob/git/ejs/doc/api/ejs/staging/src/include/ejs.h" line="5410" bodyfile="/Users/mob/git/ejs/doc/api/ejs/staging/src/include/ejs.h" bodystart="5410" bodyend="-1"/>
-      </memberdef>
-      <memberdef kind="variable" id="struct_ec_stream_10d4866f6d56c5472e837b7ee3f3d745a" prot="public" static="no" mutable="no">
+      <memberdef kind="variable" id="struct_ec_stream_1a0d4866f6d56c5472e837b7ee3f3d745a" prot="public" static="no" mutable="no">
         <type>struct EcCompiler *</type>
         <definition>struct EcCompiler* EcStream::compiler</definition>
         <argsstring></argsstring>
@@ -40,24 +27,11 @@
         </detaileddescription>
         <inbodydescription>
         </inbodydescription>
-        <location file="/Users/mob/git/ejs/doc/api/ejs/staging/src/include/ejs.h" line="5427" bodyfile="/Users/mob/git/ejs/doc/api/ejs/staging/src/include/ejs.h" bodystart="5427" bodyend="-1"/>
+        <location file="/Users/mob/git/ejs/doc/api/ejs/staging/src/deps/ejs/ejs.h" line="5032" bodyfile="/Users/mob/git/ejs/doc/api/ejs/staging/src/deps/ejs/ejs.h" bodystart="5032" bodyend="-1"/>
       </memberdef>
-      <memberdef kind="variable" id="struct_ec_stream_1b0f0f7265280604abefcd3cb3cfdbfa9" prot="public" static="no" mutable="no">
-        <type>char *</type>
-        <definition>char* EcStream::currentLine</definition>
-        <argsstring></argsstring>
-        <name>currentLine</name>
-        <briefdescription>
-        </briefdescription>
-        <detaileddescription>
-        </detaileddescription>
-        <inbodydescription>
-        </inbodydescription>
-        <location file="/Users/mob/git/ejs/doc/api/ejs/staging/src/include/ejs.h" line="5408" bodyfile="/Users/mob/git/ejs/doc/api/ejs/staging/src/include/ejs.h" bodystart="5408" bodyend="-1"/>
-      </memberdef>
-      <memberdef kind="variable" id="struct_ec_stream_1c16e906b444c72d3c2978ddb687467a3" prot="public" static="no" mutable="no">
-        <type>char *</type>
-        <definition>char* EcStream::end</definition>
+      <memberdef kind="variable" id="struct_ec_stream_1a335b40be9335da004d7e115cdec1fcca" prot="public" static="no" mutable="no">
+        <type>MprChar *</type>
+        <definition>MprChar* EcStream::end</definition>
         <argsstring></argsstring>
         <name>end</name>
         <briefdescription>
@@ -66,9 +40,9 @@
         </detaileddescription>
         <inbodydescription>
         </inbodydescription>
-        <location file="/Users/mob/git/ejs/doc/api/ejs/staging/src/include/ejs.h" line="5420" bodyfile="/Users/mob/git/ejs/doc/api/ejs/staging/src/include/ejs.h" bodystart="5420" bodyend="-1"/>
+        <location file="/Users/mob/git/ejs/doc/api/ejs/staging/src/deps/ejs/ejs.h" line="5038" bodyfile="/Users/mob/git/ejs/doc/api/ejs/staging/src/deps/ejs/ejs.h" bodystart="5038" bodyend="-1"/>
       </memberdef>
-      <memberdef kind="variable" id="struct_ec_stream_1d990fa2ae7b2cfb2a472bbad43d8d993" prot="public" static="no" mutable="no">
+      <memberdef kind="variable" id="struct_ec_stream_1ad990fa2ae7b2cfb2a472bbad43d8d993" prot="public" static="no" mutable="no">
         <type>bool</type>
         <definition>bool EcStream::eof</definition>
         <argsstring></argsstring>
@@ -79,9 +53,9 @@
         </detaileddescription>
         <inbodydescription>
         </inbodydescription>
-        <location file="/Users/mob/git/ejs/doc/api/ejs/staging/src/include/ejs.h" line="5422" bodyfile="/Users/mob/git/ejs/doc/api/ejs/staging/src/include/ejs.h" bodystart="5422" bodyend="-1"/>
+        <location file="/Users/mob/git/ejs/doc/api/ejs/staging/src/deps/ejs/ejs.h" line="5039" bodyfile="/Users/mob/git/ejs/doc/api/ejs/staging/src/deps/ejs/ejs.h" bodystart="5039" bodyend="-1"/>
       </memberdef>
-      <memberdef kind="variable" id="struct_ec_stream_1a855f9a5f87b219929b4ab0af16ee0af" prot="public" static="no" mutable="no">
+      <memberdef kind="variable" id="struct_ec_stream_1aa855f9a5f87b219929b4ab0af16ee0af" prot="public" static="no" mutable="no">
         <type>int</type>
         <definition>int EcStream::flags</definition>
         <argsstring></argsstring>
@@ -92,76 +66,50 @@
         </detaileddescription>
         <inbodydescription>
         </inbodydescription>
-        <location file="/Users/mob/git/ejs/doc/api/ejs/staging/src/include/ejs.h" line="5424" bodyfile="/Users/mob/git/ejs/doc/api/ejs/staging/src/include/ejs.h" bodystart="5424" bodyend="-1"/>
+        <location file="/Users/mob/git/ejs/doc/api/ejs/staging/src/deps/ejs/ejs.h" line="5040" bodyfile="/Users/mob/git/ejs/doc/api/ejs/staging/src/deps/ejs/ejs.h" bodystart="5040" bodyend="-1"/>
       </memberdef>
-      <memberdef kind="variable" id="struct_ec_stream_1eababdee9bf4c74bd806ae1307fa9f13" prot="public" static="no" mutable="no">
+      <memberdef kind="variable" id="struct_ec_stream_1aec748896005c9b0b16962906a2760050" prot="public" static="no" mutable="no">
         <type>EcStreamGet</type>
-        <definition>EcStreamGet EcStream::gets</definition>
+        <definition>EcStreamGet EcStream::getInput</definition>
         <argsstring></argsstring>
-        <name>gets</name>
+        <name>getInput</name>
         <briefdescription>
         </briefdescription>
         <detaileddescription>
         </detaileddescription>
         <inbodydescription>
         </inbodydescription>
-        <location file="/Users/mob/git/ejs/doc/api/ejs/staging/src/include/ejs.h" line="5425" bodyfile="/Users/mob/git/ejs/doc/api/ejs/staging/src/include/ejs.h" bodystart="5425" bodyend="-1"/>
+        <location file="/Users/mob/git/ejs/doc/api/ejs/staging/src/deps/ejs/ejs.h" line="5035" bodyfile="/Users/mob/git/ejs/doc/api/ejs/staging/src/deps/ejs/ejs.h" bodystart="5035" bodyend="-1"/>
       </memberdef>
-      <memberdef kind="variable" id="struct_ec_stream_1439721cdd3e741e55275a7c758a0117a" prot="public" static="no" mutable="no">
-        <type>int</type>
-        <definition>int EcStream::lastColumn</definition>
+      <memberdef kind="variable" id="struct_ec_stream_1a3be77364b9fedf2f17a3d2c4f3822313" prot="public" static="no" mutable="no">
+        <type>EcLocation</type>
+        <definition>EcLocation EcStream::lastLoc</definition>
         <argsstring></argsstring>
-        <name>lastColumn</name>
+        <name>lastLoc</name>
         <briefdescription>
         </briefdescription>
         <detaileddescription>
         </detaileddescription>
         <inbodydescription>
         </inbodydescription>
-        <location file="/Users/mob/git/ejs/doc/api/ejs/staging/src/include/ejs.h" line="5413" bodyfile="/Users/mob/git/ejs/doc/api/ejs/staging/src/include/ejs.h" bodystart="5413" bodyend="-1"/>
+        <location file="/Users/mob/git/ejs/doc/api/ejs/staging/src/deps/ejs/ejs.h" line="5034" bodyfile="/Users/mob/git/ejs/doc/api/ejs/staging/src/deps/ejs/ejs.h" bodystart="5034" bodyend="-1"/>
       </memberdef>
-      <memberdef kind="variable" id="struct_ec_stream_11ee407d6e13d9a3abd5ca624a85fe1e1" prot="public" static="no" mutable="no">
-        <type>char *</type>
-        <definition>char* EcStream::lastLine</definition>
+      <memberdef kind="variable" id="struct_ec_stream_1a8dab7633cf48908ffe685368b40c9ed1" prot="public" static="no" mutable="no">
+        <type>EcLocation</type>
+        <definition>EcLocation EcStream::loc</definition>
         <argsstring></argsstring>
-        <name>lastLine</name>
+        <name>loc</name>
         <briefdescription>
         </briefdescription>
         <detaileddescription>
         </detaileddescription>
         <inbodydescription>
         </inbodydescription>
-        <location file="/Users/mob/git/ejs/doc/api/ejs/staging/src/include/ejs.h" line="5412" bodyfile="/Users/mob/git/ejs/doc/api/ejs/staging/src/include/ejs.h" bodystart="5412" bodyend="-1"/>
+        <location file="/Users/mob/git/ejs/doc/api/ejs/staging/src/deps/ejs/ejs.h" line="5033" bodyfile="/Users/mob/git/ejs/doc/api/ejs/staging/src/deps/ejs/ejs.h" bodystart="5033" bodyend="-1"/>
       </memberdef>
-      <memberdef kind="variable" id="struct_ec_stream_157caed9b5d7b67b8bcb4f93f14d1b009" prot="public" static="no" mutable="no">
-        <type>int</type>
-        <definition>int EcStream::lineNumber</definition>
-        <argsstring></argsstring>
-        <name>lineNumber</name>
-        <briefdescription>
-        </briefdescription>
-        <detaileddescription>
-        </detaileddescription>
-        <inbodydescription>
-        </inbodydescription>
-        <location file="/Users/mob/git/ejs/doc/api/ejs/staging/src/include/ejs.h" line="5409" bodyfile="/Users/mob/git/ejs/doc/api/ejs/staging/src/include/ejs.h" bodystart="5409" bodyend="-1"/>
-      </memberdef>
-      <memberdef kind="variable" id="struct_ec_stream_11aa12a77be922a9eda379a9b2e5f31c1" prot="public" static="no" mutable="no">
-        <type>char *</type>
-        <definition>char* EcStream::name</definition>
-        <argsstring></argsstring>
-        <name>name</name>
-        <briefdescription>
-        </briefdescription>
-        <detaileddescription>
-        </detaileddescription>
-        <inbodydescription>
-        </inbodydescription>
-        <location file="/Users/mob/git/ejs/doc/api/ejs/staging/src/include/ejs.h" line="5406" bodyfile="/Users/mob/git/ejs/doc/api/ejs/staging/src/include/ejs.h" bodystart="5406" bodyend="-1"/>
-      </memberdef>
-      <memberdef kind="variable" id="struct_ec_stream_1395261e2fef457989c53e52cfcd3fb2d" prot="public" static="no" mutable="no">
-        <type>char *</type>
-        <definition>char* EcStream::nextChar</definition>
+      <memberdef kind="variable" id="struct_ec_stream_1aad31e05f40bf349fc09eafc356a61895" prot="public" static="no" mutable="no">
+        <type>MprChar *</type>
+        <definition>MprChar* EcStream::nextChar</definition>
         <argsstring></argsstring>
         <name>nextChar</name>
         <briefdescription>
@@ -170,28 +118,24 @@
         </detaileddescription>
         <inbodydescription>
         </inbodydescription>
-        <location file="/Users/mob/git/ejs/doc/api/ejs/staging/src/include/ejs.h" line="5419" bodyfile="/Users/mob/git/ejs/doc/api/ejs/staging/src/include/ejs.h" bodystart="5419" bodyend="-1"/>
+        <location file="/Users/mob/git/ejs/doc/api/ejs/staging/src/deps/ejs/ejs.h" line="5037" bodyfile="/Users/mob/git/ejs/doc/api/ejs/staging/src/deps/ejs/ejs.h" bodystart="5037" bodyend="-1"/>
       </memberdef>
       </sectiondef>
     <briefdescription>
     </briefdescription>
     <detaileddescription>
     </detaileddescription>
-    <location file="/Users/mob/git/ejs/doc/api/ejs/staging/src/include/ejs.h" line="5405" bodyfile="/Users/mob/git/ejs/doc/api/ejs/staging/src/include/ejs.h" bodystart="5405" bodyend="5429"/>
+    <location file="/Users/mob/git/ejs/doc/api/ejs/staging/src/deps/ejs/ejs.h" line="5031" bodyfile="/Users/mob/git/ejs/doc/api/ejs/staging/src/deps/ejs/ejs.h" bodystart="5031" bodyend="5041"/>
     <listofallmembers>
-      <member refid="struct_ec_stream_15f28b711d81489e3aae9aeb626bb12ea" prot="public" virt="non-virtual"><scope>EcStream</scope><name>buf</name></member>
-      <member refid="struct_ec_stream_105475b638811108059a8d114ad6669f1" prot="public" virt="non-virtual"><scope>EcStream</scope><name>column</name></member>
-      <member refid="struct_ec_stream_10d4866f6d56c5472e837b7ee3f3d745a" prot="public" virt="non-virtual"><scope>EcStream</scope><name>compiler</name></member>
-      <member refid="struct_ec_stream_1b0f0f7265280604abefcd3cb3cfdbfa9" prot="public" virt="non-virtual"><scope>EcStream</scope><name>currentLine</name></member>
-      <member refid="struct_ec_stream_1c16e906b444c72d3c2978ddb687467a3" prot="public" virt="non-virtual"><scope>EcStream</scope><name>end</name></member>
-      <member refid="struct_ec_stream_1d990fa2ae7b2cfb2a472bbad43d8d993" prot="public" virt="non-virtual"><scope>EcStream</scope><name>eof</name></member>
-      <member refid="struct_ec_stream_1a855f9a5f87b219929b4ab0af16ee0af" prot="public" virt="non-virtual"><scope>EcStream</scope><name>flags</name></member>
-      <member refid="struct_ec_stream_1eababdee9bf4c74bd806ae1307fa9f13" prot="public" virt="non-virtual"><scope>EcStream</scope><name>gets</name></member>
-      <member refid="struct_ec_stream_1439721cdd3e741e55275a7c758a0117a" prot="public" virt="non-virtual"><scope>EcStream</scope><name>lastColumn</name></member>
-      <member refid="struct_ec_stream_11ee407d6e13d9a3abd5ca624a85fe1e1" prot="public" virt="non-virtual"><scope>EcStream</scope><name>lastLine</name></member>
-      <member refid="struct_ec_stream_157caed9b5d7b67b8bcb4f93f14d1b009" prot="public" virt="non-virtual"><scope>EcStream</scope><name>lineNumber</name></member>
-      <member refid="struct_ec_stream_11aa12a77be922a9eda379a9b2e5f31c1" prot="public" virt="non-virtual"><scope>EcStream</scope><name>name</name></member>
-      <member refid="struct_ec_stream_1395261e2fef457989c53e52cfcd3fb2d" prot="public" virt="non-virtual"><scope>EcStream</scope><name>nextChar</name></member>
+      <member refid="struct_ec_stream_1a7652fe8e475a218e6702441bfd328586" prot="public" virt="non-virtual"><scope>EcStream</scope><name>buf</name></member>
+      <member refid="struct_ec_stream_1a0d4866f6d56c5472e837b7ee3f3d745a" prot="public" virt="non-virtual"><scope>EcStream</scope><name>compiler</name></member>
+      <member refid="struct_ec_stream_1a335b40be9335da004d7e115cdec1fcca" prot="public" virt="non-virtual"><scope>EcStream</scope><name>end</name></member>
+      <member refid="struct_ec_stream_1ad990fa2ae7b2cfb2a472bbad43d8d993" prot="public" virt="non-virtual"><scope>EcStream</scope><name>eof</name></member>
+      <member refid="struct_ec_stream_1aa855f9a5f87b219929b4ab0af16ee0af" prot="public" virt="non-virtual"><scope>EcStream</scope><name>flags</name></member>
+      <member refid="struct_ec_stream_1aec748896005c9b0b16962906a2760050" prot="public" virt="non-virtual"><scope>EcStream</scope><name>getInput</name></member>
+      <member refid="struct_ec_stream_1a3be77364b9fedf2f17a3d2c4f3822313" prot="public" virt="non-virtual"><scope>EcStream</scope><name>lastLoc</name></member>
+      <member refid="struct_ec_stream_1a8dab7633cf48908ffe685368b40c9ed1" prot="public" virt="non-virtual"><scope>EcStream</scope><name>loc</name></member>
+      <member refid="struct_ec_stream_1aad31e05f40bf349fc09eafc356a61895" prot="public" virt="non-virtual"><scope>EcStream</scope><name>nextChar</name></member>
     </listofallmembers>
   </compounddef>
 </doxygen>

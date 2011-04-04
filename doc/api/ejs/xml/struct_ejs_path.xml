@@ -1,9 +1,9 @@
 <?xml version='1.0' encoding='UTF-8' standalone='no'?>
-<doxygen xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="compound.xsd" version="1.5.8">
+<doxygen xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="compound.xsd" version="1.7.3">
   <compounddef id="struct_ejs_path" kind="struct" prot="public">
     <compoundname>EjsPath</compoundname>
       <sectiondef kind="public-attrib">
-      <memberdef kind="variable" id="struct_ejs_path_1ae248807571cf51539ae0777e3bf561c" prot="public" static="no" mutable="no">
+      <memberdef kind="variable" id="struct_ejs_path_1aae248807571cf51539ae0777e3bf561c" prot="public" static="no" mutable="no">
         <type>MprList *</type>
         <definition>MprList* EjsPath::files</definition>
         <argsstring></argsstring>
@@ -14,9 +14,9 @@
         </detaileddescription>
         <inbodydescription>
         </inbodydescription>
-        <location file="/Users/mob/git/ejs/doc/api/ejs/staging/src/include/ejs.h" line="2642" bodyfile="/Users/mob/git/ejs/doc/api/ejs/staging/src/include/ejs.h" bodystart="2642" bodyend="-1"/>
+        <location file="/Users/mob/git/ejs/doc/api/ejs/staging/src/deps/ejs/ejs.h" line="2782" bodyfile="/Users/mob/git/ejs/doc/api/ejs/staging/src/deps/ejs/ejs.h" bodystart="2782" bodyend="-1"/>
       </memberdef>
-      <memberdef kind="variable" id="struct_ejs_path_126dc6e3850293d15fb41ea3fa2dee122" prot="public" static="no" mutable="no">
+      <memberdef kind="variable" id="struct_ejs_path_1a26dc6e3850293d15fb41ea3fa2dee122" prot="public" static="no" mutable="no">
         <type>MprPath</type>
         <definition>MprPath EjsPath::info</definition>
         <argsstring></argsstring>
@@ -27,45 +27,45 @@
         </detaileddescription>
         <inbodydescription>
         </inbodydescription>
-        <location file="/Users/mob/git/ejs/doc/api/ejs/staging/src/include/ejs.h" line="2638" bodyfile="/Users/mob/git/ejs/doc/api/ejs/staging/src/include/ejs.h" bodystart="2638" bodyend="-1"/>
+        <location file="/Users/mob/git/ejs/doc/api/ejs/staging/src/deps/ejs/ejs.h" line="2781" bodyfile="/Users/mob/git/ejs/doc/api/ejs/staging/src/deps/ejs/ejs.h" bodystart="2781" bodyend="-1"/>
       </memberdef>
-      <memberdef kind="variable" id="struct_ejs_path_18a0ffeb59486a8079de590e838eb8082" prot="public" static="no" mutable="no">
+      <memberdef kind="variable" id="struct_ejs_path_1a8a0ffeb59486a8079de590e838eb8082" prot="public" static="no" mutable="no">
         <type>EjsObj</type>
         <definition>EjsObj EjsPath::obj</definition>
         <argsstring></argsstring>
         <name>obj</name>
         <briefdescription>
-<para>Extends Object. </para>        </briefdescription>
+<para>Base object. </para>        </briefdescription>
         <detaileddescription>
         </detaileddescription>
         <inbodydescription>
         </inbodydescription>
-        <location file="/Users/mob/git/ejs/doc/api/ejs/staging/src/include/ejs.h" line="2637" bodyfile="/Users/mob/git/ejs/doc/api/ejs/staging/src/include/ejs.h" bodystart="2637" bodyend="-1"/>
+        <location file="/Users/mob/git/ejs/doc/api/ejs/staging/src/deps/ejs/ejs.h" line="2779" bodyfile="/Users/mob/git/ejs/doc/api/ejs/staging/src/deps/ejs/ejs.h" bodystart="2779" bodyend="-1"/>
       </memberdef>
-      <memberdef kind="variable" id="struct_ejs_path_157d9e8289aacc181652dea3ead88bc3c" prot="public" static="no" mutable="no">
-        <type>char *</type>
-        <definition>char* EjsPath::path</definition>
+      <memberdef kind="variable" id="struct_ejs_path_1af3609cd082e5615147ea8c7c09a28e0f" prot="public" static="no" mutable="no">
+        <type>cchar *</type>
+        <definition>cchar* EjsPath::value</definition>
         <argsstring></argsstring>
-        <name>path</name>
+        <name>value</name>
         <briefdescription>
 <para>Filename path. </para>        </briefdescription>
         <detaileddescription>
         </detaileddescription>
         <inbodydescription>
         </inbodydescription>
-        <location file="/Users/mob/git/ejs/doc/api/ejs/staging/src/include/ejs.h" line="2641" bodyfile="/Users/mob/git/ejs/doc/api/ejs/staging/src/include/ejs.h" bodystart="2641" bodyend="-1"/>
+        <location file="/Users/mob/git/ejs/doc/api/ejs/staging/src/deps/ejs/ejs.h" line="2780" bodyfile="/Users/mob/git/ejs/doc/api/ejs/staging/src/deps/ejs/ejs.h" bodystart="2780" bodyend="-1"/>
       </memberdef>
       </sectiondef>
     <briefdescription>
     </briefdescription>
     <detaileddescription>
     </detaileddescription>
-    <location file="/Users/mob/git/ejs/doc/api/ejs/staging/src/include/ejs.h" line="2636" bodyfile="/Users/mob/git/ejs/doc/api/ejs/staging/src/include/ejs.h" bodystart="2636" bodyend="2649"/>
+    <location file="/Users/mob/git/ejs/doc/api/ejs/staging/src/deps/ejs/ejs.h" line="2778" bodyfile="/Users/mob/git/ejs/doc/api/ejs/staging/src/deps/ejs/ejs.h" bodystart="2778" bodyend="2789"/>
     <listofallmembers>
-      <member refid="struct_ejs_path_1ae248807571cf51539ae0777e3bf561c" prot="public" virt="non-virtual"><scope>EjsPath</scope><name>files</name></member>
-      <member refid="struct_ejs_path_126dc6e3850293d15fb41ea3fa2dee122" prot="public" virt="non-virtual"><scope>EjsPath</scope><name>info</name></member>
-      <member refid="struct_ejs_path_18a0ffeb59486a8079de590e838eb8082" prot="public" virt="non-virtual"><scope>EjsPath</scope><name>obj</name></member>
-      <member refid="struct_ejs_path_157d9e8289aacc181652dea3ead88bc3c" prot="public" virt="non-virtual"><scope>EjsPath</scope><name>path</name></member>
+      <member refid="struct_ejs_path_1aae248807571cf51539ae0777e3bf561c" prot="public" virt="non-virtual"><scope>EjsPath</scope><name>files</name></member>
+      <member refid="struct_ejs_path_1a26dc6e3850293d15fb41ea3fa2dee122" prot="public" virt="non-virtual"><scope>EjsPath</scope><name>info</name></member>
+      <member refid="struct_ejs_path_1a8a0ffeb59486a8079de590e838eb8082" prot="public" virt="non-virtual"><scope>EjsPath</scope><name>obj</name></member>
+      <member refid="struct_ejs_path_1af3609cd082e5615147ea8c7c09a28e0f" prot="public" virt="non-virtual"><scope>EjsPath</scope><name>value</name></member>
     </listofallmembers>
   </compounddef>
 </doxygen>

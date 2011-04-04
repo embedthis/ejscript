@@ -1,9 +1,9 @@
 <?xml version='1.0' encoding='UTF-8' standalone='no'?>
-<doxygen xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="compound.xsd" version="1.5.8">
+<doxygen xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="compound.xsd" version="1.7.3">
   <compounddef id="struct_ejs_array" kind="struct" prot="public">
     <compoundname>EjsArray</compoundname>
       <sectiondef kind="public-attrib">
-      <memberdef kind="variable" id="struct_ejs_array_1f363002c3a744338ac67a0892cc726b1" prot="public" static="no" mutable="no">
+      <memberdef kind="variable" id="struct_ejs_array_1af363002c3a744338ac67a0892cc726b1" prot="public" static="no" mutable="no">
         <type>EjsObj **</type>
         <definition>EjsObj** EjsArray::data</definition>
         <argsstring></argsstring>
@@ -14,9 +14,9 @@
         </detaileddescription>
         <inbodydescription>
         </inbodydescription>
-        <location file="/Users/mob/git/ejs/doc/api/ejs/staging/src/include/ejs.h" line="2158" bodyfile="/Users/mob/git/ejs/doc/api/ejs/staging/src/include/ejs.h" bodystart="2158" bodyend="-1"/>
+        <location file="/Users/mob/git/ejs/doc/api/ejs/staging/src/deps/ejs/ejs.h" line="1962" bodyfile="/Users/mob/git/ejs/doc/api/ejs/staging/src/deps/ejs/ejs.h" bodystart="1962" bodyend="-1"/>
       </memberdef>
-      <memberdef kind="variable" id="struct_ejs_array_10f492640e108ba507772cd5545ae10a6" prot="public" static="no" mutable="no">
+      <memberdef kind="variable" id="struct_ejs_array_1a0f492640e108ba507772cd5545ae10a6" prot="public" static="no" mutable="no">
         <type>int</type>
         <definition>int EjsArray::length</definition>
         <argsstring></argsstring>
@@ -27,31 +27,31 @@
         </detaileddescription>
         <inbodydescription>
         </inbodydescription>
-        <location file="/Users/mob/git/ejs/doc/api/ejs/staging/src/include/ejs.h" line="2159" bodyfile="/Users/mob/git/ejs/doc/api/ejs/staging/src/include/ejs.h" bodystart="2159" bodyend="-1"/>
+        <location file="/Users/mob/git/ejs/doc/api/ejs/staging/src/deps/ejs/ejs.h" line="1963" bodyfile="/Users/mob/git/ejs/doc/api/ejs/staging/src/deps/ejs/ejs.h" bodystart="1963" bodyend="-1"/>
       </memberdef>
-      <memberdef kind="variable" id="struct_ejs_array_1973dd020b30c461650d02427c683bdc2" prot="public" static="no" mutable="no">
-        <type>EjsObj</type>
-        <definition>EjsObj EjsArray::obj</definition>
+      <memberdef kind="variable" id="struct_ejs_array_1a8bb80e01a66d8e78d2780e6169779c29" prot="public" static="no" mutable="no">
+        <type>EjsPot</type>
+        <definition>EjsPot EjsArray::pot</definition>
         <argsstring></argsstring>
-        <name>obj</name>
+        <name>pot</name>
         <briefdescription>
-<para>Extends Object. </para>        </briefdescription>
+<para>Property storage. </para>        </briefdescription>
         <detaileddescription>
         </detaileddescription>
         <inbodydescription>
         </inbodydescription>
-        <location file="/Users/mob/git/ejs/doc/api/ejs/staging/src/include/ejs.h" line="2157" bodyfile="/Users/mob/git/ejs/doc/api/ejs/staging/src/include/ejs.h" bodystart="2157" bodyend="-1"/>
+        <location file="/Users/mob/git/ejs/doc/api/ejs/staging/src/deps/ejs/ejs.h" line="1961" bodyfile="/Users/mob/git/ejs/doc/api/ejs/staging/src/deps/ejs/ejs.h" bodystart="1961" bodyend="-1"/>
       </memberdef>
       </sectiondef>
     <briefdescription>
     </briefdescription>
     <detaileddescription>
     </detaileddescription>
-    <location file="/Users/mob/git/ejs/doc/api/ejs/staging/src/include/ejs.h" line="2156" bodyfile="/Users/mob/git/ejs/doc/api/ejs/staging/src/include/ejs.h" bodystart="2156" bodyend="2160"/>
+    <location file="/Users/mob/git/ejs/doc/api/ejs/staging/src/deps/ejs/ejs.h" line="1960" bodyfile="/Users/mob/git/ejs/doc/api/ejs/staging/src/deps/ejs/ejs.h" bodystart="1960" bodyend="1964"/>
     <listofallmembers>
-      <member refid="struct_ejs_array_1f363002c3a744338ac67a0892cc726b1" prot="public" virt="non-virtual"><scope>EjsArray</scope><name>data</name></member>
-      <member refid="struct_ejs_array_10f492640e108ba507772cd5545ae10a6" prot="public" virt="non-virtual"><scope>EjsArray</scope><name>length</name></member>
-      <member refid="struct_ejs_array_1973dd020b30c461650d02427c683bdc2" prot="public" virt="non-virtual"><scope>EjsArray</scope><name>obj</name></member>
+      <member refid="struct_ejs_array_1af363002c3a744338ac67a0892cc726b1" prot="public" virt="non-virtual"><scope>EjsArray</scope><name>data</name></member>
+      <member refid="struct_ejs_array_1a0f492640e108ba507772cd5545ae10a6" prot="public" virt="non-virtual"><scope>EjsArray</scope><name>length</name></member>
+      <member refid="struct_ejs_array_1a8bb80e01a66d8e78d2780e6169779c29" prot="public" virt="non-virtual"><scope>EjsArray</scope><name>pot</name></member>
     </listofallmembers>
   </compounddef>
 </doxygen>

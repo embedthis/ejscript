@@ -1,20 +1,20 @@
 <?xml version='1.0' encoding='UTF-8' standalone='no'?>
-<doxygen xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="compound.xsd" version="1.5.8">
+<doxygen xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="compound.xsd" version="1.7.3">
   <compounddef id="group___ejs_byte_array" kind="group">
     <compoundname>EjsByteArray</compoundname>
     <title>EjsByteArray</title>
       <sectiondef kind="func">
-      <memberdef kind="function" id="group___ejs_byte_array_1g7c58836430321096069355ee4f0f1114" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+      <memberdef kind="function" id="group___ejs_byte_array_1ga4587936a91ae2826232be299da064cdf" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
         <type>EjsByteArray *</type>
         <definition>EjsByteArray* ejsCreateByteArray</definition>
-        <argsstring>(Ejs *ejs, int size)</argsstring>
+        <argsstring>(Ejs *ejs, ssize size)</argsstring>
         <name>ejsCreateByteArray</name>
         <param>
           <type>Ejs *</type>
           <declname>ejs</declname>
         </param>
         <param>
-          <type>int</type>
+          <type>ssize</type>
           <declname>size</declname>
         </param>
         <briefdescription>
@@ -26,7 +26,7 @@
 <parametername>ejs</parametername>
 </parameternamelist>
 <parameterdescription>
-<para>Ejs reference returned from <ref refid="group___ejs_obj_1g50d9d774b3cddd1784d654326cddc237" kindref="member">ejsCreate</ref> </para></parameterdescription>
+<para>Ejs reference returned from <ref refid="group___ejs_1ga75cce70e794158ee54ddb800509060e0" kindref="member">ejsCreate</ref> </para></parameterdescription>
 </parameteritem>
 <parameteritem>
 <parameternamelist>
@@ -40,38 +40,12 @@
 </para>        </detaileddescription>
         <inbodydescription>
         </inbodydescription>
-        <location file="/Users/mob/git/ejs/doc/api/ejs/staging/src/include/ejs.h" line="2313"/>
+        <location file="/Users/mob/git/ejs/doc/api/ejs/staging/src/deps/ejs/ejs.h" line="2468"/>
       </memberdef>
-      <memberdef kind="function" id="group___ejs_byte_array_1gd776821fe6df5db995543ec0d60387f0" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
-        <type>bool</type>
-        <definition>bool ejsIsByteArray</definition>
-        <argsstring>(EjsObj *vp)</argsstring>
-        <name>ejsIsByteArray</name>
-        <param>
-          <type>EjsObj *</type>
-          <declname>vp</declname>
-        </param>
-        <briefdescription>
-<para>Determine if a variable is a byte array. </para>        </briefdescription>
-        <detaileddescription>
-<para><parameterlist kind="param"><parameteritem>
-<parameternamelist>
-<parametername>vp</parametername>
-</parameternamelist>
-<parameterdescription>
-<para>Variable to test </para></parameterdescription>
-</parameteritem>
-</parameterlist>
-<simplesect kind="return"><para>True if the variable is a byte array </para></simplesect>
-</para>        </detaileddescription>
-        <inbodydescription>
-        </inbodydescription>
-        <location file="/Users/mob/git/ejs/doc/api/ejs/staging/src/include/ejs.h" line="2300"/>
-      </memberdef>
-      <memberdef kind="function" id="group___ejs_byte_array_1gb8ca386fac3fe62e25d296a15da3e80e" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+      <memberdef kind="function" id="group___ejs_byte_array_1gae53317802b2494990f39a29403e74343" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
         <type>void</type>
         <definition>void ejsSetByteArrayPositions</definition>
-        <argsstring>(Ejs *ejs, EjsByteArray *ba, int readPosition, int writePosition)</argsstring>
+        <argsstring>(Ejs *ejs, EjsByteArray *ba, ssize readPosition, ssize writePosition)</argsstring>
         <name>ejsSetByteArrayPositions</name>
         <param>
           <type>Ejs *</type>
@@ -82,11 +56,11 @@
           <declname>ba</declname>
         </param>
         <param>
-          <type>int</type>
+          <type>ssize</type>
           <declname>readPosition</declname>
         </param>
         <param>
-          <type>int</type>
+          <type>ssize</type>
           <declname>writePosition</declname>
         </param>
         <briefdescription>
@@ -98,7 +72,7 @@
 <parametername>ejs</parametername>
 </parameternamelist>
 <parameterdescription>
-<para>Ejs reference returned from <ref refid="group___ejs_obj_1g50d9d774b3cddd1784d654326cddc237" kindref="member">ejsCreate</ref> </para></parameterdescription>
+<para>Ejs reference returned from <ref refid="group___ejs_1ga75cce70e794158ee54ddb800509060e0" kindref="member">ejsCreate</ref> </para></parameterdescription>
 </parameteritem>
 <parameteritem>
 <parameternamelist>
@@ -125,15 +99,15 @@
 </para>        </detaileddescription>
         <inbodydescription>
         </inbodydescription>
-        <location file="/Users/mob/git/ejs/doc/api/ejs/staging/src/include/ejs.h" line="2326"/>
+        <location file="/Users/mob/git/ejs/doc/api/ejs/staging/src/deps/ejs/ejs.h" line="2481"/>
       </memberdef>
       </sectiondef>
     <briefdescription>
 <para>ByteArray class. </para>    </briefdescription>
     <detaileddescription>
-<para><simplesect kind="par"><title><bold>Description</bold>:</title><para>ByteArrays provide a growable, integer indexed, in-memory store for bytes. ByteArrays can be used as a simple array type to store and encode data as bytes or they can be used as buffered Streams implementing the Stream interface. <linebreak/>
+<para><simplesect kind="par"><title><bold>Description</bold>:</title><para>ByteArrays provide a resizable, integer indexed, in-memory store for bytes. ByteArrays can be used as a simple array type to store and encode data as bytes or they can be used as buffered Streams implementing the Stream interface. <linebreak/>
 <linebreak/>
- When used as a simple byte array, the ByteArray class offers a low level set of methods to insert and extract bytes. The index operator [] can be used to access individual bytes and the copyIn and copyOut methods can be used to get and put blocks of data. In this mode, the read and write position properties are ignored. Access to the byte array is from index zero up to the size defined by the length property. When constructed, the ByteArray can be designated as growable, in which case the initial size will grow as required to accomodate data and the length property will be updated accordingly. <linebreak/>
+ When used as a simple byte array, the ByteArray class offers a low level set of methods to insert and extract bytes. The index operator [] can be used to access individual bytes and the copyIn and copyOut methods can be used to get and put blocks of data. In this mode, the read and write position properties are ignored. Access to the byte array is from index zero up to the size defined by the length property. When constructed, the ByteArray can be designated as resizable, in which case the initial size will grow as required to accomodate data and the length property will be updated accordingly. <linebreak/>
 <linebreak/>
  When used as a Stream, the byte array additional write methods to store data at the location specified by the $writePosition property and read methods to read from the $readPosition property. The $available method indicates how much data is available between the read and write position pointers. The $reset method can reset the pointers to the start of the array. When used with for/in, ByteArrays will iterate or enumerate over the available data between the read and write pointers. <linebreak/>
 <linebreak/>
@@ -141,7 +115,7 @@
 <linebreak/>
  In Stream mode ByteArrays can be configured to run in sync or async mode. Adding observers via the $addObserver method will put a stream into async mode. Events will then be issued for close, eof, read and write events. </para></simplesect>
 <simplesect kind="par"><title><bold>API</bold> Stability:</title><para>Evolving</para></simplesect>
-<simplesect kind="see"><para><ref refid="group___ejs_byte_array" kindref="compound">EjsByteArray</ref> <ref refid="group___ejs_byte_array_1gd776821fe6df5db995543ec0d60387f0" kindref="member">ejsIsByteArray</ref> <ref refid="group___ejs_byte_array_1g7c58836430321096069355ee4f0f1114" kindref="member">ejsCreateByteArray</ref> <ref refid="group___ejs_byte_array_1gb8ca386fac3fe62e25d296a15da3e80e" kindref="member">ejsSetByteArrayPositions</ref> ejsCopyToByteArray </para></simplesect>
+<simplesect kind="see"><para><ref refid="group___ejs_byte_array" kindref="compound">EjsByteArray</ref> <ref refid="group___ejs_byte_array_1ga4587936a91ae2826232be299da064cdf" kindref="member">ejsCreateByteArray</ref> <ref refid="group___ejs_byte_array_1gae53317802b2494990f39a29403e74343" kindref="member">ejsSetByteArrayPositions</ref> ejsCopyToByteArray </para></simplesect>
 </para>    </detaileddescription>
   </compounddef>
 </doxygen>

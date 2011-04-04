@@ -1,9 +1,9 @@
 <?xml version='1.0' encoding='UTF-8' standalone='no'?>
-<doxygen xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="compound.xsd" version="1.5.8">
+<doxygen xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="compound.xsd" version="1.7.3">
   <compounddef id="struct_ejs_x_m_l" kind="struct" prot="public">
     <compoundname>EjsXML</compoundname>
       <sectiondef kind="public-attrib">
-      <memberdef kind="variable" id="struct_ejs_x_m_l_18a2b38b2e599414cf9a86dc23375c284" prot="public" static="no" mutable="no">
+      <memberdef kind="variable" id="struct_ejs_x_m_l_1a8a2b38b2e599414cf9a86dc23375c284" prot="public" static="no" mutable="no">
         <type>MprList *</type>
         <definition>MprList* EjsXML::attributes</definition>
         <argsstring></argsstring>
@@ -14,9 +14,9 @@
         </detaileddescription>
         <inbodydescription>
         </inbodydescription>
-        <location file="/Users/mob/git/ejs/doc/api/ejs/staging/src/include/ejs.h" line="3250" bodyfile="/Users/mob/git/ejs/doc/api/ejs/staging/src/include/ejs.h" bodystart="3250" bodyend="-1"/>
+        <location file="/Users/mob/git/ejs/doc/api/ejs/staging/src/deps/ejs/ejs.h" line="3202" bodyfile="/Users/mob/git/ejs/doc/api/ejs/staging/src/deps/ejs/ejs.h" bodystart="3202" bodyend="-1"/>
       </memberdef>
-      <memberdef kind="variable" id="struct_ejs_x_m_l_133fc144d8c125151ab8ff9b3ae1fb417" prot="public" static="no" mutable="no">
+      <memberdef kind="variable" id="struct_ejs_x_m_l_1a33fc144d8c125151ab8ff9b3ae1fb417" prot="public" static="no" mutable="no">
         <type>MprList *</type>
         <definition>MprList* EjsXML::elements</definition>
         <argsstring></argsstring>
@@ -27,9 +27,9 @@
         </detaileddescription>
         <inbodydescription>
         </inbodydescription>
-        <location file="/Users/mob/git/ejs/doc/api/ejs/staging/src/include/ejs.h" line="3249" bodyfile="/Users/mob/git/ejs/doc/api/ejs/staging/src/include/ejs.h" bodystart="3249" bodyend="-1"/>
+        <location file="/Users/mob/git/ejs/doc/api/ejs/staging/src/deps/ejs/ejs.h" line="3201" bodyfile="/Users/mob/git/ejs/doc/api/ejs/staging/src/deps/ejs/ejs.h" bodystart="3201" bodyend="-1"/>
       </memberdef>
-      <memberdef kind="variable" id="struct_ejs_x_m_l_133f23f4b4f3e5ccab486f6381e197e1d" prot="public" static="no" mutable="no">
+      <memberdef kind="variable" id="struct_ejs_x_m_l_1a33f23f4b4f3e5ccab486f6381e197e1d" prot="public" static="no" mutable="no">
         <type>int</type>
         <definition>int EjsXML::flags</definition>
         <argsstring></argsstring>
@@ -40,9 +40,9 @@
         </detaileddescription>
         <inbodydescription>
         </inbodydescription>
-        <location file="/Users/mob/git/ejs/doc/api/ejs/staging/src/include/ejs.h" line="3256" bodyfile="/Users/mob/git/ejs/doc/api/ejs/staging/src/include/ejs.h" bodystart="3256" bodyend="-1"/>
+        <location file="/Users/mob/git/ejs/doc/api/ejs/staging/src/deps/ejs/ejs.h" line="3208" bodyfile="/Users/mob/git/ejs/doc/api/ejs/staging/src/deps/ejs/ejs.h" bodystart="3208" bodyend="-1"/>
       </memberdef>
-      <memberdef kind="variable" id="struct_ejs_x_m_l_1403260c3cf02227c37852100bde58818" prot="public" static="no" mutable="no">
+      <memberdef kind="variable" id="struct_ejs_x_m_l_1a403260c3cf02227c37852100bde58818" prot="public" static="no" mutable="no">
         <type>int</type>
         <definition>int EjsXML::kind</definition>
         <argsstring></argsstring>
@@ -53,9 +53,9 @@
         </detaileddescription>
         <inbodydescription>
         </inbodydescription>
-        <location file="/Users/mob/git/ejs/doc/api/ejs/staging/src/include/ejs.h" line="3248" bodyfile="/Users/mob/git/ejs/doc/api/ejs/staging/src/include/ejs.h" bodystart="3248" bodyend="-1"/>
+        <location file="/Users/mob/git/ejs/doc/api/ejs/staging/src/deps/ejs/ejs.h" line="3200" bodyfile="/Users/mob/git/ejs/doc/api/ejs/staging/src/deps/ejs/ejs.h" bodystart="3200" bodyend="-1"/>
       </memberdef>
-      <memberdef kind="variable" id="struct_ejs_x_m_l_1e6fd29a23c644db32cf21cb959894e1b" prot="public" static="no" mutable="no">
+      <memberdef kind="variable" id="struct_ejs_x_m_l_1ae6fd29a23c644db32cf21cb959894e1b" prot="public" static="no" mutable="no">
         <type>MprList *</type>
         <definition>MprList* EjsXML::namespaces</definition>
         <argsstring></argsstring>
@@ -66,35 +66,35 @@
         </detaileddescription>
         <inbodydescription>
         </inbodydescription>
-        <location file="/Users/mob/git/ejs/doc/api/ejs/staging/src/include/ejs.h" line="3251" bodyfile="/Users/mob/git/ejs/doc/api/ejs/staging/src/include/ejs.h" bodystart="3251" bodyend="-1"/>
+        <location file="/Users/mob/git/ejs/doc/api/ejs/staging/src/deps/ejs/ejs.h" line="3203" bodyfile="/Users/mob/git/ejs/doc/api/ejs/staging/src/deps/ejs/ejs.h" bodystart="3203" bodyend="-1"/>
       </memberdef>
-      <memberdef kind="variable" id="struct_ejs_x_m_l_1d9389317e3b8f6dc226b3588e6ca5331" prot="public" static="no" mutable="no">
+      <memberdef kind="variable" id="struct_ejs_x_m_l_1ad9389317e3b8f6dc226b3588e6ca5331" prot="public" static="no" mutable="no">
         <type>EjsObj</type>
         <definition>EjsObj EjsXML::obj</definition>
         <argsstring></argsstring>
         <name>obj</name>
         <briefdescription>
-<para>Extends Object - Property storage (unused). </para>        </briefdescription>
+<para>Base object. </para>        </briefdescription>
         <detaileddescription>
         </detaileddescription>
         <inbodydescription>
         </inbodydescription>
-        <location file="/Users/mob/git/ejs/doc/api/ejs/staging/src/include/ejs.h" line="3246" bodyfile="/Users/mob/git/ejs/doc/api/ejs/staging/src/include/ejs.h" bodystart="3246" bodyend="-1"/>
+        <location file="/Users/mob/git/ejs/doc/api/ejs/staging/src/deps/ejs/ejs.h" line="3198" bodyfile="/Users/mob/git/ejs/doc/api/ejs/staging/src/deps/ejs/ejs.h" bodystart="3198" bodyend="-1"/>
       </memberdef>
-      <memberdef kind="variable" id="struct_ejs_x_m_l_14f50c79236c2e8a7446086da7a73e5ad" prot="public" static="no" mutable="no">
+      <memberdef kind="variable" id="struct_ejs_x_m_l_1a4f50c79236c2e8a7446086da7a73e5ad" prot="public" static="no" mutable="no">
         <type>struct EjsXML *</type>
         <definition>struct EjsXML* EjsXML::parent</definition>
         <argsstring></argsstring>
         <name>parent</name>
         <briefdescription>
-<para>Parent node reference (XML or XMLList). </para>        </briefdescription>
+<para>Parent node reference (XML or XMLList) </para>        </briefdescription>
         <detaileddescription>
         </detaileddescription>
         <inbodydescription>
         </inbodydescription>
-        <location file="/Users/mob/git/ejs/doc/api/ejs/staging/src/include/ejs.h" line="3252" bodyfile="/Users/mob/git/ejs/doc/api/ejs/staging/src/include/ejs.h" bodystart="3252" bodyend="-1"/>
+        <location file="/Users/mob/git/ejs/doc/api/ejs/staging/src/deps/ejs/ejs.h" line="3204" bodyfile="/Users/mob/git/ejs/doc/api/ejs/staging/src/deps/ejs/ejs.h" bodystart="3204" bodyend="-1"/>
       </memberdef>
-      <memberdef kind="variable" id="struct_ejs_x_m_l_179d1c70b36ab426847374ba8bee26e9b" prot="public" static="no" mutable="no">
+      <memberdef kind="variable" id="struct_ejs_x_m_l_1a79d1c70b36ab426847374ba8bee26e9b" prot="public" static="no" mutable="no">
         <type>EjsName</type>
         <definition>EjsName EjsXML::qname</definition>
         <argsstring></argsstring>
@@ -105,9 +105,9 @@
 <para>tagName) </para>        </detaileddescription>
         <inbodydescription>
         </inbodydescription>
-        <location file="/Users/mob/git/ejs/doc/api/ejs/staging/src/include/ejs.h" line="3247" bodyfile="/Users/mob/git/ejs/doc/api/ejs/staging/src/include/ejs.h" bodystart="3247" bodyend="-1"/>
+        <location file="/Users/mob/git/ejs/doc/api/ejs/staging/src/deps/ejs/ejs.h" line="3199" bodyfile="/Users/mob/git/ejs/doc/api/ejs/staging/src/deps/ejs/ejs.h" bodystart="3199" bodyend="-1"/>
       </memberdef>
-      <memberdef kind="variable" id="struct_ejs_x_m_l_16f9239522faeb0b297d32a44a239aa86" prot="public" static="no" mutable="no">
+      <memberdef kind="variable" id="struct_ejs_x_m_l_1a6f9239522faeb0b297d32a44a239aa86" prot="public" static="no" mutable="no">
         <type>struct EjsXML *</type>
         <definition>struct EjsXML* EjsXML::targetObject</definition>
         <argsstring></argsstring>
@@ -118,9 +118,9 @@
         </detaileddescription>
         <inbodydescription>
         </inbodydescription>
-        <location file="/Users/mob/git/ejs/doc/api/ejs/staging/src/include/ejs.h" line="3253" bodyfile="/Users/mob/git/ejs/doc/api/ejs/staging/src/include/ejs.h" bodystart="3253" bodyend="-1"/>
+        <location file="/Users/mob/git/ejs/doc/api/ejs/staging/src/deps/ejs/ejs.h" line="3205" bodyfile="/Users/mob/git/ejs/doc/api/ejs/staging/src/deps/ejs/ejs.h" bodystart="3205" bodyend="-1"/>
       </memberdef>
-      <memberdef kind="variable" id="struct_ejs_x_m_l_19ee63e27793fcf69847185cefdfc168f" prot="public" static="no" mutable="no">
+      <memberdef kind="variable" id="struct_ejs_x_m_l_1a9ee63e27793fcf69847185cefdfc168f" prot="public" static="no" mutable="no">
         <type>EjsName</type>
         <definition>EjsName EjsXML::targetProperty</definition>
         <argsstring></argsstring>
@@ -131,39 +131,39 @@
         </detaileddescription>
         <inbodydescription>
         </inbodydescription>
-        <location file="/Users/mob/git/ejs/doc/api/ejs/staging/src/include/ejs.h" line="3254" bodyfile="/Users/mob/git/ejs/doc/api/ejs/staging/src/include/ejs.h" bodystart="3254" bodyend="-1"/>
+        <location file="/Users/mob/git/ejs/doc/api/ejs/staging/src/deps/ejs/ejs.h" line="3206" bodyfile="/Users/mob/git/ejs/doc/api/ejs/staging/src/deps/ejs/ejs.h" bodystart="3206" bodyend="-1"/>
       </memberdef>
-      <memberdef kind="variable" id="struct_ejs_x_m_l_180d6616d833107f2cef71d29f01c1628" prot="public" static="no" mutable="no">
-        <type>char *</type>
-        <definition>char* EjsXML::value</definition>
+      <memberdef kind="variable" id="struct_ejs_x_m_l_1ad842c13de74e27eebbdd055e076538e5" prot="public" static="no" mutable="no">
+        <type>EjsString *</type>
+        <definition>EjsString* EjsXML::value</definition>
         <argsstring></argsstring>
         <name>value</name>
         <briefdescription>
-<para>String vale of text|attribute|comment|pi. </para>        </briefdescription>
+<para>Value of text|attribute|comment|pi. </para>        </briefdescription>
         <detaileddescription>
         </detaileddescription>
         <inbodydescription>
         </inbodydescription>
-        <location file="/Users/mob/git/ejs/doc/api/ejs/staging/src/include/ejs.h" line="3255" bodyfile="/Users/mob/git/ejs/doc/api/ejs/staging/src/include/ejs.h" bodystart="3255" bodyend="-1"/>
+        <location file="/Users/mob/git/ejs/doc/api/ejs/staging/src/deps/ejs/ejs.h" line="3207" bodyfile="/Users/mob/git/ejs/doc/api/ejs/staging/src/deps/ejs/ejs.h" bodystart="3207" bodyend="-1"/>
       </memberdef>
       </sectiondef>
     <briefdescription>
     </briefdescription>
     <detaileddescription>
     </detaileddescription>
-    <location file="/Users/mob/git/ejs/doc/api/ejs/staging/src/include/ejs.h" line="3245" bodyfile="/Users/mob/git/ejs/doc/api/ejs/staging/src/include/ejs.h" bodystart="3245" bodyend="3257"/>
+    <location file="/Users/mob/git/ejs/doc/api/ejs/staging/src/deps/ejs/ejs.h" line="3197" bodyfile="/Users/mob/git/ejs/doc/api/ejs/staging/src/deps/ejs/ejs.h" bodystart="3197" bodyend="3209"/>
     <listofallmembers>
-      <member refid="struct_ejs_x_m_l_18a2b38b2e599414cf9a86dc23375c284" prot="public" virt="non-virtual"><scope>EjsXML</scope><name>attributes</name></member>
-      <member refid="struct_ejs_x_m_l_133fc144d8c125151ab8ff9b3ae1fb417" prot="public" virt="non-virtual"><scope>EjsXML</scope><name>elements</name></member>
-      <member refid="struct_ejs_x_m_l_133f23f4b4f3e5ccab486f6381e197e1d" prot="public" virt="non-virtual"><scope>EjsXML</scope><name>flags</name></member>
-      <member refid="struct_ejs_x_m_l_1403260c3cf02227c37852100bde58818" prot="public" virt="non-virtual"><scope>EjsXML</scope><name>kind</name></member>
-      <member refid="struct_ejs_x_m_l_1e6fd29a23c644db32cf21cb959894e1b" prot="public" virt="non-virtual"><scope>EjsXML</scope><name>namespaces</name></member>
-      <member refid="struct_ejs_x_m_l_1d9389317e3b8f6dc226b3588e6ca5331" prot="public" virt="non-virtual"><scope>EjsXML</scope><name>obj</name></member>
-      <member refid="struct_ejs_x_m_l_14f50c79236c2e8a7446086da7a73e5ad" prot="public" virt="non-virtual"><scope>EjsXML</scope><name>parent</name></member>
-      <member refid="struct_ejs_x_m_l_179d1c70b36ab426847374ba8bee26e9b" prot="public" virt="non-virtual"><scope>EjsXML</scope><name>qname</name></member>
-      <member refid="struct_ejs_x_m_l_16f9239522faeb0b297d32a44a239aa86" prot="public" virt="non-virtual"><scope>EjsXML</scope><name>targetObject</name></member>
-      <member refid="struct_ejs_x_m_l_19ee63e27793fcf69847185cefdfc168f" prot="public" virt="non-virtual"><scope>EjsXML</scope><name>targetProperty</name></member>
-      <member refid="struct_ejs_x_m_l_180d6616d833107f2cef71d29f01c1628" prot="public" virt="non-virtual"><scope>EjsXML</scope><name>value</name></member>
+      <member refid="struct_ejs_x_m_l_1a8a2b38b2e599414cf9a86dc23375c284" prot="public" virt="non-virtual"><scope>EjsXML</scope><name>attributes</name></member>
+      <member refid="struct_ejs_x_m_l_1a33fc144d8c125151ab8ff9b3ae1fb417" prot="public" virt="non-virtual"><scope>EjsXML</scope><name>elements</name></member>
+      <member refid="struct_ejs_x_m_l_1a33f23f4b4f3e5ccab486f6381e197e1d" prot="public" virt="non-virtual"><scope>EjsXML</scope><name>flags</name></member>
+      <member refid="struct_ejs_x_m_l_1a403260c3cf02227c37852100bde58818" prot="public" virt="non-virtual"><scope>EjsXML</scope><name>kind</name></member>
+      <member refid="struct_ejs_x_m_l_1ae6fd29a23c644db32cf21cb959894e1b" prot="public" virt="non-virtual"><scope>EjsXML</scope><name>namespaces</name></member>
+      <member refid="struct_ejs_x_m_l_1ad9389317e3b8f6dc226b3588e6ca5331" prot="public" virt="non-virtual"><scope>EjsXML</scope><name>obj</name></member>
+      <member refid="struct_ejs_x_m_l_1a4f50c79236c2e8a7446086da7a73e5ad" prot="public" virt="non-virtual"><scope>EjsXML</scope><name>parent</name></member>
+      <member refid="struct_ejs_x_m_l_1a79d1c70b36ab426847374ba8bee26e9b" prot="public" virt="non-virtual"><scope>EjsXML</scope><name>qname</name></member>
+      <member refid="struct_ejs_x_m_l_1a6f9239522faeb0b297d32a44a239aa86" prot="public" virt="non-virtual"><scope>EjsXML</scope><name>targetObject</name></member>
+      <member refid="struct_ejs_x_m_l_1a9ee63e27793fcf69847185cefdfc168f" prot="public" virt="non-virtual"><scope>EjsXML</scope><name>targetProperty</name></member>
+      <member refid="struct_ejs_x_m_l_1ad842c13de74e27eebbdd055e076538e5" prot="public" virt="non-virtual"><scope>EjsXML</scope><name>value</name></member>
     </listofallmembers>
   </compounddef>
 </doxygen>
