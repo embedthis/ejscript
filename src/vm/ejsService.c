@@ -425,6 +425,8 @@ static int configureEjs(Ejs *ejs)
     ejsConfigureXMLType(ejs);
     ejsConfigureXMLListType(ejs);
 
+    ejsDefineConfigProperties(ejs);
+
     ejsInitSearchPath(ejs);
     ejs->initialized = 1;
     return 0;
@@ -794,7 +796,6 @@ static int searchForMethod(Ejs *ejs, cchar *methodName, EjsType **typeReturn)
 
 static void logHandler(int flags, int level, cchar *msg)
 {
-    MprFile     *file;
     char        *prefix, *tag, *amsg, lbuf[16], buf[MPR_MAX_STRING];
     static int  solo = 0;
 
@@ -823,11 +824,9 @@ static void logHandler(int flags, int level, cchar *msg)
             msg = amsg = mprAsprintf("%s: %s: %s\n", prefix, tag, msg);
         }
     }
-    if (MPR->logData) {
-        file = (MprFile*) MPR->logData;
-        mprFprintf(file, "%s", msg);
+    if (MPR->logFile) {
+        mprFprintf(MPR->logFile, "%s", msg);
     } else {
-        file = (MprFile*) MPR->logData;
         mprPrintfError("%s", msg);
     }
     solo = 0;
@@ -860,8 +859,20 @@ int ejsRedirectLogging(char *logSpec)
         }
     }
     mprSetLogLevel(level);
-    mprSetLogHandler(logHandler, file);
+    mprSetLogHandler(logHandler);
+    mprSetLogFile(file);
     return 0;
+}
+
+
+void ejsRedirectLoggingToFile(MprFile *file, int level)
+{
+    if (level >= 0) {
+        mprSetLogLevel(level);
+    }
+    if (file) {
+        mprSetLogFile(file);
+    }
 }
 
 

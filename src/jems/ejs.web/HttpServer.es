@@ -106,10 +106,8 @@ module ejs.web {
             If an "ejsrc" file exists in the server root, it will be loaded and update the "$config" properties.
             @param documentRoot Directory containing web documents to serve. If set to null and the HttpServer is hosted,
                 the documentRoot will be defined by the web server.
-MOB - more explanation about what is in the ServerRoot
-            @param serverRoot Base directory for the server configuration. If set to null and the HttpServer is hosted,
-                the serverRoot will be defined by the web server. The serverRoot directory may contain an optional "ejsrc"
-                configuration file to load.
+            @param serverRoot Base directory for the server ejsrc configuration file. If set to null and the HttpServer is 
+                hosted, the serverRoot will be defined by the web server.
             @spec ejs
             @stability prototype
             @example: This is a fully async server:
@@ -152,14 +150,19 @@ MOB - more explanation about what is in the ServerRoot
                     App.updateLog()
                 }
             }
-            let dirs = config.directories
-            for (let [key,value] in dirs) {
-                //  MOB - multiple servers will keep prepending the doc root
-                //  MOB - TEMP hack
-                if (!value.toString().startsWith(documentRoot)) {
-                    dirs[key] = documentRoot.join(value)
+        /* UNUSED
+            directories must be relative to the serverRoot directory
+            if (1 || documentRoot != ".") {
+                let dirs = config.directories
+                for (let [key,value] in dirs) {
+                    //  MOB - multiple servers will keep prepending the doc root
+                    //  MOB - TEMP hack
+                    if (!value.toString().startsWith(documentRoot)) {
+                        dirs[key] = documentRoot.join(value)
+                    }
                 }
             }
+        */
         }
 
         /** 

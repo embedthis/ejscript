@@ -495,7 +495,7 @@ static EjsType *defineClass(EcCompiler *cp, EcNode *np)
         type = ejsGetPropertyByName(ejs, ejs->service->foundation, np->qname);
     }
     if (np->attributes & EJS_PROP_NATIVE) {
-        astWarn(cp, np, "Native attribute on class %s is not required, ignoring.", np->qname.name);
+        astWarn(cp, np, "Native attribute on class %@ is not required, ignoring.", np->qname.name);
     }
     attributes = np->attributes | EJS_TYPE_FIXUP;
     if (np->klass.isInterface) {
@@ -504,7 +504,7 @@ static EjsType *defineClass(EcCompiler *cp, EcNode *np)
     if (type == 0) {
         type = ejsCreateType(ejs, np->qname, state->currentModule, NULL, NULL, sizeof(EjsPot), sid, 0, 0, attributes);
         if (type == 0) {
-            astError(cp, np, "Can't create type %s", type->qname.name);
+            astError(cp, np, "Can't create type %N", type->qname);
             return 0;
         }
         ejsClonePotHelpers(ejs, type);
@@ -537,7 +537,7 @@ static EjsType *defineClass(EcCompiler *cp, EcNode *np)
      */
     slotNum = ejsDefineProperty(ejs, ejs->global, slotNum, np->qname, ST(Type), attributes, type);
     if (slotNum < 0) {
-        astError(cp, np, "Can't install type %s",  np->qname.name);
+        astError(cp, np, "Can't install type %n",  np->qname);
         return 0;
     }
     if (!type->isInterface) {
@@ -582,7 +582,7 @@ static void validateClass(EcCompiler *cp, EcNode *np)
 
     baseType = type->baseType;
     if (baseType && baseType->final) {
-        astError(cp, np, "Class \"%s\" is attempting to subclass a final class \"%s\"", type->qname.name, 
+        astError(cp, np, "Class \"%@\" is attempting to subclass a final class \"%@\"", type->qname.name, 
             baseType->qname.name);
     }
 
@@ -599,7 +599,7 @@ static void validateClass(EcCompiler *cp, EcNode *np)
             qname = ejsGetPropertyName(ejs, (EjsObj*) iface, i);
             vp = ejsGetPropertyByName(ejs, (EjsObj*) type, qname);
             if (vp == 0 || !ejsIsFunction(ejs, vp)) {
-                astError(cp, np, "Missing method \"%s\" required by interface \"%s\"", qname.name, iface->qname.name);
+                astError(cp, np, "Missing method \"%@\" required by interface \"%@\"", qname.name, iface->qname.name);
             } else {
                 validateFunction(cp, np, fun, (EjsFunction*) vp);
             }
@@ -983,7 +983,7 @@ static EjsFunction *defineFunction(EcCompiler *cp, EcNode *np)
         fun = ejsCreateFunction(ejs, np->qname.name, NULL, 0, numArgs, 0, 0, NULL, np->attributes, state->currentModule, 
             NULL, cp->fileState->strict);
         if (fun == 0) {
-            astError(cp, np, "Can't create function \"%s\"", np->qname.name);
+            astError(cp, np, "Can't create function \"%@\"", np->qname.name);
             return 0;
         }  
 
@@ -996,13 +996,13 @@ static EjsFunction *defineFunction(EcCompiler *cp, EcNode *np)
         if (slotNum >= 0 && cp->fileState->strict) {
             if ((np->function.setter && ejsPropertyHasTrait(ejs, block, slotNum, EJS_TRAIT_SETTER)) ||
                 (np->function.getter && ejsPropertyHasTrait(ejs, block, slotNum, EJS_TRAIT_GETTER))) {
-                astError(cp, np, "Property \"%s\" is already defined.", np->qname);
+                astError(cp, np, "Property \"%@\" is already defined.", np->qname);
                 return 0;
             }
         }
         slotNum = ejsDefineProperty(ejs, block, slotNum, np->qname, TYPE(fun), np->attributes, (EjsObj*) fun);
         if (slotNum < 0) {
-            astError(cp, np, "Can't define function in type \"%s\"", state->currentClass->qname.name);
+            astError(cp, np, "Can't define function in type \"%@\"", state->currentClass->qname.name);
             return 0;
         }
     }
@@ -1208,7 +1208,7 @@ static EjsFunction *bindFunction(EcCompiler *cp, EcNode *np)
                 if (currentClass->qname.space != ejsCreateStringFromAsc(ejs, EJS_EJS_NAMESPACE) && 
                     currentClass->qname.name != ejsCreateStringFromAsc(ejs, "Type")) {
                     astError(cp, np, 
-                        "Function \"%s\" is already defined in a base class. Using \"override\" keyword.", np->qname.name);
+                        "Function \"%@\" is already defined in a base class. Using \"override\" keyword.", np->qname.name);
                     return 0;
                 }
             }
@@ -1236,7 +1236,7 @@ static EjsFunction *bindFunction(EcCompiler *cp, EcNode *np)
                 if (!iface->isInterface) {
                     if (!(np->attributes & EJS_FUN_OVERRIDE)) {
                         astError(cp, np, 
-                            "Function \"%s\" is already defined in an implemented class. Use the \"override\" keyword.", 
+                            "Function \"%@\" is already defined in an implemented class. Use the \"override\" keyword.", 
                             np->qname.name);
                         return 0;
                     }
@@ -1254,7 +1254,7 @@ static EjsFunction *bindFunction(EcCompiler *cp, EcNode *np)
         //  MOB -- assumes all types are in global. Should do a scope search?
         if (resolveName(cp, resultTypeNode, ejs->global, resultTypeNode->qname) < 0) {
             if (STRICT_MODE(cp)) {
-                astError(cp, np, "Can't find type \"%s\". All variables must be declared and typed in strict mode.", 
+                astError(cp, np, "Can't find type \"%@\". All variables must be declared and typed in strict mode.", 
                     resultTypeNode->qname.name);
             }
         } else {
@@ -1539,7 +1539,8 @@ static EjsObj *evalNode(EcCompiler *cp, EcNode *np)
 {
     Ejs         *ejs;
     EjsModule   *mp;
-    EjsObj      *result, *config;
+    EjsType     *config;
+    EjsObj      *result;
     int         saveDebug;
 
     ejs = cp->ejs;
@@ -1567,12 +1568,10 @@ static EjsObj *evalNode(EcCompiler *cp, EcNode *np)
     /*  Install the Config object as a local variable in the initializer function */
     config = ejsGetPropertyByName(ejs, ejs->global, N("ejs", "Config"));
     ejsDefineProperty(ejs, mp->initializer->activation, 0, EN("Config"), ST(Type), 0, config);
-#if UNUSED
-    ejsSetPropertyName(ejs, config, ES_Config_Legacy, EN("Legacy"));
-#endif
+    ejsDefineConfigProperties(ejs);
+
     result = ejsRunInitializer(ejs, mp);
     cp->debug = saveDebug;
-    mprAssert(ejs->result == 0 || (MPR_GET_GEN(MPR_GET_MEM(ejs->result)) != MPR->heap.dead));
 
     if (result == 0) {
         ejsClearException(ejs);
@@ -1587,8 +1586,8 @@ static EjsObj *evalNode(EcCompiler *cp, EcNode *np)
  */
 static void astHash(EcCompiler *cp, EcNode *np)
 {
-    EjsObj          *result;
-    int             savePhase;
+    EjsObj      *result;
+    int         savePhase;
 
     ENTER(cp);
 
@@ -1727,7 +1726,7 @@ static void astBindName(EcCompiler *cp, EcNode *np)
             if (state->currentClass) {
                 rc = resolveProperty(cp, np, state->currentClass, np->qname);
                 if (rc < 0 && STRICT_MODE(cp)) {
-                    astError(cp, np, "Can't find property \"%s\" in this class %s.", np->qname.name, 
+                    astError(cp, np, "Can't find property \"%@\" in this class %@.", np->qname.name, 
                          state->currentClass->qname.name);
                 }
             }
@@ -1752,7 +1751,7 @@ static void astBindName(EcCompiler *cp, EcNode *np)
                 np->lookup.ownerIsType = 1;
                 rc = resolveProperty(cp, np, (EjsType*) left->lookup.ref, np->qname);
                 if (rc < 0 && STRICT_MODE(cp) && !((EjsType*) left->lookup.ref)->dynamicInstance) {
-                    astError(cp, np, "Can't find property \"%s\" in class \"%s\".", np->qname.name,
+                    astError(cp, np, "Can't find property \"%@\" in class \"%@\".", np->qname.name,
                         ((EjsType*) left->lookup.ref)->qname.name);
 
                 } else if (np->lookup.trait && !(np->lookup.trait->attributes & EJS_PROP_STATIC) &&
@@ -1760,7 +1759,7 @@ static void astBindName(EcCompiler *cp, EcNode *np)
                     if (np->lookup.slotNum >= ES_Object_NUM_CLASS_PROP) {
                         /* Exclude the case of calling a function (constructor) to create a new instance */
                         if (!(left->kind == N_CALL || left->kind == N_EXPRESSIONS)) {
-                            astError(cp, np, "Accessing instance level propery \"%s\" without an instance", np->qname.name);
+                            astError(cp, np, "Accessing instance level propery \"%@\" without an instance", np->qname.name);
                         }
                     }
                     
@@ -1819,7 +1818,7 @@ static void astBindName(EcCompiler *cp, EcNode *np)
             if (ejsIsPrototype(ejs, lookup->obj) || 
                     (ejsIsType(ejs, lookup->obj) && (lookup->trait && !(lookup->trait->attributes & EJS_PROP_STATIC)))) {
                 if (!state->inFunction || (state->currentFunctionNode->attributes & EJS_PROP_STATIC)) {
-                    astError(cp, np, "Accessing instance level property \"%s\" without an instance", np->qname.name);
+                    astError(cp, np, "Accessing instance level property \"%@\" without an instance", np->qname.name);
                     rc = -1;
                 }
             }
@@ -1832,12 +1831,12 @@ static void astBindName(EcCompiler *cp, EcNode *np)
         if (left && left->lookup.trait && left->lookup.trait->type) {
             type = left->lookup.trait->type;
             if (!type->dynamicInstance) {
-                astError(cp, np, "Can't find a declaration for \"%s\".", np->qname.name);
+                astError(cp, np, "Can't find a declaration for \"%@\".", np->qname.name);
             }
         }
 #endif
         if (STRICT_MODE(cp) && !cp->error) {
-            astError(cp, np, "Can't find a declaration for \"%s\". All variables must be declared and typed in strict mode.",
+            astError(cp, np, "Can't find a declaration for \"%@\". All variables must be declared and typed in strict mode.",
                 np->qname.name);
         }
 
@@ -1931,7 +1930,7 @@ static void astBindName(EcCompiler *cp, EcNode *np)
     currentFunction = state->currentFunction;
     if (lookup->slotNum < 0) {
         if (cp->phase == EC_PHASE_BIND && cp->warnLevel > 5) {
-            astWarn(cp, np, "Using unbound variable reference for \"%s\"", np->qname.name);
+            astWarn(cp, np, "Using unbound variable reference for \"%@\"", np->qname.name);
         }
     }
     LEAVE(cp);
@@ -2106,7 +2105,7 @@ static void astReturn(EcCompiler *cp, EcNode *np)
                         Allow block-less function expressions where a return node was generated by the parser.
                      */
                     if (!np->ret.blockless) {
-                        astError(cp, np, "Void function \"%s\" can't return a value", functionNode->qname.name);
+                        astError(cp, np, "Void function \"%@\" can't return a value", functionNode->qname.name);
                     }
                 }
 
@@ -2425,7 +2424,7 @@ static void astUseNamespace(EcCompiler *cp, EcNode *np)
                 Then update the URI. URI not used.
              */
             if (resolveName(cp, np, NULL, np->qname) < 0) {
-                astError(cp, np, "Can't find namespace \"%s\"", np->qname.name);
+                astError(cp, np, "Can't find namespace \"%@\"", np->qname.name);
 
             } else {
                 //  MOB -- UN BIND
@@ -2434,7 +2433,7 @@ static void astUseNamespace(EcCompiler *cp, EcNode *np)
                 if (namespace) {
                     np->namespaceRef->value = namespace->value;
                     if (!ejsIs(ejs, namespace, Namespace)) {
-                        astError(cp, np, "The variable \"%s\" is not a namespace", np->qname.name);
+                        astError(cp, np, "The variable \"%@\" is not a namespace", np->qname.name);
                     } else {
                         np->namespaceRef = namespace;
                     }
@@ -2514,7 +2513,7 @@ static void astRequire(EcCompiler *cp, EcNode *np)
         }
 
         if (mp == 0) {
-            astError(cp, np, "Can't find required module \"%s\"", np->qname.name);
+            astError(cp, np, "Can't find required module \"%@\"", np->qname.name);
 
         } else if (mp != currentModule) {
             if (currentModule->dependencies == 0) {
@@ -2626,7 +2625,7 @@ static void defineVar(EcCompiler *cp, EcNode *np, int varKind, EjsObj *value)
             obj = cp->lookup.obj;
             slotNum = cp->lookup.slotNum;
             if (cp->fileState->strict) {
-                astError(cp, np, "Variable \"%s\" is already defined", np->qname.name);
+                astError(cp, np, "Variable \"%@\" is already defined", np->qname.name);
                 return;
             }
         } else {
@@ -2639,7 +2638,7 @@ static void defineVar(EcCompiler *cp, EcNode *np, int varKind, EjsObj *value)
             obj = cp->lookup.obj;
             slotNum = cp->lookup.slotNum;
             if (cp->fileState->strict) {
-                astError(cp, np, "Variable \"%s\" is already defined.", np->qname.name);
+                astError(cp, np, "Variable \"%@\" is already defined.", np->qname.name);
                 return;
             }
         }
@@ -2650,7 +2649,7 @@ static void defineVar(EcCompiler *cp, EcNode *np, int varKind, EjsObj *value)
         slotNum = ejsDefineProperty(ejs, obj, -1, np->qname, 0, attributes, value);
     }
     if (slotNum < 0) {
-        astError(cp, np, "Can't define variable %s", np->qname.name);
+        astError(cp, np, "Can't define variable \"%@\"", np->qname.name);
         return;
     }
 }
@@ -2724,7 +2723,7 @@ static bool hoistBlockVar(EcCompiler *cp, EcNode *np)
 
         slotNum = ejsDefineProperty(ejs, obj, -1, np->qname, 0, attributes, vp);
         if (slotNum < 0) {
-            astError(cp, np, "Can't define local variable %s::%s", np->qname.space, np->qname.name);
+            astError(cp, np, "Can't define local variable \"%N\"", np->qname.space, np->qname.name);
             return 0;
         }
         if (obj == ejs->global) {
@@ -2782,13 +2781,13 @@ static void bindVariableDefinition(EcCompiler *cp, EcNode *np)
      */
     if (state->inClass && !state->inFunction && state->currentClass->baseType) {
         if (ecLookupVar(cp, (EjsObj*) state->currentClass->baseType, np->qname) >= 0) {
-            astError(cp, np, "Public property %s is already defined in a base class", np->qname.name);
+            astError(cp, np, "Public property %@ is already defined in a base class", np->qname.name);
             LEAVE(cp);
             return;
         }
     }
     if (resolveName(cp, np, (EjsObj*) block, np->qname) < 0) {
-        astError(cp, np, "Can't find variable \"%s::%s\"", np->qname.space, np->qname.name);
+        astError(cp, np, "Can't find variable \"%N\"", np->qname.space, np->qname.name);
     }
     typeNode = np->typeNode;
     if (typeNode && np->lookup.trait) {
@@ -2971,7 +2970,7 @@ static void astVoid(EcCompiler *cp, EcNode *np)
     if (cp->phase >= EC_PHASE_BIND) {
         qname = N(EJS_EJS_NAMESPACE, "Void");
         if (resolveName(cp, np, 0, qname) < 0) {
-            astError(cp, np, "Can't find variable \"%s::%s\"", qname.space, qname.name);
+            astError(cp, np, "Can't find variable \"%N\"", qname.space, qname.name);
         }
     }
     LEAVE(cp);
@@ -3021,7 +3020,7 @@ static EjsModule *createModule(EcCompiler *cp, EcNode *np)
     if (mp == 0) {
         mp = ejsCreateModule(cp->ejs, np->qname.name, np->module.version, NULL);
         if (mp == 0) {
-            astError(cp, np, "Can't create module %s", np->qname.name);
+            astError(cp, np, "Can't create module %@", np->qname.name);
             return 0;
         }
         mp->scope = (EjsBlock*) ejs->global;
@@ -3403,7 +3402,7 @@ static void fixupClass(EcCompiler *cp, EjsType *type)
             if (iface) {
                 mprAddItem(type->implements, iface);
             } else {
-                astError(cp, np, "Can't find interface \"%s\"", child->qname.name);
+                astError(cp, np, "Can't find interface \"%@\"", child->qname.name);
                 SET_VISITED(type, 0);
                 LEAVE(cp);
                 return;
@@ -3412,7 +3411,7 @@ static void fixupClass(EcCompiler *cp, EjsType *type)
     }
     if (baseType == 0) {
         if (! (!ejs->initialized && type->qname.name == ST(Object)->qname.name) && !np->klass.isInterface) {
-            astError(cp, np, "Can't find base type for %s", type->qname.name);
+            astError(cp, np, "Can't find base type for %@", type->qname.name);
             SET_VISITED(type, 0);
             LEAVE(cp);
             return;
@@ -3521,7 +3520,7 @@ static void fixupClass(EcCompiler *cp, EjsType *type)
             ejsRemovePotProperty(ejs, prototype, slotNum);
             slotNum--;
             if (resolveName(cp, NULL, (EjsObj*) type, qname) < 0 || cp->lookup.slotNum < 0) {
-                astError(cp, 0, "Can't find method \"%s::%s\" in base type of \"%s\" to override", qname.space, qname.name, 
+                astError(cp, 0, "Can't find method \"%N\" in base type of \"%@\" to override", qname.space, qname.name, 
                     type->qname.name);
             } else {
                 ejsSetProperty(ejs, prototype, cp->lookup.slotNum, (EjsObj*) fun);

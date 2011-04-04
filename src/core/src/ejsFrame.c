@@ -55,8 +55,7 @@ EjsFrame *ejsCreateCompilerFrame(Ejs *ejs, EjsFunction *fun)
 {
     EjsFrame    *fp;
 
-    fp = ejsCreateObj(ejs, ST(Frame), 0);
-    if (fp == 0) {
+    if ((fp = ejsCreatePot(ejs, ST(Frame), 0)) == 0) {
         return 0;
     }
     fp->orig = fun;
@@ -93,6 +92,7 @@ EjsFrame *ejsCreateFrame(Ejs *ejs, EjsFunction *fun, EjsObj *thisObj, int argc, 
         ejsMakeHash(ejs, obj);
     }
     ejsZeroSlots(ejs, &obj->properties->slots[numProp], size - numProp);
+    //  MOB - should not need to do this
     SET_DYNAMIC(obj, 1);
 
     frame->orig = fun;
@@ -149,7 +149,9 @@ void ejsCreateFrameType(Ejs *ejs)
 {
     EjsType     *type;
 
-    type = ejsCreateNativeType(ejs, N("ejs", "Frame"), S_Frame, sizeof(EjsFrame), manageFrame, EJS_POT_HELPERS);
+    type = ejsCreateNativeType(ejs, N("ejs", "Frame"), sizeof(EjsFrame), S_Frame, ES_Frame_NUM_CLASS_PROP,
+        manageFrame, EJS_POT_HELPERS);
+    ejsSetTypeAttributes(type, EJS_TYPE_DYNAMIC_INSTANCE);
     type->constructor.block.pot.shortScope = 1;
 }
 

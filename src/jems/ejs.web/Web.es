@@ -18,8 +18,7 @@ module ejs.web {
         private static var defaultConfig = {
             cache: {
                 enable: true,
-                //  MOB - not yet supported
-                reload: false,
+                reload: true,
             },
             directories: {
                 cache: Path("cache"),

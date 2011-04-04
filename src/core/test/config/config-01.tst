@@ -3,7 +3,6 @@
 */
 
 assert(Config.Debug is Boolean)
-
 assert(Config.CPU is String)
 assert(Config.OS is String)
 assert(Config.Product is String)

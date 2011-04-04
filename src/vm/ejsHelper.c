@@ -117,7 +117,7 @@ int ejsDefineProperty(Ejs *ejs, EjsAny *vp, int slotNum, EjsName name, EjsType *
 {
     mprAssert(name.name);
     mprAssert(name.space);
-    
+
     return (TYPE(vp)->helpers.defineProperty)(ejs, vp, slotNum, name, propType, attributes, value);
 }
 

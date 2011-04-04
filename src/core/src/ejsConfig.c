@@ -12,43 +12,53 @@
 
 void ejsCreateConfigType(Ejs *ejs)
 {
+    ejsCreateNativeType(ejs, N("ejs", "Config"), sizeof(EjsObj), S_Config, ES_Config_NUM_CLASS_PROP, ejsManagePot, 
+        EJS_POT_HELPERS);
+}
+
+
+void ejsDefineConfigProperties(Ejs *ejs)
+{
     EjsType     *type;
     char        version[16];
 
-    //  MOB -- Config should just be converted back to a non-native type
-    type = ejsCreateNativeType(ejs, N("ejs", "Config"), -1, sizeof(EjsObj), ejsManagePot, EJS_POT_HELPERS);
+    if (ejs->configSet) {
+        return;
+    }
+    ejs->configSet = 1;
+    type = ST(Config);
+    ejsDefineProperty(ejs, type, ES_Config_Debug, N("public", "Debug"), 0, 0, BLD_DEBUG ? S(true): S(false));
+    ejsDefineProperty(ejs, type, ES_Config_CPU, N("public", "CPU"), 0, 0, ejsCreateStringFromAsc(ejs, BLD_HOST_CPU));
+    ejsDefineProperty(ejs, type, ES_Config_OS, N("public", "OS"), 0, 0, ejsCreateStringFromAsc(ejs, BLD_OS));
+    ejsDefineProperty(ejs, type, ES_Config_Product, N("public", "Product"), 0, 0, ejsCreateStringFromAsc(ejs, BLD_PRODUCT));
 
-    ejsSetProperty(ejs, type, ES_Config_Debug, BLD_DEBUG ? S(true): S(false));
-    ejsSetProperty(ejs, type, ES_Config_CPU, ejsCreateStringFromAsc(ejs, BLD_HOST_CPU));
-    ejsSetProperty(ejs, type, ES_Config_OS, ejsCreateStringFromAsc(ejs, BLD_OS));
-    ejsSetProperty(ejs, type, ES_Config_Product, ejsCreateStringFromAsc(ejs, BLD_PRODUCT));
-
-    ejsSetProperty(ejs, type, ES_Config_Title, ejsCreateStringFromAsc(ejs, BLD_NAME));
+    ejsDefineProperty(ejs, type, ES_Config_Title, N("public", "Title"), 0, 0, ejsCreateStringFromAsc(ejs, BLD_NAME));
     mprSprintf(version, sizeof(version), "%s-%s", BLD_VERSION, BLD_NUMBER);
-    ejsSetProperty(ejs, type, ES_Config_Version, ejsCreateStringFromAsc(ejs, version));
+    ejsDefineProperty(ejs, type, ES_Config_Version, N("public", "Version"), 0, 0, ejsCreateStringFromAsc(ejs, version));
 
-    ejsSetProperty(ejs, type, ES_Config_Legacy, ejsCreateBoolean(ejs, BLD_FEATURE_LEGACY_API));
-    ejsSetProperty(ejs, type, ES_Config_SSL, ejsCreateBoolean(ejs, BLD_FEATURE_SSL));
-    ejsSetProperty(ejs, type, ES_Config_SQLITE, ejsCreateBoolean(ejs, BLD_FEATURE_SQLITE));
+    ejsDefineProperty(ejs, type, ES_Config_Legacy, N("public", "Legacy"), 0, 0, ejsCreateBoolean(ejs, BLD_FEATURE_LEGACY_API));
+    //  MOB - should genercise this
+    ejsDefineProperty(ejs, type, ES_Config_SSL, N("public", "SSL"), 0, 0, ejsCreateBoolean(ejs, BLD_FEATURE_SSL));
+    ejsDefineProperty(ejs, type, ES_Config_SQLITE, N("public", "SQLITE"), 0, 0, ejsCreateBoolean(ejs, BLD_FEATURE_SQLITE));
 
 #if BLD_WIN_LIKE
 {
     EjsString    *path;
 
     path = ejsCreateStringFromAsc(ejs, mprGetAppDir(ejs));
-    ejsSetProperty(ejs, type, ES_Config_BinDir, path);
-    ejsSetProperty(ejs, type, ES_Config_ModDir, path);
-    ejsSetProperty(ejs, type, ES_Config_LibDir, path);
+    ejsDefineProperty(ejs, type, ES_Config_BinDir, N("public", "BinDir"), 0, 0, path);
+    ejsDefineProperty(ejs, type, ES_Config_ModDir, N("public", "ModDir"), 0, 0, path);
+    ejsDefineProperty(ejs, type, ES_Config_LibDir, N("public", "LibDir"), 0, 0, path);
 }
 #else
 #ifdef BLD_BIN_PREFIX
-    ejsSetProperty(ejs, type, ES_Config_BinDir, ejsCreateStringFromAsc(ejs, BLD_BIN_PREFIX));
+    ejsDefineProperty(ejs, type, ES_Config_BinDir, N("public", "BinDir"), 0, 0, ejsCreateStringFromAsc(ejs, BLD_BIN_PREFIX));
 #endif
 #ifdef BLD_MOD_PREFIX
-    ejsSetProperty(ejs, type, ES_Config_ModDir, ejsCreateStringFromAsc(ejs, BLD_MOD_PREFIX));
+    ejsDefineProperty(ejs, type, ES_Config_ModDir, N("public", "ModDir"), 0, 0, ejsCreateStringFromAsc(ejs, BLD_MOD_PREFIX));
 #endif
 #ifdef BLD_LIB_PREFIX
-    ejsSetProperty(ejs, type, ES_Config_LibDir, ejsCreateStringFromAsc(ejs, BLD_LIB_PREFIX));
+    ejsDefineProperty(ejs, type, ES_Config_LibDir, N("public", "LibDir"), 0, 0, ejsCreateStringFromAsc(ejs, BLD_LIB_PREFIX));
 #endif
 #endif
 }

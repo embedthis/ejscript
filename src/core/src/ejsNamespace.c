@@ -154,8 +154,8 @@ void ejsCreateNamespaceType(Ejs *ejs)
 {
     EjsType     *type;
 
-    type = ejsCreateNativeType(ejs, N("ejs", "Namespace"), S_Namespace, sizeof(EjsNamespace), 
-        (MprManager) manageNamespace, EJS_OBJ_HELPERS);
+    type = ejsCreateNativeType(ejs, N("ejs", "Namespace"), sizeof(EjsNamespace), S_Namespace, ES_Namespace_NUM_CLASS_PROP,
+        manageNamespace, EJS_OBJ_HELPERS);
     type->helpers.cast = (EjsCastHelper) castNamespace;
     type->helpers.invokeOperator = (EjsInvokeOperatorHelper) invokeNamespaceOperator;
 }

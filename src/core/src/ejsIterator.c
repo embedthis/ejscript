@@ -100,12 +100,12 @@ void ejsCreateIteratorType(Ejs *ejs)
     EjsType     *type;
 
     if (ST(Iterator) == 0) {
-        type = ejsCreateNativeType(ejs, N(EJS_ITERATOR_NAMESPACE, "Iterator"), S_Iterator, sizeof(EjsIterator), 
-            manageIterator, EJS_OBJ_HELPERS);
+        type = ejsCreateNativeType(ejs, N(EJS_ITERATOR_NAMESPACE, "Iterator"), sizeof(EjsIterator), S_Iterator,  
+            ES_iterator_Iterator_NUM_CLASS_PROP, manageIterator, EJS_OBJ_HELPERS);
     }
     if (ST(StopIteration) == 0) {
-        type = ejsCreateNativeType(ejs, N(EJS_ITERATOR_NAMESPACE, "StopIteration"), 
-            S_StopIteration, sizeof(EjsError), (MprManager) manageIterator, EJS_OBJ_HELPERS);
+        type = ejsCreateNativeType(ejs, N(EJS_ITERATOR_NAMESPACE, "StopIteration"), sizeof(EjsError), S_StopIteration, 
+            ES_iterator_StopIteration_NUM_CLASS_PROP, manageIterator, EJS_OBJ_HELPERS);
     }
 }
 

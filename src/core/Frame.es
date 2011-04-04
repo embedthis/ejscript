@@ -10,7 +10,7 @@ module ejs {
         The Frame type is used for activation call frames. 
         @stability evolving
      */
-    final class Frame extends Function { }
+    dynamic class Frame extends Function { }
 }
 
 /*

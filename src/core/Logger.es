@@ -318,8 +318,9 @@ module ejs {
             if (_pattern && !origin.match(_pattern)) {
                 return
             }
-            if (_filter && !filter(this, origin, level, kind, msg))
+            if (_filter && !filter(this, origin, level, kind, msg)) {
                 return
+            }
             if (_outStream is Logger) {
                 _outStream.emit(origin, level, kind, msg)
             } else {

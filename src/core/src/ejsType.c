@@ -82,7 +82,7 @@ static EjsType *createTypeVar(Ejs *ejs, EjsType *typeType, int numProp)
         NOTE: don't confuse this with dynamic objects.
      */
     sizeHash = 0;
-    if (numProp < 0 || ejs->empty || ejs->flags & EJS_FLAG_DYNAMIC) {
+    if (numProp < 0 || ejs->empty /* UNUSED || ejs->flags & EJS_FLAG_DYNAMIC */) {
         dynamic = 1;
         typeSize = sizeof(EjsType);
         numProp = 0;
@@ -285,11 +285,11 @@ EjsType *ejsCreateType(Ejs *ejs, EjsName qname, EjsModule *up, EjsType *baseType
 /*
     Create a native built-in type. This is used for the core native classes of the language.
  */
-EjsType *ejsCreateNativeType(Ejs *ejs, EjsName qname, int sid, int instanceSize, void *manager, int helpers)
+EjsType *ejsCreateNativeType(Ejs *ejs, EjsName qname, int instanceSize, int sid, int numTypeProp, void *manager, int helpers)
 {
     EjsType     *type;
 
-    if ((type = ejsCreateType(ejs, qname, NULL, NULL, NULL, instanceSize, sid, 0, 0, 0)) == 0) {
+    if ((type = ejsCreateType(ejs, qname, NULL, NULL, NULL, instanceSize, sid, numTypeProp, 0, 0)) == 0) {
         ejs->hasError = 1;
         return 0;
     }

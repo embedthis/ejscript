@@ -70,7 +70,7 @@ EjsAny *ejsClonePot(Ejs *ejs, EjsAny *vp, bool deep)
 }
 
 
-static EjsObj *prepareAccessors(Ejs *ejs, EjsObj *obj, int slotNum, int64 *attributes, EjsObj *value)
+static EjsObj *prepareAccessors(Ejs *ejs, EjsPot *obj, int slotNum, int64 *attributes, EjsObj *value)
 {
     EjsFunction     *fun;
     EjsTrait        *trait;
@@ -107,7 +107,7 @@ static EjsObj *prepareAccessors(Ejs *ejs, EjsObj *obj, int slotNum, int64 *attri
 /*
     Define (or redefine) a property and set its name, type, attributes and property value.
  */
-static int definePotProperty(Ejs *ejs, EjsObj *obj, int slotNum, EjsName qname, EjsType *propType, int64 attributes, 
+static int definePotProperty(Ejs *ejs, EjsPot *obj, int slotNum, EjsName qname, EjsType *propType, int64 attributes, 
     EjsObj *value)
 {
     EjsFunction     *fun;
@@ -125,11 +125,27 @@ static int definePotProperty(Ejs *ejs, EjsObj *obj, int slotNum, EjsName qname, 
     priorSlot = ejsLookupProperty(ejs, obj, qname);
     if (slotNum < 0) {
         if (priorSlot < 0) {
-            slotNum = ejsGetPropertyCount(ejs, obj);
+            slotNum = obj->numProp;
         } else {
             slotNum = priorSlot;
         }
+
     }
+    if (slotNum >= obj->numProp && !DYNAMIC(obj)) {
+        if (obj->properties == 0 || slotNum >= obj->properties->size) {
+            if (growSlots(ejs, obj, slotNum + 1) < 0) {
+                ejsThrowMemoryError(ejs);
+                return EJS_ERR;
+            }
+        }
+        obj->numProp = slotNum + 1;
+    }
+#if UNUSED
+    if (slotNum >= obj->numProp && (obj->properties && slotNum < obj->properties->size)) {
+        /* When types are created, slots are allocated but numProp is zero -  */
+        obj->numProp = slotNum + 1;
+    }
+#endif
     if (priorSlot < 0 && ejsSetPropertyName(ejs, obj, slotNum, qname) < 0) {
         return EJS_ERR;
     }
@@ -358,9 +374,9 @@ int ejsGetSlot(Ejs *ejs, EjsPot *obj, int slotNum)
 {
     mprAssert(ejsIsPot(ejs, obj));
 
-    if (slotNum < 0) {
-        //  MOB - should this be here or only in the VM. probably only in the VM.
-        //  MOB -- or move this routine to the VM
+    //  MOB - should this be here or only in the VM. probably only in the VM.
+    //  MOB -- or move this routine to the VM
+    if (slotNum < 0 || slotNum >= obj->numProp) {
         if (!DYNAMIC(obj)) {
             if (ejsIs(ejs, obj, Null)) {
                 ejsThrowReferenceError(ejs, "Object is null");
@@ -371,23 +387,19 @@ int ejsGetSlot(Ejs *ejs, EjsPot *obj, int slotNum)
             }
             return EJS_ERR;
         }
-        slotNum = obj->numProp;
-        if (obj->properties == 0 || slotNum >= obj->properties->size) {
-            if (growSlots(ejs, obj, obj->numProp + 1) < 0) {
-                ejsThrowMemoryError(ejs);
-                return EJS_ERR;
-            }
+        if (slotNum < 0) {
+            slotNum = obj->numProp;
         }
-        obj->numProp++;
-        
-    } else if (slotNum >= obj->numProp) {
         if (obj->properties == 0 || slotNum >= obj->properties->size) {
             if (growSlots(ejs, obj, slotNum + 1) < 0) {
                 ejsThrowMemoryError(ejs);
                 return EJS_ERR;
             }
         }
-        obj->numProp = slotNum + 1;
+        if (slotNum > obj->numProp) {
+            obj->numProp = slotNum;
+        }
+        obj->numProp++;
     }
     mprAssert(obj->numProp <= obj->properties->size);
 #if BLD_DEBUG && 0

@@ -186,7 +186,8 @@ void ejsCreateNullType(Ejs *ejs)
 {
     EjsType     *type;
 
-    type = ejsCreateNativeType(ejs, N("ejs", "Null"), S_Null, sizeof(EjsNull), NULL, EJS_OBJ_HELPERS);
+    type = ejsCreateNativeType(ejs, N("ejs", "Null"), sizeof(EjsNull), S_Null, ES_Null_NUM_CLASS_PROP, 
+        NULL, EJS_OBJ_HELPERS);
 
     type->helpers.cast             = (EjsCastHelper) castNull;
     type->helpers.getProperty      = (EjsGetPropertyHelper) getNullProperty;

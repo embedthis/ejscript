@@ -1754,7 +1754,8 @@ void ejsCreateArrayType(Ejs *ejs)
     EjsType         *type;
     EjsHelpers      *helpers;
 
-    type = ejsCreateNativeType(ejs, N("ejs", "Array"), S_Array, sizeof(EjsArray), manageArray, EJS_POT_HELPERS);
+    type = ejsCreateNativeType(ejs, N("ejs", "Array"), sizeof(EjsArray), S_Array, ES_Array_NUM_CLASS_PROP, 
+        manageArray, EJS_POT_HELPERS);
     type->numericIndicies = 1;
     type->virtualSlots = 1;
 

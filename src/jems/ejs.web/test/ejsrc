@@ -1,7 +1,7 @@
 //  Just for general debugging
 {
     cache: {
-        enable: false,
+        enable: true,
         reload: true,
     },
     log: {

@@ -9613,7 +9613,7 @@ static void appendDocString(EcCompiler *cp, EcNode *np, EcNode *parameter, EcNod
     } else if (value->kind == N_UNARY_OP) {
         if (value->left->kind == N_LITERAL) {
             if (value->tokenId == T_MINUS) {
-                defaultValue = ejsSprintf(ejs, "-%s", ejsToString(ejs, value->left->literal.var));
+                defaultValue = ejsSprintf(ejs, "-%@", ejsToString(ejs, value->left->literal.var));
             }
         }
     } else if (value->kind == N_LITERAL) {
@@ -9629,15 +9629,15 @@ static void appendDocString(EcCompiler *cp, EcNode *np, EcNode *parameter, EcNod
         if (ejsContainsMulti(ejs, np->doc, arg) != 0) {
             found++;
         } else {
-            mprSprintf(arg, sizeof(arg), "@params %s ", parameter->qname.name);
+            mprSprintf(arg, sizeof(arg), "@params %@ ", parameter->qname.name);
             if (ejsContainsMulti(ejs, np->doc, arg) != 0) {
                 found++;
             }
         }
         if (found) {
-            np->doc = ejsSprintf(ejs, "%s\n@default %s %@", np->doc, parameter->qname.name, defaultValue);
+            np->doc = ejsSprintf(ejs, "%s\n@default %@ %@", np->doc, parameter->qname.name, defaultValue);
         } else {
-            np->doc = ejsSprintf(ejs, "%s\n@param %s\n@default %s %@", np->doc, parameter->qname.name,
+            np->doc = ejsSprintf(ejs, "%s\n@param %@\n@default %@ %@", np->doc, parameter->qname.name,
                 parameter->qname.name, defaultValue);
         }
     }

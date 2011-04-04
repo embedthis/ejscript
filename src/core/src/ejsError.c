@@ -92,7 +92,9 @@ static EjsType *defineType(Ejs *ejs, cchar *name, int id)
 {
     EjsType     *type;
 
-    type = ejsCreateNativeType(ejs, N("ejs", name), id, sizeof(EjsError), ejsManagePot, EJS_POT_HELPERS);
+    type = ejsCreateNativeType(ejs, N("ejs", name), sizeof(EjsError), id, ES_Error_NUM_CLASS_PROP, ejsManagePot, 
+        EJS_POT_HELPERS);
+    ejsSetTypeAttributes(type, EJS_TYPE_DYNAMIC_INSTANCE | EJS_TYPE_HAS_INSTANCE_VARS);
     //  MOB -- why?
     type->constructor.block.nobind = 1;
     type->helpers.cast = (EjsCastHelper) castError;

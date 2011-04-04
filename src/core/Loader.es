@@ -76,23 +76,26 @@ module ejs {
             let initializer, code
             let cache: Path = cached(id, config)
             if (path) {
-                if (cache && cache.exists && cache.modified >= path.modified) {
+                if (cache && cache.exists && (!config.cache.reload || cache.modified > path.modified)) {
                     /* Cache mod file exists and is current */
-                    App.log.debug(4, "Use cache for: " + path)
                     if (initializers[path]) {
+                        App.log.debug(4, "Use memory cache for \"" + path + "\"")
                         initializer = initializers[path]
                         signatures[path] = exports = {}
                         initializer(require, exports, {id: id, path: path}, null)
                         return exports
                     }
-                    initializer = global.load(cache)
+                    App.log.debug(4, "Use disk cache for \"" + path + "\" from \"" + cache + "\"")
+                    try { initializer = global.load(cache); } catch {}
+
                 } else {
-                    /* Missing cache mod file */
+                    /* Missing or out of date cache mod file */
                     if (initializers[path] && config.cache.preloaded) {
                         //  Everything compiled flat - everything in App.mod
                         //  MOB -- warning. This prevents reload working. Should rebuild all and reload.
                         initializer = initializers[path]
                         signatures[path] = exports = {}
+                        App.log.debug(4, "Use preloaded \"" + path + "\"")
                         initializer(require, exports, {id: id, path: path}, null)
                         return exports
                     }
@@ -105,12 +108,16 @@ module ejs {
                         code = wrap(id, path.readString())
                     }
                     if (cache) {
-                        App.log.debug(4, "Recompile module to: " + cache)
+                        App.log.debug(4, "Recompile \"" + path + "\" to \"" + cache + "\"")
+                    } else {
+                        App.log.debug(4, "Compile \"" + path + "\" no caching")
                     }
                     initializer = eval(code, cache)
                 }
                 timestamps[path] = path.modified
-            } else {
+            }
+            if (initializer == null) {
+                App.log.debug(4, "Compile \"" + path + "\" to \"" + cache + "\"")
                 if (codeReader) {
                     code = codeReader(id, path)
                 } else {
@@ -134,7 +141,7 @@ module ejs {
                 if (dir.exists) {
                     return Path(dir).join(md5(id)).joinExt('.mod')
                 } else {
-                    App.log.error("Can't find cache directory: " + dir)
+                    App.log.error("Can't find cache directory: \"" + dir + "\"")
                 }
             }
             return null

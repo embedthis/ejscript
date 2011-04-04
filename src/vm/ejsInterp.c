@@ -2452,6 +2452,7 @@ static void storePropertyToSlot(Ejs *ejs, EjsObj *thisObj, EjsAny *obj, int slot
         if (trait->attributes & EJS_TRAIT_SETTER) {
             pushOutside(ejs, value);
             fun = ejsGetProperty(ejs, obj, slotNum);
+            mprAssert(fun);
             fun = fun->setter;
             callFunction(ejs, fun, thisObj, 1, 0);
             return;
@@ -2477,7 +2478,7 @@ static void storePropertyToSlot(Ejs *ejs, EjsObj *thisObj, EjsAny *obj, int slot
             }
         }
         if (trait->attributes & EJS_TRAIT_READONLY) {
-            EjsName         qname;
+            EjsName  qname;
             vp = ejsGetProperty(ejs, obj, slotNum);
             if (vp != S(null) && vp != S(undefined)) {
                 qname = ejsGetPropertyName(ejs, obj, slotNum);
@@ -2488,7 +2489,6 @@ static void storePropertyToSlot(Ejs *ejs, EjsObj *thisObj, EjsAny *obj, int slot
     }
     ejsSetProperty(ejs, obj, slotNum, value);
     ejs->result = value;
-mprAssert(ejs->result == 0 || (MPR_GET_GEN(MPR_GET_MEM(ejs->result)) != MPR->heap.dead));
 }
 
 
@@ -2524,6 +2524,7 @@ static void storeProperty(Ejs *ejs, EjsObj *thisObj, EjsAny *vp, EjsName qname, 
             } else if (ejsIsPrototype(ejs, lookup.obj) || trait->attributes & EJS_TRAIT_GETTER) {
                 if (TYPE(vp)->hasInstanceVars) {
                     /* The prototype properties have been inherited */
+                    mprAssert(ejsIsPot(ejs, vp));
                     slotNum = ejsGetSlot(ejs, vp, slotNum);
                     pot = (EjsPot*) vp;
                     //MOB - BUG what if not a POT
@@ -2579,8 +2580,8 @@ static void storePropertyToScope(Ejs *ejs, EjsName qname, EjsObj *value)
                 vp = lookup.obj;
 
             } else if (TYPE(vp)->hasInstanceVars && ejsIsPot(ejs, vp)) {
-                mprAssert(ejsIsPot(ejs, vp));
                 /* The prototype properties have been inherited */
+                mprAssert(ejsIsPot(ejs, vp));
                 slotNum = ejsGetSlot(ejs, (EjsPot*) vp, slotNum);
                 obj = (EjsPot*) vp;
                 mprAssert(slotNum < obj->numProp);

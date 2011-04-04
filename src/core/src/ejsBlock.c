@@ -179,7 +179,8 @@ void ejsCreateBlockType(Ejs *ejs)
 {
     EjsType     *type;
 
-    type = ejsCreateNativeType(ejs, N("ejs", "Block"), S_Block, sizeof(EjsBlock), ejsManageBlock, EJS_POT_HELPERS);
+    type = ejsCreateNativeType(ejs, N("ejs", "Block"), sizeof(EjsBlock), S_Block, ES_Block_NUM_CLASS_PROP, 
+        ejsManageBlock, EJS_POT_HELPERS);
     type->constructor.block.pot.shortScope = 1;
 
     type->helpers.clone = (EjsCloneHelper) ejsCloneBlock;

@@ -184,7 +184,8 @@ void ejsCreateVoidType(Ejs *ejs)
     EjsType     *type;
 
     //  MOB -- should not be a Void type. Should be "NULL" == void
-    type = ejsCreateNativeType(ejs, N("ejs", "Void"), S_Void, sizeof(EjsVoid), NULL, EJS_OBJ_HELPERS);
+    type = ejsCreateNativeType(ejs, N("ejs", "Void"), sizeof(EjsVoid), S_Void, ES_Void_NUM_CLASS_PROP, NULL, 
+        EJS_OBJ_HELPERS);
 
     type->helpers.cast             = (EjsCastHelper) castVoid;
     type->helpers.invokeOperator   = (EjsInvokeOperatorHelper) invokeVoidOperator;

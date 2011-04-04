@@ -510,7 +510,6 @@ module ejs.web {
             for each (r in routeSet) {
                 log.debug(5, "Test route \"" + r.name + "\"")
                 if (r.match(request)) {
-                    log.debug(3, "Match route \"" + r.name + "\"")
                     return makeApp(request, r)
                 }
             }
@@ -518,7 +517,6 @@ module ejs.web {
             for each (r in routeSet) {
                 log.debug(5, "Test route \"" + r.name + "\"")
                 if (r.match(request)) {
-                    log.debug(3, "Match route \"" + r.name + "\"")
                     return makeApp(request, r)
                 }
             }

@@ -32,10 +32,12 @@ static EjsObj *logger_set_nativeLevel(Ejs *ejs, EjsObj *unused, int argc, EjsObj
  */
 static EjsFile *logger_nativeStream(Ejs *ejs, EjsObj *unused, int argc, EjsObj **argv)
 {
-    int     fd;
+    MprFile     *file;
+    int         fd;
 
     if (ejs->nativeStream == 0) {
-        if ((fd = mprGetLogFd()) >= 0) {
+        if ((file = mprGetLogFile()) != 0) {
+            fd = mprGetFileFd(file);
             ejs->nativeStream = ejsCreateFileFromFd(ejs, fd, "mpr-logger", O_WRONLY);
             return ejs->nativeStream;
         } else {
@@ -58,8 +60,7 @@ static EjsObj *logger_set_nativeStream(Ejs *ejs, EjsObj *unused, int argc, EjsOb
         ejsThrowError(ejs, "Argument is not a file stream");
         return 0;
     }
-    mprSetLogFd(mprGetFileFd(stream->file));
-    ejs->nativeStream = stream;
+    ejsRedirectLoggingToFile(stream->file, -1);
     return 0;
 }
 

@@ -568,8 +568,8 @@ void ejsCreateFunctionType(Ejs *ejs)
     EjsHelpers      *helpers;
     EjsFunction     *nop;
 
-    type = ejsCreateNativeType(ejs, N("ejs", "Function"), S_Function, sizeof(EjsFunction), ejsManageFunction, 
-        EJS_POT_HELPERS);
+    type = ejsCreateNativeType(ejs, N("ejs", "Function"), sizeof(EjsFunction), S_Function, ES_Function_NUM_CLASS_PROP,
+        ejsManageFunction, EJS_POT_HELPERS);
 
     helpers = &type->helpers;
     helpers->create = (EjsCreateHelper) createFunction;

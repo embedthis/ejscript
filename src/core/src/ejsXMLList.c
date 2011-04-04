@@ -797,7 +797,8 @@ void ejsCreateXMLListType(Ejs *ejs)
 {
     EjsType     *type;
 
-    type = ejsCreateNativeType(ejs, N("ejs", "XMLList"), S_XMLList, sizeof(EjsXML), ejsManageXML, EJS_OBJ_HELPERS);
+    type = ejsCreateNativeType(ejs, N("ejs", "XMLList"), sizeof(EjsXML), S_XMLList, ES_XMLList_NUM_CLASS_PROP, 
+        ejsManageXML, EJS_OBJ_HELPERS);
 
     /*
         Must not bind as XML uses get/setPropertyByName to defer to user XML elements over XML methods

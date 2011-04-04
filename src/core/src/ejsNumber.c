@@ -425,7 +425,8 @@ void ejsCreateNumberType(Ejs *ejs)
     EjsType     *type;
     static int  zero = 0;
 
-    type = ejsCreateNativeType(ejs, N("ejs", "Number"), S_Number, sizeof(EjsNumber), NULL, EJS_OBJ_HELPERS);
+    type = ejsCreateNativeType(ejs, N("ejs", "Number"), sizeof(EjsNumber), S_Number, ES_Number_NUM_CLASS_PROP, 
+        NULL, EJS_OBJ_HELPERS);
     type->immutable = 1;
 
     type->helpers.cast = (EjsCastHelper) castNumber;
