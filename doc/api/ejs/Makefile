@@ -18,11 +18,11 @@ gen:
 	$(call log) "[Generate]" "doxygen ejs.spec"
 	doxygen ejs.spec
 	$(call log) "[Transform]" "gendoc"
-	ejs $(BLD_TOOLS_DIR)/gendoc.es --bare --title "Escript Native API" --tags ../ejs.tags \
+	ejs $(BLD_TOOLS_DIR)/gendoc.es --bare --title "Ejscript Native API" --tags ../ejs.tags \
 		xml/ejs_8h.xml xml/group* xml/struct_*.xml >../ejsBare.html
 	ejs $(BLD_TOOLS_DIR)/gendoc.es --title "Ejscript Native API" --tags ../ejs.tags \
 		xml/ejs_8h.xml xml/group* xml/struct_*.xml >../ejs.html
-	echo rm -fr ./$(STAGING)
+	rm -fr ./$(STAGING) xml html
 
 cleanExtra:
 	rm -rf xml html ../ejs.tags
