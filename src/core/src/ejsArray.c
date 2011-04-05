@@ -34,8 +34,7 @@ static EjsArray *createArray(Ejs *ejs, EjsType *type, int numProp)
 {
     EjsArray     *ap;
 
-    ap = (EjsArray*) ejsCreatePot(ejs, S(Array), 0);
-    if (ap == 0) {
+    if ((ap = ejsCreatePot(ejs, S(Array), 0)) == 0) {
         return 0;
     }
     ap->length = 0;
@@ -78,8 +77,7 @@ EjsArray *ejsCloneArray(Ejs *ejs, EjsArray *ap, bool deep)
     EjsObj      **dest, **src;
     int         i;
 
-    newArray = (EjsArray*) ejsClonePot(ejs, ap, deep);
-    if (newArray == 0) {
+    if ((newArray = ejsClonePot(ejs, ap, deep)) == 0) {
         ejsThrowMemoryError(ejs);
         return 0;
     }
@@ -90,10 +88,9 @@ EjsArray *ejsCloneArray(Ejs *ejs, EjsArray *ap, bool deep)
         }
         src = ap->data;
         dest = newArray->data;
-
         if (deep) {
             for (i = 0; i < ap->length; i++) {
-                dest[i] = ejsClone(ejs, src[i], 1);
+                dest[i] = ejsClone(ejs, src[i], deep);
             }
         } else {
             memcpy(dest, src, ap->length * sizeof(EjsObj*));
@@ -112,24 +109,9 @@ static int deleteArrayProperty(Ejs *ejs, EjsArray *ap, int slot)
         mprAssert(0);
         return EJS_ERR;
     }
-#if MOB
-{
-    int i, size;
-    size = mprGetBlockSize(ap->data) / sizeof(EjsObj*);
-    for (i = 0; i < size; i++) {
-        printf("0x%p ", ap->data[i]);
-        mprAssert(ap->data[i] == 0 || mprIsValid(ap->data[i]));
-    }
-    printf("\n");
-}
-    if (ejsSetProperty(ejs, ap, slot, 0) < 0) {
-        return EJS_ERR;
-    }
-#else
     if (ejsSetProperty(ejs, ap, slot, S(undefined)) < 0) {
         return EJS_ERR;
     }
-#endif
     if ((slot + 1) == ap->length) {
         ap->length--;
     }
@@ -1716,8 +1698,7 @@ EjsArray *ejsCreateArray(Ejs *ejs, int size)
     /*
         No need to invoke constructor
      */
-    ap = (EjsArray*) ejsCreatePot(ejs, S(Array), 0);
-    if (ap != 0) {
+    if ((ap = ejsCreatePot(ejs, S(Array), 0)) != 0) {
         ap->length = 0;
         if (size > 0 && growArray(ejs, ap, size) < 0) {
             ejsThrowMemoryError(ejs);

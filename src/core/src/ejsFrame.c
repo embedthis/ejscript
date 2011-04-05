@@ -44,6 +44,7 @@ static EjsFrame *allocFrame(Ejs *ejs, int numProp)
     }
     mprSetManager(obj, manageFrame);
     SET_TYPE(obj, ST(Frame));
+    ejsSetMemRef(obj);
     return (EjsFrame*) obj;
 }
 

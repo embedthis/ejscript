@@ -80,9 +80,6 @@ static EjsObj *hs_close(Ejs *ejs, EjsHttpServer *sp, int argc, EjsObj **argv)
     if (sp->server) {
         ejsSendEvent(ejs, sp->emitter, "close", NULL, sp);
         httpDestroyServer(sp->server);
-#if MOB
-        ejsStopSessionTimer(sp);
-#endif
         sp->server = 0;
         mprRemoveRoot(sp);
     }
@@ -778,7 +775,7 @@ EjsHttpServer *ejsCloneHttpServer(Ejs *ejs, EjsHttpServer *sp, bool deep)
 {
     EjsHttpServer   *nsp;
 
-    if ((nsp = ejsClone(ejs, sp, deep)) == 0) {
+    if ((nsp = ejsClonePot(ejs, sp, deep)) == 0) {
         return 0;
     }
     nsp->ejs = ejs;
@@ -797,9 +794,6 @@ void ejsConfigureHttpServerType(Ejs *ejs)
     EjsPot      *prototype;
 
     type = ejsConfigureNativeType(ejs, N("ejs.web", "HttpServer"), sizeof(EjsHttpServer), manageHttpServer, EJS_POT_HELPERS);
-#if UNUSED
-    ejsSetSpecialType(ejs, S_HttpServer, type);
-#endif
     type->helpers.create = (EjsCreateHelper) createHttpServer;
 
     prototype = type->prototype;

@@ -64,12 +64,12 @@ module ejs.web {
             Request configuration. Initially refers to App.config which is filled with the aggregated "ejsrc" content.
             Middleware may modify to refer to a request local configuration object.
          */
-        enumerable var config: Object
+        native enumerable var config: Object
 
         /** 
             Associated Controller object. Set to null if no associated controller.
          */
-        enumerable var controller: Controller
+        native enumerable var controller: Controller
 
         /** 
             Get the request content length. This is the length of body data sent by the client with the request. 
@@ -120,7 +120,7 @@ module ejs.web {
             Physical filename for the resource supplying the response content for the request. Virtual requests where
             the Request $uri does not correspond to any physical resource may not define this property.
          */
-        enumerable var filename: Path
+        native enumerable var filename: Path
 
         /** 
             Notification "flash" messages to pass to the next request (only). By convention, the following keys are used:
@@ -197,7 +197,7 @@ module ejs.web {
             the client is stored in this property and the method property reflects the newly defined value. If method is
             not overridden, originalMethod will be null.
          */
-        enumerable var originalMethod: String
+        native enumerable var originalMethod: String
 
         /**
             The original request URI supplied by the client. This is the Uri path supplied by the client on the first
@@ -938,7 +938,7 @@ module ejs.web {
                     } catch {}
                 }
                 finalize()
-                log.debug(1, "Request error (" + status + ") for: \"" + uri + "\". " + msg)
+                log.debug(4, "Request error (" + status + ") for: \"" + uri + "\". " + msg)
             }
         }
 

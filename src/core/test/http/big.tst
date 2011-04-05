@@ -15,9 +15,9 @@ assert(http.status == 200)
 http.close()
 
 /*  MOB - a bit slow
-http.get(BIG)
-ts = new TextStream(http)
-lines = ts.readLines()
-assert(lines.length == 801)
-http.close()
+    http.get(BIG)
+    ts = new TextStream(http)
+    lines = ts.readLines()
+    assert(lines.length == 801)
+    http.close()
 */

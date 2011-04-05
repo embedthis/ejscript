@@ -20,7 +20,7 @@ static EjsFunction *createFunction(Ejs *ejs, EjsType *type, int numProp)
 {
     EjsFunction     *fun;
 
-    if ((fun = (EjsFunction*) ejsCreatePot(ejs, ST(Function), 0)) == 0) {
+    if ((fun = ejsCreatePot(ejs, ST(Function), 0)) == 0) {
         return 0;
     }
     fun->block.pot.isFunction = 1;
@@ -597,9 +597,7 @@ void ejsConfigureFunctionType(Ejs *ejs)
     ejsBindMethod(ejs, prototype, ES_Function_bound, (EjsProc) fun_bound);
     ejsBindMethod(ejs, prototype, ES_Function_call, (EjsProc) fun_call);
     ejsBindMethod(ejs, prototype, ES_Function_length, (EjsProc) fun_length);
-#if ES_Function_name
     ejsBindMethod(ejs, prototype, ES_Function_name, (EjsProc) fun_name);
-#endif
     ejsBindMethod(ejs, prototype, ES_Function_setScope, (EjsProc) fun_setScope);
 }
 

@@ -62,6 +62,6 @@ try {
 
 } finally {
     Cmd.kill(pid, 9)
-    rmdir("junk", true)
+    // MOB rmdir("junk", true)
 }
 

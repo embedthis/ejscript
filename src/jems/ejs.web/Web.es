@@ -72,16 +72,11 @@ module ejs.web {
             The server must be restarted to reload changes. This happens before HttpServer loads serverRoot/ejsrc.
          */
         private static function initWeb(): Void {
-        /*
-            MOB - remove
-            config = App.config
-            let path = Path("ejsrc")
-            if (path.exists) {
-                let webConfig = deserialize(path.readString())
-                blend(config, webConfig, true)
-            }
-        */
             blend(App.config, defaultConfig, false)
+            let dirs = App.config.directories
+            for (let [key, value] in dirs) {
+                dirs[key] = Path(value)
+            }
         }
         initWeb()
 

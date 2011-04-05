@@ -544,6 +544,9 @@ static void *getRequestProperty(Ejs *ejs, EjsRequest *req, int slotNum)
     case ES_ejs_web_Request_responseHeaders:
         return createResponseHeaders(ejs, req);
 
+    case ES_ejs_web_Request_route:
+        return mapNull(ejs, req->route);
+
     case ES_ejs_web_Request_scheme:
         if (req->scheme == 0) {
             req->scheme = createString(ejs, (conn && conn->secure) ? "https" : "http");
@@ -658,8 +661,11 @@ static int setRequestProperty(Ejs *ejs, EjsRequest *req, int slotNum,  EjsObj *v
 
     switch (slotNum) {
     default:
-    case ES_ejs_web_Request_config:
         return ST(Object)->helpers.setProperty(ejs, (EjsObj*) req, slotNum, value);
+
+    case ES_ejs_web_Request_config:
+        req->config = value;
+        break;
 
     case ES_ejs_web_Request_absHome:
         req->absHome = (EjsObj*) ejsToUri(ejs, value);
@@ -730,6 +736,10 @@ static int setRequestProperty(Ejs *ejs, EjsRequest *req, int slotNum,  EjsObj *v
 
     case ES_ejs_web_Request_responseHeaders:
         req->responseHeaders = value;
+        break;
+
+    case ES_ejs_web_Request_route:
+        req->route = value;
         break;
 
     case ES_ejs_web_Request_scriptName:
@@ -1226,10 +1236,8 @@ static EjsObj *req_written(Ejs *ejs, EjsRequest *req, int argc, EjsObj **argv)
 
 /************************************ Factory *************************************/
 /*
-    Clone the request object into the "ejs" interpreter
-
-    This does a "minimal" clone for speed. It does not support doing 1/2 processing on one request and then cloning to 
-    another request.
+    Clone the request object into the "ejs" interpreter.
+    This does a "minimal" clone for speed.
  */
 EjsRequest *ejsCloneRequest(Ejs *ejs, EjsRequest *req, bool deep)
 {
@@ -1249,6 +1257,12 @@ EjsRequest *ejsCloneRequest(Ejs *ejs, EjsRequest *req, bool deep)
     nreq->scriptName = (EjsObj*) ejsCreateStringFromAsc(ejs, conn->rx->scriptName);
     nreq->accepted = req->accepted;
     nreq->running = req->running;
+    if (req->route) {
+        nreq->route = ejsClone(ejs, req->route, 1);
+    }
+    if (req->config) {
+        nreq->config = ejsClone(ejs, req->config, 1);
+    }
     return nreq;
 }
 
@@ -1319,6 +1333,7 @@ static void manageRequest(EjsRequest *req, int flags)
     if (flags & MPR_MANAGE_MARK) {
         ejsManagePot(req, flags);
         mprMark(req->absHome);
+        mprMark(req->config);
         mprMark(req->conn);
         mprMark(req->cookies);
         mprMark(req->dir);
@@ -1338,11 +1353,13 @@ static void manageRequest(EjsRequest *req, int flags)
         mprMark(req->query);
         mprMark(req->reference);
         mprMark(req->responseHeaders);
+        mprMark(req->route);
         mprMark(req->scheme);
         mprMark(req->scriptName);
         mprMark(req->server);
         mprMark(req->session);
         mprMark(req->uri);
+        mprMark(req->app);
     }
 }
 

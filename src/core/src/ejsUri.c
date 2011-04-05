@@ -55,9 +55,10 @@ static EjsUri *cloneUri(Ejs *ejs, EjsUri *src, bool deep)
 {
     EjsUri     *dest;
 
-    //  MOB - should clone the pot properties
-    dest = ejsCreateObj(ejs, TYPE(src), 0);
-    /*  Deep copy will complete the uri */
+    if ((dest = ejsCreateObj(ejs, TYPE(src), 0)) == 0) {
+        return 0;
+    }
+    /*  NOTE: a deep copy will complete the uri - MOB is that right? */
     dest->uri = httpCloneUri(src->uri, deep);
     return dest;
 }

@@ -62,7 +62,6 @@ static EjsObj *req_worker(Ejs *ejs, EjsObj *web, int argc, EjsObj **argv)
         ejsThrowStateError(ejs, "Can't load ejs.web.mod: %s", ejsGetErrorMsg(nejs, 1));
         return 0;
     }
-    //  MOB -- not really doing a clone. This is a minimal copy. Should rename perhaps?
     if ((nreq = ejsCloneRequest(nejs, req, 1)) == 0) {
         ejsThrowStateError(ejs, "Can't clone request");
         return 0;
@@ -70,7 +69,6 @@ static EjsObj *req_worker(Ejs *ejs, EjsObj *web, int argc, EjsObj **argv)
     httpSetConnContext(conn, nreq);
     nreq->app = app;
 
-    //  MOB -- not really doing a clone. This is a minimal copy. Should rename perhaps?
     if ((nreq->server = ejsCloneHttpServer(nejs, req->server, 1)) == 0) {
         ejsThrowStateError(ejs, "Can't clone request");
         return 0;

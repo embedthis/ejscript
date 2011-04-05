@@ -78,7 +78,7 @@ EjsError *ejsCreateError(Ejs *ejs, EjsType *type, EjsObj *msg)
 {
     EjsError    *error;
 
-    error = (EjsError*) ejsCreatePot(ejs, type, 0);
+    error = ejsCreatePot(ejs, type, 0);
     if (error) {
         ejsSetProperty(ejs, error, ES_Error_message, msg);
         ejsSetProperty(ejs, error, ES_Error_timestamp, ejsCreateDate(ejs, mprGetTime()));

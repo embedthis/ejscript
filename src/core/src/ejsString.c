@@ -75,7 +75,7 @@ static EjsAny *castString(Ejs *ejs, EjsString *sp, EjsType *type)
 
 static EjsString *cloneString(Ejs *ejs, EjsString *sp, bool deep)
 {
-    /* Strings immutable */
+    /* Strings are immutable, interned and shared across all interps */
     return sp;
 }
 

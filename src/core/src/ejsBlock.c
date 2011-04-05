@@ -8,7 +8,6 @@
 
 #include    "ejs.h"
 
-//  MOB -- rename to LexBlock
 /*********************************** Helpers **********************************/
 
 EjsBlock *ejsCloneBlock(Ejs *ejs, EjsBlock *src, bool deep)
@@ -19,13 +18,8 @@ EjsBlock *ejsCloneBlock(Ejs *ejs, EjsBlock *src, bool deep)
 
     dest->nobind = src->nobind;
     dest->scope = src->scope;
-#if MOB && OPT
-    //  This could work if a bit is set in EjsBlock to say inherited
-    dest->namespaces = src->namespaces;
-#else
     mprInitList(&dest->namespaces);
     mprCopyList(&dest->namespaces, &src->namespaces);
-#endif
     return dest;
 }
 
@@ -118,8 +112,7 @@ EjsBlock *ejsCreateBlock(Ejs *ejs, int size)
 {
     EjsBlock        *block;
 
-    block = (EjsBlock*) ejsCreatePot(ejs, S(Block), size);
-    if (block == 0) {
+    if ((block = ejsCreatePot(ejs, S(Block), size)) == 0) {
         return 0;
     }
     block->pot.shortScope = 1;
@@ -137,11 +130,6 @@ void ejsManageBlock(EjsBlock *block, int flags)
 
     if (block) {
         if (flags & MPR_MANAGE_MARK) {
-#if UNUSED
-if (block == block->pot.obj.type->ejs->globalBlock) {
-    printf("Manage global numprop %d in ejs %s\n", block->pot.numProp, block->pot.obj.type->ejs->name);
-}
-#endif
             ejsManagePot(block, flags);
             mprMark(block->prevException);
 
@@ -152,7 +140,6 @@ if (block == block->pot.obj.type->ejs->globalBlock) {
             for (next = 0; ((item = (EjsObj*) mprGetNextItem(&block->namespaces, &next)) != 0); ) {
                 mprMark(item);
             }
-
             /* This is the lexical block scope */
             for (b = block->scope; b; b = b->scope) {
 #if FUTURE

@@ -439,7 +439,6 @@ static EjsObj *openFile(Ejs *ejs, EjsFile *fp, int argc, EjsObj **argv)
             fp->mode |= FILE_WRITE;
         }
     }
-
     fp->modeString = sclone(mode);
     fp->perms = perms;
 
@@ -857,7 +856,7 @@ EjsFile *ejsCreateFileFromFd(Ejs *ejs, int fd, cchar *name, int mode)
         return 0;
     }
     fp->attached = 1;
-    fp->path = sclone("");
+    fp->path = MPR->emptyString;
     return fp;
 }
 

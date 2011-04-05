@@ -25,14 +25,7 @@ static EjsObj *castPath(Ejs *ejs, EjsPath *fp, EjsType *type)
 
 static EjsPath *clonePath(Ejs *ejs, EjsPath *src, bool deep)
 {
-    EjsPath     *dest;
-
-    if ((dest = ejsCreateObj(ejs, TYPE(src), 0)) == 0) {
-        return 0;
-    }
-    dest->value = sclone(src->value);
-    dest->info = src->info;
-    return dest;
+    return ejsCreatePathFromAsc(ejs, src->value);
 }
 
 
@@ -1216,8 +1209,6 @@ static cchar *getPathString(Ejs *ejs, EjsObj *vp)
 }
 
 /*********************************** Factory **********************************/
-
-//  MOB -- should take EjsString
 
 EjsPath *ejsCreatePath(Ejs *ejs, EjsString *path)
 {

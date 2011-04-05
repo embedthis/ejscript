@@ -26,11 +26,11 @@ static ssize readFileData(MprXml *xp, void *data, char *buf, ssize size);
 
 static EjsXML *createXml(Ejs *ejs, EjsType *type, int size)
 {
-    return (EjsXML*) ejsCreateXML(ejs, 0, N(NULL, NULL), NULL, NULL);
+    return ejsCreateXML(ejs, 0, N(NULL, NULL), NULL, NULL);
 }
 
 
-static EjsObj *cloneXml(Ejs *ejs, EjsXML *xml, bool deep)
+static EjsXML *cloneXml(Ejs *ejs, EjsXML *xml, bool deep)
 {
     EjsXML  *newXML;
 
@@ -39,14 +39,14 @@ static EjsObj *cloneXml(Ejs *ejs, EjsXML *xml, bool deep)
         ejsThrowMemoryError(ejs);
         return 0;
     }
-    return (EjsObj*) newXML;
+    return newXML;
 }
 
 
 /*
     Cast the object operand to a primitive type
  */
-static EjsObj *castXml(Ejs *ejs, EjsXML *xml, EjsType *type)
+static EjsAny *castXml(Ejs *ejs, EjsXML *xml, EjsType *type)
 {
     EjsXML      *item;
     EjsObj      *result;
@@ -55,30 +55,29 @@ static EjsObj *castXml(Ejs *ejs, EjsXML *xml, EjsType *type)
     mprAssert(ejsIsXML(ejs, xml));
 
     if (type == ST(XMLList)) {
-        return (EjsObj*) xml;
+        return xml;
     }
 
     switch (type->sid) {
     case S_Object:
 
     case S_Boolean:
-        return (EjsObj*) ejsCreateBoolean(ejs, 1);
+        return ejsCreateBoolean(ejs, 1);
 
     case S_Number:
         result = castXml(ejs, xml, ST(String));
-        result = (EjsObj*) ejsToNumber(ejs, result);
-        return result;
+        return ejsToNumber(ejs, result);
 
     case S_String:
         if (xml->kind == EJS_XML_ELEMENT) {
             if (xml->elements == 0) {
-                return (EjsObj*) S(empty);
+                return S(empty);
             }
             if (xml->elements && mprGetListLength(xml->elements) == 1) {
                 //  TODO - what about PI and comments?
                 item = mprGetFirstItem(xml->elements);
                 if (item->kind == EJS_XML_TEXT) {
-                    return (EjsObj*) item->value;
+                    return item->value;
                 }
             }
         }
@@ -86,8 +85,7 @@ static EjsObj *castXml(Ejs *ejs, EjsXML *xml, EjsType *type)
         if (ejsXMLToString(ejs, buf, xml, -1) < 0) {
             return 0;
         }
-        result = (EjsObj*) ejsCreateStringFromAsc(ejs, (char*) buf->start);
-        return result;
+        return ejsCreateStringFromAsc(ejs, (char*) buf->start);
 
     default:
         ejsThrowTypeError(ejs, "Can't cast to this type");

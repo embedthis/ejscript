@@ -1,3 +1,4 @@
+
 /**
     ejsScope.c - Lookup variables in the scope chain.
   
@@ -41,7 +42,7 @@ int ejsLookupScope(Ejs *ejs, EjsName name, EjsLookup *lookup)
     for (lookup->nthBlock = 0, bp = state->bp; bp; bp = bp->scope, lookup->nthBlock++) {
         /* Seach simple object */
         lookup->originalObj = bp;
-        if ((slotNum = ejsLookupVarWithNamespaces(ejs, (EjsObj*) bp, name, lookup)) >= 0) {
+        if ((slotNum = ejsLookupVarWithNamespaces(ejs, bp, name, lookup)) >= 0) {
             return slotNum;
         }
         if (ejsIsFrame(ejs, bp)) {
@@ -59,7 +60,7 @@ int ejsLookupScope(Ejs *ejs, EjsName name, EjsLookup *lookup)
                     if ((prototype = type->prototype) == 0 || prototype->shortScope) {
                         break;
                     }
-                    if ((slotNum = ejsLookupVarWithNamespaces(ejs, (EjsObj*) prototype, name, lookup)) >= 0) {
+                    if ((slotNum = ejsLookupVarWithNamespaces(ejs, prototype, name, lookup)) >= 0) {
                         lookup->nthBase = nthBase;
                         lookup->type = type;
                         return slotNum;
@@ -144,7 +145,7 @@ int ejsLookupVar(Ejs *ejs, EjsAny *obj, EjsName name, EjsLookup *lookup)
     Find a variable in an object considering namespaces. If the space is "", then search for the property name using
     the set of open namespaces.
  */
-int ejsLookupVarWithNamespaces(Ejs *ejs, EjsObj *obj, EjsName name, EjsLookup *lookup)
+int ejsLookupVarWithNamespaces(Ejs *ejs, EjsAny *obj, EjsName name, EjsLookup *lookup)
 {
     EjsNamespace    *nsp;
     EjsName         qname, target;
@@ -185,7 +186,7 @@ int ejsLookupVarWithNamespaces(Ejs *ejs, EjsObj *obj, EjsName name, EjsLookup *l
                     /* Unique name match. Name matches, but namespace does not */
                     slotNum = -1;
                 } else if (target.space && target.space->value[0]) {
-                    for (next = -1; (nsp = (EjsNamespace*) mprGetPrevItem(globalSpaces, &next)) != 0; ) {
+                    for (next = -1; (nsp = mprGetPrevItem(globalSpaces, &next)) != 0; ) {
                         if (nsp->value == target.space) {
                             goto done;
                         }
@@ -194,7 +195,7 @@ int ejsLookupVarWithNamespaces(Ejs *ejs, EjsObj *obj, EjsName name, EjsLookup *l
                     /* Verify namespace is open */
                     for (b = ejs->state->bp; b->scope; b = b->scope) {
                         //  MOB - OPT. Doing some namespaces multiple times. Fix in compiler.
-                        for (next = -1; (nsp = (EjsNamespace*) mprGetPrevItem(&b->namespaces, &next)) != 0; ) {
+                        for (next = -1; (nsp = mprGetPrevItem(&b->namespaces, &next)) != 0; ) {
                             if (nsp->value == target.space) {
                                 goto done;
                             }

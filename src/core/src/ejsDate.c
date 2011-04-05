@@ -58,12 +58,9 @@ static EjsObj *castDate(Ejs *ejs, EjsDate *dp, EjsType *type)
 }
 
 
-static EjsObj *cloneDate(Ejs *ejs, EjsDate *dp, int deep)
+static EjsDate *cloneDate(Ejs *ejs, EjsDate *dp, int deep)
 {
-    if (deep) {
-        return (EjsObj*) ejsCreateDate(ejs, dp->value);
-    } 
-    return (EjsObj*) dp;
+    return ejsCreateDate(ejs, dp->value);
 }
 
 

@@ -25,7 +25,6 @@ module ejs.cjs {
             stdout = App.outputStream
             stderr = App.errorStream
             args = App.args
-//  TODO MOB
             env = {}        // App.env
             platform = Config.title
             this.global = global

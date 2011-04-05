@@ -36,12 +36,9 @@ static EjsObj *castNumber(Ejs *ejs, EjsNumber *vp, EjsType *type)
 }
 
 
-static EjsObj *cloneNumber(Ejs *ejs, EjsNumber *np, int deep)
+static EjsNumber *cloneNumber(Ejs *ejs, EjsNumber *np, int deep)
 {
-    if (deep) {
-        return (EjsObj*) ejsCreateNumber(ejs, np->value);
-    }
-    return (EjsObj*) np;
+    return ejsCreateNumber(ejs, np->value);
 }
 
 

@@ -74,11 +74,11 @@ typedef struct EjsRequest {
     EjsObj          *cookies;           /**< Cached cookies */
     HttpConn        *conn;              /**< Underlying Http connection object */
     EjsHttpServer   *server;            /**< Owning server */
-
     EjsObj          *app;               /**< Application build function. Used when threaded */
     EjsObj          *absHome;           /**< Absolute URI to the home of the application from this request */
-    EjsObj          *emitter;           /**< Event emitter */
+    EjsObj          *config;            /**< Request config environment */
     EjsPath         *dir;               /**< Home directory containing the application */
+    EjsObj          *emitter;           /**< Event emitter */
     EjsObj          *env;               /**< Request.env */
     EjsPath         *filename;          /**< Physical resource filename */
     EjsObj          *files;             /**< Files object */
@@ -94,6 +94,7 @@ typedef struct EjsRequest {
     EjsObj          *port;              /**< Port property */
     EjsObj          *query;             /**< Query property */
     EjsObj          *reference;         /**< Reference property */
+    EjsObj          *route;             /**< Matching route in route table */
     EjsObj          *responseHeaders;   /**< Headers object */
     EjsObj          *scheme;            /**< Scheme property */
     EjsObj          *scriptName;        /**< ScriptName property */

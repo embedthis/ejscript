@@ -66,8 +66,7 @@ static EjsByteArray *cloneByteArrayVar(Ejs *ejs, EjsByteArray *ap, bool deep)
     EjsByteArray    *newArray;
     int             i;
 
-    newArray = ejsCreateByteArray(ejs, ap->length);
-    if (newArray == 0) {
+    if ((newArray = ejsCreateByteArray(ejs, ap->length)) == 0) {
         ejsThrowMemoryError(ejs);
         return 0;
     }
