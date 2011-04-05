@@ -62,46 +62,6 @@ static EjsObj *app_chdir(Ejs *ejs, EjsObj *unused, int argc, EjsObj **argv)
 }
 
 /*  
-    Get an environment var
-    function getenv(key: String): String
- */
-static EjsAny *app_getenv(Ejs *ejs, EjsObj *app, int argc, EjsObj **argv)
-{
-    cchar   *value;
-
-    value = getenv(ejsToMulti(ejs, argv[0]));
-    if (value == 0) {
-        return S(null);
-    }
-    return ejsCreateStringFromAsc(ejs, value);
-}
-
-
-/*  
-    Put an environment var
-    function putenv(key: String, value: String): void
- */
-static EjsObj *app_putenv(Ejs *ejs, EjsObj *app, int argc, EjsObj **argv)
-{
-#if !WINCE
-#if BLD_UNIX_LIKE
-    char    *key, *value;
-
-    key = sclone(ejsToMulti(ejs, argv[0]));
-    value = sclone(ejsToMulti(ejs, argv[1]));
-    setenv(key, value, 1);
-#else
-    char   *cmd;
-    //  MOB OPT
-    cmd = sjoin(ejsToMulti(ejs, argv[0]), "=", ejsToMulti(ejs, argv[1]), NULL);
-    putenv(cmd);
-#endif
-#endif
-    return 0;
-}
-
-
-/*  
     Get the directory containing the application's executable file.
     static function get exeDir(): Path
  */
@@ -152,17 +112,64 @@ static EjsObj *app_exit(Ejs *ejs, EjsObj *unused, int argc, EjsObj **argv)
 }
 
 
-#if UNUSED
+#if ES_App_env
 /*  
-    Control if the application will exit when the last script completes.
-    static function noexit(exit: Boolean): void
+    Get all environment vars
+    function get env(): Object
  */
-static EjsObj *app_noexit(Ejs *ejs, EjsObj *unused, int argc, EjsObj **argv)
+static EjsAny *app_env(Ejs *ejs, EjsObj *app, int argc, EjsObj **argv)
 {
-    ejs->flags |= EJS_FLAG_NOEXIT;
-    return 0;
+    EjsPot    *result;
+    char        **ep, *pair, *key, *value;
+
+    result = ejsCreatePot(ejs, S(Object), 0);
+    for (ep = environ; ep && *ep; ep++) {
+        pair = sclone(*ep);
+        key = stok(pair, "=", &value);
+        ejsSetPropertyByName(ejs, result, EN(key), ejsCreateStringFromAsc(ejs, value));
+    }
+    return result;
 }
 #endif
+
+
+/*  
+    Get an environment var
+    function getenv(key: String): String
+ */
+static EjsAny *app_getenv(Ejs *ejs, EjsObj *app, int argc, EjsObj **argv)
+{
+    cchar   *value;
+
+    value = getenv(ejsToMulti(ejs, argv[0]));
+    if (value == 0) {
+        return S(null);
+    }
+    return ejsCreateStringFromAsc(ejs, value);
+}
+
+
+/*  
+    Put an environment var
+    function putenv(key: String, value: String): void
+ */
+static EjsObj *app_putenv(Ejs *ejs, EjsObj *app, int argc, EjsObj **argv)
+{
+#if !WINCE
+#if BLD_UNIX_LIKE
+    char    *key, *value;
+
+    key = sclone(ejsToMulti(ejs, argv[0]));
+    value = sclone(ejsToMulti(ejs, argv[1]));
+    setenv(key, value, 1);
+#else
+    //  TODO OPT
+    char *cmd = sjoin(ejsToMulti(ejs, argv[0]), "=", ejsToMulti(ejs, argv[1]), NULL);
+    putenv(cmd);
+#endif
+#endif
+    return 0;
+}
 
 
 /*  
@@ -275,23 +282,16 @@ void ejsConfigureAppType(Ejs *ejs)
     ejsBindMethod(ejs, type, ES_App_chdir, (EjsProc) app_chdir);
     ejsBindMethod(ejs, type, ES_App_exeDir, (EjsProc) app_exeDir);
     ejsBindMethod(ejs, type, ES_App_exePath, (EjsProc) app_exePath);
+#if ES_App_env
+    ejsBindMethod(ejs, type, ES_App_env, (EjsProc) app_env);
+#endif
     ejsBindMethod(ejs, type, ES_App_exit, (EjsProc) app_exit);
     ejsBindMethod(ejs, type, ES_App_getenv, (EjsProc) app_getenv);
     ejsBindMethod(ejs, type, ES_App_putenv, (EjsProc) app_putenv);
-#if UNUSED
-    ejsBindMethod(ejs, type, ES_App_noexit, (EjsProc) app_noexit);
-#endif
-#if ES_App_pid
     ejsBindMethod(ejs, type, ES_App_pid, (EjsProc) app_pid);
-#endif
     ejsBindMethod(ejs, type, ES_App_run, (EjsProc) app_run);
     ejsBindAccess(ejs, type, ES_App_search, (EjsProc) app_search, (EjsProc) app_set_search);
     ejsBindMethod(ejs, type, ES_App_sleep, (EjsProc) app_sleep);
-
-#if FUTURE
-    (ejs, type, ES_App_permissions, (EjsProc) getPermissions,
-        ES_App_set_permissions, (EjsProc) setPermissions);
-#endif
 }
 
 

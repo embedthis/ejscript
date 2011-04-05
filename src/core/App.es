@@ -139,6 +139,11 @@ module ejs {
         native static function get dir(): Path
 
         /** 
+            Application environment. Object hash of all environment variables.
+         */
+        native static function get env(): Object
+
+        /** 
             The directory containing the application executable
          */
         native static function get exeDir(): Path
