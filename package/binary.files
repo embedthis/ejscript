@@ -10,6 +10,9 @@ if [ "${TASK}" = Remove -a -f "${BLD_BIN_PREFIX}/linkup" ] ; then
     cp "${BLD_BIN_PREFIX}/linkup" /tmp/linkup$$
 fi
 
+#
+#   BARE will be set if doing "make deploy" which calls makeInstall --bare
+#
 if [ "${BARE}" = 0 ] ; then
     cpy -t -w -e doc/licenses/LICENSE.TXT doc/product/README.TXT COPYRIGHT.TXT "${BLD_VER_PREFIX}"
     cpy -e -m 0755 package/uninstall.sh "${BLD_BIN_PREFIX}/uninstall"
@@ -29,7 +32,8 @@ if [ -x "${BLD_BIN_DIR}/ejsc${BLD_EXE}" ] ; then
 fi
 
 if [ "${BARE}" = 0 ] ; then
-    cpy -m 644 -d "${BLD_LIB_DIR}/www" "*" "${BLD_VER_PREFIX}/web"
+    # cpy -m 644 -d "${BLD_LIB_DIR}/www" "*" "${BLD_VER_PREFIX}/web"
+    makeDir "${BLD_LIB_PREFIX}/www"
     cpy -m 644 -d "${BLD_LIB_DIR}/www" "*" "${BLD_LIB_PREFIX}/www"
     cpy -m 755 -d ${BLD_BIN_DIR} mvc ejspage jem "${BLD_BIN_PREFIX}"
     if [ $BLD_HOST_OS = WIN ] ; then
