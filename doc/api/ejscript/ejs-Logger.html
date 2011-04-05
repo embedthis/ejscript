@@ -17,16 +17,19 @@
 <table class='classHead' summary='Logger'>
    <tr><td><strong>Module</strong></td><td>ejs</td></tr>
    <tr><td><strong>Definition</strong></td><td> class Logger</td></tr>
-   <tr><td><strong>Inheritance</strong></td><td>Logger <img src='images/inherit.gif' alt='inherit'/> <tr><td><strong>Example</strong></td><td><pre>var file = File("progress.log", "w")
-var log = new Logger("name", file, 5)
-log.debug(2, "message")
-</pre></td></tr>
+   <tr><td><strong>Inheritance</strong></td><td>Logger <img src='images/inherit.gif' alt='inherit'/> <a href='ejs-Object.html'>Object</a><tr><td><strong>Specified</strong></td><td>ejscript-2.0</td></tr>
+<tr><td><strong>Stability</strong></td><td>Prototype.</td></tr>
        </td></tr>
 </table>
 
-<p class='classBrief'>Logger constructor.</p>
+<p class='classBrief'>Logger objects provide a convenient and consistent method to capture and store logging information.</p>
 
-<p class='classDescription'>The Logger constructor can create different types of loggers based on the three (optional) arguments.</p>
+<p class='classDescription'>Loggers can direct output to streams and may be aggregated in a hierarchical manner. The verbosity of 
+logging can be managed and messages can be filtered.<br/><br/>A logger may have a "parent" logger in order to create hierarchies of loggers for granular control of logging.
+For example, a logger can be created for each class in a package with all such loggers having a single parent. 
+Loggers can send log messages to their parent and inherit their parent's log level. 
+The top level logger for an application is defined by App.log.<br/><br/>Loggers may define a filter function that returns true or false depending on whether a specific message 
+should be logged or not. A matching pattern can alternatively be used to filter messages based on the logger name.<br/><br/>Loggers are themselves Streams and Stream filters can be stacked atop Loggers.</p>
 
 </div>
 
@@ -64,6 +67,8 @@ log.debug(2, "message")
    <tr class='apiDef'><td class='apiType'>public const </td><td><a href='#debug'><b>debug</b></a>(level: <a href='ejs-Number.html'>Number</a>, msgs: <a href='ejs-Array.html'>Array</a>): <a href='ejs-Void.html'>Void</a></tr><tr class='apiBrief'><td>&nbsp;</td><td>Emit a debug message.</td></tr>
    <tr class='apiDef'><td class='apiType'>public const </td><td><a href='#error'><b>error</b></a>(msgs: <a href='ejs-Array.html'>Array</a>): <a href='ejs-Void.html'>Void</a></tr><tr class='apiBrief'><td>&nbsp;</td><td>Emit an error message.</td></tr>
    <tr class='apiDef'><td class='apiType'>public const </td><td><a href='#info'><b>info</b></a>(msgs: <a href='ejs-Array.html'>Array</a>): <a href='ejs-Void.html'>Void</a></tr><tr class='apiBrief'><td>&nbsp;</td><td>Emit an informational message.</td></tr>
+   <tr class='apiDef'><td class='apiType'></td><td><a href='#Logger'><b>Logger</b></a>(name: <a href='ejs-String.html'>String</a>, location, level: <a href='ejs-Number.html'>Number</a> = 0)</tr><tr class='apiBrief'><td>&nbsp;</td><td>Logger constructor.</td></tr>
+   <tr class='apiDef'><td class='apiType'></td><td><a href='#Logger'><b>Logger</b></a>(name: <a href='ejs-String.html'>String</a>, location, level: <a href='ejs-Number.html'>Number</a> = 0)</tr><tr class='apiBrief'><td>&nbsp;</td><td>Logger constructor.</td></tr>
    <tr class='apiDef'><td class='apiType'>public const </td><td><a href='#redirect'><b>redirect</b></a>(location, level: <a href='ejs-Number.html'>Number</a> = null): <a href='ejs-Void.html'>Void</a></tr><tr class='apiBrief'><td>&nbsp;</td><td>Redirect log output.</td></tr>
    <tr class='apiDef'><td class='apiType'>public const </td><td><a href='#warn'><b>warn</b></a>(msgs: <a href='ejs-Array.html'>Array</a>): <a href='ejs-Void.html'>Void</a></tr><tr class='apiBrief'><td>&nbsp;</td><td>Emit a warning message.</td></tr>
    <tr class='apiDef'><td class='apiType'>public const </td><td><a href='#write'><b>write</b></a>(data: <a href='ejs-Array.html'>Array</a>): <a href='ejs-Number.html'>Number</a></tr><tr class='apiBrief'><td>&nbsp;</td><td>Write data to the stream.Write raw data to the logger stream.</td></tr>
@@ -131,6 +136,42 @@ may filter the message out before logging.</dd></dl>
 <dd><table class='parameters' summary ='parameters'>
 <tr class='param'><td class='param'>msgs: <a href='ejs-Array.html'>Array</a> </td><td>Data to log.</td></tr></table></dd>
 </dl></div>
+</div>
+<hr />
+<a name='Logger'></a>
+<div class='api'>
+<div class='apiSig'>  ejs  Logger(name: <a href='ejs-String.html'>String</a>, location, level: <a href='ejs-Number.html'>Number</a> = 0)
+</div>
+<div class='apiDetail'>
+<p>Logger constructor.</p>
+<dl><dt>Description</dt><dd>The Logger constructor can create different types of loggers based on the three (optional) arguments.</dd></dl>
+<dl><dt>Parameters</dt>
+<dd><table class='parameters' summary ='parameters'>
+<tr class='param'><td class='param'>name: <a href='ejs-String.html'>String</a> </td><td>Unique name of the logger. Loggers are typically named after the module, class or subsystem they  are associated with.</td></tr><tr class='param'><td class='param'>location </td><td>Optional output stream or Logger to send messages to. If a parent Logger instance is provided for the output parameter, messages are sent to the parent for rendering.</td></tr><tr class='param'><td class='param'>level: <a href='ejs-Number.html'>Number</a> </td><td>Optional integer verbosity level. Messages with a message level less than or equal to the defined logger level will be emitted. Range is 0 (least verbose) to 9. [default: 0]</td></tr></table></dd>
+</dl><dl><dt>Example</dt>
+<dd><pre>var file = File("progress.log", "w")
+var log = new Logger("name", file, 5)
+log.debug(2, "message")
+</pre></dd></dl>
+</div>
+</div>
+<hr />
+<a name='Logger'></a>
+<div class='api'>
+<div class='apiSig'>  ejs  Logger(name: <a href='ejs-String.html'>String</a>, location, level: <a href='ejs-Number.html'>Number</a> = 0)
+</div>
+<div class='apiDetail'>
+<p>Logger constructor.</p>
+<dl><dt>Description</dt><dd>The Logger constructor can create different types of loggers based on the three (optional) arguments.</dd></dl>
+<dl><dt>Parameters</dt>
+<dd><table class='parameters' summary ='parameters'>
+<tr class='param'><td class='param'>name: <a href='ejs-String.html'>String</a> </td><td>Unique name of the logger. Loggers are typically named after the module, class or subsystem they  are associated with.</td></tr><tr class='param'><td class='param'>location </td><td>Optional output stream or Logger to send messages to. If a parent Logger instance is provided for the output parameter, messages are sent to the parent for rendering.</td></tr><tr class='param'><td class='param'>level: <a href='ejs-Number.html'>Number</a> </td><td>Optional integer verbosity level. Messages with a message level less than or equal to the defined logger level will be emitted. Range is 0 (least verbose) to 9. [default: 0]</td></tr></table></dd>
+</dl><dl><dt>Example</dt>
+<dd><pre>var file = File("progress.log", "w")
+var log = new Logger("name", file, 5)
+log.debug(2, "message")
+</pre></dd></dl>
+</div>
 </div>
 <hr />
 <a name='redirect'></a>

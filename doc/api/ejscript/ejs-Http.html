@@ -17,12 +17,16 @@
 <table class='classHead' summary='Http'>
    <tr><td><strong>Module</strong></td><td>ejs</td></tr>
    <tr><td><strong>Definition</strong></td><td> class Http</td></tr>
-   <tr><td><strong>Inheritance</strong></td><td>Http <img src='images/inherit.gif' alt='inherit'/>        </td></tr>
+   <tr><td><strong>Inheritance</strong></td><td>Http <img src='images/inherit.gif' alt='inherit'/> <a href='ejs-Object.html'>Object</a><tr><td><strong>Specified</strong></td><td>ejscript-2.0</td></tr>
+<tr><td><strong>Stability</strong></td><td>Evolving.</td></tr>
+       </td></tr>
 </table>
 
-<p class='classBrief'>Create an Http object.</p>
+<p class='classBrief'>The Http object represents a Hypertext Transfer Protocol version 1/1 client connection.</p>
 
-<p class='classDescription'>The object is initialized with the Uri.</p>
+<p class='classDescription'>It is used to issue 
+HTTP requests and capture responses. It supports the HTTP/1.1 standard including methods for GET, POST, 
+PUT, DELETE, OPTIONS, and TRACE. It also supports Keep-Alive and SSL connections.</p>
 
 </div>
 
@@ -155,6 +159,8 @@ line or from a local error message if the response fails to parse.</td></tr>
    <tr class='apiDef'><td class='apiType'>public const </td><td><a href='#getRequestHeaders'><b>getRequestHeaders</b></a>(): <a href='ejs-Object.html'>Object</a></tr><tr class='apiBrief'><td>&nbsp;</td><td>Get the (proposed) request headers that will be sent with the request.</td></tr>
    <tr class='apiDef'><td class='apiType'>public const </td><td><a href='#head'><b>head</b></a>(uri: <a href='ejs-Uri.html'>Uri</a> = null): <a href='ejs-Void.html'>Void</a></tr><tr class='apiBrief'><td>&nbsp;</td><td>Commence a HEAD request for the current uri.</td></tr>
    <tr class='apiDef'><td class='apiType'>public const </td><td><a href='#header'><b>header</b></a>(key: <a href='ejs-String.html'>String</a>): <a href='ejs-String.html'>String</a></tr><tr class='apiBrief'><td>&nbsp;</td><td>Get the value of a single response header.</td></tr>
+   <tr class='apiDef'><td class='apiType'></td><td><a href='#Http'><b>Http</b></a>(uri: <a href='ejs-Uri.html'>Uri</a> = null)</tr><tr class='apiBrief'><td>&nbsp;</td><td>Create an Http object.</td></tr>
+   <tr class='apiDef'><td class='apiType'></td><td><a href='#Http'><b>Http</b></a>(uri: <a href='ejs-Uri.html'>Uri</a> = null)</tr><tr class='apiBrief'><td>&nbsp;</td><td>Create an Http object.</td></tr>
    <tr class='apiDef'><td class='apiType'>public const </td><td><a href='#off'><b>off</b></a>(name, observer: <a href='ejs-Function.html'>Function</a>): <a href='ejs-Void.html'>Void</a></tr><tr class='apiBrief'><td>&nbsp;</td><td>Remove an observer from the stream.</td></tr>
    <tr class='apiDef'><td class='apiType'>public const </td><td><a href='#on'><b>on</b></a>(name, observer: <a href='ejs-Function.html'>Function</a>): <a href='ejs-Void.html'>Void</a></tr><tr class='apiBrief'><td>&nbsp;</td><td>Add an observer to the stream for the named events.All events are called with the following signature.</td></tr>
    <tr class='apiDef'><td class='apiType'>public const </td><td><a href='#post'><b>post</b></a>(uri: <a href='ejs-Uri.html'>Uri</a>, data: <a href='ejs-Array.html'>Array</a>): <a href='ejs-Void.html'>Void</a></tr><tr class='apiBrief'><td>&nbsp;</td><td>Initiate a POST request.</td></tr>
@@ -320,6 +326,38 @@ headers or header(key) to get a single response header.</dd></dl>
 <dl><dt>Returns</dt>
 <dd>The header field value as a string or null if not known.</dd></dl>
 </div>
+</div>
+<hr />
+<a name='Http'></a>
+<div class='api'>
+<div class='apiSig'>  ejs  Http(uri: <a href='ejs-Uri.html'>Uri</a> = null)
+</div>
+<div class='apiDetail'>
+<p>Create an Http object.</p>
+<dl><dt>Description</dt><dd>The object is initialized with the Uri.</dd></dl>
+<dl><dt>Parameters</dt>
+<dd><table class='parameters' summary ='parameters'>
+<tr class='param'><td class='param'>uri: <a href='ejs-Uri.html'>Uri</a> </td><td>The (optional) Uri to initialize with. [default: null]</td></tr></table></dd>
+</dl><dl><dt>Throws</dt><dd>
+<a href='ejs-IOError.html'>IOError</a>: if the Uri is malformed.  
+</dd>
+</dl></div>
+</div>
+<hr />
+<a name='Http'></a>
+<div class='api'>
+<div class='apiSig'>  ejs  Http(uri: <a href='ejs-Uri.html'>Uri</a> = null)
+</div>
+<div class='apiDetail'>
+<p>Create an Http object.</p>
+<dl><dt>Description</dt><dd>The object is initialized with the Uri.</dd></dl>
+<dl><dt>Parameters</dt>
+<dd><table class='parameters' summary ='parameters'>
+<tr class='param'><td class='param'>uri: <a href='ejs-Uri.html'>Uri</a> </td><td>The (optional) Uri to initialize with. [default: null]</td></tr></table></dd>
+</dl><dl><dt>Throws</dt><dd>
+<a href='ejs-IOError.html'>IOError</a>: if the Uri is malformed.  
+</dd>
+</dl></div>
 </div>
 <hr />
 <a name='off'></a>

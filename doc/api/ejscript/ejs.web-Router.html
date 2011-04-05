@@ -17,12 +17,28 @@
 <table class='classHead' summary='Router'>
    <tr><td><strong>Module</strong></td><td>ejs.web</td></tr>
    <tr><td><strong>Definition</strong></td><td> class Router</td></tr>
-   <tr><td><strong>Inheritance</strong></td><td>Router <img src='images/inherit.gif' alt='inherit'/>        </td></tr>
+   <tr><td><strong>Inheritance</strong></td><td>Router <img src='images/inherit.gif' alt='inherit'/> <a href='ejs-Object.html'>Object</a><tr><td><strong>Specified</strong></td><td>ejscript-2.0</td></tr>
+<tr><td><strong>Stability</strong></td><td>Prototype.</td></tr>
+<tr><td><strong>Example</strong></td><td><pre>
+        var r = new Router
+
+        //  Match /some/path and run the custom builder. Target is data for the customBuilder.
+        r.add("/some/path", {run: customBuilder, target: "/other/path"})
+
+        //  Match /some/path and run MvcBuilder with controller == User and action == "register"
+        r.add("</pre></td></tr>
+       </td></tr>
 </table>
 
-<p class='classBrief'>Create a Router instance and initialize routes.</p>
+<p class='classBrief'>Web router class.</p>
 
-<p class='classDescription'>null</p>
+<p class='classDescription'>Routes incoming client HTTP requests to the appropriate location. The Route class supports 
+configurable user-defined routes.  Each application should create a Router instance and then attach matching routes.<br/><br/>The Router works by defining routes in a route table. For rapid routing, routes are grouped into sets of 
+routes with the same leading URI path segment. For example: the route template "/User/login" would be put into
+the "User" route set. If a route template is a function or regular expression, the route is added to the "Global"
+route set.<br/><br/>The pathInfo and other request properties are examined when selecting a matching route. The request's leading 
+URI pathInfo segment is used to select a route set and then the request is matched against each route in that set.
+Routes are matched in the order in which they are defined.</p>
 
 </div>
 
@@ -64,6 +80,8 @@ route for static pages. Use of this constant will not add routes for MVC content
    <tr class='apiDef'><td class='apiType'>public const </td><td><a href='#remove'><b>remove</b></a>(name: <a href='ejs-String.html'>String</a>): <a href='ejs-Void.html'>Void</a></tr><tr class='apiBrief'><td>&nbsp;</td><td>Remove a route.</td></tr>
    <tr class='apiDef'><td class='apiType'>public const </td><td><a href='#reset'><b>reset</b></a>(request): <a href='ejs-Void.html'>Void</a></tr><tr class='apiBrief'><td>&nbsp;</td><td>Reset the routing tables by removing all routes.</td></tr>
    <tr class='apiDef'><td class='apiType'>public const </td><td><a href='#route'><b>route</b></a>(request): <a href='ejs-Function.html'>Function</a></tr><tr class='apiBrief'><td>&nbsp;</td><td>Route a request.</td></tr>
+   <tr class='apiDef'><td class='apiType'></td><td><a href='#Router'><b>Router</b></a>(routeSet: <a href='ejs-String.html'>String</a> = Top)</tr><tr class='apiBrief'><td>&nbsp;</td><td>Create a Router instance and initialize routes.</td></tr>
+   <tr class='apiDef'><td class='apiType'></td><td><a href='#Router'><b>Router</b></a>(routeSet: <a href='ejs-String.html'>String</a> = Top)</tr><tr class='apiBrief'><td>&nbsp;</td><td>Create a Router instance and initialize routes.</td></tr>
    <tr class='apiDef'><td class='apiType'>public const </td><td><a href='#show'><b>show</b></a>(extra: <a href='ejs-Boolean.html'>Boolean</a> = false): <a href='ejs-Void.html'>Void</a></tr><tr class='apiBrief'><td>&nbsp;</td><td>Show the route table.</td></tr>
 </table>
 
@@ -281,6 +299,36 @@ The call returns the web application to execute.</dd></dl>
 </dl><dl><dt>Returns</dt>
 <dd>The web application function of the signature:  function app(request: Request): Object.</dd></dl>
 </div>
+</div>
+<hr />
+<a name='Router'></a>
+<div class='api'>
+<div class='apiSig'>  ejs.web  Router(routeSet: <a href='ejs-String.html'>String</a> = Top)
+</div>
+<div class='apiDetail'>
+<p>Create a Router instance and initialize routes.</p>
+<dl><dt>Parameters</dt>
+<dd><table class='parameters' summary ='parameters'>
+<tr class='param'><td class='param'>routeSet: <a href='ejs-String.html'>String</a> </td><td>Optional name of the route set to add. Supports sets include: Router.Top and Router.Restful. The Top routes provide top level routes for pages with extensions ".ejs",  and ".es" as well as for static content (see <a href='#addHandlers,'>addHandlers,</a> <a href='#addCatchall)'>addCatchall)</a>.  [default: Top]</td></tr></table></dd>
+</dl><dl><dt>Throws</dt><dd>
+<a href='ejs-Error.html'>Error</a>: for an unknown route set.  
+</dd>
+</dl></div>
+</div>
+<hr />
+<a name='Router'></a>
+<div class='api'>
+<div class='apiSig'>  ejs.web  Router(routeSet: <a href='ejs-String.html'>String</a> = Top)
+</div>
+<div class='apiDetail'>
+<p>Create a Router instance and initialize routes.</p>
+<dl><dt>Parameters</dt>
+<dd><table class='parameters' summary ='parameters'>
+<tr class='param'><td class='param'>routeSet: <a href='ejs-String.html'>String</a> </td><td>Optional name of the route set to add. Supports sets include: Router.Top and Router.Restful. The Top routes provide top level routes for pages with extensions ".ejs",  and ".es" as well as for static content (see <a href='#addHandlers,'>addHandlers,</a> <a href='#addCatchall)'>addCatchall)</a>.  [default: Top]</td></tr></table></dd>
+</dl><dl><dt>Throws</dt><dd>
+<a href='ejs-Error.html'>Error</a>: for an unknown route set.  
+</dd>
+</dl></div>
 </div>
 <hr />
 <a name='show'></a>

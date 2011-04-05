@@ -88,14 +88,14 @@ module ejs {
             All events are called with the signature:
             function (event: String, cmd: Cmd): Void
          */
-        native function on(name, listener: Function): Void
+        native function on(name, observer: Function): Void
 
         /** 
             This call is not supported.
             @duplicate Stream.off
             @hide
          */
-        native function off(name, listener: Function): Void
+        native function off(name, observer: Function): Void
 
         /**
             Process ID of the the command. This is set to the process ID (PID) of the command. If no command has 
@@ -105,7 +105,7 @@ module ejs {
 
         /**
             @duplicate Stream.read
-            If no listener has been defined via $on(), this call will block if there is no data to be read.
+            If no observer has been defined via $on(), this call will block if there is no data to be read.
          */
         native function read(buffer: ByteArray, offset: Number = 0, count: Number = -1): Number
 
@@ -199,6 +199,7 @@ module ejs {
 
         /**
             Start a command in the background as a daemon.  No data can be written to the daemon's stdin.
+            @param cmdline Command line to use. The cmdline may be either a string or an array of strings.
             @return The process ID. This pid can be used with kill().
          */
         static function daemon(cmdline: Object, options: Object = null): Number {

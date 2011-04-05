@@ -17,12 +17,15 @@
 <table class='classHead' summary='Socket'>
    <tr><td><strong>Module</strong></td><td>ejs</td></tr>
    <tr><td><strong>Definition</strong></td><td> class Socket</td></tr>
-   <tr><td><strong>Inheritance</strong></td><td>Socket <img src='images/inherit.gif' alt='inherit'/>        </td></tr>
+   <tr><td><strong>Inheritance</strong></td><td>Socket <img src='images/inherit.gif' alt='inherit'/> <a href='ejs-Object.html'>Object</a><tr><td><strong>Specified</strong></td><td>ejscript-2.0</td></tr>
+<tr><td><strong>Stability</strong></td><td>Prototype.</td></tr>
+       </td></tr>
 </table>
 
-<p class='classBrief'>Create a socket object.</p>
+<p class='classBrief'>Client and server side TCP/IP support for IPv4 and IPv6 communications.</p>
 
-<p class='classDescription'>null</p>
+<p class='classDescription'>This class supports broadcast, datagram and
+byte-stream socket sevices for both client and server endpoints. Aynchronous and asynchronous operation is supported.</p>
 
 </div>
 
@@ -56,6 +59,8 @@ is not bound.</td></tr>
    <tr class='apiDef'><td class='apiType'>public const </td><td><a href='#off'><b>off</b></a>(name: <a href='ejs-Object.html'>Object</a>, observer: <a href='ejs-Function.html'>Function</a>): <a href='ejs-Void.html'>Void</a></tr><tr class='apiBrief'><td>&nbsp;</td><td>Remove an observer from the stream.</td></tr>
    <tr class='apiDef'><td class='apiType'>public const </td><td><a href='#on'><b>on</b></a>(name, observer: <a href='ejs-Function.html'>Function</a>): <a href='ejs-Void.html'>Void</a></tr><tr class='apiBrief'><td>&nbsp;</td><td>Add an observer to the stream for the named events.</td></tr>
    <tr class='apiDef'><td class='apiType'>public const </td><td><a href='#read'><b>read</b></a>(buffer: <a href='ejs-ByteArray.html'>ByteArray</a>, offset: <a href='ejs-Number.html'>Number</a> = 0 , count: <a href='ejs-Number.html'>Number</a> = -1): <a href='ejs-Number.html'>Number</a></tr><tr class='apiBrief'><td>&nbsp;</td><td>Read a data from the stream.</td></tr>
+   <tr class='apiDef'><td class='apiType'></td><td><a href='#Socket'><b>Socket</b></a>()</tr><tr class='apiBrief'><td>&nbsp;</td><td>Create a socket object.</td></tr>
+   <tr class='apiDef'><td class='apiType'></td><td><a href='#Socket'><b>Socket</b></a>()</tr><tr class='apiBrief'><td>&nbsp;</td><td>Create a socket object.</td></tr>
    <tr class='apiDef'><td class='apiType'>public const </td><td><a href='#write'><b>write</b></a>(data: <a href='ejs-Array.html'>Array</a>): <a href='ejs-Number.html'>Number</a></tr><tr class='apiBrief'><td>&nbsp;</td><td>Write data to the stream.</td></tr>
 </table>
 
@@ -207,6 +212,24 @@ In this case a "readable" event will be issued when data is available for readin
 </table></dd>
 </dl><dl><dt>Returns</dt>
 <dd>A count of the bytes actually read. Returns null on eof.</dd></dl>
+</div>
+</div>
+<hr />
+<a name='Socket'></a>
+<div class='api'>
+<div class='apiSig'>  ejs  Socket()
+</div>
+<div class='apiDetail'>
+<p>Create a socket object.</p>
+</div>
+</div>
+<hr />
+<a name='Socket'></a>
+<div class='api'>
+<div class='apiSig'>  ejs  Socket()
+</div>
+<div class='apiDetail'>
+<p>Create a socket object.</p>
 </div>
 </div>
 <hr />

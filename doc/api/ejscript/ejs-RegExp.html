@@ -17,12 +17,50 @@
 <table class='classHead' summary='RegExp'>
    <tr><td><strong>Module</strong></td><td>ejs</td></tr>
    <tr><td><strong>Definition</strong></td><td>final  class RegExp</td></tr>
-   <tr><td><strong>Inheritance</strong></td><td>RegExp <img src='images/inherit.gif' alt='inherit'/>        </td></tr>
+   <tr><td><strong>Inheritance</strong></td><td>RegExp <img src='images/inherit.gif' alt='inherit'/> <a href='ejs-Object.html'>Object</a><tr><td><strong>Specified</strong></td><td>evolving</td></tr>
+       </td></tr>
 </table>
 
-<p class='classBrief'>Create a regular expression object that can be used to process strings.</p>
+<p class='classBrief'>Regular expressions per ECMA-262.</p>
 
-<p class='classDescription'>null</p>
+<p class='classDescription'>The following special characters are supported:
+<table class="itemTable">
+<tr><td>\\</td><td>Reverse whether a character is treated literally or not.</td></tr>
+<tr><td>^</td><td>Match to the start of input. If multiline, match starting after a line break.</td></tr>
+<tr><td>\</td><td>Match to the end of input. If matching multiline, match before after a line break.</td></tr>
+<tr><td>*<</td><td>Match the preceding item zero or more times.</td></tr>
+<tr><td>+</td><td>Match the preceding item one or more times.</td></tr>
+<tr><td>?</td><td>Match the preceding item zero or one times.</td></tr>
+<tr><td>(mem)</td><td>Match inside the parenthesis (i.e. "mem") and store the match.</td></tr>
+<tr><td>(?:nomem)</td><td>Match "nomem" and do not store the match.</td></tr>
+<tr><td>oper(?=need)</td><td>Match "oper" only if it is followed by "need".</td></tr>
+<tr><td>oper(?!not)</td><td>Match "oper" only if it is not followed by "not".</td></tr>
+<tr><td>either|or</td><td>Match "either" or "or".</td></tr>
+<tr><td>{int}</td><td>Match exactly int occurences of the preceding item.</td></tr>
+<tr><td>{int,}</td><td>Match at least int occurences of the preceding item.</td></tr>
+<tr><td>{int1,int2}</td><td>Match at least int1 occurences of the preceding item but no more then int2.</td></tr>
+<tr><td>[pqr]</td><td>Match any one of the enclosed characters. Use a hyphen to specify a range of characters.</td></tr>
+<tr><td>[^pqr]</td><td>Match anything except the characters in brackets.</td></tr>
+<tr><td>[\b]</td><td>Match a backspace.</td></tr>
+<tr><td>\b</td><td>Match a word boundary.</td></tr>
+<tr><td>\B</td><td>Match a non-word boundary.</td></tr>
+<tr><td>\cQ</td><td>Match a control string, e.g. Control-Q</td></tr>
+<tr><td>\d</td><td>Match a digit.</td></tr>
+<tr><td>\D</td><td>Match any non-digit character.</td></tr>
+<tr><td>\f</td><td>Match a form feed.</td></tr>
+<tr><td>\n</td><td>Match a line feed.</td></tr>
+<tr><td>\r</td><td>Match a carriage return.</td></tr>
+<tr><td>\s</td><td>Match a single white space.</td></tr>
+<tr><td>\S</td><td>Match a non-white space.</td></tr>
+<tr><td>\t</td><td>Match a tab.</td></tr>
+<tr><td>\v</td><td>Match a vertical tab.</td></tr>
+<tr><td>\w</td><td>Match any alphanumeric character.</td></tr>
+<tr><td>\W</td><td>Match any non-word character.</td></tr>
+<tr><td>\int</td><td>A reference back int matches.</td></tr>
+<tr><td>\0</td><td>Match a null character.</td></tr>
+<tr><td>\xYY</td><td>Match the character code YY.</td></tr>
+<tr><td>\xYYYY</td><td>Match the character code YYYY.</td></tr>
+</table></p>
 
 </div>
 
@@ -58,6 +96,8 @@ return and new line characters in the input.</td></tr>
 <table class='apiIndex' summary='methods'>
    <tr><th>Qualifiers</th><th width='95%'>Method</th></tr>
    <tr class='apiDef'><td class='apiType'>public const </td><td><a href='#exec'><b>exec</b></a>(str: <a href='ejs-String.html'>String</a>, start: <a href='ejs-Number.html'>Number</a> = 0): <a href='ejs-Array.html'>Array</a></tr><tr class='apiBrief'><td>&nbsp;</td><td>Match this regular expression against the supplied string.</td></tr>
+   <tr class='apiDef'><td class='apiType'>final </td><td><a href='#RegExp'><b>RegExp</b></a>(pattern: <a href='ejs-String.html'>String</a>, flags: <a href='ejs-String.html'>String</a> = null)</tr><tr class='apiBrief'><td>&nbsp;</td><td>Create a regular expression object that can be used to process strings.</td></tr>
+   <tr class='apiDef'><td class='apiType'>final </td><td><a href='#RegExp'><b>RegExp</b></a>(pattern: <a href='ejs-String.html'>String</a>, flags: <a href='ejs-String.html'>String</a> = null)</tr><tr class='apiBrief'><td>&nbsp;</td><td>Create a regular expression object that can be used to process strings.</td></tr>
    <tr class='apiDef'><td class='apiType'>public const </td><td><a href='#replace'><b>replace</b></a>(str: <a href='ejs-String.html'>String</a>, replacement: <a href='ejs-Object.html'>Object</a>): <a href='ejs-String.html'>String</a></tr><tr class='apiBrief'><td>&nbsp;</td><td>Replace all the matches.</td></tr>
    <tr class='apiDef'><td class='apiType'>public const </td><td><a href='#split'><b>split</b></a>(target: <a href='ejs-String.html'>String</a>): <a href='ejs-Array.html'>Array</a></tr><tr class='apiBrief'><td>&nbsp;</td><td>Split the target string into substrings around the matching sections.</td></tr>
    <tr class='apiDef'><td class='apiType'>public const </td><td><a href='#test'><b>test</b></a>(str: <a href='ejs-String.html'>String</a>): <a href='ejs-Boolean.html'>Boolean</a></tr><tr class='apiBrief'><td>&nbsp;</td><td>Test whether this regular expression will match against a string.</td></tr>
@@ -84,6 +124,30 @@ of the string.</dd></dl>
 <dl><dt>Specified</dt>
 <dd>ejs Adds start argument.</dd></dl>
 </div>
+</div>
+<hr />
+<a name='RegExp'></a>
+<div class='api'>
+<div class='apiSig'>final   ejs  RegExp(pattern: <a href='ejs-String.html'>String</a>, flags: <a href='ejs-String.html'>String</a> = null)
+</div>
+<div class='apiDetail'>
+<p>Create a regular expression object that can be used to process strings.</p>
+<dl><dt>Parameters</dt>
+<dd><table class='parameters' summary ='parameters'>
+<tr class='param'><td class='param'>pattern: <a href='ejs-String.html'>String</a> </td><td>The pattern to associated with this regular expression.</td></tr><tr class='param'><td class='param'>flags: <a href='ejs-String.html'>String</a> </td><td>"g" for global match, "i" to ignore case, "m" match over multiple lines, "y" for sticky match. [default: null]</td></tr></table></dd>
+</dl></div>
+</div>
+<hr />
+<a name='RegExp'></a>
+<div class='api'>
+<div class='apiSig'>final   ejs  RegExp(pattern: <a href='ejs-String.html'>String</a>, flags: <a href='ejs-String.html'>String</a> = null)
+</div>
+<div class='apiDetail'>
+<p>Create a regular expression object that can be used to process strings.</p>
+<dl><dt>Parameters</dt>
+<dd><table class='parameters' summary ='parameters'>
+<tr class='param'><td class='param'>pattern: <a href='ejs-String.html'>String</a> </td><td>The pattern to associated with this regular expression.</td></tr><tr class='param'><td class='param'>flags: <a href='ejs-String.html'>String</a> </td><td>"g" for global match, "i" to ignore case, "m" match over multiple lines, "y" for sticky match. [default: null]</td></tr></table></dd>
+</dl></div>
 </div>
 <hr />
 <a name='replace'></a>

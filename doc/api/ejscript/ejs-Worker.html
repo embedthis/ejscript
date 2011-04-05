@@ -17,15 +17,17 @@
 <table class='classHead' summary='Worker'>
    <tr><td><strong>Module</strong></td><td>ejs</td></tr>
    <tr><td><strong>Definition</strong></td><td> class Worker</td></tr>
-   <tr><td><strong>Inheritance</strong></td><td>Worker <img src='images/inherit.gif' alt='inherit'/> <tr><td><strong>Specified</strong></td><td>WebWorker and ejs</td></tr>
+   <tr><td><strong>Inheritance</strong></td><td>Worker <img src='images/inherit.gif' alt='inherit'/> <a href='ejs-Object.html'>Object</a><tr><td><strong>Specified</strong></td><td>WebWorker</td></tr>
+<tr><td><strong>Stability</strong></td><td>Prototype.</td></tr>
        </td></tr>
 </table>
 
-<p class='classBrief'>Create a new Worker instance.</p>
+<p class='classBrief'>Worker Class.</p>
 
-<p class='classDescription'>This call returns an outside worker object for using in the calling interpreter.
-Inside the worker interpreter, a corresponding "inside" worker object is created that is paired to the
-outside worker.</p>
+<p class='classDescription'>Worker threads are medium-weight thread-based virtual machine instances. They run separate 
+interpreters with tightly controlled data interchange. This class is currently being specified by the
+WebWorker task group (See http://www.whatwg.org/specs/web-workers/current-work/#introduction).
+This class is prototype and highly likely to change.</p>
 
 </div>
 
@@ -64,6 +66,8 @@ This is invoked as: function (event) { }.</td></tr>
    <tr class='apiDef'><td class='apiType'>public const </td><td><a href='#preload'><b>preload</b></a>(path: <a href='ejs-Path.html'>Path</a>): <a href='ejs-String.html'>String</a></tr><tr class='apiBrief'><td>&nbsp;</td><td>Preload the specified script or module file to initialize the worker.</td></tr>
    <tr class='apiDef'><td class='apiType'>public const </td><td><a href='#terminate'><b>terminate</b></a>(): <a href='ejs-Void.html'>Void</a></tr><tr class='apiBrief'><td>&nbsp;</td><td>Terminate the worker.</td></tr>
    <tr class='apiDef'><td class='apiType'>public const </td><td><a href='#waitForMessage'><b>waitForMessage</b></a>(timeout: <a href='ejs-Number.html'>Number</a> = -1): <a href='ejs-Boolean.html'>Boolean</a></tr><tr class='apiBrief'><td>&nbsp;</td><td>Wait for receipt of a message.</td></tr>
+   <tr class='apiDef'><td class='apiType'></td><td><a href='#Worker'><b>Worker</b></a>(script: <a href='ejs-Path.html'>Path</a> = null , options: <a href='ejs-Object.html'>Object</a> = null)</tr><tr class='apiBrief'><td>&nbsp;</td><td>Create a new Worker instance.</td></tr>
+   <tr class='apiDef'><td class='apiType'></td><td><a href='#Worker'><b>Worker</b></a>(script: <a href='ejs-Path.html'>Path</a> = null , options: <a href='ejs-Object.html'>Object</a> = null)</tr><tr class='apiBrief'><td>&nbsp;</td><td>Create a new Worker instance.</td></tr>
 </table>
 
 <p class='inheritedLink'><a href='ejs-Object.html#Methods'><i>Inherited Methods</i></a></p>
@@ -201,6 +205,50 @@ all global code has completed and the script/module is initialized.</dd></dl>
 <dd>True if a message was received.</dd></dl>
 <dl><dt>Stability</dt>
 <dd>Prototype.</dd></dl>
+</div>
+</div>
+<hr />
+<a name='Worker'></a>
+<div class='api'>
+<div class='apiSig'>  ejs  Worker(script: <a href='ejs-Path.html'>Path</a> = null , options: <a href='ejs-Object.html'>Object</a> = null)
+</div>
+<div class='apiDetail'>
+<p>Create a new Worker instance.</p>
+<dl><dt>Description</dt><dd>This call returns an outside worker object for using in the calling interpreter.
+Inside the worker interpreter, a corresponding "inside" worker object is created that is paired to the
+outside worker.</dd></dl>
+<dl><dt>Parameters</dt>
+<dd><table class='parameters' summary ='parameters'>
+<tr class='param'><td class='param'>script: <a href='ejs-Path.html'>Path</a> </td><td>Optional path to a script or module to execute. If supplied, then a new Worker instance will invoke load() to execute the script. [default: null ]</td></tr><tr class='param'><td class='param'>options: <a href='ejs-Object.html'>Object</a> </td><td>Options hash. [default: null]</td></tr></table></dd>
+</dl><dl><dt>Options</dt>
+<dd><table class='parameters' summary ='options'>
+<td class='param'>search</td><td>Search path.</td></tr>
+<td class='param'>name</td><td>Name of the Worker instance.</td></tr>
+</table></dd>
+</dl><dl><dt>Specified</dt>
+<dd>WebWorker and ejs</dd></dl>
+</div>
+</div>
+<hr />
+<a name='Worker'></a>
+<div class='api'>
+<div class='apiSig'>  ejs  Worker(script: <a href='ejs-Path.html'>Path</a> = null , options: <a href='ejs-Object.html'>Object</a> = null)
+</div>
+<div class='apiDetail'>
+<p>Create a new Worker instance.</p>
+<dl><dt>Description</dt><dd>This call returns an outside worker object for using in the calling interpreter.
+Inside the worker interpreter, a corresponding "inside" worker object is created that is paired to the
+outside worker.</dd></dl>
+<dl><dt>Parameters</dt>
+<dd><table class='parameters' summary ='parameters'>
+<tr class='param'><td class='param'>script: <a href='ejs-Path.html'>Path</a> </td><td>Optional path to a script or module to execute. If supplied, then a new Worker instance will invoke load() to execute the script. [default: null ]</td></tr><tr class='param'><td class='param'>options: <a href='ejs-Object.html'>Object</a> </td><td>Options hash. [default: null]</td></tr></table></dd>
+</dl><dl><dt>Options</dt>
+<dd><table class='parameters' summary ='options'>
+<td class='param'>search</td><td>Search path.</td></tr>
+<td class='param'>name</td><td>Name of the Worker instance.</td></tr>
+</table></dd>
+</dl><dl><dt>Specified</dt>
+<dd>WebWorker and ejs</dd></dl>
 </div>
 </div>
 <hr />

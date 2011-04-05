@@ -321,7 +321,7 @@ module ejs.web {
         native enumerable var uri: Uri
 
         /*************************************** Methods ******************************************/
-        /*
+        /**
             Construct the a Request object. Request objects are typically created by HttpServers and not constructed
             manually.
             @param uri Request URI
@@ -813,6 +813,9 @@ module ejs.web {
             }
         }
 
+        /**
+            @hide
+         */
         function showRequest(): Void {
             write("request: {\r\n") 
             for (let [key,value] in this) {

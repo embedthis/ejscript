@@ -17,12 +17,16 @@
 <table class='classHead' summary='Path'>
    <tr><td><strong>Module</strong></td><td>ejs</td></tr>
    <tr><td><strong>Definition</strong></td><td>final  class Path</td></tr>
-   <tr><td><strong>Inheritance</strong></td><td>Path <img src='images/inherit.gif' alt='inherit'/>        </td></tr>
+   <tr><td><strong>Inheritance</strong></td><td>Path <img src='images/inherit.gif' alt='inherit'/> <a href='ejs-Object.html'>Object</a><tr><td><strong>Specified</strong></td><td>ejscript-2.0</td></tr>
+<tr><td><strong>Stability</strong></td><td>Evolving.</td></tr>
+       </td></tr>
 </table>
 
-<p class='classBrief'>Create a new Path object and set the path's location.</p>
+<p class='classBrief'>Path class.</p>
 
-<p class='classDescription'>null</p>
+<p class='classDescription'>Paths are filenames and may or may not represent physical files in a file system. That is, the 
+corresponding file or directory for the Path  may or may not exist. Once created, Paths are immutable and their
+path value cannot be changed.</p>
 
 </div>
 
@@ -124,6 +128,8 @@ size determination failed.</td></tr>
    <tr class='apiDef'><td class='apiType'>public const </td><td><a href='#open'><b>open</b></a>(options: <a href='ejs-Object.html'>Object</a> = null): <a href='ejs-File.html'>File</a></tr><tr class='apiBrief'><td>&nbsp;</td><td>Open a path and return a File object.</td></tr>
    <tr class='apiDef'><td class='apiType'>public const </td><td><a href='#openBinaryStream'><b>openBinaryStream</b></a>(options: <a href='ejs-Object.html'>Object</a> = null): <a href='ejs-BinaryStream.html'>BinaryStream</a></tr><tr class='apiBrief'><td>&nbsp;</td><td>Open a file and return a BinaryStream object.</td></tr>
    <tr class='apiDef'><td class='apiType'>public const </td><td><a href='#openTextStream'><b>openTextStream</b></a>(options: <a href='ejs-Object.html'>Object</a> = null): <a href='ejs-TextStream.html'>TextStream</a></tr><tr class='apiBrief'><td>&nbsp;</td><td>Open a file and return a TextStream object.</td></tr>
+   <tr class='apiDef'><td class='apiType'>final </td><td><a href='#Path'><b>Path</b></a>(path: <a href='ejs-String.html'>String</a>)</tr><tr class='apiBrief'><td>&nbsp;</td><td>Create a new Path object and set the path's location.</td></tr>
+   <tr class='apiDef'><td class='apiType'>final </td><td><a href='#Path'><b>Path</b></a>(path: <a href='ejs-String.html'>String</a>)</tr><tr class='apiBrief'><td>&nbsp;</td><td>Create a new Path object and set the path's location.</td></tr>
    <tr class='apiDef'><td class='apiType'>public const </td><td><a href='#readBytes'><b>readBytes</b></a>(): <a href='ejs-ByteArray.html'>ByteArray</a></tr><tr class='apiBrief'><td>&nbsp;</td><td>Read the file contents as a ByteArray.</td></tr>
    <tr class='apiDef'><td class='apiType'>public const </td><td><a href='#readJSON'><b>readJSON</b></a>(): <a href='ejs-Object.html'>Object</a></tr><tr class='apiBrief'><td>&nbsp;</td><td>Read the file containing a JSON string and return a deserialized object.</td></tr>
    <tr class='apiDef'><td class='apiType'>public const </td><td><a href='#readLines'><b>readLines</b></a>(): <a href='ejs-Array.html'>Array</a></tr><tr class='apiBrief'><td>&nbsp;</td><td>Read the file contents as an array of lines.</td></tr>
@@ -410,6 +416,30 @@ the function returns without throwing an exception.</dd></dl>
 <dl><dt>Throws</dt><dd>
 <a href='ejs-IOError.html'>IOError</a>: if the path or file cannot be opened or created.  
 </dd>
+</dl></div>
+</div>
+<hr />
+<a name='Path'></a>
+<div class='api'>
+<div class='apiSig'>final   ejs  Path(path: <a href='ejs-String.html'>String</a>)
+</div>
+<div class='apiDetail'>
+<p>Create a new Path object and set the path's location.</p>
+<dl><dt>Parameters</dt>
+<dd><table class='parameters' summary ='parameters'>
+<tr class='param'><td class='param'>path: <a href='ejs-String.html'>String</a> </td><td>Name of the path to associate with this path object.</td></tr></table></dd>
+</dl></div>
+</div>
+<hr />
+<a name='Path'></a>
+<div class='api'>
+<div class='apiSig'>final   ejs  Path(path: <a href='ejs-String.html'>String</a>)
+</div>
+<div class='apiDetail'>
+<p>Create a new Path object and set the path's location.</p>
+<dl><dt>Parameters</dt>
+<dd><table class='parameters' summary ='parameters'>
+<tr class='param'><td class='param'>path: <a href='ejs-String.html'>String</a> </td><td>Name of the path to associate with this path object.</td></tr></table></dd>
 </dl></div>
 </div>
 <hr />

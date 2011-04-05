@@ -17,12 +17,19 @@
 <table class='classHead' summary='Emitter'>
    <tr><td><strong>Module</strong></td><td>ejs</td></tr>
    <tr><td><strong>Definition</strong></td><td> class Emitter</td></tr>
-   <tr><td><strong>Inheritance</strong></td><td>Emitter <img src='images/inherit.gif' alt='inherit'/>        </td></tr>
+   <tr><td><strong>Inheritance</strong></td><td>Emitter <img src='images/inherit.gif' alt='inherit'/> <a href='ejs-Object.html'>Object</a><tr><td><strong>Stability</strong></td><td>Prototype.</td></tr>
+<tr><td><strong>Example</strong></td><td><pre>events.on(event, function (event, ...args) {
+    //  Do something
+}
+events.fire("topic", 1, 2, 3)
+</pre></td></tr>
+       </td></tr>
 </table>
 
-<p class='classBrief'>Construct a new event Emitter object.</p>
+<p class='classBrief'>The emitter class provides a publish/subscribe model of communication.</p>
 
-<p class='classDescription'>null</p>
+<p class='classDescription'>It supports the registration of observers
+who want to subscribe to events of interest.</p>
 
 </div>
 
@@ -42,6 +49,8 @@
 <table class='apiIndex' summary='methods'>
    <tr><th>Qualifiers</th><th width='95%'>Method</th></tr>
    <tr class='apiDef'><td class='apiType'>public const </td><td><a href='#clearObservers'><b>clearObservers</b></a>(name: <a href='ejs-Object.html'>Object</a> = null): <a href='ejs-Void.html'>Void</a></tr><tr class='apiBrief'><td>&nbsp;</td><td>Clear observers for a given event name.</td></tr>
+   <tr class='apiDef'><td class='apiType'></td><td><a href='#Emitter'><b>Emitter</b></a>()</tr><tr class='apiBrief'><td>&nbsp;</td><td>Construct a new event Emitter object.</td></tr>
+   <tr class='apiDef'><td class='apiType'></td><td><a href='#Emitter'><b>Emitter</b></a>()</tr><tr class='apiBrief'><td>&nbsp;</td><td>Construct a new event Emitter object.</td></tr>
    <tr class='apiDef'><td class='apiType'>public const </td><td><a href='#fire'><b>fire</b></a>(name: <a href='ejs-String.html'>String</a>, args: <a href='ejs-Array.html'>Array</a>): <a href='ejs-Void.html'>Void</a></tr><tr class='apiBrief'><td>&nbsp;</td><td>Emit an event to the registered observers.</td></tr>
    <tr class='apiDef'><td class='apiType'>public const </td><td><a href='#fireThis'><b>fireThis</b></a>(name: <a href='ejs-String.html'>String</a>, thisObj: <a href='ejs-Object.html'>Object</a>, args: <a href='ejs-Array.html'>Array</a>): <a href='ejs-Void.html'>Void</a></tr><tr class='apiBrief'><td>&nbsp;</td><td>Emit an event to the registered observers using an explict value for the "this" object.</td></tr>
    <tr class='apiDef'><td class='apiType'>public const </td><td><a href='#getObservers'><b>getObservers</b></a>(name: <a href='ejs-String.html'>String</a>): <a href='ejs-Array.html'>Array</a></tr><tr class='apiBrief'><td>&nbsp;</td><td>Return the observers for this emitter.</td></tr>
@@ -64,6 +73,24 @@
 <dd><table class='parameters' summary ='parameters'>
 <tr class='param'><td class='param'>name: <a href='ejs-Object.html'>Object</a> </td><td>Event name to clear. The name can be a string or an array of event strings. If null, observers  for all event names are cleared. [default: null]</td></tr></table></dd>
 </dl></div>
+</div>
+<hr />
+<a name='Emitter'></a>
+<div class='api'>
+<div class='apiSig'>  ejs  Emitter()
+</div>
+<div class='apiDetail'>
+<p>Construct a new event Emitter object.</p>
+</div>
+</div>
+<hr />
+<a name='Emitter'></a>
+<div class='api'>
+<div class='apiSig'>  ejs  Emitter()
+</div>
+<div class='apiDetail'>
+<p>Construct a new event Emitter object.</p>
+</div>
 </div>
 <hr />
 <a name='fire'></a>

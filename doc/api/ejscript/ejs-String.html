@@ -17,16 +17,14 @@
 <table class='classHead' summary='String'>
    <tr><td><strong>Module</strong></td><td>ejs</td></tr>
    <tr><td><strong>Definition</strong></td><td>final  class String</td></tr>
-   <tr><td><strong>Inheritance</strong></td><td>String <img src='images/inherit.gif' alt='inherit'/>        </td></tr>
+   <tr><td><strong>Inheritance</strong></td><td>String <img src='images/inherit.gif' alt='inherit'/> <a href='ejs-Object.html'>Object</a><tr><td><strong>Specified</strong></td><td>evolving</td></tr>
+       </td></tr>
 </table>
 
-<p class='classBrief'>String constructor.</p>
+<p class='classBrief'>Each String object represents a single immutable linear sequence of characters.</p>
 
-<p class='classDescription'>This can take two forms:
-<ul>
-<li>String()</li>
-<li>String(str: String)</li>
-</ul></p>
+<p class='classDescription'>Strings have operators 
+for: comparison, concatenation, copying, searching, conversion, matching, replacement, and, subsetting.</p>
 
 </div>
 
@@ -85,6 +83,8 @@
    <tr class='apiDef'><td class='apiType'>public const </td><td><a href='#slice'><b>slice</b></a>(start: <a href='ejs-Number.html'>Number</a>, end: <a href='ejs-Number.html'>Number</a> = -1 , step: <a href='ejs-Number.html'>Number</a> = 1): <a href='ejs-String.html'>String</a></tr><tr class='apiBrief'><td>&nbsp;</td><td>Extract a substring.</td></tr>
    <tr class='apiDef'><td class='apiType'>public const </td><td><a href='#split'><b>split</b></a>(delimiter: <a href='ejs-Object.html'>Object</a>, limit: <a href='ejs-Number.html'>Number</a> = -1): <a href='ejs-Array.html'>Array</a></tr><tr class='apiBrief'><td>&nbsp;</td><td>Split a string into an array of substrings.</td></tr>
    <tr class='apiDef'><td class='apiType'>public const </td><td><a href='#startsWith'><b>startsWith</b></a>(test: <a href='ejs-String.html'>String</a>): <a href='ejs-Boolean.html'>Boolean</a></tr><tr class='apiBrief'><td>&nbsp;</td><td>Tests if this string starts with the string specified in the argument.</td></tr>
+   <tr class='apiDef'><td class='apiType'>final </td><td><a href='#String'><b>String</b></a>(str: <a href='ejs-Array.html'>Array</a>)</tr><tr class='apiBrief'><td>&nbsp;</td><td>String constructor.</td></tr>
+   <tr class='apiDef'><td class='apiType'>final </td><td><a href='#String'><b>String</b></a>(str: <a href='ejs-Array.html'>Array</a>)</tr><tr class='apiBrief'><td>&nbsp;</td><td>String constructor.</td></tr>
    <tr class='apiDef'><td class='apiType'>public const </td><td><a href='#substring'><b>substring</b></a>(startIndex: <a href='ejs-Number.html'>Number</a>, end: <a href='ejs-Number.html'>Number</a> = -1): <a href='ejs-String.html'>String</a></tr><tr class='apiBrief'><td>&nbsp;</td><td>Extract a substring.</td></tr>
    <tr class='apiDef'><td class='apiType'>public const </td><td><a href='#times'><b>times</b></a>(times: <a href='ejs-Number.html'>Number</a>): <a href='ejs-String.html'>String</a></tr><tr class='apiBrief'><td>&nbsp;</td><td>Replication.</td></tr>
    <tr class='apiDef'><td class='apiType'>public const </td><td><a href='#toCamel'><b>toCamel</b></a>(): <a href='ejs-String.html'>String</a></tr><tr class='apiBrief'><td>&nbsp;</td><td>Copy the string into a new string and lower case the first character if there is one.</td></tr>
@@ -489,6 +489,40 @@ and replace it with the replace text. If the pattern is a string, only the first
 <dl><dt>Specified</dt>
 <dd>ejscript-2.0</dd></dl>
 </div>
+</div>
+<hr />
+<a name='String'></a>
+<div class='api'>
+<div class='apiSig'>final   ejs  String(str: <a href='ejs-Array.html'>Array</a>)
+</div>
+<div class='apiDetail'>
+<p>String constructor.</p>
+<dl><dt>Description</dt><dd>This can take two forms:
+<ul>
+<li>String()</li>
+<li>String(str: String)</li>
+</ul></dd></dl>
+<dl><dt>Parameters</dt>
+<dd><table class='parameters' summary ='parameters'>
+<tr class='param'><td class='param'>str: <a href='ejs-Array.html'>Array</a> </td><td>The args can be either empty or a string. If a non-string arg is supplied, the VM will automatically cast to a string.</td></tr></table></dd>
+</dl></div>
+</div>
+<hr />
+<a name='String'></a>
+<div class='api'>
+<div class='apiSig'>final   ejs  String(str: <a href='ejs-Array.html'>Array</a>)
+</div>
+<div class='apiDetail'>
+<p>String constructor.</p>
+<dl><dt>Description</dt><dd>This can take two forms:
+<ul>
+<li>String()</li>
+<li>String(str: String)</li>
+</ul></dd></dl>
+<dl><dt>Parameters</dt>
+<dd><table class='parameters' summary ='parameters'>
+<tr class='param'><td class='param'>str: <a href='ejs-Array.html'>Array</a> </td><td>The args can be either empty or a string. If a non-string arg is supplied, the VM will automatically cast to a string.</td></tr></table></dd>
+</dl></div>
 </div>
 <hr />
 <a name='substring'></a>

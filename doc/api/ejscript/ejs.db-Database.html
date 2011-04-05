@@ -17,13 +17,15 @@
 <table class='classHead' summary='Database'>
    <tr><td><strong>Module</strong></td><td>ejs.db</td></tr>
    <tr><td><strong>Definition</strong></td><td> class Database</td></tr>
-   <tr><td><strong>Inheritance</strong></td><td>Database <img src='images/inherit.gif' alt='inherit'/>        </td></tr>
+   <tr><td><strong>Inheritance</strong></td><td>Database <img src='images/inherit.gif' alt='inherit'/> <a href='ejs-Object.html'>Object</a><tr><td><strong>Specified</strong></td><td>ejscript-2.0</td></tr>
+<tr><td><strong>Stability</strong></td><td>Evolving.</td></tr>
+       </td></tr>
 </table>
 
-<p class='classBrief'>Initialize a database connection using the supplied database connection string.</p>
+<p class='classBrief'>SQL Database support.</p>
 
-<p class='classDescription'>The first opened database
-will also be defined as the default database.</p>
+<p class='classDescription'>The Database class provides an interface over other database adapter classes such as 
+SQLite or MySQL. Not all the functionality expressed by this API may be implemented by a specific database adapter.</p>
 
 </div>
 
@@ -53,6 +55,8 @@ will also be defined as the default database.</p>
    <tr class='apiDef'><td class='apiType'>public const </td><td><a href='#commit'><b>commit</b></a>(): <a href='ejs-Void.html'>Void</a></tr><tr class='apiBrief'><td>&nbsp;</td><td>Commit a database transaction.</td></tr>
    <tr class='apiDef'><td class='apiType'>public const </td><td><a href='#createDatabase'><b>createDatabase</b></a>(name: <a href='ejs-String.html'>String</a>, options: <a href='ejs-Object.html'>Object</a> = null): <a href='ejs-Void.html'>Void</a></tr><tr class='apiBrief'><td>&nbsp;</td><td>Create a new database.</td></tr>
    <tr class='apiDef'><td class='apiType'>public const </td><td><a href='#createTable'><b>createTable</b></a>(table: <a href='ejs-String.html'>String</a>, columns: <a href='ejs-Array.html'>Array</a> = null): <a href='ejs-Void.html'>Void</a></tr><tr class='apiBrief'><td>&nbsp;</td><td>Create a new table.</td></tr>
+   <tr class='apiDef'><td class='apiType'></td><td><a href='#Database'><b>Database</b></a>(adapter: <a href='ejs-String.html'>String</a>, options: <a href='ejs-Object.html'>Object</a>)</tr><tr class='apiBrief'><td>&nbsp;</td><td>Initialize a database connection using the supplied database connection string.</td></tr>
+   <tr class='apiDef'><td class='apiType'></td><td><a href='#Database'><b>Database</b></a>(adapter: <a href='ejs-String.html'>String</a>, options: <a href='ejs-Object.html'>Object</a>)</tr><tr class='apiBrief'><td>&nbsp;</td><td>Initialize a database connection using the supplied database connection string.</td></tr>
    <tr class='apiDef'><td class='apiType'>public const </td><td><a href='#dataTypeToSqlType'><b>dataTypeToSqlType</b></a>(dataType: <a href='ejs-String.html'>String</a>): <a href='ejs-String.html'>String</a></tr><tr class='apiBrief'><td>&nbsp;</td><td>Map the database independant data type to a database dependant SQL data type.</td></tr>
    <tr class='apiDef'><td class='apiType'>public const </td><td><a href='#destroyDatabase'><b>destroyDatabase</b></a>(name: <a href='ejs-String.html'>String</a>): <a href='ejs-Void.html'>Void</a></tr><tr class='apiBrief'><td>&nbsp;</td><td>Destroy a database.</td></tr>
    <tr class='apiDef'><td class='apiType'>public const </td><td><a href='#destroyTable'><b>destroyTable</b></a>(table: <a href='ejs-String.html'>String</a>): <a href='ejs-Void.html'>Void</a></tr><tr class='apiBrief'><td>&nbsp;</td><td>Destroy a table.</td></tr>
@@ -158,6 +162,34 @@ for the garbage collector to automatically close the connection when disposing t
 <dl><dt>Parameters</dt>
 <dd><table class='parameters' summary ='parameters'>
 <tr class='param'><td class='param'>table: <a href='ejs-String.html'>String</a> </td><td>Name of the table.</td></tr><tr class='param'><td class='param'>columns: <a href='ejs-Array.html'>Array</a> </td><td>Array of column descriptor tuples consisting of name:datatype. [default: null]</td></tr></table></dd>
+</dl></div>
+</div>
+<hr />
+<a name='Database'></a>
+<div class='api'>
+<div class='apiSig'>  ejs.db  Database(adapter: <a href='ejs-String.html'>String</a>, options: <a href='ejs-Object.html'>Object</a>)
+</div>
+<div class='apiDetail'>
+<p>Initialize a database connection using the supplied database connection string.</p>
+<dl><dt>Description</dt><dd>The first opened database
+will also be defined as the default database.</dd></dl>
+<dl><dt>Parameters</dt>
+<dd><table class='parameters' summary ='parameters'>
+<tr class='param'><td class='param'>adapter: <a href='ejs-String.html'>String</a> </td><td>Database adapter to use. E.g. "sqlite". Sqlite is currently the only supported adapter.</td></tr><tr class='param'><td class='param'>options: <a href='ejs-Object.html'>Object</a> </td><td>Connection options. This may be filename or an object hash of properties. If set to a filename they type must be either String or Path and it should contain the filename of the database on the local system. If options is set ot an object hash. It should contain adapter specific properties that specify  how to attach to the database. Typical fields include: <ul> <li>name - Database URI Examples: http://example.com:1234/database.db, Examples: file://var/spool/db/database.db </li> <li>username - Database username</li> <li>password - Database password</li> <li>trace - Trace database commands to the log <li>socket - /var/run/mysqld/mysqld.sock </ul></td></tr></table></dd>
+</dl></div>
+</div>
+<hr />
+<a name='Database'></a>
+<div class='api'>
+<div class='apiSig'>  ejs.db  Database(adapter: <a href='ejs-String.html'>String</a>, options: <a href='ejs-Object.html'>Object</a>)
+</div>
+<div class='apiDetail'>
+<p>Initialize a database connection using the supplied database connection string.</p>
+<dl><dt>Description</dt><dd>The first opened database
+will also be defined as the default database.</dd></dl>
+<dl><dt>Parameters</dt>
+<dd><table class='parameters' summary ='parameters'>
+<tr class='param'><td class='param'>adapter: <a href='ejs-String.html'>String</a> </td><td>Database adapter to use. E.g. "sqlite". Sqlite is currently the only supported adapter.</td></tr><tr class='param'><td class='param'>options: <a href='ejs-Object.html'>Object</a> </td><td>Connection options. This may be filename or an object hash of properties. If set to a filename they type must be either String or Path and it should contain the filename of the database on the local system. If options is set ot an object hash. It should contain adapter specific properties that specify  how to attach to the database. Typical fields include: <ul> <li>name - Database URI Examples: http://example.com:1234/database.db, Examples: file://var/spool/db/database.db </li> <li>username - Database username</li> <li>password - Database password</li> <li>trace - Trace database commands to the log <li>socket - /var/run/mysqld/mysqld.sock </ul></td></tr></table></dd>
 </dl></div>
 </div>
 <hr />

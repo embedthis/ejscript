@@ -77,7 +77,7 @@ module ejs.db.mapper {
 
         use default namespace public
 
-        /*
+        /**
             Constructor for use when instantiating directly from Record. Typically, use models will implement this
             class and will provdie their own constructor which calls initialize().
          */

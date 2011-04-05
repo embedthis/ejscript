@@ -35,6 +35,12 @@ module ejs {
             require.main = mainId
         }
 
+        /**
+            Register a CommonJS module initializer
+            @param id Unique path ID for the module. This is typically a relative path to the module
+            @param fn Module initialization function
+            @return The function 
+         */
         public static function register(id, fn): Function {
             Loader.initializers[id] = fn
             return fn

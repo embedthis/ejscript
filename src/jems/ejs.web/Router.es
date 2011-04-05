@@ -745,7 +745,7 @@ module ejs.web {
          */
         internal var splitter: String
 
-        /*
+        /**
             Create a new Route instance. This is normally not invoked directly. Rather Router.add() is used to
             create and install routes into the Router.
             @param template String or Regular Expression defining the form of a matching URI (Request.pathInfo).
@@ -760,6 +760,7 @@ module ejs.web {
             @option name Name to give to the route. If absent, the name is created from the controller and action names.
             @option outer Parent route. The parent's template and parameters are appended to this route.
             @option params Override parameter to provide to the request in the Request.params.
+            @param router Owning router object
             @examples:
                 Route("/{controller}(/{action}(/{id}))/", { method: "POST" })
                 Route("/User/login", {name: "login" })

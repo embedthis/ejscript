@@ -87,7 +87,7 @@ static EjsNamespace *resolveNamespace(EcCompiler *cp, EcNode *np, EjsBlock *bloc
 static void     removeScope(EcCompiler *cp);
 static int      resolveName(EcCompiler *cp, EcNode *node, EjsObj *vp,  EjsName name);
 static int      resolveProperty(EcCompiler *cp, EcNode *node, EjsType *type, EjsName name);
-static void     setAstDocString(Ejs *ejs, EcNode *np, void *vp, int slotNum);
+static void     setAstDocString(Ejs *ejs, EcNode *np, cchar *tag, void *vp, int slotNum);
 static EjsNamespace *lookupNamespace(Ejs *ejs, EjsString *namespace);
 
 /*********************************************** Code ***********************************************/
@@ -662,7 +662,7 @@ static void bindClass(EcCompiler *cp, EcNode *np)
     if (resolveName(cp, np, ejs->global, type->qname) < 0) {
         return;
     }
-    setAstDocString(ejs, np, ejs->global, np->lookup.slotNum);
+    setAstDocString(ejs, np, "class", ejs->global, np->lookup.slotNum);
 }
 
 
@@ -1267,7 +1267,7 @@ static EjsFunction *bindFunction(EcCompiler *cp, EcNode *np)
             astError(cp, np, "Internal error. Can't resolve function %@", np->qname.name);
         }
         if (np->lookup.slotNum >= 0) {
-            setAstDocString(ejs, np, np->lookup.obj, np->lookup.slotNum);
+            setAstDocString(ejs, np, "fun", np->lookup.obj, np->lookup.slotNum);
         }
     } else {
         qname.space = NULL;
@@ -1278,7 +1278,7 @@ static EjsFunction *bindFunction(EcCompiler *cp, EcNode *np)
             }
         }
         if (np->lookup.slotNum >= 0) {
-            setAstDocString(ejs, np, np->lookup.obj, np->lookup.slotNum);
+            setAstDocString(ejs, np, "fun", np->lookup.obj, np->lookup.slotNum);
         }
     }
 
@@ -2815,7 +2815,7 @@ static void bindVariableDefinition(EcCompiler *cp, EcNode *np)
 #endif
         }
     }
-    setAstDocString(ejs, np, np->lookup.obj, np->lookup.slotNum);
+    setAstDocString(ejs, np, "var", np->lookup.obj, np->lookup.slotNum);
     np->lookup.bind = 0;
     LEAVE(cp);
 }
@@ -3735,13 +3735,13 @@ static void addGlobalProperty(EcCompiler *cp, EcNode *np, EjsName *qname)
 }
 
 
-static void setAstDocString(Ejs *ejs, EcNode *np, void *vp, int slotNum)
+static void setAstDocString(Ejs *ejs, EcNode *np, cchar *tag, void *vp, int slotNum)
 {
     mprAssert(vp);
     mprAssert(slotNum >= 0);
 
     if (np->doc && vp && slotNum >= 0) {
-        ejsCreateDoc(ejs, vp, slotNum, np->doc);
+        ejsCreateDoc(ejs, tag, vp, slotNum, np->doc);
     }
 }
 

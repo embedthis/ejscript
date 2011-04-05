@@ -17,13 +17,19 @@
 <table class='classHead' summary='Controller'>
    <tr><td><strong>Module</strong></td><td>ejs.web</td></tr>
    <tr><td><strong>Definition</strong></td><td> class Controller</td></tr>
-   <tr><td><strong>Inheritance</strong></td><td>Controller <img src='images/inherit.gif' alt='inherit'/>        </td></tr>
+   <tr><td><strong>Inheritance</strong></td><td>Controller <img src='images/inherit.gif' alt='inherit'/> <a href='ejs-Object.html'>Object</a><tr><td><strong>Specified</strong></td><td>ejscript-2.0</td></tr>
+<tr><td><strong>Stability</strong></td><td>Prototype.</td></tr>
+       </td></tr>
 </table>
 
-<p class='classBrief'>Create and initialize a controller.</p>
+<p class='classBrief'>Web framework controller class.</p>
 
-<p class='classDescription'>This may be called directly by class constructors or via 
-the Controller.create factory method.</p>
+<p class='classDescription'>The controller classes can accept web requests and direct them to action methods
+which generate the response. Controllers are responsible for either generating output for the client or invoking
+a View which will create the response. By convention, all Controllers should be defined with a "Controller" 
+suffix. This permits similar Controller and Model to exist in the same namespace.<br/><br/>MOB - Need intro to controllers here<br/><br/>Action methods will autoFinalize by calling Request.autoFinalize unless Request.dontAutoFinalize has been called.
+If the Controller action wants to keep the request connection to the client open, you must call dontAutoFinalize
+before returning from the action.</p>
 
 </div>
 
@@ -87,6 +93,8 @@ The "uri" property has fields for: scheme, host, port, path, query and reference
    <tr class='apiDef'><td class='apiType'>const </td><td><a href='#app'><b>app</b></a>(request: <a href='ejs.web-Request.html'>Request</a>, aname: <a href='ejs-String.html'>String</a> = null): <a href='ejs-Object.html'>Object</a></tr><tr class='apiBrief'><td>&nbsp;</td><td>Controller web application.</td></tr>
    <tr class='apiDef'><td class='apiType'>const </td><td><a href='#autoFinalize'><b>autoFinalize</b></a>(): <a href='ejs-Void.html'>Void</a></tr><tr class='apiBrief'><td>&nbsp;</td><td>Finalize the request if dontAutoFinalize has not been called.</td></tr>
    <tr class='apiDef'><td class='apiType'>const </td><td><a href='#before'><b>before</b></a>(fn, options: <a href='ejs-Object.html'>Object</a> = null): <a href='ejs-Void.html'>Void</a></tr><tr class='apiBrief'><td>&nbsp;</td><td>Run an action checker before running the action.</td></tr>
+   <tr class='apiDef'><td class='apiType'></td><td><a href='#Controller'><b>Controller</b></a>(req: <a href='ejs.web-Request.html'>Request</a> = null)</tr><tr class='apiBrief'><td>&nbsp;</td><td>Create and initialize a controller.</td></tr>
+   <tr class='apiDef'><td class='apiType'></td><td><a href='#Controller'><b>Controller</b></a>(req: <a href='ejs.web-Request.html'>Request</a> = null)</tr><tr class='apiBrief'><td>&nbsp;</td><td>Create and initialize a controller.</td></tr>
    <tr class='apiDef'><td class='apiType'>static const </td><td><a href='#create'><b>create</b></a>(request: <a href='ejs.web-Request.html'>Request</a>, cname: <a href='ejs-String.html'>String</a> = null): <a href='ejs.web-Controller.html'>Controller</a></tr><tr class='apiBrief'><td>&nbsp;</td><td>Static factory method to create and initialize a controller.</td></tr>
    <tr class='apiDef'><td class='apiType'>const </td><td><a href='#dontAutoFinalize'><b>dontAutoFinalize</b></a>(): <a href='ejs-Void.html'>Void</a></tr><tr class='apiBrief'><td>&nbsp;</td><td>Stop auto-finalizing the request.</td></tr>
    <tr class='apiDef'><td class='apiType'>const </td><td><a href='#error'><b>error</b></a>(msg: <a href='ejs-String.html'>String</a>): <a href='ejs-Void.html'>Void</a></tr><tr class='apiBrief'><td>&nbsp;</td><td>Set an error flash notification message.</td></tr>
@@ -183,6 +191,34 @@ checker does write a response, it must call finalize.</dd></dl>
 <td class='param'>only</td><td>Only run the checker for this action name.</td></tr>
 <td class='param'>except</td><td>Run the checker for all actions except this name.</td></tr>
 </table></dd>
+</dl></div>
+</div>
+<hr />
+<a name='Controller'></a>
+<div class='api'>
+<div class='apiSig'>  ejs.web  Controller(req: <a href='ejs.web-Request.html'>Request</a> = null)
+</div>
+<div class='apiDetail'>
+<p>Create and initialize a controller.</p>
+<dl><dt>Description</dt><dd>This may be called directly by class constructors or via 
+the Controller.create factory method.</dd></dl>
+<dl><dt>Parameters</dt>
+<dd><table class='parameters' summary ='parameters'>
+<tr class='param'><td class='param'>req: <a href='ejs.web-Request.html'>Request</a> </td><td>Web request object. [default: null]</td></tr></table></dd>
+</dl></div>
+</div>
+<hr />
+<a name='Controller'></a>
+<div class='api'>
+<div class='apiSig'>  ejs.web  Controller(req: <a href='ejs.web-Request.html'>Request</a> = null)
+</div>
+<div class='apiDetail'>
+<p>Create and initialize a controller.</p>
+<dl><dt>Description</dt><dd>This may be called directly by class constructors or via 
+the Controller.create factory method.</dd></dl>
+<dl><dt>Parameters</dt>
+<dd><table class='parameters' summary ='parameters'>
+<tr class='param'><td class='param'>req: <a href='ejs.web-Request.html'>Request</a> </td><td>Web request object. [default: null]</td></tr></table></dd>
 </dl></div>
 </div>
 <hr />

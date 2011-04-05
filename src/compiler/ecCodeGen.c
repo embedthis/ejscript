@@ -1493,7 +1493,7 @@ static void genClass(EcCompiler *cp, EcNode *np)
         ecAddConstants(cp, (EjsObj*) type->prototype);
     }
     if (cp->ejs->flags & EJS_FLAG_DOC) {
-        ecAddDocConstant(cp, np->lookup.obj, np->lookup.slotNum);
+        ecAddDocConstant(cp, "class", np->lookup.obj, np->lookup.slotNum);
     }
     LEAVE(cp);
 }
@@ -2385,7 +2385,7 @@ static void genFunction(EcCompiler *cp, EcNode *np)
         }
     }
     if (cp->ejs->flags & EJS_FLAG_DOC) {
-        ecAddDocConstant(cp, np->lookup.obj, np->lookup.slotNum);
+        ecAddDocConstant(cp, "fun", np->lookup.obj, np->lookup.slotNum);
     }
     LEAVE(cp);
 }
@@ -3608,7 +3608,7 @@ static void genVar(EcCompiler *cp, EcNode *np)
         ecAddStringConstant(cp, np->lookup.trait->type->qname.name);
     }
     if (cp->ejs->flags & EJS_FLAG_DOC) {
-        ecAddDocConstant(cp, np->lookup.obj, np->lookup.slotNum);
+        ecAddDocConstant(cp, "var", np->lookup.obj, np->lookup.slotNum);
     }
     if (np->left) {
         processNode(cp, np->left);

@@ -237,8 +237,12 @@ module ejs {
      */
     native function print(...args): void
 
-    //  MOB DOC
-    function printf(fmt, ...args)
+    /**
+        Print the arguments using a printf style format string
+        @param fmt Format string
+        @param args Variables to print
+     */
+    function printf(fmt, ...args): Void
         App.outputStream.write(fmt.format(args))
 
     /** 

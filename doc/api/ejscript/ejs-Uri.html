@@ -17,10 +17,12 @@
 <table class='classHead' summary='Uri'>
    <tr><td><strong>Module</strong></td><td>ejs</td></tr>
    <tr><td><strong>Definition</strong></td><td> class Uri</td></tr>
-   <tr><td><strong>Inheritance</strong></td><td>Uri <img src='images/inherit.gif' alt='inherit'/>        </td></tr>
+   <tr><td><strong>Inheritance</strong></td><td>Uri <img src='images/inherit.gif' alt='inherit'/> <a href='ejs-Object.html'>Object</a><tr><td><strong>Specified</strong></td><td>ejscript-2.0</td></tr>
+<tr><td><strong>Stability</strong></td><td>Prototype.</td></tr>
+       </td></tr>
 </table>
 
-<p class='classBrief'>Create and parse a Uri object.</p>
+<p class='classBrief'>Uri class to manage Uris.</p>
 
 <p class='classDescription'>null</p>
 
@@ -105,6 +107,8 @@ NOTE: this does a case-sensitive match.</td></tr>
    <tr class='apiDef'><td class='apiType'>public const </td><td><a href='#trimExt'><b>trimExt</b></a>(): <a href='ejs-Uri.html'>Uri</a></tr><tr class='apiBrief'><td>&nbsp;</td><td>Trim the extension portion off the URI path.</td></tr>
    <tr class='apiDef'><td class='apiType'>public const </td><td><a href='#trimStart'><b>trimStart</b></a>(pat: <a href='ejs-String.html'>String</a>): <a href='ejs-Uri.html'>Uri</a></tr><tr class='apiBrief'><td>&nbsp;</td><td>Trim a pattern from the start of the path
 NOTE: this does a case-sensitive match.</td></tr>
+   <tr class='apiDef'><td class='apiType'></td><td><a href='#Uri'><b>Uri</b></a>(uri: <a href='ejs-Object.html'>Object</a>)</tr><tr class='apiBrief'><td>&nbsp;</td><td>Create and parse a Uri object.</td></tr>
+   <tr class='apiDef'><td class='apiType'></td><td><a href='#Uri'><b>Uri</b></a>(uri: <a href='ejs-Object.html'>Object</a>)</tr><tr class='apiBrief'><td>&nbsp;</td><td>Create and parse a Uri object.</td></tr>
 </table>
 
 <p class='inheritedLink'><a href='ejs-Object.html#Methods'><i>Inherited Methods</i></a></p>
@@ -425,6 +429,48 @@ NOTE: this does a case-sensitive match.</p>
 <dl><dt>Returns</dt>
 <dd>A URI containing the trimmed path name TODO - should support reg expressions.</dd></dl>
 </div>
+</div>
+<hr />
+<a name='Uri'></a>
+<div class='api'>
+<div class='apiSig'>  ejs  Uri(uri: <a href='ejs-Object.html'>Object</a>)
+</div>
+<div class='apiDetail'>
+<p>Create and parse a Uri object.</p>
+<dl><dt>Parameters</dt>
+<dd><table class='parameters' summary ='parameters'>
+<tr class='param'><td class='param'>uri: <a href='ejs-Object.html'>Object</a> </td><td>A string or object hash that describes the URI. The <a href='#uri'>uri</a> specify a complete absolute URI string or it may specify a partial URI where missing elements take the normal defaults. The <a href='#uri'>uri</a> argument may also be  an object hash with the following properties.</td></tr></table></dd>
+</dl><dl><dt>Options</dt>
+<dd><table class='parameters' summary ='options'>
+<td class='param'>scheme</td><td>String URI protocol scheme (http or https).</td></tr>
+<td class='param'>host</td><td>String URI host name or IP address.</td></tr>
+<td class='param'>port</td><td>Number TCP/IP port number for communications.</td></tr>
+<td class='param'>path</td><td>String URI path.</td></tr>
+<td class='param'>query</td><td>String URI query parameters. Does not include "?".</td></tr>
+<td class='param'>reference</td><td>String URI path reference. Does not include "#".</td></tr>
+</table></dd>
+</dl></div>
+</div>
+<hr />
+<a name='Uri'></a>
+<div class='api'>
+<div class='apiSig'>  ejs  Uri(uri: <a href='ejs-Object.html'>Object</a>)
+</div>
+<div class='apiDetail'>
+<p>Create and parse a Uri object.</p>
+<dl><dt>Parameters</dt>
+<dd><table class='parameters' summary ='parameters'>
+<tr class='param'><td class='param'>uri: <a href='ejs-Object.html'>Object</a> </td><td>A string or object hash that describes the URI. The <a href='#uri'>uri</a> specify a complete absolute URI string or it may specify a partial URI where missing elements take the normal defaults. The <a href='#uri'>uri</a> argument may also be  an object hash with the following properties.</td></tr></table></dd>
+</dl><dl><dt>Options</dt>
+<dd><table class='parameters' summary ='options'>
+<td class='param'>scheme</td><td>String URI protocol scheme (http or https).</td></tr>
+<td class='param'>host</td><td>String URI host name or IP address.</td></tr>
+<td class='param'>port</td><td>Number TCP/IP port number for communications.</td></tr>
+<td class='param'>path</td><td>String URI path.</td></tr>
+<td class='param'>query</td><td>String URI query parameters. Does not include "?".</td></tr>
+<td class='param'>reference</td><td>String URI path reference. Does not include "#".</td></tr>
+</table></dd>
+</dl></div>
 </div>
 <hr />
 <div class="terms">

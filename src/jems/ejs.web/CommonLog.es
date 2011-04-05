@@ -4,8 +4,8 @@
 
 module ejs.web {
     /** 
-        CommonLog middleware script. This logs each request to a file in the Common Log format defined 
-        by the Apache web server.
+        Common Log web server logging. 
+        This function is a middleware constructor that returns a web application function.
         @param app Application servicing the request and generating the response.
         @param logger Stream to use for writing access log information
         @return A web application function that services a web request and when invoked with the request object will 
@@ -20,7 +20,8 @@ module ejs.web {
     }
 
     /**
-        TODO - doc
+        Common Log web server logging.
+        This logs each HTTP request to a file in the Common Log format defined by the Apache web server.
      */
     class CommonLogClass {
         var innerApp: Function

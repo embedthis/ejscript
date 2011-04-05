@@ -842,7 +842,7 @@ extern void     ecAddConstants(EcCompiler *cp, EjsAny *obj);
 extern int      ecAddStringConstant(EcCompiler *cp, EjsString *sp);
 extern int      ecAddCStringConstant(EcCompiler *cp, cchar *str);
 extern int      ecAddNameConstant(EcCompiler *cp, EjsName qname);
-extern int      ecAddDocConstant(EcCompiler *cp, void *vp, int slotNum);
+extern int      ecAddDocConstant(EcCompiler *cp, cchar *tag, void *vp, int slotNum);
 extern int      ecAddModuleConstant(EcCompiler *cp, EjsModule *up, cchar *str);
 extern int      ecCreateModuleHeader(EcCompiler *cp);
 extern int      ecCreateModuleSection(EcCompiler *cp);

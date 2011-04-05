@@ -14,6 +14,7 @@ module ejs {
     /**
         Locale information.
         @stability prototype
+        @hide
      */
     class Locale {
 

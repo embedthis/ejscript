@@ -17,12 +17,13 @@
 <table class='classHead' summary='Cmd'>
    <tr><td><strong>Module</strong></td><td>ejs</td></tr>
    <tr><td><strong>Definition</strong></td><td> class Cmd</td></tr>
-   <tr><td><strong>Inheritance</strong></td><td>Cmd <img src='images/inherit.gif' alt='inherit'/>        </td></tr>
+   <tr><td><strong>Inheritance</strong></td><td>Cmd <img src='images/inherit.gif' alt='inherit'/> <a href='ejs-Object.html'>Object</a><tr><td><strong>Specified</strong></td><td>ejscript-2.0</td></tr>
+       </td></tr>
 </table>
 
-<p class='classBrief'>Create an Cmd object.</p>
+<p class='classBrief'>The Cmd class supports invoking other programs on the same system.</p>
 
-<p class='classDescription'>If a command line is provided, the command is immediately started.</p>
+<p class='classDescription'>null</p>
 
 </div>
 
@@ -56,12 +57,14 @@ test if the command has completed.</td></tr>
 <table class='apiIndex' summary='methods'>
    <tr><th>Qualifiers</th><th width='95%'>Method</th></tr>
    <tr class='apiDef'><td class='apiType'>public const </td><td><a href='#close'><b>close</b></a>(): <a href='ejs-Void.html'>Void</a></tr><tr class='apiBrief'><td>&nbsp;</td><td>Close the connection to the command and free up all associated resources.</td></tr>
+   <tr class='apiDef'><td class='apiType'></td><td><a href='#Cmd'><b>Cmd</b></a>(command: <a href='ejs-Object.html'>Object</a> = null , options: <a href='ejs-Object.html'>Object</a> = null)</tr><tr class='apiBrief'><td>&nbsp;</td><td>Create an Cmd object.</td></tr>
+   <tr class='apiDef'><td class='apiType'></td><td><a href='#Cmd'><b>Cmd</b></a>(command: <a href='ejs-Object.html'>Object</a> = null , options: <a href='ejs-Object.html'>Object</a> = null)</tr><tr class='apiBrief'><td>&nbsp;</td><td>Create an Cmd object.</td></tr>
    <tr class='apiDef'><td class='apiType'>public static const </td><td><a href='#daemon'><b>daemon</b></a>(cmdline: <a href='ejs-Object.html'>Object</a>, options: <a href='ejs-Object.html'>Object</a> = null): <a href='ejs-Number.html'>Number</a></tr><tr class='apiBrief'><td>&nbsp;</td><td>Start a command in the background as a daemon.</td></tr>
    <tr class='apiDef'><td class='apiType'>public static const </td><td><a href='#exec'><b>exec</b></a>(cmdline: <a href='ejs-String.html'>String</a> = null , options: <a href='ejs-Object.html'>Object</a> = expression): <a href='ejs-Void.html'>Void</a></tr><tr class='apiBrief'><td>&nbsp;</td><td>Execute a new program by the current process.</td></tr>
    <tr class='apiDef'><td class='apiType'>public const </td><td><a href='#finalize'><b>finalize</b></a>(): <a href='ejs-Void.html'>Void</a></tr><tr class='apiBrief'><td>&nbsp;</td><td>Signal the end of write data.</td></tr>
    <tr class='apiDef'><td class='apiType'>public static const </td><td><a href='#kill'><b>kill</b></a>(pid: <a href='ejs-Number.html'>Number</a>, signal: <a href='ejs-Number.html'>Number</a> = 2): <a href='ejs-Boolean.html'>Boolean</a></tr><tr class='apiBrief'><td>&nbsp;</td><td>Kill the specified process.</td></tr>
-   <tr class='apiDef'><td class='apiType'>public const </td><td><a href='#on'><b>on</b></a>(name, listener: <a href='ejs-Function.html'>Function</a>): <a href='ejs-Void.html'>Void</a></tr><tr class='apiBrief'><td>&nbsp;</td><td>Add an observer to the stream for the named events.</td></tr>
-   <tr class='apiDef'><td class='apiType'>public const </td><td><a href='#read'><b>read</b></a>(buffer: <a href='ejs-ByteArray.html'>ByteArray</a>, offset: <a href='ejs-Number.html'>Number</a> = 0 , count: <a href='ejs-Number.html'>Number</a> = -1): <a href='ejs-Number.html'>Number</a></tr><tr class='apiBrief'><td>&nbsp;</td><td>Read a data from the stream.If no listener has been defined via <a href='#on(),'>on(),</a> this call will block if there is no data to be read.</td></tr>
+   <tr class='apiDef'><td class='apiType'>public const </td><td><a href='#on'><b>on</b></a>(name, observer: <a href='ejs-Function.html'>Function</a>): <a href='ejs-Void.html'>Void</a></tr><tr class='apiBrief'><td>&nbsp;</td><td>Add an observer to the stream for the named events.</td></tr>
+   <tr class='apiDef'><td class='apiType'>public const </td><td><a href='#read'><b>read</b></a>(buffer: <a href='ejs-ByteArray.html'>ByteArray</a>, offset: <a href='ejs-Number.html'>Number</a> = 0 , count: <a href='ejs-Number.html'>Number</a> = -1): <a href='ejs-Number.html'>Number</a></tr><tr class='apiBrief'><td>&nbsp;</td><td>Read a data from the stream.If no observer has been defined via <a href='#on(),'>on(),</a> this call will block if there is no data to be read.</td></tr>
    <tr class='apiDef'><td class='apiType'>public const </td><td><a href='#readLines'><b>readLines</b></a>(count: <a href='ejs-Number.html'>Number</a> = -1): <a href='ejs-Array.html'>Array</a></tr><tr class='apiBrief'><td>&nbsp;</td><td>Read the data from the command as an array of lines.</td></tr>
    <tr class='apiDef'><td class='apiType'>public const </td><td><a href='#readString'><b>readString</b></a>(count: <a href='ejs-Number.html'>Number</a> = -1): <a href='ejs-String.html'>String</a></tr><tr class='apiBrief'><td>&nbsp;</td><td>Read the data from the command output as a string.</td></tr>
    <tr class='apiDef'><td class='apiType'>public const </td><td><a href='#readXml'><b>readXml</b></a>(): <a href='ejs-XML.html'>XML</a></tr><tr class='apiBrief'><td>&nbsp;</td><td>Read the command output as an XML document.</td></tr>
@@ -89,6 +92,46 @@ unread response data are not accessible.</dd></dl>
 </div>
 </div>
 <hr />
+<a name='Cmd'></a>
+<div class='api'>
+<div class='apiSig'>  ejs  Cmd(command: <a href='ejs-Object.html'>Object</a> = null , options: <a href='ejs-Object.html'>Object</a> = null)
+</div>
+<div class='apiDetail'>
+<p>Create an Cmd object.</p>
+<dl><dt>Description</dt><dd>If a command line is provided, the command is immediately started.</dd></dl>
+<dl><dt>Parameters</dt>
+<dd><table class='parameters' summary ='parameters'>
+<tr class='param'><td class='param'>command: <a href='ejs-Object.html'>Object</a> </td><td>The (optional) command line to initialize with. If a command line is provided, the start() method is automatically invoked after the command is constructed. The command may be either a string or an array of arguments. Using an array of args can simplify quoting if the args have embedded spaces or quotes. [default: null ]</td></tr><tr class='param'><td class='param'>options: <a href='ejs-Object.html'>Object</a> </td><td>Command options hash. Supported options are:. [default: null]</td></tr><tr class='param'><td class='param'>options: <a href='ejs-Object.html'>Object</a> </td><td>null [default: null]</td></tr></table></dd>
+</dl><dl><dt>Options</dt>
+<dd><table class='parameters' summary ='options'>
+<td class='param'>detach</td><td>Boolean If true, run the command and return immediately. If detached, finalize() must be called to signify the end of data being written to the command's stdin.</td></tr>
+<td class='param'>dir</td><td>Path or String. Directory to set as the current working directory for the command.</td></tr>
+<td class='param'>exception</td><td>Boolean If true, throw exceptions if the command returns a non-zero status code.  Defaults to false.</td></tr>
+<td class='param'>timeout</td><td>Number This is the default number of milliseconds for the command to complete.</td></tr>
+</table></dd>
+</dl></div>
+</div>
+<hr />
+<a name='Cmd'></a>
+<div class='api'>
+<div class='apiSig'>  ejs  Cmd(command: <a href='ejs-Object.html'>Object</a> = null , options: <a href='ejs-Object.html'>Object</a> = null)
+</div>
+<div class='apiDetail'>
+<p>Create an Cmd object.</p>
+<dl><dt>Description</dt><dd>If a command line is provided, the command is immediately started.</dd></dl>
+<dl><dt>Parameters</dt>
+<dd><table class='parameters' summary ='parameters'>
+<tr class='param'><td class='param'>command: <a href='ejs-Object.html'>Object</a> </td><td>The (optional) command line to initialize with. If a command line is provided, the start() method is automatically invoked after the command is constructed. The command may be either a string or an array of arguments. Using an array of args can simplify quoting if the args have embedded spaces or quotes. [default: null ]</td></tr><tr class='param'><td class='param'>options: <a href='ejs-Object.html'>Object</a> </td><td>Command options hash. Supported options are:. [default: null]</td></tr><tr class='param'><td class='param'>options: <a href='ejs-Object.html'>Object</a> </td><td>null [default: null]</td></tr></table></dd>
+</dl><dl><dt>Options</dt>
+<dd><table class='parameters' summary ='options'>
+<td class='param'>detach</td><td>Boolean If true, run the command and return immediately. If detached, finalize() must be called to signify the end of data being written to the command's stdin.</td></tr>
+<td class='param'>dir</td><td>Path or String. Directory to set as the current working directory for the command.</td></tr>
+<td class='param'>exception</td><td>Boolean If true, throw exceptions if the command returns a non-zero status code.  Defaults to false.</td></tr>
+<td class='param'>timeout</td><td>Number This is the default number of milliseconds for the command to complete.</td></tr>
+</table></dd>
+</dl></div>
+</div>
+<hr />
 <a name='daemon'></a>
 <div class='api'>
 <div class='apiSig'>static const   public  daemon(cmdline: <a href='ejs-Object.html'>Object</a>, options: <a href='ejs-Object.html'>Object</a> = null): <a href='ejs-Number.html'>Number</a>
@@ -98,7 +141,7 @@ unread response data are not accessible.</dd></dl>
 <dl><dt>Description</dt><dd>No data can be written to the daemon's stdin.</dd></dl>
 <dl><dt>Parameters</dt>
 <dd><table class='parameters' summary ='parameters'>
-<tr class='param'><td class='param'>options: <a href='ejs-Object.html'>Object</a> </td><td>null [default: null]</td></tr></table></dd>
+<tr class='param'><td class='param'>cmdline: <a href='ejs-Object.html'>Object</a> </td><td>Command line to use. The cmdline may be either a string or an array of strings.</td></tr><tr class='param'><td class='param'>options: <a href='ejs-Object.html'>Object</a> </td><td>null [default: null]</td></tr></table></dd>
 </dl><dl><dt>Returns</dt>
 <dd>The process ID. This pid can be used with kill().</dd></dl>
 </div>
@@ -150,13 +193,13 @@ creating a new process.</dd></dl>
 <hr />
 <a name='on'></a>
 <div class='api'>
-<div class='apiSig'>const   public  on(name, listener: <a href='ejs-Function.html'>Function</a>): <a href='ejs-Void.html'>Void</a>
+<div class='apiSig'>const   public  on(name, observer: <a href='ejs-Function.html'>Function</a>): <a href='ejs-Void.html'>Void</a>
 </div>
 <div class='apiDetail'>
 <p>Add an observer to the stream for the named events.</p>
 <dl><dt>Parameters</dt>
 <dd><table class='parameters' summary ='parameters'>
-<tr class='param'><td class='param'>name </td><td>Name of the event to listen for. The name may be an array of events.</td></tr></td></tr></table></dd>
+<tr class='param'><td class='param'>name </td><td>Name of the event to listen for. The name may be an array of events.</td></tr><tr class='param'><td class='param'>observer: <a href='ejs-Function.html'>Function</a> </td><td>Callback observer function. The function is called with the following signature: function observer(event: String, ...args): Void.</td></tr></table></dd>
 </dl><dl><dt>Events</dt>
 <dd><table class='parameters' summary ='events'>
 <td class='param'>readable</td><td>Issued when the stream becomes readable.</td></tr>
@@ -175,7 +218,7 @@ creating a new process.</dd></dl>
 <div class='apiSig'>const   public  read(buffer: <a href='ejs-ByteArray.html'>ByteArray</a>, offset: <a href='ejs-Number.html'>Number</a> = 0 , count: <a href='ejs-Number.html'>Number</a> = -1): <a href='ejs-Number.html'>Number</a>
 </div>
 <div class='apiDetail'>
-<p>Read a data from the stream.If no listener has been defined via <a href='#on(),'>on(),</a> this call will block if there is no data to be read.</p>
+<p>Read a data from the stream.If no observer has been defined via <a href='#on(),'>on(),</a> this call will block if there is no data to be read.</p>
 <dl><dt>Description</dt><dd>If data is available, the call will return immediately. 
 If no data is available and the stream is in sync mode, the call will block until data is available.
 If no data is available and the stream is in async mode, the call will not block and will return immediately.

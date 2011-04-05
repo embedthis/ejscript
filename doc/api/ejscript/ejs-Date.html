@@ -17,19 +17,13 @@
 <table class='classHead' summary='Date'>
    <tr><td><strong>Module</strong></td><td>ejs</td></tr>
    <tr><td><strong>Definition</strong></td><td>final  class Date</td></tr>
-   <tr><td><strong>Inheritance</strong></td><td>Date <img src='images/inherit.gif' alt='inherit'/>        </td></tr>
+   <tr><td><strong>Inheritance</strong></td><td>Date <img src='images/inherit.gif' alt='inherit'/> <a href='ejs-Object.html'>Object</a><tr><td><strong>Stability</strong></td><td>Evolving.</td></tr>
+       </td></tr>
 </table>
 
-<p class='classBrief'>Construct a new date object.</p>
+<p class='classBrief'>General purpose class for representing and working with dates, times, time spans and time zones.</p>
 
-<p class='classDescription'>Permissible constructor forms:
-<ul>
-<li>Date() This is the default and it constructs a date instance for the current time.</li>
-<li>Date(milliseconds) where (seconds sincde 1 Jan 1970 00:00:00 UTC))</li>
-<li>Date(dateString) where (In a format recognized by parse())</li>
-<li>Date(year, month, date) where (Four digit year, month: 0-11, date: 1-31)</li>
-<li>Date(year, month, date [, hour, minute, second, msec]) where (hour: 0-23, minute: 0-59, second: 0-59, msec: 0-999)</li>
-</ul></p>
+<p class='classDescription'>null</p>
 
 </div>
 
@@ -53,6 +47,8 @@ will return the <a href='#now'>now</a> value in milliseconds.</td></tr>
 <h2 class='classSection'>Date Methods</h2>
 <table class='apiIndex' summary='methods'>
    <tr><th>Qualifiers</th><th width='95%'>Method</th></tr>
+   <tr class='apiDef'><td class='apiType'>final </td><td><a href='#Date'><b>Date</b></a>(args: <a href='ejs-Array.html'>Array</a>)</tr><tr class='apiBrief'><td>&nbsp;</td><td>Construct a new date object.</td></tr>
+   <tr class='apiDef'><td class='apiType'>final </td><td><a href='#Date'><b>Date</b></a>(args: <a href='ejs-Array.html'>Array</a>)</tr><tr class='apiBrief'><td>&nbsp;</td><td>Construct a new date object.</td></tr>
    <tr class='apiDef'><td class='apiType'>public const </td><td><a href='#format'><b>format</b></a>(layout: <a href='ejs-String.html'>String</a>): <a href='ejs-String.html'>String</a></tr><tr class='apiBrief'><td>&nbsp;</td><td>Format a date using a format specifier in local time.</td></tr>
    <tr class='apiDef'><td class='apiType'>public const </td><td><a href='#formatUTC'><b>formatUTC</b></a>(layout: <a href='ejs-String.html'>String</a>): <a href='ejs-String.html'>String</a></tr><tr class='apiBrief'><td>&nbsp;</td><td>Format a date using a format specifier in UTC time.</td></tr>
    <tr class='apiDef'><td class='apiType'>public const </td><td><a href='#future'><b>future</b></a>(msec: <a href='ejs-Number.html'>Number</a>): <a href='ejs-Date.html'>Date</a></tr><tr class='apiBrief'><td>&nbsp;</td><td>Calculate a time that is <a href='#msec'>msec</a> in the future.</td></tr>
@@ -113,6 +109,40 @@ If a value outside the range is given, the date is adjusted without error.</td><
 
 <hr />
 <h2>Method Detail</h2>
+<a name='Date'></a>
+<div class='api'>
+<div class='apiSig'>final   ejs  Date(args: <a href='ejs-Array.html'>Array</a>)
+</div>
+<div class='apiDetail'>
+<p>Construct a new date object.</p>
+<dl><dt>Description</dt><dd>Permissible constructor forms:
+<ul>
+<li>Date() This is the default and it constructs a date instance for the current time.</li>
+<li>Date(milliseconds) where (seconds sincde 1 Jan 1970 00:00:00 UTC))</li>
+<li>Date(dateString) where (In a format recognized by parse())</li>
+<li>Date(year, month, date) where (Four digit year, month: 0-11, date: 1-31)</li>
+<li>Date(year, month, date [, hour, minute, second, msec]) where (hour: 0-23, minute: 0-59, second: 0-59, msec: 0-999)</li>
+</ul></dd></dl>
+</div>
+</div>
+<hr />
+<a name='Date'></a>
+<div class='api'>
+<div class='apiSig'>final   ejs  Date(args: <a href='ejs-Array.html'>Array</a>)
+</div>
+<div class='apiDetail'>
+<p>Construct a new date object.</p>
+<dl><dt>Description</dt><dd>Permissible constructor forms:
+<ul>
+<li>Date() This is the default and it constructs a date instance for the current time.</li>
+<li>Date(milliseconds) where (seconds sincde 1 Jan 1970 00:00:00 UTC))</li>
+<li>Date(dateString) where (In a format recognized by parse())</li>
+<li>Date(year, month, date) where (Four digit year, month: 0-11, date: 1-31)</li>
+<li>Date(year, month, date [, hour, minute, second, msec]) where (hour: 0-23, minute: 0-59, second: 0-59, msec: 0-999)</li>
+</ul></dd></dl>
+</div>
+</div>
+<hr />
 <a name='format'></a>
 <div class='api'>
 <div class='apiSig'>const   public  format(layout: <a href='ejs-String.html'>String</a>): <a href='ejs-String.html'>String</a>

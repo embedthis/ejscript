@@ -39,7 +39,7 @@ static void popScope(EjsModule *mp, int keepScope);
 static void pushScope(EjsModule *mp, EjsBlock *block, EjsObj *obj);
 static char *search(Ejs *ejs, cchar *filename, int minVersion, int maxVersion);
 static int  trimModule(Ejs *ejs, char *name);
-static void setDoc(Ejs *ejs, EjsModule *mp, void *vp, int slotNum);
+static void setDoc(Ejs *ejs, EjsModule *mp, cchar *tag, void *vp, int slotNum);
 
 /******************************************************************************/
 /**
@@ -613,7 +613,7 @@ static int loadClassSection(Ejs *ejs, EjsModule *mp)
             return MPR_ERR_MEMORY;
         }
     }
-    setDoc(ejs, mp, ejs->global, slotNum);
+    setDoc(ejs, mp, "class", ejs->global, slotNum);
     pushScope(mp, (EjsBlock*) type, (EjsObj*) type);
 
     if (ejs->loaderCallback) {
@@ -737,11 +737,6 @@ static int loadFunctionSection(Ejs *ejs, EjsModule *mp)
     mprAssert(fun->block.pot.isBlock);
     mprAssert(fun->block.pot.isFunction);
 
-#if UNUSED
-    if (mp->flags & EJS_LOADER_BUILTIN) {
-        BUILTIN(fun) = 1;
-    }
-#endif
     if (numProp > 0) {
         fun->activation = ejsCreateActivation(ejs, fun, numProp);
     }
@@ -776,7 +771,11 @@ static int loadFunctionSection(Ejs *ejs, EjsModule *mp)
             return MPR_ERR_MEMORY;
         }
     }
-    setDoc(ejs, mp, block, slotNum);
+    if (currentType && attributes & EJS_FUN_CONSTRUCTOR) {
+        setDoc(ejs, mp, "fun", ejs->global, ejsLookupProperty(ejs, ejs->global, currentType->qname));
+    } else {
+        setDoc(ejs, mp, "fun", block, slotNum);
+    }
 
     mp->currentMethod = fun;
     pushScope(mp, ejsIsType(ejs, fun) ? NULL : (EjsBlock*) fun, (EjsObj*) fun->activation);
@@ -939,7 +938,7 @@ static int loadPropertySection(Ejs *ejs, EjsModule *mp, int sectionType)
             return MPR_ERR_MEMORY;
         }
     }
-    setDoc(ejs, mp, current, slotNum);
+    setDoc(ejs, mp, "var", current, slotNum);
 
     if (ejs->loaderCallback) {
         (ejs->loaderCallback)(ejs, EJS_SECT_PROPERTY, mp, current, slotNum, qname, attributes, propTypeName);
@@ -1613,10 +1612,10 @@ static int addFixup(Ejs *ejs, EjsModule *mp, int kind, EjsObj *target, int slotN
 }
 
 
-static void setDoc(Ejs *ejs, EjsModule *mp, void *vp, int slotNum)
+static void setDoc(Ejs *ejs, EjsModule *mp, cchar *tag, void *vp, int slotNum)
 {
     if (mp->doc) {
-        ejsCreateDoc(ejs, vp, slotNum, mp->doc);
+        ejsCreateDoc(ejs, tag, vp, slotNum, mp->doc);
         mp->doc = 0;
     }
 }
@@ -1658,7 +1657,7 @@ static void manageDoc(EjsDoc *doc, int flags)
 }
 
 
-EjsDoc *ejsCreateDoc(Ejs *ejs, void *vp, int slotNum, EjsString *docString)
+EjsDoc *ejsCreateDoc(Ejs *ejs, cchar *tag, void *vp, int slotNum, EjsString *docString)
 {
     EjsDoc      *doc;
     char        key[32];
@@ -1669,11 +1668,8 @@ EjsDoc *ejsCreateDoc(Ejs *ejs, void *vp, int slotNum, EjsString *docString)
     doc->docString = docString;
     if (ejs->doc == 0) {
         ejs->doc = mprCreateHash(EJS_DOC_HASH_SIZE, 0);
-#if UNUSED
-        mprSetManager(ejs->doc, manageDocStrings);
-#endif
     }
-    mprSprintf(key, sizeof(key), "%Lx %d", PTOL(vp), slotNum);
+    mprSprintf(key, sizeof(key), "%s %Lx %d", tag, PTOL(vp), slotNum);
     mprAddKey(ejs->doc, key, doc);
     return doc;
 }
