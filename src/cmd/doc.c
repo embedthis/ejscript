@@ -763,6 +763,7 @@ static void generateClassPage(EjsMod *mp, EjsObj *obj, EjsName name, EjsTrait *t
     MprList     *methods;
     int         count;
 
+    mprAssert(strcmp(name.name->value, "Column") != 0);
     prepDocStrings(mp, obj, name, trait, doc);
     if (doc->hide) {
         return;
@@ -892,7 +893,7 @@ static void generateClassPageHeader(EjsMod *mp, EjsObj *obj, EjsName qname, EjsT
         if (type && type->baseType) {
             out(mp, "   <tr><td><strong>Inheritance</strong></td><td>%@", qname.name);
             for (t = type->baseType; t; t = t->baseType) {
-                out(mp, " <img src='images/inherit.gif' alt='inherit'/> %@", fmtTypeReference(ejs, t->qname));
+                out(mp, " <img src='images/inherit.gif' alt='inherit'/> %s", fmtTypeReference(ejs, t->qname));
             }
         }
 
