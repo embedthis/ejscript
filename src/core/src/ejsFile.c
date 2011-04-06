@@ -373,7 +373,7 @@ static EjsObj *getFilePosition(Ejs *ejs, EjsFile *fp, int argc, EjsObj **argv)
  */
 static EjsObj *setFilePosition(Ejs *ejs, EjsFile *fp, int argc, EjsObj **argv)
 {
-    long        pos;
+    MprOff      pos;
 
     mprAssert(argc == 1 && ejsIs(ejs, argv[0], Number));
     pos = ejsGetInt(ejs, argv[0]);
@@ -384,7 +384,7 @@ static EjsObj *setFilePosition(Ejs *ejs, EjsFile *fp, int argc, EjsObj **argv)
     }
     pos = ejsGetInt(ejs, argv[0]);
     if (mprSeekFile(fp->file, SEEK_SET, pos) != pos) {
-        ejsThrowIOError(ejs, "Can't seek to %ld", pos);
+        ejsThrowIOError(ejs, "Can't seek to %Ld", pos);
     }
     return 0;
 }
