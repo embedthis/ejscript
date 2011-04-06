@@ -392,7 +392,7 @@ static EjsDebug *loadDebug(Ejs *ejs, EjsFunction *fun)
     EjsDebug    *debug;
     EjsLine     *line;
     EjsCode     *code;
-    MprOffset   prior;
+    MprOff      prior;
     int         i, length;
 
     mp = fun->body.code->module;

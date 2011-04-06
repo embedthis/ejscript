@@ -540,7 +540,7 @@ static EjsObj *http_readString(Ejs *ejs, EjsHttp *hp, int argc, EjsObj **argv)
     } else {
         timeout = conn->limits->inactivityTimeout;
         if (timeout <= 0) {
-            timeout = INT_MAX;
+            timeout = MAXINT;
         }
     }
     if (!waitForState(hp, HTTP_STATE_CONTENT, timeout, 1)) {
@@ -831,7 +831,7 @@ static EjsObj *http_wait(Ejs *ejs, EjsHttp *hp, int argc, EjsObj **argv)
     if (timeout < 0) {
         timeout = hp->conn->limits->requestTimeout;
         if (timeout == 0) {
-            timeout = INT_MAX;
+            timeout = MAXINT;
         }
     }
     mark = mprGetTime();
@@ -990,7 +990,6 @@ static ssize readHttpData(Ejs *ejs, EjsHttp *hp, ssize count)
 
     conn = hp->conn;
 
-    //  MOB -- does this block in sync mode?
     buf = hp->responseContent;
     while (count < 0 || mprGetBufLength(buf) < count) {
         len = (count < 0) ? HTTP_BUFSIZE : (count - mprGetBufLength(buf));
@@ -1182,8 +1181,8 @@ static bool expired(EjsHttp *hp)
 {
     int     requestTimeout, inactivityTimeout, diff, inactivity;
 
-    requestTimeout = conn->limits->requestTimeout ? conn->limits->requestTimeout : INT_MAX;
-    inactivityTimeout = conn->limits->inactivityTimeout ? conn->limits->inactivityTimeout : INT_MAX;
+    requestTimeout = conn->limits->requestTimeout ? conn->limits->requestTimeout : MAXINT;
+    inactivityTimeout = conn->limits->inactivityTimeout ? conn->limits->inactivityTimeout : MAXINT;
 
     /* 
         Workaround for a GCC bug when comparing two 64bit numerics directly. Need a temporary.
@@ -1241,7 +1240,7 @@ static bool waitForState(EjsHttp *hp, int state, int timeout, int throw)
     if (timeout < 0) {
         timeout = 0;
     } else if (mprGetDebugMode()) {
-        timeout = INT_MAX;
+        timeout = MAXINT;
     }
     remaining = timeout;
     mark = mprGetTime();
@@ -1337,7 +1336,7 @@ static bool waitForResponseHeaders(EjsHttp *hp, int timeout)
     if (timeout < 0) {
         timeout = hp->conn->limits->inactivityTimeout;
         if (timeout <= 0) {
-            timeout = INT_MAX;
+            timeout = MAXINT;
         }
     }
     if (hp->conn->state < HTTP_STATE_PARSED && !waitForState(hp, HTTP_STATE_PARSED, timeout, 1)) {

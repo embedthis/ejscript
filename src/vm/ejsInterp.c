@@ -1482,7 +1482,6 @@ mprAssert(ejs->result == 0 || (MPR_GET_GEN(MPR_GET_MEM(ejs->result)) != MPR->hea
                 }
             }
             ejs->result = type;
-mprAssert(ejs->result == 0 || (MPR_GET_GEN(MPR_GET_MEM(ejs->result)) != MPR->heap.dead));
             BREAK;
 
         /*
@@ -1601,7 +1600,6 @@ mprAssert(ejs->result == 0 || (MPR_GET_GEN(MPR_GET_MEM(ejs->result)) != MPR->hea
          */
         CASE (EJS_OP_POP):
             ejs->result = pop(ejs);
-mprAssert(ejs->result == 0 || (MPR_GET_GEN(MPR_GET_MEM(ejs->result)) != MPR->heap.dead));
             mprAssert(ejs->exception || ejs->result);
             BREAK;
 
@@ -2396,10 +2394,10 @@ ejsFreeze(ejs, frozen);
                 EjsName n = { nameVar, NULL };
                 slotNum = ejsLookupProperty(ejs, v1, n);
                 if (slotNum < 0) {
-                    //  MOB -- Reconsider
-                    slotNum = ejsLookupVar(ejs, v1, qname, &lookup);
+                    n.space = S(empty);
+                    slotNum = ejsLookupVar(ejs, v1, n, &lookup);
                     if (slotNum < 0 && ejsIsType(ejs, v1)) {
-                        slotNum = ejsLookupVar(ejs, (EjsObj*) ((EjsType*) v1)->prototype, qname, &lookup);
+                        slotNum = ejsLookupVar(ejs, (EjsObj*) ((EjsType*) v1)->prototype, n, &lookup);
                     }
                 }
                 push(ejsCreateBoolean(ejs, slotNum >= 0));

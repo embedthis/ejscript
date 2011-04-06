@@ -466,6 +466,7 @@ static void stateChangeNotifier(HttpConn *conn, int state, int notifyFlags)
         setupConnTrace(conn);
         break;
 
+            
     case HTTP_STATE_FIRST:
         if (!(conn->rx->flags & (HTTP_OPTIONS | HTTP_TRACE))) {
             conn->tx->handler = (conn->error) ? conn->http->passHandler : conn->http->ejsHandler;

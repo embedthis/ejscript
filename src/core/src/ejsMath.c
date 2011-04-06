@@ -208,7 +208,7 @@ static EjsObj *math_random(Ejs *ejs, EjsObj *unused, int argc, EjsObj **argv)
     }
 }
 #endif
-    value = ((MprNumber) (uvalue & 0x7FFFFFFF)) / INT_MAX;
+    value = ((MprNumber) (uvalue & 0x7FFFFFFF)) / MAXINT;
     return (EjsObj*) ejsCreateNumber(ejs, value);
 }
 

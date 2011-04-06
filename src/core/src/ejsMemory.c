@@ -89,7 +89,7 @@ static EjsObj *setRedline(Ejs *ejs, EjsObj *thisObj, int argc, EjsObj **argv)
     redline = ejsGetInt(ejs, argv[0]);
     if (redline <= 0) {
         //  TODO - 64 bit
-        redline = INT_MAX;
+        redline = MAXINT;
     }
     mprSetMemLimits(redline, -1);
     return 0;

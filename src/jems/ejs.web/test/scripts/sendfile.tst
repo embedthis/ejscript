@@ -10,6 +10,7 @@ assert(http.status == 200)
 assert(http.response == Path("web/sendfile.txt").readString())
 http.close()
 
+/*
 http.get(HTTP + "/sendfile-header.es")
 assert(http.status == 200)
 assert(http.response == Path("web/sendfile.txt").readString())
@@ -19,3 +20,4 @@ http.get(HTTP + "/sendfile-path.es")
 assert(http.status == 200)
 assert(http.response == Path("web/sendfile.txt").readString())
 http.close()
+*/

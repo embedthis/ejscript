@@ -16,9 +16,7 @@ FLAT_PERM_NAME	:= ejs-flat.tgz
 SRC				:= ../../src
 JEMS			:= $(SRC)/jems
 DEST			:= $(TDIR)/src/deps/ejs
-# INC_DEST  		:= $(TDIR)/src/include
 INC_DEST  		:= $(DEST)
-MASTER  		:= $(TDIR)/src/include/master
 DOC_DEST		:= $(TDIR)/doc
 EJS_HEADERS		+= $(patsubst %,$(SRC)/include/%.h, ejsTune ejsByteCode ejsByteCodeTable ejs ejsWeb)
 SLOT_HEADERS	+= $(shell find $(SRC)/include/master -name 'ejs*slots.h' | sort)
@@ -36,8 +34,7 @@ DB_SOURCES		+= $(JEMS)/ejs.db.sqlite/src/ejsSqlite.c
 SQLITE_HEADERS	+= $(SRC)/include/sqlite3.h
 SQLITE_SOURCES	+= $(JEMS)/ejs.db.sqlite/src/sqlite3.c
 WEB_SOURCES		+= $(shell find $(JEMS)/ejs.web -name '*.c' | egrep -v 'SAVE|save|legacy|Archive' | sort)
-TARGETS			+= $(patsubst %,$(INC_DEST)/%, ejs.h sqlite3.h)
-TARGETS			+= $(patsubst %,$(MASTER)/%, ejs.slots.h)
+TARGETS			+= $(patsubst %,$(INC_DEST)/%, ejs.h sqlite3.h slots.h)
 TARGETS			+= $(patsubst %,$(DEST)/%, ejsLib.c ejs.c ejsc.c ejsmod.c ejssql.c sqlite3.c ejs.es)
 
 dist packageExtra:	clean prep $(TARGETS) $(REL_DIR)/$(DIST_VER_NAME) $(REL_DIR)/$(FLAT_VER_NAME) cleanup
@@ -54,9 +51,8 @@ $(INC_DEST)/ejs.h: $(EJS_HEADERS)
 $(INC_DEST)/sqlite3.h: $(BLD_TOP)/src/include/sqlite3.h
 	cp $(BLD_TOP)/src/include/sqlite3.h $(INC_DEST)/sqlite3.h
 
-$(MASTER)/ejs.slots.h: $(SLOT_HEADERS)
-	TITLE="$(BLD_NAME) Slot files" \
-	dist $(SLOT_HEADERS) >$(MASTER)/ejs.slots.h
+$(INC_DEST)/slots.h: $(SLOT_HEADERS)
+	TITLE="$(BLD_NAME) Slot files" dist $(SLOT_HEADERS) >$(INC_DEST)/slots.h
 
 $(DEST)/ejsLib.c: $(EJS_SOURCES) $(DB_SOURCES) $(WEB_SOURCES)
 	echo '#define EJS_DEFINE_OPTABLE 1' >$(DEST)/ejsLib.c

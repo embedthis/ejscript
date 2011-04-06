@@ -223,11 +223,11 @@ static EjsObj *app_run(Ejs *ejs, EjsObj *unused, int argc, EjsObj **argv)
     MprTime     mark, remaining;
     int         oneEvent, timeout;
 
-    timeout = (argc > 0) ? ejsGetInt(ejs, argv[0]) : INT_MAX;
+    timeout = (argc > 0) ? ejsGetInt(ejs, argv[0]) : MAXINT;
     oneEvent = (argc > 1) ? ejsGetInt(ejs, argv[1]) : 0;
 
     if (timeout < 0) {
-        timeout = INT_MAX;
+        timeout = MAXINT;
     }
     mark = mprGetTime();
     remaining = timeout;
@@ -248,9 +248,9 @@ static EjsObj *app_sleep(Ejs *ejs, EjsObj *unused, int argc, EjsObj **argv)
     MprTime     mark, remaining;
     int         timeout;
 
-    timeout = (argc > 0) ? ejsGetInt(ejs, argv[0]) : INT_MAX;
+    timeout = (argc > 0) ? ejsGetInt(ejs, argv[0]) : MAXINT;
     if (timeout < 0) {
-        timeout = INT_MAX;
+        timeout = MAXINT;
     }
     mark = mprGetTime();
     remaining = timeout;
