@@ -19,6 +19,7 @@ module ejs.web {
         return (new CommonLogClass(app, logger)).app
     }
 
+    //  MOB - not a great name having Class in the name
     /**
         Common Log web server logging.
         This logs each HTTP request to a file in the Common Log format defined by the Apache web server.
@@ -27,6 +28,11 @@ module ejs.web {
         var innerApp: Function
         var logger: Stream
 
+        /**
+            Constructor for the CommonLogClass
+            @param app Application function
+            @param logger Optional logger. Defaults to App.log
+         */
         function CommonLogClass(app, logger: Stream = App.log) {
             this.innerApp = app
             this.logger = logger

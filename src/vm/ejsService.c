@@ -32,8 +32,8 @@ static EjsService *createService()
     }
     MPR->ejsService = sp;
     mprSetMemNotifier((MprMemNotifier) allocNotifier);
-    if (mprGetLogHandler() != logHandler) {
-        ejsRedirectLogging("stdout:1");
+    if (mprUsingDefaultLogHandler()) {
+        ejsRedirectLogging(0);
     }
     sp->nativeModules = mprCreateHash(-1, MPR_HASH_STATIC_KEYS);
     sp->mutex = mprCreateLock();
@@ -411,7 +411,7 @@ static int configureEjs(Ejs *ejs)
     ejsConfigureGCType(ejs);
     ejsConfigureHttpType(ejs);
     ejsConfigureJSONType(ejs);
-    ejsConfigureLoggerType(ejs);
+    ejsConfigureLogFileType(ejs);
     ejsConfigureMathType(ejs);
     ejsConfigureMemoryType(ejs);
     ejsConfigureNamespaceType(ejs);
@@ -806,7 +806,9 @@ static void logHandler(int flags, int level, cchar *msg)
     prefix = MPR->name;
     amsg = NULL;
 
-    if (flags & MPR_ERROR_SRC) {
+    if (flags & MPR_WARN_SRC) {
+        tag = "Warning";
+    } else if (flags & MPR_ERROR_SRC) {
         tag = "Error";
     } else if (flags & MPR_FATAL_SRC) {
         tag = "Fatal";
@@ -832,29 +834,33 @@ static void logHandler(int flags, int level, cchar *msg)
     solo = 0;
 }
 
-
-int ejsRedirectLogging(char *logSpec)
+int ejsRedirectLogging(cchar *logSpec)
 {
     MprFile     *file;
-    char        *levelSpec;
+    char        *spec, *levelSpec;
     int         level;
 
     level = 0;
-    logSpec = sclone(logSpec);
+    if (logSpec == 0) {
+        logSpec = "stdout:1";
+    } else {
+        MPR->logging = 1;
+    }
+    spec = sclone(logSpec);
 
-    if ((levelSpec = strchr(logSpec, ':')) != 0) {
+    if ((levelSpec = strchr(spec, ':')) != 0) {
         *levelSpec++ = '\0';
         level = atoi(levelSpec);
     }
-    if (strcmp(logSpec, "stdout") == 0) {
+    if (strcmp(spec, "stdout") == 0) {
         file = MPR->fileSystem->stdOutput;
 
-    } else if (strcmp(logSpec, "stderr") == 0) {
+    } else if (strcmp(spec, "stderr") == 0) {
         file = MPR->fileSystem->stdError;
 
     } else {
-        if ((file = mprOpenFile(logSpec, O_CREAT | O_WRONLY | O_TRUNC | O_TEXT, 0664)) == 0) {
-            mprPrintfError("Can't open log file %s\n", logSpec);
+        if ((file = mprOpenFile(spec, O_CREAT | O_WRONLY | O_TRUNC | O_TEXT, 0664)) == 0) {
+            mprPrintfError("Can't open log file %s\n", spec);
             return EJS_ERR;
         }
     }

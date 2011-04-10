@@ -7,7 +7,7 @@
 module ejs {
 
     /**
-        The Cmd class supports invoking other programs on the same system. 
+        The Cmd class supports invoking other programs as separate processes on the same system. 
         @spec ejs
      */
     class Cmd implements Stream {
@@ -51,7 +51,7 @@ module ejs {
         native function set env(values: Object): Void
 
         /**
-            Eommand error output data as a string. The first time this property is read, the error content will be read 
+            Command error output data as a string. The first time this property is read, the error content will be read 
             and buffered.
          */
         function get error(): String {
@@ -67,7 +67,8 @@ module ejs {
         native function get errorStream(): Stream
 
         /** 
-            Signal the end of write data. The finalize() call must be invoked to properly signify the end of write data.
+            Signal the end of writing data to the command. The finalize() call must be invoked to properly 
+            signify the end of write data.
          */
         native function finalize(): Void 
 
@@ -198,7 +199,8 @@ module ejs {
         /* Static Helper Methods */
 
         /**
-            Start a command in the background as a daemon.  No data can be written to the daemon's stdin.
+            Start a command in the background as a daemon.  The daemon command is detached and the application 
+            continues immediately in the foreground. Note: No data can be written to the daemon's stdin.
             @param cmdline Command line to use. The cmdline may be either a string or an array of strings.
             @return The process ID. This pid can be used with kill().
          */

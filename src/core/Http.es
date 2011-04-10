@@ -6,7 +6,7 @@
 module ejs {
 
     /** 
-        The Http object represents a Hypertext Transfer Protocol version 1/1 client connection. It is used to issue 
+        The Http object represents a Hypertext Transfer Protocol version 1.1 client connection. It is used to issue 
         HTTP requests and capture responses. It supports the HTTP/1.1 standard including methods for GET, POST, 
         PUT, DELETE, OPTIONS, and TRACE. It also supports Keep-Alive and SSL connections. 
         @spec ejs
@@ -227,8 +227,8 @@ module ejs {
         /** 
             Commence a HTTP request for the current method and uri. The HTTP method should be defined via the $method 
             property and Uri via the $uri property. This routine is typically not used. Rather it is invoked via one 
-            of the Http methods get(), head(), post() instead. This call, and the Http method calls  may not immediately
-            initiate the connection. The Http class will delay connections until finalize() is called explicitly or 
+            of the Http methods $get(), $head(), $post() instead. This call, and the Http method calls  may not immediately
+            initiate the connection. The Http class will delay connections until $finalize() is called explicitly or 
             implicitly reading $status or response content. This enables the request content length to be determined 
             automatically for smaller requests where the request body data can be buffered and measured before sending 
             the request headers.  
@@ -284,7 +284,7 @@ module ejs {
             @param method Http method. This is typically "GET" or "POST"
             @param uri URL to fetch
             @param data Body data to send with the request. Set to null for no data. If set to null, the request
-                will be finalized. If not set to null, finalize() must be called after writing all data.
+                will be finalized. If not set to null, $finalize() must be called after writing all data.
             @param callback Optional function to invoke on completion of the request.
           */
         function fetch(method: String, uri: Uri, data: *, callback: Function = null) {
@@ -317,7 +317,7 @@ module ejs {
         native function get finalized(): Boolean 
 
         /** 
-            Flush request data. Calling flush(Sream.WRITE) or finalize() is required to ensure write data is sent to 
+            Flush request data. Calling $flush(Sream.WRITE) or $finalize() is required to ensure write data is sent to 
             the server.
             @duplicate Stream.flush
          */
@@ -331,9 +331,9 @@ module ejs {
         native function set followRedirects(flag: Boolean): Void
 
         /** 
-            Commence a POST request with www-url encoded key=value data. See connect() for connection details.
+            Commence a POST request with www-url encoded key=value data. See $connect() for connection details.
             This will encode each data objects as a string of "key=value" pairs separated by "&" characters.
-            After writing data, form() will call finalize().
+            After writing data, $form() will call $finalize().
             @param uri Optional request uri. If non-null, this overrides any previously defined uri for the Http object.
                 If null, use a previously defined uri.
             @param data Optional object hash of key value pairs to use as the post data. These are www-url-encoded and
@@ -344,7 +344,7 @@ module ejs {
 
         /**
 FUTURE & KEEP
-            Commence a POST request with form data the current uri. See connect() for connection details.
+            Commence a POST request with form data the current uri. See $connect() for connection details.
             @param uri Optional request uri. If non-null, this overrides any previously defined uri for the Http object.
                 If null, use the previously defined uri.
             @param data Data objects to pass with the POST request. The objects are json encoded and the Content-Type is
@@ -358,9 +358,9 @@ FUTURE & KEEP
         native function jsonForm(uri: Uri, ...data): Void
 
         /** 
-            Commence a GET request for the current uri. See connect() for connection details.
+            Commence a GET request for the current uri. See $connect() for connection details.
             This call initiates a GET request. It does not wait for the request to complete. 
-            The get() method will call finalize. If you need to send body content with a get request, use connect(). 
+            The $get() method will call finalize. If you need to send body content with a get request, use $connect(). 
             Once initiated, one of the $read or response routines  may be used to receive the response data.
             @param uri The uri to get. This overrides any previously defined uri for the Http object. If null, use
                 a previously defined uri.
@@ -379,7 +379,7 @@ FUTURE & KEEP
         native function getRequestHeaders(): Object
 
         /** 
-            Commence a HEAD request for the current uri. See connect() for connection details.
+            Commence a HEAD request for the current uri. See $connect() for connection details.
             @param uri The request uri. This overrides any previously defined uri for the Http object.
                 If null, use a previously defined uri.
             @throws IOError if the request cannot be issued to the remote server.
@@ -393,7 +393,7 @@ FUTURE & KEEP
         native function header(key: String): String
 
         /** 
-            Response headers. Use header() to retrieve a single header value.
+            Response headers. Use $header() to retrieve a single header value.
             Set to an object filled with all the response headers. If multiple headers of the same key value are
                 defined, their contents will be catenated with a ", " separator as per the HTTP/1.1 specification.
          */
@@ -468,7 +468,7 @@ FUTURE & KEEP
         /** 
             Initiate a POST request. This call initiates a POST request. It does not wait for the request to complete. 
             Posted data is NOT URL encoded. If you want to post data to a form, consider using the $form method instead 
-            which automatically URL encodes the data. After writing data, post() will call finalize(). Post data may be 
+            which automatically URL encodes the data. After writing data, $post() will call $finalize(). Post data may be 
             supplied may alternatively via $write. 
             @param uri Optional request uri. If non-null, this overrides any previously defined uri for the Http object. 
                 If null, use a previously defined uri.
@@ -478,7 +478,7 @@ FUTURE & KEEP
         native function post(uri: Uri, ...data): Void
 
         /** 
-            Commence a PUT request for the current uri. See connect() for connection details.
+            Commence a PUT request for the current uri. See $connect() for connection details.
             If a contentLength has not been previously defined for this request, chunked transfer encoding will be enabled.
             @param uri The uri to put. This overrides any previously defined uri for the Http object.
                 If null, use a previously defined uri.
@@ -576,7 +576,7 @@ FUTURE & KEEP
         native function setCredentials(username: String, password: String): Void
 
         /** 
-            Set a request header. Use setHeaders() to set all the headers. Use getRequestHeaders() to retrieve and examine
+            Set a request header. Use setHeaders() to set all the headers. Use $getRequestHeaders() to retrieve and examine
             the request header set.
             @param key The header keyword for the request, e.g. "accept".
             @param value The value to associate with the header, e.g. "yes"
@@ -587,7 +587,7 @@ FUTURE & KEEP
         native function setHeader(key: String, value: String, overwrite: Boolean = true): Void
 
         /** 
-            Set request headers. Use setHeader() to set a single header. Use getRequestHeaders() to retrieve and examine 
+            Set request headers. Use setHeader() to set a single header. Use $getRequestHeaders() to retrieve and examine 
             the request headers set.
             @param headers Object hash of headers to set.
             @param overwrite If true, the new set of headers completely replaces the existing set of request headers.
@@ -694,7 +694,7 @@ FUTURE & KEEP
         native function set uri(newUri: Uri): Void
 
         /** 
-            Wait for a request to complete. This will call finalize() if in sync mode and the request is not already 
+            Wait for a request to complete. This will call $finalize() if in sync mode and the request is not already 
             finalized.
             @param timeout Timeout in milliseconds to wait for the request to complete. A timeout of zero means no 
             timeout, ie. wait forever. A timeout of < 0 (default), means use the default request timeout.
@@ -703,7 +703,7 @@ FUTURE & KEEP
         native function wait(timeout: Number = -1): Boolean
 
         /** 
-            Write body data to the server. This will buffer the written data until either flush() or finalize() is called. 
+            Write body data to the server. This will buffer the written data until either $flush() or $finalize() is called. 
             The Http "Content-Length" header should normally be set prior to writing any data for optimial data transfter.
             If the Content-Length header has not been defined, the data will be transferred using chunked transfers. 
             @duplicate Stream.write
@@ -780,7 +780,7 @@ FUTURE & KEEP
             header("content-encoding")
 
         /** 
-            Commence a DELETE request for the current uri. See connect() for connection details.
+            Commence a DELETE request for the current uri. See $connect() for connection details.
             @param uri The uri to delete. This overrides any previously defined uri for the Http object.
                 If null, use a previously defined uri.
             @param data Data objects to send with the request. Data is written raw and is not encoded or converted. 
@@ -810,7 +810,7 @@ FUTURE & KEEP
             Uri(path)..mimeType
 
         /** 
-            Commence an OPTIONS request for the current uri. See connect() for connection details.
+            Commence an OPTIONS request for the current uri. See $connect() for connection details.
             @param uri New uri to use. This overrides any previously defined uri for the Http object.
                 If null, use a previously defined uri.
             @throws IOError if the request cannot be issued to the remote server.
@@ -830,7 +830,7 @@ FUTURE & KEEP
         }
 
         /** 
-            Commence a TRACE request for the current uri. See connect() for connection details.
+            Commence a TRACE request for the current uri. See $connect() for connection details.
             @param uri New uri to use. This overrides any previously defined uri for the Http object.
                 If null, use a previously defined uri.
             @throws IOError if the request cannot be issued to the remote server.

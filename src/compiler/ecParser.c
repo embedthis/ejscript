@@ -9606,7 +9606,6 @@ static void appendDocString(EcCompiler *cp, EcNode *np, EcNode *parameter, EcNod
     if (np == 0 || parameter == 0 || parameter->kind != N_QNAME || value == 0) {
         return;
     }
-
     defaultValue = 0;
     if (value->kind == N_QNAME) {
         defaultValue = value->qname.name;
@@ -9622,11 +9621,10 @@ static void appendDocString(EcCompiler *cp, EcNode *np, EcNode *parameter, EcNod
     if (defaultValue == 0) {
         defaultValue = ejsCreateStringFromAsc(ejs, "expression");
     }
-
     if (np->doc) {
         found = 0;
         mprSprintf(arg, sizeof(arg), "@param %@ ", parameter->qname.name);
-        if (ejsContainsMulti(ejs, np->doc, arg) != 0) {
+        if (ejsContainsMulti(ejs, np->doc, arg) != 0 || ejsContainsMulti(ejs, np->doc, "@duplicate") != 0) {
             found++;
         } else {
             mprSprintf(arg, sizeof(arg), "@params %@ ", parameter->qname.name);

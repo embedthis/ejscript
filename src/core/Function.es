@@ -52,6 +52,7 @@ module ejs {
         /** 
             Bind the value of "this" for the function. This can set the value of "this" for the function. If
             $overwrite is false, it will only define the value of "this" if it is not already defined.
+            Use $bound to examine the bound "this" value.
             @param thisObj Value of "this" to define
             @param args Function arguments to supply to the function. These arguments preceed any caller supplied
                 arguments when the function is actually invoked.
@@ -60,6 +61,7 @@ module ejs {
 
         /** 
             The bound object representing the "this" object for the function. Will be set to null if no object is bound.
+            Use $bind() to set the bound "this" object.
             @see bind
          */
         native function get bound(): Object

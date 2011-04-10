@@ -6,6 +6,13 @@
 
 module ejs.web {
 
+    /**
+        HttpServer objects represents the server-side of a Hypertext Transfer Protocol (HTTP) version 1.1 connection. 
+        It is used to receive HTTP requests and generate responses. It supports the HTTP/1.1 standard
+        including methods for GET, POST, PUT, DELETE, OPTIONS, and TRACE. It also supports Keep-Alive and SSL connections.
+        @spec ejs
+        @stability evolving
+     */
     enumerable dynamic class HttpServer {
         use default namespace public
 
@@ -13,7 +20,7 @@ module ejs.web {
             Index files list. Index files are used by various handlers when requests to directories are made. The 
             indicies are tried in turn for the first valid index file.
           */
-        static var indicies = ["index.ejs", "index.html"]
+        static var indicies: Array = ["index.ejs", "index.html"]
 
         /** 
             Get the local IP address bound to this socket.
@@ -96,11 +103,21 @@ module ejs.web {
         var sessions: Object
 
         /** 
-            Software details for the web server
+            Software description for the web server
             @return A string containing the name and version of the web server software
          */
         native function get software(): String
 
+        /*
+            //  MOB - better HttpServer(options)
+            {
+                home: "dir"
+                documents: "web"
+                threaded: true
+                ejsrc: "ejsrc"
+                other config to blend
+            }
+        */
         /** 
             Create a HttpServer object. The server is created in async mode by default.
             If an "ejsrc" file exists in the server root, it will be loaded and update the "$config" properties.
@@ -111,33 +128,23 @@ module ejs.web {
             @spec ejs
             @stability prototype
             @example: This is a fully async server:
-
-            let server: HttpServer = new HttpServer(".", "web")
-            let router = Router(Router.Restful)
-            server.on("readable", function (event: String, request: Request) {
-                request.status = 200
-                request.setHeaders({"Content-Type": "text/plain"})
-                request.on("readable", function (event, request) {
-                    let data = new ByteArray
-                    if (request.read(data) == null) {
-                        print("EOF")
-                    }
-                })
-                request.on("writable", function (event) {
-                    request.write("Hello World")
-                    request.finalize()
-                })
-            }
-            server.listen("127.0.0.1:7777")
-
-//  MOB - better HttpServer(options)
-            {
-                home: "dir"
-                documents: "web"
-                threaded: true
-                ejsrc: "ejsrc"
-                other config to blend
-            }
+let server: HttpServer = new HttpServer(".", "web")
+let router = Router(Router.Restful)
+server.on("readable", function (event: String, request: Request) {
+    request.status = 200
+    request.setHeaders({"Content-Type": "text/plain"})
+    request.on("readable", function (event, request) {
+        let data = new ByteArray
+        if (request.read(data) == null) {
+            print("EOF")
+        }
+    })
+    request.on("writable", function (event) {
+        request.write("Hello World")
+        request.finalize()
+    })
+}
+server.listen("127.0.0.1:7777")
          */
         function HttpServer(documentRoot: Path = ".", serverRoot: Path = ".") {
             this.documentRoot = documentRoot

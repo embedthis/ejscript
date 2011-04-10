@@ -6,7 +6,7 @@
 module ejs {
 
     /**
-        The CmdArgs class parses the command line options and arguments. The template of permissible args is 
+        The CmdArgs class parses the Application's command line options and arguments. The template of permissible args is 
         passed to the CmdArgs constructor. CmdArgs supports command options that begin with "-" or "--" and parses
         option arguments of the forms: "-flag x" and "-flag=x". An option may have multiple forms (e.g. --verbose or -v).
         The primary option form must be specified first as it is the first option that will have its value defined in
@@ -14,18 +14,18 @@ module ejs {
         @spec ejs
         @stability prototype
         @example 
-        cmd = CmdArgs({
-            [ "depth", Number ]
-            [ "quiet", null, false ]
-            [ [ "verbose", "v", ], true ]
-            [ "log", /\w+(:\d)/, "stdout:4" ],
-            [ "mode", [ "low", "medium", "high" ], "high" ]
-        })
-        let options = cmd.options
-        if (options.verbose) { }
-        for each (file in cmd.args) {
-            ...
-        }
+cmd = CmdArgs({
+    [ "depth", Number ]
+    [ "quiet", null, false ]
+    [ [ "verbose", "v", ], true ]
+    [ "log", /\w+(:\d)/, "stdout:4" ],
+    [ "mode", [ "low", "medium", "high" ], "high" ]
+})
+let options = cmd.options
+if (options.verbose) { }
+for each (file in cmd.args) {
+    ...
+}
      */
     class CmdArgs {
         /* User supplied arguments */

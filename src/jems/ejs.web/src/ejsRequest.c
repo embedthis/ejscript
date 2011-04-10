@@ -862,6 +862,8 @@ static EjsObj *req_set_async(Ejs *ejs, EjsRequest *req, int argc, EjsObj **argv)
 
 /*  
     function autoFinalize(): Void
+
+    Auto-finalize the request if dontAutoFinalize has not been set.
  */
 static EjsObj *req_autoFinalize(Ejs *ejs, EjsRequest *req, int argc, EjsObj **argv)
 {

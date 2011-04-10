@@ -21,9 +21,10 @@ module ejs {
         native static function breakpoint(): void
 
         /**
-            The current debug mode. This property is read-write. Setting mode to true will put the application in 
-            debug mode. When debug mode is enabled, the runtime will typically suspend timeouts and will take other 
-            actions to make debugging easier.
+            The current debug mode.  Setting mode to true will put the application in debug mode. When debug mode 
+            is enabled, the runtime will typically suspend timeouts and will take other actions to make debugging easier.
+            Invoking the ejs shell with a -D command line switch will also enable debug mode.
+            This property is read-write. 
          */
         native static function get mode(): Boolean
 

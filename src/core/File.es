@@ -92,7 +92,6 @@ module ejs {
 
         /** 
             Is the file open
-            MOB - doc
          */
         native function get isOpen(): Boolean
 

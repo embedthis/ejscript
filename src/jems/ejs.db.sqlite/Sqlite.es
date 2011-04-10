@@ -119,7 +119,8 @@ module ejs.db.sqlite {
         /** @duplicate ejs.db::Database.close */
         native function close(): Void
 
-        /** @duplicate ejs.db::Database.commit */
+        /** @duplicate ejs.db::Database.commit 
+            @hide*/
         function commit(): Void {}
 
         //  TODO - implement in native code
@@ -167,7 +168,8 @@ module ejs.db.sqlite {
         function destroyTable(table: String): Void
             query("DROP TABLE IF EXISTS " + table + ";")
 
-        /** @duplicate ejs.db::Database.endTransaction */
+        /** @duplicate ejs.db::Database.endTransaction 
+            @hide */
         function endTransaction(): Void {}
 
         /** @duplicate ejs.db::Database.getColumns */
@@ -293,7 +295,8 @@ module ejs.db.sqlite {
         function sqlTypeToEjsType(sqlType: String): Type
             "ejs.db"::Sqlite.SqlTypeToEjsType[sqlType]
 
-        /** @duplicate ejs.db::Database.startTransaction */
+        /** @duplicate ejs.db::Database.startTransaction 
+            @hide */
         function startTransaction(): Void {}
     }
 }

@@ -15,7 +15,8 @@ module ejs.db.mapper {
         in the Record instance for each column in the database table. Users should subclass the Record class for each 
         database table to manage. When users subclass Record to create models, they should use "implement" rather than
         extend.
-        @example public dynamic class MyModel implements Record {}
+        @example 
+        public dynamic class MyModel implements Record {}
         @spec ejs
         @stability prototype
      */

@@ -20,9 +20,6 @@
 typedef struct App {
     MprList     *files;
     MprList     *modules;
-#if UNUSED
-    EjsService  *ejsService;
-#endif
     Ejs         *ejs;
     EcCompiler  *compiler;
 } App;
@@ -500,7 +497,7 @@ static int consoleGets(EcStream *stream)
         mprPrintf("\n");
         return -1;
     }
-    cp = sclone(strim(line, "\r\n", MPR_TRIM_BOTH));
+    cp = strim(line, "\r\n", MPR_TRIM_BOTH);
     ecSetStreamBuf(stream, cp, slen(cp));
     stream->flags |= EC_STREAM_EOL;
     return (int) slen(cp);

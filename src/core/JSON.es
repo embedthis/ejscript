@@ -7,7 +7,8 @@
 module ejs {
 
     /**
-        JavaScript Object Notation. This class supports the JSON data exchange format as described by:
+        Encoding and decoding to JavaScript Object Notation strings (JSON). 
+        This class supports the JSON data exchange format as described by: 
         RFC 4627 at (http://www.ietf.org/rfc/rfc4627.txt).
         @stability evolving
      */

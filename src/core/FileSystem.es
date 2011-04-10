@@ -7,7 +7,7 @@
 module ejs {
 
     /** 
-        The FileSystem objects provide statistics and data about file systems.
+        The FileSystem objects provide global information about a file systems.
         @spec ejs
         @stability prototype
      */
@@ -16,8 +16,8 @@ module ejs {
         use default namespace public
 
         /** 
-            Create a new FileSystem object based on the given path.
-            @param path String or Path of the file system
+            Create a new FileSystem object for the file system that contains the given path.
+            @param path String or Path of a file that would reside in the file system.
          */
         native function FileSystem(path: Object? = null)
 

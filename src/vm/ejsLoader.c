@@ -1662,14 +1662,17 @@ EjsDoc *ejsCreateDoc(Ejs *ejs, cchar *tag, void *vp, int slotNum, EjsString *doc
     EjsDoc      *doc;
     char        key[32];
 
-    if ((doc = mprAllocObj(EjsDoc, manageDoc)) == 0) {
-        return 0;
-    }
-    doc->docString = docString;
     if (ejs->doc == 0) {
         ejs->doc = mprCreateHash(EJS_DOC_HASH_SIZE, 0);
     }
     mprSprintf(key, sizeof(key), "%s %Lx %d", tag, PTOL(vp), slotNum);
+    if ((doc = mprLookupHash(ejs->doc, key)) != 0) {
+        return doc;
+    }
+    if ((doc = mprAllocObj(EjsDoc, manageDoc)) == 0) {
+        return 0;
+    }
+    doc->docString = docString;
     mprAddKey(ejs->doc, key, doc);
     return doc;
 }

@@ -8,6 +8,7 @@
 #include    "ejs.h"
 
 /*********************************** Methods **********************************/
+#if UNUSED
 /*  
     function get nativeLevel(): Number
  */
@@ -64,11 +65,13 @@ static EjsObj *logger_set_nativeStream(Ejs *ejs, EjsObj *unused, int argc, EjsOb
     return 0;
 }
 
+#endif
 
 /*********************************** Factory **********************************/
-
+//  MOB -- convert logger to be fully script - not native:
 void ejsConfigureLoggerType(Ejs *ejs)
 {
+#if UNUSED
     EjsType         *type;
 
     type = ejsGetTypeByName(ejs, N("ejs", "Logger"));
@@ -76,6 +79,7 @@ void ejsConfigureLoggerType(Ejs *ejs)
 
     ejsBindAccess(ejs, type, ES_Logger_nativeLevel, logger_nativeLevel, logger_set_nativeLevel);
     ejsBindAccess(ejs, type, ES_Logger_nativeStream, logger_nativeStream, logger_set_nativeStream);
+#endif
 }
 
 

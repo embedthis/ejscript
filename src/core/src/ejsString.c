@@ -1829,6 +1829,7 @@ int ejsAtoi(Ejs *ejs, EjsString *sp, int radix)
 }
 
 
+// MOB - rename to join
 EjsString *ejsCatString(Ejs *ejs, EjsString *dest, EjsString *src)
 {
     EjsString   *result;
@@ -1847,6 +1848,7 @@ EjsString *ejsCatString(Ejs *ejs, EjsString *dest, EjsString *src)
 
 /*
     Catenate a set of unicode string arguments onto another.
+    MOB - rename to join
  */
 EjsString *ejsCatStrings(Ejs *ejs, EjsString *src, ...)
 {

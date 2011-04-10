@@ -17,28 +17,109 @@
 <table class='classHead' summary='Router'>
    <tr><td><strong>Module</strong></td><td>ejs.web</td></tr>
    <tr><td><strong>Definition</strong></td><td> class Router</td></tr>
-   <tr><td><strong>Inheritance</strong></td><td>Router <img src='images/inherit.gif' alt='inherit'/> <a href='ejs-Object.html'>Object</a><tr><td><strong>Specified</strong></td><td>ejscript-2.0</td></tr>
+   <tr><td><strong>Inheritance</strong></td><td>Router <img src='images/inherit.gif' alt='inherit'/> <a href='Object.html'>Object</a><tr><td><strong>Specified</strong></td><td>ejscript-2.0</td></tr>
 <tr><td><strong>Stability</strong></td><td>Prototype.</td></tr>
-<tr><td><strong>Example</strong></td><td><pre>
-        var r = new Router
+<tr><td><strong>Example</strong></td><td><pre>var r = new Router
 
-        //  Match /some/path and run the custom builder. Target is data for the customBuilder.
-        r.add("/some/path", {run: customBuilder, target: "/other/path"})
+//  Match /some/path and run the custom builder. Target is data for the customBuilder.
+r.add("/some/path", {run: customBuilder, target: "/other/path"})
 
-        //  Match /some/path and run MvcBuilder with controller == User and action == "register"
-        r.add("</pre></td></tr>
+//  Match /some/path and run MvcBuilder with controller == User and action == "register"
+r.add("\@/User/register")
+
+//  Add route for files with a ".es" extension and use the ScriptBuilder to run
+r.add(/\.es$/, {run: ScriptBuilder})
+
+//  Add route for directories and use the DirBuilder to run
+r.add(Router.isDir, {name: "dir", run: DirBuilder})
+
+//  Add route for RESTful routes and run with the MvcBuilder
+r.addResources("User")
+
+//  Manually create restful routes
+r.add("/{controller}",           {action: "create", method: "POST"})
+r.add("/{controller}/init",      {action: "init"})
+r.add("/{controller}",           {action: "index"})
+r.add("/{controller}/{id}/edit", {action: "edit"})
+r.add("/{controller}/{id}",      {action: "show"})
+r.add("/{controller}/{id}",      {action: "update", method: "PUT"})
+r.add("/{controller}/{id}",      {action: "destroy", method: "DELETE"})
+r.add("/{controller}(/do/{action})")
+
+//  Add route for upper or lower case "D" or "d". Run the default app: MvcBuilder, 
+//  Dash contoller, refresh action.
+r.add("/[Dd]ash/refresh", "\@Dash/refresh")
+
+//  Add route for an "admin" application. This sets the scriptName to "admin" and 
+//  expects an application to be located at the directory "myApp"
+r.add("/admin/", {location: { scriptName: "/control", dir: "my"})
+
+//  Rewrite a request for "old.html" to new.html
+r.add("/web/old.html", {rewrite: function(request) { request.pathInfo = "/web/new.html"}})  
+
+//  Handle a request with a literal response
+r.add("/oldStuff/", {run: {body: "Not found"} })
+
+//  Handle a request with an inline function
+r.add("/oldStuff/", {run: function(request) { return {body: "Not found"} }})
+
+//  A custom matching function to match SSL requests
+r.add(function (request) {
+    if (request.scheme == "https") {
+        request.params["security"] = "high"
+        return true
+    }, {
+        name: "secure", action: "private" 
+    }
+})
+
+//  A matching function that rewrites a request and then continues matching other routes
+r.add(function (request) {
+    if (request.uri.startsWith("/old")) {
+        request.uri = request.uri.toString().trimStart("/old")
+        return false
+    }
+})
+
+//  Set request parameters with values from request
+r.add("/custom", {action: "display", params: { from: "{uri}", transport: "{scheme}" })
+
+//  Nest matching routes
+let outer = r.add("/blog", {target: "/post/index"})
+r.add("/comment", {target: "/comment/{action}/{id}", outer: outer})
+
+//  Match with regular expression. The sub-match is available via $N parameters
+r.add(/^\/Dash-((Mini)|(Full))$/, 
+    {controller: "post", action: "list", params: {kind: "$1"}}
+)
+
+//  Conditional matching. Surround optional tokens in "()"
+r.add("/Dash(/{product}(/{branch}(/{configuration})))", {   
+    name: "dash", 
+    method: "POST", 
+    controller: "Dash", 
+    action: "index",
+})
+
+//  Replace the home page route
+r.addHome("/Status")
+
+//  Display the route table to the console
+r.show()
+
+@stability prototype</pre></td></tr>
        </td></tr>
 </table>
 
-<p class='classBrief'>Web router class.</p>
+<p class='classBrief'>The Router class manages incoming HTTP requests to the appropriate location application for servicing.</p>
 
-<p class='classDescription'>Routes incoming client HTTP requests to the appropriate location. The Route class supports 
-configurable user-defined routes.  Each application should create a Router instance and then attach matching routes.<br/><br/>The Router works by defining routes in a route table. For rapid routing, routes are grouped into sets of 
+<p class='classDescription'>The Route class supports configurable user-defined routes. Each application should create a Router 
+instance and then attach matching routes.<br/><br/>The Router works by defining routes in a route table. For rapid routing, routes are grouped into sets of 
 routes with the same leading URI path segment. For example: the route template "/User/login" would be put into
 the "User" route set. If a route template is a function or regular expression, the route is added to the "Global"
-route set.<br/><br/>The pathInfo and other request properties are examined when selecting a matching route. The request's leading 
-URI pathInfo segment is used to select a route set and then the request is matched against each route in that set.
-Routes are matched in the order in which they are defined.</p>
+route set.<br/><br/>The <a href='ejs.web-Request.html#pathInfo'>Request.pathInfo</a> and other Request properties are examined when selecting a matching route. 
+The request's leading URI pathInfo segment is used to select a route set and then the request is matched 
+against each route in that set. Routes are matched in the order in which they are defined.</p>
 
 </div>
 
@@ -49,55 +130,78 @@ Routes are matched in the order in which they are defined.</p>
 <table class='itemTable' summary='properties'>
    <tr><th>Qualifiers</th><th>Property</th><th>Type</th><th width='95%'>Description</th></tr>
 <a name='Restful'></a>
-   <tr><td nowrap align='center'>public static const </td><td>Restful</td><td>&nbsp;</td><td>Symbolic constant for Router() to add top-level routes for directory, *..es, *..ejs, generic routes for
-RESTful resources and a catchall route for static pages. null</td></tr>
+   <tr><td nowrap align='center'> static const </td><td>Restful</td><td><a href='String.html'>String</a></td><td>Symbolic constant for Router() to add top-level routes for directory, *..es, *..ejs, generic routes for
+RESTful resources and a catchall route for static pages. </td></tr>
 <a name='Top'></a>
-   <tr><td nowrap align='center'>public static const </td><td>Top</td><td>&nbsp;</td><td>Symbolic constant for Router() to add top-level routes for directory, *..es, *..ejs and a catchall 
+   <tr><td nowrap align='center'> static const </td><td>Top</td><td><a href='String.html'>String</a></td><td>Symbolic constant for Router() to add top-level routes for directory, *..es, *..ejs and a catchall 
 route for static pages. Use of this constant will not add routes for MVC content or RESTful resources.</td></tr>
 <a name='defaultBuilder'></a>
-   <tr><td nowrap align='center'>public </td><td>defaultBuilder</td><td>&nbsp;</td><td>Default builder to use when unspecified by a route. null</td></tr>
+   <tr><td nowrap align='center'> </td><td>defaultBuilder</td><td><a href='Function.html'>Function</a></td><td>Default builder to use when unspecified by a route. </td></tr>
 <a name='routes'></a>
-   <tr><td nowrap align='center'>public </td><td>routes</td><td><a href='ejs-Object.html'>Object</a></td><td>null null</td></tr>
+   <tr><td nowrap align='center'> </td><td>routes</td><td><a href='Object.html'>Object</a></td><td>Routes indexed by first component of the URI path/template. </td></tr>
 </table>
 
-<p class='inheritedLink'><a href='ejs-Object.html#Properties'><i>Inherited Properties</i></a></p>
+<p class='inheritedLink'><a href='Object.html#Properties'><i>Inherited Properties</i></a></p>
 
 <hr />
-<a name='Methods'></a>
-<h2 class='classSection'>Router Methods</h2>
+<a name='ClassMethods'></a>
+<h2 class='classSection'>Router Class Methods</h2>
 <table class='apiIndex' summary='methods'>
    <tr><th>Qualifiers</th><th width='95%'>Method</th></tr>
-   <tr class='apiDef'><td class='apiType'>public const </td><td><a href='#add'><b>add</b></a>(template: <a href='ejs-Object.html'>Object</a>, options: <a href='ejs-Object.html'>Object</a> = null): <a href='ejs.web-Route.html'>Route</a></tr><tr class='apiBrief'><td>&nbsp;</td><td>Add a route.</td></tr>
-   <tr class='apiDef'><td class='apiType'>public const </td><td><a href='#addCatchall'><b>addCatchall</b></a>(): <a href='ejs-Void.html'>Void</a></tr><tr class='apiBrief'><td>&nbsp;</td><td>Add a catch-all route for static content.</td></tr>
-   <tr class='apiDef'><td class='apiType'>public const </td><td><a href='#addDefault'><b>addDefault</b></a>(run: <a href='ejs-Object.html'>Object</a>): <a href='ejs-Void.html'>Void</a></tr><tr class='apiBrief'><td>&nbsp;</td><td>Add a default MVC controller/action route.</td></tr>
-   <tr class='apiDef'><td class='apiType'>public const </td><td><a href='#addHandlers'><b>addHandlers</b></a>(): <a href='ejs-Void.html'>Void</a></tr><tr class='apiBrief'><td>&nbsp;</td><td>Add routes to handle static content, directories, "es" scripts and stand-alone ejs templated pages.</td></tr>
-   <tr class='apiDef'><td class='apiType'>public const </td><td><a href='#addHome'><b>addHome</b></a>(target: <a href='ejs-Object.html'>Object</a>): <a href='ejs-Void.html'>Void</a></tr><tr class='apiBrief'><td>&nbsp;</td><td>Add a home page route.</td></tr>
-   <tr class='apiDef'><td class='apiType'>public const </td><td><a href='#addResource'><b>addResource</b></a>(name: <a href='ejs-Object.html'>Object</a>): <a href='ejs-Void.html'>Void</a></tr><tr class='apiBrief'><td>&nbsp;</td><td>Add restful routes for a singleton resource.</td></tr>
-   <tr class='apiDef'><td class='apiType'>public const </td><td><a href='#addResources'><b>addResources</b></a>(name: <a href='ejs-Object.html'>Object</a>): <a href='ejs-Void.html'>Void</a></tr><tr class='apiBrief'><td>&nbsp;</td><td>Add restful routes for a resource collection.</td></tr>
-   <tr class='apiDef'><td class='apiType'>public const </td><td><a href='#addRestful'><b>addRestful</b></a>(): <a href='ejs-Void.html'>Void</a></tr><tr class='apiBrief'><td>&nbsp;</td><td>Add default restful routes for resources.</td></tr>
-   <tr class='apiDef'><td class='apiType'>public static const </td><td><a href='#isDir'><b>isDir</b></a>(request)</tr><tr class='apiBrief'><td>&nbsp;</td><td>Function to test if the Request.filename is a directory.</td></tr>
-   <tr class='apiDef'><td class='apiType'>public const </td><td><a href='#lookup'><b>lookup</b></a>(options: <a href='ejs-Object.html'>Object</a>): <a href='ejs.web-Route.html'>Route</a></tr><tr class='apiBrief'><td>&nbsp;</td><td>Lookup a route by name.</td></tr>
-   <tr class='apiDef'><td class='apiType'>public const </td><td><a href='#remove'><b>remove</b></a>(name: <a href='ejs-String.html'>String</a>): <a href='ejs-Void.html'>Void</a></tr><tr class='apiBrief'><td>&nbsp;</td><td>Remove a route.</td></tr>
-   <tr class='apiDef'><td class='apiType'>public const </td><td><a href='#reset'><b>reset</b></a>(request): <a href='ejs-Void.html'>Void</a></tr><tr class='apiBrief'><td>&nbsp;</td><td>Reset the routing tables by removing all routes.</td></tr>
-   <tr class='apiDef'><td class='apiType'>public const </td><td><a href='#route'><b>route</b></a>(request): <a href='ejs-Function.html'>Function</a></tr><tr class='apiBrief'><td>&nbsp;</td><td>Route a request.</td></tr>
-   <tr class='apiDef'><td class='apiType'></td><td><a href='#Router'><b>Router</b></a>(routeSet: <a href='ejs-String.html'>String</a> = Top)</tr><tr class='apiBrief'><td>&nbsp;</td><td>Create a Router instance and initialize routes.</td></tr>
-   <tr class='apiDef'><td class='apiType'></td><td><a href='#Router'><b>Router</b></a>(routeSet: <a href='ejs-String.html'>String</a> = Top)</tr><tr class='apiBrief'><td>&nbsp;</td><td>Create a Router instance and initialize routes.</td></tr>
-   <tr class='apiDef'><td class='apiType'>public const </td><td><a href='#show'><b>show</b></a>(extra: <a href='ejs-Boolean.html'>Boolean</a> = false): <a href='ejs-Void.html'>Void</a></tr><tr class='apiBrief'><td>&nbsp;</td><td>Show the route table.</td></tr>
+   <tr class='apiDef'><td class='apiType'> static </td><td><a href='#isDir'><b>isDir</b></a>(request)</tr><tr class='apiBrief'><td>&nbsp;</td><td>Function to test if the Request.filename is a directory.</td></tr>
 </table>
 
-<p class='inheritedLink'><a href='ejs-Object.html#Methods'><i>Inherited Methods</i></a></p>
+<p class='inheritedLink'><a href='Object.html#InstanceMethods'><i>Inherited Methods</i></a></p>
+
+<hr />
+<a name='InstanceMethods'></a>
+<h2 class='classSection'>Router Instance Methods</h2>
+<table class='apiIndex' summary='methods'>
+   <tr><th>Qualifiers</th><th width='95%'>Method</th></tr>
+   <tr class='apiDef'><td class='apiType'></td><td><a href='#Router'><b>Router</b></a>(routeSet: <a href='String.html'>String</a> = Top)</tr><tr class='apiBrief'><td>&nbsp;</td><td>Create a Router instance and initialize routes.</td></tr>
+   <tr class='apiDef'><td class='apiType'> </td><td><a href='#add'><b>add</b></a>(template: <a href='Object.html'>Object</a>, options: <a href='Object.html'>Object</a> = null): <a href='ejs.web-Route.html'>Route</a></tr><tr class='apiBrief'><td>&nbsp;</td><td>Add a route.</td></tr>
+   <tr class='apiDef'><td class='apiType'> </td><td><a href='#addCatchall'><b>addCatchall</b></a>(): <a href='Void.html'>Void</a></tr><tr class='apiBrief'><td>&nbsp;</td><td>Add a catch-all route for static content.</td></tr>
+   <tr class='apiDef'><td class='apiType'> </td><td><a href='#addDefault'><b>addDefault</b></a>(run: <a href='Object.html'>Object</a>): <a href='Void.html'>Void</a></tr><tr class='apiBrief'><td>&nbsp;</td><td>Add a default MVC controller/action route.</td></tr>
+   <tr class='apiDef'><td class='apiType'> </td><td><a href='#addHandlers'><b>addHandlers</b></a>(): <a href='Void.html'>Void</a></tr><tr class='apiBrief'><td>&nbsp;</td><td>Add routes to handle static content, directories, "es" scripts and stand-alone ejs templated pages.</td></tr>
+   <tr class='apiDef'><td class='apiType'> </td><td><a href='#addHome'><b>addHome</b></a>(target: <a href='Object.html'>Object</a>): <a href='Void.html'>Void</a></tr><tr class='apiBrief'><td>&nbsp;</td><td>Add a home page route.</td></tr>
+   <tr class='apiDef'><td class='apiType'> </td><td><a href='#addResource'><b>addResource</b></a>(name: <a href='Object.html'>Object</a>): <a href='Void.html'>Void</a></tr><tr class='apiBrief'><td>&nbsp;</td><td>Add restful routes for a singleton resource.</td></tr>
+   <tr class='apiDef'><td class='apiType'> </td><td><a href='#addResources'><b>addResources</b></a>(name: <a href='Object.html'>Object</a>): <a href='Void.html'>Void</a></tr><tr class='apiBrief'><td>&nbsp;</td><td>Add restful routes for a resource collection.</td></tr>
+   <tr class='apiDef'><td class='apiType'> </td><td><a href='#addRestful'><b>addRestful</b></a>(): <a href='Void.html'>Void</a></tr><tr class='apiBrief'><td>&nbsp;</td><td>Add default restful routes for resources.</td></tr>
+   <tr class='apiDef'><td class='apiType'> </td><td><a href='#lookup'><b>lookup</b></a>(options: <a href='Object.html'>Object</a>): <a href='ejs.web-Route.html'>Route</a></tr><tr class='apiBrief'><td>&nbsp;</td><td>Lookup a route by name.</td></tr>
+   <tr class='apiDef'><td class='apiType'> </td><td><a href='#remove'><b>remove</b></a>(name: <a href='String.html'>String</a>): <a href='Void.html'>Void</a></tr><tr class='apiBrief'><td>&nbsp;</td><td>Remove a route.</td></tr>
+   <tr class='apiDef'><td class='apiType'> </td><td><a href='#reset'><b>reset</b></a>(request): <a href='Void.html'>Void</a></tr><tr class='apiBrief'><td>&nbsp;</td><td>Reset the routing tables by removing all routes.</td></tr>
+   <tr class='apiDef'><td class='apiType'> </td><td><a href='#route'><b>route</b></a>(request): <a href='Function.html'>Function</a></tr><tr class='apiBrief'><td>&nbsp;</td><td>Route a request.</td></tr>
+   <tr class='apiDef'><td class='apiType'> </td><td><a href='#show'><b>show</b></a>(extra: <a href='Boolean.html'>Boolean</a> = false): <a href='Void.html'>Void</a></tr><tr class='apiBrief'><td>&nbsp;</td><td>Show the route table.</td></tr>
+</table>
+
+<p class='inheritedLink'><a href='Object.html#InstanceMethods'><i>Inherited Methods</i></a></p>
 
 <hr />
 <h2>Method Detail</h2>
-<a name='add'></a>
+<a name='Router'></a>
 <div class='api'>
-<div class='apiSig'>const   public  add(template: <a href='ejs-Object.html'>Object</a>, options: <a href='ejs-Object.html'>Object</a> = null): <a href='ejs.web-Route.html'>Route</a>
+<div class='apiSig'>  ejs.web  Router(routeSet: <a href='String.html'>String</a> = Top)
 </div>
 <div class='apiDetail'>
-<p>Add a route.</p>
+<dl><dt>Description</dt></dd><dd>Create a Router instance and initialize routes. </dd></dl>
 <dl><dt>Parameters</dt>
 <dd><table class='parameters' summary ='parameters'>
-<tr class='param'><td class='param'>template: <a href='ejs-Object.html'>Object</a> </td><td>String or Regular Expression defining the form of a matching URI (Request.pathInfo).</td></tr><tr class='param'><td class='param'>options: <a href='ejs-Object.html'>Object</a> </td><td>Route options representing the URI and options to use when servicing the request. If it is a string, it may begin with an ". [default: null]</td></tr></table></dd>
+<tr class='param'><td class='param'>routeSet: <a href='String.html'>String</a> </td><td>Optional name of the route set to add. Supports sets include: Router.Top and Router.Restful. The Top routes provide top level routes for pages with extensions ".ejs",  and ".es" as well as for static content (see <a href='#addHandlers'>addHandlers</a> addCatchall). The Restful routes provide  default Controller/Action routes according to a RESTful paradigm (see addRestful). The routeSet can also be set to null to add not routes. This is useful for creating a bare Router instance. Defaults  to Top. [default: Top]</td></tr></table></dd>
+</dl><dl><dt>Throws</dt><dd>
+<a href='Error.html'>Error</a>: for an unknown route set.
+</dd>
+</dl></div>
+</div>
+<hr />
+<a name='add'></a>
+<div class='api'>
+<div class='apiSig'>    add(template: <a href='Object.html'>Object</a>, options: <a href='Object.html'>Object</a> = null): <a href='ejs.web-Route.html'>Route</a>
+</div>
+<div class='apiDetail'>
+<dl><dt>Description</dt></dd><dd>Add a route. </dd></dl>
+<dl><dt>Parameters</dt>
+<dd><table class='parameters' summary ='parameters'>
+<tr class='param'><td class='param'>template: <a href='Object.html'>Object</a> </td><td>String or Regular Expression defining the form of a matching URI (Request.pathInfo).</td></tr><tr class='param'><td class='param'>options: <a href='Object.html'>Object</a> </td><td>Route options representing the URI and options to use when servicing the request. If it is a string, it may begin with a " @" and be of the form " @[controller/]action". In this case, if there is a "/" delimiter, the first portion is a controller and the second is the controller action to invoke. The controller or action may be absent. For example: " @Controller/", " @action", " @controller/action". If the string does not begin with an " @", it is interpreted as a literal URI. For example: "/web/index.html". If the options is an object hash, it may contain the options below:. [default: null]</td></tr></table></dd>
 </dl><dl><dt>Options</dt>
 <dd><table class='parameters' summary ='options'>
 <td class='param'>action</td><td>Action method to service the request if using controllers. This may also be of the form  "controller/action" to set both the action and controller in one property.</td></tr>
@@ -116,64 +220,61 @@ route for static pages. Use of this constant will not add routes for MVC content
 <td class='param'>rewrite</td><td>Rewrite function. This can rewrite request properties.</td></tr>
 <td class='param'>run</td><td>(Function|Object) This can be either a builder function to serve the request or it can be a  response hash with status, headers and body properties. The builder function should return a function  of the form: function (request: Request): Object.</td></tr>
 <td class='param'>set</td><td>Route set name in which to add this route. Defaults to the first component of the template if the template is a string, otherwise "".</td></tr>
-<td class='param'>target</td><td>Target for the route. This can be a Uri path or a controller/action pair: ".</td></tr>
+<td class='param'>target</td><td>Target for the route. This can be a Uri path or a controller/action pair: " @[controller/]action".</td></tr>
 </table></dd>
 </dl><dl><dt>Example</dt>
 <dd><pre>Route("/{controller}(/{action}(/{id}))/", { method: "POST" })
 Route("/User/login", {name: "login" })
-</pre></dd></dl>
+@option name Name for the route</pre></dd></dl>
 </div>
 </div>
 <hr />
 <a name='addCatchall'></a>
 <div class='api'>
-<div class='apiSig'>const   public  addCatchall(): <a href='ejs-Void.html'>Void</a>
+<div class='apiSig'>    addCatchall(): <a href='Void.html'>Void</a>
 </div>
 <div class='apiDetail'>
-<p>Add a catch-all route for static content.</p>
+<dl><dt>Description</dt></dd><dd>Add a catch-all route for static content. </dd></dl>
 </div>
 </div>
 <hr />
 <a name='addDefault'></a>
 <div class='api'>
-<div class='apiSig'>const   public  addDefault(run: <a href='ejs-Object.html'>Object</a>): <a href='ejs-Void.html'>Void</a>
+<div class='apiSig'>    addDefault(run: <a href='Object.html'>Object</a>): <a href='Void.html'>Void</a>
 </div>
 <div class='apiDetail'>
-<p>Add a default MVC controller/action route.</p>
-<dl><dt>Description</dt><dd>This consists of a "/{controller}/{action}" route.
+<dl><dt>Description</dt></dd><dd>Add a default MVC controller/action route. This consists of a "/{controller}/{action}" route.
 All HTTP method verbs are supported.</dd></dl>
 </div>
 </div>
 <hr />
 <a name='addHandlers'></a>
 <div class='api'>
-<div class='apiSig'>const   public  addHandlers(): <a href='ejs-Void.html'>Void</a>
+<div class='apiSig'>    addHandlers(): <a href='Void.html'>Void</a>
 </div>
 <div class='apiDetail'>
-<p>Add routes to handle static content, directories, "es" scripts and stand-alone ejs templated pages.</p>
+<dl><dt>Description</dt></dd><dd>Add routes to handle static content, directories, "es" scripts and stand-alone ejs templated pages. </dd></dl>
 </div>
 </div>
 <hr />
 <a name='addHome'></a>
 <div class='api'>
-<div class='apiSig'>const   public  addHome(target: <a href='ejs-Object.html'>Object</a>): <a href='ejs-Void.html'>Void</a>
+<div class='apiSig'>    addHome(target: <a href='Object.html'>Object</a>): <a href='Void.html'>Void</a>
 </div>
 <div class='apiDetail'>
-<p>Add a home page route.</p>
-<dl><dt>Description</dt><dd>This will add or update the "home" page route.</dd></dl>
+<dl><dt>Description</dt></dd><dd>Add a home page route. This will add or update the "home" page route.</dd></dl>
 <dl><dt>Parameters</dt>
 <dd><table class='parameters' summary ='parameters'>
-<tr class='param'><td class='param'>target: <a href='ejs-Object.html'>Object</a> </td><td>Target to invoke when the home page is accessed.</td></tr></table></dd>
+<tr class='param'><td class='param'>target: <a href='Object.html'>Object</a> </td><td>Target to invoke when the home page is accessed.</td></tr></table></dd>
 </dl></div>
 </div>
 <hr />
 <a name='addResource'></a>
 <div class='api'>
-<div class='apiSig'>const   public  addResource(name: <a href='ejs-Object.html'>Object</a>): <a href='ejs-Void.html'>Void</a>
+<div class='apiSig'>    addResource(name: <a href='Object.html'>Object</a>): <a href='Void.html'>Void</a>
 </div>
 <div class='apiDetail'>
-<p>Add restful routes for a singleton resource.</p>
-<dl><dt>Description</dt><dd>Supports member CRUD actions: edit, show, update, and custom actions.
+<dl><dt>Description</dt></dd><dd>Add restful routes for a singleton resource. Supports member CRUD actions: edit, show, update, and custom actions.
 The restful routes defined are:
 <pre>
 Method  URL                   Action
@@ -182,20 +283,19 @@ GET     /controller           show        Display a resource (not editable)
 PUT     /controller           update      Update a resource (idempotent)
 ANY     /controllers/action   *            Other custom actions
 </pre>
-The default route is used when constructing URIs via Request.link</dd></dl>
+The default route is used when constructing URIs via Request.link.</dd></dl>
 <dl><dt>Parameters</dt>
 <dd><table class='parameters' summary ='parameters'>
-<tr class='param'><td class='param'>name: <a href='ejs-Object.html'>Object</a> </td><td>Name of the resource to route. Can also be an array of names.</td></tr></table></dd>
+<tr class='param'><td class='param'>name: <a href='Object.html'>Object</a> </td><td>Name of the resource to route. Can also be an array of names.</td></tr></table></dd>
 </dl></div>
 </div>
 <hr />
 <a name='addResources'></a>
 <div class='api'>
-<div class='apiSig'>const   public  addResources(name: <a href='ejs-Object.html'>Object</a>): <a href='ejs-Void.html'>Void</a>
+<div class='apiSig'>    addResources(name: <a href='Object.html'>Object</a>): <a href='Void.html'>Void</a>
 </div>
 <div class='apiDetail'>
-<p>Add restful routes for a resource collection.</p>
-<dl><dt>Description</dt><dd>Supports CRUD actions: edit, index, show, create, update, destroy. The restful routes defined are:
+<dl><dt>Description</dt></dd><dd>Add restful routes for a resource collection. Supports CRUD actions: edit, index, show, create, update, destroy. The restful routes defined are:
 <pre>
 Method  URL                     Action
 GET     /controller             index       Display an overview of the resource
@@ -205,20 +305,19 @@ GET     /controller/1           show        Display a resource (not editable)
 PUT     /controller/1           update      Update a resource (idempotent)
 DELETE  /controller/1           destroy     Destroy a resource (idempotent)<br/><br/>ANY     /controller/action      default     Other custom actions
 </pre>
-The default route is used when constructing URIs via Request.link</dd></dl>
+The default route is used when constructing URIs via Request.link.</dd></dl>
 <dl><dt>Parameters</dt>
 <dd><table class='parameters' summary ='parameters'>
-<tr class='param'><td class='param'>name: <a href='ejs-Object.html'>Object</a> </td><td>Name of the resource to route. Can also be an array of names.</td></tr></table></dd>
+<tr class='param'><td class='param'>name: <a href='Object.html'>Object</a> </td><td>Name of the resource to route. Can also be an array of names.</td></tr></table></dd>
 </dl></div>
 </div>
 <hr />
 <a name='addRestful'></a>
 <div class='api'>
-<div class='apiSig'>const   public  addRestful(): <a href='ejs-Void.html'>Void</a>
+<div class='apiSig'>    addRestful(): <a href='Void.html'>Void</a>
 </div>
 <div class='apiDetail'>
-<p>Add default restful routes for resources.</p>
-<dl><dt>Description</dt><dd>This adds default routes for generic resources.
+<dl><dt>Description</dt></dd><dd>Add default restful routes for resources. This adds default routes for generic resources.
 Supports CRUD actions: edit, index, show, create, update, destroy. The restful routes defined are:
 <pre>
 Method  URL                     Action
@@ -229,16 +328,16 @@ GET     /controller/1           show        Display a resource (not editable)
 PUT     /controller/1           update      Update a resource (idempotent)
 DELETE  /controller/1           destroy     Destroy a resource (idempotent)<br/><br/>ANY     /controller/action      default     Other custom actions
 </pre>
-The default route is used when constructing URIs via Request.link</dd></dl>
+The default route is used when constructing URIs via Request.link.</dd></dl>
 </div>
 </div>
 <hr />
 <a name='isDir'></a>
 <div class='api'>
-<div class='apiSig'>static const   public  isDir(request)
+<div class='apiSig'>static     isDir(request)
 </div>
 <div class='apiDetail'>
-<p>Function to test if the Request.filename is a directory.</p>
+<dl><dt>Description</dt></dd><dd>Function to test if the Request.filename is a directory. </dd></dl>
 <dl><dt>Parameters</dt>
 <dd><table class='parameters' summary ='parameters'>
 <tr class='param'><td class='param'>request </td><td>Request object to consider.</td></tr></table></dd>
@@ -249,16 +348,15 @@ The default route is used when constructing URIs via Request.link</dd></dl>
 <hr />
 <a name='lookup'></a>
 <div class='api'>
-<div class='apiSig'>const   public  lookup(options: <a href='ejs-Object.html'>Object</a>): <a href='ejs.web-Route.html'>Route</a>
+<div class='apiSig'>    lookup(options: <a href='Object.html'>Object</a>): <a href='ejs.web-Route.html'>Route</a>
 </div>
 <div class='apiDetail'>
-<p>Lookup a route by name.</p>
-<dl><dt>Description</dt><dd>The route name is determined by the options provided when the route was created.
+<dl><dt>Description</dt></dd><dd>Lookup a route by name. The route name is determined by the options provided when the route was created.
 Action names will be sleuthed from the template if no options provided.
 Outer routes are pre-pended if defined.</dd></dl>
 <dl><dt>Parameters</dt>
 <dd><table class='parameters' summary ='parameters'>
-<tr class='param'><td class='param'>options: <a href='ejs-Object.html'>Object</a> </td><td>Route description. This can be either string or object hash. If it is a string, it should be of the form "controller/action". If the options is an object hash, it should have properties controller and action. The controller is used as the index for the route set. The action property is the index for the route name.</td></tr></table></dd>
+<tr class='param'><td class='param'>options: <a href='Object.html'>Object</a> </td><td>Route description. This can be either string or object hash. If it is a string, it should be of the form "controller/action". If the options is an object hash, it should have properties controller and action. The controller is used as the index for the route set. The action property is the index for the route name.</td></tr></table></dd>
 </dl><dl><dt>Returns</dt>
 <dd>Route object.</dd></dl>
 </div>
@@ -266,32 +364,31 @@ Outer routes are pre-pended if defined.</dd></dl>
 <hr />
 <a name='remove'></a>
 <div class='api'>
-<div class='apiSig'>const   public  remove(name: <a href='ejs-String.html'>String</a>): <a href='ejs-Void.html'>Void</a>
+<div class='apiSig'>    remove(name: <a href='String.html'>String</a>): <a href='Void.html'>Void</a>
 </div>
 <div class='apiDetail'>
-<p>Remove a route.</p>
+<dl><dt>Description</dt></dd><dd>Remove a route. </dd></dl>
 <dl><dt>Parameters</dt>
 <dd><table class='parameters' summary ='parameters'>
-<tr class='param'><td class='param'>name: <a href='ejs-String.html'>String</a> </td><td>Name of the route to remove. Name should be of the form "controller/action" where controller is the index for the route set and action is the index for the route name.</td></tr></table></dd>
+<tr class='param'><td class='param'>name: <a href='String.html'>String</a> </td><td>Name of the route to remove. Name should be of the form "controller/action" where controller is the index for the route set and action is the index for the route name.</td></tr></table></dd>
 </dl></div>
 </div>
 <hr />
 <a name='reset'></a>
 <div class='api'>
-<div class='apiSig'>const   public  reset(request): <a href='ejs-Void.html'>Void</a>
+<div class='apiSig'>    reset(request): <a href='Void.html'>Void</a>
 </div>
 <div class='apiDetail'>
-<p>Reset the routing tables by removing all routes.</p>
+<dl><dt>Description</dt></dd><dd>Reset the routing tables by removing all routes. </dd></dl>
 </div>
 </div>
 <hr />
 <a name='route'></a>
 <div class='api'>
-<div class='apiSig'>const   public  route(request): <a href='ejs-Function.html'>Function</a>
+<div class='apiSig'>    route(request): <a href='Function.html'>Function</a>
 </div>
 <div class='apiDetail'>
-<p>Route a request.</p>
-<dl><dt>Description</dt><dd>The request is matched against the configured route table. 
+<dl><dt>Description</dt></dd><dd>Route a request. The request is matched against the configured route table. 
 The call returns the web application to execute.</dd></dl>
 <dl><dt>Parameters</dt>
 <dd><table class='parameters' summary ='parameters'>
@@ -301,45 +398,15 @@ The call returns the web application to execute.</dd></dl>
 </div>
 </div>
 <hr />
-<a name='Router'></a>
-<div class='api'>
-<div class='apiSig'>  ejs.web  Router(routeSet: <a href='ejs-String.html'>String</a> = Top)
-</div>
-<div class='apiDetail'>
-<p>Create a Router instance and initialize routes.</p>
-<dl><dt>Parameters</dt>
-<dd><table class='parameters' summary ='parameters'>
-<tr class='param'><td class='param'>routeSet: <a href='ejs-String.html'>String</a> </td><td>Optional name of the route set to add. Supports sets include: Router.Top and Router.Restful. The Top routes provide top level routes for pages with extensions ".ejs",  and ".es" as well as for static content (see <a href='#addHandlers,'>addHandlers,</a> <a href='#addCatchall)'>addCatchall)</a>.  [default: Top]</td></tr></table></dd>
-</dl><dl><dt>Throws</dt><dd>
-<a href='ejs-Error.html'>Error</a>: for an unknown route set.  
-</dd>
-</dl></div>
-</div>
-<hr />
-<a name='Router'></a>
-<div class='api'>
-<div class='apiSig'>  ejs.web  Router(routeSet: <a href='ejs-String.html'>String</a> = Top)
-</div>
-<div class='apiDetail'>
-<p>Create a Router instance and initialize routes.</p>
-<dl><dt>Parameters</dt>
-<dd><table class='parameters' summary ='parameters'>
-<tr class='param'><td class='param'>routeSet: <a href='ejs-String.html'>String</a> </td><td>Optional name of the route set to add. Supports sets include: Router.Top and Router.Restful. The Top routes provide top level routes for pages with extensions ".ejs",  and ".es" as well as for static content (see <a href='#addHandlers,'>addHandlers,</a> <a href='#addCatchall)'>addCatchall)</a>.  [default: Top]</td></tr></table></dd>
-</dl><dl><dt>Throws</dt><dd>
-<a href='ejs-Error.html'>Error</a>: for an unknown route set.  
-</dd>
-</dl></div>
-</div>
-<hr />
 <a name='show'></a>
 <div class='api'>
-<div class='apiSig'>const   public  show(extra: <a href='ejs-Boolean.html'>Boolean</a> = false): <a href='ejs-Void.html'>Void</a>
+<div class='apiSig'>    show(extra: <a href='Boolean.html'>Boolean</a> = false): <a href='Void.html'>Void</a>
 </div>
 <div class='apiDetail'>
-<p>Show the route table.</p>
+<dl><dt>Description</dt></dd><dd>Show the route table. </dd></dl>
 <dl><dt>Parameters</dt>
 <dd><table class='parameters' summary ='parameters'>
-<tr class='param'><td class='param'>extra: <a href='ejs-Boolean.html'>Boolean</a> </td><td>Set to true to display extra route information. [default: false]</td></tr></table></dd>
+<tr class='param'><td class='param'>extra: <a href='Boolean.html'>Boolean</a> </td><td>Set to true to display extra route information. [default: false]</td></tr></table></dd>
 </dl></div>
 </div>
 <hr />

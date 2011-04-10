@@ -216,12 +216,12 @@ static EjsNumber *app_pid(Ejs *ejs, EjsObj *unused, int argc, EjsObj **argv)
 
 
 /*  
-    static function run(timeout: Number = -1, oneEvent: Boolean = false): void
+    static function run(timeout: Number = -1, oneEvent: Boolean = false): Boolean
  */
 static EjsObj *app_run(Ejs *ejs, EjsObj *unused, int argc, EjsObj **argv)
 {
     MprTime     mark, remaining;
-    int         oneEvent, timeout;
+    int         rc, oneEvent, timeout;
 
     timeout = (argc > 0) ? ejsGetInt(ejs, argv[0]) : MAXINT;
     oneEvent = (argc > 1) ? ejsGetInt(ejs, argv[1]) : 0;
@@ -232,10 +232,10 @@ static EjsObj *app_run(Ejs *ejs, EjsObj *unused, int argc, EjsObj **argv)
     mark = mprGetTime();
     remaining = timeout;
     do {
-        mprWaitForEvent(ejs->dispatcher, (int) remaining); 
+        rc = mprWaitForEvent(ejs->dispatcher, remaining); 
         remaining = mprGetRemainingTime(mark, timeout);
     } while (!oneEvent && !ejs->exiting && remaining > 0 && !mprIsStopping());
-    return 0;
+    return (rc == 0) ? S(true) : S(false);
 }
 
 
@@ -282,9 +282,7 @@ void ejsConfigureAppType(Ejs *ejs)
     ejsBindMethod(ejs, type, ES_App_chdir, (EjsProc) app_chdir);
     ejsBindMethod(ejs, type, ES_App_exeDir, (EjsProc) app_exeDir);
     ejsBindMethod(ejs, type, ES_App_exePath, (EjsProc) app_exePath);
-#if ES_App_env
     ejsBindMethod(ejs, type, ES_App_env, (EjsProc) app_env);
-#endif
     ejsBindMethod(ejs, type, ES_App_exit, (EjsProc) app_exit);
     ejsBindMethod(ejs, type, ES_App_getenv, (EjsProc) app_getenv);
     ejsBindMethod(ejs, type, ES_App_putenv, (EjsProc) app_putenv);

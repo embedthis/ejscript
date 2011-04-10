@@ -6,7 +6,7 @@
 
 module ejs.unix {
 
-    use default namespace public
+    // use default namespace public
 
     /**
         Get the base name of a file. Returns the base name portion of a file name. The base name portion is the 

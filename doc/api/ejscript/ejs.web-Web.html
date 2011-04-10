@@ -17,7 +17,7 @@
 <table class='classHead' summary='Web'>
    <tr><td><strong>Module</strong></td><td>ejs.web</td></tr>
    <tr><td><strong>Definition</strong></td><td> class Web</td></tr>
-   <tr><td><strong>Inheritance</strong></td><td>Web <img src='images/inherit.gif' alt='inherit'/> <a href='ejs-Object.html'>Object</a><tr><td><strong>Specified</strong></td><td>ejscript-2.0</td></tr>
+   <tr><td><strong>Inheritance</strong></td><td>Web <img src='images/inherit.gif' alt='inherit'/> <a href='Object.html'>Object</a><tr><td><strong>Specified</strong></td><td>ejscript-2.0</td></tr>
 <tr><td><strong>Stability</strong></td><td>Prototype.</td></tr>
        </td></tr>
 </table>
@@ -25,7 +25,7 @@
 <p class='classBrief'>Web class manages web applications.</p>
 
 <p class='classDescription'>This class initializes the web framework and loads web applications. 
-Apps may be JSGI apps with a *..es extension, template apps with a ".ejs" extension or MVC applications.</p>
+Apps may be JSGI apps with an "es" extension, template apps with an "ejs" extension or MVC applications.</p>
 
 </div>
 
@@ -33,67 +33,70 @@ Apps may be JSGI apps with a *..es extension, template apps with a ".ejs" extens
 <hr />
 <a name='Properties'></a>
 <h2 class='classSection'>Properties</h2>
-<table class='itemTable' summary='properties'>
-   <tr><th>Qualifiers</th><th>Property</th><th>Type</th><th width='95%'>Description</th></tr>
-   <tr><td colspan='4'>No properties defined</td></tr></table>
-
-<p class='inheritedLink'><a href='ejs-Object.html#Properties'><i>Inherited Properties</i></a></p>
+   <p>(No own properties defined)</p><p class='inheritedLink'><a href='Object.html#Properties'><i>Inherited Properties</i></a></p>
 
 <hr />
-<a name='Methods'></a>
-<h2 class='classSection'>Web Methods</h2>
+<a name='ClassMethods'></a>
+<h2 class='classSection'>Web Class Methods</h2>
 <table class='apiIndex' summary='methods'>
    <tr><th>Qualifiers</th><th width='95%'>Method</th></tr>
-   <tr class='apiDef'><td class='apiType'>public static const </td><td><a href='#process'><b>process</b></a>(app: <a href='ejs-Function.html'>Function</a>, request: <a href='ejs.web-Request.html'>Request</a>, finalize: <a href='ejs-Boolean.html'>Boolean</a> = true): <a href='ejs-Void.html'>Void</a></tr><tr class='apiBrief'><td>&nbsp;</td><td>Process a web request.</td></tr>
-   <tr class='apiDef'><td class='apiType'>public static const </td><td><a href='#run'><b>run</b></a>(address: <a href='ejs-String.html'>String</a>, documentRoot: <a href='ejs-Path.html'>Path</a> = . , serverRoot: <a href='ejs-Path.html'>Path</a> = .): <a href='ejs-Void.html'>Void</a></tr><tr class='apiBrief'><td>&nbsp;</td><td>Convenience routine to run a single web app script.</td></tr>
-   <tr class='apiDef'><td class='apiType'>public static const </td><td><a href='#serve'><b>serve</b></a>(request: <a href='ejs.web-Request.html'>Request</a>, router: <a href='ejs.web-Router.html'>Router</a> = expression): <a href='ejs-Void.html'>Void</a></tr><tr class='apiBrief'><td>&nbsp;</td><td>Serve a web request.</td></tr>
-   <tr class='apiDef'><td class='apiType'>public static const </td><td><a href='#start'><b>start</b></a>(address: <a href='ejs-String.html'>String</a>, documentRoot: <a href='ejs-Path.html'>Path</a> = . , serverRoot: <a href='ejs-Path.html'>Path</a> = . , routes = expression): <a href='ejs-Void.html'>Void</a></tr><tr class='apiBrief'><td>&nbsp;</td><td>Convenience routine to start a routing web server that will serve a variety of content.</td></tr>
-   <tr class='apiDef'><td class='apiType'>public static const </td><td><a href='#worker'><b>worker</b></a>(app: <a href='ejs-Function.html'>Function</a>, request: <a href='ejs.web-Request.html'>Request</a>): <a href='ejs-Void.html'>Void</a></tr><tr class='apiBrief'><td>&nbsp;</td><td>Run the request via a separate worker thread.</td></tr>
+   <tr class='apiDef'><td class='apiType'> static </td><td><a href='#process'><b>process</b></a>(app: <a href='Function.html'>Function</a>, request: <a href='ejs.web-Request.html'>Request</a>, finalize: <a href='Boolean.html'>Boolean</a> = true): <a href='Void.html'>Void</a></tr><tr class='apiBrief'><td>&nbsp;</td><td>Process a web request.</td></tr>
+   <tr class='apiDef'><td class='apiType'> static </td><td><a href='#run'><b>run</b></a>(address: <a href='String.html'>String</a>, documentRoot: <a href='Path.html'>Path</a> = ., serverRoot: <a href='Path.html'>Path</a> = .): <a href='Void.html'>Void</a></tr><tr class='apiBrief'><td>&nbsp;</td><td>Convenience routine to run a single web app script.</td></tr>
+   <tr class='apiDef'><td class='apiType'> static </td><td><a href='#serve'><b>serve</b></a>(request: <a href='ejs.web-Request.html'>Request</a>, router: <a href='ejs.web-Router.html'>Router</a> = expression): <a href='Void.html'>Void</a></tr><tr class='apiBrief'><td>&nbsp;</td><td>Serve a web request.</td></tr>
+   <tr class='apiDef'><td class='apiType'> static </td><td><a href='#start'><b>start</b></a>(address: <a href='String.html'>String</a>, documentRoot: <a href='Path.html'>Path</a> = ., serverRoot: <a href='Path.html'>Path</a> = ., routes = expression): <a href='Void.html'>Void</a></tr><tr class='apiBrief'><td>&nbsp;</td><td>Convenience routine to start a routing web server that will serve a variety of content.</td></tr>
+   <tr class='apiDef'><td class='apiType'> static </td><td><a href='#worker'><b>worker</b></a>(app: <a href='Function.html'>Function</a>, request: <a href='ejs.web-Request.html'>Request</a>): <a href='Void.html'>Void</a></tr><tr class='apiBrief'><td>&nbsp;</td><td>Run the request via a separate worker thread.</td></tr>
 </table>
 
-<p class='inheritedLink'><a href='ejs-Object.html#Methods'><i>Inherited Methods</i></a></p>
+<p class='inheritedLink'><a href='Object.html#InstanceMethods'><i>Inherited Methods</i></a></p>
+
+<hr />
+<a name='InstanceMethods'></a>
+<h2 class='classSection'>Web Instance Methods</h2>
+<table class='apiIndex' summary='methods'>
+   <tr><th>Qualifiers</th><th width='95%'>Method</th></tr>
+   <p>(No own instance methods defined)</p></table>
+
+<p class='inheritedLink'><a href='Object.html#InstanceMethods'><i>Inherited Methods</i></a></p>
 
 <hr />
 <h2>Method Detail</h2>
 <a name='process'></a>
 <div class='api'>
-<div class='apiSig'>static const   public  process(app: <a href='ejs-Function.html'>Function</a>, request: <a href='ejs.web-Request.html'>Request</a>, finalize: <a href='ejs-Boolean.html'>Boolean</a> = true): <a href='ejs-Void.html'>Void</a>
+<div class='apiSig'>static     process(app: <a href='Function.html'>Function</a>, request: <a href='ejs.web-Request.html'>Request</a>, finalize: <a href='Boolean.html'>Boolean</a> = true): <a href='Void.html'>Void</a>
 </div>
 <div class='apiDetail'>
-<p>Process a web request.</p>
+<dl><dt>Description</dt></dd><dd>Process a web request. </dd></dl>
 <dl><dt>Parameters</dt>
 <dd><table class='parameters' summary ='parameters'>
-<tr class='param'><td class='param'>request: <a href='ejs.web-Request.html'>Request</a> </td><td>Request object.</td></tr><tr class='param'><td class='param'>app: <a href='ejs-Function.html'>Function</a> </td><td>Web application function.</td></tr><tr class='param'><td class='param'>finalize: <a href='ejs-Boolean.html'>Boolean</a> </td><td>null [default: true]</td></tr></table></dd>
+<tr class='param'><td class='param'>request: <a href='ejs.web-Request.html'>Request</a> </td><td>Request object.</td></tr><tr class='param'><td class='param'>app: <a href='Function.html'>Function</a> </td><td>Web application function.</td></tr><tr class='param'><td class='param'>finalize: <a href='Boolean.html'>Boolean</a> </td><td>null [default: true]</td></tr></table></dd>
 </dl></div>
 </div>
 <hr />
 <a name='run'></a>
 <div class='api'>
-<div class='apiSig'>static const   public  run(address: <a href='ejs-String.html'>String</a>, documentRoot: <a href='ejs-Path.html'>Path</a> = . , serverRoot: <a href='ejs-Path.html'>Path</a> = .): <a href='ejs-Void.html'>Void</a>
+<div class='apiSig'>static     run(address: <a href='String.html'>String</a>, documentRoot: <a href='Path.html'>Path</a> = ., serverRoot: <a href='Path.html'>Path</a> = .): <a href='Void.html'>Void</a>
 </div>
 <div class='apiDetail'>
-<p>Convenience routine to run a single web app script.</p>
+<dl><dt>Description</dt></dd><dd>Convenience routine to run a single web app script. </dd></dl>
 <dl><dt>Parameters</dt>
 <dd><table class='parameters' summary ='parameters'>
-<tr class='param'><td class='param'>address: <a href='ejs-String.html'>String</a> </td><td>The IP endpoint address on which to listen. The address may be a port number or a composite  "IP:PORT" string. If only a port number is provided, the socket will listen on all interfaces on that port.  If null is provided for an endpoint value, an existing web server listening connection will be used. In this case, the web server will typically be the virtual host that specifies the EjsStartup script. See the hosting web server documentation for specifics.</td></tr><tr class='param'><td class='param'>documentRoot: <a href='ejs-Path.html'>Path</a> </td><td>Directory containing web documents to serve. If set to null and the HttpServer is hosted, the documentRoot will be defined by the web server. [default: . ]</td></tr><tr class='param'><td class='param'>serverRoot: <a href='ejs-Path.html'>Path</a> </td><td>Base directory for the server configuration. If set to null and the HttpServer is hosted, the serverRoot will be defined by the web server. [default: .]</td></tr></table></dd>
+<tr class='param'><td class='param'>address: <a href='String.html'>String</a> </td><td>The IP endpoint address on which to listen. The address may be a port number or a composite  "IP:PORT" string. If only a port number is provided, the socket will listen on all interfaces on that port.  If null is provided for an endpoint value, an existing web server listening connection will be used. In this case, the web server will typically be the virtual host that specifies the EjsStartup script. See the hosting web server documentation for specifics.</td></tr><tr class='param'><td class='param'>documentRoot: <a href='Path.html'>Path</a> </td><td>Directory containing web documents to serve. If set to null and the HttpServer is hosted, the documentRoot will be defined by the web server. [default: .]</td></tr><tr class='param'><td class='param'>serverRoot: <a href='Path.html'>Path</a> </td><td>Base directory for the server configuration. If set to null and the HttpServer is hosted, the serverRoot will be defined by the web server. [default: .]</td></tr></table></dd>
 </dl><dl><dt>Example</dt>
 <dd><pre>exports.app = function (request) {
     return { 
         status: Http.Ok,
         body: "Hello World\r\n"
     }
-}
-</pre></dd></dl>
+}</pre></dd></dl>
 </div>
 </div>
 <hr />
 <a name='serve'></a>
 <div class='api'>
-<div class='apiSig'>static const   public  serve(request: <a href='ejs.web-Request.html'>Request</a>, router: <a href='ejs.web-Router.html'>Router</a> = expression): <a href='ejs-Void.html'>Void</a>
+<div class='apiSig'>static     serve(request: <a href='ejs.web-Request.html'>Request</a>, router: <a href='ejs.web-Router.html'>Router</a> = expression): <a href='Void.html'>Void</a>
 </div>
 <div class='apiDetail'>
-<p>Serve a web request.</p>
-<dl><dt>Description</dt><dd>Convenience function to route, load and start a web application. 
+<dl><dt>Description</dt></dd><dd>Serve a web request. Convenience function to route, load and start a web application. 
 Called by web application start script.</dd></dl>
 <dl><dt>Parameters</dt>
 <dd><table class='parameters' summary ='parameters'>
@@ -103,27 +106,26 @@ Called by web application start script.</dd></dl>
 <hr />
 <a name='start'></a>
 <div class='api'>
-<div class='apiSig'>static const   public  start(address: <a href='ejs-String.html'>String</a>, documentRoot: <a href='ejs-Path.html'>Path</a> = . , serverRoot: <a href='ejs-Path.html'>Path</a> = . , routes = expression): <a href='ejs-Void.html'>Void</a>
+<div class='apiSig'>static     start(address: <a href='String.html'>String</a>, documentRoot: <a href='Path.html'>Path</a> = ., serverRoot: <a href='Path.html'>Path</a> = ., routes = expression): <a href='Void.html'>Void</a>
 </div>
 <div class='apiDetail'>
-<p>Convenience routine to start a routing web server that will serve a variety of content.</p>
-<dl><dt>Description</dt><dd>This routines
+<dl><dt>Description</dt></dd><dd>Convenience routine to start a routing web server that will serve a variety of content. This routines
 sets up a web server using the specified route tables.</dd></dl>
 <dl><dt>Parameters</dt>
 <dd><table class='parameters' summary ='parameters'>
-<tr class='param'><td class='param'>address: <a href='ejs-String.html'>String</a> </td><td>The IP endpoint address on which to listen. The address may be a port number or a composite  "IP:PORT" string. If only a port number is provided, the socket will listen on all interfaces on that port.  If null is provided for an endpoint value, an existing web server listening connection will be used. In this case, the web server will typically be the virtual host that specifies the EjsStartup script. See the hosting web server documentation for specifics.</td></tr><tr class='param'><td class='param'>documentRoot: <a href='ejs-Path.html'>Path</a> </td><td>Directory containing web documents to serve. If set to null and the HttpServer is hosted, the documentRoot will be defined by the web server. [default: . ]</td></tr><tr class='param'><td class='param'>serverRoot: <a href='ejs-Path.html'>Path</a> </td><td>Base directory for the server configuration. If set to null and the HttpServer is hosted, the serverRoot will be defined by the web server. [default: . ]</td></tr><tr class='param'><td class='param'>routes </td><td>Route table to use. Defaults to Router.Top. [default: expression]</td></tr></table></dd>
+<tr class='param'><td class='param'>address: <a href='String.html'>String</a> </td><td>The IP endpoint address on which to listen. The address may be a port number or a composite  "IP:PORT" string. If only a port number is provided, the socket will listen on all interfaces on that port.  If null is provided for an endpoint value, an existing web server listening connection will be used. In this case, the web server will typically be the virtual host that specifies the EjsStartup script. See the hosting web server documentation for specifics.</td></tr><tr class='param'><td class='param'>documentRoot: <a href='Path.html'>Path</a> </td><td>Directory containing web documents to serve. If set to null and the HttpServer is hosted, the documentRoot will be defined by the web server. [default: .]</td></tr><tr class='param'><td class='param'>serverRoot: <a href='Path.html'>Path</a> </td><td>Base directory for the server configuration. If set to null and the HttpServer is hosted, the serverRoot will be defined by the web server. [default: .]</td></tr><tr class='param'><td class='param'>routes </td><td>Route table to use. Defaults to Router.Top. [default: expression]</td></tr></table></dd>
 </dl></div>
 </div>
 <hr />
 <a name='worker'></a>
 <div class='api'>
-<div class='apiSig'>static const   public  worker(app: <a href='ejs-Function.html'>Function</a>, request: <a href='ejs.web-Request.html'>Request</a>): <a href='ejs-Void.html'>Void</a>
+<div class='apiSig'>static     worker(app: <a href='Function.html'>Function</a>, request: <a href='ejs.web-Request.html'>Request</a>): <a href='Void.html'>Void</a>
 </div>
 <div class='apiDetail'>
-<p>Run the request via a separate worker thread.</p>
+<dl><dt>Description</dt></dd><dd>Run the request via a separate worker thread. </dd></dl>
 <dl><dt>Parameters</dt>
 <dd><table class='parameters' summary ='parameters'>
-<tr class='param'><td class='param'>app: <a href='ejs-Function.html'>Function</a> </td><td>Application function to run.</td></tr><tr class='param'><td class='param'>request: <a href='ejs.web-Request.html'>Request</a> </td><td>Request object.</td></tr></table></dd>
+<tr class='param'><td class='param'>app: <a href='Function.html'>Function</a> </td><td>Application function to run.</td></tr><tr class='param'><td class='param'>request: <a href='ejs.web-Request.html'>Request</a> </td><td>Request object.</td></tr></table></dd>
 </dl></div>
 </div>
 <hr />

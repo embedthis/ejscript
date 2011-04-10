@@ -5,8 +5,12 @@
 module ejs.web {
     /** 
         Session state storage class. 
+        The session state objects can be used to share state between requests. The $ejs.web::Request object has
+        a $ejs.web::Request.session property that stores an Session instance. Storing objects into the session instance
+        will cause the object to be serialized for later retrieveal.
+
         @spec ejs
-     */
+    */
     dynamic class Session { }
 }
 

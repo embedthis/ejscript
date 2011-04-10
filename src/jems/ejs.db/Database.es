@@ -98,6 +98,7 @@ module ejs.db {
 
         /**
             Commit a database transaction
+            @hide
          */
         function commit(): Void
             adapter.commit()
@@ -136,7 +137,7 @@ module ejs.db {
         /**
             Map the database independant data type to a database dependant SQL data type
             @param dataType Data type to map
-            @returns The corresponding SQL database type
+            @returns A string containing the name of the the corresponding SQL database type
          */
         function dataTypeToSqlType(dataType:String): String
             adapter.dataTypeToSqlType(dataType)
@@ -170,6 +171,7 @@ module ejs.db {
 
         /**
             End a transaction
+            @hide
          */
         function endTransaction(): Void
             adapter.endTransaction()
@@ -288,6 +290,7 @@ module ejs.db {
 
         /**
             Start a new database transaction
+            @hide
          */
         function startTransaction(): Void
             adapter.startTransaction()
@@ -304,6 +307,7 @@ module ejs.db {
         /**
             Execute a database transaction
             @param code Function to run inside a database transaction
+            @hide
          */
         function transaction(code: Function): Void {
             startTransaction()

@@ -27,12 +27,12 @@ module ejs {
         native function clone(deep: Boolean = true) : Object
 
         /** 
-            Create a new object, set the prototype and properties.
+            Create a new object, set the object prototype and properties.
             @param prototype Prototype object
-            @param props Properties for the new object
+            @param properties Properties for the new object
             @return The created object
          */
-        static native function create(prototype: Object, props: Object = undefined): Object 
+        static native function create(prototype: Object, properties: Object = undefined): Object 
 
         /** 
             Define or redefine a property on the given object

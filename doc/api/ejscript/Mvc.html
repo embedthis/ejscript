@@ -17,14 +17,12 @@
 <table class='classHead' summary='Mvc'>
    <tr><td><strong>Module</strong></td><td>ejs.web</td></tr>
    <tr><td><strong>Definition</strong></td><td> class Mvc</td></tr>
-   <tr><td><strong>Inheritance</strong></td><td>Mvc <img src='images/inherit.gif' alt='inherit'/> <a href='ejs-Object.html'>Object</a><tr><td><strong>Specified</strong></td><td>ejscript-2.0</td></tr>
+   <tr><td><strong>Inheritance</strong></td><td>Mvc <img src='images/inherit.gif' alt='inherit'/> <a href='Object.html'>Object</a><tr><td><strong>Specified</strong></td><td>ejscript-2.0</td></tr>
 <tr><td><strong>Stability</strong></td><td>Prototype.</td></tr>
        </td></tr>
 </table>
 
 <p class='classBrief'>The Mvc class manages the loading and initialization of MVC web applications.</p>
-
-<p class='classDescription'>null</p>
 
 </div>
 
@@ -34,30 +32,38 @@
 <h2 class='classSection'>Properties</h2>
 <table class='itemTable' summary='properties'>
    <tr><th>Qualifiers</th><th>Property</th><th>Type</th><th width='95%'>Description</th></tr>
-   <tr><td colspan='4'>No properties defined</td></tr></table>
-
-<p class='inheritedLink'><a href='ejs-Object.html#Properties'><i>Inherited Properties</i></a></p>
-
-<hr />
-<a name='Methods'></a>
-<h2 class='classSection'>Mvc Methods</h2>
-<table class='apiIndex' summary='methods'>
-   <tr><th>Qualifiers</th><th width='95%'>Method</th></tr>
-   <tr class='apiDef'><td class='apiType'>const </td><td><a href='#init'><b>init</b></a>(request: <a href='ejs.web-Request.html'>Request</a>): <a href='ejs-Void.html'>Void</a></tr><tr class='apiBrief'><td>&nbsp;</td><td>Load an MVC application.</td></tr>
-   <tr class='apiDef'><td class='apiType'>const </td><td><a href='#loadComponent'><b>loadComponent</b></a>(request: <a href='ejs.web-Request.html'>Request</a>, mod: <a href='ejs-Path.html'>Path</a>, files: <a href='ejs-Array.html'>Array</a> = null , deps: <a href='ejs-Array.html'>Array</a> = null)</tr><tr class='apiBrief'><td>&nbsp;</td><td>Load a component.</td></tr>
 </table>
 
-<p class='inheritedLink'><a href='ejs-Object.html#Methods'><i>Inherited Methods</i></a></p>
+<p class='inheritedLink'><a href='Object.html#Properties'><i>Inherited Properties</i></a></p>
+
+<hr />
+<a name='ClassMethods'></a>
+<h2 class='classSection'>Mvc Class Methods</h2>
+<table class='apiIndex' summary='methods'>
+   <tr><th>Qualifiers</th><th width='95%'>Method</th></tr>
+   <p>(No own class methods defined)</p></table>
+
+<p class='inheritedLink'><a href='Object.html#InstanceMethods'><i>Inherited Methods</i></a></p>
+
+<hr />
+<a name='InstanceMethods'></a>
+<h2 class='classSection'>Mvc Instance Methods</h2>
+<table class='apiIndex' summary='methods'>
+   <tr><th>Qualifiers</th><th width='95%'>Method</th></tr>
+   <tr class='apiDef'><td class='apiType'></td><td><a href='#init'><b>init</b></a>(request: <a href='ejs.web-Request.html'>Request</a>): <a href='Void.html'>Void</a></tr><tr class='apiBrief'><td>&nbsp;</td><td>Load an MVC application.</td></tr>
+   <tr class='apiDef'><td class='apiType'></td><td><a href='#loadComponent'><b>loadComponent</b></a>(request: <a href='ejs.web-Request.html'>Request</a>, mod: <a href='Path.html'>Path</a>, files: <a href='Array.html'>Array</a> = null, deps: <a href='Array.html'>Array</a> = null)</tr><tr class='apiBrief'><td>&nbsp;</td><td>Load a component.</td></tr>
+</table>
+
+<p class='inheritedLink'><a href='Object.html#InstanceMethods'><i>Inherited Methods</i></a></p>
 
 <hr />
 <h2>Method Detail</h2>
 <a name='init'></a>
 <div class='api'>
-<div class='apiSig'>const   public  init(request: <a href='ejs.web-Request.html'>Request</a>): <a href='ejs-Void.html'>Void</a>
+<div class='apiSig'>    init(request: <a href='ejs.web-Request.html'>Request</a>): <a href='Void.html'>Void</a>
 </div>
 <div class='apiDetail'>
-<p>Load an MVC application.</p>
-<dl><dt>Description</dt><dd>This is typically called by the Router to load an application after routing
+<dl><dt>Description</dt></dd><dd>Load an MVC application. This is typically called by the Router to load an application after routing
 the request to determine the appropriate controller.</dd></dl>
 <dl><dt>Parameters</dt>
 <dd><table class='parameters' summary ='parameters'>
@@ -67,15 +73,14 @@ the request to determine the appropriate controller.</dd></dl>
 <hr />
 <a name='loadComponent'></a>
 <div class='api'>
-<div class='apiSig'>const   public  loadComponent(request: <a href='ejs.web-Request.html'>Request</a>, mod: <a href='ejs-Path.html'>Path</a>, files: <a href='ejs-Array.html'>Array</a> = null , deps: <a href='ejs-Array.html'>Array</a> = null)
+<div class='apiSig'>    loadComponent(request: <a href='ejs.web-Request.html'>Request</a>, mod: <a href='Path.html'>Path</a>, files: <a href='Array.html'>Array</a> = null, deps: <a href='Array.html'>Array</a> = null)
 </div>
 <div class='apiDetail'>
-<p>Load a component.</p>
-<dl><dt>Description</dt><dd>This will load a module and optionally recompile if the given dependency paths are
+<dl><dt>Description</dt></dd><dd>Load a component. This will load a module and optionally recompile if the given dependency paths are
 more recent than the module itself. If recompilation occurs, the result will be cached in the supplied module.</dd></dl>
 <dl><dt>Parameters</dt>
 <dd><table class='parameters' summary ='parameters'>
-<tr class='param'><td class='param'>request: <a href='ejs.web-Request.html'>Request</a> </td><td>Request object.</td></tr><tr class='param'><td class='param'>mod: <a href='ejs-Path.html'>Path</a> </td><td>Path to the module to load.</td></tr><tr class='param'><td class='param'>files: <a href='ejs-Array.html'>Array</a> </td><td>Files to compile into the module. [default: null ]</td></tr><tr class='param'><td class='param'>deps: <a href='ejs-Array.html'>Array</a> </td><td>Extra file dependencies. [default: null]</td></tr></table></dd>
+<tr class='param'><td class='param'>request: <a href='ejs.web-Request.html'>Request</a> </td><td>Request object.</td></tr><tr class='param'><td class='param'>mod: <a href='Path.html'>Path</a> </td><td>Path to the module to load.</td></tr><tr class='param'><td class='param'>files: <a href='Array.html'>Array</a> </td><td>Files to compile into the module. [default: null]</td></tr><tr class='param'><td class='param'>deps: <a href='Array.html'>Array</a> </td><td>Extra file dependencies. [default: null]</td></tr></table></dd>
 </dl></div>
 </div>
 <hr />

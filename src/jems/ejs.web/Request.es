@@ -26,8 +26,8 @@ module ejs.web {
         private var lastFlash: Object
 
         /** 
-            Absolute Uri for the top-level of the application. This returns an absolute Uri (includes scheme and host) 
-            for the top-most application Uri. See $home to get a relative Uri.
+            Uri for the top-level of the application. This is an absolute Uri that includes scheme and host components.
+            See $home to get a relative Uri.
          */ 
         native enumerable var absHome: Uri
 
@@ -51,17 +51,16 @@ module ejs.web {
         native enumerable var authUser: String
 
         /** 
-            Stop auto-finalizing the request. Some web frameworks will "auto-finalize" requests by calling finalize()
-            automatically at the conclusion of the request. Applications that wish to keep the connection open to the
-            client can defeat this auto-finalization by calling dontAutoFinalize().
-
-            Auto-finalization control. Set to true if the request will be finalized automatically at the conclusion of 
-            the request. Defaults to true and is set to false if dontAutoFinalize() is called. 
+            Control whether auto-finalizing will be used for the request. If autoFinalizing is false, a request must
+            call $finalize() to signal the end of write data. If autoFinalize is true, the Request class will automatically 
+            call finalize at the conclusion of the request.
+            Applications that wish to keep the request open to the client can suppress auto-finalization by 
+            setting autoFinalizing to false or by calling $dontAutoFinalize(). This property defaults to true.
          */
         native enumerable var autoFinalizing: Boolean
 
         /** 
-            Request configuration. Initially refers to App.config which is filled with the aggregated "ejsrc" content.
+            Request configuration. Initially refers to $App.config which is filled with the aggregated "ejsrc" content.
             Middleware may modify to refer to a request local configuration object.
          */
         native enumerable var config: Object
@@ -122,14 +121,12 @@ module ejs.web {
          */
         native enumerable var filename: Path
 
-        /** 
-            Notification "flash" messages to pass to the next request (only). By convention, the following keys are used:
-            @option error    Negative errors (Warnings and errors)
-            @option inform   Informational / postitive feedback (note)
-            @option warn     Negative feedback (Warnings and errors)
-            @option *        Other feedback (reminders, suggestions...)
-        */
 //  MOB -- why public here
+        /** 
+            Notification "flash" messages to pass to the next request (only). By convention, the following keys are used.
+            error: Negative errors (Warnings and errors), inform: Informational / postitive feedback (note),
+            warn: Negative feedback (Warnings and errors), *: Other feedback (reminders, suggestions...)
+        */
         public var flash: Object
 
         /** 
@@ -213,7 +210,7 @@ module ejs.web {
         native enumerable var params: Object
 
         /** 
-            Portion of the request URL after the scriptName. This is the location of the request within the application.
+            Location of the request within the application. This is the portion of the request URL after the scriptName. 
             The pathInfo is originally derrived from uri.path after splitting off the scriptName. Changes to the uri or 
             scriptName properties will not affect the pathInfo property.
          */
@@ -297,7 +294,8 @@ module ejs.web {
         /** 
             Session state object. The session state object can be used to share state between requests.
             If a session has not already been created, accessing this property automatically creates a new session 
-            and sets the $sessionID property and a cookie containing a session ID sent to the client with the response.
+            and sets the $ejs.web::Request.sessionID property and a cookie containing a session ID sent to the client 
+            with the response.
             To test if a session has been created, test the sessionID property which will not auto-create a session.
             Objects are stored in the session state using JSON serialization.
          */
@@ -339,13 +337,10 @@ module ejs.web {
         native function get async(): Boolean
         native function set async(enable: Boolean): Void
 
-//  MOB - rename
         /** 
-            Finalize the request if dontAutoFinalize has not been called. Finalization signals the end of any write data 
-            and flushes any buffered write data to the client. This routine is used by frameworks to allow users to 
-            defeat finalization by calling dontAutoFinalize. Users can then call finalize() to explictly control when
-            all the response data has been written. If dontAutoFinalize() has been called, this call will have no effect. 
-            In that case, call finalize() to finalize the request.
+            Finalize the request if $autoFinalizing is true. Finalization signals the end of any write data 
+            and flushes any buffered write data to the client. This routine is used by frameworks to finalize
+            requests if required. 
          */
         native function autoFinalize(): Void 
 
@@ -386,11 +381,11 @@ module ejs.web {
             return session
         }
 
-//  MOB - rename
         /**
-            Stop auto-finalizing the request. Some web frameworks will "auto-finalize" requests by calling finalize()
-            automatically at the conclusion of the request. Applications that wish to keep the connection open to the
-            client can defeat this auto-finalization by calling dontAutoFinalize().
+            Stop auto-finalizing the request. This will set $autoFinalizing to false. Some web frameworks will 
+            "auto-finalize" requests by calling finalize() automatically at the conclusion of the request. 
+            Applications that wish to keep the connection open to the client can defeat this auto-finalization by 
+            calling dontAutoFinalize().
          */
         native function dontAutoFinalize(): Void
 
@@ -466,7 +461,7 @@ module ejs.web {
         native function header(key: String): String
 
         /** 
-            Set a informational flash notification message.
+            Set an informational flash notification message.
             Flash messages persist for only one request and are a convenient way to pass state information or 
             feedback messages to the next request. To use flash messages, setupFlash() and finalizeFlash() must 
             be called before and after the request is processed. Web.process will call setupFlash and finalizeFlash 
@@ -476,6 +471,7 @@ module ejs.web {
         function inform(msg: String): Void
             notify("inform", msg)
 
+        // MOB - OPT make native
         /** 
             Create a URI link. The target parameter may contain partial or complete URI information. The missing parts 
             are supplied using the current request and route tables. The resulting URI is a normalized, server-local 
@@ -493,9 +489,9 @@ module ejs.web {
                 name will be used. If these don't result in a usable route, the "default" route will be used. See the
                 Router for more details.
                
-                If the target is a string that begins with "@" it will be interpreted as a controller/action pair of the 
-                form "@Controller/action". If the "controller/" portion is absent, the current controller is used. If 
-                the action component is missing, the "index" action is used. A bare "@" refers to the "index" action 
+                If the target is a string that begins with "\@" it will be interpreted as a controller/action pair of the 
+                form "\@Controller/action". If the "controller/" portion is absent, the current controller is used. If 
+                the action component is missing, the "index" action is used. A bare "\@" refers to the "index" action 
                 of the current controller.
 
                 Lastly, the target object hash may contain an override "uri" property. If specified, the value of the 
@@ -512,30 +508,27 @@ module ejs.web {
             @option action String Action to invoke. This can be a URI string or a Controller action of the form
                 @Controller/action.
             @option route String Route name to use for the URI template
-            @example
-                Given a current request of http://example.com/samples/demo" and "r" == the current request:
-
-
-                r.link("images/splash.png")                  returns "/samples/images/splash.png"
-                r.link("images/splash.png").complete(r.uri)  returns "http://example.com/samples/images/splash.png"
-                r.link("images/splash.png").relative(r.uri)  returns "images/splash.png"
-
-                r.link("http://example.com/index.html")
-                r.link("/path/to/index.html")
-                r.link("@Controller/checkout")
-                r.link("@Controller/")
-                r.link("@checkout")
-                r.link("@")
-                r.link({action: "checkout")
-                r.link({action: "logout", controller: "Admin")
-                r.link({action: "Admin/logout")
-                r.link({action: "@Admin/logout")
-                r.link({uri: "http://example.com/checkout"})
-                r.link({route: "default", action: "@checkout")
-                r.link({product: "candy", quantity: "10", template: "/cart/{product}/{quantity}")
-
             @return A normalized, server-local Uri object.
-            MOB - OPT make native
+            @example
+Given a current request of http://example.com/samples/demo" and "r" == the current request:
+
+r.link("images/splash.png")                  # "/samples/images/splash.png"
+r.link("images/splash.png").complete(r.uri)  # "http://example.com/samples/images/splash.png"
+r.link("images/splash.png").relative(r.uri)  # "images/splash.png"
+
+r.link("http://example.com/index.html")
+r.link("/path/to/index.html")
+r.link("\@Controller/checkout")
+r.link("\@Controller/")
+r.link("\@checkout")
+r.link("\@")
+r.link({action: "checkout")
+r.link({action: "logout", controller: "Admin")
+r.link({action: "Admin/logout")
+r.link({action: "\@Admin/logout")
+r.link({uri: "http://example.com/checkout"})
+r.link({route: "default", action: "\@checkout")
+r.link({product: "candy", quantity: "10", template: "/cart/{product}/{quantity}")
          */
         function link(target: Object): Uri {
             if (target is Uri) {
@@ -678,8 +671,8 @@ module ejs.web {
             by the $url.  Optionally, a redirection code may be provided. Normally this code is set to be the HTTP 
             code 302 which means a temporary redirect. A 301, permanent redirect code may be explicitly set.
             @param target Uri to redirect the client toward. This can be a relative or absolute string URI or it can be
-                a hash of URI components. For example, the following are valid inputs: "../index.ejs", 
-                "http://www.example.com/home.html", "@list".
+                a hash of URI components. For example, the following are valid inputs: ../index.ejs, 
+                http://www.example.com/home.html, \@list.
             @param status Optional HTTP redirection status
          */
         function redirect(target: *, status: Number = Http.MovedTemporarily): Void {
@@ -705,7 +698,7 @@ module ejs.web {
         }
 
         /** 
-            Define a cookie header to send with the response. Path, domain and lifetime can be set to null for 
+            Define a cookie header to send with the response. The Path, domain and expires properties can be set to null for 
                 default values.
             @param name Cookie name
             @param options Cookie field options
@@ -766,7 +759,7 @@ module ejs.web {
 
         /**
             Convenience routine to define an application at a given Uri prefix and directory location. This is typically
-                called from routing tables.
+                called from routing tables. This sets the $pathInfo, $scriptName and $dir properties.
             @param prefix The leading Uri prefix for the application. This prefix is removed from the pathInfo and the
                 $scriptName property is set to the prefix. The script name should begin with "/".
             @param location Path to where the application home directory is. This sets the $dir property to the $location
@@ -884,7 +877,6 @@ module ejs.web {
             @returns a count of the bytes actually written. Returns null on eof.
             @event writable Issued when the connection can absorb more data.
 
-            MOB - same for Http and other streams
          */
         # FUTURE
         native function writeBlock(buffer: ByteArray, offset: Number = 0, count: Number = -1): Number 

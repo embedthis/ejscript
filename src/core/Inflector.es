@@ -5,6 +5,7 @@
 module ejs {
 
     /** 
+        Inflector class to convert singular to plural and vice-versa.
         The Inflector class emulates the Rails Inflector. 
         See: http://api.rubyonrails.org/classes/ActiveSupport/Inflector.html
      */
@@ -74,6 +75,8 @@ module ejs {
             "sheep",
             "species",
         ]
+
+        use default namespace public
 
         /**
             Add a new irregular mapping
@@ -175,6 +178,8 @@ module ejs {
             return word
         }
     }
+
+    use default namespace public
 
     /**
         Convert a number to an ordinal string

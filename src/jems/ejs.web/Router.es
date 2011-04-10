@@ -5,27 +5,27 @@
 module ejs.web {
 
     /** 
-        Web router class. Routes incoming client HTTP requests to the appropriate location. The Route class supports 
-        configurable user-defined routes.  Each application should create a Router instance and then attach matching routes.
+        The Router class manages incoming HTTP requests to the appropriate location application for servicing. 
+        The Route class supports configurable user-defined routes. Each application should create a Router 
+        instance and then attach matching routes.
 
         The Router works by defining routes in a route table. For rapid routing, routes are grouped into sets of 
         routes with the same leading URI path segment. For example: the route template "/User/login" would be put into
         the "User" route set. If a route template is a function or regular expression, the route is added to the "Global"
         route set.
         
-        The pathInfo and other request properties are examined when selecting a matching route. The request's leading 
-        URI pathInfo segment is used to select a route set and then the request is matched against each route in that set.
-        Routes are matched in the order in which they are defined.
+        The $ejs.web::Request.pathInfo and other Request properties are examined when selecting a matching route. 
+        The request's leading URI pathInfo segment is used to select a route set and then the request is matched 
+        against each route in that set. Routes are matched in the order in which they are defined.
 
         @example:
-
         var r = new Router
-
+        
         //  Match /some/path and run the custom builder. Target is data for the customBuilder.
         r.add("/some/path", {run: customBuilder, target: "/other/path"})
 
         //  Match /some/path and run MvcBuilder with controller == User and action == "register"
-        r.add("@/User/register")
+        r.add("\@/User/register")
 
         //  Add route for files with a ".es" extension and use the ScriptBuilder to run
         r.add(/\.es$/, {run: ScriptBuilder})
@@ -46,15 +46,16 @@ module ejs.web {
         r.add("/{controller}/{id}",      {action: "destroy", method: "DELETE"})
         r.add("/{controller}(/do/{action})")
         
-        //  Add route for upper or lower case "D" or "d". Run the default app: MvcBuilder, Dash contoller, refresh action.
-        r.add("/[Dd]ash/refresh", "@Dash/refresh")
+        //  Add route for upper or lower case "D" or "d". Run the default app: MvcBuilder, 
+        //  Dash contoller, refresh action.
+        r.add("/[Dd]ash/refresh", "\@Dash/refresh")
 
-        //  Add route for an "admin" application. This sets the scriptName to "admin" and expects an application to be
-        //      located at the directory "myApp"
+        //  Add route for an "admin" application. This sets the scriptName to "admin" and 
+        //  expects an application to be located at the directory "myApp"
         r.add("/admin/", {location: { scriptName: "/control", dir: "my"})
 
         //  Rewrite a request for "old.html" to new.html
-        r.add("/web/old.html",  {rewrite: function(request) { request.pathInfo = "/web/new.html"}})
+        r.add("/web/old.html", {rewrite: function(request) { request.pathInfo = "/web/new.html"}})  
 
         //  Handle a request with a literal response
         r.add("/oldStuff/", {run: {body: "Not found"} })
@@ -88,7 +89,9 @@ module ejs.web {
         r.add("/comment", {target: "/comment/{action}/{id}", outer: outer})
 
         //  Match with regular expression. The sub-match is available via $N parameters
-        r.add(/^\/Dash-((Mini)|(Full))$/, {controller: "post", action: "list", params: {kind: "$1"}})
+        r.add(/^\/Dash-((Mini)|(Full))$/, 
+            {controller: "post", action: "list", params: {kind: "$1"}}
+        )
         
         //  Conditional matching. Surround optional tokens in "()"
         r.add("/Dash(/{product}(/{branch}(/{configuration})))", {   
@@ -114,7 +117,7 @@ module ejs.web {
             route for static pages. 
             Use of this constant will not add routes for MVC content or RESTful resources. 
          */ 
-        public static const Top = "top"
+        public static const Top: String = "top"
 
         /**
             Max calls to route() per request
@@ -125,14 +128,14 @@ module ejs.web {
             Symbolic constant for Router() to add top-level routes for directory, *.es, *.ejs, generic routes for
             RESTful resources and a catchall route for static pages
          */ 
-        public static const Restful = "restful"
+        public static const Restful: String = "restful"
 
         /**
             Default builder to use when unspecified by a route
          */
-        public var defaultBuilder = MvcBuilder
+        public var defaultBuilder: Function = MvcBuilder
 
-        /*
+        /**
             Routes indexed by first component of the URI path/template
          */
         public var routes: Object = {}
@@ -314,10 +317,10 @@ module ejs.web {
             Add a route
             @param template String or Regular Expression defining the form of a matching URI (Request.pathInfo).
             @param options Route options representing the URI and options to use when servicing the request. If it
-                is a string, it may begin with an "@" and be of the form "@[controller/]action". In this case, if there
+                is a string, it may begin with a "\@" and be of the form "\@[controller/]action". In this case, if there
                 is a "/" delimiter, the first portion is a controller and the second is the controller action to invoke.
-                The controller or action may be absent. For example: "@Controller/", "@action", "@controller/action".
-                If the string does not begin with an "@", it is interpreted as a literal URI. For example: "/web/index.html".
+                The controller or action may be absent. For example: "\@Controller/", "\@action", "\@controller/action".
+                If the string does not begin with an "\@", it is interpreted as a literal URI. For example: "/web/index.html".
                 If the options is an object hash, it may contain the options below:
             @option action Action method to service the request if using controllers. This may also be of the form 
                 "controller/action" to set both the action and controller in one property.
@@ -352,7 +355,7 @@ module ejs.web {
                     function (request: Request): Object
             @option set Route set name in which to add this route. Defaults to the first component of the template if
                 the template is a string, otherwise "".
-            @option target Target for the route. This can be a Uri path or a controller/action pair: "@[controller/]action".
+            @option target Target for the route. This can be a Uri path or a controller/action pair: "\@[controller/]action".
             @example:
                 r.add("/User/{action}", {controller: "User"})
          */
@@ -587,8 +590,8 @@ module ejs.web {
     }
 
     /** 
-        Route class. A Route describes a mapping from a URI to a web application. A route has a URI template and a
-        serving function.
+        A Route describes a mapping from a URI to a web application. A route has a URI template for matching with
+        candidate request URIs and a serving function to respond to the request.
 
         If the URI template is a regular expression, it is used to match against the request pathInfo. If it matches,
         the pathInfo is matched and sub-expressions may be referenced in the override parameters by using $1, $2 and
@@ -750,11 +753,11 @@ module ejs.web {
             create and install routes into the Router.
             @param template String or Regular Expression defining the form of a matching URI (Request.pathInfo).
             @param options Route options representing the URI and options to use when servicing the request. If it
-                is a string, it may begin with an "@" and be of the form "@[controller/]action". In this case, if there
+                is a string, it may begin with an "\@" and be of the form "\@[controller/]action". In this case, if there
                 is a "/" delimiter, the first portion is a controller and the second is the controller action to invoke.
-                The controller or action may be absent. For example: "@Controller/", "@action", "@controller/action".
-                If the string does not begin with an "@", it is interpreted as a literal URI. For example: "/web/index.html".
-                If the options is an object hash, it may contain the options below:
+                The controller or action may be absent. For example: "\@Controller/", "\@action", "\@controller/action".
+                If the string does not begin with an "\@", it is interpreted as a literal URI. 
+                For example: "/web/index.html". If the options is an object hash, it may contain the options below:
             @option action Action method to service the request. This may be of the form "controller/action" or "controller/"
             @option controller Controller to service the request.
             @option name Name to give to the route. If absent, the name is created from the controller and action names.

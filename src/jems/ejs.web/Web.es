@@ -6,7 +6,7 @@
 module ejs.web {
     /** 
         Web class manages web applications. This class initializes the web framework and loads web applications. 
-        Apps may be JSGI apps with a *.es extension, template apps with a ".ejs" extension or MVC applications.
+        Apps may be JSGI apps with an "es" extension, template apps with an "ejs" extension or MVC applications.
         @spec ejs
         @stability prototype
      */

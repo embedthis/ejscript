@@ -5,7 +5,8 @@
 module ejs {
 
     /** 
-        Loader for CommonJS modules
+        Loader for CommonJS modules. The Loader class provides provides a $require() function to load
+            script files.
         @param id Module identifier. May be top level or may be an identifier relative to the loading script.
         @returns An object hash of exports from the module
         @spec ejs
@@ -31,9 +32,8 @@ module ejs {
             UNUSED - not yet used
             @hide
          */
-        public static function init(mainId: String? = null) {
+        public static function init(mainId: String? = null)
             require.main = mainId
-        }
 
         /**
             Register a CommonJS module initializer
@@ -68,8 +68,8 @@ module ejs {
         }
 
         /** 
-            Load a CommonJS module and return the exports object. After the first load, the CJS module will be compiled
-            and cached as a byte-code module.
+            Load a CommonJS module and return the exports object. After the first load, the script module will be compiled
+            and cached as a byte-code module. It will be recompiled if the script source is modified or missing.
             @param id Unique name of the module to load. The id may be a unique ID, an absolute path, relative path or a 
                 path fragment that is resolved relative to the App search path. Ids may or may not include a ".es" or 
                 ".js" extension.
@@ -187,7 +187,7 @@ module ejs {
             determine the eligible file extensions to use when searching for modules.
             @param newConfig Configuration options hash.
          */
-        public static function setConfig(newConfig): Void
+        public static function setConfig(newConfig: Object): Void
             config = newConfig
     }
 }

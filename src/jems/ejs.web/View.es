@@ -10,7 +10,8 @@ module ejs.web {
         web pages. Ejscript web pages are compiled to create a new View class which extends the View base class.  
         This class provides a suite of high-level control methods that generate HTML for input, output and 
         presentation needs.  In addition to the properties defined by this class, user view classes will typically 
-        inherit at runtime, all public properites of any associated controller object defined in Request.controller.
+        inherit at runtime, all public properites of any associated controller object defined in 
+        $ejs.web::Request.controller.
 
         <h4>Control Methods</h4>
         Control methods are grouped into two families: input form controls and general output controls. Input controls
@@ -25,7 +26,7 @@ module ejs.web {
 
         Various controls have custom options, but most share the following common set of option properties. 
         @option action String Action to invoke. This can be a URI string or a Controller action of the form
-            @Controller/action.
+            \@Controller/action.
         @option apply String Client JQuery selector identifying the element to apply the remote update.
             Typically "div.ID" where ID is the DOM ID for the element.
         @option background String Background color. This is a CSS RGB color specification. For example "FF0000" for red.
@@ -67,7 +68,7 @@ module ejs.web {
         @option remote (String|URI|Object) Perform the request in the background without changing the browser location.
         @option refresh (String|URI|Object) URI to invoke in the background to refresh the control's data every $period.
             milliseconds. If period is undefined or zero, a persistent connection may be used to refresh data.
-            The refresh option may use the "@Controller/action" form.
+            The refresh option may use the "\@Controller/action" form.
         @option size (Number|String) Size of the element.
         @option style String CSS Style to use for the table.
         @option value Object Override value to display if used without a form control record.
@@ -206,7 +207,7 @@ module ejs.web {
             @param text Text to display in the button. The text can contain embedded HTML.
             @param options Options specifying the target URI to invoke. See $View for a list of the standard options.
             @example
-                buttonLink("Cancel" "@")
+                buttonLink("Cancel" "\@")
          */
         function buttonLink(text: String, options: Object = {}): Void {
             options = getOptions(options)
@@ -230,7 +231,7 @@ module ejs.web {
                 linechart, imagelinechart, imagepiechart, scatterchart (and more)
             @example
                 <% chart(grid, { refresh: "/getData", period: 2000" }) %>
-                <% chart(data, { click: "@update" }) %>
+                <% chart(data, { click: "\@update" }) %>
          */
         function chart(data: Array, options: Object = {}): Void {
             options = getOptions(options)
@@ -361,11 +362,10 @@ MOB -- much more doc here
             @param options Optional extra options. See $View for a list of the standard options.
             @examples
                 <% image("pic.gif") %>
-                <% image("pic.gif", { refresh: "@store/getData", period: 2000, style: "myStyle" }) %>
-MOB - uri not supported
-                <% image("pic.gif", { click: "@foreground/click" }) %>
-                <% image("checkout.gif", { click: "@checkout" }) %>
-                <% image("pic.gif", { remote: "@store/update" }) %>
+                <% image("pic.gif", { refresh: "\@store/getData", period: 2000, style: "myStyle" }) %>
+                <% image("pic.gif", { click: "\@foreground/click" }) %>
+                <% image("checkout.gif", { click: "\@checkout" }) %>
+                <% image("pic.gif", { remote: "\@store/update" }) %>
          */
         function image(src: String, options: Object = {}): Void {
             options = getOptions(options)
@@ -433,7 +433,7 @@ print("CATCH " + e)
                 <% label("Hello World") %>
                 <% label("Hello", { refresh: "/getData", period: 2000, style: "myStyle" }) %>
                 <% label("Hello", { click: "/foreground/link" }) %>
-                <% label("Checkout", { click: "@checkout" }) %>
+                <% label("Checkout", { click: "\@checkout" }) %>
          */
         function label(text: String, options: Object = {}): Void {
             options = getOptions(options)
@@ -616,11 +616,11 @@ print("CATCH " + e)
             </ul>
         
             @example
-                <% table(gridData, { refresh: "@update", period: 1000, pivot: true" }) %>
-                <% table(gridData, { click: "@edit" }) %>
+                <% table(gridData, { refresh: "\@update", period: 1000, pivot: true" }) %>
+                <% table(gridData, { click: "\@edit" }) %>
                 <% table(Table.findAll()) %>
                 <% table(gridData, {
-                    click: "@edit",
+                    click: "\@edit",
                     sort: "Product",
                     columns: {
                         product:    { header: "Product", width: "20%" }
@@ -654,7 +654,7 @@ print("CATCH " + e)
             @option toggle Set to true to show the selected pane and hide other panes.
             @example
                 tabs({Status: "pane-1", "Edit: "pane-2"})
-                tabs([{Status: "/url-1"}, {"Edit: "/url-2"}], { click: "@someAction"})
+                tabs([{Status: "/url-1"}, {"Edit: "/url-2"}], { click: "\@someAction"})
          */
         function tabs(data: Object, options: Object = {}): Void {
             options = getOptions(options)

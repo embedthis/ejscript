@@ -20,13 +20,13 @@ module ejs {
 
         use default namespace public
 
-        /** Read direction constant for flush() */
+        /** Read direction constant for $flush() */
         static const READ = 0x1
 
-        /** Write direction constant for flush() */
+        /** Write direction constant for $flush() */
         static const WRITE = 0x2
 
-        /** Both directions constant for flush() */
+        /** Both directions constant for $flush() */
         static const BOTH = 0x3
 
         /** 
@@ -51,10 +51,10 @@ module ejs {
         /**
             Flush the stream and underlying streams. A supplied flush $direction argument modifies the effect of this call.
             If direction is set to Stream.READ, then all read data is discarded. If direction is set to Stream.WRITE, 
-            any buffered data is written. Stream.BOTH will cause both directions to be flushed.  If the stream is in 
+            any buffered data is written. Stream.BOTH will cause both directions to be flushed. If the stream is in 
             sync mode, this call will block until all data is written. If the stream is in async mode, it will attempt 
-            to write all data but will return immediately.
-            @param
+            to write all data but will return immediately. Defaults to Stream.WRITE.
+            @param dir direction to flush. Set to $READ, $WRITE or $BOTH.
          */
         function flush(dir: Number): Void 
 
@@ -68,7 +68,7 @@ module ejs {
         //  MOB - define what this is set to in the callback
         /** 
             Add an observer to the stream for the named events. 
-            @param name Name of the event to listen for. The name may be an array of events.
+            @param name :[String|Array] Name of the event to listen for. The name may be an array of events.
             @param observer Callback observer function. The function is called with the following signature:
                 function observer(event: String, ...args): Void
             @event readable Issued when the stream becomes readable. 
@@ -100,7 +100,7 @@ module ejs {
             If the stream can accept all the write data, the call returns immediately with the number of bytes written. 
             If writing more data than the stream can absorb in sync mode, the call will block until the data is written.
             If writing more data than the stream can absorb in async mode, the call will not block and will buffer the
-            data and return immediately. Some streams will require a flush() call to actually send the data.
+            data and return immediately. Some streams will require a $flush() call to actually send the data.
             A "writable" event will be issued when the stream can again absorb more data.
             @param data Data to write. 
             @returns a count of the bytes actually written.

@@ -19,8 +19,9 @@ module ejs {
 
         use default namespace public
 
-        //  MOB - Should be many more system contants. Is this the right place for them?
-        //  MOB - should be tunable
+        /**
+            Default buffer size 
+         */
         public static const Bufsize: Number = 1024
 
         /**

@@ -40,8 +40,13 @@ div.top {
  *	Top navigation
  */
 div.version {
-	float: right;
-	padding: 70px 10px 0 0;
+    display: block;
+    position: absolute;
+    top: 15px;
+    right: 120px;
+    width: 700px;
+	_float: right;
+	_padding: 70px 10px 0 0;
 	font-size: 115%; 
 	color: #000000; 
 }
@@ -95,6 +100,7 @@ div.search {
 	padding: 0 30px 0 0;
 	white-space: nowrap; 	/* Opera */
 	z-index: 11;
+    display: none;
 }
 
 /* Non-IE */
@@ -240,7 +246,6 @@ div.api {
 }
 
 div.apiSig {
-	white-space: nowrap;
 	font-weight: bold;
 	border: 1px solid #84b0c7;	
 	color: #000040;
@@ -389,7 +394,7 @@ ol {
 }
 
 pre { 
-    font-size: 120%;
+    font-size: 110%;
 	width: 90%;
     color: #204070;
     font-family: Courier New, Courier, monospace;

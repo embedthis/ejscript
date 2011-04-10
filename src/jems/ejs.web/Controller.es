@@ -8,13 +8,13 @@ module ejs.web {
      */
     namespace action = "action"
 
+    //  MOB - need more doc here on controllers
     /** 
-        Web framework controller class. The controller classes can accept web requests and direct them to action methods
-        which generate the response. Controllers are responsible for either generating output for the client or invoking
+        Web framework controller class. The Controller class is part of the Ejscript Model View Controller (MVC) web
+        framework. Controller class instances can accept web requests and direct them to action methods for servicing
+        which generates the response. Controllers are responsible for either generating output for the client or invoking
         a View which will create the response. By convention, all Controllers should be defined with a "Controller" 
-        suffix. This permits similar Controller and Model to exist in the same namespace.
-
-        MOB - Need intro to controllers here
+        suffix. This permits similar Controller and Model classes to exist in the same namespace.
 
         Action methods will autoFinalize by calling Request.autoFinalize unless Request.dontAutoFinalize has been called.
         If the Controller action wants to keep the request connection to the client open, you must call dontAutoFinalize
@@ -34,23 +34,23 @@ module ejs.web {
         private var _afterCheckers: Array
         private var _beforeCheckers: Array
 
-        /** Name of the action being run */
+        /** Name of the Controller action method being run for this request */
         var actionName:  String 
 
-        /** Configuration settings - reference to Request.config */
+        /** Configuration settings. This is a reference to $ejs.web::Request.config */
         var config: Object 
 
 //  MOB -- rename to "name"
         /** Pascal case controller name */
         var controllerName: String
 
-        /** Logger stream - reference to Request.log */
+        /** Logger stream - reference to $ejs.web::Request.log */
         var log: Logger
 
-        /** Form and query parameters - reference to the Request.params object. */
+        /** Form and query parameters. This is a reference to the $ejs.web::Request.params object. */
         var params: Object
 
-        /** Reference to the current Request object */
+        /** Reference to the current $ejs.web::Request object */
         var request: Request
 
         /***************************************** Convenience Getters  ***************************************/
@@ -95,7 +95,7 @@ module ejs.web {
         }
 
         /** 
-            Create and initialize a controller. This may be called directly by class constructors or via 
+            Create and initialize a controller. This may be called directly or via 
             the Controller.create factory method.
             @param req Web request object
          */
@@ -118,11 +118,13 @@ module ejs.web {
         }
 
         /** 
-            Run an action checker function after running the action
+            Run an check function after running the action
             @param fn Function callback to invoke
-            @param options Checker options. 
-            @option only Only run the checker for this action name
-            @option except Run the checker for all actions except this name
+            @param options Check function options. 
+            @option only [String|Array] Only run the checker for this action name. This can be a string action name or
+                an array of action names.
+            @option except [String|Array] Run the check function for all actions except this name.
+                This can be a string action name or an array of action names.
          */
         function after(fn, options: Object = null): Void {
             _afterCheckers ||= []
@@ -130,8 +132,9 @@ module ejs.web {
         }
 
         /** 
-            Controller web application. This function will run the controller action method and return a response object. 
-            The action method may be specified by the $aname parameter or it may be supplied via params.action.
+            Controller web application. This function will run a controller action method and return a response object. 
+            The action method may be specified by the $aname parameter or it may be supplied via 
+            $ejs.web::Request.params.action.
             @param request Request object
             @param aname Optional action method name. If not supplied, params.action is consulted. If that is absent too, 
                 "index" is used as the action method name.
@@ -180,8 +183,10 @@ module ejs.web {
             checker does write a response, it must call finalize.
             @param fn Function callback to invoke
             @param options Checker options. 
-            @option only Only run the checker for this action name
-            @option except Run the checker for all actions except this name
+            @option only [String|Array] Only run the checker for this action name. This can be a string action name or
+                an array of action names.
+            @option except [String|Array] Run the checker for all actions except this name
+                This can be a string action name or an array of action names.
          */
         function before(fn, options: Object = null): Void {
             _beforeCheckers ||= []
@@ -232,6 +237,7 @@ module ejs.web {
 
         /** 
             Missing action method. This method will be called if the requested action routine does not exist.
+            It should be overridden in user controller classes by using the "override" keyword.
          */
         action function missing() {
             throw "Missing Action: " + params.action + ": could not be found for controller: " + controllerName
@@ -281,13 +287,21 @@ module ejs.web {
             request.status = status
 
         /** 
-            Render the raw data back to the client. 
+            Low-level write data to the client. This will buffer the written data until either flush() or finalize() 
+            is called.
             If an action method does call a write data back to the client and has not called finalize() or 
             dontAutoFinalize(), a default view template will be generated when the action method returns. 
-            @param args Arguments to write to the client.  The args are converted to strings.
+            @param args Arguments to write to the client. The args are converted to strings.
+            @return The number of bytes written to the client
          */
-        function write(...args): Void
+        function write(...args): Number
             request.write(...args)
+
+        /** 
+            @duplicate ejs.web::Request.warn
+         */
+        function warn(msg: String): Void
+            request.warn(msg)
 
         /**
             @duplicate ejs.web::Request.writeContent
@@ -385,25 +399,10 @@ module ejs.web {
             Web.process(app, request, false)
         }
 
-        /** 
-            @duplicate ejs.web::Request.warn
-         */
-        function warn(msg: String): Void
-            request.warn(msg)
-
-        /** 
-            Low-level write data to the client. This will buffer the written data until either flush() or finalize() 
-            is called.
-            @duplicate ejs.web::Request.write
-         */
-        function write(...data): Number
-            request.write(...data)
-
         /**************************************** Private ******************************************/
 
-        private function checkSecurityToken() {
+        private function checkSecurityToken()
             request.checkSecurityToken()
-        }
 
         /*
             Open database. Expects ejsrc configuration:

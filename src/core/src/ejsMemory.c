@@ -41,12 +41,12 @@ static EjsObj *setRedlineCallback(Ejs *ejs, EjsObj *thisObj, int argc, EjsObj **
 /*
     native static function get maximum(): Number
  */
-static EjsObj *getMaxMemory(Ejs *ejs, EjsObj *thisObj, int argc, EjsObj **argv)
+static EjsNumber *getMaxMemory(Ejs *ejs, EjsObj *thisObj, int argc, EjsObj **argv)
 {
     MprMemStats    *mem;
 
     mem = mprGetMemStats(ejs);
-    return (EjsObj*) ejsCreateNumber(ejs, (MprNumber) mem->maxMemory);
+    return ejsCreateNumber(ejs, (MprNumber) mem->maxMemory);
 }
 
 
@@ -68,12 +68,12 @@ static EjsObj *setMaxMemory(Ejs *ejs, EjsObj *thisObj, int argc, EjsObj **argv)
 /*
     native static function get redline(): Number
  */
-static EjsObj *getRedline(Ejs *ejs, EjsObj *thisObj, int argc, EjsObj **argv)
+static EjsNumber *getRedline(Ejs *ejs, EjsObj *thisObj, int argc, EjsObj **argv)
 {
     MprMemStats    *mem;
 
     mem = mprGetMemStats(ejs);
-    return (EjsObj*) ejsCreateNumber(ejs, (MprNumber) mem->redLine);
+    return ejsCreateNumber(ejs, (MprNumber) mem->redLine);
 }
 
 
@@ -99,24 +99,24 @@ static EjsObj *setRedline(Ejs *ejs, EjsObj *thisObj, int argc, EjsObj **argv)
 /*
     native static function get resident(): Number
  */
-static EjsObj *getResident(Ejs *ejs, EjsObj *thisObj, int argc, EjsObj **argv)
+static EjsNumber *getResident(Ejs *ejs, EjsObj *thisObj, int argc, EjsObj **argv)
 {
     MprMemStats    *mem;
 
     mem = mprGetMemStats(ejs);
-    return (EjsObj*) ejsCreateNumber(ejs, (MprNumber) mem->rss);
+    return ejsCreateNumber(ejs, (MprNumber) mem->rss);
 }
 
 
 /*
     native static function get system(): Number
  */
-static EjsObj *getSystemRam(Ejs *ejs, EjsObj *thisObj, int argc, EjsObj **argv)
+static EjsNumber *getSystemRam(Ejs *ejs, EjsObj *thisObj, int argc, EjsObj **argv)
 {
     MprMemStats    *mem;
 
     mem = mprGetMemStats(ejs);
-    return (EjsObj*) ejsCreateNumber(ejs, (double) mem->ram);
+    return ejsCreateNumber(ejs, (double) mem->ram);
 }
 
 

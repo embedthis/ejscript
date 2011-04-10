@@ -187,6 +187,7 @@
 		C976286E0FD07B2D009C78E1 /* libejs.dylib in Frameworks */ = {isa = PBXBuildFile; fileRef = C97627CB0FD07828009C78E1 /* libejs.dylib */; };
 		C97628740FD07C69009C78E1 /* libmpr.dylib in Frameworks */ = {isa = PBXBuildFile; fileRef = C97627A60FD077A7009C78E1 /* libmpr.dylib */; };
 		C97628790FD07C7F009C78E1 /* libsqlite.dylib in Frameworks */ = {isa = PBXBuildFile; fileRef = C97627BD0FD077FC009C78E1 /* libsqlite.dylib */; };
+		C97837EA134E61D0008DDEAC /* ejsLogFile.c in Sources */ = {isa = PBXBuildFile; fileRef = C97837E9134E61D0008DDEAC /* ejsLogFile.c */; };
 		C97D30781263AF2900262E95 /* ejsHelper.c in Sources */ = {isa = PBXBuildFile; fileRef = C97D30771263AF2900262E95 /* ejsHelper.c */; };
 		C9818119110EBDA800F241EF /* ejssql.c in Sources */ = {isa = PBXBuildFile; fileRef = C9818105110EBD4E00F241EF /* ejssql.c */; };
 		C981811F110EBDC400F241EF /* sqlite3.c in Sources */ = {isa = PBXBuildFile; fileRef = C9818106110EBD4E00F241EF /* sqlite3.c */; };
@@ -774,6 +775,7 @@
 		C97627BD0FD077FC009C78E1 /* libsqlite.dylib */ = {isa = PBXFileReference; explicitFileType = "compiled.mach-o.dylib"; includeInIndex = 0; path = libsqlite.dylib; sourceTree = BUILT_PRODUCTS_DIR; };
 		C97627CB0FD07828009C78E1 /* libejs.dylib */ = {isa = PBXFileReference; explicitFileType = "compiled.mach-o.dylib"; includeInIndex = 0; path = libejs.dylib; sourceTree = BUILT_PRODUCTS_DIR; };
 		C97627D90FD07850009C78E1 /* ejs.web.dylib */ = {isa = PBXFileReference; explicitFileType = "compiled.mach-o.dylib"; includeInIndex = 0; path = ejs.web.dylib; sourceTree = BUILT_PRODUCTS_DIR; };
+		C97837E9134E61D0008DDEAC /* ejsLogFile.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; name = ejsLogFile.c; path = ../../../src/core/src/ejsLogFile.c; sourceTree = "<group>"; };
 		C97A5E9211E7F7F600BB0981 /* test.xcconfig */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.xcconfig; path = test.xcconfig; sourceTree = "<group>"; };
 		C97D30771263AF2900262E95 /* ejsHelper.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; name = ejsHelper.c; path = ../../../src/vm/ejsHelper.c; sourceTree = SOURCE_ROOT; };
 		C9818105110EBD4E00F241EF /* ejssql.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; name = ejssql.c; path = ../../../src/jems/ejs.db.sqlite/src/ejssql.c; sourceTree = SOURCE_ROOT; };
@@ -985,6 +987,7 @@
 				C9188B40115DAC060018846C /* ejsHttp.c */,
 				C9188B42115DAC060018846C /* ejsIterator.c */,
 				C9188B43115DAC060018846C /* ejsJSON.c */,
+				C97837E9134E61D0008DDEAC /* ejsLogFile.c */,
 				C9267D99118AAEF000A446EA /* ejsLogger.c */,
 				C9188B44115DAC060018846C /* ejsMath.c */,
 				C9188B45115DAC060018846C /* ejsMemory.c */,
@@ -1200,6 +1203,7 @@
 				C97624240FD06F8B009C78E1 /* compiler */,
 				C9188AF6115DAB760018846C /* core */,
 				C9566A4010A16EB200AF4E04 /* jems */,
+				C9B4339810A28A6600A1BA02 /* ejsmod */,
 				C97628390FD079EF009C78E1 /* vm */,
 			);
 			name = Source;
@@ -1208,7 +1212,6 @@
 		C976241C0FD06F8B009C78E1 /* cmd */ = {
 			isa = PBXGroup;
 			children = (
-				C9B4339810A28A6600A1BA02 /* ejsmod */,
 				C976241F0FD06F8B009C78E1 /* ejs.c */,
 				C97624200FD06F8B009C78E1 /* ejsc.c */,
 			);
@@ -1339,6 +1342,7 @@
 				C9248E5C10A4933400B29BDD /* slotGen.c */,
 			);
 			name = ejsmod;
+			path = ../../../src/cmd;
 			sourceTree = "<group>";
 		};
 		C9D84A2F1051B5BA0022DB20 /* Libraries */ = {
@@ -2021,6 +2025,7 @@
 				C9F8C9A8128C848100FD3A5D /* ejsPot.c in Sources */,
 				C919245B129601190045B8A0 /* ecCompiler.c in Sources */,
 				C9CD7647131245C0007794B0 /* ejsCmd.c in Sources */,
+				C97837EA134E61D0008DDEAC /* ejsLogFile.c in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};

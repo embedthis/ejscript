@@ -6,7 +6,7 @@
 module ejs {
 
     /**
-        TextStreams interpret data as a stream of Unicode characters. They provide methods to read and write data
+        TextStreams interpret data as a stream of characters. They provide methods to read and write data
         in various text encodings and to read/write lines of text appending appropriate system dependent new line 
         terminators. TextStreams can be stacked upon other Streams such as files, byte arrays, sockets, or Http objects.
         @spec ejs

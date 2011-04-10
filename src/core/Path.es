@@ -28,7 +28,7 @@
 module ejs {
 
     /**
-        Path class. Paths are filenames and may or may not represent physical files in a file system. That is, the 
+        Paths are filename objects and may or may not represent physical files in a file system. That is, the 
         corresponding file or directory for the Path  may or may not exist. Once created, Paths are immutable and their
         path value cannot be changed.
         @spec ejs
@@ -326,7 +326,7 @@ module ejs {
 
         /**
             Open a path and return a File object.
-            @params options
+            @param options
             @options mode optional file access mode string. Use "r" for read, "w" for write, "a" for append to existing
                 content, "+" never truncate.
             @options permissions optional Posix permissions number mask. Defaults to 0664.
@@ -340,7 +340,7 @@ module ejs {
 
         /**
             Open a file and return a TextStream object.
-            @params options Optional options object
+            @param options Optional options object
             @options mode optional file access mode string. Use "r" for read, "w" for write, "a" for append to existing
                 content, "+" never truncate.
             @options encoding Text encoding format
@@ -355,7 +355,7 @@ module ejs {
 
         /**
             Open a file and return a BinaryStream object.
-            @params options Optional options object
+            @param options Optional options object
             @options mode optional file access mode with values ored from: Read, Write, Append, Create, Open, Truncate. 
                 Defaults to Read.
             @options permissions optional Posix permissions number mask. Defaults to 0664.
@@ -518,7 +518,7 @@ module ejs {
 
             Resolve is useful for creating paths in the region of the current path and gracefully handles both 
             absolute and relative path segments.
-            @params otherPaths Paths to resolve in the region of this path.
+            @param otherPaths Paths to resolve in the region of this path.
             @return A new Path object that is resolved against the prior path. 
          */
         native function resolve(...otherPaths): Path

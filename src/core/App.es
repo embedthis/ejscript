@@ -27,10 +27,9 @@ module ejs {
     public var stdout: TextStream
 
     /** 
-        Application configuration state. The App class is a singleton class object. The App class is accessed via
-        the App global type object. It provides  methods to interrogate and control the applications environment including
-        the current working directory, application command line arguments, path to the application's executable and
-        input and output streams.
+        Application configuration state. The App class is a singleton class object and that accesses and controls 
+        the applications execution environment including the current working directory, application command line 
+        arguments, environment strings, path to the application's executable and input and output streams.
         @spec ejs
         @stability evolving
      */
@@ -39,7 +38,7 @@ module ejs {
         use default namespace public
 
         /** 
-            Configuration environment specified in the .ejsrc/ejsrc configuration files.
+            Configuration environment specified in the ~/.ejsrc or ejsrc configuration files.
          */
         static var config: Object
 
@@ -85,30 +84,38 @@ module ejs {
         }
 
         /**
-            Default event Emitter for the application
+            Default event Emitter for the application.
          */
         static var emitter: Emitter = new Emitter
 
         /** 
-            Default application logger. This is set to stderr unless the program specifies an output log via the --log 
-            command line switch. At startup, the ejsrc log.location field is used to initialize the App.log property,
-            and the native code logging stream (Logger.nativeStream) is set to this location. Once initialized, changes to
-            App.log will not update the native logging stream which must be explicitly updated.
+            Application logger. This singleton object respresents the Application default logger.
+            If the ejsrc startup configuration file defines a log.location field, the log logger will send messages to
+            the defined location. Otherwise, messages will be sent to the LogFile stream. 
          */
         public static var log: Logger
 
         /** 
-            Application name. Set to a single word, lower-case name for the application.
+            Application LogFile object. This singleton object represents the Application log file specified via the
+            --log command line switch.
+         */
+        public static var logFile: LogFile
+
+        /** 
+            Application name. Single word, lower-case name for the application. This is initialized to the name of
+            the script or "ejs" if running interactively.
          */
         static var name: String
 
         /** 
-            Application title name. Multi-word, Camel Case name for the application suitable for display.
+            Application title name. Multi-word, Camel Case name for the application suitable for display. This is 
+            initialized to the name of the script or "Embedthis Ejscript" if running interactively.
          */
         static var title: String
 
         /** 
-            Application version string. Set to a version string of the format Major.Minor.Patch-Build. For example: 1.1.2-3.
+            Application version string. Set to a version string [format Major.Minor.Patch-Build]. For example: 1.1.2-3.
+            Initialized to the ejs version.
          */
         static var version: String
 
@@ -119,7 +126,8 @@ module ejs {
         native static function get args(): Array
 
         /** 
-            Create a search path array for locating ejs modules.
+            Create a search path array for locating ejs modules. This converts a delimited PATH to an array of 
+            paths suitable for use by the $search property. NOTE: this does not modify the application's search path.
             @param searchPath String containing a colon separated (or semi-colon on Windows) set of paths.
                 If search path is null, the default system search paths are returned.
             @return An array of search paths.
@@ -127,7 +135,7 @@ module ejs {
         native static function createSearch(searchPath: String? = null): Array
 
         /** 
-            Change the application's Working directory
+            Change the application's working directory
             @param value The path to the new working directory
          */
         native static function chdir(value: Object): Void
@@ -173,14 +181,13 @@ module ejs {
             @param status The optional exit code to provide the environment. If running inside the ejs command program,
                 the status is used as process exit status.
             @param how How the exit should proceed. Options are: "normal", "immediate" or "graceful". A normal exit
-                will close write buffered and outstanding data, flush buffers, close files and resources and then exit 
-                without waiting.  An immediate exit will exit without writing buffered data. A graceful exit will wait
+                will flush buffered data and close files and resources and then exit without waiting.  
+                An immediate exit will exit without writing buffered data or closing files. A graceful exit will wait
                 until the system is idle and then do a normal exit. A system is idle when it has no running commands, 
-                sockets or worker threads.
+                sockets, Http requests or worker threads.
          */
         native static function exit(status: Number = 0, how: String = "normal"): Void
 
-//  MOB -- need get env()
         /** 
             Get an environment variable.
             @param name The name of the environment variable to retrieve.
@@ -229,15 +236,6 @@ module ejs {
         native static function set locale(locale: String): Void
 
         /** 
-            Control whether an application will exit when global scripts have completed. Setting this to true will cause
-            the application to continue servicing events until the $exit method is explicitly called. The default 
-            application setting of noexit is false.
-            @param exit If true, the application will exit when the last script completes.
-         */
-        # DEPRECATED
-        native static function noexit(exit: Boolean = true): Void
-
-        /** 
             The standard output stream. Changing the output stream will close and reopen stdout.
          */
         static function get outputStream(): Stream
@@ -265,40 +263,21 @@ module ejs {
 
         //  MOB -- could return Boolean - true if one event was serviced
         /** 
-            Run the application event loop. This is typically done automatically by the hosting program and is not 
-            normally required in user programs.
+            Run the application event loop. 
+            A script may call run() to service events. The ejs shell will exit when it has executed the last statement
+            in the script. Calling run() will cause the ejs shell to wait and service events until instructed to exit.
             @param timeout Timeout to block waiting for an event in milliseconds before returning. If an event occurs, the
                 call returns immediately. Set to -1 for no timeout.
             @param oneEvent If true, return immediately after servicing at least one ejs event.
+            @return True if an event happened. Otherwise return false if the timeout expired before any event.
          */
-        native static function run(timeout: Number = -1, oneEvent: Boolean = false): Void
-
-        /**
-            Run the application event loop. This is typically done automatically by the hosting program and is not 
-            normally required in user programs.
-            @param timeout Timeout to block waiting for an event in milliseconds before returning. If an event occurs, the
-                call returns immediately. Set to -1 for no timeout.
-            @param oneEvent If true, return immediately after servicing at least one ejs event.
-            @hide
-         */
-        # DEPRECATE
-        static function eventLoop(timeout: Number = -1, oneEvent: Boolean = false): Void
-            run(timeout, oneEvent)
+        native static function run(timeout: Number = -1, oneEvent: Boolean = false): Boolean
 
         /** 
             The current module search path. Set to an array of Paths.
          */
         native static function get search(): Array
         native static function set search(paths: Array): Void
-
-        /** 
-            Set an environment variable.
-            @param env The name of the environment variable to set.
-            @param value The new value.
-            @return True if the environment variable was successfully set.
-         */
-        # FUTURE
-        native static function setEnv(name: String, value: String): Boolean
 
         /** 
             Sleep the application for the given number of milliseconds. Events will be serviced while asleep.
@@ -351,7 +330,7 @@ module ejs {
         }
 
         /**
-            Redirect the Application's logger based on an update App.config.log setting
+            Redirect the Application's logger based on the App.config.log setting
          */
         static function updateLog(): Void {
             let log = config.log
@@ -383,9 +362,10 @@ module ejs {
         @hide
      */
     function appInit(): Void {
-
         App.name = App.args[0] || Config.Product
         App.title = App.args[0] || Config.Title
+        App.version = Config.Version
+        App.logFile = new LogFile
 
         /*  
             Load ~/.ejsrc and ejsrc
@@ -403,11 +383,12 @@ module ejs {
         stdin = TextStream(App.inputStream)
 
         let log = config.log
+        let stream
         if (log.enable) {
-            let stream = Logger.nativeStream
-            if (stream) {
-                /* Native log defined via --log switch. Adopt native log level. ie. overrides config */
-                log.level = Logger.nativeLevel
+            if (App.logFile.logging) {
+                /* App invoked with a --log switch */
+                log.level = App.logFile.level
+                stream = App.logFile;
             } else if (log.location == "stdout") {
                 stream = App.outputStream
             } else if (log.location == "stderr") {
