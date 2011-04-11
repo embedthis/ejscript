@@ -119,7 +119,10 @@ static EjsObj *app_exit(Ejs *ejs, EjsObj *unused, int argc, EjsObj **argv)
  */
 static EjsAny *app_env(Ejs *ejs, EjsObj *app, int argc, EjsObj **argv)
 {
-    EjsPot    *result;
+#if VXWORKS
+    return S(null);
+#else
+    EjsPot      *result;
     char        **ep, *pair, *key, *value;
 
     result = ejsCreatePot(ejs, S(Object), 0);
@@ -129,6 +132,7 @@ static EjsAny *app_env(Ejs *ejs, EjsObj *app, int argc, EjsObj **argv)
         ejsSetPropertyByName(ejs, result, EN(key), ejsCreateStringFromAsc(ejs, value));
     }
     return result;
+#endif
 }
 #endif
 
