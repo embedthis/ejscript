@@ -17756,7 +17756,7 @@ static void disconnectSocket(MprSocket *sp)
         shutdown(sp->fd, SHUT_RDWR);
         fd = sp->fd;
         sp->flags |= MPR_SOCKET_EOF;
-        mprRecallWaitHandler(fd);
+        mprRecallWaitHandlerByFd(fd);
     }
     unlock(sp);
 }
@@ -20986,7 +20986,6 @@ int mprStartThread(MprThread *tp)
     taskPriorityGet(taskIdSelf(), &pri);
     taskHandle = taskSpawn(tp->name, pri, 0, tp->stackSize, (FUNCPTR) threadProcWrapper, (int) tp, 
         0, 0, 0, 0, 0, 0, 0, 0, 0);
-
     if (taskHandle < 0) {
         mprError("Can't create thread %s\n", tp->name);
         return MPR_ERR_CANT_INITIALIZE;
@@ -24145,7 +24144,7 @@ void mprEnableWaitEvents(MprWaitHandler *wp, int mask)
 /*
     Set a handler to be recalled without further I/O
  */
-void mprRecallWaitHandler(int fd)
+void mprRecallWaitHandlerByFd(int fd)
 {
     MprWaitService  *ws;
     MprWaitHandler  *wp;
@@ -24161,6 +24160,19 @@ void mprRecallWaitHandler(int fd)
             break;
         }
     }
+    unlock(ws);
+}
+
+
+void mprRecallWaitHandler(MprWaitHandler *wp)
+{
+    MprWaitService  *ws;
+
+    ws = MPR->waitService;
+    lock(ws);
+    wp->flags |= MPR_WAIT_RECALL_HANDLER;
+    ws->needRecall = 1;
+    mprWakeWaitService();
     unlock(ws);
 }
 

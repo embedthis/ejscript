@@ -41,6 +41,7 @@ EXPORTS
   mprAttachFileFd
   mprBreakpoint
   mprCheckBlock
+  mprClaimDispatcher
   mprClearList
   mprCloneBuf
   mprCloneHash
@@ -52,6 +53,7 @@ EXPORTS
   mprCompareTime
   mprConnectSocket
   mprCopyList
+  mprCopyName
   mprCopyPath
   mprCopyright
   mprCreate
@@ -178,7 +180,7 @@ EXPORTS
   mprGetLastPathSeparator
   mprGetListCapacity
   mprGetListLength
-  mprGetLogFd
+  mprGetLogFile
   mprGetLogHandler
   mprGetLogLevel
   mprGetMD5Hash
@@ -357,7 +359,6 @@ EXPORTS
   mprServiceSignals
   mprServiceWinIO
   mprServicesAreIdle
-  mprSetAltLogData
   mprSetAppName
   mprSetBufMax
   mprSetBufRefillProc
@@ -376,7 +377,7 @@ EXPORTS
   mprSetIpAddr
   mprSetItem
   mprSetListLimits
-  mprSetLogFd
+  mprSetLogFile
   mprSetLogHandler
   mprSetLogLevel
   mprSetManager
@@ -449,6 +450,7 @@ EXPORTS
   mprUriDecode
   mprUriEncode
   mprUserError
+  mprUsingDefaultLogHandler
   mprVerifyMem
   mprVirtAlloc
   mprVirtFree
@@ -465,6 +467,7 @@ EXPORTS
   mprWakeNotifier
   mprWakeWaitService
   mprWakeWorkers
+  mprWarn
   mprWriteCmd
   mprWriteFile
   mprWriteFileFormat

@@ -11,13 +11,13 @@ EXPORTS
   httpAddGroup
   httpAddHandler
   httpAddHeader
+  httpAddHeaderString
   httpAddHost
   httpAddHostToServer
   httpAddHostToServers
   httpAddLocation
   httpAddLocationExpiry
   httpAddServer
-  httpAddSimpleHeader
   httpAddStage
   httpAddUploadFile
   httpAddUser
@@ -26,6 +26,7 @@ EXPORTS
   httpAddVars
   httpAddVarsFromQueue
   httpAppendHeader
+  httpAppendHeaderString
   httpAppendQueue
   httpCallEvent
   httpClearStages
@@ -88,6 +89,7 @@ EXPORTS
   httpDiscardTransmitData
   httpDisconnect
   httpDontCache
+  httpEaseLimits
   httpEnableConnEvents
   httpEnableGroup
   httpEnableQueue
@@ -259,6 +261,7 @@ EXPORTS
   httpSetGroupAcl
   httpSetHandler
   httpSetHeader
+  httpSetHeaderString
   httpSetHeadersCallback
   httpSetHostAddress
   httpSetHostDocumentRoot
@@ -297,7 +300,6 @@ EXPORTS
   httpSetServerLocation
   httpSetServerName
   httpSetServerNotifier
-  httpSetSimpleHeader
   httpSetSoftware
   httpSetStageData
   httpSetState

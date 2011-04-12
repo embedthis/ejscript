@@ -96,7 +96,7 @@ EXPORTS
   ejsBlendObject
   ejsBootstrapTypes
   ejsCaptureStack
-  ejsCast
+  ejsCastType
   ejsCatString
   ejsCatStrings
   ejsClearArray
@@ -133,6 +133,7 @@ EXPORTS
   ejsConfigureHttpType
   ejsConfigureIteratorType
   ejsConfigureJSONType
+  ejsConfigureLogFileType
   ejsConfigureLoggerType
   ejsConfigureMathType
   ejsConfigureMemoryType
@@ -236,6 +237,7 @@ EXPORTS
   ejsDecodeInt32
   ejsDecodeNum
   ejsDeepCopyXML
+  ejsDefineConfigProperties
   ejsDefineGlobalFunction
   ejsDefineProperty
   ejsDefineReservedNamespace
@@ -343,6 +345,7 @@ EXPORTS
   ejsManageString
   ejsManageXML
   ejsMarkName
+  ejsMatchName
   ejsModuleReadBlock
   ejsModuleReadByte
   ejsModuleReadConst
@@ -364,6 +367,8 @@ EXPORTS
   ejsPopBlockNamespaces
   ejsPropertyHasTrait
   ejsPushBlock
+  ejsRedirectLogging
+  ejsRedirectLoggingToFile
   ejsRegExpToString
   ejsRemoveItem
   ejsRemoveItemAtPos
@@ -398,13 +403,14 @@ EXPORTS
   ejsSetPropertyTraits
   ejsSetSearchPath
   ejsSetSpecial
+  ejsSetSpecialType
+  ejsSetTypeAttributes
   ejsSetTypeName
   ejsSetXML
   ejsSetupTrace
   ejsShowBlockScope
   ejsShowCurrentScope
   ejsSprintf
-  ejsStartMprLogging
   ejsStartsWithMulti
   ejsStringToJSON
   ejsSubstring
