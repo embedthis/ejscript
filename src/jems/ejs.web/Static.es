@@ -118,9 +118,8 @@ module ejs.web {
             return { body: put }
 
         } else if (request.method == "HEAD") {
-            /* No need to calculate the content */
+            /* Just need the content length */
             headers["Content-Length"] = filename.size
-            // request.setHeader("Content-Length", filename.size)
 
         } else {
             status = Http.BadMethod
