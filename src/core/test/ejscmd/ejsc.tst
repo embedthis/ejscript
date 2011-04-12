@@ -1,6 +1,7 @@
 /*
     ejsc.tst - Test compiler
  */
+require ejs.unix
 
 let compileFlags = [
     "",
