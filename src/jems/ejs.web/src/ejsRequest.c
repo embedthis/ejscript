@@ -200,7 +200,7 @@ static int fillResponseHeaders(EjsRequest *req)
             if (n.name && vp && req->conn) {
                 if (ejsIsDefined(ejs, vp)) {
                     value = ejsToMulti(ejs, vp);
-                    httpSetSimpleHeader(req->conn, ejsToMulti(ejs, n.name), value);
+                    httpSetHeaderString(req->conn, ejsToMulti(ejs, n.name), value);
                 }
             }
         }

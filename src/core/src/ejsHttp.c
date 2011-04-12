@@ -654,9 +654,9 @@ EjsObj *http_setHeader(Ejs *ejs, EjsHttp *hp, int argc, EjsObj **argv)
     value = ejsToMulti(ejs, argv[1]);
     overwrite = (argc == 3) ? ejsGetBoolean(ejs, argv[2]) : 1;
     if (overwrite) {
-        httpSetSimpleHeader(hp->conn, key, value);
+        httpSetHeaderString(hp->conn, key, value);
     } else {
-        httpAppendHeader(hp->conn, key, "%s", value);
+        httpAppendHeaderString(hp->conn, key, value);
     }
     return 0;
 }
