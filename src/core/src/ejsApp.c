@@ -122,7 +122,7 @@ static EjsAny *app_env(Ejs *ejs, EjsObj *app, int argc, EjsObj **argv)
 #if VXWORKS
     return S(null);
 #else
-    EjsPot    *result;
+    EjsPot  *result;
     char        **ep, *pair, *key, *value;
 
     result = ejsCreatePot(ejs, S(Object), 0);
