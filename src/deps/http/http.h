@@ -1369,6 +1369,9 @@ typedef struct HttpConn {
     MprDispatcher   *oldDispatcher;         /**< Original dispatcher if using a worker thread */
     HttpNotifier    notifier;               /**< Connection Http state change notification callback */
 #if UNUSED
+    /* Removed request notifier. Was calling both requestNotifier and notifier resulting in double readable events.
+       The second event simulated EOF with a count of zero.
+     */
     HttpNotifier    requestNotifier;        /**< Request Http state change notification callback */
 #endif
     MprWaitHandler  *waitHandler;           /**< I/O wait handler */
@@ -2769,6 +2772,7 @@ typedef struct HttpServer {
     struct MprSsl   *ssl;                   /**< Server SSL configuration */
 } HttpServer;
 
+//  UNUSED MOB - remove requestNotifier
 #define HTTP_NOTIFY(conn, state, flags) \
     if (1) { \
         if (conn->notifier) { \

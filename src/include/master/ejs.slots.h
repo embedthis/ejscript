@@ -230,8 +230,8 @@
 #define ES_App__outputStream                                           5
 #define ES_App_defaultConfig                                           6
 #define ES_App_emitter                                                 7
-#define ES_App_logFile                                                 8
-#define ES_App_log                                                     9
+#define ES_App_log                                                     8
+#define ES_App_logFile                                                 9
 #define ES_App_name                                                    10
 #define ES_App_title                                                   11
 #define ES_App_version                                                 12
@@ -534,12 +534,6 @@
 /*
     Class property slots for the "Config" type 
  */
-#define ES_Config_SQLITE                                               11
-#define ES_Config_NUM_CLASS_PROP                                       12
-
-/*
-   Prototype (instance) slots for "Config" type 
- */
 #define ES_Config_Debug                                                0
 #define ES_Config_CPU                                                  1
 #define ES_Config_OS                                                   2
@@ -551,7 +545,13 @@
 #define ES_Config_ModDir                                               8
 #define ES_Config_Legacy                                               9
 #define ES_Config_SSL                                                  10
-#define ES_Config_NUM_INSTANCE_PROP                                    11
+#define ES_Config_SQLITE                                               11
+#define ES_Config_NUM_CLASS_PROP                                       12
+
+/*
+   Prototype (instance) slots for "Config" type 
+ */
+#define ES_Config_NUM_INSTANCE_PROP                                    0
 #define ES_Config_NUM_INHERITED_PROP                                   0
 
 

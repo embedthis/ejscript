@@ -115,14 +115,14 @@
 #define ES_ejs_web_Controller_ejs_web_setHeaders                       34
 #define ES_ejs_web_Controller_ejs_web_setStatus                        35
 #define ES_ejs_web_Controller_ejs_web_write                            36
-#define ES_ejs_web_Controller_ejs_web_writeContent                     37
-#define ES_ejs_web_Controller_ejs_web_writeError                       38
-#define ES_ejs_web_Controller_ejs_web_writeFile                        39
-#define ES_ejs_web_Controller_ejs_web_writePartialTemplate             40
-#define ES_ejs_web_Controller_ejs_web_writeView                        41
-#define ES_ejs_web_Controller_ejs_web_writeTemplate                    42
-#define ES_ejs_web_Controller_ejs_web_writeTemplateLiteral             43
-#define ES_ejs_web_Controller_ejs_web_warn                             44
+#define ES_ejs_web_Controller_ejs_web_warn                             37
+#define ES_ejs_web_Controller_ejs_web_writeContent                     38
+#define ES_ejs_web_Controller_ejs_web_writeError                       39
+#define ES_ejs_web_Controller_ejs_web_writeFile                        40
+#define ES_ejs_web_Controller_ejs_web_writePartialTemplate             41
+#define ES_ejs_web_Controller_ejs_web_writeView                        42
+#define ES_ejs_web_Controller_ejs_web_writeTemplate                    43
+#define ES_ejs_web_Controller_ejs_web_writeTemplateLiteral             44
 #define ES_ejs_web_Controller_checkSecurityToken                       45
 #define ES_ejs_web_Controller_openDatabase                             46
 #define ES_ejs_web_Controller_runCheckers                              47
@@ -590,6 +590,6 @@
 #define ES_ejs_web_Web_run_documentRoot                                1
 #define ES_ejs_web_Web_run_serverRoot                                  2
 
-#define _ES_CHECKSUM_ejs_web   766700
+#define _ES_CHECKSUM_ejs_web   766719
 
 #endif
