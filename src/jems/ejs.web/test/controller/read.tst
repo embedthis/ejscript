@@ -41,6 +41,7 @@ http.wait()
 assert(http.response == "Done")
 http.close()
 
+
 //  Stream async I/O
 let http = new Http
 http.post(HTTP + "/test/stream", "Some data")

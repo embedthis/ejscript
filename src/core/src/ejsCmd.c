@@ -310,7 +310,7 @@ static void cmdIOCallback(MprCmd *mc, int channel, void *data)
     }
     len = mprReadCmd(mc, channel, mprGetBufEnd(buf), space);
     if (len <= 0) {
-        if (len == 0 || (len < 0 && !(errno == EAGAIN || EWOULDBLOCK))) {
+        if (len == 0 || (len < 0 && !(errno == EAGAIN || errno == EWOULDBLOCK))) {
             mprCloseCmdFd(mc, channel);
         }
     } else {

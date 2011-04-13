@@ -3848,7 +3848,7 @@ static void bkpt(Ejs *ejs)
 
     Display source with current line highlighted
 
-    optable = ejsGetOptable(ejs);
+    optable = ejsGetOptable();
     if (mprGetLogLevel(ejs) > 7) {
         mprPrintf(ejs, "%0s %04d: [%d] %02x: %-35s # %s:%d %@",
             mprGetCurrentThreadName(fp), offset, (int) (state->stack - fp->stackReturn),
@@ -3889,7 +3889,7 @@ static EjsOpCode traceCode(Ejs *ejs, EjsOpCode opcode)
         if (offset < 0) {
             offset = 0;
         }
-        optable = ejsGetOptable(ejs);
+        optable = ejsGetOptable();
         fp->line = ejsGetDebugLine(ejs, (EjsFunction*) fp, fp->pc);
 #if UNUSED
         if (showFrequency && ((once % 1000) == 999)) {
@@ -3912,7 +3912,7 @@ void ejsShowOpFrequency(Ejs *ejs)
     if (mprGetLogLevel(ejs) < 6) {
         return;
     }
-    optable = ejsGetOptable(ejs);
+    optable = ejsGetOptable();
     mprLog(0, "Opcode Frequency");
     for (i = 0; i < 256 && optable[i].name; i++) {
         mprLog(6, "%4d %24s %8d", (uchar) i, optable[i].name, opcount[i]);

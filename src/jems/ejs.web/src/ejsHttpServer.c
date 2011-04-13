@@ -13,7 +13,6 @@
 /********************************** Forwards **********************************/
 
 static EjsRequest *createRequest(EjsHttpServer *sp, HttpConn *conn);
-static EjsHttpServer *getServerContext(HttpConn *conn);
 static void setHttpPipeline(Ejs *ejs, EjsHttpServer *sp);
 static void setupConnTrace(HttpConn *conn);
 static void stateChangeNotifier(HttpConn *conn, int state, int notifyFlags);
@@ -208,7 +207,7 @@ static EjsObj *hs_listen(Ejs *ejs, EjsHttpServer *sp, int argc, EjsObj **argv)
     httpSetSoftware(server->http, EJS_HTTPSERVER_NAME);
     httpSetServerAsync(server, sp->async);
     httpSetServerContext(server, sp);
-    httpSetServerNotifier(server, (HttpNotifier) stateChangeNotifier);
+    httpSetServerNotifier(server, stateChangeNotifier);
 
     /*
         This is only required for when http is using non-ejs handlers and/or filters
@@ -465,7 +464,6 @@ static void stateChangeNotifier(HttpConn *conn, int state, int notifyFlags)
     case HTTP_STATE_BEGIN:
         setupConnTrace(conn);
         break;
-
             
     case HTTP_STATE_FIRST:
         if (!(conn->rx->flags & (HTTP_OPTIONS | HTTP_TRACE))) {
@@ -512,7 +510,9 @@ static void closeEjs(HttpQueue *q)
         req->conn = 0;
     }
     httpSetConnContext(q->conn, 0);
+#if UNUSED
     httpSetRequestNotifier(q->conn, 0);
+#endif
 }
 
 
@@ -553,52 +553,6 @@ static void setupConnTrace(HttpConn *conn)
 }
 
 
-static EjsHttpServer *getServerContext(HttpConn *conn)
-{
-    Ejs             *ejs;
-    EjsHttpServer   *sp;
-    HttpLoc         *loc;
-
-    if ((sp = httpGetServerContext(conn->server)) != 0) {
-        return sp;
-    }
-    /*
-        Hosted handler. Must supply a location block which defines the HttpServer instance.
-     */
-    loc = conn->rx->loc;
-    if (loc == 0 || loc->context == 0) {
-        if (!conn->error) {
-            mprError("Location block is not defined for request");
-        }
-        return 0;
-    }
-    sp = (EjsHttpServer*) loc->context;
-    ejs = sp->ejs;
-#if UNUSED
-    EjsPath         *dirPath;
-    cchar           *dir;
-    dirPath = ejsGetProperty(ejs, (EjsObj*) sp, ES_ejs_web_HttpServer_documentRoot);
-    dir = (dirPath && ejsIs(ejs, dirPath, Path)) ? dirPath->value : conn->host->documentRoot;
-#endif
-    
-    if (sp->server == 0) {
-        /* Don't set limits or pipeline. That will come from the embedding server */
-        sp->server = conn->server;
-        sp->server->ssl = loc->ssl;
-        sp->ip = sclone(conn->server->ip);
-        sp->port = conn->server->port;
-#if UNUSED
-        sp->dir = sclone(dir);
-#else
-        sp->dir = sclone(conn->host->documentRoot);
-#endif
-    }
-    httpSetServerContext(conn->server, sp);
-    httpSetRequestNotifier(conn, (HttpNotifier) stateChangeNotifier);
-    return sp;
-}
-
-
 static EjsRequest *createRequest(EjsHttpServer *sp, HttpConn *conn)
 {
     Ejs             *ejs;
@@ -606,19 +560,9 @@ static EjsRequest *createRequest(EjsHttpServer *sp, HttpConn *conn)
     cchar           *dir;
 
     ejs = sp->ejs;
-#if UNUSED
-    EjsPath         *dirPath;
-    dirPath = ejsGetProperty(ejs, (EjsObj*) sp, ES_ejs_web_HttpServer_documentRoot);
-    dir = (dirPath && ejsIs(ejs, dirPath, Path)) ? dirPath->value : ".";
-#else
     dir = conn->host->documentRoot;
-#endif
     req = ejsCreateRequest(ejs, sp, conn, dir);
     httpSetConnContext(conn, req);
-#if UNUSED
-    conn->dispatcher = ejs->dispatcher;
-    conn->tx->handler = ejs->http->ejsHandler;
-#endif
 
 #if FUTURE
     if (sp->pipe) {
@@ -645,6 +589,38 @@ static EjsRequest *createRequest(EjsHttpServer *sp, HttpConn *conn)
 }
 
 
+static EjsHttpServer *getServer(HttpConn *conn)
+{
+    EjsHttpServer   *sp;
+    HttpLoc         *loc;
+
+    if ((sp = httpGetServerContext(conn->server)) == 0) {
+        /* Hosted handler. Must supply a location block which defines the HttpServer instance.  */
+        loc = conn->rx->loc;
+        if (loc == 0 || loc->context == 0) {
+            if (!conn->error) {
+                mprError("Location block is not defined for request");
+            }
+            return 0;
+        }
+        sp = (EjsHttpServer*) loc->context;
+        if (sp->server == 0) {
+            /* Don't set limits or pipeline. That will come from the embedding server */
+            sp->server = conn->server;
+            sp->server->ssl = loc->ssl;
+            sp->ip = sclone(conn->server->ip);
+            sp->port = conn->server->port;
+            sp->dir = sclone(conn->host->documentRoot);
+        }
+        httpSetServerContext(conn->server, sp);
+    }
+    if (conn->notifier == 0) {
+        httpSetConnNotifier(conn, stateChangeNotifier);
+    }
+    return sp;
+}
+
+
 /*
     Note: this may be called multiple times for async, long-running requests.
     MOB -rename then
@@ -656,9 +632,7 @@ static void startEjs(HttpQueue *q)
     HttpConn        *conn;
 
     conn = q->conn;
-    mprAssert(httpGetConnContext(conn) == 0);
-   
-    if ((sp = getServerContext(conn)) == 0) {
+    if ((sp = getServer(conn)) == 0) {
         return;
     }
     createRequest(sp, conn);
@@ -683,12 +657,6 @@ static void processEjs(HttpQueue *q)
     HttpConn        *conn;
     
     conn = q->conn;
-#if UNUSED
-    EjsHttpServer   *sp;
-    EjsRequest      *req;
-    sp = httpGetServerContext(conn->server);
-    req = httpGetConnContext(conn);
-#endif
 
     if (conn->readq->count > 0) {
         HTTP_NOTIFY(conn, 0, HTTP_NOTIFY_READABLE);
@@ -727,9 +695,6 @@ HttpStage *ejsAddWebHandler(Http *http, MprModule *module)
 static void manageHttpServer(EjsHttpServer *sp, int flags)
 {
     if (flags & MPR_MANAGE_MARK) {
-#if UNUSED
-        mprLog(0, "MARK httpServer for %s", sp->ejs->name);
-#endif
         ejsManagePot(sp, flags);
         mprMark(sp->ejs);
         mprMark(sp->server);
@@ -756,9 +721,6 @@ static void manageHttpServer(EjsHttpServer *sp, int flags)
         if (!mprIsStopping() && sp->ejs && sp->ejs->service) {
             ejsSendEvent(sp->ejs, sp->emitter, "close", NULL, sp);
         }
-#endif
-#if UNUSED 
-        mprLog(0, "DESTROY HttpServer %s in %s", sp->name, sp->ejs->name);
 #endif
         sp->sessions = 0;
         ejsStopSessionTimer(sp);
