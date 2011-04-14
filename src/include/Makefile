@@ -3,15 +3,23 @@
 #
 #	Copyright (c) Embedthis Software LLC, 2003-2011. All Rights Reserved.
 #
+HEADERS     += $(patsubst master/%.h,$(BLD_INC_DIR)/%.h,$(shell find master/*.slots.h))
 
-include 		.makedep
+include 	.makedep
+
+compileExtra: $(HEADERS)
 
 dependExtra:
 	cp master/*slots.h $(BLD_INC_DIR)
 
 cleanExtra:
 	mkdir -p $(BLD_INC_DIR)
-	cp master/*slots.h $(BLD_INC_DIR)
+	rm -f $(BLD_INC_DIR)/ejs.*.h
+
+.SUFFIXES: .h
+
+$(BLD_INC_DIR)/%.h: master/%.h
+	cp $< $@
 
 #
 #   Local variables:

@@ -181,7 +181,7 @@ module ejs.web {
                         /* list("priority", [["low", "3"], ["med", "5"], ["high", "9"]]) */
                         let [key, value] = choice
                         selected = (value == defaultValue) ? ' selected="yes"' : ''
-                        write('      <option value="' + value + '"' + selected + '>' + key + '</option>\r\n')
+                        write('      <option value="' + key + '"' + selected + '>' + value + '</option>\r\n')
 
                     } else if (choice && choice.id) {
                         /* list("priority", [{id: 77, field: "value", ...}, ...]) */
@@ -195,8 +195,8 @@ module ejs.web {
                     } else if (Object.getOwnPropertyCount(choice) > 0) {
                         /* list("priority", [{low: 3}, {med: 5}, {high: 9}]) */
                         for (let [key, value] in choice) {
-                            selected = (value == defaultValue) ? ' selected="yes"' : ''
-                            write('      <option value="' + value + '"' + selected + '>' + key + '</option>\r\n')
+                            selected = (key == defaultValue) ? ' selected="yes"' : ''
+                            write('      <option value="' + key + '"' + selected + '>' + value + '</option>\r\n')
                         }
                     } else {
                         /* list("priority", ["low", "med", "high"]) */
@@ -208,8 +208,8 @@ module ejs.web {
             } else {
                 /* list("priority", {low: 0, med: 1, high: 2}) */
                 for (let [key, value]  in choices) {
-                    selected = (value == defaultValue) ? ' selected="yes"' : ''
-                    write('      <option value="' + value + '"' + selected + '>' + key + '</option>\r\n')
+                    selected = (key == defaultValue) ? ' selected="yes"' : ''
+                    write('      <option value="' + key + '"' + selected + '>' + value + '</option>\r\n')
                 }
             }
             write('    </select>\r\n')

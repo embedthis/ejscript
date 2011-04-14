@@ -26,6 +26,7 @@ ifeq ($(BLD_CROSS),1)
 	echo
 	$(call log) [Notice] "Building Ejs Toolchain for ($(BLD_BUILD_SYSTEM)) (ejsc, ejs, ejsmod)"
 endif
+	$(MAKE) -S --no-print-directory BUILDING_NATIVE=1 TRACE=$(TRACE) DIR=$(DIR)/include -C include compile
 	$(MAKE) -S --no-print-directory BUILDING_NATIVE=1 TRACE=$(TRACE) DIR=$(DIR)/deps -C deps compile
 	$(MAKE) -S --no-print-directory BUILDING_NATIVE=1 TRACE=$(TRACE) DIR=$(DIR)/vm -C vm compile
 	$(MAKE) -S --no-print-directory BUILDING_NATIVE=1 TRACE=$(TRACE) DIR=$(DIR)/compiler -C compiler compile
@@ -60,6 +61,7 @@ endif
 cleanExtra:
 	find . -name '*.lst' -o -name '*.mod' -o -name '*.jem' -type f | xargs rm -f
 	rm -f *.slots.h
+	rm -f $(BLD_INC_DIR)/ejs*.h
 
 #
 #   Local variables:

@@ -556,6 +556,7 @@ r.link({product: "candy", quantity: "10", template: "/cart/{product}/{quantity}"
                     }
                     target.route = target.action || "default"
                 }
+dump("TARGET", target)
                 if (target.route) {
                     target.scriptName ||= scriptName
                     if (!target.template && route) {
@@ -564,6 +565,7 @@ r.link({product: "candy", quantity: "10", template: "/cart/{product}/{quantity}"
                 }
             }
             if (target.route && target.template) {
+dump("TEMPLATE", target.template)
                 target = Uri.template(target.template, target).path
             }
             return uri.local.resolve(target).normalize
