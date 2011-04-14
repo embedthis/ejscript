@@ -580,10 +580,10 @@ module ejs.web {
             if (extra) {
                 if (params && Object.getOwnPropertyCount(params) > 0) {
                     if (!(params.action && Object.getOwnPropertyCount(params) == 1)) {
-                        line += "\n                                                    %s".format(serialize(params))
+                        line += "\n                                                      %s".format(serialize(params))
                     }
                 }
-                line += "\n                                                    pattern: " + r.pattern + "\n"
+                line += "\n                                                      pattern: " + r.pattern + "\n"
             }
             print(line)
         }
