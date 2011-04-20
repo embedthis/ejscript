@@ -6391,8 +6391,8 @@ HttpPacket *httpCreateEntityPacket(MprOff pos, MprOff size, HttpFillProc fill)
         return 0;
     }
     packet->flags = HTTP_PACKET_DATA;
-    packet->vpos = pos;
-    packet->vsize = size;
+    packet->epos = pos;
+    packet->esize = size;
     packet->fill = fill;
     return packet;
 }
@@ -6505,8 +6505,8 @@ int httpJoinPacket(HttpPacket *packet, HttpPacket *p)
 {
     ssize   len;
 
-    mprAssert(packet->vsize == 0);
-    mprAssert(p->vsize == 0);
+    mprAssert(packet->esize == 0);
+    mprAssert(p->esize == 0);
 
     len = httpGetPacketLength(p);
     if (mprPutBlockToBuf(packet->content, mprGetBufStart(p->content), (ssize) len) != len) {
@@ -6600,25 +6600,24 @@ int httpResizePacket(HttpQueue *q, HttpPacket *packet, ssize size)
     if (size <= 0) {
         size = MAXINT;
     }
-    if (packet->vsize > size) {
+    if (packet->esize > size) {
         if ((tail = httpSplitPacket(packet, size)) == 0) {
             return MPR_ERR_MEMORY;
         }
-        httpPutBackPacket(q, tail);
-    }
-    /*  
-        Calculate the size that will fit downstream
-     */
-    len = packet->content ? httpGetPacketLength(packet) : 0;
-    size = min(size, len);
-    size = min(size, q->nextQ->max);
-    size = min(size, q->nextQ->packetSize);
-
-    if (size == 0 || size == len) {
-        return 0;
-    }
-    if ((tail = httpSplitPacket(packet, size)) == 0) {
-        return MPR_ERR_MEMORY;
+    } else {
+        /*  
+            Calculate the size that will fit downstream
+         */
+        len = packet->content ? httpGetPacketLength(packet) : 0;
+        size = min(size, len);
+        size = min(size, q->nextQ->max);
+        size = min(size, q->nextQ->packetSize);
+        if (size == 0 || size == len) {
+            return 0;
+        }
+        if ((tail = httpSplitPacket(packet, size)) == 0) {
+            return MPR_ERR_MEMORY;
+        }
     }
     httpPutBackPacket(q, tail);
     return 0;
@@ -6639,8 +6638,8 @@ HttpPacket *httpClonePacket(HttpPacket *orig)
         packet->prefix = mprCloneBuf(orig->prefix);
     }
     packet->flags = orig->flags;
-    packet->vsize = orig->vsize;
-    packet->vpos = orig->vpos;
+    packet->esize = orig->esize;
+    packet->epos = orig->epos;
     packet->fill = orig->fill;
     return packet;
 }
@@ -6689,11 +6688,11 @@ HttpPacket *httpSplitPacket(HttpPacket *orig, ssize offset)
     HttpPacket  *packet;
     ssize       count, size;
 
-    if (orig->content == 0) {
-        if ((packet = httpCreateEntityPacket(orig->vpos + offset, orig->vsize - offset, orig->fill)) == 0) {
+    if (orig->esize) {
+        if ((packet = httpCreateEntityPacket(orig->epos + offset, orig->esize - offset, orig->fill)) == 0) {
             return 0;
         }
-        orig->vsize = offset;
+        orig->esize = offset;
 
     } else {
         if (offset >= httpGetPacketLength(orig)) {
@@ -6703,7 +6702,7 @@ HttpPacket *httpSplitPacket(HttpPacket *orig, ssize offset)
         count = httpGetPacketLength(orig) - offset;
         size = max(count, HTTP_BUFSIZE);
         size = HTTP_PACKET_ALIGN(size);
-        if ((packet = httpCreatePacket(size)) == 0) {
+        if ((packet = httpCreateDataPacket(size)) == 0) {
             return 0;
         }
         httpAdjustPacketEnd(orig, (ssize) -count);
@@ -6719,23 +6718,23 @@ HttpPacket *httpSplitPacket(HttpPacket *orig, ssize offset)
 }
 
 
-void httpAdjustPacketStart(HttpPacket *packet, ssize size)
+void httpAdjustPacketStart(HttpPacket *packet, MprOff size)
 {
-    if (packet->vsize) {
-        packet->vpos += size;
-        packet->vsize -= size;
+    if (packet->esize) {
+        packet->epos += size;
+        packet->esize -= size;
     } else if (packet->content) {
-        mprAdjustBufStart(packet->content, size);
+        mprAdjustBufStart(packet->content, (ssize) size);
     }
 }
 
 
-void httpAdjustPacketEnd(HttpPacket *packet, ssize size)
+void httpAdjustPacketEnd(HttpPacket *packet, MprOff size)
 {
-    if (packet->vsize) {
-        packet->vsize += size;
+    if (packet->esize) {
+        packet->esize += size;
     } else if (packet->content) {
-        mprAdjustBufEnd(packet->content, size);
+        mprAdjustBufEnd(packet->content, (ssize) size);
     }
 }
 
@@ -8002,7 +8001,7 @@ static void applyRange(HttpQueue *q, HttpPacket *packet)
         are filled with entity data as required.
      */
     while (range) {
-        length = httpGetPacketVLength(packet);
+        length = httpGetPacketEntityLength(packet);
         if (length <= 0) {
             break;
         }
@@ -8082,71 +8081,7 @@ static void outgoingRangeService(HttpQueue *q)
                 return;
             }
             httpSendPacketToNext(q, packet);
-            continue;
         }
-#if UNUSED
-        /*  
-            Process the current packet over multiple ranges ranges until all the data is processed or discarded.
-            A packet may contain data or it may be empty with an associated entityLength. If empty, range packets
-            are filled with entity data as required.
-         */
-        bytes = packet->content ? mprGetBufLength(packet->content) : (packet->entityLength - tx->rangePos);
-
-        while (range && bytes > 0) {
-            endpos = tx->rangePos + bytes;
-            if (endpos < range->start) {
-                /* Packet is before the next range, so discard the entire packet and seek forwards */
-                tx->rangePos += bytes;
-                bytes = 0;
-
-            } else if (tx->rangePos > range->end) {
-                /* Missing some output - should not happen */
-                mprAssert(0);
-
-            } else if (tx->rangePos < range->start) {
-                /*  Packet starts before range so skip some data */
-                gap = (range->start - tx->rangePos);
-                bytes -= gap;
-                tx->rangePos += gap;
-                if (packet->content) {
-                    if (gap < httpGetPacketLength(packet)) {
-                        mprAdjustBufStart(packet->content, (ssize) gap);
-                    }
-                }
-
-            } else {
-                /* In range */
-                mprAssert(range->start <= tx->rangePos && tx->rangePos < range->end);
-                span = min(bytes, (range->end - tx->rangePos));
-                count = (ssize) min(span, q->nextQ->packetSize);
-                mprAssert(count > 0);
-
-                if (!httpWillNextQueueAcceptSize(q, count)) {
-                    httpPutBackPacket(q, packet);
-                    return;
-                }
-                if (packet->entityLength > count) {
-                    /*
-                        Put back a new entity packet to be processed after this range, if the entityLength will be
-                        not satisfied by this range.
-                     */
-                    httpPutBackPacket(q, httpCreateEntityPacket(packet->entityLength - count, packet->fill));
-                }
-                if (packet->fill && (*packet->fill)(q, packet, tx->rangePos, count) < 0) {
-                    return;
-                }
-                if (tx->rangeBoundary) {
-                    httpSendPacketToNext(q, createRangePacket(conn, range));
-                }
-                httpSendPacketToNext(q, packet);
-                tx->rangePos += count;
-                bytes = 0;
-            }
-            if (tx->rangePos >= range->end) {
-                range = range->next;
-            }
-        }
-#endif
     }
 }
 
@@ -10153,7 +10088,7 @@ static MprOff buildSendVec(HttpQueue *q)
             httpWriteHeaders(conn, packet);
             q->count += httpGetPacketLength(packet);
             
-        } else if (httpGetPacketLength(packet) == 0 && packet->vsize == 0) {
+        } else if (httpGetPacketLength(packet) == 0 && packet->esize == 0) {
             q->flags |= HTTP_QUEUE_EOF;
             if (packet->prefix == NULL) {
                 break;
@@ -10201,10 +10136,10 @@ static void addPacketForSend(HttpQueue *q, HttpPacket *packet)
     if (packet->prefix) {
         addToSendVector(q, mprGetBufStart(packet->prefix), mprGetBufLength(packet->prefix));
     }
-    if (packet->vsize > 0) {
+    if (packet->esize > 0) {
         mprAssert(q->ioFile == 0);
         q->ioFile = 1;
-        q->ioCount += packet->vsize;
+        q->ioCount += packet->esize;
 
     } else if (httpGetPacketLength(packet) > 0) {
         /*
@@ -10245,14 +10180,14 @@ static void adjustPacketData(HttpQueue *q, MprOff bytes)
                 packet->prefix = 0;
             }
         }
-        if (packet->vsize) {
-            len = (ssize) min(packet->vsize, bytes);
-            packet->vsize -= len;
-            packet->vpos += len;
+        if (packet->esize) {
+            len = (ssize) min(packet->esize, bytes);
+            packet->esize -= len;
+            packet->epos += len;
             bytes -= len;
-            mprAssert(packet->vsize >= 0);
+            mprAssert(packet->esize >= 0);
             mprAssert(bytes == 0);
-            if (packet->vsize > 0) {
+            if (packet->esize > 0) {
                 break;
             }
         } else if ((len = httpGetPacketLength(packet)) > 0) {
