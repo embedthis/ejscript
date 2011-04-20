@@ -9,8 +9,8 @@
 
 /**************************** Forward Declarations ****************************/
 
-static EjsObj   *getDateHeader(Ejs *ejs, EjsHttp *hp, cchar *key);
-static EjsObj   *getStringHeader(Ejs *ejs, EjsHttp *hp, cchar *key);
+static EjsDate  *getDateHeader(Ejs *ejs, EjsHttp *hp, cchar *key);
+static EjsString *getStringHeader(Ejs *ejs, EjsHttp *hp, cchar *key);
 static void     httpIOEvent(HttpConn *conn, MprEvent *event);
 static void     httpNotify(HttpConn *conn, int state, int notifyFlags);
 static void     prepForm(Ejs *ejs, EjsHttp *hp, char *prefix, EjsObj *data);
@@ -26,7 +26,7 @@ static ssize    writeHttpData(Ejs *ejs, EjsHttp *hp);
 /*  
     function Http(uri: Uri = null)
  */
-static EjsObj *httpConstructor(Ejs *ejs, EjsHttp *hp, int argc, EjsObj **argv)
+static EjsHttp *httpConstructor(Ejs *ejs, EjsHttp *hp, int argc, EjsObj **argv)
 {
     ejsLoadHttpService(ejs);
 
@@ -43,31 +43,31 @@ static EjsObj *httpConstructor(Ejs *ejs, EjsHttp *hp, int argc, EjsObj **argv)
     hp->method = sclone("GET");
     hp->requestContent = mprCreateBuf(HTTP_BUFSIZE, -1);
     hp->responseContent = mprCreateBuf(HTTP_BUFSIZE, -1);
-    return (EjsObj*) hp;
+    return hp;
 }
 
 
 /*  
     function on(name, observer: function): Void
  */
-EjsObj *http_on(Ejs *ejs, EjsHttp *hp, int argc, EjsObj **argv)
+static EjsObj *http_on(Ejs *ejs, EjsHttp *hp, int argc, EjsObj **argv)
 {
     EjsFunction     *observer;
     HttpConn        *conn;
 
     observer = (EjsFunction*) argv[1];
     if (observer->boundThis == 0 || observer->boundThis == ejs->global) {
-        observer->boundThis = (EjsObj*) hp;
+        observer->boundThis = hp;
     }
     ejsAddObserver(ejs, &hp->emitter, argv[0], argv[1]);
 
     conn = hp->conn;
     if (conn->readq && conn->readq->count > 0) {
-        ejsSendEvent(ejs, hp->emitter, "readable", NULL, (EjsObj*) hp);
+        ejsSendEvent(ejs, hp->emitter, "readable", NULL, hp);
     }
     if (!conn->writeComplete && !conn->error && HTTP_STATE_CONNECTED <= conn->state && conn->state < HTTP_STATE_COMPLETE &&
             conn->writeq->ioCount == 0) {
-        ejsSendEvent(ejs, hp->emitter, "writable", NULL, (EjsObj*) hp);
+        ejsSendEvent(ejs, hp->emitter, "writable", NULL, hp);
     }
     return 0;
 }
@@ -76,45 +76,47 @@ EjsObj *http_on(Ejs *ejs, EjsHttp *hp, int argc, EjsObj **argv)
 /*  
     function get async(): Boolean
  */
-EjsObj *http_async(Ejs *ejs, EjsHttp *hp, int argc, EjsObj **argv)
+static EjsBoolean *http_async(Ejs *ejs, EjsHttp *hp, int argc, EjsObj **argv)
 {
-    return httpGetAsync(hp->conn) ? (EjsObj*) S(true) : (EjsObj*) S(false);
+    return httpGetAsync(hp->conn) ? S(true) : S(false);
 }
 
 
 /*  
     function set async(enable: Boolean): Void
  */
-EjsObj *http_set_async(Ejs *ejs, EjsHttp *hp, int argc, EjsObj **argv)
+static EjsObj *http_set_async(Ejs *ejs, EjsHttp *hp, int argc, EjsObj **argv)
 {
     HttpConn    *conn;
     int         async;
 
     conn = hp->conn;
-    async = (argv[0] == (EjsObj*) S(true));
+    async = (argv[0] == S(true));
     httpSetAsync(conn, async);
     httpSetIOCallback(conn, httpIOEvent);
     return 0;
 }
 
 
+#if ES_Http_available
 /*  
     function get available(): Number
     DEPRECATED 1.0.0B3 (11/09)
  */
-EjsObj *http_available(Ejs *ejs, EjsHttp *hp, int argc, EjsObj **argv)
+static EjsNumber *http_available(Ejs *ejs, EjsHttp *hp, int argc, EjsObj **argv)
 {
-    ssize     len;
+    MprOff      len;
 
     if (!waitForResponseHeaders(hp, -1)) {
         return 0;
     }
     len = httpGetContentLength(hp->conn);
     if (len > 0) {
-        return (EjsObj*) ejsCreateNumber(ejs, (MprNumber) len);
+        return ejsCreateNumber(ejs, (MprNumber) len);
     }
-    return (EjsObj*) S(minusOne);
+    return (EjsNumber*) S(minusOne);
 }
+#endif
 
 
 /*  
@@ -149,10 +151,10 @@ static EjsObj *http_connect(Ejs *ejs, EjsHttp *hp, int argc, EjsObj **argv)
 /*  
     function get certificate(): String
  */
-static EjsObj *http_certificate(Ejs *ejs, EjsHttp *hp, int argc, EjsObj **argv)
+static EjsString *http_certificate(Ejs *ejs, EjsHttp *hp, int argc, EjsObj **argv)
 {
     if (hp->certFile) {
-        return (EjsObj*) ejsCreateStringFromAsc(ejs, hp->certFile);
+        return ejsCreateStringFromAsc(ejs, hp->certFile);
     }
     return S(null);
 }
@@ -171,22 +173,22 @@ static EjsObj *http_set_certificate(Ejs *ejs, EjsHttp *hp, int argc, EjsObj **ar
 /*  
     function get contentLength(): Number
  */
-static EjsObj *http_contentLength(Ejs *ejs, EjsHttp *hp, int argc, EjsObj **argv)
+static EjsNumber *http_contentLength(Ejs *ejs, EjsHttp *hp, int argc, EjsObj **argv)
 {
-    ssize     length;
+    MprOff      length;
 
     if (!waitForResponseHeaders(hp, -1)) {
         return 0;
     }
     length = httpGetContentLength(hp->conn);
-    return (EjsObj*) ejsCreateNumber(ejs, (MprNumber) length);
+    return ejsCreateNumber(ejs, (MprNumber) length);
 }
 
 
 /*  
     function get contentType(): String
  */
-static EjsObj *http_contentType(Ejs *ejs, EjsHttp *hp, int argc, EjsObj **argv)
+static EjsString *http_contentType(Ejs *ejs, EjsHttp *hp, int argc, EjsObj **argv)
 {
     return getStringHeader(ejs, hp, "CONTENT-TYPE");
 }
@@ -195,7 +197,7 @@ static EjsObj *http_contentType(Ejs *ejs, EjsHttp *hp, int argc, EjsObj **argv)
 /*  
     function get date(): Date
  */
-static EjsObj *http_date(Ejs *ejs, EjsHttp *hp, int argc, EjsObj **argv)
+static EjsDate *http_date(Ejs *ejs, EjsHttp *hp, int argc, EjsObj **argv)
 {
     return getDateHeader(ejs, hp, "DATE");
 }
@@ -216,10 +218,10 @@ static EjsObj *http_finalize(Ejs *ejs, EjsHttp *hp, int argc, EjsObj **argv)
 /*  
     function get finalized(): Boolean
  */
-static EjsObj *http_finalized(Ejs *ejs, EjsHttp *hp, int argc, EjsObj **argv)
+static EjsBoolean *http_finalized(Ejs *ejs, EjsHttp *hp, int argc, EjsObj **argv)
 {
     if (hp->conn && hp->conn->tx) {
-        return (EjsObj*) ejsCreateBoolean(ejs, hp->conn->tx->finalized);
+        return ejsCreateBoolean(ejs, hp->conn->tx->finalized);
     }
     return S(false);
 }
@@ -274,9 +276,9 @@ static EjsObj *http_form(Ejs *ejs, EjsHttp *hp, int argc, EjsObj **argv)
 /*  
     function get followRedirects(): Boolean
  */
-static EjsObj *http_followRedirects(Ejs *ejs, EjsHttp *hp, int argc, EjsObj **argv)
+static EjsBoolean *http_followRedirects(Ejs *ejs, EjsHttp *hp, int argc, EjsObj **argv)
 {
-    return (EjsObj*) ejsCreateBoolean(ejs, hp->conn->followRedirects);
+    return ejsCreateBoolean(ejs, hp->conn->followRedirects);
 }
 
 
@@ -308,18 +310,18 @@ static EjsObj *http_get(Ejs *ejs, EjsHttp *hp, int argc, EjsObj **argv)
     Return the (proposed) request headers
     function getRequestHeaders(): Object
  */
-static EjsObj *http_getRequestHeaders(Ejs *ejs, EjsHttp *hp, int argc, EjsObj **argv)
+static EjsPot *http_getRequestHeaders(Ejs *ejs, EjsHttp *hp, int argc, EjsObj **argv)
 {
     MprHash         *p;
     HttpConn        *conn;
-    EjsObj          *headers;
+    EjsPot          *headers;
 
     conn = hp->conn;
-    headers = (EjsObj*) ejsCreateEmptyPot(ejs);
+    headers = ejsCreateEmptyPot(ejs);
     for (p = 0; conn->tx && (p = mprGetNextHash(conn->tx->headers, p)) != 0; ) {
         ejsSetPropertyByName(ejs, headers, EN(p->key), ejsCreateStringFromAsc(ejs, p->data));
     }
-    return (EjsObj*) headers;
+    return headers;
 }
 
 
@@ -335,11 +337,11 @@ static EjsObj *http_head(Ejs *ejs, EjsHttp *hp, int argc, EjsObj **argv)
 /*  
     function header(key: String): String
  */
-static EjsObj *http_header(Ejs *ejs, EjsHttp *hp, int argc, EjsObj **argv)
+static EjsString *http_header(Ejs *ejs, EjsHttp *hp, int argc, EjsObj **argv)
 {
-    EjsObj  *result;
-    cchar   *value;
-    char    *str;
+    EjsString   *result;
+    cchar       *value;
+    char        *str;
 
     if (!waitForResponseHeaders(hp, -1)) {
         return 0;
@@ -347,9 +349,9 @@ static EjsObj *http_header(Ejs *ejs, EjsHttp *hp, int argc, EjsObj **argv)
     str = slower(ejsToMulti(ejs, argv[0]));
     value = httpGetHeader(hp->conn, str);
     if (value) {
-        result = (EjsObj*) ejsCreateStringFromAsc(ejs, value);
+        result = ejsCreateStringFromAsc(ejs, value);
     } else {
-        result = (EjsObj*) S(null);
+        result = S(null);
     }
     return result;
 }
@@ -358,7 +360,7 @@ static EjsObj *http_header(Ejs *ejs, EjsHttp *hp, int argc, EjsObj **argv)
 /*  
     function get headers(): Object
  */
-static EjsObj *http_headers(Ejs *ejs, EjsHttp *hp, int argc, EjsObj **argv)
+static EjsPot *http_headers(Ejs *ejs, EjsHttp *hp, int argc, EjsObj **argv)
 {
     MprHashTable    *hash;
     MprHash         *p;
@@ -371,21 +373,21 @@ static EjsObj *http_headers(Ejs *ejs, EjsHttp *hp, int argc, EjsObj **argv)
     results = ejsCreateEmptyPot(ejs);
     hash = httpGetHeaderHash(hp->conn);
     if (hash == 0) {
-        return (EjsObj*) results;
+        return results;
     }
     for (i = 0, p = mprGetFirstHash(hash); p; p = mprGetNextHash(hash, p), i++) {
         ejsSetPropertyByName(ejs, results, EN(p->key), ejsCreateStringFromAsc(ejs, p->data));
     }
-    return (EjsObj*) results;
+    return results;
 }
 
 
 /*  
     function get isSecure(): Boolean
  */
-static EjsObj *http_isSecure(Ejs *ejs, EjsHttp *hp, int argc, EjsObj **argv)
+static EjsBoolean *http_isSecure(Ejs *ejs, EjsHttp *hp, int argc, EjsObj **argv)
 {
-    return (EjsObj*) ejsCreateBoolean(ejs, hp->conn->secure);
+    return ejsCreateBoolean(ejs, hp->conn->secure);
 }
 
 
@@ -414,7 +416,7 @@ static EjsObj *http_set_key(Ejs *ejs, EjsHttp *hp, int argc, EjsObj **argv)
 /*  
     function get lastModified(): Date
  */
-static EjsObj *http_lastModified(Ejs *ejs, EjsHttp *hp, int argc, EjsObj **argv)
+static EjsDate *http_lastModified(Ejs *ejs, EjsHttp *hp, int argc, EjsObj **argv)
 {
     return getDateHeader(ejs, hp, "LAST-MODIFIED");
 }
@@ -436,9 +438,9 @@ static EjsObj *http_limits(Ejs *ejs, EjsHttp *hp, int argc, EjsObj **argv)
 /*  
     function get method(): String
  */
-static EjsObj *http_method(Ejs *ejs, EjsHttp *hp, int argc, EjsObj **argv)
+static EjsString *http_method(Ejs *ejs, EjsHttp *hp, int argc, EjsObj **argv)
 {
-    return (EjsObj*) ejsCreateStringFromAsc(ejs, hp->method);
+    return ejsCreateStringFromAsc(ejs, hp->method);
 }
 
 
@@ -483,11 +485,12 @@ static EjsObj *http_put(Ejs *ejs, EjsHttp *hp, int argc, EjsObj **argv)
     function read(buffer: ByteArray, offset: Number = 0, count: Number = -1): Number
     Returns a count of bytes read. Non-blocking if a callback is defined. Otherwise, blocks.
  */
-static EjsObj *http_read(Ejs *ejs, EjsHttp *hp, int argc, EjsObj **argv)
+static EjsNumber *http_read(Ejs *ejs, EjsHttp *hp, int argc, EjsObj **argv)
 {
     EjsByteArray    *buffer;
     HttpConn        *conn;
-    ssize           offset, count, contentLength;
+    MprOff          contentLength;
+    ssize           offset, count;
 
     conn = hp->conn;
     buffer = (EjsByteArray*) argv[0];
@@ -501,7 +504,7 @@ static EjsObj *http_read(Ejs *ejs, EjsHttp *hp, int argc, EjsObj **argv)
     contentLength = httpGetContentLength(conn);
     if (conn->state >= HTTP_STATE_PARSED && contentLength == hp->readCount) {
         /* End of input */
-        return (EjsObj*) S(null);
+        return S(null);
     }
     if (offset < 0) {
         offset = buffer->writePosition;
@@ -519,7 +522,7 @@ static EjsObj *http_read(Ejs *ejs, EjsHttp *hp, int argc, EjsObj **argv)
     ejsCopyToByteArray(ejs, buffer, buffer->writePosition, (char*) mprGetBufStart(hp->responseContent), count);
     ejsSetByteArrayPositions(ejs, buffer, -1, buffer->writePosition + count);
     mprAdjustBufStart(hp->responseContent, count);
-    return (EjsObj*) ejsCreateNumber(ejs, (MprNumber) count);
+    return ejsCreateNumber(ejs, (MprNumber) count);
 }
 
 
@@ -527,9 +530,9 @@ static EjsObj *http_read(Ejs *ejs, EjsHttp *hp, int argc, EjsObj **argv)
     function readString(count: Number = -1): String
     Read count bytes (default all) of content as a string. This always starts at the first character of content.
  */
-static EjsObj *http_readString(Ejs *ejs, EjsHttp *hp, int argc, EjsObj **argv)
+static EjsString *http_readString(Ejs *ejs, EjsHttp *hp, int argc, EjsObj **argv)
 {
-    EjsObj      *result;
+    EjsString   *result;
     HttpConn    *conn;
     ssize       count;
     int         timeout;
@@ -553,7 +556,7 @@ static EjsObj *http_readString(Ejs *ejs, EjsHttp *hp, int argc, EjsObj **argv)
         return 0;
     }
     //  MOB - UNICODE ENCODING
-    result = (EjsObj*) ejsCreateStringFromMulti(ejs, mprGetBufStart(hp->responseContent), count);
+    result = ejsCreateStringFromMulti(ejs, mprGetBufStart(hp->responseContent), count);
     mprAdjustBufStart(hp->responseContent, count);
     return result;
 }
@@ -562,7 +565,7 @@ static EjsObj *http_readString(Ejs *ejs, EjsHttp *hp, int argc, EjsObj **argv)
 /*  
     function off(name, observer: function): Void
  */
-EjsObj *http_off(Ejs *ejs, EjsHttp *hp, int argc, EjsObj **argv)
+static EjsObj *http_off(Ejs *ejs, EjsHttp *hp, int argc, EjsObj **argv)
 {
     ejsRemoveObserver(ejs, hp->emitter, argv[0], argv[1]);
     return 0;
@@ -583,13 +586,13 @@ static EjsObj *http_reset(Ejs *ejs, EjsHttp *hp, int argc, EjsObj **argv)
 /*  
     function get response(): String
  */
-static EjsObj *http_response(Ejs *ejs, EjsHttp *hp, int argc, EjsObj **argv)
+static EjsString *http_response(Ejs *ejs, EjsHttp *hp, int argc, EjsObj **argv)
 {
     if (hp->responseCache) {
         return hp->responseCache;
     }
     hp->responseCache = http_readString(ejs, hp, argc, argv);
-    return (EjsObj*) hp->responseCache;
+    return hp->responseCache;
 }
 
 
@@ -598,7 +601,7 @@ static EjsObj *http_response(Ejs *ejs, EjsHttp *hp, int argc, EjsObj **argv)
  */
 static EjsObj *http_set_response(Ejs *ejs, EjsHttp *hp, int argc, EjsObj **argv)
 {
-    hp->responseCache = argv[0];
+    hp->responseCache = (EjsString*) argv[0];
     return 0;
 }
 
@@ -606,9 +609,9 @@ static EjsObj *http_set_response(Ejs *ejs, EjsHttp *hp, int argc, EjsObj **argv)
 /*  
     function get retries(): Number
  */
-static EjsObj *http_retries(Ejs *ejs, EjsHttp *hp, int argc, EjsObj **argv)
+static EjsNumber *http_retries(Ejs *ejs, EjsHttp *hp, int argc, EjsObj **argv)
 {
-    return (EjsObj*) ejsCreateNumber(ejs, hp->conn->retries);
+    return ejsCreateNumber(ejs, hp->conn->retries);
 }
 
 
@@ -639,7 +642,7 @@ static EjsObj *http_setCredentials(Ejs *ejs, EjsHttp *hp, int argc, EjsObj **arg
 /*  
     function setHeader(key: String, value: String, overwrite: Boolean = true): Void
  */
-EjsObj *http_setHeader(Ejs *ejs, EjsHttp *hp, int argc, EjsObj **argv)
+static EjsObj *http_setHeader(Ejs *ejs, EjsHttp *hp, int argc, EjsObj **argv)
 {
     HttpConn    *conn;
     cchar       *key, *value;
@@ -765,11 +768,11 @@ static EjsObj *http_trace(Ejs *ejs, EjsHttp *hp, int argc, EjsObj **argv)
 
 
 /*  
-    function get uri(): String
+    function get uri(): Uri
  */
-static EjsObj *http_uri(Ejs *ejs, EjsHttp *hp, int argc, EjsObj **argv)
+static EjsUri *http_uri(Ejs *ejs, EjsHttp *hp, int argc, EjsObj **argv)
 {
-    return (EjsObj*) ejsCreateUriFromMulti(ejs, hp->uri);
+    return ejsCreateUriFromMulti(ejs, hp->uri);
 }
 
 
@@ -786,7 +789,7 @@ static EjsObj *http_set_uri(Ejs *ejs, EjsHttp *hp, int argc, EjsObj **argv)
 /*  
     function get status(): Number
  */
-static EjsObj *http_status(Ejs *ejs, EjsHttp *hp, int argc, EjsObj **argv)
+static EjsNumber *http_status(Ejs *ejs, EjsHttp *hp, int argc, EjsObj **argv)
 {
     int     code;
 
@@ -797,14 +800,14 @@ static EjsObj *http_status(Ejs *ejs, EjsHttp *hp, int argc, EjsObj **argv)
     if (code <= 0) {
         return S(null);
     }
-    return (EjsObj*) ejsCreateNumber(ejs, code);
+    return ejsCreateNumber(ejs, code);
 }
 
 
 /*  
     function get statusMessage(): String
  */
-static EjsObj *http_statusMessage(Ejs *ejs, EjsHttp *hp, int argc, EjsObj **argv)
+static EjsString *http_statusMessage(Ejs *ejs, EjsHttp *hp, int argc, EjsObj **argv)
 {
     HttpConn    *conn;
 
@@ -813,9 +816,9 @@ static EjsObj *http_statusMessage(Ejs *ejs, EjsHttp *hp, int argc, EjsObj **argv
     }
     conn = hp->conn;
     if (conn->errorMsg) {
-        return (EjsObj*) ejsCreateStringFromAsc(ejs, conn->errorMsg);
+        return ejsCreateStringFromAsc(ejs, conn->errorMsg);
     }
-    return (EjsObj*) ejsCreateStringFromAsc(ejs, httpGetStatusMessage(hp->conn));
+    return ejsCreateStringFromAsc(ejs, httpGetStatusMessage(hp->conn));
 }
 
 
@@ -824,7 +827,7 @@ static EjsObj *http_statusMessage(Ejs *ejs, EjsHttp *hp, int argc, EjsObj **argv
 
     function wait(timeout: Number = -1): Boolean
  */
-static EjsObj *http_wait(Ejs *ejs, EjsHttp *hp, int argc, EjsObj **argv)
+static EjsBoolean *http_wait(Ejs *ejs, EjsHttp *hp, int argc, EjsObj **argv)
 {
     MprTime     mark;
     int         timeout;
@@ -838,9 +841,9 @@ static EjsObj *http_wait(Ejs *ejs, EjsHttp *hp, int argc, EjsObj **argv)
     }
     mark = mprGetTime();
     if (!waitForState(hp, HTTP_STATE_COMPLETE, timeout, 0)) {
-        return (EjsObj*) S(false);
+        return S(false);
     }
-    return (EjsObj*) S(true);
+    return S(true);
 }
 
 
@@ -879,7 +882,7 @@ static EjsObj *startHttpRequest(Ejs *ejs, EjsHttp *hp, char *method, int argc, E
     EjsNumber       *written;
     EjsUri          *uriObj;
     HttpConn        *conn;
-    ssize           length, nbytes;
+    ssize           nbytes;
 
     conn = hp->conn;
     hp->responseCache = 0;
@@ -926,8 +929,7 @@ static EjsObj *startHttpRequest(Ejs *ejs, EjsHttp *hp, char *method, int argc, E
         }
         httpFinalize(conn);
     }
-    length = hp->conn->tx->length;
-    ejsSendEvent(ejs, hp->emitter, "writable", NULL, (EjsObj*) hp);
+    ejsSendEvent(ejs, hp->emitter, "writable", NULL, hp);
     if (conn->async) {
         httpEnableConnEvents(hp->conn);
     }
@@ -949,7 +951,7 @@ static void httpNotify(HttpConn *conn, int state, int notifyFlags)
 
     case HTTP_STATE_PARSED:
         if (hp->emitter) {
-            ejsSendEvent(ejs, hp->emitter, "headers", NULL, (EjsObj*) hp);
+            ejsSendEvent(ejs, hp->emitter, "headers", NULL, hp);
         }
         break;
 
@@ -969,10 +971,10 @@ static void httpNotify(HttpConn *conn, int state, int notifyFlags)
     case 0:
         if (hp && hp->emitter) {
             if (notifyFlags & HTTP_NOTIFY_READABLE) {
-                ejsSendEvent(ejs, hp->emitter, "readable", NULL, (EjsObj*) hp);
+                ejsSendEvent(ejs, hp->emitter, "readable", NULL, hp);
             } 
             if (notifyFlags & HTTP_NOTIFY_WRITABLE) {
-                ejsSendEvent(ejs, hp->emitter, "writable", NULL, (EjsObj*) hp);
+                ejsSendEvent(ejs, hp->emitter, "writable", NULL, hp);
             }
         }
         break;
@@ -1068,7 +1070,7 @@ static void httpIOEvent(HttpConn *conn, MprEvent *event)
 }
 
 
-static EjsObj *getDateHeader(Ejs *ejs, EjsHttp *hp, cchar *key)
+static EjsDate *getDateHeader(Ejs *ejs, EjsHttp *hp, cchar *key)
 {
     MprTime     when;
     cchar       *value;
@@ -1078,16 +1080,16 @@ static EjsObj *getDateHeader(Ejs *ejs, EjsHttp *hp, cchar *key)
     }
     value = httpGetHeader(hp->conn, key);
     if (value == 0) {
-        return (EjsObj*) S(null);
+        return S(null);
     }
     if (mprParseTime(&when, value, MPR_UTC_TIMEZONE, NULL) < 0) {
         value = 0;
     }
-    return (EjsObj*) ejsCreateDate(ejs, when);
+    return ejsCreateDate(ejs, when);
 }
 
 
-static EjsObj *getStringHeader(Ejs *ejs, EjsHttp *hp, cchar *key)
+static EjsString *getStringHeader(Ejs *ejs, EjsHttp *hp, cchar *key)
 {
     cchar       *value;
 
@@ -1096,9 +1098,9 @@ static EjsObj *getStringHeader(Ejs *ejs, EjsHttp *hp, cchar *key)
     }
     value = httpGetHeader(hp->conn, key);
     if (value == 0) {
-        return (EjsObj*) S(null);
+        return S(null);
     }
-    return (EjsObj*) ejsCreateStringFromAsc(ejs, value);
+    return ejsCreateStringFromAsc(ejs, value);
 }
 
 
@@ -1427,7 +1429,7 @@ static void sendHttpCloseEvent(Ejs *ejs, EjsHttp *hp)
     if (!hp->closed && ejs->service) {
         hp->closed = 1;
         if (hp->emitter) {
-            ejsSendEvent(ejs, hp->emitter, "close", NULL, (EjsObj*) hp);
+            ejsSendEvent(ejs, hp->emitter, "close", NULL, hp);
         }
     }
 }
@@ -1438,7 +1440,7 @@ static void sendHttpErrorEvent(Ejs *ejs, EjsHttp *hp)
     if (!hp->error) {
         hp->error = 1;
         if (hp->emitter) {
-            ejsSendEvent(ejs, hp->emitter, "error", NULL, (EjsObj*) hp);
+            ejsSendEvent(ejs, hp->emitter, "error", NULL, hp);
         }
     }
 }

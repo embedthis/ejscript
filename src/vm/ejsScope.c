@@ -152,7 +152,7 @@ int ejsLookupVarWithNamespaces(Ejs *ejs, EjsAny *obj, EjsName name, EjsLookup *l
     EjsString       *space;
     EjsBlock        *b;
     MprList         *globalSpaces;
-    int             slotNum, next;
+    int             next, slotNum;
 
     mprAssert(obj);
     mprAssert(name.name);

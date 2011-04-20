@@ -677,6 +677,10 @@ mprAssert(ejs->result == 0 || (MPR_GET_GEN(MPR_GET_MEM(ejs->result)) != MPR->hea
         CASE (EJS_OP_GET_SCOPED_NAME):
             mark = FRAME->pc - 1;
             qname = GET_NAME();
+#if UNUSED
+                mprAssert(strcmp(qname.name->value, "Legacy") != 0);
+                mprAssert(strcmp(qname.name->value, "Config") != 0);
+#endif
             vp = ejsGetVarByName(ejs, NULL, qname, &lookup);
             if (unlikely(vp == 0)) {
                 ejsThrowReferenceError(ejs, "%@ is not defined", qname.name);

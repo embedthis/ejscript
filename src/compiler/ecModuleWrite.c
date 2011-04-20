@@ -196,7 +196,7 @@ static void createGlobalType(EcCompiler *cp, EjsType *type)
     Ejs             *ejs;
     EjsModule       *mp;
     EjsType         *iface;
-    int             slotNum, next;
+    int             next, slotNum;
 
     ejs = cp->ejs;
     mp = cp->state->currentModule;
@@ -852,6 +852,7 @@ void ecEncodeGlobal(EcCompiler *cp, EjsAny *obj, EjsName qname)
         If binding globals, we can encode the slot number of the type.
      */
     slotNum = ejsLookupProperty(ejs, ejs->global, qname);
+    /* MOB - comment this out because ejs.tar was being compiled and bound */
     if (slotNum < ES_global_NUM_CLASS_PROP || cp->bind) {
         if (slotNum >= 0) {
             ecEncodeNum(cp, (slotNum << 2) | EJS_ENCODE_GLOBAL_SLOT);

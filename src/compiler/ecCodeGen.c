@@ -144,7 +144,7 @@ int ecCodeGen(EcCompiler *cp)
     EjsModule   *mp;
     EcNode      *np;
     MprList     *modules;
-    int         i, version, next, count;
+    int         next, i, version, count;
 
     ejs = cp->ejs;
     if (ecEnterState(cp) < 0) {
@@ -244,7 +244,6 @@ static void genArgs(EcCompiler *cp, EcNode *np)
     int         next;
 
     ENTER(cp);
-
     mprAssert(np->kind == N_ARGS);
 
     cp->state->needsValue = 1;
@@ -308,7 +307,7 @@ static void genArrayLiteral(EcCompiler *cp, EcNode *np)
 static void genAssignOp(EcCompiler *cp, EcNode *np)
 {
     EcState     *state;
-    int         rc, next;
+    int         next, rc;
 
     ENTER(cp);
 
@@ -1278,7 +1277,7 @@ static int injectCode(Ejs *ejs, EjsFunction *fun, EcCodeGen *extra)
     EjsEx       *ex;
     EjsDebug    *debug;
     uchar       *byteCode;
-    int         i, next, len, codeLen, extraCodeLen;
+    int         next, i, len, codeLen, extraCodeLen;
 
     if (extra == NULL || extra->buf == NULL) {
         return 0;
@@ -1502,7 +1501,7 @@ static void genClass(EcCompiler *cp, EcNode *np)
 static void genDassign(EcCompiler *cp, EcNode *np)
 {
     EcNode      *field;
-    int         count, next;
+    int         next, count;
 
     mprAssert(np->kind == N_DASSIGN);
 
@@ -2168,7 +2167,7 @@ static void genDefaultParameterCode(EcCompiler *cp, EcNode *np, EjsFunction *fun
     EcNode          *parameters, *child;
     EcState         *state;
     EcCodeGen       **buffers, *saveCode;
-    int             next, len, needLongJump, count, firstDefault;
+    int             len, next, needLongJump, count, firstDefault;
 
     ejs = cp->ejs;
     state = cp->state;
@@ -2229,7 +2228,6 @@ static void genDefaultParameterCode(EcCompiler *cp, EcNode *np, EjsFunction *fun
     ecEncodeByte(cp, fun->numDefault + fun->rest + 1);
 
     len = (fun->numDefault + fun->rest + 1) * ((needLongJump) ? 4 : 1);
-
     for (next = firstDefault; next < count; next++) {
         if (buffers[next] == 0) {
             continue;
@@ -2500,7 +2498,6 @@ static void genIf(EcCompiler *cp, EcNode *np)
         ecEncodeOpcode(cp, EJS_OP_GOTO);
         ecEncodeInt32(cp, elseLen);
     }
-
     if (np->tenary.elseCode) {
         copyCodeBuffer(cp, state->code, np->tenary.elseCode);
     }
@@ -2839,8 +2836,8 @@ static void genProgram(EcCompiler *cp, EcNode *np)
 
 static void genPragmas(EcCompiler *cp, EcNode *np)
 {
-    EcNode  *child;
-    int     next;
+    EcNode      *child;
+    int         next;
 
     next = 0;
     while ((child = getNextNode(cp, np, &next))) {
@@ -3772,7 +3769,7 @@ static void copyCodeBuffer(EcCompiler *cp, EcCodeGen *dest, EcCodeGen *src)
     EcJump          *jump;
     EcState         *state;
     uint            baseOffset;
-    int             len, next, i;
+    int             next, len, i;
 
     state = cp->state;
     mprAssert(state);
@@ -3837,8 +3834,7 @@ static void patchJumps(EcCompiler *cp, int kind, int target)
 {
     EcJump      *jump;
     EcCodeGen   *code;
-    int         next;
-    int         offset;
+    int         next, offset;
 
     code = cp->state->code;
     mprAssert(code);
@@ -4308,6 +4304,9 @@ static void processModule(EcCompiler *cp, EjsModule *mp)
         //  MOB -- make these standard strings in native core
         ecAddCStringConstant(cp, EJS_INITIALIZER_NAME);
         ecAddCStringConstant(cp, EJS_EJS_NAMESPACE);
+        if (mp->initializer->resultType) {
+            ecAddNameConstant(cp, mp->initializer->resultType->qname);
+        }
     }
     if (ecCreateModuleSection(cp) < 0) {
         genError(cp, 0, "Can't write module sections");

@@ -221,7 +221,7 @@ static EjsObj *booleanConstructor(Ejs *ejs, EjsBoolean *bp, int argc, EjsObj **a
 
 EjsBoolean *ejsCreateBoolean(Ejs *ejs, int value)
 {
-    return (EjsBoolean*) ((value) ? S(true) : S(false));
+    return ((value) ? S(true) : S(false));
 }
 
 

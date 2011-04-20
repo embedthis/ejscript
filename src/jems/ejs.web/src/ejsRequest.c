@@ -1202,16 +1202,16 @@ static EjsObj *req_writeFile(Ejs *ejs, EjsRequest *req, int argc, EjsObj **argv)
     EjsPath         *path;
     HttpConn        *conn;
     HttpRx          *rx;
-    HttpTx          *trans;
+    HttpTx          *tx;
     HttpPacket      *packet;
     MprPath         info;
 
     if (!connOk(ejs, req, 1)) return 0;
     conn = req->conn;
     rx = conn->rx;
-    trans = conn->tx;
+    tx = conn->tx;
 
-    if (rx->ranges || conn->secure || trans->chunkSize > 0) {
+    if (rx->ranges || conn->secure || tx->chunkSize > 0) {
         return S(false);
     }
     path = (EjsPath*) argv[0];
@@ -1219,11 +1219,9 @@ static EjsObj *req_writeFile(Ejs *ejs, EjsRequest *req, int argc, EjsObj **argv)
         ejsThrowIOError(ejs, "Cannot open %s", path->value);
         return S(false);
     }
+    packet = httpCreateEntityPacket(0, info.size, NULL);
+    tx->length = tx->entityLength = info.size;
     httpSetSendConnector(req->conn, path->value);
-
-    packet = httpCreateDataPacket(0);
-    packet->entityLength = (int) info.size;
-    trans->length = trans->entityLength = (int) info.size;
     httpPutForService(conn->writeq, packet, 0);
     httpFinalize(req->conn);
     return S(true);

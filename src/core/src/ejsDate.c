@@ -23,6 +23,7 @@
 //  TODO this is a generic need. Make an API
 
 #define getNumber(ejs, a) ejsGetNumber(ejs, (EjsObj*) ejsToNumber(ejs, ((EjsObj*) a)))
+#define getInt(ejs, a) ((int) ejsGetNumber(ejs, (EjsObj*) ejsToNumber(ejs, ((EjsObj*) a))))
 
 /******************************************************************************/
 /*
@@ -31,24 +32,24 @@
     function cast(type: Type) : Object
  */
 
-static EjsObj *castDate(Ejs *ejs, EjsDate *dp, EjsType *type)
+static EjsAny *castDate(Ejs *ejs, EjsDate *dp, EjsType *type)
 {
     struct tm   tm;
 
     switch (type->sid) {
 
     case S_Boolean:
-        return (EjsObj*) S(true);
+        return S(true);
 
     case S_Number:
-        return (EjsObj*) ejsCreateNumber(ejs, (MprNumber) dp->value);
+        return ejsCreateNumber(ejs, (MprNumber) dp->value);
 
     case S_String:
         /*
             Format:  Tue Jul 15 2011 10:53:23 GMT-0700 (PDT)
          */
         mprDecodeLocalTime(&tm, dp->value);
-        return (EjsObj*) ejsCreateStringFromAsc(ejs, mprFormatTime("%a %b %d %Y %T GMT%z (%Z)", &tm));
+        return ejsCreateStringFromAsc(ejs, mprFormatTime("%a %b %d %Y %T GMT%z (%Z)", &tm));
 
     default:
         ejsThrowTypeError(ejs, "Can't cast to this type");
@@ -67,7 +68,7 @@ static EjsDate *cloneDate(Ejs *ejs, EjsDate *dp, int deep)
 /*
     TODO - this is the same as number. Should share code
  */
-static EjsObj *coerceDateOperands(Ejs *ejs, EjsObj *lhs, int opcode, EjsObj *rhs)
+static EjsAny *coerceDateOperands(Ejs *ejs, EjsObj *lhs, int opcode, EjsObj *rhs)
 {
     switch (opcode) {
     /*
@@ -75,13 +76,13 @@ static EjsObj *coerceDateOperands(Ejs *ejs, EjsObj *lhs, int opcode, EjsObj *rhs
      */
     case EJS_OP_ADD:
         if (ejsIs(ejs, rhs, Void)) {
-            return (EjsObj*) S(nan);
+            return S(nan);
         } else if (ejsIs(ejs, rhs, Null)) {
-            rhs = (EjsObj*) S(zero);
+            rhs = S(zero);
         } else if (ejsIs(ejs, rhs, Boolean) || ejsIs(ejs, rhs, Number)) {
-            return ejsInvokeOperator(ejs, (EjsObj*) ejsToNumber(ejs, lhs), opcode, rhs);
+            return ejsInvokeOperator(ejs, ejsToNumber(ejs, lhs), opcode, rhs);
         } else {
-            return ejsInvokeOperator(ejs, (EjsObj*) ejsToString(ejs, lhs), opcode, rhs);
+            return ejsInvokeOperator(ejs, ejsToString(ejs, lhs), opcode, rhs);
         }
         break;
 
@@ -98,10 +99,10 @@ static EjsObj *coerceDateOperands(Ejs *ejs, EjsObj *lhs, int opcode, EjsObj *rhs
         return ejsInvokeOperator(ejs, (EjsObj*) ejsToNumber(ejs, lhs), opcode, rhs);
 
     case EJS_OP_COMPARE_STRICTLY_NE:
-        return (EjsObj*) S(true);
+        return S(true);
 
     case EJS_OP_COMPARE_STRICTLY_EQ:
-        return (EjsObj*) S(false);
+        return S(false);
 
     /*
         Unary operators
@@ -111,15 +112,15 @@ static EjsObj *coerceDateOperands(Ejs *ejs, EjsObj *lhs, int opcode, EjsObj *rhs
 
     case EJS_OP_COMPARE_NOT_ZERO:
     case EJS_OP_COMPARE_TRUE:
-        return (EjsObj*) (((EjsDate*) lhs)->value ? S(true) : S(false));
+        return (((EjsDate*) lhs)->value ? S(true) : S(false));
 
     case EJS_OP_COMPARE_ZERO:
     case EJS_OP_COMPARE_FALSE:
-        return (EjsObj*) (((EjsDate*) lhs)->value ? S(false): S(true));
+        return (((EjsDate*) lhs)->value ? S(false): S(true));
 
     case EJS_OP_COMPARE_UNDEFINED:
     case EJS_OP_COMPARE_NULL:
-        return (EjsObj*) S(false);
+        return S(false);
 
     default:
         ejsThrowTypeError(ejs, "Opcode %d not valid for type %@", opcode, TYPE(lhs)->qname.name);
@@ -129,9 +130,9 @@ static EjsObj *coerceDateOperands(Ejs *ejs, EjsObj *lhs, int opcode, EjsObj *rhs
 }
 
 
-static EjsObj *invokeDateOperator(Ejs *ejs, EjsDate *lhs, int opcode, EjsDate *rhs)
+static EjsAny *invokeDateOperator(Ejs *ejs, EjsDate *lhs, int opcode, EjsDate *rhs)
 {
-    EjsObj      *result;
+    EjsAny      *result;
 
     if (rhs == 0 || TYPE(lhs) != TYPE(rhs)) {
         if (!ejsIs(ejs, lhs, Date) || !ejsIs(ejs, rhs, Date)) {
@@ -143,90 +144,90 @@ static EjsObj *invokeDateOperator(Ejs *ejs, EjsDate *lhs, int opcode, EjsDate *r
 
     switch (opcode) {
     case EJS_OP_COMPARE_EQ: case EJS_OP_COMPARE_STRICTLY_EQ:
-        return (EjsObj*) ejsCreateBoolean(ejs, lhs->value == rhs->value);
+        return ejsCreateBoolean(ejs, lhs->value == rhs->value);
 
     case EJS_OP_COMPARE_NE: case EJS_OP_COMPARE_STRICTLY_NE:
-        return (EjsObj*) ejsCreateBoolean(ejs, !(lhs->value == rhs->value));
+        return ejsCreateBoolean(ejs, !(lhs->value == rhs->value));
 
     case EJS_OP_COMPARE_LT:
-        return (EjsObj*) ejsCreateBoolean(ejs, lhs->value < rhs->value);
+        return ejsCreateBoolean(ejs, lhs->value < rhs->value);
 
     case EJS_OP_COMPARE_LE:
-        return (EjsObj*) ejsCreateBoolean(ejs, lhs->value <= rhs->value);
+        return ejsCreateBoolean(ejs, lhs->value <= rhs->value);
 
     case EJS_OP_COMPARE_GT:
-        return (EjsObj*) ejsCreateBoolean(ejs, lhs->value > rhs->value);
+        return ejsCreateBoolean(ejs, lhs->value > rhs->value);
 
     case EJS_OP_COMPARE_GE:
-        return (EjsObj*) ejsCreateBoolean(ejs, lhs->value >= rhs->value);
+        return ejsCreateBoolean(ejs, lhs->value >= rhs->value);
 
     case EJS_OP_COMPARE_NOT_ZERO:
-        return (EjsObj*) ((lhs->value) ? S(true): S(false));
+        return ((lhs->value) ? S(true): S(false));
 
     case EJS_OP_COMPARE_ZERO:
-        return (EjsObj*) ((lhs->value == 0) ? S(true): S(false));
+        return ((lhs->value == 0) ? S(true): S(false));
 
     case EJS_OP_COMPARE_UNDEFINED:
     case EJS_OP_COMPARE_NULL:
     case EJS_OP_COMPARE_FALSE:
     case EJS_OP_COMPARE_TRUE:
-        return (EjsObj*) S(false);
+        return S(false);
 
     /*
         Unary operators
      */
     case EJS_OP_NEG:
-        return (EjsObj*) ejsCreateNumber(ejs, - (MprNumber) lhs->value);
+        return ejsCreateNumber(ejs, - (MprNumber) lhs->value);
 
     case EJS_OP_LOGICAL_NOT:
-        return (EjsObj*) ejsCreateBoolean(ejs, (MprNumber) !fixed(lhs->value));
+        return ejsCreateBoolean(ejs, (int) !fixed(lhs->value));
 
     case EJS_OP_NOT:
-        return (EjsObj*) ejsCreateNumber(ejs, (MprNumber) (~fixed(lhs->value)));
+        return ejsCreateNumber(ejs, (MprNumber) (~fixed(lhs->value)));
 
     /*
         Binary operators
      */
     case EJS_OP_ADD:
-        return (EjsObj*) ejsCreateDate(ejs, lhs->value + rhs->value);
+        return ejsCreateDate(ejs, lhs->value + rhs->value);
 
     case EJS_OP_AND:
-        return (EjsObj*) ejsCreateDate(ejs, (MprNumber) (fixed(lhs->value) & fixed(rhs->value)));
+        return ejsCreateDate(ejs, (MprNumber) (fixed(lhs->value) & fixed(rhs->value)));
 
     case EJS_OP_DIV:
         if (rhs->value == 0) {
             ejsThrowArithmeticError(ejs, "Divisor is zero");
             return 0;
         }
-        return (EjsObj*) ejsCreateDate(ejs, lhs->value / rhs->value);
+        return ejsCreateDate(ejs, lhs->value / rhs->value);
 
     case EJS_OP_MUL:
-        return (EjsObj*) ejsCreateDate(ejs, lhs->value * rhs->value);
+        return ejsCreateDate(ejs, lhs->value * rhs->value);
 
     case EJS_OP_OR:
-        return (EjsObj*) ejsCreateDate(ejs, (MprNumber) (fixed(lhs->value) | fixed(rhs->value)));
+        return ejsCreateDate(ejs, (MprNumber) (fixed(lhs->value) | fixed(rhs->value)));
 
     case EJS_OP_REM:
         if (rhs->value == 0) {
             ejsThrowArithmeticError(ejs, "Divisor is zero");
             return 0;
         }
-        return (EjsObj*) ejsCreateDate(ejs, (MprNumber) (fixed(lhs->value) % fixed(rhs->value)));
+        return ejsCreateDate(ejs, (MprNumber) (fixed(lhs->value) % fixed(rhs->value)));
 
     case EJS_OP_SHL:
-        return (EjsObj*) ejsCreateDate(ejs, (MprNumber) (fixed(lhs->value) << fixed(rhs->value)));
+        return ejsCreateDate(ejs, (MprNumber) (fixed(lhs->value) << fixed(rhs->value)));
 
     case EJS_OP_SHR:
-        return (EjsObj*) ejsCreateDate(ejs, (MprNumber) (fixed(lhs->value) >> fixed(rhs->value)));
+        return ejsCreateDate(ejs, (MprNumber) (fixed(lhs->value) >> fixed(rhs->value)));
 
     case EJS_OP_SUB:
-        return (EjsObj*) ejsCreateDate(ejs, (MprNumber) (fixed(lhs->value) - fixed(rhs->value)));
+        return ejsCreateDate(ejs, (MprNumber) (fixed(lhs->value) - fixed(rhs->value)));
 
     case EJS_OP_USHR:
-        return (EjsObj*) ejsCreateDate(ejs, (MprNumber) (fixed(lhs->value) >> fixed(rhs->value)));
+        return ejsCreateDate(ejs, (MprNumber) (fixed(lhs->value) >> fixed(rhs->value)));
 
     case EJS_OP_XOR:
-        return (EjsObj*) ejsCreateDate(ejs, (MprNumber) (fixed(lhs->value) ^ fixed(rhs->value)));
+        return ejsCreateDate(ejs, (MprNumber) (fixed(lhs->value) ^ fixed(rhs->value)));
 
     default:
         ejsThrowTypeError(ejs, "Opcode %d not implemented for type %@", opcode, TYPE(lhs)->qname.name);
@@ -253,7 +254,7 @@ static EjsObj *invokeDateOperator(Ejs *ejs, EjsDate *lhs, int opcode, EjsDate *r
         @param second Integer second value (0-59)
         @param msec Integer millisecond value (0-999)
 */
-static EjsObj *date_Date(Ejs *ejs, EjsDate *date, int argc, EjsObj **argv)
+static EjsDate *date_Date(Ejs *ejs, EjsDate *date, int argc, EjsObj **argv)
 {
     EjsArray    *args;
     EjsObj      *vp;
@@ -292,32 +293,32 @@ static EjsObj *date_Date(Ejs *ejs, EjsDate *date, int argc, EjsObj **argv)
         memset(&tm, 0, sizeof(tm));
         tm.tm_isdst = -1;
         vp = ejsGetProperty(ejs, (EjsObj*) args, 0);
-        year = getNumber(ejs, vp);
+        year = getInt(ejs, vp);
         if (0 <= year && year < 100) {
             year += 1900;
         }
         tm.tm_year = year - 1900;
         if (args->length > 1) {
             vp = ejsGetProperty(ejs, (EjsObj*) args, 1);
-            tm.tm_mon = getNumber(ejs, vp);
+            tm.tm_mon = getInt(ejs, vp);
         }
         if (args->length > 2) {
             vp = ejsGetProperty(ejs, (EjsObj*) args, 2);
-            tm.tm_mday = getNumber(ejs, vp);
+            tm.tm_mday = getInt(ejs, vp);
         } else {
             tm.tm_mday = 1;
         }
         if (args->length > 3) {
             vp = ejsGetProperty(ejs, (EjsObj*) args, 3);
-            tm.tm_hour = getNumber(ejs, vp);
+            tm.tm_hour = getInt(ejs, vp);
         }
         if (args->length > 4) {
             vp = ejsGetProperty(ejs, (EjsObj*) args, 4);
-            tm.tm_min = getNumber(ejs, vp);
+            tm.tm_min = getInt(ejs, vp);
         }
         if (args->length > 5) {
             vp = ejsGetProperty(ejs, (EjsObj*) args, 5);
-            tm.tm_sec = getNumber(ejs, vp);
+            tm.tm_sec = getInt(ejs, vp);
         }
         date->value = mprMakeTime(&tm);
         if (date->value == -1) {
@@ -327,7 +328,7 @@ static EjsObj *date_Date(Ejs *ejs, EjsDate *date, int argc, EjsObj **argv)
             date->value += getNumber(ejs, vp);
         }
     }
-    return (EjsObj*) date;
+    return date;
 }
 
 
@@ -335,12 +336,12 @@ static EjsObj *date_Date(Ejs *ejs, EjsDate *date, int argc, EjsObj **argv)
     function get day(): Number
     Range: 0-6, where 0 is Sunday
  */
-static EjsObj *date_day(Ejs *ejs, EjsDate *dp, int argc, EjsObj **argv)
+static EjsNumber *date_day(Ejs *ejs, EjsDate *dp, int argc, EjsObj **argv)
 {
     struct tm   tm;
 
     mprDecodeLocalTime(&tm, dp->value);
-    return (EjsObj*) ejsCreateNumber(ejs, tm.tm_wday);
+    return ejsCreateNumber(ejs, tm.tm_wday);
 }
 
 
@@ -365,12 +366,12 @@ static EjsObj *date_set_day(Ejs *ejs, EjsDate *dp, int argc, EjsObj **argv)
     function get dayOfYear(): Number
     Return day of year (0 - 365)
  */
-static EjsObj *date_dayOfYear(Ejs *ejs, EjsDate *dp, int argc, EjsObj **argv)
+static EjsNumber *date_dayOfYear(Ejs *ejs, EjsDate *dp, int argc, EjsObj **argv)
 {
     struct tm   tm;
 
     mprDecodeLocalTime(&tm, dp->value);
-    return (EjsObj*) ejsCreateNumber(ejs, tm.tm_yday);
+    return ejsCreateNumber(ejs, tm.tm_yday);
 }
 
 
@@ -395,12 +396,12 @@ static EjsObj *date_set_dayOfYear(Ejs *ejs, EjsDate *dp, int argc, EjsObj **argv
     function get date(): Number
     Return day of month (1-31)
  */
-static EjsObj *date_date(Ejs *ejs, EjsDate *dp, int argc, EjsObj **argv)
+static EjsNumber *date_date(Ejs *ejs, EjsDate *dp, int argc, EjsObj **argv)
 {
     struct tm   tm;
 
     mprDecodeLocalTime(&tm, dp->value);
-    return (EjsObj*) ejsCreateNumber(ejs, tm.tm_mday);
+    return ejsCreateNumber(ejs, tm.tm_mday);
 }
 
 
@@ -425,33 +426,33 @@ static EjsObj *date_set_date(Ejs *ejs, EjsDate *dp, int argc, EjsObj **argv)
     function get elapsed(): Number
     Get the elapsed time in milliseconds since the Date object was constructed
  */
-static EjsObj *date_elapsed(Ejs *ejs, EjsDate *dp, int argc, EjsObj **argv)
+static EjsNumber *date_elapsed(Ejs *ejs, EjsDate *dp, int argc, EjsObj **argv)
 {
-    return (EjsObj*) ejsCreateNumber(ejs, mprGetElapsedTime(dp->value));
+    return ejsCreateNumber(ejs, mprGetElapsedTime(dp->value));
 }
 
 
 /*
     function format(layout: String): String
  */
-static EjsObj *date_format(Ejs *ejs, EjsDate *dp, int argc, EjsObj **argv)
+static EjsString *date_format(Ejs *ejs, EjsDate *dp, int argc, EjsObj **argv)
 {
     struct tm   tm;
 
     mprDecodeLocalTime(&tm, dp->value);
-    return (EjsObj*) ejsCreateStringFromAsc(ejs, mprFormatTime(ejsToMulti(ejs, argv[0]), &tm));
+    return ejsCreateStringFromAsc(ejs, mprFormatTime(ejsToMulti(ejs, argv[0]), &tm));
 }
 
 
 /*
     function formatUTC(layout: String): String
  */
-static EjsObj *date_formatUTC(Ejs *ejs, EjsDate *dp, int argc, EjsObj **argv)
+static EjsString *date_formatUTC(Ejs *ejs, EjsDate *dp, int argc, EjsObj **argv)
 {
     struct tm   tm;
 
     mprDecodeUniversalTime(&tm, dp->value);
-    return (EjsObj*) ejsCreateStringFromAsc(ejs, mprFormatTime(ejsToMulti(ejs, argv[0]), &tm));
+    return ejsCreateStringFromAsc(ejs, mprFormatTime(ejsToMulti(ejs, argv[0]), &tm));
 }
 
 
@@ -459,12 +460,12 @@ static EjsObj *date_formatUTC(Ejs *ejs, EjsDate *dp, int argc, EjsObj **argv)
     function get fullYear(): Number
     Return year in 4 digits
  */
-static EjsObj *date_fullYear(Ejs *ejs, EjsDate *dp, int argc, EjsObj **argv)
+static EjsNumber *date_fullYear(Ejs *ejs, EjsDate *dp, int argc, EjsObj **argv)
 {
     struct tm   tm;
 
     mprDecodeLocalTime(&tm, dp->value);
-    return (EjsObj*) ejsCreateNumber(ejs, tm.tm_year + 1900);
+    return ejsCreateNumber(ejs, tm.tm_year + 1900);
 }
 
 
@@ -477,7 +478,7 @@ static EjsObj *date_set_fullYear(Ejs *ejs, EjsDate *dp, int argc, EjsObj **argv)
     struct tm   tm;
 
     mprDecodeLocalTime(&tm, dp->value);
-    tm.tm_year = ejsGetNumber(ejs, argv[0]) - 1900;
+    tm.tm_year = (int) ejsGetNumber(ejs, argv[0]) - 1900;
     dp->value = mprMakeTime(&tm);
     return 0;
 }
@@ -486,12 +487,12 @@ static EjsObj *date_set_fullYear(Ejs *ejs, EjsDate *dp, int argc, EjsObj **argv)
 /*
     function future(msec: Number): Date
  */
-static EjsObj *date_future(Ejs *ejs, EjsDate *dp, int argc, EjsObj **argv)
+static EjsDate *date_future(Ejs *ejs, EjsDate *dp, int argc, EjsObj **argv)
 {
     MprTime     inc;
 
     inc = ejsGetNumber(ejs, argv[0]);
-    return (EjsObj*) ejsCreateDate(ejs, dp->value + inc);
+    return ejsCreateDate(ejs, dp->value + inc);
 }
 
 
@@ -503,9 +504,9 @@ static EjsObj *date_future(Ejs *ejs, EjsDate *dp, int argc, EjsObj **argv)
 
     function getTimezoneOffset(): Number
 */
-static EjsObj *date_getTimezoneOffset(Ejs *ejs, EjsDate *dp, int argc, EjsObj **argv)
+static EjsNumber *date_getTimezoneOffset(Ejs *ejs, EjsDate *dp, int argc, EjsObj **argv)
 {
-    return (EjsObj*) ejsCreateNumber(ejs, -mprGetTimeZoneOffset(dp->value) / (MPR_TICKS_PER_SEC * 60));
+    return ejsCreateNumber(ejs, -mprGetTimeZoneOffset(dp->value) / (MPR_TICKS_PER_SEC * 60));
 }
 
 
@@ -513,12 +514,12 @@ static EjsObj *date_getTimezoneOffset(Ejs *ejs, EjsDate *dp, int argc, EjsObj **
     function getUTCDate(): Number
     Range: 0-31
  */
-static EjsObj *date_getUTCDate(Ejs *ejs, EjsDate *dp, int argc, EjsObj **argv)
+static EjsNumber *date_getUTCDate(Ejs *ejs, EjsDate *dp, int argc, EjsObj **argv)
 {
     struct tm   tm;
 
     mprDecodeUniversalTime(&tm, dp->value);
-    return (EjsObj*) ejsCreateNumber(ejs, tm.tm_mday);
+    return ejsCreateNumber(ejs, tm.tm_mday);
 }
 
 
@@ -526,12 +527,12 @@ static EjsObj *date_getUTCDate(Ejs *ejs, EjsDate *dp, int argc, EjsObj **argv)
     function getUTCDay(): Number
     Range: 0-6
  */
-static EjsObj *date_getUTCDay(Ejs *ejs, EjsDate *dp, int argc, EjsObj **argv)
+static EjsNumber *date_getUTCDay(Ejs *ejs, EjsDate *dp, int argc, EjsObj **argv)
 {
     struct tm   tm;
 
     mprDecodeUniversalTime(&tm, dp->value);
-    return (EjsObj*) ejsCreateNumber(ejs, tm.tm_wday);
+    return ejsCreateNumber(ejs, tm.tm_wday);
 }
 
 
@@ -539,12 +540,12 @@ static EjsObj *date_getUTCDay(Ejs *ejs, EjsDate *dp, int argc, EjsObj **argv)
     function getUTCFullYear(): Number
     Range: 4 digits
  */
-static EjsObj *date_getUTCFullYear(Ejs *ejs, EjsDate *dp, int argc, EjsObj **argv)
+static EjsNumber *date_getUTCFullYear(Ejs *ejs, EjsDate *dp, int argc, EjsObj **argv)
 {
     struct tm   tm;
 
     mprDecodeUniversalTime(&tm, dp->value);
-    return (EjsObj*) ejsCreateNumber(ejs, tm.tm_year + 1900);
+    return ejsCreateNumber(ejs, tm.tm_year + 1900);
 }
 
 
@@ -552,12 +553,12 @@ static EjsObj *date_getUTCFullYear(Ejs *ejs, EjsDate *dp, int argc, EjsObj **arg
     function getUTCHours(): Number
     Range: 0-23
  */
-static EjsObj *date_getUTCHours(Ejs *ejs, EjsDate *dp, int argc, EjsObj **argv)
+static EjsNumber *date_getUTCHours(Ejs *ejs, EjsDate *dp, int argc, EjsObj **argv)
 {
     struct tm   tm;
 
     mprDecodeUniversalTime(&tm, dp->value);
-    return (EjsObj*) ejsCreateNumber(ejs, tm.tm_hour);
+    return ejsCreateNumber(ejs, tm.tm_hour);
 }
 
 
@@ -565,9 +566,9 @@ static EjsObj *date_getUTCHours(Ejs *ejs, EjsDate *dp, int argc, EjsObj **argv)
     function getUTCMilliseconds(): Number
     Range: 0-999
  */
-static EjsObj *date_getUTCMilliseconds(Ejs *ejs, EjsDate *dp, int argc, EjsObj **argv)
+static EjsNumber *date_getUTCMilliseconds(Ejs *ejs, EjsDate *dp, int argc, EjsObj **argv)
 {
-    return (EjsObj*) ejsCreateNumber(ejs, ((int64) dp->value) % MPR_TICKS_PER_SEC);
+    return ejsCreateNumber(ejs, ((int64) dp->value) % MPR_TICKS_PER_SEC);
 }
 
 
@@ -575,12 +576,12 @@ static EjsObj *date_getUTCMilliseconds(Ejs *ejs, EjsDate *dp, int argc, EjsObj *
     function getUTCMinutes(): Number
     Range: 0-31
  */
-static EjsObj *date_getUTCMinutes(Ejs *ejs, EjsDate *dp, int argc, EjsObj **argv)
+static EjsNumber *date_getUTCMinutes(Ejs *ejs, EjsDate *dp, int argc, EjsObj **argv)
 {
     struct tm   tm;
 
     mprDecodeUniversalTime(&tm, dp->value);
-    return (EjsObj*) ejsCreateNumber(ejs, tm.tm_min);
+    return ejsCreateNumber(ejs, tm.tm_min);
 }
 
 
@@ -588,12 +589,12 @@ static EjsObj *date_getUTCMinutes(Ejs *ejs, EjsDate *dp, int argc, EjsObj **argv
     function getUTCMonth(): Number
     Range: 1-12
  */
-static EjsObj *date_getUTCMonth(Ejs *ejs, EjsDate *dp, int argc, EjsObj **argv)
+static EjsNumber *date_getUTCMonth(Ejs *ejs, EjsDate *dp, int argc, EjsObj **argv)
 {
     struct tm   tm;
 
     mprDecodeUniversalTime(&tm, dp->value);
-    return (EjsObj*) ejsCreateNumber(ejs, tm.tm_mon);
+    return ejsCreateNumber(ejs, tm.tm_mon);
 }
 
 
@@ -601,12 +602,12 @@ static EjsObj *date_getUTCMonth(Ejs *ejs, EjsDate *dp, int argc, EjsObj **argv)
     function getUTCSeconds(): Number
     Range: 0-59
  */
-static EjsObj *date_getUTCSeconds(Ejs *ejs, EjsDate *dp, int argc, EjsObj **argv)
+static EjsNumber *date_getUTCSeconds(Ejs *ejs, EjsDate *dp, int argc, EjsObj **argv)
 {
     struct tm   tm;
 
     mprDecodeUniversalTime(&tm, dp->value);
-    return (EjsObj*) ejsCreateNumber(ejs, tm.tm_sec);
+    return ejsCreateNumber(ejs, tm.tm_sec);
 }
 
 
@@ -614,12 +615,12 @@ static EjsObj *date_getUTCSeconds(Ejs *ejs, EjsDate *dp, int argc, EjsObj **argv
     function get hours(): Number
     Return hour of day (0-23)
  */
-static EjsObj *date_hours(Ejs *ejs, EjsDate *dp, int argc, EjsObj **argv)
+static EjsNumber *date_hours(Ejs *ejs, EjsDate *dp, int argc, EjsObj **argv)
 {
     struct tm   tm;
 
     mprDecodeLocalTime(&tm, dp->value);
-    return (EjsObj*) ejsCreateNumber(ejs, tm.tm_hour);
+    return ejsCreateNumber(ejs, tm.tm_hour);
 }
 
 
@@ -632,7 +633,7 @@ static EjsObj *date_set_hours(Ejs *ejs, EjsDate *dp, int argc, EjsObj **argv)
     struct tm   tm;
 
     mprDecodeLocalTime(&tm, dp->value);
-    tm.tm_hour = ejsGetNumber(ejs, argv[0]);
+    tm.tm_hour = (int) ejsGetNumber(ejs, argv[0]);
     dp->value = mprMakeTime(&tm);
     return 0;
 }
@@ -641,9 +642,9 @@ static EjsObj *date_set_hours(Ejs *ejs, EjsDate *dp, int argc, EjsObj **argv)
 /*
     function get milliseconds(): Number
  */
-static EjsObj *date_milliseconds(Ejs *ejs, EjsDate *dp, int argc, EjsObj **argv)
+static EjsNumber *date_milliseconds(Ejs *ejs, EjsDate *dp, int argc, EjsObj **argv)
 {
-    return (EjsObj*) ejsCreateNumber(ejs, ((int64) dp->value) % MPR_TICKS_PER_SEC);
+    return ejsCreateNumber(ejs, ((int64) dp->value) % MPR_TICKS_PER_SEC);
 }
 
 
@@ -660,12 +661,12 @@ static EjsObj *date_set_milliseconds(Ejs *ejs, EjsDate *dp, int argc, EjsObj **a
 /*
     function get minutes(): Number
  */
-static EjsObj *date_minutes(Ejs *ejs, EjsDate *dp, int argc, EjsObj **argv)
+static EjsNumber *date_minutes(Ejs *ejs, EjsDate *dp, int argc, EjsObj **argv)
 {
     struct tm   tm;
 
     mprDecodeLocalTime(&tm, dp->value);
-    return (EjsObj*) ejsCreateNumber(ejs, tm.tm_min);
+    return ejsCreateNumber(ejs, tm.tm_min);
 }
 
 
@@ -677,7 +678,7 @@ static EjsObj *date_set_minutes(Ejs *ejs, EjsDate *dp, int argc, EjsObj **argv)
     struct tm   tm;
 
     mprDecodeLocalTime(&tm, dp->value);
-    tm.tm_min = ejsGetNumber(ejs, argv[0]);
+    tm.tm_min = (int) ejsGetNumber(ejs, argv[0]);
     dp->value = mprMakeTime(&tm);
     return 0;
 }
@@ -687,12 +688,12 @@ static EjsObj *date_set_minutes(Ejs *ejs, EjsDate *dp, int argc, EjsObj **argv)
     function get month(): Number
     Get the month (0-11)
  */
-static EjsObj *date_month(Ejs *ejs, EjsDate *dp, int argc, EjsObj **argv)
+static EjsNumber *date_month(Ejs *ejs, EjsDate *dp, int argc, EjsObj **argv)
 {
     struct tm   tm;
 
     mprDecodeLocalTime(&tm, dp->value);
-    return (EjsObj*) ejsCreateNumber(ejs, tm.tm_mon);
+    return ejsCreateNumber(ejs, tm.tm_mon);
 }
 
 
@@ -704,7 +705,7 @@ static EjsObj *date_set_month(Ejs *ejs, EjsDate *dp, int argc, EjsObj **argv)
     struct tm   tm;
 
     mprDecodeLocalTime(&tm, dp->value);
-    tm.tm_mon = ejsGetNumber(ejs, argv[0]);
+    tm.tm_mon = (int) ejsGetNumber(ejs, argv[0]);
     dp->value = mprMakeTime(&tm);
     return 0;
 }
@@ -713,7 +714,7 @@ static EjsObj *date_set_month(Ejs *ejs, EjsDate *dp, int argc, EjsObj **argv)
 /*
     function nextDay(inc: Number = 1): Date
  */
-static EjsObj *date_nextDay(Ejs *ejs, EjsDate *dp, int argc, EjsObj **argv)
+static EjsDate *date_nextDay(Ejs *ejs, EjsDate *dp, int argc, EjsObj **argv)
 {
     MprTime     inc;
 
@@ -722,23 +723,23 @@ static EjsObj *date_nextDay(Ejs *ejs, EjsDate *dp, int argc, EjsObj **argv)
     } else {
         inc = 1;
     }
-    return (EjsObj*) ejsCreateDate(ejs, dp->value + (inc * 86400 * 1000));
+    return ejsCreateDate(ejs, dp->value + (inc * 86400 * 1000));
 }
 
 
 /*
     static function now(): Number
  */
-static EjsObj *date_now(Ejs *ejs, EjsDate *unused, int argc, EjsObj **argv)
+static EjsNumber *date_now(Ejs *ejs, EjsDate *unused, int argc, EjsObj **argv)
 {
-    return (EjsObj*) ejsCreateNumber(ejs, mprGetTime());
+    return ejsCreateNumber(ejs, mprGetTime());
 }
 
 
 /*
     static function parse(arg: String): Date
  */
-static EjsObj *date_parse(Ejs *ejs, EjsDate *unused, int argc, EjsObj **argv)
+static EjsDate *date_parse(Ejs *ejs, EjsDate *unused, int argc, EjsObj **argv)
 {
     MprTime     when;
 
@@ -746,14 +747,14 @@ static EjsObj *date_parse(Ejs *ejs, EjsDate *unused, int argc, EjsObj **argv)
         ejsThrowArgError(ejs, "Can't parse date string: %@", ejsToString(ejs, argv[0]));
         return 0;
     }
-    return (EjsObj*) ejsCreateNumber(ejs, when);
+    return ejsCreateDate(ejs, when);
 }
 
 
 /*
     static function parseDate(arg: String, defaultDate: Date = null): Date
  */
-static EjsObj *date_parseDate(Ejs *ejs, EjsDate *unused, int argc, EjsObj **argv)
+static EjsDate *date_parseDate(Ejs *ejs, EjsDate *unused, int argc, EjsObj **argv)
 {
     struct tm   tm, *defaults;
     MprTime     when;
@@ -768,14 +769,14 @@ static EjsObj *date_parseDate(Ejs *ejs, EjsDate *unused, int argc, EjsObj **argv
         ejsThrowArgError(ejs, "Can't parse date string: %@", ejsToString(ejs, argv[0]));
         return 0;
     }
-    return (EjsObj*) ejsCreateDate(ejs, when);
+    return ejsCreateDate(ejs, when);
 }
 
 
 /*
     static function parseUTCDate(arg: String, defaultDate: Date = null): Date
  */
-static EjsObj *date_parseUTCDate(Ejs *ejs, EjsDate *unused, int argc, EjsObj **argv)
+static EjsDate *date_parseUTCDate(Ejs *ejs, EjsDate *unused, int argc, EjsObj **argv)
 {
     struct tm   tm, *defaults;
     MprTime     when;
@@ -790,7 +791,7 @@ static EjsObj *date_parseUTCDate(Ejs *ejs, EjsDate *unused, int argc, EjsObj **a
         ejsThrowArgError(ejs, "Can't parse date string: %@", ejsToString(ejs, argv[0]));
         return 0;
     }
-    return (EjsObj*) ejsCreateDate(ejs, when);
+    return ejsCreateDate(ejs, when);
 }
 
 
@@ -798,12 +799,12 @@ static EjsObj *date_parseUTCDate(Ejs *ejs, EjsDate *unused, int argc, EjsObj **a
     function get seconds(): Number
     Get seconds (0-59)
  */
-static EjsObj *date_seconds(Ejs *ejs, EjsDate *dp, int argc, EjsObj **argv)
+static EjsNumber *date_seconds(Ejs *ejs, EjsDate *dp, int argc, EjsObj **argv)
 {
     struct tm   tm;
 
     mprDecodeLocalTime(&tm, dp->value);
-    return (EjsObj*) ejsCreateNumber(ejs, tm.tm_sec);
+    return ejsCreateNumber(ejs, tm.tm_sec);
 }
 
 
@@ -815,7 +816,7 @@ static EjsObj *date_set_seconds(Ejs *ejs, EjsDate *dp, int argc, EjsObj **argv)
     struct tm   tm;
 
     mprDecodeLocalTime(&tm, dp->value);
-    tm.tm_sec = ejsGetNumber(ejs, argv[0]);
+    tm.tm_sec = (int) ejsGetNumber(ejs, argv[0]);
     dp->value = mprMakeTime(&tm);
     return 0;
 }
@@ -846,7 +847,7 @@ static EjsObj *date_setUTCFullYear(Ejs *ejs, EjsDate *dp, int argc, EjsObj **arg
     struct tm   tm;
 
     mprDecodeUniversalTime(&tm, dp->value);
-    tm.tm_year = ejsGetNumber(ejs, argv[0]) - 1900;
+    tm.tm_year = (int) ejsGetNumber(ejs, argv[0]) - 1900;
     dp->value = mprMakeUniversalTime(&tm);
     return 0;
 }
@@ -860,7 +861,7 @@ static EjsObj *date_setUTCHours(Ejs *ejs, EjsDate *dp, int argc, EjsObj **argv)
     struct tm   tm;
 
     mprDecodeUniversalTime(&tm, dp->value);
-    tm.tm_hour = ejsGetNumber(ejs, argv[0]);
+    tm.tm_hour = (int) ejsGetNumber(ejs, argv[0]);
     dp->value = mprMakeUniversalTime(&tm);
     return 0;
 }
@@ -885,7 +886,7 @@ static EjsObj *date_setUTCMinutes(Ejs *ejs, EjsDate *dp, int argc, EjsObj **argv
     struct tm   tm;
 
     mprDecodeUniversalTime(&tm, dp->value);
-    tm.tm_min = ejsGetNumber(ejs, argv[0]);
+    tm.tm_min = (int) ejsGetNumber(ejs, argv[0]);
     dp->value = mprMakeUniversalTime(&tm);
     return 0;
 }
@@ -899,7 +900,7 @@ static EjsObj *date_setUTCMonth(Ejs *ejs, EjsDate *dp, int argc, EjsObj **argv)
     struct tm   tm;
 
     mprDecodeUniversalTime(&tm, dp->value);
-    tm.tm_mon = ejsGetNumber(ejs, argv[0]);
+    tm.tm_mon = (int) ejsGetNumber(ejs, argv[0]);
     dp->value = mprMakeUniversalTime(&tm);
     return 0;
 }
@@ -913,7 +914,7 @@ static EjsObj *date_setUTCSeconds(Ejs *ejs, EjsDate *dp, int argc, EjsObj **argv
     struct tm   tm;
 
     mprDecodeUniversalTime(&tm, dp->value);
-    tm.tm_sec = ejsGetNumber(ejs, argv[0]);
+    tm.tm_sec = (int) ejsGetNumber(ejs, argv[0]);
     dp->value = mprMakeUniversalTime(&tm);
     if (argc >= 2) {
         dp->value = (dp->value / MPR_TICKS_PER_SEC  * MPR_TICKS_PER_SEC) + ejsGetNumber(ejs, argv[1]);
@@ -925,9 +926,9 @@ static EjsObj *date_setUTCSeconds(Ejs *ejs, EjsDate *dp, int argc, EjsObj **argv
 /*
     static function ticks(): Number
  */
-static EjsObj *date_ticks(Ejs *ejs, EjsDate *unused, int argc, EjsObj **argv)
+static EjsNumber *date_ticks(Ejs *ejs, EjsDate *unused, int argc, EjsObj **argv)
 {
-    return (EjsObj*) ejsCreateNumber(ejs, mprGetTicks());
+    return ejsCreateNumber(ejs, mprGetTicks());
 }
 
 
@@ -935,16 +936,16 @@ static EjsObj *date_ticks(Ejs *ejs, EjsDate *unused, int argc, EjsObj **argv)
     Get the number of millseconds since Jan 1, 1970 UTC.
     function get time(): Number
  */
-static EjsObj *date_time(Ejs *ejs, EjsDate *dp, int argc, EjsObj **argv)
+static EjsNumber *date_time(Ejs *ejs, EjsDate *dp, int argc, EjsObj **argv)
 {
-    return (EjsObj*) ejsCreateNumber(ejs, dp->value);
+    return ejsCreateNumber(ejs, dp->value);
 }
 
 
 /*
     function set time(value: Number): Number
  */
-static EjsObj *date_set_time(Ejs *ejs, EjsDate *dp, int argc, EjsObj **argv)
+static EjsNumber *date_set_time(Ejs *ejs, EjsDate *dp, int argc, EjsObj **argv)
 {
     dp->value = ejsGetNumber(ejs, argv[0]);
     return 0;
@@ -956,26 +957,24 @@ static EjsObj *date_set_time(Ejs *ejs, EjsDate *dp, int argc, EjsObj **argv)
     Sample format: "2006-12-15T23:45:09.33-08:00"
     function toISOString(): String
 */
-static EjsObj *date_toISOString(Ejs *ejs, EjsDate *dp, int argc, EjsObj **argv)
+static EjsString *date_toISOString(Ejs *ejs, EjsDate *dp, int argc, EjsObj **argv)
 {
-    EjsObj      *vp;
     struct tm   tm;
     char        *base, *str;
 
     mprDecodeUniversalTime(&tm, dp->value);
     base = mprFormatTime("%Y-%m-%dT%H:%M:%S", &tm);
     str = mprAsprintf("%s.%03dZ", base, dp->value % MPR_TICKS_PER_SEC);
-    vp = (EjsObj*) ejsCreateStringFromAsc(ejs, str);
-    return vp;
+    return ejsCreateStringFromAsc(ejs, str);
 }
 
 
 /*
     Serialize using JSON encoding. This uses the ISO date format
 
-    function toJSON()
+    function toJSON(): String
  */
-static EjsObj *date_toJSON(Ejs *ejs, EjsDate *dp, int argc, EjsObj **argv)
+static EjsString *date_toJSON(Ejs *ejs, EjsDate *dp, int argc, EjsObj **argv)
 {
     struct tm   tm;
     char        *base, *str;
@@ -983,14 +982,14 @@ static EjsObj *date_toJSON(Ejs *ejs, EjsDate *dp, int argc, EjsObj **argv)
     mprDecodeUniversalTime(&tm, dp->value);
     base = mprFormatTime("%Y-%m-%dT%H:%M:%S", &tm);
     str = mprAsprintf("\"%sZ\"", base);
-    return (EjsObj*) ejsCreateStringFromAsc(ejs, str);
+    return ejsCreateStringFromAsc(ejs, str);
 }
 
 
 /*
     override native function toString(): String
  */
-static EjsObj *date_toString(Ejs *ejs, EjsDate *dp, int argc, EjsObj **argv)
+static EjsString *date_toString(Ejs *ejs, EjsDate *dp, int argc, EjsObj **argv)
 {
     return castDate(ejs, dp, ST(String));
 }
@@ -1000,50 +999,50 @@ static EjsObj *date_toString(Ejs *ejs, EjsDate *dp, int argc, EjsObj **argv)
     Construct a date from UTC values
     function UTC(year, month, date, hour = 0, minute = 0, second = 0, msec = 0): Number
  */
-static EjsObj *date_UTC(Ejs *ejs, EjsDate *unused, int argc, EjsObj **argv)
+static EjsNumber *date_UTC(Ejs *ejs, EjsDate *unused, int argc, EjsObj **argv)
 {
     EjsDate     *dp;
     struct tm   tm;
     int         year;
 
     memset(&tm, 0, sizeof(tm));
-    year = getNumber(ejs, argv[0]);
+    year = getInt(ejs, argv[0]);
     if (year < 100) {
         year += 1900;
     }
     tm.tm_year = year - 1900;
     if (argc > 1) {
-        tm.tm_mon = getNumber(ejs, argv[1]);
+        tm.tm_mon = getInt(ejs, argv[1]);
     }
     if (argc > 2) {
-        tm.tm_mday = getNumber(ejs, argv[2]);
+        tm.tm_mday = getInt(ejs, argv[2]);
     }
     if (argc > 3) {
-        tm.tm_hour = getNumber(ejs, argv[3]);
+        tm.tm_hour = getInt(ejs, argv[3]);
     }
     if (argc > 4) {
-        tm.tm_min = getNumber(ejs, argv[4]);
+        tm.tm_min = getInt(ejs, argv[4]);
     }
     if (argc > 5) {
-        tm.tm_sec = getNumber(ejs, argv[5]);
+        tm.tm_sec = getInt(ejs, argv[5]);
     }
     dp = ejsCreateDate(ejs, mprMakeUniversalTime(&tm));
     if (argc > 6) {
         dp->value += getNumber(ejs, argv[6]);
     }
-    return (EjsObj*) ejsCreateNumber(ejs, dp->value);
+    return ejsCreateNumber(ejs, dp->value);
 }
 
 
 /*
     function get year(): Number
  */
-static EjsObj *date_year(Ejs *ejs, EjsDate *dp, int argc, EjsObj **argv)
+static EjsNumber *date_year(Ejs *ejs, EjsDate *dp, int argc, EjsObj **argv)
 {
     struct tm   tm;
 
     mprDecodeLocalTime(&tm, dp->value);
-    return (EjsObj*) ejsCreateNumber(ejs, tm.tm_year + 1900);
+    return ejsCreateNumber(ejs, tm.tm_year + 1900);
 }
 
 
@@ -1055,7 +1054,7 @@ static EjsObj *date_set_year(Ejs *ejs, EjsDate *dp, int argc, EjsObj **argv)
     struct tm   tm;
 
     mprDecodeLocalTime(&tm, dp->value);
-    tm.tm_year = ejsGetNumber(ejs, argv[0]) - 1900;
+    tm.tm_year = (int) ejsGetNumber(ejs, argv[0]) - 1900;
     dp->value = mprMakeTime(&tm);
     return 0;
 }

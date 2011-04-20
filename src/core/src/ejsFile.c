@@ -39,7 +39,8 @@ static void unmapFile(EjsFile *fp);
  */
 static EjsObj *getFileProperty(Ejs *ejs, EjsFile *fp, int slotNum)
 {
-    int     c, offset;
+    MprOff  offset;
+    int     c;
 
     if (!(fp->mode & FILE_OPEN)) {
         ejsThrowIOError(ejs, "File is not open");
@@ -104,7 +105,8 @@ static int lookupFileProperty(Ejs *ejs, EjsFile *fp, EjsName qname)
  */
 static int setFileProperty(Ejs *ejs, EjsFile *fp, int slotNum, EjsObj *value)
 {
-    int     c, offset;
+    MprOff  offset;
+    int     c;
 
     if (!(fp->mode & FILE_OPEN)) {
         ejsThrowIOError(ejs, "File is not open");
@@ -119,7 +121,7 @@ static int setFileProperty(Ejs *ejs, EjsFile *fp, int slotNum, EjsObj *value)
     offset = mprSeekFile(fp->file, SEEK_CUR, 0);
     if (slotNum < 0) {
         //  could have an mprGetPosition(file) API
-        slotNum = offset;
+        slotNum = (int) offset;
     }
 
 #if BLD_CC_MMU && FUTURE

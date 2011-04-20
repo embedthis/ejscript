@@ -72,7 +72,8 @@ static EjsType *createTypeVar(Ejs *ejs, EjsType *typeType, int numProp)
     EjsType     *type;
     EjsPot      *obj;
     char        *start;
-    int         typeSize, sizeHash, dynamic;
+    ssize       typeSize;
+    int         sizeHash, dynamic;
 
     mprAssert(ejs);
     

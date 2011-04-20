@@ -29,41 +29,43 @@ void ejsDefineConfigProperties(Ejs *ejs)
     ejs->configSet = 1;
     type = ST(Config);
     att = EJS_PROP_STATIC | EJS_PROP_ENUMERABLE;
-    ejsDefineProperty(ejs, type, ES_Config_Debug, N("public", "Debug"), 0, att, BLD_DEBUG ? S(true): S(false));
-    ejsDefineProperty(ejs, type, ES_Config_CPU, N("public", "CPU"), 0, att, ejsCreateStringFromAsc(ejs, BLD_HOST_CPU));
-    ejsDefineProperty(ejs, type, ES_Config_OS, N("public", "OS"), 0, att, ejsCreateStringFromAsc(ejs, BLD_OS));
-    ejsDefineProperty(ejs, type, ES_Config_Product, N("public", "Product"), 0, att, 
-        ejsCreateStringFromAsc(ejs, BLD_PRODUCT));
-    ejsDefineProperty(ejs, type, ES_Config_Title, N("public", "Title"), 0, att, ejsCreateStringFromAsc(ejs, BLD_NAME));
-    mprSprintf(version, sizeof(version), "%s-%s", BLD_VERSION, BLD_NUMBER);
-    ejsDefineProperty(ejs, type, ES_Config_Version, N("public", "Version"), 0, att, ejsCreateStringFromAsc(ejs, version));
 
-    ejsDefineProperty(ejs, type, ES_Config_Legacy, N("public", "Legacy"), 0, att, ejsCreateBoolean(ejs, BLD_FEATURE_LEGACY_API));
+    /*
+        Must use -1 for slotNumber as this function is called by the compiler when compiling ejs.mod. 
+        There will still be a -Config- property in slot[0]
+     */
+    ejsDefineProperty(ejs, type, -1, N("public", "Debug"), 0, att, BLD_DEBUG ? S(true): S(false));
+    ejsDefineProperty(ejs, type, -1, N("public", "CPU"), 0, att, ejsCreateStringFromAsc(ejs, BLD_HOST_CPU));
+    ejsDefineProperty(ejs, type, -1, N("public", "OS"), 0, att, ejsCreateStringFromAsc(ejs, BLD_OS));
+    ejsDefineProperty(ejs, type, -1, N("public", "Product"), 0, att, 
+        ejsCreateStringFromAsc(ejs, BLD_PRODUCT));
+    ejsDefineProperty(ejs, type, -1, N("public", "Title"), 0, att, ejsCreateStringFromAsc(ejs, BLD_NAME));
+    mprSprintf(version, sizeof(version), "%s-%s", BLD_VERSION, BLD_NUMBER);
+    ejsDefineProperty(ejs, type, -1, N("public", "Version"), 0, att, ejsCreateStringFromAsc(ejs, version));
+
+    ejsDefineProperty(ejs, type, -1, N("public", "Legacy"), 0, att, ejsCreateBoolean(ejs, BLD_FEATURE_LEGACY_API));
     //  MOB - should genercise this
-    ejsDefineProperty(ejs, type, ES_Config_SSL, N("public", "SSL"), 0, att, ejsCreateBoolean(ejs, BLD_FEATURE_SSL));
-    ejsDefineProperty(ejs, type, ES_Config_SQLITE, N("public", "SQLITE"), 0, att, ejsCreateBoolean(ejs, BLD_FEATURE_SQLITE));
+    ejsDefineProperty(ejs, type, -1, N("public", "SSL"), 0, att, ejsCreateBoolean(ejs, BLD_FEATURE_SSL));
+    ejsDefineProperty(ejs, type, -1, N("public", "SQLITE"), 0, att, ejsCreateBoolean(ejs, BLD_FEATURE_SQLITE));
 
 #if BLD_WIN_LIKE
 {
     EjsString    *path;
 
     path = ejsCreateStringFromAsc(ejs, mprGetAppDir(ejs));
-    ejsDefineProperty(ejs, type, ES_Config_BinDir, N("public", "BinDir"), 0, att, path);
-    ejsDefineProperty(ejs, type, ES_Config_ModDir, N("public", "ModDir"), 0, att, path);
-    ejsDefineProperty(ejs, type, ES_Config_LibDir, N("public", "LibDir"), 0, att, path);
+    ejsDefineProperty(ejs, type, -1, N("public", "BinDir"), 0, att, path);
+    ejsDefineProperty(ejs, type, -1, N("public", "ModDir"), 0, att, path);
+    ejsDefineProperty(ejs, type, -1, N("public", "LibDir"), 0, att, path);
 }
 #else
 #ifdef BLD_BIN_PREFIX
-    ejsDefineProperty(ejs, type, ES_Config_BinDir, N("public", "BinDir"), 0, att, 
-        ejsCreateStringFromAsc(ejs, BLD_BIN_PREFIX));
+    ejsDefineProperty(ejs, type, -1, N("public", "BinDir"), 0, att, ejsCreateStringFromAsc(ejs, BLD_BIN_PREFIX));
 #endif
 #ifdef BLD_MOD_PREFIX
-    ejsDefineProperty(ejs, type, ES_Config_ModDir, N("public", "ModDir"), 0, att, 
-        ejsCreateStringFromAsc(ejs, BLD_MOD_PREFIX));
+    ejsDefineProperty(ejs, type, -1, N("public", "ModDir"), 0, att, ejsCreateStringFromAsc(ejs, BLD_MOD_PREFIX));
 #endif
 #ifdef BLD_LIB_PREFIX
-    ejsDefineProperty(ejs, type, ES_Config_LibDir, N("public", "LibDir"), 0, att, 
-        ejsCreateStringFromAsc(ejs, BLD_LIB_PREFIX));
+    ejsDefineProperty(ejs, type, -1, N("public", "LibDir"), 0, att, ejsCreateStringFromAsc(ejs, BLD_LIB_PREFIX));
 #endif
 #endif
 }

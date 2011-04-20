@@ -33,7 +33,7 @@ static void manageFrame(EjsFrame *frame, int flags)
 static EjsFrame *allocFrame(Ejs *ejs, int numProp)
 {
     EjsObj      *obj;
-    uint        size;
+    ssize       size;
 
     mprAssert(ejs);
 

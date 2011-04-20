@@ -129,8 +129,9 @@ static int definePotProperty(Ejs *ejs, EjsPot *obj, int slotNum, EjsName qname, 
         } else {
             slotNum = priorSlot;
         }
-
     }
+    mprAssert(priorSlot < 0 || priorSlot == slotNum);
+
     if (slotNum >= obj->numProp && !DYNAMIC(obj)) {
         if (obj->properties == 0 || slotNum >= obj->properties->size) {
             if (growSlots(ejs, obj, slotNum + 1) < 0) {

@@ -124,7 +124,7 @@ static int compileInner(EcCompiler *cp, int argc, char **argv)
     EcLocation  loc;
     cchar       *ext;
     char        *msg;
-    int         i, j, next, nextModule, lflags, rc, frozen;
+    int         next, i, j, nextModule, lflags, rc, frozen;
 
     ejs = cp->ejs;
     if ((nodes = mprCreateList(-1, 0)) == 0) {
@@ -189,9 +189,7 @@ static int compileInner(EcCompiler *cp, int argc, char **argv)
             
             //  MOB - move this deeper (gradually)
             frozen = ejsFreeze(ejs, 1);
-// printf(">>>>>>>>>>> Before parse MUST BE NO GC\n");
             mprAddItem(nodes, ecParseFile(cp, argv[i]));
-// printf("<<<<<<<<<<<< AFTER parse\n");
             ejsFreeze(ejs, frozen);
         }
         mprAssert(!MPR->marking);
@@ -200,9 +198,7 @@ static int compileInner(EcCompiler *cp, int argc, char **argv)
 #if UNUSED
         if (!frozen) {
             mprAssert(ejs->result == 0 || (MPR_GET_GEN(MPR_GET_MEM(ejs->result)) != MPR->heap.dead));
-// printf("Yield after parse\n");
             mprYield(0);
-// printf("Back from yield after parse\n");
             mprAssert(ejs->result == 0 || (MPR_GET_GEN(MPR_GET_MEM(ejs->result)) != MPR->heap.dead));
         }
 #endif
@@ -222,7 +218,6 @@ static int compileInner(EcCompiler *cp, int argc, char **argv)
         Process the internal representation and generate code
      */
     frozen = ejsFreeze(ejs, 1);
-// printf("Freeze before AST\n");
     if (!cp->parseOnly && cp->errorCount == 0) {
         ecResetParser(cp);
         if (ecAstProcess(cp) < 0) {
@@ -230,7 +225,6 @@ static int compileInner(EcCompiler *cp, int argc, char **argv)
             cp->nodes = NULL;
             return EJS_ERR;
         }
-// printf("after AST\n");
         if (cp->errorCount == 0) {
             ecResetParser(cp);
             if (ecCodeGen(cp) < 0) {
@@ -252,9 +246,7 @@ static int compileInner(EcCompiler *cp, int argc, char **argv)
     cp->nodes = NULL;
     ejsFreeze(ejs, frozen);
     if (!frozen) {
-// printf("Yield after code gen\n");
         mprYield(0);
-// printf("After Yield after code gen\n");
     }
     mprAssert(ejs->result == 0 || (MPR_GET_GEN(MPR_GET_MEM(ejs->result)) != MPR->heap.dead));
     return (cp->errorCount > 0) ? EJS_ERR: 0;

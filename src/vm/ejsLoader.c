@@ -162,7 +162,7 @@ static char *search(Ejs *ejs, cchar *filename, int minVersion, int maxVersion)
 static int loadSections(Ejs *ejs, MprFile *file, cchar *path, EjsModuleHdr *hdr, int flags)
 {
     EjsModule   *mp;
-    int         rc, sectionType, created, firstModule, status, next;
+    int         next, rc, sectionType, created, firstModule, status;
 
     created = 0;
     mp = 0;
@@ -386,7 +386,7 @@ static int loadDependencySection(Ejs *ejs, EjsModule *mp)
     EjsModule   *module;
     EjsString   *name;
     void        *saveCallback;
-    int         rc, next, minVersion, maxVersion, checksum, nextModule;
+    int         next, rc, minVersion, maxVersion, checksum, nextModule;
 
     mprAssert(ejs);
     mprAssert(mp);
@@ -814,7 +814,7 @@ static int loadDebugSection(Ejs *ejs, EjsModule *mp)
      */
     mprAssert(!fun->isNativeProc);
     size = ejsModuleReadInt32(ejs, mp);
-    fun->body.code->debugOffset = mprGetFilePosition(mp->file);
+    fun->body.code->debugOffset = (int) mprGetFilePosition(mp->file);
     mprSeekFile(mp->file, SEEK_CUR, size);
     if (ejs->loaderCallback) {
         (ejs->loaderCallback)(ejs, EJS_SECT_DEBUG, mp, fun);
@@ -1227,7 +1227,7 @@ static char *probe(Ejs *ejs, cchar *path, int minVersion, int maxVersion)
     MprDirEntry     *dp, *best;
     MprList         *files;
     char            *dir, *base, *ext;
-    int             nameLen, version, next, bestVersion;
+    int             next, nameLen, version, bestVersion;
 
     mprAssert(ejs);
     mprAssert(path);

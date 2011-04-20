@@ -524,12 +524,12 @@ static EjsObj *obj_hasOwnProperty(Ejs *ejs, EjsObj *obj, int argc, EjsObj **argv
 /*
     static function isExtensible(obj: Object): Boolean
  */
-static EjsObj *obj_isExtensible(Ejs *ejs, EjsObj *unused, int argc, EjsObj **argv)
+static EjsBoolean *obj_isExtensible(Ejs *ejs, EjsObj *unused, int argc, EjsObj **argv)
 {
     EjsObj      *obj;
 
     obj = argv[0];
-    return (EjsObj*) ejsCreateBoolean(ejs, DYNAMIC(obj));
+    return ejsCreateBoolean(ejs, DYNAMIC(obj));
 }
 
 

@@ -569,8 +569,8 @@ static EjsNumber *cmd_write(Ejs *ejs, EjsCmd *cmd, int argc, EjsObj **argv)
     EjsByteArray    *bp;
     EjsString       *sp;
     EjsObj          *vp;
-    ssize           len;
-    int             i, wrote;
+    ssize           len, wrote;
+    int             i;
 
     mprAssert(argc == 1 && ejsIs(ejs, argv[0], Array));
 
@@ -586,7 +586,6 @@ static EjsNumber *cmd_write(Ejs *ejs, EjsCmd *cmd, int argc, EjsObj **argv)
         args = (EjsArray*) vp;
     }
     wrote = 0;
-
     for (i = 0; i < args->length; i++) {
         if ((vp = ejsGetProperty(ejs, args, i)) == 0) {
             continue;

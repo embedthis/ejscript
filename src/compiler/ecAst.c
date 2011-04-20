@@ -209,13 +209,12 @@ static void astSpread(EcCompiler *cp, EcNode *np)
 static void astAssignOp(EcCompiler *cp, EcNode *np)
 {
     EcState     *state;
-    int         rc, next;
+    int         rc;
 
     ENTER(cp);
 
     state = cp->state;
     rc = 0;
-    next = 0;
 
     mprAssert(np->kind == N_ASSIGN_OP);
     mprAssert(np->left);
@@ -1020,7 +1019,7 @@ static int defineParameters(EcCompiler *cp, EcNode *np)
     Ejs             *ejs;
     EjsFunction     *fun;
     EcNode          *nameNode, *child, *parameters;
-    int             attributes, next, slotNum, numDefault;
+    int             next, attributes, slotNum, numDefault;
 
     ejs = cp->ejs;
     parameters = np->function.parameters;
@@ -1158,7 +1157,7 @@ static EjsFunction *bindFunction(EcCompiler *cp, EcNode *np)
     EjsBlock        *block;
     EjsName         qname;
     bool            modified;
-    int             slotNum, next;
+    int             next, slotNum;
 
     mprAssert(cp->phase >= EC_PHASE_BIND);
     mprAssert(np->kind == N_FUNCTION);
@@ -1484,8 +1483,8 @@ static void astFor(EcCompiler *cp, EcNode *np)
  */
 static void astForIn(EcCompiler *cp, EcNode *np)
 {
-    Ejs         *ejs;
-    int         rc;
+    Ejs     *ejs;
+    int     rc;
 
     ENTER(cp);
 
@@ -1654,7 +1653,6 @@ static void astImplements(EcCompiler *cp, EcNode *np)
     int         next;
     
     ENTER(cp);
-    
     mprAssert(np->kind == N_TYPE_IDENTIFIERS);
     
     next = 0;
@@ -2055,10 +2053,10 @@ static void astPostfixOp(EcCompiler *cp, EcNode *np)
 
 static void astProgram(EcCompiler *cp, EcNode *np)
 {
-    Ejs             *ejs;
-    EcState         *state;
-    EcNode          *child;
-    int             next;
+    Ejs         *ejs;
+    EcState     *state;
+    EcNode      *child;
+    int         next;
 
     ENTER(cp);
     ejs = cp->ejs;
@@ -2239,7 +2237,7 @@ static void astTry(EcCompiler *cp, EcNode *np)
     Ejs         *ejs;
     EjsBlock    *block;
     EcNode      *child;
-    EcState         *state;
+    EcState     *state;
     int         next, count;
 
     ENTER(cp);
@@ -3361,7 +3359,7 @@ static void fixupClass(EcCompiler *cp, EjsType *type)
     EjsName         qname;
     EjsTrait        *trait;
     EcNode          *np, *child;
-    int             rc, slotNum, attributes, next, hasInstanceVars;
+    int             next, rc, slotNum, attributes, hasInstanceVars;
 
     if (VISITED(type) || !type->needFixup) {
         return;
@@ -3709,10 +3707,10 @@ static int resolveName(EcCompiler *cp, EcNode *np, EjsObj *vp, EjsName qname)
  */
 static void addGlobalProperty(EcCompiler *cp, EcNode *np, EjsName *qname)
 {
-    Ejs             *ejs;
-    EjsModule       *up;
-    EjsName         *p;
-    int             next;
+    Ejs         *ejs;
+    EjsModule   *up;
+    EjsName     *p;
+    int         next;
 
     ejs = cp->ejs;
 
