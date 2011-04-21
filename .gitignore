@@ -122,3 +122,7 @@ build.log
 .cpy_copied
 *.cltmp
 .embedthis
+src/fcgi-2.4.0
+src/jems/ejs.web/test/f.es
+src/jems/ejs.web/test/s.es
+src/jems/ejs.web/test/web/sleep.ejs
