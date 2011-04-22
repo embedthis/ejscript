@@ -305,8 +305,8 @@ static cchar *getHost(HttpConn *conn, EjsRequest *req)
 
     if (req->server && req->server->name && *req->server->name) {
         hostName = req->server->name;
-    } else if (conn && conn->rx->hostName && conn->rx->hostName) {
-        hostName = conn->rx->hostName;
+    } else if (conn && conn->rx->hostHeader && conn->rx->hostHeader) {
+        hostName = conn->rx->hostHeader;
     } else if (conn && conn->sock) {
         hostName = conn->sock->acceptIp;
     } else {
