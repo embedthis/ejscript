@@ -1000,6 +1000,19 @@ int ejsGetInt(Ejs *ejs, EjsAny *vp)
 }
 
 
+int64 ejsGetInt64(Ejs *ejs, EjsAny *vp)
+{
+    mprAssert(vp);
+    if (!ejsIs(ejs, vp, Number)) {
+        if ((vp = ejsCast(ejs, vp, Number)) == 0) {
+            return 0;
+        }
+    }
+    mprAssert(ejsIs(ejs, vp, Number));
+    return (vp) ? ((int64) (((EjsNumber*) (vp))->value)): 0;
+}
+
+
 double ejsGetDouble(Ejs *ejs, EjsAny *vp)
 {
     mprAssert(vp);

@@ -646,7 +646,8 @@ static EjsObj *makePathLink(Ejs *ejs, EjsPath *fp, int argc, EjsObj **argv)
 
 
 /*
-    Make a temporary file. Creates a new, uniquely named temporary file.
+    Make a temporary file. Creates a new, uniquely named temporary file. The path object specifies the directory
+    to contain the temp file.
     NOTE: Still the callers responsibility to remove the temp file
   
     function temp(): Path
