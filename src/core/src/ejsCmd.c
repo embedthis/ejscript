@@ -180,7 +180,6 @@ static EjsObj *cmd_off(Ejs *ejs, EjsCmd *cmd, int argc, EjsObj **argv)
 static EjsNumber *cmd_pid(Ejs *ejs, EjsCmd *cmd, int argc, EjsObj **argv)
 {
     if (cmd->mc == 0 || cmd->mc->pid == 0) {
-        // ejsThrowStateError(ejs, "No active command");
         return S(zero);
     }
     return ejsCreateNumber(ejs, cmd->mc->pid);
