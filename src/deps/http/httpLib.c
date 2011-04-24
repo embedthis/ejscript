@@ -1184,7 +1184,7 @@ static bool matchAuth(HttpConn *conn, HttpStage *handler)
         }
     }
     if (!(http->validateCred)(auth, auth->requiredRealm, ad->userName, ad->password, requiredPassword, &msg)) {
-        formatAuthResponse(conn, auth, HTTP_CODE_UNAUTHORIZED, "Access denied, authentication error", msg);
+        formatAuthResponse(conn, auth, HTTP_CODE_UNAUTHORIZED, "Access denied, incorrect username/password", msg);
     }
     rx->authenticated = 1;
     return 1;
@@ -2461,8 +2461,12 @@ static void manageConn(HttpConn *conn, int flags)
         mprMark(conn->serviceq);
         mprMark(conn->currentq);
         mprMark(conn->input);
+
+        //  MOB - these 3 should not be required
         mprMark(conn->readq);
         mprMark(conn->writeq);
+        mprMark(conn->connq);
+
         mprMark(conn->context);
         mprMark(conn->boundary);
         mprMark(conn->errorMsg);
@@ -2717,12 +2721,11 @@ static void readEvent(HttpConn *conn)
 
 static void writeEvent(HttpConn *conn)
 {
-    //  MOB 6
-    LOG(3, "httpProcessWriteEvent, state %d", conn->state);
+    LOG(6, "httpProcessWriteEvent, state %d", conn->state);
 
     conn->writeBlocked = 0;
     if (conn->tx) {
-        httpEnableQueue(conn->tx->queue[HTTP_QUEUE_TRANS]->prevQ);
+        httpEnableQueue(conn->connq);
         httpServiceQueues(conn);
         httpProcess(conn, NULL);
     }
@@ -2757,8 +2760,10 @@ void httpEnableConnEvents(HttpConn *conn)
             return;
         }
         if (tx) {
-            //  MOB OPT - can we just test writeBlocked? or count?
-            if (conn->writeBlocked || tx->queue[HTTP_QUEUE_TRANS]->prevQ->count > 0) {
+            /*
+                Can be writeBlocked with data in the iovec and none in the queue
+             */
+            if (conn->writeBlocked || (conn->connq && conn->connq->count > 0)) {
                 eventMask |= MPR_WRITABLE;
             }
             /*
@@ -5568,7 +5573,7 @@ static void netOutgoingService(HttpQueue *q)
          */
         mprAssert(q->ioIndex > 0);
         written = mprWriteSocketVector(conn->sock, q->iovec, q->ioIndex);
-        LOG(5, "Net connector wrote %d, written so far %d", written, tx->bytesWritten);
+        LOG(5, "Net connector wrote %d, written so far %Ld, q->count %d/%d", written, tx->bytesWritten, q->count, q->max);
         if (written < 0) {
             errCode = mprGetError(q);
             if (errCode == EAGAIN || errCode == EWOULDBLOCK) {
@@ -6515,6 +6520,7 @@ void httpCreatePipeline(HttpConn *conn, HttpLoc *loc, HttpStage *proposedHandler
 
     conn->writeq = tx->queue[HTTP_QUEUE_TRANS]->nextQ;
     conn->readq = tx->queue[HTTP_QUEUE_RECEIVE]->prevQ;
+    conn->connq = tx->queue[HTTP_QUEUE_TRANS]->prevQ;
     httpPutForService(conn->writeq, httpCreateHeaderPacket(), 0);
 
     /*  
@@ -7459,7 +7465,7 @@ ssize httpWrite(HttpQueue *q, cchar *fmt, ...)
 
 
 
-static void applyRange(HttpQueue *q, HttpPacket *packet);
+static bool applyRange(HttpQueue *q, HttpPacket *packet);
 static void createRangeBoundary(HttpConn *conn);
 static HttpPacket *createRangePacket(HttpConn *conn, HttpRange *range);
 static HttpPacket *createFinalRangePacket(HttpConn *conn);
@@ -7530,7 +7536,9 @@ static void outgoingRangeService(HttpQueue *q)
 
     for (packet = httpGetPacket(q); packet; packet = httpGetPacket(q)) {
         if (packet->flags & HTTP_PACKET_DATA) {
-            applyRange(q, packet);
+            if (!applyRange(q, packet)) {
+                return;
+            }
         } else {
             /*
                 Send headers and end packet downstream
@@ -7548,7 +7556,7 @@ static void outgoingRangeService(HttpQueue *q)
 }
 
 
-static void applyRange(HttpQueue *q, HttpPacket *packet)
+static bool applyRange(HttpQueue *q, HttpPacket *packet)
 {
     HttpRange   *range;
     HttpConn    *conn;
@@ -7595,14 +7603,14 @@ static void applyRange(HttpQueue *q, HttpPacket *packet)
             mprAssert(count > 0);
             if (!httpWillNextQueueAcceptSize(q, count)) {
                 httpPutBackPacket(q, packet);
-                return;
+                return 0;
             }
             if (length > count) {
                 /* Split packet if packet extends past range */
                 httpPutBackPacket(q, httpSplitPacket(packet, count));
             }
             if (packet->fill && (*packet->fill)(q, packet, tx->rangePos, count) < 0) {
-                return;
+                return 0;
             }
             if (tx->rangeBoundary) {
                 httpSendPacketToNext(q, createRangePacket(conn, range));
@@ -7615,6 +7623,7 @@ static void applyRange(HttpQueue *q, HttpPacket *packet)
             tx->currentRange = range = range->next;
         }
     }
+    return 1;
 }
 
 
@@ -9206,8 +9215,7 @@ int httpWait(HttpConn *conn, int state, MprTime timeout)
  */
 void httpSetWriteBlocked(HttpConn *conn)
 {
-//  MOB
-    mprLog(3, "Write Blocked");
+    mprLog(6, "Write Blocked");
     conn->canProceed = 0;
     conn->writeBlocked = 1;
 }
@@ -9381,6 +9389,9 @@ static bool parseRange(HttpConn *conn, char *value)
             return 0;
         }
         if (next) {
+            if (range->end < 0) {
+                return 0;
+            }
             if (next->start >= 0 && range->end > next->start) {
                 return 0;
             }
@@ -9603,8 +9614,8 @@ void httpSendOutgoingService(HttpQueue *q)
         file = q->ioFile ? tx->file : 0;
         written = mprSendFileToSocket(conn->sock, file, q->ioPos, q->ioCount, q->iovec, q->ioIndex, NULL, 0);
 
-        mprLog(8, "Send connector ioCount %d, wrote %Ld, written so far %d, sending file %d", q->ioCount, written, 
-            tx->bytesWritten, q->ioFile);
+        mprLog(8, "Send connector ioCount %d, wrote %Ld, written so far %Ld, sending file %d, q->count %d/%d", 
+                q->ioCount, written, tx->bytesWritten, q->ioFile, q->count, q->max);
         if (written < 0) {
             errCode = mprGetError(q);
             if (errCode == EAGAIN || errCode == EWOULDBLOCK) {
