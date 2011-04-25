@@ -868,6 +868,7 @@ r.link({product: "candy", quantity: "10", template: "/cart/{product}/{quantity}"
          */
         native function write(...data): Number
 
+        //  MOB - add this to ByteArray, Http, Socket (not to Stream)
         /** 
             Write a block of data to the client. This will buffer the written data which will be flushed when either 
             close(), flush() or finalize() is called or the underlying pipeline is full. 
