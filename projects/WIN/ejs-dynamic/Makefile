@@ -64,7 +64,7 @@ libejs.vcproj: Makefile $(CONFIG)
 	    $(shell find $(SRC)/include -name 'ejs*.h') \
 	    $(shell find $(SRC)/core $(SRC)/vm $(SRC)/compiler -name '*.c')
 	
-ejsc.vcproj: Makefile $(CONFIG)
+ejsc.vcproj: Makefile $(CONFIG) ejsc.custom
 	makeVsProj --project ejsc.vcproj --exe ejsc.exe --search "$(BLD_EJS_LIBPATHS)" --dflags "$(DFLAGS)" \
 		--custom ejsc.custom --libs "$(LIBS) libejs.lib libmpr.lib" $(MPR_HDR) $(SRC)/cmd/ejsc.c
 
