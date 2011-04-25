@@ -1388,9 +1388,6 @@ static void manageByteArray(EjsByteArray *ap, int flags)
 {
     if (flags & MPR_MANAGE_MARK) {
         mprMark(ap->emitter);
-#if UNUSED
-        mprMark(ap->listeners);
-#endif
         mprMark(ap->value);
         mprMark(TYPE(ap));
     }

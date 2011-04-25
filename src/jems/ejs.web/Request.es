@@ -644,6 +644,7 @@ r.link({product: "candy", quantity: "10", template: "/cart/{product}/{quantity}"
          */
         native function on(name, observer: Function): Void
 
+        //  MOB - should there be a blocking read option?
         /** 
             @duplicate Stream.read
             If the request is posting a form, i.e. the Http ContentType header is set to 

@@ -1265,10 +1265,6 @@ static bool waitForState(EjsHttp *hp, int state, int timeout, int throw)
                 if (url) {
                     uri = httpCreateUri(url, 0);
                     hp->uri = httpUriToString(uri, 1);
-#if UNUSED
-                    httpPrepClientConn(conn, count);
-                    count = 0;
-#endif
                 }
                 count--; 
                 redirectCount++;

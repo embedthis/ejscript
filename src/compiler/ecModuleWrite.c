@@ -317,11 +317,7 @@ static void createClassSection(EcCompiler *cp, EjsPot *block, int slotNum, EjsPo
         }
     }
     ecEncodeNum(cp, attributes);
-#if UNUSED
-    ecEncodeNum(cp, type->sid);
-#else
     ecEncodeNum(cp, (cp->bind) ? slotNum : -1);
-#endif
 
     mprAssert(type != type->baseType);
     //  MOB -- refactor

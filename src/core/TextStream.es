@@ -43,12 +43,6 @@ module ejs {
                 throw new ArgError("Must supply a Stream argument")
             }
             inbuf = new ByteArray
-/* UNUSED
-            let self = this
-            inbuf.on("writable", function (event, ba) {
-                self.fill()
-            });
-*/
             nextStream = stream
             newline = FileSystem("/").newline
         }

@@ -388,9 +388,6 @@ static void lstFunction(EjsMod *mp, EjsModule *module, EjsObj *block, int slotNu
         interp(mp, module, fun);
     }
     mprFprintf(mp->file,  "\n");
-#if UNUSED
-    leadin(mp, module, 0, 0);
-#endif
 }
 
 
@@ -758,11 +755,6 @@ static void lstVarSlot(EjsMod *mp, EjsModule *module, EjsName *qname, EjsTrait *
         if (trait->type == ST(Function)) {
             mprFprintf(mp->file, "%04d    %@ function %@\n", slotNum, space, qname->name);
 
-#if UNUSED
-        } else if (trait->type == ejs->functionType) {
-            mprFprintf(mp->file, "%04d    %@ class %@\n", slotNum, space, qname->name);
-#endif
-
         } else {
             mprFprintf(mp->file, "%04d    %@ var %@: %@\n", slotNum, space, qname->name, trait->type->qname.name);
         }
@@ -980,11 +972,6 @@ static char *getAttributeString(EjsMod *mp, int attributes)
     if (attributes & EJS_TYPE_DYNAMIC_INSTANCE) {
         strcat(attributeBuf, "dynamic ");
     }
-#if UNUSED
-    if (attributes & EJS_TYPE_ORPHAN) {
-        strcat(attributeBuf, "orphan ");
-    }
-#endif
     if (attributes & EJS_TRAIT_GETTER) {
         strcat(attributeBuf, "get ");
     }

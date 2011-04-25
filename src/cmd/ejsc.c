@@ -14,9 +14,6 @@
 /********************************** Forwards **********************************/
 
 typedef struct App {
-#if UNUSED
-    EjsService  *ejsService;
-#endif
     Ejs         *ejs;
     EcCompiler  *compiler;
     MprList     *modules;

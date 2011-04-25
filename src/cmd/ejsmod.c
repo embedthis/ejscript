@@ -305,64 +305,6 @@ static void getDepends(Ejs *ejs, MprList *list, EjsModule *mp)
     }
 }
 
-
-#if UNUSED
-static int setLogging(Mpr *mpr, char *logSpec)
-{
-    MprFile     *file;
-    char        *levelSpec;
-    int         level;
-
-    level = 0;
-
-    if ((levelSpec = strchr(logSpec, ':')) != 0) {
-        *levelSpec++ = '\0';
-        level = atoi(levelSpec);
-    }
-    if (strcmp(logSpec, "stdout") == 0) {
-        file = mpr->fileSystem->stdOutput;
-    } else {
-        if ((file = mprOpenFile(logSpec, O_WRONLY, 0664)) == 0) {
-            mprPrintfError("Can't open log file %s\n", logSpec);
-            return EJS_ERR;
-        }
-    }
-    mprSetLogLevel(level);
-    mprSetLogHandler(logger, (void*) file);
-    return 0;
-}
-
-
-static void logger(int flags, int level, const char *msg)
-{
-    Mpr         *mpr;
-    MprFile     *file;
-    char        *prefix;
-
-    mpr = mprGetMpr();
-    file = (MprFile*) mpr->logData;
-    prefix = mpr->name;
-
-    while (*msg == '\n') {
-        mprFprintf(file, "\n");
-        msg++;
-    }
-    if (flags & MPR_LOG_SRC) {
-        mprFprintf(file, "%s: %d: %s\n", prefix, level, msg);
-    } else if (flags & MPR_ERROR_SRC) {
-        mprFprintf(file, "%s: Error: %s\n", prefix, msg);
-    } else if (flags & MPR_FATAL_SRC) {
-        mprFprintf(file, "%s: Fatal: %s\n", prefix, msg);
-    } else if (flags & MPR_RAW) {
-        mprFprintf(file, "%s", msg);
-    }
-    if (flags & (MPR_ERROR_SRC | MPR_FATAL_SRC | MPR_ASSERT_SRC)) {
-        mprBreakpoint();
-    }
-}
-#endif
-
-
 /*
     @copy   default
     

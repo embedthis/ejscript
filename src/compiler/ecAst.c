@@ -1299,21 +1299,6 @@ static EjsFunction *bindFunction(EcCompiler *cp, EcNode *np)
     } else {
         fun->fullScope = 1;
     }
-#if UNUSED
-        //  MOB -- refactor
-    if (!ejsIsType(ejs, block) || !(np->attributes & EJS_PROP_STATIC)) {
-        if (np->function.isMethod) {
-            mprAssert(ejsIsBlock(ejs, state->varBlock));
-            fun->block.scope = ((EjsBlock*) state->varBlock)->scope;
-        } else {
-            mprAssert(ejsIsBlock(ejs, state->optimizedLetBlock));
-            fun->block.scope = ((EjsBlock*) state->optimizedLetBlock)->scope;
-        }
-    } else {
-        mprAssert(ejsIsBlock(ejs, block));
-        fun->block.scope = (EjsBlock*) block;
-    }
-#else
     if (!np->function.isConstructor) {
         if (np->function.isMethod) {
             fun->block.scope = (EjsBlock*) state->varBlock;
@@ -1321,7 +1306,6 @@ static EjsFunction *bindFunction(EcCompiler *cp, EcNode *np)
             fun->block.scope = (EjsBlock*) state->optimizedLetBlock;
         }
     }
-#endif
     return fun;
 }
 
@@ -1434,11 +1418,7 @@ static void astFunction(EcCompiler *cp, EcNode *np)
                     an appropriate return.
                  */
                 if (!(state->currentClass && state->currentClass->isInterface) && !(np->attributes & EJS_PROP_NATIVE)) {
-#if UNUSED
-                    if (ejs->initialized || fun->resultType == 0 || fun->resultType->qname.name != ST(Void)->qname.name) {
-#else
                     if (ejs->initialized || fun->resultType == 0 || fun->resultType != ST(Void)) {
-#endif
                         astError(cp, np, "Function \"%@\" must return a value",  np->qname.name);
                     }
                 }

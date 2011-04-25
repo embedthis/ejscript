@@ -677,10 +677,6 @@ mprAssert(ejs->result == 0 || (MPR_GET_GEN(MPR_GET_MEM(ejs->result)) != MPR->hea
         CASE (EJS_OP_GET_SCOPED_NAME):
             mark = FRAME->pc - 1;
             qname = GET_NAME();
-#if UNUSED
-                mprAssert(strcmp(qname.name->value, "Legacy") != 0);
-                mprAssert(strcmp(qname.name->value, "Config") != 0);
-#endif
             vp = ejsGetVarByName(ejs, NULL, qname, &lookup);
             if (unlikely(vp == 0)) {
                 ejsThrowReferenceError(ejs, "%@ is not defined", qname.name);
@@ -707,11 +703,7 @@ mprAssert(ejs->result == 0 || (MPR_GET_GEN(MPR_GET_MEM(ejs->result)) != MPR->hea
             }
             vp = ejsGetVarByName(ejs, NULL, qname, &lookup);
             if (unlikely(vp == 0)) {
-#if UNUSED
-                ejsThrowReferenceError(ejs, "%@ is not defined", qname.name);
-#else
                 push(S(undefined));
-#endif
             } else {
                 CHECK_VALUE(vp, NULL, lookup.obj, lookup.slotNum);
             }
@@ -2537,17 +2529,12 @@ static void storeProperty(Ejs *ejs, EjsObj *thisObj, EjsAny *vp, EjsName qname, 
                     slotNum = -1;
                 }
             } else {
-#if UNUSED
-                //  MOB -- this is allowing a obj.prop = x, where prop is in a static base type 
-                vp = lookup.obj;
-#else
                 /*
                     This is the fundamental asymetry between load/store. We allow loading properties from static base 
                     types, but do not allow stores. This is essential to stop bleeding of Object static properties into
                     all objects. E.g. Object.create.
                  */
                 slotNum = -1;
-#endif
             }
         }
     }
@@ -2863,55 +2850,6 @@ static int validateArgs(Ejs *ejs, EjsFunction *fun, int argc, void *args)
 }
 
 
-#if UNUSED
-/*
-    Call a type constructor function and create a new object.
- */
-static void callConstructor(Ejs *ejs, EjsType *type, int argc, int stackAdjust)
-{
-    EjsObj      *obj;
-
-    mprAssert(ejsIsType(ejs, type));
-    mprAssert(ejs->exception == 0);
-    mprAssert(ejs->state->fp->attentionPc == 0);
-
-    obj = ejsCreateObj(ejs, type, 0);
-    ejsClearAttention(ejs);
-    
-    mprAssert(type->constructor.block.pot.isFunction);
-    if (ejsIsNativeFunction(ejs, type)) {
-        mprAssert(ejs->state->fp == 0 || ejs->state->fp->attentionPc == 0);    
-        callFunction(ejs, (EjsFunction*) type, obj, argc, stackAdjust);
-    } else {
-        VM(ejs, (EjsFunction*) type, obj, argc, stackAdjust);
-        ejs->state->stack -= (argc + stackAdjust);
-        if (ejs->exiting || mprIsStopping(ejs)) {
-            ejsAttention(ejs);
-        }
-    }
-    ejs->result = obj;
-mprAssert(ejs->result == 0 || (MPR_GET_GEN(MPR_GET_MEM(ejs->result)) != MPR->heap.dead));
-}
-#endif
-
-
-#if UNUSED
-/*
-    Find the right base class to use as "this" for a static method
- */
-static EjsType *getStaticThis(Ejs *ejs, EjsType *type, int slotNum)
-{
-    while (type) {
-        if (slotNum >= type->numInherited) {
-            break;
-        }
-        type = type->baseType;
-    }
-    return type;
-}
-#endif
-
-
 static void callInterfaceInitializers(Ejs *ejs, EjsType *type)
 {
     EjsType         *iface;
@@ -3032,12 +2970,6 @@ static EjsEx *findExceptionHandler(Ejs *ejs, int kind)
     for (i = 0; i < code->numHandlers; i++) {
         ex = code->handlers[i];
         if (ex->tryStart <= pc && pc < ex->handlerEnd && (ex->flags & kind)) {
-#if UNUSED
-            //  MOB surely S(iterator) is never thrown?
-            if (ejs->exception == S(iterator) || kind == EJS_EX_FINALLY || ex->catchType == ST(Void)) {
-                return ex;
-            }
-#endif
             if (ejsIsType(ejs, ejs->exception) && ((EjsType*) ejs->exception)->sid == S_StopIteration) {
                 return ex;
             }
@@ -3331,12 +3263,6 @@ int ejsInitStack(Ejs *ejs)
 {
     EjsState    *state;
 
-#if UNUSED
-    if ((state = mprAllocBlock(sizeof(EjsState), MPR_ALLOC_ZERO)) == 0) {
-        mprSetMemError(ejs);
-        return EJS_ERR;
-    }
-#endif
     state = ejs->state;
     mprAssert(state);
 
@@ -3351,9 +3277,6 @@ int ejsInitStack(Ejs *ejs)
         return EJS_ERR;
     }
     state->stack = &state->stackBase[-1];
-#if UNUSED
-    ejs->state = ejs->masterState = state;
-#endif
     return 0;
 }
 
@@ -3623,7 +3546,6 @@ state->frozen = fstate;
         if (ejs->result == 0) {
             ejs->result = S(null);
         }
-mprAssert(ejs->result == 0 || (MPR_GET_GEN(MPR_GET_MEM(ejs->result)) != MPR->heap.dead));
         state->stack -= (argc + stackAdjust);
 
     } else {
@@ -3638,13 +3560,7 @@ mprAssert(ejs->result == 0 || (MPR_GET_GEN(MPR_GET_MEM(ejs->result)) != MPR->hea
         state->bp = (EjsBlock*) fp;
         ejsClearAttention(ejs);
     }
-mprAssert(ejs->result == 0 || (MPR_GET_GEN(MPR_GET_MEM(ejs->result)) != MPR->heap.dead));
     //  MOB - is this the best place for this?
-#if UNUSED
-    if (MPR->heap.mustYield && !(state->frozen)) { 
-        mprYield(0); 
-    }
-#endif
     mprAssert(ejs->state->fp);
     // mprAssert(!state->frozen);
 }
@@ -3716,10 +3632,6 @@ static EjsAny *getNthBlock(Ejs *ejs, int nth)
 
     for (block = ejs->state->bp; block && --nth >= 0; ) {
         /* TODO - this is done for loading scripts into ejs. Really the compiler should remove these blocks */
-#if UNUSED
-        mprAssert(block->pot.hidden == 0);
-        if (block->pot.hidden) nth++;
-#endif
         block = block->scope;
     }
     return block;
@@ -3740,13 +3652,6 @@ void ejsLog(Ejs *ejs, const char *fmt, ...)
     mprLog(0, "%s", buf);
 }
 
-
-#if UNUSED
-void ejsShowStack(Ejs *ejs, EjsFunction *fp)
-{
-    mprLog(7, "Stack\n%s", ejsFormatStack(ejs, NULL));
-}
-#endif
 
 #if FUTURE
 
@@ -3940,9 +3845,6 @@ void ejsShowOpFrequency(Ejs *ejs)
 #undef FUNCTION
 #undef BLOCK
 #undef SWAP
-#if UNUSED
-#undef TRACE
-#endif
 #undef GET_SLOT
 #undef SET_SLOT
 #undef GET_BYTE

@@ -204,9 +204,6 @@ static EjsObj *hs_listen(Ejs *ejs, EjsHttpServer *sp, int argc, EjsObj **argv)
         httpSecureServer(server->ip, sp->port, sp->ssl);
     }
     if (sp->name) {
-#if UNUSED
-        httpSetServerName(server, sp->name);
-#endif
         httpSetHostName(host, sp->name);
     }
     httpSetSoftware(server->http, EJS_HTTPSERVER_NAME);
@@ -259,9 +256,6 @@ static EjsObj *hs_set_name(Ejs *ejs, EjsHttpServer *sp, int argc, EjsObj **argv)
     if (sp->server && sp->name) {
         host = mprGetFirstItem(sp->server->hosts);
         httpSetHostName(host, sp->name);
-#if UNUSED
-        httpSetServerName(sp->server, sp->name);
-#endif
     }
     return 0;
 }
@@ -520,9 +514,6 @@ static void closeEjs(HttpQueue *q)
         req->conn = 0;
     }
     httpSetConnContext(q->conn, 0);
-#if UNUSED
-    httpSetRequestNotifier(q->conn, 0);
-#endif
 }
 
 
@@ -725,13 +716,6 @@ static void manageHttpServer(EjsHttpServer *sp, int flags)
         mprMark(sp->incomingStages);
         
     } else {
-#if UNUSED
-        mprLog(0, "FREE httpServer for %s", sp->ejs->name);
-        //  MOB -- can't do this. ejs and everything else could be dead.
-        if (!mprIsStopping() && sp->ejs && sp->ejs->service) {
-            ejsSendEvent(sp->ejs, sp->emitter, "close", NULL, sp);
-        }
-#endif
         sp->sessions = 0;
         ejsStopSessionTimer(sp);
         if (sp->server && !sp->cloned) {

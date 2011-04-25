@@ -348,13 +348,6 @@ static EjsModule *loadModuleSection(Ejs *ejs, MprFile *file, EjsModuleHdr *hdr, 
     mp->checksum = checksum;
     *created = 1;
 
-#if UNUSED
-    /* Signify that loading the module has begun. We allow multiple loads into the default module.  */
-    if (strcmp(name, EJS_DEFAULT_MODULE) != 0) {
-        mp->loaded = 1;
-        mp->constants->locked = 1;
-    }
-#endif
     mp->file = file;
     mp->flags = flags;
     mp->loadState = createLoadState(ejs, flags);
@@ -543,11 +536,6 @@ static int loadClassSection(Ejs *ejs, EjsModule *mp)
     }
     mprLog(9, "    Load %@ class %@ for module %@ at slotNum %d", qname.space, qname.name, mp->name, slotNum);
 
-#if UNUSED
-    if (slotNum < 0) {
-        slotNum = ejsGetPropertyCount(ejs, ejs->global);
-    }
-#endif
     if (type == 0) {
         type = ejsCreateType(ejs, qname, mp, baseType, NULL, sizeof(EjsPot), -1, numTypeProp, numInstanceProp, 
             attributes);
@@ -595,11 +583,6 @@ static int loadClassSection(Ejs *ejs, EjsModule *mp)
             }
         }
     }
-#if UNUSED
-    if (mp->flags & EJS_LOADER_BUILTIN) {
-        BUILTIN(type) = 1;
-    }
-#endif
     slotNum = ejsDefineProperty(ejs, ejs->global, slotNum, qname, ST(Type), attributes, (EjsObj*) type);
     if (slotNum < 0) {
         ejsThrowMemoryError(ejs);
@@ -916,12 +899,6 @@ static int loadPropertySection(Ejs *ejs, EjsModule *mp, int sectionType)
     if (slotNum < 0) {
         return MPR_ERR_CANT_WRITE;
     }
-#if UNUSED
-    if (mp->flags & EJS_LOADER_BUILTIN) {
-        value = ejsGetProperty(ejs, current, slotNum);
-        BUILTIN(value) = 1;
-    }
-#endif
     if (fixup) {
         if (ejsIsFunction(ejs, current)) {
             fixupKind = EJS_FIXUP_LOCAL;
@@ -1619,20 +1596,6 @@ static void setDoc(Ejs *ejs, EjsModule *mp, cchar *tag, void *vp, int slotNum)
         mp->doc = 0;
     }
 }
-
-
-#if UNUSED
-static void manageDocStrings(MprHashTable *strings, int flags)
-{
-    MprHash     *hp;
-
-    if (flags & MPR_MANAGE_MARK) {
-        for (hp = mprGetFirstHash(strings); hp; hp = mprGetNextHash(strings, hp)) {
-            mprMark(hp->data);
-        }
-    }
-}
-#endif
 
 
 static void manageDoc(EjsDoc *doc, int flags)

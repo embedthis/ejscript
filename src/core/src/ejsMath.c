@@ -264,9 +264,6 @@ void ejsConfigureMathType(Ejs *ejs)
     EjsType     *type;
 
     type = ejsConfigureNativeType(ejs, N("ejs", "Math"), sizeof(EjsObj), NULL, EJS_OBJ_HELPERS);
-#if UNUSED
-    ejsSetSpecialType(ejs, S_Math, type);
-#endif
     ejsBindMethod(ejs, type, ES_Math_abs, (EjsProc) math_abs);
     ejsBindMethod(ejs, type, ES_Math_acos, (EjsProc) math_acos);
     ejsBindMethod(ejs, type, ES_Math_asin, (EjsProc) math_asin);

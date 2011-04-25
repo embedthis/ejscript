@@ -157,19 +157,6 @@ server.listen("127.0.0.1:7777")
                     App.updateLog()
                 }
             }
-        /* UNUSED
-            directories must be relative to the serverRoot directory
-            if (1 || documentRoot != ".") {
-                let dirs = config.directories
-                for (let [key,value] in dirs) {
-                    //  MOB - multiple servers will keep prepending the doc root
-                    //  MOB - TEMP hack
-                    if (!value.toString().startsWith(documentRoot)) {
-                        dirs[key] = documentRoot.join(value)
-                    }
-                }
-            }
-        */
         }
 
         /** 

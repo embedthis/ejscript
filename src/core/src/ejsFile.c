@@ -641,14 +641,6 @@ static EjsObj *getFileSize(Ejs *ejs, EjsFile *fp, int argc, EjsObj **argv)
 {
     MprPath     info;
 
-#if UNUSED
-    if (fp->mode & FILE_OPEN) {
-        /*
-            GetFileSize is not accurate - MOB why?
-         */
-        return (EjsObj*) ejsCreateNumber(ejs, (MprNumber) mprGetFileSize(fp->file));
-    } else {
-#endif
     if (mprGetPathInfo(fp->path, &info) < 0) {
         return (EjsObj*) S(minusOne);
     }

@@ -83,7 +83,7 @@ static EjsType *createTypeVar(Ejs *ejs, EjsType *typeType, int numProp)
         NOTE: don't confuse this with dynamic objects.
      */
     sizeHash = 0;
-    if (numProp < 0 || ejs->empty /* UNUSED || ejs->flags & EJS_FLAG_DYNAMIC */) {
+    if (numProp < 0 || ejs->empty) {
         dynamic = 1;
         typeSize = sizeof(EjsType);
         numProp = 0;
@@ -227,11 +227,6 @@ static int defaultManager(EjsObj *ev, int flags)
 {
     if (flags & MPR_MANAGE_MARK) {
         mprAssert(!TYPE(ev)->isPot);
-#if UNUSED
-            //  MOB -- should this be done?
-            mprMark(ev->type);
-        }
-#endif
     }
     return 0;
 }
@@ -875,13 +870,7 @@ void ejsDefineTypeNamespaces(Ejs *ejs, EjsType *type)
     }
     //  TODO - add readonly here
     nsp = ejsDefineReservedNamespace(ejs, (EjsBlock*) type, &type->qname, EJS_PROTECTED_NAMESPACE);
-#if UNUSED
-    nsp->flags |= EJS_NSP_PROTECTED;
-#endif
     nsp = ejsDefineReservedNamespace(ejs, (EjsBlock*) type, &type->qname, EJS_PRIVATE_NAMESPACE);
-#if UNUSED
-    nsp->flags |= EJS_NSP_PRIVATE;
-#endif
 }
 
 

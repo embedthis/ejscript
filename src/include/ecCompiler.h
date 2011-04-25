@@ -215,9 +215,6 @@ typedef struct EcNode {
             Node        body;                   /* Function body */
             Node        parameters;             /* Function formal parameters */
             Node        constructorSettings;    /* Constructor settings */
-#if UNUSED
-            Node        expressionRef;          /* Reference to the function expression name */
-#endif
             EjsFunction *functionVar;           /* Function variable */
             uint        operatorFn    : 1;      /* operator function */
             uint        getter        : 1;      /* getter function */

@@ -235,10 +235,6 @@ EjsConstants *ejsCreateConstants(Ejs *ejs, int count, ssize size)
     }
     constants->index[0] = S(empty);
     constants->indexCount = 1;
-#if UNUSED
-    //  MOB -- get another solution for hold/release
-    mprHold(constants->index);
-#endif
     return constants;
 }
 

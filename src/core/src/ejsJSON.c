@@ -29,9 +29,6 @@ typedef struct Json {
     int         namespaces;
     int         pretty;
     int         nest;              /* Json serialize nest level */
-#if UNUSED
-    struct Json *next;
-#endif
 } Json;
 
 /***************************** Forward Declarations ***************************/
@@ -580,9 +577,6 @@ static EjsString *serialize(Ejs *ejs, EjsAny *vp, Json *json)
             if (!ejsIsFunction(ejs, fn) || (fn->isNativeProc && fn->body.proc == (EjsFun) ejsObjToJSON)) {
                 sv = serialize(ejs, pp, json);
             } else {
-#if UNUSED
-                sv = (EjsString*) ejsToJSON(ejs, pp, json->options);
-#endif
                 sv = (EjsString*) ejsRunFunction(ejs, fn, pp, 1, &json->options);
             }
             if (sv == 0 || !ejsIs(ejs, sv, String)) {

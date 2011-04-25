@@ -78,16 +78,6 @@ module ejs {
         /** @hide */
         native function setScope(scope: Object): Void
     }
-
-//  MOB -- remove
-/** 
-        UNUSED @hide 
-    native function makeGetter(fn: Function): Function
-*/
-
-/** UNUSED
-    native function clearBoundThis(fn: Function): Function
-*/
 }
 
 /*

@@ -186,22 +186,12 @@ static int compileInner(EcCompiler *cp, int argc, char **argv)
             mprAddItem(nodes, 0);
         } else  {
             mprAssert(!MPR->marking);
-            
             //  MOB - move this deeper (gradually)
             frozen = ejsFreeze(ejs, 1);
             mprAddItem(nodes, ecParseFile(cp, argv[i]));
             ejsFreeze(ejs, frozen);
         }
         mprAssert(!MPR->marking);
-        mprAssert(ejs->result == 0 || (MPR_GET_GEN(MPR_GET_MEM(ejs->result)) != MPR->heap.dead));
-
-#if UNUSED
-        if (!frozen) {
-            mprAssert(ejs->result == 0 || (MPR_GET_GEN(MPR_GET_MEM(ejs->result)) != MPR->heap.dead));
-            mprYield(0);
-            mprAssert(ejs->result == 0 || (MPR_GET_GEN(MPR_GET_MEM(ejs->result)) != MPR->heap.dead));
-        }
-#endif
     }
     mprAssert(ejs->result == 0 || (MPR_GET_GEN(MPR_GET_MEM(ejs->result)) != MPR->heap.dead));
 

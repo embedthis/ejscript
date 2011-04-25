@@ -260,35 +260,6 @@ static void markValues(Ejs *ejs)
     for (i = 0; i < EJS_MAX_SPECIAL; i++) {
         mprMark(ejs->values[i]);
     }
-#if UNUSED
-    mprMark(ejs->commaProtString);
-    mprMark(ejs->ejsSpace);
-    mprMark(ejs->emptySpace);
-    mprMark(ejs->emptyString);
-    mprMark(ejs->falseValue);
-    mprMark(ejs->infinityValue);
-    mprMark(ejs->internalSpace);
-    mprMark(ejs->iterator);
-    mprMark(ejs->iteratorSpace);
-    mprMark(ejs->lengthString);
-    mprMark(ejs->maxValue);
-    mprMark(ejs->minValue);
-    mprMark(ejs->minusOneValue);
-    mprMark(ejs->nanValue);
-    mprMark(ejs->negativeInfinityValue);
-    mprMark(ejs->nopFunction);
-    mprMark(ejs->nullValue);
-    mprMark(ejs->oneValue);
-    mprMark(ejs->publicSpace);
-    mprMark(ejs->publicString);
-    mprMark(ejs->trueValue);
-    mprMark(ejs->undefinedValue);
-
-    //  MOB
-    mprAssert(ejs->undefinedValue == 0 || (MPR_GET_GEN(MPR_GET_MEM(ejs->undefinedValue)) != MPR->heap.dead));
-    mprMark(ejs->zeroValue);
-    mprMark(ejs->nopFunction);
-#endif
 }
 
 
