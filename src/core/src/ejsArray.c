@@ -1495,12 +1495,11 @@ static int growArray(Ejs *ejs, EjsArray *ap, int len)
         } else {
             count = len;
         }
-        //  MOB OPT - this is currently 16
+        //  OPT - this is currently 16
         count = EJS_PROP_ROUNDUP(count);
         if (ap->data == 0) {
             mprAssert(ap->length == 0);
             mprAssert(count > 0);
-            // MOB mprAssert(ejs->state->fp == 0 || strstr(ejs->state->fp->line->source, "utest|505|pair") == 0);
             if ((ap->data = mprAllocZeroed(sizeof(EjsObj*) * count)) == 0) {
                 return EJS_ERR;
             }
@@ -1723,9 +1722,6 @@ static void manageArray(EjsArray *ap, int flags)
             }
         }
         mprMark(data);
-#if MOB && CONSIDER
-        mprMark(ap->pot.type);
-#endif
     }
 }
 

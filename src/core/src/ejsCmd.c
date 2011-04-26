@@ -153,12 +153,6 @@ static EjsObj *cmd_on(Ejs *ejs, EjsCmd *cmd, int argc, EjsObj **argv)
     ejsAddObserver(ejs, &cmd->emitter, argv[0], argv[1]);
     if (!cmd->async) {
         cmd->async = 1;
-#if UNUSED
-        if (cmd->mc) {
-            //  MOB -- but handlers always added anyway
-            mprAddCmdHandlers(cmd->mc);
-        }
-#endif
     }
     return 0;
 }

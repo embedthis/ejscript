@@ -1045,7 +1045,7 @@ static EjsObj *req_read(Ejs *ejs, EjsRequest *req, int argc, EjsObj **argv)
     }
     if (nbytes == 0) {
         if (httpIsEof(req->conn)) {
-            //  MOB -- should this set req->conn to zero?
+            //  TODO -- should this set req->conn to zero?
             return S(null);
         }
     }
@@ -1076,7 +1076,7 @@ static EjsObj *req_setHeader(Ejs *ejs, EjsRequest *req, int argc, EjsObj **argv)
     }
     ejsSetPropertyByName(ejs, req->responseHeaders, EN(key), value);
 
-    /* MOB Just until we have filters - to disable chunk filtering */
+    /* Just until we have filters - to disable chunk filtering */
     if (strcmp(key, "x-chunk-size") == 0) {
         httpSetChunkSize(req->conn, ejsGetInt(ejs, value));
     }
@@ -1156,9 +1156,9 @@ static EjsObj *req_write(Ejs *ejs, EjsRequest *req, int argc, EjsObj **argv)
 
         case S_ByteArray:
             ba = (EjsByteArray*) data;
-            //  MOB -- not updating the read position
-            //  MOB ba->readPosition += len;
-            //  MOB -- should reset ptrs also
+            //  TODO -- not updating the read position
+            //      ba->readPosition += len;
+            //      should reset ptrs also
             len = ba->writePosition - ba->readPosition;
             if ((written = httpWriteBlock(q, (char*) &ba->value[ba->readPosition], len)) != len) {
                 err++;
@@ -1181,10 +1181,8 @@ static EjsObj *req_write(Ejs *ejs, EjsRequest *req, int argc, EjsObj **argv)
     }
     req->responded = 1;
 
-    //  MOB - now
     if (!conn->writeComplete && !conn->error && HTTP_STATE_CONNECTED <= conn->state && conn->state < HTTP_STATE_COMPLETE &&
             conn->writeq->ioCount == 0) {
-        //  MOB - what if over the queue max
         ejsSendEvent(ejs, req->emitter, "writable", NULL, (EjsObj*) req);
     }
     return 0;
@@ -1292,7 +1290,7 @@ EjsRequest *ejsCreateRequest(Ejs *ejs, EjsHttpServer *server, HttpConn *conn, cc
         req->dir = ejsCreatePathFromAsc(ejs, mprGetRelPath(dir));
     }
     mprAssert(!VISITED(req->dir));
-    //  MOB -- why replicate these two
+    //  OPT -- why replicate these two
     req->pathInfo = (EjsObj*) ejsCreateStringFromAsc(ejs, rx->pathInfo);
     req->scriptName = (EjsObj*) ejsCreateStringFromAsc(ejs, rx->scriptName);
     return req;

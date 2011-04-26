@@ -70,7 +70,7 @@ module ejs {
          */
         static native function freeze(obj: Object): Void
 
-/* MOB 
+/* FUTURE 
         get options
         @option baseClasses Boolean determining if base class properties will be serialized. Defaults to false.
         @option depth Number indiciating the depth to recurse when converting properties to literals. If set to zero, 
@@ -95,13 +95,13 @@ module ejs {
          */
         static native function getOwnPropertyDescriptor(obj: Object, prop: String): Object
 
+//  MOB -- inconsistent with JSON.baseClasses
         /** 
             Return an array of all property names including non-enumerable properties. This returns the bare names
             and does not include the namespace portions of the names. Use getOwnPropertyDescriptor to access property
             namespace values.
             @param obj Object to inspect
             @param options Property selection options
-MOB -- inconsistent with JSON.baseClasses
             @option includeBases Boolean determining if base class properties will included. Defaults to false.
             @option excludeFunctions Boolean determining if function properties will included. Defaults to false.
             @return Array of enumerable property names
@@ -135,7 +135,6 @@ MOB -- inconsistent with JSON.baseClasses
          */
         native function hasOwnProperty(name: String): Boolean
 
-//  MOB -- terminology. dynamic vs extensible
         /** 
             Test if an object is extensible
             @return True if the extensible trait of the object is true

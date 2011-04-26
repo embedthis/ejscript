@@ -173,7 +173,7 @@ module ejs.web {
         }
 
 //  MOB -- consider deprecating
-        /**
+        /*
             Emit an anchor. This is lable inside an anchor reference. 
             @param text Link text to display
             @param options Optional extra options. See $View for a list of the standard options.

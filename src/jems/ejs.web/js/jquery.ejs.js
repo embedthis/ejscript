@@ -55,7 +55,7 @@
             }
         }
         elt.trigger('http:before');
-        // MOB changeUrl(url);
+        // changeUrl(url);
         $.ajax({
             url: url,
             data: data,
@@ -101,7 +101,7 @@
         var result = {};
         $.each(elt[0].attributes, function(index, att) {
             if (att.name.indexOf("data-") == 0) {
-                //  MOB -- why bother removing data-
+                //  why bother removing data-
                 result[att.name.substring(5)] = att.value;
             }
         });
@@ -245,7 +245,6 @@
                         e.removeAttr("checked")
                     }
                 } else if (d.type == "radio") {
-                    //  MOB BROKEN
                     if (data == e.val()) {
                         e.attr("checked", "yes")
                     } else {
@@ -271,7 +270,7 @@
             if (o.updating) {
                 var method = o["refresh-method"] || "GET";
 
-                //  MOB - consider firing events - elt.trigger('http:complete', http);
+                //  consider firing events - elt.trigger('http:complete', http);
                 $.ajax({
                     url: o.refresh,
                     type: method,
@@ -343,7 +342,6 @@
         $(this).attr("checked", true);
     });
 
-//  MOB -- is this used? or is data-click always present?
     /* Click on link foreground with data-method */
     $('a[data-method]:not([data-remote])').live('click', function (e) {
         request.apply(this)
@@ -435,8 +433,8 @@
     });
 
 /////////////////////////////////////////
-/*  MOB -- TODO - fix location 
-    //  MOB -- rename change Address
+/*  TODO - fix location 
+    //  rename change Address
     function changeUrl(i) {
         console.log("CHANGE " + i);
         $.address.title(i);
@@ -453,7 +451,7 @@
     $.address.init(function(e) {
         console.log("INIT CALLBACK");
     });
-    $.address.title("MOB");
+    $.address.title("SOMETHING");
     $.address.value("ABC");
 */
 

@@ -349,7 +349,6 @@ static void processRequest()
     char   *errorMsg;
     int    flags;
 
-    //  MOB -- not right
     if (strncmp(pathInfo, "web/", 4) == 0) {
         copyFile(pathInfo);
         flushOutput(output);

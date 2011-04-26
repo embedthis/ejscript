@@ -131,7 +131,7 @@ static EjsFunction *fun_Function(Ejs *ejs, EjsFunction *fun, int argc, void *arg
 
     script = mprGetBufStart(buf);
     if (ejsLoadScriptLiteral(ejs, script, NULL, EC_FLAGS_NO_OUT | EC_FLAGS_DEBUG | EC_FLAGS_THROW | EC_FLAGS_VISIBLE) < 0) {
-        //  MOB -- what happens to compiler errors
+        //  TODO -- what happens to compiler errors
         return 0;
     }
     fun->body.code = ;
@@ -438,7 +438,6 @@ static EjsObj *nopFunction(Ejs *ejs, EjsObj *obj, int argc, EjsObj **argv)
 }
 
 
-//  MOB -- who calls this?
 void ejsUseActivation(Ejs *ejs, EjsFunction *fun)
 {
     EjsPot  *activation;
@@ -450,7 +449,6 @@ void ejsUseActivation(Ejs *ejs, EjsFunction *fun)
     numProp = activation->numProp;
     if (numProp > 0) {
         ejsGrowPot(ejs, (EjsPot*) fun, numProp);
-        //  MOB -- fix this API
         ejsCopySlots(ejs, (EjsPot*) fun, fun->block.pot.properties->slots, fun->activation->properties->slots, numProp);
         fun->block.pot.numProp = numProp;
     }
@@ -537,7 +535,6 @@ int ejsInitFunction(Ejs *ejs, EjsFunction *fun, EjsString *name, cuchar *byteCod
     fun->name = name;
     setFunctionAttributes(fun, attributes);
     mprSetName(fun, "function");
-    //  MOB - need function for this - perhaps wrap both above and below into ejsSetPotName
     return 0;
 }
 

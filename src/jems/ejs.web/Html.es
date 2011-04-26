@@ -7,7 +7,7 @@ module ejs.web {
     /**
         The Html Connector provides bare HTML encoding of View controls.
 
-        MOB Style conventions???
+        TODO Style conventions???
             -ejs- prefixes all internal styles
             -ejs-alert
             -ejs-flash

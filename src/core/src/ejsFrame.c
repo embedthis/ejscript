@@ -18,7 +18,6 @@ static void manageFrame(EjsFrame *frame, int flags)
             ejsManageFunction((EjsFunction*) frame, flags);
             mprMark(frame->orig);
             mprMark(frame->caller);
-            //  MOB -- is this needed?
             mprMark(TYPE(frame));
             /* Marking the stack is done in ejsGarbage.c:mark() */
 #if BLD_DEBUG && UNUSED
@@ -87,13 +86,13 @@ EjsFrame *ejsCreateFrame(Ejs *ejs, EjsFunction *fun, EjsObj *thisObj, int argc, 
     obj->properties->size = size;
     obj->numProp = numProp;
     if (activation) {
-        //  MOB -- could the function be setup as the prototype and thus avoid doing this?
-        //  MOB -- assumes that the function is sealed
+        //  OPT -- could the function be setup as the prototype and thus avoid doing this?
+        //  OPT -- assumes that the function is sealed
         memcpy(obj->properties->slots, activation->properties->slots, numProp * sizeof(EjsSlot));
         ejsMakeHash(ejs, obj);
     }
     ejsZeroSlots(ejs, &obj->properties->slots[numProp], size - numProp);
-    //  MOB - should not need to do this
+    //  OPT - should not need to do this
     SET_DYNAMIC(obj, 1);
 
     frame->orig = fun;
@@ -106,8 +105,7 @@ EjsFrame *ejsCreateFrame(Ejs *ejs, EjsFunction *fun, EjsObj *thisObj, int argc, 
     frame->function.block.breakCatch = fun->block.breakCatch;
     frame->function.block.nobind = fun->block.nobind;
 
-    //  MOB -- check these
-    //  MOB - OPT
+    //  OPT
     frame->function.numArgs = fun->numArgs;
     frame->function.numDefault = fun->numDefault;
     frame->function.castNulls = fun->castNulls;

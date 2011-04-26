@@ -22,7 +22,7 @@ module ejs {
          */
         native function Function(...args)
 /*
-    MOB -- todo
+    FUTURE -- todo
             let body = args.pop()
             let code = "function(" + args.join(",") + ") {\n" + body + "\n}"
             print("CODE " + code)
@@ -74,7 +74,7 @@ module ejs {
         //  Number of arguments expected by the function
         native function get length(): Number
 
-        //  MOB -- DOC
+        //  DOC
         /** @hide */
         native function setScope(scope: Object): Void
     }

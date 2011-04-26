@@ -290,7 +290,6 @@ EjsArray *ejsCaptureStack(Ejs *ejs, int uplevels)
 /*
     Get the current exception error. May be an Error object or may be any other object that is thrown.
     Caller must NOT free.
-    MOB _- Query should return EjsString?
  */
 cchar *ejsGetErrorMsg(Ejs *ejs, int withStack)
 {

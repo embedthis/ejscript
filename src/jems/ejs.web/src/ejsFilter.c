@@ -62,8 +62,6 @@ static void outgoingFilterService(HttpQueue *q)
     conn = q->conn;
     trans = conn->transmitter;
 
-    //  MOB -- want packets joined.
-
     filter = (EjsFilter*) q->pair->queueData;
     ejsRunFunction(ejs, ser, filter, data);
 

@@ -77,7 +77,6 @@ module ejs {
          */
         native function get basename(): Path
         
-//  MOB -- perhaps should be split()
         /**
             Path components. This is the path converted to an absolute path and then broken into components for each
             directory level. It is set to an array object with an element for each segment of the path. The first 
@@ -249,7 +248,6 @@ module ejs {
          */
         native function joinExt(ext: String): Path
 
-//  MOB -- fix when UNICODE to length in characters
         /**
             The length of the path name in bytes. Note: this is not the file size. For that, use Path.size
          */
@@ -467,11 +465,9 @@ module ejs {
          */
         native function get relative(): Path
 
-//  MOB - better not to throw
         /**
             Delete the file associated with the Path object. If this is a directory without contents it will be removed.
             @return True if the file is sucessfully deleted
-            @throws IOError if the file exists and could not be deleted.
          */
         native function remove(): Boolean 
 

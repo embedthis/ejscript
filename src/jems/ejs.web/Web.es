@@ -117,11 +117,9 @@ print("Multithreaded request")
             }
         }
 
-        //  MOB -- where here should content mapping take place according to Accept: 
         //    Accept: application/xml,application/xhtml+xml,text/html;q=0.9,text/plain;q=0.8,image/png,*/*;q=0.5
         private static function processBody(request: Request, body: Object): Void {
             if (body is Path) {
-                //  MOB -- should have generic way of disabling writeFile
                 if (request.isSecure) {
                     body = File(body, "r")
                 } else {

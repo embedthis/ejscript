@@ -31,7 +31,7 @@ static EjsObj *gc_set_enabled(Ejs *ejs, EjsObj *thisObj, int argc, EjsObj **argv
 
 /*
     run(deep: Boolean = false)
-    MOB -- change args to be a string "check", "all"
+    TODO -- change args to be a string "check", "all"
  */
 static EjsObj *gc_run(Ejs *ejs, EjsObj *thisObj, int argc, EjsObj **argv)
 {

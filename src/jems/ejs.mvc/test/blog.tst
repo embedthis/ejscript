@@ -2,7 +2,7 @@
     blog.tst - Blog mini app
  */
 
-//  MOB -- should use the test http port for this
+//  TODO -- should use the test http port for this
 const HTTP = ":4000"
 
 require ejs.unix
@@ -62,6 +62,6 @@ try {
 
 } finally {
     Cmd.kill(pid, 9)
-    // MOB rmdir("junk", true)
+    rmdir("junk", true)
 }
 

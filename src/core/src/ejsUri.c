@@ -19,7 +19,7 @@ static EjsObj *uri_join(Ejs *ejs, EjsUri *up, int argc, EjsObj **argv);
 /************************************ Helpers *********************************/
 
 #if UNUSED && KEEP
-//  MOB -- keep this for when the cast helper is reversed
+//  keep this for when the cast helper is reversed
 /*
     Convert an arg to a URI. Can handle strings, paths, URIs and object hashes. Will cast all else to strings and then
     parse.
@@ -58,7 +58,7 @@ static EjsUri *cloneUri(Ejs *ejs, EjsUri *src, bool deep)
     if ((dest = ejsCreateObj(ejs, TYPE(src), 0)) == 0) {
         return 0;
     }
-    /*  NOTE: a deep copy will complete the uri - MOB is that right? */
+    /*  NOTE: a deep copy will complete the uri */
     dest->uri = httpCloneUri(src->uri, deep);
     return dest;
 }

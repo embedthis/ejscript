@@ -2,7 +2,7 @@
     mvc generate app
  */
 
-//  MOB -- should use the test http port for this
+//  TODO -- should use the test http port for this
 const HTTP = ":4000"
 
 require ejs.unix

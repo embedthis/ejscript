@@ -68,7 +68,9 @@ static EjsObj *logger_set_nativeStream(Ejs *ejs, EjsObj *unused, int argc, EjsOb
 #endif
 
 /*********************************** Factory **********************************/
-//  MOB -- convert logger to be fully script - not native:
+
+//  TODO  -- convert logger to be fully script - not native:
+
 void ejsConfigureLoggerType(Ejs *ejs)
 {
 #if UNUSED

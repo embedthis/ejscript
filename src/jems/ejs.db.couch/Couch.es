@@ -88,7 +88,6 @@ module ejs.db.couch {
             }
             hp.connect(uri.join(url))
             if (data) {
-//  MOB -- this is sync and blocking
                 hp.write(data)
             }
             hp.finalize()

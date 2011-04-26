@@ -131,7 +131,7 @@ module ejs {
                 }
                 initializer = eval(code, cache)
             }
-            //  MOB -- implement system and module?
+            //  TODO -- implement system and module?
             //  function initializer(require, exports, module, system)
             signatures[path] = exports = {}
             initializer(require, exports, {id: id, path: path}, null)
@@ -142,7 +142,6 @@ module ejs {
         public static function cached(id: Path, config = App.config, cachedir: Path = null): Path {
             config ||= App.config
             if (id && config.cache.enable) {
-                //  MOB - should Path("cache") be used?
                 let dir = cachedir || Path(config.directories.cache) || Path("cache")
                 if (dir.exists) {
                     return Path(dir).join(md5(id)).joinExt('.mod')

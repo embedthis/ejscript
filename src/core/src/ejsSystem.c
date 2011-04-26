@@ -11,7 +11,6 @@
 /************************************ Methods *********************************/
 /*
     function run(cmd: String): String
-    MOB - remove
  */
 static EjsString *system_run(Ejs *ejs, EjsObj *unused, int argc, EjsObj **argv)
 {
@@ -38,7 +37,6 @@ static EjsString *system_run(Ejs *ejs, EjsObj *unused, int argc, EjsObj **argv)
 
 /*
     function runx(cmd: String): Void
-    MOB - remove
  */
 static EjsObj *system_runx(Ejs *ejs, EjsObj *unused, int argc, EjsObj **argv)
 {
@@ -61,7 +59,6 @@ static EjsObj *system_runx(Ejs *ejs, EjsObj *unused, int argc, EjsObj **argv)
 
 /*
     function daemon(cmd: String): Number
-    MOB - remove
  */
 static EjsNumber *system_daemon(Ejs *ejs, EjsObj *unused, int argc, EjsObj **argv)
 {

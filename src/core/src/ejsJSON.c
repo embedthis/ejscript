@@ -447,13 +447,13 @@ EjsString *ejsSerialize(Ejs *ejs, EjsAny *vp, EjsObj *options)
         if ((arg = ejsGetPropertyByName(ejs, options, EN("indent"))) != 0) {
             if (ejsIs(ejs, arg, String)) {
                json.indent = (char*) ejsToMulti(ejs, arg);
-                //  MOB - get another solution to hold
+                //  TODO - get another solution to hold
                 mprHold(json.indent);
             } else if (ejsIs(ejs, arg, Number)) {
                 i = ejsGetInt(ejs, arg);
                 if (0 <= i && i < MPR_MAX_STRING) {
                     json.indent = mprAlloc(i + 1);
-                    //  MOB - get another solution to hold
+                    //  TODO - get another solution to hold
                     mprHold(json.indent);
                     memset(json.indent, ' ', i);
                     json.indent[i] = '\0';
@@ -475,7 +475,7 @@ EjsString *ejsSerialize(Ejs *ejs, EjsAny *vp, EjsObj *options)
         }
     }
     result = serialize(ejs, vp, &json);
-    //  MOB - get another solution to hold
+    //  TODO - get another solution to hold
     mprRelease(json.indent);
     return result;
 }
@@ -498,7 +498,7 @@ static EjsString *serialize(Ejs *ejs, EjsAny *vp, Json *json)
      */
     count = ejsGetPropertyCount(ejs, vp);
     if (count == 0 && TYPE(vp) != ST(Object) && TYPE(vp) != ST(Array)) {
-        //  MOB OPT - need some flag for this test.
+        //  OPT - need some flag for this test.
         if (!ejsIsDefined(ejs, vp) || ejsIs(ejs, vp, Boolean) || ejsIs(ejs, vp, Number) || ejsIs(ejs, vp, String)) {
             return ejsToString(ejs, vp);
         } else {
@@ -556,7 +556,7 @@ static EjsString *serialize(Ejs *ejs, EjsAny *vp, Json *json)
                         mprPutFmtToWideBuf(json->buf, "\"%@\"::", qname.space);
                     }
                 }
-//  MOB -- should this be in unicode?  yes?
+//  TODO -- should this be in unicode?  yes?
                 mprPutCharToWideBuf(json->buf, '"');
                 for (cp = qname.name->value; cp && *cp; cp++) {
                     c = *cp;
@@ -573,7 +573,7 @@ static EjsString *serialize(Ejs *ejs, EjsAny *vp, Json *json)
                 }
             }
             fn = (EjsFunction*) ejsGetPropertyByName(ejs, (EjsObj*) TYPE(pp)->prototype, N(NULL, "toJSON"));
-// MOB - check that this is going directly to serialize most of the time
+// TODO - check that this is going directly to serialize most of the time
             if (!ejsIsFunction(ejs, fn) || (fn->isNativeProc && fn->body.proc == (EjsFun) ejsObjToJSON)) {
                 sv = serialize(ejs, pp, json);
             } else {

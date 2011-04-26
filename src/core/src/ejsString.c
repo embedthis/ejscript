@@ -176,7 +176,7 @@ static EjsAny *invokeStringOperator(Ejs *ejs, EjsString *lhs, int opcode, EjsStr
     switch (opcode) {
     case EJS_OP_COMPARE_STRICTLY_EQ:
     case EJS_OP_COMPARE_EQ:
-        //  MOB -- should use lhs == rhs
+        //  OPT -- should use lhs == rhs
         if (lhs->value == rhs->value) {
             mprAssert(lhs == rhs);
             return S(true);
@@ -185,7 +185,7 @@ static EjsAny *invokeStringOperator(Ejs *ejs, EjsString *lhs, int opcode, EjsStr
 
     case EJS_OP_COMPARE_NE:
     case EJS_OP_COMPARE_STRICTLY_NE:
-        //  MOB -- should use lhs == rhs
+        //  OPT -- should use lhs == rhs
         if (lhs->value != rhs->value) {
             mprAssert(lhs != rhs);
             return S(true);
@@ -266,7 +266,7 @@ static int lookupStringProperty(Ejs *ejs, EjsString *sp, EjsName qname)
 {
     int     index;
 
-    //  MOB UNICODE
+    //  TODO UNICODE
     if (!isdigit((int) qname.name->value[0])) {
         return EJS_ERR;
     }
@@ -367,7 +367,6 @@ static EjsNumber *charCodeAt(Ejs *ejs, EjsString *sp, int argc, EjsObj **argv)
         index = (int) sp->length -1 ;
     }
     if (index < 0 || index >= sp->length) {
-        //  MOB - should this return nan or -1?
         return S(nan);
     }
     return ejsCreateNumber(ejs, (uchar) sp->value[index]);
@@ -516,7 +515,7 @@ static EjsObj *formatString(Ejs *ejs, EjsString *sp, int argc, EjsObj **argv)
                 value = S(null);
             }
             buf = 0;
-            //  MOB - OPT
+            //  OPT
             switch (kind) {
             case 'd': case 'i': case 'o': case 'u':
                 value = (EjsObj*) ejsToNumber(ejs, value);
@@ -1785,7 +1784,7 @@ static int toMulti(char *dest, MprChar *src, ssize len)
 #if WIN || WINCE
     len = WideCharToMultiByte(CP_ACP, 0, src, -1, dest, (DWORD) len, NULL, NULL);
 #else
-    //  MOB -- Linux wchar_t is 32 bits and so can't use this if MprChar is 16 bits
+    //  Linux wchar_t is 32 bits and so can't use this if MprChar is 16 bits
     len = wcstombs(dest, src, len);
 #endif
 #endif
@@ -1806,7 +1805,7 @@ static int toUni(MprChar *dest, cchar *src, ssize len)
 #if WIN || WINCE
     len = MultiByteToWideChar(CP_ACP, 0, src, -1, dest, len);
 #else
-    //  MOB -- Linux wchar_t is 32 bits and so can't use this if MprChar is 16 bits
+    //  Linux wchar_t is 32 bits and so can't use this if MprChar is 16 bits
     len = mbstowcs(dest, src, len);
 #endif
 #endif
@@ -1829,7 +1828,7 @@ int ejsAtoi(Ejs *ejs, EjsString *sp, int radix)
 }
 
 
-// MOB - rename to join
+// TODO - rename to join
 EjsString *ejsCatString(Ejs *ejs, EjsString *dest, EjsString *src)
 {
     EjsString   *result;
@@ -1848,7 +1847,7 @@ EjsString *ejsCatString(Ejs *ejs, EjsString *dest, EjsString *src)
 
 /*
     Catenate a set of unicode string arguments onto another.
-    MOB - rename to join
+    TODO - rename to join
  */
 EjsString *ejsCatStrings(Ejs *ejs, EjsString *src, ...)
 {
@@ -1964,7 +1963,6 @@ int ejsCompareString(Ejs *ejs, EjsString *sp1, EjsString *sp2)
     } else if (*s2 == '\0' && *s1) {
         return 1;
     }
-    /* MOB Should never get here with interned strings */
     mprAssert(0);
     return 0;
 }
@@ -2049,7 +2047,7 @@ int ejsContainsStringAnyCase(Ejs *ejs, EjsString *sp, EjsString *pat)
 
     for (i = 0; i < sp->length; i++) {
         for (j = 0; j < pat->length; j++) {
-            //  MOB - tolower only works for ASCII
+            //  TODO UNICODE - tolower only works for ASCII
             if (tolower(sp->value[i]) != tolower(pat->value[j])) {
                 break;
             }

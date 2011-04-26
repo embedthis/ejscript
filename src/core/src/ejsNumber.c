@@ -23,7 +23,7 @@ static EjsObj *castNumber(Ejs *ejs, EjsNumber *vp, EjsType *type)
         return (EjsObj*) ((vp->value) ? S(true) : S(false));
 
     case S_String:
-        //  MOB OPT. mprDtoa does a sclone.
+        //  OPT. mprDtoa does a sclone.
         return (EjsObj*) ejsCreateStringFromAsc(ejs, mprDtoa(vp->value, 0, 0, 0));
 
     case S_Number:

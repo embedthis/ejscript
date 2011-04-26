@@ -100,7 +100,7 @@ EjsObj *sock_set_async(Ejs *ejs, EjsSocket *sp, int argc, EjsObj **argv)
 
 /*
     function close(): Void
-    MOB - should support graceful option
+    TODO - should support graceful option
  */
 static EjsObj *sock_close(Ejs *ejs, EjsSocket *sp, int argc, EjsObj **argv)
 {
@@ -233,18 +233,14 @@ static EjsObj *sock_read(Ejs *ejs, EjsSocket *sp, int argc, EjsObj **argv)
     }
     nbytes = mprReadSocket(sp->sock, &ba->value[offset], count);
     if (nbytes < 0) {
-#if UNUSED
-        ejsThrowIOError(ejs, "Can't read from socket");
-        return 0;
-#endif
-        //  MOB -- should not be using EOF event
+        //  TODO -- should not be using EOF event
         ejsSendEvent(ejs, sp->emitter, "eof", NULL, (EjsObj*) sp);
         //  TODO - do we need to set the mask here?
         return (EjsObj*) S(null);
     }
     if (nbytes == 0) {
         //  TODO - but in async, this does not mean eof. See mpr for how to tell eof
-        //  MOB -- should not be using EOF event
+        //  TODO -- should not be using EOF event
         ejsSendEvent(ejs, sp->emitter, "eof", NULL, (EjsObj*) sp);
         //  TODO - do we need to set the mask here?
         return (EjsObj*) S(null);
@@ -351,7 +347,6 @@ static void enableSocketEvents(EjsSocket *sp, int (*proc)(EjsSocket *sp, MprEven
 
 
 #if UNUSED
-//  MOB -- when is this called?
 static int socketConnectEvent(EjsSocket *sp, MprEvent *event)
 {
     Ejs     *ejs;

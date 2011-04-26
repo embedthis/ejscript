@@ -54,7 +54,7 @@ static EjsObj *sqliteConstructor(Ejs *ejs, EjsSqlite *db, int argc, EjsObj **arg
     options = argv[0];
     
     /*
-        MOB - this will create a database if it doesn't exist. Should have more control over creating databases.
+        TODO - this will create a database if it doesn't exist. Should have more control over creating databases.
      */
     if (ejsIs(ejs, options, Path) || ejsIs(ejs, options, String)) {
         path = ejsToMulti(ejs, ejsToString(ejs, options));
@@ -74,7 +74,7 @@ static EjsObj *sqliteConstructor(Ejs *ejs, EjsSqlite *db, int argc, EjsObj **arg
                 ejsThrowIOError(ejs, "Can't open database %s", path);
                 return 0;
             }
-            //  MOB TODO - should be configurable somewhere
+            //  TODO - should be configurable somewhere
             sqlite3_soft_heap_limit(20 * 1024 * 1024);
             sqlite3_busy_timeout(sdb, EJS_SQLITE_TIMEOUT);
 
@@ -163,10 +163,6 @@ static EjsObj *sqliteSql(Ejs *ejs, EjsSqlite *db, int argc, EjsObj **argv)
                     ejsThrowIOError(ejs, "Can't update query result set");
                     return 0;
                 }
-#if MOB
-                /* This will ensure we have a row->names memory context. This gets freed if the object is pooled. */
-                ejsGrowObjectNames(row, rowNum + 1);
-#endif
                 for (i = 0; i < ncol; i++) {
                     tableName = (char*) sqlite3_column_table_name(stmt, i);
                     if (defaultTableName == 0) {
@@ -180,7 +176,7 @@ static EjsObj *sqliteSql(Ejs *ejs, EjsSqlite *db, int argc, EjsObj **argv)
                     } else {
                         /*
                             Append the table name for columns from foreign tables. Convert to camel case (tableColumn)
-                            MOB - refactor crude singularization.
+                            TODO - refactor crude singularization.
                          */
                         len = strlen(tableName) + 1;
                         tableName = sjoin("_", tableName, colName, NULL);

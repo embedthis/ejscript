@@ -536,9 +536,9 @@ module ejs.web {
 
         /**
             Show the route table
-            @param extra Set to true to display extra route information
+            @param extra Set to "full" to display extra route information
          */
-        public function show(extra: Boolean = false): Void {
+        public function show(extra: String = null): Void {
             let lastController
             for each (name in Object.getOwnPropertyNames(routes).sort()) {
                 print("\n" + (name || "Global")+ "/")
@@ -549,7 +549,7 @@ module ejs.web {
             print()
         }
 
-        private function showRoute(r: Route, extra: Boolean = false): Void {
+        private function showRoute(r: Route, extra: String = null): Void {
             let method = r.method || "*"
             let target
             let tokens = r.tokens
@@ -577,7 +577,7 @@ module ejs.web {
                 template = "*"
             }
             let line = "  %-24s %s %-24s %-7s %s".format(r.name, r.threaded ? "T": " ", target, method, template)
-            if (extra) {
+            if (extra == "full") {
                 if (params && Object.getOwnPropertyCount(params) > 0) {
                     if (!(params.action && Object.getOwnPropertyCount(params) == 1)) {
                         line += "\n                                                      %s".format(serialize(params))
@@ -970,7 +970,6 @@ module ejs.web {
                     name = template.name
                 }
             }
-            //  MOB -- was index
             name ||= "default"
             if (outer && !options.name) {
                 name = options.name + "/" + name

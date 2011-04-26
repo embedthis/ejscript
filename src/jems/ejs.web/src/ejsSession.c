@@ -72,7 +72,6 @@ static EjsObj *getSessionPropertyByName(Ejs *ejs, EjsSession *sp, EjsName qname)
 static int setSessionProperty(Ejs *ejs, EjsSession *sp, int slotNum, EjsObj *value)
 {
     mprLock(sessionLock);
-    //  MOB BUG - this won't work multithreaded
     value = (EjsObj*) ejsToJSON(ejs, value, NULL);
     slotNum = ejs->potHelpers.setProperty(ejs, (EjsObj*) sp, slotNum, value);
     noteSessionActivity(ejs, sp);
@@ -256,10 +255,8 @@ static void startSessionTimer(Ejs *ejs, EjsHttpServer *server)
     mprLock(sessionLock);
     if (server->sessionTimer == 0) {
         // printf("START TIMER %s\n", server->name);
-        //  MOB - should session timers run on the ejs->dispatcher or nonblock. Are sessions owned by one interp
-        //  or by the service
         server->sessionTimer = mprCreateTimerEvent(ejs->dispatcher, "sessionTimer", EJS_TIMER_PERIOD, 
-            (MprEventProc) sessionTimer, server, MPR_EVENT_STATIC_DATA /* | MPR_EVENT_QUICK */);
+            sessionTimer, server, MPR_EVENT_STATIC_DATA); 
     }
     mprUnlock(sessionLock);
 }
@@ -297,7 +294,7 @@ static void sessionTimer(EjsHttpServer *server, MprEvent *event)
     mprAssert(ejs->name);
 
     /*  
-        This could be on the primary event thread. Can't block long.  MOB -- is this lock really needed
+        This could be on the primary event thread. Can't block long.
      */
     if (sessions && server->server && mprTryLock(sessionLock)) {
         removed = 0;
@@ -379,10 +376,8 @@ void ejsConfigureSessionType(Ejs *ejs)
     mprAssert(type->mutex == 0);
     if (sessionLock == 0) {
         sessionLock = type->mutex = mprCreateLock();
-        //  MOB -- redo
         mprHold(sessionLock);
     }
-
     helpers = &type->helpers;
     helpers->getProperty = (EjsGetPropertyHelper) getSessionProperty;
     helpers->getPropertyByName = (EjsGetPropertyByNameHelper) getSessionPropertyByName;

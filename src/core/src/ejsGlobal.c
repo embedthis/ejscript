@@ -41,7 +41,6 @@ static EjsObj *g_assert(Ejs *ejs, EjsObj *vp, int argc, EjsObj **argv)
 }
 
 
-//  MOB -- would this be better as blend(obj, obj, obj, ...)
 /*  
     function blend(dest: Object, src: Object, overwrite: Boolean = true): void
  */
@@ -72,41 +71,6 @@ static EjsObj *g_cloneBase(Ejs *ejs, EjsObj *ignored, int argc, EjsObj **argv)
     type->baseType = ejsClone(ejs, type->baseType, 0);
     return 0;
 }
-
-
-/** DEPRECATED
-    MOB - remove
-    Print the arguments to the standard error with a new line.
-    static function error(...args): void
-static EjsObj *error(Ejs *ejs, EjsObj *unused, int argc, EjsObj **argv)
-{
-    EjsString   *s;
-    EjsObj      *args, *vp;
-    int         rc, i, count;
-
-    mprAssert(argc == 1 && ejsIs(ejs, argv[0], Array));
-
-    args = argv[0];
-    count = ejsGetPropertyCount(ejs, args);
-
-    for (i = 0; i < count; i++) {
-        if ((vp = ejsGetProperty(ejs, args, i)) != 0) {
-            if (!ejsIs(ejs, vp, String)) {
-                vp = (EjsObj*) ejsToJSON(ejs, vp, NULL);
-            }
-            if (ejs->exception) {
-                return 0;
-            }
-            if (vp) {
-                s = (EjsString*) vp;
-                rc = write(2, s->value, s->length);
-            }
-        }
-    }
-    rc = write(2, "\n", 1);
-    return 0;
-}
- */
 
 
 /*  
@@ -143,43 +107,6 @@ static EjsObj *g_hashcode(Ejs *ejs, EjsObj *vp, int argc, EjsObj **argv)
     return (EjsObj*) ejsCreateNumber(ejs, (MprNumber) PTOL(argv[0]));
 }
 #endif
-
-
-/** 
-    MOB REMOVE
-    DEPREACATED
-    Read a line of input
-    static function input(): String
-static EjsObj *input(Ejs *ejs, EjsObj *unused, int argc, EjsObj **argv)
-{
-    MprFileSystem   *fs;
-    MprBuf          *buf;
-    int             c;
-
-    fs = mprGetMpr()->fileSystem;
-
-    buf = mprCreateBuf(ejs, -1, -1);
-    while ((c = getchar()) != EOF) {
-#if BLD_WIN_LIKE
-        if (c == fs->newline[0]) {
-            continue;
-        } else if (c == fs->newline[1]) {
-            break;
-        }
-#else
-        if (c == fs->newline[0]) {
-            break;
-        }
-#endif
-        mprPutCharToBuf(buf, c);
-    }
-    if (c == EOF && mprGetBufLength(buf) == 0) {
-        return (EjsObj*) S(null);
-    }
-    mprAddNullToBuf(buf);
-    return (EjsObj*) ejsCreateStringFromAsc(ejs, mprGetBufStart(buf));
-}
- */
 
 
 /*  
@@ -298,7 +225,6 @@ static EjsObj *g_parseInt(Ejs *ejs, EjsObj *unused, int argc, EjsObj **argv)
     cchar       *str;
     int         radix, err;
 
-    //  MOB -- don't convert to cstring
     str = ejsToMulti(ejs, argv[0]);
     radix = (argc >= 2) ? ejsGetInt(ejs, argv[1]) : 0;
     while (isspace((int) *str)) {

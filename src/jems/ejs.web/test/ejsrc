@@ -18,8 +18,8 @@
         timeout: 1800,
     },
     web: {
-        inactivity: 3600,               //  MOB
-        timeout: 3600,                  //  MOB
+        inactivity: 3600,
+        timeout: 3600,
         expires: {
             "html": 86400,
             "ejs": 86400,

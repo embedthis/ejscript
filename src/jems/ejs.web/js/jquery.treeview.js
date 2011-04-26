@@ -12,7 +12,6 @@
  *
  * Revision: $Id: jquery.treeview.js 4684 2008-02-07 19:08:06Z joern.zaefferer $
 
- MOB TODO
     - Inline async
     - Don't rely on cookie
     - Simplify
@@ -34,7 +33,6 @@
 			return this.filter('.' + c1).removeClass(c1).addClass(c2).end();
 		},
 		hoverClass: function(className) {
-            //MOB - only used once - inline
 			className = className || "hover";
 			return this.hover(function() {
 				$(this).addClass(className);
@@ -98,12 +96,10 @@
 			
 			// apply event to hitarea
 			this.find("div." + CLASSES.hitarea).click( toggler );
-			//MOB this.find("div." + CLASSES.hitarea).live('click', toggler );
 		},
         setcookie: function(branches, settings) {
 			function serialize() {
 				function binary(arg) {
-                    /* MOB - not used */
 					return arg ? 1 : 0;
 				}
 				var data = [];
@@ -129,14 +125,8 @@
                     multiple calls to setcookie, keep multiple callbacks. Don't overload settings.toogle 
                     which is a user callback, with internal use 
                  */
-				//MOB var toggleCallback = settings.toggle;
 				settings.toggle = function() {
 					serialize();
-                /* MOB - temp
-					if (toggleCallback) {
-						toggleCallback.apply(this, arguments);
-					}
-                 */
 				};
 				deserialize();
 				break;

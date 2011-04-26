@@ -125,7 +125,6 @@ static EjsNumber *http_available(Ejs *ejs, EjsHttp *hp, int argc, EjsObj **argv)
 static EjsObj *http_close(Ejs *ejs, EjsHttp *hp, int argc, EjsObj **argv)
 {
     if (hp->conn) {
-        //  MOB - should this do more to 
         httpFinalize(hp->conn);
         sendHttpCloseEvent(ejs, hp);
         httpDestroyConn(hp->conn);
@@ -497,7 +496,6 @@ static EjsNumber *http_read(Ejs *ejs, EjsHttp *hp, int argc, EjsObj **argv)
     offset = (argc >= 2) ? ejsGetInt(ejs, argv[1]) : 0;
     count = (argc >= 3) ? ejsGetInt(ejs, argv[2]): -1;
 
-    //  MOB - why does this use waitForResponseHeaders and http_readString uses waitForState
     if (!waitForResponseHeaders(hp, -1)) {
         return 0;
     }
@@ -556,7 +554,7 @@ static EjsString *http_readString(Ejs *ejs, EjsHttp *hp, int argc, EjsObj **argv
         mprAssert(ejs->exception);
         return 0;
     }
-    //  MOB - UNICODE ENCODING
+    //  UNICODE ENCODING
     result = ejsCreateStringFromMulti(ejs, mprGetBufStart(hp->responseContent), count);
     mprAdjustBufStart(hp->responseContent, count);
     mprResetBufIfEmpty(hp->responseContent);
@@ -1062,9 +1060,7 @@ static void httpIOEvent(HttpConn *conn, MprEvent *event)
     hp = conn->context;
     ejs = TYPE(hp)->ejs;
 
-    //  MOB -- what if this is deleted?
     httpEvent(conn, event);
-
     if (event->mask & MPR_WRITABLE) {
         if (hp->data) {
             writeHttpData(ejs, hp);
@@ -1302,7 +1298,7 @@ static bool waitForState(EjsHttp *hp, int state, int timeout, int throw)
         if (hp->requestContentCount > 0) {
             mprAdjustBufStart(hp->requestContent, -hp->requestContentCount);
         }
-        /* Force a new connection - MOB why. Slow for ordinary redirects */
+        /* Force a new connection */
         if (conn->rx == 0 || conn->rx->status != HTTP_CODE_UNAUTHORIZED) {
             httpSetKeepAliveCount(conn, -1);
         }

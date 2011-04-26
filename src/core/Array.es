@@ -246,7 +246,6 @@ module ejs {
             @param mapper Transforming function
          */
         function map(mapper: Function): Array {
-            //  BUG MOB TODO return clone().transform(mapper)
             var result: Array = clone()
             result.transform(mapper)
             return result

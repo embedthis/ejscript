@@ -220,7 +220,6 @@ static int loadSections(Ejs *ejs, MprFile *file, cchar *path, EjsModuleHdr *hdr,
             if ((mp = loadModuleSection(ejs, file, hdr, &created, flags)) == 0) {
                 return MPR_ERR_CANT_LOAD;
             }
-            // MOB - should remove the old module?
             ejsAddModule(ejs, mp);
             mp->path = sclone(path);
             mp->file = file;
@@ -258,7 +257,7 @@ static int loadSections(Ejs *ejs, MprFile *file, cchar *path, EjsModuleHdr *hdr,
             }
             mp->loadState = 0;
         }
-        //  MOB rationalize down to just ejs flag
+        //  TODO rationalize down to just ejs flag
         if (!ejs->empty && !(flags & EJS_LOADER_NO_INIT) && !(ejs->flags & EJS_FLAG_NO_INIT)) {
             if (!mp->initialized) {
                 if ((status = initializeModule(ejs, mp)) < 0) {
@@ -338,7 +337,6 @@ static EjsModule *loadModuleSection(Ejs *ejs, MprFile *file, EjsModuleHdr *hdr, 
         return 0;
     }
     mp->constants = constants;
-    //  MOB - this is storing just the name base not the full path. This is correct!
     name = ejsCreateStringFromConst(ejs, mp, nameToken);
     if ((mp = ejsCreateModule(ejs, name, version, constants)) == NULL) {
         return 0;
@@ -507,26 +505,7 @@ static int loadClassSection(Ejs *ejs, EjsModule *mp)
     if (fixup || (baseType && baseType->needFixup)) {
         attributes |= EJS_TYPE_FIXUP;
     }
-
-#if UNUSED
-    type = 0;
-    if (!ejs->empty) {
-        //  MOB -- PROP_NATIVE never seems to be set in ecModuleWrite for classes.
-        if (attributes & EJS_PROP_NATIVE) {
-            if ((type = ejsGetPropertyByName(ejs, ejs->service->foundation, qname)) == 0) {
-                mprLog(1, "WARNING: can't find native type \"%@\"", qname.name);
-            }
-        } else {
-#if BLD_DEBUG
-            if (ejsLookupProperty(ejs, ejs->service->foundation, qname) >= 0) {
-                mprError("WARNING: native type \"%@\" is provided but not declared as native", qname.name);
-            }
-#endif
-        }
-    }
-#else
     type = ejsGetPropertyByName(ejs, ejs->service->foundation, qname);
-#endif
 
     if (attributes & EJS_TYPE_FIXUP) {
         baseType = 0;
@@ -724,7 +703,6 @@ static int loadFunctionSection(Ejs *ejs, EjsModule *mp)
         fun->activation = ejsCreateActivation(ejs, fun, numProp);
     }
     if (block == ejs->global && slotNum < 0) {
-        //  MOB -- don't understand this. Why ejs->global and override?
         if (attributes & EJS_FUN_OVERRIDE) {
             slotNum = ejsLookupProperty(ejs, block, qname);
             if (slotNum < 0) {
@@ -870,7 +848,6 @@ static int loadPropertySection(Ejs *ejs, EjsModule *mp, int sectionType)
         being run -- but we still need the value of the namespace if a script wants to declare a variable qualified
         by the namespace that is defined in the module.
      */
-    //  MOB -- remove the need for this flag
     if (attributes & EJS_PROP_HAS_VALUE) {
         EjsString  *str;
         if ((str = ejsModuleReadConst(ejs, mp)) == 0) {
@@ -1425,7 +1402,6 @@ static int alreadyLoaded(Ejs *ejs, EjsString *name, int minVersion, int maxVersi
 {
     EjsModule   *mp;
 
-    //  MOB - this is looking up full path as the name of the module. This is not right.
     if ((mp = ejsLookupModule(ejs, name, minVersion, maxVersion)) == 0) {
         return 0;
     }

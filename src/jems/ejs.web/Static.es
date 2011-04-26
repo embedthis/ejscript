@@ -93,7 +93,6 @@ module ejs.web {
                 headers["Expires"] = when.toUTCString()
             }
         }
-//  MOB OPT cache request.method
         if (request.method == "GET" || request.method == "POST") {
             headers["Content-Length"] = filename.size
             if (request.config.web.nosend) {
@@ -104,7 +103,6 @@ module ejs.web {
 
         } else if (request.method == "DELETE") {
             status = Http.NoContent
-            //  MOB -- remove try when not needed
             try {
                 if (!filename.remove()) {
                     status = Http.NotFound
@@ -133,7 +131,6 @@ module ejs.web {
 
         /* Inline function to handle put requests */
         function put(request: Request) {
-            //  MOB -- how to handle ranges?
             let path = request.dir.join(request.pathInfo.trimStart('/'))
             request.status = path.exists ? Http.NoContent : Http.Created
 
@@ -168,7 +165,6 @@ module ejs.web {
         @stability prototype
      */
     function StaticBuilder(request: Request): Function {
-        //  MOB -- BUG should not need "ejs.web"
         return "ejs.web"::StaticApp
     }
 }

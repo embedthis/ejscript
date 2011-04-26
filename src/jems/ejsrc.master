@@ -10,7 +10,6 @@
         class: "Database",
         adapter: "sqlite3",
         timeout: 5000,
-        //  MOB -- need better way of doing modes
         debug: {
             name: "db/switch.sdb", 
             username: "", 
@@ -37,10 +36,6 @@
         level: 2,
         match: null,
         showClient: true,                       // ejs.web 
-    },
-    http: {
-        //  MOB -- is this used?
-        timeout: 60,
     },
     init: {
         load: [],

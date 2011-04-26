@@ -396,7 +396,7 @@ static EjsObj *hs_verifyClients(Ejs *ejs, EjsHttpServer *sp, int argc, EjsObj **
 
 /************************************ Support *************************************/
 
-//  MOB - rethink this. This should really go into the HttpHost object
+//  TODO rethink this. This should really go into the HttpHost object
 
 static void setHttpPipeline(Ejs *ejs, EjsHttpServer *sp) 
 {
@@ -624,7 +624,7 @@ static EjsHttpServer *getServer(HttpConn *conn)
 
 /*
     Note: this may be called multiple times for async, long-running requests.
-    MOB -rename then
+    TODO -rename then
  */
 static void startEjs(HttpQueue *q)
 {
