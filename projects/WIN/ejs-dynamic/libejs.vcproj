@@ -3,7 +3,7 @@
     ProjectType="Visual C++"
     Version="8.00"
     Name="libejs"
-    ProjectGUID="f96faab9-3aa2-453d-8cd5-711fefd5d86c"
+    ProjectGUID="2e8f41c7-a0e1-4a04-852b-662cb346b4de"
     RootNamespace=""
     Keyword="Win32Proj"
     TargetFrameworkVersion="0"
@@ -77,7 +77,7 @@
             <Tool
                 Name="VCLinkerTool"
                 AdditionalLibraryDirectories="$(OutDir)"
-                AdditionalDependencies="libmpr.lib libhttp.lib libsqlite3.lib libejs.def ws2_32.lib"
+                AdditionalDependencies="libmpr.lib libhttp.lib libsqlite3.lib ws2_32.lib"
                 ModuleDefinitionFile="libejs.def"
                 Targetmachine="1"
                 SubSystem="1"
@@ -147,7 +147,7 @@
             <Tool
                 Name="VCLinkerTool"
                 AdditionalLibraryDirectories="$(OutDir)"
-                AdditionalDependencies="libmpr.lib libhttp.lib libsqlite3.lib libejs.def ws2_32.lib"
+                AdditionalDependencies="libmpr.lib libhttp.lib libsqlite3.lib ws2_32.lib"
                 ModuleDefinitionFile="libejs.def"
                 Targetmachine="1"
                 SubSystem="1"
@@ -162,7 +162,7 @@
         <Filter
             Name="Header Files"
             Filter="h;hpp;hxx;hm;inl;inc;xsd"
-            UniqueIdentifier="{35320e6b-061d-47ff-9a0d-3e7254969c80}"
+            UniqueIdentifier="{6bc3c4e1-d058-4810-a8d8-cb31f7ad7084}"
             >
             <File
                 RelativePath="..\..\..\out\include\buildConfig.h"
@@ -212,7 +212,7 @@
         <Filter
             Name="Source Files"
             Filter="cpp;c;cc;cxx;def;odl;idl;hpj;bat;asm;asmx"
-            UniqueIdentifier="{19b00d01-0c7e-4cf4-a497-893df6fd45b3}"
+            UniqueIdentifier="{ff49fcec-3fc8-44c1-ae4f-b131e133c383}"
             >
             <File
                 RelativePath="..\..\..\src\core\src\ejsApp.c"

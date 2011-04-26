@@ -60,7 +60,7 @@ libsqlite3.vcproj: Makefile $(CONFIG)
 	
 libejs.vcproj: Makefile $(CONFIG)
 	makeVsProj --project libejs.vcproj --library ejs --dflags "$(DFLAGS)" \
-		--def libejs.def --libs "libmpr.lib libhttp.lib libsqlite3.lib libejs.def $(LIBS)" $(MPR_HDR) \
+		--def libejs.def --libs "libmpr.lib libhttp.lib libsqlite3.lib $(LIBS)" $(MPR_HDR) \
 	    $(shell find $(SRC)/include -name 'ejs*.h') \
 	    $(shell find $(SRC)/core $(SRC)/vm $(SRC)/compiler -name '*.c')
 	
@@ -92,7 +92,7 @@ ejs.web.vcproj: Makefile $(CONFIG)
 	    $(shell find $(JEMS)/ejs.web/src/ -name '*.c')
 
 cleanExtra:
-	rm -fr Upgrade* _Upgrade* x64 Win32
+	rm -fr Upgrade* _Upgrade* x64 Win32 *.suo *.sdf *.filters *.vcxproj*
 
 #
 #   Local variables:
