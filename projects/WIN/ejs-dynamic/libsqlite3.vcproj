@@ -3,7 +3,7 @@
     ProjectType="Visual C++"
     Version="8.00"
     Name="libsqlite3"
-    ProjectGUID="6306b513-509f-4858-9073-f2c6e9fedd12"
+    ProjectGUID="9ce3700d-0250-4f73-8785-26ea900043a3"
     RootNamespace=""
     Keyword="Win32Proj"
     TargetFrameworkVersion="0"
@@ -162,7 +162,7 @@
         <Filter
             Name="Header Files"
             Filter="h;hpp;hxx;hm;inl;inc;xsd"
-            UniqueIdentifier="{82802b64-a8f0-4e22-8c16-e1f1e918d28a}"
+            UniqueIdentifier="{5d565dee-af4b-4757-9356-3fe06d91c343}"
             >
             <File
                 RelativePath="..\..\..\out\include\buildConfig.h"
@@ -172,7 +172,7 @@
         <Filter
             Name="Source Files"
             Filter="cpp;c;cc;cxx;def;odl;idl;hpj;bat;asm;asmx"
-            UniqueIdentifier="{f00d9326-1533-42cb-8f99-e45c5416a54b}"
+            UniqueIdentifier="{8436a134-e1de-44ea-9b4e-3a9210f3ec09}"
             >
             <File
                 RelativePath="..\..\..\src\jems\ejs.db.sqlite\src\sqlite3.c"

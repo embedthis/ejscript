@@ -3,7 +3,7 @@
     ProjectType="Visual C++"
     Version="8.00"
     Name="libejs"
-    ProjectGUID="2e8f41c7-a0e1-4a04-852b-662cb346b4de"
+    ProjectGUID="44430a37-25c5-4690-badd-1d4625f24d19"
     RootNamespace=""
     Keyword="Win32Proj"
     TargetFrameworkVersion="0"
@@ -162,7 +162,7 @@
         <Filter
             Name="Header Files"
             Filter="h;hpp;hxx;hm;inl;inc;xsd"
-            UniqueIdentifier="{6bc3c4e1-d058-4810-a8d8-cb31f7ad7084}"
+            UniqueIdentifier="{181d7e41-254a-46b2-a6e7-e5c645d13004}"
             >
             <File
                 RelativePath="..\..\..\out\include\buildConfig.h"
@@ -212,7 +212,7 @@
         <Filter
             Name="Source Files"
             Filter="cpp;c;cc;cxx;def;odl;idl;hpj;bat;asm;asmx"
-            UniqueIdentifier="{ff49fcec-3fc8-44c1-ae4f-b131e133c383}"
+            UniqueIdentifier="{65561a58-5555-44d4-9e4d-5e4331674003}"
             >
             <File
                 RelativePath="..\..\..\src\core\src\ejsApp.c"

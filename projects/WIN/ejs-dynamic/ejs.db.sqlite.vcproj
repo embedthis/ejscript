@@ -3,7 +3,7 @@
     ProjectType="Visual C++"
     Version="8.00"
     Name="ejs.db.sqlite"
-    ProjectGUID="905c0c33-4fef-4229-8e9f-eea46b59f4b4"
+    ProjectGUID="97c82390-0771-4d4e-84a0-abb794a9a618"
     RootNamespace=""
     Keyword="Win32Proj"
     TargetFrameworkVersion="0"
@@ -162,7 +162,7 @@
         <Filter
             Name="Header Files"
             Filter="h;hpp;hxx;hm;inl;inc;xsd"
-            UniqueIdentifier="{4ef64ada-5090-44d4-8f12-c38097fdb3a2}"
+            UniqueIdentifier="{27e3c122-e907-4b81-a55b-ba357d102ea9}"
             >
             <File
                 RelativePath="..\..\..\out\include\buildConfig.h"
@@ -172,7 +172,7 @@
         <Filter
             Name="Source Files"
             Filter="cpp;c;cc;cxx;def;odl;idl;hpj;bat;asm;asmx"
-            UniqueIdentifier="{3b7daabb-95d9-4ee3-8486-019a0921ebc1}"
+            UniqueIdentifier="{f99d7f30-29b7-4151-aae6-a129241274d2}"
             >
             <File
                 RelativePath="..\..\..\src\jems\ejs.db.sqlite\src\ejsSqlite.c"
