@@ -142,7 +142,7 @@ static int setFileProperty(Ejs *ejs, EjsFile *fp, int slotNum, EjsObj *value)
 
 /************************************ Methods *********************************/
 
-//  MOB - rename
+//  TODO - rename
 static int ejsGetNumOption(Ejs *ejs, EjsObj *options, cchar *field, int defaultValue, bool optional)
 {
     EjsObj      *vp;
@@ -693,7 +693,7 @@ EjsObj *writeFile(Ejs *ejs, EjsFile *fp, int argc, EjsObj **argv)
         switch (TYPE(vp)->sid) {
         case S_ByteArray:
             ap = (EjsByteArray*) vp;
-            //  MOB ENCODING
+            //  TODO UNICODE ENCODING
             buf = (cchar*) &ap->value[ap->readPosition];
             len = ap->writePosition - ap->readPosition;
             break;
@@ -865,7 +865,6 @@ static void manageFile(void *ptr, int flags)
         mprMark(fp->file);
         mprMark(fp->path);
         mprMark(fp->modeString);
-        //  MOB - is type needed
         mprMark(TYPE(fp));
 
     } else if (flags & MPR_MANAGE_FREE) {

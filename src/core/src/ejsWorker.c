@@ -11,7 +11,6 @@
 
 typedef struct Message {
     EjsWorker   *worker;
-    //  MOB - rename
     cchar       *callback;
     char        *data;
     EjsObj      *message;
@@ -123,9 +122,8 @@ static void addWorker(Ejs *ejs, EjsWorker *worker)
     mprAssert(worker->state == EJS_WORKER_BEGIN);
     mprAssert(!worker->inside);
 
-    //  MOB - locking not needed
+    //  OPT - locking not needed
     lock(ejs);
-    //  MOB
     mprAssert(ejs->workers->length < 10);
     mprAddItem(ejs->workers, worker);
     unlock(ejs);
@@ -532,7 +530,6 @@ static EjsObj *workerPreeval(Ejs *ejs, EjsWorker *worker, int argc, EjsObj **arg
         handleError(ejs, worker, inside->exception, 1);
         return 0;
     }
-    //  MOB - first arg was "ejs"
     result = (EjsObj*) ejsToJSON(inside, inside->result, NULL);
     if (result == 0) {
         return S(null);
@@ -850,10 +847,7 @@ void ejsConfigureWorkerType(Ejs *ejs)
     ejsBindMethod(ejs, prototype, ES_Worker_terminate, (EjsProc) workerTerminate);
     ejsBindMethod(ejs, prototype, ES_Worker_waitForMessage, (EjsProc) workerWaitForMessage);
 
-    //  MOB - is this used?
     ejsSetSpecial(ejs, S_Event, ejsGetTypeByName(ejs, N("ejs", "Event")));
-
-    //  MOB - is this used?
     ejsSetSpecial(ejs, S_ErrorEvent, ejsGetTypeByName(ejs, N("ejs", "ErrorEvent")));
 }
 

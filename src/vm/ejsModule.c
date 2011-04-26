@@ -153,17 +153,13 @@ EjsModule *ejsLookupModule(Ejs *ejs, EjsString *name, int minVersion, int maxVer
 int ejsAddModule(Ejs *ejs, EjsModule *mp)
 {
     mprAssert(ejs->modules);
-    //MOB
-    mprAssert(ejs->modules->length < 40);
     mp->ejs = ejs;
-    //MOB printf("Add modules (before) len %d mustYield %d newCount %d\n", ejs->modules->length, MPR->heap.mustYield, MPR->heap.newCount);
     return mprAddItem(ejs->modules, mp);
 }
 
 
 void ejsRemoveModule(Ejs *ejs, EjsModule *mp)
 {
-    //  MOB
     mprLog(6, "Remove module: %@", mp->name); 
     mp->ejs = 0;
     if (ejs->modules) {
@@ -202,10 +198,6 @@ static void manageConstants(EjsConstants *cp, int flags)
                 mprMark(cp->index[i]);
             }
         }
-    } else if (flags & MPR_MANAGE_FREE) {
-        //MOB
-        i = 7;
-        i = 10;
     }
 }
 
@@ -357,8 +349,6 @@ int ejsAddDebugLine(Ejs *ejs, EjsDebug **debugp, int offset, MprChar *source)
     line->source = source;
     line->offset = offset;
     debug->numLines = numLines;
-    //  MOB
-    mprAssert(debug->numLines < 20000);
     return 0;
 }
 
@@ -748,7 +738,7 @@ MprChar *ejsModuleReadMultiAsWide(Ejs *ejs, EjsModule *mp)
 {
     mprAssert(mp);
 
-    //  MOB OPT - need direct multi to wide without the double copy
+    //  OPT - need direct multi to wide without the double copy
     return amtow(ejsModuleReadMulti(ejs, mp), NULL);
 }
 

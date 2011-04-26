@@ -23,7 +23,7 @@ module ejs {
          */
         native function Number(value: Object? = null)
 
-//  MOB - convert these back to constants
+//  TODO - convert these back to constants
         /**
             Return the maximim value this number type can assume. Alias for MaxValue.
             An object of the appropriate number with its value set to the maximum value allowed.

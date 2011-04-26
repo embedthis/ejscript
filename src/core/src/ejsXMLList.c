@@ -306,7 +306,6 @@ static EjsObj *invokeOperator(Ejs *ejs, EjsXML *lhs, int opCode,  EjsXML *rhs)
     default:
         /*
             Cast to strings and re-invoke
-            MOB - change to ejsToString
          */
         l = ejsCast(ejs, lhs, String);
         r = ejsCast(ejs, rhs, String);

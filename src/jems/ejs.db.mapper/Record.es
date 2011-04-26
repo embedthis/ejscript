@@ -22,8 +22,6 @@ module ejs.db.mapper {
      */
     public class Record {
         
-        //  MOB -- these should be private. Also need a default namesapce
-
         static var  _assocName: String          //  Name for use in associations. Lower case class name
         static var  _belongsTo: Array = null    //  List of belonging associations
         static var  _className: String          //  Model class name
@@ -384,7 +382,6 @@ module ejs.db.mapper {
             return null
         }
 
-//  MOB -- count not implemented
         /**
             Find records matching a condition. Select a set of records using a given SQL where clause
             @param where SQL WHERE clause to use when selecting rows.
@@ -733,7 +730,6 @@ module ejs.db.mapper {
 
         /*
             Make a getter function to lazily (on-demand) read associated records (belongsTo)
-            MOB - OPT should reuse these and not create a new reader for each cell
          */
         private static function makeLazyReader(rec: Record, field: String, model, key: String, 
                 options: Object = {}): Function {
@@ -949,7 +945,6 @@ module ejs.db.mapper {
             }
         }
 
-        //  MOB -- count not documented or implemented
         /**
             Run an SQL statement and return selected records.
             @param cmd SQL command to issue. Note: "SELECT" is automatically prepended and ";" is appended for you.

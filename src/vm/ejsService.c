@@ -225,34 +225,6 @@ static void manageEjs(Ejs *ejs, int flags)
 }
 
 
-#if UNUSED
-static void markGlobal(Ejs *ejs)
-{
-    EjsPot      *obj;
-    EjsBlock    *block;
-    int         i, numProp;
-
-    obj = (EjsPot*) ejs->global;
-    numProp = ejsGetPropertyCount(ejs, obj);
-
-    //  MOB - fix making core eternal
-    for (i = ejs->firstGlobal; i < numProp; i++) {
-        mprMark(obj->properties->slots[i].value.ref);
-    }
-    block = (EjsBlock*) ejs->global;
-    if (block->prevException) {
-        mprMark(block->prevException);
-    }
-    if (block->namespaces.length > 0) {
-        for (i = 0; i < block->namespaces.length; i++) {
-            //  MOB - OPT
-            mprMark(mprGetItem(&block->namespaces, i));
-        }
-    }
-}
-#endif
-
-
 static void markValues(Ejs *ejs)
 {
     int     i;
@@ -290,7 +262,7 @@ static void cloneTypes(Ejs *ejs)
     if ((master = ejs->service->master) != 0 && master != ejs) {
         ejs->values[S_Iterator] = master->values[S_Iterator];
         ejs->values[S_StopIteration] = master->values[S_StopIteration];
-#if MOB
+#if UNUSED
         ejs->values[S_String] = master->values[S_String];
         ejs->values[S_Type] = master->values[S_Type];
         ejs->values[S_Object] = master->values[S_Object];
@@ -690,7 +662,6 @@ int ejsRemoveObserver(Ejs *ejs, EjsObj *emitter, EjsObj *name, EjsObj *listener)
 }
 
 
-//  MOB - most users are setting thisObj to null. What should this be?
 int ejsSendEventv(Ejs *ejs, EjsObj *emitter, cchar *name, EjsAny *thisObj, int argc, void *args)
 {
     EjsObj  **av, **argv;

@@ -215,7 +215,6 @@ module ejs.db {
             @TODO Refactor logging when Log class implemented
          */
         function query(cmd: String, tag: String = "SQL", trace: Boolean = false): Array {
-            //  MOB - refactor tracing. Sqlite does tracing too
             if (options.trace || trace) {
                 print(tag + ": " + cmd)
             }

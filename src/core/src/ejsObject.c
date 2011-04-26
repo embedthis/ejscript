@@ -253,7 +253,6 @@ static EjsObj *obj_defineProperty(Ejs *ejs, EjsObj *unused, int argc, EjsObj **a
         }
     }
     mprAssert((attributes & EJS_TRAIT_MASK) == attributes);
-    //  MOB -- go via helper
     if (ejsDefineProperty(ejs, obj, -1, qname, type, attributes, value) < 0) {
         ejsThrowTypeError(ejs, "Can't define property %@", qname.name);
     }
@@ -311,7 +310,6 @@ static EjsObj *nextObjectKey(Ejs *ejs, EjsIterator *ip, int argc, EjsObj **argv)
         }
         trait = ejsGetPropertyTraits(ejs, obj, ip->index);
         if (trait && trait->attributes & 
-            /* MOB OPT - make initializers and deleted items always hidden */
                 (EJS_TRAIT_HIDDEN | EJS_TRAIT_DELETED | EJS_FUN_INITIALIZER | EJS_FUN_MODULE_INITIALIZER)) {
             continue;
         }
@@ -398,7 +396,7 @@ static EjsObj *obj_getOwnPropertyDescriptor(Ejs *ejs, EjsObj *unused, int argc, 
     int             slotNum;
 
     obj = argv[0];
-    //  MOB - ugly
+    //  TODO - ugly
     qname.space = S(empty);
     qname.name = (EjsString*) argv[1];
     if ((slotNum = ejsLookupVarWithNamespaces(ejs, obj, qname, &lookup)) < 0) {
@@ -639,7 +637,6 @@ static EjsObj *obj_keys(Ejs *ejs, EjsObj *unused, int argc, EjsObj **argv)
 
 /*
     static function preventExtensions(obj: Object): Object
-    MOB -- should this be void return?
  */
 static EjsObj *obj_preventExtensions(Ejs *ejs, EjsObj *unused, int argc, EjsObj **argv)
 {
@@ -741,7 +738,6 @@ static EjsType *obj_getBaseType(Ejs *ejs, EjsObj *unused, int argc, EjsObj **arg
     if (ejsIsType(ejs, vp)) {
         return (((EjsType*) vp)->baseType);
     }
-    //  MOB - should this throw?
     return S(null);
 }
 
@@ -778,7 +774,6 @@ static EjsType *obj_getType(Ejs *ejs, EjsObj *unused, int argc, EjsObj **argv)
 }
 
 
-//  MOB - move out of here
 /*
     Return the name of the type of an object. If the obj is a type, get the base type.
  */
@@ -837,7 +832,6 @@ static EjsObj *obj_typeOf(Ejs *ejs, EjsObj *obj, int argc, EjsObj **argv)
 }
 
 
-//  MOB -- move out of here
 /*
     Get the ecma "typeof" value for an object. Unfortunately, typeof is pretty lame.
  */

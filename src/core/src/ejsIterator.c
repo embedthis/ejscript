@@ -92,8 +92,6 @@ static void manageIterator(EjsIterator *ip, int flags)
 
 /*
     Create the Iterator and StopIteration types
-
-    MOB - who uses Iterator
  */
 void ejsCreateIteratorType(Ejs *ejs)
 {

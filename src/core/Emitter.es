@@ -4,7 +4,6 @@
  */
 
 module ejs {
-    //  MOB - rename emitter to something else
     /** 
         The emitter class provides a publish/subscribe model of communication via events. It supports the 
         registration of observers
@@ -61,8 +60,9 @@ module ejs {
             }
         }
 
-        /** @hide
-            MOB -- complete or remove
+        /** 
+            @hide
+            TODO - complete or remove
          */
         function delayedFire(name: String, delay: Number, ...args): Void {
             Timer(delay, function() {

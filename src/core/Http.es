@@ -214,13 +214,13 @@ module ejs {
         native function get async(): Boolean
         native function set async(enable: Boolean): Void
 
-        //  MOB - does this do an abortive close?
         /** 
             @duplicate Stream.close 
-            This closes any open network connection and resets the http object to be ready for another connection. 
-            Connections should be explicitly closed rather than relying on the garbage collector to dispose of the 
-            Http object and automatically close the connection. If you have more requests that can be issued on 
-            the same network connection, use reset() rather than close to prepare for a new request on the same connection.
+            This immediately closes any open network connection and resets the http object to be ready for another 
+            connection.  Connections should be explicitly closed rather than relying on the garbage collector to 
+            dispose of the Http object and automatically close the connection. If you have more requests that can 
+            be issued on the same network connection, use reset() rather than close to prepare for a new request 
+            on the same connection.
          */
         native function close(): Void 
 

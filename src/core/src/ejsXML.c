@@ -453,7 +453,6 @@ static int setXmlPropertyByName(Ejs *ejs, EjsXML *xml, EjsName qname, EjsObj *va
             value = (EjsObj*) ejsDeepCopyXML(ejs, xvalue);
         }
     } else {
-        //  MOB - change all these to use ejsToString()
         value = ejsCast(ejs, value, String);
     }
     if (qname.name->value[0] == '@') {

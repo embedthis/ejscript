@@ -42,11 +42,12 @@ module ejs.web {
     }
 
     /*
-UNUSED && KEEP
         Return the request form parameters. This creates the params object on demand.
         @returns Object hash of user parameters
         @spec ejs
         @stability prototype
+
+        UNUSED && KEEP
 
     function parseParams(form: Object): Object {
         params = {}

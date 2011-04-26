@@ -164,7 +164,7 @@ module ejs {
      */
     native function md5(str: String): String
 
-//  MOB -- rewrite
+//  DOC -- rewrite
     /** 
         Blend one object into another.  The merge is done at the primitive property level and it does a deep clone of 
         the source. If overwrite is true, the property is replaced. If overwrite is false, the property will be added 
@@ -179,7 +179,7 @@ module ejs {
      */
     native function blend(dest: Object, src: Object, overwrite: Boolean = true): Object
 
-     // TODO - should cache be a Path
+    // TODO - should cache be a Path
     /** 
         Evaluate a script. Not present in ejsvm.
         @param script Script string to evaluate
@@ -209,7 +209,7 @@ module ejs {
     function isFinite(arg: Number): Boolean
         arg.isFinite
 
-    //  TODO MOB - should file and cache be paths?
+    //  TODO - should file and cache be paths?
     /** 
         Load a script or module
         @param file path name to load. File will be interpreted relative to EJSPATH if it is not found as an absolute or

@@ -38,7 +38,7 @@ int ejsLookupScope(Ejs *ejs, EjsName name, EjsLookup *lookup)
     memset(lookup, 0, sizeof(*lookup));
     thisObj = state->fp->function.boundThis;
 
-    //  MOB -- remove nthBlock. Not needed if not binding
+    //  OPT -- remove nthBlock. Not needed if not binding
     for (lookup->nthBlock = 0, bp = state->bp; bp; bp = bp->scope, lookup->nthBlock++) {
         /* Seach simple object */
         lookup->originalObj = bp;
@@ -80,7 +80,7 @@ int ejsLookupScope(Ejs *ejs, EjsName name, EjsLookup *lookup)
                 thisObj = 0;
             }
         } else if (ejsIsType(ejs, bp)) {
-            //  MOB -- remove nthBase. Not needed if not binding.
+            //  OPT -- remove nthBase. Not needed if not binding.
             /* Search base class chain */
             for (nthBase = 1, type = (EjsType*) bp; type; type = type->baseType, nthBase++) {
                 if (type->constructor.block.pot.shortScope) {
@@ -129,7 +129,6 @@ int ejsLookupVar(Ejs *ejs, EjsAny *obj, EjsName name, EjsLookup *lookup)
     type = ejsIsType(ejs, obj) ? ((EjsType*) obj)->baseType : TYPE(obj);
     for (nthBase = 1; type; type = type->baseType, nthBase++) {
         if (type->constructor.block.pot.shortScope) {
-            //  MOB -- continue or break?
             continue;
         }
         if ((slotNum = ejsLookupVarWithNamespaces(ejs, (EjsObj*) type, name, lookup)) >= 0) {
@@ -162,7 +161,6 @@ int ejsLookupVarWithNamespaces(Ejs *ejs, EjsAny *obj, EjsName name, EjsLookup *l
     b = (EjsBlock*) ejs->global;
     globalSpaces = &b->namespaces;
 
-    //  MOB -- better to set name.space to NULL?
     if (name.space->value[0]) {
         /* Lookup with an explicit namespace */
         slotNum = ejsLookupProperty(ejs, obj, name);
@@ -191,10 +189,10 @@ int ejsLookupVarWithNamespaces(Ejs *ejs, EjsAny *obj, EjsName name, EjsLookup *l
                             goto done;
                         }
                     }
-                    //  MOB -- need a fast way to know if the space is a standard reserved namespace or not */
+                    //  OPT -- need a fast way to know if the space is a standard reserved namespace or not */
                     /* Verify namespace is open */
                     for (b = ejs->state->bp; b->scope; b = b->scope) {
-                        //  MOB - OPT. Doing some namespaces multiple times. Fix in compiler.
+                        //  OPT. Doing some namespaces multiple times. Fix in compiler.
                         for (next = -1; (nsp = mprGetPrevItem(&b->namespaces, &next)) != 0; ) {
                             if (nsp->value == target.space) {
                                 goto done;
@@ -220,7 +218,7 @@ int ejsLookupVarWithNamespaces(Ejs *ejs, EjsAny *obj, EjsName name, EjsLookup *l
     }
 done:
     if (slotNum >= 0) {
-        //  MOB MUST GET RID OF THIS. Means that every store does a get
+        //  OPT MUST GET RID OF THIS. Means that every store does a get
         lookup->ref = ejsGetProperty(ejs, obj, slotNum);
         if (ejs->exception) {
             slotNum = -1;
@@ -246,7 +244,7 @@ EjsAny *ejsGetVarByName(Ejs *ejs, EjsAny *obj, EjsName name, EjsLookup *lookup)
     mprAssert(ejs);
 
     //  OPT - really nice to remove this
-    //  MOB -- perhaps delegate the logic below down into a getPropertyByName?
+    //  OPT -- perhaps delegate the logic below down into a getPropertyByName?
     if (obj && TYPE(obj)->helpers.getPropertyByName) {
         if ((result = (TYPE(obj)->helpers.getPropertyByName)(ejs, obj, name)) != 0) {
             return result;

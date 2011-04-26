@@ -8,7 +8,7 @@ module ejs.web {
      */
     namespace action = "action"
 
-    //  MOB - need more doc here on controllers
+    //  DOC - need more doc here on controllers
     /** 
         Web framework controller class. The Controller class is part of the Ejscript Model View Controller (MVC) web
         framework. Controller class instances can accept web requests and direct them to action methods for servicing
@@ -40,7 +40,7 @@ module ejs.web {
         /** Configuration settings. This is a reference to $ejs.web::Request.config */
         var config: Object 
 
-//  MOB -- rename to "name"
+//  TODO -- rename to "name"
         /** Pascal case controller name */
         var controllerName: String
 

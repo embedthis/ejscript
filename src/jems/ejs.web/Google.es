@@ -16,8 +16,8 @@ module ejs.web {
             // this.controller = controller
         }
 
-        //  MOB -- state should be stored in View.viewState. This should be stateless
-//  MOB -- all methods must become static
+//  TODO -- state should be stored in View.viewState. This should be stateless
+//  TODO -- all methods must become static
         private var nextId: Number = 0
 
         private function scriptHeader(kind: String, id: String): Void {

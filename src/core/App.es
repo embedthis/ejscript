@@ -225,7 +225,7 @@ module ejs {
             }
         }
 
-        //  MOB TODO - move to locale
+        //  TODO - move to locale
         /** 
             Get the current language locale for this application
             @hide
@@ -261,7 +261,6 @@ module ejs {
          */
         native static function putenv(name: String, value: String): Void
 
-        //  MOB -- could return Boolean - true if one event was serviced
         /** 
             Run the application event loop. 
             A script may call run() to service events. The ejs shell will exit when it has executed the last statement
@@ -400,9 +399,6 @@ module ejs {
             if (log.match) {
                 App.log.match = log.match
             }
-            /* MOB - This messes up Appweb 
-                Logger.nativeLevel = log.level
-             */
         }
 
         /*  Append search paths */

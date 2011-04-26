@@ -161,8 +161,6 @@ static int definePotProperty(Ejs *ejs, EjsPot *obj, int slotNum, EjsName qname, 
     if (ejsSetPropertyTraits(ejs, (EjsObj*) obj, slotNum, propType, (int) attributes) < 0) {
         return EJS_ERR;
     }
-
-    //  MOB -- reconsider this code
     if (value && ejsIsFunction(ejs, value)) {
         fun = ((EjsFunction*) value);
         if (!ejsIsNativeFunction(ejs, fun) && ejsIsType(ejs, obj)) {
@@ -198,9 +196,9 @@ static int deletePotProperty(Ejs *ejs, EjsPot *obj, int slotNum)
         return EJS_ERR;
     }
 #if UNUSED
-    //  MOB -- this should be in the VM and not here
+    //  TODO -- this should be in the VM and not here
     if (!DYNAMIC(obj)) {
-        //  MOB -- probably can remove this and rely on fixed below as per ecma spec
+        //  TODO -- probably can remove this and rely on fixed below as per ecma spec
         ejsThrowTypeError(ejs, "Can't delete properties in a non-dynamic object");
         return EJS_ERR;
     } else if (ejsPropertyHasTrait(ejs, obj, slotNum, EJS_TRAIT_FIXED)) {
@@ -375,8 +373,8 @@ int ejsGetSlot(Ejs *ejs, EjsPot *obj, int slotNum)
 {
     mprAssert(ejsIsPot(ejs, obj));
 
-    //  MOB - should this be here or only in the VM. probably only in the VM.
-    //  MOB -- or move this routine to the VM
+    //  TODO - should this be here or only in the VM. probably only in the VM.
+    //  TODO -- or move this routine to the VM
     if (slotNum < 0 || slotNum >= obj->numProp) {
         if (!DYNAMIC(obj)) {
             if (ejsIs(ejs, obj, Null)) {
@@ -520,7 +518,7 @@ int ejsGrowPot(Ejs *ejs, EjsPot *obj, int numProp)
 }
 
 
-//  MOB -- inconsistent with growObject which takes numProp. This takes incr.
+//  TODO-- inconsistent with growObject which takes numProp. This takes incr.
 /*
     Grow the slots, traits, and names by the specified "incr". The new slots|traits|names are created at the "offset"
     Does not update numProp or numTraits.
@@ -575,11 +573,6 @@ static int growSlots(Ejs *ejs, EjsPot *obj, int slotCount)
     props = obj->properties;
     oldSize = props ? props->size : 0;
     
-    if (obj == (EjsPot*) ejs->global) {
-        if (slotCount > 500) { //MOB
-            mprGetAppDir();
-        }
-    }
     if (slotCount > oldSize) {
         if (slotCount > EJS_LOTSA_PROP) {
             factor = max(oldSize / 4, EJS_ROUND_PROP);
@@ -664,7 +657,7 @@ void ejsZeroSlots(Ejs *ejs, EjsSlot *slots, int count)
         for (sp = &slots[count - 1]; sp >= slots; sp--) {
             sp->value.ref = S(null);
             sp->hashChain = -1;
-            //  MOB -- why set names to this. Better to set to null?
+            //  TODO -- why set names to this. Better to set to null?
             sp->qname.name = S(empty);
             sp->qname.space = S(empty);
             sp->trait.type = 0;
@@ -674,7 +667,7 @@ void ejsZeroSlots(Ejs *ejs, EjsSlot *slots, int count)
 }
 
 
-//  MOB - bad API. Should take two EjsPots
+//  TODO - bad API. Should take two EjsPots
 void ejsCopySlots(Ejs *ejs, EjsPot *obj, EjsSlot *dest, EjsSlot *src, int count)
 {
     while (count-- > 0) {
@@ -880,7 +873,7 @@ static int hashProperty(Ejs *ejs, EjsPot *obj, int slotNum, EjsName qname)
     If numInstanceProp is < 0, then grow the number of properties by an increment. Otherwise, set the number of properties 
     to numInstanceProp. We currently don't allow reductions.
  */
-//  MOB -- rename
+//  TODO -- rename
 int ejsMakeHash(Ejs *ejs, EjsPot *obj)
 {
     EjsSlot         *sp;
@@ -935,7 +928,7 @@ int ejsMakeHash(Ejs *ejs, EjsPot *obj)
 }
 
 
-//  MOB -- rename
+//  TODO -- rename
 void ejsClearPotHash(EjsPot *obj)
 {
     EjsSlot         *sp;
@@ -968,7 +961,7 @@ static void removeHashEntry(Ejs *ejs, EjsPot *obj, EjsName qname)
         for (slotNum = 0; slotNum < obj->numProp; slotNum++) {
             sp = &obj->properties->slots[slotNum];
             if (CMP_QNAME(&sp->qname, &qname)) {
-                //  MOB -- would null be better
+                //  TODO -- would null be better
                 sp->qname.name = S(empty);
                 sp->qname.space = S(empty);
                 sp->hashChain = -1;
@@ -991,7 +984,7 @@ static void removeHashEntry(Ejs *ejs, EjsPot *obj, EjsName qname)
             } else {
                 buckets[index] = obj->properties->slots[slotNum].hashChain;
             }
-            //  MOB -- null would be better
+            //  TODO -- null would be better
             sp->qname.name = S(empty);
             sp->qname.space = S(empty);
             sp->hashChain = -1;
@@ -1105,18 +1098,13 @@ void ejsManagePot(void *ptr, int flags)
             }
             /*
                 Cache numProp incase the object grows while traversing
-                //  MOB - assumes that objects dont shrink
              */
             numProp = obj->numProp;
             for (sp = obj->properties->slots, i = 0; i < numProp; i++, sp++) {
-                //  MOB -- should not need this test. But seems to be a race with property creation
                 if (sp->qname.name) {
                     mprMark(sp->qname.name);
                     mprMark(sp->qname.space);
                     mprMark(sp->value.ref);
-#if MOB && CONSIDER
-                    mprMark(sp->trait.type);
-#endif
                 }
             }
         }

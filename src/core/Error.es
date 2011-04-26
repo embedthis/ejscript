@@ -125,7 +125,7 @@ module ejs {
         native function AssertError(message: String? = null) 
     }
 
-//MOB Who is using this? Delete
+//UNUSED Who is using this? Delete
     /**
         Code (instruction) error exception class. Thrown when an illegal or insecure operation code is detected 
         in the instruction stream.
@@ -182,7 +182,7 @@ module ejs {
         native function MemoryError(message: String? = null) 
     }
 
-//MOB Who is using this? Delete
+//UNUSED Who is using this? Delete
     /**
         OutOfBounds error exception class. Thrown to indicate that an attempt has been made to set or access an 
         object's property outside of the permitted set of values for that property. For example, an array has been 
@@ -282,7 +282,7 @@ module ejs {
         native function TypeError(message: String? = null) 
     }
 
-//MOB Delete
+//UNUSED Delete
     /**
         Uri error exception class. Throw a Uri fails to parse.
         @stability prototype

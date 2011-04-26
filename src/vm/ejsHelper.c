@@ -22,15 +22,15 @@ EjsAny *ejsAlloc(Ejs *ejs, EjsType *type, ssize extra)
     mprAssert(type);
     mprAssert(extra >= 0);
 
-    //  MOB - OPT could have dedicated ejsAlloc as a macro when assign is zero
+    //  OPT could have dedicated ejsAlloc as a macro when assign is zero
     if ((vp = mprAllocBlock(type->instanceSize + extra, MPR_ALLOC_MANAGER | MPR_ALLOC_ZERO)) == NULL) {
         return NULL;
     }
-    //  MOB - OPT can do direct assign
+    //  OPT can do direct assign
     SET_TYPE(vp, type);
     ejsSetMemRef(vp);
     mprAssert(type->manager);
-    //  MOB - OPT inline here
+    //  OPT inline here
     mprSetManager(vp, type->manager);
     return vp;
 }
@@ -503,7 +503,6 @@ static EjsObj *castObj(Ejs *ejs, EjsObj *obj, EjsType *type)
 
 static EjsObj *cloneObj(Ejs *ejs, EjsObj *obj, bool deep)
 {
-    //  MOB - is this sufficient
     return obj;
 }
 
@@ -780,7 +779,6 @@ EjsName ejsWideName(Ejs *ejs, MprChar *space, MprChar *name)
         [(+|-)][DIGITS]
         [+|-][DIGITS][.][DIGITS][(e|E)[+|-]DIGITS]
  */
-//  MOB -- should 2nd arg be EjsString or MprChar?
 EjsAny *ejsParse(Ejs *ejs, MprChar *str, int preferredType)
 {
     MprChar     *buf;
@@ -791,7 +789,7 @@ EjsAny *ejsParse(Ejs *ejs, MprChar *str, int preferredType)
     buf = str;
     sid = preferredType;
 
-    //  MOB unicode
+    //  TODO unicode
     while (isspace((int) *buf)) {
         buf++;
     }    
@@ -898,7 +896,7 @@ static MprNumber parseNumber(Ejs *ejs, MprChar *str)
     if (!(*str == '0' && tolower((int) str[1]) == 'x')) {
         for (cp = str; *cp; cp++) {
             if (*cp == '.' || tolower((int) *cp) == 'e') {
-                //MOB OPT
+                // OPT
                 for (sp = str, dp = nbuf; *str && dp < &nbuf[sizeof(nbuf) - 1]; ) {
                     *dp++ = *sp++;
                 }

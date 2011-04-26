@@ -88,14 +88,14 @@ void ejsInheritBaseClassNamespaces(Ejs *ejs, EjsType *type, EjsType *baseType)
 
     if (baseNamespaces) {
         for (next = 0; ((nsp = (EjsNamespace*) mprGetNextItem(baseNamespaces, &next)) != 0); ) {
-            //  MOB -- must be a better way to do this?
+            //  OPT -- must be a better way to do this?
             if (ejsContainsString(ejs, nsp->value, S(commaProt))) {
                 for (i = 0; ((existing = (EjsNamespace*) mprGetNextItem(&block->namespaces, &i)) != 0); ) {
                     if (existing->value == nsp->value) {
                         break;
                     }
                 }
-                //  MOB -- debug to see if duplicates found 
+                //  OPT -- debug to see if duplicates found 
                 mprAssert(existing == NULL);
                 if (existing == NULL) {
                     mprInsertItemAtPos(&block->namespaces, next - 1, nsp);

@@ -35,7 +35,7 @@ static EjsNumber *lf_emit(Ejs *ejs, EjsObj *unused, int argc, EjsObj **argv)
         switch (TYPE(vp)->sid) {
         case S_ByteArray:
             ap = (EjsByteArray*) vp;
-            //  MOB ENCODING
+            //  TODO ENCODING
             arg = (char*) &ap->value[ap->readPosition];
             len = ap->writePosition - ap->readPosition;
             break;

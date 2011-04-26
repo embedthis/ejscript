@@ -26,7 +26,6 @@ static void manageType(EjsType *type, int flags);
 
     function copy(type: Object): Object
  */
-//  MOB -- is this ever used?
 static EjsType *cloneTypeVar(Ejs *ejs, EjsType *src, bool deep)
 {
     EjsType     *dest;
@@ -178,7 +177,6 @@ static void createBootPrototype(Ejs *ejs, int sid, cchar *name)
         return;
     }
     type->prototype->isPrototype = 1;
-    //  MOB - won't work for unicode-16
     mprSetName(type, name);
     mprSetName(type->prototype, name);
     ejsSetPropertyByName(ejs, ejs->service->foundation, type->qname, type);
@@ -196,7 +194,7 @@ int ejsBootstrapTypes(Ejs *ejs)
     ejsCreateObjHelpers(ejs);
     ejsCreatePotHelpers(ejs);
 
-    //  MOB
+    //  TODO - should only need to do once
     if (1 || ST(String) == 0) {
         createBootType(ejs, S_String, sizeof(EjsString), 0, ejsManageString);
         createBootType(ejs, S_Type, sizeof(EjsType), 1, manageType);
@@ -363,7 +361,7 @@ EjsType *ejsCreateArchetype(Ejs *ejs, EjsFunction *fun, EjsPot *prototype)
     }
     if (fun) {
         code = fun->body.code;
-        /*  MOB -- using ST(Object) as the return type because the Yahoo module pattern returns {} in the constructor */
+        /*  using ST(Object) as the return type because the Yahoo module pattern returns {} in the constructor */
         ejsInitFunction(ejs, (EjsFunction*) type, type->qname.name, code->byteCode, code->codeLen, 
             fun->numArgs, fun->numDefault, code->numHandlers, ST(Object), EJS_TRAIT_HIDDEN | EJS_TRAIT_FIXED, 
             code->module, NULL, fun->strict);
@@ -513,12 +511,12 @@ int ejsFixupType(Ejs *ejs, EjsType *type, EjsType *baseType, int makeRoom)
     type->baseType = baseType;
     
     if (baseType) {
-        //  MOB -- should be able to remove the || baseType->hasBaseConstructors
+        //  TODO-- should be able to remove the || baseType->hasBaseConstructors
         if (baseType->hasConstructor || baseType->hasBaseConstructors) {
             type->hasBaseConstructors = 1;
         }
-        //  MOB -- when compiling baseType is always != ST(Object)
-        //  MOB _- should not explicity reference objecttype
+        //  TODO -- when compiling baseType is always != ST(Object)
+        //  TODO - should not explicity reference objecttype
         if (baseType != ST(Object) && baseType->dynamicInstance) {
             type->dynamicInstance = 1;
         }
@@ -542,7 +540,7 @@ int ejsFixupType(Ejs *ejs, EjsType *type, EjsType *baseType, int makeRoom)
 }
 
 
-#if UNUSED && MOB
+#if UNUSED && KEEP
 /*
     Import properties from the Type class. These are not inherited in the usual sense and numInherited is not updated.
     The properties are directly copied.
@@ -556,7 +554,6 @@ int ejsBlendTypeProperties(Ejs *ejs, EjsType *type, EjsType *typeType)
 
     count = ejsGetPropertyCount(ejs, (EjsObj*) typeType) - typeType->numInherited;
     mprAssert(count == 0);
-    //  MOB -- currently not being used
 
     if (count > 0) { 
         /*  Append properties to the end of the type so as to not mess up the first slot which may be an initializer */

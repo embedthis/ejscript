@@ -19,7 +19,7 @@ module ejs.web {
         return (new CommonLogClass(app, logger)).app
     }
 
-    //  MOB - not a great name having Class in the name
+    //  TODO - not a great name having Class in the name
     /**
         Common Log web server logging.
         This logs each HTTP request to a file in the Common Log format defined by the Apache web server.

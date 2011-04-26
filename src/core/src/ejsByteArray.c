@@ -837,7 +837,7 @@ static EjsObj *ba_readString(Ejs *ejs, EjsByteArray *ap, int argc, EjsObj **argv
         return (EjsObj*) S(null);
     }
     count = min(count, availableBytes(ap));
-    //  MOB - UNICODE ENCODING
+    //  TODO - UNICODE ENCODING
     result = (EjsObj*) ejsCreateStringFromMulti(ejs, (cchar*) &ap->value[ap->readPosition], count);
     adjustReadPosition(ap, count);
     return result;
@@ -889,7 +889,7 @@ static EjsObj *ba_room(Ejs *ejs, EjsByteArray *ap, int argc, EjsObj **argv)
  */
 static EjsObj *ba_toString(Ejs *ejs, EjsByteArray *ap, int argc, EjsObj **argv)
 {
-    //  MOB - UNICODE ENCODING
+    //  TODO - UNICODE ENCODING
     return (EjsObj*) ejsCreateStringFromMulti(ejs, (cchar*) &ap->value[ap->readPosition], availableBytes(ap));
 }
 
@@ -1296,7 +1296,7 @@ static int putNumber(EjsByteArray *ap, MprNumber value)
 
 static int putString(EjsByteArray *ap, EjsString *str, ssize len)
 {
-    //  MOB -- this must do encoding
+    //  TODO -- this must do encoding
     mprMemcpy(&ap->value[ap->writePosition], room(ap), str->value, len);
     ap->writePosition += len;
     return (int) len;

@@ -218,7 +218,7 @@ EjsRegExp *ejsCreateRegExp(Ejs *ejs, EjsString *pattern)
             rp->options = parseFlags(rp, &flags[1]);
             *flags = 0;
         }
-        //  MOB - UNICODE is pattern meant to be 
+        //  TODO - UNICODE is pattern meant to be 
         rp->compiled = pcre_compile2(rp->pattern, rp->options, &errCode, &errMsg, &column, NULL);
         if (rp->compiled == NULL) {
             ejsThrowArgError(ejs, "Can't compile regular expression. Error %s at column %d", errMsg, column);

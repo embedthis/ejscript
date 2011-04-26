@@ -109,7 +109,7 @@ static MPR_INLINE void checkGetter(Ejs *ejs, EjsAny *value, EjsAny *thisObj, Ejs
 /*
     Must clear attentionPc when changing the PC. Otherwise the next instruction will jump to a bad (stale) location.
  */
-//  MOB -- should not need to clear attentionPc
+//  TODO -- should not need to clear attentionPc
 #define SET_PC(fp, value) \
     if (1) { \
         (fp)->pc = (uchar*) (value); \
@@ -120,7 +120,7 @@ static MPR_INLINE void checkGetter(Ejs *ejs, EjsAny *value, EjsAny *thisObj, Ejs
 #define GET_DOUBLE()    ejsDecodeDouble(ejs, &(FRAME)->pc)
 #define GET_INT()       ((int) GET_NUM())
 
-//  MOB OPT - returns 64 bits, but most cases only need 32 bits
+//  TODO OPT - returns 64 bits, but most cases only need 32 bits
 #define GET_NUM()       ejsDecodeNum(ejs, &(FRAME)->pc)
 #define GET_NAME()      getNameArg(ejs, FRAME)
 #define GET_STRING()    getStringArg(ejs, FRAME)
@@ -206,7 +206,6 @@ static void VM(Ejs *ejs, EjsFunction *fun, EjsAny *otherThis, int argc, int stac
     mprAssert(!mprHasMemError(ejs));
     mprAssert(!ejs->exception);
     mprAssert(ejs->state->fp == 0 || ejs->state->fp->attentionPc == 0);
-    mprAssert(ejs->result == 0 || (MPR_GET_GEN(MPR_GET_MEM(ejs->result)) != MPR->heap.dead));
 
     MPR_VERIFY_MEM();
 
@@ -264,7 +263,6 @@ static void VM(Ejs *ejs, EjsFunction *fun, EjsAny *otherThis, int argc, int stac
          */
         CASE (EJS_OP_RETURN_VALUE):
             ejs->result = pop(ejs);
-mprAssert(ejs->result == 0 || (MPR_GET_GEN(MPR_GET_MEM(ejs->result)) != MPR->heap.dead));
             if (FRAME->caller == 0) {
                 goto done;
             }
@@ -273,7 +271,7 @@ mprAssert(ejs->result == 0 || (MPR_GET_GEN(MPR_GET_MEM(ejs->result)) != MPR->hea
                 f1 = &FRAME->function;
                 if (FRAME->function.resultType) {
                     type = FRAME->function.resultType;
-                    //  MOB remove this voidType
+                    //  TODO remove this voidType
                     if (type != ST(Void) && !ejsIsA(ejs, ejs->result, type)) {
                         if (ejs->result == S(null) || ejs->result == S(undefined)) {
                             if (FRAME->function.throwNulls) {
@@ -292,7 +290,6 @@ mprAssert(ejs->result == 0 || (MPR_GET_GEN(MPR_GET_MEM(ejs->result)) != MPR->hea
                             }
                         }
                     }
-mprAssert(ejs->result == 0 || (MPR_GET_GEN(MPR_GET_MEM(ejs->result)) != MPR->heap.dead));
                 }
             }
             if (FRAME->getter) {
@@ -349,7 +346,6 @@ mprAssert(ejs->result == 0 || (MPR_GET_GEN(MPR_GET_MEM(ejs->result)) != MPR->hea
          */
         CASE (EJS_OP_SAVE_RESULT):
             ejs->result = pop(ejs);
-mprAssert(ejs->result == 0 || (MPR_GET_GEN(MPR_GET_MEM(ejs->result)) != MPR->heap.dead));
             BREAK;
 
         /* Load Constants ----------------------------------------------- */
@@ -663,7 +659,6 @@ mprAssert(ejs->result == 0 || (MPR_GET_GEN(MPR_GET_MEM(ejs->result)) != MPR->hea
             if (type == 0) {
                 ejsThrowReferenceError(ejs, "Bad base class reference");
             } else {
-                //  MOB -- is this the right "this". Should not be an instance?
                 GET_SLOT(THIS, type, slotNum);
             }
             BREAK;
@@ -2180,7 +2175,6 @@ mprAssert(ejs->result == 0 || (MPR_GET_GEN(MPR_GET_MEM(ejs->result)) != MPR->hea
             }
             push(obj);
             ejs->result = obj;
-mprAssert(ejs->result == 0 || (MPR_GET_GEN(MPR_GET_MEM(ejs->result)) != MPR->heap.dead));
             BREAK;
                 
             /*
@@ -2600,8 +2594,6 @@ EjsObj *ejsRunInitializer(Ejs *ejs, EjsModule *mp)
     EjsModule   *dp;
     int         next;
 
-    mprAssert(ejs->result == 0 || (MPR_GET_GEN(MPR_GET_MEM(ejs->result)) != MPR->heap.dead));
-    
     if (mp->initialized || !mp->hasInitializer) {
         mp->initialized = 1;
         return S(null);
@@ -2630,8 +2622,6 @@ int ejsRun(Ejs *ejs)
     EjsModule   *mp;
     int         next;
 
-    mprAssert(ejs->result == 0 || (MPR_GET_GEN(MPR_GET_MEM(ejs->result)) != MPR->heap.dead));
-
     /*
         This is used by ejs to interpret scripts. MOB OPT. Should not run through old modules every time
      */
@@ -2644,7 +2634,6 @@ int ejsRun(Ejs *ejs)
         if (ejsRunInitializer(ejs, mp) == 0) {
             return EJS_ERR;
         }
-        mprAssert(ejs->result == 0 || (MPR_GET_GEN(MPR_GET_MEM(ejs->result)) != MPR->heap.dead));
     }
     return 0;
 }
@@ -2658,7 +2647,6 @@ EjsAny *ejsRunFunction(Ejs *ejs, EjsFunction *fun, EjsAny *thisObj, int argc, vo
     mprAssert(fun);
     mprAssert(ejsIsFunction(ejs, fun));
     mprAssert(ejs->exception == 0);
-    mprAssert(ejs->result == 0 || (MPR_GET_GEN(MPR_GET_MEM(ejs->result)) != MPR->heap.dead));
     MPR_VERIFY_MEM();
 
     if (ejs->exception) {
@@ -2687,11 +2675,10 @@ for (i = 0; i < argc; i++) {
     pushOutside(ejs, ((EjsAny**) argv)[i]);
 }
         ejs->result = (fun->body.proc)(ejs, thisObj, argc, argv);
-ejs->state->stack -= argc;
+        ejs->state->stack -= argc;
         if (ejs->result == 0) {
             ejs->result = S(null);
         }
-mprAssert(ejs->result == 0 || (MPR_GET_GEN(MPR_GET_MEM(ejs->result)) != MPR->heap.dead));
 
     } else {
         for (i = 0; i < argc; i++) {
@@ -3470,7 +3457,6 @@ static void callFunction(Ejs *ejs, EjsFunction *fun, EjsAny *thisObj, int argc, 
     mprAssert(fun);
     mprAssert(ejs->exception == 0);
     mprAssert(ejs->state->fp == 0 || ejs->state->fp->attentionPc == 0);  
-    mprAssert(ejs->result == 0 || (MPR_GET_GEN(MPR_GET_MEM(ejs->result)) != MPR->heap.dead));
 
     state = ejs->state;
 

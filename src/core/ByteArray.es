@@ -325,7 +325,6 @@ module ejs {
 
         /** 
             Write a byte to the array. Data is written to the current write $position pointer which is then incremented.
-//  MOB -- no such details exist
             See $write for details about sync, async modes and event handling.
             @param data Data to write
             @throws IOError if an I/O error occurs or if the stream cannot absorb all the data.

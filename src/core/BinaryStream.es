@@ -156,15 +156,6 @@ module ejs {
             inbuf.readByte()
 
         /** 
-            MOB -- unwanted
-            Read data from the stream into a byte array.
-            @returns a new byte array with the available data. Returns an empty byte array on eof.
-            @throws IOError if an I/O error occurs or premature eof
-        function readByteArray(count: Number = -1): ByteArray
-            inbuf.readByteArray(count)
-         */
-
-        /** 
             Read a date from the stream.
             @returns a date
             @throws IOError if an I/O error occurs or premature eof
