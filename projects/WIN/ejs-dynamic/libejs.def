@@ -453,7 +453,6 @@ EXPORTS
   ejsXMLToString
   ejsZeroSlots
   g_deserialize
-  getMimeType
   getNextJsonToken
   manageFileStream
   manageLoadState
