@@ -5172,7 +5172,11 @@ void httpMatchHandler(HttpConn *conn)
             handler = findHandler(conn);
         }
     }
-    if (!handler || conn->error || ((tx->flags & HTTP_TX_NO_BODY) && !(rx->flags & HTTP_HEAD))) {
+#if UNUSED
+    if (!handler || conn->error || ((tx->flags & HTTP_TX_NO_BODY) && !(rx->flags & HTTP_HEAD)))
+#else
+    if (!handler || conn->error) {
+#endif
         handler = http->passHandler;
         if (!conn->error && rx->rewrites >= HTTP_MAX_REWRITE) {
             httpError(conn, HTTP_CODE_INTERNAL_SERVER_ERROR, "Too many request rewrites");
@@ -8044,14 +8048,18 @@ static void parseRequestLine(HttpConn *conn, HttpPacket *packet)
     case 'O':
         if (strcmp(method, "OPTIONS") == 0) {
             methodFlags = HTTP_OPTIONS;
+#if UNUSED
             httpOmitBody(conn);
+#endif
         }
         break;
 
     case 'T':
         if (strcmp(method, "TRACE") == 0) {
             methodFlags = HTTP_TRACE;
+#if UNUSED
             httpOmitBody(conn);
+#endif
         }
         break;
     }

@@ -554,10 +554,8 @@ r.link({product: "candy", quantity: "10", template: "/cart/{product}/{quantity}"
                     if (!target.controller && controller) {
                         target.controller = controller.controllerName
                     }
-                    /* MOB WAS
                     target.route ||= target.action || "default"
-                    */
-                    target.route ||= "default"
+                    // target.route ||= "default"
                 }
                 if (target.route) {
                     target.scriptName ||= scriptName
