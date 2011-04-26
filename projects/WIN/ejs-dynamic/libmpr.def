@@ -19,7 +19,6 @@ EXPORTS
   mprAddKey
   mprAddKeyFmt
   mprAddMime
-  mprAddNotifier
   mprAddNullToBuf
   mprAddRoot
   mprAddSocketHandler
@@ -102,7 +101,6 @@ EXPORTS
   mprDestroyMemService
   mprDisableCmdEvents
   mprDisableFileBuffering
-  mprDisableWaitEvents
   mprDisconnectCmd
   mprDisconnectSocket
   mprDispatchersAreIdle
@@ -115,7 +113,6 @@ EXPORTS
   mprEnableFileBuffering
   mprEnableGC
   mprEnableSocketEvents
-  mprEnableWaitEvents
   mprEncode64
   mprError
   mprEscapeCmd
@@ -287,6 +284,7 @@ EXPORTS
   mprMemdup
   mprMemoryError
   mprNop
+  mprNotifyOn
   mprOpenFile
   mprParseIp
   mprParseTestArgs
@@ -317,6 +315,7 @@ EXPORTS
   mprReadSocket
   mprRealloc
   mprRecallWaitHandler
+  mprRecallWaitHandlerByFd
   mprRefillBuf
   mprRelayEvent
   mprRelease
@@ -327,7 +326,6 @@ EXPORTS
   mprRemoveItem
   mprRemoveItemAtPos
   mprRemoveLastItem
-  mprRemoveNotifier
   mprRemoveRangeOfItems
   mprRemoveRoot
   mprRemoveSignalHandler
@@ -461,11 +459,11 @@ EXPORTS
   mprWaitForMultiCond
   mprWaitForSingleIO
   mprWaitForTestToComplete
+  mprWaitOn
   mprWaitTillIdle
   mprWakeDispatchers
   mprWakeGCService
   mprWakeNotifier
-  mprWakeWaitService
   mprWakeWorkers
   mprWarn
   mprWriteCmd

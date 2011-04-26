@@ -3,7 +3,7 @@
     ProjectType="Visual C++"
     Version="8.00"
     Name="libmprssl"
-    ProjectGUID="d9ce6660-d0eb-4b81-b30f-c0f19d20f170"
+    ProjectGUID="19f0a7e9-e5a1-41da-a22c-aa7848449026"
     RootNamespace=""
     Keyword="Win32Proj"
     TargetFrameworkVersion="0"
@@ -162,7 +162,7 @@
         <Filter
             Name="Header Files"
             Filter="h;hpp;hxx;hm;inl;inc;xsd"
-            UniqueIdentifier="{80793b65-e618-4006-a1dc-c0328b822e8b}"
+            UniqueIdentifier="{de5b69ca-9371-4f0b-97bf-2e58fa224a21}"
             >
             <File
                 RelativePath="..\..\..\out\include\buildConfig.h"
@@ -172,7 +172,7 @@
         <Filter
             Name="Source Files"
             Filter="cpp;c;cc;cxx;def;odl;idl;hpj;bat;asm;asmx"
-            UniqueIdentifier="{a8f62ce6-f98e-4ae2-9d8c-e5f284c31bd6}"
+            UniqueIdentifier="{6ae38384-0f87-4742-9822-e04efc15e3dd}"
             >
             <File
                 RelativePath="..\..\..\src\deps\mpr\mprSsl.c"

@@ -25,6 +25,8 @@ EXPORTS
   httpAddUsersToGroup
   httpAddVars
   httpAddVarsFromQueue
+  httpAdjustPacketEnd
+  httpAdjustPacketStart
   httpAppendHeader
   httpAppendHeaderString
   httpAppendQueue
@@ -53,6 +55,7 @@ EXPORTS
   httpCreateDataPacket
   httpCreateDir
   httpCreateEndPacket
+  httpCreateEntityPacket
   httpCreateFilter
   httpCreateGroup
   httpCreateHandler
@@ -286,10 +289,9 @@ EXPORTS
   httpSetMimeType
   httpSetNamedVirtualServer
   httpSetNamedVirtualServers
-  httpSetPipeHandler
+  httpSetPipelineHandler
   httpSetProtocol
   httpSetProxy
-  httpSetRequestNotifier
   httpSetRequiredAcl
   httpSetResponseBody
   httpSetRetries
@@ -298,7 +300,6 @@ EXPORTS
   httpSetServerAsync
   httpSetServerContext
   httpSetServerLocation
-  httpSetServerName
   httpSetServerNotifier
   httpSetSoftware
   httpSetStageData
@@ -322,6 +323,7 @@ EXPORTS
   httpValidateNativeCredentials
   httpWait
   httpWillNextQueueAcceptPacket
+  httpWillNextQueueAcceptSize
   httpWritable
   httpWrite
   httpWriteBlock

@@ -3,7 +3,7 @@
     ProjectType="Visual C++"
     Version="8.00"
     Name="libmpr"
-    ProjectGUID="a44621fc-b88c-4d90-8fa6-62bba3b247a2"
+    ProjectGUID="dbd883c4-f9aa-4849-8bb1-9979a9a8c94a"
     RootNamespace=""
     Keyword="Win32Proj"
     TargetFrameworkVersion="0"
@@ -162,7 +162,7 @@
         <Filter
             Name="Header Files"
             Filter="h;hpp;hxx;hm;inl;inc;xsd"
-            UniqueIdentifier="{20131216-1118-4ede-b270-91cdc56dfc59}"
+            UniqueIdentifier="{e656d495-b100-4764-871e-a7df12576c59}"
             >
             <File
                 RelativePath="..\..\..\out\include\buildConfig.h"
@@ -172,7 +172,7 @@
         <Filter
             Name="Source Files"
             Filter="cpp;c;cc;cxx;def;odl;idl;hpj;bat;asm;asmx"
-            UniqueIdentifier="{8e000d5f-c568-43c8-b87b-e2c170c509b7}"
+            UniqueIdentifier="{f386fe55-cb9f-44f0-90c8-0802deff9f4c}"
             >
             <File
                 RelativePath="..\..\..\src\deps\mpr\mprLib.c"
