@@ -132,3 +132,5 @@ projects/WIN/ejs-dynamic/_UpgradeReport*
 projects/WIN/ejs-dynamic/ejs-dynamic.opensdf
 projects/WIN/ejs-dynamic/*.vcxproj
 projects/WIN/ejs-dynamic/*.filters
+*.sln.old
+*.suo.old
