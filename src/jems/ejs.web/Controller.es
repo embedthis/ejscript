@@ -152,6 +152,7 @@ module ejs.web {
                         response = "action"::missing()
                     }
                 } else {
+                    App.log.debug(3, "Run action " + actionName)
                     response = (ns)::[actionName]()
                 }
                 if (response && !response.body) {

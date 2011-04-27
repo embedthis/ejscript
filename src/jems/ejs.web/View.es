@@ -172,16 +172,15 @@ module ejs.web {
             getConnector("alert", options).alert(text, options)
         }
 
-//  MOB -- consider deprecating
         /*
             Emit an anchor. This is lable inside an anchor reference. 
             @param text Link text to display
             @param options Optional extra options. See $View for a list of the standard options.
+         */
         function anchor(text: String, options: Object = {}): Void {
             options = getOptions(options)
             getConnector("label", options).label(text, options)
         }
-*/
 
         /**
             Render a form button. This creates a button suitable for use inside an input form. When the button is clicked,
@@ -502,9 +501,10 @@ print("CATCH " + e)
                 options.value property.
             @param choices Choices to select from. This can be an array list where each element is displayed and the value 
                 returned is an element index (origin zero). It can also be an array of key/value array tuples where the 
-                first entry is the value to display and the second is the value to send to the app. Or it can be an 
-                array of objects such as those returned from a table lookup. Lastly, it can be an object where the
-                property key is the value to display and the property value is the value to send to the app.
+                first entry is the value to display and the second is the value to send to the app and store in the 
+                database. Or it can be an array of objects such as those returned from a table lookup. Lastly, it can 
+                be an object where the property key is the value to display and the property value is the value to 
+                send to the app and store in the database.
             @param options Optional extra options. See $View for a list of the standard options.
             @example
                 radio("priority", ["low", "med", "high"])

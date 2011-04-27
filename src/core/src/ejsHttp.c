@@ -736,7 +736,7 @@ static void setupTrace(Ejs *ejs, HttpTrace *trace, int dir, EjsObj *options)
         tp->exclude = mprCreateHash(0, 0);
         for (i = 0; i < extensions->length; i++) {
             if ((ext = ejsGetProperty(ejs, extensions, i)) != 0) {
-                mprAddKey(tp->exclude, ejsToMulti(ejs, ejsToString(ejs, ext)), "");
+                mprAddKey(tp->exclude, ejsToMulti(ejs, ejsToString(ejs, ext)), MPR->emptyString);
             }
         }
     }

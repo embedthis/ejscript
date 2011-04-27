@@ -51,15 +51,8 @@ module ejs.web {
             "domid":                "id",
             "effects":              "data-effects",
             "height":               "height",
-
-//          "key":                  "data-key",
-//          "keyFormat":            "data-key-format",
-//          "refresh":              "data-refresh",
-//          "params":               "data-params",
-
             "method":               "data-method",
             "modal":                "data-modal",
-//  MOB
             "period":               "data-refresh-period",
             "pivot":                "data-pivot",
             "rel":                  "rel",
@@ -70,7 +63,7 @@ module ejs.web {
             "width":                "width",
         }
 
-        //  MOB -- need styles for
+        //  MOB -- need to be able to control treeview or not
         private static const defaultStylesheets = [
             "/layout.css", 
             "/themes/default.css", 
@@ -96,13 +89,10 @@ module ejs.web {
             write('<div' + getAttributes(options) + '>' +  text + '</div>\r\n')
         }
 
-/*
         function anchor(text: String, options: Object): Void {
-            setLink(options.click, options, "data-click")
             let att = getAttributes(options, {"data-click": true})
             write('<a href="' + options.data-click + '"' + att + '>' + text + '</a>\r\n')
         }
-*/
 
         function button(name: String, value: String, options: Object): Void {
             write('    <input name="' + name + '" type="submit" value="' + value + '"' + getAttributes(options) + ' />\r\n')
@@ -181,7 +171,7 @@ module ejs.web {
                         /* list("priority", [["low", "3"], ["med", "5"], ["high", "9"]]) */
                         /* Note: value is first */
                         let [value, key] = choice
-                        selected = (value == defaultValue) ? ' selected="yes"' : ''
+                        selected = (key == defaultValue) ? ' selected="yes"' : ''
                         write('      <option value="' + key + '"' + selected + '>' + value + '</option>\r\n')
 
                     } else if (choice && choice.id) {
@@ -523,12 +513,13 @@ module ejs.web {
         }
 */
 
+//  MOB - move to request
         /*
-            Set the template key fields
-                        options.record = r
-                        options.row = row
-                        options.field = name
-                        options.values = values
+            Set the template key fields:
+                options.record = r
+                options.row = row
+                options.field = name
+                options.values = values
         */
         private function setKeyFields(target: Object, keyFields: Array, options: Object): Void {
             let record = options.record
@@ -559,37 +550,38 @@ module ejs.web {
          */
         }
 
+//  MOB - move to request
         /**
             Map options to a HTML attribute string. See htmlOptions and $View for a discussion on standard options.
             @param options Control options
             @returns a string containing the HTML attributes to emit. Will return an empty string or a string with a 
                 leading space (and not trailing space)
          */
-        private function getAttributes(options: Object, exclude: Object = null): String {
+        function getAttributes(options: Object, exclude: Object = null): String {
             if (options.hasError) {
                 options.style = append(options.style, "-ejs-field-error")
             }
             if (options.click) {
-                setLink(options.click, options, "data-click")
+                setLinkOptions(options.click, options, "data-click")
 
             } else if (options.remote) {
                 if (options.remote == true && options.action) {
                     options.remote = options.action
                 }
-                setLink(options.remote, options, "data-remote")
+                setLinkOptions(options.remote, options, "data-remote")
 
             } else if (options.edit) {
-                setLink(options.edit, options, "data-edit")
+                setLinkOptions(options.edit, options, "data-edit")
 
-/*
+/*  MOB
             } else if (options.action) {
                 // This is just a safety net incase someone uses "action" instead of click 
-                setLink(options.action, options, "data-click")
+                setLinkOptions(options.action, options, "data-click")
 */
             }
             if (options.refresh) {
                 options.domid ||= getNextID()
-                setLink(options.refresh, options, "data-refresh")
+                setLinkOptions(options.refresh, options, "data-refresh")
             }
             return mapAttributes(options, exclude)
         }
@@ -639,7 +631,7 @@ module ejs.web {
             "id_" + lastDomID++
 
         /*
-            Map options to HTML attributes
+            Map options to an HTML attribute string
          */
         private function mapAttributes(options: Object, exclude: Object = null): String {
             let result: String = ""
@@ -658,7 +650,17 @@ module ejs.web {
             return (result == "") ? result : (" " + result.trimEnd())
         }
 
-        private function setLink(target: Object, options: Object, prefix: String) {
+//  MOB
+        /*
+            Set option fields for a target URI:
+                options[prefix] == uri
+                options[prefix-method]
+                options[prefix-params]
+            @param target The URI target
+            @param options The options object hash
+            @param prefix The property prefix to use in options
+         */
+        private function setLinkOptions(target: Object, options: Object, prefix: String) {
             if (typeOf(target) != "Object") {
                 target = target.toString()
                 if (target[0] == '@') {
@@ -672,10 +674,12 @@ module ejs.web {
             }
             blend(target, options, false)
             if (options.key && options.record) {
+//  MOB -- need to understand this
                 setKeyFields(target, options.key, options)
             }
             target.uri ||= request.link(target)
             if (target.params) {
+//  MOB - should be a utility routine
                 /* Process params and convert to an encoded query string */
                 let list = []
                 for (let [k,v] in target.params) {
@@ -686,15 +690,11 @@ module ejs.web {
             options[prefix] = target.uri
             if (target.method) {
                 options[prefix + "-" + "method"] = target.method
+                delete options.method
             }
             if (target.params) {
                 options[prefix + "-" + "params"] = target.params
             }
-/*MOB
-            if (target.key) {
-                options[prefix + "-" + "key"] = target.key
-            }
-*/
         }
 
         private function write(str: String): Void

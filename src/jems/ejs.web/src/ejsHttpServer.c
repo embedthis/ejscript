@@ -714,6 +714,8 @@ static void manageHttpServer(EjsHttpServer *sp, int flags)
         mprMark(sp->sessions);
         mprMark(sp->outgoingStages);
         mprMark(sp->incomingStages);
+        httpManageTrace(&sp->trace[0], flags);
+        httpManageTrace(&sp->trace[1], flags);
         
     } else {
         sp->sessions = 0;

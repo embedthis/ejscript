@@ -15,6 +15,7 @@
      */
     var defaults = {
         "updating": true,
+        //  ESC to toggle updating
         "toggle-updating": 27
     }
     $.fn.extend({
@@ -55,7 +56,7 @@
             }
         }
         elt.trigger('http:before');
-        // changeUrl(url);
+        // MOB changeUrl(url);
         $.ajax({
             url: url,
             data: data,
@@ -101,7 +102,7 @@
         var result = {};
         $.each(elt[0].attributes, function(index, att) {
             if (att.name.indexOf("data-") == 0) {
-                //  why bother removing data-
+                //  MOB -- why bother removing data-
                 result[att.name.substring(5)] = att.value;
             }
         });
@@ -125,9 +126,12 @@
      */
     function request() {
         var el          = $(this);
+
+        //  MOB - when is data-click-method used and when data-method
+        //  MOB -- really should pair these. If method uses data-click-method, then params must be data-click-params
         var method      = el.attr('data-click-method') || el.attr('data-method') || 'GET';
         var url         = el.attr('data-click') || el.attr('action') || el.attr('href');
-        var params      = el.attr('data-click-params');
+        var params      = el.attr('data-click-params') || el.attr('data-params');
 
         if (url === undefined) {
             alert("No URL specified");
@@ -145,9 +149,11 @@
                     append('<input name="-ejs-method-" value="' + method + '" type="hidden" />').
                     append('<input name="' + tokenName + '" value="' + token + '" type="hidden" />');
                 if (params) {
+                    params = params.split("&")
+                    var k;
                     for (k in params) {
-                        param = params[k];
-                        pair = param.split("=")
+                        var param = params[k];
+                        var pair = param.split("=")
                         form.append('<input name="' + pair[0] + '" value="' + pair[1] + '" type="hidden" />');
                     }
                 }
@@ -245,6 +251,7 @@
                         e.removeAttr("checked")
                     }
                 } else if (d.type == "radio") {
+                    //  MOB BROKEN
                     if (data == e.val()) {
                         e.attr("checked", "yes")
                     } else {
@@ -270,7 +277,7 @@
             if (o.updating) {
                 var method = o["refresh-method"] || "GET";
 
-                //  consider firing events - elt.trigger('http:complete', http);
+                //  MOB - consider firing events - elt.trigger('http:complete', http);
                 $.ajax({
                     url: o.refresh,
                     type: method,
@@ -342,6 +349,7 @@
         $(this).attr("checked", true);
     });
 
+//  MOB -- is this used? or is data-click always present?
     /* Click on link foreground with data-method */
     $('a[data-method]:not([data-remote])').live('click', function (e) {
         request.apply(this)
@@ -398,6 +406,12 @@
         return false
     });
 
+    $('[data-click] a').live('click', function (e) {
+        // window.location = $(this).attr('href');
+        request.apply(this);
+        return false;
+    });
+
     /* Click on anything with data-click */
     $('[data-click]').live('click', function (e) {
         request.apply(this);
@@ -433,8 +447,8 @@
     });
 
 /////////////////////////////////////////
-/*  TODO - fix location 
-    //  rename change Address
+/*  MOB -- TODO - fix location 
+    //  MOB -- rename change Address
     function changeUrl(i) {
         console.log("CHANGE " + i);
         $.address.title(i);

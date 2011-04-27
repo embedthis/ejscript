@@ -555,7 +555,6 @@ r.link({product: "candy", quantity: "10", template: "/cart/{product}/{quantity}"
                         target.controller = controller.controllerName
                     }
                     target.route ||= target.action || "default"
-                    // target.route ||= "default"
                 }
                 if (target.route) {
                     target.scriptName ||= scriptName
@@ -836,18 +835,18 @@ r.link({product: "candy", quantity: "10", template: "/cart/{product}/{quantity}"
                 The include property is an array of file extensions to include in tracing.
                 The include property is an array of file extensions to exclude from tracing.
                 The all property specifies that everything for this direction should be traced.
-                The conn property specifies that new connections should be traced.
+                The conn property specifies that new connections should be traced. (Rx only)
                 The first property specifies that the first line of the request should be traced.
                 The headers property specifies that the headers (including first line) of the request should be traced.
                 The body property specifies that the body content of the request should be traced.
                 The size property specifies a maximum body size in bytes that will be traced. Content beyond this limit 
                     will not be traced.
-            @option transmit. Object hash with optional properties: include, exclude, first, headers, body, size.
-            @option receive. Object hash with optional properties: include, exclude, conn, first, headers, body, size.
+            @option tx. Object hash with optional properties: include, exclude, first, headers, body, size.
+            @option rx. Object hash with optional properties: include, exclude, conn, first, headers, body, size.
             @example:
                 trace({
-                    transmit: { exclude: ["gif", "png"], "headers": 3, "body": 4, size: 1000000 }
-                    receive:  { "conn": 1, "headers": 2 , "body": 4, size: 1024 }
+                    tx: { exclude: ["gif", "png"], "first": 2, "headers": 3, "body": 4, size: 1000000 }
+                    rx: { "conn": 1, "first": 2, "headers": 3 , "body": 4, size: 1024 }
                 })
           */
         native function trace(options: Object): Void

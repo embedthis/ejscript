@@ -455,8 +455,10 @@ module ejs.web {
             }
             if (log.level >= 3) {
                 log.debug(3, "Matched route \"" + r.routeSetName + "/" + r.name + "\"")
-                if (log.level >= 5) {
-                    log.debug(5, "  Route params " + serialize(params, {pretty: true}))
+                //  MOB 5
+                if (log.level >= 3) {
+                    //  MOB 5
+                    log.debug(3, "  Route params " + serialize(params, {pretty: true}))
                 }
                 if (log.level >= 6) {
                     log.debug(6, "  Route " + serialize(r, {pretty: true}))
