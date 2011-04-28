@@ -146,6 +146,7 @@ int main(int argc, char *argv[])
 
         } else {
             err++;
+            break;
         }
     }
     if (nextArg >= argc) {
@@ -178,7 +179,7 @@ int main(int argc, char *argv[])
         for (len = 0, i = nextArg; i < argc; i++) {
             strcpy(&app->serviceArgs[len], argv[i]);
             len += slen(argv[i]);
-            if ((i + 1) < nextArg) {
+            if ((i + 1) < argc) {
                 app->serviceArgs[len++] = ' ';
             }
         }
