@@ -101,13 +101,14 @@ setCompilerOptions()
             echo -e "    Checking for compiler -Wno-unused-result support"
             # echo -e "        ${cc}" -Werror -Wall -Wno-unused-result -c $file "\n"
         fi
+        echo -e "#include <stdio.h>\n#include <unistd.h>\nint main() { write(1, \"abc\", 3); return 0; }\n" >$file
         eval \"${cc}\" -Werror -Wall -Wno-unused-result -c $file >/dev/null 2>&1
         if [ $? = 0 ] ; then
             eval $hasWarnUnused=1
         fi
 
         #
-        #   Test if -Wno-unused-result is supported
+        #   Test if -Wshorten-64-to-32 result is supported
         #
         if [ "$verbose" != 0 ] ; then
             echo -e "    Checking for compiler -Wshorten-64-to-32 support"
@@ -126,7 +127,7 @@ setCompilerOptions()
                 echo -e "    Checking for fork()"
                 # echo -e "        ${cc}" -o $out -c $file "\n"
             fi
-            echo -e "#include <stdio.h>\nint main() { fork(); return 0; }\n" >$file
+            echo -e "#include <stdio.h>\n#include <unistd.h>\nint main() { fork(); return 0; }\n" >$file
             eval \"${cc}\" ${flags} -o $out $file >/dev/null 2>&1
             if [ $? = 0 ] ; then
                 eval $hasMmu=1
@@ -142,7 +143,7 @@ setCompilerOptions()
                 echo -e "    Checking for dlopen()"
                 # echo "         ${cc}" -o $out -c $file 
             fi
-            echo -e "#include <stdio.h>\nint main() { dlopen(); return 0; }\n" >$file
+            echo -e "#include <stdio.h>\n#include <dlfcn.h>\nint main() { dlopen(\"test.so\", 0); return 0; }\n" >$file
             eval \"${cc}\" ${flags} -o $out $file >/dev/null 2>&1
             if [ $? = 0 ] ; then
                 eval $hasDynLoad=1
