@@ -12,24 +12,25 @@
 #if BLD_UNIX_LIKE
 /*********************************** Locals ***********************************/
 
-#define RESTART_DELAY (0 * 1000)            /* Default heart beat period (30 sec) */
-#define RESTART_MAX   (100)                 /* Max restarts per hour */
+#define RESTART_DELAY (0 * 1000)        /* Default heart beat period (30 sec) */
+#define RESTART_MAX   (100)             /* Max restarts per hour */
 
 typedef struct App {
-    cchar        *appName;               /* Angel name */
-    int          exiting;                /* Program should exit */
-    char         *homeDir;               /* Home directory for service */
-    char         *logSpec;               /* Log directive for service */
-    char         *pidDir;                /* Location for pid file */
-    char         *pidPath;               /* Path to the angel pid for this service */
-    int          restartCount;           /* Service restart count */
-    int          restartWarned;          /* Has user been notified */
-    int          runAsDaemon;            /* Run as a daemon */
-    int          servicePid;             /* Process ID for the service */
-    char         *serviceArgs;           /* Args to pass to service */
-    char         *serviceName;           /* Basename of service program */
-    char         *serviceProgram;        /* Program to start */
-    int          verbose;                /* Run in verbose mode */
+    cchar   *appName;                   /* Angel name */
+    int     exiting;                    /* Program should exit */
+    int     retries;                    /* Number of times to retry staring app */
+    char    *homeDir;                   /* Home directory for service */
+    char    *logSpec;                   /* Log directive for service */
+    char    *pidDir;                    /* Location for pid file */
+    char    *pidPath;                   /* Path to the angel pid for this service */
+    int     restartCount;               /* Service restart count */
+    int     restartWarned;              /* Has user been notified */
+    int     runAsDaemon;                /* Run as a daemon */
+    int     servicePid;                 /* Process ID for the service */
+    char    *serviceArgs;               /* Args to pass to service */
+    char    *serviceName;               /* Basename of service program */
+    char    *serviceProgram;            /* Program to start */
+    int     verbose;                    /* Run in verbose mode */
 } App;
 
 static App *app;
@@ -126,6 +127,13 @@ int main(int argc, char *argv[])
             }
 #endif
 
+        } else if (strcmp(argp, "--retries") == 0) {
+            if (nextArg >= argc) {
+                err++;
+            } else {
+                app->retries = atoi(argv[++nextArg]);
+            }
+
         } else if (strcmp(argp, "--stop") == 0) {
             /*
                 Stop a currently running angel
@@ -151,6 +159,7 @@ int main(int argc, char *argv[])
 #endif
                 "    --home path          # Home directory for service\n"
                 "    --log logFile:level  # Log directive for service\n"
+                "    --retries count      # Max count of app restarts\n"
                 "    --stop               # Stop the service",
                 app->appName);
             return -1;
@@ -172,7 +181,6 @@ int main(int argc, char *argv[])
         }
         app->serviceArgs[len] = '\0';
     }
-    printf("program %s\n", app->serviceProgram);
     setupUnixSignals();
 
     if (app->runAsDaemon) {
@@ -204,13 +212,11 @@ static void setAppDefaults(Mpr *mpr)
     app->homeDir = mprGetAppDir();
     app->serviceProgram = mprJoinPath(app->homeDir, BLD_PRODUCT);
     app->serviceName = mprGetPathBase(app->serviceProgram);
+    app->retries = RESTART_MAX;
 
-#if MOB
-    if (mprPathExists("/var/run", X_OK)) {
+    if (mprPathExists("/var/run", X_OK) && getuid() == 0) {
         app->pidDir = "/var/run";
-    } else 
-#endif
-        if (mprPathExists("/tmp", X_OK)) {
+    } else if (mprPathExists("/tmp", X_OK)) {
         app->pidDir = "/tmp";
     } else if (mprPathExists("/Temp", X_OK)) {
         app->pidDir = "/Temp";
@@ -250,7 +256,7 @@ static void angel()
             app->restartWarned = 0;
         }
         if (app->servicePid == 0) {
-            if (app->restartCount >= RESTART_MAX) {
+            if (app->restartCount >= app->retries) {
                 if (! app->restartWarned) {
                     mprError("Too many restarts for %s, %d in ths last hour", app->serviceProgram, app->restartCount);
                     mprError("Suspending restarts for one hour");
@@ -328,7 +334,7 @@ static void angel()
             waitpid(app->servicePid, &status, 0);
             if (app->verbose) {
                 mprPrintf("%s: %s has exited with status %d, restarting (%d/%d)...\n", 
-                    app->appName, app->serviceProgram, WEXITSTATUS(status), app->restartCount, RESTART_MAX);
+                    app->appName, app->serviceProgram, WEXITSTATUS(status), app->restartCount, app->retries);
             }
             app->servicePid = 0;
         }
