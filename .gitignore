@@ -134,3 +134,4 @@ projects/WIN/ejs-dynamic/*.vcxproj
 projects/WIN/ejs-dynamic/*.filters
 *.sln.old
 *.suo.old
+src/jems/ejs.mvc/test/junk
