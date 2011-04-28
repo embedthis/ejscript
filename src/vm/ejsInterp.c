@@ -2652,8 +2652,8 @@ EjsAny *ejsRunFunction(Ejs *ejs, EjsFunction *fun, EjsAny *thisObj, int argc, vo
     if (ejs->exception) {
         return 0;
     }
-    //  MOB -is this required 
 #if TEST
+    //  MOB -is this required 
     mprAssert(ejs->state->fp->attentionPc == 0);
 #endif
     ejsClearAttention(ejs);

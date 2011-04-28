@@ -2,8 +2,11 @@
     mvc run
  */
 //  TODO Generate minimum app
-//  TODO -- should use the test http port for this
+
+// const HTTP = (global.test) ? test.config.http_port : ":4770"
 const HTTP = ":4000"
+
+print(HTTP)
 
 require ejs.unix
 
