@@ -63,7 +63,7 @@ int main(int argc, char *argv[])
     mprAddRoot(app);
     setAppDefaults(mpr);
 
-    for (nextArg = 1; nextArg < argc; nextArg++) {
+    for (nextArg = 1; nextArg < argc && !err; nextArg++) {
         argp = argv[nextArg];
         if (*argp != '-') {
             break;
@@ -147,23 +147,26 @@ int main(int argc, char *argv[])
         } else {
             err++;
         }
-        if (err) {
-            mprUserError("Bad command line: \n"
-                "  Usage: %s [options] [program args ...]\n"
-                "  Switches:\n"
-                "    --args               # Args to pass to service\n"
-                "    --daemon             # Run as a daemon\n"
+    }
+    if (nextArg >= argc) {
+        err++;
+    }
+    if (err) {
+        mprUserError("Bad command line: \n"
+            "  Usage: %s [options] [program args ...]\n"
+            "  Switches:\n"
+            "    --args               # Args to pass to service\n"
+            "    --daemon             # Run as a daemon\n"
 #if FUTURE
-                "    --heartBeat interval # Heart beat interval period (secs) \n"
-                "    --program path       # Service program to start\n"
+            "    --heartBeat interval # Heart beat interval period (secs) \n"
+            "    --program path       # Service program to start\n"
 #endif
-                "    --home path          # Home directory for service\n"
-                "    --log logFile:level  # Log directive for service\n"
-                "    --retries count      # Max count of app restarts\n"
-                "    --stop               # Stop the service",
-                app->appName);
-            return -1;
-        }
+            "    --home path          # Home directory for service\n"
+            "    --log logFile:level  # Log directive for service\n"
+            "    --retries count      # Max count of app restarts\n"
+            "    --stop               # Stop the service",
+            app->appName);
+        return -1;
     }
     if (nextArg < argc) {
         /* TODO - replace with mprJoin() */
@@ -210,8 +213,10 @@ static void setAppDefaults(Mpr *mpr)
 {
     app->appName = mprGetAppName();
     app->homeDir = mprGetAppDir();
+#if UNUSED
     app->serviceProgram = mprJoinPath(app->homeDir, BLD_PRODUCT);
     app->serviceName = mprGetPathBase(app->serviceProgram);
+#endif
     app->retries = RESTART_MAX;
 
     if (mprPathExists("/var/run", X_OK) && getuid() == 0) {
