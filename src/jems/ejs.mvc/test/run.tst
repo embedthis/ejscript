@@ -6,8 +6,6 @@
 // const HTTP = (global.test) ? test.config.http_port : ":4770"
 const HTTP = ":4000"
 
-print(HTTP)
-
 require ejs.unix
 
 let mvc = locate("mvc")

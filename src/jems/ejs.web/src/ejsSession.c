@@ -208,7 +208,7 @@ EjsSession *ejsCreateSession(Ejs *ejs, EjsRequest *req, int timeout, bool secure
     }
     count = ejsGetPropertyCount(ejs, (EjsObj*) server->sessions);
     if (count >= limits->sessionCount) {
-        mprError("Too many sessions: %d, limit %d", count, limits->sessionCount);
+        mprWarn("Too many sessions: %d, limit %d", count, limits->sessionCount);
     }
     slotNum = ejsSetPropertyByName(ejs, server->sessions, EN(session->id), session);
     if (slotNum < 0) {
@@ -254,7 +254,6 @@ static void startSessionTimer(Ejs *ejs, EjsHttpServer *server)
 {
     mprLock(sessionLock);
     if (server->sessionTimer == 0) {
-        // printf("START TIMER %s\n", server->name);
         server->sessionTimer = mprCreateTimerEvent(ejs->dispatcher, "sessionTimer", EJS_TIMER_PERIOD, 
             sessionTimer, server, MPR_EVENT_STATIC_DATA); 
     }
@@ -299,12 +298,12 @@ static void sessionTimer(EjsHttpServer *server, MprEvent *event)
     if (sessions && server->server && mprTryLock(sessionLock)) {
         removed = 0;
         limits = server->server->limits;
-        count = ejsGetPropertyCount(ejs, (EjsObj*) sessions);
-        mprLog(6, "Check for sessions count %d/%d", count, limits->sessionCount);
+        count = ejsGetPropertyCount(ejs, sessions);
+mprLog(2, "Check for sessions count %d/%d", count, limits->sessionCount);
         now = mprGetTime();
 
         /*
-            Start pruning at 80% of the max
+            Start pruning at 80% of the max session count
          */
         redline = limits->sessionCount * 8 / 10;
         if (count > redline) {
@@ -314,34 +313,37 @@ static void sessionTimer(EjsHttpServer *server, MprEvent *event)
              */
             soon = limits->sessionTimeout / 5;
             for (i = count - 1; soon > 0 && i >= 0; i--) {
-                if ((session = ejsGetProperty(ejs, (EjsObj*) sessions, i)) == 0) {
+                if ((session = ejsGetProperty(ejs, sessions, i)) == 0) {
                     continue;
                 }
                 if ((session->expire - now) < soon) {
                     mprLog(3, "Too many sessions. Pruning session %s", session->id);
-                    ejsDeleteProperty(ejs, (EjsObj*) sessions, i);
+                    ejsDeleteProperty(ejs, sessions, i);
                     removed++;
+                    count--;
                 }
             }
         }
         for (i = count - 1; i >= 0; i--) {
-            if ((session = ejsGetProperty(ejs, (EjsObj*) sessions, i)) == 0) {
+            if ((session = ejsGetProperty(ejs, sessions, i)) == 0) {
                 continue;
             }
             if (TYPE(session) == ST(Session)) {
-                mprLog(7, "Check session %s timeout %d, expires %d secs", session->id, 
-                   session->timeout / MPR_TICKS_PER_SEC,
+mprLog(3, "Check session %s timeout %d, expires %d secs", session->id, 
+                    session->timeout / MPR_TICKS_PER_SEC,
                    (int) (session->expire - now) / MPR_TICKS_PER_SEC);
                 if (count > limits->sessionCount) {
                     mprLog(3, "Too many sessions. Pruning session %s", session->id);
-                    ejsDeleteProperty(ejs, (EjsObj*) sessions, i);
+                    ejsDeleteProperty(ejs, sessions, i);
+                    removed++;
                     count--;
                 }  
                 if (session->expire <= now) {
                     mprLog(3, "Session expired: %s (timeout %d secs)", 
                         session->id, session->timeout / MPR_TICKS_PER_SEC);
-                    ejsDeleteProperty(ejs, (EjsObj*) sessions, i);
+                    ejsDeleteProperty(ejs, sessions, i);
                     removed++;
+                    count--;
                 }
             }
         }
