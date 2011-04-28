@@ -156,7 +156,6 @@ int main(int argc, char *argv[])
             return -1;
         }
     }
-
     if (nextArg < argc) {
         /* TODO - replace with mprJoin() */
         app->serviceProgram = argv[nextArg++];
@@ -167,10 +166,13 @@ int main(int argc, char *argv[])
         for (len = 0, i = nextArg; i < argc; i++) {
             strcpy(&app->serviceArgs[len], argv[i]);
             len += slen(argv[i]);
-            app->serviceArgs[len++] = ' ';
+            if ((i + 1) < nextArg) {
+                app->serviceArgs[len++] = ' ';
+            }
         }
         app->serviceArgs[len] = '\0';
     }
+    printf("program %s\n", app->serviceProgram);
     setupUnixSignals();
 
     if (app->runAsDaemon) {
@@ -203,9 +205,12 @@ static void setAppDefaults(Mpr *mpr)
     app->serviceProgram = mprJoinPath(app->homeDir, BLD_PRODUCT);
     app->serviceName = mprGetPathBase(app->serviceProgram);
 
+#if MOB
     if (mprPathExists("/var/run", X_OK)) {
         app->pidDir = "/var/run";
-    } else if (mprPathExists("/tmp", X_OK)) {
+    } else 
+#endif
+        if (mprPathExists("/tmp", X_OK)) {
         app->pidDir = "/tmp";
     } else if (mprPathExists("/Temp", X_OK)) {
         app->pidDir = "/Temp";
@@ -238,7 +243,7 @@ static void angel()
     }
     mark = mprGetTime();
 
-    while (! app->exiting) {
+    while (!mprIsStopping()) {
         if (mprGetElapsedTime(mark) > (3600 * 1000)) {
             mark = mprGetTime();
             app->restartCount = 0;
@@ -278,7 +283,7 @@ static void angel()
                     close(i);
                 }
                 if (app->serviceArgs && *app->serviceArgs) {
-                    mprMakeArgv(app->serviceArgs, &ac, &av, MPR_ARGV_ARGS_ONLY);
+                    mprMakeArgv(app->serviceArgs, &ac, &av, 0);
                 } else {
                     ac = 0;
                 }
@@ -288,12 +293,12 @@ static void angel()
                 env[2] = 0;
 
                 next = 0;
-                argv[next++] = (char*) mprGetPathBase(app->serviceProgram);
+                argv[next++] = app->serviceProgram;
                 if (app->logSpec) {
                     argv[next++] = "--log";
                     argv[next++] = (char*) app->logSpec;
                 }
-                for (i = 1; i < ac; i++) {
+                for (i = 0; i < ac; i++) {
                     argv[next++] = av[i];
                 }
                 argv[next++] = 0;
@@ -322,8 +327,8 @@ static void angel()
 
             waitpid(app->servicePid, &status, 0);
             if (app->verbose) {
-                mprPrintf("%s: %s has exited with status %d, restarting ...\n", app->appName, app->serviceProgram, 
-                    WEXITSTATUS(status));
+                mprPrintf("%s: %s has exited with status %d, restarting (%d/%d)...\n", 
+                    app->appName, app->serviceProgram, WEXITSTATUS(status), app->restartCount, RESTART_MAX);
             }
             app->servicePid = 0;
         }
