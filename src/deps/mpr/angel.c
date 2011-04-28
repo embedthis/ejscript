@@ -212,7 +212,7 @@ static void manageApp(void *ptr, int flags)
 static void setAppDefaults(Mpr *mpr)
 {
     app->appName = mprGetAppName();
-    app->homeDir = mprGetAppDir();
+    app->homeDir = sclone(".");
 #if UNUSED
     app->serviceProgram = mprJoinPath(app->homeDir, BLD_PRODUCT);
     app->serviceName = mprGetPathBase(app->serviceProgram);
