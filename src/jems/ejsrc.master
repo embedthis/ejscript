@@ -5,16 +5,18 @@
     cache: {
         enable: true,
         reload: true,
+        _timeout: 3600,
+        _app: true,
+        _page: true,
+        _action: true,
+        _database: true,
     },
     database: {                                 // ejsmvc
         class: "Database",
         adapter: "sqlite3",
         timeout: 5000,
         debug: {
-            name: "db/switch.sdb", 
-            username: "", 
-            password: "", 
-            trace: false,
+            name: "db/switch.sdb", username: "", password: "", trace: false,
         },
         test: { },
         production: { },
@@ -24,7 +26,7 @@
         db: "db",
         cache: "cache",
         controllers: "controllers",
-        layouts: "views/layouts",
+        layouts: "layouts",
         models: "models",
         views: "views",
         src: "src",
@@ -48,18 +50,19 @@
     },
     search: null,
     scripts: null,
-    session: {
-        enable: true,
-        timeout: 1800,
-    },
     web: {
+        endpoint: ":4000",             // ejsmvc only
         expires: {
             "html": 86400,  
             "ejs": 86400,
             "es": 86400,
             "": 86400,
         },
-        endpoint: "127.0.0.1:4000",             // ejsmvc only
+        limits: {sessions: 60, sessionTimeout: 60}
+        trace: {
+            tx: { exclude: ["jpg", "gif", "png", "ico", "css",], headers: 4, body: 5, size: 10240 }
+            rx: { exclude: ["jpg", "gif", "png", "ico", "css", "js"], conn: 5, first: 2, headers: 4, body: 4, size: 1024 }
+        },
         view: {
             connectors: {
                 table: "html",
@@ -71,9 +74,5 @@
                 Date: "%a %e %b %H:%M",
             },
         },
-    },
-    session: {
-        enable: true,
-        timeout: 1800,
     },
 }

@@ -299,7 +299,7 @@ static void sessionTimer(EjsHttpServer *server, MprEvent *event)
         removed = 0;
         limits = server->server->limits;
         count = ejsGetPropertyCount(ejs, sessions);
-mprLog(2, "Check for sessions count %d/%d", count, limits->sessionCount);
+        mprLog(7, "Check for sessions count %d/%d", count, limits->sessionCount);
         now = mprGetTime();
 
         /*
@@ -329,9 +329,9 @@ mprLog(2, "Check for sessions count %d/%d", count, limits->sessionCount);
                 continue;
             }
             if (TYPE(session) == ST(Session)) {
-mprLog(3, "Check session %s timeout %d, expires %d secs", session->id, 
-                    session->timeout / MPR_TICKS_PER_SEC,
-                   (int) (session->expire - now) / MPR_TICKS_PER_SEC);
+                mprLog(7, "Check session %s timeout %d, expires %d secs", session->id, 
+                                    session->timeout / MPR_TICKS_PER_SEC,
+                                   (int) (session->expire - now) / MPR_TICKS_PER_SEC);
                 if (count > limits->sessionCount) {
                     mprLog(3, "Too many sessions. Pruning session %s", session->id);
                     ejsDeleteProperty(ejs, sessions, i);

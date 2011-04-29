@@ -101,6 +101,7 @@ class EjsMvc {
         loadConfig("ejsrc", true)
         ext = config.extensions
 
+        //  MOB - why test config.mvc
         if (config.mvc) {
             dirs = config.directories
             dirs.home = App.dir

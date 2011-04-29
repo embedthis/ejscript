@@ -157,6 +157,12 @@ server.listen("127.0.0.1:7777")
                     App.updateLog()
                 }
             }
+            if (config.web.trace) {
+                trace(config.web.trace)
+            }
+            if (config.web.limits) {
+                setLimits(config.web.limits)
+            }
         }
 
         /** 

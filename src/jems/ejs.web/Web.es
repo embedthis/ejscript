@@ -34,13 +34,12 @@ module ejs.web {
                 showClient: true,
                 //  where: "file" - defaults to web server log
             },
-            // MOB -- not yet implemented
+            /* MOB -- not yet implemented
             session: {
-                //  MOB -- do we need enable
                 enable: true,
-                //  MOB -- is this being used?
                 timeout: 1800,
             },
+            */
             web: {
                 expires: {
                     /*
@@ -51,8 +50,10 @@ module ejs.web {
                         "":     86400,
                      */
                 },
-                // endpoint: "127.0.0.1:4000",
+                // endpoint: ":4000",
                 // helpers: [],
+                // limits: {}
+                // trace: {rx: {}, tx: {}}
                 view: {
                     connectors: {
                         table: "html",
