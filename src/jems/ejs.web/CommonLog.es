@@ -38,6 +38,7 @@ module ejs.web {
             this.logger = logger
         }
 
+        //  MOB -- rename
         function app(request: Request): Object {
             let start = new Date
             let response = innerApp.call(request, request)

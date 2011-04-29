@@ -131,6 +131,7 @@ module ejs.web {
             _afterCheckers.append([fn, options])
         }
 
+        //  MOB - rename
         /** 
             Controller web application. This function will run a controller action method and return a response object. 
             The action method may be specified by the $aname parameter or it may be supplied via 

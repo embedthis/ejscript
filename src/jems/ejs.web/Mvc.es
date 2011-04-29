@@ -188,10 +188,8 @@ module ejs.web {
         @spec ejs
         @stability prototype
      */
-    function MvcApp(request: Request): Object {
-        let app = MvcBuilder(request)
-        return app(request)
-    }
+    function MvcApp(request: Request): Object
+        MvcBuilder(request)
 
 //  MOB -- update doc
     /** 
@@ -209,6 +207,7 @@ module ejs.web {
         //  MOB -- rename to load?
         mvc.init(request)
         let cname: String = request.params.controller + "Controller"
+        //  MOB - rename app to be more unique
         return Controller.create(request, cname).app
     }
 }

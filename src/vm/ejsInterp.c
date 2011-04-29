@@ -1490,6 +1490,7 @@ static void VM(Ejs *ejs, EjsFunction *fun, EjsAny *otherThis, int argc, int stac
                 //  MOB -- fullScope is always true if DEFINE_FUNCTION is emitted
                 mprAssert(f1->fullScope);
                 if (f1->fullScope) {
+                    //  MOB - why exception for global
                     if (lookup.obj != ejs->global) {
                         f2 = ejsCloneFunction(ejs, f1, 0);
                     } else {

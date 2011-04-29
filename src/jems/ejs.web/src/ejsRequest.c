@@ -1261,6 +1261,9 @@ EjsRequest *ejsCloneRequest(Ejs *ejs, EjsRequest *req, bool deep)
     if (req->config) {
         nreq->config = ejsClone(ejs, req->config, 1);
     }
+    if (req->params) {
+        nreq->params = ejsClone(ejs, req->params, 1);
+    }
     return nreq;
 }
 
