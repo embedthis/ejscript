@@ -2279,6 +2279,7 @@ static void genFunction(EcCompiler *cp, EcNode *np)
     
     ejs = cp->ejs;
     state = cp->state;
+    cp->lastOpcode = 0;
     mprAssert(state);
 
     mprAssert(np->function.functionVar);
