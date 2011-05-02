@@ -64,7 +64,7 @@
 				C9A06FFA10A34EBD00F48512 /* PBXTargetDependency */,
 				C9E750B410A367E1004E03DD /* PBXTargetDependency */,
 				C99A33D210C2F15E00F6C7BC /* PBXTargetDependency */,
-				C99A346910C2FCA100F6C7BC /* PBXTargetDependency */,
+				C9C24D88136CF5530000C111 /* PBXTargetDependency */,
 				C9D4529011ECDA6600F029C8 /* PBXTargetDependency */,
 			);
 			name = All;
@@ -92,6 +92,16 @@
 			);
 			name = ejspage;
 			productName = ejsweb;
+		};
+		C9C24D8A136CF5D70000C111 /* clean */ = {
+			isa = PBXAggregateTarget;
+			buildConfigurationList = C9C24D8B136CF5D70000C111 /* Build configuration list for PBXAggregateTarget "clean" */;
+			buildPhases = (
+			);
+			dependencies = (
+			);
+			name = clean;
+			productName = clean;
 		};
 /* End PBXAggregateTarget section */
 
@@ -382,13 +392,6 @@
 			remoteGlobalIDString = C99A33CA10C2F14000F6C7BC;
 			remoteInfo = ejspage;
 		};
-		C99A346810C2FCA100F6C7BC /* PBXContainerItemProxy */ = {
-			isa = PBXContainerItemProxy;
-			containerPortal = C97623C10FD06EC4009C78E1 /* Project object */;
-			proxyType = 1;
-			remoteGlobalIDString = C99A346510C2FC5B00F6C7BC;
-			remoteInfo = clean;
-		};
 		C9A06FF910A34EBD00F48512 /* PBXContainerItemProxy */ = {
 			isa = PBXContainerItemProxy;
 			containerPortal = C97623C10FD06EC4009C78E1 /* Project object */;
@@ -437,6 +440,13 @@
 			proxyType = 1;
 			remoteGlobalIDString = C97627B50FD077E7009C78E1;
 			remoteInfo = libmprssl;
+		};
+		C9C24D87136CF5530000C111 /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = C97623C10FD06EC4009C78E1 /* Project object */;
+			proxyType = 1;
+			remoteGlobalIDString = C903098610A366F0003FF2AB;
+			remoteInfo = jem;
 		};
 		C9C59E7510A34BF5002D7049 /* PBXContainerItemProxy */ = {
 			isa = PBXContainerItemProxy;
@@ -1417,23 +1427,6 @@
 		};
 /* End PBXHeadersBuildPhase section */
 
-/* Begin PBXLegacyTarget section */
-		C99A346510C2FC5B00F6C7BC /* clean */ = {
-			isa = PBXLegacyTarget;
-			buildArgumentsString = "DIR=$BUILT_PRODUCTS_DIR -C .. -f Makefile $ACTION";
-			buildConfigurationList = C99A346C10C2FCCC00F6C7BC /* Build configuration list for PBXLegacyTarget "clean" */;
-			buildPhases = (
-			);
-			buildToolPath = /usr/bin/make;
-			buildWorkingDirectory = "";
-			dependencies = (
-			);
-			name = clean;
-			passBuildSettingsInEnvironment = 1;
-			productName = clean;
-		};
-/* End PBXLegacyTarget section */
-
 /* Begin PBXNativeTarget section */
 		C95E4FD310EBFD9300982610 /* libhttp */ = {
 			isa = PBXNativeTarget;
@@ -1725,7 +1718,7 @@
 				C987612F0FD87D7300311B7A /* ejs.db.sqlite */,
 				C97627D80FD07850009C78E1 /* ejs.web */,
 				C9222E520FD5813F00AFA5A4 /* modules */,
-				C99A346510C2FC5B00F6C7BC /* clean */,
+				C9C24D8A136CF5D70000C111 /* clean */,
 			);
 		};
 /* End PBXProject section */
@@ -2179,11 +2172,6 @@
 			target = C99A33CA10C2F14000F6C7BC /* ejspage */;
 			targetProxy = C99A33D110C2F15E00F6C7BC /* PBXContainerItemProxy */;
 		};
-		C99A346910C2FCA100F6C7BC /* PBXTargetDependency */ = {
-			isa = PBXTargetDependency;
-			target = C99A346510C2FC5B00F6C7BC /* clean */;
-			targetProxy = C99A346810C2FCA100F6C7BC /* PBXContainerItemProxy */;
-		};
 		C9A06FFA10A34EBD00F48512 /* PBXTargetDependency */ = {
 			isa = PBXTargetDependency;
 			target = C97623E80FD06F04009C78E1 /* ejssql */;
@@ -2218,6 +2206,11 @@
 			isa = PBXTargetDependency;
 			target = C97627B50FD077E7009C78E1 /* libmprssl */;
 			targetProxy = C9B66E2111F0945400011B2E /* PBXContainerItemProxy */;
+		};
+		C9C24D88136CF5530000C111 /* PBXTargetDependency */ = {
+			isa = PBXTargetDependency;
+			target = C903098610A366F0003FF2AB /* jem */;
+			targetProxy = C9C24D87136CF5530000C111 /* PBXContainerItemProxy */;
 		};
 		C9C59E7610A34BF5002D7049 /* PBXTargetDependency */ = {
 			isa = PBXTargetDependency;
@@ -2976,24 +2969,17 @@
 			};
 			name = Release;
 		};
-		C99A346610C2FC5B00F6C7BC /* Debug */ = {
+		C9C24D8C136CF5D70000C111 /* Debug */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
-				COPY_PHASE_STRIP = NO;
-				GCC_DYNAMIC_NO_PIC = NO;
-				GCC_OPTIMIZATION_LEVEL = 0;
-				PRODUCT_NAME = clean;
+				PRODUCT_NAME = "$(TARGET_NAME)";
 			};
 			name = Debug;
 		};
-		C99A346710C2FC5B00F6C7BC /* Release */ = {
+		C9C24D8D136CF5D70000C111 /* Release */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
-				COPY_PHASE_STRIP = YES;
-				DEBUG_INFORMATION_FORMAT = "dwarf-with-dsym";
-				GCC_ENABLE_FIX_AND_CONTINUE = NO;
-				PRODUCT_NAME = clean;
-				ZERO_LINK = NO;
+				PRODUCT_NAME = "$(TARGET_NAME)";
 			};
 			name = Release;
 		};
@@ -3201,14 +3187,13 @@
 			defaultConfigurationIsVisible = 0;
 			defaultConfigurationName = Release;
 		};
-		C99A346C10C2FCCC00F6C7BC /* Build configuration list for PBXLegacyTarget "clean" */ = {
+		C9C24D8B136CF5D70000C111 /* Build configuration list for PBXAggregateTarget "clean" */ = {
 			isa = XCConfigurationList;
 			buildConfigurations = (
-				C99A346610C2FC5B00F6C7BC /* Debug */,
-				C99A346710C2FC5B00F6C7BC /* Release */,
+				C9C24D8C136CF5D70000C111 /* Debug */,
+				C9C24D8D136CF5D70000C111 /* Release */,
 			);
 			defaultConfigurationIsVisible = 0;
-			defaultConfigurationName = Release;
 		};
 		C9D4529511ECDAA800F029C8 /* Build configuration list for PBXNativeTarget "http" */ = {
 			isa = XCConfigurationList;
