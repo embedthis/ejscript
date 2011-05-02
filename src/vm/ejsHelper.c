@@ -448,7 +448,7 @@ static void missingHelper(Ejs *ejs, EjsObj *obj, cchar *helper)
 }
 
 
-static EjsObj *castObj(Ejs *ejs, EjsObj *obj, EjsType *type)
+static EjsAny *castObj(Ejs *ejs, EjsObj *obj, EjsType *type)
 {
     EjsString       *str;
     EjsFunction     *fun;
@@ -462,7 +462,7 @@ static EjsObj *castObj(Ejs *ejs, EjsObj *obj, EjsType *type)
     }
     switch (type->sid) {
     case S_Boolean:
-        return (EjsObj*) ejsCreateBoolean(ejs, 1);
+        return ejsCreateBoolean(ejs, 1);
 
     case S_Number:
         str = ejsToString(ejs, obj);
@@ -482,13 +482,13 @@ static EjsObj *castObj(Ejs *ejs, EjsObj *obj, EjsType *type)
                 }
             }
         }
-        if (obj == (EjsObj*) ejs->global) {
-            return (EjsObj*) ejsCreateStringFromAsc(ejs, "[object global]");
+        if (obj == ejs->global) {
+            return ejsCreateStringFromAsc(ejs, "[object global]");
         } else {
             if (TYPE(obj)->helpers.cast && TYPE(obj)->helpers.cast != (EjsCastHelper) castObj) {
                 return (TYPE(obj)->helpers.cast)(ejs, obj, type);
             }
-            return (EjsObj*) ejsSprintf(ejs, "[object %@]", TYPE(obj)->qname.name);
+            return ejsSprintf(ejs, "[object %@]", TYPE(obj)->qname.name);
         }
 
     default:

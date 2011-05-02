@@ -11,12 +11,12 @@
 /*
     native static function get allocated(): Number
  */
-static EjsObj *getAllocatedMemory(Ejs *ejs, EjsObj *thisObj, int argc, EjsObj **argv)
+static EjsNumber *getAllocatedMemory(Ejs *ejs, EjsObj *thisObj, int argc, EjsObj **argv)
 {
     MprMemStats    *mem;
 
     mem = mprGetMemStats(ejs);
-    return (EjsObj*) ejsCreateNumber(ejs, (MprNumber) mem->bytesAllocated);
+    return ejsCreateNumber(ejs, (MprNumber) mem->bytesAllocated);
 }
 
 
@@ -24,7 +24,7 @@ static EjsObj *getAllocatedMemory(Ejs *ejs, EjsObj *thisObj, int argc, EjsObj **
 /*
     native static function callback(fn: Function): Void
  */
-static EjsObj *setRedlineCallback(Ejs *ejs, EjsObj *thisObj, int argc, EjsObj **argv)
+static EjsNumber *setRedlineCallback(Ejs *ejs, EjsObj *thisObj, int argc, EjsObj **argv)
 {
     mprAssert(argc == 1 && ejsIsFunction(ejs, argv[0]));
 

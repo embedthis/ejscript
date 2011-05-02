@@ -348,7 +348,7 @@ static EjsAny *nextPathKey(Ejs *ejs, EjsIterator *ip, int argc, EjsObj **argv)
 static EjsAny *getPathIterator(Ejs *ejs, EjsPath *fp, int argc, EjsObj **argv)
 {
     fp->files = mprGetPathFiles(fp->value, 0);
-    return ejsCreateIterator(ejs, (EjsObj*) fp, (EjsProc) nextPathKey, 0, NULL);
+    return ejsCreateIterator(ejs, fp, nextPathKey, 0, NULL);
 }
 
 
@@ -382,7 +382,7 @@ static EjsAny *nextPathValue(Ejs *ejs, EjsIterator *ip, int argc, EjsObj **argv)
 static EjsAny *getPathValues(Ejs *ejs, EjsPath *fp, int argc, EjsObj **argv)
 {
     fp->files = mprGetPathFiles(fp->value, 0);
-    return ejsCreateIterator(ejs, (EjsObj*) fp, (EjsProc) nextPathValue, 0, NULL);
+    return ejsCreateIterator(ejs, fp, nextPathValue, 0, NULL);
 }
 
 
@@ -639,7 +639,7 @@ static EjsObj *makePathLink(Ejs *ejs, EjsPath *fp, int argc, EjsObj **argv)
     int     hard;
 
     target = ((EjsPath*) argv[0])->value;
-    hard = (argc >= 2) ? (argv[1] == (EjsObj*) S(true)) : 0;
+    hard = (argc >= 2) ? (argv[1] == S(true)) : 0;
     if (mprMakeLink(fp->value, target, hard) < 0) {
         ejsThrowIOError(ejs, "Can't make link");
     }
@@ -1189,7 +1189,7 @@ static EjsObj *writeToFile(Ejs *ejs, EjsPath *fp, int argc, EjsObj **argv)
     }
 
     for (i = 0; i < args->length; i++) {
-        data = ejsToMulti(ejs, ejsToString(ejs, ejsGetProperty(ejs, (EjsObj*) args, i)));
+        data = ejsToMulti(ejs, ejsToString(ejs, ejsGetProperty(ejs, args, i)));
         length = (int) strlen(data);
         bytes = mprWriteFile(file, data, length);
         if (bytes != length) {

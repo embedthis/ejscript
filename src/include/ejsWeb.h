@@ -84,21 +84,21 @@ typedef struct EjsRequest {
     EjsObj          *files;             /**< Files object */
     EjsObj          *headers;           /**< Headers object */
     EjsUri          *home;              /**< Relative URI to the home of the application from this request */
-    EjsObj          *host;              /**< Host property */
+    EjsString       *host;              /**< Host property */
     EjsObj          *limits;            /**< Limits object */
     EjsObj          *log;               /**< Log object */
-    EjsObj          *originalMethod;    /**< Saved original method */
+    EjsString       *originalMethod;    /**< Saved original method */
     EjsObj          *originalUri;       /**< Saved original URI */
     EjsObj          *params;            /**< Form variables */
-    EjsObj          *pathInfo;          /**< PathInfo property */
-    EjsObj          *port;              /**< Port property */
-    EjsObj          *query;             /**< Query property */
-    EjsObj          *reference;         /**< Reference property */
+    EjsString       *pathInfo;          /**< PathInfo property */
+    EjsNumber       *port;              /**< Port property */
+    EjsString       *query;             /**< Query property */
+    EjsString       *reference;         /**< Reference property */
     EjsObj          *route;             /**< Matching route in route table */
     EjsObj          *responseHeaders;   /**< Headers object */
-    EjsObj          *scheme;            /**< Scheme property */
-    EjsObj          *scriptName;        /**< ScriptName property */
-    EjsObj          *uri;               /**< Complete uri */
+    EjsString       *scheme;            /**< Scheme property */
+    EjsString       *scriptName;        /**< ScriptName property */
+    EjsUri          *uri;               /**< Complete uri */
 
     Ejs             *ejs;               /**< Ejscript interpreter handle */
     struct EjsSession *session;         /**< Current session */

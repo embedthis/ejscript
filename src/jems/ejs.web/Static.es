@@ -160,7 +160,7 @@ module ejs.web {
         @param request Request object. 
         @return A web script function that services a web request for static content
         @example:
-          { name: "index", builder: StaticBuilder, }
+          { name: "index", builder: StaticBuilder }
         @spec ejs
         @stability prototype
      */

@@ -34,7 +34,7 @@ static EjsType *cloneTypeVar(Ejs *ejs, EjsType *src, bool deep)
         ejsThrowTypeError(ejs, "Expecting a Type object");
         return 0;
     }
-    dest = (EjsType*) (ST(Block)->helpers.clone)(ejs, (EjsObj*) src, deep);
+    dest = (EjsType*) (ST(Block)->helpers.clone)(ejs, src, deep);
     if (dest == 0) {
         return dest;
     }
@@ -141,7 +141,7 @@ static int setTypeProperty(Ejs *ejs, EjsType *type, int slotNum, EjsObj *value)
         ejsThrowTypeError(ejs, "Object is not dynamic");
         return EJS_ERR;
     }
-    return (ST(Block)->helpers.setProperty)(ejs, (EjsObj*) type, slotNum, value);
+    return (ST(Block)->helpers.setProperty)(ejs, type, slotNum, value);
 }
 
 
@@ -348,7 +348,7 @@ EjsType *ejsCreateArchetype(Ejs *ejs, EjsFunction *fun, EjsPot *prototype)
     EjsString   *name;
 
     if (prototype == 0 && fun) {
-        prototype = ejsGetPropertyByName(ejs, (EjsObj*) fun, N(NULL, "prototype"));
+        prototype = ejsGetPropertyByName(ejs, fun, N(NULL, "prototype"));
     }
     baseType = prototype ? TYPE(prototype): ST(Object);
     name = (fun && fun->name) ? fun->name : ejsCreateStringFromAsc(ejs, "-type-from-function-");
@@ -552,17 +552,17 @@ int ejsBlendTypeProperties(Ejs *ejs, EjsType *type, EjsType *typeType)
     mprAssert(type);
     mprAssert(typeType);
 
-    count = ejsGetPropertyCount(ejs, (EjsObj*) typeType) - typeType->numInherited;
+    count = ejsGetPropertyCount(ejs, typeType) - typeType->numInherited;
     mprAssert(count == 0);
 
     if (count > 0) { 
         /*  Append properties to the end of the type so as to not mess up the first slot which may be an initializer */
-        destOffset = ejsGetPropertyCount(ejs, (EjsObj*) type);
+        destOffset = ejsGetPropertyCount(ejs, type);
         srcOffset = 0;
-        if (ejsGrowPot(ejs, (EjsObj*) type, type->constructor.block.obj.numProp + count) < 0) {
+        if (ejsGrowPot(ejs, type, type->constructor.block.obj.numProp + count) < 0) {
             return EJS_ERR;
         }
-        if (inheritProperties(ejs, type, (EjsObj*) type, destOffset, (EjsObj*) typeType, srcOffset, count, 0) < 0) {
+        if (inheritProperties(ejs, type, type, destOffset, typeType, srcOffset, count, 0) < 0) {
             return EJS_ERR;
         }
     }
@@ -571,10 +571,10 @@ int ejsBlendTypeProperties(Ejs *ejs, EjsType *type, EjsType *typeType)
     if (protoCount > 0) {
         srcOffset = typeType->numInherited;
         destOffset = ejsGetPropertyCount(ejs, type->prototype);
-        if (ejsGrowPot(ejs, (EjsObj*) type->prototype, type->prototype->numProp + protoCount) < 0) {
+        if (ejsGrowPot(ejs, type->prototype, type->prototype->numProp + protoCount) < 0) {
             return EJS_ERR;
         }
-        if (inheritProperties(ejs, type, (EjsObj*) type->prototype, destOffset, (EjsObj*) typeType->prototype, srcOffset, 
+        if (inheritProperties(ejs, type, type->prototype, destOffset, typeType->prototype, srcOffset, 
                 protoCount, 0) < 0) {
             return EJS_ERR;
         }

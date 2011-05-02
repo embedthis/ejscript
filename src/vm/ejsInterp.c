@@ -643,7 +643,7 @@ static void VM(Ejs *ejs, EjsFunction *fun, EjsAny *otherThis, int argc, int stac
         CASE (EJS_OP_GET_TYPE_SLOT):
             slotNum = GET_INT();
             thisObj = pop(ejs);
-            vp = getNthBase(ejs, (EjsObj*) thisObj, GET_INT());
+            vp = getNthBase(ejs, thisObj, GET_INT());
             GET_SLOT(thisObj, vp, slotNum);
             BREAK;
 
@@ -1152,13 +1152,13 @@ static void VM(Ejs *ejs, EjsFunction *fun, EjsAny *otherThis, int argc, int stac
             if (vp == S(null) || vp == S(undefined)) {
                 //  MOB -- refactor
                 if (vp && (slotNum == ES_Object_iterator_get || slotNum == ES_Object_iterator_getValues)) {
-                    callProperty(ejs, (EjsObj*) TYPE(vp), slotNum, vp, argc, 1);
+                    callProperty(ejs, TYPE(vp), slotNum, vp, argc, 1);
                 } else {
                     ejsThrowReferenceError(ejs, "Object reference is null or undefined");
                 }
             } else {
                 //  MOB -- need a function to invoke 
-                callProperty(ejs, (EjsObj*) TYPE(vp)->prototype, slotNum, vp, argc, 1);
+                callProperty(ejs, TYPE(vp)->prototype, slotNum, vp, argc, 1);
             }
             BREAK;
 
@@ -1230,7 +1230,7 @@ static void VM(Ejs *ejs, EjsFunction *fun, EjsAny *otherThis, int argc, int stac
                 throwNull(ejs);
             } else {
                 type = (EjsType*) getNthBase(ejs, vp, nthBase);
-                callProperty(ejs, (EjsObj*) type, slotNum, (EjsObj*) type, argc, 1);
+                callProperty(ejs, type, slotNum, type, argc, 1);
             }
             BREAK;
 
@@ -1252,7 +1252,7 @@ static void VM(Ejs *ejs, EjsFunction *fun, EjsAny *otherThis, int argc, int stac
                 ejsThrowReferenceError(ejs, "Bad type reference");
                 BREAK;
             }
-            callProperty(ejs, (EjsObj*) type, slotNum, (EjsObj*) type, argc, 0);
+            callProperty(ejs, type, slotNum, type, argc, 0);
             BREAK;
 
         /*
@@ -1354,7 +1354,7 @@ static void VM(Ejs *ejs, EjsFunction *fun, EjsAny *otherThis, int argc, int stac
             mprAssert(type);
             if (type && type->constructor.block.pot.isFunction) {
                 mprAssert(type->prototype);
-                callFunction(ejs, (EjsFunction*) type, (EjsObj*) vp, argc, 0);
+                callFunction(ejs, (EjsFunction*) type, vp, argc, 0);
                 //  MOB -- must update pushed object
                 state->stack[0] = ejs->result;
             }
@@ -1461,9 +1461,9 @@ static void VM(Ejs *ejs, EjsFunction *fun, EjsAny *otherThis, int argc, int stac
             } else {
                 type->constructor.block.scope = state->bp;
                 if (type && type->hasInitializer) {
-                    fun = ejsGetProperty(ejs, (EjsObj*) type, 0);
+                    fun = ejsGetProperty(ejs, type, 0);
                     MPR_VERIFY_MEM();
-                    callFunction(ejs, fun, (EjsObj*) type, 0, 0);
+                    callFunction(ejs, fun, type, 0, 0);
                     MPR_VERIFY_MEM();
                     if (type->implements && !ejs->exception) {
                         callInterfaceInitializers(ejs, type);
@@ -2117,9 +2117,10 @@ static void VM(Ejs *ejs, EjsFunction *fun, EjsAny *otherThis, int argc, int stac
          */
         CASE (EJS_OP_LOGICAL_NOT):
             v1 = pop(ejs);
-            v1 = ejsCast(ejs, v1, Boolean);
-            result = ejsInvokeOperator(ejs, v1, opcode, 0);
-            push(result);
+            if ((v1 = ejsCast(ejs, v1, Boolean)) != 0) {
+                result = ejsInvokeOperator(ejs, v1, opcode, 0);
+                push(result);
+            }
             BREAK;
 
         /*
@@ -2143,7 +2144,7 @@ static void VM(Ejs *ejs, EjsFunction *fun, EjsAny *otherThis, int argc, int stac
         CASE (EJS_OP_INC):
             v1 = pop(ejs);
             count = (schar) GET_BYTE();
-            result = evalBinaryExpr(ejs, v1, EJS_OP_ADD, (EjsObj*) ejsCreateNumber(ejs, count));
+            result = evalBinaryExpr(ejs, v1, EJS_OP_ADD, ejsCreateNumber(ejs, count));
             push(result);
             BREAK;
 
@@ -2388,7 +2389,7 @@ ejsFreeze(ejs, frozen);
                     n.space = S(empty);
                     slotNum = ejsLookupVar(ejs, v1, n, &lookup);
                     if (slotNum < 0 && ejsIsType(ejs, v1)) {
-                        slotNum = ejsLookupVar(ejs, (EjsObj*) ((EjsType*) v1)->prototype, n, &lookup);
+                        slotNum = ejsLookupVar(ejs, ((EjsType*) v1)->prototype, n, &lookup);
                     }
                 }
                 push(ejsCreateBoolean(ejs, slotNum >= 0));

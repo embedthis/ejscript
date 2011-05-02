@@ -10,11 +10,11 @@
 
 /************************************ Forwards ********************************/
 
-static EjsObj *completeUri(Ejs *ejs, EjsUri *up, EjsObj *missing, int includeQuery);
+static EjsUri *completeUri(Ejs *ejs, EjsUri *up, EjsObj *missing, int includeQuery);
 static int same(Ejs *ejs, HttpUri *u1, HttpUri *u2, int exact);
 static HttpUri *createHttpUriFromHash(Ejs *ejs, EjsObj *arg, int complete);
 static HttpUri *toHttpUri(Ejs *ejs, EjsObj *arg, int dup);
-static EjsObj *uri_join(Ejs *ejs, EjsUri *up, int argc, EjsObj **argv);
+static EjsUri *uri_join(Ejs *ejs, EjsUri *up, int argc, EjsObj **argv);
 
 /************************************ Helpers *********************************/
 
@@ -64,7 +64,7 @@ static EjsUri *cloneUri(Ejs *ejs, EjsUri *src, bool deep)
 }
 
 
-static EjsObj *coerceUriOperands(Ejs *ejs, EjsUri *lhs, int opcode,  EjsObj *rhs)
+static EjsAny *coerceUriOperands(Ejs *ejs, EjsUri *lhs, int opcode,  EjsAny *rhs)
 {
     HttpUri     *uri;
     char        *ustr;
@@ -76,35 +76,35 @@ static EjsObj *coerceUriOperands(Ejs *ejs, EjsUri *lhs, int opcode,  EjsObj *rhs
     case EJS_OP_ADD:
         uri = lhs->uri;
         ustr = httpFormatUri(uri->scheme, uri->host, uri->port, uri->path, uri->reference, uri->query, 0);
-        return ejsInvokeOperator(ejs, (EjsObj*) ejsCreateStringFromAsc(ejs, ustr), opcode, rhs);
+        return ejsInvokeOperator(ejs, ejsCreateStringFromAsc(ejs, ustr), opcode, rhs);
 
     case EJS_OP_COMPARE_EQ: case EJS_OP_COMPARE_NE:
     case EJS_OP_COMPARE_LE: case EJS_OP_COMPARE_LT:
     case EJS_OP_COMPARE_GE: case EJS_OP_COMPARE_GT:
         if (!ejsIsDefined(ejs, rhs)) {
-            return (EjsObj*) ((opcode == EJS_OP_COMPARE_EQ) ? S(false): S(true));
+            return ((opcode == EJS_OP_COMPARE_EQ) ? S(false): S(true));
         }
         uri = lhs->uri;
         ustr = httpFormatUri(uri->scheme, uri->host, uri->port, uri->path, uri->reference, uri->query, 0);
-        return ejsInvokeOperator(ejs, (EjsObj*) ejsCreateStringFromAsc(ejs, ustr), opcode, rhs);
+        return ejsInvokeOperator(ejs, ejsCreateStringFromAsc(ejs, ustr), opcode, rhs);
 
     case EJS_OP_COMPARE_STRICTLY_NE:
-        return (EjsObj*) S(true);
+        return S(true);
 
     case EJS_OP_COMPARE_STRICTLY_EQ:
-        return (EjsObj*) S(false);
+        return S(false);
 
     case EJS_OP_COMPARE_NOT_ZERO:
     case EJS_OP_COMPARE_TRUE:
-        return (EjsObj*) S(true);
+        return S(true);
 
     case EJS_OP_COMPARE_ZERO:
     case EJS_OP_COMPARE_FALSE:
-        return (EjsObj*) S(false);
+        return S(false);
 
     case EJS_OP_COMPARE_UNDEFINED:
     case EJS_OP_COMPARE_NULL:
-        return (EjsObj*) S(false);
+        return S(false);
 
     default:
         ejsThrowTypeError(ejs, "Opcode %d not valid for type %@", opcode, TYPE(lhs)->qname.name);
@@ -114,12 +114,12 @@ static EjsObj *coerceUriOperands(Ejs *ejs, EjsUri *lhs, int opcode,  EjsObj *rhs
 }
 
 
-static EjsObj *invokeUriOperator(Ejs *ejs, EjsUri *lhs, int opcode,  EjsUri *rhs, void *data)
+static EjsAny *invokeUriOperator(Ejs *ejs, EjsUri *lhs, int opcode,  EjsUri *rhs, void *data)
 {
-    EjsObj      *result;
+    EjsAny      *result;
 
     if (rhs == 0 || TYPE(lhs) != TYPE(rhs)) {
-        if ((result = coerceUriOperands(ejs, lhs, opcode, (EjsObj*) rhs)) != 0) {
+        if ((result = coerceUriOperands(ejs, lhs, opcode, rhs)) != 0) {
             return result;
         }
     }
@@ -130,42 +130,42 @@ static EjsObj *invokeUriOperator(Ejs *ejs, EjsUri *lhs, int opcode,  EjsUri *rhs
     case EJS_OP_COMPARE_STRICTLY_EQ:
     case EJS_OP_COMPARE_EQ:
         if (lhs == rhs || (lhs->uri == rhs->uri)) {
-            return (EjsObj*) S(true);
+            return S(true);
         }
-        return (EjsObj*) ejsCreateBoolean(ejs,  same(ejs, lhs->uri, rhs->uri, 1));
+        return ejsCreateBoolean(ejs,  same(ejs, lhs->uri, rhs->uri, 1));
 
     case EJS_OP_COMPARE_NE:
     case EJS_OP_COMPARE_STRICTLY_NE:
-        return (EjsObj*) ejsCreateBoolean(ejs,  !same(ejs, lhs->uri, rhs->uri, 1));
+        return ejsCreateBoolean(ejs,  !same(ejs, lhs->uri, rhs->uri, 1));
 
     /*  NOTE: these only compare the paths */
     case EJS_OP_COMPARE_LT:
-        return (EjsObj*) ejsCreateBoolean(ejs,  scmp(lhs->uri->path, rhs->uri->path) < 0);
+        return ejsCreateBoolean(ejs,  scmp(lhs->uri->path, rhs->uri->path) < 0);
 
     case EJS_OP_COMPARE_LE:
-        return (EjsObj*) ejsCreateBoolean(ejs,  scmp(lhs->uri->path, rhs->uri->path) <= 0);
+        return ejsCreateBoolean(ejs,  scmp(lhs->uri->path, rhs->uri->path) <= 0);
 
     case EJS_OP_COMPARE_GT:
-        return (EjsObj*) ejsCreateBoolean(ejs,  scmp(lhs->uri->path, rhs->uri->path) > 0);
+        return ejsCreateBoolean(ejs,  scmp(lhs->uri->path, rhs->uri->path) > 0);
 
     case EJS_OP_COMPARE_GE:
-        return (EjsObj*) ejsCreateBoolean(ejs,  scmp(lhs->uri->path, rhs->uri->path) >= 0);
+        return ejsCreateBoolean(ejs,  scmp(lhs->uri->path, rhs->uri->path) >= 0);
 
     /*  
         Unary operators
      */
     case EJS_OP_COMPARE_NOT_ZERO:
-        return (EjsObj*) ((lhs->uri->path) ? S(true): S(false));
+        return ((lhs->uri->path) ? S(true): S(false));
 
     case EJS_OP_COMPARE_ZERO:
-        return (EjsObj*) ((lhs->uri->path == 0) ? S(true): S(false));
+        return ((lhs->uri->path == 0) ? S(true): S(false));
 
 
     case EJS_OP_COMPARE_UNDEFINED:
     case EJS_OP_COMPARE_NULL:
     case EJS_OP_COMPARE_FALSE:
     case EJS_OP_COMPARE_TRUE:
-        return (EjsObj*) S(false);
+        return S(false);
 
     /*  
         Binary operators
@@ -189,12 +189,12 @@ static EjsObj *invokeUriOperator(Ejs *ejs, EjsUri *lhs, int opcode,  EjsUri *rhs
     function Uri(path: String)
     function Uri(parts: Object)
  */
-static EjsObj *uri_constructor(Ejs *ejs, EjsUri *up, int argc, EjsObj **argv)
+static EjsUri *uri_constructor(Ejs *ejs, EjsUri *up, int argc, EjsObj **argv)
 {
     if (argc >= 0) {
         up->uri = toHttpUri(ejs, argv[0], 1);
     }
-    return (EjsObj*) up;
+    return up;
 }
 
 
@@ -203,7 +203,7 @@ static EjsObj *uri_constructor(Ejs *ejs, EjsUri *up, int argc, EjsObj **argv)
 
     function absolute(base): Uri
  */
-static EjsObj *uri_absolute(Ejs *ejs, EjsUri *up, int argc, EjsObj **argv)
+static EjsUri *uri_absolute(Ejs *ejs, EjsUri *up, int argc, EjsObj **argv)
 {
     EjsUri      *result;
     HttpUri     *uri, *baseUri;
@@ -221,14 +221,14 @@ static EjsObj *uri_absolute(Ejs *ejs, EjsUri *up, int argc, EjsObj **argv)
         httpCompleteUri(result->uri, NULL);
     }
     httpNormalizeUri(result->uri);
-    return (EjsObj*) result;
+    return result;
 }
 
 
 /*  
     function get basename(): Uri
  */
-static EjsObj *uri_basename(Ejs *ejs, EjsUri *up, int argc, EjsObj **argv)
+static EjsUri *uri_basename(Ejs *ejs, EjsUri *up, int argc, EjsObj **argv)
 {
     EjsUri      *np;
     char        *path, *cp;
@@ -237,7 +237,7 @@ static EjsObj *uri_basename(Ejs *ejs, EjsUri *up, int argc, EjsObj **argv)
     np = cloneUri(ejs, up, 0);
     path = np->uri->path;
     if (path == 0) {
-        return (EjsObj*) S(empty);
+        return S(empty);
     }
     len = (int) strlen(path);
     if (path[len - 1] == '/') {
@@ -247,14 +247,14 @@ static EjsObj *uri_basename(Ejs *ejs, EjsUri *up, int argc, EjsObj **argv)
             np->uri->path = &cp[1];
         }
     }
-    return (EjsObj*) np;
+    return np;
 }
 
 
 /*  
     function complete(missing = null): Uri
  */
-static EjsObj *uri_complete(Ejs *ejs, EjsUri *up, int argc, EjsObj **argv)
+static EjsUri *uri_complete(Ejs *ejs, EjsUri *up, int argc, EjsObj **argv)
 {
     EjsUri  *result;
 
@@ -294,7 +294,7 @@ static EjsObj *uri_components(Ejs *ejs, EjsUri *up, int argc, EjsObj **argv)
     if (uri->query) {
         ejsSetPropertyByName(ejs, obj, EN("query"), ejsCreateStringFromAsc(ejs, uri->query));
     }
-    return (EjsObj*) obj;
+    return obj;
 }
 
 
@@ -302,9 +302,9 @@ static EjsObj *uri_components(Ejs *ejs, EjsUri *up, int argc, EjsObj **argv)
     Decode a Uri
     static function decode(str: String): String
  */
-static EjsObj *uri_decode(Ejs *ejs, EjsObj *unused, int argc, EjsObj **argv)
+static EjsString *uri_decode(Ejs *ejs, EjsObj *unused, int argc, EjsObj **argv)
 {
-    return (EjsObj*) ejsCreateStringFromAsc(ejs, mprUriDecode(ejsToMulti(ejs, argv[0])));
+    return ejsCreateStringFromAsc(ejs, mprUriDecode(ejsToMulti(ejs, argv[0])));
 }
 
 
@@ -312,16 +312,16 @@ static EjsObj *uri_decode(Ejs *ejs, EjsObj *unused, int argc, EjsObj **argv)
     Decode a Uri component
     static function decodeComponent(str: String): String
  */
-static EjsObj *uri_decodeComponent(Ejs *ejs, EjsObj *unused, int argc, EjsObj **argv)
+static EjsString *uri_decodeComponent(Ejs *ejs, EjsObj *unused, int argc, EjsObj **argv)
 {
-    return (EjsObj*) ejsCreateStringFromAsc(ejs, mprUriDecode(ejsToMulti(ejs, argv[0])));
+    return ejsCreateStringFromAsc(ejs, mprUriDecode(ejsToMulti(ejs, argv[0])));
 }
 
 
 /*  
     function get dirname(): Uri
  */
-static EjsObj *uri_dirname(Ejs *ejs, EjsUri *up, int argc, EjsObj **argv)
+static EjsUri *uri_dirname(Ejs *ejs, EjsUri *up, int argc, EjsObj **argv)
 {
     EjsUri      *np;
     char        *path, *cp;
@@ -330,7 +330,7 @@ static EjsObj *uri_dirname(Ejs *ejs, EjsUri *up, int argc, EjsObj **argv)
     np = cloneUri(ejs, up, 0);
     path = np->uri->path;
     if (path == 0) {
-        return (EjsObj*) S(empty);
+        return S(empty);
     }
     len = (int) strlen(path);
     if (path[len - 1] == '/') {
@@ -346,7 +346,7 @@ static EjsObj *uri_dirname(Ejs *ejs, EjsUri *up, int argc, EjsObj **argv)
             }
         }
     }
-    return (EjsObj*) np;
+    return np;
 }
 
 
@@ -354,9 +354,9 @@ static EjsObj *uri_dirname(Ejs *ejs, EjsUri *up, int argc, EjsObj **argv)
     Uri Encode a string
     function encode(str: String): String
  */
-static EjsObj *uri_encode(Ejs *ejs, EjsObj *unused, int argc, EjsObj **argv)
+static EjsString *uri_encode(Ejs *ejs, EjsObj *unused, int argc, EjsObj **argv)
 {
-    return (EjsObj*) ejsCreateStringFromAsc(ejs, mprUriEncode(ejsToMulti(ejs, argv[0]), MPR_ENCODE_URI));
+    return ejsCreateStringFromAsc(ejs, mprUriEncode(ejsToMulti(ejs, argv[0]), MPR_ENCODE_URI));
 }
 
 
@@ -364,9 +364,9 @@ static EjsObj *uri_encode(Ejs *ejs, EjsObj *unused, int argc, EjsObj **argv)
     Encode a Uri component
     static function encodeComponent(str: String): String
  */
-static EjsObj *uri_encodeComponent(Ejs *ejs, EjsObj *unused, int argc, EjsObj **argv)
+static EjsString *uri_encodeComponent(Ejs *ejs, EjsObj *unused, int argc, EjsObj **argv)
 {
-    return (EjsObj*) ejsCreateStringFromAsc(ejs, mprUriEncode(ejsToMulti(ejs, argv[0]), MPR_ENCODE_URI_COMPONENT));
+    return ejsCreateStringFromAsc(ejs, mprUriEncode(ejsToMulti(ejs, argv[0]), MPR_ENCODE_URI_COMPONENT));
 }
 
 
@@ -374,9 +374,9 @@ static EjsObj *uri_encodeComponent(Ejs *ejs, EjsObj *unused, int argc, EjsObj **
     Get the Uri extension
     static function get extension(): String
  */
-static EjsObj *uri_extension(Ejs *ejs, EjsUri *up, int argc, EjsObj **argv)
+static EjsString *uri_extension(Ejs *ejs, EjsUri *up, int argc, EjsObj **argv)
 {
-    return (EjsObj*) ejsCreateStringFromAsc(ejs, up->uri->ext);
+    return ejsCreateStringFromAsc(ejs, up->uri->ext);
 }
 
 
@@ -399,9 +399,9 @@ static EjsObj *uri_set_extension(Ejs *ejs, EjsUri *up, int argc, EjsObj **argv)
     Determine if the uri has an extension
     static function get hasExtension(): Boolean
  */
-static EjsObj *uri_hasExtension(Ejs *ejs, EjsUri *up, int argc, EjsObj **argv)
+static EjsBoolean *uri_hasExtension(Ejs *ejs, EjsUri *up, int argc, EjsObj **argv)
 {
-    return (EjsObj*) ((up->uri->ext) ? S(true) : S(false));
+    return ejsCreateBoolean(ejs, up->uri->ext);
 }
 
 
@@ -409,9 +409,9 @@ static EjsObj *uri_hasExtension(Ejs *ejs, EjsUri *up, int argc, EjsObj **argv)
     Determine if the uri has a host
     static function get hasHost(): Boolean
  */
-static EjsObj *uri_hasHost(Ejs *ejs, EjsUri *up, int argc, EjsObj **argv)
+static EjsBoolean *uri_hasHost(Ejs *ejs, EjsUri *up, int argc, EjsObj **argv)
 {
-    return (EjsObj*) ((up->uri->host) ? S(true) : S(false));
+    return ejsCreateBoolean(ejs, up->uri->host);
 }
 
 
@@ -419,9 +419,9 @@ static EjsObj *uri_hasHost(Ejs *ejs, EjsUri *up, int argc, EjsObj **argv)
     Determine if the uri has a port
     static function get hasPort(): Boolean
  */
-static EjsObj *uri_hasPort(Ejs *ejs, EjsUri *up, int argc, EjsObj **argv)
+static EjsBoolean *uri_hasPort(Ejs *ejs, EjsUri *up, int argc, EjsObj **argv)
 {
-    return (EjsObj*) ((up->uri->port > 0) ? S(true) : S(false));
+    return ejsCreateBoolean(ejs, up->uri->port > 0);
 }
 
 
@@ -429,9 +429,9 @@ static EjsObj *uri_hasPort(Ejs *ejs, EjsUri *up, int argc, EjsObj **argv)
     Determine if the uri has a query
     static function get hasQuery(): Boolean
  */
-static EjsObj *uri_hasQuery(Ejs *ejs, EjsUri *up, int argc, EjsObj **argv)
+static EjsBoolean *uri_hasQuery(Ejs *ejs, EjsUri *up, int argc, EjsObj **argv)
 {
-    return (EjsObj*) ((up->uri->query) ? S(true) : S(false));
+    return ejsCreateBoolean(ejs, up->uri->query);
 }
 
 
@@ -439,9 +439,9 @@ static EjsObj *uri_hasQuery(Ejs *ejs, EjsUri *up, int argc, EjsObj **argv)
     Determine if the uri has a reference
     static function get hasReference(): Boolean
  */
-static EjsObj *uri_hasReference(Ejs *ejs, EjsUri *up, int argc, EjsObj **argv)
+static EjsBoolean *uri_hasReference(Ejs *ejs, EjsUri *up, int argc, EjsObj **argv)
 {
-    return (EjsObj*) ((up->uri->reference) ? S(true) : S(false));
+    return ejsCreateBoolean(ejs, up->uri->reference);
 }
 
 
@@ -449,9 +449,9 @@ static EjsObj *uri_hasReference(Ejs *ejs, EjsUri *up, int argc, EjsObj **argv)
     Determine if the uri has a scheme
     static function get hasScheme(): Boolean
  */
-static EjsObj *uri_hasScheme(Ejs *ejs, EjsUri *up, int argc, EjsObj **argv)
+static EjsBoolean *uri_hasScheme(Ejs *ejs, EjsUri *up, int argc, EjsObj **argv)
 {
-    return (EjsObj*) ((up->uri->scheme) ? S(true) : S(false));
+    return ejsCreateBoolean(ejs, up->uri->scheme);
 }
 
 
@@ -459,16 +459,12 @@ static EjsObj *uri_hasScheme(Ejs *ejs, EjsUri *up, int argc, EjsObj **argv)
     Get the host portion
     static function get host(): String
  */
-static EjsObj *uri_host(Ejs *ejs, EjsUri *up, int argc, EjsObj **argv)
+static EjsString *uri_host(Ejs *ejs, EjsUri *up, int argc, EjsObj **argv)
 {
     if (up->uri->host == 0) {
-#if UNUSED
-        return (EjsObj*) ejsCreateStringFromAsc(ejs, "localhost");
-#else
         return S(null);
-#endif
     }    
-    return (EjsObj*) ejsCreateStringFromAsc(ejs, up->uri->host);
+    return ejsCreateStringFromAsc(ejs, up->uri->host);
 }
 
 
@@ -486,9 +482,9 @@ static EjsObj *uri_set_host(Ejs *ejs, EjsUri *up, int argc, EjsObj **argv)
 /*  
     function get isAbsolute(): Boolean
  */
-static EjsObj *uri_isAbsolute(Ejs *ejs, EjsUri *up, int argc, EjsObj **argv)
+static EjsBoolean *uri_isAbsolute(Ejs *ejs, EjsUri *up, int argc, EjsObj **argv)
 {
-    return (EjsObj*) ((up->uri->path[0] == '/') ? S(true) : S(false));
+    return ejsCreateBoolean(ejs, up->uri->path[0] == '/');
 }
 
 
@@ -496,12 +492,12 @@ static EjsObj *uri_isAbsolute(Ejs *ejs, EjsUri *up, int argc, EjsObj **argv)
     Determine if the file name is a directory. This 
     function get isDir(): Boolean
  */
-static EjsObj *uri_isDir(Ejs *ejs, EjsUri *up, int argc, EjsObj **argv)
+static EjsBoolean *uri_isDir(Ejs *ejs, EjsUri *up, int argc, EjsObj **argv)
 {
     HttpUri     *uri;
 
     uri = up->uri;
-    return (EjsObj*) ((uri->path[strlen(uri->path) - 1] == '/') ? S(true) : S(false));
+    return ejsCreateBoolean(ejs, uri->path[strlen(uri->path) - 1] == '/');
 }
 
 
@@ -509,7 +505,7 @@ static EjsObj *uri_isDir(Ejs *ejs, EjsUri *up, int argc, EjsObj **argv)
     Join uri segments
     function join(...others): Uri
  */
-static EjsObj *uri_join(Ejs *ejs, EjsUri *up, int argc, EjsObj **argv)
+static EjsUri *uri_join(Ejs *ejs, EjsUri *up, int argc, EjsObj **argv)
 {
     EjsUri      *result;
     EjsObj      *arg;
@@ -521,7 +517,7 @@ static EjsObj *uri_join(Ejs *ejs, EjsUri *up, int argc, EjsObj **argv)
     result = cloneUri(ejs, up, 0);
     uri = result->uri;
     for (i = 0; i < args->length; i++) {
-        arg = ejsGetProperty(ejs, (EjsObj*) args, i);
+        arg = ejsGetProperty(ejs, args, i);
         if ((other = toHttpUri(ejs, arg, 0)) == NULL) {
             return 0;
         }
@@ -529,7 +525,7 @@ static EjsObj *uri_join(Ejs *ejs, EjsUri *up, int argc, EjsObj **argv)
         uri = httpJoinUri(oldUri, 1, &other);
     }
     result->uri = uri;
-    return (EjsObj*) result;
+    return result;
 }
 
 
@@ -537,7 +533,7 @@ static EjsObj *uri_join(Ejs *ejs, EjsUri *up, int argc, EjsObj **argv)
     Join extension
     function joinExt(ext: String): Uri
  */
-static EjsObj *uri_joinExt(Ejs *ejs, EjsUri *up, int argc, EjsObj **argv)
+static EjsUri *uri_joinExt(Ejs *ejs, EjsUri *up, int argc, EjsObj **argv)
 {
     EjsUri      *np;
     HttpUri     *nuri;
@@ -551,21 +547,21 @@ static EjsObj *uri_joinExt(Ejs *ejs, EjsUri *up, int argc, EjsObj **argv)
     }
     nuri->ext = ext;
     nuri->path = sjoin(mprTrimPathExtension(nuri->path), ".", nuri->ext, NULL);
-    return (EjsObj*) np;
+    return np;
 }
 
 
 /*  
     function local(): Uri
  */
-static EjsObj *uri_local(Ejs *ejs, EjsUri *up, int argc, EjsObj **argv)
+static EjsUri *uri_local(Ejs *ejs, EjsUri *up, int argc, EjsObj **argv)
 {
     EjsUri      *result;
 
     if ((result = cloneUri(ejs, up, 0)) != 0) {
         httpMakeUriLocal(result->uri);
     }
-    return (EjsObj*) result;
+    return result;
 }
 
 
@@ -573,22 +569,22 @@ static EjsObj *uri_local(Ejs *ejs, EjsUri *up, int argc, EjsObj **argv)
     Get the mimeType
     function mimeType(): String
  */
-static EjsObj *uri_mimeType(Ejs *ejs, EjsUri *up, int argc, EjsObj **argv)
+static EjsString *uri_mimeType(Ejs *ejs, EjsUri *up, int argc, EjsObj **argv)
 {
-    return (EjsObj*) ejsCreateStringFromAsc(ejs, mprLookupMime(NULL, up->uri->ext));
+    return ejsCreateStringFromAsc(ejs, mprLookupMime(NULL, up->uri->ext));
 }
 
 
 /*  
     function get normalize(): Uri
  */
-static EjsObj *uri_normalize(Ejs *ejs, EjsUri *up, int argc, EjsObj **argv)
+static EjsUri *uri_normalize(Ejs *ejs, EjsUri *up, int argc, EjsObj **argv)
 {
     EjsUri      *np;
 
     np = cloneUri(ejs, up, 0);
     np->uri->path = httpNormalizeUriPath(up->uri->path);
-    return (EjsObj*) np;
+    return np;
 }
 
 
@@ -596,9 +592,9 @@ static EjsObj *uri_normalize(Ejs *ejs, EjsUri *up, int argc, EjsObj **argv)
     Get the path portion
     static function get path(): String
  */
-static EjsObj *uri_path(Ejs *ejs, EjsUri *up, int argc, EjsObj **argv)
+static EjsString *uri_path(Ejs *ejs, EjsUri *up, int argc, EjsObj **argv)
 {
-    return (EjsObj*) ejsCreateStringFromAsc(ejs, up->uri->path);
+    return ejsCreateStringFromAsc(ejs, up->uri->path);
 }
 
 
@@ -618,7 +614,7 @@ static EjsObj *uri_set_path(Ejs *ejs, EjsUri *up, int argc, EjsObj **argv)
     Get the port portion
     static function get port(): Number
  */
-static EjsObj *uri_port(Ejs *ejs, EjsUri *up, int argc, EjsObj **argv)
+static EjsNumber *uri_port(Ejs *ejs, EjsUri *up, int argc, EjsObj **argv)
 {
     HttpUri     *uri;
     
@@ -628,12 +624,12 @@ static EjsObj *uri_port(Ejs *ejs, EjsUri *up, int argc, EjsObj **argv)
             return S(null);
         }
         if (uri->scheme == 0 || strcmp(uri->scheme, "http") == 0) {
-            return (EjsObj*) ejsCreateNumber(ejs, 80);
+            return ejsCreateNumber(ejs, 80);
         } else if (uri->scheme && strcmp(uri->scheme, "https") == 0) {
-            return (EjsObj*) ejsCreateNumber(ejs, 443);
+            return ejsCreateNumber(ejs, 443);
         }
     }
-    return (EjsObj*) ejsCreateNumber(ejs, up->uri->port);
+    return ejsCreateNumber(ejs, up->uri->port);
 }
 
 
@@ -652,7 +648,7 @@ static EjsObj *uri_set_port(Ejs *ejs, EjsUri *up, int argc, EjsObj **argv)
     Replace the Uri extension
     static function set replaceExt(ext: String): Uri
  */
-static EjsObj *uri_replaceExtension(Ejs *ejs, EjsUri *up, int argc, EjsObj **argv)
+static EjsUri *uri_replaceExtension(Ejs *ejs, EjsUri *up, int argc, EjsObj **argv)
 {
     EjsUri      *np;
     HttpUri     *nuri;
@@ -667,14 +663,14 @@ static EjsObj *uri_replaceExtension(Ejs *ejs, EjsUri *up, int argc, EjsObj **arg
     }
     nuri->ext = ext;
     nuri->path = sjoin(mprTrimPathExtension(nuri->path), ".", nuri->ext, NULL);
-    return (EjsObj*) np;
+    return np;
 }
 
 
 /*  
     function resolve(target): Uri
  */
-static EjsObj *uri_resolve(Ejs *ejs, EjsUri *up, int argc, EjsObj **argv)
+static EjsUri *uri_resolve(Ejs *ejs, EjsUri *up, int argc, EjsObj **argv)
 {
     EjsUri      *result;
     HttpUri     *uri, *target;
@@ -693,14 +689,14 @@ static EjsObj *uri_resolve(Ejs *ejs, EjsUri *up, int argc, EjsObj **argv)
         uri = httpCloneUri(uri, 0);
     }
     result->uri = uri;
-    return (EjsObj*) result;
+    return result;
 }
 
 
 /*  
     function relative(base): Uri
  */
-static EjsObj *uri_relative(Ejs *ejs, EjsUri *up, int argc, EjsObj **argv)
+static EjsUri *uri_relative(Ejs *ejs, EjsUri *up, int argc, EjsObj **argv)
 {
     EjsUri      *result;
     HttpUri     *baseUri;
@@ -708,7 +704,7 @@ static EjsObj *uri_relative(Ejs *ejs, EjsUri *up, int argc, EjsObj **argv)
     baseUri = toHttpUri(ejs, argv[0], 0);
     result = ejsCreateObj(ejs, ST(Uri), 0);
     result->uri = httpGetRelativeUri(baseUri, up->uri, 1);
-    return (EjsObj*) result;
+    return result;
 }
 
 
@@ -716,16 +712,12 @@ static EjsObj *uri_relative(Ejs *ejs, EjsUri *up, int argc, EjsObj **argv)
     Get the scheme portion
     static function get scheme(): String
  */
-static EjsObj *uri_scheme(Ejs *ejs, EjsUri *up, int argc, EjsObj **argv)
+static EjsString *uri_scheme(Ejs *ejs, EjsUri *up, int argc, EjsObj **argv)
 {
     if (up->uri->scheme == 0) {
-#if UNUSED
-        return (EjsObj*) ejsCreateStringFromAsc(ejs, "http");
-#else
         return S(null);
-#endif
     }
-    return (EjsObj*) ejsCreateStringFromAsc(ejs, up->uri->scheme);
+    return ejsCreateStringFromAsc(ejs, up->uri->scheme);
 }
 
 
@@ -744,9 +736,9 @@ static EjsObj *uri_set_scheme(Ejs *ejs, EjsUri *up, int argc, EjsObj **argv)
     Get the query portion
     static function get query(): String
  */
-static EjsObj *uri_query(Ejs *ejs, EjsUri *up, int argc, EjsObj **argv)
+static EjsString *uri_query(Ejs *ejs, EjsUri *up, int argc, EjsObj **argv)
 {
-    return (EjsObj*) ejsCreateStringFromAsc(ejs, up->uri->query);
+    return ejsCreateStringFromAsc(ejs, up->uri->query);
 }
 
 
@@ -768,9 +760,9 @@ static EjsObj *uri_set_query(Ejs *ejs, EjsUri *up, int argc, EjsObj **argv)
     Get the reference portion
     static function get reference(): String
  */
-static EjsObj *uri_reference(Ejs *ejs, EjsUri *up, int argc, EjsObj **argv)
+static EjsString *uri_reference(Ejs *ejs, EjsUri *up, int argc, EjsObj **argv)
 {
-    return (EjsObj*) ejsCreateStringFromAsc(ejs, up->uri->reference);
+    return ejsCreateStringFromAsc(ejs, up->uri->reference);
 }
 
 
@@ -798,8 +790,8 @@ static EjsObj *uri_same(Ejs *ejs, EjsUri *up, int argc, EjsObj **argv)
     int     exact;
 
     other = (EjsUri*) argv[0];
-    exact = (argc == 2 && argv[1] == (EjsObj*) S(true));
-    return (EjsObj*) (same(ejs, up->uri, other->uri, exact) ? S(true): S(false));
+    exact = (argc == 2 && argv[1] == S(true));
+    return ejsCreateBoolean(ejs, same(ejs, up->uri, other->uri, exact));
 }
 
 
@@ -808,7 +800,7 @@ static EjsObj *uri_same(Ejs *ejs, EjsUri *up, int argc, EjsObj **argv)
 
     function template(pattern: String, ...options): Uri
  */
-static EjsObj *uri_template(Ejs *ejs, EjsUri *up, int argc, EjsObj **argv)
+static EjsUri *uri_template(Ejs *ejs, EjsUri *up, int argc, EjsObj **argv)
 {
     EjsArray    *options;
     EjsObj      *obj, *value;
@@ -852,39 +844,38 @@ static EjsObj *uri_template(Ejs *ejs, EjsUri *up, int argc, EjsObj **argv)
         }
     }
     mprAddNullToBuf(buf);
-    return (EjsObj*) ejsCreateUriFromMulti(ejs, mprGetBufStart(buf));
+    return ejsCreateUriFromMulti(ejs, mprGetBufStart(buf));
 }
 
 
 /* 
    function toString(): String
  */
-static EjsObj *uri_toString(Ejs *ejs, EjsUri *up, int argc, EjsObj **argv)
+static EjsString *uri_toString(Ejs *ejs, EjsUri *up, int argc, EjsObj **argv)
 {
     HttpUri     *uri;
 
     uri = up->uri;
-    return (EjsObj*) ejsCreateStringFromAsc(ejs, httpUriToString(uri, 0));
+    return ejsCreateStringFromAsc(ejs, httpUriToString(uri, 0));
 }
 
 
 /* 
    function toLocalString(): String
  */
-static EjsObj *uri_toLocalString(Ejs *ejs, EjsUri *up, int argc, EjsObj **argv)
+static EjsString *uri_toLocalString(Ejs *ejs, EjsUri *up, int argc, EjsObj **argv)
 {
     HttpUri     *uri;
 
     uri = up->uri;
-    return (EjsObj*) ejsCreateStringFromAsc(ejs, 
-        httpFormatUri(NULL, NULL, 0, uri->path, uri->reference, uri->query, 0));
+    return ejsCreateStringFromAsc(ejs, httpFormatUri(NULL, NULL, 0, uri->path, uri->reference, uri->query, 0));
 }
 
 
 /*  
     function trimExt(): Uri
  */
-static EjsObj *uri_trimExt(Ejs *ejs, EjsUri *up, int argc, EjsObj **argv)
+static EjsUri *uri_trimExt(Ejs *ejs, EjsUri *up, int argc, EjsObj **argv)
 {
     EjsUri      *np;
     HttpUri     *nuri;
@@ -893,7 +884,7 @@ static EjsObj *uri_trimExt(Ejs *ejs, EjsUri *up, int argc, EjsObj **argv)
     nuri = np->uri;
     nuri->ext = 0;
     nuri->path = mprTrimPathExtension(nuri->path);
-    return (EjsObj*) np;
+    return np;
 }
 
 
@@ -919,7 +910,7 @@ static char *uriToString(Ejs *ejs, EjsUri *up)
 #endif
 
 
-static EjsObj *completeUri(Ejs *ejs, EjsUri *up, EjsObj *missing, int includeQuery)
+static EjsUri *completeUri(Ejs *ejs, EjsUri *up, EjsObj *missing, int includeQuery)
 {
     EjsUri      *missingUri;
 
@@ -939,7 +930,7 @@ static EjsObj *completeUri(Ejs *ejs, EjsUri *up, EjsObj *missing, int includeQue
     } else {
         httpCompleteUri(up->uri, missingUri->uri);
     }
-    return (EjsObj*) up;
+    return up;
 }
 
 

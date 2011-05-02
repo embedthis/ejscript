@@ -21,10 +21,10 @@ static void stateChangeNotifier(HttpConn *conn, int state, int notifyFlags);
 /*  
     function get address(): String
  */
-static EjsObj *hs_address(Ejs *ejs, EjsHttpServer *sp, int argc, EjsObj **argv)
+static EjsString *hs_address(Ejs *ejs, EjsHttpServer *sp, int argc, EjsObj **argv)
 {
     if (sp->ip) {
-        return (EjsObj*) ejsCreateStringFromAsc(ejs, sp->ip);
+        return ejsCreateStringFromAsc(ejs, sp->ip);
     } 
     return S(null);
 }
@@ -33,7 +33,7 @@ static EjsObj *hs_address(Ejs *ejs, EjsHttpServer *sp, int argc, EjsObj **argv)
 /*  
     function accept(): Request
  */
-static EjsObj *hs_accept(Ejs *ejs, EjsHttpServer *sp, int argc, EjsObj **argv)
+static EjsRequest *hs_accept(Ejs *ejs, EjsHttpServer *sp, int argc, EjsObj **argv)
 {
     HttpConn    *conn;
     MprEvent    event;
@@ -45,7 +45,7 @@ static EjsObj *hs_accept(Ejs *ejs, EjsHttpServer *sp, int argc, EjsObj **argv)
         mprError("Can't accept connection");
         return 0;
     }
-    return (EjsObj*) createRequest(sp, conn);
+    return createRequest(sp, conn);
 }
 
 
@@ -214,11 +214,11 @@ static EjsObj *hs_listen(Ejs *ejs, EjsHttpServer *sp, int argc, EjsObj **argv)
     /*
         This is only required for when http is using non-ejs handlers and/or filters
      */
-    root = ejsGetProperty(ejs, (EjsObj*) sp, ES_ejs_web_HttpServer_documentRoot);
+    root = ejsGetProperty(ejs, sp, ES_ejs_web_HttpServer_documentRoot);
     if (ejsIs(ejs, root, Path)) {
         httpSetHostDocumentRoot(host, root->value);
     }
-    root = ejsGetProperty(ejs, (EjsObj*) sp, ES_ejs_web_HttpServer_serverRoot);
+    root = ejsGetProperty(ejs, sp, ES_ejs_web_HttpServer_serverRoot);
     if (ejsIs(ejs, root, Path)) {
         httpSetHostServerRoot(host, root->value);
     }
@@ -236,10 +236,10 @@ static EjsObj *hs_listen(Ejs *ejs, EjsHttpServer *sp, int argc, EjsObj **argv)
 /*  
     function get name(): String
  */
-static EjsObj *hs_name(Ejs *ejs, EjsHttpServer *sp, int argc, EjsObj **argv)
+static EjsString *hs_name(Ejs *ejs, EjsHttpServer *sp, int argc, EjsObj **argv)
 {
     if (sp->name) {
-        return (EjsObj*) ejsCreateStringFromAsc(ejs, sp->name);
+        return ejsCreateStringFromAsc(ejs, sp->name);
     }
     return S(null);
 }
@@ -276,9 +276,9 @@ static EjsObj *hs_off(Ejs *ejs, EjsHttpServer *sp, int argc, EjsObj **argv)
 /*  
     function get port(): Number
  */
-static EjsObj *hs_port(Ejs *ejs, EjsHttpServer *sp, int argc, EjsObj **argv)
+static EjsNumber *hs_port(Ejs *ejs, EjsHttpServer *sp, int argc, EjsObj **argv)
 {
-    return (EjsObj*) ejsCreateNumber(ejs, sp->port);
+    return ejsCreateNumber(ejs, sp->port);
 }
 
 
@@ -378,9 +378,9 @@ static EjsObj *hs_trace(Ejs *ejs, EjsHttpServer *sp, int argc, EjsObj **argv)
 /*  
     function get software(headers: Object = null): Void
  */
-static EjsObj *hs_software(Ejs *ejs, EjsHttpServer *sp, int argc, EjsObj **argv)
+static EjsString *hs_software(Ejs *ejs, EjsHttpServer *sp, int argc, EjsObj **argv)
 {
-    return (EjsObj*) ejsCreateStringFromAsc(ejs, EJS_HTTPSERVER_NAME);
+    return ejsCreateStringFromAsc(ejs, EJS_HTTPSERVER_NAME);
 }
 
 

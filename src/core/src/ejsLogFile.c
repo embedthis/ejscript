@@ -30,7 +30,7 @@ static EjsNumber *lf_emit(Ejs *ejs, EjsObj *unused, int argc, EjsObj **argv)
     frozen = ejsFreeze(ejs, 1);
 
     for (i = 0; i < args->length; i++) {
-        vp = ejsGetProperty(ejs, (EjsObj*) args, i);
+        vp = ejsGetProperty(ejs, args, i);
         mprAssert(vp);
         switch (TYPE(vp)->sid) {
         case S_ByteArray:

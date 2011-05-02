@@ -14,7 +14,7 @@
 
     function Timer(period: Number, callback: Function, ...args)
  */
-static EjsObj *timer_constructor(Ejs *ejs, EjsTimer *tp, int argc, EjsObj **argv)
+static EjsTimer *timer_constructor(Ejs *ejs, EjsTimer *tp, int argc, EjsObj **argv)
 {
     mprAssert(argc >= 2);
     mprAssert(ejsIs(ejs, argv[0], Number));
@@ -26,17 +26,17 @@ static EjsObj *timer_constructor(Ejs *ejs, EjsTimer *tp, int argc, EjsObj **argv
     tp->args = (EjsArray*) argv[2];
     tp->repeat = 0;
     tp->drift = 1;
-    return (EjsObj*) tp;
+    return tp;
 }
 
 
 /*
     function get drift(): Boolean
  */
-static EjsObj *timer_get_drift(Ejs *ejs, EjsTimer *tp, int argc, EjsObj **argv)
+static EjsBoolean *timer_get_drift(Ejs *ejs, EjsTimer *tp, int argc, EjsObj **argv)
 {
     mprAssert(argc == 0);
-    return (EjsObj*) ejsCreateBoolean(ejs, tp->drift);
+    return ejsCreateBoolean(ejs, tp->drift);
 }
 
 
@@ -54,10 +54,10 @@ static EjsObj *timer_set_drift(Ejs *ejs, EjsTimer *tp, int argc, EjsObj **argv)
 /*
     function get onerror(): Function
  */
-static EjsObj *timer_get_onerror(Ejs *ejs, EjsTimer *tp, int argc, EjsObj **argv)
+static EjsFunction *timer_get_onerror(Ejs *ejs, EjsTimer *tp, int argc, EjsObj **argv)
 {
     mprAssert(argc == 0);
-    return (EjsObj*) tp->onerror;
+    return tp->onerror;
 }
 
 
@@ -74,10 +74,10 @@ static EjsObj *timer_set_onerror(Ejs *ejs, EjsTimer *tp, int argc, EjsObj **argv
 /*
     function get period(): Number
  */
-static EjsObj *timer_get_period(Ejs *ejs, EjsTimer *tp, int argc, EjsObj **argv)
+static EjsNumber *timer_get_period(Ejs *ejs, EjsTimer *tp, int argc, EjsObj **argv)
 {
     mprAssert(argc == 0);
-    return (EjsObj*) ejsCreateNumber(ejs, tp->period);
+    return ejsCreateNumber(ejs, tp->period);
 }
 
 
@@ -96,10 +96,10 @@ static EjsObj *timer_set_period(Ejs *ejs, EjsTimer *tp, int argc, EjsObj **argv)
 /*
     function get repeat(): Boolean
  */
-static EjsObj *timer_get_repeat(Ejs *ejs, EjsTimer *tp, int argc, EjsObj **argv)
+static EjsBoolean *timer_get_repeat(Ejs *ejs, EjsTimer *tp, int argc, EjsObj **argv)
 {
     mprAssert(argc == 0);
-    return (EjsObj*) ejsCreateBoolean(ejs, tp->repeat);
+    return ejsCreateBoolean(ejs, tp->repeat);
 }
 
 

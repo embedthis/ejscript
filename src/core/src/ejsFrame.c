@@ -152,6 +152,7 @@ void ejsCreateFrameType(Ejs *ejs)
         manageFrame, EJS_POT_HELPERS);
     ejsSetTypeAttributes(type, EJS_TYPE_DYNAMIC_INSTANCE);
     type->constructor.block.pot.shortScope = 1;
+    type->helpers.clone = (EjsCloneHelper) ejsCloneBlock;
 }
 
 

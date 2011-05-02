@@ -20,7 +20,7 @@ static EjsObj *ref_Reflect(Ejs *ejs, EjsReflect *rp, int argc,  EjsObj **argv)
     mprAssert(argc == 1);
     rp->subject = argv[0];
     mprAssert(rp->subject->type);
-    return (EjsObj*) rp;
+    return rp;
 }
 
 
@@ -35,21 +35,21 @@ static EjsObj *ref_base(Ejs *ejs, EjsReflect *rp, int argc, EjsObj **argv)
 
     vp = rp->subject;
     if (ejsIsType(ejs, vp)) {
-        return (EjsObj*) (((EjsType*) vp)->baseType);
+        return (((EjsType*) vp)->baseType);
     }
     if (vp->type == 0) {
         return S(null);
     }
-    return (EjsObj*) vp->type;
+    return vp->type;
 }
 
 
 /*
     function get isType(): Boolean
  */
-static EjsObj *ref_isType(Ejs *ejs, EjsReflect *rp, int argc, EjsObj **argv)
+static EjsBoolean *ref_isType(Ejs *ejs, EjsReflect *rp, int argc, EjsObj **argv)
 {
-    return (EjsObj*) ejsCreateBoolean(ejs, ejsIsType(ejs, rp->subject));
+    return ejsCreateBoolean(ejs, ejsIsType(ejs, rp->subject));
 }
 
 
@@ -58,7 +58,7 @@ static EjsObj *ref_isType(Ejs *ejs, EjsReflect *rp, int argc, EjsObj **argv)
 
     function get type(): Object
  */
-static EjsObj *ref_type(Ejs *ejs, EjsReflect *rp, int argc, EjsObj **argv)
+static EjsType *ref_type(Ejs *ejs, EjsReflect *rp, int argc, EjsObj **argv)
 {
     EjsObj      *vp;
 
@@ -66,14 +66,14 @@ static EjsObj *ref_type(Ejs *ejs, EjsReflect *rp, int argc, EjsObj **argv)
     if (vp->type == 0) {
         return S(null);
     }
-    return (EjsObj*) vp->type;
+    return vp->type;
 }
 
 
 /*
     Return the type name of a var as a string. If the var is a type, get the base type.
  */
-EjsObj *ejsGetTypeName(Ejs *ejs, EjsObj *vp)
+EjsString *ejsGetTypeName(Ejs *ejs, EjsObj *vp)
 {
     EjsType     *type;
 
@@ -84,7 +84,7 @@ EjsObj *ejsGetTypeName(Ejs *ejs, EjsObj *vp)
     if (type == 0) {
         return S(null);
     }
-    return (EjsObj*) ejsCreateStringFromAsc(ejs, type->qname.name);
+    return ejsCreateStringFromAsc(ejs, type->qname.name);
 }
 
 
@@ -93,15 +93,15 @@ EjsObj *ejsGetTypeName(Ejs *ejs, EjsObj *vp)
 
     function get name(): String
  */
-static EjsObj *ref_name(Ejs *ejs, EjsReflect *rp, int argc, EjsObj **argv)
+static EjsString *ref_name(Ejs *ejs, EjsReflect *rp, int argc, EjsObj **argv)
 {
     EjsType     *type;
 
     type = (EjsType*) rp->subject;
     if (!ejsIsType(ejs, type)) {
-        return (EjsObj*) S(empty);
+        return S(empty);
     }
-    return (EjsObj*) ejsCreateStringFromAsc(ejs, type->qname.name);
+    return ejsCreateStringFromAsc(ejs, type->qname.name);
 }
 
 /*********************************** Globals **********************************/
@@ -109,10 +109,10 @@ static EjsObj *ref_name(Ejs *ejs, EjsReflect *rp, int argc, EjsObj **argv)
 /*
     function get typeOf(obj): String
  */
-static EjsObj *ref_typeOf(Ejs *ejs, EjsObj *obj, int argc, EjsObj **argv)
+static EjsString *ref_typeOf(Ejs *ejs, EjsObj *obj, int argc, EjsObj **argv)
 {
     mprAssert(argc >= 1);
-    return (EjsObj*) ejsGetTypeName(ejs, argv[0]);
+    return ejsGetTypeName(ejs, argv[0]);
 }
 
 

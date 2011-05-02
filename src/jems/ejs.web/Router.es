@@ -135,6 +135,9 @@ module ejs.web {
          */
         public var defaultBuilder: Function = MvcBuilder
 
+        /* Router options provide to constructor */
+        private var routerOptions: Object
+
         /**
             Routes indexed by first component of the URI path/template
          */
@@ -287,9 +290,13 @@ module ejs.web {
                 default Controller/Action routes according to a RESTful paradigm (see $addRestful). The routeSet can
                also be set to null to add not routes. This is useful for creating a bare Router instance. Defaults 
                to Top.
+            @param options Options to apply to all routes
+            @option threaded Boolean If true, the request should be run in a worker thread if possible. This thread 
+                will not be dedicated, but will be assigned as the request requires CPU resources.
            @throws Error for an unknown route set.
          */
-        function Router(routeSet: String = Top) {
+        function Router(routeSet: String = Top, options: Object = {}) {
+            routerOptions = options
             switch (routeSet) {
             case Top:
                 addHandlers()
@@ -308,9 +315,12 @@ module ejs.web {
             }
         }
 
-        private function insertRoute(r: Route, options: Object): Void {
+        private function insertRoute(r: Route): Void {
             let routeSet = routes[r.routeSetName] ||= {}
             routeSet[r.name] = r
+            if (r.threaded == null) {
+                r.threaded = routerOptions.threaded
+            }
         }
 
         /**
@@ -361,7 +371,7 @@ module ejs.web {
          */
         public function add(template: Object, options: Object = null): Route {
             let r = new Route(template, options, this)
-            insertRoute(r, options)
+            insertRoute(r)
             return r
         }
 
@@ -478,7 +488,7 @@ module ejs.web {
         }
 
         /**
-            Reset the routing tables by removing all routes
+            Reset the request routing table by removing all routes
          */
         public function reset(request): Void {
             routes = {}

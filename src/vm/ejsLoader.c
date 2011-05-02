@@ -36,7 +36,7 @@ static int  loadPropertySection(Ejs *ejs, EjsModule *mp, int sectionType);
 static int  loadScriptModule(Ejs *ejs, cchar *filename, int minVersion, int maxVersion, int flags);
 static char *makeModuleName(cchar *name);
 static void popScope(EjsModule *mp, int keepScope);
-static void pushScope(EjsModule *mp, EjsBlock *block, EjsObj *obj);
+static void pushScope(EjsModule *mp, EjsBlock *block, EjsAny *obj);
 static char *search(Ejs *ejs, cchar *filename, int minVersion, int maxVersion);
 static int  trimModule(Ejs *ejs, char *name);
 static void setDoc(Ejs *ejs, EjsModule *mp, cchar *tag, void *vp, int slotNum);
@@ -451,14 +451,14 @@ static int loadBlockSection(Ejs *ejs, EjsModule *mp)
             return MPR_ERR_CANT_CREATE;
         }
     }
-    slotNum = ejsDefineProperty(ejs, current, slotNum, qname, ST(Block), 0, (EjsObj*) bp);
+    slotNum = ejsDefineProperty(ejs, current, slotNum, qname, ST(Block), 0, bp);
     if (slotNum < 0) {
         return MPR_ERR_CANT_WRITE;
     }
     if (ejs->loaderCallback) {
         (ejs->loaderCallback)(ejs, EJS_SECT_BLOCK, mp, current, slotNum, qname.name, numSlot, bp);
     }
-    pushScope(mp, bp, (EjsObj*) bp);
+    pushScope(mp, bp, bp);
     return 0;
 }
 
@@ -576,7 +576,7 @@ static int loadClassSection(Ejs *ejs, EjsModule *mp)
         }
     }
     setDoc(ejs, mp, "class", ejs->global, slotNum);
-    pushScope(mp, (EjsBlock*) type, (EjsObj*) type);
+    pushScope(mp, (EjsBlock*) type, type);
 
     if (ejs->loaderCallback) {
         (ejs->loaderCallback)(ejs, EJS_SECT_CLASS, mp, slotNum, qname, type, attributes);
@@ -719,7 +719,7 @@ static int loadFunctionSection(Ejs *ejs, EjsModule *mp)
             mp->initializer = fun;
             slotNum = -1;
         } else {
-            slotNum = ejsDefineProperty(ejs, block, slotNum, qname, ST(Function), attributes, (EjsObj*) fun);
+            slotNum = ejsDefineProperty(ejs, block, slotNum, qname, ST(Function), attributes, fun);
             if (slotNum < 0) {
                 return MPR_ERR_MEMORY;
             }
@@ -739,7 +739,7 @@ static int loadFunctionSection(Ejs *ejs, EjsModule *mp)
     }
 
     mp->currentMethod = fun;
-    pushScope(mp, ejsIsType(ejs, fun) ? NULL : (EjsBlock*) fun, (EjsObj*) fun->activation);
+    pushScope(mp, ejsIsType(ejs, fun) ? NULL : (EjsBlock*) fun, fun->activation);
     if (ejs->loaderCallback) {
         (ejs->loaderCallback)(ejs, EJS_SECT_FUNCTION, mp, block, slotNum, qname, fun, attributes);
     }
@@ -1623,7 +1623,7 @@ static EjsObj *getCurrentBlock(EjsModule *mp)
 }
 
 
-static void pushScope(EjsModule *mp, EjsBlock *block, EjsObj *obj)
+static void pushScope(EjsModule *mp, EjsBlock *block, EjsAny *obj)
 {
     mprAssert(block != mp->scope);
     if (block) {

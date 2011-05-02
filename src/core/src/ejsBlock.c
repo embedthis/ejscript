@@ -14,7 +14,7 @@ EjsBlock *ejsCloneBlock(Ejs *ejs, EjsBlock *src, bool deep)
 {
     EjsBlock    *dest;
 
-    dest = (EjsBlock*) ejsClonePot(ejs, (EjsObj*) src, deep);
+    dest = (EjsBlock*) ejsClonePot(ejs, src, deep);
 
     dest->nobind = src->nobind;
     dest->scope = src->scope;

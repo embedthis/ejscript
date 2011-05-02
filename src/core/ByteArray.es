@@ -224,7 +224,7 @@ module ejs {
             @returns a double or null on eof.
             @throws IOError if an I/O error occurs or premature eof.
          */
-        native function readDouble(): Date
+        native function readDouble(): Number
 
         /** 
             Read an 32-bit integer from the array. The data will be decoded according to the endian property.

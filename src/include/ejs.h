@@ -478,6 +478,7 @@ typedef struct Ejs {
 
     EjsAny              *exceptionArg;      /**< Exception object for catch block */
 
+    struct Ejs          *master;            /**< Master interpreter used to create this interpreter */
     MprDispatcher       *dispatcher;        /**< Event dispatcher */
     MprList             *workers;           /**< Worker interpreters */
     MprList             *modules;           /**< Loaded modules */
@@ -1521,6 +1522,8 @@ typedef struct EjsBoolean {
     bool    value;              /**< Boolean value */
 } EjsBoolean;
 
+
+#if DOXYGEN
 /** 
     Create a boolean
     @description Create a boolean value. This will not actually create a new boolean instance as there can only ever
@@ -1531,6 +1534,9 @@ typedef struct EjsBoolean {
     @ingroup EjsBoolean
  */
 extern EjsBoolean *ejsCreateBoolean(Ejs *ejs, int value);
+#else
+#define ejsCreateBoolean(ejs, v) ((v) ? S(true) : S(false))
+#endif
 
 /** 
     Cast a variable to a boolean 
@@ -2078,7 +2084,7 @@ typedef struct EjsIterator {
     @return A new EjsIterator object
     @ingroup EjsIterator
  */
-extern EjsIterator *ejsCreateIterator(Ejs *ejs, EjsAny *target, EjsFun next, bool deep, EjsArray *namespaces);
+extern EjsIterator *ejsCreateIterator(Ejs *ejs, EjsAny *target, void *next, bool deep, EjsArray *namespaces);
 
 /** 
     Namespace Class
@@ -2794,7 +2800,7 @@ typedef struct EjsLookup {
 typedef struct EjsService {
     EjsObj          *(*loadScriptLiteral)(Ejs *ejs, EjsString *script, cchar *cache);
     EjsObj          *(*loadScriptFile)(Ejs *ejs, cchar *path, cchar *cache);
-    Ejs             *master;                /**< Master interpreter */
+    struct Ejs      *master;
     MprList         *vmlist;
     MprHashTable    *nativeModules;
     Http            *http;
@@ -2802,7 +2808,6 @@ typedef struct EjsService {
     uint            logging: 1;             /**< Using --log */
     EjsIntern       *intern;                /**< Interned Unicode string hash - shared over all interps */
     EjsObj          *foundation;            /**< Foundational native types */
-    EjsAny          *values[EJS_MAX_SPECIAL];
     MprMutex        *mutex;                 /**< Multithread locking */
 } EjsService;
 
@@ -2818,6 +2823,7 @@ extern void ejsClearAttention(Ejs *ejs);
         interpreters. One interpreter can be designated as a master interpreter and then it can be cloned by supplying 
         the master interpreter to this call. A master interpreter provides the standard system types and clone interpreters 
         can quickly be created an utilize the master interpreter's types. This saves memory and speeds initialization.
+    @param master Master VM upon which to base the new VM.
     @param dispatcher Mpr event dispatcher to use for servicing I/O and other events.
     @param search Module search path to use. Set to NULL for the default search path.
     @param require Optional list of required modules to load. If NULL, the following modules will be loaded:
@@ -2832,7 +2838,8 @@ extern void ejsClearAttention(Ejs *ejs);
     @return A new interpreter
     @ingroup Ejs
  */
-extern Ejs *ejsCreate(MprDispatcher *dispatcher, cchar *search, MprList *require, int argc, cchar **argv, int flags);
+extern Ejs *ejsCreateVM(Ejs *master, MprDispatcher *dispatcher, cchar *search, MprList *require, int argc, 
+        cchar **argv, int flags);
 extern void ejsDestroy(Ejs *ejs);
 
 /**

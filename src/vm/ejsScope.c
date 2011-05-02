@@ -52,7 +52,7 @@ int ejsLookupScope(Ejs *ejs, EjsName name, EjsLookup *lookup)
                     !frame->function.isInitializer) {
                 lookup->originalObj = thisObj;
                 /* Instance method only */
-                if ((slotNum = ejsLookupVarWithNamespaces(ejs, (EjsObj*) thisObj, name, lookup)) >= 0) {
+                if ((slotNum = ejsLookupVarWithNamespaces(ejs, thisObj, name, lookup)) >= 0) {
                     return slotNum;
                 }
                 /* Search prototype chain */
@@ -71,7 +71,7 @@ int ejsLookupScope(Ejs *ejs, EjsName name, EjsLookup *lookup)
                         if (type->constructor.block.pot.shortScope) {
                             break;
                         }
-                        if ((slotNum = ejsLookupVarWithNamespaces(ejs, (EjsObj*) type, name, lookup)) >= 0) {
+                        if ((slotNum = ejsLookupVarWithNamespaces(ejs, type, name, lookup)) >= 0) {
                             lookup->nthBase = nthBase;
                             return slotNum;
                         }
@@ -86,7 +86,7 @@ int ejsLookupScope(Ejs *ejs, EjsName name, EjsLookup *lookup)
                 if (type->constructor.block.pot.shortScope) {
                     break;
                 }
-                if ((slotNum = ejsLookupVarWithNamespaces(ejs, (EjsObj*) type, name, lookup)) >= 0) {
+                if ((slotNum = ejsLookupVarWithNamespaces(ejs, type, name, lookup)) >= 0) {
                     lookup->nthBase = nthBase;
                     return slotNum;
                 }
@@ -112,7 +112,7 @@ int ejsLookupVar(Ejs *ejs, EjsAny *obj, EjsName name, EjsLookup *lookup)
     memset(lookup, 0, sizeof(*lookup));
 
     /* Lookup simple object */
-    if ((slotNum = ejsLookupVarWithNamespaces(ejs, (EjsObj*) obj, name, lookup)) >= 0) {
+    if ((slotNum = ejsLookupVarWithNamespaces(ejs, obj, name, lookup)) >= 0) {
         return slotNum;
     }
     /* Lookup prototype chain */
@@ -120,7 +120,7 @@ int ejsLookupVar(Ejs *ejs, EjsAny *obj, EjsName name, EjsLookup *lookup)
         if ((prototype = type->prototype) == 0 || prototype->shortScope) {
             break;
         }
-        if ((slotNum = ejsLookupVarWithNamespaces(ejs, (EjsObj*) prototype, name, lookup)) >= 0) {
+        if ((slotNum = ejsLookupVarWithNamespaces(ejs, prototype, name, lookup)) >= 0) {
             lookup->nthBase = nthBase;
             return slotNum;
         }
@@ -131,7 +131,7 @@ int ejsLookupVar(Ejs *ejs, EjsAny *obj, EjsName name, EjsLookup *lookup)
         if (type->constructor.block.pot.shortScope) {
             continue;
         }
-        if ((slotNum = ejsLookupVarWithNamespaces(ejs, (EjsObj*) type, name, lookup)) >= 0) {
+        if ((slotNum = ejsLookupVarWithNamespaces(ejs, type, name, lookup)) >= 0) {
             lookup->nthBase = nthBase;
             return slotNum;
         }

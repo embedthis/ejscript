@@ -696,9 +696,9 @@ static EjsNumber *nextArrayKey(Ejs *ejs, EjsIterator *ip, int argc, EjsObj **arg
 
     iterator native function get(): Iterator
  */
-static EjsObj *getArrayIterator(Ejs *ejs, EjsArray *ap, int argc, EjsObj **argv)
+static EjsIterator *getArrayIterator(Ejs *ejs, EjsArray *ap, int argc, EjsObj **argv)
 {
-    return (EjsObj*) ejsCreateIterator(ejs, ap, (EjsProc) nextArrayKey, 0, NULL);
+    return ejsCreateIterator(ejs, ap, nextArrayKey, 0, NULL);
 }
 
 
@@ -739,7 +739,7 @@ static EjsObj *nextArrayValue(Ejs *ejs, EjsIterator *ip, int argc, EjsObj **argv
  */
 static EjsAny *getArrayValues(Ejs *ejs, EjsArray *ap, int argc, EjsObj **argv)
 {
-    return ejsCreateIterator(ejs, ap, (EjsProc) nextArrayValue, 0, NULL);
+    return ejsCreateIterator(ejs, ap, nextArrayValue, 0, NULL);
 }
 
 

@@ -179,7 +179,7 @@ MAIN(ejsmodMain, int argc, char **argv)
     if (mp->html || mp->xml) {
         flags |= EJS_FLAG_DOC;
     }
-    ejs = ejsCreate(NULL, searchPath, requiredModules, 0, NULL, flags);
+    ejs = ejsCreateVM(0, 0, searchPath, requiredModules, 0, NULL, flags);
     if (ejs == 0) {
         return MPR_ERR_MEMORY;
     }

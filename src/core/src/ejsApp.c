@@ -10,9 +10,9 @@
 /*********************************** Methods **********************************/
 /*  
     Get the application command line arguments
-    static function get args(): String
+    static function get args(): Array
  */
-static EjsObj *app_args(Ejs *ejs, EjsObj *unused, int argc, EjsObj **argv)
+static EjsArray *app_args(Ejs *ejs, EjsObj *unused, int argc, EjsObj **argv)
 {
     EjsArray    *args;
     int         i;
@@ -21,7 +21,7 @@ static EjsObj *app_args(Ejs *ejs, EjsObj *unused, int argc, EjsObj **argv)
     for (i = 0; i < ejs->argc; i++) {
         ejsSetProperty(ejs, args, i, ejsCreateStringFromAsc(ejs, ejs->argv[i]));
     }
-    return (EjsObj*) args;
+    return args;
 }
 
 
@@ -29,9 +29,9 @@ static EjsObj *app_args(Ejs *ejs, EjsObj *unused, int argc, EjsObj **argv)
     Get the current working directory
     function get dir(): Path
  */
-static EjsObj *app_dir(Ejs *ejs, EjsObj *unused, int argc, EjsObj **argv)
+static EjsPath *app_dir(Ejs *ejs, EjsObj *unused, int argc, EjsObj **argv)
 {
-    return (EjsObj*) ejsCreatePathFromAsc(ejs, mprGetCurrentPath(ejs));
+    return ejsCreatePathFromAsc(ejs, mprGetCurrentPath(ejs));
 }
 
 
@@ -65,9 +65,9 @@ static EjsObj *app_chdir(Ejs *ejs, EjsObj *unused, int argc, EjsObj **argv)
     Get the directory containing the application's executable file.
     static function get exeDir(): Path
  */
-static EjsObj *app_exeDir(Ejs *ejs, EjsObj *unused, int argc, EjsObj **argv)
+static EjsPath *app_exeDir(Ejs *ejs, EjsObj *unused, int argc, EjsObj **argv)
 {
-    return (EjsObj*) ejsCreatePathFromAsc(ejs, mprGetAppDir(ejs));
+    return ejsCreatePathFromAsc(ejs, mprGetAppDir(ejs));
 }
 
 
@@ -75,9 +75,9 @@ static EjsObj *app_exeDir(Ejs *ejs, EjsObj *unused, int argc, EjsObj **argv)
     Get the application's executable filename.
     static function get exePath(): Path
  */
-static EjsObj *app_exePath(Ejs *ejs, EjsObj *unused, int argc, EjsObj **argv)
+static EjsPath *app_exePath(Ejs *ejs, EjsObj *unused, int argc, EjsObj **argv)
 {
-    return (EjsObj*) ejsCreatePathFromAsc(ejs, mprGetAppPath(ejs));
+    return ejsCreatePathFromAsc(ejs, mprGetAppPath(ejs));
 }
 
 
@@ -180,9 +180,9 @@ static EjsObj *app_putenv(Ejs *ejs, EjsObj *app, int argc, EjsObj **argv)
     Get the ejs module search path. Does not actually read the environment.
     function get search(): Array
  */
-static EjsObj *app_search(Ejs *ejs, EjsObj *app, int argc, EjsObj **argv)
+static EjsArray *app_search(Ejs *ejs, EjsObj *app, int argc, EjsObj **argv)
 {
-    return (EjsObj*) ejs->search;
+    return ejs->search;
 }
 
 
@@ -199,14 +199,14 @@ static EjsObj *app_set_search(Ejs *ejs, EjsObj *app, int argc, EjsObj **argv)
 
 /*  
     Get a default search path. NOTE: this does not modify ejs->search.
-    function get createSearch(searchPaths: String): Void
+    function get createSearch(searchPaths: String): Array
  */
-static EjsObj *app_createSearch(Ejs *ejs, EjsObj *app, int argc, EjsObj **argv)
+static EjsArray *app_createSearch(Ejs *ejs, EjsObj *app, int argc, EjsObj **argv)
 {
     cchar   *searchPath;
 
     searchPath = (argc == 0) ? NULL : ejsToMulti(ejs, argv[0]);
-    return (EjsObj*) ejsCreateSearchPath(ejs, searchPath);
+    return ejsCreateSearchPath(ejs, searchPath);
 }
 
 

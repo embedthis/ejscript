@@ -13,23 +13,23 @@
     Cast the void operand to a primitive type
  */
 
-static EjsObj *castVoid(Ejs *ejs, EjsVoid *vp, EjsType *type)
+static EjsAny *castVoid(Ejs *ejs, EjsVoid *vp, EjsType *type)
 {
     switch (type->sid) {
     case S_Boolean:
-        return (EjsObj*) S(false);
+        return S(false);
 
     case S_Number:
         return S(nan);
 
     case S_Object:
-        return (EjsObj*) vp;
+        return vp;
 
     case S_String:
-        return (EjsObj*) ejsCreateStringFromAsc(ejs, "undefined");
+        return ejsCreateStringFromAsc(ejs, "undefined");
 
     case S_Uri:
-        return (EjsObj*) ejsCreateUriFromMulti(ejs, "undefined");
+        return ejsCreateUriFromMulti(ejs, "undefined");
             
     default:
         ejsThrowTypeError(ejs, "Can't cast to this type");
@@ -39,44 +39,44 @@ static EjsObj *castVoid(Ejs *ejs, EjsVoid *vp, EjsType *type)
 
 
 
-static EjsObj *coerceVoidOperands(Ejs *ejs, EjsVoid *lhs, int opcode, EjsVoid *rhs)
+static EjsAny *coerceVoidOperands(Ejs *ejs, EjsVoid *lhs, int opcode, EjsVoid *rhs)
 {
     switch (opcode) {
 
     case EJS_OP_ADD:
         if (!ejsIs(ejs, rhs, Number)) {
-            return ejsInvokeOperator(ejs, (EjsObj*) ejsToString(ejs, (EjsObj*) lhs), opcode, (EjsObj*) rhs);
+            return ejsInvokeOperator(ejs, ejsToString(ejs, lhs), opcode, rhs);
         }
         /* Fall through */
 
     case EJS_OP_AND: case EJS_OP_DIV: case EJS_OP_MUL: case EJS_OP_OR: case EJS_OP_REM:
     case EJS_OP_SHL: case EJS_OP_SHR: case EJS_OP_SUB: case EJS_OP_USHR: case EJS_OP_XOR:
-        return ejsInvokeOperator(ejs, (EjsObj*) S(nan), opcode, (EjsObj*) rhs);
+        return ejsInvokeOperator(ejs, S(nan), opcode, rhs);
 
     /*
      *  Comparision
      */
     case EJS_OP_COMPARE_LE: case EJS_OP_COMPARE_LT:
     case EJS_OP_COMPARE_GE: case EJS_OP_COMPARE_GT:
-        return (EjsObj*) S(false);
+        return S(false);
 
     case EJS_OP_COMPARE_NE:
         if (ejsIs(ejs, rhs, Null)) {
-            return (EjsObj*) S(false);
+            return S(false);
         }
-        return (EjsObj*) S(true);
+        return S(true);
 
     case EJS_OP_COMPARE_STRICTLY_NE:
-        return (EjsObj*) S(true);
+        return S(true);
 
     case EJS_OP_COMPARE_EQ:
         if (ejsIs(ejs, rhs, Null)) {
-            return (EjsObj*) S(true);
+            return S(true);
         }
-        return (EjsObj*) S(false);
+        return S(false);
 
     case EJS_OP_COMPARE_STRICTLY_EQ:
-        return (EjsObj*) S(false);
+        return S(false);
 
     /*
      *  Unary operators
@@ -87,12 +87,12 @@ static EjsObj *coerceVoidOperands(Ejs *ejs, EjsVoid *lhs, int opcode, EjsVoid *r
     case EJS_OP_COMPARE_UNDEFINED:
     case EJS_OP_COMPARE_NOT_ZERO:
     case EJS_OP_COMPARE_NULL:
-        return (EjsObj*) S(true);
+        return S(true);
 
     case EJS_OP_COMPARE_FALSE:
     case EJS_OP_COMPARE_TRUE:
     case EJS_OP_COMPARE_ZERO:
-        return (EjsObj*) S(false);
+        return S(false);
 
     default:
         ejsThrowTypeError(ejs, "Opcode %d not valid for type %@", opcode, TYPE(lhs)->qname.name);
@@ -123,27 +123,27 @@ static EjsObj *invokeVoidOperator(Ejs *ejs, EjsVoid *lhs, int opcode, EjsVoid *r
     case EJS_OP_COMPARE_UNDEFINED:
     case EJS_OP_COMPARE_NOT_ZERO:
     case EJS_OP_COMPARE_NULL:
-        return (EjsObj*) S(true);
+        return S(true);
 
     case EJS_OP_COMPARE_NE: case EJS_OP_COMPARE_STRICTLY_NE:
     case EJS_OP_COMPARE_LT: case EJS_OP_COMPARE_GT:
     case EJS_OP_COMPARE_FALSE:
     case EJS_OP_COMPARE_TRUE:
     case EJS_OP_COMPARE_ZERO:
-        return (EjsObj*) S(false);
+        return S(false);
 
     /*
      *  Unary operators
      */
     case EJS_OP_LOGICAL_NOT: case EJS_OP_NOT: case EJS_OP_NEG:
-        return (EjsObj*) S(nan);
+        return S(nan);
 
     /*
      *  Binary operators
      */
     case EJS_OP_ADD: case EJS_OP_AND: case EJS_OP_DIV: case EJS_OP_MUL: case EJS_OP_OR: case EJS_OP_REM:
     case EJS_OP_SHL: case EJS_OP_SHR: case EJS_OP_SUB: case EJS_OP_USHR: case EJS_OP_XOR:
-        return (EjsObj*) S(nan);
+        return S(nan);
 
     default:
         ejsThrowTypeError(ejs, "Opcode %d not implemented for type %@", opcode, TYPE(lhs)->qname.name);
@@ -156,9 +156,9 @@ static EjsObj *invokeVoidOperator(Ejs *ejs, EjsVoid *lhs, int opcode, EjsVoid *r
 /*
     iterator native function get(): Iterator
  */
-static EjsObj *getVoidIterator(Ejs *ejs, EjsObj *np, int argc, EjsObj **argv)
+static EjsIterator *getVoidIterator(Ejs *ejs, EjsObj *np, int argc, EjsObj **argv)
 {
-    return (EjsObj*) ejsCreateIterator(ejs, np, NULL, 0, NULL);
+    return ejsCreateIterator(ejs, np, NULL, 0, NULL);
 }
 
 

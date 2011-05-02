@@ -17,119 +17,119 @@
 /*
     function abs(value: Number): Number
  */
-static EjsObj *math_abs(Ejs *ejs, EjsObj *unused, int argc, EjsObj **argv)
+static EjsNumber *math_abs(Ejs *ejs, EjsObj *unused, int argc, EjsObj **argv)
 {
     //  TODO - can a null slip through?
-    return (EjsObj*) ejsCreateNumber(ejs, (MprNumber) fabs(ejsGetNumber(ejs, argv[0])));
+    return ejsCreateNumber(ejs, (MprNumber) fabs(ejsGetNumber(ejs, argv[0])));
 }
 
 
 /*
     function acos(value: Number): Number
  */
-static EjsObj *math_acos(Ejs *ejs, EjsObj *unused, int argc, EjsObj **argv)
+static EjsNumber *math_acos(Ejs *ejs, EjsObj *unused, int argc, EjsObj **argv)
 {
     MprNumber   value;
     
     value = ejsGetNumber(ejs, argv[0]);
-    return (EjsObj*) ejsCreateNumber(ejs, (MprNumber) acos(ejsGetNumber(ejs, argv[0])));
+    return ejsCreateNumber(ejs, (MprNumber) acos(ejsGetNumber(ejs, argv[0])));
 }
 
 
 /*
     function asin(value: Number): Number
  */
-static EjsObj *math_asin(Ejs *ejs, EjsObj *unused, int argc, EjsObj **argv)
+static EjsNumber *math_asin(Ejs *ejs, EjsObj *unused, int argc, EjsObj **argv)
 {
-    return (EjsObj*) ejsCreateNumber(ejs, (MprNumber) asin(ejsGetNumber(ejs, argv[0])));
+    return ejsCreateNumber(ejs, (MprNumber) asin(ejsGetNumber(ejs, argv[0])));
 }
 
 
 /*
     function atan(value: Number): Number
  */
-static EjsObj *math_atan(Ejs *ejs, EjsObj *unused, int argc, EjsObj **argv)
+static EjsNumber *math_atan(Ejs *ejs, EjsObj *unused, int argc, EjsObj **argv)
 {
-    return (EjsObj*) ejsCreateNumber(ejs, (MprNumber) atan(ejsGetNumber(ejs, argv[0])));
+    return ejsCreateNumber(ejs, (MprNumber) atan(ejsGetNumber(ejs, argv[0])));
 }
 
 
 /*
     function atan2(x: Number, y: Number): Number
  */
-static EjsObj *math_atan2(Ejs *ejs, EjsObj *unused, int argc, EjsObj **argv)
+static EjsNumber *math_atan2(Ejs *ejs, EjsObj *unused, int argc, EjsObj **argv)
 {
-    return (EjsObj*) ejsCreateNumber(ejs, (MprNumber) atan2(ejsGetNumber(ejs, argv[0]), ejsGetNumber(ejs, argv[1])));
+    return ejsCreateNumber(ejs, (MprNumber) atan2(ejsGetNumber(ejs, argv[0]), ejsGetNumber(ejs, argv[1])));
 }
 
 
 /*
     function ceil(value: Number): Number
  */
-static EjsObj *math_ceil(Ejs *ejs, EjsObj *unused, int argc, EjsObj **argv)
+static EjsNumber *math_ceil(Ejs *ejs, EjsObj *unused, int argc, EjsObj **argv)
 {
-    return (EjsObj*) ejsCreateNumber(ejs, (MprNumber) ceil(ejsGetNumber(ejs, argv[0])));
+    return ejsCreateNumber(ejs, (MprNumber) ceil(ejsGetNumber(ejs, argv[0])));
 }
 
 
 /*
     function cos(value: Number): Number
  */
-static EjsObj *math_cos(Ejs *ejs, EjsObj *unused, int argc, EjsObj **argv)
+static EjsNumber *math_cos(Ejs *ejs, EjsObj *unused, int argc, EjsObj **argv)
 {
-    return (EjsObj*) ejsCreateNumber(ejs, (MprNumber) cos(ejsGetNumber(ejs, argv[0])));
+    return ejsCreateNumber(ejs, (MprNumber) cos(ejsGetNumber(ejs, argv[0])));
 }
 
 
 /*
     function exp(value: Number): Number
  */
-static EjsObj *math_exp(Ejs *ejs, EjsObj *unused, int argc, EjsObj **argv)
+static EjsNumber *math_exp(Ejs *ejs, EjsObj *unused, int argc, EjsObj **argv)
 {
-    return (EjsObj*) ejsCreateNumber(ejs, (MprNumber) exp(ejsGetNumber(ejs, argv[0])));
+    return ejsCreateNumber(ejs, (MprNumber) exp(ejsGetNumber(ejs, argv[0])));
 }
 
 
 /*
     function floor(value: Number): Number
  */
-static EjsObj *math_floor(Ejs *ejs, EjsObj *unused, int argc, EjsObj **argv)
+static EjsNumber *math_floor(Ejs *ejs, EjsObj *unused, int argc, EjsObj **argv)
 {
-    return (EjsObj*) ejsCreateNumber(ejs, (MprNumber) floor(ejsGetNumber(ejs, argv[0])));
+    return ejsCreateNumber(ejs, (MprNumber) floor(ejsGetNumber(ejs, argv[0])));
 }
 
 
 /*
     function log10(value: Number): Number
  */
-static EjsObj *math_log10(Ejs *ejs, EjsObj *unused, int argc, EjsObj **argv)
+static EjsNumber *math_log10(Ejs *ejs, EjsObj *unused, int argc, EjsObj **argv)
 {
-    return (EjsObj*) ejsCreateNumber(ejs, (MprNumber) log10(ejsGetNumber(ejs, argv[0])));
+    return ejsCreateNumber(ejs, (MprNumber) log10(ejsGetNumber(ejs, argv[0])));
 }
 
 
 /*
     function log(value: Number): Number
  */
-static EjsObj *math_log(Ejs *ejs, EjsObj *unused, int argc, EjsObj **argv)
+static EjsNumber *math_log(Ejs *ejs, EjsObj *unused, int argc, EjsObj **argv)
 {
-    return (EjsObj*) ejsCreateNumber(ejs, (MprNumber) log(ejsGetNumber(ejs, argv[0])));
+    return ejsCreateNumber(ejs, (MprNumber) log(ejsGetNumber(ejs, argv[0])));
 }
 
 
 /*
     function max(x: Number, y: Number): Number
  */
-static EjsObj *math_max(Ejs *ejs, EjsObj *unused, int argc, EjsObj **argv)
+static EjsNumber *math_max(Ejs *ejs, EjsObj *unused, int argc, EjsObj **argv)
 {
     MprNumber   x, y;
     
     x = ejsGetNumber(ejs, argv[0]);
     y = ejsGetNumber(ejs, argv[1]);
     if (x > y) {
-        return argv[0];
+        return (EjsNumber*) argv[0];
     }
-    return argv[1];
+    return (EjsNumber*) argv[1];
 }
 
 
@@ -152,7 +152,7 @@ static EjsObj *math_min(Ejs *ejs, EjsObj *unused, int argc, EjsObj **argv)
 /*
     function pow(x: Number, y: Number): Number
  */
-static EjsObj *math_pow(Ejs *ejs, EjsObj *unused, int argc, EjsObj **argv)
+static EjsNumber *math_pow(Ejs *ejs, EjsObj *unused, int argc, EjsObj **argv)
 {
     MprNumber   x, y, result;
     
@@ -165,14 +165,14 @@ static EjsObj *math_pow(Ejs *ejs, EjsObj *unused, int argc, EjsObj **argv)
         result = -result;
     }
 #endif
-    return (EjsObj*) ejsCreateNumber(ejs, (MprNumber) result);
+    return ejsCreateNumber(ejs, (MprNumber) result);
 }
 
 
 /*
     function random(value: Number): Number
  */
-static EjsObj *math_random(Ejs *ejs, EjsObj *unused, int argc, EjsObj **argv)
+static EjsNumber *math_random(Ejs *ejs, EjsObj *unused, int argc, EjsObj **argv)
 {
     MprNumber   value;
     uint        uvalue;
@@ -209,14 +209,14 @@ static EjsObj *math_random(Ejs *ejs, EjsObj *unused, int argc, EjsObj **argv)
 }
 #endif
     value = ((MprNumber) (uvalue & 0x7FFFFFFF)) / MAXINT;
-    return (EjsObj*) ejsCreateNumber(ejs, value);
+    return ejsCreateNumber(ejs, value);
 }
 
 
 /*
     function round(value: Number): Number
  */
-static EjsObj *math_round(Ejs *ejs, EjsObj *unused, int argc, EjsObj **argv)
+static EjsNumber *math_round(Ejs *ejs, EjsObj *unused, int argc, EjsObj **argv)
 {
     MprNumber   n;
 
@@ -226,34 +226,34 @@ static EjsObj *math_round(Ejs *ejs, EjsObj *unused, int argc, EjsObj **argv)
     } else {
         n += 0.5;
     }
-    return (EjsObj*) ejsCreateNumber(ejs, floor(n));
+    return ejsCreateNumber(ejs, floor(n));
 }
 
 
 /*
     function sin(value: Number): Number
  */
-static EjsObj *math_sin(Ejs *ejs, EjsObj *unused, int argc, EjsObj **argv)
+static EjsNumber *math_sin(Ejs *ejs, EjsObj *unused, int argc, EjsObj **argv)
 {
-    return (EjsObj*) ejsCreateNumber(ejs, (MprNumber) sin(ejsGetNumber(ejs, argv[0])));
+    return ejsCreateNumber(ejs, (MprNumber) sin(ejsGetNumber(ejs, argv[0])));
 }
 
 
 /*
     function sqrt(value: Number): Number
  */
-static EjsObj *math_sqrt(Ejs *ejs, EjsObj *unused, int argc, EjsObj **argv)
+static EjsNumber *math_sqrt(Ejs *ejs, EjsObj *unused, int argc, EjsObj **argv)
 {
-    return (EjsObj*) ejsCreateNumber(ejs, (MprNumber) sqrt(ejsGetNumber(ejs, argv[0])));
+    return ejsCreateNumber(ejs, (MprNumber) sqrt(ejsGetNumber(ejs, argv[0])));
 }
 
 
 /*
     function tan(value: Number): Number
  */
-static EjsObj *math_tan(Ejs *ejs, EjsObj *unused, int argc, EjsObj **argv)
+static EjsNumber *math_tan(Ejs *ejs, EjsObj *unused, int argc, EjsObj **argv)
 {
-    return (EjsObj*) ejsCreateNumber(ejs, (MprNumber) tan(ejsGetNumber(ejs, argv[0])));
+    return ejsCreateNumber(ejs, (MprNumber) tan(ejsGetNumber(ejs, argv[0])));
 }
 
 

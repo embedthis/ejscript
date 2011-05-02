@@ -54,18 +54,19 @@
 				C97627E90FD0788C009C78E1 /* PBXTargetDependency */,
 				C95E4FEC10EBFE5C00982610 /* PBXTargetDependency */,
 				C97627F10FD0788C009C78E1 /* PBXTargetDependency */,
-				C976254B0FD071EE009C78E1 /* PBXTargetDependency */,
-				C976254D0FD071EE009C78E1 /* PBXTargetDependency */,
-				C97625490FD071EE009C78E1 /* PBXTargetDependency */,
-				C9C59E7610A34BF5002D7049 /* PBXTargetDependency */,
 				C9A0700010A34EBD00F48512 /* PBXTargetDependency */,
 				C9A0700210A34EBD00F48512 /* PBXTargetDependency */,
 				C9A0701010A34EC500F48512 /* PBXTargetDependency */,
+				C976254B0FD071EE009C78E1 /* PBXTargetDependency */,
+				C976254D0FD071EE009C78E1 /* PBXTargetDependency */,
+				C97625490FD071EE009C78E1 /* PBXTargetDependency */,
 				C9A06FFA10A34EBD00F48512 /* PBXTargetDependency */,
+				C9D4529011ECDA6600F029C8 /* PBXTargetDependency */,
+				C9C59E7610A34BF5002D7049 /* PBXTargetDependency */,
 				C9E750B410A367E1004E03DD /* PBXTargetDependency */,
 				C99A33D210C2F15E00F6C7BC /* PBXTargetDependency */,
 				C9C24D88136CF5530000C111 /* PBXTargetDependency */,
-				C9D4529011ECDA6600F029C8 /* PBXTargetDependency */,
+				C9C24D90136CF6D60000C111 /* PBXTargetDependency */,
 			);
 			name = All;
 			productName = Untitled;
@@ -97,6 +98,7 @@
 			isa = PBXAggregateTarget;
 			buildConfigurationList = C9C24D8B136CF5D70000C111 /* Build configuration list for PBXAggregateTarget "clean" */;
 			buildPhases = (
+				C9C24D8E136CF5F00000C111 /* ShellScript */,
 			);
 			dependencies = (
 			);
@@ -447,6 +449,13 @@
 			proxyType = 1;
 			remoteGlobalIDString = C903098610A366F0003FF2AB;
 			remoteInfo = jem;
+		};
+		C9C24D8F136CF6D60000C111 /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = C97623C10FD06EC4009C78E1 /* Project object */;
+			proxyType = 1;
+			remoteGlobalIDString = C9C24D8A136CF5D70000C111;
+			remoteInfo = clean;
 		};
 		C9C59E7510A34BF5002D7049 /* PBXContainerItemProxy */ = {
 			isa = PBXContainerItemProxy;
@@ -1632,11 +1641,11 @@
 			buildRules = (
 			);
 			dependencies = (
-				C901403810A8A0C100FCF0BC /* PBXTargetDependency */,
-				C90BD5B610CC56C700C50CA5 /* PBXTargetDependency */,
-				C92F849D10F2B93900CA953D /* PBXTargetDependency */,
 				C94D089511C72A4B001B151C /* PBXTargetDependency */,
 				C94D089711C72A52001B151C /* PBXTargetDependency */,
+				C92F849D10F2B93900CA953D /* PBXTargetDependency */,
+				C901403810A8A0C100FCF0BC /* PBXTargetDependency */,
+				C90BD5B610CC56C700C50CA5 /* PBXTargetDependency */,
 			);
 			name = ejs.web;
 			productName = libejsweb;
@@ -1701,23 +1710,23 @@
 			targets = (
 				C97625450FD071E5009C78E1 /* All */,
 				C97A5EC611E81E9B00BB0981 /* prep */,
+				C97627A50FD077A7009C78E1 /* libmpr */,
+				C97627AE0FD077C3009C78E1 /* libpcre */,
+				C97627B50FD077E7009C78E1 /* libmprssl */,
+				C95E4FD310EBFD9300982610 /* libhttp */,
+				C97627BC0FD077FC009C78E1 /* libsqlite3 */,
+				C97627CA0FD07828009C78E1 /* libejs */,
+				C987612F0FD87D7300311B7A /* ejs.db.sqlite */,
+				C97627D80FD07850009C78E1 /* ejs.web */,
 				C97623D10FD06EE7009C78E1 /* ejs */,
 				C97623DA0FD06EF4009C78E1 /* ejsc */,
 				C97623E10FD06EFC009C78E1 /* ejsmod */,
 				C97623E80FD06F04009C78E1 /* ejssql */,
 				C9D4528611ECDA4300F029C8 /* http */,
-				C99A33CA10C2F14000F6C7BC /* ejspage */,
-				C903098210A366CA003FF2AB /* ejsmvc */,
-				C903098610A366F0003FF2AB /* jem */,
-				C95E4FD310EBFD9300982610 /* libhttp */,
-				C97627A50FD077A7009C78E1 /* libmpr */,
-				C97627AE0FD077C3009C78E1 /* libpcre */,
-				C97627B50FD077E7009C78E1 /* libmprssl */,
-				C97627BC0FD077FC009C78E1 /* libsqlite3 */,
-				C97627CA0FD07828009C78E1 /* libejs */,
-				C987612F0FD87D7300311B7A /* ejs.db.sqlite */,
-				C97627D80FD07850009C78E1 /* ejs.web */,
 				C9222E520FD5813F00AFA5A4 /* modules */,
+				C903098210A366CA003FF2AB /* ejsmvc */,
+				C99A33CA10C2F14000F6C7BC /* ejspage */,
+				C903098610A366F0003FF2AB /* jem */,
 				C9C24D8A136CF5D70000C111 /* clean */,
 			);
 		};
@@ -1836,7 +1845,7 @@
 				"$(JEMS)/ejs.web.jsgi/Static.es",
 			);
 			outputPaths = (
-				"$(BUILT_PRODUCTS_DIR)/ejs.mod",
+				ejs.mod,
 				"$(BUILT_PRODUCTS_DIR)/ejs.cache.mod",
 				"$(BUILT_PRODUCTS_DIR)/ejs.cjs.mod",
 				"$(BUILT_PRODUCTS_DIR)/ejs.db.mod",
@@ -1847,11 +1856,12 @@
 				"$(BUILT_PRODUCTS_DIR)/ejs.web.mod",
 				"$(BUILT_PRODUCTS_DIR)/ejs.web.jsgi.mod",
 				"$(BUILT_PRODUCTS_DIR)/ejs.web.template.mod",
+				"",
+				"$(DERIVED_FILE_DIR)/ejs.mod",
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 			shellPath = /bin/sh;
 			shellScript = "export BIN_DIR=$BUILT_PRODUCTS_DIR\nexport DYLD_LIBRARY_PATH=$BUILT_PRODUCTS_DIR\nmake -C $SRC/core TRACE=1 xmodules && cp $OUT/modules/*.mod $BUILT_PRODUCTS_DIR || exit 255\nmake -C $SRC/jems TRACE=1 xmodules && cp $OUT/modules/*.mod $BUILT_PRODUCTS_DIR || exit 255\nmake -C $SRC/jems/ejs.mvc TRACE=1 compile && cp $OUT/bin/mvc $BUILT_PRODUCTS_DIR || exit 255\n";
-			showEnvVarsInLog = 0;
 		};
 		C97A5EC511E81E9B00BB0981 /* ShellScript */ = {
 			isa = PBXShellScriptBuildPhase;
@@ -1878,6 +1888,19 @@
 			runOnlyForDeploymentPostprocessing = 0;
 			shellPath = /bin/sh;
 			shellScript = "# shell script goes here\nexit 0";
+		};
+		C9C24D8E136CF5F00000C111 /* ShellScript */ = {
+			isa = PBXShellScriptBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			inputPaths = (
+			);
+			outputPaths = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+			shellPath = /bin/sh;
+			shellScript = "echo ACTION $ACTION\nls $BUILT_PRODUCTS_DIR";
 		};
 /* End PBXShellScriptBuildPhase section */
 
@@ -2212,6 +2235,11 @@
 			target = C903098610A366F0003FF2AB /* jem */;
 			targetProxy = C9C24D87136CF5530000C111 /* PBXContainerItemProxy */;
 		};
+		C9C24D90136CF6D60000C111 /* PBXTargetDependency */ = {
+			isa = PBXTargetDependency;
+			target = C9C24D8A136CF5D70000C111 /* clean */;
+			targetProxy = C9C24D8F136CF6D60000C111 /* PBXContainerItemProxy */;
+		};
 		C9C59E7610A34BF5002D7049 /* PBXTargetDependency */ = {
 			isa = PBXTargetDependency;
 			target = C9222E520FD5813F00AFA5A4 /* modules */;
@@ -2446,7 +2474,7 @@
 		C97623C20FD06EC4009C78E1 /* Debug */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
-				ARCHS = "$(ARCHS_STANDARD_32_BIT)";
+				ARCHS = "$(ARCHS_STANDARD_64_BIT)";
 				BBIN = $SRCROOT/../../../build/bin;
 				COPY_PHASE_STRIP = NO;
 				GCC_C_LANGUAGE_STANDARD = gnu99;
@@ -2478,7 +2506,7 @@
 		C97623C30FD06EC4009C78E1 /* Release */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
-				ARCHS = "$(ARCHS_STANDARD_32_BIT)";
+				ARCHS = "$(ARCHS_STANDARD_64_BIT)";
 				BBIN = $SRCROOT/../../../build/bin;
 				COPY_PHASE_STRIP = YES;
 				GCC_C_LANGUAGE_STANDARD = gnu99;

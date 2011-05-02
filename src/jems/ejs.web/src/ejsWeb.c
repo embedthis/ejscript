@@ -44,11 +44,12 @@ static EjsObj *req_worker(Ejs *ejs, EjsObj *web, int argc, EjsObj **argv)
     Ejs         *nejs;
     EjsRequest  *req, *nreq;
     EjsObj      *app;
+    EjsBlock    *bp;
     HttpConn    *conn;
 
     app = argv[0];
     req = (EjsRequest*) argv[1];
-    if ((nejs = ejsCreate(0, 0, 0, 0, 0, 0)) == 0) {
+    if ((nejs = ejsCreateVM(ejs, 0, 0, 0, 0, 0, 0)) == 0) {
         ejsThrowStateError(ejs, "Can't create interpreter to service request");
         return 0;
     }
@@ -67,8 +68,16 @@ static EjsObj *req_worker(Ejs *ejs, EjsObj *web, int argc, EjsObj **argv)
         return 0;
     }
     httpSetConnContext(conn, nreq);
-    nreq->app = app;
 
+    //  MOB OPT
+    nreq->app = ejsClone(nejs, app, 0);
+    for (bp = (EjsBlock*) nreq->app; bp; bp = bp->scope) {
+        if (bp->scope == ejs->global) {
+            bp->scope = nejs->global;
+        } else {
+            bp->scope = ejsClone(nejs, bp->scope, 0);
+        }
+    }
     if ((nreq->server = ejsCloneHttpServer(nejs, req->server, 1)) == 0) {
         ejsThrowStateError(ejs, "Can't clone request");
         return 0;
@@ -76,7 +85,7 @@ static EjsObj *req_worker(Ejs *ejs, EjsObj *web, int argc, EjsObj **argv)
     conn->workerEvent = mprCreateEvent(conn->dispatcher, "RequestWorker", 0, requestWorker, nreq, MPR_EVENT_DONT_QUEUE);
     if (conn->workerEvent == 0) {
         ejsThrowStateError(ejs, "Can't create worker event");
-    }
+    }  
     return 0;
 }
 

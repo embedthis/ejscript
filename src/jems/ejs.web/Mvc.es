@@ -115,7 +115,7 @@ module ejs.web {
                 /* Load controller */
                 let params = request.params
                 if (!params.controller) {
-                    throw new StateError("No controller specified by route: " + request.route.name)
+                    throw "No controller specified by route: " + request.route.name
                 }
                 let controller = params.controller = params.controller.toPascal()
                 let mod = dirs.cache.join(controller).joinExt(ext.mod)
@@ -138,7 +138,7 @@ module ejs.web {
                 let path = Path(file)
                 if (!path.exists) {
                     request.status = Http.NotFound
-                    throw new StateError("Can't find required component: \"" + path + "\"")
+                    throw "Can't find required component: \"" + path + "\""
                 }
                 code += path.readString()
             }

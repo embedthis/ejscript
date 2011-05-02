@@ -22,8 +22,8 @@
 
 //  TODO this is a generic need. Make an API
 
-#define getNumber(ejs, a) ejsGetNumber(ejs, (EjsObj*) ejsToNumber(ejs, ((EjsObj*) a)))
-#define getInt(ejs, a) ((int) ejsGetNumber(ejs, (EjsObj*) ejsToNumber(ejs, ((EjsObj*) a))))
+#define getNumber(ejs, a) ejsGetNumber(ejs, ejsToNumber(ejs, a))
+#define getInt(ejs, a) ((int) ejsGetNumber(ejs, ejsToNumber(ejs, a)))
 
 /******************************************************************************/
 /*
@@ -68,7 +68,7 @@ static EjsDate *cloneDate(Ejs *ejs, EjsDate *dp, int deep)
 /*
     TODO - this is the same as number. Should share code
  */
-static EjsAny *coerceDateOperands(Ejs *ejs, EjsObj *lhs, int opcode, EjsObj *rhs)
+static EjsAny *coerceDateOperands(Ejs *ejs, EjsAny *lhs, int opcode, EjsAny *rhs)
 {
     switch (opcode) {
     /*
@@ -88,15 +88,15 @@ static EjsAny *coerceDateOperands(Ejs *ejs, EjsObj *lhs, int opcode, EjsObj *rhs
 
     case EJS_OP_AND: case EJS_OP_DIV: case EJS_OP_MUL: case EJS_OP_OR: case EJS_OP_REM:
     case EJS_OP_SHL: case EJS_OP_SHR: case EJS_OP_SUB: case EJS_OP_USHR: case EJS_OP_XOR:
-        return ejsInvokeOperator(ejs, (EjsObj*) ejsToNumber(ejs, lhs), opcode, rhs);
+        return ejsInvokeOperator(ejs, ejsToNumber(ejs, lhs), opcode, rhs);
 
     case EJS_OP_COMPARE_EQ: case EJS_OP_COMPARE_NE:
     case EJS_OP_COMPARE_LE: case EJS_OP_COMPARE_LT:
     case EJS_OP_COMPARE_GE: case EJS_OP_COMPARE_GT:
         if (ejsIs(ejs, rhs, String)) {
-            return ejsInvokeOperator(ejs, (EjsObj*) ejsToString(ejs, lhs), opcode, rhs);
+            return ejsInvokeOperator(ejs, ejsToString(ejs, lhs), opcode, rhs);
         }
-        return ejsInvokeOperator(ejs, (EjsObj*) ejsToNumber(ejs, lhs), opcode, rhs);
+        return ejsInvokeOperator(ejs, ejsToNumber(ejs, lhs), opcode, rhs);
 
     case EJS_OP_COMPARE_STRICTLY_NE:
         return S(true);
@@ -136,7 +136,7 @@ static EjsAny *invokeDateOperator(Ejs *ejs, EjsDate *lhs, int opcode, EjsDate *r
 
     if (rhs == 0 || TYPE(lhs) != TYPE(rhs)) {
         if (!ejsIs(ejs, lhs, Date) || !ejsIs(ejs, rhs, Date)) {
-            if ((result = coerceDateOperands(ejs, (EjsObj*) lhs, opcode, (EjsObj*) rhs)) != 0) {
+            if ((result = coerceDateOperands(ejs, lhs, opcode, rhs)) != 0) {
                 return result;
             }
         }
@@ -270,7 +270,7 @@ static EjsDate *date_Date(Ejs *ejs, EjsDate *date, int argc, EjsObj **argv)
         date->value = mprGetTime();
 
     } else if (args->length == 1) {
-        vp = ejsGetProperty(ejs, (EjsObj*) args, 0);
+        vp = ejsGetProperty(ejs, args, 0);
         if (ejsIs(ejs, vp, Number)) {
             /* Milliseconds */
             date->value = ejsGetNumber(ejs, vp);
@@ -292,39 +292,39 @@ static EjsDate *date_Date(Ejs *ejs, EjsDate *date, int argc, EjsObj **argv)
         /* Date(year, month, date, hour, minute, second, msec) or any portion thereof */
         memset(&tm, 0, sizeof(tm));
         tm.tm_isdst = -1;
-        vp = ejsGetProperty(ejs, (EjsObj*) args, 0);
+        vp = ejsGetProperty(ejs, args, 0);
         year = getInt(ejs, vp);
         if (0 <= year && year < 100) {
             year += 1900;
         }
         tm.tm_year = year - 1900;
         if (args->length > 1) {
-            vp = ejsGetProperty(ejs, (EjsObj*) args, 1);
+            vp = ejsGetProperty(ejs, args, 1);
             tm.tm_mon = getInt(ejs, vp);
         }
         if (args->length > 2) {
-            vp = ejsGetProperty(ejs, (EjsObj*) args, 2);
+            vp = ejsGetProperty(ejs, args, 2);
             tm.tm_mday = getInt(ejs, vp);
         } else {
             tm.tm_mday = 1;
         }
         if (args->length > 3) {
-            vp = ejsGetProperty(ejs, (EjsObj*) args, 3);
+            vp = ejsGetProperty(ejs, args, 3);
             tm.tm_hour = getInt(ejs, vp);
         }
         if (args->length > 4) {
-            vp = ejsGetProperty(ejs, (EjsObj*) args, 4);
+            vp = ejsGetProperty(ejs, args, 4);
             tm.tm_min = getInt(ejs, vp);
         }
         if (args->length > 5) {
-            vp = ejsGetProperty(ejs, (EjsObj*) args, 5);
+            vp = ejsGetProperty(ejs, args, 5);
             tm.tm_sec = getInt(ejs, vp);
         }
         date->value = mprMakeTime(&tm);
         if (date->value == -1) {
             ejsThrowArgError(ejs, "Can't construct date from this argument");
         } else if (args->length > 6) {
-            vp = ejsGetProperty(ejs, (EjsObj*) args, 6);
+            vp = ejsGetProperty(ejs, args, 6);
             date->value += getNumber(ejs, vp);
         }
     }

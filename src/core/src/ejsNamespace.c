@@ -13,14 +13,14 @@
     Cast the operand to the specified type
  */
 
-static EjsObj *castNamespace(Ejs *ejs, EjsNamespace *vp, EjsType *type)
+static EjsAny *castNamespace(Ejs *ejs, EjsNamespace *vp, EjsType *type)
 {
     switch (type->sid) {
     case S_Boolean:
-        return (EjsObj*) ejsCreateBoolean(ejs, 1);
+        return ejsCreateBoolean(ejs, 1);
 
     case S_String:
-        return (EjsObj*) ejsCreateStringFromAsc(ejs, "[object Namespace]");
+        return ejsCreateStringFromAsc(ejs, "[object Namespace]");
 
     default:
         ejsThrowTypeError(ejs, "Can't cast to this type");
@@ -29,14 +29,14 @@ static EjsObj *castNamespace(Ejs *ejs, EjsNamespace *vp, EjsType *type)
 }
 
 
-static EjsObj *invokeNamespaceOperator(Ejs *ejs, EjsNamespace *lhs, int opCode, EjsNamespace *rhs)
+static EjsAny *invokeNamespaceOperator(Ejs *ejs, EjsNamespace *lhs, int opCode, EjsNamespace *rhs)
 {
     bool        boolResult;
 
     switch (opCode) {
     case EJS_OP_COMPARE_EQ:
         if (!ejsIsDefined(ejs, rhs)) {
-            return (EjsObj*) ((opCode == EJS_OP_COMPARE_EQ) ? S(false): S(true));
+            return ((opCode == EJS_OP_COMPARE_EQ) ? S(false): S(true));
         }
         boolResult = ejsCompareString(ejs, lhs->value, rhs->value) == 0;
         break;
@@ -47,7 +47,7 @@ static EjsObj *invokeNamespaceOperator(Ejs *ejs, EjsNamespace *lhs, int opCode, 
 
     case EJS_OP_COMPARE_NE:
         if (!ejsIsDefined(ejs, rhs)) {
-            return (EjsObj*) ((opCode == EJS_OP_COMPARE_EQ) ? S(false): S(true));
+            return ((opCode == EJS_OP_COMPARE_EQ) ? S(false): S(true));
         }
         boolResult = !(ejsCompareString(ejs, lhs->value, rhs->value) == 0);
         break;
@@ -60,7 +60,7 @@ static EjsObj *invokeNamespaceOperator(Ejs *ejs, EjsNamespace *lhs, int opCode, 
         ejsThrowTypeError(ejs, "Operation is not valid on this type");
         return 0;
     }
-    return (EjsObj*) ejsCreateBoolean(ejs, boolResult);
+    return ejsCreateBoolean(ejs, boolResult);
 }
 
 

@@ -10,7 +10,7 @@
 /***************************** Forward Declarations ***************************/
 
 static EjsObj *ba_flush(Ejs *ejs, EjsByteArray *ap, int argc, EjsObj **argv);
-static EjsObj *ba_toString(Ejs *ejs, EjsByteArray *ap, int argc, EjsObj **argv);
+static EjsString *ba_toString(Ejs *ejs, EjsByteArray *ap, int argc, EjsObj **argv);
 
 static int  flushByteArray(Ejs *ejs, EjsByteArray *ap);
 static ssize  getInput(Ejs *ejs, EjsByteArray *ap, ssize required);
@@ -107,13 +107,13 @@ static ssize getByteArrayPropertyCount(Ejs *ejs, EjsByteArray *ap)
 }
 
 
-static EjsObj *getByteArrayProperty(Ejs *ejs, EjsByteArray *ap, int slotNum)
+static EjsNumber *getByteArrayProperty(Ejs *ejs, EjsByteArray *ap, int slotNum)
 {
     if (slotNum < 0 || slotNum >= ap->length) {
         ejsThrowOutOfBoundsError(ejs, "Bad array subscript");
         return 0;
     }
-    return (EjsObj*) ejsCreateNumber(ejs, ap->value[slotNum]);
+    return ejsCreateNumber(ejs, ap->value[slotNum]);
 }
 
 
@@ -135,7 +135,7 @@ static int lookupByteArrayProperty(struct Ejs *ejs, EjsByteArray *ap, EjsName qn
 /*
     Cast operands as required for invokeOperator
  */
-static EjsObj *coerceByteArrayOperands(Ejs *ejs, EjsObj *lhs, int opcode,  EjsObj *rhs)
+static EjsAny *coerceByteArrayOperands(Ejs *ejs, EjsObj *lhs, int opcode,  EjsObj *rhs)
 {
     switch (opcode) {
     /*
@@ -146,34 +146,34 @@ static EjsObj *coerceByteArrayOperands(Ejs *ejs, EjsObj *lhs, int opcode,  EjsOb
 
     case EJS_OP_AND: case EJS_OP_DIV: case EJS_OP_MUL: case EJS_OP_OR: case EJS_OP_REM:
     case EJS_OP_SHL: case EJS_OP_SHR: case EJS_OP_SUB: case EJS_OP_USHR: case EJS_OP_XOR:
-        return ejsInvokeOperator(ejs, (EjsObj*) S(zero), opcode, rhs);
+        return ejsInvokeOperator(ejs, S(zero), opcode, rhs);
 
     case EJS_OP_COMPARE_EQ: case EJS_OP_COMPARE_NE:
         if (!ejsIsDefined(ejs, rhs)) {
-            return (EjsObj*) ((opcode == EJS_OP_COMPARE_EQ) ? S(false): S(true));
+            return ((opcode == EJS_OP_COMPARE_EQ) ? S(false): S(true));
         } else if (ejsIs(ejs, rhs, Number)) {
-            return ejsInvokeOperator(ejs, (EjsObj*) ejsToNumber(ejs, lhs), opcode, rhs);
+            return ejsInvokeOperator(ejs, ejsToNumber(ejs, lhs), opcode, rhs);
         }
-        return ejsInvokeOperator(ejs, (EjsObj*) ejsToString(ejs, lhs), opcode, rhs);
+        return ejsInvokeOperator(ejs, ejsToString(ejs, lhs), opcode, rhs);
 
     case EJS_OP_COMPARE_LE: case EJS_OP_COMPARE_LT:
     case EJS_OP_COMPARE_GE: case EJS_OP_COMPARE_GT:
         if (ejsIs(ejs, rhs, Number)) {
-            return ejsInvokeOperator(ejs, (EjsObj*) ejsToNumber(ejs, lhs), opcode, rhs);
+            return ejsInvokeOperator(ejs, ejsToNumber(ejs, lhs), opcode, rhs);
         }
-        return ejsInvokeOperator(ejs, (EjsObj*) ejsToString(ejs, lhs), opcode, rhs);
+        return ejsInvokeOperator(ejs, ejsToString(ejs, lhs), opcode, rhs);
 
     case EJS_OP_COMPARE_STRICTLY_NE:
     case EJS_OP_COMPARE_UNDEFINED:
     case EJS_OP_COMPARE_NOT_ZERO:
     case EJS_OP_COMPARE_NULL:
-        return (EjsObj*) S(true);
+        return S(true);
 
     case EJS_OP_COMPARE_STRICTLY_EQ:
     case EJS_OP_COMPARE_FALSE:
     case EJS_OP_COMPARE_TRUE:
     case EJS_OP_COMPARE_ZERO:
-        return (EjsObj*) S(false);
+        return S(false);
 
     /*
         Unary operators
@@ -189,7 +189,7 @@ static EjsObj *coerceByteArrayOperands(Ejs *ejs, EjsObj *lhs, int opcode,  EjsOb
 }
 
 
-static EjsObj *invokeByteArrayOperator(Ejs *ejs, EjsObj *lhs, int opcode,  EjsObj *rhs)
+static EjsAny *invokeByteArrayOperator(Ejs *ejs, EjsObj *lhs, int opcode,  EjsObj *rhs)
 {
     EjsObj      *result;
 
@@ -203,27 +203,27 @@ static EjsObj *invokeByteArrayOperator(Ejs *ejs, EjsObj *lhs, int opcode,  EjsOb
 
     case EJS_OP_COMPARE_EQ: case EJS_OP_COMPARE_STRICTLY_EQ:
     case EJS_OP_COMPARE_LE: case EJS_OP_COMPARE_GE:
-        return (EjsObj*) ejsCreateBoolean(ejs, (lhs == rhs));
+        return ejsCreateBoolean(ejs, (lhs == rhs));
 
     case EJS_OP_COMPARE_NE: case EJS_OP_COMPARE_STRICTLY_NE:
     case EJS_OP_COMPARE_LT: case EJS_OP_COMPARE_GT:
-        return (EjsObj*) ejsCreateBoolean(ejs, !(lhs == rhs));
+        return ejsCreateBoolean(ejs, !(lhs == rhs));
 
     /*
         Unary operators
      */
     case EJS_OP_COMPARE_NOT_ZERO:
-        return (EjsObj*) S(true);
+        return S(true);
 
     case EJS_OP_COMPARE_UNDEFINED:
     case EJS_OP_COMPARE_NULL:
     case EJS_OP_COMPARE_FALSE:
     case EJS_OP_COMPARE_TRUE:
     case EJS_OP_COMPARE_ZERO:
-        return (EjsObj*) S(false);
+        return S(false);
 
     case EJS_OP_LOGICAL_NOT: case EJS_OP_NOT: case EJS_OP_NEG:
-        return (EjsObj*) S(one);
+        return S(one);
 
     /*
         Binary operators
@@ -265,7 +265,7 @@ static int setByteArrayProperty(struct Ejs *ejs, EjsByteArray *ap, int slotNum, 
 /*
     function ByteArray(size: Number = -1, resizable: Boolean = true): ByteArray
  */
-static EjsObj *ba_ByteArray(Ejs *ejs, EjsByteArray *ap, int argc, EjsObj **argv)
+static EjsByteArray *ba_ByteArray(Ejs *ejs, EjsByteArray *ap, int argc, EjsObj **argv)
 {
     bool    resizable;
     int     size;
@@ -285,7 +285,7 @@ static EjsObj *ba_ByteArray(Ejs *ejs, EjsByteArray *ap, int argc, EjsObj **argv)
     }
     ap->resizable = resizable;
     mprAssert(ap->value);
-    return (EjsObj*) ap;
+    return ap;
 }
 
 
@@ -303,9 +303,9 @@ static EjsObj *ba_on(Ejs *ejs, EjsByteArray *ap, int argc, EjsObj **argv)
     Determine if the byte array is in async mode
     function get async(): Boolean
  */
-static EjsObj *ba_async(Ejs *ejs, EjsByteArray *ap, int argc, EjsObj **argv)
+static EjsBoolean *ba_async(Ejs *ejs, EjsByteArray *ap, int argc, EjsObj **argv)
 {
-    return ap->async ? (EjsObj*) S(true) : (EjsObj*) S(false);
+    return ap->async ? S(true) : S(false);
 }
 
 
@@ -315,7 +315,7 @@ static EjsObj *ba_async(Ejs *ejs, EjsByteArray *ap, int argc, EjsObj **argv)
  */
 static EjsObj *ba_setAsync(Ejs *ejs, EjsByteArray *ap, int argc, EjsObj **argv)
 {
-    ap->async = (argv[0] == (EjsObj*) S(true));
+    ap->async = (argv[0] == S(true));
     return 0;
 }
 
@@ -324,9 +324,9 @@ static EjsObj *ba_setAsync(Ejs *ejs, EjsByteArray *ap, int argc, EjsObj **argv)
     Get the number of bytes that are currently available on this stream for reading.
     function get available(): Number
  */
-static EjsObj *ba_available(Ejs *ejs, EjsByteArray *ap, int argc, EjsObj **argv)
+static EjsNumber *ba_available(Ejs *ejs, EjsByteArray *ap, int argc, EjsObj **argv)
 {
-    return (EjsObj*) ejsCreateNumber(ejs, (MprNumber) (ap->writePosition - ap->readPosition));
+    return ejsCreateNumber(ejs, (MprNumber) (ap->writePosition - ap->readPosition));
 }
 
 
@@ -336,7 +336,7 @@ static EjsObj *ba_available(Ejs *ejs, EjsByteArray *ap, int argc, EjsObj **argv)
 static EjsObj *ba_close(Ejs *ejs, EjsByteArray *ap, int argc, EjsObj **argv)
 {
     if (ap->emitter) {
-        ejsSendEvent(ejs, ap->emitter, "close", NULL, (EjsObj*) ap);
+        ejsSendEvent(ejs, ap->emitter, "close", NULL, ap);
     }
     ap->writePosition = ap->readPosition = 0;
     return 0;
@@ -367,7 +367,7 @@ static EjsObj *ba_compact(Ejs *ejs, EjsByteArray *ap, int argc, EjsObj **argv)
     Copy data into the array. Data is written at the $destOffset.
     function copyIn(destOffset: Number, src: ByteArray, srcOffset: Number = 0, count: Number = -1): Number
  */
-static EjsObj *ba_copyIn(Ejs *ejs, EjsByteArray *ap, int argc, EjsObj **argv)
+static EjsNumber *ba_copyIn(Ejs *ejs, EjsByteArray *ap, int argc, EjsObj **argv)
 {
     EjsByteArray    *src;
     ssize           i, destOffset, srcOffset, count;
@@ -395,7 +395,7 @@ static EjsObj *ba_copyIn(Ejs *ejs, EjsByteArray *ap, int argc, EjsObj **argv)
     for (i = 0; i < count; i++) {
         ap->value[destOffset++] = src->value[srcOffset++];
     }
-    return (EjsObj*) ejsCreateNumber(ejs, (MprNumber) count);
+    return ejsCreateNumber(ejs, (MprNumber) count);
 }
 
 
@@ -403,7 +403,7 @@ static EjsObj *ba_copyIn(Ejs *ejs, EjsByteArray *ap, int argc, EjsObj **argv)
     Copy data from the array. Data is copied from the $srcOffset.
     function copyOut(srcOffset: Number, dest: ByteArray, destOffset: Number = 0, count: Number = -1): Number
  */
-static EjsObj *ba_copyOut(Ejs *ejs, EjsByteArray *ap, int argc, EjsObj **argv)
+static EjsNumber *ba_copyOut(Ejs *ejs, EjsByteArray *ap, int argc, EjsObj **argv)
 {
     EjsByteArray    *dest;
     ssize           count;
@@ -428,7 +428,7 @@ static EjsObj *ba_copyOut(Ejs *ejs, EjsByteArray *ap, int argc, EjsObj **argv)
     for (i = 0; i < count; i++) {
         dest->value[destOffset++] = ap->value[srcOffset++];
     }
-    return (EjsObj*) ejsCreateNumber(ejs, (MprNumber) count);
+    return ejsCreateNumber(ejs, (MprNumber) count);
 }
 
 
@@ -436,9 +436,9 @@ static EjsObj *ba_copyOut(Ejs *ejs, EjsByteArray *ap, int argc, EjsObj **argv)
     Determine if the system is using little endian byte ordering
     function get endian(): Number
  */
-static EjsObj *endian(Ejs *ejs, EjsByteArray *ap, int argc, EjsObj **argv)
+static EjsNumber *endian(Ejs *ejs, EjsByteArray *ap, int argc, EjsObj **argv)
 {
-    return (EjsObj*) ejsCreateNumber(ejs, ap->endian);
+    return ejsCreateNumber(ejs, ap->endian);
 }
 
 
@@ -467,7 +467,7 @@ static EjsObj *setEndian(Ejs *ejs, EjsByteArray *ap, int argc, EjsObj **argv)
     Function to iterate and return the next element index.
     NOTE: this is not a method of Array. Rather, it is a callback function for Iterator
  */
-static EjsObj *nextByteArrayKey(Ejs *ejs, EjsIterator *ip, int argc, EjsObj **argv)
+static EjsNumber *nextByteArrayKey(Ejs *ejs, EjsIterator *ip, int argc, EjsObj **argv)
 {
     EjsByteArray    *ap;
 
@@ -480,7 +480,7 @@ static EjsObj *nextByteArrayKey(Ejs *ejs, EjsIterator *ip, int argc, EjsObj **ar
         ip->index = (int) ap->readPosition;
     }
     if (ip->index < (int) ap->writePosition) {
-        return (EjsObj*) ejsCreateNumber(ejs, ip->index++);
+        return ejsCreateNumber(ejs, ip->index++);
     }
     ejsThrowStopIteration(ejs);
     return 0;
@@ -491,9 +491,9 @@ static EjsObj *nextByteArrayKey(Ejs *ejs, EjsIterator *ip, int argc, EjsObj **ar
     Return the default iterator. This returns the array index names.
     iterator native function get(): Iterator
  */
-static EjsObj *ba_get(Ejs *ejs, EjsObj *ap, int argc, EjsObj **argv)
+static EjsIterator *ba_get(Ejs *ejs, EjsObj *ap, int argc, EjsObj **argv)
 {
-    return (EjsObj*) ejsCreateIterator(ejs, ap, (EjsProc) nextByteArrayKey, 0, NULL);
+    return ejsCreateIterator(ejs, ap, nextByteArrayKey, 0, NULL);
 }
 
 
@@ -501,7 +501,7 @@ static EjsObj *ba_get(Ejs *ejs, EjsObj *ap, int argc, EjsObj **argv)
     Function to iterate and return the next element value.
     NOTE: this is not a method of Array. Rather, it is a callback function for Iterator
  */
-static EjsObj *nextByteArrayValue(Ejs *ejs, EjsIterator *ip, int argc, EjsObj **argv)
+static EjsNumber *nextByteArrayValue(Ejs *ejs, EjsIterator *ip, int argc, EjsObj **argv)
 {
     EjsByteArray    *ap;
 
@@ -514,7 +514,7 @@ static EjsObj *nextByteArrayValue(Ejs *ejs, EjsIterator *ip, int argc, EjsObj **
         ip->index = (int) ap->readPosition;
     }
     if (ip->index < ap->writePosition) {
-        return (EjsObj*) ejsCreateNumber(ejs, ap->value[ip->index++]);
+        return ejsCreateNumber(ejs, ap->value[ip->index++]);
     }
     ejsThrowStopIteration(ejs);
     return 0;
@@ -525,9 +525,9 @@ static EjsObj *nextByteArrayValue(Ejs *ejs, EjsIterator *ip, int argc, EjsObj **
     Return an iterator to return the next array element value.
     iterator native function getValues(): Iterator
  */
-static EjsObj *ba_getValues(Ejs *ejs, EjsObj *ap, int argc, EjsObj **argv)
+static EjsIterator *ba_getValues(Ejs *ejs, EjsObj *ap, int argc, EjsObj **argv)
 {
-    return (EjsObj*) ejsCreateIterator(ejs, ap, (EjsProc) nextByteArrayValue, 0, NULL);
+    return ejsCreateIterator(ejs, ap, nextByteArrayValue, 0, NULL);
 }
 
 
@@ -548,9 +548,9 @@ static EjsObj *ba_flush(Ejs *ejs, EjsByteArray *ap, int argc, EjsObj **argv)
     @return Returns the number of items in the array
     override function get length(): Number
  */
-static EjsObj *ba_getLength(Ejs *ejs, EjsByteArray *ap, int argc, EjsObj **argv)
+static EjsNumber *ba_getLength(Ejs *ejs, EjsByteArray *ap, int argc, EjsObj **argv)
 {
-    return (EjsObj*) ejsCreateNumber(ejs, (int) ap->length);
+    return ejsCreateNumber(ejs, (int) ap->length);
 }
 
 
@@ -582,9 +582,9 @@ static EjsObj *ba_setLength(Ejs *ejs, EjsByteArray *ap, int argc, EjsObj **argv)
     @return Returns the number of items in the array
     function resizable(): Boolean
  */
-static EjsObj *ba_resizable(Ejs *ejs, EjsByteArray *ap, int argc, EjsObj **argv)
+static EjsBoolean *ba_resizable(Ejs *ejs, EjsByteArray *ap, int argc, EjsObj **argv)
 {
-    return ap->resizable ? (EjsObj*) S(true) : (EjsObj*) S(false);
+    return ap->resizable ? S(true) : S(false);
 }
 
 
@@ -594,7 +594,7 @@ static EjsObj *ba_resizable(Ejs *ejs, EjsByteArray *ap, int argc, EjsObj **argv)
     write position is updated.
     function read(buffer: ByteArray, offset: Number = 0, count: Number = -1): Number
  */
-static EjsObj *ba_read(Ejs *ejs, EjsByteArray *ap, int argc, EjsObj **argv)
+static EjsNumber *ba_read(Ejs *ejs, EjsByteArray *ap, int argc, EjsObj **argv)
 {
     EjsByteArray    *buffer;
     ssize           offset, count;
@@ -620,7 +620,7 @@ static EjsObj *ba_read(Ejs *ejs, EjsByteArray *ap, int argc, EjsObj **argv)
     }
     if (getInput(ejs, ap, 1) <= 0) {
         /* eof */
-        return (EjsObj*) S(null);
+        return S(null);
     }
     count = min(availableBytes(ap), count);
     for (i = 0; i < count; i++) {
@@ -628,9 +628,9 @@ static EjsObj *ba_read(Ejs *ejs, EjsByteArray *ap, int argc, EjsObj **argv)
     }
     buffer->writePosition += count;
     if (ap->emitter && availableBytes(ap) && !ejs->exception) {
-        ejsSendEvent(ejs, ap->emitter, "writable", NULL, (EjsObj*) ap);
+        ejsSendEvent(ejs, ap->emitter, "writable", NULL, ap);
     }
-    return (EjsObj*) ejsCreateNumber(ejs, (MprNumber) count);
+    return ejsCreateNumber(ejs, (MprNumber) count);
 }
 
 
@@ -638,17 +638,17 @@ static EjsObj *ba_read(Ejs *ejs, EjsByteArray *ap, int argc, EjsObj **argv)
     Read a boolean from the array.
     function readBoolean(): Boolean
  */
-static EjsObj *ba_readBoolean(Ejs *ejs, EjsByteArray *ap, int argc, EjsObj **argv)
+static EjsBoolean *ba_readBoolean(Ejs *ejs, EjsByteArray *ap, int argc, EjsObj **argv)
 {
     int     result;
 
     if (getInput(ejs, ap, 1) <= 0) {
         /* eof */
-        return (EjsObj*) S(null);
+        return S(null);
     }
     result = ap->value[ap->readPosition];
     adjustReadPosition(ap, 1);
-    return (EjsObj*) ejsCreateBoolean(ejs, result);
+    return ejsCreateBoolean(ejs, result);
 }
 
 
@@ -656,17 +656,17 @@ static EjsObj *ba_readBoolean(Ejs *ejs, EjsByteArray *ap, int argc, EjsObj **arg
     Read a byte from the array.
     function readByte(): Number
  */
-static EjsObj *ba_readByte(Ejs *ejs, EjsByteArray *ap, int argc, EjsObj **argv)
+static EjsNumber *ba_readByte(Ejs *ejs, EjsByteArray *ap, int argc, EjsObj **argv)
 {
     int     result;
 
     if (getInput(ejs, ap, 1) <= 0) {
         /* eof */
-        return (EjsObj*) S(null);
+        return S(null);
     }
     result = ap->value[ap->readPosition];
     adjustReadPosition(ap, 1);
-    return (EjsObj*) ejsCreateNumber(ejs, result);
+    return ejsCreateNumber(ejs, result);
 }
 
 
@@ -674,7 +674,7 @@ static EjsObj *ba_readByte(Ejs *ejs, EjsByteArray *ap, int argc, EjsObj **argv)
     Read a date from the array.
     function readDate(): Date
  */
-static EjsObj *ba_readDate(Ejs *ejs, EjsByteArray *ap, int argc, EjsObj **argv)
+static EjsDate *ba_readDate(Ejs *ejs, EjsByteArray *ap, int argc, EjsObj **argv)
 {
     double  value;
 
@@ -683,20 +683,20 @@ static EjsObj *ba_readDate(Ejs *ejs, EjsByteArray *ap, int argc, EjsObj **argv)
             ejsThrowIOError(ejs, "Premanture eof");
             return 0;
         }
-        return (EjsObj*) S(null);
+        return S(null);
     }
     value = * (double*) &ap->value[ap->readPosition];
     value = swapDouble(ap, value);
     adjustReadPosition(ap, sizeof(double));
-    return (EjsObj*) ejsCreateDate(ejs, (MprTime) value);
+    return ejsCreateDate(ejs, (MprTime) value);
 }
 
 
 /**
     Read a double from the array. The data will be decoded according to the encoding property.
-    function readDouble(): Date
+    function readDouble(): Number
  */
-static EjsObj *ba_readDouble(Ejs *ejs, EjsByteArray *ap, int argc, EjsObj **argv)
+static EjsNumber *ba_readDouble(Ejs *ejs, EjsByteArray *ap, int argc, EjsObj **argv)
 {
     double  value;
 
@@ -705,16 +705,12 @@ static EjsObj *ba_readDouble(Ejs *ejs, EjsByteArray *ap, int argc, EjsObj **argv
             ejsThrowIOError(ejs, "Premanture eof");
             return 0;
         }
-        return (EjsObj*) S(null);
+        return S(null);
     }
-#if OLD
-    value = * (double*) &ap->value[ap->readPosition];
-#else
     memcpy(&value, (char*) &ap->value[ap->readPosition], sizeof(double));
-#endif
     value = swapDouble(ap, value);
     adjustReadPosition(ap, sizeof(double));
-    return (EjsObj*) ejsCreateNumber(ejs, (MprNumber) value);
+    return ejsCreateNumber(ejs, (MprNumber) value);
 }
 
 
@@ -722,7 +718,7 @@ static EjsObj *ba_readDouble(Ejs *ejs, EjsByteArray *ap, int argc, EjsObj **argv
     Read a 32-bit integer from the array. The data will be decoded according to the encoding property.
     function readInteger(): Number
  */
-static EjsObj *ba_readInteger(Ejs *ejs, EjsByteArray *ap, int argc, EjsObj **argv)
+static EjsNumber *ba_readInteger(Ejs *ejs, EjsByteArray *ap, int argc, EjsObj **argv)
 {
     int     value;
 
@@ -731,12 +727,12 @@ static EjsObj *ba_readInteger(Ejs *ejs, EjsByteArray *ap, int argc, EjsObj **arg
             ejsThrowIOError(ejs, "Premanture eof");
             return 0;
         }
-        return (EjsObj*) S(null);
+        return S(null);
     }
     value = * (int*) &ap->value[ap->readPosition];
     value = swap32(ap, value);
     adjustReadPosition(ap, sizeof(int));
-    return (EjsObj*) ejsCreateNumber(ejs, value);
+    return ejsCreateNumber(ejs, value);
 }
 
 
@@ -744,7 +740,7 @@ static EjsObj *ba_readInteger(Ejs *ejs, EjsByteArray *ap, int argc, EjsObj **arg
     Read a 64-bit long from the array.The data will be decoded according to the encoding property.
     function readLong(): Number
  */
-static EjsObj *ba_readLong(Ejs *ejs, EjsByteArray *ap, int argc, EjsObj **argv)
+static EjsNumber *ba_readLong(Ejs *ejs, EjsByteArray *ap, int argc, EjsObj **argv)
 {
     int64   value;
 
@@ -753,12 +749,12 @@ static EjsObj *ba_readLong(Ejs *ejs, EjsByteArray *ap, int argc, EjsObj **argv)
             ejsThrowIOError(ejs, "Premanture eof");
             return 0;
         }
-        return (EjsObj*) S(null);
+        return S(null);
     }
     value = * (int64*) &ap->value[ap->readPosition];
     value = swap64(ap, value);
     adjustReadPosition(ap, sizeof(int64));
-    return (EjsObj*) ejsCreateNumber(ejs, (MprNumber) value);
+    return ejsCreateNumber(ejs, (MprNumber) value);
 }
 
 
@@ -766,9 +762,9 @@ static EjsObj *ba_readLong(Ejs *ejs, EjsByteArray *ap, int argc, EjsObj **argv)
     Get the current read position offset
     function get readPosition(): Number
  */
-static EjsObj *ba_readPosition(Ejs *ejs, EjsByteArray *ap, int argc, EjsObj **argv)
+static EjsNumber *ba_readPosition(Ejs *ejs, EjsByteArray *ap, int argc, EjsObj **argv)
 {
-    return (EjsObj*) ejsCreateNumber(ejs, (MprNumber) ap->readPosition);
+    return ejsCreateNumber(ejs, (MprNumber) ap->readPosition);
 }
 
 
@@ -800,17 +796,17 @@ static EjsObj *ba_setReadPosition(Ejs *ejs, EjsByteArray *ap, int argc, EjsObj *
     Read a 16-bit short integer from the array. The data will be decoded according to the encoding property.
     function readShort(): Number
  */
-static EjsObj *ba_readShort(Ejs *ejs, EjsByteArray *ap, int argc, EjsObj **argv)
+static EjsNumber *ba_readShort(Ejs *ejs, EjsByteArray *ap, int argc, EjsObj **argv)
 {
     int     value;
 
     if (getInput(ejs, ap, EJS_SIZE_SHORT) <= 0) {
-        return (EjsObj*) S(null);
+        return S(null);
     }
     value = * (short*) &ap->value[ap->readPosition];
     value = swap16(ap, value);
     adjustReadPosition(ap, sizeof(short));
-    return (EjsObj*) ejsCreateNumber(ejs, value);
+    return ejsCreateNumber(ejs, value);
 }
 
 
@@ -820,25 +816,25 @@ static EjsObj *ba_readShort(Ejs *ejs, EjsByteArray *ap, int argc, EjsObj **argv)
 
     function readString(count: Number = -1): String
  */
-static EjsObj *ba_readString(Ejs *ejs, EjsByteArray *ap, int argc, EjsObj **argv)
+static EjsString *ba_readString(Ejs *ejs, EjsByteArray *ap, int argc, EjsObj **argv)
 {
-    EjsObj  *result;
-    ssize   count;
+    EjsString   *result;
+    ssize       count;
 
     count = (argc == 1) ? ejsGetInt(ejs, argv[0]) : -1;
 
     if (count < 0) {
         if (getInput(ejs, ap, 1) < 0) {
-            return (EjsObj*) S(null);
+            return S(null);
         }
         count = availableBytes(ap);
 
     } else if (getInput(ejs, ap, count) < 0) {
-        return (EjsObj*) S(null);
+        return S(null);
     }
     count = min(count, availableBytes(ap));
     //  TODO - UNICODE ENCODING
-    result = (EjsObj*) ejsCreateStringFromMulti(ejs, (cchar*) &ap->value[ap->readPosition], count);
+    result = ejsCreateStringFromMulti(ejs, (cchar*) &ap->value[ap->readPosition], count);
     adjustReadPosition(ap, count);
     return result;
 }
@@ -877,9 +873,9 @@ static EjsObj *ba_off(Ejs *ejs, EjsByteArray *ap, int argc, EjsObj **argv)
     Get the number of data bytes that the array can store from the write position till the end of the array.
     function get room(): Number
  */
-static EjsObj *ba_room(Ejs *ejs, EjsByteArray *ap, int argc, EjsObj **argv)
+static EjsNumber *ba_room(Ejs *ejs, EjsByteArray *ap, int argc, EjsObj **argv)
 {
-    return (EjsObj*) ejsCreateNumber(ejs, (MprNumber) room(ap));
+    return ejsCreateNumber(ejs, (MprNumber) room(ap));
 }
 
 
@@ -887,10 +883,10 @@ static EjsObj *ba_room(Ejs *ejs, EjsByteArray *ap, int argc, EjsObj **argv)
     Convert the byte array data between the read and write positions into a string.
     override function toString(): String
  */
-static EjsObj *ba_toString(Ejs *ejs, EjsByteArray *ap, int argc, EjsObj **argv)
+static EjsString *ba_toString(Ejs *ejs, EjsByteArray *ap, int argc, EjsObj **argv)
 {
     //  TODO - UNICODE ENCODING
-    return (EjsObj*) ejsCreateStringFromMulti(ejs, (cchar*) &ap->value[ap->readPosition], availableBytes(ap));
+    return ejsCreateStringFromMulti(ejs, (cchar*) &ap->value[ap->readPosition], availableBytes(ap));
 }
 
 
@@ -981,7 +977,7 @@ EjsNumber *ejsWriteToByteArray(Ejs *ejs, EjsByteArray *ap, int argc, EjsObj **ar
         }
     }
     if (ap->emitter && wrote > 0 && availableBytes(ap) > 0) {
-        ejsSendEvent(ejs, ap->emitter, "readable", NULL, (EjsObj*) ap);
+        ejsSendEvent(ejs, ap->emitter, "readable", NULL, ap);
     }
     return ejsCreateNumber(ejs, (MprNumber) wrote);
 }
@@ -998,7 +994,7 @@ static EjsObj *ba_writeByte(Ejs *ejs, EjsByteArray *ap, int argc, EjsObj **argv)
     }
     putByte(ap, ejsGetInt(ejs, argv[0]));
     if (ap->emitter) {
-        ejsSendEvent(ejs, ap->emitter, "readable", NULL, (EjsObj*) ap);
+        ejsSendEvent(ejs, ap->emitter, "readable", NULL, ap);
     }
     return 0;
 }
@@ -1015,7 +1011,7 @@ static EjsObj *ba_writeShort(Ejs *ejs, EjsByteArray *ap, int argc, EjsObj **argv
     }
     putShort(ap, ejsGetInt(ejs, argv[0]));
     if (ap->emitter) {
-        ejsSendEvent(ejs, ap->emitter, "readable", NULL, (EjsObj*) ap);
+        ejsSendEvent(ejs, ap->emitter, "readable", NULL, ap);
     }
     return 0;
 }
@@ -1032,7 +1028,7 @@ static EjsObj *ba_writeDouble(Ejs *ejs, EjsByteArray *ap, int argc, EjsObj **arg
     }
     putDouble(ap, ejsGetDouble(ejs, argv[0]));
     if (ap->emitter) {
-        ejsSendEvent(ejs, ap->emitter, "readable", NULL, (EjsObj*) ap);
+        ejsSendEvent(ejs, ap->emitter, "readable", NULL, ap);
     }
     return 0;
 }
@@ -1067,7 +1063,7 @@ static EjsObj *ba_writeLong(Ejs *ejs, EjsByteArray *ap, int argc, EjsObj **argv)
     }
     putLong(ap, ejsGetInt(ejs, argv[0]));
     if (ap->emitter) {
-        ejsSendEvent(ejs, ap->emitter, "readable", NULL, (EjsObj*) ap);
+        ejsSendEvent(ejs, ap->emitter, "readable", NULL, ap);
     }
     return 0;
 }
@@ -1077,9 +1073,9 @@ static EjsObj *ba_writeLong(Ejs *ejs, EjsByteArray *ap, int argc, EjsObj **argv)
     Get the current write position offset
     function get writePosition(): Number
  */
-static EjsObj *ba_writePosition(Ejs *ejs, EjsByteArray *ap, int argc, EjsObj **argv)
+static EjsNumber *ba_writePosition(Ejs *ejs, EjsByteArray *ap, int argc, EjsObj **argv)
 {
-    return (EjsObj*) ejsCreateNumber(ejs, (MprNumber) ap->writePosition);
+    return ejsCreateNumber(ejs, (MprNumber) ap->writePosition);
 }
 
 
@@ -1114,11 +1110,11 @@ static EjsObj *ba_setWritePosition(Ejs *ejs, EjsByteArray *ap, int argc, EjsObj 
 static int flushByteArray(Ejs *ejs, EjsByteArray *ap)
 {
     if (ap->emitter && availableBytes(ap) && !ejs->exception) {
-        ejsSendEvent(ejs, ap->emitter, "flush", NULL, (EjsObj*) ap);
+        ejsSendEvent(ejs, ap->emitter, "flush", NULL, ap);
     }
     ap->writePosition = ap->readPosition = 0;
     if (ap->emitter) {
-        ejsSendEvent(ejs, ap->emitter, "writable", NULL, (EjsObj*) ap);
+        ejsSendEvent(ejs, ap->emitter, "writable", NULL, ap);
     }
     return 0;
 }
@@ -1159,7 +1155,7 @@ static ssize getInput(Ejs *ejs, EjsByteArray *ap, ssize required)
     }
     if (availableBytes(ap) < required && !ejs->exception) {
         if (ap->emitter) {
-            ejsSendEvent(ejs, ap->emitter, "writable", NULL, (EjsObj*) ap);
+            ejsSendEvent(ejs, ap->emitter, "writable", NULL, ap);
         }
     }
     if (availableBytes(ap) < required) {
@@ -1175,7 +1171,7 @@ bool ejsMakeRoomInByteArray(Ejs *ejs, EjsByteArray *ap, ssize require)
 
     if (room(ap) < require) {
         if (ap->emitter && availableBytes(ap)) {
-            ejsSendEvent(ejs, ap->emitter, "readable", NULL, (EjsObj*) ap);
+            ejsSendEvent(ejs, ap->emitter, "readable", NULL, ap);
         }
         if (room(ap) < require) {
             newLen = max(ap->length + require, ap->length + ap->growInc);

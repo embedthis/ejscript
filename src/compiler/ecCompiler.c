@@ -367,8 +367,8 @@ int ejsEvalFile(cchar *path)
     Ejs     *ejs;
     Mpr     *mpr;
 
-    mpr = mprCreate(0, NULL, 0);
-    if ((ejs = ejsCreate(NULL, NULL, NULL, 0, NULL, 0)) == 0) {
+    mpr = mprCreate(0, 0, 0);
+    if ((ejs = ejsCreateVM(0, 0, 0, 0, 0, 0, 0)) == 0) {
         mprDestroy(0);
         return MPR_ERR_MEMORY;
     }
@@ -391,8 +391,8 @@ int ejsEvalScript(cchar *script)
     Ejs     *ejs;
     Mpr     *mpr;
 
-    mpr = mprCreate(0, NULL, 0);
-    if ((ejs = ejsCreate(NULL, NULL, NULL, 0, NULL, 0)) == 0) {
+    mpr = mprCreate(0, 0, 0);
+    if ((ejs = ejsCreateVM(0, 0, 0, 0, 0, 0, 0)) == 0) {
         mprDestroy(0);
         return MPR_ERR_MEMORY;
     }

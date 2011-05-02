@@ -37,7 +37,7 @@ static void unmapFile(EjsFile *fp);
 /*  
     Index into a file and extract a byte. This is random access reading.
  */
-static EjsObj *getFileProperty(Ejs *ejs, EjsFile *fp, int slotNum)
+static EjsNumber *getFileProperty(Ejs *ejs, EjsFile *fp, int slotNum)
 {
     MprOff  offset;
     int     c;
@@ -76,7 +76,7 @@ static EjsObj *getFileProperty(Ejs *ejs, EjsFile *fp, int slotNum)
         return 0;
     }
 #endif
-    return (EjsObj*) ejsCreateNumber(ejs, c);
+    return ejsCreateNumber(ejs, c);
 }
 
 
@@ -191,7 +191,7 @@ static cchar *getStrOption(Ejs *ejs, EjsObj *options, cchar *field, cchar *defau
     Constructor
     function File(path: Object, options: Object = null)
  */
-static EjsObj *fileConstructor(Ejs *ejs, EjsFile *fp, int argc, EjsObj **argv)
+static EjsFile *fileConstructor(Ejs *ejs, EjsFile *fp, int argc, EjsObj **argv)
 {
     EjsObj      *pp;
     cchar       *path;
@@ -213,25 +213,25 @@ static EjsObj *fileConstructor(Ejs *ejs, EjsFile *fp, int argc, EjsObj **argv)
     if (argc == 2) {
         openFile(ejs, fp, 1, &argv[1]);
     }
-    return (EjsObj*) fp;
+    return fp;
 }
 
 
 /*  
     function get canRead(): Boolean
  */
-static EjsObj *canReadFile(Ejs *ejs, EjsFile *fp, int argc, EjsObj **argv)
+static EjsBoolean *canReadFile(Ejs *ejs, EjsFile *fp, int argc, EjsObj **argv)
 {
-    return (EjsObj*) ejsCreateBoolean(ejs, fp->mode & FILE_OPEN && (fp->mode & FILE_READ));
+    return ejsCreateBoolean(ejs, fp->mode & FILE_OPEN && (fp->mode & FILE_READ));
 }
 
 
 /*  
     function get canRead(): Boolean
  */
-static EjsObj *canWriteFile(Ejs *ejs, EjsFile *fp, int argc, EjsObj **argv)
+static EjsBoolean *canWriteFile(Ejs *ejs, EjsFile *fp, int argc, EjsObj **argv)
 {
-    return (EjsObj*) ejsCreateBoolean(ejs, fp->mode & FILE_OPEN && (fp->mode & FILE_WRITE));
+    return ejsCreateBoolean(ejs, fp->mode & FILE_OPEN && (fp->mode & FILE_WRITE));
 }
 
 /*  
@@ -266,7 +266,7 @@ static EjsObj *closeFile(Ejs *ejs, EjsFile *fp, int argc, EjsObj **argv)
     Function to iterate and return the next element index.
     NOTE: this is not a method of Array. Rather, it is a callback function for Iterator
  */
-static EjsObj *nextKey(Ejs *ejs, EjsIterator *ip, int argc, EjsObj **argv)
+static EjsNumber *nextKey(Ejs *ejs, EjsIterator *ip, int argc, EjsObj **argv)
 {
     EjsFile     *fp;
 
@@ -276,7 +276,7 @@ static EjsObj *nextKey(Ejs *ejs, EjsIterator *ip, int argc, EjsObj **argv)
         return 0;
     }
     if (ip->index < fp->info.size) {
-        return (EjsObj*) ejsCreateNumber(ejs, ip->index++);
+        return ejsCreateNumber(ejs, ip->index++);
     }
     ejsThrowStopIteration(ejs);
     return 0;
@@ -287,10 +287,10 @@ static EjsObj *nextKey(Ejs *ejs, EjsIterator *ip, int argc, EjsObj **argv)
     Return the default iterator for use with "for ... in". This returns byte offsets in the file.
     iterator native function get(): Iterator
  */
-static EjsObj *getFileIterator(Ejs *ejs, EjsFile *fp, int argc, EjsObj **argv)
+static EjsIterator *getFileIterator(Ejs *ejs, EjsFile *fp, int argc, EjsObj **argv)
 {
     mprGetPathInfo(fp->path, &fp->info);
-    return (EjsObj*) ejsCreateIterator(ejs, (EjsObj*) fp, (EjsProc) nextKey, 0, NULL);
+    return ejsCreateIterator(ejs, fp, nextKey, 0, NULL);
 }
 
 

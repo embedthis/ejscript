@@ -41,29 +41,38 @@ static EjsAny *castString(Ejs *ejs, EjsString *sp, EjsType *type)
     mprAssert(sp);
     mprAssert(type);
 
+#if UNUSED
     if (type == ST(Path)) {
-        return (EjsObj*) ejsCreatePath(ejs, sp);
+        return ejsCreatePath(ejs, sp);
     } else if (type == ST(Uri)) {
-        return (EjsObj*) ejsCreateUri(ejs, sp);
+        return ejsCreateUri(ejs, sp);
     }
+#endif
+
     switch (type->sid) {
     case S_Boolean:
         if (sp != S(empty)) {
-            return (EjsObj*) S(true);
+            return S(true);
         }
-        return (EjsObj*) S(false);
+        return S(false);
 
     case S_Number:
         return ejsParse(ejs, sp->value, S_Number);
 
+    case S_Path:
+        return ejsCreatePath(ejs, sp);
+
     case S_RegExp:
         if (sp && sp->value[0] == '/') {
-            return (EjsObj*) ejsCreateRegExp(ejs, sp);
+            return ejsCreateRegExp(ejs, sp);
         }
         return ejsCreateRegExp(ejs, ejsSprintf(ejs, "/%@/", sp));
 
     case S_String:
         return sp;
+
+    case S_Uri:
+        return ejsCreateUri(ejs, sp);
 
     default:
         ejsThrowTypeError(ejs, "Can't cast to required type");
@@ -83,13 +92,12 @@ static EjsString *cloneString(Ejs *ejs, EjsString *sp, bool deep)
 /*
     Get a string element. Slot numbers correspond to character indicies.
  */
-static EjsObj *getStringProperty(Ejs *ejs, EjsString *sp, int index)
+static EjsString *getStringProperty(Ejs *ejs, EjsString *sp, int index)
 {
     if (index < 0 || index >= sp->length) {
-        return (EjsObj*) S(empty);
-        return 0;
+        return S(empty);
     }
-    return (EjsObj*) ejsCreateString(ejs, &sp->value[index], 1);
+    return ejsCreateString(ejs, &sp->value[index], 1);
 }
 
 
@@ -295,7 +303,7 @@ static EjsString *stringConstructor(Ejs *ejs, EjsString *sp, int argc, EjsObj **
     if (argc == 1) {
         args = (EjsArray*) argv[0];
         if (args->length > 0) {
-            return ejsToString(ejs, ejsGetProperty(ejs, (EjsObj*) args, 0));
+            return ejsToString(ejs, ejsGetProperty(ejs, args, 0));
         }
     }
     return ejsInternString(sp);
@@ -307,14 +315,14 @@ static EjsString *stringConstructor(Ejs *ejs, EjsString *sp, int argc, EjsObj **
 
     function caseCompare(compare: String): Number
  */
-static EjsObj *caseCompare(Ejs *ejs, EjsString *sp, int argc, EjsObj **argv)
+static EjsNumber *caseCompare(Ejs *ejs, EjsString *sp, int argc, EjsObj **argv)
 {
     int     result;
 
     mprAssert(argc == 1 && ejsIs(ejs, argv[0], String));
 
     result = wcmp(sp->value, ((EjsString*) argv[0])->value);
-    return (EjsObj*) ejsCreateNumber(ejs, result);
+    return ejsCreateNumber(ejs, result);
 }
 
 
@@ -323,14 +331,14 @@ static EjsObj *caseCompare(Ejs *ejs, EjsString *sp, int argc, EjsObj **argv)
 
     function caselessCompare(compare: String): Number
  */
-static EjsObj *caselessCompare(Ejs *ejs, EjsString *sp, int argc, EjsObj **argv)
+static EjsNumber *caselessCompare(Ejs *ejs, EjsString *sp, int argc, EjsObj **argv)
 {
     int     result;
 
     mprAssert(argc == 1 && ejsIs(ejs, argv[0], String));
 
     result = wcasecmp(sp->value, ((EjsString*) argv[0])->value);
-    return (EjsObj*) ejsCreateNumber(ejs, result);
+    return ejsCreateNumber(ejs, result);
 }
 
 
@@ -339,16 +347,16 @@ static EjsObj *caselessCompare(Ejs *ejs, EjsString *sp, int argc, EjsObj **argv)
 
     function charAt(index: Number): String
  */
-static EjsObj *charAt(Ejs *ejs, EjsString *sp, int argc, EjsObj **argv)
+static EjsString *charAt(Ejs *ejs, EjsString *sp, int argc, EjsObj **argv)
 {
     int     index;
 
     mprAssert(argc == 1 && ejsIs(ejs, argv[0], Number));
     index = ejsGetInt(ejs, argv[0]);
     if (index < 0 || index >= sp->length) {
-        return (EjsObj*) S(empty);
+        return S(empty);
     }
-    return (EjsObj*) ejsCreateString(ejs, &sp->value[index], 1);
+    return ejsCreateString(ejs, &sp->value[index], 1);
 }
 
 
@@ -378,7 +386,7 @@ static EjsNumber *charCodeAt(Ejs *ejs, EjsString *sp, int argc, EjsObj **argv)
 
     function concat(...args): String
  */
-static EjsObj *concatString(Ejs *ejs, EjsString *sp, int argc, EjsObj **argv)
+static EjsString *concatString(Ejs *ejs, EjsString *sp, int argc, EjsObj **argv)
 {
     EjsArray    *args;
     EjsString   *result, *str;
@@ -388,15 +396,15 @@ static EjsObj *concatString(Ejs *ejs, EjsString *sp, int argc, EjsObj **argv)
     args = (EjsArray*) argv[0];
 
     result = (EjsString*) ejsClone(ejs, sp, 0);
-    count = ejsGetPropertyCount(ejs, (EjsObj*) args);
+    count = ejsGetPropertyCount(ejs, args);
     for (i = 0; i < args->length; i++) {
-        str = ejsToString(ejs, ejsGetProperty(ejs, (EjsObj*) args, i));
+        str = ejsToString(ejs, ejsGetProperty(ejs, args, i));
         if ((result = ejsCatString(ejs, result, str)) == NULL) {
             ejsThrowMemoryError(ejs);
             return 0;
         }
     }
-    return (EjsObj*) result;
+    return result;
 }
 
 
@@ -405,7 +413,7 @@ static EjsObj *concatString(Ejs *ejs, EjsString *sp, int argc, EjsObj **argv)
 
     function contains(pattern: Object): Boolean
  */
-static EjsObj *containsString(Ejs *ejs, EjsString *sp, int argc, EjsObj **argv)
+static EjsBoolean *containsString(Ejs *ejs, EjsString *sp, int argc, EjsObj **argv)
 {
     EjsObj      *pat;
     EjsString   *spat;
@@ -414,14 +422,14 @@ static EjsObj *containsString(Ejs *ejs, EjsString *sp, int argc, EjsObj **argv)
 
     if (ejsIs(ejs, pat, String)) {
         spat = (EjsString*) pat;
-        return (EjsObj*) ejsCreateBoolean(ejs, wcontains(sp->value, spat->value, -1) != 0);
+        return ejsCreateBoolean(ejs, wcontains(sp->value, spat->value, -1) != 0);
 
     } else if (ejsIs(ejs, pat, RegExp)) {
         EjsRegExp   *rp;
         int         count;
         rp = (EjsRegExp*) argv[0];
         count = pcre_exec(rp->compiled, NULL, sp->value, (int) sp->length, 0, 0, 0, 0);
-        return (EjsObj*) ejsCreateBoolean(ejs, count >= 0);
+        return ejsCreateBoolean(ejs, count >= 0);
     }
     ejsThrowTypeError(ejs, "Wrong argument type");
     return 0;
@@ -433,7 +441,7 @@ static EjsObj *containsString(Ejs *ejs, EjsString *sp, int argc, EjsObj **argv)
 
     function endsWith(pattern: String): Boolean
  */
-static EjsObj *endsWith(Ejs *ejs, EjsString *sp, int argc, EjsObj **argv)
+static EjsBoolean *endsWith(Ejs *ejs, EjsString *sp, int argc, EjsObj **argv)
 {
     EjsString   *pattern;
     ssize       len;
@@ -443,9 +451,9 @@ static EjsObj *endsWith(Ejs *ejs, EjsString *sp, int argc, EjsObj **argv)
     pattern = (EjsString*) argv[0];
     len = pattern->length;
     if (len > sp->length) {
-        return (EjsObj*) S(false);
+        return S(false);
     }
-    return (EjsObj*) ejsCreateBoolean(ejs, wncmp(&sp->value[sp->length - len], pattern->value, len) == 0);
+    return ejsCreateBoolean(ejs, wncmp(&sp->value[sp->length - len], pattern->value, len) == 0);
 }
 
 
@@ -457,11 +465,11 @@ static EjsObj *endsWith(Ejs *ejs, EjsString *sp, int argc, EjsObj **argv)
     Format:         %[modifier][width][precision][type]
     Modifiers:      +- #,
  */
-static EjsObj *formatString(Ejs *ejs, EjsString *sp, int argc, EjsObj **argv)
+static EjsString *formatString(Ejs *ejs, EjsString *sp, int argc, EjsObj **argv)
 {
     EjsArray    *args, *inner;
     EjsString   *result;
-    EjsObj      *value;
+    EjsAny      *value;
     MprChar     *buf, fmt[32];
     ssize       i, flen, start, len, last;
     int         c, nextArg, kind;
@@ -475,7 +483,7 @@ static EjsObj *formatString(Ejs *ejs, EjsString *sp, int argc, EjsObj **argv)
         via the overloaded operator '%' which in turn invokes format()
      */
     if (args->length == 1) {
-        inner = ejsGetProperty(ejs, (EjsObj*) args, 0);
+        inner = ejsGetProperty(ejs, args, 0);
         if (ejsIs(ejs, inner, Array)) {
             args = inner;
         }
@@ -510,7 +518,7 @@ static EjsObj *formatString(Ejs *ejs, EjsString *sp, int argc, EjsObj **argv)
             wncopy(fmt, (sizeof(fmt) / sizeof(MprChar)) - 4, &sp->value[start], len);
 
             if (nextArg < args->length) {
-                value = ejsGetProperty(ejs, (EjsObj*) args, nextArg);
+                value = ejsGetProperty(ejs, args, nextArg);
             } else {
                 value = S(null);
             }
@@ -518,19 +526,19 @@ static EjsObj *formatString(Ejs *ejs, EjsString *sp, int argc, EjsObj **argv)
             //  OPT
             switch (kind) {
             case 'd': case 'i': case 'o': case 'u':
-                value = (EjsObj*) ejsToNumber(ejs, value);
+                value = ejsToNumber(ejs, value);
                 flen = sizeof(fmt) - len + 1;
                 mtow(&fmt[len - 1], flen, ".0f", 3);
                 buf = wfmt(fmt, ejsGetNumber(ejs, value));
                 break;
 
             case 'e': case 'g': case 'f':
-                value = (EjsObj*) ejsToNumber(ejs, value);
+                value = ejsToNumber(ejs, value);
                 buf = wfmt(fmt, ejsGetNumber(ejs, value));
                 break;
 
             case 's':
-                value = (EjsObj*) ejsToString(ejs, value);
+                value = ejsToString(ejs, value);
                 buf = wfmt(fmt, ejsToMulti(ejs, value));
                 break;
 
@@ -560,7 +568,7 @@ static EjsObj *formatString(Ejs *ejs, EjsString *sp, int argc, EjsObj **argv)
     if (sp->length > last) {
         result = buildString(ejs, result, &sp->value[last], sp->length - last);
     }
-    return (EjsObj*) ejsInternString(result);
+    return ejsInternString(result);
 }
 
 
@@ -569,7 +577,7 @@ static EjsObj *formatString(Ejs *ejs, EjsString *sp, int argc, EjsObj **argv)
 
     static function fromCharCode(...codes): String
  */
-static EjsObj *fromCharCode(Ejs *ejs, EjsString *unused, int argc, EjsObj **argv)
+static EjsString *fromCharCode(Ejs *ejs, EjsString *unused, int argc, EjsObj **argv)
 {
     EjsString   *result;
     EjsArray    *args;
@@ -583,12 +591,12 @@ static EjsObj *fromCharCode(Ejs *ejs, EjsString *unused, int argc, EjsObj **argv
         return 0;
     }
     for (i = 0; i < args->length; i++) {
-        vp = ejsGetProperty(ejs, (EjsObj*) args, i);
+        vp = ejsGetProperty(ejs, args, i);
         result->value[i] = ejsGetInt(ejs, ejsToNumber(ejs, vp));
     }
     result->value[i] = '\0';
     result->length = args->length;
-    return (EjsObj*) ejsInternString(result);
+    return ejsInternString(result);
 }
 
 
@@ -596,7 +604,7 @@ static EjsObj *fromCharCode(Ejs *ejs, EjsString *unused, int argc, EjsObj **argv
     Function to iterate and return the next character code.
     NOTE: this is not a method of String. Rather, it is a callback function for Iterator
  */
-static EjsObj *nextStringKey(Ejs *ejs, EjsIterator *ip, int argc, EjsObj **argv)
+static EjsNumber *nextStringKey(Ejs *ejs, EjsIterator *ip, int argc, EjsObj **argv)
 {
     EjsString   *sp;
 
@@ -607,7 +615,7 @@ static EjsObj *nextStringKey(Ejs *ejs, EjsIterator *ip, int argc, EjsObj **argv)
         return 0;
     }
     if (ip->index < sp->length) {
-        return (EjsObj*) ejsCreateNumber(ejs, ip->index++);
+        return ejsCreateNumber(ejs, ip->index++);
     }
     ejsThrowStopIteration(ejs);
     return 0;
@@ -619,9 +627,9 @@ static EjsObj *nextStringKey(Ejs *ejs, EjsIterator *ip, int argc, EjsObj **argv)
 
     iterator function get(): Iterator
  */
-static EjsObj *getStringIterator(Ejs *ejs, EjsObj *sp, int argc, EjsObj **argv)
+static EjsIterator *getStringIterator(Ejs *ejs, EjsObj *sp, int argc, EjsObj **argv)
 {
-    return (EjsObj*) ejsCreateIterator(ejs, sp, (EjsProc) nextStringKey, 0, NULL);
+    return ejsCreateIterator(ejs, sp, (EjsProc) nextStringKey, 0, NULL);
 }
 
 
@@ -629,7 +637,7 @@ static EjsObj *getStringIterator(Ejs *ejs, EjsObj *sp, int argc, EjsObj **argv)
     Function to iterate and return the next string character (as a string).
     NOTE: this is not a method of Array. Rather, it is a callback function for Iterator
  */
-static EjsObj *nextStringValue(Ejs *ejs, EjsIterator *ip, int argc, EjsObj **argv)
+static EjsString *nextStringValue(Ejs *ejs, EjsIterator *ip, int argc, EjsObj **argv)
 {
     EjsString   *sp;
 
@@ -640,7 +648,7 @@ static EjsObj *nextStringValue(Ejs *ejs, EjsIterator *ip, int argc, EjsObj **arg
     }
 
     if (ip->index < sp->length) {
-        return (EjsObj*) ejsCreateString(ejs, &sp->value[ip->index++], 1);
+        return ejsCreateString(ejs, &sp->value[ip->index++], 1);
     }
     ejsThrowStopIteration(ejs);
     return 0;
@@ -652,9 +660,9 @@ static EjsObj *nextStringValue(Ejs *ejs, EjsIterator *ip, int argc, EjsObj **arg
 
     iterator function getValues(): Iterator
  */
-static EjsObj *getStringValues(Ejs *ejs, EjsObj *sp, int argc, EjsObj **argv)
+static EjsIterator *getStringValues(Ejs *ejs, EjsObj *sp, int argc, EjsObj **argv)
 {
-    return (EjsObj*) ejsCreateIterator(ejs, sp, (EjsProc) nextStringValue, 0, NULL);
+    return ejsCreateIterator(ejs, sp, (EjsProc) nextStringValue, 0, NULL);
 }
 
 
@@ -665,9 +673,9 @@ static EjsObj *getStringValues(Ejs *ejs, EjsObj *sp, int argc, EjsObj **argv)
     override function get length(): Number
  */
 
-static EjsObj *stringLength(Ejs *ejs, EjsString *ap, int argc, EjsObj **argv)
+static EjsNumber *stringLength(Ejs *ejs, EjsString *ap, int argc, EjsObj **argv)
 {
-    return (EjsObj*) ejsCreateNumber(ejs, (MprNumber) ap->length);
+    return ejsCreateNumber(ejs, (MprNumber) ap->length);
 }
 
 
@@ -676,7 +684,7 @@ static EjsObj *stringLength(Ejs *ejs, EjsString *ap, int argc, EjsObj **argv)
 
     function indexOf(pattern: String, startIndex: Number = 0): Number
  */
-static EjsObj *indexOf(Ejs *ejs, EjsString *sp, int argc,  EjsObj **argv)
+static EjsNumber *indexOf(Ejs *ejs, EjsString *sp, int argc,  EjsObj **argv)
 {
     EjsString   *pattern;
     ssize       start, index, patternLength;
@@ -700,105 +708,105 @@ static EjsObj *indexOf(Ejs *ejs, EjsString *sp, int argc,  EjsObj **argv)
     }
     index = indexof(&sp->value[start], sp->length - start, pattern, patternLength, 1);
     if (index < 0) {
-        return (EjsObj*) S(minusOne);
+        return S(minusOne);
     }
-    return (EjsObj*) ejsCreateNumber(ejs, (MprNumber) (index + start));
+    return ejsCreateNumber(ejs, (MprNumber) (index + start));
 }
 
 
-static EjsObj *isAlpha(Ejs *ejs, EjsString *sp, int argc,  EjsObj **argv)
+static EjsBoolean *isAlpha(Ejs *ejs, EjsString *sp, int argc,  EjsObj **argv)
 {
     MprChar     *cp;
 
     if (sp->length == 0) {
-        return (EjsObj*) S(false);
+        return S(false);
     }
     for (cp = sp->value; cp < &sp->value[sp->length]; cp++) {
         if (*cp & 0x80 || !isalpha((int) *cp)) {
-            return (EjsObj*) S(false);
+            return S(false);
         }
     }
-    return (EjsObj*) S(true);
+    return S(true);
 }
 
 
-static EjsObj *isAlphaNum(Ejs *ejs, EjsString *sp, int argc,  EjsObj **argv)
+static EjsBoolean *isAlphaNum(Ejs *ejs, EjsString *sp, int argc,  EjsObj **argv)
 {
     MprChar     *cp;
 
     if (sp->length == 0) {
-        return (EjsObj*) S(false);
+        return S(false);
     }
     for (cp = sp->value; cp < &sp->value[sp->length]; cp++) {
         if (*cp & 0x80 || !isalnum((int) *cp)) {
-            return (EjsObj*) S(false);
+            return S(false);
         }
     }
-    return (EjsObj*) S(true);
+    return S(true);
 }
 
 
-static EjsObj *isDigit(Ejs *ejs, EjsString *sp, int argc,  EjsObj **argv)
+static EjsBoolean *isDigit(Ejs *ejs, EjsString *sp, int argc,  EjsObj **argv)
 {
     MprChar     *cp;
 
     if (sp->length == 0) {
-        return (EjsObj*) S(false);
+        return S(false);
     }
     for (cp = sp->value; cp < &sp->value[sp->length]; cp++) {
         if (*cp & 0x80 || !isdigit((int) *cp)) {
-            return (EjsObj*) S(false);
+            return S(false);
         }
     }
-    return (EjsObj*) S(true);
+    return S(true);
 }
 
 
-static EjsObj *isLower(Ejs *ejs, EjsString *sp, int argc,  EjsObj **argv)
+static EjsBoolean *isLower(Ejs *ejs, EjsString *sp, int argc,  EjsObj **argv)
 {
     MprChar     *cp;
 
     if (sp->length == 0) {
-        return (EjsObj*) S(false);
+        return S(false);
     }
     for (cp = sp->value; cp < &sp->value[sp->length]; cp++) {
         if (!islower((int) *cp)) {
-            return (EjsObj*) S(false);
+            return S(false);
         }
     }
-    return (EjsObj*) S(true);
+    return S(true);
 }
 
 
-static EjsObj *isSpace(Ejs *ejs, EjsString *sp, int argc,  EjsObj **argv)
+static EjsBoolean *isSpace(Ejs *ejs, EjsString *sp, int argc,  EjsObj **argv)
 {
     MprChar     *cp;
 
     if (sp->length == 0) {
-        return (EjsObj*) S(false);
+        return S(false);
     }
     for (cp = sp->value; cp < &sp->value[sp->length]; cp++) {
         if (*cp & 0x80 || !isspace((int) *cp)) {
-            return (EjsObj*) S(false);
+            return S(false);
         }
     }
-    return (EjsObj*) S(true);
+    return S(true);
 }
 
 
-static EjsObj *isUpper(Ejs *ejs, EjsString *sp, int argc,  EjsObj **argv)
+static EjsBoolean *isUpper(Ejs *ejs, EjsString *sp, int argc,  EjsObj **argv)
 {
     MprChar     *cp;
 
     if (sp->length == 0) {
-        return (EjsObj*) S(false);
+        return S(false);
     }
     for (cp = sp->value; cp < &sp->value[sp->length]; cp++) {
         if (!isupper((int) *cp)) {
-            return (EjsObj*) S(false);
+            return S(false);
         }
     }
-    return (EjsObj*) S(true);
+    return S(true);
 }
 
 
@@ -807,7 +815,7 @@ static EjsObj *isUpper(Ejs *ejs, EjsString *sp, int argc,  EjsObj **argv)
 
     function lastIndexOf(pattern: String, start: Number = -1): Number
  */
-static EjsObj *lastIndexOf(Ejs *ejs, EjsString *sp, int argc,  EjsObj **argv)
+static EjsNumber *lastIndexOf(Ejs *ejs, EjsString *sp, int argc,  EjsObj **argv)
 {
     EjsString   *pattern;
     ssize       start, patternLength, index;
@@ -830,9 +838,9 @@ static EjsObj *lastIndexOf(Ejs *ejs, EjsString *sp, int argc,  EjsObj **argv)
     }
     index = indexof(sp->value, sp->length, pattern, patternLength, -1);
     if (index < 0) {
-        return (EjsObj*) S(minusOne);
+        return S(minusOne);
     }
-    return (EjsObj*) ejsCreateNumber(ejs, (MprNumber) index);
+    return ejsCreateNumber(ejs, (MprNumber) index);
 }
 
 
@@ -841,7 +849,7 @@ static EjsObj *lastIndexOf(Ejs *ejs, EjsString *sp, int argc,  EjsObj **argv)
 
     function match(pattern: RegExp): Array
  */
-static EjsObj *match(Ejs *ejs, EjsString *sp, int argc, EjsObj **argv)
+static EjsArray *match(Ejs *ejs, EjsString *sp, int argc, EjsObj **argv)
 {
     EjsRegExp   *rp;
     EjsArray    *results;
@@ -874,13 +882,13 @@ static EjsObj *match(Ejs *ejs, EjsString *sp, int argc, EjsObj **argv)
         }
     } while (rp->global);
     if (results == NULL) {
-        return (EjsObj*) S(null);
+        return S(null);
     }
-    return (EjsObj*) results;
+    return results;
 }
 
 
-static EjsObj *printable(Ejs *ejs, EjsString *sp, int argc, EjsObj **argv)
+static EjsString *printable(Ejs *ejs, EjsString *sp, int argc, EjsObj **argv)
 {
     EjsString       *result;
     MprChar         buf[16];
@@ -894,7 +902,7 @@ static EjsObj *printable(Ejs *ejs, EjsString *sp, int argc, EjsObj **argv)
         }
     }
     if (nonprint == 0) {
-        return (EjsObj*) sp;
+        return sp;
     }
     if ((result = ejsCreateBareString(ejs, sp->length + (nonprint * 6) + 1)) == NULL) {
         return 0;
@@ -917,11 +925,11 @@ static EjsObj *printable(Ejs *ejs, EjsString *sp, int argc, EjsObj **argv)
     }
     result->value[j] = '\0';
     result->length = j;
-    return (EjsObj*) ejsInternString(result);
+    return ejsInternString(result);
 }
 
 
-static EjsObj *quote(Ejs *ejs, EjsString *sp, int argc, EjsObj **argv)
+static EjsString *quote(Ejs *ejs, EjsString *sp, int argc, EjsObj **argv)
 {
     EjsString       *result;
 
@@ -933,7 +941,7 @@ static EjsObj *quote(Ejs *ejs, EjsString *sp, int argc, EjsObj **argv)
     result->value[sp->length + 1] = '"';
     result->value[sp->length + 2] = '\0';
     result->length = sp->length + 2;
-    return (EjsObj*) ejsInternString(result);
+    return ejsInternString(result);
 }
 
 
@@ -943,7 +951,7 @@ static EjsObj *quote(Ejs *ejs, EjsString *sp, int argc, EjsObj **argv)
     function remove(start: Number, end: Number = -1): String
 
  */
-static EjsObj *removeCharsFromString(Ejs *ejs, EjsString *sp, int argc, EjsObj **argv)
+static EjsString *removeCharsFromString(Ejs *ejs, EjsString *sp, int argc, EjsObj **argv)
 {
     EjsString       *result;
     ssize           start, end, i, j;
@@ -981,7 +989,7 @@ static EjsObj *removeCharsFromString(Ejs *ejs, EjsString *sp, int argc, EjsObj *
         result->value[j] = sp->value[i];
     }
     result->value[j] = '\0';
-    return (EjsObj*) ejsInternString(result);
+    return ejsInternString(result);
 }
 
 
@@ -1012,7 +1020,7 @@ static EjsString *getReplacementText(Ejs *ejs, EjsFunction *fn, int count, int *
 
     function replace(pattern: (String|Regexp), replacement: (String|Function)): String
  */
-static EjsObj *replace(Ejs *ejs, EjsString *sp, int argc, EjsObj **argv)
+static EjsString *replace(Ejs *ejs, EjsString *sp, int argc, EjsObj **argv)
 {
     EjsString   *result, *replacement, *pattern;
     EjsFunction *replacementFunction;
@@ -1052,7 +1060,7 @@ static EjsObj *replace(Ejs *ejs, EjsString *sp, int argc, EjsObj **argv)
                 result = buildString(ejs, result, &sp->value[index], sp->length - index);
             }
         } else {
-            result = (EjsString*) ejsClone(ejs, sp, 0);
+            result = ejsClone(ejs, sp, 0);
         }
 
     } else if (ejsIs(ejs, argv[0], RegExp)) {
@@ -1150,7 +1158,7 @@ static EjsObj *replace(Ejs *ejs, EjsString *sp, int argc, EjsObj **argv)
         ejsThrowTypeError(ejs, "Wrong argument type");
         return 0;
     }
-    return (EjsObj*) ejsInternString(result);
+    return ejsInternString(result);
 }
 
 
@@ -1211,7 +1219,7 @@ static EjsNumber *searchString(Ejs *ejs, EjsString *sp, int argc, EjsObj **argv)
 
     function slice(start: Number, end: Number = -1, step: Number = 1): String
  */
-static EjsObj *sliceString(Ejs *ejs, EjsString *sp, int argc, EjsObj **argv)
+static EjsString *sliceString(Ejs *ejs, EjsString *sp, int argc, EjsObj **argv)
 {
     EjsString       *result;
     ssize           start, end, step, i, j, size;
@@ -1263,7 +1271,7 @@ static EjsObj *sliceString(Ejs *ejs, EjsString *sp, int argc, EjsObj **argv)
     }
     result->value[j] = '\0';
     result->length = j;
-    return (EjsObj*) ejsInternString(result);
+    return ejsInternString(result);
 }
 
 
@@ -1272,7 +1280,7 @@ static EjsObj *sliceString(Ejs *ejs, EjsString *sp, int argc, EjsObj **argv)
 
     function split(delimiter: (String | RegExp), limit: Number = -1): Array
  */
-static EjsObj *split(Ejs *ejs, EjsString *sp, int argc, EjsObj **argv)
+static EjsArray *split(Ejs *ejs, EjsString *sp, int argc, EjsObj **argv)
 {
     EjsArray    *results;
     EjsString   *elt, *delim;
@@ -1303,7 +1311,7 @@ static EjsObj *split(Ejs *ejs, EjsString *sp, int argc, EjsObj **argv)
             elt = ejsCreateString(ejs, cp, (int) (mark - cp));
             ejsSetProperty(ejs, results, -1, elt);
         }
-        return (EjsObj*) results;
+        return results;
 
     } else if (ejsIs(ejs, argv[0], RegExp)) {
         EjsRegExp   *rp;
@@ -1330,7 +1338,7 @@ static EjsObj *split(Ejs *ejs, EjsString *sp, int argc, EjsObj **argv)
             match = ejsCreateString(ejs, &sp->value[rp->endLastMatch], sp->length - rp->endLastMatch);
             ejsSetProperty(ejs, results, resultCount++, match);
         }
-        return (EjsObj*) results;
+        return results;
     }
 
     ejsThrowTypeError(ejs, "Wrong argument type");
@@ -1343,14 +1351,14 @@ static EjsObj *split(Ejs *ejs, EjsString *sp, int argc, EjsObj **argv)
 
     function startsWith(pattern: String): Boolean
  */
-static EjsObj *startsWith(Ejs *ejs, EjsString *sp, int argc, EjsObj **argv)
+static EjsBoolean *startsWith(Ejs *ejs, EjsString *sp, int argc, EjsObj **argv)
 {
     EjsString   *pattern;
 
     mprAssert(argc == 1 && ejsIs(ejs, argv[0], String));
 
     pattern = (EjsString*) argv[0];
-    return (EjsObj*) ejsCreateBoolean(ejs, wncmp(&sp->value[0], pattern->value, pattern->length) == 0);
+    return ejsCreateBoolean(ejs, wncmp(&sp->value[0], pattern->value, pattern->length) == 0);
 }
 
 
@@ -1359,7 +1367,7 @@ static EjsObj *startsWith(Ejs *ejs, EjsString *sp, int argc, EjsObj **argv)
 
     function substring(start: Number, end: Number = -1): String
  */
-static EjsObj *substring(Ejs *ejs, EjsString *sp, int argc, EjsObj **argv)
+static EjsString *substring(Ejs *ejs, EjsString *sp, int argc, EjsObj **argv)
 {
     ssize   start, end, tmp;
 
@@ -1389,7 +1397,7 @@ static EjsObj *substring(Ejs *ejs, EjsString *sp, int argc, EjsObj **argv)
         start = end;
         end = tmp;
     }
-    return (EjsObj*) ejsSubstring(ejs, sp, start, (int) (end - start));
+    return ejsSubstring(ejs, sp, start, (int) (end - start));
 }
 
 
@@ -1398,7 +1406,7 @@ static EjsObj *substring(Ejs *ejs, EjsString *sp, int argc, EjsObj **argv)
 
     function toCamel(): String
  */
-static EjsObj *toCamel(Ejs *ejs, EjsString *sp, int argc, EjsObj **argv)
+static EjsString *toCamel(Ejs *ejs, EjsString *sp, int argc, EjsObj **argv)
 {
     EjsString   *result;
 
@@ -1407,7 +1415,7 @@ static EjsObj *toCamel(Ejs *ejs, EjsString *sp, int argc, EjsObj **argv)
     }
     memcpy(result->value, sp->value, sp->length * sizeof(MprChar));
     result->value[0] = tolower((int) sp->value[0]);
-    return (EjsObj*) ejsInternString(result);
+    return ejsInternString(result);
 }
 
 
@@ -1447,9 +1455,9 @@ EjsString *ejsStringToJSON(Ejs *ejs, EjsObj *vp)
 
     function toLowerCase(locale: String = null): String
  */
-static EjsObj *toLowerCase(Ejs *ejs, EjsString *sp, int argc,  EjsObj **argv)
+static EjsString *toLowerCase(Ejs *ejs, EjsString *sp, int argc,  EjsObj **argv)
 {
-    return (EjsObj*) ejsToLower(ejs, sp);
+    return ejsToLower(ejs, sp);
 }
 
 
@@ -1458,7 +1466,7 @@ static EjsObj *toLowerCase(Ejs *ejs, EjsString *sp, int argc,  EjsObj **argv)
 
     function toPascal(): String
  */
-static EjsObj *toPascal(Ejs *ejs, EjsString *sp, int argc, EjsObj **argv)
+static EjsString *toPascal(Ejs *ejs, EjsString *sp, int argc, EjsObj **argv)
 {
     EjsString   *result;
 
@@ -1467,7 +1475,7 @@ static EjsObj *toPascal(Ejs *ejs, EjsString *sp, int argc, EjsObj **argv)
     }
     memcpy(result->value, sp->value, sp->length * sizeof(MprChar));
     result->value[0] = toupper((int) sp->value[0]);
-    return (EjsObj*) ejsInternString(result);
+    return ejsInternString(result);
 }
 
 
@@ -1476,9 +1484,9 @@ static EjsObj *toPascal(Ejs *ejs, EjsString *sp, int argc, EjsObj **argv)
 
     override function toString(): String
  */
-static EjsObj *stringToString(Ejs *ejs, EjsString *sp, int argc, EjsObj **argv)
+static EjsString *stringToString(Ejs *ejs, EjsString *sp, int argc, EjsObj **argv)
 {
-    return (EjsObj*) sp;
+    return sp;
 }
 
 
@@ -1489,9 +1497,9 @@ static EjsObj *stringToString(Ejs *ejs, EjsString *sp, int argc, EjsObj **argv)
 
     function toUpperCase(locale: String = null): String
  */
-static EjsObj *toUpperCase(Ejs *ejs, EjsString *sp, int argc,  EjsObj **argv)
+static EjsString *toUpperCase(Ejs *ejs, EjsString *sp, int argc,  EjsObj **argv)
 {
-    return (EjsObj*) ejsToUpper(ejs, sp);
+    return ejsToUpper(ejs, sp);
 }
 
 
@@ -1500,7 +1508,7 @@ static EjsObj *toUpperCase(Ejs *ejs, EjsString *sp, int argc,  EjsObj **argv)
 
     function tokenize(format: String): Array
  */
-static EjsObj *tokenize(Ejs *ejs, EjsString *sp, int argc, EjsObj **argv)
+static EjsArray *tokenize(Ejs *ejs, EjsString *sp, int argc, EjsObj **argv)
 {
     EjsArray    *result;
     MprChar     *cp, *buf;
@@ -1542,11 +1550,11 @@ static EjsObj *tokenize(Ejs *ejs, EjsString *sp, int argc, EjsObj **argv)
             buf++;
         }
     }
-    return (EjsObj*) result;
+    return result;
 }
 
 
-static EjsObj *trim(Ejs *ejs, EjsString *sp, EjsString *pattern, int where)
+static EjsString *trim(Ejs *ejs, EjsString *sp, EjsString *pattern, int where)
 {
     MprChar     *start, *end, *mark;
     ssize       index, patternLength;
@@ -1572,7 +1580,7 @@ static EjsObj *trim(Ejs *ejs, EjsString *sp, EjsString *pattern, int where)
     } else {
         patternLength = pattern->length;
         if (patternLength <= 0 || patternLength > sp->length) {
-            return (EjsObj*) sp;
+            return sp;
         }
         mark = sp->value;
         if (where & MPR_TRIM_START) {
@@ -1596,7 +1604,7 @@ static EjsObj *trim(Ejs *ejs, EjsString *sp, EjsString *pattern, int where)
         }
         end = mark + patternLength;
     }
-    return (EjsObj*) ejsSubstring(ejs, sp, (int) (start - sp->value), (int) (end - start));
+    return ejsSubstring(ejs, sp, (int) (start - sp->value), (int) (end - start));
 }
 
 
@@ -1608,7 +1616,7 @@ static EjsObj *trim(Ejs *ejs, EjsString *sp, EjsString *pattern, int where)
 
     function trim(str: String = null): String
  */
-static EjsObj *trimString(Ejs *ejs, EjsString *sp, int argc,  EjsObj **argv)
+static EjsString *trimString(Ejs *ejs, EjsString *sp, int argc,  EjsObj **argv)
 {
     EjsString   *pattern;
 
@@ -1627,7 +1635,7 @@ static EjsObj *trimString(Ejs *ejs, EjsString *sp, int argc,  EjsObj **argv)
 /*  
     function trimStart(str: String = null): String
  */
-static EjsObj *trimStartString(Ejs *ejs, EjsString *sp, int argc,  EjsObj **argv)
+static EjsString *trimStartString(Ejs *ejs, EjsString *sp, int argc,  EjsObj **argv)
 {
     EjsString   *pattern;
 
@@ -1646,7 +1654,7 @@ static EjsObj *trimStartString(Ejs *ejs, EjsString *sp, int argc,  EjsObj **argv
 /*  
     function trimEnd(str: String = null): String
  */
-static EjsObj *trimEndString(Ejs *ejs, EjsString *sp, int argc,  EjsObj **argv)
+static EjsString *trimEndString(Ejs *ejs, EjsString *sp, int argc,  EjsObj **argv)
 {
     EjsString   *pattern;
 

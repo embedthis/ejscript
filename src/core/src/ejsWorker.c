@@ -35,7 +35,7 @@ static EjsObj *workerPreload(Ejs *ejs, EjsWorker *worker, int argc, EjsObj **arg
     Script is optional. If supplied, the script is run immediately by a worker thread. This call
     does not block. Options are: search and name.
  */
-static EjsObj *workerConstructor(Ejs *ejs, EjsWorker *worker, int argc, EjsObj **argv)
+static EjsWorker *workerConstructor(Ejs *ejs, EjsWorker *worker, int argc, EjsObj **argv)
 {
     Ejs             *wejs;
     EjsObj          *options, *value, *search;
@@ -72,7 +72,7 @@ static EjsObj *workerConstructor(Ejs *ejs, EjsWorker *worker, int argc, EjsObj *
         Create a new interpreter and an "inside" worker object and pair it with the current "outside" worker.
         The worker interpreter gets a new dispatcher
      */
-    if ((wejs = ejsCreate(NULL, NULL, NULL, 0, NULL, 0)) == 0) {
+    if ((wejs = ejsCreateVM(0, 0, 0, 0, 0, 0, 0)) == 0) {
         ejsThrowMemoryError(ejs);
         return 0;
     }
@@ -108,7 +108,7 @@ static EjsObj *workerConstructor(Ejs *ejs, EjsWorker *worker, int argc, EjsObj *
             return 0;
         }
     }
-    return (EjsObj*) worker;
+    return worker;
 }
 
 
@@ -181,7 +181,7 @@ static EjsObj *startWorker(Ejs *ejs, EjsWorker *outsideWorker, int timeout)
 {
     EjsWorker   *insideWorker;
     Ejs         *inside;
-    EjsObj      *result;
+    EjsString   *result;
 
     mprAssert(ejs);
     mprAssert(outsideWorker);
@@ -217,16 +217,16 @@ static EjsObj *startWorker(Ejs *ejs, EjsWorker *outsideWorker, int timeout)
     if (join(ejs, (EjsObj*) outsideWorker, timeout) < 0) {
         return S(undefined);
     }
-    result = (EjsObj*) ejsToJSON(inside, inside->result, NULL);
+    result = ejsToJSON(inside, inside->result, NULL);
     if (result == 0) {
         return S(null);
     }
-    return ejsDeserialize(ejs, (EjsString*) result);
+    return ejsDeserialize(ejs, result);
 }
 
 
 /*
-    function eval(script: String, timeout: Boolean = -1): String
+    function eval(script: String, timeout: Boolean = -1): Obj
  */
 static EjsObj *workerEval(Ejs *ejs, EjsWorker *worker, int argc, EjsObj **argv)
 {
@@ -404,7 +404,7 @@ static EjsObj *workerLoad(Ejs *ejs, EjsWorker *worker, int argc, EjsObj **argv)
 /*
     static function lookup(name: String): Worker
  */
-static EjsObj *workerLookup(Ejs *ejs, EjsObj *unused, int argc, EjsObj **argv)
+static EjsWorker *workerLookup(Ejs *ejs, EjsObj *unused, int argc, EjsObj **argv)
 {
     EjsWorker   *worker;
     cchar       *name;
@@ -415,7 +415,7 @@ static EjsObj *workerLookup(Ejs *ejs, EjsObj *unused, int argc, EjsObj **argv)
     for (next = 0; (worker = mprGetNextItem(ejs->workers, &next)) != NULL; ) {
         if (worker->name && strcmp(name, worker->name) == 0) {
             unlock(ejs);
-            return (EjsObj*) worker;
+            return worker;
         }
     }
     unlock(ejs);
@@ -506,14 +506,14 @@ static int doMessage(Message *msg, MprEvent *mprEvent)
 
 
 /*
-    function preeval(script: String): String
+    function preeval(script: String): Object
     NOTE: this blocks. 
  */
 static EjsObj *workerPreeval(Ejs *ejs, EjsWorker *worker, int argc, EjsObj **argv)
 {
     Ejs         *inside;
     EjsWorker   *insideWorker;
-    EjsObj      *result;
+    EjsString   *result;
 
     mprAssert(!worker->inside);
 
@@ -530,23 +530,23 @@ static EjsObj *workerPreeval(Ejs *ejs, EjsWorker *worker, int argc, EjsObj **arg
         handleError(ejs, worker, inside->exception, 1);
         return 0;
     }
-    result = (EjsObj*) ejsToJSON(inside, inside->result, NULL);
+    result = ejsToJSON(inside, inside->result, NULL);
     if (result == 0) {
         return S(null);
     }
-    return ejsDeserialize(ejs, (EjsString*) result);
+    return ejsDeserialize(ejs, result);
 }
 
 
 /*
-    function preload(path: Path): String
+    function preload(path: Path): Object
     NOTE: this blocks. 
  */
 static EjsObj *workerPreload(Ejs *ejs, EjsWorker *worker, int argc, EjsObj **argv)
 {
     Ejs         *inside;
     EjsWorker   *insideWorker;
-    EjsObj      *result;
+    EjsString   *result;
 
     mprAssert(argc > 0 && ejsIs(ejs, argv[0], Path));
     mprAssert(!worker->inside);
@@ -564,11 +564,11 @@ static EjsObj *workerPreload(Ejs *ejs, EjsWorker *worker, int argc, EjsObj **arg
         handleError(ejs, worker, inside->exception, 1);
         return 0;
     }
-    result = (EjsObj*) ejsToJSON(inside, inside->result, NULL);
+    result = ejsToJSON(inside, inside->result, NULL);
     if (result == 0) {
         return S(null);
     }
-    return ejsDeserialize(ejs, (EjsString*) result);
+    return ejsDeserialize(ejs, result);
 }
 
 
@@ -595,7 +595,7 @@ static Message *createMessage()
  */
 static EjsObj *workerPostMessage(Ejs *ejs, EjsWorker *worker, int argc, EjsObj **argv)
 {
-    EjsObj          *data;
+    EjsString       *data;
     EjsWorker       *target;
     MprDispatcher   *dispatcher;
     Message         *msg;
@@ -608,7 +608,7 @@ static EjsObj *workerPostMessage(Ejs *ejs, EjsWorker *worker, int argc, EjsObj *
         Create the event with serialized data in the originating interpreter. It owns the data.
      */
     ejsFreeze(ejs, 1);
-    if ((data = (EjsObj*) ejsToJSON(ejs, argv[0], NULL)) == 0) {
+    if ((data = ejsToJSON(ejs, argv[0], NULL)) == 0) {
         ejsThrowArgError(ejs, "Can't serialize message data");
         return 0;
     }
@@ -688,7 +688,7 @@ static int workerMain(EjsWorker *insideWorker, MprEvent *event)
 
 
 /*
-    function terminate()
+    function terminate(): Void
  */
 static EjsObj *workerTerminate(Ejs *ejs, EjsWorker *worker, int argc, EjsObj **argv)
 {    
@@ -713,7 +713,7 @@ static EjsObj *workerTerminate(Ejs *ejs, EjsWorker *worker, int argc, EjsObj **a
 /*
     function waitForMessage(timeout: Number = -1): Boolean
  */
-static EjsObj *workerWaitForMessage(Ejs *ejs, EjsWorker *worker, int argc, EjsObj **argv)
+static EjsBoolean *workerWaitForMessage(Ejs *ejs, EjsWorker *worker, int argc, EjsObj **argv)
 {
     MprTime     mark;
     MprTime     remaining;
@@ -734,9 +734,9 @@ static EjsObj *workerWaitForMessage(Ejs *ejs, EjsWorker *worker, int argc, EjsOb
 
     if (worker->gotMessage) {
         worker->gotMessage = 0;
-        return (EjsObj*) S(true);
+        return S(true);
     } else {
-        return (EjsObj*) S(true);
+        return S(true);
     }
 }
 

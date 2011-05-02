@@ -14,7 +14,7 @@
 
     function FileSystem(path: String)
  */
-static EjsObj *fileSystemConstructor(Ejs *ejs, EjsFileSystem *fp, int argc, EjsObj **argv)
+static EjsFileSystem *fileSystemConstructor(Ejs *ejs, EjsFileSystem *fp, int argc, EjsObj **argv)
 {
     cchar   *path;
 
@@ -23,7 +23,7 @@ static EjsObj *fileSystemConstructor(Ejs *ejs, EjsFileSystem *fp, int argc, EjsO
     path = ejsToMulti(ejs, argv[0]);
     fp->path = mprGetNormalizedPath(path);
     fp->fs = mprLookupFileSystem(path);
-    return (EjsObj*) fp;
+    return fp;
 }
 
 
@@ -53,9 +53,9 @@ static EjsObj *fileSystemSpace(Ejs *ejs, EjsFileSystem *fp, int argc, EjsObj **a
 
     static function hasDrives(): Boolean
  */
-static EjsObj *hasDrives(Ejs *ejs, EjsFileSystem *fp, int argc, EjsObj **argv)
+static EjsBoolean *hasDrives(Ejs *ejs, EjsFileSystem *fp, int argc, EjsObj **argv)
 {
-    return (EjsObj*) ejsCreateBoolean(ejs, fp->fs->hasDriveSpecs);
+    return ejsCreateBoolean(ejs, fp->fs->hasDriveSpecs);
 }
 
 
@@ -65,25 +65,25 @@ static EjsObj *hasDrives(Ejs *ejs, EjsFileSystem *fp, int argc, EjsObj **argv)
 
     function get isReady(): Boolean
  */
-static EjsObj *isReady(Ejs *ejs, EjsFileSystem *fp, int argc, EjsObj **argv)
+static EjsBoolean *isReady(Ejs *ejs, EjsFileSystem *fp, int argc, EjsObj **argv)
 {
     MprPath     info;
     int         rc;
 
     rc = mprGetPathInfo(ejs, fp->path, &info);
-    return (EjsObj*) ejsCreateBoolean(ejs, rc == 0 && info.isDir);
+    return ejsCreateBoolean(ejs, rc == 0 && info.isDir);
 }
 #endif
 
 
 #if ES_isWritable
-static EjsObj *isWritable(Ejs *ejs, EjsFileSystem *fp, int argc, EjsObj **argv)
+static EjsBoolean *isWritable(Ejs *ejs, EjsFileSystem *fp, int argc, EjsObj **argv)
 {
     MprPath     info;
     int         rc;
 
     rc = mprGetPathInfo(ejs, fp->path, &info);
-    return (EjsObj*) ejsCreateBoolean(ejs, rc == 0 && info.isDir);
+    return ejsCreateBoolean(ejs, rc == 0 && info.isDir);
 }
 #endif
 
@@ -93,9 +93,9 @@ static EjsObj *isWritable(Ejs *ejs, EjsFileSystem *fp, int argc, EjsObj **argv)
 
     function get newline(): String
  */
-static EjsObj *getNewline(Ejs *ejs, EjsFileSystem *fp, int argc, EjsObj **argv)
+static EjsString *getNewline(Ejs *ejs, EjsFileSystem *fp, int argc, EjsObj **argv)
 {
-    return (EjsObj*) ejsCreateStringFromAsc(ejs, mprGetPathNewline(fp->path));
+    return ejsCreateStringFromAsc(ejs, mprGetPathNewline(fp->path));
 }
 
 
@@ -115,7 +115,7 @@ static EjsObj *setNewline(Ejs *ejs, EjsFileSystem *fp, int argc, EjsObj **argv)
 }
 
 
-static EjsObj *root(Ejs *ejs, EjsFileSystem *fp, int argc, EjsObj **argv)
+static EjsPath *root(Ejs *ejs, EjsFileSystem *fp, int argc, EjsObj **argv)
 {
     cchar   *separators;
     char    *path, *cp;
@@ -125,7 +125,7 @@ static EjsObj *root(Ejs *ejs, EjsFileSystem *fp, int argc, EjsObj **argv)
     if ((cp = strchr(path, separators[0])) != 0) {
         *++cp = '\0';
     }
-    return (EjsObj*) ejsCreatePathFromAsc(ejs, path);
+    return ejsCreatePathFromAsc(ejs, path);
 }
 
 
@@ -134,9 +134,9 @@ static EjsObj *root(Ejs *ejs, EjsFileSystem *fp, int argc, EjsObj **argv)
 
     static function get separators(): String
  */
-static EjsObj *getSeparators(Ejs *ejs, EjsFileSystem *fp, int argc, EjsObj **argv)
+static EjsString *getSeparators(Ejs *ejs, EjsFileSystem *fp, int argc, EjsObj **argv)
 {
-    return (EjsObj*) ejsCreateStringFromAsc(ejs, fp->fs->separators);
+    return ejsCreateStringFromAsc(ejs, fp->fs->separators);
 }
 
 

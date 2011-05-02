@@ -14,7 +14,7 @@
 
     function cast(type: Type) : Object
  */
-static EjsObj *castError(Ejs *ejs, EjsError *error, EjsType *type)
+static EjsAny *castError(Ejs *ejs, EjsError *error, EjsType *type)
 {
     EjsString   *stack, *msg;
     EjsString   *us;
@@ -22,16 +22,16 @@ static EjsObj *castError(Ejs *ejs, EjsError *error, EjsType *type)
 
     switch (type->sid) {
     case S_Boolean:
-        return (EjsObj*) ejsCreateBoolean(ejs, 1);
+        return ejsCreateBoolean(ejs, 1);
 
     case S_String:
-        stack = (EjsString*) ejsRunFunctionBySlot(ejs, (EjsObj*) error, ES_Error_formatStack, 0, NULL);
+        stack = (EjsString*) ejsRunFunctionBySlot(ejs, error, ES_Error_formatStack, 0, NULL);
         us = ejsIs(ejs, stack, String) ? stack : S(empty);
         msg = ejsGetProperty(ejs, error, ES_Error_message);
         if ((buf = mprAsprintf("%@ Exception: %@\nStack:\n%@\n", TYPE(error)->qname.name, msg, us)) == NULL) {
             ejsThrowMemoryError(ejs);
         }
-        return (EjsObj*) ejsCreateStringFromAsc(ejs, buf);
+        return ejsCreateStringFromAsc(ejs, buf);
         break;
 
     default:
@@ -47,7 +47,7 @@ static EjsObj *castError(Ejs *ejs, EjsError *error, EjsType *type)
 
     public function Error(message: String = null)
  */
-static EjsObj *errorConstructor(Ejs *ejs, EjsError *error, int argc, EjsObj **argv)
+static EjsError *errorConstructor(Ejs *ejs, EjsError *error, int argc, EjsObj **argv)
 {
     if (argc > 0) {
         ejsSetProperty(ejs, error, ES_Error_message, ejsToString(ejs, argv[0]));
@@ -56,19 +56,19 @@ static EjsObj *errorConstructor(Ejs *ejs, EjsError *error, int argc, EjsObj **ar
         ejsSetProperty(ejs, error, ES_Error_timestamp, ejsCreateDate(ejs, mprGetTime()));
         ejsSetProperty(ejs, error, ES_Error_stack, ejsCaptureStack(ejs, 0));
     }
-    return (EjsObj*) error;
+    return error;
 }
 
 
 /*
-    static function capture(uplevels: Number): Void
+    static function capture(uplevels: Number): Array
  */
-static EjsObj *error_capture(Ejs *ejs, EjsError *error, int argc,  EjsObj **argv)
+static EjsArray *error_capture(Ejs *ejs, EjsError *error, int argc,  EjsObj **argv)
 {
     int     uplevels;
     
     uplevels = (argc > 0) ? ejsGetInt(ejs, argv[0]) : 0;
-    return (EjsObj*) ejsCaptureStack(ejs, uplevels);
+    return ejsCaptureStack(ejs, uplevels);
 }
 
 /************************************ Factory *********************************/

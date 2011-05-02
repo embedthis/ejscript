@@ -12,9 +12,9 @@
 /*
     native static function get enabled(): Boolean
  */
-static EjsObj *gc_enabled(Ejs *ejs, EjsObj *thisObj, int argc, EjsObj **argv)
+static EjsBoolean *gc_enabled(Ejs *ejs, EjsObj *thisObj, int argc, EjsObj **argv)
 {
-    return (EjsObj*) ((mprGetMpr()->heap.enabled) ? S(true): S(false));
+    return ((mprGetMpr()->heap.enabled) ? S(true): S(false));
 }
 
 
@@ -50,9 +50,9 @@ static EjsObj *gc_run(Ejs *ejs, EjsObj *thisObj, int argc, EjsObj **argv)
 /*
     native static function get newQuota(): Number
  */
-static EjsObj *gc_newQuota(Ejs *ejs, EjsObj *thisObj, int argc, EjsObj **argv)
+static EjsNumber *gc_newQuota(Ejs *ejs, EjsObj *thisObj, int argc, EjsObj **argv)
 {
-    return (EjsObj*) ejsCreateNumber(ejs, mprGetMpr()->heap.newQuota);
+    return ejsCreateNumber(ejs, mprGetMpr()->heap.newQuota);
 }
 
 

@@ -72,7 +72,7 @@ module ejs {
             @throws an exception if the script can't be compiled or if it thows a run-time exception.
             @spec ejs
          */
-        native function eval(script: String, timeout: Number = -1): String
+        native function eval(script: String, timeout: Number = -1): Object
 
         /**
             Exit the worker.
@@ -109,10 +109,10 @@ module ejs {
             @throws an exception if the script or module can't be loaded or initialized or if it thows an exception.
             @spec ejs
          */
-        native function preload(path: Path): String
+        native function preload(path: Path): Object
 
         /** @hide TODO */
-        native function preeval(script: String): String
+        native function preeval(script: String): Object
 
         /**
             Lookup a Worker by name

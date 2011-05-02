@@ -12,9 +12,9 @@
 /*  
     function get nativeLevel(): Number
  */
-static EjsObj *logger_nativeLevel(Ejs *ejs, EjsObj *unused, int argc, EjsObj **argv)
+static EjsNumber *logger_nativeLevel(Ejs *ejs, EjsObj *unused, int argc, EjsObj **argv)
 {
-    return (EjsObj*) ejsCreateNumber(ejs, mprGetLogLevel(ejs));
+    return ejsCreateNumber(ejs, mprGetLogLevel(ejs));
 }
 
 

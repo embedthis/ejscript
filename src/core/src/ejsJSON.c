@@ -49,12 +49,12 @@ EjsObj *g_deserialize(Ejs *ejs, EjsObj *unused, int argc, EjsObj **argv)
 
 
 /*
-    function serialize(obj: Object, options: Object = null)
+    function serialize(obj: Object, options: Object = null): String
         Options: baseClasses, depth, indent, hidden, pretty, replacer
  */
-static EjsObj *g_serialize(Ejs *ejs, EjsObj *unused, int argc, EjsObj **argv)
+static EjsString *g_serialize(Ejs *ejs, EjsObj *unused, int argc, EjsObj **argv)
 {
-    return (EjsObj*) ejsToJSON(ejs, argv[0], (argc == 2) ? argv[1] : NULL);
+    return ejsToJSON(ejs, argv[0], (argc == 2) ? argv[1] : NULL);
 }
 
 
@@ -410,7 +410,7 @@ EjsString *ejsToJSON(Ejs *ejs, EjsAny *vp, EjsObj *options)
     EjsObj          *argv[1];
     int             argc;
 
-    fn = (EjsFunction*) ejsGetPropertyByName(ejs, (EjsObj*) TYPE(vp)->prototype, N(NULL, "toJSON"));
+    fn = (EjsFunction*) ejsGetPropertyByName(ejs, TYPE(vp)->prototype, N(NULL, "toJSON"));
     if (!ejsIsFunction(ejs, fn) || (fn->isNativeProc && fn->body.proc == (EjsFun) ejsObjToJSON)) {
         result = ejsSerialize(ejs, vp, options);
     } else {
@@ -439,7 +439,7 @@ EjsString *ejsSerialize(Ejs *ejs, EjsAny *vp, EjsObj *options)
     if (options) {
         json.options = options;
         if ((arg = ejsGetPropertyByName(ejs, options, EN("baseClasses"))) != 0) {
-            json.baseClasses = (arg == (EjsObj*) S(true));
+            json.baseClasses = (arg == S(true));
         }
         if ((arg = ejsGetPropertyByName(ejs, options, EN("depth"))) != 0) {
             json.depth = ejsGetInt(ejs, arg);
@@ -461,13 +461,13 @@ EjsString *ejsSerialize(Ejs *ejs, EjsAny *vp, EjsObj *options)
             }
         }
         if ((arg = ejsGetPropertyByName(ejs, options, EN("hidden"))) != 0) {
-            json.hidden = (arg == (EjsObj*) S(true));
+            json.hidden = (arg == S(true));
         }
         if ((arg = ejsGetPropertyByName(ejs, options, EN("namespaces"))) != 0) {
-            json.namespaces = (arg == (EjsObj*) S(true));
+            json.namespaces = (arg == S(true));
         }
         if ((arg = ejsGetPropertyByName(ejs, options, EN("pretty"))) != 0) {
-            json.pretty = (arg == (EjsObj*) S(true));
+            json.pretty = (arg == S(true));
         }
         json.replacer = ejsGetPropertyByName(ejs, options, EN("replacer"));
         if (!ejsIsFunction(ejs, json.replacer)) {
@@ -572,7 +572,7 @@ static EjsString *serialize(Ejs *ejs, EjsAny *vp, Json *json)
                     mprPutCharToWideBuf(json->buf, ' ');
                 }
             }
-            fn = (EjsFunction*) ejsGetPropertyByName(ejs, (EjsObj*) TYPE(pp)->prototype, N(NULL, "toJSON"));
+            fn = (EjsFunction*) ejsGetPropertyByName(ejs, TYPE(pp)->prototype, N(NULL, "toJSON"));
 // TODO - check that this is going directly to serialize most of the time
             if (!ejsIsFunction(ejs, fn) || (fn->isNativeProc && fn->body.proc == (EjsFun) ejsObjToJSON)) {
                 sv = serialize(ejs, pp, json);

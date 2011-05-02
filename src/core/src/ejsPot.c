@@ -158,7 +158,7 @@ static int definePotProperty(Ejs *ejs, EjsPot *obj, int slotNum, EjsName qname, 
             return EJS_ERR;
         }
     }
-    if (ejsSetPropertyTraits(ejs, (EjsObj*) obj, slotNum, propType, (int) attributes) < 0) {
+    if (ejsSetPropertyTraits(ejs, obj, slotNum, propType, (int) attributes) < 0) {
         return EJS_ERR;
     }
     if (value && ejsIsFunction(ejs, value)) {

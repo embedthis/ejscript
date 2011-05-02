@@ -61,10 +61,7 @@ static void manageEjsService(EjsService *sp, int flags)
 }
 
 
-/*  
-    Create a new interpreter
- */
-Ejs *ejsCreate(MprDispatcher *dispatcher, cchar *searchPath, MprList *require, int argc, cchar **argv, int flags)
+Ejs *ejsCreateVM(Ejs *master, MprDispatcher *dispatcher, cchar *search, MprList *require, int argc, cchar **argv, int flags)
 {
     EjsService  *sp;
     Ejs         *ejs;
@@ -77,10 +74,11 @@ Ejs *ejsCreate(MprDispatcher *dispatcher, cchar *searchPath, MprList *require, i
 
     if ((sp = MPR->ejsService) == 0) {
         sp = createService();
-        sp->master = ejs;
+        sp->master = master;
     }
     ejs->service = sp;
     mprAddItem(sp->vmlist, ejs);
+    ejs->master = master;
 
     if ((ejs->state = mprAllocZeroed(sizeof(EjsState))) == 0) {
         return 0;
@@ -108,7 +106,7 @@ Ejs *ejsCreate(MprDispatcher *dispatcher, cchar *searchPath, MprList *require, i
     }
     unlock(sp);
         
-    if ((ejs->bootSearch = searchPath) == 0) {
+    if ((ejs->bootSearch = search) == 0) {
         ejs->bootSearch = getenv("EJSPATH");
     }
     if (ejsInitStack(ejs) < 0) {
@@ -257,15 +255,15 @@ void ejsCloneBlockHelpers(Ejs *ejs, EjsType *type)
 
 static void cloneTypes(Ejs *ejs)
 {
-    Ejs         *master;
+    Ejs     *master;
 
     if ((master = ejs->service->master) != 0 && master != ejs) {
         ejs->values[S_Iterator] = master->values[S_Iterator];
         ejs->values[S_StopIteration] = master->values[S_StopIteration];
 #if UNUSED
-        ejs->values[S_String] = master->values[S_String];
-        ejs->values[S_Type] = master->values[S_Type];
-        ejs->values[S_Object] = master->values[S_Object];
+        ejs->values[S_String] = ejs->master->values[S_String];
+        ejs->values[S_Type] = ejs->master->values[S_Type];
+        ejs->values[S_Object] = ejs->master->values[S_Object];
 #endif
     }
 }
@@ -484,7 +482,7 @@ int ejsEvalModule(cchar *path)
     if ((mpr = mprCreate(0, NULL, 0)) != 0) {
         status = MPR_ERR_MEMORY;
 
-    } else if ((ejs = ejsCreate(NULL, NULL, NULL, 0, NULL, 0)) == 0) {
+    } else if ((ejs = ejsCreateVM(0, 0, 0, 0, 0, 0, 0)) == 0) {
         status = MPR_ERR_MEMORY;
 
     } else if (ejsLoadModule(ejs, ejsCreateStringFromAsc(ejs, path), -1, -1, 0) < 0) {

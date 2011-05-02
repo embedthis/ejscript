@@ -49,7 +49,7 @@ static EjsObj *g_blend(Ejs *ejs, EjsObj *unused, int argc, EjsObj **argv)
     EjsObj      *src, *dest;
     int         overwrite;
 
-    overwrite = (argc == 3) ? (argv[2] == (EjsObj*) S(true)) : 1;
+    overwrite = (argc == 3) ? (argv[2] == S(true)) : 1;
     dest = argv[0];
     src = argv[1];
     ejsBlendObject(ejs, dest, src, overwrite);
@@ -101,10 +101,10 @@ static EjsObj *g_eval(Ejs *ejs, EjsObj *unused, int argc, EjsObj **argv)
     Get the hash code for the object.
     function hashcode(o: Object): Number
  */
-static EjsObj *g_hashcode(Ejs *ejs, EjsObj *vp, int argc, EjsObj **argv)
+static EjsNumber *g_hashcode(Ejs *ejs, EjsObj *vp, int argc, EjsObj **argv)
 {
     mprAssert(argc == 1);
-    return (EjsObj*) ejsCreateNumber(ejs, (MprNumber) PTOL(argv[0]));
+    return ejsCreateNumber(ejs, (MprNumber) PTOL(argv[0]));
 }
 #endif
 
@@ -138,9 +138,9 @@ static EjsObj *g_load(Ejs *ejs, EjsObj *unused, int argc, EjsObj **argv)
 
 /*  
     Compute an MD5 checksum
-    static function md5(name: String): void
+    static function md5(name: String): String
  */
-static EjsObj *g_md5(Ejs *ejs, EjsObj *unused, int argc, EjsObj **argv)
+static EjsString *g_md5(Ejs *ejs, EjsObj *unused, int argc, EjsObj **argv)
 {
     EjsString   *str;
     char        *hash;
@@ -148,7 +148,7 @@ static EjsObj *g_md5(Ejs *ejs, EjsObj *unused, int argc, EjsObj **argv)
     MPR_VERIFY_MEM();
     str = (EjsString*) argv[0];
     hash = mprGetMD5Hash(ejsToMulti(ejs, str), str->length, NULL);
-    return (EjsObj*) ejsCreateStringFromAsc(ejs, hash);
+    return ejsCreateStringFromAsc(ejs, hash);
 }
 
 
@@ -173,7 +173,7 @@ int ejsBlendObject(Ejs *ejs, EjsObj *dest, EjsObj *src, int overwrite)
         /* NOTE: treats arrays as primitive types */
         if (!ejsIs(ejs, vp, Array) && !ejsIsXML(ejs, vp) && ejsGetPropertyCount(ejs, vp) > 0) {
             if ((dp = ejsGetPropertyByName(ejs, dest, name)) == 0 || ejsGetPropertyCount(ejs, dp) == 0) {
-                ejsSetPropertyByName(ejs, dest, name, ejsClonePot(ejs, (EjsObj*) vp, 1));
+                ejsSetPropertyByName(ejs, dest, name, ejsClonePot(ejs, vp, 1));
             } else {
                 ejsBlendObject(ejs, dp, vp, overwrite);
             }
@@ -213,13 +213,13 @@ static EjsObj *g_parse(Ejs *ejs, EjsObj *unused, int argc, EjsObj **argv)
 
 /*
     Parse the input as an integer
-    static function parseInt(input: String, radix: Number = 10): void
+    static function parseInt(input: String, radix: Number = 10): Number
     Formats:
         [(+|-)][0][OCTAL_DIGITS]
         [(+|-)][0][(x|X)][HEX_DIGITS]
         [(+|-)][DIGITS]
  */
-static EjsObj *g_parseInt(Ejs *ejs, EjsObj *unused, int argc, EjsObj **argv)
+static EjsNumber *g_parseInt(Ejs *ejs, EjsObj *unused, int argc, EjsObj **argv)
 {
     MprNumber   n;
     cchar       *str;
@@ -235,7 +235,7 @@ static EjsObj *g_parseInt(Ejs *ejs, EjsObj *unused, int argc, EjsObj **argv)
         if (err) {
             return S(nan);
         }
-        return (EjsObj*) ejsCreateNumber(ejs, n);
+        return ejsCreateNumber(ejs, n);
     }
     return S(nan);
 }

@@ -5,7 +5,7 @@
 module ejs.web {
 
     /**
-        Run a script app. The script at request.filename will be run
+        Run a script app. Run the script specified by request.filename
         @param request Request object
         @return A response object
         @spec ejs
@@ -29,7 +29,7 @@ module ejs.web {
     function ScriptBuilder(request: Request): Function {
         if (!request.filename.exists) {
             request.writeError(Http.NotFound, "Cannot find " + request.pathInfo) 
-            /* Simple abort request */
+            //  MOB - should not need throw, just return
             throw true
         }
         try {
