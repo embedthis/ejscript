@@ -1145,6 +1145,7 @@ void ejsConfigureUriType(Ejs *ejs)
     EjsPot      *prototype;
 
     type = ejsConfigureNativeType(ejs, N("ejs", "Uri"), sizeof(EjsUri), manageUri, EJS_OBJ_HELPERS);
+    type->mutableInstances = 1;
     ejsSetSpecialType(ejs, S_Uri, type);
     prototype = type->prototype;
 

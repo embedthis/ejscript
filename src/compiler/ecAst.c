@@ -511,25 +511,12 @@ static EjsType *defineClass(EcCompiler *cp, EcNode *np)
     } else {
         ejsSetTypeAttributes(type, attributes);
         type->module = state->currentModule;
-        /*
-            type->instanceSize = sizeof(EjsPot);
-         */
     }
     type->typeData = np;
     np->klass.ref = type;
 
     nsp = ejsDefineReservedNamespace(ejs, (EjsBlock*) type, &type->qname, EJS_PROTECTED_NAMESPACE);
-#if UNUSED
-    //  MOB -- these flags should be args to above()
-    //  MOB -- need some flag like this to speed up scope searching
-    nsp->flags |= EJS_NSP_PROTECTED;
-#endif
-
     nsp = ejsDefineReservedNamespace(ejs, (EjsBlock*) type, &type->qname, EJS_PRIVATE_NAMESPACE);
-#if UNUSED
-    //  MOB -- need some flag like this to speed up scope searching
-    nsp->flags |= EJS_NSP_PRIVATE;
-#endif
 
     /*
         Define a property for the type in global
@@ -553,9 +540,6 @@ static EjsType *defineClass(EcCompiler *cp, EcNode *np)
         if (constructorNode && !constructorNode->function.isDefault) {
             type->hasConstructor = 1;
         }
-#if MOB
-        ejsDefineProperty(ejs, (EjsObj*) type, 1, EN("prototype"), ST(Object), fatt, type->prototype);
-#endif
     }
     return type;
 }
@@ -1728,7 +1712,7 @@ static void astBindName(EcCompiler *cp, EcNode *np)
                  */
                 np->lookup.ownerIsType = 1;
                 rc = resolveProperty(cp, np, (EjsType*) left->lookup.ref, np->qname);
-                if (rc < 0 && STRICT_MODE(cp) && !((EjsType*) left->lookup.ref)->dynamicInstance) {
+                if (rc < 0 && STRICT_MODE(cp) && !((EjsType*) left->lookup.ref)->dynamicInstances) {
                     astError(cp, np, "Can't find property \"%@\" in class \"%@\".", np->qname.name,
                         ((EjsType*) left->lookup.ref)->qname.name);
 
@@ -1808,7 +1792,7 @@ static void astBindName(EcCompiler *cp, EcNode *np)
         //  TODO - need propert expression calculation and propagation
         if (left && left->lookup.trait && left->lookup.trait->type) {
             type = left->lookup.trait->type;
-            if (!type->dynamicInstance) {
+            if (!type->dynamicInstances) {
                 astError(cp, np, "Can't find a declaration for \"%@\".", np->qname.name);
             }
         }
@@ -1871,7 +1855,7 @@ static void astBindName(EcCompiler *cp, EcNode *np)
                  */
                 lookup->bind = 0;
 
-            } else if (type->dynamicInstance /* && !BUILTIN(type) */) {
+            } else if (type->dynamicInstances /* && !BUILTIN(type) */) {
                 /*
                     Don't bind non-core dynamic properties
                  */
@@ -2568,6 +2552,7 @@ static void defineVar(EcCompiler *cp, EcNode *np, int varKind, EjsObj *value)
     Ejs             *ejs;
     EjsFunction     *method;
     EjsObj          *obj;
+    EjsType         *type;
     EcState         *state;
     int             slotNum, attributes;
 
@@ -2630,6 +2615,14 @@ static void defineVar(EcCompiler *cp, EcNode *np, int varKind, EjsObj *value)
         astError(cp, np, "Can't define variable \"%@\"", np->qname.name);
         return;
     }
+    if (ejsIsType(ejs, obj) && !(np->attributes & EJS_TRAIT_READONLY)) {
+        type = (EjsType*) obj;
+        if (state->instanceCode) {
+            type->mutableInstances = 1;
+        } else {
+            type->mutable = 1;
+        }
+    }
 }
 
 
@@ -2667,7 +2660,6 @@ static bool hoistBlockVar(EcCompiler *cp, EcNode *np)
         obj = (EjsObj*) state->varBlock;
         attributes |= EJS_PROP_STATIC;
     }
-
     if (!cp->bind && obj == ejs->global) {
         /* Can't hoist variables to global scope if not binding */
         return 0;
@@ -2855,7 +2847,6 @@ static void astVar(EcCompiler *cp, EcNode *np, int varKind, EjsObj *value)
         }
         return;
     }
-
     state->instanceCode = 0;
     if (state->inClass && !(np->attributes & EJS_PROP_STATIC)) {
         if (state->inMethod) {

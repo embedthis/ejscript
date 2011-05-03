@@ -821,6 +821,7 @@ void ejsConfigureXMLListType(Ejs *ejs)
     EjsPot      *prototype;
 
     type = ST(XMLList);
+    type->mutableInstances = 1;
     prototype = type->prototype;
 
     ejsBindConstructor(ejs, type, (EjsProc) xmlListConstructor);

@@ -320,6 +320,8 @@ int ejsSetPropertyByName(Ejs *ejs, EjsAny *vp, EjsName qname, EjsAny *value)
         if (ejsSetPropertyName(ejs, vp, slotNum, qname) < 0) {
             return EJS_ERR;
         }
+        //  UNICODE
+        mprSetName(vp, qname.name->value);
         return slotNum;
     }
     return ejsSetProperty(ejs, vp, slotNum, value);

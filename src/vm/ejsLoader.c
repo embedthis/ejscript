@@ -602,6 +602,12 @@ static int loadEndClassSection(Ejs *ejs, EjsModule *mp)
         ejsDefineTypeNamespaces(ejs, type);
     }
     popScope(mp, 0);
+    if (type->dynamicInstances) {
+        type->mutableInstances = 1;
+    }
+#if UNUSED && KEEP
+    mprLog(0, "Type %N is %s and has %s instances", type->qname, (type->mutable) ? "mutable" : "immutable", type->mutableInstances ? "mutable" : "immutable");
+#endif
     return 0;
 }
 
@@ -829,7 +835,7 @@ static int loadExceptionSection(Ejs *ejs, EjsModule *mp)
 
 static int loadPropertySection(Ejs *ejs, EjsModule *mp, int sectionType)
 {
-    EjsType         *type;
+    EjsType         *type, *ctype;
     EjsTypeFixup    *fixup;
     EjsName         qname, propTypeName;
     EjsObj          *current, *value;
@@ -868,7 +874,15 @@ static int loadPropertySection(Ejs *ejs, EjsModule *mp, int sectionType)
         }
     }
     if (ejsIsType(ejs, current)) {
-        if (!(attributes & EJS_PROP_STATIC) && current != ejs->global && ((EjsType*) current)->prototype){
+        ctype = (EjsType*) current;
+        if (!(attributes & EJS_TRAIT_READONLY)) {
+            if (attributes & EJS_PROP_STATIC) {
+                ctype->mutable = 1;
+            } else {
+                ctype->mutableInstances = 1;
+            }
+        }
+        if (!(attributes & EJS_PROP_STATIC) && current != ejs->global && ctype->prototype) {
             current = (EjsObj*) ((EjsType*) current)->prototype;
         }
     }

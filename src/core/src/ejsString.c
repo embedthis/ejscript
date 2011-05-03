@@ -2713,13 +2713,8 @@ void ejsInitStringType(Ejs *ejs, EjsType *type)
     if (firstTime) {
         mprInitSpinLock(&internLock);
         firstTime = 0;
-#if XXX || 1
         rebuildIntern(ejs->service->intern);
-#endif
     }
-#if XXX
-    rebuildIntern(ejs->service->intern);
-#endif
     ejsCloneObjHelpers(ejs, type);
     type->mutex = mprCreateLock();
     type->helpers.cast = (EjsCastHelper) castString;

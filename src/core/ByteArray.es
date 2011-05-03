@@ -43,12 +43,12 @@ module ejs {
         /** 
             Little endian byte order used for the $endian property
          */
-        static const LittleEndian: Number   = 0
+        static const LittleEndian: Number = 0
 
         /** 
             Big endian byte order used for the $endian property
          */
-        static const BigEndian: Number      = 1
+        static const BigEndian: Number = 1
 
         /** 
             Create a new array.

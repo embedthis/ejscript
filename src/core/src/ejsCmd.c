@@ -649,6 +649,7 @@ void ejsConfigureCmdType(Ejs *ejs)
         return;
     }
     type->instanceSize = sizeof(EjsCmd);
+    type->mutableInstances = 1;
     type->manager = (MprManager) manageEjsCmd;
     prototype = type->prototype;
 

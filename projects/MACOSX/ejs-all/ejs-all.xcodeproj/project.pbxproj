@@ -151,7 +151,6 @@
 		C9248E5F10A4933400B29BDD /* ejsmod.c in Sources */ = {isa = PBXBuildFile; fileRef = C9248E5A10A4933400B29BDD /* ejsmod.c */; };
 		C9248E6010A4933400B29BDD /* listing.c in Sources */ = {isa = PBXBuildFile; fileRef = C9248E5B10A4933400B29BDD /* listing.c */; };
 		C9248E6110A4933400B29BDD /* slotGen.c in Sources */ = {isa = PBXBuildFile; fileRef = C9248E5C10A4933400B29BDD /* slotGen.c */; };
-		C9267D9A118AAEF000A446EA /* ejsLogger.c in Sources */ = {isa = PBXBuildFile; fileRef = C9267D99118AAEF000A446EA /* ejsLogger.c */; };
 		C92F848810F2B80300CA953D /* ejsHttpServer.c in Sources */ = {isa = PBXBuildFile; fileRef = C92F848610F2B80300CA953D /* ejsHttpServer.c */; };
 		C92F848910F2B80300CA953D /* ejsWeb.c in Sources */ = {isa = PBXBuildFile; fileRef = C92F848710F2B80300CA953D /* ejsWeb.c */; };
 		C92F849B10F2B93200CA953D /* libhttp.dylib in Frameworks */ = {isa = PBXBuildFile; fileRef = C95E4FDB10EBFD9300982610 /* libhttp.dylib */; };
@@ -761,7 +760,6 @@
 		C9248E5A10A4933400B29BDD /* ejsmod.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = ejsmod.c; sourceTree = "<group>"; };
 		C9248E5B10A4933400B29BDD /* listing.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = listing.c; sourceTree = "<group>"; };
 		C9248E5C10A4933400B29BDD /* slotGen.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = slotGen.c; sourceTree = "<group>"; };
-		C9267D99118AAEF000A446EA /* ejsLogger.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; name = ejsLogger.c; path = ../../../src/core/src/ejsLogger.c; sourceTree = SOURCE_ROOT; };
 		C92F848510F2B7DE00CA953D /* HttpServer.es */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; name = HttpServer.es; path = ../../../src/jems/ejs.web/HttpServer.es; sourceTree = SOURCE_ROOT; };
 		C92F848610F2B80300CA953D /* ejsHttpServer.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; name = ejsHttpServer.c; path = ../../../src/jems/ejs.web/src/ejsHttpServer.c; sourceTree = SOURCE_ROOT; };
 		C92F848710F2B80300CA953D /* ejsWeb.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; name = ejsWeb.c; path = ../../../src/jems/ejs.web/src/ejsWeb.c; sourceTree = SOURCE_ROOT; };
@@ -1007,7 +1005,6 @@
 				C9188B42115DAC060018846C /* ejsIterator.c */,
 				C9188B43115DAC060018846C /* ejsJSON.c */,
 				C97837E9134E61D0008DDEAC /* ejsLogFile.c */,
-				C9267D99118AAEF000A446EA /* ejsLogger.c */,
 				C9188B44115DAC060018846C /* ejsMath.c */,
 				C9188B45115DAC060018846C /* ejsMemory.c */,
 				C9188B46115DAC060018846C /* ejsNamespace.c */,
@@ -2036,7 +2033,6 @@
 				C9188B7F115DAC060018846C /* ejsXMLList.c in Sources */,
 				C9188B80115DAC060018846C /* ejsXMLLoader.c in Sources */,
 				C9902A691161776B00473F37 /* ejsFrame.c in Sources */,
-				C9267D9A118AAEF000A446EA /* ejsLogger.c in Sources */,
 				C97D30781263AF2900262E95 /* ejsHelper.c in Sources */,
 				C9F8C9A8128C848100FD3A5D /* ejsPot.c in Sources */,
 				C919245B129601190045B8A0 /* ecCompiler.c in Sources */,
@@ -3222,6 +3218,7 @@
 				C9C24D8D136CF5D70000C111 /* Release */,
 			);
 			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
 		};
 		C9D4529511ECDAA800F029C8 /* Build configuration list for PBXNativeTarget "http" */ = {
 			isa = XCConfigurationList;

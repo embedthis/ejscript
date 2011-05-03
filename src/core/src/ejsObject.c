@@ -873,6 +873,7 @@ void ejsConfigureObjectType(Ejs *ejs)
     EjsFunction *fun;
 
     type = ST(Object);
+    type->mutableInstances = 1;
     prototype = type->prototype;
 
     ejsBindMethod(ejs, type, ES_Object_create, obj_create);

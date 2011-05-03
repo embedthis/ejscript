@@ -1243,13 +1243,25 @@ static void managePath(EjsPath *path, int flags)
 }
 
 
+void ejsCreatePathType(Ejs *ejs)
+{
+    EjsType     *type;
+
+    type = ejsCreateNativeType(ejs, N("ejs", "Path"), sizeof(EjsPath), S_Path, ES_Path_NUM_CLASS_PROP, 
+        managePath, EJS_OBJ_HELPERS);
+    type->helpers.cast = (EjsCastHelper) castPath;
+    type->helpers.clone = (EjsCloneHelper) clonePath;
+    type->helpers.invokeOperator = (EjsInvokeOperatorHelper) invokePathOperator;
+}
+
+
 void ejsConfigurePathType(Ejs *ejs)
 {
     EjsType     *type;
     EjsPot      *prototype;
 
-    type = ejsConfigureNativeType(ejs, N("ejs", "Path"), sizeof(EjsPath), managePath, EJS_OBJ_HELPERS);
-    ejsSetSpecialType(ejs, S_Path, type);
+    type = ST(Path);
+    mprAssert(type);
     prototype = type->prototype;
 
     type->helpers.cast = (EjsCastHelper) castPath;

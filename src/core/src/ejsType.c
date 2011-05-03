@@ -34,31 +34,43 @@ static EjsType *cloneTypeVar(Ejs *ejs, EjsType *src, bool deep)
         ejsThrowTypeError(ejs, "Expecting a Type object");
         return 0;
     }
-    dest = (EjsType*) (ST(Block)->helpers.clone)(ejs, src, deep);
+    dest = (ST(Block)->helpers.clone)(ejs, src, deep);
     if (dest == 0) {
         return dest;
     }
     //  TODO OPT
     dest->baseType = src->baseType;
     dest->callsSuper = src->callsSuper;
+    dest->dynamicInstances = src->dynamicInstances;
     dest->final = src->final;
-    dest->hasConstructor = src->hasConstructor;
     dest->hasBaseConstructors = src->hasBaseConstructors;
     dest->hasBaseInitializers = src->hasBaseInitializers;
-    dest->hasMeta = src->hasMeta;
+    dest->hasConstructor = src->hasConstructor;
     dest->hasInitializer = src->hasInitializer;
+    dest->hasMeta = src->hasMeta;
+    dest->hasScriptFunctions = src->hasScriptFunctions;
     dest->helpers = src->helpers;
-    dest->sid = src->sid;
-    dest->immutable = src->immutable;
+    dest->implements = src->implements;
     dest->initialized = src->initialized;
     dest->instanceSize = src->instanceSize;
     dest->isInterface = src->isInterface;
+    dest->isPot = src->isPot;
+    dest->manager = src->manager;
+    dest->mutable = src->mutable;
+    dest->mutableInstances = src->mutableInstances;
+    dest->mutex = src->mutex;
+    if (dest->mutex) {
+        mprNop(NULL);
+    }
     dest->module = src->module;
     dest->numericIndicies = src->numericIndicies;
     dest->numInherited = src->numInherited;
     dest->prototype = src->prototype;
     dest->qname = src->qname;
+    dest->sid = src->sid;
     dest->typeData = src->typeData;
+    dest->virtualSlots = src->virtualSlots;
+
     return dest;
 }
 
@@ -158,7 +170,7 @@ static void createBootType(Ejs *ejs, int sid, int size, int dynamic, void *manag
     }
     type->sid = sid;
     type->instanceSize = size;
-    type->dynamicInstance = dynamic;
+    type->dynamicInstances = dynamic;
     type->manager = manager;
     type->ejs = ejs;
     ejsSetSpecial(ejs, sid, type);
@@ -181,6 +193,7 @@ static void createBootPrototype(Ejs *ejs, int sid, cchar *name)
     mprSetName(type->prototype, name);
     ejsSetPropertyByName(ejs, ejs->service->foundation, type->qname, type);
 }
+
 
 /*
     Handcraft the Array, Object, String and Type classes.
@@ -390,7 +403,7 @@ void ejsSetTypeAttributes(EjsType *type, int64 attributes)
         type->callsSuper = 1;
     }
     if (attributes & EJS_TYPE_DYNAMIC_INSTANCE) {
-        type->dynamicInstance = 1;
+        type->dynamicInstances = 1;
     }
     if (attributes & EJS_TYPE_FINAL) {
         type->final = 1;
@@ -404,9 +417,11 @@ void ejsSetTypeAttributes(EjsType *type, int64 attributes)
     if (attributes & EJS_TYPE_HAS_INSTANCE_VARS) {
         type->hasInstanceVars = 1;
     }
-    if (attributes & EJS_TYPE_IMMUTABLE) {
-        type->immutable = 1;
+#if UNUSED
+    if (attributes & EJS_TYPE_IMMUTABLE_INSTANCES) {
+        type->mutableInstances = 1;
     }
+#endif
     if (attributes & EJS_TYPE_INTERFACE) {
         type->isInterface = 1;
     }
@@ -517,8 +532,8 @@ int ejsFixupType(Ejs *ejs, EjsType *type, EjsType *baseType, int makeRoom)
         }
         //  TODO -- when compiling baseType is always != ST(Object)
         //  TODO - should not explicity reference objecttype
-        if (baseType != ST(Object) && baseType->dynamicInstance) {
-            type->dynamicInstance = 1;
+        if (baseType != ST(Object) && baseType->dynamicInstances) {
+            type->dynamicInstances = 1;
         }
         type->hasInstanceVars |= baseType->hasInstanceVars;
     }
@@ -881,6 +896,9 @@ static void manageType(EjsType *type, int flags)
         mprMark(type->qname.space);
         mprMark(type->prototype);
         mprMark(type->baseType);
+        if (type->mutex) {
+            mprNop(NULL);
+        }
         mprMark(type->mutex);
         mprMark(type->implements);
         mprMark(type->typeData);

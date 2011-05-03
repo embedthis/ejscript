@@ -59,9 +59,7 @@ void ejsConfigureDebugType(Ejs *ejs)
     }
     ejsBindMethod(ejs, type, ES_Debug_breakpoint, debug_breakpoint);
     ejsBindAccess(ejs, type, ES_Debug_mode, debug_mode, debug_set_mode);
-    /*
-        Globals
-     */
+
     ejsBindFunction(ejs, ejs->global, ES_breakpoint, debug_breakpoint);
 }
 

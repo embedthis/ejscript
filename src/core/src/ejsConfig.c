@@ -28,6 +28,7 @@ void ejsDefineConfigProperties(Ejs *ejs)
     }
     ejs->configSet = 1;
     type = ST(Config);
+    type->mutable = 1;
     att = EJS_PROP_STATIC | EJS_PROP_ENUMERABLE;
 
     /*

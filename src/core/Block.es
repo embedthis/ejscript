@@ -13,7 +13,7 @@ module ejs {
         @stability stable
         @spec ejs
      */
-    final class Block { }
+    dynamic final class Block { }
 }
 
 

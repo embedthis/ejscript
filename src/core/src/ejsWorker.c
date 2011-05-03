@@ -831,6 +831,7 @@ void ejsConfigureWorkerType(Ejs *ejs)
     EjsPot      *prototype;
 
     type = ejsConfigureNativeType(ejs, N("ejs", "Worker"), sizeof(EjsWorker), manageWorker, EJS_POT_HELPERS);
+    type->mutableInstances = 1;
     ejsSetSpecialType(ejs, S_Worker, type);
     prototype = type->prototype;
 

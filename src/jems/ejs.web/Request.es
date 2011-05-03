@@ -983,7 +983,7 @@ r.link({product: "candy", quantity: "10", template: "/cart/{product}/{quantity}"
             JSGI specification configuration object.
             @spec jsgi-0.3
          */
-        static var jsgi: Object = {
+        static const jsgi: Object = {
             errors: App.log,
             version: [0,3],
             multithread: true,

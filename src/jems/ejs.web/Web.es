@@ -13,9 +13,7 @@ module ejs.web {
     class Web {
         use default namespace public
 
-        // static var config
-
-        private static var defaultConfig = {
+        private static const defaultConfig = {
             cache: {
                 enable: true,
                 reload: true,
@@ -92,6 +90,7 @@ module ejs.web {
             try {
                 let app = router.route(request)
                 if (request.route.threaded) {
+print("MOB call worker app " + app)
                     worker(app, request)
                 } else {
                     process(app, request)
@@ -116,6 +115,7 @@ module ejs.web {
             } catch (e) {
                 request.writeError(Http.ServerError, e)
             }
+print("LEAVE WORKER HELPER")
         }
 
         //    Accept: application/xml,application/xhtml+xml,text/html;q=0.9,text/plain;q=0.8,image/png,*/*;q=0.5
@@ -193,6 +193,8 @@ module ejs.web {
             @param app Web application function 
          */
         static function process(app: Function, request: Request, finalize: Boolean = true): Void {
+print("IN PROCESS " + app)
+print(app)
             request.config = request.server.config
             try {
                 if (request.route && request.route.middleware) {
@@ -202,11 +204,15 @@ module ejs.web {
                     request.setupFlash()
                 }
                 let response
+print("Bound " + app.bound)
                 if (app.bound != global) {
+print("CALL APP " + app)
                     response = app(request)
+print("BACK FROM APP")
                 } else {
                     response = app.call(request, request)
                 }
+print("RESPONSE " + response)
                 if (response is Function) {
                     /* Functions don't auto finalize. The user is responsible for calling finalize() */
                     response.call(request, request)
@@ -230,6 +236,7 @@ module ejs.web {
                 App.log.debug(3, e)
                 request.writeError(Http.ServerError, e)
             }
+print("LEAVE PROCESS ")
         }
 
         /**

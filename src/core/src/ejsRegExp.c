@@ -336,6 +336,7 @@ void ejsConfigureRegExpType(Ejs *ejs)
     EjsPot      *prototype;
 
     type = ST(RegExp);
+    type->mutableInstances = 1;
     prototype = type->prototype;
 
     ejsBindConstructor(ejs, type, (EjsProc) regex_Constructor);

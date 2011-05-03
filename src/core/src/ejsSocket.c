@@ -425,6 +425,7 @@ void ejsConfigureSocketType(Ejs *ejs)
     EjsPot      *prototype;
 
     type = ejsConfigureNativeType(ejs, N("ejs", "Socket"), sizeof(EjsSocket), (MprManager) manageSocket, EJS_OBJ_HELPERS);
+    type->mutableInstances = 1;
     prototype = type->prototype;
 
     ejsBindConstructor(ejs, type, (EjsProc) sock_Socket);
@@ -434,9 +435,7 @@ void ejsConfigureSocketType(Ejs *ejs)
     ejsBindMethod(ejs, prototype, ES_Socket_close, (EjsProc) sock_close);
     ejsBindMethod(ejs, prototype, ES_Socket_connect, (EjsProc) sock_connect);
     ejsBindMethod(ejs, prototype, ES_Socket_listen, (EjsProc) sock_listen);
-#if ES_Socket_off
     ejsBindMethod(ejs, prototype, ES_Socket_off, (EjsProc) sock_off);
-#endif
     ejsBindMethod(ejs, prototype, ES_Socket_on, (EjsProc) sock_on);
     ejsBindMethod(ejs, prototype, ES_Socket_port, (EjsProc) sock_port);
     ejsBindMethod(ejs, prototype, ES_Socket_read, (EjsProc) sock_read);

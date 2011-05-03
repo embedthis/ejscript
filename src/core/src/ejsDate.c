@@ -1081,7 +1081,10 @@ void ejsConfigureDateType(Ejs *ejs)
     EjsType     *type;
     EjsPot      *prototype;
 
-    type = ejsConfigureNativeType(ejs, N("ejs", "Date"), sizeof(EjsDate), NULL, EJS_OBJ_HELPERS);
+    if ((type = ejsConfigureNativeType(ejs, N("ejs", "Date"), sizeof(EjsDate), NULL, EJS_OBJ_HELPERS)) == 0) {
+        return;
+    }
+    type->mutableInstances = 1;
     ejsSetSpecialType(ejs, S_Date, type);
     prototype = type->prototype;
 

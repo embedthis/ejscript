@@ -214,6 +214,7 @@ void ejsConfigureTimerType(Ejs *ejs)
     type = ejsGetTypeByName(ejs, N("ejs", "Timer"));
     type->instanceSize = sizeof(EjsTimer);
     type->manager = (MprManager) manageTimer;
+    type->mutableInstances = 1;
     ejsCloneObjHelpers(ejs, type);
 
     prototype = type->prototype;

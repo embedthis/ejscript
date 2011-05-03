@@ -1735,6 +1735,8 @@ void ejsCreateArrayType(Ejs *ejs)
         manageArray, EJS_POT_HELPERS);
     type->numericIndicies = 1;
     type->virtualSlots = 1;
+    type->mutableInstances = 1;
+    type->dynamicInstances = 1;
 
     helpers = &type->helpers;
     helpers->cast = (EjsCastHelper) castArray;

@@ -150,6 +150,7 @@ void ejsCreateFrameType(Ejs *ejs)
 
     type = ejsCreateNativeType(ejs, N("ejs", "Frame"), sizeof(EjsFrame), S_Frame, ES_Frame_NUM_CLASS_PROP,
         manageFrame, EJS_POT_HELPERS);
+    type->mutableInstances = 1;
     ejsSetTypeAttributes(type, EJS_TYPE_DYNAMIC_INSTANCE);
     type->constructor.block.pot.shortScope = 1;
     type->helpers.clone = (EjsCloneHelper) ejsCloneBlock;

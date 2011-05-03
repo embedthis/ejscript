@@ -1097,6 +1097,7 @@ void ejsConfigureXMLType(Ejs *ejs)
     EjsPot      *prototype;
 
     type = ST(XML);
+    type->mutableInstances = 1;
     prototype = type->prototype;
 
     ejsBindConstructor(ejs, type, (EjsProc) xmlConstructor);

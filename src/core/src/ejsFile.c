@@ -885,6 +885,7 @@ void ejsConfigureFileType(Ejs *ejs)
 
     type->numericIndicies = 1;
     type->virtualSlots = 1;
+    type->mutableInstances = 1;
     prototype = type->prototype;
 
     type->helpers.getProperty    = (EjsGetPropertyHelper) getFileProperty;

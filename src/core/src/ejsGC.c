@@ -96,9 +96,7 @@ void ejsConfigureGCType(Ejs *ejs)
     ejsBindAccess(ejs, type, ES_GC_enabled, gc_enabled, gc_set_enabled);
     ejsBindAccess(ejs, type, ES_GC_newQuota, gc_newQuota, gc_set_newQuota);
     ejsBindMethod(ejs, type, ES_GC_run, gc_run);
-#if ES_GC_verify
     ejsBindMethod(ejs, type, ES_GC_verify, gc_verify);
-#endif
 }
 
 /*

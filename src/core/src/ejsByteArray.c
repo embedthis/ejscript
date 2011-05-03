@@ -1400,6 +1400,7 @@ void ejsConfigureByteArrayType(Ejs *ejs)
     ejsSetSpecialType(ejs, S_ByteArray, type);
     type->numericIndicies = 1;
     type->virtualSlots = 1;
+    type->mutableInstances = 1;
     prototype = type->prototype;
 
     helpers = &type->helpers;
@@ -1426,9 +1427,7 @@ void ejsConfigureByteArrayType(Ejs *ejs)
     ejsBindMethod(ejs, prototype, ES_ByteArray_length, ba_getLength);
     ejsBindMethod(ejs, prototype, ES_ByteArray_iterator_get, ba_get);
     ejsBindMethod(ejs, prototype, ES_ByteArray_iterator_getValues, ba_getValues);
-#if ES_ByteArray_off
     ejsBindMethod(ejs, prototype, ES_ByteArray_off, ba_off);
-#endif
     ejsBindMethod(ejs, prototype, ES_ByteArray_read, ba_read);
     ejsBindMethod(ejs, prototype, ES_ByteArray_readBoolean, ba_readBoolean);
     ejsBindMethod(ejs, prototype, ES_ByteArray_readByte, ba_readByte);

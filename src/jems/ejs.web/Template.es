@@ -55,10 +55,12 @@ module ejs.web {
         if (!options.literal) {
             path = request.filename
             if (path && !path.exists) {
+print("PATH NOT FOUND " + path)
                 request.writeError(Http.NotFound, "Cannot find " + path)
                 return null
             }
         }
+print("CALLING Load " + path)
         return Loader.load(path, path, request.config, function (id, path) {
             if (!global.TemplateParser) {
                 load("ejs.template.mod")

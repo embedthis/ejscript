@@ -11,8 +11,10 @@
 /*********************************** Forward **********************************/
 
 static int allocNotifier(int flags, ssize size);
+static int cloneVM(Ejs *ejs, Ejs *master);
 static int  configureEjs(Ejs *ejs);
 static int  defineTypes(Ejs *ejs);
+static void initSearchPath(Ejs *ejs, cchar *search);
 static void manageEjs(Ejs *ejs, int flags);
 static void manageEjsService(EjsService *service, int flags);
 static void markValues(Ejs *ejs);
@@ -74,7 +76,6 @@ Ejs *ejsCreateVM(Ejs *master, MprDispatcher *dispatcher, cchar *search, MprList 
 
     if ((sp = MPR->ejsService) == 0) {
         sp = createService();
-        sp->master = master;
     }
     ejs->service = sp;
     mprAddItem(sp->vmlist, ejs);
@@ -106,30 +107,41 @@ Ejs *ejsCreateVM(Ejs *master, MprDispatcher *dispatcher, cchar *search, MprList 
     }
     unlock(sp);
         
+#if UNUSED
     if ((ejs->bootSearch = search) == 0) {
         ejs->bootSearch = getenv("EJSPATH");
     }
+#endif
+
     if (ejsInitStack(ejs) < 0) {
         ejsDestroy(ejs);
         mprRemoveRoot(ejs);
         return 0;
     }
     ejs->state->frozen = 1;
-    if (defineTypes(ejs) < 0 || loadStandardModules(ejs, require) < 0) {
-        if (ejs->exception) {
-            ejsReportError(ejs, "Can't initialize interpreter");
+
+    if (master) {
+        if (cloneVM(ejs, master) < 0) {
+            return 0;
         }
-        ejsDestroy(ejs);
-        mprRemoveRoot(ejs);
-        return 0;
+    } else {
+        if (defineTypes(ejs) < 0 || loadStandardModules(ejs, require) < 0) {
+            if (ejs->exception) {
+                ejsReportError(ejs, "Can't initialize interpreter");
+            }
+            ejsDestroy(ejs);
+            mprRemoveRoot(ejs);
+            return 0;
+        }
+        ejsFreezeGlobal(ejs);
     }
-    ejsFreezeGlobal(ejs);
     if (mprHasMemError(ejs)) {
         mprError("Memory allocation error during initialization");
         ejsDestroy(ejs);
         mprRemoveRoot(ejs);
         return 0;
     }
+    initSearchPath(ejs, search);
     mprRemoveRoot(ejs);
     ejs->state->frozen = 0;
 #if DEBUG_IDE
@@ -137,6 +149,73 @@ Ejs *ejsCreateVM(Ejs *master, MprDispatcher *dispatcher, cchar *search, MprList 
 #endif
     return ejs;
 }
+
+
+#if UNUSED
+static int isMutable(Ejs *ejs, EjsPot *obj)
+{
+    int     i;
+
+    if (!DYNAMIC(obj)) {
+        return 0;
+    }
+    if (TYPE(obj)->immutable) {
+        return 0;
+    }
+    if (ejsIsType(ejs, obj)) {
+        for (i = ejsGetPropertyCount(ejs, obj) - 1; i >= 0; i--) {
+            if (!ejsIsFunction(ejs, ejsGetProperty(ejs, obj, i))) {
+                return 0;
+            }
+        }
+        return 1;
+    }
+    return 0;
+}
+
+
+/*
+    MOB - this could become the regular clone routine
+ */
+static EjsAny *clone(Ejs *ejs, EjsAny *src)
+{
+    EjsType     *type;
+    EjsPot      *dest;
+    EjsAny      *value;
+    EjsTrait    *traits;
+    int         i;
+    
+    if (src == 0) {
+        return 0;
+    }
+    mprAssert(TYPE(src)->helpers.clone);
+    if (VISITED(src)) {
+        return src;
+    }
+    SET_VISITED(src, 1);
+
+    dest = (TYPE(src)->helpers.clone)(ejs, src, 0);
+    for (i = ejsGetPropertyCount(ejs, src) - 1; i >= 0; i--) {
+        value = ejsGetProperty(ejs, src, i);
+        if (ejsIsDefined(ejs, src)) {
+            if (isMutable(ejs, value)) {
+                ejsSetProperty(ejs, dest, i, clone(ejs, value));
+            }
+            if ((traits = ejsGetPropertyTraits(ejs, src, i)) != 0) {
+                if (isMutable(ejs, (EjsAny*) traits->type)) {
+                    if ((type = ejsGetPropertyByName(ejs, ejs->global, traits->type->qname)) != 0) {
+                        ejsSetPropertyTraits(ejs, dest, i, type, traits->attributes);
+                    }
+                }
+            }
+        }
+    }
+    mprCopyName(dest, src);
+    SET_VISITED(src, 0);
+    SET_VISITED(dest, 0);
+    return dest;
+}
+#endif
 
 
 void ejsDestroy(Ejs *ejs)
@@ -181,7 +260,9 @@ static void manageEjs(Ejs *ejs, int flags)
 #endif
         mprMark(ejs->global);
         mprMark(ejs->name);
+#if UNUSED
         mprMark(ejs->applications);
+#endif
         mprMark(ejs->doc);
         mprMark(ejs->errorMsg);
         mprMark(ejs->exception);
@@ -256,8 +337,9 @@ void ejsCloneBlockHelpers(Ejs *ejs, EjsType *type)
 static void cloneTypes(Ejs *ejs)
 {
     Ejs     *master;
-
-    if ((master = ejs->service->master) != 0 && master != ejs) {
+    
+    master = (ejs->master) ? ejs->master : mprGetFirstItem(ejs->service->vmlist);
+    if (master) {
         ejs->values[S_Iterator] = master->values[S_Iterator];
         ejs->values[S_StopIteration] = master->values[S_StopIteration];
 #if UNUSED
@@ -268,6 +350,28 @@ static void cloneTypes(Ejs *ejs)
     }
 }
 
+
+static int cloneVM(Ejs *ejs, Ejs *master)
+{
+    int     i;
+
+    for (i = 0; i < EJS_MAX_SPECIAL; i++) {
+        ejs->values[i] = master->values[i];
+    }
+    ejs->global = master->global;
+    ejs->global = ejsClone(ejs, master->global, 1);
+    ejs->potHelpers = master->potHelpers;
+    ejs->objHelpers = master->objHelpers;
+    ejs->modules = mprCloneList(master->modules);
+    ejs->sqlite = master->sqlite;
+    ejs->http = master->http;
+    ejs->loc = master->loc;
+#if UNUSED
+    ejs->applications = master->applications;
+#endif
+    ejs->initialized = 1;
+    return 0;
+}
 
 /*  
     Create the core language types. These are native types and are created prior to loading ejs.mod.
@@ -298,6 +402,7 @@ static int defineTypes(Ejs *ejs)
     ejsCreateIteratorType(ejs);
     ejsCreateVoidType(ejs);
     ejsCreateNumberType(ejs);
+    ejsCreatePathType(ejs);
     ejsCreateRegExpType(ejs);
     ejsCreateXMLType(ejs);
     ejsCreateXMLListType(ejs);
@@ -368,7 +473,9 @@ static int configureEjs(Ejs *ejs)
 
     ejsDefineConfigProperties(ejs);
 
-    ejsInitSearchPath(ejs);
+#if UNUSED
+    initSearchPath(ejs);
+#endif
     ejs->initialized = 1;
     return 0;
 }
@@ -397,8 +504,11 @@ static int loadStandardModules(Ejs *ejs, MprList *require)
 }
 
 
-void ejsInitSearchPath(Ejs *ejs)
+static void initSearchPath(Ejs *ejs, cchar *search)
 {
+    if ((ejs->bootSearch = search) == 0) {
+        ejs->bootSearch = getenv("EJSPATH");
+    }
     if (ejs->bootSearch) {
         ejs->search = ejsCreateSearchPath(ejs, ejs->bootSearch);
     } else {

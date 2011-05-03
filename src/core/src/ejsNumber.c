@@ -427,7 +427,6 @@ void ejsCreateNumberType(Ejs *ejs)
 
     type = ejsCreateNativeType(ejs, N("ejs", "Number"), sizeof(EjsNumber), S_Number, ES_Number_NUM_CLASS_PROP, 
         NULL, EJS_OBJ_HELPERS);
-    type->immutable = 1;
 
     type->helpers.cast = (EjsCastHelper) castNumber;
     type->helpers.clone = (EjsCloneHelper) cloneNumber;
@@ -496,9 +495,7 @@ void ejsConfigureNumberType(Ejs *ejs)
     ejsSetProperty(ejs, ejs->global, ES_Infinity, S(infinity));
     ejsSetProperty(ejs, ejs->global, ES_NaN, S(nan));
     ejsSetProperty(ejs, ejs->global, ES_double, type);
-#if ES_num
     ejsSetProperty(ejs, ejs->global, ES_num, type);
-#endif
 }
 
 /*

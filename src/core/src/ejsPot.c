@@ -29,17 +29,19 @@ EjsAny *ejsCreateEmptyPot(Ejs *ejs)
 }
 
 
-EjsAny *ejsClonePot(Ejs *ejs, EjsAny *vp, bool deep)
+EjsAny *ejsClonePot(Ejs *ejs, EjsAny *obj, bool deep)
 {
     EjsPot      *dest, *src;
     EjsSlot     *dp, *sp;
+    EjsType     *type;
+    EjsObj      *vp;
     int         numProp, i;
 
-    if (!ejsIsPot(ejs, vp)) {
-        mprAssert(ejsIsPot(ejs, vp));
+    if (!ejsIsPot(ejs, obj)) {
+        mprAssert(ejsIsPot(ejs, obj));
         return NULL;
     }
-    src = (EjsPot*) vp;
+    src = (EjsPot*) obj;
     numProp = src->numProp;
     if ((dest = ejsCreatePot(ejs, TYPE(src), numProp)) == 0) {
         return 0;
@@ -58,8 +60,23 @@ EjsAny *ejsClonePot(Ejs *ejs, EjsAny *vp, bool deep)
     for (i = 0; i < numProp; i++, sp++, dp++) {
         *dp = *sp;
         dp->hashChain = -1;
-        if (deep && !TYPE(sp->value.ref)->immutable) {
-            dp->value.ref = ejsClone(ejs, sp->value.ref, deep);
+        if (deep) {
+            vp = sp->value.ref;
+            type = TYPE(vp);
+            if ((ejsIsType(ejs, vp) && ((EjsType*) vp)->mutable) || (!ejsIsType(ejs, vp) && type->mutableInstances)) {
+                EjsName qname = ejsGetPropertyName(ejs, src, i);
+                dp->value.ref = ejsClone(ejs, vp, deep);
+                //  UNICODE
+                mprSetName(dp->value.ref, qname.name->value);
+            }
+            if (dp->trait.type && dp->trait.type->mutable) {
+                if ((type = ejsGetPropertyByName(ejs, ejs->global, dp->trait.type->qname)) != 0) {
+                    dp->trait.type = type;
+                } else {
+                    //MOB - forward reference
+                    mprAssert(0);
+                }
+            }
         }
     }
     if (dest->numProp > EJS_HASH_MIN_PROP) {
@@ -1041,7 +1058,7 @@ void *ejsCreatePot(Ejs *ejs, EjsType *type, int numProp)
     if (type->hasInstanceVars) {
         numProp = max(numProp, prototype->numProp);
     }
-    if (type->dynamicInstance) {
+    if (type->dynamicInstances) {
         if ((obj = ejsAlloc(ejs, type, 0)) == 0) {
             return 0;
         }
@@ -1105,6 +1122,9 @@ void ejsManagePot(void *ptr, int flags)
                     mprMark(sp->qname.name);
                     mprMark(sp->qname.space);
                     mprMark(sp->value.ref);
+#if FUTURE
+                    mprMark(sp->trait.type);
+#endif
                 }
             }
         }

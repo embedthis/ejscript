@@ -2470,7 +2470,7 @@ static void storePropertyToSlot(Ejs *ejs, EjsObj *thisObj, EjsAny *obj, int slot
         if (trait->attributes & EJS_TRAIT_READONLY) {
             EjsName  qname;
             vp = ejsGetProperty(ejs, obj, slotNum);
-            if (vp != S(null) && vp != S(undefined)) {
+            if (vp != value && vp != S(null) && vp != S(undefined)) {
                 qname = ejsGetPropertyName(ejs, obj, slotNum);
                 ejsThrowReferenceError(ejs, "Property \"%@\" is not writable", qname.name);
                 return;
@@ -2536,6 +2536,8 @@ static void storeProperty(Ejs *ejs, EjsObj *thisObj, EjsAny *vp, EjsName qname, 
     }
     if (slotNum < 0) {
         slotNum = ejsSetPropertyName(ejs, vp, slotNum, qname);
+        //  UNICODE
+        mprSetName(value, qname.name->value);
     }
     if (!ejs->exception) {
         storePropertyToSlot(ejs, thisObj, vp, slotNum, value);
@@ -2583,6 +2585,8 @@ static void storePropertyToScope(Ejs *ejs, EjsName qname, EjsObj *value)
     } else {
         thisObj = vp = fp->function.moduleInitializer ? ejs->global : (EjsObj*) fp;
         slotNum = ejsSetPropertyName(ejs, vp, slotNum, qname);
+        //  UNICODE
+        mprSetName(value, qname.name->value);
     }
     storePropertyToSlot(ejs, thisObj, vp, slotNum, value);
 }

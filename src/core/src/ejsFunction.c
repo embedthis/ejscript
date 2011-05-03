@@ -206,7 +206,6 @@ static EjsNumber *fun_length(Ejs *ejs, EjsFunction *fun, int argc, EjsObj **argv
 }
 
 
-#if ES_Function_name
 /*
     function get name(): String
  */
@@ -217,7 +216,6 @@ static EjsString *fun_name(Ejs *ejs, EjsFunction *fun, int argc, EjsObj **argv)
     }
     return fun->name;
 }
-#endif
 
 
 /*
@@ -406,28 +404,7 @@ int ejsSetFunctionCode(Ejs *ejs, EjsFunction *fun, EjsModule *module, cuchar *by
     mprAssert(byteCode);
     mprAssert(len >= 0);
 
-#if UNUSED
-    code = fun->body.code;
-    if (code == NULL) {
-        if ((code = mprAllocZeroed(sizeof(EjsCode) + len)) == 0) {
-            return MPR_ERR_MEMORY;
-        }
-        fun->body.code = code;
-    } else {
-        if (len > code->codeLen) {
-            if ((code = mprRealloc(code, sizeof(EjsCode) + len)) == 0) {
-                return MPR_ERR_MEMORY;
-            }
-            fun->body.code = code;
-        }
-    }
-    memcpy(code->byteCode, byteCode, len);
-    code->codeLen = len;
-    code->module = module;
-    code->debug = debug;
-#else
     fun->body.code = ejsCreateCode(ejs, fun, module, byteCode, len, debug);
-#endif
     return 0;
 }
 
@@ -518,19 +495,8 @@ int ejsInitFunction(Ejs *ejs, EjsFunction *fun, EjsString *name, cuchar *byteCod
     fun->strict = strict;
 
     if (codeLen > 0) {
-#if UNUSED
-        if ((code = mprAllocZeroed(sizeof(EjsCode) + codeLen)) == 0) {
-            return MPR_ERR_MEMORY;
-        }
-        fun->body.code = code;
-        code->module = module;
-        code->numHandlers = numExceptions;
-        code->codeLen = codeLen;
-        memcpy(code->byteCode, byteCode, codeLen);
-#else
         fun->body.code = ejsCreateCode(ejs, fun, module, byteCode, codeLen, NULL);
         fun->body.code->numHandlers = numExceptions;
-#endif
     }
     fun->name = name;
     setFunctionAttributes(fun, attributes);
@@ -541,19 +507,17 @@ int ejsInitFunction(Ejs *ejs, EjsFunction *fun, EjsString *name, cuchar *byteCod
 
 void ejsManageFunction(EjsFunction *fun, int flags)
 {
-    if (fun) {
-        if (flags & MPR_MANAGE_MARK) {
-            ejsManageBlock((EjsBlock*) fun, flags);
-            mprMark(fun->name);
-            mprMark(fun->activation);
-            mprMark(fun->setter);
-            mprMark(fun->archetype);
-            mprMark(fun->resultType);
-            mprMark(fun->boundThis);
-            mprMark(fun->boundArgs);
-            if (!fun->isNativeProc) {
-                mprMark(fun->body.code);
-            }
+    if (flags & MPR_MANAGE_MARK) {
+        ejsManageBlock((EjsBlock*) fun, flags);
+        mprMark(fun->name);
+        mprMark(fun->activation);
+        mprMark(fun->setter);
+        mprMark(fun->archetype);
+        mprMark(fun->resultType);
+        mprMark(fun->boundThis);
+        mprMark(fun->boundArgs);
+        if (!fun->isNativeProc) {
+            mprMark(fun->body.code);
         }
     }
 }
@@ -586,6 +550,7 @@ void ejsConfigureFunctionType(Ejs *ejs)
     EjsPot      *prototype;
 
     type = ST(Function);
+    type->mutableInstances = 1;
     prototype = type->prototype;
 
     ejsBindConstructor(ejs, type, (EjsProc) fun_Function);

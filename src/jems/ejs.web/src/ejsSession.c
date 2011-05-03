@@ -172,6 +172,7 @@ EjsSession *ejsCreateSession(Ejs *ejs, EjsRequest *req, int timeout, bool secure
     MprTime         now;
     char            idBuf[64], *id;
     int             count, slotNum, next;
+    static int      nextSession = 0;
 
     if ((server = req->server) == 0) {
         return 0;
@@ -193,7 +194,7 @@ EjsSession *ejsCreateSession(Ejs *ejs, EjsRequest *req, int timeout, bool secure
         Use an MD5 prefix of "x" to avoid the hash being interpreted as a numeric index.
      */
     mprLock(sessionLock);
-    next = ejs->nextSession++;
+    next = nextSession++;
     mprSprintf(idBuf, sizeof(idBuf), "%08x%08x%d", PTOI(ejs) + PTOI(session->expire), (int) now, next);
     id = mprGetMD5Hash(idBuf, sizeof(idBuf), "x");
     if (id == 0) {

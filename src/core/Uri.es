@@ -6,6 +6,7 @@
 module ejs {
     /**
         The URI class to provides the ability to create, and manipulate URIs and their constituent components.
+        Uri objects are mutable.
         @spec ejs
         @stability evolving
      */
