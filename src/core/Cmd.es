@@ -55,6 +55,8 @@ module ejs {
             and buffered.
          */
         function get error(): String {
+print("THIS " + this)
+breakpoint()
             if (!_errorResponse) {
                 _errorResponse = errorStream.toString()
             }

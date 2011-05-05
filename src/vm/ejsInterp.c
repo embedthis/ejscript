@@ -683,6 +683,7 @@ static void VM(Ejs *ejs, EjsFunction *fun, EjsAny *otherThis, int argc, int stac
             if (unlikely(vp == 0)) {
                 ejsThrowReferenceError(ejs, "%@ is not defined", qname.name);
             } else {
+//  XXX
                 CHECK_VALUE(vp, NULL, lookup.obj, lookup.slotNum);
             }
             BREAK;
@@ -2675,17 +2676,18 @@ EjsAny *ejsRunFunction(Ejs *ejs, EjsFunction *fun, EjsAny *thisObj, int argc, vo
 #endif
     ejsClearAttention(ejs);
     
-#if MOB
-    if (thisObj == 0) {
-        thisObj = fun->boundThis ? fun->boundThis : ejs->global;
-    }
-#endif
+#if UNUSED
     if (thisObj == 0) {
         //  MOB - simplify
         if ((thisObj = fun->boundThis) == 0) {
             thisObj = ejs->state->fp->function.boundThis;
         }
     }    
+#else
+    if (thisObj == 0) {
+        thisObj = fun->boundThis ? fun->boundThis : ejs->global;
+    }
+#endif
     if (ejsIsNativeFunction(ejs, fun)) {
         if (fun->body.proc == 0) {
             ejsThrowArgError(ejs, "Native function is not defined");
@@ -3505,11 +3507,18 @@ static void callFunction(Ejs *ejs, EjsFunction *fun, EjsAny *thisObj, int argc, 
             return;
         }
     }
+//  XXX
+#if UNUSED || 1
     if (thisObj == 0) {
         if ((thisObj = fun->boundThis) == 0) {
             thisObj = state->fp->function.boundThis;
         } 
     } 
+#else
+    if (thisObj == 0) {
+        thisObj = fun->boundThis ? fun->boundThis : ejs->global;
+    }
+#endif
     if (fun->boundArgs) {
         mprAssert(ejsIs(ejs, fun->boundArgs, Array));
         count = fun->boundArgs->length;

@@ -121,6 +121,7 @@ EjsFrame *ejsCreateFrame(Ejs *ejs, EjsFunction *fun, EjsObj *thisObj, int argc, 
 
     frame->function.boundArgs = fun->boundArgs;
 
+#if UNUSED
     //  MOB thisObj is always set
     mprAssert(thisObj);
     if (thisObj) {
@@ -131,6 +132,10 @@ EjsFrame *ejsCreateFrame(Ejs *ejs, EjsFunction *fun, EjsObj *thisObj, int argc, 
     } else {
         frame->function.boundThis = ejs->global;
     }
+#else
+    /* NOTE: this can be set to ejs->global in frames */
+    frame->function.boundThis = thisObj;
+#endif
     
     frame->function.resultType = fun->resultType;
     frame->function.body = fun->body;
