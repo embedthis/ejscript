@@ -48,32 +48,6 @@ static EjsHttp *httpConstructor(Ejs *ejs, EjsHttp *hp, int argc, EjsObj **argv)
 
 
 /*  
-    function on(name, observer: function): Void
- */
-static EjsObj *http_on(Ejs *ejs, EjsHttp *hp, int argc, EjsObj **argv)
-{
-    EjsFunction     *observer;
-    HttpConn        *conn;
-
-    observer = (EjsFunction*) argv[1];
-    if (observer->boundThis == 0 || observer->boundThis == ejs->global) {
-        observer->boundThis = hp;
-    }
-    ejsAddObserver(ejs, &hp->emitter, argv[0], argv[1]);
-
-    conn = hp->conn;
-    if (conn->readq && conn->readq->count > 0) {
-        ejsSendEvent(ejs, hp->emitter, "readable", NULL, hp);
-    }
-    if (!conn->writeComplete && !conn->error && HTTP_STATE_CONNECTED <= conn->state && conn->state < HTTP_STATE_COMPLETE &&
-            conn->writeq->ioCount == 0) {
-        ejsSendEvent(ejs, hp->emitter, "writable", NULL, hp);
-    }
-    return 0;
-}
-
-
-/*  
     function get async(): Boolean
  */
 static EjsBoolean *http_async(Ejs *ejs, EjsHttp *hp, int argc, EjsObj **argv)
@@ -463,6 +437,42 @@ static EjsObj *http_set_method(Ejs *ejs, EjsHttp *hp, int argc, EjsObj **argv)
 
 
 /*  
+    function off(name, observer: function): Void
+ */
+static EjsObj *http_off(Ejs *ejs, EjsHttp *hp, int argc, EjsAny **argv)
+{
+    ejsRemoveObserver(ejs, hp->emitter, argv[0], argv[1]);
+    return 0;
+}
+
+
+/*  
+    function on(name, observer: function): Void
+ */
+static EjsObj *http_on(Ejs *ejs, EjsHttp *hp, int argc, EjsObj **argv)
+{
+    EjsFunction     *observer;
+    HttpConn        *conn;
+
+    observer = (EjsFunction*) argv[1];
+    if (observer->boundThis == 0 || observer->boundThis == ejs->global) {
+        observer->boundThis = hp;
+    }
+    ejsAddObserver(ejs, &hp->emitter, argv[0], observer);
+
+    conn = hp->conn;
+    if (conn->readq && conn->readq->count > 0) {
+        ejsSendEvent(ejs, hp->emitter, "readable", NULL, hp);
+    }
+    if (!conn->writeComplete && !conn->error && HTTP_STATE_CONNECTED <= conn->state && conn->state < HTTP_STATE_COMPLETE &&
+            conn->writeq->ioCount == 0) {
+        ejsSendEvent(ejs, hp->emitter, "writable", NULL, hp);
+    }
+    return 0;
+}
+
+
+/*  
     function post(uri: String = null, ...requestContent): Void
  */
 static EjsObj *http_post(Ejs *ejs, EjsHttp *hp, int argc, EjsObj **argv)
@@ -559,16 +569,6 @@ static EjsString *http_readString(Ejs *ejs, EjsHttp *hp, int argc, EjsObj **argv
     mprAdjustBufStart(hp->responseContent, count);
     mprResetBufIfEmpty(hp->responseContent);
     return result;
-}
-
-
-/*  
-    function off(name, observer: function): Void
- */
-static EjsObj *http_off(Ejs *ejs, EjsHttp *hp, int argc, EjsObj **argv)
-{
-    ejsRemoveObserver(ejs, hp->emitter, argv[0], argv[1]);
-    return 0;
 }
 
 

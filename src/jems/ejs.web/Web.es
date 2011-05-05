@@ -88,12 +88,11 @@ module ejs.web {
          */
         static function serve(request: Request, router: Router = Router()): Void {
             try {
-                let app = router.route(request)
+                let route: Route = router.route(request)
                 if (request.route.threaded) {
-print("MOB call worker app " + app)
-                    worker(app, request)
+                    worker(request)
                 } else {
-                    process(app, request)
+                    process(route.response, request)
                 }
             } catch (e) {
                 let status = request.status != Http.Ok ? request.status : Http.ServerError
@@ -103,19 +102,18 @@ print("MOB call worker app " + app)
 
         /**
             Run the request via a separate worker thread
-            @param app Application function to run
             @param request Request object
          */
-        static native function worker(app: Function, request: Request): Void
+        static native function worker(request: Request): Void
 
-        private static function workerHelper(app: Function, request: Request): Void {
+        private static function workerHelper(request: Request): Void {
+print("################ WORKER")
             App.log.debug(3, "Multithreaded request")
             try {
-                process(app, request)
+                process(request.route.response, request)
             } catch (e) {
                 request.writeError(Http.ServerError, e)
             }
-print("LEAVE WORKER HELPER")
         }
 
         //    Accept: application/xml,application/xhtml+xml,text/html;q=0.9,text/plain;q=0.8,image/png,*/*;q=0.5
@@ -193,8 +191,6 @@ print("LEAVE WORKER HELPER")
             @param app Web application function 
          */
         static function process(app: Function, request: Request, finalize: Boolean = true): Void {
-print("IN PROCESS " + app)
-print(app)
             request.config = request.server.config
             try {
                 if (request.route && request.route.middleware) {
@@ -204,15 +200,11 @@ print(app)
                     request.setupFlash()
                 }
                 let response
-print("Bound " + app.bound)
-                if (app.bound != global) {
-print("CALL APP " + app)
+                if (app.bound) {
                     response = app(request)
-print("BACK FROM APP")
                 } else {
                     response = app.call(request, request)
                 }
-print("RESPONSE " + response)
                 if (response is Function) {
                     /* Functions don't auto finalize. The user is responsible for calling finalize() */
                     response.call(request, request)
@@ -236,7 +228,6 @@ print("RESPONSE " + response)
                 App.log.debug(3, e)
                 request.writeError(Http.ServerError, e)
             }
-print("LEAVE PROCESS ")
         }
 
         /**
@@ -290,7 +281,7 @@ print("LEAVE PROCESS ")
                     if (!request.filename.exists) {
                         request.writeError(Http.NotFound, "Cannot find " + request.uri)
                     } else {
-                        process(Loader.require(request.filename).app)
+                        process(Loader.require(request.filename).app, request)
                     }
                 } catch {
                     request.writeError(Http.ServerError, "Exception serving " + request.uri)

@@ -74,7 +74,9 @@ typedef struct EjsRequest {
     EjsObj          *cookies;           /**< Cached cookies */
     HttpConn        *conn;              /**< Underlying Http connection object */
     EjsHttpServer   *server;            /**< Owning server */
+#if UNUSED
     EjsObj          *app;               /**< Application build function. Used when threaded */
+#endif
     EjsObj          *absHome;           /**< Absolute URI to the home of the application from this request */
     EjsObj          *config;            /**< Request config environment */
     EjsPath         *dir;               /**< Home directory containing the application */

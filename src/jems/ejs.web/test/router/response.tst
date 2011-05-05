@@ -11,8 +11,8 @@ server.listen(HTTP)
 //  Server - route request and serialize the request object as a response
 server.on("readable", function (event, request: Request) {
     try {
-        let app = router.route(request)
-        Web.process(app, request)
+        let route = router.route(request)
+        Web.process(route.response, request)
     } catch (e) {
         print(e)
         finalize()
@@ -22,15 +22,13 @@ server.on("readable", function (event, request: Request) {
     finalize()
 })
 
-//  Create the router and set the default buidler
 let router = new Router(null)
-router.setDefaultBuilder(builder)
 
 
 //  Run with inline response
 
 router.reset()
-router.add("/custom/test", { run: { status: 200, body: "hello world\n" }})
+router.add("/custom/test", { response: { status: 200, body: "hello world\n" }})
 let response = test("/custom/test")
 assert(response == "hello world")
 
@@ -38,10 +36,8 @@ assert(response == "hello world")
 //  Run with function response
 
 router.reset()
-router.add("/custom/test", { run: function builder(request) {
-    return function app(request) {
-        return { body: "Hello Cruel World\n" }
-    }
+router.add("/custom/test", { response: function builder(request) {
+    return { body: "Hello Cruel World\n" }
 }})
 let response = test("/custom/test")
 assert(response == "Hello Cruel World")

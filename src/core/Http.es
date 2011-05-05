@@ -295,10 +295,10 @@ module ejs {
                 if (xh.readyState == XMLHttp.Loaded) {
                     response = xh.responseText
                     if (callback) {
-                        if (callback.bound == global) {
-                            callback.call(this)
-                        } else {
+                        if (callback.bound) {
                             callback()
+                        } else {
+                            callback.call(this)
                         }
                     }
                 }

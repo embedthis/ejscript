@@ -127,7 +127,7 @@ module ejs {
                 if (codeReader) {
                     code = codeReader(id, path)
                 } else {
-                    throw new StateError("Cannot load " + id + " Must provide a codeReader if path is not specified")
+                    throw new StateError("Cannot load " + id + ". Must provide a codeReader if path is not specified.")
                 }
                 initializer = eval(code, cache)
             }
@@ -135,6 +135,11 @@ module ejs {
             //  function initializer(require, exports, module, system)
             signatures[path] = exports = {}
             initializer(require, exports, {id: id, path: path}, null)
+    /*
+            if (exports.app.bound == this) {
+                exports.app.bind(null)
+            }
+    */
             return exports
         }
 

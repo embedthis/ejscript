@@ -34,7 +34,7 @@ static EjsType *cloneTypeVar(Ejs *ejs, EjsType *src, bool deep)
         ejsThrowTypeError(ejs, "Expecting a Type object");
         return 0;
     }
-    dest = (ST(Block)->helpers.clone)(ejs, src, deep);
+    dest = (ST(Function)->helpers.clone)(ejs, src, deep);
     if (dest == 0) {
         return dest;
     }
@@ -59,9 +59,6 @@ static EjsType *cloneTypeVar(Ejs *ejs, EjsType *src, bool deep)
     dest->mutable = src->mutable;
     dest->mutableInstances = src->mutableInstances;
     dest->mutex = src->mutex;
-    if (dest->mutex) {
-        mprNop(NULL);
-    }
     dest->module = src->module;
     dest->numericIndicies = src->numericIndicies;
     dest->numInherited = src->numInherited;
@@ -70,6 +67,7 @@ static EjsType *cloneTypeVar(Ejs *ejs, EjsType *src, bool deep)
     dest->sid = src->sid;
     dest->typeData = src->typeData;
     dest->virtualSlots = src->virtualSlots;
+    dest->ejs = ejs;
 
     return dest;
 }
@@ -259,7 +257,6 @@ EjsType *ejsCreateType(Ejs *ejs, EjsName qname, EjsModule *up, EjsType *baseType
     if ((type = createTypeVar(ejs, ST(Type), numTypeProp)) == 0) {
         return 0;
     }
-    mprSetName(type, "type");
     type->manager = ejsManagePot;
     type->sid = sid;
     type->qname = qname;
@@ -269,13 +266,17 @@ EjsType *ejsCreateType(Ejs *ejs, EjsName qname, EjsModule *up, EjsType *baseType
     type->instanceSize = instanceSize;
     ejsSetTypeAttributes(type, attributes);
 
+    //  UNICODE
+    mprSetName(type, qname.name->value);
+
     if (prototype) {
         type->prototype = prototype;
     } else {
         if ((type->prototype = ejsCreatePot(ejs, ST(Object), numInstanceProp)) == 0) {
             return 0;
         }
-        mprSetName(type->prototype, "prototype");
+        //  UNICODE
+        mprSetName(type->prototype, qname.name->value);
     }
     type->prototype->isPrototype = 1;
 
@@ -636,7 +637,7 @@ static int fixupTypeImplements(Ejs *ejs, EjsType *type, int makeRoom)
                     (nsp = (EjsNamespace*) mprGetNextItem(&iface->constructor.block.namespaces, &nextNsp)) != 0;) {
                 ejsAddNamespaceToBlock(ejs, (EjsBlock*) type, nsp);
             }
-            for (bp = iface->constructor.block.scope; bp->scope; bp = bp->scope) {
+            for (bp = iface->constructor.block.scope; bp; bp = bp->scope) {
                 for (nextNsp = 0; (nsp = (EjsNamespace*) mprGetNextItem(&bp->namespaces, &nextNsp)) != 0;) {
                     ejsAddNamespaceToBlock(ejs, (EjsBlock*) type, nsp);
                 }

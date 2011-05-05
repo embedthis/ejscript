@@ -21,19 +21,19 @@ module ejs.web {
         @example:
         var r = new Router
         
-        //  Match /some/path and run the custom builder. Target is data for the customBuilder.
-        r.add("/some/path", {run: customBuilder, target: "/other/path"})
+        //  Match /some/path and run myCustomApp to generate a response. Target is data for myCustomApp.
+        r.add("/some/path", {response: myCustomApp, target: "/other/path"})
 
-        //  Match /some/path and run MvcBuilder with controller == User and action == "register"
+        //  Match /some/path and run MvcApp with controller == User and action == "register"
         r.add("\@/User/register")
 
-        //  Add route for files with a ".es" extension and use the ScriptBuilder to run
-        r.add(/\.es$/, {run: ScriptBuilder})
+        //  Add route for files with a ".es" extension and use the ScriptApp to generate the response
+        r.add(/\.es$/, {response: ScriptApp})
 
-        //  Add route for directories and use the DirBuilder to run
-        r.add(Router.isDir, {name: "dir", run: DirBuilder})
+        //  Add route for directories and use the DirApp to generate the response
+        r.add(Router.isDir, {name: "dir", response: DirApp})
 
-        //  Add route for RESTful routes and run with the MvcBuilder
+        //  Add route for RESTful routes and respond with the MvcApp
         r.addResources("User")
 
         //  Manually create restful routes
@@ -46,7 +46,7 @@ module ejs.web {
         r.add("/{controller}/{id}",      {action: "destroy", method: "DELETE"})
         r.add("/{controller}(/do/{action})")
         
-        //  Add route for upper or lower case "D" or "d". Run the default app: MvcBuilder, 
+        //  Add route for upper or lower case "D" or "d". Run the default app: MvcApp, 
         //  Dash contoller, refresh action.
         r.add("/[Dd]ash/refresh", "\@Dash/refresh")
 
@@ -58,10 +58,10 @@ module ejs.web {
         r.add("/web/old.html", {rewrite: function(request) { request.pathInfo = "/web/new.html"}})  
 
         //  Handle a request with a literal response
-        r.add("/oldStuff/", {run: {body: "Not found"} })
+        r.add("/oldStuff/", {response: {body: "Not found"} })
 
         //  Handle a request with an inline function
-        r.add("/oldStuff/", {run: function(request) { return {body: "Not found"} }})
+        r.add("/oldStuff/", {response: function(request) { return {body: "Not found"} }})
 
         //  A custom matching function to match SSL requests
         r.add(function (request) {
@@ -131,9 +131,9 @@ module ejs.web {
         public static const Restful: String = "restful"
 
         /**
-            Default builder to use when unspecified by a route
+            Default application to use when unspecified by a route
          */
-        public var defaultBuilder: Function = MvcBuilder
+        public var defaultApp: Function = MvcApp
 
         /* Router options provide to constructor */
         private var routerOptions: Object
@@ -154,14 +154,14 @@ module ejs.web {
             Add a catch-all route for static content
          */
         public function addCatchall(): Void
-            add(/^\/.*$/, {name: "catchall", run: StaticBuilder, method: "*"})
+            add(/^\/.*$/, {name: "catchall", response: StaticApp, method: "*"})
 
         /**
             Add a default MVC controller/action route. This consists of a "/{controller}/{action}" route.
             All HTTP method verbs are supported.
          */
-        public function addDefault(run: Object): Void
-            add("/{controller}(/{action}(/.*))", {name: "default", method: "*", run: run})
+        public function addDefault(response: Object): Void
+            add("/{controller}(/{action}(/.*))", {name: "default", method: "*", response: response})
 
         /**
             Add routes to handle static content, directories, "es" scripts and stand-alone ejs templated pages.
@@ -169,11 +169,11 @@ module ejs.web {
         public function addHandlers(): Void {
             let staticPattern = "\/" + (App.config.directories.static.basename || "static") + "\/.*"
             if (staticPattern) {
-                add(staticPattern, {name: "default", run: StaticBuilder})
+                add(staticPattern, {name: "default", response: StaticApp})
             }
-            add(/\.es$/,  {name: "es",  run: ScriptBuilder, method: "*"})
-            add(/\.ejs$/, {name: "ejs", module: "ejs.template", run: TemplateBuilder, method: "*"})
-            add(isDir,    {name: "dir", run: DirBuilder})
+            add(/\.es$/,  {name: "es",  response: ScriptApp, method: "*"})
+            add(/\.ejs$/, {name: "ejs", module: "ejs.template", response: TemplateApp, method: "*"})
+            add(isDir,    {name: "dir", response: DirApp})
         }
 
         /**
@@ -291,7 +291,7 @@ module ejs.web {
                also be set to null to add not routes. This is useful for creating a bare Router instance. Defaults 
                to Top.
             @param options Options to apply to all routes
-            @option threaded Boolean If true, the request should be run in a worker thread if possible. This thread 
+            @option threaded Boolean If true, the request should be execute in a worker thread if possible. This thread 
                 will not be dedicated, but will be assigned as the request requires CPU resources.
            @throws Error for an unknown route set.
          */
@@ -300,7 +300,7 @@ module ejs.web {
             switch (routeSet) {
             case Top:
                 addHandlers()
-                addDefault(StaticBuilder)
+                addDefault(StaticApp)
                 break
             case Restful:
                 addHome("@Base/")
@@ -358,11 +358,10 @@ module ejs.web {
             @option params Override request parameters.
             @option parent Outer parent route
             @option redirect Redirect requests on this route to this URI.
-            @option rewrite Rewrite function. This can rewrite request properties.
-            @option run (Function|Object) This can be either a builder function to serve the request or it can be a 
-                response hash with status, headers and body properties. The builder function should return a function 
-                of the form:
+            @option response (Function|Object) This can be either a function to serve the request or it can be a response 
+                hash with status, headers and body properties. The function should have this signature:
                     function (request: Request): Object
+            @option rewrite Rewrite function. This can rewrite request properties.
             @option set Route set name in which to add this route. Defaults to the first component of the template if
                 the template is a string, otherwise "".
             @option target Target for the route. This can be a Uri path or a controller/action pair: "\@[controller/]action".
@@ -422,10 +421,22 @@ module ejs.web {
             throw "Can't find route \"" + name + "\" to remove"
         }
 
-        /*
-            Make the application function to service the request
+        /**
+            Reset the request routing table by removing all routes
          */
-        private function makeApp(request: Request, r: Route): Function {
+        public function reset(request): Void {
+            routes = {}
+        }
+
+        private function reroute(request): Route {
+            request.routed ||= 1
+            if (request.routed++ > MaxRoute) {
+                throw "Too many route calls. Route table may have a loop."
+            }
+            return route(request)
+        }
+
+        private function secondStageRoute(request: Request, r: Route): Route {
             let params = request.params
             let pathInfo = request.pathInfo
             let log = request.log
@@ -446,12 +457,11 @@ module ejs.web {
                 return reroute(request)
             }
             if (r.redirect) {
-                //  TODO OPT - could this this via a custom builder
+                //  TODO OPT - could this this via a custom app function
                 request.pathInfo = r.redirect
                 log.debug(5, "Route redirected to \"" + request.pathInfo + "\" (reroute)")
                 return reroute(request)
             }
-            request.route = r
             let location = r.location
             if (location && location.scriptName && location.scriptName != request.scriptName && location.dir) {
                 request.setLocation(location.scriptName, location.dir)
@@ -484,22 +494,8 @@ module ejs.web {
                     request.trace(r.trace.level || 0, r.trace.options, r.trace.size)
                 }
             }
-            return r.builder(request)
-        }
-
-        /**
-            Reset the request routing table by removing all routes
-         */
-        public function reset(request): Void {
-            routes = {}
-        }
-
-        private function reroute(request): Function {
-            request.routed ||= 1
-            if (request.routed++ > MaxRoute) {
-                throw "Too many route calls. Route table may have a loop."
-            }
-            return route(request)
+            request.route = r
+            return r
         }
 
         /** 
@@ -509,7 +505,7 @@ module ejs.web {
             @return The web application function of the signature: 
                 function app(request: Request): Object
          */
-        public function route(request): Function {
+        public function route(request): Route {
             let log = request.log
             log.debug(5, "Routing " + request.pathInfo)
             if (request.method == "POST") {
@@ -523,26 +519,27 @@ module ejs.web {
             for each (r in routeSet) {
                 log.debug(5, "Test route \"" + r.name + "\"")
                 if (r.match(request)) {
-                    return makeApp(request, r)
+                    //  MOB -- inline that code here
+                    return secondStageRoute(request, r)
                 }
             }
             routeSet = routes[""]
             for each (r in routeSet) {
                 log.debug(5, "Test route \"" + r.name + "\"")
                 if (r.match(request)) {
-                    return makeApp(request, r)
+                    //  MOB -- inline that code here
+                    return secondStageRoute(request, r)
                 }
             }
             throw "No route for " + request.pathInfo
         }
 
         /**
-            Set the default builder function for the route
+            Set the default application function for the route
             @hide
          */
-        public function setDefaultBuilder(builder: Function): Void {
-            defaultBuilder = builder
-        }
+        public function setDefaultApp(app: Function): Void
+            defaultApp = app
 
         /**
             Show the route table
@@ -570,9 +567,11 @@ module ejs.web {
                 let action = params.action || "*"
                 target = controller + "/" + action
             } else if (r.response) {
-                target = "Response Object"
-            } else if (r.builder) {
-                target = r.builder.name
+                if (r.response is Function) {
+                    target = r.response.name
+                } else {
+                    target = "Response Object"
+                }
             } else {
                 target = "UNKNOWN"
             }
@@ -620,12 +619,6 @@ module ejs.web {
             Seed for generating route names 
          */
         private static var nameSeed: Number = 0
-
-        /**
-            Builder function to create a function app to serve the request. The builder should return return a function 
-            that will be invoked serve the request. The builder can also be a response object hash.
-         */
-        var builder: Object
 
         /**
             Resource limits for the request. See HttpServer.limits for details.
@@ -691,7 +684,7 @@ module ejs.web {
         var redirect: String
 
         /**
-            Response object hash
+            Response object hash or function to serve the request
          */
         var response: Object
 
@@ -726,7 +719,7 @@ module ejs.web {
         var template: Object
 
         /**
-            If true, the request should be run in a worker thread if possible. This thread will not be dedicated, 
+            If true, the request should execute in a worker thread if possible. This thread will not be dedicated, 
             but will be assigned as the request requires CPU resources.
          */
         var threaded: Boolean
@@ -1013,16 +1006,13 @@ module ejs.web {
             } else {
                 method = options.method || "GET"
             }
-            options.run ||= router.defaultBuilder
-            if (!(options.run is Function)) {
-                response = options.run
-                builder = function (request) {
-                    return function (request) {
-                        return response
-                    }
+            options.response ||= router.defaultApp
+            if (!(options.response is Function)) {
+                response = function (request) {
+                    return options.response
                 }
             } else {
-                builder = options.run
+                response = options.response
             }
         }
 

@@ -799,7 +799,7 @@ extern EcNode       *ecLinkNode(EcNode *np, EcNode *child);
 
 extern EjsModule    *ecLookupModule(EcCompiler *cp, EjsString *name, int minVersion, int maxVersion);
 extern int          ecLookupScope(EcCompiler *cp, EjsName name);
-extern int          ecLookupVar(EcCompiler *cp, EjsObj *vp, EjsName name);
+extern int          ecLookupVar(EcCompiler *cp, EjsAny *vp, EjsName name);
 extern EcNode       *ecParseWarning(EcCompiler *cp, char *fmt, ...);
 extern int          ecPeekToken(EcCompiler *cp);
 extern int          ecPutSpecificToken(EcCompiler *cp, EcToken *token);

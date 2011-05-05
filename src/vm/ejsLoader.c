@@ -36,7 +36,7 @@ static int  loadPropertySection(Ejs *ejs, EjsModule *mp, int sectionType);
 static int  loadScriptModule(Ejs *ejs, cchar *filename, int minVersion, int maxVersion, int flags);
 static char *makeModuleName(cchar *name);
 static void popScope(EjsModule *mp, int keepScope);
-static void pushScope(EjsModule *mp, EjsBlock *block, EjsAny *obj);
+static void pushScope(EjsModule *mp, EjsAny *block, EjsAny *obj);
 static char *search(Ejs *ejs, cchar *filename, int minVersion, int maxVersion);
 static int  trimModule(Ejs *ejs, char *name);
 static void setDoc(Ejs *ejs, EjsModule *mp, cchar *tag, void *vp, int slotNum);
@@ -342,7 +342,11 @@ static EjsModule *loadModuleSection(Ejs *ejs, MprFile *file, EjsModuleHdr *hdr, 
         return 0;
     }
     mp->current = mprCreateList(-1, 0);
-    pushScope(mp, (EjsBlock*) ejs->global, ejs->global);
+#if UNUSED
+    pushScope(mp, ejs->global, ejs->global);
+#else
+    pushScope(mp, 0, ejs->global);
+#endif
     mp->checksum = checksum;
     *created = 1;
 
@@ -576,7 +580,7 @@ static int loadClassSection(Ejs *ejs, EjsModule *mp)
         }
     }
     setDoc(ejs, mp, "class", ejs->global, slotNum);
-    pushScope(mp, (EjsBlock*) type, type);
+    pushScope(mp, type, type);
 
     if (ejs->loaderCallback) {
         (ejs->loaderCallback)(ejs, EJS_SECT_CLASS, mp, slotNum, qname, type, attributes);
@@ -745,7 +749,7 @@ static int loadFunctionSection(Ejs *ejs, EjsModule *mp)
     }
 
     mp->currentMethod = fun;
-    pushScope(mp, ejsIsType(ejs, fun) ? NULL : (EjsBlock*) fun, fun->activation);
+    pushScope(mp, ejsIsType(ejs, fun) ? NULL : fun, fun->activation);
     if (ejs->loaderCallback) {
         (ejs->loaderCallback)(ejs, EJS_SECT_FUNCTION, mp, block, slotNum, qname, fun, attributes);
     }
@@ -1637,11 +1641,11 @@ static EjsObj *getCurrentBlock(EjsModule *mp)
 }
 
 
-static void pushScope(EjsModule *mp, EjsBlock *block, EjsAny *obj)
+static void pushScope(EjsModule *mp, EjsAny *block, EjsAny *obj)
 {
-    mprAssert(block != mp->scope);
     if (block) {
-        block->scope = mp->scope;
+        mprAssert(block != mp->scope);
+        ((EjsBlock*) block)->scope = mp->scope;
         mp->scope = block;
         mprAssert(mp->scope != mp->scope->scope);
     }

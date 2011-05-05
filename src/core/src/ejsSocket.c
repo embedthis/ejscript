@@ -36,16 +36,6 @@ static EjsSocket *sock_Socket(Ejs *ejs, EjsSocket *sp, int argc, EjsObj **argv)
 
 
 /*
-    function on(name: [String|Array], listener: Function): Void
- */
-EjsObj *sock_on(Ejs *ejs, EjsSocket *sp, int argc, EjsObj **argv)
-{
-    ejsAddObserver(ejs, &sp->emitter, argv[0], argv[1]);
-    return 0;
-}
-
-
-/*
     function accept(): Socket
  */
 EjsSocket *sock_accept(Ejs *ejs, EjsSocket *listen, int argc, EjsObj **argv)
@@ -202,6 +192,26 @@ static EjsObj *sock_listen(Ejs *ejs, EjsSocket *sp, int argc, EjsObj **argv)
 
 
 /*
+    function off(name, observer: Function): Void
+ */
+static EjsObj *sock_off(Ejs *ejs, EjsSocket *sp, int argc, EjsAny **argv)
+{
+    ejsRemoveObserver(ejs, sp->emitter, argv[0], argv[1]);
+    return 0;
+}
+
+
+/*
+    function on(name: [String|Array], observer: Function): Void
+ */
+EjsObj *sock_on(Ejs *ejs, EjsSocket *sp, int argc, EjsAny **argv)
+{
+    ejsAddObserver(ejs, &sp->emitter, argv[0], argv[1]);
+    return 0;
+}
+
+
+/*
     function get port(): Number
  */
 static EjsNumber *sock_port(Ejs *ejs, EjsSocket *sp, int argc, EjsObj **argv)
@@ -258,16 +268,6 @@ static EjsNumber *sock_read(Ejs *ejs, EjsSocket *sp, int argc, EjsObj **argv)
 static EjsString *sock_remoteAddress(Ejs *ejs, EjsSocket *sp, int argc, EjsObj **argv)
 {
     return ejsCreateStringFromAsc(ejs, sp->address);
-}
-
-
-/*
-    function off(name, listener: Function): Void
- */
-static EjsObj *sock_off(Ejs *ejs, EjsSocket *sp, int argc, EjsObj **argv)
-{
-    ejsRemoveObserver(ejs, sp->emitter, argv[0], argv[1]);
-    return 0;
 }
 
 

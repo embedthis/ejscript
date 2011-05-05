@@ -9,6 +9,8 @@ module ejs.web {
         and will use X-SendFile for efficient transmission of static content.
         @param request Request objects
         @returns A response hash object
+        @example:
+          { name: "index", builder: StaticApp }
         @spec ejs
         @stability prototype
      */
@@ -155,16 +157,16 @@ module ejs.web {
         }
     }
 
+    //  MOB -- rename to scriptBuilder
     /** 
         Static builder for use in routing tables to serve static file content.
         @param request Request object. 
         @return A web script function that services a web request for static content
-        @example:
-          { name: "index", builder: StaticBuilder }
         @spec ejs
         @stability prototype
      */
     function StaticBuilder(request: Request): Function {
+        //  MOB - should not need "ejs.web"
         return "ejs.web"::StaticApp
     }
 }

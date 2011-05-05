@@ -49,7 +49,7 @@ endif
 #
 xmodules:
 	for d in $(LOADABLE) ; do  \
-		$(MAKE) --no-print-directory TRACE=$(TRACE) -C $$d module ; \
+		$(MAKE) --no-print-directory TRACE=$(TRACE) -C $$d module || exit 255; \
 	done
 
 packagePrep: $(DOC)

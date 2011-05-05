@@ -290,16 +290,6 @@ static EjsByteArray *ba_ByteArray(Ejs *ejs, EjsByteArray *ap, int argc, EjsObj *
 
 
 /**
-    function get on(name, listener: Function): Void
- */
-static EjsObj *ba_on(Ejs *ejs, EjsByteArray *ap, int argc, EjsObj **argv)
-{
-    ejsAddObserver(ejs, &ap->emitter, argv[0], argv[1]);
-    return 0;
-}
-
-
-/**
     Determine if the byte array is in async mode
     function get async(): Boolean
  */
@@ -860,11 +850,21 @@ static EjsObj *ba_reset(Ejs *ejs, EjsByteArray *ap, int argc, EjsObj **argv)
 
 
 /**
-    function off(name, listener: Function): Number
+    function off(name, observer: Function): Number
  */
-static EjsObj *ba_off(Ejs *ejs, EjsByteArray *ap, int argc, EjsObj **argv)
+static EjsObj *ba_off(Ejs *ejs, EjsByteArray *ap, int argc, EjsAny **argv)
 {
     ejsRemoveObserver(ejs, ap->emitter, argv[0], argv[1]);
+    return 0;
+}
+
+
+/**
+    function get on(name, observer: Function): Void
+ */
+static EjsObj *ba_on(Ejs *ejs, EjsByteArray *ap, int argc, EjsAny **argv)
+{
+    ejsAddObserver(ejs, &ap->emitter, argv[0], argv[1]);
     return 0;
 }
 

@@ -21,8 +21,8 @@ module ejs.web {
                 if (path.exists) {
                     /* Return a String containing the new pathInfo to serve */
                     request.pathInfo += index 
-                    app = request.route.router.route(request)
-                    return Web.process(app, request)
+                    let route = request.route.router.route(request)
+                    return Web.process(route.response, request)
                 }
             }
             return { 
@@ -46,10 +46,11 @@ module ejs.web {
           { name: "index", builder: DirBuilder, match: Router.isDir }
         @spec ejs
         @stability prototype
-     */
+        UNUSED
     function DirBuilder(request: Request): Function {
         return DirApp
     }
+     */
 }
 
 /*

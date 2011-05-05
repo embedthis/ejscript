@@ -101,7 +101,6 @@ function QueryRoute(map) {
         if (!(map[route] is Function)) {
             return errorBody(Http.NotFound, "Cannot find " + route)
         }
-        //  MOB -- this assignment to fun may have fixed it
         let fun = map[route]
         return fun(request)
     }

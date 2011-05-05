@@ -59,6 +59,7 @@ static MPR_INLINE void getPropertyFromSlot(Ejs *ejs, EjsAny *thisObj, EjsAny *ob
             /* Function extraction. Bind the "thisObj" into a clone of the function */
             fun = ejsCloneFunction(ejs, fun, 0);
             fun->boundThis = thisObj;
+            mprAssert(fun->boundThis != ejs->global);
         }
     }
     pushOutside(ejs, value);
@@ -84,10 +85,12 @@ static MPR_INLINE void checkGetter(Ejs *ejs, EjsAny *value, EjsAny *thisObj, Ejs
             }
             return;
         } else {
-            if (!fun->boundThis && thisObj) {
+            if (!fun->boundThis && thisObj && thisObj != ejs->global) {
                 /* Function extraction. Bind the "thisObj" into a clone of the function */
+                /* OPT - this is slow in the a case: a.b.fn */
                 fun = ejsCloneFunction(ejs, fun, 0);
                 fun->boundThis = thisObj;
+                mprAssert(fun->boundThis != ejs->global);
                 value = fun;
             }
         }
@@ -127,7 +130,11 @@ static MPR_INLINE void checkGetter(Ejs *ejs, EjsAny *value, EjsAny *thisObj, Ejs
 #define GET_TYPE()      ((EjsType*) getGlobalArg(ejs, FRAME))
 #define GET_WORD()      ejsDecodeInt32(ejs, &(FRAME)->pc)
 #undef THIS
+#if UNUSED
+#define THIS            FRAME->thisObj
+#else
 #define THIS            FRAME->function.boundThis
+#endif
 #define FILL(mark)      while (mark < FRAME->pc) { *mark++ = EJS_OP_NOP; }
 
 #if DEBUG_IDE
@@ -1319,6 +1326,7 @@ static void VM(Ejs *ejs, EjsFunction *fun, EjsAny *otherThis, int argc, int stac
                     Calculate the "this" to use for the function. If required function is a method in the current 
                     "this" object use the current thisObj. If the lookup.obj is a type, then use it. Otherwise global.
                  */
+                //  MOB
                 if ((vp = fun->boundThis) == 0) {
                     if (lookup.obj == THIS) {
                         vp = THIS;
@@ -1327,8 +1335,8 @@ static void VM(Ejs *ejs, EjsFunction *fun, EjsAny *otherThis, int argc, int stac
                     } else if (ejsIsType(ejs, lookup.obj)) {
                         vp = lookup.obj;
                     } else {
-                        vp = ejs->global;
-                    }
+                        vp = /* lookup.obj */ ejs->global;
+                    } 
                 }
                 callProperty(ejs, lookup.obj, slotNum, vp, argc, 0);
             }
@@ -1497,7 +1505,10 @@ static void VM(Ejs *ejs, EjsFunction *fun, EjsAny *otherThis, int argc, int stac
                         f2 = f1;
                     }
                     f2->block.scope = state->bp;
-                    f2->boundThis = FRAME->function.boundThis;
+                    if (FRAME->function.boundThis != ejs->global) {
+                        f2->boundThis = FRAME->function.boundThis;
+                    }
+                    mprAssert(f2->boundThis != ejs->global);
                     mprAssert(!ejsIsPrototype(ejs, lookup.obj));
                     ejsSetProperty(ejs, lookup.obj, lookup.slotNum, f2);
                 }
@@ -2664,6 +2675,11 @@ EjsAny *ejsRunFunction(Ejs *ejs, EjsFunction *fun, EjsAny *thisObj, int argc, vo
 #endif
     ejsClearAttention(ejs);
     
+#if MOB
+    if (thisObj == 0) {
+        thisObj = fun->boundThis ? fun->boundThis : ejs->global;
+    }
+#endif
     if (thisObj == 0) {
         //  MOB - simplify
         if ((thisObj = fun->boundThis) == 0) {
@@ -3541,6 +3557,7 @@ state->frozen = fstate;
         state->stack -= (argc + stackAdjust);
 
     } else {
+        mprAssert(thisObj);
         if ((fp = ejsCreateFrame(ejs, fun, thisObj, argc, argv)) == 0) {
             return;
         }

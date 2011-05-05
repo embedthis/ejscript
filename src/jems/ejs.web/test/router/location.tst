@@ -22,10 +22,8 @@ server.on("readable", function (event, request: Request) {
 })
 
 
-//  Create the router and set the default buidler
+//  Create the router
 let router = new Router(null)
-router.setDefaultBuilder(builder)
-
 
 //  Define a location block
 

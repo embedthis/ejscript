@@ -19,17 +19,21 @@ static int configureWebTypes(Ejs *ejs);
 static int requestWorker(EjsRequest *req, MprEvent *event)
 {
     Ejs         *ejs;
-    EjsObj      *argv[2];
+    EjsObj      *argv[1];
     HttpConn    *conn;
     
     ejs = req->ejs;
     mprAssert(ejs);
+#if UNUSED
     mprAssert(req->app);
+#endif
     
     conn = req->conn;
+#if UNUSED
     argv[0] = (EjsObj*) req->app;
-    argv[1] = (EjsObj*) req;
-    ejsRunFunctionBySlot(ejs, S(Web), ES_ejs_web_Web_workerHelper, 2, argv);
+#endif
+    argv[0] = (EjsObj*) req;
+    ejsRunFunctionBySlot(ejs, S(Web), ES_ejs_web_Web_workerHelper, 1, argv);
     conn->dispatcher = conn->oldDispatcher;
     httpEnableConnEvents(conn);
     return 0; 
@@ -37,18 +41,15 @@ static int requestWorker(EjsRequest *req, MprEvent *event)
 
 
 /*
-    static function worker(app: Function, req: Request): Void
+    static function worker(req: Request): Void
  */
 static EjsObj *req_worker(Ejs *ejs, EjsObj *web, int argc, EjsObj **argv)
 {
     Ejs         *nejs;
     EjsRequest  *req, *nreq;
-    EjsObj      *app;
-    EjsBlock    *bp;
     HttpConn    *conn;
 
-    app = argv[0];
-    req = (EjsRequest*) argv[1];
+    req = (EjsRequest*) argv[0];
     if ((nejs = ejsCreateVM(ejs, 0, 0, 0, 0, 0, 0)) == 0) {
         ejsThrowStateError(ejs, "Can't create interpreter to service request");
         return 0;
@@ -71,6 +72,7 @@ static EjsObj *req_worker(Ejs *ejs, EjsObj *web, int argc, EjsObj **argv)
     }
     httpSetConnContext(conn, nreq);
 
+#if UNUSED
     //  MOB OPT
     nreq->app = ejsClone(nejs, app, 0);
     for (bp = (EjsBlock*) nreq->app; bp; bp = bp->scope) {
@@ -80,6 +82,7 @@ static EjsObj *req_worker(Ejs *ejs, EjsObj *web, int argc, EjsObj **argv)
             bp->scope = ejsClone(nejs, bp->scope, 0);
         }
     }
+#endif
     if ((nreq->server = ejsCloneHttpServer(nejs, req->server, 1)) == 0) {
         ejsThrowStateError(ejs, "Can't clone request");
         return 0;

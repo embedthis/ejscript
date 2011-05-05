@@ -366,9 +366,7 @@ static int cloneVM(Ejs *ejs, Ejs *master)
     ejs->sqlite = master->sqlite;
     ejs->http = master->http;
     ejs->loc = master->loc;
-#if UNUSED
-    ejs->applications = master->applications;
-#endif
+    ejsSetPropertyByName(ejs, ejs->global, N("ejs", "global"), ejs->global);
     ejs->initialized = 1;
     return 0;
 }
@@ -697,16 +695,17 @@ static int runSpecificMethod(Ejs *ejs, cchar *className, cchar *methodName)
     for (i = 0; i < ejs->argc; i++) {
         ejsSetProperty(ejs, args, i, ejsCreateStringFromAsc(ejs, ejs->argv[i]));
     }
-    if (ejsRunFunction(ejs, fun, 0, 1, &args) == 0) {
+    if (ejsRunFunction(ejs, fun, NULL, 1, &args) == 0) {
         return EJS_ERR;
     }
     return 0;
 }
 
 
-int ejsAddObserver(Ejs *ejs, EjsObj **emitterPtr, EjsObj *name, EjsObj *listener)
+int ejsAddObserver(Ejs *ejs, EjsObj **emitterPtr, EjsObj *name, EjsFunction *observer)
 {
-    EjsObj      *emitter, *argv[2];
+    EjsAny      *argv[2];
+    EjsObj      *emitter;
     EjsArray    *list;
     int         i;
 
@@ -715,7 +714,7 @@ int ejsAddObserver(Ejs *ejs, EjsObj **emitterPtr, EjsObj *name, EjsObj *listener
     }
     emitter = *emitterPtr;
 
-    argv[1] = listener;
+    argv[1] = observer;
     if (ejsIs(ejs, name, Array)) {
         list = (EjsArray*) name;
         for (i = 0; i < list->length; i++) {
@@ -744,14 +743,14 @@ int ejsHasObservers(Ejs *ejs, EjsObj *emitter)
 #endif
 
 
-int ejsRemoveObserver(Ejs *ejs, EjsObj *emitter, EjsObj *name, EjsObj *listener)
+int ejsRemoveObserver(Ejs *ejs, EjsObj *emitter, EjsObj *name, EjsFunction *observer)
 {
-    EjsObj      *argv[2];
+    EjsAny      *argv[2];
     EjsArray    *list;
     int         i;
 
     if (emitter) {
-        argv[1] = listener;
+        argv[1] = observer;
         if (ejsIs(ejs, name, Array)) {
             list = (EjsArray*) name;
             for (i = 0; i < list->length; i++) {

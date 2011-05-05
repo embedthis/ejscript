@@ -146,11 +146,17 @@ static EjsObj *cmd_kill(Ejs *ejs, EjsCmd *cmd, int argc, EjsObj **argv)
 
 
 /**
-    function get on(name, listener: Function): Void
+    function get on(name, observer: Function): Void
  */
-static EjsObj *cmd_on(Ejs *ejs, EjsCmd *cmd, int argc, EjsObj **argv)
+static EjsObj *cmd_on(Ejs *ejs, EjsCmd *cmd, int argc, EjsAny **argv)
 {
-    ejsAddObserver(ejs, &cmd->emitter, argv[0], argv[1]);
+    EjsFunction     *observer;
+
+    observer = (EjsFunction*) argv[1];
+    if (observer->boundThis == 0 || observer->boundThis == ejs->global) {
+        observer->boundThis = cmd;
+    }
+    ejsAddObserver(ejs, &cmd->emitter, argv[0], observer);
     if (!cmd->async) {
         cmd->async = 1;
     }
@@ -159,9 +165,9 @@ static EjsObj *cmd_on(Ejs *ejs, EjsCmd *cmd, int argc, EjsObj **argv)
 
 
 /**
-    function get off(name, listener: Function): Void
+    function get off(name, observer: Function): Void
  */
-static EjsObj *cmd_off(Ejs *ejs, EjsCmd *cmd, int argc, EjsObj **argv)
+static EjsObj *cmd_off(Ejs *ejs, EjsCmd *cmd, int argc, EjsAny **argv)
 {
     ejsRemoveObserver(ejs, cmd->emitter, argv[0], argv[1]);
     return 0;

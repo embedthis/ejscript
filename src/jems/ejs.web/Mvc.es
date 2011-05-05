@@ -9,7 +9,7 @@ module ejs.web {
         @stability prototype
         @spec ejs
      */
-    public class Mvc {
+    class Mvc {
 
         static var apps = {}
 
@@ -41,10 +41,13 @@ module ejs.web {
         private static var loaded: Object = {}
         private static const EJSRC = "ejsrc"
 
-        private static function initMvc(): Void {
+    /* UNUSED
+        private static function initConfig(): Void {
             blend(App.config, defaultConfig, false)
         }
-        initMvc()
+        initConfig()
+     */
+        blend(App.config, defaultConfig, false)
 
         /*
             Load the app/ejsrc and defaultConfig. Blend with the HttpServer.config
@@ -81,18 +84,18 @@ module ejs.web {
             return config
         }
 
-
-//  MOB -- rename to load?
         /** 
             Load an MVC application. This is typically called by the Router to load an application after routing
             the request to determine the appropriate controller
             @param request Request object
          */
-        public function init(request: Request): Void {
+        function Mvc(request: Request) {
             let config = loadConfig(request)
             let dirs = config.directories
             let appmod = dirs.cache.join(config.mvc.appmod)
 
+            //  MOB - from here down needs to be done per request
+            //  MOB - what about reloading ejsrc
             if (config.cache.flat) {
                 if (!global.BaseController) {
                     global.load(appmod)
@@ -142,7 +145,8 @@ module ejs.web {
                 }
                 code += path.readString()
             }
-            request.log.debug(4, "Rebuild component: " + mod + " files: " + files)
+            //  MOB 4
+            request.log.debug(0, "Rebuild component: " + mod + " files: " + files)
             eval(code, mod)
         }
 
@@ -188,8 +192,10 @@ module ejs.web {
         @spec ejs
         @stability prototype
      */
-    function MvcApp(request: Request): Object
-        MvcBuilder(request)
+    function MvcApp(request: Request): Object {
+        let app = MvcBuilder(request)
+        return app(request)
+    }
 
 //  MOB -- update doc
     /** 
@@ -202,10 +208,12 @@ module ejs.web {
         @stability prototype
      */
     function MvcBuilder(request: Request): Function {
-        //  MOB OPT - Currently Mvc has no state so really don't need an Mvc instance
-        let mvc: Mvc = Mvc.apps[request.dir] || (Mvc.apps[request.dir] = new Mvc(request))
-        //  MOB -- rename to load?
-        mvc.init(request)
+        let mvc: Mvc
+        if ((mvc = Mvc.apps[request.dir]) == null) {
+            App.log.debug(2, "Load MVC application from \"" + request.dir + "\"")
+            // mvc = Mvc.apps[request.dir] = new Mvc(request)
+            mvc = new Mvc(request)
+        }
         let cname: String = request.params.controller + "Controller"
         //  MOB - rename app to be more unique
         return Controller.create(request, cname).app

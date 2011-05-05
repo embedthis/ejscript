@@ -1692,6 +1692,7 @@ static void genEndFunction(EcCompiler *cp, EcNode *np)
             ecEncodeOpcode(cp, EJS_OP_RETURN_VALUE);
         }
     }
+    cp->lastOpcode = 0;
     LEAVE(cp);
 }
 

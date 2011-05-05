@@ -985,7 +985,7 @@ static EjsObj *req_header(Ejs *ejs, EjsRequest *req, int argc, EjsObj **argv)
 /*  
     function off(name: [String|Array], listener: Function): Void
  */
-static EjsObj *req_off(Ejs *ejs, EjsRequest *req, int argc, EjsObj **argv)
+static EjsObj *req_off(Ejs *ejs, EjsRequest *req, int argc, EjsAny **argv)
 {
     ejsRemoveObserver(ejs, req->emitter, argv[0], argv[1]);
     return 0;
@@ -995,7 +995,7 @@ static EjsObj *req_off(Ejs *ejs, EjsRequest *req, int argc, EjsObj **argv)
 /*  
     function on(name: [String|Array], listener: Function): Void
  */
-static EjsObj *req_on(Ejs *ejs, EjsRequest *req, int argc, EjsObj **argv)
+static EjsObj *req_on(Ejs *ejs, EjsRequest *req, int argc, EjsAny **argv)
 {
     HttpConn    *conn;
     
@@ -1365,7 +1365,9 @@ static void manageRequest(EjsRequest *req, int flags)
         mprMark(req->server);
         mprMark(req->session);
         mprMark(req->uri);
+#if UNUSED
         mprMark(req->app);
+#endif
     }
 }
 

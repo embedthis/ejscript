@@ -104,17 +104,6 @@ static EjsObj *hs_limits(Ejs *ejs, EjsHttpServer *sp, int argc, EjsObj **argv)
 
 
 /*  
-    function on(name: [String|Array], observer: Function): Void
- */
-static EjsObj *hs_on(Ejs *ejs, EjsHttpServer *sp, int argc, EjsObj **argv)
-{
-    //  TODO -- should fire if currently readable / writable (also socket etc)
-    ejsAddObserver(ejs, &sp->emitter, argv[0], argv[1]);
-    return 0;
-}
-
-
-/*  
     function setLimits(limits: Object): Void
  */
 static EjsObj *hs_setLimits(Ejs *ejs, EjsHttpServer *sp, int argc, EjsObj **argv)
@@ -261,16 +250,25 @@ static EjsObj *hs_set_name(Ejs *ejs, EjsHttpServer *sp, int argc, EjsObj **argv)
 }
 
 
-#if ES_ejs_web_HttpServer_off
 /*  
     function off(name: [String|Array], observer: Function): Void
  */
-static EjsObj *hs_off(Ejs *ejs, EjsHttpServer *sp, int argc, EjsObj **argv)
+static EjsObj *hs_off(Ejs *ejs, EjsHttpServer *sp, int argc, EjsAny **argv)
 {
     ejsRemoveObserver(ejs, sp->emitter, argv[0], argv[1]);
     return 0;
 }
-#endif
+
+
+/*  
+    function on(name: [String|Array], observer: Function): Void
+ */
+static EjsObj *hs_on(Ejs *ejs, EjsHttpServer *sp, int argc, EjsAny **argv)
+{
+    //  TODO -- should fire if currently readable / writable (also socket etc)
+    ejsAddObserver(ejs, &sp->emitter, argv[0], argv[1]);
+    return 0;
+}
 
 
 /*  

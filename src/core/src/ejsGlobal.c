@@ -13,7 +13,7 @@
     Assert a condition is true.
     static function assert(condition: Boolean): Boolean
  */
-static EjsObj *g_assert(Ejs *ejs, EjsObj *vp, int argc, EjsObj **argv)
+static EjsBoolean *g_assert(Ejs *ejs, EjsObj *vp, int argc, EjsObj **argv)
 {
     EjsFrame        *fp;
     MprChar         *source;
@@ -21,7 +21,7 @@ static EjsObj *g_assert(Ejs *ejs, EjsObj *vp, int argc, EjsObj **argv)
 
     mprAssert(argc == 1);
 
-    if (! ejsIs(ejs, argv[0], Boolean)) {
+    if (!ejsIs(ejs, argv[0], Boolean)) {
         b = (EjsBoolean*) ejsCast(ejs, argv[0], Boolean);
     } else {
         b = (EjsBoolean*) argv[0];
@@ -37,7 +37,7 @@ static EjsObj *g_assert(Ejs *ejs, EjsObj *vp, int argc, EjsObj **argv)
         }
         return 0;
     }
-    return vp;
+    return S(true);
 }
 
 

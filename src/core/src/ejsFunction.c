@@ -153,7 +153,10 @@ static EjsObj *fun_applyFunction(Ejs *ejs, EjsFunction *fun, int argc, EjsObj **
     mprAssert(ejsIs(ejs, args, Array));
 
     save = fun->boundThis;
-    thisObj = (argv[0] == S(null)) ? fun->boundThis: argv[0];
+    thisObj = argv[0];
+    if (thisObj == S(null)) {
+        thisObj = fun->boundThis ? fun->boundThis : ejs->global;
+    }
     result =  ejsRunFunction(ejs, fun, thisObj, args->length, args->data);
     fun->boundThis = save;
     return result;
@@ -165,9 +168,12 @@ static EjsObj *fun_applyFunction(Ejs *ejs, EjsFunction *fun, int argc, EjsObj **
  */
 static EjsObj *fun_bindFunction(Ejs *ejs, EjsFunction *fun, int argc, EjsObj **argv)
 {
+    EjsAny      *thisObj;
+
     mprAssert(argc >= 1);
 
-    fun->boundThis = argv[0];
+    thisObj = argv[0];
+    fun->boundThis = ejsIsDefined(ejs, thisObj) ? thisObj : 0;
     if (argc == 2) {
         fun->boundArgs = (EjsArray*) argv[1];
         mprAssert(ejsIs(ejs, fun->boundArgs, Array));
@@ -177,11 +183,11 @@ static EjsObj *fun_bindFunction(Ejs *ejs, EjsFunction *fun, int argc, EjsObj **a
 
 
 /*
-    function bound(): Function
+    function get bound(): Object
  */
-static EjsObj *fun_bound(Ejs *ejs, EjsFunction *fun, int argc, EjsObj **argv)
+static EjsAny *fun_bound(Ejs *ejs, EjsFunction *fun, int argc, EjsObj **argv)
 {
-    return fun->boundThis;
+    return fun->boundThis ? fun->boundThis : S(undefined);
 }
 
 
@@ -500,7 +506,6 @@ int ejsInitFunction(Ejs *ejs, EjsFunction *fun, EjsString *name, cuchar *byteCod
     }
     fun->name = name;
     setFunctionAttributes(fun, attributes);
-    mprSetName(fun, "function");
     return 0;
 }
 

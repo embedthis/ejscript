@@ -85,7 +85,6 @@ module ejs.web {
                 suffix.
          */
         static function create(request: Request, cname: String = null): Controller {
-printHash("CREATE CONTROLLER INSTANCE request ", request)
             request.params.controller = request.params.controller.toPascal()
             cname ||= (request.params.controller + "Controller")
             _initRequest = request
@@ -96,8 +95,7 @@ printHash("CREATE CONTROLLER INSTANCE request ", request)
         }
 
         /** 
-            Create and initialize a controller. This may be called directly or via 
-            the Controller.create factory method.
+            Create and initialize a controller. This may be called directly or via the Controller.create factory method.
             @param req Web request object
          */
         function Controller(req: Request = null) {
@@ -143,44 +141,32 @@ printHash("CREATE CONTROLLER INSTANCE request ", request)
             @return A response object hash {status, headers, body} or null if writing directly using the request object.
          */
         function app(request: Request, aname: String = null): Object {
-print("11 IN CONTROLLER APP")
             let ns = params.namespace || "action"
             actionName ||= aname || params.action || "index"
             params.action = actionName
-print("AA")
             runCheckers(_beforeCheckers)
             let response
-print("BB")
             if (!request.finalized && request.autoFinalizing) {
-print("CC")
                 if (!(ns)::[actionName]) {
                     if (!viewExists(actionName)) {
                         response = "action"::missing()
                     }
                 } else {
                     App.log.debug(3, "Run action " + actionName)
-print("C1 " + actionName)
                     response = (ns)::[actionName]()
-print("C2")
                 }
-print("C3")
                 if (response && !response.body) {
                     throw "Response object is missing a \"body\""
                 }
-print("C4")
-breakpoint()
                 if (!response && !request.responded && request.autoFinalizing) {
                     /* Run a default view */
-print("C5")
                     writeView()
                 }
             }
-print("DD")
             runCheckers(_afterCheckers)
             if (!response) {
                 request.autoFinalize()
             }
-print("LEAVING CONTROLLER APP")
             return response
         }
 
@@ -353,9 +339,8 @@ print("LEAVING CONTROLLER APP")
             if (options.layout === undefined) {
                 options.layout = Path(config.directories.layouts).join(config.web.view.layout)
             }
-            let app = TemplateBuilder(request, options)
             log.debug(4, "writePartialTemplate: \"" + path + "\"")
-            Web.process(app, request, false)
+            Web.process(TemplateBuilder(request, options), request, false)
         }
 
         /** 
@@ -384,7 +369,6 @@ print("LEAVING CONTROLLER APP")
             @option layout Optional layout template. Defaults to config.directories.layouts/default.ejs.
          */
         function writeTemplate(path: Path, options: Object = {}): Void {
-print("\n\nWRITE TEMPLATE " + path)
             log.debug(4, "writeTemplate: \"" + path + "\"")
             let saveFilename = request.filename
             request.filename = path
@@ -392,10 +376,7 @@ print("\n\nWRITE TEMPLATE " + path)
             if (options.layout === undefined) {
                 options.layout = config.directories.layouts.join(config.web.view.layout)
             }
-            let app = TemplateBuilder(request, options)
-print(">>>>>>>>>> app" + app)
-            Web.process(app, request, false)
-print("<<<<<<<<<<")
+            Web.process(TemplateBuilder(request, options), request, false)
             request.filename = saveFilename
         }
 
@@ -413,8 +394,7 @@ print("<<<<<<<<<<")
                 options.layout = config.directories.layouts.join(config.web.view.layout)
             }
             options.literal = page
-            let app = TemplateBuilder(request, options)
-            Web.process(app, request, false)
+            Web.process(TemplateBuilder(request, options), request, false)
         }
 
         /**************************************** Private ******************************************/

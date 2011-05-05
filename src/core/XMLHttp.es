@@ -185,10 +185,10 @@ module ejs {
          */
         private function notify() {
             if (onreadystatechange) {
-                if (onreadystatechange.bound == global) {
-                    onreadystatechange.call(this, this)
-                } else {
+                if (onreadystatechange.bound) {
                     onreadystatechange(this)
+                } else {
+                    onreadystatechange.call(this, this)
                 }
             }
         }

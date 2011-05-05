@@ -120,10 +120,18 @@ EjsFrame *ejsCreateFrame(Ejs *ejs, EjsFunction *fun, EjsObj *thisObj, int argc, 
     frame->function.throwNulls = fun->throwNulls;
 
     frame->function.boundArgs = fun->boundArgs;
-    frame->function.boundThis = fun->boundThis;
+
+    //  MOB thisObj is always set
+    mprAssert(thisObj);
     if (thisObj) {
         frame->function.boundThis = thisObj;
+    } else if (fun->boundThis) {
+        mprAssert(fun->boundThis != ejs->global);
+        frame->function.boundThis = fun->boundThis;
+    } else {
+        frame->function.boundThis = ejs->global;
     }
+    
     frame->function.resultType = fun->resultType;
     frame->function.body = fun->body;
     frame->pc = fun->body.code->byteCode;
@@ -139,7 +147,8 @@ EjsFrame *ejsCreateFrame(Ejs *ejs, EjsFunction *fun, EjsObj *thisObj, int argc, 
             frame->function.block.pot.properties->slots[i].value.ref = argv[i];
         }
     }
-    mprCopyName(frame, fun);
+    //  UNICODE
+    mprSetName(frame, fun->name->value);
     return frame;
 }
 

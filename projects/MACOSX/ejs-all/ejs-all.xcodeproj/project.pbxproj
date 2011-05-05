@@ -66,7 +66,6 @@
 				C9E750B410A367E1004E03DD /* PBXTargetDependency */,
 				C99A33D210C2F15E00F6C7BC /* PBXTargetDependency */,
 				C9C24D88136CF5530000C111 /* PBXTargetDependency */,
-				C9C24D90136CF6D60000C111 /* PBXTargetDependency */,
 			);
 			name = All;
 			productName = Untitled;
@@ -93,17 +92,6 @@
 			);
 			name = ejspage;
 			productName = ejsweb;
-		};
-		C9C24D8A136CF5D70000C111 /* clean */ = {
-			isa = PBXAggregateTarget;
-			buildConfigurationList = C9C24D8B136CF5D70000C111 /* Build configuration list for PBXAggregateTarget "clean" */;
-			buildPhases = (
-				C9C24D8E136CF5F00000C111 /* ShellScript */,
-			);
-			dependencies = (
-			);
-			name = clean;
-			productName = clean;
 		};
 /* End PBXAggregateTarget section */
 
@@ -448,13 +436,6 @@
 			proxyType = 1;
 			remoteGlobalIDString = C903098610A366F0003FF2AB;
 			remoteInfo = jem;
-		};
-		C9C24D8F136CF6D60000C111 /* PBXContainerItemProxy */ = {
-			isa = PBXContainerItemProxy;
-			containerPortal = C97623C10FD06EC4009C78E1 /* Project object */;
-			proxyType = 1;
-			remoteGlobalIDString = C9C24D8A136CF5D70000C111;
-			remoteInfo = clean;
 		};
 		C9C59E7510A34BF5002D7049 /* PBXContainerItemProxy */ = {
 			isa = PBXContainerItemProxy;
@@ -1238,9 +1219,9 @@
 		C97624240FD06F8B009C78E1 /* compiler */ = {
 			isa = PBXGroup;
 			children = (
-				C919245A129601190045B8A0 /* ecCompiler.c */,
 				C97624260FD06F8B009C78E1 /* ecAst.c */,
 				C97624270FD06F8B009C78E1 /* ecCodeGen.c */,
+				C919245A129601190045B8A0 /* ecCompiler.c */,
 				C97624280FD06F8B009C78E1 /* ecLex.c */,
 				C97624290FD06F8B009C78E1 /* ecModuleWrite.c */,
 				C976242A0FD06F8B009C78E1 /* ecParser.c */,
@@ -1724,7 +1705,6 @@
 				C903098210A366CA003FF2AB /* ejsmvc */,
 				C99A33CA10C2F14000F6C7BC /* ejspage */,
 				C903098610A366F0003FF2AB /* jem */,
-				C9C24D8A136CF5D70000C111 /* clean */,
 			);
 		};
 /* End PBXProject section */
@@ -1885,19 +1865,6 @@
 			runOnlyForDeploymentPostprocessing = 0;
 			shellPath = /bin/sh;
 			shellScript = "# shell script goes here\nexit 0";
-		};
-		C9C24D8E136CF5F00000C111 /* ShellScript */ = {
-			isa = PBXShellScriptBuildPhase;
-			buildActionMask = 2147483647;
-			files = (
-			);
-			inputPaths = (
-			);
-			outputPaths = (
-			);
-			runOnlyForDeploymentPostprocessing = 0;
-			shellPath = /bin/sh;
-			shellScript = "echo ACTION $ACTION\nls $BUILT_PRODUCTS_DIR";
 		};
 /* End PBXShellScriptBuildPhase section */
 
@@ -2230,11 +2197,6 @@
 			isa = PBXTargetDependency;
 			target = C903098610A366F0003FF2AB /* jem */;
 			targetProxy = C9C24D87136CF5530000C111 /* PBXContainerItemProxy */;
-		};
-		C9C24D90136CF6D60000C111 /* PBXTargetDependency */ = {
-			isa = PBXTargetDependency;
-			target = C9C24D8A136CF5D70000C111 /* clean */;
-			targetProxy = C9C24D8F136CF6D60000C111 /* PBXContainerItemProxy */;
 		};
 		C9C59E7610A34BF5002D7049 /* PBXTargetDependency */ = {
 			isa = PBXTargetDependency;
@@ -2993,20 +2955,6 @@
 			};
 			name = Release;
 		};
-		C9C24D8C136CF5D70000C111 /* Debug */ = {
-			isa = XCBuildConfiguration;
-			buildSettings = {
-				PRODUCT_NAME = "$(TARGET_NAME)";
-			};
-			name = Debug;
-		};
-		C9C24D8D136CF5D70000C111 /* Release */ = {
-			isa = XCBuildConfiguration;
-			buildSettings = {
-				PRODUCT_NAME = "$(TARGET_NAME)";
-			};
-			name = Release;
-		};
 		C9D4528911ECDA4400F029C8 /* Debug */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
@@ -3207,15 +3155,6 @@
 			buildConfigurations = (
 				C99A33CF10C2F14000F6C7BC /* Debug */,
 				C99A33D010C2F14000F6C7BC /* Release */,
-			);
-			defaultConfigurationIsVisible = 0;
-			defaultConfigurationName = Release;
-		};
-		C9C24D8B136CF5D70000C111 /* Build configuration list for PBXAggregateTarget "clean" */ = {
-			isa = XCConfigurationList;
-			buildConfigurations = (
-				C9C24D8C136CF5D70000C111 /* Debug */,
-				C9C24D8D136CF5D70000C111 /* Release */,
 			);
 			defaultConfigurationIsVisible = 0;
 			defaultConfigurationName = Release;

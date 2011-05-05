@@ -40,7 +40,7 @@ $(EJS_MOD): $(EJS_FILES)
 	if [ "$$changed" = 1 -a "$(RETRY)" = "" ] ; then \
 		echo ; \
 		$(call log) [Notice] "Rebuild with Modified Slot Definitions" ; \
-		$(MAKE) TRACE=$(TRACE) RETRY=1 $(MAKECMDGOALS) ; \
+		$(MAKE) TRACE=$(TRACE) RETRY=1 $(MAKECMDGOALS) || exit 255 ; \
 	fi
 
 #
