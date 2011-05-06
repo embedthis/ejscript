@@ -280,20 +280,20 @@ void ejsConfigureAppType(Ejs *ejs)
     ejsSetProperty(ejs, type, ES_App__outputStream, ejsCreateFileFromFd(ejs, 1, "stdout", O_WRONLY));
     ejsSetProperty(ejs, type, ES_App__errorStream, ejsCreateFileFromFd(ejs, 2, "stderr", O_WRONLY));
 
-    ejsBindMethod(ejs, type, ES_App_args, (EjsProc) app_args);
-    ejsBindMethod(ejs, type, ES_App_createSearch, (EjsProc) app_createSearch);
-    ejsBindMethod(ejs, type, ES_App_dir, (EjsProc) app_dir);
-    ejsBindMethod(ejs, type, ES_App_chdir, (EjsProc) app_chdir);
-    ejsBindMethod(ejs, type, ES_App_exeDir, (EjsProc) app_exeDir);
-    ejsBindMethod(ejs, type, ES_App_exePath, (EjsProc) app_exePath);
-    ejsBindMethod(ejs, type, ES_App_env, (EjsProc) app_env);
-    ejsBindMethod(ejs, type, ES_App_exit, (EjsProc) app_exit);
-    ejsBindMethod(ejs, type, ES_App_getenv, (EjsProc) app_getenv);
-    ejsBindMethod(ejs, type, ES_App_putenv, (EjsProc) app_putenv);
-    ejsBindMethod(ejs, type, ES_App_pid, (EjsProc) app_pid);
-    ejsBindMethod(ejs, type, ES_App_run, (EjsProc) app_run);
-    ejsBindAccess(ejs, type, ES_App_search, (EjsProc) app_search, (EjsProc) app_set_search);
-    ejsBindMethod(ejs, type, ES_App_sleep, (EjsProc) app_sleep);
+    ejsBindMethod(ejs, type, ES_App_args, app_args);
+    ejsBindMethod(ejs, type, ES_App_createSearch, app_createSearch);
+    ejsBindMethod(ejs, type, ES_App_dir, app_dir);
+    ejsBindMethod(ejs, type, ES_App_chdir, app_chdir);
+    ejsBindMethod(ejs, type, ES_App_exeDir, app_exeDir);
+    ejsBindMethod(ejs, type, ES_App_exePath, app_exePath);
+    ejsBindMethod(ejs, type, ES_App_env, app_env);
+    ejsBindMethod(ejs, type, ES_App_exit, app_exit);
+    ejsBindMethod(ejs, type, ES_App_getenv, app_getenv);
+    ejsBindMethod(ejs, type, ES_App_putenv, app_putenv);
+    ejsBindMethod(ejs, type, ES_App_pid, app_pid);
+    ejsBindMethod(ejs, type, ES_App_run, app_run);
+    ejsBindAccess(ejs, type, ES_App_search, app_search, app_set_search);
+    ejsBindMethod(ejs, type, ES_App_sleep, app_sleep);
 }
 
 

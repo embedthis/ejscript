@@ -171,7 +171,7 @@ static EjsObj *nextXmlKey(Ejs *ejs, EjsIterator *ip, int argc, EjsObj **argv)
  */
 static EjsObj *getXmlIterator(Ejs *ejs, EjsObj *xml, int argc, EjsObj **argv)
 {
-    return (EjsObj*) ejsCreateIterator(ejs, xml, (EjsProc) nextXmlKey, 0, NULL);
+    return (EjsObj*) ejsCreateIterator(ejs, xml, nextXmlKey, 0, NULL);
 }
 
 
@@ -209,7 +209,7 @@ static EjsObj *nextXmlValue(Ejs *ejs, EjsIterator *ip, int argc, EjsObj **argv)
  */
 static EjsObj *getXmlValues(Ejs *ejs, EjsObj *ap, int argc, EjsObj **argv)
 {
-    return (EjsObj*) ejsCreateIterator(ejs, ap, (EjsProc) nextXmlValue, 0, NULL);
+    return (EjsObj*) ejsCreateIterator(ejs, ap, nextXmlValue, 0, NULL);
 }
 
 
@@ -1100,19 +1100,19 @@ void ejsConfigureXMLType(Ejs *ejs)
     type->mutableInstances = 1;
     prototype = type->prototype;
 
-    ejsBindConstructor(ejs, type, (EjsProc) xmlConstructor);
-    ejsBindMethod(ejs, prototype, ES_XML_length, (EjsProc) xmlLength);
-    ejsBindMethod(ejs, prototype, ES_XML_load, (EjsProc) loadXml);
-    ejsBindMethod(ejs, prototype, ES_XML_save, (EjsProc) saveXml);
-    ejsBindMethod(ejs, prototype, ES_XML_name, (EjsProc) getXmlNodeName);
+    ejsBindConstructor(ejs, type, xmlConstructor);
+    ejsBindMethod(ejs, prototype, ES_XML_length, xmlLength);
+    ejsBindMethod(ejs, prototype, ES_XML_load, loadXml);
+    ejsBindMethod(ejs, prototype, ES_XML_save, saveXml);
+    ejsBindMethod(ejs, prototype, ES_XML_name, getXmlNodeName);
 
     ejsBindMethod(ejs, prototype, ES_XML_parent, (EjsNativeFunction) xml_parent);
 
     /*
         Override these methods
      */
-    ejsBindMethod(ejs, prototype, ES_XML_toString, (EjsProc) xmlToString);
-    ejsBindMethod(ejs, prototype, ES_XML_toJSON, (EjsProc) xmlToJson);
+    ejsBindMethod(ejs, prototype, ES_XML_toString, xmlToString);
+    ejsBindMethod(ejs, prototype, ES_XML_toJSON, xmlToJson);
     ejsBindMethod(ejs, prototype, ES_XML_iterator_get, getXmlIterator);
     ejsBindMethod(ejs, prototype, ES_XML_iterator_getValues, getXmlValues);
 #if FUTURE

@@ -353,7 +353,7 @@ static EjsString *toPrecision(Ejs *ejs, EjsNumber *np, int argc, EjsObj **argv)
  */
 static EjsIterator *getNumberIterator(Ejs *ejs, EjsObj *np, int argc, EjsObj **argv)
 {
-    return ejsCreateIterator(ejs, np, (EjsProc) nextNumber, 0, NULL);
+    return ejsCreateIterator(ejs, np, nextNumber, 0, NULL);
 }
 
 

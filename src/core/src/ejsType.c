@@ -67,7 +67,6 @@ static EjsType *cloneTypeVar(Ejs *ejs, EjsType *src, bool deep)
     dest->sid = src->sid;
     dest->typeData = src->typeData;
     dest->virtualSlots = src->virtualSlots;
-    dest->ejs = ejs;
 
     return dest;
 }
@@ -111,7 +110,6 @@ static EjsType *createTypeVar(Ejs *ejs, EjsType *typeType, int numProp)
     }
     mprSetManager(type, manageType);
     mprInitList(&type->constructor.block.namespaces);
-    type->ejs = ejs;
     obj = (EjsPot*) type;
     SET_TYPE(obj, typeType);
     SET_DYNAMIC(obj, dynamic);
@@ -170,7 +168,6 @@ static void createBootType(Ejs *ejs, int sid, int size, int dynamic, void *manag
     type->instanceSize = size;
     type->dynamicInstances = dynamic;
     type->manager = manager;
-    type->ejs = ejs;
     ejsSetSpecial(ejs, sid, type);
 }
 

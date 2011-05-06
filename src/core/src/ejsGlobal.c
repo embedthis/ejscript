@@ -323,7 +323,7 @@ void ejsConfigureGlobalBlock(Ejs *ejs)
     mprAssert(block);
     
     ejsBindFunction(ejs, block, ES_assert, g_assert);
-    ejsBindFunction(ejs, block, ES_cloneBase, (EjsProc) g_cloneBase);
+    ejsBindFunction(ejs, block, ES_cloneBase, g_cloneBase);
     ejsBindFunction(ejs, block, ES_eval, g_eval);
     ejsBindFunction(ejs, block, ES_hashcode, g_hashcode);
     ejsBindFunction(ejs, block, ES_load, g_load);

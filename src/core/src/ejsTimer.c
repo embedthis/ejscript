@@ -26,6 +26,7 @@ static EjsTimer *timer_constructor(Ejs *ejs, EjsTimer *tp, int argc, EjsObj **ar
     tp->args = (EjsArray*) argv[2];
     tp->repeat = 0;
     tp->drift = 1;
+    tp->ejs = ejs;
     return tp;
 }
 
@@ -127,7 +128,7 @@ static int timerCallback(EjsTimer *tp, MprEvent *e)
     mprAssert(tp->args);
     mprAssert(tp->callback);
 
-    ejs = TYPE(tp)->ejs;
+    ejs = tp->ejs;
     thisObj = (tp->callback->boundThis) ? tp->callback->boundThis : tp;
     ejsRunFunction(ejs, tp->callback, thisObj, tp->args->length, tp->args->data);
     if (ejs->exception) {
@@ -144,7 +145,6 @@ static int timerCallback(EjsTimer *tp, MprEvent *e)
         mprRemoveRoot(tp);
         tp->event = 0;
         tp->ejs = 0;
-    } else {
     }
     return 0;
 }
@@ -218,14 +218,14 @@ void ejsConfigureTimerType(Ejs *ejs)
     ejsCloneObjHelpers(ejs, type);
 
     prototype = type->prototype;
-    ejsBindConstructor(ejs, type, (EjsProc) timer_constructor);
-    ejsBindMethod(ejs, prototype, ES_Timer_start, (EjsProc) timer_start);
-    ejsBindMethod(ejs, prototype, ES_Timer_stop, (EjsProc) timer_stop);
+    ejsBindConstructor(ejs, type, timer_constructor);
+    ejsBindMethod(ejs, prototype, ES_Timer_start, timer_start);
+    ejsBindMethod(ejs, prototype, ES_Timer_stop, timer_stop);
 
-    ejsBindAccess(ejs, prototype, ES_Timer_drift, (EjsProc) timer_get_drift, (EjsProc) timer_set_drift);
-    ejsBindAccess(ejs, prototype, ES_Timer_period, (EjsProc) timer_get_period, (EjsProc) timer_set_period);
-    ejsBindAccess(ejs, prototype, ES_Timer_onerror, (EjsProc) timer_get_onerror, (EjsProc) timer_set_onerror);
-    ejsBindAccess(ejs, prototype, ES_Timer_repeat, (EjsProc) timer_get_repeat, (EjsProc) timer_set_repeat);
+    ejsBindAccess(ejs, prototype, ES_Timer_drift, timer_get_drift, timer_set_drift);
+    ejsBindAccess(ejs, prototype, ES_Timer_period, timer_get_period, timer_set_period);
+    ejsBindAccess(ejs, prototype, ES_Timer_onerror, timer_get_onerror, timer_set_onerror);
+    ejsBindAccess(ejs, prototype, ES_Timer_repeat, timer_get_repeat, timer_set_repeat);
 }
 
 /*

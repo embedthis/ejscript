@@ -438,6 +438,7 @@ static int doMessage(Message *msg, MprEvent *mprEvent)
     worker = msg->worker;
     worker->gotMessage = 1;
     ejs = worker->ejs;
+    mprAssert(!ejs->exception);
     event = 0;
     ejsFreeze(ejs, 1);
 
@@ -623,7 +624,7 @@ static EjsObj *workerPostMessage(Ejs *ejs, EjsWorker *worker, int argc, EjsObj *
     msg->callbackSlot = ES_Worker_onmessage;
 
     dispatcher = target->ejs->dispatcher;
-    mprCreateEvent(dispatcher, "postMessage", 0, (MprEventProc) doMessage, msg, 0);
+    mprCreateEvent(dispatcher, "postMessage", 0, doMessage, msg, 0);
     return 0;
 }
 
@@ -835,18 +836,18 @@ void ejsConfigureWorkerType(Ejs *ejs)
     ejsSetSpecialType(ejs, S_Worker, type);
     prototype = type->prototype;
 
-    ejsBindConstructor(ejs, type, (EjsProc) workerConstructor);
-    ejsBindMethod(ejs, type, ES_Worker_exit, (EjsProc) workerExit);
-    ejsBindMethod(ejs, type, ES_Worker_join, (EjsProc) workerJoin);
-    ejsBindMethod(ejs, type, ES_Worker_lookup, (EjsProc) workerLookup);
+    ejsBindConstructor(ejs, type, workerConstructor);
+    ejsBindMethod(ejs, type, ES_Worker_exit, workerExit);
+    ejsBindMethod(ejs, type, ES_Worker_join, workerJoin);
+    ejsBindMethod(ejs, type, ES_Worker_lookup, workerLookup);
 
-    ejsBindMethod(ejs, prototype, ES_Worker_eval, (EjsProc) workerEval);
-    ejsBindMethod(ejs, prototype, ES_Worker_load, (EjsProc) workerLoad);
-    ejsBindMethod(ejs, prototype, ES_Worker_preload, (EjsProc) workerPreload);
-    ejsBindMethod(ejs, prototype, ES_Worker_preeval, (EjsProc) workerPreeval);
-    ejsBindMethod(ejs, prototype, ES_Worker_postMessage, (EjsProc) workerPostMessage);
-    ejsBindMethod(ejs, prototype, ES_Worker_terminate, (EjsProc) workerTerminate);
-    ejsBindMethod(ejs, prototype, ES_Worker_waitForMessage, (EjsProc) workerWaitForMessage);
+    ejsBindMethod(ejs, prototype, ES_Worker_eval, workerEval);
+    ejsBindMethod(ejs, prototype, ES_Worker_load, workerLoad);
+    ejsBindMethod(ejs, prototype, ES_Worker_preload, workerPreload);
+    ejsBindMethod(ejs, prototype, ES_Worker_preeval, workerPreeval);
+    ejsBindMethod(ejs, prototype, ES_Worker_postMessage, workerPostMessage);
+    ejsBindMethod(ejs, prototype, ES_Worker_terminate, workerTerminate);
+    ejsBindMethod(ejs, prototype, ES_Worker_waitForMessage, workerWaitForMessage);
 
     ejsSetSpecial(ejs, S_Event, ejsGetTypeByName(ejs, N("ejs", "Event")));
     ejsSetSpecial(ejs, S_ErrorEvent, ejsGetTypeByName(ejs, N("ejs", "ErrorEvent")));

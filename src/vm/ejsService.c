@@ -40,6 +40,7 @@ static EjsService *createService()
     sp->nativeModules = mprCreateHash(-1, MPR_HASH_STATIC_KEYS);
     sp->mutex = mprCreateLock();
     sp->vmlist = mprCreateList(-1, MPR_LIST_STATIC_VALUES);
+    sp->vmpool = mprCreateList(-1, MPR_LIST_STATIC_VALUES);
     sp->intern = ejsCreateIntern(sp);
     ejsInitCompiler(sp);
     return sp;
@@ -52,6 +53,7 @@ static void manageEjsService(EjsService *sp, int flags)
         mprMark(sp->http);
         mprMark(sp->mutex);
         mprMark(sp->vmlist);
+        mprMark(sp->vmpool);
         mprMark(sp->nativeModules);
         mprMark(sp->intern);
         mprMark(sp->foundation);
@@ -62,7 +64,15 @@ static void manageEjsService(EjsService *sp, int flags)
     }
 }
 
+#if FUTURE
+//  MOB - add flag to suppress loading ejs.mod
+Ejs *ejsCreateVM(cchar *search, int argc, cchar **argv, int flags)
+Ejs *ejsCloneVM(Ejs *ejs)
+void ejsSetDispatcher(Ejs *ejs, MprDispatcher *dispatcher);
+int ejsLoadModules(Ejs *ejs, MprList *require);
+#endif
 
+//  MOB - refactor args
 Ejs *ejsCreateVM(Ejs *master, MprDispatcher *dispatcher, cchar *search, MprList *require, int argc, cchar **argv, int flags)
 {
     EjsService  *sp;
@@ -106,30 +116,22 @@ Ejs *ejsCreateVM(Ejs *master, MprDispatcher *dispatcher, cchar *search, MprList 
         ejs->dispatcher = dispatcher;
     }
     unlock(sp);
-        
-#if UNUSED
-    if ((ejs->bootSearch = search) == 0) {
-        ejs->bootSearch = getenv("EJSPATH");
-    }
-#endif
 
     if (ejsInitStack(ejs) < 0) {
-        ejsDestroy(ejs);
+        ejsDestroyVM(ejs);
         mprRemoveRoot(ejs);
         return 0;
     }
     ejs->state->frozen = 1;
 
-    if (master) {
-        if (cloneVM(ejs, master) < 0) {
-            return 0;
-        }
+    if (master && cloneVM(ejs, master) < 0) {
+        return 0;
     } else {
         if (defineTypes(ejs) < 0 || loadStandardModules(ejs, require) < 0) {
             if (ejs->exception) {
                 ejsReportError(ejs, "Can't initialize interpreter");
             }
-            ejsDestroy(ejs);
+            ejsDestroyVM(ejs);
             mprRemoveRoot(ejs);
             return 0;
         }
@@ -137,7 +139,7 @@ Ejs *ejsCreateVM(Ejs *master, MprDispatcher *dispatcher, cchar *search, MprList 
     }
     if (mprHasMemError(ejs)) {
         mprError("Memory allocation error during initialization");
-        ejsDestroy(ejs);
+        ejsDestroyVM(ejs);
         mprRemoveRoot(ejs);
         return 0;
     }
@@ -147,78 +149,12 @@ Ejs *ejsCreateVM(Ejs *master, MprDispatcher *dispatcher, cchar *search, MprList 
 #if DEBUG_IDE
     mprLog(5, "CREATE %s, length %d", ejs->name, sp->vmlist->length);
 #endif
+    mprAssert(!ejs->exception);
     return ejs;
 }
 
 
-#if UNUSED
-static int isMutable(Ejs *ejs, EjsPot *obj)
-{
-    int     i;
-
-    if (!DYNAMIC(obj)) {
-        return 0;
-    }
-    if (TYPE(obj)->immutable) {
-        return 0;
-    }
-    if (ejsIsType(ejs, obj)) {
-        for (i = ejsGetPropertyCount(ejs, obj) - 1; i >= 0; i--) {
-            if (!ejsIsFunction(ejs, ejsGetProperty(ejs, obj, i))) {
-                return 0;
-            }
-        }
-        return 1;
-    }
-    return 0;
-}
-
-
-/*
-    MOB - this could become the regular clone routine
- */
-static EjsAny *clone(Ejs *ejs, EjsAny *src)
-{
-    EjsType     *type;
-    EjsPot      *dest;
-    EjsAny      *value;
-    EjsTrait    *traits;
-    int         i;
-    
-    if (src == 0) {
-        return 0;
-    }
-    mprAssert(TYPE(src)->helpers.clone);
-    if (VISITED(src)) {
-        return src;
-    }
-    SET_VISITED(src, 1);
-
-    dest = (TYPE(src)->helpers.clone)(ejs, src, 0);
-    for (i = ejsGetPropertyCount(ejs, src) - 1; i >= 0; i--) {
-        value = ejsGetProperty(ejs, src, i);
-        if (ejsIsDefined(ejs, src)) {
-            if (isMutable(ejs, value)) {
-                ejsSetProperty(ejs, dest, i, clone(ejs, value));
-            }
-            if ((traits = ejsGetPropertyTraits(ejs, src, i)) != 0) {
-                if (isMutable(ejs, (EjsAny*) traits->type)) {
-                    if ((type = ejsGetPropertyByName(ejs, ejs->global, traits->type->qname)) != 0) {
-                        ejsSetPropertyTraits(ejs, dest, i, type, traits->attributes);
-                    }
-                }
-            }
-        }
-    }
-    mprCopyName(dest, src);
-    SET_VISITED(src, 0);
-    SET_VISITED(dest, 0);
-    return dest;
-}
-#endif
-
-
-void ejsDestroy(Ejs *ejs)
+void ejsDestroyVM(Ejs *ejs)
 {
     EjsService  *sp;
     EjsState    *state;
@@ -260,9 +196,6 @@ static void manageEjs(Ejs *ejs, int flags)
 #endif
         mprMark(ejs->global);
         mprMark(ejs->name);
-#if UNUSED
-        mprMark(ejs->applications);
-#endif
         mprMark(ejs->doc);
         mprMark(ejs->errorMsg);
         mprMark(ejs->exception);
@@ -299,7 +232,7 @@ static void manageEjs(Ejs *ejs, int flags)
         markValues(ejs);
 
     } else if (flags & MPR_MANAGE_FREE) {
-        ejsDestroy(ejs);
+        ejsDestroyVM(ejs);
     }
 }
 
@@ -342,20 +275,22 @@ static void cloneTypes(Ejs *ejs)
     if (master) {
         ejs->values[S_Iterator] = master->values[S_Iterator];
         ejs->values[S_StopIteration] = master->values[S_StopIteration];
-#if UNUSED
-        ejs->values[S_String] = ejs->master->values[S_String];
-        ejs->values[S_Type] = ejs->master->values[S_Type];
-        ejs->values[S_Object] = ejs->master->values[S_Object];
-#endif
     }
 }
 
 
 static int cloneVM(Ejs *ejs, Ejs *master)
 {
-    int     i;
+    EjsAny      *vp;
+    int         i;
 
     for (i = 0; i < EJS_MAX_SPECIAL; i++) {
+        vp = master->values[i];
+        if (vp == 0) {
+            continue;
+        }
+        mprAssert(!((ejsIsType(ejs, vp) && ((EjsType*) vp)->mutable) || 
+                (!ejsIsType(ejs, vp) && TYPE(vp)->mutableInstances)));
         ejs->values[i] = master->values[i];
     }
     ejs->global = master->global;
@@ -470,10 +405,6 @@ static int configureEjs(Ejs *ejs)
     ejsConfigureXMLListType(ejs);
 
     ejsDefineConfigProperties(ejs);
-
-#if UNUSED
-    initSearchPath(ejs);
-#endif
     ejs->initialized = 1;
     return 0;
 }

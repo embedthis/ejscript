@@ -887,7 +887,7 @@ void ejsConfigureObjectType(Ejs *ejs)
     ejsBindMethod(ejs, type, ES_Object_isFrozen, obj_isFrozen);
     ejsBindMethod(ejs, type, ES_Object_isSealed, obj_isSealed);
     ejsBindMethod(ejs, type, ES_Object_preventExtensions, obj_preventExtensions);
-    ejsBindAccess(ejs, type, ES_Object_prototype, (EjsProc) obj_prototype, obj_set_prototype);
+    ejsBindAccess(ejs, type, ES_Object_prototype, obj_prototype, obj_set_prototype);
     ejsBindMethod(ejs, type, ES_Object_seal, obj_seal);
 
     /* Reflection */
@@ -898,7 +898,7 @@ void ejsConfigureObjectType(Ejs *ejs)
     ejsBindMethod(ejs, type, ES_Object_isPrototype, obj_isPrototype);
     ejsBindMethod(ejs, type, ES_Object_isType, obj_isType);
 
-    ejsBindMethod(ejs, prototype, ES_Object_constructor, (EjsProc) obj_constructor);
+    ejsBindMethod(ejs, prototype, ES_Object_constructor, obj_constructor);
     ejsBindMethod(ejs, prototype, ES_Object_clone, obj_clone);
     ejsBindMethod(ejs, prototype, ES_Object_iterator_get, obj_get);
     ejsBindMethod(ejs, prototype, ES_Object_iterator_getValues, obj_getValues);
@@ -909,7 +909,7 @@ void ejsConfigureObjectType(Ejs *ejs)
     ejsBindMethod(ejs, prototype, ES_Object_toString, ejsObjToString);
     ejsBindMethod(ejs, prototype, ES_Object_toJSON, ejsObjToJSON);
 
-    ejsBindFunction(ejs, ejs->global, ES_typeOf, (EjsProc) obj_typeOf);
+    ejsBindFunction(ejs, ejs->global, ES_typeOf, obj_typeOf);
 
     /*
         The prototype method is special. It is declared as static so it is generated in the type slots, but it is

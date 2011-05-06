@@ -1389,24 +1389,24 @@ void ejsConfigureRequestType(Ejs *ejs)
     helpers->setProperty = (EjsSetPropertyHelper) setRequestProperty;
 
     prototype = type->prototype;
-    ejsBindAccess(ejs, prototype, ES_ejs_web_Request_async, (EjsProc) req_async, (EjsProc) req_set_async);
-    ejsBindMethod(ejs, prototype, ES_ejs_web_Request_autoFinalize, (EjsProc) req_autoFinalize);
-    ejsBindMethod(ejs, prototype, ES_ejs_web_Request_close, (EjsProc) req_close);
-    ejsBindMethod(ejs, prototype, ES_ejs_web_Request_destroySession, (EjsProc) req_destroySession);
-    ejsBindMethod(ejs, prototype, ES_ejs_web_Request_dontAutoFinalize, (EjsProc) req_dontAutoFinalize);
-    ejsBindMethod(ejs, prototype, ES_ejs_web_Request_finalize, (EjsProc) req_finalize);
-    ejsBindMethod(ejs, prototype, ES_ejs_web_Request_finalized, (EjsProc) req_finalized);
-    ejsBindMethod(ejs, prototype, ES_ejs_web_Request_flush, (EjsProc) req_flush);
-    ejsBindMethod(ejs, prototype, ES_ejs_web_Request_header, (EjsProc) req_header);
-    ejsBindMethod(ejs, prototype, ES_ejs_web_Request_off, (EjsProc) req_off);
-    ejsBindMethod(ejs, prototype, ES_ejs_web_Request_on, (EjsProc) req_on);
-    ejsBindMethod(ejs, prototype, ES_ejs_web_Request_read, (EjsProc) req_read);
-    ejsBindMethod(ejs, prototype, ES_ejs_web_Request_setLimits, (EjsProc) req_setLimits);
-    ejsBindMethod(ejs, prototype, ES_ejs_web_Request_setHeader, (EjsProc) req_setHeader);
-    ejsBindMethod(ejs, prototype, ES_ejs_web_Request_trace, (EjsProc) req_trace);
-    ejsBindMethod(ejs, prototype, ES_ejs_web_Request_write, (EjsProc) req_write);
-    ejsBindMethod(ejs, prototype, ES_ejs_web_Request_writeFile, (EjsProc) req_writeFile);
-    ejsBindMethod(ejs, prototype, ES_ejs_web_Request_written, (EjsProc) req_written);
+    ejsBindAccess(ejs, prototype, ES_ejs_web_Request_async, req_async, req_set_async);
+    ejsBindMethod(ejs, prototype, ES_ejs_web_Request_autoFinalize, req_autoFinalize);
+    ejsBindMethod(ejs, prototype, ES_ejs_web_Request_close, req_close);
+    ejsBindMethod(ejs, prototype, ES_ejs_web_Request_destroySession, req_destroySession);
+    ejsBindMethod(ejs, prototype, ES_ejs_web_Request_dontAutoFinalize, req_dontAutoFinalize);
+    ejsBindMethod(ejs, prototype, ES_ejs_web_Request_finalize, req_finalize);
+    ejsBindMethod(ejs, prototype, ES_ejs_web_Request_finalized, req_finalized);
+    ejsBindMethod(ejs, prototype, ES_ejs_web_Request_flush, req_flush);
+    ejsBindMethod(ejs, prototype, ES_ejs_web_Request_header, req_header);
+    ejsBindMethod(ejs, prototype, ES_ejs_web_Request_off, req_off);
+    ejsBindMethod(ejs, prototype, ES_ejs_web_Request_on, req_on);
+    ejsBindMethod(ejs, prototype, ES_ejs_web_Request_read, req_read);
+    ejsBindMethod(ejs, prototype, ES_ejs_web_Request_setLimits, req_setLimits);
+    ejsBindMethod(ejs, prototype, ES_ejs_web_Request_setHeader, req_setHeader);
+    ejsBindMethod(ejs, prototype, ES_ejs_web_Request_trace, req_trace);
+    ejsBindMethod(ejs, prototype, ES_ejs_web_Request_write, req_write);
+    ejsBindMethod(ejs, prototype, ES_ejs_web_Request_writeFile, req_writeFile);
+    ejsBindMethod(ejs, prototype, ES_ejs_web_Request_written, req_written);
 }
 
 

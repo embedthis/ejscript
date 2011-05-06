@@ -189,8 +189,6 @@ module ejs {
     function get onerror(): Function
         self.onerror
 
-    /**
-     */
     function set onerror(fun: Function): Void
         self.onerror = fun
 
@@ -202,11 +200,8 @@ module ejs {
     function get onmessage(): Function
         self.onmessage
 
-    /**
-     */
-    function set onmessage(fun: Function): Void {
+    function set onmessage(fun: Function): Void
         self.onmessage = fun
-    }
 
     # WebWorker         // Only relevant in browsers 
     var location: WorkerLocation

@@ -80,7 +80,10 @@ static EjsObj *hs_close(Ejs *ejs, EjsHttpServer *sp, int argc, EjsObj **argv)
         ejsSendEvent(ejs, sp->emitter, "close", NULL, sp);
         httpDestroyServer(sp->server);
         sp->server = 0;
+#if UNUSED
+        //  MOB -- where else should the root be removed
         mprRemoveRoot(sp);
+#endif
     }
     return 0;
 }
@@ -154,9 +157,12 @@ static EjsObj *hs_listen(Ejs *ejs, EjsHttpServer *sp, int argc, EjsObj **argv)
         sp->server = 0;
     }
     if (ejsIs(ejs, endpoint, Null)) {
-        mprAddRoot(sp);
         if (ejs->loc) {
             ejs->loc->context = sp;
+#if UNUSED
+//  MOB - may not bee needed as ejs->loc is being marked
+            mprAddRoot(sp);
+#endif
         } else {
             ejsThrowStateError(ejs, "Can't find web server context for Ejscript. Check EjsStartup directive");
             return 0;
@@ -164,7 +170,10 @@ static EjsObj *hs_listen(Ejs *ejs, EjsHttpServer *sp, int argc, EjsObj **argv)
         return S(null);
     }
     if (ejs->loc) {
+#if UNUSED
+//  MOB - may not bee needed as ejs->loc is being marked
         mprAddRoot(sp);
+#endif
         /* Being called hosted - ignore endpoint value */
         ejs->loc->context = sp;
         return S(null);
@@ -211,10 +220,12 @@ static EjsObj *hs_listen(Ejs *ejs, EjsHttpServer *sp, int argc, EjsObj **argv)
     if (ejsIs(ejs, root, Path)) {
         httpSetHostServerRoot(host, root->value);
     }
-
     if (httpStartServer(server) < 0) {
         ejsThrowIOError(ejs, "Can't listen on %s", address->value);
         httpDestroyServer(sp->server);
+#if UNUSED
+        mprRemoveRoot(sp);
+#endif
         sp->server = 0;
         return 0;
     }
@@ -303,7 +314,6 @@ static EjsObj *hs_secure(Ejs *ejs, EjsHttpServer *sp, int argc, EjsObj **argv)
     if (!ejsIs(ejs, argv[1], Null)) {
         mprSetSslCertFile(sp->ssl, ejsToMulti(ejs, argv[1]));
     }
-
     if (argc >= 3 && ejsIs(ejs, argv[2], Array)) {
         protocols = (EjsArray*) argv[2];
         protoMask = 0;
@@ -454,6 +464,7 @@ static void setHttpPipeline(Ejs *ejs, EjsHttpServer *sp)
 static void stateChangeNotifier(HttpConn *conn, int state, int notifyFlags)
 {
     Ejs             *ejs;
+    EjsHttpServer   *sp;
     EjsRequest      *req;
 
     mprAssert(conn);
@@ -482,13 +493,7 @@ static void stateChangeNotifier(HttpConn *conn, int state, int notifyFlags)
         }
         break;
 
-    case -1:
-        if (req) {
-            req->conn = 0;
-        }
-        break;
-
-    case 0:
+    case HTTP_EVENT_IO:
         /*  IO event notification for the request.  */
         if (req && req->emitter) {
             if (notifyFlags & HTTP_NOTIFY_READABLE) {
@@ -499,6 +504,26 @@ static void stateChangeNotifier(HttpConn *conn, int state, int notifyFlags)
             }
         }
         break;
+
+    case HTTP_EVENT_CLOSE:
+        /* Connection close */
+        if (conn->server) {
+            ejs = conn->mark;
+            sp = httpGetServerContext(conn->server);
+            if (ejs && sp->cloned) {
+                printf("CLOSE Connection, remaining VMs %d\n", mprGetListLength(ejs->service->vmlist) - 1);
+#if UNUSED
+                mprRemoveRoot(sp);
+#endif
+                ejsDestroyVM(ejs);
+                conn->mark = 0;
+            }
+        }
+        if (req && req->conn) {
+            req->conn = 0;
+        }
+        break;
+
     }
 }
 
@@ -717,10 +742,12 @@ static void manageHttpServer(EjsHttpServer *sp, int flags)
         
     } else {
         sp->sessions = 0;
-        ejsStopSessionTimer(sp);
-        if (sp->server && !sp->cloned) {
-            httpDestroyServer(sp->server);
-            sp->server = 0;
+        if (!sp->cloned) {
+            ejsStopSessionTimer(sp);
+            if (sp->server) {
+                httpDestroyServer(sp->server);
+                sp->server = 0;
+            }
         }
     }
 }
@@ -747,11 +774,21 @@ EjsHttpServer *ejsCloneHttpServer(Ejs *ejs, EjsHttpServer *sp, bool deep)
     if ((nsp = ejsClonePot(ejs, sp, deep)) == 0) {
         return 0;
     }
+    nsp->cloned = sp;
     nsp->ejs = ejs;
     nsp->async = sp->async;
     nsp->server = sp->server;
     nsp->name = sp->name;
-    nsp->cloned = 1;
+    nsp->ssl = sp->ssl;
+    nsp->connector = sp->connector;
+    nsp->dir = sp->dir;
+    nsp->port = sp->port;
+    nsp->ip = sp->ip;
+    nsp->certFile = sp->certFile;
+    nsp->keyFile = sp->keyFile;
+    nsp->ciphers = sp->ciphers;
+    nsp->protocols = sp->protocols;
+    nsp->sessions = sp->sessions;
     httpInitTrace(nsp->trace);
     return nsp;
 }
@@ -766,23 +803,23 @@ void ejsConfigureHttpServerType(Ejs *ejs)
     type->helpers.create = (EjsCreateHelper) createHttpServer;
 
     prototype = type->prototype;
-    ejsBindMethod(ejs, prototype, ES_ejs_web_HttpServer_accept, (EjsProc) hs_accept);
-    ejsBindMethod(ejs, prototype, ES_ejs_web_HttpServer_address, (EjsProc) hs_address);
-    ejsBindAccess(ejs, prototype, ES_ejs_web_HttpServer_async, (EjsProc) hs_async, (EjsProc) hs_set_async);
-    ejsBindMethod(ejs, prototype, ES_ejs_web_HttpServer_close, (EjsProc) hs_close);
-    ejsBindMethod(ejs, prototype, ES_ejs_web_HttpServer_limits, (EjsProc) hs_limits);
-    ejsBindMethod(ejs, prototype, ES_ejs_web_HttpServer_isSecure, (EjsProc) hs_isSecure);
-    ejsBindMethod(ejs, prototype, ES_ejs_web_HttpServer_listen, (EjsProc) hs_listen);
-    ejsBindAccess(ejs, prototype, ES_ejs_web_HttpServer_name, (EjsProc) hs_name, (EjsProc) hs_set_name);
-    ejsBindMethod(ejs, prototype, ES_ejs_web_HttpServer_port, (EjsProc) hs_port);
-    ejsBindMethod(ejs, prototype, ES_ejs_web_HttpServer_off, (EjsProc) hs_off);
-    ejsBindMethod(ejs, prototype, ES_ejs_web_HttpServer_on, (EjsProc) hs_on);
-    ejsBindMethod(ejs, prototype, ES_ejs_web_HttpServer_secure, (EjsProc) hs_secure);
-    ejsBindMethod(ejs, prototype, ES_ejs_web_HttpServer_setLimits, (EjsProc) hs_setLimits);
-    ejsBindMethod(ejs, prototype, ES_ejs_web_HttpServer_setPipeline, (EjsProc) hs_setPipeline);
-    ejsBindMethod(ejs, prototype, ES_ejs_web_HttpServer_trace, (EjsProc) hs_trace);
-    ejsBindMethod(ejs, prototype, ES_ejs_web_HttpServer_verifyClients, (EjsProc) hs_verifyClients);
-    ejsBindMethod(ejs, prototype, ES_ejs_web_HttpServer_software, (EjsProc) hs_software);
+    ejsBindMethod(ejs, prototype, ES_ejs_web_HttpServer_accept, hs_accept);
+    ejsBindMethod(ejs, prototype, ES_ejs_web_HttpServer_address, hs_address);
+    ejsBindAccess(ejs, prototype, ES_ejs_web_HttpServer_async, hs_async, hs_set_async);
+    ejsBindMethod(ejs, prototype, ES_ejs_web_HttpServer_close, hs_close);
+    ejsBindMethod(ejs, prototype, ES_ejs_web_HttpServer_limits, hs_limits);
+    ejsBindMethod(ejs, prototype, ES_ejs_web_HttpServer_isSecure, hs_isSecure);
+    ejsBindMethod(ejs, prototype, ES_ejs_web_HttpServer_listen, hs_listen);
+    ejsBindAccess(ejs, prototype, ES_ejs_web_HttpServer_name, hs_name, hs_set_name);
+    ejsBindMethod(ejs, prototype, ES_ejs_web_HttpServer_port, hs_port);
+    ejsBindMethod(ejs, prototype, ES_ejs_web_HttpServer_off, hs_off);
+    ejsBindMethod(ejs, prototype, ES_ejs_web_HttpServer_on, hs_on);
+    ejsBindMethod(ejs, prototype, ES_ejs_web_HttpServer_secure, hs_secure);
+    ejsBindMethod(ejs, prototype, ES_ejs_web_HttpServer_setLimits, hs_setLimits);
+    ejsBindMethod(ejs, prototype, ES_ejs_web_HttpServer_setPipeline, hs_setPipeline);
+    ejsBindMethod(ejs, prototype, ES_ejs_web_HttpServer_trace, hs_trace);
+    ejsBindMethod(ejs, prototype, ES_ejs_web_HttpServer_verifyClients, hs_verifyClients);
+    ejsBindMethod(ejs, prototype, ES_ejs_web_HttpServer_software, hs_software);
 
     /* One time initializations */
     ejsLoadHttpService(ejs);

@@ -16,7 +16,7 @@ static int configureWebTypes(Ejs *ejs);
 
 /************************************ Code ************************************/
 
-static int requestWorker(EjsRequest *req, MprEvent *event)
+static void requestWorker(EjsRequest *req, MprEvent *event)
 {
     Ejs         *ejs;
     EjsObj      *argv[1];
@@ -24,19 +24,20 @@ static int requestWorker(EjsRequest *req, MprEvent *event)
     
     ejs = req->ejs;
     mprAssert(ejs);
-#if UNUSED
-    mprAssert(req->app);
-#endif
     
     conn = req->conn;
-#if UNUSED
-    argv[0] = (EjsObj*) req->app;
-#endif
     argv[0] = (EjsObj*) req;
+
+    /*
+        Run the workerHelper. This may return before the request or a series of requests (keep-alive) are complete.
+     */
     ejsRunFunctionBySlot(ejs, S(Web), ES_ejs_web_Web_workerHelper, 1, argv);
+#if UNUSED
     conn->dispatcher = conn->oldDispatcher;
+    //  MOB - must hang here
+#endif
     httpEnableConnEvents(conn);
-    return 0; 
+    /* Thread will return to the pool - further I/O events (or close) will come on the conn->dispatcher */
 }
 
 
@@ -50,6 +51,7 @@ static EjsObj *req_worker(Ejs *ejs, EjsObj *web, int argc, EjsObj **argv)
     HttpConn    *conn;
 
     req = (EjsRequest*) argv[0];
+
     if ((nejs = ejsCreateVM(ejs, 0, 0, 0, 0, 0, 0)) == 0) {
         ejsThrowStateError(ejs, "Can't create interpreter to service request");
         return 0;
@@ -60,7 +62,8 @@ static EjsObj *req_worker(Ejs *ejs, EjsObj *web, int argc, EjsObj **argv)
     conn->newDispatcher = nejs->dispatcher;
     
     nejs->loc = ejs->loc;
-#if UNUSED
+#if UNUSED && KEEP
+    /* Need this if not cloning */
     if (ejsLoadModule(nejs, ejsCreateStringFromAsc(nejs, "ejs.web"), -1, -1, EJS_LOADER_RELOAD) < 0) {
         ejsThrowStateError(ejs, "Can't load ejs.web.mod: %s", ejsGetErrorMsg(nejs, 1));
         return 0;
@@ -72,17 +75,6 @@ static EjsObj *req_worker(Ejs *ejs, EjsObj *web, int argc, EjsObj **argv)
     }
     httpSetConnContext(conn, nreq);
 
-#if UNUSED
-    //  MOB OPT
-    nreq->app = ejsClone(nejs, app, 0);
-    for (bp = (EjsBlock*) nreq->app; bp; bp = bp->scope) {
-        if (bp->scope == ejs->global) {
-            bp->scope = nejs->global;
-        } else {
-            bp->scope = ejsClone(nejs, bp->scope, 0);
-        }
-    }
-#endif
     if ((nreq->server = ejsCloneHttpServer(nejs, req->server, 1)) == 0) {
         ejsThrowStateError(ejs, "Can't clone request");
         return 0;

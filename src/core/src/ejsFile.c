@@ -242,7 +242,11 @@ static EjsObj *closeFile(Ejs *ejs, EjsFile *fp, int argc, EjsObj **argv)
 {
     if (fp->mode & FILE_OPEN && fp->mode & FILE_WRITE) {
         if (mprFlushFile(fp->file) < 0) {
-            ejsThrowIOError(ejs, "Can't flush file data");
+            if (ejs) {
+                ejsThrowIOError(ejs, "Can't flush file data");
+            } else {
+                mprError("Can't flush file data");
+            }
             return 0;
         }
     }
@@ -341,7 +345,7 @@ static EjsObj *getFileValues(Ejs *ejs, EjsFile *fp, int argc, EjsObj **argv)
 {
     mprGetPathInfo(fp->path, &fp->info);
 
-    return (EjsObj*) ejsCreateIterator(ejs, (EjsObj*) fp, (EjsProc) nextValue, 0, NULL);
+    return (EjsObj*) ejsCreateIterator(ejs, (EjsObj*) fp, nextValue, 0, NULL);
 }
 
 
@@ -869,7 +873,7 @@ static void manageFile(void *ptr, int flags)
 
     } else if (flags & MPR_MANAGE_FREE) {
         if (fp->file && !fp->attached) {
-            closeFile(TYPE(fp)->ejs, fp, 0, NULL);
+            closeFile(0, fp, 0, NULL);
         }
     }
 }
@@ -892,23 +896,23 @@ void ejsConfigureFileType(Ejs *ejs)
     type->helpers.lookupProperty = (EjsLookupPropertyHelper) lookupFileProperty;
     type->helpers.setProperty    = (EjsSetPropertyHelper) setFileProperty;
 
-    ejsBindConstructor(ejs, type, (EjsProc) fileConstructor);
-    ejsBindMethod(ejs, prototype, ES_File_canRead, (EjsProc) canReadFile);
-    ejsBindMethod(ejs, prototype, ES_File_canWrite, (EjsProc) canWriteFile);
-    ejsBindMethod(ejs, prototype, ES_File_close, (EjsProc) closeFile);
-    ejsBindMethod(ejs, prototype, ES_File_iterator_get, (EjsProc) getFileIterator);
-    ejsBindMethod(ejs, prototype, ES_File_iterator_getValues, (EjsProc) getFileValues);
-    ejsBindMethod(ejs, prototype, ES_File_isOpen, (EjsProc) isFileOpen);
-    ejsBindMethod(ejs, prototype, ES_File_open, (EjsProc) openFile);
-    ejsBindMethod(ejs, prototype, ES_File_options, (EjsProc) getFileOptions);
-    ejsBindMethod(ejs, prototype, ES_File_path, (EjsProc) getFilePath);
-    ejsBindAccess(ejs, prototype, ES_File_position, (EjsProc) getFilePosition, (EjsProc) setFilePosition);
-    ejsBindMethod(ejs, prototype, ES_File_readBytes, (EjsProc) readFileBytes);
-    ejsBindMethod(ejs, prototype, ES_File_readString, (EjsProc) readFileString);
-    ejsBindMethod(ejs, prototype, ES_File_read, (EjsProc) readFile);
-    ejsBindMethod(ejs, prototype, ES_File_size, (EjsProc) getFileSize);
-    ejsBindMethod(ejs, prototype, ES_File_truncate, (EjsProc) truncateFile);
-    ejsBindMethod(ejs, prototype, ES_File_write, (EjsProc) writeFile);
+    ejsBindConstructor(ejs, type, fileConstructor);
+    ejsBindMethod(ejs, prototype, ES_File_canRead, canReadFile);
+    ejsBindMethod(ejs, prototype, ES_File_canWrite, canWriteFile);
+    ejsBindMethod(ejs, prototype, ES_File_close, closeFile);
+    ejsBindMethod(ejs, prototype, ES_File_iterator_get, getFileIterator);
+    ejsBindMethod(ejs, prototype, ES_File_iterator_getValues, getFileValues);
+    ejsBindMethod(ejs, prototype, ES_File_isOpen, isFileOpen);
+    ejsBindMethod(ejs, prototype, ES_File_open, openFile);
+    ejsBindMethod(ejs, prototype, ES_File_options, getFileOptions);
+    ejsBindMethod(ejs, prototype, ES_File_path, getFilePath);
+    ejsBindAccess(ejs, prototype, ES_File_position, getFilePosition, setFilePosition);
+    ejsBindMethod(ejs, prototype, ES_File_readBytes, readFileBytes);
+    ejsBindMethod(ejs, prototype, ES_File_readString, readFileString);
+    ejsBindMethod(ejs, prototype, ES_File_read, readFile);
+    ejsBindMethod(ejs, prototype, ES_File_size, getFileSize);
+    ejsBindMethod(ejs, prototype, ES_File_truncate, truncateFile);
+    ejsBindMethod(ejs, prototype, ES_File_write, writeFile);
 }
 
 /*

@@ -558,14 +558,14 @@ void ejsConfigureFunctionType(Ejs *ejs)
     type->mutableInstances = 1;
     prototype = type->prototype;
 
-    ejsBindConstructor(ejs, type, (EjsProc) fun_Function);
-    ejsBindMethod(ejs, prototype, ES_Function_apply, (EjsProc) fun_applyFunction);
-    ejsBindMethod(ejs, prototype, ES_Function_bind, (EjsProc) fun_bindFunction);
-    ejsBindMethod(ejs, prototype, ES_Function_bound, (EjsProc) fun_bound);
-    ejsBindMethod(ejs, prototype, ES_Function_call, (EjsProc) fun_call);
-    ejsBindMethod(ejs, prototype, ES_Function_length, (EjsProc) fun_length);
-    ejsBindMethod(ejs, prototype, ES_Function_name, (EjsProc) fun_name);
-    ejsBindMethod(ejs, prototype, ES_Function_setScope, (EjsProc) fun_setScope);
+    ejsBindConstructor(ejs, type, fun_Function);
+    ejsBindMethod(ejs, prototype, ES_Function_apply, fun_applyFunction);
+    ejsBindMethod(ejs, prototype, ES_Function_bind, fun_bindFunction);
+    ejsBindMethod(ejs, prototype, ES_Function_bound, fun_bound);
+    ejsBindMethod(ejs, prototype, ES_Function_call, fun_call);
+    ejsBindMethod(ejs, prototype, ES_Function_length, fun_length);
+    ejsBindMethod(ejs, prototype, ES_Function_name, fun_name);
+    ejsBindMethod(ejs, prototype, ES_Function_setScope, fun_setScope);
 }
 
 

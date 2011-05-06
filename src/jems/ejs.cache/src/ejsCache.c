@@ -162,11 +162,11 @@ static int configureCacheType(Ejs *ejs)
 
     type = ejsConfigureNativeType(ejs, "ejs.cache", "Cache", sizeof(EjsCache), manageCache, EJS_DEFAULT_HELPERS);
 
-    ejsBindConstructor(ejs, type, (EjsProc) cacheConstructor);
+    ejsBindConstructor(ejs, type, cacheConstructor);
     prototype = type->prototype;
-    ejsBindMethod(ejs, prototype, ES_ejs_cache_Cache_read, (EjsProc) readCache);
-    ejsBindMethod(ejs, prototype, ES_ejs_cache_Cache_write, (EjsProc) writeCache);
-    ejsBindMethod(ejs, prototype, ES_ejs_cache_Cache_remove, (EjsProc) removeCache);
+    ejsBindMethod(ejs, prototype, ES_ejs_cache_Cache_read, readCache);
+    ejsBindMethod(ejs, prototype, ES_ejs_cache_Cache_write, writeCache);
+    ejsBindMethod(ejs, prototype, ES_ejs_cache_Cache_remove, removeCache);
     return 0;
 }
 

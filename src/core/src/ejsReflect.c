@@ -164,16 +164,16 @@ void ejsConfigureReflectType(Ejs *ejs)
     type = ejsConfigureNativeType(ejs, N("ejs", "Reflect"), sizeof(EjsReflect), manageReflect, EJS_OBJ_HELPERS);
     prototype = type->prototype;
 
-    ejsBindConstructor(ejs, type, (EjsProc) ref_Reflect);
-    ejsBindMethod(ejs, prototype, ES_Reflect_base, (EjsProc) ref_base);
-    ejsBindMethod(ejs, prototype, ES_Reflect_isType, (EjsProc) ref_isType);
-    ejsBindMethod(ejs, prototype, ES_Reflect_name, (EjsProc) ref_name);
+    ejsBindConstructor(ejs, type, ref_Reflect);
+    ejsBindMethod(ejs, prototype, ES_Reflect_base, ref_base);
+    ejsBindMethod(ejs, prototype, ES_Reflect_isType, ref_isType);
+    ejsBindMethod(ejs, prototype, ES_Reflect_name, ref_name);
 #if UNUSED
-    ejsBindMethod(ejs, prototype, ES_Reflect_isPrototype, (EjsProc) ref_isPrototype);
-    ejsBindMethod(ejs, prototype, ES_Reflect_prototype, (EjsProc) ref_prototype);
+    ejsBindMethod(ejs, prototype, ES_Reflect_isPrototype, ref_isPrototype);
+    ejsBindMethod(ejs, prototype, ES_Reflect_prototype, ref_prototype);
 #endif
-    ejsBindMethod(ejs, prototype, ES_Reflect_type, (EjsProc) ref_type);
-    ejsBindFunction(ejs, ejs->globalBlock, ES_typeOf, (EjsProc) ref_typeOf);
+    ejsBindMethod(ejs, prototype, ES_Reflect_type, ref_type);
+    ejsBindFunction(ejs, ejs->globalBlock, ES_typeOf, ref_typeOf);
 }
 
 #else

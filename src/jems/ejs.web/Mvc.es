@@ -210,7 +210,8 @@ module ejs.web {
     function MvcBuilder(request: Request): Function {
         let mvc: Mvc
         if ((mvc = Mvc.apps[request.dir]) == null) {
-            App.log.debug(2, "Load MVC application from \"" + request.dir + "\"")
+            //  MOB 2
+            App.log.debug(5, "Load MVC application from \"" + request.dir + "\"")
             // mvc = Mvc.apps[request.dir] = new Mvc(request)
             mvc = new Mvc(request)
         }

@@ -107,7 +107,6 @@ module ejs.web {
         static native function worker(request: Request): Void
 
         private static function workerHelper(request: Request): Void {
-print("################ WORKER")
             App.log.debug(3, "Multithreaded request")
             try {
                 process(request.route.response, request)

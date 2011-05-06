@@ -23,6 +23,7 @@ static int socketListenEvent(EjsSocket *listen, MprEvent *event);
 static EjsSocket *sock_Socket(Ejs *ejs, EjsSocket *sp, int argc, EjsObj **argv)
 {
     //  TODO -- ssl?
+    sp->ejs = ejs;
     sp->sock = mprCreateSocket(NULL);
     if (sp->sock == 0) {
         ejsThrowMemoryError(ejs);
@@ -337,7 +338,7 @@ static void enableSocketEvents(EjsSocket *sp, int (*proc)(EjsSocket *sp, MprEven
 {
     Ejs     *ejs;
 
-    ejs = TYPE(sp)->ejs;
+    ejs = sp->ejs;
     if (sp->sock->handler == 0) {
         mprAddSocketHandler(sp->sock, sp->mask, ejs->dispatcher, (MprEventProc) proc, sp, 0);
     } else {
@@ -351,7 +352,7 @@ static int socketConnectEvent(EjsSocket *sp, MprEvent *event)
 {
     Ejs     *ejs;
 
-    ejs = sp->type->ejs;
+    ejs = sp->ejs;
     if (sp->emitter) {
         ejsSendEvent(ejs, sp->emitter, "connect", NULL, sp);
         ejsSendEvent(ejs, sp->emitter, "writable", NULL, sp);
@@ -366,7 +367,7 @@ static int socketListenEvent(EjsSocket *listen, MprEvent *event)
 {
     Ejs     *ejs;
 
-    ejs = TYPE(listen)->ejs;
+    ejs = listen->ejs;
     if (listen->emitter) {
         ejsSendEvent(ejs, listen->emitter, "accept", NULL, listen);
     }
@@ -379,7 +380,7 @@ static int socketIOEvent(EjsSocket *sp, MprEvent *event)
 {
     Ejs     *ejs;
 
-    ejs = TYPE(sp)->ejs;
+    ejs = sp->ejs;
     if (event->mask & MPR_READABLE) {
         if (sp->emitter) {
             ejsSendEvent(ejs, sp->emitter, "readable", NULL, sp);
@@ -411,11 +412,14 @@ static void manageSocket(EjsSocket *sp, int flags)
 
 EjsSocket *ejsCreateSocket(Ejs *ejs)
 {
-    return ejsCreateObj(ejs, ejsGetTypeByName(ejs, N(EJS_EJS_NAMESPACE, "Socket")), 0);
+    EjsSocket   *sp;
+
+    sp = ejsCreateObj(ejs, ejsGetTypeByName(ejs, N(EJS_EJS_NAMESPACE, "Socket")), 0);
+    sp->ejs = ejs;
 #if UNUSED
     sp->waitHandler.fd = -1;
-    return sp;
 #endif
+    return sp;
 }
 
 
@@ -428,19 +432,19 @@ void ejsConfigureSocketType(Ejs *ejs)
     type->mutableInstances = 1;
     prototype = type->prototype;
 
-    ejsBindConstructor(ejs, type, (EjsProc) sock_Socket);
-    ejsBindMethod(ejs, prototype, ES_Socket_accept, (EjsProc) sock_accept);
-    ejsBindMethod(ejs, prototype, ES_Socket_address, (EjsProc) sock_address);
-    ejsBindAccess(ejs, prototype, ES_Socket_async, (EjsProc) sock_async, (EjsProc) sock_set_async);
-    ejsBindMethod(ejs, prototype, ES_Socket_close, (EjsProc) sock_close);
-    ejsBindMethod(ejs, prototype, ES_Socket_connect, (EjsProc) sock_connect);
-    ejsBindMethod(ejs, prototype, ES_Socket_listen, (EjsProc) sock_listen);
-    ejsBindMethod(ejs, prototype, ES_Socket_off, (EjsProc) sock_off);
-    ejsBindMethod(ejs, prototype, ES_Socket_on, (EjsProc) sock_on);
-    ejsBindMethod(ejs, prototype, ES_Socket_port, (EjsProc) sock_port);
-    ejsBindMethod(ejs, prototype, ES_Socket_read, (EjsProc) sock_read);
-    ejsBindMethod(ejs, prototype, ES_Socket_remoteAddress, (EjsProc) sock_remoteAddress);
-    ejsBindMethod(ejs, prototype, ES_Socket_write, (EjsProc) sock_write);
+    ejsBindConstructor(ejs, type, sock_Socket);
+    ejsBindMethod(ejs, prototype, ES_Socket_accept, sock_accept);
+    ejsBindMethod(ejs, prototype, ES_Socket_address, sock_address);
+    ejsBindAccess(ejs, prototype, ES_Socket_async, sock_async, sock_set_async);
+    ejsBindMethod(ejs, prototype, ES_Socket_close, sock_close);
+    ejsBindMethod(ejs, prototype, ES_Socket_connect, sock_connect);
+    ejsBindMethod(ejs, prototype, ES_Socket_listen, sock_listen);
+    ejsBindMethod(ejs, prototype, ES_Socket_off, sock_off);
+    ejsBindMethod(ejs, prototype, ES_Socket_on, sock_on);
+    ejsBindMethod(ejs, prototype, ES_Socket_port, sock_port);
+    ejsBindMethod(ejs, prototype, ES_Socket_read, sock_read);
+    ejsBindMethod(ejs, prototype, ES_Socket_remoteAddress, sock_remoteAddress);
+    ejsBindMethod(ejs, prototype, ES_Socket_write, sock_write);
 }
 
 /*

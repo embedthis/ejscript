@@ -629,7 +629,7 @@ static EjsNumber *nextStringKey(Ejs *ejs, EjsIterator *ip, int argc, EjsObj **ar
  */
 static EjsIterator *getStringIterator(Ejs *ejs, EjsObj *sp, int argc, EjsObj **argv)
 {
-    return ejsCreateIterator(ejs, sp, (EjsProc) nextStringKey, 0, NULL);
+    return ejsCreateIterator(ejs, sp, nextStringKey, 0, NULL);
 }
 
 
@@ -662,7 +662,7 @@ static EjsString *nextStringValue(Ejs *ejs, EjsIterator *ip, int argc, EjsObj **
  */
 static EjsIterator *getStringValues(Ejs *ejs, EjsObj *sp, int argc, EjsObj **argv)
 {
-    return ejsCreateIterator(ejs, sp, (EjsProc) nextStringValue, 0, NULL);
+    return ejsCreateIterator(ejs, sp, nextStringValue, 0, NULL);
 }
 
 
@@ -2766,49 +2766,49 @@ void ejsConfigureStringType(Ejs *ejs)
 
     ejsSetProperty(ejs, ejs->global, ES_string, type);
     
-    ejsBindMethod(ejs, type, ES_String_fromCharCode, (EjsProc) fromCharCode);
-    ejsBindConstructor(ejs, type, (EjsProc) stringConstructor);
+    ejsBindMethod(ejs, type, ES_String_fromCharCode, fromCharCode);
+    ejsBindConstructor(ejs, type, stringConstructor);
     
-    ejsBindMethod(ejs, prototype, ES_String_caseCompare, (EjsProc) caseCompare);
-    ejsBindMethod(ejs, prototype, ES_String_caselessCompare, (EjsProc) caselessCompare);
-    ejsBindMethod(ejs, prototype, ES_String_charAt, (EjsProc) charAt);
-    ejsBindMethod(ejs, prototype, ES_String_charCodeAt, (EjsProc) charCodeAt);
-    ejsBindMethod(ejs, prototype, ES_String_concat, (EjsProc) concatString);
-    ejsBindMethod(ejs, prototype, ES_String_contains, (EjsProc) containsString);
-    ejsBindMethod(ejs, prototype, ES_String_endsWith, (EjsProc) endsWith);
-    ejsBindMethod(ejs, prototype, ES_String_format, (EjsProc) formatString);
-    ejsBindMethod(ejs, prototype, ES_String_iterator_get, (EjsProc) getStringIterator);
-    ejsBindMethod(ejs, prototype, ES_String_iterator_getValues, (EjsProc) getStringValues);
-    ejsBindMethod(ejs, prototype, ES_String_indexOf, (EjsProc) indexOf);
-    ejsBindMethod(ejs, prototype, ES_String_isDigit, (EjsProc) isDigit);
-    ejsBindMethod(ejs, prototype, ES_String_isAlpha, (EjsProc) isAlpha);
-    ejsBindMethod(ejs, prototype, ES_String_isAlphaNum, (EjsProc) isAlphaNum);
-    ejsBindMethod(ejs, prototype, ES_String_isLower, (EjsProc) isLower);
-    ejsBindMethod(ejs, prototype, ES_String_isSpace, (EjsProc) isSpace);
-    ejsBindMethod(ejs, prototype, ES_String_isUpper, (EjsProc) isUpper);
-    ejsBindMethod(ejs, prototype, ES_String_lastIndexOf, (EjsProc) lastIndexOf);
-    ejsBindMethod(ejs, prototype, ES_String_length, (EjsProc) stringLength);
-    ejsBindMethod(ejs, prototype, ES_String_match, (EjsProc) match);
-    ejsBindMethod(ejs, prototype, ES_String_remove, (EjsProc) removeCharsFromString);
-    ejsBindMethod(ejs, prototype, ES_String_slice, (EjsProc) sliceString);
-    ejsBindMethod(ejs, prototype, ES_String_split, (EjsProc) split);
-    ejsBindMethod(ejs, prototype, ES_String_printable, (EjsProc) printable);
-    ejsBindMethod(ejs, prototype, ES_String_quote, (EjsProc) quote);
-    ejsBindMethod(ejs, prototype, ES_String_replace, (EjsProc) replace);
-    ejsBindMethod(ejs, prototype, ES_String_reverse, (EjsProc) reverseString);
-    ejsBindMethod(ejs, prototype, ES_String_search, (EjsProc) searchString);
-    ejsBindMethod(ejs, prototype, ES_String_startsWith, (EjsProc) startsWith);
-    ejsBindMethod(ejs, prototype, ES_String_substring, (EjsProc) substring);
-    ejsBindMethod(ejs, prototype, ES_String_toCamel, (EjsProc) toCamel);
-    ejsBindMethod(ejs, prototype, ES_String_toJSON, (EjsProc) ejsStringToJSON);
-    ejsBindMethod(ejs, prototype, ES_String_toLowerCase, (EjsProc) toLowerCase);
-    ejsBindMethod(ejs, prototype, ES_String_toPascal, (EjsProc) toPascal);
-    ejsBindMethod(ejs, prototype, ES_String_toString, (EjsProc) stringToString);
-    ejsBindMethod(ejs, prototype, ES_String_toUpperCase, (EjsProc) toUpperCase);
-    ejsBindMethod(ejs, prototype, ES_String_tokenize, (EjsProc) tokenize);
-    ejsBindMethod(ejs, prototype, ES_String_trim, (EjsProc) trimString);
-    ejsBindMethod(ejs, prototype, ES_String_trimStart, (EjsProc) trimStartString);
-    ejsBindMethod(ejs, prototype, ES_String_trimEnd, (EjsProc) trimEndString);
+    ejsBindMethod(ejs, prototype, ES_String_caseCompare, caseCompare);
+    ejsBindMethod(ejs, prototype, ES_String_caselessCompare, caselessCompare);
+    ejsBindMethod(ejs, prototype, ES_String_charAt, charAt);
+    ejsBindMethod(ejs, prototype, ES_String_charCodeAt, charCodeAt);
+    ejsBindMethod(ejs, prototype, ES_String_concat, concatString);
+    ejsBindMethod(ejs, prototype, ES_String_contains, containsString);
+    ejsBindMethod(ejs, prototype, ES_String_endsWith, endsWith);
+    ejsBindMethod(ejs, prototype, ES_String_format, formatString);
+    ejsBindMethod(ejs, prototype, ES_String_iterator_get, getStringIterator);
+    ejsBindMethod(ejs, prototype, ES_String_iterator_getValues, getStringValues);
+    ejsBindMethod(ejs, prototype, ES_String_indexOf, indexOf);
+    ejsBindMethod(ejs, prototype, ES_String_isDigit, isDigit);
+    ejsBindMethod(ejs, prototype, ES_String_isAlpha, isAlpha);
+    ejsBindMethod(ejs, prototype, ES_String_isAlphaNum, isAlphaNum);
+    ejsBindMethod(ejs, prototype, ES_String_isLower, isLower);
+    ejsBindMethod(ejs, prototype, ES_String_isSpace, isSpace);
+    ejsBindMethod(ejs, prototype, ES_String_isUpper, isUpper);
+    ejsBindMethod(ejs, prototype, ES_String_lastIndexOf, lastIndexOf);
+    ejsBindMethod(ejs, prototype, ES_String_length, stringLength);
+    ejsBindMethod(ejs, prototype, ES_String_match, match);
+    ejsBindMethod(ejs, prototype, ES_String_remove, removeCharsFromString);
+    ejsBindMethod(ejs, prototype, ES_String_slice, sliceString);
+    ejsBindMethod(ejs, prototype, ES_String_split, split);
+    ejsBindMethod(ejs, prototype, ES_String_printable, printable);
+    ejsBindMethod(ejs, prototype, ES_String_quote, quote);
+    ejsBindMethod(ejs, prototype, ES_String_replace, replace);
+    ejsBindMethod(ejs, prototype, ES_String_reverse, reverseString);
+    ejsBindMethod(ejs, prototype, ES_String_search, searchString);
+    ejsBindMethod(ejs, prototype, ES_String_startsWith, startsWith);
+    ejsBindMethod(ejs, prototype, ES_String_substring, substring);
+    ejsBindMethod(ejs, prototype, ES_String_toCamel, toCamel);
+    ejsBindMethod(ejs, prototype, ES_String_toJSON, ejsStringToJSON);
+    ejsBindMethod(ejs, prototype, ES_String_toLowerCase, toLowerCase);
+    ejsBindMethod(ejs, prototype, ES_String_toPascal, toPascal);
+    ejsBindMethod(ejs, prototype, ES_String_toString, stringToString);
+    ejsBindMethod(ejs, prototype, ES_String_toUpperCase, toUpperCase);
+    ejsBindMethod(ejs, prototype, ES_String_tokenize, tokenize);
+    ejsBindMethod(ejs, prototype, ES_String_trim, trimString);
+    ejsBindMethod(ejs, prototype, ES_String_trimStart, trimStartString);
+    ejsBindMethod(ejs, prototype, ES_String_trimEnd, trimEndString);
 
 #if FUTURE
     ejsBindMethod(ejs, prototype, ES_String_LBRACKET, operLBRACKET);

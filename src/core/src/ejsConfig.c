@@ -28,8 +28,8 @@ void ejsDefineConfigProperties(Ejs *ejs)
     }
     ejs->configSet = 1;
     type = ST(Config);
-    type->mutable = 1;
     att = EJS_PROP_STATIC | EJS_PROP_ENUMERABLE;
+    type->mutable = 0;
 
     /*
         Must use -1 for slotNumber as this function is called by the compiler when compiling ejs.mod. 

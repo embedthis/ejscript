@@ -141,17 +141,17 @@ void ejsConfigureMemoryType(Ejs *ejs)
         mprError("Can't find Memory type");
         return;
     }
-    ejsBindMethod(ejs, type, ES_Memory_allocated, (EjsProc) getAllocatedMemory);
-    ejsBindAccess(ejs, type, ES_Memory_maximum, (EjsProc) getMaxMemory, (EjsProc) setMaxMemory);
-    ejsBindAccess(ejs, type, ES_Memory_redline, (EjsProc) getRedline, (EjsProc) setRedline);
-    ejsBindMethod(ejs, type, ES_Memory_resident, (EjsProc) getResident);
-    ejsBindMethod(ejs, type, ES_Memory_system, (EjsProc) getSystemRam);
-    ejsBindMethod(ejs, type, ES_Memory_stats, (EjsProc) printStats);
+    ejsBindMethod(ejs, type, ES_Memory_allocated, getAllocatedMemory);
+    ejsBindAccess(ejs, type, ES_Memory_maximum, getMaxMemory, setMaxMemory);
+    ejsBindAccess(ejs, type, ES_Memory_redline, getRedline, setRedline);
+    ejsBindMethod(ejs, type, ES_Memory_resident, getResident);
+    ejsBindMethod(ejs, type, ES_Memory_system, getSystemRam);
+    ejsBindMethod(ejs, type, ES_Memory_stats, printStats);
 
 #if UNUSED
     EjsPot      *prototype;
     prototype = type->prototype;
-    ejsBindAccess(ejs, type, ES_Memory_callback, NULL, (EjsProc) setRedlineCallback);
+    ejsBindAccess(ejs, type, ES_Memory_callback, NULL, setRedlineCallback);
 #endif
 }
 

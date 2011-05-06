@@ -2456,6 +2456,7 @@ static void storePropertyToSlot(Ejs *ejs, EjsObj *thisObj, EjsAny *obj, int slot
             fun = ejsGetProperty(ejs, obj, slotNum);
             mprAssert(fun);
             fun = fun->setter;
+            mprAssert(fun);
             callFunction(ejs, fun, thisObj, 1, 0);
             return;
         }

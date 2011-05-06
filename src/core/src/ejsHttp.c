@@ -29,6 +29,7 @@ static ssize    writeHttpData(Ejs *ejs, EjsHttp *hp);
 static EjsHttp *httpConstructor(Ejs *ejs, EjsHttp *hp, int argc, EjsObj **argv)
 {
     ejsLoadHttpService(ejs);
+    hp->ejs = ejs;
 
     if ((hp->conn = httpCreateConn(ejs->http, NULL, ejs->dispatcher)) == 0) {
         ejsThrowMemoryError(ejs);
@@ -943,7 +944,7 @@ static void httpNotify(HttpConn *conn, int state, int notifyFlags)
     EjsHttp     *hp;
 
     hp = httpGetConnContext(conn);
-    ejs = TYPE(hp)->ejs;
+    ejs = hp->ejs;
 
     switch (state) {
     case HTTP_STATE_BEGIN:
@@ -1058,7 +1059,7 @@ static void httpIOEvent(HttpConn *conn, MprEvent *event)
     mprAssert(conn->async);
 
     hp = conn->context;
-    ejs = TYPE(hp)->ejs;
+    ejs = hp->ejs;
 
     httpEvent(conn, event);
     if (event->mask & MPR_WRITABLE) {
@@ -1227,7 +1228,7 @@ static bool waitForState(EjsHttp *hp, int state, int timeout, int throw)
 
     mprAssert(state >= HTTP_STATE_PARSED);
 
-    ejs = TYPE(hp)->ejs;
+    ejs = hp->ejs;
     conn = hp->conn;
     mprAssert(conn->state >= HTTP_STATE_CONNECTED);
 
@@ -1463,7 +1464,7 @@ static void manageHttp(EjsHttp *http, int flags)
 
     } else if (flags & MPR_MANAGE_FREE) {
         if (http->conn) {
-            sendHttpCloseEvent(TYPE(http)->ejs, http);
+            sendHttpCloseEvent(http->ejs, http);
             httpDestroyConn(http->conn);
             http->conn = 0;
         }

@@ -339,18 +339,18 @@ void ejsConfigureRegExpType(Ejs *ejs)
     type->mutableInstances = 1;
     prototype = type->prototype;
 
-    ejsBindConstructor(ejs, type, (EjsProc) regex_Constructor);
-    ejsBindMethod(ejs, prototype, ES_RegExp_exec, (EjsProc) regex_exec);
-    ejsBindAccess(ejs, prototype, ES_RegExp_lastIndex, (EjsProc) regex_getLastIndex, (EjsProc) regex_setLastIndex);
-    ejsBindMethod(ejs, prototype, ES_RegExp_global, (EjsProc) regex_getGlobalFlag);
-    ejsBindMethod(ejs, prototype, ES_RegExp_ignoreCase, (EjsProc) regex_getIgnoreCase);
-    ejsBindMethod(ejs, prototype, ES_RegExp_multiline, (EjsProc) regex_getMultiline);
-    ejsBindMethod(ejs, prototype, ES_RegExp_source, (EjsProc) regex_getSource);
-    ejsBindMethod(ejs, prototype, ES_RegExp_matched, (EjsProc) regex_matched);
-    ejsBindMethod(ejs, prototype, ES_RegExp_start, (EjsProc) regex_start);
-    ejsBindMethod(ejs, prototype, ES_RegExp_sticky, (EjsProc) regex_sticky);
-    ejsBindMethod(ejs, prototype, ES_RegExp_test, (EjsProc) regex_test);
-    ejsBindMethod(ejs, prototype, ES_RegExp_toString, (EjsProc) ejsRegExpToString);
+    ejsBindConstructor(ejs, type, regex_Constructor);
+    ejsBindMethod(ejs, prototype, ES_RegExp_exec, regex_exec);
+    ejsBindAccess(ejs, prototype, ES_RegExp_lastIndex, regex_getLastIndex, regex_setLastIndex);
+    ejsBindMethod(ejs, prototype, ES_RegExp_global, regex_getGlobalFlag);
+    ejsBindMethod(ejs, prototype, ES_RegExp_ignoreCase, regex_getIgnoreCase);
+    ejsBindMethod(ejs, prototype, ES_RegExp_multiline, regex_getMultiline);
+    ejsBindMethod(ejs, prototype, ES_RegExp_source, regex_getSource);
+    ejsBindMethod(ejs, prototype, ES_RegExp_matched, regex_matched);
+    ejsBindMethod(ejs, prototype, ES_RegExp_start, regex_start);
+    ejsBindMethod(ejs, prototype, ES_RegExp_sticky, regex_sticky);
+    ejsBindMethod(ejs, prototype, ES_RegExp_test, regex_test);
+    ejsBindMethod(ejs, prototype, ES_RegExp_toString, ejsRegExpToString);
 }
 
 /*

@@ -264,25 +264,25 @@ void ejsConfigureMathType(Ejs *ejs)
     EjsType     *type;
 
     type = ejsConfigureNativeType(ejs, N("ejs", "Math"), sizeof(EjsObj), NULL, EJS_OBJ_HELPERS);
-    ejsBindMethod(ejs, type, ES_Math_abs, (EjsProc) math_abs);
-    ejsBindMethod(ejs, type, ES_Math_acos, (EjsProc) math_acos);
-    ejsBindMethod(ejs, type, ES_Math_asin, (EjsProc) math_asin);
-    ejsBindMethod(ejs, type, ES_Math_atan, (EjsProc) math_atan);
-    ejsBindMethod(ejs, type, ES_Math_atan2, (EjsProc) math_atan2);
-    ejsBindMethod(ejs, type, ES_Math_ceil, (EjsProc) math_ceil);
-    ejsBindMethod(ejs, type, ES_Math_cos, (EjsProc) math_cos);
-    ejsBindMethod(ejs, type, ES_Math_exp, (EjsProc) math_exp);
-    ejsBindMethod(ejs, type, ES_Math_floor, (EjsProc) math_floor);
-    ejsBindMethod(ejs, type, ES_Math_log, (EjsProc) math_log);
-    ejsBindMethod(ejs, type, ES_Math_log10, (EjsProc) math_log10);
-    ejsBindMethod(ejs, type, ES_Math_max, (EjsProc) math_max);
-    ejsBindMethod(ejs, type, ES_Math_min, (EjsProc) math_min);
-    ejsBindMethod(ejs, type, ES_Math_pow, (EjsProc) math_pow);
-    ejsBindMethod(ejs, type, ES_Math_random, (EjsProc) math_random);
-    ejsBindMethod(ejs, type, ES_Math_round, (EjsProc) math_round);
-    ejsBindMethod(ejs, type, ES_Math_sin, (EjsProc) math_sin);
-    ejsBindMethod(ejs, type, ES_Math_sqrt, (EjsProc) math_sqrt);
-    ejsBindMethod(ejs, type, ES_Math_tan, (EjsProc) math_tan);
+    ejsBindMethod(ejs, type, ES_Math_abs, math_abs);
+    ejsBindMethod(ejs, type, ES_Math_acos, math_acos);
+    ejsBindMethod(ejs, type, ES_Math_asin, math_asin);
+    ejsBindMethod(ejs, type, ES_Math_atan, math_atan);
+    ejsBindMethod(ejs, type, ES_Math_atan2, math_atan2);
+    ejsBindMethod(ejs, type, ES_Math_ceil, math_ceil);
+    ejsBindMethod(ejs, type, ES_Math_cos, math_cos);
+    ejsBindMethod(ejs, type, ES_Math_exp, math_exp);
+    ejsBindMethod(ejs, type, ES_Math_floor, math_floor);
+    ejsBindMethod(ejs, type, ES_Math_log, math_log);
+    ejsBindMethod(ejs, type, ES_Math_log10, math_log10);
+    ejsBindMethod(ejs, type, ES_Math_max, math_max);
+    ejsBindMethod(ejs, type, ES_Math_min, math_min);
+    ejsBindMethod(ejs, type, ES_Math_pow, math_pow);
+    ejsBindMethod(ejs, type, ES_Math_random, math_random);
+    ejsBindMethod(ejs, type, ES_Math_round, math_round);
+    ejsBindMethod(ejs, type, ES_Math_sin, math_sin);
+    ejsBindMethod(ejs, type, ES_Math_sqrt, math_sqrt);
+    ejsBindMethod(ejs, type, ES_Math_tan, math_tan);
 }
 
 

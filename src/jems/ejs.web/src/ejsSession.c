@@ -177,14 +177,23 @@ EjsSession *ejsCreateSession(Ejs *ejs, EjsRequest *req, int timeout, bool secure
     if ((server = req->server) == 0) {
         return 0;
     }
-    limits = server->server->limits;
-
-    if (timeout <= 0) {
-        timeout = limits->sessionTimeout;
+    if (server->cloned) {
+        server = server->cloned;
+        ejs = server->ejs;
     }
     now = mprGetTime();
 
+    /*
+        WARNING: this code is multithreaded on "ejs". ejsCreateObj/ejsCreateEmptyPot are thread-safe.
+     */
+    mprLock(sessionLock);
+    limits = server->server->limits;
+    if (timeout <= 0) {
+        timeout = limits->sessionTimeout;
+    }
+
     if ((session = ejsCreateObj(ejs, ST(Session), 0)) == 0) {
+        mprUnlock(sessionLock);
         return 0;
     }
     session->timeout = timeout;
@@ -193,7 +202,6 @@ EjsSession *ejsCreateSession(Ejs *ejs, EjsRequest *req, int timeout, bool secure
     /*  
         Use an MD5 prefix of "x" to avoid the hash being interpreted as a numeric index.
      */
-    mprLock(sessionLock);
     next = nextSession++;
     mprSprintf(idBuf, sizeof(idBuf), "%08x%08x%d", PTOI(ejs) + PTOI(session->expire), (int) now, next);
     id = mprGetMD5Hash(idBuf, sizeof(idBuf), "x");
@@ -220,6 +228,9 @@ EjsSession *ejsCreateSession(Ejs *ejs, EjsRequest *req, int timeout, bool secure
     startSessionTimer(ejs, server);
     mprUnlock(sessionLock);
 
+    /*
+        Session created event issued on the non-cloned vm
+     */
     mprLog(3, "Created new session %s. Count %d/%d", id, slotNum + 1, limits->sessionCount);
     if (server->emitter) {
         ejsSendEvent(ejs, server->emitter, "createSession", NULL, ejsCreateStringFromAsc(ejs, id));

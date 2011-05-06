@@ -361,11 +361,11 @@ void ejsConfigureDbTypes(Ejs *ejs)
 
     type = (EjsType*) ejsConfigureNativeType(ejs, "ejs.db", Database, sizeof(EjsDb), (MprManager) manageDb, 0);
 
-    ejsBindMethod(ejs, type, ES_ejs_db_Database_Database, (EjsProc) dbConstructor);
-    ejsBindMethod(ejs, type, ES_ejs_db_Database_close, (EjsProc) closeDb);
-    ejsBindMethod(ejs, type, ES_ejs_db_Database_sql, (EjsProc) sql);
+    ejsBindMethod(ejs, type, ES_ejs_db_Database_Database, dbConstructor);
+    ejsBindMethod(ejs, type, ES_ejs_db_Database_close, closeDb);
+    ejsBindMethod(ejs, type, ES_ejs_db_Database_sql, sql);
 #if FUTURE
-    ejsSetAccessors(ejs, type, ES_ejs_db_Database_tables, (EjsProc) tables, -1, 0);
+    ejsSetAccessors(ejs, type, ES_ejs_db_Database_tables, tables, -1, 0);
     ejsBindMethod(ejs, type, ES_ejs_db_Database_start, startDb);
     ejsBindMethod(ejs, type, ES_ejs_db_Database_commit, commitDb);
     ejsBindMethod(ejs, type, ES_ejs_db_Database_rollback, rollbackDb);

@@ -380,9 +380,9 @@ static int configureSqliteTypes(Ejs *ejs)
     
     type = (EjsType*) ejsConfigureNativeType(ejs, N("ejs.db", "Sqlite"), sizeof(EjsSqlite), manageSqlite, EJS_POT_HELPERS);
     prototype = type->prototype;
-    ejsBindConstructor(ejs, type, (EjsProc) sqliteConstructor);
-    ejsBindMethod(ejs, prototype, ES_ejs_db_Sqlite_close, (EjsProc) sqliteClose);
-    ejsBindMethod(ejs, prototype, ES_ejs_db_Sqlite_sql, (EjsProc) sqliteSql);
+    ejsBindConstructor(ejs, type, sqliteConstructor);
+    ejsBindMethod(ejs, prototype, ES_ejs_db_Sqlite_close, sqliteClose);
+    ejsBindMethod(ejs, prototype, ES_ejs_db_Sqlite_sql, sqliteSql);
 
     if (!initialized) {
         initialized++;

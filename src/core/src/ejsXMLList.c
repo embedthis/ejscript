@@ -236,7 +236,7 @@ static EjsObj *nextXmlListKey(Ejs *ejs, EjsIterator *ip, int argc, EjsObj **argv
  */
 static EjsObj *getXmlListIterator(Ejs *ejs, EjsObj *xml, int argc, EjsObj **argv)
 {
-    return (EjsObj*) ejsCreateIterator(ejs, xml, (EjsProc) nextXmlListKey, 0, NULL);
+    return (EjsObj*) ejsCreateIterator(ejs, xml, nextXmlListKey, 0, NULL);
 }
 
 
@@ -274,7 +274,7 @@ static EjsObj *nextXmlListValue(Ejs *ejs, EjsIterator *ip, int argc, EjsObj **ar
  */
 static EjsObj *getXmlListValues(Ejs *ejs, EjsObj *ap, int argc, EjsObj **argv)
 {
-    return (EjsObj*) ejsCreateIterator(ejs, ap, (EjsProc) nextXmlListValue, 0, NULL);
+    return (EjsObj*) ejsCreateIterator(ejs, ap, nextXmlListValue, 0, NULL);
 }
 
 
@@ -824,16 +824,16 @@ void ejsConfigureXMLListType(Ejs *ejs)
     type->mutableInstances = 1;
     prototype = type->prototype;
 
-    ejsBindConstructor(ejs, type, (EjsProc) xmlListConstructor);
-    ejsBindMethod(ejs, prototype, ES_XMLList_length, (EjsProc) xlLength);
-    ejsBindMethod(ejs, prototype, ES_XMLList_name, (EjsProc) getXmlListNodeName);
+    ejsBindConstructor(ejs, type, xmlListConstructor);
+    ejsBindMethod(ejs, prototype, ES_XMLList_length, xlLength);
+    ejsBindMethod(ejs, prototype, ES_XMLList_name, getXmlListNodeName);
     ejsBindMethod(ejs, prototype, ES_XMLList_parent, (EjsNativeFunction) xl_parent);
 #if FUTURE
     ejsBindMethod(ejs, prototype, "name", name, NULL);
     ejsBindMethod(ejs, prototype, "valueOf", valueOf, NULL);
 #endif
-    ejsBindMethod(ejs, prototype, ES_XMLList_toJSON, (EjsProc) xmlListToJson);
-    ejsBindMethod(ejs, prototype, ES_XMLList_toString, (EjsProc) xmlListToString);
+    ejsBindMethod(ejs, prototype, ES_XMLList_toJSON, xmlListToJson);
+    ejsBindMethod(ejs, prototype, ES_XMLList_toString, xmlListToString);
     ejsBindMethod(ejs, prototype, ES_XMLList_iterator_get, getXmlListIterator);
     ejsBindMethod(ejs, prototype, ES_XMLList_iterator_getValues, getXmlListValues);
 }

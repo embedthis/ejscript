@@ -127,7 +127,7 @@ static void configureType(Ejs *ejs, cchar *name)
 
     type = ejsGetTypeByName(ejs, N("ejs", name));
     mprAssert(type);
-    ejsBindConstructor(ejs, type, (EjsProc) errorConstructor);
+    ejsBindConstructor(ejs, type, errorConstructor);
 }
 
 
@@ -151,7 +151,7 @@ void ejsConfigureErrorType(Ejs *ejs)
     configureType(ejs, "TypeError");
     configureType(ejs, "URIError");
 
-    ejsBindMethod(ejs, ST(Error), ES_Error_capture, (EjsProc) error_capture);
+    ejsBindMethod(ejs, ST(Error), ES_Error_capture, error_capture);
 }
 
 

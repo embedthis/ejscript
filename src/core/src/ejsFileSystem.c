@@ -195,22 +195,22 @@ void ejsConfigureFileSystemType(Ejs *ejs)
     ejsSetSpecialType(ejs, S_FileSystem, type);
     prototype = type->prototype;
 
-    ejsBindConstructor(ejs, type, (EjsProc) fileSystemConstructor);
+    ejsBindConstructor(ejs, type, fileSystemConstructor);
 #if ES_space
-    ejsBindMethod(ejs, prototype, ES_FileSystem_space, (EjsProc) fileSystemSpace);
+    ejsBindMethod(ejs, prototype, ES_FileSystem_space, fileSystemSpace);
 #endif
-    ejsBindMethod(ejs, prototype, ES_FileSystem_hasDrives, (EjsProc) hasDrives);
+    ejsBindMethod(ejs, prototype, ES_FileSystem_hasDrives, hasDrives);
 #if ES_isReady
-    ejsBindMethod(ejs, prototype, ES_FileSystem_isReady, (EjsProc) isReady);
+    ejsBindMethod(ejs, prototype, ES_FileSystem_isReady, isReady);
 #endif
 #if ES_isWritable
-    ejsBindMethod(ejs, prototype, ES_FileSystem_isWritable, (EjsProc) isWritable);
+    ejsBindMethod(ejs, prototype, ES_FileSystem_isWritable, isWritable);
 #endif
-    ejsBindAccess(ejs, prototype, ES_FileSystem_newline, (EjsProc) getNewline, (EjsProc) setNewline);
-    ejsBindMethod(ejs, prototype, ES_FileSystem_root, (EjsProc) root);
-    ejsBindAccess(ejs, prototype, ES_FileSystem_separators, (EjsProc) getSeparators, (EjsProc) setSeparators);
+    ejsBindAccess(ejs, prototype, ES_FileSystem_newline, getNewline, setNewline);
+    ejsBindMethod(ejs, prototype, ES_FileSystem_root, root);
+    ejsBindAccess(ejs, prototype, ES_FileSystem_separators, getSeparators, setSeparators);
 #if ES_size
-    ejsBindMethod(ejs, prototype, ES_FileSystem_size, (EjsProc) size);
+    ejsBindMethod(ejs, prototype, ES_FileSystem_size, size);
 #endif
 }
 

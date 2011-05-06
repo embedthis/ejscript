@@ -373,14 +373,20 @@ typedef struct EjsIntern {
 #define S_FileSystem            11
 #define S_Frame                 12
 #define S_Function              13
+//  MOB - missing
 #define S_Http                  14
+//  MOB - missing 15
 #define S_Iterator              16
+//  MOB - missing 17
 #define S_Namespace             18
 #define S_Null                  19
 #define S_Number                20
 #define S_Object                21
 #define S_Path                  22
+
+//  MOB - missing 23 - 29
 #define S_RegExp                30
+//  MOB - missing 31-33
 #define S_StopIteration         34
 #define S_String                35
 #define S_Type                  36
@@ -408,6 +414,7 @@ typedef struct EjsIntern {
 #define S_nop                   63
 #define S_null                  64
 #define S_one                   65
+//  MOB - missing 66
 #define S_public                66
 #define S_true                  67
 #define S_undefined             68
@@ -416,6 +423,7 @@ typedef struct EjsIntern {
 #define S_emptySpace            70
 #define S_ejsSpace              71
 #define S_iteratorSpace         72
+//  MOB - missing 73
 #define S_internalSpace         73
 #define S_publicSpace           74
 
@@ -602,11 +610,9 @@ typedef struct EjsProperties {
     @stability Evolving.
     @defgroup EjsPot EjsPot
     @see EjsPot ejsIsPot ejsCreateSimpleObject ejsCreateObject ejsCloneObject ejsGrowObject ejsManageObject
-        MOB - change these From Var
-        ejsGetVarType ejsAllocObj ejsFreeObj ejsCast ejsClone ejsCreateInstance ejsCreateVar
-        ejsDestroyVar ejsDefineProperty ejsDeleteProperty ejsDeletePropertyByName
+        ejsAlloc ejsCast ejsClone ejsCreateInstance ejsDefineProperty ejsDeleteProperty ejsDeletePropertyByName
         ejsGetProperty ejsLookupProperty ejsSetProperty ejsSetPropertyByName ejsSetPropertyName
-        ejsSetPropertyTraits ejsDeserialize ejsParseVar
+        ejsSetPropertyTraits ejsDeserialize ejsParse
  */
 typedef struct EjsPot {
     EjsObj  obj;                                /**< Base object */
@@ -1885,6 +1891,7 @@ extern EjsError *ejsThrowTypeError(Ejs *ejs, cchar *fmt, ...) PRINTF_ATTRIBUTE(2
  */
 typedef struct EjsFile {
     EjsObj          obj;                /**< Base object */
+    Ejs             *ejs;               /**< Interp reference */
     MprFile         *file;              /**< Open file handle */
     MprPath         info;               /**< Cached file info */
     char            *path;              /**< Filename path */
@@ -2016,6 +2023,7 @@ extern void ejsFreezeGlobal(Ejs *ejs);
  */
 typedef struct EjsHttp {
     EjsObj          obj;                        /**< Base object */
+    Ejs             *ejs;                       /**< Interp reference */
     EjsObj          *emitter;                   /**< Event emitter */
     EjsByteArray    *data;                      /**< Buffered write data */
     EjsObj          *limits;                    /**< Limits object */
@@ -2221,6 +2229,7 @@ EjsString *ejsRegExpToString(Ejs *ejs, EjsRegExp *rp);
  */
 typedef struct EjsSocket {
     EjsObj          obj;                /**< Base object */
+    Ejs             *ejs;               /**< Interp reference */
     EjsObj          *emitter;           /**< Event emitter */
     EjsByteArray    *data;              /**< Buffered write data */
     MprSocket       *sock;              /**< Underlying MPR socket object */
@@ -2457,7 +2466,9 @@ typedef struct EjsType {
     EjsHelpers      helpers;                        /**< Type helper methods */
     struct EjsType  *baseType;                      /**< Base class */
     MprManager      manager;                        /**< Manager callback */
+#if UNUSED
     struct Ejs      *ejs;                           /**< Interpreter reference */
+#endif
     MprMutex        *mutex;                         /**< Optional locking for types that require it */
 
     MprList         *implements;                    /**< List of implemented interfaces */
@@ -2797,7 +2808,8 @@ typedef struct EjsLookup {
 typedef struct EjsService {
     EjsObj          *(*loadScriptLiteral)(Ejs *ejs, EjsString *script, cchar *cache);
     EjsObj          *(*loadScriptFile)(Ejs *ejs, cchar *path, cchar *cache);
-    MprList         *vmlist;
+    MprList         *vmlist;                /**< List of all VM interpreters */
+    MprList         *vmpool;                /**< Pool of unused (cached) VM interpreters */
     MprHashTable    *nativeModules;
     Http            *http;
     uint            dontExit: 1;            /**< Prevent App.exit() from exiting */
@@ -2837,7 +2849,7 @@ extern void ejsClearAttention(Ejs *ejs);
  */
 extern Ejs *ejsCreateVM(Ejs *master, MprDispatcher *dispatcher, cchar *search, MprList *require, int argc, 
         cchar **argv, int flags);
-extern void ejsDestroy(Ejs *ejs);
+extern void ejsDestroyVM(Ejs *ejs);
 
 /**
     Create a search path array. This can be used in ejsCreate.

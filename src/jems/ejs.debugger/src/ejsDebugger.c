@@ -79,9 +79,9 @@ static int configureDebuggerTypes(Ejs *ejs)
     type->helpers = ejsCloneObjectHelpers(ejs, "debugger-helpers");
     type->helpers->destroy = (EjsDestroyHelper) destroyDebuggerDb;
 
-    ejsBindMethod(ejs, type, ES_ejs_db_Debugger_Debugger, (EjsProc) debuggerConstructor);
-    ejsBindMethod(ejs, type, ES_ejs_db_Debugger_close, (EjsProc) debuggerClose);
-    ejsBindMethod(ejs, type, ES_ejs_db_Debugger_sql, (EjsProc) debuggerSql);
+    ejsBindMethod(ejs, type, ES_ejs_db_Debugger_Debugger, debuggerConstructor);
+    ejsBindMethod(ejs, type, ES_ejs_db_Debugger_close, debuggerClose);
+    ejsBindMethod(ejs, type, ES_ejs_db_Debugger_sql, debuggerSql);
     return 0;
 }
 
