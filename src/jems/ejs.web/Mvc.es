@@ -145,8 +145,7 @@ module ejs.web {
                 }
                 code += path.readString()
             }
-            //  MOB 4
-            request.log.debug(0, "Rebuild component: " + mod + " files: " + files)
+            request.log.debug(4, "Rebuild component: " + mod + " files: " + files)
             eval(code, mod)
         }
 

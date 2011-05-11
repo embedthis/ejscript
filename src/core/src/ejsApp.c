@@ -274,7 +274,9 @@ void ejsConfigureAppType(Ejs *ejs)
 
     type = ejsGetTypeByName(ejs, N("ejs", "App"));
     mprAssert(type);
+#if UNUSED
     ejsSetSpecial(ejs, S_App, type);
+#endif
 
     ejsSetProperty(ejs, type, ES_App__inputStream, ejsCreateFileFromFd(ejs, 0, "stdin", O_RDONLY));
     ejsSetProperty(ejs, type, ES_App__outputStream, ejsCreateFileFromFd(ejs, 1, "stdout", O_WRONLY));

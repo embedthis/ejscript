@@ -29,37 +29,22 @@ static int workerMain(EjsWorker *worker, MprEvent *event);
 static EjsObj *workerPreload(Ejs *ejs, EjsWorker *worker, int argc, EjsObj **argv);
 
 /************************************ Methods *********************************/
-/*
-    function Worker(script: String = null, options: Object = null)
 
-    Script is optional. If supplied, the script is run immediately by a worker thread. This call
-    does not block. Options are: search and name.
- */
-static EjsWorker *workerConstructor(Ejs *ejs, EjsWorker *worker, int argc, EjsObj **argv)
+static EjsWorker *initWorker(Ejs *ejs, EjsWorker *worker, Ejs *baseVm, cchar *name, EjsArray *search, cchar *scriptFile)
 {
     Ejs             *wejs;
-    EjsObj          *options, *value, *search;
     EjsWorker       *self;
     EjsNamespace    *ns;
     EjsName         sname;
-    cchar           *name;
     static int      workerSeqno = 0;
 
     ejsFreeze(ejs, 1);
+    if (worker == 0) {
+        worker = ejsCreateWorker(ejs);
+    }
     worker->ejs = ejs;
     worker->state = EJS_WORKER_BEGIN;
 
-    options = (argc == 2) ? (EjsObj*) argv[1]: NULL;
-    name = 0;
-    search = 0;
-
-    if (options) {
-        search = ejsGetPropertyByName(ejs, options, EN("search"));
-        value = ejsGetPropertyByName(ejs, options, EN("name"));
-        if (ejsIs(ejs, value, String)) {
-            name = ejsToMulti(ejs, value);
-        }
-    }
     if (name) {
         worker->name = sclone(name);
     } else {
@@ -72,7 +57,7 @@ static EjsWorker *workerConstructor(Ejs *ejs, EjsWorker *worker, int argc, EjsOb
         Create a new interpreter and an "inside" worker object and pair it with the current "outside" worker.
         The worker interpreter gets a new dispatcher
      */
-    if ((wejs = ejsCreateVM(0, 0, 0, 0, 0, 0, 0)) == 0) {
+    if ((wejs = ejsCreateVM(baseVm, 0, 0, 0, 0, 0, 0)) == 0) {
         ejsThrowMemoryError(ejs);
         return 0;
     }
@@ -99,9 +84,9 @@ static EjsWorker *workerConstructor(Ejs *ejs, EjsWorker *worker, int argc, EjsOb
      */
     ns = ejsDefineReservedNamespace(wejs, wejs->global, NULL, EJS_WORKER_NAMESPACE);
 
-    if (argc > 0 && ejsIs(ejs, argv[0], Path)) {
+    if (scriptFile) {
         addWorker(ejs, worker);
-        worker->scriptFile = sclone(((EjsPath*) argv[0])->value);
+        worker->scriptFile = sclone(scriptFile);
         worker->state = EJS_WORKER_STARTED;
         if (mprCreateEvent(wejs->dispatcher, "workerMain", 0, (MprEventProc) workerMain, self, 0) < 0) {
             ejsThrowStateError(ejs, "Can't create worker event");
@@ -109,6 +94,31 @@ static EjsWorker *workerConstructor(Ejs *ejs, EjsWorker *worker, int argc, EjsOb
         }
     }
     return worker;
+}
+
+
+static EjsWorker *workerConstructor(Ejs *ejs, EjsWorker *worker, int argc, EjsObj **argv)
+{
+    EjsArray    *search;
+    EjsObj      *options, *value;
+    cchar       *name, *scriptFile;
+
+    ejsFreeze(ejs, 1);
+
+    scriptFile = (argc >= 1) ? ((EjsPath*) argv[0])->value : 0;
+    options = (argc == 2) ? (EjsObj*) argv[1]: NULL;
+    name = 0;
+    search = 0;
+    if (options) {
+        search = ejsGetPropertyByName(ejs, options, EN("search"));
+        value = ejsGetPropertyByName(ejs, options, EN("name"));
+        if (ejsIs(ejs, value, String)) {
+            name = ejsToMulti(ejs, value);
+        }
+    }
+    worker->ejs = ejs;
+    worker->state = EJS_WORKER_BEGIN;
+    return initWorker(ejs, worker, 0, name, search, scriptFile);
 }
 
 
@@ -222,6 +232,24 @@ static EjsObj *startWorker(Ejs *ejs, EjsWorker *outsideWorker, int timeout)
         return S(null);
     }
     return ejsDeserialize(ejs, result);
+}
+
+
+/*
+    function clone(deep: Boolean = null): Worker
+ */
+static EjsWorker *workerClone(Ejs *ejs, EjsWorker *baseWorker, int argc, EjsObj **argv)
+{
+    return initWorker(ejs, 0, baseWorker->pair->ejs, 0, 0, 0);
+}
+
+
+/*
+    static function cloneSelf(): Worker
+ */
+static EjsWorker *workerCloneSelf(Ejs *ejs, EjsWorker *unused, int argc, EjsObj **argv)
+{
+    return initWorker(ejs, 0, ejs, 0, 0, 0);
 }
 
 
@@ -438,7 +466,6 @@ static int doMessage(Message *msg, MprEvent *mprEvent)
     worker = msg->worker;
     worker->gotMessage = 1;
     ejs = worker->ejs;
-    mprAssert(!ejs->exception);
     event = 0;
     ejsFreeze(ejs, 1);
 
@@ -840,7 +867,8 @@ void ejsConfigureWorkerType(Ejs *ejs)
     ejsBindMethod(ejs, type, ES_Worker_exit, workerExit);
     ejsBindMethod(ejs, type, ES_Worker_join, workerJoin);
     ejsBindMethod(ejs, type, ES_Worker_lookup, workerLookup);
-
+    ejsBindMethod(ejs, type, ES_Worker_cloneSelf, workerCloneSelf);
+    ejsBindMethod(ejs, prototype, ES_Worker_clone, workerClone);
     ejsBindMethod(ejs, prototype, ES_Worker_eval, workerEval);
     ejsBindMethod(ejs, prototype, ES_Worker_load, workerLoad);
     ejsBindMethod(ejs, prototype, ES_Worker_preload, workerPreload);

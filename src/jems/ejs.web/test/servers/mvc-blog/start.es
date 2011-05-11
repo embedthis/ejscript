@@ -1,12 +1,11 @@
-
 require ejs.web
     
-let server: HttpServer = new HttpServer(".")
+let server: HttpServer = new HttpServer
 var router = Router(Router.LegacyRoutes)
 
 server.on("readable", function (event, request) {
     App.log.info(request.method, request.uri, request.scheme)
-    Web.serve(request, router)
+    server.serve(request, router)
 })
 
 //  See ejsrc to modify the endpoint

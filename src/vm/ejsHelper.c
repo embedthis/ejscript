@@ -15,6 +15,8 @@ static bool      parseBoolean(Ejs *ejs, MprChar *s);
 
 /************************************* Code ***********************************/
 
+static int acount;
+
 EjsAny *ejsAlloc(Ejs *ejs, EjsType *type, ssize extra)
 {
     EjsObj      *vp;
@@ -32,6 +34,7 @@ EjsAny *ejsAlloc(Ejs *ejs, EjsType *type, ssize extra)
     mprAssert(type->manager);
     //  OPT inline here
     mprSetManager(vp, type->manager);
+    acount++;
     return vp;
 }
 
@@ -77,6 +80,8 @@ EjsAny *ejsCreateObj(Ejs *ejs, EjsType *type, int numSlots)
     return (type->helpers.create)(ejs, type, numSlots);
 }
 
+int cloneCopy = 0;
+int cloneRef = 0;
 
 /**
     Copy a variable by copying all properties. If a property is a reference  type, just copy the reference.
@@ -91,6 +96,7 @@ EjsAny *ejsClone(Ejs *ejs, EjsAny *src, bool deep)
     if (src == 0) {
         return 0;
     }
+cloneCopy++;
     mprAssert(TYPE(src)->helpers.clone);
     if (VISITED(src) == 0) {
         type = TYPE(src);

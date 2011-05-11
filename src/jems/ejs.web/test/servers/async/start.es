@@ -4,10 +4,10 @@
 require ejs.web
 
 let address = ":" + (App.config.test.http_port || "6700")
-let server: HttpServer = new HttpServer("../../web")
+let server: HttpServer = new HttpServer({documents: "../../web"})
 
 server.on("readable", function (event, request) {
-    Web.serve(request)
+    server.serve(request)
 /*
     switch (request.pathInfo) {
     case "/test1":

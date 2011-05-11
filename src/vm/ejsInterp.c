@@ -1511,6 +1511,7 @@ static void VM(Ejs *ejs, EjsFunction *fun, EjsAny *otherThis, int argc, int stac
                     }
                     mprAssert(f2->boundThis != ejs->global);
                     mprAssert(!ejsIsPrototype(ejs, lookup.obj));
+                    //  OPT - don't do this for global functions (if f2 == f1 and boundThis not updated (== global))
                     ejsSetProperty(ejs, lookup.obj, lookup.slotNum, f2);
                 }
             }
@@ -2611,25 +2612,27 @@ static void storePropertyToScope(Ejs *ejs, EjsName qname, EjsObj *value)
 EjsObj *ejsRunInitializer(Ejs *ejs, EjsModule *mp)
 {
     EjsModule   *dp;
+    EjsAny      *result;
     int         next;
-
+    
     if (mp->initialized || !mp->hasInitializer) {
         mp->initialized = 1;
-        return S(null);
-    }
-    mp->initialized = 1;
-
-    if (mp->dependencies) {
-        for (next = 0; (dp = (EjsModule*) mprGetNextItem(mp->dependencies, &next)) != 0;) {
-            if (dp->hasInitializer && !dp->initialized) {
-                if (ejsRunInitializer(ejs, dp) == 0) {
-                    return 0;
+        result = S(null);
+    } else {
+        mp->initialized = 1;
+        if (mp->dependencies) {
+            for (next = 0; (dp = mprGetNextItem(mp->dependencies, &next)) != 0;) {
+                if (dp->hasInitializer && !dp->initialized) {
+                    if (ejsRunInitializer(ejs, dp) == 0) {
+                        return 0;
+                    }
                 }
             }
         }
+        mprLog(6, "Running initializer for module %@", mp->name);
+        result = ejsRunFunction(ejs, mp->initializer, ejs->global, 0, NULL);
     }
-    mprLog(6, "Running initializer for module %@", mp->name);
-    return ejsRunFunction(ejs, mp->initializer, ejs->global, 0, NULL);
+    return result;
 }
 
 
@@ -2641,16 +2644,15 @@ int ejsRun(Ejs *ejs)
     EjsModule   *mp;
     int         next;
 
-    /*
-        This is used by ejs to interpret scripts. MOB OPT. Should not run through old modules every time
-     */
-    for (next = 0; (mp = (EjsModule*) mprGetNextItem(ejs->modules, &next)) != 0;) {
-        //MOB - need to keep a list of non-initialized modules
-        if (mp->initialized) {
-            continue;
+    for (next = 0; (mp = mprGetNextItem(ejs->modules, &next)) != 0;) {
+        if (!mp->initialized) {
+            ejsRunInitializer(ejs, mp);
         }
-        MPR_VERIFY_MEM();
-        if (ejsRunInitializer(ejs, mp) == 0) {
+        if (ejsCompareMulti(ejs, mp->name, EJS_DEFAULT_MODULE) == 0) {
+            ejsRemoveModule(ejs, mp);
+            next--;
+        }
+        if (ejs->exception) {
             return EJS_ERR;
         }
     }
@@ -2746,13 +2748,22 @@ EjsAny *ejsRunFunctionBySlot(Ejs *ejs, EjsAny *thisObj, int slotNum, int argc, v
 EjsAny *ejsRunFunctionByName(Ejs *ejs, EjsAny *container, EjsName qname, EjsAny *thisObj, int argc, void *argv)
 {
     EjsFunction     *fun;
+    EjsLookup       lookup;
 
     if (thisObj == 0) {
         thisObj = ejs->global;
     }
-    if ((fun = ejsGetPropertyByName(ejs, container, qname)) == 0) {
-        ejsThrowReferenceError(ejs, "Can't find function %N", qname);
-        return 0;
+    if (container) {
+        if ((fun = ejsGetPropertyByName(ejs, container, qname)) == 0) {
+            ejsThrowReferenceError(ejs, "Can't find function %N", qname);
+            return 0;
+        }
+    } else {
+        if (ejsLookupScope(ejs, qname, &lookup) == 0) {
+            ejsThrowReferenceError(ejs, "Can't find function %N", qname);
+            return 0;
+        }
+        fun = ejsGetProperty(ejs, lookup.obj, lookup.slotNum);
     }
     return ejsRunFunction(ejs, fun, thisObj, argc, argv);
 }

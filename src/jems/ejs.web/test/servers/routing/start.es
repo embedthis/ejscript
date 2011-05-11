@@ -14,7 +14,7 @@
 
 require ejs.web
 
-let server: HttpServer = new HttpServer(".", "./web")
+let server: HttpServer = new HttpServer({documents: "web"})
 
 /*
     Define the routes. The routes are matched in order. The router table fields are:
@@ -66,7 +66,7 @@ public static var RestfulRoutes = [
 
 var router = Router(routes)
 server.on("readable", function (event, request) {
-    Web.serve(request, router)
+    server.serve(request, router)
 })
 
 server.listen("127.0.0.1:7000")

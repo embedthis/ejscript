@@ -12,7 +12,7 @@ server.setPipeline(function(request) {
 
 var router = Router(MyRoutes)
 server.on("readable", function (event, request) {
-    Web.serve(request)
+    server.serve(request)
 })
 
 App.log.info("Listen on " + address)

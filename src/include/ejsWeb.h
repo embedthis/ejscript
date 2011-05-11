@@ -42,15 +42,15 @@ typedef struct EjsHttpServer {
     struct MprSsl   *ssl;                       /**< SSL configuration */
     HttpTrace       trace[2];                   /**< Default tracing for requests */
     cchar           *connector;                 /**< Pipeline connector */
-    cchar           *dir;                       /**< Directory containing web documents */
     char            *keyFile;                   /**< SSL key file */
     char            *certFile;                  /**< SSL certificate file */
     char            *protocols;                 /**< SSL protocols */
     char            *ciphers;                   /**< SSL ciphers */
     char            *ip;                        /**< Listening address */
     char            *name;                      /**< Server name */
-    int             port;                       /**< Listening port */
     int             async;                      /**< Async mode */
+    int             port;                       /**< Listening port */
+    int             hosted;                     /**< Server being hosted inside a web server */
     struct EjsHttpServer *cloned;               /**< Server that was cloned */
     EjsObj          *emitter;                   /**< Event emitter */
     EjsObj          *limits;                    /**< Limits object */
@@ -74,9 +74,7 @@ typedef struct EjsRequest {
     EjsObj          *cookies;           /**< Cached cookies */
     HttpConn        *conn;              /**< Underlying Http connection object */
     EjsHttpServer   *server;            /**< Owning server */
-#if UNUSED
-    EjsObj          *app;               /**< Application build function. Used when threaded */
-#endif
+    struct EjsRequest *cloned;          /**< Request that was cloned */
     EjsObj          *absHome;           /**< Absolute URI to the home of the application from this request */
     EjsObj          *config;            /**< Request config environment */
     EjsPath         *dir;               /**< Home directory containing the application */
@@ -105,7 +103,10 @@ typedef struct EjsRequest {
     Ejs             *ejs;               /**< Ejscript interpreter handle */
     struct EjsSession *session;         /**< Current session */
 
+#if UNUSED
     int             accepted;           /**< Request has been accepted from the HttpServer */
+#endif
+    //  OPT - make bit fields
     int             dontAutoFinalize;   /**< Suppress auto-finalization */
     int             probedSession;      /**< Determined if a session exists */
     int             closed;             /**< Request closed and "close" event has been issued */

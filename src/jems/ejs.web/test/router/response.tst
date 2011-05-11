@@ -12,7 +12,7 @@ server.listen(HTTP)
 server.on("readable", function (event, request: Request) {
     try {
         let route = router.route(request)
-        Web.process(route.response, request)
+        server.process(route.response, request)
     } catch (e) {
         print(e)
         finalize()

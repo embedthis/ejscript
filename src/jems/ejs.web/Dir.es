@@ -22,7 +22,7 @@ module ejs.web {
                     /* Return a String containing the new pathInfo to serve */
                     request.pathInfo += index 
                     let route = request.route.router.route(request)
-                    return Web.process(route.response, request)
+                    return request.server.process(route.response, request)
                 }
             }
             return { 

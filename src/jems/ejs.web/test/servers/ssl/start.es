@@ -4,7 +4,7 @@
 require ejs.web
 
 let address = ":" + (App.config.test.ssl_port || "6743")
-let server: HttpServer = new HttpServer(".", "web")
+let server: HttpServer = new HttpServer({documents: "web"})
 
 /* OK
 //  MOB -- test protocols and ciphers
@@ -18,7 +18,7 @@ let server: HttpServer = new HttpServer(".", "web")
 var router = Router(Router.Default)
 server.on("readable", function (event, request) {
     App.log.info(request.method, request.uri)
-    Web.serve(request, router)
+    server.serve(request, router)
 })
 
 App.log.info("Listen on " + address)

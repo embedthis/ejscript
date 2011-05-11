@@ -11,7 +11,6 @@
 
 #include    "mpr.h"
 #include    "http.h"
-#include    "ejsTune.h"
 #include    "ejsByteCode.h"
 #include    "ejsByteCodeTable.h"
 #include    "ejs.slots.h"
@@ -19,6 +18,127 @@
 #ifdef __cplusplus
 extern "C" {
 #endif
+
+/******************************* Tunable Constants ****************************/
+
+#define HEAP_OVERHEAD (MPR_ALLOC_HDR_SIZE + MPR_ALLOC_ALIGN(sizeof(MprRegion) + sizeof(MprHeap) + sizeof(MprDestructor)))
+
+/*
+    TODO - consistency of names needs work
+ */
+#if BLD_TUNE == MPR_TUNE_SIZE || DOXYGEN
+    /*
+     *  Tune for size
+     */
+    #define EJS_ARENA_SIZE          ((1 * 1024 * 1024) - MPR_HEAP_OVERHEAD) /* Initial virt memory for objects */
+    #define EJS_LOTSA_PROP          256             /* Object with lots of properties. Grow by bigger chunks */
+    #define EJS_MAX_OBJ_POOL        512             /* Maximum number of objects per type to cache */
+    #define EJS_MAX_RECURSION       10000           /* Maximum recursion */
+    #define EJS_MAX_REGEX_MATCHES   32              /* Maximum regular sub-expressions */
+    #define EJS_MAX_SQLITE_MEM      (2*1024*1024)   /* Maximum buffering for Sqlite */
+    #define EJS_MAX_TYPE            256             /* Maximum number of types */
+    #define EJS_MIN_FRAME_SLOTS     16              /* Miniumum number of slots for function frames */
+    #define EJS_NUM_GLOBAL          256             /* Number of globals slots to pre-create */
+    #define EJS_ROUND_PROP          16              /* Rounding for growing properties */
+    #define EJS_WORK_QUOTA          1024            /* Allocations required before garbage colllection */
+    #define EJS_XML_MAX_NODE_DEPTH  64              /* Max nesting of tags */
+
+#elif BLD_TUNE == MPR_TUNE_BALANCED
+    /*
+        Tune balancing speed and size
+     */
+    #define EJS_ARENA_SIZE          ((4 * 1024 * 1024) - MPR_HEAP_OVERHEAD)
+    #define EJS_LOTSA_PROP          256
+    #define EJS_MAX_OBJ_POOL        1024
+    #define EJS_MAX_SQLITE_MEM      (20*1024*1024)
+    #define EJS_MAX_RECURSION       (1000000)
+    #define EJS_MAX_REGEX_MATCHES   64
+    #define EJS_MIN_FRAME_SLOTS     24
+    #define EJS_NUM_GLOBAL          512
+    #define EJS_MAX_TYPE            512
+    #define EJS_ROUND_PROP          24
+    #define EJS_WORK_QUOTA          2048
+    #define EJS_XML_MAX_NODE_DEPTH  256
+
+#else
+    /*
+        Tune for speed
+     */
+    #define EJS_ARENA_SIZE          ((8 * 1024 * 1024) - MPR_HEAP_OVERHEAD)
+    #define EJS_NUM_GLOBAL          1024
+    #define EJS_LOTSA_PROP          1024
+    #define EJS_MAX_OBJ_POOL        4096
+    #define EJS_MAX_RECURSION       (1000000)
+    #define EJS_MAX_REGEX_MATCHES   128
+    #define EJS_MAX_TYPE            1024
+    #define EJS_MAX_SQLITE_MEM      (20*1024*1024)
+    #define EJS_MIN_FRAME_SLOTS     32
+    #define EJS_ROUND_PROP          32
+    #define EJS_WORK_QUOTA          4096
+    #define EJS_XML_MAX_NODE_DEPTH  1024
+#endif
+
+#define EJS_XML_BUF_MAX             (256 * 1024)    /* Max XML document size */
+#define EJS_HASH_MIN_PROP           8               /* Min props to hash */
+#define EJS_MAX_COLLISIONS          4               /* Max intern string collion chain */
+
+#define EJS_POOL_INACTIVITY_TIMEOUT (60  * 1000)    /* Prune inactive pooled VMs older than this */
+#define EJS_SQLITE_TIMEOUT          30000           /* Database busy timeout */
+#define EJS_SESSION_TIMEOUT         1800
+#define EJS_TIMER_PERIOD            1000            /* Timer checks ever 1 second */
+#define EJS_FILE_PERMS              0664            /* Default file perms */
+#define EJS_DIR_PERMS               0775            /* Default dir perms */
+
+#if BLD_FEATURE_MMU
+    #if BLD_TUNE == MPR_TUNE_SIZE
+        #define EJS_STACK_MAX       (1024 * 1024)   /* Stack size on virtual memory systems */
+    #elif BLD_TUNE == MPR_TUNE_BALANCED
+        #define EJS_STACK_MAX       (1024 * 1024 * 4)
+    #else
+        #define EJS_STACK_MAX       (1024 * 1024 * 16)
+    #endif
+#else
+    /*
+        Highly recursive workloads may need to increase the stack values
+     */
+    #if BLD_TUNE == MPR_TUNE_SIZE
+        #define EJS_STACK_MAX       (1024 * 32)     /* Stack size without MMU */
+    #elif BLD_TUNE == MPR_TUNE_BALANCED
+        #define EJS_STACK_MAX       (1024 * 64)
+    #else
+        #define EJS_STACK_MAX       (1024 * 128)
+    #endif
+#endif
+
+/*
+    Sanity constants. Only for sanity checking. Set large enough to never be a
+    real limit but low enough to catch some errors in development.
+ */
+#define EJS_MAX_POOL            (4*1024*1024)   /* Size of constant pool */
+#define EJS_MAX_ARGS            (8192)          /* Max number of args */
+#define EJS_MAX_LOCALS          (10*1024)       /* Max number of locals */
+#define EJS_MAX_EXCEPTIONS      (8192)          /* Max number of exceptions */
+#define EJS_MAX_TRAITS          (0x7fff)        /* Max number of declared properties per block */
+
+/*
+    Should not need to change these
+ */
+#define EJS_INC_ARGS            8               /* Frame stack increment */
+#define EJS_MAX_BASE_CLASSES    256             /* Max inheritance chain */
+#define EJS_DOC_HASH_SIZE       1007            /* Hash for doc descriptions */
+
+/*
+    Compiler constants
+ */
+#define EC_MAX_INCLUDE          32              /* Max number of nested includes */
+#define EC_LINE_INCR            1024            /* Growth increment for input lines */
+#define EC_TOKEN_INCR           64              /* Growth increment for tokens */
+#define EC_MAX_LOOK_AHEAD       8
+#define EC_BUFSIZE              4096            /* General buffer size */
+#define EC_MAX_ERRORS           25              /* Max compilation errors before giving up */
+
+#define EC_CODE_BUFSIZE         4096            /* Initial size of code gen buffer */
+#define EC_NUM_PAK_PROP         32              /* Initial number of properties */
 
 /********************************* Defines ************************************/
 
@@ -93,6 +213,7 @@ struct EjsXML;
 #define EJS_FLAG_NO_INIT        0x8         /**< Don't initialize any modules*/
 #define EJS_FLAG_DOC            0x40        /**< Load documentation from modules */
 #define EJS_FLAG_NOEXIT         0x200       /**< App should service events and not exit */
+#define EJS_FLAG_HOSTED         0x400       /**< Interp is hosted in a web server */
 #define EJS_STACK_ARG           -1          /* Offset to locate first arg */
 
 /** 
@@ -359,7 +480,10 @@ typedef struct EjsIntern {
 
 /********************************************** Special Values ******************************************/
 
+#if UNUSED
 #define S_App                   0
+#endif
+
 #define S_Array                 1
 #define S_Block                 2
 #define S_Boolean               3
@@ -397,7 +521,6 @@ typedef struct EjsIntern {
 #define S_XMLList               42
 #define S_Request               43
 #define S_Session               44
-#define S_Web                   45
 
 #define S_commaProt             50
 #define S_empty                 51
@@ -469,6 +592,7 @@ typedef struct Ejs {
     int                 serializeDepth;     /**< Serialization depth */
     int                 spreadArgs;         /**< Count of spread args */
     int                 gc;                 /**< GC required (don't make bit field) */
+    uint                hosted: 1;          /**< Interp is hosted (webserver) */
     uint                configSet: 1;       /**< Config properties defined */
     uint                compiling: 1;       /**< Currently executing the compiler */
     uint                destroying: 1;      /**< Interpreter is being destroyed */
@@ -485,22 +609,45 @@ typedef struct Ejs {
     MprDispatcher       *dispatcher;        /**< Event dispatcher */
     MprList             *workers;           /**< Worker interpreters */
     MprList             *modules;           /**< Loaded modules */
+    MprList             *httpServers;       /**< Configured HttpServers */
 
     void                (*loaderCallback)(struct Ejs *ejs, int kind, ...);
 
     //  MOB - what is this for?
     void                *userData;          /**< User data */
+    void                *httpServer;        /**< HttpServer instance when VM is embedded */
 
     MprHashTable        *doc;               /**< Documentation */
     void                *sqlite;            /**< Sqlite context information */
 
     Http                *http;              /**< Http service object (copy of EjsService.http) */
-    HttpLoc             *loc;               /**< Current HttpLocation object for web start scripts */
 #if UNUSED
+    HttpLoc             *loc;               /**< Current HttpLocation object for web start scripts */
     EjsAny              *applications;      /**< Application cache */
 #endif
     MprMutex            *mutex;             /**< Multithread locking */
 } Ejs;
+
+
+/**
+    Cached pooled of virtual machines.
+  */
+typedef struct EjsPool {
+    MprList     *list;                      /**< Free list */
+    MprTime     lastActivity;               /**< When a VM was last used */
+    MprMutex    *mutex;                     /**< Multithread locking */
+    MprEvent    *timer;                     /**< VM prune timer */
+    int         count;                      /**< Count of allocated VMs */
+    int         max;                        /**< Maximum number of VMs */
+    Ejs         *template;                  /**< VM template to clone */
+    char        *templateScript;            /**< Template initialization script filename */
+    char        *startScriptPath;           /**< Template initialization literal script */
+} EjsPool;
+
+
+extern EjsPool *ejsCreatePool(int poolMax, cchar *templateScriptPath, cchar *startScript);
+extern Ejs *ejsAllocPoolVM(EjsPool *pool, int flags);
+extern void ejsFreePoolVM(EjsPool *pool, Ejs *ejs);
 
 
 #if !DOXYGEN
@@ -2810,8 +2957,8 @@ typedef struct EjsService {
     EjsObj          *(*loadScriptFile)(Ejs *ejs, cchar *path, cchar *cache);
     MprList         *vmlist;                /**< List of all VM interpreters */
     MprList         *vmpool;                /**< Pool of unused (cached) VM interpreters */
-    MprHashTable    *nativeModules;
-    Http            *http;
+    MprHashTable    *nativeModules;         /**< Set of loaded native modules */
+    Http            *http;                  /**< Http service */
     uint            dontExit: 1;            /**< Prevent App.exit() from exiting */
     uint            logging: 1;             /**< Using --log */
     EjsIntern       *intern;                /**< Interned Unicode string hash - shared over all interps */
@@ -3207,6 +3354,7 @@ typedef struct EjsModule {
     EjsString       *name;                  /* Name of this module - basename of the filename without .mod extension */
     //  MOB - document the version format
     EjsString       *vname;                 /* Versioned name - name with optional version suffix */
+    MprList         *vms;                   /* List of VMs referencing the module */
     int             version;                /* Made with EJS_MAKE_VERSION */
     int             minVersion;             /* Minimum version when used as a dependency */
     int             maxVersion;             /* Maximum version when used as a dependency */
@@ -3214,8 +3362,8 @@ typedef struct EjsModule {
 
     EjsConstants    *constants;             /* Constant pool */
     EjsFunction     *initializer;           /* Initializer method */
-    Ejs             *ejs;                   /* Back reference for GC */
 
+    //  MOB - should have isDefault bit
     uint            compiling       : 1;    /* Module currently being compiled from source */
     uint            configured      : 1;    /* Module types have been configured with native code */
     uint            loaded          : 1;    /* Module has been loaded from an external file */
@@ -3333,12 +3481,13 @@ extern EjsDoc       *ejsCreateDoc(Ejs *ejs, cchar *tag, void *vp, int slotNum, E
 extern int          ejsAddModule(Ejs *ejs, EjsModule *up);
 extern EjsModule    *ejsLookupModule(Ejs *ejs, EjsString *name, int minVersion, int maxVersion);
 extern void         ejsRemoveModule(Ejs *ejs, EjsModule *up);
-extern void         ejsRemoveModules(Ejs *ejs);
+extern void         ejsRemoveModuleFromAll(EjsModule *up);
 
 extern int  ejsAddNativeModule(Ejs *ejs, cchar *name, EjsNativeCallback callback, int checksum, int flags);
 extern EjsNativeModule *ejsLookupNativeModule(Ejs *ejs, cchar *name);
 
 extern EjsModule *ejsCreateModule(Ejs *ejs, EjsString *name, int version, EjsConstants *constants);
+extern EjsModule *ejsCloneModule(Ejs *ejs, EjsModule *mp);
 
 #ifdef __cplusplus
 }

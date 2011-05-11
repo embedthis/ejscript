@@ -17,7 +17,7 @@ static int  checkSlot(Ejs *ejs, EjsArray *ap, int slotNum);
 static bool compareArrayElement(Ejs *ejs, EjsObj *v1, EjsObj *v2);
 static int growArray(Ejs *ejs, EjsArray *ap, int len);
 static int lookupArrayProperty(Ejs *ejs, EjsArray *ap, EjsName qname);
-static EjsNumber *pushArray(Ejs *ejs, EjsArray *ap, int argc, EjsObj **argv);
+static EjsNumber *pushArray(Ejs *ejs, EjsArray *ap, int argc, EjsAny **argv);
 static EjsArray *spliceArray(Ejs *ejs, EjsArray *ap, int argc, EjsObj **argv);
 static EjsString *arrayToString(Ejs *ejs, EjsArray *ap, int argc, EjsObj **argv);
 
@@ -251,7 +251,7 @@ static EjsObj *coerceArrayOperands(Ejs *ejs, EjsObj *lhs, int opcode, EjsObj *rh
 }
 
 
-static EjsAny *invokeArrayOperator(Ejs *ejs, EjsObj *lhs, int opcode, EjsObj *rhs)
+static EjsAny *invokeArrayOperator(Ejs *ejs, EjsAny *lhs, int opcode, EjsAny *rhs)
 {
     EjsAny  *result;
 
@@ -299,21 +299,21 @@ static EjsAny *invokeArrayOperator(Ejs *ejs, EjsObj *lhs, int opcode, EjsObj *rh
      */
     case EJS_OP_ADD:
         result = ejsCreateArray(ejs, 0);
-        pushArray(ejs, (EjsArray*) result, 1, &lhs);
-        pushArray(ejs, (EjsArray*) result, 1, &rhs);
+        pushArray(ejs, result, 1, &lhs);
+        pushArray(ejs, result, 1, &rhs);
         return result;
 
     case EJS_OP_AND:
-        return makeIntersection(ejs, (EjsArray*) lhs, (EjsArray*) rhs);
+        return makeIntersection(ejs, lhs, rhs);
 
     case EJS_OP_OR:
-        return makeUnion(ejs, (EjsArray*) lhs, (EjsArray*) rhs);
+        return makeUnion(ejs, lhs, rhs);
 
     case EJS_OP_SHL:
-        return pushArray(ejs, (EjsArray*) lhs, 1, &rhs);
+        return pushArray(ejs, lhs, 1, &rhs);
 
     case EJS_OP_SUB:
-        return removeArrayElements(ejs, (EjsArray*) lhs, (EjsArray*) rhs);
+        return removeArrayElements(ejs, lhs, rhs);
 
     default:
         ejsThrowTypeError(ejs, "Opcode %d not implemented for type %@", opcode, TYPE(lhs)->qname.name);
@@ -1012,7 +1012,7 @@ static EjsObj *popArray(Ejs *ejs, EjsArray *ap, int argc, EjsObj **argv)
 
     function push(...items): Number
  */
-static EjsNumber *pushArray(Ejs *ejs, EjsArray *ap, int argc, EjsObj **argv)
+static EjsNumber *pushArray(Ejs *ejs, EjsArray *ap, int argc, EjsAny **argv)
 {
     EjsArray    *args;
     EjsObj      **src, **dest;
@@ -1031,6 +1031,18 @@ static EjsNumber *pushArray(Ejs *ejs, EjsArray *ap, int argc, EjsObj **argv)
         dest[i + oldLen] = src[i];
     }
     return ejsCreateNumber(ejs, ap->length);
+}
+
+
+/*
+    Remove array elements
+    MOB - rename to "remove"
+
+    function removeElements(...elts): Array
+ */
+static EjsArray *removeElements(Ejs *ejs, EjsArray *ap, int argc, EjsArray **argv)
+{
+    return removeArrayElements(ejs, ap, argv[0]);
 }
 
 
@@ -1783,6 +1795,9 @@ void ejsConfigureArrayType(Ejs *ejs)
     ejsBindAccess(ejs, prototype, ES_Array_length, getArrayLength, setArrayLength);
     ejsBindMethod(ejs, prototype, ES_Array_pop, popArray);
     ejsBindMethod(ejs, prototype, ES_Array_push, pushArray);
+#if ES_Array_removeElements
+    ejsBindMethod(ejs, prototype, ES_Array_removeElements, removeElements);
+#endif
     ejsBindMethod(ejs, prototype, ES_Array_reverse, reverseArray);
     ejsBindMethod(ejs, prototype, ES_Array_shift, shiftArray);
     ejsBindMethod(ejs, prototype, ES_Array_slice, sliceArray);

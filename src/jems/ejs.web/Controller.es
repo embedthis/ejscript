@@ -340,7 +340,7 @@ module ejs.web {
                 options.layout = Path(config.directories.layouts).join(config.web.view.layout)
             }
             log.debug(4, "writePartialTemplate: \"" + path + "\"")
-            Web.process(TemplateBuilder(request, options), request, false)
+            request.server.process(TemplateBuilder(request, options), request, false)
         }
 
         /** 
@@ -376,7 +376,7 @@ module ejs.web {
             if (options.layout === undefined) {
                 options.layout = config.directories.layouts.join(config.web.view.layout)
             }
-            Web.process(TemplateBuilder(request, options), request, false)
+            request.server.process(TemplateBuilder(request, options), request, false)
             request.filename = saveFilename
         }
 
@@ -394,7 +394,7 @@ module ejs.web {
                 options.layout = config.directories.layouts.join(config.web.view.layout)
             }
             options.literal = page
-            Web.process(TemplateBuilder(request, options), request, false)
+            request.server.process(TemplateBuilder(request, options), request, false)
         }
 
         /**************************************** Private ******************************************/

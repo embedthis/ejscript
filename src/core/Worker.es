@@ -58,6 +58,20 @@ module ejs {
          */
         native function Worker(script: Path? = null, options: Object? = null)
 
+        /** 
+            Clone the worker and underlying interpreter
+            @param deep Ignored
+            @spec ejs
+         */
+        native function clone(deep: Boolean = true): Worker
+
+        /** 
+            Create a new worker by cloning the current interpreter
+            @param deep Ignored
+            @spec ejs
+         */
+        native static function cloneSelf(): Worker
+
         /**
             Load the script. The literal script is compiled as a JavaScript program and loaded and run.
             This is similar to the global eval() command but the script is run in its own interpreter and does not
@@ -101,9 +115,9 @@ module ejs {
 
         /**
             Preload the specified script or module file to initialize the worker. This will run a script using the current
-            thread and will block. To run a worker using its own thread, use load() or Worker(script).
-            This call will load the script/module and initialize and run global code. The call will block until 
-            all global code has completed and the script/module is initialized. 
+            thread.  This call will load the script/module and initialize and run global code. The call will block until 
+            all global code has completed and the script/module is initialized.  To run a worker using its own thread, 
+            use load() or Worker(script) instead.
             @param path Filename path for the module or script to load. This should include the file extension.
             @returns the value of the last expression in the script or module.
             @throws an exception if the script or module can't be loaded or initialized or if it thows an exception.

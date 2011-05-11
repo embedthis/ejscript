@@ -40,10 +40,16 @@ EjsModule *ejsCreateModule(Ejs *ejs, EjsString *name, int version, EjsConstants 
 }
 
 
+#if UNUSED
+EjsModule *ejsCloneModule(Ejs *ejs, EjsModule *mp)
+{
+    return ejsCreateModule(ejs, mp->name, mp->version, mp->constants);
+}
+#endif
+
+
 static void manageModule(EjsModule *mp, int flags)
 {
-    Ejs     *ejs;
-
     if (flags & MPR_MANAGE_MARK) {
         mprMark(mp->name);
         mprMark(mp->vname);
@@ -58,15 +64,11 @@ static void manageModule(EjsModule *mp, int flags)
         mprMark(mp->scope);
         mprMark(mp->currentMethod);
         mprMark(mp->current);
-        mprMark(mp->ejs);
+        mprMark(mp->vms);
 
     } else if (flags & MPR_MANAGE_FREE) {
         mprCloseFile(mp->file);
-        ejs = mp->ejs;
-        if (ejs && ejs->modules) {
-            mprAssert(ejs->name);
-            ejsRemoveModule(ejs, mp);
-        }
+        ejsRemoveModuleFromAll(mp);
     }
 }
 
@@ -153,7 +155,10 @@ EjsModule *ejsLookupModule(Ejs *ejs, EjsString *name, int minVersion, int maxVer
 int ejsAddModule(Ejs *ejs, EjsModule *mp)
 {
     mprAssert(ejs->modules);
-    mp->ejs = ejs;
+    if (mp->vms == 0) {
+        mp->vms = mprCreateList(-1, 0);
+        mprAddItem(mp->vms, ejs);
+    }
     return mprAddItem(ejs->modules, mp);
 }
 
@@ -161,22 +166,24 @@ int ejsAddModule(Ejs *ejs, EjsModule *mp)
 void ejsRemoveModule(Ejs *ejs, EjsModule *mp)
 {
     mprLog(6, "Remove module: %@", mp->name); 
-    mp->ejs = 0;
-    if (ejs->modules) {
-        mprRemoveItem(ejs->modules, mp);
-    }
+    mprRemoveItem(mp->vms, ejs);
+    mprRemoveItem(ejs->modules, mp);
 }
 
 
-void ejsRemoveModules(Ejs *ejs)
+void ejsRemoveModuleFromAll(EjsModule *mp)
 {
-    EjsModule   *mp;
-    int         next;
+    Ejs     *ejs;
+    int     next;
 
-    for (next = 0; (mp = mprGetNextItem(ejs->modules, &next)) != 0; ) {
-        mp->ejs = 0;
+    if (mp->vms) {
+        mprLog(6, "Remove module from all vms: %@", mp->name); 
+        for (next = 0; (ejs = mprGetNextItem(mp->vms, &next)) != 0; ) {
+            if (ejs->modules) {
+                mprRemoveItem(ejs->modules, mp);
+            }
+        }
     }
-    ejs->modules = 0;
 }
 
 

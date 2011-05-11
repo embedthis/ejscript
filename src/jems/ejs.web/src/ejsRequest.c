@@ -371,7 +371,7 @@ static char *makeRelativeHome(Ejs *ejs, EjsRequest *req)
  */
 static EjsAny *getRequestProperty(Ejs *ejs, EjsRequest *req, int slotNum)
 {
-    EjsObj      *value;
+    EjsAny      *value, *app;
     HttpConn    *conn;
     cchar       *pathInfo, *scriptName;
     char        *path, *filename, *uri, *ip, *scheme;
@@ -410,7 +410,8 @@ static EjsAny *getRequestProperty(Ejs *ejs, EjsRequest *req, int slotNum)
         value = ST(Object)->helpers.getProperty(ejs, (EjsObj*) req, slotNum);
         if (value == 0 || ejsIs(ejs, value, Null)) {
             /* Default to App.config */
-            value = ejsGetProperty(ejs, ST(App), ES_App_config);
+            app = ejsGetProperty(ejs, ejs->global, ES_App);
+            value = ejsGetProperty(ejs, app, ES_App_config);
         }
         return mapNull(ejs, value);
 
@@ -481,7 +482,8 @@ static EjsAny *getRequestProperty(Ejs *ejs, EjsRequest *req, int slotNum)
 
     case ES_ejs_web_Request_log:
         if (req->log == 0) {
-            req->log = ejsGetProperty(ejs, ST(App), ES_App_log);
+            app = ejsGetProperty(ejs, ejs->global, ES_App);
+            req->log = ejsGetProperty(ejs, app, ES_App_log);
         }
         return req->log;
 
@@ -931,10 +933,7 @@ static EjsObj *req_finalize(Ejs *ejs, EjsRequest *req, int argc, EjsObj **argv)
  */
 static EjsBoolean *req_finalized(Ejs *ejs, EjsRequest *req, int argc, EjsObj **argv)
 {
-    if (req->conn && req->conn->tx) {
-        return ejsCreateBoolean(ejs, req->conn->tx->finalized);
-    }
-    return S(false);
+    return ejsCreateBoolean(ejs, req->conn == 0 || req->conn->tx->finalized);
 }
 
 
@@ -1007,6 +1006,7 @@ static EjsObj *req_on(Ejs *ejs, EjsRequest *req, int argc, EjsAny **argv)
     }
     if (!conn->writeComplete && !conn->error && HTTP_STATE_CONNECTED <= conn->state && conn->state < HTTP_STATE_COMPLETE &&
             conn->writeq->ioCount == 0) {
+        //  MOB - where else are writable events issued?  - what if write blocked and then resuming?
         ejsSendEvent(ejs, req->emitter, "writable", NULL, req);
     }
     return 0;
@@ -1256,8 +1256,11 @@ EjsRequest *ejsCloneRequest(Ejs *ejs, EjsRequest *req, bool deep)
     nreq->filename = ejsClone(ejs, req->filename, 1);
     nreq->pathInfo = ejsCreateStringFromAsc(ejs, conn->rx->pathInfo);
     nreq->scriptName = ejsCreateStringFromAsc(ejs, conn->rx->scriptName);
+#if UNUSED
     nreq->accepted = req->accepted;
+#endif
     nreq->running = req->running;
+    nreq->cloned = req;
 
 //  MOB - limits?
     if (req->route) {
@@ -1365,9 +1368,9 @@ static void manageRequest(EjsRequest *req, int flags)
         mprMark(req->server);
         mprMark(req->session);
         mprMark(req->uri);
-#if UNUSED
-        mprMark(req->app);
-#endif
+        mprMark(req->cloned);
+    } else {
+        // mprLog(0, "FREE REQUEST - cloned %p", req->cloned);
     }
 }
 

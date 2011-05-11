@@ -33,7 +33,7 @@ server.on("readable", function (event, request: Request) {
     }
     let app = Controller.create(request).app
     assert(app is Function)
-    Web.process(app, request)
+    server.process(app, request)
 })
 server.listen(HTTP)
 

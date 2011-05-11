@@ -65,9 +65,13 @@ EjsAny *ejsClonePot(Ejs *ejs, EjsAny *obj, bool deep)
             type = TYPE(vp);
             if ((ejsIsType(ejs, vp) && ((EjsType*) vp)->mutable) || (!ejsIsType(ejs, vp) && type->mutableInstances)) {
                 EjsName qname = ejsGetPropertyName(ejs, src, i);
+                // mprLog(0, "CLONE %N", qname);
                 dp->value.ref = ejsClone(ejs, vp, deep);
                 //  UNICODE
                 mprSetName(dp->value.ref, qname.name->value);
+            } else {
+                extern int cloneRef;
+                cloneRef++;
             }
             if (dp->trait.type && dp->trait.type->mutable) {
                 if ((type = ejsGetPropertyByName(ejs, ejs->global, dp->trait.type->qname)) != 0) {

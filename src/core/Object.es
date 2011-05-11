@@ -24,7 +24,7 @@ module ejs {
             @param deep If true, do a deep copy where all object references are also copied, and so on, recursively.
             @spec ejs
          */
-        native function clone(deep: Boolean = true) : Object
+        native function clone(deep: Boolean = true): Object
 
         /** 
             Create a new object, set the object prototype and properties.

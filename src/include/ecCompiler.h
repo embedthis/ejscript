@@ -10,7 +10,6 @@
 #define _h_EC_COMPILER 1
 
 #include    "ejs.h"
-#include    "ejsTune.h"
 
 #ifdef __cplusplus
 extern "C" {

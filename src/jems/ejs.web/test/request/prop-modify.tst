@@ -86,7 +86,7 @@ server.on("readable", function (event, request: Request) {
     scriptName = ""
     assert(uri == "http://localhost:6700/index.html")
 
-    assert(server && server.documentRoot == "." && server.serverRoot == ".")
+    assert(server && server.documents == "." && server.home == ".")
     assert(status == 200)
 
     finalize()

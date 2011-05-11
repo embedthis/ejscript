@@ -555,7 +555,8 @@ void ejsConfigureFunctionType(Ejs *ejs)
     EjsPot      *prototype;
 
     type = ST(Function);
-    type->mutableInstances = 1;
+    //  MOB - testing functions with immutable instances
+    type->mutableInstances = 0;
     prototype = type->prototype;
 
     ejsBindConstructor(ejs, type, fun_Function);

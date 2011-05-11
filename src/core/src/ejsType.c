@@ -47,6 +47,7 @@ static EjsType *cloneTypeVar(Ejs *ejs, EjsType *src, bool deep)
     dest->hasBaseInitializers = src->hasBaseInitializers;
     dest->hasConstructor = src->hasConstructor;
     dest->hasInitializer = src->hasInitializer;
+    dest->hasInstanceVars = src->hasInstanceVars;
     dest->hasMeta = src->hasMeta;
     dest->hasScriptFunctions = src->hasScriptFunctions;
     dest->helpers = src->helpers;

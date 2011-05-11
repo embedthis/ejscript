@@ -13,6 +13,7 @@
 /********************************** Forwards **********************************/
 
 static EjsRequest *createRequest(EjsHttpServer *sp, HttpConn *conn);
+static EjsHttpServer *lookupServer(Ejs *ejs, cchar *ip, int port);
 static void setHttpPipeline(Ejs *ejs, EjsHttpServer *sp);
 static void setupConnTrace(HttpConn *conn);
 static void stateChangeNotifier(HttpConn *conn, int state, int notifyFlags);
@@ -80,10 +81,6 @@ static EjsObj *hs_close(Ejs *ejs, EjsHttpServer *sp, int argc, EjsObj **argv)
         ejsSendEvent(ejs, sp->emitter, "close", NULL, sp);
         httpDestroyServer(sp->server);
         sp->server = 0;
-#if UNUSED
-        //  MOB -- where else should the root be removed
-        mprRemoveRoot(sp);
-#endif
     }
     return 0;
 }
@@ -140,96 +137,88 @@ static EjsObj *hs_isSecure(Ejs *ejs, EjsHttpServer *sp, int argc, EjsObj **argv)
 
 /*  
     function listen(endpoint): Void
-    An endpoint can be either a "port", "ip:port", or null
+    An endpoint can be either a "port" or "ip:port", or null
  */
-static EjsObj *hs_listen(Ejs *ejs, EjsHttpServer *sp, int argc, EjsObj **argv)
+static EjsVoid *hs_listen(Ejs *ejs, EjsHttpServer *sp, int argc, EjsObj **argv)
 {
     HttpServer  *server;
     HttpHost    *host;
     EjsString   *address;
-    EjsObj      *endpoint;
-    EjsPath     *root;
+    EjsObj      *endpoint, *options;
+    EjsPath     *home, *documents;
 
     endpoint = (argc >= 1) ? argv[0] : S(null);
-
-    if (sp->server) {
-        httpDestroyServer(sp->server);
-        sp->server = 0;
+    if (endpoint != S(null)) {
+        address = ejsToString(ejs, endpoint);
+        mprParseIp(address->value, &sp->ip, &sp->port, 0);
+    } else {
+        address = 0;
     }
-    if (ejsIs(ejs, endpoint, Null)) {
-        if (ejs->loc) {
-            ejs->loc->context = sp;
-#if UNUSED
-//  MOB - may not bee needed as ejs->loc is being marked
-            mprAddRoot(sp);
-#endif
-        } else {
-            ejsThrowStateError(ejs, "Can't find web server context for Ejscript. Check EjsStartup directive");
+    if (ejs->hosted) {
+        if ((options = ejsGetProperty(ejs, sp, ES_ejs_web_HttpServer_options)) != 0) {
+            sp->hosted = ejsGetPropertyByName(ejs, options, EN("own")) != S(true);
+        }
+    }
+
+    if (!sp->hosted) {
+        if (address == 0) {
+            ejsThrowArgError(ejs, "Missing listen endpoint");
             return 0;
         }
-        return S(null);
-    }
-    if (ejs->loc) {
-#if UNUSED
-//  MOB - may not bee needed as ejs->loc is being marked
-        mprAddRoot(sp);
-#endif
-        /* Being called hosted - ignore endpoint value */
-        ejs->loc->context = sp;
-        return S(null);
-    }
-    address = ejsToString(ejs, endpoint);
-    mprParseIp(address->value, &sp->ip, &sp->port, 80);
+        if (sp->server) {
+            httpDestroyServer(sp->server);
+            sp->server = 0;
+        }
+        /*
+            The server uses the ejsDispatcher. This is VERY important. All connections will inherit this also.
+            This serializes all activity on one dispatcher.
+         */
+        if ((server = httpCreateServer(sp->ip, sp->port, ejs->dispatcher, HTTP_CREATE_HOST)) == 0) {
+            ejsThrowIOError(ejs, "Can't create Http server object");
+            return 0;
+        }
+        sp->server = server;
+        host = mprGetFirstItem(server->hosts);
+        if (sp->limits) {
+            ejsSetHttpLimits(ejs, server->limits, sp->limits, 1);
+        }
+        if (sp->incomingStages || sp->outgoingStages || sp->connector) {
+            setHttpPipeline(ejs, sp);
+        }
+        if (sp->ssl) {
+            httpSecureServer(server->ip, sp->port, sp->ssl);
+        }
+        if (sp->name) {
+            httpSetHostName(host, sp->name);
+        }
+        httpSetSoftware(server->http, EJS_HTTPSERVER_NAME);
+        httpSetServerAsync(server, sp->async);
+        httpSetServerContext(server, sp);
+        httpSetServerNotifier(server, stateChangeNotifier);
 
-    /*
-        The server uses the ejsDispatcher. This is VERY important. All connections will inherit this also.
-        This serializes all activity on one dispatcher.
-     */
-    if ((server = httpCreateServer(sp->ip, sp->port, ejs->dispatcher, HTTP_CREATE_HOST)) == 0) {
-        ejsThrowIOError(ejs, "Can't create Http server object");
-        return 0;
+        /*
+            This is only required for when http is using non-ejs handlers and/or filters
+         */
+        documents = ejsGetProperty(ejs, sp, ES_ejs_web_HttpServer_documents);
+        if (ejsIs(ejs, documents, Path)) {
+            httpSetHostDocumentRoot(host, documents->value);
+        }
+        home = ejsGetProperty(ejs, sp, ES_ejs_web_HttpServer_home);
+        if (ejsIs(ejs, home, Path)) {
+            httpSetHostServerRoot(host, home->value);
+        }
+        if (httpStartServer(server) < 0) {
+            httpDestroyServer(sp->server);
+            sp->server = 0;
+            ejsThrowIOError(ejs, "Can't listen on %s", address->value);
+        }
     }
-    sp->server = server;
-    host = mprGetFirstItem(server->hosts);
-
-    if (sp->limits) {
-        ejsSetHttpLimits(ejs, server->limits, sp->limits, 1);
+    if (ejs->httpServers == 0) {
+       ejs->httpServers = mprCreateList(-1, MPR_LIST_STATIC_VALUES);
     }
-    if (sp->incomingStages || sp->outgoingStages || sp->connector) {
-        setHttpPipeline(ejs, sp);
-    }
-    if (sp->ssl) {
-        httpSecureServer(server->ip, sp->port, sp->ssl);
-    }
-    if (sp->name) {
-        httpSetHostName(host, sp->name);
-    }
-    httpSetSoftware(server->http, EJS_HTTPSERVER_NAME);
-    httpSetServerAsync(server, sp->async);
-    httpSetServerContext(server, sp);
-    httpSetServerNotifier(server, stateChangeNotifier);
-
-    /*
-        This is only required for when http is using non-ejs handlers and/or filters
-     */
-    root = ejsGetProperty(ejs, sp, ES_ejs_web_HttpServer_documentRoot);
-    if (ejsIs(ejs, root, Path)) {
-        httpSetHostDocumentRoot(host, root->value);
-    }
-    root = ejsGetProperty(ejs, sp, ES_ejs_web_HttpServer_serverRoot);
-    if (ejsIs(ejs, root, Path)) {
-        httpSetHostServerRoot(host, root->value);
-    }
-    if (httpStartServer(server) < 0) {
-        ejsThrowIOError(ejs, "Can't listen on %s", address->value);
-        httpDestroyServer(sp->server);
-#if UNUSED
-        mprRemoveRoot(sp);
-#endif
-        sp->server = 0;
-        return 0;
-    }
-    return S(null);
+    mprRemoveItem(ejs->httpServers, sp);
+    mprAddItem(ejs->httpServers, sp);
+    return 0;
 }
 
 
@@ -402,6 +391,65 @@ static EjsObj *hs_verifyClients(Ejs *ejs, EjsHttpServer *sp, int argc, EjsObj **
 }
 
 
+static void receiveRequest(EjsRequest *req, MprEvent *event)
+{
+    Ejs             *ejs;
+    EjsAny          *argv[1];
+    EjsFunction     *onrequest;
+    HttpConn        *conn;
+    
+    conn = req->conn;
+    ejs = req->ejs;
+    mprAssert(ejs);
+
+    onrequest = ejsGetProperty(ejs, req->server, ES_ejs_web_HttpServer_onrequest);
+    if (!ejsIsFunction(ejs, onrequest)) {
+        ejsThrowStateError(ejs, "HttpServer.onrequest is not a function");
+        return;
+    }
+    argv[0] = req;
+    ejsRunFunction(ejs, onrequest, req->server, 1, argv);
+    httpEnableConnEvents(conn);
+}
+
+
+/*
+    function passRequest(req: Request, worker: Worker): Void
+ */
+static EjsVoid *hs_passRequest(Ejs *ejs, EjsHttpServer *server, int argc, EjsAny **argv)
+{
+    Ejs             *nejs;
+    EjsRequest      *req, *nreq;
+    EjsWorker       *worker;
+    HttpConn        *conn;
+
+    req = argv[0];
+    worker = argv[1];
+
+    nejs = worker->pair->ejs;
+    conn = req->conn;
+    conn->ejs = nejs;
+    conn->oldDispatcher = conn->dispatcher;
+    conn->newDispatcher = nejs->dispatcher;
+
+    if ((nreq = ejsCloneRequest(nejs, req, 1)) == 0) {
+        ejsThrowStateError(ejs, "Can't clone request");
+        return 0;
+    }
+    httpSetConnContext(conn, nreq);
+
+    if ((nreq->server = ejsCloneHttpServer(nejs, req->server, 1)) == 0) {
+        ejsThrowStateError(ejs, "Can't clone request");
+        return 0;
+    }
+    conn->workerEvent = mprCreateEvent(conn->dispatcher, "RequestWorker", 0, receiveRequest, nreq, MPR_EVENT_DONT_QUEUE);
+    if (conn->workerEvent == 0) {
+        ejsThrowStateError(ejs, "Can't create worker event");
+    }  
+    return 0;
+}
+
+
 /************************************ Support *************************************/
 
 //  TODO rethink this. This should really go into the HttpHost object
@@ -464,7 +512,6 @@ static void setHttpPipeline(Ejs *ejs, EjsHttpServer *sp)
 static void stateChangeNotifier(HttpConn *conn, int state, int notifyFlags)
 {
     Ejs             *ejs;
-    EjsHttpServer   *sp;
     EjsRequest      *req;
 
     mprAssert(conn);
@@ -490,6 +537,9 @@ static void stateChangeNotifier(HttpConn *conn, int state, int notifyFlags)
                 ejsSendRequestErrorEvent(ejs, req);
             }
             ejsSendRequestCloseEvent(ejs, req);
+            if (req->cloned) {
+                ejsSendRequestCloseEvent(req->cloned->ejs, req->cloned);
+            }
         }
         break;
 
@@ -507,36 +557,36 @@ static void stateChangeNotifier(HttpConn *conn, int state, int notifyFlags)
 
     case HTTP_EVENT_CLOSE:
         /* Connection close */
-        if (conn->server) {
-            ejs = conn->mark;
-            sp = httpGetServerContext(conn->server);
-            if (ejs && sp->cloned) {
-                printf("CLOSE Connection, remaining VMs %d\n", mprGetListLength(ejs->service->vmlist) - 1);
 #if UNUSED
-                mprRemoveRoot(sp);
-#endif
-                ejsDestroyVM(ejs);
-                conn->mark = 0;
-            }
+        if (conn->pool) {
+            ejsFreePoolVM(conn->pool, conn->ejs);
+            conn->ejs = 0;
         }
+#endif
         if (req && req->conn) {
             req->conn = 0;
         }
         break;
-
     }
 }
 
 
-static void closeEjs(HttpQueue *q)
+static void closeEjsHandler(HttpQueue *q)
 {
     EjsRequest  *req;
+    HttpConn    *conn;
 
-    if ((req = httpGetConnContext(q->conn)) != 0) {
+    conn = q->conn;
+
+    if ((req = httpGetConnContext(conn)) != 0) {
         ejsSendRequestCloseEvent(req->ejs, req);
         req->conn = 0;
     }
-    httpSetConnContext(q->conn, 0);
+    httpSetConnContext(conn, 0);
+    if (conn->pool) {
+        ejsFreePoolVM(conn->pool, conn->ejs);
+        conn->ejs = 0;
+    }
 }
 
 
@@ -568,11 +618,10 @@ static void setupConnTrace(HttpConn *conn)
     EjsHttpServer   *sp;
     int             i;
 
-    sp = httpGetServerContext(conn->server);
-    mprAssert(sp);
-
-    for (i = 0; i < HTTP_TRACE_MAX_DIR; i++) {
-        conn->trace[i] = sp->trace[i];
+    if ((sp = httpGetServerContext(conn->server)) != 0) {
+        for (i = 0; i < HTTP_TRACE_MAX_DIR; i++) {
+            conn->trace[i] = sp->trace[i];
+        }
     }
 }
 
@@ -613,70 +662,51 @@ static EjsRequest *createRequest(EjsHttpServer *sp, HttpConn *conn)
 }
 
 
-static EjsHttpServer *getServer(HttpConn *conn)
+static void startEjsHandler(HttpQueue *q)
 {
     EjsHttpServer   *sp;
-    HttpLoc         *loc;
+    EjsRequest      *req;
+    Ejs             *ejs;
+    HttpServer      *server;
+    HttpConn        *conn;
+    MprSocket       *lp;
 
-    if ((sp = httpGetServerContext(conn->server)) == 0) {
-        /* Hosted handler. Must supply a location block which defines the HttpServer instance.  */
-        loc = conn->rx->loc;
-        if (loc == 0 || loc->context == 0) {
-            if (!conn->error) {
-                mprError("Location block is not defined for request");
-            }
-            return 0;
+    conn = q->conn;
+    server = conn->server;
+
+    if ((sp = httpGetServerContext(server)) == 0) {
+        lp = conn->sock->listenSock;
+        if ((sp = lookupServer(conn->ejs, lp->ip, lp->port)) == 0) {
+            httpError(conn, HTTP_CODE_INTERNAL_SERVER_ERROR, 
+                    "No HttpServer configured to serve for request from %s:%d", lp->ip, lp->port);
+            return;
         }
-        sp = (EjsHttpServer*) loc->context;
-        if (sp->server == 0) {
-            /* Don't set limits or pipeline. That will come from the embedding server */
-            sp->server = conn->server;
-            sp->server->ssl = loc->ssl;
-            sp->ip = sclone(conn->server->ip);
-            sp->port = conn->server->port;
-            sp->dir = sclone(conn->host->documentRoot);
+        ejs = sp->ejs;
+        sp->server = server;
+        sp->ip = server->ip;
+        sp->port = server->port;
+        if (!ejsIsDefined(ejs, ejsGetProperty(ejs, sp, ES_ejs_web_HttpServer_documents))) {
+            ejsSetProperty(ejs, sp, ES_ejs_web_HttpServer_documents, 
+                ejsCreateStringFromAsc(ejs, conn->host->documentRoot));
         }
-        httpSetServerContext(conn->server, sp);
+    } else {
+        ejs = sp->ejs;
     }
     if (conn->notifier == 0) {
         httpSetConnNotifier(conn, stateChangeNotifier);
     }
-    return sp;
-}
+    if ((req = createRequest(sp, conn)) != 0) {
+        ejsSendEvent(ejs, sp->emitter, "readable", req, req);
 
-
-/*
-    Note: this may be called multiple times for async, long-running requests.
-    TODO -rename then
- */
-static void startEjs(HttpQueue *q)
-{
-    EjsHttpServer   *sp;
-    EjsRequest      *req;
-    HttpConn        *conn;
-
-    conn = q->conn;
-    if ((sp = getServer(conn)) == 0) {
-        return;
-    }
-    createRequest(sp, conn);
-    req = httpGetConnContext(conn);
-    if (req && !req->accepted) {
-        /* Server accept event */
-        req->accepted = 1;
-        ejsSendEvent(sp->ejs, sp->emitter, "readable", req, req);
+        /* Send EOF if form or upload and all content has been received.  */
         if (conn->rx->startAfterContent && conn->rx->eof) {
-            /* 
-                If form or upload, then all content is already buffered and no more input data will arrive. So can send
-                the EOF notification here
-             */
             HTTP_NOTIFY(conn, 0, HTTP_NOTIFY_READABLE);
         }
     }
 }
 
 
-static void processEjs(HttpQueue *q)
+static void processEjsHandler(HttpQueue *q)
 {
     HttpConn        *conn;
     
@@ -705,10 +735,10 @@ HttpStage *ejsAddWebHandler(Http *http, MprModule *module)
         return 0;
     }
     http->ejsHandler = handler;
-    handler->close = closeEjs;
+    handler->close = closeEjsHandler;
     handler->incomingData = incomingEjsData;
-    handler->start = startEjs;
-    handler->process = processEjs;
+    handler->start = startEjsHandler;
+    handler->process = processEjsHandler;
     return handler;
 }
 
@@ -725,7 +755,6 @@ static void manageHttpServer(EjsHttpServer *sp, int flags)
         mprMark(sp->sessionTimer);
         mprMark(sp->ssl);
         mprMark(sp->connector);
-        mprMark(sp->dir);
         mprMark(sp->keyFile);
         mprMark(sp->certFile);
         mprMark(sp->protocols);
@@ -741,10 +770,13 @@ static void manageHttpServer(EjsHttpServer *sp, int flags)
         httpManageTrace(&sp->trace[1], flags);
         
     } else {
+        if (sp->ejs->httpServers) {
+            mprRemoveItem(sp->ejs->httpServers, sp);
+        }
         sp->sessions = 0;
         if (!sp->cloned) {
             ejsStopSessionTimer(sp);
-            if (sp->server) {
+            if (sp->server && !sp->hosted) {
                 httpDestroyServer(sp->server);
                 sp->server = 0;
             }
@@ -781,7 +813,6 @@ EjsHttpServer *ejsCloneHttpServer(Ejs *ejs, EjsHttpServer *sp, bool deep)
     nsp->name = sp->name;
     nsp->ssl = sp->ssl;
     nsp->connector = sp->connector;
-    nsp->dir = sp->dir;
     nsp->port = sp->port;
     nsp->ip = sp->ip;
     nsp->certFile = sp->certFile;
@@ -791,6 +822,27 @@ EjsHttpServer *ejsCloneHttpServer(Ejs *ejs, EjsHttpServer *sp, bool deep)
     nsp->sessions = sp->sessions;
     httpInitTrace(nsp->trace);
     return nsp;
+}
+
+
+static EjsHttpServer *lookupServer(Ejs *ejs, cchar *ip, int port)
+{
+    EjsHttpServer   *sp;
+    int             next;
+
+    if (ip == 0) {
+        ip = "";
+    }
+    if (ejs->httpServers) {
+        for (next = 0; (sp = mprGetNextItem(ejs->httpServers, &next)) != 0; ) {
+            if (sp->port <= 0 || port <= 0 || sp->port == port) {
+                if (sp->ip == 0 || *sp->ip == '\0' || *ip == '\0' || scmp(sp->ip, ip) == 0) {
+                    return sp;
+                }
+            }
+        }
+    }
+    return 0;
 }
 
 
@@ -813,6 +865,7 @@ void ejsConfigureHttpServerType(Ejs *ejs)
     ejsBindAccess(ejs, prototype, ES_ejs_web_HttpServer_name, hs_name, hs_set_name);
     ejsBindMethod(ejs, prototype, ES_ejs_web_HttpServer_port, hs_port);
     ejsBindMethod(ejs, prototype, ES_ejs_web_HttpServer_off, hs_off);
+    ejsBindMethod(ejs, prototype, ES_ejs_web_HttpServer_passRequest, hs_passRequest);
     ejsBindMethod(ejs, prototype, ES_ejs_web_HttpServer_on, hs_on);
     ejsBindMethod(ejs, prototype, ES_ejs_web_HttpServer_secure, hs_secure);
     ejsBindMethod(ejs, prototype, ES_ejs_web_HttpServer_setLimits, hs_setLimits);

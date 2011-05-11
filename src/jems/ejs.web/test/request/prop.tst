@@ -48,7 +48,7 @@ server.on("readable", function (event, request: Request) {
     assert(route == null)
     assert(scheme == "http")
     assert(scriptName == "")
-    assert(server && server.documentRoot == "." && server.serverRoot == ".")
+    assert(server && server.documents == "." && server.home == ".")
     assert(sessionID == null)
     assert(status == 200)
     assert(uri == "http://localhost:6700/index.html")

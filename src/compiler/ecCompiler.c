@@ -332,6 +332,7 @@ int ejsLoadScriptLiteral(Ejs *ejs, EjsString *script, cchar *cache, int flags)
     } else {
         cp->noout = 1;
     }
+    //  UNICODE -- should this API be multi or unicode
     if (ecOpenMemoryStream(cp, ejsToMulti(ejs, script), script->length) < 0) {
         mprError("Can't open memory stream");
         mprRemoveRoot(cp);

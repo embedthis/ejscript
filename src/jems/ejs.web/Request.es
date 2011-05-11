@@ -400,7 +400,7 @@ module ejs.web {
             Set an error flash notification message.
             Flash messages persist for only one request and are a convenient way to pass state information or 
             feedback messages to the next request. To use flash messages, setupFlash() and finalizeFlash() must 
-            be called before and after the request is processed. Web.process will call setupFlash and finalizeFlash 
+            be called before and after the request is processed. HttpServer.process will call setupFlash and finalizeFlash 
             automatically.
             @param msg Message to store
          */
@@ -464,7 +464,7 @@ module ejs.web {
             Set an informational flash notification message.
             Flash messages persist for only one request and are a convenient way to pass state information or 
             feedback messages to the next request. To use flash messages, setupFlash() and finalizeFlash() must 
-            be called before and after the request is processed. Web.process will call setupFlash and finalizeFlash 
+            be called before and after the request is processed. HttpServer.process will call setupFlash and finalizeFlash 
             automatically.
             @param msg Message to store
          */
@@ -613,7 +613,7 @@ r.link({product: "candy", quantity: "10", template: "/cart/{product}/{quantity}"
         /** 
             Set a transient flash notification message. Flash messages persist for only one request and are a convenient
                 way to pass state information or feedback messages to the next request. To use flash messages, 
-                setupFlash() and finalizeFlash() must be called before and after the request is processed. Web.process
+                setupFlash() and finalizeFlash() must be called before and after the request is processed. HttpServer.process
                 will call setupFlash and finalizeFlash automatically.
             @param key Flash message key
             @param msg Message to store
@@ -855,7 +855,7 @@ r.link({product: "candy", quantity: "10", template: "/cart/{product}/{quantity}"
             Set a warning flash notification.
             Flash messages persist for only one request and are a convenient way to pass state information or 
             feedback messages to the next request. To use flash messages, setupFlash() and finalizeFlash() must 
-            be called before and after the request is processed. Web.process will call setupFlash and finalizeFlash 
+            be called before and after the request is processed. HttpServer.process will call setupFlash and finalizeFlash 
             automatically.
             @param msg Message to store
          */
@@ -919,7 +919,7 @@ r.link({product: "candy", quantity: "10", template: "/cart/{product}/{quantity}"
          */
         function writeError(status: Number, ...msgs): Void {
             if (!finalized) {
-                this.status = status
+                this.status = status || Http.ServerError
                 let msg = msgs.join(" ").replace(/.*Error Exception: /, "")
                 let title = "Request Error for \"" + pathInfo + "\""
                 if (config.log.showClient) {

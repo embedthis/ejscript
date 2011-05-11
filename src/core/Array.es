@@ -6,11 +6,6 @@
 
 module ejs {
 
-    /*
-        TODO 
-            - removeByElement(e) - remove an array element by reference
-     */
-
     /**
         Arrays provide a growable, integer indexed, in-memory store for objects.  An array can be treated as a 
         stack (FIFO or LIFO) or a list (ordered).  Insertions can be done at the beginning or end of the stack or at an 
@@ -344,6 +339,7 @@ module ejs {
             @param end Numeric index of the last element to remove
             @spec ejs
          */
+//  MOB - remove and replace with removeElements
         function remove(start: Number, end: Number = -1): Void {
             if (start < 0) {
                 start += length
@@ -353,6 +349,8 @@ module ejs {
             }
             splice(start, end - start + 1)
         }
+
+        native function removeElements(...elts): Void
 
         /**
             Reverse the order of the objects in the array. The elements are reversed in the original array.
@@ -486,6 +484,7 @@ module ejs {
         # DOC_ONLY
         native function << (elements: Array): Array
 
+        //  MOB - need a function equivalent for this
         /**
             Array subtraction. Remove any items that appear in the supplied array.
             @param arr The array to remove.

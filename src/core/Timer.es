@@ -98,7 +98,7 @@ module ejs {
         timer.stop()
 
     /**
-        Create a timeout
+        Run a function after a delay
         @param callback Function to invoke when the timer expires
         @param delay Time in milliseconds until the timer expires and the callback is invoked
         @param args Function arguments

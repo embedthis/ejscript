@@ -315,17 +315,18 @@
 #define ES_Array_reduceRight                                           22
 #define ES_Array_reject                                                23
 #define ES_Array_remove                                                24
-#define ES_Array_reverse                                               25
-#define ES_Array_shift                                                 26
-#define ES_Array_slice                                                 27
-#define ES_Array_some                                                  28
-#define ES_Array_sort                                                  29
-#define ES_Array_splice                                                30
-#define ES_Array_toString                                              31
-#define ES_Array_transform                                             32
-#define ES_Array_unique                                                33
-#define ES_Array_unshift                                               34
-#define ES_Array_NUM_INSTANCE_PROP                                     35
+#define ES_Array_removeElements                                        25
+#define ES_Array_reverse                                               26
+#define ES_Array_shift                                                 27
+#define ES_Array_slice                                                 28
+#define ES_Array_some                                                  29
+#define ES_Array_sort                                                  30
+#define ES_Array_splice                                                31
+#define ES_Array_toString                                              32
+#define ES_Array_transform                                             33
+#define ES_Array_unique                                                34
+#define ES_Array_unshift                                               35
+#define ES_Array_NUM_INSTANCE_PROP                                     36
 #define ES_Array_NUM_INHERITED_PROP                                    0
 
 
@@ -2105,10 +2106,11 @@
 /*
     Class property slots for the "Worker" type 
  */
-#define ES_Worker_exit                                                 0
-#define ES_Worker_join                                                 1
-#define ES_Worker_lookup                                               2
-#define ES_Worker_NUM_CLASS_PROP                                       3
+#define ES_Worker_cloneSelf                                            0
+#define ES_Worker_exit                                                 1
+#define ES_Worker_join                                                 2
+#define ES_Worker_lookup                                               3
+#define ES_Worker_NUM_CLASS_PROP                                       4
 
 /*
    Prototype (instance) slots for "Worker" type 
@@ -2117,14 +2119,15 @@
 #define ES_Worker_onmessage                                            1
 #define ES_Worker_onerror                                              2
 #define ES_Worker_name                                                 3
-#define ES_Worker_eval                                                 4
-#define ES_Worker_load                                                 5
-#define ES_Worker_preload                                              6
-#define ES_Worker_preeval                                              7
-#define ES_Worker_postMessage                                          8
-#define ES_Worker_terminate                                            9
-#define ES_Worker_waitForMessage                                       10
-#define ES_Worker_NUM_INSTANCE_PROP                                    11
+#define ES_Worker_clone                                                4
+#define ES_Worker_eval                                                 5
+#define ES_Worker_load                                                 6
+#define ES_Worker_preload                                              7
+#define ES_Worker_preeval                                              8
+#define ES_Worker_postMessage                                          9
+#define ES_Worker_terminate                                            10
+#define ES_Worker_waitForMessage                                       11
+#define ES_Worker_NUM_INSTANCE_PROP                                    12
 #define ES_Worker_NUM_INHERITED_PROP                                   0
 
 /*
@@ -2277,6 +2280,6 @@
 #define ES_XMLList_NUM_INSTANCE_PROP                                   20
 #define ES_XMLList_NUM_INHERITED_PROP                                  0
 
-#define _ES_CHECKSUM_ejs   1391283
+#define _ES_CHECKSUM_ejs   1395077
 
 #endif

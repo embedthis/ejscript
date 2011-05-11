@@ -1,3 +1,4 @@
+//  MOB - remove Web class and blend into HttpServer
 /*
     ejsWeb.c -- Ejscript web framework.
 
@@ -15,78 +16,6 @@
 static int configureWebTypes(Ejs *ejs);
 
 /************************************ Code ************************************/
-
-static void requestWorker(EjsRequest *req, MprEvent *event)
-{
-    Ejs         *ejs;
-    EjsObj      *argv[1];
-    HttpConn    *conn;
-    
-    ejs = req->ejs;
-    mprAssert(ejs);
-    
-    conn = req->conn;
-    argv[0] = (EjsObj*) req;
-
-    /*
-        Run the workerHelper. This may return before the request or a series of requests (keep-alive) are complete.
-     */
-    ejsRunFunctionBySlot(ejs, S(Web), ES_ejs_web_Web_workerHelper, 1, argv);
-#if UNUSED
-    conn->dispatcher = conn->oldDispatcher;
-    //  MOB - must hang here
-#endif
-    httpEnableConnEvents(conn);
-    /* Thread will return to the pool - further I/O events (or close) will come on the conn->dispatcher */
-}
-
-
-/*
-    static function worker(req: Request): Void
- */
-static EjsObj *req_worker(Ejs *ejs, EjsObj *web, int argc, EjsObj **argv)
-{
-    Ejs         *nejs;
-    EjsRequest  *req, *nreq;
-    HttpConn    *conn;
-
-    req = (EjsRequest*) argv[0];
-
-    if ((nejs = ejsCreateVM(ejs, 0, 0, 0, 0, 0, 0)) == 0) {
-        ejsThrowStateError(ejs, "Can't create interpreter to service request");
-        return 0;
-    }
-    conn = req->conn;
-    conn->mark = nejs;
-    conn->oldDispatcher = conn->dispatcher;
-    conn->newDispatcher = nejs->dispatcher;
-    
-    nejs->loc = ejs->loc;
-#if UNUSED && KEEP
-    /* Need this if not cloning */
-    if (ejsLoadModule(nejs, ejsCreateStringFromAsc(nejs, "ejs.web"), -1, -1, EJS_LOADER_RELOAD) < 0) {
-        ejsThrowStateError(ejs, "Can't load ejs.web.mod: %s", ejsGetErrorMsg(nejs, 1));
-        return 0;
-    }
-#endif
-    if ((nreq = ejsCloneRequest(nejs, req, 1)) == 0) {
-        ejsThrowStateError(ejs, "Can't clone request");
-        return 0;
-    }
-    httpSetConnContext(conn, nreq);
-
-    if ((nreq->server = ejsCloneHttpServer(nejs, req->server, 1)) == 0) {
-        ejsThrowStateError(ejs, "Can't clone request");
-        return 0;
-    }
-    conn->workerEvent = mprCreateEvent(conn->dispatcher, "RequestWorker", 0, requestWorker, nreq, MPR_EVENT_DONT_QUEUE);
-    if (conn->workerEvent == 0) {
-        ejsThrowStateError(ejs, "Can't create worker event");
-    }  
-    return 0;
-}
-
-
 /*  
     HTML escape a string
     function escapeHtml(str: String): String
@@ -100,21 +29,9 @@ static EjsObj *web_escapeHtml(Ejs *ejs, EjsObj *unused, int argc, EjsObj **argv)
 }
 
 
-/******************************************************************************/
-
 static int configureWebTypes(Ejs *ejs)
 {
-    EjsType     *type;
     int         slotNum;
-
-    if ((type = ejsGetTypeByName(ejs, N("ejs.web", "Web"))) == 0) {
-        mprError("Can't find ejs.web::Web class");
-        ejs->hasError = 1;
-        return MPR_ERR_CANT_INITIALIZE;
-    }
-    ejsSetSpecialType(ejs, S_Web, type);
-
-    ejsBindMethod(ejs, type, ES_ejs_web_Web_worker, req_worker);
 
     if ((slotNum = ejsLookupProperty(ejs, ejs->global, N("ejs.web", "escapeHtml"))) != 0) {
         ejsBindFunction(ejs, ejs->global, slotNum, web_escapeHtml);
