@@ -7,8 +7,8 @@
 module ejs.web {
 
     /**
-        HttpServer objects represents the server-side of a Hypertext Transfer Protocol (HTTP) version 1.1 connection. 
-        It is used to receive HTTP requests and generate responses. It supports the HTTP/1.1 standard
+        HttpServer objects represents the server-side of Hypertext Transfer Protocol (HTTP) version 1.1 connections. 
+        The HttpServer class is used to receive HTTP requests and generate responses. It supports the HTTP/1.1 standard
         including methods for GET, POST, PUT, DELETE, OPTIONS, and TRACE. It also supports Keep-Alive and SSL connections.
         @spec ejs
         @stability evolving
@@ -39,12 +39,6 @@ module ejs.web {
                 showClient: true,
                 //  where: "file" - defaults to web server log
             },
-            /* MOB -- not yet implemented
-            session: {
-                enable: true,
-                timeout: 1800,
-            },
-            */
             web: {
                 expires: {
                     /*
@@ -171,6 +165,7 @@ module ejs.web {
             function onrequest(request: Request): Void
          */
         public var onrequest = defaultOnRequest
+
         /*
             Default onrequest function to handle threaded requests
             @param request Request object
@@ -399,12 +394,11 @@ server.listen("127.0.0.1:7777")
                     request.autoFinalize()
                 }
             } catch (e) {
-                App.log.debug(3, e)
+                App.log.debug(1, e)
                 request.writeError(Http.ServerError, e)
             }
         }
 
-        //    Accept: application/xml,application/xhtml+xml,text/html;q=0.9,text/plain;q=0.8,image/png,*/*;q=0.5
         private function processBody(request: Request, body: Object): Void {
             if (body is Path) {
                 if (request.isSecure) {
@@ -471,14 +465,12 @@ server.listen("127.0.0.1:7777")
             }
         }
 
-//TEST
         /** @hide */
         function pruneWorkers(): Void
             idleWorkers = []
 
         private function releaseWorker(w: Worker): Void {
             activeWorkers.remove(w)
-//TEST
             if (config.cache.worker) {
                 idleWorkers.push(w)
             }

@@ -66,6 +66,9 @@ module ejs.web {
                 for each (key in ["bin", "db", "controllers", "models", "src", "static"]) {
                     dirs[key] = request.dir.join(dirs[key])
                 }
+                for (let [key, value] in dirs) {
+                    dirs[key] = Path(value)
+                }
                 App.updateLog()
             }
 /* FUTURE
@@ -209,8 +212,7 @@ module ejs.web {
     function MvcBuilder(request: Request): Function {
         let mvc: Mvc
         if ((mvc = Mvc.apps[request.dir]) == null) {
-            //  MOB 2
-            App.log.debug(5, "Load MVC application from \"" + request.dir + "\"")
+            App.log.debug(2, "Load MVC application from \"" + request.dir + "\"")
             // mvc = Mvc.apps[request.dir] = new Mvc(request)
             mvc = new Mvc(request)
         }

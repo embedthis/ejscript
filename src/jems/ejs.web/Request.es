@@ -644,7 +644,7 @@ r.link({product: "candy", quantity: "10", template: "/cart/{product}/{quantity}"
          */
         native function on(name, observer: Function): Void
 
-        //  MOB - should there be a blocking read option?
+//  MOB - should there be a blocking read option?
         /** 
             @duplicate Stream.read
             If the request is posting a form, i.e. the Http ContentType header is set to 
@@ -868,7 +868,7 @@ r.link({product: "candy", quantity: "10", template: "/cart/{product}/{quantity}"
          */
         native function write(...data): Number
 
-        //  MOB - add this to ByteArray, Http, Socket (not to Stream)
+//  MOB - add this to ByteArray, Http, Socket (not to Stream)
         /** 
             Write a block of data to the client. This will buffer the written data which will be flushed when either 
             close(), flush() or finalize() is called or the underlying pipeline is full. 
@@ -1039,6 +1039,7 @@ r.link({product: "candy", quantity: "10", template: "/cart/{product}/{quantity}"
 
         /*************************************** Deprecated ***************************************/
 
+//  MOB - remove all this legacy stuff
         /** 
             @hide
             @deprecated 2.0.0
