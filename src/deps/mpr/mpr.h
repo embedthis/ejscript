@@ -5274,6 +5274,7 @@ typedef struct MprDispatcher {
     MprCond         *cond;              /**< Multi-thread sync */
     int             enabled;            /**< Dispatcher enabled to run events */
     int             waitingOnCond;      /**< Waiting on the cond */
+    int             destroyed;          /**< Dispatcher has been destroyed */
     struct MprDispatcher *next;         /**< Next dispatcher linkage */
     struct MprDispatcher *prev;         /**< Previous dispatcher linkage */
     struct MprDispatcher *parent;       /**< Queue pointer */
