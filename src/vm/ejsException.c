@@ -223,6 +223,25 @@ EjsError *ejsThrowResourceError(Ejs *ejs, cchar *fmt, ...)
 }
 
 
+EjsString *ejsThrowString(Ejs *ejs, cchar *fmt, ...)
+{
+    va_list     fmtArgs;
+    char        *msg;
+
+    mprAssert(fmt);
+    va_start(fmtArgs, fmt);
+    msg = mprAsprintfv(fmt, fmtArgs);
+    va_end(fmtArgs);
+
+    /*
+        Throwing a string will not create a stack frame
+     */
+    ejs->exception = ejsCreateStringFromAsc(ejs, msg);
+    ejsAttention(ejs);
+    return ejs->exception;
+}
+
+
 EjsError *ejsThrowStateError(Ejs *ejs, cchar *fmt, ...)
 {
     va_list     fmtArgs;
