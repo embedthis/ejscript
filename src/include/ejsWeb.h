@@ -38,7 +38,9 @@ typedef struct EjsHttpServer {
     EjsPot          pot;                        /**< Extends Object */
     Ejs             *ejs;                       /**< Ejscript interpreter handle */
     HttpServer      *server;                    /**< Http server object */
+#if UNUSED
     MprEvent        *sessionTimer;              /**< Session expiry timer */
+#endif
     struct MprSsl   *ssl;                       /**< SSL configuration */
     HttpTrace       trace[2];                   /**< Default tracing for requests */
     cchar           *connector;                 /**< Pipeline connector */
@@ -54,7 +56,9 @@ typedef struct EjsHttpServer {
     struct EjsHttpServer *cloned;               /**< Server that was cloned */
     EjsObj          *emitter;                   /**< Event emitter */
     EjsObj          *limits;                    /**< Limits object */
+#if UNUSED
     EjsPot          *sessions;                  /**< Session cache */
+#endif
     EjsArray        *incomingStages;            /**< Incoming Http pipeline stages */
     EjsArray        *outgoingStages;            /**< Outgoing Http pipeline stages */
 } EjsHttpServer;
@@ -137,7 +141,7 @@ extern EjsRequest *ejsCreateRequest(Ejs *ejs, EjsHttpServer *server, HttpConn *c
 extern EjsRequest *ejsCloneRequest(Ejs *ejs, EjsRequest *req, bool deep);
 
 /** 
-    Session Class
+    Session Class. Requests can access to session state storage via the Session class.
     @description
         Session objects represent a shared session state object into which Http Requests and store and retrieve data
         that persists beyond a single request.
@@ -146,9 +150,9 @@ extern EjsRequest *ejsCloneRequest(Ejs *ejs, EjsRequest *req, bool deep);
     @see EjsSession ejsCreateSession ejsDestroySession
  */
 typedef struct EjsSession {
-    EjsPot      pot;
-    MprTime     expire;             /* When the session should expire */
+    EjsPot      pot;                /* Storage for session objects */
     cchar       *id;                /* Session ID */
+    MprTime     expire;             /* When the session should expire */
     int         timeout;            /* Session inactivity lifespan */
     int         index;              /* Index in sesssions[] */
 } EjsSession;
@@ -177,7 +181,11 @@ extern void ejsUpdateSessionLimits(Ejs *ejs, EjsHttpServer *server);
 
 extern void ejsSendRequestCloseEvent(Ejs *ejs, EjsRequest *req);
 extern void ejsSendRequestErrorEvent(Ejs *ejs, EjsRequest *req);
-extern void ejsStopSessionTimer(EjsHttpServer *server);
+
+#if UNUSED
+//  MOB - should take no arg
+extern void ejsCheckSessionTimer(EjsHttpServer *server);
+#endif
 
 /******************************* Internal APIs ********************************/
 

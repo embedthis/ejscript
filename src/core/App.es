@@ -280,6 +280,7 @@ module ejs {
 
         /** 
             Sleep the application for the given number of milliseconds. Events will be serviced while asleep.
+            An alternative to sleep is $App.run which can be configured to sleep and return early if an event is received.
             @param delay Time in milliseconds to sleep. Set to -1 to sleep forever.
          */
         native static function sleep(delay: Number = -1): Void

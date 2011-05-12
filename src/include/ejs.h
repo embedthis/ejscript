@@ -2009,6 +2009,15 @@ extern EjsError *ejsThrowStateError(Ejs *ejs, cchar *fmt, ...) PRINTF_ATTRIBUTE(
 extern EjsObj *ejsThrowStopIteration(Ejs *ejs);
 
 /** 
+    Throw a string message. This will not capture the stack as part of the exception message.
+    @param ejs Ejs reference returned from #ejsCreate
+    @param fmt Printf style format string to use for the error message
+    @param ... Message arguments
+    @ingroup EjsError
+ */
+extern EjsString *ejsThrowString(Ejs *ejs, cchar *fmt, ...) PRINTF_ATTRIBUTE(2,3);
+
+/** 
     Throw an syntax error exception
     @param ejs Ejs reference returned from #ejsCreate
     @param fmt Printf style format string to use for the error message

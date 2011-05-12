@@ -20,7 +20,7 @@ static int connOk(Ejs *ejs, EjsRequest *req, int throwException)
 {
     if (!req->conn || req->conn->rx == 0) {
         if (!ejs->exception && throwException) {
-            ejsThrowIOError(ejs, "Connection lost or not established");
+            ejsThrowString(ejs, "Connection lost or not established");
         }
         return 0;
     }
@@ -1144,7 +1144,12 @@ static EjsObj *req_write(Ejs *ejs, EjsRequest *req, int argc, EjsObj **argv)
     q = conn->writeq;
 
     if (httpIsFinalized(conn)) {
+        /*
+            Better to just eat the data if already finalized
+         */
+#if UNUSED
         ejsThrowIOError(ejs, "Response already finalized");
+#endif
         return 0;
     }
     for (i = 0; i < args->length; i++) {

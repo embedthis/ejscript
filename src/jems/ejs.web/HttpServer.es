@@ -24,6 +24,7 @@ module ejs.web {
             cache: {
                 enable: true,
                 reload: true,
+                worker: true,
             },
             directories: {
                 cache: Path("cache"),
@@ -53,7 +54,7 @@ module ejs.web {
                 // helpers: [],
                 // limits: {}
                 // trace: {rx: {}, tx: {}}
-                // workers: {}
+                workers: {},
                 view: {
                     connectors: {
                         table: "html",
@@ -205,7 +206,6 @@ module ejs.web {
                 hosted, the $home property will be defined by the web server.
             @option ejsrc Alternate path to the "ejsrc" configuration file
             @option config Alternate App.config settings
-            @option threaded MOB
             @option own If hosted inside a web server, set to true to bypass any web server listening endpoints and 
                 create a new stand-alone listening connection.
             @spec ejs
@@ -214,6 +214,7 @@ module ejs.web {
 let server: HttpServer = new HttpServer({documents: "web"})
 let router = Router(Router.Restful)
 server.on("readable", function (event: String, request: Request) {
+    // "this" object is also set to request
     request.status = 200
     request.setHeaders({"Content-Type": "text/plain"})
     request.on("readable", function (event, request) {

@@ -47,6 +47,7 @@ class EjsMvc {
         cache: {
             enable: true,
             reload: true,
+            worker: true,
         },
         database: {
             timeout: 5000,
@@ -1434,6 +1435,7 @@ class Templates {
     cache: {
         enable: true,
         reload: true,
+        worker: true,
     },
 
     database: {
@@ -1485,6 +1487,11 @@ class Templates {
             ejs:    86400,
             es:     86400,
             "":     86400,
+        },
+        limits: {
+            requestTimeout: 3600, 
+            sessionTimeout: 3600, 
+            workers: 10,
         },
         view: {
             connectors: {

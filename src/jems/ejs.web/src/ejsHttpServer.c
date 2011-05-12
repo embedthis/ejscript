@@ -752,7 +752,10 @@ static void manageHttpServer(EjsHttpServer *sp, int flags)
         ejsManagePot(sp, flags);
         mprMark(sp->ejs);
         mprMark(sp->server);
+#if UNUSED
         mprMark(sp->sessionTimer);
+        mprMark(sp->sessions);
+#endif
         mprMark(sp->ssl);
         mprMark(sp->connector);
         mprMark(sp->keyFile);
@@ -763,23 +766,26 @@ static void manageHttpServer(EjsHttpServer *sp, int flags)
         mprMark(sp->name);
         mprMark(sp->emitter);
         mprMark(sp->limits);
-        mprMark(sp->sessions);
         mprMark(sp->outgoingStages);
         mprMark(sp->incomingStages);
         httpManageTrace(&sp->trace[0], flags);
         httpManageTrace(&sp->trace[1], flags);
         
     } else {
-        if (sp->ejs->httpServers) {
+        if (sp->ejs && sp->ejs->httpServers) {
             mprRemoveItem(sp->ejs->httpServers, sp);
         }
+#if UNUSED
         sp->sessions = 0;
+#endif
         if (!sp->cloned) {
-            ejsStopSessionTimer(sp);
             if (sp->server && !sp->hosted) {
                 httpDestroyServer(sp->server);
                 sp->server = 0;
             }
+#if UNUSED
+            ejsCheckSessionTimer(sp);
+#endif
         }
     }
 }
@@ -819,7 +825,9 @@ EjsHttpServer *ejsCloneHttpServer(Ejs *ejs, EjsHttpServer *sp, bool deep)
     nsp->keyFile = sp->keyFile;
     nsp->ciphers = sp->ciphers;
     nsp->protocols = sp->protocols;
+#if UNUSED
     nsp->sessions = sp->sessions;
+#endif
     httpInitTrace(nsp->trace);
     return nsp;
 }
@@ -853,6 +861,7 @@ void ejsConfigureHttpServerType(Ejs *ejs)
 
     type = ejsConfigureNativeType(ejs, N("ejs.web", "HttpServer"), sizeof(EjsHttpServer), manageHttpServer, EJS_POT_HELPERS);
     type->helpers.create = (EjsCreateHelper) createHttpServer;
+    type->helpers.clone = (EjsCloneHelper) ejsCloneHttpServer;
 
     prototype = type->prototype;
     ejsBindMethod(ejs, prototype, ES_ejs_web_HttpServer_accept, hs_accept);

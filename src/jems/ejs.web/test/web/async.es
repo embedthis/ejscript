@@ -3,15 +3,14 @@ require ejs.web
 exports.app = function (r: Request) { 
     setStatus(200)
     setHeaders({"Content-Type": "text/html"})
+    dontAutoFinalize()
 
-    // dump(r.server.limits)
-    // r.setLimits({ transmission: 1024 })
-    // dump(r.limits)
-
-    Timer(1000, function() {
-        for each (i in 800) {
-            write(" Line: %05d %s".format(i, "aaaaaaaaaaaaaaaaaabbbbbbbbbbbbbbbbccccccccccccccccccddddddd<br/>\r\n"))
-        } 
-        finalize()
+    Timer(30 * 1000, function() {
+        try {
+            for each (i in 800) {
+                write(" Line: %05d %s".format(i, "aaaaaaaaaaaaaaaaaabbbbbbbbbbbbbbbbccccccccccccccccccddddddd<br/>\r\n"))
+            } 
+            finalize()
+        } catch {}
     }).start()
 }
