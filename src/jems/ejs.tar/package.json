@@ -14,7 +14,7 @@
     "GPLv2 (http://www.ejscript.org/products/ejs/doc/licenses/gpl.html)"
   ],
   "stability": "prototype",
-  "location": "http://hg.embedthis.com/ejs",
+  "location": "https://github.com/embedthis/ejs-2",
   "keywords": [
     "archive",
     "tar"
