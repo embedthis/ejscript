@@ -2729,7 +2729,7 @@ static EjsDoc *getDoc(Ejs *ejs, cchar *tag, void *obj, int slotNum)
         }
     }
     mprSprintf(key, sizeof(key), "%s %Lx %d", tag, PTOL(obj), slotNum);
-    return mprLookupHash(ejs->doc, key);
+    return mprLookupKey(ejs->doc, key);
 }
 
 

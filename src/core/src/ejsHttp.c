@@ -292,7 +292,7 @@ static EjsPot *http_getRequestHeaders(Ejs *ejs, EjsHttp *hp, int argc, EjsObj **
 
     conn = hp->conn;
     headers = ejsCreateEmptyPot(ejs);
-    for (p = 0; conn->tx && (p = mprGetNextHash(conn->tx->headers, p)) != 0; ) {
+    for (p = 0; conn->tx && (p = mprGetNextKey(conn->tx->headers, p)) != 0; ) {
         ejsSetPropertyByName(ejs, headers, EN(p->key), ejsCreateStringFromAsc(ejs, p->data));
     }
     return headers;
@@ -349,7 +349,7 @@ static EjsPot *http_headers(Ejs *ejs, EjsHttp *hp, int argc, EjsObj **argv)
     if (hash == 0) {
         return results;
     }
-    for (i = 0, p = mprGetFirstHash(hash); p; p = mprGetNextHash(hash, p), i++) {
+    for (i = 0, p = mprGetFirstKey(hash); p; p = mprGetNextKey(hash, p), i++) {
         ejsSetPropertyByName(ejs, results, EN(p->key), ejsCreateStringFromAsc(ejs, p->data));
     }
     return results;
@@ -1352,8 +1352,8 @@ static bool waitForResponseHeaders(EjsHttp *hp, int timeout)
 void ejsGetHttpLimits(Ejs *ejs, EjsObj *obj, HttpLimits *limits, int server) 
 {
     ejsSetPropertyByName(ejs, obj, EN("chunk"), ejsCreateNumber(ejs, (MprNumber) limits->chunkSize));
+    ejsSetPropertyByName(ejs, obj, EN("connReuse"), ejsCreateNumber(ejs, limits->keepAliveCount));
     ejsSetPropertyByName(ejs, obj, EN("receive"), ejsCreateNumber(ejs, (MprNumber) limits->receiveBodySize));
-    ejsSetPropertyByName(ejs, obj, EN("reuse"), ejsCreateNumber(ejs, limits->keepAliveCount));
     ejsSetPropertyByName(ejs, obj, EN("transmission"), ejsCreateNumber(ejs, (MprNumber) limits->transmissionBodySize));
     ejsSetPropertyByName(ejs, obj, EN("upload"), ejsCreateNumber(ejs, (MprNumber) limits->uploadSize));
     ejsSetPropertyByName(ejs, obj, EN("inactivityTimeout"), 
@@ -1392,7 +1392,7 @@ void ejsSetHttpLimits(Ejs *ejs, HttpLimits *limits, EjsObj *obj, int server)
     limits->chunkSize = (ssize) setLimit(ejs, obj, "chunk", 1);
     limits->inactivityTimeout = (int) setLimit(ejs, obj, "inactivityTimeout", MPR_TICKS_PER_SEC);
     limits->receiveBodySize = (MprOff) setLimit(ejs, obj, "receive", 1);
-    limits->keepAliveCount = (int) setLimit(ejs, obj, "reuse", 1);
+    limits->keepAliveCount = (int) setLimit(ejs, obj, "connReuse", 1);
     limits->requestTimeout = (int) setLimit(ejs, obj, "requestTimeout", MPR_TICKS_PER_SEC);
     limits->sessionTimeout = (int) setLimit(ejs, obj, "sessionTimeout", MPR_TICKS_PER_SEC);
     limits->transmissionBodySize = (MprOff) setLimit(ejs, obj, "transmission", 1);
