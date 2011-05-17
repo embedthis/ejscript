@@ -949,8 +949,8 @@ int ejsMakeHash(Ejs *ejs, EjsPot *obj)
 }
 
 
-//  TODO -- rename
-void ejsClearPotHash(EjsPot *obj)
+#if UNUSED
+void ejsClearHash(EjsPot *obj)
 {
     EjsSlot         *sp;
     int             i;
@@ -965,6 +965,7 @@ void ejsClearPotHash(EjsPot *obj)
         }
     }
 }
+#endif
 
 
 static void removeHashEntry(Ejs *ejs, EjsPot *obj, EjsName qname)

@@ -204,7 +204,6 @@ static EjsAny *invokeBooleanOperator(Ejs *ejs, EjsBoolean *lhs, int opcode, EjsB
     If the value is omitted or 0, -1, NaN, false, null, undefined or the empty string, then set the boolean value to
     to false.
  */
-
 static EjsBoolean *booleanConstructor(Ejs *ejs, EjsBoolean *bp, int argc, EjsObj **argv)
 {
     mprAssert(argc == 0 || argc == 1);
@@ -218,13 +217,6 @@ static EjsBoolean *booleanConstructor(Ejs *ejs, EjsBoolean *bp, int argc, EjsObj
 
 
 /*********************************** Factory **********************************/
-#if UNUSED
-EjsBoolean *ejsCreateBoolean(Ejs *ejs, int value)
-{
-    return ((value) ? S(true) : S(false));
-}
-#endif
-
 
 void ejsCreateBooleanType(Ejs *ejs)
 {
