@@ -1191,12 +1191,6 @@ static EjsObj *req_write(Ejs *ejs, EjsRequest *req, int argc, EjsObj **argv)
     q = conn->writeq;
 
     if (httpIsFinalized(conn)) {
-        /*
-            Better to just eat the data if already finalized
-         */
-#if UNUSED
-        ejsThrowIOError(ejs, "Response already finalized");
-#endif
         return 0;
     }
     for (i = 0; i < args->length; i++) {
@@ -1308,9 +1302,6 @@ EjsRequest *ejsCloneRequest(Ejs *ejs, EjsRequest *req, bool deep)
     nreq->filename = ejsClone(ejs, req->filename, 1);
     nreq->pathInfo = ejsCreateStringFromAsc(ejs, conn->rx->pathInfo);
     nreq->scriptName = ejsCreateStringFromAsc(ejs, conn->rx->scriptName);
-#if UNUSED
-    nreq->accepted = req->accepted;
-#endif
     nreq->running = req->running;
     nreq->cloned = req;
 
