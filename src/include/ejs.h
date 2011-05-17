@@ -621,10 +621,6 @@ typedef struct Ejs {
     void                *sqlite;            /**< Sqlite context information */
 
     Http                *http;              /**< Http service object (copy of EjsService.http) */
-#if UNUSED
-    HttpLoc             *loc;               /**< Current HttpLocation object for web start scripts */
-    EjsAny              *applications;      /**< Application cache */
-#endif
     MprMutex            *mutex;             /**< Multithread locking */
 } Ejs;
 
@@ -1627,9 +1623,6 @@ typedef struct EjsFrame {
     struct EjsFrame *caller;                /**< Previous invoking frame */
     EjsObj          **stackBase;            /**< Start of stack in this function */
     EjsObj          **stackReturn;          /**< Top of stack to return to */
-#if UNUSED
-    EjsObj          *thisObj;               /**< Current "this" object for the frame */
-#endif
     EjsLine         *line;                  /**< Debug source line */
     uchar           *pc;                    /**< Program counter */
     uchar           *attentionPc;           /**< Restoration PC value after attention */
@@ -2626,11 +2619,7 @@ typedef struct EjsType {
     EjsHelpers      helpers;                        /**< Type helper methods */
     struct EjsType  *baseType;                      /**< Base class */
     MprManager      manager;                        /**< Manager callback */
-#if UNUSED
-    struct Ejs      *ejs;                           /**< Interpreter reference */
-#endif
     MprMutex        *mutex;                         /**< Optional locking for types that require it */
-
     MprList         *implements;                    /**< List of implemented interfaces */
         
     uint            callsSuper           : 1;       /**< Constructor calls super() */
@@ -3040,9 +3029,6 @@ struct EjsArray *ejsCreateSearchPath(Ejs *ejs, cchar *searchPath);
     @ingroup Ejs
  */
 extern void ejsSetSearchPath(Ejs *ejs, struct EjsArray *search);
-#if UNUSED
-extern void ejsInitSearchPath(Ejs *ejs);
-#endif
 
 /**
     Evaluate a file

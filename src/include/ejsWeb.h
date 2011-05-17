@@ -38,9 +38,6 @@ typedef struct EjsHttpServer {
     EjsPot          pot;                        /**< Extends Object */
     Ejs             *ejs;                       /**< Ejscript interpreter handle */
     HttpServer      *server;                    /**< Http server object */
-#if UNUSED
-    MprEvent        *sessionTimer;              /**< Session expiry timer */
-#endif
     struct MprSsl   *ssl;                       /**< SSL configuration */
     HttpTrace       trace[2];                   /**< Default tracing for requests */
     cchar           *connector;                 /**< Pipeline connector */
@@ -56,9 +53,6 @@ typedef struct EjsHttpServer {
     struct EjsHttpServer *cloned;               /**< Server that was cloned */
     EjsObj          *emitter;                   /**< Event emitter */
     EjsObj          *limits;                    /**< Limits object */
-#if UNUSED
-    EjsPot          *sessions;                  /**< Session cache */
-#endif
     EjsArray        *incomingStages;            /**< Incoming Http pipeline stages */
     EjsArray        *outgoingStages;            /**< Outgoing Http pipeline stages */
 } EjsHttpServer;
@@ -107,9 +101,6 @@ typedef struct EjsRequest {
     Ejs             *ejs;               /**< Ejscript interpreter handle */
     struct EjsSession *session;         /**< Current session */
 
-#if UNUSED
-    int             accepted;           /**< Request has been accepted from the HttpServer */
-#endif
     //  OPT - make bit fields
     int             dontAutoFinalize;   /**< Suppress auto-finalization */
     int             probedSession;      /**< Determined if a session exists */
@@ -173,16 +164,9 @@ extern EjsSession *ejsGetSession(Ejs *ejs, EjsString *key, MprTime timeout, int 
     @param session Session object created via ejsGetSession()
 */
 extern int ejsDestroySession(Ejs *ejs, EjsSession *session);
-
 extern void ejsSetSessionTimeout(Ejs *ejs, EjsSession *sp, int timeout);
-
 extern void ejsSendRequestCloseEvent(Ejs *ejs, EjsRequest *req);
 extern void ejsSendRequestErrorEvent(Ejs *ejs, EjsRequest *req);
-
-#if UNUSED
-//  MOB - should take no arg
-extern void ejsCheckSessionTimer(EjsHttpServer *server);
-#endif
 
 /******************************* Internal APIs ********************************/
 
