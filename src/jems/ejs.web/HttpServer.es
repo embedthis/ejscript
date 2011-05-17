@@ -21,12 +21,11 @@ module ejs.web {
         private var workerImage: Worker
 
         private static const defaultConfig = {
-            cache: {
-                enable: true,
+            app: {
                 reload: true,
-                worker: true,
+                cache: true,
             },
-            directories: {
+            dirs: {
                 cache: Path("cache"),
                 layouts: Path("layouts"),
                 views: Path("views"),
@@ -38,24 +37,20 @@ module ejs.web {
             },
             log: {
                 showClient: true,
-                //  where: "file" - defaults to web server log
+            },
+            store: {
+                adapter: "local",
+                "class": "Local",
+                module: "ejs.store.local",
+                limits: {
+                    lifespan: 3600,
+                },
             },
             web: {
-                expires: {
-                    /*
-                        MOB -- can we have some of this be the default?
-                        html:   86400,
-                        ejs:    86400,
-                        es:     86400,
-                        "":     86400,
-                     */
-                },
-                // endpoint: ":4000",
-                // helpers: [],
-                // limits: {}
-                // trace: {rx: {}, tx: {}}
-                workers: {},
-                view: {
+                cache: {
+                    workers: true,
+                }
+                views: {
                     connectors: {
                         table: "html",
                         chart: "google",
@@ -66,18 +61,21 @@ module ejs.web {
                     },
                     layout: "default.ejs",
                 },
+                workers: {},
             },
         }
 
         /*  
-            One time initialization. Loads the top-level "ejsrc" configuration file.
-            The application must be restarted to reload changes. This happens before HttpServer loads serverRoot/ejsrc.
+            One time initialization. Blend mandatory config into App.config.
          */
         static function initHttpServer() {
             blend(App.config, defaultConfig, false)
-            let dirs = App.config.directories
+            let dirs = App.config.dirs
             for (let [key, value] in dirs) {
                 dirs[key] = Path(value)
+            }
+            if (App.store == null && App.config.store) {
+                App.store = new Store(null, App.config.store)
             }
         }
         initHttpServer()
@@ -132,8 +130,7 @@ module ejs.web {
             @option requests Maximum number of simultaneous requests.
             @option requestTimeout Maximum time in seconds for a request to complete. Set to zero for no timeout.
             @option reuse Maximum number of times to reuse a connection for requests (KeepAlive count).
-            @option sessions Maximum number of simultaneous sessions.
-            @option sessionTimeout Maximum time to preserve session state. Set to zero for no timeout.
+            @option sessionTimeout Default time to preserve session state for new requests. Set to zero for no timeout.
             @option stageBuffer Maximum stage buffer size for each direction.
             @option transmission Maximum size of outgoing body data.
             @option upload Maximum size of uploaded files.
@@ -186,11 +183,6 @@ module ejs.web {
         var home: Path
 
         /** 
-            Hash of session objects. This is created on demand as requests require session state storage.
-         */
-        var sessions: Object
-
-        /** 
             Software description for the web server
             @return A string containing the name and version of the web server software
          */
@@ -236,7 +228,14 @@ server.listen("127.0.0.1:7777")
             this.config = options.config || App.config
             this.options = options
             if (options.ejsrc) {
-                blend(config, Path(options.ejsrc).readJSON(), true)
+                config.ejsrc = options.ejsrc
+            }
+            if (config.files.ejsrc && config.files.ejsrc.exists) {
+                blend(config, Path(config.files.ejsrc).readJSON(), true)
+                let dirs = config.dirs
+                for (let [key, value] in dirs) {
+                    dirs[key] = Path(value)
+                }
                 App.updateLog()
             } else if (home != ".") {
                 let path = home.join("ejsrc")
@@ -245,11 +244,28 @@ server.listen("127.0.0.1:7777")
                     App.updateLog()
                 }
             }
-            if (config.web.trace) {
-                trace(config.web.trace)
+            let web = config.web
+            if (web.trace) {
+                trace(web.trace)
             }
-            if (config.web.limits) {
-                setLimits(config.web.limits)
+            if (web.limits) {
+                /* This will set session limits too */
+                setLimits(web.limits)
+            }
+            if (web.session) {
+                openSession()
+            }
+        }
+
+        private function openSession() {
+            let sconfig = config.session
+            let sclass = sconfig["class"]
+            if (sclass) {
+                if (sconfig.module && !global.(module)::[sclass]) {
+                    global.load(sconfig.module + ".mod")
+                }
+                let module = sconfig.module || "public"
+                new (module)::[sclass](sconfig.adapter, sconfig.options)
             }
         }
 
@@ -338,12 +354,9 @@ server.listen("127.0.0.1:7777")
             @param name Name of the event to listen for. The name may be an array of events.
             @param observer Callback listening function. The function is called with the following signature:
                 function on(event: String, ...args): Void
-            @event readable Issued when there is a new request available. This readable event will explicitlyl set the
+            @event readable Issued when there is a new request available. This readable event will explicitly set the
                 value of "this" to the request regardless of whether the function has a bound "this" value.
             @event close Issued when server is being closed.
-            @event createSession Issued when a new session store object is created for a client. The request object is
-                passed.
-            @event destroySession Issued when a session is destroyed. The request object is passed.
          */
         native function on(name, observer: Function): Void
 

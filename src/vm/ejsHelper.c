@@ -327,7 +327,11 @@ int ejsSetPropertyByName(Ejs *ejs, EjsAny *vp, EjsName qname, EjsAny *value)
             return EJS_ERR;
         }
         //  UNICODE
-        mprSetName(vp, qname.name->value);
+#if BLD_DEBUG
+        if (((EjsObj*) value)->mem == 0) {
+            mprSetName(value, qname.name->value);
+        }
+#endif
         return slotNum;
     }
     return ejsSetProperty(ejs, vp, slotNum, value);

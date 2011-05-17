@@ -119,7 +119,7 @@ module ejs.web {
 //  MOB -- replace all this with blend. Perhaps request and config come over automatically.
                 this.request = request
                 this.config = request.config
-                formats = config.web.view.formats
+                formats = config.web.views.sformats
                 for each (let n: String in 
                         Object.getOwnPropertyNames(controller, {includeBases: true, excludeFunctions: true})) {
                     if (n.startsWith("_")) continue
@@ -130,7 +130,7 @@ module ejs.web {
                 request = {}
                 config = App.config
             }
-            for (helper in config.web.view.helpers) {
+            for (helper in config.web.views.shelpers) {
                 if (helper.contains("::")) {
                     [mod, klass] = helper.split("::")
                     global.load(mod + ".mod")
@@ -724,7 +724,7 @@ MOB -- review and rethink this
                     ext = viewPath.ext
                 }
             }
-            controller.writeTemplate(request.dir.join(config.directories.views.basename, cname, action).joinExt(ext))
+            controller.writeTemplate(request.dir.join(config.dirs.views.basename, cname, action).joinExt(ext))
         }
 
         // MOB TODO - need a rich text editor. Wiki style.  wiki()
@@ -808,7 +808,7 @@ MOB -- review and rethink this
         }
 
         private function getConnector(kind: String, options: Object = {}) {
-            let vc = config.web.view
+            let vc = config.web.views
             let connectorName = options.connector || vc.connectors[kind] || vc.connectors["rest"]
             let name = (connectorName + "ViewConnector").toPascal()
             if (connectors[name]) {

@@ -120,7 +120,7 @@ module ejs.template  {
                         break
 
                     case "layout":
-                        let layouts = options.layouts || App.config.directories.layouts || "layouts"
+                        let layouts = options.layouts || App.config.dirs.layouts || "layouts"
                         let path = args[1]
                         if (path == "" || path == '""') {
                             layoutPage = undefined

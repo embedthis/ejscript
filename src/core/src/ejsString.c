@@ -1837,17 +1837,17 @@ int ejsAtoi(Ejs *ejs, EjsString *sp, int radix)
 
 
 // TODO - rename to join
-EjsString *ejsCatString(Ejs *ejs, EjsString *dest, EjsString *src)
+EjsString *ejsCatString(Ejs *ejs, EjsString *s1, EjsString *s2)
 {
     EjsString   *result;
     ssize       len;
 
-    len = dest->length + src->length;
+    len = s1->length + s2->length;
     if ((result = ejsCreateBareString(ejs, len)) == NULL) {
         return NULL;
     }
-    memcpy(result->value, dest->value, dest->length * sizeof(MprChar));
-    memcpy(&result->value[dest->length], src->value, src->length * sizeof(MprChar));
+    memcpy(result->value, s1->value, s1->length * sizeof(MprChar));
+    memcpy(&result->value[s1->length], s2->value, s2->length * sizeof(MprChar));
     return ejsInternString(result);
 }
 

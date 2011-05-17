@@ -103,7 +103,7 @@ static EjsObj *createCookies(Ejs *ejs, EjsRequest *req)
         req->cookies = S(null);
     } else {
         argv[0] = (EjsObj*) ejsCreateStringFromAsc(ejs, cookieHeader);
-        req->cookies = ejsRunFunctionByName(ejs, ejs->global, N("ejs.web", "parseCookies"), ejs->global, 1, (EjsObj**) argv);
+        req->cookies = ejsRunFunctionByName(ejs, ejs->global, N("ejs.web", "parseCookies"), ejs->global, 1, argv);
     }
     return req->cookies;
 }
@@ -232,21 +232,69 @@ static EjsObj *createResponseHeaders(Ejs *ejs, EjsRequest *req)
 
 
 /*
+    Return the session object corresponding to a request cookie. Note the Session class on which session instances are
+    based, defines helpers for all accesses to session data objects.
+ */
+static EjsString *getSessionKey(Ejs *ejs, EjsRequest *req)
+{
+    cchar   *cookies, *cookie;
+    char    *id, *cp, *value;
+    int     quoted, len;
+
+    if (!req->conn) {
+        return 0;
+    }
+    cookies = httpGetCookies(req->conn);
+    for (cookie = cookies; cookie && (value = strstr(cookie, EJS_SESSION)) != 0; cookie = value) {
+        value += strlen(EJS_SESSION);
+        while (isspace((int) *value) || *value == '=') {
+            value++;
+        }
+        quoted = 0;
+        if (*value == '"') {
+            value++;
+            quoted++;
+        }
+        for (cp = value; *cp; cp++) {
+            if (quoted) {
+                if (*cp == '"' && cp[-1] != '\\') {
+                    break;
+                }
+            } else {
+                if ((*cp == ',' || *cp == ';') && cp[-1] != '\\') {
+                    break;
+                }
+            }
+        }
+        len = (int) (cp - value);
+        id = mprMemdup(value, len + 1);
+        id[len] = '\0';
+        return ejsCreateStringFromAsc(ejs, id);
+    }
+    return 0;
+}
+
+
+/*
     This will get the current session or create a new session if required
  */
 static EjsSession *getSession(Ejs *ejs, EjsRequest *req, int create)
 {
     HttpConn    *conn;
+    EjsString   *key;
 
     conn = req->conn;
-    if (req->session) {
+    if (req->probedSession || !conn) {
         return req->session;
     }
-    if ((req->session = ejsGetSession(ejs, req)) == NULL && create) {
-        req->session = ejsCreateSession(ejs, req, 0, 0);
-        if (req->session && conn) {
-            httpSetCookie(conn, EJS_SESSION, req->session->id, "/", NULL, 0, conn->secure);
+    key = getSessionKey(ejs, req);
+    if (key || create) {
+        req->session = ejsGetSession(ejs, key, conn->limits->sessionTimeout, create);
+        if (req->session && !key) {
+            //UNICODE
+            httpSetCookie(conn, EJS_SESSION, req->session->key->value, "/", NULL, 0, conn->secure);
         }
+        req->probedSession = 1;
     }
     return req->session;
 }
@@ -407,11 +455,12 @@ static EjsAny *getRequestProperty(Ejs *ejs, EjsRequest *req, int slotNum)
         return ejsCreateBoolean(ejs, !req->dontAutoFinalize);
 
     case ES_ejs_web_Request_config:
-        value = ST(Object)->helpers.getProperty(ejs, (EjsObj*) req, slotNum);
+        value = ST(Object)->helpers.getProperty(ejs, req, slotNum);
         if (value == 0 || ejsIs(ejs, value, Null)) {
             /* Default to App.config */
             app = ejsGetProperty(ejs, ejs->global, ES_App);
             value = ejsGetProperty(ejs, app, ES_App_config);
+            ejsSetProperty(ejs, req, slotNum, value);
         }
         return mapNull(ejs, value);
 
@@ -566,17 +615,11 @@ static EjsAny *getRequestProperty(Ejs *ejs, EjsRequest *req, int slotNum)
         if (req->session == 0) {
             req->session = getSession(ejs, req, 1);
         }
-        return req->session ? (EjsObj*) req->session : S(null);
+        return req->session ? req->session : S(null);
 
     case ES_ejs_web_Request_sessionID:
-        if (!req->probedSession) {
-            getSession(ejs, req, 0);
-            req->probedSession = 1;
-        }
-        if (req->session) {
-            return createString(ejs, req->session->id);
-        }
-        return S(null);
+        getSession(ejs, req, 0);
+        return (req->session) ? req->session->key : S(null);
 
     case ES_ejs_web_Request_status:
         if (conn) {
@@ -613,7 +656,7 @@ static EjsAny *getRequestProperty(Ejs *ejs, EjsRequest *req, int slotNum)
 
     default:
         if (slotNum < req->pot.numProp) {
-            return ST(Object)->helpers.getProperty(ejs, (EjsObj*) req, slotNum);
+            return ST(Object)->helpers.getProperty(ejs, req, slotNum);
         }
     }
     return 0;
@@ -666,7 +709,7 @@ static int setRequestProperty(Ejs *ejs, EjsRequest *req, int slotNum,  EjsObj *v
 
     switch (slotNum) {
     default:
-        return ST(Object)->helpers.setProperty(ejs, (EjsObj*) req, slotNum, value);
+        return ST(Object)->helpers.setProperty(ejs, req, slotNum, value);
 
     case ES_ejs_web_Request_config:
         req->config = value;
@@ -898,7 +941,11 @@ static EjsObj *req_close(Ejs *ejs, EjsRequest *req, int argc, EjsObj **argv)
  */
 static EjsObj *req_destroySession(Ejs *ejs, EjsRequest *req, int argc, EjsObj **argv)
 {
-    ejsDestroySession(ejs, req->server, getSession(ejs, req, 0));
+    EjsSession  *sp;
+
+    if ((sp = getSession(ejs, req, 0)) != 0) {
+        ejsDestroySession(ejs, sp);
+    }
     req->probedSession = 0;
     req->session = 0;
     return 0;

@@ -46,8 +46,8 @@ assert(r.uri == "http://example.com:7777/app/index.html#section-1?a=b&c=d")
 //  Request.config
 let c = r.config
 assert(c.log)
-assert(c.cache)
-assert(c.directories)
+assert(c.web.cache)
+assert(c.dirs)
 assert(c.init)
 assert(c.test)
 assert(c.web)

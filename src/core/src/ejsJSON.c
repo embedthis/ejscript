@@ -47,7 +47,6 @@ EjsObj *g_deserialize(Ejs *ejs, EjsObj *unused, int argc, EjsObj **argv)
     return ejsDeserialize(ejs, (EjsString*) argv[0]);
 }
 
-
 /*
     function serialize(obj: Object, options: Object = null): String
         Options: baseClasses, depth, indent, hidden, pretty, replacer

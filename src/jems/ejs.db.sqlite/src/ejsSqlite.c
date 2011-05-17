@@ -42,6 +42,13 @@ typedef struct EjsSqlite {
     DB Constructor and also used for constructor for sub classes.
 
     function Sqlite(options: Object)
+
+    Options forms:
+        string
+            file://name
+        path
+            filename
+        { name: path }
  */
 static EjsObj *sqliteConstructor(Ejs *ejs, EjsSqlite *db, int argc, EjsObj **argv)
 {
@@ -61,10 +68,12 @@ static EjsObj *sqliteConstructor(Ejs *ejs, EjsSqlite *db, int argc, EjsObj **arg
     } else {
         path = ejsToMulti(ejs, ejsToString(ejs, ejsGetPropertyByName(ejs, options, EN("name"))));
     }
+#if SECURITY_RISK
     if (strncmp(path, "memory://", 9) == 0) {
         sdb = (sqlite3*) (size_t) stoi(&path[9], 10, NULL);
 
     } else {
+#endif
         db->memory = 0;
         if (strncmp(path, "file://", 7) == 0) {
             path += 7;
@@ -82,7 +91,9 @@ static EjsObj *sqliteConstructor(Ejs *ejs, EjsSqlite *db, int argc, EjsObj **arg
             ejsThrowArgError(ejs, "Unknown SQLite database URI %s", path);
             return 0;
         }
+#if SECURITY_RISK
     }
+#endif
     db->sdb = sdb;
     return (EjsObj*) db;
 }
@@ -378,11 +389,11 @@ static int configureSqliteTypes(Ejs *ejs)
     EjsPot      *prototype;
     static int  initialized = 0;
     
-    type = (EjsType*) ejsConfigureNativeType(ejs, N("ejs.db", "Sqlite"), sizeof(EjsSqlite), manageSqlite, EJS_POT_HELPERS);
+    type = (EjsType*) ejsConfigureNativeType(ejs, N("ejs.db.sqlite", "Sqlite"), sizeof(EjsSqlite), manageSqlite, EJS_POT_HELPERS);
     prototype = type->prototype;
     ejsBindConstructor(ejs, type, sqliteConstructor);
-    ejsBindMethod(ejs, prototype, ES_ejs_db_Sqlite_close, sqliteClose);
-    ejsBindMethod(ejs, prototype, ES_ejs_db_Sqlite_sql, sqliteSql);
+    ejsBindMethod(ejs, prototype, ES_ejs_db_sqlite_Sqlite_close, sqliteClose);
+    ejsBindMethod(ejs, prototype, ES_ejs_db_sqlite_Sqlite_sql, sqliteSql);
 
     if (!initialized) {
         initialized++;

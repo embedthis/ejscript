@@ -85,7 +85,7 @@ extern "C" {
 #define EJS_POOL_INACTIVITY_TIMEOUT (60  * 1000)    /* Prune inactive pooled VMs older than this */
 #define EJS_SQLITE_TIMEOUT          30000           /* Database busy timeout */
 #define EJS_SESSION_TIMEOUT         1800
-#define EJS_TIMER_PERIOD            1000            /* Timer checks ever 1 second */
+#define EJS_SESSION_TIMER_PERIOD    (60 * 1000)     /* Timer checks ever minute */
 #define EJS_FILE_PERMS              0664            /* Default file perms */
 #define EJS_DIR_PERMS               0775            /* Default dir perms */
 
@@ -1192,7 +1192,9 @@ extern void ejsManageIntern(Ejs *ejs, int flags);
 extern void ejsDestroyIntern(EjsIntern *intern);
 
 extern int       ejsAtoi(Ejs *ejs, EjsString *sp, int radix);
-extern EjsString *ejsCatString(Ejs *ejs, EjsString *dest, EjsString *src);
+
+//  MOB - rename Join
+extern EjsString *ejsCatString(Ejs *ejs, EjsString *s1, EjsString *s2);
 extern EjsString *ejsCatStrings(Ejs *ejs, EjsString *src, ...);
 extern EjsString *ejsSubstring(Ejs *ejs, EjsString *src, ssize start, ssize len);
 extern int       ejsCompareString(Ejs *ejs, EjsString *s1, EjsString *s2);
@@ -2583,6 +2585,8 @@ extern int64 ejsGetInt64(Ejs *ejs, EjsAny *obj);
  */
 extern double ejsGetDouble(Ejs *ejs, EjsAny *obj);
 
+#define ejsGetDate(ejs, obj) (ejsIs(ejs, obj, Date) ? ((EjsDate*) obj)->value : 0)
+
 //  MOB -- rename alloc/free
 typedef EjsAny  *(*EjsCreateHelper)(Ejs *ejs, struct EjsType *type, int size);
 typedef EjsAny  *(*EjsCastHelper)(Ejs *ejs, EjsAny *obj, struct EjsType *type);
@@ -3497,6 +3501,15 @@ extern EjsNativeModule *ejsLookupNativeModule(Ejs *ejs, cchar *name);
 
 extern EjsModule *ejsCreateModule(Ejs *ejs, EjsString *name, int version, EjsConstants *constants);
 extern EjsModule *ejsCloneModule(Ejs *ejs, EjsModule *mp);
+
+extern EjsVoid *ejsStoreExpire(Ejs *ejs, EjsObj *store, EjsString *key, EjsDate *when);
+extern EjsAny *ejsStoreRead(Ejs *ejs, EjsObj *store, EjsString *key, EjsObj *options);
+extern EjsAny *ejsStoreReadObj(Ejs *ejs, EjsObj *store, EjsString *key, EjsObj *options);
+extern EjsBoolean *ejsStoreRemove(Ejs *ejs, EjsObj *store, EjsString *key);
+extern EjsVoid *ejsStoreSetLimits(Ejs *ejs, EjsObj *store, EjsObj *limits);
+extern EjsNumber *ejsStoreWrite(Ejs *ejs, EjsObj *store, EjsString *key, EjsString *value, EjsObj *options);
+extern EjsNumber *ejsStoreWriteObj(Ejs *ejs, EjsObj *store, EjsString *key, EjsAny *value, EjsObj *options);
+
 
 #ifdef __cplusplus
 }

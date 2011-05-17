@@ -260,7 +260,7 @@ module ejs.web {
                     options.minified = true
                 }
                 /* MVC directory */
-                let dirs = request.config.directories
+                let dirs = request.config.dirs
                 let sdir = (dirs && dirs.static) ? dirs.static.basename : "static"
                 for each (uri in defaultScripts) {
                     uri = request.link("/" + sdir + uri)
@@ -280,7 +280,7 @@ module ejs.web {
         function stylesheet(uri: String, options: Object): Void {
             if (uri == null) {
                 /* MVC directory */
-                let dirs = request.config.directories
+                let dirs = request.config.dirs
                 let sdir = (dirs && dirs.static) ? dirs.static.basename : "static"
                 for each (uri in defaultStylesheets) {
                     uri = request.link("/" + sdir + uri)

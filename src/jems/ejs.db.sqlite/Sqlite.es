@@ -11,7 +11,7 @@ module ejs.db.sqlite {
         @spec ejs
         @stabilitiy prototype
      */
-    "ejs.db" class Sqlite {
+    class Sqlite {
 
         /*
             Map independent types to SQL types
@@ -87,7 +87,7 @@ module ejs.db.sqlite {
             @options name Database name URI specifying the SQLite database to open. 
                 Example: file://var/spool/db/database.db
          */
-        native "ejs.db" function Sqlite(options: Object)
+        native function Sqlite(options: Object)
 
         /** @duplicate ejs.db::Database.addColumn */
         function addColumn(table: String, column: String, datatype: String, options = null): Void {
@@ -276,9 +276,8 @@ module ejs.db.sqlite {
         /** @duplicate ejs.db::Database.query */
         function query(cmd: String, tag: String = "SQL", trace: Boolean = false): Array {
             //  TODO - need to access Database.traceAll
-            //  TODO - need to better logging framework
             if (trace) {
-                print(tag + ": " + cmd)
+                App.log.activity(tag,  cmd)
             }
             return sql(cmd)
         }
@@ -288,11 +287,11 @@ module ejs.db.sqlite {
 
         /** @duplicate ejs.db::Database.sqlTypeToDataType */
         function sqlTypeToDataType(sqlType: String): String
-            "ejs.db"::Sqlite.SqlTypeToDataType[sqlType]
+            Sqlite.SqlTypeToDataType[sqlType]
 
         /** @duplicate ejs.db::Database.sqlTypeToEjsType */
         function sqlTypeToEjsType(sqlType: String): Type
-            "ejs.db"::Sqlite.SqlTypeToEjsType[sqlType]
+            Sqlite.SqlTypeToEjsType[sqlType]
 
         /** @duplicate ejs.db::Database.startTransaction 
             @hide */

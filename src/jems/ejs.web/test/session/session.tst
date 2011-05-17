@@ -51,7 +51,7 @@ server.on("readable", function (event, request: Request) {
 //  Create a session and save the session cookie
 http = fetch(HTTP + "/basic")
 assert(http.status == Http.Ok)
-let cookie = http.header("Set-Cookie").match(/(-ejs-session-=.*);/)[1]
+let cookie = http.sessionCookie
 assert(cookie.contains("-ejs-session-="))
 http.close()
 

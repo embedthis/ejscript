@@ -29,6 +29,7 @@ module ejs.web {
          */
         use default namespace module
 
+        //  MOB - not thread safe
         private static var _initRequest: Request
 
         private var _afterCheckers: Array
@@ -87,6 +88,7 @@ module ejs.web {
         static function create(request: Request, cname: String = null): Controller {
             request.params.controller = request.params.controller.toPascal()
             cname ||= (request.params.controller + "Controller")
+// MOB - not thread safe !!!
             _initRequest = request
             let c: Controller = new global[cname](request)
             c.request = request
@@ -107,9 +109,13 @@ module ejs.web {
                 log = request.log
                 params = request.params
                 config = request.config
+            /*
+UNUSED MOB
                 if (config.database) {
+                    //  MOB - OPT - move this into MVC and do only once
                     openDatabase(request)
                 }
+            */
                 if (request.method == "POST") {
                     before(checkSecurityToken)
                 }
@@ -331,13 +337,13 @@ module ejs.web {
             Render a partial response using template file.
             @param path Path to the template to render to the client
             @param options Additional options.
-            @option layout Optional layout template. Defaults to config.directories.layouts/default.ejs.
+            @option layout Optional layout template. Defaults to config.dirs.layouts/default.ejs.
          */
         function writePartialTemplate(path: Path, options: Object = {}): Void { 
             request.filename = path
             request.setHeader("Content-Type", "text/html")
             if (options.layout === undefined) {
-                options.layout = Path(config.directories.layouts).join(config.web.view.layout)
+                options.layout = Path(config.dirs.layouts).join(config.web.views.layout)
             }
             log.debug(4, "writePartialTemplate: \"" + path + "\"")
             request.server.process(TemplateBuilder(request, options), request, false)
@@ -350,15 +356,15 @@ module ejs.web {
                 joining the views directory with the controller name and view name. E.g. views/Controller/list.ejs.
             @param options Additional options.
             @option controller Optional controller for the view.
-            @option layout Optional layout template. Defaults to config.directories.layouts/default.ejs.
+            @option layout Optional layout template. Defaults to config.dirs.layouts/default.ejs.
          */
         function writeView(viewName = null, options: Object = {}): Void {
             let controller = options.controller || controllerName
             viewName ||= options.action || actionName
             if (options.layout === undefined) {
-                options.layout = config.directories.layouts.join(config.web.view.layout)
+                options.layout = config.dirs.layouts.join(config.web.views.layout)
             }
-            writeTemplate(config.directories.views.join(controller, viewName).joinExt(config.extensions.ejs), options)
+            writeTemplate(config.dirs.views.join(controller, viewName).joinExt(config.extensions.ejs), options)
         }
 
         /** 
@@ -366,7 +372,7 @@ module ejs.web {
             This call writes the result of running the view template file back to the client.
             @param path Path to the view template to render and write to the client.
             @param options Additional options.
-            @option layout Optional layout template. Defaults to config.directories.layouts/default.ejs.
+            @option layout Optional layout template. Defaults to config.dirs.layouts/default.ejs.
          */
         function writeTemplate(path: Path, options: Object = {}): Void {
             log.debug(4, "writeTemplate: \"" + path + "\"")
@@ -374,7 +380,7 @@ module ejs.web {
             request.filename = path
             request.setHeader("Content-Type", "text/html")
             if (options.layout === undefined) {
-                options.layout = config.directories.layouts.join(config.web.view.layout)
+                options.layout = config.dirs.layouts.join(config.web.views.layout)
             }
             request.server.process(TemplateBuilder(request, options), request, false)
             request.filename = saveFilename
@@ -385,13 +391,13 @@ module ejs.web {
             This call writes the result of running the view template file back to the client.
             @param page String literal containing the view template to render and write to the client.
             @param options Additional options.
-            @option layout Path layout template. Defaults to config.directories.layouts/default.ejs.
+            @option layout Path layout template. Defaults to config.dirs.layouts/default.ejs.
          */
         function writeTemplateLiteral(page: String, options: Object = {}): Void {
             log.debug(4, "writeTemplateLiteral")
             request.setHeader("Content-Type", "text/html")
             if (options.layout === undefined) {
-                options.layout = config.directories.layouts.join(config.web.view.layout)
+                options.layout = config.dirs.layouts.join(config.web.views.layout)
             }
             options.literal = page
             request.server.process(TemplateBuilder(request, options), request, false)
@@ -403,6 +409,7 @@ module ejs.web {
             request.checkSecurityToken()
 
         /*
+UNUSED MOB
             Open database. Expects ejsrc configuration:
 
             mode: "debug",
@@ -414,13 +421,12 @@ module ejs.web {
                 test: { name: "db/blog.sdb", trace: true },
                 production: { name: "db/blog.sdb", trace: true },
             }
-         */
         private function openDatabase(request: Request) {
             let dbconfig = config.database
             let dbclass = dbconfig["class"]
-            let options = dbconfig[config.mode]
             if (dbclass) {
-                if (dbconfig.module && !global[dbclass]) {
+                let options = dbconfig[config.mode]
+                if (dbconfig.module && !global.(dbconfig.module)::[dbclass]) {
                     global.load(dbconfig.module + ".mod")
                 }
                 let module = dbconfig.module || "public"
@@ -428,6 +434,7 @@ module ejs.web {
                 new (module)::[dbclass](dbconfig.adapter, options)
             }
         }
+*/
 
         /* 
             Run the before/after checkers. These are typically used to handle authorization and similar tasks
@@ -456,7 +463,7 @@ module ejs.web {
             if (global[viewClass]) {
                 return true
             }
-            let path = config.directories.views.join(controllerName, name).joinExt(config.extensions.ejs)
+            let path = config.dirs.views.join(controllerName, name).joinExt(config.extensions.ejs)
             if (path.exists) {
                 return true
             }

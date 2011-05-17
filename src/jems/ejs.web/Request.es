@@ -376,6 +376,7 @@ module ejs.web {
          */
         function createSession(timeout: Number = -1): Session {
             if (timeout >= 0) {
+// - MOB - does this change the timeout for just this session or for all?
                 setLimits({ sessionTimeout: timeout })
             }
             return session

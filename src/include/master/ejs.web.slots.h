@@ -123,10 +123,9 @@
 #define ES_ejs_web_Controller_ejs_web_writeTemplate                    43
 #define ES_ejs_web_Controller_ejs_web_writeTemplateLiteral             44
 #define ES_ejs_web_Controller_checkSecurityToken                       45
-#define ES_ejs_web_Controller_openDatabase                             46
-#define ES_ejs_web_Controller_runCheckers                              47
-#define ES_ejs_web_Controller_viewExists                               48
-#define ES_ejs_web_Controller_NUM_INSTANCE_PROP                        49
+#define ES_ejs_web_Controller_runCheckers                              46
+#define ES_ejs_web_Controller_viewExists                               47
+#define ES_ejs_web_Controller_NUM_INSTANCE_PROP                        48
 #define ES_ejs_web_Controller_NUM_INHERITED_PROP                       0
 
 /*
@@ -217,8 +216,8 @@
 #define ES_ejs_web_HttpServer_onrequest                                12
 #define ES_ejs_web_HttpServer_defaultOnRequest                         13
 #define ES_ejs_web_HttpServer_home                                     14
-#define ES_ejs_web_HttpServer_sessions                                 15
-#define ES_ejs_web_HttpServer_software                                 16
+#define ES_ejs_web_HttpServer_software                                 15
+#define ES_ejs_web_HttpServer_openSession                              16
 #define ES_ejs_web_HttpServer_accept                                   17
 #define ES_ejs_web_HttpServer_close                                    18
 #define ES_ejs_web_HttpServer_getWorker                                19
@@ -260,10 +259,13 @@
 /*
    Prototype (instance) slots for "Mvc" type 
  */
-#define ES_ejs_web_Mvc_loadConfig                                      0
-#define ES_ejs_web_Mvc_rebuildComponent                                1
-#define ES_ejs_web_Mvc_loadComponent                                   2
-#define ES_ejs_web_Mvc_NUM_INSTANCE_PROP                               3
+#define ES_ejs_web_Mvc_config                                          0
+#define ES_ejs_web_Mvc_loadConfig                                      1
+#define ES_ejs_web_Mvc_load                                            2
+#define ES_ejs_web_Mvc_loadComponent                                   3
+#define ES_ejs_web_Mvc_openDatabase                                    4
+#define ES_ejs_web_Mvc_rebuildComponent                                5
+#define ES_ejs_web_Mvc_NUM_INSTANCE_PROP                               6
 #define ES_ejs_web_Mvc_NUM_INHERITED_PROP                              0
 
 
@@ -466,13 +468,21 @@
 /*
     Class property slots for the "Session" type 
  */
-#define ES_ejs_web_Session_NUM_CLASS_PROP                              0
+#define ES_ejs_web_Session_key                                         0
+#define ES_ejs_web_Session_destorySession                              1
+#define ES_ejs_web_Session_NUM_CLASS_PROP                              2
 
 /*
    Prototype (instance) slots for "Session" type 
  */
 #define ES_ejs_web_Session_NUM_INSTANCE_PROP                           0
 #define ES_ejs_web_Session_NUM_INHERITED_PROP                          0
+
+/*
+    Local slots for methods in type "Session" 
+ */
+#define ES_ejs_web_Session_key_session                                 0
+#define ES_ejs_web_Session_destorySession_session                      0
 
 
 /*
@@ -568,6 +578,6 @@
 #define ES_ejs_web_View_plainFormatter_value                           1
 #define ES_ejs_web_View_plainFormatter_options                         2
 
-#define _ES_CHECKSUM_ejs_web   771419
+#define _ES_CHECKSUM_ejs_web   778504
 
 #endif

@@ -1007,6 +1007,8 @@ void ejsRedirectLoggingToFile(MprFile *file, int level)
 }
 
 
+//  MOB - rename to ejsPauseGC / ejsResumeGC
+
 int ejsFreeze(Ejs *ejs, int freeze)
 {
     int     old;
@@ -1015,7 +1017,6 @@ int ejsFreeze(Ejs *ejs, int freeze)
     if (freeze != -1) {
         ejs->state->frozen = freeze;
     }
-    //printf("SET FREEZE for %s to %d was %d\n", ejs->name, freeze, old);
     return old;
 }
 

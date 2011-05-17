@@ -147,37 +147,34 @@ extern EjsRequest *ejsCloneRequest(Ejs *ejs, EjsRequest *req, bool deep);
         that persists beyond a single request.
     @stability Prototype
     @defgroup EjsSession EjsSession
-    @see EjsSession ejsCreateSession ejsDestroySession
+    @see EjsSession ejsGetSession ejsDestroySession
  */
 typedef struct EjsSession {
-    EjsPot      pot;                /* Storage for session objects */
-    cchar       *id;                /* Session ID */
-    MprTime     expire;             /* When the session should expire */
-    int         timeout;            /* Session inactivity lifespan */
-    int         index;              /* Index in sesssions[] */
+    EjsPot      pot;                /* Session properties */
+    EjsString   *key;               /* Session ID key */
+    EjsObj      *store;             /* Store reference */
+    EjsObj      *options;           /* Default write options */
+    MprTime     lifespan;           /* Session inactivity lifespan */
+    int         ready;              /* Data cached from store into pot */
 } EjsSession;
 
 /** 
-    Create a session object
+    Create a session object for a given key. If the given key is NULL or has expired, a new key will be generated.
     @param ejs Ejs interpreter handle returned from $ejsCreate
-    @param req Request object creating the session
-    @param timeout Timeout in milliseconds
-    @param secure If the session is to be given a cookie that is designated as only for secure sessions (SSL)
+    @param key String containing the session ID
     @returns A new session object.
 */
-extern EjsSession *ejsCreateSession(Ejs *ejs, struct EjsRequest *req, int timeout, bool secure);
-extern EjsSession *ejsGetSession(Ejs *ejs, struct EjsRequest *req);
+extern EjsSession *ejsGetSession(Ejs *ejs, EjsString *key, MprTime timeout, int create);
 
 /** 
     Destroy as session. This destroys the session object so that subsequent requests will need to establish a new session.
     @param ejs Ejs interpreter handle returned from $ejsCreate
     @param server Server object owning the session.
-    @param session Session object created via ejsCreateSession()
+    @param session Session object created via ejsGetSession()
 */
-extern int ejsDestroySession(Ejs *ejs, EjsHttpServer *server, EjsSession *session);
+extern int ejsDestroySession(Ejs *ejs, EjsSession *session);
 
 extern void ejsSetSessionTimeout(Ejs *ejs, EjsSession *sp, int timeout);
-extern void ejsUpdateSessionLimits(Ejs *ejs, EjsHttpServer *server);
 
 extern void ejsSendRequestCloseEvent(Ejs *ejs, EjsRequest *req);
 extern void ejsSendRequestErrorEvent(Ejs *ejs, EjsRequest *req);

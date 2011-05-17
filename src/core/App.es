@@ -59,28 +59,23 @@ module ejs {
             @hide
          */
         static internal var defaultConfig = {
-            /*
-                search: null,
-                script: null,
-             */
             log: {
                 enable: true,
                 location: "stderr",
                 level: 0,
-                /* match: null, */
             },
-            cache: {
-                enable: false,
-                reload: true,
+            app: {
+                cache: false,
+                reload: false,
             },
-            directories: {
-                cache: "cache",
+            dirs: {
+                cache: Path("cache"),
             },
-            init: {
-                /* load: [] */
+            files: {
+                ejsrc: Path("ejsrc"),
             },
-            test: {
-            },
+            init: { },
+            test: { },
         }
 
         /**
@@ -106,6 +101,11 @@ module ejs {
             the script or "ejs" if running interactively.
          */
         static var name: String
+
+        /**
+            Application in-memory store reference. See $ejs.store::Store
+         */
+        static var store: Store
 
         /** 
             Application title name. Multi-word, Camel Case name for the application suitable for display. This is 
@@ -401,7 +401,6 @@ module ejs {
                 App.log.match = log.match
             }
         }
-
         /*  Append search paths */
         if (config.search) {
             if (config.search is Array) {
@@ -410,12 +409,14 @@ module ejs {
                 App.search = config.search.split(App.SearchSeparator) + App.search
             }
         }
-
         /*  Pre-load modules and scripts */
         if (config.init.load) {
             for each (m in config.init.load) {
                 load(m)
             }
+        }
+        if (config.store) {
+            App.store = new Store(null, config.store)
         }
     }
 

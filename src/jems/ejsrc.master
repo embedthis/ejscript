@@ -2,26 +2,22 @@
     Master ejsrc
  */
 {
-    cache: {
-        enable: true,
+    app: {
+        cache: true,
+        preloaded: false,
         reload: true,
-        _timeout: 3600,
-        _app: true,
-        _page: true,
-        _action: true,
-        _database: true,
     },
-    database: {                                 // ejsmvc
-        class: "Database",
-        adapter: "sqlite3",
-        timeout: 5000,
+    database: {                     //  MVC
+        adapter: "sqlite",
+        class: "Sqlite",
+        module: "ejs.db.sqlite",
         debug: {
             name: "db/switch.sdb", username: "", password: "", trace: false,
         },
         test: { },
         production: { },
     },
-    directories: {
+    dirs: {
         bin: "bin",
         db: "db",
         cache: "cache",
@@ -32,9 +28,13 @@
         src: "src",
         web: "web",
     },
+    ejsrc: "/path/ejsrc",
+    files: {
+        ejsrc: "ejsrc",
+    },
     log: {
         enable: true,
-        location: "stdout",
+        location: "stderr",
         level: 2,
         match: null,
         showClient: true,                       // ejs.web 
@@ -42,28 +42,64 @@
     init: {
         load: [],
     },
-    mode: "debug",                              // ejsmvc
+    mode: "debug",                              // MVC
     mvc: {
         appmod: "App.mod",
         compiler: "ejsc --debug --web",
         start: "start.es",
     },
     search: null,
-    scripts: null,
+    store: {
+        adapter: "local",
+        class: "Local",
+        module: "ejs.store.local",
+        memory: 100000000,
+        keys: 1000,
+        lifespan: 3600,
+        timeout: 5000,
+        retries: 5,
+    },
     web: {
-        endpoint: ":4000",             // ejsmvc only
+        //  MOB - update ejs.mvc
+        cache: {
+            item: { enable: false, lifespan: 3600 }
+            actions: false,
+            databases: false,
+            pages: { enable: true, lifespan: 86400, memory: 2000000 },
+            workers: { enable: true, limit: 10 },
+        },
         expires: {
             "html": 86400,  
             "ejs": 86400,
             "es": 86400,
             "": 86400,
         },
-        limits: {sessions: 60, sessionTimeout: 60}
+        helpers: {
+            //  MOB TODO
+        },
+        limits: {
+            chunk: 8192,
+            clients: 100,
+            headers: 50,
+            header: 2048,
+            inactivityTimeout: 300,
+            receive: 2000000000,
+            requests: 200,
+            requestTimeout: 0,
+            reuse: 200,
+sessionTimeout: 60, 
+            stageBuffer: 32768,
+            transmission: 2000000000,
+            upload: 2000000000,
+            uri: 1000000,
+workers: 10,
+        },
+        listen: ":4000",                      // MVC
         trace: {
             tx: { exclude: ["jpg", "gif", "png", "ico", "css",], headers: 4, body: 5, size: 10240 }
             rx: { exclude: ["jpg", "gif", "png", "ico", "css", "js"], conn: 5, first: 2, headers: 4, body: 4, size: 1024 }
         },
-        view: {
+        views: {
             connectors: {
                 table: "html",
                 chart: "google",
@@ -73,6 +109,10 @@
                 currency: "$%10f",
                 Date: "%a %e %b %H:%M",
             },
+            layout: "default.ejs",
+        },
+        workers: {
+            init: "script",
         },
     },
 }

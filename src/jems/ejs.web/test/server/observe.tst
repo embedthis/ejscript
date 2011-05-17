@@ -22,24 +22,15 @@ server.on("readable", function (event, request) {
 function watch(event, request) {
     events[event] = true
 }
-server.on(["close", "createSession", "destroySession", "readable"], watch)
+server.on(["close", "readable"], watch)
 
 //  Run server and fetch one request
-assert(server.sessions == null)
 server.listen(HTTP)
 http = fetch(HTTP + "/")
-
-//  Sessions should now exist with one sesson object
-assert(server.sessions)
-/*
-assert(Object.getOwnPropertyCount(server.sessions) == 1)
-*/
 
 //  Close server and verify all events received
 server.close()
 
-server.off(["close", "createSession", "destroySession", "readable"], watch)
+server.off(["close", "readable"], watch)
 assert(events.close)
 assert(events.readable)
-assert(events.createSession)
-assert(events.destroySession)

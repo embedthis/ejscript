@@ -6,13 +6,37 @@ module ejs.web {
     /** 
         Session state storage class. 
         The session state objects can be used to share state between requests. The $ejs.web::Request object has
-        a $ejs.web::Request.session property that stores an Session instance. Storing objects into the session instance
-        will cause the object to be serialized for later retrieveal.
-
+        a $ejs.web::Request.session property that stores a Session object instance. Values stored into the session 
+        state are serialized and deserialized upon retrieval.
         @spec ejs
     */
-    dynamic class Session { }
+    dynamic class Session { 
+        use default namespace public
+
+        /**
+            Create a new session state object. This uses the Store in-memory caching service.
+            @param key Optional key to provide. If omitted or null, a new key will be generated. If the given key has
+                expired, a new key will be generated.
+            @param options
+            @option lifespan Lifespan in seconds for the session
+         */
+        native function Session(key, options: Object = null)
+
+        /**
+            Get the session ID key for a session. This is a static method so as to not clash with session properties.
+            @param session Session to examine
+            @return The session ID key.
+         */
+        native static function key(session: Session!): String
+
+        /**
+            Destroy a session
+            @param session Session to destroy
+         */
+        native static function destorySession(session: Session!): Void
+    }
 }
+
 
 
 /*
