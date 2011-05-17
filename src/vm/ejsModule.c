@@ -628,6 +628,7 @@ int ejsEncodeInt32(Ejs *ejs, uchar *pos, int number)
         mprAssert("Code generation error. Word exceeds maximum");
         return 0;
     }
+    memset(pos, 0, 4);
     len = ejsEncodeNum(ejs, pos, (int64) number);
     mprAssert(len <= 4);
     return 4;
