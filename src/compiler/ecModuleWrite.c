@@ -642,7 +642,7 @@ static void createDocSection(EcCompiler *cp, cchar *tag, EjsPot *block, int slot
         ejs->doc = mprCreateHash(EJS_DOC_HASH_SIZE, 0);
     }
     mprSprintf(key, sizeof(key), "%s %Lx %d", tag, PTOL(block), slotNum);
-    if ((doc = mprLookupHash(ejs->doc, key)) == 0) {
+    if ((doc = mprLookupKey(ejs->doc, key)) == 0) {
         return;
     }
     ecEncodeByte(cp, EJS_SECT_DOC);
@@ -768,7 +768,7 @@ int ecAddDocConstant(EcCompiler *cp, cchar *tag, void *vp, int slotNum)
     mprAssert(slotNum >= 0);
 
     mprSprintf(key, sizeof(key), "%s %Lx %d", tag, PTOL(vp), slotNum);
-    doc = (EjsDoc*) mprLookupHash(ejs->doc, key);
+    doc = (EjsDoc*) mprLookupKey(ejs->doc, key);
     if (doc && doc->docString) {
         if (ecAddStringConstant(cp, doc->docString) < 0) {
             mprAssert(0);
@@ -797,7 +797,7 @@ int ecAddModuleConstant(EcCompiler *cp, EjsModule *mp, cchar *str)
         return 0;
     }
     constants = mp->constants;
-    if (constants->table && (hp = mprLookupHashEntry(constants->table, str)) != 0) {
+    if (constants->table && (hp = mprLookupKeyEntry(constants->table, str)) != 0) {
         return PTOI(hp->data);
     }
     index = ejsAddConstant(cp->ejs, constants, str);

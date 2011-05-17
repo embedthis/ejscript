@@ -726,7 +726,7 @@ static int makeAlphaToken(EcCompiler *cp, EcToken *tp, int c)
     if (c) {
         putBackChar(stream, c);
     }
-    rp = (ReservedWord*) mprLookupHash(cp->keywords, tp->text);
+    rp = (ReservedWord*) mprLookupKey(cp->keywords, tp->text);
     if (rp) {
         setTokenID(tp, rp->tokenId, rp->subId, rp->groupMask);
     } else {
