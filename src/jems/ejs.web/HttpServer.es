@@ -22,8 +22,8 @@ module ejs.web {
 
         private static const defaultConfig = {
             app: {
-                reload: true,
                 cache: true,
+                reload: true,
             },
             dirs: {
                 cache: Path("cache"),
@@ -42,14 +42,13 @@ module ejs.web {
                 adapter: "local",
                 "class": "Local",
                 module: "ejs.store.local",
-                limits: {
-                    lifespan: 3600,
-                },
+                lifespan: 3600,
             },
             web: {
                 cache: {
-                    workers: true,
-                }
+                    workers: { enable: true, limit: 10 },
+                },
+                limits: {},
                 views: {
                     connectors: {
                         table: "html",
@@ -61,7 +60,6 @@ module ejs.web {
                     },
                     layout: "default.ejs",
                 },
-                workers: {},
             },
         }
 
@@ -123,19 +121,20 @@ module ejs.web {
             @param limits. Limits is an object hash with the following properties:
             @option chunk Maximum size of a chunk when using chunked transfer encoding.
             @option clients Maximum number of simultaneous clients.
+            @option connReuse Maximum number of times to reuse a connection for requests (KeepAlive count).
             @option headers Maximum number of headers in a request.
             @option header Maximum size of headers.
             @option inactivityTimeout Maximum time in seconds to keep a connection open if idle. Set to zero for no timeout.
             @option receive Maximum size of incoming body data.
             @option requests Maximum number of simultaneous requests.
             @option requestTimeout Maximum time in seconds for a request to complete. Set to zero for no timeout.
-            @option reuse Maximum number of times to reuse a connection for requests (KeepAlive count).
             @option sessionTimeout Default time to preserve session state for new requests. Set to zero for no timeout.
             @option stageBuffer Maximum stage buffer size for each direction.
             @option transmission Maximum size of outgoing body data.
             @option upload Maximum size of uploaded files.
             @option uri Maximum size of URIs.
-            @option workers Maximum number of Worker virtual machines to create for threaded requests
+            @option workers Maximum number of Worker threads to utilize for threaded requests. This value is initialized
+                from the ejsrc cache.workers.limit field.
             @see setLimits
           */
         native function get limits(): Object
@@ -248,10 +247,8 @@ server.listen("127.0.0.1:7777")
             if (web.trace) {
                 trace(web.trace)
             }
-            if (web.limits) {
-                /* This will set session limits too */
-                setLimits(web.limits)
-            }
+            web.limits.workers ||= web.cache.workers.limit
+            setLimits(web.limits)
             if (web.session) {
                 openSession()
             }
@@ -302,7 +299,7 @@ server.listen("127.0.0.1:7777")
                 }
                 workerImage ||= Worker.cloneSelf()
                 w = workerImage.clone()
-                if (config.web.workers.init) {
+                if (config.web.workers && config.web.workers.init) {
                     w.preeval(config.web.workers.init)
                 }
             }
@@ -397,6 +394,7 @@ server.listen("127.0.0.1:7777")
                     let headers = response.headers || { "Content-Type": "text/html" }
                     request.setHeaders(headers)
                     processBody(request, response.body)
+
                 } else {
                     let file = request.responseHeaders["X-Sendfile"]
                     if (file && !request.isSecure) {
@@ -485,7 +483,7 @@ server.listen("127.0.0.1:7777")
 
         private function releaseWorker(w: Worker): Void {
             activeWorkers.remove(w)
-            if (config.cache.worker) {
+            if (config.web.cache.workers.enable) {
                 idleWorkers.push(w)
             }
             App.log.debug(4, "HttpServer.releaseWorker idle: " + idleWorkers.length + " active:" + activeWorkers.length)

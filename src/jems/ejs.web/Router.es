@@ -168,9 +168,13 @@ module ejs.web {
          */
         public function addHandlers(): Void {
             let staticPattern = "\/" + (App.config.dirs.static.basename || "static") + "\/.*"
+            //  MOB - why test here?
             if (staticPattern) {
                 add(staticPattern, {name: "default", response: StaticApp})
             }
+/*  MOB
+            add(/\.html$|\.css$|\.jpg$|\.gif$|\.png$|\.ico$|\.css$|\.js$/,  {name: "static",  response: StaticApp})
+ */
             add(/\.es$/,  {name: "es",  response: ScriptApp, method: "*"})
             add(/\.ejs$/, {name: "ejs", module: "ejs.template", response: TemplateApp, method: "*"})
             add(isDir,    {name: "dir", response: DirApp})
@@ -300,6 +304,7 @@ module ejs.web {
             switch (routeSet) {
             case Top:
                 addHandlers()
+                //  MOB - should this not be addCatchall()
                 addDefault(StaticApp)
                 break
             case Restful:

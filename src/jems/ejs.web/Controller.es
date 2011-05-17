@@ -109,13 +109,6 @@ module ejs.web {
                 log = request.log
                 params = request.params
                 config = request.config
-            /*
-UNUSED MOB
-                if (config.database) {
-                    //  MOB - OPT - move this into MVC and do only once
-                    openDatabase(request)
-                }
-            */
                 if (request.method == "POST") {
                     before(checkSecurityToken)
                 }
@@ -152,7 +145,18 @@ UNUSED MOB
             params.action = actionName
             runCheckers(_beforeCheckers)
             let response
+            //  MOB - is this right to test autoFinalizing here?
             if (!request.finalized && request.autoFinalizing) {
+/*
+                MOB - prototype action caching
+                if (_cache[actionName]) {
+                    response = App.store.read("::ejs.web.action::" + controllerName + "::" + actionName)
+                    if (response) {
+                        return deserialize(response)
+                    }
+                    request.writeBuffer = new ByteArray
+                }
+ */
                 if (!(ns)::[actionName]) {
                     if (!viewExists(actionName)) {
                         response = "action"::missing()
@@ -173,6 +177,14 @@ UNUSED MOB
             if (!response) {
                 request.autoFinalize()
             }
+/*MOB
+            //  MOB - but what if not finalized? 
+            //  MOB - options. Could just have caching for what the action has rendered.
+            if (_cache[actionName]) {
+                response = App.store.write("::ejs.web.action::" + controllerName + "::" + actionName, 
+                    serialize(request.writeBuffer), _cache[actionName])
+            }
+ */
             return response
         }
 
@@ -199,6 +211,16 @@ UNUSED MOB
             _beforeCheckers ||= []
             _beforeCheckers.append([fn, options])
         }
+
+/*MOB
+        //  MOB - this is action caching. Caches entire page
+        //  Usage:  cache("index", {lifespan: 200})
+        function cache(name: String, options: Object = null): Void {
+            if (config.cache.action.enable) {
+                _cache[name] = options
+            }
+        }
+ */
 
         /** @duplicate ejs.web::Request.dontAutoFinalize */
         function dontAutoFinalize(): Void

@@ -423,6 +423,7 @@ FUTURE & KEEP
             Resource limits for requests.
             @param limits. Limits is an object hash with the following properties:
             @option chunk Maximum size of a chunk when using chunked transfer encoding.
+            @option connReuse Maximum number of times to reuse a connection for requests (KeepAlive count).
             Chunked encoding will be used if the total body content length is unknown at the time the request headers 
             must be emitted. The Http class will typically buffer output until $flush is called and will often be able 
             to determine the content length even if a Content-Length header has not been explicitly defined. 
@@ -431,7 +432,6 @@ FUTURE & KEEP
             @option inactivityTimeout Maximum time in seconds to keep a connection open if idle. Set to zero for no timeout.
             @option receive Maximum size of incoming body data.
             @option requestTimeout Maximum time in seconds for a request to complete. Set to zero for no timeout.
-            @option reuse Maximum number of times to reuse a connection for requests (KeepAlive count).
             @option stageBuffer Maximum stage buffer size for each direction.
             @option transmission Maximum size of outgoing body data.
             @see setLimits

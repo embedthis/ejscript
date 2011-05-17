@@ -573,7 +573,6 @@ module ejs.db.mapper {
             if (options.noassoc) {
                 options.depth = 0
             }
-
             if (options.columns) {
                 columns = options.columns
                 /*
@@ -711,6 +710,20 @@ module ejs.db.mapper {
                 throw new Error("Database connection has not yet been established")
             }
 
+/*
+    MOB - prototype caching
+
+            if (options.lifespan) {
+                if (App.config.cache.database && App.config.cache.database.enable) {
+                    if (_cache[cmd]) {
+                        results = App.store.read("::ejs.db.mapper::" + controllerName + "::" + actionName)
+                        if (results) {
+                            return deserialize(results)
+                        }
+                    }
+                }
+            }
+ */
             let results: Array
             try {
                 if (_trace) {

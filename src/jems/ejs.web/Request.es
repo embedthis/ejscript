@@ -162,10 +162,10 @@ module ejs.web {
             Resource limits for the request. The limits have initial default values defined by the owning HttpServer.
             @param limits. Limits is an object hash with the following properties:
             @option chunk Maximum size of a chunk when using chunked transfer encoding.
+            @option connReuse Maximum number of times to reuse a connection for requests (KeepAlive count).
             @option inactivityTimeout Maximum time in seconds to keep a connection open if idle. Set to zero for no timeout.
             @option receive Maximum size of incoming body data.
             @option requestTimeout Maximum time in seconds for a request to complete. Set to zero for no timeout.
-            @option reuse Maximum number of times to reuse a connection for requests (KeepAlive count).
             @option sessionTimeout Maximum time to preserve session state. Set to zero for no timeout.
             @option transmission Maximum size of outgoing body data.
             @option upload Maximum size of uploaded files.

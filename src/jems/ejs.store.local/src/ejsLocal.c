@@ -83,7 +83,7 @@ static EjsAny *sl_expire(Ejs *ejs, EjsLocalStore *store, int argc, EjsAny **argv
 
     lock(store);
     //  UNICODE
-    if ((item = mprLookupHash(store->cache, key->value)) == 0) {
+    if ((item = mprLookupKey(store->cache, key->value)) == 0) {
         unlock(store);
         return S(false);
     }
@@ -133,7 +133,7 @@ static EjsAny *sl_read(Ejs *ejs, EjsLocalStore *store, int argc, EjsAny **argv)
     }
     lock(store);
     //  UNICODE
-    if ((item = mprLookupHash(store->cache, key->value)) == 0) {
+    if ((item = mprLookupKey(store->cache, key->value)) == 0) {
         unlock(store);
         return S(null);
     }
@@ -165,9 +165,9 @@ static EjsBoolean *sl_remove(Ejs *ejs, EjsLocalStore *store, int argc, EjsAny **
     lock(store);
     if (ejsIsDefined(ejs, key)) {
         //  UNICODE
-        if ((item = mprLookupHash(store->cache, key->value)) != 0) {
+        if ((item = mprLookupKey(store->cache, key->value)) != 0) {
             store->usedMem -= (key->length + item->data->length);
-            mprRemoveHash(store->cache, key->value);
+            mprRemoveKey(store->cache, key->value);
             result = S(true);
         } else {
             result = S(false);
@@ -266,7 +266,7 @@ static EjsNumber *sl_write(Ejs *ejs, EjsLocalStore *store, int argc, EjsAny **ar
         }
     }
     lock(store);
-    if ((hp = mprLookupHashEntry(store->cache, key->value)) != 0) {
+    if ((hp = mprLookupKeyEntry(store->cache, key->value)) != 0) {
         exists++;
         item = (StoreItem*) hp->data;
         if (checkVersion) {
@@ -340,10 +340,10 @@ static void localTimer(EjsLocalStore *store, MprEvent *event)
 
     if (mprTryLock(store->mutex)) {
         when = mprGetTime();
-        for (hp = 0; (hp = mprGetNextHash(store->cache, hp)) != 0; ) {
+        for (hp = 0; (hp = mprGetNextKey(store->cache, hp)) != 0; ) {
             item = (StoreItem*) hp->data;
             if (item->expires && item->expires <= when) {
-                mprRemoveHash(store->cache, hp->key);
+                mprRemoveKey(store->cache, hp->key);
                 store->usedMem -= (item->key->length + item->data->length);
             }
         }
@@ -356,9 +356,9 @@ static void localTimer(EjsLocalStore *store, MprEvent *event)
             excessKeys = mprGetHashLength(store->cache) - store->maxKeys;
             while (excessKeys > 0 || store->usedMem > store->maxMem) {
                 for (factor = 3600; excessKeys > 0; factor *= 2) {
-                    for (hp = 0; (hp = mprGetNextHash(store->cache, hp)) != 0; ) {
+                    for (hp = 0; (hp = mprGetNextKey(store->cache, hp)) != 0; ) {
                         if (item->expires && item->expires <= when) {
-                            mprRemoveHash(store->cache, hp->key);
+                            mprRemoveKey(store->cache, hp->key);
                             store->usedMem -= (item->key->length + item->data->length);
                         }
                     }

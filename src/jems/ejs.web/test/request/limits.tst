@@ -17,13 +17,13 @@ server.on("readable", function (event, request: Request) {
     case "/init":
         assert(l)
         assert(l.chunk > 1024)
-        assert(l.receive > 1024 * 1024)
-        assert(l.reuse == 100)
-        assert(l.transmission > 1024 * 1024)
-        assert(l.upload > 1024 * 1024)
+        assert(l.connReuse == 100)
         assert(l.inactivityTimeout == 60)
+        assert(l.receive > 1024 * 1024)
         assert(l.requestTimeout > 1000000)
         assert(l.sessionTimeout == 3600)
+        assert(l.transmission > 1024 * 1024)
+        assert(l.upload > 1024 * 1024)
         assert(l.chunk > 0)
         finalize()
         break

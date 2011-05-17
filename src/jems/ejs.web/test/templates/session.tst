@@ -22,7 +22,6 @@ let firstSession = http.response.match(/"(.*)"/)[1]
 let cookie = http.header("Set-Cookie").match(/(-ejs-session-=.*);/)[1]
 assert(firstSession == cookie.match(/-ejs-session-=(.*)/)[1])
 assert(firstSession != "")
-assert(firstSession.length == 40)
 http.close()
 
 
@@ -39,7 +38,6 @@ http.close()
 http.header("Cookie", cookie)
 http.form(HTTP + "/session.ejs", { submit: "New Session" })
 let thirdSession = http.response.match(/"(.*)"/)[1]
-assert(thirdSession.length == 40)
 assert(thirdSession != firstSession)
 assert(http.status == 200)
 http.close()

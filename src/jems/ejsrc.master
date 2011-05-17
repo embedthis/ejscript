@@ -7,7 +7,7 @@
         preloaded: false,
         reload: true,
     },
-    database: {                     //  MVC
+    database: {
         adapter: "sqlite",
         class: "Sqlite",
         module: "ejs.db.sqlite",
@@ -28,21 +28,20 @@
         src: "src",
         web: "web",
     },
-    ejsrc: "/path/ejsrc",
     files: {
-        ejsrc: "ejsrc",
+        ejsrc: "/path/to/ejsrc",
     },
     log: {
         enable: true,
         location: "stderr",
         level: 2,
         match: null,
-        showClient: true,                       // ejs.web 
+        showClient: true,
     },
     init: {
         load: [],
     },
-    mode: "debug",                              // MVC
+    mode: "debug",
     mvc: {
         appmod: "App.mod",
         compiler: "ejsc --debug --web",
@@ -53,20 +52,16 @@
         adapter: "local",
         class: "Local",
         module: "ejs.store.local",
-        memory: 100000000,
+        memory: 10000000,
         keys: 1000,
         lifespan: 3600,
-        timeout: 5000,
-        retries: 5,
     },
     web: {
-        //  MOB - update ejs.mvc
         cache: {
-            item: { enable: false, lifespan: 3600 }
-            actions: false,
-            databases: false,
-            pages: { enable: true, lifespan: 86400, memory: 2000000 },
-            workers: { enable: true, limit: 10 },
+            actions:    { enable: true, lifespan: 3600 },
+            databases:  { enable: true, lifespan: 3600 },
+            fragments:  { enable: true, lifespan: 3600 },
+            workers:    { enable: true, limit: 10 },
         },
         expires: {
             "html": 86400,  
@@ -75,10 +70,11 @@
             "": 86400,
         },
         helpers: {
-            //  MOB TODO
+            //  MOB TODO - or should this be in views?
         },
         limits: {
             chunk: 8192,
+            connReuse: 200,
             clients: 100,
             headers: 50,
             header: 2048,
@@ -86,15 +82,13 @@
             receive: 2000000000,
             requests: 200,
             requestTimeout: 0,
-            reuse: 200,
-sessionTimeout: 60, 
+            sessionTimeout: 3600, 
             stageBuffer: 32768,
             transmission: 2000000000,
             upload: 2000000000,
             uri: 1000000,
-workers: 10,
         },
-        listen: ":4000",                      // MVC
+        listen: ":4000",
         trace: {
             tx: { exclude: ["jpg", "gif", "png", "ico", "css",], headers: 4, body: 5, size: 10240 }
             rx: { exclude: ["jpg", "gif", "png", "ico", "css", "js"], conn: 5, first: 2, headers: 4, body: 4, size: 1024 }

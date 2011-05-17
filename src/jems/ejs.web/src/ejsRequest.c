@@ -79,7 +79,7 @@ static EjsObj *createParams(Ejs *ejs, EjsRequest *req)
         params = (EjsObj*) ejsCreateEmptyPot(ejs);
         if (req->conn && (formVars = req->conn->rx->formVars) != 0) {
             hp = 0;
-            while ((hp = mprGetNextHash(formVars, hp)) != NULL) {
+            while ((hp = mprGetNextKey(formVars, hp)) != NULL) {
                 defineParam(ejs, params, hp->key, hp->data);
             }
         }
@@ -99,7 +99,7 @@ static EjsObj *createCookies(Ejs *ejs, EjsRequest *req)
     if (req->conn == 0) {
         return S(null);
     }
-    if ((cookieHeader = mprLookupHash(req->conn->rx->headers, "cookie")) == 0) {
+    if ((cookieHeader = mprLookupKey(req->conn->rx->headers, "cookie")) == 0) {
         req->cookies = S(null);
     } else {
         argv[0] = (EjsObj*) ejsCreateStringFromAsc(ejs, cookieHeader);
@@ -135,7 +135,7 @@ static EjsObj *createFiles(Ejs *ejs, EjsRequest *req)
             return S(null);
         }
         req->files = files = (EjsObj*) ejsCreateEmptyPot(ejs);
-        for (index = 0, hp = 0; (hp = mprGetNextHash(conn->rx->files, hp)) != 0; index++) {
+        for (index = 0, hp = 0; (hp = mprGetNextKey(conn->rx->files, hp)) != 0; index++) {
             up = (HttpUploadFile*) hp->data;
             file = (EjsObj*) ejsCreateEmptyPot(ejs);
             ejsSetPropertyByName(ejs, file, EN("filename"), ejsCreateStringFromAsc(ejs, up->filename));
@@ -161,7 +161,7 @@ static EjsObj *createHeaders(Ejs *ejs, EjsRequest *req)
     if (req->headers == 0) {
         req->headers = (EjsObj*) ejsCreateEmptyPot(ejs);
         conn = req->conn;
-        for (hp = 0; conn && (hp = mprGetNextHash(conn->rx->headers, hp)) != 0; ) {
+        for (hp = 0; conn && (hp = mprGetNextKey(conn->rx->headers, hp)) != 0; ) {
             n = EN(hp->key);
             if ((old = ejsGetPropertyByName(ejs, req->headers, n)) != 0) {
                 value = ejsCreateStringFromAsc(ejs, sjoin(ejsToMulti(ejs, old), "; ", hp->data, NULL));
@@ -220,7 +220,7 @@ static EjsObj *createResponseHeaders(Ejs *ejs, EjsRequest *req)
         conn = req->conn;
         if (conn && conn->tx) {
             /* Get default headers */
-            for (hp = 0; (hp = mprGetNextHash(conn->tx->headers, hp)) != 0; ) {
+            for (hp = 0; (hp = mprGetNextKey(conn->tx->headers, hp)) != 0; ) {
                 ejsSetPropertyByName(ejs, req->responseHeaders, EN(hp->key), ejsCreateStringFromAsc(ejs, hp->data));
             }
             conn->headersCallback = (HttpHeadersCallback) fillResponseHeaders;

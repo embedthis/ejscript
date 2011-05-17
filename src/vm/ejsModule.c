@@ -111,7 +111,7 @@ int ejsAddNativeModule(Ejs *ejs, cchar *name, EjsNativeCallback callback, int ch
 
 EjsNativeModule *ejsLookupNativeModule(Ejs *ejs, cchar *name) 
 {
-    return mprLookupHash(ejs->service->nativeModules, name);
+    return mprLookupKey(ejs->service->nativeModules, name);
 }
 
 
