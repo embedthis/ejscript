@@ -41,14 +41,6 @@ static EjsAny *castString(Ejs *ejs, EjsString *sp, EjsType *type)
     mprAssert(sp);
     mprAssert(type);
 
-#if UNUSED
-    if (type == ST(Path)) {
-        return ejsCreatePath(ejs, sp);
-    } else if (type == ST(Uri)) {
-        return ejsCreateUri(ejs, sp);
-    }
-#endif
-
     switch (type->sid) {
     case S_Boolean:
         if (sp != S(empty)) {
@@ -2354,14 +2346,6 @@ EjsString *ejsInternWide(Ejs *ejs, MprChar *value, ssize len)
     if ((sp = ejsAlloc(ejs, ST(String), (len + 1) * sizeof(MprChar))) != NULL) {
         memcpy(sp->value, value, len * sizeof(MprChar));
         sp->value[len] = 0;
-#if UNUSED
-        if (strcmp(value, "multithread") == 0) {
-            MprThread *tp = mprGetCurrentThread();
-            MprMem *mp = MPR_GET_MEM(sp);
-            printf("EJS %s %p, ALLOCATE multithread GEN %d MARK %d, active %d\n", ejs->name, ejs, (int) MPR_GET_GEN(mp), (int) MPR_GET_MARK(mp), MPR->heap.active);
-            printf("\n");
-        }
-#endif
     }
     sp->length = len;
     linkString(head, sp);
@@ -2403,14 +2387,6 @@ EjsString *ejsInternAsc(Ejs *ejs, cchar *value, ssize len)
                     ip->reuse++;
                     /* Revive incase almost stale or dead */
                     mprRevive(sp);
-#if UNUSED
-                    if (strcmp(value, "multithread") == 0) {
-                        MprThread *tp = mprGetCurrentThread();
-                        MprMem *mp = MPR_GET_MEM(sp);
-                        printf("EJS %s, @@@@ REVIVE MULTITHREAD GEN %d MARK %d, active %d\n", ejs->name, (int) MPR_GET_GEN(mp), (int) MPR_GET_MARK(mp), MPR->heap.active);
-                        printf("\n");
-                    }
-#endif
                     iunlock();
                     return sp;
                 }
