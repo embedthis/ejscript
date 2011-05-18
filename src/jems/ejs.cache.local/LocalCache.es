@@ -43,6 +43,14 @@ module ejs.cache.local {
         native function expire(key: String~, expires: Date): Boolean
 
         /**
+            Increment a key's value by a given amount. This operation is atomic.
+            @param key Key value to read.
+            @param amount Amount by which to increment the value. This amount can be negative to achieve a decrement.
+            @return The new key value
+         */ 
+        native function inc(key: String~, amount: Number~ = 1): Number
+
+        /**
             Resource limits for the server and for initial resource limits for requests.
             @param limits. Limits is an object hash with the following properties:
             @option keys Maximum number of keys in the cache.

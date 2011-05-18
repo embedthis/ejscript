@@ -19,7 +19,7 @@
 typedef struct EjsLocalCache
 {
     EjsPot          pot;                /* Object base */
-    MprHashTable    *cache;             /* Key cache */
+    MprHashTable    *store;             /* Key/value store */
     MprMutex        *mutex;             /* Cache lock*/
     MprEvent        *timer;             /* Pruning timer */
     MprTime         lifespan;           /* Default lifespan */
@@ -64,7 +64,7 @@ static EjsLocalCache *localConstructor(Ejs *ejs, EjsLocalCache *cache, int argc,
         cache->shared = shared;
     } else {
         cache->mutex = mprCreateLock();
-        cache->cache = mprCreateHash(CACHE_HASH_SIZE, 0);
+        cache->store = mprCreateHash(CACHE_HASH_SIZE, 0);
         cache->maxMem = MAXSSIZE;
         cache->maxKeys = MAXSSIZE;
         cache->resolution = CACHE_TIMER_PERIOD;
@@ -84,6 +84,10 @@ static EjsVoid *sl_destroy(Ejs *ejs, EjsLocalCache *cache, int argc, EjsObj **ar
         mprRemoveEvent(cache->timer);
         cache->timer = 0;
     }
+    //  MOB - race here
+    if (cache == shared) {
+        shared = 0;
+    }
     return 0;
 }
 
@@ -99,13 +103,14 @@ static EjsAny *sl_expire(Ejs *ejs, EjsLocalCache *cache, int argc, EjsAny **argv
 
     if (cache->shared) {
         cache = cache->shared;
+        mprAssert(cache == shared);
     }
     key = argv[0];
     expires = argv[1];
 
     lock(cache);
     //  UNICODE
-    if ((item = mprLookupKey(cache->cache, key->value)) == 0) {
+    if ((item = mprLookupKey(cache->store, key->value)) == 0) {
         unlock(cache);
         return S(false);
     }
@@ -121,6 +126,45 @@ static EjsAny *sl_expire(Ejs *ejs, EjsLocalCache *cache, int argc, EjsAny **argv
 
 
 /*
+    function inc(key: String, amount: Number): Number
+ */
+static EjsAny *sl_inc(Ejs *ejs, EjsLocalCache *cache, int argc, EjsAny **argv)
+{
+    EjsString   *key;
+    CacheItem   *item;
+    int64       amount;
+    char        nbuf[32];
+
+    if (cache->shared) {
+        cache = cache->shared;
+        mprAssert(cache == shared);
+    }
+    key = argv[0];
+    amount = (argc >= 2) ? ejsGetInt(ejs, argv[1]) : 1;
+
+    lock(cache);
+    //  UNICODE
+    if ((item = mprLookupKey(cache->store, key->value)) == 0) {
+        if ((item = mprAllocObj(CacheItem, manageCacheItem)) == 0) {
+            ejsThrowMemoryError(ejs);
+            return 0;
+        }
+    } else {
+        amount += stoi(item->data->value, 10, 0);
+    }
+    if (item->data) {
+        cache->usedMem -= item->data->length;
+    }
+    item->data = ejsCreateStringFromAsc(ejs, itos(nbuf, sizeof(nbuf), amount, 10));
+    cache->usedMem += item->data->length;
+    item->expires = mprGetTime() + item->lifespan;
+    item->version++;
+    unlock(cache);
+    return item->data;
+}
+
+
+/*
     function get limits(): Object
  */
 static EjsPot *sl_limits(Ejs *ejs, EjsLocalCache *cache, int argc, EjsObj **argv)
@@ -129,10 +173,11 @@ static EjsPot *sl_limits(Ejs *ejs, EjsLocalCache *cache, int argc, EjsObj **argv
 
     if (cache->shared) {
         cache = cache->shared;
+        mprAssert(cache == shared);
     }
     result = ejsCreateEmptyPot(ejs);
     ejsSetPropertyByName(ejs, result, EN("keys"), ejsCreateNumber(ejs, cache->maxKeys == MAXSSIZE ? 0 : cache->maxKeys));
-    ejsSetPropertyByName(ejs, result, EN("lifespan"), ejsCreateNumber(ejs, cache->lifespan));
+    ejsSetPropertyByName(ejs, result, EN("lifespan"), ejsCreateNumber(ejs, cache->lifespan / MPR_TICKS_PER_SEC));
     ejsSetPropertyByName(ejs, result, EN("memory"), ejsCreateNumber(ejs, cache->maxMem == MAXSSIZE ? 0 : cache->maxMem));
     return result;
 }
@@ -151,6 +196,7 @@ static EjsAny *sl_read(Ejs *ejs, EjsLocalCache *cache, int argc, EjsAny **argv)
 
     if (cache->shared) {
         cache = cache->shared;
+        mprAssert(cache == shared);
     }
     key = argv[0];
     getVersion = 0;
@@ -161,7 +207,7 @@ static EjsAny *sl_read(Ejs *ejs, EjsLocalCache *cache, int argc, EjsAny **argv)
     }
     lock(cache);
     //  UNICODE
-    if ((item = mprLookupKey(cache->cache, key->value)) == 0) {
+    if ((item = mprLookupKey(cache->store, key->value)) == 0) {
         unlock(cache);
         return S(null);
     }
@@ -191,14 +237,15 @@ static EjsBoolean *sl_remove(Ejs *ejs, EjsLocalCache *cache, int argc, EjsAny **
 
     if (cache->shared) {
         cache = cache->shared;
+        mprAssert(cache == shared);
     }
     key = argv[0];
     lock(cache);
     if (ejsIsDefined(ejs, key)) {
         //  UNICODE
-        if ((item = mprLookupKey(cache->cache, key->value)) != 0) {
+        if ((item = mprLookupKey(cache->store, key->value)) != 0) {
             cache->usedMem -= (key->length + item->data->length);
-            mprRemoveKey(cache->cache, key->value);
+            mprRemoveKey(cache->store, key->value);
             result = S(true);
         } else {
             result = S(false);
@@ -206,8 +253,8 @@ static EjsBoolean *sl_remove(Ejs *ejs, EjsLocalCache *cache, int argc, EjsAny **
 
     } else {
         /* Remove all keys */
-        result = mprGetHashLength(cache->cache) ? S(true) : S(false);
-        cache->cache = mprCreateHash(257, 0);
+        result = mprGetHashLength(cache->store) ? S(true) : S(false);
+        cache->store = mprCreateHash(CACHE_HASH_SIZE, 0);
         cache->usedMem = 0;
     }
     unlock(cache);
@@ -224,6 +271,7 @@ static void setLocalLimits(Ejs *ejs, EjsLocalCache *cache, EjsPot *options)
     }
     if (cache->shared) {
         cache = cache->shared;
+        mprAssert(cache == shared);
     }
     if ((vp = ejsGetPropertyByName(ejs, options, EN("keys"))) != 0) {
         cache->maxKeys = (ssize) ejsGetInt64(ejs, vp);
@@ -232,7 +280,7 @@ static void setLocalLimits(Ejs *ejs, EjsLocalCache *cache, EjsPot *options)
         }
     }
     if ((vp = ejsGetPropertyByName(ejs, options, EN("lifespan"))) != 0) {
-        cache->lifespan = (ssize) ejsGetInt(ejs, vp);
+        cache->lifespan = (ssize) ejsGetInt64(ejs, vp) * MPR_TICKS_PER_SEC;
     }
     if ((vp = ejsGetPropertyByName(ejs, options, EN("memory"))) != 0) {
         cache->maxMem = (ssize) ejsGetInt64(ejs, vp);
@@ -256,6 +304,7 @@ static EjsVoid *sl_setLimits(Ejs *ejs, EjsLocalCache *cache, int argc, EjsAny **
 {
     if (cache->shared) {
         cache = cache->shared;
+        mprAssert(cache == shared);
     }
     setLocalLimits(ejs, cache, argv[0]);
     return 0;
@@ -279,6 +328,7 @@ static EjsNumber *sl_write(Ejs *ejs, EjsLocalCache *cache, int argc, EjsAny **ar
 
     if (cache->shared) {
         cache = cache->shared;
+        mprAssert(cache == shared);
     }
     checkVersion = exists = add = prepend = append = throw = 0;
     set = 1;
@@ -290,7 +340,7 @@ static EjsNumber *sl_write(Ejs *ejs, EjsLocalCache *cache, int argc, EjsAny **ar
     if (argc >= 3 && argv[2] != S(null)) {
         options = argv[2];
         if ((vp = ejsGetPropertyByName(ejs, options, EN("lifespan"))) != 0) {
-            lifespan = ejsGetInt64(ejs, vp);
+            lifespan = ejsGetInt64(ejs, vp) * MPR_TICKS_PER_SEC;
         }
         if ((vp = ejsGetPropertyByName(ejs, options, EN("expires"))) != 0 && ejsIs(ejs, vp, Date)) {
             expires = ejsGetDate(ejs, vp);
@@ -315,7 +365,7 @@ static EjsNumber *sl_write(Ejs *ejs, EjsLocalCache *cache, int argc, EjsAny **ar
         }
     }
     lock(cache);
-    if ((hp = mprLookupKeyEntry(cache->cache, key->value)) != 0) {
+    if ((hp = mprLookupKeyEntry(cache->store, key->value)) != 0) {
         exists++;
         item = (CacheItem*) hp->data;
         if (checkVersion) {
@@ -334,7 +384,7 @@ static EjsNumber *sl_write(Ejs *ejs, EjsLocalCache *cache, int argc, EjsAny **ar
             return 0;
         }
         //  UNICODE
-        mprAddKey(cache->cache, key->value, item);
+        mprAddKey(cache->store, key->value, item);
         set = 1;
         item->key = key;
     }
@@ -368,6 +418,7 @@ static EjsNumber *sl_write(Ejs *ejs, EjsLocalCache *cache, int argc, EjsAny **ar
     cache->usedMem += (len - oldLen);
 
     if (cache->timer == 0) {
+        mprLog(5, "Start ejs.local.cache prune timer with resolution %d", cache->resolution);
         cache->timer = mprCreateTimerEvent(ejs->dispatcher, "localCacheTimer", cache->resolution, localPruner, cache, 
             MPR_EVENT_STATIC_DATA); 
     }
@@ -389,10 +440,11 @@ static void localPruner(EjsLocalCache *cache, MprEvent *event)
 
     if (mprTryLock(cache->mutex)) {
         when = mprGetTime();
-        for (hp = 0; (hp = mprGetNextKey(cache->cache, hp)) != 0; ) {
+        for (hp = 0; (hp = mprGetNextKey(cache->store, hp)) != 0; ) {
             item = (CacheItem*) hp->data;
             if (item->expires && item->expires <= when) {
-                mprRemoveKey(cache->cache, hp->key);
+                mprLog(5, "ejs.local.cache prune key %s", hp->key);
+                mprRemoveKey(cache->store, hp->key);
                 cache->usedMem -= (item->key->length + item->data->length);
             }
         }
@@ -402,12 +454,13 @@ static void localPruner(EjsLocalCache *cache, MprEvent *event)
             If too many keys or too much memory used, prune keys expiring first.
          */
         if (cache->maxKeys < MAXSSIZE || cache->maxMem < MAXSSIZE) {
-            excessKeys = mprGetHashLength(cache->cache) - cache->maxKeys;
+            excessKeys = mprGetHashLength(cache->store) - cache->maxKeys;
             while (excessKeys > 0 || cache->usedMem > cache->maxMem) {
                 for (factor = 3600; excessKeys > 0; factor *= 2) {
-                    for (hp = 0; (hp = mprGetNextKey(cache->cache, hp)) != 0; ) {
+                    for (hp = 0; (hp = mprGetNextKey(cache->store, hp)) != 0; ) {
                         if (item->expires && item->expires <= when) {
-                            mprRemoveKey(cache->cache, hp->key);
+                            mprLog(5, "ejs.local.cache prune key %s", hp->key);
+                            mprRemoveKey(cache->store, hp->key);
                             cache->usedMem -= (item->key->length + item->data->length);
                         }
                     }
@@ -421,7 +474,7 @@ static void localPruner(EjsLocalCache *cache, MprEvent *event)
         }
         mprAssert(cache->usedMem >= 0);
 
-        if (mprGetHashLength(cache->cache) == 0) {
+        if (mprGetHashLength(cache->store) == 0) {
             mprRemoveEvent(event);
             cache->timer = 0;
         }
@@ -433,10 +486,15 @@ static void localPruner(EjsLocalCache *cache, MprEvent *event)
 static void manageLocalCache(EjsLocalCache *cache, int flags) 
 {
     if (flags & MPR_MANAGE_MARK) {
-        mprMark(cache->cache);
+        mprMark(cache->store);
         mprMark(cache->mutex);
         mprMark(cache->timer);
         mprMark(cache->shared);
+
+    } else if (flags & MPR_MANAGE_FREE) {
+        if (cache == shared) {
+            shared = 0;
+        }
     }
 }
 
@@ -464,8 +522,9 @@ static int configureLocalTypes(Ejs *ejs)
     ejsBindConstructor(ejs, type, localConstructor);
     prototype = type->prototype;
 
-    ejsBindMethod(ejs, prototype, ES_ejs_cache_local_LocalCache_expire, sl_expire);
     ejsBindMethod(ejs, prototype, ES_ejs_cache_local_LocalCache_destroy, sl_destroy);
+    ejsBindMethod(ejs, prototype, ES_ejs_cache_local_LocalCache_expire, sl_expire);
+    ejsBindMethod(ejs, prototype, ES_ejs_cache_local_LocalCache_inc, sl_inc);
     ejsBindAccess(ejs, prototype, ES_ejs_cache_local_LocalCache_limits, sl_limits, 0);
     ejsBindMethod(ejs, prototype, ES_ejs_cache_local_LocalCache_read, sl_read);
     ejsBindMethod(ejs, prototype, ES_ejs_cache_local_LocalCache_remove, sl_remove);
