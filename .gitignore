@@ -136,3 +136,4 @@ projects/WIN/ejs-dynamic/*.filters
 *.suo.old
 src/jems/ejs.mvc/test/junk
 src/compiler/test/bugs
+src/core/test/harmony.es
