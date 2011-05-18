@@ -498,7 +498,7 @@ static EjsString *serialize(Ejs *ejs, EjsAny *vp, Json *json)
     count = ejsGetPropertyCount(ejs, vp);
     if (count == 0 && TYPE(vp) != ST(Object) && TYPE(vp) != ST(Array)) {
         //  OPT - need some flag for this test.
-        if (!ejsIsDefined(ejs, vp) || ejsIs(ejs, vp, Boolean) || ejsIs(ejs, vp, Number) || ejsIs(ejs, vp, String)) {
+        if (!ejsIsDefined(ejs, vp) || ejsIs(ejs, vp, Boolean) || ejsIs(ejs, vp, Number) /* MOB || ejsIs(ejs, vp, String) */) {
             return ejsToString(ejs, vp);
         } else {
             return ejsStringToJSON(ejs, vp);
