@@ -142,7 +142,7 @@ Ejs *ejsAllocPoolVM(EjsPool *pool, int flags)
         pool->count++;
     }
     pool->lastActivity = mprGetTime();
-    mprLog(0, "ejs: Alloc VM active %d, allocated %d, max %d", pool->count - mprGetListLength(pool->list), 
+    mprLog(5, "ejs: Alloc VM active %d, allocated %d, max %d", pool->count - mprGetListLength(pool->list), 
         pool->count, pool->max);
 
     if (!mprGetDebugMode()) {
@@ -163,7 +163,7 @@ void ejsFreePoolVM(EjsPool *pool, Ejs *ejs)
     pool->lastActivity = mprGetTime();
     lock(pool);
     mprPushItem(pool->list, ejs);
-    mprLog(0, "ejs: Free VM, active %d, allocated %d, max %d", pool->count - mprGetListLength(pool->list), pool->count,
+    mprLog(5, "ejs: Free VM, active %d, allocated %d, max %d", pool->count - mprGetListLength(pool->list), pool->count,
         pool->max);
     unlock(pool);
 }
@@ -495,12 +495,17 @@ static int defineTypes(Ejs *ejs)
      */
     ejsAddNativeModule(ejs, "ejs", configureEjs, _ES_CHECKSUM_ejs, 0);
 
+    /*
+        When building all-in-one (appweb), we need to explicitly call the module entry points of these built-in modules.
+     */
 #if BLD_FEATURE_EJS_ALL_IN_ONE
 #if BLD_FEATURE_SQLITE
     ejs_db_sqlite_Init(ejs, NULL);
 #endif
+    ejs_cache_local_Init(ejs, NULL);
     ejs_web_Init(ejs, NULL);
 #endif
+
     if (ejs->hasError || mprHasMemError(ejs)) {
         mprError("Can't create core types");
         return EJS_ERR;

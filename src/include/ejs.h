@@ -2896,6 +2896,7 @@ extern void     ejsDefineConfigProperties(Ejs *ejs);
 #if BLD_FEATURE_SQLITE
 extern int      ejs_db_sqlite_Init(Ejs *ejs, MprModule *mp);
 #endif
+extern int      ejs_cache_local_Init(Ejs *ejs, MprModule *mp);
 extern int      ejs_web_Init(Ejs *ejs, MprModule *mp);
 
 /* 
