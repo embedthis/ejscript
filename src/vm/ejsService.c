@@ -280,6 +280,7 @@ void ejsDestroyVM(Ejs *ejs)
 {
     EjsService  *sp;
     EjsState    *state;
+    EjsModule   *mp;   
 
 #if DEBUG_IDE && 0
     if (ejs->service) {
@@ -289,9 +290,10 @@ void ejsDestroyVM(Ejs *ejs)
     ejs->destroying = 1;
     sp = ejs->service;
     if (sp) {
-#if UNUSED
-        ejsRemoveModules(ejs);
-#endif
+        while ((mp = mprGetFirstItem(ejs->modules)) != 0) {
+            ejsRemoveModule(ejs, mp);
+        }
+        mprAssert(ejs->modules->length == 0);
         ejsRemoveWorkers(ejs);
         state = ejs->state;
         if (state->stackBase) {
@@ -315,6 +317,7 @@ static void manageEjs(Ejs *ejs, int flags)
     int         next;
 
     if (flags & MPR_MANAGE_MARK) {
+        mprAssert(!ejs->destroying);
 #if DEBUG_IDE && 0
         if (ejs->service) {
             printf("MARK EJS %s, length %d", ejs->name, ejs->service->vmlist->length);
@@ -333,7 +336,7 @@ static void manageEjs(Ejs *ejs, int flags)
         mprMark(ejs->httpServers);
         mprMark(ejs->workers);
 
-        for (next = 0; (mp = (EjsModule*) mprGetNextItem(ejs->modules, &next)) != 0;) {
+        for (next = 0; (mp = mprGetNextItem(ejs->modules, &next)) != 0;) {
             if (!mp->initialized) {
                 mprMark(mp);
             }
@@ -364,6 +367,7 @@ static void manageEjs(Ejs *ejs, int flags)
             }
         }
         markValues(ejs);
+
     } else if (flags & MPR_MANAGE_FREE) {
         ejsDestroyVM(ejs);
     }
@@ -443,7 +447,7 @@ static int cloneVM(Ejs *ejs, Ejs *master)
     ejs->http = master->http;
 
     ejs->modules = mprCreateList(-1, MPR_LIST_STATIC_VALUES);
-    for (next = 0; (mp = (EjsModule*) mprGetNextItem(master->modules, &next)) != 0;) {
+    for (next = 0; (mp = mprGetNextItem(master->modules, &next)) != 0;) {
         ejsAddModule(ejs, mp);
     }
     ejsSetPropertyByName(ejs, ejs->global, N("ejs", "global"), ejs->global);

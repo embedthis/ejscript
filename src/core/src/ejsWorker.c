@@ -83,12 +83,14 @@ static EjsWorker *initWorker(Ejs *ejs, EjsWorker *worker, Ejs *baseVm, cchar *na
         Workers have a dedicated namespace to enable viewing of the worker globals (self, onmessage, postMessage...)
      */
     ns = ejsDefineReservedNamespace(wejs, wejs->global, NULL, EJS_WORKER_NAMESPACE);
+    
+    addWorker(ejs, worker);
 
     if (scriptFile) {
-        addWorker(ejs, worker);
         worker->scriptFile = sclone(scriptFile);
         worker->state = EJS_WORKER_STARTED;
         if (mprCreateEvent(wejs->dispatcher, "workerMain", 0, (MprEventProc) workerMain, self, 0) < 0) {
+            mprRemoveItem(ejs->workers, worker);
             ejsThrowStateError(ejs, "Can't create worker event");
             return 0;
         }
@@ -211,7 +213,9 @@ static EjsObj *startWorker(Ejs *ejs, EjsWorker *outsideWorker, int timeout)
     mprAssert(insideWorker->state == EJS_WORKER_BEGIN);
     inside = insideWorker->ejs;
 
+#if UNUSED
     addWorker(ejs, outsideWorker);
+#endif
     outsideWorker->state = EJS_WORKER_STARTED;
 
     if (mprCreateEvent(inside->dispatcher, "workerMain", 0, (MprEventProc) workerMain, insideWorker, 0) < 0) {

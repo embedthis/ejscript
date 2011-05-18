@@ -1,11 +1,11 @@
 /*
- *  Basic Worker Tests
+    Basic Worker Tests
  */
 var w: Worker
 
 if (test.depth >= 3) {
     for (i in 1000) {
-        w = startWorker("stress/worker/basic.es")
+        w = startWorker("basic.es")
         Worker.join(w)
     }
 } else {
