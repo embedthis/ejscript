@@ -1,11 +1,9 @@
 {
-  "name": "ejs.web.jsgi",
-  "description": "CommonJS Gateway Interface Support for Ejscript",
+  "name": "ejs.cache.local",
+  "description": "Process local in-memory caching",
   "version": "2.0.0",
   "categories": [
-    "jsgi",
-    "ejs",
-    "web"
+    "ejs"
   ],
   "author": "Embedthis (http://www.embedthis.com) <dev@embedthis.com>",
   "contributors": [
@@ -18,12 +16,12 @@
   "stability": "prototype",
   "location": "https://github.com/embedthis/ejs-2",
   "keywords": [
-    "web"
+    "cache"
   ],
   "dependencies": [
     [
       "ejs",
-      "== 1.0.0"
+      "== 0.0.0"
     ]
   ],
   "os": "*",

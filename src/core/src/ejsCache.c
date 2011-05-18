@@ -1,5 +1,5 @@
 /**
-    ejsStore.c - API for the Store class
+    ejsCache.c - API for the Cache class
 
     Copyright (c) All Rights Reserved. See details at the end of the file.
  */
@@ -10,63 +10,63 @@
 
 /************************************* Code ***********************************/
 
-EjsVoid *ejsStoreExpire(Ejs *ejs, EjsObj *store, EjsString *key, EjsDate *when)
+EjsVoid *ejsCacheExpire(Ejs *ejs, EjsObj *cache, EjsString *key, EjsDate *when)
 {
     EjsAny  *argv[3];
 
     ejsFreeze(ejs, 1);
     argv[0] = key;
     argv[1] = when;
-    return ejsRunFunctionBySlot(ejs, store, ES_Store_expire, 2, argv);
+    return ejsRunFunctionBySlot(ejs, cache, ES_Cache_expire, 2, argv);
 }
 
 
-EjsAny *ejsStoreRead(Ejs *ejs, EjsObj *store, EjsString *key, EjsObj *options)
+EjsAny *ejsCacheRead(Ejs *ejs, EjsObj *cache, EjsString *key, EjsObj *options)
 {
     EjsAny  *argv[3];
 
     ejsFreeze(ejs, 1);
     argv[0] = key;
     argv[1] = (options) ? options : S(null);
-    return ejsRunFunctionBySlot(ejs, store, ES_Store_read, 2, argv);
+    return ejsRunFunctionBySlot(ejs, cache, ES_Cache_read, 2, argv);
 }
 
 
-EjsAny *ejsStoreReadObj(Ejs *ejs, EjsObj *store, EjsString *key, EjsObj *options)
+EjsAny *ejsCacheReadObj(Ejs *ejs, EjsObj *cache, EjsString *key, EjsObj *options)
 {
     EjsAny  *value, *argv[3];
 
     ejsFreeze(ejs, 1);
     argv[0] = key;
     argv[1] = (options) ? options : S(null);
-    if ((value = ejsRunFunctionBySlot(ejs, store, ES_Store_read, 2, argv)) == 0 || value == S(null)) {
+    if ((value = ejsRunFunctionBySlot(ejs, cache, ES_Cache_read, 2, argv)) == 0 || value == S(null)) {
         return 0;
     }
     return ejsDeserialize(ejs, value);
 }
 
 
-EjsBoolean *ejsStoreRemove(Ejs *ejs, EjsObj *store, EjsString *key)
+EjsBoolean *ejsCacheRemove(Ejs *ejs, EjsObj *cache, EjsString *key)
 {
     EjsAny  *argv[3];
 
     ejsFreeze(ejs, 1);
     argv[0] = key;
-    return ejsRunFunctionBySlot(ejs, store, ES_Store_remove, 1, argv);
+    return ejsRunFunctionBySlot(ejs, cache, ES_Cache_remove, 1, argv);
 }
 
 
-EjsVoid *ejsStoreSetLimits(Ejs *ejs, EjsObj *store, EjsObj *limits)
+EjsVoid *ejsCacheSetLimits(Ejs *ejs, EjsObj *cache, EjsObj *limits)
 {
     EjsAny  *argv[2];
 
     ejsFreeze(ejs, 1);
     argv[0] = limits;
-    return ejsRunFunctionBySlot(ejs, store, ES_Store_setLimits, 2, argv);
+    return ejsRunFunctionBySlot(ejs, cache, ES_Cache_setLimits, 2, argv);
 }
 
 
-EjsNumber *ejsStoreWrite(Ejs *ejs, EjsObj *store, EjsString *key, EjsString *value, EjsObj *options)
+EjsNumber *ejsCacheWrite(Ejs *ejs, EjsObj *cache, EjsString *key, EjsString *value, EjsObj *options)
 {
     EjsAny  *argv[3];
 
@@ -74,11 +74,11 @@ EjsNumber *ejsStoreWrite(Ejs *ejs, EjsObj *store, EjsString *key, EjsString *val
     argv[0] = key;
     argv[1] = value;
     argv[2] = (options) ? options : S(null);
-    return ejsRunFunctionBySlot(ejs, store, ES_Store_write, 3, argv);
+    return ejsRunFunctionBySlot(ejs, cache, ES_Cache_write, 3, argv);
 }
 
 
-EjsNumber *ejsStoreWriteObj(Ejs *ejs, EjsObj *store, EjsString *key, EjsAny *value, EjsObj *options)
+EjsNumber *ejsCacheWriteObj(Ejs *ejs, EjsObj *cache, EjsString *key, EjsAny *value, EjsObj *options)
 {
     EjsAny  *argv[3];
 
@@ -86,7 +86,7 @@ EjsNumber *ejsStoreWriteObj(Ejs *ejs, EjsObj *store, EjsString *key, EjsAny *val
     argv[0] = key;
     argv[1] = ejsSerialize(ejs, value, 0);
     argv[2] = (options) ? options : S(null);
-    return ejsRunFunctionBySlot(ejs, store, ES_Store_write, 3, argv);
+    return ejsRunFunctionBySlot(ejs, cache, ES_Cache_write, 3, argv);
 }
 
 

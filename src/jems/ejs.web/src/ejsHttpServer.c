@@ -108,7 +108,7 @@ static EjsObj *hs_limits(Ejs *ejs, EjsHttpServer *sp, int argc, EjsObj **argv)
  */
 static EjsObj *hs_setLimits(Ejs *ejs, EjsHttpServer *sp, int argc, EjsObj **argv)
 {
-    EjsObj      *vp, *app, *store, *storeLimits;
+    EjsObj      *vp, *app, *cache, *cacheLimits;
     HttpLimits  *limits;
 
     if (sp->limits == 0) {
@@ -124,11 +124,11 @@ static EjsObj *hs_setLimits(Ejs *ejs, EjsHttpServer *sp, int argc, EjsObj **argv
     }
     if ((vp = ejsGetPropertyByName(ejs, sp->limits, EN("sessionTimeout"))) != 0) {
         app = ejsGetPropertyByName(ejs, ejs->global, N("ejs", "App"));
-        store = ejsGetProperty(ejs, app, ES_App_store);
-        if (store) {
-            storeLimits = ejsCreateEmptyPot(ejs);
-            ejsSetPropertyByName(ejs, storeLimits, EN("lifespan"), vp);
-            ejsStoreSetLimits(ejs, store, storeLimits);
+        cache = ejsGetProperty(ejs, app, ES_App_cache);
+        if (cache) {
+            cacheLimits = ejsCreateEmptyPot(ejs);
+            ejsSetPropertyByName(ejs, cacheLimits, EN("lifespan"), vp);
+            ejsCacheSetLimits(ejs, cache, cacheLimits);
         }
     }
     return 0;

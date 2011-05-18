@@ -1,5 +1,5 @@
 #
-#	Makefile for the ejs.store.local - Local key/value store
+#	Makefile for the ejs.cache.local - Local key/value cache
 #
 #	Copyright (c) Embedthis Software LLC, 2003-2011. All Rights Reserved.
 #
@@ -7,7 +7,7 @@
 include 	.makedep
 
 PRE_DIRS	= src
-NAME		= ejs.store.local
+NAME		= ejs.cache.local
 MOD			= $(NAME).mod
 JEM			= $(NAME)-$(BLD_VERSION)
 MODULE		+= $(BLD_MOD_DIR)/$(NAME).mod 

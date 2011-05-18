@@ -1,31 +1,35 @@
 /*
-    LocalStore.es -- Local in-memory key/value store class 
+    LocalCache.es -- Local in-memory key/value cache class 
  */
 
-module ejs.store.local {
+module ejs.cache.local {
 
     /**
-        Fast, non-scalable, non-durable, Local in-memory key/value store class. The store is in-process and is not 
-        available to other processes on the same machine. Key/value data is not persisted. Use this store if you require
-        the fastest, non-scalable key/value store alternative. There is one store per Application. All uses of the Local
-        class connect to the one store using one domain of keys.
+        Fast, non-scalable, non-durable, in-memory key/value cache class. The cache is in-process and is not 
+        available to other processes on the same machine. Key/value data is not persisted. Use this cache if you require
+        the fastest, non-scalable key/value cache alternative. There is one cache per Application. All uses of the LocalCache
+        class connect to the one cache using one domain of keys.
         @stability prototype
      */
-    class Local {
+    class LocalCache {
         use default namespace public
 
         /**
-            Create and connect to the local store. An application has only one store regardless of how many Local
-            instances are created. All Local instances connect to the same underlying store. 
+            Create and connect to the local cache. An application has only one cache regardless of how many LocalCache
+            instances are created. All LocalCache instances connect to the same underlying cache. Multiple interpreters
+            can use the local cache to reliably share information.
             @param options Configuration options.
+            @option shared Create or connect to a single, shared cache. If multiple interpreters in a single
+                process create shared LocalCache instances they will be able to share key/value data.
             @option lifespan Default lifespan for key values. Set to zero for a default unlimited timeout.
+            @option resolution Time in milliseconds to check for expired expired keys
             @option memory Maximum memory to use for keys and data
             @option trace Trace I/O operations for debug
          */
-        native function Local(options: Object = null)
+        native function LocalCache(options: Object = null)
 
         /**
-            Destroy the store. This will destory the store for all.
+            Destroy the cache
          */
         native function destroy(): Void
 
@@ -41,7 +45,7 @@ module ejs.store.local {
         /**
             Resource limits for the server and for initial resource limits for requests.
             @param limits. Limits is an object hash with the following properties:
-            @option keys Maximum number of keys in the store.
+            @option keys Maximum number of keys in the cache.
             @option lifespan Default time to preserve key data. Set to zero for an unlimited default timeout.
             @option memory Maximum memory to use for keys and data.
             @see setLimits
@@ -62,7 +66,7 @@ module ejs.store.local {
                 specified "version == true", return an object with the properties "data" for the key data and 
                 "version" for the CAS version identifier.
          */
-        native function read(key: String~, options: Object = null): Object
+        native function read(key: String~, options: Object = null): String
 
         /**
             @param key Key value to remove. If key is null, then all keys are removed.
@@ -71,7 +75,7 @@ module ejs.store.local {
         native function remove(key: String): Boolean
 
         /**
-            Update the store store resource limits. The supplied limit fields are updated.
+            Update the cache cache resource limits. The supplied limit fields are updated.
             See the $limits property for limit field details.
             @param limits Object hash of limit fields and values
             @see limits
@@ -79,7 +83,7 @@ module ejs.store.local {
         native function setLimits(limits: Object): Void
 
         /**
-            Write the key and associated value to the store. The value is written according to the optional mode option.  
+            Write the key and associated value to the cache. The value is written according to the optional mode option.  
             The key's expiry will be updated based on the defined lifespan from the current time.
             @option expires When to expire the key. Takes precedence over lifetime. 
             @option lifespan Preservation time for the key in seconds. If zero, the key will never expire.

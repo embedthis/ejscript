@@ -4,13 +4,15 @@
 
 module ejs {
 
-    /** 
+    /**
         Loader for CommonJS modules. The Loader class provides provides a $require() function to load
             script files.
+        WARNING: this will not be supported in future releases as the Harmony loader will be supported instead.
         @param id Module identifier. May be top level or may be an identifier relative to the loading script.
         @returns An object hash of exports from the module
         @spec ejs
         @stability prototype
+        @hide
      */
     public function require(id: String): Object
         Loader.require(id)
@@ -28,8 +30,8 @@ module ejs {
         private static var timestamps = {}
         private static const defaultExtensions = [".es", ".js"]
 
-        /**
-            UNUSED - not yet used
+        /*
+            WARNING: this will not be supported in future releases as the Harmony loader will be supported instead.
             @hide
          */
         public static function init(mainId: String? = null)
@@ -48,6 +50,7 @@ module ejs {
 
         /**
             Load a CommonJS module. The module is loaded only once unless it is modified.
+            WARNING: this will not be supported in future releases as the Harmony loader will be supported instead.
             @param id Name of the module to load. The id may be an absolute path, relative path or a path fragment that is
                 resolved relative to the App search path. Ids may or may not include a ".es" or ".js" extension.
             @return a hash of exported properties
@@ -58,7 +61,7 @@ module ejs {
                 let path: Path = locate(id, config)
                 if (path.modified > timestamps[path]) {
                     if (!global."ejs.cjs"::CommonSystem) {
-                        /* On-demand loading of CommonJS modules */
+                        // On-demand loading of CommonJS modules
                         global.load("ejs.cjs.mod")
                     }
                     return load(id, path, config)
@@ -132,11 +135,9 @@ module ejs {
                 }
                 initializer = eval(code, cache)
             }
-            //  TODO -- implement system and module?
-            //  function initializer(require, exports, module, system)
             signatures[path] = exports = {}
             initializer(require, exports, {id: id, path: path}, null)
-    /*
+    /* UNUSED
             if (exports.app.bound == this) {
                 exports.app.bind(null)
             }

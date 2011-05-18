@@ -1,12 +1,12 @@
 #
-#	Makefile for the native ejs.store.local code
+#	Makefile for the native ejs.cache.local code
 #
 #	Copyright (c) Embedthis Software LLC, 2003-2011. All Rights Reserved.
 #
 #
 include 	.makedep
 
-JEM			:= ejs.store.local
+JEM			:= ejs.cache.local
 TARGET		:= $(BLD_MOD_DIR)/$(JEM)$(BLD_LIB)
 MAKE_IFLAGS  += $(BLD_MPR_IFLAGS) $(BLD_HTTP_IFLAGS)
 

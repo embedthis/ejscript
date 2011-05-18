@@ -7689,7 +7689,7 @@ static MprDispatcher *getNextReadyDispatcher(MprEventService *es)
             next = dp->next;
             event = dp->eventQ->next;
             mprAssert(event->magic == MPR_EVENT_MAGIC);
-            if (event->due <= es->now) {
+            if (event->due <= es->now && dp->enabled) {
                 queueDispatcher(es->readyQ, dp);
                 break;
             }

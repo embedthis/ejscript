@@ -143,7 +143,7 @@ extern EjsRequest *ejsCloneRequest(Ejs *ejs, EjsRequest *req, bool deep);
 typedef struct EjsSession {
     EjsPot      pot;                /* Session properties */
     EjsString   *key;               /* Session ID key */
-    EjsObj      *store;             /* Store reference */
+    EjsObj      *cache;             /* Cache store reference */
     EjsObj      *options;           /* Default write options */
     MprTime     lifespan;           /* Session inactivity lifespan */
     int         ready;              /* Data cached from store into pot */

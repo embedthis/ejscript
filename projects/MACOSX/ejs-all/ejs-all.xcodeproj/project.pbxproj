@@ -38,6 +38,11 @@
 				C9222E510FD5813F00AFA5A4 /* ShellScript */,
 			);
 			dependencies = (
+				C9B13B3E1383239500B2E649 /* PBXTargetDependency */,
+				C9B13B3C1383239200B2E649 /* PBXTargetDependency */,
+				C9B13B3A1383238E00B2E649 /* PBXTargetDependency */,
+				C9B13B381383238B00B2E649 /* PBXTargetDependency */,
+				C9B13B361383238600B2E649 /* PBXTargetDependency */,
 			);
 			name = modules;
 			productName = ejs.mod;
@@ -144,8 +149,6 @@
 		C92A432F1381871100BAD2A4 /* libpcre.dylib in Frameworks */ = {isa = PBXBuildFile; fileRef = C97627AF0FD077C3009C78E1 /* libpcre.dylib */; };
 		C92A43301381871100BAD2A4 /* libmprssl.dylib in Frameworks */ = {isa = PBXBuildFile; fileRef = C97627B60FD077E7009C78E1 /* libmprssl.dylib */; };
 		C92A43311381871100BAD2A4 /* libejs.dylib in Frameworks */ = {isa = PBXBuildFile; fileRef = C97627CB0FD07828009C78E1 /* libejs.dylib */; };
-		C92A433A138187C900BAD2A4 /* ejsLocal.c in Sources */ = {isa = PBXBuildFile; fileRef = C92A4339138187A600BAD2A4 /* ejsLocal.c */; };
-		C92A433E1381882100BAD2A4 /* ejsStore.c in Sources */ = {isa = PBXBuildFile; fileRef = C92A433D1381882100BAD2A4 /* ejsStore.c */; };
 		C92F848810F2B80300CA953D /* ejsHttpServer.c in Sources */ = {isa = PBXBuildFile; fileRef = C92F848610F2B80300CA953D /* ejsHttpServer.c */; };
 		C92F848910F2B80300CA953D /* ejsWeb.c in Sources */ = {isa = PBXBuildFile; fileRef = C92F848710F2B80300CA953D /* ejsWeb.c */; };
 		C92F849B10F2B93200CA953D /* libhttp.dylib in Frameworks */ = {isa = PBXBuildFile; fileRef = C95E4FDB10EBFD9300982610 /* libhttp.dylib */; };
@@ -208,6 +211,8 @@
 		C98FD60812E50ECC00F76138 /* http.h in Headers */ = {isa = PBXBuildFile; fileRef = C98FD60712E50ECC00F76138 /* http.h */; };
 		C9902A691161776B00473F37 /* ejsFrame.c in Sources */ = {isa = PBXBuildFile; fileRef = C9902A681161776B00473F37 /* ejsFrame.c */; };
 		C9A0708010A3573C00F48512 /* ejsSqlite.c in Sources */ = {isa = PBXBuildFile; fileRef = C9A0707F10A3573C00F48512 /* ejsSqlite.c */; };
+		C9B13B341383233F00B2E649 /* ejsCache.c in Sources */ = {isa = PBXBuildFile; fileRef = C9B13B32138322B600B2E649 /* ejsCache.c */; };
+		C9B13B421383244B00B2E649 /* ejsLocalCache.c in Sources */ = {isa = PBXBuildFile; fileRef = C9B13B411383244B00B2E649 /* ejsLocalCache.c */; };
 		C9CD7647131245C0007794B0 /* ejsCmd.c in Sources */ = {isa = PBXBuildFile; fileRef = C9CD7646131245C0007794B0 /* ejsCmd.c */; };
 		C9D452B511ECDBA300F029C8 /* http.c in Sources */ = {isa = PBXBuildFile; fileRef = C9D452B411ECDBA300F029C8 /* http.c */; };
 		C9D452C711ECDC0600F029C8 /* libhttp.dylib in Frameworks */ = {isa = PBXBuildFile; fileRef = C95E4FDB10EBFD9300982610 /* libhttp.dylib */; };
@@ -443,6 +448,48 @@
 			proxyType = 1;
 			remoteGlobalIDString = C987612F0FD87D7300311B7A;
 			remoteInfo = ejs.db.sqlite;
+		};
+		C9B13B351383238600B2E649 /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = C97623C10FD06EC4009C78E1 /* Project object */;
+			proxyType = 1;
+			remoteGlobalIDString = C92A43231381871100BAD2A4;
+			remoteInfo = ejs.cache.local;
+		};
+		C9B13B371383238B00B2E649 /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = C97623C10FD06EC4009C78E1 /* Project object */;
+			proxyType = 1;
+			remoteGlobalIDString = C97627CA0FD07828009C78E1;
+			remoteInfo = libejs;
+		};
+		C9B13B391383238E00B2E649 /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = C97623C10FD06EC4009C78E1 /* Project object */;
+			proxyType = 1;
+			remoteGlobalIDString = C97627A50FD077A7009C78E1;
+			remoteInfo = libmpr;
+		};
+		C9B13B3B1383239200B2E649 /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = C97623C10FD06EC4009C78E1 /* Project object */;
+			proxyType = 1;
+			remoteGlobalIDString = C95E4FD310EBFD9300982610;
+			remoteInfo = libhttp;
+		};
+		C9B13B3D1383239500B2E649 /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = C97623C10FD06EC4009C78E1 /* Project object */;
+			proxyType = 1;
+			remoteGlobalIDString = C97627AE0FD077C3009C78E1;
+			remoteInfo = libpcre;
+		};
+		C9B13B3F138323F200B2E649 /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = C97623C10FD06EC4009C78E1 /* Project object */;
+			proxyType = 1;
+			remoteGlobalIDString = C92A43231381871100BAD2A4;
+			remoteInfo = ejs.cache.local;
 		};
 		C9B66E1D11F0944E00011B2E /* PBXContainerItemProxy */ = {
 			isa = PBXContainerItemProxy;
@@ -773,9 +820,7 @@
 		C9248E5A10A4933400B29BDD /* ejsmod.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = ejsmod.c; sourceTree = "<group>"; };
 		C9248E5B10A4933400B29BDD /* listing.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = listing.c; sourceTree = "<group>"; };
 		C9248E5C10A4933400B29BDD /* slotGen.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = slotGen.c; sourceTree = "<group>"; };
-		C92A43361381871100BAD2A4 /* ejs.store.local.dylib */ = {isa = PBXFileReference; explicitFileType = "compiled.mach-o.dylib"; includeInIndex = 0; path = ejs.store.local.dylib; sourceTree = BUILT_PRODUCTS_DIR; };
-		C92A4339138187A600BAD2A4 /* ejsLocal.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; name = ejsLocal.c; path = ../../../src/jems/ejs.store.local/src/ejsLocal.c; sourceTree = "<group>"; };
-		C92A433D1381882100BAD2A4 /* ejsStore.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; name = ejsStore.c; path = ../../../src/core/src/ejsStore.c; sourceTree = "<group>"; };
+		C92A43361381871100BAD2A4 /* ejs.cache.local.dylib */ = {isa = PBXFileReference; explicitFileType = "compiled.mach-o.dylib"; includeInIndex = 0; path = ejs.cache.local.dylib; sourceTree = BUILT_PRODUCTS_DIR; };
 		C92A433F1381885200BAD2A4 /* Inflector.es */ = {isa = PBXFileReference; lastKnownFileType = text; name = Inflector.es; path = ../../../src/core/Inflector.es; sourceTree = "<group>"; };
 		C92A43401381885200BAD2A4 /* Loader.es */ = {isa = PBXFileReference; lastKnownFileType = text; name = Loader.es; path = ../../../src/core/Loader.es; sourceTree = "<group>"; };
 		C92A43411381885200BAD2A4 /* LogFile.es */ = {isa = PBXFileReference; lastKnownFileType = text; name = LogFile.es; path = ../../../src/core/LogFile.es; sourceTree = "<group>"; };
@@ -852,6 +897,8 @@
 		C9A0708C10A3583000F48512 /* package.json */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; name = package.json; path = ../../../src/jems/ejs.web/package.json; sourceTree = SOURCE_ROOT; };
 		C9A070A310A3586E00F48512 /* Request.es */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; name = Request.es; path = ../../../src/jems/ejs.web/Request.es; sourceTree = SOURCE_ROOT; };
 		C9A070A510A3586E00F48512 /* Session.es */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; name = Session.es; path = ../../../src/jems/ejs.web/Session.es; sourceTree = SOURCE_ROOT; };
+		C9B13B32138322B600B2E649 /* ejsCache.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; name = ejsCache.c; path = ../../../src/core/src/ejsCache.c; sourceTree = "<group>"; };
+		C9B13B411383244B00B2E649 /* ejsLocalCache.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; name = ejsLocalCache.c; path = ../../../src/jems/ejs.cache.local/src/ejsLocalCache.c; sourceTree = "<group>"; };
 		C9CD7646131245C0007794B0 /* ejsCmd.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; name = ejsCmd.c; path = ../../../src/core/src/ejsCmd.c; sourceTree = SOURCE_ROOT; };
 		C9D4528711ECDA4300F029C8 /* http */ = {isa = PBXFileReference; explicitFileType = "compiled.mach-o.executable"; includeInIndex = 0; path = http; sourceTree = BUILT_PRODUCTS_DIR; };
 		C9D452B411ECDBA300F029C8 /* http.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; name = http.c; path = ../../../src/deps/http/http.c; sourceTree = SOURCE_ROOT; };
@@ -1020,6 +1067,7 @@
 				C9188B33115DAC060018846C /* ejsBlock.c */,
 				C9188B34115DAC060018846C /* ejsBoolean.c */,
 				C9188B35115DAC060018846C /* ejsByteArray.c */,
+				C9B13B32138322B600B2E649 /* ejsCache.c */,
 				C9CD7646131245C0007794B0 /* ejsCmd.c */,
 				C9188B36115DAC060018846C /* ejsConfig.c */,
 				C9188B37115DAC060018846C /* ejsDate.c */,
@@ -1047,7 +1095,6 @@
 				C9188B4C115DAC060018846C /* ejsRegExp.c */,
 				C9188B4D115DAC060018846C /* ejsSocket.c */,
 				C9188B4E115DAC060018846C /* ejsString.c */,
-				C92A433D1381882100BAD2A4 /* ejsStore.c */,
 				C9188B50115DAC060018846C /* ejsSystem.c */,
 				C9188B51115DAC060018846C /* ejsTimer.c */,
 				C9188B52115DAC060018846C /* ejsType.c */,
@@ -1132,12 +1179,12 @@
 			name = ejs.template;
 			sourceTree = "<group>";
 		};
-		C92A43381381875900BAD2A4 /* ejs.store.local */ = {
+		C92A43381381875900BAD2A4 /* ejs.cache.local */ = {
 			isa = PBXGroup;
 			children = (
-				C92A4339138187A600BAD2A4 /* ejsLocal.c */,
+				C9B13B411383244B00B2E649 /* ejsLocalCache.c */,
 			);
-			name = ejs.store.local;
+			name = ejs.cache.local;
 			sourceTree = "<group>";
 		};
 		C9566A4010A16EB200AF4E04 /* jems */ = {
@@ -1148,7 +1195,7 @@
 				C9A0702710A351EC00F48512 /* ejs.db.mapper */,
 				C9A0707710A356CA00F48512 /* ejs.db.sqlite */,
 				C903097C10A36659003FF2AB /* ejs.jem */,
-				C92A43381381875900BAD2A4 /* ejs.store.local */,
+				C92A43381381875900BAD2A4 /* ejs.cache.local */,
 				C91A68B411F7A4980051551E /* ejs.template */,
 				C9A0708510A357AC00F48512 /* ejs.unix */,
 				C9A0708910A357FC00F48512 /* ejs.web */,
@@ -1230,7 +1277,7 @@
 				C9FB52EF0FD9E92700882CC3 /* ejs.db.sqlite.dylib */,
 				C98D7153110FBEEA00F2ED80 /* ejssql */,
 				C9D4528711ECDA4300F029C8 /* http */,
-				C92A43361381871100BAD2A4 /* ejs.store.local.dylib */,
+				C92A43361381871100BAD2A4 /* ejs.cache.local.dylib */,
 			);
 			name = Products;
 			sourceTree = "<group>";
@@ -1482,9 +1529,9 @@
 /* End PBXHeadersBuildPhase section */
 
 /* Begin PBXNativeTarget section */
-		C92A43231381871100BAD2A4 /* ejs.store.local */ = {
+		C92A43231381871100BAD2A4 /* ejs.cache.local */ = {
 			isa = PBXNativeTarget;
-			buildConfigurationList = C92A43331381871100BAD2A4 /* Build configuration list for PBXNativeTarget "ejs.store.local" */;
+			buildConfigurationList = C92A43331381871100BAD2A4 /* Build configuration list for PBXNativeTarget "ejs.cache.local" */;
 			buildPhases = (
 				C92A432A1381871100BAD2A4 /* Headers */,
 				C92A432B1381871100BAD2A4 /* Sources */,
@@ -1497,9 +1544,9 @@
 				C92A43261381871100BAD2A4 /* PBXTargetDependency */,
 				C92A43281381871100BAD2A4 /* PBXTargetDependency */,
 			);
-			name = ejs.store.local;
+			name = ejs.cache.local;
 			productName = ejs.db.sqlite.mod;
-			productReference = C92A43361381871100BAD2A4 /* ejs.store.local.dylib */;
+			productReference = C92A43361381871100BAD2A4 /* ejs.cache.local.dylib */;
 			productType = "com.apple.product-type.library.dynamic";
 		};
 		C95E4FD310EBFD9300982610 /* libhttp */ = {
@@ -1529,6 +1576,7 @@
 			buildRules = (
 			);
 			dependencies = (
+				C9B13B40138323F200B2E649 /* PBXTargetDependency */,
 				C9EA94050FD4FB0C00870DB0 /* PBXTargetDependency */,
 				C9EA94070FD4FB0C00870DB0 /* PBXTargetDependency */,
 				C9EA94090FD4FB0C00870DB0 /* PBXTargetDependency */,
@@ -1782,8 +1830,8 @@
 				C97627BC0FD077FC009C78E1 /* libsqlite3 */,
 				C97627CA0FD07828009C78E1 /* libejs */,
 				C987612F0FD87D7300311B7A /* ejs.db.sqlite */,
+				C92A43231381871100BAD2A4 /* ejs.cache.local */,
 				C97627D80FD07850009C78E1 /* ejs.web */,
-				C92A43231381871100BAD2A4 /* ejs.store.local */,
 				C97623D10FD06EE7009C78E1 /* ejs */,
 				C97623DA0FD06EF4009C78E1 /* ejsc */,
 				C97623E10FD06EFC009C78E1 /* ejsmod */,
@@ -1961,7 +2009,7 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				C92A433A138187C900BAD2A4 /* ejsLocal.c in Sources */,
+				C9B13B421383244B00B2E649 /* ejsLocalCache.c in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -2045,6 +2093,7 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				C9B13B341383233F00B2E649 /* ejsCache.c in Sources */,
 				C976282F0FD079D9009C78E1 /* ejsByteCode.c in Sources */,
 				C97628300FD079D9009C78E1 /* ejsException.c in Sources */,
 				C97628320FD079D9009C78E1 /* ejsInterp.c in Sources */,
@@ -2101,7 +2150,6 @@
 				C919245B129601190045B8A0 /* ecCompiler.c in Sources */,
 				C9CD7647131245C0007794B0 /* ejsCmd.c in Sources */,
 				C97837EA134E61D0008DDEAC /* ejsLogFile.c in Sources */,
-				C92A433E1381882100BAD2A4 /* ejsStore.c in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -2177,7 +2225,7 @@
 		};
 		C92A433C138187EE00BAD2A4 /* PBXTargetDependency */ = {
 			isa = PBXTargetDependency;
-			target = C92A43231381871100BAD2A4 /* ejs.store.local */;
+			target = C92A43231381871100BAD2A4 /* ejs.cache.local */;
 			targetProxy = C92A433B138187EE00BAD2A4 /* PBXContainerItemProxy */;
 		};
 		C92F849D10F2B93900CA953D /* PBXTargetDependency */ = {
@@ -2294,6 +2342,36 @@
 			isa = PBXTargetDependency;
 			target = C987612F0FD87D7300311B7A /* ejs.db.sqlite */;
 			targetProxy = C9A0700F10A34EC500F48512 /* PBXContainerItemProxy */;
+		};
+		C9B13B361383238600B2E649 /* PBXTargetDependency */ = {
+			isa = PBXTargetDependency;
+			target = C92A43231381871100BAD2A4 /* ejs.cache.local */;
+			targetProxy = C9B13B351383238600B2E649 /* PBXContainerItemProxy */;
+		};
+		C9B13B381383238B00B2E649 /* PBXTargetDependency */ = {
+			isa = PBXTargetDependency;
+			target = C97627CA0FD07828009C78E1 /* libejs */;
+			targetProxy = C9B13B371383238B00B2E649 /* PBXContainerItemProxy */;
+		};
+		C9B13B3A1383238E00B2E649 /* PBXTargetDependency */ = {
+			isa = PBXTargetDependency;
+			target = C97627A50FD077A7009C78E1 /* libmpr */;
+			targetProxy = C9B13B391383238E00B2E649 /* PBXContainerItemProxy */;
+		};
+		C9B13B3C1383239200B2E649 /* PBXTargetDependency */ = {
+			isa = PBXTargetDependency;
+			target = C95E4FD310EBFD9300982610 /* libhttp */;
+			targetProxy = C9B13B3B1383239200B2E649 /* PBXContainerItemProxy */;
+		};
+		C9B13B3E1383239500B2E649 /* PBXTargetDependency */ = {
+			isa = PBXTargetDependency;
+			target = C97627AE0FD077C3009C78E1 /* libpcre */;
+			targetProxy = C9B13B3D1383239500B2E649 /* PBXContainerItemProxy */;
+		};
+		C9B13B40138323F200B2E649 /* PBXTargetDependency */ = {
+			isa = PBXTargetDependency;
+			target = C92A43231381871100BAD2A4 /* ejs.cache.local */;
+			targetProxy = C9B13B3F138323F200B2E649 /* PBXContainerItemProxy */;
 		};
 		C9B66E1E11F0944E00011B2E /* PBXTargetDependency */ = {
 			isa = PBXTargetDependency;
@@ -2528,7 +2606,7 @@
 				GCC_OPTIMIZATION_LEVEL = 0;
 				INSTALL_PATH = /usr/lib/ejs;
 				PREBINDING = NO;
-				PRODUCT_NAME = ejs.store.local;
+				PRODUCT_NAME = ejs.cache.local;
 			};
 			name = Debug;
 		};
@@ -2543,7 +2621,7 @@
 				GCC_MODEL_TUNING = G5;
 				INSTALL_PATH = /usr/local/lib;
 				PREBINDING = NO;
-				PRODUCT_NAME = ejs.store.local;
+				PRODUCT_NAME = ejs.cache.local;
 				ZERO_LINK = NO;
 			};
 			name = Release;
@@ -3164,7 +3242,7 @@
 			defaultConfigurationIsVisible = 0;
 			defaultConfigurationName = Release;
 		};
-		C92A43331381871100BAD2A4 /* Build configuration list for PBXNativeTarget "ejs.store.local" */ = {
+		C92A43331381871100BAD2A4 /* Build configuration list for PBXNativeTarget "ejs.cache.local" */ = {
 			isa = XCConfigurationList;
 			buildConfigurations = (
 				C92A43341381871100BAD2A4 /* Debug */,

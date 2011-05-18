@@ -1,43 +1,47 @@
 /*
-    Store.es -- Store class providing key/value storage.
+    Cache.es -- Cache class providing key/value storage.
 
     Usage Tutorial:
 
-        store = new Store("local", {lifespan: 86400, timeout: 5000, memory: 200000000, keys: 10000000})
+        cache = new Cache("local", {lifespan: 86400, timeout: 5000, memory: 200000000, keys: 10000000})
 
-        session = store.read(key)
-        store.write(key, value, {lifespan: 3600})
-        store.remove("session", sessionID)
-        store.destroy()
+        session = cache.read(key)
+        cache.write(key, value, {lifespan: 3600})
+        cache.remove("session", sessionID)
+        cache.destroy()
 
-        store = new Store("memcached", {addresses: ["127.0.0.1:11211"], debug: false})
+        cache = new Cache("memcached", {addresses: ["127.0.0.1:11211"], debug: false})
+        cache = new Cache("file", {dir: "/tmp"})
+
+        Ejs uses the key naming convention:  ::module::key
  */
 module ejs {
 
     /**
-        Store meta class to manage in-memory storage of key-value data. The Store class provides an abstraction over
-        various in-memory and disk-based caching store backends.
+        Cache meta class to manage in-memory storage of key-value data. The Cache class provides an abstraction over
+        various in-memory and disk-based caching cache backends.
         @stability prototype
      */
-    class Store {
+    class Cache {
         use default namespace public
 
         private var adapter: Object
 
         /**
-            Store constructor.
-            @param adapter Adapter for the store store. E.g. "local". The Local store is the only currently supported
-                store backend.
+            Cache constructor.
+            @param adapter Adapter for the cache cache. E.g. "local". The Local cache is the only currently supported
+                cache backend.
             @param options Adapter options. The common options are described below, other options are passed through
             to the relevant caching backend.
             @option lifespan Default lifespan for key values
-            @option timeout Timeout on store I/O operations
+            @option resolution Time in milliseconds to check for expired expired keys
+            @option timeout Timeout on cache I/O operations
             @option trace Trace I/O operations for debug
-            @option module Module name containing the store connector class. This is a bare module name without ".mod"
+            @option module Module name containing the cache connector class. This is a bare module name without ".mod"
                 or any leading path.
-            @option class Class name containing the store backend.
+            @option class Class name containing the cache backend.
          */
-        function Store(adapter: String = null, options: Object = null) {
+        function Cache(adapter: String = null, options: Object = null) {
             adapter ||= "local"
             let adapterClass = options["class"] || options.adapter.toPascal()
             //  BUG should be able to use (options.module) below
@@ -45,14 +49,14 @@ module ejs {
             if (!global.module::[adapterClass]) {
                 load(module + ".mod")
                 if (!global.module::[adapterClass]) {
-                    throw "Can't find store adapter: \"" + module + "::" + adapter + "\""
+                    throw "Can't find cache adapter: \"" + module + "::" + adapter + "\""
                 }
             }
             this.adapter = new global.module::[adapterClass](options)
         }
 
         /**
-            Destroy the store
+            Destroy the cache
          */
         function destroy(): Void
             adapter.destroy()
@@ -67,14 +71,14 @@ module ejs {
 
         /**
             Resource limits for the server and for initial resource limits for requests.
-            @param limits. Limits is an object hash. Depending on the store backend in-use, the limits object may have
-                some of the following properties. Consult the documentation for the actual store backend for which properties
+            @param limits. Limits is an object hash. Depending on the cache backend in-use, the limits object may have
+                some of the following properties. Consult the documentation for the actual cache backend for which properties
                 are supported by the backend.
-            @option keys Maximum number of keys in the store. Set to zero for no limit.
+            @option keys Maximum number of keys in the cache. Set to zero for no limit.
             @option lifespan Default time to preserve key data. Set to zero for no timeout.
-            @option memory Total memory to allocate for store keys and data. Set to zero for no limit.
-            @option retries Maximum number of times to retry I/O operations with store backends.
-            @option timeout Maximum time to transact I/O operations with store backends. Set to zero for no timeout.
+            @option memory Total memory to allocate for cache keys and data. Set to zero for no limit.
+            @option retries Maximum number of times to retry I/O operations with cache backends.
+            @option timeout Maximum time to transact I/O operations with cache backends. Set to zero for no timeout.
             @see setLimits
           */
         function get limits(): Object
@@ -91,11 +95,14 @@ module ejs {
                 specified "version == true", return an object with the properties "data" for the key data and 
                 "version" for the CAS version identifier.
          */
-        function read(key: String, options: Object = null): Object
+        function read(key: String, options: Object = null): String
             adapter.read(key, options)
 
+        function readObj(key: String, options: Object = null): Object
+            deserialize(adapter.read(key, options))
+
         /**
-            Remove the key and associated value from the store
+            Remove the key and associated value from the cache
             @param key Key value to remove. If key is null, then all keys are removed.
             @param Return true if the key was removed
          */
@@ -103,7 +110,7 @@ module ejs {
             adapter.remove(key)
 
         /**
-            Update the store store resource limits. The supplied limit fields are updated.
+            Update the cache cache resource limits. The supplied limit fields are updated.
             See the $limits property for limit field details.
             @param limits Object hash of limit fields and values
             @see limits
@@ -112,7 +119,7 @@ module ejs {
             adapter.setLimits(limits)
 
         /**
-            Write the key and associated value to the store. The value is written according to the optional mode option.  
+            Write the key and associated value to the cache. The value is written according to the optional mode option.  
             @option lifespan Preservation time for the key in seconds 
             @option expire When to expire the key. Takes precedence over lifetime.
             @option mode Mode of writing: "set" is the default and means set a new value and create if required.
@@ -125,8 +132,11 @@ module ejs {
             @return The number of bytes written, returns null if the write failed due to an updated version identifier for
                 the key.
          */
-        function write(key: String, value: Object, options: Object = {}): Number
+        function write(key: String, value: String, options: Object = null): Number
             adapter.write(key, value, options)
+
+        function writeObj(key: String, value: Object, options: Object = null): Number
+            adapter.write(key, serialize(value), options)
     }
 
 }

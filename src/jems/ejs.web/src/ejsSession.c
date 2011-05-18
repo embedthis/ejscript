@@ -20,7 +20,7 @@ static EjsSession *initSession(Ejs *ejs, EjsSession *sp, EjsString *key, MprTime
     EjsObj      *app;
 
     app = ejsGetPropertyByName(ejs, ejs->global, N("ejs", "App"));
-    sp->store = ejsGetProperty(ejs, app, ES_App_store);
+    sp->cache = ejsGetProperty(ejs, app, ES_App_cache);
 
     sp->lifespan = timeout;
     sp->key = key;
@@ -62,7 +62,7 @@ EjsSession *ejsGetSession(Ejs *ejs, EjsString *key, MprTime timeout, int create)
 int ejsDestroySession(Ejs *ejs, EjsSession *sp)
 {
     if (sp) {
-        ejsStoreRemove(ejs, sp->store, sp->key);
+        ejsCacheRemove(ejs, sp->cache, sp->key);
     }
     return 0;
 }
@@ -90,7 +90,7 @@ static int getSessionState(Ejs *ejs, EjsSession *sp)
         return 1;
     }
     sp->ready = 1;
-    if (sp->key && (src = ejsStoreReadObj(ejs, sp->store, sp->key, 0)) != 0) {
+    if (sp->key && (src = ejsCacheReadObj(ejs, sp->cache, sp->key, 0)) != 0) {
         sp->pot.numProp = 0;
         count = ejsGetPropertyCount(ejs, src);
         for (i = 0; i < count; i++) {
@@ -139,7 +139,7 @@ static int lookupSessionProperty(Ejs *ejs, EjsSession *sp, EjsName qname)
 
 
 /*
-    Set a session property with write-through to the key/value store
+    Set a session property with write-through to the key/value cache
  */
 static int setSessionProperty(Ejs *ejs, EjsSession *sp, int slotNum, EjsAny *value)
 {
@@ -150,7 +150,7 @@ static int setSessionProperty(Ejs *ejs, EjsSession *sp, int slotNum, EjsAny *val
         sp->options = ejsCreateEmptyPot(ejs);
         ejsSetPropertyByName(ejs, sp->options, EN("lifespan"), ejsCreateNumber(ejs, sp->lifespan));
     }
-    if (ejsStoreWriteObj(ejs, sp->store, sp->key, sp, sp->options) == 0) {
+    if (ejsCacheWriteObj(ejs, sp->cache, sp->key, sp, sp->options) == 0) {
         return EJS_ERR;
     }
     return 0;
@@ -159,7 +159,7 @@ static int setSessionProperty(Ejs *ejs, EjsSession *sp, int slotNum, EjsAny *val
 
 void ejsSetSessionTimeout(Ejs *ejs, EjsSession *sp, int timeout)
 {
-    ejsStoreExpire(ejs, sp->store, sp->key, ejsCreateDate(ejs, mprGetTime() + timeout));
+    ejsCacheExpire(ejs, sp->cache, sp->key, ejsCreateDate(ejs, mprGetTime() + timeout));
 }
 
 

@@ -103,9 +103,9 @@ module ejs {
         static var name: String
 
         /**
-            Application in-memory store reference. See $ejs.store::Store
+            Application in-memory cache reference
          */
-        static var store: Store
+        static var cache: Cache
 
         /** 
             Application title name. Multi-word, Camel Case name for the application suitable for display. This is 
@@ -415,8 +415,8 @@ module ejs {
                 load(m)
             }
         }
-        if (config.store) {
-            App.store = new Store(null, config.store)
+        if (config.cache) {
+            App.cache = new Cache(null, blend({shared: true}, config.cache))
         }
     }
 

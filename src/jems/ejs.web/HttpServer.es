@@ -38,10 +38,10 @@ module ejs.web {
             log: {
                 showClient: true,
             },
-            store: {
+            cache: {
                 adapter: "local",
-                "class": "Local",
-                module: "ejs.store.local",
+                "class": "LocalCache",
+                module: "ejs.cache.local",
                 lifespan: 3600,
             },
             web: {
@@ -72,8 +72,8 @@ module ejs.web {
             for (let [key, value] in dirs) {
                 dirs[key] = Path(value)
             }
-            if (App.store == null && App.config.store) {
-                App.store = new Store(null, App.config.store)
+            if (App.cache == null && App.config.cache) {
+                App.cache = new Cache(null, blend({shared: true}, App.config.cache))
             }
         }
         initHttpServer()

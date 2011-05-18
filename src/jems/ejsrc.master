@@ -48,10 +48,10 @@
         start: "start.es",
     },
     search: null,
-    store: {
+    cache: {
         adapter: "local",
-        class: "Local",
-        module: "ejs.store.local",
+        class: "LocalCache",
+        module: "ejs.cache.local",
         memory: 10000000,
         keys: 1000,
         lifespan: 3600,

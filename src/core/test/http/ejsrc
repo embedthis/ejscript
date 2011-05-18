@@ -1,35 +1,16 @@
 //  Just for general debugging
 {
-    cache: {
-        enable: false,
+    app: {
+        cache: false,
         reload: true,
     },
     log: {
         enable: true,
-        location: "stdout",
+        location: "stderr",
         level: 0,
-        match: null,
         showClient: true,
     },
-    search: null,
-    scripts: null,
-    session: {
-        enable: true,
-        timeout: 1800,
-    },
     web: {
-        inactivity: 3600,               //  MOB
-        timeout: 3600,                  //  MOB
-        _expires: {
-            "html": 86400,
-            "ejs": 86400,
-            "es": 86400,
-            "": 86400,
-        },
-        _endpoint: "127.0.0.1:4000",
-        _view: {
-            connectors: { },
-            formats: { },
-        },
+        _listen: "127.0.0.1:4000",
     },
 }
