@@ -804,7 +804,6 @@
 		C9188B57115DAC060018846C /* ejsXMLList.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; name = ejsXMLList.c; path = ../../../src/core/src/ejsXMLList.c; sourceTree = SOURCE_ROOT; };
 		C9188B58115DAC060018846C /* ejsXMLLoader.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; name = ejsXMLLoader.c; path = ../../../src/core/src/ejsXMLLoader.c; sourceTree = SOURCE_ROOT; };
 		C919245A129601190045B8A0 /* ecCompiler.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = ecCompiler.c; sourceTree = "<group>"; };
-		C91A68B611F7A4D10051551E /* Loader.es */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; name = Loader.es; path = ../../../src/jems/ejs.cjs/Loader.es; sourceTree = SOURCE_ROOT; };
 		C91A68B711F7A5130051551E /* Controller.es */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; name = Controller.es; path = ../../../src/jems/ejs.web/Controller.es; sourceTree = SOURCE_ROOT; };
 		C91A68B811F7A5130051551E /* Dir.es */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; name = Dir.es; path = ../../../src/jems/ejs.web/Dir.es; sourceTree = SOURCE_ROOT; };
 		C91A68B911F7A5130051551E /* Google.es */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; name = Google.es; path = ../../../src/jems/ejs.web/Google.es; sourceTree = SOURCE_ROOT; };
@@ -868,7 +867,6 @@
 		C98FD60512E50EC200F76138 /* mprSsl.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = mprSsl.h; path = ../../../src/deps/mpr/mprSsl.h; sourceTree = "<group>"; };
 		C98FD60712E50ECC00F76138 /* http.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = http.h; path = ../../../src/deps/http/http.h; sourceTree = "<group>"; };
 		C9902A681161776B00473F37 /* ejsFrame.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; name = ejsFrame.c; path = ../../../src/core/src/ejsFrame.c; sourceTree = SOURCE_ROOT; };
-		C99A33DF10C2F1FF00F6C7BC /* package.json */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; name = package.json; path = ../../../src/jems/ejs.cjs/package.json; sourceTree = SOURCE_ROOT; };
 		C99A33E110C2F29C00F6C7BC /* Utils.es */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; name = Utils.es; path = ../../../src/jems/ejs.web/Utils.es; sourceTree = SOURCE_ROOT; };
 		C99A33FE10C2F35200F6C7BC /* ejs.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = ejs.h; path = ../../../src/include/ejs.h; sourceTree = SOURCE_ROOT; };
 		C99A340B10C2F35200F6C7BC /* ejsByteCode.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = ejsByteCode.h; path = ../../../src/include/ejsByteCode.h; sourceTree = SOURCE_ROOT; };
@@ -1190,12 +1188,11 @@
 		C9566A4010A16EB200AF4E04 /* jems */ = {
 			isa = PBXGroup;
 			children = (
-				C965D64610BCB2F600409B48 /* ejs.cjs */,
+				C92A43381381875900BAD2A4 /* ejs.cache.local */,
 				C9A0706D10A3564800F48512 /* ejs.db */,
 				C9A0702710A351EC00F48512 /* ejs.db.mapper */,
 				C9A0707710A356CA00F48512 /* ejs.db.sqlite */,
 				C903097C10A36659003FF2AB /* ejs.jem */,
-				C92A43381381875900BAD2A4 /* ejs.cache.local */,
 				C91A68B411F7A4980051551E /* ejs.template */,
 				C9A0708510A357AC00F48512 /* ejs.unix */,
 				C9A0708910A357FC00F48512 /* ejs.web */,
@@ -1238,15 +1235,6 @@
 				C95E4FE510EBFE1400982610 /* httpLib.c */,
 			);
 			name = http;
-			sourceTree = "<group>";
-		};
-		C965D64610BCB2F600409B48 /* ejs.cjs */ = {
-			isa = PBXGroup;
-			children = (
-				C91A68B611F7A4D10051551E /* Loader.es */,
-				C99A33DF10C2F1FF00F6C7BC /* package.json */,
-			);
-			name = ejs.cjs;
 			sourceTree = "<group>";
 		};
 		C97623BF0FD06EC4009C78E1 = {
