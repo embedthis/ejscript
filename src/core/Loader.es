@@ -60,8 +60,9 @@ module ejs {
             if (!exports || config.app.reload) {
                 let path: Path = locate(id, config)
                 if (path.modified > timestamps[path]) {
-                    if (!global."ejs.cjs"::CommonSystem) {
-                        // On-demand loading of CommonJS modules
+                    //  On-demand loading of CommonJS support
+                    //  DEPRECATED
+                    if (config.commonJS && !global."ejs.cjs"::CommonSystem) {
                         global.load("ejs.cjs.mod")
                     }
                     return load(id, path, config)

@@ -23,8 +23,7 @@ SLOT_HEADERS	+= $(shell find $(SRC)/include/master -name 'ejs*slots.h' | sort)
 EC_HEADERS		+= $(patsubst %,$(SRC)/include/%.h, ecCompiler)
 EJS_SOURCES		+= $(shell find $(SRC)/vm $(SRC)/core -name '*.c' | sort) 
 EC_SOURCES		+= $(shell find $(SRC)/compiler -name '*.c' | sort) 
-ES_SOURCES		+= $(shell find $(SRC)/core $(JEMS)/ejs.cjs \
-				    $(JEMS)/ejs.unix $(JEMS)/ejs.db $(JEMS)/ejs.db.mapper \
+ES_SOURCES		+= $(shell find $(SRC)/core $(JEMS)/ejs.unix $(JEMS)/ejs.db $(JEMS)/ejs.db.mapper \
 					$(JEMS)/ejs.db.sqlite $(JEMS)/ejs.web $(JEMS)/ejs.template -name '*.es' | \
 					egrep -v 'SAVE|save|legacy|Archive|old|sample.es|XmlGlobal.es|mvc.es' | \
 					egrep -v 'Jsdb.es|Mysql.es|ejspage.es|\/test\/' | sort) 

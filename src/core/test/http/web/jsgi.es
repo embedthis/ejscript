@@ -56,7 +56,6 @@ exports.app = Cascade(Response(function (request) {
 */
 
 /*OK
-require ejs.cjs
 exports.app = require("jsgi-test").AddHeader(
     function (request) {
         return {
