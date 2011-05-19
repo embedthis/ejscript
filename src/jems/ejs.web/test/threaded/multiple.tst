@@ -13,8 +13,10 @@ nap.get(HTTP + "/nap.ejs")
 //  Overlapped non-blocking request
 var http: Http = new Http
 for (i in 20) {
+    let now = new Date()
     http.get(HTTP + "/index.ejs")
     assert(http.status == 200)
+    assert(now.elapsed < 2000)
 }
 http.close()
 

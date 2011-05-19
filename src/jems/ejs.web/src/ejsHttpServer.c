@@ -678,6 +678,7 @@ static void startEjsHandler(HttpQueue *q)
     server = conn->server;
 
     if ((sp = httpGetServerContext(server)) == 0) {
+        mprAssert(conn->ejs);
         lp = conn->sock->listenSock;
         if ((sp = lookupServer(conn->ejs, lp->ip, lp->port)) == 0) {
             httpError(conn, HTTP_CODE_INTERNAL_SERVER_ERROR, 
