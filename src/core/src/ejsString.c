@@ -15,13 +15,13 @@ static int internHashSizes[] = {
 };
 
 /*
-    XXX 
+    MOB OPT - holding spin locks too long. ejsInternAsc can take a while
     Intern locking
  */
-static MprSpin      internLock;
-static MprSpin      *ispin = &internLock;
-#define ilock()     mprSpinLock(ispin);
-#define iunlock()   mprSpinUnlock(ispin);
+static MprMutex     internLock;
+static MprMutex     *ilock = &internLock;
+#define ilock()     mprLock(ilock);
+#define iunlock()   mprUnlock(ilock);
 
 /***************************** Forward Declarations ***************************/
 
@@ -2297,11 +2297,12 @@ EjsString *ejsInternString(EjsString *str)
         }
     }
     linkString(head, str);
-    iunlock();
     if (step > EJS_MAX_COLLISIONS) {
         /*  Remake the entire hash - should not happen often */
+        //  MOB OPT - BAD holding lock while rebuildingIntern
         rebuildIntern(ip);
     }
+    iunlock();
     return str;
 }
 
@@ -2349,11 +2350,11 @@ EjsString *ejsInternWide(Ejs *ejs, MprChar *value, ssize len)
     }
     sp->length = len;
     linkString(head, sp);
-    iunlock();
     if (step > EJS_MAX_COLLISIONS) {
         /*  Remake the entire hash - should not happen often */
         rebuildIntern(ip);
     }
+    iunlock();
     return sp;
 }
 
@@ -2406,11 +2407,11 @@ EjsString *ejsInternAsc(Ejs *ejs, cchar *value, ssize len)
     }
     sp->length = len;
     linkString(head, sp);
-    iunlock();
     if (step > EJS_MAX_COLLISIONS) {
         /*  Remake the entire hash - should not happen often */
         rebuildIntern(ip);
     }
+    iunlock();
     return sp;
 }
 
@@ -2463,11 +2464,11 @@ EjsString *ejsInternMulti(Ejs *ejs, cchar *value, ssize len)
         }
     }
     linkString(head, src);
-    iunlock();
     if (step > EJS_MAX_COLLISIONS) {
         /*  Remake the entire hash - should not happen often */
         rebuildIntern(ip);
     }
+    iunlock();
     return sp;
 }
 #endif /* BLD_CHAR_LEN > 1 */
@@ -2686,11 +2687,13 @@ void ejsInitStringType(Ejs *ejs, EjsType *type)
 {
     static int firstTime = 1;
 
+    mprGlobalLock();
     if (firstTime) {
-        mprInitSpinLock(&internLock);
+        mprInitLock(&internLock);
         firstTime = 0;
         rebuildIntern(ejs->service->intern);
     }
+    mprGlobalUnlock();
     ejsCloneObjHelpers(ejs, type);
     type->mutex = mprCreateLock();
     type->helpers.cast = (EjsCastHelper) castString;
