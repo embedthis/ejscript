@@ -70,8 +70,8 @@ static void managePool(EjsPool *pool, int flags)
 {
     if (flags & MPR_MANAGE_MARK) {
         mprMark(pool->list);
-        mprMark(pool->template);
         mprMark(pool->mutex);
+        mprMark(pool->template);
         mprMark(pool->templateScript);
         mprMark(pool->startScriptPath);
     }
@@ -85,10 +85,10 @@ EjsPool *ejsCreatePool(int poolMax, cchar *templateScript, cchar *startScriptPat
     if ((pool = mprAllocObj(EjsPool, managePool)) == 0) {
         return 0;
     }
-    pool->mutex = mprCreateLock();
     if ((pool->list = mprCreateList(-1, 0)) == 0) {
         return 0;
     }
+    pool->mutex = mprCreateLock();
     pool->max = poolMax <= 0 ? MAXINT : poolMax;
     if (templateScript) {
         pool->templateScript = sclone(templateScript);
@@ -107,28 +107,33 @@ Ejs *ejsAllocPoolVM(EjsPool *pool, int flags)
 
     mprAssert(pool);
 
-    lock(pool);
-    if ((ejs = mprPopItem(pool->list)) == 0) {
+    //  OPT -- don't need locking
+    ejs = mprPopItem(pool->list);
+
+    if (ejs == 0) {
         if (pool->count >= pool->max) {
             mprError("Too many ejs VMS: %d max %d", pool->count, pool->max);
-            unlock(pool);
             return 0;
         }
+        lock(pool);
         if (pool->template == 0) {
             if ((pool->template = ejsCreateVM(0, 0, 0, 0, 0, 0, flags)) == 0) {
+                unlock(pool);
                 return 0;
             }
             if (pool->templateScript) {
                 script = ejsCreateStringFromAsc(pool->template, pool->templateScript);
                 if (ejsLoadScriptLiteral(pool->template, script, NULL, EC_FLAGS_NO_OUT | EC_FLAGS_BIND) < 0) {
                     mprError("Can't execute \"%s\"\n%s", script, ejsGetErrorMsg(pool->template, 1));
+                    unlock(pool);
                     return 0;
                 }
             }
         }
+        unlock(pool);
+
         if ((ejs = ejsCreateVM(pool->template, 0, 0, 0, 0, 0, flags)) == 0) {
             mprMemoryError("Can't alloc ejs VM");
-            unlock(pool);
             return 0;
         }
         mprAddRoot(ejs);
@@ -139,6 +144,7 @@ Ejs *ejsAllocPoolVM(EjsPool *pool, int flags)
                 return 0;
             }
         }
+        mprRemoveRoot(ejs);
         pool->count++;
     }
     pool->lastActivity = mprGetTime();
@@ -149,8 +155,6 @@ Ejs *ejsAllocPoolVM(EjsPool *pool, int flags)
         pool->timer = mprCreateTimerEvent(NULL, "ejsPoolTimer", HTTP_TIMER_PERIOD, poolTimer, pool,
             MPR_EVENT_CONTINUOUS | MPR_EVENT_QUICK);
     }
-    mprRemoveRoot(ejs);
-    unlock(pool);
     return ejs;
 }
 
@@ -161,22 +165,18 @@ void ejsFreePoolVM(EjsPool *pool, Ejs *ejs)
     mprAssert(ejs);
 
     pool->lastActivity = mprGetTime();
-    lock(pool);
     mprPushItem(pool->list, ejs);
     mprLog(5, "ejs: Free VM, active %d, allocated %d, max %d", pool->count - mprGetListLength(pool->list), pool->count,
         pool->max);
-    unlock(pool);
 }
 
 
 static void poolTimer(EjsPool *pool, MprEvent *event)
 {
-    lock(pool);
     if (mprGetElapsedTime(pool->lastActivity) > EJS_POOL_INACTIVITY_TIMEOUT && !mprGetDebugMode()) {
         pool->template = 0;
         mprClearList(pool->list);
     }
-    unlock(pool);
 }
 
 
@@ -203,9 +203,12 @@ Ejs *ejsCreateVM(Ejs *master, MprDispatcher *dispatcher, cchar *search, MprList 
     }
     mprAddRoot(ejs);
 
+    mprGlobalLock();
     if ((sp = MPR->ejsService) == 0) {
         sp = createService();
     }
+    mprGlobalUnlock();
+
     ejs->service = sp;
     mprAddItem(sp->vmlist, ejs);
     ejs->master = master;
