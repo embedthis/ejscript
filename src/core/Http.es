@@ -551,7 +551,7 @@ FUTURE & KEEP
             Get the ejs session cookie. This call extracts the ejs session cookie from the Http response headers.
             Ejscript sessions are identified by a client cookie which when transmitted with subsequent requests will 
             permit the server to locate the relevant session state store for the server-side application. 
-            Use: setCookie("Cookie", cookie) to transmit the cookie on subsquent requests.
+            Use: setCookie(cookie) to transmit the cookie on subsquent requests.
          */
         function get sessionCookie() {
             let cookie = header("Set-Cookie")

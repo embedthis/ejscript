@@ -56,7 +56,8 @@ module ejs.web {
             path = request.filename
             if (path && !path.exists) {
                 request.writeError(Http.NotFound, "Cannot find " + path)
-                return null
+                //  MOB - is this a generic need for a function like this?
+                return function() {}
             }
         }
         return Loader.load(path, path, request.config, function (id, path) {

@@ -804,10 +804,24 @@ static int mapMode(cchar *mode)
         omode &= ~O_TRUNC;
     }
     if (strchr(mode, '+')) {
+        /* Append to existing content */
         omode &= ~O_TRUNC;
     }
     if (strchr(mode, 't')) {
+        /* Text mode */
         omode &= ~O_BINARY;
+    }
+    if (strchr(mode, 'l')) {
+        /* Exclusive lock */
+        omode |= O_EXLOCK;
+    }
+    if (strchr(mode, 's')) {
+        /* Shared lock */
+        omode |= O_SHLOCK;
+    }
+    if (strchr(mode, 'c')) {
+        /* Create - must not exist prior */
+        omode |= O_CREAT | O_EXCL;
     }
     return omode;
 }
