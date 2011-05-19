@@ -29,14 +29,15 @@
  */
 #define ES_ejs_cache_local_LocalCache_destroy                          0
 #define ES_ejs_cache_local_LocalCache_expire                           1
-#define ES_ejs_cache_local_LocalCache_limits                           2
-#define ES_ejs_cache_local_LocalCache_read                             3
-#define ES_ejs_cache_local_LocalCache_remove                           4
-#define ES_ejs_cache_local_LocalCache_setLimits                        5
-#define ES_ejs_cache_local_LocalCache_write                            6
-#define ES_ejs_cache_local_LocalCache_NUM_INSTANCE_PROP                7
+#define ES_ejs_cache_local_LocalCache_inc                              2
+#define ES_ejs_cache_local_LocalCache_limits                           3
+#define ES_ejs_cache_local_LocalCache_read                             4
+#define ES_ejs_cache_local_LocalCache_remove                           5
+#define ES_ejs_cache_local_LocalCache_setLimits                        6
+#define ES_ejs_cache_local_LocalCache_write                            7
+#define ES_ejs_cache_local_LocalCache_NUM_INSTANCE_PROP                8
 #define ES_ejs_cache_local_LocalCache_NUM_INHERITED_PROP               0
 
-#define _ES_CHECKSUM_ejs_cache_local   15554
+#define _ES_CHECKSUM_ejs_cache_local   16860
 
 #endif

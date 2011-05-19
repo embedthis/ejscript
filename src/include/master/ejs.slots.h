@@ -461,14 +461,15 @@
 #define ES_Cache_adapter                                               0
 #define ES_Cache_destroy                                               1
 #define ES_Cache_expire                                                2
-#define ES_Cache_limits                                                3
-#define ES_Cache_read                                                  4
-#define ES_Cache_readObj                                               5
-#define ES_Cache_remove                                                6
-#define ES_Cache_setLimits                                             7
-#define ES_Cache_write                                                 8
-#define ES_Cache_writeObj                                              9
-#define ES_Cache_NUM_INSTANCE_PROP                                     10
+#define ES_Cache_inc                                                   3
+#define ES_Cache_limits                                                4
+#define ES_Cache_read                                                  5
+#define ES_Cache_readObj                                               6
+#define ES_Cache_remove                                                7
+#define ES_Cache_setLimits                                             8
+#define ES_Cache_write                                                 9
+#define ES_Cache_writeObj                                              10
+#define ES_Cache_NUM_INSTANCE_PROP                                     11
 #define ES_Cache_NUM_INHERITED_PROP                                    0
 
 
@@ -2304,6 +2305,6 @@
 #define ES_XMLList_NUM_INSTANCE_PROP                                   20
 #define ES_XMLList_NUM_INHERITED_PROP                                  0
 
-#define _ES_CHECKSUM_ejs   1414151
+#define _ES_CHECKSUM_ejs   1415548
 
 #endif
