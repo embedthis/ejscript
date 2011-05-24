@@ -14,14 +14,16 @@ static int internHashSizes[] = {
      389, 769, 1543, 3079, 6151, 12289, 24593, 49157, 98317, 196613, 0
 };
 
+#if UNUSED
 /*
-    MOB OPT - holding spin locks too long. ejsInternAsc can take a while
+    MOB OPT - holding locks too long. ejsInternAsc can take a while
     Intern locking
  */
 static MprMutex     internLock;
 static MprMutex     *ilock = &internLock;
-#define ilock()     mprLock(ilock);
-#define iunlock()   mprUnlock(ilock);
+#define lock(ip)     mprLock(ilock);
+#define unlock(ip)   mprUnlock(ilock);
+#endif
 
 /***************************** Forward Declarations ***************************/
 
@@ -2275,7 +2277,7 @@ EjsString *ejsInternString(EjsString *str)
     ip = ((EjsService*) MPR->ejsService)->intern;
     step = 0;
 
-    ilock();
+    lock(ip);
     ip->accesses++;
     index = whash(str->value, str->length) % ip->size;
     if ((head = &ip->buckets[index]) != NULL) {
@@ -2290,7 +2292,7 @@ EjsString *ejsInternString(EjsString *str)
                     ip->reuse++;
                     /* Revive incase almost stale or dead */
                     mprRevive(sp);
-                    iunlock();
+                    unlock(ip);
                     return sp;
                 }
             }
@@ -2302,7 +2304,7 @@ EjsString *ejsInternString(EjsString *str)
         //  MOB OPT - BAD holding lock while rebuildingIntern
         rebuildIntern(ip);
     }
-    iunlock();
+    unlock(ip);
     return str;
 }
 
@@ -2322,7 +2324,7 @@ EjsString *ejsInternWide(Ejs *ejs, MprChar *value, ssize len)
     ip = ejs->service->intern;
     step = 0;
 
-    ilock();
+    lock(ip);
     ip->accesses++;
     index = whash(value, len) % ip->size;
     if ((head = &ip->buckets[index]) != NULL) {
@@ -2338,13 +2340,13 @@ EjsString *ejsInternWide(Ejs *ejs, MprChar *value, ssize len)
                     ip->reuse++;
                     /* Revive incase almost stale or dead */
                     mprRevive(sp);
-                    iunlock();
+                    unlock(ip);
                     return sp;
                 }
             }
         }
     }
-    if ((sp = ejsAlloc(ejs, ST(String), (len + 1) * sizeof(MprChar))) != NULL) {
+    if ((sp = ejsAlloc(ejs, S(String), (len + 1) * sizeof(MprChar))) != NULL) {
         memcpy(sp->value, value, len * sizeof(MprChar));
         sp->value[len] = 0;
     }
@@ -2354,7 +2356,7 @@ EjsString *ejsInternWide(Ejs *ejs, MprChar *value, ssize len)
         /*  Remake the entire hash - should not happen often */
         rebuildIntern(ip);
     }
-    iunlock();
+    unlock(ip);
     return sp;
 }
 
@@ -2371,7 +2373,7 @@ EjsString *ejsInternAsc(Ejs *ejs, cchar *value, ssize len)
     step = 0;
     ip = ejs->service->intern;
 
-    ilock();
+    lock(ip);
     ip->accesses++;
     mprAssert(ip->size > 0);
     index = shash(value, len) % ip->size;
@@ -2388,13 +2390,13 @@ EjsString *ejsInternAsc(Ejs *ejs, cchar *value, ssize len)
                     ip->reuse++;
                     /* Revive incase almost stale or dead */
                     mprRevive(sp);
-                    iunlock();
+                    unlock(ip);
                     return sp;
                 }
             }
         }
     }
-    if ((sp = ejsAlloc(ejs, ST(String), (len + 1) * sizeof(MprChar))) != NULL) {
+    if ((sp = ejsAlloc(ejs, S(String), (len + 1) * sizeof(MprChar))) != NULL) {
 #if BLD_CHAR_LEN > 1
         for (i = 0; i < len; i++) {
             sp->value[i] = value[i];
@@ -2411,7 +2413,7 @@ EjsString *ejsInternAsc(Ejs *ejs, cchar *value, ssize len)
         /*  Remake the entire hash - should not happen often */
         rebuildIntern(ip);
     }
-    iunlock();
+    unlock(ip);
     return sp;
 }
 
@@ -2439,11 +2441,11 @@ EjsString *ejsInternMulti(Ejs *ejs, cchar *value, ssize len)
         Have to convert the multibyte string to unicode before comparision. Convert into an EjsString to it is ready
         to intern if not found.
      */
-    if ((src = ejsAlloc(ejs, ST(String), (len + 1) * sizeof(MprChar))) != NULL) {
+    if ((src = ejsAlloc(ejs, S(String), (len + 1) * sizeof(MprChar))) != NULL) {
         src->length = mtow(src->value, len + 1, value, len);
         value = src->value;
     }
-    ilock();
+    lock(ip);
     ip->accesses++;
     index = whash(value, len) % ip->size;
     if ((head = &ip->buckets[index]) != NULL) {
@@ -2458,7 +2460,7 @@ EjsString *ejsInternMulti(Ejs *ejs, cchar *value, ssize len)
                 ip->reuse++;
                 /* Revive incase almost stale or dead */
                 mprRevive(sp);
-                iunlock();
+                unlock(ip);
                 return sp;
             }
         }
@@ -2468,7 +2470,7 @@ EjsString *ejsInternMulti(Ejs *ejs, cchar *value, ssize len)
         /*  Remake the entire hash - should not happen often */
         rebuildIntern(ip);
     }
-    iunlock();
+    unlock(ip);
     return sp;
 }
 #endif /* BLD_CHAR_LEN > 1 */
@@ -2604,7 +2606,7 @@ EjsString *ejsCreateBareString(Ejs *ejs, ssize len)
     EjsString   *sp;
     
     mprAssert(0 <= len && len < MAXINT);
-    if ((sp = ejsAlloc(ejs, ST(String), (len + 1) * sizeof(MprChar))) != NULL) {
+    if ((sp = ejsAlloc(ejs, S(String), (len + 1) * sizeof(MprChar))) != NULL) {
         sp->length = len;
         sp->value[0] = 0;
         sp->value[len] = 0;
@@ -2618,7 +2620,7 @@ EjsString *ejsCreateNonInternedString(Ejs *ejs, MprChar *value, ssize len)
     EjsString   *sp;
     
     mprAssert(0 <= len && len < MAXINT);
-    if ((sp = ejsAlloc(ejs, ST(String), (len + 1) * sizeof(MprChar))) != NULL) {
+    if ((sp = ejsAlloc(ejs, S(String), (len + 1) * sizeof(MprChar))) != NULL) {
         memcpy(sp->value, value, (len + 1) * sizeof(MprChar));
         sp->length = len;
         sp->value[len] = 0;
@@ -2629,13 +2631,16 @@ EjsString *ejsCreateNonInternedString(Ejs *ejs, MprChar *value, ssize len)
 
 void ejsManageString(EjsString *sp, int flags)
 {
+    EjsIntern   *ip;
+
     if (flags & MPR_MANAGE_MARK) {
         mprMark(TYPE(sp));
 
     } else if (flags & MPR_MANAGE_FREE) {
-        ilock();
+        ip = ((EjsService*) MPR->ejsService)->intern;
+        lock(ip);
         unlinkString(sp);
-        iunlock();
+        unlock(ip);
     }
 }
 
@@ -2645,14 +2650,13 @@ EjsIntern *ejsCreateIntern(EjsService *sp)
     EjsIntern   *intern;
     
     intern = mprAllocObj(EjsIntern, manageIntern);
-#if XXX
-    intern->ejs = ejs;
-#endif
+    intern->mutex = mprCreateLock();
+    rebuildIntern(intern);
     return intern;
 }
 
 
-void ejsDestroyIntern(EjsIntern *intern)
+void ejsDestroyIntern(EjsIntern *ip)
 {
     EjsString   *sp, *head, *next;
     int         i;
@@ -2660,15 +2664,15 @@ void ejsDestroyIntern(EjsIntern *intern)
     /*
         Unlink strings now as when they are freed later, the intern structure may not exist in memory.
      */
-    ilock();
-    for (i = intern->size - 1; i >= 0; i--) {
-        head = &intern->buckets[i];
+    lock(ip);
+    for (i = ip->size - 1; i >= 0; i--) {
+        head = &ip->buckets[i];
         for (sp = head->next; sp != head; sp = next) {
             next = sp->next;
             unlinkString(sp);
         }
     }
-    iunlock();
+    unlock(ip);
 }
 
 
@@ -2685,32 +2689,27 @@ static void manageIntern(EjsIntern *intern, int flags)
 
 void ejsInitStringType(Ejs *ejs, EjsType *type)
 {
-    static int firstTime = 1;
-
-    mprGlobalLock();
-    if (firstTime) {
-        mprInitLock(&internLock);
-        firstTime = 0;
-        rebuildIntern(ejs->service->intern);
-    }
-    mprGlobalUnlock();
-    ejsCloneObjHelpers(ejs, type);
-    type->mutex = mprCreateLock();
     type->helpers.cast = (EjsCastHelper) castString;
     type->helpers.clone = (EjsCloneHelper) cloneString;
     type->helpers.getProperty = (EjsGetPropertyHelper) getStringProperty;
     type->helpers.invokeOperator = (EjsInvokeOperatorHelper) invokeStringOperator;
     type->helpers.lookupProperty = (EjsLookupPropertyHelper) lookupStringProperty;
     type->numericIndicies = 1;
+#if UNUSED
     type->manager = (MprManager) ejsManageString;
     type->qname = N("ejs", "String");
     SET_TYPE_NAME(type->qname.name, type);
     SET_TYPE_NAME(type->qname.space, type);
+#endif
     
     /*
         Standard string values. Create here so modules do not have to export these strings
      */
+#if UNUSED
     ejsSetSpecial(ejs, S_empty, ejsCreateStringFromAsc(ejs, ""));
+#else
+    S(empty) = ejsCreateStringFromAsc(ejs, "");
+#endif
 
 #if UNUSED
     ejsSetSpecial(ejs, -1, ejsCreateStringFromAsc(ejs, EJS_BLOCK_NAMESPACE));
@@ -2740,7 +2739,7 @@ void ejsConfigureStringType(Ejs *ejs)
     EjsType     *type;
     EjsPot      *prototype;
 
-    type = ST(String);
+    type = S(String);
     prototype = type->prototype;
 
     ejsSetProperty(ejs, ejs->global, ES_string, type);

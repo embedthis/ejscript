@@ -721,7 +721,7 @@ EjsString *ejsObjToString(Ejs *ejs, EjsObj *vp, int argc, EjsObj **argv)
     if (ejsIs(ejs, vp, String)) {
         return (EjsString*) vp;
     }
-    return (ejs->objHelpers.cast)(ejs, vp, ST(String));
+    return (ejs->service->objHelpers.cast)(ejs, vp, S(String));
 }
 
 
@@ -872,7 +872,7 @@ void ejsConfigureObjectType(Ejs *ejs)
     EjsPot      *prototype;
     EjsFunction *fun;
 
-    type = ST(Object);
+    type = S(Object);
     type->mutableInstances = 1;
     prototype = type->prototype;
 

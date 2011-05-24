@@ -46,8 +46,10 @@ static EjsString *makeKey(Ejs *ejs, EjsSession *sp)
 EjsSession *ejsGetSession(Ejs *ejs, EjsString *key, MprTime timeout, int create)
 {
     EjsSession  *sp;
+    EjsType     *type;
 
-    if ((sp = ejsCreateObj(ejs, ST(Session), 0)) == 0) {
+    type = ejsGetTypeByName(ejs, N("ejs.web", "Session"));
+    if ((sp = ejsCreateObj(ejs, type, 0)) == 0) {
         return 0;
     }
     mprSetName(sp, "session");
@@ -98,8 +100,8 @@ static int getSessionState(Ejs *ejs, EjsSession *sp)
                 continue;
             }
             qname = ejsGetPropertyName(ejs, src, i);
-            ejs->potHelpers.setProperty(ejs, sp, i, vp);
-            ejs->potHelpers.setPropertyName(ejs, sp, i, qname);
+            ejs->service->potHelpers.setProperty(ejs, sp, i, vp);
+            ejs->service->potHelpers.setPropertyName(ejs, sp, i, qname);
         }
         return 1;
     }
@@ -112,7 +114,7 @@ static EjsObj *getSessionProperty(Ejs *ejs, EjsSession *sp, int slotNum)
     EjsObj  *value;
 
     getSessionState(ejs, sp);
-    value = ejs->potHelpers.getProperty(ejs, sp, slotNum);
+    value = ejs->service->potHelpers.getProperty(ejs, sp, slotNum);
     if (ejsIs(ejs, value, Void)) {
         /*  Return empty string so that web pages can access session values without having to test for null/undefined */
         value = S(empty);
@@ -126,15 +128,15 @@ static EjsObj *getSessionPropertyByName(Ejs *ejs, EjsSession *sp, EjsName qname)
     int     slotNum;
 
     getSessionState(ejs, sp);
-    slotNum = ejs->potHelpers.lookupProperty(ejs, sp, qname);
-    return (slotNum < 0) ? S(empty) : ejs->potHelpers.getProperty(ejs, sp, slotNum);
+    slotNum = ejs->service->potHelpers.lookupProperty(ejs, sp, qname);
+    return (slotNum < 0) ? S(empty) : ejs->service->potHelpers.getProperty(ejs, sp, slotNum);
 }
 
 
 static int lookupSessionProperty(Ejs *ejs, EjsSession *sp, EjsName qname)
 {
     getSessionState(ejs, sp);
-    return ejs->potHelpers.lookupProperty(ejs, sp, qname);
+    return ejs->service->potHelpers.lookupProperty(ejs, sp, qname);
 }
 
 
@@ -143,7 +145,7 @@ static int lookupSessionProperty(Ejs *ejs, EjsSession *sp, EjsName qname)
  */
 static int setSessionProperty(Ejs *ejs, EjsSession *sp, int slotNum, EjsAny *value)
 {
-    if (ejs->potHelpers.setProperty(ejs, sp, slotNum, value) != slotNum) {
+    if (ejs->service->potHelpers.setProperty(ejs, sp, slotNum, value) != slotNum) {
         return EJS_ERR;
     }
     if (sp->options == 0) {
@@ -212,8 +214,9 @@ void ejsConfigureSessionType(Ejs *ejs)
     EjsHelpers      *helpers;
 
     type = ejsConfigureNativeType(ejs, N("ejs.web", "Session"), sizeof(EjsSession), manageSession, EJS_POT_HELPERS);
+#if UNUSED
     ejsSetSpecialType(ejs, S_Session, type);
-    mprAssert(type->mutex == 0);
+#endif
 
     /*
         Sessions are created indirectly by accessing Request.session[] which uses ejsGetSession.

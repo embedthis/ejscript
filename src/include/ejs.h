@@ -475,15 +475,11 @@ typedef struct EjsIntern {
     int             size;                   /**< Size of hash */
     int             reuse;
     uint64          accesses;
+    MprMutex        *mutex;
 } EjsIntern;
 
-
 /********************************************** Special Values ******************************************/
-
 #if UNUSED
-#define S_App                   0
-#endif
-
 #define S_Array                 1
 #define S_Block                 2
 #define S_Boolean               3
@@ -497,66 +493,125 @@ typedef struct EjsIntern {
 #define S_FileSystem            11
 #define S_Frame                 12
 #define S_Function              13
-//  MOB - missing
 #define S_Http                  14
-//  MOB - missing 15
-#define S_Iterator              16
-//  MOB - missing 17
-#define S_Namespace             18
-#define S_Null                  19
-#define S_Number                20
-#define S_Object                21
-#define S_Path                  22
+#define S_Iterator              15
+#define S_Namespace             16
+#define S_Null                  17
+#define S_Number                18
+#define S_Object                19
+#define S_Path                  20
+#define S_RegExp                21
+#define S_StopIteration         22
+#define S_String                23
+#define S_Type                  24
+#define S_Uri                   25
+#define S_Void                  26
+#define S_Worker                27
+#define S_XML                   28
+#define S_XMLList               29
 
-//  MOB - missing 23 - 29
-#define S_RegExp                30
-//  MOB - missing 31-33
-#define S_StopIteration         34
-#define S_String                35
-#define S_Type                  36
-#define S_Uri                   37
-#define S_Void                  38
-#define S_Worker                40
-#define S_XML                   41
-#define S_XMLList               42
-#define S_Request               43
-#define S_Session               44
+#define S_commaProt             30
+#define S_empty                 31
+#define S_false                 32
+#define S_global                33
+#define S_infinity              34
+                                        #define S_iterator              35
+#define S_length                36
+#define S_max                   37
+#define S_min                   38
+#define S_minusOne              39
+#define S_nan                   40
+#define S_negativeInfinity      41      NegativeInfinity
+#define S_nop                   42
+#define S_null                  43
+#define S_one                   44
+#define S_public                45
+#define S_true                  46
+#define S_undefined             47
+#define S_zero                  48
+#define S_emptySpace            49
+#define S_ejsSpace              50
+#define S_iteratorSpace         51
+#define S_internalSpace         52
+#define S_publicSpace           53
+#define EJS_MAX_SPECIAL         54
+#endif
 
-#define S_commaProt             50
-#define S_empty                 51
-#define S_false                 52
-#define S_global                53
-#define S_infinity              54
-#define S_iterator              55
-#define S_length                57
-#define S_max                   58
-#define S_min                   59
-#define S_minusOne              60
-#define S_nan                   61
-#define S_negativeInfinity      62
-#define S_nop                   63
-#define S_null                  64
-#define S_one                   65
-//  MOB - missing 66
-#define S_public                66
-#define S_true                  67
-#define S_undefined             68
-#define S_zero                  69
 
-#define S_emptySpace            70
-#define S_ejsSpace              71
-#define S_iteratorSpace         72
-//  MOB - missing 73
-#define S_internalSpace         73
-#define S_publicSpace           74
+#define S_Array ES_Array
+#define S_Block ES_Block
+#define S_Boolean ES_Boolean
+#define S_ByteArray ES_ByteArray
+#define S_Config ES_Config
+#define S_Date ES_Date
+#define S_Error ES_Error
+#define S_ErrorEvent ES_ErrorEvent
+#define S_Event ES_Event
+#define S_File ES_File
+#define S_FileSystem ES_FileSystem
+#define S_Frame ES_Frame
+#define S_Function ES_Function
+#define S_Http ES_Http
+#define S_Namespace ES_Namespace
+#define S_Null ES_Null
+#define S_Number ES_Number
+#define S_Object ES_Object
+#define S_Path ES_Path
+#define S_RegExp ES_RegExp
+#define S_String ES_String
+#define S_Type ES_Type
+#define S_Uri ES_Uri
+#define S_Void ES_Void
+#define S_Worker ES_Worker
+#define S_XML ES_XML
+#define S_XMLList ES_XMLList
+#define S_commaProt ES_commaProt
+#define S_empty ES_empty
+#define S_false ES_false
+#define S_global ES_global
+#define S_iterator ES_iterator
+#define S_length ES_length
+#define S_max ES_max
+#define S_min ES_min
+#define S_minusOne ES_minusOne
+#define S_nop ES_nop
+#define S_null ES_null
+#define S_one ES_one
+#define S_public ES_public
+#define S_true ES_true
+#define S_undefined ES_undefined
+#define S_zero ES_zero
+#define EJS_MAX_SPECIAL         ES_global_NUM_CLASS_PROP
 
-#define EJS_MAX_SPECIAL         75
+//  FIXES
+#define S_StopIteration ES_iterator_StopIteration
+#define S_nan ES_NaN
+#define S_Iterator ES_iterator_Iterator
+#define S_infinity ES_Infinity
+#define S_negativeInfinity ES_NegativeInfinity
+#define S_ejsSpace ES_ejs
+#define S_iteratorSpace ES_iterator
+#define S_internalSpace ES_internal
+#define S_publicSpace ES_public
+#define S_emptySpace ES_emptySpace
 
 extern void ejsSetSpecial(struct Ejs *ejs, int sid, EjsAny *value);
-extern void ejsSetSpecialType(struct Ejs *ejs, int sid, struct EjsType *type);
 extern EjsAny *ejsGetSpecial(struct Ejs *ejs, int sid);
+
+#if UNUSED
+extern void ejsSetSpecialType(struct Ejs *ejs, int sid, struct EjsType *type);
+#endif
+
+#if 0
 #define S(name) ejs->values[S_ ## name]
 #define ST(name) ((EjsType*) (ejs->values[S_ ## name]))
+#endif
+
+//  MOB - rename to ESV. Remove ST?
+#define S(name) ejs->service->shared[S_ ## name]
+#define ST(name) ((EjsType*) (ejs->service->shared[S_ ## name]))
+#if 0
+#endif
 
 /**
     Ejsript Interperter Structure
@@ -577,11 +632,12 @@ typedef struct Ejs {
     cchar               *className;         /**< Name of a specific class to run for a program */
     cchar               *methodName;        /**< Name of a specific method to run for a program */
 
+#if UNUSED
     EjsAny              *values[EJS_MAX_SPECIAL];
+#endif
     EjsAny              *global;            /**< The "global" object */
+    EjsAny              *hidden;            /**< A hidden "global" object when compiling empty */
 
-    EjsHelpers          objHelpers;         /**< Default EjsObj helpers */
-    EjsHelpers          potHelpers;         /**< Helper methods for Pots */
     char                *errorMsg;          /**< Error message */
     cchar               **argv;             /**< Command line args */
     int                 argc;               /**< Count of command line args */
@@ -605,7 +661,9 @@ typedef struct Ejs {
 
     EjsAny              *exceptionArg;      /**< Exception object for catch block */
 
+#if UNUSED
     struct Ejs          *master;            /**< Master interpreter used to create this interpreter */
+#endif
     MprDispatcher       *dispatcher;        /**< Event dispatcher */
     MprList             *workers;           /**< Worker interpreters */
     MprList             *modules;           /**< Loaded modules */
@@ -1297,7 +1355,9 @@ typedef struct EjsBlock {
     EjsObj          *prevException;                 /**< Previous exception if nested exceptions */
     EjsObj          **stackBase;                    /**< Start of stack in this block */
     uint            breakCatch: 1;                  /**< Return, break or continue in a catch block */
+#if UNUSED
     uint            isGlobal: 1;                    /**< Block is the global block */
+#endif
     uint            nobind: 1;                      /**< Don't bind to properties in this block */
 #if BLD_DEBUG
     struct EjsLine  *line;
@@ -1353,6 +1413,7 @@ extern void     ejsManageBlock(EjsBlock *block, int flags);
 extern void     ejsPopBlockNamespaces(EjsBlock *block, int count);
 extern EjsBlock *ejsRemoveScope(EjsBlock *block);
 extern void     ejsResetBlockNamespaces(Ejs *ejs, EjsBlock *block);
+extern void     ejsCreateBlockHelpers(Ejs *ejs);
 
 #if BLD_DEBUG
 #define ejsSetBlockLocation(block, loc) block->line = loc
@@ -1853,7 +1914,7 @@ extern EjsDate *ejsCreateDate(Ejs *ejs, MprTime value);
  */
 typedef EjsPot EjsError;
 
-#define ejsIsError(ejs, obj) (obj && ejsIsA(ejs, obj, ejs->values[S_Error]))
+#define ejsIsError(ejs, obj) (obj && ejsIsA(ejs, obj, S(Error)))
 
 extern EjsError *ejsCreateError(Ejs *ejs, struct EjsType *type, EjsObj *message);
 extern EjsArray *ejsCaptureStack(Ejs *ejs, int uplevels);
@@ -2635,16 +2696,18 @@ typedef struct EjsType {
     uint            initialized          : 1;       /**< Static initializer has run */
     uint            isInterface          : 1;       /**< Interface vs class */
     uint            isPot                : 1;       /**< Instances are based on EjsPot */
+    uint            loaded               : 1;       /**< Byte code loaded for type */
     uint            mutable              : 1;       /**< Type is mutable (has changable state) */
     uint            mutableInstances     : 1;       /**< Instances are mutable */
     uint            needFixup            : 1;       /**< Slots need fixup */
     uint            numericIndicies      : 1;       /**< Instances support direct numeric indicies */
     uint            virtualSlots         : 1;       /**< Properties are not stored in slots[] */
     
+    MprOff          endClass;                       /**< Offset in mod file for end of class */
     //  MOB -- pack with above?
     ushort          numInherited;                   /**< Number of inherited prototype properties */
     ushort          instanceSize;                   /**< Size of instances in bytes */
-    short           sid;                            /**< Special value Index into ejs->values[] */
+    short           sid;                            /**< Slot index into ejs->service->shared[] */
     struct EjsModule *module;                       /**< Module owning the type - stores the constant pool */
     void            *typeData;                      /**< Type specific data */
 } EjsType;
@@ -2724,10 +2787,9 @@ extern int ejsDefineGlobalFunction(Ejs *ejs, EjsString *name, EjsFun fn);
     assumption is worth the benefit.
  */
 //  MOB - need doc for this too
-//  MOB - #define ejsIs(ejs, obj, name) (obj && ejs->values[S_ ## name] == TYPE(obj))
-#define ejsIs(ejs, obj, name) ejsIsA(ejs, obj, ejs->values[S_ ## name])
+#define ejsIs(ejs, obj, name) ejsIsA(ejs, obj, ejs->service->shared[S_ ## name])
 #define ejsIsDefined(ejs, obj) (obj != 0 && !ejsIs(ejs, obj, Null) && !ejsIs(ejs, obj, Void))
-#define ejsCast(ejs, obj, name) ejsCastType(ejs, obj, ST(name))
+#define ejsCast(ejs, obj, name) ejsCastType(ejs, obj, S(name))
 
 /** 
     Test if an variable is an instance of a given type
@@ -2819,28 +2881,28 @@ extern void     ejsSetTypeAttributes(EjsType *type, int64 attributes);
 
 /******************************** Private Prototypes **********************************/
 
-extern int      ejsBootstrapTypes(Ejs *ejs);
+extern int      ejsCreateBootstrapTypes(Ejs *ejs);
+
+extern void     ejsInitBlockType(Ejs *ejs, EjsType *type);
+extern void     ejsInitNullType(Ejs *ejs, EjsType *type);
+extern void     ejsInitStringType(Ejs *ejs, EjsType *type);
+extern void     ejsInitTypeType(Ejs *ejs, EjsType *type);
+
 extern void     ejsCreateArrayType(Ejs *ejs);
-extern void     ejsCreateBlockType(Ejs *ejs);
 extern void     ejsCreateBooleanType(Ejs *ejs);
 extern void     ejsCreateConfigType(Ejs *ejs);
 extern void     ejsCreateErrorType(Ejs *ejs);
 extern void     ejsCreateFrameType(Ejs *ejs);
 extern void     ejsCreateFunctionType(Ejs *ejs);
-extern void     ejsCreateGlobalBlock(Ejs *ejs);
 extern void     ejsCreateIteratorType(Ejs *ejs);
 extern void     ejsCreateNamespaceType(Ejs *ejs);
-extern void     ejsCreateNullType(Ejs *ejs);
 extern void     ejsCreateNumberType(Ejs *ejs);
 extern void     ejsCreateObjectType(Ejs *ejs);
 extern void     ejsCreatePathType(Ejs *ejs);
 extern void     ejsCreateRegExpType(Ejs *ejs);
-extern void     ejsCreateTypeType(Ejs *ejs);
 extern void     ejsCreateVoidType(Ejs *ejs);
 extern void     ejsCreateXMLType(Ejs *ejs);
 extern void     ejsCreateXMLListType(Ejs *ejs);
-
-extern void     ejsInitStringType(Ejs *ejs, EjsType *type);
 
 /*  
     Native type configuration
@@ -2965,8 +3027,10 @@ typedef struct EjsService {
     uint            dontExit: 1;            /**< Prevent App.exit() from exiting */
     uint            logging: 1;             /**< Using --log */
     EjsIntern       *intern;                /**< Interned Unicode string hash - shared over all interps */
-    EjsObj          *foundation;            /**< Foundational native types */
-    EjsPot          *master;                /**< Master for quick cloning VMs */
+    EjsAny          **shared;               /**< Root of shared immutable types and values */
+    EjsHelpers      objHelpers;             /**< Default EjsObj helpers */
+    EjsHelpers      potHelpers;             /**< Default EjsPot helpers */
+    EjsHelpers      blockHelpers;           /**< Default EjsBlock helpers */
     MprMutex        *mutex;                 /**< Multithread locking */
 } EjsService;
 

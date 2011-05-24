@@ -836,7 +836,7 @@ EjsFile *ejsCreateFile(Ejs *ejs, cchar *path)
 
     mprAssert(path && *path);
 
-    fp = ejsCreateObj(ejs, ST(File), 0);
+    fp = ejsCreateObj(ejs, S(File), 0);
     if (fp == 0) {
         return 0;
     }
@@ -853,7 +853,7 @@ EjsFile *ejsCreateFileFromFd(Ejs *ejs, int fd, cchar *name, int mode)
     mprAssert(fd >= 0);
     mprAssert(name);
 
-    if ((fp = ejsCreateObj(ejs, ST(File), 0)) == NULL) {
+    if ((fp = ejsCreateObj(ejs, S(File), 0)) == NULL) {
         return NULL;
     }
     fp->perms = EJS_FILE_PERMS;
@@ -899,7 +899,7 @@ void ejsConfigureFileType(Ejs *ejs)
     EjsPot      *prototype;
 
     type = ejsConfigureNativeType(ejs, N("ejs", "File"), sizeof(EjsFile), manageFile, EJS_OBJ_HELPERS);
-    ejsSetSpecialType(ejs, S_File, type);
+    ejsSetSpecial(ejs, S_File, type);
 
     type->numericIndicies = 1;
     type->virtualSlots = 1;

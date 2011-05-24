@@ -490,9 +490,10 @@ static EjsType *defineClass(EcCompiler *cp, EcNode *np)
         astError(cp, np, "%N Class is already defined.", np->qname);
         return 0;
     }
-    if (ejs->empty) {
-        type = ejsGetPropertyByName(ejs, ejs->service->foundation, np->qname);
-    }
+    type = ejsGetPropertyByName(ejs, ejs->empty ? ejs->hidden : ejs->global, np->qname);
+
+    // UNUSED mprLog(0, "Look for %N, exists %p", np->qname, type);
+
     if (np->attributes & EJS_PROP_NATIVE) {
         astWarn(cp, np, "Native attribute on class %@ is not required, ignoring.", np->qname.name);
     }

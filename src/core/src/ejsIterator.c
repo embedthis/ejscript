@@ -30,7 +30,7 @@ EjsObj *ejsThrowStopIteration(Ejs *ejs)
 #if FUTURE
     ejs->exception = ejs->iterator;
 #else
-    ejs->exception = ST(StopIteration);
+    ejs->exception = S(StopIteration);
 #endif
     ejsAttention(ejs);
     return ejs->exception;
@@ -67,7 +67,7 @@ EjsIterator *ejsCreateIterator(Ejs *ejs, EjsAny *obj, void *nativeNext, bool dee
 {
     EjsIterator     *ip;
 
-    ip = ejsCreateObj(ejs, ST(Iterator), 0);
+    ip = ejsCreateObj(ejs, S(Iterator), 0);
     if (ip) {
         ip->index = 0;
         ip->indexVar = 0;
@@ -95,16 +95,10 @@ static void manageIterator(EjsIterator *ip, int flags)
  */
 void ejsCreateIteratorType(Ejs *ejs)
 {
-    EjsType     *type;
-
-    if (ST(Iterator) == 0) {
-        type = ejsCreateNativeType(ejs, N(EJS_ITERATOR_NAMESPACE, "Iterator"), sizeof(EjsIterator), S_Iterator,  
-            ES_iterator_Iterator_NUM_CLASS_PROP, manageIterator, EJS_OBJ_HELPERS);
-    }
-    if (ST(StopIteration) == 0) {
-        type = ejsCreateNativeType(ejs, N(EJS_ITERATOR_NAMESPACE, "StopIteration"), sizeof(EjsError), S_StopIteration, 
-            ES_iterator_StopIteration_NUM_CLASS_PROP, manageIterator, EJS_OBJ_HELPERS);
-    }
+    ejsCreateNativeType(ejs, N(EJS_ITERATOR_NAMESPACE, "Iterator"), sizeof(EjsIterator), S_Iterator,  
+        ES_iterator_Iterator_NUM_CLASS_PROP, manageIterator, EJS_OBJ_HELPERS);
+    ejsCreateNativeType(ejs, N(EJS_ITERATOR_NAMESPACE, "StopIteration"), sizeof(EjsError), S_StopIteration, 
+        ES_iterator_StopIteration_NUM_CLASS_PROP, manageIterator, EJS_OBJ_HELPERS);
 }
 
 
@@ -112,13 +106,10 @@ void ejsConfigureIteratorType(Ejs *ejs)
 {
     EjsType     *type;
     EjsPot      *prototype;
-    static int once = 0;
 
-    if (once++ == 0) {
-        type = ST(Iterator);
-        prototype = type->prototype;
-        ejsBindMethod(ejs, prototype, ES_iterator_Iterator_next, nextIterator);
-    }
+    type = S(Iterator);
+    prototype = type->prototype;
+    ejsBindMethod(ejs, prototype, ES_iterator_Iterator_next, nextIterator);
 }
 
 

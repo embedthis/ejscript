@@ -1290,8 +1290,10 @@ EjsRequest *ejsCloneRequest(Ejs *ejs, EjsRequest *req, bool deep)
 {
     HttpConn    *conn;
     EjsRequest  *nreq;
+    EjsType     *type;
 
-    if ((nreq = ejsCreatePot(ejs, ST(Request), 0)) == 0) {
+    type = ejsGetTypeByName(ejs, N("ejs.web", "Request"));
+    if ((nreq = ejsCreatePot(ejs, type, 0)) == 0) {
         ejsThrowMemoryError(ejs);
         return 0;
     }
@@ -1425,7 +1427,9 @@ void ejsConfigureRequestType(Ejs *ejs)
     EjsPot      *prototype;
 
     type = ejsConfigureNativeType(ejs, N("ejs.web", "Request"), sizeof(EjsRequest), manageRequest, EJS_POT_HELPERS);
+#if UNUSED
     ejsSetSpecialType(ejs, S_Request, type);
+#endif
 
     helpers = &type->helpers;
     helpers->getProperty = (EjsGetPropertyHelper) getRequestProperty;

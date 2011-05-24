@@ -189,7 +189,7 @@ static EjsBoolean *regex_test(Ejs *ejs, EjsRegExp *rp, int argc, EjsObj **argv)
 
 EjsString *ejsRegExpToString(Ejs *ejs, EjsRegExp *rp)
 {
-    return (EjsString*) castRegExp(ejs, rp, ST(String));
+    return (EjsString*) castRegExp(ejs, rp, S(String));
 }
 
 /*********************************** Factory **********************************/
@@ -208,7 +208,7 @@ EjsRegExp *ejsCreateRegExp(Ejs *ejs, EjsString *pattern)
         ejsThrowArgError(ejs, "Bad regular expression pattern. Must start with '/'");
         return 0;
     }
-    rp = ejsCreateObj(ejs, ST(RegExp), 0);
+    rp = ejsCreateObj(ejs, S(RegExp), 0);
     if (rp != 0) {
         /*
             Strip off flags for passing to pcre_compile2
@@ -335,7 +335,7 @@ void ejsConfigureRegExpType(Ejs *ejs)
     EjsType     *type;
     EjsPot      *prototype;
 
-    type = ST(RegExp);
+    type = S(RegExp);
     type->mutableInstances = 1;
     prototype = type->prototype;
 

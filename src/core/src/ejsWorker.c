@@ -323,7 +323,7 @@ static int reapJoins(Ejs *ejs, EjsObj *workers)
         if (completed == set->length) {
             joined = 1;
         }
-    } else if (TYPE(workers) == ST(Worker)) {
+    } else if (TYPE(workers) == S(Worker)) {
         /* Join one worker */
         worker = (EjsWorker*) workers;
         if (worker->state >= EJS_WORKER_COMPLETE) {
@@ -477,12 +477,12 @@ static int doMessage(Message *msg, MprEvent *mprEvent)
 
     switch (msg->callbackSlot) {
     case ES_Worker_onerror:
-        event = ejsCreateObj(ejs, ST(ErrorEvent), 0);
+        event = ejsCreateObj(ejs, S(ErrorEvent), 0);
         break;
             
     case ES_Worker_onclose:
     case ES_Worker_onmessage:
-        event = ejsCreateObj(ejs, ST(Event), 0);
+        event = ejsCreateObj(ejs, S(Event), 0);
         break;
             
     default:
@@ -828,7 +828,7 @@ static void handleError(Ejs *ejs, EjsWorker *worker, EjsObj *exception, int thro
 
 EjsWorker *ejsCreateWorker(Ejs *ejs)
 {
-    return ejsCreateObj(ejs, ST(Worker), 0);
+    return ejsCreateObj(ejs, S(Worker), 0);
 }
 
 
@@ -864,7 +864,7 @@ void ejsConfigureWorkerType(Ejs *ejs)
 
     type = ejsConfigureNativeType(ejs, N("ejs", "Worker"), sizeof(EjsWorker), manageWorker, EJS_POT_HELPERS);
     type->mutableInstances = 1;
-    ejsSetSpecialType(ejs, S_Worker, type);
+    ejsSetSpecial(ejs, S_Worker, type);
     prototype = type->prototype;
 
     ejsBindConstructor(ejs, type, workerConstructor);

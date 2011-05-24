@@ -290,6 +290,7 @@ void ejsFreezeGlobal(Ejs *ejs)
 }
 
 
+#if UNUSED
 void ejsCreateGlobalBlock(Ejs *ejs)
 {
     EjsBlock    *block;
@@ -303,16 +304,8 @@ void ejsCreateGlobalBlock(Ejs *ejs)
     block->pot.shortScope = 1;
     SET_DYNAMIC(block, 1);
     mprSetName(block, "global");
-
-    /*  
-        Create the standard namespaces. Order matters here. This is the (reverse) order of lookup.
-        Empty is first to maximize speed of searching dynamic properties. Ejs second to maximize builtin lookups.
-     */
-    ejsSetSpecial(ejs, S_iteratorSpace, ejsDefineReservedNamespace(ejs, block, NULL, EJS_ITERATOR_NAMESPACE));
-    ejsSetSpecial(ejs, S_publicSpace, ejsDefineReservedNamespace(ejs, block, NULL, EJS_PUBLIC_NAMESPACE));
-    ejsSetSpecial(ejs, S_ejsSpace, ejsDefineReservedNamespace(ejs, block, NULL, EJS_EJS_NAMESPACE));
-    ejsSetSpecial(ejs, S_emptySpace, ejsDefineReservedNamespace(ejs, block, NULL, EJS_EMPTY_NAMESPACE));
 }
+#endif
 
 
 void ejsConfigureGlobalBlock(Ejs *ejs)

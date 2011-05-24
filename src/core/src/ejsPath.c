@@ -19,7 +19,7 @@ static EjsAny *castPath(Ejs *ejs, EjsPath *fp, EjsType *type)
     if (type->sid == S_String) {
         return ejsCreateStringFromAsc(ejs, fp->value);
     }
-    return (ejs->potHelpers.cast)(ejs, fp, type);
+    return (ejs->service->potHelpers.cast)(ejs, fp, type);
 }
 
 
@@ -1220,7 +1220,7 @@ EjsPath *ejsCreatePath(Ejs *ejs, EjsString *path)
 {
     EjsPath     *fp;
 
-    if ((fp = ejsCreateObj(ejs, ST(Path), 0)) == 0) {
+    if ((fp = ejsCreateObj(ejs, S(Path), 0)) == 0) {
         return 0;
     }
     pathConstructor(ejs, fp, 1, (EjsObj**) &path);
@@ -1247,8 +1247,8 @@ void ejsCreatePathType(Ejs *ejs)
 {
     EjsType     *type;
 
-    type = ejsCreateNativeType(ejs, N("ejs", "Path"), sizeof(EjsPath), S_Path, ES_Path_NUM_CLASS_PROP, 
-        managePath, EJS_OBJ_HELPERS);
+    type = ejsCreateNativeType(ejs, N("ejs", "Path"), sizeof(EjsPath), S_Path, ES_Path_NUM_CLASS_PROP, managePath, 
+        EJS_OBJ_HELPERS);
     type->helpers.cast = (EjsCastHelper) castPath;
     type->helpers.clone = (EjsCloneHelper) clonePath;
     type->helpers.invokeOperator = (EjsInvokeOperatorHelper) invokePathOperator;
@@ -1260,7 +1260,7 @@ void ejsConfigurePathType(Ejs *ejs)
     EjsType     *type;
     EjsPot      *prototype;
 
-    type = ST(Path);
+    type = S(Path);
     mprAssert(type);
     prototype = type->prototype;
 

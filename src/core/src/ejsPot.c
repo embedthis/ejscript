@@ -25,7 +25,7 @@ static void removeHashEntry(Ejs *ejs, EjsPot *obj, EjsName qname);
 
 EjsAny *ejsCreateEmptyPot(Ejs *ejs)
 {
-    return ejsCreatePot(ejs, ST(Object), 0);
+    return ejsCreatePot(ejs, S(Object), 0);
 }
 
 
@@ -1141,8 +1141,8 @@ void ejsCreatePotHelpers(Ejs *ejs)
 {
     EjsHelpers      *helpers;
 
-    ejs->potHelpers = ejs->objHelpers;
-    helpers = &ejs->potHelpers;
+    ejs->service->potHelpers = ejs->service->objHelpers;
+    helpers = &ejs->service->potHelpers;
     helpers->clone                  = (EjsCloneHelper) ejsClonePot;
     helpers->create                 = (EjsCreateHelper) ejsCreatePot;
     helpers->defineProperty         = (EjsDefinePropertyHelper) definePotProperty;

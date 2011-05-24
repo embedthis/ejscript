@@ -52,7 +52,7 @@ static EjsError *errorConstructor(Ejs *ejs, EjsError *error, int argc, EjsObj **
     if (argc > 0) {
         ejsSetProperty(ejs, error, ES_Error_message, ejsToString(ejs, argv[0]));
     }
-    if (ST(Date)) {
+    if (S(Date)) {
         ejsSetProperty(ejs, error, ES_Error_timestamp, ejsCreateDate(ejs, mprGetTime()));
         ejsSetProperty(ejs, error, ES_Error_stack, ejsCaptureStack(ejs, 0));
     }
@@ -103,21 +103,21 @@ static EjsType *defineType(Ejs *ejs, cchar *name, int id)
 void ejsCreateErrorType(Ejs *ejs)
 {
     defineType(ejs, "Error", S_Error);
-    defineType(ejs, "ArgError", -1);
-    defineType(ejs, "ArithmeticError", -1);
-    defineType(ejs, "AssertError", -1);
-    defineType(ejs, "InstructionError", -1);
-    defineType(ejs, "IOError", -1);
-    defineType(ejs, "InternalError", -1);
-    defineType(ejs, "MemoryError", -1);
-    defineType(ejs, "OutOfBoundsError", -1);
-    defineType(ejs, "ReferenceError", -1);
-    defineType(ejs, "ResourceError", -1);
-    defineType(ejs, "SecurityError", -1);
-    defineType(ejs, "StateError", -1);
-    defineType(ejs, "SyntaxError", -1);
-    defineType(ejs, "TypeError", -1);
-    defineType(ejs, "URIError", -1);
+    defineType(ejs, "ArgError", ES_ArgError);
+    defineType(ejs, "ArithmeticError", ES_ArithmeticError);
+    defineType(ejs, "AssertError", ES_AssertError);
+    defineType(ejs, "InstructionError", ES_InstructionError);
+    defineType(ejs, "IOError", ES_IOError);
+    defineType(ejs, "InternalError", ES_InternalError);
+    defineType(ejs, "MemoryError", ES_MemoryError);
+    defineType(ejs, "OutOfBoundsError", ES_OutOfBoundsError);
+    defineType(ejs, "ReferenceError", ES_ReferenceError);
+    defineType(ejs, "ResourceError", ES_ResourceError);
+    defineType(ejs, "SecurityError", ES_SecurityError);
+    defineType(ejs, "StateError", ES_StateError);
+    defineType(ejs, "SyntaxError", ES_SyntaxError);
+    defineType(ejs, "TypeError", ES_TypeError);
+    defineType(ejs, "URIError", ES_URIError);
 }
 
 
@@ -151,7 +151,7 @@ void ejsConfigureErrorType(Ejs *ejs)
     configureType(ejs, "TypeError");
     configureType(ejs, "URIError");
 
-    ejsBindMethod(ejs, ST(Error), ES_Error_capture, error_capture);
+    ejsBindMethod(ejs, S(Error), ES_Error_capture, error_capture);
 }
 
 

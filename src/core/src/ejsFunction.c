@@ -20,7 +20,7 @@ static EjsFunction *createFunction(Ejs *ejs, EjsType *type, int numProp)
 {
     EjsFunction     *fun;
 
-    if ((fun = ejsCreatePot(ejs, ST(Function), 0)) == 0) {
+    if ((fun = ejsCreatePot(ejs, S(Function), 0)) == 0) {
         return 0;
     }
     fun->block.pot.isFunction = 1;
@@ -442,7 +442,7 @@ EjsPot *ejsCreateActivation(Ejs *ejs, EjsFunction *fun, int numProp)
 {
     EjsPot  *activation;
 
-    activation = ejsCreatePot(ejs, ST(Object), numProp);
+    activation = ejsCreatePot(ejs, S(Object), numProp);
     mprCopyName(activation, fun);
     return activation;
 }
@@ -454,7 +454,7 @@ EjsFunction *ejsCreateSimpleFunction(Ejs *ejs, EjsString *name, int attributes)
 {
     EjsFunction     *fun;
 
-    if ((fun = ejsCreateObj(ejs, ST(Function), 0)) == NULL) {
+    if ((fun = ejsCreateObj(ejs, S(Function), 0)) == NULL) {
         return 0;
     }
     fun->name = name;
@@ -554,8 +554,7 @@ void ejsConfigureFunctionType(Ejs *ejs)
     EjsType     *type;
     EjsPot      *prototype;
 
-    type = ST(Function);
-    //  MOB - testing functions with immutable instances
+    type = S(Function);
     type->mutableInstances = 0;
     prototype = type->prototype;
 

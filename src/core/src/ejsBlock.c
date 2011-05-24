@@ -162,15 +162,26 @@ void ejsManageBlock(EjsBlock *block, int flags)
 }
 
 
-void ejsCreateBlockType(Ejs *ejs)
+void ejsCreateBlockHelpers(Ejs *ejs)
 {
+    EjsHelpers      *helpers;
+
+    ejs->service->blockHelpers = ejs->service->potHelpers;
+    helpers = &ejs->service->blockHelpers;
+    helpers->clone = (EjsCloneHelper) ejsCloneBlock;
+}
+
+
+void ejsInitBlockType(Ejs *ejs, EjsType *type)
+{
+#if UNUSED
     EjsType     *type;
 
     type = ejsCreateNativeType(ejs, N("ejs", "Block"), sizeof(EjsBlock), S_Block, ES_Block_NUM_CLASS_PROP, 
         ejsManageBlock, EJS_POT_HELPERS);
+#endif
     type->constructor.block.pot.shortScope = 1;
 
-    type->helpers.clone = (EjsCloneHelper) ejsCloneBlock;
     ejsSetSpecial(ejs, S_commaProt, ejsCreateStringFromAsc(ejs, ",protected"));
 }
 

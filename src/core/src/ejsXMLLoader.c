@@ -44,8 +44,8 @@ MprXml *ejsCreateXmlParser(Ejs *ejs, EjsXML *xml, cchar *filename)
     parser->nodeStack[0].obj = xml;
     
     //  TODO - these 2 are not really needed. Can use ejs->
-    parser->xmlType = ST(XML);
-    parser->xmlListType = ST(XMLList);
+    parser->xmlType = S(XML);
+    parser->xmlListType = S(XMLList);
     parser->filename = filename;
 
     mprXmlSetParseArg(xp, parser);

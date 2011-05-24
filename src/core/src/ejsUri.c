@@ -28,7 +28,7 @@ static EjsUri *castToUri(Ejs *ejs, EjsObj *arg)
 {
     EjsUri  *up;
 
-    up = ejsCreateObj(ejs, ST(Uri), 0);
+    up = ejsCreateObj(ejs, S(Uri), 0);
     if (ejsIs(ejs, arg, String)) {
         up->uri = httpCreateUri(up, ejsToMulti(ejs, arg), 0);
 
@@ -683,7 +683,7 @@ static EjsUri *uri_resolve(Ejs *ejs, EjsUri *up, int argc, EjsObj **argv)
 
     uri = up->uri;
     target = toHttpUri(ejs, argv[0], 0);
-    result = ejsCreateObj(ejs, ST(Uri), 0);
+    result = ejsCreateObj(ejs, S(Uri), 0);
     uri = httpResolveUri(uri, 1, &target, 0);
     if (up->uri == uri) {
         uri = httpCloneUri(uri, 0);
@@ -702,7 +702,7 @@ static EjsUri *uri_relative(Ejs *ejs, EjsUri *up, int argc, EjsObj **argv)
     HttpUri     *baseUri;
 
     baseUri = toHttpUri(ejs, argv[0], 0);
-    result = ejsCreateObj(ejs, ST(Uri), 0);
+    result = ejsCreateObj(ejs, S(Uri), 0);
     result->uri = httpGetRelativeUri(baseUri, up->uri, 1);
     return result;
 }
@@ -917,7 +917,7 @@ static EjsUri *completeUri(Ejs *ejs, EjsUri *up, EjsObj *missing, int includeQue
     if (!ejsIsDefined(ejs, missing)) {
         missingUri = 0;
     } else if (ejsGetPropertyCount(ejs, missing) > 0) {
-        missingUri = ejsCreateObj(ejs, ST(Uri), 0);
+        missingUri = ejsCreateObj(ejs, S(Uri), 0);
         missingUri->uri = createHttpUriFromHash(ejs, missing, 1);
     } else {
         missingUri = ejsToUri(ejs, missing);
@@ -1096,7 +1096,7 @@ EjsUri *ejsCreateUri(Ejs *ejs, EjsString *path)
 {
     EjsUri      *up;
 
-    if ((up = ejsCreateObj(ejs, ST(Uri), 0)) == NULL) {
+    if ((up = ejsCreateObj(ejs, S(Uri), 0)) == NULL) {
         return 0;
     }
     uri_constructor(ejs, up, 1, (EjsObj**) &path);
@@ -1109,7 +1109,7 @@ EjsUri *ejsCreateUriFromMulti(Ejs *ejs, cchar *path)
     EjsUri      *up;
     EjsObj      *arg;
 
-    if ((up = ejsCreateObj(ejs, ST(Uri), 0)) == 0) {
+    if ((up = ejsCreateObj(ejs, S(Uri), 0)) == 0) {
         return 0;
     }
     arg = (EjsObj*) ejsCreateStringFromAsc(ejs, path);
@@ -1123,7 +1123,7 @@ EjsUri *ejsCreateUriFromParts(Ejs *ejs, cchar *scheme, cchar *host, int port, cc
 {
     EjsUri      *up;
 
-    if ((up = ejsCreateObj(ejs, ST(Uri), 0)) == 0) {
+    if ((up = ejsCreateObj(ejs, S(Uri), 0)) == 0) {
         return 0;
     }
     up->uri = httpCreateUriFromParts(scheme, host, port, path, reference, query, complete);
@@ -1146,7 +1146,7 @@ void ejsConfigureUriType(Ejs *ejs)
 
     type = ejsConfigureNativeType(ejs, N("ejs", "Uri"), sizeof(EjsUri), manageUri, EJS_OBJ_HELPERS);
     type->mutableInstances = 1;
-    ejsSetSpecialType(ejs, S_Uri, type);
+    ejsSetSpecial(ejs, S_Uri, type);
     prototype = type->prototype;
 
     type->helpers.clone = (EjsCloneHelper) cloneUri;

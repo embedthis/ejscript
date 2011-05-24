@@ -722,7 +722,7 @@ void ejsCreateObjHelpers(Ejs *ejs)
 {
     EjsHelpers      *helpers;
 
-    helpers = &ejs->objHelpers;
+    helpers = &ejs->service->objHelpers;
     helpers->cast                   = (EjsCastHelper) castObj;
     helpers->clone                  = (EjsCloneHelper) cloneObj;
     helpers->create                 = (EjsCreateHelper) ejsAlloc;

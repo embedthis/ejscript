@@ -728,6 +728,7 @@ char *ejsModuleReadMulti(Ejs *ejs, EjsModule *mp)
     mprAssert(mp);
 
     len = ejsModuleReadInt(ejs, mp);
+    mprAssert(len >= 0);
     if (mp->hasError || (buf = mprAlloc(len)) == 0) {
         return NULL;
     }

@@ -127,7 +127,7 @@ static int deleteArrayPropertyByName(Ejs *ejs, EjsArray *ap, EjsName qname)
     if (isdigit((int) qname.name->value[0])) {
         return deleteArrayProperty(ejs, ap, (int) wtoi(qname.name->value, 10, NULL));
     }
-    return (ejs->potHelpers.deletePropertyByName)(ejs, ap, qname);
+    return (ejs->service->potHelpers.deletePropertyByName)(ejs, ap, qname);
 }
 
 
@@ -168,11 +168,11 @@ static EjsObj *getArrayPropertyByName(Ejs *ejs, EjsArray *ap, EjsName qname)
     if (qname.name == S(length)) {
         return 0;
     }
-    slotNum = (ejs->potHelpers.lookupProperty)(ejs, ap, qname);
+    slotNum = (ejs->service->potHelpers.lookupProperty)(ejs, ap, qname);
     if (slotNum < 0) {
         return 0;
     }
-    return (ejs->potHelpers.getProperty)(ejs, ap, slotNum);
+    return (ejs->service->potHelpers.getProperty)(ejs, ap, slotNum);
 }
 
 
@@ -347,19 +347,19 @@ static int setArrayPropertyByName(Ejs *ejs, EjsArray *ap, EjsName qname, EjsObj 
             setArrayLength(ejs, ap, 1, &value);
             return ES_Array_length;
         }
-        slotNum = (ejs->potHelpers.lookupProperty)(ejs, ap, qname);
+        slotNum = (ejs->service->potHelpers.lookupProperty)(ejs, ap, qname);
         if (slotNum < 0) {
-            slotNum = (ejs->potHelpers.setProperty)(ejs, ap, slotNum, value);
+            slotNum = (ejs->service->potHelpers.setProperty)(ejs, ap, slotNum, value);
             if (slotNum < 0) {
                 return EJS_ERR;
             }
-            if ((ejs->potHelpers.setPropertyName)(ejs, ap, slotNum, qname) < 0) {
+            if ((ejs->service->potHelpers.setPropertyName)(ejs, ap, slotNum, qname) < 0) {
                 return EJS_ERR;
             }
             return slotNum;
 
         } else {
-            return (ejs->potHelpers.setProperty)(ejs, ap, slotNum, value);
+            return (ejs->service->potHelpers.setProperty)(ejs, ap, slotNum, value);
         }
     }
     if ((slotNum = checkSlot(ejs, ap, ejsAtoi(ejs, qname.name, 10))) < 0) {
@@ -1773,7 +1773,7 @@ void ejsConfigureArrayType(Ejs *ejs)
     EjsType     *type;
     EjsPot      *prototype;
 
-    type = ST(Array);
+    type = S(Array);
     prototype = type->prototype;
 
     /*

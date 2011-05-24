@@ -54,7 +54,7 @@ static EjsAny *castXml(Ejs *ejs, EjsXML *xml, EjsType *type)
 
     mprAssert(ejsIsXML(ejs, xml));
 
-    if (type == ST(XMLList)) {
+    if (type == S(XMLList)) {
         return xml;
     }
 
@@ -65,7 +65,7 @@ static EjsAny *castXml(Ejs *ejs, EjsXML *xml, EjsType *type)
         return ejsCreateBoolean(ejs, 1);
 
     case S_Number:
-        result = castXml(ejs, xml, ST(String));
+        result = castXml(ejs, xml, S(String));
         return ejsToNumber(ejs, result);
 
     case S_String:
@@ -817,7 +817,7 @@ static EjsString *xmlToJson(Ejs *ejs, EjsObj *vp, int argc, EjsObj **argv)
  */
 static EjsObj *xmlToString(Ejs *ejs, EjsObj *obj, int argc, EjsObj **argv)
 {
-    return (TYPE(obj)->helpers.cast)(ejs, obj, ST(String));
+    return (TYPE(obj)->helpers.cast)(ejs, obj, S(String));
 }
 
 
@@ -1000,7 +1000,7 @@ EjsXML *ejsCreateXML(Ejs *ejs, int kind, EjsName qname, EjsXML *parent, EjsStrin
 {
     EjsXML      *xml;
 
-    if ((xml = (EjsXML*) ejsAlloc(ejs, ST(XML), 0)) == NULL) {
+    if ((xml = (EjsXML*) ejsAlloc(ejs, S(XML), 0)) == NULL) {
         return 0;
     }
     if (qname.name) {
@@ -1072,8 +1072,8 @@ void ejsCreateXMLType(Ejs *ejs)
 {
     EjsType     *type;
 
-    type = ejsCreateNativeType(ejs, N("ejs", "XML"), sizeof(EjsXML), S_XML, ES_XML_NUM_CLASS_PROP, 
-        ejsManageXML, EJS_OBJ_HELPERS);
+    type = ejsCreateNativeType(ejs, N("ejs", "XML"), sizeof(EjsXML), S_XML, ES_XML_NUM_CLASS_PROP, ejsManageXML, 
+        EJS_OBJ_HELPERS);
 
     /*
         Must not bind as XML uses get/setPropertyByName to defer to user XML elements over XML methods
@@ -1096,7 +1096,7 @@ void ejsConfigureXMLType(Ejs *ejs)
     EjsType     *type;
     EjsPot      *prototype;
 
-    type = ST(XML);
+    type = S(XML);
     type->mutableInstances = 1;
     prototype = type->prototype;
 

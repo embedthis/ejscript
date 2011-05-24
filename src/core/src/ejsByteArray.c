@@ -1362,7 +1362,7 @@ EjsByteArray *ejsCreateByteArray(Ejs *ejs, ssize size)
     /*
         No need to invoke constructor
      */
-    ap = ejsCreateObj(ejs, ST(ByteArray), 0);
+    ap = ejsCreateObj(ejs, S(ByteArray), 0);
     if (ap == 0) {
         return 0;
     }
@@ -1397,7 +1397,7 @@ void ejsConfigureByteArrayType(Ejs *ejs)
     EjsPot      *prototype;
 
     type = ejsConfigureNativeType(ejs, N("ejs", "ByteArray"), sizeof(EjsByteArray), manageByteArray, EJS_OBJ_HELPERS);
-    ejsSetSpecialType(ejs, S_ByteArray, type);
+    ejsSetSpecial(ejs, S_ByteArray, type);
     type->numericIndicies = 1;
     type->virtualSlots = 1;
     type->mutableInstances = 1;

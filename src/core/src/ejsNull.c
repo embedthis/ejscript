@@ -182,19 +182,22 @@ EjsNull *ejsCreateNull(Ejs *ejs)
 }
 
 
-void ejsCreateNullType(Ejs *ejs)
+void ejsInitNullType(Ejs *ejs, EjsType *type)
 {
+#if UNUSED
     EjsType     *type;
 
     type = ejsCreateNativeType(ejs, N("ejs", "Null"), sizeof(EjsNull), S_Null, ES_Null_NUM_CLASS_PROP, 
         NULL, EJS_OBJ_HELPERS);
+#endif
 
     type->helpers.cast             = (EjsCastHelper) castNull;
     type->helpers.getProperty      = (EjsGetPropertyHelper) getNullProperty;
     type->helpers.invokeOperator   = (EjsInvokeOperatorHelper) invokeNullOperator;
-
-    ejsSetSpecial(ejs, S_null, ejsCreateObj(ejs, type, 0));
+#if UNUSED
+    ejsSetSpecial(ejs, ES_null, ejsCreateObj(ejs, type, 0));
     mprSetName(S(null), "null");
+#endif
 }
 
 
@@ -203,7 +206,7 @@ void ejsConfigureNullType(Ejs *ejs)
     EjsType     *type;
     EjsPot      *prototype;
 
-    type = ST(Null);
+    type = S(Null);
     prototype = type->prototype;
 
     ejsSetProperty(ejs, ejs->global, ES_null, S(null));

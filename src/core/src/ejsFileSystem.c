@@ -176,7 +176,7 @@ EjsFileSystem *ejsCreateFileSystem(Ejs *ejs, cchar *path)
     EjsFileSystem   *fs;
     EjsObj          *arg;
 
-    fs = ejsCreateObj(ejs, ST(FileSystem), 0);
+    fs = ejsCreateObj(ejs, S(FileSystem), 0);
     if (fs == 0) {
         return 0;
     }
@@ -192,7 +192,7 @@ void ejsConfigureFileSystemType(Ejs *ejs)
     EjsPot      *prototype;
 
     type = ejsConfigureNativeType(ejs, N("ejs", "FileSystem"), sizeof(EjsFileSystem), manageFileSystem, EJS_OBJ_HELPERS);
-    ejsSetSpecialType(ejs, S_FileSystem, type);
+    ejsSetSpecial(ejs, S_FileSystem, type);
     prototype = type->prototype;
 
     ejsBindConstructor(ejs, type, fileSystemConstructor);

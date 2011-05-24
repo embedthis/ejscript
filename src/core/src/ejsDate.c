@@ -991,7 +991,7 @@ static EjsString *date_toJSON(Ejs *ejs, EjsDate *dp, int argc, EjsObj **argv)
  */
 static EjsString *date_toString(Ejs *ejs, EjsDate *dp, int argc, EjsObj **argv)
 {
-    return castDate(ejs, dp, ST(String));
+    return castDate(ejs, dp, S(String));
 }
 
 
@@ -1085,7 +1085,7 @@ void ejsConfigureDateType(Ejs *ejs)
         return;
     }
     type->mutableInstances = 1;
-    ejsSetSpecialType(ejs, S_Date, type);
+    ejsSetSpecial(ejs, S_Date, type);
     prototype = type->prototype;
 
     type->helpers.cast = (EjsCastHelper) castDate;
@@ -1093,9 +1093,7 @@ void ejsConfigureDateType(Ejs *ejs)
     type->helpers.invokeOperator = (EjsInvokeOperatorHelper) invokeDateOperator;
 
     ejsBindMethod(ejs, type, ES_Date_now, date_now);
-#if ES_Date_ticks
     ejsBindAccess(ejs, type, ES_Date_ticks, date_ticks, NULL);
-#endif
     ejsBindMethod(ejs, type, ES_Date_parseDate, date_parseDate);
     ejsBindMethod(ejs, type, ES_Date_parseUTCDate, date_parseUTCDate);
     ejsBindMethod(ejs, type, ES_Date_parse, date_parse);

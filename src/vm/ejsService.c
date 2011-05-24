@@ -14,12 +14,12 @@ static int allocNotifier(int flags, ssize size);
 static int cloneVM(Ejs *ejs, Ejs *master);
 static int  configureEjs(Ejs *ejs);
 static int  defineTypes(Ejs *ejs);
+static int  defineSharedTypes(Ejs *ejs);
 static void initSearchPath(Ejs *ejs, cchar *search);
 static int  loadStandardModules(Ejs *ejs, MprList *require);
 static void logHandler(int flags, int level, cchar *msg);
 static void manageEjs(Ejs *ejs, int flags);
 static void manageEjsService(EjsService *service, int flags);
-static void markValues(Ejs *ejs);
 static void poolTimer(EjsPool *pool, MprEvent *event);
 static int  runSpecificMethod(Ejs *ejs, cchar *className, cchar *methodName);
 static int  searchForMethod(Ejs *ejs, cchar *methodName, EjsType **typeReturn);
@@ -38,6 +38,7 @@ static EjsService *createService()
     if (mprUsingDefaultLogHandler()) {
         ejsRedirectLogging(0);
     }
+    sp->shared = mprAllocZeroed(EJS_MAX_SPECIAL * sizeof(EjsAny*));
     sp->nativeModules = mprCreateHash(-1, MPR_HASH_STATIC_KEYS);
     sp->mutex = mprCreateLock();
     sp->vmlist = mprCreateList(-1, MPR_LIST_STATIC_VALUES);
@@ -50,6 +51,8 @@ static EjsService *createService()
 
 static void manageEjsService(EjsService *sp, int flags)
 {
+    int     i;
+
     if (flags & MPR_MANAGE_MARK) {
         mprMark(sp->http);
         mprMark(sp->mutex);
@@ -57,7 +60,10 @@ static void manageEjsService(EjsService *sp, int flags)
         mprMark(sp->vmpool);
         mprMark(sp->nativeModules);
         mprMark(sp->intern);
-        mprMark(sp->foundation);
+        mprMark(sp->shared);
+        for (i = 0; i < EJS_MAX_SPECIAL; i++) {
+            mprMark(sp->shared[i]);
+        }
 
     } else if (flags & MPR_MANAGE_FREE) {
         ejsDestroyIntern(sp->intern);
@@ -123,11 +129,15 @@ Ejs *ejsAllocPoolVM(EjsPool *pool, int flags)
             }
             if (pool->templateScript) {
                 script = ejsCreateStringFromAsc(pool->template, pool->templateScript);
+//  MOB
+int frozen = ejsFreeze(pool->template, 1);
                 if (ejsLoadScriptLiteral(pool->template, script, NULL, EC_FLAGS_NO_OUT | EC_FLAGS_BIND) < 0) {
                     mprError("Can't execute \"%s\"\n%s", script, ejsGetErrorMsg(pool->template, 1));
                     unlock(pool);
+ejsFreeze(pool->template, frozen);
                     return 0;
                 }
+ejsFreeze(pool->template, frozen);
             }
         }
         unlock(pool);
@@ -210,8 +220,9 @@ Ejs *ejsCreateVM(Ejs *master, MprDispatcher *dispatcher, cchar *search, MprList 
     mprGlobalUnlock();
 
     ejs->service = sp;
-    mprAddItem(sp->vmlist, ejs);
+#if UNUSED
     ejs->master = master;
+#endif
 
     if ((ejs->state = mprAllocZeroed(sizeof(EjsState))) == 0) {
         return 0;
@@ -248,18 +259,25 @@ Ejs *ejsCreateVM(Ejs *master, MprDispatcher *dispatcher, cchar *search, MprList 
     ejs->state->frozen = 1;
 
     if (master) {
+        // MOB - address
         if (cloneVM(ejs, master) < 0) {
             return 0;
         }
     } else {
-        if (defineTypes(ejs) < 0 || loadStandardModules(ejs, require) < 0) {
+//  MOB
+mprGlobalLock();
+        defineSharedTypes(ejs);
+        defineTypes(ejs);
+        if (loadStandardModules(ejs, require) < 0) {
             if (ejs->exception) {
                 ejsReportError(ejs, "Can't initialize interpreter");
             }
             ejsDestroyVM(ejs);
             mprRemoveRoot(ejs);
+mprGlobalUnlock();
             return 0;
         }
+mprGlobalUnlock();
         ejsFreezeGlobal(ejs);
     }
     if (mprHasMemError(ejs)) {
@@ -275,6 +293,7 @@ Ejs *ejsCreateVM(Ejs *master, MprDispatcher *dispatcher, cchar *search, MprList 
     mprLog(5, "CREATE %s, length %d", ejs->name, sp->vmlist->length);
 #endif
     mprAssert(!ejs->exception);
+    mprAddItem(sp->vmlist, ejs);
     return ejs;
 }
 
@@ -327,6 +346,7 @@ static void manageEjs(Ejs *ejs, int flags)
         }
 #endif
         mprMark(ejs->global);
+        mprMark(ejs->hidden);
         mprMark(ejs->name);
         mprMark(ejs->doc);
         mprMark(ejs->errorMsg);
@@ -369,7 +389,6 @@ static void manageEjs(Ejs *ejs, int flags)
                 }
             }
         }
-        markValues(ejs);
 
     } else if (flags & MPR_MANAGE_FREE) {
         ejsDestroyVM(ejs);
@@ -377,65 +396,30 @@ static void manageEjs(Ejs *ejs, int flags)
 }
 
 
-static void markValues(Ejs *ejs)
-{
-    int     i;
-
-    for (i = 0; i < EJS_MAX_SPECIAL; i++) {
-        mprMark(ejs->values[i]);
-    }
-}
-
-
 void ejsCloneObjHelpers(Ejs *ejs, EjsType *type)
 {
-    type->helpers = ejs->objHelpers;
+    type->helpers = ejs->service->objHelpers;
 }
 
 
 void ejsClonePotHelpers(Ejs *ejs, EjsType *type)
 {
-    type->helpers = ejs->potHelpers;
+    type->helpers = ejs->service->potHelpers;
     type->isPot = 1;
 }
 
 
 void ejsCloneBlockHelpers(Ejs *ejs, EjsType *type)
 {
-    type->helpers = ST(Block)->helpers;
+    type->helpers = ejs->service->blockHelpers;
     type->isPot = 1;
-}
-
-
-static void cloneTypes(Ejs *ejs)
-{
-    Ejs     *master;
-    
-    master = (ejs->master) ? ejs->master : mprGetFirstItem(ejs->service->vmlist);
-    if (master) {
-        ejs->values[S_Iterator] = master->values[S_Iterator];
-        ejs->values[S_StopIteration] = master->values[S_StopIteration];
-    }
 }
 
 
 static int cloneVM(Ejs *ejs, Ejs *master)
 {
-    EjsAny      *vp;
     EjsModule   *mp;
-    int         i, next;
-
-    for (i = 0; i < EJS_MAX_SPECIAL; i++) {
-        vp = master->values[i];
-        if (vp == 0) {
-            continue;
-        }
-#if UNUSED
-        mprAssert(!((ejsIsType(ejs, vp) && ((EjsType*) vp)->mutable) ||(!ejsIsType(ejs, vp) && TYPE(vp)->mutableInstances)));
-#endif
-        ejs->values[i] = master->values[i];
-    }
-    ejs->global = master->global;
+    int         next;
 
 // extern int cloneCopy;
 // MOB extern int cloneRef;
@@ -443,9 +427,6 @@ static int cloneVM(Ejs *ejs, Ejs *master)
     ejs->global = ejsClone(ejs, master->global, 1);
 // print("Copied %d, ref %d\n", cloneCopy, cloneRef);
 
-
-    ejs->potHelpers = master->potHelpers;
-    ejs->objHelpers = master->objHelpers;
     ejs->sqlite = master->sqlite;
     ejs->http = master->http;
 
@@ -458,45 +439,103 @@ static int cloneVM(Ejs *ejs, Ejs *master)
     return 0;
 }
 
+
 /*  
-    Create the core language types. These are native types and are created prior to loading ejs.mod.
-    The loader then matches these types to the loaded definitions.
+    Create the shared immutable language types and values. This is called only once ever.
  */
-static int defineTypes(Ejs *ejs)
+static int defineSharedTypes(Ejs *ejs)
 {
     /*  
         Create the essential bootstrap types: Object, Type and the global object, these are the foundation.
         All types are instances of Type. Order matters here.
      */
-    cloneTypes(ejs);
-    ejsBootstrapTypes(ejs);
-    ejsCreateArrayType(ejs);
-    ejsCreateBlockType(ejs);
-    ejsCreateTypeType(ejs);
-    ejsCreateNullType(ejs);
-    ejsCreateNamespaceType(ejs);
-    ejsCreateFunctionType(ejs);
-    ejsCreateFrameType(ejs);
-    ejsCreateGlobalBlock(ejs);
+    if (S(Object) == 0) {
+        ejsCreateBootstrapTypes(ejs);
+        ejsCreateArrayType(ejs);
+        ejsCreateNamespaceType(ejs);
+        ejsCreateFunctionType(ejs);
+        ejsCreateFrameType(ejs);
 
-    /*
-        These types are used by the compiler. Must work with an empty interpreter. Order does not matter.
-     */
-    ejsCreateBooleanType(ejs);
-    ejsCreateErrorType(ejs);
-    ejsCreateIteratorType(ejs);
-    ejsCreateVoidType(ejs);
-    ejsCreateNumberType(ejs);
-    ejsCreatePathType(ejs);
-    ejsCreateRegExpType(ejs);
-    ejsCreateXMLType(ejs);
-    ejsCreateXMLListType(ejs);
+        /*
+            These types are used by the compiler. Must work with an empty interpreter. Order does not matter.
+         */
+        ejsCreateBooleanType(ejs);
+        ejsCreateErrorType(ejs);
+        ejsCreateIteratorType(ejs);
+        ejsCreateVoidType(ejs);
+        ejsCreateNumberType(ejs);
+        ejsCreatePathType(ejs);
+        ejsCreateRegExpType(ejs);
+        ejsCreateXMLType(ejs);
+        ejsCreateXMLListType(ejs);
+
+        ejsAddNativeModule(ejs, "ejs", configureEjs, _ES_CHECKSUM_ejs, 0);
+
+        if (ejs->hasError || mprHasMemError(ejs)) {
+            mprError("Can't create core shared types");
+            return EJS_ERR;
+        }
+    } else {
+        ejs->global = ejsCreateBlock(ejs, max(ES_global_NUM_CLASS_PROP, EJS_NUM_GLOBAL));
+        ((EjsPot*) ejs->global)->numProp = ES_global_NUM_CLASS_PROP;
+        mprSetName(ejs->global, "global");
+    }
+    return 0;
+}
+
+
+static int defineTypes(Ejs *ejs)
+{
+    Ejs         *base;
+    EjsAny      *vp;
+    EjsName     qname;
+    int         i;
+
+    base = mprGetFirstItem(ejs->service->vmlist);
+    if (base && base != ejs) {
+        for (i = 0; i < ES_global_NUM_CLASS_PROP; i++) {
+            vp = ejsGetProperty(base, base->global, i);
+            qname = ejsGetPropertyName(base, base->global, i);
+            if ((ejsIsType(ejs, vp) && !((EjsType*) vp)->mutable) || (!ejsIsType(ejs, vp) && !TYPE(vp)->mutableInstances)) {
+                ejsSetProperty(ejs, base->global, i, vp);
+                ejsSetPropertyName(ejs, base->global, i, qname);
+            } else {
+                mprLog(0, "SKIP mutable property %N", qname);
+            }
+        }
+    }
     ejsCreateConfigType(ejs);
-
-    /*  
-        Define the native module configuration routines.
-     */
-    ejsAddNativeModule(ejs, "ejs", configureEjs, _ES_CHECKSUM_ejs, 0);
+#if UNUSED
+    ejsSetPropertyByName(ejs, ejs->global, N("ejs", "Array"), S(Array));
+    ejsSetPropertyByName(ejs, ejs->global, N("ejs", "Block"), S(Block));
+    ejsSetPropertyByName(ejs, ejs->global, N("ejs", "Boolean"), S(Boolean));
+    ejsSetPropertyByName(ejs, ejs->global, N("ejs", "ByteArray"), S(ByteArray));
+    ejsSetPropertyByName(ejs, ejs->global, N("ejs", "Config"), S(Config));
+    ejsSetPropertyByName(ejs, ejs->global, N("ejs", "Date"), S(Date));
+    ejsSetPropertyByName(ejs, ejs->global, N("ejs", "Error"), S(Error));
+    ejsSetPropertyByName(ejs, ejs->global, N("ejs", "ErrorEvent"), S(ErrorEvent));
+    ejsSetPropertyByName(ejs, ejs->global, N("ejs", "Event"), S(Event));
+    ejsSetPropertyByName(ejs, ejs->global, N("ejs", "File"), S(File));
+    ejsSetPropertyByName(ejs, ejs->global, N("ejs", "FileSystem"), S(FileSystem));
+    ejsSetPropertyByName(ejs, ejs->global, N("ejs", "Frame"), S(Frame));
+    ejsSetPropertyByName(ejs, ejs->global, N("ejs", "Function"), S(Function));
+    ejsSetPropertyByName(ejs, ejs->global, N("ejs", "Http"), S(Http));
+    ejsSetPropertyByName(ejs, ejs->global, N("ejs", "Iterator"), S(Iterator));
+    ejsSetPropertyByName(ejs, ejs->global, N("ejs", "Namespace"), S(Namespace));
+    ejsSetPropertyByName(ejs, ejs->global, N("ejs", "Null"), S(Null));
+    ejsSetPropertyByName(ejs, ejs->global, N("ejs", "Number"), S(Number));
+    ejsSetPropertyByName(ejs, ejs->global, N("ejs", "Object"), S(Object));
+    ejsSetPropertyByName(ejs, ejs->global, N("ejs", "Path"), S(Path));
+    ejsSetPropertyByName(ejs, ejs->global, N("ejs", "RegExp"), S(RegExp));
+    ejsSetPropertyByName(ejs, ejs->global, N("ejs", "StopIteration"), S(StopIteration));
+    ejsSetPropertyByName(ejs, ejs->global, N("ejs", "String"), S(String));
+    ejsSetPropertyByName(ejs, ejs->global, N("ejs", "Type"), S(Type));
+    ejsSetPropertyByName(ejs, ejs->global, N("ejs", "Uri"), S(Uri));
+    ejsSetPropertyByName(ejs, ejs->global, N("ejs", "Void"), S(Void));
+    ejsSetPropertyByName(ejs, ejs->global, N("ejs", "Worker"), S(Worker));
+    ejsSetPropertyByName(ejs, ejs->global, N("ejs", "XML"), S(XML));
+    ejsSetPropertyByName(ejs, ejs->global, N("ejs", "XMLList"), S(XMLList));
+#endif
 
     /*
         When building all-in-one (appweb), we need to explicitly call the module entry points of these built-in modules.
@@ -519,6 +558,7 @@ static int defineTypes(Ejs *ejs)
 
 /*  
     This will configure all the core types by defining native methods and properties
+    This runs after ejs.mod is loaded. NOTE: this does not happen when compiling ejs.mod (ejs->empty).
  */
 static int configureEjs(Ejs *ejs)
 {
@@ -1178,8 +1218,7 @@ void ejsSetSpecial(Ejs *ejs, int sid, EjsAny *value)
     mprAssert(sid < EJS_MAX_SPECIAL);
     
     if (0 <= sid && sid < EJS_MAX_SPECIAL) {
-        mprAssert(ejs->values[sid] == 0);
-        ejs->values[sid] = value;
+        ejs->service->shared[sid] = value;
     }
 }
 
@@ -1187,16 +1226,22 @@ void ejsSetSpecial(Ejs *ejs, int sid, EjsAny *value)
 EjsAny *ejsGetSpecial(Ejs *ejs, int sid)
 {
     mprAssert(0 <= sid && sid < EJS_MAX_SPECIAL);
-    return ejs->values[sid];
+
+    if (0 <= sid && sid < EJS_MAX_SPECIAL) {
+        return ejs->service->shared[sid];
+    }
+    return 0;
 }
 
 
+#if UNUSED
 void ejsSetSpecialType(Ejs *ejs, int sid, EjsType *type)
 {
     mprAssert(0 <= sid && sid < EJS_MAX_SPECIAL);
     type->sid = sid;
-    ejs->values[sid] = type;
+    ejs->shared[sid] = type;
 }
+#endif
 
 
 void ejsDisableExit(Ejs *ejs)

@@ -115,7 +115,7 @@ EjsNamespace *ejsCreateNamespace(Ejs *ejs, EjsString *name)
 {
     EjsNamespace    *np;
 
-    if ((np = ejsCreateObj(ejs, ST(Namespace), 0)) == 0) {
+    if ((np = ejsCreateObj(ejs, S(Namespace), 0)) == 0) {
         return 0;
     }
     np->value = name;
@@ -158,6 +158,15 @@ void ejsCreateNamespaceType(Ejs *ejs)
         manageNamespace, EJS_OBJ_HELPERS);
     type->helpers.cast = (EjsCastHelper) castNamespace;
     type->helpers.invokeOperator = (EjsInvokeOperatorHelper) invokeNamespaceOperator;
+
+    /*  
+        Create the standard namespaces. Order matters here. This is the (reverse) order of lookup.
+        Empty is first to maximize speed of searching dynamic properties. Ejs second to maximize builtin lookups.
+     */
+    ejsSetSpecial(ejs, S_iteratorSpace, ejsDefineReservedNamespace(ejs, ejs->global, NULL, EJS_ITERATOR_NAMESPACE));
+    ejsSetSpecial(ejs, S_publicSpace, ejsDefineReservedNamespace(ejs, ejs->global, NULL, EJS_PUBLIC_NAMESPACE));
+    ejsSetSpecial(ejs, S_ejsSpace, ejsDefineReservedNamespace(ejs, ejs->global, NULL, EJS_EJS_NAMESPACE));
+    ejsSetSpecial(ejs, S_emptySpace, ejsDefineReservedNamespace(ejs, ejs->global, NULL, EJS_EMPTY_NAMESPACE));
 }
 
 

@@ -190,7 +190,7 @@ void ejsCreateVoidType(Ejs *ejs)
     type->helpers.invokeOperator   = (EjsInvokeOperatorHelper) invokeVoidOperator;
     type->helpers.getProperty      = (EjsGetPropertyHelper) getVoidProperty;
 
-    ejsSetSpecial(ejs, S_undefined, ejsCreateObj(ejs, type, 0));
+    ejsSetSpecial(ejs, ES_undefined, ejsCreateObj(ejs, type, 0));
     mprSetName(S(undefined), "undefined");
 }
 
@@ -200,7 +200,7 @@ void ejsConfigureVoidType(Ejs *ejs)
     EjsType     *type;
     EjsPot      *prototype;
 
-    type = ST(Void);
+    type = S(Void);
     prototype = type->prototype;
 
     ejsSetProperty(ejs, ejs->global, ES_void, type);

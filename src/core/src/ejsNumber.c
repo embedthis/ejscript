@@ -363,7 +363,7 @@ static EjsIterator *getNumberIterator(Ejs *ejs, EjsObj *np, int argc, EjsObj **a
  */
 static EjsObj *numberToString(Ejs *ejs, EjsNumber *vp, int argc, EjsObj **argv)
 {
-    return castNumber(ejs, vp, ST(String));
+    return castNumber(ejs, vp, S(String));
 }
 
 
@@ -412,7 +412,7 @@ EjsNumber *ejsCreateNumber(Ejs *ejs, MprNumber value)
     } else if (value == -1) {
         return S(minusOne);
     }
-    if ((vp = ejsCreateObj(ejs, ST(Number), 0)) != 0) {
+    if ((vp = ejsCreateObj(ejs, S(Number), 0)) != 0) {
         vp->value = value;
     }
     return vp;
@@ -471,7 +471,7 @@ void ejsConfigureNumberType(Ejs *ejs)
     EjsType    *type;
     EjsPot     *prototype;
 
-    type = ST(Number);
+    type = S(Number);
     prototype = type->prototype;
 
     ejsBindConstructor(ejs, type, numberConstructor);

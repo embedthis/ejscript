@@ -500,90 +500,108 @@ static int loadClassSection(Ejs *ejs, EjsModule *mp)
     if (mp->hasError) {
         return MPR_ERR_CANT_READ;
     }
-    if (mp->loadState->flags & EJS_LOADER_STRICT) {
-        if (ejsLookupProperty(ejs, ejs->global, qname) >= 0) {
+    if (fixup || (baseType && baseType->needFixup)) {
+        attributes |= EJS_TYPE_FIXUP;
+    }
+
+    /*
+        Immutable types may be already loaded in global
+     */
+    type = ejsGetPropertyByName(ejs, ejs->global, qname);
+#if 0
+    if (type == 0) {
+        type = ejsGetPropertyByName(ejs, ejs->immutable, qname);
+    }
+#endif
+
+    if (type) {
+        if (type->loaded && mp->loadState->flags & EJS_LOADER_STRICT) {
             ejsThrowReferenceError(ejs, "Class \"%@\" already loaded", qname.name);
             return MPR_ERR_CANT_CREATE;
         }
     }
-    if (fixup || (baseType && baseType->needFixup)) {
-        attributes |= EJS_TYPE_FIXUP;
-    }
-    type = ejsGetPropertyByName(ejs, ejs->service->foundation, qname);
-
-    if (attributes & EJS_TYPE_FIXUP) {
-        baseType = 0;
-        if (fixup == 0) {
-            fixup = createFixup(ejs, mp, (baseType) ? baseType->qname : ST(Object)->qname, -1);
+    if (type == 0 || !type->loaded) {
+        if (attributes & EJS_TYPE_FIXUP) {
+            baseType = 0;
+            if (fixup == 0) {
+                fixup = createFixup(ejs, mp, (baseType) ? baseType->qname : ST(Object)->qname, -1);
+            }
         }
-    }
-    mprLog(9, "    Load %@ class %@ for module %@ at slotNum %d", qname.space, qname.name, mp->name, slotNum);
+        mprLog(9, "    Load %@ class %@ for module %@ at slotNum %d", qname.space, qname.name, mp->name, slotNum);
 
-    if (type == 0) {
-        type = ejsCreateType(ejs, qname, mp, baseType, NULL, sizeof(EjsPot), -1, numTypeProp, numInstanceProp, 
-            attributes);
         if (type == 0) {
-            ejsThrowInternalError(ejs, "Can't create class %@", qname.name);
-            return MPR_ERR_BAD_STATE;
-        }
-        ejsClonePotHelpers(ejs, type);
+            type = ejsCreateType(ejs, qname, mp, baseType, NULL, sizeof(EjsPot), -1, numTypeProp, numInstanceProp, 
+                attributes);
+            if (type == 0) {
+                ejsThrowInternalError(ejs, "Can't create class %@", qname.name);
+                return MPR_ERR_BAD_STATE;
+            }
+            ejsClonePotHelpers(ejs, type);
 
-    } else {
-        if (ejsConfigureType(ejs, type, mp, baseType, numTypeProp, numInstanceProp, attributes) < 0) {
-            ejsThrowInternalError(ejs, "Can't configure class %@", qname.name);
-            return MPR_ERR_BAD_STATE;
-        }
-        mp->hasNative = 1;
+        } else {
+            if (ejsConfigureType(ejs, type, mp, baseType, numTypeProp, numInstanceProp, attributes) < 0) {
+                ejsThrowInternalError(ejs, "Can't configure class %@", qname.name);
+                return MPR_ERR_BAD_STATE;
+            }
+            mp->hasNative = 1;
 #if FUTURE
-        /*
-            Currently errors on Namespace
-         */
-        if (attributes & EJS_TYPE_HAS_CONSTRUCTOR && !type->hasConstructor) {
-            mprError("WARNING: module indicates a constructor required but none exists for \"%@\"", type->qname.name);
-        }
+            /*
+                Currently errors on Namespace
+             */
+            if (attributes & EJS_TYPE_HAS_CONSTRUCTOR && !type->hasConstructor) {
+                mprError("WARNING: module indicates a constructor required but none exists for \"%@\"", type->qname.name);
+            }
 #endif
 #if UNUSED && KEEP
-        if (!type->native) {
-            mprError("WARNING: type not defined as native: \"%@\"", type->qname.name);
-        }
+            if (!type->native) {
+                mprError("WARNING: type not defined as native: \"%@\"", type->qname.name);
+            }
 #endif
+        }
     }
-    
+        
     /*
         Read implemented interfaces. Add to type->implements. Create fixup record if the interface type is not yet known.
      */
     if (numInterfaces > 0) {
-        type->implements = mprCreateList(numInterfaces, 0);
+        if (!type->implements) {
+            type->implements = mprCreateList(numInterfaces, 0);
+        }
         for (i = 0; i < numInterfaces; i++) {
             if (ejsModuleReadType(ejs, mp, &iface, &ifixup, &ifaceClassName, 0) < 0) {
                 return MPR_ERR_CANT_READ;
             }
-            if (iface) {
-                mprAddItem(type->implements, iface);
-            } else if (addFixup(ejs, mp, EJS_FIXUP_INTERFACE_TYPE, (EjsObj*) type, -1, ifixup) < 0) {
+            if (!type->loaded) {
+                if (iface) {
+                    mprAddItem(type->implements, iface);
+                } else if (addFixup(ejs, mp, EJS_FIXUP_INTERFACE_TYPE, (EjsObj*) type, -1, ifixup) < 0) {
+                    ejsThrowMemoryError(ejs);
+                    return MPR_ERR_MEMORY;
+                }
+            }
+        }
+    }
+    if (!type->loaded) {
+        slotNum = ejsDefineProperty(ejs, ejs->global, slotNum, qname, ST(Type), attributes, (EjsObj*) type);
+        if (slotNum < 0) {
+            ejsThrowMemoryError(ejs);
+            return MPR_ERR_MEMORY;
+        }
+        type->module = mp;
+        if (fixup) {
+            if (addFixup(ejs, mp, EJS_FIXUP_BASE_TYPE, (EjsObj*) type, -1, fixup) < 0) {
                 ejsThrowMemoryError(ejs);
                 return MPR_ERR_MEMORY;
             }
         }
+        setDoc(ejs, mp, "class", ejs->global, slotNum);
     }
-    slotNum = ejsDefineProperty(ejs, ejs->global, slotNum, qname, ST(Type), attributes, (EjsObj*) type);
-    if (slotNum < 0) {
-        ejsThrowMemoryError(ejs);
-        return MPR_ERR_MEMORY;
-    }
-    type->module = mp;
-
-    if (fixup) {
-        if (addFixup(ejs, mp, EJS_FIXUP_BASE_TYPE, (EjsObj*) type, -1, fixup) < 0) {
-            ejsThrowMemoryError(ejs);
-            return MPR_ERR_MEMORY;
-        }
-    }
-    setDoc(ejs, mp, "class", ejs->global, slotNum);
     pushScope(mp, type, type);
-
     if (ejs->loaderCallback) {
         (ejs->loaderCallback)(ejs, EJS_SECT_CLASS, mp, slotNum, qname, type, attributes);
+    }
+    if (type->loaded) {
+        mprSeekFile(mp->file, SEEK_SET, type->endClass);
     }
     return 0;
 }
@@ -599,19 +617,23 @@ static int loadEndClassSection(Ejs *ejs, EjsModule *mp)
         (ejs->loaderCallback)(ejs, EJS_SECT_CLASS_END, mp, mp->scope);
     }
     type = (EjsType*) mp->scope;
-    if (type->hasScriptFunctions) {
-        type->hasScriptFunctions = 1;
-    }
-    if (type->hasScriptFunctions && type->baseType) {
-        ejsDefineTypeNamespaces(ejs, type);
-    }
-    popScope(mp, 0);
-    if (type->dynamicInstances) {
-        type->mutableInstances = 1;
-    }
-#if UNUSED && KEEP
-    mprLog(0, "Type %N is %s and has %s instances", type->qname, (type->mutable) ? "mutable" : "immutable", type->mutableInstances ? "mutable" : "immutable");
+    if (!type->loaded) {
+        type->endClass = mprGetFilePosition(mp->file) - 1;
+        if (type->hasScriptFunctions) {
+            type->hasScriptFunctions = 1;
+        }
+        if (type->hasScriptFunctions && type->baseType) {
+            ejsDefineTypeNamespaces(ejs, type);
+        }
+        popScope(mp, 0);
+        if (type->dynamicInstances) {
+            type->mutableInstances = 1;
+        }
+#if UNUSED 
+        mprLog(0, "Type %N is %s and has %s instances", type->qname, (type->mutable) ? "mutable" : "immutable", type->mutableInstances ? "mutable" : "immutable");
 #endif
+    }
+    type->loaded = 1;
     return 0;
 }
 

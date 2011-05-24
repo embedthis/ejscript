@@ -68,7 +68,7 @@ static EjsObj *xlCast(Ejs *ejs, EjsXML *vp, EjsType *type)
     EjsXML      *elt, *item;
     int         next;
 
-    if (type == ST(XML)) {
+    if (type == S(XML)) {
         return (EjsObj*) vp;
     }
     switch (type->sid) {
@@ -78,7 +78,7 @@ static EjsObj *xlCast(Ejs *ejs, EjsXML *vp, EjsType *type)
         return (EjsObj*) ejsCreateBoolean(ejs, 1);
 
     case S_Number:
-        result = xlCast(ejs, vp, ST(String));
+        result = xlCast(ejs, vp, S(String));
         result = (EjsObj*) ejsToNumber(ejs, result);
         return result;
 
@@ -715,7 +715,7 @@ static EjsObj *xmlListToJson(Ejs *ejs, EjsObj *vp, int argc, EjsObj **argv)
  */
 static EjsObj *xmlListToString(Ejs *ejs, EjsObj *vp, int argc, EjsObj **argv)
 {
-    return (TYPE(vp)->helpers.cast)(ejs, vp, ST(String));
+    return (TYPE(vp)->helpers.cast)(ejs, vp, S(String));
 }
 
 
@@ -778,7 +778,7 @@ EjsXML *ejsCreateXMLList(Ejs *ejs, EjsXML *targetObject, EjsName targetProperty)
 {
     EjsXML      *list;
 
-    if ((list = (EjsXML*) ejsAlloc(ejs, ST(XMLList), 0)) == NULL) {
+    if ((list = (EjsXML*) ejsAlloc(ejs, S(XMLList), 0)) == NULL) {
         return 0;
     }
     list->kind = EJS_XML_LIST;
@@ -820,7 +820,7 @@ void ejsConfigureXMLListType(Ejs *ejs)
     EjsType     *type;
     EjsPot      *prototype;
 
-    type = ST(XMLList);
+    type = S(XMLList);
     type->mutableInstances = 1;
     prototype = type->prototype;
 
