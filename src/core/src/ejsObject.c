@@ -151,7 +151,7 @@ static EjsObj *obj_create(Ejs *ejs, EjsObj *unused, int argc, EjsObj **argv)
     }
     obj = ejsCreateObj(ejs, type, 0);
     if (properties) {
-        count = ejsGetPropertyCount(ejs, properties);
+        count = ejsGetLength(ejs, properties);
         for (slotNum = 0; slotNum < count; slotNum++) {
             qname = ejsGetPropertyName(ejs, properties, slotNum);
             options = ejsGetProperty(ejs, properties, slotNum);
@@ -271,7 +271,7 @@ static EjsObj *obj_freeze(Ejs *ejs, EjsObj *unused, int argc, EjsObj **argv)
 
     obj = (EjsObj*) argv[0];
     SET_DYNAMIC(obj, 0);
-    numProp = ejsGetPropertyCount(ejs, obj);
+    numProp = ejsGetLength(ejs, obj);
     for (slotNum = 0; slotNum < numProp; slotNum++) {
         if ((trait = ejsGetPropertyTraits(ejs, obj, slotNum)) != 0) {
             ejsSetPropertyTraits(ejs, obj, slotNum, NULL, trait->attributes | EJS_TRAIT_READONLY | EJS_TRAIT_FIXED);
@@ -279,7 +279,7 @@ static EjsObj *obj_freeze(Ejs *ejs, EjsObj *unused, int argc, EjsObj **argv)
     }
     if (ejsIsType(ejs, obj)) {
         obj = (EjsObj*) ((EjsType*) obj)->prototype;
-        numProp = ejsGetPropertyCount(ejs, obj);
+        numProp = ejsGetLength(ejs, obj);
         for (slotNum = 0; slotNum < numProp; slotNum++) {
             if ((trait = ejsGetPropertyTraits(ejs, obj, slotNum)) != 0) {
                 ejsSetPropertyTraits(ejs, obj, slotNum, NULL, trait->attributes | EJS_TRAIT_READONLY | EJS_TRAIT_FIXED);
@@ -302,7 +302,7 @@ static EjsObj *nextObjectKey(Ejs *ejs, EjsIterator *ip, int argc, EjsObj **argv)
     int         numProp;
 
     obj = ip->target;
-    numProp = ejsGetPropertyCount(ejs, obj);
+    numProp = ejsGetLength(ejs, obj);
     for (; ip->index < numProp; ip->index++) {
         qname = ejsGetPropertyName(ejs, obj, ip->index);
         if (qname.name == NULL) {
@@ -343,7 +343,7 @@ static EjsObj *nextObjectValue(Ejs *ejs, EjsIterator *ip, int argc, EjsObj **arg
     int         numProp;
 
     obj = ip->target;
-    numProp = ejsGetPropertyCount(ejs, obj);
+    numProp = ejsGetLength(ejs, obj);
     for (; ip->index < numProp; ip->index++) {
         trait = ejsGetPropertyTraits(ejs, obj, ip->index);
         if (trait && trait->attributes & 
@@ -378,7 +378,7 @@ static EjsNumber *obj_getOwnPropertyCount(Ejs *ejs, EjsObj *unused, int argc, Ej
     EjsObj      *obj;
 
     obj = argv[0];
-    return ejsCreateNumber(ejs, ejsGetPropertyCount(ejs, obj) - TYPE(obj)->numInherited);
+    return ejsCreateNumber(ejs, ejsGetLength(ejs, obj) - TYPE(obj)->numInherited);
 }
 
 
@@ -462,7 +462,7 @@ static EjsArray *obj_getOwnPropertyNames(Ejs *ejs, EjsObj *unused, int argc, Ejs
     }
     index = 0;
     slotNum = (includeBases) ? 0 : TYPE(obj)->numInherited;
-    numProp = ejsGetPropertyCount(ejs, obj);
+    numProp = ejsGetLength(ejs, obj);
     for (; slotNum < numProp; slotNum++) {
         if ((trait = ejsGetPropertyTraits(ejs, obj, slotNum)) != 0) {
             if (trait->attributes & (EJS_TRAIT_DELETED | EJS_FUN_INITIALIZER | EJS_FUN_MODULE_INITIALIZER)) {
@@ -543,7 +543,7 @@ static EjsBoolean *obj_isFrozen(Ejs *ejs, EjsObj *type, int argc, EjsObj **argv)
 
     obj = (EjsPot*) argv[0];
     frozen = 1;
-    numProp = ejsGetPropertyCount(ejs, obj);
+    numProp = ejsGetLength(ejs, obj);
     for (slotNum = 0; slotNum < numProp; slotNum++) {
         if ((trait = ejsGetPropertyTraits(ejs, obj, slotNum)) != 0) {
             if (!(trait->attributes & EJS_TRAIT_READONLY)) {
@@ -586,7 +586,7 @@ static EjsBoolean *obj_isSealed(Ejs *ejs, EjsObj *unused, int argc, EjsObj **arg
 
     obj = (EjsPot*) argv[0];
     sealed = 1;
-    numProp = ejsGetPropertyCount(ejs, obj);
+    numProp = ejsGetLength(ejs, obj);
     for (slotNum = 0; slotNum < numProp; slotNum++) {
         if ((trait = ejsGetPropertyTraits(ejs, obj, slotNum)) != 0) {
             if (!(trait->attributes & EJS_TRAIT_FIXED)) {
@@ -617,7 +617,7 @@ static EjsArray *obj_keys(Ejs *ejs, EjsObj *unused, int argc, EjsObj **argv)
     int         numProp, slotNum;
 
     obj = argv[0];
-    numProp = ejsGetPropertyCount(ejs, obj);
+    numProp = ejsGetLength(ejs, obj);
     if ((result = ejsCreateArray(ejs, numProp)) == 0) {
         return 0;
     }
@@ -659,7 +659,7 @@ static EjsObj *obj_seal(Ejs *ejs, EjsObj *unused, int argc, EjsObj **argv)
     int         slotNum, numProp;
 
     obj = argv[0];
-    numProp = ejsGetPropertyCount(ejs, obj);
+    numProp = ejsGetLength(ejs, obj);
     for (slotNum = 0; slotNum < numProp; slotNum++) {
         if ((trait = ejsGetPropertyTraits(ejs, obj, slotNum)) != 0) {
             trait->attributes |= EJS_TRAIT_FIXED;

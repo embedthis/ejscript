@@ -489,64 +489,6 @@ typedef struct EjsIntern {
 } EjsIntern;
 
 /********************************************** Special Values ******************************************/
-#if UNUSED
-#define S_Array                 1
-#define S_Block                 2
-#define S_Boolean               3
-#define S_ByteArray             4
-#define S_Config                5
-#define S_Date                  6
-#define S_Error                 7
-#define S_ErrorEvent            8
-#define S_Event                 9
-#define S_File                  10
-#define S_FileSystem            11
-#define S_Frame                 12
-#define S_Function              13
-#define S_Http                  14
-#define S_Iterator              15
-#define S_Namespace             16
-#define S_Null                  17
-#define S_Number                18
-#define S_Object                19
-#define S_Path                  20
-#define S_RegExp                21
-#define S_StopIteration         22
-#define S_String                23
-#define S_Type                  24
-#define S_Uri                   25
-#define S_Void                  26
-#define S_Worker                27
-#define S_XML                   28
-#define S_XMLList               29
-
-#define S_commaProt             30
-#define S_empty                 31
-#define S_false                 32
-#define S_global                33
-#define S_infinity              34
-                                        #define S_iterator              35
-#define S_length                36
-#define S_max                   37
-#define S_min                   38
-#define S_minusOne              39
-#define S_nan                   40
-#define S_negativeInfinity      41      NegativeInfinity
-#define S_nop                   42
-#define S_null                  43
-#define S_one                   44
-#define S_public                45
-#define S_true                  46
-#define S_undefined             47
-#define S_zero                  48
-#define S_emptySpace            49
-#define S_ejsSpace              50
-#define S_iteratorSpace         51
-#define S_internalSpace         52
-#define S_publicSpace           53
-#define EJS_MAX_SPECIAL         54
-#endif
-
 
 #define S_Array ES_Array
 #define S_Block ES_Block
@@ -591,9 +533,8 @@ typedef struct EjsIntern {
 #define S_true ES_true
 #define S_undefined ES_undefined
 #define S_zero ES_zero
-#define EJS_MAX_SPECIAL         ES_global_NUM_CLASS_PROP
+#define EJS_MAX_SPECIAL ES_global_NUM_CLASS_PROP
 
-//  MOB FIXES
 #define S_StopIteration ES_iterator_StopIteration
 #define S_nan ES_NaN
 #define S_Iterator ES_iterator_Iterator
@@ -609,10 +550,10 @@ extern int ejsAddImmutable(struct Ejs *ejs, int sid, EjsName qname, EjsAny *valu
 extern EjsAny *ejsGetImmutable(struct Ejs *ejs, int sid);
 extern EjsAny *ejsGetImmutableByName(struct Ejs *ejs, EjsName qname);
 
-//  MOB - rename to ESV. Remove ST?
+//  MOB - rename to ESV
 //  MOB - OPT
 #define S(name) ejs->service->immutable->properties->slots[S_ ## name].value.ref
-#define ST(name) ((EjsType*) (ejs->service->immutable->properties->slots[S_ ## name].value.ref))
+#define ST(name) ((EjsType*) S(name))
 
 /**
     Ejsript Interperter Structure
@@ -652,7 +593,6 @@ typedef struct Ejs {
     uint                exiting: 1;         /**< VM should exit */
     uint                hasError: 1;        /**< Interpreter has an initialization error */
     uint                initialized: 1;     /**< Interpreter fully initialized and not empty */
-    uint                workerComplete: 1;  /**< TEMP MOB */
 
     EjsAny              *exceptionArg;      /**< Exception object for catch block */
     MprDispatcher       *dispatcher;        /**< Event dispatcher */
@@ -662,8 +602,7 @@ typedef struct Ejs {
 
     void                (*loaderCallback)(struct Ejs *ejs, int kind, ...);
 
-    //  MOB - what is this for?
-    void                *userData;          /**< User data */
+    void                *loadData;          /**< Arg to load callbacks */
     void                *httpServer;        /**< HttpServer instance when VM is embedded */
 
     MprHashTable        *doc;               /**< Documentation */
@@ -708,13 +647,10 @@ extern void ejsFreePoolVM(EjsPool *pool, Ejs *ejs);
  */
 typedef struct EjsObj *(*EjsFun)(Ejs *ejs, EjsAny *thisObj, int argc, EjsObj **argv);
 
-//LEGACY
+/* Legacy definitions */
 typedef EjsFun EjsProc;
 typedef EjsFun EjsNativeFunction;
 #endif
-
-//  TODO is this used?
-typedef int (*EjsSortFn)(Ejs *ejs, EjsAny *p1, EjsAny *p2, cchar *name, int order);
 
 /**
     Initialize a Qualified Name structure using a wide namespace and name
@@ -761,7 +697,7 @@ typedef struct EjsTrait {
 } EjsTrait;
 
 
-//  MOB OPT packing
+//  OPT packing
 typedef struct EjsSlot {
     EjsName         qname;                  /**< Property name */
     int             hashChain;              /**< Next property in hash chain */
@@ -964,9 +900,6 @@ extern EjsAny *ejsGetProperty(Ejs *ejs, EjsAny *obj, int slotNum);
  */
 extern int ejsGetLength(Ejs *ejs, EjsAny *obj);
 
-//  MOB -- globally change
-#define ejsGetPropertyCount(ejs, obj) ejsGetLength(ejs, obj)
-
 /** 
     Get a variable property's name
     @description Get a property name for the property at a given slot in the  variable.
@@ -1065,7 +998,6 @@ extern int ejsSetPropertyByName(Ejs *ejs, void *obj, EjsName qname, void *value)
  */
 extern int ejsSetPropertyName(Ejs *ejs, EjsAny *obj, int slotNum, EjsName qname);
 
-//  MOB - should attributes be int64
 /** 
     Set a property's traits
     @description Set the traits describing a property. These include the property's base type and access attributes.
@@ -1439,8 +1371,10 @@ typedef struct EjsConstants {
     int           locked;                   /**< No more additions allowed */
     MprHashTable  *table;                   /**< Hash table for fast lookup when compiling */
     EjsString     **index;                  /**< Interned string index */
+#if UNUSED
 //  MOB - remove
     struct EjsModule     *mp;
+#endif
 } EjsConstants;
 
 extern EjsConstants *ejsCreateConstants(Ejs *ejs, int count, ssize size);
@@ -1699,7 +1633,8 @@ extern EjsFrame *ejsCreateFrame(Ejs *ejs, EjsFunction *src, EjsObj *thisObj, int
 extern EjsFrame *ejsCreateCompilerFrame(Ejs *ejs, EjsFunction *src);
 extern EjsBlock *ejsPopBlock(Ejs *ejs);
 extern EjsBlock *ejsPushBlock(Ejs *ejs, EjsBlock *block);
-extern int ejsFreeze(Ejs *ejs, int freeze);
+extern int ejsPauseGC(Ejs *ejs);
+extern void ejsResumeGC(Ejs *ejs, int paused);
 
 /** 
     Boolean class
@@ -1908,17 +1843,6 @@ typedef EjsPot EjsError;
 
 extern EjsError *ejsCreateError(Ejs *ejs, struct EjsType *type, EjsObj *message);
 extern EjsArray *ejsCaptureStack(Ejs *ejs, int uplevels);
-
-/* 
-    DEPRECATED MOB
-    Format the stack backtrace
-    @description Return a string containing the current interpreter stack backtrace
-    @param ejs Ejs reference returned from #ejsCreate
-    @param error Error exception object to analyseo analyseo analyseo analyse
-    @return A string containing the stack backtrace. The caller must free.
-    @ingroup EjsError
-extern char *ejsFormatStack(Ejs *ejs, EjsError *error);
- */
 
 /** 
     Get the interpreter error message
@@ -2152,10 +2076,8 @@ typedef struct EjsPath {
  */
 extern EjsPath *ejsCreatePath(Ejs *ejs, EjsString *path);
 extern EjsPath *ejsCreatePathFromAsc(Ejs *ejs, cchar *path);
-
 //  MOB DOC
 extern EjsPath *ejsToPath(Ejs *ejs, EjsAny *obj);
-
 
 /** 
     Uri class
@@ -2978,7 +2900,7 @@ typedef struct EjsState {
     struct EjsState     *prev;              /* Previous state */
     struct EjsNamespace *internal;          /* Current internal namespace */
     ssize               stackSize;          /* Stack size */
-    uint                frozen: 1;          /* Garbage collection frozen */
+    uint                paused: 1;          /* Garbage collection paused */
     EjsObj              *t1;                /* Temp one for GC */
 } EjsState;
 

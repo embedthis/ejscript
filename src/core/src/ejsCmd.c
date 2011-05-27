@@ -436,7 +436,7 @@ static EjsObj *cmd_start(Ejs *ejs, EjsCmd *cmd, int argc, EjsObj **argv)
         return 0;
     }
     if (cmd->env) {
-        len = ejsGetPropertyCount(ejs, cmd->env);
+        len = ejsGetLength(ejs, cmd->env);
         if ((env = mprAlloc(sizeof(void*) * (len + 1))) == 0) {
             ejsThrowMemoryError(ejs);
             return 0;

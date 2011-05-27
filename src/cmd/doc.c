@@ -295,7 +295,7 @@ static void generateNamespaceList(EjsMod *mp)
         Build a sorted list of namespaces used by classes
      */
     namespaces = mprCreateList(0, 0);
-    count = ejsGetPropertyCount(ejs, ejs->global);
+    count = ejsGetLength(ejs, ejs->global);
     for (slotNum = 0; slotNum < count; slotNum++) {
         trait = ejsGetPropertyTraits(ejs, ejs->global, slotNum);
         if (trait == 0) {
@@ -416,7 +416,7 @@ static int generateNamespaceClassTableEntries(EjsMod *mp, cchar *namespace)
         trait = crec->trait;
         fmtName = fmtType(ejs, crec->qname);
         out(mp, "   <tr><td><a href='%s' target='content'>%@</a></td>", getFilename(fmtName), qname.name);
-        if (crec->block == ejs->global && mp->firstGlobal == ejsGetPropertyCount(ejs, ejs->global)) {
+        if (crec->block == ejs->global && mp->firstGlobal == ejsGetLength(ejs, ejs->global)) {
             continue;
         }
         doc = getDoc(ejs, "class", crec->block ? crec->block : ejs->global, crec->slotNum);
@@ -447,7 +447,7 @@ static MprList *buildClassList(EjsMod *mp, cchar *namespace)
         Build a sorted list of classes
      */
     classes = mprCreateList(0, 0);
-    count = ejsGetPropertyCount(ejs, ejs->global);
+    count = ejsGetLength(ejs, ejs->global);
     for (slotNum = 0; slotNum < count; slotNum++) {
         trait = ejsGetPropertyTraits(ejs, ejs->global, slotNum);
         if (trait == 0) {
@@ -492,7 +492,7 @@ static MprList *buildClassList(EjsMod *mp, cchar *namespace)
         Add a special type "Global"
      */
     if (strcmp(namespace, "__all") == 0) {
-        if (mp->firstGlobal < ejsGetPropertyCount(ejs, ejs->global)) {
+        if (mp->firstGlobal < ejsGetLength(ejs, ejs->global)) {
             crec = mprAlloc(sizeof(ClassRec));
             crec->qname = N(EJS_EJS_NAMESPACE, EJS_GLOBAL);
             crec->block = ejs->global;
@@ -697,7 +697,7 @@ static void generateClassPages(EjsMod *mp)
 
     ejs = mp->ejs;
 
-    count = ejsGetPropertyCount(ejs, ejs->global);
+    count = ejsGetLength(ejs, ejs->global);
     for (slotNum = mp->firstGlobal; slotNum < count; slotNum++) {
         type = ejsGetProperty(ejs, ejs->global, slotNum);
         qname = ejsGetPropertyName(ejs, ejs->global, slotNum);
@@ -736,7 +736,7 @@ static void generateClassPages(EjsMod *mp)
     mprSprintf(key, sizeof(key), "%Lx %d", PTOL(0), 0);
     mprAddKey(ejs->doc, key, doc);
 
-    slotNum = ejsGetPropertyCount(ejs, ejs->global);
+    slotNum = ejsGetLength(ejs, ejs->global);
 
     qname = N(EJS_EJS_NAMESPACE, EJS_GLOBAL);
     mp->file = createFile(mp, getFilename(fmtType(ejs, qname)));
@@ -804,7 +804,7 @@ static void prepDocStrings(EjsMod *mp, EjsObj *obj, EjsName qname, EjsTrait *typ
     /*
         Loop over all the static properties
      */
-    numProp = ejsGetPropertyCount(ejs, obj);
+    numProp = ejsGetLength(ejs, obj);
     for (slotNum = 0; slotNum < numProp; slotNum++) {
         trait = ejsGetPropertyTraits(ejs, obj, slotNum);
         if (trait == 0) {
@@ -825,7 +825,7 @@ static void prepDocStrings(EjsMod *mp, EjsObj *obj, EjsName qname, EjsTrait *typ
         prototype = type->prototype;
         if (prototype) {
             numInherited = type->numInherited;
-            if (ejsGetPropertyCount(ejs, prototype) > 0) {
+            if (ejsGetLength(ejs, prototype) > 0) {
                 for (slotNum = numInherited; slotNum < prototype->numProp; slotNum++) {
                     trait = ejsGetPropertyTraits(ejs, prototype, slotNum);
                     if (trait == 0) {
@@ -931,7 +931,7 @@ static int getPropertyCount(Ejs *ejs, EjsObj *obj)
 
     count = 0;
 
-    limit = ejsGetPropertyCount(ejs, obj);
+    limit = ejsGetLength(ejs, obj);
     for (slotNum = 0; slotNum < limit; slotNum++) {
         vp = ejsGetProperty(ejs, obj, slotNum);
         if (vp) {
@@ -947,7 +947,7 @@ static int getPropertyCount(Ejs *ejs, EjsObj *obj)
         type = (EjsType*) obj;
         if (type->prototype) {
             prototype = type->prototype;
-            limit = ejsGetPropertyCount(ejs, prototype);
+            limit = ejsGetLength(ejs, prototype);
             for (slotNum = 0; slotNum < limit; slotNum++) {
                 vp = ejsGetProperty(ejs, prototype, slotNum);
                 if (vp && !ejsIsFunction(ejs, vp)) {
@@ -1024,7 +1024,7 @@ static void buildPropertyList(EjsMod *mp, MprList *list, EjsAny *obj, int numInh
         Loop over all the (non-inherited) properties
      */
     start = (obj == ejs->global) ? mp->firstGlobal : numInherited;
-    numProp = ejsGetPropertyCount(ejs, obj);
+    numProp = ejsGetLength(ejs, obj);
     for (slotNum = start; slotNum < numProp; slotNum++) {
         vp = ejsGetProperty(ejs, obj, slotNum);
         trait = ejsGetPropertyTraits(ejs, obj, slotNum);
@@ -1083,7 +1083,7 @@ static void buildGetterList(EjsMod *mp, MprList *list, EjsObj *obj, int numInher
     } else {
         slotNum = numInherited;
     }
-    numProp = ejsGetPropertyCount(ejs, obj);
+    numProp = ejsGetLength(ejs, obj);
     for (; slotNum < numProp; slotNum++) {
         vp = ejsGetProperty(ejs, obj, slotNum);
         qname = ejsGetPropertyName(ejs, obj, slotNum);
@@ -1311,7 +1311,7 @@ static void buildMethodList(EjsMod *mp, MprList *methods, EjsObj *obj, EjsObj *o
         }
     }
 
-    numProp = ejsGetPropertyCount(ejs, obj);
+    numProp = ejsGetLength(ejs, obj);
 
     numInherited = 0;
     if (ejsIsPrototype(ejs, obj)) {

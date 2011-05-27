@@ -19,7 +19,7 @@ static EjsNumber *lf_emit(Ejs *ejs, EjsObj *unused, int argc, EjsObj **argv)
     EjsString       *str;
     char            *msg, *arg;
     ssize           len, written;
-    int             i, level, frozen;
+    int             i, level, paused;
 
     mprAssert(argc >= 2 && ejsIs(ejs, argv[1], Array));
 
@@ -27,7 +27,7 @@ static EjsNumber *lf_emit(Ejs *ejs, EjsObj *unused, int argc, EjsObj **argv)
     args = (EjsArray*) argv[1];
     written = 0;
     msg = 0;
-    frozen = ejsFreeze(ejs, 1);
+    paused = ejsPauseGC(ejs);
 
     for (i = 0; i < args->length; i++) {
         vp = ejsGetProperty(ejs, args, i);
@@ -55,7 +55,7 @@ static EjsNumber *lf_emit(Ejs *ejs, EjsObj *unused, int argc, EjsObj **argv)
         mprRawLog(level, "%s", msg);
         written += slen(msg);
     }
-    ejsFreeze(ejs, frozen);
+    ejsResumeGC(ejs, paused);
     return ejsCreateNumber(ejs, (MprNumber) slen(msg));
 }
 

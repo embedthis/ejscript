@@ -572,7 +572,7 @@ static void validateClass(EcCompiler *cp, EcNode *np)
         Ensure the class implements all required implemented methods
      */
     for (next = 0; ((iface = (EjsType*) mprGetNextItem(type->implements, &next)) != 0); ) {
-        count = ejsGetPropertyCount(ejs, iface);
+        count = ejsGetLength(ejs, iface);
         for (i = 0; i < count; i++) {
             fun = ejsGetProperty(ejs, iface, i);
             if (!ejsIsFunction(ejs, fun) || fun->isInitializer) {
@@ -694,9 +694,6 @@ static void astClass(EcCompiler *cp, EcNode *np)
     }
     state->currentClass = type;
     state->currentClassNode = np;
-#if UNUSED
-    state->currentClassName = type->qname;
-#endif
     state->inClass = 1;
     
     //  MOB -- need a way to zero things that should not be inherited
@@ -1021,11 +1018,6 @@ static int defineParameters(EcCompiler *cp, EcNode *np)
         nameNode = 0;
         if (child->left->kind == N_QNAME) {
             nameNode = child->left;
-#if UNUSED
-            if (numDefault) {
-                astError(cp, np, "Can't have non-default parameters after default parameters");
-            }
-#endif
         } else if (child->left->kind == N_ASSIGN_OP) {
             numDefault++;
             nameNode = child->left->left;
@@ -1101,12 +1093,8 @@ static void bindParameters(EcCompiler *cp, EcNode *np)
                 if (varNode->name.isRest) {
                     arraySlot = ejsLookupProperty(ejs, ejs->global, N(EJS_EJS_NAMESPACE, "Array"));
                     mprAssert(arraySlot >= 0);
-#if UNUSED
-                    ejsSetTraitType(cp->ejs, trait, ejsGetProperty(ejs, ejs->global, arraySlot));
-#else
                     arrayType = ejsGetProperty(ejs, ejs->global, arraySlot);
                     ejsSetPropertyTraits(ejs, fun->activation, slotNum, arrayType, -1);
-#endif
                     fun->rest = 1;
                 }
 
@@ -1115,12 +1103,7 @@ static void bindParameters(EcCompiler *cp, EcNode *np)
                 processAstNode(cp, localType);
                 if (localType->lookup.ref) {
                     attributes |= (localType->attributes & (EJS_TRAIT_CAST_NULLS | EJS_TRAIT_THROW_NULLS));
-#if UNUSED
-                    ejsSetTraitAttributes(cp->ejs, trait, attributes);
-                    ejsSetTraitType(cp->ejs, trait, (EjsType*) localType->lookup.ref);
-#else
                     ejsSetPropertyTraits(cp->ejs, fun->activation, slotNum, (EjsType*) localType->lookup.ref, attributes);
-#endif
                 }
             }
         }
@@ -1467,29 +1450,9 @@ static void astForIn(EcCompiler *cp, EcNode *np)
         Link to the iterGet node so we can bind the "next" call.
      */
     if (cp->phase >= EC_PHASE_BIND) {
-#if UNUSED
-        EjsType     *iteratorType;
-        EjsName     qname;
-        iteratorType = (EjsType*) ejsGetPropertyByName(ejs, ejs->global, N("iterator", "Iterator"));
-        mprAssert(iteratorType);
-        if (iteratorType == 0) {
-            astError(cp, np, "Can't find Iterator class");
-        } else {
-            /*
-                TODO MOB - this assumes that iterators use Iterator and it is bindable. What if an operator that
-                implements an Iterable/Iterator interface
-             */
-            rc = resolveName(cp, np->forInLoop.iterNext, iteratorType->prototype, N("public", "next"));
-            if (rc < 0) {
-                astError(cp, np, "Can't find Iterator.next method");
-            }
-        }
-        
-#else
         np->forInLoop.iterNext->qname = N("public", "next");
         rc = resolveName(cp, np->forInLoop.iterNext, ST(Iterator)->prototype, np->forInLoop.iterNext->qname);
         np->forInLoop.iterNext->lookup.bind = 0;
-#endif
     }
     if (np->forInLoop.body) {
         processAstNode(cp, np->forInLoop.body);
@@ -1705,8 +1668,7 @@ static void astBindName(EcCompiler *cp, EcNode *np)
                 This is because in the first case, we must extract the type of an object, whereas in the 2nd case,
                 we already have the type via an explicit type reference.
              */
-            if (left->lookup.ref && (ejsIsType(ejs, left->lookup.ref) 
-                        /* UNUSED || ejsIsPrototype(ejs, left->lookup.ref) */)) {
+            if (left->lookup.ref && (ejsIsType(ejs, left->lookup.ref))) {
                 /*
                     Case 2. Type.property. We have resolved the type reference.
                  */
@@ -1821,14 +1783,6 @@ static void astBindName(EcCompiler *cp, EcNode *np)
         lookup->useThis = 0;
     }
 
-#if UNUSED
-    if (lookup->obj != (EjsObj*) state->currentFunction || ejsIsType(ejs, lookup->obj)) {
-        lookup->bind = 0;
-        lookup->useThis = 0;
-    }
-#endif
-
-#if UNUSED || 1
     //  MOB -- restore some binding
     if (lookup->slotNum >= 0) {
         /*
@@ -1843,7 +1797,7 @@ static void astBindName(EcCompiler *cp, EcNode *np)
             /*
                 Unbind non-core globals
              */
-            if ((lookup->slotNum >= ES_global_NUM_CLASS_PROP) /* UNUSED && !(lookup->ref && BUILTIN(lookup->ref)) */) {
+            if ((lookup->slotNum >= ES_global_NUM_CLASS_PROP)) {
                 lookup->bind = 0;
             }
         }
@@ -1872,19 +1826,11 @@ static void astBindName(EcCompiler *cp, EcNode *np)
                     }
                 }
             }
-
-#if UNUSED
-        } else if (ejsIsPrototype(ejs, np->lookup.obj)) {
-            if (!BUILTIN(np->lookup.obj)) {
-                lookup->bind = 0;
-            }
-#endif
         }
         if (lookup->trait && lookup->trait->attributes & EJS_TRAIT_GETTER) {
             lookup->bind = 0;
         }
     }
-#endif
 
     /*
         If accessing unbound variables, then the function will require full scope if a closure is ever required.
@@ -2778,11 +2724,7 @@ static void bindVariableDefinition(EcCompiler *cp, EcNode *np)
                     return;
                 }
             }
-#if UNUSED
-            ejsSetTraitType(cp->ejs, np->lookup.trait, (EjsType*) typeNode->lookup.ref);
-#else
             ejsSetPropertyTraits(cp->ejs, np->lookup.obj, np->lookup.slotNum, (EjsType*) typeNode->lookup.ref, -1);
-#endif
         }
     }
     setAstDocString(ejs, np, "var", np->lookup.obj, np->lookup.slotNum);
@@ -2992,9 +2934,6 @@ static EjsModule *createModule(EcCompiler *cp, EcNode *np)
             astError(cp, np, "Can't create module %@", np->qname.name);
             return 0;
         }
-#if UNUSED
-        mp->scope = (EjsBlock*) ejs->global;
-#endif
         if (ecAddModule(cp, mp) < 0) {
             astError(cp, 0, "Can't insert module");
             return 0;
@@ -3465,11 +3404,6 @@ static void fixupClass(EcCompiler *cp, EjsType *type)
     if (typeType->needFixup) {
         fixupClass(cp, typeType);
     }
-#if UNUSED
-    if (type != typeType) {
-        ejsBlendTypeProperties(ejs, type, typeType);
-    }
-#endif
 
     /*
         Remove the original overridden method. Set the inherited slot to the overridden method. This implements a v-table.
@@ -3827,7 +3761,7 @@ static EjsNamespace *createHoistNamespace(EcCompiler *cp, EjsObj *obj)
     char            *spaceName;
 
     ejs = cp->ejs;
-    spaceName = mprAsprintf("-hoisted-%d", ejsGetPropertyCount(ejs, obj));
+    spaceName = mprAsprintf("-hoisted-%d", ejsGetLength(ejs, obj));
     namespace = ejsCreateNamespace(ejs, ejsCreateStringFromAsc(ejs, spaceName));
 
     letBlockNode = cp->state->letBlockNode;

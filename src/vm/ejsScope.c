@@ -106,20 +106,6 @@ static int lookupVarInBlock(Ejs *ejs, EjsBlock *bp, EjsName name, EjsLookup *loo
             thisObj = 0;
         }
     } else if (ejsIsType(ejs, bp)) {
-#if UNUSED
-        //  TODO should this be searching the prototype chain here?
-        /* Lookup prototype chain */
-        //  OPT -- remove nthBase. Not needed if not binding.
-        for (nthBase = 1, type = (EjsType*) bp; type; type = type->baseType, nthBase++) {
-            if ((prototype = type->prototype) == 0 || prototype->shortScope) {
-                break;
-            }
-            if ((slotNum = ejsLookupVarWithNamespaces(ejs, prototype, name, lookup)) >= 0) {
-                lookup->nthBase = nthBase;
-                return slotNum;
-            }
-        }
-#endif
         /* Search base class chain */
         //  OPT -- remove nthBase. Not needed if not binding.
         for (nthBase = 1, type = (EjsType*) bp; type; type = type->baseType, nthBase++) {

@@ -495,7 +495,7 @@ static EjsString *serialize(Ejs *ejs, EjsAny *vp, Json *json)
         The main code below can handle Arrays, Objects, objects derrived from Object and also native classes with properties.
         All others just use toString.
      */
-    count = ejsGetPropertyCount(ejs, vp);
+    count = ejsGetLength(ejs, vp);
     if (count == 0 && TYPE(vp) != S(Object) && TYPE(vp) != S(Array)) {
         //  OPT - need some flag for this test.
         if (!ejsIsDefined(ejs, vp) || ejsIs(ejs, vp, Boolean) || ejsIs(ejs, vp, Number)) {

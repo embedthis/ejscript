@@ -94,7 +94,7 @@ static int getSessionState(Ejs *ejs, EjsSession *sp)
     sp->ready = 1;
     if (sp->key && (src = ejsCacheReadObj(ejs, sp->cache, sp->key, 0)) != 0) {
         sp->pot.numProp = 0;
-        count = ejsGetPropertyCount(ejs, src);
+        count = ejsGetLength(ejs, src);
         for (i = 0; i < count; i++) {
             if ((vp = ejsGetProperty(ejs, src, i)) == 0) {
                 continue;

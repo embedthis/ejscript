@@ -14,7 +14,7 @@ EjsVoid *ejsCacheExpire(Ejs *ejs, EjsObj *cache, EjsString *key, EjsDate *when)
 {
     EjsAny  *argv[3];
 
-    ejsFreeze(ejs, 1);
+    ejsPauseGC(ejs);
     argv[0] = key;
     argv[1] = when;
     return ejsRunFunctionBySlot(ejs, cache, ES_Cache_expire, 2, argv);
@@ -25,7 +25,7 @@ EjsAny *ejsCacheRead(Ejs *ejs, EjsObj *cache, EjsString *key, EjsObj *options)
 {
     EjsAny  *argv[3];
 
-    ejsFreeze(ejs, 1);
+    ejsPauseGC(ejs);
     argv[0] = key;
     argv[1] = (options) ? options : S(null);
     return ejsRunFunctionBySlot(ejs, cache, ES_Cache_read, 2, argv);
@@ -36,7 +36,7 @@ EjsAny *ejsCacheReadObj(Ejs *ejs, EjsObj *cache, EjsString *key, EjsObj *options
 {
     EjsAny  *value, *argv[3];
 
-    ejsFreeze(ejs, 1);
+    ejsPauseGC(ejs);
     argv[0] = key;
     argv[1] = (options) ? options : S(null);
     if ((value = ejsRunFunctionBySlot(ejs, cache, ES_Cache_read, 2, argv)) == 0 || value == S(null)) {
@@ -50,7 +50,7 @@ EjsBoolean *ejsCacheRemove(Ejs *ejs, EjsObj *cache, EjsString *key)
 {
     EjsAny  *argv[3];
 
-    ejsFreeze(ejs, 1);
+    ejsPauseGC(ejs);
     argv[0] = key;
     return ejsRunFunctionBySlot(ejs, cache, ES_Cache_remove, 1, argv);
 }
@@ -60,7 +60,7 @@ EjsVoid *ejsCacheSetLimits(Ejs *ejs, EjsObj *cache, EjsObj *limits)
 {
     EjsAny  *argv[2];
 
-    ejsFreeze(ejs, 1);
+    ejsPauseGC(ejs);
     argv[0] = limits;
     return ejsRunFunctionBySlot(ejs, cache, ES_Cache_setLimits, 2, argv);
 }
@@ -70,7 +70,7 @@ EjsNumber *ejsCacheWrite(Ejs *ejs, EjsObj *cache, EjsString *key, EjsString *val
 {
     EjsAny  *argv[3];
 
-    ejsFreeze(ejs, 1);
+    ejsPauseGC(ejs);
     argv[0] = key;
     argv[1] = value;
     argv[2] = (options) ? options : S(null);
@@ -82,7 +82,7 @@ EjsNumber *ejsCacheWriteObj(Ejs *ejs, EjsObj *cache, EjsString *key, EjsAny *val
 {
     EjsAny  *argv[3];
 
-    ejsFreeze(ejs, 1);
+    ejsPauseGC(ejs);
     argv[0] = key;
     argv[1] = ejsSerialize(ejs, value, 0);
     argv[2] = (options) ? options : S(null);

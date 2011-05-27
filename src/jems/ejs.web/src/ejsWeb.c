@@ -1,4 +1,3 @@
-//  MOB - remove Web class and blend into HttpServer
 /*
     ejsWeb.c -- Ejscript web framework.
 

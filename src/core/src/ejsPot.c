@@ -187,12 +187,6 @@ static int definePotProperty(Ejs *ejs, EjsPot *obj, int slotNum, EjsName qname, 
         }
         obj->numProp = slotNum + 1;
     }
-#if UNUSED
-    if (slotNum >= obj->numProp && (obj->properties && slotNum < obj->properties->size)) {
-        /* When types are created, slots are allocated but numProp is zero -  */
-        obj->numProp = slotNum + 1;
-    }
-#endif
     if (priorSlot < 0 && ejsSetPropertyName(ejs, obj, slotNum, qname) < 0) {
         return EJS_ERR;
     }
@@ -241,17 +235,6 @@ static int deletePotProperty(Ejs *ejs, EjsPot *obj, int slotNum)
         ejsThrowReferenceError(ejs, "Invalid property slot to delete");
         return EJS_ERR;
     }
-#if UNUSED
-    //  TODO -- this should be in the VM and not here
-    if (!DYNAMIC(obj)) {
-        //  TODO -- probably can remove this and rely on fixed below as per ecma spec
-        ejsThrowTypeError(ejs, "Can't delete properties in a non-dynamic object");
-        return EJS_ERR;
-    } else if (ejsPropertyHasTrait(ejs, obj, slotNum, EJS_TRAIT_FIXED)) {
-        ejsThrowTypeError(ejs, "Property \"%@\" is not deletable", qname.name);
-        return EJS_ERR;
-    }
-#endif
     qname = ejsGetPotPropertyName(ejs, obj, slotNum);
     if (qname.name) {
         removeHashEntry(ejs, obj, qname);
@@ -317,15 +300,6 @@ EjsName ejsGetPotPropertyName(Ejs *ejs, EjsPot *obj, int slotNum)
     }
     return obj->properties->slots[slotNum].qname;
 }
-
-
-#if UNUSED
-static EjsTrait *getPotPropertyTrait(Ejs *ejs, EjsPot *obj, int slotNum)
-{
-    mprAssert(ejsIsPot(ejs, obj));
-    return ejsGetPropertyTraits(ejs, obj, slotNum);
-}
-#endif
 
 
 /*
@@ -519,29 +493,6 @@ static int setPotPropertyName(Ejs *ejs, EjsPot *obj, int slotNum, EjsName qname)
     }
     return slotNum;
 }
-
-
-#if UNUSED
-/*
-    Set the property Trait. Grow traits if required.
- */
-static int setPotPropertyTrait(Ejs *ejs, EjsPot *obj, int slotNum, EjsType *type, int attributes)
-{
-    EjsSlots   *slots;
-
-    mprAssert(obj);
-    mprAssert(ejsIsPot(ejs, obj));
-    mprAssert(slotNum >= 0);
-
-    if ((slotNum = ejsGetSlot(ejs, obj, slotNum)) < 0) {
-        return EJS_ERR;
-    }
-    slots = obj->properties->slots;
-    slots[slotNum].trait.type = type;
-    slots[slotNum].trait.attributes = attributes;
-    return slotNum;
-}
-#endif
 
 
 /******************************* Slot Routines ********************************/
@@ -751,24 +702,6 @@ int ejsRemovePotProperty(Ejs *ejs, EjsAny *vp, int slotNum)
 
 
 /*********************************** Traits ***********************************/
-#if UNUSED
-
-void ejsSetTraitType(Ejs *ejs, EjsTrait *trait, EjsType *type)
-{
-    mprAssert(trait);
-    mprAssert(type == 0 || ejsIsType(ejs, type));
-    trait->type = type;
-}
-
-
-void ejsSetTraitAttributes(Ejs *ejs, EjsTrait *trait, int attributes)
-{
-    mprAssert(trait);
-    mprAssert((attributes & EJS_TRAIT_MASK) == attributes);
-    trait->attributes = attributes;
-}
-#endif
-
 
 static EjsTrait *getPotPropertyTraits(Ejs *ejs, EjsPot *obj, int slotNum)
 {
@@ -796,49 +729,6 @@ static int setPotPropertyTraits(Ejs *ejs, EjsPot *obj, int slotNum, EjsType *typ
     }
     return slotNum;
 }
-
-
-#if UNUSED
-int ejsGetTraitAttributes(Ejs *ejs, EjsAny *vp, int slotNum)
-{
-    EjsPot      *obj;
-
-    if (!ejsIsPot(ejs, vp)) {
-        ejsThrowTypeError(ejs, "Object is not configurable");
-        return EJS_ERR;
-    }
-    obj = vp;
-    mprAssert(obj);
-    mprAssert(slotNum >= 0);
-
-    if (slotNum < 0 || slotNum >= obj->numProp) {
-        mprAssert(0);
-        return 0;
-    }
-    return obj->properties->slots[slotNum].trait.attributes;
-}
-
-
-EjsType *ejsGetTraitType(Ejs *ejs, EjsAny *vp, int slotNum)
-{
-    EjsPot      *obj;
-
-    mprAssert(ejsIsPot(ejs, obj));
-
-    if (!ejsIsPot(ejs, vp)) {
-        ejsThrowTypeError(ejs, "Object is not configurable");
-        return NULL;
-    }
-    obj = vp;
-    mprAssert(obj);
-    mprAssert(slotNum >= 0);
-    if (slotNum < 0 || slotNum >= obj->numProp) {
-        mprAssert(0);
-        return NULL;
-    }
-    return obj->properties->slots[slotNum].trait.type;
-}
-#endif
 
 
 /******************************* Hash Routines ********************************/
@@ -972,25 +862,6 @@ int ejsMakeHash(Ejs *ejs, EjsPot *obj)
     }
     return 0;
 }
-
-
-#if UNUSED
-void ejsClearHash(EjsPot *obj)
-{
-    EjsSlot         *sp;
-    int             i;
-
-    mprAssert(obj);
-    mprAssert(ejsIsPot(ejs, obj));
-
-    if (obj->properties->hash) {
-        memset(obj->properties->hash->buckets, -1, obj->properties->hash->size * sizeof(int));
-        for (sp = obj->properties->slots, i = 0; i < obj->numProp; i++, sp++) {
-            sp->hashChain = -1;
-        }
-    }
-}
-#endif
 
 
 static void removeHashEntry(Ejs *ejs, EjsPot *obj, EjsName qname)

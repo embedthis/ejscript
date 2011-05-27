@@ -2710,10 +2710,6 @@ static EcNode *parsePropertyOperator(EcCompiler *cp)
             } else {
                 np = appendNode(np, parsePropertyName(cp));
             }
-#if UNUSED
-            getToken(cp);
-            np = unexpected(cp);
-#endif
             break;
         }
         break;

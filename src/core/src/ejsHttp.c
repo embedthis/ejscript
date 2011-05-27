@@ -233,7 +233,7 @@ static EjsObj *http_form(Ejs *ejs, EjsHttp *hp, int argc, EjsObj **argv)
         httpPrepClientConn(hp->conn, 1);
         mprFlushBuf(hp->requestContent);
         data = argv[1];
-        if (ejsGetPropertyCount(ejs, data) > 0) {
+        if (ejsGetLength(ejs, data) > 0) {
             prepForm(ejs, hp, NULL, data);
         } else {
             mprPutStringToBuf(hp->requestContent, ejsToMulti(ejs, data));
@@ -1118,7 +1118,7 @@ static void prepForm(Ejs *ejs, EjsHttp *hp, char *prefix, EjsObj *data)
     char        *encodedKey, *encodedValue, *newPrefix, *newKey;
     int         i, count;
 
-    count = ejsGetPropertyCount(ejs, data);
+    count = ejsGetLength(ejs, data);
     for (i = 0; i < count; i++) {
         qname = ejsGetPropertyName(ejs, data, i);
 
@@ -1126,7 +1126,7 @@ static void prepForm(Ejs *ejs, EjsHttp *hp, char *prefix, EjsObj *data)
         if (vp == 0) {
             continue;
         }
-        if (ejsGetPropertyCount(ejs, vp) > 0 && !ejsIs(ejs, vp, Array)) {
+        if (ejsGetLength(ejs, vp) > 0 && !ejsIs(ejs, vp, Array)) {
             if (prefix) {
                 newPrefix = mprAsprintf("%s.%@", prefix, qname.name);
                 prepForm(ejs, hp, newPrefix, vp);

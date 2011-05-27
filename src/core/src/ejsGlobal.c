@@ -163,7 +163,7 @@ int ejsBlendObject(Ejs *ejs, EjsObj *dest, EjsObj *src, int overwrite)
     EjsName     name;
     int         i, count;
 
-    count = ejsGetPropertyCount(ejs, src);
+    count = ejsGetLength(ejs, src);
     for (i = 0; i < count; i++) {
         vp = ejsGetProperty(ejs, src, i);
         if (vp == 0) {
@@ -171,8 +171,8 @@ int ejsBlendObject(Ejs *ejs, EjsObj *dest, EjsObj *src, int overwrite)
         }
         name = ejsGetPropertyName(ejs, src, i);
         /* NOTE: treats arrays as primitive types */
-        if (!ejsIs(ejs, vp, Array) && !ejsIsXML(ejs, vp) && ejsGetPropertyCount(ejs, vp) > 0) {
-            if ((dp = ejsGetPropertyByName(ejs, dest, name)) == 0 || ejsGetPropertyCount(ejs, dp) == 0) {
+        if (!ejsIs(ejs, vp, Array) && !ejsIsXML(ejs, vp) && ejsGetLength(ejs, vp) > 0) {
+            if ((dp = ejsGetPropertyByName(ejs, dest, name)) == 0 || ejsGetLength(ejs, dp) == 0) {
                 ejsSetPropertyByName(ejs, dest, name, ejsClonePot(ejs, vp, 1));
             } else {
                 ejsBlendObject(ejs, dp, vp, overwrite);
@@ -257,7 +257,7 @@ static EjsObj *g_printLine(Ejs *ejs, EjsObj *unused, int argc, EjsObj **argv)
     mprAssert(argc == 1 && ejsIs(ejs, argv[0], Array));
 
     args = argv[0];
-    count = ejsGetPropertyCount(ejs, args);
+    count = ejsGetLength(ejs, args);
 
     for (i = 0; i < count; i++) {
         if ((vp = ejsGetProperty(ejs, args, i)) != 0) {

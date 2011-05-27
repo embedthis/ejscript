@@ -159,14 +159,6 @@ static EjsObj *timer_start(Ejs *ejs, EjsTimer *tp, int argc, EjsObj **argv)
 
     if (tp->event == 0) {
         flags = tp->repeat ? MPR_EVENT_CONTINUOUS : 0;
-#if UNUSED
-        /*
-            MOB - should not need this. When a VM is destroyed, the dispatcher (and queued events) are removed too
-         */
-        mprAddRoot(tp);
-        /* Need to mark ejs as there may be no global references */
-        tp->ejs = ejs;
-#endif
         tp->event = mprCreateEvent(ejs->dispatcher, "timer", tp->period, (MprEventProc) timerCallback, tp, flags);
         if (tp->event == 0) {
             ejsThrowMemoryError(ejs);

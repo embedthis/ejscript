@@ -1106,9 +1106,6 @@ void ejsConfigureDateType(Ejs *ejs)
     ejsBindMethod(ejs, prototype, ES_Date_elapsed, date_elapsed);
     ejsBindMethod(ejs, prototype, ES_Date_format, date_format);
     ejsBindMethod(ejs, prototype, ES_Date_formatUTC, date_formatUTC);
-#if UNUSED && DEPRECATED
-    ejsBindAccess(ejs, prototype, ES_Date_fullYear, date_fullYear, date_set_fullYear);
-#endif
     ejsBindMethod(ejs, prototype, ES_Date_future, date_future);
     ejsBindMethod(ejs, prototype, ES_Date_getTimezoneOffset, date_getTimezoneOffset); 
     ejsBindMethod(ejs, prototype, ES_Date_getUTCDate, date_getUTCDate);

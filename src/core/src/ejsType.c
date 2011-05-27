@@ -326,11 +326,6 @@ EjsType *ejsCreateType(Ejs *ejs, EjsName qname, EjsModule *up, EjsType *baseType
     if (baseType && ejsFixupType(ejs, type, baseType, 0) < 0) {
         return 0;
     }
-#if UNUSED
-    if (!type->mutable) {
-        ejsAddImmutable(ejs, sid, type->qname, type);
-    }
-#endif
     return type;
 }
 
@@ -350,10 +345,6 @@ EjsType *ejsCreateNativeType(Ejs *ejs, EjsName qname, int size, int sid, int num
     if (!type->mutable && type->sid >= 0) {
         ejsAddImmutable(ejs, type->sid, type->qname, type);
     }
-#if UNUSED
-    mprLog(0, "CreateNativeType %N is %s and has %s instances, sid %d", type->qname, type->mutable ? "mutable" : "immutable",
-        type->mutableInstances ? "mutable" : "immutable", type->sid);
-#endif
     return type;
 }
 
@@ -394,11 +385,6 @@ EjsType *ejsFinalizeScriptType(Ejs *ejs, EjsName qname, int size, void *manager,
     }
     type->manager = manager ? (MprManager) manager : (MprManager) defaultManager;
 
-#if UNUSED
-    mprLog(0, "FinalizeScriptType %N is %s and has %s instances, sid %d", type->qname, 
-        type->mutable ? "mutable" : "immutable",
-        type->mutableInstances ? "mutable" : "immutable", type->sid);
-#endif
     type->configured = 1;
     return type;
 }
@@ -731,12 +717,12 @@ int ejsBlendTypeProperties(Ejs *ejs, EjsType *type, EjsType *typeType)
     mprAssert(type);
     mprAssert(typeType);
 
-    count = ejsGetPropertyCount(ejs, typeType) - typeType->numInherited;
+    count = ejsGetLength(ejs, typeType) - typeType->numInherited;
     mprAssert(count == 0);
 
     if (count > 0) { 
         /*  Append properties to the end of the type so as to not mess up the first slot which may be an initializer */
-        destOffset = ejsGetPropertyCount(ejs, type);
+        destOffset = ejsGetLength(ejs, type);
         srcOffset = 0;
         if (ejsGrowPot(ejs, type, type->constructor.block.obj.numProp + count) < 0) {
             return EJS_ERR;
@@ -746,10 +732,10 @@ int ejsBlendTypeProperties(Ejs *ejs, EjsType *type, EjsType *typeType)
         }
     }
 #if FUTURE && KEEP
-    protoCount = ejsGetPropertyCount(ejs, typeType->prototype);
+    protoCount = ejsGetLength(ejs, typeType->prototype);
     if (protoCount > 0) {
         srcOffset = typeType->numInherited;
-        destOffset = ejsGetPropertyCount(ejs, type->prototype);
+        destOffset = ejsGetLength(ejs, type->prototype);
         if (ejsGrowPot(ejs, type->prototype, type->prototype->numProp + protoCount) < 0) {
             return EJS_ERR;
         }
@@ -913,7 +899,7 @@ int ejsBindFunction(Ejs *ejs, EjsAny *obj, int slotNum, void *nativeProc)
 {
     EjsFunction     *fun;
 
-    if (ejsGetPropertyCount(ejs, obj) < slotNum) {
+    if (ejsGetLength(ejs, obj) < slotNum) {
         ejs->hasError = 1;
         mprError("Attempt to bind non-existant function for slot %d in \"%s\"", slotNum, mprGetName(obj));
         return EJS_ERR;
@@ -1076,18 +1062,6 @@ void ejsInitTypeType(Ejs *ejs, EjsType *type)
     type->helpers.clone        = (EjsCloneHelper) cloneTypeVar;
     type->helpers.create       = (EjsCreateHelper) createTypeVar;
     type->helpers.setProperty  = (EjsSetPropertyHelper) setTypeProperty;
-
-#if UNUSED
-    /*
-        WARNING: read closely. This can be confusing. Fixup the helpers for the object type. We need to find
-        helpers via objectType->type->helpers. So we set it to the Type type. We keep objectType->baseType == 0
-        because Object has no base type. Similarly for the Type type.
-     */
-    SET_TYPE(S(Object), type);
-    SET_TYPE(S(Block), type);
-    SET_TYPE(S(String), type);
-    SET_TYPE(S(Type), S(Object));
-#endif
 }
 
 

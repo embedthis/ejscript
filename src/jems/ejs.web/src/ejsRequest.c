@@ -189,7 +189,7 @@ static int fillResponseHeaders(EjsRequest *req)
     
     if (req->responseHeaders) {
         ejs = req->ejs;
-        count = ejsGetPropertyCount(ejs, req->responseHeaders);
+        count = ejsGetLength(ejs, req->responseHeaders);
         for (i = 0; i < count; i++) {
             trait = ejsGetPropertyTraits(ejs, req->responseHeaders, i);
             if (trait && trait->attributes & 
@@ -1015,7 +1015,7 @@ static EjsObj *req_header(Ejs *ejs, EjsRequest *req, int argc, EjsObj **argv)
     key = (char*) ejsToMulti(ejs, argv[0]);
 
     if ((value = ejsGetPropertyByName(ejs, req->headers, EN(key))) == 0) {
-        count = ejsGetPropertyCount(ejs, req->headers);
+        count = ejsGetLength(ejs, req->headers);
         for (i = 0; i < count; i++) {
             qname = ejsGetPropertyName(ejs, req->headers, i);
             if (mcasecmp(qname.name->value, key) == 0) {
@@ -1307,7 +1307,6 @@ EjsRequest *ejsCloneRequest(Ejs *ejs, EjsRequest *req, bool deep)
     nreq->running = req->running;
     nreq->cloned = req;
 
-//  MOB - limits?
     if (req->route) {
         nreq->route = ejsClone(ejs, req->route, 1);
     }

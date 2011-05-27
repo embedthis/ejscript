@@ -282,25 +282,6 @@ static void genSpread(EcCompiler *cp, EcNode *np)
 }
 
 
-#if UNUSED
-static void genArrayLiteral(EcCompiler *cp, EcNode *np)
-{
-    EcNode      *child;
-    int         next;
-
-    ENTER(cp);
-
-    next = 0;
-    while ((child = getNextNode(cp, np, &next)) != 0) {
-        /* Don't propagate needsValue here. We have a new and that will take care of the residual value */
-        cp->state->needsValue = 0;
-        processNode(cp, child);
-    }
-    LEAVE(cp);
-}
-#endif
-
-
 /*
     Generate an assignment expression
  */
@@ -806,13 +787,6 @@ static void genClassName(EcCompiler *cp, EjsType *type)
             (!state->inFunction || (state->currentFunction && state->currentFunction->staticMethod))) {
         ecEncodeOpcode(cp, EJS_OP_LOAD_THIS);
         pushStack(cp, 1);
-#if UNUSED
-            /*
-                This is broken. When calling a subclass method, this refers to the outer class and so the base is not right
-             */
-            ecEncodeOpcode(cp, EJS_OP_LOAD_THIS_BASE);
-            ecEncodeNum(cp, 0);
-#endif
 
     } else {
         ecEncodeOpcode(cp, EJS_OP_LOAD_GLOBAL);
@@ -876,14 +850,9 @@ static void genBoundName(EcCompiler *cp, EcNode *np)
 
     if (lookup->obj == ejs->global) {
         /*
-            Global variable.
+            Global variable
          */
-        //  TODO -- this logic looks strange
-#if UNUSED
-        if (lookup->slotNum < 0 || (!cp->bind && (lookup->ref == 0 || !BUILTIN(lookup->ref)))) {
-#else
         if (lookup->slotNum < 0 || lookup->slotNum > ES_global_NUM_CLASS_PROP) {
-#endif
             lookup->bind = 0;
             genUnboundName(cp, np);
 
@@ -1019,16 +988,7 @@ static void genCallSequence(EcCompiler *cp, EcNode *np)
                 MOB BUG. Could be an arbitrary expression on the left. Need a consistent way to save the right most
                 object before the property. */
             count = getStackCount(cp);
-#if UNUSED
-            left->needThis = 1;
-#endif
             processNodeGetValue(cp, left);
-#if UNUSED
-            if (getStackCount(cp) < (count + 2)) {
-                ecEncodeOpcode(cp, EJS_OP_DUP);
-                pushStack(cp, 1);
-            }
-#endif
             ecEncodeOpcode(cp, EJS_OP_LOAD_THIS_LOOKUP);
             pushStack(cp, 1);
             ecEncodeOpcode(cp, EJS_OP_SWAP);
@@ -1076,9 +1036,6 @@ static void genCallSequence(EcCompiler *cp, EcNode *np)
     if (staticMethod) {
         mprAssert(ejsIsType(ejs, lookup->obj));
         if (state->currentClass && state->inFunction && 
-#if UNUSED
-                ejsIsTypeSubType(ejs, state->currentClass, (EjsType*) lookup->originalObj) && 
-#endif
                 lookup->obj != ST(Object)) {
             /*
                 Calling a static method from within a class or subclass. So we can use "this".
@@ -1087,17 +1044,6 @@ static void genCallSequence(EcCompiler *cp, EcNode *np)
             mprAssert(0);
             ecEncodeOpcode(cp, EJS_OP_CALL_THIS_STATIC_SLOT);
             ecEncodeNum(cp, lookup->slotNum);
-#if UNUSED
-            /*
-                If searching the scope chain (i.e. without a qualifying obj.property), and if the current class is not the 
-                original object, then see how far back on the inheritance chain we must go.
-             */
-            if (lookup->originalObj != lookup->obj) {
-                for (type = state->currentClass; type != (EjsType*) lookup->originalObj; type = type->baseType) {
-                    lookup->nthBase++;
-                }
-            }
-#endif
             if (!state->currentFunction->staticMethod) {
                 /*
                     If calling from within an instance function, need to step over the instance also
@@ -1426,51 +1372,6 @@ static void genClass(EcCompiler *cp, EcNode *np)
             ecAddCStringConstant(cp, EJS_CONSTRUCTOR_NAMESPACE);
 
         } else if (type->constructor.block.pot.isFunction) {
-#if UNUSED
-            /*
-                Inject instance initializer code into (before) pre-existing constructor code. 
-             */
-            initializerCode = code->buf;
-            initializerLen = mprGetBufLength(initializerCode);
-            mprAssert(initializerLen >= 0);
-            if (initializerLen > 0) {
-                constructorLen = (constructor->body.code) ? constructor->body.code->codeLen : 0;
-                mprAssert(constructorLen >= 0);
-                len = initializerLen + constructorLen;
-                if ((byteCode = mprAllocZeroed(len)) == 0) {
-                    genError(cp, np, "Can't allocate code buffer");
-                    LEAVE(cp);
-                }
-                mprMemcpy(byteCode, initializerLen, mprGetBufStart(initializerCode), initializerLen);
-                if (constructorLen) {
-                    mprMemcpy(&byteCode[initializerLen], constructorLen, constructor->body.code->byteCode, constructorLen);
-                }
-                if (constructor->body.code) {
-                    debug = constructor->body.code->debug;
-                    mprAssert(debug->magic == EJS_DEBUG_MAGIC);
-                    if (debug && debug->numLines > 0) {
-                        for (i = 0; i < debug->numLines; i++) {
-                            addDebugLine(cp, code, debug->lines[i].offset, debug->lines[i].source);
-                        }
-                    }
-                }
-                /*
-                    Adjust existing exception blocks to accomodate injected code.
-                    Then define new try/catch blocks encountered.
-                 */
-                for (i = 0; i < constructor->body.code->numHandlers; i++) {
-                    ex = constructor->body.code->handlers[i];
-                    ex->tryStart += initializerLen;
-                    ex->tryEnd += initializerLen;
-                    ex->handlerStart += initializerLen;
-                    ex->handlerEnd += initializerLen;
-                }
-                for (next = 0; (ex = (EjsEx*) mprGetNextItem(code->exceptions, &next)) != 0; ) {
-                    ejsAddException(ejs, constructor, ex->tryStart, ex->tryEnd, ex->catchType, ex->handlerStart, 
-                        ex->handlerEnd, ex->numBlocks, ex->numStack, ex->flags, -1);
-                }
-            }
-#endif
             injectCode(ejs, constructor, code);
         }
     }
@@ -2093,15 +1994,10 @@ static void genForIn(EcCompiler *cp, EcNode *np)
         ecEncodeOpcode(cp, EJS_OP_DUP);
         pushStack(cp, 1);
     }
-    
-#if UNUSED
-    //  MOB -- MUST CLEANUP this so we can use genLeftHandSide. But genVar() can't call genName??
-    genLeftHandSide(cp, iterVar->left);
-#else
     state->onLeft = 1;
     genName(cp, iterVar->left);
     state->onLeft = 0;
-#endif
+
     if (iterVar->kind == N_VAR_DEFINITION && iterVar->def.varKind == KIND_LET) {
         ecAddNameConstant(cp, iterVar->left->qname);
     }
@@ -2139,11 +2035,6 @@ static void genForIn(EcCompiler *cp, EcNode *np)
     /*
         Patch break/continue statements
      */
-#if UNUSED
-    if (varCount == 2) {
-        ecEncodeOpcode(cp, EJS_OP_POP);
-    }
-#endif
     discardStackItems(cp, startMark);
     breakLabel = (int) mprGetBufLength(state->code->buf);
 
@@ -2291,9 +2182,6 @@ static void genFunction(EcCompiler *cp, EcNode *np)
     state->inFunction = 1;
     state->inMethod = state->inMethod || np->function.isMethod;
     state->blockIsMethod = np->function.isMethod;
-#if UNUSED
-    state->currentFunctionName = np->qname.name;
-#endif
     state->currentFunction = fun;
     state->currentFunctionNode = np;
 
@@ -2779,11 +2667,6 @@ static void genField(EcCompiler *cp, EcNode *np)
             ecEncodeOpcode(cp, EJS_OP_LOAD_NULL);
             pushStack(cp, 1);            
         }
-    } else {
-        mprAssert(0);
-#if UNUSED
-        processNode(cp, np->field.fieldName);
-#endif
     }
 }
 
@@ -2910,10 +2793,6 @@ static void genSuper(EcCompiler *cp, EcNode *np)
         }
         ecEncodeOpcode(cp, EJS_OP_CALL_NEXT_CONSTRUCTOR);
         ecEncodeName(cp, cp->state->currentClass->baseType->qname);
-#if UNUSED
-        ejsName(&qname, EJS_CONSTRUCTOR_NAMESPACE, cp->state->currentClass->baseType->qname.name);
-        ecEncodeName(cp, qname);
-#endif
         ecEncodeNum(cp, argc);        
         popStack(cp, argc);
     } else {
@@ -3453,28 +3332,6 @@ static void genUnboundName(EcCompiler *cp, EcNode *np)
 
         popStack(cp, 1);
         pushStack(cp, (state->onLeft) ? -1 : 1);
-
-#if UNUSED
-    } else if (owner == ejs->global) {
-        /* Can't do early binding. Using Function.call/apply may change scope chain and invalidate the early-bound global */
-        if (np->needThis) {
-            mprAssert(0);
-            ecEncodeOpcode(cp, EJS_OP_LOAD_GLOBAL);
-            pushStack(cp, 1);
-            np->needThis = 0;
-        }
-        ecEncodeOpcode(cp, EJS_OP_LOAD_GLOBAL);
-        pushStack(cp, 1);
-        code = (!state->onLeft) ?  EJS_OP_GET_OBJ_NAME :  EJS_OP_PUT_OBJ_NAME;
-        ecEncodeOpcode(cp, code);
-        ecEncodeName(cp, np->qname);
-
-        /*
-            Store: -2, load: 0
-         */
-        popStack(cp, 1);
-        pushStack(cp, (state->onLeft) ? -1 : 1);
-#endif
 
     } else if (lookup->useThis) {
         ecEncodeOpcode(cp, EJS_OP_LOAD_THIS);

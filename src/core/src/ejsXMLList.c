@@ -326,7 +326,7 @@ static int setAlphaPropertyByName(Ejs *ejs, EjsXML *list, EjsName qname, EjsObj 
 
     targetObject = 0;
 
-    count = ejsGetPropertyCount(ejs, (EjsObj*) list);
+    count = ejsGetLength(ejs, (EjsObj*) list);
     if (count > 1) {
         //  TODO - why no error in spec?
         mprAssert(0);
@@ -341,7 +341,7 @@ static int setAlphaPropertyByName(Ejs *ejs, EjsXML *list, EjsName qname, EjsObj 
         if (targetObject == 0) {
             return 0;
         }
-        if (ejsGetPropertyCount(ejs, (EjsObj*) targetObject) != 1) {
+        if (ejsGetLength(ejs, (EjsObj*) targetObject) != 1) {
             return 0;
         }
         ejsAppendToXML(ejs, list, targetObject);
@@ -350,7 +350,7 @@ static int setAlphaPropertyByName(Ejs *ejs, EjsXML *list, EjsName qname, EjsObj 
     /*
         Update the element
      */
-    mprAssert(ejsGetPropertyCount(ejs, (EjsObj*) list) == 1);
+    mprAssert(ejsGetLength(ejs, (EjsObj*) list) == 1);
     elt = mprGetItem(list->elements, 0);                        //  TODO OPT - GetFirstItem
     mprAssert(elt);
     ejsSetPropertyByName(ejs, elt, qname, value);
@@ -625,11 +625,11 @@ static EjsXML *resolve(Ejs *ejs, EjsXML *xml)
     if (targetPropertyList == 0) {
         return 0;
     }
-    if (ejsGetPropertyCount(ejs, (EjsObj*) targetPropertyList) == 0) {
+    if (ejsGetLength(ejs, (EjsObj*) targetPropertyList) == 0) {
         /*
             Property does not exist in the target.
          */
-        if (targetObject->kind == EJS_XML_LIST && ejsGetPropertyCount(ejs, (EjsObj*) targetObject) > 1) {
+        if (targetObject->kind == EJS_XML_LIST && ejsGetLength(ejs, (EjsObj*) targetObject) > 1) {
             return 0;
         }
         /*

@@ -326,9 +326,9 @@ static void createClassSection(EcCompiler *cp, EjsPot *block, int slotNum, EjsPo
     } else {
         ecEncodeNum(cp, EJS_ENCODE_GLOBAL_NOREF);
     }
-    ecEncodeNum(cp, ejsGetPropertyCount(ejs, (EjsObj*) type));
+    ecEncodeNum(cp, ejsGetLength(ejs, (EjsObj*) type));
 
-    instanceTraits = ejsGetPropertyCount(ejs, (EjsObj*) type->prototype);
+    instanceTraits = ejsGetLength(ejs, (EjsObj*) type->prototype);
     mprAssert(instanceTraits >= 0);
     ecEncodeNum(cp, instanceTraits);
     
@@ -352,7 +352,7 @@ static void createClassSection(EcCompiler *cp, EjsPot *block, int slotNum, EjsPo
     /*
         Loop over type traits
      */
-    count = ejsGetPropertyCount(ejs, type); 
+    count = ejsGetLength(ejs, type); 
     for (slotNum = 0; slotNum < count; slotNum++) {
         createSection(cp, (EjsPot*) type, slotNum);
     }
@@ -361,7 +361,7 @@ static void createClassSection(EcCompiler *cp, EjsPot *block, int slotNum, EjsPo
      */
     prototype = type->prototype;
     if (prototype) {
-        count = ejsGetPropertyCount(ejs, prototype);
+        count = ejsGetLength(ejs, prototype);
         for (slotNum = 0; slotNum < count; slotNum++) {
             pname = ejsGetPropertyName(ejs, prototype, slotNum);
             trait = ejsGetPropertyTraits(ejs, prototype, slotNum);
@@ -373,7 +373,7 @@ static void createClassSection(EcCompiler *cp, EjsPot *block, int slotNum, EjsPo
             createSection(cp, prototype, slotNum);
         }
     }
-    mp->checksum += sumNum(ejsGetPropertyCount(ejs, type) + instanceTraits + interfaceCount);
+    mp->checksum += sumNum(ejsGetLength(ejs, type) + instanceTraits + interfaceCount);
     mp->checksum += sumString(type->qname.name);
     ecEncodeByte(cp, EJS_SECT_CLASS_END);
 }
@@ -734,7 +734,7 @@ void ecAddConstants(EcCompiler *cp, EjsAny *block)
     }
     SET_VISITED(block, 1);
 
-    numTraits = ejsGetPropertyCount(ejs, block);
+    numTraits = ejsGetLength(ejs, block);
     for (i = 0; i < numTraits; i++) {
         qname = ejsGetPropertyName(ejs, block, i);
         ecAddNameConstant(cp, qname);

@@ -98,9 +98,9 @@ static int createSlotFile(EjsMod *bp, EjsModule *mp, MprFile *file)
 
     mprFprintf(file, "\n/*\n   Slots for the \"%@\" module \n */\n", mp->name);
 
-    slotNum = ejsGetPropertyCount(ejs, ejs->global);
+    slotNum = ejsGetLength(ejs, ejs->global);
     type = ejsCreateType(ejs, N(EJS_EJS_NAMESPACE, EJS_GLOBAL), NULL, NULL, NULL, -1, 
-        ejsGetPropertyCount(ejs, ejs->global), 0, sizeof(EjsType), 0, EJS_TYPE_POT);
+        ejsGetLength(ejs, ejs->global), 0, sizeof(EjsType), 0, EJS_TYPE_POT);
     type->constructor.block = *(EjsBlock*) ejs->global;
     SET_TYPE(type, ST(Type));
     type->constructor.block.pot.isType = 1;
@@ -231,7 +231,7 @@ static int genType(EjsMod *bp, MprFile *file, EjsModule *mp, EjsType *type, int 
     prototype = type->prototype;
     if (prototype) {
         mprFprintf(file, "\n/*\n   Prototype (instance) slots for \"%@\" type \n */\n", type->qname.name);
-        count = ejsGetPropertyCount(ejs, prototype);
+        count = ejsGetLength(ejs, prototype);
         offset = 0;
         for (slotNum = offset; slotNum < count; slotNum++) {
             qname = ejsGetPropertyName(ejs, prototype, slotNum);
@@ -316,7 +316,7 @@ static int genType(EjsMod *bp, MprFile *file, EjsModule *mp, EjsType *type, int 
         }
         SET_VISITED(vp, 1);
 
-        count = ejsGetPropertyCount(ejs, (EjsObj*) nt);
+        count = ejsGetLength(ejs, (EjsObj*) nt);
         if (genType(bp, file, mp, nt, 0, count, 0) < 0) {
             SET_VISITED(vp, 0);
             return EJS_ERR;

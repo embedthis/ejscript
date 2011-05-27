@@ -93,7 +93,7 @@ static void manageCompiler(EcCompiler *cp, int flags)
 int ecCompile(EcCompiler *cp, int argc, char **argv)
 {
     Ejs     *ejs;
-    int     rc, saveCompiling, frozen;
+    int     rc, saveCompiling, paused;
 
 #if BLD_DEBUG
     MprThread   *tp;
@@ -105,11 +105,9 @@ int ecCompile(EcCompiler *cp, int argc, char **argv)
     ejs->compiling = 1;
     
     //  MOB -- remove this. Should not be required.
-    frozen = ejsFreeze(ejs, -1);
-
+    paused = ejsPauseGC(ejs);
     rc = compileInner(cp, argc, argv);
-
-    ejsFreeze(ejs, frozen);
+    ejsResumeGC(ejs, paused);
     ejs->compiling = saveCompiling;
     return rc;
 }
@@ -124,7 +122,7 @@ static int compileInner(EcCompiler *cp, int argc, char **argv)
     EcLocation  loc;
     cchar       *ext;
     char        *msg;
-    int         next, i, j, nextModule, lflags, rc, frozen;
+    int         next, i, j, nextModule, lflags, rc, paused;
 
     ejs = cp->ejs;
     if ((nodes = mprCreateList(-1, 0)) == 0) {
@@ -187,9 +185,9 @@ static int compileInner(EcCompiler *cp, int argc, char **argv)
         } else  {
             mprAssert(!MPR->marking);
             //  MOB - move this deeper (gradually)
-            frozen = ejsFreeze(ejs, 1);
+            paused = ejsPauseGC(ejs);
             mprAddItem(nodes, ecParseFile(cp, argv[i]));
-            ejsFreeze(ejs, frozen);
+            ejsResumeGC(ejs, paused);
         }
         mprAssert(!MPR->marking);
     }
@@ -207,12 +205,13 @@ static int compileInner(EcCompiler *cp, int argc, char **argv)
     /*
         Process the internal representation and generate code
      */
-    frozen = ejsFreeze(ejs, 1);
+    paused = ejsPauseGC(ejs);
     if (!cp->parseOnly && cp->errorCount == 0) {
         ecResetParser(cp);
         if (ecAstProcess(cp) < 0) {
             ejsPopBlock(ejs);
             cp->nodes = NULL;
+            ejsResumeGC(ejs, paused);
             return EJS_ERR;
         }
         if (cp->errorCount == 0) {
@@ -220,6 +219,7 @@ static int compileInner(EcCompiler *cp, int argc, char **argv)
             if (ecCodeGen(cp) < 0) {
                 ejsPopBlock(ejs);
                 cp->nodes = NULL;
+                ejsResumeGC(ejs, paused);
                 return EJS_ERR;
             }
         }
@@ -234,8 +234,8 @@ static int compileInner(EcCompiler *cp, int argc, char **argv)
         ejsAddModule(cp->ejs, mp);
     }
     cp->nodes = NULL;
-    ejsFreeze(ejs, frozen);
-    if (!frozen) {
+    ejsResumeGC(ejs, paused);
+    if (!paused) {
         mprYield(0);
     }
     mprAssert(ejs->result == 0 || (MPR_GET_GEN(MPR_GET_MEM(ejs->result)) != MPR->heap.dead));

@@ -34,18 +34,9 @@ EjsModule *ejsCreateModule(Ejs *ejs, EjsString *name, int version, EjsConstants 
     } else if ((mp->constants = ejsCreateConstants(ejs, EJS_INDEX_INCR, EC_BUFSIZE)) == NULL) {
         return 0;
     }
-    mp->constants->mp = mp;
     mprAssert(mp->checksum == 0);
     return mp;
 }
-
-
-#if UNUSED
-EjsModule *ejsCloneModule(Ejs *ejs, EjsModule *mp)
-{
-    return ejsCreateModule(ejs, mp->name, mp->version, mp->constants);
-}
-#endif
 
 
 static void manageModule(EjsModule *mp, int flags)

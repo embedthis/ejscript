@@ -249,11 +249,6 @@ void ejsConfigureBooleanType(Ejs *ejs)
         return;
     }
     ejsBindConstructor(ejs, type, booleanConstructor);
-#if UNUSED
-    ejsSetProperty(ejs, ejs->global, ES_boolean, type);
-    ejsSetProperty(ejs, ejs->global, ES_true, S(true));
-    ejsSetProperty(ejs, ejs->global, ES_false, S(false));
-#endif
 }
 
 

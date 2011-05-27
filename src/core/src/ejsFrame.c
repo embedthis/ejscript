@@ -19,11 +19,6 @@ static void manageFrame(EjsFrame *frame, int flags)
             mprMark(frame->orig);
             mprMark(frame->caller);
             mprMark(TYPE(frame));
-            /* Marking the stack is done in ejsGarbage.c:mark() */
-#if BLD_DEBUG && UNUSED
-            mprMark(frame->loc.source);
-            mprMark(frame->loc.filename);
-#endif
         }
     }
 }
@@ -121,21 +116,8 @@ EjsFrame *ejsCreateFrame(Ejs *ejs, EjsFunction *fun, EjsObj *thisObj, int argc, 
 
     frame->function.boundArgs = fun->boundArgs;
 
-#if UNUSED
-    //  MOB thisObj is always set
-    mprAssert(thisObj);
-    if (thisObj) {
-        frame->function.boundThis = thisObj;
-    } else if (fun->boundThis) {
-        mprAssert(fun->boundThis != ejs->global);
-        frame->function.boundThis = fun->boundThis;
-    } else {
-        frame->function.boundThis = ejs->global;
-    }
-#else
     /* NOTE: this can be set to ejs->global in frames */
     frame->function.boundThis = thisObj;
-#endif
     
     frame->function.resultType = fun->resultType;
     frame->function.body = fun->body;

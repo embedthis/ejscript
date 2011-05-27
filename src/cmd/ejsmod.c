@@ -246,14 +246,14 @@ static int process(EjsMod *mp, cchar *output, int argc, char **argv)
         outfile = 0;
     }
     ejs->loaderCallback = (mp->listing) ? emListingLoadCallback : 0;
-    mp->firstGlobal = ejsGetPropertyCount(ejs, ejs->global);
+    mp->firstGlobal = ejsGetLength(ejs, ejs->global);
 
     /*
         For each module on the command line
      */
     for (i = 0; i < argc && !mp->fatalError; i++) {
         moduleCount = mprGetListLength(ejs->modules);
-        ejs->userData = mp;
+        ejs->loadData = mp;
         if (!mprPathExists(argv[i], R_OK)) {
             mprError("Can't access module %s", argv[i]);
             return EJS_ERR;

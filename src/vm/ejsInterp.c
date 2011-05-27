@@ -102,7 +102,7 @@ static MPR_INLINE void checkGetter(Ejs *ejs, EjsAny *value, EjsAny *thisObj, Ejs
 
 #define CHECK_VALUE(value, thisObj, obj, slotNum) checkGetter(ejs, value, thisObj, obj, slotNum)
 
-#define CHECK_GC() if (MPR->heap.mustYield && !(ejs->state->frozen)) { mprYield(0); } else 
+#define CHECK_GC() if (MPR->heap.mustYield && !(ejs->state->paused)) { mprYield(0); } else 
 
 /*
     Set a slot value when we don't know if the object is an EjsObj
@@ -130,11 +130,7 @@ static MPR_INLINE void checkGetter(Ejs *ejs, EjsAny *value, EjsAny *thisObj, Ejs
 #define GET_TYPE()      ((EjsType*) getGlobalArg(ejs, FRAME))
 #define GET_WORD()      ejsDecodeInt32(ejs, &(FRAME)->pc)
 #undef THIS
-#if UNUSED
-#define THIS            FRAME->thisObj
-#else
 #define THIS            FRAME->function.boundThis
-#endif
 #define FILL(mark)      while (mark < FRAME->pc) { *mark++ = EJS_OP_NOP; }
 
 #if DEBUG_IDE
@@ -201,7 +197,7 @@ static void VM(Ejs *ejs, EjsFunction *fun, EjsAny *otherThis, int argc, int stac
     EjsNamespace *nsp;
     EjsString   *str;
     uchar       *mark;
-    int         i, offset, count, opcode, attributes, frozen;
+    int         i, offset, count, opcode, attributes, paused;
 
 #if BLD_UNIX_LIKE || (VXWORKS && !BLD_CC_DIAB)
     /*
@@ -223,7 +219,7 @@ static void VM(Ejs *ejs, EjsFunction *fun, EjsAny *otherThis, int argc, int stac
     state = mprAlloc(sizeof(EjsState));
     *state = *ejs->state;
     state->prev = ejs->state;
-    state->frozen = ejs->state->frozen;
+    state->paused = ejs->state->paused;
     ejs->state = state;
 
     callFunction(ejs, fun, otherThis, argc, stackAdjust);
@@ -1720,7 +1716,7 @@ static void VM(Ejs *ejs, EjsFunction *fun, EjsAny *otherThis, int argc, int stac
          */
         CASE (EJS_OP_SPREAD):
             vp = *state->stack;
-            count = ejsGetPropertyCount(ejs, vp);
+            count = ejsGetLength(ejs, vp);
             if (count > 0) {
                 vp = pop(ejs);
                 for (i = 0; i < count; i++) {
@@ -2200,7 +2196,7 @@ static void VM(Ejs *ejs, EjsFunction *fun, EjsAny *otherThis, int argc, int stac
              Stack after         []
              */
         CASE (EJS_OP_NEW_ARRAY):
-frozen = ejsFreeze(ejs, 1);
+            paused = ejsPauseGC(ejs);
             type = GET_TYPE();
             argc = GET_INT();
             argc += ejs->spreadArgs;
@@ -2217,7 +2213,7 @@ frozen = ejsFreeze(ejs, 1);
             state->stack -= (argc * 2);
             push(vp);
             state->t1 = 0;
-ejsFreeze(ejs, frozen);
+            ejsResumeGC(ejs, paused);
             BREAK;
 
         /*
@@ -2228,7 +2224,7 @@ ejsFreeze(ejs, frozen);
                 Stack after         []
          */
         CASE (EJS_OP_NEW_OBJECT):
-frozen = ejsFreeze(ejs, 1);
+            paused = ejsPauseGC(ejs);
             type = GET_TYPE();
             argc = GET_INT();
             argc += ejs->spreadArgs;
@@ -2250,7 +2246,7 @@ frozen = ejsFreeze(ejs, 1);
             state->stack -= (argc * 3);
             push(vp);
             state->t1 = 0;
-ejsFreeze(ejs, frozen);
+            ejsResumeGC(ejs, paused);
             BREAK;
 
 
@@ -2675,34 +2671,20 @@ EjsAny *ejsRunFunction(Ejs *ejs, EjsFunction *fun, EjsAny *thisObj, int argc, vo
     if (ejs->exception) {
         return 0;
     }
-#if TEST
-    //  MOB -is this required 
-    mprAssert(ejs->state->fp->attentionPc == 0);
-#endif
     ejsClearAttention(ejs);
     
-#if UNUSED
-    if (thisObj == 0) {
-        //  MOB - simplify
-        if ((thisObj = fun->boundThis) == 0) {
-            thisObj = ejs->state->fp->function.boundThis;
-        }
-    }    
-#else
     if (thisObj == 0) {
         thisObj = fun->boundThis ? fun->boundThis : ejs->global;
     }
-#endif
     if (ejsIsNativeFunction(ejs, fun)) {
         if (fun->body.proc == 0) {
             ejsThrowArgError(ejs, "Native function is not defined");
             return 0;
         }
-//  MOB - need faster solution
-//  MOB -- just so that all args get marked
-for (i = 0; i < argc; i++) {
-    pushOutside(ejs, ((EjsAny**) argv)[i]);
-}
+        /* Push args so they get marked */
+        for (i = 0; i < argc; i++) {
+            pushOutside(ejs, ((EjsAny**) argv)[i]);
+        }
         ejs->result = (fun->body.proc)(ejs, thisObj, argc, argv);
         ejs->state->stack -= argc;
         if (ejs->result == 0) {
@@ -3437,7 +3419,7 @@ static EjsObj *getGlobalArg(Ejs *ejs, EjsFrame *fp)
 
     case EJS_ENCODE_GLOBAL_SLOT:
         slotNum = t >> 2;
-        if (0 <= slotNum && slotNum < ejsGetPropertyCount(ejs, ejs->global)) {
+        if (0 <= slotNum && slotNum < ejsGetLength(ejs, ejs->global)) {
             obj = ejsGetProperty(ejs, ejs->global, slotNum);
         }
         break;
@@ -3521,18 +3503,11 @@ static void callFunction(Ejs *ejs, EjsFunction *fun, EjsAny *thisObj, int argc, 
             return;
         }
     }
-//  XXX
-#if UNUSED || 1
     if (thisObj == 0) {
         if ((thisObj = fun->boundThis) == 0) {
             thisObj = state->fp->function.boundThis;
         } 
     } 
-#else
-    if (thisObj == 0) {
-        thisObj = fun->boundThis ? fun->boundThis : ejs->global;
-    }
-#endif
     if (fun->boundArgs) {
         mprAssert(ejsIs(ejs, fun->boundArgs, Array));
         count = fun->boundArgs->length;
@@ -3571,9 +3546,9 @@ static void callFunction(Ejs *ejs, EjsFunction *fun, EjsAny *thisObj, int argc, 
             return;
         }
         ejsClearAttention(ejs);
-fstate = state->frozen;
+        fstate = state->paused;
         ejs->result = (fun->body.proc)(ejs, thisObj, argc, argv);
-state->frozen = fstate;
+        state->paused = fstate;
         if (ejs->result == 0) {
             ejs->result = S(null);
         }
@@ -3592,9 +3567,7 @@ state->frozen = fstate;
         state->bp = (EjsBlock*) fp;
         ejsClearAttention(ejs);
     }
-    //  MOB - is this the best place for this?
     mprAssert(ejs->state->fp);
-    // mprAssert(!state->frozen);
 }
 
 
@@ -3815,7 +3788,7 @@ static EjsOpCode traceCode(Ejs *ejs, EjsOpCode opcode)
     EjsState        *state;
     EjsOptable      *optable;
     int             offset;
-#if UNUSED
+#if FUTURE
     static int      showFrequency = 1;
 #endif
 
@@ -3832,7 +3805,7 @@ static EjsOpCode traceCode(Ejs *ejs, EjsOpCode opcode)
         }
         optable = ejsGetOptable();
         fp->line = ejsGetDebugLine(ejs, (EjsFunction*) fp, fp->pc);
-#if UNUSED
+#if FUTURE
         if (showFrequency && ((once % 1000) == 999)) {
             ejsShowOpFrequency(ejs);
         }
@@ -3844,7 +3817,7 @@ static EjsOpCode traceCode(Ejs *ejs, EjsOpCode opcode)
 }
 
 
-#if UNUSED
+#if FUTURE
 void ejsShowOpFrequency(Ejs *ejs)
 {
     EjsOptable      *optable;

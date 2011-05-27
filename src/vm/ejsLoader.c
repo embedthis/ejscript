@@ -85,7 +85,7 @@ int ejsLoadModule(Ejs *ejs, EjsString *path, int minVersion, int maxVersion, int
 static int initializeModule(Ejs *ejs, EjsModule *mp)
 {
     EjsNativeModule     *nativeModule;
-    int                 priorGen, old;
+    int                 priorGen, paused;
 
     priorGen = 0;
 
@@ -122,12 +122,12 @@ static int initializeModule(Ejs *ejs, EjsModule *mp)
         }
     }
     mp->configured = 1;
-    old = ejsFreeze(ejs, 1);
+    paused = ejsPauseGC(ejs);
     if (ejsRunInitializer(ejs, mp) == 0) {
-        ejsFreeze(ejs, old);
+        ejsResumeGC(ejs, paused);
         return MPR_ERR_CANT_INITIALIZE;
     }
-    ejsFreeze(ejs, old);
+    ejsResumeGC(ejs, paused);
     return 0;
 }
 
@@ -201,7 +201,7 @@ static int loadSections(Ejs *ejs, MprFile *file, cchar *path, EjsModuleHdr *hdr,
 
         case EJS_SECT_DEPENDENCY:
             rc = loadDependencySection(ejs, mp);
-            mp->firstGlobal = ejsGetPropertyCount(ejs, ejs->global);
+            mp->firstGlobal = ejsGetLength(ejs, ejs->global);
             break;
 
         case EJS_SECT_EXCEPTION:
@@ -225,12 +225,12 @@ static int loadSections(Ejs *ejs, MprFile *file, cchar *path, EjsModuleHdr *hdr,
             ejsAddModule(ejs, mp);
             mp->path = sclone(path);
             mp->file = file;
-            mp->firstGlobal = (ejs->initialized) ? ejsGetPropertyCount(ejs, ejs->global) : 0;
+            mp->firstGlobal = (ejs->initialized) ? ejsGetLength(ejs, ejs->global) : 0;
             break;
 
         case EJS_SECT_MODULE_END:
             rc = loadEndModuleSection(ejs, mp);
-            mp->lastGlobal = ejsGetPropertyCount(ejs, ejs->global);
+            mp->lastGlobal = ejsGetLength(ejs, ejs->global);
             unlock(mp);
             break;
 
@@ -1499,7 +1499,7 @@ int ejsModuleReadType(Ejs *ejs, EjsModule *mp, EjsType **typeRef, EjsTypeFixup *
             Type is a builtin primitive type or we are binding globals.
          */
         slot = t >> 2;
-        if (0 <= slot && slot < ejsGetPropertyCount(ejs, ejs->global)) {
+        if (0 <= slot && slot < ejsGetLength(ejs, ejs->global)) {
             type = ejsGetProperty(ejs, ejs->global, slot);
             if (type && (EjsObj*) type != S(null)) {
                 qname = type->qname;

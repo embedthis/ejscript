@@ -51,7 +51,7 @@ void emListingLoadCallback(Ejs *ejs, int kind, ...)
     int             nextModule;
 
     va_start(args, kind);
-    mp = ejs->userData;
+    mp = ejs->loadData;
     lst = mprAlloc(sizeof(Lst));
 
     /*
@@ -264,8 +264,8 @@ static void lstClass(EjsMod *mp, EjsModule *module, int slotNum, EjsType *klass,
     leadin(mp, module, 1, 0);
     mprFprintf(mp->file, 
         "        #  Class Details: %d class traits, %d prototype (instance) traits, %s, requested slot %d\n",
-        ejsGetPropertyCount(ejs, (EjsObj*) klass),
-        klass->prototype ? ejsGetPropertyCount(ejs, klass->prototype) : 0, 
+        ejsGetLength(ejs, (EjsObj*) klass),
+        klass->prototype ? ejsGetLength(ejs, klass->prototype) : 0, 
         klass->hasInstanceVars ? "has-state": "", slotNum);
 }
 
@@ -792,7 +792,7 @@ static void lstSlotAssignments(EjsMod *mp, EjsModule *module, EjsObj *parent, in
     if (obj == ejs->global) {
         mprFprintf(mp->file,  "\n#\n"
             "#  Global slot assignments (Num prop %d)\n"
-            "#\n", ejsGetPropertyCount(ejs, obj));
+            "#\n", ejsGetLength(ejs, obj));
 
         /*
             List slots for global
@@ -813,9 +813,9 @@ static void lstSlotAssignments(EjsMod *mp, EjsModule *module, EjsObj *parent, in
         if (fun) {
             mprFprintf(mp->file,  "\n#\n"
                 "#  Initializer slot assignments (Num prop %d)\n"
-                "#\n", ejsGetPropertyCount(ejs, (EjsObj*) fun));
+                "#\n", ejsGetLength(ejs, (EjsObj*) fun));
 
-            count = ejsGetPropertyCount(ejs, (EjsObj*) fun);
+            count = ejsGetLength(ejs, (EjsObj*) fun);
             for (i = 0; i < count; i++) {
                 trait = ejsGetPropertyTraits(ejs, (EjsObj*) fun, i);
                 qname = ejsGetPropertyName(ejs, (EjsObj*) fun, i);
@@ -829,7 +829,7 @@ static void lstSlotAssignments(EjsMod *mp, EjsModule *module, EjsObj *parent, in
 
     } else if (ejsIsFunction(ejs, obj)) {
         fun = (EjsFunction*) obj;
-        count = ejsGetPropertyCount(ejs, (EjsObj*) obj);
+        count = ejsGetLength(ejs, (EjsObj*) obj);
         if (count > 0) {
             mprFprintf(mp->file,  "\n#\n"
                 "#  Local slot assignments for the \"%@\" function (Num slots %d)\n"
@@ -851,9 +851,9 @@ static void lstSlotAssignments(EjsMod *mp, EjsModule *module, EjsObj *parent, in
         mprFprintf(mp->file,  "\n#\n"
             "#  Class slot assignments for the \"%@\" class (Num slots %d)\n"
             "#\n", type->qname.name,
-            ejsGetPropertyCount(ejs, (EjsObj*) type));
+            ejsGetLength(ejs, (EjsObj*) type));
 
-        count = ejsGetPropertyCount(ejs, (EjsObj*) type);
+        count = ejsGetLength(ejs, (EjsObj*) type);
         for (i = 0; i < count; i++) {
             trait = ejsGetPropertyTraits(ejs, (EjsObj*) type, i);
             mprAssert(trait);
@@ -863,17 +863,17 @@ static void lstSlotAssignments(EjsMod *mp, EjsModule *module, EjsObj *parent, in
 
         prototype = type->prototype;
         if (type->baseType && type->baseType->prototype) {
-            numInherited = ejsGetPropertyCount(ejs, type->baseType->prototype);
+            numInherited = ejsGetLength(ejs, type->baseType->prototype);
         } else {
             numInherited = 0;
         }
         mprFprintf(mp->file,  "\n#\n"
             "#  Instance slot assignments for the \"%@\" class (Num prop %d, num inherited %d)\n"
             "#\n", type->qname.name,
-            prototype ? ejsGetPropertyCount(ejs, prototype): 0, numInherited);
+            prototype ? ejsGetLength(ejs, prototype): 0, numInherited);
 
         if (prototype) {
-            count = ejsGetPropertyCount(ejs, prototype);
+            count = ejsGetLength(ejs, prototype);
             for (i = 0; i < count; i++) {
                 trait = ejsGetPropertyTraits(ejs, prototype, i);
                 mprAssert(trait);
@@ -887,14 +887,14 @@ static void lstSlotAssignments(EjsMod *mp, EjsModule *module, EjsObj *parent, in
     } else if (ejsIsBlock(ejs, obj)) {
         qname = ejsGetPropertyName(ejs, parent, slotNum);
         block = (EjsBlock*) obj;
-        count = ejsGetPropertyCount(ejs, (EjsObj*) block);
+        count = ejsGetLength(ejs, (EjsObj*) block);
         if (count > 0) {
             mprFprintf(mp->file,  
                 "\n#\n"
                 "#  Block slot assignments for the \"%@\" (Num slots %d)\n"
-                "#\n", qname.name, ejsGetPropertyCount(ejs, obj));
+                "#\n", qname.name, ejsGetLength(ejs, obj));
             
-            count = ejsGetPropertyCount(ejs, obj);
+            count = ejsGetLength(ejs, obj);
             for (i = 0; i < count; i++) {
                 trait = ejsGetPropertyTraits(ejs, obj, i);
                 mprAssert(trait);
@@ -912,7 +912,7 @@ static void lstSlotAssignments(EjsMod *mp, EjsModule *module, EjsObj *parent, in
         count = module->lastGlobal;
     } else {
         i = 0;
-        count = ejsGetPropertyCount(ejs, obj);
+        count = ejsGetLength(ejs, obj);
     }
     for (; i < count; i++) {
         qname = ejsGetPropertyName(ejs, obj, i);
@@ -1093,7 +1093,7 @@ static void getGlobal(EjsMod *mp, char *buf, int buflen)
             Type is a builtin primitive type or we are binding globals.
          */
         slotNum = t >> 2;
-        if (0 <= slotNum && slotNum < ejsGetPropertyCount(ejs, ejs->global)) {
+        if (0 <= slotNum && slotNum < ejsGetLength(ejs, ejs->global)) {
             vp = ejsGetProperty(ejs, ejs->global, slotNum);
         }
         if (vp && ejsIsType(ejs, vp)) {

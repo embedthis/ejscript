@@ -14,17 +14,6 @@ static int internHashSizes[] = {
      389, 769, 1543, 3079, 6151, 12289, 24593, 49157, 98317, 196613, 0
 };
 
-#if UNUSED
-/*
-    MOB OPT - holding locks too long. ejsInternAsc can take a while
-    Intern locking
- */
-static MprMutex     internLock;
-static MprMutex     *ilock = &internLock;
-#define lock(ip)     mprLock(ilock);
-#define unlock(ip)   mprUnlock(ilock);
-#endif
-
 /***************************** Forward Declarations ***************************/
 
 static EjsString *buildString(Ejs *ejs, EjsString *result, MprChar *str, ssize len);
@@ -390,7 +379,7 @@ static EjsString *concatString(Ejs *ejs, EjsString *sp, int argc, EjsObj **argv)
     args = (EjsArray*) argv[0];
 
     result = (EjsString*) ejsClone(ejs, sp, 0);
-    count = ejsGetPropertyCount(ejs, args);
+    count = ejsGetLength(ejs, args);
     for (i = 0; i < args->length; i++) {
         str = ejsToString(ejs, ejsGetProperty(ejs, args, i));
         if ((result = ejsCatString(ejs, result, str)) == NULL) {
@@ -1772,50 +1761,6 @@ static ssize indexof(MprChar *str, ssize len, EjsString *pattern, ssize patternL
     return -1;
 }
 
-
-#if UNUSED && MOVED_TO_MPR
-static int toMulti(char *dest, MprChar *src, ssize len)
-{
-#if BLD_CHAR_LEN == 1
-    if (dest) {
-        mprStrcpy(dest, len, src);
-    } else {
-        len = min(strlen(src), len);
-    }
-#else
-#if WIN || WINCE
-    len = WideCharToMultiByte(CP_ACP, 0, src, -1, dest, (DWORD) len, NULL, NULL);
-#else
-    //  Linux wchar_t is 32 bits and so can't use this if MprChar is 16 bits
-    len = wcstombs(dest, src, len);
-#endif
-#endif
-    mprAssert(len < MAXINT);
-    return len;
-}
-
-
-static int toUni(MprChar *dest, cchar *src, ssize len) 
-{
-#if BLD_CHAR_LEN == 1
-    if (dest) {
-        mprStrcpy(dest, len, src);
-    } else {
-        len = min(strlen(src), len);
-    }
-#else
-#if WIN || WINCE
-    len = MultiByteToWideChar(CP_ACP, 0, src, -1, dest, len);
-#else
-    //  Linux wchar_t is 32 bits and so can't use this if MprChar is 16 bits
-    len = mbstowcs(dest, src, len);
-#endif
-#endif
-    mprAssert(len < MAXINT);
-    return len;
-}
-#endif
-
 /******************************************** String API *******************************************/
 
 int ejsAtoi(Ejs *ejs, EjsString *sp, int radix)
@@ -2696,12 +2641,6 @@ void ejsInitStringType(Ejs *ejs, EjsType *type)
     type->helpers.invokeOperator = (EjsInvokeOperatorHelper) invokeStringOperator;
     type->helpers.lookupProperty = (EjsLookupPropertyHelper) lookupStringProperty;
     type->numericIndicies = 1;
-#if UNUSED
-    type->manager = (MprManager) ejsManageString;
-    type->qname = N("ejs", "String");
-    SET_TYPE_NAME(type->qname.name, type);
-    SET_TYPE_NAME(type->qname.space, type);
-#endif
 }
 
 

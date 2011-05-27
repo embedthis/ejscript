@@ -39,7 +39,7 @@ static EjsUri *castToUri(Ejs *ejs, EjsObj *arg)
         ustr = ((EjsPath*) arg)->path;
         up->uri = httpCreateUri(up, ustr, 0);
 
-    } else if (ejsGetPropertyCount(ejs, arg) > 0) {
+    } else if (ejsGetLength(ejs, arg) > 0) {
         up->uri = createHttpUriFromHash(ejs, up, arg, 0);
 
     } else {
@@ -675,12 +675,6 @@ static EjsUri *uri_resolve(Ejs *ejs, EjsUri *up, int argc, EjsObj **argv)
     EjsUri      *result;
     HttpUri     *uri, *target;
 
-#if UNUSED
-    int         relative;
-
-    relative = (argc >= 2 && argv[1] == S(false)) ? 0 : 1;
-#endif
-
     uri = up->uri;
     target = toHttpUri(ejs, argv[0], 0);
     result = ejsCreateObj(ejs, S(Uri), 0);
@@ -916,7 +910,7 @@ static EjsUri *completeUri(Ejs *ejs, EjsUri *up, EjsObj *missing, int includeQue
 
     if (!ejsIsDefined(ejs, missing)) {
         missingUri = 0;
-    } else if (ejsGetPropertyCount(ejs, missing) > 0) {
+    } else if (ejsGetLength(ejs, missing) > 0) {
         missingUri = ejsCreateObj(ejs, S(Uri), 0);
         missingUri->uri = createHttpUriFromHash(ejs, missing, 1);
     } else {
@@ -951,7 +945,7 @@ static HttpUri *toHttpUri(Ejs *ejs, EjsObj *arg, int dup)
     } else if (ejsIs(ejs, arg, Path)) {
         uri = httpCreateUri(((EjsPath*) arg)->value, 0);
 
-    } else if (ejsGetPropertyCount(ejs, arg) > 0) {
+    } else if (ejsGetLength(ejs, arg) > 0) {
         uri = createHttpUriFromHash(ejs, arg, 0);
 
     } else {

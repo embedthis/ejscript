@@ -38,7 +38,7 @@ static EjsWorker *initWorker(Ejs *ejs, EjsWorker *worker, Ejs *baseVm, cchar *na
     EjsName         sname;
     static int      workerSeqno = 0;
 
-    ejsFreeze(ejs, 1);
+    ejsPauseGC(ejs);
     if (worker == 0) {
         worker = ejsCreateWorker(ejs);
     }
@@ -105,7 +105,7 @@ static EjsWorker *workerConstructor(Ejs *ejs, EjsWorker *worker, int argc, EjsOb
     EjsObj      *options, *value;
     cchar       *name, *scriptFile;
 
-    ejsFreeze(ejs, 1);
+    ejsPauseGC(ejs);
 
     scriptFile = (argc >= 1) ? ((EjsPath*) argv[0])->value : 0;
     options = (argc == 2) ? (EjsObj*) argv[1]: NULL;
@@ -160,7 +160,6 @@ static void removeWorker(EjsWorker *worker)
         }
         /* Accelerate GC */
         if (worker->pair) {
-            worker->pair->ejs->workerComplete = 1;
             worker->pair->ejs = 0;
             worker->pair->pair = 0;
             worker->pair = 0;
@@ -213,9 +212,6 @@ static EjsObj *startWorker(Ejs *ejs, EjsWorker *outsideWorker, int timeout)
     mprAssert(insideWorker->state == EJS_WORKER_BEGIN);
     inside = insideWorker->ejs;
 
-#if UNUSED
-    addWorker(ejs, outsideWorker);
-#endif
     outsideWorker->state = EJS_WORKER_STARTED;
 
     if (mprCreateEvent(inside->dispatcher, "workerMain", 0, (MprEventProc) workerMain, insideWorker, 0) < 0) {
@@ -471,7 +467,7 @@ static int doMessage(Message *msg, MprEvent *mprEvent)
     worker->gotMessage = 1;
     ejs = worker->ejs;
     event = 0;
-    ejsFreeze(ejs, 1);
+    ejsPauseGC(ejs);
 
     callback = ejsGetProperty(ejs, worker, msg->callbackSlot);
 
@@ -639,7 +635,7 @@ static EjsObj *workerPostMessage(Ejs *ejs, EjsWorker *worker, int argc, EjsObj *
     /*
         Create the event with serialized data in the originating interpreter. It owns the data.
      */
-    ejsFreeze(ejs, 1);
+    ejsPauseGC(ejs);
     if ((data = ejsToJSON(ejs, argv[0], NULL)) == 0) {
         ejsThrowArgError(ejs, "Can't serialize message data");
         return 0;
@@ -699,7 +695,7 @@ static int workerMain(EjsWorker *insideWorker, MprEvent *event)
         handleError(outside, outsideWorker, inside->exception, 0);
         inside->exception = 0;
     }
-    ejsFreeze(inside, 1);
+    ejsPauseGC(inside);
     if ((msg = createMessage()) == 0) {
         ejsThrowMemoryError(outside);
         return 0;
@@ -788,7 +784,7 @@ static void handleError(Ejs *ejs, EjsWorker *worker, EjsObj *exception, int thro
     mprAssert(exception);
     mprAssert(ejs == worker->ejs);
 
-    ejsFreeze(ejs, 1);
+    ejsPauseGC(ejs);
     if ((msg = createMessage()) == 0) {
         ejsThrowMemoryError(ejs);
         return;
