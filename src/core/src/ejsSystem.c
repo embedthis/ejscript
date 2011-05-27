@@ -153,8 +153,7 @@ void ejsConfigureSystemType(Ejs *ejs)
 {
     EjsType         *type;
 
-    if ((type = ejsGetTypeByName(ejs, N("ejs", "System"))) == 0) {
-        mprError("Can't find System type");
+    if ((type = ejsFinalizeScriptType(ejs, N("ejs", "System"), 0, 0, 0)) == 0) {
         return;
     }
     ejsBindMethod(ejs, type, ES_System_daemon, system_daemon);

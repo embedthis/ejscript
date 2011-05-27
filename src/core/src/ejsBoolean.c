@@ -223,8 +223,8 @@ void ejsCreateBooleanType(Ejs *ejs)
     EjsType     *type;
     EjsBoolean  *vp;
 
-    type = ejsCreateNativeType(ejs, N("ejs", "Boolean"), sizeof(EjsBoolean), S_Boolean,
-        ES_Boolean_NUM_CLASS_PROP, NULL, EJS_OBJ_HELPERS);
+    type = ejsCreateNativeType(ejs, N("ejs", "Boolean"), sizeof(EjsBoolean), S_Boolean, ES_Boolean_NUM_CLASS_PROP, 
+        0, EJS_TYPE_OBJ | EJS_TYPE_IMMUTABLE_INSTANCES);
     type->helpers.cast = (EjsCastHelper) castBooleanVar;
     type->helpers.invokeOperator = (EjsInvokeOperatorHelper) invokeBooleanOperator;
 
@@ -233,25 +233,27 @@ void ejsCreateBooleanType(Ejs *ejs)
      */
     vp = ejsCreateObj(ejs, type, 0);
     vp->value = 1;
-    ejsSetSpecial(ejs, S_true, vp);
+    ejsAddImmutable(ejs, S_true, EN("true"), vp);
 
     vp = ejsCreateObj(ejs, type, 0);
     vp->value = 0;
-    ejsSetSpecial(ejs, S_false, vp);
+    ejsAddImmutable(ejs, S_false, EN("false"), vp);
 }
 
 
 void ejsConfigureBooleanType(Ejs *ejs)
 {
     EjsType     *type;
-    EjsPot      *prototype;
 
-    type = S(Boolean);
-    prototype = type->prototype;
+    if ((type = ejsFinalizeNativeType(ejs, N("ejs", "Boolean"))) == 0) {
+        return;
+    }
     ejsBindConstructor(ejs, type, booleanConstructor);
+#if UNUSED
     ejsSetProperty(ejs, ejs->global, ES_boolean, type);
     ejsSetProperty(ejs, ejs->global, ES_true, S(true));
     ejsSetProperty(ejs, ejs->global, ES_false, S(false));
+#endif
 }
 
 

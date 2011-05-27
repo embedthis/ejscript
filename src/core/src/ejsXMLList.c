@@ -797,7 +797,7 @@ void ejsCreateXMLListType(Ejs *ejs)
     EjsType     *type;
 
     type = ejsCreateNativeType(ejs, N("ejs", "XMLList"), sizeof(EjsXML), S_XMLList, ES_XMLList_NUM_CLASS_PROP, 
-        ejsManageXML, EJS_OBJ_HELPERS);
+        ejsManageXML, EJS_TYPE_OBJ);
 
     /*
         Must not bind as XML uses get/setPropertyByName to defer to user XML elements over XML methods
@@ -821,9 +821,16 @@ void ejsConfigureXMLListType(Ejs *ejs)
     EjsPot      *prototype;
 
     type = S(XMLList);
-    type->mutableInstances = 1;
-    prototype = type->prototype;
+    if (type->configured) {
+        return;
+    }
+    type->configured = 1;
 
+    //  MOB - remove
+    mprAssert(type->mutableInstances);
+    type->mutableInstances = 1;
+
+    prototype = type->prototype;
     ejsBindConstructor(ejs, type, xmlListConstructor);
     ejsBindMethod(ejs, prototype, ES_XMLList_length, xlLength);
     ejsBindMethod(ejs, prototype, ES_XMLList_name, getXmlListNodeName);

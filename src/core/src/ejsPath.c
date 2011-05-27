@@ -1248,7 +1248,7 @@ void ejsCreatePathType(Ejs *ejs)
     EjsType     *type;
 
     type = ejsCreateNativeType(ejs, N("ejs", "Path"), sizeof(EjsPath), S_Path, ES_Path_NUM_CLASS_PROP, managePath, 
-        EJS_OBJ_HELPERS);
+        EJS_TYPE_OBJ | EJS_TYPE_IMMUTABLE_INSTANCES);
     type->helpers.cast = (EjsCastHelper) castPath;
     type->helpers.clone = (EjsCloneHelper) clonePath;
     type->helpers.invokeOperator = (EjsInvokeOperatorHelper) invokePathOperator;
@@ -1260,15 +1260,11 @@ void ejsConfigurePathType(Ejs *ejs)
     EjsType     *type;
     EjsPot      *prototype;
 
-    type = S(Path);
-    mprAssert(type);
-    prototype = type->prototype;
-
-    type->helpers.cast = (EjsCastHelper) castPath;
-    type->helpers.clone = (EjsCloneHelper) clonePath;
-    type->helpers.invokeOperator = (EjsInvokeOperatorHelper) invokePathOperator;
-
+    if ((type = ejsFinalizeNativeType(ejs, N("ejs", "Path"))) == 0) {
+        return;
+    }
     //  TODO - rename all and use pa_ prefix
+    prototype = type->prototype;
     ejsBindConstructor(ejs, type, pathConstructor);
     ejsBindMethod(ejs, prototype, ES_Path_absolute, absolutePath);
     ejsBindMethod(ejs, prototype, ES_Path_accessed, getAccessedDate);

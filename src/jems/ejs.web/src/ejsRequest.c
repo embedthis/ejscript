@@ -1426,11 +1426,9 @@ void ejsConfigureRequestType(Ejs *ejs)
     EjsHelpers  *helpers;
     EjsPot      *prototype;
 
-    type = ejsConfigureNativeType(ejs, N("ejs.web", "Request"), sizeof(EjsRequest), manageRequest, EJS_POT_HELPERS);
-#if UNUSED
-    ejsSetSpecialType(ejs, S_Request, type);
-#endif
-
+    if ((type = ejsFinalizeScriptType(ejs, N("ejs.web", "Request"), sizeof(EjsRequest), manageRequest, EJS_TYPE_POT)) == 0) {
+        return;
+    }
     helpers = &type->helpers;
     helpers->getProperty = (EjsGetPropertyHelper) getRequestProperty;
     helpers->getPropertyCount = (EjsGetPropertyCountHelper) getRequestPropertyCount;

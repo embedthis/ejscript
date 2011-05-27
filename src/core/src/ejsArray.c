@@ -54,13 +54,13 @@ static EjsArray *createArray(Ejs *ejs, EjsType *type, int numProp)
 static EjsAny *castArray(Ejs *ejs, EjsArray *vp, EjsType *type)
 {
     switch (type->sid) {
-    case S_Boolean:
+    case ES_Boolean:
         return S(true);
 
-    case S_Number:
+    case ES_Number:
         return S(zero);
 
-    case S_String:
+    case ES_String:
         return arrayToString(ejs, vp, 0, 0);
 
     default:
@@ -1743,12 +1743,10 @@ void ejsCreateArrayType(Ejs *ejs)
     EjsType         *type;
     EjsHelpers      *helpers;
 
-    type = ejsCreateNativeType(ejs, N("ejs", "Array"), sizeof(EjsArray), S_Array, ES_Array_NUM_CLASS_PROP, 
-        manageArray, EJS_POT_HELPERS);
-    type->numericIndicies = 1;
-    type->virtualSlots = 1;
-    type->mutableInstances = 1;
-    type->dynamicInstances = 1;
+    //  MOB - should not need MUTABLE or DYNAMIC
+    type = ejsCreateNativeType(ejs, N("ejs", "Array"), sizeof(EjsArray), S_Array, ES_Array_NUM_CLASS_PROP, manageArray, 
+        EJS_TYPE_POT | EJS_TYPE_NUMERIC_INDICIES | EJS_TYPE_VIRTUAL_SLOTS | EJS_TYPE_MUTABLE_INSTANCES | 
+        EJS_TYPE_DYNAMIC_INSTANCES);
 
     helpers = &type->helpers;
     helpers->cast = (EjsCastHelper) castArray;
@@ -1764,7 +1762,7 @@ void ejsCreateArrayType(Ejs *ejs)
     helpers->setProperty = (EjsSetPropertyHelper) setArrayProperty;
     helpers->setPropertyByName = (EjsSetPropertyByNameHelper) setArrayPropertyByName;
 
-    ejsSetSpecial(ejs, S_length, ejsCreateStringFromAsc(ejs, "length"));
+    ejsAddImmutable(ejs, S_length, EN("length"), ejsCreateStringFromAsc(ejs, "length"));
 }
 
 
@@ -1773,12 +1771,10 @@ void ejsConfigureArrayType(Ejs *ejs)
     EjsType     *type;
     EjsPot      *prototype;
 
-    type = S(Array);
+    if ((type = ejsFinalizeNativeType(ejs, N("ejs", "Array"))) == 0) {
+        return;
+    }
     prototype = type->prototype;
-
-    /*
-        We override some Object methods
-     */
     ejsBindConstructor(ejs, type, arrayConstructor);
     ejsBindMethod(ejs, prototype, ES_Array_iterator_get, getArrayIterator);
     ejsBindMethod(ejs, prototype, ES_Array_iterator_getValues, getArrayValues);
@@ -1795,9 +1791,7 @@ void ejsConfigureArrayType(Ejs *ejs)
     ejsBindAccess(ejs, prototype, ES_Array_length, getArrayLength, setArrayLength);
     ejsBindMethod(ejs, prototype, ES_Array_pop, popArray);
     ejsBindMethod(ejs, prototype, ES_Array_push, pushArray);
-#if ES_Array_removeElements
     ejsBindMethod(ejs, prototype, ES_Array_removeElements, removeElements);
-#endif
     ejsBindMethod(ejs, prototype, ES_Array_reverse, reverseArray);
     ejsBindMethod(ejs, prototype, ES_Array_shift, shiftArray);
     ejsBindMethod(ejs, prototype, ES_Array_slice, sliceArray);

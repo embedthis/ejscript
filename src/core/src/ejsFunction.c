@@ -534,8 +534,9 @@ void ejsCreateFunctionType(Ejs *ejs)
     EjsHelpers      *helpers;
     EjsFunction     *nop;
 
+    //  MOB - should support mutable functions via a copy-on-write strategy
     type = ejsCreateNativeType(ejs, N("ejs", "Function"), sizeof(EjsFunction), S_Function, ES_Function_NUM_CLASS_PROP,
-        ejsManageFunction, EJS_POT_HELPERS);
+        ejsManageFunction, EJS_TYPE_POT | EJS_TYPE_IMMUTABLE_INSTANCES);
 
     helpers = &type->helpers;
     helpers->create = (EjsCreateHelper) createFunction;
@@ -543,7 +544,7 @@ void ejsCreateFunctionType(Ejs *ejs)
     helpers->clone  = (EjsCloneHelper) ejsCloneFunction;
 
     nop = ejsCreateFunction(ejs, ejsCreateStringFromAsc(ejs, "nop"), NULL, 0, -1, 0, 0, NULL, EJS_PROP_NATIVE, NULL, NULL,0);
-    ejsSetSpecial(ejs, S_nop, nop);
+    ejsAddImmutable(ejs, S_nop, EN("nop"), nop);
     nop->body.proc = (EjsFun) nopFunction;
     nop->isNativeProc = 1;
 }
@@ -554,10 +555,10 @@ void ejsConfigureFunctionType(Ejs *ejs)
     EjsType     *type;
     EjsPot      *prototype;
 
-    type = S(Function);
-    type->mutableInstances = 0;
+    if ((type = ejsFinalizeNativeType(ejs, N("ejs", "Function"))) == 0) {
+        return;
+    }
     prototype = type->prototype;
-
     ejsBindConstructor(ejs, type, fun_Function);
     ejsBindMethod(ejs, prototype, ES_Function_apply, fun_applyFunction);
     ejsBindMethod(ejs, prototype, ES_Function_bind, fun_bindFunction);

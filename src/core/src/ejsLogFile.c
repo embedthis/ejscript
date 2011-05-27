@@ -113,10 +113,10 @@ void ejsConfigureLogFileType(Ejs *ejs)
     EjsType     *type;
     EjsPot      *prototype;
 
-    type = ejsGetTypeByName(ejs, N("ejs", "LogFile"));
-    mprAssert(type);
+    if ((type = ejsFinalizeScriptType(ejs, N("ejs", "LogFile"), sizeof(EjsPot), ejsManagePot, EJS_TYPE_POT)) == 0) {
+        return;
+    }
     prototype = type->prototype;
-
     ejsBindAccess(ejs, prototype, ES_LogFile_logging, lf_logging, 0);
     ejsBindMethod(ejs, prototype, ES_LogFile_emit, lf_emit);
     ejsBindAccess(ejs, prototype, ES_LogFile_level, lf_level, lf_set_level);

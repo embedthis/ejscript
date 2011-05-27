@@ -213,11 +213,9 @@ void ejsConfigureSessionType(Ejs *ejs)
     EjsType         *type;
     EjsHelpers      *helpers;
 
-    type = ejsConfigureNativeType(ejs, N("ejs.web", "Session"), sizeof(EjsSession), manageSession, EJS_POT_HELPERS);
-#if UNUSED
-    ejsSetSpecialType(ejs, S_Session, type);
-#endif
-
+    if ((type = ejsFinalizeScriptType(ejs, N("ejs.web", "Session"), sizeof(EjsSession), manageSession, EJS_TYPE_POT)) == 0) {
+        return;
+    }
     /*
         Sessions are created indirectly by accessing Request.session[] which uses ejsGetSession.
      */

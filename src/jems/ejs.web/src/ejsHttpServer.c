@@ -850,7 +850,10 @@ void ejsConfigureHttpServerType(Ejs *ejs)
     EjsType     *type;
     EjsPot      *prototype;
 
-    type = ejsConfigureNativeType(ejs, N("ejs.web", "HttpServer"), sizeof(EjsHttpServer), manageHttpServer, EJS_POT_HELPERS);
+    if ((type = ejsFinalizeScriptType(ejs, N("ejs.web", "HttpServer"), sizeof(EjsHttpServer), manageHttpServer, 
+            EJS_TYPE_POT)) == 0) {
+        return;
+    }
     type->helpers.create = (EjsCreateHelper) createHttpServer;
     type->helpers.clone = (EjsCloneHelper) ejsCloneHttpServer;
 

@@ -272,12 +272,11 @@ void ejsConfigureAppType(Ejs *ejs)
 {
     EjsType     *type;
 
-    type = ejsGetTypeByName(ejs, N("ejs", "App"));
-    mprAssert(type);
-#if UNUSED
-    ejsSetSpecial(ejs, S_App, type);
-#endif
+    //  MOB - good to make App immutable and use an instance for state
 
+    if ((type = ejsFinalizeScriptType(ejs, N("ejs", "App"), 0, 0, 0)) == 0) {
+        return;
+    }
     ejsSetProperty(ejs, type, ES_App__inputStream, ejsCreateFileFromFd(ejs, 0, "stdin", O_RDONLY));
     ejsSetProperty(ejs, type, ES_App__outputStream, ejsCreateFileFromFd(ejs, 1, "stdout", O_WRONLY));
     ejsSetProperty(ejs, type, ES_App__errorStream, ejsCreateFileFromFd(ejs, 2, "stderr", O_WRONLY));

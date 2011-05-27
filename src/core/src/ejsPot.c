@@ -54,7 +54,7 @@ EjsAny *ejsClonePot(Ejs *ejs, EjsAny *obj, bool deep)
     dest->isType = src->isType;
     dest->numProp = numProp;
     dest->shortScope = src->shortScope;
-
+    
     dp = dest->properties->slots;
     sp = src->properties->slots;
     for (i = 0; i < numProp; i++, sp++, dp++) {
@@ -64,22 +64,14 @@ EjsAny *ejsClonePot(Ejs *ejs, EjsAny *obj, bool deep)
             vp = sp->value.ref;
             type = TYPE(vp);
             if ((ejsIsType(ejs, vp) && ((EjsType*) vp)->mutable) || (!ejsIsType(ejs, vp) && type->mutableInstances)) {
-                EjsName qname = ejsGetPropertyName(ejs, src, i);
-                // mprLog(0, "CLONE %N", qname);
                 dp->value.ref = ejsClone(ejs, vp, deep);
-                //  UNICODE
+#if BLD_DEBUG
+                EjsName qname = ejsGetPropertyName(ejs, src, i);
                 mprSetName(dp->value.ref, qname.name->value);
             } else {
                 extern int cloneRef;
                 cloneRef++;
-            }
-            if (dp->trait.type && dp->trait.type->mutable) {
-                if ((type = ejsGetPropertyByName(ejs, ejs->global, dp->trait.type->qname)) != 0) {
-                    dp->trait.type = type;
-                } else {
-                    //MOB - forward reference
-                    mprAssert(0);
-                }
+#endif
             }
         }
     }
@@ -88,6 +80,39 @@ EjsAny *ejsClonePot(Ejs *ejs, EjsAny *obj, bool deep)
     }
     mprCopyName(dest, src);
     return dest;
+}
+
+
+/*
+    Fix trait type references to point to mutable types in the current interpreter. Only needed after cloning global.
+ */
+void ejsFixCrossRefs(Ejs *ejs, EjsPot *obj)
+{
+    EjsSlot     *sp;
+    EjsType     *type;
+    int         numProp, i;
+
+    //  MOB - not thread safe with GC
+if (VISITED(obj)) {
+    return;
+}
+SET_VISITED(obj, 1);
+    numProp = obj->numProp;
+    sp = obj->properties->slots;
+    
+    for (i = 0; i < numProp; i++, sp++) {
+        if (sp->trait.type && sp->trait.type->mutable) {
+            if ((type = ejsGetPropertyByName(ejs, ejs->global, sp->trait.type->qname)) != 0) {
+                sp->trait.type = type;
+            } else {
+                mprAssert(0);
+            }
+        }
+        if (ejsIsPot(ejs, sp->value.ref)) {
+            ejsFixCrossRefs(ejs, sp->value.ref);
+        }
+    }
+SET_VISITED(obj, 0);
 }
 
 

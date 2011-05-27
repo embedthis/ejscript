@@ -137,8 +137,7 @@ void ejsConfigureMemoryType(Ejs *ejs)
 {
     EjsType     *type;
 
-    if ((type = ejsGetTypeByName(ejs, N(EJS_EJS_NAMESPACE, "Memory"))) == 0) {
-        mprError("Can't find Memory type");
+    if ((type = ejsFinalizeScriptType(ejs, N("ejs", "Memory"), sizeof(EjsPot), ejsManagePot, EJS_TYPE_POT)) == 0) {
         return;
     }
     ejsBindMethod(ejs, type, ES_Memory_allocated, getAllocatedMemory);

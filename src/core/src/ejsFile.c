@@ -33,7 +33,6 @@ static void unmapFile(EjsFile *fp);
 #endif
 
 /************************************ Helpers *********************************/
-
 /*  
     Index into a file and extract a byte. This is random access reading.
  */
@@ -898,18 +897,16 @@ void ejsConfigureFileType(Ejs *ejs)
     EjsType     *type;
     EjsPot      *prototype;
 
-    type = ejsConfigureNativeType(ejs, N("ejs", "File"), sizeof(EjsFile), manageFile, EJS_OBJ_HELPERS);
-    ejsSetSpecial(ejs, S_File, type);
-
-    type->numericIndicies = 1;
-    type->virtualSlots = 1;
-    type->mutableInstances = 1;
-    prototype = type->prototype;
-
+    //  MOB MUTABLE
+    if ((type = ejsFinalizeScriptType(ejs, N("ejs", "File"), sizeof(EjsFile), manageFile,
+            EJS_TYPE_OBJ | EJS_TYPE_NUMERIC_INDICIES | EJS_TYPE_VIRTUAL_SLOTS | EJS_TYPE_MUTABLE_INSTANCES)) == 0) {
+        return;
+    }
     type->helpers.getProperty    = (EjsGetPropertyHelper) getFileProperty;
     type->helpers.lookupProperty = (EjsLookupPropertyHelper) lookupFileProperty;
     type->helpers.setProperty    = (EjsSetPropertyHelper) setFileProperty;
 
+    prototype = type->prototype;
     ejsBindConstructor(ejs, type, fileConstructor);
     ejsBindMethod(ejs, prototype, ES_File_canRead, canReadFile);
     ejsBindMethod(ejs, prototype, ES_File_canWrite, canWriteFile);

@@ -96,9 +96,9 @@ static void manageIterator(EjsIterator *ip, int flags)
 void ejsCreateIteratorType(Ejs *ejs)
 {
     ejsCreateNativeType(ejs, N(EJS_ITERATOR_NAMESPACE, "Iterator"), sizeof(EjsIterator), S_Iterator,  
-        ES_iterator_Iterator_NUM_CLASS_PROP, manageIterator, EJS_OBJ_HELPERS);
+        ES_iterator_Iterator_NUM_CLASS_PROP, manageIterator, EJS_TYPE_OBJ);
     ejsCreateNativeType(ejs, N(EJS_ITERATOR_NAMESPACE, "StopIteration"), sizeof(EjsError), S_StopIteration, 
-        ES_iterator_StopIteration_NUM_CLASS_PROP, manageIterator, EJS_OBJ_HELPERS);
+        ES_iterator_StopIteration_NUM_CLASS_PROP, manageIterator, EJS_TYPE_OBJ);
 }
 
 
@@ -107,9 +107,15 @@ void ejsConfigureIteratorType(Ejs *ejs)
     EjsType     *type;
     EjsPot      *prototype;
 
-    type = S(Iterator);
+    if ((type = ejsFinalizeNativeType(ejs, N(EJS_ITERATOR_NAMESPACE, "Iterator"))) == 0) {
+        return;
+    }
     prototype = type->prototype;
     ejsBindMethod(ejs, prototype, ES_iterator_Iterator_next, nextIterator);
+
+    if ((type = ejsFinalizeNativeType(ejs, N(EJS_ITERATOR_NAMESPACE, "StopIteration"))) == 0) {
+        return;
+    }
 }
 
 

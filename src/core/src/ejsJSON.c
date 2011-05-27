@@ -624,6 +624,11 @@ static EjsString *serialize(Ejs *ejs, EjsAny *vp, Json *json)
 
 void ejsConfigureJSONType(Ejs *ejs)
 {
+    EjsType     *type;
+
+    if ((type = ejsFinalizeScriptType(ejs, N("ejs", "JSON"), sizeof(EjsPot), ejsManagePot, EJS_TYPE_POT)) == 0) {
+        return;
+    }
     ejsBindFunction(ejs, ejs->global, ES_deserialize, g_deserialize);
     ejsBindFunction(ejs, ejs->global, ES_serialize, g_serialize);
 }

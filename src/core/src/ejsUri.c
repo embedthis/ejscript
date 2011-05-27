@@ -1144,11 +1144,11 @@ void ejsConfigureUriType(Ejs *ejs)
     EjsType     *type;
     EjsPot      *prototype;
 
-    type = ejsConfigureNativeType(ejs, N("ejs", "Uri"), sizeof(EjsUri), manageUri, EJS_OBJ_HELPERS);
-    type->mutableInstances = 1;
-    ejsSetSpecial(ejs, S_Uri, type);
-    prototype = type->prototype;
-
+    //  MOB - should not need MUTABLE
+    if ((type = ejsFinalizeScriptType(ejs, N("ejs", "Uri"), sizeof(EjsUri), manageUri,
+            EJS_TYPE_OBJ | EJS_TYPE_MUTABLE_INSTANCES)) == 0) {
+        return;
+    }
     type->helpers.clone = (EjsCloneHelper) cloneUri;
     type->helpers.invokeOperator = (EjsInvokeOperatorHelper) invokeUriOperator;
 
@@ -1158,6 +1158,7 @@ void ejsConfigureUriType(Ejs *ejs)
     ejsBindMethod(ejs, type, ES_Uri_encodeComponent, uri_encodeComponent);
     ejsBindMethod(ejs, type, ES_Uri_template, uri_template);
 
+    prototype = type->prototype;
     ejsBindConstructor(ejs, type, uri_constructor);
     ejsBindMethod(ejs, prototype, ES_Uri_absolute, uri_absolute);
     ejsBindMethod(ejs, prototype, ES_Uri_basename, uri_basename);

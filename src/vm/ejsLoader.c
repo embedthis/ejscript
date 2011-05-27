@@ -168,7 +168,7 @@ static int loadSections(Ejs *ejs, MprFile *file, cchar *path, EjsModuleHdr *hdr,
     mp = 0;
     firstModule = mprGetListLength(ejs->modules);
 
-    while ((sectionType = mprGetFileChar(file)) >= 0) {
+    while ((sectionType = (int) mprGetFileChar(file)) >= 0) {
         if (sectionType < 0 || sectionType >= EJS_SECT_MAX) {
             mprError("Bad section type %d in %@", sectionType, mp->name);
             return MPR_ERR_CANT_LOAD;
@@ -220,6 +220,8 @@ static int loadSections(Ejs *ejs, MprFile *file, cchar *path, EjsModuleHdr *hdr,
             if ((mp = loadModuleSection(ejs, file, hdr, &created, flags)) == 0) {
                 return MPR_ERR_CANT_LOAD;
             }
+            mp->mutex = mprCreateLock();
+            lock(mp);
             ejsAddModule(ejs, mp);
             mp->path = sclone(path);
             mp->file = file;
@@ -229,6 +231,7 @@ static int loadSections(Ejs *ejs, MprFile *file, cchar *path, EjsModuleHdr *hdr,
         case EJS_SECT_MODULE_END:
             rc = loadEndModuleSection(ejs, mp);
             mp->lastGlobal = ejsGetPropertyCount(ejs, ejs->global);
+            unlock(mp);
             break;
 
         case EJS_SECT_PROPERTY:
@@ -342,11 +345,7 @@ static EjsModule *loadModuleSection(Ejs *ejs, MprFile *file, EjsModuleHdr *hdr, 
         return 0;
     }
     mp->current = mprCreateList(-1, 0);
-#if UNUSED
-    pushScope(mp, ejs->global, ejs->global);
-#else
     pushScope(mp, 0, ejs->global);
-#endif
     mp->checksum = checksum;
     *created = 1;
 
@@ -503,24 +502,11 @@ static int loadClassSection(Ejs *ejs, EjsModule *mp)
     if (fixup || (baseType && baseType->needFixup)) {
         attributes |= EJS_TYPE_FIXUP;
     }
-
     /*
-        Immutable types may be already loaded in global
+        See if the type has been registered in the set of immutable types. If so, can use without creating.
      */
-    type = ejsGetPropertyByName(ejs, ejs->global, qname);
-#if 0
+    type = ejsGetPropertyByName(ejs, ejs->service->immutable, qname);
     if (type == 0) {
-        type = ejsGetPropertyByName(ejs, ejs->immutable, qname);
-    }
-#endif
-
-    if (type) {
-        if (type->loaded && mp->loadState->flags & EJS_LOADER_STRICT) {
-            ejsThrowReferenceError(ejs, "Class \"%@\" already loaded", qname.name);
-            return MPR_ERR_CANT_CREATE;
-        }
-    }
-    if (type == 0 || !type->loaded) {
         if (attributes & EJS_TYPE_FIXUP) {
             baseType = 0;
             if (fixup == 0) {
@@ -529,35 +515,31 @@ static int loadClassSection(Ejs *ejs, EjsModule *mp)
         }
         mprLog(9, "    Load %@ class %@ for module %@ at slotNum %d", qname.space, qname.name, mp->name, slotNum);
 
+        type = ejsCreateType(ejs, qname, mp, baseType, NULL, slotNum, numTypeProp, numInstanceProp, 0, 0, attributes);
         if (type == 0) {
-            type = ejsCreateType(ejs, qname, mp, baseType, NULL, sizeof(EjsPot), -1, numTypeProp, numInstanceProp, 
-                attributes);
-            if (type == 0) {
-                ejsThrowInternalError(ejs, "Can't create class %@", qname.name);
-                return MPR_ERR_BAD_STATE;
-            }
-            ejsClonePotHelpers(ejs, type);
+            ejsThrowInternalError(ejs, "Can't create class %@", qname.name);
+            return MPR_ERR_BAD_STATE;
+        }
 
-        } else {
-            if (ejsConfigureType(ejs, type, mp, baseType, numTypeProp, numInstanceProp, attributes) < 0) {
-                ejsThrowInternalError(ejs, "Can't configure class %@", qname.name);
-                return MPR_ERR_BAD_STATE;
-            }
-            mp->hasNative = 1;
+    } else {
+        if (ejsConfigureType(ejs, type, mp, baseType, numTypeProp, numInstanceProp, attributes) < 0) {
+            ejsThrowInternalError(ejs, "Can't configure class %@", qname.name);
+            return MPR_ERR_BAD_STATE;
+        }
+        mp->hasNative = 1;
 #if FUTURE
-            /*
-                Currently errors on Namespace
-             */
-            if (attributes & EJS_TYPE_HAS_CONSTRUCTOR && !type->hasConstructor) {
-                mprError("WARNING: module indicates a constructor required but none exists for \"%@\"", type->qname.name);
-            }
+        /*
+            Currently errors on Namespace
+         */
+        if (attributes & EJS_TYPE_HAS_CONSTRUCTOR && !type->hasConstructor) {
+            mprError("WARNING: module indicates a constructor required but none exists for \"%@\"", type->qname.name);
+        }
 #endif
 #if UNUSED && KEEP
-            if (!type->native) {
-                mprError("WARNING: type not defined as native: \"%@\"", type->qname.name);
-            }
-#endif
+        if (!type->native) {
+            mprError("WARNING: type not defined as native: \"%@\"", type->qname.name);
         }
+#endif
     }
         
     /*
@@ -571,7 +553,7 @@ static int loadClassSection(Ejs *ejs, EjsModule *mp)
             if (ejsModuleReadType(ejs, mp, &iface, &ifixup, &ifaceClassName, 0) < 0) {
                 return MPR_ERR_CANT_READ;
             }
-            if (!type->loaded) {
+            if (type->endClass == 0) {
                 if (iface) {
                     mprAddItem(type->implements, iface);
                 } else if (addFixup(ejs, mp, EJS_FIXUP_INTERFACE_TYPE, (EjsObj*) type, -1, ifixup) < 0) {
@@ -581,7 +563,8 @@ static int loadClassSection(Ejs *ejs, EjsModule *mp)
             }
         }
     }
-    if (!type->loaded) {
+    //  MOB - must define even if immutable
+    if (1 || type->endClass == 0) {
         slotNum = ejsDefineProperty(ejs, ejs->global, slotNum, qname, ST(Type), attributes, (EjsObj*) type);
         if (slotNum < 0) {
             ejsThrowMemoryError(ejs);
@@ -600,7 +583,7 @@ static int loadClassSection(Ejs *ejs, EjsModule *mp)
     if (ejs->loaderCallback) {
         (ejs->loaderCallback)(ejs, EJS_SECT_CLASS, mp, slotNum, qname, type, attributes);
     }
-    if (type->loaded) {
+    if (type->endClass) {
         mprSeekFile(mp->file, SEEK_SET, type->endClass);
     }
     return 0;
@@ -617,15 +600,14 @@ static int loadEndClassSection(Ejs *ejs, EjsModule *mp)
         (ejs->loaderCallback)(ejs, EJS_SECT_CLASS_END, mp, mp->scope);
     }
     type = (EjsType*) mp->scope;
-    if (!type->loaded) {
-        type->endClass = mprGetFilePosition(mp->file) - 1;
+    if (type->endClass == 0) {
+        type->endClass = (int) mprGetFilePosition(mp->file) - 1;
         if (type->hasScriptFunctions) {
             type->hasScriptFunctions = 1;
         }
         if (type->hasScriptFunctions && type->baseType) {
             ejsDefineTypeNamespaces(ejs, type);
         }
-        popScope(mp, 0);
         if (type->dynamicInstances) {
             type->mutableInstances = 1;
         }
@@ -633,7 +615,7 @@ static int loadEndClassSection(Ejs *ejs, EjsModule *mp)
         mprLog(0, "Type %N is %s and has %s instances", type->qname, (type->mutable) ? "mutable" : "immutable", type->mutableInstances ? "mutable" : "immutable");
 #endif
     }
-    type->loaded = 1;
+    popScope(mp, 0);
     return 0;
 }
 
@@ -649,6 +631,8 @@ static int loadFunctionSection(Ejs *ejs, EjsModule *mp)
     int             slotNum, numProp, numArgs, numDefault, codeLen, numExceptions, attributes, strict, sn;
 
     strict = 0;
+    code = 0;
+
     qname = ejsModuleReadName(ejs, mp);
     attributes = ejsModuleReadInt(ejs, mp);
     strict = ejsModuleReadByte(ejs, mp);
@@ -677,99 +661,96 @@ static int loadFunctionSection(Ejs *ejs, EjsModule *mp)
 
     mprLog(9, "Loading function %N at slot %d", qname, slotNum);
 
-    /*
-        Read the code
-     */
-    if (codeLen > 0) {
-        if ((code = mprAlloc(codeLen)) == 0) {
-            return MPR_ERR_MEMORY;
-        }
-        if (mprReadFile(mp->file, code, codeLen) != codeLen) {
-            return MPR_ERR_CANT_READ;
-        }
-        if (currentType) {
-            currentType->hasScriptFunctions = 1;
-        }
-    } else {
-        code = 0;
-    }
     if (attributes & EJS_PROP_NATIVE) {
         mp->hasNative = 1;
     }
     if (attributes & EJS_FUN_MODULE_INITIALIZER) {
         mp->hasInitializer = 1;
     }
-    if (attributes & EJS_FUN_CONSTRUCTOR) {
-        fun = (EjsFunction*) block;
-        ejsInitFunction(ejs, fun, qname.name, code, codeLen, numArgs, numDefault, numExceptions, returnType, 
-            attributes, mp, NULL, strict);
-        mprAssert(fun->isConstructor);
-
-    } else {
-        if (mp->loadState->flags & EJS_LOADER_STRICT) {
-            if ((sn = ejsLookupProperty(ejs, block, qname)) >= 0 && !(attributes & EJS_FUN_OVERRIDE)) {
-                if (!(attributes & EJS_TRAIT_SETTER && ejsPropertyHasTrait(ejs, block, sn, EJS_TRAIT_GETTER))) {
-                    if (ejsIsType(ejs, block)) {
-                        ejsThrowReferenceError(ejs,
-                            "function \"%@\" already defined in type \"%@\". Add \"override\" to the function declaration.", 
-                            qname.name, ((EjsType*) block)->qname.name);
-                    } else {
-                        ejsThrowReferenceError(ejs,
-                            "function \"%@\" already defined. Try adding \"override\" to the function declaration.", 
-                            qname.name);
-                    }
-                    return MPR_ERR_CANT_CREATE;
-                }
+    fun = 0;
+    if ((sn = ejsLookupProperty(ejs, block, qname)) >= 0) {
+        fun = ejsGetProperty(ejs, block, sn);
+    }
+    if (fun == 0 || (attributes & EJS_TRAIT_SETTER && !fun->setter)) {
+        /*
+            Read the code
+         */
+        if (codeLen > 0) {
+            if ((code = mprAlloc(codeLen)) == 0) {
+                return MPR_ERR_MEMORY;
+            }
+            if (mprReadFile(mp->file, code, codeLen) != codeLen) {
+                return MPR_ERR_CANT_READ;
+            }
+            if (currentType) {
+                currentType->hasScriptFunctions = 1;
             }
         }
-        fun = ejsCreateFunction(ejs, qname.name, code, codeLen, numArgs, numDefault, numExceptions, returnType, attributes, 
-            mp, mp->scope, strict);
+        if (attributes & EJS_FUN_CONSTRUCTOR) {
+            fun = (EjsFunction*) block;
+            ejsInitFunction(ejs, fun, qname.name, code, codeLen, numArgs, numDefault, numExceptions, returnType, 
+                attributes, mp, NULL, strict);
+            mprAssert(fun->isConstructor);
+        } else {
+            fun = ejsCreateFunction(ejs, qname.name, code, codeLen, numArgs, numDefault, numExceptions, returnType, 
+                attributes, mp, mp->scope, strict);
+        }
         if (fun == 0) {
             return MPR_ERR_MEMORY;
         }
-    }
-    mprAssert(fun->block.pot.isBlock);
-    mprAssert(fun->block.pot.isFunction);
-
-    if (numProp > 0) {
-        fun->activation = ejsCreateActivation(ejs, fun, numProp);
-    }
-    if (block == ejs->global && slotNum < 0) {
-        if (attributes & EJS_FUN_OVERRIDE) {
-            slotNum = ejsLookupProperty(ejs, block, qname);
-            if (slotNum < 0) {
-                mprError("Can't find method \"%@\" to override", qname.name);
-                return MPR_ERR_MEMORY;
-            }
-
-        } else {
-            slotNum = -1;
+        mprAssert(fun->block.pot.isBlock);
+        mprAssert(fun->block.pot.isFunction);
+        if (numProp > 0) {
+            fun->activation = ejsCreateActivation(ejs, fun, numProp);
         }
-    }
-    if (!(attributes & EJS_FUN_CONSTRUCTOR)) {
-        if (attributes & EJS_FUN_MODULE_INITIALIZER && block == ejs->global) {
-            mp->initializer = fun;
-            slotNum = -1;
-        } else {
-            slotNum = ejsDefineProperty(ejs, block, slotNum, qname, ST(Function), attributes, fun);
-            if (slotNum < 0) {
-                return MPR_ERR_MEMORY;
+        if (block == ejs->global && slotNum < 0) {
+            if (attributes & EJS_FUN_OVERRIDE) {
+                //  MOB - remove this case
+                mprAssert(0);
+                slotNum = ejsLookupProperty(ejs, block, qname);
+                if (slotNum < 0) {
+                    mprError("Can't find method \"%@\" to override", qname.name);
+                    return MPR_ERR_MEMORY;
+                }
+
+            } else {
+                slotNum = -1;
             }
         }
-    }
-    if (fixup) {
-        mprAssert(returnType == 0);
-        if (addFixup(ejs, mp, EJS_FIXUP_RETURN_TYPE, (EjsObj*) fun, -1, fixup) < 0) {
-            ejsThrowMemoryError(ejs);
+        if (!(attributes & EJS_FUN_CONSTRUCTOR)) {
+            if (attributes & EJS_FUN_MODULE_INITIALIZER && block == ejs->global) {
+                mp->initializer = fun;
+                slotNum = -1;
+            } else {
+                if ((slotNum = ejsDefineProperty(ejs, block, slotNum, qname, ST(Function), attributes, fun)) < 0) {
+                    return MPR_ERR_MEMORY;
+                }
+            }
+        }
+        if (fixup) {
+            mprAssert(returnType == 0);
+            if (addFixup(ejs, mp, EJS_FIXUP_RETURN_TYPE, (EjsObj*) fun, -1, fixup) < 0) {
+                ejsThrowMemoryError(ejs);
+                return MPR_ERR_MEMORY;
+            }
+        }
+        if (currentType && attributes & EJS_FUN_CONSTRUCTOR) {
+            setDoc(ejs, mp, "fun", ejs->global, ejsLookupProperty(ejs, ejs->global, currentType->qname));
+        } else {
+            setDoc(ejs, mp, "fun", block, slotNum);
+        }
+    } else {
+        if (attributes & EJS_TRAIT_SETTER && fun->setter) {
+            fun = fun->setter;
+        }
+        if ((slotNum = ejsDefineProperty(ejs, block, slotNum, qname, ST(Function), attributes, fun)) < 0) {
             return MPR_ERR_MEMORY;
         }
+        mprAssert(fun->endFunction);
+        mprAssert(mprGetFilePosition(mp->file) <= fun->endFunction);
+        mprSeekFile(mp->file, SEEK_SET, fun->endFunction);
     }
-    if (currentType && attributes & EJS_FUN_CONSTRUCTOR) {
-        setDoc(ejs, mp, "fun", ejs->global, ejsLookupProperty(ejs, ejs->global, currentType->qname));
-    } else {
-        setDoc(ejs, mp, "fun", block, slotNum);
-    }
-
+    mprAssert(fun);
     mp->currentMethod = fun;
     pushScope(mp, ejsIsType(ejs, fun) ? NULL : fun, fun->activation);
     if (ejs->loaderCallback) {
@@ -786,6 +767,7 @@ static int loadEndFunctionSection(Ejs *ejs, EjsModule *mp)
     mprLog(9, "    End function section");
 
     fun = (EjsFunction*) mp->scope;
+    fun->endFunction = (int) mprGetFilePosition(mp->file) - 1;
     if (ejs->loaderCallback) {
         (ejs->loaderCallback)(ejs, EJS_SECT_FUNCTION_END, mp, fun);
     }
@@ -843,7 +825,8 @@ static int loadExceptionSection(Ejs *ejs, EjsModule *mp)
         if (mp->hasError) {
             return MPR_ERR_CANT_READ;
         }
-        ex = ejsAddException(ejs, fun, tryStart, tryEnd, catchType, handlerStart, handlerEnd, numBlocks, numStack, flags, i);
+        ex = ejsAddException(ejs, fun, tryStart, tryEnd, catchType, handlerStart, handlerEnd, numBlocks, 
+            numStack, flags, i);
         if (fixup) {
             mprAssert(catchType == 0);
             if (addFixup(ejs, mp, EJS_FIXUP_EXCEPTION, (EjsObj*) ex, 0, fixup) < 0) {
@@ -870,7 +853,6 @@ static int loadPropertySection(Ejs *ejs, EjsModule *mp, int sectionType)
     value = 0;
     current = getCurrentBlock(mp);
     qname = ejsModuleReadName(ejs, mp);
-    
     attributes = ejsModuleReadInt(ejs, mp);
     slotNum = ejsModuleReadInt(ejs, mp);
     ejsModuleReadType(ejs, mp, &type, &fixup, &propTypeName, 0);
@@ -893,12 +875,14 @@ static int loadPropertySection(Ejs *ejs, EjsModule *mp, int sectionType)
     if (attributes & EJS_PROP_NATIVE) {
         mp->hasNative = 1;
     }
+#if UNUSED && KEEP
     if (mp->loadState->flags & EJS_LOADER_STRICT) {
         if (ejsLookupProperty(ejs, current, qname) >= 0) {
             ejsThrowReferenceError(ejs, "property \"%@\" already loaded", qname.name);
             return MPR_ERR_CANT_CREATE;
         }
     }
+#endif
     if (ejsIsType(ejs, current)) {
         ctype = (EjsType*) current;
         if (!(attributes & EJS_TRAIT_READONLY)) {

@@ -195,16 +195,26 @@ struct EjsXML;
 #define EJS_TRAIT_MASK                  0xFFFFF     /**< Mask of trait attributes */
 
 /*
-    These attributes are never stored in EjsTrait but are often passed in "attributes"
+    These attributes are never stored in EjsTrait but are often passed in "attributes" which is int64
  */
 #define EJS_TYPE_CALLS_SUPER            0x100000    /**< Constructor calls super() */
 #define EJS_TYPE_HAS_INSTANCE_VARS      0x200000    /**< Type has non-method instance vars (state) */
-#define EJS_TYPE_DYNAMIC_INSTANCE       0x400000    /**< Instances are not sealed */
+#define EJS_TYPE_DYNAMIC_INSTANCES      0x400000    /**< Instances are not sealed and can add properties */
 #define EJS_TYPE_FINAL                  0x800000    /**< Type can't be subclassed */
 #define EJS_TYPE_FIXUP                  0x1000000   /**< Type needs to inherit base types properties */
 #define EJS_TYPE_HAS_CONSTRUCTOR        0x2000000   /**< Type has a constructor */
 #define EJS_TYPE_HAS_TYPE_INITIALIZER   0x4000000   /**< Type has an initializer */
-#define EJS_TYPE_INTERFACE              0x8000000   /**< Class is an interface */
+#define EJS_TYPE_INTERFACE              0x8000000   /**< Type is an interface */
+
+#define EJS_TYPE_OBJ                    0x10000000  /**< Type is using object helpers */
+#define EJS_TYPE_POT                    0x20000000  /**< Type is using pot helpers */
+#define EJS_TYPE_BLOCK                  0x40000000  /**< Type is using block helpers */
+#define EJS_TYPE_MUTABLE                0x80000000  /**< Type is mutable */
+
+#define EJS_TYPE_MUTABLE_INSTANCES      UINT64(0x100000000) /**< Type has mutable instances */
+#define EJS_TYPE_IMMUTABLE_INSTANCES    UINT64(0x200000000) /**< Type has immutable instances */
+#define EJS_TYPE_VIRTUAL_SLOTS          UINT64(0x400000000) /**< Type is unsing virtual slots */
+#define EJS_TYPE_NUMERIC_INDICIES       UINT64(0x800000000) /**< Type is using numeric indicies for properties */
 
 /*
     Interpreter flags
@@ -583,7 +593,7 @@ typedef struct EjsIntern {
 #define S_zero ES_zero
 #define EJS_MAX_SPECIAL         ES_global_NUM_CLASS_PROP
 
-//  FIXES
+//  MOB FIXES
 #define S_StopIteration ES_iterator_StopIteration
 #define S_nan ES_NaN
 #define S_Iterator ES_iterator_Iterator
@@ -595,23 +605,14 @@ typedef struct EjsIntern {
 #define S_publicSpace ES_public
 #define S_emptySpace ES_emptySpace
 
-extern void ejsSetSpecial(struct Ejs *ejs, int sid, EjsAny *value);
-extern EjsAny *ejsGetSpecial(struct Ejs *ejs, int sid);
-
-#if UNUSED
-extern void ejsSetSpecialType(struct Ejs *ejs, int sid, struct EjsType *type);
-#endif
-
-#if 0
-#define S(name) ejs->values[S_ ## name]
-#define ST(name) ((EjsType*) (ejs->values[S_ ## name]))
-#endif
+extern int ejsAddImmutable(struct Ejs *ejs, int sid, EjsName qname, EjsAny *value);
+extern EjsAny *ejsGetImmutable(struct Ejs *ejs, int sid);
+extern EjsAny *ejsGetImmutableByName(struct Ejs *ejs, EjsName qname);
 
 //  MOB - rename to ESV. Remove ST?
-#define S(name) ejs->service->shared[S_ ## name]
-#define ST(name) ((EjsType*) (ejs->service->shared[S_ ## name]))
-#if 0
-#endif
+//  MOB - OPT
+#define S(name) ejs->service->immutable->properties->slots[S_ ## name].value.ref
+#define ST(name) ((EjsType*) (ejs->service->immutable->properties->slots[S_ ## name].value.ref))
 
 /**
     Ejsript Interperter Structure
@@ -627,17 +628,11 @@ typedef struct Ejs {
     EjsAny              *result;            /**< Last expression result */
     struct EjsState     *state;             /**< Current evaluation state and stack */
     struct EjsService   *service;           /**< Back pointer to the service */
+    EjsAny              *global;            /**< The "global" object */
     cchar               *bootSearch;        /**< Module search when bootstrapping the VM */
     struct EjsArray     *search;            /**< Module load search path */
     cchar               *className;         /**< Name of a specific class to run for a program */
     cchar               *methodName;        /**< Name of a specific method to run for a program */
-
-#if UNUSED
-    EjsAny              *values[EJS_MAX_SPECIAL];
-#endif
-    EjsAny              *global;            /**< The "global" object */
-    EjsAny              *hidden;            /**< A hidden "global" object when compiling empty */
-
     char                *errorMsg;          /**< Error message */
     cchar               **argv;             /**< Command line args */
     int                 argc;               /**< Count of command line args */
@@ -660,10 +655,6 @@ typedef struct Ejs {
     uint                workerComplete: 1;  /**< TEMP MOB */
 
     EjsAny              *exceptionArg;      /**< Exception object for catch block */
-
-#if UNUSED
-    struct Ejs          *master;            /**< Master interpreter used to create this interpreter */
-#endif
     MprDispatcher       *dispatcher;        /**< Event dispatcher */
     MprList             *workers;           /**< Worker interpreters */
     MprList             *modules;           /**< Loaded modules */
@@ -1141,6 +1132,8 @@ extern EjsName ejsGetPotPropertyName(Ejs *ejs, EjsPot *obj, int slotNum);
  */
 extern EjsAny *ejsClonePot(Ejs *ejs, EjsAny *src, bool deep);
 
+extern void ejsFixCrossRefs(Ejs *ejs, EjsPot *obj);
+
 /** 
     Grow a pot object
     @description Grow the property storage for an object. Object properties are stored in slots. To store more 
@@ -1333,7 +1326,6 @@ extern int ejsRemoveLastItem(Ejs *ejs, EjsArray *ap);
 extern int ejsRemoveItemAtPos(Ejs *ejs, EjsArray *ap, int index);
 
 /************************************************ Block ********************************************************/
-
 //MOB - add dividors for all classes
 /** 
     Block class
@@ -1355,9 +1347,6 @@ typedef struct EjsBlock {
     EjsObj          *prevException;                 /**< Previous exception if nested exceptions */
     EjsObj          **stackBase;                    /**< Start of stack in this block */
     uint            breakCatch: 1;                  /**< Return, break or continue in a catch block */
-#if UNUSED
-    uint            isGlobal: 1;                    /**< Block is the global block */
-#endif
     uint            nobind: 1;                      /**< Don't bind to properties in this block */
 #if BLD_DEBUG
     struct EjsLine  *line;
@@ -1516,7 +1505,7 @@ typedef struct EjsFunction {
         activation object. When compiling, the compiler stores parameters in the normal property "block", it then
         transfers them into the activation block when complete.
      */
-    EjsBlock        block;                  /** Run-time properties for local vars */
+    EjsBlock        block;                  /** Function properties */
     EjsPot          *activation;            /** Parameter and local properties */
     EjsString       *name;                  /** Function name */
 #if FUTURE
@@ -1535,21 +1524,22 @@ typedef struct EjsFunction {
     struct EjsArray *boundArgs;             /**< Bound "args" */
     EjsAny          *boundThis;             /**< Bound "this" object value */
     struct EjsType  *resultType;            /**< Return type of method */
+    int             endFunction;            /**< Offset in mod file for end of function */
 
     uint    numArgs: 8;                     /**< Count of formal parameters */
     uint    numDefault: 8;                  /**< Count of formal parameters with default initializers */
     uint    allowMissingArgs: 1;            /**< Allow unsufficient args for native functions */
     uint    castNulls: 1;                   /**< Cast return values of null */
     uint    fullScope: 1;                   /**< Closures must capture full scope */
-    uint    hasReturn: 1;                   /**< Function has a return stmt */
+    uint    hasReturn: 1;                   /**< Has a return stmt */
     uint    inCatch: 1;                     /**< Executing catch block */
     uint    inException: 1;                 /**< Executing catch/finally exception processing */
-    uint    isConstructor: 1;               /**< Function is a constructor */
-    uint    isInitializer: 1;               /**< Function is a type initializer */
-    uint    isNativeProc: 1;                /**< Function is native procedure */
-    uint    moduleInitializer: 1;           /**< Function is a module initializer */
-    uint    rest: 1;                        /**< Function has a "..." rest of args parameter */
-    uint    staticMethod: 1;                /**< Function is a static method */
+    uint    isConstructor: 1;               /**< Is a constructor */
+    uint    isInitializer: 1;               /**< Is a type initializer */
+    uint    isNativeProc: 1;                /**< Is native procedure */
+    uint    moduleInitializer: 1;           /**< Is a module initializer */
+    uint    rest: 1;                        /**< Has a "..." rest of args parameter */
+    uint    staticMethod: 1;                /**< Is a static method */
     uint    strict: 1;                      /**< Language strict mode (vs standard) */
     uint    throwNulls: 1;                  /**< Return type cannot be null */
 
@@ -2222,6 +2212,9 @@ typedef struct EjsFileSystem {
 extern EjsFileSystem *ejsCreateFileSystem(Ejs *ejs, cchar *path);
 extern EjsObj *ejsCreateGlobal(Ejs *ejs);
 extern void ejsFreezeGlobal(Ejs *ejs);
+extern void ejsDefineGlobalNamespaces(Ejs *ejs);
+extern void ejsDefineGlobals(Ejs *ejs);
+
 
 /** 
     Http Class
@@ -2684,6 +2677,7 @@ typedef struct EjsType {
     MprList         *implements;                    /**< List of implemented interfaces */
         
     uint            callsSuper           : 1;       /**< Constructor calls super() */
+    uint            configured           : 1;       /**< Type has been configured with native methods */
     uint            dynamicInstances     : 1;       /**< Object instances may add properties */
     uint            final                : 1;       /**< Type is final */
     uint            hasBaseConstructors  : 1;       /**< Base types has constructors */
@@ -2696,18 +2690,17 @@ typedef struct EjsType {
     uint            initialized          : 1;       /**< Static initializer has run */
     uint            isInterface          : 1;       /**< Interface vs class */
     uint            isPot                : 1;       /**< Instances are based on EjsPot */
-    uint            loaded               : 1;       /**< Byte code loaded for type */
     uint            mutable              : 1;       /**< Type is mutable (has changable state) */
     uint            mutableInstances     : 1;       /**< Instances are mutable */
     uint            needFixup            : 1;       /**< Slots need fixup */
     uint            numericIndicies      : 1;       /**< Instances support direct numeric indicies */
     uint            virtualSlots         : 1;       /**< Properties are not stored in slots[] */
     
-    MprOff          endClass;                       /**< Offset in mod file for end of class */
+    int             endClass;                       /**< Offset in mod file for end of class */
     //  MOB -- pack with above?
     ushort          numInherited;                   /**< Number of inherited prototype properties */
     ushort          instanceSize;                   /**< Size of instances in bytes */
-    short           sid;                            /**< Slot index into ejs->service->shared[] */
+    short           sid;                            /**< Slot index into service->immutable[] */
     struct EjsModule *module;                       /**< Module owning the type - stores the constant pool */
     void            *typeData;                      /**< Type specific data */
 } EjsType;
@@ -2746,26 +2739,26 @@ typedef struct EjsType {
     @param baseType Base type for this type.
     @param prototype Prototype object instance properties of this type.
     @param size Size of instances. This is the size in bytes of an instance object.
-    @param sid Unique type ID for core types. For non-core types, set to -1.
+    @param slotNum Unique type ID for core types. For non-core types, set to -1.
     @param numTypeProp Number of type (class) properties for the type. These include static properties and methods.
     @param numInstanceProp Number of instance properties.
     @param attributes Attribute mask to modify how the type is initialized.
     @ingroup EjsType EjsType
  */
 extern EjsType *ejsCreateType(Ejs *ejs, EjsName name, struct EjsModule *up, EjsType *baseType, EjsPot *prototype,
-    int size, int sid, int numTypeProp, int numInstanceProp, int64 attributes);
+    int slotNum, int numTypeProp, int numInstanceProp, int size, void *manager, int64 attributes);
 
 //  DOC
+//  Called by loader to configure a native type based on the mod file information
 extern EjsType *ejsConfigureType(Ejs *ejs, EjsType *type, struct EjsModule *up, EjsType *baseType, 
     int numTypeProp, int numInstanceProp, int64 attributes);
 
-#define EJS_OBJ_HELPERS 1
-#define EJS_POT_HELPERS  2
-
 //  DOC
-extern EjsType  *ejsCreateNativeType(Ejs *ejs, EjsName qname, int size, int sid, int numProp, void *manager, int helpers);
+extern EjsType  *ejsCreateNativeType(Ejs *ejs, EjsName qname, int size, int slotNum, int numProp, void *manager, 
+        int64 attributes);
 //  DOC
-extern EjsType  *ejsConfigureNativeType(Ejs *ejs, EjsName qname, int size, void *manager, int helpers);
+extern EjsType  *ejsFinalizeScriptType(Ejs *ejs, EjsName qname, int size, void *manager, int64 attributes);
+extern EjsType  *ejsFinalizeNativeType(Ejs *ejs, EjsName qname);
 
 //  DOC
 extern EjsObj *ejsCreatePrototype(Ejs *ejs, EjsType *type, int numProp);
@@ -2787,7 +2780,7 @@ extern int ejsDefineGlobalFunction(Ejs *ejs, EjsString *name, EjsFun fn);
     assumption is worth the benefit.
  */
 //  MOB - need doc for this too
-#define ejsIs(ejs, obj, name) ejsIsA(ejs, obj, ejs->service->shared[S_ ## name])
+#define ejsIs(ejs, obj, name) ejsIsA(ejs, obj, ST(name))
 #define ejsIsDefined(ejs, obj) (obj != 0 && !ejsIs(ejs, obj, Null) && !ejsIs(ejs, obj, Void))
 #define ejsCast(ejs, obj, name) ejsCastType(ejs, obj, S(name))
 
@@ -2877,7 +2870,8 @@ extern void     ejsSetTypeName(Ejs *ejs, EjsType *type, EjsName qname);
 extern void     ejsTypeNeedsFixup(Ejs *ejs, EjsType *type);
 extern int      ejsGetTypeSize(Ejs *ejs, EjsType *type);
 extern EjsPot   *ejsGetPrototype(Ejs *ejs, EjsAny *obj);
-extern void     ejsSetTypeAttributes(EjsType *type, int64 attributes);
+extern int64    ejsSetTypeAttributes(EjsType *type, int size, MprManager manager, int64 attributes);
+extern void     ejsSetTypeHelpers(EjsType *type, int64 attributes);
 
 /******************************** Private Prototypes **********************************/
 
@@ -2909,6 +2903,7 @@ extern void     ejsCreateXMLListType(Ejs *ejs);
  */
 extern void     ejsConfigureAppType(Ejs *ejs);
 extern void     ejsConfigureArrayType(Ejs *ejs);
+extern void     ejsConfigureBlockType(Ejs *ejs);
 extern void     ejsConfigureBooleanType(Ejs *ejs);
 extern void     ejsConfigureByteArrayType(Ejs *ejs);
 extern void     ejsConfigureCmdType(Ejs *ejs);
@@ -2917,6 +2912,7 @@ extern void     ejsConfigureSqliteTypes(Ejs *ejs);
 extern void     ejsConfigureDebugType(Ejs *ejs);
 extern void     ejsConfigureErrorType(Ejs *ejs);
 extern void     ejsConfigureEventType(Ejs *ejs);
+extern void     ejsConfigureFrameType(Ejs *ejs);
 extern void     ejsConfigureGCType(Ejs *ejs);
 extern void     ejsConfigureGlobalBlock(Ejs *ejs);
 extern void     ejsConfigureFileType(Ejs *ejs);
@@ -3027,7 +3023,7 @@ typedef struct EjsService {
     uint            dontExit: 1;            /**< Prevent App.exit() from exiting */
     uint            logging: 1;             /**< Using --log */
     EjsIntern       *intern;                /**< Interned Unicode string hash - shared over all interps */
-    EjsAny          **shared;               /**< Root of shared immutable types and values */
+    EjsPot          *immutable;             /**< Immutable types and special values*/
     EjsHelpers      objHelpers;             /**< Default EjsObj helpers */
     EjsHelpers      potHelpers;             /**< Default EjsPot helpers */
     EjsHelpers      blockHelpers;           /**< Default EjsBlock helpers */
@@ -3207,10 +3203,11 @@ extern void ejsShowBlockScope(Ejs *ejs, EjsBlock *block);
 extern int  ejsRedirectLogging(cchar *logSpec);
 extern void ejsRedirectLoggingToFile(MprFile *file, int level);
 extern void ejsCreateObjHelpers(Ejs *ejs);
-extern void ejsCloneObjHelpers(Ejs *ejs, EjsType *type);
-extern void ejsClonePotHelpers(Ejs *ejs, EjsType *type);
-extern void ejsCloneBlockHelpers(Ejs *ejs, EjsType *type);
 extern int  ejsParseModuleVersion(cchar *name);
+
+extern void ejsApplyObjHelpers(EjsService *sp, EjsType *type);
+extern void ejsApplyPotHelpers(EjsService *sp, EjsType *type);
+extern void ejsApplyBlockHelpers(EjsService *sp, EjsType *type);
 
 extern void ejsLockVm(Ejs *ejs);
 extern void ejsUnlockVm(Ejs *ejs);
@@ -3419,6 +3416,7 @@ typedef struct EjsModule {
     //  MOB - document the version format
     EjsString       *vname;                 /* Versioned name - name with optional version suffix */
     MprList         *vms;                   /* List of VMs referencing the module */
+    MprMutex        *mutex;                 /* Multithread locking */
     int             version;                /* Made with EJS_MAKE_VERSION */
     int             minVersion;             /* Minimum version when used as a dependency */
     int             maxVersion;             /* Maximum version when used as a dependency */

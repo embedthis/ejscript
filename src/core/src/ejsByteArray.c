@@ -1396,13 +1396,11 @@ void ejsConfigureByteArrayType(Ejs *ejs)
     EjsHelpers  *helpers;
     EjsPot      *prototype;
 
-    type = ejsConfigureNativeType(ejs, N("ejs", "ByteArray"), sizeof(EjsByteArray), manageByteArray, EJS_OBJ_HELPERS);
-    ejsSetSpecial(ejs, S_ByteArray, type);
-    type->numericIndicies = 1;
-    type->virtualSlots = 1;
-    type->mutableInstances = 1;
-    prototype = type->prototype;
-
+    //  MOB - should not need MUTABLE
+    if ((type = ejsFinalizeScriptType(ejs, N("ejs", "ByteArray"), sizeof(EjsByteArray), manageByteArray, 
+            EJS_TYPE_OBJ | EJS_TYPE_NUMERIC_INDICIES | EJS_TYPE_VIRTUAL_SLOTS | EJS_TYPE_MUTABLE_INSTANCES)) == 0) {
+        return;
+    }
     helpers = &type->helpers;
     helpers->cast = (EjsCastHelper) castByteArrayVar;
     helpers->clone = (EjsCloneHelper) cloneByteArrayVar;
@@ -1413,6 +1411,7 @@ void ejsConfigureByteArrayType(Ejs *ejs)
     helpers->lookupProperty = (EjsLookupPropertyHelper) lookupByteArrayProperty;
     helpers->setProperty = (EjsSetPropertyHelper) setByteArrayProperty;
     
+    prototype = type->prototype;
     ejsBindConstructor(ejs, type, ba_ByteArray);
     ejsBindMethod(ejs, prototype, ES_ByteArray_on, ba_on);
     ejsBindMethod(ejs, prototype, ES_ByteArray_available, ba_available);

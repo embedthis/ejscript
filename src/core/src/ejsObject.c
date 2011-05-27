@@ -872,10 +872,10 @@ void ejsConfigureObjectType(Ejs *ejs)
     EjsPot      *prototype;
     EjsFunction *fun;
 
-    type = S(Object);
-    type->mutableInstances = 1;
+    if ((type = ejsFinalizeNativeType(ejs, N("ejs", "Object"))) == 0) {
+        return;
+    }
     prototype = type->prototype;
-
     ejsBindMethod(ejs, type, ES_Object_create, obj_create);
     ejsBindMethod(ejs, type, ES_Object_defineProperty, obj_defineProperty);
     ejsBindMethod(ejs, type, ES_Object_freeze, obj_freeze);

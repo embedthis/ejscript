@@ -89,8 +89,7 @@ void ejsConfigureGCType(Ejs *ejs)
 {
     EjsType         *type;
 
-    if ((type = ejsGetTypeByName(ejs, N("ejs", "GC"))) == 0) {
-        mprError("Can't find GC type");
+    if ((type = ejsFinalizeScriptType(ejs, N("ejs", "GC"), sizeof(EjsPot), ejsManagePot, EJS_TYPE_POT)) == 0) {
         return;
     }
     ejsBindAccess(ejs, type, ES_GC_enabled, gc_enabled, gc_set_enabled);

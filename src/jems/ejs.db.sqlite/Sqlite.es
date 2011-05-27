@@ -16,7 +16,7 @@ module ejs.db.sqlite {
         /*
             Map independent types to SQL types
          */
-        static const DataTypeToSqlType: Object = {
+        static var DataTypeToSqlType: Object = {
             "binary":       "blob",
             "boolean":      "tinyint",
             "date":         "date",
@@ -34,7 +34,7 @@ module ejs.db.sqlite {
         /*
             Map independent types to SQL types
          */
-        static const SqlTypeToDataType: Object = {
+        static var SqlTypeToDataType: Object = {
             "blob":         "binary",
             "tinyint":      "boolean",
             "date":         "date",
@@ -50,7 +50,7 @@ module ejs.db.sqlite {
         /*
             Map SQL types to Ejscript native types
          */
-        static const SqlTypeToEjsType: Object = {
+        static var SqlTypeToEjsType: Object = {
             "blob":         String,
             "date":         Date,
             "datetime":     Date,
@@ -68,7 +68,7 @@ module ejs.db.sqlite {
             Map Ejscript native types back to SQL types
             INCOMPLETE and INCORRECT
          
-        static const EjsToDataType: Object = {
+        static var EjsToDataType: Object = {
             "string":       "varchar",
             "number":       "decimal",
             "date":         "datetime",

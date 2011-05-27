@@ -37,7 +37,6 @@ static EjsAny *castDate(Ejs *ejs, EjsDate *dp, EjsType *type)
     struct tm   tm;
 
     switch (type->sid) {
-
     case S_Boolean:
         return S(true);
 
@@ -1081,13 +1080,11 @@ void ejsConfigureDateType(Ejs *ejs)
     EjsType     *type;
     EjsPot      *prototype;
 
-    if ((type = ejsConfigureNativeType(ejs, N("ejs", "Date"), sizeof(EjsDate), NULL, EJS_OBJ_HELPERS)) == 0) {
+    //  MOB - MUTABLE
+    if ((type = ejsFinalizeScriptType(ejs, N("ejs", "Date"), sizeof(EjsDate), 0, 
+            EJS_TYPE_OBJ | EJS_TYPE_MUTABLE_INSTANCES)) == 0) {
         return;
     }
-    type->mutableInstances = 1;
-    ejsSetSpecial(ejs, S_Date, type);
-    prototype = type->prototype;
-
     type->helpers.cast = (EjsCastHelper) castDate;
     type->helpers.clone = (EjsCloneHelper) cloneDate;
     type->helpers.invokeOperator = (EjsInvokeOperatorHelper) invokeDateOperator;
@@ -1099,6 +1096,7 @@ void ejsConfigureDateType(Ejs *ejs)
     ejsBindMethod(ejs, type, ES_Date_parse, date_parse);
     ejsBindMethod(ejs, type, ES_Date_UTC, date_UTC);
 
+    prototype = type->prototype;
     ejsBindConstructor(ejs, type, date_Date);
     ejsBindAccess(ejs, prototype, ES_Date_day, date_day, date_set_day);
     ejsBindAccess(ejs, prototype, ES_Date_dayOfYear, date_dayOfYear, date_set_dayOfYear);

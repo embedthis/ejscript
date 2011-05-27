@@ -862,11 +862,12 @@ void ejsConfigureWorkerType(Ejs *ejs)
     EjsType     *type;
     EjsPot      *prototype;
 
-    type = ejsConfigureNativeType(ejs, N("ejs", "Worker"), sizeof(EjsWorker), manageWorker, EJS_POT_HELPERS);
-    type->mutableInstances = 1;
-    ejsSetSpecial(ejs, S_Worker, type);
+    //  MOB - should not need MUTABLE
+    if ((type = ejsFinalizeScriptType(ejs, N("ejs", "Worker"), sizeof(EjsWorker), manageWorker, 
+            EJS_TYPE_POT | EJS_TYPE_MUTABLE_INSTANCES)) == 0) {
+        return;
+    }
     prototype = type->prototype;
-
     ejsBindConstructor(ejs, type, workerConstructor);
     ejsBindMethod(ejs, type, ES_Worker_exit, workerExit);
     ejsBindMethod(ejs, type, ES_Worker_join, workerJoin);
@@ -881,8 +882,8 @@ void ejsConfigureWorkerType(Ejs *ejs)
     ejsBindMethod(ejs, prototype, ES_Worker_terminate, workerTerminate);
     ejsBindMethod(ejs, prototype, ES_Worker_waitForMessage, workerWaitForMessage);
 
-    ejsSetSpecial(ejs, S_Event, ejsGetTypeByName(ejs, N("ejs", "Event")));
-    ejsSetSpecial(ejs, S_ErrorEvent, ejsGetTypeByName(ejs, N("ejs", "ErrorEvent")));
+    ejsAddImmutable(ejs, S_Event, N("ejs", "Event"), ejsGetTypeByName(ejs, N("ejs", "Event")));
+    ejsAddImmutable(ejs, S_ErrorEvent, N("ejs", "ErrorEvent"), ejsGetTypeByName(ejs, N("ejs", "ErrorEvent")));
 }
 
 /*

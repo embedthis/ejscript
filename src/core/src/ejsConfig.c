@@ -16,8 +16,8 @@ void ejsCreateConfigType(Ejs *ejs)
         The Config object may be used by conditional compilation, so the type must exist without loading ejs.mod
         The compiler will call ejsDefineConfigProperties if required.
      */
-    ejsCreateNativeType(ejs, N("ejs", "Config"), sizeof(EjsObj), S_Config, ES_Config_NUM_CLASS_PROP, 
-        ejsManagePot,EJS_POT_HELPERS);
+    ejsCreateNativeType(ejs, N("ejs", "Config"), sizeof(EjsPot), S_Config, ES_Config_NUM_CLASS_PROP, 
+        ejsManagePot, EJS_TYPE_POT);
 }
 
 
@@ -27,24 +27,17 @@ void ejsDefineConfigProperties(Ejs *ejs)
     char        version[16];
     int         att;
 
-    //  MOB refactor this away
-#if 0
-    debug = BLD_DEBUG ? S(true) : S(false);
-    if (ejsGetProperty(ejs, type, N("public", "Debug")) != debug) {
-    }
-#endif
-    if (ejs->configSet) {
+    if ((type = ejsFinalizeNativeType(ejs, N("ejs", "Config"))) == 0) {
         return;
     }
-    ejs->configSet = 1;
-    type = S(Config);
-    att = EJS_PROP_STATIC | EJS_PROP_ENUMERABLE;
+    /* Not mutable once initialized - Should have a Config instance instead */
     type->mutable = 0;
 
     /*
         Must use -1 for slotNumber as this function is called by the compiler when compiling ejs.mod. 
         There will still be a -Config- property in slot[0]
      */
+    att = EJS_PROP_STATIC | EJS_PROP_ENUMERABLE;
     ejsDefineProperty(ejs, type, -1, N("public", "Debug"), 0, att, BLD_DEBUG ? S(true): S(false));
     ejsDefineProperty(ejs, type, -1, N("public", "CPU"), 0, att, ejsCreateStringFromAsc(ejs, BLD_HOST_CPU));
     ejsDefineProperty(ejs, type, -1, N("public", "OS"), 0, att, ejsCreateStringFromAsc(ejs, BLD_OS));

@@ -324,8 +324,9 @@ void ejsCreateRegExpType(Ejs *ejs)
 {
     EjsType     *type;
 
+    //  MOB - MUTABLE
     type = ejsCreateNativeType(ejs, N("ejs", "RegExp"), sizeof(EjsRegExp), S_RegExp, ES_RegExp_NUM_CLASS_PROP,
-        manageRegExp, EJS_OBJ_HELPERS);
+        manageRegExp, EJS_TYPE_OBJ | EJS_TYPE_MUTABLE_INSTANCES);
     type->helpers.cast = (EjsCastHelper) castRegExp;
 }
 
@@ -335,10 +336,10 @@ void ejsConfigureRegExpType(Ejs *ejs)
     EjsType     *type;
     EjsPot      *prototype;
 
-    type = S(RegExp);
-    type->mutableInstances = 1;
+    if ((type = ejsFinalizeNativeType(ejs, N("ejs", "RegExp"))) == 0) {
+        return;
+    }
     prototype = type->prototype;
-
     ejsBindConstructor(ejs, type, regex_Constructor);
     ejsBindMethod(ejs, prototype, ES_RegExp_exec, regex_exec);
     ejsBindAccess(ejs, prototype, ES_RegExp_lastIndex, regex_getLastIndex, regex_setLastIndex);

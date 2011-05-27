@@ -174,16 +174,21 @@ void ejsCreateBlockHelpers(Ejs *ejs)
 
 void ejsInitBlockType(Ejs *ejs, EjsType *type)
 {
-#if UNUSED
-    EjsType     *type;
-
-    type = ejsCreateNativeType(ejs, N("ejs", "Block"), sizeof(EjsBlock), S_Block, ES_Block_NUM_CLASS_PROP, 
-        ejsManageBlock, EJS_POT_HELPERS);
-#endif
     type->constructor.block.pot.shortScope = 1;
-
-    ejsSetSpecial(ejs, S_commaProt, ejsCreateStringFromAsc(ejs, ",protected"));
+    ejsAddImmutable(ejs, S_commaProt, EN(",protected"), ejsCreateStringFromAsc(ejs, ",protected"));
 }
+
+
+void ejsConfigureBlockType(Ejs *ejs)
+{
+    EjsType     *type;
+    
+    if ((type = ejsFinalizeNativeType(ejs, N("ejs", "Block"))) == 0) {
+        return;
+    }
+    ejsAddImmutable(ejs, S_commaProt, EN(",protected"), ejsCreateStringFromAsc(ejs, ",protected"));
+}
+
 
 
 /*

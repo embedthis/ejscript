@@ -473,10 +473,10 @@ static EjsAny *castObj(Ejs *ejs, EjsObj *obj, EjsType *type)
         return ejsRunFunctionByName(ejs, type, N(EJS_META_NAMESPACE, "cast"), type, 1, &obj);
     }
     switch (type->sid) {
-    case S_Boolean:
+    case ES_Boolean:
         return ejsCreateBoolean(ejs, 1);
 
-    case S_Number:
+    case ES_Number:
         str = ejsToString(ejs, obj);
         if (str == 0) {
             ejsThrowMemoryError(ejs);
@@ -484,7 +484,7 @@ static EjsAny *castObj(Ejs *ejs, EjsObj *obj, EjsType *type)
         }
         return ejsParse(ejs, str->value, S_Number);
 
-    case S_String:
+    case ES_String:
         if (!ejsIsType(ejs, obj) && !ejsIsPrototype(ejs, obj)) {
             if (ejsLookupVar(ejs, obj, EN("toString"), &lookup) >= 0 && lookup.obj != ST(Object)->prototype) {
                 fun = ejsGetProperty(ejs, lookup.obj, lookup.slotNum);

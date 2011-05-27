@@ -91,9 +91,9 @@ static EjsType *defineType(Ejs *ejs, cchar *name, int id)
 {
     EjsType     *type;
 
+    //  MOB - DYNAMIC | MUTABLE | HAS_INSTANCE ...
     type = ejsCreateNativeType(ejs, N("ejs", name), sizeof(EjsError), id, ES_Error_NUM_CLASS_PROP, ejsManagePot, 
-        EJS_POT_HELPERS);
-    ejsSetTypeAttributes(type, EJS_TYPE_DYNAMIC_INSTANCE | EJS_TYPE_HAS_INSTANCE_VARS);
+            EJS_TYPE_POT | EJS_TYPE_DYNAMIC_INSTANCES | EJS_TYPE_HAS_INSTANCE_VARS | EJS_TYPE_MUTABLE_INSTANCES);
     type->constructor.block.nobind = 1;
     type->helpers.cast = (EjsCastHelper) castError;
     return type;
@@ -125,8 +125,9 @@ static void configureType(Ejs *ejs, cchar *name)
 {
     EjsType     *type;
 
-    type = ejsGetTypeByName(ejs, N("ejs", name));
-    mprAssert(type);
+    if ((type = ejsFinalizeNativeType(ejs, N("ejs", name))) == 0) {
+        return;
+    }
     ejsBindConstructor(ejs, type, errorConstructor);
 }
 

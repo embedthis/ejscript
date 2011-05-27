@@ -6839,7 +6839,7 @@ static EcNode *parseAttribute(EcCompiler *cp)
             if (inClass || inInterface) {
                 np = unexpected(cp);
             } else {
-                np->attributes |= EJS_TYPE_DYNAMIC_INSTANCE;
+                np->attributes |= EJS_TYPE_DYNAMIC_INSTANCES;
             }
             break;
 

@@ -969,7 +969,7 @@ static char *getAttributeString(EjsMod *mp, int attributes)
     if (attributes & EJS_FUN_OVERRIDE) {
         strcat(attributeBuf, "override ");
     }
-    if (attributes & EJS_TYPE_DYNAMIC_INSTANCE) {
+    if (attributes & EJS_TYPE_DYNAMIC_INSTANCES) {
         strcat(attributeBuf, "dynamic ");
     }
     if (attributes & EJS_TRAIT_GETTER) {

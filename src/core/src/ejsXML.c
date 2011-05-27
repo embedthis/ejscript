@@ -1073,7 +1073,7 @@ void ejsCreateXMLType(Ejs *ejs)
     EjsType     *type;
 
     type = ejsCreateNativeType(ejs, N("ejs", "XML"), sizeof(EjsXML), S_XML, ES_XML_NUM_CLASS_PROP, ejsManageXML, 
-        EJS_OBJ_HELPERS);
+        EJS_TYPE_OBJ);
 
     /*
         Must not bind as XML uses get/setPropertyByName to defer to user XML elements over XML methods
@@ -1097,15 +1097,20 @@ void ejsConfigureXMLType(Ejs *ejs)
     EjsPot      *prototype;
 
     type = S(XML);
+    if (type->configured) {
+        return;
+    }
+    type->configured = 1;
+    //  MOB - why not already set
+    mprAssert(type->mutableInstances);
     type->mutableInstances = 1;
-    prototype = type->prototype;
 
+    prototype = type->prototype;
     ejsBindConstructor(ejs, type, xmlConstructor);
     ejsBindMethod(ejs, prototype, ES_XML_length, xmlLength);
     ejsBindMethod(ejs, prototype, ES_XML_load, loadXml);
     ejsBindMethod(ejs, prototype, ES_XML_save, saveXml);
     ejsBindMethod(ejs, prototype, ES_XML_name, getXmlNodeName);
-
     ejsBindMethod(ejs, prototype, ES_XML_parent, (EjsNativeFunction) xml_parent);
 
     /*

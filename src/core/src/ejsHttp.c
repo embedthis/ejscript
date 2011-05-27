@@ -1475,10 +1475,10 @@ void ejsConfigureHttpType(Ejs *ejs)
     EjsType     *type;
     EjsPot      *prototype;
 
-    type = ejsConfigureNativeType(ejs, N("ejs", "Http"), sizeof(EjsHttp), (MprManager) manageHttp, EJS_OBJ_HELPERS);
+    if ((type = ejsFinalizeScriptType(ejs, N("ejs", "Http"), sizeof(EjsHttp), manageHttp, EJS_TYPE_OBJ)) == 0) {
+        return;
+    }
     prototype = type->prototype;
-    type->mutableInstances = 1;
-
     ejsBindConstructor(ejs, type, httpConstructor);
     ejsBindAccess(ejs, prototype, ES_Http_async, http_async, http_set_async);
 #if ES_Http_available

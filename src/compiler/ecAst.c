@@ -490,9 +490,7 @@ static EjsType *defineClass(EcCompiler *cp, EcNode *np)
         astError(cp, np, "%N Class is already defined.", np->qname);
         return 0;
     }
-    type = ejsGetPropertyByName(ejs, ejs->empty ? ejs->hidden : ejs->global, np->qname);
-
-    // UNUSED mprLog(0, "Look for %N, exists %p", np->qname, type);
+    type = ejsGetPropertyByName(ejs, ejs->service->immutable, np->qname);
 
     if (np->attributes & EJS_PROP_NATIVE) {
         astWarn(cp, np, "Native attribute on class %@ is not required, ignoring.", np->qname.name);
@@ -502,15 +500,15 @@ static EjsType *defineClass(EcCompiler *cp, EcNode *np)
         attributes |= EJS_TYPE_INTERFACE;
     }
     if (type == 0) {
-        type = ejsCreateType(ejs, np->qname, state->currentModule, NULL, NULL, sizeof(EjsPot), sid, 0, 0, attributes);
+        attributes |= EJS_TYPE_POT;
+        type = ejsCreateType(ejs, np->qname, state->currentModule, NULL, NULL, sid, 0, 0, 0, 0, attributes);
         if (type == 0) {
             astError(cp, np, "Can't create type %N", type->qname);
             return 0;
         }
-        ejsClonePotHelpers(ejs, type);
         
     } else {
-        ejsSetTypeAttributes(type, attributes);
+        ejsSetTypeAttributes(type, type->instanceSize, type->manager, attributes);
         type->module = state->currentModule;
     }
     type->typeData = np;
@@ -975,6 +973,7 @@ static EjsFunction *defineFunction(EcCompiler *cp, EcNode *np)
             Check if this function has already been defined in this block. Can't check base classes yes. Must wait till 
             bindFunction()
          */
+        mprAssert(block);
         slotNum = ejsLookupProperty(ejs, block, np->qname);
 
         if (slotNum >= 0 && cp->fileState->strict) {

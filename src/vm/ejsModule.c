@@ -53,18 +53,20 @@ static void manageModule(EjsModule *mp, int flags)
     if (flags & MPR_MANAGE_MARK) {
         mprMark(mp->name);
         mprMark(mp->vname);
-        mprMark(mp->path);
+        mprMark(mp->vms);
+        mprMark(mp->mutex);
+        mprMark(mp->constants);
+        mprMark(mp->initializer);
         mprMark(mp->loadState);
         mprMark(mp->dependencies);
         mprMark(mp->file);
-        mprMark(mp->code);
-        mprMark(mp->initializer);
-        mprMark(mp->constants);
-        mprMark(mp->doc);
-        mprMark(mp->scope);
-        mprMark(mp->currentMethod);
         mprMark(mp->current);
-        mprMark(mp->vms);
+        mprMark(mp->currentMethod);
+        mprMark(mp->scope);
+        mprMark(mp->path);
+        mprMark(mp->code);
+        mprMark(mp->doc);
+        mprMark(mp->globalProperties);
 
     } else if (flags & MPR_MANAGE_FREE) {
         mprCloseFile(mp->file);
@@ -392,10 +394,12 @@ static EjsDebug *loadDebug(Ejs *ejs, EjsFunction *fun)
     code = fun->body.code;
     prior = 0;
     debug = NULL;
+    lock(mp);
 
     if (mp->file == 0) {
         if ((mp->file = mprOpenFile(mp->path, O_RDONLY | O_BINARY, 0666)) == NULL) {
             mprLog(5, "Can't open module file %s", mp->path);
+            unlock(mp);
             return NULL;
         }
         mprEnableFileBuffering(mp->file, 0, 0);
@@ -404,7 +408,7 @@ static EjsDebug *loadDebug(Ejs *ejs, EjsFunction *fun)
     }
     if (mprSeekFile(mp->file, SEEK_SET, code->debugOffset) != code->debugOffset) {
         mprSeekFile(mp->file, SEEK_SET, prior);
-        mprAssert(0);
+        unlock(mp);
         return 0;
     }
     length = ejsModuleReadInt(ejs, mp);
@@ -424,6 +428,7 @@ static EjsDebug *loadDebug(Ejs *ejs, EjsFunction *fun)
         mprCloseFile(mp->file);
         mp->file = 0;
     }
+    unlock(mp);
     if (mp->hasError) {
         return NULL;
     }

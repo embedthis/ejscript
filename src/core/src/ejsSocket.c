@@ -428,10 +428,12 @@ void ejsConfigureSocketType(Ejs *ejs)
     EjsType     *type;
     EjsPot      *prototype;
 
-    type = ejsConfigureNativeType(ejs, N("ejs", "Socket"), sizeof(EjsSocket), (MprManager) manageSocket, EJS_OBJ_HELPERS);
-    type->mutableInstances = 1;
+    //  MOB MUTABLE
+    if ((type = ejsFinalizeScriptType(ejs, N("ejs", "Socket"), sizeof(EjsSocket), manageSocket,
+            EJS_TYPE_OBJ | EJS_TYPE_MUTABLE_INSTANCES)) == 0) {
+        return;
+    }
     prototype = type->prototype;
-
     ejsBindConstructor(ejs, type, sock_Socket);
     ejsBindMethod(ejs, prototype, ES_Socket_accept, sock_accept);
     ejsBindMethod(ejs, prototype, ES_Socket_address, sock_address);

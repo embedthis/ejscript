@@ -155,23 +155,19 @@ void ejsCreateNamespaceType(Ejs *ejs)
     EjsType     *type;
 
     type = ejsCreateNativeType(ejs, N("ejs", "Namespace"), sizeof(EjsNamespace), S_Namespace, ES_Namespace_NUM_CLASS_PROP,
-        manageNamespace, EJS_OBJ_HELPERS);
+        manageNamespace, EJS_TYPE_OBJ | EJS_TYPE_IMMUTABLE_INSTANCES);
     type->helpers.cast = (EjsCastHelper) castNamespace;
     type->helpers.invokeOperator = (EjsInvokeOperatorHelper) invokeNamespaceOperator;
-
-    /*  
-        Create the standard namespaces. Order matters here. This is the (reverse) order of lookup.
-        Empty is first to maximize speed of searching dynamic properties. Ejs second to maximize builtin lookups.
-     */
-    ejsSetSpecial(ejs, S_iteratorSpace, ejsDefineReservedNamespace(ejs, ejs->global, NULL, EJS_ITERATOR_NAMESPACE));
-    ejsSetSpecial(ejs, S_publicSpace, ejsDefineReservedNamespace(ejs, ejs->global, NULL, EJS_PUBLIC_NAMESPACE));
-    ejsSetSpecial(ejs, S_ejsSpace, ejsDefineReservedNamespace(ejs, ejs->global, NULL, EJS_EJS_NAMESPACE));
-    ejsSetSpecial(ejs, S_emptySpace, ejsDefineReservedNamespace(ejs, ejs->global, NULL, EJS_EMPTY_NAMESPACE));
 }
 
 
 void ejsConfigureNamespaceType(Ejs *ejs)
 {
+    EjsType     *type;
+
+    if ((type = ejsFinalizeNativeType(ejs, N("ejs", "Namespace"))) == 0) {
+        return;
+    }
     ejsSetProperty(ejs, ejs->global, ES_iterator, S(iteratorSpace));
     ejsSetProperty(ejs, ejs->global, ES_public, S(publicSpace));
     ejsSetProperty(ejs, ejs->global, ES_ejs, S(ejsSpace));

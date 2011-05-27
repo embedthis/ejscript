@@ -1773,7 +1773,7 @@ static char *fmtAttributes(EjsAny *vp, int attributes, int klass)
         if (attributes & EJS_TYPE_FINAL) {
             strcat(attributeBuf, "final ");
         }
-        if (attributes & EJS_TYPE_DYNAMIC_INSTANCE) {
+        if (attributes & EJS_TYPE_DYNAMIC_INSTANCES) {
             strcat(attributeBuf, "dynamic ");
         }
     } else if (ejsIsFunction(ejs, vp)) {

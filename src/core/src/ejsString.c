@@ -2680,6 +2680,7 @@ static void manageIntern(EjsIntern *intern, int flags)
 {
     if (flags & MPR_MANAGE_MARK) {
         mprMark(intern->buckets);
+        mprMark(intern->mutex);
 
     } else if (flags & MPR_MANAGE_FREE) {
         ejsDestroyIntern(intern);
@@ -2701,36 +2702,6 @@ void ejsInitStringType(Ejs *ejs, EjsType *type)
     SET_TYPE_NAME(type->qname.name, type);
     SET_TYPE_NAME(type->qname.space, type);
 #endif
-    
-    /*
-        Standard string values. Create here so modules do not have to export these strings
-     */
-#if UNUSED
-    ejsSetSpecial(ejs, S_empty, ejsCreateStringFromAsc(ejs, ""));
-#else
-    S(empty) = ejsCreateStringFromAsc(ejs, "");
-#endif
-
-#if UNUSED
-    ejsSetSpecial(ejs, -1, ejsCreateStringFromAsc(ejs, EJS_BLOCK_NAMESPACE));
-    ejsSetSpecial(ejs, -1, ejsCreateStringFromAsc(ejs, EJS_CONSTRUCTOR_NAMESPACE));
-    ejsSetSpecial(ejs, -1, ejsCreateStringFromAsc(ejs, EJS_EJS_NAMESPACE));
-    ejsSetSpecial(ejs, -1, ejsCreateStringFromAsc(ejs, EJS_INIT_NAMESPACE));
-    ejsSetSpecial(ejs, -1, ejsCreateStringFromAsc(ejs, EJS_INTERNAL_NAMESPACE));
-    ejsSetSpecial(ejs, -1, ejsCreateStringFromAsc(ejs, EJS_ITERATOR_NAMESPACE));
-    ejsSetSpecial(ejs, -1, ejsCreateStringFromAsc(ejs, EJS_META_NAMESPACE));
-    ejsSetSpecial(ejs, -1, ejsCreateStringFromAsc(ejs, EJS_PRIVATE_NAMESPACE));
-    ejsSetSpecial(ejs, -1, ejsCreateStringFromAsc(ejs, EJS_PROTECTED_NAMESPACE));
-    ejsSetSpecial(ejs, -1, ejsCreateStringFromAsc(ejs, EJS_PROTOTYPE_NAMESPACE));
-    ejsSetSpecial(ejs, -1, ejsCreateStringFromAsc(ejs, EJS_PUBLIC_NAMESPACE));
-    ejsSetSpecial(ejs, -1, ejsCreateStringFromAsc(ejs, EJS_WORKER_NAMESPACE));
-    ejsSetSpecial(ejs, -1, ejsCreateStringFromAsc(ejs, EJS_CONSTRUCTOR_NAMESPACE));
-    ejsSetSpecial(ejs, -1, ejsCreateStringFromAsc(ejs, EJS_EJS_NAMESPACE));
-    ejsSetSpecial(ejs, -1, ejsCreateStringFromAsc(ejs, EJS_INITIALIZER_NAME));
-    ejsSetSpecial(ejs, -1, ejsCreateStringFromAsc(ejs, EJS_DEFAULT_MODULE));
-    ejsSetSpecial(ejs, -1, ejsCreateStringFromAsc(ejs, EJS_DEFAULT_MODULE_NAME));
-    ejsSetSpecial(ejs, -1, ejsCreateStringFromAsc(ejs, EJS_DEFAULT_CLASS_NAME));
-#endif
 }
 
 
@@ -2739,14 +2710,14 @@ void ejsConfigureStringType(Ejs *ejs)
     EjsType     *type;
     EjsPot      *prototype;
 
-    type = S(String);
-    prototype = type->prototype;
-
+    if ((type = ejsFinalizeNativeType(ejs, N("ejs", "String"))) == 0) {
+        return;
+    }
     ejsSetProperty(ejs, ejs->global, ES_string, type);
-    
     ejsBindMethod(ejs, type, ES_String_fromCharCode, fromCharCode);
     ejsBindConstructor(ejs, type, stringConstructor);
     
+    prototype = type->prototype;
     ejsBindMethod(ejs, prototype, ES_String_caseCompare, caseCompare);
     ejsBindMethod(ejs, prototype, ES_String_caselessCompare, caselessCompare);
     ejsBindMethod(ejs, prototype, ES_String_charAt, charAt);

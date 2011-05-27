@@ -162,12 +162,22 @@ void ejsCreateFrameType(Ejs *ejs)
 {
     EjsType     *type;
 
+    //  MOB MUTABLE
     type = ejsCreateNativeType(ejs, N("ejs", "Frame"), sizeof(EjsFrame), S_Frame, ES_Frame_NUM_CLASS_PROP,
-        manageFrame, EJS_POT_HELPERS);
-    type->mutableInstances = 1;
-    ejsSetTypeAttributes(type, EJS_TYPE_DYNAMIC_INSTANCE);
+        manageFrame, EJS_TYPE_POT | EJS_TYPE_DYNAMIC_INSTANCES | EJS_TYPE_MUTABLE_INSTANCES);
     type->constructor.block.pot.shortScope = 1;
+    type->configured = 1;
     type->helpers.clone = (EjsCloneHelper) ejsCloneBlock;
+}
+
+
+void ejsConfigureFrameType(Ejs *ejs)
+{
+    EjsType     *type;
+
+    if ((type = ejsFinalizeNativeType(ejs, N("ejs", "Frame"))) == 0) {
+        return;
+    }
 }
 
 

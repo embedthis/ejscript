@@ -2485,9 +2485,11 @@ static void storePropertyToSlot(Ejs *ejs, EjsObj *thisObj, EjsAny *obj, int slot
             EjsName  qname;
             vp = ejsGetProperty(ejs, obj, slotNum);
             if (vp != value && vp != S(null) && vp != S(undefined)) {
-                qname = ejsGetPropertyName(ejs, obj, slotNum);
-                ejsThrowReferenceError(ejs, "Property \"%@\" is not writable", qname.name);
-                return;
+                if (ejsInvokeOperator(ejs, vp, EJS_OP_COMPARE_EQ, value) != S(true)) {
+                    qname = ejsGetPropertyName(ejs, obj, slotNum);
+                    ejsThrowReferenceError(ejs, "Property \"%@\" is not writable", qname.name);
+                    return;
+                }
             }
         }
     }

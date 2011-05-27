@@ -174,8 +174,8 @@ static EjsObj *getNullProperty(Ejs *ejs, EjsNull *unused, int slotNum)
 /*********************************** Factory **********************************/
 /*
     We dont actually allocate any nulls. We just reuse the singleton instance.
+    OPT - macro
  */
-
 EjsNull *ejsCreateNull(Ejs *ejs)
 {
     return S(null);
@@ -184,20 +184,9 @@ EjsNull *ejsCreateNull(Ejs *ejs)
 
 void ejsInitNullType(Ejs *ejs, EjsType *type)
 {
-#if UNUSED
-    EjsType     *type;
-
-    type = ejsCreateNativeType(ejs, N("ejs", "Null"), sizeof(EjsNull), S_Null, ES_Null_NUM_CLASS_PROP, 
-        NULL, EJS_OBJ_HELPERS);
-#endif
-
     type->helpers.cast             = (EjsCastHelper) castNull;
     type->helpers.getProperty      = (EjsGetPropertyHelper) getNullProperty;
     type->helpers.invokeOperator   = (EjsInvokeOperatorHelper) invokeNullOperator;
-#if UNUSED
-    ejsSetSpecial(ejs, ES_null, ejsCreateObj(ejs, type, 0));
-    mprSetName(S(null), "null");
-#endif
 }
 
 
@@ -206,10 +195,10 @@ void ejsConfigureNullType(Ejs *ejs)
     EjsType     *type;
     EjsPot      *prototype;
 
-    type = S(Null);
+    if ((type = ejsFinalizeNativeType(ejs, N("ejs", "Null"))) == 0) {
+        return;
+    }
     prototype = type->prototype;
-
-    ejsSetProperty(ejs, ejs->global, ES_null, S(null));
     ejsBindMethod(ejs, prototype, ES_Null_iterator_get, getNullIterator);
     ejsBindMethod(ejs, prototype, ES_Null_iterator_getValues, getNullIterator);
 }

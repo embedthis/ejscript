@@ -426,7 +426,7 @@ void ejsCreateNumberType(Ejs *ejs)
     static int  zero = 0;
 
     type = ejsCreateNativeType(ejs, N("ejs", "Number"), sizeof(EjsNumber), S_Number, ES_Number_NUM_CLASS_PROP, 
-        NULL, EJS_OBJ_HELPERS);
+        NULL, EJS_TYPE_OBJ | EJS_TYPE_IMMUTABLE_INSTANCES);
 
     type->helpers.cast = (EjsCastHelper) castNumber;
     type->helpers.clone = (EjsCloneHelper) cloneNumber;
@@ -434,35 +434,35 @@ void ejsCreateNumberType(Ejs *ejs)
 
     np = ejsCreateObj(ejs, type, 0);
     np->value = 0;
-    ejsSetSpecial(ejs, S_zero, np);
+    ejsAddImmutable(ejs, S_zero, EN("zero"), np);
 
     np = ejsCreateObj(ejs, type, 0);
     np->value = 1;
-    ejsSetSpecial(ejs, S_one, np);
+    ejsAddImmutable(ejs, S_one, EN("one"), np);
 
     np = ejsCreateObj(ejs, type, 0);
     np->value = -1;
-    ejsSetSpecial(ejs, S_minusOne, np);
+    ejsAddImmutable(ejs, S_minusOne, EN("minusOne"), np);
 
     np = ejsCreateObj(ejs, type, 0);
     np->value = 1.0 / zero;
-    ejsSetSpecial(ejs, S_infinity, np);
+    ejsAddImmutable(ejs, S_infinity, EN("Infinity"), np);
 
     np = ejsCreateObj(ejs, type, 0);
     np->value = -1.0 / zero;
-    ejsSetSpecial(ejs, S_negativeInfinity, np);
+    ejsAddImmutable(ejs, S_negativeInfinity, EN("NegativeInfinity"), np);
 
     np = ejsCreateObj(ejs, type, 0);
     np->value = 0.0 / zero;
-    ejsSetSpecial(ejs, S_nan, np);
+    ejsAddImmutable(ejs, S_nan, EN("NaN"), np);
 
     np = ejsCreateObj(ejs, type, 0);
     np->value = 1.7976931348623157e+308;
-    ejsSetSpecial(ejs, S_max, np);
+    ejsAddImmutable(ejs, S_max, EN("max"), np);
 
     np = ejsCreateObj(ejs, type, 0);
     np->value = 5e-324;
-    ejsSetSpecial(ejs, S_min, np);
+    ejsAddImmutable(ejs, S_min, EN("min"), np);
 }
 
 
@@ -471,9 +471,10 @@ void ejsConfigureNumberType(Ejs *ejs)
     EjsType    *type;
     EjsPot     *prototype;
 
-    type = S(Number);
+    if ((type = ejsFinalizeNativeType(ejs, N("ejs", "Number"))) == 0) {
+        return;
+    }
     prototype = type->prototype;
-
     ejsBindConstructor(ejs, type, numberConstructor);
     ejsBindMethod(ejs, prototype, ES_Number_iterator_get, getNumberIterator);
     ejsBindMethod(ejs, prototype, ES_Number_iterator_getValues, getNumberIterator);
@@ -490,12 +491,6 @@ void ejsConfigureNumberType(Ejs *ejs)
     ejsSetProperty(ejs, type, ES_Number_NEGATIVE_INFINITY, S(negativeInfinity));
     ejsSetProperty(ejs, type, ES_Number_POSITIVE_INFINITY, S(infinity));
     ejsSetProperty(ejs, type, ES_Number_NaN, S(nan));
-
-    ejsSetProperty(ejs, ejs->global, ES_NegativeInfinity, S(negativeInfinity));
-    ejsSetProperty(ejs, ejs->global, ES_Infinity, S(infinity));
-    ejsSetProperty(ejs, ejs->global, ES_NaN, S(nan));
-    ejsSetProperty(ejs, ejs->global, ES_double, type);
-    ejsSetProperty(ejs, ejs->global, ES_num, type);
 }
 
 /*

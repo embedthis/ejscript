@@ -290,22 +290,40 @@ void ejsFreezeGlobal(Ejs *ejs)
 }
 
 
-#if UNUSED
-void ejsCreateGlobalBlock(Ejs *ejs)
+void ejsDefineGlobalNamespaces(Ejs *ejs)
 {
-    EjsBlock    *block;
-    int         sizeSlots;
-
-    sizeSlots = (ejs->empty) ? 0 : max(ES_global_NUM_CLASS_PROP, EJS_NUM_GLOBAL);
-    block = ejsCreateBlock(ejs, sizeSlots);
-    ejs->global = block;
-    block->isGlobal = 1;
-    block->pot.numProp = (ejs->empty) ? 0: ES_global_NUM_CLASS_PROP;
-    block->pot.shortScope = 1;
-    SET_DYNAMIC(block, 1);
-    mprSetName(block, "global");
+    /*  
+        Create the standard namespaces. Order matters here. This is the (reverse) order of lookup.
+        Empty is first to maximize speed of searching dynamic properties. Ejs second to maximize builtin lookups.
+     */
+    ejsAddImmutable(ejs, S_iteratorSpace, EN("iterator"), 
+        ejsDefineReservedNamespace(ejs, ejs->global, NULL, EJS_ITERATOR_NAMESPACE));
+    ejsAddImmutable(ejs, S_publicSpace, EN("public"), 
+        ejsDefineReservedNamespace(ejs, ejs->global, NULL, EJS_PUBLIC_NAMESPACE));
+    ejsAddImmutable(ejs, S_ejsSpace, EN("ejs"), 
+        ejsDefineReservedNamespace(ejs, ejs->global, NULL, EJS_EJS_NAMESPACE));
+    ejsAddImmutable(ejs, S_emptySpace, EN("empty"), 
+        ejsDefineReservedNamespace(ejs, ejs->global, NULL, EJS_EMPTY_NAMESPACE));
 }
-#endif
+
+
+void ejsDefineGlobals(Ejs *ejs)
+{
+    if (!ejs->empty) {
+        ejsSetProperty(ejs, ejs->global, ES_void, S(Void));
+        ejsSetProperty(ejs, ejs->global, ES_undefined, S(undefined));
+        ejsSetProperty(ejs, ejs->global, ES_null, S(null));
+        ejsSetProperty(ejs, ejs->global, ES_global, ejs->global);
+        ejsSetProperty(ejs, ejs->global, ES_NegativeInfinity, S(negativeInfinity));
+        ejsSetProperty(ejs, ejs->global, ES_Infinity, S(infinity));
+        ejsSetProperty(ejs, ejs->global, ES_NaN, S(nan));
+        ejsSetProperty(ejs, ejs->global, ES_double, S(Number));
+        ejsSetProperty(ejs, ejs->global, ES_num, S(Number));
+        ejsSetProperty(ejs, ejs->global, ES_boolean, S(Boolean));
+        ejsSetProperty(ejs, ejs->global, ES_true, S(true));
+        ejsSetProperty(ejs, ejs->global, ES_false, S(false));
+    }
+}
 
 
 void ejsConfigureGlobalBlock(Ejs *ejs)
@@ -325,8 +343,6 @@ void ejsConfigureGlobalBlock(Ejs *ejs)
     ejsBindFunction(ejs, block, ES_parse, g_parse);
     ejsBindFunction(ejs, block, ES_parseInt, g_parseInt);
     ejsBindFunction(ejs, block, ES_print, g_printLine);
-
-    ejsSetProperty(ejs, ejs->global, ES_global, ejs->global);
 }
 
 

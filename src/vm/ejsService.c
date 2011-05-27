@@ -38,7 +38,9 @@ static EjsService *createService()
     if (mprUsingDefaultLogHandler()) {
         ejsRedirectLogging(0);
     }
+#if UNUSED
     sp->shared = mprAllocZeroed(EJS_MAX_SPECIAL * sizeof(EjsAny*));
+#endif
     sp->nativeModules = mprCreateHash(-1, MPR_HASH_STATIC_KEYS);
     sp->mutex = mprCreateLock();
     sp->vmlist = mprCreateList(-1, MPR_LIST_STATIC_VALUES);
@@ -51,8 +53,6 @@ static EjsService *createService()
 
 static void manageEjsService(EjsService *sp, int flags)
 {
-    int     i;
-
     if (flags & MPR_MANAGE_MARK) {
         mprMark(sp->http);
         mprMark(sp->mutex);
@@ -60,10 +60,14 @@ static void manageEjsService(EjsService *sp, int flags)
         mprMark(sp->vmpool);
         mprMark(sp->nativeModules);
         mprMark(sp->intern);
+        mprMark(sp->immutable);
+#if UNUSED
         mprMark(sp->shared);
+        int     i;
         for (i = 0; i < EJS_MAX_SPECIAL; i++) {
             mprMark(sp->shared[i]);
         }
+#endif
 
     } else if (flags & MPR_MANAGE_FREE) {
         ejsDestroyIntern(sp->intern);
@@ -346,7 +350,6 @@ static void manageEjs(Ejs *ejs, int flags)
         }
 #endif
         mprMark(ejs->global);
-        mprMark(ejs->hidden);
         mprMark(ejs->name);
         mprMark(ejs->doc);
         mprMark(ejs->errorMsg);
@@ -396,22 +399,22 @@ static void manageEjs(Ejs *ejs, int flags)
 }
 
 
-void ejsCloneObjHelpers(Ejs *ejs, EjsType *type)
+void ejsApplyObjHelpers(EjsService *sp, EjsType *type)
 {
-    type->helpers = ejs->service->objHelpers;
+    type->helpers = sp->objHelpers;
 }
 
 
-void ejsClonePotHelpers(Ejs *ejs, EjsType *type)
+void ejsApplyPotHelpers(EjsService *sp, EjsType *type)
 {
-    type->helpers = ejs->service->potHelpers;
+    type->helpers = sp->potHelpers;
     type->isPot = 1;
 }
 
 
-void ejsCloneBlockHelpers(Ejs *ejs, EjsType *type)
+void ejsApplyBlockHelpers(EjsService *sp, EjsType *type)
 {
-    type->helpers = ejs->service->blockHelpers;
+    type->helpers = sp->blockHelpers;
     type->isPot = 1;
 }
 
@@ -425,6 +428,9 @@ static int cloneVM(Ejs *ejs, Ejs *master)
 // MOB extern int cloneRef;
 
     ejs->global = ejsClone(ejs, master->global, 1);
+    ejsFixCrossRefs(ejs, ejs->global);
+    ejsDefineGlobals(ejs);
+    ejsDefineGlobalNamespaces(ejs);
 // print("Copied %d, ref %d\n", cloneCopy, cloneRef);
 
     ejs->sqlite = master->sqlite;
@@ -449,7 +455,7 @@ static int defineSharedTypes(Ejs *ejs)
         Create the essential bootstrap types: Object, Type and the global object, these are the foundation.
         All types are instances of Type. Order matters here.
      */
-    if (S(Object) == 0) {
+    if (ejs->service->immutable == 0) {
         ejsCreateBootstrapTypes(ejs);
         ejsCreateArrayType(ejs);
         ejsCreateNamespaceType(ejs);
@@ -471,14 +477,16 @@ static int defineSharedTypes(Ejs *ejs)
 
         ejsAddNativeModule(ejs, "ejs", configureEjs, _ES_CHECKSUM_ejs, 0);
 
-        if (ejs->hasError || mprHasMemError(ejs)) {
-            mprError("Can't create core shared types");
-            return EJS_ERR;
-        }
     } else {
         ejs->global = ejsCreateBlock(ejs, max(ES_global_NUM_CLASS_PROP, EJS_NUM_GLOBAL));
         ((EjsPot*) ejs->global)->numProp = ES_global_NUM_CLASS_PROP;
         mprSetName(ejs->global, "global");
+    }
+    ejsDefineGlobals(ejs);
+    ejsDefineGlobalNamespaces(ejs);
+    if (ejs->hasError || mprHasMemError(ejs)) {
+        mprError("Can't create core shared types");
+        return EJS_ERR;
     }
     return 0;
 }
@@ -489,18 +497,36 @@ static int defineTypes(Ejs *ejs)
     Ejs         *base;
     EjsAny      *vp;
     EjsName     qname;
+    EjsTrait    *trait;
     int         i;
 
     base = mprGetFirstItem(ejs->service->vmlist);
     if (base && base != ejs) {
+        /*
+            For subsequent VMs, copy global references to immutable types and functions
+            NOTE: troublesome to copy immutable instances and loader complains about redefines. Test this again.
+         */
         for (i = 0; i < ES_global_NUM_CLASS_PROP; i++) {
             vp = ejsGetProperty(base, base->global, i);
             qname = ejsGetPropertyName(base, base->global, i);
+#if UNUSED && KEEP
             if ((ejsIsType(ejs, vp) && !((EjsType*) vp)->mutable) || (!ejsIsType(ejs, vp) && !TYPE(vp)->mutableInstances)) {
-                ejsSetProperty(ejs, base->global, i, vp);
-                ejsSetPropertyName(ejs, base->global, i, qname);
+#else
+            if ((ejsIsType(ejs, vp) && !((EjsType*) vp)->mutable) || (!ejsIsType(ejs, vp) && ejsIsFunction(ejs, vp))) {
+#endif
+#if UNUSED || 1
+                ejsSetProperty(ejs, ejs->global, i, vp);
+                ejsSetPropertyName(ejs, ejs->global, i, qname);
+                trait = ejsGetPropertyTraits(base, base->global, i);
+                ejsSetPropertyTraits(ejs, ejs->global, i, trait->type, trait->attributes);
+#else
+                trait = ejsGetPropertyTraits(base, base->global, i);
+                attributes = trait->attributes;
+                if (attributes &
+                ejsDefineProperty(ejs, ejs->global, i, qname, trait->type, trait->attributes, vp);
+#endif
             } else {
-                mprLog(0, "SKIP mutable property %N", qname);
+                // mprLog(0, "SKIP mutable property %N", qname);
             }
         }
     }
@@ -565,43 +591,46 @@ static int configureEjs(Ejs *ejs)
     /* 
         Order matters
      */
-    ejsConfigureGlobalBlock(ejs);
-    ejsConfigureObjectType(ejs);
-    ejsConfigureIteratorType(ejs);
-    ejsConfigureErrorType(ejs);
-    ejsConfigureNullType(ejs);
-    ejsConfigureBooleanType(ejs);
-    ejsConfigureVoidType(ejs);
-    ejsConfigureNumberType(ejs);
+    if (!ST(Object)->configured) {
+        ejsConfigureGlobalBlock(ejs);
+        ejsConfigureObjectType(ejs);
+        ejsConfigureIteratorType(ejs);
+        ejsConfigureErrorType(ejs);
+        ejsConfigureNullType(ejs);
+        ejsConfigureBooleanType(ejs);
+        ejsConfigureVoidType(ejs);
+        ejsConfigureNumberType(ejs);
 
-    ejsConfigurePathType(ejs);
-    ejsConfigureFileSystemType(ejs);
-    ejsConfigureFileType(ejs);
+        ejsConfigurePathType(ejs);
+        ejsConfigureFileSystemType(ejs);
+        ejsConfigureFileType(ejs);
+        ejsConfigureArrayType(ejs);
+        ejsConfigureByteArrayType(ejs);
+        ejsConfigureCmdType(ejs);
+        ejsConfigureDateType(ejs);
+        ejsConfigureDebugType(ejs);
+        ejsConfigureFunctionType(ejs);
+        ejsConfigureGCType(ejs);
+        ejsConfigureHttpType(ejs);
+        ejsConfigureJSONType(ejs);
+        ejsConfigureLogFileType(ejs);
+        ejsConfigureMathType(ejs);
+        ejsConfigureMemoryType(ejs);
+        ejsConfigureNamespaceType(ejs);
+        ejsConfigureRegExpType(ejs);
+        ejsConfigureSocketType(ejs);
+        ejsConfigureStringType(ejs);
+        ejsConfigureSystemType(ejs);
+        ejsConfigureTimerType(ejs);
+        ejsConfigureUriType(ejs);
+        ejsConfigureWorkerType(ejs);
+        ejsConfigureXMLType(ejs);
+        ejsConfigureXMLListType(ejs);
+    }
+
     ejsConfigureAppType(ejs);
-    ejsConfigureArrayType(ejs);
-    ejsConfigureByteArrayType(ejs);
-    ejsConfigureCmdType(ejs);
-    ejsConfigureDateType(ejs);
-    ejsConfigureDebugType(ejs);
-    ejsConfigureFunctionType(ejs);
-    ejsConfigureGCType(ejs);
-    ejsConfigureHttpType(ejs);
-    ejsConfigureJSONType(ejs);
-    ejsConfigureLogFileType(ejs);
-    ejsConfigureMathType(ejs);
-    ejsConfigureMemoryType(ejs);
-    ejsConfigureNamespaceType(ejs);
-    ejsConfigureRegExpType(ejs);
-    ejsConfigureSocketType(ejs);
-    ejsConfigureStringType(ejs);
-    ejsConfigureSystemType(ejs);
-    ejsConfigureTimerType(ejs);
-    ejsConfigureUriType(ejs);
-    ejsConfigureWorkerType(ejs);
-    ejsConfigureXMLType(ejs);
-    ejsConfigureXMLListType(ejs);
-
     ejsDefineConfigProperties(ejs);
+
     ejs->initialized = 1;
     return 0;
 }
@@ -1213,6 +1242,7 @@ void ejsLoadHttpService(Ejs *ejs)
 }
 
 
+#if UNUSED
 void ejsSetSpecial(Ejs *ejs, int sid, EjsAny *value)
 {
     mprAssert(sid < EJS_MAX_SPECIAL);
@@ -1233,6 +1263,35 @@ EjsAny *ejsGetSpecial(Ejs *ejs, int sid)
     return 0;
 }
 
+#else
+int ejsAddImmutable(Ejs *ejs, int slotNum, EjsName qname, EjsAny *value)
+{
+    int     foundSlot;
+
+    mprAssert((ejsIsType(ejs, value) && !((EjsType*) value)->mutable) ||
+              (!ejsIsType(ejs, value) && !TYPE(value)->mutableInstances));
+    
+    if ((foundSlot = ejsLookupProperty(ejs, ejs->service->immutable, qname)) >= 0) {
+        return foundSlot;
+    }
+    slotNum = ejsSetProperty(ejs, ejs->service->immutable, slotNum, value);
+    ejsSetPropertyName(ejs, ejs->service->immutable, slotNum, qname);
+    return slotNum;
+}
+
+
+EjsAny *ejsGetImmutable(Ejs *ejs, int slotNum)
+{
+    return ejsGetProperty(ejs, ejs->service->immutable, slotNum);
+}
+
+
+EjsAny *ejsGetImmutableByName(Ejs *ejs, EjsName qname)
+{
+    return ejsGetPropertyByName(ejs, ejs->service->immutable, qname);
+}
+
+#endif
 
 #if UNUSED
 void ejsSetSpecialType(Ejs *ejs, int sid, EjsType *type)

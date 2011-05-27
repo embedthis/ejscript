@@ -161,9 +161,10 @@ void ejsConfigureReflectType(Ejs *ejs)
     EjsType     *type;
     EjsObj      *prototype;
 
-    type = ejsConfigureNativeType(ejs, N("ejs", "Reflect"), sizeof(EjsReflect), manageReflect, EJS_OBJ_HELPERS);
+    if ((type = ejsFinalizeScriptType(ejs, N("ejs", "Reflect"), sizeof(EjsReflect), manageReflect, EJS_TYPE_OBJ)) == 0) {
+        return;
+    }
     prototype = type->prototype;
-
     ejsBindConstructor(ejs, type, ref_Reflect);
     ejsBindMethod(ejs, prototype, ES_Reflect_base, ref_base);
     ejsBindMethod(ejs, prototype, ES_Reflect_isType, ref_isType);

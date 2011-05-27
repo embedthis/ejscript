@@ -216,12 +216,11 @@ void ejsConfigureTimerType(Ejs *ejs)
     EjsType     *type;
     EjsPot      *prototype;
 
-    type = ejsGetTypeByName(ejs, N("ejs", "Timer"));
-    type->instanceSize = sizeof(EjsTimer);
-    type->manager = (MprManager) manageTimer;
-    type->mutableInstances = 1;
-    ejsCloneObjHelpers(ejs, type);
-
+    //  MOB - should not need mutable
+    if ((type = ejsFinalizeScriptType(ejs, N("ejs", "Timer"), sizeof(EjsTimer), manageTimer,
+            EJS_TYPE_OBJ | EJS_TYPE_MUTABLE_INSTANCES)) == 0) {
+        return;
+    }
     prototype = type->prototype;
     ejsBindConstructor(ejs, type, timer_constructor);
     ejsBindMethod(ejs, prototype, ES_Timer_start, timer_start);

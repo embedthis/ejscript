@@ -2567,9 +2567,8 @@ static void genLiteral(EcCompiler *cp, EcNode *np)
         Map Numbers to the configured real type
      */
     sid = TYPE(np->literal.var)->sid;
-
     switch (sid) {
-    case S_Boolean:
+    case ES_Boolean:
         bp = (EjsBoolean*) np->literal.var;
         if (bp->value) {
             ecEncodeOpcode(cp, EJS_OP_LOAD_TRUE);
@@ -2578,7 +2577,7 @@ static void genLiteral(EcCompiler *cp, EcNode *np)
         }
         break;
 
-    case S_Number:
+    case ES_Number:
         /*
             These are signed values
          */
@@ -2597,28 +2596,28 @@ static void genLiteral(EcCompiler *cp, EcNode *np)
         }
         break;
 
-    case S_Namespace:
+    case ES_Namespace:
         ecEncodeOpcode(cp, EJS_OP_LOAD_NAMESPACE);
         nsp = (EjsNamespace*) np->literal.var;
         ecEncodeConst(cp, nsp->value);
         break;
 
-    case S_Null:
+    case ES_Null:
         ecEncodeOpcode(cp, EJS_OP_LOAD_NULL);
         break;
 
-    case S_String:
+    case ES_String:
         ecEncodeOpcode(cp, EJS_OP_LOAD_STRING);
         ecEncodeConst(cp, ((EjsString*) np->literal.var));
         break;
 
-    case S_RegExp:
+    case ES_RegExp:
         ecEncodeOpcode(cp, EJS_OP_LOAD_REGEXP);
         pattern = (EjsString*) ejsRegExpToString(cp->ejs, (EjsRegExp*) np->literal.var);
         ecEncodeConst(cp, pattern);
         break;
 
-    case S_Void:
+    case ES_Void:
         ecEncodeOpcode(cp, EJS_OP_LOAD_UNDEFINED);
         break;
 

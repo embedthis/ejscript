@@ -650,19 +650,16 @@ void ejsConfigureCmdType(Ejs *ejs)
     EjsType     *type;
     EjsPot      *prototype;
 
-    if ((type = ejsGetTypeByName(ejs, N("ejs", "Cmd"))) == 0) {
-        mprError("Can't find Cmd type");
+    //  MOB MUTABLE
+    if ((type = ejsFinalizeScriptType(ejs, N("ejs", "Cmd"), sizeof(EjsCmd), manageEjsCmd,
+            EJS_TYPE_POT | EJS_TYPE_MUTABLE_INSTANCES)) == 0) {
         return;
     }
-    type->instanceSize = sizeof(EjsCmd);
-    type->mutableInstances = 1;
-    type->manager = (MprManager) manageEjsCmd;
-    prototype = type->prototype;
-
     ejsBindConstructor(ejs, type, cmd_constructor);
     ejsBindMethod(ejs, type, ES_Cmd_kill, cmd_kill);
     ejsBindMethod(ejs, type, ES_Cmd_exec, cmd_exec);
 
+    prototype = type->prototype;
     ejsBindMethod(ejs, prototype, ES_Cmd_close, cmd_close);
     ejsBindAccess(ejs, prototype, ES_Cmd_errorStream, cmd_errorStream, 0);
     ejsBindAccess(ejs, prototype, ES_Cmd_env, cmd_env, cmd_set_env);
