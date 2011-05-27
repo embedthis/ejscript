@@ -152,13 +152,6 @@ module ejs {
          */
         native function formatUTC(layout: String): String 
 
-        /**
-            The year as four digits in local time.
-            @spec ejs
-         */
-        native function get fullYear(): Number 
-        native function set fullYear(year: Number): void
-
 //  MOB -- rethink name
         /**
             Calculate a time that is $msec in the future
@@ -186,7 +179,7 @@ module ejs {
             @return The integer year
          */
         function getFullYear(): Number 
-            fullYear
+            year
 
         /**
             Return the hour (0 - 23) in local time.
@@ -630,7 +623,7 @@ module ejs {
             time
 
         /**
-            The current year as two digits in local time.
+            The year in local time. This is the full year. E.g. A date of the year 2010 will return the number 2010.
             @spec ejs
          */
         native function get year(): Number 
