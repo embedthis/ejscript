@@ -85,7 +85,6 @@ module ejs.web {
      */
     native function escapeHtml(str: String): String
 
-
     /** 
         HTML encode the arguments. This escapes HTML directives to be safe for inclusion in a web page.
         @param args Variable arguments that will be converted to safe html
