@@ -137,3 +137,11 @@ projects/WIN/ejs-dynamic/*.filters
 src/jems/ejs.mvc/test/junk
 src/compiler/test/bugs
 src/core/test/harmony.es
+src/core/test/s-432.es
+src/core/test/s-593.es
+src/core/test/s-594.es
+src/core/test/s-596.es
+src/core/test/s-599.es
+src/core/test/s-600.es
+src/core/test/s-601.es
+src/jems/ejs.web/test/web/chinese.ejs
