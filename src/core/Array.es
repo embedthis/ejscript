@@ -339,7 +339,6 @@ module ejs {
             @param end Numeric index of the last element to remove
             @spec ejs
          */
-//  MOB - remove and replace with removeElements
         function remove(start: Number, end: Number = -1): Void {
             if (start < 0) {
                 start += length

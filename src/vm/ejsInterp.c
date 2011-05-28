@@ -1020,7 +1020,6 @@ static void VM(Ejs *ejs, EjsFunction *fun, EjsAny *otherThis, int argc, int stac
                 Stack after         []
          */
         CASE (EJS_OP_PUT_SCOPED_NAME_EXPR):
-            //  MOB -- all these toStrings can cause a function to run which can cause a GC???
             qname.name = ejsToString(ejs, pop(ejs));
             v1 = pop(ejs);
             if (ejsIs(ejs, v1, Namespace)) {
@@ -1035,7 +1034,6 @@ static void VM(Ejs *ejs, EjsFunction *fun, EjsAny *otherThis, int argc, int stac
         /*
             Store a property by property name to an object
                 PutObjName
-                MOB - is this right order?
                 Stack before (top)  [objRef]
                                     [value]
                 Stack after         []
@@ -1061,11 +1059,10 @@ static void VM(Ejs *ejs, EjsFunction *fun, EjsAny *otherThis, int argc, int stac
             v2 = pop(ejs);
             obj = pop(ejs);
             value = pop(ejs);
-            //  MOB -- cleanup this too - push into storeProperty
+            //  TODO -- cleanup this too - push into storeProperty
             if (TYPE(obj)->numericIndicies && ejsIs(ejs, v1, Number)) {
                 ejsSetProperty(ejs, obj, ejsGetInt(ejs, v1), value);
             } else {
-                //  MOB -- all these toStrings can cause a function to run which can cause a GC???
                 qname.name = ejsToString(ejs, v1);
                 if (ejsIs(ejs, v2, Namespace)) {
                     qname.space = ((EjsNamespace*) v2)->value;
@@ -1154,14 +1151,13 @@ static void VM(Ejs *ejs, EjsFunction *fun, EjsAny *otherThis, int argc, int stac
             ejs->spreadArgs = 0;
             vp = state->stack[-argc];
             if (vp == S(null) || vp == S(undefined)) {
-                //  MOB -- refactor
+                //  TODO -- refactor
                 if (vp && (slotNum == ES_Object_iterator_get || slotNum == ES_Object_iterator_getValues)) {
                     callProperty(ejs, TYPE(vp), slotNum, vp, argc, 1);
                 } else {
                     ejsThrowReferenceError(ejs, "Object reference is null or undefined");
                 }
             } else {
-                //  MOB -- need a function to invoke 
                 callProperty(ejs, TYPE(vp)->prototype, slotNum, vp, argc, 1);
             }
             BREAK;
@@ -1323,7 +1319,6 @@ static void VM(Ejs *ejs, EjsFunction *fun, EjsAny *otherThis, int argc, int stac
                     Calculate the "this" to use for the function. If required function is a method in the current 
                     "this" object use the current thisObj. If the lookup.obj is a type, then use it. Otherwise global.
                  */
-                //  MOB
                 if ((vp = fun->boundThis) == 0) {
                     if (lookup.obj == THIS) {
                         vp = THIS;
@@ -1360,7 +1355,6 @@ static void VM(Ejs *ejs, EjsFunction *fun, EjsAny *otherThis, int argc, int stac
             if (type && type->constructor.block.pot.isFunction) {
                 mprAssert(type->prototype);
                 callFunction(ejs, (EjsFunction*) type, vp, argc, 0);
-                //  MOB -- must update pushed object
                 state->stack[0] = ejs->result;
             }
             BREAK;
@@ -1393,7 +1387,6 @@ static void VM(Ejs *ejs, EjsFunction *fun, EjsAny *otherThis, int argc, int stac
             str = GET_STRING();
             nsp = ejsCreateNamespace(ejs, str);
             ejsAddNamespaceToBlock(ejs, state->bp, nsp);
-            //  MOB - opt
             if (ejsContainsMulti(ejs, str, "internal-")) {
                 state->internal = nsp;
             }
@@ -1439,7 +1432,6 @@ static void VM(Ejs *ejs, EjsFunction *fun, EjsAny *otherThis, int argc, int stac
         CASE (EJS_OP_OPEN_WITH):
             vp = pop(ejs);
             blk = ejsCreateBlock(ejs, 0);
-            //  MOB -- looks bugged. Can overwrite block.
             memcpy((void*) blk, vp, TYPE(vp)->instanceSize);
             blk->prev = blk->scope = state->bp;
             state->bp = blk;
@@ -1492,10 +1484,10 @@ static void VM(Ejs *ejs, EjsFunction *fun, EjsAny *otherThis, int argc, int stac
             if (slotNum < 0 || !ejsIsFunction(ejs, f1)) {
                 ejsThrowReferenceError(ejs, "Reference is not a function");
             } else {
-                //  MOB -- fullScope is always true if DEFINE_FUNCTION is emitted
+                //  TODO -- fullScope is always true if DEFINE_FUNCTION is emitted
                 mprAssert(f1->fullScope);
                 if (f1->fullScope) {
-                    //  MOB - why exception for global
+                    //  TODO - why exception for global
                     if (lookup.obj != ejs->global) {
                         f2 = ejsCloneFunction(ejs, f1, 0);
                     } else {
@@ -2281,7 +2273,7 @@ static void VM(Ejs *ejs, EjsFunction *fun, EjsAny *otherThis, int argc, int stac
             if (slotNum < 0) {
                 push(S(true));
             } else {
-                if (/* MOB !DYNAMIC(lookup.obj) || */ ejsPropertyHasTrait(ejs, lookup.obj, slotNum, EJS_TRAIT_FIXED)) {
+                if (ejsPropertyHasTrait(ejs, lookup.obj, slotNum, EJS_TRAIT_FIXED)) {
                     push(S(false));
                 } else {
                     ejsDeletePropertyByName(ejs, lookup.obj, lookup.name);
@@ -2309,7 +2301,7 @@ static void VM(Ejs *ejs, EjsFunction *fun, EjsAny *otherThis, int argc, int stac
             if (slotNum < 0) {
                 push(S(true));
             } else {
-                if (/* MOB - !DYNAMIC(lookup.obj) || */ ejsPropertyHasTrait(ejs, lookup.obj, slotNum, EJS_TRAIT_FIXED)) {
+                if (ejsPropertyHasTrait(ejs, lookup.obj, slotNum, EJS_TRAIT_FIXED)) {
                     push(S(false));
                 } else {
                     ejsDeletePropertyByName(ejs, lookup.obj, lookup.name);
@@ -2507,7 +2499,7 @@ static void storeProperty(Ejs *ejs, EjsObj *thisObj, EjsAny *vp, EjsName qname, 
     mprAssert(qname.name);
     mprAssert(vp);
 
-    //  MOB -- ONLY XML requires this.  NOTE: this bypasses ES5 traits
+    //  ONLY XML requires this.  NOTE: this bypasses ES5 traits
     //  Alternatively push this whole function down into ejsObject and have all go via setPropertyByName
     
     if (TYPE(vp)->helpers.setPropertyByName) {
@@ -2522,14 +2514,12 @@ static void storeProperty(Ejs *ejs, EjsObj *thisObj, EjsAny *vp, EjsName qname, 
             if (trait->attributes & EJS_TRAIT_SETTER) {
                 vp = lookup.obj;
                 
-                //  MOB - REFACTOR. Just for prototype() getter in Object.prototype
             } else if (ejsIsPrototype(ejs, lookup.obj) || trait->attributes & EJS_TRAIT_GETTER) {
                 if (TYPE(vp)->hasInstanceVars) {
                     /* The prototype properties have been inherited */
                     mprAssert(ejsIsPot(ejs, vp));
                     slotNum = ejsGetSlot(ejs, vp, slotNum);
                     pot = (EjsPot*) vp;
-                    //MOB - BUG what if not a POT
                     pot->properties->slots[slotNum].trait = ((EjsPot*) lookup.obj)->properties->slots[slotNum].trait;
                     pot->properties->slots[slotNum].value = ((EjsPot*) lookup.obj)->properties->slots[slotNum].value;
                     slotNum = ejsSetPropertyName(ejs, vp, slotNum, qname);
@@ -2705,8 +2695,6 @@ EjsAny *ejsRunFunction(Ejs *ejs, EjsFunction *fun, EjsAny *thisObj, int argc, vo
 }
 
 
-//  MOB - can only be used to run instance methods -- rename to clarify
-
 EjsAny *ejsRunFunctionBySlot(Ejs *ejs, EjsAny *thisObj, int slotNum, int argc, void *argv)
 {
     EjsFunction     *fun;
@@ -2879,7 +2867,6 @@ static void callInterfaceInitializers(Ejs *ejs, EjsType *type)
 
 /*
     Push a block. Used by compiler.
-    MOB -- move back to the compiler
  */
 EjsBlock *ejsPushBlock(Ejs *ejs, EjsBlock *original)
 {
@@ -3362,8 +3349,6 @@ int ejsGrowStack(Ejs *ejs, int incr)
  */
 void ejsExit(Ejs *ejs, int status)
 {
-    //  TODO - should pass status back
-    //  MOB -- what about graceful exiting 
     ejs->exiting = 1;
     mprSignalDispatcher(ejs->dispatcher);
 }
@@ -3448,7 +3433,6 @@ static void callProperty(Ejs *ejs, EjsAny *obj, int slotNum, EjsAny *thisObj, in
     EjsTrait    *trait;
     EjsFunction *fun;
 
-    //  MOB -- rethink this.
     fun = ejsGetProperty(ejs, obj, slotNum);
     trait = ejsGetPropertyTraits(ejs, obj, slotNum);
     if (trait && trait->attributes & EJS_TRAIT_GETTER) {
@@ -3522,7 +3506,6 @@ static void callFunction(Ejs *ejs, EjsFunction *fun, EjsAny *thisObj, int argc, 
         argc += count;
     }
     
-    //  MOB -- should already be factored in.
     mprAssert(ejs->spreadArgs == 0);
     argc += ejs->spreadArgs;
     ejs->spreadArgs = 0;
@@ -3659,10 +3642,6 @@ void ejsLog(Ejs *ejs, const char *fmt, ...)
 
 
 #if FUTURE
-
-- Separate file
-
-//  MOB - move into the mpr
 #if BLD_CC_EDITLINE
 static History  *cmdHistory;
 static EditLine *eh; 

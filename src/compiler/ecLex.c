@@ -816,8 +816,6 @@ static int makeSubToken(EcToken *tp, int c, int tokenId, int subId, int groupMas
 }
 
 
-//  MOB - should this return int64
-//  MOB -- should be same arg format as stoi
 static int decodeNumber(EcCompiler *cp, int radix, int length)
 {
     char        buf[16];
@@ -1003,7 +1001,6 @@ static int getNextChar(EcStream *stream)
             stream->loc.column++;
         }
         if (stream->loc.source == 0) {
-            //  MOB -- replace this when doing lazy loading. source should be an index into a buffer.
             for (start = stream->nextChar - 1; isspace((int) *start); start++) ;
             for (next = start; *next && *next != '\n'; next++) ;
             stream->loc.source = wsub(start, 0, next - start);
@@ -1077,8 +1074,6 @@ void ecSetStreamBuf(EcStream *sp, cchar *contents, ssize len)
         sp->buf = buf;
         sp->nextChar = buf;
         sp->end = &buf[len];
-
-        //  MOB -- should flush old token
         putBackChar(sp, getNextChar(sp));
     }
 }

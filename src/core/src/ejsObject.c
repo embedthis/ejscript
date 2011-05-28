@@ -491,16 +491,12 @@ static EjsArray *obj_getOwnPropertyNames(Ejs *ejs, EjsObj *unused, int argc, Ejs
 }
 
 
-//  MOB - is this really a type?
 /*
-    static function getOwnPrototypeOf(obj: Object): Type
+    static function getOwnPrototypeOf(obj: Object): Object
  */
-static EjsType *obj_getOwnPrototypeOf(Ejs *ejs, EjsObj *unused, int argc, EjsObj **argv)
+static EjsPot *obj_getOwnPrototypeOf(Ejs *ejs, EjsObj *unused, int argc, EjsObj **argv)
 {
-    EjsObj      *obj;
-
-    obj = argv[0];
-    return (EjsType*) TYPE(obj)->prototype;
+    return TYPE(argv[0])->prototype;
 }
 
 

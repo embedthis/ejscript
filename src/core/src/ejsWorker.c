@@ -30,7 +30,7 @@ static EjsObj *workerPreload(Ejs *ejs, EjsWorker *worker, int argc, EjsObj **arg
 
 /************************************ Methods *********************************/
 
-static EjsWorker *initWorker(Ejs *ejs, EjsWorker *worker, Ejs *baseVm, cchar *name, EjsArray *search, cchar *scriptFile)
+static EjsWorker *initWorker(Ejs *ejs, EjsWorker *worker, Ejs *baseVM, cchar *name, EjsArray *search, cchar *scriptFile)
 {
     Ejs             *wejs;
     EjsWorker       *self;
@@ -57,9 +57,19 @@ static EjsWorker *initWorker(Ejs *ejs, EjsWorker *worker, Ejs *baseVm, cchar *na
         Create a new interpreter and an "inside" worker object and pair it with the current "outside" worker.
         The worker interpreter gets a new dispatcher
      */
-    if ((wejs = ejsCreateVM(baseVm, 0, 0, 0, 0, 0, 0)) == 0) {
-        ejsThrowMemoryError(ejs);
-        return 0;
+    if (baseVM) {
+        if ((wejs = ejsCloneVM(baseVM)) == 0) {
+            ejsThrowMemoryError(ejs);
+            return 0;
+        }
+    } else {
+        if ((wejs = ejsCreateVM(0, 0, ejs->flags)) == 0) {
+            ejsThrowMemoryError(ejs);
+            return 0;
+        }
+        if (ejsLoadModules(wejs, 0, 0) < 0) {
+            return 0;
+        }
     }
     worker->pair = self = ejsCreateWorker(wejs);
     self->state = EJS_WORKER_BEGIN;
@@ -858,7 +868,6 @@ void ejsConfigureWorkerType(Ejs *ejs)
     EjsType     *type;
     EjsPot      *prototype;
 
-    //  MOB - should not need MUTABLE
     if ((type = ejsFinalizeScriptType(ejs, N("ejs", "Worker"), sizeof(EjsWorker), manageWorker, 
             EJS_TYPE_POT | EJS_TYPE_MUTABLE_INSTANCES)) == 0) {
         return;

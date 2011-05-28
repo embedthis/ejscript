@@ -320,7 +320,6 @@ static void createClassSection(EcCompiler *cp, EjsPot *block, int slotNum, EjsPo
     ecEncodeNum(cp, (cp->bind) ? slotNum : -1);
 
     mprAssert(type != type->baseType);
-    //  MOB -- refactor
     if (type->baseType) {
         ecEncodeGlobal(cp, (EjsObj*) type->baseType, type->baseType->qname);
     } else {
@@ -673,7 +672,6 @@ int ecAddStringConstant(EcCompiler *cp, EjsString *sp)
 }
 
 
-//  MOB -- remove
 int ecAddCStringConstant(EcCompiler *cp, cchar *str)
 {
     int    offset;
@@ -809,7 +807,6 @@ int ecAddModuleConstant(EcCompiler *cp, EjsModule *mp, cchar *str)
 /****************************** Value Emitters ********************************/
 /*
     Emit an encoded string ored with flags. The name index is shifted by 2.
-    MOB -- should be full qname
  */
 static void encodeTypeName(EcCompiler *cp, EjsString *name, int flags)
 {
@@ -848,7 +845,6 @@ void ecEncodeGlobal(EcCompiler *cp, EjsAny *obj, EjsName qname)
         If binding globals, we can encode the slot number of the type.
      */
     slotNum = ejsLookupProperty(ejs, ejs->global, qname);
-    /* MOB - comment this out because ejs.tar was being compiled and bound */
     if (slotNum < ES_global_NUM_CLASS_PROP || cp->bind) {
         if (slotNum >= 0) {
             ecEncodeNum(cp, (slotNum << 2) | EJS_ENCODE_GLOBAL_SLOT);

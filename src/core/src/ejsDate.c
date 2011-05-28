@@ -455,36 +455,6 @@ static EjsString *date_formatUTC(Ejs *ejs, EjsDate *dp, int argc, EjsObj **argv)
 }
 
 
-#if UNUSED && DEPRECATED
-/*
-    function get fullYear(): Number
-    Return year in 4 digits
- */
-static EjsNumber *date_fullYear(Ejs *ejs, EjsDate *dp, int argc, EjsObj **argv)
-{
-    struct tm   tm;
-
-    mprDecodeLocalTime(&tm, dp->value);
-    return ejsCreateNumber(ejs, tm.tm_year + 1900);
-}
-
-
-/*
-    function set fullYear(year: Number): void
-    Update the year component using a 4 digit year
- */
-static EjsObj *date_set_fullYear(Ejs *ejs, EjsDate *dp, int argc, EjsObj **argv)
-{
-    struct tm   tm;
-
-    mprDecodeLocalTime(&tm, dp->value);
-    tm.tm_year = (int) ejsGetNumber(ejs, argv[0]) - 1900;
-    dp->value = mprMakeTime(&tm);
-    return 0;
-}
-#endif
-
-
 /*
     function future(msec: Number): Date
  */
@@ -1082,7 +1052,6 @@ void ejsConfigureDateType(Ejs *ejs)
     EjsType     *type;
     EjsPot      *prototype;
 
-    //  MOB - MUTABLE
     if ((type = ejsFinalizeScriptType(ejs, N("ejs", "Date"), sizeof(EjsDate), 0, 
             EJS_TYPE_OBJ | EJS_TYPE_MUTABLE_INSTANCES)) == 0) {
         return;

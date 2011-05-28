@@ -29,7 +29,6 @@ module ejs.web {
          */
         use default namespace module
 
-        //  MOB - not thread safe
         private static var _initRequest: Request
 
         private var _afterCheckers: Array
@@ -88,7 +87,6 @@ module ejs.web {
         static function create(request: Request, cname: String = null): Controller {
             request.params.controller = request.params.controller.toPascal()
             cname ||= (request.params.controller + "Controller")
-// MOB - not thread safe !!!
             _initRequest = request
             let c: Controller = new global[cname](request)
             c.request = request

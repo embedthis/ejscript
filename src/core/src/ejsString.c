@@ -2246,7 +2246,7 @@ EjsString *ejsInternString(EjsString *str)
     linkString(head, str);
     if (step > EJS_MAX_COLLISIONS) {
         /*  Remake the entire hash - should not happen often */
-        //  MOB OPT - BAD holding lock while rebuildingIntern
+        //  OPT - BAD holding lock while rebuildingIntern
         rebuildIntern(ip);
     }
     unlock(ip);

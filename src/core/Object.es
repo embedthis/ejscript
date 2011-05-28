@@ -118,7 +118,7 @@ module ejs {
             @param obj Object to inspect
             @return The prototype object for the given object.
          */
-        static native function getOwnPrototypeOf(obj: Object): Type
+        static native function getOwnPrototypeOf(obj: Object): Object
 
         /** 
             Get an iterator for this object to be used by "for each (v in obj)"

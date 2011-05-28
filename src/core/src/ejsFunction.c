@@ -96,7 +96,7 @@ EjsFunction *ejsCloneFunction(Ejs *ejs, EjsFunction *src, int deep)
  */
 static EjsFunction *fun_Function(Ejs *ejs, EjsFunction *fun, int argc, void *argv)
 {
-#if UNUSED && FUTURE
+#if FUTURE
     EjsArray        *args;
     EjsString       *str;
     MprBuf          *buf;
@@ -432,7 +432,7 @@ void ejsUseActivation(Ejs *ejs, EjsFunction *fun)
     numProp = activation->numProp;
     if (numProp > 0) {
         ejsGrowPot(ejs, (EjsPot*) fun, numProp);
-        ejsCopySlots(ejs, (EjsPot*) fun, fun->block.pot.properties->slots, fun->activation->properties->slots, numProp);
+        ejsCopySlots(ejs, (EjsPot*) fun, 0, fun->activation, 0, numProp);
         fun->block.pot.numProp = numProp;
     }
 }
@@ -534,10 +534,8 @@ void ejsCreateFunctionType(Ejs *ejs)
     EjsHelpers      *helpers;
     EjsFunction     *nop;
 
-    //  MOB - should support mutable functions via a copy-on-write strategy
     type = ejsCreateNativeType(ejs, N("ejs", "Function"), sizeof(EjsFunction), S_Function, ES_Function_NUM_CLASS_PROP,
         ejsManageFunction, EJS_TYPE_POT | EJS_TYPE_IMMUTABLE_INSTANCES);
-
     helpers = &type->helpers;
     helpers->create = (EjsCreateHelper) createFunction;
     helpers->cast   = (EjsCastHelper) castFunction;

@@ -17,7 +17,6 @@ static HttpUri *toHttpUri(Ejs *ejs, EjsObj *arg, int dup);
 static EjsUri *uri_join(Ejs *ejs, EjsUri *up, int argc, EjsObj **argv);
 
 /************************************ Helpers *********************************/
-
 #if UNUSED && KEEP
 //  keep this for when the cast helper is reversed
 /*
@@ -1138,7 +1137,6 @@ void ejsConfigureUriType(Ejs *ejs)
     EjsType     *type;
     EjsPot      *prototype;
 
-    //  MOB - should not need MUTABLE
     if ((type = ejsFinalizeScriptType(ejs, N("ejs", "Uri"), sizeof(EjsUri), manageUri,
             EJS_TYPE_OBJ | EJS_TYPE_MUTABLE_INSTANCES)) == 0) {
         return;

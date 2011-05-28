@@ -56,19 +56,7 @@ int ejsAddNamespaceToBlock(Ejs *ejs, EjsBlock *block, EjsNamespace *nsp)
         ejsThrowTypeError(ejs, "Not a namespace");
         return EJS_ERR;
     }
-#if UNUSED && KEEP
-    /* Namespaces must be ordered and so can't do this */ 
-    for (next = 0; ((existing = (EjsNamespace*) mprGetNextItem(&block->namespaces, &next)) != 0); ) {
-        if (existing->value == nsp->value) {
-            break;
-        }
-    }
-    if (existing == NULL) {
-        mprAddItem(&block->namespaces, nsp);
-    }
-#else
-        mprAddItem(&block->namespaces, nsp);
-#endif
+    mprAddItem(&block->namespaces, nsp);
     return 0;
 }
 

@@ -126,14 +126,6 @@ static void defineSlot(EjsMod *bp, MprFile *file, EjsModule *mp, EjsType *type, 
     ejs = bp->ejs;
 
     typeStr = mapFullName(ejs, &type->qname, 1);
-#if UNUSED
-    if (slotNum < type->numInherited && obj == type->prototype) {
-        subStr = mapFullName(ejs, &type->baseType->qname, 1);
-        subSep = "_";
-    } else {
-        subSep = subStr = "";
-    }
-#endif
     funStr = mapFullName(ejs, funName, 0);
     nameStr = mapFullName(ejs, name, 0);
 
@@ -441,10 +433,6 @@ static char *mapNamespace(cchar *space)
         space = "";
     } else if (strcmp(space, EJS_PRIVATE_NAMESPACE) == 0) {
         space = "";
-#if UNUSED
-    } else if (strcmp(space, EJS_ITERATOR_NAMESPACE) == 0) {
-        space = "iter";
-#endif
     } else if (strcmp(space, EJS_CONSTRUCTOR_NAMESPACE) == 0) {
         space = "";
     } else if (strstr(space, ",private]") != 0) {

@@ -936,7 +936,7 @@ static EcNode *parseQualifiedNameIdentifier(EcCompiler *cp)
             getToken(cp);
             np = createNode(cp, N_QNAME, NULL);
             vp = ejsParse(cp->ejs, cp->token->text, -1);
-            //  MOB - cant set literal.var in a QNAME. clashes with "name" union structure. Not marked.
+            //  cant set literal.var in a QNAME. clashes with "name" union structure. Not marked.
             mprAssert(0);
             np->literal.var = vp;
             break;
@@ -945,7 +945,7 @@ static EcNode *parseQualifiedNameIdentifier(EcCompiler *cp)
             getToken(cp);
             np = createNode(cp, N_QNAME, NULL);
             vp = (EjsObj*) tokenString(cp);
-            //  MOB - cant set literal.var in a QNAME. clashes with "name" union structure. Not marked.
+            //  cant set literal.var in a QNAME. clashes with "name" union structure. Not marked.
             np->literal.var = vp;
             break;
 
@@ -1147,7 +1147,7 @@ static EcNode *parseAttributeName(EcCompiler *cp)
         np = parsePropertyName(cp);
     }
     if (np && np->kind == N_QNAME) {
-        //  MOB - OPT. Better to allow lexer to keep @ in the id name and return T_AT with the entire attribute name.
+        //  OPT. Better to allow lexer to keep @ in the id name and return T_AT with the entire attribute name.
         np->name.isAttribute = 1;
         attribute = sjoin("@", np->qname.name->value, NULL);
         np->qname.name = ejsCreateStringFromAsc(cp->ejs, attribute);
@@ -1871,13 +1871,12 @@ static EcNode *parseComprehensionExpression(EcCompiler *cp, EcNode *literalEleme
     EcNode      *np;
 
     ENTER(cp);
-    //  MOB
     np = 0;
     return LEAVE(cp, np);
 }
 
 
-#if UNUSED && MOB
+#if UNUSED
 /*
     ForInExpressionList (62)
         ForExpression
@@ -2679,7 +2678,7 @@ static EcNode *parsePropertyOperator(EcCompiler *cp)
             np = appendNode(np, name);
             break;
 
-        /* MOB TODO - should handle all contextually reserved identifiers here */
+        /* TODO - should handle all contextually reserved identifiers here */
         case T_TYPE:
         case T_ID:
         case T_GET:
@@ -4418,7 +4417,7 @@ static EcNode *parseTypedPattern(EcCompiler *cp)
         undefined
         TypeExpression
         TypeExpression ?            # Nullable
-        MOB REMOVE TypeExpression ! # Non-Nullable
+        REMOVE TypeExpression ! # Non-Nullable
 
     Input
 
@@ -8486,7 +8485,7 @@ static EcNode *parseNamespaceDefinition(EcCompiler *cp, EcNode *attributeNode)
     NamespaceInitialisation (501)
         EMPTY
         = StringLiteral
-        = MOB -- not supported SimpleQualifiedName
+        = not supported SimpleQualifiedName
 
     AST
         N_LITERAL
@@ -9141,14 +9140,8 @@ static EcNode *parseProgram(EcCompiler *cp, cchar *path)
     state = cp->state;
     state->strict = cp->strict;
 
-    //  MOB  public should be a standard string
     np = createNode(cp, N_PROGRAM, ejsCreateStringFromAsc(cp->ejs, EJS_PUBLIC_NAMESPACE));
 
-#if UNUSED && KEEP
-    if (cp->fileState->lang == EJS_SPEC_ECMA) {
-        np->qname.name = EJS_PUBLIC_NAMESPACE;
-    } else {
-#endif
     if (cp->visibleGlobals && ejs->state->internal) {
         np->qname.name = ejs->state->internal->value;
     } else if (path) {
@@ -9732,7 +9725,6 @@ static EcNode *createAssignNode(EcCompiler *cp, EcNode *lhs, EcNode *rhs, EcNode
     Add a child node. If an allocation error, return 0, otherwise return the
     parent node.
  */
-//  MOB -- should have an appendNodes( ....)
 static EcNode *appendNode(EcNode *np, EcNode *child)
 {
     EcCompiler      *cp;
@@ -10029,7 +10021,7 @@ void ecSetTabWidth(EcCompiler *cp, int width)
 void ecSetOutputFile(EcCompiler *cp, cchar *outputFile)
 {
     if (outputFile) {
-        //  MOB UNICODE
+        //  UNICODE
         cp->outputFile = sclone(outputFile);
     }
 }
@@ -10037,7 +10029,7 @@ void ecSetOutputFile(EcCompiler *cp, cchar *outputFile)
 
 void ecSetCertFile(EcCompiler *cp, cchar *certFile)
 {
-    //  MOB UNICODE
+    //  UNICODE
     cp->certFile = sclone(certFile);
 }
 
@@ -10109,7 +10101,6 @@ static void manageNode(EcNode *node, int flags)
 
         case N_CASE_LABEL:
             mprMark(node->caseLabel.expression);
-            //  MOB - surely these can be local?
             mprMark(node->caseLabel.expressionCode);
             break;
 
@@ -10158,7 +10149,6 @@ static void manageNode(EcNode *node, int flags)
             mprMark(node->forLoop.cond);
             mprMark(node->forLoop.initializer);
             mprMark(node->forLoop.perLoop);
-            //  MOB - surely these can be local?
             mprMark(node->forLoop.condCode);
             mprMark(node->forLoop.bodyCode);
             mprMark(node->forLoop.perLoopCode);
@@ -10169,7 +10159,6 @@ static void manageNode(EcNode *node, int flags)
             mprMark(node->forInLoop.iterGet);
             mprMark(node->forInLoop.iterNext);
             mprMark(node->forInLoop.body);
-            //  MOB - surely these can be local?
             mprMark(node->forInLoop.initCode);
             mprMark(node->forInLoop.bodyCode);
             break;
@@ -10194,7 +10183,6 @@ static void manageNode(EcNode *node, int flags)
             mprMark(node->tenary.cond);
             mprMark(node->tenary.thenBlock);
             mprMark(node->tenary.elseBlock);
-            //  MOB - surely these can be local?
             mprMark(node->tenary.thenCode);
             mprMark(node->tenary.elseCode);
             break;
@@ -10326,7 +10314,6 @@ static EcNode *createNode(EcCompiler *cp, int kind, EjsString *name)
         Remember the current input token. Don't do for initial program and module nodes.
      */
     if (cp->token == 0 && cp->state->blockNestCount > 0) {
-        //  MOB OPT
         getToken(cp);
         putToken(cp);
         peekToken(cp);
@@ -10338,7 +10325,6 @@ static EcNode *createNode(EcCompiler *cp, int kind, EjsString *name)
         np->groupMask = token->groupMask;
         np->subId = token->subId;
     }
-    //  MOB OPT - do this on demand
     np->children = mprCreateList(-1, 0);
     if (token && token->loc.source) {
         np->loc = token->loc;

@@ -126,7 +126,6 @@
 		C9188B70115DAC060018846C /* ejsNumber.c in Sources */ = {isa = PBXBuildFile; fileRef = C9188B48115DAC060018846C /* ejsNumber.c */; };
 		C9188B71115DAC060018846C /* ejsObject.c in Sources */ = {isa = PBXBuildFile; fileRef = C9188B49115DAC060018846C /* ejsObject.c */; };
 		C9188B72115DAC060018846C /* ejsPath.c in Sources */ = {isa = PBXBuildFile; fileRef = C9188B4A115DAC060018846C /* ejsPath.c */; };
-		C9188B73115DAC060018846C /* ejsReflect.c in Sources */ = {isa = PBXBuildFile; fileRef = C9188B4B115DAC060018846C /* ejsReflect.c */; };
 		C9188B74115DAC060018846C /* ejsRegExp.c in Sources */ = {isa = PBXBuildFile; fileRef = C9188B4C115DAC060018846C /* ejsRegExp.c */; };
 		C9188B75115DAC060018846C /* ejsSocket.c in Sources */ = {isa = PBXBuildFile; fileRef = C9188B4D115DAC060018846C /* ejsSocket.c */; };
 		C9188B76115DAC060018846C /* ejsString.c in Sources */ = {isa = PBXBuildFile; fileRef = C9188B4E115DAC060018846C /* ejsString.c */; };
@@ -790,7 +789,6 @@
 		C9188B48115DAC060018846C /* ejsNumber.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; name = ejsNumber.c; path = ../../../src/core/src/ejsNumber.c; sourceTree = SOURCE_ROOT; };
 		C9188B49115DAC060018846C /* ejsObject.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; name = ejsObject.c; path = ../../../src/core/src/ejsObject.c; sourceTree = SOURCE_ROOT; };
 		C9188B4A115DAC060018846C /* ejsPath.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; name = ejsPath.c; path = ../../../src/core/src/ejsPath.c; sourceTree = SOURCE_ROOT; };
-		C9188B4B115DAC060018846C /* ejsReflect.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; name = ejsReflect.c; path = ../../../src/core/src/ejsReflect.c; sourceTree = SOURCE_ROOT; };
 		C9188B4C115DAC060018846C /* ejsRegExp.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; name = ejsRegExp.c; path = ../../../src/core/src/ejsRegExp.c; sourceTree = SOURCE_ROOT; };
 		C9188B4D115DAC060018846C /* ejsSocket.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; name = ejsSocket.c; path = ../../../src/core/src/ejsSocket.c; sourceTree = SOURCE_ROOT; };
 		C9188B4E115DAC060018846C /* ejsString.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; name = ejsString.c; path = ../../../src/core/src/ejsString.c; sourceTree = SOURCE_ROOT; };
@@ -1089,7 +1087,6 @@
 				C9188B49115DAC060018846C /* ejsObject.c */,
 				C9188B4A115DAC060018846C /* ejsPath.c */,
 				C9F8C9A7128C848100FD3A5D /* ejsPot.c */,
-				C9188B4B115DAC060018846C /* ejsReflect.c */,
 				C9188B4C115DAC060018846C /* ejsRegExp.c */,
 				C9188B4D115DAC060018846C /* ejsSocket.c */,
 				C9188B4E115DAC060018846C /* ejsString.c */,
@@ -1962,7 +1959,7 @@
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 			shellPath = /bin/sh;
-			shellScript = "export BIN_DIR=$BUILT_PRODUCTS_DIR\nexport DYLD_LIBRARY_PATH=$BUILT_PRODUCTS_DIR\nmake -C $SRC/core TRACE=1 xmodules && cp $OUT/modules/*.mod $BUILT_PRODUCTS_DIR || exit 255\nmake -C $SRC/jems TRACE=1 xmodules && cp $OUT/modules/*.mod $BUILT_PRODUCTS_DIR || exit 255\nmake -C $SRC/jems/ejs.mvc TRACE=1 compile && cp $OUT/bin/mvc $BUILT_PRODUCTS_DIR || exit 255\n";
+			shellScript = "export BIN_DIR=$BUILT_PRODUCTS_DIR\nexport DYLD_LIBRARY_PATH=$BUILT_PRODUCTS_DIR\nmake -C $SRC/core TRACE=1 xmodules && cp $OUT/modules/*.mod $BUILT_PRODUCTS_DIR || exit 255\n# make -C $SRC/jems TRACE=1 xmodules && cp $OUT/modules/*.mod $BUILT_PRODUCTS_DIR || exit 255\n# make -C $SRC/jems/ejs.mvc TRACE=1 compile && cp $OUT/bin/mvc $BUILT_PRODUCTS_DIR || exit 255\n";
 		};
 		C97A5EC511E81E9B00BB0981 /* ShellScript */ = {
 			isa = PBXShellScriptBuildPhase;
@@ -2119,7 +2116,6 @@
 				C9188B70115DAC060018846C /* ejsNumber.c in Sources */,
 				C9188B71115DAC060018846C /* ejsObject.c in Sources */,
 				C9188B72115DAC060018846C /* ejsPath.c in Sources */,
-				C9188B73115DAC060018846C /* ejsReflect.c in Sources */,
 				C9188B74115DAC060018846C /* ejsRegExp.c in Sources */,
 				C9188B75115DAC060018846C /* ejsSocket.c in Sources */,
 				C9188B76115DAC060018846C /* ejsString.c in Sources */,

@@ -650,7 +650,6 @@ void ejsConfigureCmdType(Ejs *ejs)
     EjsType     *type;
     EjsPot      *prototype;
 
-    //  MOB MUTABLE
     if ((type = ejsFinalizeScriptType(ejs, N("ejs", "Cmd"), sizeof(EjsCmd), manageEjsCmd,
             EJS_TYPE_POT | EJS_TYPE_MUTABLE_INSTANCES)) == 0) {
         return;

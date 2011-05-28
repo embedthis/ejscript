@@ -200,12 +200,9 @@ void ejsConfigureVoidType(Ejs *ejs)
     EjsType     *type;
     EjsPot      *prototype;
 
-    type = S(Void);
-    if (type->configured) {
+    if ((type = ejsFinalizeNativeType(ejs, N("ejs", "Void"))) == 0) {
         return;
     }
-    type->configured = 1;
-
     prototype = type->prototype;
     ejsBindMethod(ejs, prototype, ES_Void_iterator_get, getVoidIterator);
     ejsBindMethod(ejs, prototype, ES_Void_iterator_getValues, getVoidIterator);

@@ -820,16 +820,9 @@ void ejsConfigureXMLListType(Ejs *ejs)
     EjsType     *type;
     EjsPot      *prototype;
 
-    type = S(XMLList);
-    if (type->configured) {
+    if ((type = ejsFinalizeNativeType(ejs, N("ejs", "XMLList"))) == 0) {
         return;
     }
-    type->configured = 1;
-
-    //  MOB - remove
-    mprAssert(type->mutableInstances);
-    type->mutableInstances = 1;
-
     prototype = type->prototype;
     ejsBindConstructor(ejs, type, xmlListConstructor);
     ejsBindMethod(ejs, prototype, ES_XMLList_length, xlLength);

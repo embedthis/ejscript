@@ -20,7 +20,7 @@ static EjsNumber *getAllocatedMemory(Ejs *ejs, EjsObj *thisObj, int argc, EjsObj
 }
 
 
-#if UNUSED
+#if FUTURE
 /*
     native static function callback(fn: Function): Void
  */
@@ -147,7 +147,7 @@ void ejsConfigureMemoryType(Ejs *ejs)
     ejsBindMethod(ejs, type, ES_Memory_system, getSystemRam);
     ejsBindMethod(ejs, type, ES_Memory_stats, printStats);
 
-#if UNUSED
+#if FUTURE
     EjsPot      *prototype;
     prototype = type->prototype;
     ejsBindAccess(ejs, type, ES_Memory_callback, NULL, setRedlineCallback);

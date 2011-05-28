@@ -272,8 +272,6 @@ void ejsConfigureAppType(Ejs *ejs)
 {
     EjsType     *type;
 
-    //  MOB - good to make App immutable and use an instance for state
-
     if ((type = ejsFinalizeScriptType(ejs, N("ejs", "App"), 0, 0, 0)) == 0) {
         return;
     }

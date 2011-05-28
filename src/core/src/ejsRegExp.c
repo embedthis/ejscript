@@ -324,7 +324,6 @@ void ejsCreateRegExpType(Ejs *ejs)
 {
     EjsType     *type;
 
-    //  MOB - MUTABLE
     type = ejsCreateNativeType(ejs, N("ejs", "RegExp"), sizeof(EjsRegExp), S_RegExp, ES_RegExp_NUM_CLASS_PROP,
         manageRegExp, EJS_TYPE_OBJ | EJS_TYPE_MUTABLE_INSTANCES);
     type->helpers.cast = (EjsCastHelper) castRegExp;

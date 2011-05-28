@@ -1092,15 +1092,9 @@ void ejsConfigureXMLType(Ejs *ejs)
     EjsType     *type;
     EjsPot      *prototype;
 
-    type = S(XML);
-    if (type->configured) {
+    if ((type = ejsFinalizeNativeType(ejs, N("ejs", "XML"))) == 0) {
         return;
     }
-    type->configured = 1;
-    //  MOB - why not already set
-    mprAssert(type->mutableInstances);
-    type->mutableInstances = 1;
-
     prototype = type->prototype;
     ejsBindConstructor(ejs, type, xmlConstructor);
     ejsBindMethod(ejs, prototype, ES_XML_length, xmlLength);

@@ -187,7 +187,7 @@ int ecCodeGen(EcCompiler *cp)
         orderModule(cp, modules, mp);
     }
     for (next = 0; (mp = mprGetNextItem(modules, &next)) != 0 && !cp->fatalError; ) {
-        //  MOB -- remove this test. Should be able to add to a loaded module??
+        //  TODO -- remove this test. Should be able to add to a loaded module??
         mprAssert(!mp->loaded);
         if (mp->loaded) {
             continue;
@@ -475,7 +475,6 @@ static void genBlockName(EcCompiler *cp, int slotNum, int nthBlock)
 
     mprAssert(slotNum >= 0);
 
-    //  MOB BINDING OK
     code = (!cp->state->onLeft) ?  EJS_OP_GET_BLOCK_SLOT :  EJS_OP_PUT_BLOCK_SLOT;
     ecEncodeOpcode(cp, code);
     ecEncodeNum(cp, slotNum);
@@ -562,8 +561,6 @@ static void genGlobalName(EcCompiler *cp, int slotNum)
 
     mprAssert(slotNum >= 0);
 
-    //  MOB - TEMP warning if being called.
-    // mprAssert(0);
     code = (!cp->state->onLeft) ?  EJS_OP_GET_GLOBAL_SLOT :  EJS_OP_PUT_GLOBAL_SLOT;
     ecEncodeOpcode(cp, code);
     ecEncodeNum(cp, slotNum);
@@ -580,8 +577,6 @@ static void genLocalName(EcCompiler *cp, int slotNum)
     int     code;
 
     mprAssert(slotNum >= 0);
-
-    //  MOB BINDING OK
 
     if (slotNum < 10) {
         code = (!cp->state->onLeft) ?  EJS_OP_GET_LOCAL_SLOT_0 :  EJS_OP_PUT_LOCAL_SLOT_0;
@@ -639,7 +634,6 @@ static void genLogicalOp(EcCompiler *cp, EcNode *np)
     pushStack(cp, 1);
     popStack(cp, 1);
 
-    //  MOB - remove test
     mprAssert(np->right);
     if (np->right) {
         state->code = allocCodeBuffer(cp);
@@ -985,8 +979,9 @@ static void genCallSequence(EcCompiler *cp, EcNode *np)
             
         } else {
             /*
-                MOB BUG. Could be an arbitrary expression on the left. Need a consistent way to save the right most
-                object before the property. */
+                Could be an arbitrary expression on the left. Need a consistent way to save the right most
+                object before the property. 
+             */
             count = getStackCount(cp);
             processNodeGetValue(cp, left);
             ecEncodeOpcode(cp, EJS_OP_LOAD_THIS_LOOKUP);
@@ -1130,7 +1125,6 @@ static void genCallSequence(EcCompiler *cp, EcNode *np)
             }
             
         } else if (ejsIsBlock(ejs, lookup->obj)) {
-            //  MOB BINDING OK
             argc = genCallArgs(cp, right);
             ecEncodeOpcode(cp, EJS_OP_CALL_BLOCK_SLOT);
             ecEncodeNum(cp, lookup->slotNum);
@@ -1367,7 +1361,6 @@ static void genClass(EcCompiler *cp, EcNode *np)
             ecEncodeOpcode(cp, EJS_OP_LOAD_THIS);
             ecEncodeOpcode(cp, EJS_OP_RETURN_VALUE);
             setFunctionCode(cp, (EjsFunction*) type, code);
-            //  MOB -- make these standard strings in native core
             ecAddCStringConstant(cp, EJS_PUBLIC_NAMESPACE);
             ecAddCStringConstant(cp, EJS_CONSTRUCTOR_NAMESPACE);
 
@@ -2084,7 +2077,6 @@ static void genDefaultParameterCode(EcCompiler *cp, EcNode *np, EjsFunction *fun
         ecEncodeGlobal(cp, (EjsObj*) ST(Array), ST(Array)->qname);
         ecEncodeNum(cp, 0);
         pushStack(cp, 1);
-        //  MOB -- convenience routine
         if (fun->numArgs < 10) {
             ecEncodeOpcode(cp, EJS_OP_PUT_LOCAL_SLOT_0 + fun->numArgs - 1);
         } else {
@@ -2656,7 +2648,7 @@ static void genField(EcCompiler *cp, EcNode *np)
         genLiteral(cp, fieldName);
 
     } else {
-        //  MOB
+        //  TODO
         mprAssert(0);
         processNode(cp, fieldName);
     }
@@ -4159,7 +4151,7 @@ static void processModule(EcCompiler *cp, EjsModule *mp)
     code = state->code;
 
     if (mp->hasInitializer) {
-        //  MOB -- make these standard strings in native core
+        //  TODO -- make these standard strings in native core
         ecAddCStringConstant(cp, EJS_INITIALIZER_NAME);
         ecAddCStringConstant(cp, EJS_EJS_NAMESPACE);
         if (mp->initializer->resultType) {
@@ -4228,7 +4220,7 @@ static void addModule(EcCompiler *cp, EjsModule *mp)
 }
 
 
-//  MOB -- cleanup
+//  TODO -- cleanup
 static int level = 8;
 
 static void pushStack(EcCompiler *cp, int count)

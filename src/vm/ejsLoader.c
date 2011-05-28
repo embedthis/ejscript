@@ -563,22 +563,20 @@ static int loadClassSection(Ejs *ejs, EjsModule *mp)
             }
         }
     }
-    //  MOB - must define even if immutable
-    if (1 || type->endClass == 0) {
-        slotNum = ejsDefineProperty(ejs, ejs->global, slotNum, qname, ST(Type), attributes, (EjsObj*) type);
-        if (slotNum < 0) {
+    slotNum = ejsDefineProperty(ejs, ejs->global, slotNum, qname, ST(Type), attributes, (EjsObj*) type);
+    if (slotNum < 0) {
+        ejsThrowMemoryError(ejs);
+        return MPR_ERR_MEMORY;
+    }
+    type->module = mp;
+    if (fixup) {
+        if (addFixup(ejs, mp, EJS_FIXUP_BASE_TYPE, (EjsObj*) type, -1, fixup) < 0) {
             ejsThrowMemoryError(ejs);
             return MPR_ERR_MEMORY;
         }
-        type->module = mp;
-        if (fixup) {
-            if (addFixup(ejs, mp, EJS_FIXUP_BASE_TYPE, (EjsObj*) type, -1, fixup) < 0) {
-                ejsThrowMemoryError(ejs);
-                return MPR_ERR_MEMORY;
-            }
-        }
-        setDoc(ejs, mp, "class", ejs->global, slotNum);
     }
+    setDoc(ejs, mp, "class", ejs->global, slotNum);
+
     pushScope(mp, type, type);
     if (ejs->loaderCallback) {
         (ejs->loaderCallback)(ejs, EJS_SECT_CLASS, mp, slotNum, qname, type, attributes);
@@ -612,7 +610,8 @@ static int loadEndClassSection(Ejs *ejs, EjsModule *mp)
             type->mutableInstances = 1;
         }
 #if UNUSED 
-        mprLog(0, "Type %N is %s and has %s instances", type->qname, (type->mutable) ? "mutable" : "immutable", type->mutableInstances ? "mutable" : "immutable");
+        mprLog(0, "Type %N is %s and has %s instances", type->qname, (type->mutable) ? "mutable" : "immutable", 
+            type->mutableInstances ? "mutable" : "immutable");
 #endif
     }
     popScope(mp, 0);
@@ -703,9 +702,9 @@ static int loadFunctionSection(Ejs *ejs, EjsModule *mp)
         if (numProp > 0) {
             fun->activation = ejsCreateActivation(ejs, fun, numProp);
         }
+#if UNUSED
         if (block == ejs->global && slotNum < 0) {
             if (attributes & EJS_FUN_OVERRIDE) {
-                //  MOB - remove this case
                 mprAssert(0);
                 slotNum = ejsLookupProperty(ejs, block, qname);
                 if (slotNum < 0) {
@@ -717,6 +716,7 @@ static int loadFunctionSection(Ejs *ejs, EjsModule *mp)
                 slotNum = -1;
             }
         }
+#endif
         if (!(attributes & EJS_FUN_CONSTRUCTOR)) {
             if (attributes & EJS_FUN_MODULE_INITIALIZER && block == ejs->global) {
                 mp->initializer = fun;

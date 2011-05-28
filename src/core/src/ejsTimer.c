@@ -208,7 +208,6 @@ void ejsConfigureTimerType(Ejs *ejs)
     EjsType     *type;
     EjsPot      *prototype;
 
-    //  MOB - should not need mutable
     if ((type = ejsFinalizeScriptType(ejs, N("ejs", "Timer"), sizeof(EjsTimer), manageTimer,
             EJS_TYPE_OBJ | EJS_TYPE_MUTABLE_INSTANCES)) == 0) {
         return;

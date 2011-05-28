@@ -428,7 +428,6 @@ void ejsConfigureSocketType(Ejs *ejs)
     EjsType     *type;
     EjsPot      *prototype;
 
-    //  MOB MUTABLE
     if ((type = ejsFinalizeScriptType(ejs, N("ejs", "Socket"), sizeof(EjsSocket), manageSocket,
             EJS_TYPE_OBJ | EJS_TYPE_MUTABLE_INSTANCES)) == 0) {
         return;

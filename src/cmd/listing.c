@@ -105,7 +105,6 @@ void emListingLoadCallback(Ejs *ejs, int kind, ...)
         lst->qname = va_arg(args, EjsName);
         lst->fun = va_arg(args, EjsFunction*);
         lst->attributes = va_arg(args, int);
-        //MOB mprAssert(lst->fun->body.code || lst->fun->isNativeProc);
         break;
 
     case EJS_SECT_FUNCTION_END:

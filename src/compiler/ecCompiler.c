@@ -61,12 +61,6 @@ EcCompiler *ecCreateCompiler(Ejs *ejs, int flags)
 }
 
         
-//  MOB - remove
-void ecDestroyCompiler(EcCompiler *cp)
-{
-}
-
-
 static void manageCompiler(EcCompiler *cp, int flags)
 {
     if (flags & MPR_MANAGE_MARK) {
@@ -104,7 +98,6 @@ int ecCompile(EcCompiler *cp, int argc, char **argv)
     saveCompiling = ejs->compiling;
     ejs->compiling = 1;
     
-    //  MOB -- remove this. Should not be required.
     paused = ejsPauseGC(ejs);
     rc = compileInner(cp, argc, argv);
     ejsResumeGC(ejs, paused);
@@ -180,11 +173,9 @@ static int compileInner(EcCompiler *cp, int argc, char **argv)
                     }
                 }
             }
-            //  MOB -- does this really need to be added?
             mprAddItem(nodes, 0);
         } else  {
             mprAssert(!MPR->marking);
-            //  MOB - move this deeper (gradually)
             paused = ejsPauseGC(ejs);
             mprAddItem(nodes, ecParseFile(cp, argv[i]));
             ejsResumeGC(ejs, paused);
@@ -196,7 +187,6 @@ static int compileInner(EcCompiler *cp, int argc, char **argv)
 
     /*
         Allocate the eval frame stack. This is used for property lookups. We have one dummy block at the top always.
-        MOB -- why ?
      */
     block = ejsCreateBlock(ejs, 0);
     mprSetName(block, "Compiler");
@@ -243,7 +233,6 @@ static int compileInner(EcCompiler *cp, int argc, char **argv)
 }
 
 
-//  MOB - remove this
 int ejsInitCompiler(EjsService *service)
 {
     service->loadScriptLiteral = loadScriptLiteral;
@@ -252,7 +241,6 @@ int ejsInitCompiler(EjsService *service)
 }
 
 
-//  MOB -- remove these
 /*
     Load a script file. This indirect routine is used by the core VM to compile a file when required.
  */
@@ -266,7 +254,6 @@ static EjsObj *loadScriptFile(Ejs *ejs, cchar *path, cchar *cache)
 }
 
 
-//  MOB -- remove these
 /*
     Function for ejs->loadScriptLiteral. This indirect routine is used by the core VM to compile a script when required.
  */
@@ -301,11 +288,9 @@ int ejsLoadScriptFile(Ejs *ejs, cchar *path, cchar *cache, int flags)
             ejsThrowSyntaxError(ejs, "%s", ec->errorMsg ? ec->errorMsg : "Can't parse script");
         }
         mprRemoveRoot(ec);
-        ecDestroyCompiler(ec);
         return EJS_ERR;
     }
     mprRemoveRoot(ec);
-    ecDestroyCompiler(ec);
 
     if (ejsRun(ejs) < 0) {
         return EJS_ERR;
@@ -336,7 +321,6 @@ int ejsLoadScriptLiteral(Ejs *ejs, EjsString *script, cchar *cache, int flags)
     if (ecOpenMemoryStream(cp, ejsToMulti(ejs, script), script->length) < 0) {
         mprError("Can't open memory stream");
         mprRemoveRoot(cp);
-        ecDestroyCompiler(cp);
         return EJS_ERR;
     }
     path = "__script__";
@@ -345,12 +329,10 @@ int ejsLoadScriptLiteral(Ejs *ejs, EjsString *script, cchar *cache, int flags)
             ejsThrowSyntaxError(ejs, "%s", cp->errorMsg ? cp->errorMsg : "Can't parse script");
         }
         mprRemoveRoot(cp);
-        ecDestroyCompiler(cp);
         return EJS_ERR;
     }
     ecCloseStream(cp);
     mprRemoveRoot(cp);
-    ecDestroyCompiler(cp);
     MPR_VERIFY_MEM();
     
     if (ejsRun(ejs) < 0) {
@@ -369,11 +351,15 @@ int ejsEvalFile(cchar *path)
     Mpr     *mpr;
 
     mpr = mprCreate(0, 0, 0);
-    if ((ejs = ejsCreateVM(0, 0, 0, 0, 0, 0, 0)) == 0) {
+    if ((ejs = ejsCreateVM(0, 0, 0)) == 0) {
         mprDestroy(0);
         return MPR_ERR_MEMORY;
     }
     mprAddRoot(ejs);
+    if (ejsLoadModules(ejs, 0, 0) < 0) {
+        mprDestroy(0);
+        return MPR_ERR_CANT_READ;
+    }
     if (ejsLoadScriptFile(ejs, path, NULL, EC_FLAGS_NO_OUT | EC_FLAGS_DEBUG) == 0) {
         ejsReportError(ejs, "Error in program");
         mprDestroy(0);
@@ -393,11 +379,15 @@ int ejsEvalScript(cchar *script)
     Mpr     *mpr;
 
     mpr = mprCreate(0, 0, 0);
-    if ((ejs = ejsCreateVM(0, 0, 0, 0, 0, 0, 0)) == 0) {
+    if ((ejs = ejsCreateVM(0, 0, 0)) == 0) {
         mprDestroy(0);
         return MPR_ERR_MEMORY;
     }
     mprAddRoot(ejs);
+    if (ejsLoadModules(ejs, 0, 0) < 0) {
+        mprDestroy(0);
+        return MPR_ERR_CANT_READ;
+    }
     if (ejsLoadScriptLiteral(ejs, ejsCreateStringFromAsc(ejs, script), NULL, EC_FLAGS_NO_OUT | EC_FLAGS_DEBUG) == 0) {
         ejsReportError(ejs, "Error in program");
         mprDestroy(0);

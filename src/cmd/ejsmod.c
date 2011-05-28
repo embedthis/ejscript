@@ -179,9 +179,11 @@ MAIN(ejsmodMain, int argc, char **argv)
     if (mp->html || mp->xml) {
         flags |= EJS_FLAG_DOC;
     }
-    ejs = ejsCreateVM(0, 0, searchPath, requiredModules, 0, NULL, flags);
-    if (ejs == 0) {
+    if ((ejs = ejsCreateVM(0, 0, flags)) == 0) {
         return MPR_ERR_MEMORY;
+    }
+    if (ejsLoadModules(ejs, searchPath, requiredModules) < 0) {
+        return MPR_ERR_CANT_READ;
     }
     mp->ejs = ejs;
 

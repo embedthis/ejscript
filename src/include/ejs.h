@@ -1017,9 +1017,7 @@ extern EjsAny *ejsDeserialize(Ejs *ejs, EjsString *value);
 //  MOB -- should this be EjsString?
 extern EjsAny *ejsParse(Ejs *ejs, MprChar *str,  int prefType);
 extern void ejsZeroSlots(Ejs *ejs, EjsSlot *slots, int count);
-
-//  MOB -- bad signature
-extern void ejsCopySlots(Ejs *ejs, EjsPot *pot, EjsSlot *dest, EjsSlot *src, int count);
+extern void ejsCopySlots(Ejs *ejs, EjsPot *dest, int destOff, EjsPot *src, int srcOff, int count);
 
 /** 
     Create an empty property object
@@ -2944,6 +2942,7 @@ typedef struct EjsService {
     Http            *http;                  /**< Http service */
     uint            dontExit: 1;            /**< Prevent App.exit() from exiting */
     uint            logging: 1;             /**< Using --log */
+    uint            seqno;                  /**< Interp sequence numbers */
     EjsIntern       *intern;                /**< Interned Unicode string hash - shared over all interps */
     EjsPot          *immutable;             /**< Immutable types and special values*/
     EjsHelpers      objHelpers;             /**< Default EjsObj helpers */
@@ -2979,8 +2978,18 @@ extern void ejsClearAttention(Ejs *ejs);
     @return A new interpreter
     @ingroup Ejs
  */
+#if 0
 extern Ejs *ejsCreateVM(Ejs *master, MprDispatcher *dispatcher, cchar *search, MprList *require, int argc, 
         cchar **argv, int flags);
+#else
+extern Ejs *ejsCreateVM(int argc, cchar **argv, int flags);
+#endif
+
+
+extern Ejs *ejsCloneVM(Ejs *ejs);
+extern void ejsSetDispatcher(Ejs *ejs, MprDispatcher *dispatcher);
+extern int ejsLoadModules(Ejs *ejs, cchar *search, MprList *require);
+
 extern void ejsDestroyVM(Ejs *ejs);
 
 /**

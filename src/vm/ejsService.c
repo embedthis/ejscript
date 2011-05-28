@@ -11,7 +11,6 @@
 /*********************************** Forward **********************************/
 
 static int allocNotifier(int flags, ssize size);
-static int cloneVM(Ejs *ejs, Ejs *master);
 static int  configureEjs(Ejs *ejs);
 static int  defineTypes(Ejs *ejs);
 static int  defineSharedTypes(Ejs *ejs);
@@ -30,7 +29,12 @@ static EjsService *createService()
 {
     EjsService  *sp;
 
-    if ((sp = mprAllocObj(EjsService, manageEjsService)) == NULL) {
+    mprGlobalLock();
+    if (MPR->ejsService) {
+        mprGlobalUnlock();
+        return MPR->ejsService;
+    } else if ((sp = mprAllocObj(EjsService, manageEjsService)) == NULL) {
+        mprGlobalUnlock();
         return 0;
     }
     MPR->ejsService = sp;
@@ -44,6 +48,7 @@ static EjsService *createService()
     sp->vmpool = mprCreateList(-1, MPR_LIST_STATIC_VALUES);
     sp->intern = ejsCreateIntern(sp);
     ejsInitCompiler(sp);
+    mprGlobalUnlock();
     return sp;
 }
 
@@ -66,41 +71,29 @@ static void manageEjsService(EjsService *sp, int flags)
 }
 
 
-#if FUTURE
-//  MOB - add flag to suppress loading ejs.mod
-Ejs *ejsCreateVM(cchar *search, int argc, cchar **argv, int flags)
-Ejs *ejsCloneVM(Ejs *ejs)
-void ejsSetDispatcher(Ejs *ejs, MprDispatcher *dispatcher);
-int ejsLoadModules(Ejs *ejs, MprList *require);
-#endif
 
-//  MOB - refactor args
-Ejs *ejsCreateVM(Ejs *master, MprDispatcher *dispatcher, cchar *search, MprList *require, int argc, cchar **argv, int flags)
+Ejs *ejsCreateVM(int argc, cchar **argv, int flags)
 {
     EjsService  *sp;
     Ejs         *ejs;
-    static int  seqno = 0;
 
     if ((ejs = mprAllocObj(Ejs, manageEjs)) == NULL) {
         return 0;
     }
-    mprAddRoot(ejs);
-
-    mprGlobalLock();
     if ((sp = MPR->ejsService) == 0) {
         sp = createService();
     }
-    mprGlobalUnlock();
-
     ejs->service = sp;
     if ((ejs->state = mprAllocZeroed(sizeof(EjsState))) == 0) {
         return 0;
     }
-    ejs->empty = require && mprGetListLength(require) == 0;
-    ejs->mutex = mprCreateLock(ejs);
     ejs->argc = argc;
     ejs->argv = argv;
+    ejs->dispatcher = mprCreateDispatcher(ejs->name, 1);
+    ejs->name = mprAsprintf("ejs-%d", sp->seqno++);
+    ejs->mutex = mprCreateLock(ejs);
     ejs->dontExit = sp->dontExit;
+    ejs->empty = 1;
     ejs->flags |= (flags & (EJS_FLAG_NO_INIT | EJS_FLAG_DOC | EJS_FLAG_HOSTED));
     ejs->hosted = (flags & EJS_FLAG_HOSTED) ? 1 : 0;
 
@@ -111,56 +104,87 @@ Ejs *ejsCreateVM(Ejs *master, MprDispatcher *dispatcher, cchar *search, MprList 
     ejs->modules = mprCreateList(-1, MPR_LIST_STATIC_VALUES);
     ejs->workers = mprCreateList(0, 0);
 
-    lock(sp);
-    if (dispatcher == 0) {
-        ejs->name = mprAsprintf("ejs-%d", seqno++);
-        ejs->dispatcher = mprCreateDispatcher(ejs->name, 1);
-    } else {
-        ejs->dispatcher = dispatcher;
-    }
-    unlock(sp);
-
     if (ejsInitStack(ejs) < 0) {
         ejsDestroyVM(ejs);
         mprRemoveRoot(ejs);
         return 0;
     }
-    ejs->state->paused = 1;
+    lock(sp);
+    defineSharedTypes(ejs);
+    defineTypes(ejs);
+    initSearchPath(ejs, 0);
+    mprAddItem(sp->vmlist, ejs);
+    unlock(sp);
+    return ejs;
+}
+
+
+Ejs *ejsCloneVM(Ejs *master)
+{
+    EjsModule   *mp;
+    Ejs         *ejs;
+    int         next;
 
     if (master) {
-        if (cloneVM(ejs, master) < 0) {
+        if ((ejs = ejsCreateVM(master->argc, master->argv, master ? master->flags : 0)) == 0) {
             return 0;
         }
+        ejs->global = ejsClone(ejs, master->global, 1);
+        ejsFixCrossRefs(ejs, ejs->global);
+        ejsDefineGlobals(ejs);
+        ejsDefineGlobalNamespaces(ejs);
+        ejs->sqlite = master->sqlite;
+        ejs->http = master->http;
+        ejs->initialized = master->initialized;
+        ejs->empty = 0;
+        for (next = 0; (mp = mprGetNextItem(master->modules, &next)) != 0;) {
+            ejsAddModule(ejs, mp);
+        }
+        ejsSetPropertyByName(ejs, ejs->global, N("ejs", "global"), ejs->global);
     } else {
-//  MOB
-mprGlobalLock();
-        defineSharedTypes(ejs);
-        defineTypes(ejs);
-        if (loadStandardModules(ejs, require) < 0) {
-            if (ejs->exception) {
-                ejsReportError(ejs, "Can't initialize interpreter");
-            }
-            ejsDestroyVM(ejs);
-            mprRemoveRoot(ejs);
-mprGlobalUnlock();
+        if ((ejs = ejsCreateVM(0, 0, 0)) == 0) {
             return 0;
         }
-mprGlobalUnlock();
-        ejsFreezeGlobal(ejs);
     }
+    return ejs;
+}
+
+
+/*
+    Load the standard ejs modules with an optional override search path and list of required modules.
+    If the require list is empty, then ejs->empty will be true.
+ */
+int ejsLoadModules(Ejs *ejs, cchar *search, MprList *require)
+{
+    EjsService      *sp;
+
+    sp = ejs->service;
+    mprAssert(mprGetListLength(ejs->modules) == 0);
+
+    if (require == 0 || mprGetListLength(require)) {
+        ejs->empty = 0;
+        ejsDefineGlobals(ejs);
+    }
+    if (search) {
+        initSearchPath(ejs, search);
+    }
+    lock(sp);
+    if (loadStandardModules(ejs, require) < 0) {
+        if (ejs->exception) {
+            ejsReportError(ejs, "Can't initialize interpreter");
+        }
+        ejsDestroyVM(ejs);
+        unlock(sp);
+        return MPR_ERR_CANT_READ;
+    }
+    unlock(sp);
     if (mprHasMemError(ejs)) {
         mprError("Memory allocation error during initialization");
         ejsDestroyVM(ejs);
-        mprRemoveRoot(ejs);
-        return 0;
+        return MPR_ERR_MEMORY;
     }
-    initSearchPath(ejs, search);
-    mprRemoveRoot(ejs);
-    mprAddItem(sp->vmlist, ejs);
-
-    ejs->state->paused = 0;
     mprAssert(!ejs->exception);
-    return ejs;
+    return 0;
 }
 
 
@@ -300,7 +324,7 @@ Ejs *ejsAllocPoolVM(EjsPool *pool, int flags)
         }
         lock(pool);
         if (pool->template == 0) {
-            if ((pool->template = ejsCreateVM(0, 0, 0, 0, 0, 0, flags)) == 0) {
+            if ((pool->template = ejsCreateVM(0, 0, flags)) == 0) {
                 unlock(pool);
                 return 0;
             }
@@ -318,7 +342,7 @@ Ejs *ejsAllocPoolVM(EjsPool *pool, int flags)
         }
         unlock(pool);
 
-        if ((ejs = ejsCreateVM(pool->template, 0, 0, 0, 0, 0, flags)) == 0) {
+        if ((ejs = ejsCloneVM(pool->template)) == 0) {
             mprMemoryError("Can't alloc ejs VM");
             return 0;
         }
@@ -366,6 +390,12 @@ static void poolTimer(EjsPool *pool, MprEvent *event)
 }
 
 
+void ejsSetDispatcher(Ejs *ejs, MprDispatcher *dispatcher)
+{
+    ejs->dispatcher = dispatcher;
+}
+
+
 void ejsApplyObjHelpers(EjsService *sp, EjsType *type)
 {
     type->helpers = sp->objHelpers;
@@ -383,29 +413,6 @@ void ejsApplyBlockHelpers(EjsService *sp, EjsType *type)
 {
     type->helpers = sp->blockHelpers;
     type->isPot = 1;
-}
-
-
-static int cloneVM(Ejs *ejs, Ejs *master)
-{
-    EjsModule   *mp;
-    int         next;
-
-    ejs->global = ejsClone(ejs, master->global, 1);
-    ejsFixCrossRefs(ejs, ejs->global);
-    ejsDefineGlobals(ejs);
-    ejsDefineGlobalNamespaces(ejs);
-
-    ejs->sqlite = master->sqlite;
-    ejs->http = master->http;
-
-    ejs->modules = mprCreateList(-1, MPR_LIST_STATIC_VALUES);
-    for (next = 0; (mp = mprGetNextItem(master->modules, &next)) != 0;) {
-        ejsAddModule(ejs, mp);
-    }
-    ejsSetPropertyByName(ejs, ejs->global, N("ejs", "global"), ejs->global);
-    ejs->initialized = 1;
-    return 0;
 }
 
 
@@ -445,7 +452,6 @@ static int defineSharedTypes(Ejs *ejs)
         ((EjsPot*) ejs->global)->numProp = ES_global_NUM_CLASS_PROP;
         mprSetName(ejs->global, "global");
     }
-    ejsDefineGlobals(ejs);
     ejsDefineGlobalNamespaces(ejs);
     if (ejs->hasError || mprHasMemError(ejs)) {
         mprError("Can't create core shared types");
@@ -559,18 +565,19 @@ static int configureEjs(Ejs *ejs)
 static int loadStandardModules(Ejs *ejs, MprList *require)
 {
     char    *name;
-    int     rc, next, ver, flags;
+    int     rc, next, paused;
 
     rc = 0;
-    ver = 0;
+    paused = ejsPauseGC(ejs);
     if (require) {
         for (next = 0; rc == 0 && (name = mprGetNextItem(require, &next)) != 0; ) {
-            flags = EJS_LOADER_STRICT;
-            rc += ejsLoadModule(ejs, ejsCreateStringFromAsc(ejs, name), ver, ver, flags);
+            rc += ejsLoadModule(ejs, ejsCreateStringFromAsc(ejs, name), 0, 0, EJS_LOADER_STRICT);
         }
     } else {
-        rc += ejsLoadModule(ejs, ejsCreateStringFromAsc(ejs, "ejs"), ver, ver, EJS_LOADER_STRICT);
+        rc += ejsLoadModule(ejs, ejsCreateStringFromAsc(ejs, "ejs"), 0, 0, EJS_LOADER_STRICT);
     }
+    ejsFreezeGlobal(ejs);
+    ejsResumeGC(ejs, paused);
     return rc;
 }
 
@@ -650,7 +657,7 @@ int ejsEvalModule(cchar *path)
     if ((mpr = mprCreate(0, NULL, 0)) != 0) {
         status = MPR_ERR_MEMORY;
 
-    } else if ((ejs = ejsCreateVM(0, 0, 0, 0, 0, 0, 0)) == 0) {
+    } else if ((ejs = ejsCreateVM(0, 0, 0)) == 0) {
         status = MPR_ERR_MEMORY;
 
     } else if (ejsLoadModule(ejs, ejsCreateStringFromAsc(ejs, path), -1, -1, 0) < 0) {

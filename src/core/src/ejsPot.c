@@ -92,11 +92,10 @@ void ejsFixCrossRefs(Ejs *ejs, EjsPot *obj)
     EjsType     *type;
     int         numProp, i;
 
-    //  MOB - not thread safe with GC
-if (VISITED(obj)) {
-    return;
-}
-SET_VISITED(obj, 1);
+    if (VISITED(obj)) {
+        return;
+    }
+    SET_VISITED(obj, 1);
     numProp = obj->numProp;
     sp = obj->properties->slots;
     
@@ -112,7 +111,7 @@ SET_VISITED(obj, 1);
             ejsFixCrossRefs(ejs, sp->value.ref);
         }
     }
-SET_VISITED(obj, 0);
+    SET_VISITED(obj, 0);
 }
 
 
@@ -421,12 +420,6 @@ int ejsGetSlot(Ejs *ejs, EjsPot *obj, int slotNum)
         obj->numProp++;
     }
     mprAssert(obj->numProp <= obj->properties->size);
-#if BLD_DEBUG && 0
-    if (obj == ejs->global && obj->numProp > 220) {
-        mprAssert(obj != ejs->global || obj->numProp < 220);
-        mprBreakpoint();
-    }
-#endif
     return slotNum;
 }
 
@@ -664,14 +657,20 @@ void ejsZeroSlots(Ejs *ejs, EjsSlot *slots, int count)
 }
 
 
-//  TODO - bad API. Should take two EjsPots
-void ejsCopySlots(Ejs *ejs, EjsPot *obj, EjsSlot *dest, EjsSlot *src, int count)
+void ejsCopySlots(Ejs *ejs, EjsPot *dest, int destOff, EjsPot *src, int srcOff, int count)
 {
-    while (count-- > 0) {
-        *dest = *src;
-        dest->hashChain = -1;
-        dest++;
-        src++;
+    EjsSlot     *sp, *dp;
+
+    mprAssert(dest->properties);
+    mprAssert(src->properties);
+    mprAssert(srcOff < src->numProp);
+    mprAssert(destOff < dest->numProp);
+
+    for (sp = &src->properties->slots[srcOff], dp = &dest->properties->slots[destOff]; count > 0; count--) {
+        *dp = *sp;
+        dp->hashChain = -1;
+        dp++;
+        sp++;
     }
 }
 
@@ -980,7 +979,7 @@ void *ejsCreatePot(Ejs *ejs, EjsType *type, int numProp)
     if (numProp > 0) {
         if (type->hasInstanceVars) {
             if (prototype->numProp > 0) {
-                ejsCopySlots(ejs, obj, obj->properties->slots, prototype->properties->slots, prototype->numProp);
+                ejsCopySlots(ejs, obj, 0, prototype, 0, prototype->numProp);
             }
             ejsZeroSlots(ejs, &obj->properties->slots[prototype->numProp], obj->properties->size - prototype->numProp);
             if (numProp > EJS_HASH_MIN_PROP) {
