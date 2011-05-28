@@ -2,8 +2,6 @@
     Multiple cache store tests
  */
 
-require ejs.cache.local
-
 //  Create cache and write
 cache1 = new Cache("local")
 cache1.write("message", "Hello World")

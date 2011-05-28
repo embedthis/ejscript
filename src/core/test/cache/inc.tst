@@ -2,8 +2,6 @@
     Inc tests
  */
 
-require ejs.cache.local
-
 cache = new Cache
 
 //  Write a simple value and increment
