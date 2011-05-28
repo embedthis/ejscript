@@ -365,6 +365,7 @@ void *mprAllocBlock(ssize usize, int flags)
     int         padWords;
 
     mprAssert(!MPR->marking);
+    mprAssert(usize >= 0);
 
     padWords = padding[flags & MPR_ALLOC_PAD_MASK];
     size = usize + sizeof(MprMem) + (padWords * sizeof(void*));
@@ -7651,11 +7652,8 @@ static void serviceDispatcher(MprDispatcher *dispatcher)
 
     } else {
         if (mprStartWorker((MprWorkerProc) serviceDispatcherMain, dispatcher) < 0) {
-            /* Can't start a worker thread. Put back on the wait queue */
-            mprAssert(!dispatcher->destroyed);
-//  MOB
-            mprAssert(0);
-            queueDispatcher(dispatcher->service->waitQ, dispatcher);
+            /* Can't start a worker thread, run using the current thread */
+            serviceDispatcherMain(dispatcher);
         } 
     }
 }
@@ -9007,6 +9005,7 @@ int mprFlushFile(MprFile *file)
 }
 
 
+//  MOB - naming vs mprSeekFile or mprSetFilePosition or mprTellFile
 MprOff mprGetFilePosition(MprFile *file)
 {
     return file->pos;
