@@ -586,7 +586,7 @@ static void closeEjsHandler(HttpQueue *q)
         req->conn = 0;
     }
     httpSetConnContext(conn, 0);
-    if (conn->pool) {
+    if (conn->pool && conn->ejs) {
         ejsFreePoolVM(conn->pool, conn->ejs);
         conn->ejs = 0;
     }
@@ -677,6 +677,9 @@ static void startEjsHandler(HttpQueue *q)
     conn = q->conn;
     server = conn->server;
 
+    if (conn->ejs == 0) {
+        return;
+    }
     if ((sp = httpGetServerContext(server)) == 0) {
         mprAssert(conn->ejs);
         lp = conn->sock->listenSock;
