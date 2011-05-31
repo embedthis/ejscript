@@ -547,7 +547,7 @@ static void stateChangeNotifier(HttpConn *conn, int state, int notifyFlags)
             }
             ejsSendRequestCloseEvent(ejs, req);
             if (req->cloned) {
-                ejsSendRequestCloseEvent(req->cloned->ejs, req->cloned);
+                ejsSendRequestCloseEvent(req->ejs, req->cloned);
             }
         }
         break;
@@ -695,6 +695,8 @@ static void startEjsHandler(HttpQueue *q)
             ejsSetProperty(ejs, sp, ES_ejs_web_HttpServer_documents, 
                 ejsCreateStringFromAsc(ejs, conn->host->documentRoot));
         }
+    } else if (conn->ejs) {
+        ejs = conn->ejs;
     } else {
         ejs = sp->ejs;
     }
