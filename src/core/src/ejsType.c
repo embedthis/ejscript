@@ -227,7 +227,7 @@ EjsType *ejsFinalizeScriptType(Ejs *ejs, EjsName qname, int size, void *manager,
     if (type->configured) {
         return 0;
     }
-#if BLD_DEBUG
+#if UNUSED
     if (attributes & EJS_TYPE_POT) {
         if (size > sizeof(EjsPot)) {
             mprAssert(attributes & EJS_TYPE_DYNAMIC_INSTANCES);

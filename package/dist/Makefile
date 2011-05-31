@@ -24,13 +24,12 @@ EC_HEADERS		+= $(patsubst %,$(SRC)/include/%.h, ecCompiler)
 EJS_SOURCES		+= $(shell find $(SRC)/vm $(SRC)/core -name '*.c' | sort) 
 EC_SOURCES		+= $(shell find $(SRC)/compiler -name '*.c' | sort) 
 ES_SOURCES		+= $(shell find $(SRC)/core $(JEMS)/ejs.unix $(JEMS)/ejs.db $(JEMS)/ejs.db.mapper \
-				    $(JEMS)/ejs.cache.local $(JEMS)/ejs.db.sqlite $(JEMS)/ejs.web $(JEMS)/ejs.template -name '*.es' | \
+				    $(JEMS)/ejs.db.sqlite $(JEMS)/ejs.web $(JEMS)/ejs.template -name '*.es' | \
 					egrep -v 'SAVE|save|legacy|Archive|old|sample.es|XmlGlobal.es|mvc.es' | \
 					egrep -v 'Jsdb.es|Mysql.es|ejspage.es|\/test\/' | sort) 
 EJSMOD_HEADERS	+= $(SRC)/cmd/ejsmod.h
 EJSMOD_SOURCES	+= $(patsubst %,$(SRC)/cmd/%.c, doc docFiles ejsmod listing slotGen)
 DB_SOURCES		+= $(JEMS)/ejs.db.sqlite/src/ejsSqlite.c
-CACHE_SOURCES	+= $(JEMS)/ejs.cache.local/src/ejsLocalCache.c
 SQLITE_HEADERS	+= $(SRC)/include/sqlite3.h
 SQLITE_SOURCES	+= $(JEMS)/ejs.db.sqlite/src/sqlite3.c
 WEB_SOURCES		+= $(shell find $(JEMS)/ejs.web -name '*.c' | egrep -v 'SAVE|save|legacy|Archive' | sort)
@@ -54,11 +53,11 @@ $(INC_DEST)/sqlite3.h: $(BLD_TOP)/src/include/sqlite3.h
 $(INC_DEST)/slots.h: $(SLOT_HEADERS)
 	TITLE="$(BLD_NAME) Slot files" dist $(SLOT_HEADERS) >$(INC_DEST)/slots.h
 
-$(DEST)/ejsLib.c: $(EJS_SOURCES) $(CACHE_SOURCES) $(DB_SOURCES) $(WEB_SOURCES)
+$(DEST)/ejsLib.c: $(EJS_SOURCES) $(DB_SOURCES) $(WEB_SOURCES)
 	echo '#define EJS_DEFINE_OPTABLE 1' >$(DEST)/ejsLib.c
 	echo '#include "ejs.h"' >>$(DEST)/ejsLib.c
 	TITLE="$BLD_NAME Library Source" \
-	dist $(EJS_SOURCES) $(CACHE_SOURCES) $(DB_SOURCES) $(WEB_SOURCES) $(EC_SOURCES) | \
+	dist $(EJS_SOURCES) $(DB_SOURCES) $(WEB_SOURCES) $(EC_SOURCES) | \
         csplit -s -f tmpEjsLib. - '/#include.*ejsByteGoto.h/'
 	(cat tmpEjsLib.00 ; cat $(SRC)/include/ejsByteGoto.h ; \
 	if [ "$(BLD_OS)" = MACOSX -o "$(BLD_OS)" = FREEBSD ] ; \

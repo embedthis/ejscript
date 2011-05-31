@@ -428,34 +428,6 @@ module ejs.web {
         private function checkSecurityToken()
             request.checkSecurityToken()
 
-        /*
-UNUSED MOB
-            Open database. Expects ejsrc configuration:
-
-            mode: "debug",
-            database: {
-                module: "name.mod",
-                class: "Database",
-                adapter: "sqlite3",
-                debug: { name: "db/blog.sdb", trace: true },
-                test: { name: "db/blog.sdb", trace: true },
-                production: { name: "db/blog.sdb", trace: true },
-            }
-        private function openDatabase(request: Request) {
-            let dbconfig = config.database
-            let dbclass = dbconfig["class"]
-            if (dbclass) {
-                let options = dbconfig[config.mode]
-                if (dbconfig.module && !global.(dbconfig.module)::[dbclass]) {
-                    global.load(dbconfig.module + ".mod")
-                }
-                let module = dbconfig.module || "public"
-                options.dir = request.dir
-                new (module)::[dbclass](dbconfig.adapter, options)
-            }
-        }
-*/
-
         /* 
             Run the before/after checkers. These are typically used to handle authorization and similar tasks
          */

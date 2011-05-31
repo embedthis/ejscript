@@ -50,7 +50,7 @@ module ejs.db {
             //BUG - should be able to use (options.module) below
             let module = options.module
             if (!global.module::[adapterClass]) {
-                load(module + ".mod")
+                load(module + ".mod", {reload: false})
                 if (!global.module::[adapterClass]) {
                     throw "Can't find database connector \"" + module + "::" + adapter + "\""
                 }

@@ -118,7 +118,7 @@ module ejs {
                 Options can be either a mode string or can be an options hash. 
             @options mode optional file access mode string. Use "r" for read, "w" for write, "a" for append to existing
                 content, "c" to create the file if it does not exist, "l" to gain an exclusive lock, "s" for a shared lock,
-                "t" for text mode, and "+" to never truncate. Defaults to "r". 
+                "t" for text mode, and "+" to never truncate. Defaults to "r". NOTE: not all platforms support "l" and "s".
                 If "w" is specified and the file does not exist, it will be created. 
                 If "c" is specified and the file exists, the open will fail.
             @options permissions Number containing the Posix permissions number value. Note: this is a number

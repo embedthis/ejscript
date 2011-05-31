@@ -105,7 +105,7 @@ module ejs {
         /**
             Application in-memory cache reference
          */
-        private static var _cache: Cache
+        static var cache: Cache
 
         /** 
             Application title name. Multi-word, Camel Case name for the application suitable for display. This is 
@@ -125,17 +125,18 @@ module ejs {
          */
         native static function get args(): Array
 
-        /**
+        /*
+UNUSED
             Application in-memory cache reference
-         */
-        function get cache(): Cache {
-            if (!_cache && config.cache) {
-                App.cache = new Cache(null, blend({shared: true}, config.cache))
+        static function get cache(): Cache {
+            if (!cacheStore) {
+                cacheStore = new Cache(null, blend({shared: true}, config.cache))
             }
-            return _cache
+            return cacheStore
         }
-        function set cache(c: Cache): Void
-            _cache = c
+        static function set cache(c: Cache): Void
+            cacheStore = c
+*/
 
         /** 
             Change the application's working directory
@@ -427,11 +428,9 @@ module ejs {
                 load(m)
             }
         }
-    /*
         if (config.cache) {
             App.cache = new Cache(null, blend({shared: true}, config.cache))
         }
-     */
     }
 
     appInit()

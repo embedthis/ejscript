@@ -2847,6 +2847,7 @@ extern void     ejsConfigureFunctionType(Ejs *ejs);
 extern void     ejsConfigureHttpType(Ejs *ejs);
 extern void     ejsConfigureIteratorType(Ejs *ejs);
 extern void     ejsConfigureJSONType(Ejs *ejs);
+extern void     ejsConfigureLocalCacheType(Ejs *ejs);
 extern void     ejsConfigureLogFileType(Ejs *ejs);
 extern void     ejsConfigureNamespaceType(Ejs *ejs);
 extern void     ejsConfigureMemoryType(Ejs *ejs);

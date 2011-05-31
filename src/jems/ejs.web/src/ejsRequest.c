@@ -1425,7 +1425,8 @@ void ejsConfigureRequestType(Ejs *ejs)
     EjsHelpers  *helpers;
     EjsPot      *prototype;
 
-    if ((type = ejsFinalizeScriptType(ejs, N("ejs.web", "Request"), sizeof(EjsRequest), manageRequest, EJS_TYPE_POT)) == 0) {
+    if ((type = ejsFinalizeScriptType(ejs, N("ejs.web", "Request"), sizeof(EjsRequest), manageRequest, 
+            EJS_TYPE_DYNAMIC_INSTANCES | EJS_TYPE_POT)) == 0) {
         return;
     }
     helpers = &type->helpers;

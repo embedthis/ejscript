@@ -125,7 +125,7 @@ static EjsObj *hs_setLimits(Ejs *ejs, EjsHttpServer *sp, int argc, EjsObj **argv
     if ((vp = ejsGetPropertyByName(ejs, sp->limits, EN("sessionTimeout"))) != 0) {
         app = ejsGetPropertyByName(ejs, ejs->global, N("ejs", "App"));
         cache = ejsGetProperty(ejs, app, ES_App_cache);
-        if (cache) {
+        if (cache && cache != S(null)) {
             cacheLimits = ejsCreateEmptyPot(ejs);
             ejsSetPropertyByName(ejs, cacheLimits, EN("lifespan"), vp);
             ejsCacheSetLimits(ejs, cache, cacheLimits);
@@ -853,7 +853,7 @@ void ejsConfigureHttpServerType(Ejs *ejs)
     EjsPot      *prototype;
 
     if ((type = ejsFinalizeScriptType(ejs, N("ejs.web", "HttpServer"), sizeof(EjsHttpServer), manageHttpServer, 
-            EJS_TYPE_POT)) == 0) {
+            EJS_TYPE_POT | EJS_TYPE_DYNAMIC_INSTANCES)) == 0) {
         return;
     }
     type->helpers.create = (EjsCreateHelper) createHttpServer;

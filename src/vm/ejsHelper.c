@@ -15,8 +15,6 @@ static bool      parseBoolean(Ejs *ejs, MprChar *s);
 
 /************************************* Code ***********************************/
 
-static int acount;
-
 EjsAny *ejsAlloc(Ejs *ejs, EjsType *type, ssize extra)
 {
     EjsObj      *vp;
@@ -34,7 +32,6 @@ EjsAny *ejsAlloc(Ejs *ejs, EjsType *type, ssize extra)
     mprAssert(type->manager);
     //  OPT inline here
     mprSetManager(vp, type->manager);
-    acount++;
     return vp;
 }
 

@@ -111,17 +111,28 @@ static EjsNumber *g_hashcode(Ejs *ejs, EjsObj *vp, int argc, EjsObj **argv)
 
 /*  
     Load a script or module. Name should have an extension. Name will be located according to the EJSPATH search strategy.
-    static function load(filename: String, cache: String): void
+
+    static function load(filename: String, options: Object): void
+
+    options = { cache: String|Path, reload: true }
  */
 static EjsObj *g_load(Ejs *ejs, EjsObj *unused, int argc, EjsObj **argv)
 {
+    EjsObj      *options, *vp;
     cchar       *path, *cache, *cp;
+    int         reload;
 
-    MPR_VERIFY_MEM();
-
+    cache = 0;
+    reload = 1;
     path = ejsToMulti(ejs, argv[0]);
-    cache = (argc < 2) ? 0 : ejsToMulti(ejs, argv[1]);
+    options = (argc >= 2) ? argv[1] : 0;
 
+    if (options) {
+        if ((vp = ejsGetPropertyByName(ejs, options, EN("cache"))) != 0) {
+            cache = ejsToMulti(ejs, ejsToString(ejs, vp));
+        }
+        reload = ejsGetPropertyByName(ejs, options, EN("reload")) == S(true);
+    }
     if ((cp = strrchr(path, '.')) != NULL && strcmp(cp, EJS_MODULE_EXT) != 0) {
         if (ejs->service->loadScriptFile == 0) {
             ejsThrowIOError(ejs, "load: Compiling is not enabled for %s", path);
@@ -129,7 +140,7 @@ static EjsObj *g_load(Ejs *ejs, EjsObj *unused, int argc, EjsObj **argv)
             return (ejs->service->loadScriptFile)(ejs, path, cache);
         }
     } else {
-        ejsLoadModule(ejs, ejsCreateStringFromAsc(ejs, path), -1, -1, EJS_LOADER_RELOAD);
+        ejsLoadModule(ejs, ejsCreateStringFromAsc(ejs, path), -1, -1, (reload) ? EJS_LOADER_RELOAD : 0);
         return (ejs->exception) ? 0 : ejs->result;
     }
     return 0;

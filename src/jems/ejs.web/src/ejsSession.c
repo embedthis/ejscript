@@ -20,8 +20,11 @@ static EjsSession *initSession(Ejs *ejs, EjsSession *sp, EjsString *key, MprTime
     EjsObj      *app;
 
     app = ejsGetPropertyByName(ejs, ejs->global, N("ejs", "App"));
-    sp->cache = ejsGetProperty(ejs, app, ES_App_cache);
-
+    if ((sp->cache = ejsGetProperty(ejs, app, ES_App_cache)) == S(null)) {
+        ejsThrowStateError(ejs, "App.cache is null");
+        sp->cache = 0;
+        return 0;
+    }
     sp->lifespan = timeout;
     sp->key = key;
     return sp;
@@ -53,7 +56,9 @@ EjsSession *ejsGetSession(Ejs *ejs, EjsString *key, MprTime timeout, int create)
         return 0;
     }
     mprSetName(sp, "session");
-    initSession(ejs, sp, key, timeout);
+    if ((sp = initSession(ejs, sp, key, timeout)) == 0) {
+        return 0;
+    }
     if (!getSessionState(ejs, sp) && create) {
         sp->key = makeKey(ejs, sp);
     }
@@ -213,7 +218,8 @@ void ejsConfigureSessionType(Ejs *ejs)
     EjsType         *type;
     EjsHelpers      *helpers;
 
-    if ((type = ejsFinalizeScriptType(ejs, N("ejs.web", "Session"), sizeof(EjsSession), manageSession, EJS_TYPE_POT)) == 0) {
+    if ((type = ejsFinalizeScriptType(ejs, N("ejs.web", "Session"), sizeof(EjsSession), manageSession, 
+            EJS_TYPE_POT | EJS_TYPE_DYNAMIC_INSTANCES)) == 0) {
         return;
     }
     /*

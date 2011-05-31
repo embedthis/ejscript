@@ -234,10 +234,12 @@ module ejs {
         Load a script or module
         @param file path name to load. File will be interpreted relative to EJSPATH if it is not found as an absolute or
             relative file name.
-        @param cache path name to save the compiled script as.
+        @param options Option parameters
+        @options cache String or Path name to save the compiled script as.
+        @options reload Boolean If true, reload the module if already loaded. Defaults to true.
         @returns The value of the last expression in the loaded module
      */
-    native function load(file: String, cache: String? = null): Object
+    native function load(file: String, options: Object = null): Object
 
     /** 
         Print the arguments to the standard output with a new line appended. This call evaluates the arguments, 

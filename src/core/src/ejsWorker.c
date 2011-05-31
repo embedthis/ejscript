@@ -869,7 +869,7 @@ void ejsConfigureWorkerType(Ejs *ejs)
     EjsPot      *prototype;
 
     if ((type = ejsFinalizeScriptType(ejs, N("ejs", "Worker"), sizeof(EjsWorker), manageWorker, 
-            EJS_TYPE_POT | EJS_TYPE_MUTABLE_INSTANCES  | EJS_TYPE_DYNAMIC_INSTANCES)) == 0) {
+            EJS_TYPE_POT | EJS_TYPE_MUTABLE_INSTANCES)) == 0) {
         return;
     }
     prototype = type->prototype;

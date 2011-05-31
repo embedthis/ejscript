@@ -499,7 +499,6 @@ static int defineTypes(Ejs *ejs)
 #if BLD_FEATURE_SQLITE
     ejs_db_sqlite_Init(ejs, NULL);
 #endif
-    ejs_cache_local_Init(ejs, NULL);
     ejs_web_Init(ejs, NULL);
 #endif
     if (ejs->hasError || mprHasMemError(ejs)) {
@@ -541,6 +540,7 @@ static int configureEjs(Ejs *ejs)
         ejsConfigureGCType(ejs);
         ejsConfigureHttpType(ejs);
         ejsConfigureJSONType(ejs);
+        ejsConfigureLocalCacheType(ejs);
         ejsConfigureLogFileType(ejs);
         ejsConfigureMathType(ejs);
         ejsConfigureMemoryType(ejs);

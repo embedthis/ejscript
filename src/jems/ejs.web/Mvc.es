@@ -166,7 +166,7 @@ module ejs.web {
         private function openDatabase(request: Request) {
             let dbconfig = config.database
             if (dbconfig) {
-                global.load("ejs.db.mod")
+                global.load("ejs.db.mod", {reload: false})
                 blend(dbconfig, dbconfig[config.mode])
                 new "ejs.db"::["Database"](dbconfig.adapter, dbconfig)
             }

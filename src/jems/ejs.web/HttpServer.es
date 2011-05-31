@@ -41,7 +41,7 @@ module ejs.web {
             cache: {
                 adapter: "local",
                 "class": "LocalCache",
-                module: "ejs.cache.local",
+                module: "ejs",
                 lifespan: 3600,
             },
             web: {
@@ -72,7 +72,7 @@ module ejs.web {
             for (let [key, value] in dirs) {
                 dirs[key] = Path(value)
             }
-            if (App.cache == null && App.config.cache) {
+            if (!App.cache) {
                 App.cache = new Cache(null, blend({shared: true}, App.config.cache))
             }
         }
@@ -259,7 +259,7 @@ server.listen("127.0.0.1:7777")
             let sclass = sconfig["class"]
             if (sclass) {
                 if (sconfig.module && !global.(module)::[sclass]) {
-                    global.load(sconfig.module + ".mod")
+                    global.load(sconfig.module + ".mod", {reload: false})
                 }
                 let module = sconfig.module || "public"
                 new (module)::[sclass](sconfig.adapter, sconfig.options)

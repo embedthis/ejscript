@@ -45,24 +45,21 @@ module ejs {
          */
         function Cache(adapter: String = null, options: Object = {}) {
             let adapterClass, modname
-            if (adapter == null) {
+            if (adapter == null || adapter == "local") {
                 options = blend({shared: true}, options, true)
                 adapter = "local"
-                modname = "ejs.cache.local"
+                modname = "ejs"
                 adapterClass = "LocalCache"
-            }
-            adapterClass ||= options["class"] || (adapter.toPascal() + "Cache")
-            modname ||= options.module || ("ejs.cache." + adapter)
-print("MODNAME " + modname)
-print("CLASS " + adapterClass)
-            if (!global.modname::[adapterClass]) {
-print("LOADING " + modname + "::" + adapterClass)
-                load(modname + ".mod")
+            } else {
+                adapterClass ||= options["class"] || (adapter.toPascal() + "Cache")
+                modname ||= options.module || ("ejs.cache." + adapter)
                 if (!global.modname::[adapterClass]) {
-                    throw "Can't find cache adapter: \"" + modname + "::" + adapter + "\""
+                    load(modname + ".mod", {reload: false})
+                    if (!global.modname::[adapterClass]) {
+                        throw "Can't find cache adapter: \"" + modname + "::" + adapter + "\""
+                    }
                 }
             }
-            breakpoint()
             this.adapter = new global.modname::[adapterClass](options)
         }
 

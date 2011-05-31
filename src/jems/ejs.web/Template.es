@@ -16,7 +16,7 @@ module ejs.web {
             let id = md5(request.id)
             return Loader.load(id, id, request.config, function (id, path) {
                 if (!global.TemplateParser) {
-                    load("ejs.template.mod")
+                    load("ejs.template.mod", {reload: false})
                 }
                 let data = TemplateParser().build(response.body)
                 return Loader.wrap(id, data)
@@ -62,7 +62,7 @@ module ejs.web {
         }
         return Loader.load(path, path, request.config, function (id, path) {
             if (!global.TemplateParser) {
-                global.load("ejs.template.mod")
+                global.load("ejs.template.mod", {reload: false})
             }
             let data = options.literal || TemplateParser().build(path.readString(), options)
             return Loader.wrap(path, data)

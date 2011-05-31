@@ -810,14 +810,18 @@ static int mapMode(cchar *mode)
         /* Text mode */
         omode &= ~O_BINARY;
     }
+#if O_EXLOCK
     if (strchr(mode, 'l')) {
         /* Exclusive lock */
         omode |= O_EXLOCK;
     }
+#endif
+#if O_SHLOCK
     if (strchr(mode, 's')) {
         /* Shared lock */
         omode |= O_SHLOCK;
     }
+#endif
     if (strchr(mode, 'c')) {
         /* Create - must not exist prior */
         omode |= O_CREAT | O_EXCL;
