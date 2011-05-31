@@ -183,7 +183,7 @@ void ejsCreateVoidType(Ejs *ejs)
 {
     EjsType     *type;
 
-    type = ejsCreateNativeType(ejs, N("ejs", "Void"), sizeof(EjsVoid), S_Void, ES_Void_NUM_CLASS_PROP, NULL, 
+    type = ejsCreateCoreType(ejs, N("ejs", "Void"), sizeof(EjsVoid), S_Void, ES_Void_NUM_CLASS_PROP, NULL, 
         EJS_TYPE_OBJ);
 
     type->helpers.cast             = (EjsCastHelper) castVoid;
@@ -200,7 +200,7 @@ void ejsConfigureVoidType(Ejs *ejs)
     EjsType     *type;
     EjsPot      *prototype;
 
-    if ((type = ejsFinalizeNativeType(ejs, N("ejs", "Void"))) == 0) {
+    if ((type = ejsFinalizeCoreType(ejs, N("ejs", "Void"))) == 0) {
         return;
     }
     prototype = type->prototype;

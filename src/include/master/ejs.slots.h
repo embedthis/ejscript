@@ -243,12 +243,12 @@
 #define ES_App_log                                                     8
 #define ES_App_logFile                                                 9
 #define ES_App_name                                                    10
-#define ES_App_cache                                                   11
+#define ES_App__cache                                                  11
 #define ES_App_title                                                   12
 #define ES_App_version                                                 13
 #define ES_App_args                                                    14
-#define ES_App_createSearch                                            15
-#define ES_App_chdir                                                   16
+#define ES_App_chdir                                                   15
+#define ES_App_createSearch                                            16
 #define ES_App_dir                                                     17
 #define ES_App_env                                                     18
 #define ES_App_exeDir                                                  19
@@ -271,14 +271,15 @@
 /*
    Prototype (instance) slots for "App" type 
  */
-#define ES_App_NUM_INSTANCE_PROP                                       0
+#define ES_App_cache                                                   0
+#define ES_App_NUM_INSTANCE_PROP                                       1
 #define ES_App_NUM_INHERITED_PROP                                      0
 
 /*
     Local slots for methods in type "App" 
  */
-#define ES_App_createSearch_searchPath                                 0
 #define ES_App_chdir_value                                             0
+#define ES_App_createSearch_searchPath                                 0
 #define ES_App_exit_status                                             0
 #define ES_App_exit_how                                                1
 #define ES_App_getenv_name                                             0
@@ -2314,6 +2315,6 @@
 #define ES_XMLList_NUM_INSTANCE_PROP                                   20
 #define ES_XMLList_NUM_INHERITED_PROP                                  0
 
-#define _ES_CHECKSUM_ejs   1419237
+#define _ES_CHECKSUM_ejs   1420433
 
 #endif

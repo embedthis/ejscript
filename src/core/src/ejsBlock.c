@@ -171,7 +171,7 @@ void ejsConfigureBlockType(Ejs *ejs)
 {
     EjsType     *type;
     
-    if ((type = ejsFinalizeNativeType(ejs, N("ejs", "Block"))) == 0) {
+    if ((type = ejsFinalizeCoreType(ejs, N("ejs", "Block"))) == 0) {
         return;
     }
     ejsAddImmutable(ejs, S_commaProt, EN(",protected"), ejsCreateStringFromAsc(ejs, ",protected"));

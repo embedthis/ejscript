@@ -324,7 +324,7 @@ void ejsCreateRegExpType(Ejs *ejs)
 {
     EjsType     *type;
 
-    type = ejsCreateNativeType(ejs, N("ejs", "RegExp"), sizeof(EjsRegExp), S_RegExp, ES_RegExp_NUM_CLASS_PROP,
+    type = ejsCreateCoreType(ejs, N("ejs", "RegExp"), sizeof(EjsRegExp), S_RegExp, ES_RegExp_NUM_CLASS_PROP,
         manageRegExp, EJS_TYPE_OBJ | EJS_TYPE_MUTABLE_INSTANCES);
     type->helpers.cast = (EjsCastHelper) castRegExp;
 }
@@ -335,7 +335,7 @@ void ejsConfigureRegExpType(Ejs *ejs)
     EjsType     *type;
     EjsPot      *prototype;
 
-    if ((type = ejsFinalizeNativeType(ejs, N("ejs", "RegExp"))) == 0) {
+    if ((type = ejsFinalizeCoreType(ejs, N("ejs", "RegExp"))) == 0) {
         return;
     }
     prototype = type->prototype;

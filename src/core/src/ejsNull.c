@@ -195,7 +195,7 @@ void ejsConfigureNullType(Ejs *ejs)
     EjsType     *type;
     EjsPot      *prototype;
 
-    if ((type = ejsFinalizeNativeType(ejs, N("ejs", "Null"))) == 0) {
+    if ((type = ejsFinalizeCoreType(ejs, N("ejs", "Null"))) == 0) {
         return;
     }
     prototype = type->prototype;

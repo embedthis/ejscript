@@ -534,8 +534,8 @@ void ejsCreateFunctionType(Ejs *ejs)
     EjsHelpers      *helpers;
     EjsFunction     *nop;
 
-    type = ejsCreateNativeType(ejs, N("ejs", "Function"), sizeof(EjsFunction), S_Function, ES_Function_NUM_CLASS_PROP,
-        ejsManageFunction, EJS_TYPE_POT | EJS_TYPE_IMMUTABLE_INSTANCES);
+    type = ejsCreateCoreType(ejs, N("ejs", "Function"), sizeof(EjsFunction), S_Function, ES_Function_NUM_CLASS_PROP,
+        ejsManageFunction, EJS_TYPE_POT | EJS_TYPE_IMMUTABLE_INSTANCES | EJS_TYPE_DYNAMIC_INSTANCES);
     helpers = &type->helpers;
     helpers->create = (EjsCreateHelper) createFunction;
     helpers->cast   = (EjsCastHelper) castFunction;
@@ -553,7 +553,7 @@ void ejsConfigureFunctionType(Ejs *ejs)
     EjsType     *type;
     EjsPot      *prototype;
 
-    if ((type = ejsFinalizeNativeType(ejs, N("ejs", "Function"))) == 0) {
+    if ((type = ejsFinalizeCoreType(ejs, N("ejs", "Function"))) == 0) {
         return;
     }
     prototype = type->prototype;

@@ -223,7 +223,7 @@ void ejsCreateBooleanType(Ejs *ejs)
     EjsType     *type;
     EjsBoolean  *vp;
 
-    type = ejsCreateNativeType(ejs, N("ejs", "Boolean"), sizeof(EjsBoolean), S_Boolean, ES_Boolean_NUM_CLASS_PROP, 
+    type = ejsCreateCoreType(ejs, N("ejs", "Boolean"), sizeof(EjsBoolean), S_Boolean, ES_Boolean_NUM_CLASS_PROP, 
         0, EJS_TYPE_OBJ | EJS_TYPE_IMMUTABLE_INSTANCES);
     type->helpers.cast = (EjsCastHelper) castBooleanVar;
     type->helpers.invokeOperator = (EjsInvokeOperatorHelper) invokeBooleanOperator;
@@ -245,7 +245,7 @@ void ejsConfigureBooleanType(Ejs *ejs)
 {
     EjsType     *type;
 
-    if ((type = ejsFinalizeNativeType(ejs, N("ejs", "Boolean"))) == 0) {
+    if ((type = ejsFinalizeCoreType(ejs, N("ejs", "Boolean"))) == 0) {
         return;
     }
     ejsBindConstructor(ejs, type, booleanConstructor);

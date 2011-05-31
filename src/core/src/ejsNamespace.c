@@ -154,7 +154,7 @@ void ejsCreateNamespaceType(Ejs *ejs)
 {
     EjsType     *type;
 
-    type = ejsCreateNativeType(ejs, N("ejs", "Namespace"), sizeof(EjsNamespace), S_Namespace, ES_Namespace_NUM_CLASS_PROP,
+    type = ejsCreateCoreType(ejs, N("ejs", "Namespace"), sizeof(EjsNamespace), S_Namespace, ES_Namespace_NUM_CLASS_PROP,
         manageNamespace, EJS_TYPE_OBJ | EJS_TYPE_IMMUTABLE_INSTANCES);
     type->helpers.cast = (EjsCastHelper) castNamespace;
     type->helpers.invokeOperator = (EjsInvokeOperatorHelper) invokeNamespaceOperator;
@@ -165,7 +165,7 @@ void ejsConfigureNamespaceType(Ejs *ejs)
 {
     EjsType     *type;
 
-    if ((type = ejsFinalizeNativeType(ejs, N("ejs", "Namespace"))) == 0) {
+    if ((type = ejsFinalizeCoreType(ejs, N("ejs", "Namespace"))) == 0) {
         return;
     }
     ejsSetProperty(ejs, ejs->global, ES_iterator, S(iteratorSpace));

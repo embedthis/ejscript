@@ -91,7 +91,7 @@ static EjsType *defineType(Ejs *ejs, cchar *name, int id)
 {
     EjsType     *type;
 
-    type = ejsCreateNativeType(ejs, N("ejs", name), sizeof(EjsError), id, ES_Error_NUM_CLASS_PROP, ejsManagePot, 
+    type = ejsCreateCoreType(ejs, N("ejs", name), sizeof(EjsError), id, ES_Error_NUM_CLASS_PROP, ejsManagePot, 
         EJS_TYPE_POT | EJS_TYPE_DYNAMIC_INSTANCES | EJS_TYPE_HAS_INSTANCE_VARS | EJS_TYPE_MUTABLE_INSTANCES);
     type->constructor.block.nobind = 1;
     type->helpers.cast = (EjsCastHelper) castError;
@@ -124,7 +124,7 @@ static void configureType(Ejs *ejs, cchar *name)
 {
     EjsType     *type;
 
-    if ((type = ejsFinalizeNativeType(ejs, N("ejs", name))) == 0) {
+    if ((type = ejsFinalizeCoreType(ejs, N("ejs", name))) == 0) {
         return;
     }
     ejsBindConstructor(ejs, type, errorConstructor);

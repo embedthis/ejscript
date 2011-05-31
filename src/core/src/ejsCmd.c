@@ -651,7 +651,7 @@ void ejsConfigureCmdType(Ejs *ejs)
     EjsPot      *prototype;
 
     if ((type = ejsFinalizeScriptType(ejs, N("ejs", "Cmd"), sizeof(EjsCmd), manageEjsCmd,
-            EJS_TYPE_POT | EJS_TYPE_MUTABLE_INSTANCES)) == 0) {
+            EJS_TYPE_POT | EJS_TYPE_MUTABLE_INSTANCES | EJS_TYPE_DYNAMIC_INSTANCES)) == 0) {
         return;
     }
     ejsBindConstructor(ejs, type, cmd_constructor);

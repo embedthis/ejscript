@@ -105,7 +105,7 @@ module ejs {
         /**
             Application in-memory cache reference
          */
-        static var cache: Cache
+        private static var _cache: Cache
 
         /** 
             Application title name. Multi-word, Camel Case name for the application suitable for display. This is 
@@ -125,6 +125,24 @@ module ejs {
          */
         native static function get args(): Array
 
+        /**
+            Application in-memory cache reference
+         */
+        function get cache(): Cache {
+            if (!_cache && config.cache) {
+                App.cache = new Cache(null, blend({shared: true}, config.cache))
+            }
+            return _cache
+        }
+        function set cache(c: Cache): Void
+            _cache = c
+
+        /** 
+            Change the application's working directory
+            @param value The path to the new working directory
+         */
+        native static function chdir(value: Object): Void
+
         /** 
             Create a search path array for locating ejs modules. This converts a delimited PATH to an array of 
             paths suitable for use by the $search property. NOTE: this does not modify the application's search path.
@@ -133,12 +151,6 @@ module ejs {
             @return An array of search paths.
          */
         native static function createSearch(searchPath: String? = null): Array
-
-        /** 
-            Change the application's working directory
-            @param value The path to the new working directory
-         */
-        native static function chdir(value: Object): Void
 
         /** 
             The application's current directory
@@ -415,9 +427,11 @@ module ejs {
                 load(m)
             }
         }
+    /*
         if (config.cache) {
             App.cache = new Cache(null, blend({shared: true}, config.cache))
         }
+     */
     }
 
     appInit()

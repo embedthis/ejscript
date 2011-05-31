@@ -679,7 +679,6 @@ static void VM(Ejs *ejs, EjsFunction *fun, EjsAny *otherThis, int argc, int stac
             if (unlikely(vp == 0)) {
                 ejsThrowReferenceError(ejs, "%@ is not defined", qname.name);
             } else {
-//  XXX
                 CHECK_VALUE(vp, NULL, lookup.obj, lookup.slotNum);
             }
             BREAK;

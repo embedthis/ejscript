@@ -16,7 +16,7 @@ void ejsCreateConfigType(Ejs *ejs)
         The Config object may be used by conditional compilation, so the type must exist without loading ejs.mod
         The compiler will call ejsDefineConfigProperties if required.
      */
-    ejsCreateNativeType(ejs, N("ejs", "Config"), sizeof(EjsPot), S_Config, ES_Config_NUM_CLASS_PROP, 
+    ejsCreateCoreType(ejs, N("ejs", "Config"), sizeof(EjsPot), S_Config, ES_Config_NUM_CLASS_PROP, 
         ejsManagePot, EJS_TYPE_POT);
 }
 
@@ -27,7 +27,7 @@ void ejsDefineConfigProperties(Ejs *ejs)
     char        version[16];
     int         att;
 
-    if ((type = ejsFinalizeNativeType(ejs, N("ejs", "Config"))) == 0) {
+    if ((type = ejsFinalizeCoreType(ejs, N("ejs", "Config"))) == 0) {
         return;
     }
     /* Not mutable once initialized - Should have a Config instance instead */

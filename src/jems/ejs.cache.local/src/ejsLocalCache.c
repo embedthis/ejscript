@@ -18,8 +18,7 @@
 
 typedef struct EjsLocalCache
 {
-    //  MOB - does this need to be pot?
-    EjsPot          pot;                /* Object base */
+    EjsObj          obj;                /* Object base */
     MprHashTable    *store;             /* Key/value store */
     MprMutex        *mutex;             /* Cache lock*/
     MprEvent        *timer;             /* Pruning timer */
@@ -535,21 +534,30 @@ static EjsLocalCache *cloneLocalCache(Ejs *ejs, EjsLocalCache *src, bool deep)
 }
 
 
+#if UNUSED
+void ejsCreateLocalCacheType(Ejs *ejs)
+{
+    EjsType         *type;
+
+    type = ejsCreateNativeType(ejs, N("ejs.cache.local", "LocalCache"), sizeof(EjsLocalCache), S_LocalCache, 
+            ES_ejs_cache_local_LocalCache_NUM_CLASS_PROP, manageLocalCache, EJS_TYPE_OBJ | EJS_TYPE_MUTABLE_INSTANCES | EJS_TYPE_DYNAMIC_INSTANCES);
+}
+#endif
+
+
 static int configureLocalTypes(Ejs *ejs)
 {
     EjsType     *type;
     EjsPot      *prototype;
 
-    type = ejsGetTypeByName(ejs, N("ejs.cache.local", "LocalCache"));
-    mprAssert(type);
-    type->instanceSize = sizeof(EjsLocalCache);
-    type->mutableInstances = 1;
-    type->manager = (MprManager) manageLocalCache;
+    if ((type = ejsFinalizeScriptType(ejs, N("ejs.cache.local", "LocalCache"), sizeof(EjsLocalCache), 
+            manageLocalCache, EJS_TYPE_OBJ | EJS_TYPE_MUTABLE_INSTANCES)) == 0) {
+        return 0;
+    }
+    ejsAddImmutable(ejs, S_LocalCache, type->qname, type);
     type->helpers.clone = (EjsCloneHelper) cloneLocalCache;
-
     ejsBindConstructor(ejs, type, localConstructor);
     prototype = type->prototype;
-
     ejsBindMethod(ejs, prototype, ES_ejs_cache_local_LocalCache_destroy, sl_destroy);
     ejsBindMethod(ejs, prototype, ES_ejs_cache_local_LocalCache_expire, sl_expire);
     ejsBindMethod(ejs, prototype, ES_ejs_cache_local_LocalCache_inc, sl_inc);
@@ -567,6 +575,9 @@ static int configureLocalTypes(Ejs *ejs)
  */
 int ejs_cache_local_Init(Ejs *ejs, MprModule *mp)
 {
+#if UNUSED
+    ejsCreateLocalCacheType(ejs);
+#endif
     return ejsAddNativeModule(ejs, "ejs.cache.local", configureLocalTypes, _ES_CHECKSUM_ejs_cache_local, EJS_LOADER_ETERNAL);
 }
 

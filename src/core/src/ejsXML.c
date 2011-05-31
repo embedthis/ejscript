@@ -1068,7 +1068,7 @@ void ejsCreateXMLType(Ejs *ejs)
 {
     EjsType     *type;
 
-    type = ejsCreateNativeType(ejs, N("ejs", "XML"), sizeof(EjsXML), S_XML, ES_XML_NUM_CLASS_PROP, ejsManageXML, 
+    type = ejsCreateCoreType(ejs, N("ejs", "XML"), sizeof(EjsXML), S_XML, ES_XML_NUM_CLASS_PROP, ejsManageXML, 
         EJS_TYPE_OBJ);
 
     /*
@@ -1092,7 +1092,7 @@ void ejsConfigureXMLType(Ejs *ejs)
     EjsType     *type;
     EjsPot      *prototype;
 
-    if ((type = ejsFinalizeNativeType(ejs, N("ejs", "XML"))) == 0) {
+    if ((type = ejsFinalizeCoreType(ejs, N("ejs", "XML"))) == 0) {
         return;
     }
     prototype = type->prototype;

@@ -425,7 +425,7 @@ void ejsCreateNumberType(Ejs *ejs)
     EjsType     *type;
     static int  zero = 0;
 
-    type = ejsCreateNativeType(ejs, N("ejs", "Number"), sizeof(EjsNumber), S_Number, ES_Number_NUM_CLASS_PROP, 
+    type = ejsCreateCoreType(ejs, N("ejs", "Number"), sizeof(EjsNumber), S_Number, ES_Number_NUM_CLASS_PROP, 
         NULL, EJS_TYPE_OBJ | EJS_TYPE_IMMUTABLE_INSTANCES);
 
     type->helpers.cast = (EjsCastHelper) castNumber;
@@ -471,7 +471,7 @@ void ejsConfigureNumberType(Ejs *ejs)
     EjsType    *type;
     EjsPot     *prototype;
 
-    if ((type = ejsFinalizeNativeType(ejs, N("ejs", "Number"))) == 0) {
+    if ((type = ejsFinalizeCoreType(ejs, N("ejs", "Number"))) == 0) {
         return;
     }
     prototype = type->prototype;

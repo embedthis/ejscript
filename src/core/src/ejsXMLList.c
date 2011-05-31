@@ -796,7 +796,7 @@ void ejsCreateXMLListType(Ejs *ejs)
 {
     EjsType     *type;
 
-    type = ejsCreateNativeType(ejs, N("ejs", "XMLList"), sizeof(EjsXML), S_XMLList, ES_XMLList_NUM_CLASS_PROP, 
+    type = ejsCreateCoreType(ejs, N("ejs", "XMLList"), sizeof(EjsXML), S_XMLList, ES_XMLList_NUM_CLASS_PROP, 
         ejsManageXML, EJS_TYPE_OBJ);
 
     /*
@@ -820,7 +820,7 @@ void ejsConfigureXMLListType(Ejs *ejs)
     EjsType     *type;
     EjsPot      *prototype;
 
-    if ((type = ejsFinalizeNativeType(ejs, N("ejs", "XMLList"))) == 0) {
+    if ((type = ejsFinalizeCoreType(ejs, N("ejs", "XMLList"))) == 0) {
         return;
     }
     prototype = type->prototype;

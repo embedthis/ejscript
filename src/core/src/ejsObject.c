@@ -868,7 +868,7 @@ void ejsConfigureObjectType(Ejs *ejs)
     EjsPot      *prototype;
     EjsFunction *fun;
 
-    if ((type = ejsFinalizeNativeType(ejs, N("ejs", "Object"))) == 0) {
+    if ((type = ejsFinalizeCoreType(ejs, N("ejs", "Object"))) == 0) {
         return;
     }
     prototype = type->prototype;

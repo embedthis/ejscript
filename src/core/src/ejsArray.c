@@ -1742,7 +1742,7 @@ void ejsCreateArrayType(Ejs *ejs)
     EjsType         *type;
     EjsHelpers      *helpers;
 
-    type = ejsCreateNativeType(ejs, N("ejs", "Array"), sizeof(EjsArray), S_Array, ES_Array_NUM_CLASS_PROP, manageArray, 
+    type = ejsCreateCoreType(ejs, N("ejs", "Array"), sizeof(EjsArray), S_Array, ES_Array_NUM_CLASS_PROP, manageArray, 
         EJS_TYPE_POT | EJS_TYPE_NUMERIC_INDICIES | EJS_TYPE_VIRTUAL_SLOTS | EJS_TYPE_MUTABLE_INSTANCES | 
         EJS_TYPE_DYNAMIC_INSTANCES);
 
@@ -1769,7 +1769,7 @@ void ejsConfigureArrayType(Ejs *ejs)
     EjsType     *type;
     EjsPot      *prototype;
 
-    if ((type = ejsFinalizeNativeType(ejs, N("ejs", "Array"))) == 0) {
+    if ((type = ejsFinalizeCoreType(ejs, N("ejs", "Array"))) == 0) {
         return;
     }
     prototype = type->prototype;

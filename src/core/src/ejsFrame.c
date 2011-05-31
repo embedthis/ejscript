@@ -144,7 +144,7 @@ void ejsCreateFrameType(Ejs *ejs)
 {
     EjsType     *type;
 
-    type = ejsCreateNativeType(ejs, N("ejs", "Frame"), sizeof(EjsFrame), S_Frame, ES_Frame_NUM_CLASS_PROP,
+    type = ejsCreateCoreType(ejs, N("ejs", "Frame"), sizeof(EjsFrame), S_Frame, ES_Frame_NUM_CLASS_PROP,
         manageFrame, EJS_TYPE_POT | EJS_TYPE_DYNAMIC_INSTANCES | EJS_TYPE_MUTABLE_INSTANCES);
     type->constructor.block.pot.shortScope = 1;
     type->configured = 1;
@@ -156,7 +156,7 @@ void ejsConfigureFrameType(Ejs *ejs)
 {
     EjsType     *type;
 
-    if ((type = ejsFinalizeNativeType(ejs, N("ejs", "Frame"))) == 0) {
+    if ((type = ejsFinalizeCoreType(ejs, N("ejs", "Frame"))) == 0) {
         return;
     }
 }

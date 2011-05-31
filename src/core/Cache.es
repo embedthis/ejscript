@@ -53,12 +53,16 @@ module ejs {
             }
             adapterClass ||= options["class"] || (adapter.toPascal() + "Cache")
             modname ||= options.module || ("ejs.cache." + adapter)
+print("MODNAME " + modname)
+print("CLASS " + adapterClass)
             if (!global.modname::[adapterClass]) {
+print("LOADING " + modname + "::" + adapterClass)
                 load(modname + ".mod")
                 if (!global.modname::[adapterClass]) {
                     throw "Can't find cache adapter: \"" + modname + "::" + adapter + "\""
                 }
             }
+            breakpoint()
             this.adapter = new global.modname::[adapterClass](options)
         }
 

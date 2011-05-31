@@ -1247,7 +1247,7 @@ void ejsCreatePathType(Ejs *ejs)
 {
     EjsType     *type;
 
-    type = ejsCreateNativeType(ejs, N("ejs", "Path"), sizeof(EjsPath), S_Path, ES_Path_NUM_CLASS_PROP, managePath, 
+    type = ejsCreateCoreType(ejs, N("ejs", "Path"), sizeof(EjsPath), S_Path, ES_Path_NUM_CLASS_PROP, managePath, 
         EJS_TYPE_OBJ | EJS_TYPE_IMMUTABLE_INSTANCES);
     type->helpers.cast = (EjsCastHelper) castPath;
     type->helpers.clone = (EjsCloneHelper) clonePath;
@@ -1260,7 +1260,7 @@ void ejsConfigurePathType(Ejs *ejs)
     EjsType     *type;
     EjsPot      *prototype;
 
-    if ((type = ejsFinalizeNativeType(ejs, N("ejs", "Path"))) == 0) {
+    if ((type = ejsFinalizeCoreType(ejs, N("ejs", "Path"))) == 0) {
         return;
     }
     //  TODO - rename all and use pa_ prefix

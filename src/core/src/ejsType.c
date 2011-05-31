@@ -177,11 +177,18 @@ EjsType *ejsCreateType(Ejs *ejs, EjsName qname, EjsModule *up, EjsType *baseType
 /*
     Create a native built-in type. This is used for the core native classes of the language.
  */
-EjsType *ejsCreateNativeType(Ejs *ejs, EjsName qname, int size, int sid, int numTypeProp, void *manager, int64 attributes)
+EjsType *ejsCreateCoreType(Ejs *ejs, EjsName qname, int size, int sid, int numTypeProp, void *manager, int64 attributes)
 {
     EjsType     *type;
 
-    mprAssert(sid >= 0);
+#if BLD_DEBUG
+    if (attributes & EJS_TYPE_POT) {
+        if (size > sizeof(EjsPot)) {
+            mprAssert(attributes & EJS_TYPE_DYNAMIC_INSTANCES);
+            attributes |= EJS_TYPE_DYNAMIC_INSTANCES;
+        }
+    }
+#endif
     if ((type = ejsCreateType(ejs, qname, NULL, NULL, NULL, sid, numTypeProp, 0, size, manager, attributes)) == 0) {
         ejs->hasError = 1;
         return 0;
@@ -193,7 +200,7 @@ EjsType *ejsCreateNativeType(Ejs *ejs, EjsName qname, int size, int sid, int num
 }
 
 
-EjsType *ejsFinalizeNativeType(Ejs *ejs, EjsName qname)
+EjsType *ejsFinalizeCoreType(Ejs *ejs, EjsName qname)
 {
     EjsType     *type;
 
@@ -220,6 +227,14 @@ EjsType *ejsFinalizeScriptType(Ejs *ejs, EjsName qname, int size, void *manager,
     if (type->configured) {
         return 0;
     }
+#if BLD_DEBUG
+    if (attributes & EJS_TYPE_POT) {
+        if (size > sizeof(EjsPot)) {
+            mprAssert(attributes & EJS_TYPE_DYNAMIC_INSTANCES);
+            attributes |= EJS_TYPE_DYNAMIC_INSTANCES;
+        }
+    }
+#endif
     attributes = setDefaultAttributes(type, size, attributes);
     attributes = ejsSetTypeAttributes(type, size, manager, attributes);
     ejsSetTypeHelpers(type, attributes);
