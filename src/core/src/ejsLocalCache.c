@@ -417,8 +417,11 @@ static EjsNumber *sl_write(Ejs *ejs, EjsLocalCache *cache, int argc, EjsAny **ar
     cache->usedMem += (len - oldLen);
 
     if (cache->timer == 0) {
-        mprLog(5, "Start ejs.local.cache prune timer with resolution %d", cache->resolution);
-        cache->timer = mprCreateTimerEvent(ejs->dispatcher, "localCacheTimer", cache->resolution, localPruner, cache, 
+        mprLog(5, "Start LocalCache pruner with resolution %d", cache->resolution);
+        /* 
+            Use the MPR dispatcher incase this VM is destroyed 
+         */
+        cache->timer = mprCreateTimerEvent(MPR->dispatcher, "localCacheTimer", cache->resolution, localPruner, cache, 
             MPR_EVENT_STATIC_DATA); 
     }
     unlock(cache);
@@ -442,7 +445,7 @@ static void localPruner(EjsLocalCache *cache, MprEvent *event)
         for (hp = 0; (hp = mprGetNextKey(cache->store, hp)) != 0; ) {
             item = (CacheItem*) hp->data;
             if (item->expires && item->expires <= when) {
-                mprLog(5, "ejs.local.cache prune key %s", hp->key);
+                mprLog(5, "LocalCache prune key %s", hp->key);
                 mprRemoveKey(cache->store, hp->key);
                 cache->usedMem -= (item->key->length + item->data->length);
             }
@@ -458,7 +461,7 @@ static void localPruner(EjsLocalCache *cache, MprEvent *event)
                 for (factor = 3600; excessKeys > 0; factor *= 2) {
                     for (hp = 0; (hp = mprGetNextKey(cache->store, hp)) != 0; ) {
                         if (item->expires && item->expires <= when) {
-                            mprLog(5, "ejs.local.cache prune key %s", hp->key);
+                            mprLog(5, "LocalCache prune key %s", hp->key);
                             mprRemoveKey(cache->store, hp->key);
                             cache->usedMem -= (item->key->length + item->data->length);
                         }

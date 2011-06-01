@@ -418,6 +418,10 @@ static void receiveRequest(EjsRequest *req, MprEvent *event)
     }
     argv[0] = req;
     ejsRunFunction(ejs, onrequest, req->server, 1, argv);
+    if (conn->state == HTTP_STATE_BEGIN) {
+        conn->ejs = 0;
+        httpUsePrimary(conn);        
+    }
     httpEnableConnEvents(conn);
 }
 
@@ -431,6 +435,7 @@ static EjsVoid *hs_passRequest(Ejs *ejs, EjsHttpServer *server, int argc, EjsAny
     EjsRequest      *req, *nreq;
     EjsWorker       *worker;
     HttpConn        *conn;
+    MprEvent        *event;
 
     req = argv[0];
     worker = argv[1];
@@ -438,8 +443,6 @@ static EjsVoid *hs_passRequest(Ejs *ejs, EjsHttpServer *server, int argc, EjsAny
     nejs = worker->pair->ejs;
     conn = req->conn;
     conn->ejs = nejs;
-    conn->oldDispatcher = conn->dispatcher;
-    conn->newDispatcher = nejs->dispatcher;
 
     if ((nreq = ejsCloneRequest(nejs, req, 1)) == 0) {
         ejsThrowStateError(ejs, "Can't clone request");
@@ -451,10 +454,8 @@ static EjsVoid *hs_passRequest(Ejs *ejs, EjsHttpServer *server, int argc, EjsAny
         ejsThrowStateError(ejs, "Can't clone request");
         return 0;
     }
-    conn->workerEvent = mprCreateEvent(conn->dispatcher, "RequestWorker", 0, receiveRequest, nreq, MPR_EVENT_DONT_QUEUE);
-    if (conn->workerEvent == 0) {
-        ejsThrowStateError(ejs, "Can't create worker event");
-    }  
+    event = mprCreateEvent(conn->dispatcher, "RequestWorker", 0, receiveRequest, nreq, MPR_EVENT_DONT_QUEUE);
+    httpUseWorker(conn, nejs->dispatcher, event);
     return 0;
 }
 
