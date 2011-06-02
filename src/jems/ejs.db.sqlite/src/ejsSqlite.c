@@ -387,7 +387,6 @@ static int configureSqliteTypes(Ejs *ejs)
 {
     EjsType     *type;
     EjsPot      *prototype;
-    static int  initialized = 0;
     
     if ((type = ejsFinalizeScriptType(ejs, N("ejs.db.sqlite", "Sqlite"), sizeof(EjsSqlite), manageSqlite,
             EJS_TYPE_POT)) == 0) {
@@ -398,19 +397,16 @@ static int configureSqliteTypes(Ejs *ejs)
     ejsBindMethod(ejs, prototype, ES_ejs_db_sqlite_Sqlite_close, sqliteClose);
     ejsBindMethod(ejs, prototype, ES_ejs_db_sqlite_Sqlite_sql, sqliteSql);
 
-    if (!initialized) {
-        initialized++;
 #if MAP_ALLOC
-        sqlite3_config(SQLITE_CONFIG_MALLOC, &mem);
+    sqlite3_config(SQLITE_CONFIG_MALLOC, &mem);
 #endif
 #if MAP_MUTEXES
-        sqlite3_config(SQLITE_CONFIG_MUTEX, &mut);
+    sqlite3_config(SQLITE_CONFIG_MUTEX, &mut);
 #endif
-        sqlite3_config(THREAD_STYLE);
-        if (sqlite3_initialize() != SQLITE_OK) {
-            mprError("Can't initialize SQLite");
-            return MPR_ERR_CANT_INITIALIZE;
-        }
+    sqlite3_config(THREAD_STYLE);
+    if (sqlite3_initialize() != SQLITE_OK) {
+        mprError("Can't initialize SQLite");
+        return MPR_ERR_CANT_INITIALIZE;
     }
     return 0;
 }
