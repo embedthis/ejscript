@@ -262,8 +262,12 @@ module ejs {
                     }
                 }
             } else {
+               cmd.start(["/bin/sh", "-c", "/bin/ps -e"])
                 for each (line in cmd.readLines()) {
-                    let [pid,command] = line.split(" ")
+                    let fields = line.split(/ +/g)
+                    let pid = fields[0]
+                    let command = fields.slice(3).join(" ")
+                    if (!pid.isDigit || command == "") continue
                     if ((pattern is RegExp && pattern.test(command)) || command.search(pattern.toString()) >= 0) {
                         if (preserve.length == 0 || !preserve.find(function(e, index, arrr) { return e == pid })) {
                             // print("KILL " + pid + " pattern " + pattern + " signal " + signal)
@@ -299,10 +303,13 @@ module ejs {
                     }
                 }
             } else {
+                // cmd.start(["/bin/sh", "-c", "/bin/ps -e | awk '{print $1,$4}'"])
                 cmd.start(["/bin/sh", "-c", "/bin/ps -e"])
                 for each (line in cmd.readLines()) {
-                    let [pid,command] = line.split(" ")
+                    let fields = line.split(/ +/g)
+                    let pid = fields[0]
                     let command = fields.slice(3).join(" ")
+                    if (!pid.isDigit || command == "") continue
                     if ((pattern is RegExp && pattern.test(command)) || command.search(pattern.toString()) >= 0) {
                         result.append({pid: pid, command: command})
                     }

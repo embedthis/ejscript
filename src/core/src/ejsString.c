@@ -1314,6 +1314,9 @@ static EjsArray *split(Ejs *ejs, EjsString *sp, int argc, EjsObj **argv)
                 match = ejsCreateString(ejs, &sp->value[rp->endLastMatch], matches[0] - rp->endLastMatch);
                 ejsSetProperty(ejs, results, resultCount++, match);
             }
+            if (matches[1] == rp->endLastMatch) {
+                matches[1]++;
+            }
             rp->endLastMatch = matches[1];
         } while (rp->global);
 
