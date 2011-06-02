@@ -16,7 +16,7 @@ if (!Path("/bin").exists) {
 
     //  Set environment
     cmd = new Cmd
-    cmd.env = { "WEATHER": "sunny" }
+    cmd.env = { "WEATHER": "sunny", "PATH": "/bin:/usr/bin" }
     cmd.start("/bin/sh -c env")
     assert(cmd.response.contains("WEATHER=sunny"))
     assert(cmd.env.WEATHER == "sunny")
