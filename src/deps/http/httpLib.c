@@ -2419,14 +2419,17 @@ void httpDestroyConn(HttpConn *conn)
     if (conn->http) {
         if (conn->server) {
             httpValidateLimits(conn->server, HTTP_VALIDATE_CLOSE_CONN, conn);
+            mprAssert(conn->http);
         }
         if (HTTP_STATE_PARSED <= conn->state && conn->state < HTTP_STATE_COMPLETE) {
             HTTP_NOTIFY(conn, HTTP_STATE_COMPLETE, 0);
+            mprAssert(conn->http);
         }
         HTTP_NOTIFY(conn, HTTP_EVENT_CLOSE, 0);
         mprAssert(conn->http);
         httpRemoveConn(conn->http, conn);
         httpCloseConn(conn);
+        mprAssert(conn->http);
         conn->input = 0;
         if (conn->rx) {
             conn->rx->conn = 0;

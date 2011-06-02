@@ -28,7 +28,7 @@ module ejs.web {
         r.add("\@/User/register")
 
         //  Add route for files with a ".es" extension and use the ScriptApp to generate the response
-        r.add(/\.es$/, {response: ScriptApp})
+        r.add(/\.es$/i, {response: ScriptApp})
 
         //  Add route for directories and use the DirApp to generate the response
         r.add(Router.isDir, {name: "dir", response: DirApp})
@@ -172,11 +172,11 @@ module ejs.web {
             if (staticPattern) {
                 add(staticPattern, {name: "default", response: StaticApp})
             }
-/*  MOB
-            add(/\.html$|\.css$|\.jpg$|\.gif$|\.png$|\.ico$|\.css$|\.js$/,  {name: "static",  response: StaticApp})
+/*  FUTURE
+            add(/\.html$|\.css$|\.jpg$|\.gif$|\.png$|\.ico$|\.css$|\.js$/i,  {name: "static",  response: StaticApp})
  */
-            add(/\.es$/,  {name: "es",  response: ScriptApp, method: "*"})
-            add(/\.ejs$/, {name: "ejs", module: "ejs.template", response: TemplateApp, method: "*"})
+            add(/\.es$/i,  {name: "es",  response: ScriptApp, method: "*"})
+            add(/\.ejs$/i, {name: "ejs", module: "ejs.template", response: TemplateApp, method: "*"})
             add(isDir,    {name: "dir", response: DirApp})
         }
 
