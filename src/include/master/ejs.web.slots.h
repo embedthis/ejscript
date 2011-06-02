@@ -229,14 +229,15 @@
 #define ES_ejs_web_HttpServer_processBody                              25
 #define ES_ejs_web_HttpServer_pruneWorkers                             26
 #define ES_ejs_web_HttpServer_releaseWorker                            27
-#define ES_ejs_web_HttpServer_secure                                   28
-#define ES_ejs_web_HttpServer_serve                                    29
-#define ES_ejs_web_HttpServer_setPipeline                              30
-#define ES_ejs_web_HttpServer_setLimits                                31
-#define ES_ejs_web_HttpServer_setWorkerImage                           32
-#define ES_ejs_web_HttpServer_trace                                    33
-#define ES_ejs_web_HttpServer_verifyClients                            34
-#define ES_ejs_web_HttpServer_NUM_INSTANCE_PROP                        35
+#define ES_ejs_web_HttpServer_run                                      28
+#define ES_ejs_web_HttpServer_secure                                   29
+#define ES_ejs_web_HttpServer_serve                                    30
+#define ES_ejs_web_HttpServer_setPipeline                              31
+#define ES_ejs_web_HttpServer_setLimits                                32
+#define ES_ejs_web_HttpServer_setWorkerImage                           33
+#define ES_ejs_web_HttpServer_trace                                    34
+#define ES_ejs_web_HttpServer_verifyClients                            35
+#define ES_ejs_web_HttpServer_NUM_INSTANCE_PROP                        36
 #define ES_ejs_web_HttpServer_NUM_INHERITED_PROP                       0
 
 /*
@@ -578,6 +579,6 @@
 #define ES_ejs_web_View_plainFormatter_value                           1
 #define ES_ejs_web_View_plainFormatter_options                         2
 
-#define _ES_CHECKSUM_ejs_web   779811
+#define _ES_CHECKSUM_ejs_web   780153
 
 #endif
