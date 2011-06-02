@@ -119,7 +119,7 @@ module ejs.web {
 //  MOB -- replace all this with blend. Perhaps request and config come over automatically.
                 this.request = request
                 this.config = request.config
-                formats = config.web.views.sformats
+                formats = config.web.views.formats
                 for each (let n: String in 
                         Object.getOwnPropertyNames(controller, {includeBases: true, excludeFunctions: true})) {
                     if (n.startsWith("_")) continue
@@ -917,6 +917,7 @@ MOB -- review and rethink this
             //  MOB -- put all standard types here -- faster
         }
 
+        //  MOB -- 
         private static function dateFormatter(view: View, value: Object, options: Object): String
             new Date(value).format(view.formats.Date)
 

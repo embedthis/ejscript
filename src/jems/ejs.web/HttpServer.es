@@ -528,6 +528,7 @@ server.listen("127.0.0.1:7777")
                     }
                     request.on("close", function() {releaseWorker(w)})
                     passRequest(request, w)
+                    /* Must not touch request from here on - the worker owns it now */
                 } else {
                     //  MOB - rename response => responder
                     process(route.response, request)

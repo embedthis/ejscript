@@ -619,7 +619,6 @@ static EjsObj *cmd_exec(Ejs *ejs, EjsObj *unused, int argc, EjsObj **argv)
     return 0;
 }
 
-
 /************************************ Factory *********************************/
 
 static void manageEjsCmd(EjsCmd *cmd, int flags)

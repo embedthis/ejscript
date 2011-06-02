@@ -89,8 +89,8 @@ Ejs *ejsCreateVM(int argc, cchar **argv, int flags)
     }
     ejs->argc = argc;
     ejs->argv = argv;
-    ejs->dispatcher = mprCreateDispatcher(ejs->name, 1);
     ejs->name = mprAsprintf("ejs-%d", sp->seqno++);
+    ejs->dispatcher = mprCreateDispatcher(ejs->name, 1);
     ejs->mutex = mprCreateLock(ejs);
     ejs->dontExit = sp->dontExit;
     ejs->empty = 1;
