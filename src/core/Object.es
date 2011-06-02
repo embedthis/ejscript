@@ -22,6 +22,7 @@ module ejs {
         /** 
             Clone the object
             @param deep If true, do a deep copy where all object references are also copied, and so on, recursively.
+            A shallow clone will do 1 level deep. Deep clones are N-level deep.
             @spec ejs
          */
         native function clone(deep: Boolean = true): Object
