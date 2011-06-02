@@ -155,7 +155,7 @@ static int setSessionProperty(Ejs *ejs, EjsSession *sp, int slotNum, EjsAny *val
     }
     if (sp->options == 0) {
         sp->options = ejsCreateEmptyPot(ejs);
-        ejsSetPropertyByName(ejs, sp->options, EN("lifespan"), ejsCreateNumber(ejs, sp->lifespan));
+        ejsSetPropertyByName(ejs, sp->options, EN("lifespan"), ejsCreateNumber(ejs, (MprNumber) sp->lifespan));
     }
     if (ejsCacheWriteObj(ejs, sp->cache, sp->key, sp, sp->options) == 0) {
         return EJS_ERR;
