@@ -248,17 +248,27 @@ module ejs {
             }
             let cmd = new Cmd
             if (Config.OS == "WIN") {
-                // cmd.start(["cmd", "/c", "WMIC PROCESS get Processid,Commandline | type"])
-                cmd.start(["/bin/sh", "-c", "/bin/ps -W | awk '{print $4,$8}'"])
+                cmd.start('cmd /A /C "WMIC PROCESS get Processid,Commandline /format:csv"')
+                for each (line in cmd.readLines()) {
+                    let fields = line.split(",")
+                    let pid = fields.pop().trim()
+                    let command = fields.slice(1).join(" ")
+                    if (!pid.isDigit || command == "") continue
+                    if ((pattern is RegExp && pattern.test(command)) || command.search(pattern.toString()) >= 0) {
+                        if (preserve.length == 0 || !preserve.find(function(e, index, arrr) { return e == pid })) {
+                            // print("KILL " + pid + " pattern " + pattern + " signal " + signal)
+                            Cmd.kill(pid, signal)
+                        }
+                    }
+                }
             } else {
-                cmd.start(["/bin/sh", "-c", "/bin/ps -e | awk '{print $1,$4}'"])
-            }
-            for each (line in cmd.readLines()) {
-                let [pid,command] = line.split(" ")
-                if ((pattern is RegExp && pattern.test(command)) || command.search(pattern.toString()) >= 0) {
-                    if (preserve.length == 0 || !preserve.find(function(e, index, arrr) { return e == pid })) {
-                        // print("KILL " + pid + " pattern " + pattern + " signal " + signal)
-                        Cmd.kill(pid, signal)
+                for each (line in cmd.readLines()) {
+                    let [pid,command] = line.split(" ")
+                    if ((pattern is RegExp && pattern.test(command)) || command.search(pattern.toString()) >= 0) {
+                        if (preserve.length == 0 || !preserve.find(function(e, index, arrr) { return e == pid })) {
+                            // print("KILL " + pid + " pattern " + pattern + " signal " + signal)
+                            Cmd.kill(pid, signal)
+                        }
                     }
                 }
             }
@@ -274,19 +284,28 @@ module ejs {
             @return An array of matching processes. Each array entry is an object with properties "pid" and "command".
             @hide 
          */
-        static function ps(pattern: Object): Array {
+        static function ps(pattern: Object = ""): Array {
             let result = []
             let cmd = new Cmd
             if (Config.OS == "WIN") {
-                // cmd.start(["cmd", "/c", "WMIC PROCESS get Processid,Commandline | type"])
-                cmd.start(["/bin/sh", "-c", "/bin/ps -W | awk '{print $4,$8}'"])
+                cmd.start('cmd /A /C "WMIC PROCESS get Processid,Commandline /format:csv"')
+                for each (line in cmd.readLines()) {
+                    let fields = line.split(",")
+                    let pid = fields.pop().trim()
+                    let command = fields.slice(1).join(" ")
+                    if (!pid.isDigit || command == "") continue
+                    if ((pattern is RegExp && pattern.test(command)) || command.search(pattern.toString()) >= 0) {
+                        result.append({pid: pid, command: command})
+                    }
+                }
             } else {
-                cmd.start(["/bin/sh", "-c", "/bin/ps -e | awk '{print $1,$4}'"])
-            }
-            for each (line in cmd.readLines()) {
-                let [pid,command] = line.split(" ")
-                if ((pattern is RegExp && pattern.test(command)) || command.search(pattern.toString()) >= 0) {
-                    result.append({pid: pid, command: command})
+                cmd.start(["/bin/sh", "-c", "/bin/ps -e"])
+                for each (line in cmd.readLines()) {
+                    let [pid,command] = line.split(" ")
+                    let command = fields.slice(3).join(" ")
+                    if ((pattern is RegExp && pattern.test(command)) || command.search(pattern.toString()) >= 0) {
+                        result.append({pid: pid, command: command})
+                    }
                 }
             }
             cmd.close()
