@@ -176,7 +176,8 @@ static EjsPot *sl_limits(Ejs *ejs, EjsLocalCache *cache, int argc, EjsObj **argv
     }
     result = ejsCreateEmptyPot(ejs);
     ejsSetPropertyByName(ejs, result, EN("keys"), ejsCreateNumber(ejs, cache->maxKeys == MAXSSIZE ? 0 : cache->maxKeys));
-    ejsSetPropertyByName(ejs, result, EN("lifespan"), ejsCreateNumber(ejs, cache->lifespan / MPR_TICKS_PER_SEC));
+    ejsSetPropertyByName(ejs, result, EN("lifespan"), 
+        ejsCreateNumber(ejs, (MprNumber) (cache->lifespan / MPR_TICKS_PER_SEC)));
     ejsSetPropertyByName(ejs, result, EN("memory"), ejsCreateNumber(ejs, cache->maxMem == MAXSSIZE ? 0 : cache->maxMem));
     return result;
 }
@@ -215,7 +216,7 @@ static EjsAny *sl_read(Ejs *ejs, EjsLocalCache *cache, int argc, EjsAny **argv)
     }
     if (getVersion) {
         result = ejsCreatePot(ejs, S(Object), 2);
-        ejsSetPropertyByName(ejs, result, EN("version"), ejsCreateNumber(ejs, item->version));
+        ejsSetPropertyByName(ejs, result, EN("version"), ejsCreateNumber(ejs, (MprNumber) item->version));
         ejsSetPropertyByName(ejs, result, EN("data"), item->data);
     } else {
         result = item->data;
