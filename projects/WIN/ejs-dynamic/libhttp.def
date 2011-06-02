@@ -318,6 +318,8 @@ EXPORTS
   httpTraceContent
   httpUpdateUserAcls
   httpUriToString
+  httpUsePrimary
+  httpUseWorker
   httpValidateLimits
   httpValidateNativeCredentials
   httpWait

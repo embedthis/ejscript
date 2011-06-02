@@ -33,9 +33,11 @@ if (!Path("/bin").exists) {
     assert(response == "args,a b,c")
     assert(response.length == 3)
 
-    //  Backquoting to pass in quotes
-    cmd = Cmd(ejs + ' args \\"a\\" b c')
-    let response = deserialize(cmd.response)
-    assert(response.length == 4)
-    assert(response == 'args,"a",b,c')
+    //  Backquoting to pass in quotes. Won't work on windows as windows command exec strips quotes
+    if (Config.OS != "WIN") {
+        cmd = Cmd(ejs + ' args \\"a\\" b c')
+        let response = deserialize(cmd.response)
+        assert(response.length == 4)
+        assert(response == 'args,"a",b,c')
+    }
 }
