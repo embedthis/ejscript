@@ -5146,14 +5146,19 @@ static int sanitizeArgs(MprCmd *cmd, int argc, char **argv, char **env)
     dp = cmd->command;
     for (ap = &argv[0]; *ap; ) {
         start = cp = *ap;
-        quote = '"';
-        for (*dp++ = quote; *cp; ) {
+        quote = (schr(cp, ' ') != 0) ? '"' : 0;
+        if (quote) {
+            *dp++ = quote;
+        }
+        while (*cp) {
             if (*cp == quote && !(cp > start && cp[-1] == '\\')) {
                 *dp++ = '\\';
             }
             *dp++ = *cp++;
         }
-        *dp++ = quote;
+        if (quote) {
+            *dp++ = quote;
+        }
         if (*++ap) {
             *dp++ = ' ';
         }
@@ -5209,6 +5214,7 @@ static int sanitizeArgs(MprCmd *cmd, int argc, char **argv, char **env)
         *dp++ = '\0';                        /* Windows requires two nulls */
         mprAssert(dp <= endp);
     }
+    mprLog(5, "Cmd: %s", cmd->command);
 #endif /* BLD_WIN_LIKE */
     return 0;
 }
