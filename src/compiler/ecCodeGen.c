@@ -773,7 +773,8 @@ static void genClassName(EcCompiler *cp, EjsType *type)
         return;
     }
     slotNum = ejsLookupProperty(ejs, ejs->global, type->qname);
-    if (cp->bind && slotNum <= ES_global_NUM_CLASS_PROP) {
+    if (cp->bind && slotNum < ES_global_NUM_CLASS_PROP) {
+        //  MOB - WARNING: this won't work if classes are implemented like Record.
         mprAssert(slotNum >= 0);
         genGlobalName(cp, slotNum);
 
