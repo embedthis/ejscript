@@ -168,7 +168,6 @@ static EjsVoid *hs_listen(Ejs *ejs, EjsHttpServer *sp, int argc, EjsObj **argv)
             sp->hosted = ejsGetPropertyByName(ejs, options, EN("own")) != S(true);
         }
     }
-
     if (!sp->hosted) {
         if (address == 0) {
             ejsThrowArgError(ejs, "Missing listen endpoint");
@@ -286,6 +285,20 @@ static EjsObj *hs_on(Ejs *ejs, EjsHttpServer *sp, int argc, EjsAny **argv)
 static EjsNumber *hs_port(Ejs *ejs, EjsHttpServer *sp, int argc, EjsObj **argv)
 {
     return ejsCreateNumber(ejs, sp->port);
+}
+
+
+/*  
+    function run(): Void
+ */
+static EjsVoid *hs_run(Ejs *ejs, EjsHttpServer *sp, int argc, EjsObj **argv)
+{
+    if (!sp->hosted) {
+        while (!ejs->exiting && !mprIsStopping()) {
+            mprWaitForEvent(ejs->dispatcher, MAXINT); 
+        }
+    }
+    return 0;
 }
 
 
@@ -634,10 +647,17 @@ static EjsRequest *createRequest(EjsHttpServer *sp, HttpConn *conn)
 {
     Ejs             *ejs;
     EjsRequest      *req;
+    EjsPath         *documents;
     cchar           *dir;
 
     ejs = sp->ejs;
-    dir = conn->host->documentRoot;
+    documents = ejsGetProperty(ejs, sp, ES_ejs_web_HttpServer_documents);
+    if (ejsIs(ejs, documents, Path)) {
+        dir = documents->value;
+    } else {
+        /* Safety fall back */
+        dir = conn->host->documentRoot;
+    }
     req = ejsCreateRequest(ejs, sp, conn, dir);
     httpSetConnContext(conn, req);
 
@@ -873,8 +893,11 @@ void ejsConfigureHttpServerType(Ejs *ejs)
     ejsBindAccess(ejs, prototype, ES_ejs_web_HttpServer_name, hs_name, hs_set_name);
     ejsBindMethod(ejs, prototype, ES_ejs_web_HttpServer_port, hs_port);
     ejsBindMethod(ejs, prototype, ES_ejs_web_HttpServer_off, hs_off);
-    ejsBindMethod(ejs, prototype, ES_ejs_web_HttpServer_passRequest, hs_passRequest);
     ejsBindMethod(ejs, prototype, ES_ejs_web_HttpServer_on, hs_on);
+    ejsBindMethod(ejs, prototype, ES_ejs_web_HttpServer_passRequest, hs_passRequest);
+#if ES_ejs_web_HttpServer_run
+    ejsBindMethod(ejs, prototype, ES_ejs_web_HttpServer_run, hs_run);
+#endif
     ejsBindMethod(ejs, prototype, ES_ejs_web_HttpServer_secure, hs_secure);
     ejsBindMethod(ejs, prototype, ES_ejs_web_HttpServer_setLimits, hs_setLimits);
     ejsBindMethod(ejs, prototype, ES_ejs_web_HttpServer_setPipeline, hs_setPipeline);

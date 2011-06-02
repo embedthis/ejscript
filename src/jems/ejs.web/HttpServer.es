@@ -490,6 +490,12 @@ server.listen("127.0.0.1:7777")
         }
 
         /** 
+            Run the application event loop to service requests.
+            If the HttpServer is hosted in a web server, this call does nothing as the web server will service events. 
+         */
+        native function run(): Void
+
+        /** 
             Define the Secure Sockets Layer (SSL) protocol credentials. This must be done before calling $listen.
             @param keyFile Path of the file containing the server's private key. This file
             contains the PEM encoded private key file for the server. Set to null if the private key is combined with 

@@ -150,6 +150,7 @@ module ejs.web {
         }
 
         function icon(uri: String, options: Object): Void {
+            //MOB uri = request.link(uri)
             write('    <link href="' + uri + '" rel="shortcut icon" />\r\n')
         }
 
@@ -268,6 +269,7 @@ module ejs.web {
                     write('    <script src="' + uri + '" type="text/javascript"></script>\r\n')
                 }
             } else {
+                //MOB uri = request.link(uri)
                 write('    <script src="' + uri + '" type="text/javascript"></script>\r\n')
             }
         }
@@ -287,6 +289,7 @@ module ejs.web {
                     write('    <link rel="stylesheet" type="text/css" href="' + uri + '" />\r\n')
                 }
             } else {
+                //MOB uri = request.link(uri)
                 write('    <link rel="stylesheet" type="text/css" href="' + uri + '" />\r\n')
             }
         }
