@@ -7,13 +7,10 @@ EXPORTS
   ejsConfigureRequestType
   ejsConfigureSessionType
   ejsCreateRequest
-  ejsCreateSession
   ejsDestroySession
   ejsGetSession
   ejsSendRequestCloseEvent
   ejsSendRequestErrorEvent
   ejsSendRequestEvent
   ejsSetSessionTimeout
-  ejsStopSessionTimer
-  ejsUpdateSessionLimits
   ejs_web_Init
