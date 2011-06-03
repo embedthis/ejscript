@@ -11,6 +11,7 @@ assert(re is RegExp)
 assert(re.test("abcdef"))
 assert(!re.test("xyz"))
 
+
 //  Basic exec
 
 assert(re.exec("abcdef") == "def")
@@ -27,17 +28,21 @@ re = /(a)(b)(c)/g
 assert((re.exec("abc def abc")).length == 4)
 assert(re.exec("abc def abc") == "abc,a,b,c")
 
+
 //  Case insensitive matching
 
 assert(/def/.test("def"))
 assert(!/def/.test("DEF"))
 assert(/def/i.test("DEF"))
 
+
 //  toString
 
 assert(/def/ == "/def/")
 assert(/def/g == "/def/g")
 
+
+//  Properties
 
 re = /def/g
 assert(re.global)
@@ -47,6 +52,7 @@ assert(!re.sticky)
 assert(/def/y.sticky)
 assert(/def/m.multiline)
 assert(/def/i.ignoreCase)
+
 
 //  lastIndex
 
@@ -66,6 +72,7 @@ var r = new RegExp("gray|grey")
 r.exec("The gray fox")
 assert(r.lastIndex == 0)
 
+
 //  Test RegExp constructor
 
 let s = "abc_def-ghi_jkl"
@@ -79,15 +86,25 @@ assert(RegExp("abc", "g") == "/abc/g")
 assert(RegExp("abc", "g").toString() == "/abc/g")
 assert(RegExp("/abc/g") == "//abc/g/")
 
+
 //  replace
 
 var result = new RegExp("z|d", "g")
 assert(result.replace("The lazy dog", "ZZZ") == "The laZZZy ZZZog")
 
+
 //  source
 
 var result = new RegExp("z|d", "g")
 assert(result.source == "z|d")
+
+
+//  White space
+assert("abc".split(/ +/).toString() == "abc")
+assert("a b c".split(/ +/).toString() == "a,b,c")
+assert(" a b c".split(/ +/).toString() == ",a,b,c")
+assert(" a b c ".split(/ +/).toString() == ",a,b,c,")
+
 
 /*
     re.matched
@@ -97,5 +114,6 @@ assert(result.source == "z|d")
         re.replace
     re.replace(re, "$2 $1")
  */
+
 
 

@@ -1304,25 +1304,26 @@ static EjsArray *split(Ejs *ejs, EjsString *sp, int argc, EjsObj **argv)
         rp = (EjsRegExp*) argv[0];
         rp->endLastMatch = 0;
         resultCount = 0;
-        do {
+        while (1) {
             count = (int) pcre_exec(rp->compiled, NULL, sp->value, (int) sp->length, rp->endLastMatch, 0, matches, 
                 sizeof(matches) / sizeof(int));
             if (count <= 0) {
                 break;
             }
-            if (rp->endLastMatch <= matches[0]) {
-                match = ejsCreateString(ejs, &sp->value[rp->endLastMatch], matches[0] - rp->endLastMatch);
-                ejsSetProperty(ejs, results, resultCount++, match);
-            }
+            match = ejsCreateString(ejs, &sp->value[rp->endLastMatch], matches[0] - rp->endLastMatch);
+            ejsSetProperty(ejs, results, resultCount++, match);
             if (matches[1] == rp->endLastMatch) {
-                matches[1]++;
+                /* Catch patterns that match the empty string - prevents infinite loop */
+                rp->endLastMatch = matches[1] + 1;
+            } else {
+                rp->endLastMatch = matches[1];
             }
-            rp->endLastMatch = matches[1];
-        } while (rp->global);
-
+        }
         if (rp->endLastMatch < sp->length) {
             match = ejsCreateString(ejs, &sp->value[rp->endLastMatch], sp->length - rp->endLastMatch);
-            ejsSetProperty(ejs, results, resultCount++, match);
+            ejsSetProperty(ejs, results, resultCount, match);
+        } else {
+            ejsSetProperty(ejs, results, resultCount, S(empty));
         }
         return results;
     }
