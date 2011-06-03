@@ -56,7 +56,7 @@ properties shared by all objects of a given type.</td></tr>
    <tr class='apiDef'><td class='apiType'> static </td><td><a href='#getOwnPropertyCount'><b>getOwnPropertyCount</b></a>(obj: <a href='Object.html'>Object</a>): <a href='Number.html'>Number</a></tr><tr class='apiBrief'><td>&nbsp;</td><td>The number of properties in the object including non-enumerable properties.</td></tr>
    <tr class='apiDef'><td class='apiType'> static </td><td><a href='#getOwnPropertyDescriptor'><b>getOwnPropertyDescriptor</b></a>(obj: <a href='Object.html'>Object</a>, prop: <a href='String.html'>String</a>): <a href='Object.html'>Object</a></tr><tr class='apiBrief'><td>&nbsp;</td><td>Get the prototype property descriptor.</td></tr>
    <tr class='apiDef'><td class='apiType'> static </td><td><a href='#getOwnPropertyNames'><b>getOwnPropertyNames</b></a>(obj: <a href='Object.html'>Object</a>, options = null): <a href='Array.html'>Array</a></tr><tr class='apiBrief'><td>&nbsp;</td><td>Return an array of all property names including non-enumerable properties.</td></tr>
-   <tr class='apiDef'><td class='apiType'> static </td><td><a href='#getOwnPrototypeOf'><b>getOwnPrototypeOf</b></a>(obj: <a href='Object.html'>Object</a>): <a href='Type.html'>Type</a></tr><tr class='apiBrief'><td>&nbsp;</td><td>Get the prototype object.</td></tr>
+   <tr class='apiDef'><td class='apiType'> static </td><td><a href='#getOwnPrototypeOf'><b>getOwnPrototypeOf</b></a>(obj: <a href='Object.html'>Object</a>): <a href='Object.html'>Object</a></tr><tr class='apiBrief'><td>&nbsp;</td><td>Get the prototype object.</td></tr>
    <tr class='apiDef'><td class='apiType'> static </td><td><a href='#getType'><b>getType</b></a>(obj: <a href='Object.html'>Object</a>): <a href='Type.html'>Type</a></tr><tr class='apiBrief'><td>&nbsp;</td><td>Get the type for an object.</td></tr>
    <tr class='apiDef'><td class='apiType'> static </td><td><a href='#getTypeName'><b>getTypeName</b></a>(obj: <a href='Object.html'>Object</a>): <a href='String.html'>String</a></tr><tr class='apiBrief'><td>&nbsp;</td><td>Get the name of the type for an object.</td></tr>
    <tr class='apiDef'><td class='apiType'> static </td><td><a href='#isExtensible'><b>isExtensible</b></a>(obj: <a href='Object.html'>Object</a>): <a href='Boolean.html'>Boolean</a></tr><tr class='apiBrief'><td>&nbsp;</td><td>Test if an object is extensible.</td></tr>
@@ -96,7 +96,7 @@ properties shared by all objects of a given type.</td></tr>
 <dl><dt>Description</dt></dd><dd>Clone the object. </dd></dl>
 <dl><dt>Parameters</dt>
 <dd><table class='parameters' summary ='parameters'>
-<tr class='param'><td class='param'>deep: <a href='Boolean.html'>Boolean</a> </td><td>If true, do a deep copy where all object references are also copied, and so on, recursively. [default: true]</td></tr></table></dd>
+<tr class='param'><td class='param'>deep: <a href='Boolean.html'>Boolean</a> </td><td>If true, do a deep copy where all object references are also copied, and so on, recursively. A shallow clone will do 1 level deep. Deep clones are N-level deep. [default: true]</td></tr></table></dd>
 </dl><dl><dt>Specified</dt>
 <dd>ejscript-2.0</dd></dl>
 </div>
@@ -236,7 +236,7 @@ and does not include the namespace portions of the names. Use getOwnPropertyDesc
 namespace values.</dd></dl>
 <dl><dt>Parameters</dt>
 <dd><table class='parameters' summary ='parameters'>
-<tr class='param'><td class='param'>obj: <a href='Object.html'>Object</a> </td><td>Object to inspect.</td></tr><tr class='param'><td class='param'>options </td><td>Property selection options MOB -- inconsistent with JSON.baseClasses. [default: null]</td></tr></table></dd>
+<tr class='param'><td class='param'>obj: <a href='Object.html'>Object</a> </td><td>Object to inspect.</td></tr><tr class='param'><td class='param'>options </td><td>Property selection options. [default: null]</td></tr></table></dd>
 </dl><dl><dt>Options</dt>
 <dd><table class='parameters' summary ='options'>
 <td class='param'>includeBases</td><td>Boolean determining if base class properties will included. Defaults to false.</td></tr>
@@ -249,7 +249,7 @@ namespace values.</dd></dl>
 <hr />
 <a name='getOwnPrototypeOf'></a>
 <div class='api'>
-<div class='apiSig'>static     getOwnPrototypeOf(obj: <a href='Object.html'>Object</a>): <a href='Type.html'>Type</a>
+<div class='apiSig'>static     getOwnPrototypeOf(obj: <a href='Object.html'>Object</a>): <a href='Object.html'>Object</a>
 </div>
 <div class='apiDetail'>
 <dl><dt>Description</dt></dd><dd>Get the prototype object. </dd></dl>

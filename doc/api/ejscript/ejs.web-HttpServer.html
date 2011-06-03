@@ -22,9 +22,9 @@
        </td></tr>
 </table>
 
-<p class='classBrief'>HttpServer objects represents the server-side of a Hypertext Transfer Protocol (HTTP) version 1.1 connection.</p>
+<p class='classBrief'>HttpServer objects represents the server-side of Hypertext Transfer Protocol (HTTP) version 1.1 connections.</p>
 
-<p class='classDescription'>It is used to receive HTTP requests and generate responses. It supports the HTTP/1.1 standard
+<p class='classDescription'>The HttpServer class is used to receive HTTP requests and generate responses. It supports the HTTP/1.1 standard
 including methods for GET, POST, PUT, DELETE, OPTIONS, and TRACE. It also supports Keep-Alive and SSL connections.</p>
 
 </div>
@@ -41,10 +41,12 @@ including methods for GET, POST, PUT, DELETE, OPTIONS, and TRACE. It also suppor
    <tr><td nowrap align='center'> get set </td><td>async</td><td><a href='Boolean.html'>Boolean</a></td><td>The current async mode.If the server is put into sync mode, it must be done before calling listen. Set to true if the stream is in async mode.</td></tr>
 <a name='config'></a>
    <tr><td nowrap align='center'> </td><td>config</td><td><a href='Object.html'>Object</a></td><td>Server configuration. Initially refers to App.config which is filled with the aggregated "ejsrc" content.
-If a documentRoot/ejsrc exists, it is loaded once at startup and is blended (overwrites) existing 
+If a "ejsrc" configuration file exists, it is loaded once at startup and is blended (overwrites) existing 
 App.config settings.</td></tr>
-<a name='documentRoot'></a>
-   <tr><td nowrap align='center'> </td><td>documentRoot</td><td><a href='Path.html'>Path</a></td><td>Default local directory for web documents to serve. This is used as the default Request.dir value.</td></tr>
+<a name='documents'></a>
+   <tr><td nowrap align='center'> </td><td>documents</td><td><a href='Path.html'>Path</a></td><td>Default local directory for web documents to serve. This is used as the default Request.dir value.</td></tr>
+<a name='home'></a>
+   <tr><td nowrap align='center'> </td><td>home</td><td><a href='Path.html'>Path</a></td><td>Default root directory for the server. The app does not change its current directory to this path.</td></tr>
 <a name='indicies'></a>
    <tr><td nowrap align='center'> static </td><td>indicies</td><td><a href='Array.html'>Array</a></td><td>Index files list. Index files are used by various handlers when requests to directories are made. The 
 indicies are tried in turn for the first valid index file.</td></tr>
@@ -56,12 +58,13 @@ protocol scheme.</td></tr>
 <a name='name'></a>
    <tr><td nowrap align='center'> get set </td><td>name</td><td><a href='String.html'>String</a></td><td>The authorized public host name for the server. If defined, this name will be used in preference for 
 request redirections. If no name is defined, redirections will use to the listening IP address by default.</td></tr>
+<a name='onrequest'></a>
+   <tr><td nowrap align='center'> </td><td>onrequest</td><td>&nbsp;</td><td>Function to invoke inside a worker when serving a threaded request. The function is invoked with the signature:
+function onrequest(request: Request): Void.</td></tr>
+<a name='options'></a>
+   <tr><td nowrap align='center'> </td><td>options</td><td><a href='Boolean.html'>Boolean</a></td><td>HttpServer constructor options. </td></tr>
 <a name='port'></a>
    <tr><td nowrap align='center'> get </td><td>port</td><td><a href='Number.html'>Number</a></td><td>Get the port bound to this Http endpoint. </td></tr>
-<a name='serverRoot'></a>
-   <tr><td nowrap align='center'> </td><td>serverRoot</td><td><a href='Path.html'>Path</a></td><td>Default root directory for the server. The app does not change its current directory to this path.</td></tr>
-<a name='sessions'></a>
-   <tr><td nowrap align='center'> </td><td>sessions</td><td><a href='Object.html'>Object</a></td><td>Hash of session objects. This is created on demand as requests require session state storage.</td></tr>
 <a name='software'></a>
    <tr><td nowrap align='center'> get </td><td>software</td><td><a href='String.html'>String</a></td><td>Software description for the web server. </td></tr>
 </table>
@@ -73,7 +76,8 @@ request redirections. If no name is defined, redirections will use to the listen
 <h2 class='classSection'>HttpServer Class Methods</h2>
 <table class='apiIndex' summary='methods'>
    <tr><th>Qualifiers</th><th width='95%'>Method</th></tr>
-   <p>(No own class methods defined)</p></table>
+   <tr class='apiDef'><td class='apiType'> static </td><td><a href='#create'><b>create</b></a>(address: <a href='String.html'>String</a>, options: <a href='Object.html'>Object</a> = expression): <a href='Void.html'>Void</a></tr><tr class='apiBrief'><td>&nbsp;</td><td>Convenience routine to create a web server.</td></tr>
+</table>
 
 <p class='inheritedLink'><a href='Object.html#InstanceMethods'><i>Inherited Methods</i></a></p>
 
@@ -82,15 +86,20 @@ request redirections. If no name is defined, redirections will use to the listen
 <h2 class='classSection'>HttpServer Instance Methods</h2>
 <table class='apiIndex' summary='methods'>
    <tr><th>Qualifiers</th><th width='95%'>Method</th></tr>
-   <tr class='apiDef'><td class='apiType'></td><td><a href='#HttpServer'><b>HttpServer</b></a>(documentRoot: <a href='Path.html'>Path</a> = ., serverRoot: <a href='Path.html'>Path</a> = .)</tr><tr class='apiBrief'><td>&nbsp;</td><td>Create a HttpServer object.</td></tr>
+   <tr class='apiDef'><td class='apiType'></td><td><a href='#HttpServer'><b>HttpServer</b></a>(options: <a href='Object.html'>Object</a> = expression)</tr><tr class='apiBrief'><td>&nbsp;</td><td>Create a HttpServer object.</td></tr>
    <tr class='apiDef'><td class='apiType'> </td><td><a href='#accept'><b>accept</b></a>(): <a href='ejs.web-Request.html'>Request</a></tr><tr class='apiBrief'><td>&nbsp;</td><td>Accept a new incoming for sync servers.</td></tr>
    <tr class='apiDef'><td class='apiType'> </td><td><a href='#close'><b>close</b></a>(): <a href='Void.html'>Void</a></tr><tr class='apiBrief'><td>&nbsp;</td><td>Close the stream.</td></tr>
    <tr class='apiDef'><td class='apiType'> </td><td><a href='#listen'><b>listen</b></a>(endpoint: <a href='String.html'>String</a> = null): <a href='Void.html'>Void</a></tr><tr class='apiBrief'><td>&nbsp;</td><td>Listen for client connections.</td></tr>
    <tr class='apiDef'><td class='apiType'> </td><td><a href='#off'><b>off</b></a>(name: <a href='Object.html'>Object</a>, observer: <a href='Function.html'>Function</a>): <a href='Void.html'>Void</a></tr><tr class='apiBrief'><td>&nbsp;</td><td>Remove an observer from the server.</td></tr>
    <tr class='apiDef'><td class='apiType'> </td><td><a href='#on'><b>on</b></a>(name, observer: <a href='Function.html'>Function</a>): <a href='Void.html'>Void</a></tr><tr class='apiBrief'><td>&nbsp;</td><td>Add an observer for server events.</td></tr>
+   <tr class='apiDef'><td class='apiType'> </td><td><a href='#passRequest'><b>passRequest</b></a>(request: <a href='ejs.web-Request.html'>Request</a>, worker: <a href='Worker.html'>Worker</a>)</tr><tr class='apiBrief'><td>&nbsp;</td><td>Pass a request into a worker VM.</td></tr>
+   <tr class='apiDef'><td class='apiType'> </td><td><a href='#process'><b>process</b></a>(app: <a href='Function.html'>Function</a>, request: <a href='ejs.web-Request.html'>Request</a>, finalize: <a href='Boolean.html'>Boolean</a> = true): <a href='Void.html'>Void</a></tr><tr class='apiBrief'><td>&nbsp;</td><td>Process a web request.</td></tr>
+   <tr class='apiDef'><td class='apiType'> </td><td><a href='#run'><b>run</b></a>(): <a href='Void.html'>Void</a></tr><tr class='apiBrief'><td>&nbsp;</td><td>Run the application event loop to service requests.</td></tr>
    <tr class='apiDef'><td class='apiType'> </td><td><a href='#secure'><b>secure</b></a>(keyFile: <a href='Path.html'>Path</a>, certFile: <a href='Path.html'>Path</a>, protocols: <a href='Array.html'>Array</a> = null, ciphers: <a href='Array.html'>Array</a> = null): <a href='Void.html'>Void</a></tr><tr class='apiBrief'><td>&nbsp;</td><td>Define the Secure Sockets Layer (SSL) protocol credentials.</td></tr>
+   <tr class='apiDef'><td class='apiType'> </td><td><a href='#serve'><b>serve</b></a>(request: <a href='ejs.web-Request.html'>Request</a>, router: <a href='ejs.web-Router.html'>Router</a> = expression): <a href='Void.html'>Void</a></tr><tr class='apiBrief'><td>&nbsp;</td><td>Serve a web request.</td></tr>
    <tr class='apiDef'><td class='apiType'> </td><td><a href='#setLimits'><b>setLimits</b></a>(limits: <a href='Object.html'>Object</a>): <a href='Void.html'>Void</a></tr><tr class='apiBrief'><td>&nbsp;</td><td>Update the server resource limits.</td></tr>
    <tr class='apiDef'><td class='apiType'> </td><td><a href='#setPipeline'><b>setPipeline</b></a>(incoming: <a href='Array.html'>Array</a>, outgoing: <a href='Array.html'>Array</a>, connector: <a href='String.html'>String</a>): <a href='Void.html'>Void</a></tr><tr class='apiBrief'><td>&nbsp;</td><td>Define the stages of the Http processing pipeline.</td></tr>
+   <tr class='apiDef'><td class='apiType'> </td><td><a href='#setWorkerImage'><b>setWorkerImage</b></a>(worker: <a href='Worker.html'>Worker</a>): <a href='Void.html'>Void</a></tr><tr class='apiBrief'><td>&nbsp;</td><td>Define a worker that will serve as the base for cloning workers to serve web requests.</td></tr>
    <tr class='apiDef'><td class='apiType'> </td><td><a href='#trace'><b>trace</b></a>(options: <a href='Object.html'>Object</a>): <a href='Void.html'>Void</a></tr><tr class='apiBrief'><td>&nbsp;</td><td>Configure request tracing for the server.</td></tr>
    <tr class='apiDef'><td class='apiType'> </td><td><a href='#verifyClients'><b>verifyClients</b></a>(caCertPath: <a href='Path.html'>Path</a>, caCertFile: <a href='Path.html'>Path</a>): <a href='Void.html'>Void</a></tr><tr class='apiBrief'><td>&nbsp;</td><td>Verify client certificates.</td></tr>
 </table>
@@ -101,22 +110,31 @@ request redirections. If no name is defined, redirections will use to the listen
 <h2>Method Detail</h2>
 <a name='HttpServer'></a>
 <div class='api'>
-<div class='apiSig'>  ejs.web  HttpServer(documentRoot: <a href='Path.html'>Path</a> = ., serverRoot: <a href='Path.html'>Path</a> = .)
+<div class='apiSig'>  ejs.web  HttpServer(options: <a href='Object.html'>Object</a> = expression)
 </div>
 <div class='apiDetail'>
 <dl><dt>Description</dt></dd><dd>Create a HttpServer object. The server is created in async mode by default.
 If an "ejsrc" file exists in the server root, it will be loaded and update the "<a href='#config"'>config"</a> properties.</dd></dl>
 <dl><dt>Parameters</dt>
 <dd><table class='parameters' summary ='parameters'>
-<tr class='param'><td class='param'>documentRoot: <a href='Path.html'>Path</a> </td><td>Directory containing web documents to serve. If set to null and the HttpServer is hosted, the documentRoot will be defined by the web server. [default: .]</td></tr><tr class='param'><td class='param'>serverRoot: <a href='Path.html'>Path</a> </td><td>Base directory for the server ejsrc configuration file. If set to null and the HttpServer is  hosted, the serverRoot will be defined by the web server. [default: .]</td></tr></table></dd>
+<tr class='param'><td class='param'>options: <a href='Object.html'>Object</a> </td><td>Set of options to configure the server. [default: expression]</td></tr><tr class='param'><td class='param'>options: <a href='Object.html'>Object</a> </td><td>null [default: expression]</td></tr></table></dd>
+</dl><dl><dt>Options</dt>
+<dd><table class='parameters' summary ='options'>
+<td class='param'>documents</td><td>Directory containing web documents to serve. If unset and the HttpServer is hosted, the <a href='#documents'>documents</a> property will be defined by the web server.</td></tr>
+<td class='param'>home</td><td>Base directory for the server and the "ejsrc" configuration file. If unset and the HttpServer is  hosted, the <a href='#home'>home</a> property will be defined by the web server.</td></tr>
+<td class='param'>ejsrc</td><td>Alternate path to the "ejsrc" configuration file.</td></tr>
+<td class='param'>config</td><td>Alternate App.config settings.</td></tr>
+<td class='param'>own</td><td>If hosted inside a web server, set to true to bypass any web server listening endpoints and  create a new stand-alone listening connection.</td></tr>
+</table></dd>
 </dl><dl><dt>Specified</dt>
 <dd>ejscript-2.0</dd></dl>
 <dl><dt>Stability</dt>
 <dd>Prototype.</dd></dl>
 <dl><dt>Example</dt>
-<dd><pre>let server: HttpServer = new HttpServer(".", "web")
+<dd><pre>let server: HttpServer = new HttpServer({documents: "web"})
 let router = Router(Router.Restful)
 server.on("readable", function (event: String, request: Request) {
+    // "this" object is also set to request
     request.status = 200
     request.setHeaders({"Content-Type": "text/plain"})
     request.on("readable", function (event, request) {
@@ -152,7 +170,7 @@ as the HttpServer automatically creates the Request object and passes it on "rea
 <dd><pre>server = new HttpServer
 server.listen("8080")
 while (request = server.accept()) {
-    Web.serve(request)
+    server.serve(request)
 }</pre></dd></dl>
 </div>
 </div>
@@ -166,6 +184,25 @@ while (request = server.accept()) {
 <dl><dt>Events</dt>
 <dd><table class='parameters' summary ='events'>
 <td class='param'>close</td><td>A close event is issued before closing the stream.</td></tr>
+</table></dd>
+</dl></div>
+</div>
+<hr />
+<a name='create'></a>
+<div class='api'>
+<div class='apiSig'>static     create(address: <a href='String.html'>String</a>, options: <a href='Object.html'>Object</a> = expression): <a href='Void.html'>Void</a>
+</div>
+<div class='apiDetail'>
+<dl><dt>Description</dt></dd><dd>Convenience routine to create a web server. This will start a routing web server that will serve a 
+variety of content using the given specified route tables.</dd></dl>
+<dl><dt>Parameters</dt>
+<dd><table class='parameters' summary ='parameters'>
+<tr class='param'><td class='param'>address: <a href='String.html'>String</a> </td><td>The IP endpoint address on which to listen. The address may be a port number or a composite  "IP:PORT" string. If only a port number is provided, the socket will listen on all interfaces on that port.  If null is provided for an endpoint value, an existing web server listening connection will be used. In this case, the web server will typically be the virtual host that specifies the EjsStartup script. See the hosting web server documentation for specifics.</td></tr><tr class='param'><td class='param'>options: <a href='Object.html'>Object</a> </td><td>Set of options to configure the server. [default: expression]</td></tr><tr class='param'><td class='param'>options: <a href='Object.html'>Object</a> </td><td>null [default: expression]</td></tr></table></dd>
+</dl><dl><dt>Options</dt>
+<dd><table class='parameters' summary ='options'>
+<td class='param'>documents</td><td>Directory containing web documents to serve. If unset and the HttpServer is hosted, the <a href='#documents'>documents</a> property will be defined by the web server.</td></tr>
+<td class='param'>home</td><td>Base directory for the server and the "ejsrc" configuration file. If unset and the HttpServer is  hosted, the <a href='#home'>home</a> property will be defined by the web server.</td></tr>
+<td class='param'>routes</td><td>Route table to use. Defaults to Router.Top.</td></tr>
 </table></dd>
 </dl></div>
 </div>
@@ -184,7 +221,7 @@ Request object.  In async mode, Request objects will be created automatically an
 observers via "readable" events.</dd></dl>
 <dl><dt>Parameters</dt>
 <dd><table class='parameters' summary ='parameters'>
-<tr class='param'><td class='param'>endpoint: <a href='String.html'>String</a> </td><td>The endpoint address on which to listen. An endoint may be a port number or a composite  "IP:PORT" string. If only a port number is provided, the socket will listen on all interfaces on that port.  If null is provided for an endpoint value, an existing web server listening connection will be used. In this case, the web server will typically be the virtual host that specifies the EjsStartup script. See the hosting web server documentation for specifics. [default: null]</td></tr></table></dd>
+<tr class='param'><td class='param'>endpoint: <a href='String.html'>String</a> </td><td>The endpoint address on which to listen. An endoint may be a port number or a composite  "IP:PORT" string. If only a port number is provided, the socket will listen on all interfaces on that port.  The IP portion may also be "*"" to indicate all interfaces. If the server is hosted in a web server, an appropriate existing web server listening connection will be  used. Otherwise, if not hosted, a server socket will be opened on the endpoint. If hosted and an endpoint is not provided, the server will listen on all appropriate web server connections. [default: null]</td></tr></table></dd>
 </dl><dl><dt>Events</dt>
 <dd><table class='parameters' summary ='events'>
 <td class='param'>Issues</td><td>A "accept" event when there is a new connection available.</td></tr>
@@ -193,10 +230,10 @@ observers via "readable" events.</dd></dl>
 <a href='ArgError.html'>ArgError</a>: if the specified endpoint address is not valid or available for binding.
 </dd>
 </dl><dl><dt>Example</dt>
-<dd><pre>server = new Http(".", "./web")
+<dd><pre>server = new Http({home: ".", documents: "web"})
 server.on("readable", function (event, request) {
-    //  NOTE: this is set to the request
-    Web.serve(request)
+    //  NOTE: "this" is set to the request
+    server.serve(request)
 })
 server.listen("80")</pre></dd></dl>
 </div>
@@ -225,12 +262,44 @@ server.listen("80")</pre></dd></dl>
 <tr class='param'><td class='param'>name </td><td>Name of the event to listen for. The name may be an array of events.</td></tr><tr class='param'><td class='param'>observer: <a href='Function.html'>Function</a> </td><td>Callback listening function. The function is called with the following signature: function on(event: String, ...args): Void.</td></tr></table></dd>
 </dl><dl><dt>Events</dt>
 <dd><table class='parameters' summary ='events'>
-<td class='param'>readable</td><td>Issued when there is a new request available. This readable event will explicitlyl set the value of "this" to the request regardless of whether the function has a bound "this" value.</td></tr>
+<td class='param'>readable</td><td>Issued when there is a new request available. This readable event will explicitly set the value of "this" to the request regardless of whether the function has a bound "this" value.</td></tr>
 <td class='param'>close</td><td>Issued when server is being closed.</td></tr>
-<td class='param'>createSession</td><td>Issued when a new session store object is created for a client. The request object is passed.</td></tr>
-<td class='param'>destroySession</td><td>Issued when a session is destroyed. The request object is passed.</td></tr>
 </table></dd>
 </dl></div>
+</div>
+<hr />
+<a name='passRequest'></a>
+<div class='api'>
+<div class='apiSig'>    passRequest(request: <a href='ejs.web-Request.html'>Request</a>, worker: <a href='Worker.html'>Worker</a>)
+</div>
+<div class='apiDetail'>
+<dl><dt>Description</dt></dd><dd>Pass a request into a worker VM. The onrequest callback receives the request. This routine clones stub 
+Request and HttpServer objects into the worker VM.</dd></dl>
+<dl><dt>Parameters</dt>
+<dd><table class='parameters' summary ='parameters'>
+<tr class='param'><td class='param'>request: <a href='ejs.web-Request.html'>Request</a> </td><td>Request object.</td></tr><tr class='param'><td class='param'>worker: <a href='Worker.html'>Worker</a> </td><td>Worker to handle the request.</td></tr></table></dd>
+</dl></div>
+</div>
+<hr />
+<a name='process'></a>
+<div class='api'>
+<div class='apiSig'>    process(app: <a href='Function.html'>Function</a>, request: <a href='ejs.web-Request.html'>Request</a>, finalize: <a href='Boolean.html'>Boolean</a> = true): <a href='Void.html'>Void</a>
+</div>
+<div class='apiDetail'>
+<dl><dt>Description</dt></dd><dd>Process a web request. </dd></dl>
+<dl><dt>Parameters</dt>
+<dd><table class='parameters' summary ='parameters'>
+<tr class='param'><td class='param'>request: <a href='ejs.web-Request.html'>Request</a> </td><td>Request object.</td></tr><tr class='param'><td class='param'>app: <a href='Function.html'>Function</a> </td><td>Web application function.</td></tr><tr class='param'><td class='param'>finalize: <a href='Boolean.html'>Boolean</a> </td><td>null [default: true]</td></tr></table></dd>
+</dl></div>
+</div>
+<hr />
+<a name='run'></a>
+<div class='api'>
+<div class='apiSig'>    run(): <a href='Void.html'>Void</a>
+</div>
+<div class='apiDetail'>
+<dl><dt>Description</dt></dd><dd>Run the application event loop to service requests. If the HttpServer is hosted in a web server, this call does nothing as the web server will service events.</dd></dl>
+</div>
 </div>
 <hr />
 <a name='secure'></a>
@@ -245,6 +314,19 @@ server.listen("80")</pre></dd></dl>
 </dl><dl><dt>Throws</dt><dd>
 <a href='ArgError.html'>ArgError</a>: for invalid arguments
 </dd>
+</dl></div>
+</div>
+<hr />
+<a name='serve'></a>
+<div class='api'>
+<div class='apiSig'>    serve(request: <a href='ejs.web-Request.html'>Request</a>, router: <a href='ejs.web-Router.html'>Router</a> = expression): <a href='Void.html'>Void</a>
+</div>
+<div class='apiDetail'>
+<dl><dt>Description</dt></dd><dd>Serve a web request. Convenience function to route, load and start a web application. 
+Called by web application start script.</dd></dl>
+<dl><dt>Parameters</dt>
+<dd><table class='parameters' summary ='parameters'>
+<tr class='param'><td class='param'>request: <a href='ejs.web-Request.html'>Request</a> </td><td>Request object.</td></tr><tr class='param'><td class='param'>router: <a href='ejs.web-Router.html'>Router</a> </td><td>Configured router instance. If omitted, a default Router will be created using the Router.Top routing table. [default: expression]</td></tr></table></dd>
 </dl></div>
 </div>
 <hr />
@@ -276,6 +358,18 @@ the network.</dd></dl>
 <dl><dt>Parameters</dt>
 <dd><table class='parameters' summary ='parameters'>
 <tr class='param'><td class='param'>incoming: <a href='Array.html'>Array</a> </td><td>Array of stages for the incoming pipeline: default: ["chunk", "range", "upload"].</td></tr><tr class='param'><td class='param'>outgoing: <a href='Array.html'>Array</a> </td><td>Array of stages for the outgoing pipeline: default: ["auth", "range", "chunk"].</td></tr><tr class='param'><td class='param'>connector: <a href='String.html'>String</a> </td><td>Network connector to use for I/O. Defaults to the network connector "net". Other values: "send". The "net" connector transparently upgrades to the "send" connector if transmitting static data and  not using SSL, ranged or chunked transfers.</td></tr></table></dd>
+</dl></div>
+</div>
+<hr />
+<a name='setWorkerImage'></a>
+<div class='api'>
+<div class='apiSig'>    setWorkerImage(worker: <a href='Worker.html'>Worker</a>): <a href='Void.html'>Void</a>
+</div>
+<div class='apiDetail'>
+<dl><dt>Description</dt></dd><dd>Define a worker that will serve as the base for cloning workers to serve web requests. </dd></dl>
+<dl><dt>Parameters</dt>
+<dd><table class='parameters' summary ='parameters'>
+<tr class='param'><td class='param'>worker: <a href='Worker.html'>Worker</a> </td><td>Configured worker.</td></tr></table></dd>
 </dl></div>
 </div>
 <hr />

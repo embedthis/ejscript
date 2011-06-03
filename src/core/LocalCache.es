@@ -77,6 +77,7 @@ module ejs {
         native function read(key: String~, options: Object = null): String
 
         /**
+            Remove the key and associated value from the cache
             @param key Key value to remove. If key is null, then all keys are removed.
             @return True if the key was removed.
          */
@@ -93,6 +94,9 @@ module ejs {
         /**
             Write the key and associated value to the cache. The value is written according to the optional mode option.  
             The key's expiry will be updated based on the defined lifespan from the current time.
+            @param key Key to modify
+            @param value String value to associate with the key
+            @param options Options values
             @option expires When to expire the key. Takes precedence over lifetime. 
             @option lifespan Preservation time for the key in seconds. If zero, the key will never expire.
             @option mode Mode of writing: "set" is the default and means set a new value and create if required.

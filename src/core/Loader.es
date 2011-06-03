@@ -30,7 +30,7 @@ module ejs {
         private static var timestamps = {}
         private static const defaultExtensions = [".es", ".js"]
 
-        /*
+        /**
             WARNING: this will not be supported in future releases as the Harmony loader will be supported instead.
             @hide
          */

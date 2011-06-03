@@ -96,7 +96,17 @@ SQLite or MySQL. Not all the functionality expressed by this API may be implemen
 will also be defined as the default database.</dd></dl>
 <dl><dt>Parameters</dt>
 <dd><table class='parameters' summary ='parameters'>
-<tr class='param'><td class='param'>adapter: <a href='String.html'>String</a> </td><td>Database adapter to use. E.g. "sqlite". Sqlite is currently the only supported adapter.</td></tr><tr class='param'><td class='param'>options: <a href='Object.html'>Object</a> </td><td>Connection options. This may be filename or an object hash of properties. If set to a filename they type must be either String or Path and it should contain the filename of the database on the local system. If options is set ot an object hash. It should contain adapter specific properties that specify  how to attach to the database. Typical fields include: <ul> <li>name - Database URI Examples: http://example.com:1234/database.db, Examples: file://var/spool/db/database.db </li> <li>username - Database username</li> <li>password - Database password</li> <li>trace - Trace database commands to the log <li>socket - /var/run/mysqld/mysqld.sock </ul></td></tr></table></dd>
+<tr class='param'><td class='param'>adapter: <a href='String.html'>String</a> </td><td>Database adapter to use. E.g. "sqlite". Sqlite is currently the only supported adapter.</td></tr><tr class='param'><td class='param'>options: <a href='Object.html'>Object</a> </td><td>Connection options. This may be filename or an object hash of properties. If set to a filename, it should contain the filename of the database on the local system. If options is an object hash, it should  contain adapter specific properties that specify how to attach to the database.</td></tr></table></dd>
+</dl><dl><dt>Options</dt>
+<dd><table class='parameters' summary ='options'>
+<td class='param'>name</td><td>Database name.</td></tr>
+<td class='param'>username</td><td>Database username.</td></tr>
+<td class='param'>password</td><td>Database password.</td></tr>
+<td class='param'>trace</td><td>Trace database commands to the log.</td></tr>
+<td class='param'>socket</td><td>Database communications socket.</td></tr>
+<td class='param'>module</td><td>Module name containing the database connector class. This is a bare module name without ".mod" or any leading path.</td></tr>
+<td class='param'>class</td><td>Class name containing the database backend.</td></tr>
+</table></dd>
 </dl></div>
 </div>
 <hr />

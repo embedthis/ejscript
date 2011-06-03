@@ -146,7 +146,7 @@ characters. If the response has no body content, the empty string will be return
    <tr><td nowrap align='center'> get </td><td>sessionCookie</td><td>&nbsp;</td><td>Get the ejs session cookie. This call extracts the ejs session cookie from the Http response headers.
 Ejscript sessions are identified by a client cookie which when transmitted with subsequent requests will 
 permit the server to locate the relevant session state store for the server-side application. 
-Use: setCookie("Cookie", cookie) to transmit the cookie on subsquent requests.</td></tr>
+Use: setCookie(cookie) to transmit the cookie on subsquent requests.</td></tr>
 <a name='status'></a>
    <tr><td nowrap align='center'> get </td><td>status</td><td><a href='Number.html'>Number</a></td><td>Http response status code from the Http response status line, e.g. 200. Set to null if unknown.
 This command will block until the request completes.</td></tr>
@@ -174,7 +174,8 @@ line or from a local error message if the response fails to parse.</td></tr>
 <table class='apiIndex' summary='methods'>
    <tr><th>Qualifiers</th><th width='95%'>Method</th></tr>
    <tr class='apiDef'><td class='apiType'></td><td><a href='#Http'><b>Http</b></a>(uri: <a href='Uri.html'>Uri</a> = null)</tr><tr class='apiBrief'><td>&nbsp;</td><td>Create an Http object.</td></tr>
-   <tr class='apiDef'><td class='apiType'> </td><td><a href='#close'><b>close</b></a>(): <a href='Void.html'>Void</a></tr><tr class='apiBrief'><td>&nbsp;</td><td>Close the stream.This closes any open network connection and resets the http object to be ready for another connection.</td></tr>
+   <tr class='apiDef'><td class='apiType'> </td><td><a href='#close'><b>close</b></a>(): <a href='Void.html'>Void</a></tr><tr class='apiBrief'><td>&nbsp;</td><td>Close the stream.This immediately closes any open network connection and resets the http object to be ready for another 
+connection.</td></tr>
    <tr class='apiDef'><td class='apiType'> </td><td><a href='#connect'><b>connect</b></a>(method: <a href='String.html'>String</a>, uri: <a href='Uri.html'>Uri</a> = null, data: <a href='Array.html'>Array</a>): <a href='Void.html'>Void</a></tr><tr class='apiBrief'><td>&nbsp;</td><td>Commence a HTTP request for the current method and uri.</td></tr>
    <tr class='apiDef'><td class='apiType'> </td><td><a href='#finalize'><b>finalize</b></a>(): <a href='Void.html'>Void</a></tr><tr class='apiBrief'><td>&nbsp;</td><td>Signals the end of any write data and flushes any buffered write data to the client.</td></tr>
    <tr class='apiDef'><td class='apiType'> </td><td><a href='#flush'><b>flush</b></a>(dir: <a href='Number.html'>Number</a> = expression): <a href='Void.html'>Void</a></tr><tr class='apiBrief'><td>&nbsp;</td><td>Flush the stream and underlying streams.Flush request data.</td></tr>
@@ -227,9 +228,11 @@ line or from a local error message if the response fails to parse.</td></tr>
 <div class='apiSig'>    close(): <a href='Void.html'>Void</a>
 </div>
 <div class='apiDetail'>
-<dl><dt>Description</dt></dd><dd>Close the stream.This closes any open network connection and resets the http object to be ready for another connection. Connections should be explicitly closed rather than relying on the garbage collector to dispose of the 
-Http object and automatically close the connection. If you have more requests that can be issued on 
-the same network connection, use reset() rather than close to prepare for a new request on the same connection.</dd></dl>
+<dl><dt>Description</dt></dd><dd>Close the stream.This immediately closes any open network connection and resets the http object to be ready for another 
+connection. Connections should be explicitly closed rather than relying on the garbage collector to 
+dispose of the Http object and automatically close the connection. If you have more requests that can 
+be issued on the same network connection, use reset() rather than close to prepare for a new request 
+on the same connection.</dd></dl>
 <dl><dt>Events</dt>
 <dd><table class='parameters' summary ='events'>
 <td class='param'>close</td><td>A close event is issued before closing the stream.</td></tr>

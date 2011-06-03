@@ -41,6 +41,8 @@ arguments, environment strings, path to the application's executable and input a
 <a name='args'></a>
    <tr><td nowrap align='center'> static get </td><td>args</td><td><a href='Array.html'>Array</a></td><td>Application command line arguments. Set to an array containing each of the arguments. If the ejs command 
 is invoked as "ejs script arg1 arg2", then args[0] will be "script", args[1] will be "arg1" etc.</td></tr>
+<a name='cache'></a>
+   <tr><td nowrap align='center'> static </td><td>cache</td><td><a href='Cache.html'>Cache</a></td><td>Application in-memory cache reference. </td></tr>
 <a name='config'></a>
    <tr><td nowrap align='center'> static </td><td>config</td><td><a href='Object.html'>Object</a></td><td>Configuration environment specified in the ~/.ejsrc or ejsrc configuration files. </td></tr>
 <a name='dir'></a>
@@ -212,7 +214,8 @@ in the script. Calling run() will cause the ejs shell to wait and service events
 <div class='apiSig'>static     sleep(delay: <a href='Number.html'>Number</a> = -1): <a href='Void.html'>Void</a>
 </div>
 <div class='apiDetail'>
-<dl><dt>Description</dt></dd><dd>Sleep the application for the given number of milliseconds. Events will be serviced while asleep.</dd></dl>
+<dl><dt>Description</dt></dd><dd>Sleep the application for the given number of milliseconds. Events will be serviced while asleep.
+An alternative to sleep is <a href='App.html#run'>App.run</a> which can be configured to sleep and return early if an event is received.</dd></dl>
 <dl><dt>Parameters</dt>
 <dd><table class='parameters' summary ='parameters'>
 <tr class='param'><td class='param'>delay: <a href='Number.html'>Number</a> </td><td>Time in milliseconds to sleep. Set to -1 to sleep forever. [default: -1]</td></tr></table></dd>

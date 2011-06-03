@@ -115,13 +115,24 @@ module ejs {
         function read(key: String, options: Object = null): String
             adapter.read(key, options)
 
+        /**
+            Read a key and return an object 
+            This will read the data for a key and then deserialize. This assumes that $writeObj was used to store the
+            key value.
+            @param key Key value to read.
+            @param options Read options
+            @option version If set to true, the read will return an object hash containing the data and a unique version 
+                identifier for the last update to this key. This version identifier can be specified to write to peform
+                an atomic CAS (check and swap) operation.
+            @return Null if the key is not present. Otherwise return key data as an object.
+         */
         function readObj(key: String, options: Object = null): Object
             deserialize(adapter.read(key, options))
 
         /**
             Remove the key and associated value from the cache
             @param key Key value to remove. If key is null, then all keys are removed.
-            @param Return true if the key was removed
+            @return true if the key was removed
          */
         function remove(key: String): Boolean
             adapter.remove(key)
@@ -137,6 +148,9 @@ module ejs {
 
         /**
             Write the key and associated value to the cache. The value is written according to the optional mode option.  
+            @param key Key to modify
+            @param value String value to associate with the key
+            @param options Options values
             @option lifespan Preservation time for the key in seconds 
             @option expire When to expire the key. Takes precedence over lifetime.
             @option mode Mode of writing: "set" is the default and means set a new value and create if required.
@@ -152,6 +166,24 @@ module ejs {
         function write(key: String, value: String, options: Object = null): Number
             adapter.write(key, value, options)
 
+        /**
+            Write the key and associated object value to the cache. The object value is serialized using JSON notation and
+            written according to the optional mode option.  
+            @param key Key to modify
+            @param value Object to associate with the key
+            @param options Options values
+            @option lifespan Preservation time for the key in seconds 
+            @option expire When to expire the key. Takes precedence over lifetime.
+            @option mode Mode of writing: "set" is the default and means set a new value and create if required.
+                "add" means set the value only if the key does not already exist. "append" means append to any existing
+                value and create if required. "prepend" means prepend to any existing value and create if required.
+            @option version Unique version identifier to be used for a conditional write. The write will only be 
+                performed if the version id for the key has not changed. This implements an atomic compare and swap.
+                See $read.
+            @option throw Throw an exception rather than returning null if the version id has been updated for the key.
+            @return The number of bytes written, returns null if the write failed due to an updated version identifier for
+                the key.
+         */
         function writeObj(key: String, value: Object, options: Object = null): Number
             adapter.write(key, serialize(value), options)
     }

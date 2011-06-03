@@ -37,9 +37,6 @@ parameters previously set.</p>
 <h2 class='classSection'>Properties</h2>
 <table class='itemTable' summary='properties'>
    <tr><th>Qualifiers</th><th>Property</th><th>Type</th><th width='95%'>Description</th></tr>
-<a name='builder'></a>
-   <tr><td nowrap align='center'> </td><td>builder</td><td><a href='Object.html'>Object</a></td><td>Builder function to create a function app to serve the request. The builder should return return a function 
-that will be invoked serve the request. The builder can also be a response object hash.</td></tr>
 <a name='limits'></a>
    <tr><td nowrap align='center'> </td><td>limits</td><td><a href='Object.html'>Object</a></td><td>Resource limits for the request. See HttpServer.limits for details.</td></tr>
 <a name='location'></a>
@@ -61,7 +58,7 @@ be defined in Request.params[].</td></tr>
 <a name='redirect'></a>
    <tr><td nowrap align='center'> </td><td>redirect</td><td><a href='String.html'>String</a></td><td>URI to redirect the request toward. </td></tr>
 <a name='response'></a>
-   <tr><td nowrap align='center'> </td><td>response</td><td><a href='Object.html'>Object</a></td><td>Response object hash. </td></tr>
+   <tr><td nowrap align='center'> </td><td>response</td><td><a href='Object.html'>Object</a></td><td>Response object hash or function to serve the request. </td></tr>
 <a name='rewrite'></a>
    <tr><td nowrap align='center'> </td><td>rewrite</td><td><a href='Function.html'>Function</a></td><td>Rewrite function to rewrite the request before serving. It may update the request scriptName, pathInfo 
 and other Request properties. Return true to continue serving the request on this route. Otherwise re-route
@@ -81,7 +78,7 @@ then sub-expressions may be referenced in the <a href='#params'>params</a> value
 e.g. params: { priority: "<a href='#1"'>1"</a> }<br/><br/>If the template is a function, it is run to test for a request match. The function should return true to 
 match the request. The function can directly set parameters in request.params.</td></tr>
 <a name='threaded'></a>
-   <tr><td nowrap align='center'> </td><td>threaded</td><td><a href='Boolean.html'>Boolean</a></td><td>If true, the request should be run in a worker thread if possible. This thread will not be dedicated, 
+   <tr><td nowrap align='center'> </td><td>threaded</td><td><a href='Boolean.html'>Boolean</a></td><td>If true, the request should execute in a worker thread if possible. This thread will not be dedicated, 
 but will be assigned as the request requires CPU resources.</td></tr>
 <a name='tokens'></a>
    <tr><td nowrap align='center'> </td><td>tokens</td><td><a href='Array.html'>Array</a></td><td>Key tokens in the route template. </td></tr>

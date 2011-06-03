@@ -67,7 +67,6 @@ module ejs {
 
         /** 
             Create a new worker by cloning the current interpreter
-            @param deep Ignored
             @spec ejs
          */
         native static function cloneSelf(): Worker

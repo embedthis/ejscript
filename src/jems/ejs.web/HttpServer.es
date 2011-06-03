@@ -63,8 +63,9 @@ module ejs.web {
             },
         }
 
-        /*  
+        /**
             One time initialization. Blend mandatory config into App.config.
+            @hide
          */
         static function initHttpServer() {
             blend(App.config, defaultConfig, false)
@@ -569,8 +570,8 @@ server.listen("127.0.0.1:7777")
             Define a worker that will serve as the base for cloning workers to serve web requests
             @param worker Configured worker 
          */
-        function setWorkerImage(w: Worker): Void
-            workerImage = w
+        function setWorkerImage(worker: Worker): Void
+            workerImage = worker
 
         /**
             Configure request tracing for the server. The default is to trace the first line of requests and responses at

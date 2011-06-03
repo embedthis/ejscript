@@ -813,7 +813,7 @@ static void prepDocStrings(EjsMod *mp, EjsObj *obj, EjsName qname, EjsTrait *typ
         dp = getDoc(ejs, NULL, obj, slotNum);
         if (dp) {
             pname = ejsGetPropertyName(ejs, obj, slotNum);
-            combined = mprAsprintf("%S.%S", qname.name, pname.name);
+            combined = mprAsprintf("%@.%@", qname.name, pname.name);
             crackDoc(mp, dp, EN(combined)); 
         }
     }
@@ -860,19 +860,19 @@ static void generateClassPageHeader(EjsMod *mp, EjsObj *obj, EjsName qname, EjsT
         out(mp, "<a name='top'></a>\n");
         out(mp, "<h1 class='className'>Global Functions and Variables</h1>\n");
     } else {
-        generateContentHeader(mp, "Class %S", qname.name);
+        generateContentHeader(mp, "Class %@", qname.name);
         out(mp, "<a name='top'></a>\n");
-        out(mp, "<h1 class='className'>%S</h1>\n", qname.name);
+        out(mp, "<h1 class='className'>%@</h1>\n", qname.name);
     }
     out(mp, "<div class='classBlock'>\n");
 
     if (ejsIsType(ejs, obj)) {
         type = (EjsType*) obj;
-        out(mp, "<table class='classHead' summary='%S'>\n", qname.name);
+        out(mp, "<table class='classHead' summary='%@'>\n", qname.name);
 
         if (type && type->module) {
             modName = fmtModule(ejs, type->module->name);
-            out(mp, "   <tr><td><strong>Module</strong></td><td>%S</td></tr>\n", modName);
+            out(mp, "   <tr><td><strong>Module</strong></td><td>%@</td></tr>\n", modName);
         }
         namespace = fmtNamespace(ejs, qname);
         out(mp, "   <tr><td><strong>Definition</strong></td><td>%s class %@</td></tr>\n", 
@@ -1233,11 +1233,11 @@ static int generateMethodTable(EjsMod *mp, MprList *methods, EjsObj *obj, int in
 
     if (instanceMethods) {
         out(mp, "<a name='InstanceMethods'></a>\n");
-        out(mp, "<h2 class='classSection'>%S Instance Methods</h2>\n", 
+        out(mp, "<h2 class='classSection'>%@ Instance Methods</h2>\n", 
             (type) ? type->qname.name : ejsCreateStringFromAsc(ejs, "Global"));
     } else {
         out(mp, "<a name='ClassMethods'></a>\n");
-        out(mp, "<h2 class='classSection'>%S Class Methods</h2>\n", 
+        out(mp, "<h2 class='classSection'>%@ Class Methods</h2>\n", 
             (type) ? type->qname.name : ejsCreateStringFromAsc(ejs, "Global"));
     }
     /*
@@ -1356,7 +1356,7 @@ static void checkArgs(EjsMod *mp, Ejs *ejs, EjsName ownerName, EjsFunction *fun,
         }
         if (param == 0) { 
             if (mp->warnOnError) {
-                mprWarn("Missing documentation for parameter \"%S\" in function \"%S\" in type \"%S\"", 
+                mprWarn("Missing documentation for parameter \"%@\" in function \"%@\" in type \"%@\"", 
                      argName.name, qname.name, ownerName.name);
             }
         }
@@ -1848,7 +1848,7 @@ static EjsDoc *crackDoc(EjsMod *mp, EjsDoc *doc, EjsName qname)
         if (match(token, "duplicate")) {
             duplicate = mtrim(line, " \t\n", MPR_TRIM_BOTH);
             if ((dup = getDuplicateDoc(ejs, duplicate)) == 0) {
-                mprError("Can't find @duplicate directive %s for %S", duplicate, qname.name);
+                mprError("Can't find @duplicate directive %s for %@", duplicate, qname.name);
             } else {
                 crackDoc(mp, dup, WEN(duplicate));
                 mprCopyList(doc->params, dup->params);

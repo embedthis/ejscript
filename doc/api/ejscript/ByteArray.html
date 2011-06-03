@@ -107,7 +107,7 @@ array storage.</td></tr>
    <tr class='apiDef'><td class='apiType'> </td><td><a href='#readBoolean'><b>readBoolean</b></a>(): <a href='Boolean.html'>Boolean</a></tr><tr class='apiBrief'><td>&nbsp;</td><td>Read a boolean from the array.</td></tr>
    <tr class='apiDef'><td class='apiType'> </td><td><a href='#readByte'><b>readByte</b></a>(): <a href='Number.html'>Number</a></tr><tr class='apiBrief'><td>&nbsp;</td><td>Read a byte from the array.</td></tr>
    <tr class='apiDef'><td class='apiType'> </td><td><a href='#readDate'><b>readDate</b></a>(): <a href='Date.html'>Date</a></tr><tr class='apiBrief'><td>&nbsp;</td><td>Read a date from the array.</td></tr>
-   <tr class='apiDef'><td class='apiType'> </td><td><a href='#readDouble'><b>readDouble</b></a>(): <a href='Date.html'>Date</a></tr><tr class='apiBrief'><td>&nbsp;</td><td>Read a double from the array.</td></tr>
+   <tr class='apiDef'><td class='apiType'> </td><td><a href='#readDouble'><b>readDouble</b></a>(): <a href='Number.html'>Number</a></tr><tr class='apiBrief'><td>&nbsp;</td><td>Read a double from the array.</td></tr>
    <tr class='apiDef'><td class='apiType'> </td><td><a href='#readInteger'><b>readInteger</b></a>(): <a href='Number.html'>Number</a></tr><tr class='apiBrief'><td>&nbsp;</td><td>Read an 32-bit integer from the array.</td></tr>
    <tr class='apiDef'><td class='apiType'> </td><td><a href='#readLong'><b>readLong</b></a>(): <a href='Number.html'>Number</a></tr><tr class='apiBrief'><td>&nbsp;</td><td>Read a 64-bit long from the array.The data will be decoded according to the endian property.</td></tr>
    <tr class='apiDef'><td class='apiType'> </td><td><a href='#readShort'><b>readShort</b></a>(): <a href='Number.html'>Number</a></tr><tr class='apiBrief'><td>&nbsp;</td><td>Read a 16-bit short integer from the array.The data will be decoded according to the endian property.</td></tr>
@@ -327,7 +327,7 @@ will return return null indicating eof.</dd></dl>
 <hr />
 <a name='readDouble'></a>
 <div class='api'>
-<div class='apiSig'>    readDouble(): <a href='Date.html'>Date</a>
+<div class='apiSig'>    readDouble(): <a href='Number.html'>Number</a>
 </div>
 <div class='apiDetail'>
 <dl><dt>Description</dt></dd><dd>Read a double from the array. The data will be decoded according to the endian property. Data is read 
@@ -480,7 +480,6 @@ fit in the ByteArray, the call may return having only written a portion of the d
 </div>
 <div class='apiDetail'>
 <dl><dt>Description</dt></dd><dd>Write a byte to the array. Data is written to the current write <a href='#position'>position</a> pointer which is then incremented.
-//  MOB -- no such details exist
 See <a href='#write'>write</a> for details about sync, async modes and event handling.</dd></dl>
 <dl><dt>Parameters</dt>
 <dd><table class='parameters' summary ='parameters'>

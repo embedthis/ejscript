@@ -150,9 +150,11 @@ typedef struct EjsSession {
 } EjsSession;
 
 /** 
-    Create a session object for a given key. If the given key is NULL or has expired, a new key will be generated.
+    Get a session object for a given key. This will create a session if the given key is NULL or has expired.
     @param ejs Ejs interpreter handle returned from $ejsCreate
     @param key String containing the session ID
+    @param timeout Timeout to use for the session if one is created
+    @param create Create a new session if an existing session cannot be found or it has expired.
     @returns A new session object.
 */
 extern EjsSession *ejsGetSession(Ejs *ejs, EjsString *key, MprTime timeout, int create);
@@ -160,7 +162,6 @@ extern EjsSession *ejsGetSession(Ejs *ejs, EjsString *key, MprTime timeout, int 
 /** 
     Destroy as session. This destroys the session object so that subsequent requests will need to establish a new session.
     @param ejs Ejs interpreter handle returned from $ejsCreate
-    @param server Server object owning the session.
     @param session Session object created via ejsGetSession()
 */
 extern int ejsDestroySession(Ejs *ejs, EjsSession *session);

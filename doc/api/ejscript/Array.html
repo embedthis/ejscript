@@ -72,7 +72,7 @@ indexed location within a list.</p>
    <tr class='apiDef'><td class='apiType'> </td><td><a href='#indexOf'><b>indexOf</b></a>(element: <a href='Object.html'>Object</a>, startIndex: <a href='Number.html'>Number</a> = 0): <a href='Number.html'>Number</a></tr><tr class='apiBrief'><td>&nbsp;</td><td>Search for an item using strict equality "===".</td></tr>
    <tr class='apiDef'><td class='apiType'> </td><td><a href='#insert'><b>insert</b></a>(pos: <a href='Number.html'>Number</a>, args: <a href='Array.html'>Array</a>): <a href='Array.html'>Array</a></tr><tr class='apiBrief'><td>&nbsp;</td><td>Insert elements.</td></tr>
    <tr class='apiDef'><td class='apiType'> </td><td><a href='#join'><b>join</b></a>(sep: <a href='String.html'>String</a> = ): <a href='String.html'>String</a></tr><tr class='apiBrief'><td>&nbsp;</td><td>Convert the array into a string.</td></tr>
-   <tr class='apiDef'><td class='apiType'> </td><td><a href='#lastIndexOf'><b>lastIndexOf</b></a>(element: <a href='Object.html'>Object</a>, startIndex: <a href='Number.html'>Number</a> = -1): <a href='Number.html'>Number</a></tr><tr class='apiBrief'><td>&nbsp;</td><td>Find an item searching from the end of the arry.</td></tr>
+   <tr class='apiDef'><td class='apiType'> </td><td><a href='#lastIndexOf'><b>lastIndexOf</b></a>(element: <a href='Object.html'>Object</a>, startIndex: <a href='Number.html'>Number</a> = -1): <a href='Number.html'>Number</a></tr><tr class='apiBrief'><td>&nbsp;</td><td>Find an item searching from the end of the array.</td></tr>
    <tr class='apiDef'><td class='apiType'> </td><td><a href='#map'><b>map</b></a>(mapper: <a href='Function.html'>Function</a>): <a href='Array.html'>Array</a></tr><tr class='apiBrief'><td>&nbsp;</td><td>Call the mapper on each array element in increasing index order and return a new array with the values returned 
 from the mapper.</td></tr>
    <tr class='apiDef'><td class='apiType'> </td><td><a href='#pop'><b>pop</b></a>(): <a href='Object.html'>Object</a></tr><tr class='apiBrief'><td>&nbsp;</td><td>Remove and return the last value in the array.</td></tr>
@@ -81,6 +81,7 @@ from the mapper.</td></tr>
    <tr class='apiDef'><td class='apiType'> </td><td><a href='#reduceRight'><b>reduceRight</b></a>(callback: <a href='Function.html'>Function</a>, initial = null): <a href='Object.html'>Object</a></tr><tr class='apiBrief'><td>&nbsp;</td><td>Reduce array elements.</td></tr>
    <tr class='apiDef'><td class='apiType'> </td><td><a href='#reject'><b>reject</b></a>(match: <a href='Function.html'>Function</a>): <a href='Array.html'>Array</a></tr><tr class='apiBrief'><td>&nbsp;</td><td>Find non-matching elements.</td></tr>
    <tr class='apiDef'><td class='apiType'> </td><td><a href='#remove'><b>remove</b></a>(start: <a href='Number.html'>Number</a>, end: <a href='Number.html'>Number</a> = -1): <a href='Void.html'>Void</a></tr><tr class='apiBrief'><td>&nbsp;</td><td>Remove elements.</td></tr>
+   <tr class='apiDef'><td class='apiType'> </td><td><a href='#removeElements'><b>removeElements</b></a>(elts: <a href='Array.html'>Array</a>): <a href='Void.html'>Void</a></tr><tr class='apiBrief'><td>&nbsp;</td><td>Remove specified elements from the array.</td></tr>
    <tr class='apiDef'><td class='apiType'> </td><td><a href='#reverse'><b>reverse</b></a>(): <a href='Array.html'>Array</a></tr><tr class='apiBrief'><td>&nbsp;</td><td>Reverse the order of the objects in the array.</td></tr>
    <tr class='apiDef'><td class='apiType'> </td><td><a href='#shift'><b>shift</b></a>(): <a href='Object.html'>Object</a></tr><tr class='apiBrief'><td>&nbsp;</td><td>Remove and return the first element in the array.</td></tr>
    <tr class='apiDef'><td class='apiType'> </td><td><a href='#slice'><b>slice</b></a>(start: <a href='Number.html'>Number</a>, end: <a href='Number.html'>Number</a> = -1, step: <a href='Number.html'>Number</a> = 1): <a href='Array.html'>Array</a></tr><tr class='apiBrief'><td>&nbsp;</td><td>Create a new array subset by taking a slice from an array.</td></tr>
@@ -352,7 +353,7 @@ concatenating the strings inserting a separator between each.</dd></dl>
 <div class='apiSig'>    lastIndexOf(element: <a href='Object.html'>Object</a>, startIndex: <a href='Number.html'>Number</a> = -1): <a href='Number.html'>Number</a>
 </div>
 <div class='apiDetail'>
-<dl><dt>Description</dt></dd><dd>Find an item searching from the end of the arry. Search for an item using strict equality "===". This call searches from the end of the array for the given 
+<dl><dt>Description</dt></dd><dd>Find an item searching from the end of the array. Search for an item using strict equality "===". This call searches from the end of the array for the given 
 element.</dd></dl>
 <dl><dt>Parameters</dt>
 <dd><table class='parameters' summary ='parameters'>
@@ -466,6 +467,21 @@ to undefined as the delete operator will do. Indicies are renumbered. NOTE: this
 <dl><dt>Parameters</dt>
 <dd><table class='parameters' summary ='parameters'>
 <tr class='param'><td class='param'>start: <a href='Number.html'>Number</a> </td><td>Numeric index of the first element to remove. Negative indices measure from the end of the array. -1 is the last element.</td></tr><tr class='param'><td class='param'>end: <a href='Number.html'>Number</a> </td><td>Numeric index of the last element to remove. [default: -1]</td></tr></table></dd>
+</dl><dl><dt>Specified</dt>
+<dd>ejscript-2.0</dd></dl>
+</div>
+</div>
+<hr />
+<a name='removeElements'></a>
+<div class='api'>
+<div class='apiSig'>    removeElements(elts: <a href='Array.html'>Array</a>): <a href='Void.html'>Void</a>
+</div>
+<div class='apiDetail'>
+<dl><dt>Description</dt></dd><dd>Remove specified elements from the array. The elements are removed and not just set 
+to undefined as the delete operator will do. Indicies are renumbered.</dd></dl>
+<dl><dt>Parameters</dt>
+<dd><table class='parameters' summary ='parameters'>
+<tr class='param'><td class='param'>elts: <a href='Array.html'>Array</a> </td><td>List of elements to remove.</td></tr></table></dd>
 </dl><dl><dt>Specified</dt>
 <dd>ejscript-2.0</dd></dl>
 </div>

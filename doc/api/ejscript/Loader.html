@@ -102,7 +102,8 @@ and cached as a byte-code module. It will be recompiled if the script source is 
 <div class='apiSig'>static  require(id: <a href='String.html'>String</a>, config: <a href='Object.html'>Object</a> = expression): <a href='Object.html'>Object</a>
 </div>
 <div class='apiDetail'>
-<dl><dt>Description</dt></dd><dd>Load a CommonJS module. The module is loaded only once unless it is modified.</dd></dl>
+<dl><dt>Description</dt></dd><dd>Load a CommonJS module. The module is loaded only once unless it is modified.
+WARNING: this will not be supported in future releases as the Harmony loader will be supported instead.</dd></dl>
 <dl><dt>Parameters</dt>
 <dd><table class='parameters' summary ='parameters'>
 <tr class='param'><td class='param'>id: <a href='String.html'>String</a> </td><td>Name of the module to load. The id may be an absolute path, relative path or a path fragment that is resolved relative to the App search path. Ids may or may not include a ".es" or ".js" extension.</td></tr><tr class='param'><td class='param'>config: <a href='Object.html'>Object</a> </td><td>null [default: expression]</td></tr></table></dd>

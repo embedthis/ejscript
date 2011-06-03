@@ -88,6 +88,7 @@ Objects are stored in the session state using JSON serialization.</td></tr>
    <tr><th>Qualifiers</th><th width='95%'>Method</th></tr>
    <tr class='apiDef'><td class='apiType'></td><td><a href='#View'><b>View</b></a>(request: <a href='Object.html'>Object</a>)</tr><tr class='apiBrief'><td>&nbsp;</td><td>Constructor method to initialize a new View.</td></tr>
    <tr class='apiDef'><td class='apiType'></td><td><a href='#alert'><b>alert</b></a>(text: <a href='String.html'>String</a>, options: <a href='Object.html'>Object</a> = expression): <a href='Void.html'>Void</a></tr><tr class='apiBrief'><td>&nbsp;</td><td>Emit a status alert area.</td></tr>
+   <tr class='apiDef'><td class='apiType'></td><td><a href='#anchor'><b>anchor</b></a>(text: <a href='String.html'>String</a>, options: <a href='Object.html'>Object</a> = expression): <a href='Void.html'>Void</a></tr><tr class='apiBrief'><td>&nbsp;</td><td>Emit an anchor.</td></tr>
    <tr class='apiDef'><td class='apiType'></td><td><a href='#button'><b>button</b></a>(name: <a href='String.html'>String</a>, label: <a href='String.html'>String</a>, options: <a href='Object.html'>Object</a> = expression): <a href='Void.html'>Void</a></tr><tr class='apiBrief'><td>&nbsp;</td><td>Render a form button.</td></tr>
    <tr class='apiDef'><td class='apiType'></td><td><a href='#buttonLink'><b>buttonLink</b></a>(text: <a href='String.html'>String</a>, options: <a href='Object.html'>Object</a> = expression): <a href='Void.html'>Void</a></tr><tr class='apiBrief'><td>&nbsp;</td><td>Render a link button.</td></tr>
    <tr class='apiDef'><td class='apiType'></td><td><a href='#chart'><b>chart</b></a>(data: <a href='Array.html'>Array</a>, options: <a href='Object.html'>Object</a> = expression): <a href='Void.html'>Void</a></tr><tr class='apiBrief'><td>&nbsp;</td><td>Render a chart.</td></tr>
@@ -158,6 +159,18 @@ Objects are stored in the session state using JSON serialization.</td></tr>
 </dl><dl><dt>Example</dt>
 <dd><pre>&lt;% alert("Status Message", { refresh: "/getData", period: 2000" }) %&gt;</pre></dd></dl>
 </div>
+</div>
+<hr />
+<a name='anchor'></a>
+<div class='api'>
+<div class='apiSig'>  ejs.web  anchor(text: <a href='String.html'>String</a>, options: <a href='Object.html'>Object</a> = expression): <a href='Void.html'>Void</a>
+</div>
+<div class='apiDetail'>
+<dl><dt>Description</dt></dd><dd>Emit an anchor. This is lable inside an anchor reference.</dd></dl>
+<dl><dt>Parameters</dt>
+<dd><table class='parameters' summary ='parameters'>
+<tr class='param'><td class='param'>text: <a href='String.html'>String</a> </td><td>Link text to display.</td></tr><tr class='param'><td class='param'>options: <a href='Object.html'>Object</a> </td><td>Optional extra options. See <a href='#View'>View</a> for a list of the standard options. [default: expression]</td></tr></table></dd>
+</dl></div>
 </div>
 <hr />
 <a name='button'></a>
@@ -514,7 +527,7 @@ list("priority", [{id: 77, field: "value", ...}, ...])</pre></dd></dl>
 <dl><dt>Description</dt></dd><dd>Render a radio button. This creates a radio button suitable for use within an input form.</dd></dl>
 <dl><dt>Parameters</dt>
 <dd><table class='parameters' summary ='parameters'>
-<tr class='param'><td class='param'>name: <a href='String.html'>String</a> </td><td>Name for the input radio button. This defines the HTML element name and provides the source  of the initial value to display. The field should be a property of the form control record. It can  be a simple property of the record or it can have multiple parts, such as: field.field.field. If  this call is used without a form control record, the actual data value should be supplied via the  options.value property.</td></tr><tr class='param'><td class='param'>choices: <a href='Object.html'>Object</a> </td><td>Choices to select from. This can be an array list where each element is displayed and the value  returned is an element index (origin zero). It can also be an array of key/value array tuples where the  first entry is the value to display and the second is the value to send to the app. Or it can be an  array of objects such as those returned from a table lookup. Lastly, it can be an object where the property key is the value to display and the property value is the value to send to the app.</td></tr><tr class='param'><td class='param'>options: <a href='Object.html'>Object</a> </td><td>Optional extra options. See <a href='#View'>View</a> for a list of the standard options. [default: expression]</td></tr></table></dd>
+<tr class='param'><td class='param'>name: <a href='String.html'>String</a> </td><td>Name for the input radio button. This defines the HTML element name and provides the source  of the initial value to display. The field should be a property of the form control record. It can  be a simple property of the record or it can have multiple parts, such as: field.field.field. If  this call is used without a form control record, the actual data value should be supplied via the  options.value property.</td></tr><tr class='param'><td class='param'>choices: <a href='Object.html'>Object</a> </td><td>Choices to select from. This can be an array list where each element is displayed and the value  returned is an element index (origin zero). It can also be an array of key/value array tuples where the  first entry is the value to display and the second is the value to send to the app and store in the  database. Or it can be an array of objects such as those returned from a table lookup. Lastly, it can  be an object where the property key is the value to display and the property value is the value to  send to the app and store in the database.</td></tr><tr class='param'><td class='param'>options: <a href='Object.html'>Object</a> </td><td>Optional extra options. See <a href='#View'>View</a> for a list of the standard options. [default: expression]</td></tr></table></dd>
 </dl><dl><dt>Example</dt>
 <dd><pre>radio("priority", ["low", "med", "high"])
 radio("priority", [["low", 0], ["med", 0.5], ["high", 1]])

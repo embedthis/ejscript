@@ -349,6 +349,12 @@ module ejs {
             splice(start, end - start + 1)
         }
 
+        /**
+            Remove specified elements from the array. The elements are removed and not just set 
+            to undefined as the delete operator will do. Indicies are renumbered. 
+            @param elts List of elements to remove.
+            @spec ejs
+         */
         native function removeElements(...elts): Void
 
         /**

@@ -57,6 +57,7 @@ This is invoked as: function (event) { }.</td></tr>
 <h2 class='classSection'>Worker Class Methods</h2>
 <table class='apiIndex' summary='methods'>
    <tr><th>Qualifiers</th><th width='95%'>Method</th></tr>
+   <tr class='apiDef'><td class='apiType'> static </td><td><a href='#cloneSelf'><b>cloneSelf</b></a>(): <a href='Worker.html'>Worker</a></tr><tr class='apiBrief'><td>&nbsp;</td><td>Create a new worker by cloning the current interpreter.</td></tr>
    <tr class='apiDef'><td class='apiType'> static </td><td><a href='#exit'><b>exit</b></a>(): <a href='Void.html'>Void</a></tr><tr class='apiBrief'><td>&nbsp;</td><td>Exit the worker.</td></tr>
    <tr class='apiDef'><td class='apiType'> static </td><td><a href='#join'><b>join</b></a>(workers: <a href='Object.html'>Object</a> = null, timeout: <a href='Number.html'>Number</a> = -1): <a href='Boolean.html'>Boolean</a></tr><tr class='apiBrief'><td>&nbsp;</td><td>Wait for Workers to exit.</td></tr>
    <tr class='apiDef'><td class='apiType'> static </td><td><a href='#lookup'><b>lookup</b></a>(name: <a href='String.html'>String</a>): <a href='Worker.html'>Worker</a></tr><tr class='apiBrief'><td>&nbsp;</td><td>Lookup a Worker by name.</td></tr>
@@ -70,10 +71,11 @@ This is invoked as: function (event) { }.</td></tr>
 <table class='apiIndex' summary='methods'>
    <tr><th>Qualifiers</th><th width='95%'>Method</th></tr>
    <tr class='apiDef'><td class='apiType'></td><td><a href='#Worker'><b>Worker</b></a>(script: <a href='Path.html'>Path</a> = null, options: <a href='Object.html'>Object</a> = null)</tr><tr class='apiBrief'><td>&nbsp;</td><td>Create a new Worker instance.</td></tr>
-   <tr class='apiDef'><td class='apiType'> </td><td><a href='#eval'><b>eval</b></a>(script: <a href='String.html'>String</a>, timeout: <a href='Number.html'>Number</a> = -1): <a href='String.html'>String</a></tr><tr class='apiBrief'><td>&nbsp;</td><td>Load the script.</td></tr>
+   <tr class='apiDef'><td class='apiType'> </td><td><a href='#clone'><b>clone</b></a>(deep: <a href='Boolean.html'>Boolean</a> = true): <a href='Worker.html'>Worker</a></tr><tr class='apiBrief'><td>&nbsp;</td><td>Clone the worker and underlying interpreter.</td></tr>
+   <tr class='apiDef'><td class='apiType'> </td><td><a href='#eval'><b>eval</b></a>(script: <a href='String.html'>String</a>, timeout: <a href='Number.html'>Number</a> = -1): <a href='Object.html'>Object</a></tr><tr class='apiBrief'><td>&nbsp;</td><td>Load the script.</td></tr>
    <tr class='apiDef'><td class='apiType'> </td><td><a href='#load'><b>load</b></a>(script: <a href='Path.html'>Path</a>, timeout: <a href='Number.html'>Number</a> = 0): <a href='Void.html'>Void</a></tr><tr class='apiBrief'><td>&nbsp;</td><td>Load and run a script in a dedicated worker thread.</td></tr>
    <tr class='apiDef'><td class='apiType'> </td><td><a href='#postMessage'><b>postMessage</b></a>(data: <a href='Object.html'>Object</a>, ports: <a href='Array.html'>Array</a> = null): <a href='Void.html'>Void</a></tr><tr class='apiBrief'><td>&nbsp;</td><td>Post a message to the Worker's parent.</td></tr>
-   <tr class='apiDef'><td class='apiType'> </td><td><a href='#preload'><b>preload</b></a>(path: <a href='Path.html'>Path</a>): <a href='String.html'>String</a></tr><tr class='apiBrief'><td>&nbsp;</td><td>Preload the specified script or module file to initialize the worker.</td></tr>
+   <tr class='apiDef'><td class='apiType'> </td><td><a href='#preload'><b>preload</b></a>(path: <a href='Path.html'>Path</a>): <a href='Object.html'>Object</a></tr><tr class='apiBrief'><td>&nbsp;</td><td>Preload the specified script or module file to initialize the worker.</td></tr>
    <tr class='apiDef'><td class='apiType'> </td><td><a href='#terminate'><b>terminate</b></a>(): <a href='Void.html'>Void</a></tr><tr class='apiBrief'><td>&nbsp;</td><td>Terminate the worker.</td></tr>
    <tr class='apiDef'><td class='apiType'> </td><td><a href='#waitForMessage'><b>waitForMessage</b></a>(timeout: <a href='Number.html'>Number</a> = -1): <a href='Boolean.html'>Boolean</a></tr><tr class='apiBrief'><td>&nbsp;</td><td>Wait for receipt of a message.</td></tr>
 </table>
@@ -103,9 +105,34 @@ outside worker.</dd></dl>
 </div>
 </div>
 <hr />
+<a name='clone'></a>
+<div class='api'>
+<div class='apiSig'>    clone(deep: <a href='Boolean.html'>Boolean</a> = true): <a href='Worker.html'>Worker</a>
+</div>
+<div class='apiDetail'>
+<dl><dt>Description</dt></dd><dd>Clone the worker and underlying interpreter. </dd></dl>
+<dl><dt>Parameters</dt>
+<dd><table class='parameters' summary ='parameters'>
+<tr class='param'><td class='param'>deep: <a href='Boolean.html'>Boolean</a> </td><td>Ignored. [default: true]</td></tr></table></dd>
+</dl><dl><dt>Specified</dt>
+<dd>ejscript-2.0</dd></dl>
+</div>
+</div>
+<hr />
+<a name='cloneSelf'></a>
+<div class='api'>
+<div class='apiSig'>static     cloneSelf(): <a href='Worker.html'>Worker</a>
+</div>
+<div class='apiDetail'>
+<dl><dt>Description</dt></dd><dd>Create a new worker by cloning the current interpreter. </dd></dl>
+<dl><dt>Specified</dt>
+<dd>ejscript-2.0</dd></dl>
+</div>
+</div>
+<hr />
 <a name='eval'></a>
 <div class='api'>
-<div class='apiSig'>    eval(script: <a href='String.html'>String</a>, timeout: <a href='Number.html'>Number</a> = -1): <a href='String.html'>String</a>
+<div class='apiSig'>    eval(script: <a href='String.html'>String</a>, timeout: <a href='Number.html'>Number</a> = -1): <a href='Object.html'>Object</a>
 </div>
 <div class='apiDetail'>
 <dl><dt>Description</dt></dd><dd>Load the script. The literal script is compiled as a JavaScript program and loaded and run.
@@ -191,13 +218,13 @@ share any data the the invoking interpreter. The result is serialized in the wor
 <hr />
 <a name='preload'></a>
 <div class='api'>
-<div class='apiSig'>    preload(path: <a href='Path.html'>Path</a>): <a href='String.html'>String</a>
+<div class='apiSig'>    preload(path: <a href='Path.html'>Path</a>): <a href='Object.html'>Object</a>
 </div>
 <div class='apiDetail'>
 <dl><dt>Description</dt></dd><dd>Preload the specified script or module file to initialize the worker. This will run a script using the current
-thread and will block. To run a worker using its own thread, use load() or Worker(script).
-This call will load the script/module and initialize and run global code. The call will block until 
-all global code has completed and the script/module is initialized.</dd></dl>
+thread.  This call will load the script/module and initialize and run global code. The call will block until 
+all global code has completed and the script/module is initialized.  To run a worker using its own thread, 
+use load() or Worker(script) instead.</dd></dl>
 <dl><dt>Parameters</dt>
 <dd><table class='parameters' summary ='parameters'>
 <tr class='param'><td class='param'>path: <a href='Path.html'>Path</a> </td><td>Filename path for the module or script to load. This should include the file extension.</td></tr></table></dd>

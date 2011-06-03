@@ -40,6 +40,8 @@
    <tr><td nowrap align='center'> const </td><td>double</td><td><a href='Type.html'>Type</a></td><td>Alias for the Number type. </td></tr>
 <a name='ejs'></a>
    <tr><td nowrap align='center'> </td><td>ejs</td><td><a href='Namespace.html'>Namespace</a></td><td>The "ejs" namespace used for the core library. </td></tr>
+<a name='empty'></a>
+   <tr><td nowrap align='center'> const </td><td>empty</td><td><a href='String.html'>String</a></td><td>Empty string value. </td></tr>
 <a name='false'></a>
    <tr><td nowrap align='center'> const </td><td>false</td><td><a href='Boolean.html'>Boolean</a></td><td>Boolean false value. </td></tr>
 <a name='global'></a>
@@ -99,6 +101,7 @@ for a property that has not been defined.</td></tr>
    <tr class='apiDef'><td class='apiType'> </td><td><a href='#BinaryStream'><b>BinaryStream</b></a>(stream: <a href='Stream.html'>Stream</a>)</tr><tr class='apiBrief'><td>&nbsp;</td><td>Create a new BinaryStream.</td></tr>
    <tr class='apiDef'><td class='apiType'> </td><td><a href='#Boolean'><b>Boolean</b></a>(value: <a href='Boolean.html'>Boolean</a> = false)</tr><tr class='apiBrief'><td>&nbsp;</td><td>Boolean constructor.</td></tr>
    <tr class='apiDef'><td class='apiType'> </td><td><a href='#ByteArray'><b>ByteArray</b></a>(size: <a href='Number.html'>Number</a> = -1, resizable: <a href='Boolean.html'>Boolean</a> = true)</tr><tr class='apiBrief'><td>&nbsp;</td><td>Create a new array.</td></tr>
+   <tr class='apiDef'><td class='apiType'> </td><td><a href='#Cache'><b>Cache</b></a>(adapter: <a href='String.html'>String</a> = null, options: <a href='Object.html'>Object</a> = expression)</tr><tr class='apiBrief'><td>&nbsp;</td><td>Cache constructor.</td></tr>
    <tr class='apiDef'><td class='apiType'>ejs.web </td><td><a href='#Cascade'><b>Cascade</b></a>(apps: <a href='Array.html'>Array</a>): <a href='Object.html'>Object</a></tr><tr class='apiBrief'><td>&nbsp;</td><td>Cascade middleware script for web apps.</td></tr>
    <tr class='apiDef'><td class='apiType'> </td><td><a href='#Cmd'><b>Cmd</b></a>(command: <a href='Object.html'>Object</a> = null, options: <a href='Object.html'>Object</a> = null)</tr><tr class='apiBrief'><td>&nbsp;</td><td>Create an Cmd object.</td></tr>
    <tr class='apiDef'><td class='apiType'> </td><td><a href='#CmdArgs'><b>CmdArgs</b></a>(template: <a href='Object.html'>Object</a>, argv: <a href='Array.html'>Array</a> = expression)</tr><tr class='apiBrief'><td>&nbsp;</td><td>The CmdArgs constructor creates a new instance of the CmdArgs.</td></tr>
@@ -109,7 +112,6 @@ for a property that has not been defined.</td></tr>
    <tr class='apiDef'><td class='apiType'>ejs.db </td><td><a href='#Database'><b>Database</b></a>(adapter: <a href='String.html'>String</a>, options: <a href='Object.html'>Object</a>)</tr><tr class='apiBrief'><td>&nbsp;</td><td>Initialize a database connection using the supplied database connection string.</td></tr>
    <tr class='apiDef'><td class='apiType'> </td><td><a href='#Date'><b>Date</b></a>(args: <a href='Array.html'>Array</a>)</tr><tr class='apiBrief'><td>&nbsp;</td><td>Construct a new date object.</td></tr>
    <tr class='apiDef'><td class='apiType'>ejs.web </td><td><a href='#DirApp'><b>DirApp</b></a>(request: <a href='ejs.web-Request.html'>Request</a>): <a href='Object.html'>Object</a></tr><tr class='apiBrief'><td>&nbsp;</td><td>Directory content handler.</td></tr>
-   <tr class='apiDef'><td class='apiType'>ejs.web </td><td><a href='#DirBuilder'><b>DirBuilder</b></a>(request: <a href='ejs.web-Request.html'>Request</a>): <a href='Function.html'>Function</a></tr><tr class='apiBrief'><td>&nbsp;</td><td>Directory builder for use in routing tables to service requests for directories.</td></tr>
    <tr class='apiDef'><td class='apiType'> </td><td><a href='#Emitter'><b>Emitter</b></a>()</tr><tr class='apiBrief'><td>&nbsp;</td><td>Construct a new event Emitter object.</td></tr>
    <tr class='apiDef'><td class='apiType'> </td><td><a href='#Error'><b>Error</b></a>(message: <a href='String.html'>String</a> = null)</tr><tr class='apiBrief'><td>&nbsp;</td><td>Construct a new Error object.</td></tr>
    <tr class='apiDef'><td class='apiType'> </td><td><a href='#ErrorEvent'><b>ErrorEvent</b></a>()</tr>   <tr class='apiDef'><td class='apiType'> </td><td><a href='#Event'><b>Event</b></a>()</tr>   <tr class='apiDef'><td class='apiType'> </td><td><a href='#File'><b>File</b></a>(path: <a href='Object.html'>Object</a>, options: <a href='Object.html'>Object</a> = null)</tr><tr class='apiBrief'><td>&nbsp;</td><td>Create a File object and open the requested path.</td></tr>
@@ -117,13 +119,15 @@ for a property that has not been defined.</td></tr>
    <tr class='apiDef'><td class='apiType'> </td><td><a href='#Frame'><b>Frame</b></a>()</tr>   <tr class='apiDef'><td class='apiType'> </td><td><a href='#Function'><b>Function</b></a>(args: <a href='Array.html'>Array</a>)</tr><tr class='apiBrief'><td>&nbsp;</td><td>Create a function from the supplied formal parameter names and function body expression.</td></tr>
    <tr class='apiDef'><td class='apiType'>ejs.web </td><td><a href='#Head'><b>Head</b></a>(app: <a href='Function.html'>Function</a>)</tr><tr class='apiBrief'><td>&nbsp;</td><td>Head wrapper middleware.</td></tr>
    <tr class='apiDef'><td class='apiType'> </td><td><a href='#Http'><b>Http</b></a>(uri: <a href='Uri.html'>Uri</a> = null)</tr><tr class='apiBrief'><td>&nbsp;</td><td>Create an Http object.</td></tr>
-   <tr class='apiDef'><td class='apiType'>ejs.web </td><td><a href='#HttpServer'><b>HttpServer</b></a>(documentRoot: <a href='Path.html'>Path</a> = ., serverRoot: <a href='Path.html'>Path</a> = .)</tr><tr class='apiBrief'><td>&nbsp;</td><td>Create a HttpServer object.</td></tr>
+   <tr class='apiDef'><td class='apiType'>ejs.web </td><td><a href='#HttpServer'><b>HttpServer</b></a>(options: <a href='Object.html'>Object</a> = expression)</tr><tr class='apiBrief'><td>&nbsp;</td><td>Create a HttpServer object.</td></tr>
    <tr class='apiDef'><td class='apiType'> </td><td><a href='#IOError'><b>IOError</b></a>(message: <a href='String.html'>String</a> = null)</tr><tr class='apiBrief'><td>&nbsp;</td><td>IOError constructor.</td></tr>
    <tr class='apiDef'><td class='apiType'> </td><td><a href='#InstructionError'><b>InstructionError</b></a>(message: <a href='String.html'>String</a> = null)</tr><tr class='apiBrief'><td>&nbsp;</td><td>InstructionError constructor.</td></tr>
+   <tr class='apiDef'><td class='apiType'> </td><td><a href='#LocalCache'><b>LocalCache</b></a>(options: <a href='Object.html'>Object</a> = null)</tr><tr class='apiBrief'><td>&nbsp;</td><td>Create and connect to the local cache.</td></tr>
    <tr class='apiDef'><td class='apiType'> </td><td><a href='#Logger'><b>Logger</b></a>(name: <a href='String.html'>String</a>, location, level: <a href='Number.html'>Number</a> = 0)</tr><tr class='apiBrief'><td>&nbsp;</td><td>Logger constructor.</td></tr>
    <tr class='apiDef'><td class='apiType'> </td><td><a href='#MemoryError'><b>MemoryError</b></a>(message: <a href='String.html'>String</a> = null)</tr><tr class='apiBrief'><td>&nbsp;</td><td>MemoryError constructor.</td></tr>
    <tr class='apiDef'><td class='apiType'>ejs.web </td><td><a href='#MethodOverride'><b>MethodOverride</b></a>(app: <a href='Function.html'>Function</a>): <a href='Function.html'>Function</a></tr><tr class='apiBrief'><td>&nbsp;</td><td>Method override wrapper middleware.</td></tr>
    <tr class='apiDef'><td class='apiType'>ejs.web </td><td><a href='#Middleware'><b>Middleware</b></a>(app: <a href='Function.html'>Function</a>, middleware: <a href='Array.html'>Array</a> = null): <a href='Function.html'>Function</a></tr><tr class='apiBrief'><td>&nbsp;</td><td>Define middleware for a web app.</td></tr>
+   <tr class='apiDef'><td class='apiType'>ejs.web </td><td><a href='#Mvc'><b>Mvc</b></a>(request: <a href='ejs.web-Request.html'>Request</a>)</tr><tr class='apiBrief'><td>&nbsp;</td><td>Load an MVC application and the optional application specific ejsrc file.</td></tr>
    <tr class='apiDef'><td class='apiType'>ejs.web </td><td><a href='#MvcApp'><b>MvcApp</b></a>(request: <a href='ejs.web-Request.html'>Request</a>): <a href='Object.html'>Object</a></tr><tr class='apiBrief'><td>&nbsp;</td><td>MVC request handler.</td></tr>
    <tr class='apiDef'><td class='apiType'>ejs.web </td><td><a href='#MvcBuilder'><b>MvcBuilder</b></a>(request: <a href='ejs.web-Request.html'>Request</a>): <a href='Function.html'>Function</a></tr><tr class='apiBrief'><td>&nbsp;</td><td>MVC builder for use in routing tables.</td></tr>
    <tr class='apiDef'><td class='apiType'> </td><td><a href='#Number'><b>Number</b></a>(value: <a href='Object.html'>Object</a> = null)</tr><tr class='apiBrief'><td>&nbsp;</td><td>Number constructor.</td></tr>
@@ -134,19 +138,20 @@ for a property that has not been defined.</td></tr>
    <tr class='apiDef'><td class='apiType'>ejs.web </td><td><a href='#Request'><b>Request</b></a>(uri: <a href='Uri.html'>Uri</a>, dir: <a href='Path.html'>Path</a> = .)</tr><tr class='apiBrief'><td>&nbsp;</td><td>Construct the a Request object.</td></tr>
    <tr class='apiDef'><td class='apiType'> </td><td><a href='#ResourceError'><b>ResourceError</b></a>(message: <a href='String.html'>String</a> = null)</tr><tr class='apiBrief'><td>&nbsp;</td><td>ResourceError constructor.</td></tr>
    <tr class='apiDef'><td class='apiType'>ejs.web </td><td><a href='#Route'><b>Route</b></a>(template: <a href='Object.html'>Object</a>, options: <a href='Object.html'>Object</a>, router: <a href='ejs.web-Router.html'>Router</a>)</tr><tr class='apiBrief'><td>&nbsp;</td><td>Create a new Route instance.</td></tr>
-   <tr class='apiDef'><td class='apiType'>ejs.web </td><td><a href='#Router'><b>Router</b></a>(routeSet: <a href='String.html'>String</a> = Top)</tr><tr class='apiBrief'><td>&nbsp;</td><td>Create a Router instance and initialize routes.</td></tr>
+   <tr class='apiDef'><td class='apiType'>ejs.web </td><td><a href='#Router'><b>Router</b></a>(routeSet: <a href='String.html'>String</a> = Top, options: <a href='Object.html'>Object</a> = expression)</tr><tr class='apiBrief'><td>&nbsp;</td><td>Create a Router instance and initialize routes.</td></tr>
    <tr class='apiDef'><td class='apiType'>ejs.web </td><td><a href='#ScriptApp'><b>ScriptApp</b></a>(request: <a href='ejs.web-Request.html'>Request</a>)</tr><tr class='apiBrief'><td>&nbsp;</td><td>Run a script app.</td></tr>
-   <tr class='apiDef'><td class='apiType'>ejs.web </td><td><a href='#ScriptBuilder'><b>ScriptBuilder</b></a>(request: <a href='ejs.web-Request.html'>Request</a>): <a href='Function.html'>Function</a></tr><tr class='apiBrief'><td>&nbsp;</td><td>Script builder for use in routing tables to load pure script files (*..es).</td></tr>
+   <tr class='apiDef'><td class='apiType'>ejs.web </td><td><a href='#ScriptBuilder'><b>ScriptBuilder</b></a>(request: <a href='ejs.web-Request.html'>Request</a>): <a href='Object.html'>Object</a></tr><tr class='apiBrief'><td>&nbsp;</td><td>Script builder to create a function to serve a script request (*..es).</td></tr>
+   <tr class='apiDef'><td class='apiType'>ejs.web </td><td><a href='#Session'><b>Session</b></a>(key, options: <a href='Object.html'>Object</a> = null)</tr><tr class='apiBrief'><td>&nbsp;</td><td>Create a new session state object.</td></tr>
    <tr class='apiDef'><td class='apiType'>ejs.web </td><td><a href='#ShowExceptions'><b>ShowExceptions</b></a>(app: <a href='Function.html'>Function</a>): <a href='Function.html'>Function</a></tr><tr class='apiBrief'><td>&nbsp;</td><td>ShowExceptions middleware wrapper.</td></tr>
    <tr class='apiDef'><td class='apiType'> </td><td><a href='#Socket'><b>Socket</b></a>()</tr><tr class='apiBrief'><td>&nbsp;</td><td>Create a socket object.</td></tr>
-   <tr class='apiDef'><td class='apiType'>ejs.db </td><td><a href='#Sqlite'><b>Sqlite</b></a>(options: <a href='Object.html'>Object</a>)</tr><tr class='apiBrief'><td>&nbsp;</td><td>Initialize a database connection using the supplied database connection string.</td></tr>
+   <tr class='apiDef'><td class='apiType'>ejs.db.sqlite </td><td><a href='#Sqlite'><b>Sqlite</b></a>(options: <a href='Object.html'>Object</a>)</tr><tr class='apiBrief'><td>&nbsp;</td><td>Initialize a database connection using the supplied database connection string.</td></tr>
    <tr class='apiDef'><td class='apiType'> </td><td><a href='#StateError'><b>StateError</b></a>(message: <a href='String.html'>String</a> = null)</tr><tr class='apiBrief'><td>&nbsp;</td><td>StateError constructor.</td></tr>
    <tr class='apiDef'><td class='apiType'>ejs.web </td><td><a href='#StaticApp'><b>StaticApp</b></a>(request: <a href='ejs.web-Request.html'>Request</a>): <a href='Object.html'>Object</a></tr><tr class='apiBrief'><td>&nbsp;</td><td>Static content handler.</td></tr>
    <tr class='apiDef'><td class='apiType'>ejs.web </td><td><a href='#StaticBuilder'><b>StaticBuilder</b></a>(request: <a href='ejs.web-Request.html'>Request</a>): <a href='Function.html'>Function</a></tr><tr class='apiBrief'><td>&nbsp;</td><td>Static builder for use in routing tables to serve static file content.</td></tr>
    <tr class='apiDef'><td class='apiType'> </td><td><a href='#String'><b>String</b></a>(str: <a href='Array.html'>Array</a>)</tr><tr class='apiBrief'><td>&nbsp;</td><td>String constructor.</td></tr>
    <tr class='apiDef'><td class='apiType'> </td><td><a href='#SyntaxError'><b>SyntaxError</b></a>(message: <a href='String.html'>String</a> = null)</tr><tr class='apiBrief'><td>&nbsp;</td><td>SyntaxError constructor.</td></tr>
-   <tr class='apiDef'><td class='apiType'>ejs.web </td><td><a href='#TemplateApp'><b>TemplateApp</b></a>(request: <a href='ejs.web-Request.html'>Request</a>)</tr><tr class='apiBrief'><td>&nbsp;</td><td>Template web page handler.</td></tr>
-   <tr class='apiDef'><td class='apiType'>ejs.web </td><td><a href='#TemplateBuilder'><b>TemplateBuilder</b></a>(request: <a href='ejs.web-Request.html'>Request</a>, options: <a href='Object.html'>Object</a> = expression): <a href='Function.html'>Function</a></tr><tr class='apiBrief'><td>&nbsp;</td><td>Template builder for use in routing tables to serve requests for templates.</td></tr>
+   <tr class='apiDef'><td class='apiType'>ejs.web </td><td><a href='#TemplateApp'><b>TemplateApp</b></a>(request: <a href='ejs.web-Request.html'>Request</a>): <a href='Object.html'>Object</a></tr><tr class='apiBrief'><td>&nbsp;</td><td>Template web page handler.</td></tr>
+   <tr class='apiDef'><td class='apiType'>ejs.web </td><td><a href='#TemplateBuilder'><b>TemplateBuilder</b></a>(request: <a href='ejs.web-Request.html'>Request</a>, options: <a href='Object.html'>Object</a> = expression): <a href='Function.html'>Function</a></tr><tr class='apiBrief'><td>&nbsp;</td><td>Template builder.</td></tr>
    <tr class='apiDef'><td class='apiType'>ejs.web </td><td><a href='#TemplateFilter'><b>TemplateFilter</b></a>(app: <a href='Function.html'>Function</a>): <a href='Object.html'>Object</a></tr><tr class='apiBrief'><td>&nbsp;</td><td>Template middleware filter.</td></tr>
    <tr class='apiDef'><td class='apiType'> </td><td><a href='#TemplateParser'><b>TemplateParser</b></a>()</tr>   <tr class='apiDef'><td class='apiType'> </td><td><a href='#TextStream'><b>TextStream</b></a>(stream: <a href='Stream.html'>Stream</a>)</tr><tr class='apiBrief'><td>&nbsp;</td><td>Create a text filter stream.</td></tr>
    <tr class='apiDef'><td class='apiType'> </td><td><a href='#Timer'><b>Timer</b></a>(period: <a href='Number.html'>Number</a>, callback: <a href='Function.html'>Function</a>, args: <a href='Array.html'>Array</a>)</tr><tr class='apiBrief'><td>&nbsp;</td><td>Constructor for Timer.</td></tr>
@@ -183,7 +188,7 @@ for a property that has not been defined.</td></tr>
    <tr class='apiDef'><td class='apiType'>ejs.unix </td><td><a href='#isDir'><b>isDir</b></a>(path: <a href='String.html'>String</a>): <a href='Boolean.html'>Boolean</a></tr><tr class='apiBrief'><td>&nbsp;</td><td>Is a file a directory.</td></tr>
    <tr class='apiDef'><td class='apiType'> </td><td><a href='#isFinite'><b>isFinite</b></a>(arg: <a href='Number.html'>Number</a>): <a href='Boolean.html'>Boolean</a></tr><tr class='apiBrief'><td>&nbsp;</td><td>Evaluate an argument to determine if it is a finite number.</td></tr>
    <tr class='apiDef'><td class='apiType'> </td><td><a href='#isNaN'><b>isNaN</b></a>(arg: <a href='Number.html'>Number</a>): <a href='Boolean.html'>Boolean</a></tr><tr class='apiBrief'><td>&nbsp;</td><td>Evaluate an argument to determine if it is a number.</td></tr>
-   <tr class='apiDef'><td class='apiType'> </td><td><a href='#load'><b>load</b></a>(file: <a href='String.html'>String</a>, cache: <a href='String.html'>String</a> = null): <a href='Object.html'>Object</a></tr><tr class='apiBrief'><td>&nbsp;</td><td>Load a script or module.</td></tr>
+   <tr class='apiDef'><td class='apiType'> </td><td><a href='#load'><b>load</b></a>(file: <a href='String.html'>String</a>, options: <a href='Object.html'>Object</a> = null): <a href='Object.html'>Object</a></tr><tr class='apiBrief'><td>&nbsp;</td><td>Load a script or module.</td></tr>
    <tr class='apiDef'><td class='apiType'>ejs.unix </td><td><a href='#ls'><b>ls</b></a>(path: <a href='String.html'>String</a> = ., enumDirs: <a href='Boolean.html'>Boolean</a> = false): <a href='Array.html'>Array</a></tr><tr class='apiBrief'><td>&nbsp;</td><td>Get a list of files in a directory.</td></tr>
    <tr class='apiDef'><td class='apiType'> </td><td><a href='#md5'><b>md5</b></a>(str: <a href='String.html'>String</a>): <a href='String.html'>String</a></tr><tr class='apiBrief'><td>&nbsp;</td><td>Computed an MD5 sum of a string
 This function is prototype and may be renamed in a future release.</td></tr>
@@ -197,12 +202,11 @@ This function is prototype and may be renamed in a future release.</td></tr>
    <tr class='apiDef'><td class='apiType'> </td><td><a href='#print'><b>print</b></a>(args: <a href='Array.html'>Array</a>): <a href='Void.html'>Void</a></tr><tr class='apiBrief'><td>&nbsp;</td><td>Print the arguments to the standard output with a new line appended.</td></tr>
    <tr class='apiDef'><td class='apiType'> </td><td><a href='#printf'><b>printf</b></a>(fmt, args: <a href='Array.html'>Array</a>): <a href='Void.html'>Void</a></tr><tr class='apiBrief'><td>&nbsp;</td><td>Print the arguments using a printf style format string.</td></tr>
    <tr class='apiDef'><td class='apiType'>ejs.unix </td><td><a href='#pwd'><b>pwd</b></a>(): <a href='Path.html'>Path</a></tr><tr class='apiBrief'><td>&nbsp;</td><td>Get the current working directory.</td></tr>
-   <tr class='apiDef'><td class='apiType'> </td><td><a href='#require'><b>require</b></a>(id: <a href='String.html'>String</a>): <a href='Object.html'>Object</a></tr><tr class='apiBrief'><td>&nbsp;</td><td>Loader for CommonJS modules.</td></tr>
    <tr class='apiDef'><td class='apiType'>ejs.unix </td><td><a href='#rm'><b>rm</b></a>(path: <a href='Path.html'>Path</a>): <a href='Void.html'>Void</a></tr><tr class='apiBrief'><td>&nbsp;</td><td>Remove a file from the file system.</td></tr>
    <tr class='apiDef'><td class='apiType'>ejs.unix </td><td><a href='#rmdir'><b>rmdir</b></a>(path: <a href='Path.html'>Path</a>, contents: <a href='Boolean.html'>Boolean</a> = false): <a href='Void.html'>Void</a></tr><tr class='apiBrief'><td>&nbsp;</td><td>Removes a directory.</td></tr>
    <tr class='apiDef'><td class='apiType'> </td><td><a href='#serialize'><b>serialize</b></a>(obj: <a href='Object.html'>Object</a>, options: <a href='Object.html'>Object</a> = null): <a href='String.html'>String</a></tr><tr class='apiBrief'><td>&nbsp;</td><td>Encode an object as a string.</td></tr>
    <tr class='apiDef'><td class='apiType'> </td><td><a href='#setInterval'><b>setInterval</b></a>(callback: <a href='Function.html'>Function</a>, delay: <a href='Number.html'>Number</a>, args: <a href='Array.html'>Array</a>): <a href='Timer.html'>Timer</a></tr><tr class='apiBrief'><td>&nbsp;</td><td>Create an interval timer.</td></tr>
-   <tr class='apiDef'><td class='apiType'> </td><td><a href='#setTimeout'><b>setTimeout</b></a>(callback: <a href='Function.html'>Function</a>, delay: <a href='Number.html'>Number</a>, args: <a href='Array.html'>Array</a>): <a href='Number.html'>Number</a></tr><tr class='apiBrief'><td>&nbsp;</td><td>Create a timeout.</td></tr>
+   <tr class='apiDef'><td class='apiType'> </td><td><a href='#setTimeout'><b>setTimeout</b></a>(callback: <a href='Function.html'>Function</a>, delay: <a href='Number.html'>Number</a>, args: <a href='Array.html'>Array</a>): <a href='Number.html'>Number</a></tr><tr class='apiBrief'><td>&nbsp;</td><td>Run a function after a delay.</td></tr>
    <tr class='apiDef'><td class='apiType'>ejs.unix </td><td><a href='#sleep'><b>sleep</b></a>(delay: <a href='Number.html'>Number</a>): <a href='Void.html'>Void</a></tr><tr class='apiBrief'><td>&nbsp;</td><td>Sleep the application for the given number of milliseconds.</td></tr>
    <tr class='apiDef'><td class='apiType'>ejs.unix </td><td><a href='#tempname'><b>tempname</b></a>(directory: <a href='String.html'>String</a> = null): <a href='File.html'>File</a></tr><tr class='apiBrief'><td>&nbsp;</td><td>Create a temporary file.</td></tr>
    <tr class='apiDef'><td class='apiType'> </td><td><a href='#toOrdinal'><b>toOrdinal</b></a>(number: <a href='Number.html'>Number</a>): <a href='String.html'>String</a></tr><tr class='apiBrief'><td>&nbsp;</td><td>Convert a number to an ordinal string.</td></tr>
@@ -296,6 +300,27 @@ immutable, this constructor will return a reference to either the "true" or "fal
 <dl><dt>Parameters</dt>
 <dd><table class='parameters' summary ='parameters'>
 <tr class='param'><td class='param'>size: <a href='Number.html'>Number</a> </td><td>The initial size of the byte array. If not supplied a default buffer size will be used which is typically 4K or larger. [default: -1]</td></tr><tr class='param'><td class='param'>resizable: <a href='Boolean.html'>Boolean</a> </td><td>Set to true to automatically grow the array as required to fit written data. [default: true]</td></tr></table></dd>
+</dl></div>
+</div>
+<hr />
+<a name='Cache'></a>
+<div class='api'>
+<div class='apiSig'>    Cache(adapter: <a href='String.html'>String</a> = null, options: <a href='Object.html'>Object</a> = expression)
+</div>
+<div class='apiDetail'>
+<dl><dt>Description</dt></dd><dd>Cache constructor. </dd></dl>
+<dl><dt>Parameters</dt>
+<dd><table class='parameters' summary ='parameters'>
+<tr class='param'><td class='param'>adapter: <a href='String.html'>String</a> </td><td>Adapter for the cache cache. E.g. "local". The Local cache is the only currently supported cache backend. [default: null]</td></tr><tr class='param'><td class='param'>options: <a href='Object.html'>Object</a> </td><td>Adapter options. The common options are described below, other options are passed through to the relevant caching backend. [default: expression]</td></tr></table></dd>
+</dl><dl><dt>Options</dt>
+<dd><table class='parameters' summary ='options'>
+<td class='param'>lifespan</td><td>Default lifespan for key values.</td></tr>
+<td class='param'>resolution</td><td>Time in milliseconds to check for expired expired keys.</td></tr>
+<td class='param'>timeout</td><td>Timeout on cache I/O operations.</td></tr>
+<td class='param'>trace</td><td>Trace I/O operations for debug.</td></tr>
+<td class='param'>module</td><td>Module name containing the cache connector class. This is a bare module name without ".mod" or any leading path. If module is not present, a module name is derrived using "ejs.cache" + adapter.</td></tr>
+<td class='param'>class</td><td>Class name containing the cache backend. If the class property is not present, the  class is derived from the adapter name with "Cache" appended. The first letter of the adapter is converted to uppercase. For example, if the adapter was "mem", the class would be inferred to be "MemCache".</td></tr>
+</table></dd>
 </dl></div>
 </div>
 <hr />
@@ -417,8 +442,7 @@ mime type from the Request.pathInfo extension.</dd></dl>
 <div class='apiSig'>  ejs.web  Controller(req: <a href='ejs.web-Request.html'>Request</a> = null)
 </div>
 <div class='apiDetail'>
-<dl><dt>Description</dt></dd><dd>Create and initialize a controller. This may be called directly or via 
-the Controller.create factory method.</dd></dl>
+<dl><dt>Description</dt></dd><dd>Create and initialize a controller. This may be called directly or via the Controller.create factory method.</dd></dl>
 <dl><dt>Parameters</dt>
 <dd><table class='parameters' summary ='parameters'>
 <tr class='param'><td class='param'>req: <a href='ejs.web-Request.html'>Request</a> </td><td>Web request object. [default: null]</td></tr></table></dd>
@@ -434,7 +458,17 @@ the Controller.create factory method.</dd></dl>
 will also be defined as the default database.</dd></dl>
 <dl><dt>Parameters</dt>
 <dd><table class='parameters' summary ='parameters'>
-<tr class='param'><td class='param'>adapter: <a href='String.html'>String</a> </td><td>Database adapter to use. E.g. "sqlite". Sqlite is currently the only supported adapter.</td></tr><tr class='param'><td class='param'>options: <a href='Object.html'>Object</a> </td><td>Connection options. This may be filename or an object hash of properties. If set to a filename they type must be either String or Path and it should contain the filename of the database on the local system. If options is set ot an object hash. It should contain adapter specific properties that specify  how to attach to the database. Typical fields include: <ul> <li>name - Database URI Examples: http://example.com:1234/database.db, Examples: file://var/spool/db/database.db </li> <li>username - Database username</li> <li>password - Database password</li> <li>trace - Trace database commands to the log <li>socket - /var/run/mysqld/mysqld.sock </ul></td></tr></table></dd>
+<tr class='param'><td class='param'>adapter: <a href='String.html'>String</a> </td><td>Database adapter to use. E.g. "sqlite". Sqlite is currently the only supported adapter.</td></tr><tr class='param'><td class='param'>options: <a href='Object.html'>Object</a> </td><td>Connection options. This may be filename or an object hash of properties. If set to a filename, it should contain the filename of the database on the local system. If options is an object hash, it should  contain adapter specific properties that specify how to attach to the database.</td></tr></table></dd>
+</dl><dl><dt>Options</dt>
+<dd><table class='parameters' summary ='options'>
+<td class='param'>name</td><td>Database name.</td></tr>
+<td class='param'>username</td><td>Database username.</td></tr>
+<td class='param'>password</td><td>Database password.</td></tr>
+<td class='param'>trace</td><td>Trace database commands to the log.</td></tr>
+<td class='param'>socket</td><td>Database communications socket.</td></tr>
+<td class='param'>module</td><td>Module name containing the database connector class. This is a bare module name without ".mod" or any leading path.</td></tr>
+<td class='param'>class</td><td>Class name containing the database backend.</td></tr>
+</table></dd>
 </dl></div>
 </div>
 <hr />
@@ -472,27 +506,6 @@ the client is redirected to a URL equal to the pathInfo with a "/" appended.</dd
 <dd>ejscript-2.0</dd></dl>
 <dl><dt>Stability</dt>
 <dd>Prototype.</dd></dl>
-</div>
-</div>
-<hr />
-<a name='DirBuilder'></a>
-<div class='api'>
-<div class='apiSig'>  ejs.web  DirBuilder(request: <a href='ejs.web-Request.html'>Request</a>): <a href='Function.html'>Function</a>
-</div>
-<div class='apiDetail'>
-<dl><dt>Description</dt></dd><dd>Directory builder for use in routing tables to service requests for directories. </dd></dl>
-<dl><dt>Parameters</dt>
-<dd><table class='parameters' summary ='parameters'>
-<tr class='param'><td class='param'>request: <a href='ejs.web-Request.html'>Request</a> </td><td>Request object.</td></tr></table></dd>
-</dl><dl><dt>Returns</dt>
-<dd>A web application function that services a web request and when invoked with the request object will  yield a response object.</dd></dl>
-<dl><dt>Specified</dt>
-<dd>ejscript-2.0</dd></dl>
-<dl><dt>Stability</dt>
-<dd>Prototype.</dd></dl>
-<dl><dt>Example</dt>
-<dd><pre>{ name: "index", builder: DirBuilder, match: Router.isDir }
-@spec ejs</pre></dd></dl>
 </div>
 </div>
 <hr />
@@ -588,22 +601,31 @@ This version is limited, in that it will only define a Content-Length if the res
 <hr />
 <a name='HttpServer'></a>
 <div class='api'>
-<div class='apiSig'>  ejs.web  HttpServer(documentRoot: <a href='Path.html'>Path</a> = ., serverRoot: <a href='Path.html'>Path</a> = .)
+<div class='apiSig'>  ejs.web  HttpServer(options: <a href='Object.html'>Object</a> = expression)
 </div>
 <div class='apiDetail'>
 <dl><dt>Description</dt></dd><dd>Create a HttpServer object. The server is created in async mode by default.
 If an "ejsrc" file exists in the server root, it will be loaded and update the "<a href='#config"'>config"</a> properties.</dd></dl>
 <dl><dt>Parameters</dt>
 <dd><table class='parameters' summary ='parameters'>
-<tr class='param'><td class='param'>documentRoot: <a href='Path.html'>Path</a> </td><td>Directory containing web documents to serve. If set to null and the HttpServer is hosted, the documentRoot will be defined by the web server. [default: .]</td></tr><tr class='param'><td class='param'>serverRoot: <a href='Path.html'>Path</a> </td><td>Base directory for the server ejsrc configuration file. If set to null and the HttpServer is  hosted, the serverRoot will be defined by the web server. [default: .]</td></tr></table></dd>
+<tr class='param'><td class='param'>options: <a href='Object.html'>Object</a> </td><td>Set of options to configure the server. [default: expression]</td></tr><tr class='param'><td class='param'>options: <a href='Object.html'>Object</a> </td><td>null [default: expression]</td></tr></table></dd>
+</dl><dl><dt>Options</dt>
+<dd><table class='parameters' summary ='options'>
+<td class='param'>documents</td><td>Directory containing web documents to serve. If unset and the HttpServer is hosted, the <a href='#documents'>documents</a> property will be defined by the web server.</td></tr>
+<td class='param'>home</td><td>Base directory for the server and the "ejsrc" configuration file. If unset and the HttpServer is  hosted, the <a href='#home'>home</a> property will be defined by the web server.</td></tr>
+<td class='param'>ejsrc</td><td>Alternate path to the "ejsrc" configuration file.</td></tr>
+<td class='param'>config</td><td>Alternate App.config settings.</td></tr>
+<td class='param'>own</td><td>If hosted inside a web server, set to true to bypass any web server listening endpoints and  create a new stand-alone listening connection.</td></tr>
+</table></dd>
 </dl><dl><dt>Specified</dt>
 <dd>ejscript-2.0</dd></dl>
 <dl><dt>Stability</dt>
 <dd>Prototype.</dd></dl>
 <dl><dt>Example</dt>
-<dd><pre>let server: HttpServer = new HttpServer(".", "web")
+<dd><pre>let server: HttpServer = new HttpServer({documents: "web"})
 let router = Router(Router.Restful)
 server.on("readable", function (event: String, request: Request) {
+    // "this" object is also set to request
     request.status = 200
     request.setHeaders({"Content-Type": "text/plain"})
     request.on("readable", function (event, request) {
@@ -642,6 +664,28 @@ server.listen("127.0.0.1:7777")</pre></dd></dl>
 <dl><dt>Parameters</dt>
 <dd><table class='parameters' summary ='parameters'>
 <tr class='param'><td class='param'>message: <a href='String.html'>String</a> </td><td>Message to use when defining the Error.message property. [default: null]</td></tr></table></dd>
+</dl></div>
+</div>
+<hr />
+<a name='LocalCache'></a>
+<div class='api'>
+<div class='apiSig'>    LocalCache(options: <a href='Object.html'>Object</a> = null)
+</div>
+<div class='apiDetail'>
+<dl><dt>Description</dt></dd><dd>Create and connect to the local cache. An application has only one cache regardless of how many LocalCache
+instances are created. All LocalCache instances connect to the same underlying cache. Multiple interpreters
+can use the local cache to reliably share information.</dd></dl>
+<dl><dt>Parameters</dt>
+<dd><table class='parameters' summary ='parameters'>
+<tr class='param'><td class='param'>options: <a href='Object.html'>Object</a> </td><td>Configuration options. [default: null]</td></tr></table></dd>
+</dl><dl><dt>Options</dt>
+<dd><table class='parameters' summary ='options'>
+<td class='param'>shared</td><td>Create or connect to a single, shared cache. If multiple interpreters in a single process create shared LocalCache instances they will be able to share key/value data.</td></tr>
+<td class='param'>lifespan</td><td>Default lifespan for key values. Set to zero for a default unlimited timeout.</td></tr>
+<td class='param'>resolution</td><td>Time in milliseconds to check for expired expired keys.</td></tr>
+<td class='param'>memory</td><td>Maximum memory to use for keys and data.</td></tr>
+<td class='param'>trace</td><td>Trace I/O operations for debug.</td></tr>
+</table></dd>
 </dl></div>
 </div>
 <hr />
@@ -708,6 +752,18 @@ a X-HTTP-METHOD-OVERRIDE Http header.</dd></dl>
 </div>
 </div>
 <hr />
+<a name='Mvc'></a>
+<div class='api'>
+<div class='apiSig'>  ejs.web  Mvc(request: <a href='ejs.web-Request.html'>Request</a>)
+</div>
+<div class='apiDetail'>
+<dl><dt>Description</dt></dd><dd>Load an MVC application and the optional application specific ejsrc file. </dd></dl>
+<dl><dt>Parameters</dt>
+<dd><table class='parameters' summary ='parameters'>
+<tr class='param'><td class='param'>request: <a href='ejs.web-Request.html'>Request</a> </td><td>Request object.</td></tr></table></dd>
+</dl></div>
+</div>
+<hr />
 <a name='MvcApp'></a>
 <div class='api'>
 <div class='apiSig'>  ejs.web  MvcApp(request: <a href='ejs.web-Request.html'>Request</a>): <a href='Object.html'>Object</a>
@@ -741,9 +797,6 @@ a X-HTTP-METHOD-OVERRIDE Http header.</dd></dl>
 <dd>ejscript-2.0</dd></dl>
 <dl><dt>Stability</dt>
 <dd>Prototype.</dd></dl>
-<dl><dt>Example</dt>
-<dd><pre>{ name: "index", builder: MvcBuilder, match: "/" }
-@spec ejs</pre></dd></dl>
 </div>
 </div>
 <hr />
@@ -859,13 +912,17 @@ Route("/User/login", {name: "login" })</pre></dd></dl>
 <hr />
 <a name='Router'></a>
 <div class='api'>
-<div class='apiSig'>  ejs.web  Router(routeSet: <a href='String.html'>String</a> = Top)
+<div class='apiSig'>  ejs.web  Router(routeSet: <a href='String.html'>String</a> = Top, options: <a href='Object.html'>Object</a> = expression)
 </div>
 <div class='apiDetail'>
 <dl><dt>Description</dt></dd><dd>Create a Router instance and initialize routes. </dd></dl>
 <dl><dt>Parameters</dt>
 <dd><table class='parameters' summary ='parameters'>
-<tr class='param'><td class='param'>routeSet: <a href='String.html'>String</a> </td><td>Optional name of the route set to add. Supports sets include: Router.Top and Router.Restful. The Top routes provide top level routes for pages with extensions ".ejs",  and ".es" as well as for static content (see <a href='#addHandlers'>addHandlers</a> addCatchall). The Restful routes provide  default Controller/Action routes according to a RESTful paradigm (see addRestful). The routeSet can also be set to null to add not routes. This is useful for creating a bare Router instance. Defaults  to Top. [default: Top]</td></tr></table></dd>
+<tr class='param'><td class='param'>routeSet: <a href='String.html'>String</a> </td><td>Optional name of the route set to add. Supports sets include: Router.Top and Router.Restful. The Top routes provide top level routes for pages with extensions ".ejs",  and ".es" as well as for static content (see <a href='#addHandlers'>addHandlers</a> addCatchall). The Restful routes provide  default Controller/Action routes according to a RESTful paradigm (see addRestful). The routeSet can also be set to null to add not routes. This is useful for creating a bare Router instance. Defaults  to Top. [default: Top]</td></tr><tr class='param'><td class='param'>options: <a href='Object.html'>Object</a> </td><td>Options to apply to all routes. [default: expression]</td></tr></table></dd>
+</dl><dl><dt>Options</dt>
+<dd><table class='parameters' summary ='options'>
+<td class='param'>threaded</td><td>Boolean If true, the request should be execute in a worker thread if possible. This thread  will not be dedicated, but will be assigned as the request requires CPU resources.</td></tr>
+</table></dd>
 </dl><dl><dt>Throws</dt><dd>
 <a href='Error.html'>Error</a>: for an unknown route set.
 </dd>
@@ -877,7 +934,7 @@ Route("/User/login", {name: "login" })</pre></dd></dl>
 <div class='apiSig'>  ejs.web  ScriptApp(request: <a href='ejs.web-Request.html'>Request</a>)
 </div>
 <div class='apiDetail'>
-<dl><dt>Description</dt></dd><dd>Run a script app. The script at request.filename will be run.</dd></dl>
+<dl><dt>Description</dt></dd><dd>Run a script app. Run the script specified by request.filename.</dd></dl>
 <dl><dt>Parameters</dt>
 <dd><table class='parameters' summary ='parameters'>
 <tr class='param'><td class='param'>request: <a href='ejs.web-Request.html'>Request</a> </td><td>Request object.</td></tr></table></dd>
@@ -887,28 +944,44 @@ Route("/User/login", {name: "login" })</pre></dd></dl>
 <dd>ejscript-2.0</dd></dl>
 <dl><dt>Stability</dt>
 <dd>Prototype.</dd></dl>
+<dl><dt>Example</dt>
+<dd><pre>{ name: "index", builder: ScriptBuilder, match: "\.es$" }
+@spec ejs</pre></dd></dl>
 </div>
 </div>
 <hr />
 <a name='ScriptBuilder'></a>
 <div class='api'>
-<div class='apiSig'>  ejs.web  ScriptBuilder(request: <a href='ejs.web-Request.html'>Request</a>): <a href='Function.html'>Function</a>
+<div class='apiSig'>  ejs.web  ScriptBuilder(request: <a href='ejs.web-Request.html'>Request</a>): <a href='Object.html'>Object</a>
 </div>
 <div class='apiDetail'>
-<dl><dt>Description</dt></dd><dd>Script builder for use in routing tables to load pure script files (*..es). </dd></dl>
+<dl><dt>Description</dt></dd><dd>Script builder to create a function to serve a script request (*..es). </dd></dl>
 <dl><dt>Parameters</dt>
 <dd><table class='parameters' summary ='parameters'>
 <tr class='param'><td class='param'>request: <a href='ejs.web-Request.html'>Request</a> </td><td>Request object.</td></tr></table></dd>
 </dl><dl><dt>Returns</dt>
-<dd>A web script function that services a web request.</dd></dl>
+<dd>A request response.</dd></dl>
 <dl><dt>Specified</dt>
 <dd>ejscript-2.0</dd></dl>
 <dl><dt>Stability</dt>
 <dd>Prototype.</dd></dl>
-<dl><dt>Example</dt>
-<dd><pre>{ name: "index", builder: ScriptBuilder, match: "\.es$" }
-@spec ejs</pre></dd></dl>
 </div>
+</div>
+<hr />
+<a name='Session'></a>
+<div class='api'>
+<div class='apiSig'>  ejs.web  Session(key, options: <a href='Object.html'>Object</a> = null)
+</div>
+<div class='apiDetail'>
+<dl><dt>Description</dt></dd><dd>Create a new session state object. This uses the Store in-memory caching service.</dd></dl>
+<dl><dt>Parameters</dt>
+<dd><table class='parameters' summary ='parameters'>
+<tr class='param'><td class='param'>key </td><td>Optional key to provide. If omitted or null, a new key will be generated. If the given key has expired, a new key will be generated.</td></tr><tr class='param'><td class='param'>options: <a href='Object.html'>Object</a> </td><td>null [default: null]</td></tr><tr class='param'><td class='param'>options: <a href='Object.html'>Object</a> </td><td>null [default: null]</td></tr></table></dd>
+</dl><dl><dt>Options</dt>
+<dd><table class='parameters' summary ='options'>
+<td class='param'>lifespan</td><td>Lifespan in seconds for the session.</td></tr>
+</table></dd>
+</dl></div>
 </div>
 <hr />
 <a name='ShowExceptions'></a>
@@ -936,7 +1009,7 @@ Route("/User/login", {name: "login" })</pre></dd></dl>
 <hr />
 <a name='Sqlite'></a>
 <div class='api'>
-<div class='apiSig'>  ejs.db  Sqlite(options: <a href='Object.html'>Object</a>)
+<div class='apiSig'>  ejs.db.sqlite  Sqlite(options: <a href='Object.html'>Object</a>)
 </div>
 <div class='apiDetail'>
 <dl><dt>Description</dt></dd><dd>Initialize a database connection using the supplied database connection string. </dd></dl>
@@ -978,6 +1051,9 @@ and will use X-SendFile for efficient transmission of static content.</dd></dl>
 <dd>ejscript-2.0</dd></dl>
 <dl><dt>Stability</dt>
 <dd>Prototype.</dd></dl>
+<dl><dt>Example</dt>
+<dd><pre>{ name: "index", builder: StaticApp }
+@spec ejs</pre></dd></dl>
 </div>
 </div>
 <hr />
@@ -996,9 +1072,6 @@ and will use X-SendFile for efficient transmission of static content.</dd></dl>
 <dd>ejscript-2.0</dd></dl>
 <dl><dt>Stability</dt>
 <dd>Prototype.</dd></dl>
-<dl><dt>Example</dt>
-<dd><pre>{ name: "index", builder: StaticBuilder, }
-@spec ejs</pre></dd></dl>
 </div>
 </div>
 <hr />
@@ -1032,7 +1105,7 @@ and will use X-SendFile for efficient transmission of static content.</dd></dl>
 <hr />
 <a name='TemplateApp'></a>
 <div class='api'>
-<div class='apiSig'>  ejs.web  TemplateApp(request: <a href='ejs.web-Request.html'>Request</a>)
+<div class='apiSig'>  ejs.web  TemplateApp(request: <a href='ejs.web-Request.html'>Request</a>): <a href='Object.html'>Object</a>
 </div>
 <div class='apiDetail'>
 <dl><dt>Description</dt></dd><dd>Template web page handler. The template web page at request.filename will be processed and run.</dd></dl>
@@ -1045,6 +1118,9 @@ and will use X-SendFile for efficient transmission of static content.</dd></dl>
 <dd>ejscript-2.0</dd></dl>
 <dl><dt>Stability</dt>
 <dd>Prototype.</dd></dl>
+<dl><dt>Example</dt>
+<dd><pre>{ name: "index", builder: TemplateApp, match: "\.ejs$" }
+@stability prototype</pre></dd></dl>
 </div>
 </div>
 <hr />
@@ -1053,8 +1129,8 @@ and will use X-SendFile for efficient transmission of static content.</dd></dl>
 <div class='apiSig'>  ejs.web  TemplateBuilder(request: <a href='ejs.web-Request.html'>Request</a>, options: <a href='Object.html'>Object</a> = expression): <a href='Function.html'>Function</a>
 </div>
 <div class='apiDetail'>
-<dl><dt>Description</dt></dd><dd>Template builder for use in routing tables to serve requests for templates. The template path can be supplied
-via the request.filename or a literal template can be provided via options.literal.</dd></dl>
+<dl><dt>Description</dt></dd><dd>Template builder. This routine creates a template function to serve requests for template files. 
+The template path can be supplied via the request.filename or a literal template can be provided via options.literal.</dd></dl>
 <dl><dt>Parameters</dt>
 <dd><table class='parameters' summary ='parameters'>
 <tr class='param'><td class='param'>request: <a href='ejs.web-Request.html'>Request</a> </td><td>Request object.</td></tr><tr class='param'><td class='param'>options: <a href='Object.html'>Object</a> </td><td>Object hash of options. [default: expression]</td></tr></table></dd>
@@ -1070,9 +1146,6 @@ via the request.filename or a literal template can be provided via options.liter
 <dd>ejscript-2.0</dd></dl>
 <dl><dt>Stability</dt>
 <dd>Prototype.</dd></dl>
-<dl><dt>Example</dt>
-<dd><pre>{ name: "index", builder: TemplateBuilder, match: "\.ejs$" }
-@spec ejs</pre></dd></dl>
 </div>
 </div>
 <hr />
@@ -1617,13 +1690,18 @@ in the path.</dd></dl>
 <hr />
 <a name='load'></a>
 <div class='api'>
-<div class='apiSig'>    load(file: <a href='String.html'>String</a>, cache: <a href='String.html'>String</a> = null): <a href='Object.html'>Object</a>
+<div class='apiSig'>    load(file: <a href='String.html'>String</a>, options: <a href='Object.html'>Object</a> = null): <a href='Object.html'>Object</a>
 </div>
 <div class='apiDetail'>
 <dl><dt>Description</dt></dd><dd>Load a script or module. </dd></dl>
 <dl><dt>Parameters</dt>
 <dd><table class='parameters' summary ='parameters'>
-<tr class='param'><td class='param'>file: <a href='String.html'>String</a> </td><td>Path name to load. File will be interpreted relative to EJSPATH if it is not found as an absolute or relative file name.</td></tr><tr class='param'><td class='param'>cache: <a href='String.html'>String</a> </td><td>Path name to save the compiled script as. [default: null]</td></tr></table></dd>
+<tr class='param'><td class='param'>file: <a href='String.html'>String</a> </td><td>Path name to load. File will be interpreted relative to EJSPATH if it is not found as an absolute or relative file name.</td></tr><tr class='param'><td class='param'>options: <a href='Object.html'>Object</a> </td><td>Option parameters. [default: null]</td></tr></table></dd>
+</dl><dl><dt>Options</dt>
+<dd><table class='parameters' summary ='options'>
+<td class='param'>cache</td><td>String or Path name to save the compiled script as.</td></tr>
+<td class='param'>reload</td><td>Boolean If true, reload the module if already loaded. Defaults to true.</td></tr>
+</table></dd>
 </dl><dl><dt>Returns</dt>
 <dd>The value of the last expression in the loaded module.</dd></dl>
 </div>
@@ -1798,25 +1876,6 @@ strings by calling their toString method.</dd></dl>
 </div>
 </div>
 <hr />
-<a name='require'></a>
-<div class='api'>
-<div class='apiSig'>    require(id: <a href='String.html'>String</a>): <a href='Object.html'>Object</a>
-</div>
-<div class='apiDetail'>
-<dl><dt>Description</dt></dd><dd>Loader for CommonJS modules. The Loader class provides provides a <a href='#require'>require()</a> function to load
-script files.</dd></dl>
-<dl><dt>Parameters</dt>
-<dd><table class='parameters' summary ='parameters'>
-<tr class='param'><td class='param'>id: <a href='String.html'>String</a> </td><td>Module identifier. May be top level or may be an identifier relative to the loading script.</td></tr></table></dd>
-</dl><dl><dt>Returns</dt>
-<dd>An object hash of exports from the module.</dd></dl>
-<dl><dt>Specified</dt>
-<dd>ejscript-2.0</dd></dl>
-<dl><dt>Stability</dt>
-<dd>Prototype.</dd></dl>
-</div>
-</div>
-<hr />
 <a name='rm'></a>
 <div class='api'>
 <div class='apiSig'>  ejs.unix  rm(path: <a href='Path.html'>Path</a>): <a href='Void.html'>Void</a>
@@ -1897,7 +1956,7 @@ until all properties are rendered.  NOTE: the maxDepth, all and base properties 
 <div class='apiSig'>    setTimeout(callback: <a href='Function.html'>Function</a>, delay: <a href='Number.html'>Number</a>, args: <a href='Array.html'>Array</a>): <a href='Number.html'>Number</a>
 </div>
 <div class='apiDetail'>
-<dl><dt>Description</dt></dd><dd>Create a timeout. </dd></dl>
+<dl><dt>Description</dt></dd><dd>Run a function after a delay. </dd></dl>
 <dl><dt>Parameters</dt>
 <dd><table class='parameters' summary ='parameters'>
 <tr class='param'><td class='param'>callback: <a href='Function.html'>Function</a> </td><td>Function to invoke when the timer expires.</td></tr><tr class='param'><td class='param'>delay: <a href='Number.html'>Number</a> </td><td>Time in milliseconds until the timer expires and the callback is invoked.</td></tr><tr class='param'><td class='param'>args: <a href='Array.html'>Array</a> </td><td>Function arguments.</td></tr></table></dd>
