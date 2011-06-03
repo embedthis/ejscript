@@ -81,6 +81,13 @@ module ejs.web {
             }
         })
 
+        //  Route based on header values
+        r.add(function (request) {
+            if (request.header("user-agent").contains("Chrome")) {
+                return true
+            }
+        })
+
         //  Set request parameters with values from request
         r.add("/custom", {action: "display", params: { from: "{uri}", transport: "{scheme}" })
 

@@ -1877,7 +1877,7 @@ extern EjsObj *ejsGetException(Ejs *ejs);
     @param ... Message arguments
     @ingroup EjsError
  */
-extern EjsError *ejsThrowArgError(Ejs *ejs, cchar *fmt, ...) PRINTF_ATTRIBUTE(2,3);
+extern EjsError *ejsThrowArgError(Ejs *ejs, cchar *fmt, ...);
 
 /** 
     Throw an assertion exception
@@ -1886,7 +1886,7 @@ extern EjsError *ejsThrowArgError(Ejs *ejs, cchar *fmt, ...) PRINTF_ATTRIBUTE(2,
     @param ... Message arguments
     @ingroup EjsError
  */
-extern EjsError *ejsThrowAssertError(Ejs *ejs, cchar *fmt, ...) PRINTF_ATTRIBUTE(2,3);
+extern EjsError *ejsThrowAssertError(Ejs *ejs, cchar *fmt, ...);
 
 /** 
     Throw an math exception
@@ -1895,7 +1895,7 @@ extern EjsError *ejsThrowAssertError(Ejs *ejs, cchar *fmt, ...) PRINTF_ATTRIBUTE
     @param ... Message arguments
     @ingroup EjsError
  */
-extern EjsError *ejsThrowArithmeticError(Ejs *ejs, cchar *fmt, ...) PRINTF_ATTRIBUTE(2,3);
+extern EjsError *ejsThrowArithmeticError(Ejs *ejs, cchar *fmt, ...);
 
 /** 
     Throw an instruction code exception
@@ -1904,7 +1904,7 @@ extern EjsError *ejsThrowArithmeticError(Ejs *ejs, cchar *fmt, ...) PRINTF_ATTRI
     @param ... Message arguments
     @ingroup EjsError
  */
-extern EjsError *ejsThrowInstructionError(Ejs *ejs, cchar *fmt, ...) PRINTF_ATTRIBUTE(2,3);
+extern EjsError *ejsThrowInstructionError(Ejs *ejs, cchar *fmt, ...);
 
 /** 
     Throw an general error exception
@@ -1913,7 +1913,7 @@ extern EjsError *ejsThrowInstructionError(Ejs *ejs, cchar *fmt, ...) PRINTF_ATTR
     @param ... Message arguments
     @ingroup EjsError
  */
-extern EjsError *ejsThrowError(Ejs *ejs, cchar *fmt, ...) PRINTF_ATTRIBUTE(2,3);
+extern EjsError *ejsThrowError(Ejs *ejs, cchar *fmt, ...);
 
 /** 
     Throw an internal error exception
@@ -1922,7 +1922,7 @@ extern EjsError *ejsThrowError(Ejs *ejs, cchar *fmt, ...) PRINTF_ATTRIBUTE(2,3);
     @param ... Message arguments
     @ingroup EjsError
  */
-extern EjsError *ejsThrowInternalError(Ejs *ejs, cchar *fmt, ...) PRINTF_ATTRIBUTE(2,3);
+extern EjsError *ejsThrowInternalError(Ejs *ejs, cchar *fmt, ...);
 
 /** 
     Throw an IO exception
@@ -1931,7 +1931,7 @@ extern EjsError *ejsThrowInternalError(Ejs *ejs, cchar *fmt, ...) PRINTF_ATTRIBU
     @param ... Message arguments
     @ingroup EjsError
  */
-extern EjsError *ejsThrowIOError(Ejs *ejs, cchar *fmt, ...) PRINTF_ATTRIBUTE(2,3);
+extern EjsError *ejsThrowIOError(Ejs *ejs, cchar *fmt, ...);
 
 /** 
     Throw an Memory depletion exception
@@ -1947,7 +1947,7 @@ extern EjsError *ejsThrowMemoryError(Ejs *ejs);
     @param ... Message arguments
     @ingroup EjsError
  */
-extern EjsError *ejsThrowOutOfBoundsError(Ejs *ejs, cchar *fmt, ...) PRINTF_ATTRIBUTE(2,3);
+extern EjsError *ejsThrowOutOfBoundsError(Ejs *ejs, cchar *fmt, ...);
 
 /** 
     Throw an reference exception
@@ -1956,7 +1956,7 @@ extern EjsError *ejsThrowOutOfBoundsError(Ejs *ejs, cchar *fmt, ...) PRINTF_ATTR
     @param ... Message arguments
     @ingroup EjsError
  */
-extern EjsError *ejsThrowReferenceError(Ejs *ejs, cchar *fmt, ...) PRINTF_ATTRIBUTE(2,3);
+extern EjsError *ejsThrowReferenceError(Ejs *ejs, cchar *fmt, ...);
 
 /** 
     Throw an resource exception
@@ -1965,7 +1965,7 @@ extern EjsError *ejsThrowReferenceError(Ejs *ejs, cchar *fmt, ...) PRINTF_ATTRIB
     @param ... Message arguments
     @ingroup EjsError
  */
-extern EjsError *ejsThrowResourceError(Ejs *ejs, cchar *fmt, ...) PRINTF_ATTRIBUTE(2,3);
+extern EjsError *ejsThrowResourceError(Ejs *ejs, cchar *fmt, ...);
 
 /** 
     Throw an state exception
@@ -1974,7 +1974,7 @@ extern EjsError *ejsThrowResourceError(Ejs *ejs, cchar *fmt, ...) PRINTF_ATTRIBU
     @param ... Message arguments
     @ingroup EjsError
  */
-extern EjsError *ejsThrowStateError(Ejs *ejs, cchar *fmt, ...) PRINTF_ATTRIBUTE(2,3);
+extern EjsError *ejsThrowStateError(Ejs *ejs, cchar *fmt, ...);
 
 /** 
     Throw an stop iteration exception
@@ -1990,7 +1990,7 @@ extern EjsObj *ejsThrowStopIteration(Ejs *ejs);
     @param ... Message arguments
     @ingroup EjsError
  */
-extern EjsString *ejsThrowString(Ejs *ejs, cchar *fmt, ...) PRINTF_ATTRIBUTE(2,3);
+extern EjsString *ejsThrowString(Ejs *ejs, cchar *fmt, ...);
 
 /** 
     Throw an syntax error exception
@@ -1999,7 +1999,7 @@ extern EjsString *ejsThrowString(Ejs *ejs, cchar *fmt, ...) PRINTF_ATTRIBUTE(2,3
     @param ... Message arguments
     @ingroup EjsError
  */
-extern EjsError *ejsThrowSyntaxError(Ejs *ejs, cchar *fmt, ...) PRINTF_ATTRIBUTE(2,3);
+extern EjsError *ejsThrowSyntaxError(Ejs *ejs, cchar *fmt, ...);
 
 /** 
     Throw an type error exception
@@ -2008,7 +2008,7 @@ extern EjsError *ejsThrowSyntaxError(Ejs *ejs, cchar *fmt, ...) PRINTF_ATTRIBUTE
     @param ... Message arguments
     @ingroup EjsError
  */
-extern EjsError *ejsThrowTypeError(Ejs *ejs, cchar *fmt, ...) PRINTF_ATTRIBUTE(2,3);
+extern EjsError *ejsThrowTypeError(Ejs *ejs, cchar *fmt, ...);
 
 
 /** 

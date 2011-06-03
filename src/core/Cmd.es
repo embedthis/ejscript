@@ -250,7 +250,7 @@ module ejs {
             if (Config.OS == "WIN") {
                 cmd.start('cmd /A /C "WMIC PROCESS get Processid,Commandline /format:csv"')
                 for each (line in cmd.readLines()) {
-                    let fields = line.split(",")
+                    let fields = line.trim().split(",")
                     let pid = fields.pop().trim()
                     let command = fields.slice(1).join(" ")
                     if (!pid.isDigit || command == "") continue
@@ -306,7 +306,7 @@ module ejs {
                 // cmd.start(["/bin/sh", "-c", "/bin/ps -e | awk '{print $1,$4}'"])
                 cmd.start(["/bin/sh", "-c", "/bin/ps -e"])
                 for each (line in cmd.readLines()) {
-                    let fields = line.split(/ +/g)
+                    let fields = line.trim().split(/ +/g)
                     let pid = fields[0]
                     let command = fields.slice(3).join(" ")
                     if (!pid.isDigit || command == "") continue
