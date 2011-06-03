@@ -130,9 +130,10 @@ Ejs *ejsCloneVM(Ejs *master)
             return 0;
         }
         ejs->global = ejsClone(ejs, master->global, 1);
-        ejsFixCrossRefs(ejs, ejs->global);
+        ejsSetPropertyByName(ejs, ejs->global, N("ejs", "global"), ejs->global);
         ejsDefineGlobals(ejs);
         ejsDefineGlobalNamespaces(ejs);
+        ejsFixCrossRefs(ejs, ejs->global);
         ejs->sqlite = master->sqlite;
         ejs->http = master->http;
         ejs->initialized = master->initialized;
@@ -140,7 +141,6 @@ Ejs *ejsCloneVM(Ejs *master)
         for (next = 0; (mp = mprGetNextItem(master->modules, &next)) != 0;) {
             ejsAddModule(ejs, mp);
         }
-        ejsSetPropertyByName(ejs, ejs->global, N("ejs", "global"), ejs->global);
     } else {
         if ((ejs = ejsCreateVM(0, 0, 0)) == 0) {
             return 0;

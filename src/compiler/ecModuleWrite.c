@@ -845,7 +845,9 @@ void ecEncodeGlobal(EcCompiler *cp, EjsAny *obj, EjsName qname)
         If binding globals, we can encode the slot number of the type.
      */
     slotNum = ejsLookupProperty(ejs, ejs->global, qname);
-    if (slotNum < ES_global_NUM_CLASS_PROP || cp->bind) {
+
+    //  MOB - don't bind for Appweb all-in-one. ejs.web can load at different places 
+    if (slotNum < ES_global_NUM_CLASS_PROP /* || cp->bind */) {
         if (slotNum >= 0) {
             ecEncodeNum(cp, (slotNum << 2) | EJS_ENCODE_GLOBAL_SLOT);
             return;

@@ -853,6 +853,7 @@ static int loadPropertySection(Ejs *ejs, EjsModule *mp, int sectionType)
     value = 0;
     current = getCurrentBlock(mp);
     qname = ejsModuleReadName(ejs, mp);
+
     attributes = ejsModuleReadInt(ejs, mp);
     slotNum = ejsModuleReadInt(ejs, mp);
     ejsModuleReadType(ejs, mp, &type, &fixup, &propTypeName, 0);

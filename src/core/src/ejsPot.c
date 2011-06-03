@@ -98,6 +98,7 @@ void ejsFixCrossRefs(Ejs *ejs, EjsPot *obj)
     
     for (i = 0; i < numProp; i++, sp++) {
         if (sp->trait.type && sp->trait.type->mutable) {
+            mprAssert(sp->trait.type->qname.name);
             if ((type = ejsGetPropertyByName(ejs, ejs->global, sp->trait.type->qname)) != 0) {
                 sp->trait.type = type;
             } else {
