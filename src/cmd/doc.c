@@ -2215,7 +2215,7 @@ static void out(EjsMod *mp, char *fmt, ...)
 static EjsString *fmtModule(Ejs *ejs, EjsString *name)
 {
     if (ejsCompareMulti(ejs, name, EJS_DEFAULT_MODULE) == 0) {
-        return S(empty);
+        return ESV(empty);
     }
     return name;
 }
@@ -2432,7 +2432,7 @@ static cchar *demangle(Ejs *ejs, EjsString *name)
 }
 
 
-static cchar *demangleCS(cchar *name)
+static cchar *demangleCESV(cchar *name)
 {
     return name;
 }
@@ -2442,8 +2442,8 @@ static int compareNames(char **q1, char **q2)
 {
     cchar    *s1, *s2, *cp;
 
-    s1 = demangleCS(*q1);
-    s2 = demangleCS(*q2);
+    s1 = demangleCESV(*q1);
+    s2 = demangleCESV(*q2);
 
     /*
         Don't sort on the namespace portions of the name

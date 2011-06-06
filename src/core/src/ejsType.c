@@ -62,17 +62,17 @@ int ejsCreateBootstrapTypes(Ejs *ejs)
     ejs->service->immutable = immutable = ejsCreatePot(ejs, objectType, 0);
     ejsGrowPot(ejs, immutable, max(EJS_NUM_GLOBAL, ES_global_NUM_CLASS_PROP));
     mprSetName(immutable, "immutable");
-    S(null) = null = ejsCreateObj(ejs, nullType, 0);
-    mprSetName(S(null), "null value");
+    ESV(null) = null = ejsCreateObj(ejs, nullType, 0);
+    mprSetName(ESV(null), "null value");
     zeroSlots(ejs, immutable, immutable->numProp, null);
 
     /*
         Preset some essential types and values so we can finish up the types
      */
-    S(Object) = objectType;
-    S(String) = stringType;
-    S(null) = null;
-    S(empty) = ejsCreateStringFromAsc(ejs, "");
+    ESV(Object) = objectType;
+    ESV(String) = stringType;
+    ESV(null) = null;
+    ESV(empty) = ejsCreateStringFromAsc(ejs, "");
 
     finishBootType(ejs, ES_String, N("ejs", "String"), stringType);
     finishBootType(ejs, ES_Object, N("ejs", "Object"), objectType);
@@ -120,7 +120,7 @@ static void finishBootType(Ejs *ejs, int slotNum, EjsName qname, EjsType *type)
     mprSetName(type, qname.name->value);
     ejsAddImmutable(ejs, slotNum, type->qname, type);
 
-    if ((type->prototype = ejsCreatePot(ejs, S(Object), 0)) == 0) {
+    if ((type->prototype = ejsCreatePot(ejs, ESV(Object), 0)) == 0) {
         return;
     }
     mprSetName(type->prototype, qname.name->value);
@@ -141,7 +141,7 @@ EjsType *ejsCreateType(Ejs *ejs, EjsName qname, EjsModule *up, EjsType *baseType
     mprAssert(ejs);
     mprAssert(size >= 0);
     
-    if ((type = createTypeVar(ejs, S(Type), numTypeProp)) == 0) {
+    if ((type = createTypeVar(ejs, ESV(Type), numTypeProp)) == 0) {
         return 0;
     }
     attributes = setDefaultAttributes(type, size, attributes);
@@ -159,7 +159,7 @@ EjsType *ejsCreateType(Ejs *ejs, EjsName qname, EjsModule *up, EjsType *baseType
     if (prototype) {
         type->prototype = prototype;
     } else {
-        if ((type->prototype = ejsCreatePot(ejs, S(Object), numInstanceProp)) == 0) {
+        if ((type->prototype = ejsCreatePot(ejs, ESV(Object), numInstanceProp)) == 0) {
             return 0;
         }
         //  UNICODE
@@ -283,20 +283,20 @@ EjsType *ejsCreateArchetype(Ejs *ejs, EjsFunction *fun, EjsPot *prototype)
     if (prototype == 0 && fun) {
         prototype = ejsGetPropertyByName(ejs, fun, N(NULL, "prototype"));
     }
-    baseType = prototype ? TYPE(prototype): S(Object);
+    baseType = prototype ? TYPE(prototype): ESV(Object);
     name = (fun && fun->name) ? fun->name : ejsCreateStringFromAsc(ejs, "-type-from-function-");
     qname.space = ejsCreateStringFromAsc(ejs, EJS_PROTOTYPE_NAMESPACE);
     qname.name = name;
-    type = ejsCreateType(ejs, qname, NULL, baseType, prototype, -1, 0, 0, ST(Object)->instanceSize, 0, 
+    type = ejsCreateType(ejs, qname, NULL, baseType, prototype, -1, 0, 0, EST(Object)->instanceSize, 0, 
         EJS_TYPE_POT | EJS_TYPE_DYNAMIC_INSTANCES);
     if (type == 0) {
         return 0;
     }
     if (fun) {
         code = fun->body.code;
-        /*  using S(Object) as the return type because the Yahoo module pattern returns {} in the constructor */
+        /*  using ESV(Object) as the return type because the Yahoo module pattern returns {} in the constructor */
         ejsInitFunction(ejs, (EjsFunction*) type, type->qname.name, code->byteCode, code->codeLen, 
-            fun->numArgs, fun->numDefault, code->numHandlers, S(Object), EJS_TRAIT_HIDDEN | EJS_TRAIT_FIXED, 
+            fun->numArgs, fun->numDefault, code->numHandlers, ESV(Object), EJS_TRAIT_HIDDEN | EJS_TRAIT_FIXED, 
             code->module, NULL, fun->strict);
         type->constructor.activation = ejsClone(ejs, fun->activation, 0);
         type->constructor.boundThis = 0;
@@ -500,7 +500,7 @@ static int inheritProperties(Ejs *ejs, EjsType *type, EjsPot *obj, int destOffse
     for (i = destOffset; i < (destOffset + count); i++) {
         if ((vp = ejsGetProperty(ejs, obj, i)) != 0 && !ejsIs(ejs, vp, Null) && !ejsIsFunction(ejs, vp)) {
             if (ejsIsType(ejs, vp)) {
-                ejsSetProperty(ejs, obj, i, S(null));
+                ejsSetProperty(ejs, obj, i, ESV(null));
             }
         }
     }
@@ -513,7 +513,7 @@ static void fixInstanceSize(Ejs *ejs, EjsType *type)
 {
     EjsType     *tp;
 
-    for (tp = type->baseType; tp && tp != S(Object); tp = tp->baseType) {
+    for (tp = type->baseType; tp && tp != ESV(Object); tp = tp->baseType) {
         if (tp->instanceSize > type->instanceSize) {
             type->instanceSize = tp->instanceSize;
         }
@@ -540,9 +540,9 @@ int ejsFixupType(Ejs *ejs, EjsType *type, EjsType *baseType, int makeRoom)
         if (baseType->hasConstructor || baseType->hasBaseConstructors) {
             type->hasBaseConstructors = 1;
         }
-        //  TODO -- when compiling baseType is always != S(Object)
+        //  TODO -- when compiling baseType is always != ESV(Object)
         //  TODO - should not explicity reference objecttype
-        if (baseType != S(Object) && baseType->dynamicInstances) {
+        if (baseType != ESV(Object) && baseType->dynamicInstances) {
             type->dynamicInstances = 1;
         }
         type->hasInstanceVars |= baseType->hasInstanceVars;
@@ -556,7 +556,7 @@ int ejsFixupType(Ejs *ejs, EjsType *type, EjsType *baseType, int makeRoom)
         if (type->implements || baseType->prototype->numProp > 0) {
             fixupPrototypeProperties(ejs, type, baseType, makeRoom);
         }
-        if (baseType->isPot && baseType != S(Object)) {
+        if (baseType->isPot && baseType != ESV(Object)) {
             type->isPot = 1;
         }
    }
@@ -758,7 +758,7 @@ int ejsDefineGlobalFunction(Ejs *ejs, EjsString *name, EjsProc fn)
     EjsFunction *fun;
     EjsName     qname;
 
-    if ((fun = ejsCreateFunction(ejs, name, NULL, -1, 0, 0, 0, S(Object), 0, NULL, NULL, 0)) == 0) {
+    if ((fun = ejsCreateFunction(ejs, name, NULL, -1, 0, 0, 0, ESV(Object), 0, NULL, NULL, 0)) == 0) {
         return MPR_ERR_MEMORY;
     }
     fun->body.proc = fn;
@@ -881,7 +881,7 @@ static EjsType *cloneTypeVar(Ejs *ejs, EjsType *src, bool deep)
         ejsThrowTypeError(ejs, "Expecting a Type object");
         return 0;
     }
-    dest = (ST(Function)->helpers.clone)(ejs, src, deep);
+    dest = (EST(Function)->helpers.clone)(ejs, src, deep);
     if (dest == 0) {
         return dest;
     }
@@ -996,7 +996,7 @@ static int setTypeProperty(Ejs *ejs, EjsType *type, int slotNum, EjsObj *value)
         ejsThrowTypeError(ejs, "Object is not dynamic");
         return EJS_ERR;
     }
-    return (ST(Block)->helpers.setProperty)(ejs, type, slotNum, value);
+    return (EST(Block)->helpers.setProperty)(ejs, type, slotNum, value);
 }
 
 

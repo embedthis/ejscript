@@ -34,10 +34,10 @@ static EjsAny *castString(Ejs *ejs, EjsString *sp, EjsType *type)
 
     switch (type->sid) {
     case S_Boolean:
-        if (sp != S(empty)) {
-            return S(true);
+        if (sp != ESV(empty)) {
+            return ESV(true);
         }
-        return S(false);
+        return ESV(false);
 
     case S_Number:
         return ejsParse(ejs, sp->value, S_Number);
@@ -78,7 +78,7 @@ static EjsString *cloneString(Ejs *ejs, EjsString *sp, bool deep)
 static EjsString *getStringProperty(Ejs *ejs, EjsString *sp, int index)
 {
     if (index < 0 || index >= sp->length) {
-        return S(empty);
+        return ESV(empty);
     }
     return ejsCreateString(ejs, &sp->value[index], 1);
 }
@@ -115,10 +115,10 @@ static EjsAny *coerceStringOperands(Ejs *ejs, EjsAny *lhs, int opcode,  EjsAny *
         return ejsInvokeOperator(ejs, lhs, opcode, ejsToString(ejs, rhs));
 
     case EJS_OP_COMPARE_STRICTLY_NE:
-        return S(true);
+        return ESV(true);
 
     case EJS_OP_COMPARE_STRICTLY_EQ:
-        return S(false);
+        return ESV(false);
 
     /*
         Unary operators
@@ -132,19 +132,19 @@ static EjsAny *coerceStringOperands(Ejs *ejs, EjsAny *lhs, int opcode,  EjsAny *
 
     case EJS_OP_COMPARE_NOT_ZERO:
     case EJS_OP_COMPARE_TRUE:
-        return (((EjsString*) lhs) ? S(true) : S(false));
+        return (((EjsString*) lhs) ? ESV(true) : ESV(false));
 
     case EJS_OP_COMPARE_ZERO:
     case EJS_OP_COMPARE_FALSE:
-        return (((EjsString*) lhs) ? S(false): S(true));
+        return (((EjsString*) lhs) ? ESV(false): ESV(true));
 
     case EJS_OP_COMPARE_UNDEFINED:
     case EJS_OP_COMPARE_NULL:
-        return S(false);
+        return ESV(false);
 
     default:
         ejsThrowTypeError(ejs, "Opcode %d not valid for type %@", opcode, TYPE(lhs)->qname.name);
-        return S(undefined);
+        return ESV(undefined);
     }
     return 0;
 }
@@ -170,18 +170,18 @@ static EjsAny *invokeStringOperator(Ejs *ejs, EjsString *lhs, int opcode, EjsStr
         //  OPT -- should use lhs == rhs
         if (lhs->value == rhs->value) {
             mprAssert(lhs == rhs);
-            return S(true);
+            return ESV(true);
         }
-        return S(false);
+        return ESV(false);
 
     case EJS_OP_COMPARE_NE:
     case EJS_OP_COMPARE_STRICTLY_NE:
         //  OPT -- should use lhs == rhs
         if (lhs->value != rhs->value) {
             mprAssert(lhs != rhs);
-            return S(true);
+            return ESV(true);
         }
-        return S(false);
+        return ESV(false);
 
     case EJS_OP_COMPARE_LT:
         return ejsCreateBoolean(ejs, 
@@ -203,17 +203,17 @@ static EjsAny *invokeStringOperator(Ejs *ejs, EjsString *lhs, int opcode, EjsStr
         Unary operators
      */
     case EJS_OP_COMPARE_NOT_ZERO:
-        return ((lhs) ? S(true): S(false));
+        return ((lhs) ? ESV(true): ESV(false));
 
     case EJS_OP_COMPARE_ZERO:
-        return ((lhs == 0) ? S(true): S(false));
+        return ((lhs == 0) ? ESV(true): ESV(false));
 
 
     case EJS_OP_COMPARE_UNDEFINED:
     case EJS_OP_COMPARE_NULL:
     case EJS_OP_COMPARE_FALSE:
     case EJS_OP_COMPARE_TRUE:
-        return S(false);
+        return ESV(false);
 
     /*
         Binary operators
@@ -337,7 +337,7 @@ static EjsString *charAt(Ejs *ejs, EjsString *sp, int argc, EjsObj **argv)
     mprAssert(argc == 1 && ejsIs(ejs, argv[0], Number));
     index = ejsGetInt(ejs, argv[0]);
     if (index < 0 || index >= sp->length) {
-        return S(empty);
+        return ESV(empty);
     }
     return ejsCreateString(ejs, &sp->value[index], 1);
 }
@@ -358,7 +358,7 @@ static EjsNumber *charCodeAt(Ejs *ejs, EjsString *sp, int argc, EjsObj **argv)
         index = (int) sp->length -1 ;
     }
     if (index < 0 || index >= sp->length) {
-        return S(nan);
+        return ESV(nan);
     }
     return ejsCreateNumber(ejs, (uchar) sp->value[index]);
 }
@@ -434,7 +434,7 @@ static EjsBoolean *endsWith(Ejs *ejs, EjsString *sp, int argc, EjsObj **argv)
     pattern = (EjsString*) argv[0];
     len = pattern->length;
     if (len > sp->length) {
-        return S(false);
+        return ESV(false);
     }
     return ejsCreateBoolean(ejs, wncmp(&sp->value[sp->length - len], pattern->value, len) == 0);
 }
@@ -503,7 +503,7 @@ static EjsString *formatString(Ejs *ejs, EjsString *sp, int argc, EjsObj **argv)
             if (nextArg < args->length) {
                 value = ejsGetProperty(ejs, args, nextArg);
             } else {
-                value = S(null);
+                value = ESV(null);
             }
             buf = 0;
             //  OPT
@@ -691,7 +691,7 @@ static EjsNumber *indexOf(Ejs *ejs, EjsString *sp, int argc,  EjsObj **argv)
     }
     index = indexof(&sp->value[start], sp->length - start, pattern, patternLength, 1);
     if (index < 0) {
-        return S(minusOne);
+        return ESV(minusOne);
     }
     return ejsCreateNumber(ejs, (MprNumber) (index + start));
 }
@@ -702,14 +702,14 @@ static EjsBoolean *isAlpha(Ejs *ejs, EjsString *sp, int argc,  EjsObj **argv)
     MprChar     *cp;
 
     if (sp->length == 0) {
-        return S(false);
+        return ESV(false);
     }
     for (cp = sp->value; cp < &sp->value[sp->length]; cp++) {
         if (*cp & 0x80 || !isalpha((int) *cp)) {
-            return S(false);
+            return ESV(false);
         }
     }
-    return S(true);
+    return ESV(true);
 }
 
 
@@ -718,14 +718,14 @@ static EjsBoolean *isAlphaNum(Ejs *ejs, EjsString *sp, int argc,  EjsObj **argv)
     MprChar     *cp;
 
     if (sp->length == 0) {
-        return S(false);
+        return ESV(false);
     }
     for (cp = sp->value; cp < &sp->value[sp->length]; cp++) {
         if (*cp & 0x80 || !isalnum((int) *cp)) {
-            return S(false);
+            return ESV(false);
         }
     }
-    return S(true);
+    return ESV(true);
 }
 
 
@@ -734,14 +734,14 @@ static EjsBoolean *isDigit(Ejs *ejs, EjsString *sp, int argc,  EjsObj **argv)
     MprChar     *cp;
 
     if (sp->length == 0) {
-        return S(false);
+        return ESV(false);
     }
     for (cp = sp->value; cp < &sp->value[sp->length]; cp++) {
         if (*cp & 0x80 || !isdigit((int) *cp)) {
-            return S(false);
+            return ESV(false);
         }
     }
-    return S(true);
+    return ESV(true);
 }
 
 
@@ -750,14 +750,14 @@ static EjsBoolean *isLower(Ejs *ejs, EjsString *sp, int argc,  EjsObj **argv)
     MprChar     *cp;
 
     if (sp->length == 0) {
-        return S(false);
+        return ESV(false);
     }
     for (cp = sp->value; cp < &sp->value[sp->length]; cp++) {
         if (!islower((int) *cp)) {
-            return S(false);
+            return ESV(false);
         }
     }
-    return S(true);
+    return ESV(true);
 }
 
 
@@ -766,14 +766,14 @@ static EjsBoolean *isSpace(Ejs *ejs, EjsString *sp, int argc,  EjsObj **argv)
     MprChar     *cp;
 
     if (sp->length == 0) {
-        return S(false);
+        return ESV(false);
     }
     for (cp = sp->value; cp < &sp->value[sp->length]; cp++) {
         if (*cp & 0x80 || !isspace((int) *cp)) {
-            return S(false);
+            return ESV(false);
         }
     }
-    return S(true);
+    return ESV(true);
 }
 
 
@@ -782,14 +782,14 @@ static EjsBoolean *isUpper(Ejs *ejs, EjsString *sp, int argc,  EjsObj **argv)
     MprChar     *cp;
 
     if (sp->length == 0) {
-        return S(false);
+        return ESV(false);
     }
     for (cp = sp->value; cp < &sp->value[sp->length]; cp++) {
         if (!isupper((int) *cp)) {
-            return S(false);
+            return ESV(false);
         }
     }
-    return S(true);
+    return ESV(true);
 }
 
 
@@ -821,7 +821,7 @@ static EjsNumber *lastIndexOf(Ejs *ejs, EjsString *sp, int argc,  EjsObj **argv)
     }
     index = indexof(sp->value, sp->length, pattern, patternLength, -1);
     if (index < 0) {
-        return S(minusOne);
+        return ESV(minusOne);
     }
     return ejsCreateNumber(ejs, (MprNumber) index);
 }
@@ -865,7 +865,7 @@ static EjsArray *match(Ejs *ejs, EjsString *sp, int argc, EjsObj **argv)
         }
     } while (rp->global);
     if (results == NULL) {
-        return S(null);
+        return ESV(null);
     }
     return results;
 }
@@ -1186,7 +1186,7 @@ static EjsNumber *searchString(Ejs *ejs, EjsString *sp, int argc, EjsObj **argv)
         rp = (EjsRegExp*) argv[0];
         count = pcre_exec(rp->compiled, NULL, sp->value, (int) sp->length, 0, 0, matches, sizeof(matches) / sizeof(int));
         if (count < 0) {
-            return S(minusOne);
+            return ESV(minusOne);
         }
         return ejsCreateNumber(ejs, matches[0]);
 
@@ -1323,7 +1323,7 @@ static EjsArray *split(Ejs *ejs, EjsString *sp, int argc, EjsObj **argv)
             match = ejsCreateString(ejs, &sp->value[rp->endLastMatch], sp->length - rp->endLastMatch);
             ejsSetProperty(ejs, results, resultCount, match);
         } else {
-            ejsSetProperty(ejs, results, resultCount, S(empty));
+            ejsSetProperty(ejs, results, resultCount, ESV(empty));
         }
         return results;
     }
@@ -2067,7 +2067,7 @@ int ejsContainsString(Ejs *ejs, EjsString *sp, EjsString *pat)
 char *ejsToMulti(Ejs *ejs, EjsAny *ev)
 {
     if (ev == 0) {
-        ev = S(empty);
+        ev = ESV(empty);
     }
     if (!ejsIs(ejs, ev, String)) {
         if ((ev = ejsCast(ejs, ev, String)) == 0) {
@@ -2109,7 +2109,7 @@ EjsString *ejsSubstring(Ejs *ejs, EjsString *src, ssize start, ssize len)
         len = src->length - start;
     }
     if (len < 0 || (start + len) > src->length || start < 0) {
-        return S(empty);
+        return ESV(empty);
     }
     len = min(len, src->length);
     if ((result = ejsCreateBareString(ejs, len)) == NULL) {
@@ -2295,7 +2295,7 @@ EjsString *ejsInternWide(Ejs *ejs, MprChar *value, ssize len)
             }
         }
     }
-    if ((sp = ejsAlloc(ejs, S(String), (len + 1) * sizeof(MprChar))) != NULL) {
+    if ((sp = ejsAlloc(ejs, ESV(String), (len + 1) * sizeof(MprChar))) != NULL) {
         memcpy(sp->value, value, len * sizeof(MprChar));
         sp->value[len] = 0;
     }
@@ -2345,7 +2345,7 @@ EjsString *ejsInternAsc(Ejs *ejs, cchar *value, ssize len)
             }
         }
     }
-    if ((sp = ejsAlloc(ejs, S(String), (len + 1) * sizeof(MprChar))) != NULL) {
+    if ((sp = ejsAlloc(ejs, ESV(String), (len + 1) * sizeof(MprChar))) != NULL) {
 #if BLD_CHAR_LEN > 1
         for (i = 0; i < len; i++) {
             sp->value[i] = value[i];
@@ -2390,7 +2390,7 @@ EjsString *ejsInternMulti(Ejs *ejs, cchar *value, ssize len)
         Have to convert the multibyte string to unicode before comparision. Convert into an EjsString to it is ready
         to intern if not found.
      */
-    if ((src = ejsAlloc(ejs, S(String), (len + 1) * sizeof(MprChar))) != NULL) {
+    if ((src = ejsAlloc(ejs, ESV(String), (len + 1) * sizeof(MprChar))) != NULL) {
         src->length = mtow(src->value, len + 1, value, len);
         value = src->value;
     }
@@ -2555,7 +2555,7 @@ EjsString *ejsCreateBareString(Ejs *ejs, ssize len)
     EjsString   *sp;
     
     mprAssert(0 <= len && len < MAXINT);
-    if ((sp = ejsAlloc(ejs, S(String), (len + 1) * sizeof(MprChar))) != NULL) {
+    if ((sp = ejsAlloc(ejs, ESV(String), (len + 1) * sizeof(MprChar))) != NULL) {
         sp->length = len;
         sp->value[0] = 0;
         sp->value[len] = 0;
@@ -2569,7 +2569,7 @@ EjsString *ejsCreateNonInternedString(Ejs *ejs, MprChar *value, ssize len)
     EjsString   *sp;
     
     mprAssert(0 <= len && len < MAXINT);
-    if ((sp = ejsAlloc(ejs, S(String), (len + 1) * sizeof(MprChar))) != NULL) {
+    if ((sp = ejsAlloc(ejs, ESV(String), (len + 1) * sizeof(MprChar))) != NULL) {
         memcpy(sp->value, value, (len + 1) * sizeof(MprChar));
         sp->length = len;
         sp->value[len] = 0;

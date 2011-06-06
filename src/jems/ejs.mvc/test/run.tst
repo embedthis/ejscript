@@ -1,10 +1,10 @@
 /*
     mvc run
  */
-//  TODO Generate minimum app
+//  TODO Generate minimum/flat app
 
-// const HTTP = (global.test) ? test.config.http_port : ":4770"
-const HTTP = ":4000"
+const PORT = (App.config.test.http_port || 6700)
+const HTTP = ":" + PORT
 
 require ejs.unix
 
@@ -16,7 +16,7 @@ rmdir("junk", true)
 assert(!exists("junk"))
 
 //  Generate app and scaffold
-sh(mvc + " generate app junk")
+sh(mvc + " --listen " + HTTP + " generate app junk")
 sh("cd junk ; " + mvc + " compile")
 
 //  Start web server. Use ejs start.es so we can kill it. Change to mvc run when Cmd supports kill group

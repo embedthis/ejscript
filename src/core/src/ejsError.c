@@ -26,7 +26,7 @@ static EjsAny *castError(Ejs *ejs, EjsError *error, EjsType *type)
 
     case S_String:
         stack = (EjsString*) ejsRunFunctionBySlot(ejs, error, ES_Error_formatStack, 0, NULL);
-        us = ejsIs(ejs, stack, String) ? stack : S(empty);
+        us = ejsIs(ejs, stack, String) ? stack : ESV(empty);
         msg = ejsGetProperty(ejs, error, ES_Error_message);
         if ((buf = mprAsprintf("%@ Exception: %@\nStack:\n%@\n", TYPE(error)->qname.name, msg, us)) == NULL) {
             ejsThrowMemoryError(ejs);
@@ -52,7 +52,7 @@ static EjsError *errorConstructor(Ejs *ejs, EjsError *error, int argc, EjsObj **
     if (argc > 0) {
         ejsSetProperty(ejs, error, ES_Error_message, ejsToString(ejs, argv[0]));
     }
-    if (S(Date)) {
+    if (ESV(Date)) {
         ejsSetProperty(ejs, error, ES_Error_timestamp, ejsCreateDate(ejs, mprGetTime()));
         ejsSetProperty(ejs, error, ES_Error_stack, ejsCaptureStack(ejs, 0));
     }
@@ -151,7 +151,7 @@ void ejsConfigureErrorType(Ejs *ejs)
     configureType(ejs, "TypeError");
     configureType(ejs, "URIError");
 
-    ejsBindMethod(ejs, S(Error), ES_Error_capture, error_capture);
+    ejsBindMethod(ejs, ESV(Error), ES_Error_capture, error_capture);
 }
 
 

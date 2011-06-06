@@ -225,7 +225,7 @@ EjsConstants *ejsCreateConstants(Ejs *ejs, int count, ssize size)
     if ((constants->index = mprAlloc(count * sizeof(EjsString*))) == NULL) {
         return 0;
     }
-    constants->index[0] = S(empty);
+    constants->index[0] = ESV(empty);
     constants->indexCount = 1;
     return constants;
 }
@@ -385,8 +385,11 @@ static EjsDebug *loadDebug(Ejs *ejs, EjsFunction *fun)
     code = fun->body.code;
     prior = 0;
     debug = NULL;
-    lock(mp);
 
+    /*
+        Synchronize with ejsLoadModule. May be multiple threads using immutable types
+     */
+    lock(mp);
     if (mp->file == 0) {
         if ((mp->file = mprOpenFile(mp->path, O_RDONLY | O_BINARY, 0666)) == NULL) {
             mprLog(5, "Can't open module file %s", mp->path);

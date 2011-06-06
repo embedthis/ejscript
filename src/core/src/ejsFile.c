@@ -523,7 +523,7 @@ static EjsObj *readFileBytes(Ejs *ejs, EjsFile *fp, int argc, EjsObj **argv)
         ejsThrowIOError(ejs, "Can't read from file: %s", fp->path);
         return 0;
     } else if (totalRead == 0) {
-        return S(null);
+        return ESV(null);
     }
     ejsSetByteArrayPositions(ejs, result, 0, totalRead);
     return (EjsObj*) result;
@@ -629,7 +629,7 @@ static EjsNumber *readFile(Ejs *ejs, EjsFile *fp, int argc, EjsObj **argv)
     if (totalRead < 0) {
         return 0;
     } else if (totalRead == 0) {
-        return S(zero);
+        return ESV(zero);
     }
     ejsSetByteArrayPositions(ejs, buffer, -1, offset + totalRead);
     return ejsCreateNumber(ejs, (MprNumber) totalRead);
@@ -645,7 +645,7 @@ static EjsObj *getFileSize(Ejs *ejs, EjsFile *fp, int argc, EjsObj **argv)
     MprPath     info;
 
     if (mprGetPathInfo(fp->path, &info) < 0) {
-        return (EjsObj*) S(minusOne);
+        return (EjsObj*) ESV(minusOne);
     }
     return (EjsObj*) ejsCreateNumber(ejs, (MprNumber) info.size);
 }
@@ -839,7 +839,7 @@ EjsFile *ejsCreateFile(Ejs *ejs, cchar *path)
 
     mprAssert(path && *path);
 
-    fp = ejsCreateObj(ejs, S(File), 0);
+    fp = ejsCreateObj(ejs, ESV(File), 0);
     if (fp == 0) {
         return 0;
     }
@@ -856,7 +856,7 @@ EjsFile *ejsCreateFileFromFd(Ejs *ejs, int fd, cchar *name, int mode)
     mprAssert(fd >= 0);
     mprAssert(name);
 
-    if ((fp = ejsCreateObj(ejs, S(File), 0)) == NULL) {
+    if ((fp = ejsCreateObj(ejs, ESV(File), 0)) == NULL) {
         return NULL;
     }
     fp->perms = EJS_FILE_PERMS;

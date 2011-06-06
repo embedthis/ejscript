@@ -1391,7 +1391,7 @@ static EcNode *parseFunctionExpression(EcCompiler *cp)
     if (np->qname.name == 0) {
         np->qname.name = ejsSprintf(cp->ejs, "--fun_%d-%d--", np->seqno, (int) mprGetTime());
     }
-    np->qname.space = state->inFunction ? S(empty): cp->fileState->nspace;
+    np->qname.space = state->inFunction ? ESV(empty): cp->fileState->nspace;
 
     np = parseFunctionSignature(cp, np);
     if (np == 0) {
@@ -1490,7 +1490,7 @@ static EcNode *parseObjectLiteral(EcCompiler *cp)
         getToken(cp);
         typeNode = parseNullableTypeExpression(cp);
     } else {
-        typeNode = createNode(cp, N_QNAME, ST(Object)->qname.name);
+        typeNode = createNode(cp, N_QNAME, EST(Object)->qname.name);
     }
     np->objectLiteral.typeNode = linkNode(np, typeNode);
     np->objectLiteral.isArray = 0;
@@ -1733,7 +1733,7 @@ static EcNode *parseArrayLiteral(EcCompiler *cp)
         }
         if (np) {
             if (typeNode == 0) {
-                typeNode = createNode(cp, N_QNAME, ST(Array)->qname.name);
+                typeNode = createNode(cp, N_QNAME, EST(Array)->qname.name);
             }
             np->objectLiteral.typeNode = linkNode(np, typeNode);
         }
@@ -1957,10 +1957,10 @@ struct EcNode *parseXMLInitializer(EcCompiler *cp)
     np = createNode(cp, N_LITERAL, NULL);
     np->literal.data = mprCreateBuf(0, 0);
 
-    if (ST(XML) == 0) {
+    if (EST(XML) == 0) {
         return LEAVE(cp, parseError(cp, "No XML support configured"));
     }
-    np->literal.var = (EjsObj*) ejsCreateObj(ejs, ST(XML), 0);
+    np->literal.var = (EjsObj*) ejsCreateObj(ejs, EST(XML), 0);
 
     switch (peekToken(cp)) {
     case T_XML_COMMENT_START:
@@ -2374,7 +2374,7 @@ static EcNode *parsePrimaryExpression(EcCompiler *cp)
             np = createNode(cp, N_QNAME, tokenString(cp));
         } else {
             np = createNode(cp, N_LITERAL, tokenString(cp));
-            np->literal.var = S(null);
+            np->literal.var = ESV(null);
         }
         break;
 
@@ -2384,7 +2384,7 @@ static EcNode *parsePrimaryExpression(EcCompiler *cp)
             np = createNode(cp, N_QNAME, tokenString(cp));
         } else {
             np = createNode(cp, N_LITERAL, tokenString(cp));
-            np->literal.var = S(undefined);
+            np->literal.var = ESV(undefined);
         }
         break;
 
@@ -4502,7 +4502,7 @@ static EcNode *parseTypeExpression(EcCompiler *cp)
 
     case T_MUL:
         getToken(cp);
-        np = createNode(cp, N_QNAME, ST(Object)->qname.name);
+        np = createNode(cp, N_QNAME, EST(Object)->qname.name);
         np->name.isType = 1;
         break;
 
@@ -7727,7 +7727,7 @@ static EcNode *parseParameter(EcCompiler *cp, bool rest)
     np = parseParameterKind(cp);
     parameter = parseTypedPattern(cp);
     if (parameter) {
-        parameter->qname.space = S(empty);
+        parameter->qname.space = ESV(empty);
     }
     np = appendNode(np, parameter);
     if (parameter) {
@@ -7836,7 +7836,7 @@ static EcNode *parseResultType(EcCompiler *cp)
         getToken(cp);
         if (peekToken(cp) == T_VOID) {
             getToken(cp);
-            np = createNode(cp, N_QNAME, ST(Void)->qname.name);
+            np = createNode(cp, N_QNAME, EST(Void)->qname.name);
             np->name.isType = 1;
 
         } else {
@@ -8021,7 +8021,7 @@ static EcNode *parseFunctionBody(EcCompiler *cp, EcNode *fun)
 
     ejs = cp->ejs;
     cp->state->inFunction = 1;
-    cp->state->nspace = S(empty);
+    cp->state->nspace = ESV(empty);
 
     if (peekToken(cp) == T_LBRACE) {
         np = parseBlock(cp);
@@ -9987,7 +9987,7 @@ void ecResetInput(EcCompiler *cp)
     cp->stream->flags &= ~EC_STREAM_EOL;
     cp->error = 0;
     cp->ejs->exception = 0;
-    cp->ejs->result = S(undefined);
+    cp->ejs->result = ESV(undefined);
     while ((tp = cp->putback) != 0 && (tp->tokenId == T_EOF || tp->tokenId == T_NOP)) {
         ecGetToken(cp);
     }
@@ -10042,7 +10042,7 @@ static EjsString *tokenString(EcCompiler *cp)
     if (cp->token) {
         return ejsCreateString(cp->ejs, cp->token->text, cp->token->length);
     }
-    return S(empty);
+    return ESV(empty);
 }
 
 

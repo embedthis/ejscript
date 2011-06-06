@@ -67,7 +67,7 @@ EjsAny *ejsDeserialize(Ejs *ejs, EjsString *str)
         return 0;
     }
     if (str->length == 0) {
-        return S(empty);
+        return ESV(empty);
     }
     js.next = js.data = str->value;
     js.end = &js.data[str->length];
@@ -363,9 +363,9 @@ static EjsObj *parseLiteralInner(Ejs *ejs, MprBuf *buf, JsonState *js)
                     vp = ejsCreateString(ejs, value, strlen(value));
                 } else {
                     if (mcmp(value, "null") == 0) {
-                        vp = S(null);
+                        vp = ESV(null);
                     } else if (mcmp(value, "undefined") == 0) {
-                        vp = S(undefined);
+                        vp = ESV(undefined);
                     } else {
                         vp = ejsParse(ejs, value, -1);
                     }
@@ -438,7 +438,7 @@ EjsString *ejsSerialize(Ejs *ejs, EjsAny *vp, EjsObj *options)
     if (options) {
         json.options = options;
         if ((arg = ejsGetPropertyByName(ejs, options, EN("baseClasses"))) != 0) {
-            json.baseClasses = (arg == S(true));
+            json.baseClasses = (arg == ESV(true));
         }
         if ((arg = ejsGetPropertyByName(ejs, options, EN("depth"))) != 0) {
             json.depth = ejsGetInt(ejs, arg);
@@ -460,13 +460,13 @@ EjsString *ejsSerialize(Ejs *ejs, EjsAny *vp, EjsObj *options)
             }
         }
         if ((arg = ejsGetPropertyByName(ejs, options, EN("hidden"))) != 0) {
-            json.hidden = (arg == S(true));
+            json.hidden = (arg == ESV(true));
         }
         if ((arg = ejsGetPropertyByName(ejs, options, EN("namespaces"))) != 0) {
-            json.namespaces = (arg == S(true));
+            json.namespaces = (arg == ESV(true));
         }
         if ((arg = ejsGetPropertyByName(ejs, options, EN("pretty"))) != 0) {
-            json.pretty = (arg == S(true));
+            json.pretty = (arg == ESV(true));
         }
         json.replacer = ejsGetPropertyByName(ejs, options, EN("replacer"));
         if (!ejsIsFunction(ejs, json.replacer)) {
@@ -496,7 +496,7 @@ static EjsString *serialize(Ejs *ejs, EjsAny *vp, Json *json)
         All others just use toString.
      */
     count = ejsGetLength(ejs, vp);
-    if (count == 0 && TYPE(vp) != S(Object) && TYPE(vp) != S(Array)) {
+    if (count == 0 && TYPE(vp) != ESV(Object) && TYPE(vp) != ESV(Array)) {
         //  OPT - need some flag for this test.
         if (!ejsIsDefined(ejs, vp) || ejsIs(ejs, vp, Boolean) || ejsIs(ejs, vp, Number)) {
             return ejsToString(ejs, vp);
@@ -536,7 +536,7 @@ static EjsString *serialize(Ejs *ejs, EjsAny *vp, Json *json)
             if (isArray) {
                 itos(key, sizeof(key), slotNum, 10);
                 qname.name = ejsCreateStringFromAsc(ejs, key);
-                qname.space = S(empty);
+                qname.space = ESV(empty);
             } else {
                 qname = ejsGetPropertyName(ejs, vp, slotNum);
             }
@@ -551,7 +551,7 @@ static EjsString *serialize(Ejs *ejs, EjsAny *vp, Json *json)
             }
             if (!isArray) {
                 if (json->namespaces) {
-                    if (qname.space != S(empty)) {
+                    if (qname.space != ESV(empty)) {
                         mprPutFmtToWideBuf(json->buf, "\"%@\"::", qname.space);
                     }
                 }

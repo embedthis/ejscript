@@ -77,7 +77,7 @@ void ejsInheritBaseClassNamespaces(Ejs *ejs, EjsType *type, EjsType *baseType)
     if (baseNamespaces) {
         for (next = 0; ((nsp = (EjsNamespace*) mprGetNextItem(baseNamespaces, &next)) != 0); ) {
             //  OPT -- must be a better way to do this?
-            if (ejsContainsString(ejs, nsp->value, S(commaProt))) {
+            if (ejsContainsString(ejs, nsp->value, ESV(commaProt))) {
                 for (i = 0; ((existing = (EjsNamespace*) mprGetNextItem(&block->namespaces, &i)) != 0); ) {
                     if (existing->value == nsp->value) {
                         break;
@@ -100,7 +100,7 @@ EjsBlock *ejsCreateBlock(Ejs *ejs, int size)
 {
     EjsBlock        *block;
 
-    if ((block = ejsCreatePot(ejs, S(Block), size)) == 0) {
+    if ((block = ejsCreatePot(ejs, ESV(Block), size)) == 0) {
         return 0;
     }
     block->pot.shortScope = 1;

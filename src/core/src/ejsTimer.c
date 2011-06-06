@@ -151,9 +151,9 @@ static int timerCallback(EjsTimer *tp, MprEvent *e)
 
 
 /*
-    function start(): Void
+    function start(): Timer
  */
-static EjsObj *timer_start(Ejs *ejs, EjsTimer *tp, int argc, EjsObj **argv)
+static EjsTimer *timer_start(Ejs *ejs, EjsTimer *tp, int argc, EjsObj **argv)
 {
     int     flags;
 
@@ -165,7 +165,7 @@ static EjsObj *timer_start(Ejs *ejs, EjsTimer *tp, int argc, EjsObj **argv)
             return 0;
         }
     }
-    return 0;
+    return tp;
 }
 
 

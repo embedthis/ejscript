@@ -25,7 +25,7 @@ static void removeHashEntry(Ejs *ejs, EjsPot *obj, EjsName qname);
 
 EjsAny *ejsCreateEmptyPot(Ejs *ejs)
 {
-    return ejsCreatePot(ejs, S(Object), 0);
+    return ejsCreatePot(ejs, ESV(Object), 0);
 }
 
 
@@ -129,7 +129,7 @@ static EjsObj *prepareAccessors(Ejs *ejs, EjsPot *obj, int slotNum, int64 *attri
             }
         } else {
             /* No existing getter, must define a dummy getter - will not be called */
-            fun = (EjsFunction*) ejsCloneFunction(ejs, S(nop), 0);
+            fun = (EjsFunction*) ejsCloneFunction(ejs, ESV(nop), 0);
             fun->setter = (EjsFunction*) value;
         }
         value = (EjsObj*) fun;
@@ -191,7 +191,7 @@ static int definePotProperty(Ejs *ejs, EjsPot *obj, int slotNum, EjsName qname, 
         value = prepareAccessors(ejs, obj, slotNum, &attributes, value);
     }
     if (value) {
-        if (ejsSetProperty(ejs, obj, slotNum, value ? value: S(null)) < 0) {
+        if (ejsSetProperty(ejs, obj, slotNum, value ? value: ESV(null)) < 0) {
             return EJS_ERR;
         }
     }
@@ -237,7 +237,7 @@ static int deletePotProperty(Ejs *ejs, EjsPot *obj, int slotNum)
         removeHashEntry(ejs, obj, qname);
     }
     sp = &obj->properties->slots[slotNum];
-    sp->value.ref = S(undefined);
+    sp->value.ref = ESV(undefined);
     sp->trait.type = 0;
     sp->trait.attributes = EJS_TRAIT_DELETED | EJS_TRAIT_HIDDEN;
     return 0;
@@ -643,11 +643,11 @@ void ejsZeroSlots(Ejs *ejs, EjsSlot *slots, int count)
     if (slots) {
         //  TODO OPT. If hashChans were biased by +1 and NULL was allowed for names, then a simple zero would suffice.
         for (sp = &slots[count - 1]; sp >= slots; sp--) {
-            sp->value.ref = S(null);
+            sp->value.ref = ESV(null);
             sp->hashChain = -1;
             //  TODO -- why set names to this. Better to set to null?
-            sp->qname.name = S(empty);
-            sp->qname.space = S(empty);
+            sp->qname.name = ESV(empty);
+            sp->qname.space = ESV(empty);
             sp->trait.type = 0;
             sp->trait.attributes = 0;
         }
@@ -877,8 +877,8 @@ static void removeHashEntry(Ejs *ejs, EjsPot *obj, EjsName qname)
             sp = &obj->properties->slots[slotNum];
             if (CMP_QNAME(&sp->qname, &qname)) {
                 //  TODO -- would null be better
-                sp->qname.name = S(empty);
-                sp->qname.space = S(empty);
+                sp->qname.name = ESV(empty);
+                sp->qname.space = ESV(empty);
                 sp->hashChain = -1;
                 return;
             }
@@ -900,8 +900,8 @@ static void removeHashEntry(Ejs *ejs, EjsPot *obj, EjsName qname)
                 buckets[index] = obj->properties->slots[slotNum].hashChain;
             }
             //  TODO -- null would be better
-            sp->qname.name = S(empty);
-            sp->qname.space = S(empty);
+            sp->qname.name = ESV(empty);
+            sp->qname.space = ESV(empty);
             sp->hashChain = -1;
             return;
         }

@@ -8,6 +8,11 @@ module ejs.web {
      */
     namespace action = "action"
 
+    /**
+        Request for which a controller is being constructed
+     */
+    var _initRequest: Request
+
     //  DOC - need more doc here on controllers
     /** 
         Web framework controller class. The Controller class is part of the Ejscript Model View Controller (MVC) web
@@ -28,8 +33,6 @@ module ejs.web {
             Override with "public" the specific properties that must be copied to views.
          */
         use default namespace module
-
-        private static var _initRequest: Request
 
         private var _afterCheckers: Array
         private var _beforeCheckers: Array
@@ -89,7 +92,6 @@ module ejs.web {
             cname ||= (request.params.controller + "Controller")
             _initRequest = request
             let c: Controller = new global[cname](request)
-            c.request = request
             _initRequest = null
             return c
         }

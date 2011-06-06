@@ -20,7 +20,7 @@ static EjsFunction *createFunction(Ejs *ejs, EjsType *type, int numProp)
 {
     EjsFunction     *fun;
 
-    if ((fun = ejsCreatePot(ejs, S(Function), 0)) == 0) {
+    if ((fun = ejsCreatePot(ejs, ESV(Function), 0)) == 0) {
         return 0;
     }
     fun->block.pot.isFunction = 1;
@@ -41,10 +41,10 @@ static EjsAny *castFunction(Ejs *ejs, EjsFunction *vp, EjsType *type)
         return ejsCreateStringFromAsc(ejs, "[function Function]");
 
     case S_Number:
-        return S(nan);
+        return ESV(nan);
 
     case S_Boolean:
-        return S(true);
+        return ESV(true);
             
     default:
         ejsThrowTypeError(ejs, "Can't cast type \"%@\"", type->qname.name);
@@ -154,7 +154,7 @@ static EjsObj *fun_applyFunction(Ejs *ejs, EjsFunction *fun, int argc, EjsObj **
 
     save = fun->boundThis;
     thisObj = argv[0];
-    if (thisObj == S(null)) {
+    if (thisObj == ESV(null)) {
         thisObj = fun->boundThis ? fun->boundThis : ejs->global;
     }
     result =  ejsRunFunction(ejs, fun, thisObj, args->length, args->data);
@@ -187,7 +187,7 @@ static EjsObj *fun_bindFunction(Ejs *ejs, EjsFunction *fun, int argc, EjsObj **a
  */
 static EjsAny *fun_bound(Ejs *ejs, EjsFunction *fun, int argc, EjsObj **argv)
 {
-    return fun->boundThis ? fun->boundThis : S(undefined);
+    return fun->boundThis ? fun->boundThis : ESV(undefined);
 }
 
 
@@ -218,7 +218,7 @@ static EjsNumber *fun_length(Ejs *ejs, EjsFunction *fun, int argc, EjsObj **argv
 static EjsString *fun_name(Ejs *ejs, EjsFunction *fun, int argc, EjsObj **argv)
 {
     if (fun->name && fun->name->value[0] == '-') {
-        return S(empty);
+        return ESV(empty);
     }
     return fun->name;
 }
@@ -417,7 +417,7 @@ int ejsSetFunctionCode(Ejs *ejs, EjsFunction *fun, EjsModule *module, cuchar *by
 
 static EjsObj *nopFunction(Ejs *ejs, EjsObj *obj, int argc, EjsObj **argv)
 {
-    return S(undefined);
+    return ESV(undefined);
 }
 
 
@@ -442,7 +442,7 @@ EjsPot *ejsCreateActivation(Ejs *ejs, EjsFunction *fun, int numProp)
 {
     EjsPot  *activation;
 
-    activation = ejsCreatePot(ejs, S(Object), numProp);
+    activation = ejsCreatePot(ejs, ESV(Object), numProp);
     mprCopyName(activation, fun);
     return activation;
 }
@@ -454,7 +454,7 @@ EjsFunction *ejsCreateSimpleFunction(Ejs *ejs, EjsString *name, int attributes)
 {
     EjsFunction     *fun;
 
-    if ((fun = ejsCreateObj(ejs, S(Function), 0)) == NULL) {
+    if ((fun = ejsCreateObj(ejs, ESV(Function), 0)) == NULL) {
         return 0;
     }
     fun->name = name;

@@ -42,31 +42,31 @@ static EjsAny *coercePathOperands(Ejs *ejs, EjsPath *lhs, int opcode,  EjsAny *r
     case EJS_OP_COMPARE_LE: case EJS_OP_COMPARE_LT:
     case EJS_OP_COMPARE_GE: case EJS_OP_COMPARE_GT:
         if (!ejsIsDefined(ejs, rhs)) {
-            return ((opcode == EJS_OP_COMPARE_EQ) ? S(false): S(true));
+            return ((opcode == EJS_OP_COMPARE_EQ) ? ESV(false): ESV(true));
         }
         return ejsInvokeOperator(ejs, ejsCreateStringFromAsc(ejs, lhs->value), opcode, rhs);
 
     case EJS_OP_COMPARE_STRICTLY_NE:
-        return S(true);
+        return ESV(true);
 
     case EJS_OP_COMPARE_STRICTLY_EQ:
-        return S(false);
+        return ESV(false);
 
     case EJS_OP_COMPARE_NOT_ZERO:
     case EJS_OP_COMPARE_TRUE:
-        return S(true);
+        return ESV(true);
 
     case EJS_OP_COMPARE_ZERO:
     case EJS_OP_COMPARE_FALSE:
-        return S(false);
+        return ESV(false);
 
     case EJS_OP_COMPARE_UNDEFINED:
     case EJS_OP_COMPARE_NULL:
-        return S(false);
+        return ESV(false);
 
     default:
         ejsThrowTypeError(ejs, "Opcode %d not valid for type %@", opcode, TYPE(lhs)->qname.name);
-        return S(undefined);
+        return ESV(undefined);
     }
     return 0;
 }
@@ -88,7 +88,7 @@ static EjsAny *invokePathOperator(Ejs *ejs, EjsPath *lhs, int opcode,  EjsPath *
     case EJS_OP_COMPARE_STRICTLY_EQ:
     case EJS_OP_COMPARE_EQ:
         if (lhs == rhs || (lhs->value == rhs->value)) {
-            return S(true);
+            return ESV(true);
         }
         return ejsCreateBoolean(ejs,  scmp(lhs->value, rhs->value) == 0);
 
@@ -112,17 +112,17 @@ static EjsAny *invokePathOperator(Ejs *ejs, EjsPath *lhs, int opcode,  EjsPath *
         Unary operators
      */
     case EJS_OP_COMPARE_NOT_ZERO:
-        return ((lhs->value) ? S(true): S(false));
+        return ((lhs->value) ? ESV(true): ESV(false));
 
     case EJS_OP_COMPARE_ZERO:
-        return ((lhs->value == 0) ? S(true): S(false));
+        return ((lhs->value == 0) ? ESV(true): ESV(false));
 
 
     case EJS_OP_COMPARE_UNDEFINED:
     case EJS_OP_COMPARE_NULL:
     case EJS_OP_COMPARE_FALSE:
     case EJS_OP_COMPARE_TRUE:
-        return S(false);
+        return ESV(false);
 
     /*
         Binary operators
@@ -176,7 +176,7 @@ static EjsDate *getAccessedDate(Ejs *ejs, EjsPath *fp, int argc, EjsObj **argv)
 
     mprGetPathInfo(fp->value, &info);
     if (!info.valid) {
-        return S(null);
+        return ESV(null);
     }
     return ejsCreateDate(ejs, ((MprTime) info.atime) * 1000);
 }
@@ -277,7 +277,7 @@ static EjsDate *getCreatedDate(Ejs *ejs, EjsPath *fp, int argc, EjsObj **argv)
 
     mprGetPathInfo(fp->value, &info);
     if (!info.valid) {
-        return S(null);
+        return ESV(null);
     }
     return ejsCreateDate(ejs, ((MprTime) info.ctime) * 1000);
 }
@@ -314,7 +314,7 @@ static EjsString *getPathExtension(Ejs *ejs, EjsPath *fp, int argc, EjsObj **arg
     char    *ext;
 
     if ((ext = mprGetPathExtension(fp->value)) == 0) {
-        return S(empty);
+        return ESV(empty);
     }
     return ejsCreateStringFromAsc(ejs, ext);
 }
@@ -462,7 +462,7 @@ static EjsBoolean *pathHasDrive(Ejs *ejs, EjsPath *fp, int argc, EjsObj **argv)
  */
 static EjsBoolean *isPathAbsolute(Ejs *ejs, EjsPath *fp, int argc, EjsObj **argv)
 {
-    return (mprIsAbsPath(fp->value) ? S(true): S(false));
+    return (mprIsAbsPath(fp->value) ? ESV(true): ESV(false));
 }
 
 
@@ -511,7 +511,7 @@ static EjsBoolean *isPathRegular(Ejs *ejs, EjsPath *fp, int argc, EjsObj **argv)
  */
 static EjsBoolean *isPathRelative(Ejs *ejs, EjsPath *fp, int argc, EjsObj **argv)
 {
-    return (mprIsRelPath(fp->value) ? S(true): S(false));
+    return (mprIsRelPath(fp->value) ? ESV(true): ESV(false));
 }
 
 
@@ -576,7 +576,7 @@ static EjsPath *pathLinkTarget(Ejs *ejs, EjsPath *fp, int argc, EjsObj **argv)
     char    *path;
 
     if ((path = mprGetPathLink(fp->value)) == 0) {
-        return S(null);
+        return ESV(null);
     }
     return ejsCreatePathFromAsc(ejs, mprGetPathLink(fp->value));
 }
@@ -639,7 +639,7 @@ static EjsObj *makePathLink(Ejs *ejs, EjsPath *fp, int argc, EjsObj **argv)
     int     hard;
 
     target = ((EjsPath*) argv[0])->value;
-    hard = (argc >= 2) ? (argv[1] == S(true)) : 0;
+    hard = (argc >= 2) ? (argv[1] == ESV(true)) : 0;
     if (mprMakeLink(fp->value, target, hard) < 0) {
         ejsThrowIOError(ejs, "Can't make link");
     }
@@ -703,7 +703,7 @@ static EjsDate *getModifiedDate(Ejs *ejs, EjsPath *fp, int argc, EjsObj **argv)
 
     mprGetPathInfo(fp->value, &info);
     if (!info.valid) {
-        return S(null);
+        return ESV(null);
     }
     return ejsCreateDate(ejs, ((MprTime) info.mtime) * 1000);
 }
@@ -757,7 +757,7 @@ static EjsNumber *getPerms(Ejs *ejs, EjsPath *fp, int argc, EjsObj **argv)
     MprPath     info;
 
     if (mprGetPathInfo(fp->value, &info) < 0) {
-        return S(null);
+        return ESV(null);
     }
     return ejsCreateNumber(ejs, info.perms);
 }
@@ -792,7 +792,7 @@ static EjsPath *getPortablePath(Ejs *ejs, EjsPath *fp, int argc, EjsObj **argv)
     char    *path;
     int     lower;
 
-    lower = (argc >= 1 && argv[0] == S(true));
+    lower = (argc >= 1 && argv[0] == ESV(true));
     path = mprGetPortablePath(fp->value);
     if (lower) {
         path = slower(path);
@@ -998,10 +998,10 @@ static EjsObj *removePath(Ejs *ejs, EjsPath *fp, int argc, EjsObj **argv)
 
     if (mprGetPathInfo(fp->value, &info) == 0) {
         if (mprDeletePath(fp->value) < 0) {
-            return S(false);
+            return ESV(false);
         }
     }
-    return S(true);
+    return ESV(true);
 }
 
 
@@ -1063,9 +1063,9 @@ static EjsBoolean *isPathSame(Ejs *ejs, EjsPath *fp, int argc, EjsObj **argv)
     } else if (ejsIs(ejs, argv[0], Path)) {
         other = ((EjsPath*) (argv[0]))->value;
     } else {
-        return S(false);
+        return ESV(false);
     }
-    return (mprSamePath(fp->value, other) ? S(true) : S(false));
+    return (mprSamePath(fp->value, other) ? ESV(true) : ESV(false));
 }
 
 
@@ -1093,7 +1093,7 @@ static EjsString *pathSeparator(Ejs *ejs, EjsPath *fp, int argc, EjsObj **argv)
 static EjsNumber *getPathFileSize(Ejs *ejs, EjsPath *fp, int argc, EjsObj **argv)
 {
     if (mprGetPathInfo(fp->value, &fp->info) < 0) {
-        return S(minusOne);
+        return ESV(minusOne);
     }
     return ejsCreateNumber(ejs, (MprNumber) fp->info.size);
 }
@@ -1220,7 +1220,7 @@ EjsPath *ejsCreatePath(Ejs *ejs, EjsString *path)
 {
     EjsPath     *fp;
 
-    if ((fp = ejsCreateObj(ejs, S(Path), 0)) == 0) {
+    if ((fp = ejsCreateObj(ejs, ESV(Path), 0)) == 0) {
         return 0;
     }
     pathConstructor(ejs, fp, 1, (EjsObj**) &path);

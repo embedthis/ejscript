@@ -57,7 +57,7 @@ static EjsLocalCache *localConstructor(Ejs *ejs, EjsLocalCache *cache, int argc,
     int         wantShared;
 
     options = (argc >= 1 && ejsIsDefined(ejs, argv[0])) ? argv[0] : 0;
-    wantShared = (options && ejsGetPropertyByName(ejs, options, EN("shared")) == S(true));
+    wantShared = (options && ejsGetPropertyByName(ejs, options, EN("shared")) == ESV(true));
 
     if (wantShared && shared) {
         cache->shared = shared;
@@ -111,16 +111,16 @@ static EjsAny *sl_expire(Ejs *ejs, EjsLocalCache *cache, int argc, EjsAny **argv
     //  UNICODE
     if ((item = mprLookupKey(cache->store, key->value)) == 0) {
         unlock(cache);
-        return S(false);
+        return ESV(false);
     }
     item->lifespan = 0;
-    if (expires == S(null)) {
+    if (expires == ESV(null)) {
         item->expires = 0;
     } else {
         item->expires = ejsGetDate(ejs, expires);
     }
     unlock(cache);
-    return S(true);
+    return ESV(true);
 }
 
 
@@ -203,19 +203,19 @@ static EjsAny *sl_read(Ejs *ejs, EjsLocalCache *cache, int argc, EjsAny **argv)
 
     if (argc >= 2 && ejsIsDefined(ejs, argv[1])) {
         options = argv[1];
-        getVersion = ejsGetPropertyByName(ejs, options, EN("version")) == S(true);
+        getVersion = ejsGetPropertyByName(ejs, options, EN("version")) == ESV(true);
     }
     lock(cache);
     //  UNICODE
     if ((item = mprLookupKey(cache->store, key->value)) == 0) {
         unlock(cache);
-        return S(null);
+        return ESV(null);
     }
     if (item->lifespan) {
         item->expires = mprGetTime() + item->lifespan;
     }
     if (getVersion) {
-        result = ejsCreatePot(ejs, S(Object), 2);
+        result = ejsCreatePot(ejs, ESV(Object), 2);
         ejsSetPropertyByName(ejs, result, EN("version"), ejsCreateNumber(ejs, (MprNumber) item->version));
         ejsSetPropertyByName(ejs, result, EN("data"), item->data);
     } else {
@@ -246,14 +246,14 @@ static EjsBoolean *sl_remove(Ejs *ejs, EjsLocalCache *cache, int argc, EjsAny **
         if ((item = mprLookupKey(cache->store, key->value)) != 0) {
             cache->usedMem -= (key->length + item->data->length);
             mprRemoveKey(cache->store, key->value);
-            result = S(true);
+            result = ESV(true);
         } else {
-            result = S(false);
+            result = ESV(false);
         }
 
     } else {
         /* Remove all keys */
-        result = mprGetHashLength(cache->store) ? S(true) : S(false);
+        result = mprGetHashLength(cache->store) ? ESV(true) : ESV(false);
         cache->store = mprCreateHash(CACHE_HASH_SIZE, 0);
         cache->usedMem = 0;
     }
@@ -334,10 +334,11 @@ static EjsNumber *sl_write(Ejs *ejs, EjsLocalCache *cache, int argc, EjsAny **ar
     set = 1;
     expires = 0;
     lifespan = cache->lifespan;
+    version = 0;
     key = argv[0];
     value = argv[1];
 
-    if (argc >= 3 && argv[2] != S(null)) {
+    if (argc >= 3 && argv[2] != ESV(null)) {
         options = argv[2];
         if ((vp = ejsGetPropertyByName(ejs, options, EN("lifespan"))) != 0) {
             lifespan = ejsGetInt64(ejs, vp) * MPR_TICKS_PER_SEC;
@@ -358,7 +359,7 @@ static EjsNumber *sl_write(Ejs *ejs, EjsLocalCache *cache, int argc, EjsAny **ar
                 set = 1;
             }
         }
-        throw = (vp = ejsGetPropertyByName(ejs, options, EN("throw"))) == S(true);
+        throw = (vp = ejsGetPropertyByName(ejs, options, EN("throw"))) == ESV(true);
         if ((vp = ejsGetPropertyByName(ejs, options, EN("version"))) != 0) {
             version = ejsGetInt64(ejs, vp);
             checkVersion = 1;
@@ -373,7 +374,7 @@ static EjsNumber *sl_write(Ejs *ejs, EjsLocalCache *cache, int argc, EjsAny **ar
                 if (throw) {
                     ejsThrowStateError(ejs, "Key version does not match");
                 } else {
-                    return S(null);
+                    return ESV(null);
                 }
                 unlock(cache);
             }
@@ -393,7 +394,7 @@ static EjsNumber *sl_write(Ejs *ejs, EjsLocalCache *cache, int argc, EjsAny **ar
         item->data = value;
     } else if (add) {
         if (exists) {
-            return S(null);
+            return ESV(null);
         }
         item->data = value;
     } else if (append) {
@@ -461,6 +462,7 @@ static void localPruner(EjsLocalCache *cache, MprEvent *event)
             while (excessKeys > 0 || cache->usedMem > cache->maxMem) {
                 for (factor = 3600; excessKeys > 0; factor *= 2) {
                     for (hp = 0; (hp = mprGetNextKey(cache->store, hp)) != 0; ) {
+                        item = (CacheItem*) hp->data;
                         if (item->expires && item->expires <= when) {
                             mprLog(5, "LocalCache prune key %s", hp->key);
                             mprRemoveKey(cache->store, hp->key);

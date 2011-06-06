@@ -95,7 +95,7 @@ static EjsObj *app_exit(Ejs *ejs, EjsObj *unused, int argc, EjsObj **argv)
         return 0;
     }
     status = argc >= 1 ? ejsGetInt(ejs, argv[0]) : 0;
-    how = ejsToMulti(ejs, argc >= 2 ? ejsToString(ejs, argv[1]): S(empty));
+    how = ejsToMulti(ejs, argc >= 2 ? ejsToString(ejs, argv[1]): ESV(empty));
 
     if (scmp(how, "default") == 0) {
         mode = MPR_EXIT_DEFAULT;
@@ -120,12 +120,12 @@ static EjsObj *app_exit(Ejs *ejs, EjsObj *unused, int argc, EjsObj **argv)
 static EjsAny *app_env(Ejs *ejs, EjsObj *app, int argc, EjsObj **argv)
 {
 #if VXWORKS
-    return S(null);
+    return ESV(null);
 #else
     EjsPot  *result;
     char        **ep, *pair, *key, *value;
 
-    result = ejsCreatePot(ejs, S(Object), 0);
+    result = ejsCreatePot(ejs, ESV(Object), 0);
     for (ep = environ; ep && *ep; ep++) {
         pair = sclone(*ep);
         key = stok(pair, "=", &value);
@@ -147,7 +147,7 @@ static EjsAny *app_getenv(Ejs *ejs, EjsObj *app, int argc, EjsObj **argv)
 
     value = getenv(ejsToMulti(ejs, argv[0]));
     if (value == 0) {
-        return S(null);
+        return ESV(null);
     }
     return ejsCreateStringFromAsc(ejs, value);
 }
@@ -239,7 +239,7 @@ static EjsObj *app_run(Ejs *ejs, EjsObj *unused, int argc, EjsObj **argv)
         rc = mprWaitForEvent(ejs->dispatcher, remaining); 
         remaining = mprGetRemainingTime(mark, timeout);
     } while (!oneEvent && !ejs->exiting && remaining > 0 && !mprIsStopping());
-    return (rc == 0) ? S(true) : S(false);
+    return (rc == 0) ? ESV(true) : ESV(false);
 }
 
 

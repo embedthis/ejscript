@@ -4852,8 +4852,8 @@ int httpAddHandler(HttpLoc *loc, cchar *name, cchar *extensions)
 
     http = loc->http;
     graduate(loc);
-    handler = httpLookupStage(http, name);
-    if (handler == 0) {
+
+    if ((handler = httpLookupStage(http, name)) == 0) {
         mprError("Can't find stage %s", name); 
         return MPR_ERR_CANT_FIND;
     }
@@ -4887,7 +4887,9 @@ int httpAddHandler(HttpLoc *loc, cchar *name, cchar *extensions)
              */
             mprAddKey(loc->extensions, "", handler);
         }
-        mprAddItem(loc->handlers, handler);
+        if (mprLookupItem(loc->handlers, handler) < 0) {
+            mprAddItem(loc->handlers, handler);
+        }
     }
     return 0;
 }
@@ -5309,7 +5311,7 @@ static HttpStage *findHandler(HttpConn *conn)
     HttpHost    *host;
     HttpRx      *rx;
     HttpTx      *tx;
-    HttpStage   *handler;
+    HttpStage   *handler, *h;
     HttpLoc     *loc;
     MprHash     *hp;
     char        *path;
@@ -5335,8 +5337,9 @@ static HttpStage *findHandler(HttpConn *conn)
         /* 
             Perform custom handler matching first on all defined handlers 
          */
-        for (next = 0; (handler = mprGetNextItem(loc->handlers, &next)) != 0; ) {
-            if (checkHandler(conn, handler)) {
+        for (next = 0; (h = mprGetNextItem(loc->handlers, &next)) != 0; ) {
+            if (checkHandler(conn, h)) {
+                handler = h;
                 break;
             }
         }

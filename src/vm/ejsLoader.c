@@ -114,7 +114,7 @@ static int initializeModule(Ejs *ejs, EjsModule *mp)
         if (nativeModule && (nativeModule->callback)(ejs) < 0) {
             return MPR_ERR_CANT_INITIALIZE;
         }
-        if (ejs->hasError || ST(Error) == 0 || mprHasMemError(ejs)) {
+        if (ejs->hasError || EST(Error) == 0 || mprHasMemError(ejs)) {
             if (!ejs->exception) {
                 ejsThrowIOError(ejs, "Initialization error for %s (%d, %d)", mp->path, ejs->hasError, mprHasMemError(ejs));
             }
@@ -454,7 +454,7 @@ static int loadBlockSection(Ejs *ejs, EjsModule *mp)
             return MPR_ERR_CANT_CREATE;
         }
     }
-    slotNum = ejsDefineProperty(ejs, current, slotNum, qname, ST(Block), 0, bp);
+    slotNum = ejsDefineProperty(ejs, current, slotNum, qname, EST(Block), 0, bp);
     if (slotNum < 0) {
         return MPR_ERR_CANT_WRITE;
     }
@@ -510,7 +510,7 @@ static int loadClassSection(Ejs *ejs, EjsModule *mp)
         if (attributes & EJS_TYPE_FIXUP) {
             baseType = 0;
             if (fixup == 0) {
-                fixup = createFixup(ejs, mp, (baseType) ? baseType->qname : ST(Object)->qname, -1);
+                fixup = createFixup(ejs, mp, (baseType) ? baseType->qname : EST(Object)->qname, -1);
             }
         }
         mprLog(9, "    Load %@ class %@ for module %@ at slotNum %d", qname.space, qname.name, mp->name, slotNum);
@@ -563,7 +563,7 @@ static int loadClassSection(Ejs *ejs, EjsModule *mp)
             }
         }
     }
-    slotNum = ejsDefineProperty(ejs, ejs->global, slotNum, qname, ST(Type), attributes, (EjsObj*) type);
+    slotNum = ejsDefineProperty(ejs, ejs->global, slotNum, qname, EST(Type), attributes, (EjsObj*) type);
     if (slotNum < 0) {
         ejsThrowMemoryError(ejs);
         return MPR_ERR_MEMORY;
@@ -722,7 +722,7 @@ static int loadFunctionSection(Ejs *ejs, EjsModule *mp)
                 mp->initializer = fun;
                 slotNum = -1;
             } else {
-                if ((slotNum = ejsDefineProperty(ejs, block, slotNum, qname, ST(Function), attributes, fun)) < 0) {
+                if ((slotNum = ejsDefineProperty(ejs, block, slotNum, qname, EST(Function), attributes, fun)) < 0) {
                     return MPR_ERR_MEMORY;
                 }
             }
@@ -743,7 +743,7 @@ static int loadFunctionSection(Ejs *ejs, EjsModule *mp)
         if (attributes & EJS_TRAIT_SETTER && fun->setter) {
             fun = fun->setter;
         }
-        if ((slotNum = ejsDefineProperty(ejs, block, slotNum, qname, ST(Function), attributes, fun)) < 0) {
+        if ((slotNum = ejsDefineProperty(ejs, block, slotNum, qname, EST(Function), attributes, fun)) < 0) {
             return MPR_ERR_MEMORY;
         }
         mprAssert(fun->endFunction);
@@ -1280,7 +1280,7 @@ static char *searchForModule(Ejs *ejs, cchar *moduleName, int minVersion, int ma
     withDotMod = makeModuleName(moduleName);
     name = mprGetNormalizedPath(withDotMod);
 
-    mprLog(6, "Search for module \"%s\"", name);
+    mprLog(7, "Search for module \"%s\"", name);
 
     /*
         1. Search for path directly
@@ -1400,7 +1400,6 @@ char *ejsSearchForModule(Ejs *ejs, cchar *moduleName, int minVersion, int maxVer
     withDotMod = makeModuleName(moduleName);
     name = mprGetNormalizedPath(withDotMod);
 
-    mprLog(6, "Search for module \"%s\"", name);
     path = searchForModule(ejs, name, minVersion, maxVersion);
     if (path) {
         mprLog(6, "Found %s at %s", name, path);
@@ -1502,7 +1501,7 @@ int ejsModuleReadType(Ejs *ejs, EjsModule *mp, EjsType **typeRef, EjsTypeFixup *
         slot = t >> 2;
         if (0 <= slot && slot < ejsGetLength(ejs, ejs->global)) {
             type = ejsGetProperty(ejs, ejs->global, slot);
-            if (type && (EjsObj*) type != S(null)) {
+            if (type && (EjsObj*) type != ESV(null)) {
                 qname = type->qname;
             }
         }
@@ -1529,7 +1528,7 @@ int ejsModuleReadType(Ejs *ejs, EjsModule *mp, EjsType **typeRef, EjsTypeFixup *
         }
         break;
     }
-    if (type == S(null)) {
+    if (type == ESV(null)) {
         type = 0;
     }
     if (type) {

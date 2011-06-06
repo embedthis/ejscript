@@ -141,9 +141,9 @@ static EjsObj *cmd_kill(Ejs *ejs, EjsCmd *cmd, int argc, EjsObj **argv)
         if (cmd->throw) {
             ejsThrowIOError(ejs, "Can't kill %d with signal %d, errno %d", pid, signal, errno);
         }
-        return S(false);
+        return ESV(false);
     }
-    return S(true);
+    return ESV(true);
 }
 
 
@@ -182,7 +182,7 @@ static EjsObj *cmd_off(Ejs *ejs, EjsCmd *cmd, int argc, EjsAny **argv)
 static EjsNumber *cmd_pid(Ejs *ejs, EjsCmd *cmd, int argc, EjsObj **argv)
 {
     if (cmd->mc == 0 || cmd->mc->pid == 0) {
-        return S(zero);
+        return ESV(zero);
     }
     return ejsCreateNumber(ejs, cmd->mc->pid);
 }
@@ -355,7 +355,7 @@ static int parseOptions(Ejs *ejs, EjsCmd *cmd)
     flags = MPR_CMD_IN | MPR_CMD_OUT | MPR_CMD_ERR;
     if (cmd->options) {
         if ((value = ejsGetPropertyByName(ejs, cmd->options, EN("detach"))) != 0) {
-            if (value == S(true)) {
+            if (value == ESV(true)) {
                 flags |= MPR_CMD_DETACH;
             }
         }
@@ -366,7 +366,7 @@ static int parseOptions(Ejs *ejs, EjsCmd *cmd)
             }
         }
         if ((value = ejsGetPropertyByName(ejs, cmd->options, EN("exception"))) != 0) {
-            if (value == S(true)) {
+            if (value == ESV(true)) {
                 cmd->throw = 1;
             }
         }
@@ -420,7 +420,7 @@ static EjsObj *cmd_start(Ejs *ejs, EjsCmd *cmd, int argc, EjsObj **argv)
     cmd->command = argv[0];
     cmd->options = (argc >=2 ) ? argv[1] : 0;
 
-    if (cmd->command == S(null)) {
+    if (cmd->command == ESV(null)) {
         ejsThrowStateError(ejs, "Missing command line");
         return 0;
     }
@@ -513,9 +513,9 @@ static EjsObj *cmd_stop(Ejs *ejs, EjsCmd *cmd, int argc, EjsObj **argv)
     }
     if (mprStopCmd(cmd->mc, signal) < 0) {
         ejsThrowIOError(ejs, "Can't kill %d with signal %d, errno %d", cmd->mc->pid, signal, errno);
-        return S(false);
+        return ESV(false);
     }
-    return S(true);
+    return ESV(true);
 }
 
 
@@ -552,9 +552,9 @@ static EjsObj *cmd_wait(Ejs *ejs, EjsCmd *cmd, int argc, EjsObj **argv)
     }
     /* NOTE: mprWaitForCmd will auto-finalize */
     if (mprWaitForCmd(cmd->mc, timeout) < 0) {
-        return S(false);
+        return ESV(false);
     }
-    return S(true);
+    return ESV(true);
 }
 
 

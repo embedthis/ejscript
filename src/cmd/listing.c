@@ -358,7 +358,7 @@ static void lstFunction(EjsMod *mp, EjsModule *module, EjsObj *block, int slotNu
     }
 
     resultType = fun->resultType;
-    mprFprintf(mp->file,  ") : %@\n", resultType ? resultType->qname.name : ST(Void)->qname.name);
+    mprFprintf(mp->file,  ") : %@\n", resultType ? resultType->qname.name : EST(Void)->qname.name);
 
     /*
         Repeat the args
@@ -426,7 +426,7 @@ void lstException(EjsMod *mp, EjsModule *module, EjsFunction *fun)
         mprFprintf(mp->file,
             "%-3d %-10s %5d   %5d      %5d        %5d       %@\n",
             i, exKind, ex->tryStart, ex->tryEnd, ex->handlerStart, ex->handlerEnd,
-            ex->catchType ? ex->catchType->qname.name : S(empty));
+            ex->catchType ? ex->catchType->qname.name : ESV(empty));
     }
     mprFprintf(mp->file, "\n");
 }
@@ -751,7 +751,7 @@ static void lstVarSlot(EjsMod *mp, EjsModule *module, EjsName *qname, EjsTrait *
         mprFprintf(mp->file, "%04d    <inherited>\n", slotNum);
 
     } else if (trait && trait->type) {
-        if (trait->type == ST(Function)) {
+        if (trait->type == EST(Function)) {
             mprFprintf(mp->file, "%04d    %@ function %@\n", slotNum, space, qname->name);
 
         } else {

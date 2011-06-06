@@ -599,7 +599,7 @@ static void createPropertySection(EcCompiler *cp, EjsPot *block, int slotNum, Ej
     mprLog(7, "    global property section %@", qname.name);
 
     if (trait->type) {
-        if (trait->type == ST(Namespace) || (!ejs->initialized && trait->type->qname.name == ST(Namespace)->qname.name)){
+        if (trait->type == EST(Namespace) || (!ejs->initialized && trait->type->qname.name == EST(Namespace)->qname.name)){
             attributes |= EJS_PROP_HAS_VALUE;
         }
     }

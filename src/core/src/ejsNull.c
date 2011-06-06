@@ -17,10 +17,10 @@ static EjsAny *castNull(Ejs *ejs, EjsObj *vp, EjsType *type)
 {
     switch (type->sid) {
     case S_Boolean:
-        return S(false);
+        return ESV(false);
 
     case S_Number:
-        return S(zero);
+        return ESV(zero);
 
     case S_Object:
     default:
@@ -47,7 +47,7 @@ static EjsAny *coerceNullOperands(Ejs *ejs, EjsObj *lhs, int opcode, EjsObj *rhs
 
     case EJS_OP_AND: case EJS_OP_DIV: case EJS_OP_MUL: case EJS_OP_OR: case EJS_OP_REM:
     case EJS_OP_SHL: case EJS_OP_SHR: case EJS_OP_SUB: case EJS_OP_USHR: case EJS_OP_XOR:
-        return ejsInvokeOperator(ejs, S(zero), opcode, rhs);
+        return ejsInvokeOperator(ejs, ESV(zero), opcode, rhs);
 
     /*
         Comparision
@@ -55,7 +55,7 @@ static EjsAny *coerceNullOperands(Ejs *ejs, EjsObj *lhs, int opcode, EjsObj *rhs
     case EJS_OP_COMPARE_LE: case EJS_OP_COMPARE_LT:
     case EJS_OP_COMPARE_GE: case EJS_OP_COMPARE_GT:
         if (ejsIs(ejs, rhs, Number)) {
-            return ejsInvokeOperator(ejs, S(zero), opcode, rhs);
+            return ejsInvokeOperator(ejs, ESV(zero), opcode, rhs);
         } else if (ejsIs(ejs, rhs, String)) {
             return ejsInvokeOperator(ejs, ejsToString(ejs, lhs), opcode, rhs);
         }
@@ -63,31 +63,31 @@ static EjsAny *coerceNullOperands(Ejs *ejs, EjsObj *lhs, int opcode, EjsObj *rhs
 
     case EJS_OP_COMPARE_NE:
         if (ejsIs(ejs, rhs, Void)) {
-            return S(false);
+            return ESV(false);
         }
-        return S(true);
+        return ESV(true);
 
     case EJS_OP_COMPARE_STRICTLY_NE:
-        return S(true);
+        return ESV(true);
 
     case EJS_OP_COMPARE_EQ:
         if (ejsIs(ejs, rhs, Void)) {
-            return S(true);
+            return ESV(true);
         }
-        return S(false);
+        return ESV(false);
 
     case EJS_OP_COMPARE_STRICTLY_EQ:
-        return S(false);
+        return ESV(false);
 
     case EJS_OP_COMPARE_UNDEFINED:
     case EJS_OP_COMPARE_NOT_ZERO:
     case EJS_OP_COMPARE_NULL:
-        return S(true);
+        return ESV(true);
 
     case EJS_OP_COMPARE_FALSE:
     case EJS_OP_COMPARE_TRUE:
     case EJS_OP_COMPARE_ZERO:
-        return S(false);
+        return ESV(false);
 
     /*
         Unary operators
@@ -97,7 +97,7 @@ static EjsAny *coerceNullOperands(Ejs *ejs, EjsObj *lhs, int opcode, EjsObj *rhs
 
     default:
         ejsThrowTypeError(ejs, "Opcode %d not valid for type %@", opcode, TYPE(lhs)->qname.name);
-        return S(undefined);
+        return ESV(undefined);
     }
     return 0;
 }
@@ -126,27 +126,27 @@ static EjsAny *invokeNullOperator(Ejs *ejs, EjsObj *lhs, int opcode, EjsObj *rhs
     case EJS_OP_COMPARE_UNDEFINED:
     case EJS_OP_COMPARE_NOT_ZERO:
     case EJS_OP_COMPARE_NULL:
-        return S(true);
+        return ESV(true);
 
     case EJS_OP_COMPARE_NE: case EJS_OP_COMPARE_STRICTLY_NE:
     case EJS_OP_COMPARE_LT: case EJS_OP_COMPARE_GT:
     case EJS_OP_COMPARE_FALSE:
     case EJS_OP_COMPARE_TRUE:
     case EJS_OP_COMPARE_ZERO:
-        return S(false);
+        return ESV(false);
 
     /*
         Unary operators
      */
     case EJS_OP_LOGICAL_NOT: case EJS_OP_NOT: case EJS_OP_NEG:
-        return S(one);
+        return ESV(one);
 
     /*
         Binary operators. Reinvoke with left = zero
      */
     case EJS_OP_ADD: case EJS_OP_AND: case EJS_OP_DIV: case EJS_OP_MUL: case EJS_OP_OR: case EJS_OP_REM:
     case EJS_OP_SHL: case EJS_OP_SHR: case EJS_OP_SUB: case EJS_OP_USHR: case EJS_OP_XOR:
-        return ejsInvokeOperator(ejs, S(zero), opcode, rhs);
+        return ejsInvokeOperator(ejs, ESV(zero), opcode, rhs);
 
     default:
         ejsThrowTypeError(ejs, "Opcode %d not implemented for type %@", opcode, TYPE(lhs)->qname.name);
@@ -178,7 +178,7 @@ static EjsObj *getNullProperty(Ejs *ejs, EjsNull *unused, int slotNum)
  */
 EjsNull *ejsCreateNull(Ejs *ejs)
 {
-    return S(null);
+    return ESV(null);
 }
 
 

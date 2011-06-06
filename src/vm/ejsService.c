@@ -224,7 +224,6 @@ static void manageEjs(Ejs *ejs, int flags)
     int         next;
 
     if (flags & MPR_MANAGE_MARK) {
-        mprAssert(!ejs->destroying);
         mprMark(ejs->global);
         mprMark(ejs->name);
         mprMark(ejs->doc);
@@ -518,7 +517,7 @@ static int configureEjs(Ejs *ejs)
     /* 
         Order matters
      */
-    if (!ST(Object)->configured) {
+    if (!EST(Object)->configured) {
         ejsConfigureGlobalBlock(ejs);
         ejsConfigureObjectType(ejs);
         ejsConfigureIteratorType(ejs);
@@ -837,7 +836,7 @@ int ejsSendEventv(Ejs *ejs, EjsObj *emitter, cchar *name, EjsAny *thisObj, int a
         argv = args;
         av = mprAlloc((argc + 2) * sizeof(EjsObj*));
         av[0] = (EjsObj*) ejsCreateStringFromAsc(ejs, name);
-        av[1] = thisObj ? thisObj : S(null);
+        av[1] = thisObj ? thisObj : ESV(null);
         for (i = 0; i < argc; i++) {
             av[i + 2] = argv[i];
         }
@@ -949,9 +948,9 @@ int ejsRedirectLogging(cchar *logSpec)
 
     level = 0;
     if (logSpec == 0) {
-        logSpec = "stdout:1";
+        logSpec = "stderr:1";
     } else {
-        MPR->logging = 1;
+        mprSetCmdlineLogging(1);
     }
     spec = sclone(logSpec);
 
@@ -1110,15 +1109,15 @@ void ejsUnlockVm(Ejs *ejs)
 }
 
 
-void ejsLockService(Ejs *ejs)
+void ejsLockService()
 {
-    mprLock(ejs->service->mutex);
+    mprLock(((EjsService*) MPR->ejsService)->mutex);
 }
 
 
-void ejsUnlockService(Ejs *ejs)
+void ejsUnlockService()
 {
-    mprUnlock(ejs->service->mutex);
+    mprUnlock(((EjsService*) MPR->ejsService)->mutex);
 }
 
 

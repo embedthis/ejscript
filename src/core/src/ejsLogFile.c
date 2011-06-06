@@ -65,7 +65,7 @@ static EjsNumber *lf_emit(Ejs *ejs, EjsObj *unused, int argc, EjsObj **argv)
  */
 static EjsBoolean *lf_logging(Ejs *ejs, EjsObj *unused, int argc, EjsObj **argv)
 {
-    return ejsCreateBoolean(ejs, MPR->logging);
+    return ejsCreateBoolean(ejs, mprGetCmdlineLogging());
 }
 
 /*  

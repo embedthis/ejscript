@@ -27,7 +27,7 @@ static EjsString *hs_address(Ejs *ejs, EjsHttpServer *sp, int argc, EjsObj **arg
     if (sp->ip) {
         return ejsCreateStringFromAsc(ejs, sp->ip);
     } 
-    return S(null);
+    return ESV(null);
 }
 
 
@@ -55,7 +55,7 @@ static EjsRequest *hs_accept(Ejs *ejs, EjsHttpServer *sp, int argc, EjsObj **arg
  */
 static EjsObj *hs_async(Ejs *ejs, EjsHttpServer *sp, int argc, EjsObj **argv)
 {
-    return (sp->async) ? S(true): S(false);
+    return (sp->async) ? ESV(true): ESV(false);
 }
 
 
@@ -125,7 +125,7 @@ static EjsObj *hs_setLimits(Ejs *ejs, EjsHttpServer *sp, int argc, EjsObj **argv
     if ((vp = ejsGetPropertyByName(ejs, sp->limits, EN("sessionTimeout"))) != 0) {
         app = ejsGetPropertyByName(ejs, ejs->global, N("ejs", "App"));
         cache = ejsGetProperty(ejs, app, ES_App_cache);
-        if (cache && cache != S(null)) {
+        if (cache && cache != ESV(null)) {
             cacheLimits = ejsCreateEmptyPot(ejs);
             ejsSetPropertyByName(ejs, cacheLimits, EN("lifespan"), vp);
             ejsCacheSetLimits(ejs, cache, cacheLimits);
@@ -140,7 +140,7 @@ static EjsObj *hs_setLimits(Ejs *ejs, EjsHttpServer *sp, int argc, EjsObj **argv
  */
 static EjsObj *hs_isSecure(Ejs *ejs, EjsHttpServer *sp, int argc, EjsObj **argv)
 {
-    return sp->ssl ? S(true): S(false);
+    return sp->ssl ? ESV(true): ESV(false);
 }
 
 
@@ -156,8 +156,8 @@ static EjsVoid *hs_listen(Ejs *ejs, EjsHttpServer *sp, int argc, EjsObj **argv)
     EjsObj      *endpoint, *options;
     EjsPath     *home, *documents;
 
-    endpoint = (argc >= 1) ? argv[0] : S(null);
-    if (endpoint != S(null)) {
+    endpoint = (argc >= 1) ? argv[0] : ESV(null);
+    if (endpoint != ESV(null)) {
         address = ejsToString(ejs, endpoint);
         mprParseIp(address->value, &sp->ip, &sp->port, 0);
     } else {
@@ -165,7 +165,7 @@ static EjsVoid *hs_listen(Ejs *ejs, EjsHttpServer *sp, int argc, EjsObj **argv)
     }
     if (ejs->hosted) {
         if ((options = ejsGetProperty(ejs, sp, ES_ejs_web_HttpServer_options)) != 0) {
-            sp->hosted = ejsGetPropertyByName(ejs, options, EN("own")) != S(true);
+            sp->hosted = ejsGetPropertyByName(ejs, options, EN("own")) != ESV(true);
         }
     }
     if (!sp->hosted) {
@@ -238,7 +238,7 @@ static EjsString *hs_name(Ejs *ejs, EjsHttpServer *sp, int argc, EjsObj **argv)
     if (sp->name) {
         return ejsCreateStringFromAsc(ejs, sp->name);
     }
-    return S(null);
+    return ESV(null);
 }
 
 

@@ -14,7 +14,7 @@
  */
 static EjsBoolean *gc_enabled(Ejs *ejs, EjsObj *thisObj, int argc, EjsObj **argv)
 {
-    return ((mprGetMpr()->heap.enabled) ? S(true): S(false));
+    return ((mprGetMpr()->heap.enabled) ? ESV(true): ESV(false));
 }
 
 

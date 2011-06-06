@@ -18,7 +18,7 @@ cmd = CmdArgs({
     [ "depth", Number ]
     [ "quiet", null, false ]
     [ [ "verbose", "v", ], true ]
-    [ "log", /\w+(:\d)/, "stdout:4" ],
+    [ "log", /\w+(:\d)/, "stderr:4" ],
     [ "mode", [ "low", "medium", "high" ], "high" ]
 })
 let options = cmd.options
@@ -141,7 +141,7 @@ for each (file in cmd.args) {
                 cmd = CmdArgs([
                     [ "quiet", null, false ]
                     [ [ "verbose", "v", ] ]
-                    [ "log", /\w+(:\d)/, "stdout:4" ],
+                    [ "log", /\w+(:\d)/, "stderr:4" ],
                     [ "mode", [ "low", "medium", "high" ], "high" ]
                     [ "speed", Number, 60 ]
                 ])

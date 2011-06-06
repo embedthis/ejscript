@@ -41,7 +41,9 @@ module ejs {
         native function set drift(enable: Boolean): Void
 
         /**
-            Timer delay period in milliseconds
+            Timer delay period in milliseconds. Changing a timer period will not reschedule a currently scheduled timer.
+            The period will be used to schedule the next invocation. To change the current period, stop the timer and
+            restart it.
          */
         native function get period(): Number
         native function set period(period: Number): Void
@@ -60,13 +62,27 @@ module ejs {
         native function get repeat(): Boolean
         native function set repeat(enable: Boolean): Void
 
+        /*
+            Reschedule a timer. This will stop the timer if it is currently scheduled, then reschedule the timer.
+            If the $when argument is provided, the timer period will be set before starting.
+            @param when Time period for when to next run the timer
+         */
+        function restart(when: Number = null): Void {
+            stop()
+            if (when) {
+                period = when
+            }
+            start()
+        }
+
         /**
             Start a timer running. The timer will be repeatedly invoked if the $repeat property is true, otherwise it 
             will be invoked once.
             When the timer callback is invoked, it will be invoked with the value of "this" set to the timer unless the
                 function has bound a "this" value via Function.bind.
+            @return The timer instance. This helps chaining. For example: var timer = Timer(1000, sayHello).start()
          */
-        native function start(): Void
+        native function start(): Timer
 
         /**
             Stop a timer running. Once stopped a timer can be restarted by calling $start.
@@ -83,7 +99,6 @@ module ejs {
         @return Timer ID that can be used with $clearInterval
      */
     function setInterval(callback: Function, delay: Number, ...args): Timer {
-        breakpoint()
         let timer = new Timer(delay, callback, ...args)
         timer.repeat = true
         timer.start()

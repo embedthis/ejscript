@@ -529,7 +529,7 @@ static void genDelete(EcCompiler *cp, EcNode *np)
         } else {
             /* delete obj[expr] */
             ecEncodeOpcode(cp, EJS_OP_LOAD_STRING);
-            ecEncodeConst(cp, S(empty));
+            ecEncodeConst(cp, ESV(empty));
             processNode(cp, lright);
             ecEncodeOpcode(cp, EJS_OP_DELETE_NAME_EXPR);
             popStack(cp, 2);
@@ -1032,7 +1032,7 @@ static void genCallSequence(EcCompiler *cp, EcNode *np)
     if (staticMethod) {
         mprAssert(ejsIsType(ejs, lookup->obj));
         if (state->currentClass && state->inFunction && 
-                lookup->obj != ST(Object)) {
+                lookup->obj != EST(Object)) {
             /*
                 Calling a static method from within a class or subclass. So we can use "this".
              */
@@ -1177,7 +1177,7 @@ static void genCall(EcCompiler *cp, EcNode *np)
      */
     hasResult = 0;
     if (fun && ejsIsFunction(ejs, fun)) {
-        if (fun->resultType && fun->resultType != ST(Void)) {
+        if (fun->resultType && fun->resultType != EST(Void)) {
             hasResult = 1;
 
         } else if (fun->hasReturn || ejsIsType(ejs, fun)) {
@@ -1526,7 +1526,7 @@ static void genDot(EcCompiler *cp, EcNode *np, EcNode **rightMost)
         state->currentObjectNode = 0;
         state->needsValue = 1;
         ecEncodeOpcode(cp, EJS_OP_LOAD_STRING);
-        ecEncodeConst(cp, S(empty));
+        ecEncodeConst(cp, ESV(empty));
         pushStack(cp, 1);
         if (right->kind == N_LITERAL) {
             genLiteral(cp, right);
@@ -1578,7 +1578,7 @@ static void genEndFunction(EcCompiler *cp, EcNode *np)
                 ecEncodeOpcode(cp, EJS_OP_RETURN);
             }
 
-        } else if (fun->resultType == ST(Void)) {
+        } else if (fun->resultType == EST(Void)) {
             ecEncodeOpcode(cp, EJS_OP_RETURN);
 
         } else {
@@ -1974,7 +1974,7 @@ static void genForIn(EcCompiler *cp, EcNode *np)
         pushStack(cp, 1);
         //  TODO space is not used with numericIndicies
         ecEncodeOpcode(cp, EJS_OP_LOAD_STRING);
-        ecEncodeConst(cp, S(empty));
+        ecEncodeConst(cp, ESV(empty));
         pushStack(cp, 1);
     }
 
@@ -2023,7 +2023,7 @@ static void genForIn(EcCompiler *cp, EcNode *np)
         Note: we have a zero length handler (noop)
      */
     handlerStart = ecGetCodeOffset(cp);
-    addException(cp, tryStart, tryEnd, ST(StopIteration), handlerStart, handlerStart, 0, startMark,
+    addException(cp, tryStart, tryEnd, EST(StopIteration), handlerStart, handlerStart, 0, startMark,
         EJS_EX_CATCH | EJS_EX_ITERATION);
 
     /*
@@ -2075,7 +2075,7 @@ static void genDefaultParameterCode(EcCompiler *cp, EcNode *np, EjsFunction *fun
     if (fun->rest) {
         buffers[count - 1] = state->code = allocCodeBuffer(cp);
         ecEncodeOpcode(cp, EJS_OP_NEW_ARRAY);
-        ecEncodeGlobal(cp, (EjsObj*) ST(Array), ST(Array)->qname);
+        ecEncodeGlobal(cp, (EjsObj*) EST(Array), EST(Array)->qname);
         ecEncodeNum(cp, 0);
         pushStack(cp, 1);
         if (fun->numArgs < 10) {
@@ -2435,7 +2435,7 @@ static void genLiteral(EcCompiler *cp, EcNode *np)
     ENTER(cp);
     ejs = cp->ejs;
 
-    if (TYPE(np->literal.var) == ST(XML)) {
+    if (TYPE(np->literal.var) == EST(XML)) {
         ecEncodeOpcode(cp, EJS_OP_LOAD_XML);
         data = ejsCreateString(ejs, mprGetBufStart(np->literal.data), mprGetBufLength(np->literal.data) / sizeof(MprChar));
         ecEncodeConst(cp, data);
@@ -2644,7 +2644,7 @@ static void genField(EcCompiler *cp, EcNode *np)
 
     } else if (fieldName->kind == N_LITERAL) {
         ecEncodeOpcode(cp, EJS_OP_LOAD_STRING);
-        ecEncodeConst(cp, S(empty));
+        ecEncodeConst(cp, ESV(empty));
         pushStack(cp, 1);
         genLiteral(cp, fieldName);
 
@@ -2739,7 +2739,7 @@ static void genReturn(EcCompiler *cp, EcNode *np)
     }
     if (np->left) {
         fun = cp->state->currentFunction;
-        if (fun->resultType == NULL || fun->resultType != ST(Void)) {
+        if (fun->resultType == NULL || fun->resultType != EST(Void)) {
             cp->state->needsValue = 1;
             processNode(cp, np->left);
             cp->state->needsValue = 0;
@@ -3156,7 +3156,7 @@ static void genTry(EcCompiler *cp, EcNode *np)
                 catchType = (EjsType*) arg->typeNode->lookup.ref;
             }
             if (catchType == 0) {
-                catchType = ST(Void);
+                catchType = EST(Void);
             }
             ecAddNameConstant(cp, catchType->qname);
             addException(cp, tryStart, tryEnd, catchType, handlerStart, handlerEnd, np->exception.numBlocks, numStack, 
@@ -3171,7 +3171,7 @@ static void genTry(EcCompiler *cp, EcNode *np)
         handlerStart = ecGetCodeOffset(cp);
         copyCodeBuffer(cp, state->code, np->exception.finallyBlock->code);
         handlerEnd = ecGetCodeOffset(cp);
-        addException(cp, tryStart, tryEnd, ST(Void), handlerStart, handlerEnd, np->exception.numBlocks, numStack, 
+        addException(cp, tryStart, tryEnd, EST(Void), handlerStart, handlerEnd, np->exception.numBlocks, numStack, 
             EJS_EX_FINALLY);
     }
     LEAVE(cp);

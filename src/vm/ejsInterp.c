@@ -95,7 +95,7 @@ static MPR_INLINE void checkGetter(Ejs *ejs, EjsAny *value, EjsAny *thisObj, Ejs
             }
         }
     } else if (value == 0) {
-        value = S(undefined);
+        value = ESV(undefined);
     }
     pushOutside(ejs, value);
 }
@@ -250,7 +250,7 @@ static void VM(Ejs *ejs, EjsFunction *fun, EjsAny *otherThis, int argc, int stac
              */
             if (ejs->result == 0) {
                 // OPT - remove this
-                ejs->result = S(undefined);
+                ejs->result = ESV(undefined);
             }
             if (FRAME->getter) {
                 push(ejs->result);
@@ -275,8 +275,8 @@ static void VM(Ejs *ejs, EjsFunction *fun, EjsAny *otherThis, int argc, int stac
                 if (FRAME->function.resultType) {
                     type = FRAME->function.resultType;
                     //  TODO remove this voidType
-                    if (type != ST(Void) && !ejsIsA(ejs, ejs->result, type)) {
-                        if (ejs->result == S(null) || ejs->result == S(undefined)) {
+                    if (type != EST(Void) && !ejsIsA(ejs, ejs->result, type)) {
+                        if (ejs->result == ESV(null) || ejs->result == ESV(undefined)) {
                             if (FRAME->function.throwNulls) {
                                 ejsThrowTypeError(ejs, "Unacceptable null or undefined return value");
                                 BREAK;
@@ -309,7 +309,7 @@ static void VM(Ejs *ejs, EjsFunction *fun, EjsAny *otherThis, int argc, int stac
                 Return
          */
         CASE (EJS_OP_RETURN):
-            ejs->result = S(undefined);
+            ejs->result = ESV(undefined);
             if (FRAME->caller == 0) {
                 goto done;
             }
@@ -430,7 +430,7 @@ static void VM(Ejs *ejs, EjsFunction *fun, EjsAny *otherThis, int argc, int stac
                 Stack after         [XML]
          */
         CASE (EJS_OP_LOAD_XML):
-            v1 = ejsCreateObj(ejs, ST(XML), 0);
+            v1 = ejsCreateObj(ejs, EST(XML), 0);
             str = GET_STRING();
             ejsLoadXMLString(ejs, (EjsXML*) v1, str);
             push(v1);
@@ -459,7 +459,7 @@ static void VM(Ejs *ejs, EjsFunction *fun, EjsAny *otherThis, int argc, int stac
                 Stack after         [Null]
          */
         CASE (EJS_OP_LOAD_NULL):
-            push(S(null));
+            push(ESV(null));
             BREAK;
 
         /*
@@ -469,7 +469,7 @@ static void VM(Ejs *ejs, EjsFunction *fun, EjsAny *otherThis, int argc, int stac
                 Stack after         [undefined]
          */
         CASE (EJS_OP_LOAD_UNDEFINED):
-            push(S(undefined));
+            push(ESV(undefined));
             BREAK;
 
         CASE (EJS_OP_LOAD_THIS):
@@ -513,7 +513,7 @@ static void VM(Ejs *ejs, EjsFunction *fun, EjsAny *otherThis, int argc, int stac
                 Stack after         [true]
          */
         CASE (EJS_OP_LOAD_TRUE):
-            push(S(true));
+            push(ESV(true));
             BREAK;
 
         /*
@@ -523,7 +523,7 @@ static void VM(Ejs *ejs, EjsFunction *fun, EjsAny *otherThis, int argc, int stac
                 Stack after         [false]
          */
         CASE (EJS_OP_LOAD_FALSE):
-            push(S(false));
+            push(ESV(false));
             BREAK;
 
         /*
@@ -701,12 +701,12 @@ static void VM(Ejs *ejs, EjsFunction *fun, EjsAny *otherThis, int argc, int stac
             }
             vp = ejsGetVarByName(ejs, NULL, qname, &lookup);
             if (unlikely(vp == 0)) {
-                push(S(undefined));
+                push(ESV(undefined));
             } else {
                 CHECK_VALUE(vp, NULL, lookup.obj, lookup.slotNum);
             }
 #if DYNAMIC_BINDING
-            if (ejs->flags & EJS_FLAG_COMPILER || TYPE(lookup.obj) == ST(Object) || lookup.slotNum >= 4096) {
+            if (ejs->flags & EJS_FLAG_COMPILER || TYPE(lookup.obj) == EST(Object) || lookup.slotNum >= 4096) {
                 BREAK;
             }
             if (lookup.obj == ejs->global) {
@@ -745,7 +745,7 @@ static void VM(Ejs *ejs, EjsFunction *fun, EjsAny *otherThis, int argc, int stac
 #endif
             qname = GET_NAME();
             vp = pop(ejs);
-            if (vp == S(null) || vp == S(undefined)) {
+            if (vp == ESV(null) || vp == ESV(undefined)) {
                 ejsThrowReferenceError(ejs, "Object reference is null");
                 BREAK;
             }
@@ -807,7 +807,7 @@ static void VM(Ejs *ejs, EjsFunction *fun, EjsAny *otherThis, int argc, int stac
             mark = FRAME->pc - 1;
             qname = GET_NAME();
             vp = pop(ejs);
-            if (vp == S(null) || vp == S(undefined)) {
+            if (vp == ESV(null) || vp == ESV(undefined)) {
                 ejsThrowReferenceError(ejs, "Object reference is null");
                 BREAK;
             }
@@ -838,13 +838,13 @@ static void VM(Ejs *ejs, EjsFunction *fun, EjsAny *otherThis, int argc, int stac
             v1 = pop(ejs);
             v2 = pop(ejs);
             vp = pop(ejs);
-            if (vp == 0 || vp == S(null) || vp == S(undefined)) {
+            if (vp == 0 || vp == ESV(null) || vp == ESV(undefined)) {
                 ejsThrowReferenceError(ejs, "Object reference is null");
                 BREAK;
             }
             if (TYPE(vp)->numericIndicies && ejsIs(ejs, v1, Number)) {
                 vp = ejsGetProperty(ejs, vp, ejsGetInt(ejs, v1));
-                push(vp == 0 ? S(null) : vp);
+                push(vp == 0 ? ESV(null) : vp);
                 BREAK;
             } else {
                 qname.name = ejsToString(ejs, v1);
@@ -1149,7 +1149,7 @@ static void VM(Ejs *ejs, EjsFunction *fun, EjsAny *otherThis, int argc, int stac
             argc += ejs->spreadArgs;
             ejs->spreadArgs = 0;
             vp = state->stack[-argc];
-            if (vp == S(null) || vp == S(undefined)) {
+            if (vp == ESV(null) || vp == ESV(undefined)) {
                 //  TODO -- refactor
                 if (vp && (slotNum == ES_Object_iterator_get || slotNum == ES_Object_iterator_getValues)) {
                     callProperty(ejs, TYPE(vp), slotNum, vp, argc, 1);
@@ -1204,7 +1204,7 @@ static void VM(Ejs *ejs, EjsFunction *fun, EjsAny *otherThis, int argc, int stac
             argc += ejs->spreadArgs;
             ejs->spreadArgs = 0;
             vp = state->stack[-argc];
-            if (vp == 0 || vp == S(null) || vp == S(undefined)) {
+            if (vp == 0 || vp == ESV(null) || vp == ESV(undefined)) {
                 ejsThrowReferenceError(ejs, "Object reference is null");
             } else {
                 callProperty(ejs, vp, slotNum, vp, argc, 1);
@@ -1225,7 +1225,7 @@ static void VM(Ejs *ejs, EjsFunction *fun, EjsAny *otherThis, int argc, int stac
             argc += ejs->spreadArgs;
             ejs->spreadArgs = 0;
             vp = state->stack[-argc];
-            if (vp == S(null) || vp == S(undefined)) {
+            if (vp == ESV(null) || vp == ESV(undefined)) {
                 throwNull(ejs);
             } else {
                 type = (EjsType*) getNthBase(ejs, vp, nthBase);
@@ -1246,7 +1246,7 @@ static void VM(Ejs *ejs, EjsFunction *fun, EjsAny *otherThis, int argc, int stac
             argc += ejs->spreadArgs;
             ejs->spreadArgs = 0;
             type = (EjsType*) getNthBase(ejs, THIS, nthBase);
-            if (type == ST(Object)) {
+            if (type == EST(Object)) {
                 //  TODO - remove
                 ejsThrowReferenceError(ejs, "Bad type reference");
                 BREAK;
@@ -1307,7 +1307,7 @@ static void VM(Ejs *ejs, EjsFunction *fun, EjsAny *otherThis, int argc, int stac
 
             } else if (!ejsIsFunction(ejs, fun)) {
                 if (!ejs->exception) {
-                    if ((EjsObj*) vp == (EjsObj*) S(undefined)) {
+                    if ((EjsObj*) vp == (EjsObj*) ESV(undefined)) {
                         ejsThrowReferenceError(ejs, "Function is undefined");
                     } else {
                         ejsThrowReferenceError(ejs, "Reference is not a function");
@@ -1345,7 +1345,7 @@ static void VM(Ejs *ejs, EjsFunction *fun, EjsAny *otherThis, int argc, int stac
             argc += ejs->spreadArgs;
             ejs->spreadArgs = 0;
             vp = state->stack[-argc];
-            if (vp == 0 || vp == S(null) || vp == S(undefined)) {
+            if (vp == 0 || vp == ESV(null) || vp == ESV(undefined)) {
                 throwNull(ejs);
                 BREAK;
             }
@@ -1813,7 +1813,7 @@ static void VM(Ejs *ejs, EjsFunction *fun, EjsAny *otherThis, int argc, int stac
                 Stack after         []
          */
         CASE (EJS_OP_BRANCH_NULL):
-            push(S(null));
+            push(ESV(null));
             offset = GET_WORD();
             goto commonBranchCode;
 
@@ -1824,7 +1824,7 @@ static void VM(Ejs *ejs, EjsFunction *fun, EjsAny *otherThis, int argc, int stac
                 Stack after         []
          */
         CASE (EJS_OP_BRANCH_UNDEFINED):
-            push(S(undefined));
+            push(ESV(undefined));
             offset = GET_WORD();
             goto commonBranchCode;
 
@@ -1844,7 +1844,7 @@ static void VM(Ejs *ejs, EjsFunction *fun, EjsAny *otherThis, int argc, int stac
                 Stack after         []
          */
         CASE (EJS_OP_BRANCH_NOT_ZERO):
-            push(S(zero));
+            push(ESV(zero));
             offset = GET_WORD();
             goto commonBranchCode;
 
@@ -1963,7 +1963,7 @@ static void VM(Ejs *ejs, EjsFunction *fun, EjsAny *otherThis, int argc, int stac
                 Stack after         [boolean]
          */
         CASE (EJS_OP_COMPARE_NULL):
-            push(S(null));
+            push(ESV(null));
             goto binaryExpression;
 
         /*
@@ -1973,7 +1973,7 @@ static void VM(Ejs *ejs, EjsFunction *fun, EjsAny *otherThis, int argc, int stac
                 Stack after         [boolean]
          */
         CASE (EJS_OP_COMPARE_UNDEFINED):
-            push(S(undefined));
+            push(ESV(undefined));
             goto binaryExpression;
 
         /*
@@ -2270,13 +2270,13 @@ static void VM(Ejs *ejs, EjsFunction *fun, EjsAny *otherThis, int argc, int stac
             vp = pop(ejs);
             slotNum = ejsLookupVar(ejs, vp, qname, &lookup);
             if (slotNum < 0) {
-                push(S(true));
+                push(ESV(true));
             } else {
                 if (ejsPropertyHasTrait(ejs, lookup.obj, slotNum, EJS_TRAIT_FIXED)) {
-                    push(S(false));
+                    push(ESV(false));
                 } else {
                     ejsDeletePropertyByName(ejs, lookup.obj, lookup.name);
-                    push(S(true));
+                    push(ESV(true));
                 }
             }
             BREAK;
@@ -2298,13 +2298,13 @@ static void VM(Ejs *ejs, EjsFunction *fun, EjsAny *otherThis, int argc, int stac
             }
             slotNum = ejsLookupScope(ejs, qname, &lookup);
             if (slotNum < 0) {
-                push(S(true));
+                push(ESV(true));
             } else {
                 if (ejsPropertyHasTrait(ejs, lookup.obj, slotNum, EJS_TRAIT_FIXED)) {
-                    push(S(false));
+                    push(ESV(false));
                 } else {
                     ejsDeletePropertyByName(ejs, lookup.obj, lookup.name);
-                    push(S(true));
+                    push(ESV(true));
                 }
             }
             BREAK;
@@ -2386,7 +2386,7 @@ static void VM(Ejs *ejs, EjsFunction *fun, EjsAny *otherThis, int argc, int stac
                 EjsName n = { nameVar, NULL };
                 slotNum = ejsLookupProperty(ejs, v1, n);
                 if (slotNum < 0) {
-                    n.space = S(empty);
+                    n.space = ESV(empty);
                     slotNum = ejsLookupVar(ejs, v1, n, &lookup);
                     if (slotNum < 0 && ejsIsType(ejs, v1)) {
                         slotNum = ejsLookupVar(ejs, ((EjsType*) v1)->prototype, n, &lookup);
@@ -2450,7 +2450,7 @@ static void storePropertyToSlot(Ejs *ejs, EjsObj *thisObj, EjsAny *obj, int slot
         }
         if (trait->type) {
             if (!ejsIsA(ejs, value, trait->type)) {
-                if (value == S(null) || value == S(undefined)) {
+                if (value == ESV(null) || value == ESV(undefined)) {
                     if (trait->attributes & EJS_TRAIT_THROW_NULLS) {
                         ejsThrowTypeError(ejs, "Unacceptable null or undefined value");
                         return;
@@ -2471,8 +2471,8 @@ static void storePropertyToSlot(Ejs *ejs, EjsObj *thisObj, EjsAny *obj, int slot
         if (trait->attributes & EJS_TRAIT_READONLY) {
             EjsName  qname;
             vp = ejsGetProperty(ejs, obj, slotNum);
-            if (vp != value && vp != S(null) && vp != S(undefined)) {
-                if (ejsInvokeOperator(ejs, vp, EJS_OP_COMPARE_EQ, value) != S(true)) {
+            if (vp != value && vp != ESV(null) && vp != ESV(undefined)) {
+                if (ejsInvokeOperator(ejs, vp, EJS_OP_COMPARE_EQ, value) != ESV(true)) {
                     qname = ejsGetPropertyName(ejs, obj, slotNum);
                     ejsThrowReferenceError(ejs, "Property \"%@\" is not writable", qname.name);
                     return;
@@ -2604,7 +2604,7 @@ EjsObj *ejsRunInitializer(Ejs *ejs, EjsModule *mp)
     
     if (mp->initialized || !mp->hasInitializer) {
         mp->initialized = 1;
-        result = S(null);
+        result = ESV(null);
     } else {
         mp->initialized = 1;
         if (mp->dependencies) {
@@ -2616,7 +2616,7 @@ EjsObj *ejsRunInitializer(Ejs *ejs, EjsModule *mp)
                 }
             }
         }
-        mprLog(6, "Running initializer for module %@", mp->name);
+        mprLog(7, "Running initializer for module %@", mp->name);
         result = ejsRunFunction(ejs, mp->initializer, ejs->global, 0, NULL);
     }
     return result;
@@ -2677,7 +2677,7 @@ EjsAny *ejsRunFunction(Ejs *ejs, EjsFunction *fun, EjsAny *thisObj, int argc, vo
         ejs->result = (fun->body.proc)(ejs, thisObj, argc, argv);
         ejs->state->stack -= argc;
         if (ejs->result == 0) {
-            ejs->result = S(null);
+            ejs->result = ESV(null);
         }
 
     } else {
@@ -2778,7 +2778,7 @@ static int validateArgs(Ejs *ejs, EjsFunction *fun, int argc, void *args)
             } else {
                 /* Create undefined values for missing args for script functions */
                 for (i = argc; i < nonDefault; i++) {
-                    pushOutside(ejs, S(undefined));
+                    pushOutside(ejs, ESV(undefined));
                 }
                 argc = nonDefault;
             }
@@ -2822,7 +2822,7 @@ static int validateArgs(Ejs *ejs, EjsFunction *fun, int argc, void *args)
         }
         type = trait->type;
         if (!ejsIsA(ejs, argv[i], type)) {
-            if ((argv[i] == S(null) || argv[i] == S(undefined))) {
+            if ((argv[i] == ESV(null) || argv[i] == ESV(undefined))) {
                 if (trait->attributes & EJS_TRAIT_THROW_NULLS) {
                     badArgType(ejs, activation, trait, i);
                     return EJS_ERR;
@@ -3068,7 +3068,7 @@ static void checkExceptionHandlers(Ejs *ejs)
     mprAssert(pc >= 0);
 
 rescan:
-    if (!fp->function.inException || (ejs->exception == ST(StopIteration))) {
+    if (!fp->function.inException || (ejs->exception == EST(StopIteration))) {
         /*
             Normal exception in a try block. NOTE: the catch will jump or fall through to the finally block code.
             ie. We won't come here again for the finally code unless there is an exception in the catch block.
@@ -3235,10 +3235,10 @@ static EjsAny *evalBinaryExpr(Ejs *ejs, EjsAny *lhs, EjsOpCode opcode, EjsAny *r
     int         slotNum;
 
     if (lhs == 0) {
-        lhs = S(undefined);
+        lhs = ESV(undefined);
     }
     if (rhs == 0) {
-        rhs = S(undefined);
+        rhs = ESV(undefined);
     }
     result = ejsInvokeOperator(ejs, lhs, opcode, rhs);
 
@@ -3478,7 +3478,7 @@ static void callFunction(Ejs *ejs, EjsFunction *fun, EjsAny *thisObj, int argc, 
         }
         
     } else if (!ejsIsFunction(ejs, fun)) {
-        if (fun == S(undefined)) {
+        if (fun == ESV(undefined)) {
             ejsThrowReferenceError(ejs, "Function is undefined");
             return;
         } else {
@@ -3532,7 +3532,7 @@ static void callFunction(Ejs *ejs, EjsFunction *fun, EjsAny *thisObj, int argc, 
         ejs->result = (fun->body.proc)(ejs, thisObj, argc, argv);
         state->paused = fstate;
         if (ejs->result == 0) {
-            ejs->result = S(null);
+            ejs->result = ESV(null);
         }
         state->stack -= (argc + stackAdjust);
 

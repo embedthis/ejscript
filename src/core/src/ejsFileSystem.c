@@ -176,7 +176,7 @@ EjsFileSystem *ejsCreateFileSystem(Ejs *ejs, cchar *path)
     EjsFileSystem   *fs;
     EjsObj          *arg;
 
-    fs = ejsCreateObj(ejs, S(FileSystem), 0);
+    fs = ejsCreateObj(ejs, ESV(FileSystem), 0);
     if (fs == 0) {
         return 0;
     }

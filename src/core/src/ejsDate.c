@@ -38,7 +38,7 @@ static EjsAny *castDate(Ejs *ejs, EjsDate *dp, EjsType *type)
 
     switch (type->sid) {
     case S_Boolean:
-        return S(true);
+        return ESV(true);
 
     case S_Number:
         return ejsCreateNumber(ejs, (MprNumber) dp->value);
@@ -75,9 +75,9 @@ static EjsAny *coerceDateOperands(Ejs *ejs, EjsAny *lhs, int opcode, EjsAny *rhs
      */
     case EJS_OP_ADD:
         if (ejsIs(ejs, rhs, Void)) {
-            return S(nan);
+            return ESV(nan);
         } else if (ejsIs(ejs, rhs, Null)) {
-            rhs = S(zero);
+            rhs = ESV(zero);
         } else if (ejsIs(ejs, rhs, Boolean) || ejsIs(ejs, rhs, Number)) {
             return ejsInvokeOperator(ejs, ejsToNumber(ejs, lhs), opcode, rhs);
         } else {
@@ -98,10 +98,10 @@ static EjsAny *coerceDateOperands(Ejs *ejs, EjsAny *lhs, int opcode, EjsAny *rhs
         return ejsInvokeOperator(ejs, ejsToNumber(ejs, lhs), opcode, rhs);
 
     case EJS_OP_COMPARE_STRICTLY_NE:
-        return S(true);
+        return ESV(true);
 
     case EJS_OP_COMPARE_STRICTLY_EQ:
-        return S(false);
+        return ESV(false);
 
     /*
         Unary operators
@@ -111,19 +111,19 @@ static EjsAny *coerceDateOperands(Ejs *ejs, EjsAny *lhs, int opcode, EjsAny *rhs
 
     case EJS_OP_COMPARE_NOT_ZERO:
     case EJS_OP_COMPARE_TRUE:
-        return (((EjsDate*) lhs)->value ? S(true) : S(false));
+        return (((EjsDate*) lhs)->value ? ESV(true) : ESV(false));
 
     case EJS_OP_COMPARE_ZERO:
     case EJS_OP_COMPARE_FALSE:
-        return (((EjsDate*) lhs)->value ? S(false): S(true));
+        return (((EjsDate*) lhs)->value ? ESV(false): ESV(true));
 
     case EJS_OP_COMPARE_UNDEFINED:
     case EJS_OP_COMPARE_NULL:
-        return S(false);
+        return ESV(false);
 
     default:
         ejsThrowTypeError(ejs, "Opcode %d not valid for type %@", opcode, TYPE(lhs)->qname.name);
-        return S(undefined);
+        return ESV(undefined);
     }
     return 0;
 }
@@ -161,16 +161,16 @@ static EjsAny *invokeDateOperator(Ejs *ejs, EjsDate *lhs, int opcode, EjsDate *r
         return ejsCreateBoolean(ejs, lhs->value >= rhs->value);
 
     case EJS_OP_COMPARE_NOT_ZERO:
-        return ((lhs->value) ? S(true): S(false));
+        return ((lhs->value) ? ESV(true): ESV(false));
 
     case EJS_OP_COMPARE_ZERO:
-        return ((lhs->value == 0) ? S(true): S(false));
+        return ((lhs->value == 0) ? ESV(true): ESV(false));
 
     case EJS_OP_COMPARE_UNDEFINED:
     case EJS_OP_COMPARE_NULL:
     case EJS_OP_COMPARE_FALSE:
     case EJS_OP_COMPARE_TRUE:
-        return S(false);
+        return ESV(false);
 
     /*
         Unary operators
@@ -962,7 +962,7 @@ static EjsString *date_toJSON(Ejs *ejs, EjsDate *dp, int argc, EjsObj **argv)
  */
 static EjsString *date_toString(Ejs *ejs, EjsDate *dp, int argc, EjsObj **argv)
 {
-    return castDate(ejs, dp, S(String));
+    return castDate(ejs, dp, ESV(String));
 }
 
 
@@ -1039,7 +1039,7 @@ EjsDate *ejsCreateDate(Ejs *ejs, MprTime value)
 {
     EjsDate *vp;
 
-    vp = ejsCreateObj(ejs, S(Date), 0);
+    vp = ejsCreateObj(ejs, ESV(Date), 0);
     if (vp != 0) {
         vp->value = value;
     }

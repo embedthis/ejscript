@@ -102,7 +102,7 @@ static int createSlotFile(EjsMod *bp, EjsModule *mp, MprFile *file)
     type = ejsCreateType(ejs, N(EJS_EJS_NAMESPACE, EJS_GLOBAL), NULL, NULL, NULL, -1, 
         ejsGetLength(ejs, ejs->global), 0, sizeof(EjsType), 0, EJS_TYPE_POT);
     type->constructor.block = *(EjsBlock*) ejs->global;
-    SET_TYPE(type, ST(Type));
+    SET_TYPE(type, EST(Type));
     type->constructor.block.pot.isType = 1;
 
     if (genType(bp, file, mp, type, mp->firstGlobal, mp->lastGlobal, 1) < 0) {
@@ -253,7 +253,7 @@ static int genType(EjsMod *bp, MprFile *file, EjsModule *mp, EjsType *type, int 
         if (trait == 0 || qname.name == 0) {
             continue;
         }
-        if (trait->type != ST(Function)) {
+        if (trait->type != EST(Function)) {
             continue;
         }
         vp = ejsGetProperty(ejs, (EjsObj*) type, slotNum);

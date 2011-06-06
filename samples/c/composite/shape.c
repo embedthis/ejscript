@@ -33,8 +33,8 @@ static EjsObj *constructor(Ejs *ejs, EjsObj *sp, int argc, EjsObj **argv)
 
     mprLog(1, "Shape()");
 
-    ejsSetProperty(ejs, sp, ES_sample_Shape_x, S(zero));
-    ejsSetProperty(ejs, sp, ES_sample_Shape_y, S(zero));
+    ejsSetProperty(ejs, sp, ES_sample_Shape_x, ESV(zero));
+    ejsSetProperty(ejs, sp, ES_sample_Shape_y, ESV(zero));
     ejsSetProperty(ejs, sp, ES_sample_Shape_height, argv[0]);
     ejsSetProperty(ejs, sp, ES_sample_Shape_width, argv[1]);
 

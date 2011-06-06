@@ -557,10 +557,11 @@ extern int ejsAddImmutable(struct Ejs *ejs, int sid, EjsName qname, EjsAny *valu
 extern EjsAny *ejsGetImmutable(struct Ejs *ejs, int sid);
 extern EjsAny *ejsGetImmutableByName(struct Ejs *ejs, EjsName qname);
 
-//  MOB - rename to ESV
-//  MOB - OPT
-#define S(name) ejs->service->immutable->properties->slots[S_ ## name].value.ref
-#define ST(name) ((EjsType*) S(name))
+/*
+    Special value, special type
+ */
+#define ESV(name) ejs->service->immutable->properties->slots[S_ ## name].value.ref
+#define EST(name) ((EjsType*) ESV(name))
 
 /**
     Ejsript Interperter Structure
@@ -1669,7 +1670,7 @@ typedef struct EjsBoolean {
  */
 extern EjsBoolean *ejsCreateBoolean(Ejs *ejs, int value);
 #else
-#define ejsCreateBoolean(ejs, v) ((v) ? S(true) : S(false))
+#define ejsCreateBoolean(ejs, v) ((v) ? ESV(true) : ESV(false))
 #endif
 
 /** 
@@ -1844,7 +1845,7 @@ extern EjsDate *ejsCreateDate(Ejs *ejs, MprTime value);
  */
 typedef EjsPot EjsError;
 
-#define ejsIsError(ejs, obj) (obj && ejsIsA(ejs, obj, S(Error)))
+#define ejsIsError(ejs, obj) (obj && ejsIsA(ejs, obj, ESV(Error)))
 
 extern EjsError *ejsCreateError(Ejs *ejs, struct EjsType *type, EjsObj *message);
 extern EjsArray *ejsCaptureStack(Ejs *ejs, int uplevels);
@@ -2708,9 +2709,9 @@ extern int ejsDefineGlobalFunction(Ejs *ejs, EjsString *name, EjsFun fn);
     assumption is worth the benefit.
  */
 //  MOB - need doc for this too
-#define ejsIs(ejs, obj, name) ejsIsA(ejs, obj, ST(name))
+#define ejsIs(ejs, obj, name) ejsIsA(ejs, obj, EST(name))
 #define ejsIsDefined(ejs, obj) (obj != 0 && !ejsIs(ejs, obj, Null) && !ejsIs(ejs, obj, Void))
-#define ejsCast(ejs, obj, name) ejsCastType(ejs, obj, S(name))
+#define ejsCast(ejs, obj, name) ejsCastType(ejs, obj, ESV(name))
 
 /** 
     Test if an variable is an instance of a given type
@@ -3170,8 +3171,8 @@ extern void ejsApplyBlockHelpers(EjsService *sp, EjsType *type);
 
 extern void ejsLockVm(Ejs *ejs);
 extern void ejsUnlockVm(Ejs *ejs);
-extern void ejsLockService(Ejs *ejs);
-extern void ejsUnlockService(Ejs *ejs);
+extern void ejsLockService();
+extern void ejsUnlockService();
 
 /******************************************* Module **************************************************/
 /*

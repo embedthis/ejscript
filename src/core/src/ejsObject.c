@@ -41,7 +41,7 @@ static EjsAny *obj_prototype(Ejs *ejs, EjsObj *obj, int argc, EjsObj **argv)
 
     if (ejs->compiling) {
         mprAssert(0);
-        prototype = S(undefined);
+        prototype = ESV(undefined);
         
     } else if (ejsIsType(ejs, obj)) {
         prototype = ((EjsType*) obj)->prototype;
@@ -56,7 +56,7 @@ static EjsAny *obj_prototype(Ejs *ejs, EjsObj *obj, int argc, EjsObj **argv)
             prototype = type->prototype;
         }
     } else {
-        prototype = S(undefined);
+        prototype = ESV(undefined);
     }
     return prototype;
 }
@@ -72,7 +72,7 @@ static EjsObj *obj_set_prototype(Ejs *ejs, EjsObj *obj, int argc, EjsObj **argv)
 
     if (ejs->compiling) {
         mprAssert(0);
-        return S(undefined);
+        return ESV(undefined);
     }
     prototype = (EjsPot*) argv[0];
     if (ejsIsType(ejs, obj)) {
@@ -103,7 +103,7 @@ static EjsObj *obj_clone(Ejs *ejs, EjsObj *obj, int argc, EjsObj **argv)
 {
     bool    deep;
 
-    deep = (argc == 1 && argv[0] == S(true));
+    deep = (argc == 1 && argv[0] == ESV(true));
     return ejsClone(ejs, obj, deep);
 }
 
@@ -184,7 +184,7 @@ static EjsObj *obj_defineProperty(Ejs *ejs, EjsObj *unused, int argc, EjsObj **a
         return NULL;
     }
     qname.name = (EjsString*) argv[1];
-    qname.space = S(empty);
+    qname.space = ESV(empty);
     options = argv[2];
     value = 0;
     set = get = 0;
@@ -202,12 +202,12 @@ static EjsObj *obj_defineProperty(Ejs *ejs, EjsObj *unused, int argc, EjsObj **a
     type = ejsGetPropertyByName(ejs, options, EN("type"));
 
     if ((configurable = ejsGetPropertyByName(ejs, options, EN("configurable"))) != 0) {
-        if (configurable == S(false)) {
+        if (configurable == ESV(false)) {
             attributes |= EJS_TRAIT_FIXED;
         }
     }
     if ((enumerable = ejsGetPropertyByName(ejs, options, EN("enumerable"))) != 0) {
-        if (enumerable == S(false)) {
+        if (enumerable == ESV(false)) {
             attributes |= EJS_TRAIT_HIDDEN;
         }
     }
@@ -248,7 +248,7 @@ static EjsObj *obj_defineProperty(Ejs *ejs, EjsObj *unused, int argc, EjsObj **a
         value = (EjsObj*) get;
     }
     if ((writable = ejsGetPropertyByName(ejs, options, EN("writable"))) != 0) {
-        if (writable == S(false)) {
+        if (writable == ESV(false)) {
             attributes |= EJS_TRAIT_READONLY;
         }
     }
@@ -397,16 +397,16 @@ static EjsObj *obj_getOwnPropertyDescriptor(Ejs *ejs, EjsObj *unused, int argc, 
 
     obj = argv[0];
     //  TODO - ugly
-    qname.space = S(empty);
+    qname.space = ESV(empty);
     qname.name = (EjsString*) argv[1];
     if ((slotNum = ejsLookupVarWithNamespaces(ejs, obj, qname, &lookup)) < 0) {
-        return S(false);
+        return ESV(false);
     }
     trait = ejsGetPropertyTraits(ejs, obj, slotNum);
     result = ejsCreateEmptyPot(ejs);
     value = ejsGetVarByName(ejs, obj, qname, &lookup);
     if (value == 0) {
-        value = S(null);
+        value = ESV(null);
     }
     type = (trait) ? trait->type: 0;
     if (trait && trait->attributes & EJS_TRAIT_GETTER) {
@@ -425,7 +425,7 @@ static EjsObj *obj_getOwnPropertyDescriptor(Ejs *ejs, EjsObj *unused, int argc, 
         ejsCreateBoolean(ejs, !trait || !(trait->attributes & EJS_TRAIT_HIDDEN)));
     qn = ejsGetPropertyName(ejs, obj, slotNum);
     ejsSetPropertyByName(ejs, result, EN("namespace"), qn.space);
-    ejsSetPropertyByName(ejs, result, EN("type"), type ? (EjsObj*) type : S(null));
+    ejsSetPropertyByName(ejs, result, EN("type"), type ? (EjsObj*) type : ESV(null));
     ejsSetPropertyByName(ejs, result, EN("writable"), 
         ejsCreateBoolean(ejs, !trait || !(trait->attributes & EJS_TRAIT_READONLY)));
     return result;
@@ -451,10 +451,10 @@ static EjsArray *obj_getOwnPropertyNames(Ejs *ejs, EjsObj *unused, int argc, Ejs
     if (argc > 0) {
         options = argv[1];
         if ((arg = ejsGetPropertyByName(ejs, options, EN("includeBases"))) != 0) {
-            includeBases = (arg == S(true));
+            includeBases = (arg == ESV(true));
         }
         if ((arg = ejsGetPropertyByName(ejs, options, EN("excludeFunctions"))) != 0) {
-            excludeFunctions = (arg == S(true));
+            excludeFunctions = (arg == ESV(true));
         }
     }
     if ((result = ejsCreateArray(ejs, 0)) == 0) {
@@ -509,7 +509,7 @@ static EjsBoolean *obj_hasOwnProperty(Ejs *ejs, EjsObj *obj, int argc, EjsObj **
     EjsLookup   lookup;
     int         slotNum;
 
-    qname.space = S(empty);
+    qname.space = ESV(empty);
     qname.name = (EjsString*) argv[0];
     slotNum = ejsLookupVarWithNamespaces(ejs, obj, qname, &lookup);
     return ejsCreateBoolean(ejs, slotNum >= 0);
@@ -567,7 +567,7 @@ static EjsBoolean *obj_isPrototypeOf(Ejs *ejs, EjsObj *prototype, int argc, EjsO
     EjsObj  *obj;
     
     obj = argv[0];
-    return (prototype == ((EjsObj*) TYPE(obj)->prototype)) ? S(true) : S(false);
+    return (prototype == ((EjsObj*) TYPE(obj)->prototype)) ? ESV(true) : ESV(false);
 }
 
 
@@ -678,10 +678,10 @@ static EjsBoolean *obj_propertyIsEnumerable(Ejs *ejs, EjsObj *obj, int argc, Ejs
 
     mprAssert(argc == 1 || argc == 2);
 
-    qname.space = S(empty);
+    qname.space = ESV(empty);
     qname.name = (EjsString*) argv[0];
     if ((slotNum = ejsLookupVarWithNamespaces(ejs, obj, qname, &lookup)) < 0) {
-        return S(false);
+        return ESV(false);
     }
     trait = ejsGetPropertyTraits(ejs, obj, slotNum);
     return ejsCreateBoolean(ejs, !trait || !(trait->attributes & EJS_TRAIT_HIDDEN));
@@ -717,7 +717,7 @@ EjsString *ejsObjToString(Ejs *ejs, EjsObj *vp, int argc, EjsObj **argv)
     if (ejsIs(ejs, vp, String)) {
         return (EjsString*) vp;
     }
-    return (ejs->service->objHelpers.cast)(ejs, vp, S(String));
+    return (ejs->service->objHelpers.cast)(ejs, vp, ESV(String));
 }
 
 
@@ -735,7 +735,7 @@ static EjsType *obj_getBaseType(Ejs *ejs, EjsObj *unused, int argc, EjsObj **arg
     if (ejsIsType(ejs, vp)) {
         return (((EjsType*) vp)->baseType);
     }
-    return S(null);
+    return ESV(null);
 }
 
 
@@ -779,11 +779,11 @@ EjsString *ejsGetTypeName(Ejs *ejs, EjsAny *obj)
     EjsType     *type;
 
     if (obj == 0) {
-        return S(undefined);
+        return ESV(undefined);
     }
     type = (EjsType*) TYPE(obj);
     if (type == 0) {
-        return S(null);
+        return ESV(null);
     }
     return type->qname.name;
 }
@@ -815,7 +815,7 @@ static EjsString *obj_getName(Ejs *ejs, EjsObj *unused, int argc, EjsObj **argv)
     } else if (ejsIsFunction(ejs, obj)) {
         return ((EjsFunction*) obj)->name;
     }
-    return S(empty);
+    return ESV(empty);
 }
 
 /*********************************** Globals **********************************/
@@ -836,7 +836,7 @@ EjsString *ejsGetTypeOf(Ejs *ejs, EjsAny *vp)
 {
     cchar   *word;
 
-    if (vp == S(undefined)) {
+    if (vp == ESV(undefined)) {
         word = "undefined";
 
     } else if (ejsIs(ejs, vp, Null)) {

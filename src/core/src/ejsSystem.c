@@ -143,7 +143,7 @@ static EjsString *system_ipaddr(Ejs *ejs, EjsObj *unused, int argc, EjsObj **arg
         return ejsCreateStringFromAsc(ejs, ip ? ip : "127.0.0.1");
     }
 #endif
-    return S(null);
+    return ESV(null);
 }
 
 

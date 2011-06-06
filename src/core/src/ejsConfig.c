@@ -38,7 +38,7 @@ void ejsDefineConfigProperties(Ejs *ejs)
         There will still be a -Config- property in slot[0]
      */
     att = EJS_PROP_STATIC | EJS_PROP_ENUMERABLE;
-    ejsDefineProperty(ejs, type, -1, N("public", "Debug"), 0, att, BLD_DEBUG ? S(true): S(false));
+    ejsDefineProperty(ejs, type, -1, N("public", "Debug"), 0, att, BLD_DEBUG ? ESV(true): ESV(false));
     ejsDefineProperty(ejs, type, -1, N("public", "CPU"), 0, att, ejsCreateStringFromAsc(ejs, BLD_HOST_CPU));
     ejsDefineProperty(ejs, type, -1, N("public", "OS"), 0, att, ejsCreateStringFromAsc(ejs, BLD_OS));
     ejsDefineProperty(ejs, type, -1, N("public", "Product"), 0, att, 

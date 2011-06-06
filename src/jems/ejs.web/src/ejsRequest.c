@@ -97,10 +97,10 @@ static EjsObj *createCookies(Ejs *ejs, EjsRequest *req)
         return req->cookies;
     }
     if (req->conn == 0) {
-        return S(null);
+        return ESV(null);
     }
     if ((cookieHeader = mprLookupKey(req->conn->rx->headers, "cookie")) == 0) {
-        req->cookies = S(null);
+        req->cookies = ESV(null);
     } else {
         argv[0] = (EjsObj*) ejsCreateStringFromAsc(ejs, cookieHeader);
         req->cookies = ejsRunFunctionByName(ejs, ejs->global, N("ejs.web", "parseCookies"), ejs->global, 1, argv);
@@ -128,11 +128,11 @@ static EjsObj *createFiles(Ejs *ejs, EjsRequest *req)
 
     if (req->files == 0) {
         if (req->conn == 0) {
-            return S(null);
+            return ESV(null);
         }
         conn = req->conn;
         if (conn->rx->files == 0) {
-            return S(null);
+            return ESV(null);
         }
         req->files = files = (EjsObj*) ejsCreateEmptyPot(ejs);
         for (index = 0, hp = 0; (hp = mprGetNextKey(conn->rx->files, hp)) != 0; index++) {
@@ -303,7 +303,7 @@ static EjsSession *getSession(Ejs *ejs, EjsRequest *req, int create)
 static EjsString *createString(Ejs *ejs, cchar *value)
 {
     if (value == 0) {
-        return S(null);
+        return ESV(null);
     }
     return ejsCreateStringFromAsc(ejs, value);
 }
@@ -339,7 +339,7 @@ static cchar *getRequestString(Ejs *ejs, EjsObj *value)
 static EjsAny *mapNull(Ejs *ejs, EjsAny *value)
 {
     if (value == 0) {
-        return S(null);
+        return ESV(null);
     }
     return value;
 }
@@ -437,7 +437,7 @@ static EjsAny *getRequestProperty(Ejs *ejs, EjsRequest *req, int slotNum)
                 uri = mprAsprintf("%s://%s:%d%s/", scheme, ip, port, conn->rx->scriptName);
                 req->absHome = (EjsObj*) ejsCreateUriFromMulti(ejs, uri);
             } else {
-                req->absHome = S(null);
+                req->absHome = ESV(null);
             }
         }
         return req->absHome;
@@ -455,7 +455,7 @@ static EjsAny *getRequestProperty(Ejs *ejs, EjsRequest *req, int slotNum)
         return ejsCreateBoolean(ejs, !req->dontAutoFinalize);
 
     case ES_ejs_web_Request_config:
-        value = ST(Object)->helpers.getProperty(ejs, req, slotNum);
+        value = EST(Object)->helpers.getProperty(ejs, req, slotNum);
         if (value == 0 || ejsIs(ejs, value, Null)) {
             /* Default to App.config */
             app = ejsGetProperty(ejs, ejs->global, ES_App);
@@ -471,12 +471,12 @@ static EjsAny *getRequestProperty(Ejs *ejs, EjsRequest *req, int slotNum)
         if (conn) {
             createHeaders(ejs, req);
             return mapNull(ejs, ejsGetPropertyByName(ejs, req->headers, EN("content-type")));
-        } else return S(null);
+        } else return ESV(null);
 
     case ES_ejs_web_Request_cookies:
         if (conn) {
             return createCookies(ejs, req);
-        } else return S(null);
+        } else return ESV(null);
 
     case ES_ejs_web_Request_dir:
         return req->dir;
@@ -497,7 +497,7 @@ static EjsAny *getRequestProperty(Ejs *ejs, EjsRequest *req, int slotNum)
                 req->filename = ejsCreatePathFromAsc(ejs, pathInfo);
             }
         }
-        return req->filename ? (EjsObj*) req->filename : S(null);
+        return req->filename ? (EjsObj*) req->filename : ESV(null);
 
     case ES_ejs_web_Request_files:
         return createFiles(ejs, req);
@@ -509,7 +509,7 @@ static EjsAny *getRequestProperty(Ejs *ejs, EjsRequest *req, int slotNum)
         if (req->home == 0) {
             if (conn) {
                 req->home = ejsCreateUriFromMulti(ejs, makeRelativeHome(ejs, req));
-            } else return S(null);
+            } else return ESV(null);
         }
         return req->home;
 
@@ -550,7 +550,7 @@ static EjsAny *getRequestProperty(Ejs *ejs, EjsRequest *req, int slotNum)
                 req->originalUri = (EjsObj*) ejsCreateUriFromParts(ejs, scheme, getHost(conn, req), req->server->port, 
                     conn->rx->uri, conn->rx->parsedUri->query, conn->rx->parsedUri->reference, 0);
             } else {
-                return S(null);
+                return ESV(null);
             }
         }
         return req->originalUri;
@@ -565,7 +565,7 @@ static EjsAny *getRequestProperty(Ejs *ejs, EjsRequest *req, int slotNum)
         if (req->port == 0) {
             if (req->server) {
                 req->port = ejsCreateNumber(ejs, req->server->port);
-            } else return S(null);
+            } else return ESV(null);
         }
         return req->port;
 
@@ -606,7 +606,7 @@ static EjsAny *getRequestProperty(Ejs *ejs, EjsRequest *req, int slotNum)
         return req->scheme;
 
     case ES_ejs_web_Request_scriptName:
-        return req->scriptName ? req->scriptName : S(empty);
+        return req->scriptName ? req->scriptName : ESV(empty);
 
     case ES_ejs_web_Request_server:
         return req->server;
@@ -615,16 +615,16 @@ static EjsAny *getRequestProperty(Ejs *ejs, EjsRequest *req, int slotNum)
         if (req->session == 0) {
             req->session = getSession(ejs, req, 1);
         }
-        return req->session ? req->session : S(null);
+        return req->session ? req->session : ESV(null);
 
     case ES_ejs_web_Request_sessionID:
         getSession(ejs, req, 0);
-        return (req->session) ? req->session->key : S(null);
+        return (req->session) ? req->session->key : ESV(null);
 
     case ES_ejs_web_Request_status:
         if (conn) {
             return ejsCreateNumber(ejs, conn->tx->status);
-        } else return S(null);
+        } else return ESV(null);
 
     case ES_ejs_web_Request_uri:
         if (req->uri == 0) {
@@ -656,7 +656,7 @@ static EjsAny *getRequestProperty(Ejs *ejs, EjsRequest *req, int slotNum)
 
     default:
         if (slotNum < req->pot.numProp) {
-            return ST(Object)->helpers.getProperty(ejs, req, slotNum);
+            return EST(Object)->helpers.getProperty(ejs, req, slotNum);
         }
     }
     return 0;
@@ -709,7 +709,7 @@ static int setRequestProperty(Ejs *ejs, EjsRequest *req, int slotNum,  EjsObj *v
 
     switch (slotNum) {
     default:
-        return ST(Object)->helpers.setProperty(ejs, req, slotNum, value);
+        return EST(Object)->helpers.setProperty(ejs, req, slotNum, value);
 
     case ES_ejs_web_Request_config:
         req->config = value;
@@ -779,7 +779,7 @@ static int setRequestProperty(Ejs *ejs, EjsRequest *req, int slotNum,  EjsObj *v
         break;
 
     case ES_ejs_web_Request_responded:
-        req->responded = (value == S(true));
+        req->responded = (value == ESV(true));
         break;
 
     case ES_ejs_web_Request_responseHeaders:
@@ -892,7 +892,7 @@ static int setRequestProperty(Ejs *ejs, EjsRequest *req, int slotNum,  EjsObj *v
  */
 static EjsObj *req_async(Ejs *ejs, EjsRequest *req, int argc, EjsObj **argv)
 {
-    return S(true);
+    return ESV(true);
 }
 
 
@@ -901,7 +901,7 @@ static EjsObj *req_async(Ejs *ejs, EjsRequest *req, int argc, EjsObj **argv)
  */
 static EjsObj *req_set_async(Ejs *ejs, EjsRequest *req, int argc, EjsObj **argv)
 {
-    if (argv[0] != S(true)) {
+    if (argv[0] != ESV(true)) {
         ejsThrowIOError(ejs, "Request only supports async mode");
     }
     return 0;
@@ -1024,7 +1024,7 @@ static EjsObj *req_header(Ejs *ejs, EjsRequest *req, int argc, EjsObj **argv)
             }
         }
     }
-    return (value) ? value : S(null);
+    return (value) ? value : ESV(null);
 }
 
 
@@ -1096,7 +1096,7 @@ static EjsNumber *req_read(Ejs *ejs, EjsRequest *req, int argc, EjsObj **argv)
     if (nbytes == 0) {
         if (httpIsEof(req->conn)) {
             //  TODO -- should this set req->conn to zero?
-            return S(null);
+            return ESV(null);
         }
     }
     ba->writePosition += nbytes;
@@ -1117,7 +1117,7 @@ static EjsObj *req_setHeader(Ejs *ejs, EjsRequest *req, int argc, EjsObj **argv)
     if (!connOk(ejs, req, 1)) return 0;
     key = ejsToMulti(ejs, argv[0]);
     value = (EjsString*) argv[1];
-    overwrite = argc < 3 || argv[2] == S(true);
+    overwrite = argc < 3 || argv[2] == ESV(true);
     createResponseHeaders(ejs, req);
     if (!overwrite) {
         if ((old = ejsGetPropertyByName(ejs, req->responseHeaders, EN(key))) != 0) {
@@ -1256,19 +1256,19 @@ static EjsObj *req_writeFile(Ejs *ejs, EjsRequest *req, int argc, EjsObj **argv)
     tx = conn->tx;
 
     if (rx->ranges || conn->secure || tx->chunkSize > 0) {
-        return S(false);
+        return ESV(false);
     }
     path = (EjsPath*) argv[0];
     if (mprGetPathInfo(path->value, &info) < 0) {
         ejsThrowIOError(ejs, "Cannot open %s", path->value);
-        return S(false);
+        return ESV(false);
     }
     packet = httpCreateEntityPacket(0, info.size, NULL);
     tx->length = tx->entityLength = info.size;
     httpSetSendConnector(req->conn, path->value);
     httpPutForService(conn->writeq, packet, 0);
     httpFinalize(req->conn);
-    return S(true);
+    return ESV(true);
 }
 
 

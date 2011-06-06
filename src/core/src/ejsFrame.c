@@ -37,7 +37,7 @@ static EjsFrame *allocFrame(Ejs *ejs, int numProp)
         return 0;
     }
     mprSetManager(obj, manageFrame);
-    SET_TYPE(obj, S(Frame));
+    SET_TYPE(obj, ESV(Frame));
     ejsSetMemRef(obj);
     return (EjsFrame*) obj;
 }
@@ -50,7 +50,7 @@ EjsFrame *ejsCreateCompilerFrame(Ejs *ejs, EjsFunction *fun)
 {
     EjsFrame    *fp;
 
-    if ((fp = ejsCreatePot(ejs, S(Frame), 0)) == 0) {
+    if ((fp = ejsCreatePot(ejs, ESV(Frame), 0)) == 0) {
         return 0;
     }
     fp->orig = fun;

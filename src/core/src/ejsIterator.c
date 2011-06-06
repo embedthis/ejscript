@@ -30,7 +30,7 @@ EjsObj *ejsThrowStopIteration(Ejs *ejs)
 #if FUTURE
     ejs->exception = ejs->iterator;
 #else
-    ejs->exception = S(StopIteration);
+    ejs->exception = ESV(StopIteration);
 #endif
     ejsAttention(ejs);
     return ejs->exception;
@@ -67,7 +67,7 @@ EjsIterator *ejsCreateIterator(Ejs *ejs, EjsAny *obj, void *nativeNext, bool dee
 {
     EjsIterator     *ip;
 
-    ip = ejsCreateObj(ejs, S(Iterator), 0);
+    ip = ejsCreateObj(ejs, ESV(Iterator), 0);
     if (ip) {
         ip->index = 0;
         ip->indexVar = 0;

@@ -54,7 +54,7 @@ static EjsAny *castXml(Ejs *ejs, EjsXML *xml, EjsType *type)
 
     mprAssert(ejsIsXML(ejs, xml));
 
-    if (type == S(XMLList)) {
+    if (type == ESV(XMLList)) {
         return xml;
     }
 
@@ -65,13 +65,13 @@ static EjsAny *castXml(Ejs *ejs, EjsXML *xml, EjsType *type)
         return ejsCreateBoolean(ejs, 1);
 
     case S_Number:
-        result = castXml(ejs, xml, S(String));
+        result = castXml(ejs, xml, ESV(String));
         return ejsToNumber(ejs, result);
 
     case S_String:
         if (xml->kind == EJS_XML_ELEMENT) {
             if (xml->elements == 0) {
-                return S(empty);
+                return ESV(empty);
             }
             if (xml->elements && mprGetListLength(xml->elements) == 1) {
                 //  TODO - what about PI and comments?
@@ -813,7 +813,7 @@ static EjsString *xmlToJson(Ejs *ejs, EjsObj *vp, int argc, EjsObj **argv)
  */
 static EjsObj *xmlToString(Ejs *ejs, EjsObj *obj, int argc, EjsObj **argv)
 {
-    return (TYPE(obj)->helpers.cast)(ejs, obj, S(String));
+    return (TYPE(obj)->helpers.cast)(ejs, obj, ESV(String));
 }
 
 
@@ -848,14 +848,14 @@ static EjsObj *setLength(Ejs *ejs, EjsXML *xml, int argc, EjsObj **argv)
 
     if (length < ap->length) {
         for (i = length; i < ap->length; i++) {
-            if (ejsSetProperty(ejs, ap, i, S(undefined)) < 0) {
+            if (ejsSetProperty(ejs, ap, i, ESV(undefined)) < 0) {
                 //  TODO - DIAG
                 return 0;
             }
         }
 
     } else if (length > ap->length) {
-        if (ejsSetProperty(ejs, ap, length - 1, S(undefined)) < 0) {
+        if (ejsSetProperty(ejs, ap, length - 1, ESV(undefined)) < 0) {
             //  TODO - DIAG
             return 0;
         }
@@ -872,7 +872,7 @@ static EjsObj *setLength(Ejs *ejs, EjsXML *xml, int argc, EjsObj **argv)
  */
 static EjsObj *xml_parent(Ejs *ejs, EjsXML *xml, int argc, EjsObj **argv)
 {
-    return (xml->parent && xml != xml->parent) ? (EjsObj*) xml->parent : (EjsObj*) S(null);
+    return (xml->parent && xml != xml->parent) ? (EjsObj*) xml->parent : (EjsObj*) ESV(null);
 }
 
 /********************************** Support **********************************/
@@ -996,7 +996,7 @@ EjsXML *ejsCreateXML(Ejs *ejs, int kind, EjsName qname, EjsXML *parent, EjsStrin
 {
     EjsXML      *xml;
 
-    if ((xml = (EjsXML*) ejsAlloc(ejs, S(XML), 0)) == NULL) {
+    if ((xml = (EjsXML*) ejsAlloc(ejs, ESV(XML), 0)) == NULL) {
         return 0;
     }
     if (qname.name) {

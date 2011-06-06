@@ -36,7 +36,7 @@ static EjsAny *invokeNamespaceOperator(Ejs *ejs, EjsNamespace *lhs, int opCode, 
     switch (opCode) {
     case EJS_OP_COMPARE_EQ:
         if (!ejsIsDefined(ejs, rhs)) {
-            return ((opCode == EJS_OP_COMPARE_EQ) ? S(false): S(true));
+            return ((opCode == EJS_OP_COMPARE_EQ) ? ESV(false): ESV(true));
         }
         boolResult = ejsCompareString(ejs, lhs->value, rhs->value) == 0;
         break;
@@ -47,7 +47,7 @@ static EjsAny *invokeNamespaceOperator(Ejs *ejs, EjsNamespace *lhs, int opCode, 
 
     case EJS_OP_COMPARE_NE:
         if (!ejsIsDefined(ejs, rhs)) {
-            return ((opCode == EJS_OP_COMPARE_EQ) ? S(false): S(true));
+            return ((opCode == EJS_OP_COMPARE_EQ) ? ESV(false): ESV(true));
         }
         boolResult = !(ejsCompareString(ejs, lhs->value, rhs->value) == 0);
         break;
@@ -95,7 +95,7 @@ EjsString *ejsFormatReservedNamespace(Ejs *ejs, EjsName *typeName, EjsString *sp
     EjsString   *namespace;
 
     if (typeName) {
-        if (typeName->space && typeName->space == S(public)) {
+        if (typeName->space && typeName->space == ESV(public)) {
             namespace = ejsSprintf(ejs, "[%N,%@]", *typeName, spaceName);
         } else {
             namespace = ejsSprintf(ejs, "[%@,%@]", typeName->name, spaceName);
@@ -115,7 +115,7 @@ EjsNamespace *ejsCreateNamespace(Ejs *ejs, EjsString *name)
 {
     EjsNamespace    *np;
 
-    if ((np = ejsCreateObj(ejs, S(Namespace), 0)) == 0) {
+    if ((np = ejsCreateObj(ejs, ESV(Namespace), 0)) == 0) {
         return 0;
     }
     np->value = name;
@@ -168,9 +168,9 @@ void ejsConfigureNamespaceType(Ejs *ejs)
     if ((type = ejsFinalizeCoreType(ejs, N("ejs", "Namespace"))) == 0) {
         return;
     }
-    ejsSetProperty(ejs, ejs->global, ES_iterator, S(iteratorSpace));
-    ejsSetProperty(ejs, ejs->global, ES_public, S(publicSpace));
-    ejsSetProperty(ejs, ejs->global, ES_ejs, S(ejsSpace));
+    ejsSetProperty(ejs, ejs->global, ES_iterator, ESV(iteratorSpace));
+    ejsSetProperty(ejs, ejs->global, ES_public, ESV(publicSpace));
+    ejsSetProperty(ejs, ejs->global, ES_ejs, ESV(ejsSpace));
 }
 
 /*

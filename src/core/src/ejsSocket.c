@@ -75,7 +75,7 @@ EjsString *sock_address(Ejs *ejs, EjsSocket *sp, int argc, EjsObj **argv)
  */
 EjsBoolean *sock_async(Ejs *ejs, EjsSocket *sp, int argc, EjsObj **argv)
 {
-    return (sp->async) ? S(true) : S(false);
+    return (sp->async) ? ESV(true) : ESV(false);
 }
 
 
@@ -84,7 +84,7 @@ EjsBoolean *sock_async(Ejs *ejs, EjsSocket *sp, int argc, EjsObj **argv)
  */
 EjsObj *sock_set_async(Ejs *ejs, EjsSocket *sp, int argc, EjsObj **argv)
 {
-    sp->async = (argv[0] == S(true));
+    sp->async = (argv[0] == ESV(true));
     return 0;
 }
 
@@ -247,14 +247,14 @@ static EjsNumber *sock_read(Ejs *ejs, EjsSocket *sp, int argc, EjsObj **argv)
         //  TODO -- should not be using EOF event
         ejsSendEvent(ejs, sp->emitter, "eof", NULL, sp);
         //  TODO - do we need to set the mask here?
-        return S(null);
+        return ESV(null);
     }
     if (nbytes == 0) {
         //  TODO - but in async, this does not mean eof. See mpr for how to tell eof
         //  TODO -- should not be using EOF event
         ejsSendEvent(ejs, sp->emitter, "eof", NULL, sp);
         //  TODO - do we need to set the mask here?
-        return S(null);
+        return ESV(null);
     }
     ba->writePosition += nbytes;
     sp->mask |= MPR_READABLE;

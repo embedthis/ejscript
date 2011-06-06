@@ -20,7 +20,7 @@ static EjsAny *castBooleanVar(Ejs *ejs, EjsBoolean *vp, EjsType *type)
 
     switch (type->sid) {
     case S_Number:
-        return ((vp->value) ? S(one): S(zero));
+        return ((vp->value) ? ESV(one): ESV(zero));
 
     case S_String:
         return ejsCreateStringFromAsc(ejs, (vp->value) ? "true" : "false");
@@ -41,7 +41,7 @@ static EjsAny *coerceBooleanOperands(Ejs *ejs, EjsAny *lhs, int opcode, EjsAny *
 
     case EJS_OP_ADD:
         if (ejsIs(ejs, rhs, Void)) {
-            return S(nan);
+            return ESV(nan);
         } else if (ejsIs(ejs, rhs, Null) || ejsIs(ejs, rhs, Number) || ejsIs(ejs, rhs, Date)) {
             return ejsInvokeOperator(ejs, ejsToNumber(ejs, lhs), opcode, rhs);
         } else {
@@ -62,10 +62,10 @@ static EjsAny *coerceBooleanOperands(Ejs *ejs, EjsAny *lhs, int opcode, EjsAny *
         return ejsInvokeOperator(ejs, ejsToNumber(ejs, lhs), opcode, rhs);
 
     case EJS_OP_COMPARE_STRICTLY_NE:
-        return S(true);
+        return ESV(true);
 
     case EJS_OP_COMPARE_STRICTLY_EQ:
-        return S(false);
+        return ESV(false);
 
     /*
         Unary operators
@@ -75,19 +75,19 @@ static EjsAny *coerceBooleanOperands(Ejs *ejs, EjsAny *lhs, int opcode, EjsAny *
 
     case EJS_OP_COMPARE_NOT_ZERO:
     case EJS_OP_COMPARE_TRUE:
-        return (((EjsBoolean*) lhs)->value ? S(true): S(false));
+        return (((EjsBoolean*) lhs)->value ? ESV(true): ESV(false));
 
     case EJS_OP_COMPARE_ZERO:
     case EJS_OP_COMPARE_FALSE:
-        return (((EjsBoolean*) lhs)->value ? S(false) : S(true));
+        return (((EjsBoolean*) lhs)->value ? ESV(false) : ESV(true));
 
     case EJS_OP_COMPARE_UNDEFINED:
     case EJS_OP_COMPARE_NULL:
-        return S(false);
+        return ESV(false);
 
     default:
         ejsThrowTypeError(ejs, "Opcode %d not valid for type %@", opcode, TYPE(lhs)->qname.name);
-        return S(undefined);
+        return ESV(undefined);
     }
 }
 
@@ -113,38 +113,38 @@ static EjsAny *invokeBooleanOperator(Ejs *ejs, EjsBoolean *lhs, int opcode, EjsB
     switch (opcode) {
 
     case EJS_OP_COMPARE_EQ: case EJS_OP_COMPARE_STRICTLY_EQ:
-        return ((lhs->value == rhs->value) ? S(true): S(false));
+        return ((lhs->value == rhs->value) ? ESV(true): ESV(false));
 
     case EJS_OP_COMPARE_NE: case EJS_OP_COMPARE_STRICTLY_NE:
-        return ((lhs->value != rhs->value) ? S(true): S(false));
+        return ((lhs->value != rhs->value) ? ESV(true): ESV(false));
 
     case EJS_OP_COMPARE_LT:
-        return ((lhs->value < rhs->value) ? S(true): S(false));
+        return ((lhs->value < rhs->value) ? ESV(true): ESV(false));
 
     case EJS_OP_COMPARE_LE:
-        return ((lhs->value <= rhs->value) ? S(true): S(false));
+        return ((lhs->value <= rhs->value) ? ESV(true): ESV(false));
 
     case EJS_OP_COMPARE_GT:
-        return ((lhs->value > rhs->value) ? S(true): S(false));
+        return ((lhs->value > rhs->value) ? ESV(true): ESV(false));
 
     case EJS_OP_COMPARE_GE:
-        return ((lhs->value >= rhs->value) ? S(true): S(false));
+        return ((lhs->value >= rhs->value) ? ESV(true): ESV(false));
 
     case EJS_OP_COMPARE_NOT_ZERO:
-        return ((lhs->value) ? S(true): S(false));
+        return ((lhs->value) ? ESV(true): ESV(false));
 
     case EJS_OP_COMPARE_ZERO:
-        return ((lhs->value == 0) ? S(true): S(false));
+        return ((lhs->value == 0) ? ESV(true): ESV(false));
 
     case EJS_OP_COMPARE_UNDEFINED:
     case EJS_OP_COMPARE_NULL:
-        return S(false);
+        return ESV(false);
 
     case EJS_OP_COMPARE_FALSE:
-        return ((lhs->value) ? S(false): S(true));
+        return ((lhs->value) ? ESV(false): ESV(true));
 
     case EJS_OP_COMPARE_TRUE:
-        return ((lhs->value) ? S(true): S(false));
+        return ((lhs->value) ? ESV(true): ESV(false));
 
     /*
         Unary operators

@@ -53,7 +53,7 @@ static EjsHttp *httpConstructor(Ejs *ejs, EjsHttp *hp, int argc, EjsObj **argv)
  */
 static EjsBoolean *http_async(Ejs *ejs, EjsHttp *hp, int argc, EjsObj **argv)
 {
-    return httpGetAsync(hp->conn) ? S(true) : S(false);
+    return httpGetAsync(hp->conn) ? ESV(true) : ESV(false);
 }
 
 
@@ -66,7 +66,7 @@ static EjsObj *http_set_async(Ejs *ejs, EjsHttp *hp, int argc, EjsObj **argv)
     int         async;
 
     conn = hp->conn;
-    async = (argv[0] == S(true));
+    async = (argv[0] == ESV(true));
     httpSetAsync(conn, async);
     httpSetIOCallback(conn, httpIOEvent);
     return 0;
@@ -89,7 +89,7 @@ static EjsNumber *http_available(Ejs *ejs, EjsHttp *hp, int argc, EjsObj **argv)
     if (len > 0) {
         return ejsCreateNumber(ejs, (MprNumber) len);
     }
-    return (EjsNumber*) S(minusOne);
+    return (EjsNumber*) ESV(minusOne);
 }
 #endif
 
@@ -130,7 +130,7 @@ static EjsString *http_certificate(Ejs *ejs, EjsHttp *hp, int argc, EjsObj **arg
     if (hp->certFile) {
         return ejsCreateStringFromAsc(ejs, hp->certFile);
     }
-    return S(null);
+    return ESV(null);
 }
 
 
@@ -197,7 +197,7 @@ static EjsBoolean *http_finalized(Ejs *ejs, EjsHttp *hp, int argc, EjsObj **argv
     if (hp->conn && hp->conn->tx) {
         return ejsCreateBoolean(ejs, hp->conn->tx->finalized);
     }
-    return S(false);
+    return ESV(false);
 }
 
 
@@ -325,7 +325,7 @@ static EjsString *http_header(Ejs *ejs, EjsHttp *hp, int argc, EjsObj **argv)
     if (value) {
         result = ejsCreateStringFromAsc(ejs, value);
     } else {
-        result = S(null);
+        result = ESV(null);
     }
     return result;
 }
@@ -373,7 +373,7 @@ static EjsAny *http_key(Ejs *ejs, EjsHttp *hp, int argc, EjsObj **argv)
     if (hp->keyFile) {
         return ejsCreateStringFromAsc(ejs, hp->keyFile);
     }
-    return S(null);
+    return ESV(null);
 }
 
 
@@ -513,7 +513,7 @@ static EjsNumber *http_read(Ejs *ejs, EjsHttp *hp, int argc, EjsObj **argv)
     contentLength = httpGetContentLength(conn);
     if (conn->state >= HTTP_STATE_PARSED && contentLength == hp->readCount) {
         /* End of input */
-        return S(null);
+        return ESV(null);
     }
     if (offset < 0) {
         offset = buffer->writePosition;
@@ -799,7 +799,7 @@ static EjsNumber *http_status(Ejs *ejs, EjsHttp *hp, int argc, EjsObj **argv)
     }
     code = httpGetStatus(hp->conn);
     if (code <= 0) {
-        return S(null);
+        return ESV(null);
     }
     return ejsCreateNumber(ejs, code);
 }
@@ -842,9 +842,9 @@ static EjsBoolean *http_wait(Ejs *ejs, EjsHttp *hp, int argc, EjsObj **argv)
     }
     mark = mprGetTime();
     if (!waitForState(hp, HTTP_STATE_COMPLETE, timeout, 0)) {
-        return S(false);
+        return ESV(false);
     }
-    return S(true);
+    return ESV(true);
 }
 
 
@@ -1080,7 +1080,7 @@ static EjsDate *getDateHeader(Ejs *ejs, EjsHttp *hp, cchar *key)
     }
     value = httpGetHeader(hp->conn, key);
     if (value == 0) {
-        return S(null);
+        return ESV(null);
     }
     if (mprParseTime(&when, value, MPR_UTC_TIMEZONE, NULL) < 0) {
         value = 0;
@@ -1098,7 +1098,7 @@ static EjsString *getStringHeader(Ejs *ejs, EjsHttp *hp, cchar *key)
     }
     value = httpGetHeader(hp->conn, key);
     if (value == 0) {
-        return S(null);
+        return ESV(null);
     }
     return ejsCreateStringFromAsc(ejs, value);
 }

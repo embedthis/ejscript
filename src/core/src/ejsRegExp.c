@@ -25,7 +25,7 @@ static EjsAny *castRegExp(Ejs *ejs, EjsRegExp *rp, EjsType *type)
 
     switch (type->sid) {
     case S_Boolean:
-        return S(true);
+        return ESV(true);
 
     case S_String:
         flags = makeFlags(rp);
@@ -106,7 +106,7 @@ static EjsArray *regex_exec(Ejs *ejs, EjsRegExp *rp, int argc, EjsObj **argv)
     count = pcre_exec(rp->compiled, NULL, str->value, (int) str->length, start, 0, matches, sizeof(matches) / sizeof(int));
     if (count < 0) {
         rp->endLastMatch = 0;
-        return S(null);
+        return ESV(null);
     }
     results = ejsCreateArray(ejs, count);
     for (index = 0, i = 0; i < count; i++, index += 2) {
@@ -153,7 +153,7 @@ static EjsString *regex_getSource(Ejs *ejs, EjsRegExp *rp, int argc, EjsObj **ar
 static EjsString *regex_matched(Ejs *ejs, EjsRegExp *rp, int argc, EjsObj **argv)
 {
     if (rp->matched == 0) {
-        return S(null);
+        return ESV(null);
     }
     return rp->matched;
 }
@@ -181,15 +181,15 @@ static EjsBoolean *regex_test(Ejs *ejs, EjsRegExp *rp, int argc, EjsObj **argv)
     count = pcre_exec(rp->compiled, NULL, str->value, (int) str->length, rp->endLastMatch, 0, 0, 0);
     if (count < 0) {
         rp->endLastMatch = 0;
-        return S(false);
+        return ESV(false);
     }
-    return S(true);
+    return ESV(true);
 }
 
 
 EjsString *ejsRegExpToString(Ejs *ejs, EjsRegExp *rp)
 {
-    return (EjsString*) castRegExp(ejs, rp, S(String));
+    return (EjsString*) castRegExp(ejs, rp, ESV(String));
 }
 
 /*********************************** Factory **********************************/
@@ -208,7 +208,7 @@ EjsRegExp *ejsCreateRegExp(Ejs *ejs, EjsString *pattern)
         ejsThrowArgError(ejs, "Bad regular expression pattern. Must start with '/'");
         return 0;
     }
-    rp = ejsCreateObj(ejs, S(RegExp), 0);
+    rp = ejsCreateObj(ejs, ESV(RegExp), 0);
     if (rp != 0) {
         /*
             Strip off flags for passing to pcre_compile2

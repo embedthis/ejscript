@@ -34,7 +34,7 @@ static EjsArray *createArray(Ejs *ejs, EjsType *type, int numProp)
 {
     EjsArray     *ap;
 
-    if ((ap = ejsCreatePot(ejs, S(Array), 0)) == 0) {
+    if ((ap = ejsCreatePot(ejs, ESV(Array), 0)) == 0) {
         return 0;
     }
     ap->length = 0;
@@ -55,10 +55,10 @@ static EjsAny *castArray(Ejs *ejs, EjsArray *vp, EjsType *type)
 {
     switch (type->sid) {
     case ES_Boolean:
-        return S(true);
+        return ESV(true);
 
     case ES_Number:
-        return S(zero);
+        return ESV(zero);
 
     case ES_String:
         return arrayToString(ejs, vp, 0, 0);
@@ -109,7 +109,7 @@ static int deleteArrayProperty(Ejs *ejs, EjsArray *ap, int slot)
         mprAssert(0);
         return EJS_ERR;
     }
-    if (ejsSetProperty(ejs, ap, slot, S(undefined)) < 0) {
+    if (ejsSetProperty(ejs, ap, slot, ESV(undefined)) < 0) {
         return EJS_ERR;
     }
     if ((slot + 1) == ap->length) {
@@ -146,7 +146,7 @@ static int getArrayPropertyCount(Ejs *ejs, EjsArray *ap)
 static EjsObj *getArrayProperty(Ejs *ejs, EjsArray *ap, int slotNum)
 {
     if (slotNum < 0 || slotNum >= ap->length) {
-        return S(undefined);
+        return ESV(undefined);
     }
     return ap->data[slotNum];
 }
@@ -165,7 +165,7 @@ static EjsObj *getArrayPropertyByName(Ejs *ejs, EjsArray *ap, EjsName qname)
     }
 
     /* The "length" property is a method getter */
-    if (qname.name == S(length)) {
+    if (qname.name == ESV(length)) {
         return 0;
     }
     slotNum = (ejs->service->potHelpers.lookupProperty)(ejs, ap, qname);
@@ -208,11 +208,11 @@ static EjsObj *coerceArrayOperands(Ejs *ejs, EjsObj *lhs, int opcode, EjsObj *rh
 
     case EJS_OP_AND: case EJS_OP_DIV: case EJS_OP_MUL: case EJS_OP_OR: case EJS_OP_REM:
     case EJS_OP_SHL: case EJS_OP_SHR: case EJS_OP_SUB: case EJS_OP_USHR: case EJS_OP_XOR:
-        return ejsInvokeOperator(ejs, S(zero), opcode, rhs);
+        return ejsInvokeOperator(ejs, ESV(zero), opcode, rhs);
 
     case EJS_OP_COMPARE_EQ: case EJS_OP_COMPARE_NE:
         if (!ejsIsDefined(ejs, rhs)) {
-            return ((opcode == EJS_OP_COMPARE_EQ) ? S(false): S(true));
+            return ((opcode == EJS_OP_COMPARE_EQ) ? ESV(false): ESV(true));
         } else if (ejsIs(ejs, rhs, Number)) {
             return ejsInvokeOperator(ejs, ejsToNumber(ejs, lhs), opcode, rhs);
         }
@@ -229,13 +229,13 @@ static EjsObj *coerceArrayOperands(Ejs *ejs, EjsObj *lhs, int opcode, EjsObj *rh
     case EJS_OP_COMPARE_UNDEFINED:
     case EJS_OP_COMPARE_NOT_ZERO:
     case EJS_OP_COMPARE_NULL:
-        return S(true);
+        return ESV(true);
 
     case EJS_OP_COMPARE_STRICTLY_EQ:
     case EJS_OP_COMPARE_FALSE:
     case EJS_OP_COMPARE_TRUE:
     case EJS_OP_COMPARE_ZERO:
-        return S(false);
+        return ESV(false);
 
     /*
         Unary operators
@@ -245,7 +245,7 @@ static EjsObj *coerceArrayOperands(Ejs *ejs, EjsObj *lhs, int opcode, EjsObj *rh
 
     default:
         ejsThrowTypeError(ejs, "Opcode %d not valid for type %@", opcode, TYPE(lhs)->qname.name);
-        return S(undefined);
+        return ESV(undefined);
     }
     return 0;
 }
@@ -275,24 +275,24 @@ static EjsAny *invokeArrayOperator(Ejs *ejs, EjsAny *lhs, int opcode, EjsAny *rh
         Unary operators
      */
     case EJS_OP_COMPARE_NOT_ZERO:
-        return S(true);
+        return ESV(true);
 
     case EJS_OP_COMPARE_UNDEFINED:
     case EJS_OP_COMPARE_NULL:
     case EJS_OP_COMPARE_FALSE:
     case EJS_OP_COMPARE_TRUE:
     case EJS_OP_COMPARE_ZERO:
-        return S(false);
+        return ESV(false);
 
     case EJS_OP_LOGICAL_NOT: case EJS_OP_NOT: case EJS_OP_NEG:
-        return S(one);
+        return ESV(one);
 
     /*
         Binary operators
      */
     case EJS_OP_DIV: case EJS_OP_MUL: case EJS_OP_REM:
     case EJS_OP_SHR: case EJS_OP_USHR: case EJS_OP_XOR:
-        return S(zero);
+        return ESV(zero);
 
     /*
         Operator overload
@@ -343,7 +343,7 @@ static int setArrayPropertyByName(Ejs *ejs, EjsArray *ap, EjsName qname, EjsObj 
 
     if (!isdigit((int) qname.name->value[0])) { 
         /* The "length" property is a method getter */
-        if (qname.name == S(length)) {
+        if (qname.name == ESV(length)) {
             setArrayLength(ejs, ap, 1, &value);
             return ES_Array_length;
         }
@@ -602,7 +602,7 @@ static EjsArray *compactArray(Ejs *ejs, EjsArray *ap, int argc, EjsObj **argv)
     oldLen = ap->length;
     ap->length = (int) (dest - &data[0]);
     for (i = ap->length; i < oldLen; i++) {
-        *dest++ = S(undefined);
+        *dest++ = ESV(undefined);
     }
     return ap;
 }
@@ -826,7 +826,7 @@ static EjsNumber *indexOfArray(Ejs *ejs, EjsArray *ap, int argc, EjsObj **argv)
         start += ap->length;
     }
     if (start >= ap->length) {
-        return S(minusOne);
+        return ESV(minusOne);
     }
     if (start < 0) {
         start = 0;
@@ -836,7 +836,7 @@ static EjsNumber *indexOfArray(Ejs *ejs, EjsArray *ap, int argc, EjsObj **argv)
             return ejsCreateNumber(ejs, i);
         }
     }
-    return S(minusOne);
+    return ESV(minusOne);
 }
 
 
@@ -899,7 +899,7 @@ static EjsString *joinArray(Ejs *ejs, EjsArray *ap, int argc, EjsObj **argv)
     int             i;
 
     sep = (argc == 1) ? (EjsString*) argv[0] : NULL;
-    result = S(empty);
+    result = ESV(empty);
     for (i = 0; i < ap->length; i++) {
         vp = ap->data[i];
         if (!ejsIsDefined(ejs, vp)) {
@@ -937,14 +937,14 @@ static EjsNumber *lastArrayIndexOf(Ejs *ejs, EjsArray *ap, int argc, EjsObj **ar
         start = ap->length - 1;
     }
     if (start < 0) {
-        return S(minusOne);
+        return ESV(minusOne);
     }
     for (i = start; i >= 0; i--) {
         if (compareArrayElement(ejs, ap->data[i], element)) {
             return ejsCreateNumber(ejs, i);
         }
     }
-    return S(minusOne);
+    return ESV(minusOne);
 }
 
 
@@ -1000,7 +1000,7 @@ static EjsObj *setArrayLength(Ejs *ejs, EjsArray *ap, int argc, EjsObj **argv)
 static EjsObj *popArray(Ejs *ejs, EjsArray *ap, int argc, EjsObj **argv)
 {
     if (ap->length == 0) {
-        return S(undefined);
+        return ESV(undefined);
     }
     return ap->data[--ap->length];
 }
@@ -1084,7 +1084,7 @@ static EjsObj *shiftArray(Ejs *ejs, EjsArray *ap, int argc, EjsObj **argv)
     int         i;
 
     if (ap->length == 0) {
-        return S(undefined);
+        return ESV(undefined);
     }
     data = ap->data;
     result = data[0];
@@ -1254,7 +1254,7 @@ static EjsArray *sortArray(Ejs *ejs, EjsArray *ap, int argc, EjsObj **argv)
         return ap;
     }
     compare = (EjsFunction*) ((argc >= 1) ? argv[0]: NULL);
-    if (compare == S(null)) {
+    if (compare == ESV(null)) {
         compare = 0;
     }
     if (compare && !ejsIsFunction(ejs, compare)) {
@@ -1389,7 +1389,7 @@ static EjsString *arrayToString(Ejs *ejs, EjsArray *ap, int argc, EjsObj **argv)
     EjsObj              *vp;
     int             i, rc;
 
-    result = S(empty);
+    result = ESV(empty);
     if (result == 0) {
         ejsThrowMemoryError(ejs);
         return 0;
@@ -1522,7 +1522,7 @@ static int growArray(Ejs *ejs, EjsArray *ap, int len)
         }
         dp = &ap->data[ap->length];
         for (i = ap->length; i < count; i++) {
-            *dp++ = S(undefined);
+            *dp++ = ESV(undefined);
         }
     } else {
         mprNop(ITOP(size));
@@ -1708,7 +1708,7 @@ EjsArray *ejsCreateArray(Ejs *ejs, int size)
     /*
         No need to invoke constructor
      */
-    if ((ap = ejsCreatePot(ejs, S(Array), 0)) != 0) {
+    if ((ap = ejsCreatePot(ejs, ESV(Array), 0)) != 0) {
         ap->length = 0;
         if (size > 0 && growArray(ejs, ap, size) < 0) {
             ejsThrowMemoryError(ejs);

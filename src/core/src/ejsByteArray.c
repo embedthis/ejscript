@@ -46,10 +46,10 @@ static EjsAny *castByteArrayVar(Ejs *ejs, EjsByteArray *vp, EjsType *type)
 {
     switch (type->sid) {
     case S_Boolean:
-        return S(true);
+        return ESV(true);
 
     case S_Number:
-        return S(zero);
+        return ESV(zero);
 
     case S_String:
         return ba_toString(ejs, vp, 0, 0);
@@ -94,7 +94,7 @@ static int deleteByteArrayProperty(struct Ejs *ejs, EjsByteArray *ap, int slot)
             ap->writePosition = ap->length - 1;
         }
     }
-    if (ejsSetProperty(ejs, ap, slot, S(undefined)) < 0) {
+    if (ejsSetProperty(ejs, ap, slot, ESV(undefined)) < 0) {
         return EJS_ERR;
     }
     return 0;
@@ -146,11 +146,11 @@ static EjsAny *coerceByteArrayOperands(Ejs *ejs, EjsObj *lhs, int opcode,  EjsOb
 
     case EJS_OP_AND: case EJS_OP_DIV: case EJS_OP_MUL: case EJS_OP_OR: case EJS_OP_REM:
     case EJS_OP_SHL: case EJS_OP_SHR: case EJS_OP_SUB: case EJS_OP_USHR: case EJS_OP_XOR:
-        return ejsInvokeOperator(ejs, S(zero), opcode, rhs);
+        return ejsInvokeOperator(ejs, ESV(zero), opcode, rhs);
 
     case EJS_OP_COMPARE_EQ: case EJS_OP_COMPARE_NE:
         if (!ejsIsDefined(ejs, rhs)) {
-            return ((opcode == EJS_OP_COMPARE_EQ) ? S(false): S(true));
+            return ((opcode == EJS_OP_COMPARE_EQ) ? ESV(false): ESV(true));
         } else if (ejsIs(ejs, rhs, Number)) {
             return ejsInvokeOperator(ejs, ejsToNumber(ejs, lhs), opcode, rhs);
         }
@@ -167,13 +167,13 @@ static EjsAny *coerceByteArrayOperands(Ejs *ejs, EjsObj *lhs, int opcode,  EjsOb
     case EJS_OP_COMPARE_UNDEFINED:
     case EJS_OP_COMPARE_NOT_ZERO:
     case EJS_OP_COMPARE_NULL:
-        return S(true);
+        return ESV(true);
 
     case EJS_OP_COMPARE_STRICTLY_EQ:
     case EJS_OP_COMPARE_FALSE:
     case EJS_OP_COMPARE_TRUE:
     case EJS_OP_COMPARE_ZERO:
-        return S(false);
+        return ESV(false);
 
     /*
         Unary operators
@@ -183,7 +183,7 @@ static EjsAny *coerceByteArrayOperands(Ejs *ejs, EjsObj *lhs, int opcode,  EjsOb
 
     default:
         ejsThrowTypeError(ejs, "Opcode %d not valid for type %@", opcode, TYPE(lhs)->qname.name);
-        return S(undefined);
+        return ESV(undefined);
     }
     return 0;
 }
@@ -213,24 +213,24 @@ static EjsAny *invokeByteArrayOperator(Ejs *ejs, EjsObj *lhs, int opcode,  EjsOb
         Unary operators
      */
     case EJS_OP_COMPARE_NOT_ZERO:
-        return S(true);
+        return ESV(true);
 
     case EJS_OP_COMPARE_UNDEFINED:
     case EJS_OP_COMPARE_NULL:
     case EJS_OP_COMPARE_FALSE:
     case EJS_OP_COMPARE_TRUE:
     case EJS_OP_COMPARE_ZERO:
-        return S(false);
+        return ESV(false);
 
     case EJS_OP_LOGICAL_NOT: case EJS_OP_NOT: case EJS_OP_NEG:
-        return S(one);
+        return ESV(one);
 
     /*
         Binary operators
      */
     case EJS_OP_DIV: case EJS_OP_MUL: case EJS_OP_REM:
     case EJS_OP_SHR: case EJS_OP_USHR: case EJS_OP_XOR:
-        return S(zero);
+        return ESV(zero);
 
     default:
         ejsThrowTypeError(ejs, "Opcode %d not implemented for type %@", opcode, TYPE(lhs)->qname.name);
@@ -295,7 +295,7 @@ static EjsByteArray *ba_ByteArray(Ejs *ejs, EjsByteArray *ap, int argc, EjsObj *
  */
 static EjsBoolean *ba_async(Ejs *ejs, EjsByteArray *ap, int argc, EjsObj **argv)
 {
-    return ap->async ? S(true) : S(false);
+    return ap->async ? ESV(true) : ESV(false);
 }
 
 
@@ -305,7 +305,7 @@ static EjsBoolean *ba_async(Ejs *ejs, EjsByteArray *ap, int argc, EjsObj **argv)
  */
 static EjsObj *ba_setAsync(Ejs *ejs, EjsByteArray *ap, int argc, EjsObj **argv)
 {
-    ap->async = (argv[0] == S(true));
+    ap->async = (argv[0] == ESV(true));
     return 0;
 }
 
@@ -574,7 +574,7 @@ static EjsObj *ba_setLength(Ejs *ejs, EjsByteArray *ap, int argc, EjsObj **argv)
  */
 static EjsBoolean *ba_resizable(Ejs *ejs, EjsByteArray *ap, int argc, EjsObj **argv)
 {
-    return ap->resizable ? S(true) : S(false);
+    return ap->resizable ? ESV(true) : ESV(false);
 }
 
 
@@ -610,7 +610,7 @@ static EjsNumber *ba_read(Ejs *ejs, EjsByteArray *ap, int argc, EjsObj **argv)
     }
     if (getInput(ejs, ap, 1) <= 0) {
         /* eof */
-        return S(null);
+        return ESV(null);
     }
     count = min(availableBytes(ap), count);
     for (i = 0; i < count; i++) {
@@ -634,7 +634,7 @@ static EjsBoolean *ba_readBoolean(Ejs *ejs, EjsByteArray *ap, int argc, EjsObj *
 
     if (getInput(ejs, ap, 1) <= 0) {
         /* eof */
-        return S(null);
+        return ESV(null);
     }
     result = ap->value[ap->readPosition];
     adjustReadPosition(ap, 1);
@@ -652,7 +652,7 @@ static EjsNumber *ba_readByte(Ejs *ejs, EjsByteArray *ap, int argc, EjsObj **arg
 
     if (getInput(ejs, ap, 1) <= 0) {
         /* eof */
-        return S(null);
+        return ESV(null);
     }
     result = ap->value[ap->readPosition];
     adjustReadPosition(ap, 1);
@@ -673,7 +673,7 @@ static EjsDate *ba_readDate(Ejs *ejs, EjsByteArray *ap, int argc, EjsObj **argv)
             ejsThrowIOError(ejs, "Premanture eof");
             return 0;
         }
-        return S(null);
+        return ESV(null);
     }
     value = * (double*) &ap->value[ap->readPosition];
     value = swapDouble(ap, value);
@@ -695,7 +695,7 @@ static EjsNumber *ba_readDouble(Ejs *ejs, EjsByteArray *ap, int argc, EjsObj **a
             ejsThrowIOError(ejs, "Premanture eof");
             return 0;
         }
-        return S(null);
+        return ESV(null);
     }
     memcpy(&value, (char*) &ap->value[ap->readPosition], sizeof(double));
     value = swapDouble(ap, value);
@@ -717,7 +717,7 @@ static EjsNumber *ba_readInteger(Ejs *ejs, EjsByteArray *ap, int argc, EjsObj **
             ejsThrowIOError(ejs, "Premanture eof");
             return 0;
         }
-        return S(null);
+        return ESV(null);
     }
     value = * (int*) &ap->value[ap->readPosition];
     value = swap32(ap, value);
@@ -739,7 +739,7 @@ static EjsNumber *ba_readLong(Ejs *ejs, EjsByteArray *ap, int argc, EjsObj **arg
             ejsThrowIOError(ejs, "Premanture eof");
             return 0;
         }
-        return S(null);
+        return ESV(null);
     }
     value = * (int64*) &ap->value[ap->readPosition];
     value = swap64(ap, value);
@@ -791,7 +791,7 @@ static EjsNumber *ba_readShort(Ejs *ejs, EjsByteArray *ap, int argc, EjsObj **ar
     int     value;
 
     if (getInput(ejs, ap, EJS_SIZE_SHORT) <= 0) {
-        return S(null);
+        return ESV(null);
     }
     value = * (short*) &ap->value[ap->readPosition];
     value = swap16(ap, value);
@@ -815,12 +815,12 @@ static EjsString *ba_readString(Ejs *ejs, EjsByteArray *ap, int argc, EjsObj **a
 
     if (count < 0) {
         if (getInput(ejs, ap, 1) < 0) {
-            return S(null);
+            return ESV(null);
         }
         count = availableBytes(ap);
 
     } else if (getInput(ejs, ap, count) < 0) {
-        return S(null);
+        return ESV(null);
     }
     count = min(count, availableBytes(ap));
     //  TODO - UNICODE ENCODING
@@ -1362,7 +1362,7 @@ EjsByteArray *ejsCreateByteArray(Ejs *ejs, ssize size)
     /*
         No need to invoke constructor
      */
-    ap = ejsCreateObj(ejs, S(ByteArray), 0);
+    ap = ejsCreateObj(ejs, ESV(ByteArray), 0);
     if (ap == 0) {
         return 0;
     }

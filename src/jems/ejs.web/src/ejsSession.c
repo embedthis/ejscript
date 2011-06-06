@@ -20,7 +20,7 @@ static EjsSession *initSession(Ejs *ejs, EjsSession *sp, EjsString *key, MprTime
     EjsObj      *app;
 
     app = ejsGetPropertyByName(ejs, ejs->global, N("ejs", "App"));
-    if ((sp->cache = ejsGetProperty(ejs, app, ES_App_cache)) == S(null)) {
+    if ((sp->cache = ejsGetProperty(ejs, app, ES_App_cache)) == ESV(null)) {
         ejsThrowStateError(ejs, "App.cache is null");
         sp->cache = 0;
         return 0;
@@ -122,7 +122,7 @@ static EjsObj *getSessionProperty(Ejs *ejs, EjsSession *sp, int slotNum)
     value = ejs->service->potHelpers.getProperty(ejs, sp, slotNum);
     if (ejsIs(ejs, value, Void)) {
         /*  Return empty string so that web pages can access session values without having to test for null/undefined */
-        value = S(empty);
+        value = ESV(empty);
     }
     return value;
 }
@@ -134,7 +134,7 @@ static EjsObj *getSessionPropertyByName(Ejs *ejs, EjsSession *sp, EjsName qname)
 
     getSessionState(ejs, sp);
     slotNum = ejs->service->potHelpers.lookupProperty(ejs, sp, qname);
-    return (slotNum < 0) ? S(empty) : ejs->service->potHelpers.getProperty(ejs, sp, slotNum);
+    return (slotNum < 0) ? ESV(empty) : ejs->service->potHelpers.getProperty(ejs, sp, slotNum);
 }
 
 

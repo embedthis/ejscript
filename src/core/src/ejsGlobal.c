@@ -37,7 +37,7 @@ static EjsBoolean *g_assert(Ejs *ejs, EjsObj *vp, int argc, EjsObj **argv)
         }
         return 0;
     }
-    return S(true);
+    return ESV(true);
 }
 
 
@@ -49,7 +49,7 @@ static EjsObj *g_blend(Ejs *ejs, EjsObj *unused, int argc, EjsObj **argv)
     EjsObj      *src, *dest;
     int         overwrite;
 
-    overwrite = (argc == 3) ? (argv[2] == S(true)) : 1;
+    overwrite = (argc == 3) ? (argv[2] == ESV(true)) : 1;
     dest = argv[0];
     src = argv[1];
     ejsBlendObject(ejs, dest, src, overwrite);
@@ -131,7 +131,7 @@ static EjsObj *g_load(Ejs *ejs, EjsObj *unused, int argc, EjsObj **argv)
         if ((vp = ejsGetPropertyByName(ejs, options, EN("cache"))) != 0) {
             cache = ejsToMulti(ejs, ejsToString(ejs, vp));
         }
-        reload = ejsGetPropertyByName(ejs, options, EN("reload")) == S(true);
+        reload = ejsGetPropertyByName(ejs, options, EN("reload")) == ESV(true);
     }
     if ((cp = strrchr(path, '.')) != NULL && strcmp(cp, EJS_MODULE_EXT) != 0) {
         if (ejs->service->loadScriptFile == 0) {
@@ -244,11 +244,11 @@ static EjsNumber *g_parseInt(Ejs *ejs, EjsObj *unused, int argc, EjsObj **argv)
     if (*str == '-' || *str == '+' || isdigit((int) *str)) {
         n = (MprNumber) stoi(str, radix, &err);
         if (err) {
-            return S(nan);
+            return ESV(nan);
         }
         return ejsCreateNumber(ejs, n);
     }
-    return S(nan);
+    return ESV(nan);
 }
 
 
@@ -321,18 +321,18 @@ void ejsDefineGlobalNamespaces(Ejs *ejs)
 void ejsDefineGlobals(Ejs *ejs)
 {
     if (!ejs->empty) {
-        ejsSetProperty(ejs, ejs->global, ES_void, S(Void));
-        ejsSetProperty(ejs, ejs->global, ES_undefined, S(undefined));
-        ejsSetProperty(ejs, ejs->global, ES_null, S(null));
+        ejsSetProperty(ejs, ejs->global, ES_void, ESV(Void));
+        ejsSetProperty(ejs, ejs->global, ES_undefined, ESV(undefined));
+        ejsSetProperty(ejs, ejs->global, ES_null, ESV(null));
         ejsSetProperty(ejs, ejs->global, ES_global, ejs->global);
-        ejsSetProperty(ejs, ejs->global, ES_NegativeInfinity, S(negativeInfinity));
-        ejsSetProperty(ejs, ejs->global, ES_Infinity, S(infinity));
-        ejsSetProperty(ejs, ejs->global, ES_NaN, S(nan));
-        ejsSetProperty(ejs, ejs->global, ES_double, S(Number));
-        ejsSetProperty(ejs, ejs->global, ES_num, S(Number));
-        ejsSetProperty(ejs, ejs->global, ES_boolean, S(Boolean));
-        ejsSetProperty(ejs, ejs->global, ES_true, S(true));
-        ejsSetProperty(ejs, ejs->global, ES_false, S(false));
+        ejsSetProperty(ejs, ejs->global, ES_NegativeInfinity, ESV(negativeInfinity));
+        ejsSetProperty(ejs, ejs->global, ES_Infinity, ESV(infinity));
+        ejsSetProperty(ejs, ejs->global, ES_NaN, ESV(nan));
+        ejsSetProperty(ejs, ejs->global, ES_double, ESV(Number));
+        ejsSetProperty(ejs, ejs->global, ES_num, ESV(Number));
+        ejsSetProperty(ejs, ejs->global, ES_boolean, ESV(Boolean));
+        ejsSetProperty(ejs, ejs->global, ES_true, ESV(true));
+        ejsSetProperty(ejs, ejs->global, ES_false, ESV(false));
     }
 }
 

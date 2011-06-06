@@ -27,7 +27,7 @@ EjsAny *ejsCacheRead(Ejs *ejs, EjsObj *cache, EjsString *key, EjsObj *options)
 
     ejsPauseGC(ejs);
     argv[0] = key;
-    argv[1] = (options) ? options : S(null);
+    argv[1] = (options) ? options : ESV(null);
     return ejsRunFunctionBySlot(ejs, cache, ES_Cache_read, 2, argv);
 }
 
@@ -38,8 +38,8 @@ EjsAny *ejsCacheReadObj(Ejs *ejs, EjsObj *cache, EjsString *key, EjsObj *options
 
     ejsPauseGC(ejs);
     argv[0] = key;
-    argv[1] = (options) ? options : S(null);
-    if ((value = ejsRunFunctionBySlot(ejs, cache, ES_Cache_read, 2, argv)) == 0 || value == S(null)) {
+    argv[1] = (options) ? options : ESV(null);
+    if ((value = ejsRunFunctionBySlot(ejs, cache, ES_Cache_read, 2, argv)) == 0 || value == ESV(null)) {
         return 0;
     }
     return ejsDeserialize(ejs, value);
@@ -73,7 +73,7 @@ EjsNumber *ejsCacheWrite(Ejs *ejs, EjsObj *cache, EjsString *key, EjsString *val
     ejsPauseGC(ejs);
     argv[0] = key;
     argv[1] = value;
-    argv[2] = (options) ? options : S(null);
+    argv[2] = (options) ? options : ESV(null);
     return ejsRunFunctionBySlot(ejs, cache, ES_Cache_write, 3, argv);
 }
 
@@ -85,7 +85,7 @@ EjsNumber *ejsCacheWriteObj(Ejs *ejs, EjsObj *cache, EjsString *key, EjsAny *val
     ejsPauseGC(ejs);
     argv[0] = key;
     argv[1] = ejsSerialize(ejs, value, 0);
-    argv[2] = (options) ? options : S(null);
+    argv[2] = (options) ? options : ESV(null);
     return ejsRunFunctionBySlot(ejs, cache, ES_Cache_write, 3, argv);
 }
 

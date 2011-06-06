@@ -16,9 +16,13 @@ module ejs.web {
     enumerable dynamic class HttpServer {
         use default namespace public
 
+        /** Frequency to check and release excess worker threads */
+        static var PrunePeriod = 60 * 1024
+
         private var idleWorkers: Array = []
         private var activeWorkers: Array = []
         private var workerImage: Worker
+        private var pruner: Timer
 
         private static const defaultConfig = {
             app: {
@@ -253,6 +257,8 @@ server.listen("127.0.0.1:7777")
             if (web.session) {
                 openSession()
             }
+            //  MOB - BUG. Need this.fun to bind the function
+            setInterval(this.pruneWorkers, PrunePeriod, this)
         }
 
         private function openSession() {
@@ -478,14 +484,24 @@ server.listen("127.0.0.1:7777")
             }
         }
 
-        /** @hide */
-        function pruneWorkers(): Void
-            idleWorkers = []
+        /** 
+            Prune idle worker threads. This will release cached worker interpreters and reduce memory footprint. 
+            After calling, the next request will be a little slower as it will need to recreate a worker interpreter.
+            This is normally run every PrunePeriod. It may be also be called manually at any time.
+         */
+        function pruneWorkers(): Void {
+            if (idleWorkers.length > 0) {
+                App.log.debug(6, "HttpServer prune " + idleWorkers.length + " workers")
+                idleWorkers = []
+                GC.run()
+            }
+        }
 
         private function releaseWorker(w: Worker): Void {
             activeWorkers.remove(w)
             if (config.web.cache.workers.enable) {
                 idleWorkers.push(w)
+                pruner.restart()
             }
             App.log.debug(4, "HttpServer.releaseWorker idle: " + idleWorkers.length + " active:" + activeWorkers.length)
         }

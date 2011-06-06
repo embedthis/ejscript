@@ -68,7 +68,7 @@ static EjsObj *xlCast(Ejs *ejs, EjsXML *vp, EjsType *type)
     EjsXML      *elt, *item;
     int         next;
 
-    if (type == S(XML)) {
+    if (type == ESV(XML)) {
         return (EjsObj*) vp;
     }
     switch (type->sid) {
@@ -78,7 +78,7 @@ static EjsObj *xlCast(Ejs *ejs, EjsXML *vp, EjsType *type)
         return (EjsObj*) ejsCreateBoolean(ejs, 1);
 
     case S_Number:
-        result = xlCast(ejs, vp, S(String));
+        result = xlCast(ejs, vp, ESV(String));
         result = (EjsObj*) ejsToNumber(ejs, result);
         return result;
 
@@ -88,7 +88,7 @@ static EjsObj *xlCast(Ejs *ejs, EjsXML *vp, EjsType *type)
             elt = mprGetFirstItem(vp->elements);
             if (elt->kind == EJS_XML_ELEMENT) {
                 if (elt->elements == 0) {
-                    return (EjsObj*) S(empty);
+                    return (EjsObj*) ESV(empty);
                 }
                 if (elt->elements && mprGetListLength(elt->elements) == 1) {
                     //  TODO - what about PI and comments?
@@ -201,7 +201,7 @@ static EjsObj *getXmlListNodeName(Ejs *ejs, EjsXML *xml, int argc, EjsObj **argv
     } else if (xml->targetObject) {
         return (EjsObj*) xml->targetObject->qname.name;
     } else {
-        return S(null);
+        return ESV(null);
     }
 }
 
@@ -547,7 +547,7 @@ static int setXmlListPropertyByName(Ejs *ejs, EjsXML *list, EjsName qname, EjsOb
  */
 static EjsObj *xl_parent(Ejs *ejs, EjsXML *xml, int argc, EjsObj **argv)
 {
-    return xml->targetObject ? (EjsObj*) xml->targetObject : (EjsObj*) S(null);
+    return xml->targetObject ? (EjsObj*) xml->targetObject : (EjsObj*) ESV(null);
 }
 
 /******************************** Support Routines **************************/
@@ -635,7 +635,7 @@ static EjsXML *resolve(Ejs *ejs, EjsXML *xml)
         /*
             Create the property as an element (The text value will be optimized away).
          */
-        ejsSetPropertyByName(ejs, targetObject, xml->targetProperty, S(empty));
+        ejsSetPropertyByName(ejs, targetObject, xml->targetProperty, ESV(empty));
         targetPropertyList = ejsGetPropertyByName(ejs, (EjsObj*) targetObject, xml->targetProperty);
     }
     return targetPropertyList;
@@ -715,7 +715,7 @@ static EjsObj *xmlListToJson(Ejs *ejs, EjsObj *vp, int argc, EjsObj **argv)
  */
 static EjsObj *xmlListToString(Ejs *ejs, EjsObj *vp, int argc, EjsObj **argv)
 {
-    return (TYPE(vp)->helpers.cast)(ejs, vp, S(String));
+    return (TYPE(vp)->helpers.cast)(ejs, vp, ESV(String));
 }
 
 
@@ -752,14 +752,14 @@ static EjsObj *setLength(Ejs *ejs, EjsXMLList *xml, int argc, EjsObj **argv)
 #if KEEP
     if (length < ap->length) {
         for (i = length; i < ap->length; i++) {
-            if (ejsSetProperty(ejs, ap, i, S(undefined)) < 0) {
+            if (ejsSetProperty(ejs, ap, i, ESV(undefined)) < 0) {
                 //  TODO - DIAG
                 return 0;
             }
         }
 
     } else if (length > ap->length) {
-        if (ejsSetProperty(ejs, ap, length - 1, S(undefined)) < 0) {
+        if (ejsSetProperty(ejs, ap, length - 1, ESV(undefined)) < 0) {
             //  TODO - DIAG
             return 0;
         }
@@ -778,7 +778,7 @@ EjsXML *ejsCreateXMLList(Ejs *ejs, EjsXML *targetObject, EjsName targetProperty)
 {
     EjsXML      *list;
 
-    if ((list = (EjsXML*) ejsAlloc(ejs, S(XMLList), 0)) == NULL) {
+    if ((list = (EjsXML*) ejsAlloc(ejs, ESV(XMLList), 0)) == NULL) {
         return 0;
     }
     list->kind = EJS_XML_LIST;

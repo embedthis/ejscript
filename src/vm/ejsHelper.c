@@ -375,7 +375,7 @@ EjsNumber *ejsToNumber(Ejs *ejs, EjsAny *vp)
         return (EjsNumber*) vp;
     }
     if (TYPE(vp)->helpers.cast) {
-        return (TYPE(vp)->helpers.cast)(ejs, vp, ST(Number));
+        return (TYPE(vp)->helpers.cast)(ejs, vp, EST(Number));
     }
     ejsThrowInternalError(ejs, "CastVar helper not defined for type \"%@\"", TYPE(vp)->qname.name);
     return 0;
@@ -392,7 +392,7 @@ EjsBoolean *ejsToBoolean(Ejs *ejs, EjsAny *vp)
         return (EjsBoolean*) vp;
     }
     if (TYPE(vp)->helpers.cast) {
-        return (TYPE(vp)->helpers.cast)(ejs, vp, ST(Boolean));
+        return (TYPE(vp)->helpers.cast)(ejs, vp, EST(Boolean));
     }
     ejsThrowInternalError(ejs, "CastVar helper not defined for type \"%@\"", TYPE(vp)->qname.name);
     return 0;
@@ -483,7 +483,7 @@ static EjsAny *castObj(Ejs *ejs, EjsObj *obj, EjsType *type)
 
     case ES_String:
         if (!ejsIsType(ejs, obj) && !ejsIsPrototype(ejs, obj)) {
-            if (ejsLookupVar(ejs, obj, EN("toString"), &lookup) >= 0 && lookup.obj != ST(Object)->prototype) {
+            if (ejsLookupVar(ejs, obj, EN("toString"), &lookup) >= 0 && lookup.obj != EST(Object)->prototype) {
                 fun = ejsGetProperty(ejs, lookup.obj, lookup.slotNum);
                 if (fun && ejsIsFunction(ejs, fun) && fun->body.proc != (EjsFun) ejsObjToString) {
                     result = ejsRunFunction(ejs, fun, obj, 0, NULL);
@@ -531,11 +531,11 @@ EjsAny *ejsCoerceOperands(Ejs *ejs, EjsObj *lhs, int opcode, EjsObj *rhs)
 
     case EJS_OP_AND: case EJS_OP_DIV: case EJS_OP_MUL: case EJS_OP_OR: case EJS_OP_REM:
     case EJS_OP_SHL: case EJS_OP_SHR: case EJS_OP_SUB: case EJS_OP_USHR: case EJS_OP_XOR:
-        return ejsInvokeOperator(ejs, S(zero), opcode, rhs);
+        return ejsInvokeOperator(ejs, ESV(zero), opcode, rhs);
 
     case EJS_OP_COMPARE_EQ:  case EJS_OP_COMPARE_NE:
         if (!ejsIsDefined(ejs, rhs)) {
-            return ((opcode == EJS_OP_COMPARE_EQ) ? S(false): S(true));
+            return ((opcode == EJS_OP_COMPARE_EQ) ? ESV(false): ESV(true));
         } else if (ejsIs(ejs, rhs, Number)) {
             return ejsInvokeOperator(ejs, ejsToNumber(ejs, lhs), opcode, rhs);
         }
@@ -552,13 +552,13 @@ EjsAny *ejsCoerceOperands(Ejs *ejs, EjsObj *lhs, int opcode, EjsObj *rhs)
     case EJS_OP_COMPARE_UNDEFINED:
     case EJS_OP_COMPARE_NOT_ZERO:
     case EJS_OP_COMPARE_NULL:
-        return S(true);
+        return ESV(true);
 
     case EJS_OP_COMPARE_STRICTLY_EQ:
     case EJS_OP_COMPARE_FALSE:
     case EJS_OP_COMPARE_TRUE:
     case EJS_OP_COMPARE_ZERO:
-        return S(false);
+        return ESV(false);
 
     /* Unary operators */
     case EJS_OP_LOGICAL_NOT: case EJS_OP_NOT:
@@ -566,7 +566,7 @@ EjsAny *ejsCoerceOperands(Ejs *ejs, EjsObj *lhs, int opcode, EjsObj *rhs)
 
     default:
         ejsThrowTypeError(ejs, "Opcode %d not valid for type %@", opcode, TYPE(lhs)->qname.name);
-        return S(undefined);
+        return ESV(undefined);
     }
     return 0;
 }
@@ -595,17 +595,17 @@ EjsAny *ejsInvokeOperatorDefault(Ejs *ejs, EjsAny *lhs, int opcode, EjsAny *rhs)
     /* Unary operators */
 
     case EJS_OP_COMPARE_NOT_ZERO:
-        return S(true);
+        return ESV(true);
 
     case EJS_OP_COMPARE_UNDEFINED:
     case EJS_OP_COMPARE_NULL:
     case EJS_OP_COMPARE_FALSE:
     case EJS_OP_COMPARE_TRUE:
     case EJS_OP_COMPARE_ZERO:
-        return S(false);
+        return ESV(false);
 
     case EJS_OP_LOGICAL_NOT: case EJS_OP_NOT: case EJS_OP_NEG:
-        return S(one);
+        return ESV(one);
 
     /* Binary operators */
 
@@ -646,7 +646,7 @@ static int deletePropertyByName(Ejs *ejs, EjsObj *obj, EjsName qname)
 
 static EjsObj *getProperty(Ejs *ejs, EjsObj *obj, int slotNum)
 {
-    if (obj == 0 || obj == S(null) || obj == S(undefined)) {
+    if (obj == 0 || obj == ESV(null) || obj == ESV(undefined)) {
         ejsThrowReferenceError(ejs, "Object is null");
         return NULL;
     }
@@ -684,7 +684,7 @@ static int lookupProperty(struct Ejs *ejs, EjsObj *obj, EjsName qname)
 
 static int setProperty(Ejs *ejs, EjsObj *obj, int slotNum, EjsObj *value)
 {
-    if (obj == 0 || obj == S(null) || obj == S(undefined)) {
+    if (obj == 0 || obj == ESV(null) || obj == ESV(undefined)) {
         ejsThrowReferenceError(ejs, "Object is null");
         return EJS_ERR;
     }
@@ -695,7 +695,7 @@ static int setProperty(Ejs *ejs, EjsObj *obj, int slotNum, EjsObj *value)
 
 static int setPropertyName(Ejs *ejs, EjsObj *obj, int slotNum, EjsName qname)
 {
-    if (obj == 0 || obj == S(null) || obj == S(undefined)) {
+    if (obj == 0 || obj == ESV(null) || obj == ESV(undefined)) {
         ejsThrowReferenceError(ejs, "Object is null");
         return EJS_ERR;
     }
@@ -706,7 +706,7 @@ static int setPropertyName(Ejs *ejs, EjsObj *obj, int slotNum, EjsName qname)
 
 static int setPropertyTraits(Ejs *ejs, EjsObj *obj, int slot, EjsType *type, int attributes)
 {
-    if (obj == 0 || obj == S(null) || obj == S(undefined)) {
+    if (obj == 0 || obj == ESV(null) || obj == ESV(undefined)) {
         ejsThrowReferenceError(ejs, "Object is null");
         return EJS_ERR;
     }
@@ -745,7 +745,7 @@ EjsName ejsEmptyName(Ejs *ejs, cchar *name)
     EjsName     n;
 
     n.name = ejsCreateStringFromAsc(ejs, name);
-    n.space = S(empty);
+    n.space = ESV(empty);
     return n;
 }
 
@@ -755,7 +755,7 @@ EjsName ejsEmptyWideName(Ejs *ejs, MprChar *name)
     EjsName     n;
 
     n.name = ejsCreateString(ejs, name, strlen(name));
-    n.space = S(empty);
+    n.space = ESV(empty);
     return n;
 }
 
@@ -811,10 +811,10 @@ EjsAny *ejsParse(Ejs *ejs, MprChar *str, int preferredType)
 
         } else if (!isdigit((int) *buf) && *buf != '.') {
             if (mcmp(buf, "true") == 0) {
-                return S(true);
+                return ESV(true);
 
             } else if (mcmp(buf, "false") == 0) {
-                return S(false);
+                return ESV(false);
             }
             sid = S_String;
 
@@ -897,7 +897,7 @@ static MprNumber parseNumber(Ejs *ejs, MprChar *str)
         str++;
     }
     if (*str != '.' && !isdigit((int) *str)) {
-        return ((EjsNumber*) S(nan))->value;
+        return ((EjsNumber*) ESV(nan))->value;
     }
     /*
         Floatng format: [DIGITS].[DIGITS][(e|E)[+|-]DIGITS]
