@@ -6440,7 +6440,6 @@ typedef struct MprWorkerStats {
     int             minThreads;         /* Configured minimum */
     int             numThreads;         /* Configured minimum */
     int             maxUse;             /* Max used */
-    int             pruneHighWater;     /* Peak thread use in last minute */
     int             idleThreads;        /* Current idle */
     int             busyThreads;        /* Current busy */
 } MprWorkerStats;
@@ -6460,7 +6459,6 @@ typedef struct MprWorkerService {
     int             minThreads;         /* Max # threads in worker pool */
     int             nextThreadNum;      /* Unique next thread number */
     int             numThreads;         /* Current number of threads in worker pool */
-    int             pruneHighWater;     /* Peak thread use in last minute */
     int             stackSize;          /* Stack size for worker threads */
     MprMutex        *mutex;             /* Per task synchronization */
     struct MprEvent *pruneTimer;        /* Timer for excess threads pruner */

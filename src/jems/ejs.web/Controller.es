@@ -583,6 +583,14 @@ module ejs.web {
             @deprecated 2.0.0
          */
         # Config.Legacy
+        function renderError(status, ...msgs): Void
+            writeError(status, ...msgs)
+
+        /**
+            @hide
+            @deprecated 2.0.0
+         */
+        # Config.Legacy
         function renderFile(filename: String): Void
             writeFile(filename)
 

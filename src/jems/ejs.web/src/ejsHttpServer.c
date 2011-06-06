@@ -620,7 +620,7 @@ static void incomingEjsData(HttpQueue *q, HttpPacket *packet)
             httpError(conn, HTTP_CODE_BAD_REQUEST, "Client supplied insufficient body data");
         }
         httpPutForService(q, packet, 0);
-        if (rx->form || rx->upload) {
+        if (rx->form) {
             rx->formVars = httpAddVarsFromQueue(rx->formVars, q);
         }
     } else {
@@ -759,7 +759,7 @@ HttpStage *ejsAddWebHandler(Http *http, MprModule *module)
     if (http->ejsHandler) {
         return http->ejsHandler;
     }
-    handler = httpCreateHandler(http, "ejsHandler", HTTP_STAGE_ALL | HTTP_STAGE_QUERY_VARS | HTTP_STAGE_FORM_VARS, module);
+    handler = httpCreateHandler(http, "ejsHandler", HTTP_STAGE_ALL | HTTP_STAGE_QUERY_VARS, module);
     if (handler == 0) {
         return 0;
     }

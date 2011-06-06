@@ -347,7 +347,7 @@ module ejs.web {
                 for (name in columns) {
                     values[name] = view.getValue(r, name, options)
                 }
-                let styleRow = options.styleRows ? (' class="' + options.styleRows[row] + '"') : ""
+                
                 let rowOptions = {
                     click: options.click,
                     edit: options.edit,
@@ -356,19 +356,15 @@ module ejs.web {
                     params: options.params,
                     remote: options.remote,
                 }
-    /*MOB
-                if (options.cell) {
-                    write('        <tr' + styleRow + '>\r\n')
-                } else {
-    */
-                    rowOptions.record = r
-                    rowOptions.field = null
-                    rowOptions.values = values
-                    let att = getAttributes(rowOptions)
-                    write('        <tr' + att + styleRow + '>\r\n')
-    /*MOB
+                let styleRow = ""
+                if (options.styleRows && options.styleRows[row]) {
+                    styleRow = ' class="' + options.styleRows[row] + '"'
                 }
-    */
+                rowOptions.record = r
+                rowOptions.field = null
+                rowOptions.values = values
+                let att = getAttributes(rowOptions)
+                write('        <tr' + att + styleRow + '>\r\n')
 
                 let col = 0
                 for (let [name, column] in columns) {
@@ -516,13 +512,11 @@ module ejs.web {
         }
 */
 
-//  MOB - move to request
         /*
-            Set the template key fields:
-                options.record = r
-                options.row = row
-                options.field = name
-                options.values = values
+            Set the template key fields based on the record data
+            This defines target[property] = record[property]. The property name is defined in "keyFields"
+            Key fields can be an array of property names e.g. ["name", "id"], or they can provide mapping:
+            e.g. ["name", {buildId: "id"}]
         */
         private function setKeyFields(target: Object, keyFields: Array, options: Object): Void {
             let record = options.record
@@ -532,25 +526,19 @@ module ejs.web {
                 // Add missing values incase columns are not being displayed 
                 values[name] ||= record[name]
             }
-            let keys = []
             for each (key in keyFields) {
-                let value = (values[key] != null) ? Uri.encodeComponent(values[key]) : row
                 if (key is String) {
                     // Array of key names corresponding to the columns 
+                    let value = (values[key] != null) ? Uri.encodeComponent(values[key]) : row
                     target[key] = value
                 } else {
                     // Hash of key:mapped names corresponding to the columns
                     for (field in key) {
+                        let value = (values[field] != null) ? Uri.encodeComponent(values[field]) : row
                         target[key[field]] = value
                     }
                 }
             }
-        /*  MOB
-            if (keys && keys.length > 0) {
-                return keys.join("&")
-            }
-            return null
-         */
         }
 
 //  MOB - move to request
@@ -677,7 +665,7 @@ module ejs.web {
             }
             blend(target, options, false)
             if (options.key && options.record) {
-//  MOB -- need to understand this
+                /* Set template key fields */
                 setKeyFields(target, options.key, options)
             }
             target.uri ||= request.link(target)
