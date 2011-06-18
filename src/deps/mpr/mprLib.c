@@ -2202,7 +2202,23 @@ MprMemStats *mprGetMemStats()
 ssize mprGetMem()
 {
 #if LINUX
-    struct rusage   rusage;
+    int fd;
+    char path[MPR_MAX_PATH];
+    sprintf(path, "/proc/%d/status", getpid());
+    if ((fd = open(path, O_RDONLY)) >= 0) {
+        char buf[MPR_BUFSIZE], *tok;
+        int nbytes = read(fd, buf, sizeof(buf) - 1);
+        close(fd);
+        if (nbytes > 0) {
+            buf[nbytes] = '\0';
+            if ((tok = strstr(buf, "VmRSS:")) != 0) {
+                for (tok += 6; tok && isspace((int) *tok); tok++) {}
+                return stoi(tok, 10, 0) * 1024;
+            }
+        }
+        close(fd);
+    }
+    struct rusage rusage;
     getrusage(RUSAGE_SELF, &rusage);
     return rusage.ru_maxrss * 1024;
 #elif MACOSX || FREEBSD
