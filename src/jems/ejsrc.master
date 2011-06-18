@@ -14,6 +14,9 @@
         memory: 10000000,
         keys: 1000,
         lifespan: 3600,
+        actions:    { enable: true, lifespan: 3600 },
+        database:   { enable: true, lifespan: 3600 },
+        workers:    { enable: true, limit: 10 },
     },
     database: {
         adapter: "sqlite",
@@ -57,12 +60,6 @@
     },
     search: null,
     web: {
-        cache: {
-            actions:    { enable: true, lifespan: 3600 },
-            databases:  { enable: true, lifespan: 3600 },
-            fragments:  { enable: true, lifespan: 3600 },
-            workers:    { enable: true, limit: 10 },
-        },
         expires: {
             "html": 86400,  
             "ejs": 86400,

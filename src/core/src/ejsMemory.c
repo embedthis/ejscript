@@ -126,7 +126,7 @@ static EjsNumber *getSystemRam(Ejs *ejs, EjsObj *thisObj, int argc, EjsObj **arg
 static EjsObj *printStats(Ejs *ejs, EjsObj *thisObj, int argc, EjsObj **argv)
 {
     //  TODO - should go to log file and not to stdout
-    mprPrintMem("Memory Report", 0);
+    mprPrintMem("Memory Report", 1);
     return 0;
 }
 

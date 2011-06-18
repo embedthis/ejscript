@@ -33,7 +33,7 @@ module ejs {
                 cache backend. 
             @param options Adapter options. The common options are described below, other options are passed through
             to the relevant caching backend.
-            @option lifespan Default lifespan for key values
+            @option lifespan Default lifespan for key values in seconds.
             @option resolution Time in milliseconds to check for expired expired keys
             @option timeout Timeout on cache I/O operations
             @option trace Trace I/O operations for debug
@@ -46,7 +46,7 @@ module ejs {
         function Cache(adapter: String = null, options: Object = {}) {
             let adapterClass, modname
             if (adapter == null || adapter == "local") {
-                options = blend({shared: true}, options, true)
+                options = blend({shared: true}, options)
                 adapter = "local"
                 modname = "ejs"
                 adapterClass = "LocalCache"
@@ -69,12 +69,14 @@ module ejs {
         function destroy(): Void
             adapter.destroy()
 
+        //  MOB - bit inconsistent that expires takes only a date and not a lifespan too
         /**
             Set a new expire date for a key
             @param key Key to modify
             @param when Date at which to expire the data. Set to null to never expire.
+            @return True if the key's expiry can be updated. 
          */
-        function expire(key: String, when: Date): Void
+        function expire(key: String, when: Date): Boolean
             adapter.expire(key, when)
 
         /**
@@ -92,7 +94,7 @@ module ejs {
                 some of the following properties. Consult the documentation for the actual cache backend for which properties
                 are supported by the backend.
             @option keys Maximum number of keys in the cache. Set to zero for no limit.
-            @option lifespan Default time to preserve key data. Set to zero for no timeout.
+            @option lifespan Default time in seconds to preserve key data. Set to zero for no timeout.
             @option memory Total memory to allocate for cache keys and data. Set to zero for no limit.
             @option retries Maximum number of times to retry I/O operations with cache backends.
             @option timeout Maximum time to transact I/O operations with cache backends. Set to zero for no timeout.
@@ -126,8 +128,13 @@ module ejs {
                 an atomic CAS (check and swap) operation.
             @return Null if the key is not present. Otherwise return key data as an object.
          */
-        function readObj(key: String, options: Object = null): Object
-            deserialize(adapter.read(key, options))
+        function readObj(key: String, options: Object = null): Object {
+            let data = adapter.read(key, options)
+            if (data) {
+                return deserialize(data)
+            }
+            return null
+        }
 
         /**
             Remove the key and associated value from the cache
@@ -151,7 +158,7 @@ module ejs {
             @param key Key to modify
             @param value String value to associate with the key
             @param options Options values
-            @option lifespan Preservation time for the key in seconds 
+            @option lifespan Preservation time for the key in seconds.
             @option expire When to expire the key. Takes precedence over lifetime.
             @option mode Mode of writing: "set" is the default and means set a new value and create if required.
                 "add" means set the value only if the key does not already exist. "append" means append to any existing
@@ -172,7 +179,7 @@ module ejs {
             @param key Key to modify
             @param value Object to associate with the key
             @param options Options values
-            @option lifespan Preservation time for the key in seconds 
+            @option lifespan Preservation time for the key in seconds. Set to zero for never expire.
             @option expire When to expire the key. Takes precedence over lifetime.
             @option mode Mode of writing: "set" is the default and means set a new value and create if required.
                 "add" means set the value only if the key does not already exist. "append" means append to any existing

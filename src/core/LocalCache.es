@@ -21,7 +21,7 @@ module ejs {
             @param options Configuration options.
             @option shared Create or connect to a single, shared cache. If multiple interpreters in a single
                 process create shared LocalCache instances they will be able to share key/value data.
-            @option lifespan Default lifespan for key values. Set to zero for a default unlimited timeout.
+            @option lifespan Default lifespan for key values in seconds. Set to zero for a default unlimited timeout.
             @option resolution Time in milliseconds to check for expired expired keys
             @option memory Maximum memory to use for keys and data
             @option trace Trace I/O operations for debug
@@ -54,7 +54,7 @@ module ejs {
             Resource limits for the server and for initial resource limits for requests.
             @param limits. Limits is an object hash with the following properties:
             @option keys Maximum number of keys in the cache.
-            @option lifespan Default time to preserve key data. Set to zero for an unlimited default timeout.
+            @option lifespan Default time to preserve key data in seconds. Set to zero for an unlimited default timeout.
             @option memory Maximum memory to use for keys and data.
             @see setLimits
           */

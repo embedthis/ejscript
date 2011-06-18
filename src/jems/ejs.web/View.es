@@ -3,8 +3,10 @@
  */
 module ejs.web {
 
+    //  MOB - is this necessary?
     require ejs.web
 
+    //  MOB - what does option click Boolean mean below??
     /**
         Base class for web framework Views. This class provides the core functionality for templated Ejscript view 
         web pages. Ejscript web pages are compiled to create a new View class which extends the View base class.  
@@ -116,32 +118,28 @@ module ejs.web {
         function View(request: Object) {
             if (request) {
                 controller = request.controller
-//  MOB -- replace all this with blend. Perhaps request and config come over automatically.
+                blend(this, controller, {overwrite: true, deep: false})
+                /* Manual construction may not have a controller */
+                config = request.config
                 this.request = request
-                this.config = request.config
                 formats = config.web.views.formats
-                for each (let n: String in 
-                        Object.getOwnPropertyNames(controller, {includeBases: true, excludeFunctions: true})) {
-                    if (n.startsWith("_")) continue
-                    //  MOB - can we remove public::
-                    this.public::[n] = controller[n]
-                }
             } else {
                 request = {}
                 config = App.config
             }
-            for (helper in config.web.views.shelpers) {
+
+        /*  FUTURE
+            for each (helper in config.web.views.helpers) {
                 if (helper.contains("::")) {
                     [mod, klass] = helper.split("::")
                     global.load(mod + ".mod")
-                    /*  MOB -- should use 
-                        blend(this, global.[mod]::[klass])
-                     */
+                    //  MOB -- should use blend(this, global.[mod]::[klass])
                     blend(this, global[klass])
                 } else {
                     blend(this, global[helper])
                 }
             }
+         */
         }
 
         /**
@@ -575,11 +573,12 @@ print("CATCH " + e)
         /*
             TODO table
             - in-cell editing
+            - per-row click URIs
             - pagination
          */
         /**
             Render a table. The table control can display static or dynamic tabular data. The client table control 
-                manages sorting by column, dynamic data refreshes, pagination and clicking on rows or cells.
+                manages sorting by column, dynamic data refreshes and clicking on rows or cells.
             @param data Data to display. The data must be a grid of data, ie. an Array of objects where each object 
                 represents the data for a row. The column names are the object property names and the cell text is 
                 the object property values.
@@ -917,7 +916,6 @@ MOB -- review and rethink this
             //  MOB -- put all standard types here -- faster
         }
 
-        //  MOB -- 
         private static function dateFormatter(view: View, value: Object, options: Object): String
             new Date(value).format(view.formats.Date)
 

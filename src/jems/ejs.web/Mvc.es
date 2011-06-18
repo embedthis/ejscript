@@ -39,33 +39,62 @@ module ejs.web {
         private static var loaded: Object = {}
         private static const EJSRC = "ejsrc"
 
-        blend(App.config, defaultConfig, false)
+        blend(App.config, defaultConfig, {overwrite: false})
 
         /** 
             Load an MVC application and the optional application specific ejsrc file
             @param request Request object
          */
-        function Mvc(request: Request) {
-            config = request.config
-            let path = request.dir.join(EJSRC)
-            if (request.dir != request.server.documents && path.exists) {
-                loadConfig(request, path)
-                request.config = config
+        function Mvc(dir: Path, cfg = App.config) {
+            this.config = cfg
+            let path = dir.join(EJSRC)
+            if (path.exists) {
+                loadConfig(dir, path)
             }
             if (config.database) {
-                openDatabase(request)
+                openDatabase()
             }
+        }
+
+        /**
+            Factory to load an MVC application.
+            @param dir Base directory containing the MVC application. Defaults to "."
+            @param config Default configuration for the application
+            @return An Mvc application object
+          */
+        public static function load(dir: Path = ".", config = App.config): Mvc {
+            if ((mvc = Mvc.apps[dir]) == null) {
+                App.log.debug(2, "Load MVC application from \"" + dir + "\"")
+                mvc = Mvc.apps[dir] = new Mvc(dir, config)
+                let appmod = config.dirs.cache.join(config.mvc.appmod)
+
+                /* Load App. Touch ejsrc triggers a complete reload */
+                let files, deps
+                if (config.app.reload) {
+                    let dirs = config.dirs
+                    let ext = config.extensions
+                    deps = [dir.join(EJSRC)]
+                    files = dirs.models.find("*" + ext.es)
+                    files += dirs.src.find("*" + ext.es)
+                    files += [dirs.controllers.join("Base").joinExt(ext.es)]
+                }
+                let request = new Request("/")
+                request.config = config
+                mvc.loadComponent(request, appmod, files, deps)
+                loaded[appmod] = new Date
+            }
+            return mvc
         }
 
         /*
             Load the app/ejsrc and defaultConfig
          */
-        private function loadConfig(request: Request, path: Path): Void {
+        private function loadConfig(baseDir: Path, path: Path): Void {
             let appConfig = path.readJSON()
-            config = blend(config.clone(), appConfig, true)
+            config = blend(config.clone(), appConfig)
             let dirs = config.dirs
             for each (key in ["bin", "db", "controllers", "models", "src", "static"]) {
-                dirs[key] = request.dir.join(dirs[key])
+                dirs[key] = baseDir.join(dirs[key])
             }
             for (let [key, value] in dirs) {
                 dirs[key] = Path(value)
@@ -76,10 +105,12 @@ module ejs.web {
         /*
             Load the required parts of the Mvc app
          */
-        function load(request: Request) {
+        function loadRequest(request: Request) {
+            request.config = config
             let dirs = config.dirs
             let appmod = dirs.cache.join(config.mvc.appmod)
-            if (config.web.cache.flat) {
+            //  MOB - implement flat
+            if (config.web.flat) {
                 if (!global.BaseController) {
                     global.load(appmod)
                 }
@@ -163,11 +194,11 @@ module ejs.web {
                     production: { name: "db/blog.sdb", trace: true },
                 }
          */
-        private function openDatabase(request: Request) {
-            let dbconfig = config.database
+        public static function openDatabase() {
+            let dbconfig = App.config.database
             if (dbconfig) {
                 global.load("ejs.db.mod", {reload: false})
-                blend(dbconfig, dbconfig[config.mode])
+                blend(dbconfig, dbconfig[App.config.mode])
                 new "ejs.db"::["Database"](dbconfig.adapter, dbconfig)
             }
         }
@@ -188,6 +219,7 @@ module ejs.web {
 
     }
 
+    //  MOB - who uses this?
     /**
         MVC request handler.  
         @param request Request object
@@ -209,12 +241,8 @@ module ejs.web {
         @stability prototype
      */
     function MvcBuilder(request: Request): Function {
-        let mvc: Mvc
-        if ((mvc = Mvc.apps[request.dir]) == null) {
-            App.log.debug(2, "Load MVC application from \"" + request.dir + "\"")
-            mvc = Mvc.apps[request.dir] = new Mvc(request)
-        }
-        mvc.load(request)
+        let mvc: Mvc = Mvc.load(request.dir, request.config)
+        mvc.loadRequest(request)
         //  MOB - rename app to be more unique
         return Controller.create(request, request.params.controller + "Controller").app
     }

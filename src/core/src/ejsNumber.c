@@ -20,7 +20,7 @@ static EjsAny *castNumber(Ejs *ejs, EjsNumber *vp, EjsType *type)
 {
     switch (type->sid) {
     case S_Boolean:
-        return ((vp->value) ? ESV(true) : ESV(false));
+        return ((vp->value && !ejsIsNan(vp->value)) ? ESV(true) : ESV(false));
 
     case S_String:
         //  OPT. mprDtoa does a sclone.

@@ -6,7 +6,8 @@ module ejs.web {
 
     /** 
         Static content handler. This supports DELETE, GET, POST and PUT methods. It handles directory redirection
-        and will use X-SendFile for efficient transmission of static content.
+        and will use X-SendFile for efficient transmission of static content. The If-Match, If-None-Match,
+        If-Modified-Since and If-Unmodified-Since headers are supported.
         @param request Request objects
         @returns A response hash object
         @example:
@@ -17,6 +18,7 @@ module ejs.web {
     function StaticApp(request: Request): Object {
         let filename = request.filename
         let status = Http.Ok, body
+        let hdr
 
         let headers = {
             "Content-Type": Uri(request.uri).mimeType,
@@ -42,54 +44,66 @@ module ejs.web {
             headers["ETag"] = etag
             headers["Last-Modified"] = filename.modified.toUTCString()
         }
-        let ignoreIfModified = false
 
-        let rtags = request.header("If-Match")
-        if (rtags) {
-            for each (rtag in rtags.split(",")) {
-                if (rtag != etag || (rtag == "*" && !filename.exists)) {
-                    /* Etag doesn't match - don't retrieve - must still check If-Modified */
-                   status = Http.PrecondFailed
-                } else {
-                    ignoreIfModified = true
+        /*
+            If a specified tag matches, then return the full resource
+         */
+        let match = false
+        if (hdr = request.header("If-Match")) {
+            for each (rtag in hdr.split(",")) {
+                if (rtag == etag || (rtag == "*" && filename.exists)) {
+                    match = true
+                    break
                 }
             }
+            if (!match) {
+                return { status: Http.PrecondFailed }
+            }
         }
-        let rtags = request.header("If-None-Match")
-        if (rtags) {
-            for each (rtag in rtags.split(",")) {
-                if (rtag == etag || (rtag == "*" && filename.exists)) {
-                    /* Etag matches - don't retrieve */
-                    status = Http.PrecondFailed
-                } else {
-                    ignoreIfModified = true
+        /*
+            If a specified etag matches, then no need to process the request. Respond with Not-Modified.
+         */
+        match = true
+        if (hdr = request.header("If-None-Match")) {
+            for each (rtag in hdr.split(",")) {
+                if (rtag != etag || (rtag == "*" && !filename.exists)) {
+                    match = false
                 }
+            }
+            if (match) {
+                status = Http.PrecondFailed
+                /* Keep going to allow If-Modified-Since to be analysed */
             }
         }
 
         /*
-            Must not return NotModified if an If-None-Match failed
+            If the resource has not been modified since, return Not-Modified
          */
-        if (!ignoreIfModified && (when = request.header("If-Modified-Since"))) {
-            when = Date.parse(when)
-            if (filename.exists && filename.modified <= when) {
-                return { headers: headers, status: Http.NotModified }
+        if (match && (when = request.header("If-Modified-Since"))) {
+            if (request.method == "GET" || request.method == "HEAD") {
+                if (filename.exists && filename.modified <= Date.parse(when) && !request.header("Range")) {
+                    status = Http.NotModified
+                }
             }
         }
-        if (!ignoreIfModified && (when = request.header("If-Unmodified-Since"))) {
-            when = Date.parse(when)
-            if (!filename.exists && when < filename.modified) {
+        if (when = request.header("If-Unmodified-Since")) {
+            if (!filename.exists || Date.parse(when) < filename.modified) {
                 status = Http.PrecondFailed
             }
         }
+        if (status == Http.NotModified &&
+                (hdr = request.header("Cache-Control")) && (hdr.contains("max-age=0") || hdr.contains("no-cache"))) {
+            status = Http.Ok
+        }
         if (status != Http.Ok) {
-            return { status: status }
+            return { headers: headers, status: status }
         }
         let expires = request.config.web.expires
         if (expires) {
             let lifetime = expires[request.extension] || expires[""]
             if (lifetime) {
                 headers["Cache-Control"] = "max-age=" + lifetime
+                /* OPT - don't really need to do expires. Cache-Control should be sufficient */
                 let when = new Date
                 when.time += (lifetime * 1000)
                 headers["Expires"] = when.toUTCString()

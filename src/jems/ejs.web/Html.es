@@ -36,7 +36,7 @@ module ejs.web {
         private var view: View
 
         /* Sequential DOM ID generator */
-        private var lastDomID: Number = 0
+        private static var lastDomID: Number = 0
 
         /*
             Mapping of helper options to HTML attributes.
@@ -347,7 +347,6 @@ module ejs.web {
                 for (name in columns) {
                     values[name] = view.getValue(r, name, options)
                 }
-                
                 let rowOptions = {
                     click: options.click,
                     edit: options.edit,
@@ -663,7 +662,7 @@ module ejs.web {
             } else {
                 target = target.clone()
             }
-            blend(target, options, false)
+            blend(target, options, {overwrite: false})
             if (options.key && options.record) {
                 /* Set template key fields */
                 setKeyFields(target, options.key, options)

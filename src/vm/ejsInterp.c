@@ -3776,7 +3776,7 @@ static EjsOpCode traceCode(Ejs *ejs, EjsOpCode opcode)
     fp = state->fp;
     opcount[opcode]++;
 
-    if (ejs->initialized && doDebug) {
+    if (1 || ejs->initialized && doDebug) {
         offset = (int) (fp->pc - fp->function.body.code->byteCode) - 1;
         if (offset < 0) {
             offset = 0;

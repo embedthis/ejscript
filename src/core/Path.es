@@ -611,6 +611,7 @@ module ejs {
          */
         native function truncate(size: Number): Void
 
+        //  MOB rename? - bit confusing "write". This really does a "save"
         /**
             Write the file contents. This method opens the file, writes the contents and closes the file.
             @param args The data to write to the file. Data is serialized in before writing. Note that numbers will not 

@@ -215,10 +215,19 @@ module ejs.db {
             @TODO Refactor logging when Log class implemented
          */
         function query(cmd: String, tag: String = "SQL", trace: Boolean = false): Array {
-            if (options.trace || trace) {
-                print(tag + ": " + cmd)
+            let mark, size
+            trace ||= options.trace
+            if (trace) {
+                App.log.activity(tag, cmd)
+                mark = new Date
+                size = Memory.resident
             }
-            return adapter.sql(cmd)
+            let result = adapter.sql(cmd)
+            if (trace) {
+                App.log.activity("Stats", "Elapsed %5.2f msec, memory %5.2f".format(mark.elapsed, 
+                    (Memory.resident - size) / (1024 * 1024)))
+            }
+            return result
         }
 
         /**

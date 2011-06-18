@@ -1123,7 +1123,7 @@ void ejsUnlockService()
 
 void ejsLoadHttpService(Ejs *ejs)
 {
-    ejsLockService(ejs);
+    ejsLockService();
     if (mprGetMpr()->httpService == 0) {
         httpCreate();
     }
@@ -1131,7 +1131,7 @@ void ejsLoadHttpService(Ejs *ejs)
     if (ejs->http == 0) {
         mprError("Can't load Http Service");
     }
-    ejsUnlockService(ejs);
+    ejsUnlockService();
 }
 
 

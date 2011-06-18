@@ -2247,8 +2247,9 @@ EjsString *ejsInternString(EjsString *str)
             }
         }
     }
+    ip->count++;
     linkString(head, str);
-    if (step > EJS_MAX_COLLISIONS) {
+    if (step > EJS_MAX_COLLISIONS && ip->count > (ip->size/2)) {
         /*  Remake the entire hash - should not happen often */
         //  OPT - BAD holding lock while rebuildingIntern
         rebuildIntern(ip);
@@ -2300,9 +2301,11 @@ EjsString *ejsInternWide(Ejs *ejs, MprChar *value, ssize len)
         sp->value[len] = 0;
     }
     sp->length = len;
+    ip->count++;
     linkString(head, sp);
-    if (step > EJS_MAX_COLLISIONS) {
+    if (step > EJS_MAX_COLLISIONS && ip->count > (ip->size/2)) {
         /*  Remake the entire hash - should not happen often */
+        //  OPT - BAD holding lock while rebuildingIntern
         rebuildIntern(ip);
     }
     unlock(ip);
@@ -2357,9 +2360,11 @@ EjsString *ejsInternAsc(Ejs *ejs, cchar *value, ssize len)
         sp->value[len] = 0;
     }
     sp->length = len;
+    ip->count++;
     linkString(head, sp);
-    if (step > EJS_MAX_COLLISIONS) {
+    if (step > EJS_MAX_COLLISIONS && ip->count > (ip->size/2)) {
         /*  Remake the entire hash - should not happen often */
+        //  OPT - BAD holding lock while rebuildingIntern
         rebuildIntern(ip);
     }
     unlock(ip);
@@ -2414,9 +2419,11 @@ EjsString *ejsInternMulti(Ejs *ejs, cchar *value, ssize len)
             }
         }
     }
+    ip->count++;
     linkString(head, src);
-    if (step > EJS_MAX_COLLISIONS) {
+    if (step > EJS_MAX_COLLISIONS && ip->count > (ip->size/2)) {
         /*  Remake the entire hash - should not happen often */
+        //  OPT - BAD holding lock while rebuildingIntern
         rebuildIntern(ip);
     }
     unlock(ip);
@@ -2438,28 +2445,31 @@ static int getInternHashSize(int size)
 }
 
 
-static int rebuildIntern(EjsIntern *intern)
+static int rebuildIntern(EjsIntern *ip)
 {
     EjsString   *oldBuckets, *sp, *next, *head;
     int         i, newSize, oldSize;
 
-    mprAssert(intern);
+    mprAssert(ip);
 
-    oldBuckets = intern->buckets;
-    newSize = getInternHashSize(intern->size * 2);
+    oldBuckets = ip->buckets;
+    newSize = getInternHashSize(ip->size + 1);
     oldSize = 0;
     if (oldBuckets) {
-        oldSize = intern->size;
+        oldSize = ip->size;
         if (oldSize > newSize) {
             return 0;
         }
     }
-    if ((intern->buckets = mprAllocZeroed((newSize * sizeof(EjsString)))) == NULL) {
+    mprLog(6, "Grow string intern new size %d old size %d, count %d, sizeof(EjsString) %d", 
+        newSize, oldSize, ip->count, sizeof(EjsString));
+
+    if ((ip->buckets = mprAllocZeroed((newSize * sizeof(EjsString)))) == NULL) {
         return MPR_ERR_MEMORY;
     }
-    intern->size = newSize;
+    ip->size = newSize;
     for (i = 0; i < newSize; i++) {
-        sp = &intern->buckets[i];
+        sp = &ip->buckets[i];
         sp->next = sp->prev = sp;
     }
     if (oldBuckets) {
@@ -2588,6 +2598,7 @@ void ejsManageString(EjsString *sp, int flags)
     } else if (flags & MPR_MANAGE_FREE) {
         ip = ((EjsService*) MPR->ejsService)->intern;
         lock(ip);
+        ip->count--;
         unlinkString(sp);
         unlock(ip);
     }
@@ -2618,6 +2629,7 @@ void ejsDestroyIntern(EjsIntern *ip)
         head = &ip->buckets[i];
         for (sp = head->next; sp != head; sp = next) {
             next = sp->next;
+            ip->count--;
             unlinkString(sp);
         }
     }

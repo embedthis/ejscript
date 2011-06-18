@@ -42,17 +42,28 @@ static EjsBoolean *g_assert(Ejs *ejs, EjsObj *vp, int argc, EjsObj **argv)
 
 
 /*  
-    function blend(dest: Object, src: Object, overwrite: Boolean = true): void
+    function blend(dest: Object, src: Object, options = null): Object
  */
 static EjsObj *g_blend(Ejs *ejs, EjsObj *unused, int argc, EjsObj **argv)
 {
-    EjsObj      *src, *dest;
-    int         overwrite;
+    EjsObj      *src, *dest, *options;
+    int         flags;
 
-    overwrite = (argc == 3) ? (argv[2] == ESV(true)) : 1;
+    options = (argc >= 3) ? argv[2] : 0;
+    if (options) {
+        flags = 0;
+        flags |= ejsGetPropertyByName(ejs, options, EN("functions")) == ESV(true) ? EJS_BLEND_FUNCTIONS : 0;
+        flags |= ejsGetPropertyByName(ejs, options, EN("trace")) == ESV(true) ? EJS_BLEND_TRACE : 0;
+
+        flags |= ejsGetPropertyByName(ejs, options, EN("overwrite")) == ESV(false) ? 0 : EJS_BLEND_OVERWRITE;
+        flags |= ejsGetPropertyByName(ejs, options, EN("subclass")) == ESV(false) ? 0 : EJS_BLEND_SUBCLASSES;
+        flags |= ejsGetPropertyByName(ejs, options, EN("deep")) == ESV(false) ? 0 : EJS_BLEND_DEEP;
+    } else {
+        flags = EJS_BLEND_DEEP | EJS_BLEND_OVERWRITE | EJS_BLEND_SUBCLASSES;
+    }
     dest = argv[0];
     src = argv[1];
-    ejsBlendObject(ejs, dest, src, overwrite);
+    ejsBlendObject(ejs, dest, src, 0, flags);
     return dest;
 }
 
@@ -168,34 +179,53 @@ static EjsString *g_md5(Ejs *ejs, EjsObj *unused, int argc, EjsObj **argv)
     things). The blending is done at the primitive property level. If overwrite is true, the property is replaced. If
     overwrite is false, the property will be added if it does not already exist
  */
-int ejsBlendObject(Ejs *ejs, EjsObj *dest, EjsObj *src, int overwrite)
+int ejsBlendObject(Ejs *ejs, EjsObj *dest, EjsObj *src, int xoverwrite, int flags)
 {
+    EjsTrait    *trait;
     EjsObj      *vp, *dp;
     EjsName     name;
-    int         i, count;
+    int         i, count, start, deep, functions, overwrite, privateProps, trace;
 
     count = ejsGetLength(ejs, src);
-    for (i = 0; i < count; i++) {
-        vp = ejsGetProperty(ejs, src, i);
-        if (vp == 0) {
+    start = (flags & EJS_BLEND_SUBCLASSES) ? 0 : TYPE(src)->numInherited;
+    deep = (flags & EJS_BLEND_DEEP) ? 1 : 0;
+    overwrite = (flags & EJS_BLEND_OVERWRITE) ? 1 : 0;
+    functions = (flags & EJS_BLEND_FUNCTIONS) ? 1 : 0;
+    privateProps = (flags & EJS_BLEND_PRIVATE) ? 1 : 0;
+    trace = (flags & EJS_BLEND_TRACE) ? 1 : 0;
+
+    for (i = start; i < count; i++) {
+        if ((trait = ejsGetPropertyTraits(ejs, src, i)) != 0) {
+            if (trait->attributes & (EJS_TRAIT_DELETED | EJS_FUN_INITIALIZER | EJS_FUN_MODULE_INITIALIZER)) {
+                continue;
+            }
+        }
+        if ((vp = ejsGetProperty(ejs, src, i)) == 0) {
+            continue;
+        }
+        if (!functions && ejsIsFunction(ejs, ejsGetProperty(ejs, src, i))) {
             continue;
         }
         name = ejsGetPropertyName(ejs, src, i);
+        if (!privateProps && ejsContainsMulti(ejs, name.space, ",private")) {
+            continue;
+        }
+        if (trace) {
+            mprLog(0, "NAME %N", name);
+        }
         /* NOTE: treats arrays as primitive types */
-        if (!ejsIs(ejs, vp, Array) && !ejsIsXML(ejs, vp) && ejsGetLength(ejs, vp) > 0) {
+        if (deep && !ejsIs(ejs, vp, Array) && !ejsIsXML(ejs, vp) && ejsGetLength(ejs, vp) > 0) {
             if ((dp = ejsGetPropertyByName(ejs, dest, name)) == 0 || ejsGetLength(ejs, dp) == 0) {
-                ejsSetPropertyByName(ejs, dest, name, ejsClonePot(ejs, vp, 1));
+                ejsSetPropertyByName(ejs, dest, name, ejsClonePot(ejs, vp, deep));
             } else {
-                ejsBlendObject(ejs, dp, vp, overwrite);
+                ejsBlendObject(ejs, dp, vp, 0, flags);
             }
         } else {
             /* Primitive type (including arrays) */
             if (overwrite) {
                 ejsSetPropertyByName(ejs, dest, name, vp);
-            } else {
-                if (ejsLookupProperty(ejs, dest, name) < 0) {
-                    ejsSetPropertyByName(ejs, dest, name, vp);
-                }
+            } else if (ejsLookupProperty(ejs, dest, name) < 0) {
+                ejsSetPropertyByName(ejs, dest, name, vp);
             }
         }
     }

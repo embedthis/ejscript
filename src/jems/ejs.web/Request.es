@@ -130,6 +130,12 @@ module ejs.web {
         public var flash: Object
 
         /** 
+            The request form parameters as a string. This parameters are www-url decoded from the POST request body data. 
+            This is useful to get a stable, sorted string representing the form parameters.
+         */
+        native enumerable var formData: String
+
+        /** 
             Request Http headers. This is an object hash filled with lower-case request headers from the client. If multiple 
             headers of the same key value are defined, their contents will be catenated with a ", " separator as per the 
             HTTP/1.1 specification. Use the header() method if you want to retrieve a single header.
@@ -205,7 +211,8 @@ module ejs.web {
         native enumerable var originalUri: Uri
 
         /** 
-            The request form parameters. This parameters are www-url decoded from the POST request body data. 
+            The request form parameters plus other routing parameters. 
+            The form parameters are www-url decoded from the POST request body data. See also $form.
          */
         native enumerable var params: Object
 
@@ -318,6 +325,11 @@ module ejs.web {
          */
         native enumerable var uri: Uri
 
+        /**
+            Write buffer when capturing output
+         */
+        var writeBuffer: ByteArray
+
         /*************************************** Methods ******************************************/
         /**
             Construct the a Request object. Request objects are typically created by HttpServers and not constructed
@@ -364,6 +376,14 @@ module ejs.web {
                 throw new SecurityError("Security token does not match. Potential CSRF attack. Denying request")
             }
         }
+
+        /**
+            Clear previous flags messages. Useful when using client mode caching for an action.
+            @stability prototype
+            @hide
+         */
+        function clearFlash(): Void
+            flash = null
 
         /**
             Create a session state object. The session state object can be used to share state between requests.
@@ -885,8 +905,10 @@ r.link({product: "candy", quantity: "10", template: "/cart/{product}/{quantity}"
         native function writeBlock(buffer: ByteArray, offset: Number = 0, count: Number = -1): Number 
 
         /**
+MOB - DEBUG
             Write content based on the requested accept mime type
             @param data Data to send to the client
+            @hide
          */
         function writeContent(data): Void {
             let mime = matchContent("application/json", "text/html", "application/xml", "text/plain")
@@ -1021,22 +1043,6 @@ r.link({product: "candy", quantity: "10", template: "/cart/{product}/{quantity}"
          */
         function get serverPort(): Number
             server.port
-
-        /**
-            @example
-            @option max-age Max time in seconds the resource is considered fresh
-            @option s-maxage Max time in seconds the resource is considered fresh from a shared cache
-            @option public marks authenticated responses as cacheable
-            @option private shared caches may not store the response
-            @option no-cache cache must re-submit request for validation before using cached copy
-            @option no-store response may not be stored in a cache.
-            @option must-revalidate forces caches to observe expiry and other freshness information
-            @option proxy-revalidate similar to must-revalidate except only for proxy caches
-            @hide
-            MOB - complete
-          */
-        function cache(options) {
-        }
 
         /*************************************** Deprecated ***************************************/
 

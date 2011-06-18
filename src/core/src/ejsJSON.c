@@ -480,6 +480,8 @@ EjsString *ejsSerialize(Ejs *ejs, EjsAny *vp, EjsObj *options)
 }
 
 
+//  TOD REFACTOR
+
 static EjsString *serialize(Ejs *ejs, EjsAny *vp, Json *json)
 {
     EjsName     qname;
@@ -495,7 +497,7 @@ static EjsString *serialize(Ejs *ejs, EjsAny *vp, Json *json)
         The main code below can handle Arrays, Objects, objects derrived from Object and also native classes with properties.
         All others just use toString.
      */
-    count = ejsGetLength(ejs, vp);
+    count = ejsIsPot(ejs, vp) ? ejsGetLength(ejs, vp) : 0;
     if (count == 0 && TYPE(vp) != ESV(Object) && TYPE(vp) != ESV(Array)) {
         //  OPT - need some flag for this test.
         if (!ejsIsDefined(ejs, vp) || ejsIs(ejs, vp, Boolean) || ejsIs(ejs, vp, Number)) {
@@ -530,7 +532,6 @@ static EjsString *serialize(Ejs *ejs, EjsAny *vp, Json *json)
                 return 0;
             }
             if (pp == 0) {
-                mprAssert(0);
                 continue;
             }
             if (isArray) {
@@ -572,7 +573,7 @@ static EjsString *serialize(Ejs *ejs, EjsAny *vp, Json *json)
                 }
             }
             fn = (EjsFunction*) ejsGetPropertyByName(ejs, TYPE(pp)->prototype, N(NULL, "toJSON"));
-// TODO - check that this is going directly to serialize most of the time
+// OPT - check that this is going directly to serialize most of the time
             if (!ejsIsFunction(ejs, fn) || (fn->isNativeProc && fn->body.proc == (EjsFun) ejsObjToJSON)) {
                 sv = serialize(ejs, pp, json);
             } else {

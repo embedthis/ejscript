@@ -18,8 +18,8 @@ static ssize    readHttpData(Ejs *ejs, EjsHttp *hp, ssize count);
 static void     sendHttpCloseEvent(Ejs *ejs, EjsHttp *hp);
 static void     sendHttpErrorEvent(Ejs *ejs, EjsHttp *hp);
 static EjsObj   *startHttpRequest(Ejs *ejs, EjsHttp *hp, char *method, int argc, EjsObj **argv);
-static bool     waitForResponseHeaders(EjsHttp *hp, int timeout);
-static bool     waitForState(EjsHttp *hp, int state, int timeout, int throw);
+static bool     waitForResponseHeaders(EjsHttp *hp, MprTime timeout);
+static bool     waitForState(EjsHttp *hp, int state, MprTime timeout, int throw);
 static ssize    writeHttpData(Ejs *ejs, EjsHttp *hp);
 
 /************************************ Methods *********************************/
@@ -528,6 +528,7 @@ static EjsNumber *http_read(Ejs *ejs, EjsHttp *hp, int argc, EjsObj **argv)
         return 0;
     } 
     hp->readCount += count;
+    //  MOB - should use RC Value (== count)
     ejsCopyToByteArray(ejs, buffer, buffer->writePosition, (char*) mprGetBufStart(hp->responseContent), count);
     ejsSetByteArrayPositions(ejs, buffer, -1, buffer->writePosition + count);
     mprAdjustBufStart(hp->responseContent, count);
@@ -545,7 +546,7 @@ static EjsString *http_readString(Ejs *ejs, EjsHttp *hp, int argc, EjsObj **argv
     EjsString   *result;
     HttpConn    *conn;
     ssize       count;
-    int         timeout;
+    MprTime     timeout;
     
     count = (argc == 1) ? ejsGetInt(ejs, argv[0]) : -1;
     conn = hp->conn;
@@ -680,7 +681,7 @@ static EjsObj *http_setLimits(Ejs *ejs, EjsHttp *hp, int argc, EjsObj **argv)
         hp->limits = (EjsObj*) ejsCreateEmptyPot(ejs);
         ejsGetHttpLimits(ejs, hp->limits, hp->conn->limits, 0);
     }
-    ejsBlendObject(ejs, hp->limits, argv[0], 1);
+    ejsBlendObject(ejs, hp->limits, argv[0], 0, EJS_BLEND_OVERWRITE);
     ejsSetHttpLimits(ejs, hp->conn->limits, hp->limits, 0);
     return 0;
 }
@@ -831,7 +832,7 @@ static EjsString *http_statusMessage(Ejs *ejs, EjsHttp *hp, int argc, EjsObj **a
 static EjsBoolean *http_wait(Ejs *ejs, EjsHttp *hp, int argc, EjsObj **argv)
 {
     MprTime     mark;
-    int         timeout;
+    MprTime     timeout;
 
     timeout = (argc >= 1) ? ejsGetInt(ejs, argv[0]) : -1;
     if (timeout < 0) {
@@ -1217,14 +1218,14 @@ static bool expired(EjsHttp *hp)
     Wait for the connection to acheive a requested state
     Timeout is in msec. <= 0 means don't wait.
  */
-static bool waitForState(EjsHttp *hp, int state, int timeout, int throw)
+static bool waitForState(EjsHttp *hp, int state, MprTime timeout, int throw)
 {
     Ejs             *ejs;
-    MprTime         mark;
+    MprTime         mark, remaining;
     HttpConn        *conn;
     HttpUri         *uri;
     char            *url;
-    int             count, redirectCount, success, rc, remaining;
+    int             count, redirectCount, success, rc;
 
     mprAssert(state >= HTTP_STATE_PARSED);
 
@@ -1326,7 +1327,7 @@ static bool waitForState(EjsHttp *hp, int state, int timeout, int throw)
     Wait till the response headers have been received. Safe in sync and async mode. Async mode never blocks.
     Timeout < 0 means use default inactivity timeout. Timeout of zero means wait forever.
  */
-static bool waitForResponseHeaders(EjsHttp *hp, int timeout)
+static bool waitForResponseHeaders(EjsHttp *hp, MprTime timeout)
 {
     if (hp->conn->async) {
         timeout = 0;

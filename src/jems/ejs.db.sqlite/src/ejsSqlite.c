@@ -21,7 +21,9 @@
     Map allocation and mutex routines to use ejscript version.
  */
 #define MAP_ALLOC   1
-#define MAP_MUTEXES 1
+
+//  MOB - 
+#define MAP_MUTEXES 0
 
 #define THREAD_STYLE SQLITE_CONFIG_MULTITHREAD
 //#define THREAD_STYLE SQLITE_CONFIG_SERIALIZED
@@ -193,7 +195,8 @@ static EjsObj *sqliteSql(Ejs *ejs, EjsSqlite *db, int argc, EjsObj **argv)
                     } else {
                         /*
                             Append the table name for columns from foreign tables. Convert to camel case (tableColumn)
-                            TODO - refactor crude singularization.
+                            Prefix with "_". ie. "_TableColumn"
+                            MOB - remove singularization.
                          */
                         len = strlen(tableName) + 1;
                         tableName = sjoin("_", tableName, colName, NULL);
@@ -208,7 +211,6 @@ static EjsObj *sqliteSql(Ejs *ejs, EjsSqlite *db, int argc, EjsObj **argv)
                             strcpy(&tableName[len - 1], colName);
                             len--;
                         }
-                        // tableName[0] = tolower((int) tableName[0]);
                         tableName[len] = toupper((int) tableName[len]);
                         qname = EN(tableName);
                     }
@@ -314,6 +316,9 @@ struct sqlite3_mem_methods mem = {
 /*
     Map mutexes to use MPR
  */
+
+int mutc = 0;
+
 static int initMutex(void) { 
     return 0; 
 }
@@ -324,12 +329,14 @@ static int termMutex(void) {
 }
 
 
+//  MOB - incomplete must handle kind
 static sqlite3_mutex *allocMutex(int kind)
 {
     MprMutex    *lock;
 
     if ((lock = mprCreateLock()) != 0) {
         mprHold(lock);
+        mutc++;
     }
     return (sqlite3_mutex*) lock;
 }
@@ -337,6 +344,7 @@ static sqlite3_mutex *allocMutex(int kind)
 
 static void freeMutex(sqlite3_mutex *mutex)
 {
+    mutc--;
     mprRelease((MprMutex*) mutex);
 }
 

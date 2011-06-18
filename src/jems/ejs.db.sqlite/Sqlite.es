@@ -91,11 +91,11 @@ module ejs.db.sqlite {
 
         /** @duplicate ejs.db::Database.addColumn */
         function addColumn(table: String, column: String, datatype: String, options = null): Void {
-            datatype = DataTypeToSqlType[datatype.toLowerCase()]
-            if (datatype == undefined) {
+            let mapped = DataTypeToSqlType[datatype.toLowerCase()]
+            if (mapped == undefined) {
                 throw "Bad Ejscript column type: " + datatype
             }
-            query("ALTER TABLE " + table + " ADD " + column + " " + datatype)
+            query("ALTER TABLE " + table + " ADD " + column + " " + mapped)
         }
 
         /** @duplicate ejs.db::Database.addIndex */
@@ -273,13 +273,24 @@ module ejs.db.sqlite {
          */
         function rollback(): Void {}
 
+        //  MOB - why have query and sql
+
         /** @duplicate ejs.db::Database.query */
         function query(cmd: String, tag: String = "SQL", trace: Boolean = false): Array {
             //  TODO - need to access Database.traceAll
+            let mark, size
+            //  MOB - rationalize Sqlite.query with Database.query and Record.innerFind
             if (trace) {
-                App.log.activity(tag,  cmd)
+                App.log.debug(0, tag + ": " + cmd)
+                mark = new Date
+                size = Memory.resident
             }
-            return sql(cmd)
+            let result = sql(cmd)
+            if (trace) {
+                App.log.activity("Stats", "Sqlite query %.2f msec, memory %.2f MB, resident %.2f".format(mark.elapsed, 
+                    (Memory.resident - size) / (1024 * 1024), Memory.resident / (1024 * 1024)))
+            }
+            return result
         }
 
         /** @duplicate ejs.db::Database.sql */

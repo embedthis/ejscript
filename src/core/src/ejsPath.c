@@ -837,6 +837,7 @@ static EjsByteArray *readBytes(Ejs *ejs, EjsPath *fp, int argc, EjsObj **argv)
     rc = 0;
     offset = 0;
     while ((bytes = mprReadFile(file, buffer, MPR_BUFSIZE)) > 0) {
+        //  MOB - should use RC Value (== bytes)
         if (ejsCopyToByteArray(ejs, result, offset, buffer, bytes) < 0) {
             ejsThrowMemoryError(ejs);
             rc = -1;

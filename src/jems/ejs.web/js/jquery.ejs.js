@@ -188,7 +188,7 @@
     }
 
     /*
-        Refresh dynamic elements using a data-refresh attribugte
+        Refresh dynamic elements using a data-refresh attributes
      */
     function refresh(options) {
         function anim() {
@@ -313,7 +313,11 @@
         }
         var elt = $(this);
         var refreshCfg = $.extend({}, defaults, options || {});
-        update.call(elt, refreshCfg);
+        // update.call(elt, refreshCfg);
+        var period = getDataAttributes(elt)["refresh-period"];
+        setTimeout(function(elt) { 
+            update.call(elt, refreshCfg); 
+        }, period, elt);
         return this;
     }
 

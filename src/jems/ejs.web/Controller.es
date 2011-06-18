@@ -34,11 +34,18 @@ module ejs.web {
          */
         use default namespace module
 
+        /*
+            Actions to cache. Indexed by controller+action name plus optionally, post and query data. 
+            Contains cache options for this action. Created on demand if cache() is called.
+         */
+        private static var _cacheOptions: Object = {}
+        private static var _caching: Boolean
+
         private var _afterCheckers: Array
         private var _beforeCheckers: Array
 
         /** Name of the Controller action method being run for this request */
-        var actionName:  String 
+        var actionName: String 
 
         /** Configuration settings. This is a reference to $ejs.web::Request.config */
         var config: Object 
@@ -102,7 +109,7 @@ module ejs.web {
          */
         function Controller(req: Request = null) {
             /*  _initRequest may be set by create() to allow subclasses to omit constructors */
-            controllerName = typeOf(this).trim("Controller") || "-DefaultController-"
+            controllerName = typeOf(this).trim("Controller") //MOB || "-DefaultController-"
             request = req || _initRequest
             if (request) {
                 request.controller = this
@@ -129,6 +136,126 @@ module ejs.web {
             _afterCheckers.append([fn, options])
         }
 
+        /*
+            Fetch cached data from the cache if present.
+            @return a response object
+         */
+        private function fetchCachedResponse(): Object {
+            let cacheIndex = getCacheIndex(controllerName, actionName)
+            let options = _cacheOptions[cacheIndex]
+            if (options) {
+                let cacheName = getCacheName(cacheIndex, options)
+                if ((!options.uri || options.uri == "*" || cacheName == (cacheIndex + "::" + options.uri)) && 
+                        options.mode != "manual") {
+                    let hdr
+                    if ((hdr = request.header("Cache-Control")) && (hdr.contains("max-age=0") || hdr.contains("no-cache"))) {
+                        App.log.debug(5, "Cache-control header rejects use of cached content")
+                    } else {
+                        let item = App.cache.readObj(cacheName)
+                        if (item) {
+                            /*
+                                Observe headers
+                                If-None-Match: "ec18d-54-4d706a63"
+                                If-Modified-Since: Fri, 04 Mar 2011 04:28:19 GMT
+                             */
+                            let status = Http.Ok
+                            if ((hdr = request.header("If-None-Match")) && hdr == item.tag) {
+                                /* 
+                                    RFC2616 requires returning PrecondFailed, but chrome doesn't send an If-Modified-Since
+                                    header and so returning PrecondFailed caused Chrome to fail.
+                                 */
+                                // SPEC REQUIRES THIS BUG CHROME FAILS status = Http.PrecondFailed
+                                status = Http.NotModified
+                            }
+                            if ((hdr = request.header("If-Modified-Since"))) {
+                                if (item.modified <= Date.parse(hdr)) {
+                                    status = Http.NotModified
+                                }
+                            }
+                            if (options.client) {
+                                setHeader("Cache-Control", options.client, false)
+                            }
+                            setHeader("Last-Modified", Date(item.modified).toUTCString())
+                            setHeader("Etag", md5(cacheName))
+                            if (status == Http.Ok) {
+                                //  MOB - change this trace to just use "actionName"
+                                App.log.debug(5, "Use cached: " + cacheName)
+                                write(item.data)
+                                request.finalize()
+                            } else {
+                                App.log.debug(5, "Use cached content, status: " + status + ", " + cacheName)
+                            }
+                            return {status: status}
+                        }
+                        App.log.debug(5, "No cached content for: " + cacheName)
+                    }
+                    request.writeBuffer = new ByteArray
+                    setHeader("Etag", md5(cacheName))
+                    if (options.client) {
+                        setHeader("Cache-Control", options.client, false)
+                    }
+                }
+            }
+            setHeader("Last-Modified", Date().toUTCString())
+            return null
+        }
+
+        /**
+            Manually write out cached content to the client.
+            This routine will write is valid (non-expired) cached data to the client. Caching for actions is enabled by
+            calling $cache() in the Controller.
+            @return True if valid cached content was found to write to the client.
+         */
+        function writeCached(): Boolean {
+            let cacheIndex = getCacheIndex(controllerName, actionName)
+            let options = _cacheOptions[cacheIndex]
+            if (request.finalized || !options) {
+                return false
+            }
+            let cacheName = getCacheName(cacheIndex, options)
+            if ((!options.uri || options.uri == "*" || cacheName == options.uri)) {
+                let item
+                if (item = App.cache.readObj(cacheName)) {
+                    App.log.debug(5, "Use cached: " + cacheName)
+                    setHeader("Etag", md5(cacheName))
+                    setHeader("Last-Modified", Date(item.modified).toUTCString())
+                    if (options.client) {
+                        setHeader("Cache-Control", options.client, false)
+                    }
+                    request.writeBuffer = null
+                    write(item.data)
+                    request.finalize()
+                    return true
+                }
+            }
+            App.log.debug(5, "no cached: " + cacheName)
+            return false
+        }
+
+        /*
+            Save the output from the action for future requests
+         */
+        private function saveCachedResponse(): Void {
+            if (request.finalized) {
+                let cacheIndex = getCacheIndex(controllerName, actionName)
+                /* Cache output */
+                let options = _cacheOptions[cacheIndex]
+                if (options) {
+                    let cacheName = getCacheName(cacheIndex, options)
+                    let etag = md5(cacheName)
+                    App.cache.writeObj(cacheName, { tag: etag, modified: Date.now(), data: request.writeBuffer}, options)
+                    App.log.debug(5, "Cache action " + cacheName + ", " + request.writeBuffer.available + " bytes")
+                }
+            }
+            let data = request.writeBuffer
+            request.writeBuffer = null
+            request.write(data)
+            if (request.finalized) {
+                /* Now that writeBuffer is cleared, finalize will actually finalize the request */
+                request.finalize()
+            }
+        }
+
         //  MOB - rename
         /** 
             Controller web application. This function will run a controller action method and return a response object. 
@@ -140,29 +267,23 @@ module ejs.web {
             @return A response object hash {status, headers, body} or null if writing directly using the request object.
          */
         function app(request: Request, aname: String = null): Object {
+            let response, cacheIndex, cacheName
             let ns = params.namespace || "action"
+
             actionName ||= aname || params.action || "index"
             params.action = actionName
             runCheckers(_beforeCheckers)
-            let response
-            //  MOB - is this right to test autoFinalizing here?
+
             if (!request.finalized && request.autoFinalizing) {
-/*
-                MOB - prototype action caching
-                if (_cache[actionName]) {
-                    response = App.store.read("::ejs.web.action::" + controllerName + "::" + actionName)
-                    if (response) {
-                        return deserialize(response)
-                    }
-                    request.writeBuffer = new ByteArray
+                if (_caching && (response = fetchCachedResponse())) {
+                    return response
                 }
- */
                 if (!(ns)::[actionName]) {
                     if (!viewExists(actionName)) {
                         response = "action"::missing()
                     }
                 } else {
-                    App.log.debug(3, "Run action " + actionName)
+                    App.log.debug(4, "Run action " + actionName)
                     response = (ns)::[actionName]()
                 }
                 if (response && !response.body) {
@@ -177,14 +298,9 @@ module ejs.web {
             if (!response) {
                 request.autoFinalize()
             }
-/*MOB
-            //  MOB - but what if not finalized? 
-            //  MOB - options. Could just have caching for what the action has rendered.
-            if (_cache[actionName]) {
-                response = App.store.write("::ejs.web.action::" + controllerName + "::" + actionName, 
-                    serialize(request.writeBuffer), _cache[actionName])
+            if (request.writeBuffer) {
+                saveCachedResponse()
             }
- */
             return response
         }
 
@@ -212,15 +328,163 @@ module ejs.web {
             _beforeCheckers.append([fn, options])
         }
 
-/*MOB
-        //  MOB - this is action caching. Caches entire page
-        //  Usage:  cache("index", {lifespan: 200})
-        function cache(name: String, options: Object = null): Void {
-            if (config.cache.action.enable) {
-                _cache[name] = options
+        /**
+            Controler action caching. This caches the entire output of an action (including generated view).
+            Caching is disabled/enabled via the ejsrc config.cache.actions.enable field. It is enabled by default.
+            Caching may be used for any HTTP method, though typically it is most useful for state-less GET requests.
+            Output data is uniquely cached for requests with different URI post data or query parameters.
+            @param controller Controller class. This can be a Controller class object, "this" or a String controller name.
+                You can specify "this" in static code or can also use "this" in class instance
+                code and this routine will determine the underlying controller class.
+            @param actions Action string or array of actions
+            @param options Cache control options. Default options for all action caching can be provided via the 
+                ejsrc config.cache.actions field. This is frequently used to specifiy a default lifespan for cached data.
+            @option mode Client caching mode. Defaults to "server" if unset. If mode is set to "client", a Cache-Control 
+                header will be sent to the client with the caching "max-age" set to the lifespan. This causes the client 
+                to serve client-cached content and to not contact the server at all until the max-age expires. 
+                If mode is set to "manual", the output from the action will be cached, but the action routine will 
+                always be called. To use the cached content in this mode, call $writeCached() in the action method. 
+                The default mode is "server" which caches content at the server for the specified lifespan. In server mode, 
+                the client will cache requests, but will always revalidate the request with the server. If the server-side 
+                content has not expired, a HTTP Not-Modified (304) response will be given and the client will use its 
+                client-side cached content.
+
+                Use "client" mode for static content that will rarely change and for which using "reload" in the browser
+                is an adequate solution to force a refresh. Use "server" mode for dynamic content in conjunction with 
+                $updateCache to expire or update cache contents. Use "manual" mode when the action routine needs to 
+                determine if cached content can be used on a case by case basis.
+
+                If a client browser clicks reload, the client cached and server cached content will be ignored and the 
+                action method will be always invoked.
+
+            @option lifespan Time in seconds for the cached output to persist.
+            @option client Cache-Control header to send to the client to control caching in the client.
+                Use this for explicit control of the Cache-Control header and thus control of caching in the client.
+                This can be used to set a "max-age" for cached data in the client.
+                These are some of the HTTP/1.1 Cache-Control keywords that can be used in the client option are:
+                "max-age" Max time in seconds the resource is considered fresh.
+                "s-maxage" Max time in seconds the resource is considered fresh from a shared cache.
+                "public" marks authenticated responses as cacheable.
+                "private" shared caches may not store the response.
+                "no-cache" cache must re-submit request for validation before using cached copy.
+                "no-store" response may not be stored in a cache.
+                "must-revalidate" forces clients to revalidate the request with the server.
+                "proxy-revalidate" similar to must-revalidate except only for proxy caches>
+            @option uri URI and parameter to further differentiate cached content. If supplied, different cache data
+                can be stored for each URI that applies to the given controller/action. If the URI is set to "*" all 
+                URIs for that action/controller are uniquely cached. If the request has POST data, the URI may include
+                such post data in a query format. E.g. {uri: /buy?item=scarf&quantity=1}.
+            @example 
+                cache(DashController, "index", {lifespan: 200})
+                cache(this, ["index", "edit", "show"])
+                cache(this, "index", false)
+         */
+        static function cache(controller, actions: Object, options: Object = {}): Void {
+            _caching = App.config.cache.actions.enable
+            if (!_caching) {
+                return
+            }
+            let cname
+            if (controller is String) {
+                cname = controller.trim("Controller")
+            } else if (!(controller is Type)) {
+                controller = Object.getType(controller)
+                cname = Object.getName(controller).trim("Controller")
+            } else {
+                cname = Object.getName(controller).trim("Controller")
+            }
+            if (actions is String || actions is Function) {
+                actions = [actions]
+            }
+            blend(options, App.config.cache.actions, {overwrite: false})
+            if (options.mode == "client") {
+                options.client ||= "max-age=" + options.lifespan
+            }
+            for each (name in actions) {
+                cacheIndex = getCacheIndex(cname, name)
+                _cacheOptions[cacheIndex] = options
+                if (options.lifespan is Number) {
+                    let cacheName = cacheIndex
+                    if (options.uri) {
+                        cacheName += "::" + options.uri
+                    }
+                    /* Invalidate cache data when the app is reloaded */
+                    App.cache.expire(cacheName, null)
+                    App.cache.expire(cacheName, Date().future(options.lifespan * 1000))
+                }
             }
         }
- */
+
+        /**
+            Update the cache contents.
+            This will manually update the cache contents for the given actions with the supplied data. If data is null,
+            then cached content will be immediately expired.
+            @param controller Controller class. This can be a Controller class object, "this" or a String controller name.
+                You can specify "this" in static code or can also use "this" in class instance
+                code and this routine will determine the underlying controller class.
+            @param actions Action string or array of actions
+            @param data Object data to cache. Data is serialized using JSON and stored in the cache. Set to null to
+                invalidate/expire cached data.
+            @param options Cache control options.
+            @option uri URI and parameter to further differentiate cached content. If supplied, different cache data
+                can be stored for each URI that applies to the given controller/action. If the URI is set to "*" all 
+                URIs for that action/controller are uniquely cached. If the request has POST data, the URI may include
+                such post data in a query format. E.g. {uri: /buy?item=scarf&quantity=1}
+          */
+        static function updateCache(controller, actions: Object, data: Object, options: Object = {}): Void {
+            _caching = App.config.cache.actions.enable
+            if (!_caching) {
+                return
+            }
+            let cname
+            if (controller is String) {
+                cname = controller.trim("Controller")
+            } else if (!(controller is Type)) {
+                controller = Object.getType(controller)
+                cname = Object.getName(controller).trim("Controller")
+            } else {
+                cname = Object.getName(controller).trim("Controller")
+            }
+            if (actions is String || actions is Function) {
+                actions = [actions]
+            }
+            for each (name in actions) {
+                cacheIndex = getCacheIndex(cname, name)
+                let cacheName = cacheIndex
+                if (options.uri) {
+                    cacheName += "::" + options.uri
+                }
+                if (data == null) {
+                    App.log.debug(5, "Expire " + cacheName)
+                    App.cache.expire(cacheName, Date())
+                } else {
+                    let etag = md5(cacheName)
+                    App.cache.writeObj(cacheName, { tag: etag, modified: Date.now(), data: data}, _cacheOptions[cacheIndex])
+                    App.log.debug(5, "Update cache " + cacheName)
+                }
+            }
+        }
+
+        /** @duplicate ejs.web::Request.clearCache */
+        function clearFlash(): Void
+            request.clearFlash()
+
+        private static function getCacheIndex(cname: String, name: String = "*"): String
+            "::ejs.web.action::" + cname + "::" + name
+
+        /*
+            Create a full cache key name by combining the name prefix from getCacheIndex with URI information 
+            URI information is added if cache() is called with options.uri set to something
+         */
+        private function getCacheName(name: String, options: Object): String {
+            if (options && options.uri) {
+                name += "::" + request.pathInfo
+                if (request.formData) {
+                    name += "?" + request.formData
+                }
+            }
+            return name
+        }
 
         /** @duplicate ejs.web::Request.dontAutoFinalize */
         function dontAutoFinalize(): Void

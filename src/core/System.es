@@ -76,10 +76,11 @@ module ejs {
             sh(args)
 
         /** 
-            @hide TODO TEMP 
-            MOB - remove
+            Exec a new program to replace the current program. A new process is not created.
+            NOTE: this call does not return
+            @param args Command arguments. The args may be either a string or an array of strings.
          */
-        native static function exec(args): String
+        native static function exec(args = null): Void
     }
 }
 

@@ -184,20 +184,25 @@ module ejs {
      */
     native function md5(str: String): String
 
-//  DOC -- rewrite
     /** 
-        Blend one object into another.  The merge is done at the primitive property level and it does a deep clone of 
-        the source. If overwrite is true, the property is replaced. If overwrite is false, the property will be added 
-        if it does not already exist This is useful for inheriting and optionally overwriting option hashes (among other
-        things). 
+        Blend the contents of one object into another. This routine copies the properites of one object into another.
+        If a property is an object reference and the "deep" option is set, the object is cloned using a deep clone. 
+        Otherwise the object reference is copied.
+        If the overwrite option is false, the property will only be copied if it does not already exist in the destination.
         @param dest Destination object
         @param src Source object
-        @param overwrite Boolean. If true, then overwrite existing properties in the destination object.
+        @param options Control options
+        @option overwrite Boolean. If true, then overwrite existing properties in the destination object. Defaults to true.
+        @option deep Boolean. If true, then recursively copy the properties of any objects referenced in the source object.
+            Otherwise, the copy is only one level deep. Defaults to true.
+        @option functions Boolean. If true, then copy functions. Defaults to false.
+        @option subclasses Boolean. If true, then copy subclass properties. Defaults to true.
+        @option trace Boolean. If true, then trace to the App.log the copied property names.
         @returns An the destination object
         @spec ejs
-        @hide
+        @example blend(dest, src, { overwrite: true, deep: true, functions: false, subclasses: true })
      */
-    native function blend(dest: Object, src: Object, overwrite: Boolean = true): Object
+    native function blend(dest: Object, src: Object, options = null): Object
 
     // TODO - should cache be a Path
     /** 

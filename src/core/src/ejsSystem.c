@@ -79,20 +79,54 @@ static EjsNumber *system_daemon(Ejs *ejs, EjsObj *unused, int argc, EjsObj **arg
 }
 
 
-//  TODO - refactor and rename
 /*
-    function exec(cmd: String): Void
+    function exec(cmd = null): Void
  */
 static EjsObj *system_exec(Ejs *ejs, EjsObj *unused, int argc, EjsObj **argv)
 {
 #if BLD_UNIX_LIKE
-    char    **argVector;
-    int     argCount;
+    EjsObj      *args;
+    EjsArray    *ap;
+    char        *path, **argVector;
+    int         argCount, i;
 
-    mprMakeArgv(ejsToMulti(ejs, argv[0]), &argCount, &argVector, 0);
-    execv(argVector[0], argVector);
+    if (argc == 0) {
+        path = MPR->argv[0];
+        if (!mprIsAbsPath(path)) {
+            path = mprGetAppPath();
+        }
+        for (i = 3; i < MPR_MAX_FILE; i++) {
+            close(i);
+        }
+        execv(path, MPR->argv);
+        ejsThrowStateError(ejs, "Can't exec %s", path);
+    } else {
+        args = argv[0];
+        if (ejsIs(ejs, args, Array)) {
+            ap = (EjsArray*) args;
+            if ((argVector = mprAlloc(sizeof(void*) * (ap->length + 1))) == 0) {
+                ejsThrowMemoryError(ejs);
+                return 0;
+            }
+            for (i = 0; i < ap->length; i++) {
+                argVector[i] = ejsToMulti(ejs, ejsToString(ejs, ejsGetProperty(ejs, args, i)));
+            }
+            argVector[i] = 0;
+            argCount = ap->length;
+
+        } else {
+            if (mprMakeArgv(ejsToMulti(ejs, args), &argCount, &argVector, 0) < 0 || argVector == 0) {
+                ejsThrowArgError(ejs, "Can't parse command line");
+                return 0;
+            }
+        }
+        for (i = 3; i < MPR_MAX_FILE; i++) {
+            close(i);
+        }
+        execv(argVector[0], argVector);
+        ejsThrowStateError(ejs, "Can't exec %@", ejsToString(ejs, argv[0]));
+    }
 #endif
-    ejsThrowStateError(ejs, "Can't exec %@", ejsToString(ejs, argv[0]));
     return 0;
 }
 

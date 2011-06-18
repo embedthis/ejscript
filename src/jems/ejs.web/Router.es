@@ -24,7 +24,7 @@ module ejs.web {
         //  Match /some/path and run myCustomApp to generate a response. Target is data for myCustomApp.
         r.add("/some/path", {response: myCustomApp, target: "/other/path"})
 
-        //  Match /some/path and run MvcApp with controller == User and action == "register"
+        //  Match /User/register and run MvcApp with controller == User and action == "register"
         r.add("\@/User/register")
 
         //  Add route for files with a ".es" extension and use the ScriptApp to generate the response
@@ -33,10 +33,10 @@ module ejs.web {
         //  Add route for directories and use the DirApp to generate the response
         r.add(Router.isDir, {name: "dir", response: DirApp})
 
-        //  Add route for RESTful routes and respond with the MvcApp
+        //  Add routes for RESTful routes for URIs starting with "/User" and respond using MvcApp
         r.addResources("User")
 
-        //  Manually create restful routes
+        //  Manually create restful routes using the given URI template patterns
         r.add("/{controller}",           {action: "create", method: "POST"})
         r.add("/{controller}/init",      {action: "init"})
         r.add("/{controller}",           {action: "index"})
@@ -338,6 +338,8 @@ module ejs.web {
         /**
             Add a route
             @param template String or Regular Expression defining the form of a matching URI (Request.pathInfo).
+                If options are not provided and the template arg is a string starting with "\@", the template is
+                interpreted both as a URI and as providing the options. See $options below for more details.
             @param options Route options representing the URI and options to use when servicing the request. If it
                 is a string, it may begin with a "\@" and be of the form "\@[controller/]action". In this case, if there
                 is a "/" delimiter, the first portion is a controller and the second is the controller action to invoke.
@@ -361,6 +363,7 @@ module ejs.web {
             @examples:
                 Route("/{controller}(/{action}(/{id}))/", { method: "POST" })
                 Route("/User/login", {name: "login" })
+                Route("\@/User/login")
             @option name Name for the route
             @option method String|RegExp HTTP methods to support.
             @option limits Limits object for the requests on this route. See HttpServer.limits.
@@ -486,7 +489,7 @@ module ejs.web {
                 r.initialized = true
             }
             if (log.level >= 3) {
-                log.debug(3, "Matched route \"" + r.routeSetName + "/" + r.name + "\"")
+                log.debug(4, "Matched route \"" + r.routeSetName + "/" + r.name + "\"")
                 if (log.level >= 5) {
                     log.debug(5, "  Route params " + serialize(params, {pretty: true}))
                 }
@@ -553,6 +556,7 @@ module ejs.web {
         public function setDefaultApp(app: Function): Void
             defaultApp = app
 
+        //  MOB - rethink the "full" arg
         /**
             Show the route table
             @param extra Set to "full" to display extra route information
@@ -773,7 +777,8 @@ module ejs.web {
                 The controller or action may be absent. For example: "\@Controller/", "\@action", "\@controller/action".
                 If the string does not begin with an "\@", it is interpreted as a literal URI. 
                 For example: "/web/index.html". If the options is an object hash, it may contain the options below:
-            @option action Action method to service the request. This may be of the form "controller/action" or "controller/"
+            @option action Action method to service the request. This may be of the form "action", "controller/action" or 
+                "controller/".  If the action portion omitted, the default action (index) will be used.
             @option controller Controller to service the request.
             @option name Name to give to the route. If absent, the name is created from the controller and action names.
             @option outer Parent route. The parent's template and parameters are appended to this route.

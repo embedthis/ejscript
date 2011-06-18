@@ -970,6 +970,7 @@ EjsNumber *ejsWriteToByteArray(Ejs *ejs, EjsByteArray *ap, int argc, EjsObj **ar
             /*
                 Note: this only copies between the read/write positions of the source byte array
              */
+            //  MOB - should use RC value (== len)
             ejsCopyToByteArray(ejs, ap, ap->writePosition, (char*) &bp->value[bp->readPosition], len);
             ap->writePosition += len;
             wrote += len;
@@ -1319,7 +1320,7 @@ void ejsSetByteArrayPositions(Ejs *ejs, EjsByteArray *ba, ssize readPosition, ss
 }
 
 
-int ejsCopyToByteArray(Ejs *ejs, EjsByteArray *ba, ssize offset, char *data, ssize length)
+ssize ejsCopyToByteArray(Ejs *ejs, EjsByteArray *ba, ssize offset, cchar *data, ssize length)
 {
     int     i;
 
@@ -1338,7 +1339,7 @@ int ejsCopyToByteArray(Ejs *ejs, EjsByteArray *ba, ssize offset, char *data, ssi
     for (i = 0; i < length; i++) {
         ba->value[offset++] = data[i];
     }
-    return 0;
+    return length;
 }
 
 

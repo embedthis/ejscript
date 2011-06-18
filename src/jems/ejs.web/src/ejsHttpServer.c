@@ -117,7 +117,7 @@ static EjsObj *hs_setLimits(Ejs *ejs, EjsHttpServer *sp, int argc, EjsObj **argv
         mprAssert(limits);
         ejsGetHttpLimits(ejs, sp->limits, limits, 1);
     }
-    ejsBlendObject(ejs, sp->limits, argv[0], 1);
+    ejsBlendObject(ejs, sp->limits, argv[0], 0, EJS_BLEND_OVERWRITE);
     if (sp->server) {
         limits = (sp->server) ? sp->server->limits : ejs->http->serverLimits;
         ejsSetHttpLimits(ejs, limits, sp->limits, 1);

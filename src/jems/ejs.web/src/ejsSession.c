@@ -25,7 +25,7 @@ static EjsSession *initSession(Ejs *ejs, EjsSession *sp, EjsString *key, MprTime
         sp->cache = 0;
         return 0;
     }
-    sp->lifespan = timeout;
+    sp->timeout = timeout;
     sp->key = key;
     return sp;
 }
@@ -44,7 +44,7 @@ static EjsString *makeKey(Ejs *ejs, EjsSession *sp)
 
 /*
     Get (create) a session object using the supplied key. If the key has expired or is NULL, then generate a new key if
-    create is true.
+    create is true. The timeout is in msec.
  */
 EjsSession *ejsGetSession(Ejs *ejs, EjsString *key, MprTime timeout, int create)
 {
@@ -80,6 +80,8 @@ static void manageSession(EjsSession *sp, int flags)
     if (flags & MPR_MANAGE_MARK) {
         ejsManagePot(sp, flags);
         mprMark(sp->key);
+        mprMark(sp->options);
+        mprMark(sp->cache);
     }
 }
 
@@ -155,7 +157,8 @@ static int setSessionProperty(Ejs *ejs, EjsSession *sp, int slotNum, EjsAny *val
     }
     if (sp->options == 0) {
         sp->options = ejsCreateEmptyPot(ejs);
-        ejsSetPropertyByName(ejs, sp->options, EN("lifespan"), ejsCreateNumber(ejs, (MprNumber) sp->lifespan));
+        ejsSetPropertyByName(ejs, sp->options, EN("lifespan"), 
+            ejsCreateNumber(ejs, (MprNumber) (sp->timeout / MPR_TICKS_PER_SEC)));
     }
     if (ejsCacheWriteObj(ejs, sp->cache, sp->key, sp, sp->options) == 0) {
         return EJS_ERR;
@@ -164,7 +167,10 @@ static int setSessionProperty(Ejs *ejs, EjsSession *sp, int slotNum, EjsAny *val
 }
 
 
-void ejsSetSessionTimeout(Ejs *ejs, EjsSession *sp, int timeout)
+/*
+    The timeout arg is a number of ticks to add to the current time
+ */
+void ejsSetSessionTimeout(Ejs *ejs, EjsSession *sp, MprTime timeout)
 {
     ejsCacheExpire(ejs, sp->cache, sp->key, ejsCreateDate(ejs, mprGetTime() + timeout));
 }
@@ -179,15 +185,15 @@ static EjsSession *sess_constructor(Ejs *ejs, EjsSession *sp, int argc, EjsAny *
 {
     EjsAny      *vp;
     EjsPot      *options;
-    MprTime     lifespan;
+    MprTime     timeout;
 
-    lifespan = 0;
+    timeout = 0;
     if (argc > 0) {
         options = argv[0];
         vp = ejsGetPropertyByName(ejs, options, EN("lifespan"));
-        lifespan = ejsGetInt(ejs, vp);
+        timeout = ejsGetInt(ejs, vp) * MPR_TICKS_PER_SEC;
     }
-    return initSession(ejs, sp, sp->key, lifespan);
+    return initSession(ejs, sp, sp->key, timeout);
 }
 
 

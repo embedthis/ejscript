@@ -184,7 +184,7 @@
 #define ES_md5_str                                                     0
 #define ES_blend_dest                                                  0
 #define ES_blend_src                                                   1
-#define ES_blend_overwrite                                             2
+#define ES_blend_options                                               2
 #define ES_eval_script                                                 0
 #define ES_eval_cache                                                  1
 #define ES_hashcode_o                                                  0
@@ -245,29 +245,30 @@
 #define ES_App_logFile                                                 9
 #define ES_App_name                                                    10
 #define ES_App_cache                                                   11
-#define ES_App_title                                                   12
-#define ES_App_version                                                 13
-#define ES_App_args                                                    14
-#define ES_App_chdir                                                   15
-#define ES_App_createSearch                                            16
-#define ES_App_dir                                                     17
-#define ES_App_env                                                     18
-#define ES_App_exeDir                                                  19
-#define ES_App_exePath                                                 20
-#define ES_App_errorStream                                             21
-#define ES_App_exit                                                    22
-#define ES_App_getenv                                                  23
-#define ES_App_inputStream                                             24
-#define ES_App_loadrc                                                  25
-#define ES_App_outputStream                                            26
-#define ES_App_pid                                                     27
-#define ES_App_putenv                                                  28
-#define ES_App_run                                                     29
-#define ES_App_search                                                  30
-#define ES_App_sleep                                                   31
-#define ES_App_updateLog                                               32
-#define ES_App_waitForEvent                                            33
-#define ES_App_NUM_CLASS_PROP                                          34
+#define ES_App_started                                                 12
+#define ES_App_title                                                   13
+#define ES_App_version                                                 14
+#define ES_App_args                                                    15
+#define ES_App_chdir                                                   16
+#define ES_App_createSearch                                            17
+#define ES_App_dir                                                     18
+#define ES_App_env                                                     19
+#define ES_App_exeDir                                                  20
+#define ES_App_exePath                                                 21
+#define ES_App_errorStream                                             22
+#define ES_App_exit                                                    23
+#define ES_App_getenv                                                  24
+#define ES_App_inputStream                                             25
+#define ES_App_loadrc                                                  26
+#define ES_App_outputStream                                            27
+#define ES_App_pid                                                     28
+#define ES_App_putenv                                                  29
+#define ES_App_run                                                     30
+#define ES_App_search                                                  31
+#define ES_App_sleep                                                   32
+#define ES_App_updateLog                                               33
+#define ES_App_waitForEvent                                            34
+#define ES_App_NUM_CLASS_PROP                                          35
 
 /*
    Prototype (instance) slots for "App" type 
@@ -2058,9 +2059,10 @@
 #define ES_Timer_period                                                1
 #define ES_Timer_onerror                                               2
 #define ES_Timer_repeat                                                3
-#define ES_Timer_start                                                 4
-#define ES_Timer_stop                                                  5
-#define ES_Timer_NUM_INSTANCE_PROP                                     6
+#define ES_Timer_restart                                               4
+#define ES_Timer_start                                                 5
+#define ES_Timer_stop                                                  6
+#define ES_Timer_NUM_INSTANCE_PROP                                     7
 #define ES_Timer_NUM_INHERITED_PROP                                    0
 
 
@@ -2335,6 +2337,6 @@
 #define ES_XMLList_NUM_INSTANCE_PROP                                   20
 #define ES_XMLList_NUM_INHERITED_PROP                                  0
 
-#define _ES_CHECKSUM_ejs   1439609
+#define _ES_CHECKSUM_ejs   1441770
 
 #endif

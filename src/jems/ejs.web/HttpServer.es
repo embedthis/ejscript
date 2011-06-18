@@ -22,7 +22,6 @@ module ejs.web {
         private var idleWorkers: Array = []
         private var activeWorkers: Array = []
         private var workerImage: Worker
-        private var pruner: Timer
 
         private static const defaultConfig = {
             app: {
@@ -47,11 +46,11 @@ module ejs.web {
                 "class": "LocalCache",
                 module: "ejs",
                 lifespan: 3600,
+                actions: { enable: true },
+                records: { enable: true },
+                workers: { enable: true, limit: 10 },
             },
             web: {
-                cache: {
-                    workers: { enable: true, limit: 10 },
-                },
                 limits: {},
                 views: {
                     connectors: {
@@ -72,7 +71,7 @@ module ejs.web {
             @hide
          */
         static function initHttpServer() {
-            blend(App.config, defaultConfig, false)
+            blend(App.config, defaultConfig, {overwrite: false})
             let dirs = App.config.dirs
             for (let [key, value] in dirs) {
                 dirs[key] = Path(value)
@@ -235,7 +234,7 @@ server.listen("127.0.0.1:7777")
                 config.ejsrc = options.ejsrc
             }
             if (config.files.ejsrc && config.files.ejsrc.exists) {
-                blend(config, Path(config.files.ejsrc).readJSON(), true)
+                blend(config, Path(config.files.ejsrc).readJSON())
                 let dirs = config.dirs
                 for (let [key, value] in dirs) {
                     dirs[key] = Path(value)
@@ -244,7 +243,7 @@ server.listen("127.0.0.1:7777")
             } else if (home != ".") {
                 let path = home.join("ejsrc")
                 if (path.exists) {
-                    blend(config, path.readJSON(), true)
+                    blend(config, path.readJSON())
                     App.updateLog()
                 }
             }
@@ -252,7 +251,7 @@ server.listen("127.0.0.1:7777")
             if (web.trace) {
                 trace(web.trace)
             }
-            web.limits.workers ||= web.cache.workers.limit
+            web.limits.workers ||= config.cache.workers.limit
             setLimits(web.limits)
             if (web.session) {
                 openSession()
@@ -400,7 +399,9 @@ server.listen("127.0.0.1:7777")
                     request.status = response.status || 200
                     let headers = response.headers || { "Content-Type": "text/html" }
                     request.setHeaders(headers)
-                    processBody(request, response.body)
+                    if (response.body) {
+                        processBody(request, response.body)
+                    }
 
                 } else {
                     let file = request.responseHeaders["X-Sendfile"]
@@ -499,9 +500,8 @@ server.listen("127.0.0.1:7777")
 
         private function releaseWorker(w: Worker): Void {
             activeWorkers.remove(w)
-            if (config.web.cache.workers.enable) {
+            if (config.cache.workers.enable) {
                 idleWorkers.push(w)
-                pruner.restart()
             }
             App.log.debug(4, "HttpServer.releaseWorker idle: " + idleWorkers.length + " active:" + activeWorkers.length)
         }
@@ -554,7 +554,9 @@ server.listen("127.0.0.1:7777")
                     /* Must not touch request from here on - the worker owns it now */
                 } else {
                     //  MOB - rename response => responder
+                    let mark = new Date
                     process(route.response, request)
+                    App.log.debug(2, "Elapsed " + mark.elapsed + " msec for " + request.uri)
                 }
             } catch (e) {
                 let status = request.status != Http.Ok ? request.status : Http.ServerError

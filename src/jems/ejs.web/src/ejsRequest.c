@@ -69,6 +69,51 @@ static void defineParam(Ejs *ejs, EjsObj *params, cchar *key, cchar *svalue)
 }
 
 
+static int sortForm(MprHash **h1, MprHash **h2)
+{
+    return scmp((*h1)->key, (*h2)->key);
+}
+
+
+/*
+    Create the formData string. This is a stable, sorted string of form variables
+ */
+static EjsString *createFormData(Ejs *ejs, EjsRequest *req)
+{
+    MprHashTable    *formVars;
+    MprHash         *hp;
+    MprList         *list;
+    char            *buf, *cp;
+    ssize           len;
+    int             next;
+
+    if (req->formData == 0) {
+        if (req->conn && (formVars = req->conn->rx->formVars) != 0) {
+            if ((list = mprCreateList(mprGetHashLength(formVars), 0)) != 0) {
+                len = 0;
+                for (hp = 0; (hp = mprGetNextKey(formVars, hp)) != NULL; ) {
+                    mprAddItem(list, hp);
+                    len += slen(hp->key) + slen(hp->data) + 2;
+                }
+                if ((buf = mprAlloc(len + 1)) != 0) {
+                    mprSortList(list, sortForm);
+                    cp = buf;
+                    for (next = 0; (hp = mprGetNextItem(list, &next)) != 0; ) {
+                        strcpy(cp, hp->key); cp += slen(hp->key);
+                        *cp++ = '=';
+                        strcpy(cp, hp->data); cp += slen(hp->data);
+                        *cp++ = '&';
+                    }
+                    cp[-1] = '\0';
+                    req->formData = ejsCreateStringFromAsc(ejs, buf);
+                }
+            }
+        }
+    }
+    return req->formData;
+}
+
+
 static EjsObj *createParams(Ejs *ejs, EjsRequest *req)
 {
     EjsObj          *params;
@@ -502,6 +547,9 @@ static EjsAny *getRequestProperty(Ejs *ejs, EjsRequest *req, int slotNum)
     case ES_ejs_web_Request_files:
         return createFiles(ejs, req);
 
+    case ES_ejs_web_Request_formData:
+        return createFormData(ejs, req);
+
     case ES_ejs_web_Request_headers:
         return createHeaders(ejs, req);
 
@@ -653,6 +701,11 @@ static EjsAny *getRequestProperty(Ejs *ejs, EjsRequest *req, int slotNum)
             }
         }
         return req->uri;
+
+#if ES_ejs_web_Request_writeBuffer
+    case ES_ejs_web_Request_writeBuffer:
+        return req->writeBuffer;
+#endif
 
     default:
         if (slotNum < req->pot.numProp) {
@@ -840,6 +893,12 @@ static int setRequestProperty(Ejs *ejs, EjsRequest *req, int slotNum,  EjsObj *v
         }
         break;
 
+#if ES_ejs_web_Request_writeBuffer
+    case ES_ejs_web_Request_writeBuffer:
+        req->writeBuffer = (EjsByteArray*) value;
+        break;
+#endif
+
     /*
         Read-only fields
      */
@@ -850,6 +909,7 @@ static int setRequestProperty(Ejs *ejs, EjsRequest *req, int slotNum,  EjsObj *v
     case ES_ejs_web_Request_cookies:
     case ES_ejs_web_Request_env:
     case ES_ejs_web_Request_errorMessage:
+    case ES_ejs_web_Request_formData:
     case ES_ejs_web_Request_files:
     case ES_ejs_web_Request_isSecure:
     case ES_ejs_web_Request_limits:
@@ -915,8 +975,12 @@ static EjsObj *req_set_async(Ejs *ejs, EjsRequest *req, int argc, EjsObj **argv)
  */
 static EjsObj *req_autoFinalize(Ejs *ejs, EjsRequest *req, int argc, EjsObj **argv)
 {
+    /* If writeBuffer is set, HttpServer is capturning output for caching */
     if (req->conn && !req->dontAutoFinalize) {
-        httpFinalize(req->conn);
+        if (!req->writeBuffer) {
+            httpFinalize(req->conn);
+        }
+        req->finalized = 1;
     }
     return 0;
 }
@@ -928,7 +992,10 @@ static EjsObj *req_autoFinalize(Ejs *ejs, EjsRequest *req, int argc, EjsObj **ar
 static EjsObj *req_close(Ejs *ejs, EjsRequest *req, int argc, EjsObj **argv)
 {
     if (req->conn) {
-        httpFinalize(req->conn);
+        if (!req->writeBuffer) {
+            httpFinalize(req->conn);
+        }
+        req->finalized = 1;
         httpCloseRx(req->conn);
     }
     ejsSendRequestCloseEvent(ejs, req);
@@ -964,12 +1031,17 @@ static EjsObj *req_dontAutoFinalize(Ejs *ejs, EjsRequest *req, int argc, EjsObj 
 
 /*  
     function finalize(): Void
+
+    This routine is idempotent. If using writeBuffers, it will be called multiple times.
  */
 static EjsObj *req_finalize(Ejs *ejs, EjsRequest *req, int argc, EjsObj **argv)
 {
     if (req->conn) {
-        httpFinalize(req->conn);
+        if (!req->writeBuffer || req->writeBuffer == ESV(null)) {
+            httpFinalize(req->conn);
+        }
     }
+    req->finalized = 1;
     req->responded = 1;
     return 0;
 }
@@ -980,7 +1052,7 @@ static EjsObj *req_finalize(Ejs *ejs, EjsRequest *req, int argc, EjsObj **argv)
  */
 static EjsBoolean *req_finalized(Ejs *ejs, EjsRequest *req, int argc, EjsObj **argv)
 {
-    return ejsCreateBoolean(ejs, req->conn == 0 || req->conn->tx->finalized);
+    return ejsCreateBoolean(ejs, req->conn == 0 || req->finalized || req->conn->tx->finalized);
 }
 
 
@@ -1147,7 +1219,7 @@ static EjsObj *req_setLimits(Ejs *ejs, EjsRequest *req, int argc, EjsObj **argv)
         req->limits = ejsCreateEmptyPot(ejs);
         ejsGetHttpLimits(ejs, req->limits, req->conn->limits, 0);
     }
-    ejsBlendObject(ejs, req->limits, argv[0], 1);
+    ejsBlendObject(ejs, req->limits, argv[0], 0, EJS_BLEND_OVERWRITE);
     ejsSetHttpLimits(ejs, req->conn->limits, req->limits, 0);
     if (req->session) {
         ejsSetSessionTimeout(ejs, req->session, req->conn->limits->sessionTimeout);
@@ -1166,8 +1238,28 @@ static EjsObj *req_trace(Ejs *ejs, EjsRequest *req, int argc, EjsObj **argv)
 }
 
 
+/*
+    Single channel for all write data
+ */
+static ssize writeResponseData(Ejs *ejs, EjsRequest *req, cchar *buf, ssize len)
+{
+    ssize   written;
+    
+    if (req->writeBuffer && req->writeBuffer != ESV(null)) {
+        if ((written = ejsCopyToByteArray(ejs, req->writeBuffer, -1, buf, len)) > 0) {
+            //  MOB - need API to do combined write to ByteArray and inc writePosition
+            req->writeBuffer->writePosition += written;
+        }
+        return written;
+    } else {
+        return httpWriteBlock(req->conn->writeq, buf, len);
+    }
+}
+
+
 /*  
     Write text to the client. This call writes the arguments back to the client's browser. 
+    This and writeFile are the lowest channel for write data.
  
     function write(data: Object): Void
  */
@@ -1177,28 +1269,24 @@ static EjsObj *req_write(Ejs *ejs, EjsRequest *req, int argc, EjsObj **argv)
     EjsString       *s;
     EjsObj          *data;
     EjsByteArray    *ba;
-    HttpQueue       *q;
     HttpConn        *conn;
     ssize           len, written;
     int             err, i;
 
-    if (!connOk(ejs, req, 1)) return 0;
-
+    conn = req->conn;
+    if (!connOk(ejs, req, 1) || httpIsFinalized(conn)) {
+        return 0;
+    }
     err = 0;
     written = 0;
     args = (EjsArray*) argv[0];
-    conn = req->conn;
-    q = conn->writeq;
 
-    if (httpIsFinalized(conn)) {
-        return 0;
-    }
     for (i = 0; i < args->length; i++) {
         data = args->data[i];
         switch (TYPE(data)->sid) {
         case S_String:
             s = (EjsString*) data;
-            if ((written = httpWriteBlock(q, s->value, s->length)) != s->length) {
+            if ((written = writeResponseData(ejs, req, s->value, s->length)) != s->length) {
                 err++;
             }
             break;
@@ -1209,14 +1297,14 @@ static EjsObj *req_write(Ejs *ejs, EjsRequest *req, int argc, EjsObj **argv)
             //      ba->readPosition += len;
             //      should reset ptrs also
             len = ba->writePosition - ba->readPosition;
-            if ((written = httpWriteBlock(q, (char*) &ba->value[ba->readPosition], len)) != len) {
+            if ((written = writeResponseData(ejs, req, (char*) &ba->value[ba->readPosition], len)) != len) {
                 err++;
             }
             break;
 
         default:
             s = (EjsString*) ejsToString(ejs, data);
-            if (s == NULL || (written = httpWriteBlock(q, s->value, s->length)) != s->length) {
+            if (s == NULL || (written = writeResponseData(ejs, req, s->value, s->length)) != s->length) {
                 err++;
             }
         }
@@ -1240,6 +1328,8 @@ static EjsObj *req_write(Ejs *ejs, EjsRequest *req, int argc, EjsObj **argv)
 
 /*  
     function writeFile(path: Path): Boolean
+
+    Note: this bypasses req->writeBuffer
  */
 static EjsObj *req_writeFile(Ejs *ejs, EjsRequest *req, int argc, EjsObj **argv)
 {
@@ -1268,6 +1358,7 @@ static EjsObj *req_writeFile(Ejs *ejs, EjsRequest *req, int argc, EjsObj **argv)
     httpSetSendConnector(req->conn, path->value);
     httpPutForService(conn->writeq, packet, 0);
     httpFinalize(req->conn);
+    req->finalized = 1;
     return ESV(true);
 }
 
@@ -1413,8 +1504,8 @@ static void manageRequest(EjsRequest *req, int flags)
         mprMark(req->session);
         mprMark(req->uri);
         mprMark(req->cloned);
-    } else {
-        // mprLog(0, "FREE REQUEST - cloned %p", req->cloned);
+        mprMark(req->writeBuffer);
+        mprMark(req->formData);
     }
 }
 

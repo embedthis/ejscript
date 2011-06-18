@@ -80,6 +80,7 @@ typedef struct EjsRequest {
     EjsObj          *env;               /**< Request.env */
     EjsPath         *filename;          /**< Physical resource filename */
     EjsObj          *files;             /**< Files object */
+    EjsString       *formData;          /**< Form data as a stable, sorted string */
     EjsObj          *headers;           /**< Headers object */
     EjsUri          *home;              /**< Relative URI to the home of the application from this request */
     EjsString       *host;              /**< Host property */
@@ -87,7 +88,7 @@ typedef struct EjsRequest {
     EjsObj          *log;               /**< Log object */
     EjsString       *originalMethod;    /**< Saved original method */
     EjsObj          *originalUri;       /**< Saved original URI */
-    EjsObj          *params;            /**< Form variables */
+    EjsObj          *params;            /**< Form variables + routing variables */
     EjsString       *pathInfo;          /**< PathInfo property */
     EjsNumber       *port;              /**< Port property */
     EjsString       *query;             /**< Query property */
@@ -97,6 +98,7 @@ typedef struct EjsRequest {
     EjsString       *scheme;            /**< Scheme property */
     EjsString       *scriptName;        /**< ScriptName property */
     EjsUri          *uri;               /**< Complete uri */
+    EjsByteArray    *writeBuffer;       /**< Write buffer for capturing output */
 
     Ejs             *ejs;               /**< Ejscript interpreter handle */
     struct EjsSession *session;         /**< Current session */
@@ -106,6 +108,7 @@ typedef struct EjsRequest {
     int             probedSession;      /**< Determined if a session exists */
     int             closed;             /**< Request closed and "close" event has been issued */
     int             error;              /**< Request errored and "error" event has been issued */
+    int             finalized;          /**< Request has written all output data */
     int             responded;          /**< Request has done some output or changed status */
     int             running;            /**< Request has started */
     ssize           written;            /**< Count of data bytes written to the client */
@@ -145,7 +148,7 @@ typedef struct EjsSession {
     EjsString   *key;               /* Session ID key */
     EjsObj      *cache;             /* Cache store reference */
     EjsObj      *options;           /* Default write options */
-    MprTime     lifespan;           /* Session inactivity lifespan */
+    MprTime     timeout;            /* Session inactivity timeout (msecs) */
     int         ready;              /* Data cached from store into pot */
 } EjsSession;
 
@@ -165,7 +168,7 @@ extern EjsSession *ejsGetSession(Ejs *ejs, EjsString *key, MprTime timeout, int 
     @param session Session object created via ejsGetSession()
 */
 extern int ejsDestroySession(Ejs *ejs, EjsSession *session);
-extern void ejsSetSessionTimeout(Ejs *ejs, EjsSession *sp, int timeout);
+extern void ejsSetSessionTimeout(Ejs *ejs, EjsSession *sp, MprTime timeout);
 extern void ejsSendRequestCloseEvent(Ejs *ejs, EjsRequest *req);
 extern void ejsSendRequestErrorEvent(Ejs *ejs, EjsRequest *req);
 

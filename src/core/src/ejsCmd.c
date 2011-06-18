@@ -230,6 +230,7 @@ static EjsNumber *cmd_read(Ejs *ejs, EjsCmd *cmd, int argc, EjsObj **argv)
         nbytes = mprGetBufLength(cmd->stdoutBuf);
     }
     count = min(count, nbytes);
+    //  MOB - should use RC Value (== count)
     ejsCopyToByteArray(ejs, buffer, buffer->writePosition, (char*) mprGetBufStart(cmd->stdoutBuf), count);
     ejsSetByteArrayPositions(ejs, buffer, -1, buffer->writePosition + count);
     mprAdjustBufStart(cmd->stdoutBuf, count);
@@ -325,6 +326,7 @@ static void cmdIOCallback(MprCmd *mc, int channel, void *data)
             cmd->error = ejsCreateByteArray(cmd->ejs, -1);
         }
         ba = cmd->error;
+        //  MOB - should use RC Value (== count)
         ejsCopyToByteArray(cmd->ejs, ba, ba->writePosition, mprGetBufStart(buf), len);
         ba->writePosition += len;
         mprAdjustBufStart(buf, len);
@@ -381,7 +383,6 @@ static int parseOptions(Ejs *ejs, EjsCmd *cmd)
 static bool setCmdArgs(Ejs *ejs, EjsCmd *cmd, int argc, EjsObj **argv)
 {
     EjsArray    *ap;
-    char        *command;
     int         i;
 
     if (ejsIs(ejs, cmd->command, Array)) {
@@ -397,9 +398,13 @@ static bool setCmdArgs(Ejs *ejs, EjsCmd *cmd, int argc, EjsObj **argv)
         cmd->argc = ap->length;
 
     } else {
-        cmd->command = ejsToString(ejs, cmd->command);
+        cmd->command = ejsToMulti(ejs, cmd->command);
+#if UNUSED
+        char *command;
         command = ejsToMulti(ejs, argv[0]);
-        if (mprMakeArgv(command, &cmd->argc, &cmd->argv, 0) < 0 || cmd->argv == 0) {
+        //  MOB - was "command" below
+#endif
+        if (mprMakeArgv(cmd->command, &cmd->argc, &cmd->argv, 0) < 0 || cmd->argv == 0) {
             ejsThrowArgError(ejs, "Can't parse command line");
             return 0;
         }

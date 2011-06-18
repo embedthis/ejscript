@@ -107,6 +107,11 @@ module ejs {
          */
         static var cache: Cache
 
+        /**
+            Application start time
+         */
+        static var started: Date = new Date
+
         /** 
             Application title name. Multi-word, Camel Case name for the application suitable for display. This is 
             initialized to the name of the script or "Embedthis Ejscript" if running interactively.
@@ -124,19 +129,6 @@ module ejs {
                 is invoked as "ejs script arg1 arg2", then args[0] will be "script", args[1] will be "arg1" etc.
          */
         native static function get args(): Array
-
-        /*
-UNUSED
-            Application in-memory cache reference
-        static function get cache(): Cache {
-            if (!cacheStore) {
-                cacheStore = new Cache(null, blend({shared: true}, config.cache))
-            }
-            return cacheStore
-        }
-        static function set cache(c: Cache): Void
-            cacheStore = c
-*/
 
         /** 
             Change the application's working directory
@@ -231,7 +223,7 @@ UNUSED
         static function loadrc(path: Path, overwrite: Boolean = true) {
             if (path.exists) {
                 try {
-                    blend(App.config, path.readJSON(), overwrite)
+                    blend(App.config, path.readJSON(), {overwrite: overwrite})
                 } catch (e) {
                     errorStream.write(App.exePath.basename +  " Can't parse " + path + ": " + e + "\n")
                 }
@@ -344,10 +336,11 @@ UNUSED
 
         /**
             Redirect the Application's logger based on the App.config.log setting
+            Ignored if app is invoked with --log
          */
         static function updateLog(): Void {
             let log = config.log
-            if (log && log.enable) {
+            if (!App.logFile.logging && log && log.enable) {
                 App.log.redirect(log.location, log.level)
             }
         }
@@ -389,7 +382,7 @@ UNUSED
             App.loadrc(Path(dir).join(".ejsrc"))
         }
         App.loadrc("ejsrc")
-        blend(config, App.defaultConfig, false)
+        blend(config, App.defaultConfig, {overwrite: false})
 
         stdout = TextStream(App.outputStream)
         stderr = TextStream(App.errorStream)
@@ -429,6 +422,7 @@ UNUSED
             }
         }
         if (config.cache) {
+            //  MOB - should there be a config.cache.enable instead
             App.cache = new Cache(null, blend({shared: true}, config.cache))
         }
     }

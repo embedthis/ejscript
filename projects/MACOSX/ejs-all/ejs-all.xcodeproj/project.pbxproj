@@ -998,7 +998,6 @@
 		C9188AF6115DAB760018846C /* core */ = {
 			isa = PBXGroup;
 			children = (
-				C9F69FD513955531006CC53D /* ejsLocalCache.c */,
 				C9188B31115DAC060018846C /* ejsApp.c */,
 				C9188B32115DAC060018846C /* ejsArray.c */,
 				C9188B33115DAC060018846C /* ejsBlock.c */,
@@ -1019,6 +1018,7 @@
 				C9188B40115DAC060018846C /* ejsHttp.c */,
 				C9188B42115DAC060018846C /* ejsIterator.c */,
 				C9188B43115DAC060018846C /* ejsJSON.c */,
+				C9F69FD513955531006CC53D /* ejsLocalCache.c */,
 				C97837E9134E61D0008DDEAC /* ejsLogFile.c */,
 				C9188B44115DAC060018846C /* ejsMath.c */,
 				C9188B45115DAC060018846C /* ejsMemory.c */,
@@ -1861,7 +1861,7 @@
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 			shellPath = /bin/sh;
-			shellScript = "export BIN_DIR=$BUILT_PRODUCTS_DIR\nexport DYLD_LIBRARY_PATH=$BUILT_PRODUCTS_DIR\nmake -C $SRC/core TRACE=1 xmodules && cp $OUT/modules/*.mod $BUILT_PRODUCTS_DIR || exit 255\nmake -C $SRC/jems TRACE=1 xmodules && cp $OUT/modules/*.mod $BUILT_PRODUCTS_DIR || exit 255\nmake -C $SRC/jems/ejs.mvc TRACE=1 compile && cp $OUT/bin/mvc $BUILT_PRODUCTS_DIR || exit 255\n";
+			shellScript = "export BIN_DIR=$BUILT_PRODUCTS_DIR\nexport DYLD_LIBRARY_PATH=$BUILT_PRODUCTS_DIR\nmake -C $SRC/core TRACE=1 xmodules && cp $OUT/modules/*.mod $BUILT_PRODUCTS_DIR || exit 255\n#make -C $SRC/jems TRACE=1 xmodules && cp $OUT/modules/*.mod $BUILT_PRODUCTS_DIR || exit 255\n#make -C $SRC/jems/ejs.mvc TRACE=1 compile && cp $OUT/bin/mvc $BUILT_PRODUCTS_DIR || exit 255\n";
 		};
 		C97A5EC511E81E9B00BB0981 /* ShellScript */ = {
 			isa = PBXShellScriptBuildPhase;
@@ -2476,7 +2476,7 @@
 		C97623C20FD06EC4009C78E1 /* Debug */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
-				ARCHS = "$(ARCHS_STANDARD_64_BIT)";
+				ARCHS = "$(ARCHS_STANDARD_32_BIT)";
 				BBIN = $SRCROOT/../../../build/bin;
 				COPY_PHASE_STRIP = NO;
 				GCC_C_LANGUAGE_STANDARD = gnu99;
@@ -2508,7 +2508,7 @@
 		C97623C30FD06EC4009C78E1 /* Release */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
-				ARCHS = "$(ARCHS_STANDARD_64_BIT)";
+				ARCHS = "$(ARCHS_STANDARD_32_BIT)";
 				BBIN = $SRCROOT/../../../build/bin;
 				COPY_PHASE_STRIP = YES;
 				GCC_C_LANGUAGE_STANDARD = gnu99;

@@ -13,80 +13,101 @@
 EjsVoid *ejsCacheExpire(Ejs *ejs, EjsObj *cache, EjsString *key, EjsDate *when)
 {
     EjsAny  *argv[3];
+    int     prior;
 
-    ejsPauseGC(ejs);
+    prior = ejsPauseGC(ejs);
     argv[0] = key;
     argv[1] = when;
-    return ejsRunFunctionBySlot(ejs, cache, ES_Cache_expire, 2, argv);
+    ejsRunFunctionBySlot(ejs, cache, ES_Cache_expire, 2, argv);
+    ejsResumeGC(ejs, prior);
+    return 0;
 }
 
 
 EjsAny *ejsCacheRead(Ejs *ejs, EjsObj *cache, EjsString *key, EjsObj *options)
 {
-    EjsAny  *argv[3];
+    EjsAny  *argv[3], *result;
+    int     prior;
 
-    ejsPauseGC(ejs);
+    prior = ejsPauseGC(ejs);
     argv[0] = key;
     argv[1] = (options) ? options : ESV(null);
-    return ejsRunFunctionBySlot(ejs, cache, ES_Cache_read, 2, argv);
+    result = ejsRunFunctionBySlot(ejs, cache, ES_Cache_read, 2, argv);
+    ejsResumeGC(ejs, prior);
+    return result;
 }
 
 
 EjsAny *ejsCacheReadObj(Ejs *ejs, EjsObj *cache, EjsString *key, EjsObj *options)
 {
-    EjsAny  *value, *argv[3];
+    EjsAny  *value, *argv[3], *result;
+    int     prior;
 
-    ejsPauseGC(ejs);
+    prior = ejsPauseGC(ejs);
     argv[0] = key;
     argv[1] = (options) ? options : ESV(null);
     if ((value = ejsRunFunctionBySlot(ejs, cache, ES_Cache_read, 2, argv)) == 0 || value == ESV(null)) {
         return 0;
     }
-    return ejsDeserialize(ejs, value);
+    result = ejsDeserialize(ejs, value);
+    ejsResumeGC(ejs, prior);
+    return result;
 }
 
 
 EjsBoolean *ejsCacheRemove(Ejs *ejs, EjsObj *cache, EjsString *key)
 {
-    EjsAny  *argv[3];
+    EjsAny  *argv[3], *result;
+    int     prior;
 
-    ejsPauseGC(ejs);
+    prior = ejsPauseGC(ejs);
     argv[0] = key;
-    return ejsRunFunctionBySlot(ejs, cache, ES_Cache_remove, 1, argv);
+    result = ejsRunFunctionBySlot(ejs, cache, ES_Cache_remove, 1, argv);
+    ejsResumeGC(ejs, prior);
+    return result;
 }
 
 
 EjsVoid *ejsCacheSetLimits(Ejs *ejs, EjsObj *cache, EjsObj *limits)
 {
-    EjsAny  *argv[2];
+    EjsAny  *argv[2], *result;
+    int     prior;
 
-    ejsPauseGC(ejs);
+    prior = ejsPauseGC(ejs);
     argv[0] = limits;
-    return ejsRunFunctionBySlot(ejs, cache, ES_Cache_setLimits, 2, argv);
+    result = ejsRunFunctionBySlot(ejs, cache, ES_Cache_setLimits, 2, argv);
+    ejsResumeGC(ejs, prior);
+    return result;
 }
 
 
 EjsNumber *ejsCacheWrite(Ejs *ejs, EjsObj *cache, EjsString *key, EjsString *value, EjsObj *options)
 {
-    EjsAny  *argv[3];
+    EjsAny  *argv[3], *result;
+    int     prior;
 
-    ejsPauseGC(ejs);
+    prior = ejsPauseGC(ejs);
     argv[0] = key;
     argv[1] = value;
     argv[2] = (options) ? options : ESV(null);
-    return ejsRunFunctionBySlot(ejs, cache, ES_Cache_write, 3, argv);
+    result = ejsRunFunctionBySlot(ejs, cache, ES_Cache_write, 3, argv);
+    ejsResumeGC(ejs, prior);
+    return result;
 }
 
 
 EjsNumber *ejsCacheWriteObj(Ejs *ejs, EjsObj *cache, EjsString *key, EjsAny *value, EjsObj *options)
 {
-    EjsAny  *argv[3];
+    EjsAny  *argv[3], *result;
+    int     prior;
 
-    ejsPauseGC(ejs);
+    prior = ejsPauseGC(ejs);
     argv[0] = key;
     argv[1] = ejsSerialize(ejs, value, 0);
     argv[2] = (options) ? options : ESV(null);
-    return ejsRunFunctionBySlot(ejs, cache, ES_Cache_write, 3, argv);
+    result = ejsRunFunctionBySlot(ejs, cache, ES_Cache_write, 3, argv);
+    ejsResumeGC(ejs, prior);
+    return result;
 }
 
 

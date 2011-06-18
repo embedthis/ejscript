@@ -484,7 +484,8 @@ typedef void (*EjsLoaderCallback)(struct Ejs *ejs, int kind, ...);
 typedef struct EjsIntern {
     EjsString       *buckets;               /**< Hash buckets and references to link chains of strings (unicode) */
     int             size;                   /**< Size of hash */
-    int             reuse;
+    int             count;                  /**< Count of entries */
+    uint64          reuse;
     uint64          accesses;
     MprMutex        *mutex;
 } EjsIntern;
@@ -1114,7 +1115,15 @@ extern EjsObj   *ejsToSource(Ejs *ejs, EjsObj *obj, int argc, void *argv);
 
 extern EjsString *ejsObjToString(Ejs *ejs, EjsObj *vp, int argc, EjsObj **argv);
 extern EjsString *ejsObjToJSON(Ejs *ejs, EjsObj *vp, int argc, EjsObj **argv);
-extern int ejsBlendObject(Ejs *ejs, EjsObj *dest, EjsObj *src, int overwrite);
+
+#define EJS_BLEND_DEEP          0x1
+#define EJS_BLEND_FUNCTIONS     0x2
+#define EJS_BLEND_OVERWRITE     0x4
+#define EJS_BLEND_SUBCLASSES    0x8
+#define EJS_BLEND_PRIVATE       0x10
+#define EJS_BLEND_TRACE         0x20
+
+extern int ejsBlendObject(Ejs *ejs, EjsObj *dest, EjsObj *src, int overwrite, int flags);
 extern bool ejsMatchName(Ejs *ejs, EjsName *a, EjsName *b);
 
 /********************************************** String ********************************************/
@@ -1772,9 +1781,9 @@ extern void ejsSetByteArrayPositions(Ejs *ejs, EjsByteArray *ba, ssize readPosit
     @param offset Offset in the byte array to which to copy the data.
     @param data Pointer to the source data
     @param length Length of the data to copy
-    @return Zero if successful, otherwise a negative MPR error code.
+    @return Count of bytes written or negative MPR error code.
  */
-extern int ejsCopyToByteArray(Ejs *ejs, EjsByteArray *ba, ssize offset, char *data, ssize length);
+extern ssize ejsCopyToByteArray(Ejs *ejs, EjsByteArray *ba, ssize offset, cchar *data, ssize length);
 
 extern void ejsResetByteArray(EjsByteArray *ba);
 extern ssize ejsGetByteArrayAvailable(EjsByteArray *ba);

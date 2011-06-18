@@ -11,7 +11,6 @@
 /************************************ Locals **********************************/
 
 #define CACHE_TIMER_PERIOD  (60 * MPR_TICKS_PER_SEC)
-#define CACHE_TIMER_PERIOD  (60 * MPR_TICKS_PER_SEC)
 #define CACHE_HASH_SIZE     257
 #define CACHE_LIFESPAN      (86400 * MPR_TICKS_PER_SEC)
 
@@ -45,6 +44,7 @@ typedef struct CacheItem
 static void localPruner(EjsLocalCache *cache, MprEvent *event);
 static void manageLocalCache(EjsLocalCache *cache, int flags);
 static void manageCacheItem(CacheItem *item, int flags);
+static void removeItem(EjsLocalCache *cache, CacheItem *item);
 static void setLocalLimits(Ejs *ejs, EjsLocalCache *cache, EjsPot *options);
 
 /************************************* Code ***********************************/
@@ -115,7 +115,7 @@ static EjsAny *sl_expire(Ejs *ejs, EjsLocalCache *cache, int argc, EjsAny **argv
     }
     item->lifespan = 0;
     if (expires == ESV(null)) {
-        item->expires = 0;
+        removeItem(cache, item);
     } else {
         item->expires = ejsGetDate(ejs, expires);
     }
@@ -211,9 +211,17 @@ static EjsAny *sl_read(Ejs *ejs, EjsLocalCache *cache, int argc, EjsAny **argv)
         unlock(cache);
         return ESV(null);
     }
+    if (item->expires && item->expires <= mprGetTime()) {
+        unlock(cache);
+        return ESV(null);
+    }
+#if UNUSED && FUTURE
+    //  MOB - reading should not refresh cache
+    //  Perhaps option "read-refresh"
     if (item->lifespan) {
         item->expires = mprGetTime() + item->lifespan;
     }
+#endif
     if (getVersion) {
         result = ejsCreatePot(ejs, ESV(Object), 2);
         ejsSetPropertyByName(ejs, result, EN("version"), ejsCreateNumber(ejs, (MprNumber) item->version));
@@ -432,6 +440,16 @@ static EjsNumber *sl_write(Ejs *ejs, EjsLocalCache *cache, int argc, EjsAny **ar
 }
 
 
+static void removeItem(EjsLocalCache *cache, CacheItem *item)
+{
+    lock(cache);
+    //UNICODE
+    mprRemoveKey(cache->store, item->key->value);
+    cache->usedMem -= (item->key->length + item->data->length);
+    unlock(cache);
+}
+
+
 /*
     Check for expired keys
  */
@@ -446,10 +464,11 @@ static void localPruner(EjsLocalCache *cache, MprEvent *event)
         when = mprGetTime();
         for (hp = 0; (hp = mprGetNextKey(cache->store, hp)) != 0; ) {
             item = (CacheItem*) hp->data;
+            mprLog(6, "LocalCache: \"%@\" lifespan %d, expires in %d secs", item->key, 
+                    item->lifespan / 1000, (item->expires - when) / 1000);
             if (item->expires && item->expires <= when) {
-                mprLog(5, "LocalCache prune key %s", hp->key);
-                mprRemoveKey(cache->store, hp->key);
-                cache->usedMem -= (item->key->length + item->data->length);
+                mprLog(5, "LocalCache prune expired key %s", hp->key);
+                removeItem(cache, item);
             }
         }
         mprAssert(cache->usedMem >= 0);
@@ -460,20 +479,16 @@ static void localPruner(EjsLocalCache *cache, MprEvent *event)
         if (cache->maxKeys < MAXSSIZE || cache->maxMem < MAXSSIZE) {
             excessKeys = mprGetHashLength(cache->store) - cache->maxKeys;
             while (excessKeys > 0 || cache->usedMem > cache->maxMem) {
-                for (factor = 3600; excessKeys > 0; factor *= 2) {
+                for (factor = 3600; excessKeys > 0 && factor < (86400 * 1000); factor *= 4) {
                     for (hp = 0; (hp = mprGetNextKey(cache->store, hp)) != 0; ) {
                         item = (CacheItem*) hp->data;
                         if (item->expires && item->expires <= when) {
-                            mprLog(5, "LocalCache prune key %s", hp->key);
-                            mprRemoveKey(cache->store, hp->key);
-                            cache->usedMem -= (item->key->length + item->data->length);
+                            mprLog(5, "LocalCache too big execess keys %Ld, mem %Ld, prune key %s", 
+                                    excessKeys, (cache->maxMem - cache->usedMem), hp->key);
+                            removeItem(cache, item);
                         }
                     }
                     when += factor;
-                }
-                if (factor < 0) {
-                    mprAssert(factor > 0);
-                    break;
                 }
             }
         }

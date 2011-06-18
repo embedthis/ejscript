@@ -66,12 +66,16 @@ proxy("label", "Text", {remote: {controller: "Admin", action: "login", method: "
 
 //  Refresh options
 proxy("label", "Text", {refresh: "@update"}, '<span id="id_0" data-refresh="/update">Text</span>')
-proxy("label", "Text", {refresh: {controller: "Dash", action: "update", method: "HEAD"}}, 
-    '<span id="id_0" data-refresh="/Dash/update" data-refresh-method="HEAD">Text</span>')
+proxy("label", "Text", {refresh: {controller: "Dash", action: "update", method: "HEAD"}}, [
+    '<span id="id',
+    ' data-refresh="/Dash/update" data-refresh-method="HEAD">Text</span>',
+])
 
 //  Combined click and refresh
-proxy("label", "Text", {click: "select", refresh: "@update", period: 20}, 
-    '<span data-refresh-period="20" data-click="select" id="id_0" data-refresh="/update">Text</span>')
+proxy("label", "Text", {click: "select", refresh: "@update", period: 20}, [
+    '<span data-refresh-period="20" data-click="select" id="id_',
+    ' data-refresh="/update">Text</span>',
+])
 
 //  Escaped text
 proxy("label", "<Text>", {escape: true}, '<span>&lt;Text&gt;</span>')
