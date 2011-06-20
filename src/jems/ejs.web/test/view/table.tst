@@ -83,7 +83,7 @@ proxy("table", data, {
 proxy("table", data, {
         title: "Color Table",
     }, [
-        '<tr><td colspan="2">Color Table</td></tr>',
+        '<tr class="-ejs-table-title"><td colspan="2">Color Table</td></tr>',
     ]
 )
 
