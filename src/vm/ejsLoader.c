@@ -1153,7 +1153,7 @@ int ejsParseModuleVersion(cchar *name)
     if ((tok = strchr(name, '.')) != 0) {
         minor = (int) stoi(++tok, 10, NULL);
     }
-    if ((tok = strchr(tok, '.')) != 0) {
+    if (tok && (tok = strchr(tok, '.')) != 0) {
         patch = (int) stoi(++tok, 10, NULL);
     }
     return EJS_MAKE_VERSION(major, minor, patch);
@@ -1180,7 +1180,10 @@ static int trimModule(Ejs *ejs, char *name)
         return 0;
     }
     *vp++ = '\0';
-    return ejsParseModuleVersion(vp);
+    if (isdigit(*vp)) {
+        return ejsParseModuleVersion(vp);
+    }
+    return 0;
 }
 
 

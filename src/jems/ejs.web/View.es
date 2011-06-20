@@ -518,6 +518,12 @@ print("CATCH " + e)
             getConnector("radio", options).radio(name, value, choices, options)
         }
 
+        function refresh(on: Uri, off: Uri, options: Object = {}): Void {
+            let connector = getConnector("refresh", options)
+            options = getOptions(options)
+            getConnector("refresh", options).refresh(on, off, options)
+        }
+
         /** 
             Emit a script link.
             @param target Script URI to load. URI or array of scripts. Call with no arguments or set to null to 
@@ -814,6 +820,7 @@ MOB -- review and rethink this
                 return connectors[name]
             }
             try {
+                //  MOB - what is this doing?
                 return connectors[name] = new global[name](this)
             } catch (e: Error) {
                 throw new Error("Undefined view connector: " + name)

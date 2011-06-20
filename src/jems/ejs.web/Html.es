@@ -255,6 +255,10 @@ module ejs.web {
             }
         }
 
+        function refresh(on: String, off, options: Object): Void {
+            write('    <img src="' + on + '" data-on="' + on + '" data-off="' + off + '" class="-ejs-refresh" />')
+        }
+
         function script(uri: String, options: Object): Void {
             if (uri == null) {
                 if (options.minified == undefined) {
@@ -289,7 +293,6 @@ module ejs.web {
                     write('    <link rel="stylesheet" type="text/css" href="' + uri + '" />\r\n')
                 }
             } else {
-                //MOB uri = request.link(uri)
                 write('    <link rel="stylesheet" type="text/css" href="' + uri + '" />\r\n')
             }
         }
@@ -325,9 +328,10 @@ module ejs.web {
                 write('    <thead>\r\n')
                 if (options.title) {
                     let length = Object.getOwnPropertyCount(columns)
-                    write('        <tr><td colspan="' + length + '">' + options.title + '</td></tr>\r\n')
+                    write('        <tr class="-ejs-table-title"><td colspan="' + length + '">' + 
+                        options.title + '</td></tr>\r\n')
                 }
-                write('        <tr>\r\n')
+                write('        <tr class="-ejs-table-header">\r\n')
                 for (let [name, column] in columns) {
                     if (name == null) continue
                     let header = (column.header) ? (column.header) : name.toPascal()
@@ -490,7 +494,7 @@ module ejs.web {
         }
 
 /*
-        //  FUTURE MOB -- never called. MOB -- better to push to client via data-filter
+        //  FUTURE -- never called. -- better to push to client via data-filter
         //  TODO - this actually modifies the grid. Need to doc this.
         private function filter(data: Array): Array {
             data = data.clone()
@@ -563,11 +567,6 @@ module ejs.web {
             } else if (options.edit) {
                 setLinkOptions(options.edit, options, "data-edit")
 
-/*  MOB
-            } else if (options.action) {
-                // This is just a safety net incase someone uses "action" instead of click 
-                setLinkOptions(options.action, options, "data-click")
-*/
             }
             if (options.refresh) {
                 options.domid ||= getNextID()

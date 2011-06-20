@@ -1359,9 +1359,11 @@ void ejsGetHttpLimits(Ejs *ejs, EjsObj *obj, HttpLimits *limits, int server)
     ejsSetPropertyByName(ejs, obj, EN("transmission"), ejsCreateNumber(ejs, (MprNumber) limits->transmissionBodySize));
     ejsSetPropertyByName(ejs, obj, EN("upload"), ejsCreateNumber(ejs, (MprNumber) limits->uploadSize));
     ejsSetPropertyByName(ejs, obj, EN("inactivityTimeout"), 
-        ejsCreateNumber(ejs, limits->inactivityTimeout / MPR_TICKS_PER_SEC));
-    ejsSetPropertyByName(ejs, obj, EN("requestTimeout"), ejsCreateNumber(ejs, limits->requestTimeout / MPR_TICKS_PER_SEC));
-    ejsSetPropertyByName(ejs, obj, EN("sessionTimeout"), ejsCreateNumber(ejs, limits->sessionTimeout / MPR_TICKS_PER_SEC));
+        ejsCreateNumber(ejs, (MprNumber) (limits->inactivityTimeout / MPR_TICKS_PER_SEC)));
+    ejsSetPropertyByName(ejs, obj, EN("requestTimeout"), 
+        ejsCreateNumber(ejs, (MprNumber) (limits->requestTimeout / MPR_TICKS_PER_SEC)));
+    ejsSetPropertyByName(ejs, obj, EN("sessionTimeout"), 
+        ejsCreateNumber(ejs, (MprNumber) (limits->sessionTimeout / MPR_TICKS_PER_SEC)));
 
     if (server) {
         ejsSetPropertyByName(ejs, obj, EN("clients"), ejsCreateNumber(ejs, (MprNumber) limits->clientCount));
