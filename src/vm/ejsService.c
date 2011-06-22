@@ -161,10 +161,6 @@ int ejsLoadModules(Ejs *ejs, cchar *search, MprList *require)
     if (search) {
         initSearchPath(ejs, search);
     }
-#if UNUSED
-    ejsDefineGlobals(ejs);
-#endif
-
     lock(sp);
     if (loadRequiredModules(ejs, require) < 0) {
         if (ejs->exception) {
@@ -470,7 +466,7 @@ static void cloneProperties(Ejs *ejs, Ejs *master)
         For subsequent VMs, copy global references to immutable types and functions.
      */
     numProp = ((EjsPot*) master->global)->numProp;
-    for (i = 0; i < numProp /* MOB ES_global_NUM_CLASS_PROP */; i++) {
+    for (i = 0; i < numProp; i++) {
         vp = ejsGetProperty(master, master->global, i);
         qname = ejsGetPropertyName(master, master->global, i);
         ejsSetPropertyName(ejs, ejs->global, i, qname);
@@ -482,20 +478,19 @@ static void cloneProperties(Ejs *ejs, Ejs *master)
             if (!((EjsType*) vp)->mutable) {
                 immutable = 1;
             }
-        } else if (!TYPE(vp)->mutableInstances) {
-            immutable = 1;
-        } else if (ejsIsFunction(ejs, vp)) {
+        } else if (!TYPE(vp)->mutableInstances || ejsIsFunction(ejs, vp)) {
             immutable = 1;
         } else if (vp == master->global) {
             vp = ejs->global;
             immutable = 1;
         }
         if (immutable) {
-            // mprLog(0, "REF   %d, %N", i, qname);
+            //  MOB - remove
+            mprLog(6, "REF   %d, %N", i, qname);
         } else {
             mvp = vp;
             vp = ejsClone(ejs, mvp, 1);
-            // mprLog(0, "CLONE %d %N from %p to %p", i, qname, mvp, vp);
+            mprLog(6, "CLONE %d %N from %p to %p", i, qname, mvp, vp);
         }
         ejsSetProperty(ejs, ejs->global, i, vp);
     }
@@ -658,12 +653,6 @@ EjsArray *ejsCreateSearchPath(Ejs *ejs, cchar *search)
     ejsSetProperty(ejs, ap, -1, ejsCreatePathFromAsc(ejs, BLD_MOD_PREFIX));
 #endif
     return (EjsArray*) ap;
-}
-
-
-EjsObj *ejsGetGlobalObject(Ejs *ejs)
-{
-    return ejs->global;
 }
 
 

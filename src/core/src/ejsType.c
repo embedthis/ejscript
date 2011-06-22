@@ -84,15 +84,6 @@ int ejsCreateBootstrapTypes(Ejs *ejs)
     ejsInitTypeType(ejs, typeType);
     ejsInitBlockType(ejs, blockType);
     ejsInitNullType(ejs, nullType);
-#if UNUSED
-    if (ejs->empty) {
-        ejs->global = ejsCreateBlock(ejs, 0);
-    } else {
-        ejs->global = ejsCreateBlock(ejs, max(ES_global_NUM_CLASS_PROP, EJS_NUM_GLOBAL));
-        ((EjsPot*) ejs->global)->numProp = ES_global_NUM_CLASS_PROP;
-    }
-    mprSetName(ejs->global, "global");
-#endif
     return 0;
 }
 

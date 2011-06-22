@@ -1125,7 +1125,6 @@ static EjsObj *req_on(Ejs *ejs, EjsRequest *req, int argc, EjsAny **argv)
     }
     if (!conn->writeComplete && !conn->error && HTTP_STATE_CONNECTED <= conn->state && conn->state < HTTP_STATE_COMPLETE &&
             conn->writeq->ioCount == 0) {
-        //  MOB - where else are writable events issued?  - what if write blocked and then resuming?
         ejsSendEvent(ejs, req->emitter, "writable", NULL, req);
     }
     return 0;

@@ -2143,8 +2143,6 @@ extern EjsObj *ejsCreateGlobal(Ejs *ejs);
 extern void ejsFreezeGlobal(Ejs *ejs);
 extern void ejsCreateGlobalNamespaces(Ejs *ejs);
 extern void ejsDefineGlobalNamespaces(Ejs *ejs);
-extern void ejsDefineGlobals(Ejs *ejs);
-
 
 /** 
     Http Class
@@ -2564,7 +2562,6 @@ extern double ejsGetDouble(Ejs *ejs, EjsAny *obj);
 
 #define ejsGetDate(ejs, obj) (ejsIs(ejs, obj, Date) ? ((EjsDate*) obj)->value : 0)
 
-//  MOB -- rename alloc/free
 typedef EjsAny  *(*EjsCreateHelper)(Ejs *ejs, struct EjsType *type, int size);
 typedef EjsAny  *(*EjsCastHelper)(Ejs *ejs, EjsAny *obj, struct EjsType *type);
 typedef EjsAny  *(*EjsCloneHelper)(Ejs *ejs, EjsAny *obj, bool deep);
@@ -3475,7 +3472,6 @@ typedef struct EjsDoc {
 //  MOB -- would this be better with an ascii name?
 extern int          ejsLoadModule(Ejs *ejs, EjsString *name, int minVer, int maxVer, int flags);
 extern char         *ejsSearchForModule(Ejs *ejs, cchar *name, int minVer, int maxVer);
-extern int          ejsSetModuleConstants(Ejs *ejs, EjsModule *mp, EjsConstants *constants);
 
 extern void         ejsModuleReadBlock(Ejs *ejs, EjsModule *module, char *buf, int len);
 extern int          ejsModuleReadByte(Ejs *ejs, EjsModule *module);

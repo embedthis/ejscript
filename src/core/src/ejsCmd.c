@@ -399,11 +399,6 @@ static bool setCmdArgs(Ejs *ejs, EjsCmd *cmd, int argc, EjsObj **argv)
 
     } else {
         cmd->command = ejsToMulti(ejs, cmd->command);
-#if UNUSED
-        char *command;
-        command = ejsToMulti(ejs, argv[0]);
-        //  MOB - was "command" below
-#endif
         if (mprMakeArgv(cmd->command, &cmd->argc, &cmd->argv, 0) < 0 || cmd->argv == 0) {
             ejsThrowArgError(ejs, "Can't parse command line");
             return 0;

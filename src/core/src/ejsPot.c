@@ -33,7 +33,7 @@ EjsAny *ejsClonePot(Ejs *ejs, EjsAny *obj, bool deep)
 {
     EjsPot      *dest, *src;
     EjsSlot     *dp, *sp;
-    EjsType     *type, *vtp;
+    EjsType     *type;
     EjsObj      *vp;
     int         numProp, i;
 
@@ -67,11 +67,10 @@ EjsAny *ejsClonePot(Ejs *ejs, EjsAny *obj, bool deep)
         dp->hashChain = -1;
         vp = sp->value.ref;
         if (deep) {
-            vtp = TYPE(vp);
-            //  MOB refactor / optimize
             if (ejsIsFunction(ejs, vp) && !ejsIsType(ejs, vp)) {
                 ;
-            } else if ((ejsIsType(ejs, vp) && ((EjsType*) vp)->mutable) || (!ejsIsType(ejs, vp) && TYPE(vp)->mutableInstances)) {
+            } else if ((ejsIsType(ejs, vp) && ((EjsType*) vp)->mutable) || 
+                      (!ejsIsType(ejs, vp) && TYPE(vp)->mutableInstances)) {
 #if BLD_DEBUG
                 EjsName qname = ejsGetPropertyName(ejs, src, i);
                 mprSetName(dp->value.ref, qname.name->value);

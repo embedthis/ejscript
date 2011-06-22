@@ -357,38 +357,6 @@ void ejsDefineGlobalNamespaces(Ejs *ejs)
 }
 
 
-void ejsDefineGlobals(Ejs *ejs)
-{
-    mprAssert(!ejs->empty);
-    if (!ejs->empty) {
-        ejsSetProperty(ejs, ejs->global, ES_global, ejs->global);
-        ejsSetProperty(ejs, ejs->global, ES_void, ESV(Void));
-        ejsSetProperty(ejs, ejs->global, ES_undefined, ESV(undefined));
-        ejsSetProperty(ejs, ejs->global, ES_null, ESV(null));
-        ejsSetProperty(ejs, ejs->global, ES_global, ejs->global);
-        ejsSetProperty(ejs, ejs->global, ES_NegativeInfinity, ESV(negativeInfinity));
-        ejsSetProperty(ejs, ejs->global, ES_Infinity, ESV(infinity));
-        ejsSetProperty(ejs, ejs->global, ES_NaN, ESV(nan));
-        ejsSetProperty(ejs, ejs->global, ES_double, ESV(Number));
-        ejsSetProperty(ejs, ejs->global, ES_num, ESV(Number));
-        ejsSetProperty(ejs, ejs->global, ES_boolean, ESV(Boolean));
-        ejsSetProperty(ejs, ejs->global, ES_string, ESV(String));
-        ejsSetProperty(ejs, ejs->global, ES_true, ESV(true));
-        ejsSetProperty(ejs, ejs->global, ES_false, ESV(false));
-    }
-#if UNUSED
-    /*  
-        Order matters here. This is the (reverse) order of lookup.
-        Empty is first to maximize speed of searching dynamic properties. Ejs second to maximize builtin lookups.
-     */
-    ejsAddNamespaceToBlock(ejs, ejs->global, ESV(iteratorSpace));
-    ejsAddNamespaceToBlock(ejs, ejs->global, ESV(publicSpace));
-    ejsAddNamespaceToBlock(ejs, ejs->global, ESV(ejsSpace));
-    ejsAddNamespaceToBlock(ejs, ejs->global, ESV(emptySpace));
-#endif
-}
-
-
 void ejsConfigureGlobalBlock(Ejs *ejs)
 {
     EjsBlock    *block;
@@ -396,8 +364,21 @@ void ejsConfigureGlobalBlock(Ejs *ejs)
     block = (EjsBlock*) ejs->global;
     mprAssert(block);
     
-    //  MOB - inline here
-ejsDefineGlobals(ejs);
+    ejsSetProperty(ejs, ejs->global, ES_global, ejs->global);
+    ejsSetProperty(ejs, ejs->global, ES_void, ESV(Void));
+    ejsSetProperty(ejs, ejs->global, ES_undefined, ESV(undefined));
+    ejsSetProperty(ejs, ejs->global, ES_null, ESV(null));
+    ejsSetProperty(ejs, ejs->global, ES_global, ejs->global);
+    ejsSetProperty(ejs, ejs->global, ES_NegativeInfinity, ESV(negativeInfinity));
+    ejsSetProperty(ejs, ejs->global, ES_Infinity, ESV(infinity));
+    ejsSetProperty(ejs, ejs->global, ES_NaN, ESV(nan));
+    ejsSetProperty(ejs, ejs->global, ES_double, ESV(Number));
+    ejsSetProperty(ejs, ejs->global, ES_num, ESV(Number));
+    ejsSetProperty(ejs, ejs->global, ES_boolean, ESV(Boolean));
+    ejsSetProperty(ejs, ejs->global, ES_string, ESV(String));
+    ejsSetProperty(ejs, ejs->global, ES_true, ESV(true));
+    ejsSetProperty(ejs, ejs->global, ES_false, ESV(false));
+
     ejsBindFunction(ejs, block, ES_assert, g_assert);
     ejsBindFunction(ejs, block, ES_cloneBase, g_cloneBase);
     ejsBindFunction(ejs, block, ES_eval, g_eval);

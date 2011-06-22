@@ -108,15 +108,6 @@ EjsNativeModule *ejsLookupNativeModule(Ejs *ejs, cchar *name)
 }
 
 
-#if UNUSED
-int ejsSetModuleConstants(Ejs *ejs, EjsModule *mp, EjsConstants *constants)
-{
-    mp->constants = constants;
-    return 0;
-}
-#endif
-
-
 /*
     Lookup a module name in the set of loaded modules
     If minVersion is <= 0, then any version up to, but not including maxVersion is acceptable.
