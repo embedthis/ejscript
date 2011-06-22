@@ -2218,7 +2218,7 @@ ssize mprGetMem()
         }
         close(fd);
     }
-    struct rusage rusage;
+    struct rusage   rusage;
     getrusage(RUSAGE_SELF, &rusage);
     return rusage.ru_maxrss * 1024;
 #elif MACOSX || FREEBSD

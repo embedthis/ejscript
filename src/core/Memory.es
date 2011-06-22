@@ -64,9 +64,11 @@ module ejs {
          */
         native static function set redline(value: Number): Void
 
+        //  MOB BUG
         /**
             Application's current resident set in bytes. This is the total memory used to host the application and 
             includes all the the application code, data and heap. It is measured by the O/S.
+            NOTE: this is currently reporting the peak resident memory and not the current resident memory.
          */
         native static function get resident(): Number
 
