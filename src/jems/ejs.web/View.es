@@ -62,6 +62,7 @@ module ejs.web {
             URI and params manually.
         @option id Number Numeric database ID for the record that originated the data for the view element.
         @option method String HTTP method to invoke.
+        @option pass String attributes to pass through unaltered to the client
         @option params Request parameters to include with a click or remote request
         @option period Number Period in milliseconds to invoke the $refresh URI to update the control data. If period
             is zero (or undefined), then refresh will be done using a perisistent connection.

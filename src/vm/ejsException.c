@@ -11,6 +11,37 @@
 static uchar trapByteCode[] = { EJS_OP_ATTENTION };
 
 /************************************ Code ************************************/
+
+static EjsAny *createException(Ejs *ejs, EjsType *type, cchar* fmt, va_list fmtArgs)
+{
+    EjsError    *error;
+    EjsAny      *argv[1];
+    char        *msg;
+
+    mprAssert(type);
+    
+#if BLD_DEBUG
+    /* Breakpoint opportunity */
+    if (!ejs->empty) {
+        mprNop(0);
+    }
+#endif
+    msg = mprAsprintfv(fmt, fmtArgs);
+    argv[0] = ejsCreateStringFromAsc(ejs, msg);
+    if (argv[0] == 0) {
+        mprAssert(argv[0]);
+        return 0;
+    }
+    if (EST(Error)->constructor.body.proc) {
+        error = (EjsError*) ejsCreateInstance(ejs, type, 1, argv);
+    } else {
+        error = ejsCreatePot(ejs, type, 0);
+        ejsSetProperty(ejs, error, ES_Error_message, ejsCreateStringFromAsc(ejs, msg));
+    }
+    return error;
+}
+
+
 /*
     Redirect the VM to the ATTENTION op code
  */
@@ -62,30 +93,6 @@ void ejsClearException(Ejs *ejs)
     if (ejs->state->fp) {
         ejsClearAttention(ejs);
     }
-}
-
-
-static EjsAny *createException(Ejs *ejs, EjsType *type, cchar* fmt, va_list fmtArgs)
-{
-    EjsError    *error;
-    EjsAny      *argv[1];
-    char        *msg;
-
-    mprAssert(type);
-
-    msg = mprAsprintfv(fmt, fmtArgs);
-    argv[0] = ejsCreateStringFromAsc(ejs, msg);
-    if (argv[0] == 0) {
-        mprAssert(argv[0]);
-        return 0;
-    }
-    if (EST(Error)->constructor.body.proc) {
-        error = (EjsError*) ejsCreateInstance(ejs, type, 1, argv);
-    } else {
-        error = ejsCreatePot(ejs, type, 0);
-        ejsSetProperty(ejs, error, ES_Error_message, ejsCreateStringFromAsc(ejs, msg));
-    }
-    return error;
 }
 
 

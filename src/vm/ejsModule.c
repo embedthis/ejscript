@@ -29,10 +29,10 @@ EjsModule *ejsCreateModule(Ejs *ejs, EjsString *name, int version, EjsConstants 
     mp->name = name;
     mp->version = version;
     mp->vname = (version) ? ejsSprintf(ejs, "%@-%d", name, version) : mp->name;
-    if (constants) {
-        mp->constants = constants;
-    } else if ((mp->constants = ejsCreateConstants(ejs, EJS_INDEX_INCR, EC_BUFSIZE)) == NULL) {
-        return 0;
+    if ((mp->constants = constants) == 0) {
+        if (ejsCreateConstants(ejs, mp, 0, EC_BUFSIZE, NULL) < 0) {
+            return 0;
+        }
     }
     mprAssert(mp->checksum == 0);
     return mp;
@@ -108,11 +108,13 @@ EjsNativeModule *ejsLookupNativeModule(Ejs *ejs, cchar *name)
 }
 
 
+#if UNUSED
 int ejsSetModuleConstants(Ejs *ejs, EjsModule *mp, EjsConstants *constants)
 {
     mp->constants = constants;
     return 0;
 }
+#endif
 
 
 /*
@@ -202,75 +204,109 @@ static void manageConstants(EjsConstants *cp, int flags)
 }
 
 
-EjsConstants *ejsCreateConstants(Ejs *ejs, int count, ssize size)
+/*
+    Create the module constants. Count is the number of strings in the constant pool. Size is the size of the pool.
+    The optional pool parameter supplies a pre-allocated buffer of constant strings.
+ */
+int ejsCreateConstants(Ejs *ejs, EjsModule *mp, int count, ssize size, char *pool)
 {
     EjsConstants    *constants;
+    char            *pp;
+    int             i;
 
     mprAssert(ejs);
 
     if ((constants = mprAllocObj(EjsConstants, manageConstants)) == 0) {
-        return NULL;
+        return MPR_ERR_MEMORY;
     }
-    if (ejs->compiling) {
-        if ((constants->table = mprCreateHash(EJS_DOC_HASH_SIZE, MPR_HASH_STATIC_VALUES)) == 0) {
-            return 0;
-        }
-    }
-    if ((constants->pool = mprAlloc(size)) == 0) {
-        return 0;
+    lock(mp);
+    mp->constants = constants;
+
+    if (ejs->compiling && ((constants->table = mprCreateHash(EJS_DOC_HASH_SIZE, MPR_HASH_STATIC_VALUES)) == 0)) {
+        unlock(mp);
+        return MPR_ERR_MEMORY;
     }
     constants->poolSize = size;
-    constants->poolLength = 0;
-
-    if ((constants->index = mprAlloc(count * sizeof(EjsString*))) == NULL) {
-        return 0;
-    }
-    constants->index[0] = ESV(empty);
-    constants->indexCount = 1;
-    return constants;
-}
-
-
-int ejsGrowConstants(Ejs *ejs, EjsConstants *constants, ssize len)
-{
-    int     indexSize;
-
-    if ((constants->poolLength + len) >= constants->poolSize) {
-        constants->poolSize = ((constants->poolSize + len) + EC_BUFSIZE - 1) / EC_BUFSIZE * EC_BUFSIZE;
-        if ((constants->pool = mprRealloc(constants->pool, constants->poolSize)) == 0) {
+    if ((constants->pool = pool) == 0) {
+        mprAssert(count == 0);
+        if ((constants->pool = mprAlloc(size)) == 0) {
+            unlock(mp);
             return MPR_ERR_MEMORY;
         }
     }
-    if (constants->indexCount >= constants->indexSize) {
-        indexSize = (constants->indexCount + EJS_INDEX_INCR - 1) / EJS_INDEX_INCR * EJS_INDEX_INCR;
-        if ((constants->index = mprRealloc(constants->index, indexSize * sizeof(EjsString*))) == NULL) {
+    if (count) {
+        constants->poolLength = size;
+        if ((constants->index = mprAlloc(count * sizeof(EjsString*))) == NULL) {
+            unlock(mp);
             return MPR_ERR_MEMORY;
         }
-        constants->indexSize = indexSize;
+        mprAssert(pool);
+        if (pool) {
+            for (pp = pool, i = 0; pp < &pool[constants->poolLength]; i++) {
+                constants->index[i] = (void*) (((pp - pool) << 1) | 0x1);
+                pp += slen(pp) + 1;
+            }
+            constants->indexCount = count;
+        }
     }
+    unlock(mp);
     return 0;
 }
 
 
-int ejsAddConstant(Ejs *ejs, EjsConstants *constants, cchar *str)
+int ejsGrowConstants(Ejs *ejs, EjsModule *mp, ssize len)
 {
-    ssize       len, oldLen;
+    EjsConstants    *cp;
+    int             indexSize;
 
-    if (constants->locked) {
+    lock(mp);
+    cp = mp->constants;
+    if ((cp->poolLength + len) >= cp->poolSize) {
+        cp->poolSize = ((cp->poolSize + len) + EC_BUFSIZE - 1) / EC_BUFSIZE * EC_BUFSIZE;
+        if ((cp->pool = mprRealloc(cp->pool, cp->poolSize)) == 0) {
+            unlock(mp);
+            return MPR_ERR_MEMORY;
+        }
+    }
+    if (cp->indexCount >= cp->indexSize) {
+        indexSize = ((cp->indexCount + EJS_INDEX_INCR) / EJS_INDEX_INCR) * EJS_INDEX_INCR;
+        if ((cp->index = mprRealloc(cp->index, indexSize * sizeof(EjsString*))) == NULL) {
+            unlock(mp);
+            return MPR_ERR_MEMORY;
+        }
+        cp->indexSize = indexSize;
+    }
+    unlock(mp);
+    return 0;
+}
+
+
+int ejsAddConstant(Ejs *ejs, EjsModule *mp, cchar *str)
+{
+    EjsConstants    *cp;
+    ssize           len, oldLen;
+    int             index;
+
+    cp = mp->constants;
+    if (cp->locked) {
         mprError("Constant pool for module is locked. Can't add constant \"%s\".",  str);
         return MPR_ERR_CANT_WRITE;
     }
+    lock(mp);
     len = slen(str) + 1;
-    if (ejsGrowConstants(ejs, constants, len) < 0) {
+    if (ejsGrowConstants(ejs, mp, len) < 0) {
+        unlock(mp);
         return MPR_ERR_MEMORY;
     }
-    memcpy(&constants->pool[constants->poolLength], str, len);
-    oldLen = constants->poolLength;
-    constants->poolLength += len;
+    memcpy(&cp->pool[cp->poolLength], str, len);
+    oldLen = cp->poolLength;
+    cp->poolLength += len;
 
-    mprAddKey(constants->table, str, ITOP(constants->indexCount));
-    constants->index[constants->indexCount] = ITOP(oldLen << 1 | 1);
-    return constants->indexCount++;
+    mprAddKey(cp->table, str, ITOP(cp->indexCount));
+    cp->index[cp->indexCount] = ITOP(oldLen << 1 | 1);
+    index = cp->indexCount++;
+    unlock(mp);
+    return index;
 }
 
 
@@ -281,9 +317,11 @@ EjsString *ejsCreateStringFromConst(Ejs *ejs, EjsModule *mp, int index)
     cchar           *str;
     int             value;
 
+    lock(mp);
     constants = mp->constants;
     if (index < 0 || index >= constants->indexCount) {
         mprAssert(!(index < 0 || index >= constants->indexCount));
+        unlock(mp);
         return 0;
     }
     value = PTOI(constants->index[index]);
@@ -291,6 +329,7 @@ EjsString *ejsCreateStringFromConst(Ejs *ejs, EjsModule *mp, int index)
         str = &constants->pool[value >> 1];
         constants->index[index] = sp = ejsInternMulti(ejs, str, slen(str));
     }
+    unlock(mp);
     mprAssert(constants->index[index]);
     return constants->index[index];
 }

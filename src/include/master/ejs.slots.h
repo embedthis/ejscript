@@ -2163,7 +2163,7 @@
 /*
     Class property slots for the "Worker" type 
  */
-#define ES_Worker_cloneSelf                                            0
+#define ES_Worker_fork                                                 0
 #define ES_Worker_exit                                                 1
 #define ES_Worker_join                                                 2
 #define ES_Worker_lookup                                               3
@@ -2337,6 +2337,6 @@
 #define ES_XMLList_NUM_INSTANCE_PROP                                   20
 #define ES_XMLList_NUM_INHERITED_PROP                                  0
 
-#define _ES_CHECKSUM_ejs   1441770
+#define _ES_CHECKSUM_ejs   1441281
 
 #endif

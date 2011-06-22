@@ -278,38 +278,12 @@ static int loadSections(Ejs *ejs, MprFile *file, cchar *path, EjsModuleHdr *hdr,
 
 /*
     Load a module section and constant pool.
-    poolCount is the number of strings. poolSize is the size of the entire pool in bytes.
- */
-static EjsConstants *loadConstants(Ejs *ejs, MprFile *file, int poolCount, int poolSize)
-{
-    EjsConstants    *constants;
-    char            *pp;
-    int             i;
-
-    if ((constants = ejsCreateConstants(ejs, poolCount, poolSize)) == 0) {
-        return 0;
-    }
-    if (mprReadFile(file, constants->pool, poolSize) != poolSize) {
-        return 0;
-    }
-    constants->poolLength = poolSize;
-    constants->indexCount = poolCount;
-    for (pp = constants->pool, i = 1; pp < &constants->pool[constants->poolLength]; i++) {
-        constants->index[i] = (void*) (((pp - constants->pool) << 1) | 0x1);
-        pp += slen(pp) + 1;
-    }
-    return constants;
-}
-
-
-/*
-    Load a module section and constant pool.
  */
 static EjsModule *loadModuleSection(Ejs *ejs, MprFile *file, EjsModuleHdr *hdr, int *created, int flags)
 {
     EjsModule       *mp, tmod;
-    EjsConstants    *constants;
     EjsString       *name;
+    char            *pool;
     int             version, checksum, poolSize, poolCount, nameToken;
 
     mprAssert(created);
@@ -336,14 +310,21 @@ static EjsModule *loadModuleSection(Ejs *ejs, MprFile *file, EjsModuleHdr *hdr, 
         mprAssert(0);
         return 0;
     }
-    if ((constants = loadConstants(ejs, file, poolCount, poolSize)) == 0) {
+    if ((pool = mprAlloc(poolSize)) == 0) {
         return 0;
     }
-    mp->constants = constants;
+    if (mprReadFile(file, pool, poolSize) != poolSize) {
+        return 0;
+    }
+    if (ejsCreateConstants(ejs, mp, poolCount, poolSize, pool) < 0) {
+        return 0;
+    }
     name = ejsCreateStringFromConst(ejs, mp, nameToken);
-    if ((mp = ejsCreateModule(ejs, name, version, constants)) == NULL) {
+
+    if ((mp = ejsCreateModule(ejs, name, version, mp->constants)) == NULL) {
         return 0;
     }
+    mp->constants = tmod.constants;
     mp->current = mprCreateList(-1, 0);
     pushScope(mp, 0, ejs->global);
     mp->checksum = checksum;

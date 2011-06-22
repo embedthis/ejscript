@@ -79,7 +79,12 @@ module ejs {
             let result = ""
             let i = 0
             for each (frame in stack) {
-                result += " [%02d] %s, line %d, %s, %s\n".format(i++, frame.filename, frame.lineno, frame.func, frame.code)
+                if (frame.filename) {
+                    result += " [%02d] %s, line %d, %s, %s\n".format(
+                        i++, frame.filename, frame.lineno, frame.func, frame.code)
+                } else {
+                    result += " [%02d] %s\n".format(i++, frame.func)
+                }
             }
             return result
         }

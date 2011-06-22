@@ -69,7 +69,7 @@ module ejs {
             Create a new worker by cloning the current interpreter
             @spec ejs
          */
-        native static function cloneSelf(): Worker
+        native static function fork(): Worker
 
         /**
             Load the script. The literal script is compiled as a JavaScript program and loaded and run.

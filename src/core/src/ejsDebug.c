@@ -53,11 +53,10 @@ void ejsConfigureDebugType(Ejs *ejs)
 {
     EjsType         *type;
 
-    if ((type = ejsFinalizeScriptType(ejs, N("ejs", "Debug"), sizeof(EjsPot), ejsManagePot, EJS_TYPE_POT)) == 0) {
-        return;
+    if ((type = ejsFinalizeScriptType(ejs, N("ejs", "Debug"), sizeof(EjsPot), ejsManagePot, EJS_TYPE_POT)) != 0) {
+        ejsBindMethod(ejs, type, ES_Debug_breakpoint, debug_breakpoint);
+        ejsBindAccess(ejs, type, ES_Debug_mode, debug_mode, debug_set_mode);
     }
-    ejsBindMethod(ejs, type, ES_Debug_breakpoint, debug_breakpoint);
-    ejsBindAccess(ejs, type, ES_Debug_mode, debug_mode, debug_set_mode);
     ejsBindFunction(ejs, ejs->global, ES_breakpoint, debug_breakpoint);
 }
 

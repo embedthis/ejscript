@@ -138,6 +138,7 @@ module ejs {
      */
     native function assert(condition: Boolean): Void
 
+    //  MOB - is this used?
     /** 
         Replace the base type of a type with an exact clone. 
         @param klass Class in which to replace the base class.
@@ -262,14 +263,7 @@ module ejs {
         @param args Variables to print
         @spec ejs
      */
-    native function print(...args): void
-
-    /**
-        Print the arguments using a printf style format string
-        @param fmt Format string
-        @param args Variables to print
-     */
-    function printf(fmt, ...args): Void
+    function printf(fmt: String, ...args): Void
         App.outputStream.write(fmt.format(args))
 
     /** 
@@ -296,26 +290,7 @@ module ejs {
      */
     native function parseInt(str: String, radix: Number = 10): Number
 
-    /* TODO - remove
-        Determine the type of a variable. 
-        @param o Variable to examine.
-        @return Returns a string containing the arguments type. Possible types are:
-            @li $undefined "undefined"
-            @li $Object "object"
-            @li $Boolean "boolean"
-            @li $Function "function"
-            @li Number "number"
-            @li String "string"
-        Note that JavaScript has many other types that are not accurately represented by the typeof call. Such types
-        and values include: Array, String, Function, Math, Date, RegExp, Error and null and undefined values. 
-        Consequently, typeof() is unable to correctly identify object data types. Use the fixed $typeOf() function
-        instead.
-        @remarks Note that lower case names are returned for class names.
-        @spec ejs
-    native function typeof(o: Object): String
-     */
-
-    /** @hide  TODO - temp only */
+    /** @hide */
     function printHash(name: String, o: Object): Void
         print("%20s %X" % [name, hashcode(o)])
 

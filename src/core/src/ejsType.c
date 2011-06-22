@@ -84,7 +84,7 @@ int ejsCreateBootstrapTypes(Ejs *ejs)
     ejsInitTypeType(ejs, typeType);
     ejsInitBlockType(ejs, blockType);
     ejsInitNullType(ejs, nullType);
-    
+#if UNUSED
     if (ejs->empty) {
         ejs->global = ejsCreateBlock(ejs, 0);
     } else {
@@ -92,6 +92,7 @@ int ejsCreateBootstrapTypes(Ejs *ejs)
         ((EjsPot*) ejs->global)->numProp = ES_global_NUM_CLASS_PROP;
     }
     mprSetName(ejs->global, "global");
+#endif
     return 0;
 }
 
@@ -216,6 +217,9 @@ EjsType *ejsFinalizeCoreType(Ejs *ejs, EjsName qname)
 }
 
 
+/*
+    Returns false if the type has already been finalized
+ */
 EjsType *ejsFinalizeScriptType(Ejs *ejs, EjsName qname, int size, void *manager, int64 attributes)
 {
     EjsType     *type;
@@ -227,14 +231,6 @@ EjsType *ejsFinalizeScriptType(Ejs *ejs, EjsName qname, int size, void *manager,
     if (type->configured) {
         return 0;
     }
-#if UNUSED
-    if (attributes & EJS_TYPE_POT) {
-        if (size > sizeof(EjsPot)) {
-            mprAssert(attributes & EJS_TYPE_DYNAMIC_INSTANCES);
-            attributes |= EJS_TYPE_DYNAMIC_INSTANCES;
-        }
-    }
-#endif
     attributes = setDefaultAttributes(type, size, attributes);
     attributes = ejsSetTypeAttributes(type, size, manager, attributes);
     ejsSetTypeHelpers(type, attributes);

@@ -2668,7 +2668,6 @@ void ejsConfigureStringType(Ejs *ejs)
     if ((type = ejsFinalizeCoreType(ejs, N("ejs", "String"))) == 0) {
         return;
     }
-    ejsSetProperty(ejs, ejs->global, ES_string, type);
     ejsBindMethod(ejs, type, ES_String_fromCharCode, fromCharCode);
     ejsBindConstructor(ejs, type, stringConstructor);
     

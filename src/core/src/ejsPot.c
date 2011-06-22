@@ -33,7 +33,7 @@ EjsAny *ejsClonePot(Ejs *ejs, EjsAny *obj, bool deep)
 {
     EjsPot      *dest, *src;
     EjsSlot     *dp, *sp;
-    EjsType     *type;
+    EjsType     *type, *vtp;
     EjsObj      *vp;
     int         numProp, i;
 
@@ -42,8 +42,9 @@ EjsAny *ejsClonePot(Ejs *ejs, EjsAny *obj, bool deep)
         return NULL;
     }
     src = (EjsPot*) obj;
+    type = TYPE(src);
     numProp = src->numProp;
-    if ((dest = ejsCreatePot(ejs, TYPE(src), numProp)) == 0) {
+    if ((dest = ejsCreatePot(ejs, type, numProp)) == 0) {
         return 0;
     }
     dest->obj = src->obj;
@@ -57,16 +58,24 @@ EjsAny *ejsClonePot(Ejs *ejs, EjsAny *obj, bool deep)
     
     dp = dest->properties->slots;
     sp = src->properties->slots;
+
+    /*
+        NOTE: Object pots do not inherit prototype properties, whereas class instances do.
+     */
     for (i = 0; i < numProp; i++, sp++, dp++) {
         *dp = *sp;
         dp->hashChain = -1;
+        vp = sp->value.ref;
         if (deep) {
-            vp = sp->value.ref;
-            type = TYPE(vp);
-            if ((ejsIsType(ejs, vp) && ((EjsType*) vp)->mutable) || (!ejsIsType(ejs, vp) && type->mutableInstances)) {
+            vtp = TYPE(vp);
+            //  MOB refactor / optimize
+            if (ejsIsFunction(ejs, vp) && !ejsIsType(ejs, vp)) {
+                ;
+            } else if ((ejsIsType(ejs, vp) && ((EjsType*) vp)->mutable) || (!ejsIsType(ejs, vp) && TYPE(vp)->mutableInstances)) {
 #if BLD_DEBUG
                 EjsName qname = ejsGetPropertyName(ejs, src, i);
                 mprSetName(dp->value.ref, qname.name->value);
+                // mprLog(0, "CLONE %N", qname);
 #endif
                 dp->value.ref = ejsClone(ejs, vp, deep);
             }
@@ -83,7 +92,7 @@ EjsAny *ejsClonePot(Ejs *ejs, EjsAny *obj, bool deep)
 /*
     Fix trait type references to point to mutable types in the current interpreter. Only needed after cloning global.
  */
-void ejsFixCrossRefs(Ejs *ejs, EjsPot *obj)
+void ejsFixTraits(Ejs *ejs, EjsPot *obj)
 {
     EjsSlot     *sp;
     EjsType     *type;
@@ -106,7 +115,7 @@ void ejsFixCrossRefs(Ejs *ejs, EjsPot *obj)
             }
         }
         if (ejsIsPot(ejs, sp->value.ref)) {
-            ejsFixCrossRefs(ejs, sp->value.ref);
+            ejsFixTraits(ejs, sp->value.ref);
         }
     }
     SET_VISITED(obj, 0);
@@ -154,7 +163,6 @@ static int definePotProperty(Ejs *ejs, EjsPot *obj, int slotNum, EjsName qname, 
     EjsObj *value)
 {
     EjsFunction     *fun;
-    EjsType         *type;
     int             priorSlot;
 
     mprAssert(ejs);
@@ -203,6 +211,7 @@ static int definePotProperty(Ejs *ejs, EjsPot *obj, int slotNum, EjsName qname, 
         if (!ejsIsNativeFunction(ejs, fun) && ejsIsType(ejs, obj)) {
             ((EjsType*) obj)->hasScriptFunctions = 1;
         }
+#if UNUSED
         if (fun->staticMethod && ejsIsType(ejs, obj)) {
             type = (EjsType*) obj;
             if (!type->isInterface) {
@@ -210,6 +219,7 @@ static int definePotProperty(Ejs *ejs, EjsPot *obj, int slotNum, EjsName qname, 
                 fun->boundThis = obj;
             }
         }
+#endif
     }
     return slotNum;
 }
@@ -952,7 +962,7 @@ void *ejsCreatePot(Ejs *ejs, EjsType *type, int numProp)
 
     mprAssert(type);
     
-    prototype = (EjsPot*) type->prototype;
+    prototype = type->prototype;
     if (type->hasInstanceVars) {
         numProp = max(numProp, prototype->numProp);
     }

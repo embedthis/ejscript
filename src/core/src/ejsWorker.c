@@ -255,9 +255,9 @@ static EjsWorker *workerClone(Ejs *ejs, EjsWorker *baseWorker, int argc, EjsObj 
 
 
 /*
-    static function cloneSelf(): Worker
+    static function fork(): Worker
  */
-static EjsWorker *workerCloneSelf(Ejs *ejs, EjsWorker *unused, int argc, EjsObj **argv)
+static EjsWorker *workerFork(Ejs *ejs, EjsWorker *unused, int argc, EjsObj **argv)
 {
     return initWorker(ejs, 0, ejs, 0, 0, 0);
 }
@@ -877,7 +877,7 @@ void ejsConfigureWorkerType(Ejs *ejs)
     ejsBindMethod(ejs, type, ES_Worker_exit, workerExit);
     ejsBindMethod(ejs, type, ES_Worker_join, workerJoin);
     ejsBindMethod(ejs, type, ES_Worker_lookup, workerLookup);
-    ejsBindMethod(ejs, type, ES_Worker_cloneSelf, workerCloneSelf);
+    ejsBindMethod(ejs, type, ES_Worker_fork, workerFork);
     ejsBindMethod(ejs, prototype, ES_Worker_clone, workerClone);
     ejsBindMethod(ejs, prototype, ES_Worker_eval, workerEval);
     ejsBindMethod(ejs, prototype, ES_Worker_load, workerLoad);

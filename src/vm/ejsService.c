@@ -11,11 +11,12 @@
 /*********************************** Forward **********************************/
 
 static int allocNotifier(int flags, ssize size);
+static void cloneProperties(Ejs *ejs, Ejs *master);
 static int  configureEjs(Ejs *ejs);
-static int  defineTypes(Ejs *ejs);
-static int  defineSharedTypes(Ejs *ejs);
+static void defineSharedTypes(Ejs *ejs);
 static void initSearchPath(Ejs *ejs, cchar *search);
-static int  loadStandardModules(Ejs *ejs, MprList *require);
+static void initStack(Ejs *ejs);
+static int  loadRequiredModules(Ejs *ejs, MprList *require);
 static void logHandler(int flags, int level, cchar *msg);
 static void manageEjs(Ejs *ejs, int flags);
 static void manageEjsService(EjsService *service, int flags);
@@ -29,14 +30,13 @@ static EjsService *createService()
 {
     EjsService  *sp;
 
-    mprGlobalLock();
     if (MPR->ejsService) {
-        mprGlobalUnlock();
         return MPR->ejsService;
-    } else if ((sp = mprAllocObj(EjsService, manageEjsService)) == NULL) {
-        mprGlobalUnlock();
+    }
+    if ((sp = mprAllocObj(EjsService, manageEjsService)) == NULL) {
         return 0;
     }
+    mprGlobalUnlock();
     MPR->ejsService = sp;
     mprSetMemNotifier((MprMemNotifier) allocNotifier);
     if (mprUsingDefaultLogHandler()) {
@@ -80,22 +80,25 @@ Ejs *ejsCreateVM(int argc, cchar **argv, int flags)
     if ((ejs = mprAllocObj(Ejs, manageEjs)) == NULL) {
         return 0;
     }
-    if ((sp = MPR->ejsService) == 0) {
-        sp = createService();
+    sp = ejs->service = MPR->ejsService;
+    if (sp == 0) {
+        sp = ejs->service = createService();
+        defineSharedTypes(ejs);
     }
-    ejs->service = sp;
-    if ((ejs->state = mprAllocZeroed(sizeof(EjsState))) == 0) {
-        return 0;
-    }
+    ejs->empty = 1;
+    ejs->state = mprAllocZeroed(sizeof(EjsState));
     ejs->argc = argc;
     ejs->argv = argv;
     ejs->name = mprAsprintf("ejs-%d", sp->seqno++);
     ejs->dispatcher = mprCreateDispatcher(ejs->name, 1);
     ejs->mutex = mprCreateLock(ejs);
     ejs->dontExit = sp->dontExit;
-    ejs->empty = 1;
     ejs->flags |= (flags & (EJS_FLAG_NO_INIT | EJS_FLAG_DOC | EJS_FLAG_HOSTED));
     ejs->hosted = (flags & EJS_FLAG_HOSTED) ? 1 : 0;
+
+    ejs->global = ejsCreateBlock(ejs, 0);
+    mprSetName(ejs->global, "global");
+    ejsDefineGlobalNamespaces(ejs);
 
     /*
         Modules are not marked in the modules list. This way, modules are collected when not referenced.
@@ -104,17 +107,15 @@ Ejs *ejsCreateVM(int argc, cchar **argv, int flags)
     ejs->modules = mprCreateList(-1, MPR_LIST_STATIC_VALUES);
     ejs->workers = mprCreateList(0, 0);
 
-    if (ejsInitStack(ejs) < 0) {
-        ejsDestroyVM(ejs);
-        mprRemoveRoot(ejs);
-        return 0;
-    }
-    lock(sp);
-    defineSharedTypes(ejs);
-    defineTypes(ejs);
+    initStack(ejs);
     initSearchPath(ejs, 0);
     mprAddItem(sp->vmlist, ejs);
-    unlock(sp);
+
+    if (ejs->hasError || mprHasMemError(ejs)) {
+        ejsDestroyVM(ejs);
+        mprError("Can't create VM");
+        return 0;
+    }
     return ejs;
 }
 
@@ -126,14 +127,12 @@ Ejs *ejsCloneVM(Ejs *master)
     int         next;
 
     if (master) {
+        mprAssert(!master->empty);
         if ((ejs = ejsCreateVM(master->argc, master->argv, master ? master->flags : 0)) == 0) {
             return 0;
         }
-        ejs->global = ejsClone(ejs, master->global, 1);
-        ejsSetPropertyByName(ejs, ejs->global, N("ejs", "global"), ejs->global);
-        ejsDefineGlobals(ejs);
-        ejsDefineGlobalNamespaces(ejs);
-        ejsFixCrossRefs(ejs, ejs->global);
+        cloneProperties(ejs, master);
+        ejsFixTraits(ejs, ejs->global);
         ejs->sqlite = master->sqlite;
         ejs->http = master->http;
         ejs->initialized = master->initialized;
@@ -141,18 +140,15 @@ Ejs *ejsCloneVM(Ejs *master)
         for (next = 0; (mp = mprGetNextItem(master->modules, &next)) != 0;) {
             ejsAddModule(ejs, mp);
         }
-    } else {
-        if ((ejs = ejsCreateVM(0, 0, 0)) == 0) {
-            return 0;
-        }
+        return ejs;
     }
-    return ejs;
+    return ejsCreateVM(0, 0, 0);
 }
 
 
 /*
     Load the standard ejs modules with an optional override search path and list of required modules.
-    If the require list is empty, then ejs->empty will be true.
+    If the require list is empty, then ejs->empty will be true. This routine should only be called once for an interpreter.
  */
 int ejsLoadModules(Ejs *ejs, cchar *search, MprList *require)
 {
@@ -161,15 +157,16 @@ int ejsLoadModules(Ejs *ejs, cchar *search, MprList *require)
     sp = ejs->service;
     mprAssert(mprGetListLength(ejs->modules) == 0);
 
-    if (require == 0 || mprGetListLength(require)) {
-        ejs->empty = 0;
-        ejsDefineGlobals(ejs);
-    }
+    ejs->empty = !(require == 0 || mprGetListLength(require));
     if (search) {
         initSearchPath(ejs, search);
     }
+#if UNUSED
+    ejsDefineGlobals(ejs);
+#endif
+
     lock(sp);
-    if (loadStandardModules(ejs, require) < 0) {
+    if (loadRequiredModules(ejs, require) < 0) {
         if (ejs->exception) {
             ejsReportError(ejs, "Can't initialize interpreter");
         }
@@ -203,7 +200,7 @@ void ejsDestroyVM(Ejs *ejs)
         mprAssert(ejs->modules->length == 0);
         ejsRemoveWorkers(ejs);
         state = ejs->state;
-        if (state->stackBase) {
+        if (state && state->stackBase) {
             mprVirtFree(state->stackBase, state->stackSize);
             state->stackBase = 0;
             ejs->state = 0;
@@ -211,7 +208,9 @@ void ejsDestroyVM(Ejs *ejs)
         mprRemoveItem(sp->vmlist, ejs);
         ejs->service = 0;
         ejs->result = 0;
-        mprDestroyDispatcher(ejs->dispatcher);
+        if (ejs->dispatcher) {
+            mprDestroyDispatcher(ejs->dispatcher);
+        }
     }
 }
 
@@ -419,92 +418,102 @@ void ejsApplyBlockHelpers(EjsService *sp, EjsType *type)
 }
 
 
-/*  
-    Create the shared immutable language types and values. This is called only once ever.
- */
-static int defineSharedTypes(Ejs *ejs)
+static void defineSharedTypes(Ejs *ejs)
 {
     /*  
-        Create the essential bootstrap types: Object, Type and the global object, these are the foundation.
-        All types are instances of Type. Order matters here.
+        Create the essential bootstrap types. Order matters.
      */
-    if (ejs->service->immutable == 0) {
-        ejsCreateBootstrapTypes(ejs);
-        ejsCreateArrayType(ejs);
-        ejsCreateNamespaceType(ejs);
-        ejsCreateFunctionType(ejs);
-        ejsCreateFrameType(ejs);
-
-        /*
-            These types are used by the compiler. Must work with an empty interpreter. Order does not matter.
-         */
-        ejsCreateBooleanType(ejs);
-        ejsCreateErrorType(ejs);
-        ejsCreateIteratorType(ejs);
-        ejsCreateVoidType(ejs);
-        ejsCreateNumberType(ejs);
-        ejsCreatePathType(ejs);
-        ejsCreateRegExpType(ejs);
-        ejsCreateXMLType(ejs);
-        ejsCreateXMLListType(ejs);
-
-        ejsAddNativeModule(ejs, "ejs", configureEjs, _ES_CHECKSUM_ejs, 0);
-
-    } else {
-        ejs->global = ejsCreateBlock(ejs, max(ES_global_NUM_CLASS_PROP, EJS_NUM_GLOBAL));
-        ((EjsPot*) ejs->global)->numProp = ES_global_NUM_CLASS_PROP;
-        mprSetName(ejs->global, "global");
-    }
-    ejsDefineGlobalNamespaces(ejs);
-    if (ejs->hasError || mprHasMemError(ejs)) {
-        mprError("Can't create core shared types");
-        return EJS_ERR;
-    }
-    return 0;
-}
-
-
-static int defineTypes(Ejs *ejs)
-{
-    Ejs         *base;
-    EjsAny      *vp;
-    EjsName     qname;
-    EjsTrait    *trait;
-    int         i;
-
-    base = mprGetFirstItem(ejs->service->vmlist);
-    if (base && base != ejs) {
-        /*
-            For subsequent VMs, copy global references to immutable types and functions
-            NOTE: troublesome to copy immutable instances and loader complains about redefines. Test this again.
-         */
-        for (i = 0; i < ES_global_NUM_CLASS_PROP; i++) {
-            vp = ejsGetProperty(base, base->global, i);
-            qname = ejsGetPropertyName(base, base->global, i);
-            if ((ejsIsType(ejs, vp) && !((EjsType*) vp)->mutable) || (!ejsIsType(ejs, vp) && ejsIsFunction(ejs, vp))) {
-                ejsSetProperty(ejs, ejs->global, i, vp);
-                ejsSetPropertyName(ejs, ejs->global, i, qname);
-                trait = ejsGetPropertyTraits(base, base->global, i);
-                ejsSetPropertyTraits(ejs, ejs->global, i, trait->type, trait->attributes);
-            }
-        }
-    }
+    ejsCreateBootstrapTypes(ejs);
+    ejsCreateArrayType(ejs);
+    ejsCreateNamespaceType(ejs);
+    ejsCreateFunctionType(ejs);
+    ejsCreateFrameType(ejs);
     ejsCreateConfigType(ejs);
 
     /*
-        When building all-in-one (appweb), we need to explicitly call the module entry points of these built-in modules.
+        These types are used by the compiler. Must work with an empty interpreter. Order does not matter.
      */
+    ejsCreateBooleanType(ejs);
+    ejsCreateErrorType(ejs);
+    ejsCreateIteratorType(ejs);
+    ejsCreateVoidType(ejs);
+    ejsCreateNumberType(ejs);
+    ejsCreatePathType(ejs);
+    ejsCreateRegExpType(ejs);
+    ejsCreateXMLType(ejs);
+    ejsCreateXMLListType(ejs);
+
+    ejsCreateGlobalNamespaces(ejs);
+    ejsAddNativeModule(ejs, "ejs", configureEjs, _ES_CHECKSUM_ejs, 0);
+
 #if BLD_FEATURE_EJS_ALL_IN_ONE
 #if BLD_FEATURE_SQLITE
     ejs_db_sqlite_Init(ejs, NULL);
 #endif
     ejs_web_Init(ejs, NULL);
 #endif
-    if (ejs->hasError || mprHasMemError(ejs)) {
-        mprError("Can't create core types");
-        return EJS_ERR;
+}
+
+
+static void cloneProperties(Ejs *ejs, Ejs *master)
+{
+    EjsAny      *vp, *mvp;
+    EjsName     qname;
+    EjsTrait    *trait;
+    EjsType     *type;
+    int         i, immutable, numProp;
+
+    mprAssert(ejs);
+    mprAssert(master);
+
+    /*
+        For subsequent VMs, copy global references to immutable types and functions.
+     */
+    numProp = ((EjsPot*) master->global)->numProp;
+    for (i = 0; i < numProp /* MOB ES_global_NUM_CLASS_PROP */; i++) {
+        vp = ejsGetProperty(master, master->global, i);
+        qname = ejsGetPropertyName(master, master->global, i);
+        ejsSetPropertyName(ejs, ejs->global, i, qname);
+        trait = ejsGetPropertyTraits(master, master->global, i);
+        ejsSetPropertyTraits(ejs, ejs->global, i, trait->type, trait->attributes);
+        immutable = 0;
+        type = TYPE(vp);
+        if (ejsIsType(ejs, vp)) {
+            if (!((EjsType*) vp)->mutable) {
+                immutable = 1;
+            }
+        } else if (!TYPE(vp)->mutableInstances) {
+            immutable = 1;
+        } else if (ejsIsFunction(ejs, vp)) {
+            immutable = 1;
+        } else if (vp == master->global) {
+            vp = ejs->global;
+            immutable = 1;
+        }
+        if (immutable) {
+            // mprLog(0, "REF   %d, %N", i, qname);
+        } else {
+            mvp = vp;
+            vp = ejsClone(ejs, mvp, 1);
+            // mprLog(0, "CLONE %d %N from %p to %p", i, qname, mvp, vp);
+        }
+        ejsSetProperty(ejs, ejs->global, i, vp);
     }
-    return 0;
+}
+
+
+static void initStack(Ejs *ejs)
+{
+    EjsState    *state;
+
+    /*
+        This will allocate memory virtually for systems with virutal memory. Otherwise, it will just use malloc.
+     */
+    state = ejs->state;
+    state->stackSize = MPR_PAGE_ALIGN(EJS_STACK_MAX, mprGetPageSize(ejs));
+    if ((state->stackBase = mprVirtAlloc(state->stackSize, MPR_MAP_READ | MPR_MAP_WRITE)) != 0) {
+        state->stack = &state->stackBase[-1];
+    }
 }
 
 
@@ -514,12 +523,10 @@ static int defineTypes(Ejs *ejs)
  */
 static int configureEjs(Ejs *ejs)
 {
-    /* 
-        Order matters
-     */
-    if (!EST(Object)->configured) {
-        ejsConfigureGlobalBlock(ejs);
-        ejsConfigureObjectType(ejs);
+    if (!ejs->service->immutableInitialized) {
+        /* 
+            Configure shared immutable types
+         */
         ejsConfigureIteratorType(ejs);
         ejsConfigureErrorType(ejs);
         ejsConfigureNullType(ejs);
@@ -534,11 +541,9 @@ static int configureEjs(Ejs *ejs)
         ejsConfigureByteArrayType(ejs);
         ejsConfigureCmdType(ejs);
         ejsConfigureDateType(ejs);
-        ejsConfigureDebugType(ejs);
         ejsConfigureFunctionType(ejs);
         ejsConfigureGCType(ejs);
         ejsConfigureHttpType(ejs);
-        ejsConfigureJSONType(ejs);
         ejsConfigureLocalCacheType(ejs);
         ejsConfigureLogFileType(ejs);
         ejsConfigureMathType(ejs);
@@ -549,11 +554,24 @@ static int configureEjs(Ejs *ejs)
         ejsConfigureStringType(ejs);
         ejsConfigureSystemType(ejs);
         ejsConfigureTimerType(ejs);
-        ejsConfigureUriType(ejs);
         ejsConfigureWorkerType(ejs);
         ejsConfigureXMLType(ejs);
         ejsConfigureXMLListType(ejs);
+        ejs->service->immutableInitialized = 1;
     }
+
+    /*
+        These types have global properties that must be initialized for all interpreters
+     */
+    ejsConfigureObjectType(ejs);
+    ejsConfigureDebugType(ejs);
+    ejsConfigureJSONType(ejs);
+    ejsConfigureUriType(ejs);
+
+    /*
+        Configure mutables
+     */
+    ejsConfigureGlobalBlock(ejs);
     ejsConfigureAppType(ejs);
     ejsDefineConfigProperties(ejs);
     ejs->initialized = 1;
@@ -562,10 +580,10 @@ static int configureEjs(Ejs *ejs)
 
 
 /*  
-    Preload standard modules. If require is NULL, then load the standard set.
+    Preload required modules. If require is NULL, then load the standard set.
     Otherwise only load those specified in require.
  */
-static int loadStandardModules(Ejs *ejs, MprList *require)
+static int loadRequiredModules(Ejs *ejs, MprList *require)
 {
     char    *name;
     int     rc, next, paused;

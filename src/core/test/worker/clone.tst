@@ -2,10 +2,10 @@
     Test cloning worker interpreters
  */
 
-//  Clone self
+//  Clone self (fork)
 public var x = 1234
 assert(x == 1234)
-w = Worker.cloneSelf()
+w = Worker.fork()
 y = w.eval('assert(x == 1234), x')
 assert(y == x)
 Worker.join(w)

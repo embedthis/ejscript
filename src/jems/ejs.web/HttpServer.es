@@ -17,7 +17,7 @@ module ejs.web {
         use default namespace public
 
         /** Frequency to check and release excess worker threads */
-        static var PrunePeriod = 60 * 1024
+        static var PrunePeriod = 60 * 1000
 
         private var idleWorkers: Array = []
         private var activeWorkers: Array = []
@@ -172,7 +172,7 @@ module ejs.web {
             @param request Request object
          */
         private function defaultOnRequest(request: Request): Void {
-            App.log.debug(3, "Multithreaded request")
+            App.log.debug(6, "Multithreaded request")
             try {
                 process(request.route.response, request)
             } catch (e) {
@@ -257,7 +257,7 @@ server.listen("127.0.0.1:7777")
                 openSession()
             }
             //  MOB - BUG. Need this.fun to bind the function
-            setInterval(this.pruneWorkers, PrunePeriod, this)
+            //MOB setInterval(this.pruneWorkers, PrunePeriod, this)
         }
 
         private function openSession() {
@@ -303,7 +303,11 @@ server.listen("127.0.0.1:7777")
                     App.log.debug(1, "Too many workers " + activeWorkers.length + "/" + limits.workers)
                     return null
                 }
-                workerImage ||= Worker.cloneSelf()
+                //MOB workerImage ||= Worker.fork()
+                if (workerImage == null) {
+                    workerImage = new Worker
+                    workerImage.preeval("require ejs.web")
+                }
                 w = workerImage.clone()
                 if (config.web.workers && config.web.workers.init) {
                     w.preeval(config.web.workers.init)
@@ -377,6 +381,7 @@ server.listen("127.0.0.1:7777")
             @param app Web application function 
          */
         function process(app: Function, request: Request, finalize: Boolean = true): Void {
+let mark = new Date
             request.config = config
             try {
                 if (request.route && request.route.middleware) {
@@ -405,7 +410,7 @@ server.listen("127.0.0.1:7777")
 
                 } else {
                     let file = request.responseHeaders["X-Sendfile"]
-                    if (file && !request.isSecure) {
+                    if (file && !request.isSecure && !request.finalized) {
                         request.writeFile(file)
                     }
                 }
@@ -417,6 +422,7 @@ server.listen("127.0.0.1:7777")
                 App.log.debug(1, e)
                 request.writeError(Http.ServerError, e)
             }
+// App.log.debug(2, "LEAVE PROCESSING  " + mark.elapsed + " msec for " + request.uri)
         }
 
         private function processBody(request: Request, body: Object): Void {
@@ -541,6 +547,7 @@ server.listen("127.0.0.1:7777")
                 routing table.
          */
         function serve(request: Request, router: Router = Router()): Void {
+            request.mark = new Date
             try {
                 let w: Worker
                 let route: Route = router.route(request)
@@ -549,7 +556,10 @@ server.listen("127.0.0.1:7777")
                         request.writeError(Http.ServiceUnavailable, "Server busy")
                         return
                     }
-                    request.on("close", function() {releaseWorker(w)})
+                    request.on("close", function() {
+                        releaseWorker(w) 
+                        App.log.debug(2, "Elapsed " + request.mark.elapsed + " msec for " + request.uri)
+                    })
                     passRequest(request, w)
                     /* Must not touch request from here on - the worker owns it now */
                 } else {

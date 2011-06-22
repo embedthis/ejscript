@@ -1861,7 +1861,7 @@
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 			shellPath = /bin/sh;
-			shellScript = "export BIN_DIR=$BUILT_PRODUCTS_DIR\nexport DYLD_LIBRARY_PATH=$BUILT_PRODUCTS_DIR\nmake -C $SRC/core TRACE=1 xmodules && cp $OUT/modules/*.mod $BUILT_PRODUCTS_DIR || exit 255\n#make -C $SRC/jems TRACE=1 xmodules && cp $OUT/modules/*.mod $BUILT_PRODUCTS_DIR || exit 255\n#make -C $SRC/jems/ejs.mvc TRACE=1 compile && cp $OUT/bin/mvc $BUILT_PRODUCTS_DIR || exit 255\n";
+			shellScript = "export BIN_DIR=$BUILT_PRODUCTS_DIR\nexport DYLD_LIBRARY_PATH=$BUILT_PRODUCTS_DIR\nmake -C $SRC/core TRACE=1 xmodules && cp $OUT/modules/*.mod $BUILT_PRODUCTS_DIR || exit 255\nmake -C $SRC/jems TRACE=1 xmodules && cp $OUT/modules/*.mod $BUILT_PRODUCTS_DIR || exit 255\nmake -C $SRC/jems/ejs.mvc TRACE=1 compile && cp $OUT/bin/mvc $BUILT_PRODUCTS_DIR || exit 255\n";
 		};
 		C97A5EC511E81E9B00BB0981 /* ShellScript */ = {
 			isa = PBXShellScriptBuildPhase;

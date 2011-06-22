@@ -868,53 +868,51 @@ void ejsConfigureObjectType(Ejs *ejs)
     EjsPot      *prototype;
     EjsFunction *fun;
 
-    if ((type = ejsFinalizeCoreType(ejs, N("ejs", "Object"))) == 0) {
-        return;
+    if ((type = ejsFinalizeCoreType(ejs, N("ejs", "Object"))) != 0) {
+        prototype = type->prototype;
+        ejsBindMethod(ejs, type, ES_Object_create, obj_create);
+        ejsBindMethod(ejs, type, ES_Object_defineProperty, obj_defineProperty);
+        ejsBindMethod(ejs, type, ES_Object_freeze, obj_freeze);
+        ejsBindMethod(ejs, type, ES_Object_getOwnPropertyCount, obj_getOwnPropertyCount);
+        ejsBindMethod(ejs, type, ES_Object_getOwnPropertyDescriptor, obj_getOwnPropertyDescriptor);
+        ejsBindMethod(ejs, type, ES_Object_getOwnPropertyNames, obj_getOwnPropertyNames);
+        ejsBindMethod(ejs, type, ES_Object_getOwnPrototypeOf, obj_getOwnPrototypeOf);
+        ejsBindMethod(ejs, type, ES_Object_isExtensible, obj_isExtensible);
+        ejsBindMethod(ejs, type, ES_Object_isFrozen, obj_isFrozen);
+        ejsBindMethod(ejs, type, ES_Object_isSealed, obj_isSealed);
+        ejsBindMethod(ejs, type, ES_Object_preventExtensions, obj_preventExtensions);
+        ejsBindAccess(ejs, type, ES_Object_prototype, obj_prototype, obj_set_prototype);
+        ejsBindMethod(ejs, type, ES_Object_seal, obj_seal);
+
+        /* Reflection */
+        ejsBindMethod(ejs, type, ES_Object_getBaseType, obj_getBaseType);
+        ejsBindMethod(ejs, type, ES_Object_getType, obj_getType);
+        ejsBindMethod(ejs, type, ES_Object_getTypeName, obj_getTypeName);
+        ejsBindMethod(ejs, type, ES_Object_getName, obj_getName);
+        ejsBindMethod(ejs, type, ES_Object_isPrototype, obj_isPrototype);
+        ejsBindMethod(ejs, type, ES_Object_isType, obj_isType);
+
+        ejsBindMethod(ejs, prototype, ES_Object_constructor, obj_constructor);
+        ejsBindMethod(ejs, prototype, ES_Object_clone, obj_clone);
+        ejsBindMethod(ejs, prototype, ES_Object_iterator_get, obj_get);
+        ejsBindMethod(ejs, prototype, ES_Object_iterator_getValues, obj_getValues);
+        ejsBindMethod(ejs, prototype, ES_Object_hasOwnProperty, obj_hasOwnProperty);
+        ejsBindMethod(ejs, prototype, ES_Object_isPrototypeOf, obj_isPrototypeOf);
+        ejsBindMethod(ejs, prototype, ES_Object_propertyIsEnumerable, obj_propertyIsEnumerable);
+        ejsBindMethod(ejs, prototype, ES_Object_toLocaleString, toLocaleString);
+        ejsBindMethod(ejs, prototype, ES_Object_toString, ejsObjToString);
+        ejsBindMethod(ejs, prototype, ES_Object_toJSON, ejsObjToJSON);
+        /*
+            The prototype method is special. It is declared as static so it is generated in the type slots, but it is
+            patched to be an instance method so the value of "this" will be preserved when it is invoked.
+         */
+        fun = ejsGetProperty(ejs, type, ES_Object_prototype);
+        fun->staticMethod = 0;
+        fun->setter->staticMethod = 0;
+        type->constructor.block.pot.properties->slots[ES_Object_prototype].trait.attributes &= ~EJS_PROP_STATIC;
     }
-    prototype = type->prototype;
-    ejsBindMethod(ejs, type, ES_Object_create, obj_create);
-    ejsBindMethod(ejs, type, ES_Object_defineProperty, obj_defineProperty);
-    ejsBindMethod(ejs, type, ES_Object_freeze, obj_freeze);
-    ejsBindMethod(ejs, type, ES_Object_getOwnPropertyCount, obj_getOwnPropertyCount);
-    ejsBindMethod(ejs, type, ES_Object_getOwnPropertyDescriptor, obj_getOwnPropertyDescriptor);
-    ejsBindMethod(ejs, type, ES_Object_getOwnPropertyNames, obj_getOwnPropertyNames);
-    ejsBindMethod(ejs, type, ES_Object_getOwnPrototypeOf, obj_getOwnPrototypeOf);
-    ejsBindMethod(ejs, type, ES_Object_isExtensible, obj_isExtensible);
-    ejsBindMethod(ejs, type, ES_Object_isFrozen, obj_isFrozen);
-    ejsBindMethod(ejs, type, ES_Object_isSealed, obj_isSealed);
-    ejsBindMethod(ejs, type, ES_Object_preventExtensions, obj_preventExtensions);
-    ejsBindAccess(ejs, type, ES_Object_prototype, obj_prototype, obj_set_prototype);
-    ejsBindMethod(ejs, type, ES_Object_seal, obj_seal);
-
-    /* Reflection */
-    ejsBindMethod(ejs, type, ES_Object_getBaseType, obj_getBaseType);
-    ejsBindMethod(ejs, type, ES_Object_getType, obj_getType);
-    ejsBindMethod(ejs, type, ES_Object_getTypeName, obj_getTypeName);
-    ejsBindMethod(ejs, type, ES_Object_getName, obj_getName);
-    ejsBindMethod(ejs, type, ES_Object_isPrototype, obj_isPrototype);
-    ejsBindMethod(ejs, type, ES_Object_isType, obj_isType);
-
-    ejsBindMethod(ejs, prototype, ES_Object_constructor, obj_constructor);
-    ejsBindMethod(ejs, prototype, ES_Object_clone, obj_clone);
-    ejsBindMethod(ejs, prototype, ES_Object_iterator_get, obj_get);
-    ejsBindMethod(ejs, prototype, ES_Object_iterator_getValues, obj_getValues);
-    ejsBindMethod(ejs, prototype, ES_Object_hasOwnProperty, obj_hasOwnProperty);
-    ejsBindMethod(ejs, prototype, ES_Object_isPrototypeOf, obj_isPrototypeOf);
-    ejsBindMethod(ejs, prototype, ES_Object_propertyIsEnumerable, obj_propertyIsEnumerable);
-    ejsBindMethod(ejs, prototype, ES_Object_toLocaleString, toLocaleString);
-    ejsBindMethod(ejs, prototype, ES_Object_toString, ejsObjToString);
-    ejsBindMethod(ejs, prototype, ES_Object_toJSON, ejsObjToJSON);
-
     ejsBindFunction(ejs, ejs->global, ES_typeOf, obj_typeOf);
 
-    /*
-        The prototype method is special. It is declared as static so it is generated in the type slots, but it is
-        patched to be an instance method so the value of "this" will be preserved when it is invoked.
-     */
-    fun = ejsGetProperty(ejs, type, ES_Object_prototype);
-    fun->staticMethod = 0;
-    fun->setter->staticMethod = 0;
-    type->constructor.block.pot.properties->slots[ES_Object_prototype].trait.attributes &= ~EJS_PROP_STATIC;
 }
 
 /*

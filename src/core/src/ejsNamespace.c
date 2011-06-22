@@ -72,10 +72,8 @@ EjsNamespace *ejsDefineReservedNamespace(Ejs *ejs, EjsBlock *block, EjsName *typ
     EjsNamespace    *namespace;
 
     namespace = ejsCreateReservedNamespace(ejs, typeName, ejsCreateStringFromAsc(ejs, spaceName));
-    if (namespace) {
-        if (ejsAddNamespaceToBlock(ejs, block, namespace) < 0) {
-            return 0;
-        }
+    if (namespace && block && ejsAddNamespaceToBlock(ejs, block, namespace) < 0) {
+        return 0;
     }
     return namespace;
 }
@@ -168,9 +166,6 @@ void ejsConfigureNamespaceType(Ejs *ejs)
     if ((type = ejsFinalizeCoreType(ejs, N("ejs", "Namespace"))) == 0) {
         return;
     }
-    ejsSetProperty(ejs, ejs->global, ES_iterator, ESV(iteratorSpace));
-    ejsSetProperty(ejs, ejs->global, ES_public, ESV(publicSpace));
-    ejsSetProperty(ejs, ejs->global, ES_ejs, ESV(ejsSpace));
 }
 
 /*

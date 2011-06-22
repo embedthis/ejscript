@@ -39,7 +39,6 @@ module ejs.web {
             Contains cache options for this action. Created on demand if cache() is called.
          */
         private static var _cacheOptions: Object = {}
-        private static var _caching: Boolean
 
         private var _afterCheckers: Array
         private var _beforeCheckers: Array
@@ -149,7 +148,7 @@ module ejs.web {
                         options.mode != "manual") {
                     let hdr
                     if ((hdr = request.header("Cache-Control")) && (hdr.contains("max-age=0") || hdr.contains("no-cache"))) {
-                        App.log.debug(5, "Cache-control header rejects use of cached content")
+                        App.log.debug(0, "Cache-control header rejects use of cached content")
                     } else {
                         let item = App.cache.readObj(cacheName)
                         if (item) {
@@ -179,15 +178,15 @@ module ejs.web {
                             setHeader("Etag", md5(cacheName))
                             if (status == Http.Ok) {
                                 //  MOB - change this trace to just use "actionName"
-                                App.log.debug(5, "Use cached: " + cacheName)
+                                App.log.debug(0, "Use cached: " + cacheName)
                                 write(item.data)
-                                request.finalize()
+                                // MOB request.finalize()
                             } else {
-                                App.log.debug(5, "Use cached content, status: " + status + ", " + cacheName)
+                                App.log.debug(0, "Use cached content, status: " + status + ", " + cacheName)
                             }
                             return {status: status}
                         }
-                        App.log.debug(5, "No cached content for: " + cacheName)
+                        App.log.debug(0, "No cached content for: " + cacheName)
                     }
                     request.writeBuffer = new ByteArray
                     setHeader("Etag", md5(cacheName))
@@ -216,7 +215,7 @@ module ejs.web {
             if ((!options.uri || options.uri == "*" || cacheName == options.uri)) {
                 let item
                 if (item = App.cache.readObj(cacheName)) {
-                    App.log.debug(5, "Use cached: " + cacheName)
+                    App.log.debug(0, "Use cached: " + cacheName)
                     setHeader("Etag", md5(cacheName))
                     setHeader("Last-Modified", Date(item.modified).toUTCString())
                     if (options.client) {
@@ -228,7 +227,7 @@ module ejs.web {
                     return true
                 }
             }
-            App.log.debug(5, "no cached: " + cacheName)
+            App.log.debug(0, "no cached: " + cacheName)
             return false
         }
 
@@ -244,7 +243,7 @@ module ejs.web {
                     let cacheName = getCacheName(cacheIndex, options)
                     let etag = md5(cacheName)
                     App.cache.writeObj(cacheName, { tag: etag, modified: Date.now(), data: request.writeBuffer}, options)
-                    App.log.debug(5, "Cache action " + cacheName + ", " + request.writeBuffer.available + " bytes")
+                    App.log.debug(0, "Cache action " + cacheName + ", " + request.writeBuffer.available + " bytes")
                 }
             }
             let data = request.writeBuffer
@@ -275,8 +274,10 @@ module ejs.web {
             runCheckers(_beforeCheckers)
 
             if (!request.finalized && request.autoFinalizing) {
-                if (_caching && (response = fetchCachedResponse())) {
-                    return response
+                if (App.config.cache.actions.enable) {
+                    if (response = fetchCachedResponse()) {
+                        return response
+                    }
                 }
                 if (!(ns)::[actionName]) {
                     if (!viewExists(actionName)) {
@@ -380,10 +381,6 @@ module ejs.web {
                 cache(this, "index", false)
          */
         static function cache(controller, actions: Object, options: Object = {}): Void {
-            _caching = App.config.cache.actions.enable
-            if (!_caching) {
-                return
-            }
             let cname
             if (controller is String) {
                 cname = controller.trim("Controller")
@@ -392,6 +389,9 @@ module ejs.web {
                 cname = Object.getName(controller).trim("Controller")
             } else {
                 cname = Object.getName(controller).trim("Controller")
+            }
+            if (!App.config.cache.actions.enable) {
+                return
             }
             if (actions is String || actions is Function) {
                 actions = [actions]
@@ -432,10 +432,6 @@ module ejs.web {
                 such post data in a query format. E.g. {uri: /buy?item=scarf&quantity=1}
           */
         static function updateCache(controller, actions: Object, data: Object, options: Object = {}): Void {
-            _caching = App.config.cache.actions.enable
-            if (!_caching) {
-                return
-            }
             let cname
             if (controller is String) {
                 cname = controller.trim("Controller")
@@ -444,6 +440,9 @@ module ejs.web {
                 cname = Object.getName(controller).trim("Controller")
             } else {
                 cname = Object.getName(controller).trim("Controller")
+            }
+            if (!App.config.cache.actions.enable) {
+                return
             }
             if (actions is String || actions is Function) {
                 actions = [actions]
@@ -455,12 +454,12 @@ module ejs.web {
                     cacheName += "::" + options.uri
                 }
                 if (data == null) {
-                    App.log.debug(5, "Expire " + cacheName)
+                    App.log.debug(6, "Expire " + cacheName)
                     App.cache.expire(cacheName, Date())
                 } else {
                     let etag = md5(cacheName)
                     App.cache.writeObj(cacheName, { tag: etag, modified: Date.now(), data: data}, _cacheOptions[cacheIndex])
-                    App.log.debug(5, "Update cache " + cacheName)
+                    App.log.debug(6, "Update cache " + cacheName)
                 }
             }
         }

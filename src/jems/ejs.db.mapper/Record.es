@@ -392,11 +392,11 @@ var before = Memory.resident
                 if (!options.query || options.query == "*" || cacheName == (cacheIndex + "::" + options.query)) {
                     let item = App.cache.readObj(cacheName)
                     if (item) {
-                        App.log.debug(3, "Use cached database query: " + cacheName)
+                        App.log.debug(6, "Use cached database query: " + cacheName)
                         return item
                     }
                 }
-                App.log.debug(3, "No cached database query for: " + cacheName)
+                App.log.debug(6, "No cached database query for: " + cacheName)
             }
             return null
         }
@@ -1006,7 +1006,7 @@ var before = Memory.resident
                 let options = _cacheOptions[cacheIndex]
                 if (options == null || options.query == null) {
                     let cacheName = getCacheName(cacheIndex, options)
-                    App.log.debug(3, "Expire database query cache " + cacheName)
+                    App.log.debug(6, "Expire database query cache " + cacheName)
                     App.cache.writeObj(cacheName, null, options)
                 } else {
                 }
@@ -1023,7 +1023,7 @@ var before = Memory.resident
             if (options) {
                 let cacheName = getCacheName(cacheIndex, options, query)
                 App.cache.writeObj(cacheName, results, options)
-                App.log.debug(3, "Cache database query " + cacheName)
+                App.log.debug(6, "Cache database query " + cacheName)
             }
         }
 

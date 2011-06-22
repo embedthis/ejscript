@@ -64,15 +64,12 @@ static EjsAny *castByteArrayVar(Ejs *ejs, EjsByteArray *vp, EjsType *type)
 static EjsByteArray *cloneByteArrayVar(Ejs *ejs, EjsByteArray *ap, bool deep)
 {
     EjsByteArray    *newArray;
-    int             i;
 
     if ((newArray = ejsCreateByteArray(ejs, ap->length)) == 0) {
         ejsThrowMemoryError(ejs);
         return 0;
     }
-    for (i = 0; i < ap->length; i++) {
-        newArray->value[i] = ap->value[i];
-    }
+    memcpy(newArray->value, ap->value, ap->length * sizeof(uchar));
     newArray->readPosition = ap->readPosition;
     newArray->writePosition = ap->writePosition;
     return newArray;

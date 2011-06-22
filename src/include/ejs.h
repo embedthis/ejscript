@@ -1071,7 +1071,7 @@ extern EjsName ejsGetPotPropertyName(Ejs *ejs, EjsPot *obj, int slotNum);
  */
 extern EjsAny *ejsClonePot(Ejs *ejs, EjsAny *src, bool deep);
 
-extern void ejsFixCrossRefs(Ejs *ejs, EjsPot *obj);
+extern void ejsFixTraits(Ejs *ejs, EjsPot *obj);
 
 /** 
     Grow a pot object
@@ -1386,15 +1386,7 @@ typedef struct EjsConstants {
     int           locked;                   /**< No more additions allowed */
     MprHashTable  *table;                   /**< Hash table for fast lookup when compiling */
     EjsString     **index;                  /**< Interned string index */
-#if UNUSED
-//  MOB - remove
-    struct EjsModule     *mp;
-#endif
 } EjsConstants;
-
-extern EjsConstants *ejsCreateConstants(Ejs *ejs, int count, ssize size);
-extern int ejsGrowConstants(Ejs *ejs, EjsConstants *constants, ssize size);
-extern int ejsAddConstant(Ejs *ejs, EjsConstants *constants, cchar *str);
 
 #define EJS_DEBUG_INCR 16
 
@@ -2149,6 +2141,7 @@ typedef struct EjsFileSystem {
 extern EjsFileSystem *ejsCreateFileSystem(Ejs *ejs, cchar *path);
 extern EjsObj *ejsCreateGlobal(Ejs *ejs);
 extern void ejsFreezeGlobal(Ejs *ejs);
+extern void ejsCreateGlobalNamespaces(Ejs *ejs);
 extern void ejsDefineGlobalNamespaces(Ejs *ejs);
 extern void ejsDefineGlobals(Ejs *ejs);
 
@@ -2961,6 +2954,7 @@ typedef struct EjsService {
     Http            *http;                  /**< Http service */
     uint            dontExit: 1;            /**< Prevent App.exit() from exiting */
     uint            logging: 1;             /**< Using --log */
+    uint            immutableInitialized: 1;/**< Immutable types are initialized */
     uint            seqno;                  /**< Interp sequence numbers */
     EjsIntern       *intern;                /**< Interned Unicode string hash - shared over all interps */
     EjsPot          *immutable;             /**< Immutable types and special values*/
@@ -3157,7 +3151,6 @@ extern int ejsCheckModuleLoaded(Ejs *ejs, cchar *name);
 extern void ejsClearExiting(Ejs *ejs);
 extern EjsAny *ejsCreateException(Ejs *ejs, int slot, cchar *fmt, va_list fmtArgs);
 extern EjsAny *ejsGetVarByName(Ejs *ejs, EjsAny *obj, EjsName name, EjsLookup *lookup);
-extern int ejsInitStack(Ejs *ejs);
 extern void ejsLog(Ejs *ejs, cchar *fmt, ...);
 
 extern int ejsLookupVar(Ejs *ejs, EjsAny *obj, EjsName name, EjsLookup *lookup);
@@ -3427,6 +3420,10 @@ typedef struct EjsModule {
     MprList         *globalProperties;      /* List of global properties */
 
 } EjsModule;
+
+extern int ejsCreateConstants(Ejs *ejs, EjsModule *mp, int count, ssize size, char *pool);
+extern int ejsGrowConstants(Ejs *ejs, EjsModule *mp, ssize size);
+extern int ejsAddConstant(Ejs *ejs, EjsModule *mp, cchar *str);
 
 
 typedef int (*EjsNativeCallback)(Ejs *ejs);

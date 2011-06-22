@@ -677,6 +677,7 @@ static void VM(Ejs *ejs, EjsFunction *fun, EjsAny *otherThis, int argc, int stac
             qname = GET_NAME();
             vp = ejsGetVarByName(ejs, NULL, qname, &lookup);
             if (unlikely(vp == 0)) {
+                vp = ejsGetVarByName(ejs, NULL, qname, &lookup);
                 ejsThrowReferenceError(ejs, "%@ is not defined", qname.name);
             } else {
                 CHECK_VALUE(vp, NULL, lookup.obj, lookup.slotNum);
@@ -3249,28 +3250,6 @@ static EjsAny *evalBinaryExpr(Ejs *ejs, EjsAny *lhs, EjsOpCode opcode, EjsAny *r
         }
     }
     return result;
-}
-
-
-int ejsInitStack(Ejs *ejs)
-{
-    EjsState    *state;
-
-    state = ejs->state;
-    mprAssert(state);
-
-    /*
-        Allocate the stack
-        This will allocate memory virtually for systems with virutal memory. Otherwise, it will just use malloc.
-        TODO - create a guard page
-     */
-    state->stackSize = MPR_PAGE_ALIGN(EJS_STACK_MAX, mprGetPageSize(ejs));
-    if ((state->stackBase = mprVirtAlloc(state->stackSize, MPR_MAP_READ | MPR_MAP_WRITE)) == 0) {
-        mprSetMemError(ejs);
-        return EJS_ERR;
-    }
-    state->stack = &state->stackBase[-1];
-    return 0;
 }
 
 

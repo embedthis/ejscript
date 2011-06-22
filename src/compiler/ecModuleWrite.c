@@ -656,17 +656,18 @@ static void createDocSection(EcCompiler *cp, cchar *tag, EjsPot *block, int slot
  */
 int ecAddStringConstant(EcCompiler *cp, EjsString *sp)
 {
-    int    offset;
+    Ejs     *ejs;
+    int     offset;
 
-    if (sp) {
-        offset = ecAddModuleConstant(cp, cp->state->currentModule, ejsToMulti(cp->ejs, sp));
-        if (offset < 0) {
-            cp->fatalError = 1;
-            mprAssert(offset > 0);
-            return EJS_ERR;
-        }
-    } else {
-        offset = 0;
+    ejs = cp->ejs;
+    if (sp == 0) {
+        sp = ESV(empty);
+    }
+    offset = ecAddModuleConstant(cp, cp->state->currentModule, ejsToMulti(cp->ejs, sp));
+    if (offset < 0) {
+        cp->fatalError = 1;
+        mprAssert(offset > 0);
+        return EJS_ERR;
     }
     return offset;
 }
@@ -676,15 +677,14 @@ int ecAddCStringConstant(EcCompiler *cp, cchar *str)
 {
     int    offset;
 
-    if (str) {
-        offset = ecAddModuleConstant(cp, cp->state->currentModule, str);
-        if (offset < 0) {
-            cp->fatalError = 1;
-            mprAssert(offset > 0);
-            return EJS_ERR;
-        }
-    } else {
-        offset = 0;
+    if (str == 0) {
+        str = "";
+    }
+    offset = ecAddModuleConstant(cp, cp->state->currentModule, str);
+    if (offset < 0) {
+        cp->fatalError = 1;
+        mprAssert(offset > 0);
+        return EJS_ERR;
     }
     return offset;
 }
@@ -798,7 +798,8 @@ int ecAddModuleConstant(EcCompiler *cp, EjsModule *mp, cchar *str)
     if (constants->table && (hp = mprLookupKeyEntry(constants->table, str)) != 0) {
         return PTOI(hp->data);
     }
-    index = ejsAddConstant(cp->ejs, constants, str);
+    index = ejsAddConstant(cp->ejs, mp, str);
+    // mprLog(0, "%6d %s", index, str);
     mprAddKey(constants->table, str, ITOP(index));
     return index;
 }
@@ -907,21 +908,22 @@ void ecEncodeName(EcCompiler *cp, EjsName qname)
 
 void ecEncodeConst(EcCompiler *cp, EjsString *sp)
 {
+    Ejs     *ejs;
     cchar   *str;
     int     offset;
 
     mprAssert(cp);
+    ejs = cp->ejs;
 
-    if (sp) {
-        str = ejsToMulti(cp->ejs, sp);
-        offset = ecAddModuleConstant(cp, cp->state->currentModule, str);
-        if (offset < 0) {
-            cp->error = 1;
-            cp->fatalError = 1;
-            return;
-        }
-    } else {
-        offset = 0;
+    if (sp == 0) {
+        sp = ESV(empty);
+    }
+    str = ejsToMulti(cp->ejs, sp);
+    offset = ecAddModuleConstant(cp, cp->state->currentModule, str);
+    if (offset < 0) {
+        cp->error = 1;
+        cp->fatalError = 1;
+        return;
     }
     mprAssert(offset >= 0);
     ecEncodeNum(cp, offset);

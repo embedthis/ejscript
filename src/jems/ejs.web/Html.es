@@ -544,7 +544,6 @@ module ejs.web {
             }
         }
 
-//  MOB - move to request
         /**
             Map options to a HTML attribute string. See htmlOptions and $View for a discussion on standard options.
             @param options Control options
@@ -633,6 +632,8 @@ module ejs.web {
                     if (htmlOptions[key] || key.startsWith("data-")) {
                         let mapped = htmlOptions[key] ? htmlOptions[key] : key
                         result += mapped + '="' + value + '" '
+                    } else if (key == "pass") {
+                        result += value + ' '
                     }
                 }
             }
