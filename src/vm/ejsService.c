@@ -128,10 +128,14 @@ Ejs *ejsCloneVM(Ejs *master)
 
     if (master) {
         mprAssert(!master->empty);
+        //  MOB - cleanup
+        extern int cloneCopy;
+        cloneCopy = 0;
         if ((ejs = ejsCreateVM(master->argc, master->argv, master ? master->flags : 0)) == 0) {
             return 0;
         }
         cloneProperties(ejs, master);
+        // printf("CLONE copied %d properties\n", cloneCopy);
         ejsFixTraits(ejs, ejs->global);
         ejs->sqlite = master->sqlite;
         ejs->http = master->http;
@@ -485,12 +489,12 @@ static void cloneProperties(Ejs *ejs, Ejs *master)
             immutable = 1;
         }
         if (immutable) {
-            //  MOB - remove
-            mprLog(6, "REF   %d, %N", i, qname);
+            //  MOB - cleanup
+            // mprLog(0, "REF   %d, %N", i, qname);
         } else {
             mvp = vp;
             vp = ejsClone(ejs, mvp, 1);
-            mprLog(6, "CLONE %d %N from %p to %p", i, qname, mvp, vp);
+            // mprLog(0, "CLONE %d %N from %p to %p", i, qname, mvp, vp);
         }
         ejsSetProperty(ejs, ejs->global, i, vp);
     }
