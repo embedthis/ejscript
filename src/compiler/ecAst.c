@@ -135,7 +135,6 @@ int ecAstProcess(EcCompiler *cp)
     if (ecEnterState(cp) < 0) {
         return EJS_ERR;
     }
-
     ejs = cp->ejs;
     cp->blockState = cp->state;
 
@@ -3078,6 +3077,7 @@ static void processAstNode(EcCompiler *cp, EcNode *np)
 
     case N_QNAME:
         astName(cp, np);
+        codeRequired++;
         break;
 
     case N_NEW:
