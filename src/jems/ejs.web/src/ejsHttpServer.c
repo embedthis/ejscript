@@ -135,8 +135,8 @@ static EjsObj *hs_setLimits(Ejs *ejs, EjsHttpServer *sp, int argc, EjsObj **argv
 }
 
 
-/*  
-    function get isSecure(): Void
+/*
+    function get isSecure(): Boolean
  */
 static EjsObj *hs_isSecure(Ejs *ejs, EjsHttpServer *sp, int argc, EjsObj **argv)
 {
@@ -144,31 +144,54 @@ static EjsObj *hs_isSecure(Ejs *ejs, EjsHttpServer *sp, int argc, EjsObj **argv)
 }
 
 
+/*
+    function get hosted(): Boolean
+ */
+static EjsObj *hs_hosted(Ejs *ejs, EjsHttpServer *sp, int argc, EjsObj **argv)
+{
+    return sp->hosted ? ESV(true): ESV(false);
+}
+
+
+/*
+    function set hosted(value: Boolean): Void
+ */
+static EjsVoid *hs_set_hosted(Ejs *ejs, EjsHttpServer *sp, int argc, EjsObj **argv)
+{
+    sp->hosted = (argv[0] == ESV(true)) ? 1 : 0;
+    return 0;
+}
+
+
 /*  
     function listen(endpoint): Void
-    An endpoint can be either a "port" or "ip:port", or null
+
+    An endpoint can be either a "port" or "ip:port", or null. If hosted, this call does little -- just add to the
+    ejs->httpServers list.
  */
 static EjsVoid *hs_listen(Ejs *ejs, EjsHttpServer *sp, int argc, EjsObj **argv)
 {
     HttpServer  *server;
     HttpHost    *host;
     EjsString   *address;
-    EjsObj      *endpoint, *options;
+    EjsObj      *endpoint;
     EjsPath     *home, *documents;
 
-    endpoint = (argc >= 1) ? argv[0] : ESV(null);
-    if (endpoint != ESV(null)) {
-        address = ejsToString(ejs, endpoint);
-        mprParseIp(address->value, &sp->ip, &sp->port, 0);
-    } else {
-        address = 0;
-    }
+#if UNUSED
     if (ejs->hosted) {
         if ((options = ejsGetProperty(ejs, sp, ES_ejs_web_HttpServer_options)) != 0) {
-            sp->hosted = ejsGetPropertyByName(ejs, options, EN("own")) != ESV(true);
+            sp->hosted = ejsGetPropertyByName(ejs, options, EN("unhosted")) != ESV(true);
         }
     }
+#endif
     if (!sp->hosted) {
+        endpoint = (argc >= 1) ? argv[0] : ESV(null);
+        if (endpoint != ESV(null)) {
+            address = ejsToString(ejs, endpoint);
+            mprParseIp(address->value, &sp->ip, &sp->port, 0);
+        } else {
+            address = 0;
+        }
         if (address == 0) {
             ejsThrowArgError(ejs, "Missing listen endpoint");
             return 0;
@@ -224,6 +247,7 @@ static EjsVoid *hs_listen(Ejs *ejs, EjsHttpServer *sp, int argc, EjsObj **argv)
     if (ejs->httpServers == 0) {
        ejs->httpServers = mprCreateList(-1, MPR_LIST_STATIC_VALUES);
     }
+    /* Remove to make sure old listening() registrations are removed */
     mprRemoveItem(ejs->httpServers, sp);
     mprAddItem(ejs->httpServers, sp);
     return 0;
@@ -818,6 +842,7 @@ static EjsHttpServer *createHttpServer(Ejs *ejs, EjsType *type, int size)
         return 0;
     }
     sp->ejs = ejs;
+    sp->hosted = ejs->hosted;
     sp->async = 1;
     httpInitTrace(sp->trace);
     return sp;
@@ -888,6 +913,7 @@ void ejsConfigureHttpServerType(Ejs *ejs)
     ejsBindAccess(ejs, prototype, ES_ejs_web_HttpServer_async, hs_async, hs_set_async);
     ejsBindMethod(ejs, prototype, ES_ejs_web_HttpServer_close, hs_close);
     ejsBindMethod(ejs, prototype, ES_ejs_web_HttpServer_limits, hs_limits);
+    ejsBindAccess(ejs, prototype, ES_ejs_web_HttpServer_hosted, hs_hosted, hs_set_hosted);
     ejsBindMethod(ejs, prototype, ES_ejs_web_HttpServer_isSecure, hs_isSecure);
     ejsBindMethod(ejs, prototype, ES_ejs_web_HttpServer_listen, hs_listen);
     ejsBindAccess(ejs, prototype, ES_ejs_web_HttpServer_name, hs_name, hs_set_name);

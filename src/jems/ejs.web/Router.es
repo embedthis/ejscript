@@ -302,8 +302,8 @@ module ejs.web {
                also be set to null to add not routes. This is useful for creating a bare Router instance. Defaults 
                to Top.
             @param options Options to apply to all routes
-            @option threaded Boolean If true, the request should be execute in a worker thread if possible. This thread 
-                will not be dedicated, but will be assigned as the request requires CPU resources.
+            @option workers Boolean If true, requests should be execute in a worker thread if possible. The worker thread 
+                will be pooled when the request completes and will be available for subsequent requests.  
            @throws Error for an unknown route set.
          */
         function Router(routeSet: String = Top, options: Object = {}) {
@@ -330,8 +330,8 @@ module ejs.web {
         private function insertRoute(r: Route): Void {
             let routeSet = routes[r.routeSetName] ||= {}
             routeSet[r.name] = r
-            if (r.threaded == null) {
-                r.threaded = routerOptions.threaded
+            if (r.workers == null) {
+                r.workers = routerOptions.workers
             }
         }
 
@@ -601,7 +601,7 @@ module ejs.web {
             } else if (!template) {
                 template = "*"
             }
-            let line = "  %-24s %s %-24s %-7s %s".format(r.name, r.threaded ? "T": " ", target, method, template)
+            let line = "  %-24s %s %-24s %-7s %s".format(r.name, r.workers ? "W": " ", target, method, template)
             if (extra == "full") {
                 if (params && Object.getOwnPropertyCount(params) > 0) {
                     if (!(params.action && Object.getOwnPropertyCount(params) == 1)) {
@@ -735,10 +735,10 @@ module ejs.web {
         var template: Object
 
         /**
-            If true, the request should execute in a worker thread if possible. This thread will not be dedicated, 
-            but will be assigned as the request requires CPU resources.
+            If true, requests should execute using a worker thread if possible. The worker thread will be pooled when
+            the request completes and be available for use by subsequent requests.
          */
-        var threaded: Boolean
+        var workers: Boolean
 
         /**
             Key tokens in the route template
@@ -1016,7 +1016,7 @@ module ejs.web {
             moduleName = options.module
             rewrite = options.rewrite
             redirect = options.redirect
-            threaded = options.threaded
+            workers = options.workers
             trace = options.trace
             if (options.method == "" || options.method == "*") {
                 method = options.method = ""

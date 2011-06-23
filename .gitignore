@@ -145,3 +145,5 @@ src/core/test/s-599.es
 src/core/test/s-600.es
 src/core/test/s-601.es
 src/jems/ejs.web/test/web/chinese.ejs
+sample.out
+main.out

@@ -24,10 +24,6 @@ module ejs.web {
         private var workerImage: Worker
 
         private static const defaultConfig = {
-            app: {
-                cache: true,
-                reload: true,
-            },
             dirs: {
                 cache: Path("cache"),
                 layouts: Path("layouts"),
@@ -46,6 +42,7 @@ module ejs.web {
                 "class": "LocalCache",
                 module: "ejs",
                 lifespan: 3600,
+                app:     { enable: true, reload: true },
                 actions: { enable: true },
                 records: { enable: true },
                 workers: { enable: true, limit: 10 },
@@ -119,6 +116,12 @@ module ejs.web {
             protocol scheme.
          */
         native function get isSecure(): Boolean
+
+        /**
+            Flag indicating if the server is running hosted inside a web server
+         */
+        native function get hosted(): Boolean
+        native function set hosted(value: Boolean): Void
 
         /**
             Resource limits for the server and for initial resource limits for requests.
@@ -201,8 +204,8 @@ module ejs.web {
                 hosted, the $home property will be defined by the web server.
             @option ejsrc Alternate path to the "ejsrc" configuration file
             @option config Alternate App.config settings
-            @option own If hosted inside a web server, set to true to bypass any web server listening endpoints and 
-                create a new stand-alone listening connection.
+            @option unhosted If hosted inside a web server, set to true to bypass any web server listening endpoints and 
+                create a new stand-alone (unhosted) listening connection.
             @spec ejs
             @stability prototype
             @example: This is a fully async server:
@@ -232,6 +235,9 @@ server.listen("127.0.0.1:7777")
             this.options = options
             if (options.ejsrc) {
                 config.ejsrc = options.ejsrc
+            }
+            if (options.unhosted) {
+                this.hosted = false
             }
             if (config.files.ejsrc && config.files.ejsrc.exists) {
                 blend(config, Path(config.files.ejsrc).readJSON())
@@ -321,9 +327,10 @@ server.listen("127.0.0.1:7777")
             Listen for client connections. This creates a HTTP server listening on a single socket endpoint. It can
             also be used to attach to an existing listening connection if embedded in a web server. 
             
-            When used inside a web server, the web server should define the listening endpoints and ensure the 
-            EjsScript startup script is executed. Then, when listen is called, the HttpServer object will be bound to
-            the web server's listening connection. In this case, the endpoint argument is not required and is ignored.
+            When hosted inside a web server, the web server will define the listening endpoints and ensure the 
+            EjsScript startup script is executed. Then, when listen() is called, the HttpServer object will be bound to
+            the actual web server's listening connection. In this case, the endpoint argument is not required and 
+            is ignored.
 
             HttpServer supports both sync and async modes of operation.  In sync mode, after listen call is made, 
             $accept must be called to wait for and receive client connections. The $accept call will create the 
@@ -513,7 +520,8 @@ let mark = new Date
 
         /** 
             Run the application event loop to service requests.
-            If the HttpServer is hosted in a web server, this call does nothing as the web server will service events. 
+            If the HttpServer is hosted in a web server, this call does nothing as the web server will service events and
+            will return immediately. 
          */
         native function run(): Void
 

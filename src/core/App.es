@@ -65,8 +65,10 @@ module ejs {
                 level: 0,
             },
             app: {
-                cache: false,
                 reload: false,
+            },
+            cache: {
+                app: { enable: false },
             },
             dirs: {
                 cache: Path("cache"),

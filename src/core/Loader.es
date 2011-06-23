@@ -57,7 +57,7 @@ module ejs {
          */
         public static function require(id: String, config: Object = App.config): Object {
             let exports = signatures[id]
-            if (!exports || config.app.reload) {
+            if (!exports || config.cache.app.reload) {
                 let path: Path = locate(id, config)
                 if (path.modified > timestamps[path]) {
                     //  On-demand loading of CommonJS support
@@ -86,7 +86,7 @@ module ejs {
             let initializer, code
             let cache: Path = cached(id, config)
             if (path) {
-                if (cache && cache.exists && (!config.app.reload || cache.modified > path.modified)) {
+                if (cache && cache.exists && (!config.cache.app.reload || cache.modified > path.modified)) {
                     /* Cache mod file exists and is current */
                     if (initializers[path]) {
                         App.log.debug(4, "Use memory cache for \"" + path + "\"")
@@ -149,7 +149,7 @@ module ejs {
         /** @hide */
         public static function cached(id: Path, config = App.config, cachedir: Path = null): Path {
             config ||= App.config
-            if (id && config.app.cache) {
+            if (id && config.cache.app.enable) {
                 let dir = cachedir || Path(config.dirs.cache) || Path("cache")
                 if (dir.exists) {
                     return Path(dir).join(md5(id)).joinExt('.mod')

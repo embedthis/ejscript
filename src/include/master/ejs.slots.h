@@ -565,19 +565,20 @@
 /*
     Class property slots for the "Config" type 
  */
-#define ES_Config_Debug                                                0
-#define ES_Config_CPU                                                  1
-#define ES_Config_OS                                                   2
-#define ES_Config_Product                                              3
-#define ES_Config_Title                                                4
-#define ES_Config_Version                                              5
-#define ES_Config_LibDir                                               6
-#define ES_Config_BinDir                                               7
-#define ES_Config_ModDir                                               8
-#define ES_Config_Legacy                                               9
-#define ES_Config_SSL                                                  10
-#define ES_Config_SQLITE                                               11
-#define ES_Config_NUM_CLASS_PROP                                       12
+#define ES_Config__initializer___Config_                               0
+#define ES_Config_Debug                                                1
+#define ES_Config_CPU                                                  2
+#define ES_Config_OS                                                   3
+#define ES_Config_Product                                              4
+#define ES_Config_Title                                                5
+#define ES_Config_Version                                              6
+#define ES_Config_LibDir                                               7
+#define ES_Config_BinDir                                               8
+#define ES_Config_ModDir                                               9
+#define ES_Config_Legacy                                               10
+#define ES_Config_SSL                                                  11
+#define ES_Config_SQLITE                                               12
+#define ES_Config_NUM_CLASS_PROP                                       13
 
 /*
    Prototype (instance) slots for "Config" type 
@@ -2238,7 +2239,8 @@
 /*
     Class property slots for the "XML" type 
  */
-#define ES_XML_NUM_CLASS_PROP                                          0
+#define ES_XML__initializer___XML_                                     0
+#define ES_XML_NUM_CLASS_PROP                                          1
 
 /*
    Prototype (instance) slots for "XML" type 
@@ -2337,6 +2339,6 @@
 #define ES_XMLList_NUM_INSTANCE_PROP                                   20
 #define ES_XMLList_NUM_INHERITED_PROP                                  0
 
-#define _ES_CHECKSUM_ejs   1441281
+#define _ES_CHECKSUM_ejs   1442302
 
 #endif
