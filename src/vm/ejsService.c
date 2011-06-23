@@ -127,9 +127,9 @@ Ejs *ejsCloneVM(Ejs *master)
     int         next;
 
     if (master) {
-        mprAssert(!master->empty);
         //  MOB - cleanup
         extern int cloneCopy;
+        mprAssert(!master->empty);
         cloneCopy = 0;
         if ((ejs = ejsCreateVM(master->argc, master->argv, master ? master->flags : 0)) == 0) {
             return 0;
