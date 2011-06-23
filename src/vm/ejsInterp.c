@@ -2632,9 +2632,10 @@ int ejsRun(Ejs *ejs)
     EjsModule   *mp;
     int         next;
 
+    //  MOB OPT - should not examine all modules just to run a script
     for (next = 0; (mp = mprGetNextItem(ejs->modules, &next)) != 0;) {
         if (!mp->initialized) {
-            ejsRunInitializer(ejs, mp);
+            ejs->result = ejsRunInitializer(ejs, mp);
         }
         if (ejsCompareMulti(ejs, mp->name, EJS_DEFAULT_MODULE) == 0) {
             ejsRemoveModule(ejs, mp);

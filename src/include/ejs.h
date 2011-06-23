@@ -1217,8 +1217,15 @@ extern EjsString *ejsSprintf(Ejs *ejs, cchar *fmt, ...);
  */
 extern EjsString *ejsToJSON(Ejs *ejs, EjsAny *obj, EjsObj *options);
 
-//  MOB - low level serialize
-extern EjsString *ejsSerialize(Ejs *ejs, EjsAny *obj, EjsObj *options);
+extern EjsString *ejsSerializeWithOptions(Ejs *ejs, EjsAny *obj, EjsObj *options);
+
+#define EJS_JSON_SHOW_SUBCLASSES    0x1
+#define EJS_JSON_SHOW_HIDDEN        0x2
+#define EJS_JSON_SHOW_NAMESPACES    0x4
+#define EJS_JSON_SHOW_PRETTY        0x8
+
+extern EjsString *ejsSerialize(Ejs *ejs, EjsAny *obj, int flags);
+
 
 /** 
     Cast a variable to a string

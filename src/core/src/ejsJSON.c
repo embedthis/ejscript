@@ -411,7 +411,7 @@ EjsString *ejsToJSON(Ejs *ejs, EjsAny *vp, EjsObj *options)
 
     fn = (EjsFunction*) ejsGetPropertyByName(ejs, TYPE(vp)->prototype, N(NULL, "toJSON"));
     if (!ejsIsFunction(ejs, fn) || (fn->isNativeProc && fn->body.proc == (EjsFun) ejsObjToJSON)) {
-        result = ejsSerialize(ejs, vp, options);
+        result = ejsSerializeWithOptions(ejs, vp, options);
     } else {
         argv[0] = options;
         argc = options ? 1 : 0;
@@ -421,10 +421,7 @@ EjsString *ejsToJSON(Ejs *ejs, EjsAny *vp, EjsObj *options)
 }
 
 
-/*
-    Low level JSON encoding.
- */
-EjsString *ejsSerialize(Ejs *ejs, EjsAny *vp, EjsObj *options)
+EjsString *ejsSerializeWithOptions(Ejs *ejs, EjsAny *vp, EjsObj *options)
 {
     Json        json;
     EjsObj      *arg;
@@ -432,9 +429,8 @@ EjsString *ejsSerialize(Ejs *ejs, EjsAny *vp, EjsObj *options)
     int         i;
 
     memset(&json, 0, sizeof(Json));
-
     json.depth = 99;
-    
+
     if (options) {
         json.options = options;
         if ((arg = ejsGetPropertyByName(ejs, options, EN("baseClasses"))) != 0) {
@@ -480,7 +476,19 @@ EjsString *ejsSerialize(Ejs *ejs, EjsAny *vp, EjsObj *options)
 }
 
 
-//  TOD REFACTOR
+EjsString *ejsSerialize(Ejs *ejs, EjsAny *vp, int flags)
+{
+    Json    json;
+
+    memset(&json, 0, sizeof(Json));
+    json.depth = 99;
+    json.pretty = (flags & EJS_JSON_SHOW_PRETTY) ? 1 : 0;
+    json.hidden = (flags & EJS_JSON_SHOW_HIDDEN) ? 1 : 0;
+    json.namespaces = (flags & EJS_JSON_SHOW_NAMESPACES) ? 1 : 0;
+    json.baseClasses = (flags & EJS_JSON_SHOW_SUBCLASSES) ? 1 : 0;
+    return serialize(ejs, vp, &json);
+}
+
 
 static EjsString *serialize(Ejs *ejs, EjsAny *vp, Json *json)
 {

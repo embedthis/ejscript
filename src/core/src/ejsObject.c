@@ -695,7 +695,7 @@ static EjsBoolean *obj_propertyIsEnumerable(Ejs *ejs, EjsObj *obj, int argc, Ejs
  */
 EjsString *ejsObjToJSON(Ejs *ejs, EjsObj *vp, int argc, EjsObj **argv)
 {
-    return ejsSerialize(ejs, vp, (argc == 1) ? argv[0] : NULL);
+    return ejsSerializeWithOptions(ejs, vp, (argc == 1) ? argv[0] : NULL);
 }
 
 

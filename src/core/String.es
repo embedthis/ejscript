@@ -494,6 +494,7 @@ module ejs {
         function % (arg: Object): String
             format(arg)
 
+//  MOB - Cleanup
         /** 
             @hide 
             @deprecated 2.0.0

@@ -805,8 +805,8 @@ static void handleError(Ejs *ejs, EjsWorker *worker, EjsObj *exception, int thro
     inside = worker->pair->ejs;
     
     inside->exception = 0;
-    str = ejsSerialize(inside, exception, NULL);
-    e = ejsDeserialize(ejs, ejsSerialize(inside, exception, NULL));
+    str = ejsSerialize(inside, exception, 0);
+    e = ejsDeserialize(ejs, ejsSerialize(inside, exception, 0));
     inside->exception = exception;
 
     /*
