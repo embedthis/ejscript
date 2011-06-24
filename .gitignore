@@ -147,3 +147,4 @@ src/core/test/s-601.es
 src/jems/ejs.web/test/web/chinese.ejs
 sample.out
 main.out
+src/jems/ejs.db.sqlite/s2/
