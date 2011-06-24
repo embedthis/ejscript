@@ -1,28 +1,31 @@
 //  Just for general debugging
 {
     cache: {
-        modules: true,
-        reload: true,
-        apps: false,
-        pages: false,
-        actions: false,
-        databases: false,
-        workers: true,
+        keys: 2000,
+        memory: 200000,
+        lifespan: 86400,
+        app:      { enable: false, },
+        actions:  { enable: false, lifespan: 1800 },
+        database: { enable: false, lifespan: 3600 },
+        workers:  { enable: false, limit: 10 },
     },
+
     log: {
         enable: true,
-        location: "stdout",
+        location: "stderr",
         level: 0,
         showClient: true,
     },
     web: {
-        endpoint: "127.0.0.1:4000",
+        listen: ":4000",
         expires: {
-            "html": 86400,
-            "ejs": 86400,
-            "es": 86400,
-            "": 86400,
+            html: 86400,
+            ejs: 86400,
+            es: 86400,
         },
-        limits: {inactivityTimeout: 60, sessionTimeout: 3600, sessions: 25, workers: 10},
+        limits: {
+            inactivityTimeout: 60, 
+            sessionTimeout: 3600
+        },
     },
 }

@@ -634,11 +634,12 @@ typedef struct EjsPool {
     int         max;                        /**< Maximum number of VMs */
     Ejs         *template;                  /**< VM template to clone */
     char        *templateScript;            /**< Template initialization script filename */
-    char        *startScriptPath;           /**< Template initialization literal script */
+    char        *startScript;               /**< Template initialization literal script */
+    char        *startScriptPath;           /**< Template initialization script filename */
 } EjsPool;
 
 
-extern EjsPool *ejsCreatePool(int poolMax, cchar *templateScriptPath, cchar *startScript);
+extern EjsPool *ejsCreatePool(int poolMax, cchar *templateScriptPath, cchar *startScript, cchar *startScriptPath);
 extern Ejs *ejsAllocPoolVM(EjsPool *pool, int flags);
 extern void ejsFreePoolVM(EjsPool *pool, Ejs *ejs);
 

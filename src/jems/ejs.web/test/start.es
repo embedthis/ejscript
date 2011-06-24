@@ -7,7 +7,7 @@ require ejs.web
 let address = App.args[1] || App.config.test.http_port || ":6700"
 let server: HttpServer = new HttpServer({documents: "web"})
 
-var r = new Router(Router.Top, {threaded: true})
+var r = new Router(Router.Top, {workers: true})
 // r.show()
 
 server.on("readable", function (event, request) {

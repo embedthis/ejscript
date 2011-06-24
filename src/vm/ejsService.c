@@ -128,8 +128,8 @@ Ejs *ejsCloneVM(Ejs *master)
 
     if (master) {
         //  MOB - cleanup
-        extern int cloneCopy;
         mprAssert(!master->empty);
+        extern int cloneCopy;
         cloneCopy = 0;
         if ((ejs = ejsCreateVM(master->argc, master->argv, master ? master->flags : 0)) == 0) {
             return 0;
@@ -280,12 +280,13 @@ static void managePool(EjsPool *pool, int flags)
         mprMark(pool->mutex);
         mprMark(pool->template);
         mprMark(pool->templateScript);
+        mprMark(pool->startScript);
         mprMark(pool->startScriptPath);
     }
 }
 
 
-EjsPool *ejsCreatePool(int poolMax, cchar *templateScript, cchar *startScriptPath)
+EjsPool *ejsCreatePool(int poolMax, cchar *templateScript, cchar *startScript, cchar *startScriptPath)
 {
     EjsPool     *pool;
 
@@ -299,6 +300,9 @@ EjsPool *ejsCreatePool(int poolMax, cchar *templateScript, cchar *startScriptPat
     pool->max = poolMax <= 0 ? MAXINT : poolMax;
     if (templateScript) {
         pool->templateScript = sclone(templateScript);
+    }
+    if (startScript) {
+        pool->startScript = sclone(startScript);
     }
     if (startScriptPath) {
         pool->startScriptPath = sclone(startScriptPath);
@@ -352,6 +356,13 @@ Ejs *ejsAllocPoolVM(EjsPool *pool, int flags)
         if (pool->startScriptPath) {
             if (ejsLoadScriptFile(ejs, pool->startScriptPath, NULL, EC_FLAGS_NO_OUT | EC_FLAGS_BIND) < 0) {
                 mprError("Can't load \"%s\"\n%s", pool->startScriptPath, ejsGetErrorMsg(ejs, 1));
+                mprRemoveRoot(ejs);
+                return 0;
+            }
+        } else if (pool->startScript) {
+            script = ejsCreateStringFromAsc(ejs, pool->startScript);
+            if (ejsLoadScriptLiteral(ejs, script, NULL, EC_FLAGS_NO_OUT | EC_FLAGS_BIND) < 0) {
+                mprError("Can't load \"%s\"\n%s", script, ejsGetErrorMsg(ejs, 1));
                 mprRemoveRoot(ejs);
                 return 0;
             }

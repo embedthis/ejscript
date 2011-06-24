@@ -4766,6 +4766,7 @@ static void manageLoc(HttpLoc *loc, int flags)
         mprMark(loc->uploadDir);
         mprMark(loc->searchPath);
         mprMark(loc->script);
+        mprMark(loc->scriptPath);
         mprMark(loc->ssl);
     }
 }
@@ -4801,6 +4802,7 @@ HttpLoc *httpCreateInheritedLocation(HttpLoc *parent)
     loc->uploadDir = parent->uploadDir;
     loc->autoDelete = parent->autoDelete;
     loc->script = parent->script;
+    loc->scriptPath = parent->scriptPath;
     loc->searchPath = parent->searchPath;
     loc->ssl = parent->ssl;
     loc->workers = parent->workers;
@@ -4885,9 +4887,11 @@ int httpAddHandler(HttpLoc *loc, cchar *name, cchar *extensions)
     } else {
         if (handler->match == 0) {
             /*
-                If a handler provides a custom match() routine, then don't match by extension.
+                Only match by extensions if no-match routine provided.
              */
             mprAddKey(loc->extensions, "", handler);
+        } else {
+            mprError("Can't match by extension with a handler that provides a match routine: %s", name);
         }
         if (mprLookupItem(loc->handlers, handler) < 0) {
             mprAddItem(loc->handlers, handler);
@@ -5076,9 +5080,14 @@ void httpSetLocationAutoDelete(HttpLoc *loc, int enable)
 }
 
 
-void httpSetLocationScript(HttpLoc *loc, cchar *script)
+void httpSetLocationScript(HttpLoc *loc, cchar *script, cchar *scriptPath)
 {
-    loc->script = sclone(script);
+    if (script) {
+        loc->script = sclone(script);
+    }
+    if (scriptPath) {
+        loc->scriptPath = sclone(scriptPath);
+    }
 }
 
 

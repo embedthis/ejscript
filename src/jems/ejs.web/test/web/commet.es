@@ -20,16 +20,16 @@ exports.app = function(r: Request) {
     })
 
     let timer = Timer(5000 * 1000, function() {
-print("TIMER WRITING")
-try {
-        write("SOME MORE " + new Date + " \r\n")
-        print("BEFORE FLUSH")
-        flush()
-        print('AFTER FLUSH')
-} catch {
-    timer.stop()
-    print("CATCH")
-}
+        print("TIMER WRITING")
+        try {
+            write("SOME MORE " + new Date + " \r\n")
+            print("BEFORE FLUSH")
+            flush()
+            print('AFTER FLUSH')
+        } catch {
+            timer.stop()
+            print("CATCH")
+        }
     })
     timer.repeat = true
     timer.start()
