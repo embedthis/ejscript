@@ -3528,7 +3528,7 @@ static MprFile *openModuleFile(EcCompiler *cp, cchar *filename)
         return 0;
     }
     if ((cp->file = mprOpenFile(filename,  O_CREAT | O_WRONLY | O_TRUNC | O_BINARY, 0664)) == 0) {
-        genError(cp, 0, "Can't create %s", filename);
+        genError(cp, 0, "Can't create module file \"%s\"", filename);
         return 0;
     }
 

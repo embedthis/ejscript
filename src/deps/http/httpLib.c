@@ -4742,6 +4742,7 @@ HttpLoc *httpCreateLocation()
     loc->prefixLen = (int) strlen(loc->prefix);
     loc->auth = httpCreateAuth(0);
     loc->flags = HTTP_LOC_SMART;
+    loc->workers = -1;
     return loc;
 }
 
@@ -4797,7 +4798,9 @@ HttpLoc *httpCreateInheritedLocation(HttpLoc *parent)
     loc->expiresByType = parent->expiresByType;
     loc->connector = parent->connector;
     loc->errorDocuments = parent->errorDocuments;
+#if UNUSED
     loc->sessionTimeout = parent->sessionTimeout;
+#endif
     loc->auth = httpCreateAuth(parent->auth);
     loc->uploadDir = parent->uploadDir;
     loc->autoDelete = parent->autoDelete;
@@ -4834,12 +4837,6 @@ void httpFinalizeLocation(HttpLoc *loc)
         mprConfigureSsl(loc->ssl);
     }
 #endif
-}
-
-
-void httpSetLocationAuth(HttpLoc *loc, HttpAuth *auth)
-{
-    loc->auth = auth;
 }
 
 
@@ -4890,8 +4887,6 @@ int httpAddHandler(HttpLoc *loc, cchar *name, cchar *extensions)
                 Only match by extensions if no-match routine provided.
              */
             mprAddKey(loc->extensions, "", handler);
-        } else {
-            mprError("Can't match by extension with a handler that provides a match routine: %s", name);
         }
         if (mprLookupItem(loc->handlers, handler) < 0) {
             mprAddItem(loc->handlers, handler);
@@ -5059,6 +5054,21 @@ HttpStage *httpGetHandlerByExtension(HttpLoc *loc, cchar *ext)
 }
 
 
+void httpSetLocationAlias(HttpLoc *loc, HttpAlias *alias)
+{
+    mprAssert(loc);
+    mprAssert(alias);
+
+    loc->alias = alias;
+}
+
+
+void httpSetLocationAuth(HttpLoc *loc, HttpAuth *auth)
+{
+    loc->auth = auth;
+}
+
+
 void httpSetLocationPrefix(HttpLoc *loc, cchar *uri)
 {
     mprAssert(loc);
@@ -5088,6 +5098,12 @@ void httpSetLocationScript(HttpLoc *loc, cchar *script, cchar *scriptPath)
     if (scriptPath) {
         loc->scriptPath = sclone(scriptPath);
     }
+}
+
+
+void httpSetLocationWorkers(HttpLoc *loc, int workers)
+{
+    loc->workers = workers;
 }
 
 
