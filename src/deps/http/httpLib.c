@@ -3394,8 +3394,11 @@ static void manageHost(HttpHost *host, int flags)
 {
     if (flags & MPR_MANAGE_MARK) {
         mprMark(host->name);
+#if UNUSED
         mprMark(host->hostname);
-        mprMark(host->infoName);
+        mprMark(host->logName);
+#endif
+        mprMark(host->address);
         mprMark(host->parent);
         mprMark(host->aliases);
         mprMark(host->dirs);
@@ -3404,7 +3407,6 @@ static void manageHost(HttpHost *host, int flags)
         mprMark(host->mimeTypes);
         mprMark(host->documentRoot);
         mprMark(host->serverRoot);
-        mprMark(host->ip);
         mprMark(host->traceInclude);
         mprMark(host->traceExclude);
         mprMark(host->protocol);
@@ -3420,7 +3422,7 @@ static void manageHost(HttpHost *host, int flags)
 }
 
 
-HttpHost *httpCreateHost(cchar *ip, int port, HttpLoc *loc)
+HttpHost *httpCreateHost(HttpLoc *loc)
 {
     HttpHost    *host;
     Http        *http;
@@ -3429,26 +3431,11 @@ HttpHost *httpCreateHost(cchar *ip, int port, HttpLoc *loc)
     if ((host = mprAllocObj(HttpHost, manageHost)) == 0) {
         return 0;
     }
-    if (ip) {
-        if (port) {
-            host->name = mprAsprintf("%s:%d", ip, port);
-            host->hostname = sclone(ip);
-        } else {
-            host->hostname = host->name = sclone(ip);
-        }
-    } else {
-        if (port) {
-            host->name = mprAsprintf("*:%d", port);
-        }
-        host->hostname = sclone("127.0.0.1");
-    }
     host->mutex = mprCreateLock();
     host->aliases = mprCreateList(-1, 0);
     host->dirs = mprCreateList(-1, 0);
     host->locations = mprCreateList(-1, 0);
     host->limits = mprMemdup(http->serverLimits, sizeof(HttpLimits));
-    host->ip = sclone(ip);
-    host->port = port;
     host->flags = HTTP_HOST_NO_TRACE;
     host->protocol = sclone("HTTP/1.1");
     host->mimeTypes = MPR->mimeTypes;
@@ -3462,16 +3449,12 @@ HttpHost *httpCreateHost(cchar *ip, int port, HttpLoc *loc)
     httpAddLocation(host, host->loc);
     host->loc->auth = httpCreateAuth(host->loc->auth);
     httpAddDir(host, httpCreateBareDir("."));
-
     httpAddHost(http, host);
     return host;
 }
 
 
-/*  
-    Create a new virtual host and inherit settings from another host
- */
-HttpHost *httpCreateVirtualHost(cchar *ip, int port, HttpHost *parent)
+HttpHost *httpCloneHost(HttpHost *parent)
 {
     HttpHost    *host;
     Http        *http;
@@ -3482,26 +3465,20 @@ HttpHost *httpCreateVirtualHost(cchar *ip, int port, HttpHost *parent)
         return 0;
     }
     host->mutex = mprCreateLock();
-    host->parent = parent;
 
     /*  
         The aliases, dirs and locations are all copy-on-write
      */
+    host->parent = parent;
     host->aliases = parent->aliases;
     host->dirs = parent->dirs;
     host->locations = parent->locations;
     host->flags = parent->flags | HTTP_HOST_VHOST;
     host->protocol = parent->protocol;
     host->mimeTypes = parent->mimeTypes;
-    host->ip = parent->ip;
-    host->port = parent->port;
     host->limits = mprMemdup(parent->limits, sizeof(HttpLimits));
-    if (ip) {
-        host->ip = sclone(ip);
-    }
-    if (port) {
-        host->port = port;
-    }
+    host->documentRoot = parent->documentRoot;
+    host->serverRoot = parent->serverRoot;
     host->loc = httpCreateInheritedLocation(parent->loc);
     host->traceMask = parent->traceMask;
     host->traceLevel = parent->traceLevel;
@@ -3546,35 +3523,39 @@ void httpSetHostServerRoot(HttpHost *host, cchar *serverRoot)
 }
 
 
-void httpSetHostName(HttpHost *host, cchar *name)
+void httpSetHostAddress(HttpHost *host, cchar *name, int port)
 {
-    cchar   *cp;
-
-    host->name = sclone(name);
-    if ((cp = schr(name, ':')) != 0) {
-        host->hostname = snclone(name, cp - name);
+    if (name) {
+        if (port > 0) {
+            host->address = mprAsprintf("%s:%d", name, port);
+        } else {
+            host->address = sclone(name);
+        }
     } else {
-        host->hostname = host->name;
+        mprAssert(port > 0);
+        host->address = mprAsprintf("*:%d", port);
+    }
+    if (host->name == 0) {
+        host->name = host->address;
     }
 }
 
 
 /*
-    Informational names are used in logs
+    Name can be an IP or a textual hostname
  */
-void httpSetHostInfoName(HttpHost *host, cchar *name)
+void httpSetHostName(HttpHost *host, cchar *name)
 {
-    host->infoName = sclone(name);
+    host->name = sclone(name);
 }
 
 
-void httpSetHostAddress(HttpHost *host, cchar *ip, int port)
+#if UNUSED
+void httpSetHostLogName(HttpHost *host, cchar *name)
 {
-    host->ip = sclone(ip);
-    if (port > 0) {
-        host->port = port;
-    }
+    host->logName = sclone(name);
 }
+#endif
 
 
 void httpSetHostProtocol(HttpHost *host, cchar *protocol)
@@ -3690,9 +3671,12 @@ HttpAlias *httpGetAlias(HttpHost *host, cchar *uri)
     if (uri) {
         for (next = 0; (alias = mprGetNextItem(host->aliases, &next)) != 0; ) {
             if (strncmp(alias->prefix, uri, alias->prefixLen) == 0) {
+#if UNUSED
                 if (uri[alias->prefixLen] == '\0' || uri[alias->prefixLen] == '/') {
                     return alias;
                 }
+#endif
+                return alias;
             }
         }
     }
@@ -4191,17 +4175,18 @@ HttpServer *httpGetFirstServer(Http *http)
 }
 
 
+#if UNUSED
 int httpAddHostToServers(Http *http, struct HttpHost *host)
 {
     HttpServer  *server;
-    cchar       *ip;
-    int         next, count;
+    char        *ip;
+    int         next, count, port;
 
-    ip = host->ip ? host->ip : "";
+    mprParseIp(host->address, &ip, &port, -1);
     mprAssert(ip);
 
     for (count = 0, next = 0; (server = mprGetNextItem(http->servers, &next)) != 0; ) {
-        if (server->port <= 0 || host->port <= 0 || server->port == host->port) {
+        if (server->port <= 0 || port <= 0 || server->port == port) {
             mprAssert(server->ip);
             if (*server->ip == '\0' || *ip == '\0' || scmp(server->ip, ip) == 0) {
                 httpAddHostToServer(server, host);
@@ -4211,27 +4196,7 @@ int httpAddHostToServers(Http *http, struct HttpHost *host)
     }
     return (count == 0) ? MPR_ERR_CANT_FIND : 0;
 }
-
-
-int httpSetNamedVirtualServers(Http *http, cchar *ip, int port)
-{
-    HttpServer  *server;
-    int         next, count;
-
-    if (ip == 0) {
-        ip = "";
-    }
-    for (count = 0, next = 0; (server = mprGetNextItem(http->servers, &next)) != 0; ) {
-        if (server->port <= 0 || port <= 0 || server->port == port) {
-            mprAssert(server->ip);
-            if (*server->ip == '\0' || *ip == '\0' || scmp(server->ip, ip) == 0) {
-                httpSetNamedVirtualServer(server);
-                count++;
-            }
-        }
-    }
-    return (count == 0) ? MPR_ERR_CANT_FIND : 0;
-}
+#endif
 
 
 void httpAddHost(Http *http, HttpHost *host)
@@ -5212,7 +5177,7 @@ void httpMatchHost(HttpConn *conn)
 
     if (httpIsNamedVirtualServer(server)) {
         rx = conn->rx;
-        if ((host = httpLookupHostByName(server, rx->hostHeader)) == 0) {
+        if ((host = httpLookupHost(server, rx->hostHeader)) == 0) {
             httpSetConnHost(conn, host);
             httpError(conn, HTTP_CODE_NOT_FOUND, "No host to serve request. Searching for %s", rx->hostHeader);
             conn->host = mprGetFirstItem(server->hosts);
@@ -9931,6 +9896,7 @@ HttpServer *httpCreateServer(cchar *ip, int port, MprDispatcher *dispatcher, int
 {
     HttpServer  *server;
     Http        *http;
+    HttpHost    *host;
 
     if ((server = mprAllocObj(HttpServer, manageServer)) == 0) {
         return 0;
@@ -9946,8 +9912,11 @@ HttpServer *httpCreateServer(cchar *ip, int port, MprDispatcher *dispatcher, int
     server->loc = httpInitLocation(http, 1);
     server->hosts = mprCreateList(-1, 0);
     httpAddServer(http, server);
+
     if (flags & HTTP_CREATE_HOST) {
-        httpAddHostToServer(server, httpCreateHost(ip, port, server->loc));
+        host = httpCreateHost(server->loc);
+        httpSetHostAddress(host, ip, port);
+        httpAddHostToServer(server, host);
     }
     return server;
 }
@@ -10232,23 +10201,26 @@ int httpGetServerAsync(HttpServer *server)
 
 void httpSetServerAddress(HttpServer *server, cchar *ip, int port)
 {
-    HttpHost    *host;
-    int         next;
-
     if (ip) {
         server->ip = sclone(ip);
     }
     if (port >= 0) {
         server->port = port;
     }
+#if XXX
+    HttpHost    *host;
+
+    int         next;
     for (next = 0; (host = mprGetNextItem(server->hosts, &next)) != 0; ) {
         httpSetHostAddress(host, ip, port);
     }
+#endif
     if (server->sock) {
         httpStopServer(server);
         httpStartServer(server);
     }
 }
+
 
 void httpSetServerAsync(HttpServer *server, int async)
 {
@@ -10286,9 +10258,12 @@ void httpSetServerNotifier(HttpServer *server, HttpNotifier notifier)
 }
 
 
-int httpSecureServer(cchar *ip, int port, struct MprSsl *ssl)
+#if UNUSED
+/*
+    This returns the first matching server. IP and port can be wild (set to 0)
+ */
+HttpServer *httpLookupServer(cchar *ip, int port)
 {
-#if BLD_FEATURE_SSL
     HttpServer  *server;
     Http        *http;
     int         next, count;
@@ -10301,15 +10276,48 @@ int httpSecureServer(cchar *ip, int port, struct MprSsl *ssl)
         if (server->port <= 0 || port <= 0 || server->port == port) {
             mprAssert(server->ip);
             if (*server->ip == '\0' || *ip == '\0' || scmp(server->ip, ip) == 0) {
-                server->ssl = ssl;
+                return server;
+            }
+        }
+    }
+    return 0;
+}
+#endif
+
+
+int httpSecureServer(HttpServer *server, struct MprSsl *ssl)
+{
+#if BLD_FEATURE_SSL
+    server->ssl = ssl;
+    return 0;
+#else
+    return MPR_ERR_BAD_STATE;
+#endif
+}
+
+
+int httpSecureServerByName(cchar *name, struct MprSsl *ssl)
+{
+    HttpServer  *server;
+    Http        *http;
+    char        *ip;
+    int         port, next, count;
+
+    http = MPR->httpService;
+    mprParseIp(name, &ip, &port, -1);
+    if (ip == 0) {
+        ip = "";
+    }
+    for (count = 0, next = 0; (server = mprGetNextItem(http->servers, &next)) != 0; ) {
+        if (server->port <= 0 || port <= 0 || server->port == port) {
+            mprAssert(server->ip);
+            if (*server->ip == '\0' || *ip == '\0' || scmp(server->ip, ip) == 0) {
+                httpSecureServer(server, ssl);
                 count++;
             }
         }
     }
     return (count == 0) ? MPR_ERR_CANT_FIND : 0;
-#else
-    return MPR_ERR_BAD_STATE;
-#endif
 }
 
 
@@ -10334,7 +10342,7 @@ void httpSetNamedVirtualServer(HttpServer *server)
 }
 
 
-HttpHost *httpLookupHostByName(HttpServer *server, cchar *name)
+HttpHost *httpLookupHost(HttpServer *server, cchar *name)
 {
     HttpHost    *host;
     int         next;
@@ -10346,6 +10354,28 @@ HttpHost *httpLookupHostByName(HttpServer *server, cchar *name)
     }
     return 0;
 }
+
+
+int httpSetNamedVirtualServers(Http *http, cchar *ip, int port)
+{
+    HttpServer  *server;
+    int         next, count;
+
+    if (ip == 0) {
+        ip = "";
+    }
+    for (count = 0, next = 0; (server = mprGetNextItem(http->servers, &next)) != 0; ) {
+        if (server->port <= 0 || port <= 0 || server->port == port) {
+            mprAssert(server->ip);
+            if (*server->ip == '\0' || *ip == '\0' || scmp(server->ip, ip) == 0) {
+                httpSetNamedVirtualServer(server);
+                count++;
+            }
+        }
+    }
+    return (count == 0) ? MPR_ERR_CANT_FIND : 0;
+}
+
 
 /*
     @copy   default
@@ -12914,7 +12944,7 @@ void httpCreateCGIVars(HttpConn *conn)
     mprAddKey(table, "REQUEST_METHOD", rx->method);
     mprAddKey(table, "REQUEST_TRANSPORT", sclone((char*) ((conn->secure) ? "https" : "http")));
     mprAddKey(table, "SERVER_ADDR", sock->acceptIp);
-    mprAddKey(table, "SERVER_NAME", host->hostname);
+    mprAddKey(table, "SERVER_NAME", host->name);
     mprAddKeyFmt(table, "SERVER_PORT", "%d", sock->acceptPort);
     mprAddKey(table, "SERVER_PROTOCOL", conn->protocol);
     mprAddKey(table, "SERVER_ROOT", host->serverRoot);

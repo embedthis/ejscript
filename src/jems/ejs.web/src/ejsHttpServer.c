@@ -217,7 +217,7 @@ static EjsVoid *hs_listen(Ejs *ejs, EjsHttpServer *sp, int argc, EjsObj **argv)
             setHttpPipeline(ejs, sp);
         }
         if (sp->ssl) {
-            httpSecureServer(server->ip, sp->port, sp->ssl);
+            httpSecureServer(server, sp->ssl);
         }
         if (sp->name) {
             httpSetHostName(host, sp->name);

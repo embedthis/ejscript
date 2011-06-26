@@ -1071,6 +1071,14 @@ void mprStartGCService()
 }
 
 
+void mprStopGCService()
+{
+    mprWakeGCService();
+    /* Give a yield on some systems */
+    mprSleep(1);
+}
+
+
 void mprWakeGCService()
 {
     mprSignalCond(heap->markerCond);
@@ -1427,8 +1435,10 @@ static void marker(void *unused, MprThread *tp)
         MPR_MEASURE(7, "GC", "mark", mark());
     }
     heap->mustYield = 0;
-    MPR->marker = 0;
+#if UNUSED
     mprResumeThreads();
+#endif
+    MPR->marker = 0;
 }
 
 
@@ -2731,9 +2741,10 @@ void mprDestroy(int how)
     mprStopSignalService();
 
     /* Final GC to run all finalizers */
-    MPR->state = MPR_FINISHED;
     mprRequestGC(gmode);
-    mprAssert(!MPR->marker);
+
+    MPR->state = MPR_FINISHED;
+    mprStopGCService();
     mprStopThreadService();
 
     /*
@@ -2745,10 +2756,13 @@ void mprDestroy(int how)
         if (mprGetRemainingTime(mark, MPR_TIMEOUT_STOP) <= 0) {
             break;
         }
-        mprSleep(10);
+#if UNUSED && KEEP
+        //  MOB - cleanup
         printf("marker %d, eventing %d, busyThreads %d, threads %d\n", MPR->marker, MPR->eventing, 
                 MPR->workerService->busyThreads->length,
                 MPR->threadService->threads->length);
+#endif
+        mprSleep(1);
     }
     mprStopOsService();
     mprDestroyMemService();
