@@ -148,3 +148,5 @@ src/jems/ejs.web/test/web/chinese.ejs
 sample.out
 main.out
 src/jems/ejs.db.sqlite/s2/
+.rpmmacros
+rpm.log
