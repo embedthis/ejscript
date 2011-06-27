@@ -1704,14 +1704,14 @@ static int catString(Ejs *ejs, EjsString *dest, char *str, ssize len)
 static EjsString *buildString(Ejs *ejs, EjsString *result, MprChar *str, ssize len)
 {
     EjsString   *newBuf;
-    ssize       size;
+    ssize       room, size;
 
     mprAssert(result);
 
-    size = mprGetBlockSize(result);
-    if (result->length + len >= size) {
-        len = max(result->length + len, MPR_BUFSIZE);
-        if ((newBuf = ejsCreateBareString(ejs, len)) == NULL) {
+    room = mprGetBlockSize(result) - sizeof(EjsString);
+    if ((result->length + len + 1) >= room) {
+        size = max(result->length + len, MPR_BUFSIZE);
+        if ((newBuf = ejsCreateBareString(ejs, size)) == NULL) {
             return NULL;
         }
         memcpy(newBuf->value, result->value, result->length * sizeof(MprChar));
@@ -1785,6 +1785,12 @@ EjsString *ejsCatString(Ejs *ejs, EjsString *s1, EjsString *s2)
     EjsString   *result;
     ssize       len;
 
+    if (s1->length == 0) {
+        return s2;
+    }
+    if (s2->length == 0) {
+        return s1;
+    }
     len = s1->length + s2->length;
     if ((result = ejsCreateBareString(ejs, len)) == NULL) {
         return NULL;
