@@ -106,7 +106,7 @@ static EjsObj *app_exit(Ejs *ejs, EjsObj *unused, int argc, EjsObj **argv)
     } else {
         mode = MPR_EXIT_NORMAL;
     }
-    mprTerminate(mode);
+    mprTerminate(mode, status);
     ejsAttention(ejs);
     return 0;
 }

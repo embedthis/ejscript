@@ -7530,10 +7530,11 @@ extern int mprStartEventsThread();
     @param flags Termination control flags. Use MPR_EXIT_IMMEDIATE for an immediate abortive shutdown. Finalizers will
         not be run. Use MPR_EXIT_NORMAL to allow garbage collection and finalizers to run. Use MPR_EXIT_GRACEFUL to
         allow all current requests and commands to complete before exiting.
+    @param status Proposed program exit status.
     @stability Evolving.
     @ingroup Mpr
  */
-extern void mprTerminate(int flags);
+extern void mprTerminate(int flags, int status);
 
 extern bool mprIsService();
 extern void mprSetPriority(int pri);
