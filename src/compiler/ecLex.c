@@ -159,11 +159,10 @@ static void manageToken(EcToken *tp, int flags)
 
 static EcToken *getLexToken(EcCompiler *cp)
 {
-    EcToken     *prev, *tp;
+    EcToken     *tp;
 
     if ((tp = cp->putback) != 0) {
         cp->putback = tp->next;
-        prev = cp->token;
         cp->token = tp;
     } else {
         if ((cp->token = mprAllocObj(EcToken, manageToken)) == 0) {

@@ -48,7 +48,6 @@ int ecCreateModuleHeader(EcCompiler *cp)
  */
 int ecCreateModuleSection(EcCompiler *cp)
 {
-    Ejs             *ejs;
     EjsConstants    *constants;
     EjsModule       *mp;
     EcState         *state;
@@ -58,11 +57,9 @@ int ecCreateModuleSection(EcCompiler *cp)
     state = cp->state;
     buf = state->code->buf;
     mp = state->currentModule;
+    constants = mp->constants;
 
     mprLog(7, "Create module section %s", mp->name);
-
-    ejs = cp->ejs;
-    constants = mp->constants;
 
     ecEncodeByte(cp, EJS_SECT_MODULE);
     ecEncodeConst(cp, mp->name);
@@ -100,14 +97,11 @@ int ecCreateModuleSection(EcCompiler *cp)
 
 static void createDependencySection(EcCompiler *cp)
 {
-    Ejs         *ejs;
     EjsModule   *module, *mp;
     int         i, count, version;
 
     mp = cp->state->currentModule;
     mprAssert(mp);
-
-    ejs = cp->ejs;
 
     /*
         If merging, don't need references to dependent modules as they are aggregated onto the output
@@ -272,7 +266,7 @@ static void createClassSection(EcCompiler *cp, EjsPot *block, int slotNum, EjsPo
     EjsType         *type, *iface;
     EjsPot          *prototype;
     EjsTrait        *trait;
-    EjsName         qname, pname;
+    EjsName         qname;
     int             next, attributes, interfaceCount, instanceTraits, count;
 
     ejs = cp->ejs;
@@ -362,7 +356,6 @@ static void createClassSection(EcCompiler *cp, EjsPot *block, int slotNum, EjsPo
     if (prototype) {
         count = ejsGetLength(ejs, prototype);
         for (slotNum = 0; slotNum < count; slotNum++) {
-            pname = ejsGetPropertyName(ejs, prototype, slotNum);
             trait = ejsGetPropertyTraits(ejs, prototype, slotNum);
             if (slotNum < type->numInherited) {
                 if (trait && !(trait->attributes & EJS_FUN_OVERRIDE)) {
@@ -494,18 +487,13 @@ static void createFunctionSection(EcCompiler *cp, EjsPot *block, int slotNum, Ej
  */
 static void createExceptionSection(EcCompiler *cp, EjsFunction *fun)
 {
-    Ejs         *ejs;
     EjsEx       *ex;
-    EjsModule   *mp;
     EjsCode     *code;
     int         i;
 
     mprAssert(fun);
 
-    mp = cp->state->currentModule;
-    ejs = cp->ejs;
     code = fun->body.code;
-
     ecEncodeByte(cp, EJS_SECT_EXCEPTION);
 
     for (i = 0; i < code->numHandlers; i++) {
@@ -528,13 +516,11 @@ static void createExceptionSection(EcCompiler *cp, EjsFunction *fun)
 
 static void createDebugSection(EcCompiler *cp, EjsFunction *fun)
 {
-    EcCodeGen   *code;
     EjsDebug    *debug;
     EjsLine     *line;
     int         i, patchSizeOffset, startDebug;
 
     mprAssert(fun);
-    code = cp->state->code;
     debug = fun->body.code->debug;
 
     ecEncodeByte(cp, EJS_SECT_DEBUG);
@@ -555,13 +541,10 @@ static void createDebugSection(EcCompiler *cp, EjsFunction *fun)
 static void createBlockSection(EcCompiler *cp, EjsPot *parent, int slotNum, EjsBlock *block)
 {
     Ejs             *ejs;
-    EjsModule       *mp;
     EjsName         qname;
     int             i;
 
     ejs = cp->ejs;
-    mp = cp->state->currentModule;
-
     ecEncodeByte(cp, EJS_SECT_BLOCK);
     qname = ejsGetPropertyName(ejs, parent, slotNum);
     ecEncodeConst(cp, qname.name);
@@ -782,13 +765,11 @@ int ecAddDocConstant(EcCompiler *cp, cchar *tag, void *vp, int slotNum)
  */
 int ecAddModuleConstant(EcCompiler *cp, EjsModule *mp, cchar *str)
 {
-    Ejs             *ejs;
     EjsConstants    *constants;
     MprHash         *hp;
     int             index;
 
     mprAssert(mp);
-    ejs = cp->ejs;
 
     if (str == 0) {
         mprAssert(0);

@@ -196,7 +196,9 @@ static void VM(Ejs *ejs, EjsFunction *fun, EjsAny *otherThis, int argc, int stac
     EjsFunction *f1, *f2;
     EjsNamespace *nsp;
     EjsString   *str;
+#if UNUSED
     uchar       *mark;
+#endif
     int         i, offset, count, opcode, attributes, paused;
 
 #if BLD_UNIX_LIKE || (VXWORKS && !BLD_CC_DIAB)
@@ -673,7 +675,9 @@ static void VM(Ejs *ejs, EjsFunction *fun, EjsAny *otherThis, int argc, int stac
                 Stack after         [value]
          */
         CASE (EJS_OP_GET_SCOPED_NAME):
+#if UNUSED
             mark = FRAME->pc - 1;
+#endif
             qname = GET_NAME();
             vp = ejsGetVarByName(ejs, NULL, qname, &lookup);
             if (unlikely(vp == 0)) {
@@ -692,7 +696,9 @@ static void VM(Ejs *ejs, EjsFunction *fun, EjsAny *otherThis, int argc, int stac
                 Stack after         [value]
          */
         CASE (EJS_OP_GET_SCOPED_NAME_EXPR):
+#if UNUSED
             mark = FRAME->pc - 1;
+#endif
             qname.name = ejsToString(ejs, pop(ejs));
             v1 = pop(ejs);
             if (ejsIs(ejs, v1, Namespace)) {
@@ -3013,7 +3019,7 @@ static EjsEx *inHandler(Ejs *ejs, int kind)
 static uint findEndException(Ejs *ejs)
 {
     EjsFrame    *fp;
-    EjsEx       *best, *ex;
+    EjsEx       *ex;
     EjsCode     *code;
     uint        offset, pc;
     int         i;
@@ -3024,7 +3030,7 @@ static uint findEndException(Ejs *ejs)
     pc = (uint) (fp->pc - code->byteCode - 1);
     offset = 0;
 
-    for (best = 0, i = 0; i < code->numHandlers; i++) {
+    for (i = 0; i < code->numHandlers; i++) {
         ex = code->handlers[i];
         /*
             Comparison must include try and all catch handlers, incase there are multiple catch handlers
@@ -3122,12 +3128,10 @@ static void createExceptionBlock(Ejs *ejs, EjsEx *ex, int flags)
     EjsBlock        *block;
     EjsFrame        *fp;
     EjsState        *state;
-    EjsCode         *code;
     int             i, count;
 
     state = ejs->state;
     fp = state->fp;
-    code = state->fp->function.body.code;
     mprAssert(ex);
 
     ejsClearAttention(ejs);

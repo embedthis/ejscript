@@ -471,7 +471,6 @@ static void cloneProperties(Ejs *ejs, Ejs *master)
     EjsAny      *vp, *mvp;
     EjsName     qname;
     EjsTrait    *trait;
-    EjsType     *type;
     int         i, immutable, numProp;
 
     mprAssert(ejs);
@@ -488,7 +487,6 @@ static void cloneProperties(Ejs *ejs, Ejs *master)
         trait = ejsGetPropertyTraits(master, master->global, i);
         ejsSetPropertyTraits(ejs, ejs->global, i, trait->type, trait->attributes);
         immutable = 0;
-        type = TYPE(vp);
         if (ejsIsType(ejs, vp)) {
             if (!((EjsType*) vp)->mutable) {
                 immutable = 1;

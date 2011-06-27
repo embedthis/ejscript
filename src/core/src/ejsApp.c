@@ -84,6 +84,7 @@ static EjsPath *app_exePath(Ejs *ejs, EjsObj *unused, int argc, EjsObj **argv)
 /*  
     Exit the application
     static function exit(status: Number, how: String = "default"): void
+    MOB - status is not implemented
  */
 static EjsObj *app_exit(Ejs *ejs, EjsObj *unused, int argc, EjsObj **argv)
 {
@@ -106,7 +107,7 @@ static EjsObj *app_exit(Ejs *ejs, EjsObj *unused, int argc, EjsObj **argv)
     } else {
         mode = MPR_EXIT_NORMAL;
     }
-    mprTerminate(mode);
+    mprTerminate(mode, status);
     ejsAttention(ejs);
     return 0;
 }

@@ -89,11 +89,6 @@ int ecCompile(EcCompiler *cp, int argc, char **argv)
     Ejs     *ejs;
     int     rc, saveCompiling, paused;
 
-#if BLD_DEBUG
-    MprThread   *tp;
-    
-    tp = mprGetCurrentThread();
-#endif
     ejs = cp->ejs;
     saveCompiling = ejs->compiling;
     ejs->compiling = 1;
@@ -348,9 +343,8 @@ int ejsLoadScriptLiteral(Ejs *ejs, EjsString *script, cchar *cache, int flags)
 int ejsEvalFile(cchar *path)
 {
     Ejs     *ejs;
-    Mpr     *mpr;
 
-    mpr = mprCreate(0, 0, 0);
+    mprCreate(0, 0, 0);
     if ((ejs = ejsCreateVM(0, 0, 0)) == 0) {
         mprDestroy(0);
         return MPR_ERR_MEMORY;
@@ -376,9 +370,8 @@ int ejsEvalFile(cchar *path)
 int ejsEvalScript(cchar *script)
 {
     Ejs     *ejs;
-    Mpr     *mpr;
 
-    mpr = mprCreate(0, 0, 0);
+    mprCreate(0, 0, 0);
     if ((ejs = ejsCreateVM(0, 0, 0)) == 0) {
         mprDestroy(0);
         return MPR_ERR_MEMORY;
@@ -473,9 +466,7 @@ void ecErrorv(EcCompiler *cp, cchar *severity, EcLocation *loc, cchar *fmt, va_l
 {
     cchar   *appName;
     char    *pointer, *errorMsg, *msg;
-    int     errCode;
 
-    errCode = 0;
     appName = mprGetAppName(cp);
     msg = mprAsprintfv(fmt, args);
 

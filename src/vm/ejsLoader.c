@@ -85,9 +85,7 @@ int ejsLoadModule(Ejs *ejs, EjsString *path, int minVersion, int maxVersion, int
 static int initializeModule(Ejs *ejs, EjsModule *mp)
 {
     EjsNativeModule     *nativeModule;
-    int                 priorGen, paused;
-
-    priorGen = 0;
+    int                 paused;
 
     if (mp->hasNative && !mp->configured) {
         /*
@@ -1031,7 +1029,6 @@ static int loadScriptModule(Ejs *ejs, cchar *filename, int minVersion, int maxVe
 static int fixupTypes(Ejs *ejs, MprList *list)
 {
     EjsTypeFixup    *fixup;
-    EjsModule       *mp;
     EjsType         *type, *targetType;
     EjsTrait        *trait;
     EjsFunction     *targetFunction;
@@ -1039,7 +1036,6 @@ static int fixupTypes(Ejs *ejs, MprList *list)
     int             next;
 
     for (next = 0; (fixup = (EjsTypeFixup*) mprGetNextItem(list, &next)) != 0; ) {
-        mp = 0;
         type = 0;
         if (fixup->typeSlotNum >= 0) {
             type = ejsGetProperty(ejs, ejs->global, fixup->typeSlotNum);

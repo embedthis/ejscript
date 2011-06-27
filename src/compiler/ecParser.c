@@ -1540,11 +1540,9 @@ static EcNode *parseFieldList(EcCompiler *cp, EcNode *np)
 static EcNode *parseLiteralField(EcCompiler *cp)
 {
     EcNode  *fp, *np, *id, *funRef, *fieldName;
-    int     getterSetter;
 
     ENTER(cp);
     np = 0;
-    getterSetter = 0;
     
     getToken(cp);
     if ((cp->token->tokenId == T_GET || cp->token->tokenId == T_SET) && peekToken(cp) != T_COLON) {
@@ -3861,7 +3859,8 @@ static EcNode *parseLetExpression(EcCompiler *cp)
     if (getToken(cp) != T_RPAREN) {
         return LEAVE(cp, expected(cp, ")"));
     }
-    return 0;
+    //  MOB - was return 0
+    return np;
 }
 
 
@@ -4028,11 +4027,9 @@ static void fixDassign(EcCompiler *cp, EcNode *np)
 static EcNode *parseAssignmentExpression(EcCompiler *cp)
 {
     EcNode      *np, *parent;
-    EcState     *state;
     int         subId;
 
     ENTER(cp);
-    state = cp->state;
 
     np = parseConditionalExpression(cp);
     if (np) {
@@ -5590,11 +5587,9 @@ static EcNode *parseDoStatement(EcCompiler *cp)
  */
 static EcNode *parseWhileStatement(EcCompiler *cp)
 {
-    EcNode      *np, *initializer;
+    EcNode      *np;
 
     ENTER(cp);
-
-    initializer = 0;
 
     if (getToken(cp) != T_WHILE) {
         return LEAVE(cp, parseError(cp, "Expecting \"while\""));
@@ -8662,8 +8657,6 @@ static EcNode *parseModuleDefinition(EcCompiler *cp)
 static EcNode *parseModuleName(EcCompiler *cp)
 {
     EcNode      *np, *idp;
-    Ejs         *ejs;
-    EjsObj      *lastPackage;
     EjsString   *name;
 
     ENTER(cp);
@@ -8673,9 +8666,6 @@ static EcNode *parseModuleName(EcCompiler *cp)
         return LEAVE(cp, np);
     }
     name = np->qname.name;
-
-    ejs = cp->ejs;
-    lastPackage = 0;
 
     while (np && getToken(cp) == T_DOT) {
         /*
@@ -8964,11 +8954,8 @@ static EcNode *parsePragmaItem(EcCompiler *cp)
     EcNode      *np, *ns;
     EcState     *upper;
     EjsModule   *module;
-    int         attributes;
 
     ENTER(cp);
-
-    attributes = 0;
 
     np = createNode(cp, N_PRAGMA, NULL);
     np->pragma.strict = cp->fileState->strict;
@@ -9727,7 +9714,6 @@ static EcNode *createAssignNode(EcCompiler *cp, EcNode *lhs, EcNode *rhs, EcNode
  */
 static EcNode *appendNode(EcNode *np, EcNode *child)
 {
-    EcCompiler      *cp;
     MprList         *list;
     int             index;
 
@@ -9735,9 +9721,7 @@ static EcNode *appendNode(EcNode *np, EcNode *child)
         return 0;
     }
     mprAssert(np != child);
-    
     list = np->children;
-    cp = np->cp;
 
     if ((index = mprAddItem(np->children, child)) < 0) {
         return 0;
@@ -9798,15 +9782,13 @@ static EcNode *linkNode(EcNode *np, EcNode *node)
  */
 static EcNode *insertNode(EcNode *np, EcNode *child, int pos)
 {
-    EcCompiler      *cp;
-    MprList         *list;
-    int             index, len;
+    MprList     *list;
+    int         index, len;
 
     if (child == 0 || np == 0) {
         return 0;
     }
     list = np->children;
-    cp = np->cp;
 
     index = mprInsertItemAtPos(list, pos, child);
     if (index < 0) {
@@ -9829,14 +9811,11 @@ static EcNode *insertNode(EcNode *np, EcNode *child, int pos)
  */
 static EcNode *removeNode(EcNode *np, EcNode *child)
 {
-    EcCompiler      *cp;
-    int             index;
+    int         index;
 
     if (child == 0 || np == 0) {
         return 0;
     }
-    cp = np->cp;
-
     index = mprRemoveItem(np->children, child);
     mprAssert(index >= 0);
 
@@ -10293,12 +10272,10 @@ static void manageNode(EcNode *node, int flags)
  */
 static EcNode *createNode(EcCompiler *cp, int kind, EjsString *name)
 {
-    Ejs         *ejs;
     EcNode      *np;
     EcToken     *token;
 
     mprAssert(cp->state);
-    ejs = cp->ejs;
 
     if ((np = mprAllocObj(EcNode, manageNode)) == 0) {
         return 0;

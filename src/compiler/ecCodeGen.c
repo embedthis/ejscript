@@ -140,13 +140,11 @@ void ecGenConditionalCode(EcCompiler *cp, EcNode *np, EjsModule *mp)
  */
 int ecCodeGen(EcCompiler *cp)
 {
-    Ejs         *ejs;
     EjsModule   *mp;
     EcNode      *np;
     MprList     *modules;
-    int         next, i, version, count;
+    int         next, i, count;
 
-    ejs = cp->ejs;
     if (ecEnterState(cp) < 0) {
         return EJS_ERR;
     }
@@ -167,10 +165,9 @@ int ecCodeGen(EcCompiler *cp)
         Open once if merging into a single output file
      */
     if (cp->outputFile) {
-        for (version = next = 0; (mp = mprGetNextItem(cp->modules, &next)) != 0; ) {
+        for (next = 0; (mp = mprGetNextItem(cp->modules, &next)) != 0; ) {
             if (next <= 1 || mp->globalProperties || mp->hasInitializer || 
                     ejsCompareMulti(cp->ejs, mp->name, EJS_DEFAULT_MODULE) != 0) {
-                version = mp->version;
                 break;
             }
         }
@@ -219,10 +216,8 @@ int ecCodeGen(EcCompiler *cp)
 static void orderModule(EcCompiler *cp, MprList *list, EjsModule *mp)
 {
     EjsModule   *dp;
-    Ejs         *ejs;
     int         next;
     
-    ejs = cp->ejs;
     mp->visited = 1;
     for (next = 0; (dp = mprGetNextItem(mp->dependencies, &next)) != 0; ) {
         if (mprLookupItem(list, dp) < 0 && mprLookupItem(cp->modules, dp) >= 0) {
@@ -288,18 +283,14 @@ static void genSpread(EcCompiler *cp, EcNode *np)
 static void genAssignOp(EcCompiler *cp, EcNode *np)
 {
     EcState     *state;
-    int         next, rc;
 
     ENTER(cp);
-
-    state = cp->state;
-    rc = 0;
-    next = 0;
 
     mprAssert(np->kind == N_ASSIGN_OP);
     mprAssert(np->left);
     mprAssert(np->right);
 
+    state = cp->state;
     state->onLeft = 0;
 
     /*
@@ -405,7 +396,6 @@ static void genBreak(EcCompiler *cp, EcNode *np)
 
 static void genBlock(EcCompiler *cp, EcNode *np)
 {
-    Ejs             *ejs;
     EjsNamespace    *namespace;
     EcState         *state;
     EjsBlock        *block;
@@ -416,7 +406,6 @@ static void genBlock(EcCompiler *cp, EcNode *np)
     ENTER(cp);
 
     state = cp->state;
-    ejs = cp->ejs;
     block = (EjsBlock*) np->blockRef;
 
     if (block && np->createBlockObject) {
@@ -728,17 +717,14 @@ static void genBaseClassPropertyName(EcCompiler *cp, int slotNum, int nthBase)
  */
 static void genThisBaseClassPropertyName(EcCompiler *cp, EjsType *type, int slotNum)
 {
-    Ejs         *ejs;
     EcState     *state;
     int         code, nthBase;
 
+    mprAssert(0);
     mprAssert(slotNum >= 0);
     mprAssert(type && ejsIsType(ejs, type));
-
-    ejs = cp->ejs;
     state = cp->state;
 
-    mprAssert(0);
     /*
         Count based up from object 
      */
@@ -799,16 +785,13 @@ static void genClassName(EcCompiler *cp, EjsType *type)
  */
 static void genPropertyViaThis(EcCompiler *cp, int slotNum)
 {
-    Ejs             *ejs;
     EcState         *state;
     int             code;
 
     mprAssert(slotNum >= 0);
-
-    ejs = cp->ejs;
+    mprAssert(0);
     state = cp->state;
 
-    mprAssert(0);
     /*
         Property in the current "this" object
      */
@@ -947,7 +930,7 @@ static void genCallSequence(EcCompiler *cp, EcNode *np)
     EcState         *state;
     EjsFunction     *fun;
     EjsLookup       *lookup;
-    int             fast, argc, staticMethod, count;    
+    int             fast, argc, staticMethod;    
         
     ejs = cp->ejs;
     state = cp->state;
@@ -983,7 +966,6 @@ static void genCallSequence(EcCompiler *cp, EcNode *np)
                 Could be an arbitrary expression on the left. Need a consistent way to save the right most
                 object before the property. 
              */
-            count = getStackCount(cp);
             processNodeGetValue(cp, left);
             ecEncodeOpcode(cp, EJS_OP_LOAD_THIS_LOOKUP);
             pushStack(cp, 1);
@@ -1427,16 +1409,14 @@ static void genDirectives(EcCompiler *cp, EcNode *np, bool saveResult)
 {
     EcState     *lastDirectiveState;
     EcNode      *child;
-    int         next, lastKind, mark;
+    int         next, mark;
 
     ENTER(cp);
 
     lastDirectiveState = cp->directiveState;
-    lastKind = -1;
     next = 0;
     mark = getStackCount(cp);
     while ((child = getNextNode(cp, np, &next)) && !cp->error) {
-        lastKind = child->kind;
         cp->directiveState = cp->state;
         processNode(cp, child);
         if (!saveResult) {
@@ -2154,7 +2134,6 @@ static void genFunction(EcCompiler *cp, EcNode *np)
     EjsType         *baseType;
     EjsName         qname;
     EjsTrait        *trait;
-    EjsLookup       *lookup;
     EjsPot          *activation;
     int             i, numProp;
 
@@ -2186,7 +2165,6 @@ static void genFunction(EcCompiler *cp, EcNode *np)
         We only need to define the function if it needs full scope (unbound property access) or it is a nested function.
      */
     if (fun->fullScope) {
-        lookup = &np->lookup;
         ecEncodeOpcode(cp, EJS_OP_DEFINE_FUNCTION);
         ecEncodeName(cp, np->qname);
     }
@@ -2683,13 +2661,10 @@ static void genPostfixOp(EcCompiler *cp, EcNode *np)
 
 static void genProgram(EcCompiler *cp, EcNode *np)
 {
-    Ejs         *ejs;
     EcNode      *child;
     int         next;
 
     ENTER(cp);
-
-    ejs = cp->ejs;
 
     next = 0;
     while ((child = getNextNode(cp, np, &next)) && !cp->error) {
@@ -3280,7 +3255,6 @@ static void genNameExpr(EcCompiler *cp, EcNode *np)
  */
 static void genUnboundName(EcCompiler *cp, EcNode *np)
 {
-    Ejs         *ejs;
     EcState     *state;
     EjsObj      *owner;
     EjsLookup   *lookup;
@@ -3288,9 +3262,7 @@ static void genUnboundName(EcCompiler *cp, EcNode *np)
 
     ENTER(cp);
 
-    ejs = cp->ejs;
     state = cp->state;
-
     mprAssert(!np->lookup.bind || !cp->bind);
 
     lookup = &np->lookup;
@@ -3404,12 +3376,9 @@ static void genModule(EcCompiler *cp, EcNode *np)
 static void genUseModule(EcCompiler *cp, EcNode *np)
 {
     EcNode      *child;
-    Ejs         *ejs;
     int         next;
 
     ENTER(cp);
-
-    ejs = cp->ejs;
 
     mprAssert(np->kind == N_USE_MODULE);
 
@@ -3444,13 +3413,9 @@ static void genUseNamespace(EcCompiler *cp, EcNode *np)
 
 static void genVar(EcCompiler *cp, EcNode *np)
 {
-    EcState     *state;
-
     mprAssert(np->kind == N_VAR);
 
     ENTER(cp);
-    state = cp->state;
-
     ecAddNameConstant(cp, np->qname);
     if (np->lookup.trait && np->lookup.trait->type) {
         ecAddStringConstant(cp, np->lookup.trait->type->qname.name);
@@ -3728,7 +3693,6 @@ static int flushModule(MprFile *file, EcCodeGen *code)
  */
 static void createInitializer(EcCompiler *cp, EjsModule *mp)
 {
-    Ejs             *ejs;
     EjsFunction     *fun;
     EcState         *state;
     EcCodeGen       *code;
@@ -3736,7 +3700,6 @@ static void createInitializer(EcCompiler *cp, EjsModule *mp)
 
     ENTER(cp);
 
-    ejs = cp->ejs;
     state = cp->state;
     mprAssert(state);
 
@@ -4115,14 +4078,12 @@ static void processNode(EcCompiler *cp, EcNode *np)
  */
 static void processModule(EcCompiler *cp, EjsModule *mp)
 {
-    Ejs         *ejs;
     EcState     *state;
     EcCodeGen   *code;
     char        *path;
 
     ENTER(cp);
 
-    ejs = cp->ejs;
     state = cp->state;
     state->currentModule = mp;
 
