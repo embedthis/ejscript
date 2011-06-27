@@ -7203,11 +7203,6 @@ extern Mpr *mprGetMpr();
 #else
     #define mprGetMpr() MPR
     extern Mpr *MPR;
-    #if !BLD_CC_WARN_UNUSED
-        #define MPR_DISCARD __junk__ =
-    #else
-        #define MPR_DISCARD (void)
-    #endif
 #endif
 
 #define MPR_DISABLE_GC          0x1         /**< Disable GC */
