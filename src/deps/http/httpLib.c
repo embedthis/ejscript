@@ -2195,13 +2195,11 @@ int httpConnect(HttpConn *conn, cchar *method, cchar *url)
 bool httpNeedRetry(HttpConn *conn, char **url)
 {
     HttpRx      *rx;
-    HttpTx      *tx;
 
     mprAssert(conn->rx);
 
     *url = 0;
     rx = conn->rx;
-    tx = conn->tx;
 
     if (conn->state < HTTP_STATE_FIRST) {
         return 0;
@@ -3134,12 +3132,10 @@ void httpFormatError(HttpConn *conn, int status, cchar *fmt, ...)
  */
 static void httpErrorV(HttpConn *conn, int flags, cchar *fmt, va_list args)
 {
-    HttpRx      *rx;
     HttpTx      *tx;
     int         status;
 
     mprAssert(fmt);
-    rx = conn->rx;
     tx = conn->tx;
 
     if (flags & HTTP_ABORT) {
@@ -5200,12 +5196,10 @@ void httpMatchHandler(HttpConn *conn)
     HttpRx      *rx;
     HttpTx      *tx;
     HttpStage   *handler;
-    HttpHost    *host;
 
     http = conn->http;
     rx = conn->rx;
     tx = conn->tx;
-    host = conn->host;
     handler = 0;
 
     mprAssert(rx->pathInfo);
@@ -5392,15 +5386,11 @@ static HttpStage *checkDirectory(HttpConn *conn, HttpStage *handler)
 {
     HttpRx      *rx;
     HttpTx      *tx;
-    MprPath     *info;
-    HttpHost    *host;
     HttpUri     *prior;
     char        *path, *pathInfo, *uri;
 
     rx = conn->rx;
     tx = conn->tx;
-    host = conn->host;
-    info = &tx->fileInfo;
     prior = rx->parsedUri;
 
     mprAssert(rx->dir);
@@ -7135,12 +7125,10 @@ ssize httpRead(HttpConn *conn, char *buf, ssize size)
 {
     HttpPacket  *packet;
     HttpQueue   *q;
-    HttpRx      *rx;
     MprBuf      *content;
     ssize       nbytes, len;
 
     q = conn->readq;
-    rx = conn->rx;
     
     while (q->count == 0 && !conn->async && conn->sock && (conn->state <= HTTP_STATE_CONTENT)) {
         httpServiceQueues(conn);
@@ -7514,15 +7502,11 @@ static void startRange(HttpQueue *q)
 static void outgoingRangeService(HttpQueue *q)
 {
     HttpPacket  *packet;
-    HttpRange   *range;
     HttpConn    *conn;
-    HttpRx      *rx;
     HttpTx      *tx;
 
     conn = q->conn;
-    rx = conn->rx;
     tx = conn->tx;
-    range = tx->currentRange;
 
     for (packet = httpGetPacket(q); packet; packet = httpGetPacket(q)) {
         if (packet->flags & HTTP_PACKET_DATA) {
@@ -7550,13 +7534,11 @@ static bool applyRange(HttpQueue *q, HttpPacket *packet)
 {
     HttpRange   *range;
     HttpConn    *conn;
-    HttpRx      *rx;
     HttpTx      *tx;
     MprOff      endPacket, length, gap, span;
     ssize       count;
 
     conn = q->conn;
-    rx = conn->rx;
     tx = conn->tx;
     range = tx->currentRange;
 
@@ -8010,12 +7992,10 @@ static bool parseIncoming(HttpConn *conn, HttpPacket *packet)
  */
 static void traceRequest(HttpConn *conn, HttpPacket *packet)
 {
-    HttpRx  *rx;
     MprBuf  *content;
     cchar   *endp, *ext, *cp;
     int     len, level;
 
-    rx = conn->rx;
     content = packet->content;
     ext = 0;
 
@@ -9095,13 +9075,9 @@ int httpMapToStorage(HttpConn *conn)
 int httpSetUri(HttpConn *conn, cchar *uri, cchar *query)
 {
     HttpRx      *rx;
-    HttpTx      *tx;
-    HttpHost    *host;
     HttpUri     *prior;
 
     rx = conn->rx;
-    tx = conn->tx;
-    host = conn->host;
     prior = rx->parsedUri;
 
     if ((rx->parsedUri = httpCreateUri(uri, 0)) == 0) {
@@ -9791,12 +9767,10 @@ static void adjustPacketData(HttpQueue *q, MprOff bytes)
  */
 static void adjustSendVec(HttpQueue *q, MprOff written)
 {
-    HttpTx      *tx;
     MprIOVec    *iovec;
     ssize       len;
     int         i, j;
 
-    tx = q->conn->tx;
     iovec = q->iovec;
     for (i = 0; i < q->ioIndex; i++) {
         len = iovec[i].len;
@@ -11296,14 +11270,12 @@ static void setHeaders(HttpConn *conn, HttpPacket *packet)
     HttpTx      *tx;
     HttpRange   *range;
     MprTime     expires;
-    MprPath     *info;
     cchar       *mimeType, *value;
 
     mprAssert(packet->flags == HTTP_PACKET_HEADER);
 
     rx = conn->rx;
     tx = conn->tx;
-    info = &tx->fileInfo;
 
     httpAddHeaderString(conn, "Date", conn->http->currentDate);
 

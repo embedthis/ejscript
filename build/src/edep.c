@@ -34,6 +34,7 @@ static int      mprGetDirName(char *buf, int bufsize, char *path);
 static void     openSignals();
 static int      findDependencies(FILE *fp, char *fname);
 static int      depSort(const void *p1, const void *p2);
+static char     *mapExtension(char *path);
 static void     catchInterrupt(int signo);
 static char     *mapDelimiters(char *s);
 
@@ -140,6 +141,7 @@ int main(int argc, char *argv[])
             continue;
         }
         strncpy(path, argv[i], sizeof(path));
+        mapExtension(path);
         fprintf(fp, " \\\n\t$(BLD_OBJ_DIR)/%s", mprGetBaseName(path));
     }
     fprintf(fp, "\n");
@@ -150,6 +152,7 @@ int main(int argc, char *argv[])
             continue;
         }
         strcpy(path, argv[i]);
+        mapExtension(path);
         fprintf(fp, "\n$(BLD_OBJ_DIR)/%s: ", mprGetBaseName(path));
 
         numDependencies = 0;
@@ -321,6 +324,25 @@ static char *mapDelimiters(char *s)
         }
     }
     return s;
+}
+
+
+static char *mapExtension(char *path)
+{
+    static char ext[16];
+    char        *cp;
+    char        *object;
+
+    object = "$(BLD_OBJ)";
+    if ((cp = strrchr(path, '.'))) {
+        strcpy(ext, cp);
+        if (strcmp(cp, ".c") == 0) {
+            strcpy(cp, object);
+        } else if (strcmp(cp, ".cpp") == 0) {
+            strcpy(cp, object);
+        }
+    }
+    return ext;
 }
 
 
