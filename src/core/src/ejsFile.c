@@ -701,7 +701,7 @@ EjsObj *writeFile(Ejs *ejs, EjsFile *fp, int argc, EjsObj **argv)
             len = ap->writePosition - ap->readPosition;
             break;
 
-        case S_String:
+        case S_String: // UNICODE
             buf = awtom(((EjsString*) vp)->value, &len);
             break;
 
