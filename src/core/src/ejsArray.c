@@ -899,6 +899,10 @@ static EjsString *joinArray(Ejs *ejs, EjsArray *ap, int argc, EjsObj **argv)
     int             i;
 
     sep = (argc == 1) ? (EjsString*) argv[0] : NULL;
+    if (sep == ESV(empty) && ap->length == 1 && ejsIs(ejs, ap->data[0], String)) {
+        /* Optimized path for joining [string]. This happens frequently with fun(...args) */
+        return (EjsString*) ap->data[0];
+    }
     result = ESV(empty);
     for (i = 0; i < ap->length; i++) {
         vp = ap->data[i];
