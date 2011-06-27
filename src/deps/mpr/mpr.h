@@ -7144,6 +7144,7 @@ typedef struct Mpr {
     char            *appDir;                /**< Path of directory containing app executable */
     int             eventing;               /**< Servicing events thread is active */
     int             exitStrategy;           /**< How to exit the app (normal, immediate, graceful) */
+    int             exitStatus;             /**< Proposed program exit status */
     int             flags;                  /**< Misc flags */
     int             cmdlineLogging;         /**< App has specified --log on the command line */
     int             hasError;               /**< Mpr has an initialization error */
