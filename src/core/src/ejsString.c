@@ -2224,7 +2224,8 @@ EjsString *ejsInternString(EjsString *str)
 {
     EjsString   *head, *sp;
     EjsIntern   *ip;
-    int         index, i, step;
+    ssize       i, len;
+    int         index, step;
 
     ip = ((EjsService*) MPR->ejsService)->intern;
     step = 0;
@@ -2234,8 +2235,15 @@ EjsString *ejsInternString(EjsString *str)
     index = whash(str->value, str->length) % ip->size;
     if ((head = &ip->buckets[index]) != NULL) {
         for (sp = head->next; sp != head; sp = sp->next, step++) {
+            if (str == sp) {
+                mprRevive(sp);
+                unlock(ip);
+                return sp;
+            }
             if (sp->length == str->length) {
-                for (i = 0; i < sp->length && i < str->length; i++) {
+                len = min(sp->length, str->length);
+                //  OPT
+                for (i = 0; i < len; i++) {
                     if (sp->value[i] != str->value[i]) {
                         break;
                     }

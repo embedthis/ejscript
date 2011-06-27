@@ -220,7 +220,7 @@ static EjsVoid *hs_listen(Ejs *ejs, EjsHttpServer *sp, int argc, EjsObj **argv)
             httpSecureServer(server, sp->ssl);
         }
         if (sp->name) {
-            httpSetHostName(host, sp->name);
+            httpSetHostName(host, sp->name, -1);
         }
         httpSetSoftware(server->http, EJS_HTTPSERVER_NAME);
         httpSetServerAsync(server, sp->async);
@@ -276,7 +276,7 @@ static EjsObj *hs_set_name(Ejs *ejs, EjsHttpServer *sp, int argc, EjsObj **argv)
     sp->name = ejsToMulti(ejs, argv[0]);
     if (sp->server && sp->name) {
         host = mprGetFirstItem(sp->server->hosts);
-        httpSetHostName(host, sp->name);
+        httpSetHostName(host, sp->name, -1);
     }
     return 0;
 }
