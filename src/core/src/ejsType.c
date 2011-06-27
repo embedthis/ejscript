@@ -824,8 +824,6 @@ void ejsSetTypeName(Ejs *ejs, EjsType *type, EjsName qname)
  */
 void ejsDefineTypeNamespaces(Ejs *ejs, EjsType *type)
 {
-    EjsNamespace        *nsp;
-
     if (type->baseType) {
         /*
             Inherit the base class's protected and internal namespaces
@@ -833,8 +831,8 @@ void ejsDefineTypeNamespaces(Ejs *ejs, EjsType *type)
         ejsInheritBaseClassNamespaces(ejs, type, type->baseType);
     }
     //  TODO - add readonly here
-    nsp = ejsDefineReservedNamespace(ejs, (EjsBlock*) type, &type->qname, EJS_PROTECTED_NAMESPACE);
-    nsp = ejsDefineReservedNamespace(ejs, (EjsBlock*) type, &type->qname, EJS_PRIVATE_NAMESPACE);
+    ejsDefineReservedNamespace(ejs, (EjsBlock*) type, &type->qname, EJS_PROTECTED_NAMESPACE);
+    ejsDefineReservedNamespace(ejs, (EjsBlock*) type, &type->qname, EJS_PRIVATE_NAMESPACE);
 }
 
 

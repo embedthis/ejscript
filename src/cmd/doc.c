@@ -150,11 +150,10 @@ static void generateImages(EjsMod *mp)
     DocFile     *df;
     MprFile     *file;
     char        *path;
-    int         rc;
 
     for (df = docFiles; df->path; df++) {
         path = mprJoinPath(mp->docDir, df->path);
-        rc = mprMakeDir(mprGetPathDir(path), 0775, 1);
+        mprMakeDir(mprGetPathDir(path), 0775, 1);
         file = mprOpenFile(path, O_WRONLY | O_CREAT | O_TRUNC | O_BINARY, 0644);
         if (file == 0) {
             mprError("Can't create %s", path);
@@ -338,10 +337,7 @@ static void generateNamespaceList(EjsMod *mp)
 
 static void generateNamespace(EjsMod *mp, cchar *namespace)
 {
-    Ejs     *ejs;
     char    *path;
-
-    ejs = mp->ejs;
 
     path = sjoin(namespace, ".html", NULL);
     mp->file = createFile(mp, path);
@@ -369,10 +365,7 @@ static void generateNamespace(EjsMod *mp, cchar *namespace)
 
 static void generateNamespaceClassTable(EjsMod *mp, cchar *namespace)
 {
-    Ejs         *ejs;
     int         count;
-
-    ejs = mp->ejs;
 
     out(mp, "<a name='Classes'></a>\n");
 
@@ -399,7 +392,6 @@ static void generateNamespaceClassTable(EjsMod *mp, cchar *namespace)
 static int generateNamespaceClassTableEntries(EjsMod *mp, cchar *namespace)
 {
     Ejs             *ejs;
-    EjsTrait        *trait;
     EjsName         qname;
     EjsDoc          *doc;
     ClassRec        *crec;
@@ -413,7 +405,6 @@ static int generateNamespaceClassTableEntries(EjsMod *mp, cchar *namespace)
 
     for (next = 0; (crec = (ClassRec*) mprGetNextItem(classes, &next)) != 0; ) {
         qname = crec->qname;
-        trait = crec->trait;
         fmtName = fmtType(ejs, crec->qname);
         out(mp, "   <tr><td><a href='%s' target='content'>%@</a></td>", getFilename(fmtName), qname.name);
         if (crec->block == ejs->global && mp->firstGlobal == ejsGetLength(ejs, ejs->global)) {
@@ -848,7 +839,7 @@ static void generateClassPageHeader(EjsMod *mp, EjsObj *obj, EjsName qname, EjsT
     Ejs         *ejs;
     EjsType     *t, *type;
     EjsString   *modName;
-    cchar       *see, *namespace;
+    cchar       *see;
     int         next, count;
 
     ejs = mp->ejs;
@@ -874,7 +865,6 @@ static void generateClassPageHeader(EjsMod *mp, EjsObj *obj, EjsName qname, EjsT
             modName = fmtModule(ejs, type->module->name);
             out(mp, "   <tr><td><strong>Module</strong></td><td>%@</td></tr>\n", modName);
         }
-        namespace = fmtNamespace(ejs, qname);
         out(mp, "   <tr><td><strong>Definition</strong></td><td>%s class %@</td></tr>\n", 
             fmtAttributes(obj, trait->attributes, 1), qname.name);
 
@@ -1073,7 +1063,7 @@ static int generateClassPropertyTableEntries(EjsMod *mp, EjsObj *obj, MprList *p
     EjsFunction     *fun;
     PropRec         *prec;
     cchar           *tname;
-    int             slotNum, count, next, attributes;
+    int             count, next, attributes;
 
     ejs = mp->ejs;
     count = 0;
@@ -1083,7 +1073,6 @@ static int generateClassPropertyTableEntries(EjsMod *mp, EjsObj *obj, MprList *p
     for (next = 0; (prec = (PropRec*) mprGetNextItem(properties, &next)) != 0; ) {
         vp = prec->vp;
         trait = prec->trait;
-        slotNum = prec->slotNum;
         qname = prec->qname;
         if (ejsStartsWithMulti(ejs, qname.space, "internal") || ejsContainsMulti(ejs, qname.space, "private")) {
             continue;
@@ -1138,7 +1127,7 @@ static void buildMethodList(EjsMod *mp, MprList *methods, EjsObj *obj, EjsObj *o
     EjsDoc          *doc;
     EjsType         *type;
     FunRec          *fp;
-    int             slotNum, numProp, count, numInherited;
+    int             slotNum, numProp, numInherited;
 
     ejs = mp->ejs;
     if (ejsIsType(ejs, owner) && !ejsIsPrototype(ejs, obj) && ((EjsType*) owner)->hasConstructor) {
@@ -1169,7 +1158,7 @@ static void buildMethodList(EjsMod *mp, MprList *methods, EjsObj *obj, EjsObj *o
     }
     slotNum = (obj == ejs->global) ? mp->firstGlobal : numInherited;
 
-    for (count = 0; slotNum < numProp; slotNum++) {
+    for (; slotNum < numProp; slotNum++) {
         vp = ejsGetProperty(ejs, obj, slotNum);
         trait = ejsGetPropertyTraits(ejs, obj, slotNum);
         qname = ejsGetPropertyName(ejs, obj, slotNum);
@@ -1323,13 +1312,10 @@ static int generateMethodTable(EjsMod *mp, MprList *methods, EjsObj *obj, int in
 
 static void generateMethodDetail(EjsMod *mp, MprList *methods)
 {
-    Ejs         *ejs;
     FunRec      *fp;
     int         next;
 
-    ejs = mp->ejs;
     out(mp, "<h2>Method Detail</h2>\n");
-
     for (next = 0; (fp = (FunRec*) mprGetNextItem(methods, &next)) != 0; ) {
         generateMethod(mp, fp);
     }
@@ -1412,7 +1398,7 @@ static void generateMethod(EjsMod *mp, FunRec *fp)
     MprKeyValue     *param, *thrown, *option, *event;
     cchar           *defaultValue, *accessorSep, *spaceSep;
     char            *see, *description, *setType;
-    int             i, count, next, numInherited, slotNum;
+    int             i, count, next, slotNum;
 
     ejs = mp->ejs;
     obj = fp->obj;
@@ -1420,12 +1406,6 @@ static void generateMethod(EjsMod *mp, FunRec *fp)
 
     type = ejsIsType(ejs, obj) ? (EjsType*) obj : 0;
     fun = (EjsFunction*) ejsGetProperty(ejs, obj, slotNum);
-
-    numInherited = 0;
-    if (ejsIsPrototype(ejs, obj)) {
-        mprAssert(ejsIsType(ejs, fp->owner));
-        numInherited = ((EjsType*) fp->owner)->numInherited;
-    }
     mprAssert(ejsIsFunction(ejs, fun));
 
     qname = ejsGetPropertyName(ejs, obj, slotNum);
@@ -2539,10 +2519,10 @@ static EjsDoc *getDuplicateDoc(Ejs *ejs, MprChar *duplicate)
     EjsDoc          *doc;
     EjsObj          *vp;
     EjsLookup       lookup;
-    MprChar         *space, *dup, *klass, *property;
+    MprChar         *space, *klass, *property;
     int             slotNum;
 
-    dup = space = wclone(duplicate);
+    space = wclone(duplicate);
     if ((klass = mcontains(space, "::", -1)) != 0) {
         *klass = '\0';
         klass += 2;

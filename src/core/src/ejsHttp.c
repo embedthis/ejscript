@@ -831,7 +831,6 @@ static EjsString *http_statusMessage(Ejs *ejs, EjsHttp *hp, int argc, EjsObj **a
  */
 static EjsBoolean *http_wait(Ejs *ejs, EjsHttp *hp, int argc, EjsObj **argv)
 {
-    MprTime     mark;
     MprTime     timeout;
 
     timeout = (argc >= 1) ? ejsGetInt(ejs, argv[0]) : -1;
@@ -841,7 +840,6 @@ static EjsBoolean *http_wait(Ejs *ejs, EjsHttp *hp, int argc, EjsObj **argv)
             timeout = MAXINT;
         }
     }
-    mark = mprGetTime();
     if (!waitForState(hp, HTTP_STATE_COMPLETE, timeout, 0)) {
         return ESV(false);
     }

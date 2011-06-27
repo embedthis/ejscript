@@ -373,13 +373,12 @@ static EjsString *concatString(Ejs *ejs, EjsString *sp, int argc, EjsObj **argv)
 {
     EjsArray    *args;
     EjsString   *result, *str;
-    int         i, count;
+    int         i;
 
     mprAssert(argc == 1 && ejsIs(ejs, argv[0], Array));
     args = (EjsArray*) argv[0];
 
     result = (EjsString*) ejsClone(ejs, sp, 0);
-    count = ejsGetLength(ejs, args);
     for (i = 0; i < args->length; i++) {
         str = ejsToString(ejs, ejsGetProperty(ejs, args, i));
         if ((result = ejsCatString(ejs, result, str)) == NULL) {
@@ -1834,7 +1833,7 @@ EjsString *ejsCatStrings(Ejs *ejs, EjsString *src, ...)
 
 int ejsStartsWithMulti(Ejs *ejs, EjsString *sp, cchar *pat)
 {
-    ssize   i, len;
+    ssize   i;
 
     mprAssert(sp);
     mprAssert(pat);
@@ -1842,8 +1841,6 @@ int ejsStartsWithMulti(Ejs *ejs, EjsString *sp, cchar *pat)
     if (pat == 0 || *pat == '\0') {
         return 0;
     }
-    len = strlen(pat);
-    
     for (i = 0; pat[i] && i < sp->length; i++) {
         if (sp->value[i] != pat[i]) {
             break;

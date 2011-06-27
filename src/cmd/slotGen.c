@@ -43,7 +43,6 @@ static int createSlotFile(EjsMod *bp, EjsModule *mp, MprFile *file)
     MprFile     *localFile;
     char        *path, slotsName[MPR_MAX_FNAME], moduleName[MPR_MAX_FNAME];
     char        *cp, *sp, *dp;
-    int         slotNum;
 
     mprAssert(bp);
 
@@ -98,7 +97,6 @@ static int createSlotFile(EjsMod *bp, EjsModule *mp, MprFile *file)
 
     mprFprintf(file, "\n/*\n   Slots for the \"%@\" module \n */\n", mp->name);
 
-    slotNum = ejsGetLength(ejs, ejs->global);
     type = ejsCreateType(ejs, N(EJS_EJS_NAMESPACE, EJS_GLOBAL), NULL, NULL, NULL, -1, 
         ejsGetLength(ejs, ejs->global), 0, sizeof(EjsType), 0, EJS_TYPE_POT);
     type->constructor.block = *(EjsBlock*) ejs->global;

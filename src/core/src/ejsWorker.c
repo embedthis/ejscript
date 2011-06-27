@@ -34,7 +34,6 @@ static EjsWorker *initWorker(Ejs *ejs, EjsWorker *worker, Ejs *baseVM, cchar *na
 {
     Ejs             *wejs;
     EjsWorker       *self;
-    EjsNamespace    *ns;
     EjsName         sname;
     static int      workerSeqno = 0;
 
@@ -92,7 +91,7 @@ static EjsWorker *initWorker(Ejs *ejs, EjsWorker *worker, Ejs *baseVM, cchar *na
     /*
         Workers have a dedicated namespace to enable viewing of the worker globals (self, onmessage, postMessage...)
      */
-    ns = ejsDefineReservedNamespace(wejs, wejs->global, NULL, EJS_WORKER_NAMESPACE);
+    ejsDefineReservedNamespace(wejs, wejs->global, NULL, EJS_WORKER_NAMESPACE);
     
     addWorker(ejs, worker);
 
@@ -401,15 +400,12 @@ static EjsObj *workerJoin(Ejs *ejs, EjsWorker *unused, int argc, EjsObj **argv)
 static void loadFile(EjsWorker *worker, cchar *path)
 {
     Ejs         *ejs;
-    EjsObj      *result;
     cchar       *cp;
 
     mprAssert(worker->inside);
     mprAssert(worker->pair && worker->pair->ejs);
 
     ejs = worker->ejs;
-    result = 0;
-
     if ((cp = strrchr(path, '.')) != NULL && strcmp(cp, EJS_MODULE_EXT) != 0) {
         if (ejs->service->loadScriptFile == 0) {
             ejsThrowIOError(ejs, "load: Compiling is not enabled for %s", path);
@@ -785,7 +781,6 @@ static EjsBoolean *workerWaitForMessage(Ejs *ejs, EjsWorker *worker, int argc, E
 static void handleError(Ejs *ejs, EjsWorker *worker, EjsObj *exception, int throwOutside)
 {
     Ejs             *inside;
-    EjsString       *str;
     EjsObj          *e;
     MprDispatcher   *dispatcher;
     Message         *msg;
@@ -805,7 +800,6 @@ static void handleError(Ejs *ejs, EjsWorker *worker, EjsObj *exception, int thro
     inside = worker->pair->ejs;
     
     inside->exception = 0;
-    str = ejsSerialize(inside, exception, 0);
     e = ejsDeserialize(ejs, ejsSerialize(inside, exception, 0));
     inside->exception = exception;
 

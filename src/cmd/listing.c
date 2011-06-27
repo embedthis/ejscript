@@ -147,13 +147,10 @@ void emListingLoadCallback(Ejs *ejs, int kind, ...)
  */
 static void lstClose(EjsMod *mp, MprList *modules, int firstModule)
 {
-    Ejs         *ejs;
     EjsModule   *module;
     Lst         *lst;
     bool        headerOutput;
     int         next, nextModule, count;
-
-    ejs = mp->ejs;
 
     for (nextModule = firstModule; (module = (EjsModule*) mprGetNextItem(modules, &nextModule)) != 0; ) {
         headerOutput = 0;
@@ -234,10 +231,7 @@ static int lstOpen(EjsMod *mp, char *moduleFilename, EjsModuleHdr *hdr)
 
 static void lstBlock(EjsMod *mp, EjsModule *module, EjsObj *owner, int slotNum, EjsString *name, int numProp)
 {
-    Ejs         *ejs;
     EjsString   *blockName;
-
-    ejs = mp->ejs;
 
     blockName = getBlockName(mp, owner, slotNum);
     mprFprintf(mp->file, "BLOCK:      [%@-%02d]  %@ (Slots %d)\n", blockName, slotNum, name, numProp);
@@ -487,7 +481,7 @@ static int decodeOperands(EjsMod *mp, EjsOptable *opt, char *argbuf, int argbufL
     char        *bufp;
     uchar       *start;
     double      dval;
-    int         i, argc, ival, len, buflen, j, numEntries, att;
+    int         i, argc, ival, len, buflen, j, numEntries;
 
     *stackEffect = opt->stackEffect;
 
@@ -541,7 +535,7 @@ static int decodeOperands(EjsMod *mp, EjsOptable *opt, char *argbuf, int argbufL
             mprSprintf(bufp, buflen,  "<argc: %d> <att: ", ival);
             bufp += strlen(bufp);
             for (j = 0; j < ival; j++) {
-                att = (int) getNum(mp);
+                /* Discard attributes */ getNum(mp);
                 mprSprintf(bufp, buflen,  "%d ", ival);
                 len = (int) strlen(bufp);
                 bufp += len;

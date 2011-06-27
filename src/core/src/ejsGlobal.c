@@ -292,7 +292,6 @@ static EjsObj *g_printLine(Ejs *ejs, EjsObj *unused, int argc, EjsObj **argv)
     EjsString   *s;
     EjsObj      *args, *vp;
     cchar       *data;
-    ssize       rc;
     int         i, count;
 
     mprAssert(argc == 1 && ejsIs(ejs, argv[0], Array));
@@ -307,13 +306,13 @@ static EjsObj *g_printLine(Ejs *ejs, EjsObj *unused, int argc, EjsObj **argv)
                 return 0;
             }
             data = ejsToMulti(ejs, s);
-            rc = write(1, (char*) data, (int) strlen(data));
+            (void) write(1, (char*) data, (int) strlen(data));
             if ((i+1) < count) {
-                rc = write(1, " ", 1);
+                (void) write(1, " ", 1);
             }
         }
     }
-    rc = write(1, "\n", 1);
+    (void) write(1, "\n", 1);
     return 0;
 }
 

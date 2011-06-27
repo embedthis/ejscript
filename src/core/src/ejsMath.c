@@ -29,9 +29,6 @@ static EjsNumber *math_abs(Ejs *ejs, EjsObj *unused, int argc, EjsObj **argv)
  */
 static EjsNumber *math_acos(Ejs *ejs, EjsObj *unused, int argc, EjsObj **argv)
 {
-    MprNumber   value;
-    
-    value = ejsGetNumber(ejs, argv[0]);
     return ejsCreateNumber(ejs, (MprNumber) acos(ejsGetNumber(ejs, argv[0])));
 }
 

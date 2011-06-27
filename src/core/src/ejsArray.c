@@ -850,7 +850,7 @@ static EjsArray *insertArray(Ejs *ejs, EjsArray *ap, int argc, EjsObj **argv)
 {
     EjsArray    *args;
     EjsObj          **src, **dest;
-    int         i, pos, delta, oldLen, endInsert;
+    int         i, pos, delta, endInsert;
 
     mprAssert(argc == 2 && ejsIs(ejs, argv[1], Array));
 
@@ -866,7 +866,6 @@ static EjsArray *insertArray(Ejs *ejs, EjsArray *ap, int argc, EjsObj **argv)
     }
     args = (EjsArray*) argv[1];
 
-    oldLen = ap->length;
     if (growArray(ejs, ap, ap->length + args->length) < 0) {
         return 0;
     }
@@ -1452,7 +1451,7 @@ static EjsArray *unshiftArray(Ejs *ejs, EjsArray *ap, int argc, EjsObj **argv)
 {
     EjsArray    *args;
     EjsObj          **src, **dest;
-    int         i, delta, oldLen, endInsert;
+    int         i, delta, endInsert;
 
     mprAssert(argc == 1 && ejsIs(ejs, argv[0], Array));
 
@@ -1460,7 +1459,6 @@ static EjsArray *unshiftArray(Ejs *ejs, EjsArray *ap, int argc, EjsObj **argv)
     if (args->length <= 0) {
         return ap;
     }
-    oldLen = ap->length;
     if (growArray(ejs, ap, ap->length + args->length) < 0) {
         return 0;
     }
