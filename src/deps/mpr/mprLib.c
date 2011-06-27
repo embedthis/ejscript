@@ -2047,7 +2047,7 @@ static void allocException(ssize size, bool granted)
         switch (heap->allocPolicy) {
         case MPR_ALLOC_POLICY_EXIT:
             mprError("Application exiting due to memory allocation failure.");
-            mprTerminate(0);
+            mprTerminate(0, 2);
             break;
         case MPR_ALLOC_POLICY_RESTART:
             mprError("Application restarting due to memory allocation failure.");
@@ -2724,7 +2724,7 @@ void mprDestroy(int how)
     }
     mprYield(MPR_YIELD_STICKY);
     if (MPR->state < MPR_STOPPING) {
-        mprTerminate(how);
+        mprTerminate(how, -1);
     }
     gmode = MPR_FORCE_GC | MPR_COMPLETE_GC | MPR_WAIT_GC;
     mprRequestGC(gmode);
@@ -2773,15 +2773,16 @@ void mprDestroy(int how)
 /*
     Start termination of the Mpr. May be called by mprDestroy or elsewhere.
  */
-void mprTerminate(int how)
+void mprTerminate(int how, int status)
 {
+    MPR->exitStatus = status;
     if (how != MPR_EXIT_DEFAULT) {
         MPR->exitStrategy = how;
     }
     how = MPR->exitStrategy;
     if (how == MPR_EXIT_IMMEDIATE) {
         mprLog(5, "Immediate exit. Aborting all requests and services.");
-        exit(0);
+        exit(status);
     } else if (how == MPR_EXIT_NORMAL) {
         mprLog(5, "Normal exit. Flush buffers, close files and aborting existing requests.");
     } else if (how == MPR_EXIT_GRACEFUL) {
@@ -3368,7 +3369,7 @@ void mprWaitForIO(MprWaitService *ws, MprTime timeout)
     mprYield(MPR_YIELD_STICKY);
     if (GetMessage(&msg, NULL, 0, 0) == 0) {
         mprResetYield();
-        mprTerminate(MPR_EXIT_DEFAULT);
+        mprTerminate(MPR_EXIT_DEFAULT, -1);
     } else {
         mprResetYield();
         TranslateMessage(&msg);
@@ -3482,7 +3483,7 @@ static LRESULT msgProc(HWND hwnd, uint msg, uint wp, long lp)
     ws = MPR->waitService;
 
     if (msg == WM_DESTROY || msg == WM_QUIT) {
-        mprTerminate(MPR_EXIT_DEFAULT);
+        mprTerminate(MPR_EXIT_DEFAULT, -1);
 
     } else if (msg && msg == ws->socketMessage) {
         sock = wp;
@@ -17375,7 +17376,7 @@ static void standardSignalHandler(void *ignored, MprSignal *sp)
     if (sp->signo == SIGINT) return;
 #endif
     if (sp->signo == SIGTERM) {
-        mprTerminate(MPR_EXIT_GRACEFUL);
+        mprTerminate(MPR_EXIT_GRACEFUL, -1);
 
     } else if (sp->signo == SIGINT) {
 #if BLD_UNIX_LIKE
@@ -17384,13 +17385,13 @@ static void standardSignalHandler(void *ignored, MprSignal *sp)
             if (write(1, "\n", 1) < 0) {}
         }
 #endif
-        mprTerminate(MPR_EXIT_IMMEDIATE);
+        mprTerminate(MPR_EXIT_IMMEDIATE, -1);
 
     } else if (sp->signo == SIGPIPE || sp->signo == SIGXFSZ) {
         /* Ignore */
 
     } else {
-        mprTerminate(MPR_EXIT_DEFAULT);
+        mprTerminate(MPR_EXIT_DEFAULT, -1);
     }
 }
 
@@ -20749,7 +20750,7 @@ static void adjustThreadCount(int adj)
     mprLock(sp->mutex);
     sp->activeThreadCount += adj;
     if (sp->activeThreadCount <= 0) {
-        mprTerminate(MPR_EXIT_DEFAULT);
+        mprTerminate(MPR_EXIT_DEFAULT, -1);
     }
     mprUnlock(sp->mutex);
 }
