@@ -198,6 +198,7 @@ EXPORTS
   ejsCreateFrameType
   ejsCreateFunction
   ejsCreateFunctionType
+  ejsCreateGlobalNamespaces
   ejsCreateInstance
   ejsCreateIntern
   ejsCreateIterator
@@ -248,7 +249,6 @@ EXPORTS
   ejsDefineConfigProperties
   ejsDefineGlobalFunction
   ejsDefineGlobalNamespaces
-  ejsDefineGlobals
   ejsDefineProperty
   ejsDefineReservedNamespace
   ejsDefineTypeNamespaces
@@ -272,7 +272,7 @@ EXPORTS
   ejsExit
   ejsFinalizeCoreType
   ejsFinalizeScriptType
-  ejsFixCrossRefs
+  ejsFixTraits
   ejsFixupType
   ejsFormatReservedNamespace
   ejsFreePoolVM
@@ -286,7 +286,6 @@ EXPORTS
   ejsGetErrorMsg
   ejsGetException
   ejsGetFirstItem
-  ejsGetGlobalObject
   ejsGetHashSize
   ejsGetHttpLimits
   ejsGetImmutable
@@ -323,7 +322,6 @@ EXPORTS
   ejsInitCompiler
   ejsInitFunction
   ejsInitNullType
-  ejsInitStack
   ejsInitStringType
   ejsInitTypeType
   ejsInsertItem
@@ -412,12 +410,12 @@ EXPORTS
   ejsSendEvent
   ejsSendEventv
   ejsSerialize
+  ejsSerializeWithOptions
   ejsSetByteArrayPositions
   ejsSetDispatcher
   ejsSetFunctionCode
   ejsSetFunctionName
   ejsSetHttpLimits
-  ejsSetModuleConstants
   ejsSetProperty
   ejsSetPropertyByName
   ejsSetPropertyName
