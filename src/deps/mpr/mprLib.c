@@ -5375,8 +5375,8 @@ static int sanitizeArgs(MprCmd *cmd, int argc, char **argv, char **env)
             }
             *dp++ = quote;
         } else {
-            scopy(dp, qp);
-            dp += slen(cp);
+            strcpy(dp, qp);
+            dp += strlen(cp);
         }
         if (*++ap) {
             *dp++ = ' ';
