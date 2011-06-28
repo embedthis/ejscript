@@ -1145,6 +1145,7 @@ static EjsNumber *req_read(Ejs *ejs, EjsRequest *req, int argc, EjsObj **argv)
     offset = (argc >= 2) ? ejsGetInt(ejs, argv[1]) : 0;
     count = (argc >= 3) ? ejsGetInt(ejs, argv[2]) : -1;
 
+    ejsResetByteArrayIfEmpty(ejs, ba);
     if (!ejsMakeRoomInByteArray(ejs, ba, count >= 0 ? count : MPR_BUFSIZE)) {
         return 0;
     }
@@ -1260,16 +1261,16 @@ static ssize writeResponseData(Ejs *ejs, EjsRequest *req, cchar *buf, ssize len)
     Write text to the client. This call writes the arguments back to the client's browser. 
     This and writeFile are the lowest channel for write data.
  
-    function write(data: Object): Void
+    function write(data: Object): Number
  */
-static EjsObj *req_write(Ejs *ejs, EjsRequest *req, int argc, EjsObj **argv)
+static EjsNumber *req_write(Ejs *ejs, EjsRequest *req, int argc, EjsObj **argv)
 {
     EjsArray        *args;
     EjsString       *s;
     EjsObj          *data;
     EjsByteArray    *ba;
     HttpConn        *conn;
-    ssize           len, written;
+    ssize           len, written, total;
     int             err, i;
 
     conn = req->conn;
@@ -1277,7 +1278,7 @@ static EjsObj *req_write(Ejs *ejs, EjsRequest *req, int argc, EjsObj **argv)
         return 0;
     }
     err = 0;
-    written = 0;
+    total = written = 0;
     args = (EjsArray*) argv[0];
 
     for (i = 0; i < args->length; i++) {
@@ -1292,12 +1293,11 @@ static EjsObj *req_write(Ejs *ejs, EjsRequest *req, int argc, EjsObj **argv)
 
         case S_ByteArray:
             ba = (EjsByteArray*) data;
-            //  TODO -- not updating the read position
-            //      ba->readPosition += len;
-            //      should reset ptrs also
             len = ba->writePosition - ba->readPosition;
             if ((written = writeResponseData(ejs, req, (char*) &ba->value[ba->readPosition], len)) != len) {
                 err++;
+            } else {
+                ba->readPosition += len;
             }
             break;
 
@@ -1314,6 +1314,7 @@ static EjsObj *req_write(Ejs *ejs, EjsRequest *req, int argc, EjsObj **argv)
             return 0;
         }
         req->written += written;
+        total += written;
     }
     req->responded = 1;
 
@@ -1321,7 +1322,7 @@ static EjsObj *req_write(Ejs *ejs, EjsRequest *req, int argc, EjsObj **argv)
             conn->writeq->ioCount == 0) {
         ejsSendEvent(ejs, req->emitter, "writable", NULL, req);
     }
-    return 0;
+    return ejsCreateNumber(ejs, total);
 }
 
 
@@ -1344,7 +1345,7 @@ static EjsObj *req_writeFile(Ejs *ejs, EjsRequest *req, int argc, EjsObj **argv)
     rx = conn->rx;
     tx = conn->tx;
 
-    if (rx->ranges || conn->secure || tx->chunkSize > 0) {
+    if (tx->outputRanges || conn->secure || tx->chunkSize > 0) {
         return ESV(false);
     }
     path = (EjsPath*) argv[0];

@@ -10,6 +10,7 @@ exports.app = function(r: Request) {
     })
     on("readable", function(event) {
         buf = new ByteArray
+//ZZ
         if (read(buf)) {
             print('READ returned ' + buf)
         } else {

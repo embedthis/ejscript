@@ -827,6 +827,9 @@ static EjsString *ba_readString(Ejs *ejs, EjsByteArray *ap, int argc, EjsObj **a
 }
 
 
+/*
+    MOB - this is the same as: void ejsResetByteArray(EjsByteArray *ba)
+ */
 void ejsResetByteArrayIfEmpty(Ejs *ejs, EjsByteArray *ap)
 {
     if (ap->writePosition == ap->readPosition) {
@@ -1167,6 +1170,9 @@ bool ejsMakeRoomInByteArray(Ejs *ejs, EjsByteArray *ap, ssize require)
 {
     ssize   newLen;
 
+    /*
+        MOB - should this do ejsResetByteArrayIfEmpty
+     */
     if (room(ap) < require) {
         if (ap->emitter && availableBytes(ap)) {
             ejsSendEvent(ejs, ap->emitter, "readable", NULL, ap);
@@ -1298,6 +1304,9 @@ static int putString(EjsByteArray *ap, EjsString *str, ssize len)
 
 /********************************* Public Support API *****************************/
 
+/*
+    MOB this is the same as: void ejsResetByteArrayIfEmpty(Ejs *ejs, EjsByteArray *ap)
+ */
 void ejsResetByteArray(EjsByteArray *ba)
 {
     if (ba->writePosition == ba->readPosition) {
