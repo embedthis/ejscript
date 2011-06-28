@@ -515,7 +515,7 @@ static void setHttpPipeline(Ejs *ejs, EjsHttpServer *sp)
     loc = sp->server->loc;
 
     if (sp->outgoingStages) {
-        httpClearStages(loc, HTTP_STAGE_OUTGOING);
+        httpClearStages(loc, HTTP_STAGE_TX);
         for (i = 0; i < sp->outgoingStages->length; i++) {
             vs = ejsGetProperty(ejs, sp->outgoingStages, i);
             if (vs && ejsIs(ejs, vs, String)) {
@@ -524,12 +524,12 @@ static void setHttpPipeline(Ejs *ejs, EjsHttpServer *sp)
                     ejsThrowArgError(ejs, "Can't find pipeline stage name %s", name);
                     return;
                 }
-                httpAddFilter(loc, name, NULL, HTTP_STAGE_OUTGOING);
+                httpAddFilter(loc, name, NULL, HTTP_STAGE_TX);
             }
         }
     }
     if (sp->incomingStages) {
-        httpClearStages(loc, HTTP_STAGE_INCOMING);
+        httpClearStages(loc, HTTP_STAGE_RX);
         for (i = 0; i < sp->incomingStages->length; i++) {
             vs = ejsGetProperty(ejs, sp->incomingStages, i);
             if (vs && ejsIs(ejs, vs, String)) {
@@ -538,7 +538,7 @@ static void setHttpPipeline(Ejs *ejs, EjsHttpServer *sp)
                     ejsThrowArgError(ejs, "Can't find pipeline stage name %s", name);
                     return;
                 }
-                httpAddFilter(loc, name, NULL, HTTP_STAGE_INCOMING);
+                httpAddFilter(loc, name, NULL, HTTP_STAGE_RX);
             }
         }
     }

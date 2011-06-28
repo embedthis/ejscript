@@ -1123,7 +1123,7 @@ static bool matchAuth(HttpConn *conn, HttpStage *handler, int dir)
     http = conn->http;
     auth = rx->auth;
 
-    if (!(dir & HTTP_STAGE_INCOMING) || !conn->server || auth == 0 || auth->type == 0) {
+    if (!(dir & HTTP_STAGE_RX) || !conn->server || auth == 0 || auth->type == 0) {
         return 0;
     }
     if ((ad = mprAllocStruct(AuthData)) == 0) {
@@ -1730,7 +1730,7 @@ static bool matchChunk(HttpConn *conn, HttpStage *handler, int dir)
 {
     HttpTx  *tx;
 
-    if (dir & HTTP_STAGE_OUTGOING) {
+    if (dir & HTTP_STAGE_TX) {
         /*
             Don't match if chunking is explicitly turned off vi a the X_APPWEB_CHUNK_SIZE header which sets the chunk 
             size to zero. Also remove if the response length is already known.
@@ -4191,13 +4191,12 @@ HttpLoc *httpInitLocation(Http *http, int serverSide)
         Create default incoming and outgoing pipelines. Order matters.
      */
     loc = httpCreateLocation();
-    httpAddFilter(loc, http->rangeFilter->name, NULL, HTTP_STAGE_OUTGOING);
-    httpAddFilter(loc, http->chunkFilter->name, NULL, HTTP_STAGE_OUTGOING);
-
-    httpAddFilter(loc, http->chunkFilter->name, NULL, HTTP_STAGE_INCOMING);
+    httpAddFilter(loc, http->rangeFilter->name, NULL, HTTP_STAGE_TX);
+    httpAddFilter(loc, http->chunkFilter->name, NULL, HTTP_STAGE_TX);
+    httpAddFilter(loc, http->chunkFilter->name, NULL, HTTP_STAGE_RX);
     if (serverSide) {
-        httpAddFilter(loc, http->uploadFilter->name, NULL, HTTP_STAGE_INCOMING);
-        httpAddFilter(loc, http->authFilter->name, NULL, HTTP_STAGE_INCOMING);
+        httpAddFilter(loc, http->uploadFilter->name, NULL, HTTP_STAGE_RX);
+        httpAddFilter(loc, http->authFilter->name, NULL, HTTP_STAGE_RX);
     }
     loc->connector = http->netConnector;
     return loc;
@@ -4893,10 +4892,10 @@ int httpAddFilter(HttpLoc *loc, cchar *name, cchar *extensions, int direction)
         }
     }
     graduate(loc);
-    if (direction & HTTP_STAGE_INCOMING) {
+    if (direction & HTTP_STAGE_RX) {
         mprAddItem(loc->inputStages, filter);
     }
-    if (direction & HTTP_STAGE_OUTGOING) {
+    if (direction & HTTP_STAGE_TX) {
         mprAddItem(loc->outputStages, filter);
     }
     return 0;
@@ -4937,10 +4936,10 @@ void httpAddLocationExpiryByType(HttpLoc *loc, MprTime when, cchar *mimeTypes)
 
 void httpClearStages(HttpLoc *loc, int direction)
 {
-    if (direction & HTTP_STAGE_INCOMING) {
+    if (direction & HTTP_STAGE_RX) {
         loc->inputStages = mprCreateList(-1, 0);
     }
-    if (direction & HTTP_STAGE_OUTGOING) {
+    if (direction & HTTP_STAGE_TX) {
         loc->outputStages = mprCreateList(-1, 0);
     }
 }
@@ -5415,7 +5414,7 @@ static HttpStage *checkHandler(HttpConn *conn, HttpStage *stage)
     }
     if (stage->match && !(stage->flags & HTTP_STAGE_UNLOADED)) {
         /* Can't have match routines on unloaded modules */
-        if (!stage->match(conn, stage, HTTP_STAGE_INCOMING | HTTP_STAGE_OUTGOING)) {
+        if (!stage->match(conn, stage, HTTP_STAGE_RX | HTTP_STAGE_TX)) {
             return 0;
         }
     }
@@ -6428,7 +6427,7 @@ void httpCreatePipeline(HttpConn *conn, HttpLoc *loc, HttpStage *proposedHandler
 
     if (loc->outputStages) {
         for (next = 0; (filter = mprGetNextItem(loc->outputStages, &next)) != 0; ) {
-            if (matchFilter(conn, filter, HTTP_STAGE_OUTGOING)) {
+            if (matchFilter(conn, filter, HTTP_STAGE_TX)) {
                 mprAddItem(tx->outputPipeline, filter);
             }
         }
@@ -6454,7 +6453,7 @@ void httpCreatePipeline(HttpConn *conn, HttpLoc *loc, HttpStage *proposedHandler
         mprAddItem(rx->inputPipeline, http->netConnector);
         if (loc) {
             for (next = 0; (filter = mprGetNextItem(loc->inputStages, &next)) != 0; ) {
-                if (!matchFilter(conn, filter, HTTP_STAGE_INCOMING)) {
+                if (!matchFilter(conn, filter, HTTP_STAGE_RX)) {
                     continue;
                 }
                 mprAddItem(rx->inputPipeline, filter);
@@ -6560,7 +6559,7 @@ void httpCreateTxPipeline(HttpConn *conn, HttpLoc *loc, HttpStage *proposedHandl
 
     if (loc->outputStages) {
         for (next = 0; (filter = mprGetNextItem(loc->outputStages, &next)) != 0; ) {
-            if (matchFilter(conn, filter, HTTP_STAGE_OUTGOING)) {
+            if (matchFilter(conn, filter, HTTP_STAGE_TX)) {
                 mprAddItem(tx->outputPipeline, filter);
             }
         }
@@ -6632,7 +6631,7 @@ void httpCreateRxPipeline(HttpConn *conn, HttpLoc *loc)
     mprAddItem(rx->inputPipeline, http->netConnector);
     if (loc) {
         for (next = 0; (filter = mprGetNextItem(loc->inputStages, &next)) != 0; ) {
-            if (!matchFilter(conn, filter, HTTP_STAGE_INCOMING)) {
+            if (!matchFilter(conn, filter, HTTP_STAGE_RX)) {
                 continue;
             }
             mprAddItem(rx->inputPipeline, filter);
@@ -7587,7 +7586,7 @@ static bool matchRange(HttpConn *conn, HttpStage *handler, int dir)
 {
     mprAssert(conn->rx);
 
-    return ((dir & HTTP_STAGE_OUTGOING) && conn->tx->outputRanges) ? 1 : 0;
+    return ((dir & HTTP_STAGE_TX) && conn->tx->outputRanges) ? 1 : 0;
 }
 
 
@@ -11713,7 +11712,7 @@ static bool matchUpload(HttpConn *conn, HttpStage *filter, int dir)
     char    *pat;
     ssize   len;
     
-    if (!(dir & HTTP_STAGE_INCOMING)) {
+    if (!(dir & HTTP_STAGE_RX)) {
         return 0;
     }
     rx = conn->rx;
