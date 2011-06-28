@@ -6511,8 +6511,10 @@ void httpCreateRxPipeline(HttpConn *conn, HttpLoc *loc)
     }
     conn->readq = tx->queue[HTTP_QUEUE_RX]->prevQ;
 
-    pairQueues(conn);
-    openQueues(conn);
+    if (!conn->server) {
+        pairQueues(conn);
+        openQueues(conn);
+    }
 }
 
 
