@@ -44,6 +44,7 @@ module ejs {
          */
         native function Path(path: String)
 
+//  MOB -- uses default native separator
         /**
             An equivalent absolute path equivalent for the current path. The path is normalized.
          */
@@ -311,7 +312,7 @@ module ejs {
 
         /**
             Natural (native) respresentation of the path. This uses the default O/S file system path separator, 
-            this is "\" on windows and "/" on unix and is normalized.
+            this is "\" on windows and "/" on unix and is normalized. See also $portable for a portable representation.
          */
         native function get natural(): Path 
 
@@ -381,7 +382,7 @@ module ejs {
 
         /**
             The path in a portable (like Unix) representation. This uses "/" separators. The value is is normalized and 
-            the separators are mapped to "/".
+            the separators are mapped to "/". See also $natural for convertion to the O/S native path representation.
          */
         native function get portable(): Path 
 

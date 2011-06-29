@@ -235,6 +235,7 @@ static void manageEjs(Ejs *ejs, int flags)
         mprMark(ejs->dispatcher);
         mprMark(ejs->httpServers);
         mprMark(ejs->workers);
+        mprMark(ejs->hostedHome);
 
         for (next = 0; (mp = mprGetNextItem(ejs->modules, &next)) != 0;) {
             if (!mp->initialized) {
@@ -286,7 +287,7 @@ static void managePool(EjsPool *pool, int flags)
 }
 
 
-EjsPool *ejsCreatePool(int poolMax, cchar *templateScript, cchar *startScript, cchar *startScriptPath)
+EjsPool *ejsCreatePool(int poolMax, cchar *templateScript, cchar *startScript, cchar *startScriptPath, char *home)
 {
     EjsPool     *pool;
 
@@ -307,6 +308,9 @@ EjsPool *ejsCreatePool(int poolMax, cchar *templateScript, cchar *startScript, c
     if (startScriptPath) {
         pool->startScriptPath = sclone(startScriptPath);
     }
+    if (home) {
+        pool->hostedHome = sclone(home);
+    }
     return pool;
 }
 
@@ -326,6 +330,9 @@ Ejs *ejsAllocPoolVM(EjsPool *pool, int flags)
         }
         lock(pool);
         if (pool->template == 0) {
+            /*
+                Create the pool template VM
+             */
             if ((pool->template = ejsCreateVM(0, 0, flags)) == 0) {
                 unlock(pool);
                 return 0;
@@ -351,6 +358,9 @@ Ejs *ejsAllocPoolVM(EjsPool *pool, int flags)
         if ((ejs = ejsCloneVM(pool->template)) == 0) {
             mprMemoryError("Can't alloc ejs VM");
             return 0;
+        }
+        if (pool->hostedHome) {
+            ejs->hostedHome = pool->hostedHome;
         }
         mprAddRoot(ejs);
         if (pool->startScriptPath) {

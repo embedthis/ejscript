@@ -675,8 +675,8 @@ static EjsPath *pa_map(Ejs *ejs, EjsPath *fp, int argc, EjsObj **argv)
     char    *path;
     int     separator;
 
-    sep = ejsToMulti(ejs, argv[0]);
-    separator = *sep ? *sep : '/';
+    sep = (argc >= 1) ? ejsToMulti(ejs, argv[0]) : "/";
+    separator = *sep;
     path = sclone(fp->value);
     mprMapSeparators(path, separator);
     return ejsCreatePathFromAsc(ejs, path);

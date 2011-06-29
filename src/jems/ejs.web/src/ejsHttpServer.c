@@ -73,6 +73,15 @@ static EjsObj *hs_set_async(Ejs *ejs, EjsHttpServer *sp, int argc, EjsObj **argv
 
 
 /*  
+    function get hostedHome(): Path
+ */
+static EjsPath *hs_hostedHome(Ejs *ejs, EjsHttpServer *sp, int argc, EjsObj **argv)
+{
+    return ejsCreatePathFromAsc(ejs, ejs->hostedHome);
+}
+
+
+/*  
     function close(): Void
  */
 static EjsObj *hs_close(Ejs *ejs, EjsHttpServer *sp, int argc, EjsObj **argv)
@@ -910,6 +919,7 @@ void ejsConfigureHttpServerType(Ejs *ejs)
     ejsBindMethod(ejs, prototype, ES_ejs_web_HttpServer_accept, hs_accept);
     ejsBindMethod(ejs, prototype, ES_ejs_web_HttpServer_address, hs_address);
     ejsBindAccess(ejs, prototype, ES_ejs_web_HttpServer_async, hs_async, hs_set_async);
+    ejsBindMethod(ejs, prototype, ES_ejs_web_HttpServer_hostedHome, hs_hostedHome);
     ejsBindMethod(ejs, prototype, ES_ejs_web_HttpServer_close, hs_close);
     ejsBindMethod(ejs, prototype, ES_ejs_web_HttpServer_limits, hs_limits);
     ejsBindAccess(ejs, prototype, ES_ejs_web_HttpServer_hosted, hs_hosted, hs_set_hosted);

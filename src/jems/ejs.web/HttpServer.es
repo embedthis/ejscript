@@ -111,6 +111,11 @@ module ejs.web {
          */
         var documents: Path
 
+        /**
+            @hide
+         */
+        native function get hostedHome(): Path
+
         /** 
             Flag indicating if the server is using secure communications. This means that TLS/SSL is the underlying
             protocol scheme.
@@ -233,8 +238,10 @@ server.listen("127.0.0.1:7777")
                 hosted = false
             }
             if (hosted) {
-                documents = options.documents || global.ejs::HttpServerDocuments || "."
-                home = options.home || global.ejs::HttpServerHome || "."
+                let path = hostedHome
+    print("HOSTED PATH " + path)
+                documents = options.documents || path
+                home = options.home || path
             } else {
                 documents = options.documents || "."
                 home = options.home || "."
@@ -246,12 +253,6 @@ server.listen("127.0.0.1:7777")
             }
             if (config.files.ejsrc && config.files.ejsrc.exists) {
                 blend(config, Path(config.files.ejsrc).readJSON())
-            /*
-                let dirs = config.dirs
-                for (let [key, value] in dirs) {
-                    dirs[key] = Path(value)
-                }
-             */
                 App.updateLog()
             } else if (home != ".") {
                 let path = home.join("ejsrc")
