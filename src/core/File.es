@@ -213,7 +213,7 @@ module ejs {
             @param items The data argument can be ByteArrays, strings or Numbers. All other types will call serialize
             first before writing. Note that numbers will not be written in a cross platform manner. If that is required, use
             the BinaryStream class to control the byte ordering when writing numbers.
-            @returns the number of bytes written.  
+            @returns the number of bytes written.
             @throws IOError if the file could not be written.
          */
         native function write(...items): Number

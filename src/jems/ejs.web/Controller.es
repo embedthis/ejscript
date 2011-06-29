@@ -148,7 +148,7 @@ module ejs.web {
                         options.mode != "manual") {
                     let hdr
                     if ((hdr = request.header("Cache-Control")) && (hdr.contains("max-age=0") || hdr.contains("no-cache"))) {
-                        App.log.debug(0, "Cache-control header rejects use of cached content")
+                        App.log.debug(5, "Cache-control header rejects use of cached content")
                     } else {
                         let item = App.cache.readObj(cacheName)
                         if (item) {
@@ -178,15 +178,15 @@ module ejs.web {
                             setHeader("Etag", md5(cacheName))
                             if (status == Http.Ok) {
                                 //  MOB - change this trace to just use "actionName"
-                                App.log.debug(0, "Use cached: " + cacheName)
+                                App.log.debug(5, "Use cached: " + cacheName)
                                 write(item.data)
                                 // MOB request.finalize()
                             } else {
-                                App.log.debug(0, "Use cached content, status: " + status + ", " + cacheName)
+                                App.log.debug(5, "Use cached content, status: " + status + ", " + cacheName)
                             }
                             return {status: status}
                         }
-                        App.log.debug(0, "No cached content for: " + cacheName)
+                        App.log.debug(5, "No cached content for: " + cacheName)
                     }
                     request.writeBuffer = new ByteArray
                     setHeader("Etag", md5(cacheName))
@@ -215,7 +215,7 @@ module ejs.web {
             if ((!options.uri || options.uri == "*" || cacheName == options.uri)) {
                 let item
                 if (item = App.cache.readObj(cacheName)) {
-                    App.log.debug(0, "Use cached: " + cacheName)
+                    App.log.debug(5, "Use cached: " + cacheName)
                     setHeader("Etag", md5(cacheName))
                     setHeader("Last-Modified", Date(item.modified).toUTCString())
                     if (options.client) {
@@ -227,7 +227,7 @@ module ejs.web {
                     return true
                 }
             }
-            App.log.debug(0, "no cached: " + cacheName)
+            App.log.debug(5, "no cached: " + cacheName)
             return false
         }
 
@@ -243,7 +243,7 @@ module ejs.web {
                     let cacheName = getCacheName(cacheIndex, options)
                     let etag = md5(cacheName)
                     App.cache.writeObj(cacheName, { tag: etag, modified: Date.now(), data: request.writeBuffer}, options)
-                    App.log.debug(0, "Cache action " + cacheName + ", " + request.writeBuffer.available + " bytes")
+                    App.log.debug(5, "Cache action " + cacheName + ", " + request.writeBuffer.available + " bytes")
                 }
             }
             let data = request.writeBuffer

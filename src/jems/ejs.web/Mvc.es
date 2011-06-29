@@ -70,7 +70,7 @@ module ejs.web {
 
                 /* Load App. Touch ejsrc triggers a complete reload */
                 let files, deps
-                if (config.app.reload) {
+                if (config.cache.app.reload) {
                     let dirs = config.dirs
                     let ext = config.extensions
                     deps = [dir.join(EJSRC)]
@@ -121,7 +121,7 @@ module ejs.web {
 
                 /* Load App. Touch ejsrc triggers a complete reload */
                 let files, deps
-                if (config.app.reload) {
+                if (config.cache.app.reload) {
                     deps = [dir.join(EJSRC)]
                     files = dirs.models.find("*" + ext.es)
                     files += dirs.src.find("*" + ext.es)
@@ -137,7 +137,7 @@ module ejs.web {
                 let controller = params.controller = params.controller.toPascal()
                 let mod = dirs.cache.join(controller).joinExt(ext.mod)
                 if (controller != "Base") {
-                    if (!global[controller + "Controller"] && mod.exists && !config.app.reload) {
+                    if (!global[controller + "Controller"] && mod.exists && !config.cache.app.reload) {
                         loadComponent(request, mod)
                     } else {
                         files = [dirs.controllers.join(controller).joinExt(ext.es)]
@@ -158,7 +158,7 @@ module ejs.web {
          */
         public function loadComponent(request: Request, mod: Path, files: Array? = null, deps: Array? = null) {
             let rebuild = false
-            if (mod.exists && request.config.app.reload) {
+            if (mod.exists && request.config.cache.app.reload) {
                 let when = mod.modified
                 for each (file in (files + deps)) {
                     if (file.exists && file.modified > when) {

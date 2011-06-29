@@ -239,7 +239,6 @@ server.listen("127.0.0.1:7777")
             }
             if (hosted) {
                 let path = hostedHome
-    print("HOSTED PATH " + path)
                 documents = options.documents || path
                 home = options.home || path
             } else {
@@ -248,10 +247,8 @@ server.listen("127.0.0.1:7777")
             }
             config = options.config || App.config
             this.options = options
-            if (options.ejsrc) {
-                config.ejsrc = options.ejsrc
-            }
-            if (config.files.ejsrc && config.files.ejsrc.exists) {
+            let ejsrc = options.ejsrc || config.files.ejsrc
+            if (ejsrc.exists && !App.config.files.ejsrc.same(ejsrc)) {
                 blend(config, Path(config.files.ejsrc).readJSON())
                 App.updateLog()
             } else if (home != ".") {
@@ -577,7 +574,7 @@ let mark = new Date
                     }
                     request.on("close", function() {
                         releaseWorker(w) 
-                        App.log.debug(2, "Elapsed " + request.mark.elapsed + " msec for " + request.uri)
+                        App.log.debug(3, "Elapsed " + request.mark.elapsed + " msec for " + request.uri)
                     })
                     passRequest(request, w)
                     /* Must not touch request from here on - the worker owns it now */
@@ -585,7 +582,7 @@ let mark = new Date
                     //  MOB - rename response => responder
                     let mark = new Date
                     process(route.response, request)
-                    App.log.debug(2, "Elapsed " + mark.elapsed + " msec for " + request.uri)
+                    App.log.debug(3, "Elapsed " + mark.elapsed + " msec for " + request.uri)
                 }
             } catch (e) {
                 let status = request.status != Http.Ok ? request.status : Http.ServerError

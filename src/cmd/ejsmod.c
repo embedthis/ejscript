@@ -89,6 +89,7 @@ MAIN(ejsmodMain, int argc, char **argv)
                 err++;
             } else {
                 ejsRedirectLogging(argv[++nextArg]);
+                mprSetCmdlineLogging(1);
             }
 
         } else if (strcmp(argp, "--out") == 0) {

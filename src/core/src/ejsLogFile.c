@@ -97,7 +97,6 @@ static EjsFile *lf_redirect(Ejs *ejs, EjsObj *unused, int argc, EjsObj **argv)
 
     logSpec = ejsToMulti(ejs, argv[0]);
     level = (argc >= 2) ? ejsGetInt(ejs, argv[1]) : -1;
-
     ejsRedirectLogging(logSpec);
     if (level >= 0) {
         mprSetLogLevel(level);

@@ -102,6 +102,8 @@ module ejs {
                 location = location.toString()
                 let [path, lev] = location.split(":")
                 _level = lev || level || this._level
+                /* Redirect the MPR logger */
+                App.logFile.redirect(path, level)
                 let stream
                 if (path == "stdout") {
                     stream = App.outputStream
@@ -275,11 +277,15 @@ module ejs {
         }
 
         /** 
-            Write messages to the logger stream.
+            Write messages to the logger stream. NOTE: for the Logger class, I/O errors will not throw exceptions. 
             @duplicate Stream.write
          */
-        function write(...data): Number
-            (_outStream) ? _outStream.write(data.join(" ")) : 0
+        function write(...data): Number {
+            try {
+                return (_outStream) ? _outStream.write(data.join(" ")) : 0
+            } catch {}
+            return 0
+        }
 
         /** 
             Emit a warning message.
@@ -311,9 +317,9 @@ module ejs {
             if (_outStream is Logger) {
                 _outStream.emit(origin, level, kind, msg)
             } else if (kind) {
-                _outStream.write(origin + ": " + kind + ": " + msg)
+                write(origin + ": " + kind + ": " + msg)
             } else {
-                _outStream.write(origin + ": " + level + ": " + msg)
+                write(origin + ": " + level + ": " + msg)
             }
         }
     }
