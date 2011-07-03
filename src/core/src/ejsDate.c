@@ -325,7 +325,7 @@ static EjsDate *date_Date(Ejs *ejs, EjsDate *date, int argc, EjsObj **argv)
         } else if (args->length > 6) {
             vp = ejsGetProperty(ejs, args, 6);
             date->value += getNumber(ejs, vp);
-        }
+        }        
     }
     return date;
 }

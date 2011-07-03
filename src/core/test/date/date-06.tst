@@ -27,6 +27,7 @@ assert(d.year == 1969)
 
 d = new Date(1902, 0, 1)
 assert(d.year == 1902)
+
 d = new Date("1902")
 assert(d.year == 1902)
 

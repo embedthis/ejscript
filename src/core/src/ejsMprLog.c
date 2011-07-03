@@ -1,5 +1,6 @@
 /*
-    ejsLogFile.c -- LogFile class
+    ejsMprLog.c -- MprLog class
+
     Copyright (c) All Rights Reserved. See details at the end of the file.
  */
 
@@ -61,12 +62,26 @@ static EjsNumber *lf_emit(Ejs *ejs, EjsObj *unused, int argc, EjsObj **argv)
 
 
 /*  
-    function get logging(): Boolean
+    function get cmdline(): Boolean
  */
-static EjsBoolean *lf_logging(Ejs *ejs, EjsObj *unused, int argc, EjsObj **argv)
+static EjsBoolean *lf_cmdline(Ejs *ejs, EjsObj *unused, int argc, EjsObj **argv)
 {
     return ejsCreateBoolean(ejs, mprGetCmdlineLogging());
 }
+
+
+/*  
+    function set cmdline(yes: Boolean)
+ */
+static EjsVoid *lf_set_cmdline(Ejs *ejs, EjsObj *unused, int argc, EjsObj **argv)
+{
+    int     yes;
+
+    yes = (argc >= 1 && argv[0] == ESV(true));
+    mprSetCmdlineLogging(yes);
+    return 0;
+}
+
 
 /*  
     function get level(): Number
@@ -107,19 +122,19 @@ static EjsFile *lf_redirect(Ejs *ejs, EjsObj *unused, int argc, EjsObj **argv)
 
 /*********************************** Factory **********************************/
 
-void ejsConfigureLogFileType(Ejs *ejs)
+void ejsConfigureMprLogType(Ejs *ejs)
 {
     EjsType     *type;
     EjsPot      *prototype;
 
-    if ((type = ejsFinalizeScriptType(ejs, N("ejs", "LogFile"), sizeof(EjsPot), ejsManagePot, EJS_TYPE_POT)) == 0) {
+    if ((type = ejsFinalizeScriptType(ejs, N("ejs", "MprLog"), sizeof(EjsPot), ejsManagePot, EJS_TYPE_POT)) == 0) {
         return;
     }
     prototype = type->prototype;
-    ejsBindAccess(ejs, prototype, ES_LogFile_logging, lf_logging, 0);
-    ejsBindMethod(ejs, prototype, ES_LogFile_emit, lf_emit);
-    ejsBindAccess(ejs, prototype, ES_LogFile_level, lf_level, lf_set_level);
-    ejsBindMethod(ejs, prototype, ES_LogFile_redirect, lf_redirect);
+    ejsBindAccess(ejs, prototype, ES_MprLog_cmdline, lf_cmdline, lf_set_cmdline);
+    ejsBindMethod(ejs, prototype, ES_MprLog_emit, lf_emit);
+    ejsBindAccess(ejs, prototype, ES_MprLog_level, lf_level, lf_set_level);
+    ejsBindMethod(ejs, prototype, ES_MprLog_redirect, lf_redirect);
 }
 
 

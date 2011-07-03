@@ -1,5 +1,5 @@
 /*
-    LogFile.es - Application Log File class
+    MprLog.es - Application Log File class
 
     Copyright (c) All Rights Reserved. See details at the end of the file.
  */
@@ -7,18 +7,18 @@
 module ejs {
 
     /** 
-        The LogFile class manages the Application's log mechanism. If the Application was started with a 
+        The MprLog class manages the Application's internal MPR log mechanism. If the Application was started with a 
         "--log" command line switch, the application will write log messages to the specified file, otherwise 
         messages will be sent to the standard error console. The Application will have a single instance of the 
-        LogFile class created and stored in the App.logFile property.
+        MprLog class created and stored in the App.mprLog property.
 
-        The Logger class can be used to create higher level logging filters and aggregators and use the LogFile as the
+        The Logger class can be used to create higher level logging filters and aggregators and use the MprLog as the
         final output stream.
 
         @spec ejs
         @stability prototype
      */
-    class LogFile implements Stream {
+    class MprLog implements Stream {
 
         use default namespace public
 
@@ -34,18 +34,20 @@ module ejs {
         }
 
         /** 
-            Close the LogFile and stop logging
+            Close the MprLog and stop logging
             @hide
          */
         function close(): Void {}
 
         /**
-            Is the Application is using logging. ie. Has been invoked with a --log switch.
+            Did the Application initiate logging via a command line --log switch. This overrides default application
+            settings.
          */
-        native function get logging(): Boolean
+        native function get cmdline(): Boolean
+        native function set cmdline(on: Boolean): Void
 
         /** 
-            Emit messages to the LogFile stream at a given level
+            Emit messages to the MprLog stream at a given level
             @param level Verbosity level at which to emit the message (0-9).
             @param data Data messages to emit
          */
@@ -57,8 +59,8 @@ module ejs {
         function flush(dir: Number = Stream.BOTH): Void { }
 
         /** 
-            The numeric verbosity setting (0-9) of this LogFile. Zero is least verbose, nine is the most verbose.
-            Messages with a lower (or equal) verbosity level than the LogFile's level are emitted.
+            The numeric verbosity setting (0-9) of this MprLog. Zero is least verbose, nine is the most verbose.
+            Messages with a lower (or equal) verbosity level than the MprLog's level are emitted.
             WARNING: Changing the logging verbosity level will affect logging for all interpreters.
          */
         native function get level(): Number
@@ -88,7 +90,7 @@ module ejs {
         native function redirect(location: String, level: Number = null): Void
 
         /** 
-            Write messages to the LogFile stream at level 0
+            Write messages to the MprLog stream at level 0
             @duplicate Stream.write
          */
         function write(...data): Number
