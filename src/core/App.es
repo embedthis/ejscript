@@ -88,15 +88,15 @@ module ejs {
         /** 
             Application logger. This singleton object respresents the Application default logger.
             If the ejsrc startup configuration file defines a log.location field, the log logger will send messages to
-            the defined location. Otherwise, messages will be sent to the LogFile stream. 
+            the defined location. Otherwise, messages will be sent to the MprLog stream. 
          */
         public static var log: Logger
 
         /** 
-            Application LogFile object. This singleton object represents the Application log file specified via the
+            Application MPR log object. This singleton object represents the Application log file specified via the
             --log command line switch.
          */
-        public static var logFile: LogFile
+        public static var mprLog: MprLog
 
         /** 
             Application name. Single word, lower-case name for the application. This is initialized to the name of
@@ -338,12 +338,13 @@ module ejs {
 
         /**
             Redirect the Application's logger based on the App.config.log setting
-            Ignored if app is invoked with --log
+            Ignored if app is invoked with --log on the command line.
          */
         static function updateLog(): Void {
             let log = config.log
-            if (!App.logFile.logging && log && log.enable) {
+            if (log && log.enable && !App.mprLog.cmdline) {
                 App.log.redirect(log.location, log.level)
+                App.mprLog.redirect(log.location, log.level)
             }
         }
 
@@ -373,7 +374,7 @@ module ejs {
         App.name = App.args[0] || Config.Product
         App.title = App.args[0] || Config.Title
         App.version = Config.Version
-        App.logFile = new LogFile
+        App.mprLog = new MprLog
 
         /*  
             Load ~/.ejsrc and ejsrc
@@ -393,10 +394,11 @@ module ejs {
         let log = config.log
         let stream
         if (log.enable) {
-            if (App.logFile.logging) {
-                /* App invoked with a --log switch */
-                log.level = App.logFile.level
-                stream = App.logFile;
+/* UNUSED
+            if (App.mprLog.cmdline) {
+                // App invoked with a --log switch
+                log.level = App.mprLog.level
+                stream = App.mprLog;
             } else if (log.location == "stdout") {
                 stream = App.outputStream
             } else if (log.location == "stderr") {
@@ -404,7 +406,17 @@ module ejs {
             } else {
                 stream = File(log.location, "w")
             }
-            App.log = new Logger(App.name, stream, log.level)
+UNUSED */
+            let level = log.level
+            let location = log.location
+            if (App.mprLog.cmdline) {
+                /* App invoked with a --log switch */
+                level = App.mprLog.level
+                location = App.mprLog;
+            } else {
+                App.mprLog.redirect(location, level)
+            }
+            App.log = new Logger(App.name, location, log.level)
             if (log.match) {
                 App.log.match = log.match
             }

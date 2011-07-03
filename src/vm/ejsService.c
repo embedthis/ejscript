@@ -563,7 +563,7 @@ static int configureEjs(Ejs *ejs)
         ejsConfigureGCType(ejs);
         ejsConfigureHttpType(ejs);
         ejsConfigureLocalCacheType(ejs);
-        ejsConfigureLogFileType(ejs);
+        ejsConfigureMprLogType(ejs);
         ejsConfigureMathType(ejs);
         ejsConfigureMemoryType(ejs);
         ejsConfigureNamespaceType(ejs);

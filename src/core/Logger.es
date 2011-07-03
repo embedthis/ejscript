@@ -102,8 +102,6 @@ module ejs {
                 location = location.toString()
                 let [path, lev] = location.split(":")
                 _level = lev || level || this._level
-                /* Redirect the MPR logger */
-                App.logFile.redirect(path, level)
                 let stream
                 if (path == "stdout") {
                     stream = App.outputStream
