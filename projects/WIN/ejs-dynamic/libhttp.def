@@ -66,15 +66,16 @@ EXPORTS
   httpCreateLimits
   httpCreateLocation
   httpCreatePacket
-  httpCreatePipeline
   httpCreateQueue
   httpCreateQueueHead
   httpCreateRange
   httpCreateRx
+  httpCreateRxPipeline
   httpCreateSecret
   httpCreateServer
   httpCreateStage
   httpCreateTx
+  httpCreateTxPipeline
   httpCreateUri
   httpCreateUriFromParts
   httpCreateUser
