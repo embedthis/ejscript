@@ -151,3 +151,4 @@ src/jems/ejs.db.sqlite/s2/
 .rpmmacros
 rpm.log
 *.stackdump
+src/core/test/cmd/TempWmicBatchFile.bat
