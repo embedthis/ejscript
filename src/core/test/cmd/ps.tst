@@ -7,16 +7,16 @@ if (!Path("/bin").exists) {
 } else {
 
     //  Test with RE match
-    let cmds = Cmd.ps(/bash/)
+    let cmds = Cmd.ps(/init/)
     assert(cmds)
     assert(cmds.length > 0)
     assert(cmds[0].pid > 0)
-    assert(cmds[0].command.contains("bash"))
+    assert(cmds[0].command.contains("init"))
 
     //  Test with string match
-    let cmds = Cmd.ps("bash")
+    let cmds = Cmd.ps("init")
     assert(cmds)
     assert(cmds.length > 0)
     assert(cmds[0].pid > 0)
-    assert(cmds[0].command.contains("bash"))
+    assert(cmds[0].command.contains("init"))
 }
