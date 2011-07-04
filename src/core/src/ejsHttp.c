@@ -18,7 +18,7 @@ static ssize    readHttpData(Ejs *ejs, EjsHttp *hp, ssize count);
 static void     sendHttpCloseEvent(Ejs *ejs, EjsHttp *hp);
 static void     sendHttpErrorEvent(Ejs *ejs, EjsHttp *hp);
 static EjsObj   *startHttpRequest(Ejs *ejs, EjsHttp *hp, char *method, int argc, EjsObj **argv);
-static bool     waitForResponseHeaders(EjsHttp *hp, MprTime timeout);
+static bool     waitForResponseHeaders(EjsHttp *hp);
 static bool     waitForState(EjsHttp *hp, int state, MprTime timeout, int throw);
 static ssize    writeHttpData(Ejs *ejs, EjsHttp *hp);
 
@@ -82,7 +82,7 @@ static EjsNumber *http_available(Ejs *ejs, EjsHttp *hp, int argc, EjsObj **argv)
 {
     MprOff      len;
 
-    if (!waitForResponseHeaders(hp, -1)) {
+    if (!waitForResponseHeaders(hp)) {
         return 0;
     }
     len = httpGetContentLength(hp->conn);
@@ -151,7 +151,7 @@ static EjsNumber *http_contentLength(Ejs *ejs, EjsHttp *hp, int argc, EjsObj **a
 {
     MprOff      length;
 
-    if (!waitForResponseHeaders(hp, -1)) {
+    if (!waitForResponseHeaders(hp)) {
         return 0;
     }
     length = httpGetContentLength(hp->conn);
@@ -317,7 +317,7 @@ static EjsString *http_header(Ejs *ejs, EjsHttp *hp, int argc, EjsObj **argv)
     cchar       *value;
     char        *str;
 
-    if (!waitForResponseHeaders(hp, -1)) {
+    if (!waitForResponseHeaders(hp)) {
         return 0;
     }
     str = slower(ejsToMulti(ejs, argv[0]));
@@ -341,7 +341,7 @@ static EjsPot *http_headers(Ejs *ejs, EjsHttp *hp, int argc, EjsObj **argv)
     EjsPot          *results;
     int             i;
 
-    if (!waitForResponseHeaders(hp, -1)) {
+    if (!waitForResponseHeaders(hp)) {
         return 0;
     }
     results = ejsCreateEmptyPot(ejs);
@@ -507,7 +507,7 @@ static EjsNumber *http_read(Ejs *ejs, EjsHttp *hp, int argc, EjsObj **argv)
     offset = (argc >= 2) ? ejsGetInt(ejs, argv[1]) : 0;
     count = (argc >= 3) ? ejsGetInt(ejs, argv[2]): -1;
 
-    if (!waitForResponseHeaders(hp, -1)) {
+    if (!waitForResponseHeaders(hp)) {
         return 0;
     }
     contentLength = httpGetContentLength(conn);
@@ -546,20 +546,10 @@ static EjsString *http_readString(Ejs *ejs, EjsHttp *hp, int argc, EjsObj **argv
     EjsString   *result;
     HttpConn    *conn;
     ssize       count;
-    MprTime     timeout;
     
     count = (argc == 1) ? ejsGetInt(ejs, argv[0]) : -1;
     conn = hp->conn;
-
-    if (conn->async) {
-        timeout = 0;
-    } else {
-        timeout = conn->limits->inactivityTimeout;
-        if (timeout <= 0) {
-            timeout = MAXINT;
-        }
-    }
-    if (!waitForState(hp, HTTP_STATE_CONTENT, timeout, 1)) {
+    if (!waitForState(hp, HTTP_STATE_CONTENT, -1, 1)) {
         return 0;
     }
     if ((count = readHttpData(ejs, hp, count)) < 0) {
@@ -795,7 +785,7 @@ static EjsNumber *http_status(Ejs *ejs, EjsHttp *hp, int argc, EjsObj **argv)
 {
     int     code;
 
-    if (!waitForResponseHeaders(hp, -1)) {
+    if (!waitForResponseHeaders(hp)) {
         return 0;
     }
     code = httpGetStatus(hp->conn);
@@ -813,7 +803,7 @@ static EjsString *http_statusMessage(Ejs *ejs, EjsHttp *hp, int argc, EjsObj **a
 {
     HttpConn    *conn;
 
-    if (!waitForResponseHeaders(hp, -1)) {
+    if (!waitForResponseHeaders(hp)) {
         return 0;
     }
     conn = hp->conn;
@@ -825,7 +815,8 @@ static EjsString *http_statusMessage(Ejs *ejs, EjsHttp *hp, int argc, EjsObj **a
 
 
 /*  
-    Wait for a request to complete. Timeout is in msec.
+    Wait for a request to complete. Timeout is in msec. Timeout < 0 means use default inactivity and request timeouts.
+    Timeout of zero means no timeout.
 
     function wait(timeout: Number = -1): Boolean
  */
@@ -834,11 +825,8 @@ static EjsBoolean *http_wait(Ejs *ejs, EjsHttp *hp, int argc, EjsObj **argv)
     MprTime     timeout;
 
     timeout = (argc >= 1) ? ejsGetInt(ejs, argv[0]) : -1;
-    if (timeout < 0) {
-        timeout = hp->conn->limits->requestTimeout;
-        if (timeout == 0) {
-            timeout = MAXINT;
-        }
+    if (timeout == 0) {
+        timeout = MPR_MAX_TIMEOUT;
     }
     if (!waitForState(hp, HTTP_STATE_COMPLETE, timeout, 0)) {
         return ESV(false);
@@ -1074,7 +1062,7 @@ static EjsDate *getDateHeader(Ejs *ejs, EjsHttp *hp, cchar *key)
     MprTime     when;
     cchar       *value;
 
-    if (!waitForResponseHeaders(hp, -1)) {
+    if (!waitForResponseHeaders(hp)) {
         return 0;
     }
     value = httpGetHeader(hp->conn, key);
@@ -1092,7 +1080,7 @@ static EjsString *getStringHeader(Ejs *ejs, EjsHttp *hp, cchar *key)
 {
     cchar       *value;
 
-    if (!waitForResponseHeaders(hp, -1)) {
+    if (!waitForResponseHeaders(hp)) {
         return 0;
     }
     value = httpGetHeader(hp->conn, key);
@@ -1214,7 +1202,8 @@ static bool expired(EjsHttp *hp)
 
 /*  
     Wait for the connection to acheive a requested state
-    Timeout is in msec. <= 0 means don't wait.
+    Timeout is in msec. Timeout of zero means don't wait. Timeout of < 0 means use standard inactivity and 
+    duration timeouts.
  */
 static bool waitForState(EjsHttp *hp, int state, MprTime timeout, int throw)
 {
@@ -1240,19 +1229,13 @@ static bool waitForState(EjsHttp *hp, int state, MprTime timeout, int throw)
         }
         return 0;
     }
-    if (timeout < 0) {
-        timeout = 0;
-    } else if (mprGetDebugMode()) {
-        timeout = MAXINT;
-    }
-    remaining = timeout;
-    mark = mprGetTime();
-    redirectCount = 0;
-    success = count = 0;
-
     if (!conn->async) {
         httpFinalize(conn);
     }
+    redirectCount = 0;
+    success = count = 0;
+    mark = mprGetTime();
+    remaining = timeout;
     while (conn->state < state && count <= conn->retries && redirectCount < 16 && 
            !conn->error && !ejs->exiting && !mprIsStopping(conn)) {
         count++;
@@ -1292,9 +1275,11 @@ static bool waitForState(EjsHttp *hp, int state, MprTime timeout, int throw)
             /* Can't auto-retry with manual writes */
             break;
         }
-        remaining = (int) (mark + timeout - mprGetTime());
-        if (count > 0 && remaining <= 0) {
-            break;
+        if (timeout > 0) {
+            remaining = mprGetRemainingTime(mark, timeout);
+            if (count > 0 && remaining <= 0) {
+                break;
+            }
         }
         if (hp->requestContentCount > 0) {
             mprAdjustBufStart(hp->requestContent, -hp->requestContentCount);
@@ -1325,21 +1310,12 @@ static bool waitForState(EjsHttp *hp, int state, MprTime timeout, int throw)
     Wait till the response headers have been received. Safe in sync and async mode. Async mode never blocks.
     Timeout < 0 means use default inactivity timeout. Timeout of zero means wait forever.
  */
-static bool waitForResponseHeaders(EjsHttp *hp, MprTime timeout)
+static bool waitForResponseHeaders(EjsHttp *hp)
 {
-    if (hp->conn->async) {
-        timeout = 0;
-    }
     if (hp->conn->state < HTTP_STATE_CONNECTED) {
         return 0;
     }
-    if (timeout < 0) {
-        timeout = hp->conn->limits->inactivityTimeout;
-        if (timeout <= 0) {
-            timeout = MAXINT;
-        }
-    }
-    if (hp->conn->state < HTTP_STATE_PARSED && !waitForState(hp, HTTP_STATE_PARSED, timeout, 1)) {
+    if (hp->conn->state < HTTP_STATE_PARSED && !waitForState(hp, HTTP_STATE_PARSED, -1, 1)) {
         return 0;
     }
     return 1;
