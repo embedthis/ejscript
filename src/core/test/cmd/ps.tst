@@ -8,6 +8,9 @@ if (!Path("/bin").exists) {
     if (Config.OS == "WIN") {
         program = "bash"
         re = /bash/
+    } else if (Config.OS == "MACOSX") {
+        program = "launchd"
+        re = /launchd/
     } else {
         /* On linux, may run from init and bash may not be running */
         program = "init"
