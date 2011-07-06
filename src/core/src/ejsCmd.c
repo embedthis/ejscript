@@ -601,6 +601,7 @@ static EjsNumber *cmd_write(Ejs *ejs, EjsCmd *cmd, int argc, EjsObj **argv)
 }
 
 
+//  MOB - compare with System.exec
 /*
     function exec(cmd: Object): Void
  */
