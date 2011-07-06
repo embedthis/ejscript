@@ -936,7 +936,7 @@ static EcNode *parseQualifiedNameIdentifier(EcCompiler *cp)
             getToken(cp);
             np = createNode(cp, N_QNAME, NULL);
             vp = ejsParse(cp->ejs, cp->token->text, -1);
-            //  MOB - cant set literal.var in a QNAME. clashes with "name" union structure. Not marked.
+            //  cant set literal.var in a QNAME. clashes with "name" union structure. Not marked.
             mprAssert(0);
             np->literal.var = vp;
             break;
@@ -945,7 +945,7 @@ static EcNode *parseQualifiedNameIdentifier(EcCompiler *cp)
             getToken(cp);
             np = createNode(cp, N_QNAME, NULL);
             vp = (EjsObj*) tokenString(cp);
-            //  MOB - cant set literal.var in a QNAME. clashes with "name" union structure. Not marked.
+            //  cant set literal.var in a QNAME. clashes with "name" union structure. Not marked.
             np->literal.var = vp;
             break;
 
@@ -1147,7 +1147,7 @@ static EcNode *parseAttributeName(EcCompiler *cp)
         np = parsePropertyName(cp);
     }
     if (np && np->kind == N_QNAME) {
-        //  MOB - OPT. Better to allow lexer to keep @ in the id name and return T_AT with the entire attribute name.
+        //  OPT. Better to allow lexer to keep @ in the id name and return T_AT with the entire attribute name.
         np->name.isAttribute = 1;
         attribute = sjoin("@", np->qname.name->value, NULL);
         np->qname.name = ejsCreateStringFromAsc(cp->ejs, attribute);
@@ -1391,7 +1391,7 @@ static EcNode *parseFunctionExpression(EcCompiler *cp)
     if (np->qname.name == 0) {
         np->qname.name = ejsSprintf(cp->ejs, "--fun_%d-%d--", np->seqno, (int) mprGetTime());
     }
-    np->qname.space = state->inFunction ? S(empty): cp->fileState->nspace;
+    np->qname.space = state->inFunction ? ESV(empty): cp->fileState->nspace;
 
     np = parseFunctionSignature(cp, np);
     if (np == 0) {
@@ -1490,7 +1490,7 @@ static EcNode *parseObjectLiteral(EcCompiler *cp)
         getToken(cp);
         typeNode = parseNullableTypeExpression(cp);
     } else {
-        typeNode = createNode(cp, N_QNAME, ST(Object)->qname.name);
+        typeNode = createNode(cp, N_QNAME, EST(Object)->qname.name);
     }
     np->objectLiteral.typeNode = linkNode(np, typeNode);
     np->objectLiteral.isArray = 0;
@@ -1540,11 +1540,9 @@ static EcNode *parseFieldList(EcCompiler *cp, EcNode *np)
 static EcNode *parseLiteralField(EcCompiler *cp)
 {
     EcNode  *fp, *np, *id, *funRef, *fieldName;
-    int     getterSetter;
 
     ENTER(cp);
     np = 0;
-    getterSetter = 0;
     
     getToken(cp);
     if ((cp->token->tokenId == T_GET || cp->token->tokenId == T_SET) && peekToken(cp) != T_COLON) {
@@ -1733,7 +1731,7 @@ static EcNode *parseArrayLiteral(EcCompiler *cp)
         }
         if (np) {
             if (typeNode == 0) {
-                typeNode = createNode(cp, N_QNAME, ST(Array)->qname.name);
+                typeNode = createNode(cp, N_QNAME, EST(Array)->qname.name);
             }
             np->objectLiteral.typeNode = linkNode(np, typeNode);
         }
@@ -1871,13 +1869,12 @@ static EcNode *parseComprehensionExpression(EcCompiler *cp, EcNode *literalEleme
     EcNode      *np;
 
     ENTER(cp);
-    //  MOB
     np = 0;
     return LEAVE(cp, np);
 }
 
 
-#if UNUSED && MOB
+#if UNUSED
 /*
     ForInExpressionList (62)
         ForExpression
@@ -1958,10 +1955,10 @@ struct EcNode *parseXMLInitializer(EcCompiler *cp)
     np = createNode(cp, N_LITERAL, NULL);
     np->literal.data = mprCreateBuf(0, 0);
 
-    if (ST(XML) == 0) {
+    if (EST(XML) == 0) {
         return LEAVE(cp, parseError(cp, "No XML support configured"));
     }
-    np->literal.var = (EjsObj*) ejsCreateObj(ejs, ST(XML), 0);
+    np->literal.var = (EjsObj*) ejsCreateObj(ejs, EST(XML), 0);
 
     switch (peekToken(cp)) {
     case T_XML_COMMENT_START:
@@ -2375,7 +2372,7 @@ static EcNode *parsePrimaryExpression(EcCompiler *cp)
             np = createNode(cp, N_QNAME, tokenString(cp));
         } else {
             np = createNode(cp, N_LITERAL, tokenString(cp));
-            np->literal.var = S(null);
+            np->literal.var = ESV(null);
         }
         break;
 
@@ -2385,7 +2382,7 @@ static EcNode *parsePrimaryExpression(EcCompiler *cp)
             np = createNode(cp, N_QNAME, tokenString(cp));
         } else {
             np = createNode(cp, N_LITERAL, tokenString(cp));
-            np->literal.var = S(undefined);
+            np->literal.var = ESV(undefined);
         }
         break;
 
@@ -2679,7 +2676,7 @@ static EcNode *parsePropertyOperator(EcCompiler *cp)
             np = appendNode(np, name);
             break;
 
-        /* MOB TODO - should handle all contextually reserved identifiers here */
+        /* TODO - should handle all contextually reserved identifiers here */
         case T_TYPE:
         case T_ID:
         case T_GET:
@@ -2710,10 +2707,6 @@ static EcNode *parsePropertyOperator(EcCompiler *cp)
             } else {
                 np = appendNode(np, parsePropertyName(cp));
             }
-#if UNUSED
-            getToken(cp);
-            np = unexpected(cp);
-#endif
             break;
         }
         break;
@@ -3866,7 +3859,8 @@ static EcNode *parseLetExpression(EcCompiler *cp)
     if (getToken(cp) != T_RPAREN) {
         return LEAVE(cp, expected(cp, ")"));
     }
-    return 0;
+    //  MOB - was return 0
+    return np;
 }
 
 
@@ -4033,11 +4027,9 @@ static void fixDassign(EcCompiler *cp, EcNode *np)
 static EcNode *parseAssignmentExpression(EcCompiler *cp)
 {
     EcNode      *np, *parent;
-    EcState     *state;
     int         subId;
 
     ENTER(cp);
-    state = cp->state;
 
     np = parseConditionalExpression(cp);
     if (np) {
@@ -4422,7 +4414,7 @@ static EcNode *parseTypedPattern(EcCompiler *cp)
         undefined
         TypeExpression
         TypeExpression ?            # Nullable
-        MOB REMOVE TypeExpression ! # Non-Nullable
+        REMOVE TypeExpression ! # Non-Nullable
 
     Input
 
@@ -4507,7 +4499,7 @@ static EcNode *parseTypeExpression(EcCompiler *cp)
 
     case T_MUL:
         getToken(cp);
-        np = createNode(cp, N_QNAME, ST(Object)->qname.name);
+        np = createNode(cp, N_QNAME, EST(Object)->qname.name);
         np->name.isType = 1;
         break;
 
@@ -5595,11 +5587,9 @@ static EcNode *parseDoStatement(EcCompiler *cp)
  */
 static EcNode *parseWhileStatement(EcCompiler *cp)
 {
-    EcNode      *np, *initializer;
+    EcNode      *np;
 
     ENTER(cp);
-
-    initializer = 0;
 
     if (getToken(cp) != T_WHILE) {
         return LEAVE(cp, parseError(cp, "Expecting \"while\""));
@@ -6839,7 +6829,7 @@ static EcNode *parseAttribute(EcCompiler *cp)
             if (inClass || inInterface) {
                 np = unexpected(cp);
             } else {
-                np->attributes |= EJS_TYPE_DYNAMIC_INSTANCE;
+                np->attributes |= EJS_TYPE_DYNAMIC_INSTANCES;
             }
             break;
 
@@ -7732,7 +7722,7 @@ static EcNode *parseParameter(EcCompiler *cp, bool rest)
     np = parseParameterKind(cp);
     parameter = parseTypedPattern(cp);
     if (parameter) {
-        parameter->qname.space = S(empty);
+        parameter->qname.space = ESV(empty);
     }
     np = appendNode(np, parameter);
     if (parameter) {
@@ -7841,7 +7831,7 @@ static EcNode *parseResultType(EcCompiler *cp)
         getToken(cp);
         if (peekToken(cp) == T_VOID) {
             getToken(cp);
-            np = createNode(cp, N_QNAME, ST(Void)->qname.name);
+            np = createNode(cp, N_QNAME, EST(Void)->qname.name);
             np->name.isType = 1;
 
         } else {
@@ -8026,7 +8016,7 @@ static EcNode *parseFunctionBody(EcCompiler *cp, EcNode *fun)
 
     ejs = cp->ejs;
     cp->state->inFunction = 1;
-    cp->state->nspace = S(empty);
+    cp->state->nspace = ESV(empty);
 
     if (peekToken(cp) == T_LBRACE) {
         np = parseBlock(cp);
@@ -8490,7 +8480,7 @@ static EcNode *parseNamespaceDefinition(EcCompiler *cp, EcNode *attributeNode)
     NamespaceInitialisation (501)
         EMPTY
         = StringLiteral
-        = MOB -- not supported SimpleQualifiedName
+        = not supported SimpleQualifiedName
 
     AST
         N_LITERAL
@@ -8667,8 +8657,6 @@ static EcNode *parseModuleDefinition(EcCompiler *cp)
 static EcNode *parseModuleName(EcCompiler *cp)
 {
     EcNode      *np, *idp;
-    Ejs         *ejs;
-    EjsObj      *lastPackage;
     EjsString   *name;
 
     ENTER(cp);
@@ -8678,9 +8666,6 @@ static EcNode *parseModuleName(EcCompiler *cp)
         return LEAVE(cp, np);
     }
     name = np->qname.name;
-
-    ejs = cp->ejs;
-    lastPackage = 0;
 
     while (np && getToken(cp) == T_DOT) {
         /*
@@ -8969,11 +8954,8 @@ static EcNode *parsePragmaItem(EcCompiler *cp)
     EcNode      *np, *ns;
     EcState     *upper;
     EjsModule   *module;
-    int         attributes;
 
     ENTER(cp);
-
-    attributes = 0;
 
     np = createNode(cp, N_PRAGMA, NULL);
     np->pragma.strict = cp->fileState->strict;
@@ -9145,14 +9127,8 @@ static EcNode *parseProgram(EcCompiler *cp, cchar *path)
     state = cp->state;
     state->strict = cp->strict;
 
-    //  MOB  public should be a standard string
     np = createNode(cp, N_PROGRAM, ejsCreateStringFromAsc(cp->ejs, EJS_PUBLIC_NAMESPACE));
 
-#if UNUSED && KEEP
-    if (cp->fileState->lang == EJS_SPEC_ECMA) {
-        np->qname.name = EJS_PUBLIC_NAMESPACE;
-    } else {
-#endif
     if (cp->visibleGlobals && ejs->state->internal) {
         np->qname.name = ejs->state->internal->value;
     } else if (path) {
@@ -9606,7 +9582,6 @@ static void appendDocString(EcCompiler *cp, EcNode *np, EcNode *parameter, EcNod
     if (np == 0 || parameter == 0 || parameter->kind != N_QNAME || value == 0) {
         return;
     }
-
     defaultValue = 0;
     if (value->kind == N_QNAME) {
         defaultValue = value->qname.name;
@@ -9622,11 +9597,10 @@ static void appendDocString(EcCompiler *cp, EcNode *np, EcNode *parameter, EcNod
     if (defaultValue == 0) {
         defaultValue = ejsCreateStringFromAsc(ejs, "expression");
     }
-
     if (np->doc) {
         found = 0;
         mprSprintf(arg, sizeof(arg), "@param %@ ", parameter->qname.name);
-        if (ejsContainsMulti(ejs, np->doc, arg) != 0) {
+        if (ejsContainsMulti(ejs, np->doc, arg) != 0 || ejsContainsMulti(ejs, np->doc, "@duplicate") != 0) {
             found++;
         } else {
             mprSprintf(arg, sizeof(arg), "@params %@ ", parameter->qname.name);
@@ -9738,10 +9712,8 @@ static EcNode *createAssignNode(EcCompiler *cp, EcNode *lhs, EcNode *rhs, EcNode
     Add a child node. If an allocation error, return 0, otherwise return the
     parent node.
  */
-//  MOB -- should have an appendNodes( ....)
 static EcNode *appendNode(EcNode *np, EcNode *child)
 {
-    EcCompiler      *cp;
     MprList         *list;
     int             index;
 
@@ -9749,9 +9721,7 @@ static EcNode *appendNode(EcNode *np, EcNode *child)
         return 0;
     }
     mprAssert(np != child);
-    
     list = np->children;
-    cp = np->cp;
 
     if ((index = mprAddItem(np->children, child)) < 0) {
         return 0;
@@ -9812,15 +9782,13 @@ static EcNode *linkNode(EcNode *np, EcNode *node)
  */
 static EcNode *insertNode(EcNode *np, EcNode *child, int pos)
 {
-    EcCompiler      *cp;
-    MprList         *list;
-    int             index, len;
+    MprList     *list;
+    int         index, len;
 
     if (child == 0 || np == 0) {
         return 0;
     }
     list = np->children;
-    cp = np->cp;
 
     index = mprInsertItemAtPos(list, pos, child);
     if (index < 0) {
@@ -9843,14 +9811,11 @@ static EcNode *insertNode(EcNode *np, EcNode *child, int pos)
  */
 static EcNode *removeNode(EcNode *np, EcNode *child)
 {
-    EcCompiler      *cp;
-    int             index;
+    int         index;
 
     if (child == 0 || np == 0) {
         return 0;
     }
-    cp = np->cp;
-
     index = mprRemoveItem(np->children, child);
     mprAssert(index >= 0);
 
@@ -10001,7 +9966,7 @@ void ecResetInput(EcCompiler *cp)
     cp->stream->flags &= ~EC_STREAM_EOL;
     cp->error = 0;
     cp->ejs->exception = 0;
-    cp->ejs->result = S(undefined);
+    cp->ejs->result = ESV(undefined);
     while ((tp = cp->putback) != 0 && (tp->tokenId == T_EOF || tp->tokenId == T_NOP)) {
         ecGetToken(cp);
     }
@@ -10035,7 +10000,7 @@ void ecSetTabWidth(EcCompiler *cp, int width)
 void ecSetOutputFile(EcCompiler *cp, cchar *outputFile)
 {
     if (outputFile) {
-        //  MOB UNICODE
+        //  UNICODE
         cp->outputFile = sclone(outputFile);
     }
 }
@@ -10043,7 +10008,7 @@ void ecSetOutputFile(EcCompiler *cp, cchar *outputFile)
 
 void ecSetCertFile(EcCompiler *cp, cchar *certFile)
 {
-    //  MOB UNICODE
+    //  UNICODE
     cp->certFile = sclone(certFile);
 }
 
@@ -10056,7 +10021,7 @@ static EjsString *tokenString(EcCompiler *cp)
     if (cp->token) {
         return ejsCreateString(cp->ejs, cp->token->text, cp->token->length);
     }
-    return S(empty);
+    return ESV(empty);
 }
 
 
@@ -10115,7 +10080,6 @@ static void manageNode(EcNode *node, int flags)
 
         case N_CASE_LABEL:
             mprMark(node->caseLabel.expression);
-            //  MOB - surely these can be local?
             mprMark(node->caseLabel.expressionCode);
             break;
 
@@ -10164,7 +10128,6 @@ static void manageNode(EcNode *node, int flags)
             mprMark(node->forLoop.cond);
             mprMark(node->forLoop.initializer);
             mprMark(node->forLoop.perLoop);
-            //  MOB - surely these can be local?
             mprMark(node->forLoop.condCode);
             mprMark(node->forLoop.bodyCode);
             mprMark(node->forLoop.perLoopCode);
@@ -10175,7 +10138,6 @@ static void manageNode(EcNode *node, int flags)
             mprMark(node->forInLoop.iterGet);
             mprMark(node->forInLoop.iterNext);
             mprMark(node->forInLoop.body);
-            //  MOB - surely these can be local?
             mprMark(node->forInLoop.initCode);
             mprMark(node->forInLoop.bodyCode);
             break;
@@ -10200,7 +10162,6 @@ static void manageNode(EcNode *node, int flags)
             mprMark(node->tenary.cond);
             mprMark(node->tenary.thenBlock);
             mprMark(node->tenary.elseBlock);
-            //  MOB - surely these can be local?
             mprMark(node->tenary.thenCode);
             mprMark(node->tenary.elseCode);
             break;
@@ -10311,12 +10272,10 @@ static void manageNode(EcNode *node, int flags)
  */
 static EcNode *createNode(EcCompiler *cp, int kind, EjsString *name)
 {
-    Ejs         *ejs;
     EcNode      *np;
     EcToken     *token;
 
     mprAssert(cp->state);
-    ejs = cp->ejs;
 
     if ((np = mprAllocObj(EcNode, manageNode)) == 0) {
         return 0;
@@ -10332,7 +10291,6 @@ static EcNode *createNode(EcCompiler *cp, int kind, EjsString *name)
         Remember the current input token. Don't do for initial program and module nodes.
      */
     if (cp->token == 0 && cp->state->blockNestCount > 0) {
-        //  MOB OPT
         getToken(cp);
         putToken(cp);
         peekToken(cp);
@@ -10344,7 +10302,6 @@ static EcNode *createNode(EcCompiler *cp, int kind, EjsString *name)
         np->groupMask = token->groupMask;
         np->subId = token->subId;
     }
-    //  MOB OPT - do this on demand
     np->children = mprCreateList(-1, 0);
     if (token && token->loc.source) {
         np->loc = token->loc;

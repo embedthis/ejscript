@@ -15,72 +15,6 @@
 static int configureWebTypes(Ejs *ejs);
 
 /************************************ Code ************************************/
-
-static int requestWorker(EjsRequest *req, MprEvent *event)
-{
-    Ejs         *ejs;
-    EjsObj      *argv[2];
-    HttpConn    *conn;
-    
-    ejs = req->ejs;
-    mprAssert(ejs);
-    mprAssert(req->app);
-    
-    conn = req->conn;
-    argv[0] = (EjsObj*) req->app;
-    argv[1] = (EjsObj*) req;
-    ejsRunFunctionBySlot(ejs, S(Web), ES_ejs_web_Web_workerHelper, 2, argv);
-    conn->dispatcher = conn->oldDispatcher;
-    httpEnableConnEvents(conn);
-    return 0; 
-}
-
-
-/*
-    static function worker(app: Function, req: Request): Void
- */
-static EjsObj *req_worker(Ejs *ejs, EjsObj *web, int argc, EjsObj **argv)
-{
-    Ejs         *nejs;
-    EjsRequest  *req, *nreq;
-    EjsObj      *app;
-    HttpConn    *conn;
-
-    app = argv[0];
-    req = (EjsRequest*) argv[1];
-    if ((nejs = ejsCreate(0, 0, 0, 0, 0, 0)) == 0) {
-        ejsThrowStateError(ejs, "Can't create interpreter to service request");
-        return 0;
-    }
-    conn = req->conn;
-    conn->mark = nejs;
-    conn->oldDispatcher = conn->dispatcher;
-    conn->newDispatcher = nejs->dispatcher;
-    
-    nejs->loc = ejs->loc;
-    if (ejsLoadModule(nejs, ejsCreateStringFromAsc(nejs, "ejs.web"), -1, -1, EJS_LOADER_RELOAD) < 0) {
-        ejsThrowStateError(ejs, "Can't load ejs.web.mod: %s", ejsGetErrorMsg(nejs, 1));
-        return 0;
-    }
-    if ((nreq = ejsCloneRequest(nejs, req, 1)) == 0) {
-        ejsThrowStateError(ejs, "Can't clone request");
-        return 0;
-    }
-    httpSetConnContext(conn, nreq);
-    nreq->app = app;
-
-    if ((nreq->server = ejsCloneHttpServer(nejs, req->server, 1)) == 0) {
-        ejsThrowStateError(ejs, "Can't clone request");
-        return 0;
-    }
-    conn->workerEvent = mprCreateEvent(conn->dispatcher, "RequestWorker", 0, requestWorker, nreq, MPR_EVENT_DONT_QUEUE);
-    if (conn->workerEvent == 0) {
-        ejsThrowStateError(ejs, "Can't create worker event");
-    }
-    return 0;
-}
-
-
 /*  
     HTML escape a string
     function escapeHtml(str: String): String
@@ -94,21 +28,9 @@ static EjsObj *web_escapeHtml(Ejs *ejs, EjsObj *unused, int argc, EjsObj **argv)
 }
 
 
-/******************************************************************************/
-
 static int configureWebTypes(Ejs *ejs)
 {
-    EjsType     *type;
     int         slotNum;
-
-    if ((type = ejsGetTypeByName(ejs, N("ejs.web", "Web"))) == 0) {
-        mprError("Can't find ejs.web::Web class");
-        ejs->hasError = 1;
-        return MPR_ERR_CANT_INITIALIZE;
-    }
-    ejsSetSpecialType(ejs, S_Web, type);
-
-    ejsBindMethod(ejs, type, ES_ejs_web_Web_worker, req_worker);
 
     if ((slotNum = ejsLookupProperty(ejs, ejs->global, N("ejs.web", "escapeHtml"))) != 0) {
         ejsBindFunction(ejs, ejs->global, slotNum, web_escapeHtml);

@@ -43,12 +43,12 @@ module ejs {
         /** 
             Little endian byte order used for the $endian property
          */
-        static const LittleEndian: Number   = 0
+        static const LittleEndian: Number = 0
 
         /** 
             Big endian byte order used for the $endian property
          */
-        static const BigEndian: Number      = 1
+        static const BigEndian: Number = 1
 
         /** 
             Create a new array.
@@ -224,7 +224,7 @@ module ejs {
             @returns a double or null on eof.
             @throws IOError if an I/O error occurs or premature eof.
          */
-        native function readDouble(): Date
+        native function readDouble(): Number
 
         /** 
             Read an 32-bit integer from the array. The data will be decoded according to the endian property.
@@ -325,7 +325,6 @@ module ejs {
 
         /** 
             Write a byte to the array. Data is written to the current write $position pointer which is then incremented.
-//  MOB -- no such details exist
             See $write for details about sync, async modes and event handling.
             @param data Data to write
             @throws IOError if an I/O error occurs or if the stream cannot absorb all the data.

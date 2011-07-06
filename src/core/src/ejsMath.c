@@ -17,119 +17,116 @@
 /*
     function abs(value: Number): Number
  */
-static EjsObj *math_abs(Ejs *ejs, EjsObj *unused, int argc, EjsObj **argv)
+static EjsNumber *math_abs(Ejs *ejs, EjsObj *unused, int argc, EjsObj **argv)
 {
     //  TODO - can a null slip through?
-    return (EjsObj*) ejsCreateNumber(ejs, (MprNumber) fabs(ejsGetNumber(ejs, argv[0])));
+    return ejsCreateNumber(ejs, (MprNumber) fabs(ejsGetNumber(ejs, argv[0])));
 }
 
 
 /*
     function acos(value: Number): Number
  */
-static EjsObj *math_acos(Ejs *ejs, EjsObj *unused, int argc, EjsObj **argv)
+static EjsNumber *math_acos(Ejs *ejs, EjsObj *unused, int argc, EjsObj **argv)
 {
-    MprNumber   value;
-    
-    value = ejsGetNumber(ejs, argv[0]);
-    return (EjsObj*) ejsCreateNumber(ejs, (MprNumber) acos(ejsGetNumber(ejs, argv[0])));
+    return ejsCreateNumber(ejs, (MprNumber) acos(ejsGetNumber(ejs, argv[0])));
 }
 
 
 /*
     function asin(value: Number): Number
  */
-static EjsObj *math_asin(Ejs *ejs, EjsObj *unused, int argc, EjsObj **argv)
+static EjsNumber *math_asin(Ejs *ejs, EjsObj *unused, int argc, EjsObj **argv)
 {
-    return (EjsObj*) ejsCreateNumber(ejs, (MprNumber) asin(ejsGetNumber(ejs, argv[0])));
+    return ejsCreateNumber(ejs, (MprNumber) asin(ejsGetNumber(ejs, argv[0])));
 }
 
 
 /*
     function atan(value: Number): Number
  */
-static EjsObj *math_atan(Ejs *ejs, EjsObj *unused, int argc, EjsObj **argv)
+static EjsNumber *math_atan(Ejs *ejs, EjsObj *unused, int argc, EjsObj **argv)
 {
-    return (EjsObj*) ejsCreateNumber(ejs, (MprNumber) atan(ejsGetNumber(ejs, argv[0])));
+    return ejsCreateNumber(ejs, (MprNumber) atan(ejsGetNumber(ejs, argv[0])));
 }
 
 
 /*
     function atan2(x: Number, y: Number): Number
  */
-static EjsObj *math_atan2(Ejs *ejs, EjsObj *unused, int argc, EjsObj **argv)
+static EjsNumber *math_atan2(Ejs *ejs, EjsObj *unused, int argc, EjsObj **argv)
 {
-    return (EjsObj*) ejsCreateNumber(ejs, (MprNumber) atan2(ejsGetNumber(ejs, argv[0]), ejsGetNumber(ejs, argv[1])));
+    return ejsCreateNumber(ejs, (MprNumber) atan2(ejsGetNumber(ejs, argv[0]), ejsGetNumber(ejs, argv[1])));
 }
 
 
 /*
     function ceil(value: Number): Number
  */
-static EjsObj *math_ceil(Ejs *ejs, EjsObj *unused, int argc, EjsObj **argv)
+static EjsNumber *math_ceil(Ejs *ejs, EjsObj *unused, int argc, EjsObj **argv)
 {
-    return (EjsObj*) ejsCreateNumber(ejs, (MprNumber) ceil(ejsGetNumber(ejs, argv[0])));
+    return ejsCreateNumber(ejs, (MprNumber) ceil(ejsGetNumber(ejs, argv[0])));
 }
 
 
 /*
     function cos(value: Number): Number
  */
-static EjsObj *math_cos(Ejs *ejs, EjsObj *unused, int argc, EjsObj **argv)
+static EjsNumber *math_cos(Ejs *ejs, EjsObj *unused, int argc, EjsObj **argv)
 {
-    return (EjsObj*) ejsCreateNumber(ejs, (MprNumber) cos(ejsGetNumber(ejs, argv[0])));
+    return ejsCreateNumber(ejs, (MprNumber) cos(ejsGetNumber(ejs, argv[0])));
 }
 
 
 /*
     function exp(value: Number): Number
  */
-static EjsObj *math_exp(Ejs *ejs, EjsObj *unused, int argc, EjsObj **argv)
+static EjsNumber *math_exp(Ejs *ejs, EjsObj *unused, int argc, EjsObj **argv)
 {
-    return (EjsObj*) ejsCreateNumber(ejs, (MprNumber) exp(ejsGetNumber(ejs, argv[0])));
+    return ejsCreateNumber(ejs, (MprNumber) exp(ejsGetNumber(ejs, argv[0])));
 }
 
 
 /*
     function floor(value: Number): Number
  */
-static EjsObj *math_floor(Ejs *ejs, EjsObj *unused, int argc, EjsObj **argv)
+static EjsNumber *math_floor(Ejs *ejs, EjsObj *unused, int argc, EjsObj **argv)
 {
-    return (EjsObj*) ejsCreateNumber(ejs, (MprNumber) floor(ejsGetNumber(ejs, argv[0])));
+    return ejsCreateNumber(ejs, (MprNumber) floor(ejsGetNumber(ejs, argv[0])));
 }
 
 
 /*
     function log10(value: Number): Number
  */
-static EjsObj *math_log10(Ejs *ejs, EjsObj *unused, int argc, EjsObj **argv)
+static EjsNumber *math_log10(Ejs *ejs, EjsObj *unused, int argc, EjsObj **argv)
 {
-    return (EjsObj*) ejsCreateNumber(ejs, (MprNumber) log10(ejsGetNumber(ejs, argv[0])));
+    return ejsCreateNumber(ejs, (MprNumber) log10(ejsGetNumber(ejs, argv[0])));
 }
 
 
 /*
     function log(value: Number): Number
  */
-static EjsObj *math_log(Ejs *ejs, EjsObj *unused, int argc, EjsObj **argv)
+static EjsNumber *math_log(Ejs *ejs, EjsObj *unused, int argc, EjsObj **argv)
 {
-    return (EjsObj*) ejsCreateNumber(ejs, (MprNumber) log(ejsGetNumber(ejs, argv[0])));
+    return ejsCreateNumber(ejs, (MprNumber) log(ejsGetNumber(ejs, argv[0])));
 }
 
 
 /*
     function max(x: Number, y: Number): Number
  */
-static EjsObj *math_max(Ejs *ejs, EjsObj *unused, int argc, EjsObj **argv)
+static EjsNumber *math_max(Ejs *ejs, EjsObj *unused, int argc, EjsObj **argv)
 {
     MprNumber   x, y;
     
     x = ejsGetNumber(ejs, argv[0]);
     y = ejsGetNumber(ejs, argv[1]);
     if (x > y) {
-        return argv[0];
+        return (EjsNumber*) argv[0];
     }
-    return argv[1];
+    return (EjsNumber*) argv[1];
 }
 
 
@@ -152,7 +149,7 @@ static EjsObj *math_min(Ejs *ejs, EjsObj *unused, int argc, EjsObj **argv)
 /*
     function pow(x: Number, y: Number): Number
  */
-static EjsObj *math_pow(Ejs *ejs, EjsObj *unused, int argc, EjsObj **argv)
+static EjsNumber *math_pow(Ejs *ejs, EjsObj *unused, int argc, EjsObj **argv)
 {
     MprNumber   x, y, result;
     
@@ -165,14 +162,14 @@ static EjsObj *math_pow(Ejs *ejs, EjsObj *unused, int argc, EjsObj **argv)
         result = -result;
     }
 #endif
-    return (EjsObj*) ejsCreateNumber(ejs, (MprNumber) result);
+    return ejsCreateNumber(ejs, (MprNumber) result);
 }
 
 
 /*
     function random(value: Number): Number
  */
-static EjsObj *math_random(Ejs *ejs, EjsObj *unused, int argc, EjsObj **argv)
+static EjsNumber *math_random(Ejs *ejs, EjsObj *unused, int argc, EjsObj **argv)
 {
     MprNumber   value;
     uint        uvalue;
@@ -208,15 +205,15 @@ static EjsObj *math_random(Ejs *ejs, EjsObj *unused, int argc, EjsObj **argv)
     }
 }
 #endif
-    value = ((MprNumber) (uvalue & 0x7FFFFFFF)) / INT_MAX;
-    return (EjsObj*) ejsCreateNumber(ejs, value);
+    value = ((MprNumber) (uvalue & 0x7FFFFFFF)) / MAXINT;
+    return ejsCreateNumber(ejs, value);
 }
 
 
 /*
     function round(value: Number): Number
  */
-static EjsObj *math_round(Ejs *ejs, EjsObj *unused, int argc, EjsObj **argv)
+static EjsNumber *math_round(Ejs *ejs, EjsObj *unused, int argc, EjsObj **argv)
 {
     MprNumber   n;
 
@@ -226,34 +223,34 @@ static EjsObj *math_round(Ejs *ejs, EjsObj *unused, int argc, EjsObj **argv)
     } else {
         n += 0.5;
     }
-    return (EjsObj*) ejsCreateNumber(ejs, floor(n));
+    return ejsCreateNumber(ejs, floor(n));
 }
 
 
 /*
     function sin(value: Number): Number
  */
-static EjsObj *math_sin(Ejs *ejs, EjsObj *unused, int argc, EjsObj **argv)
+static EjsNumber *math_sin(Ejs *ejs, EjsObj *unused, int argc, EjsObj **argv)
 {
-    return (EjsObj*) ejsCreateNumber(ejs, (MprNumber) sin(ejsGetNumber(ejs, argv[0])));
+    return ejsCreateNumber(ejs, (MprNumber) sin(ejsGetNumber(ejs, argv[0])));
 }
 
 
 /*
     function sqrt(value: Number): Number
  */
-static EjsObj *math_sqrt(Ejs *ejs, EjsObj *unused, int argc, EjsObj **argv)
+static EjsNumber *math_sqrt(Ejs *ejs, EjsObj *unused, int argc, EjsObj **argv)
 {
-    return (EjsObj*) ejsCreateNumber(ejs, (MprNumber) sqrt(ejsGetNumber(ejs, argv[0])));
+    return ejsCreateNumber(ejs, (MprNumber) sqrt(ejsGetNumber(ejs, argv[0])));
 }
 
 
 /*
     function tan(value: Number): Number
  */
-static EjsObj *math_tan(Ejs *ejs, EjsObj *unused, int argc, EjsObj **argv)
+static EjsNumber *math_tan(Ejs *ejs, EjsObj *unused, int argc, EjsObj **argv)
 {
-    return (EjsObj*) ejsCreateNumber(ejs, (MprNumber) tan(ejsGetNumber(ejs, argv[0])));
+    return ejsCreateNumber(ejs, (MprNumber) tan(ejsGetNumber(ejs, argv[0])));
 }
 
 
@@ -263,29 +260,28 @@ void ejsConfigureMathType(Ejs *ejs)
 {
     EjsType     *type;
 
-    type = ejsConfigureNativeType(ejs, N("ejs", "Math"), sizeof(EjsObj), NULL, EJS_OBJ_HELPERS);
-#if UNUSED
-    ejsSetSpecialType(ejs, S_Math, type);
-#endif
-    ejsBindMethod(ejs, type, ES_Math_abs, (EjsProc) math_abs);
-    ejsBindMethod(ejs, type, ES_Math_acos, (EjsProc) math_acos);
-    ejsBindMethod(ejs, type, ES_Math_asin, (EjsProc) math_asin);
-    ejsBindMethod(ejs, type, ES_Math_atan, (EjsProc) math_atan);
-    ejsBindMethod(ejs, type, ES_Math_atan2, (EjsProc) math_atan2);
-    ejsBindMethod(ejs, type, ES_Math_ceil, (EjsProc) math_ceil);
-    ejsBindMethod(ejs, type, ES_Math_cos, (EjsProc) math_cos);
-    ejsBindMethod(ejs, type, ES_Math_exp, (EjsProc) math_exp);
-    ejsBindMethod(ejs, type, ES_Math_floor, (EjsProc) math_floor);
-    ejsBindMethod(ejs, type, ES_Math_log, (EjsProc) math_log);
-    ejsBindMethod(ejs, type, ES_Math_log10, (EjsProc) math_log10);
-    ejsBindMethod(ejs, type, ES_Math_max, (EjsProc) math_max);
-    ejsBindMethod(ejs, type, ES_Math_min, (EjsProc) math_min);
-    ejsBindMethod(ejs, type, ES_Math_pow, (EjsProc) math_pow);
-    ejsBindMethod(ejs, type, ES_Math_random, (EjsProc) math_random);
-    ejsBindMethod(ejs, type, ES_Math_round, (EjsProc) math_round);
-    ejsBindMethod(ejs, type, ES_Math_sin, (EjsProc) math_sin);
-    ejsBindMethod(ejs, type, ES_Math_sqrt, (EjsProc) math_sqrt);
-    ejsBindMethod(ejs, type, ES_Math_tan, (EjsProc) math_tan);
+    if ((type = ejsFinalizeScriptType(ejs, N("ejs", "Math"), sizeof(EjsPot), ejsManagePot, EJS_TYPE_POT)) == 0) {
+        return;
+    }
+    ejsBindMethod(ejs, type, ES_Math_abs, math_abs);
+    ejsBindMethod(ejs, type, ES_Math_acos, math_acos);
+    ejsBindMethod(ejs, type, ES_Math_asin, math_asin);
+    ejsBindMethod(ejs, type, ES_Math_atan, math_atan);
+    ejsBindMethod(ejs, type, ES_Math_atan2, math_atan2);
+    ejsBindMethod(ejs, type, ES_Math_ceil, math_ceil);
+    ejsBindMethod(ejs, type, ES_Math_cos, math_cos);
+    ejsBindMethod(ejs, type, ES_Math_exp, math_exp);
+    ejsBindMethod(ejs, type, ES_Math_floor, math_floor);
+    ejsBindMethod(ejs, type, ES_Math_log, math_log);
+    ejsBindMethod(ejs, type, ES_Math_log10, math_log10);
+    ejsBindMethod(ejs, type, ES_Math_max, math_max);
+    ejsBindMethod(ejs, type, ES_Math_min, math_min);
+    ejsBindMethod(ejs, type, ES_Math_pow, math_pow);
+    ejsBindMethod(ejs, type, ES_Math_random, math_random);
+    ejsBindMethod(ejs, type, ES_Math_round, math_round);
+    ejsBindMethod(ejs, type, ES_Math_sin, math_sin);
+    ejsBindMethod(ejs, type, ES_Math_sqrt, math_sqrt);
+    ejsBindMethod(ejs, type, ES_Math_tan, math_tan);
 }
 
 

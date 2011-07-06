@@ -15,6 +15,7 @@
      */
     var defaults = {
         "updating": true,
+        //  ESC to toggle updating
         "toggle-updating": 27
     }
     $.fn.extend({
@@ -125,9 +126,12 @@
      */
     function request() {
         var el          = $(this);
+
+        //  MOB - when is data-click-method used and when data-method
+        //  MOB -- really should pair these. If method uses data-click-method, then params must be data-click-params
         var method      = el.attr('data-click-method') || el.attr('data-method') || 'GET';
         var url         = el.attr('data-click') || el.attr('action') || el.attr('href');
-        var params      = el.attr('data-click-params');
+        var params      = el.attr('data-click-params') || el.attr('data-params');
 
         if (url === undefined) {
             alert("No URL specified");
@@ -145,9 +149,11 @@
                     append('<input name="-ejs-method-" value="' + method + '" type="hidden" />').
                     append('<input name="' + tokenName + '" value="' + token + '" type="hidden" />');
                 if (params) {
+                    params = params.split("&")
+                    var k;
                     for (k in params) {
-                        param = params[k];
-                        pair = param.split("=")
+                        var param = params[k];
+                        var pair = param.split("=")
                         form.append('<input name="' + pair[0] + '" value="' + pair[1] + '" type="hidden" />');
                     }
                 }
@@ -182,7 +188,7 @@
     }
 
     /*
-        Refresh dynamic elements using a data-refresh attribugte
+        Refresh dynamic elements using a data-refresh attributes
      */
     function refresh(options) {
         function anim() {
@@ -190,8 +196,8 @@
             var o = e.data("ejs-options")
             var effects = o.effects;
             if (effects == "highlight") {
-                e.fadeTo(0, 0.3);
-                e.fadeTo(750, 1);
+                e.fadeTo(0, 0.5);
+                e.fadeTo(500, 1);
             } else if (effects == "fadein") {
                 e.fadeTo(0, 0);
                 e.fadeTo(1000, 1);
@@ -199,14 +205,15 @@
                 e.fadeTo(0, 1);
                 e.fadeTo(1000, 0);
             } else if (effects == "bold") {
-                /* Broken */
+                /* MOB Broken */
                 e.css("font-weight", 100);
-                e.animate({"opacity": 0.1, "font-weight": 900}, 1000);
+                // e.animate({"opacity": 0.1, "font-weight": 900}, 1000);
+                e.animate({"font-weight": 900}, 1000);
             }
         }
 
         function applyData(data, http) {
-            var d, id, oldID, newElt, isHtml = false;
+            var d, id, oldID, newElt;
 
             var id = this.attr("id");
             var apply = this.attr('data-apply') || id;
@@ -214,51 +221,57 @@
             var o = e.data("ejs-options");
             var contentType = http.getResponseHeader("Content-Type") || "text/html";
 
-            if (contentType == "text/html") {
-                try {
+            try {
+                if (contentType == "text/html") {
                     /* Copy old element options and id */
-                    data = $(data);
-                    data.data("ejs-options", o);
-                    data.attr("id", id);
-                    copyDataAttributes.call(data, e);
-                    isHtml = true;
-                } catch (e) {
-                    console.debug(e);
-                }
-            }
-            if (isHtml) {
-                if (e[0] && e[0].tagName == "TABLE") {
-                    /* Copy tablesorter data and config and re-sort the data before displaying */
-                    data.data("tablesorter", e.data("tablesorter"));
-                    var config = data[0].config = e[0].config;
-                    data.tablesorter({ sortList: config.sortList });
-                }
-                e.replaceWith(data);
-                e = data;
-
-            } else {
-                d = e[0];
-                if (d.type == "checkbox") {
-                    if (data == e.val()) {
-                        e.attr("checked", "yes")
-                    } else {
-                        e.removeAttr("checked")
+                    data = $.trim(data);
+                    var elt = $(data);
+                    elt.data("ejs-options", o);
+                    elt.attr("id", id);
+                    copyDataAttributes.call(elt, e);
+                    if (e[0] && e[0].tagName == "TABLE") {
+                        /* Copy tablesorter data and config and re-sort the data before displaying */
+                        elt.data("tablesorter", e.data("tablesorter"));
+                        var config = data[0].config = e[0].config;
+                        if (config) {
+                            elt.tablesorter({ sortList: config.sortList });
+                        }
                     }
-                } else if (d.type == "radio") {
-                    //  MOB BROKEN
-                    if (data == e.val()) {
-                        e.attr("checked", "yes")
-                    } else {
-                        e.removeAttr("checked")
-                    }
-                } else if (d.type == "text" || d.type == "textarea") {
-                    e.val(data);
-                } else if (d.tagName == "IMG") {
-                    e.attr("src", data)
-                    // var img = $('<img />').attr('src', data);
+                    /* FUTURE - compare outerHTML
+                        var a = $('<div>').append(e.clone()).html();
+                        var b = $.trim(data);
+                        if (a == b) {
+                            log("SAME");
+                        }
+                    */
+                    e.replaceWith(elt);
+                    e = elt;
                 } else {
-                    e.text(data);
+                    d = e[0];
+                    if (d.type == "checkbox") {
+                        if (data == e.val()) {
+                            e.attr("checked", "yes")
+                        } else {
+                            e.removeAttr("checked")
+                        }
+                    } else if (d.type == "radio") {
+                        //  MOB BROKEN
+                        if (data == e.val()) {
+                            e.attr("checked", "yes")
+                        } else {
+                            e.removeAttr("checked")
+                        }
+                    } else if (d.type == "text" || d.type == "textarea") {
+                        e.val(data);
+                    } else if (d.tagName == "IMG") {
+                        e.attr("src", data)
+                        // var img = $('<img />').attr('src', data);
+                    } else {
+                        e.text(data);
+                    }
                 }
+            } catch (e) {
+                console.debug(e);
             }
             anim.call(e);
             return e;
@@ -266,6 +279,8 @@
 
         function update(options) {
             var elt = $(this);
+            var id = elt.attr("id");
+            //  MOB - what about defaults?
             var o = $.extend({}, options, elt.data("ejs-options") || {}, getDataAttributes(elt));
             elt.data("ejs-options", o);
             if (o.updating) {
@@ -297,35 +312,49 @@
                 setTimeout(function(elt) { update.call(elt, o);}, o["refresh-period"], elt);
             }
             if (!o.bound) {
-                $(document).bind('keyup.refresh', function(event) {
+                $(document).bind('keyup.refresh', function (event) {
                     if (event.keyCode == o["toggle-updating"]) {
-                        $('[data-refresh]').each(toggleUpdating);
+                        /* Need to refetch as the elements has probably been replaced */
+                        toggleUpdating.call($('[id=' + id + ']'));
                     }
                 });
                 o.bound = true;
             }
         }
+
+        /*
+            Initialze the refresh
+         */
         var elt = $(this);
         var refreshCfg = $.extend({}, defaults, options || {});
-        update.call(elt, refreshCfg);
+        var period = getDataAttributes(elt)["refresh-period"];
+        setTimeout(function(elt) { 
+            update.call(elt, refreshCfg); 
+        }, period, elt);
         return this;
     }
 
+    /* Used for keyboard on the refresh control */
     function toggleUpdating() {
         elt = $(this);
         var o = elt.data("ejs-options");
         if (o) {
             o.updating = !o.updating;
+            elt.data("ejs-options", o);
         }
-        /* FUTURE
-            var image = $(".-ejs-table-download", e.get(0));
-            if (o.updating) {
-                image.src = image.src.replace(/red/, "green");
-            } else {
-                image.src = image.src.replace(/green/, "red");
-            }
-        */
     }
+
+    function toggleRefreshControl(event) {
+        if (event == null || event.keyCode == defaults["toggle-updating"]) {
+            var e = $("[class~=-ejs-refresh]");
+            if (e.attr("src") == e.attr("data-off")) {
+                e.attr("src", e.attr("data-on"));
+            } else {
+                e.attr("src", e.attr("data-off"));
+            }
+        }
+    }
+    $(document).bind('keyup.refresh', toggleRefreshControl);
 
     /***************************************** Live Attach to Elements ***************************************/
 
@@ -400,6 +429,12 @@
         return false
     });
 
+    $('[data-click] a').live('click', function (e) {
+        // window.location = $(this).attr('href');
+        request.apply(this);
+        return false;
+    });
+
     /* Click on anything with data-click */
     $('[data-click]').live('click', function (e) {
         request.apply(this);
@@ -434,6 +469,14 @@
         window.status = "";
     });
 
+    $("[class~=-ejs-refresh]").live('click', function (e) {
+        $('[data-refresh]').each(function() {
+            toggleUpdating.call(this);
+        });
+        toggleRefreshControl();
+        return false;
+    });
+
 /////////////////////////////////////////
 /*  MOB -- TODO - fix location 
     //  MOB -- rename change Address
@@ -453,7 +496,7 @@
     $.address.init(function(e) {
         console.log("INIT CALLBACK");
     });
-    $.address.title("MOB");
+    $.address.title("SOMETHING");
     $.address.value("ABC");
 */
 

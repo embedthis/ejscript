@@ -12,9 +12,9 @@
 /*
     native static function get enabled(): Boolean
  */
-static EjsObj *gc_enabled(Ejs *ejs, EjsObj *thisObj, int argc, EjsObj **argv)
+static EjsBoolean *gc_enabled(Ejs *ejs, EjsObj *thisObj, int argc, EjsObj **argv)
 {
-    return (EjsObj*) ((mprGetMpr()->heap.enabled) ? S(true): S(false));
+    return ((mprGetMpr()->heap.enabled) ? ESV(true): ESV(false));
 }
 
 
@@ -31,15 +31,15 @@ static EjsObj *gc_set_enabled(Ejs *ejs, EjsObj *thisObj, int argc, EjsObj **argv
 
 /*
     run(deep: Boolean = false)
-    MOB -- change args to be a string "check", "all"
+    TODO -- change args to be a string "check", "all"
  */
 static EjsObj *gc_run(Ejs *ejs, EjsObj *thisObj, int argc, EjsObj **argv)
 {
     int     deep;
 
-    mprAssert(!ejs->state->frozen);
+    mprAssert(!ejs->state->paused);
     
-    if (!ejs->state->frozen) {
+    if (!ejs->state->paused) {
         deep = ((argc == 1) && ejsIs(ejs, argv[1], Boolean));
         mprRequestGC(MPR_FORCE_GC | (deep ? MPR_COMPLETE_GC : 0));
     }
@@ -50,9 +50,9 @@ static EjsObj *gc_run(Ejs *ejs, EjsObj *thisObj, int argc, EjsObj **argv)
 /*
     native static function get newQuota(): Number
  */
-static EjsObj *gc_newQuota(Ejs *ejs, EjsObj *thisObj, int argc, EjsObj **argv)
+static EjsNumber *gc_newQuota(Ejs *ejs, EjsObj *thisObj, int argc, EjsObj **argv)
 {
-    return (EjsObj*) ejsCreateNumber(ejs, mprGetMpr()->heap.newQuota);
+    return ejsCreateNumber(ejs, mprGetMpr()->heap.newQuota);
 }
 
 
@@ -89,16 +89,13 @@ void ejsConfigureGCType(Ejs *ejs)
 {
     EjsType         *type;
 
-    if ((type = ejsGetTypeByName(ejs, N("ejs", "GC"))) == 0) {
-        mprError("Can't find GC type");
+    if ((type = ejsFinalizeScriptType(ejs, N("ejs", "GC"), sizeof(EjsPot), ejsManagePot, EJS_TYPE_POT)) == 0) {
         return;
     }
     ejsBindAccess(ejs, type, ES_GC_enabled, gc_enabled, gc_set_enabled);
     ejsBindAccess(ejs, type, ES_GC_newQuota, gc_newQuota, gc_set_newQuota);
     ejsBindMethod(ejs, type, ES_GC_run, gc_run);
-#if ES_GC_verify
     ejsBindMethod(ejs, type, ES_GC_verify, gc_verify);
-#endif
 }
 
 /*

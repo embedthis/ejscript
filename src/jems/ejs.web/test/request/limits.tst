@@ -5,6 +5,7 @@ require ejs.web
 
 const HTTP = ":" + (App.config.test.http_port || "6700")
 
+breakpoint()
 server = new HttpServer
 server.listen(HTTP)
 load("../utils.es")
@@ -16,13 +17,13 @@ server.on("readable", function (event, request: Request) {
     case "/init":
         assert(l)
         assert(l.chunk > 1024)
-        assert(l.receive > 1024 * 1024)
-        assert(l.reuse == 100)
-        assert(l.transmission > 1024 * 1024)
-        assert(l.upload > 1024 * 1024)
+        assert(l.connReuse == 100)
         assert(l.inactivityTimeout == 60)
+        assert(l.receive > 1024 * 1024)
         assert(l.requestTimeout > 1000000)
         assert(l.sessionTimeout == 3600)
+        assert(l.transmission > 1024 * 1024)
+        assert(l.upload > 1024 * 1024)
         assert(l.chunk > 0)
         finalize()
         break
@@ -56,14 +57,17 @@ server.on("readable", function (event, request: Request) {
 
 //  Test initialization of limits
 let http = fetch(HTTP + "/init")
+
 assert(http.response == "")
 http.close()
+
 
 //  Test transmission limit
 let http = fetch(HTTP + "/transmission", Http.EntityTooLarge)
 assert(http.status == Http.EntityTooLarge)
 assert(http.response.contains("Exceeded transmission max body of 10 bytes"))
 http.close()
+
 
 //  Test receive limit
 let http = new Http
@@ -74,10 +78,11 @@ assert(http.status == Http.EntityTooLarge)
 assert(http.response.contains("Request body of 21 bytes is too big. Limit 10"))
 http.close()
 
+
 //  Test inactivityTimeout
 let http = fetch(HTTP + "/inactivity", Http.RequestTimeout)
 assert(http.status == Http.RequestTimeout)
-assert(http.response.contains("Inactive request timed out. Exceeded inactivity timeout of 1 sec"))
+assert(http.response.contains("Exceeded inactivity timeout of 1 sec"))
 http.close()
 
 server.close()

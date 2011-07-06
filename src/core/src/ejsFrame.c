@@ -18,13 +18,7 @@ static void manageFrame(EjsFrame *frame, int flags)
             ejsManageFunction((EjsFunction*) frame, flags);
             mprMark(frame->orig);
             mprMark(frame->caller);
-            //  MOB -- is this needed?
             mprMark(TYPE(frame));
-            /* Marking the stack is done in ejsGarbage.c:mark() */
-#if BLD_DEBUG && UNUSED
-            mprMark(frame->loc.source);
-            mprMark(frame->loc.filename);
-#endif
         }
     }
 }
@@ -33,7 +27,7 @@ static void manageFrame(EjsFrame *frame, int flags)
 static EjsFrame *allocFrame(Ejs *ejs, int numProp)
 {
     EjsObj      *obj;
-    uint        size;
+    ssize       size;
 
     mprAssert(ejs);
 
@@ -43,7 +37,7 @@ static EjsFrame *allocFrame(Ejs *ejs, int numProp)
         return 0;
     }
     mprSetManager(obj, manageFrame);
-    SET_TYPE(obj, ST(Frame));
+    SET_TYPE(obj, ESV(Frame));
     ejsSetMemRef(obj);
     return (EjsFrame*) obj;
 }
@@ -56,7 +50,7 @@ EjsFrame *ejsCreateCompilerFrame(Ejs *ejs, EjsFunction *fun)
 {
     EjsFrame    *fp;
 
-    if ((fp = ejsCreatePot(ejs, ST(Frame), 0)) == 0) {
+    if ((fp = ejsCreatePot(ejs, ESV(Frame), 0)) == 0) {
         return 0;
     }
     fp->orig = fun;
@@ -87,13 +81,13 @@ EjsFrame *ejsCreateFrame(Ejs *ejs, EjsFunction *fun, EjsObj *thisObj, int argc, 
     obj->properties->size = size;
     obj->numProp = numProp;
     if (activation) {
-        //  MOB -- could the function be setup as the prototype and thus avoid doing this?
-        //  MOB -- assumes that the function is sealed
+        //  OPT -- could the function be setup as the prototype and thus avoid doing this?
+        //  OPT -- assumes that the function is sealed
         memcpy(obj->properties->slots, activation->properties->slots, numProp * sizeof(EjsSlot));
         ejsMakeHash(ejs, obj);
     }
     ejsZeroSlots(ejs, &obj->properties->slots[numProp], size - numProp);
-    //  MOB - should not need to do this
+    //  OPT - should not need to do this
     SET_DYNAMIC(obj, 1);
 
     frame->orig = fun;
@@ -106,8 +100,7 @@ EjsFrame *ejsCreateFrame(Ejs *ejs, EjsFunction *fun, EjsObj *thisObj, int argc, 
     frame->function.block.breakCatch = fun->block.breakCatch;
     frame->function.block.nobind = fun->block.nobind;
 
-    //  MOB -- check these
-    //  MOB - OPT
+    //  OPT
     frame->function.numArgs = fun->numArgs;
     frame->function.numDefault = fun->numDefault;
     frame->function.castNulls = fun->castNulls;
@@ -122,10 +115,10 @@ EjsFrame *ejsCreateFrame(Ejs *ejs, EjsFunction *fun, EjsObj *thisObj, int argc, 
     frame->function.throwNulls = fun->throwNulls;
 
     frame->function.boundArgs = fun->boundArgs;
-    frame->function.boundThis = fun->boundThis;
-    if (thisObj) {
-        frame->function.boundThis = thisObj;
-    }
+
+    /* NOTE: this can be set to ejs->global in frames */
+    frame->function.boundThis = thisObj;
+    
     frame->function.resultType = fun->resultType;
     frame->function.body = fun->body;
     frame->pc = fun->body.code->byteCode;
@@ -141,7 +134,8 @@ EjsFrame *ejsCreateFrame(Ejs *ejs, EjsFunction *fun, EjsObj *thisObj, int argc, 
             frame->function.block.pot.properties->slots[i].value.ref = argv[i];
         }
     }
-    mprCopyName(frame, fun);
+    //  UNICODE
+    mprSetName(frame, fun->name->value);
     return frame;
 }
 
@@ -150,10 +144,21 @@ void ejsCreateFrameType(Ejs *ejs)
 {
     EjsType     *type;
 
-    type = ejsCreateNativeType(ejs, N("ejs", "Frame"), sizeof(EjsFrame), S_Frame, ES_Frame_NUM_CLASS_PROP,
-        manageFrame, EJS_POT_HELPERS);
-    ejsSetTypeAttributes(type, EJS_TYPE_DYNAMIC_INSTANCE);
+    type = ejsCreateCoreType(ejs, N("ejs", "Frame"), sizeof(EjsFrame), S_Frame, ES_Frame_NUM_CLASS_PROP,
+        manageFrame, EJS_TYPE_POT | EJS_TYPE_DYNAMIC_INSTANCES | EJS_TYPE_MUTABLE_INSTANCES);
     type->constructor.block.pot.shortScope = 1;
+    type->configured = 1;
+    type->helpers.clone = (EjsCloneHelper) ejsCloneBlock;
+}
+
+
+void ejsConfigureFrameType(Ejs *ejs)
+{
+    EjsType     *type;
+
+    if ((type = ejsFinalizeCoreType(ejs, N("ejs", "Frame"))) == 0) {
+        return;
+    }
 }
 
 

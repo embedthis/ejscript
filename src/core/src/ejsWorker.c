@@ -11,7 +11,6 @@
 
 typedef struct Message {
     EjsWorker   *worker;
-    //  MOB - rename
     cchar       *callback;
     char        *data;
     EjsObj      *message;
@@ -30,37 +29,21 @@ static int workerMain(EjsWorker *worker, MprEvent *event);
 static EjsObj *workerPreload(Ejs *ejs, EjsWorker *worker, int argc, EjsObj **argv);
 
 /************************************ Methods *********************************/
-/*
-    function Worker(script: String = null, options: Object = null)
 
-    Script is optional. If supplied, the script is run immediately by a worker thread. This call
-    does not block. Options are: search and name.
- */
-static EjsObj *workerConstructor(Ejs *ejs, EjsWorker *worker, int argc, EjsObj **argv)
+static EjsWorker *initWorker(Ejs *ejs, EjsWorker *worker, Ejs *baseVM, cchar *name, EjsArray *search, cchar *scriptFile)
 {
     Ejs             *wejs;
-    EjsObj          *options, *value, *search;
     EjsWorker       *self;
-    EjsNamespace    *ns;
     EjsName         sname;
-    cchar           *name;
     static int      workerSeqno = 0;
 
-    ejsFreeze(ejs, 1);
+    ejsPauseGC(ejs);
+    if (worker == 0) {
+        worker = ejsCreateWorker(ejs);
+    }
     worker->ejs = ejs;
     worker->state = EJS_WORKER_BEGIN;
 
-    options = (argc == 2) ? (EjsObj*) argv[1]: NULL;
-    name = 0;
-    search = 0;
-
-    if (options) {
-        search = ejsGetPropertyByName(ejs, options, EN("search"));
-        value = ejsGetPropertyByName(ejs, options, EN("name"));
-        if (ejsIs(ejs, value, String)) {
-            name = ejsToMulti(ejs, value);
-        }
-    }
     if (name) {
         worker->name = sclone(name);
     } else {
@@ -73,9 +56,19 @@ static EjsObj *workerConstructor(Ejs *ejs, EjsWorker *worker, int argc, EjsObj *
         Create a new interpreter and an "inside" worker object and pair it with the current "outside" worker.
         The worker interpreter gets a new dispatcher
      */
-    if ((wejs = ejsCreate(NULL, NULL, NULL, 0, NULL, 0)) == 0) {
-        ejsThrowMemoryError(ejs);
-        return 0;
+    if (baseVM) {
+        if ((wejs = ejsCloneVM(baseVM)) == 0) {
+            ejsThrowMemoryError(ejs);
+            return 0;
+        }
+    } else {
+        if ((wejs = ejsCreateVM(0, 0, ejs->flags)) == 0) {
+            ejsThrowMemoryError(ejs);
+            return 0;
+        }
+        if (ejsLoadModules(wejs, 0, 0) < 0) {
+            return 0;
+        }
     }
     worker->pair = self = ejsCreateWorker(wejs);
     self->state = EJS_WORKER_BEGIN;
@@ -98,18 +91,45 @@ static EjsObj *workerConstructor(Ejs *ejs, EjsWorker *worker, int argc, EjsObj *
     /*
         Workers have a dedicated namespace to enable viewing of the worker globals (self, onmessage, postMessage...)
      */
-    ns = ejsDefineReservedNamespace(wejs, wejs->global, NULL, EJS_WORKER_NAMESPACE);
+    ejsDefineReservedNamespace(wejs, wejs->global, NULL, EJS_WORKER_NAMESPACE);
+    
+    addWorker(ejs, worker);
 
-    if (argc > 0 && ejsIs(ejs, argv[0], Path)) {
-        addWorker(ejs, worker);
-        worker->scriptFile = sclone(((EjsPath*) argv[0])->value);
+    if (scriptFile) {
+        worker->scriptFile = sclone(scriptFile);
         worker->state = EJS_WORKER_STARTED;
         if (mprCreateEvent(wejs->dispatcher, "workerMain", 0, (MprEventProc) workerMain, self, 0) < 0) {
+            mprRemoveItem(ejs->workers, worker);
             ejsThrowStateError(ejs, "Can't create worker event");
             return 0;
         }
     }
-    return (EjsObj*) worker;
+    return worker;
+}
+
+
+static EjsWorker *workerConstructor(Ejs *ejs, EjsWorker *worker, int argc, EjsObj **argv)
+{
+    EjsArray    *search;
+    EjsObj      *options, *value;
+    cchar       *name, *scriptFile;
+
+    ejsPauseGC(ejs);
+
+    scriptFile = (argc >= 1) ? ((EjsPath*) argv[0])->value : 0;
+    options = (argc == 2) ? (EjsObj*) argv[1]: NULL;
+    name = 0;
+    search = 0;
+    if (options) {
+        search = ejsGetPropertyByName(ejs, options, EN("search"));
+        value = ejsGetPropertyByName(ejs, options, EN("name"));
+        if (ejsIs(ejs, value, String)) {
+            name = ejsToMulti(ejs, value);
+        }
+    }
+    worker->ejs = ejs;
+    worker->state = EJS_WORKER_BEGIN;
+    return initWorker(ejs, worker, 0, name, search, scriptFile);
 }
 
 
@@ -123,9 +143,8 @@ static void addWorker(Ejs *ejs, EjsWorker *worker)
     mprAssert(worker->state == EJS_WORKER_BEGIN);
     mprAssert(!worker->inside);
 
-    //  MOB - locking not needed
+    //  OPT - locking not needed
     lock(ejs);
-    //  MOB
     mprAssert(ejs->workers->length < 10);
     mprAddItem(ejs->workers, worker);
     unlock(ejs);
@@ -150,7 +169,6 @@ static void removeWorker(EjsWorker *worker)
         }
         /* Accelerate GC */
         if (worker->pair) {
-            worker->pair->ejs->workerComplete = 1;
             worker->pair->ejs = 0;
             worker->pair->pair = 0;
             worker->pair = 0;
@@ -183,7 +201,7 @@ static EjsObj *startWorker(Ejs *ejs, EjsWorker *outsideWorker, int timeout)
 {
     EjsWorker   *insideWorker;
     Ejs         *inside;
-    EjsObj      *result;
+    EjsString   *result;
 
     mprAssert(ejs);
     mprAssert(outsideWorker);
@@ -203,7 +221,6 @@ static EjsObj *startWorker(Ejs *ejs, EjsWorker *outsideWorker, int timeout)
     mprAssert(insideWorker->state == EJS_WORKER_BEGIN);
     inside = insideWorker->ejs;
 
-    addWorker(ejs, outsideWorker);
     outsideWorker->state = EJS_WORKER_STARTED;
 
     if (mprCreateEvent(inside->dispatcher, "workerMain", 0, (MprEventProc) workerMain, insideWorker, 0) < 0) {
@@ -211,24 +228,42 @@ static EjsObj *startWorker(Ejs *ejs, EjsWorker *outsideWorker, int timeout)
         return 0;
     }
     if (timeout == 0) {
-        return S(undefined);
+        return ESV(undefined);
     } 
     if (timeout < 0) {
         timeout = MAXINT;
     }
     if (join(ejs, (EjsObj*) outsideWorker, timeout) < 0) {
-        return S(undefined);
+        return ESV(undefined);
     }
-    result = (EjsObj*) ejsToJSON(inside, inside->result, NULL);
+    result = ejsToJSON(inside, inside->result, NULL);
     if (result == 0) {
-        return S(null);
+        return ESV(null);
     }
-    return ejsDeserialize(ejs, (EjsString*) result);
+    return ejsDeserialize(ejs, result);
 }
 
 
 /*
-    function eval(script: String, timeout: Boolean = -1): String
+    function clone(deep: Boolean = null): Worker
+ */
+static EjsWorker *workerClone(Ejs *ejs, EjsWorker *baseWorker, int argc, EjsObj **argv)
+{
+    return initWorker(ejs, 0, baseWorker->pair->ejs, 0, 0, 0);
+}
+
+
+/*
+    static function fork(): Worker
+ */
+static EjsWorker *workerFork(Ejs *ejs, EjsWorker *unused, int argc, EjsObj **argv)
+{
+    return initWorker(ejs, 0, ejs, 0, 0, 0);
+}
+
+
+/*
+    function eval(script: String, timeout: Boolean = -1): Obj
  */
 static EjsObj *workerEval(Ejs *ejs, EjsWorker *worker, int argc, EjsObj **argv)
 {
@@ -293,7 +328,7 @@ static int reapJoins(Ejs *ejs, EjsObj *workers)
         if (completed == set->length) {
             joined = 1;
         }
-    } else if (TYPE(workers) == ST(Worker)) {
+    } else if (TYPE(workers) == ESV(Worker)) {
         /* Join one worker */
         worker = (EjsWorker*) workers;
         if (worker->state >= EJS_WORKER_COMPLETE) {
@@ -355,7 +390,7 @@ static EjsObj *workerJoin(Ejs *ejs, EjsWorker *unused, int argc, EjsObj **argv)
     timeout = (argc == 2) ? ejsGetInt(ejs, argv[1]) : MAXINT;
     mprAssert(!MPR->marking);
 
-    return (join(ejs, workers, timeout) == 0) ? S(true): S(false);
+    return (join(ejs, workers, timeout) == 0) ? ESV(true): ESV(false);
 }
 
 
@@ -365,15 +400,12 @@ static EjsObj *workerJoin(Ejs *ejs, EjsWorker *unused, int argc, EjsObj **argv)
 static void loadFile(EjsWorker *worker, cchar *path)
 {
     Ejs         *ejs;
-    EjsObj      *result;
     cchar       *cp;
 
     mprAssert(worker->inside);
     mprAssert(worker->pair && worker->pair->ejs);
 
     ejs = worker->ejs;
-    result = 0;
-
     if ((cp = strrchr(path, '.')) != NULL && strcmp(cp, EJS_MODULE_EXT) != 0) {
         if (ejs->service->loadScriptFile == 0) {
             ejsThrowIOError(ejs, "load: Compiling is not enabled for %s", path);
@@ -406,7 +438,7 @@ static EjsObj *workerLoad(Ejs *ejs, EjsWorker *worker, int argc, EjsObj **argv)
 /*
     static function lookup(name: String): Worker
  */
-static EjsObj *workerLookup(Ejs *ejs, EjsObj *unused, int argc, EjsObj **argv)
+static EjsWorker *workerLookup(Ejs *ejs, EjsObj *unused, int argc, EjsObj **argv)
 {
     EjsWorker   *worker;
     cchar       *name;
@@ -417,11 +449,11 @@ static EjsObj *workerLookup(Ejs *ejs, EjsObj *unused, int argc, EjsObj **argv)
     for (next = 0; (worker = mprGetNextItem(ejs->workers, &next)) != NULL; ) {
         if (worker->name && strcmp(name, worker->name) == 0) {
             unlock(ejs);
-            return (EjsObj*) worker;
+            return worker;
         }
     }
     unlock(ejs);
-    return S(null);
+    return ESV(null);
 }
 
 
@@ -441,18 +473,18 @@ static int doMessage(Message *msg, MprEvent *mprEvent)
     worker->gotMessage = 1;
     ejs = worker->ejs;
     event = 0;
-    ejsFreeze(ejs, 1);
+    ejsPauseGC(ejs);
 
     callback = ejsGetProperty(ejs, worker, msg->callbackSlot);
 
     switch (msg->callbackSlot) {
     case ES_Worker_onerror:
-        event = ejsCreateObj(ejs, ST(ErrorEvent), 0);
+        event = ejsCreateObj(ejs, ESV(ErrorEvent), 0);
         break;
             
     case ES_Worker_onclose:
     case ES_Worker_onmessage:
-        event = ejsCreateObj(ejs, ST(Event), 0);
+        event = ejsCreateObj(ejs, ESV(Event), 0);
         break;
             
     default:
@@ -508,14 +540,14 @@ static int doMessage(Message *msg, MprEvent *mprEvent)
 
 
 /*
-    function preeval(script: String): String
+    function preeval(script: String): Object
     NOTE: this blocks. 
  */
 static EjsObj *workerPreeval(Ejs *ejs, EjsWorker *worker, int argc, EjsObj **argv)
 {
     Ejs         *inside;
     EjsWorker   *insideWorker;
-    EjsObj      *result;
+    EjsString   *result;
 
     mprAssert(!worker->inside);
 
@@ -532,24 +564,23 @@ static EjsObj *workerPreeval(Ejs *ejs, EjsWorker *worker, int argc, EjsObj **arg
         handleError(ejs, worker, inside->exception, 1);
         return 0;
     }
-    //  MOB - first arg was "ejs"
-    result = (EjsObj*) ejsToJSON(inside, inside->result, NULL);
+    result = ejsToJSON(inside, inside->result, NULL);
     if (result == 0) {
-        return S(null);
+        return ESV(null);
     }
-    return ejsDeserialize(ejs, (EjsString*) result);
+    return ejsDeserialize(ejs, result);
 }
 
 
 /*
-    function preload(path: Path): String
+    function preload(path: Path): Object
     NOTE: this blocks. 
  */
 static EjsObj *workerPreload(Ejs *ejs, EjsWorker *worker, int argc, EjsObj **argv)
 {
     Ejs         *inside;
     EjsWorker   *insideWorker;
-    EjsObj      *result;
+    EjsString   *result;
 
     mprAssert(argc > 0 && ejsIs(ejs, argv[0], Path));
     mprAssert(!worker->inside);
@@ -567,11 +598,11 @@ static EjsObj *workerPreload(Ejs *ejs, EjsWorker *worker, int argc, EjsObj **arg
         handleError(ejs, worker, inside->exception, 1);
         return 0;
     }
-    result = (EjsObj*) ejsToJSON(inside, inside->result, NULL);
+    result = ejsToJSON(inside, inside->result, NULL);
     if (result == 0) {
-        return S(null);
+        return ESV(null);
     }
-    return ejsDeserialize(ejs, (EjsString*) result);
+    return ejsDeserialize(ejs, result);
 }
 
 
@@ -598,7 +629,7 @@ static Message *createMessage()
  */
 static EjsObj *workerPostMessage(Ejs *ejs, EjsWorker *worker, int argc, EjsObj **argv)
 {
-    EjsObj          *data;
+    EjsString       *data;
     EjsWorker       *target;
     MprDispatcher   *dispatcher;
     Message         *msg;
@@ -610,8 +641,8 @@ static EjsObj *workerPostMessage(Ejs *ejs, EjsWorker *worker, int argc, EjsObj *
     /*
         Create the event with serialized data in the originating interpreter. It owns the data.
      */
-    ejsFreeze(ejs, 1);
-    if ((data = (EjsObj*) ejsToJSON(ejs, argv[0], NULL)) == 0) {
+    ejsPauseGC(ejs);
+    if ((data = ejsToJSON(ejs, argv[0], NULL)) == 0) {
         ejsThrowArgError(ejs, "Can't serialize message data");
         return 0;
     }
@@ -626,7 +657,7 @@ static EjsObj *workerPostMessage(Ejs *ejs, EjsWorker *worker, int argc, EjsObj *
     msg->callbackSlot = ES_Worker_onmessage;
 
     dispatcher = target->ejs->dispatcher;
-    mprCreateEvent(dispatcher, "postMessage", 0, (MprEventProc) doMessage, msg, 0);
+    mprCreateEvent(dispatcher, "postMessage", 0, doMessage, msg, 0);
     return 0;
 }
 
@@ -670,7 +701,7 @@ static int workerMain(EjsWorker *insideWorker, MprEvent *event)
         handleError(outside, outsideWorker, inside->exception, 0);
         inside->exception = 0;
     }
-    ejsFreeze(inside, 1);
+    ejsPauseGC(inside);
     if ((msg = createMessage()) == 0) {
         ejsThrowMemoryError(outside);
         return 0;
@@ -691,7 +722,7 @@ static int workerMain(EjsWorker *insideWorker, MprEvent *event)
 
 
 /*
-    function terminate()
+    function terminate(): Void
  */
 static EjsObj *workerTerminate(Ejs *ejs, EjsWorker *worker, int argc, EjsObj **argv)
 {    
@@ -716,7 +747,7 @@ static EjsObj *workerTerminate(Ejs *ejs, EjsWorker *worker, int argc, EjsObj **a
 /*
     function waitForMessage(timeout: Number = -1): Boolean
  */
-static EjsObj *workerWaitForMessage(Ejs *ejs, EjsWorker *worker, int argc, EjsObj **argv)
+static EjsBoolean *workerWaitForMessage(Ejs *ejs, EjsWorker *worker, int argc, EjsObj **argv)
 {
     MprTime     mark;
     MprTime     remaining;
@@ -737,9 +768,9 @@ static EjsObj *workerWaitForMessage(Ejs *ejs, EjsWorker *worker, int argc, EjsOb
 
     if (worker->gotMessage) {
         worker->gotMessage = 0;
-        return (EjsObj*) S(true);
+        return ESV(true);
     } else {
-        return (EjsObj*) S(true);
+        return ESV(true);
     }
 }
 
@@ -750,7 +781,6 @@ static EjsObj *workerWaitForMessage(Ejs *ejs, EjsWorker *worker, int argc, EjsOb
 static void handleError(Ejs *ejs, EjsWorker *worker, EjsObj *exception, int throwOutside)
 {
     Ejs             *inside;
-    EjsString       *str;
     EjsObj          *e;
     MprDispatcher   *dispatcher;
     Message         *msg;
@@ -759,7 +789,7 @@ static void handleError(Ejs *ejs, EjsWorker *worker, EjsObj *exception, int thro
     mprAssert(exception);
     mprAssert(ejs == worker->ejs);
 
-    ejsFreeze(ejs, 1);
+    ejsPauseGC(ejs);
     if ((msg = createMessage()) == 0) {
         ejsThrowMemoryError(ejs);
         return;
@@ -770,8 +800,7 @@ static void handleError(Ejs *ejs, EjsWorker *worker, EjsObj *exception, int thro
     inside = worker->pair->ejs;
     
     inside->exception = 0;
-    str = ejsSerialize(inside, exception, NULL);
-    e = ejsDeserialize(ejs, ejsSerialize(inside, exception, NULL));
+    e = ejsDeserialize(ejs, ejsSerialize(inside, exception, 0));
     inside->exception = exception;
 
     /*
@@ -799,7 +828,7 @@ static void handleError(Ejs *ejs, EjsWorker *worker, EjsObj *exception, int thro
 
 EjsWorker *ejsCreateWorker(Ejs *ejs)
 {
-    return ejsCreateObj(ejs, ST(Worker), 0);
+    return ejsCreateObj(ejs, ESV(Worker), 0);
 }
 
 
@@ -833,28 +862,27 @@ void ejsConfigureWorkerType(Ejs *ejs)
     EjsType     *type;
     EjsPot      *prototype;
 
-    type = ejsConfigureNativeType(ejs, N("ejs", "Worker"), sizeof(EjsWorker), manageWorker, EJS_POT_HELPERS);
-    ejsSetSpecialType(ejs, S_Worker, type);
+    if ((type = ejsFinalizeScriptType(ejs, N("ejs", "Worker"), sizeof(EjsWorker), manageWorker, 
+            EJS_TYPE_POT | EJS_TYPE_MUTABLE_INSTANCES)) == 0) {
+        return;
+    }
     prototype = type->prototype;
+    ejsBindConstructor(ejs, type, workerConstructor);
+    ejsBindMethod(ejs, type, ES_Worker_exit, workerExit);
+    ejsBindMethod(ejs, type, ES_Worker_join, workerJoin);
+    ejsBindMethod(ejs, type, ES_Worker_lookup, workerLookup);
+    ejsBindMethod(ejs, type, ES_Worker_fork, workerFork);
+    ejsBindMethod(ejs, prototype, ES_Worker_clone, workerClone);
+    ejsBindMethod(ejs, prototype, ES_Worker_eval, workerEval);
+    ejsBindMethod(ejs, prototype, ES_Worker_load, workerLoad);
+    ejsBindMethod(ejs, prototype, ES_Worker_preload, workerPreload);
+    ejsBindMethod(ejs, prototype, ES_Worker_preeval, workerPreeval);
+    ejsBindMethod(ejs, prototype, ES_Worker_postMessage, workerPostMessage);
+    ejsBindMethod(ejs, prototype, ES_Worker_terminate, workerTerminate);
+    ejsBindMethod(ejs, prototype, ES_Worker_waitForMessage, workerWaitForMessage);
 
-    ejsBindConstructor(ejs, type, (EjsProc) workerConstructor);
-    ejsBindMethod(ejs, type, ES_Worker_exit, (EjsProc) workerExit);
-    ejsBindMethod(ejs, type, ES_Worker_join, (EjsProc) workerJoin);
-    ejsBindMethod(ejs, type, ES_Worker_lookup, (EjsProc) workerLookup);
-
-    ejsBindMethod(ejs, prototype, ES_Worker_eval, (EjsProc) workerEval);
-    ejsBindMethod(ejs, prototype, ES_Worker_load, (EjsProc) workerLoad);
-    ejsBindMethod(ejs, prototype, ES_Worker_preload, (EjsProc) workerPreload);
-    ejsBindMethod(ejs, prototype, ES_Worker_preeval, (EjsProc) workerPreeval);
-    ejsBindMethod(ejs, prototype, ES_Worker_postMessage, (EjsProc) workerPostMessage);
-    ejsBindMethod(ejs, prototype, ES_Worker_terminate, (EjsProc) workerTerminate);
-    ejsBindMethod(ejs, prototype, ES_Worker_waitForMessage, (EjsProc) workerWaitForMessage);
-
-    //  MOB - is this used?
-    ejsSetSpecial(ejs, S_Event, ejsGetTypeByName(ejs, N("ejs", "Event")));
-
-    //  MOB - is this used?
-    ejsSetSpecial(ejs, S_ErrorEvent, ejsGetTypeByName(ejs, N("ejs", "ErrorEvent")));
+    ejsAddImmutable(ejs, S_Event, N("ejs", "Event"), ejsGetTypeByName(ejs, N("ejs", "Event")));
+    ejsAddImmutable(ejs, S_ErrorEvent, N("ejs", "ErrorEvent"), ejsGetTypeByName(ejs, N("ejs", "ErrorEvent")));
 }
 
 /*

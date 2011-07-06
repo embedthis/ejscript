@@ -64,7 +64,7 @@
 			/>
 			<Tool
 				Name="VCLinkerTool"
-				AdditionalDependencies="libmpr.lib libhttp.lib libsqlite3.lib libejs.def ws2_32.lib"
+				AdditionalDependencies="libmpr.lib libhttp.lib libsqlite3.lib ws2_32.lib"
 				LinkIncremental="1"
 				AdditionalLibraryDirectories="$(OutDir)"
 				ModuleDefinitionFile="libejs.def"
@@ -147,7 +147,7 @@
 			/>
 			<Tool
 				Name="VCLinkerTool"
-				AdditionalDependencies="libmpr.lib libhttp.lib libsqlite3.lib libejs.def ws2_32.lib"
+				AdditionalDependencies="libmpr.lib libhttp.lib libsqlite3.lib ws2_32.lib"
 				LinkIncremental="2"
 				AdditionalLibraryDirectories="$(OutDir)"
 				ModuleDefinitionFile="libejs.def"
@@ -187,7 +187,7 @@
 		<Filter
 			Name="Header Files"
 			Filter="h;hpp;hxx;hm;inl;inc;xsd"
-			UniqueIdentifier="{137eeaa6-1179-4b53-9c3f-3614b8408a0c}"
+			UniqueIdentifier="{b2669593-f2f6-4762-8d42-8d1bc04e58a6}"
 			>
 			<File
 				RelativePath="..\..\..\out\include\buildConfig.h"
@@ -237,7 +237,7 @@
 		<Filter
 			Name="Source Files"
 			Filter="cpp;c;cc;cxx;def;odl;idl;hpj;bat;asm;asmx"
-			UniqueIdentifier="{47a37727-f08b-48ca-8cbd-92d25d0dfdae}"
+			UniqueIdentifier="{7e80b5ef-e89c-4cf8-820b-fe33fe6606bf}"
 			>
 			<File
 				RelativePath="..\..\..\src\compiler\ecAst.c"
@@ -361,6 +361,10 @@
 			</File>
 			<File
 				RelativePath="..\..\..\src\vm\ejsLoader.c"
+				>
+			</File>
+			<File
+				RelativePath="..\..\..\src\core\src\ejsLogFile.c"
 				>
 			</File>
 			<File

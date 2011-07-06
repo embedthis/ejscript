@@ -26,8 +26,8 @@ module ejs.web {
         private var lastFlash: Object
 
         /** 
-            Absolute Uri for the top-level of the application. This returns an absolute Uri (includes scheme and host) 
-            for the top-most application Uri. See $home to get a relative Uri.
+            Uri for the top-level of the application. This is an absolute Uri that includes scheme and host components.
+            See $home to get a relative Uri.
          */ 
         native enumerable var absHome: Uri
 
@@ -51,17 +51,16 @@ module ejs.web {
         native enumerable var authUser: String
 
         /** 
-            Stop auto-finalizing the request. Some web frameworks will "auto-finalize" requests by calling finalize()
-            automatically at the conclusion of the request. Applications that wish to keep the connection open to the
-            client can defeat this auto-finalization by calling dontAutoFinalize().
-
-            Auto-finalization control. Set to true if the request will be finalized automatically at the conclusion of 
-            the request. Defaults to true and is set to false if dontAutoFinalize() is called. 
+            Control whether auto-finalizing will be used for the request. If autoFinalizing is false, a request must
+            call $finalize() to signal the end of write data. If autoFinalize is true, the Request class will automatically 
+            call finalize at the conclusion of the request.
+            Applications that wish to keep the request open to the client can suppress auto-finalization by 
+            setting autoFinalizing to false or by calling $dontAutoFinalize(). This property defaults to true.
          */
         native enumerable var autoFinalizing: Boolean
 
         /** 
-            Request configuration. Initially refers to App.config which is filled with the aggregated "ejsrc" content.
+            Request configuration. Initially refers to $App.config which is filled with the aggregated "ejsrc" content.
             Middleware may modify to refer to a request local configuration object.
          */
         native enumerable var config: Object
@@ -122,15 +121,19 @@ module ejs.web {
          */
         native enumerable var filename: Path
 
-        /** 
-            Notification "flash" messages to pass to the next request (only). By convention, the following keys are used:
-            @option error    Negative errors (Warnings and errors)
-            @option inform   Informational / postitive feedback (note)
-            @option warn     Negative feedback (Warnings and errors)
-            @option *        Other feedback (reminders, suggestions...)
-        */
 //  MOB -- why public here
+        /** 
+            Notification "flash" messages to pass to the next request (only). By convention, the following keys are used.
+            error: Negative errors (Warnings and errors), inform: Informational / postitive feedback (note),
+            warn: Negative feedback (Warnings and errors), *: Other feedback (reminders, suggestions...)
+        */
         public var flash: Object
+
+        /** 
+            The request form parameters as a string. This parameters are www-url decoded from the POST request body data. 
+            This is useful to get a stable, sorted string representing the form parameters.
+         */
+        native enumerable var formData: String
 
         /** 
             Request Http headers. This is an object hash filled with lower-case request headers from the client. If multiple 
@@ -165,10 +168,10 @@ module ejs.web {
             Resource limits for the request. The limits have initial default values defined by the owning HttpServer.
             @param limits. Limits is an object hash with the following properties:
             @option chunk Maximum size of a chunk when using chunked transfer encoding.
+            @option connReuse Maximum number of times to reuse a connection for requests (KeepAlive count).
             @option inactivityTimeout Maximum time in seconds to keep a connection open if idle. Set to zero for no timeout.
             @option receive Maximum size of incoming body data.
             @option requestTimeout Maximum time in seconds for a request to complete. Set to zero for no timeout.
-            @option reuse Maximum number of times to reuse a connection for requests (KeepAlive count).
             @option sessionTimeout Maximum time to preserve session state. Set to zero for no timeout.
             @option transmission Maximum size of outgoing body data.
             @option upload Maximum size of uploaded files.
@@ -208,12 +211,13 @@ module ejs.web {
         native enumerable var originalUri: Uri
 
         /** 
-            The request form parameters. This parameters are www-url decoded from the POST request body data. 
+            The request form parameters plus other routing parameters. 
+            The form parameters are www-url decoded from the POST request body data. See also $form.
          */
         native enumerable var params: Object
 
         /** 
-            Portion of the request URL after the scriptName. This is the location of the request within the application.
+            Location of the request within the application. This is the portion of the request URL after the scriptName. 
             The pathInfo is originally derrived from uri.path after splitting off the scriptName. Changes to the uri or 
             scriptName properties will not affect the pathInfo property.
          */
@@ -297,7 +301,8 @@ module ejs.web {
         /** 
             Session state object. The session state object can be used to share state between requests.
             If a session has not already been created, accessing this property automatically creates a new session 
-            and sets the $sessionID property and a cookie containing a session ID sent to the client with the response.
+            and sets the $ejs.web::Request.sessionID property and a cookie containing a session ID sent to the client 
+            with the response.
             To test if a session has been created, test the sessionID property which will not auto-create a session.
             Objects are stored in the session state using JSON serialization.
          */
@@ -320,6 +325,11 @@ module ejs.web {
          */
         native enumerable var uri: Uri
 
+        /**
+            Write buffer when capturing output
+         */
+        var writeBuffer: ByteArray
+
         /*************************************** Methods ******************************************/
         /**
             Construct the a Request object. Request objects are typically created by HttpServers and not constructed
@@ -339,13 +349,10 @@ module ejs.web {
         native function get async(): Boolean
         native function set async(enable: Boolean): Void
 
-//  MOB - rename
         /** 
-            Finalize the request if dontAutoFinalize has not been called. Finalization signals the end of any write data 
-            and flushes any buffered write data to the client. This routine is used by frameworks to allow users to 
-            defeat finalization by calling dontAutoFinalize. Users can then call finalize() to explictly control when
-            all the response data has been written. If dontAutoFinalize() has been called, this call will have no effect. 
-            In that case, call finalize() to finalize the request.
+            Finalize the request if $autoFinalizing is true. Finalization signals the end of any write data 
+            and flushes any buffered write data to the client. This routine is used by frameworks to finalize
+            requests if required. 
          */
         native function autoFinalize(): Void 
 
@@ -371,6 +378,14 @@ module ejs.web {
         }
 
         /**
+            Clear previous flags messages. Useful when using client mode caching for an action.
+            @stability prototype
+            @hide
+         */
+        function clearFlash(): Void
+            flash = null
+
+        /**
             Create a session state object. The session state object can be used to share state between requests.
             If a session has not already been created, this call will create a new session and initialize the 
             $session property with the new session. It will also set the $sessionID property and a cookie containing 
@@ -381,16 +396,17 @@ module ejs.web {
          */
         function createSession(timeout: Number = -1): Session {
             if (timeout >= 0) {
+// - MOB - does this change the timeout for just this session or for all?
                 setLimits({ sessionTimeout: timeout })
             }
             return session
         }
 
-//  MOB - rename
         /**
-            Stop auto-finalizing the request. Some web frameworks will "auto-finalize" requests by calling finalize()
-            automatically at the conclusion of the request. Applications that wish to keep the connection open to the
-            client can defeat this auto-finalization by calling dontAutoFinalize().
+            Stop auto-finalizing the request. This will set $autoFinalizing to false. Some web frameworks will 
+            "auto-finalize" requests by calling finalize() automatically at the conclusion of the request. 
+            Applications that wish to keep the connection open to the client can defeat this auto-finalization by 
+            calling dontAutoFinalize().
          */
         native function dontAutoFinalize(): Void
 
@@ -405,7 +421,7 @@ module ejs.web {
             Set an error flash notification message.
             Flash messages persist for only one request and are a convenient way to pass state information or 
             feedback messages to the next request. To use flash messages, setupFlash() and finalizeFlash() must 
-            be called before and after the request is processed. Web.process will call setupFlash and finalizeFlash 
+            be called before and after the request is processed. HttpServer.process will call setupFlash and finalizeFlash 
             automatically.
             @param msg Message to store
          */
@@ -466,16 +482,17 @@ module ejs.web {
         native function header(key: String): String
 
         /** 
-            Set a informational flash notification message.
+            Set an informational flash notification message.
             Flash messages persist for only one request and are a convenient way to pass state information or 
             feedback messages to the next request. To use flash messages, setupFlash() and finalizeFlash() must 
-            be called before and after the request is processed. Web.process will call setupFlash and finalizeFlash 
+            be called before and after the request is processed. HttpServer.process will call setupFlash and finalizeFlash 
             automatically.
             @param msg Message to store
          */
         function inform(msg: String): Void
             notify("inform", msg)
 
+        // MOB - OPT make native
         /** 
             Create a URI link. The target parameter may contain partial or complete URI information. The missing parts 
             are supplied using the current request and route tables. The resulting URI is a normalized, server-local 
@@ -493,9 +510,9 @@ module ejs.web {
                 name will be used. If these don't result in a usable route, the "default" route will be used. See the
                 Router for more details.
                
-                If the target is a string that begins with "@" it will be interpreted as a controller/action pair of the 
-                form "@Controller/action". If the "controller/" portion is absent, the current controller is used. If 
-                the action component is missing, the "index" action is used. A bare "@" refers to the "index" action 
+                If the target is a string that begins with "\@" it will be interpreted as a controller/action pair of the 
+                form "\@Controller/action". If the "controller/" portion is absent, the current controller is used. If 
+                the action component is missing, the "index" action is used. A bare "\@" refers to the "index" action 
                 of the current controller.
 
                 Lastly, the target object hash may contain an override "uri" property. If specified, the value of the 
@@ -512,30 +529,27 @@ module ejs.web {
             @option action String Action to invoke. This can be a URI string or a Controller action of the form
                 @Controller/action.
             @option route String Route name to use for the URI template
-            @example
-                Given a current request of http://example.com/samples/demo" and "r" == the current request:
-
-
-                r.link("images/splash.png")                  returns "/samples/images/splash.png"
-                r.link("images/splash.png").complete(r.uri)  returns "http://example.com/samples/images/splash.png"
-                r.link("images/splash.png").relative(r.uri)  returns "images/splash.png"
-
-                r.link("http://example.com/index.html")
-                r.link("/path/to/index.html")
-                r.link("@Controller/checkout")
-                r.link("@Controller/")
-                r.link("@checkout")
-                r.link("@")
-                r.link({action: "checkout")
-                r.link({action: "logout", controller: "Admin")
-                r.link({action: "Admin/logout")
-                r.link({action: "@Admin/logout")
-                r.link({uri: "http://example.com/checkout"})
-                r.link({route: "default", action: "@checkout")
-                r.link({product: "candy", quantity: "10", template: "/cart/{product}/{quantity}")
-
             @return A normalized, server-local Uri object.
-            MOB - OPT make native
+            @example
+Given a current request of http://example.com/samples/demo" and "r" == the current request:
+
+r.link("images/splash.png")                  # "/samples/images/splash.png"
+r.link("images/splash.png").complete(r.uri)  # "http://example.com/samples/images/splash.png"
+r.link("images/splash.png").relative(r.uri)  # "images/splash.png"
+
+r.link("http://example.com/index.html")
+r.link("/path/to/index.html")
+r.link("\@Controller/checkout")
+r.link("\@Controller/")
+r.link("\@checkout")
+r.link("\@")
+r.link({action: "checkout")
+r.link({action: "logout", controller: "Admin")
+r.link({action: "Admin/logout")
+r.link({action: "\@Admin/logout")
+r.link({uri: "http://example.com/checkout"})
+r.link({route: "default", action: "\@checkout")
+r.link({product: "candy", quantity: "10", template: "/cart/{product}/{quantity}")
          */
         function link(target: Object): Uri {
             if (target is Uri) {
@@ -561,7 +575,7 @@ module ejs.web {
                     if (!target.controller && controller) {
                         target.controller = controller.controllerName
                     }
-                    target.route = target.action || "default"
+                    target.route ||= target.action || "default"
                 }
                 if (target.route) {
                     target.scriptName ||= scriptName
@@ -620,7 +634,7 @@ module ejs.web {
         /** 
             Set a transient flash notification message. Flash messages persist for only one request and are a convenient
                 way to pass state information or feedback messages to the next request. To use flash messages, 
-                setupFlash() and finalizeFlash() must be called before and after the request is processed. Web.process
+                setupFlash() and finalizeFlash() must be called before and after the request is processed. HttpServer.process
                 will call setupFlash and finalizeFlash automatically.
             @param key Flash message key
             @param msg Message to store
@@ -651,13 +665,14 @@ module ejs.web {
          */
         native function on(name, observer: Function): Void
 
+//  MOB - should there be a blocking read option?
         /** 
             @duplicate Stream.read
             If the request is posting a form, i.e. the Http ContentType header is set to 
             "application/x-www-form-urlencoded", then the request object will not be created by the HttpServer until
-            all the form data is read and the $params collection is populated with the form data. This permits form
+            all the form data is read and the $params collection created and populated with the form data. This permits form
             data to be processed synchronously without having to use async/observer techniques to respond to readable
-            events. With all other content types, the Request object will be created and run, before incoming client 
+            events. With all other content types, the Request object will be created and run before the incoming client 
             data has been read. To read data in these situations, register an observer function to run when the
             connection becomes "readable".
             @example:
@@ -666,7 +681,7 @@ module ejs.web {
                     if (read(data)) {
                         print("Got " + data)
                     } else {
-                        //  End of input
+                        //  End of input, call finalize() when all output has been written
                         request.finalize()
                     }
                 })
@@ -678,8 +693,8 @@ module ejs.web {
             by the $url.  Optionally, a redirection code may be provided. Normally this code is set to be the HTTP 
             code 302 which means a temporary redirect. A 301, permanent redirect code may be explicitly set.
             @param target Uri to redirect the client toward. This can be a relative or absolute string URI or it can be
-                a hash of URI components. For example, the following are valid inputs: "../index.ejs", 
-                "http://www.example.com/home.html", "@list".
+                a hash of URI components. For example, the following are valid inputs: ../index.ejs, 
+                http://www.example.com/home.html, \@list.
             @param status Optional HTTP redirection status
          */
         function redirect(target: *, status: Number = Http.MovedTemporarily): Void {
@@ -705,7 +720,7 @@ module ejs.web {
         }
 
         /** 
-            Define a cookie header to send with the response. Path, domain and lifetime can be set to null for 
+            Define a cookie header to send with the response. The Path, domain and expires properties can be set to null for 
                 default values.
             @param name Cookie name
             @param options Cookie field options
@@ -766,7 +781,7 @@ module ejs.web {
 
         /**
             Convenience routine to define an application at a given Uri prefix and directory location. This is typically
-                called from routing tables.
+                called from routing tables. This sets the $pathInfo, $scriptName and $dir properties.
             @param prefix The leading Uri prefix for the application. This prefix is removed from the pathInfo and the
                 $scriptName property is set to the prefix. The script name should begin with "/".
             @param location Path to where the application home directory is. This sets the $dir property to the $location
@@ -841,18 +856,18 @@ module ejs.web {
                 The include property is an array of file extensions to include in tracing.
                 The include property is an array of file extensions to exclude from tracing.
                 The all property specifies that everything for this direction should be traced.
-                The conn property specifies that new connections should be traced.
+                The conn property specifies that new connections should be traced. (Rx only)
                 The first property specifies that the first line of the request should be traced.
                 The headers property specifies that the headers (including first line) of the request should be traced.
                 The body property specifies that the body content of the request should be traced.
                 The size property specifies a maximum body size in bytes that will be traced. Content beyond this limit 
                     will not be traced.
-            @option transmit. Object hash with optional properties: include, exclude, first, headers, body, size.
-            @option receive. Object hash with optional properties: include, exclude, conn, first, headers, body, size.
+            @option tx. Object hash with optional properties: include, exclude, first, headers, body, size.
+            @option rx. Object hash with optional properties: include, exclude, conn, first, headers, body, size.
             @example:
                 trace({
-                    transmit: { exclude: ["gif", "png"], "headers": 3, "body": 4, size: 1000000 }
-                    receive:  { "conn": 1, "headers": 2 , "body": 4, size: 1024 }
+                    tx: { exclude: ["gif", "png"], "first": 2, "headers": 3, "body": 4, size: 1000000 }
+                    rx: { "conn": 1, "first": 2, "headers": 3 , "body": 4, size: 1024 }
                 })
           */
         native function trace(options: Object): Void
@@ -861,7 +876,7 @@ module ejs.web {
             Set a warning flash notification.
             Flash messages persist for only one request and are a convenient way to pass state information or 
             feedback messages to the next request. To use flash messages, setupFlash() and finalizeFlash() must 
-            be called before and after the request is processed. Web.process will call setupFlash and finalizeFlash 
+            be called before and after the request is processed. HttpServer.process will call setupFlash and finalizeFlash 
             automatically.
             @param msg Message to store
          */
@@ -874,6 +889,7 @@ module ejs.web {
          */
         native function write(...data): Number
 
+//  MOB - add this to ByteArray, Http, Socket (not to Stream)
         /** 
             Write a block of data to the client. This will buffer the written data which will be flushed when either 
             close(), flush() or finalize() is called or the underlying pipeline is full. 
@@ -884,14 +900,15 @@ module ejs.web {
             @returns a count of the bytes actually written. Returns null on eof.
             @event writable Issued when the connection can absorb more data.
 
-            MOB - same for Http and other streams
          */
         # FUTURE
         native function writeBlock(buffer: ByteArray, offset: Number = 0, count: Number = -1): Number 
 
         /**
+MOB - DEBUG
             Write content based on the requested accept mime type
             @param data Data to send to the client
+            @hide
          */
         function writeContent(data): Void {
             let mime = matchContent("application/json", "text/html", "application/xml", "text/plain")
@@ -925,7 +942,7 @@ module ejs.web {
          */
         function writeError(status: Number, ...msgs): Void {
             if (!finalized) {
-                this.status = status
+                this.status = status || Http.ServerError
                 let msg = msgs.join(" ").replace(/.*Error Exception: /, "")
                 let title = "Request Error for \"" + pathInfo + "\""
                 if (config.log.showClient) {
@@ -1027,24 +1044,9 @@ module ejs.web {
         function get serverPort(): Number
             server.port
 
-        /**
-            @example
-            @option max-age Max time in seconds the resource is considered fresh
-            @option s-maxage Max time in seconds the resource is considered fresh from a shared cache
-            @option public marks authenticated responses as cacheable
-            @option private shared caches may not store the response
-            @option no-cache cache must re-submit request for validation before using cached copy
-            @option no-store response may not be stored in a cache.
-            @option must-revalidate forces caches to observe expiry and other freshness information
-            @option proxy-revalidate similar to must-revalidate except only for proxy caches
-            @hide
-            MOB - complete
-          */
-        function cache(options) {
-        }
-
         /*************************************** Deprecated ***************************************/
 
+//  MOB - remove all this legacy stuff
         /** 
             @hide
             @deprecated 2.0.0

@@ -4,15 +4,14 @@
  */
 
 module ejs {
-
-    //  MOB - rename emitter to something else
     /** 
-        The emitter class provides a publish/subscribe model of communication. It supports the registration of observers
+        The emitter class provides a publish/subscribe model of communication via events. It supports the 
+        registration of observers
         who want to subscribe to events of interest. 
         @example
             events.on(event, function (event, ...args) {
                 //  Do something
-            }
+            })
             events.fire("topic", 1, 2, 3)
         @stability prototype
      */
@@ -61,8 +60,9 @@ module ejs {
             }
         }
 
-        /** @hide
-            MOB -- complete or remove
+        /** 
+            @hide
+            TODO - complete or remove
          */
         function delayedFire(name: String, delay: Number, ...args): Void {
             Timer(delay, function() {
@@ -131,7 +131,7 @@ module ejs {
         }
 
         /** 
-            Add an observer on a set of events.
+            Add an observer for a set of named event.
             The callback will be invoked when the requested event is fired by calling Emitter.fire. When the callback 
             runs, it will be invoked with the value of "this" relevant to the context of the callback. If the callback
             is a class method, the value of "this" will be the object instance. Global functions will have "this" set to

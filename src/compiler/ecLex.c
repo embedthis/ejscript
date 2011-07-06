@@ -159,11 +159,10 @@ static void manageToken(EcToken *tp, int flags)
 
 static EcToken *getLexToken(EcCompiler *cp)
 {
-    EcToken     *prev, *tp;
+    EcToken     *tp;
 
     if ((tp = cp->putback) != 0) {
         cp->putback = tp->next;
-        prev = cp->token;
         cp->token = tp;
     } else {
         if ((cp->token = mprAllocObj(EcToken, manageToken)) == 0) {
@@ -726,7 +725,7 @@ static int makeAlphaToken(EcCompiler *cp, EcToken *tp, int c)
     if (c) {
         putBackChar(stream, c);
     }
-    rp = (ReservedWord*) mprLookupHash(cp->keywords, tp->text);
+    rp = (ReservedWord*) mprLookupKey(cp->keywords, tp->text);
     if (rp) {
         setTokenID(tp, rp->tokenId, rp->subId, rp->groupMask);
     } else {
@@ -816,8 +815,6 @@ static int makeSubToken(EcToken *tp, int c, int tokenId, int subId, int groupMas
 }
 
 
-//  MOB - should this return int64
-//  MOB -- should be same arg format as stoi
 static int decodeNumber(EcCompiler *cp, int radix, int length)
 {
     char        buf[16];
@@ -1003,7 +1000,6 @@ static int getNextChar(EcStream *stream)
             stream->loc.column++;
         }
         if (stream->loc.source == 0) {
-            //  MOB -- replace this when doing lazy loading. source should be an index into a buffer.
             for (start = stream->nextChar - 1; isspace((int) *start); start++) ;
             for (next = start; *next && *next != '\n'; next++) ;
             stream->loc.source = wsub(start, 0, next - start);
@@ -1077,8 +1073,6 @@ void ecSetStreamBuf(EcStream *sp, cchar *contents, ssize len)
         sp->buf = buf;
         sp->nextChar = buf;
         sp->end = &buf[len];
-
-        //  MOB -- should flush old token
         putBackChar(sp, getNextChar(sp));
     }
 }

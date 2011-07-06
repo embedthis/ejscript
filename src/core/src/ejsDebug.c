@@ -34,7 +34,7 @@ static EjsObj *debug_breakpoint(Ejs *ejs, EjsObj *unused, int argc, EjsObj **arg
  */
 static EjsObj *debug_mode(Ejs *ejs, EjsObj *unused, int argc, EjsObj **argv)
 {
-    return mprGetDebugMode() ? S(true) : S(false);
+    return mprGetDebugMode() ? ESV(true) : ESV(false);
 }
 
 
@@ -43,7 +43,7 @@ static EjsObj *debug_mode(Ejs *ejs, EjsObj *unused, int argc, EjsObj **argv)
  */
 static EjsObj *debug_set_mode(Ejs *ejs, EjsObj *unused, int argc, EjsObj **argv)
 {
-    mprSetDebugMode(argv[0] == S(true));
+    mprSetDebugMode(argv[0] == ESV(true));
     return 0;
 }
 
@@ -53,15 +53,10 @@ void ejsConfigureDebugType(Ejs *ejs)
 {
     EjsType         *type;
 
-    if ((type = ejsGetTypeByName(ejs, N("ejs", "Debug"))) == 0) {
-        mprError("Can't find Debug type");
-        return;
+    if ((type = ejsFinalizeScriptType(ejs, N("ejs", "Debug"), sizeof(EjsPot), ejsManagePot, EJS_TYPE_POT)) != 0) {
+        ejsBindMethod(ejs, type, ES_Debug_breakpoint, debug_breakpoint);
+        ejsBindAccess(ejs, type, ES_Debug_mode, debug_mode, debug_set_mode);
     }
-    ejsBindMethod(ejs, type, ES_Debug_breakpoint, debug_breakpoint);
-    ejsBindAccess(ejs, type, ES_Debug_mode, debug_mode, debug_set_mode);
-    /*
-        Globals
-     */
     ejsBindFunction(ejs, ejs->global, ES_breakpoint, debug_breakpoint);
 }
 

@@ -14,25 +14,24 @@
 
     function cast(type: Type) : Object
  */
-static EjsObj *castError(Ejs *ejs, EjsError *error, EjsType *type)
+static EjsAny *castError(Ejs *ejs, EjsError *error, EjsType *type)
 {
     EjsString   *stack, *msg;
-    //  MOB -- rename
     EjsString   *us;
     char        *buf;
 
     switch (type->sid) {
     case S_Boolean:
-        return (EjsObj*) ejsCreateBoolean(ejs, 1);
+        return ejsCreateBoolean(ejs, 1);
 
     case S_String:
-        stack = (EjsString*) ejsRunFunctionBySlot(ejs, (EjsObj*) error, ES_Error_formatStack, 0, NULL);
-        us = ejsIs(ejs, stack, String) ? stack : S(empty);
+        stack = (EjsString*) ejsRunFunctionBySlot(ejs, error, ES_Error_formatStack, 0, NULL);
+        us = ejsIs(ejs, stack, String) ? stack : ESV(empty);
         msg = ejsGetProperty(ejs, error, ES_Error_message);
         if ((buf = mprAsprintf("%@ Exception: %@\nStack:\n%@\n", TYPE(error)->qname.name, msg, us)) == NULL) {
             ejsThrowMemoryError(ejs);
         }
-        return (EjsObj*) ejsCreateStringFromAsc(ejs, buf);
+        return ejsCreateStringFromAsc(ejs, buf);
         break;
 
     default:
@@ -48,28 +47,28 @@ static EjsObj *castError(Ejs *ejs, EjsError *error, EjsType *type)
 
     public function Error(message: String = null)
  */
-static EjsObj *errorConstructor(Ejs *ejs, EjsError *error, int argc, EjsObj **argv)
+static EjsError *errorConstructor(Ejs *ejs, EjsError *error, int argc, EjsObj **argv)
 {
     if (argc > 0) {
         ejsSetProperty(ejs, error, ES_Error_message, ejsToString(ejs, argv[0]));
     }
-    if (ST(Date)) {
+    if (ESV(Date)) {
         ejsSetProperty(ejs, error, ES_Error_timestamp, ejsCreateDate(ejs, mprGetTime()));
         ejsSetProperty(ejs, error, ES_Error_stack, ejsCaptureStack(ejs, 0));
     }
-    return (EjsObj*) error;
+    return error;
 }
 
 
 /*
-    static function capture(uplevels: Number): Void
+    static function capture(uplevels: Number): Array
  */
-static EjsObj *error_capture(Ejs *ejs, EjsError *error, int argc,  EjsObj **argv)
+static EjsArray *error_capture(Ejs *ejs, EjsError *error, int argc,  EjsObj **argv)
 {
     int     uplevels;
     
     uplevels = (argc > 0) ? ejsGetInt(ejs, argv[0]) : 0;
-    return (EjsObj*) ejsCaptureStack(ejs, uplevels);
+    return ejsCaptureStack(ejs, uplevels);
 }
 
 /************************************ Factory *********************************/
@@ -92,10 +91,8 @@ static EjsType *defineType(Ejs *ejs, cchar *name, int id)
 {
     EjsType     *type;
 
-    type = ejsCreateNativeType(ejs, N("ejs", name), sizeof(EjsError), id, ES_Error_NUM_CLASS_PROP, ejsManagePot, 
-        EJS_POT_HELPERS);
-    ejsSetTypeAttributes(type, EJS_TYPE_DYNAMIC_INSTANCE | EJS_TYPE_HAS_INSTANCE_VARS);
-    //  MOB -- why?
+    type = ejsCreateCoreType(ejs, N("ejs", name), sizeof(EjsError), id, ES_Error_NUM_CLASS_PROP, ejsManagePot, 
+        EJS_TYPE_POT | EJS_TYPE_DYNAMIC_INSTANCES | EJS_TYPE_HAS_INSTANCE_VARS | EJS_TYPE_MUTABLE_INSTANCES);
     type->constructor.block.nobind = 1;
     type->helpers.cast = (EjsCastHelper) castError;
     return type;
@@ -105,21 +102,21 @@ static EjsType *defineType(Ejs *ejs, cchar *name, int id)
 void ejsCreateErrorType(Ejs *ejs)
 {
     defineType(ejs, "Error", S_Error);
-    defineType(ejs, "ArgError", -1);
-    defineType(ejs, "ArithmeticError", -1);
-    defineType(ejs, "AssertError", -1);
-    defineType(ejs, "InstructionError", -1);
-    defineType(ejs, "IOError", -1);
-    defineType(ejs, "InternalError", -1);
-    defineType(ejs, "MemoryError", -1);
-    defineType(ejs, "OutOfBoundsError", -1);
-    defineType(ejs, "ReferenceError", -1);
-    defineType(ejs, "ResourceError", -1);
-    defineType(ejs, "SecurityError", -1);
-    defineType(ejs, "StateError", -1);
-    defineType(ejs, "SyntaxError", -1);
-    defineType(ejs, "TypeError", -1);
-    defineType(ejs, "URIError", -1);
+    defineType(ejs, "ArgError", ES_ArgError);
+    defineType(ejs, "ArithmeticError", ES_ArithmeticError);
+    defineType(ejs, "AssertError", ES_AssertError);
+    defineType(ejs, "InstructionError", ES_InstructionError);
+    defineType(ejs, "IOError", ES_IOError);
+    defineType(ejs, "InternalError", ES_InternalError);
+    defineType(ejs, "MemoryError", ES_MemoryError);
+    defineType(ejs, "OutOfBoundsError", ES_OutOfBoundsError);
+    defineType(ejs, "ReferenceError", ES_ReferenceError);
+    defineType(ejs, "ResourceError", ES_ResourceError);
+    defineType(ejs, "SecurityError", ES_SecurityError);
+    defineType(ejs, "StateError", ES_StateError);
+    defineType(ejs, "SyntaxError", ES_SyntaxError);
+    defineType(ejs, "TypeError", ES_TypeError);
+    defineType(ejs, "URIError", ES_URIError);
 }
 
 
@@ -127,15 +124,16 @@ static void configureType(Ejs *ejs, cchar *name)
 {
     EjsType     *type;
 
-    type = ejsGetTypeByName(ejs, N("ejs", name));
-    mprAssert(type);
-    ejsBindConstructor(ejs, type, (EjsProc) errorConstructor);
+    if ((type = ejsFinalizeCoreType(ejs, N("ejs", name))) == 0) {
+        return;
+    }
+    ejsBindConstructor(ejs, type, errorConstructor);
 }
 
 
 void ejsConfigureErrorType(Ejs *ejs)
 {
-    //  TODO MOB OPT simplify
+    //  OPT simplify
     configureType(ejs, "Error");
     configureType(ejs, "ArgError");
     configureType(ejs, "ArithmeticError");
@@ -153,7 +151,7 @@ void ejsConfigureErrorType(Ejs *ejs)
     configureType(ejs, "TypeError");
     configureType(ejs, "URIError");
 
-    ejsBindMethod(ejs, ST(Error), ES_Error_capture, (EjsProc) error_capture);
+    ejsBindMethod(ejs, ESV(Error), ES_Error_capture, error_capture);
 }
 
 

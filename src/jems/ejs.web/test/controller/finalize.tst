@@ -1,5 +1,5 @@
 /*
-    Test Controller database init
+    Test Controller finalizing
  */
 require ejs.web
 
@@ -41,10 +41,14 @@ public class TestController extends Controller {
 
 let server = new HttpServer
 server.on("readable", function (event, request: Request) {
+try {
     [,params.controller, params.action] = pathInfo.toString().split("/")
     let app = Controller.create(request).app
     assert(app is Function)
-    Web.process(app, request)
+    server.process(app, request)
+} catch (e) {
+    print('CATCH ' + e)
+}
 })
 server.listen(HTTP)
 
@@ -60,7 +64,7 @@ http.close()
 let http = fetch(HTTP + "/test/empty")
 assert(http.status == Http.Ok)
 assert(http.response == "")
-// http.close()
+http.close()
 
 
 //  Test autoFinalization with just setting status and no response

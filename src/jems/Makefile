@@ -7,7 +7,7 @@
 #
 #	Order matters
 #
-LOADABLE	= ejs.jem ejs.cjs ejs.db ejs.db.couch ejs.db.mapper ejs.db.sqlite ejs.tar ejs.unix ejs.web ejs.template
+LOADABLE	= ejs.jem ejs.unix ejs.db ejs.db.mapper ejs.db.sqlite ejs.web ejs.template ejs.tar
 TOOLS		= ejs.jem ejs.mvc
 FILTER	 	= /sample/|/legacy/|^ejs.jem/|ejsmvc|Archive|\/test\/
 DOC_SRC		= $(shell find ../core -name '*.es' | egrep -v "$(FILTER)")
@@ -49,7 +49,7 @@ endif
 #
 xmodules:
 	for d in $(LOADABLE) ; do  \
-		$(MAKE) --no-print-directory TRACE=$(TRACE) -C $$d module ; \
+		$(MAKE) --no-print-directory TRACE=$(TRACE) -C $$d module || exit 255; \
 	done
 
 packagePrep: $(DOC)

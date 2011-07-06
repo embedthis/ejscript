@@ -1,0 +1,422 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml">
+<head>
+   <title>Class BinaryStream</title>
+
+   <link rel="stylesheet" type="text/css" href="doc.css" />
+</head>
+
+<body>
+<div class='body'>
+
+<div class="content">
+
+<a name='top'></a>
+<h1 class='className'>BinaryStream</h1>
+<div class='classBlock'>
+<table class='classHead' summary='BinaryStream'>
+   <tr><td><strong>Module</strong></td><td>ejs</td></tr>
+   <tr><td><strong>Definition</strong></td><td> class BinaryStream</td></tr>
+   <tr><td><strong>Inheritance</strong></td><td>BinaryStream <img src='images/inherit.gif' alt='inherit'/> <a href='Object.html'>Object</a><tr><td><strong>Specified</strong></td><td>ejscript-2.0</td></tr>
+<tr><td><strong>Stability</strong></td><td>Evolving.</td></tr>
+       </td></tr>
+</table>
+
+<p class='classBrief'>BinaryStreams encode and decode various objects onto streams.</p>
+
+<p class='classDescription'>A BinaryStream may be stacked atop an underlying stream
+provider such as ByteArray, File, Http or Socket. The underlying stream must be in sync mode.</p>
+
+</div>
+
+
+<hr />
+<a name='Properties'></a>
+<h2 class='classSection'>Properties</h2>
+<table class='itemTable' summary='properties'>
+   <tr><th>Qualifiers</th><th>Property</th><th>Type</th><th width='95%'>Description</th></tr>
+<a name='BigEndian'></a>
+   <tr><td nowrap align='center'> static const </td><td>BigEndian</td><td><a href='Number.html'>Number</a></td><td>Big endian byte order. </td></tr>
+<a name='LittleEndian'></a>
+   <tr><td nowrap align='center'> static const </td><td>LittleEndian</td><td><a href='Number.html'>Number</a></td><td>Little endian byte order. </td></tr>
+<a name='async'></a>
+   <tr><td nowrap align='center'> get set </td><td>async</td><td><a href='Boolean.html'>Boolean</a></td><td>The current async mode. Set to true if the stream is in async mode.</td></tr>
+<a name='available'></a>
+   <tr><td nowrap align='center'> get </td><td>available</td><td><a href='Number.html'>Number</a></td><td>The number of bytes available to read without blocking. This is the number of bytes internally buffered
+in the binary stream and does not include any data buffered downstream.</td></tr>
+<a name='encoding'></a>
+   <tr><td nowrap align='center'> get set </td><td>encoding</td><td><a href='String.html'>String</a></td><td>Current encoding scheme for serializing strings. Defaults to "utf-8".</td></tr>
+<a name='endian'></a>
+   <tr><td nowrap align='center'> get set </td><td>endian</td><td><a href='Number.html'>Number</a></td><td>Current byte ordering. Set to either LittleEndian or BigEndian.</td></tr>
+</table>
+
+<p class='inheritedLink'><a href='Object.html#Properties'><i>Inherited Properties</i></a></p>
+
+<hr />
+<a name='ClassMethods'></a>
+<h2 class='classSection'>BinaryStream Class Methods</h2>
+<table class='apiIndex' summary='methods'>
+   <tr><th>Qualifiers</th><th width='95%'>Method</th></tr>
+   <p>(No own class methods defined)</p></table>
+
+<p class='inheritedLink'><a href='Object.html#InstanceMethods'><i>Inherited Methods</i></a></p>
+
+<hr />
+<a name='InstanceMethods'></a>
+<h2 class='classSection'>BinaryStream Instance Methods</h2>
+<table class='apiIndex' summary='methods'>
+   <tr><th>Qualifiers</th><th width='95%'>Method</th></tr>
+   <tr class='apiDef'><td class='apiType'></td><td><a href='#BinaryStream'><b>BinaryStream</b></a>(stream: <a href='Stream.html'>Stream</a>)</tr><tr class='apiBrief'><td>&nbsp;</td><td>Create a new BinaryStream.</td></tr>
+   <tr class='apiDef'><td class='apiType'> </td><td><a href='#close'><b>close</b></a>(): <a href='Void.html'>Void</a></tr><tr class='apiBrief'><td>&nbsp;</td><td>Close the stream.</td></tr>
+   <tr class='apiDef'><td class='apiType'> </td><td><a href='#flush'><b>flush</b></a>(dir: <a href='Number.html'>Number</a>): <a href='Void.html'>Void</a></tr><tr class='apiBrief'><td>&nbsp;</td><td>Flush the stream and underlying streams.</td></tr>
+   <tr class='apiDef'><td class='apiType'> </td><td><a href='#off'><b>off</b></a>(name, observer: <a href='Function.html'>Function</a>): <a href='Void.html'>Void</a></tr><tr class='apiBrief'><td>&nbsp;</td><td>Remove an observer from the stream.</td></tr>
+   <tr class='apiDef'><td class='apiType'> </td><td><a href='#on'><b>on</b></a>(name, observer: <a href='Function.html'>Function</a>): <a href='Void.html'>Void</a></tr><tr class='apiBrief'><td>&nbsp;</td><td>Add an observer to the stream for the named events.</td></tr>
+   <tr class='apiDef'><td class='apiType'> </td><td><a href='#read'><b>read</b></a>(buffer: <a href='ByteArray.html'>ByteArray</a>, offset: <a href='Number.html'>Number</a>, count: <a href='Number.html'>Number</a> = -1): <a href='Number.html'>Number</a></tr><tr class='apiBrief'><td>&nbsp;</td><td>Read a data from the stream.</td></tr>
+   <tr class='apiDef'><td class='apiType'> </td><td><a href='#readBoolean'><b>readBoolean</b></a>(): <a href='Boolean.html'>Boolean</a></tr><tr class='apiBrief'><td>&nbsp;</td><td>Read a boolean from the stream.</td></tr>
+   <tr class='apiDef'><td class='apiType'> </td><td><a href='#readByte'><b>readByte</b></a>(): <a href='Number.html'>Number</a></tr><tr class='apiBrief'><td>&nbsp;</td><td>Read a byte from the stream.</td></tr>
+   <tr class='apiDef'><td class='apiType'> </td><td><a href='#readDate'><b>readDate</b></a>(): <a href='Date.html'>Date</a></tr><tr class='apiBrief'><td>&nbsp;</td><td>Read a date from the stream.</td></tr>
+   <tr class='apiDef'><td class='apiType'> </td><td><a href='#readDouble'><b>readDouble</b></a>()</tr><tr class='apiBrief'><td>&nbsp;</td><td>Read a double from the stream.</td></tr>
+   <tr class='apiDef'><td class='apiType'> </td><td><a href='#readInteger'><b>readInteger</b></a>(): <a href='Number.html'>Number</a></tr><tr class='apiBrief'><td>&nbsp;</td><td>Read a 32-bit integer from the stream.</td></tr>
+   <tr class='apiDef'><td class='apiType'> </td><td><a href='#readLong'><b>readLong</b></a>(): <a href='Number.html'>Number</a></tr><tr class='apiBrief'><td>&nbsp;</td><td>Read a 64-bit long from the stream.The data will be decoded according to the encoding property.</td></tr>
+   <tr class='apiDef'><td class='apiType'> </td><td><a href='#readString'><b>readString</b></a>(count: <a href='Number.html'>Number</a> = -1): <a href='String.html'>String</a></tr><tr class='apiBrief'><td>&nbsp;</td><td>Read a UTF-8 string from the stream.</td></tr>
+   <tr class='apiDef'><td class='apiType'> </td><td><a href='#readXML'><b>readXML</b></a>(): <a href='XML.html'>XML</a></tr><tr class='apiBrief'><td>&nbsp;</td><td>Read an XML document from the stream.</td></tr>
+   <tr class='apiDef'><td class='apiType'> </td><td><a href='#room'><b>room</b></a>(): <a href='Number.html'>Number</a></tr><tr class='apiBrief'><td>&nbsp;</td><td>Return the space available for write data.</td></tr>
+   <tr class='apiDef'><td class='apiType'> </td><td><a href='#write'><b>write</b></a>(items: <a href='Array.html'>Array</a>): <a href='Number.html'>Number</a></tr><tr class='apiBrief'><td>&nbsp;</td><td>Write data to the stream.</td></tr>
+   <tr class='apiDef'><td class='apiType'> </td><td><a href='#writeByte'><b>writeByte</b></a>(data: <a href='Number.html'>Number</a>): <a href='Void.html'>Void</a></tr><tr class='apiBrief'><td>&nbsp;</td><td>Write a byte to the array.</td></tr>
+   <tr class='apiDef'><td class='apiType'> </td><td><a href='#writeDouble'><b>writeDouble</b></a>(data: <a href='Number.html'>Number</a>): <a href='Void.html'>Void</a></tr><tr class='apiBrief'><td>&nbsp;</td><td>Write a double to the array.</td></tr>
+   <tr class='apiDef'><td class='apiType'> </td><td><a href='#writeInteger'><b>writeInteger</b></a>(data: <a href='Number.html'>Number</a>): <a href='Void.html'>Void</a></tr><tr class='apiBrief'><td>&nbsp;</td><td>Write a 32-bit integer to the array.</td></tr>
+   <tr class='apiDef'><td class='apiType'> </td><td><a href='#writeLong'><b>writeLong</b></a>(data: <a href='Number.html'>Number</a>): <a href='Void.html'>Void</a></tr><tr class='apiBrief'><td>&nbsp;</td><td>Write a 64 bit long integer to the array.</td></tr>
+   <tr class='apiDef'><td class='apiType'> </td><td><a href='#writeShort'><b>writeShort</b></a>(data: <a href='Number.html'>Number</a>): <a href='Void.html'>Void</a></tr><tr class='apiBrief'><td>&nbsp;</td><td>Write a short to the array.</td></tr>
+</table>
+
+<p class='inheritedLink'><a href='Object.html#InstanceMethods'><i>Inherited Methods</i></a></p>
+
+<hr />
+<h2>Method Detail</h2>
+<a name='BinaryStream'></a>
+<div class='api'>
+<div class='apiSig'>    BinaryStream(stream: <a href='Stream.html'>Stream</a>)
+</div>
+<div class='apiDetail'>
+<dl><dt>Description</dt></dd><dd>Create a new BinaryStream. </dd></dl>
+<dl><dt>Parameters</dt>
+<dd><table class='parameters' summary ='parameters'>
+<tr class='param'><td class='param'>stream: <a href='Stream.html'>Stream</a> </td><td>Stream to stack upon.</td></tr></table></dd>
+</dl></div>
+</div>
+<hr />
+<a name='close'></a>
+<div class='api'>
+<div class='apiSig'>    close(): <a href='Void.html'>Void</a>
+</div>
+<div class='apiDetail'>
+<dl><dt>Description</dt></dd><dd>Close the stream. </dd></dl>
+<dl><dt>Events</dt>
+<dd><table class='parameters' summary ='events'>
+<td class='param'>close</td><td>A close event is issued before closing the stream.</td></tr>
+</table></dd>
+</dl></div>
+</div>
+<hr />
+<a name='flush'></a>
+<div class='api'>
+<div class='apiSig'>    flush(dir: <a href='Number.html'>Number</a>): <a href='Void.html'>Void</a>
+</div>
+<div class='apiDetail'>
+<dl><dt>Description</dt></dd><dd>Flush the stream and underlying streams. A supplied flush <a href='#direction'>direction</a> argument modifies the effect of this call.
+If direction is set to Stream.READ, then all read data is discarded. If direction is set to Stream.WRITE, 
+any buffered data is written. Stream.BOTH will cause both directions to be flushed. If the stream is in 
+sync mode, this call will block until all data is written. If the stream is in async mode, it will attempt 
+to write all data but will return immediately. Defaults to Stream.WRITE.</dd></dl>
+<dl><dt>Parameters</dt>
+<dd><table class='parameters' summary ='parameters'>
+<tr class='param'><td class='param'>dir: <a href='Number.html'>Number</a> </td><td>Direction to flush. Set to <a href='#READ'>READ</a> <a href='#WRITE'>WRITE</a> or <a href='#BOTH'>BOTH</a>.</td></tr></table></dd>
+</dl></div>
+</div>
+<hr />
+<a name='off'></a>
+<div class='api'>
+<div class='apiSig'>    off(name, observer: <a href='Function.html'>Function</a>): <a href='Void.html'>Void</a>
+</div>
+<div class='apiDetail'>
+<dl><dt>Description</dt></dd><dd>Remove an observer from the stream. </dd></dl>
+<dl><dt>Parameters</dt>
+<dd><table class='parameters' summary ='parameters'>
+<tr class='param'><td class='param'>name </td><td>Event name previously used with observe. The name may be an array of events.</td></tr><tr class='param'><td class='param'>observer: <a href='Function.html'>Function</a> </td><td>Observer function previously used with observe.</td></tr></table></dd>
+</dl></div>
+</div>
+<hr />
+<a name='on'></a>
+<div class='api'>
+<div class='apiSig'>    on(name, observer: <a href='Function.html'>Function</a>): <a href='Void.html'>Void</a>
+</div>
+<div class='apiDetail'>
+<dl><dt>Description</dt></dd><dd>Add an observer to the stream for the named events. </dd></dl>
+<dl><dt>Parameters</dt>
+<dd><table class='parameters' summary ='parameters'>
+<tr class='param'><td class='param'>name: [String|Array]</td><td>Name of the event to listen for. The name may be an array of events.</td></tr><tr class='param'><td class='param'>observer: <a href='Function.html'>Function</a> </td><td>Callback observer function. The function is called with the following signature: function observer(event: String, ...args): Void.</td></tr></table></dd>
+</dl><dl><dt>Events</dt>
+<dd><table class='parameters' summary ='events'>
+<td class='param'>readable</td><td>Issued when the stream becomes readable.</td></tr>
+<td class='param'>writable</td><td>Issued when the stream becomes writable.</td></tr>
+<td class='param'>close</td><td>Issued when stream is being closed.</td></tr>
+</table></dd>
+</dl></div>
+</div>
+<hr />
+<a name='read'></a>
+<div class='api'>
+<div class='apiSig'>    read(buffer: <a href='ByteArray.html'>ByteArray</a>, offset: <a href='Number.html'>Number</a>, count: <a href='Number.html'>Number</a> = -1): <a href='Number.html'>Number</a>
+</div>
+<div class='apiDetail'>
+<dl><dt>Description</dt></dd><dd>Read a data from the stream. If data is available, the call will return immediately. 
+If no data is available and the stream is in sync mode, the call will block until data is available.
+If no data is available and the stream is in async mode, the call will not block and will return immediately.
+In this case a "readable" event will be issued when data is available for reading.</dd></dl>
+<dl><dt>Parameters</dt>
+<dd><table class='parameters' summary ='parameters'>
+<tr class='param'><td class='param'>buffer: <a href='ByteArray.html'>ByteArray</a> </td><td>Destination byte array for read data.</td></tr><tr class='param'><td class='param'>offset: <a href='Number.html'>Number</a> </td><td>Offset in the byte array to place the data. If the offset is -1, then data is appended to the buffer write <a href='#position'>position</a> which is then updated.</td></tr><tr class='param'><td class='param'>count: <a href='Number.html'>Number</a> </td><td>Read up to this number of bytes. If -1, read as much as the buffer will hold up. If the  stream is of fixed and known length (such as a file) and the buffer is of sufficient size or is growable,  read the entire stream. [default: -1]</td></tr></table></dd>
+</dl><dl><dt>Events</dt>
+<dd><table class='parameters' summary ='events'>
+<td class='param'>readable</td><td>Issued when there is new read data available.</td></tr>
+<td class='param'>writable</td><td>Issued when the stream becomes empty.</td></tr>
+</table></dd>
+</dl><dl><dt>Returns</dt>
+<dd>A count of the bytes actually read. Returns null on eof.</dd></dl>
+</div>
+</div>
+<hr />
+<a name='readBoolean'></a>
+<div class='api'>
+<div class='apiSig'>    readBoolean(): <a href='Boolean.html'>Boolean</a>
+</div>
+<div class='apiDetail'>
+<dl><dt>Description</dt></dd><dd>Read a boolean from the stream. </dd></dl>
+<dl><dt>Returns</dt>
+<dd>A boolean. Returns null on eof.</dd></dl>
+<dl><dt>Throws</dt><dd>
+<a href='IOError.html'>IOError</a>: if an I/O error occurs.
+</dd>
+</dl></div>
+</div>
+<hr />
+<a name='readByte'></a>
+<div class='api'>
+<div class='apiSig'>    readByte(): <a href='Number.html'>Number</a>
+</div>
+<div class='apiDetail'>
+<dl><dt>Description</dt></dd><dd>Read a byte from the stream. </dd></dl>
+<dl><dt>Returns</dt>
+<dd>A byte. Returns -1 on eof.</dd></dl>
+<dl><dt>Throws</dt><dd>
+<a href='IOError.html'>IOError</a>: if an I/O error occurs.
+</dd>
+</dl></div>
+</div>
+<hr />
+<a name='readDate'></a>
+<div class='api'>
+<div class='apiSig'>    readDate(): <a href='Date.html'>Date</a>
+</div>
+<div class='apiDetail'>
+<dl><dt>Description</dt></dd><dd>Read a date from the stream. </dd></dl>
+<dl><dt>Returns</dt>
+<dd>A date.</dd></dl>
+<dl><dt>Throws</dt><dd>
+<a href='IOError.html'>IOError</a>: if an I/O error occurs or premature eof
+</dd>
+</dl></div>
+</div>
+<hr />
+<a name='readDouble'></a>
+<div class='api'>
+<div class='apiSig'>    readDouble()
+</div>
+<div class='apiDetail'>
+<dl><dt>Description</dt></dd><dd>Read a double from the stream. The data will be decoded according to the encoding property.</dd></dl>
+<dl><dt>Returns</dt>
+<dd>A double.</dd></dl>
+<dl><dt>Throws</dt><dd>
+<a href='IOError.html'>IOError</a>: if an I/O error occurs or premature eof
+</dd>
+</dl></div>
+</div>
+<hr />
+<a name='readInteger'></a>
+<div class='api'>
+<div class='apiSig'>    readInteger(): <a href='Number.html'>Number</a>
+</div>
+<div class='apiDetail'>
+<dl><dt>Description</dt></dd><dd>Read a 32-bit integer from the stream. The data will be decoded according to the encoding property.</dd></dl>
+<dl><dt>Returns</dt>
+<dd>An 32-bitinteger.</dd></dl>
+<dl><dt>Throws</dt><dd>
+<a href='IOError.html'>IOError</a>: if an I/O error occurs or premature eof
+</dd>
+</dl></div>
+</div>
+<hr />
+<a name='readLong'></a>
+<div class='api'>
+<div class='apiSig'>    readLong(): <a href='Number.html'>Number</a>
+</div>
+<div class='apiDetail'>
+<dl><dt>Description</dt></dd><dd>Read a 64-bit long from the stream.The data will be decoded according to the encoding property. </dd></dl>
+<dl><dt>Returns</dt>
+<dd>A 64-bit long number.</dd></dl>
+<dl><dt>Throws</dt><dd>
+<a href='IOError.html'>IOError</a>: if an I/O error occurs or premature eof
+</dd>
+</dl></div>
+</div>
+<hr />
+<a name='readString'></a>
+<div class='api'>
+<div class='apiSig'>    readString(count: <a href='Number.html'>Number</a> = -1): <a href='String.html'>String</a>
+</div>
+<div class='apiDetail'>
+<dl><dt>Description</dt></dd><dd>Read a UTF-8 string from the stream. </dd></dl>
+<dl><dt>Parameters</dt>
+<dd><table class='parameters' summary ='parameters'>
+<tr class='param'><td class='param'>count: <a href='Number.html'>Number</a> </td><td>Of bytes to read. Returns the entire stream contents if count is -1. [default: -1]</td></tr></table></dd>
+</dl><dl><dt>Returns</dt>
+<dd>A string.</dd></dl>
+<dl><dt>Throws</dt><dd>
+<a href='IOError.html'>IOError</a>: if an I/O error occurs or premature eof.
+</dd>
+</dl></div>
+</div>
+<hr />
+<a name='readXML'></a>
+<div class='api'>
+<div class='apiSig'>    readXML(): <a href='XML.html'>XML</a>
+</div>
+<div class='apiDetail'>
+<dl><dt>Description</dt></dd><dd>Read an XML document from the stream. This assumes the XML document will be the only data until eof.</dd></dl>
+<dl><dt>Returns</dt>
+<dd>An XML document.</dd></dl>
+<dl><dt>Throws</dt><dd>
+<a href='IOError.html'>IOError</a>: if an I/O error occurs or premature eof
+</dd>
+</dl></div>
+</div>
+<hr />
+<a name='room'></a>
+<div class='api'>
+<div class='apiSig'>    room(): <a href='Number.html'>Number</a>
+</div>
+<div class='apiDetail'>
+<dl><dt>Description</dt></dd><dd>Return the space available for write data. This call can be used to prevent write from blocking or 
+doing partial writes. If it cannot be determined how much room is available, this call will return null.</dd></dl>
+<dl><dt>Returns</dt>
+<dd>The number of bytes that can be written without blocking or null if it cannot be determined.</dd></dl>
+</div>
+</div>
+<hr />
+<a name='write'></a>
+<div class='api'>
+<div class='apiSig'>    write(items: <a href='Array.html'>Array</a>): <a href='Number.html'>Number</a>
+</div>
+<div class='apiDetail'>
+<dl><dt>Description</dt></dd><dd>Write data to the stream. Write intelligently encodes various data types onto the stream and will encode 
+data in a portable cross-platform manner according to the setting of the <a href='#endian'>endian</a> property. If data is an 
+array, each element of the array will be written.</dd></dl>
+<dl><dt>Parameters</dt>
+<dd><table class='parameters' summary ='parameters'>
+<tr class='param'><td class='param'>items: <a href='Array.html'>Array</a> </td><td>Data items to write. The ByteStream class intelligently encodes various data types according  to the current setting of the <a href='#endian'>endian</a> property.</td></tr></table></dd>
+</dl><dl><dt>Returns</dt>
+<dd>The total number of bytes that were written.</dd></dl>
+<dl><dt>Throws</dt><dd>
+<a href='IOError.html'>IOError</a>: if there is an I/O error.
+</dd>
+</dl></div>
+</div>
+<hr />
+<a name='writeByte'></a>
+<div class='api'>
+<div class='apiSig'>    writeByte(data: <a href='Number.html'>Number</a>): <a href='Void.html'>Void</a>
+</div>
+<div class='apiDetail'>
+<dl><dt>Description</dt></dd><dd>Write a byte to the array. Data is written to the current write <a href='#position'>position</a> pointer.</dd></dl>
+<dl><dt>Parameters</dt>
+<dd><table class='parameters' summary ='parameters'>
+<tr class='param'><td class='param'>data: <a href='Number.html'>Number</a> </td><td>Data to write.</td></tr></table></dd>
+</dl><dl><dt>Events</dt>
+<dd><table class='parameters' summary ='events'>
+<td class='param'>readable</td><td>Issued when data is written and a consumer can read without blocking.</td></tr>
+</table></dd>
+</dl></div>
+</div>
+<hr />
+<a name='writeDouble'></a>
+<div class='api'>
+<div class='apiSig'>    writeDouble(data: <a href='Number.html'>Number</a>): <a href='Void.html'>Void</a>
+</div>
+<div class='apiDetail'>
+<dl><dt>Description</dt></dd><dd>Write a double to the array. Data is written to the current write <a href='#position'>position</a> pointer.</dd></dl>
+<dl><dt>Parameters</dt>
+<dd><table class='parameters' summary ='parameters'>
+<tr class='param'><td class='param'>data: <a href='Number.html'>Number</a> </td><td>Data to write.</td></tr></table></dd>
+</dl><dl><dt>Events</dt>
+<dd><table class='parameters' summary ='events'>
+<td class='param'>readable</td><td>Issued when data is written and a consumer can read without blocking.</td></tr>
+</table></dd>
+</dl></div>
+</div>
+<hr />
+<a name='writeInteger'></a>
+<div class='api'>
+<div class='apiSig'>    writeInteger(data: <a href='Number.html'>Number</a>): <a href='Void.html'>Void</a>
+</div>
+<div class='apiDetail'>
+<dl><dt>Description</dt></dd><dd>Write a 32-bit integer to the array. Data is written to the current write <a href='#position'>position</a> pointer.</dd></dl>
+<dl><dt>Parameters</dt>
+<dd><table class='parameters' summary ='parameters'>
+<tr class='param'><td class='param'>data: <a href='Number.html'>Number</a> </td><td>Data to write.</td></tr></table></dd>
+</dl><dl><dt>Events</dt>
+<dd><table class='parameters' summary ='events'>
+<td class='param'>readable</td><td>Issued when data is written and a consumer can read without blocking.</td></tr>
+</table></dd>
+</dl></div>
+</div>
+<hr />
+<a name='writeLong'></a>
+<div class='api'>
+<div class='apiSig'>    writeLong(data: <a href='Number.html'>Number</a>): <a href='Void.html'>Void</a>
+</div>
+<div class='apiDetail'>
+<dl><dt>Description</dt></dd><dd>Write a 64 bit long integer to the array. Data is written to the current write <a href='#position'>position</a> pointer.</dd></dl>
+<dl><dt>Parameters</dt>
+<dd><table class='parameters' summary ='parameters'>
+<tr class='param'><td class='param'>data: <a href='Number.html'>Number</a> </td><td>Data to write.</td></tr></table></dd>
+</dl><dl><dt>Events</dt>
+<dd><table class='parameters' summary ='events'>
+<td class='param'>readable</td><td>Issued when data is written and a consumer can read without blocking.</td></tr>
+</table></dd>
+</dl></div>
+</div>
+<hr />
+<a name='writeShort'></a>
+<div class='api'>
+<div class='apiSig'>    writeShort(data: <a href='Number.html'>Number</a>): <a href='Void.html'>Void</a>
+</div>
+<div class='apiDetail'>
+<dl><dt>Description</dt></dd><dd>Write a short to the array. Data is written to the current write <a href='#position'>position</a> pointer.</dd></dl>
+<dl><dt>Parameters</dt>
+<dd><table class='parameters' summary ='parameters'>
+<tr class='param'><td class='param'>data: <a href='Number.html'>Number</a> </td><td>Data to write.</td></tr></table></dd>
+</dl><dl><dt>Events</dt>
+<dd><table class='parameters' summary ='events'>
+<td class='param'>readable</td><td>Issued when data is written and a consumer can read without blocking.</td></tr>
+</table></dd>
+</dl></div>
+</div>
+<hr />
+<div class="terms">
+   <p class="terms">
+       <a href="http://www.embedthis.com/">       Embedthis Software LLC, 2003-2011. All rights reserved. Embedthis is a trademark of Embedthis Software LLC.</a>
+   </p>
+</div></div>
+</div>
+</body>
+</html>

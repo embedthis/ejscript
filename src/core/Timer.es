@@ -8,7 +8,7 @@ module ejs {
 
     /**
         Timers manage the execution of functions at some point in the future. Timers may run once, or they can be 
-        scheduled to run repeatedly, until stopped by calling the stop() method. Timers are scheduled with a granularity 
+        scheduled to run repeatedly, until stopped by calling the $stop() method. Timers are scheduled with a granularity 
         of 1 millisecond. However, many systems are not capable of supporting this granularity and make only best efforts 
         to schedule events at the desired time.
         @Example
@@ -23,8 +23,6 @@ module ejs {
 
         /**
             Constructor for Timer. The timer is will not be called until $start is called.
-            When the callback is invoked, it will be invoked with the value of "this" set to the timer unless the
-                function has bound a "this" value via Function.bind.
             @param period Delay in milliseconds before the timer will run
             @param callback Function to invoke when the timer is due. The callback is invoked with the following signature:
                 function callback(error: Error): Void
@@ -35,17 +33,17 @@ module ejs {
         /**
             The current drift setting. If drift is true, the timer is allowed to drift its execution time due to 
             other system events when attempting to optimize overall system performance.
-            If the drift value is set to false, reschedule the timer so that the time period between callback start 
-            times does not drift and is best-efforts equal to the timer reschedule period. The timer subsystem will 
-            delay other low priority events or timers, with drift equal to true, if necessary to ensure non-drifting 
-            timers are scheduled exactly. Setting drift to true will schedule the timer so that the time between the 
-            end of the callback and the start of the next callback invocation is equal to the period. 
+            If the drift value is set to false, the timer is scheduled so that the period between callback start 
+            times does not gradually drift. When using non-drifting timers, the timer subsystem will 
+            delay other low priority events or timers, if necessary to ensure non-drifting timers are scheduled exactly. 
          */
         native function get drift(): Boolean
         native function set drift(enable: Boolean): Void
 
         /**
-            Timer delay period in milliseconds
+            Timer delay period in milliseconds. Changing a timer period will not reschedule a currently scheduled timer.
+            The period will be used to schedule the next invocation. To change the current period, stop the timer and
+            restart it.
          */
         native function get period(): Number
         native function set period(period: Number): Void
@@ -64,11 +62,27 @@ module ejs {
         native function get repeat(): Boolean
         native function set repeat(enable: Boolean): Void
 
+        /*
+            Reschedule a timer. This will stop the timer if it is currently scheduled, then reschedule the timer.
+            If the $when argument is provided, the timer period will be set before starting.
+            @param when Time period for when to next run the timer
+         */
+        function restart(when: Number = null): Void {
+            stop()
+            if (when) {
+                period = when
+            }
+            start()
+        }
+
         /**
             Start a timer running. The timer will be repeatedly invoked if the $repeat property is true, otherwise it 
             will be invoked once.
+            When the timer callback is invoked, it will be invoked with the value of "this" set to the timer unless the
+                function has bound a "this" value via Function.bind.
+            @return The timer instance. This helps chaining. For example: var timer = Timer(1000, sayHello).start()
          */
-        native function start(): Void
+        native function start(): Timer
 
         /**
             Stop a timer running. Once stopped a timer can be restarted by calling $start.
@@ -85,7 +99,6 @@ module ejs {
         @return Timer ID that can be used with $clearInterval
      */
     function setInterval(callback: Function, delay: Number, ...args): Timer {
-        breakpoint()
         let timer = new Timer(delay, callback, ...args)
         timer.repeat = true
         timer.start()
@@ -100,7 +113,7 @@ module ejs {
         timer.stop()
 
     /**
-        Create a timeout
+        Run a function after a delay
         @param callback Function to invoke when the timer expires
         @param delay Time in milliseconds until the timer expires and the callback is invoked
         @param args Function arguments

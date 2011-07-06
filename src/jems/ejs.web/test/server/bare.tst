@@ -4,8 +4,8 @@
 require ejs.web
 
 server = new HttpServer
-assert(server.documentRoot == ".")
-assert(server.serverRoot == ".")
+assert(server.documents == ".")
+assert(server.home == ".")
 assert(server.address == null)
 assert(server.async == true)
 assert(server.isSecure == false)

@@ -54,7 +54,7 @@ static EjsAny *castXml(Ejs *ejs, EjsXML *xml, EjsType *type)
 
     mprAssert(ejsIsXML(ejs, xml));
 
-    if (type == ST(XMLList)) {
+    if (type == ESV(XMLList)) {
         return xml;
     }
 
@@ -65,13 +65,13 @@ static EjsAny *castXml(Ejs *ejs, EjsXML *xml, EjsType *type)
         return ejsCreateBoolean(ejs, 1);
 
     case S_Number:
-        result = castXml(ejs, xml, ST(String));
+        result = castXml(ejs, xml, ESV(String));
         return ejsToNumber(ejs, result);
 
     case S_String:
         if (xml->kind == EJS_XML_ELEMENT) {
             if (xml->elements == 0) {
-                return S(empty);
+                return ESV(empty);
             }
             if (xml->elements && mprGetListLength(xml->elements) == 1) {
                 //  TODO - what about PI and comments?
@@ -171,7 +171,7 @@ static EjsObj *nextXmlKey(Ejs *ejs, EjsIterator *ip, int argc, EjsObj **argv)
  */
 static EjsObj *getXmlIterator(Ejs *ejs, EjsObj *xml, int argc, EjsObj **argv)
 {
-    return (EjsObj*) ejsCreateIterator(ejs, xml, (EjsProc) nextXmlKey, 0, NULL);
+    return (EjsObj*) ejsCreateIterator(ejs, xml, nextXmlKey, 0, NULL);
 }
 
 
@@ -209,7 +209,7 @@ static EjsObj *nextXmlValue(Ejs *ejs, EjsIterator *ip, int argc, EjsObj **argv)
  */
 static EjsObj *getXmlValues(Ejs *ejs, EjsObj *ap, int argc, EjsObj **argv)
 {
-    return (EjsObj*) ejsCreateIterator(ejs, ap, (EjsProc) nextXmlValue, 0, NULL);
+    return (EjsObj*) ejsCreateIterator(ejs, ap, nextXmlValue, 0, NULL);
 }
 
 
@@ -306,7 +306,7 @@ static EjsObj *invokeXmlOperator(Ejs *ejs, EjsXML *lhs, int opcode,  EjsXML *rhs
  */
 static int setXmlPropertyAttributeByName(Ejs *ejs, EjsXML *xml, EjsName qname, EjsObj *value)
 {
-    EjsXML      *elt, *attribute, *rp, *xvalue, *lastElt;
+    EjsXML      *elt, *attribute, *xvalue, *lastElt;
     EjsString   *sv;
     EjsName     qn;
     MprChar     *str;
@@ -339,7 +339,6 @@ static int setXmlPropertyAttributeByName(Ejs *ejs, EjsXML *xml, EjsName qname, E
             mprAssert(qname.name->value[0] == '@');
             if (wcmp(elt->qname.name->value, &qname.name->value[1]) == 0) {
                 if (last >= 0) {
-                    rp = mprGetItem(xml->attributes, last);
                     mprRemoveItemAtPos(xml->attributes, last);
                 }
                 last = index;
@@ -453,7 +452,6 @@ static int setXmlPropertyByName(Ejs *ejs, EjsXML *xml, EjsName qname, EjsObj *va
             value = (EjsObj*) ejsDeepCopyXML(ejs, xvalue);
         }
     } else {
-        //  MOB - change all these to use ejsToString()
         value = ejsCast(ejs, value, String);
     }
     if (qname.name->value[0] == '@') {
@@ -575,10 +573,6 @@ EjsXML *ejsXMLDescendants(Ejs *ejs, EjsXML *xml, EjsName qname)
             for (next = 0; (item = mprGetNextItem(xml->attributes, &next)) != 0; ) {
                 if (qname.name->value[2] == '*' || wcmp(item->qname.name->value, &qname.name->value[2]) == 0) {
                     result = ejsAppendToXML(ejs, result, item);
-#if UNUSED
-                } else {
-                    result = ejsAppendToXML(ejs, result, ejsXMLDescendants(ejs, item, qname));
-#endif
                 }
             }
         }
@@ -818,7 +812,7 @@ static EjsString *xmlToJson(Ejs *ejs, EjsObj *vp, int argc, EjsObj **argv)
  */
 static EjsObj *xmlToString(Ejs *ejs, EjsObj *obj, int argc, EjsObj **argv)
 {
-    return (TYPE(obj)->helpers.cast)(ejs, obj, ST(String));
+    return (TYPE(obj)->helpers.cast)(ejs, obj, ESV(String));
 }
 
 
@@ -853,14 +847,14 @@ static EjsObj *setLength(Ejs *ejs, EjsXML *xml, int argc, EjsObj **argv)
 
     if (length < ap->length) {
         for (i = length; i < ap->length; i++) {
-            if (ejsSetProperty(ejs, ap, i, S(undefined)) < 0) {
+            if (ejsSetProperty(ejs, ap, i, ESV(undefined)) < 0) {
                 //  TODO - DIAG
                 return 0;
             }
         }
 
     } else if (length > ap->length) {
-        if (ejsSetProperty(ejs, ap, length - 1, S(undefined)) < 0) {
+        if (ejsSetProperty(ejs, ap, length - 1, ESV(undefined)) < 0) {
             //  TODO - DIAG
             return 0;
         }
@@ -877,7 +871,7 @@ static EjsObj *setLength(Ejs *ejs, EjsXML *xml, int argc, EjsObj **argv)
  */
 static EjsObj *xml_parent(Ejs *ejs, EjsXML *xml, int argc, EjsObj **argv)
 {
-    return (xml->parent && xml != xml->parent) ? (EjsObj*) xml->parent : (EjsObj*) S(null);
+    return (xml->parent && xml != xml->parent) ? (EjsObj*) xml->parent : (EjsObj*) ESV(null);
 }
 
 /********************************** Support **********************************/
@@ -1001,7 +995,7 @@ EjsXML *ejsCreateXML(Ejs *ejs, int kind, EjsName qname, EjsXML *parent, EjsStrin
 {
     EjsXML      *xml;
 
-    if ((xml = (EjsXML*) ejsAlloc(ejs, ST(XML), 0)) == NULL) {
+    if ((xml = (EjsXML*) ejsAlloc(ejs, ESV(XML), 0)) == NULL) {
         return 0;
     }
     if (qname.name) {
@@ -1073,8 +1067,8 @@ void ejsCreateXMLType(Ejs *ejs)
 {
     EjsType     *type;
 
-    type = ejsCreateNativeType(ejs, N("ejs", "XML"), sizeof(EjsXML), S_XML, ES_XML_NUM_CLASS_PROP, 
-        ejsManageXML, EJS_OBJ_HELPERS);
+    type = ejsCreateCoreType(ejs, N("ejs", "XML"), sizeof(EjsXML), S_XML, ES_XML_NUM_CLASS_PROP, ejsManageXML, 
+        EJS_TYPE_OBJ);
 
     /*
         Must not bind as XML uses get/setPropertyByName to defer to user XML elements over XML methods
@@ -1097,22 +1091,22 @@ void ejsConfigureXMLType(Ejs *ejs)
     EjsType     *type;
     EjsPot      *prototype;
 
-    type = ST(XML);
+    if ((type = ejsFinalizeCoreType(ejs, N("ejs", "XML"))) == 0) {
+        return;
+    }
     prototype = type->prototype;
-
-    ejsBindConstructor(ejs, type, (EjsProc) xmlConstructor);
-    ejsBindMethod(ejs, prototype, ES_XML_length, (EjsProc) xmlLength);
-    ejsBindMethod(ejs, prototype, ES_XML_load, (EjsProc) loadXml);
-    ejsBindMethod(ejs, prototype, ES_XML_save, (EjsProc) saveXml);
-    ejsBindMethod(ejs, prototype, ES_XML_name, (EjsProc) getXmlNodeName);
-
+    ejsBindConstructor(ejs, type, xmlConstructor);
+    ejsBindMethod(ejs, prototype, ES_XML_length, xmlLength);
+    ejsBindMethod(ejs, prototype, ES_XML_load, loadXml);
+    ejsBindMethod(ejs, prototype, ES_XML_save, saveXml);
+    ejsBindMethod(ejs, prototype, ES_XML_name, getXmlNodeName);
     ejsBindMethod(ejs, prototype, ES_XML_parent, (EjsNativeFunction) xml_parent);
 
     /*
         Override these methods
      */
-    ejsBindMethod(ejs, prototype, ES_XML_toString, (EjsProc) xmlToString);
-    ejsBindMethod(ejs, prototype, ES_XML_toJSON, (EjsProc) xmlToJson);
+    ejsBindMethod(ejs, prototype, ES_XML_toString, xmlToString);
+    ejsBindMethod(ejs, prototype, ES_XML_toJSON, xmlToJson);
     ejsBindMethod(ejs, prototype, ES_XML_iterator_get, getXmlIterator);
     ejsBindMethod(ejs, prototype, ES_XML_iterator_getValues, getXmlValues);
 #if FUTURE

@@ -6,21 +6,23 @@
 
 module ejs {
 
-    //  MOB -- should this be a stream?
     /** 
         Logger objects provide a convenient and consistent method to capture and store logging information.
-        Loggers can direct output to streams and may be aggregated in a hierarchical manner. The verbosity of 
+        Loggers can direct output to Streams and may be aggregated in a hierarchical manner. The verbosity of 
         logging can be managed and messages can be filtered.
    
-        A logger may have a "parent" logger in order to create hierarchies of loggers for granular control of logging.
+        Hierarchies of loggers can be constructed by specifying a parent logger when creating a logger instance.
         For example, a logger can be created for each class in a package with all such loggers having a single parent. 
         Loggers can send log messages to their parent and inherit their parent's log level. 
         The top level logger for an application is defined by App.log.
  
-        Loggers may define a filter function that returns true or false depending on whether a specific message 
-        should be logged or not. A matching pattern can alternatively be used to filter messages based on the logger name.
+        Each logger may define a filter function that returns true or false depending on whether a specific message 
+        should be logged or not. A matching pattern can alternatively be used to filter messages.
 
-        Loggers are themselves Streams and Stream filters can be stacked atop Loggers.
+        An Application will have a default Logger instance created and stored in App.log at startup. This Logger uses
+        the LogFile class to communicate with the Application's native log file. This is typically initialized
+        by the "--log" command line switch and otherwise defaults to send messages to the standard error console.
+
         @spec ejs
         @stability prototype
      */
@@ -90,6 +92,8 @@ module ejs {
             Redirect log output.
             @param location Optional output stream or Logger to send messages to. If a parent Logger instance is 
                 provided for the output parameter, messages are sent to the parent for rendering.
+            @param level Optional integer verbosity level. Messages with a message level less than or equal to the defined
+                logger level will be emitted. Range is 0 (least verbose) to 9.
          */
         function redirect(location, level: Number = null): Void {
             if (location is Stream) {
@@ -106,12 +110,6 @@ module ejs {
                 } else {
                     stream = File(path).open("wa+")
                 }
-                /*
-                    Rely on GC to close. Otherwise this may close stderr
-                    if (_outStream && stream != _outStream && _outStream != Logger.nativeStream) {
-                        _outStream.close()
-                    }
-                 */
                 _outStream = stream
             }
             _location = location
@@ -162,19 +160,21 @@ module ejs {
 
         /** 
             The numeric verbosity setting (0-9) of this logger. Zero is least verbose, nine is the most verbose.
+            Messages with a lower (or equal) verbosity level than the logger's level are emitted.
          */
         function get level(): Number
             _level
 
         function set level(level: Number): void {
             _level = level
-            /*
-                if (this == App.log) {
-                    nativeLogLevel = level
-                }
-             */
+            if (_outStream is Log) {
+                _outStream.level = level
+            }
         }
 
+        /**
+            The logging location parameter specified when constructing or redirecting the logger. 
+         */
         function get location()
             _location
 
@@ -187,20 +187,6 @@ module ejs {
 
         function set match(pattern: RegExp): void 
             _pattern = pattern
-
-        /**
-            Logging level for native code instrumentation. 
-            This controls logging from C code.
-         */
-        static native function get nativeLevel(): Number
-        static native function set nativeLevel(level: Number): Void
-
-        /**
-            Logging stream for native code logging instrumentation.  This controls logging from C code.
-            This is initialized at startup via a command line "--log spec" switch and/or the ejsrc "log.location" field.
-         */
-        static native function get nativeStream(): Stream
-        static native function set nativeStream(stream: Stream): Void
 
         /** 
             The name of this logger.
@@ -251,6 +237,7 @@ module ejs {
         function info(...msgs): void
             emit("", Info, "INFO", msgs.join(" ") + "\n")
 
+        //  TODO - should activity take a level?
         /** 
             Emit an activity message
             @param tag Activity tag to prefix the message. The tag string is wraped in "[]".
@@ -269,14 +256,14 @@ module ejs {
             @hide
          */
         function off(name, observer: Function): Void {
-            throw "observe is not supported"
+            throw "off is not supported"
         }
 
         /** 
             @hide
          */
         function on(name, observer: Function): Void {
-            throw "observe is not supported"
+            throw "on is not supported"
         }
 
         /** 
@@ -288,11 +275,15 @@ module ejs {
         }
 
         /** 
-            Write raw data to the logger stream.
+            Write messages to the logger stream. NOTE: for the Logger class, I/O errors will not throw exceptions. 
             @duplicate Stream.write
          */
-        function write(...data): Number
-            (_outStream) ? _outStream.write(data.join(" ")) : 0
+        function write(...data): Number {
+            try {
+                return (_outStream) ? _outStream.write(data.join(" ")) : 0
+            } catch {}
+            return 0
+        }
 
         /** 
             Emit a warning message.
@@ -323,10 +314,10 @@ module ejs {
             }
             if (_outStream is Logger) {
                 _outStream.emit(origin, level, kind, msg)
+            } else if (kind) {
+                write(origin + ": " + kind + ": " + msg)
             } else {
-                if (kind)
-                    _outStream.write(origin + ": " + kind + ": " + msg)
-                else _outStream.write(origin + ": " + level + ": " + msg)
+                write(origin + ": " + level + ": " + msg)
             }
         }
     }

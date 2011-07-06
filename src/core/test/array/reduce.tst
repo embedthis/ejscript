@@ -5,7 +5,7 @@
 
 // Flatten 
 var flat = [[0,1], [2,3], [4,5]].reduce(function(a,b) {  
-          return a.concat(b);  
+    return a.concat(b);  
 }, []); 
 assert(flat == "0,1,2,3,4,5")
 
@@ -40,4 +40,3 @@ let result = [0,1,2,3,4].reduceRight(function(previous, current, index, array){
 }, 10); 
 assert(elts == "4,3,2,1,0")
 assert(result == 20)
-

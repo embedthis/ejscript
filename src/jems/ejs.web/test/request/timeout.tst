@@ -38,7 +38,7 @@ server.on("readable", function (event, request: Request) {
 //  Test inactivityTimeout
 let http = fetch(HTTP + "/dontFinalize", Http.RequestTimeout)
 assert(http.status == Http.RequestTimeout)
-assert(http.response.contains("Inactive request timed out. Exceeded inactivity timeout of 1 sec."))
+assert(http.response.contains("Exceeded inactivity timeout of 1 sec"))
 
 http.close()
 

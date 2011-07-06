@@ -33,6 +33,7 @@ v = new View
 x = v.fun("fmt")
 assert(x("abc") == "ABC")
 
+
 //  Closure test for ordinary functions
 
 function fun(x) {

@@ -20,9 +20,10 @@ static int socketListenEvent(EjsSocket *listen, MprEvent *event);
 /*
     function Socket()
  */
-static EjsObj *sock_Socket(Ejs *ejs, EjsSocket *sp, int argc, EjsObj **argv)
+static EjsSocket *sock_Socket(Ejs *ejs, EjsSocket *sp, int argc, EjsObj **argv)
 {
     //  TODO -- ssl?
+    sp->ejs = ejs;
     sp->sock = mprCreateSocket(NULL);
     if (sp->sock == 0) {
         ejsThrowMemoryError(ejs);
@@ -31,24 +32,14 @@ static EjsObj *sock_Socket(Ejs *ejs, EjsSocket *sp, int argc, EjsObj **argv)
 #if UNUSED
     sp->waitHandler.fd = -1;
 #endif
-    return (EjsObj*) sp;
-}
-
-
-/*
-    function on(name: [String|Array], listener: Function): Void
- */
-EjsObj *sock_on(Ejs *ejs, EjsSocket *sp, int argc, EjsObj **argv)
-{
-    ejsAddObserver(ejs, &sp->emitter, argv[0], argv[1]);
-    return 0;
+    return sp;
 }
 
 
 /*
     function accept(): Socket
  */
-EjsObj *sock_accept(Ejs *ejs, EjsSocket *listen, int argc, EjsObj **argv)
+EjsSocket *sock_accept(Ejs *ejs, EjsSocket *listen, int argc, EjsObj **argv)
 {
     MprSocket   *sock;
     EjsSocket   *sp;
@@ -66,25 +57,25 @@ EjsObj *sock_accept(Ejs *ejs, EjsSocket *listen, int argc, EjsObj **argv)
     } else {
         mprSetSocketBlockingMode(sp->sock, 1);
     }
-    return (EjsObj*) sp;
+    return sp;
 }
 
 
 /*
-    function get address(): Void
+    function get address(): String
  */
-EjsObj *sock_address(Ejs *ejs, EjsSocket *sp, int argc, EjsObj **argv)
+EjsString *sock_address(Ejs *ejs, EjsSocket *sp, int argc, EjsObj **argv)
 {
-    return (EjsObj*) ejsCreateStringFromAsc(ejs, sp->address);
+    return ejsCreateStringFromAsc(ejs, sp->address);
 }
 
 
 /*
     function get async(): Boolean
  */
-EjsObj *sock_async(Ejs *ejs, EjsSocket *sp, int argc, EjsObj **argv)
+EjsBoolean *sock_async(Ejs *ejs, EjsSocket *sp, int argc, EjsObj **argv)
 {
-    return (sp->async) ? (EjsObj*) S(true) : (EjsObj*) S(false);
+    return (sp->async) ? ESV(true) : ESV(false);
 }
 
 
@@ -93,18 +84,18 @@ EjsObj *sock_async(Ejs *ejs, EjsSocket *sp, int argc, EjsObj **argv)
  */
 EjsObj *sock_set_async(Ejs *ejs, EjsSocket *sp, int argc, EjsObj **argv)
 {
-    sp->async = (argv[0] == (EjsObj*) S(true));
+    sp->async = (argv[0] == ESV(true));
     return 0;
 }
 
 
 /*
     function close(): Void
-    MOB - should support graceful option
+    TODO - should support graceful option
  */
 static EjsObj *sock_close(Ejs *ejs, EjsSocket *sp, int argc, EjsObj **argv)
 {
-    ejsSendEvent(ejs, sp->emitter, "close", NULL, (EjsObj*) sp);
+    ejsSendEvent(ejs, sp->emitter, "close", NULL, sp);
     if (sp->sock) {
         mprCloseSocket(sp->sock, 0);
         sp->sock = 0;
@@ -127,7 +118,7 @@ static EjsObj *sock_connect(Ejs *ejs, EjsSocket *sp, int argc, EjsObj **argv)
         sp->port = (int) ((EjsNumber*) address)->value;
     } else {
         if (!ejsIs(ejs, address, String)) {
-            address = ejsToString(ejs, (EjsObj*) address);
+            address = ejsToString(ejs, address);
         }
         sp->address = ejsToMulti(ejs, address);
         if ((cp = strchr(sp->address, ':')) != 0) {
@@ -152,7 +143,7 @@ static EjsObj *sock_connect(Ejs *ejs, EjsSocket *sp, int argc, EjsObj **argv)
     } else {
         mprSetSocketBlockingMode(sp->sock, 1);
     }
-    ejsSendEvent(ejs, sp->emitter, "writable", NULL, (EjsObj*) sp);
+    ejsSendEvent(ejs, sp->emitter, "writable", NULL, sp);
     return 0;
 }
 
@@ -172,7 +163,7 @@ static EjsObj *sock_listen(Ejs *ejs, EjsSocket *sp, int argc, EjsObj **argv)
         sp->port = (int) ((EjsNumber*) address)->value;
     } else {
         if (!ejsIs(ejs, address, String)) {
-            address = ejsToString(ejs, (EjsObj*) address);
+            address = ejsToString(ejs, address);
         }
         sp->address = ejsToMulti(ejs, address);
         if ((cp = strchr(sp->address, ':')) != 0) {
@@ -202,18 +193,38 @@ static EjsObj *sock_listen(Ejs *ejs, EjsSocket *sp, int argc, EjsObj **argv)
 
 
 /*
+    function off(name, observer: Function): Void
+ */
+static EjsObj *sock_off(Ejs *ejs, EjsSocket *sp, int argc, EjsAny **argv)
+{
+    ejsRemoveObserver(ejs, sp->emitter, argv[0], argv[1]);
+    return 0;
+}
+
+
+/*
+    function on(name: [String|Array], observer: Function): Void
+ */
+EjsObj *sock_on(Ejs *ejs, EjsSocket *sp, int argc, EjsAny **argv)
+{
+    ejsAddObserver(ejs, &sp->emitter, argv[0], argv[1]);
+    return 0;
+}
+
+
+/*
     function get port(): Number
  */
-static EjsObj *sock_port(Ejs *ejs, EjsSocket *sp, int argc, EjsObj **argv)
+static EjsNumber *sock_port(Ejs *ejs, EjsSocket *sp, int argc, EjsObj **argv)
 {
-    return (EjsObj*) ejsCreateNumber(ejs, sp->port);
+    return ejsCreateNumber(ejs, sp->port);
 }
 
 
 /*
     function read(buffer: ByteArray, offset: Number = 0, count: Number = -1): Number
  */
-static EjsObj *sock_read(Ejs *ejs, EjsSocket *sp, int argc, EjsObj **argv)
+static EjsNumber *sock_read(Ejs *ejs, EjsSocket *sp, int argc, EjsObj **argv)
 {
     EjsByteArray    *ba;
     ssize           nbytes, offset, count;
@@ -233,45 +244,31 @@ static EjsObj *sock_read(Ejs *ejs, EjsSocket *sp, int argc, EjsObj **argv)
     }
     nbytes = mprReadSocket(sp->sock, &ba->value[offset], count);
     if (nbytes < 0) {
-#if UNUSED
-        ejsThrowIOError(ejs, "Can't read from socket");
-        return 0;
-#endif
-        //  MOB -- should not be using EOF event
-        ejsSendEvent(ejs, sp->emitter, "eof", NULL, (EjsObj*) sp);
+        //  TODO -- should not be using EOF event
+        ejsSendEvent(ejs, sp->emitter, "eof", NULL, sp);
         //  TODO - do we need to set the mask here?
-        return (EjsObj*) S(null);
+        return ESV(null);
     }
     if (nbytes == 0) {
         //  TODO - but in async, this does not mean eof. See mpr for how to tell eof
-        //  MOB -- should not be using EOF event
-        ejsSendEvent(ejs, sp->emitter, "eof", NULL, (EjsObj*) sp);
+        //  TODO -- should not be using EOF event
+        ejsSendEvent(ejs, sp->emitter, "eof", NULL, sp);
         //  TODO - do we need to set the mask here?
-        return (EjsObj*) S(null);
+        return ESV(null);
     }
     ba->writePosition += nbytes;
     sp->mask |= MPR_READABLE;
     enableSocketEvents(sp, socketIOEvent);
-    return (EjsObj*) ejsCreateNumber(ejs, (int) nbytes);
+    return ejsCreateNumber(ejs, (int) nbytes);
 }
 
 
 /*
     function get remoteAddress(): String
  */
-static EjsObj *sock_remoteAddress(Ejs *ejs, EjsSocket *sp, int argc, EjsObj **argv)
+static EjsString *sock_remoteAddress(Ejs *ejs, EjsSocket *sp, int argc, EjsObj **argv)
 {
-    return (EjsObj*) ejsCreateStringFromAsc(ejs, sp->address);
-}
-
-
-/*
-    function off(name, listener: Function): Void
- */
-static EjsObj *sock_off(Ejs *ejs, EjsSocket *sp, int argc, EjsObj **argv)
-{
-    ejsRemoveObserver(ejs, sp->emitter, argv[0], argv[1]);
-    return 0;
+    return ejsCreateStringFromAsc(ejs, sp->address);
 }
 
 
@@ -293,7 +290,7 @@ static ssize writeSocketData(Ejs *ejs, EjsSocket *sp)
     }
     if (ejsGetByteArrayAvailable(ba) == 0) {
         if (sp->emitter) {
-            ejsSendEvent(ejs, sp->emitter, "writable", NULL, (EjsObj*) sp);
+            ejsSendEvent(ejs, sp->emitter, "writable", NULL, sp);
         }
         if (sp->async) {
             sp->mask &= ~MPR_WRITABLE;
@@ -341,7 +338,7 @@ static void enableSocketEvents(EjsSocket *sp, int (*proc)(EjsSocket *sp, MprEven
 {
     Ejs     *ejs;
 
-    ejs = TYPE(sp)->ejs;
+    ejs = sp->ejs;
     if (sp->sock->handler == 0) {
         mprAddSocketHandler(sp->sock, sp->mask, ejs->dispatcher, (MprEventProc) proc, sp, 0);
     } else {
@@ -351,15 +348,14 @@ static void enableSocketEvents(EjsSocket *sp, int (*proc)(EjsSocket *sp, MprEven
 
 
 #if UNUSED
-//  MOB -- when is this called?
 static int socketConnectEvent(EjsSocket *sp, MprEvent *event)
 {
     Ejs     *ejs;
 
-    ejs = sp->type->ejs;
+    ejs = sp->ejs;
     if (sp->emitter) {
-        ejsSendEvent(ejs, sp->emitter, "connect", NULL, (EjsObj*) sp);
-        ejsSendEvent(ejs, sp->emitter, "writable", NULL, (EjsObj*) sp);
+        ejsSendEvent(ejs, sp->emitter, "connect", NULL, sp);
+        ejsSendEvent(ejs, sp->emitter, "writable", NULL, sp);
     }
     enableSocketEvents(sp, socketIOEvent);
     return 0;
@@ -371,9 +367,9 @@ static int socketListenEvent(EjsSocket *listen, MprEvent *event)
 {
     Ejs     *ejs;
 
-    ejs = TYPE(listen)->ejs;
+    ejs = listen->ejs;
     if (listen->emitter) {
-        ejsSendEvent(ejs, listen->emitter, "accept", NULL, (EjsObj*) listen);
+        ejsSendEvent(ejs, listen->emitter, "accept", NULL, listen);
     }
     enableSocketEvents(listen, socketListenEvent);
     return 0;
@@ -384,10 +380,10 @@ static int socketIOEvent(EjsSocket *sp, MprEvent *event)
 {
     Ejs     *ejs;
 
-    ejs = TYPE(sp)->ejs;
+    ejs = sp->ejs;
     if (event->mask & MPR_READABLE) {
         if (sp->emitter) {
-            ejsSendEvent(ejs, sp->emitter, "readable", NULL, (EjsObj*) sp);
+            ejsSendEvent(ejs, sp->emitter, "readable", NULL, sp);
         }
         sp->mask |= MPR_READABLE;
     } 
@@ -416,11 +412,14 @@ static void manageSocket(EjsSocket *sp, int flags)
 
 EjsSocket *ejsCreateSocket(Ejs *ejs)
 {
-    return ejsCreateObj(ejs, ejsGetTypeByName(ejs, N(EJS_EJS_NAMESPACE, "Socket")), 0);
+    EjsSocket   *sp;
+
+    sp = ejsCreateObj(ejs, ejsGetTypeByName(ejs, N(EJS_EJS_NAMESPACE, "Socket")), 0);
+    sp->ejs = ejs;
 #if UNUSED
     sp->waitHandler.fd = -1;
-    return sp;
 #endif
+    return sp;
 }
 
 
@@ -429,24 +428,24 @@ void ejsConfigureSocketType(Ejs *ejs)
     EjsType     *type;
     EjsPot      *prototype;
 
-    type = ejsConfigureNativeType(ejs, N("ejs", "Socket"), sizeof(EjsSocket), (MprManager) manageSocket, EJS_OBJ_HELPERS);
+    if ((type = ejsFinalizeScriptType(ejs, N("ejs", "Socket"), sizeof(EjsSocket), manageSocket,
+            EJS_TYPE_OBJ | EJS_TYPE_MUTABLE_INSTANCES)) == 0) {
+        return;
+    }
     prototype = type->prototype;
-
-    ejsBindConstructor(ejs, type, (EjsProc) sock_Socket);
-    ejsBindMethod(ejs, prototype, ES_Socket_accept, (EjsProc) sock_accept);
-    ejsBindMethod(ejs, prototype, ES_Socket_address, (EjsProc) sock_address);
-    ejsBindAccess(ejs, prototype, ES_Socket_async, (EjsProc) sock_async, (EjsProc) sock_set_async);
-    ejsBindMethod(ejs, prototype, ES_Socket_close, (EjsProc) sock_close);
-    ejsBindMethod(ejs, prototype, ES_Socket_connect, (EjsProc) sock_connect);
-    ejsBindMethod(ejs, prototype, ES_Socket_listen, (EjsProc) sock_listen);
-#if ES_Socket_off
-    ejsBindMethod(ejs, prototype, ES_Socket_off, (EjsProc) sock_off);
-#endif
-    ejsBindMethod(ejs, prototype, ES_Socket_on, (EjsProc) sock_on);
-    ejsBindMethod(ejs, prototype, ES_Socket_port, (EjsProc) sock_port);
-    ejsBindMethod(ejs, prototype, ES_Socket_read, (EjsProc) sock_read);
-    ejsBindMethod(ejs, prototype, ES_Socket_remoteAddress, (EjsProc) sock_remoteAddress);
-    ejsBindMethod(ejs, prototype, ES_Socket_write, (EjsProc) sock_write);
+    ejsBindConstructor(ejs, type, sock_Socket);
+    ejsBindMethod(ejs, prototype, ES_Socket_accept, sock_accept);
+    ejsBindMethod(ejs, prototype, ES_Socket_address, sock_address);
+    ejsBindAccess(ejs, prototype, ES_Socket_async, sock_async, sock_set_async);
+    ejsBindMethod(ejs, prototype, ES_Socket_close, sock_close);
+    ejsBindMethod(ejs, prototype, ES_Socket_connect, sock_connect);
+    ejsBindMethod(ejs, prototype, ES_Socket_listen, sock_listen);
+    ejsBindMethod(ejs, prototype, ES_Socket_off, sock_off);
+    ejsBindMethod(ejs, prototype, ES_Socket_on, sock_on);
+    ejsBindMethod(ejs, prototype, ES_Socket_port, sock_port);
+    ejsBindMethod(ejs, prototype, ES_Socket_read, sock_read);
+    ejsBindMethod(ejs, prototype, ES_Socket_remoteAddress, sock_remoteAddress);
+    ejsBindMethod(ejs, prototype, ES_Socket_write, sock_write);
 }
 
 /*

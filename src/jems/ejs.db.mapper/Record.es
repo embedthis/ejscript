@@ -15,16 +15,24 @@ module ejs.db.mapper {
         in the Record instance for each column in the database table. Users should subclass the Record class for each 
         database table to manage. When users subclass Record to create models, they should use "implement" rather than
         extend.
-        @example public dynamic class MyModel implements Record {}
+        @example 
+        public dynamic class MyModel implements Record {}
         @spec ejs
         @stability prototype
      */
     public class Record {
         
-        //  MOB -- these should be private. Also need a default namesapce
 
         static var  _assocName: String          //  Name for use in associations. Lower case class name
         static var  _belongsTo: Array = null    //  List of belonging associations
+
+        /*
+            Queries to cache. Indexed by model name and optionally query string. Contains cache options for this model.
+            Created on demand if cache() is called.
+         */
+        static var _cacheOptions: Object = {}
+        static var _caching: Boolean
+
         static var  _className: String          //  Model class name
         static var  _columns: Object            //  List of columns in this database table
         static var  _hasOne: Array = null       //  List of 1-1 containment associations
@@ -95,8 +103,8 @@ module ejs.db.mapper {
          */
         function initialize(fields: Object? = null): Void {
             _imodel = Object.getType(this)
-            if (fields) for (let field in fields) {
-                this."public"::[field] = fields[field]
+            if (fields) {
+                blend(this, fields, {deep: false, overwrite: true})
             }
         }
 
@@ -133,6 +141,69 @@ module ejs.db.mapper {
             _belongsTo ||= []
             _belongsTo.append(owner)
         }
+
+        /**
+            Database query caching. This caches controls the caching of database records. If enabled, the results
+            of queries are cached with a given lifetime. If the lifetime has not expired, subsequent queries will
+            be optimized by retrieving cached data. If the record is updated, the cached data will be removed so that
+            the next query retrieves fresh data.
+            Caching is disabled/enabled via the ejsrc config.cache.database.enable field. It is enabled by default.
+            Caching may be used for any Database model, though typically it is most useful for state-less GET requests.
+            @param model Model class. This can be a Model class object, "this" or a String model class name.
+                You can specify "this" in static code or can also use "this" in class instance
+                code and this routine will determine the underlying model class name.
+            @param options Cache control options. Default options for all model caching can also be provided by the 
+                ejsrc config.cache.database field.
+            @option lifespan Time in seconds for the cached output to persist.
+            @option query SQL query command to further differentiate cached content. If supplied, different cache data
+                can be stored for each query that applies to the given model. If the URI is set to "*" all 
+                URIs for the specified model will be uniquely cached. 
+            @example 
+                cache()
+                cache("Store", {lifespan: 200})
+                cache(this, {query: "SELECT * from Products"})
+                cache(this, {query: "*"})
+         */
+        static function cache(model = null, options: Object = {}): Void {
+            _caching = App.config.cache.database.enable
+            if (!_caching) {
+                return
+            }
+            let mname
+            if (model == null) {
+                mname = _className
+            } else if (model is String) {
+                mname = model
+            } else if (!(model is Type)) {
+                model = Object.getType(model)
+                mname = Object.getName(model)
+            } else {
+                mname = Object.getName(model)
+            }
+            blend(options, App.config.cache.database, {overwrite: false})
+            cacheIndex = getCacheIndex(mname)
+            _cacheOptions[cacheIndex] = options
+            if (options.lifespan is Number) {
+                let cacheName = cacheIndex
+                if (options.query) {
+                    cacheName += "::" + options.query
+                }
+                /* Invalidate cache data for app reloads */
+                App.cache.expire(cacheName, null)
+                App.cache.expire(cacheName, Date().future(options.lifespan * 1000))
+            }
+        }
+
+        private static function getCacheIndex(model: String): String
+            "::ejs.db.mapper::" + model
+
+        private static function getCacheName(name: String, options: Object, query: String): String {
+            if (options && options.query && query) {
+                name += "::" + query
+            }
+            return name
+        }
+
 
         /*
             Read a single record of kind "model" by the given "key". Data is cached for subsequent reuse.
@@ -222,8 +293,6 @@ module ejs.db.mapper {
                 if (model is Array) {
                     model = model[0]
                 }
-                // print("   Create Assoc for " + _tableName + "[" + model._assocName + "] for " + model._tableName + "[" + 
-                //    rec[model._foreignId] + "]")
                 if (preload == true || (preload && preload.contains(model))) {
                     /*
                         Query did table join, so rec already has the data. Extract the fields for the referred model and
@@ -259,6 +328,7 @@ module ejs.db.mapper {
             Process a sql result and add properties for each field in the row
          */
         private static function createRecord(data: Object, options: Object = {}) {
+var before = Memory.resident
             let rec: Record = new global[_className]
             rec.initialize(data)
             rec._keyValue = data[_keyName]
@@ -295,6 +365,7 @@ module ejs.db.mapper {
                 }
             }
             rec.coerceToEjsTypes()
+// print("Record.createRecord(" + _className + ") consumed " + (Memory.resident - before))
             return rec
         }
 
@@ -307,6 +378,27 @@ module ejs.db.mapper {
             field ||= ""
             _errors ||= {}
             _errors[field] = msg
+        }
+
+        /*
+            Fetch cached data from the cache if present
+            @return a response object
+         */
+        private static function fetchCachedResponse(query: String = null): Object {
+            let cacheIndex = getCacheIndex(_className)
+            let options = _cacheOptions[cacheIndex]
+            if (options) {
+                let cacheName = getCacheName(cacheIndex, options, query)
+                if (!options.query || options.query == "*" || cacheName == (cacheIndex + "::" + options.query)) {
+                    let item = App.cache.readObj(cacheName)
+                    if (item) {
+                        App.log.debug(6, "Use cached database query: " + cacheName)
+                        return item
+                    }
+                }
+                App.log.debug(6, "No cached database query for: " + cacheName)
+            }
+            return null
         }
 
         /**
@@ -323,6 +415,7 @@ module ejs.db.mapper {
             @option order ORDER BY clause
             @option group GROUP BY clause
             @option include [Model, ...] Models to join in the query and create associations for. Always preloads.
+                The include Model entry may also be an array of [Model, "Join Condition"]
             @option joins Low level join statement "LEFT JOIN vists on stockId = visits.id". Low level joins do not
                 create association objects (or lazy loaders). The names of the joined columns are prefixed with the
                 appropriate table name using camel case (tableColumn).
@@ -383,7 +476,6 @@ module ejs.db.mapper {
             return null
         }
 
-//  MOB -- count not implemented
         /**
             Find records matching a condition. Select a set of records using a given SQL where clause
             @param where SQL WHERE clause to use when selecting rows.
@@ -566,8 +658,12 @@ module ejs.db.mapper {
             let from: String
             let conditions: String
             let where: Boolean
+            let results: Array
 
             if (!_columns) _model.getSchema()
+            if (_caching && (results = fetchCachedResponse())) {
+                return results
+            }
             if (options == null) {
                 options = {}
             }
@@ -575,7 +671,6 @@ module ejs.db.mapper {
             if (options.noassoc) {
                 options.depth = 0
             }
-
             if (options.columns) {
                 columns = options.columns
                 /*
@@ -712,27 +807,32 @@ module ejs.db.mapper {
             if (_db == null) {
                 throw new Error("Database connection has not yet been established")
             }
-
-            let results: Array
-            try {
-                if (_trace) {
-                    let start = new Date
-                    results = _db.query(cmd, "find", _trace)
-                    App.log.activity("TIME", "Query Time:", start.elapsed)
-                    App.log.info("Query Time:", start.elapsed)
-                } else {
-                    results = _db.query(cmd, "find", _trace)
-                }
+            if (_caching && (results = fetchCachedResponse(cmd))) {
+                return results
             }
-            catch (e) {
-                throw e
+            if (results == null) {
+                try {
+                    if (_trace) {
+                        let start = new Date
+                        results = _db.query(cmd, "find", _trace)
+                        App.log.activity("TIME", "Query Time:", start.elapsed)
+                        App.log.info("Query Time:", start.elapsed)
+                    } else {
+                        results = _db.query(cmd, "find", _trace)
+                    }
+                    if (_caching) {
+                        saveQuery(results, cmd)
+                    }
+                } 
+                catch (e) {
+                    throw e
+                }
             }
             return results
         }
 
         /*
             Make a getter function to lazily (on-demand) read associated records (belongsTo)
-            MOB - OPT should reuse these and not create a new reader for each cell
          */
         private static function makeLazyReader(rec: Record, field: String, model, key: String, 
                 options: Object = {}): Function {
@@ -901,7 +1001,30 @@ module ejs.db.mapper {
                 _keyValue = this["id"] = result[0]["last_insert_rowid()"] cast Number
             }
             runFilters(_imodel._afterFilters)
+            if (_imodel._caching) {
+                let cacheIndex = getCacheIndex(_imodel._className)
+                let options = _cacheOptions[cacheIndex]
+                if (options == null || options.query == null) {
+                    let cacheName = getCacheName(cacheIndex, options)
+                    App.log.debug(6, "Expire database query cache " + cacheName)
+                    App.cache.writeObj(cacheName, null, options)
+                } else {
+                }
+            }
             return true
+        }
+
+        /*
+            Save the output from a database query for future reuse
+         */
+        private static function saveQuery(results, query: String = null): Void {
+            let cacheIndex = getCacheIndex(_className)
+            let options = _cacheOptions[cacheIndex]
+            if (options) {
+                let cacheName = getCacheName(cacheIndex, options, query)
+                App.cache.writeObj(cacheName, results, options)
+                App.log.debug(6, "Cache database query " + cacheName)
+            }
         }
 
         /**
@@ -948,7 +1071,6 @@ module ejs.db.mapper {
             }
         }
 
-        //  MOB -- count not documented or implemented
         /**
             Run an SQL statement and return selected records.
             @param cmd SQL command to issue. Note: "SELECT" is automatically prepended and ";" is appended for you.

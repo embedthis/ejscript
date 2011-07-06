@@ -59,6 +59,7 @@ static MPR_INLINE void getPropertyFromSlot(Ejs *ejs, EjsAny *thisObj, EjsAny *ob
             /* Function extraction. Bind the "thisObj" into a clone of the function */
             fun = ejsCloneFunction(ejs, fun, 0);
             fun->boundThis = thisObj;
+            mprAssert(fun->boundThis != ejs->global);
         }
     }
     pushOutside(ejs, value);
@@ -84,22 +85,24 @@ static MPR_INLINE void checkGetter(Ejs *ejs, EjsAny *value, EjsAny *thisObj, Ejs
             }
             return;
         } else {
-            if (!fun->boundThis && thisObj) {
+            if (!fun->boundThis && thisObj && thisObj != ejs->global) {
                 /* Function extraction. Bind the "thisObj" into a clone of the function */
+                /* OPT - this is slow in the a case: a.b.fn */
                 fun = ejsCloneFunction(ejs, fun, 0);
                 fun->boundThis = thisObj;
+                mprAssert(fun->boundThis != ejs->global);
                 value = fun;
             }
         }
     } else if (value == 0) {
-        value = S(undefined);
+        value = ESV(undefined);
     }
     pushOutside(ejs, value);
 }
 
 #define CHECK_VALUE(value, thisObj, obj, slotNum) checkGetter(ejs, value, thisObj, obj, slotNum)
 
-#define CHECK_GC() if (MPR->heap.mustYield && !(ejs->state->frozen)) { mprYield(0); } else 
+#define CHECK_GC() if (MPR->heap.mustYield && !(ejs->state->paused)) { mprYield(0); } else 
 
 /*
     Set a slot value when we don't know if the object is an EjsObj
@@ -109,7 +112,7 @@ static MPR_INLINE void checkGetter(Ejs *ejs, EjsAny *value, EjsAny *thisObj, Ejs
 /*
     Must clear attentionPc when changing the PC. Otherwise the next instruction will jump to a bad (stale) location.
  */
-//  MOB -- should not need to clear attentionPc
+//  TODO -- should not need to clear attentionPc
 #define SET_PC(fp, value) \
     if (1) { \
         (fp)->pc = (uchar*) (value); \
@@ -120,7 +123,7 @@ static MPR_INLINE void checkGetter(Ejs *ejs, EjsAny *value, EjsAny *thisObj, Ejs
 #define GET_DOUBLE()    ejsDecodeDouble(ejs, &(FRAME)->pc)
 #define GET_INT()       ((int) GET_NUM())
 
-//  MOB OPT - returns 64 bits, but most cases only need 32 bits
+//  TODO OPT - returns 64 bits, but most cases only need 32 bits
 #define GET_NUM()       ejsDecodeNum(ejs, &(FRAME)->pc)
 #define GET_NAME()      getNameArg(ejs, FRAME)
 #define GET_STRING()    getStringArg(ejs, FRAME)
@@ -193,8 +196,10 @@ static void VM(Ejs *ejs, EjsFunction *fun, EjsAny *otherThis, int argc, int stac
     EjsFunction *f1, *f2;
     EjsNamespace *nsp;
     EjsString   *str;
+#if UNUSED
     uchar       *mark;
-    int         i, offset, count, opcode, attributes, frozen;
+#endif
+    int         i, offset, count, opcode, attributes, paused;
 
 #if BLD_UNIX_LIKE || (VXWORKS && !BLD_CC_DIAB)
     /*
@@ -206,7 +211,6 @@ static void VM(Ejs *ejs, EjsFunction *fun, EjsAny *otherThis, int argc, int stac
     mprAssert(!mprHasMemError(ejs));
     mprAssert(!ejs->exception);
     mprAssert(ejs->state->fp == 0 || ejs->state->fp->attentionPc == 0);
-    mprAssert(ejs->result == 0 || (MPR_GET_GEN(MPR_GET_MEM(ejs->result)) != MPR->heap.dead));
 
     MPR_VERIFY_MEM();
 
@@ -217,7 +221,7 @@ static void VM(Ejs *ejs, EjsFunction *fun, EjsAny *otherThis, int argc, int stac
     state = mprAlloc(sizeof(EjsState));
     *state = *ejs->state;
     state->prev = ejs->state;
-    state->frozen = ejs->state->frozen;
+    state->paused = ejs->state->paused;
     ejs->state = state;
 
     callFunction(ejs, fun, otherThis, argc, stackAdjust);
@@ -248,7 +252,7 @@ static void VM(Ejs *ejs, EjsFunction *fun, EjsAny *otherThis, int argc, int stac
              */
             if (ejs->result == 0) {
                 // OPT - remove this
-                ejs->result = S(undefined);
+                ejs->result = ESV(undefined);
             }
             if (FRAME->getter) {
                 push(ejs->result);
@@ -264,7 +268,6 @@ static void VM(Ejs *ejs, EjsFunction *fun, EjsAny *otherThis, int argc, int stac
          */
         CASE (EJS_OP_RETURN_VALUE):
             ejs->result = pop(ejs);
-mprAssert(ejs->result == 0 || (MPR_GET_GEN(MPR_GET_MEM(ejs->result)) != MPR->heap.dead));
             if (FRAME->caller == 0) {
                 goto done;
             }
@@ -273,9 +276,9 @@ mprAssert(ejs->result == 0 || (MPR_GET_GEN(MPR_GET_MEM(ejs->result)) != MPR->hea
                 f1 = &FRAME->function;
                 if (FRAME->function.resultType) {
                     type = FRAME->function.resultType;
-                    //  MOB remove this voidType
-                    if (type != ST(Void) && !ejsIsA(ejs, ejs->result, type)) {
-                        if (ejs->result == S(null) || ejs->result == S(undefined)) {
+                    //  TODO remove this voidType
+                    if (type != EST(Void) && !ejsIsA(ejs, ejs->result, type)) {
+                        if (ejs->result == ESV(null) || ejs->result == ESV(undefined)) {
                             if (FRAME->function.throwNulls) {
                                 ejsThrowTypeError(ejs, "Unacceptable null or undefined return value");
                                 BREAK;
@@ -292,7 +295,6 @@ mprAssert(ejs->result == 0 || (MPR_GET_GEN(MPR_GET_MEM(ejs->result)) != MPR->hea
                             }
                         }
                     }
-mprAssert(ejs->result == 0 || (MPR_GET_GEN(MPR_GET_MEM(ejs->result)) != MPR->heap.dead));
                 }
             }
             if (FRAME->getter) {
@@ -309,7 +311,7 @@ mprAssert(ejs->result == 0 || (MPR_GET_GEN(MPR_GET_MEM(ejs->result)) != MPR->hea
                 Return
          */
         CASE (EJS_OP_RETURN):
-            ejs->result = S(undefined);
+            ejs->result = ESV(undefined);
             if (FRAME->caller == 0) {
                 goto done;
             }
@@ -349,7 +351,6 @@ mprAssert(ejs->result == 0 || (MPR_GET_GEN(MPR_GET_MEM(ejs->result)) != MPR->hea
          */
         CASE (EJS_OP_SAVE_RESULT):
             ejs->result = pop(ejs);
-mprAssert(ejs->result == 0 || (MPR_GET_GEN(MPR_GET_MEM(ejs->result)) != MPR->heap.dead));
             BREAK;
 
         /* Load Constants ----------------------------------------------- */
@@ -431,7 +432,7 @@ mprAssert(ejs->result == 0 || (MPR_GET_GEN(MPR_GET_MEM(ejs->result)) != MPR->hea
                 Stack after         [XML]
          */
         CASE (EJS_OP_LOAD_XML):
-            v1 = ejsCreateObj(ejs, ST(XML), 0);
+            v1 = ejsCreateObj(ejs, EST(XML), 0);
             str = GET_STRING();
             ejsLoadXMLString(ejs, (EjsXML*) v1, str);
             push(v1);
@@ -460,7 +461,7 @@ mprAssert(ejs->result == 0 || (MPR_GET_GEN(MPR_GET_MEM(ejs->result)) != MPR->hea
                 Stack after         [Null]
          */
         CASE (EJS_OP_LOAD_NULL):
-            push(S(null));
+            push(ESV(null));
             BREAK;
 
         /*
@@ -470,7 +471,7 @@ mprAssert(ejs->result == 0 || (MPR_GET_GEN(MPR_GET_MEM(ejs->result)) != MPR->hea
                 Stack after         [undefined]
          */
         CASE (EJS_OP_LOAD_UNDEFINED):
-            push(S(undefined));
+            push(ESV(undefined));
             BREAK;
 
         CASE (EJS_OP_LOAD_THIS):
@@ -514,7 +515,7 @@ mprAssert(ejs->result == 0 || (MPR_GET_GEN(MPR_GET_MEM(ejs->result)) != MPR->hea
                 Stack after         [true]
          */
         CASE (EJS_OP_LOAD_TRUE):
-            push(S(true));
+            push(ESV(true));
             BREAK;
 
         /*
@@ -524,7 +525,7 @@ mprAssert(ejs->result == 0 || (MPR_GET_GEN(MPR_GET_MEM(ejs->result)) != MPR->hea
                 Stack after         [false]
          */
         CASE (EJS_OP_LOAD_FALSE):
-            push(S(false));
+            push(ESV(false));
             BREAK;
 
         /*
@@ -647,7 +648,7 @@ mprAssert(ejs->result == 0 || (MPR_GET_GEN(MPR_GET_MEM(ejs->result)) != MPR->hea
         CASE (EJS_OP_GET_TYPE_SLOT):
             slotNum = GET_INT();
             thisObj = pop(ejs);
-            vp = getNthBase(ejs, (EjsObj*) thisObj, GET_INT());
+            vp = getNthBase(ejs, thisObj, GET_INT());
             GET_SLOT(thisObj, vp, slotNum);
             BREAK;
 
@@ -663,7 +664,6 @@ mprAssert(ejs->result == 0 || (MPR_GET_GEN(MPR_GET_MEM(ejs->result)) != MPR->hea
             if (type == 0) {
                 ejsThrowReferenceError(ejs, "Bad base class reference");
             } else {
-                //  MOB -- is this the right "this". Should not be an instance?
                 GET_SLOT(THIS, type, slotNum);
             }
             BREAK;
@@ -675,10 +675,13 @@ mprAssert(ejs->result == 0 || (MPR_GET_GEN(MPR_GET_MEM(ejs->result)) != MPR->hea
                 Stack after         [value]
          */
         CASE (EJS_OP_GET_SCOPED_NAME):
+#if UNUSED
             mark = FRAME->pc - 1;
+#endif
             qname = GET_NAME();
             vp = ejsGetVarByName(ejs, NULL, qname, &lookup);
             if (unlikely(vp == 0)) {
+                vp = ejsGetVarByName(ejs, NULL, qname, &lookup);
                 ejsThrowReferenceError(ejs, "%@ is not defined", qname.name);
             } else {
                 CHECK_VALUE(vp, NULL, lookup.obj, lookup.slotNum);
@@ -693,7 +696,9 @@ mprAssert(ejs->result == 0 || (MPR_GET_GEN(MPR_GET_MEM(ejs->result)) != MPR->hea
                 Stack after         [value]
          */
         CASE (EJS_OP_GET_SCOPED_NAME_EXPR):
+#if UNUSED
             mark = FRAME->pc - 1;
+#endif
             qname.name = ejsToString(ejs, pop(ejs));
             v1 = pop(ejs);
             if (ejsIs(ejs, v1, Namespace)) {
@@ -703,16 +708,12 @@ mprAssert(ejs->result == 0 || (MPR_GET_GEN(MPR_GET_MEM(ejs->result)) != MPR->hea
             }
             vp = ejsGetVarByName(ejs, NULL, qname, &lookup);
             if (unlikely(vp == 0)) {
-#if UNUSED
-                ejsThrowReferenceError(ejs, "%@ is not defined", qname.name);
-#else
-                push(S(undefined));
-#endif
+                push(ESV(undefined));
             } else {
                 CHECK_VALUE(vp, NULL, lookup.obj, lookup.slotNum);
             }
 #if DYNAMIC_BINDING
-            if (ejs->flags & EJS_FLAG_COMPILER || TYPE(lookup.obj) == ST(Object) || lookup.slotNum >= 4096) {
+            if (ejs->flags & EJS_FLAG_COMPILER || TYPE(lookup.obj) == EST(Object) || lookup.slotNum >= 4096) {
                 BREAK;
             }
             if (lookup.obj == ejs->global) {
@@ -751,7 +752,7 @@ mprAssert(ejs->result == 0 || (MPR_GET_GEN(MPR_GET_MEM(ejs->result)) != MPR->hea
 #endif
             qname = GET_NAME();
             vp = pop(ejs);
-            if (vp == S(null) || vp == S(undefined)) {
+            if (vp == ESV(null) || vp == ESV(undefined)) {
                 ejsThrowReferenceError(ejs, "Object reference is null");
                 BREAK;
             }
@@ -813,7 +814,7 @@ mprAssert(ejs->result == 0 || (MPR_GET_GEN(MPR_GET_MEM(ejs->result)) != MPR->hea
             mark = FRAME->pc - 1;
             qname = GET_NAME();
             vp = pop(ejs);
-            if (vp == S(null) || vp == S(undefined)) {
+            if (vp == ESV(null) || vp == ESV(undefined)) {
                 ejsThrowReferenceError(ejs, "Object reference is null");
                 BREAK;
             }
@@ -844,13 +845,13 @@ mprAssert(ejs->result == 0 || (MPR_GET_GEN(MPR_GET_MEM(ejs->result)) != MPR->hea
             v1 = pop(ejs);
             v2 = pop(ejs);
             vp = pop(ejs);
-            if (vp == 0 || vp == S(null) || vp == S(undefined)) {
+            if (vp == 0 || vp == ESV(null) || vp == ESV(undefined)) {
                 ejsThrowReferenceError(ejs, "Object reference is null");
                 BREAK;
             }
             if (TYPE(vp)->numericIndicies && ejsIs(ejs, v1, Number)) {
                 vp = ejsGetProperty(ejs, vp, ejsGetInt(ejs, v1));
-                push(vp == 0 ? S(null) : vp);
+                push(vp == 0 ? ESV(null) : vp);
                 BREAK;
             } else {
                 qname.name = ejsToString(ejs, v1);
@@ -1025,7 +1026,6 @@ mprAssert(ejs->result == 0 || (MPR_GET_GEN(MPR_GET_MEM(ejs->result)) != MPR->hea
                 Stack after         []
          */
         CASE (EJS_OP_PUT_SCOPED_NAME_EXPR):
-            //  MOB -- all these toStrings can cause a function to run which can cause a GC???
             qname.name = ejsToString(ejs, pop(ejs));
             v1 = pop(ejs);
             if (ejsIs(ejs, v1, Namespace)) {
@@ -1040,7 +1040,6 @@ mprAssert(ejs->result == 0 || (MPR_GET_GEN(MPR_GET_MEM(ejs->result)) != MPR->hea
         /*
             Store a property by property name to an object
                 PutObjName
-                MOB - is this right order?
                 Stack before (top)  [objRef]
                                     [value]
                 Stack after         []
@@ -1066,11 +1065,10 @@ mprAssert(ejs->result == 0 || (MPR_GET_GEN(MPR_GET_MEM(ejs->result)) != MPR->hea
             v2 = pop(ejs);
             obj = pop(ejs);
             value = pop(ejs);
-            //  MOB -- cleanup this too - push into storeProperty
+            //  TODO -- cleanup this too - push into storeProperty
             if (TYPE(obj)->numericIndicies && ejsIs(ejs, v1, Number)) {
                 ejsSetProperty(ejs, obj, ejsGetInt(ejs, v1), value);
             } else {
-                //  MOB -- all these toStrings can cause a function to run which can cause a GC???
                 qname.name = ejsToString(ejs, v1);
                 if (ejsIs(ejs, v2, Namespace)) {
                     qname.space = ((EjsNamespace*) v2)->value;
@@ -1158,16 +1156,15 @@ mprAssert(ejs->result == 0 || (MPR_GET_GEN(MPR_GET_MEM(ejs->result)) != MPR->hea
             argc += ejs->spreadArgs;
             ejs->spreadArgs = 0;
             vp = state->stack[-argc];
-            if (vp == S(null) || vp == S(undefined)) {
-                //  MOB -- refactor
+            if (vp == ESV(null) || vp == ESV(undefined)) {
+                //  TODO -- refactor
                 if (vp && (slotNum == ES_Object_iterator_get || slotNum == ES_Object_iterator_getValues)) {
-                    callProperty(ejs, (EjsObj*) TYPE(vp), slotNum, vp, argc, 1);
+                    callProperty(ejs, TYPE(vp), slotNum, vp, argc, 1);
                 } else {
                     ejsThrowReferenceError(ejs, "Object reference is null or undefined");
                 }
             } else {
-                //  MOB -- need a function to invoke 
-                callProperty(ejs, (EjsObj*) TYPE(vp)->prototype, slotNum, vp, argc, 1);
+                callProperty(ejs, TYPE(vp)->prototype, slotNum, vp, argc, 1);
             }
             BREAK;
 
@@ -1214,7 +1211,7 @@ mprAssert(ejs->result == 0 || (MPR_GET_GEN(MPR_GET_MEM(ejs->result)) != MPR->hea
             argc += ejs->spreadArgs;
             ejs->spreadArgs = 0;
             vp = state->stack[-argc];
-            if (vp == 0 || vp == S(null) || vp == S(undefined)) {
+            if (vp == 0 || vp == ESV(null) || vp == ESV(undefined)) {
                 ejsThrowReferenceError(ejs, "Object reference is null");
             } else {
                 callProperty(ejs, vp, slotNum, vp, argc, 1);
@@ -1235,11 +1232,11 @@ mprAssert(ejs->result == 0 || (MPR_GET_GEN(MPR_GET_MEM(ejs->result)) != MPR->hea
             argc += ejs->spreadArgs;
             ejs->spreadArgs = 0;
             vp = state->stack[-argc];
-            if (vp == S(null) || vp == S(undefined)) {
+            if (vp == ESV(null) || vp == ESV(undefined)) {
                 throwNull(ejs);
             } else {
                 type = (EjsType*) getNthBase(ejs, vp, nthBase);
-                callProperty(ejs, (EjsObj*) type, slotNum, (EjsObj*) type, argc, 1);
+                callProperty(ejs, type, slotNum, type, argc, 1);
             }
             BREAK;
 
@@ -1256,12 +1253,12 @@ mprAssert(ejs->result == 0 || (MPR_GET_GEN(MPR_GET_MEM(ejs->result)) != MPR->hea
             argc += ejs->spreadArgs;
             ejs->spreadArgs = 0;
             type = (EjsType*) getNthBase(ejs, THIS, nthBase);
-            if (type == ST(Object)) {
+            if (type == EST(Object)) {
                 //  TODO - remove
                 ejsThrowReferenceError(ejs, "Bad type reference");
                 BREAK;
             }
-            callProperty(ejs, (EjsObj*) type, slotNum, (EjsObj*) type, argc, 0);
+            callProperty(ejs, type, slotNum, type, argc, 0);
             BREAK;
 
         /*
@@ -1317,7 +1314,7 @@ mprAssert(ejs->result == 0 || (MPR_GET_GEN(MPR_GET_MEM(ejs->result)) != MPR->hea
 
             } else if (!ejsIsFunction(ejs, fun)) {
                 if (!ejs->exception) {
-                    if ((EjsObj*) vp == (EjsObj*) S(undefined)) {
+                    if ((EjsObj*) vp == (EjsObj*) ESV(undefined)) {
                         ejsThrowReferenceError(ejs, "Function is undefined");
                     } else {
                         ejsThrowReferenceError(ejs, "Reference is not a function");
@@ -1336,8 +1333,8 @@ mprAssert(ejs->result == 0 || (MPR_GET_GEN(MPR_GET_MEM(ejs->result)) != MPR->hea
                     } else if (ejsIsType(ejs, lookup.obj)) {
                         vp = lookup.obj;
                     } else {
-                        vp = ejs->global;
-                    }
+                        vp = /* lookup.obj */ ejs->global;
+                    } 
                 }
                 callProperty(ejs, lookup.obj, slotNum, vp, argc, 0);
             }
@@ -1355,7 +1352,7 @@ mprAssert(ejs->result == 0 || (MPR_GET_GEN(MPR_GET_MEM(ejs->result)) != MPR->hea
             argc += ejs->spreadArgs;
             ejs->spreadArgs = 0;
             vp = state->stack[-argc];
-            if (vp == 0 || vp == S(null) || vp == S(undefined)) {
+            if (vp == 0 || vp == ESV(null) || vp == ESV(undefined)) {
                 throwNull(ejs);
                 BREAK;
             }
@@ -1363,8 +1360,7 @@ mprAssert(ejs->result == 0 || (MPR_GET_GEN(MPR_GET_MEM(ejs->result)) != MPR->hea
             mprAssert(type);
             if (type && type->constructor.block.pot.isFunction) {
                 mprAssert(type->prototype);
-                callFunction(ejs, (EjsFunction*) type, (EjsObj*) vp, argc, 0);
-                //  MOB -- must update pushed object
+                callFunction(ejs, (EjsFunction*) type, vp, argc, 0);
                 state->stack[0] = ejs->result;
             }
             BREAK;
@@ -1397,7 +1393,6 @@ mprAssert(ejs->result == 0 || (MPR_GET_GEN(MPR_GET_MEM(ejs->result)) != MPR->hea
             str = GET_STRING();
             nsp = ejsCreateNamespace(ejs, str);
             ejsAddNamespaceToBlock(ejs, state->bp, nsp);
-            //  MOB - opt
             if (ejsContainsMulti(ejs, str, "internal-")) {
                 state->internal = nsp;
             }
@@ -1443,7 +1438,6 @@ mprAssert(ejs->result == 0 || (MPR_GET_GEN(MPR_GET_MEM(ejs->result)) != MPR->hea
         CASE (EJS_OP_OPEN_WITH):
             vp = pop(ejs);
             blk = ejsCreateBlock(ejs, 0);
-            //  MOB -- looks bugged. Can overwrite block.
             memcpy((void*) blk, vp, TYPE(vp)->instanceSize);
             blk->prev = blk->scope = state->bp;
             state->bp = blk;
@@ -1470,9 +1464,9 @@ mprAssert(ejs->result == 0 || (MPR_GET_GEN(MPR_GET_MEM(ejs->result)) != MPR->hea
             } else {
                 type->constructor.block.scope = state->bp;
                 if (type && type->hasInitializer) {
-                    fun = ejsGetProperty(ejs, (EjsObj*) type, 0);
+                    fun = ejsGetProperty(ejs, type, 0);
                     MPR_VERIFY_MEM();
-                    callFunction(ejs, fun, (EjsObj*) type, 0, 0);
+                    callFunction(ejs, fun, type, 0, 0);
                     MPR_VERIFY_MEM();
                     if (type->implements && !ejs->exception) {
                         callInterfaceInitializers(ejs, type);
@@ -1482,7 +1476,6 @@ mprAssert(ejs->result == 0 || (MPR_GET_GEN(MPR_GET_MEM(ejs->result)) != MPR->hea
                 }
             }
             ejs->result = type;
-mprAssert(ejs->result == 0 || (MPR_GET_GEN(MPR_GET_MEM(ejs->result)) != MPR->heap.dead));
             BREAK;
 
         /*
@@ -1497,17 +1490,22 @@ mprAssert(ejs->result == 0 || (MPR_GET_GEN(MPR_GET_MEM(ejs->result)) != MPR->hea
             if (slotNum < 0 || !ejsIsFunction(ejs, f1)) {
                 ejsThrowReferenceError(ejs, "Reference is not a function");
             } else {
-                //  MOB -- fullScope is always true if DEFINE_FUNCTION is emitted
+                //  TODO -- fullScope is always true if DEFINE_FUNCTION is emitted
                 mprAssert(f1->fullScope);
                 if (f1->fullScope) {
+                    //  TODO - why exception for global
                     if (lookup.obj != ejs->global) {
                         f2 = ejsCloneFunction(ejs, f1, 0);
                     } else {
                         f2 = f1;
                     }
                     f2->block.scope = state->bp;
-                    f2->boundThis = FRAME->function.boundThis;
+                    if (FRAME->function.boundThis != ejs->global) {
+                        f2->boundThis = FRAME->function.boundThis;
+                    }
+                    mprAssert(f2->boundThis != ejs->global);
                     mprAssert(!ejsIsPrototype(ejs, lookup.obj));
+                    //  OPT - don't do this for global functions (if f2 == f1 and boundThis not updated (== global))
                     ejsSetProperty(ejs, lookup.obj, lookup.slotNum, f2);
                 }
             }
@@ -1601,7 +1599,6 @@ mprAssert(ejs->result == 0 || (MPR_GET_GEN(MPR_GET_MEM(ejs->result)) != MPR->hea
          */
         CASE (EJS_OP_POP):
             ejs->result = pop(ejs);
-mprAssert(ejs->result == 0 || (MPR_GET_GEN(MPR_GET_MEM(ejs->result)) != MPR->heap.dead));
             mprAssert(ejs->exception || ejs->result);
             BREAK;
 
@@ -1717,7 +1714,7 @@ mprAssert(ejs->result == 0 || (MPR_GET_GEN(MPR_GET_MEM(ejs->result)) != MPR->hea
          */
         CASE (EJS_OP_SPREAD):
             vp = *state->stack;
-            count = ejsGetPropertyCount(ejs, vp);
+            count = ejsGetLength(ejs, vp);
             if (count > 0) {
                 vp = pop(ejs);
                 for (i = 0; i < count; i++) {
@@ -1823,7 +1820,7 @@ mprAssert(ejs->result == 0 || (MPR_GET_GEN(MPR_GET_MEM(ejs->result)) != MPR->hea
                 Stack after         []
          */
         CASE (EJS_OP_BRANCH_NULL):
-            push(S(null));
+            push(ESV(null));
             offset = GET_WORD();
             goto commonBranchCode;
 
@@ -1834,7 +1831,7 @@ mprAssert(ejs->result == 0 || (MPR_GET_GEN(MPR_GET_MEM(ejs->result)) != MPR->hea
                 Stack after         []
          */
         CASE (EJS_OP_BRANCH_UNDEFINED):
-            push(S(undefined));
+            push(ESV(undefined));
             offset = GET_WORD();
             goto commonBranchCode;
 
@@ -1854,7 +1851,7 @@ mprAssert(ejs->result == 0 || (MPR_GET_GEN(MPR_GET_MEM(ejs->result)) != MPR->hea
                 Stack after         []
          */
         CASE (EJS_OP_BRANCH_NOT_ZERO):
-            push(S(zero));
+            push(ESV(zero));
             offset = GET_WORD();
             goto commonBranchCode;
 
@@ -1973,7 +1970,7 @@ mprAssert(ejs->result == 0 || (MPR_GET_GEN(MPR_GET_MEM(ejs->result)) != MPR->hea
                 Stack after         [boolean]
          */
         CASE (EJS_OP_COMPARE_NULL):
-            push(S(null));
+            push(ESV(null));
             goto binaryExpression;
 
         /*
@@ -1983,7 +1980,7 @@ mprAssert(ejs->result == 0 || (MPR_GET_GEN(MPR_GET_MEM(ejs->result)) != MPR->hea
                 Stack after         [boolean]
          */
         CASE (EJS_OP_COMPARE_UNDEFINED):
-            push(S(undefined));
+            push(ESV(undefined));
             goto binaryExpression;
 
         /*
@@ -2127,9 +2124,10 @@ mprAssert(ejs->result == 0 || (MPR_GET_GEN(MPR_GET_MEM(ejs->result)) != MPR->hea
          */
         CASE (EJS_OP_LOGICAL_NOT):
             v1 = pop(ejs);
-            v1 = ejsCast(ejs, v1, Boolean);
-            result = ejsInvokeOperator(ejs, v1, opcode, 0);
-            push(result);
+            if ((v1 = ejsCast(ejs, v1, Boolean)) != 0) {
+                result = ejsInvokeOperator(ejs, v1, opcode, 0);
+                push(result);
+            }
             BREAK;
 
         /*
@@ -2153,7 +2151,7 @@ mprAssert(ejs->result == 0 || (MPR_GET_GEN(MPR_GET_MEM(ejs->result)) != MPR->hea
         CASE (EJS_OP_INC):
             v1 = pop(ejs);
             count = (schar) GET_BYTE();
-            result = evalBinaryExpr(ejs, v1, EJS_OP_ADD, (EjsObj*) ejsCreateNumber(ejs, count));
+            result = evalBinaryExpr(ejs, v1, EJS_OP_ADD, ejsCreateNumber(ejs, count));
             push(result);
             BREAK;
 
@@ -2186,7 +2184,6 @@ mprAssert(ejs->result == 0 || (MPR_GET_GEN(MPR_GET_MEM(ejs->result)) != MPR->hea
             }
             push(obj);
             ejs->result = obj;
-mprAssert(ejs->result == 0 || (MPR_GET_GEN(MPR_GET_MEM(ejs->result)) != MPR->heap.dead));
             BREAK;
                 
             /*
@@ -2197,7 +2194,7 @@ mprAssert(ejs->result == 0 || (MPR_GET_GEN(MPR_GET_MEM(ejs->result)) != MPR->hea
              Stack after         []
              */
         CASE (EJS_OP_NEW_ARRAY):
-frozen = ejsFreeze(ejs, 1);
+            paused = ejsPauseGC(ejs);
             type = GET_TYPE();
             argc = GET_INT();
             argc += ejs->spreadArgs;
@@ -2214,7 +2211,7 @@ frozen = ejsFreeze(ejs, 1);
             state->stack -= (argc * 2);
             push(vp);
             state->t1 = 0;
-ejsFreeze(ejs, frozen);
+            ejsResumeGC(ejs, paused);
             BREAK;
 
         /*
@@ -2225,7 +2222,7 @@ ejsFreeze(ejs, frozen);
                 Stack after         []
          */
         CASE (EJS_OP_NEW_OBJECT):
-frozen = ejsFreeze(ejs, 1);
+            paused = ejsPauseGC(ejs);
             type = GET_TYPE();
             argc = GET_INT();
             argc += ejs->spreadArgs;
@@ -2247,7 +2244,7 @@ frozen = ejsFreeze(ejs, 1);
             state->stack -= (argc * 3);
             push(vp);
             state->t1 = 0;
-ejsFreeze(ejs, frozen);
+            ejsResumeGC(ejs, paused);
             BREAK;
 
 
@@ -2280,13 +2277,13 @@ ejsFreeze(ejs, frozen);
             vp = pop(ejs);
             slotNum = ejsLookupVar(ejs, vp, qname, &lookup);
             if (slotNum < 0) {
-                push(S(true));
+                push(ESV(true));
             } else {
-                if (/* MOB !DYNAMIC(lookup.obj) || */ ejsPropertyHasTrait(ejs, lookup.obj, slotNum, EJS_TRAIT_FIXED)) {
-                    push(S(false));
+                if (ejsPropertyHasTrait(ejs, lookup.obj, slotNum, EJS_TRAIT_FIXED)) {
+                    push(ESV(false));
                 } else {
                     ejsDeletePropertyByName(ejs, lookup.obj, lookup.name);
-                    push(S(true));
+                    push(ESV(true));
                 }
             }
             BREAK;
@@ -2308,13 +2305,13 @@ ejsFreeze(ejs, frozen);
             }
             slotNum = ejsLookupScope(ejs, qname, &lookup);
             if (slotNum < 0) {
-                push(S(true));
+                push(ESV(true));
             } else {
-                if (/* MOB - !DYNAMIC(lookup.obj) || */ ejsPropertyHasTrait(ejs, lookup.obj, slotNum, EJS_TRAIT_FIXED)) {
-                    push(S(false));
+                if (ejsPropertyHasTrait(ejs, lookup.obj, slotNum, EJS_TRAIT_FIXED)) {
+                    push(ESV(false));
                 } else {
                     ejsDeletePropertyByName(ejs, lookup.obj, lookup.name);
-                    push(S(true));
+                    push(ESV(true));
                 }
             }
             BREAK;
@@ -2396,10 +2393,10 @@ ejsFreeze(ejs, frozen);
                 EjsName n = { nameVar, NULL };
                 slotNum = ejsLookupProperty(ejs, v1, n);
                 if (slotNum < 0) {
-                    //  MOB -- Reconsider
-                    slotNum = ejsLookupVar(ejs, v1, qname, &lookup);
+                    n.space = ESV(empty);
+                    slotNum = ejsLookupVar(ejs, v1, n, &lookup);
                     if (slotNum < 0 && ejsIsType(ejs, v1)) {
-                        slotNum = ejsLookupVar(ejs, (EjsObj*) ((EjsType*) v1)->prototype, qname, &lookup);
+                        slotNum = ejsLookupVar(ejs, ((EjsType*) v1)->prototype, n, &lookup);
                     }
                 }
                 push(ejsCreateBoolean(ejs, slotNum >= 0));
@@ -2454,12 +2451,13 @@ static void storePropertyToSlot(Ejs *ejs, EjsObj *thisObj, EjsAny *obj, int slot
             fun = ejsGetProperty(ejs, obj, slotNum);
             mprAssert(fun);
             fun = fun->setter;
+            mprAssert(fun);
             callFunction(ejs, fun, thisObj, 1, 0);
             return;
         }
         if (trait->type) {
             if (!ejsIsA(ejs, value, trait->type)) {
-                if (value == S(null) || value == S(undefined)) {
+                if (value == ESV(null) || value == ESV(undefined)) {
                     if (trait->attributes & EJS_TRAIT_THROW_NULLS) {
                         ejsThrowTypeError(ejs, "Unacceptable null or undefined value");
                         return;
@@ -2480,10 +2478,12 @@ static void storePropertyToSlot(Ejs *ejs, EjsObj *thisObj, EjsAny *obj, int slot
         if (trait->attributes & EJS_TRAIT_READONLY) {
             EjsName  qname;
             vp = ejsGetProperty(ejs, obj, slotNum);
-            if (vp != S(null) && vp != S(undefined)) {
-                qname = ejsGetPropertyName(ejs, obj, slotNum);
-                ejsThrowReferenceError(ejs, "Property \"%@\" is not writable", qname.name);
-                return;
+            if (vp != value && vp != ESV(null) && vp != ESV(undefined)) {
+                if (ejsInvokeOperator(ejs, vp, EJS_OP_COMPARE_EQ, value) != ESV(true)) {
+                    qname = ejsGetPropertyName(ejs, obj, slotNum);
+                    ejsThrowReferenceError(ejs, "Property \"%@\" is not writable", qname.name);
+                    return;
+                }
             }
         }
     }
@@ -2505,7 +2505,7 @@ static void storeProperty(Ejs *ejs, EjsObj *thisObj, EjsAny *vp, EjsName qname, 
     mprAssert(qname.name);
     mprAssert(vp);
 
-    //  MOB -- ONLY XML requires this.  NOTE: this bypasses ES5 traits
+    //  ONLY XML requires this.  NOTE: this bypasses ES5 traits
     //  Alternatively push this whole function down into ejsObject and have all go via setPropertyByName
     
     if (TYPE(vp)->helpers.setPropertyByName) {
@@ -2520,14 +2520,12 @@ static void storeProperty(Ejs *ejs, EjsObj *thisObj, EjsAny *vp, EjsName qname, 
             if (trait->attributes & EJS_TRAIT_SETTER) {
                 vp = lookup.obj;
                 
-                //  MOB - REFACTOR. Just for prototype() getter in Object.prototype
             } else if (ejsIsPrototype(ejs, lookup.obj) || trait->attributes & EJS_TRAIT_GETTER) {
                 if (TYPE(vp)->hasInstanceVars) {
                     /* The prototype properties have been inherited */
                     mprAssert(ejsIsPot(ejs, vp));
                     slotNum = ejsGetSlot(ejs, vp, slotNum);
                     pot = (EjsPot*) vp;
-                    //MOB - BUG what if not a POT
                     pot->properties->slots[slotNum].trait = ((EjsPot*) lookup.obj)->properties->slots[slotNum].trait;
                     pot->properties->slots[slotNum].value = ((EjsPot*) lookup.obj)->properties->slots[slotNum].value;
                     slotNum = ejsSetPropertyName(ejs, vp, slotNum, qname);
@@ -2535,22 +2533,19 @@ static void storeProperty(Ejs *ejs, EjsObj *thisObj, EjsAny *vp, EjsName qname, 
                     slotNum = -1;
                 }
             } else {
-#if UNUSED
-                //  MOB -- this is allowing a obj.prop = x, where prop is in a static base type 
-                vp = lookup.obj;
-#else
                 /*
                     This is the fundamental asymetry between load/store. We allow loading properties from static base 
                     types, but do not allow stores. This is essential to stop bleeding of Object static properties into
                     all objects. E.g. Object.create.
                  */
                 slotNum = -1;
-#endif
             }
         }
     }
     if (slotNum < 0) {
         slotNum = ejsSetPropertyName(ejs, vp, slotNum, qname);
+        //  UNICODE
+        mprSetName(value, qname.name->value);
     }
     if (!ejs->exception) {
         storePropertyToSlot(ejs, thisObj, vp, slotNum, value);
@@ -2598,6 +2593,8 @@ static void storePropertyToScope(Ejs *ejs, EjsName qname, EjsObj *value)
     } else {
         thisObj = vp = fp->function.moduleInitializer ? ejs->global : (EjsObj*) fp;
         slotNum = ejsSetPropertyName(ejs, vp, slotNum, qname);
+        //  UNICODE
+        mprSetName(value, qname.name->value);
     }
     storePropertyToSlot(ejs, thisObj, vp, slotNum, value);
 }
@@ -2609,27 +2606,27 @@ static void storePropertyToScope(Ejs *ejs, EjsName qname, EjsObj *value)
 EjsObj *ejsRunInitializer(Ejs *ejs, EjsModule *mp)
 {
     EjsModule   *dp;
+    EjsAny      *result;
     int         next;
-
-    mprAssert(ejs->result == 0 || (MPR_GET_GEN(MPR_GET_MEM(ejs->result)) != MPR->heap.dead));
     
     if (mp->initialized || !mp->hasInitializer) {
         mp->initialized = 1;
-        return S(null);
-    }
-    mp->initialized = 1;
-
-    if (mp->dependencies) {
-        for (next = 0; (dp = (EjsModule*) mprGetNextItem(mp->dependencies, &next)) != 0;) {
-            if (dp->hasInitializer && !dp->initialized) {
-                if (ejsRunInitializer(ejs, dp) == 0) {
-                    return 0;
+        result = ESV(null);
+    } else {
+        mp->initialized = 1;
+        if (mp->dependencies) {
+            for (next = 0; (dp = mprGetNextItem(mp->dependencies, &next)) != 0;) {
+                if (dp->hasInitializer && !dp->initialized) {
+                    if (ejsRunInitializer(ejs, dp) == 0) {
+                        return 0;
+                    }
                 }
             }
         }
+        mprLog(7, "Running initializer for module %@", mp->name);
+        result = ejsRunFunction(ejs, mp->initializer, ejs->global, 0, NULL);
     }
-    mprLog(6, "Running initializer for module %@", mp->name);
-    return ejsRunFunction(ejs, mp->initializer, ejs->global, 0, NULL);
+    return result;
 }
 
 
@@ -2641,21 +2638,18 @@ int ejsRun(Ejs *ejs)
     EjsModule   *mp;
     int         next;
 
-    mprAssert(ejs->result == 0 || (MPR_GET_GEN(MPR_GET_MEM(ejs->result)) != MPR->heap.dead));
-
-    /*
-        This is used by ejs to interpret scripts. MOB OPT. Should not run through old modules every time
-     */
-    for (next = 0; (mp = (EjsModule*) mprGetNextItem(ejs->modules, &next)) != 0;) {
-        //MOB - need to keep a list of non-initialized modules
-        if (mp->initialized) {
-            continue;
+    //  MOB OPT - should not examine all modules just to run a script
+    for (next = 0; (mp = mprGetNextItem(ejs->modules, &next)) != 0;) {
+        if (!mp->initialized) {
+            ejs->result = ejsRunInitializer(ejs, mp);
         }
-        MPR_VERIFY_MEM();
-        if (ejsRunInitializer(ejs, mp) == 0) {
+        if (ejsCompareMulti(ejs, mp->name, EJS_DEFAULT_MODULE) == 0) {
+            ejsRemoveModule(ejs, mp);
+            next--;
+        }
+        if (ejs->exception) {
             return EJS_ERR;
         }
-        mprAssert(ejs->result == 0 || (MPR_GET_GEN(MPR_GET_MEM(ejs->result)) != MPR->heap.dead));
     }
     return 0;
 }
@@ -2669,40 +2663,30 @@ EjsAny *ejsRunFunction(Ejs *ejs, EjsFunction *fun, EjsAny *thisObj, int argc, vo
     mprAssert(fun);
     mprAssert(ejsIsFunction(ejs, fun));
     mprAssert(ejs->exception == 0);
-    mprAssert(ejs->result == 0 || (MPR_GET_GEN(MPR_GET_MEM(ejs->result)) != MPR->heap.dead));
     MPR_VERIFY_MEM();
 
     if (ejs->exception) {
         return 0;
     }
-    //  MOB -is this required 
-#if TEST
-    mprAssert(ejs->state->fp->attentionPc == 0);
-#endif
     ejsClearAttention(ejs);
     
     if (thisObj == 0) {
-        //  MOB - simplify
-        if ((thisObj = fun->boundThis) == 0) {
-            thisObj = ejs->state->fp->function.boundThis;
-        }
-    }    
+        thisObj = fun->boundThis ? fun->boundThis : ejs->global;
+    }
     if (ejsIsNativeFunction(ejs, fun)) {
         if (fun->body.proc == 0) {
             ejsThrowArgError(ejs, "Native function is not defined");
             return 0;
         }
-//  MOB - need faster solution
-//  MOB -- just so that all args get marked
-for (i = 0; i < argc; i++) {
-    pushOutside(ejs, ((EjsAny**) argv)[i]);
-}
-        ejs->result = (fun->body.proc)(ejs, thisObj, argc, argv);
-ejs->state->stack -= argc;
-        if (ejs->result == 0) {
-            ejs->result = S(null);
+        /* Push args so they get marked */
+        for (i = 0; i < argc; i++) {
+            pushOutside(ejs, ((EjsAny**) argv)[i]);
         }
-mprAssert(ejs->result == 0 || (MPR_GET_GEN(MPR_GET_MEM(ejs->result)) != MPR->heap.dead));
+        ejs->result = (fun->body.proc)(ejs, thisObj, argc, argv);
+        ejs->state->stack -= argc;
+        if (ejs->result == 0) {
+            ejs->result = ESV(null);
+        }
 
     } else {
         for (i = 0; i < argc; i++) {
@@ -2717,8 +2701,6 @@ mprAssert(ejs->result == 0 || (MPR_GET_GEN(MPR_GET_MEM(ejs->result)) != MPR->hea
     return (ejs->exception) ? 0 : ejs->result;
 }
 
-
-//  MOB - can only be used to run instance methods -- rename to clarify
 
 EjsAny *ejsRunFunctionBySlot(Ejs *ejs, EjsAny *thisObj, int slotNum, int argc, void *argv)
 {
@@ -2745,13 +2727,22 @@ EjsAny *ejsRunFunctionBySlot(Ejs *ejs, EjsAny *thisObj, int slotNum, int argc, v
 EjsAny *ejsRunFunctionByName(Ejs *ejs, EjsAny *container, EjsName qname, EjsAny *thisObj, int argc, void *argv)
 {
     EjsFunction     *fun;
+    EjsLookup       lookup;
 
     if (thisObj == 0) {
         thisObj = ejs->global;
     }
-    if ((fun = ejsGetPropertyByName(ejs, container, qname)) == 0) {
-        ejsThrowReferenceError(ejs, "Can't find function %N", qname);
-        return 0;
+    if (container) {
+        if ((fun = ejsGetPropertyByName(ejs, container, qname)) == 0) {
+            ejsThrowReferenceError(ejs, "Can't find function %N", qname);
+            return 0;
+        }
+    } else {
+        if (ejsLookupScope(ejs, qname, &lookup) == 0) {
+            ejsThrowReferenceError(ejs, "Can't find function %N", qname);
+            return 0;
+        }
+        fun = ejsGetProperty(ejs, lookup.obj, lookup.slotNum);
     }
     return ejsRunFunction(ejs, fun, thisObj, argc, argv);
 }
@@ -2795,7 +2786,7 @@ static int validateArgs(Ejs *ejs, EjsFunction *fun, int argc, void *args)
             } else {
                 /* Create undefined values for missing args for script functions */
                 for (i = argc; i < nonDefault; i++) {
-                    pushOutside(ejs, S(undefined));
+                    pushOutside(ejs, ESV(undefined));
                 }
                 argc = nonDefault;
             }
@@ -2839,7 +2830,7 @@ static int validateArgs(Ejs *ejs, EjsFunction *fun, int argc, void *args)
         }
         type = trait->type;
         if (!ejsIsA(ejs, argv[i], type)) {
-            if ((argv[i] == S(null) || argv[i] == S(undefined))) {
+            if ((argv[i] == ESV(null) || argv[i] == ESV(undefined))) {
                 if (trait->attributes & EJS_TRAIT_THROW_NULLS) {
                     badArgType(ejs, activation, trait, i);
                     return EJS_ERR;
@@ -2859,55 +2850,6 @@ static int validateArgs(Ejs *ejs, EjsFunction *fun, int argc, void *args)
     }
     return argc;
 }
-
-
-#if UNUSED
-/*
-    Call a type constructor function and create a new object.
- */
-static void callConstructor(Ejs *ejs, EjsType *type, int argc, int stackAdjust)
-{
-    EjsObj      *obj;
-
-    mprAssert(ejsIsType(ejs, type));
-    mprAssert(ejs->exception == 0);
-    mprAssert(ejs->state->fp->attentionPc == 0);
-
-    obj = ejsCreateObj(ejs, type, 0);
-    ejsClearAttention(ejs);
-    
-    mprAssert(type->constructor.block.pot.isFunction);
-    if (ejsIsNativeFunction(ejs, type)) {
-        mprAssert(ejs->state->fp == 0 || ejs->state->fp->attentionPc == 0);    
-        callFunction(ejs, (EjsFunction*) type, obj, argc, stackAdjust);
-    } else {
-        VM(ejs, (EjsFunction*) type, obj, argc, stackAdjust);
-        ejs->state->stack -= (argc + stackAdjust);
-        if (ejs->exiting || mprIsStopping(ejs)) {
-            ejsAttention(ejs);
-        }
-    }
-    ejs->result = obj;
-mprAssert(ejs->result == 0 || (MPR_GET_GEN(MPR_GET_MEM(ejs->result)) != MPR->heap.dead));
-}
-#endif
-
-
-#if UNUSED
-/*
-    Find the right base class to use as "this" for a static method
- */
-static EjsType *getStaticThis(Ejs *ejs, EjsType *type, int slotNum)
-{
-    while (type) {
-        if (slotNum >= type->numInherited) {
-            break;
-        }
-        type = type->baseType;
-    }
-    return type;
-}
-#endif
 
 
 static void callInterfaceInitializers(Ejs *ejs, EjsType *type)
@@ -2932,7 +2874,6 @@ static void callInterfaceInitializers(Ejs *ejs, EjsType *type)
 
 /*
     Push a block. Used by compiler.
-    MOB -- move back to the compiler
  */
 EjsBlock *ejsPushBlock(Ejs *ejs, EjsBlock *original)
 {
@@ -3030,12 +2971,6 @@ static EjsEx *findExceptionHandler(Ejs *ejs, int kind)
     for (i = 0; i < code->numHandlers; i++) {
         ex = code->handlers[i];
         if (ex->tryStart <= pc && pc < ex->handlerEnd && (ex->flags & kind)) {
-#if UNUSED
-            //  MOB surely S(iterator) is never thrown?
-            if (ejs->exception == S(iterator) || kind == EJS_EX_FINALLY || ex->catchType == ST(Void)) {
-                return ex;
-            }
-#endif
             if (ejsIsType(ejs, ejs->exception) && ((EjsType*) ejs->exception)->sid == S_StopIteration) {
                 return ex;
             }
@@ -3084,7 +3019,7 @@ static EjsEx *inHandler(Ejs *ejs, int kind)
 static uint findEndException(Ejs *ejs)
 {
     EjsFrame    *fp;
-    EjsEx       *best, *ex;
+    EjsEx       *ex;
     EjsCode     *code;
     uint        offset, pc;
     int         i;
@@ -3095,7 +3030,7 @@ static uint findEndException(Ejs *ejs)
     pc = (uint) (fp->pc - code->byteCode - 1);
     offset = 0;
 
-    for (best = 0, i = 0; i < code->numHandlers; i++) {
+    for (i = 0; i < code->numHandlers; i++) {
         ex = code->handlers[i];
         /*
             Comparison must include try and all catch handlers, incase there are multiple catch handlers
@@ -3141,7 +3076,7 @@ static void checkExceptionHandlers(Ejs *ejs)
     mprAssert(pc >= 0);
 
 rescan:
-    if (!fp->function.inException || (ejs->exception == ST(StopIteration))) {
+    if (!fp->function.inException || (ejs->exception == EST(StopIteration))) {
         /*
             Normal exception in a try block. NOTE: the catch will jump or fall through to the finally block code.
             ie. We won't come here again for the finally code unless there is an exception in the catch block.
@@ -3193,12 +3128,10 @@ static void createExceptionBlock(Ejs *ejs, EjsEx *ex, int flags)
     EjsBlock        *block;
     EjsFrame        *fp;
     EjsState        *state;
-    EjsCode         *code;
     int             i, count;
 
     state = ejs->state;
     fp = state->fp;
-    code = state->fp->function.body.code;
     mprAssert(ex);
 
     ejsClearAttention(ejs);
@@ -3308,10 +3241,10 @@ static EjsAny *evalBinaryExpr(Ejs *ejs, EjsAny *lhs, EjsOpCode opcode, EjsAny *r
     int         slotNum;
 
     if (lhs == 0) {
-        lhs = S(undefined);
+        lhs = ESV(undefined);
     }
     if (rhs == 0) {
-        rhs = S(undefined);
+        rhs = ESV(undefined);
     }
     result = ejsInvokeOperator(ejs, lhs, opcode, rhs);
 
@@ -3322,37 +3255,6 @@ static EjsAny *evalBinaryExpr(Ejs *ejs, EjsAny *lhs, EjsOpCode opcode, EjsAny *r
         }
     }
     return result;
-}
-
-
-int ejsInitStack(Ejs *ejs)
-{
-    EjsState    *state;
-
-#if UNUSED
-    if ((state = mprAllocBlock(sizeof(EjsState), MPR_ALLOC_ZERO)) == 0) {
-        mprSetMemError(ejs);
-        return EJS_ERR;
-    }
-#endif
-    state = ejs->state;
-    mprAssert(state);
-
-    /*
-        Allocate the stack
-        This will allocate memory virtually for systems with virutal memory. Otherwise, it will just use malloc.
-        TODO - create a guard page
-     */
-    state->stackSize = MPR_PAGE_ALIGN(EJS_STACK_MAX, mprGetPageSize(ejs));
-    if ((state->stackBase = mprVirtAlloc(state->stackSize, MPR_MAP_READ | MPR_MAP_WRITE)) == 0) {
-        mprSetMemError(ejs);
-        return EJS_ERR;
-    }
-    state->stack = &state->stackBase[-1];
-#if UNUSED
-    ejs->state = ejs->masterState = state;
-#endif
-    return 0;
 }
 
 
@@ -3430,8 +3332,6 @@ int ejsGrowStack(Ejs *ejs, int incr)
  */
 void ejsExit(Ejs *ejs, int status)
 {
-    //  TODO - should pass status back
-    //  MOB -- what about graceful exiting 
     ejs->exiting = 1;
     mprSignalDispatcher(ejs->dispatcher);
 }
@@ -3487,7 +3387,7 @@ static EjsObj *getGlobalArg(Ejs *ejs, EjsFrame *fp)
 
     case EJS_ENCODE_GLOBAL_SLOT:
         slotNum = t >> 2;
-        if (0 <= slotNum && slotNum < ejsGetPropertyCount(ejs, ejs->global)) {
+        if (0 <= slotNum && slotNum < ejsGetLength(ejs, ejs->global)) {
             obj = ejsGetProperty(ejs, ejs->global, slotNum);
         }
         break;
@@ -3516,7 +3416,6 @@ static void callProperty(Ejs *ejs, EjsAny *obj, int slotNum, EjsAny *thisObj, in
     EjsTrait    *trait;
     EjsFunction *fun;
 
-    //  MOB -- rethink this.
     fun = ejsGetProperty(ejs, obj, slotNum);
     trait = ejsGetPropertyTraits(ejs, obj, slotNum);
     if (trait && trait->attributes & EJS_TRAIT_GETTER) {
@@ -3545,7 +3444,6 @@ static void callFunction(Ejs *ejs, EjsFunction *fun, EjsAny *thisObj, int argc, 
     mprAssert(fun);
     mprAssert(ejs->exception == 0);
     mprAssert(ejs->state->fp == 0 || ejs->state->fp->attentionPc == 0);  
-    mprAssert(ejs->result == 0 || (MPR_GET_GEN(MPR_GET_MEM(ejs->result)) != MPR->heap.dead));
 
     state = ejs->state;
 
@@ -3564,7 +3462,7 @@ static void callFunction(Ejs *ejs, EjsFunction *fun, EjsAny *thisObj, int argc, 
         }
         
     } else if (!ejsIsFunction(ejs, fun)) {
-        if (fun == S(undefined)) {
+        if (fun == ESV(undefined)) {
             ejsThrowReferenceError(ejs, "Function is undefined");
             return;
         } else {
@@ -3591,7 +3489,6 @@ static void callFunction(Ejs *ejs, EjsFunction *fun, EjsAny *thisObj, int argc, 
         argc += count;
     }
     
-    //  MOB -- should already be factored in.
     mprAssert(ejs->spreadArgs == 0);
     argc += ejs->spreadArgs;
     ejs->spreadArgs = 0;
@@ -3615,16 +3512,16 @@ static void callFunction(Ejs *ejs, EjsFunction *fun, EjsAny *thisObj, int argc, 
             return;
         }
         ejsClearAttention(ejs);
-fstate = state->frozen;
+        fstate = state->paused;
         ejs->result = (fun->body.proc)(ejs, thisObj, argc, argv);
-state->frozen = fstate;
+        state->paused = fstate;
         if (ejs->result == 0) {
-            ejs->result = S(null);
+            ejs->result = ESV(null);
         }
-mprAssert(ejs->result == 0 || (MPR_GET_GEN(MPR_GET_MEM(ejs->result)) != MPR->heap.dead));
         state->stack -= (argc + stackAdjust);
 
     } else {
+        mprAssert(thisObj);
         if ((fp = ejsCreateFrame(ejs, fun, thisObj, argc, argv)) == 0) {
             return;
         }
@@ -3636,15 +3533,7 @@ mprAssert(ejs->result == 0 || (MPR_GET_GEN(MPR_GET_MEM(ejs->result)) != MPR->hea
         state->bp = (EjsBlock*) fp;
         ejsClearAttention(ejs);
     }
-mprAssert(ejs->result == 0 || (MPR_GET_GEN(MPR_GET_MEM(ejs->result)) != MPR->heap.dead));
-    //  MOB - is this the best place for this?
-#if UNUSED
-    if (MPR->heap.mustYield && !(state->frozen)) { 
-        mprYield(0); 
-    }
-#endif
     mprAssert(ejs->state->fp);
-    // mprAssert(!state->frozen);
 }
 
 
@@ -3714,10 +3603,6 @@ static EjsAny *getNthBlock(Ejs *ejs, int nth)
 
     for (block = ejs->state->bp; block && --nth >= 0; ) {
         /* TODO - this is done for loading scripts into ejs. Really the compiler should remove these blocks */
-#if UNUSED
-        mprAssert(block->pot.hidden == 0);
-        if (block->pot.hidden) nth++;
-#endif
         block = block->scope;
     }
     return block;
@@ -3739,18 +3624,7 @@ void ejsLog(Ejs *ejs, const char *fmt, ...)
 }
 
 
-#if UNUSED
-void ejsShowStack(Ejs *ejs, EjsFunction *fp)
-{
-    mprLog(7, "Stack\n%s", ejsFormatStack(ejs, NULL));
-}
-#endif
-
 #if FUTURE
-
-- Separate file
-
-//  MOB - move into the mpr
 #if BLD_CC_EDITLINE
 static History  *cmdHistory;
 static EditLine *eh; 
@@ -3850,7 +3724,7 @@ static void bkpt(Ejs *ejs)
 
     Display source with current line highlighted
 
-    optable = ejsGetOptable(ejs);
+    optable = ejsGetOptable();
     if (mprGetLogLevel(ejs) > 7) {
         mprPrintf(ejs, "%0s %04d: [%d] %02x: %-35s # %s:%d %@",
             mprGetCurrentThreadName(fp), offset, (int) (state->stack - fp->stackReturn),
@@ -3876,7 +3750,7 @@ static EjsOpCode traceCode(Ejs *ejs, EjsOpCode opcode)
     EjsState        *state;
     EjsOptable      *optable;
     int             offset;
-#if UNUSED
+#if FUTURE
     static int      showFrequency = 1;
 #endif
 
@@ -3886,14 +3760,14 @@ static EjsOpCode traceCode(Ejs *ejs, EjsOpCode opcode)
     fp = state->fp;
     opcount[opcode]++;
 
-    if (ejs->initialized && doDebug) {
+    if (1 || ejs->initialized && doDebug) {
         offset = (int) (fp->pc - fp->function.body.code->byteCode) - 1;
         if (offset < 0) {
             offset = 0;
         }
-        optable = ejsGetOptable(ejs);
+        optable = ejsGetOptable();
         fp->line = ejsGetDebugLine(ejs, (EjsFunction*) fp, fp->pc);
-#if UNUSED
+#if FUTURE
         if (showFrequency && ((once % 1000) == 999)) {
             ejsShowOpFrequency(ejs);
         }
@@ -3905,7 +3779,7 @@ static EjsOpCode traceCode(Ejs *ejs, EjsOpCode opcode)
 }
 
 
-#if UNUSED
+#if FUTURE
 void ejsShowOpFrequency(Ejs *ejs)
 {
     EjsOptable      *optable;
@@ -3914,7 +3788,7 @@ void ejsShowOpFrequency(Ejs *ejs)
     if (mprGetLogLevel(ejs) < 6) {
         return;
     }
-    optable = ejsGetOptable(ejs);
+    optable = ejsGetOptable();
     mprLog(0, "Opcode Frequency");
     for (i = 0; i < 256 && optable[i].name; i++) {
         mprLog(6, "%4d %24s %8d", (uchar) i, optable[i].name, opcount[i]);
@@ -3938,9 +3812,6 @@ void ejsShowOpFrequency(Ejs *ejs)
 #undef FUNCTION
 #undef BLOCK
 #undef SWAP
-#if UNUSED
-#undef TRACE
-#endif
 #undef GET_SLOT
 #undef SET_SLOT
 #undef GET_BYTE

@@ -2,61 +2,62 @@
     Master ejsrc
  */
 {
-    cache: {
-        enable: true,
-        reload: true,
+    app: {
+        preloaded: false,
     },
-    database: {                                 // ejsmvc
-        class: "Database",
-        adapter: "sqlite3",
-        timeout: 5000,
-        //  MOB -- need better way of doing modes
+    cache: {
+        adapter: "local",
+        class: "LocalCache",
+        module: "ejs.cache.local",
+        memory: 10000000,
+        keys: 1000,
+        lifespan: 3600,
+        app:        { enable: true, reload: true },
+        actions:    { enable: true, lifespan: 3600 },
+        database:   { enable: true, lifespan: 3600 },
+        workers:    { enable: true, limit: 10 },
+    },
+    database: {
+        adapter: "sqlite",
+        class: "Sqlite",
+        module: "ejs.db.sqlite",
         debug: {
-            name: "db/switch.sdb", 
-            username: "", 
-            password: "", 
-            trace: false,
+            name: "db/switch.sdb", username: "", password: "", trace: false,
         },
         test: { },
         production: { },
     },
-    directories: {
+    dirs: {
         bin: "bin",
         db: "db",
         cache: "cache",
         controllers: "controllers",
-        layouts: "views/layouts",
+        layouts: "layouts",
         models: "models",
         views: "views",
         src: "src",
         web: "web",
     },
+    files: {
+        ejsrc: "/path/to/ejsrc",
+    },
     log: {
         enable: true,
-        location: "stdout",
+        location: "stderr",
         level: 2,
         match: null,
-        showClient: true,                       // ejs.web 
-    },
-    http: {
-        //  MOB -- is this used?
-        timeout: 60,
+        showClient: true,
     },
     init: {
         load: [],
     },
-    mode: "debug",                              // ejsmvc
+    mode: "debug",
     mvc: {
         appmod: "App.mod",
         compiler: "ejsc --debug --web",
         start: "start.es",
     },
     search: null,
-    scripts: null,
-    session: {
-        enable: true,
-        timeout: 1800,
-    },
     web: {
         expires: {
             "html": 86400,  
@@ -64,8 +65,31 @@
             "es": 86400,
             "": 86400,
         },
-        endpoint: "127.0.0.1:4000",             // ejsmvc only
-        view: {
+        helpers: {
+            //  MOB TODO - or should this be in views?
+        },
+        limits: {
+            chunk: 8192,
+            connReuse: 200,
+            clients: 100,
+            headers: 50,
+            header: 2048,
+            inactivityTimeout: 300,
+            receive: 2000000000,
+            requests: 200,
+            requestTimeout: 0,
+            sessionTimeout: 3600, 
+            stageBuffer: 32768,
+            transmission: 2000000000,
+            upload: 2000000000,
+            uri: 1000000,
+        },
+        listen: ":4000",
+        trace: {
+            tx: { exclude: ["jpg", "gif", "png", "ico", "css",], headers: 4, body: 5, size: 10240 }
+            rx: { exclude: ["jpg", "gif", "png", "ico", "css", "js"], conn: 5, first: 2, headers: 4, body: 4, size: 1024 }
+        },
+        views: {
             connectors: {
                 table: "html",
                 chart: "google",
@@ -75,10 +99,10 @@
                 currency: "$%10f",
                 Date: "%a %e %b %H:%M",
             },
+            layout: "default.ejs",
         },
-    },
-    session: {
-        enable: true,
-        timeout: 1800,
+        workers: {
+            init: "script",
+        },
     },
 }

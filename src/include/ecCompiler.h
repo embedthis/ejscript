@@ -10,7 +10,6 @@
 #define _h_EC_COMPILER 1
 
 #include    "ejs.h"
-#include    "ejsTune.h"
 
 #ifdef __cplusplus
 extern "C" {
@@ -215,9 +214,6 @@ typedef struct EcNode {
             Node        body;                   /* Function body */
             Node        parameters;             /* Function formal parameters */
             Node        constructorSettings;    /* Constructor settings */
-#if UNUSED
-            Node        expressionRef;          /* Reference to the function expression name */
-#endif
             EjsFunction *functionVar;           /* Function variable */
             uint        operatorFn    : 1;      /* operator function */
             uint        getter        : 1;      /* getter function */
@@ -802,7 +798,7 @@ extern EcNode       *ecLinkNode(EcNode *np, EcNode *child);
 
 extern EjsModule    *ecLookupModule(EcCompiler *cp, EjsString *name, int minVersion, int maxVersion);
 extern int          ecLookupScope(EcCompiler *cp, EjsName name);
-extern int          ecLookupVar(EcCompiler *cp, EjsObj *vp, EjsName name);
+extern int          ecLookupVar(EcCompiler *cp, EjsAny *vp, EjsName name);
 extern EcNode       *ecParseWarning(EcCompiler *cp, char *fmt, ...);
 extern int          ecPeekToken(EcCompiler *cp);
 extern int          ecPutSpecificToken(EcCompiler *cp, EcToken *token);

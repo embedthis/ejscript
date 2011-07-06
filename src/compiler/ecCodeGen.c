@@ -140,13 +140,11 @@ void ecGenConditionalCode(EcCompiler *cp, EcNode *np, EjsModule *mp)
  */
 int ecCodeGen(EcCompiler *cp)
 {
-    Ejs         *ejs;
     EjsModule   *mp;
     EcNode      *np;
     MprList     *modules;
-    int         i, version, next, count;
+    int         next, i, count;
 
-    ejs = cp->ejs;
     if (ecEnterState(cp) < 0) {
         return EJS_ERR;
     }
@@ -167,10 +165,9 @@ int ecCodeGen(EcCompiler *cp)
         Open once if merging into a single output file
      */
     if (cp->outputFile) {
-        for (version = next = 0; (mp = mprGetNextItem(cp->modules, &next)) != 0; ) {
+        for (next = 0; (mp = mprGetNextItem(cp->modules, &next)) != 0; ) {
             if (next <= 1 || mp->globalProperties || mp->hasInitializer || 
                     ejsCompareMulti(cp->ejs, mp->name, EJS_DEFAULT_MODULE) != 0) {
-                version = mp->version;
                 break;
             }
         }
@@ -187,7 +184,7 @@ int ecCodeGen(EcCompiler *cp)
         orderModule(cp, modules, mp);
     }
     for (next = 0; (mp = mprGetNextItem(modules, &next)) != 0 && !cp->fatalError; ) {
-        //  MOB -- remove this test. Should be able to add to a loaded module??
+        //  TODO -- remove this test. Should be able to add to a loaded module??
         mprAssert(!mp->loaded);
         if (mp->loaded) {
             continue;
@@ -219,10 +216,8 @@ int ecCodeGen(EcCompiler *cp)
 static void orderModule(EcCompiler *cp, MprList *list, EjsModule *mp)
 {
     EjsModule   *dp;
-    Ejs         *ejs;
     int         next;
     
-    ejs = cp->ejs;
     mp->visited = 1;
     for (next = 0; (dp = mprGetNextItem(mp->dependencies, &next)) != 0; ) {
         if (mprLookupItem(list, dp) < 0 && mprLookupItem(cp->modules, dp) >= 0) {
@@ -244,7 +239,6 @@ static void genArgs(EcCompiler *cp, EcNode *np)
     int         next;
 
     ENTER(cp);
-
     mprAssert(np->kind == N_ARGS);
 
     cp->state->needsValue = 1;
@@ -283,43 +277,20 @@ static void genSpread(EcCompiler *cp, EcNode *np)
 }
 
 
-#if UNUSED
-static void genArrayLiteral(EcCompiler *cp, EcNode *np)
-{
-    EcNode      *child;
-    int         next;
-
-    ENTER(cp);
-
-    next = 0;
-    while ((child = getNextNode(cp, np, &next)) != 0) {
-        /* Don't propagate needsValue here. We have a new and that will take care of the residual value */
-        cp->state->needsValue = 0;
-        processNode(cp, child);
-    }
-    LEAVE(cp);
-}
-#endif
-
-
 /*
     Generate an assignment expression
  */
 static void genAssignOp(EcCompiler *cp, EcNode *np)
 {
     EcState     *state;
-    int         rc, next;
 
     ENTER(cp);
-
-    state = cp->state;
-    rc = 0;
-    next = 0;
 
     mprAssert(np->kind == N_ASSIGN_OP);
     mprAssert(np->left);
     mprAssert(np->right);
 
+    state = cp->state;
     state->onLeft = 0;
 
     /*
@@ -425,7 +396,6 @@ static void genBreak(EcCompiler *cp, EcNode *np)
 
 static void genBlock(EcCompiler *cp, EcNode *np)
 {
-    Ejs             *ejs;
     EjsNamespace    *namespace;
     EcState         *state;
     EjsBlock        *block;
@@ -436,7 +406,6 @@ static void genBlock(EcCompiler *cp, EcNode *np)
     ENTER(cp);
 
     state = cp->state;
-    ejs = cp->ejs;
     block = (EjsBlock*) np->blockRef;
 
     if (block && np->createBlockObject) {
@@ -495,7 +464,6 @@ static void genBlockName(EcCompiler *cp, int slotNum, int nthBlock)
 
     mprAssert(slotNum >= 0);
 
-    //  MOB BINDING OK
     code = (!cp->state->onLeft) ?  EJS_OP_GET_BLOCK_SLOT :  EJS_OP_PUT_BLOCK_SLOT;
     ecEncodeOpcode(cp, code);
     ecEncodeNum(cp, slotNum);
@@ -550,7 +518,7 @@ static void genDelete(EcCompiler *cp, EcNode *np)
         } else {
             /* delete obj[expr] */
             ecEncodeOpcode(cp, EJS_OP_LOAD_STRING);
-            ecEncodeConst(cp, S(empty));
+            ecEncodeConst(cp, ESV(empty));
             processNode(cp, lright);
             ecEncodeOpcode(cp, EJS_OP_DELETE_NAME_EXPR);
             popStack(cp, 2);
@@ -582,8 +550,6 @@ static void genGlobalName(EcCompiler *cp, int slotNum)
 
     mprAssert(slotNum >= 0);
 
-    //  MOB - TEMP warning if being called.
-    // mprAssert(0);
     code = (!cp->state->onLeft) ?  EJS_OP_GET_GLOBAL_SLOT :  EJS_OP_PUT_GLOBAL_SLOT;
     ecEncodeOpcode(cp, code);
     ecEncodeNum(cp, slotNum);
@@ -600,8 +566,6 @@ static void genLocalName(EcCompiler *cp, int slotNum)
     int     code;
 
     mprAssert(slotNum >= 0);
-
-    //  MOB BINDING OK
 
     if (slotNum < 10) {
         code = (!cp->state->onLeft) ?  EJS_OP_GET_LOCAL_SLOT_0 :  EJS_OP_PUT_LOCAL_SLOT_0;
@@ -659,7 +623,6 @@ static void genLogicalOp(EcCompiler *cp, EcNode *np)
     pushStack(cp, 1);
     popStack(cp, 1);
 
-    //  MOB - remove test
     mprAssert(np->right);
     if (np->right) {
         state->code = allocCodeBuffer(cp);
@@ -754,17 +717,14 @@ static void genBaseClassPropertyName(EcCompiler *cp, int slotNum, int nthBase)
  */
 static void genThisBaseClassPropertyName(EcCompiler *cp, EjsType *type, int slotNum)
 {
-    Ejs         *ejs;
     EcState     *state;
     int         code, nthBase;
 
+    mprAssert(0);
     mprAssert(slotNum >= 0);
     mprAssert(type && ejsIsType(ejs, type));
-
-    ejs = cp->ejs;
     state = cp->state;
 
-    mprAssert(0);
     /*
         Count based up from object 
      */
@@ -799,7 +759,8 @@ static void genClassName(EcCompiler *cp, EjsType *type)
         return;
     }
     slotNum = ejsLookupProperty(ejs, ejs->global, type->qname);
-    if (cp->bind /* UNUSED && BUILTIN(type) */ && slotNum <= ES_global_NUM_CLASS_PROP) {
+    if (cp->bind && slotNum < ES_global_NUM_CLASS_PROP) {
+        //  MOB - WARNING: this won't work if classes are implemented like Record.
         mprAssert(slotNum >= 0);
         genGlobalName(cp, slotNum);
 
@@ -807,13 +768,6 @@ static void genClassName(EcCompiler *cp, EjsType *type)
             (!state->inFunction || (state->currentFunction && state->currentFunction->staticMethod))) {
         ecEncodeOpcode(cp, EJS_OP_LOAD_THIS);
         pushStack(cp, 1);
-#if UNUSED
-            /*
-                This is broken. When calling a subclass method, this refers to the outer class and so the base is not right
-             */
-            ecEncodeOpcode(cp, EJS_OP_LOAD_THIS_BASE);
-            ecEncodeNum(cp, 0);
-#endif
 
     } else {
         ecEncodeOpcode(cp, EJS_OP_LOAD_GLOBAL);
@@ -831,16 +785,13 @@ static void genClassName(EcCompiler *cp, EjsType *type)
  */
 static void genPropertyViaThis(EcCompiler *cp, int slotNum)
 {
-    Ejs             *ejs;
     EcState         *state;
     int             code;
 
     mprAssert(slotNum >= 0);
-
-    ejs = cp->ejs;
+    mprAssert(0);
     state = cp->state;
 
-    mprAssert(0);
     /*
         Property in the current "this" object
      */
@@ -877,14 +828,9 @@ static void genBoundName(EcCompiler *cp, EcNode *np)
 
     if (lookup->obj == ejs->global) {
         /*
-            Global variable.
+            Global variable
          */
-        //  TODO -- this logic looks strange
-#if UNUSED
-        if (lookup->slotNum < 0 || (!cp->bind && (lookup->ref == 0 || !BUILTIN(lookup->ref)))) {
-#else
         if (lookup->slotNum < 0 || lookup->slotNum > ES_global_NUM_CLASS_PROP) {
-#endif
             lookup->bind = 0;
             genUnboundName(cp, np);
 
@@ -984,7 +930,7 @@ static void genCallSequence(EcCompiler *cp, EcNode *np)
     EcState         *state;
     EjsFunction     *fun;
     EjsLookup       *lookup;
-    int             fast, argc, staticMethod, count;    
+    int             fast, argc, staticMethod;    
         
     ejs = cp->ejs;
     state = cp->state;
@@ -1017,19 +963,10 @@ static void genCallSequence(EcCompiler *cp, EcNode *np)
             
         } else {
             /*
-                MOB BUG. Could be an arbitrary expression on the left. Need a consistent way to save the right most
-                object before the property. */
-            count = getStackCount(cp);
-#if UNUSED
-            left->needThis = 1;
-#endif
+                Could be an arbitrary expression on the left. Need a consistent way to save the right most
+                object before the property. 
+             */
             processNodeGetValue(cp, left);
-#if UNUSED
-            if (getStackCount(cp) < (count + 2)) {
-                ecEncodeOpcode(cp, EJS_OP_DUP);
-                pushStack(cp, 1);
-            }
-#endif
             ecEncodeOpcode(cp, EJS_OP_LOAD_THIS_LOOKUP);
             pushStack(cp, 1);
             ecEncodeOpcode(cp, EJS_OP_SWAP);
@@ -1077,10 +1014,7 @@ static void genCallSequence(EcCompiler *cp, EcNode *np)
     if (staticMethod) {
         mprAssert(ejsIsType(ejs, lookup->obj));
         if (state->currentClass && state->inFunction && 
-#if UNUSED
-                ejsIsTypeSubType(ejs, state->currentClass, (EjsType*) lookup->originalObj) && 
-#endif
-                lookup->obj != ST(Object)) {
+                lookup->obj != EST(Object)) {
             /*
                 Calling a static method from within a class or subclass. So we can use "this".
              */
@@ -1088,17 +1022,6 @@ static void genCallSequence(EcCompiler *cp, EcNode *np)
             mprAssert(0);
             ecEncodeOpcode(cp, EJS_OP_CALL_THIS_STATIC_SLOT);
             ecEncodeNum(cp, lookup->slotNum);
-#if UNUSED
-            /*
-                If searching the scope chain (i.e. without a qualifying obj.property), and if the current class is not the 
-                original object, then see how far back on the inheritance chain we must go.
-             */
-            if (lookup->originalObj != lookup->obj) {
-                for (type = state->currentClass; type != (EjsType*) lookup->originalObj; type = type->baseType) {
-                    lookup->nthBase++;
-                }
-            }
-#endif
             if (!state->currentFunction->staticMethod) {
                 /*
                     If calling from within an instance function, need to step over the instance also
@@ -1185,7 +1108,6 @@ static void genCallSequence(EcCompiler *cp, EcNode *np)
             }
             
         } else if (ejsIsBlock(ejs, lookup->obj)) {
-            //  MOB BINDING OK
             argc = genCallArgs(cp, right);
             ecEncodeOpcode(cp, EJS_OP_CALL_BLOCK_SLOT);
             ecEncodeNum(cp, lookup->slotNum);
@@ -1237,7 +1159,7 @@ static void genCall(EcCompiler *cp, EcNode *np)
      */
     hasResult = 0;
     if (fun && ejsIsFunction(ejs, fun)) {
-        if (fun->resultType && fun->resultType != ST(Void)) {
+        if (fun->resultType && fun->resultType != EST(Void)) {
             hasResult = 1;
 
         } else if (fun->hasReturn || ejsIsType(ejs, fun)) {
@@ -1278,7 +1200,7 @@ static int injectCode(Ejs *ejs, EjsFunction *fun, EcCodeGen *extra)
     EjsEx       *ex;
     EjsDebug    *debug;
     uchar       *byteCode;
-    int         i, next, len, codeLen, extraCodeLen;
+    int         next, i, len, codeLen, extraCodeLen;
 
     if (extra == NULL || extra->buf == NULL) {
         return 0;
@@ -1422,56 +1344,10 @@ static void genClass(EcCompiler *cp, EcNode *np)
             ecEncodeOpcode(cp, EJS_OP_LOAD_THIS);
             ecEncodeOpcode(cp, EJS_OP_RETURN_VALUE);
             setFunctionCode(cp, (EjsFunction*) type, code);
-            //  MOB -- make these standard strings in native core
             ecAddCStringConstant(cp, EJS_PUBLIC_NAMESPACE);
             ecAddCStringConstant(cp, EJS_CONSTRUCTOR_NAMESPACE);
 
         } else if (type->constructor.block.pot.isFunction) {
-#if UNUSED
-            /*
-                Inject instance initializer code into (before) pre-existing constructor code. 
-             */
-            initializerCode = code->buf;
-            initializerLen = mprGetBufLength(initializerCode);
-            mprAssert(initializerLen >= 0);
-            if (initializerLen > 0) {
-                constructorLen = (constructor->body.code) ? constructor->body.code->codeLen : 0;
-                mprAssert(constructorLen >= 0);
-                len = initializerLen + constructorLen;
-                if ((byteCode = mprAllocZeroed(len)) == 0) {
-                    genError(cp, np, "Can't allocate code buffer");
-                    LEAVE(cp);
-                }
-                mprMemcpy(byteCode, initializerLen, mprGetBufStart(initializerCode), initializerLen);
-                if (constructorLen) {
-                    mprMemcpy(&byteCode[initializerLen], constructorLen, constructor->body.code->byteCode, constructorLen);
-                }
-                if (constructor->body.code) {
-                    debug = constructor->body.code->debug;
-                    mprAssert(debug->magic == EJS_DEBUG_MAGIC);
-                    if (debug && debug->numLines > 0) {
-                        for (i = 0; i < debug->numLines; i++) {
-                            addDebugLine(cp, code, debug->lines[i].offset, debug->lines[i].source);
-                        }
-                    }
-                }
-                /*
-                    Adjust existing exception blocks to accomodate injected code.
-                    Then define new try/catch blocks encountered.
-                 */
-                for (i = 0; i < constructor->body.code->numHandlers; i++) {
-                    ex = constructor->body.code->handlers[i];
-                    ex->tryStart += initializerLen;
-                    ex->tryEnd += initializerLen;
-                    ex->handlerStart += initializerLen;
-                    ex->handlerEnd += initializerLen;
-                }
-                for (next = 0; (ex = (EjsEx*) mprGetNextItem(code->exceptions, &next)) != 0; ) {
-                    ejsAddException(ejs, constructor, ex->tryStart, ex->tryEnd, ex->catchType, ex->handlerStart, 
-                        ex->handlerEnd, ex->numBlocks, ex->numStack, ex->flags, -1);
-                }
-            }
-#endif
             injectCode(ejs, constructor, code);
         }
     }
@@ -1502,7 +1378,7 @@ static void genClass(EcCompiler *cp, EcNode *np)
 static void genDassign(EcCompiler *cp, EcNode *np)
 {
     EcNode      *field;
-    int         count, next;
+    int         next, count;
 
     mprAssert(np->kind == N_DASSIGN);
 
@@ -1533,16 +1409,14 @@ static void genDirectives(EcCompiler *cp, EcNode *np, bool saveResult)
 {
     EcState     *lastDirectiveState;
     EcNode      *child;
-    int         next, lastKind, mark;
+    int         next, mark;
 
     ENTER(cp);
 
     lastDirectiveState = cp->directiveState;
-    lastKind = -1;
     next = 0;
     mark = getStackCount(cp);
     while ((child = getNextNode(cp, np, &next)) && !cp->error) {
-        lastKind = child->kind;
         cp->directiveState = cp->state;
         processNode(cp, child);
         if (!saveResult) {
@@ -1632,7 +1506,7 @@ static void genDot(EcCompiler *cp, EcNode *np, EcNode **rightMost)
         state->currentObjectNode = 0;
         state->needsValue = 1;
         ecEncodeOpcode(cp, EJS_OP_LOAD_STRING);
-        ecEncodeConst(cp, S(empty));
+        ecEncodeConst(cp, ESV(empty));
         pushStack(cp, 1);
         if (right->kind == N_LITERAL) {
             genLiteral(cp, right);
@@ -1684,7 +1558,7 @@ static void genEndFunction(EcCompiler *cp, EcNode *np)
                 ecEncodeOpcode(cp, EJS_OP_RETURN);
             }
 
-        } else if (fun->resultType == ST(Void)) {
+        } else if (fun->resultType == EST(Void)) {
             ecEncodeOpcode(cp, EJS_OP_RETURN);
 
         } else {
@@ -1693,6 +1567,7 @@ static void genEndFunction(EcCompiler *cp, EcNode *np)
             ecEncodeOpcode(cp, EJS_OP_RETURN_VALUE);
         }
     }
+    cp->lastOpcode = 0;
     LEAVE(cp);
 }
 
@@ -2079,7 +1954,7 @@ static void genForIn(EcCompiler *cp, EcNode *np)
         pushStack(cp, 1);
         //  TODO space is not used with numericIndicies
         ecEncodeOpcode(cp, EJS_OP_LOAD_STRING);
-        ecEncodeConst(cp, S(empty));
+        ecEncodeConst(cp, ESV(empty));
         pushStack(cp, 1);
     }
 
@@ -2093,15 +1968,10 @@ static void genForIn(EcCompiler *cp, EcNode *np)
         ecEncodeOpcode(cp, EJS_OP_DUP);
         pushStack(cp, 1);
     }
-    
-#if UNUSED
-    //  MOB -- MUST CLEANUP this so we can use genLeftHandSide. But genVar() can't call genName??
-    genLeftHandSide(cp, iterVar->left);
-#else
     state->onLeft = 1;
     genName(cp, iterVar->left);
     state->onLeft = 0;
-#endif
+
     if (iterVar->kind == N_VAR_DEFINITION && iterVar->def.varKind == KIND_LET) {
         ecAddNameConstant(cp, iterVar->left->qname);
     }
@@ -2133,17 +2003,12 @@ static void genForIn(EcCompiler *cp, EcNode *np)
         Note: we have a zero length handler (noop)
      */
     handlerStart = ecGetCodeOffset(cp);
-    addException(cp, tryStart, tryEnd, ST(StopIteration), handlerStart, handlerStart, 0, startMark,
+    addException(cp, tryStart, tryEnd, EST(StopIteration), handlerStart, handlerStart, 0, startMark,
         EJS_EX_CATCH | EJS_EX_ITERATION);
 
     /*
         Patch break/continue statements
      */
-#if UNUSED
-    if (varCount == 2) {
-        ecEncodeOpcode(cp, EJS_OP_POP);
-    }
-#endif
     discardStackItems(cp, startMark);
     breakLabel = (int) mprGetBufLength(state->code->buf);
 
@@ -2168,7 +2033,7 @@ static void genDefaultParameterCode(EcCompiler *cp, EcNode *np, EjsFunction *fun
     EcNode          *parameters, *child;
     EcState         *state;
     EcCodeGen       **buffers, *saveCode;
-    int             next, len, needLongJump, count, firstDefault;
+    int             len, next, needLongJump, count, firstDefault;
 
     ejs = cp->ejs;
     state = cp->state;
@@ -2190,10 +2055,9 @@ static void genDefaultParameterCode(EcCompiler *cp, EcNode *np, EjsFunction *fun
     if (fun->rest) {
         buffers[count - 1] = state->code = allocCodeBuffer(cp);
         ecEncodeOpcode(cp, EJS_OP_NEW_ARRAY);
-        ecEncodeGlobal(cp, (EjsObj*) ST(Array), ST(Array)->qname);
+        ecEncodeGlobal(cp, (EjsObj*) EST(Array), EST(Array)->qname);
         ecEncodeNum(cp, 0);
         pushStack(cp, 1);
-        //  MOB -- convenience routine
         if (fun->numArgs < 10) {
             ecEncodeOpcode(cp, EJS_OP_PUT_LOCAL_SLOT_0 + fun->numArgs - 1);
         } else {
@@ -2229,7 +2093,6 @@ static void genDefaultParameterCode(EcCompiler *cp, EcNode *np, EjsFunction *fun
     ecEncodeByte(cp, fun->numDefault + fun->rest + 1);
 
     len = (fun->numDefault + fun->rest + 1) * ((needLongJump) ? 4 : 1);
-
     for (next = firstDefault; next < count; next++) {
         if (buffers[next] == 0) {
             continue;
@@ -2271,7 +2134,6 @@ static void genFunction(EcCompiler *cp, EcNode *np)
     EjsType         *baseType;
     EjsName         qname;
     EjsTrait        *trait;
-    EjsLookup       *lookup;
     EjsPot          *activation;
     int             i, numProp;
 
@@ -2281,6 +2143,7 @@ static void genFunction(EcCompiler *cp, EcNode *np)
     
     ejs = cp->ejs;
     state = cp->state;
+    cp->lastOpcode = 0;
     mprAssert(state);
 
     mprAssert(np->function.functionVar);
@@ -2291,9 +2154,6 @@ static void genFunction(EcCompiler *cp, EcNode *np)
     state->inFunction = 1;
     state->inMethod = state->inMethod || np->function.isMethod;
     state->blockIsMethod = np->function.isMethod;
-#if UNUSED
-    state->currentFunctionName = np->qname.name;
-#endif
     state->currentFunction = fun;
     state->currentFunctionNode = np;
 
@@ -2305,7 +2165,6 @@ static void genFunction(EcCompiler *cp, EcNode *np)
         We only need to define the function if it needs full scope (unbound property access) or it is a nested function.
      */
     if (fun->fullScope) {
-        lookup = &np->lookup;
         ecEncodeOpcode(cp, EJS_OP_DEFINE_FUNCTION);
         ecEncodeName(cp, np->qname);
     }
@@ -2500,7 +2359,6 @@ static void genIf(EcCompiler *cp, EcNode *np)
         ecEncodeOpcode(cp, EJS_OP_GOTO);
         ecEncodeInt32(cp, elseLen);
     }
-
     if (np->tenary.elseCode) {
         copyCodeBuffer(cp, state->code, np->tenary.elseCode);
     }
@@ -2555,7 +2413,7 @@ static void genLiteral(EcCompiler *cp, EcNode *np)
     ENTER(cp);
     ejs = cp->ejs;
 
-    if (TYPE(np->literal.var) == ST(XML)) {
+    if (TYPE(np->literal.var) == EST(XML)) {
         ecEncodeOpcode(cp, EJS_OP_LOAD_XML);
         data = ejsCreateString(ejs, mprGetBufStart(np->literal.data), mprGetBufLength(np->literal.data) / sizeof(MprChar));
         ecEncodeConst(cp, data);
@@ -2568,9 +2426,8 @@ static void genLiteral(EcCompiler *cp, EcNode *np)
         Map Numbers to the configured real type
      */
     sid = TYPE(np->literal.var)->sid;
-
     switch (sid) {
-    case S_Boolean:
+    case ES_Boolean:
         bp = (EjsBoolean*) np->literal.var;
         if (bp->value) {
             ecEncodeOpcode(cp, EJS_OP_LOAD_TRUE);
@@ -2579,7 +2436,7 @@ static void genLiteral(EcCompiler *cp, EcNode *np)
         }
         break;
 
-    case S_Number:
+    case ES_Number:
         /*
             These are signed values
          */
@@ -2598,28 +2455,28 @@ static void genLiteral(EcCompiler *cp, EcNode *np)
         }
         break;
 
-    case S_Namespace:
+    case ES_Namespace:
         ecEncodeOpcode(cp, EJS_OP_LOAD_NAMESPACE);
         nsp = (EjsNamespace*) np->literal.var;
         ecEncodeConst(cp, nsp->value);
         break;
 
-    case S_Null:
+    case ES_Null:
         ecEncodeOpcode(cp, EJS_OP_LOAD_NULL);
         break;
 
-    case S_String:
+    case ES_String:
         ecEncodeOpcode(cp, EJS_OP_LOAD_STRING);
         ecEncodeConst(cp, ((EjsString*) np->literal.var));
         break;
 
-    case S_RegExp:
+    case ES_RegExp:
         ecEncodeOpcode(cp, EJS_OP_LOAD_REGEXP);
         pattern = (EjsString*) ejsRegExpToString(cp->ejs, (EjsRegExp*) np->literal.var);
         ecEncodeConst(cp, pattern);
         break;
 
-    case S_Void:
+    case ES_Void:
         ecEncodeOpcode(cp, EJS_OP_LOAD_UNDEFINED);
         break;
 
@@ -2765,12 +2622,12 @@ static void genField(EcCompiler *cp, EcNode *np)
 
     } else if (fieldName->kind == N_LITERAL) {
         ecEncodeOpcode(cp, EJS_OP_LOAD_STRING);
-        ecEncodeConst(cp, S(empty));
+        ecEncodeConst(cp, ESV(empty));
         pushStack(cp, 1);
         genLiteral(cp, fieldName);
 
     } else {
-        //  MOB
+        //  TODO
         mprAssert(0);
         processNode(cp, fieldName);
     }
@@ -2781,11 +2638,6 @@ static void genField(EcCompiler *cp, EcNode *np)
             ecEncodeOpcode(cp, EJS_OP_LOAD_NULL);
             pushStack(cp, 1);            
         }
-    } else {
-        mprAssert(0);
-#if UNUSED
-        processNode(cp, np->field.fieldName);
-#endif
     }
 }
 
@@ -2809,13 +2661,10 @@ static void genPostfixOp(EcCompiler *cp, EcNode *np)
 
 static void genProgram(EcCompiler *cp, EcNode *np)
 {
-    Ejs         *ejs;
     EcNode      *child;
     int         next;
 
     ENTER(cp);
-
-    ejs = cp->ejs;
 
     next = 0;
     while ((child = getNextNode(cp, np, &next)) && !cp->error) {
@@ -2839,8 +2688,8 @@ static void genProgram(EcCompiler *cp, EcNode *np)
 
 static void genPragmas(EcCompiler *cp, EcNode *np)
 {
-    EcNode  *child;
-    int     next;
+    EcNode      *child;
+    int         next;
 
     next = 0;
     while ((child = getNextNode(cp, np, &next))) {
@@ -2865,7 +2714,7 @@ static void genReturn(EcCompiler *cp, EcNode *np)
     }
     if (np->left) {
         fun = cp->state->currentFunction;
-        if (fun->resultType == NULL || fun->resultType != ST(Void)) {
+        if (fun->resultType == NULL || fun->resultType != EST(Void)) {
             cp->state->needsValue = 1;
             processNode(cp, np->left);
             cp->state->needsValue = 0;
@@ -2912,10 +2761,6 @@ static void genSuper(EcCompiler *cp, EcNode *np)
         }
         ecEncodeOpcode(cp, EJS_OP_CALL_NEXT_CONSTRUCTOR);
         ecEncodeName(cp, cp->state->currentClass->baseType->qname);
-#if UNUSED
-        ejsName(&qname, EJS_CONSTRUCTOR_NAMESPACE, cp->state->currentClass->baseType->qname.name);
-        ecEncodeName(cp, qname);
-#endif
         ecEncodeNum(cp, argc);        
         popStack(cp, argc);
     } else {
@@ -3286,7 +3131,7 @@ static void genTry(EcCompiler *cp, EcNode *np)
                 catchType = (EjsType*) arg->typeNode->lookup.ref;
             }
             if (catchType == 0) {
-                catchType = ST(Void);
+                catchType = EST(Void);
             }
             ecAddNameConstant(cp, catchType->qname);
             addException(cp, tryStart, tryEnd, catchType, handlerStart, handlerEnd, np->exception.numBlocks, numStack, 
@@ -3301,7 +3146,7 @@ static void genTry(EcCompiler *cp, EcNode *np)
         handlerStart = ecGetCodeOffset(cp);
         copyCodeBuffer(cp, state->code, np->exception.finallyBlock->code);
         handlerEnd = ecGetCodeOffset(cp);
-        addException(cp, tryStart, tryEnd, ST(Void), handlerStart, handlerEnd, np->exception.numBlocks, numStack, 
+        addException(cp, tryStart, tryEnd, EST(Void), handlerStart, handlerEnd, np->exception.numBlocks, numStack, 
             EJS_EX_FINALLY);
     }
     LEAVE(cp);
@@ -3410,7 +3255,6 @@ static void genNameExpr(EcCompiler *cp, EcNode *np)
  */
 static void genUnboundName(EcCompiler *cp, EcNode *np)
 {
-    Ejs         *ejs;
     EcState     *state;
     EjsObj      *owner;
     EjsLookup   *lookup;
@@ -3418,9 +3262,7 @@ static void genUnboundName(EcCompiler *cp, EcNode *np)
 
     ENTER(cp);
 
-    ejs = cp->ejs;
     state = cp->state;
-
     mprAssert(!np->lookup.bind || !cp->bind);
 
     lookup = &np->lookup;
@@ -3455,28 +3297,6 @@ static void genUnboundName(EcCompiler *cp, EcNode *np)
 
         popStack(cp, 1);
         pushStack(cp, (state->onLeft) ? -1 : 1);
-
-#if UNUSED
-    } else if (owner == ejs->global) {
-        /* Can't do early binding. Using Function.call/apply may change scope chain and invalidate the early-bound global */
-        if (np->needThis) {
-            mprAssert(0);
-            ecEncodeOpcode(cp, EJS_OP_LOAD_GLOBAL);
-            pushStack(cp, 1);
-            np->needThis = 0;
-        }
-        ecEncodeOpcode(cp, EJS_OP_LOAD_GLOBAL);
-        pushStack(cp, 1);
-        code = (!state->onLeft) ?  EJS_OP_GET_OBJ_NAME :  EJS_OP_PUT_OBJ_NAME;
-        ecEncodeOpcode(cp, code);
-        ecEncodeName(cp, np->qname);
-
-        /*
-            Store: -2, load: 0
-         */
-        popStack(cp, 1);
-        pushStack(cp, (state->onLeft) ? -1 : 1);
-#endif
 
     } else if (lookup->useThis) {
         ecEncodeOpcode(cp, EJS_OP_LOAD_THIS);
@@ -3556,12 +3376,9 @@ static void genModule(EcCompiler *cp, EcNode *np)
 static void genUseModule(EcCompiler *cp, EcNode *np)
 {
     EcNode      *child;
-    Ejs         *ejs;
     int         next;
 
     ENTER(cp);
-
-    ejs = cp->ejs;
 
     mprAssert(np->kind == N_USE_MODULE);
 
@@ -3596,13 +3413,9 @@ static void genUseNamespace(EcCompiler *cp, EcNode *np)
 
 static void genVar(EcCompiler *cp, EcNode *np)
 {
-    EcState     *state;
-
     mprAssert(np->kind == N_VAR);
 
     ENTER(cp);
-    state = cp->state;
-
     ecAddNameConstant(cp, np->qname);
     if (np->lookup.trait && np->lookup.trait->type) {
         ecAddStringConstant(cp, np->lookup.trait->type->qname.name);
@@ -3680,7 +3493,7 @@ static MprFile *openModuleFile(EcCompiler *cp, cchar *filename)
         return 0;
     }
     if ((cp->file = mprOpenFile(filename,  O_CREAT | O_WRONLY | O_TRUNC | O_BINARY, 0664)) == 0) {
-        genError(cp, 0, "Can't create %s", filename);
+        genError(cp, 0, "Can't create module file \"%s\"", filename);
         return 0;
     }
 
@@ -3772,7 +3585,7 @@ static void copyCodeBuffer(EcCompiler *cp, EcCodeGen *dest, EcCodeGen *src)
     EcJump          *jump;
     EcState         *state;
     uint            baseOffset;
-    int             len, next, i;
+    int             next, len, i;
 
     state = cp->state;
     mprAssert(state);
@@ -3837,8 +3650,7 @@ static void patchJumps(EcCompiler *cp, int kind, int target)
 {
     EcJump      *jump;
     EcCodeGen   *code;
-    int         next;
-    int         offset;
+    int         next, offset;
 
     code = cp->state->code;
     mprAssert(code);
@@ -3881,7 +3693,6 @@ static int flushModule(MprFile *file, EcCodeGen *code)
  */
 static void createInitializer(EcCompiler *cp, EjsModule *mp)
 {
-    Ejs             *ejs;
     EjsFunction     *fun;
     EcState         *state;
     EcCodeGen       *code;
@@ -3889,7 +3700,6 @@ static void createInitializer(EcCompiler *cp, EjsModule *mp)
 
     ENTER(cp);
 
-    ejs = cp->ejs;
     state = cp->state;
     mprAssert(state);
 
@@ -4268,14 +4078,12 @@ static void processNode(EcCompiler *cp, EcNode *np)
  */
 static void processModule(EcCompiler *cp, EjsModule *mp)
 {
-    Ejs         *ejs;
     EcState     *state;
     EcCodeGen   *code;
     char        *path;
 
     ENTER(cp);
 
-    ejs = cp->ejs;
     state = cp->state;
     state->currentModule = mp;
 
@@ -4305,9 +4113,12 @@ static void processModule(EcCompiler *cp, EjsModule *mp)
     code = state->code;
 
     if (mp->hasInitializer) {
-        //  MOB -- make these standard strings in native core
+        //  TODO -- make these standard strings in native core
         ecAddCStringConstant(cp, EJS_INITIALIZER_NAME);
         ecAddCStringConstant(cp, EJS_EJS_NAMESPACE);
+        if (mp->initializer->resultType) {
+            ecAddNameConstant(cp, mp->initializer->resultType->qname);
+        }
     }
     if (ecCreateModuleSection(cp) < 0) {
         genError(cp, 0, "Can't write module sections");
@@ -4371,7 +4182,7 @@ static void addModule(EcCompiler *cp, EjsModule *mp)
 }
 
 
-//  MOB -- cleanup
+//  TODO -- cleanup
 static int level = 8;
 
 static void pushStack(EcCompiler *cp, int count)

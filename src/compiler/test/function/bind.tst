@@ -4,7 +4,7 @@
 
 //  Test default binding
 function global_fun() {}
-assert(global_fun.bound == global)
+assert(global_fun.bound == null)
 
 class Shape {
     static public function sfun() {}
@@ -23,6 +23,6 @@ function gg(a, b, c, d) {
     assert(c == 3)
     assert(d == undefined)
 }
-assert(gg.bound == global)
+assert(gg.bound == null)
 gg.bind(obj, 1, 2)
 gg(3)

@@ -8,13 +8,18 @@ module ejs.web {
      */
     namespace action = "action"
 
-    /** 
-        Web framework controller class. The controller classes can accept web requests and direct them to action methods
-        which generate the response. Controllers are responsible for either generating output for the client or invoking
-        a View which will create the response. By convention, all Controllers should be defined with a "Controller" 
-        suffix. This permits similar Controller and Model to exist in the same namespace.
+    /**
+        Request for which a controller is being constructed
+     */
+    var _initRequest: Request
 
-        MOB - Need intro to controllers here
+    //  DOC - need more doc here on controllers
+    /** 
+        Web framework controller class. The Controller class is part of the Ejscript Model View Controller (MVC) web
+        framework. Controller class instances can accept web requests and direct them to action methods for servicing
+        which generates the response. Controllers are responsible for either generating output for the client or invoking
+        a View which will create the response. By convention, all Controllers should be defined with a "Controller" 
+        suffix. This permits similar Controller and Model classes to exist in the same namespace.
 
         Action methods will autoFinalize by calling Request.autoFinalize unless Request.dontAutoFinalize has been called.
         If the Controller action wants to keep the request connection to the client open, you must call dontAutoFinalize
@@ -29,28 +34,32 @@ module ejs.web {
          */
         use default namespace module
 
-        private static var _initRequest: Request
+        /*
+            Actions to cache. Indexed by controller+action name plus optionally, post and query data. 
+            Contains cache options for this action. Created on demand if cache() is called.
+         */
+        private static var _cacheOptions: Object = {}
 
         private var _afterCheckers: Array
         private var _beforeCheckers: Array
 
-        /** Name of the action being run */
-        var actionName:  String 
+        /** Name of the Controller action method being run for this request */
+        var actionName: String 
 
-        /** Configuration settings - reference to Request.config */
+        /** Configuration settings. This is a reference to $ejs.web::Request.config */
         var config: Object 
 
-//  MOB -- rename to "name"
+//  TODO -- rename to "name"
         /** Pascal case controller name */
         var controllerName: String
 
-        /** Logger stream - reference to Request.log */
+        /** Logger stream - reference to $ejs.web::Request.log */
         var log: Logger
 
-        /** Form and query parameters - reference to the Request.params object. */
+        /** Form and query parameters. This is a reference to the $ejs.web::Request.params object. */
         var params: Object
 
-        /** Reference to the current Request object */
+        /** Reference to the current $ejs.web::Request object */
         var request: Request
 
         /***************************************** Convenience Getters  ***************************************/
@@ -89,28 +98,23 @@ module ejs.web {
             cname ||= (request.params.controller + "Controller")
             _initRequest = request
             let c: Controller = new global[cname](request)
-            c.request = request
             _initRequest = null
             return c
         }
 
         /** 
-            Create and initialize a controller. This may be called directly by class constructors or via 
-            the Controller.create factory method.
+            Create and initialize a controller. This may be called directly or via the Controller.create factory method.
             @param req Web request object
          */
         function Controller(req: Request = null) {
             /*  _initRequest may be set by create() to allow subclasses to omit constructors */
-            controllerName = typeOf(this).trim("Controller") || "-DefaultController-"
+            controllerName = typeOf(this).trim("Controller") //MOB || "-DefaultController-"
             request = req || _initRequest
             if (request) {
                 request.controller = this
                 log = request.log
                 params = request.params
                 config = request.config
-                if (config.database) {
-                    openDatabase(request)
-                }
                 if (request.method == "POST") {
                     before(checkSecurityToken)
                 }
@@ -118,37 +122,169 @@ module ejs.web {
         }
 
         /** 
-            Run an action checker function after running the action
+            Run an check function after running the action
             @param fn Function callback to invoke
-            @param options Checker options. 
-            @option only Only run the checker for this action name
-            @option except Run the checker for all actions except this name
+            @param options Check function options. 
+            @option only [String|Array] Only run the checker for this action name. This can be a string action name or
+                an array of action names.
+            @option except [String|Array] Run the check function for all actions except this name.
+                This can be a string action name or an array of action names.
          */
         function after(fn, options: Object = null): Void {
             _afterCheckers ||= []
             _afterCheckers.append([fn, options])
         }
 
+        /*
+            Fetch cached data from the cache if present.
+            @return a response object
+         */
+        private function fetchCachedResponse(): Object {
+            let cacheIndex = getCacheIndex(controllerName, actionName)
+            let options = _cacheOptions[cacheIndex]
+            if (options) {
+                let cacheName = getCacheName(cacheIndex, options)
+                if ((!options.uri || options.uri == "*" || cacheName == (cacheIndex + "::" + options.uri)) && 
+                        options.mode != "manual") {
+                    let hdr
+                    if ((hdr = request.header("Cache-Control")) && (hdr.contains("max-age=0") || hdr.contains("no-cache"))) {
+                        App.log.debug(5, "Cache-control header rejects use of cached content")
+                    } else {
+                        let item = App.cache.readObj(cacheName)
+                        if (item) {
+                            /*
+                                Observe headers
+                                If-None-Match: "ec18d-54-4d706a63"
+                                If-Modified-Since: Fri, 04 Mar 2011 04:28:19 GMT
+                             */
+                            let status = Http.Ok
+                            if ((hdr = request.header("If-None-Match")) && hdr == item.tag) {
+                                /* 
+                                    RFC2616 requires returning PrecondFailed, but chrome doesn't send an If-Modified-Since
+                                    header and so returning PrecondFailed caused Chrome to fail.
+                                 */
+                                // SPEC REQUIRES THIS BUG CHROME FAILS status = Http.PrecondFailed
+                                status = Http.NotModified
+                            }
+                            if ((hdr = request.header("If-Modified-Since"))) {
+                                if (item.modified <= Date.parse(hdr)) {
+                                    status = Http.NotModified
+                                }
+                            }
+                            if (options.client) {
+                                setHeader("Cache-Control", options.client, false)
+                            }
+                            setHeader("Last-Modified", Date(item.modified).toUTCString())
+                            setHeader("Etag", md5(cacheName))
+                            if (status == Http.Ok) {
+                                //  MOB - change this trace to just use "actionName"
+                                App.log.debug(5, "Use cached: " + cacheName)
+                                write(item.data)
+                                // MOB request.finalize()
+                            } else {
+                                App.log.debug(5, "Use cached content, status: " + status + ", " + cacheName)
+                            }
+                            return {status: status}
+                        }
+                        App.log.debug(5, "No cached content for: " + cacheName)
+                    }
+                    request.writeBuffer = new ByteArray
+                    setHeader("Etag", md5(cacheName))
+                    if (options.client) {
+                        setHeader("Cache-Control", options.client, false)
+                    }
+                }
+            }
+            setHeader("Last-Modified", Date().toUTCString())
+            return null
+        }
+
+        /**
+            Manually write out cached content to the client.
+            This routine will write is valid (non-expired) cached data to the client. Caching for actions is enabled by
+            calling $cache() in the Controller.
+            @return True if valid cached content was found to write to the client.
+         */
+        function writeCached(): Boolean {
+            let cacheIndex = getCacheIndex(controllerName, actionName)
+            let options = _cacheOptions[cacheIndex]
+            if (request.finalized || !options) {
+                return false
+            }
+            let cacheName = getCacheName(cacheIndex, options)
+            if ((!options.uri || options.uri == "*" || cacheName == options.uri)) {
+                let item
+                if (item = App.cache.readObj(cacheName)) {
+                    App.log.debug(5, "Use cached: " + cacheName)
+                    setHeader("Etag", md5(cacheName))
+                    setHeader("Last-Modified", Date(item.modified).toUTCString())
+                    if (options.client) {
+                        setHeader("Cache-Control", options.client, false)
+                    }
+                    request.writeBuffer = null
+                    write(item.data)
+                    request.finalize()
+                    return true
+                }
+            }
+            App.log.debug(5, "no cached: " + cacheName)
+            return false
+        }
+
+        /*
+            Save the output from the action for future requests
+         */
+        private function saveCachedResponse(): Void {
+            if (request.finalized) {
+                let cacheIndex = getCacheIndex(controllerName, actionName)
+                /* Cache output */
+                let options = _cacheOptions[cacheIndex]
+                if (options) {
+                    let cacheName = getCacheName(cacheIndex, options)
+                    let etag = md5(cacheName)
+                    App.cache.writeObj(cacheName, { tag: etag, modified: Date.now(), data: request.writeBuffer}, options)
+                    App.log.debug(5, "Cache action " + cacheName + ", " + request.writeBuffer.available + " bytes")
+                }
+            }
+            let data = request.writeBuffer
+            request.writeBuffer = null
+            request.write(data)
+            if (request.finalized) {
+                /* Now that writeBuffer is cleared, finalize will actually finalize the request */
+                request.finalize()
+            }
+        }
+
+        //  MOB - rename
         /** 
-            Controller web application. This function will run the controller action method and return a response object. 
-            The action method may be specified by the $aname parameter or it may be supplied via params.action.
+            Controller web application. This function will run a controller action method and return a response object. 
+            The action method may be specified by the $aname parameter or it may be supplied via 
+            $ejs.web::Request.params.action.
             @param request Request object
             @param aname Optional action method name. If not supplied, params.action is consulted. If that is absent too, 
                 "index" is used as the action method name.
             @return A response object hash {status, headers, body} or null if writing directly using the request object.
          */
         function app(request: Request, aname: String = null): Object {
+            let response, cacheIndex, cacheName
             let ns = params.namespace || "action"
+
             actionName ||= aname || params.action || "index"
             params.action = actionName
             runCheckers(_beforeCheckers)
-            let response
+
             if (!request.finalized && request.autoFinalizing) {
+                if (App.config.cache.actions.enable) {
+                    if (response = fetchCachedResponse()) {
+                        return response
+                    }
+                }
                 if (!(ns)::[actionName]) {
                     if (!viewExists(actionName)) {
                         response = "action"::missing()
                     }
                 } else {
+                    App.log.debug(4, "Run action " + actionName)
                     response = (ns)::[actionName]()
                 }
                 if (response && !response.body) {
@@ -162,6 +298,9 @@ module ejs.web {
             runCheckers(_afterCheckers)
             if (!response) {
                 request.autoFinalize()
+            }
+            if (request.writeBuffer) {
+                saveCachedResponse()
             }
             return response
         }
@@ -180,12 +319,170 @@ module ejs.web {
             checker does write a response, it must call finalize.
             @param fn Function callback to invoke
             @param options Checker options. 
-            @option only Only run the checker for this action name
-            @option except Run the checker for all actions except this name
+            @option only [String|Array] Only run the checker for this action name. This can be a string action name or
+                an array of action names.
+            @option except [String|Array] Run the checker for all actions except this name
+                This can be a string action name or an array of action names.
          */
         function before(fn, options: Object = null): Void {
             _beforeCheckers ||= []
             _beforeCheckers.append([fn, options])
+        }
+
+        /**
+            Controler action caching. This caches the entire output of an action (including generated view).
+            Caching is disabled/enabled via the ejsrc config.cache.actions.enable field. It is enabled by default.
+            Caching may be used for any HTTP method, though typically it is most useful for state-less GET requests.
+            Output data is uniquely cached for requests with different URI post data or query parameters.
+            @param controller Controller class. This can be a Controller class object, "this" or a String controller name.
+                You can specify "this" in static code or can also use "this" in class instance
+                code and this routine will determine the underlying controller class.
+            @param actions Action string or array of actions
+            @param options Cache control options. Default options for all action caching can be provided via the 
+                ejsrc config.cache.actions field. This is frequently used to specifiy a default lifespan for cached data.
+            @option mode Client caching mode. Defaults to "server" if unset. If mode is set to "client", a Cache-Control 
+                header will be sent to the client with the caching "max-age" set to the lifespan. This causes the client 
+                to serve client-cached content and to not contact the server at all until the max-age expires. 
+                If mode is set to "manual", the output from the action will be cached, but the action routine will 
+                always be called. To use the cached content in this mode, call $writeCached() in the action method. 
+                The default mode is "server" which caches content at the server for the specified lifespan. In server mode, 
+                the client will cache requests, but will always revalidate the request with the server. If the server-side 
+                content has not expired, a HTTP Not-Modified (304) response will be given and the client will use its 
+                client-side cached content.
+
+                Use "client" mode for static content that will rarely change and for which using "reload" in the browser
+                is an adequate solution to force a refresh. Use "server" mode for dynamic content in conjunction with 
+                $updateCache to expire or update cache contents. Use "manual" mode when the action routine needs to 
+                determine if cached content can be used on a case by case basis.
+
+                If a client browser clicks reload, the client cached and server cached content will be ignored and the 
+                action method will be always invoked.
+
+            @option lifespan Time in seconds for the cached output to persist.
+            @option client Cache-Control header to send to the client to control caching in the client.
+                Use this for explicit control of the Cache-Control header and thus control of caching in the client.
+                This can be used to set a "max-age" for cached data in the client.
+                These are some of the HTTP/1.1 Cache-Control keywords that can be used in the client option are:
+                "max-age" Max time in seconds the resource is considered fresh.
+                "s-maxage" Max time in seconds the resource is considered fresh from a shared cache.
+                "public" marks authenticated responses as cacheable.
+                "private" shared caches may not store the response.
+                "no-cache" cache must re-submit request for validation before using cached copy.
+                "no-store" response may not be stored in a cache.
+                "must-revalidate" forces clients to revalidate the request with the server.
+                "proxy-revalidate" similar to must-revalidate except only for proxy caches>
+            @option uri URI and parameter to further differentiate cached content. If supplied, different cache data
+                can be stored for each URI that applies to the given controller/action. If the URI is set to "*" all 
+                URIs for that action/controller are uniquely cached. If the request has POST data, the URI may include
+                such post data in a query format. E.g. {uri: /buy?item=scarf&quantity=1}.
+            @example 
+                cache(DashController, "index", {lifespan: 200})
+                cache(this, ["index", "edit", "show"])
+                cache(this, "index", false)
+         */
+        static function cache(controller, actions: Object, options: Object = {}): Void {
+            let cname
+            if (controller is String) {
+                cname = controller.trim("Controller")
+            } else if (!(controller is Type)) {
+                controller = Object.getType(controller)
+                cname = Object.getName(controller).trim("Controller")
+            } else {
+                cname = Object.getName(controller).trim("Controller")
+            }
+            if (!App.config.cache.actions.enable) {
+                return
+            }
+            if (actions is String || actions is Function) {
+                actions = [actions]
+            }
+            blend(options, App.config.cache.actions, {overwrite: false})
+            if (options.mode == "client") {
+                options.client ||= "max-age=" + options.lifespan
+            }
+            for each (name in actions) {
+                cacheIndex = getCacheIndex(cname, name)
+                _cacheOptions[cacheIndex] = options
+                if (options.lifespan is Number) {
+                    let cacheName = cacheIndex
+                    if (options.uri) {
+                        cacheName += "::" + options.uri
+                    }
+                    /* Invalidate cache data when the app is reloaded */
+                    App.cache.expire(cacheName, null)
+                    App.cache.expire(cacheName, Date().future(options.lifespan * 1000))
+                }
+            }
+        }
+
+        /**
+            Update the cache contents.
+            This will manually update the cache contents for the given actions with the supplied data. If data is null,
+            then cached content will be immediately expired.
+            @param controller Controller class. This can be a Controller class object, "this" or a String controller name.
+                You can specify "this" in static code or can also use "this" in class instance
+                code and this routine will determine the underlying controller class.
+            @param actions Action string or array of actions
+            @param data Object data to cache. Data is serialized using JSON and stored in the cache. Set to null to
+                invalidate/expire cached data.
+            @param options Cache control options.
+            @option uri URI and parameter to further differentiate cached content. If supplied, different cache data
+                can be stored for each URI that applies to the given controller/action. If the URI is set to "*" all 
+                URIs for that action/controller are uniquely cached. If the request has POST data, the URI may include
+                such post data in a query format. E.g. {uri: /buy?item=scarf&quantity=1}
+          */
+        static function updateCache(controller, actions: Object, data: Object, options: Object = {}): Void {
+            let cname
+            if (controller is String) {
+                cname = controller.trim("Controller")
+            } else if (!(controller is Type)) {
+                controller = Object.getType(controller)
+                cname = Object.getName(controller).trim("Controller")
+            } else {
+                cname = Object.getName(controller).trim("Controller")
+            }
+            if (!App.config.cache.actions.enable) {
+                return
+            }
+            if (actions is String || actions is Function) {
+                actions = [actions]
+            }
+            for each (name in actions) {
+                cacheIndex = getCacheIndex(cname, name)
+                let cacheName = cacheIndex
+                if (options.uri) {
+                    cacheName += "::" + options.uri
+                }
+                if (data == null) {
+                    App.log.debug(6, "Expire " + cacheName)
+                    App.cache.expire(cacheName, Date())
+                } else {
+                    let etag = md5(cacheName)
+                    App.cache.writeObj(cacheName, { tag: etag, modified: Date.now(), data: data}, _cacheOptions[cacheIndex])
+                    App.log.debug(6, "Update cache " + cacheName)
+                }
+            }
+        }
+
+        /** @duplicate ejs.web::Request.clearCache */
+        function clearFlash(): Void
+            request.clearFlash()
+
+        private static function getCacheIndex(cname: String, name: String = "*"): String
+            "::ejs.web.action::" + cname + "::" + name
+
+        /*
+            Create a full cache key name by combining the name prefix from getCacheIndex with URI information 
+            URI information is added if cache() is called with options.uri set to something
+         */
+        private function getCacheName(name: String, options: Object): String {
+            if (options && options.uri) {
+                name += "::" + request.pathInfo
+                if (request.formData) {
+                    name += "?" + request.formData
+                }
+            }
+            return name
         }
 
         /** @duplicate ejs.web::Request.dontAutoFinalize */
@@ -232,6 +529,7 @@ module ejs.web {
 
         /** 
             Missing action method. This method will be called if the requested action routine does not exist.
+            It should be overridden in user controller classes by using the "override" keyword.
          */
         action function missing() {
             throw "Missing Action: " + params.action + ": could not be found for controller: " + controllerName
@@ -281,13 +579,21 @@ module ejs.web {
             request.status = status
 
         /** 
-            Render the raw data back to the client. 
+            Low-level write data to the client. This will buffer the written data until either flush() or finalize() 
+            is called.
             If an action method does call a write data back to the client and has not called finalize() or 
             dontAutoFinalize(), a default view template will be generated when the action method returns. 
-            @param args Arguments to write to the client.  The args are converted to strings.
+            @param args Arguments to write to the client. The args are converted to strings.
+            @return The number of bytes written to the client
          */
-        function write(...args): Void
+        function write(...args): Number
             request.write(...args)
+
+        /** 
+            @duplicate ejs.web::Request.warn
+         */
+        function warn(msg: String): Void
+            request.warn(msg)
 
         /**
             @duplicate ejs.web::Request.writeContent
@@ -316,17 +622,16 @@ module ejs.web {
             Render a partial response using template file.
             @param path Path to the template to render to the client
             @param options Additional options.
-            @option layout Optional layout template. Defaults to config.directories.layouts/default.ejs.
+            @option layout Optional layout template. Defaults to config.dirs.layouts/default.ejs.
          */
         function writePartialTemplate(path: Path, options: Object = {}): Void { 
             request.filename = path
             request.setHeader("Content-Type", "text/html")
             if (options.layout === undefined) {
-                options.layout = Path(config.directories.layouts).join(config.web.view.layout)
+                options.layout = Path(config.dirs.layouts).join(config.web.views.layout)
             }
-            let app = TemplateBuilder(request, options)
             log.debug(4, "writePartialTemplate: \"" + path + "\"")
-            Web.process(app, request, false)
+            request.server.process(TemplateBuilder(request, options), request, false)
         }
 
         /** 
@@ -336,15 +641,15 @@ module ejs.web {
                 joining the views directory with the controller name and view name. E.g. views/Controller/list.ejs.
             @param options Additional options.
             @option controller Optional controller for the view.
-            @option layout Optional layout template. Defaults to config.directories.layouts/default.ejs.
+            @option layout Optional layout template. Defaults to config.dirs.layouts/default.ejs.
          */
         function writeView(viewName = null, options: Object = {}): Void {
             let controller = options.controller || controllerName
             viewName ||= options.action || actionName
             if (options.layout === undefined) {
-                options.layout = config.directories.layouts.join(config.web.view.layout)
+                options.layout = config.dirs.layouts.join(config.web.views.layout)
             }
-            writeTemplate(config.directories.views.join(controller, viewName).joinExt(config.extensions.ejs), options)
+            writeTemplate(config.dirs.views.join(controller, viewName).joinExt(config.extensions.ejs), options)
         }
 
         /** 
@@ -352,7 +657,7 @@ module ejs.web {
             This call writes the result of running the view template file back to the client.
             @param path Path to the view template to render and write to the client.
             @param options Additional options.
-            @option layout Optional layout template. Defaults to config.directories.layouts/default.ejs.
+            @option layout Optional layout template. Defaults to config.dirs.layouts/default.ejs.
          */
         function writeTemplate(path: Path, options: Object = {}): Void {
             log.debug(4, "writeTemplate: \"" + path + "\"")
@@ -360,10 +665,9 @@ module ejs.web {
             request.filename = path
             request.setHeader("Content-Type", "text/html")
             if (options.layout === undefined) {
-                options.layout = config.directories.layouts.join(config.web.view.layout)
+                options.layout = config.dirs.layouts.join(config.web.views.layout)
             }
-            let app = TemplateBuilder(request, options)
-            Web.process(app, request, false)
+            request.server.process(TemplateBuilder(request, options), request, false)
             request.filename = saveFilename
         }
 
@@ -372,65 +676,22 @@ module ejs.web {
             This call writes the result of running the view template file back to the client.
             @param page String literal containing the view template to render and write to the client.
             @param options Additional options.
-            @option layout Path layout template. Defaults to config.directories.layouts/default.ejs.
+            @option layout Path layout template. Defaults to config.dirs.layouts/default.ejs.
          */
         function writeTemplateLiteral(page: String, options: Object = {}): Void {
             log.debug(4, "writeTemplateLiteral")
             request.setHeader("Content-Type", "text/html")
             if (options.layout === undefined) {
-                options.layout = config.directories.layouts.join(config.web.view.layout)
+                options.layout = config.dirs.layouts.join(config.web.views.layout)
             }
             options.literal = page
-            let app = TemplateBuilder(request, options)
-            Web.process(app, request, false)
+            request.server.process(TemplateBuilder(request, options), request, false)
         }
-
-        /** 
-            @duplicate ejs.web::Request.warn
-         */
-        function warn(msg: String): Void
-            request.warn(msg)
-
-        /** 
-            Low-level write data to the client. This will buffer the written data until either flush() or finalize() 
-            is called.
-            @duplicate ejs.web::Request.write
-         */
-        function write(...data): Number
-            request.write(...data)
 
         /**************************************** Private ******************************************/
 
-        private function checkSecurityToken() {
+        private function checkSecurityToken()
             request.checkSecurityToken()
-        }
-
-        /*
-            Open database. Expects ejsrc configuration:
-
-            mode: "debug",
-            database: {
-                module: "name.mod",
-                class: "Database",
-                adapter: "sqlite3",
-                debug: { name: "db/blog.sdb", trace: true },
-                test: { name: "db/blog.sdb", trace: true },
-                production: { name: "db/blog.sdb", trace: true },
-            }
-         */
-        private function openDatabase(request: Request) {
-            let dbconfig = config.database
-            let dbclass = dbconfig["class"]
-            let options = dbconfig[config.mode]
-            if (dbclass) {
-                if (dbconfig.module && !global[dbclass]) {
-                    global.load(dbconfig.module + ".mod")
-                }
-                let module = dbconfig.module || "public"
-                options.dir = request.dir
-                new (module)::[dbclass](dbconfig.adapter, options)
-            }
-        }
 
         /* 
             Run the before/after checkers. These are typically used to handle authorization and similar tasks
@@ -459,7 +720,7 @@ module ejs.web {
             if (global[viewClass]) {
                 return true
             }
-            let path = config.directories.views.join(controllerName, name).joinExt(config.extensions.ejs)
+            let path = config.dirs.views.join(controllerName, name).joinExt(config.extensions.ejs)
             if (path.exists) {
                 return true
             }
@@ -579,6 +840,14 @@ module ejs.web {
         # Config.Legacy
         function render(...args): Void
             write(...args)
+
+        /**
+            @hide
+            @deprecated 2.0.0
+         */
+        # Config.Legacy
+        function renderError(status, ...msgs): Void
+            writeError(status, ...msgs)
 
         /**
             @hide

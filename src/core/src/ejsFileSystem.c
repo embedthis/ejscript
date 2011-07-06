@@ -14,7 +14,7 @@
 
     function FileSystem(path: String)
  */
-static EjsObj *fileSystemConstructor(Ejs *ejs, EjsFileSystem *fp, int argc, EjsObj **argv)
+static EjsFileSystem *fileSystemConstructor(Ejs *ejs, EjsFileSystem *fp, int argc, EjsObj **argv)
 {
     cchar   *path;
 
@@ -23,7 +23,7 @@ static EjsObj *fileSystemConstructor(Ejs *ejs, EjsFileSystem *fp, int argc, EjsO
     path = ejsToMulti(ejs, argv[0]);
     fp->path = mprGetNormalizedPath(path);
     fp->fs = mprLookupFileSystem(path);
-    return (EjsObj*) fp;
+    return fp;
 }
 
 
@@ -53,9 +53,9 @@ static EjsObj *fileSystemSpace(Ejs *ejs, EjsFileSystem *fp, int argc, EjsObj **a
 
     static function hasDrives(): Boolean
  */
-static EjsObj *hasDrives(Ejs *ejs, EjsFileSystem *fp, int argc, EjsObj **argv)
+static EjsBoolean *hasDrives(Ejs *ejs, EjsFileSystem *fp, int argc, EjsObj **argv)
 {
-    return (EjsObj*) ejsCreateBoolean(ejs, fp->fs->hasDriveSpecs);
+    return ejsCreateBoolean(ejs, fp->fs->hasDriveSpecs);
 }
 
 
@@ -65,25 +65,25 @@ static EjsObj *hasDrives(Ejs *ejs, EjsFileSystem *fp, int argc, EjsObj **argv)
 
     function get isReady(): Boolean
  */
-static EjsObj *isReady(Ejs *ejs, EjsFileSystem *fp, int argc, EjsObj **argv)
+static EjsBoolean *isReady(Ejs *ejs, EjsFileSystem *fp, int argc, EjsObj **argv)
 {
     MprPath     info;
     int         rc;
 
     rc = mprGetPathInfo(ejs, fp->path, &info);
-    return (EjsObj*) ejsCreateBoolean(ejs, rc == 0 && info.isDir);
+    return ejsCreateBoolean(ejs, rc == 0 && info.isDir);
 }
 #endif
 
 
 #if ES_isWritable
-static EjsObj *isWritable(Ejs *ejs, EjsFileSystem *fp, int argc, EjsObj **argv)
+static EjsBoolean *isWritable(Ejs *ejs, EjsFileSystem *fp, int argc, EjsObj **argv)
 {
     MprPath     info;
     int         rc;
 
     rc = mprGetPathInfo(ejs, fp->path, &info);
-    return (EjsObj*) ejsCreateBoolean(ejs, rc == 0 && info.isDir);
+    return ejsCreateBoolean(ejs, rc == 0 && info.isDir);
 }
 #endif
 
@@ -93,9 +93,9 @@ static EjsObj *isWritable(Ejs *ejs, EjsFileSystem *fp, int argc, EjsObj **argv)
 
     function get newline(): String
  */
-static EjsObj *getNewline(Ejs *ejs, EjsFileSystem *fp, int argc, EjsObj **argv)
+static EjsString *getNewline(Ejs *ejs, EjsFileSystem *fp, int argc, EjsObj **argv)
 {
-    return (EjsObj*) ejsCreateStringFromAsc(ejs, mprGetPathNewline(fp->path));
+    return ejsCreateStringFromAsc(ejs, mprGetPathNewline(fp->path));
 }
 
 
@@ -115,7 +115,7 @@ static EjsObj *setNewline(Ejs *ejs, EjsFileSystem *fp, int argc, EjsObj **argv)
 }
 
 
-static EjsObj *root(Ejs *ejs, EjsFileSystem *fp, int argc, EjsObj **argv)
+static EjsPath *root(Ejs *ejs, EjsFileSystem *fp, int argc, EjsObj **argv)
 {
     cchar   *separators;
     char    *path, *cp;
@@ -125,7 +125,7 @@ static EjsObj *root(Ejs *ejs, EjsFileSystem *fp, int argc, EjsObj **argv)
     if ((cp = strchr(path, separators[0])) != 0) {
         *++cp = '\0';
     }
-    return (EjsObj*) ejsCreatePathFromAsc(ejs, path);
+    return ejsCreatePathFromAsc(ejs, path);
 }
 
 
@@ -134,9 +134,9 @@ static EjsObj *root(Ejs *ejs, EjsFileSystem *fp, int argc, EjsObj **argv)
 
     static function get separators(): String
  */
-static EjsObj *getSeparators(Ejs *ejs, EjsFileSystem *fp, int argc, EjsObj **argv)
+static EjsString *getSeparators(Ejs *ejs, EjsFileSystem *fp, int argc, EjsObj **argv)
 {
-    return (EjsObj*) ejsCreateStringFromAsc(ejs, fp->fs->separators);
+    return ejsCreateStringFromAsc(ejs, fp->fs->separators);
 }
 
 
@@ -165,7 +165,6 @@ static EjsObj *size(Ejs *ejs, EjsFileSystem *fp, int argc, EjsObj **argv)
 static void manageFileSystem(EjsFileSystem *fs, int flags)
 {
     if (flags & MPR_MANAGE_MARK) {
-        //  MOB -- type required
         mprMark(TYPE(fs));
         mprMark(fs->path);
     }
@@ -177,7 +176,7 @@ EjsFileSystem *ejsCreateFileSystem(Ejs *ejs, cchar *path)
     EjsFileSystem   *fs;
     EjsObj          *arg;
 
-    fs = ejsCreateObj(ejs, ST(FileSystem), 0);
+    fs = ejsCreateObj(ejs, ESV(FileSystem), 0);
     if (fs == 0) {
         return 0;
     }
@@ -192,26 +191,27 @@ void ejsConfigureFileSystemType(Ejs *ejs)
     EjsType     *type;
     EjsPot      *prototype;
 
-    type = ejsConfigureNativeType(ejs, N("ejs", "FileSystem"), sizeof(EjsFileSystem), manageFileSystem, EJS_OBJ_HELPERS);
-    ejsSetSpecialType(ejs, S_FileSystem, type);
+    if ((type = ejsFinalizeScriptType(ejs, N("ejs", "FileSystem"), sizeof(EjsFileSystem), manageFileSystem,
+            EJS_TYPE_OBJ)) == 0) {
+        return;
+    }
     prototype = type->prototype;
-
-    ejsBindConstructor(ejs, type, (EjsProc) fileSystemConstructor);
+    ejsBindConstructor(ejs, type, fileSystemConstructor);
 #if ES_space
-    ejsBindMethod(ejs, prototype, ES_FileSystem_space, (EjsProc) fileSystemSpace);
+    ejsBindMethod(ejs, prototype, ES_FileSystem_space, fileSystemSpace);
 #endif
-    ejsBindMethod(ejs, prototype, ES_FileSystem_hasDrives, (EjsProc) hasDrives);
+    ejsBindMethod(ejs, prototype, ES_FileSystem_hasDrives, hasDrives);
 #if ES_isReady
-    ejsBindMethod(ejs, prototype, ES_FileSystem_isReady, (EjsProc) isReady);
+    ejsBindMethod(ejs, prototype, ES_FileSystem_isReady, isReady);
 #endif
 #if ES_isWritable
-    ejsBindMethod(ejs, prototype, ES_FileSystem_isWritable, (EjsProc) isWritable);
+    ejsBindMethod(ejs, prototype, ES_FileSystem_isWritable, isWritable);
 #endif
-    ejsBindAccess(ejs, prototype, ES_FileSystem_newline, (EjsProc) getNewline, (EjsProc) setNewline);
-    ejsBindMethod(ejs, prototype, ES_FileSystem_root, (EjsProc) root);
-    ejsBindAccess(ejs, prototype, ES_FileSystem_separators, (EjsProc) getSeparators, (EjsProc) setSeparators);
+    ejsBindAccess(ejs, prototype, ES_FileSystem_newline, getNewline, setNewline);
+    ejsBindMethod(ejs, prototype, ES_FileSystem_root, root);
+    ejsBindAccess(ejs, prototype, ES_FileSystem_separators, getSeparators, setSeparators);
 #if ES_size
-    ejsBindMethod(ejs, prototype, ES_FileSystem_size, (EjsProc) size);
+    ejsBindMethod(ejs, prototype, ES_FileSystem_size, size);
 #endif
 }
 

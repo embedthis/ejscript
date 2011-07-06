@@ -6,9 +6,10 @@ state = 0
 
 try {
 	state = 1
+breakpoint()
 	throw 77
 }
-catch (e: string) {
+catch (e: String) {
 	assert(0)
 }
 catch (e: Number) {

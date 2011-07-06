@@ -4,12 +4,15 @@
 
 module ejs {
 
-    /** 
-        Loader for CommonJS modules
+    /**
+        Loader for CommonJS modules. The Loader class provides provides a $require() function to load
+            script files.
+        WARNING: this will not be supported in future releases as the Harmony loader will be supported instead.
         @param id Module identifier. May be top level or may be an identifier relative to the loading script.
         @returns An object hash of exports from the module
         @spec ejs
         @stability prototype
+        @hide
      */
     public function require(id: String): Object
         Loader.require(id)
@@ -28,12 +31,11 @@ module ejs {
         private static const defaultExtensions = [".es", ".js"]
 
         /**
-            UNUSED - not yet used
+            WARNING: this will not be supported in future releases as the Harmony loader will be supported instead.
             @hide
          */
-        public static function init(mainId: String? = null) {
+        public static function init(mainId: String? = null)
             require.main = mainId
-        }
 
         /**
             Register a CommonJS module initializer
@@ -48,17 +50,19 @@ module ejs {
 
         /**
             Load a CommonJS module. The module is loaded only once unless it is modified.
+            WARNING: this will not be supported in future releases as the Harmony loader will be supported instead.
             @param id Name of the module to load. The id may be an absolute path, relative path or a path fragment that is
                 resolved relative to the App search path. Ids may or may not include a ".es" or ".js" extension.
             @return a hash of exported properties
          */
         public static function require(id: String, config: Object = App.config): Object {
             let exports = signatures[id]
-            if (!exports || config.cache.reload) {
+            if (!exports || config.cache.app.reload) {
                 let path: Path = locate(id, config)
                 if (path.modified > timestamps[path]) {
-                    if (!global."ejs.cjs"::CommonSystem) {
-                        /* On-demand loading of CommonJS modules */
+                    //  On-demand loading of CommonJS support
+                    //  DEPRECATED
+                    if (config.commonJS && !global."ejs.cjs"::CommonSystem) {
                         global.load("ejs.cjs.mod")
                     }
                     return load(id, path, config)
@@ -68,8 +72,8 @@ module ejs {
         }
 
         /** 
-            Load a CommonJS module and return the exports object. After the first load, the CJS module will be compiled
-            and cached as a byte-code module.
+            Load a CommonJS module and return the exports object. After the first load, the script module will be compiled
+            and cached as a byte-code module. It will be recompiled if the script source is modified or missing.
             @param id Unique name of the module to load. The id may be a unique ID, an absolute path, relative path or a 
                 path fragment that is resolved relative to the App search path. Ids may or may not include a ".es" or 
                 ".js" extension.
@@ -82,7 +86,7 @@ module ejs {
             let initializer, code
             let cache: Path = cached(id, config)
             if (path) {
-                if (cache && cache.exists && (!config.cache.reload || cache.modified > path.modified)) {
+                if (cache && cache.exists && (!config.cache.app.reload || cache.modified > path.modified)) {
                     /* Cache mod file exists and is current */
                     if (initializers[path]) {
                         App.log.debug(4, "Use memory cache for \"" + path + "\"")
@@ -96,7 +100,8 @@ module ejs {
 
                 } else {
                     /* Missing or out of date cache mod file */
-                    if (initializers[path] && config.cache.preloaded) {
+                    //  MOB - can we eliminate preloaded and just use reload?
+                    if (initializers[path] && config.app.preloaded) {
                         //  Everything compiled flat - everything in App.mod
                         //  MOB -- warning. This prevents reload working. Should rebuild all and reload.
                         initializer = initializers[path]
@@ -127,23 +132,25 @@ module ejs {
                 if (codeReader) {
                     code = codeReader(id, path)
                 } else {
-                    throw new StateError("Cannot load " + id + " Must provide a codeReader if path is not specified")
+                    throw new StateError("Cannot load " + id + ". Must provide a codeReader if path is not specified.")
                 }
                 initializer = eval(code, cache)
             }
-            //  MOB -- implement system and module?
-            //  function initializer(require, exports, module, system)
             signatures[path] = exports = {}
             initializer(require, exports, {id: id, path: path}, null)
+    /* UNUSED
+            if (exports.app.bound == this) {
+                exports.app.bind(null)
+            }
+    */
             return exports
         }
 
         /** @hide */
         public static function cached(id: Path, config = App.config, cachedir: Path = null): Path {
             config ||= App.config
-            if (id && config.cache.enable) {
-                //  MOB - should Path("cache") be used?
-                let dir = cachedir || Path(config.directories.cache) || Path("cache")
+            if (id && config.cache.app.enable) {
+                let dir = cachedir || Path(config.dirs.cache) || Path("cache")
                 if (dir.exists) {
                     return Path(dir).join(md5(id)).joinExt('.mod')
                 } else {
@@ -187,7 +194,7 @@ module ejs {
             determine the eligible file extensions to use when searching for modules.
             @param newConfig Configuration options hash.
          */
-        public static function setConfig(newConfig): Void
+        public static function setConfig(newConfig: Object): Void
             config = newConfig
     }
 }

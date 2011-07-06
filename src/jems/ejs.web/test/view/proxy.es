@@ -53,9 +53,9 @@ public function proxy(tag, ...args): Http {
         }
     } catch (e) {
         print("Assertion failure:")
-        print("Expected: \"" + expected + "\"")
-        print("Actual:   \"" + response + "\"")
-        print(response)
+        print("Expected: \"" + expected + "\"\n")
+        print("Actual:   \"" + response + "\"\n")
+        // print(response)
         print(response.length, expected.length)
         throw e
     }

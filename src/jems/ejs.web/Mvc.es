@@ -9,7 +9,7 @@ module ejs.web {
         @stability prototype
         @spec ejs
      */
-    public class Mvc {
+    class Mvc {
 
         static var apps = {}
 
@@ -17,8 +17,7 @@ module ejs.web {
             Default configuration for MVC apps. This layers over App.defaultConfig and ejs.web::defaultConfig.
          */
         private static var defaultConfig = {
-            //  MOB -- change to dirs
-            directories: {
+            dirs: {
                 bin: Path("bin"),
                 db: Path("db"),
                 controllers: Path("controllers"),
@@ -27,8 +26,6 @@ module ejs.web {
                 static: Path("static"),
             },
             mvc: {
-                //  MOB -- what is this?
-                app: "",
                 //  MOB - should be moved to files
                 appmod: "App.mod",
                 view: {
@@ -38,62 +35,82 @@ module ejs.web {
             },
         }
 
+        private var config: Object
         private static var loaded: Object = {}
         private static const EJSRC = "ejsrc"
 
-        private static function initMvc(): Void {
-            blend(App.config, defaultConfig, false)
-        }
-        initMvc()
+        blend(App.config, defaultConfig, {overwrite: false})
 
-        /*
-            Load the app/ejsrc and defaultConfig. Blend with the HttpServer.config
-            @return The configuration object
-         */
-        private function loadConfig(request: Request): Object {
-            let config = request.config
-            let path = request.dir.join(EJSRC)
-            if (request.dir != request.server.documentRoot && path.exists) {
-                /* This is an app specific ejsrc */
-                let appConfig = path.readJSON()
-                /* Clone to get a request private copy of the configuration before blending "app/ejsrc" */
-                config = request.config = request.config.clone()
-                blend(config, appConfig, true)
-                let dirs = config.directories
-                for each (key in ["bin", "db", "controllers", "models", "src", "static"]) {
-                    dirs[key] = request.dir.join(dirs[key])
-                }
-                App.updateLog()
-            }
-/* FUTURE
-            //  Create per-MVC app logs
-            if (config.log) {
-                logger = new Logger("request", App.log, config.log.level)
-            }
-            if (config.mvc.app) {
-                // Load custom MVC app script and use it 
-                let script = request.dir.join(config.mvc.app)
-                if (script.exists) {
-                    startup = Loader.load(script, script, config).app
-                }
-            }
-*/
-            return config
-        }
-
-
-//  MOB -- rename to load?
         /** 
-            Load an MVC application. This is typically called by the Router to load an application after routing
-            the request to determine the appropriate controller
+            Load an MVC application and the optional application specific ejsrc file
             @param request Request object
          */
-        public function init(request: Request): Void {
-            let config = loadConfig(request)
-            let dirs = config.directories
-            let appmod = dirs.cache.join(config.mvc.appmod)
+        function Mvc(dir: Path, cfg = App.config) {
+            this.config = cfg
+            let path = dir.join(EJSRC)
+            if (path.exists) {
+                loadConfig(dir, path)
+            }
+            if (config.database) {
+                openDatabase()
+            }
+        }
 
-            if (config.cache.flat) {
+        /**
+            Factory to load an MVC application.
+            @param dir Base directory containing the MVC application. Defaults to "."
+            @param config Default configuration for the application
+            @return An Mvc application object
+          */
+        public static function load(dir: Path = ".", config = App.config): Mvc {
+            if ((mvc = Mvc.apps[dir]) == null) {
+                App.log.debug(2, "Load MVC application from \"" + dir + "\"")
+                mvc = Mvc.apps[dir] = new Mvc(dir, config)
+                let appmod = config.dirs.cache.join(config.mvc.appmod)
+
+                /* Load App. Touch ejsrc triggers a complete reload */
+                let files, deps
+                if (config.cache.app.reload) {
+                    let dirs = config.dirs
+                    let ext = config.extensions
+                    deps = [dir.join(EJSRC)]
+                    files = dirs.models.find("*" + ext.es)
+                    files += dirs.src.find("*" + ext.es)
+                    files += [dirs.controllers.join("Base").joinExt(ext.es)]
+                }
+                let request = new Request("/")
+                request.config = config
+                mvc.loadComponent(request, appmod, files, deps)
+                loaded[appmod] = new Date
+            }
+            return mvc
+        }
+
+        /*
+            Load the app/ejsrc and defaultConfig
+         */
+        private function loadConfig(baseDir: Path, path: Path): Void {
+            let appConfig = path.readJSON()
+            config = blend(config.clone(), appConfig)
+            let dirs = config.dirs
+            for each (key in ["bin", "db", "controllers", "models", "src", "static"]) {
+                dirs[key] = baseDir.join(dirs[key])
+            }
+            for (let [key, value] in dirs) {
+                dirs[key] = Path(value)
+            }
+            App.updateLog()
+        }
+
+        /*
+            Load the required parts of the Mvc app
+         */
+        function loadRequest(request: Request) {
+            request.config = config
+            let dirs = config.dirs
+            let appmod = dirs.cache.join(config.mvc.appmod)
+            //  MOB - implement flat
+            if (config.web.flat) {
                 if (!global.BaseController) {
                     global.load(appmod)
                 }
@@ -104,7 +121,7 @@ module ejs.web {
 
                 /* Load App. Touch ejsrc triggers a complete reload */
                 let files, deps
-                if (config.cache.reload) {
+                if (config.cache.app.reload) {
                     deps = [dir.join(EJSRC)]
                     files = dirs.models.find("*" + ext.es)
                     files += dirs.src.find("*" + ext.es)
@@ -115,12 +132,12 @@ module ejs.web {
                 /* Load controller */
                 let params = request.params
                 if (!params.controller) {
-                    throw new StateError("No controller specified by route: " + request.route.name)
+                    throw "No controller specified by route: " + request.route.name
                 }
                 let controller = params.controller = params.controller.toPascal()
                 let mod = dirs.cache.join(controller).joinExt(ext.mod)
                 if (controller != "Base") {
-                    if (!global[controller + "Controller"] && mod.exists && !config.cache.reload) {
+                    if (!global[controller + "Controller"] && mod.exists && !config.cache.app.reload) {
                         loadComponent(request, mod)
                     } else {
                         files = [dirs.controllers.join(controller).joinExt(ext.es)]
@@ -129,21 +146,6 @@ module ejs.web {
                     }
                 }
             }
-            // FUTURE request.logger = logger
-        }
-
-        private function rebuildComponent(request: Request, mod: Path, files: Array) {
-            let code = "require ejs.web\n"
-            for each (file in files) {
-                let path = Path(file)
-                if (!path.exists) {
-                    request.status = Http.NotFound
-                    throw new StateError("Can't find required component: \"" + path + "\"")
-                }
-                code += path.readString()
-            }
-            request.log.debug(4, "Rebuild component: " + mod + " files: " + files)
-            eval(code, mod)
         }
 
         /** 
@@ -156,7 +158,7 @@ module ejs.web {
          */
         public function loadComponent(request: Request, mod: Path, files: Array? = null, deps: Array? = null) {
             let rebuild = false
-            if (mod.exists && request.config.cache.reload) {
+            if (mod.exists && request.config.cache.app.reload) {
                 let when = mod.modified
                 for each (file in (files + deps)) {
                     if (file.exists && file.modified > when) {
@@ -179,8 +181,45 @@ module ejs.web {
                 }
             }
         }
+
+        /*
+            Open database. Expects ejsrc configuration:
+                mode: "debug",
+                database: {
+                    adapter: "sqlite",
+                    module: "ejs.db.sqlite",
+                    class: "Sqlite",
+                    debug: { name: "db/blog.sdb", trace: true },
+                    test: { name: "db/blog.sdb", trace: true },
+                    production: { name: "db/blog.sdb", trace: true },
+                }
+         */
+        public static function openDatabase() {
+            let dbconfig = App.config.database
+            if (dbconfig) {
+                global.load("ejs.db.mod", {reload: false})
+                blend(dbconfig, dbconfig[App.config.mode])
+                new "ejs.db"::["Database"](dbconfig.adapter, dbconfig)
+            }
+        }
+
+        private function rebuildComponent(request: Request, mod: Path, files: Array) {
+            let code = "require ejs.web\n"
+            for each (file in files) {
+                let path = Path(file)
+                if (!path.exists) {
+                    request.status = Http.NotFound
+                    throw "Can't find required component: \"" + path + "\""
+                }
+                code += path.readString()
+            }
+            request.log.debug(4, "Rebuild component: " + mod + " files: " + files)
+            eval(code, mod)
+        }
+
     }
 
+    //  MOB - who uses this?
     /**
         MVC request handler.  
         @param request Request object
@@ -193,23 +232,19 @@ module ejs.web {
         return app(request)
     }
 
-//  MOB -- update doc
+//  MOB -- update doc. Rename from builder?
     /** 
         MVC builder for use in routing tables. The MVC builder function can be included directly in Route table entries.
         @param request Request object. 
         @return A web script function that services a web request.
-        @example:
-          { name: "index", builder: MvcBuilder, match: "/" }
         @spec ejs
         @stability prototype
      */
     function MvcBuilder(request: Request): Function {
-        //  MOB OPT - Currently Mvc has no state so really don't need an Mvc instance
-        let mvc: Mvc = Mvc.apps[request.dir] || (Mvc.apps[request.dir] = new Mvc(request))
-        //  MOB -- rename to load?
-        mvc.init(request)
-        let cname: String = request.params.controller + "Controller"
-        return Controller.create(request, cname).app
+        let mvc: Mvc = Mvc.load(request.dir, request.config)
+        mvc.loadRequest(request)
+        //  MOB - rename app to be more unique
+        return Controller.create(request, request.params.controller + "Controller").app
     }
 }
 

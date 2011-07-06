@@ -58,6 +58,19 @@ module ejs {
          */
         native function Worker(script: Path? = null, options: Object? = null)
 
+        /** 
+            Clone the worker and underlying interpreter
+            @param deep Ignored
+            @spec ejs
+         */
+        native function clone(deep: Boolean = true): Worker
+
+        /** 
+            Create a new worker by cloning the current interpreter
+            @spec ejs
+         */
+        native static function fork(): Worker
+
         /**
             Load the script. The literal script is compiled as a JavaScript program and loaded and run.
             This is similar to the global eval() command but the script is run in its own interpreter and does not
@@ -72,7 +85,7 @@ module ejs {
             @throws an exception if the script can't be compiled or if it thows a run-time exception.
             @spec ejs
          */
-        native function eval(script: String, timeout: Number = -1): String
+        native function eval(script: String, timeout: Number = -1): Object
 
         /**
             Exit the worker.
@@ -101,18 +114,18 @@ module ejs {
 
         /**
             Preload the specified script or module file to initialize the worker. This will run a script using the current
-            thread and will block. To run a worker using its own thread, use load() or Worker(script).
-            This call will load the script/module and initialize and run global code. The call will block until 
-            all global code has completed and the script/module is initialized. 
+            thread.  This call will load the script/module and initialize and run global code. The call will block until 
+            all global code has completed and the script/module is initialized.  To run a worker using its own thread, 
+            use load() or Worker(script) instead.
             @param path Filename path for the module or script to load. This should include the file extension.
             @returns the value of the last expression in the script or module.
             @throws an exception if the script or module can't be loaded or initialized or if it thows an exception.
             @spec ejs
          */
-        native function preload(path: Path): String
+        native function preload(path: Path): Object
 
         /** @hide TODO */
-        native function preeval(script: String): String
+        native function preeval(script: String): Object
 
         /**
             Lookup a Worker by name
@@ -189,8 +202,6 @@ module ejs {
     function get onerror(): Function
         self.onerror
 
-    /**
-     */
     function set onerror(fun: Function): Void
         self.onerror = fun
 
@@ -202,11 +213,8 @@ module ejs {
     function get onmessage(): Function
         self.onmessage
 
-    /**
-     */
-    function set onmessage(fun: Function): Void {
+    function set onmessage(fun: Function): Void
         self.onmessage = fun
-    }
 
     # WebWorker         // Only relevant in browsers 
     var location: WorkerLocation

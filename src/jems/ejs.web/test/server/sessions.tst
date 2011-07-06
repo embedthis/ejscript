@@ -9,27 +9,47 @@ load("../utils.es")
 server = new HttpServer
 
 server.on("readable", function (event, request) {
-    session["anything"] = 42
-    request.finalize()
+    let old = session["value"]
+    session["value"] = 42
+    write(old)
+    finalize()
 })
 
 
-//  Set max sessions to 2 and a timeout of 1 second
-assert(server.sessions == null)
-server.setLimits({ sessions: 2, sessionTimeout: 1 })
+/*
+    Can't really test this as the session timer runs once per minute
+    //  Set max sessions to 2 and a timeout of 1 second
+    assert(server.sessions == null)
+    server.setLimits({ sessions: 2, sessionTimeout: 1 })
+*/
+let base = Session.length
 
 server.listen(HTTP)
 
 //  Fetch and create a new session object per request
-assert(Object.getOwnPropertyCount(server.sessions) == 0)
 http = fetch(HTTP + "/")
-http.reset()
-http = fetch(HTTP + "/")
-assert(Object.getOwnPropertyCount(server.sessions) == 2)
+assert(http.response == "")
+let cookie = http.sessionCookie
+assert(cookie.contains("-ejs-session-="))
+http.close()
 
-//  Wait for old sessions to be pruned 
-App.sleep(1100)
-assert(Object.getOwnPropertyCount(server.sessions) == 0)
+
+//  Use cookie and utilize the same session
+http = new Http
+http.setCookie(cookie)
+http.get(HTTP + "/")
+http.wait(30 * 1000)
+assert(http.response == "42")
+http.close()
+
+
+//  Without cookie, a new session will be used
+http = new Http
+http.get(HTTP + "/")
+http.wait(30 * 1000)
+assert(http.response == "")
+http.close()
+
 
 server.close()
 

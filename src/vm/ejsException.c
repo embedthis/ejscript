@@ -11,6 +11,37 @@
 static uchar trapByteCode[] = { EJS_OP_ATTENTION };
 
 /************************************ Code ************************************/
+
+static EjsAny *createException(Ejs *ejs, EjsType *type, cchar* fmt, va_list fmtArgs)
+{
+    EjsError    *error;
+    EjsAny      *argv[1];
+    char        *msg;
+
+    mprAssert(type);
+    
+#if BLD_DEBUG
+    /* Breakpoint opportunity */
+    if (!ejs->empty) {
+        mprNop(0);
+    }
+#endif
+    msg = mprAsprintfv(fmt, fmtArgs);
+    argv[0] = ejsCreateStringFromAsc(ejs, msg);
+    if (argv[0] == 0) {
+        mprAssert(argv[0]);
+        return 0;
+    }
+    if (EST(Error)->constructor.body.proc) {
+        error = (EjsError*) ejsCreateInstance(ejs, type, 1, argv);
+    } else {
+        error = ejsCreatePot(ejs, type, 0);
+        ejsSetProperty(ejs, error, ES_Error_message, ejsCreateStringFromAsc(ejs, msg));
+    }
+    return error;
+}
+
+
 /*
     Redirect the VM to the ATTENTION op code
  */
@@ -65,30 +96,6 @@ void ejsClearException(Ejs *ejs)
 }
 
 
-static EjsAny *createException(Ejs *ejs, EjsType *type, cchar* fmt, va_list fmtArgs)
-{
-    EjsError    *error;
-    EjsAny      *argv[1];
-    char        *msg;
-
-    mprAssert(type);
-
-    msg = mprAsprintfv(fmt, fmtArgs);
-    argv[0] = ejsCreateStringFromAsc(ejs, msg);
-    if (argv[0] == 0) {
-        mprAssert(argv[0]);
-        return 0;
-    }
-    if (ST(Error)->constructor.body.proc) {
-        error = (EjsError*) ejsCreateInstance(ejs, type, 1, argv);
-    } else {
-        error = ejsCreatePot(ejs, type, 0);
-        ejsSetProperty(ejs, error, ES_Error_message, ejsCreateStringFromAsc(ejs, msg));
-    }
-    return error;
-}
-
-
 EjsAny *ejsCreateException(Ejs *ejs, int slot, cchar *fmt, va_list fmtArgs)
 {
     EjsType     *type;
@@ -100,7 +107,7 @@ EjsAny *ejsCreateException(Ejs *ejs, int slot, cchar *fmt, va_list fmtArgs)
     }
     type = (ejs->initialized) ? ejsGetProperty(ejs, ejs->global, slot) : NULL;
     if (type == 0) {
-        type = ST(Error);
+        type = EST(Error);
     }
     error = createException(ejs, type, fmt, fmtArgs);
     if (error) {
@@ -223,6 +230,25 @@ EjsError *ejsThrowResourceError(Ejs *ejs, cchar *fmt, ...)
 }
 
 
+EjsString *ejsThrowString(Ejs *ejs, cchar *fmt, ...)
+{
+    va_list     fmtArgs;
+    char        *msg;
+
+    mprAssert(fmt);
+    va_start(fmtArgs, fmt);
+    msg = mprAsprintfv(fmt, fmtArgs);
+    va_end(fmtArgs);
+
+    /*
+        Throwing a string will not create a stack frame
+     */
+    ejs->exception = ejsCreateStringFromAsc(ejs, msg);
+    ejsAttention(ejs);
+    return ejs->exception;
+}
+
+
 EjsError *ejsThrowStateError(Ejs *ejs, cchar *fmt, ...)
 {
     va_list     fmtArgs;
@@ -276,7 +302,7 @@ EjsArray *ejsCaptureStack(Ejs *ejs, int uplevels)
                     ejsSetPropertyByName(ejs, frame, EN("lineno"), ejsCreateNumber(ejs, lineNumber));
                     ejsSetPropertyByName(ejs, frame, EN("code"), ejsCreateString(ejs, source, wlen(source)));
                 } else {
-                    ejsSetPropertyByName(ejs, frame, EN("filename"), ST(undefined));
+                    ejsSetPropertyByName(ejs, frame, EN("filename"), EST(undefined));
                 }
                 ejsSetPropertyByName(ejs, frame, EN("func"), fp->function.name);
                 ejsSetProperty(ejs, stack, index++, frame);
@@ -290,7 +316,6 @@ EjsArray *ejsCaptureStack(Ejs *ejs, int uplevels)
 /*
     Get the current exception error. May be an Error object or may be any other object that is thrown.
     Caller must NOT free.
-    MOB _- Query should return EjsString?
  */
 cchar *ejsGetErrorMsg(Ejs *ejs, int withStack)
 {
@@ -322,11 +347,11 @@ cchar *ejsGetErrorMsg(Ejs *ejs, int withStack)
             tag = ejsCreateStringFromAsc(ejs, "Error");
             message = (EjsString*) error;
             
-        } else if (error == ST(StopIteration)) {
+        } else if (error == EST(StopIteration)) {
             message = ejsCreateStringFromAsc(ejs, "Uncaught StopIteration exception");
         }
     }
-    if (message == S(null) || message == 0) {
+    if (message == ESV(null) || message == 0) {
         msg = ejsCreateStringFromAsc(ejs, "Exception");
     } else{
         msg = ejsToString(ejs, message);

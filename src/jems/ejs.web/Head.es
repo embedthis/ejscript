@@ -23,7 +23,7 @@ module ejs.web {
                 if (response.body is String) {
                     let length = response.body.length
                     response.headers ||= {}
-                    blend(response.headers, {"Content-Length": length}, true)
+                    blend(response.headers, {"Content-Length": length})
                 }
                 response.body = null
             }

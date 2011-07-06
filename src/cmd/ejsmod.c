@@ -89,6 +89,7 @@ MAIN(ejsmodMain, int argc, char **argv)
                 err++;
             } else {
                 ejsRedirectLogging(argv[++nextArg]);
+                mprSetCmdlineLogging(1);
             }
 
         } else if (strcmp(argp, "--out") == 0) {
@@ -119,9 +120,9 @@ MAIN(ejsmodMain, int argc, char **argv)
                     requiredModules = mprCreateList(-1, 0);
                 }
                 modules = sclone(argv[++nextArg]);
-#if MACOSX
-                //  FIX FOR XCODE MANGLING COMMAND LINE ARGS
-                if (modules[0] == ' ') {
+#if MACOSX || WIN
+                /*  Fix for Xcode and Visual Studio */
+                if (modules[0] == ' ' || scmp(modules, "null") == 0) {
                     modules[0] = '\0';                    
                 }
 #endif
@@ -179,9 +180,11 @@ MAIN(ejsmodMain, int argc, char **argv)
     if (mp->html || mp->xml) {
         flags |= EJS_FLAG_DOC;
     }
-    ejs = ejsCreate(NULL, searchPath, requiredModules, 0, NULL, flags);
-    if (ejs == 0) {
+    if ((ejs = ejsCreateVM(0, 0, flags)) == 0) {
         return MPR_ERR_MEMORY;
+    }
+    if (ejsLoadModules(ejs, searchPath, requiredModules) < 0) {
+        return MPR_ERR_CANT_READ;
     }
     mp->ejs = ejs;
 
@@ -194,7 +197,7 @@ MAIN(ejsmodMain, int argc, char **argv)
         err = -1;
     }
     mprRemoveRoot(mp);
-    ejsDestroy(ejs);
+    ejsDestroyVM(ejs);
     mprDestroy(MPR_EXIT_DEFAULT);
     return err;
 }
@@ -246,14 +249,14 @@ static int process(EjsMod *mp, cchar *output, int argc, char **argv)
         outfile = 0;
     }
     ejs->loaderCallback = (mp->listing) ? emListingLoadCallback : 0;
-    mp->firstGlobal = ejsGetPropertyCount(ejs, ejs->global);
+    mp->firstGlobal = ejsGetLength(ejs, ejs->global);
 
     /*
         For each module on the command line
      */
     for (i = 0; i < argc && !mp->fatalError; i++) {
         moduleCount = mprGetListLength(ejs->modules);
-        ejs->userData = mp;
+        ejs->loadData = mp;
         if (!mprPathExists(argv[i], R_OK)) {
             mprError("Can't access module %s", argv[i]);
             return EJS_ERR;
@@ -304,64 +307,6 @@ static void getDepends(Ejs *ejs, MprList *list, EjsModule *mp)
         }
     }
 }
-
-
-#if UNUSED
-static int setLogging(Mpr *mpr, char *logSpec)
-{
-    MprFile     *file;
-    char        *levelSpec;
-    int         level;
-
-    level = 0;
-
-    if ((levelSpec = strchr(logSpec, ':')) != 0) {
-        *levelSpec++ = '\0';
-        level = atoi(levelSpec);
-    }
-    if (strcmp(logSpec, "stdout") == 0) {
-        file = mpr->fileSystem->stdOutput;
-    } else {
-        if ((file = mprOpenFile(logSpec, O_WRONLY, 0664)) == 0) {
-            mprPrintfError("Can't open log file %s\n", logSpec);
-            return EJS_ERR;
-        }
-    }
-    mprSetLogLevel(level);
-    mprSetLogHandler(logger, (void*) file);
-    return 0;
-}
-
-
-static void logger(int flags, int level, const char *msg)
-{
-    Mpr         *mpr;
-    MprFile     *file;
-    char        *prefix;
-
-    mpr = mprGetMpr();
-    file = (MprFile*) mpr->logData;
-    prefix = mpr->name;
-
-    while (*msg == '\n') {
-        mprFprintf(file, "\n");
-        msg++;
-    }
-    if (flags & MPR_LOG_SRC) {
-        mprFprintf(file, "%s: %d: %s\n", prefix, level, msg);
-    } else if (flags & MPR_ERROR_SRC) {
-        mprFprintf(file, "%s: Error: %s\n", prefix, msg);
-    } else if (flags & MPR_FATAL_SRC) {
-        mprFprintf(file, "%s: Fatal: %s\n", prefix, msg);
-    } else if (flags & MPR_RAW) {
-        mprFprintf(file, "%s", msg);
-    }
-    if (flags & (MPR_ERROR_SRC | MPR_FATAL_SRC | MPR_ASSERT_SRC)) {
-        mprBreakpoint();
-    }
-}
-#endif
-
 
 /*
     @copy   default

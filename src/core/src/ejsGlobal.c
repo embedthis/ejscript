@@ -13,7 +13,7 @@
     Assert a condition is true.
     static function assert(condition: Boolean): Boolean
  */
-static EjsObj *g_assert(Ejs *ejs, EjsObj *vp, int argc, EjsObj **argv)
+static EjsBoolean *g_assert(Ejs *ejs, EjsObj *vp, int argc, EjsObj **argv)
 {
     EjsFrame        *fp;
     MprChar         *source;
@@ -21,7 +21,7 @@ static EjsObj *g_assert(Ejs *ejs, EjsObj *vp, int argc, EjsObj **argv)
 
     mprAssert(argc == 1);
 
-    if (! ejsIs(ejs, argv[0], Boolean)) {
+    if (!ejsIs(ejs, argv[0], Boolean)) {
         b = (EjsBoolean*) ejsCast(ejs, argv[0], Boolean);
     } else {
         b = (EjsBoolean*) argv[0];
@@ -37,23 +37,33 @@ static EjsObj *g_assert(Ejs *ejs, EjsObj *vp, int argc, EjsObj **argv)
         }
         return 0;
     }
-    return vp;
+    return ESV(true);
 }
 
 
-//  MOB -- would this be better as blend(obj, obj, obj, ...)
 /*  
-    function blend(dest: Object, src: Object, overwrite: Boolean = true): void
+    function blend(dest: Object, src: Object, options = null): Object
  */
 static EjsObj *g_blend(Ejs *ejs, EjsObj *unused, int argc, EjsObj **argv)
 {
-    EjsObj      *src, *dest;
-    int         overwrite;
+    EjsObj      *src, *dest, *options;
+    int         flags;
 
-    overwrite = (argc == 3) ? (argv[2] == (EjsObj*) S(true)) : 1;
+    options = (argc >= 3) ? argv[2] : 0;
+    if (options) {
+        flags = 0;
+        flags |= ejsGetPropertyByName(ejs, options, EN("functions")) == ESV(true) ? EJS_BLEND_FUNCTIONS : 0;
+        flags |= ejsGetPropertyByName(ejs, options, EN("trace")) == ESV(true) ? EJS_BLEND_TRACE : 0;
+
+        flags |= ejsGetPropertyByName(ejs, options, EN("overwrite")) == ESV(false) ? 0 : EJS_BLEND_OVERWRITE;
+        flags |= ejsGetPropertyByName(ejs, options, EN("subclass")) == ESV(false) ? 0 : EJS_BLEND_SUBCLASSES;
+        flags |= ejsGetPropertyByName(ejs, options, EN("deep")) == ESV(false) ? 0 : EJS_BLEND_DEEP;
+    } else {
+        flags = EJS_BLEND_DEEP | EJS_BLEND_OVERWRITE | EJS_BLEND_SUBCLASSES;
+    }
     dest = argv[0];
     src = argv[1];
-    ejsBlendObject(ejs, dest, src, overwrite);
+    ejsBlendObject(ejs, dest, src, 0, flags);
     return dest;
 }
 
@@ -72,41 +82,6 @@ static EjsObj *g_cloneBase(Ejs *ejs, EjsObj *ignored, int argc, EjsObj **argv)
     type->baseType = ejsClone(ejs, type->baseType, 0);
     return 0;
 }
-
-
-/** DEPRECATED
-    MOB - remove
-    Print the arguments to the standard error with a new line.
-    static function error(...args): void
-static EjsObj *error(Ejs *ejs, EjsObj *unused, int argc, EjsObj **argv)
-{
-    EjsString   *s;
-    EjsObj      *args, *vp;
-    int         rc, i, count;
-
-    mprAssert(argc == 1 && ejsIs(ejs, argv[0], Array));
-
-    args = argv[0];
-    count = ejsGetPropertyCount(ejs, args);
-
-    for (i = 0; i < count; i++) {
-        if ((vp = ejsGetProperty(ejs, args, i)) != 0) {
-            if (!ejsIs(ejs, vp, String)) {
-                vp = (EjsObj*) ejsToJSON(ejs, vp, NULL);
-            }
-            if (ejs->exception) {
-                return 0;
-            }
-            if (vp) {
-                s = (EjsString*) vp;
-                rc = write(2, s->value, s->length);
-            }
-        }
-    }
-    rc = write(2, "\n", 1);
-    return 0;
-}
- */
 
 
 /*  
@@ -137,64 +112,38 @@ static EjsObj *g_eval(Ejs *ejs, EjsObj *unused, int argc, EjsObj **argv)
     Get the hash code for the object.
     function hashcode(o: Object): Number
  */
-static EjsObj *g_hashcode(Ejs *ejs, EjsObj *vp, int argc, EjsObj **argv)
+static EjsNumber *g_hashcode(Ejs *ejs, EjsObj *vp, int argc, EjsObj **argv)
 {
     mprAssert(argc == 1);
-    return (EjsObj*) ejsCreateNumber(ejs, (MprNumber) PTOL(argv[0]));
+    return ejsCreateNumber(ejs, (MprNumber) PTOL(argv[0]));
 }
 #endif
-
-
-/** 
-    MOB REMOVE
-    DEPREACATED
-    Read a line of input
-    static function input(): String
-static EjsObj *input(Ejs *ejs, EjsObj *unused, int argc, EjsObj **argv)
-{
-    MprFileSystem   *fs;
-    MprBuf          *buf;
-    int             c;
-
-    fs = mprGetMpr()->fileSystem;
-
-    buf = mprCreateBuf(ejs, -1, -1);
-    while ((c = getchar()) != EOF) {
-#if BLD_WIN_LIKE
-        if (c == fs->newline[0]) {
-            continue;
-        } else if (c == fs->newline[1]) {
-            break;
-        }
-#else
-        if (c == fs->newline[0]) {
-            break;
-        }
-#endif
-        mprPutCharToBuf(buf, c);
-    }
-    if (c == EOF && mprGetBufLength(buf) == 0) {
-        return (EjsObj*) S(null);
-    }
-    mprAddNullToBuf(buf);
-    return (EjsObj*) ejsCreateStringFromAsc(ejs, mprGetBufStart(buf));
-}
- */
 
 
 /*  
     Load a script or module. Name should have an extension. Name will be located according to the EJSPATH search strategy.
-    static function load(filename: String, cache: String): void
+
+    static function load(filename: String, options: Object): void
+
+    options = { cache: String|Path, reload: true }
  */
 static EjsObj *g_load(Ejs *ejs, EjsObj *unused, int argc, EjsObj **argv)
 {
+    EjsObj      *options, *vp;
     cchar       *path, *cache, *cp;
+    int         reload;
 
-    MPR_VERIFY_MEM();
-
+    cache = 0;
+    reload = 1;
     path = ejsToMulti(ejs, argv[0]);
-    cache = (argc < 2) ? 0 : ejsToMulti(ejs, argv[1]);
+    options = (argc >= 2) ? argv[1] : 0;
 
+    if (options) {
+        if ((vp = ejsGetPropertyByName(ejs, options, EN("cache"))) != 0) {
+            cache = ejsToMulti(ejs, ejsToString(ejs, vp));
+        }
+        reload = ejsGetPropertyByName(ejs, options, EN("reload")) == ESV(true);
+    }
     if ((cp = strrchr(path, '.')) != NULL && strcmp(cp, EJS_MODULE_EXT) != 0) {
         if (ejs->service->loadScriptFile == 0) {
             ejsThrowIOError(ejs, "load: Compiling is not enabled for %s", path);
@@ -202,7 +151,7 @@ static EjsObj *g_load(Ejs *ejs, EjsObj *unused, int argc, EjsObj **argv)
             return (ejs->service->loadScriptFile)(ejs, path, cache);
         }
     } else {
-        ejsLoadModule(ejs, ejsCreateStringFromAsc(ejs, path), -1, -1, EJS_LOADER_RELOAD);
+        ejsLoadModule(ejs, ejsCreateStringFromAsc(ejs, path), -1, -1, (reload) ? EJS_LOADER_RELOAD : 0);
         return (ejs->exception) ? 0 : ejs->result;
     }
     return 0;
@@ -211,9 +160,9 @@ static EjsObj *g_load(Ejs *ejs, EjsObj *unused, int argc, EjsObj **argv)
 
 /*  
     Compute an MD5 checksum
-    static function md5(name: String): void
+    static function md5(name: String): String
  */
-static EjsObj *g_md5(Ejs *ejs, EjsObj *unused, int argc, EjsObj **argv)
+static EjsString *g_md5(Ejs *ejs, EjsObj *unused, int argc, EjsObj **argv)
 {
     EjsString   *str;
     char        *hash;
@@ -221,7 +170,7 @@ static EjsObj *g_md5(Ejs *ejs, EjsObj *unused, int argc, EjsObj **argv)
     MPR_VERIFY_MEM();
     str = (EjsString*) argv[0];
     hash = mprGetMD5Hash(ejsToMulti(ejs, str), str->length, NULL);
-    return (EjsObj*) ejsCreateStringFromAsc(ejs, hash);
+    return ejsCreateStringFromAsc(ejs, hash);
 }
 
 
@@ -230,34 +179,53 @@ static EjsObj *g_md5(Ejs *ejs, EjsObj *unused, int argc, EjsObj **argv)
     things). The blending is done at the primitive property level. If overwrite is true, the property is replaced. If
     overwrite is false, the property will be added if it does not already exist
  */
-int ejsBlendObject(Ejs *ejs, EjsObj *dest, EjsObj *src, int overwrite)
+int ejsBlendObject(Ejs *ejs, EjsObj *dest, EjsObj *src, int xoverwrite, int flags)
 {
+    EjsTrait    *trait;
     EjsObj      *vp, *dp;
     EjsName     name;
-    int         i, count;
+    int         i, count, start, deep, functions, overwrite, privateProps, trace;
 
-    count = ejsGetPropertyCount(ejs, src);
-    for (i = 0; i < count; i++) {
-        vp = ejsGetProperty(ejs, src, i);
-        if (vp == 0) {
+    count = ejsGetLength(ejs, src);
+    start = (flags & EJS_BLEND_SUBCLASSES) ? 0 : TYPE(src)->numInherited;
+    deep = (flags & EJS_BLEND_DEEP) ? 1 : 0;
+    overwrite = (flags & EJS_BLEND_OVERWRITE) ? 1 : 0;
+    functions = (flags & EJS_BLEND_FUNCTIONS) ? 1 : 0;
+    privateProps = (flags & EJS_BLEND_PRIVATE) ? 1 : 0;
+    trace = (flags & EJS_BLEND_TRACE) ? 1 : 0;
+
+    for (i = start; i < count; i++) {
+        if ((trait = ejsGetPropertyTraits(ejs, src, i)) != 0) {
+            if (trait->attributes & (EJS_TRAIT_DELETED | EJS_FUN_INITIALIZER | EJS_FUN_MODULE_INITIALIZER)) {
+                continue;
+            }
+        }
+        if ((vp = ejsGetProperty(ejs, src, i)) == 0) {
+            continue;
+        }
+        if (!functions && ejsIsFunction(ejs, ejsGetProperty(ejs, src, i))) {
             continue;
         }
         name = ejsGetPropertyName(ejs, src, i);
+        if (!privateProps && ejsContainsMulti(ejs, name.space, ",private")) {
+            continue;
+        }
+        if (trace) {
+            mprLog(0, "NAME %N", name);
+        }
         /* NOTE: treats arrays as primitive types */
-        if (!ejsIs(ejs, vp, Array) && !ejsIsXML(ejs, vp) && ejsGetPropertyCount(ejs, vp) > 0) {
-            if ((dp = ejsGetPropertyByName(ejs, dest, name)) == 0 || ejsGetPropertyCount(ejs, dp) == 0) {
-                ejsSetPropertyByName(ejs, dest, name, ejsClonePot(ejs, (EjsObj*) vp, 1));
+        if (deep && !ejsIs(ejs, vp, Array) && !ejsIsXML(ejs, vp) && ejsGetLength(ejs, vp) > 0) {
+            if ((dp = ejsGetPropertyByName(ejs, dest, name)) == 0 || ejsGetLength(ejs, dp) == 0) {
+                ejsSetPropertyByName(ejs, dest, name, ejsClonePot(ejs, vp, deep));
             } else {
-                ejsBlendObject(ejs, dp, vp, overwrite);
+                ejsBlendObject(ejs, dp, vp, 0, flags);
             }
         } else {
             /* Primitive type (including arrays) */
             if (overwrite) {
                 ejsSetPropertyByName(ejs, dest, name, vp);
-            } else {
-                if (ejsLookupProperty(ejs, dest, name) < 0) {
-                    ejsSetPropertyByName(ejs, dest, name, vp);
-                }
+            } else if (ejsLookupProperty(ejs, dest, name) < 0) {
+                ejsSetPropertyByName(ejs, dest, name, vp);
             }
         }
     }
@@ -286,19 +254,18 @@ static EjsObj *g_parse(Ejs *ejs, EjsObj *unused, int argc, EjsObj **argv)
 
 /*
     Parse the input as an integer
-    static function parseInt(input: String, radix: Number = 10): void
+    static function parseInt(input: String, radix: Number = 10): Number
     Formats:
         [(+|-)][0][OCTAL_DIGITS]
         [(+|-)][0][(x|X)][HEX_DIGITS]
         [(+|-)][DIGITS]
  */
-static EjsObj *g_parseInt(Ejs *ejs, EjsObj *unused, int argc, EjsObj **argv)
+static EjsNumber *g_parseInt(Ejs *ejs, EjsObj *unused, int argc, EjsObj **argv)
 {
     MprNumber   n;
     cchar       *str;
     int         radix, err;
 
-    //  MOB -- don't convert to cstring
     str = ejsToMulti(ejs, argv[0]);
     radix = (argc >= 2) ? ejsGetInt(ejs, argv[1]) : 0;
     while (isspace((int) *str)) {
@@ -307,11 +274,11 @@ static EjsObj *g_parseInt(Ejs *ejs, EjsObj *unused, int argc, EjsObj **argv)
     if (*str == '-' || *str == '+' || isdigit((int) *str)) {
         n = (MprNumber) stoi(str, radix, &err);
         if (err) {
-            return S(nan);
+            return ESV(nan);
         }
-        return (EjsObj*) ejsCreateNumber(ejs, n);
+        return ejsCreateNumber(ejs, n);
     }
-    return S(nan);
+    return ESV(nan);
 }
 
 
@@ -325,13 +292,12 @@ static EjsObj *g_printLine(Ejs *ejs, EjsObj *unused, int argc, EjsObj **argv)
     EjsString   *s;
     EjsObj      *args, *vp;
     cchar       *data;
-    ssize       rc;
     int         i, count;
 
     mprAssert(argc == 1 && ejsIs(ejs, argv[0], Array));
 
     args = argv[0];
-    count = ejsGetPropertyCount(ejs, args);
+    count = ejsGetLength(ejs, args);
 
     for (i = 0; i < count; i++) {
         if ((vp = ejsGetProperty(ejs, args, i)) != 0) {
@@ -340,13 +306,13 @@ static EjsObj *g_printLine(Ejs *ejs, EjsObj *unused, int argc, EjsObj **argv)
                 return 0;
             }
             data = ejsToMulti(ejs, s);
-            rc = write(1, (char*) data, (int) strlen(data));
+            if (write(1, (char*) data, (int) strlen(data)) < 0) {}
             if ((i+1) < count) {
-                rc = write(1, " ", 1);
+                if (write(1, " ", 1) < 0) {}
             }
         }
     }
-    rc = write(1, "\n", 1);
+    if (write(1, "\n", 1) < 0) {}
     return 0;
 }
 
@@ -364,28 +330,29 @@ void ejsFreezeGlobal(Ejs *ejs)
 }
 
 
-void ejsCreateGlobalBlock(Ejs *ejs)
+void ejsCreateGlobalNamespaces(Ejs *ejs)
 {
-    EjsBlock    *block;
-    int         sizeSlots;
+    ejsAddImmutable(ejs, S_iteratorSpace, EN("iterator"), 
+        ejsCreateNamespace(ejs, ejsCreateStringFromAsc(ejs, EJS_ITERATOR_NAMESPACE)));
+    ejsAddImmutable(ejs, S_publicSpace, EN("public"), 
+        ejsCreateNamespace(ejs, ejsCreateStringFromAsc(ejs, EJS_PUBLIC_NAMESPACE)));
+    ejsAddImmutable(ejs, S_ejsSpace, EN("ejs"), 
+        ejsCreateNamespace(ejs, ejsCreateStringFromAsc(ejs, EJS_EJS_NAMESPACE)));
+    ejsAddImmutable(ejs, S_emptySpace, EN("empty"), 
+        ejsCreateNamespace(ejs, ejsCreateStringFromAsc(ejs, EJS_EMPTY_NAMESPACE)));
+}
 
-    sizeSlots = (ejs->empty) ? 0 : max(ES_global_NUM_CLASS_PROP, EJS_NUM_GLOBAL);
-    block = ejsCreateBlock(ejs, sizeSlots);
-    ejs->global = block;
-    block->isGlobal = 1;
-    block->pot.numProp = (ejs->empty) ? 0: ES_global_NUM_CLASS_PROP;
-    block->pot.shortScope = 1;
-    SET_DYNAMIC(block, 1);
-    mprSetName(block, "global");
 
+void ejsDefineGlobalNamespaces(Ejs *ejs)
+{
     /*  
-        Create the standard namespaces. Order matters here. This is the (reverse) order of lookup.
+        Order matters here. This is the (reverse) order of lookup.
         Empty is first to maximize speed of searching dynamic properties. Ejs second to maximize builtin lookups.
      */
-    ejsSetSpecial(ejs, S_iteratorSpace, ejsDefineReservedNamespace(ejs, block, NULL, EJS_ITERATOR_NAMESPACE));
-    ejsSetSpecial(ejs, S_publicSpace, ejsDefineReservedNamespace(ejs, block, NULL, EJS_PUBLIC_NAMESPACE));
-    ejsSetSpecial(ejs, S_ejsSpace, ejsDefineReservedNamespace(ejs, block, NULL, EJS_EJS_NAMESPACE));
-    ejsSetSpecial(ejs, S_emptySpace, ejsDefineReservedNamespace(ejs, block, NULL, EJS_EMPTY_NAMESPACE));
+    ejsAddNamespaceToBlock(ejs, ejs->global, ESV(iteratorSpace));
+    ejsAddNamespaceToBlock(ejs, ejs->global, ESV(publicSpace));
+    ejsAddNamespaceToBlock(ejs, ejs->global, ESV(ejsSpace));
+    ejsAddNamespaceToBlock(ejs, ejs->global, ESV(emptySpace));
 }
 
 
@@ -396,8 +363,23 @@ void ejsConfigureGlobalBlock(Ejs *ejs)
     block = (EjsBlock*) ejs->global;
     mprAssert(block);
     
+    ejsSetProperty(ejs, ejs->global, ES_global, ejs->global);
+    ejsSetProperty(ejs, ejs->global, ES_void, ESV(Void));
+    ejsSetProperty(ejs, ejs->global, ES_undefined, ESV(undefined));
+    ejsSetProperty(ejs, ejs->global, ES_null, ESV(null));
+    ejsSetProperty(ejs, ejs->global, ES_global, ejs->global);
+    ejsSetProperty(ejs, ejs->global, ES_NegativeInfinity, ESV(negativeInfinity));
+    ejsSetProperty(ejs, ejs->global, ES_Infinity, ESV(infinity));
+    ejsSetProperty(ejs, ejs->global, ES_NaN, ESV(nan));
+    ejsSetProperty(ejs, ejs->global, ES_double, ESV(Number));
+    ejsSetProperty(ejs, ejs->global, ES_num, ESV(Number));
+    ejsSetProperty(ejs, ejs->global, ES_boolean, ESV(Boolean));
+    ejsSetProperty(ejs, ejs->global, ES_string, ESV(String));
+    ejsSetProperty(ejs, ejs->global, ES_true, ESV(true));
+    ejsSetProperty(ejs, ejs->global, ES_false, ESV(false));
+
     ejsBindFunction(ejs, block, ES_assert, g_assert);
-    ejsBindFunction(ejs, block, ES_cloneBase, (EjsProc) g_cloneBase);
+    ejsBindFunction(ejs, block, ES_cloneBase, g_cloneBase);
     ejsBindFunction(ejs, block, ES_eval, g_eval);
     ejsBindFunction(ejs, block, ES_hashcode, g_hashcode);
     ejsBindFunction(ejs, block, ES_load, g_load);
@@ -406,8 +388,6 @@ void ejsConfigureGlobalBlock(Ejs *ejs)
     ejsBindFunction(ejs, block, ES_parse, g_parse);
     ejsBindFunction(ejs, block, ES_parseInt, g_parseInt);
     ejsBindFunction(ejs, block, ES_print, g_printLine);
-
-    ejsSetProperty(ejs, ejs->global, ES_global, ejs->global);
 }
 
 

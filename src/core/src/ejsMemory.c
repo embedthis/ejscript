@@ -11,20 +11,20 @@
 /*
     native static function get allocated(): Number
  */
-static EjsObj *getAllocatedMemory(Ejs *ejs, EjsObj *thisObj, int argc, EjsObj **argv)
+static EjsNumber *getAllocatedMemory(Ejs *ejs, EjsObj *thisObj, int argc, EjsObj **argv)
 {
     MprMemStats    *mem;
 
     mem = mprGetMemStats(ejs);
-    return (EjsObj*) ejsCreateNumber(ejs, (MprNumber) mem->bytesAllocated);
+    return ejsCreateNumber(ejs, (MprNumber) mem->bytesAllocated);
 }
 
 
-#if UNUSED
+#if FUTURE
 /*
     native static function callback(fn: Function): Void
  */
-static EjsObj *setRedlineCallback(Ejs *ejs, EjsObj *thisObj, int argc, EjsObj **argv)
+static EjsNumber *setRedlineCallback(Ejs *ejs, EjsObj *thisObj, int argc, EjsObj **argv)
 {
     mprAssert(argc == 1 && ejsIsFunction(ejs, argv[0]));
 
@@ -41,12 +41,12 @@ static EjsObj *setRedlineCallback(Ejs *ejs, EjsObj *thisObj, int argc, EjsObj **
 /*
     native static function get maximum(): Number
  */
-static EjsObj *getMaxMemory(Ejs *ejs, EjsObj *thisObj, int argc, EjsObj **argv)
+static EjsNumber *getMaxMemory(Ejs *ejs, EjsObj *thisObj, int argc, EjsObj **argv)
 {
     MprMemStats    *mem;
 
     mem = mprGetMemStats(ejs);
-    return (EjsObj*) ejsCreateNumber(ejs, (MprNumber) mem->maxMemory);
+    return ejsCreateNumber(ejs, (MprNumber) mem->maxMemory);
 }
 
 
@@ -68,12 +68,12 @@ static EjsObj *setMaxMemory(Ejs *ejs, EjsObj *thisObj, int argc, EjsObj **argv)
 /*
     native static function get redline(): Number
  */
-static EjsObj *getRedline(Ejs *ejs, EjsObj *thisObj, int argc, EjsObj **argv)
+static EjsNumber *getRedline(Ejs *ejs, EjsObj *thisObj, int argc, EjsObj **argv)
 {
     MprMemStats    *mem;
 
     mem = mprGetMemStats(ejs);
-    return (EjsObj*) ejsCreateNumber(ejs, (MprNumber) mem->redLine);
+    return ejsCreateNumber(ejs, (MprNumber) mem->redLine);
 }
 
 
@@ -89,7 +89,7 @@ static EjsObj *setRedline(Ejs *ejs, EjsObj *thisObj, int argc, EjsObj **argv)
     redline = ejsGetInt(ejs, argv[0]);
     if (redline <= 0) {
         //  TODO - 64 bit
-        redline = INT_MAX;
+        redline = MAXINT;
     }
     mprSetMemLimits(redline, -1);
     return 0;
@@ -99,24 +99,24 @@ static EjsObj *setRedline(Ejs *ejs, EjsObj *thisObj, int argc, EjsObj **argv)
 /*
     native static function get resident(): Number
  */
-static EjsObj *getResident(Ejs *ejs, EjsObj *thisObj, int argc, EjsObj **argv)
+static EjsNumber *getResident(Ejs *ejs, EjsObj *thisObj, int argc, EjsObj **argv)
 {
     MprMemStats    *mem;
 
     mem = mprGetMemStats(ejs);
-    return (EjsObj*) ejsCreateNumber(ejs, (MprNumber) mem->rss);
+    return ejsCreateNumber(ejs, (MprNumber) mem->rss);
 }
 
 
 /*
     native static function get system(): Number
  */
-static EjsObj *getSystemRam(Ejs *ejs, EjsObj *thisObj, int argc, EjsObj **argv)
+static EjsNumber *getSystemRam(Ejs *ejs, EjsObj *thisObj, int argc, EjsObj **argv)
 {
     MprMemStats    *mem;
 
     mem = mprGetMemStats(ejs);
-    return (EjsObj*) ejsCreateNumber(ejs, (double) mem->ram);
+    return ejsCreateNumber(ejs, (double) mem->ram);
 }
 
 
@@ -125,8 +125,8 @@ static EjsObj *getSystemRam(Ejs *ejs, EjsObj *thisObj, int argc, EjsObj **argv)
  */
 static EjsObj *printStats(Ejs *ejs, EjsObj *thisObj, int argc, EjsObj **argv)
 {
-    //  MOB TODO - should go to log file and not to stdout
-    mprPrintMem("Memory Report", 0);
+    //  TODO - should go to log file and not to stdout
+    mprPrintMem("Memory Report", 1);
     return 0;
 }
 
@@ -137,21 +137,20 @@ void ejsConfigureMemoryType(Ejs *ejs)
 {
     EjsType     *type;
 
-    if ((type = ejsGetTypeByName(ejs, N(EJS_EJS_NAMESPACE, "Memory"))) == 0) {
-        mprError("Can't find Memory type");
+    if ((type = ejsFinalizeScriptType(ejs, N("ejs", "Memory"), sizeof(EjsPot), ejsManagePot, EJS_TYPE_POT)) == 0) {
         return;
     }
-    ejsBindMethod(ejs, type, ES_Memory_allocated, (EjsProc) getAllocatedMemory);
-    ejsBindAccess(ejs, type, ES_Memory_maximum, (EjsProc) getMaxMemory, (EjsProc) setMaxMemory);
-    ejsBindAccess(ejs, type, ES_Memory_redline, (EjsProc) getRedline, (EjsProc) setRedline);
-    ejsBindMethod(ejs, type, ES_Memory_resident, (EjsProc) getResident);
-    ejsBindMethod(ejs, type, ES_Memory_system, (EjsProc) getSystemRam);
-    ejsBindMethod(ejs, type, ES_Memory_stats, (EjsProc) printStats);
+    ejsBindMethod(ejs, type, ES_Memory_allocated, getAllocatedMemory);
+    ejsBindAccess(ejs, type, ES_Memory_maximum, getMaxMemory, setMaxMemory);
+    ejsBindAccess(ejs, type, ES_Memory_redline, getRedline, setRedline);
+    ejsBindMethod(ejs, type, ES_Memory_resident, getResident);
+    ejsBindMethod(ejs, type, ES_Memory_system, getSystemRam);
+    ejsBindMethod(ejs, type, ES_Memory_stats, printStats);
 
-#if UNUSED
+#if FUTURE
     EjsPot      *prototype;
     prototype = type->prototype;
-    ejsBindAccess(ejs, type, ES_Memory_callback, NULL, (EjsProc) setRedlineCallback);
+    ejsBindAccess(ejs, type, ES_Memory_callback, NULL, setRedlineCallback);
 #endif
 }
 

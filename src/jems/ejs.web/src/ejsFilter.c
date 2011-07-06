@@ -62,8 +62,6 @@ static void outgoingFilterService(HttpQueue *q)
     conn = q->conn;
     trans = conn->transmitter;
 
-    //  MOB -- want packets joined.
-
     filter = (EjsFilter*) q->pair->queueData;
     ejsRunFunction(ejs, ser, filter, data);
 
@@ -167,23 +165,23 @@ void ejsConfigureFilterType(Ejs *ejs)
     createEjsHttpFilter(ejs);
 
     prototype = type->prototype;
-    ejsBindMethod(ejs, prototype, ES_ejs_web_Filter_write, (EjsProc) filter_write);
+    ejsBindMethod(ejs, prototype, ES_ejs_web_Filter_write, filter_write);
 /*
-    ejsBindAccess(ejs, prototype, ES_ejs_web_Filter_async, (EjsProc) filter_async, (EjsProc) filter_set_async);
-    ejsBindMethod(ejs, prototype, ES_ejs_web_Filter_close, (EjsProc) filter_close);
-    ejsBindMethod(ejs, prototype, ES_ejs_web_Filter_destroySession, (EjsProc) filter_destroySession);
-    ejsBindMethod(ejs, prototype, ES_ejs_web_Filter_dontFinalize, (EjsProc) filter_dontFinalize);
-    ejsBindMethod(ejs, prototype, ES_ejs_web_Filter_finalize, (EjsProc) filter_finalize);
-    ejsBindMethod(ejs, prototype, ES_ejs_web_Filter_flush, (EjsProc) filter_flush);
-    ejsBindMethod(ejs, prototype, ES_ejs_web_Filter_header, (EjsProc) filter_header);
-    ejsBindMethod(ejs, prototype, ES_ejs_web_Filter_limits, (EjsProc) filter_limits);
-    ejsBindMethod(ejs, prototype, ES_ejs_web_Filter_off, (EjsProc) filter_off);
-    ejsBindMethod(ejs, prototype, ES_ejs_web_Filter_read, (EjsProc) filter_read);
-    ejsBindMethod(ejs, prototype, ES_ejs_web_Filter_sendFile, (EjsProc) filter_sendFile);
-    ejsBindMethod(ejs, prototype, ES_ejs_web_Filter_setLimits, (EjsProc) filter_setLimits);
-    ejsBindMethod(ejs, prototype, ES_ejs_web_Filter_setHeader, (EjsProc) filter_setHeader);
-    ejsBindMethod(ejs, prototype, ES_ejs_web_Filter_trace, (EjsProc) filter_trace);
-    ejsBindMethod(ejs, prototype, ES_ejs_web_Filter_write, (EjsProc) filter_write);
+    ejsBindAccess(ejs, prototype, ES_ejs_web_Filter_async, filter_async, filter_set_async);
+    ejsBindMethod(ejs, prototype, ES_ejs_web_Filter_close, filter_close);
+    ejsBindMethod(ejs, prototype, ES_ejs_web_Filter_destroySession, filter_destroySession);
+    ejsBindMethod(ejs, prototype, ES_ejs_web_Filter_dontFinalize, filter_dontFinalize);
+    ejsBindMethod(ejs, prototype, ES_ejs_web_Filter_finalize, filter_finalize);
+    ejsBindMethod(ejs, prototype, ES_ejs_web_Filter_flush, filter_flush);
+    ejsBindMethod(ejs, prototype, ES_ejs_web_Filter_header, filter_header);
+    ejsBindMethod(ejs, prototype, ES_ejs_web_Filter_limits, filter_limits);
+    ejsBindMethod(ejs, prototype, ES_ejs_web_Filter_off, filter_off);
+    ejsBindMethod(ejs, prototype, ES_ejs_web_Filter_read, filter_read);
+    ejsBindMethod(ejs, prototype, ES_ejs_web_Filter_sendFile, filter_sendFile);
+    ejsBindMethod(ejs, prototype, ES_ejs_web_Filter_setLimits, filter_setLimits);
+    ejsBindMethod(ejs, prototype, ES_ejs_web_Filter_setHeader, filter_setHeader);
+    ejsBindMethod(ejs, prototype, ES_ejs_web_Filter_trace, filter_trace);
+    ejsBindMethod(ejs, prototype, ES_ejs_web_Filter_write, filter_write);
 */
 }
 

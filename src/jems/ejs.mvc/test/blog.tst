@@ -2,8 +2,9 @@
     blog.tst - Blog mini app
  */
 
-//  MOB -- should use the test http port for this
-const HTTP = ":4000"
+//  TODO -- should use the test http port for this
+const PORT = (App.config.test.http_port || 6700)
+const HTTP = ":" + PORT
 
 require ejs.unix
 
@@ -15,7 +16,8 @@ rmdir("junk", true)
 assert(!exists("junk"))
 
 //  Generate app and scaffold
-sh(mvc + " generate app junk")
+sh(mvc + " --listen " + HTTP + " generate app junk")
+
 sh("cd junk ; " + mvc + " generate scaffold post title:string body:text")
 sh("cd junk ; " + mvc + " compile")
 
@@ -60,8 +62,13 @@ try {
     assert(http.status == 200)
     assert(http.response.contains("The quick brown fox"))
 
+} catch (e) {
+    print("CATCH " + e)
+
 } finally {
-    Cmd.kill(pid, 9)
-    // MOB rmdir("junk", true)
+    if (pid) {
+        Cmd.kill(pid, 9)
+    }
+    rmdir("junk", true)
 }
 

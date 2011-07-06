@@ -14,9 +14,6 @@
 /********************************** Forwards **********************************/
 
 typedef struct App {
-#if UNUSED
-    EjsService  *ejsService;
-#endif
     Ejs         *ejs;
     EcCompiler  *compiler;
     MprList     *modules;
@@ -36,7 +33,7 @@ MAIN(ejscMain, int argc, char **argv)
     EcCompiler      *cp;
     char            *argp, *searchPath, *outputFile, *certFile, *name, *tok, *modules;
     int             nextArg, err, ejsFlags, ecFlags, bind, debug, doc, merge, modver;
-    int             warnLevel, noout, parseOnly, tabWidth, optimizeLevel, strict, strip;
+    int             warnLevel, noout, parseOnly, tabWidth, optimizeLevel, strict;
 
     /*
         Initialize the Multithreaded Portable Runtime (MPR)
@@ -93,6 +90,7 @@ MAIN(ejscMain, int argc, char **argv)
                 err++;
             } else {
                 ejsRedirectLogging(argv[++nextArg]);
+                mprSetCmdlineLogging(1);
             }
 
         } else if (strcmp(argp, "--merge") == 0) {
@@ -152,9 +150,9 @@ MAIN(ejscMain, int argc, char **argv)
                     app->modules = mprCreateList(-1, 0);
                 }
                 modules = sclone(argv[++nextArg]);
-#if MACOSX
-                //  FIX FOR XCODE MANGLING COMMAND LINE ARGS
-                if (modules[0] == ' ') {
+#if MACOSX || WIN
+                /*  Fix for Xcode and Visual Studio */
+                if (modules[0] == ' ' || scmp(modules, "null") == 0) {
                     modules[0] = '\0';                    
                 }
 #endif
@@ -172,9 +170,10 @@ MAIN(ejscMain, int argc, char **argv)
                 certFile = argv[++nextArg];
             }
 
+#if FUTURE
         } else if (strcmp(argp, "--strip") == 0) {
             strip = 1;
-
+#endif
         } else if (strcmp(argp, "--tabWidth") == 0) {
             if (nextArg >= argc) {
                 err++;
@@ -200,7 +199,7 @@ MAIN(ejscMain, int argc, char **argv)
             require("ejs");
             require("ejs.unix");
             require("ejs.db");
-            //  TODO MOB - decouple and remove this
+            //  TODO - decouple and remove this
             require("ejs.db.mapper");
             require("ejs.web");
 
@@ -255,9 +254,11 @@ MAIN(ejscMain, int argc, char **argv)
     if (doc) {
         ejsFlags |= EJS_FLAG_DOC;
     }
-    ejs = ejsCreate(NULL, searchPath, app->modules, 0, NULL, ejsFlags);
-    if (ejs == 0) {
+    if ((ejs = ejsCreateVM(0, 0, ejsFlags)) == 0) {
         return MPR_ERR_MEMORY;
+    }
+    if (ejsLoadModules(ejs, searchPath, app->modules) < 0) {
+        return MPR_ERR_CANT_READ;
     }
     app->ejs = ejs;
     ecFlags |= (debug) ? EC_FLAGS_DEBUG: 0;

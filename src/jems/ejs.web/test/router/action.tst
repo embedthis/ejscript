@@ -21,9 +21,11 @@ server.on("readable", function (event, request: Request) {
     finalize()
 })
 
+function defaultApp(request) {}
+
 //  Create the router and set the default buidler
 let router = new Router(null)
-router.setDefaultBuilder(builder)
+router.setDefaultApp(defaultApp)
 
 
 //  add("/User/{action}") -- Set action/controller from the template

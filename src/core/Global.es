@@ -6,6 +6,8 @@
 
 module ejs {
 
+    //  MOB - fix order
+
     /**
         Constant set to true in all Ejscript interpreters
         @spec ejs
@@ -24,12 +26,14 @@ module ejs {
      */
     public namespace public
 
+    //  MOB - is this used as a global?
     /** 
         The internal namespace used to make entities visible within a single module only.
         @spec ejs
      */
     public namespace internal
 
+    //  MOB -- remove iterator namespace
     /** 
         The iterator namespace used to define iterators.
         @spec ejs
@@ -40,74 +44,90 @@ module ejs {
         Alias for the Boolean type
        @spec ejs
      */
-    native const boolean: Type
+    const boolean: Type
 
     /** 
         Alias for the Number type
      */
-    native const double: Type
+    const double: Type
 
     /** 
        Alias for the Number type
        @spec ejs
      */
-    native const num: Type
+    const num: Type
 
     /** 
         Alias for the String type
      */
-    native const string: Type
+    const string: Type
+
+    /**
+        Empty string value
+     */
+    const empty: String
 
     /** 
         Boolean false value.
      */
-    native const false: Boolean
+    const false: Boolean
 
     /** 
         Global variable space reference. The global variable references an object which is the global variable space. 
         This is useful when guaranteed access to a global variable is required. e.g. global.someName.
         @spec ejs
      */
-    native var global: Object
+    var global: Object
 
     /** 
         Null value. The null value is returned when testing a nullable variable that has not yet had a 
         value assigned or one that has had null explicitly assigned.
      */
-    native const null: Null
+    const null: Null
 
     /** 
         Infinity value.
      */
-    native const Infinity: Number
+    const Infinity: Number
 
     /** 
         Negative infinity value.
      */
-    native const NegativeInfinity: Number
+    const NegativeInfinity: Number
 
     /** 
         Invalid numeric value. If the numeric type is set to an integral type, the value is zero.
      */
-    native const NaN: Number
+    const NaN: Number
 
     /** 
         True value
      */
-    native const true: Boolean
+    const true: Boolean
 
     /** 
         Undefined variable value. The undefined value is returned when testing
         for a property that has not been defined. 
      */
-    native const undefined: Void
+    const undefined: Void
 
     /** 
         Void type value. 
         This is an alias for Void.
         @spec ejs
      */
-    native const void: Type
+    const void: Type
+
+    /* Internal slot reservations */
+    internal const commaProt: String
+    internal const one: Number
+    internal const zero: Number
+    internal const length: String
+    internal const minusOne: Number
+    internal const emptySpace: Namespace
+    internal const max: Number
+    internal const min: Number
+    internal const nop: Function
 
     /** 
         Assert a condition is true. This call tests if a condition is true by testing to see if the supplied 
@@ -118,6 +138,7 @@ module ejs {
      */
     native function assert(condition: Boolean): Void
 
+    //  MOB - is this used?
     /** 
         Replace the base type of a type with an exact clone. 
         @param klass Class in which to replace the base class.
@@ -164,22 +185,27 @@ module ejs {
      */
     native function md5(str: String): String
 
-//  MOB -- rewrite
     /** 
-        Blend one object into another.  The merge is done at the primitive property level and it does a deep clone of 
-        the source. If overwrite is true, the property is replaced. If overwrite is false, the property will be added 
-        if it does not already exist This is useful for inheriting and optionally overwriting option hashes (among other
-        things). 
+        Blend the contents of one object into another. This routine copies the properites of one object into another.
+        If a property is an object reference and the "deep" option is set, the object is cloned using a deep clone. 
+        Otherwise the object reference is copied.
+        If the overwrite option is false, the property will only be copied if it does not already exist in the destination.
         @param dest Destination object
         @param src Source object
-        @param overwrite Boolean. If true, then overwrite existing properties in the destination object.
+        @param options Control options
+        @option overwrite Boolean. If true, then overwrite existing properties in the destination object. Defaults to true.
+        @option deep Boolean. If true, then recursively copy the properties of any objects referenced in the source object.
+            Otherwise, the copy is only one level deep. Defaults to true.
+        @option functions Boolean. If true, then copy functions. Defaults to false.
+        @option subclasses Boolean. If true, then copy subclass properties. Defaults to true.
+        @option trace Boolean. If true, then trace to the App.log the copied property names.
         @returns An the destination object
         @spec ejs
-        @hide
+        @example blend(dest, src, { overwrite: true, deep: true, functions: false, subclasses: true })
      */
-    native function blend(dest: Object, src: Object, overwrite: Boolean = true): Object
+    native function blend(dest: Object, src: Object, options = null): Object
 
-     // TODO - should cache be a Path
+    // TODO - should cache be a Path
     /** 
         Evaluate a script. Not present in ejsvm.
         @param script Script string to evaluate
@@ -209,15 +235,17 @@ module ejs {
     function isFinite(arg: Number): Boolean
         arg.isFinite
 
-    //  TODO MOB - should file and cache be paths?
+    //  TODO - should file and cache be paths?
     /** 
         Load a script or module
         @param file path name to load. File will be interpreted relative to EJSPATH if it is not found as an absolute or
             relative file name.
-        @param cache path name to save the compiled script as.
+        @param options Option parameters
+        @options cache String or Path name to save the compiled script as.
+        @options reload Boolean If true, reload the module if already loaded. Defaults to true.
         @returns The value of the last expression in the loaded module
      */
-    native function load(file: String, cache: String? = null): Object
+    native function load(file: String, options: Object = null): Object
 
     /** 
         Print the arguments to the standard output with a new line appended. This call evaluates the arguments, 
@@ -235,14 +263,7 @@ module ejs {
         @param args Variables to print
         @spec ejs
      */
-    native function print(...args): void
-
-    /**
-        Print the arguments using a printf style format string
-        @param fmt Format string
-        @param args Variables to print
-     */
-    function printf(fmt, ...args): Void
+    function printf(fmt: String, ...args): Void
         App.outputStream.write(fmt.format(args))
 
     /** 
@@ -269,26 +290,7 @@ module ejs {
      */
     native function parseInt(str: String, radix: Number = 10): Number
 
-    /* TODO - remove
-        Determine the type of a variable. 
-        @param o Variable to examine.
-        @return Returns a string containing the arguments type. Possible types are:
-            @li $undefined "undefined"
-            @li $Object "object"
-            @li $Boolean "boolean"
-            @li $Function "function"
-            @li Number "number"
-            @li String "string"
-        Note that JavaScript has many other types that are not accurately represented by the typeof call. Such types
-        and values include: Array, String, Function, Math, Date, RegExp, Error and null and undefined values. 
-        Consequently, typeof() is unable to correctly identify object data types. Use the fixed $typeOf() function
-        instead.
-        @remarks Note that lower case names are returned for class names.
-        @spec ejs
-    native function typeof(o: Object): String
-     */
-
-    /** @hide  TODO - temp only */
+    /** @hide */
     function printHash(name: String, o: Object): Void
         print("%20s %X" % [name, hashcode(o)])
 

@@ -28,7 +28,7 @@
 module ejs {
 
     /**
-        Path class. Paths are filenames and may or may not represent physical files in a file system. That is, the 
+        Paths are filename objects and may or may not represent physical files in a file system. That is, the 
         corresponding file or directory for the Path  may or may not exist. Once created, Paths are immutable and their
         path value cannot be changed.
         @spec ejs
@@ -44,6 +44,7 @@ module ejs {
          */
         native function Path(path: String)
 
+//  MOB -- uses default native separator
         /**
             An equivalent absolute path equivalent for the current path. The path is normalized.
          */
@@ -77,7 +78,6 @@ module ejs {
          */
         native function get basename(): Path
         
-//  MOB -- perhaps should be split()
         /**
             Path components. This is the path converted to an absolute path and then broken into components for each
             directory level. It is set to an array object with an element for each segment of the path. The first 
@@ -249,7 +249,6 @@ module ejs {
          */
         native function joinExt(ext: String): Path
 
-//  MOB -- fix when UNICODE to length in characters
         /**
             The length of the path name in bytes. Note: this is not the file size. For that, use Path.size
          */
@@ -313,7 +312,7 @@ module ejs {
 
         /**
             Natural (native) respresentation of the path. This uses the default O/S file system path separator, 
-            this is "\" on windows and "/" on unix and is normalized.
+            this is "\" on windows and "/" on unix and is normalized. See also $portable for a portable representation.
          */
         native function get natural(): Path 
 
@@ -326,7 +325,7 @@ module ejs {
 
         /**
             Open a path and return a File object.
-            @params options
+            @param options
             @options mode optional file access mode string. Use "r" for read, "w" for write, "a" for append to existing
                 content, "+" never truncate.
             @options permissions optional Posix permissions number mask. Defaults to 0664.
@@ -340,7 +339,7 @@ module ejs {
 
         /**
             Open a file and return a TextStream object.
-            @params options Optional options object
+            @param options Optional options object
             @options mode optional file access mode string. Use "r" for read, "w" for write, "a" for append to existing
                 content, "+" never truncate.
             @options encoding Text encoding format
@@ -355,7 +354,7 @@ module ejs {
 
         /**
             Open a file and return a BinaryStream object.
-            @params options Optional options object
+            @param options Optional options object
             @options mode optional file access mode with values ored from: Read, Write, Append, Create, Open, Truncate. 
                 Defaults to Read.
             @options permissions optional Posix permissions number mask. Defaults to 0664.
@@ -383,7 +382,7 @@ module ejs {
 
         /**
             The path in a portable (like Unix) representation. This uses "/" separators. The value is is normalized and 
-            the separators are mapped to "/".
+            the separators are mapped to "/". See also $natural for convertion to the O/S native path representation.
          */
         native function get portable(): Path 
 
@@ -467,11 +466,9 @@ module ejs {
          */
         native function get relative(): Path
 
-//  MOB - better not to throw
         /**
             Delete the file associated with the Path object. If this is a directory without contents it will be removed.
             @return True if the file is sucessfully deleted
-            @throws IOError if the file exists and could not be deleted.
          */
         native function remove(): Boolean 
 
@@ -518,7 +515,7 @@ module ejs {
 
             Resolve is useful for creating paths in the region of the current path and gracefully handles both 
             absolute and relative path segments.
-            @params otherPaths Paths to resolve in the region of this path.
+            @param otherPaths Paths to resolve in the region of this path.
             @return A new Path object that is resolved against the prior path. 
          */
         native function resolve(...otherPaths): Path
@@ -615,6 +612,7 @@ module ejs {
          */
         native function truncate(size: Number): Void
 
+        //  MOB rename? - bit confusing "write". This really does a "save"
         /**
             Write the file contents. This method opens the file, writes the contents and closes the file.
             @param args The data to write to the file. Data is serialized in before writing. Note that numbers will not 

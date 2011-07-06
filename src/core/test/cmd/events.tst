@@ -8,22 +8,22 @@ if (!Path("/bin").exists) {
     test.skip("Only run on unix systems")
 } else {
 
-    data = new ByteArray
+    let out = new ByteArray
     for (i in 1000) {
-        data.write(i + ": aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa")
+        out.write(i + ": aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa")
     }
-    let count = data.available
+    let count = out.available
 
     cmd = new Cmd
     cmd.start("/bin/cat", {detach: true})
-    let response = new ByteArray
+    let input = new ByteArray
     cmd.on("readable", function(event, cmd) {
-        cmd.read(response, -1)
+        cmd.read(input, -1)
     })
     cmd.on("writable", function(event, cmd) {
-        let len = cmd.write(data)
-        data.readPosition += len
-        if (data.available == 0) {
+        let len = cmd.write(out)
+        out.readPosition += len
+        if (out.available == 0) {
             cmd.finalize()
         }
     })
@@ -32,7 +32,7 @@ if (!Path("/bin").exists) {
         gotEvent = event
     })
     cmd.wait()
-    assert(response.available == count)
+    assert(input.available == count)
     assert(cmd.status == 0)
     assert(gotEvent == "complete")
 

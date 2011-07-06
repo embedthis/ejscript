@@ -22,9 +22,7 @@ server.on("readable", function (event, request: Request) {
 })
 
 
-//  Create the router and set the default buidler
 let router = new Router(null)
-router.setDefaultBuilder(builder)
 
 
 //  Nested routes /Dash(/{product}(/{branch}(/{configuration})))

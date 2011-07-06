@@ -7,7 +7,8 @@
 module ejs {
 
     /** 
-        The Frame type is used for activation call frames. 
+        Function call frame class. The Frame type is used internally by the ejs virtual machine to manage
+        function calls and store function local variables.
         @stability evolving
      */
     dynamic class Frame extends Function { }

@@ -73,13 +73,18 @@ module ejs {
         /**
             Format the captured stack
             @return A string containing the formatted stack backtrace. Format is:
-                [INDEX FILENAME, line LINENO, FUNCTION, CODE_LINE
+                [INDEX FILENAME, line LINENO, FUNCTION, CODE_LINE]
          */
         function formatStack(): String {
             let result = ""
             let i = 0
             for each (frame in stack) {
-                result += " [%02d] %s, line %d, %s, %s\n".format(i++, frame.filename, frame.lineno, frame.func, frame.code)
+                if (frame.filename) {
+                    result += " [%02d] %s, line %d, %s, %s\n".format(
+                        i++, frame.filename, frame.lineno, frame.func, frame.code)
+                } else {
+                    result += " [%02d] %s\n".format(i++, frame.func)
+                }
             }
             return result
         }
@@ -87,7 +92,7 @@ module ejs {
 
     /**
         Arguments error exception class. 
-        Thrown the arguments are not compatible with the required function  parameters.
+        Thrown when function arguments are not compatible with the required function parameters.
         @spec ejs
         @stability evolving
      */
@@ -99,9 +104,8 @@ module ejs {
         native function ArgError(message: String? = null) 
     }
 
-//MOB Who is using this? Delete
     /**
-        Arithmetic error exception class. Thrown when the system cannot perform an arithmetic operation, 
+        Arithmetic error exception class. Thrown when the system cannot perform an arithmetic or math operation, 
         @spec ejs
         @stability evolving
      */
@@ -114,7 +118,7 @@ module ejs {
     }
 
     /**
-        Assertion error exception class. Thrown when the $assert method is invoked with a false value.
+        Assertion error exception class. Thrown when the $global.assert method is invoked with a false value.
         @spec ejs
         @stability evolving
      */
@@ -126,7 +130,7 @@ module ejs {
         native function AssertError(message: String? = null) 
     }
 
-//MOB Who is using this? Delete
+//UNUSED Who is using this? Delete
     /**
         Code (instruction) error exception class. Thrown when an illegal or insecure operation code is detected 
         in the instruction stream.
@@ -183,7 +187,7 @@ module ejs {
         native function MemoryError(message: String? = null) 
     }
 
-//MOB Who is using this? Delete
+//UNUSED Who is using this? Delete
     /**
         OutOfBounds error exception class. Thrown to indicate that an attempt has been made to set or access an 
         object's property outside of the permitted set of values for that property. For example, an array has been 
@@ -245,7 +249,7 @@ module ejs {
 
     /**
         State error exception class. Thrown when an object cannot be transitioned from its current state to the 
-        desired state, e.g. calling "sleep" on an interrupted thread.
+        desired state.
         @spec ejs
         @stability evolving
      */
@@ -272,8 +276,7 @@ module ejs {
 
     /**
         Type error exception class. Thrown when a type casting or creation operation fails, e.g. when an operand 
-        cannot be cast to a type that allows completion of a statement or when a type cannot be found for object 
-        creation or when an object cannot be instantiated given the values passed into "new".
+        cannot be cast to a required parameter type.
         @stability evolving
      */
     dynamic class TypeError extends Error {
@@ -284,7 +287,7 @@ module ejs {
         native function TypeError(message: String? = null) 
     }
 
-//MOB Delete
+//UNUSED Delete
     /**
         Uri error exception class. Throw a Uri fails to parse.
         @stability prototype

@@ -14,7 +14,7 @@ EjsBlock *ejsCloneBlock(Ejs *ejs, EjsBlock *src, bool deep)
 {
     EjsBlock    *dest;
 
-    dest = (EjsBlock*) ejsClonePot(ejs, (EjsObj*) src, deep);
+    dest = (EjsBlock*) ejsClonePot(ejs, src, deep);
 
     dest->nobind = src->nobind;
     dest->scope = src->scope;
@@ -56,19 +56,7 @@ int ejsAddNamespaceToBlock(Ejs *ejs, EjsBlock *block, EjsNamespace *nsp)
         ejsThrowTypeError(ejs, "Not a namespace");
         return EJS_ERR;
     }
-#if UNUSED && KEEP
-    /* Namespaces must be ordered and so can't do this */ 
-    for (next = 0; ((existing = (EjsNamespace*) mprGetNextItem(&block->namespaces, &next)) != 0); ) {
-        if (existing->value == nsp->value) {
-            break;
-        }
-    }
-    if (existing == NULL) {
-        mprAddItem(&block->namespaces, nsp);
-    }
-#else
-        mprAddItem(&block->namespaces, nsp);
-#endif
+    mprAddItem(&block->namespaces, nsp);
     return 0;
 }
 
@@ -88,14 +76,14 @@ void ejsInheritBaseClassNamespaces(Ejs *ejs, EjsType *type, EjsType *baseType)
 
     if (baseNamespaces) {
         for (next = 0; ((nsp = (EjsNamespace*) mprGetNextItem(baseNamespaces, &next)) != 0); ) {
-            //  MOB -- must be a better way to do this?
-            if (ejsContainsString(ejs, nsp->value, S(commaProt))) {
+            //  OPT -- must be a better way to do this?
+            if (ejsContainsString(ejs, nsp->value, ESV(commaProt))) {
                 for (i = 0; ((existing = (EjsNamespace*) mprGetNextItem(&block->namespaces, &i)) != 0); ) {
                     if (existing->value == nsp->value) {
                         break;
                     }
                 }
-                //  MOB -- debug to see if duplicates found 
+                //  OPT -- debug to see if duplicates found 
                 mprAssert(existing == NULL);
                 if (existing == NULL) {
                     mprInsertItemAtPos(&block->namespaces, next - 1, nsp);
@@ -112,7 +100,7 @@ EjsBlock *ejsCreateBlock(Ejs *ejs, int size)
 {
     EjsBlock        *block;
 
-    if ((block = ejsCreatePot(ejs, S(Block), size)) == 0) {
+    if ((block = ejsCreatePot(ejs, ESV(Block), size)) == 0) {
         return 0;
     }
     block->pot.shortScope = 1;
@@ -162,17 +150,33 @@ void ejsManageBlock(EjsBlock *block, int flags)
 }
 
 
-void ejsCreateBlockType(Ejs *ejs)
+void ejsCreateBlockHelpers(Ejs *ejs)
+{
+    EjsHelpers      *helpers;
+
+    ejs->service->blockHelpers = ejs->service->potHelpers;
+    helpers = &ejs->service->blockHelpers;
+    helpers->clone = (EjsCloneHelper) ejsCloneBlock;
+}
+
+
+void ejsInitBlockType(Ejs *ejs, EjsType *type)
+{
+    type->constructor.block.pot.shortScope = 1;
+    ejsAddImmutable(ejs, S_commaProt, EN(",protected"), ejsCreateStringFromAsc(ejs, ",protected"));
+}
+
+
+void ejsConfigureBlockType(Ejs *ejs)
 {
     EjsType     *type;
-
-    type = ejsCreateNativeType(ejs, N("ejs", "Block"), sizeof(EjsBlock), S_Block, ES_Block_NUM_CLASS_PROP, 
-        ejsManageBlock, EJS_POT_HELPERS);
-    type->constructor.block.pot.shortScope = 1;
-
-    type->helpers.clone = (EjsCloneHelper) ejsCloneBlock;
-    ejsSetSpecial(ejs, S_commaProt, ejsCreateStringFromAsc(ejs, ",protected"));
+    
+    if ((type = ejsFinalizeCoreType(ejs, N("ejs", "Block"))) == 0) {
+        return;
+    }
+    ejsAddImmutable(ejs, S_commaProt, EN(",protected"), ejsCreateStringFromAsc(ejs, ",protected"));
 }
+
 
 
 /*

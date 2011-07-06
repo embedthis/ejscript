@@ -34,6 +34,7 @@ class EjsMvc {
     private var db: Database
     private var debug: Boolean = false
     private var ext: Object
+    private var endpoint: String = ":4000"
     private var layoutPage: String
     private var mode: String = "debug"
     private var mvc: String
@@ -43,18 +44,7 @@ class EjsMvc {
 
     /* This layers over App.defaultConfig */
     private var defaultConfig = {
-        mode: "debug",
-        cache: {
-            enable: true,
-            reload: true,
-        },
-        database: {
-            timeout: 5000,
-            debug: { },
-            test: { },
-            production: { },
-        },
-        directories: {
+        dirs: {
             bin: Path("bin"),
             db: Path("db"),
             cache: Path("cache"),
@@ -71,49 +61,34 @@ class EjsMvc {
             ejs: "ejs",
             mod: "mod",
         },
-        //  MOB -- should be a files section with "ejsrc", 
         mvc: {
             appmod: "App.mod",
             compiler: "ejsc --debug --web",
             start: "start.es",
         },
-        web: {
-            view: {
-                connectors: {
-                    table: "html",
-                    chart: "google",
-                    rest: "html",
-                },
-                formats: {
-                    Date: "%a %e %b %H:%M",
-                },
-                // helpers: []
-            },
-        },
-        session: {
-            enable: true,
-            timeout: 1800,
-        },
     }
 
     function EjsMvc() {
-        blend(config, defaultConfig, false)
+        blend(config, defaultConfig, {overwrite: false})
         loadConfig("ejsrc", true)
         ext = config.extensions
 
-        if (config.mvc) {
-            dirs = config.directories
-            dirs.home = App.dir
-            //  MOB -- should these come from ejsrc
+        dirs = config.dirs
+        dirs.home = App.dir
+        //  TODO -- should these come from ejsrc
+        if (Config.OS == "WIN") {
+            dirs.lib = App.exeDir.join("../bin")
+            dirs.mod = App.exeDir.join("../bin")
+        } else {
             dirs.lib = App.exeDir.join("../lib")
             dirs.mod = App.exeDir.join("../modules")
-            for (d in dirs) {
-                dirs[d] = Path(dirs[d])
-            }
-            //  MOB -- should this come from ejsrc
-            layoutPage = dirs.layouts.join("default.ejs")
-            mvc = Path(App.args[0]).basename
         }
+        for (d in dirs) {
+            dirs[d] = Path(dirs[d])
+        }
+        //  TODO -- should this come from ejsrc
+        layoutPage = dirs.layouts.join("default.ejs")
+        mvc = Path(App.args[0]).basename
     }
 
     private var cmdOptions = [
@@ -123,6 +98,7 @@ class EjsMvc {
         [ "full" ],
         [ [ "keep", "k" ] ],
         [ "layout", String ],
+        [ "listen", String ],
         [ "min" ],
         [ "overwrite" ],
         [ [ "quiet", "q" ] ],
@@ -132,13 +108,14 @@ class EjsMvc {
     ]
 
     function usage(): Void {
-        print("\nUsage: " + mvc + " [options] [commands] ...\n" +
+        error("\nUsage: " + mvc + " [options] [commands] ...\n" +
             "  Options:\n" + 
             "    --apply                      # Apply migrations\n" + 
             "    --database [sqlite | mysql]  # Sqlite only currently supported adapter\n" + 
             "    --full\n" + 
             "    --keep\n" + 
             "    --layout layoutPage\n" + 
+            "    --listen port\n" + 
             "    --min\n" + 
             "    --reverse                    # Reverse generated migrations\n" + 
             "    --overwrite\n" + 
@@ -146,7 +123,7 @@ class EjsMvc {
             "    --verbose\n")
 
         let pre = "    " + mvc + " "
-        print("  Commands:\n" +
+        error("  Commands:\n" +
             pre + "clean\n" +
             pre + "compile [flat | app | controller names | view names]\n" +
             pre + "compile path/name.ejs ...\n" +
@@ -211,6 +188,9 @@ class EjsMvc {
         if (options.verbose) {
             verbose += (options.verbose cast Number)
         }
+        if (options.listen) {
+            endpoint = (options.listen)
+        }
         App.search = [dirs.cache] + App.search
     }
 
@@ -270,10 +250,6 @@ class EjsMvc {
 
         default:
             throw "Unknown command: " + task
-/* UNUSED TODO
-            rest = cmd.args
-            compile(rest)
-*/
             break
         }
         if (options.apply) {
@@ -455,7 +431,6 @@ class EjsMvc {
         }
         let out = dirs.cache.join(file.basename).replaceExt(ext.mod)
         let cmd: String
-        //  MOB -- but search is an array !!
         let search = App.search.join(App.SearchSeparator)
         cmd = getCompilerPath() + " --out " + out + " --search \"" + search + "\" " + dirs.cache.join(config.mvc.appmod) + 
             " " + file
@@ -471,7 +446,7 @@ class EjsMvc {
              //  Skip layouts
             return null
         }
-        if (!file.startsWith(dirs.views.toString() + "/") || file.extension != ext.ejs) {
+        if (!file.startsWith(dirs.views.toString()) || file.extension != ext.ejs) {
             throw "File \"" + file + " \" is not a view. Path should be \"" + dirs.views.join("CONTROLLER/VIEW.ejs") + "\""
         }
         if (!file.exists) {
@@ -650,7 +625,7 @@ class EjsMvc {
         binFiles = [ "ejs", "ejsc", "mvc", ]
         extFiles = [ "libcrypto", "libssl", "libmprssl" ]
 
-//  MOB - not used
+        //  TODO - not used
         confFiles = [ ]
 
         if (exists(dirs.mod.join("ejs.db.mod"))) {
@@ -902,7 +877,6 @@ class EjsMvc {
         }
     }
 
-//  MOB -- add optional endpoint arg:   mvc run [endpoint]
     function run(args: Array): Void {
         let start = config.mvc.start
         trace("[RUN]", start)
@@ -966,7 +940,6 @@ class EjsMvc {
         }
         generateDatabase()
 
-        //  MOB - use dirs.src
         let files = ["src/App.es", dirs.controllers.join("Base.es")]
         buildFiles(dirs.cache.join("App").joinExt(ext.mod), files)
         App.chdir("..")
@@ -984,7 +957,7 @@ class EjsMvc {
         makeConfigFile("ejsrc", data)
         /* Reload */
         loadConfig("ejsrc", true)
-        assert(dirs == config.directories)
+        assert(dirs == config.dirs)
         for (d in dirs) {
             dirs[d] = Path(dirs[d])
         }
@@ -1308,6 +1281,9 @@ class EjsMvc {
             }
         }
         appName = App.dir.basename.toString().toLowerCase()
+        if (!dirs.controllers.exists) {
+            throw new IOError("Not an MVC application directory")
+        }
         if (!dirs.cache.exists || !isDir(dirs.cache)) {
             upgradeApp()
         }
@@ -1321,7 +1297,7 @@ class EjsMvc {
                 return false
             }
         }
-        blend(config, path.readJSON(), overwrite)
+        blend(config, path.readJSON(), {overwrite: overwrite})
         return true
     }
 
@@ -1330,6 +1306,7 @@ class EjsMvc {
             return
         }
         data = data.replace(/\${NAME}/g, appName)
+        data = data.replace(/\${ENDPOINT}/g, endpoint)
         makeFile(path, data, "Config File")
     }
 
@@ -1434,16 +1411,18 @@ class Templates {
 '{
     mode: "debug",
 
-    cache: {
-        enable: true,
-        reload: true,
+    app: {
     },
 
+    cache : {
+        app:     { enable: true, reload: true },
+        actions: { enable: true, lifespan: 1800 },
+        workers: { enable: true, limit: 10},
+    },
     database: {
-        module: "ejs.db",
-        class: "Database",
-        adapter: "sqlite3",
-        timeout: 5000,
+        adapter: "sqlite",
+        class: "Sqlite",
+        module: "ejs.db.sqlite",
         debug: {
             name: "db/${NAME}.sdb", username: "", password: "", trace: false,
         },
@@ -1455,7 +1434,7 @@ class Templates {
         },
     },
     
-    directories: {
+    dirs: {
         cache: "cache",
         db: "db",
         migrations: "db/migrations",
@@ -1467,29 +1446,37 @@ class Templates {
 
     log: {
         enable: true,
-        location: "stdout",
+        location: "stderr",
         level: 1,
-        showClient: false,
+        showClient: true,
     },
 
     mvc: {
         start: "start.es",
     },
 
-    session: {
-        enable: true,
-        timeout: 1800,
-    },
-
     web: {
-        endpoint: ":4000",
         expires: {
             html:   86400,
-            ejs:    86400,
-            es:     86400,
-            "":     86400,
+            png:    86400,
+            gif:    86400,
+            ico:    86400,
+            jpg:    86400,
+            jpeg:   86400,
+            js:     86400,
+            css:    86400,
         },
-        view: {
+        limits: {
+            inactivityTimeout: 3600, 
+            requestTimeout: 3600, 
+            sessionTimeout: 3600, 
+        },
+        listen: "${ENDPOINT}",
+        trace: {
+            rx: { exclude: ["jpg", "gif", "png", "ico", "css", "js"], conn: 5, first: 2, headers: 3, body: 4, size: 1024 },
+            tx: { exclude: ["jpg", "gif", "png", "ico", "css",], headers: 4, body: 5, size: 10240 },
+        },
+        views: {
             connectors: {
                 table: "html",
                 chart: "google",
@@ -1754,11 +1741,11 @@ var router = new Router(Router.Restful)
 
 server.on("readable", function (event, request) {
     App.log.info(request.method, request.uri, request.scheme)
-    Web.serve(request, router)
+    server.serve(request, router)
 })
 
-App.log.info("Listen on", App.config.web.endpoint)
-server.listen(App.config.web.endpoint)
+App.log.info("Listen on", App.config.web.listen)
+server.listen(App.config.web.listen)
 App.run()
 '
 

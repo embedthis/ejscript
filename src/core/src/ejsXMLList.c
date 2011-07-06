@@ -68,7 +68,7 @@ static EjsObj *xlCast(Ejs *ejs, EjsXML *vp, EjsType *type)
     EjsXML      *elt, *item;
     int         next;
 
-    if (type == ST(XML)) {
+    if (type == ESV(XML)) {
         return (EjsObj*) vp;
     }
     switch (type->sid) {
@@ -78,7 +78,7 @@ static EjsObj *xlCast(Ejs *ejs, EjsXML *vp, EjsType *type)
         return (EjsObj*) ejsCreateBoolean(ejs, 1);
 
     case S_Number:
-        result = xlCast(ejs, vp, ST(String));
+        result = xlCast(ejs, vp, ESV(String));
         result = (EjsObj*) ejsToNumber(ejs, result);
         return result;
 
@@ -88,7 +88,7 @@ static EjsObj *xlCast(Ejs *ejs, EjsXML *vp, EjsType *type)
             elt = mprGetFirstItem(vp->elements);
             if (elt->kind == EJS_XML_ELEMENT) {
                 if (elt->elements == 0) {
-                    return (EjsObj*) S(empty);
+                    return (EjsObj*) ESV(empty);
                 }
                 if (elt->elements && mprGetListLength(elt->elements) == 1) {
                     //  TODO - what about PI and comments?
@@ -201,7 +201,7 @@ static EjsObj *getXmlListNodeName(Ejs *ejs, EjsXML *xml, int argc, EjsObj **argv
     } else if (xml->targetObject) {
         return (EjsObj*) xml->targetObject->qname.name;
     } else {
-        return S(null);
+        return ESV(null);
     }
 }
 
@@ -236,7 +236,7 @@ static EjsObj *nextXmlListKey(Ejs *ejs, EjsIterator *ip, int argc, EjsObj **argv
  */
 static EjsObj *getXmlListIterator(Ejs *ejs, EjsObj *xml, int argc, EjsObj **argv)
 {
-    return (EjsObj*) ejsCreateIterator(ejs, xml, (EjsProc) nextXmlListKey, 0, NULL);
+    return (EjsObj*) ejsCreateIterator(ejs, xml, nextXmlListKey, 0, NULL);
 }
 
 
@@ -274,7 +274,7 @@ static EjsObj *nextXmlListValue(Ejs *ejs, EjsIterator *ip, int argc, EjsObj **ar
  */
 static EjsObj *getXmlListValues(Ejs *ejs, EjsObj *ap, int argc, EjsObj **argv)
 {
-    return (EjsObj*) ejsCreateIterator(ejs, ap, (EjsProc) nextXmlListValue, 0, NULL);
+    return (EjsObj*) ejsCreateIterator(ejs, ap, nextXmlListValue, 0, NULL);
 }
 
 
@@ -306,7 +306,6 @@ static EjsObj *invokeOperator(Ejs *ejs, EjsXML *lhs, int opCode,  EjsXML *rhs)
     default:
         /*
             Cast to strings and re-invoke
-            MOB - change to ejsToString
          */
         l = ejsCast(ejs, lhs, String);
         r = ejsCast(ejs, rhs, String);
@@ -327,7 +326,7 @@ static int setAlphaPropertyByName(Ejs *ejs, EjsXML *list, EjsName qname, EjsObj 
 
     targetObject = 0;
 
-    count = ejsGetPropertyCount(ejs, (EjsObj*) list);
+    count = ejsGetLength(ejs, (EjsObj*) list);
     if (count > 1) {
         //  TODO - why no error in spec?
         mprAssert(0);
@@ -342,7 +341,7 @@ static int setAlphaPropertyByName(Ejs *ejs, EjsXML *list, EjsName qname, EjsObj 
         if (targetObject == 0) {
             return 0;
         }
-        if (ejsGetPropertyCount(ejs, (EjsObj*) targetObject) != 1) {
+        if (ejsGetLength(ejs, (EjsObj*) targetObject) != 1) {
             return 0;
         }
         ejsAppendToXML(ejs, list, targetObject);
@@ -351,7 +350,7 @@ static int setAlphaPropertyByName(Ejs *ejs, EjsXML *list, EjsName qname, EjsObj 
     /*
         Update the element
      */
-    mprAssert(ejsGetPropertyCount(ejs, (EjsObj*) list) == 1);
+    mprAssert(ejsGetLength(ejs, (EjsObj*) list) == 1);
     elt = mprGetItem(list->elements, 0);                        //  TODO OPT - GetFirstItem
     mprAssert(elt);
     ejsSetPropertyByName(ejs, elt, qname, value);
@@ -548,7 +547,7 @@ static int setXmlListPropertyByName(Ejs *ejs, EjsXML *list, EjsName qname, EjsOb
  */
 static EjsObj *xl_parent(Ejs *ejs, EjsXML *xml, int argc, EjsObj **argv)
 {
-    return xml->targetObject ? (EjsObj*) xml->targetObject : (EjsObj*) S(null);
+    return xml->targetObject ? (EjsObj*) xml->targetObject : (EjsObj*) ESV(null);
 }
 
 /******************************** Support Routines **************************/
@@ -626,17 +625,17 @@ static EjsXML *resolve(Ejs *ejs, EjsXML *xml)
     if (targetPropertyList == 0) {
         return 0;
     }
-    if (ejsGetPropertyCount(ejs, (EjsObj*) targetPropertyList) == 0) {
+    if (ejsGetLength(ejs, (EjsObj*) targetPropertyList) == 0) {
         /*
             Property does not exist in the target.
          */
-        if (targetObject->kind == EJS_XML_LIST && ejsGetPropertyCount(ejs, (EjsObj*) targetObject) > 1) {
+        if (targetObject->kind == EJS_XML_LIST && ejsGetLength(ejs, (EjsObj*) targetObject) > 1) {
             return 0;
         }
         /*
             Create the property as an element (The text value will be optimized away).
          */
-        ejsSetPropertyByName(ejs, targetObject, xml->targetProperty, S(empty));
+        ejsSetPropertyByName(ejs, targetObject, xml->targetProperty, ESV(empty));
         targetPropertyList = ejsGetPropertyByName(ejs, (EjsObj*) targetObject, xml->targetProperty);
     }
     return targetPropertyList;
@@ -716,7 +715,7 @@ static EjsObj *xmlListToJson(Ejs *ejs, EjsObj *vp, int argc, EjsObj **argv)
  */
 static EjsObj *xmlListToString(Ejs *ejs, EjsObj *vp, int argc, EjsObj **argv)
 {
-    return (TYPE(vp)->helpers.cast)(ejs, vp, ST(String));
+    return (TYPE(vp)->helpers.cast)(ejs, vp, ESV(String));
 }
 
 
@@ -753,14 +752,14 @@ static EjsObj *setLength(Ejs *ejs, EjsXMLList *xml, int argc, EjsObj **argv)
 #if KEEP
     if (length < ap->length) {
         for (i = length; i < ap->length; i++) {
-            if (ejsSetProperty(ejs, ap, i, S(undefined)) < 0) {
+            if (ejsSetProperty(ejs, ap, i, ESV(undefined)) < 0) {
                 //  TODO - DIAG
                 return 0;
             }
         }
 
     } else if (length > ap->length) {
-        if (ejsSetProperty(ejs, ap, length - 1, S(undefined)) < 0) {
+        if (ejsSetProperty(ejs, ap, length - 1, ESV(undefined)) < 0) {
             //  TODO - DIAG
             return 0;
         }
@@ -779,7 +778,7 @@ EjsXML *ejsCreateXMLList(Ejs *ejs, EjsXML *targetObject, EjsName targetProperty)
 {
     EjsXML      *list;
 
-    if ((list = (EjsXML*) ejsAlloc(ejs, ST(XMLList), 0)) == NULL) {
+    if ((list = (EjsXML*) ejsAlloc(ejs, ESV(XMLList), 0)) == NULL) {
         return 0;
     }
     list->kind = EJS_XML_LIST;
@@ -797,8 +796,8 @@ void ejsCreateXMLListType(Ejs *ejs)
 {
     EjsType     *type;
 
-    type = ejsCreateNativeType(ejs, N("ejs", "XMLList"), sizeof(EjsXML), S_XMLList, ES_XMLList_NUM_CLASS_PROP, 
-        ejsManageXML, EJS_OBJ_HELPERS);
+    type = ejsCreateCoreType(ejs, N("ejs", "XMLList"), sizeof(EjsXML), S_XMLList, ES_XMLList_NUM_CLASS_PROP, 
+        ejsManageXML, EJS_TYPE_OBJ);
 
     /*
         Must not bind as XML uses get/setPropertyByName to defer to user XML elements over XML methods
@@ -821,19 +820,20 @@ void ejsConfigureXMLListType(Ejs *ejs)
     EjsType     *type;
     EjsPot      *prototype;
 
-    type = ST(XMLList);
+    if ((type = ejsFinalizeCoreType(ejs, N("ejs", "XMLList"))) == 0) {
+        return;
+    }
     prototype = type->prototype;
-
-    ejsBindConstructor(ejs, type, (EjsProc) xmlListConstructor);
-    ejsBindMethod(ejs, prototype, ES_XMLList_length, (EjsProc) xlLength);
-    ejsBindMethod(ejs, prototype, ES_XMLList_name, (EjsProc) getXmlListNodeName);
+    ejsBindConstructor(ejs, type, xmlListConstructor);
+    ejsBindMethod(ejs, prototype, ES_XMLList_length, xlLength);
+    ejsBindMethod(ejs, prototype, ES_XMLList_name, getXmlListNodeName);
     ejsBindMethod(ejs, prototype, ES_XMLList_parent, (EjsNativeFunction) xl_parent);
 #if FUTURE
     ejsBindMethod(ejs, prototype, "name", name, NULL);
     ejsBindMethod(ejs, prototype, "valueOf", valueOf, NULL);
 #endif
-    ejsBindMethod(ejs, prototype, ES_XMLList_toJSON, (EjsProc) xmlListToJson);
-    ejsBindMethod(ejs, prototype, ES_XMLList_toString, (EjsProc) xmlListToString);
+    ejsBindMethod(ejs, prototype, ES_XMLList_toJSON, xmlListToJson);
+    ejsBindMethod(ejs, prototype, ES_XMLList_toString, xmlListToString);
     ejsBindMethod(ejs, prototype, ES_XMLList_iterator_get, getXmlListIterator);
     ejsBindMethod(ejs, prototype, ES_XMLList_iterator_getValues, getXmlListValues);
 }

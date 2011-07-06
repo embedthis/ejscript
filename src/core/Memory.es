@@ -22,7 +22,7 @@ module ejs {
          */
         native static function get allocated(): Number
 
-        //  MOB -- should use observers not callbacks
+        //  TODO -- should use observers not callbacks
         /**
             Memory redline callback. When the memory redline limit is exceeded, the callback will be invoked. 
             If no callback is defined and the redline limit is exceeded, a MemoryError exception is thrown. This callback
@@ -35,13 +35,12 @@ module ejs {
         native static function set callback(fn: Function): Void
 
 
-//  MOB -- what is the default?
         /**
             Maximum amount of heap memory the application may use in bytes. This defines the upper limit for heap memory 
             usage by the entire hosting application. If this limit is reached, subsequent memory allocations will fail and 
             a $MemoryError exception will be thrown. Setting it to zero will allow unlimited memory allocations up 
             to the system imposed maximum. If $redline is defined and non-zero, the redline callback will be invoked 
-            when the $redline is exceeded.
+            when the $redline is exceeded. By default, maximum is set to unlimited.
          */
         native static function get maximum(): Number
 
@@ -65,9 +64,11 @@ module ejs {
          */
         native static function set redline(value: Number): Void
 
+        //  MOB BUG
         /**
             Application's current resident set in bytes. This is the total memory used to host the application and 
             includes all the the application code, data and heap. It is measured by the O/S.
+            NOTE: this is currently reporting the peak resident memory and not the current resident memory.
          */
         native static function get resident(): Number
 

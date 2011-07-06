@@ -11,12 +11,12 @@ module ejs.db.sqlite {
         @spec ejs
         @stabilitiy prototype
      */
-    "ejs.db" class Sqlite {
+    class Sqlite {
 
         /*
             Map independent types to SQL types
          */
-        static const DataTypeToSqlType: Object = {
+        static var DataTypeToSqlType: Object = {
             "binary":       "blob",
             "boolean":      "tinyint",
             "date":         "date",
@@ -34,7 +34,7 @@ module ejs.db.sqlite {
         /*
             Map independent types to SQL types
          */
-        static const SqlTypeToDataType: Object = {
+        static var SqlTypeToDataType: Object = {
             "blob":         "binary",
             "tinyint":      "boolean",
             "date":         "date",
@@ -50,7 +50,7 @@ module ejs.db.sqlite {
         /*
             Map SQL types to Ejscript native types
          */
-        static const SqlTypeToEjsType: Object = {
+        static var SqlTypeToEjsType: Object = {
             "blob":         String,
             "date":         Date,
             "datetime":     Date,
@@ -68,7 +68,7 @@ module ejs.db.sqlite {
             Map Ejscript native types back to SQL types
             INCOMPLETE and INCORRECT
          
-        static const EjsToDataType: Object = {
+        static var EjsToDataType: Object = {
             "string":       "varchar",
             "number":       "decimal",
             "date":         "datetime",
@@ -87,15 +87,15 @@ module ejs.db.sqlite {
             @options name Database name URI specifying the SQLite database to open. 
                 Example: file://var/spool/db/database.db
          */
-        native "ejs.db" function Sqlite(options: Object)
+        native function Sqlite(options: Object)
 
         /** @duplicate ejs.db::Database.addColumn */
         function addColumn(table: String, column: String, datatype: String, options = null): Void {
-            datatype = DataTypeToSqlType[datatype.toLowerCase()]
-            if (datatype == undefined) {
+            let mapped = DataTypeToSqlType[datatype.toLowerCase()]
+            if (mapped == undefined) {
                 throw "Bad Ejscript column type: " + datatype
             }
-            query("ALTER TABLE " + table + " ADD " + column + " " + datatype)
+            query("ALTER TABLE " + table + " ADD " + column + " " + mapped)
         }
 
         /** @duplicate ejs.db::Database.addIndex */
@@ -119,7 +119,8 @@ module ejs.db.sqlite {
         /** @duplicate ejs.db::Database.close */
         native function close(): Void
 
-        /** @duplicate ejs.db::Database.commit */
+        /** @duplicate ejs.db::Database.commit 
+            @hide*/
         function commit(): Void {}
 
         //  TODO - implement in native code
@@ -167,7 +168,8 @@ module ejs.db.sqlite {
         function destroyTable(table: String): Void
             query("DROP TABLE IF EXISTS " + table + ";")
 
-        /** @duplicate ejs.db::Database.endTransaction */
+        /** @duplicate ejs.db::Database.endTransaction 
+            @hide */
         function endTransaction(): Void {}
 
         /** @duplicate ejs.db::Database.getColumns */
@@ -271,15 +273,24 @@ module ejs.db.sqlite {
          */
         function rollback(): Void {}
 
+        //  MOB - why have query and sql
+
         /** @duplicate ejs.db::Database.query */
         function query(cmd: String, tag: String = "SQL", trace: Boolean = false): Array {
             //  TODO - need to access Database.traceAll
-            //  TODO - need to better logging framework
-            //  MOB -- but Database does tracing outside this 
+            let mark, size
+            //  MOB - rationalize Sqlite.query with Database.query and Record.innerFind
             if (trace) {
-                print(tag + ": " + cmd)
+                App.log.debug(0, tag + ": " + cmd)
+                mark = new Date
+                size = Memory.resident
             }
-            return sql(cmd)
+            let result = sql(cmd)
+            if (trace) {
+                App.log.activity("Stats", "Sqlite query %.2f msec, memory %.2f MB, resident %.2f".format(mark.elapsed, 
+                    (Memory.resident - size) / (1024 * 1024), Memory.resident / (1024 * 1024)))
+            }
+            return result
         }
 
         /** @duplicate ejs.db::Database.sql */
@@ -287,13 +298,14 @@ module ejs.db.sqlite {
 
         /** @duplicate ejs.db::Database.sqlTypeToDataType */
         function sqlTypeToDataType(sqlType: String): String
-            "ejs.db"::Sqlite.SqlTypeToDataType[sqlType]
+            Sqlite.SqlTypeToDataType[sqlType]
 
         /** @duplicate ejs.db::Database.sqlTypeToEjsType */
         function sqlTypeToEjsType(sqlType: String): Type
-            "ejs.db"::Sqlite.SqlTypeToEjsType[sqlType]
+            Sqlite.SqlTypeToEjsType[sqlType]
 
-        /** @duplicate ejs.db::Database.startTransaction */
+        /** @duplicate ejs.db::Database.startTransaction 
+            @hide */
         function startTransaction(): Void {}
     }
 }

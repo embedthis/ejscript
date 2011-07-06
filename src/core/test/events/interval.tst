@@ -2,26 +2,24 @@
     Interval Timers
  */
 
-/* MOB
 var count = 0
 var complete = false
 
 setInterval(function (a, b, c) {
-print(a,b,c)
+    // print(a,b,c)
     assert(a == 1)
     assert(b == 2)
     assert(c == 3)
     if (++count == 3) {
-        timer.stop()
+        stop()
         complete = true
     }
-}, 100, 1, 2, 3)
+}, 50, 1, 2, 3)
 
-for (let i in 100) {
+for (i in 10) {
+    App.run(200, 1);
 	if (complete) {
 		break
 	}
-	App.sleep(100)
 }
 assert(complete)
-*/

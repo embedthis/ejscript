@@ -5,10 +5,10 @@
 
 module ejs {
     /**
-        Uri class to manage Uris
-        @stability evolving
+        The URI class to provides the ability to create, and manipulate URIs and their constituent components.
+        Uri objects are mutable.
         @spec ejs
-        @stability prototype
+        @stability evolving
      */
     class Uri {
         use default namespace public

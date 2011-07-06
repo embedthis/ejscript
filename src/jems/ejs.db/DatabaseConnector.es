@@ -7,7 +7,8 @@
 module ejs.db {
 
     /**
-        Database interface connector. This interface is implemented by database connectors such as SQLite and MYSQL.
+        Database Connector interface. The database connector interface is the contract implemented by 
+        concrete database implementations. This interface is implemented by database connectors such as SQLite and MYSQL.
         @spec ejs
         @stability evolving
      */
@@ -29,7 +30,9 @@ module ejs.db {
         /** @duplicate ejs.db::Database.close */
         function close(): Void
 
-        /** @duplicate ejs.db::Database.commit */
+        /** @duplicate ejs.db::Database.commit 
+            @hide
+         */
         function commit(): Void
 
         /** @duplicate ejs.db::Database.connect 
@@ -84,7 +87,8 @@ module ejs.db {
         /** @duplicate ejs.db::Database.sqlTypeToEjsType */
         function sqlTypeToEjsType(sqlType: String): String
 
-        /** @duplicate ejs.db::Database.startTransaction */
+        /** @duplicate ejs.db::Database.startTransaction 
+            @hide */
         function startTransaction(): Void
     }
 }

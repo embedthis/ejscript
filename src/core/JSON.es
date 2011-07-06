@@ -7,7 +7,8 @@
 module ejs {
 
     /**
-        JavaScript Object Notation. This class supports the JSON data exchange format as described by:
+        Encoding and decoding to JavaScript Object Notation strings (JSON). 
+        This class supports the JSON data exchange format as described by: 
         RFC 4627 at (http://www.ietf.org/rfc/rfc4627.txt).
         @stability evolving
      */
@@ -60,8 +61,8 @@ module ejs {
      */
     native function deserialize(str: String): Object
 
-    //  MOB -- change pretty to format: "pretty" | "compact"
-    //  MOB - change to includeBases (deprecated baseClasses)
+    //  TODO -- change pretty to format: "pretty" | "compact"
+    //  TODO - change to includeBases (deprecated baseClasses)
     /** 
         Encode an object as a string. This function returns a literal string for the object and all its properties. 
         If $maxDepth is sufficiently large (or zero for infinite depth), each property will be processed recursively 

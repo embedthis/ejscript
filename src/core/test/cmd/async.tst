@@ -10,14 +10,14 @@ if (!Path("/bin").exists) {
 
     //  Async I/O
     cmd = Cmd("/bin/echo Hello World", {detach: true})
-    response = new ByteArray
+    let data = new ByteArray
     cmd.on("readable", function(event, c) {
         assert(event == "readable")
         assert(typeOf(c) == "Cmd")
-        assert(this == global)
-        cmd.read(response, -1)
+        assert(this == cmd)
+        cmd.read(data, -1)
     })
     cmd.finalize()
     assert(cmd.wait(5000))
-    assert(response.toString().trim() == "Hello World")
+    assert(data.toString().trim() == "Hello World")
 }

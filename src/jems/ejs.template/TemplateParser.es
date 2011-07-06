@@ -5,7 +5,7 @@
 module ejs.template  {
 
     /*
-        MOB TODO implement these directives
+        TODO implement these directives
           -%>  Omit newline after tag
           <%s   For safe output Html escape the output
      */
@@ -79,7 +79,7 @@ module ejs.template  {
 
                 switch (tid) {
                 case Token.Literal:
-                    //  MOB -- should amalgamate writes
+                    //  OPT -- should amalgamate writes
                     out.write("\n        write(\"" + token + "\");")
                     break
 
@@ -120,7 +120,7 @@ module ejs.template  {
                         break
 
                     case "layout":
-                        let layouts = options.layouts || App.config.directories.layouts || "layouts"
+                        let layouts = options.layouts || App.config.dirs.layouts || "layouts"
                         let path = args[1]
                         if (path == "" || path == '""') {
                             layoutPage = undefined

@@ -20,9 +20,6 @@
 typedef struct App {
     MprList     *files;
     MprList     *modules;
-#if UNUSED
-    EjsService  *ejsService;
-#endif
     Ejs         *ejs;
     EcCompiler  *compiler;
 } App;
@@ -156,6 +153,7 @@ MAIN(ejsMain, int argc, char **argv)
                 err++;
             } else {
                 ejsRedirectLogging(argv[++nextArg]);
+                mprSetCmdlineLogging(1);
             }
 
         } else if (strcmp(argp, "--method") == 0) {
@@ -217,7 +215,8 @@ MAIN(ejsMain, int argc, char **argv)
             }
 
         } else if (strcmp(argp, "--verbose") == 0 || strcmp(argp, "-v") == 0) {
-            ejsRedirectLogging("stdout:2");
+            ejsRedirectLogging("stderr:2");
+            mprSetCmdlineLogging(1);
 
         } else if (strcmp(argp, "--version") == 0 || strcmp(argp, "-V") == 0) {
             mprPrintfError("%s %s-%s\n", BLD_NAME, BLD_VERSION, BLD_NUMBER);
@@ -262,16 +261,20 @@ MAIN(ejsMain, int argc, char **argv)
             "  --stats                  # Print memory stats on exit\n"
             "  --strict                 # Default compilation mode to strict\n"
             "  --require 'module,...'   # Required list of modules to pre-load\n"
-            "  --verbose | -v           # Same as --log stdout:2 \n"
+            "  --verbose | -v           # Same as --log stderr:2 \n"
             "  --version                # Emit the compiler version information\n"
             "  --warn level             # Set the warning message level (0-9 default is 0)\n\n",
             mpr->name);
         return -1;
     }
-    if ((ejs = ejsCreate(NULL, searchPath, app->modules, argc - nextArg, (cchar **) &argv[nextArg], 0)) == 0) {
+    if ((ejs = ejsCreateVM(argc - nextArg, (cchar **) &argv[nextArg], 0)) == 0) {
         return MPR_ERR_MEMORY;
     }
+    if (ejsLoadModules(ejs, searchPath, app->modules) < 0) {
+        return MPR_ERR_CANT_READ;
+    }
     app->ejs = ejs;
+
     ecFlags = 0;
     ecFlags |= (merge) ? EC_FLAGS_MERGE: 0;
     ecFlags |= (bind) ? EC_FLAGS_BIND: 0;
@@ -309,10 +312,15 @@ MAIN(ejsMain, int argc, char **argv)
 #if BLD_DEBUG
      if (stats) {
         mprSetLogLevel(1);
-        mprPrintMem("Memory Usage", 0);
+        mprPrintMem("Memory Usage", 1);
     }
 #endif
-    ejsDestroy(ejs);
+    if (!err) {
+        err = mpr->exitStatus;
+    }
+    app->ejs = 0;
+    mprTerminate(MPR_EXIT_DEFAULT, err);
+    ejsDestroyVM(ejs);
     mprDestroy(MPR_EXIT_DEFAULT);
     return err;
 }
@@ -374,15 +382,15 @@ static int interpretCommands(EcCompiler *cp, cchar *cmd)
         mprError("Can't open input");
         return EJS_ERR;
     }
-    // MOB ecResetInput(cp);
     tmpArgv[0] = EC_INPUT_STREAM;
 
     while (!cp->stream->eof && !mprIsStopping()) {
         err = 0;
         cp->uid = 0;
+        ejs->result = ESV(undefined);
         if (ecCompile(cp, 1, tmpArgv) < 0) {
             mprRawLog(0, "%s", cp->errorMsg);
-            ejs->result = S(undefined);
+            ejs->result = ESV(undefined);
             err++;
         }
         if (!err && cp->errorCount == 0) {
@@ -390,13 +398,13 @@ static int interpretCommands(EcCompiler *cp, cchar *cmd)
                 ejsReportError(ejs, "Error in script");
             }
         }
-        if (!ejs->exception && ejs->result != S(undefined)) {
-            if (ejsIs(ejs, ejs->result, Date) || ejsIsType(ejs, ejs->result)) {
+        if (!ejs->exception && ejs->result != ESV(undefined)) {
+            if (ejsIs(ejs, ejs->result, Date) /* MOB || ejsIsType(ejs, ejs->result) */) {
                 if ((result = (EjsString*) ejsToString(ejs, ejs->result)) != 0) {
                     mprPrintf("%@\n", result);
                 }
-            } else if (ejs->result != S(null)) {
-                if ((result = (EjsString*) ejsToJSON(ejs, ejs->result, NULL)) != 0) {
+            } else if (ejs->result != ESV(null)) {
+                if ((result = (EjsString*) ejsSerialize(ejs, ejs->result, EJS_JSON_SHOW_PRETTY)) != 0) {
                     mprPrintf("%@\n", result);
                 }
             }
@@ -442,7 +450,8 @@ static char *readline(cchar *msg)
     HistEvent   ev; 
     cchar       *str; 
     char        *result;
-    int         len, count; 
+    ssize       len;
+    int         count; 
  
     if (eh == NULL) { 
         eh = initEditLine();
@@ -453,7 +462,7 @@ static char *readline(cchar *msg)
     str = el_gets(eh, &count); 
     if (str && count > 0) { 
         result = strdup(str); 
-        len = strlen(result);
+        len = slen(result);
         if (result[len - 1] == '\n') {
             result[len - 1] = '\0'; 
         }
@@ -500,7 +509,7 @@ static int consoleGets(EcStream *stream)
         mprPrintf("\n");
         return -1;
     }
-    cp = sclone(strim(line, "\r\n", MPR_TRIM_BOTH));
+    cp = strim(line, "\r\n", MPR_TRIM_BOTH);
     ecSetStreamBuf(stream, cp, slen(cp));
     stream->flags |= EC_STREAM_EOL;
     return (int) slen(cp);
@@ -514,14 +523,12 @@ static int commandGets(EcStream *stream)
 {
     /*  
         Execute one string of commands. So we only come here once. Second time round, nextChar will be set.
-        MOB - this logic is not right
      */
     if (stream->nextChar) {
         stream->eof = 1;
         return -1;
     }
     mprAssert(0);
-    //  MOB -- because of the test above, nextChar must be zero
     return (int) (stream->end - stream->nextChar);
 }
 

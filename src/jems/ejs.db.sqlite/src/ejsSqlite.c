@@ -17,15 +17,16 @@
 #include    "ejs.db.sqlite.slots.h"
 
 /*********************************** Locals ***********************************/
+/*
+    Map allocation and mutex routines to use ejscript version.
+ */
+#define MAP_ALLOC   1
+
+//  MOB - 
+#define MAP_MUTEXES 0
 
 #define THREAD_STYLE SQLITE_CONFIG_MULTITHREAD
 //#define THREAD_STYLE SQLITE_CONFIG_SERIALIZED
-
-/*
-    Map allocation and mutex routines. Can't use this (yet) as allocated memory must be marked
- */
-#define MAP_ALLOC   1
-#define MAP_MUTEXES 1
 
 /*
     Ejscript Sqlite class object
@@ -37,11 +38,22 @@ typedef struct EjsSqlite {
     int             memory;         /* In-memory database */
 } EjsSqlite;
 
+static int sqliteInitialized;
+
+static void initSqlite();
+
 /************************************ Code ************************************/
 /*
     DB Constructor and also used for constructor for sub classes.
 
     function Sqlite(options: Object)
+
+    Options forms:
+        string
+            file://name
+        path
+            filename
+        { name: path }
  */
 static EjsObj *sqliteConstructor(Ejs *ejs, EjsSqlite *db, int argc, EjsObj **argv)
 {
@@ -53,18 +65,23 @@ static EjsObj *sqliteConstructor(Ejs *ejs, EjsSqlite *db, int argc, EjsObj **arg
     db->ejs = ejs;
     options = argv[0];
     
+    if (!sqliteInitialized) {
+        initSqlite();
+    }
     /*
-        MOB - this will create a database if it doesn't exist. Should have more control over creating databases.
+        TODO - this will create a database if it doesn't exist. Should have more control over creating databases.
      */
     if (ejsIs(ejs, options, Path) || ejsIs(ejs, options, String)) {
         path = ejsToMulti(ejs, ejsToString(ejs, options));
     } else {
         path = ejsToMulti(ejs, ejsToString(ejs, ejsGetPropertyByName(ejs, options, EN("name"))));
     }
+#if MEMORY_BASED_SQLITE
     if (strncmp(path, "memory://", 9) == 0) {
         sdb = (sqlite3*) (size_t) stoi(&path[9], 10, NULL);
 
     } else {
+#endif
         db->memory = 0;
         if (strncmp(path, "file://", 7) == 0) {
             path += 7;
@@ -74,7 +91,7 @@ static EjsObj *sqliteConstructor(Ejs *ejs, EjsSqlite *db, int argc, EjsObj **arg
                 ejsThrowIOError(ejs, "Can't open database %s", path);
                 return 0;
             }
-            //  MOB TODO - should be configurable somewhere
+            //  TODO - should be configurable somewhere
             sqlite3_soft_heap_limit(20 * 1024 * 1024);
             sqlite3_busy_timeout(sdb, EJS_SQLITE_TIMEOUT);
 
@@ -82,7 +99,9 @@ static EjsObj *sqliteConstructor(Ejs *ejs, EjsSqlite *db, int argc, EjsObj **arg
             ejsThrowArgError(ejs, "Unknown SQLite database URI %s", path);
             return 0;
         }
+#if MEMORY_BASED_SQLITE
     }
+#endif
     db->sdb = sdb;
     return (EjsObj*) db;
 }
@@ -163,10 +182,6 @@ static EjsObj *sqliteSql(Ejs *ejs, EjsSqlite *db, int argc, EjsObj **argv)
                     ejsThrowIOError(ejs, "Can't update query result set");
                     return 0;
                 }
-#if MOB
-                /* This will ensure we have a row->names memory context. This gets freed if the object is pooled. */
-                ejsGrowObjectNames(row, rowNum + 1);
-#endif
                 for (i = 0; i < ncol; i++) {
                     tableName = (char*) sqlite3_column_table_name(stmt, i);
                     if (defaultTableName == 0) {
@@ -180,7 +195,8 @@ static EjsObj *sqliteSql(Ejs *ejs, EjsSqlite *db, int argc, EjsObj **argv)
                     } else {
                         /*
                             Append the table name for columns from foreign tables. Convert to camel case (tableColumn)
-                            MOB - refactor crude singularization.
+                            Prefix with "_". ie. "_TableColumn"
+                            MOB - remove singularization.
                          */
                         len = strlen(tableName) + 1;
                         tableName = sjoin("_", tableName, colName, NULL);
@@ -195,7 +211,6 @@ static EjsObj *sqliteSql(Ejs *ejs, EjsSqlite *db, int argc, EjsObj **argv)
                             strcpy(&tableName[len - 1], colName);
                             len--;
                         }
-                        // tableName[0] = tolower((int) tableName[0]);
                         tableName[len] = toupper((int) tableName[len]);
                         qname = EN(tableName);
                     }
@@ -237,7 +252,9 @@ static EjsObj *sqliteSql(Ejs *ejs, EjsSqlite *db, int argc, EjsObj **argv)
 
 /*********************************** Alloc ********************************/
 #if MAP_ALLOC
-
+/*
+    Map memory allocations to use MPR
+ */
 static void *allocBlock(int size)
 {
     void    *ptr;
@@ -296,6 +313,11 @@ struct sqlite3_mem_methods mem = {
 
 /*********************************** Mutex ********************************/
 #if MAP_MUTEXES
+/*
+    Map mutexes to use MPR
+ */
+
+int mutc = 0;
 
 static int initMutex(void) { 
     return 0; 
@@ -307,12 +329,14 @@ static int termMutex(void) {
 }
 
 
+//  MOB - incomplete must handle kind
 static sqlite3_mutex *allocMutex(int kind)
 {
     MprMutex    *lock;
 
     if ((lock = mprCreateLock()) != 0) {
         mprHold(lock);
+        mutc++;
     }
     return (sqlite3_mutex*) lock;
 }
@@ -320,6 +344,7 @@ static sqlite3_mutex *allocMutex(int kind)
 
 static void freeMutex(sqlite3_mutex *mutex)
 {
+    mutc--;
     mprRelease((MprMutex*) mutex);
 }
 
@@ -376,20 +401,10 @@ static int manageSqlite(EjsSqlite *db, int flags)
 }
 
 
-static int configureSqliteTypes(Ejs *ejs)
+static void initSqlite()
 {
-    EjsType     *type;
-    EjsPot      *prototype;
-    static int  initialized = 0;
-    
-    type = (EjsType*) ejsConfigureNativeType(ejs, N("ejs.db", "Sqlite"), sizeof(EjsSqlite), manageSqlite, EJS_POT_HELPERS);
-    prototype = type->prototype;
-    ejsBindConstructor(ejs, type, (EjsProc) sqliteConstructor);
-    ejsBindMethod(ejs, prototype, ES_ejs_db_Sqlite_close, (EjsProc) sqliteClose);
-    ejsBindMethod(ejs, prototype, ES_ejs_db_Sqlite_sql, (EjsProc) sqliteSql);
-
-    if (!initialized) {
-        initialized++;
+    ejsLockService();
+    if (!sqliteInitialized) {
 #if MAP_ALLOC
         sqlite3_config(SQLITE_CONFIG_MALLOC, &mem);
 #endif
@@ -399,9 +414,41 @@ static int configureSqliteTypes(Ejs *ejs)
         sqlite3_config(THREAD_STYLE);
         if (sqlite3_initialize() != SQLITE_OK) {
             mprError("Can't initialize SQLite");
-            return MPR_ERR_CANT_INITIALIZE;
+            return;
         }
+        sqliteInitialized = 1;
     }
+    ejsUnlockService();
+}
+
+
+static int configureSqliteTypes(Ejs *ejs)
+{
+    EjsType     *type;
+    EjsPot      *prototype;
+    
+    if ((type = ejsFinalizeScriptType(ejs, N("ejs.db.sqlite", "Sqlite"), sizeof(EjsSqlite), manageSqlite,
+            EJS_TYPE_POT)) == 0) {
+        return 0;
+    }
+    prototype = type->prototype;
+    ejsBindConstructor(ejs, type, sqliteConstructor);
+    ejsBindMethod(ejs, prototype, ES_ejs_db_sqlite_Sqlite_close, sqliteClose);
+    ejsBindMethod(ejs, prototype, ES_ejs_db_sqlite_Sqlite_sql, sqliteSql);
+
+#if UNUSED
+#if MAP_ALLOC
+    sqlite3_config(SQLITE_CONFIG_MALLOC, &mem);
+#endif
+#if MAP_MUTEXES
+    sqlite3_config(SQLITE_CONFIG_MUTEX, &mut);
+#endif
+    sqlite3_config(THREAD_STYLE);
+    if (sqlite3_initialize() != SQLITE_OK) {
+        mprError("Can't initialize SQLite");
+        return MPR_ERR_CANT_INITIALIZE;
+    }
+#endif
     return 0;
 }
 

@@ -20,7 +20,7 @@ static EjsFunction *createFunction(Ejs *ejs, EjsType *type, int numProp)
 {
     EjsFunction     *fun;
 
-    if ((fun = ejsCreatePot(ejs, ST(Function), 0)) == 0) {
+    if ((fun = ejsCreatePot(ejs, ESV(Function), 0)) == 0) {
         return 0;
     }
     fun->block.pot.isFunction = 1;
@@ -41,10 +41,10 @@ static EjsAny *castFunction(Ejs *ejs, EjsFunction *vp, EjsType *type)
         return ejsCreateStringFromAsc(ejs, "[function Function]");
 
     case S_Number:
-        return S(nan);
+        return ESV(nan);
 
     case S_Boolean:
-        return S(true);
+        return ESV(true);
             
     default:
         ejsThrowTypeError(ejs, "Can't cast type \"%@\"", type->qname.name);
@@ -96,7 +96,7 @@ EjsFunction *ejsCloneFunction(Ejs *ejs, EjsFunction *src, int deep)
  */
 static EjsFunction *fun_Function(Ejs *ejs, EjsFunction *fun, int argc, void *argv)
 {
-#if UNUSED && FUTURE
+#if FUTURE
     EjsArray        *args;
     EjsString       *str;
     MprBuf          *buf;
@@ -131,7 +131,7 @@ static EjsFunction *fun_Function(Ejs *ejs, EjsFunction *fun, int argc, void *arg
 
     script = mprGetBufStart(buf);
     if (ejsLoadScriptLiteral(ejs, script, NULL, EC_FLAGS_NO_OUT | EC_FLAGS_DEBUG | EC_FLAGS_THROW | EC_FLAGS_VISIBLE) < 0) {
-        //  MOB -- what happens to compiler errors
+        //  TODO -- what happens to compiler errors
         return 0;
     }
     fun->body.code = ;
@@ -153,7 +153,10 @@ static EjsObj *fun_applyFunction(Ejs *ejs, EjsFunction *fun, int argc, EjsObj **
     mprAssert(ejsIs(ejs, args, Array));
 
     save = fun->boundThis;
-    thisObj = (argv[0] == S(null)) ? fun->boundThis: argv[0];
+    thisObj = argv[0];
+    if (thisObj == ESV(null)) {
+        thisObj = fun->boundThis ? fun->boundThis : ejs->global;
+    }
     result =  ejsRunFunction(ejs, fun, thisObj, args->length, args->data);
     fun->boundThis = save;
     return result;
@@ -165,9 +168,12 @@ static EjsObj *fun_applyFunction(Ejs *ejs, EjsFunction *fun, int argc, EjsObj **
  */
 static EjsObj *fun_bindFunction(Ejs *ejs, EjsFunction *fun, int argc, EjsObj **argv)
 {
+    EjsAny      *thisObj;
+
     mprAssert(argc >= 1);
 
-    fun->boundThis = argv[0];
+    thisObj = argv[0];
+    fun->boundThis = ejsIsDefined(ejs, thisObj) ? thisObj : 0;
     if (argc == 2) {
         fun->boundArgs = (EjsArray*) argv[1];
         mprAssert(ejsIs(ejs, fun->boundArgs, Array));
@@ -177,11 +183,11 @@ static EjsObj *fun_bindFunction(Ejs *ejs, EjsFunction *fun, int argc, EjsObj **a
 
 
 /*
-    function bound(): Function
+    function get bound(): Object
  */
-static EjsObj *fun_bound(Ejs *ejs, EjsFunction *fun, int argc, EjsObj **argv)
+static EjsAny *fun_bound(Ejs *ejs, EjsFunction *fun, int argc, EjsObj **argv)
 {
-    return fun->boundThis;
+    return fun->boundThis ? fun->boundThis : ESV(undefined);
 }
 
 
@@ -206,18 +212,16 @@ static EjsNumber *fun_length(Ejs *ejs, EjsFunction *fun, int argc, EjsObj **argv
 }
 
 
-#if ES_Function_name
 /*
     function get name(): String
  */
 static EjsString *fun_name(Ejs *ejs, EjsFunction *fun, int argc, EjsObj **argv)
 {
     if (fun->name && fun->name->value[0] == '-') {
-        return S(empty);
+        return ESV(empty);
     }
     return fun->name;
 }
-#endif
 
 
 /*
@@ -406,39 +410,17 @@ int ejsSetFunctionCode(Ejs *ejs, EjsFunction *fun, EjsModule *module, cuchar *by
     mprAssert(byteCode);
     mprAssert(len >= 0);
 
-#if UNUSED
-    code = fun->body.code;
-    if (code == NULL) {
-        if ((code = mprAllocZeroed(sizeof(EjsCode) + len)) == 0) {
-            return MPR_ERR_MEMORY;
-        }
-        fun->body.code = code;
-    } else {
-        if (len > code->codeLen) {
-            if ((code = mprRealloc(code, sizeof(EjsCode) + len)) == 0) {
-                return MPR_ERR_MEMORY;
-            }
-            fun->body.code = code;
-        }
-    }
-    memcpy(code->byteCode, byteCode, len);
-    code->codeLen = len;
-    code->module = module;
-    code->debug = debug;
-#else
     fun->body.code = ejsCreateCode(ejs, fun, module, byteCode, len, debug);
-#endif
     return 0;
 }
 
 
 static EjsObj *nopFunction(Ejs *ejs, EjsObj *obj, int argc, EjsObj **argv)
 {
-    return S(undefined);
+    return ESV(undefined);
 }
 
 
-//  MOB -- who calls this?
 void ejsUseActivation(Ejs *ejs, EjsFunction *fun)
 {
     EjsPot  *activation;
@@ -450,8 +432,7 @@ void ejsUseActivation(Ejs *ejs, EjsFunction *fun)
     numProp = activation->numProp;
     if (numProp > 0) {
         ejsGrowPot(ejs, (EjsPot*) fun, numProp);
-        //  MOB -- fix this API
-        ejsCopySlots(ejs, (EjsPot*) fun, fun->block.pot.properties->slots, fun->activation->properties->slots, numProp);
+        ejsCopySlots(ejs, (EjsPot*) fun, 0, fun->activation, 0, numProp);
         fun->block.pot.numProp = numProp;
     }
 }
@@ -461,7 +442,7 @@ EjsPot *ejsCreateActivation(Ejs *ejs, EjsFunction *fun, int numProp)
 {
     EjsPot  *activation;
 
-    activation = ejsCreatePot(ejs, ST(Object), numProp);
+    activation = ejsCreatePot(ejs, ESV(Object), numProp);
     mprCopyName(activation, fun);
     return activation;
 }
@@ -473,7 +454,7 @@ EjsFunction *ejsCreateSimpleFunction(Ejs *ejs, EjsString *name, int attributes)
 {
     EjsFunction     *fun;
 
-    if ((fun = ejsCreateObj(ejs, ST(Function), 0)) == NULL) {
+    if ((fun = ejsCreateObj(ejs, ESV(Function), 0)) == NULL) {
         return 0;
     }
     fun->name = name;
@@ -520,43 +501,28 @@ int ejsInitFunction(Ejs *ejs, EjsFunction *fun, EjsString *name, cuchar *byteCod
     fun->strict = strict;
 
     if (codeLen > 0) {
-#if UNUSED
-        if ((code = mprAllocZeroed(sizeof(EjsCode) + codeLen)) == 0) {
-            return MPR_ERR_MEMORY;
-        }
-        fun->body.code = code;
-        code->module = module;
-        code->numHandlers = numExceptions;
-        code->codeLen = codeLen;
-        memcpy(code->byteCode, byteCode, codeLen);
-#else
         fun->body.code = ejsCreateCode(ejs, fun, module, byteCode, codeLen, NULL);
         fun->body.code->numHandlers = numExceptions;
-#endif
     }
     fun->name = name;
     setFunctionAttributes(fun, attributes);
-    mprSetName(fun, "function");
-    //  MOB - need function for this - perhaps wrap both above and below into ejsSetPotName
     return 0;
 }
 
 
 void ejsManageFunction(EjsFunction *fun, int flags)
 {
-    if (fun) {
-        if (flags & MPR_MANAGE_MARK) {
-            ejsManageBlock((EjsBlock*) fun, flags);
-            mprMark(fun->name);
-            mprMark(fun->activation);
-            mprMark(fun->setter);
-            mprMark(fun->archetype);
-            mprMark(fun->resultType);
-            mprMark(fun->boundThis);
-            mprMark(fun->boundArgs);
-            if (!fun->isNativeProc) {
-                mprMark(fun->body.code);
-            }
+    if (flags & MPR_MANAGE_MARK) {
+        ejsManageBlock((EjsBlock*) fun, flags);
+        mprMark(fun->name);
+        mprMark(fun->activation);
+        mprMark(fun->setter);
+        mprMark(fun->archetype);
+        mprMark(fun->resultType);
+        mprMark(fun->boundThis);
+        mprMark(fun->boundArgs);
+        if (!fun->isNativeProc) {
+            mprMark(fun->body.code);
         }
     }
 }
@@ -568,16 +534,15 @@ void ejsCreateFunctionType(Ejs *ejs)
     EjsHelpers      *helpers;
     EjsFunction     *nop;
 
-    type = ejsCreateNativeType(ejs, N("ejs", "Function"), sizeof(EjsFunction), S_Function, ES_Function_NUM_CLASS_PROP,
-        ejsManageFunction, EJS_POT_HELPERS);
-
+    type = ejsCreateCoreType(ejs, N("ejs", "Function"), sizeof(EjsFunction), S_Function, ES_Function_NUM_CLASS_PROP,
+        ejsManageFunction, EJS_TYPE_POT | EJS_TYPE_IMMUTABLE_INSTANCES | EJS_TYPE_DYNAMIC_INSTANCES);
     helpers = &type->helpers;
     helpers->create = (EjsCreateHelper) createFunction;
     helpers->cast   = (EjsCastHelper) castFunction;
     helpers->clone  = (EjsCloneHelper) ejsCloneFunction;
 
     nop = ejsCreateFunction(ejs, ejsCreateStringFromAsc(ejs, "nop"), NULL, 0, -1, 0, 0, NULL, EJS_PROP_NATIVE, NULL, NULL,0);
-    ejsSetSpecial(ejs, S_nop, nop);
+    ejsAddImmutable(ejs, S_nop, EN("nop"), nop);
     nop->body.proc = (EjsFun) nopFunction;
     nop->isNativeProc = 1;
 }
@@ -588,17 +553,18 @@ void ejsConfigureFunctionType(Ejs *ejs)
     EjsType     *type;
     EjsPot      *prototype;
 
-    type = ST(Function);
+    if ((type = ejsFinalizeCoreType(ejs, N("ejs", "Function"))) == 0) {
+        return;
+    }
     prototype = type->prototype;
-
-    ejsBindConstructor(ejs, type, (EjsProc) fun_Function);
-    ejsBindMethod(ejs, prototype, ES_Function_apply, (EjsProc) fun_applyFunction);
-    ejsBindMethod(ejs, prototype, ES_Function_bind, (EjsProc) fun_bindFunction);
-    ejsBindMethod(ejs, prototype, ES_Function_bound, (EjsProc) fun_bound);
-    ejsBindMethod(ejs, prototype, ES_Function_call, (EjsProc) fun_call);
-    ejsBindMethod(ejs, prototype, ES_Function_length, (EjsProc) fun_length);
-    ejsBindMethod(ejs, prototype, ES_Function_name, (EjsProc) fun_name);
-    ejsBindMethod(ejs, prototype, ES_Function_setScope, (EjsProc) fun_setScope);
+    ejsBindConstructor(ejs, type, fun_Function);
+    ejsBindMethod(ejs, prototype, ES_Function_apply, fun_applyFunction);
+    ejsBindMethod(ejs, prototype, ES_Function_bind, fun_bindFunction);
+    ejsBindMethod(ejs, prototype, ES_Function_bound, fun_bound);
+    ejsBindMethod(ejs, prototype, ES_Function_call, fun_call);
+    ejsBindMethod(ejs, prototype, ES_Function_length, fun_length);
+    ejsBindMethod(ejs, prototype, ES_Function_name, fun_name);
+    ejsBindMethod(ejs, prototype, ES_Function_setScope, fun_setScope);
 }
 
 

@@ -18,6 +18,8 @@ static EjsObj *cmd_start(Ejs *ejs, EjsCmd *cmd, int argc, EjsObj **argv);
  */
 static EjsCmd *cmd_constructor(Ejs *ejs, EjsCmd *cmd, int argc, EjsObj **argv)
 {
+    cmd->stdoutBuf = mprCreateBuf(MPR_BUFSIZE, -1);
+    cmd->stderrBuf = mprCreateBuf(MPR_BUFSIZE, -1);
     cmd->ejs = ejs;
     cmd->timeout = -1;
     if (argc >= 1) {
@@ -139,35 +141,35 @@ static EjsObj *cmd_kill(Ejs *ejs, EjsCmd *cmd, int argc, EjsObj **argv)
         if (cmd->throw) {
             ejsThrowIOError(ejs, "Can't kill %d with signal %d, errno %d", pid, signal, errno);
         }
-        return S(false);
+        return ESV(false);
     }
-    return S(true);
+    return ESV(true);
 }
 
 
 /**
-    function get on(name, listener: Function): Void
+    function get on(name, observer: Function): Void
  */
-static EjsObj *cmd_on(Ejs *ejs, EjsCmd *cmd, int argc, EjsObj **argv)
+static EjsObj *cmd_on(Ejs *ejs, EjsCmd *cmd, int argc, EjsAny **argv)
 {
-    ejsAddObserver(ejs, &cmd->emitter, argv[0], argv[1]);
+    EjsFunction     *observer;
+
+    observer = (EjsFunction*) argv[1];
+    if (observer->boundThis == 0 || observer->boundThis == ejs->global) {
+        observer->boundThis = cmd;
+    }
+    ejsAddObserver(ejs, &cmd->emitter, argv[0], observer);
     if (!cmd->async) {
         cmd->async = 1;
-#if UNUSED
-        if (cmd->mc) {
-            //  MOB -- but handlers always added anyway
-            mprAddCmdHandlers(cmd->mc);
-        }
-#endif
     }
     return 0;
 }
 
 
 /**
-    function get off(name, listener: Function): Void
+    function get off(name, observer: Function): Void
  */
-static EjsObj *cmd_off(Ejs *ejs, EjsCmd *cmd, int argc, EjsObj **argv)
+static EjsObj *cmd_off(Ejs *ejs, EjsCmd *cmd, int argc, EjsAny **argv)
 {
     ejsRemoveObserver(ejs, cmd->emitter, argv[0], argv[1]);
     return 0;
@@ -180,8 +182,7 @@ static EjsObj *cmd_off(Ejs *ejs, EjsCmd *cmd, int argc, EjsObj **argv)
 static EjsNumber *cmd_pid(Ejs *ejs, EjsCmd *cmd, int argc, EjsObj **argv)
 {
     if (cmd->mc == 0 || cmd->mc->pid == 0) {
-        // ejsThrowStateError(ejs, "No active command");
-        return S(zero);
+        return ESV(zero);
     }
     return ejsCreateNumber(ejs, cmd->mc->pid);
 }
@@ -221,7 +222,7 @@ static EjsNumber *cmd_read(Ejs *ejs, EjsCmd *cmd, int argc, EjsObj **argv)
         count = buffer->length - buffer->writePosition;
     }
     nbytes = mprGetBufLength(cmd->stdoutBuf);
-    if (nbytes == 0 && !cmd->async) {
+    if (nbytes == 0 && !cmd->async && cmd->mc) {
         if (mprWaitForCmd(cmd->mc, cmd->timeout) < 0) {
             ejsThrowStateError(ejs, "Command timed out");
             return 0;
@@ -229,6 +230,7 @@ static EjsNumber *cmd_read(Ejs *ejs, EjsCmd *cmd, int argc, EjsObj **argv)
         nbytes = mprGetBufLength(cmd->stdoutBuf);
     }
     count = min(count, nbytes);
+    //  MOB - should use RC Value (== count)
     ejsCopyToByteArray(ejs, buffer, buffer->writePosition, (char*) mprGetBufStart(cmd->stdoutBuf), count);
     ejsSetByteArrayPositions(ejs, buffer, -1, buffer->writePosition + count);
     mprAdjustBufStart(cmd->stdoutBuf, count);
@@ -254,7 +256,7 @@ static EjsString *cmd_readString(Ejs *ejs, EjsCmd *cmd, int argc, EjsObj **argv)
         count = MAXSSIZE;
     }
     nbytes = mprGetBufLength(cmd->stdoutBuf);
-    if (nbytes == 0) {
+    if (nbytes == 0 && cmd->mc) {
         if (mprWaitForCmd(cmd->mc, cmd->timeout) < 0) {
             ejsThrowStateError(ejs, "Command timed out");
             return 0;
@@ -310,7 +312,7 @@ static void cmdIOCallback(MprCmd *mc, int channel, void *data)
     }
     len = mprReadCmd(mc, channel, mprGetBufEnd(buf), space);
     if (len <= 0) {
-        if (len == 0 || (len < 0 && !(errno == EAGAIN || EWOULDBLOCK))) {
+        if (len == 0 || (len < 0 && !(errno == EAGAIN || errno == EWOULDBLOCK))) {
             mprCloseCmdFd(mc, channel);
         }
     } else {
@@ -324,9 +326,11 @@ static void cmdIOCallback(MprCmd *mc, int channel, void *data)
             cmd->error = ejsCreateByteArray(cmd->ejs, -1);
         }
         ba = cmd->error;
+        //  MOB - should use RC Value (== count)
         ejsCopyToByteArray(cmd->ejs, ba, ba->writePosition, mprGetBufStart(buf), len);
         ba->writePosition += len;
         mprAdjustBufStart(buf, len);
+        mprResetBufIfEmpty(buf);
     }
     if (cmd->async) {
         if (channel == MPR_CMD_STDOUT) {
@@ -353,18 +357,18 @@ static int parseOptions(Ejs *ejs, EjsCmd *cmd)
     flags = MPR_CMD_IN | MPR_CMD_OUT | MPR_CMD_ERR;
     if (cmd->options) {
         if ((value = ejsGetPropertyByName(ejs, cmd->options, EN("detach"))) != 0) {
-            if (value == S(true)) {
+            if (value == ESV(true)) {
                 flags |= MPR_CMD_DETACH;
             }
         }
         if ((value = ejsGetPropertyByName(ejs, cmd->options, EN("dir"))) != 0) {
             path = ejsToPath(ejs, value);
-            if (path) {
+            if (path && cmd->mc) {
                 mprSetCmdDir(cmd->mc, path->value);
             }
         }
         if ((value = ejsGetPropertyByName(ejs, cmd->options, EN("exception"))) != 0) {
-            if (value == S(true)) {
+            if (value == ESV(true)) {
                 cmd->throw = 1;
             }
         }
@@ -379,7 +383,6 @@ static int parseOptions(Ejs *ejs, EjsCmd *cmd)
 static bool setCmdArgs(Ejs *ejs, EjsCmd *cmd, int argc, EjsObj **argv)
 {
     EjsArray    *ap;
-    char        *command;
     int         i;
 
     if (ejsIs(ejs, cmd->command, Array)) {
@@ -395,9 +398,8 @@ static bool setCmdArgs(Ejs *ejs, EjsCmd *cmd, int argc, EjsObj **argv)
         cmd->argc = ap->length;
 
     } else {
-        cmd->command = ejsToString(ejs, cmd->command);
-        command = ejsToMulti(ejs, argv[0]);
-        if (mprMakeArgv(command, &cmd->argc, &cmd->argv, 0) < 0 || cmd->argv == 0) {
+        cmd->command = ejsToMulti(ejs, cmd->command);
+        if (mprMakeArgv(cmd->command, &cmd->argc, &cmd->argv, 0) < 0 || cmd->argv == 0) {
             ejsThrowArgError(ejs, "Can't parse command line");
             return 0;
         }
@@ -418,7 +420,7 @@ static EjsObj *cmd_start(Ejs *ejs, EjsCmd *cmd, int argc, EjsObj **argv)
     cmd->command = argv[0];
     cmd->options = (argc >=2 ) ? argv[1] : 0;
 
-    if (cmd->command == S(null)) {
+    if (cmd->command == ESV(null)) {
         ejsThrowStateError(ejs, "Missing command line");
         return 0;
     }
@@ -426,17 +428,13 @@ static EjsObj *cmd_start(Ejs *ejs, EjsCmd *cmd, int argc, EjsObj **argv)
         return 0;
     }
     mprSetCmdCallback(cmd->mc, cmdIOCallback, cmd);
-    if (cmd->stdoutBuf == 0) {
-        cmd->stdoutBuf = mprCreateBuf(MPR_BUFSIZE, -1);
-    }
-    if (cmd->stderrBuf == 0) {
-        cmd->stderrBuf = mprCreateBuf(MPR_BUFSIZE, -1);
-    }
+    mprFlushBuf(cmd->stdoutBuf);
+    mprFlushBuf(cmd->stderrBuf);
     if (!setCmdArgs(ejs, cmd, argc, argv)) {
         return 0;
     }
     if (cmd->env) {
-        len = ejsGetPropertyCount(ejs, cmd->env);
+        len = ejsGetLength(ejs, cmd->env);
         if ((env = mprAlloc(sizeof(void*) * (len + 1))) == 0) {
             ejsThrowMemoryError(ejs);
             return 0;
@@ -476,7 +474,7 @@ static EjsObj *cmd_start(Ejs *ejs, EjsCmd *cmd, int argc, EjsObj **argv)
         if (cmd->throw) {
             status = mprGetCmdExitStatus(cmd->mc);
             if (status != 0) {
-                ejsThrowIOError(ejs, "Command failure: %s, exit status %d", mprGetBufStart(cmd->stderrBuf), status);
+                ejsThrowIOError(ejs, "Command failed status %d, %@", status, ejsToString(ejs, cmd->error));
             }
         }
     }
@@ -515,9 +513,9 @@ static EjsObj *cmd_stop(Ejs *ejs, EjsCmd *cmd, int argc, EjsObj **argv)
     }
     if (mprStopCmd(cmd->mc, signal) < 0) {
         ejsThrowIOError(ejs, "Can't kill %d with signal %d, errno %d", cmd->mc->pid, signal, errno);
-        return S(false);
+        return ESV(false);
     }
-    return S(true);
+    return ESV(true);
 }
 
 
@@ -554,9 +552,9 @@ static EjsObj *cmd_wait(Ejs *ejs, EjsCmd *cmd, int argc, EjsObj **argv)
     }
     /* NOTE: mprWaitForCmd will auto-finalize */
     if (mprWaitForCmd(cmd->mc, timeout) < 0) {
-        return S(false);
+        return ESV(false);
     }
-    return S(true);
+    return ESV(true);
 }
 
 
@@ -569,8 +567,8 @@ static EjsNumber *cmd_write(Ejs *ejs, EjsCmd *cmd, int argc, EjsObj **argv)
     EjsByteArray    *bp;
     EjsString       *sp;
     EjsObj          *vp;
-    ssize           len;
-    int             i, wrote;
+    ssize           len, wrote;
+    int             i;
 
     mprAssert(argc == 1 && ejsIs(ejs, argv[0], Array));
 
@@ -586,7 +584,6 @@ static EjsNumber *cmd_write(Ejs *ejs, EjsCmd *cmd, int argc, EjsObj **argv)
         args = (EjsArray*) vp;
     }
     wrote = 0;
-
     for (i = 0; i < args->length; i++) {
         if ((vp = ejsGetProperty(ejs, args, i)) == 0) {
             continue;
@@ -620,7 +617,6 @@ static EjsObj *cmd_exec(Ejs *ejs, EjsObj *unused, int argc, EjsObj **argv)
     return 0;
 }
 
-
 /************************************ Factory *********************************/
 
 static void manageEjsCmd(EjsCmd *cmd, int flags)
@@ -651,18 +647,15 @@ void ejsConfigureCmdType(Ejs *ejs)
     EjsType     *type;
     EjsPot      *prototype;
 
-    if ((type = ejsGetTypeByName(ejs, N("ejs", "Cmd"))) == 0) {
-        mprError("Can't find Cmd type");
+    if ((type = ejsFinalizeScriptType(ejs, N("ejs", "Cmd"), sizeof(EjsCmd), manageEjsCmd,
+            EJS_TYPE_POT | EJS_TYPE_MUTABLE_INSTANCES)) == 0) {
         return;
     }
-    type->instanceSize = sizeof(EjsCmd);
-    type->manager = (MprManager) manageEjsCmd;
-    prototype = type->prototype;
-
     ejsBindConstructor(ejs, type, cmd_constructor);
     ejsBindMethod(ejs, type, ES_Cmd_kill, cmd_kill);
     ejsBindMethod(ejs, type, ES_Cmd_exec, cmd_exec);
 
+    prototype = type->prototype;
     ejsBindMethod(ejs, prototype, ES_Cmd_close, cmd_close);
     ejsBindAccess(ejs, prototype, ES_Cmd_errorStream, cmd_errorStream, 0);
     ejsBindAccess(ejs, prototype, ES_Cmd_env, cmd_env, cmd_set_env);
@@ -681,6 +674,7 @@ void ejsConfigureCmdType(Ejs *ejs)
     ejsBindMethod(ejs, prototype, ES_Cmd_wait, cmd_wait);
     ejsBindMethod(ejs, prototype, ES_Cmd_write, cmd_write);
 }
+
 
 /*
     @copy   default

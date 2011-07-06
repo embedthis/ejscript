@@ -22,7 +22,7 @@ module ejs {
          */
         native function Function(...args)
 /*
-    MOB -- todo
+    FUTURE -- todo
             let body = args.pop()
             let code = "function(" + args.join(",") + ") {\n" + body + "\n}"
             print("CODE " + code)
@@ -52,6 +52,7 @@ module ejs {
         /** 
             Bind the value of "this" for the function. This can set the value of "this" for the function. If
             $overwrite is false, it will only define the value of "this" if it is not already defined.
+            Use $bound to examine the bound "this" value.
             @param thisObj Value of "this" to define
             @param args Function arguments to supply to the function. These arguments preceed any caller supplied
                 arguments when the function is actually invoked.
@@ -60,6 +61,7 @@ module ejs {
 
         /** 
             The bound object representing the "this" object for the function. Will be set to null if no object is bound.
+            Use $bind() to set the bound "this" object.
             @see bind
          */
         native function get bound(): Object
@@ -72,20 +74,10 @@ module ejs {
         //  Number of arguments expected by the function
         native function get length(): Number
 
-        //  MOB -- DOC
+        //  DOC
         /** @hide */
         native function setScope(scope: Object): Void
     }
-
-//  MOB -- remove
-/** 
-        UNUSED @hide 
-    native function makeGetter(fn: Function): Function
-*/
-
-/** UNUSED
-    native function clearBoundThis(fn: Function): Function
-*/
 }
 
 /*

@@ -159,7 +159,7 @@ class JemCmd
     function JemCmd() {
         loadDefaults()
 //  MOB -- should update App.config
-        blend(config, defaultConfig, false)
+        blend(config, defaultConfig, {overwrite: false})
         dirs = config.directories
         dirs.home = App.dir
 //  MOB -- rename ext to extensions
@@ -194,7 +194,7 @@ class JemCmd
         [ "field", String ],
         [ "force" ],
         [ "from", String ],
-        [ "log", /\w+(:\d)/, "stdout:1" ],
+        [ "log", /\w+(:\d)/, "stderr:1" ],
         [ "repository", String ],
         [ ["quiet", "q"] ],
         [ "to", String ],
@@ -1122,6 +1122,8 @@ print(e)
             logFile = parts[0]
             logLevel = parts[1]
             if (logFile == "stdout") {
+                out = App.outputStream
+            } else if (logFile == "stderr") {
                 out = App.errorStream
             } else {
                 out = Path(logFile).open("w")
@@ -1228,7 +1230,7 @@ print(e)
             }
         }
         let settings = deserialize(path.readString())
-        blend(config, settings, overwrite)
+        blend(config, settings, {overwrite: overwrite})
         return true
     }
 

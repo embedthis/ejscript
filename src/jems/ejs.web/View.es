@@ -3,14 +3,17 @@
  */
 module ejs.web {
 
+    //  MOB - is this necessary?
     require ejs.web
 
+    //  MOB - what does option click Boolean mean below??
     /**
         Base class for web framework Views. This class provides the core functionality for templated Ejscript view 
         web pages. Ejscript web pages are compiled to create a new View class which extends the View base class.  
         This class provides a suite of high-level control methods that generate HTML for input, output and 
         presentation needs.  In addition to the properties defined by this class, user view classes will typically 
-        inherit at runtime, all public properites of any associated controller object defined in Request.controller.
+        inherit at runtime, all public properites of any associated controller object defined in 
+        $ejs.web::Request.controller.
 
         <h4>Control Methods</h4>
         Control methods are grouped into two families: input form controls and general output controls. Input controls
@@ -25,7 +28,7 @@ module ejs.web {
 
         Various controls have custom options, but most share the following common set of option properties. 
         @option action String Action to invoke. This can be a URI string or a Controller action of the form
-            @Controller/action.
+            \@Controller/action.
         @option apply String Client JQuery selector identifying the element to apply the remote update.
             Typically "div.ID" where ID is the DOM ID for the element.
         @option background String Background color. This is a CSS RGB color specification. For example "FF0000" for red.
@@ -59,6 +62,7 @@ module ejs.web {
             URI and params manually.
         @option id Number Numeric database ID for the record that originated the data for the view element.
         @option method String HTTP method to invoke.
+        @option pass String attributes to pass through unaltered to the client
         @option params Request parameters to include with a click or remote request
         @option period Number Period in milliseconds to invoke the $refresh URI to update the control data. If period
             is zero (or undefined), then refresh will be done using a perisistent connection.
@@ -67,7 +71,7 @@ module ejs.web {
         @option remote (String|URI|Object) Perform the request in the background without changing the browser location.
         @option refresh (String|URI|Object) URI to invoke in the background to refresh the control's data every $period.
             milliseconds. If period is undefined or zero, a persistent connection may be used to refresh data.
-            The refresh option may use the "@Controller/action" form.
+            The refresh option may use the "\@Controller/action" form.
         @option size (Number|String) Size of the element.
         @option style String CSS Style to use for the table.
         @option value Object Override value to display if used without a form control record.
@@ -115,32 +119,28 @@ module ejs.web {
         function View(request: Object) {
             if (request) {
                 controller = request.controller
-//  MOB -- replace all this with blend. Perhaps request and config come over automatically.
+                blend(this, controller, {overwrite: true, deep: false})
+                /* Manual construction may not have a controller */
+                config = request.config
                 this.request = request
-                this.config = request.config
-                formats = config.web.view.formats
-                for each (let n: String in 
-                        Object.getOwnPropertyNames(controller, {includeBases: true, excludeFunctions: true})) {
-                    if (n.startsWith("_")) continue
-                    //  MOB - can we remove public::
-                    this.public::[n] = controller[n]
-                }
+                formats = config.web.views.formats
             } else {
                 request = {}
                 config = App.config
             }
-            for (helper in config.web.view.helpers) {
+
+        /*  FUTURE
+            for each (helper in config.web.views.helpers) {
                 if (helper.contains("::")) {
                     [mod, klass] = helper.split("::")
                     global.load(mod + ".mod")
-                    /*  MOB -- should use 
-                        blend(this, global.[mod]::[klass])
-                     */
+                    //  MOB -- should use blend(this, global.[mod]::[klass])
                     blend(this, global[klass])
                 } else {
                     blend(this, global[helper])
                 }
             }
+         */
         }
 
         /**
@@ -171,16 +171,15 @@ module ejs.web {
             getConnector("alert", options).alert(text, options)
         }
 
-//  MOB -- consider deprecating
         /**
             Emit an anchor. This is lable inside an anchor reference. 
             @param text Link text to display
             @param options Optional extra options. See $View for a list of the standard options.
+         */
         function anchor(text: String, options: Object = {}): Void {
             options = getOptions(options)
             getConnector("label", options).label(text, options)
         }
-*/
 
         /**
             Render a form button. This creates a button suitable for use inside an input form. When the button is clicked,
@@ -206,7 +205,7 @@ module ejs.web {
             @param text Text to display in the button. The text can contain embedded HTML.
             @param options Options specifying the target URI to invoke. See $View for a list of the standard options.
             @example
-                buttonLink("Cancel" "@")
+                buttonLink("Cancel" "\@")
          */
         function buttonLink(text: String, options: Object = {}): Void {
             options = getOptions(options)
@@ -230,7 +229,7 @@ module ejs.web {
                 linechart, imagelinechart, imagepiechart, scatterchart (and more)
             @example
                 <% chart(grid, { refresh: "/getData", period: 2000" }) %>
-                <% chart(data, { click: "@update" }) %>
+                <% chart(data, { click: "\@update" }) %>
          */
         function chart(data: Array, options: Object = {}): Void {
             options = getOptions(options)
@@ -361,11 +360,10 @@ MOB -- much more doc here
             @param options Optional extra options. See $View for a list of the standard options.
             @examples
                 <% image("pic.gif") %>
-                <% image("pic.gif", { refresh: "@store/getData", period: 2000, style: "myStyle" }) %>
-MOB - uri not supported
-                <% image("pic.gif", { click: "@foreground/click" }) %>
-                <% image("checkout.gif", { click: "@checkout" }) %>
-                <% image("pic.gif", { remote: "@store/update" }) %>
+                <% image("pic.gif", { refresh: "\@store/getData", period: 2000, style: "myStyle" }) %>
+                <% image("pic.gif", { click: "\@foreground/click" }) %>
+                <% image("checkout.gif", { click: "\@checkout" }) %>
+                <% image("pic.gif", { remote: "\@store/update" }) %>
          */
         function image(src: String, options: Object = {}): Void {
             options = getOptions(options)
@@ -433,7 +431,7 @@ print("CATCH " + e)
                 <% label("Hello World") %>
                 <% label("Hello", { refresh: "/getData", period: 2000, style: "myStyle" }) %>
                 <% label("Hello", { click: "/foreground/link" }) %>
-                <% label("Checkout", { click: "@checkout" }) %>
+                <% label("Checkout", { click: "\@checkout" }) %>
          */
         function label(text: String, options: Object = {}): Void {
             options = getOptions(options)
@@ -502,9 +500,10 @@ print("CATCH " + e)
                 options.value property.
             @param choices Choices to select from. This can be an array list where each element is displayed and the value 
                 returned is an element index (origin zero). It can also be an array of key/value array tuples where the 
-                first entry is the value to display and the second is the value to send to the app. Or it can be an 
-                array of objects such as those returned from a table lookup. Lastly, it can be an object where the
-                property key is the value to display and the property value is the value to send to the app.
+                first entry is the value to display and the second is the value to send to the app and store in the 
+                database. Or it can be an array of objects such as those returned from a table lookup. Lastly, it can 
+                be an object where the property key is the value to display and the property value is the value to 
+                send to the app and store in the database.
             @param options Optional extra options. See $View for a list of the standard options.
             @example
                 radio("priority", ["low", "med", "high"])
@@ -518,6 +517,12 @@ print("CATCH " + e)
             let value = getValue(currentRecord, name, options)
             name = getFieldName(name, options) 
             getConnector("radio", options).radio(name, value, choices, options)
+        }
+
+        function refresh(on: Uri, off: Uri, options: Object = {}): Void {
+            let connector = getConnector("refresh", options)
+            options = getOptions(options)
+            getConnector("refresh", options).refresh(on, off, options)
         }
 
         /** 
@@ -575,11 +580,12 @@ print("CATCH " + e)
         /*
             TODO table
             - in-cell editing
+            - per-row click URIs
             - pagination
          */
         /**
             Render a table. The table control can display static or dynamic tabular data. The client table control 
-                manages sorting by column, dynamic data refreshes, pagination and clicking on rows or cells.
+                manages sorting by column, dynamic data refreshes and clicking on rows or cells.
             @param data Data to display. The data must be a grid of data, ie. an Array of objects where each object 
                 represents the data for a row. The column names are the object property names and the cell text is 
                 the object property values.
@@ -616,11 +622,11 @@ print("CATCH " + e)
             </ul>
         
             @example
-                <% table(gridData, { refresh: "@update", period: 1000, pivot: true" }) %>
-                <% table(gridData, { click: "@edit" }) %>
+                <% table(gridData, { refresh: "\@update", period: 1000, pivot: true" }) %>
+                <% table(gridData, { click: "\@edit" }) %>
                 <% table(Table.findAll()) %>
                 <% table(gridData, {
-                    click: "@edit",
+                    click: "\@edit",
                     sort: "Product",
                     columns: {
                         product:    { header: "Product", width: "20%" }
@@ -654,7 +660,7 @@ print("CATCH " + e)
             @option toggle Set to true to show the selected pane and hide other panes.
             @example
                 tabs({Status: "pane-1", "Edit: "pane-2"})
-                tabs([{Status: "/url-1"}, {"Edit: "/url-2"}], { click: "@someAction"})
+                tabs([{Status: "/url-1"}, {"Edit: "/url-2"}], { click: "\@someAction"})
          */
         function tabs(data: Object, options: Object = {}): Void {
             options = getOptions(options)
@@ -724,7 +730,7 @@ MOB -- review and rethink this
                     ext = viewPath.ext
                 }
             }
-            controller.writeTemplate(request.dir.join(config.directories.views.basename, cname, action).joinExt(ext))
+            controller.writeTemplate(request.dir.join(config.dirs.views.basename, cname, action).joinExt(ext))
         }
 
         // MOB TODO - need a rich text editor. Wiki style.  wiki()
@@ -808,13 +814,14 @@ MOB -- review and rethink this
         }
 
         private function getConnector(kind: String, options: Object = {}) {
-            let vc = config.web.view
+            let vc = config.web.views
             let connectorName = options.connector || vc.connectors[kind] || vc.connectors["rest"]
             let name = (connectorName + "ViewConnector").toPascal()
             if (connectors[name]) {
                 return connectors[name]
             }
             try {
+                //  MOB - what is this doing?
                 return connectors[name] = new global[name](this)
             } catch (e: Error) {
                 throw new Error("Undefined view connector: " + name)

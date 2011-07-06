@@ -66,12 +66,16 @@ proxy("label", "Text", {remote: {controller: "Admin", action: "login", method: "
 
 //  Refresh options
 proxy("label", "Text", {refresh: "@update"}, '<span id="id_0" data-refresh="/update">Text</span>')
-proxy("label", "Text", {refresh: {controller: "Dash", action: "update", method: "HEAD"}}, 
-    '<span id="id_0" data-refresh="/Dash/update" data-refresh-method="HEAD">Text</span>')
+proxy("label", "Text", {refresh: {controller: "Dash", action: "update", method: "HEAD"}}, [
+    '<span id="id',
+    ' data-refresh="/Dash/update" data-refresh-method="HEAD">Text</span>',
+])
 
 //  Combined click and refresh
-proxy("label", "Text", {click: "select", refresh: "@update", period: 20}, 
-    '<span data-refresh-period="20" data-click="select" id="id_0" data-refresh="/update">Text</span>')
+proxy("label", "Text", {click: "select", refresh: "@update", period: 20}, [
+    '<span data-refresh-period="20" data-click="select" id="id_',
+    ' data-refresh="/update">Text</span>',
+])
 
 //  Escaped text
 proxy("label", "<Text>", {escape: true}, '<span>&lt;Text&gt;</span>')
@@ -81,7 +85,7 @@ proxy("label", "Text>", {domid: 999}, '<span id="999">Text></span>')
 
 //  Params
 proxy("label", "Text", {click: "/login", params: {name: "Bob", weight: 175.5}, method: "POST"}, 
-    '<span data-method="POST" data-click="/login" data-click-method="POST" data-click-params="name=Bob&weight=175.5">Text</span>')
+    '<span data-click="/login" data-click-method="POST" data-click-params="name=Bob&weight=175.5">Text</span>')
 
 //  Query
 proxy("label", "Text", {click: { path: "/test.php", query: "a=b&c=d"}}, '<span data-click="/test.php?a=b&c=d">Text</span>')

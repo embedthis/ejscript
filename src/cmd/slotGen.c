@@ -43,7 +43,6 @@ static int createSlotFile(EjsMod *bp, EjsModule *mp, MprFile *file)
     MprFile     *localFile;
     char        *path, slotsName[MPR_MAX_FNAME], moduleName[MPR_MAX_FNAME];
     char        *cp, *sp, *dp;
-    int         slotNum;
 
     mprAssert(bp);
 
@@ -98,11 +97,10 @@ static int createSlotFile(EjsMod *bp, EjsModule *mp, MprFile *file)
 
     mprFprintf(file, "\n/*\n   Slots for the \"%@\" module \n */\n", mp->name);
 
-    slotNum = ejsGetPropertyCount(ejs, ejs->global);
-    type = ejsCreateType(ejs, N(EJS_EJS_NAMESPACE, EJS_GLOBAL), NULL, NULL, NULL, sizeof(EjsType), -1, 
-        ejsGetPropertyCount(ejs, ejs->global), 0, 0);
+    type = ejsCreateType(ejs, N(EJS_EJS_NAMESPACE, EJS_GLOBAL), NULL, NULL, NULL, -1, 
+        ejsGetLength(ejs, ejs->global), 0, sizeof(EjsType), 0, EJS_TYPE_POT);
     type->constructor.block = *(EjsBlock*) ejs->global;
-    SET_TYPE(type, ST(Type));
+    SET_TYPE(type, EST(Type));
     type->constructor.block.pot.isType = 1;
 
     if (genType(bp, file, mp, type, mp->firstGlobal, mp->lastGlobal, 1) < 0) {
@@ -126,14 +124,6 @@ static void defineSlot(EjsMod *bp, MprFile *file, EjsModule *mp, EjsType *type, 
     ejs = bp->ejs;
 
     typeStr = mapFullName(ejs, &type->qname, 1);
-#if UNUSED
-    if (slotNum < type->numInherited && obj == type->prototype) {
-        subStr = mapFullName(ejs, &type->baseType->qname, 1);
-        subSep = "_";
-    } else {
-        subSep = subStr = "";
-    }
-#endif
     funStr = mapFullName(ejs, funName, 0);
     nameStr = mapFullName(ejs, name, 0);
 
@@ -231,7 +221,7 @@ static int genType(EjsMod *bp, MprFile *file, EjsModule *mp, EjsType *type, int 
     prototype = type->prototype;
     if (prototype) {
         mprFprintf(file, "\n/*\n   Prototype (instance) slots for \"%@\" type \n */\n", type->qname.name);
-        count = ejsGetPropertyCount(ejs, prototype);
+        count = ejsGetLength(ejs, prototype);
         offset = 0;
         for (slotNum = offset; slotNum < count; slotNum++) {
             qname = ejsGetPropertyName(ejs, prototype, slotNum);
@@ -261,7 +251,7 @@ static int genType(EjsMod *bp, MprFile *file, EjsModule *mp, EjsType *type, int 
         if (trait == 0 || qname.name == 0) {
             continue;
         }
-        if (trait->type != ST(Function)) {
+        if (trait->type != EST(Function)) {
             continue;
         }
         vp = ejsGetProperty(ejs, (EjsObj*) type, slotNum);
@@ -316,7 +306,7 @@ static int genType(EjsMod *bp, MprFile *file, EjsModule *mp, EjsType *type, int 
         }
         SET_VISITED(vp, 1);
 
-        count = ejsGetPropertyCount(ejs, (EjsObj*) nt);
+        count = ejsGetLength(ejs, (EjsObj*) nt);
         if (genType(bp, file, mp, nt, 0, count, 0) < 0) {
             SET_VISITED(vp, 0);
             return EJS_ERR;
@@ -441,10 +431,6 @@ static char *mapNamespace(cchar *space)
         space = "";
     } else if (strcmp(space, EJS_PRIVATE_NAMESPACE) == 0) {
         space = "";
-#if UNUSED
-    } else if (strcmp(space, EJS_ITERATOR_NAMESPACE) == 0) {
-        space = "iter";
-#endif
     } else if (strcmp(space, EJS_CONSTRUCTOR_NAMESPACE) == 0) {
         space = "";
     } else if (strstr(space, ",private]") != 0) {

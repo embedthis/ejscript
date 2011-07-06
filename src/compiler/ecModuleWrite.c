@@ -48,7 +48,6 @@ int ecCreateModuleHeader(EcCompiler *cp)
  */
 int ecCreateModuleSection(EcCompiler *cp)
 {
-    Ejs             *ejs;
     EjsConstants    *constants;
     EjsModule       *mp;
     EcState         *state;
@@ -58,11 +57,9 @@ int ecCreateModuleSection(EcCompiler *cp)
     state = cp->state;
     buf = state->code->buf;
     mp = state->currentModule;
+    constants = mp->constants;
 
     mprLog(7, "Create module section %s", mp->name);
-
-    ejs = cp->ejs;
-    constants = mp->constants;
 
     ecEncodeByte(cp, EJS_SECT_MODULE);
     ecEncodeConst(cp, mp->name);
@@ -100,14 +97,11 @@ int ecCreateModuleSection(EcCompiler *cp)
 
 static void createDependencySection(EcCompiler *cp)
 {
-    Ejs         *ejs;
     EjsModule   *module, *mp;
     int         i, count, version;
 
     mp = cp->state->currentModule;
     mprAssert(mp);
-
-    ejs = cp->ejs;
 
     /*
         If merging, don't need references to dependent modules as they are aggregated onto the output
@@ -196,7 +190,7 @@ static void createGlobalType(EcCompiler *cp, EjsType *type)
     Ejs             *ejs;
     EjsModule       *mp;
     EjsType         *iface;
-    int             slotNum, next;
+    int             next, slotNum;
 
     ejs = cp->ejs;
     mp = cp->state->currentModule;
@@ -272,7 +266,7 @@ static void createClassSection(EcCompiler *cp, EjsPot *block, int slotNum, EjsPo
     EjsType         *type, *iface;
     EjsPot          *prototype;
     EjsTrait        *trait;
-    EjsName         qname, pname;
+    EjsName         qname;
     int             next, attributes, interfaceCount, instanceTraits, count;
 
     ejs = cp->ejs;
@@ -317,22 +311,17 @@ static void createClassSection(EcCompiler *cp, EjsPot *block, int slotNum, EjsPo
         }
     }
     ecEncodeNum(cp, attributes);
-#if UNUSED
-    ecEncodeNum(cp, type->sid);
-#else
     ecEncodeNum(cp, (cp->bind) ? slotNum : -1);
-#endif
 
     mprAssert(type != type->baseType);
-    //  MOB -- refactor
     if (type->baseType) {
         ecEncodeGlobal(cp, (EjsObj*) type->baseType, type->baseType->qname);
     } else {
         ecEncodeNum(cp, EJS_ENCODE_GLOBAL_NOREF);
     }
-    ecEncodeNum(cp, ejsGetPropertyCount(ejs, (EjsObj*) type));
+    ecEncodeNum(cp, ejsGetLength(ejs, (EjsObj*) type));
 
-    instanceTraits = ejsGetPropertyCount(ejs, (EjsObj*) type->prototype);
+    instanceTraits = ejsGetLength(ejs, (EjsObj*) type->prototype);
     mprAssert(instanceTraits >= 0);
     ecEncodeNum(cp, instanceTraits);
     
@@ -356,7 +345,7 @@ static void createClassSection(EcCompiler *cp, EjsPot *block, int slotNum, EjsPo
     /*
         Loop over type traits
      */
-    count = ejsGetPropertyCount(ejs, type); 
+    count = ejsGetLength(ejs, type); 
     for (slotNum = 0; slotNum < count; slotNum++) {
         createSection(cp, (EjsPot*) type, slotNum);
     }
@@ -365,9 +354,8 @@ static void createClassSection(EcCompiler *cp, EjsPot *block, int slotNum, EjsPo
      */
     prototype = type->prototype;
     if (prototype) {
-        count = ejsGetPropertyCount(ejs, prototype);
+        count = ejsGetLength(ejs, prototype);
         for (slotNum = 0; slotNum < count; slotNum++) {
-            pname = ejsGetPropertyName(ejs, prototype, slotNum);
             trait = ejsGetPropertyTraits(ejs, prototype, slotNum);
             if (slotNum < type->numInherited) {
                 if (trait && !(trait->attributes & EJS_FUN_OVERRIDE)) {
@@ -377,7 +365,7 @@ static void createClassSection(EcCompiler *cp, EjsPot *block, int slotNum, EjsPo
             createSection(cp, prototype, slotNum);
         }
     }
-    mp->checksum += sumNum(ejsGetPropertyCount(ejs, type) + instanceTraits + interfaceCount);
+    mp->checksum += sumNum(ejsGetLength(ejs, type) + instanceTraits + interfaceCount);
     mp->checksum += sumString(type->qname.name);
     ecEncodeByte(cp, EJS_SECT_CLASS_END);
 }
@@ -499,18 +487,13 @@ static void createFunctionSection(EcCompiler *cp, EjsPot *block, int slotNum, Ej
  */
 static void createExceptionSection(EcCompiler *cp, EjsFunction *fun)
 {
-    Ejs         *ejs;
     EjsEx       *ex;
-    EjsModule   *mp;
     EjsCode     *code;
     int         i;
 
     mprAssert(fun);
 
-    mp = cp->state->currentModule;
-    ejs = cp->ejs;
     code = fun->body.code;
-
     ecEncodeByte(cp, EJS_SECT_EXCEPTION);
 
     for (i = 0; i < code->numHandlers; i++) {
@@ -533,13 +516,11 @@ static void createExceptionSection(EcCompiler *cp, EjsFunction *fun)
 
 static void createDebugSection(EcCompiler *cp, EjsFunction *fun)
 {
-    EcCodeGen   *code;
     EjsDebug    *debug;
     EjsLine     *line;
     int         i, patchSizeOffset, startDebug;
 
     mprAssert(fun);
-    code = cp->state->code;
     debug = fun->body.code->debug;
 
     ecEncodeByte(cp, EJS_SECT_DEBUG);
@@ -560,13 +541,10 @@ static void createDebugSection(EcCompiler *cp, EjsFunction *fun)
 static void createBlockSection(EcCompiler *cp, EjsPot *parent, int slotNum, EjsBlock *block)
 {
     Ejs             *ejs;
-    EjsModule       *mp;
     EjsName         qname;
     int             i;
 
     ejs = cp->ejs;
-    mp = cp->state->currentModule;
-
     ecEncodeByte(cp, EJS_SECT_BLOCK);
     qname = ejsGetPropertyName(ejs, parent, slotNum);
     ecEncodeConst(cp, qname.name);
@@ -604,7 +582,7 @@ static void createPropertySection(EcCompiler *cp, EjsPot *block, int slotNum, Ej
     mprLog(7, "    global property section %@", qname.name);
 
     if (trait->type) {
-        if (trait->type == ST(Namespace) || (!ejs->initialized && trait->type->qname.name == ST(Namespace)->qname.name)){
+        if (trait->type == EST(Namespace) || (!ejs->initialized && trait->type->qname.name == EST(Namespace)->qname.name)){
             attributes |= EJS_PROP_HAS_VALUE;
         }
     }
@@ -646,7 +624,7 @@ static void createDocSection(EcCompiler *cp, cchar *tag, EjsPot *block, int slot
         ejs->doc = mprCreateHash(EJS_DOC_HASH_SIZE, 0);
     }
     mprSprintf(key, sizeof(key), "%s %Lx %d", tag, PTOL(block), slotNum);
-    if ((doc = mprLookupHash(ejs->doc, key)) == 0) {
+    if ((doc = mprLookupKey(ejs->doc, key)) == 0) {
         return;
     }
     ecEncodeByte(cp, EJS_SECT_DOC);
@@ -661,36 +639,35 @@ static void createDocSection(EcCompiler *cp, cchar *tag, EjsPot *block, int slot
  */
 int ecAddStringConstant(EcCompiler *cp, EjsString *sp)
 {
-    int    offset;
+    Ejs     *ejs;
+    int     offset;
 
-    if (sp) {
-        offset = ecAddModuleConstant(cp, cp->state->currentModule, ejsToMulti(cp->ejs, sp));
-        if (offset < 0) {
-            cp->fatalError = 1;
-            mprAssert(offset > 0);
-            return EJS_ERR;
-        }
-    } else {
-        offset = 0;
+    ejs = cp->ejs;
+    if (sp == 0) {
+        sp = ESV(empty);
+    }
+    offset = ecAddModuleConstant(cp, cp->state->currentModule, ejsToMulti(cp->ejs, sp));
+    if (offset < 0) {
+        cp->fatalError = 1;
+        mprAssert(offset > 0);
+        return EJS_ERR;
     }
     return offset;
 }
 
 
-//  MOB -- remove
 int ecAddCStringConstant(EcCompiler *cp, cchar *str)
 {
     int    offset;
 
-    if (str) {
-        offset = ecAddModuleConstant(cp, cp->state->currentModule, str);
-        if (offset < 0) {
-            cp->fatalError = 1;
-            mprAssert(offset > 0);
-            return EJS_ERR;
-        }
-    } else {
-        offset = 0;
+    if (str == 0) {
+        str = "";
+    }
+    offset = ecAddModuleConstant(cp, cp->state->currentModule, str);
+    if (offset < 0) {
+        cp->fatalError = 1;
+        mprAssert(offset > 0);
+        return EJS_ERR;
     }
     return offset;
 }
@@ -738,7 +715,7 @@ void ecAddConstants(EcCompiler *cp, EjsAny *block)
     }
     SET_VISITED(block, 1);
 
-    numTraits = ejsGetPropertyCount(ejs, block);
+    numTraits = ejsGetLength(ejs, block);
     for (i = 0; i < numTraits; i++) {
         qname = ejsGetPropertyName(ejs, block, i);
         ecAddNameConstant(cp, qname);
@@ -772,7 +749,7 @@ int ecAddDocConstant(EcCompiler *cp, cchar *tag, void *vp, int slotNum)
     mprAssert(slotNum >= 0);
 
     mprSprintf(key, sizeof(key), "%s %Lx %d", tag, PTOL(vp), slotNum);
-    doc = (EjsDoc*) mprLookupHash(ejs->doc, key);
+    doc = (EjsDoc*) mprLookupKey(ejs->doc, key);
     if (doc && doc->docString) {
         if (ecAddStringConstant(cp, doc->docString) < 0) {
             mprAssert(0);
@@ -788,23 +765,22 @@ int ecAddDocConstant(EcCompiler *cp, cchar *tag, void *vp, int slotNum)
  */
 int ecAddModuleConstant(EcCompiler *cp, EjsModule *mp, cchar *str)
 {
-    Ejs             *ejs;
     EjsConstants    *constants;
     MprHash         *hp;
     int             index;
 
     mprAssert(mp);
-    ejs = cp->ejs;
 
     if (str == 0) {
         mprAssert(0);
         return 0;
     }
     constants = mp->constants;
-    if (constants->table && (hp = mprLookupHashEntry(constants->table, str)) != 0) {
+    if (constants->table && (hp = mprLookupKeyEntry(constants->table, str)) != 0) {
         return PTOI(hp->data);
     }
-    index = ejsAddConstant(cp->ejs, constants, str);
+    index = ejsAddConstant(cp->ejs, mp, str);
+    // mprLog(0, "%6d %s", index, str);
     mprAddKey(constants->table, str, ITOP(index));
     return index;
 }
@@ -813,7 +789,6 @@ int ecAddModuleConstant(EcCompiler *cp, EjsModule *mp, cchar *str)
 /****************************** Value Emitters ********************************/
 /*
     Emit an encoded string ored with flags. The name index is shifted by 2.
-    MOB -- should be full qname
  */
 static void encodeTypeName(EcCompiler *cp, EjsString *name, int flags)
 {
@@ -852,7 +827,9 @@ void ecEncodeGlobal(EcCompiler *cp, EjsAny *obj, EjsName qname)
         If binding globals, we can encode the slot number of the type.
      */
     slotNum = ejsLookupProperty(ejs, ejs->global, qname);
-    if (slotNum < ES_global_NUM_CLASS_PROP || cp->bind) {
+
+    //  MOB - don't bind for Appweb all-in-one. ejs.web can load at different places 
+    if (slotNum < ES_global_NUM_CLASS_PROP /* || cp->bind */) {
         if (slotNum >= 0) {
             ecEncodeNum(cp, (slotNum << 2) | EJS_ENCODE_GLOBAL_SLOT);
             return;
@@ -912,21 +889,22 @@ void ecEncodeName(EcCompiler *cp, EjsName qname)
 
 void ecEncodeConst(EcCompiler *cp, EjsString *sp)
 {
+    Ejs     *ejs;
     cchar   *str;
     int     offset;
 
     mprAssert(cp);
+    ejs = cp->ejs;
 
-    if (sp) {
-        str = ejsToMulti(cp->ejs, sp);
-        offset = ecAddModuleConstant(cp, cp->state->currentModule, str);
-        if (offset < 0) {
-            cp->error = 1;
-            cp->fatalError = 1;
-            return;
-        }
-    } else {
-        offset = 0;
+    if (sp == 0) {
+        sp = ESV(empty);
+    }
+    str = ejsToMulti(cp->ejs, sp);
+    offset = ecAddModuleConstant(cp, cp->state->currentModule, str);
+    if (offset < 0) {
+        cp->error = 1;
+        cp->fatalError = 1;
+        return;
     }
     mprAssert(offset >= 0);
     ecEncodeNum(cp, offset);

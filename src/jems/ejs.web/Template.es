@@ -16,7 +16,7 @@ module ejs.web {
             let id = md5(request.id)
             return Loader.load(id, id, request.config, function (id, path) {
                 if (!global.TemplateParser) {
-                    load("ejs.template.mod")
+                    load("ejs.template.mod", {reload: false})
                 }
                 let data = TemplateParser().build(response.body)
                 return Loader.wrap(id, data)
@@ -26,27 +26,27 @@ module ejs.web {
 
     /** 
         Template web page handler. The template web page at request.filename will be processed and run.
-        @param request Request objects
+        @param request Request objects 
         @returns A response hash object
         @spec ejs
+        @example: Example use in a Route table entry
+          { name: "index", builder: TemplateApp, match: "\.ejs$" }
         @stability prototype
      */
-    function TemplateApp(request: Request) {
+    function TemplateApp(request: Request): Object {
         let app = TemplateBuilder(request)
         return app(request)
     }
 
     /** 
-        Template builder for use in routing tables to serve requests for templates. The template path can be supplied
-        via the request.filename or a literal template can be provided via options.literal.
+        Template builder. This routine creates a template function to serve requests for template files. 
+        The template path can be supplied via the request.filename or a literal template can be provided via options.literal.
         @param request Request object. 
         @param options Object hash of options
         @options layout Path Layout file
         @options literal String containing the template to render. In this case request.filename is ignored.
         @options dir Path Base directory to use for including files and for resolving layout directives
         @return A web script function that services a web request.
-        @example: Example use in a Route table entry
-          { name: "index", builder: TemplateBuilder, match: "\.ejs$" }
         @spec ejs
         @stability prototype
      */
@@ -56,12 +56,13 @@ module ejs.web {
             path = request.filename
             if (path && !path.exists) {
                 request.writeError(Http.NotFound, "Cannot find " + path)
-                return null
+                //  MOB - is this a generic need for a function like this?
+                return function() {}
             }
         }
         return Loader.load(path, path, request.config, function (id, path) {
             if (!global.TemplateParser) {
-                load("ejs.template.mod")
+                global.load("ejs.template.mod", {reload: false})
             }
             let data = options.literal || TemplateParser().build(path.readString(), options)
             return Loader.wrap(path, data)

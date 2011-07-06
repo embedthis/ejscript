@@ -14,12 +14,12 @@ static cchar *getPathString(Ejs *ejs, EjsObj *vp);
 
 /************************************ Helpers *********************************/
 
-static EjsObj *castPath(Ejs *ejs, EjsPath *fp, EjsType *type)
+static EjsAny *castPath(Ejs *ejs, EjsPath *fp, EjsType *type)
 {
     if (type->sid == S_String) {
-        return (EjsObj*) ejsCreateStringFromAsc(ejs, fp->value);
+        return ejsCreateStringFromAsc(ejs, fp->value);
     }
-    return (ejs->potHelpers.cast)(ejs, (EjsObj*) fp, type);
+    return (ejs->service->potHelpers.cast)(ejs, fp, type);
 }
 
 
@@ -29,55 +29,55 @@ static EjsPath *clonePath(Ejs *ejs, EjsPath *src, bool deep)
 }
 
 
-static EjsObj *coercePathOperands(Ejs *ejs, EjsPath *lhs, int opcode,  EjsObj *rhs)
+static EjsAny *coercePathOperands(Ejs *ejs, EjsPath *lhs, int opcode,  EjsAny *rhs)
 {
     switch (opcode) {
     /*
         Binary operators
      */
     case EJS_OP_ADD:
-        return ejsInvokeOperator(ejs, (EjsObj*) ejsCreateStringFromAsc(ejs, lhs->value), opcode, rhs);
+        return ejsInvokeOperator(ejs, ejsCreateStringFromAsc(ejs, lhs->value), opcode, rhs);
 
     case EJS_OP_COMPARE_EQ: case EJS_OP_COMPARE_NE:
     case EJS_OP_COMPARE_LE: case EJS_OP_COMPARE_LT:
     case EJS_OP_COMPARE_GE: case EJS_OP_COMPARE_GT:
         if (!ejsIsDefined(ejs, rhs)) {
-            return (EjsObj*) ((opcode == EJS_OP_COMPARE_EQ) ? S(false): S(true));
+            return ((opcode == EJS_OP_COMPARE_EQ) ? ESV(false): ESV(true));
         }
-        return ejsInvokeOperator(ejs, (EjsObj*) ejsCreateStringFromAsc(ejs, lhs->value), opcode, rhs);
+        return ejsInvokeOperator(ejs, ejsCreateStringFromAsc(ejs, lhs->value), opcode, rhs);
 
     case EJS_OP_COMPARE_STRICTLY_NE:
-        return (EjsObj*) S(true);
+        return ESV(true);
 
     case EJS_OP_COMPARE_STRICTLY_EQ:
-        return (EjsObj*) S(false);
+        return ESV(false);
 
     case EJS_OP_COMPARE_NOT_ZERO:
     case EJS_OP_COMPARE_TRUE:
-        return (EjsObj*) S(true);
+        return ESV(true);
 
     case EJS_OP_COMPARE_ZERO:
     case EJS_OP_COMPARE_FALSE:
-        return (EjsObj*) S(false);
+        return ESV(false);
 
     case EJS_OP_COMPARE_UNDEFINED:
     case EJS_OP_COMPARE_NULL:
-        return (EjsObj*) S(false);
+        return ESV(false);
 
     default:
         ejsThrowTypeError(ejs, "Opcode %d not valid for type %@", opcode, TYPE(lhs)->qname.name);
-        return S(undefined);
+        return ESV(undefined);
     }
     return 0;
 }
 
 
-static EjsObj *invokePathOperator(Ejs *ejs, EjsPath *lhs, int opcode,  EjsPath *rhs, void *data)
+static EjsAny *invokePathOperator(Ejs *ejs, EjsPath *lhs, int opcode,  EjsPath *rhs, void *data)
 {
-    EjsObj      *result;
+    EjsAny      *result;
 
     if (rhs == 0 || TYPE(lhs) != TYPE(rhs)) {
-        if ((result = coercePathOperands(ejs, lhs, opcode, (EjsObj*) rhs)) != 0) {
+        if ((result = coercePathOperands(ejs, lhs, opcode, rhs)) != 0) {
             return result;
         }
     }
@@ -88,47 +88,47 @@ static EjsObj *invokePathOperator(Ejs *ejs, EjsPath *lhs, int opcode,  EjsPath *
     case EJS_OP_COMPARE_STRICTLY_EQ:
     case EJS_OP_COMPARE_EQ:
         if (lhs == rhs || (lhs->value == rhs->value)) {
-            return (EjsObj*) S(true);
+            return ESV(true);
         }
-        return (EjsObj*) ejsCreateBoolean(ejs,  scmp(lhs->value, rhs->value) == 0);
+        return ejsCreateBoolean(ejs,  scmp(lhs->value, rhs->value) == 0);
 
     case EJS_OP_COMPARE_NE:
     case EJS_OP_COMPARE_STRICTLY_NE:
-        return (EjsObj*) ejsCreateBoolean(ejs,  scmp(lhs->value, rhs->value) != 0);
+        return ejsCreateBoolean(ejs,  scmp(lhs->value, rhs->value) != 0);
 
     case EJS_OP_COMPARE_LT:
-        return (EjsObj*) ejsCreateBoolean(ejs,  scmp(lhs->value, rhs->value) < 0);
+        return ejsCreateBoolean(ejs,  scmp(lhs->value, rhs->value) < 0);
 
     case EJS_OP_COMPARE_LE:
-        return (EjsObj*) ejsCreateBoolean(ejs,  scmp(lhs->value, rhs->value) <= 0);
+        return ejsCreateBoolean(ejs,  scmp(lhs->value, rhs->value) <= 0);
 
     case EJS_OP_COMPARE_GT:
-        return (EjsObj*) ejsCreateBoolean(ejs,  scmp(lhs->value, rhs->value) > 0);
+        return ejsCreateBoolean(ejs,  scmp(lhs->value, rhs->value) > 0);
 
     case EJS_OP_COMPARE_GE:
-        return (EjsObj*) ejsCreateBoolean(ejs,  scmp(lhs->value, rhs->value) >= 0);
+        return ejsCreateBoolean(ejs,  scmp(lhs->value, rhs->value) >= 0);
 
     /*
         Unary operators
      */
     case EJS_OP_COMPARE_NOT_ZERO:
-        return (EjsObj*) ((lhs->value) ? S(true): S(false));
+        return ((lhs->value) ? ESV(true): ESV(false));
 
     case EJS_OP_COMPARE_ZERO:
-        return (EjsObj*) ((lhs->value == 0) ? S(true): S(false));
+        return ((lhs->value == 0) ? ESV(true): ESV(false));
 
 
     case EJS_OP_COMPARE_UNDEFINED:
     case EJS_OP_COMPARE_NULL:
     case EJS_OP_COMPARE_FALSE:
     case EJS_OP_COMPARE_TRUE:
-        return S(false);
+        return ESV(false);
 
     /*
         Binary operators
      */
     case EJS_OP_ADD:
-        return (EjsObj*) ejsCreatePathFromAsc(ejs, mprJoinPath(lhs->value, rhs->value));
+        return ejsCreatePathFromAsc(ejs, mprJoinPath(lhs->value, rhs->value));
 
     default:
         ejsThrowTypeError(ejs, "Opcode %d not implemented for type %@", opcode, TYPE(lhs)->qname.name);
@@ -143,26 +143,26 @@ static EjsObj *invokePathOperator(Ejs *ejs, EjsPath *lhs, int opcode,  EjsPath *
     Constructor
     function Path(path: String)
  */
-static EjsObj *pathConstructor(Ejs *ejs, EjsPath *fp, int argc, EjsObj **argv)
+static EjsPath *pathConstructor(Ejs *ejs, EjsPath *fp, int argc, EjsObj **argv)
 {
     cchar   *path;
 
     mprAssert(argc == 1);
     if ((path = getPathString(ejs, argv[0])) == 0) {
-        return (EjsObj*) fp;
+        return fp;
     }
     fp->value = path;
-    return (EjsObj*) fp;
+    return fp;
 }
 
 
 /*
     Return an absolute path name for the file
-    function get absolutePath()
+    function get absolute(): Path
  */
-static EjsObj *absolutePath(Ejs *ejs, EjsPath *fp, int argc, EjsObj **argv)
+static EjsPath *absolutePath(Ejs *ejs, EjsPath *fp, int argc, EjsObj **argv)
 {
-    return (EjsObj*) ejsCreatePathFromAsc(ejs, mprGetAbsPath(fp->value));
+    return ejsCreatePathFromAsc(ejs, mprGetAbsPath(fp->value));
 }
 
 
@@ -170,15 +170,15 @@ static EjsObj *absolutePath(Ejs *ejs, EjsPath *fp, int argc, EjsObj **argv)
     Get when the file was last accessed.
     function get accessed(): Date
  */
-static EjsObj *getAccessedDate(Ejs *ejs, EjsPath *fp, int argc, EjsObj **argv)
+static EjsDate *getAccessedDate(Ejs *ejs, EjsPath *fp, int argc, EjsObj **argv)
 {
     MprPath     info;
 
     mprGetPathInfo(fp->value, &info);
     if (!info.valid) {
-        return (EjsObj*) S(null);
+        return ESV(null);
     }
-    return (EjsObj*) ejsCreateDate(ejs, ((MprTime) info.atime) * 1000);
+    return ejsCreateDate(ejs, ((MprTime) info.atime) * 1000);
 }
 
 
@@ -186,9 +186,9 @@ static EjsObj *getAccessedDate(Ejs *ejs, EjsPath *fp, int argc, EjsObj **argv)
     Get the base name of a file
     function basename(): Path
  */
-static EjsObj *getPathBasename(Ejs *ejs, EjsPath *fp, int argc, EjsObj **argv)
+static EjsPath *getPathBasename(Ejs *ejs, EjsPath *fp, int argc, EjsObj **argv)
 {
-    return (EjsObj*) ejsCreatePathFromAsc(ejs, mprGetPathBase(fp->value));
+    return ejsCreatePathFromAsc(ejs, mprGetPathBase(fp->value));
 }
 
 
@@ -196,7 +196,7 @@ static EjsObj *getPathBasename(Ejs *ejs, EjsPath *fp, int argc, EjsObj **argv)
     Get the path components
     function components(): Array
  */
-static EjsObj *getPathComponents(Ejs *ejs, EjsPath *fp, int argc, EjsObj **argv)
+static EjsArray *getPathComponents(Ejs *ejs, EjsPath *fp, int argc, EjsObj **argv)
 {
     MprFileSystem   *fs;
     EjsArray        *ap;
@@ -216,7 +216,7 @@ static EjsObj *getPathComponents(Ejs *ejs, EjsPath *fp, int argc, EjsObj **argv)
     if (cp > last) {
         ejsSetProperty(ejs, ap, index++, ejsCreateStringFromAsc(ejs, last));
     }
-    return (EjsObj*) ap;
+    return ap;
 }
 
 
@@ -271,15 +271,15 @@ static EjsObj *copyPath(Ejs *ejs, EjsPath *fp, int argc, EjsObj **argv)
     Return when the file was created.
     function get created(): Date
  */
-static EjsObj *getCreatedDate(Ejs *ejs, EjsPath *fp, int argc, EjsObj **argv)
+static EjsDate *getCreatedDate(Ejs *ejs, EjsPath *fp, int argc, EjsObj **argv)
 {
     MprPath     info;
 
     mprGetPathInfo(fp->value, &info);
     if (!info.valid) {
-        return (EjsObj*) S(null);
+        return ESV(null);
     }
-    return (EjsObj*) ejsCreateDate(ejs, ((MprTime) info.ctime) * 1000);
+    return ejsCreateDate(ejs, ((MprTime) info.ctime) * 1000);
 }
 
 
@@ -287,9 +287,9 @@ static EjsObj *getCreatedDate(Ejs *ejs, EjsPath *fp, int argc, EjsObj **argv)
     Get the directory name portion of a file.
     function get dirname(): Path
  */
-static EjsObj *getPathDirname(Ejs *ejs, EjsPath *fp, int argc, EjsObj **argv)
+static EjsPath *getPathDirname(Ejs *ejs, EjsPath *fp, int argc, EjsObj **argv)
 {
-    return (EjsObj*) ejsCreatePathFromAsc(ejs, mprGetPathDir(fp->value));
+    return (EjsPath*) ejsCreatePathFromAsc(ejs, mprGetPathDir(fp->value));
 }
 
 
@@ -297,11 +297,11 @@ static EjsObj *getPathDirname(Ejs *ejs, EjsPath *fp, int argc, EjsObj **argv)
     Test to see if this file exists.
     function get exists(): Boolean
  */
-static EjsObj *getPathExists(Ejs *ejs, EjsPath *fp, int argc, EjsObj **argv)
+static EjsBoolean *getPathExists(Ejs *ejs, EjsPath *fp, int argc, EjsObj **argv)
 {
     MprPath     info;
 
-    return (EjsObj*) ejsCreateBoolean(ejs, mprGetPathInfo(fp->value, &info) == 0);
+    return ejsCreateBoolean(ejs, mprGetPathInfo(fp->value, &info) == 0);
 }
 
 
@@ -309,14 +309,14 @@ static EjsObj *getPathExists(Ejs *ejs, EjsPath *fp, int argc, EjsObj **argv)
     Get the file extension portion of the file name.
     function get extension(): String
  */
-static EjsObj *getPathExtension(Ejs *ejs, EjsPath *fp, int argc, EjsObj **argv)
+static EjsString *getPathExtension(Ejs *ejs, EjsPath *fp, int argc, EjsObj **argv)
 {
     char    *ext;
 
     if ((ext = mprGetPathExtension(fp->value)) == 0) {
-        return (EjsObj*) S(empty);
+        return ESV(empty);
     }
-    return (EjsObj*) ejsCreateStringFromAsc(ejs, ext);
+    return ejsCreateStringFromAsc(ejs, ext);
 }
 
 
@@ -324,7 +324,7 @@ static EjsObj *getPathExtension(Ejs *ejs, EjsPath *fp, int argc, EjsObj **argv)
     Function to iterate and return the next element index.
     NOTE: this is not a method of Array. Rather, it is a callback function for Iterator
  */
-static EjsObj *nextPathKey(Ejs *ejs, EjsIterator *ip, int argc, EjsObj **argv)
+static EjsAny *nextPathKey(Ejs *ejs, EjsIterator *ip, int argc, EjsObj **argv)
 {
     EjsPath     *fp;
 
@@ -334,7 +334,7 @@ static EjsObj *nextPathKey(Ejs *ejs, EjsIterator *ip, int argc, EjsObj **argv)
         return 0;
     }
     if (ip->index < mprGetListLength(fp->files)) {
-        return (EjsObj*) ejsCreateNumber(ejs, ip->index++);
+        return ejsCreateNumber(ejs, ip->index++);
     }
     ejsThrowStopIteration(ejs);
     return 0;
@@ -345,10 +345,10 @@ static EjsObj *nextPathKey(Ejs *ejs, EjsIterator *ip, int argc, EjsObj **argv)
     Return the default iterator for use with "for ... in". This will iterate over the files in a directory.
     iterator function get(): Iterator
  */
-static EjsObj *getPathIterator(Ejs *ejs, EjsPath *fp, int argc, EjsObj **argv)
+static EjsAny *getPathIterator(Ejs *ejs, EjsPath *fp, int argc, EjsObj **argv)
 {
     fp->files = mprGetPathFiles(fp->value, 0);
-    return (EjsObj*) ejsCreateIterator(ejs, (EjsObj*) fp, (EjsProc) nextPathKey, 0, NULL);
+    return ejsCreateIterator(ejs, fp, nextPathKey, 0, NULL);
 }
 
 
@@ -356,7 +356,7 @@ static EjsObj *getPathIterator(Ejs *ejs, EjsPath *fp, int argc, EjsObj **argv)
     Function to iterate and return the next element value.
     NOTE: this is not a method of Array. Rather, it is a callback function for Iterator
  */
-static EjsObj *nextPathValue(Ejs *ejs, EjsIterator *ip, int argc, EjsObj **argv)
+static EjsAny *nextPathValue(Ejs *ejs, EjsIterator *ip, int argc, EjsObj **argv)
 {
     EjsPath     *fp;
     MprDirEntry *dp;
@@ -368,7 +368,7 @@ static EjsObj *nextPathValue(Ejs *ejs, EjsIterator *ip, int argc, EjsObj **argv)
     }
     if (ip->index < mprGetListLength(fp->files)) {
         dp = (MprDirEntry*) mprGetItem(fp->files, ip->index++);
-        return (EjsObj*) ejsCreatePathFromAsc(ejs, dp->name);
+        return ejsCreatePathFromAsc(ejs, dp->name);
     }
     ejsThrowStopIteration(ejs);
     return 0;
@@ -379,10 +379,10 @@ static EjsObj *nextPathValue(Ejs *ejs, EjsIterator *ip, int argc, EjsObj **argv)
     Return an iterator to enumerate the bytes in the file. For use with "for each ..."
     iterator function getValues(): Iterator
  */
-static EjsObj *getPathValues(Ejs *ejs, EjsPath *fp, int argc, EjsObj **argv)
+static EjsAny *getPathValues(Ejs *ejs, EjsPath *fp, int argc, EjsObj **argv)
 {
     fp->files = mprGetPathFiles(fp->value, 0);
-    return (EjsObj*) ejsCreateIterator(ejs, (EjsObj*) fp, (EjsProc) nextPathValue, 0, NULL);
+    return ejsCreateIterator(ejs, fp, nextPathValue, 0, NULL);
 }
 
 
@@ -393,7 +393,7 @@ static EjsObj *getPathValues(Ejs *ejs, EjsPath *fp, int argc, EjsObj **argv)
     TODO - need pattern to match (what about "." and ".." and ".*")
     TODO - move this functionality into mprFile (see appweb dirHandler.c)
  */
-static EjsObj *getPathFiles(Ejs *ejs, EjsPath *fp, int argc, EjsObj **argv)
+static EjsArray *getPathFiles(Ejs *ejs, EjsPath *fp, int argc, EjsObj **argv)
 {
     EjsArray        *array;
     MprList         *list;
@@ -433,7 +433,7 @@ static EjsObj *getPathFiles(Ejs *ejs, EjsPath *fp, int argc, EjsObj **argv)
             }
         }
     }
-    return (EjsObj*) array;
+    return array;
 }
 
 
@@ -450,9 +450,9 @@ static EjsObj *fileSystem(Ejs *ejs, EjsPath *fp, int argc, EjsObj **argv)
     Determine if the file path has a drive spec (C:) in the file name
     static function hasDrive(): Boolean
  */
-static EjsObj *pathHasDrive(Ejs *ejs, EjsPath *fp, int argc, EjsObj **argv)
+static EjsBoolean *pathHasDrive(Ejs *ejs, EjsPath *fp, int argc, EjsObj **argv)
 {
-    return (EjsObj*) ejsCreateBoolean(ejs, 
+    return ejsCreateBoolean(ejs, 
         (isalpha((int) fp->value[0]) && fp->value[1] == ':' && (fp->value[2] == '/' || fp->value[2] == '\\')));
 }
 
@@ -460,9 +460,9 @@ static EjsObj *pathHasDrive(Ejs *ejs, EjsPath *fp, int argc, EjsObj **argv)
 /*
     function get isAbsolute(): Boolean
  */
-static EjsObj *isPathAbsolute(Ejs *ejs, EjsPath *fp, int argc, EjsObj **argv)
+static EjsBoolean *isPathAbsolute(Ejs *ejs, EjsPath *fp, int argc, EjsObj **argv)
 {
-    return (EjsObj*) (mprIsAbsPath(fp->value) ? S(true): S(false));
+    return (mprIsAbsPath(fp->value) ? ESV(true): ESV(false));
 }
 
 
@@ -470,26 +470,26 @@ static EjsObj *isPathAbsolute(Ejs *ejs, EjsPath *fp, int argc, EjsObj **argv)
     Determine if the file name is a directory
     function get isDir(): Boolean
  */
-static EjsObj *isPathDir(Ejs *ejs, EjsPath *fp, int argc, EjsObj **argv)
+static EjsBoolean *isPathDir(Ejs *ejs, EjsPath *fp, int argc, EjsObj **argv)
 {
     MprPath     info;
     int         rc;
 
     rc = mprGetPathInfo(fp->value, &info);
-    return (EjsObj*) ejsCreateBoolean(ejs, rc == 0 && info.isDir);
+    return ejsCreateBoolean(ejs, rc == 0 && info.isDir);
 }
 
 
 /*
     function get isLink(): Boolean
  */
-static EjsObj *isPathLink(Ejs *ejs, EjsPath *fp, int argc, EjsObj **argv)
+static EjsBoolean *isPathLink(Ejs *ejs, EjsPath *fp, int argc, EjsObj **argv)
 {
     MprPath     info;
     int         rc;
 
     rc = mprGetPathInfo(fp->value, &info);
-    return (EjsObj*) ejsCreateBoolean(ejs, rc == 0 && info.isLink);
+    return ejsCreateBoolean(ejs, rc == 0 && info.isLink);
 }
 
 
@@ -497,21 +497,21 @@ static EjsObj *isPathLink(Ejs *ejs, EjsPath *fp, int argc, EjsObj **argv)
     Determine if the file name is a regular file
     function get isRegular(): Boolean
  */
-static EjsObj *isPathRegular(Ejs *ejs, EjsPath *fp, int argc, EjsObj **argv)
+static EjsBoolean *isPathRegular(Ejs *ejs, EjsPath *fp, int argc, EjsObj **argv)
 {
     MprPath     info;
 
     mprGetPathInfo(fp->value, &info);
-    return (EjsObj*) ejsCreateBoolean(ejs, info.isReg);
+    return ejsCreateBoolean(ejs, info.isReg);
 }
 
 
 /*
     function get isRelative(): Boolean
  */
-static EjsObj *isPathRelative(Ejs *ejs, EjsPath *fp, int argc, EjsObj **argv)
+static EjsBoolean *isPathRelative(Ejs *ejs, EjsPath *fp, int argc, EjsObj **argv)
 {
-    return (EjsObj*) (mprIsRelPath(fp->value) ? S(true): S(false));
+    return (mprIsRelPath(fp->value) ? ESV(true): ESV(false));
 }
 
 
@@ -519,7 +519,7 @@ static EjsObj *isPathRelative(Ejs *ejs, EjsPath *fp, int argc, EjsObj **argv)
     Join path segments. Returns a normalized path.
     function join(...others): Path
  */
-static EjsObj *joinPath(Ejs *ejs, EjsPath *fp, int argc, EjsObj **argv)
+static EjsPath *joinPath(Ejs *ejs, EjsPath *fp, int argc, EjsObj **argv)
 {
     EjsArray    *args;
     cchar       *other, *result;
@@ -528,12 +528,12 @@ static EjsObj *joinPath(Ejs *ejs, EjsPath *fp, int argc, EjsObj **argv)
     args = (EjsArray*) argv[0];
     result = fp->value;
     for (i = 0; i < args->length; i++) {
-        if ((other = getPathString(ejs, ejsGetProperty(ejs, (EjsObj*) args, i))) == NULL) {
+        if ((other = getPathString(ejs, ejsGetProperty(ejs, args, i))) == NULL) {
             return 0;
         }
         result = mprJoinPath(result, other);
     }
-    return (EjsObj*) ejsCreatePathFromAsc(ejs, result);
+    return ejsCreatePathFromAsc(ejs, result);
 }
 
 
@@ -542,19 +542,18 @@ static EjsObj *joinPath(Ejs *ejs, EjsPath *fp, int argc, EjsObj **argv)
   
     function joinExt(ext: String): Path
  */
-static EjsObj *joinPathExt(Ejs *ejs, EjsPath *fp, int argc, EjsObj **argv)
+static EjsPath *joinPathExt(Ejs *ejs, EjsPath *fp, int argc, EjsObj **argv)
 {
     cchar   *ext;
 
-    //  MOB -- but if the path has "." in the path, then can't easily join an extension
     if (mprGetPathExtension(fp->value)) {
-        return (EjsObj*) fp;
+        return fp;
     }
     ext = ejsToMulti(ejs, argv[0]);
     while (ext && *ext == '.') {
         ext++;
     }
-    return (EjsObj*) ejsCreatePathFromAsc(ejs, sjoin(fp->value, ".", ext, NULL));
+    return ejsCreatePathFromAsc(ejs, sjoin(fp->value, ".", ext, NULL));
 }
 
 
@@ -563,20 +562,23 @@ static EjsObj *joinPathExt(Ejs *ejs, EjsPath *fp, int argc, EjsObj **argv)
   
     override function get length(): Number
  */
-static EjsObj *pathLength(Ejs *ejs, EjsPath *fp, int argc, EjsObj **argv)
+static EjsNumber *pathLength(Ejs *ejs, EjsPath *fp, int argc, EjsObj **argv)
 {
-    return (EjsObj*) ejsCreateNumber(ejs, (MprNumber) strlen(fp->value));
+    return ejsCreateNumber(ejs, (MprNumber) strlen(fp->value));
 }
 
 
-static EjsObj *pathLinkTarget(Ejs *ejs, EjsPath *fp, int argc, EjsObj **argv)
+/*
+    function get linkTarget(): Path
+ */
+static EjsPath *pathLinkTarget(Ejs *ejs, EjsPath *fp, int argc, EjsObj **argv)
 {
     char    *path;
 
     if ((path = mprGetPathLink(fp->value)) == 0) {
-        return (EjsObj*) S(null);
+        return ESV(null);
     }
-    return (EjsObj*) ejsCreatePathFromAsc(ejs, mprGetPathLink(fp->value));
+    return ejsCreatePathFromAsc(ejs, mprGetPathLink(fp->value));
 }
 
 
@@ -637,7 +639,7 @@ static EjsObj *makePathLink(Ejs *ejs, EjsPath *fp, int argc, EjsObj **argv)
     int     hard;
 
     target = ((EjsPath*) argv[0])->value;
-    hard = (argc >= 2) ? (argv[1] == (EjsObj*) S(true)) : 0;
+    hard = (argc >= 2) ? (argv[1] == ESV(true)) : 0;
     if (mprMakeLink(fp->value, target, hard) < 0) {
         ejsThrowIOError(ejs, "Can't make link");
     }
@@ -646,12 +648,13 @@ static EjsObj *makePathLink(Ejs *ejs, EjsPath *fp, int argc, EjsObj **argv)
 
 
 /*
-    Make a temporary file. Creates a new, uniquely named temporary file.
+    Make a temporary file. Creates a new, uniquely named temporary file. The path object specifies the directory
+    to contain the temp file.
     NOTE: Still the callers responsibility to remove the temp file
   
     function temp(): Path
  */
-static EjsObj *pathTemp(Ejs *ejs, EjsPath *fp, int argc, EjsObj **argv)
+static EjsPath *pathTemp(Ejs *ejs, EjsPath *fp, int argc, EjsObj **argv)
 {
     char    *path;
 
@@ -659,30 +662,33 @@ static EjsObj *pathTemp(Ejs *ejs, EjsPath *fp, int argc, EjsObj **argv)
         ejsThrowIOError(ejs, "Can't make temp file");
         return 0;
     }
-    return (EjsObj*) ejsCreatePathFromAsc(ejs, path);
+    return ejsCreatePathFromAsc(ejs, path);
 }
 
 
 /*
     function map(separator: String): Path
  */
-static EjsObj *pa_map(Ejs *ejs, EjsPath *fp, int argc, EjsObj **argv)
+static EjsPath *pa_map(Ejs *ejs, EjsPath *fp, int argc, EjsObj **argv)
 {
     cchar   *sep;
     char    *path;
     int     separator;
 
-    sep = ejsToMulti(ejs, argv[0]);
-    separator = *sep ? *sep : '/';
+    sep = (argc >= 1) ? ejsToMulti(ejs, argv[0]) : "/";
+    separator = *sep;
     path = sclone(fp->value);
     mprMapSeparators(path, separator);
-    return (EjsObj*) ejsCreatePathFromAsc(ejs, path);
+    return ejsCreatePathFromAsc(ejs, path);
 }
 
 
-EjsObj *getMimeType(Ejs *ejs, EjsPath *fp, int argc, EjsObj **argv)
+/*
+    function get mimeType(): String
+ */
+static EjsString *getMimeType(Ejs *ejs, EjsPath *fp, int argc, EjsObj **argv)
 {
-    return (EjsObj*) ejsCreateStringFromAsc(ejs, mprLookupMime(NULL, fp->value));
+    return ejsCreateStringFromAsc(ejs, mprLookupMime(NULL, fp->value));
 }
 
 
@@ -691,53 +697,53 @@ EjsObj *getMimeType(Ejs *ejs, EjsPath *fp, int argc, EjsObj **argv)
   
     function get modified(): Date
  */
-static EjsObj *getModifiedDate(Ejs *ejs, EjsPath *fp, int argc, EjsObj **argv)
+static EjsDate *getModifiedDate(Ejs *ejs, EjsPath *fp, int argc, EjsObj **argv)
 {
     MprPath     info;
 
     mprGetPathInfo(fp->value, &info);
     if (!info.valid) {
-        return (EjsObj*) S(null);
+        return ESV(null);
     }
-    return (EjsObj*) ejsCreateDate(ejs, ((MprTime) info.mtime) * 1000);
+    return ejsCreateDate(ejs, ((MprTime) info.mtime) * 1000);
 }
 
 
 /*
     function get name(): String
  */
-static EjsObj *pa_name(Ejs *ejs, EjsPath *fp, int argc, EjsObj **argv)
+static EjsString *pa_name(Ejs *ejs, EjsPath *fp, int argc, EjsObj **argv)
 {
-    return (EjsObj*) ejsCreateStringFromAsc(ejs, fp->value);
+    return ejsCreateStringFromAsc(ejs, fp->value);
 }
 
 
 /*
     function get natural(): Path
  */
-static EjsObj *getNaturalPath(Ejs *ejs, EjsPath *fp, int argc, EjsObj **argv)
+static EjsPath *getNaturalPath(Ejs *ejs, EjsPath *fp, int argc, EjsObj **argv)
 {
-    return (EjsObj*) ejsCreatePathFromAsc(ejs, mprGetNativePath(fp->value));
+    return ejsCreatePathFromAsc(ejs, mprGetNativePath(fp->value));
 }
 
 
 /*
     function get normalize(): Path
  */
-static EjsObj *normalizePath(Ejs *ejs, EjsPath *fp, int argc, EjsObj **argv)
+static EjsPath *normalizePath(Ejs *ejs, EjsPath *fp, int argc, EjsObj **argv)
 {
-    return (EjsObj*) ejsCreatePathFromAsc(ejs, mprGetNormalizedPath(fp->value));
+    return ejsCreatePathFromAsc(ejs, mprGetNormalizedPath(fp->value));
 }
 
 
 /*
     Get the parent directory of the absolute path of the file.
   
-    function get parent(): String
+    function get parent(): Path
  */
-static EjsObj *getPathParent(Ejs *ejs, EjsPath *fp, int argc, EjsObj **argv)
+static EjsPath *getPathParent(Ejs *ejs, EjsPath *fp, int argc, EjsObj **argv)
 {
-    return (EjsObj*) ejsCreatePathFromAsc(ejs, mprGetPathParent(fp->value));
+    return ejsCreatePathFromAsc(ejs, mprGetPathParent(fp->value));
 }
 
 
@@ -746,14 +752,14 @@ static EjsObj *getPathParent(Ejs *ejs, EjsPath *fp, int argc, EjsObj **argv)
   
     function get perms(): Number
  */
-static EjsObj *getPerms(Ejs *ejs, EjsPath *fp, int argc, EjsObj **argv)
+static EjsNumber *getPerms(Ejs *ejs, EjsPath *fp, int argc, EjsObj **argv)
 {
     MprPath     info;
 
     if (mprGetPathInfo(fp->value, &info) < 0) {
-        return (EjsObj*) S(null);
+        return ESV(null);
     }
-    return (EjsObj*) ejsCreateNumber(ejs, info.perms);
+    return ejsCreateNumber(ejs, info.perms);
 }
 
 
@@ -781,17 +787,17 @@ static EjsObj *setPerms(Ejs *ejs, EjsPath *fp, int argc, EjsObj **argv)
   
     function get portable(lower: Boolean = false): Path
  */
-static EjsObj *getPortablePath(Ejs *ejs, EjsPath *fp, int argc, EjsObj **argv)
+static EjsPath *getPortablePath(Ejs *ejs, EjsPath *fp, int argc, EjsObj **argv)
 {
     char    *path;
     int     lower;
 
-    lower = (argc >= 1 && argv[0] == (EjsObj*) S(true));
+    lower = (argc >= 1 && argv[0] == ESV(true));
     path = mprGetPortablePath(fp->value);
     if (lower) {
         path = slower(path);
     }
-    return (EjsObj*) ejsCreatePathFromAsc(ejs, path);
+    return ejsCreatePathFromAsc(ejs, path);
 }
 
 
@@ -801,7 +807,7 @@ static EjsObj *getPortablePath(Ejs *ejs, EjsPath *fp, int argc, EjsObj **argv)
   
     static function readBytes(path: String): ByteArray
  */
-static EjsObj *readBytes(Ejs *ejs, EjsPath *fp, int argc, EjsObj **argv)
+static EjsByteArray *readBytes(Ejs *ejs, EjsPath *fp, int argc, EjsObj **argv)
 {
     MprFile         *file;
     EjsByteArray    *result;
@@ -831,6 +837,7 @@ static EjsObj *readBytes(Ejs *ejs, EjsPath *fp, int argc, EjsObj **argv)
     rc = 0;
     offset = 0;
     while ((bytes = mprReadFile(file, buffer, MPR_BUFSIZE)) > 0) {
+        //  MOB - should use RC Value (== bytes)
         if (ejsCopyToByteArray(ejs, result, offset, buffer, bytes) < 0) {
             ejsThrowMemoryError(ejs);
             rc = -1;
@@ -840,7 +847,7 @@ static EjsObj *readBytes(Ejs *ejs, EjsPath *fp, int argc, EjsObj **argv)
     }
     ejsSetByteArrayPositions(ejs, result, 0, offset);
     mprCloseFile(file);
-    return (EjsObj*) result;
+    return result;
 }
 
 
@@ -849,7 +856,7 @@ static EjsObj *readBytes(Ejs *ejs, EjsPath *fp, int argc, EjsObj **argv)
   
     static function readLines(path: String): Array
  */
-static EjsObj *readLines(Ejs *ejs, EjsPath *fp, int argc, EjsObj **argv)
+static EjsArray *readLines(Ejs *ejs, EjsPath *fp, int argc, EjsObj **argv)
 {
     MprFile     *file;
     MprBuf      *data;
@@ -897,7 +904,7 @@ static EjsObj *readLines(Ejs *ejs, EjsPath *fp, int argc, EjsObj **argv)
     end = mprGetBufEnd(data);
     for (lineno = 0, cp = start; cp < end; cp++) {
         if (*cp == '\n') {
-            //  MOB - UNICODE ENCODING
+            //  TODO - UNICODE ENCODING
             if (ejsSetProperty(ejs, result, lineno++, ejsCreateStringFromAsc(ejs, start, (int) (cp - start))) < 0) {
                 break;
             }
@@ -907,11 +914,11 @@ static EjsObj *readLines(Ejs *ejs, EjsPath *fp, int argc, EjsObj **argv)
         }
     }
     if (cp > start) {
-        //  MOB - UNICODE ENCODING
+        //  TODO - UNICODE ENCODING
         ejsSetProperty(ejs, result, lineno++, ejsCreateStringFromAsc(ejs, start, (int) (cp - start)));
     }
     mprCloseFile(file);
-    return (EjsObj*) result;
+    return result;
 }
 
 
@@ -920,7 +927,7 @@ static EjsObj *readLines(Ejs *ejs, EjsPath *fp, int argc, EjsObj **argv)
   
     static function readString(path: String): String
  */
-static EjsObj *readFileAsString(Ejs *ejs, EjsPath *fp, int argc, EjsObj **argv)
+static EjsString *readFileAsString(Ejs *ejs, EjsPath *fp, int argc, EjsObj **argv)
 {
     MprFile     *file;
     MprBuf      *data;
@@ -953,8 +960,8 @@ static EjsObj *readFileAsString(Ejs *ejs, EjsPath *fp, int argc, EjsObj **argv)
         }
     }
     mprCloseFile(file);
-    //  MOB - UNICODE ENCODING
-    return (EjsObj*) ejsCreateStringFromAsc(ejs, mprGetBufStart(data),  mprGetBufLength(data));
+    //  TODO - UNICODE ENCODING
+    return ejsCreateStringFromAsc(ejs, mprGetBufStart(data),  mprGetBufLength(data));
 }
 
 
@@ -963,7 +970,7 @@ static EjsObj *readFileAsString(Ejs *ejs, EjsPath *fp, int argc, EjsObj **argv)
   
     static function readXML(path: String): XML
  */
-static EjsObj *readXML(Ejs *ejs, EjsPath *fp, int argc, EjsObj **argv)
+static EjsXML *readXML(Ejs *ejs, EjsPath *fp, int argc, EjsObj **argv)
 {
     return 0;
 }
@@ -975,16 +982,16 @@ static EjsObj *readXML(Ejs *ejs, EjsPath *fp, int argc, EjsObj **argv)
   
     function get relative(): Path
  */
-static EjsObj *relativePath(Ejs *ejs, EjsPath *fp, int argc, EjsObj **argv)
+static EjsPath *relativePath(Ejs *ejs, EjsPath *fp, int argc, EjsObj **argv)
 {
-    return (EjsObj*) ejsCreatePathFromAsc(ejs, mprGetRelPath(fp->value));
+    return ejsCreatePathFromAsc(ejs, mprGetRelPath(fp->value));
 }
 
 
 /*
     Remove the file associated with the File object. This may be a file or directory.
   
-    function remove(): void
+    function remove(): Boolean
  */
 static EjsObj *removePath(Ejs *ejs, EjsPath *fp, int argc, EjsObj **argv)
 {
@@ -992,10 +999,10 @@ static EjsObj *removePath(Ejs *ejs, EjsPath *fp, int argc, EjsObj **argv)
 
     if (mprGetPathInfo(fp->value, &info) == 0) {
         if (mprDeletePath(fp->value) < 0) {
-            ejsThrowIOError(ejs, "Cant remove %s", fp->value);
+            return ESV(false);
         }
     }
-    return 0;
+    return ESV(true);
 }
 
 
@@ -1024,7 +1031,7 @@ static EjsObj *renamePathFile(Ejs *ejs, EjsPath *fp, int argc, EjsObj **argv)
   
     function resolve(...paths): Path
  */
-static EjsObj *resolvePath(Ejs *ejs, EjsPath *fp, int argc, EjsObj **argv)
+static EjsPath *resolvePath(Ejs *ejs, EjsPath *fp, int argc, EjsObj **argv)
 {
     EjsArray    *args;
     EjsPath     *result;
@@ -1034,12 +1041,12 @@ static EjsObj *resolvePath(Ejs *ejs, EjsPath *fp, int argc, EjsObj **argv)
     args = (EjsArray*) argv[0];
     result = fp;
     for (i = 0; i < args->length; i++) {
-        if ((next = getPathString(ejs, ejsGetProperty(ejs, (EjsObj*) args, i))) == NULL) {
+        if ((next = getPathString(ejs, ejsGetProperty(ejs, args, i))) == NULL) {
             return 0;
         }
         result = ejsCreatePathFromAsc(ejs, mprResolvePath(result->value, next));
     }
-    return (EjsObj*) result;
+    return result;
 }
 
 
@@ -1048,7 +1055,7 @@ static EjsObj *resolvePath(Ejs *ejs, EjsPath *fp, int argc, EjsObj **argv)
   
     function same(other: Object): Boolean
  */
-static EjsObj *isPathSame(Ejs *ejs, EjsPath *fp, int argc, EjsObj **argv)
+static EjsBoolean *isPathSame(Ejs *ejs, EjsPath *fp, int argc, EjsObj **argv)
 {
     cchar   *other;
 
@@ -1057,25 +1064,25 @@ static EjsObj *isPathSame(Ejs *ejs, EjsPath *fp, int argc, EjsObj **argv)
     } else if (ejsIs(ejs, argv[0], Path)) {
         other = ((EjsPath*) (argv[0]))->value;
     } else {
-        return (EjsObj*) S(false);
+        return ESV(false);
     }
-    return (EjsObj*) (mprSamePath(fp->value, other) ? S(true) : S(false));
+    return (mprSamePath(fp->value, other) ? ESV(true) : ESV(false));
 }
 
 
 /*
     function get separator(): String
  */
-static EjsObj *pathSeparator(Ejs *ejs, EjsPath *fp, int argc, EjsObj **argv)
+static EjsString *pathSeparator(Ejs *ejs, EjsPath *fp, int argc, EjsObj **argv)
 {
     MprFileSystem   *fs;
     cchar           *cp;
 
     if ((cp = mprGetFirstPathSeparator(fp->value)) != 0) {
-        return (EjsObj*) ejsCreateStringFromMulti(ejs, cp, 1);
+        return ejsCreateStringFromMulti(ejs, cp, 1);
     }
     fs = mprLookupFileSystem(fp->value);
-    return (EjsObj*) ejsCreateStringFromMulti(ejs, fs->separators, 1);
+    return ejsCreateStringFromMulti(ejs, fs->separators, 1);
 }
 
 
@@ -1084,19 +1091,19 @@ static EjsObj *pathSeparator(Ejs *ejs, EjsPath *fp, int argc, EjsObj **argv)
   
     function get size(): Number
  */
-static EjsObj *getPathFileSize(Ejs *ejs, EjsPath *fp, int argc, EjsObj **argv)
+static EjsNumber *getPathFileSize(Ejs *ejs, EjsPath *fp, int argc, EjsObj **argv)
 {
     if (mprGetPathInfo(fp->value, &fp->info) < 0) {
-        return (EjsObj*) S(minusOne);
+        return ESV(minusOne);
     }
-    return (EjsObj*) ejsCreateNumber(ejs, (MprNumber) fp->info.size);
+    return ejsCreateNumber(ejs, (MprNumber) fp->info.size);
 }
 
 
 /*
     override function toJSON(): String
  */
-static EjsObj *pathToJSON(Ejs *ejs, EjsPath *fp, int argc, EjsObj **argv)
+static EjsString *pathToJSON(Ejs *ejs, EjsPath *fp, int argc, EjsObj **argv)
 {
     MprBuf  *buf;
     int     i, c, len;
@@ -1115,25 +1122,25 @@ static EjsObj *pathToJSON(Ejs *ejs, EjsPath *fp, int argc, EjsObj **argv)
     }
     mprPutCharToBuf(buf, '"');
     mprAddNullToBuf(buf);
-    return (EjsObj*) ejsCreateStringFromAsc(ejs, mprGetBufStart(buf));
+    return ejsCreateStringFromAsc(ejs, mprGetBufStart(buf));
 }
 
 
 /*
     function toString(): String
  */
-static EjsObj *pathToString(Ejs *ejs, EjsPath *fp, int argc, EjsObj **argv)
+static EjsString *pathToString(Ejs *ejs, EjsPath *fp, int argc, EjsObj **argv)
 {
-    return (EjsObj*) ejsCreateStringFromAsc(ejs, fp->value);
+    return ejsCreateStringFromAsc(ejs, fp->value);
 }
 
 
 /*
     function trimExt(): Path
  */
-static EjsObj *trimExt(Ejs *ejs, EjsPath *fp, int argc, EjsObj **argv)
+static EjsPath *trimExt(Ejs *ejs, EjsPath *fp, int argc, EjsObj **argv)
 {
-    return (EjsObj*) ejsCreatePathFromAsc(ejs, mprTrimPathExtension(fp->value));
+    return ejsCreatePathFromAsc(ejs, mprTrimPathExtension(fp->value));
 }
 
 
@@ -1183,7 +1190,7 @@ static EjsObj *writeToFile(Ejs *ejs, EjsPath *fp, int argc, EjsObj **argv)
     }
 
     for (i = 0; i < args->length; i++) {
-        data = ejsToMulti(ejs, ejsToString(ejs, ejsGetProperty(ejs, (EjsObj*) args, i)));
+        data = ejsToMulti(ejs, ejsToString(ejs, ejsGetProperty(ejs, args, i)));
         length = (int) strlen(data);
         bytes = mprWriteFile(file, data, length);
         if (bytes != length) {
@@ -1214,7 +1221,7 @@ EjsPath *ejsCreatePath(Ejs *ejs, EjsString *path)
 {
     EjsPath     *fp;
 
-    if ((fp = ejsCreateObj(ejs, ST(Path), 0)) == 0) {
+    if ((fp = ejsCreateObj(ejs, ESV(Path), 0)) == 0) {
         return 0;
     }
     pathConstructor(ejs, fp, 1, (EjsObj**) &path);
@@ -1237,68 +1244,74 @@ static void managePath(EjsPath *path, int flags)
 }
 
 
+void ejsCreatePathType(Ejs *ejs)
+{
+    EjsType     *type;
+
+    type = ejsCreateCoreType(ejs, N("ejs", "Path"), sizeof(EjsPath), S_Path, ES_Path_NUM_CLASS_PROP, managePath, 
+        EJS_TYPE_OBJ | EJS_TYPE_IMMUTABLE_INSTANCES);
+    type->helpers.cast = (EjsCastHelper) castPath;
+    type->helpers.clone = (EjsCloneHelper) clonePath;
+    type->helpers.invokeOperator = (EjsInvokeOperatorHelper) invokePathOperator;
+}
+
+
 void ejsConfigurePathType(Ejs *ejs)
 {
     EjsType     *type;
     EjsPot      *prototype;
 
-    type = ejsConfigureNativeType(ejs, N("ejs", "Path"), sizeof(EjsPath), managePath, EJS_OBJ_HELPERS);
-    ejsSetSpecialType(ejs, S_Path, type);
-    prototype = type->prototype;
-
-    type->helpers.cast = (EjsCastHelper) castPath;
-    type->helpers.clone = (EjsCloneHelper) clonePath;
-    type->helpers.invokeOperator = (EjsInvokeOperatorHelper) invokePathOperator;
-
+    if ((type = ejsFinalizeCoreType(ejs, N("ejs", "Path"))) == 0) {
+        return;
+    }
     //  TODO - rename all and use pa_ prefix
-    ejsBindConstructor(ejs, type, (EjsProc) pathConstructor);
-    ejsBindMethod(ejs, prototype, ES_Path_absolute, (EjsProc) absolutePath);
-    ejsBindMethod(ejs, prototype, ES_Path_accessed, (EjsProc) getAccessedDate);
-    ejsBindMethod(ejs, prototype, ES_Path_basename, (EjsProc) getPathBasename);
-    ejsBindMethod(ejs, prototype, ES_Path_components, (EjsProc) getPathComponents);
-    ejsBindMethod(ejs, prototype, ES_Path_copy, (EjsProc) copyPath);
-    ejsBindMethod(ejs, prototype, ES_Path_created, (EjsProc) getCreatedDate);
-    ejsBindMethod(ejs, prototype, ES_Path_dirname, (EjsProc) getPathDirname);
-    ejsBindMethod(ejs, prototype, ES_Path_exists, (EjsProc) getPathExists);
-    ejsBindMethod(ejs, prototype, ES_Path_extension, (EjsProc) getPathExtension);
-    ejsBindMethod(ejs, prototype, ES_Path_files, (EjsProc) getPathFiles);
-    ejsBindMethod(ejs, prototype, ES_Path_iterator_get, (EjsProc) getPathIterator);
-    ejsBindMethod(ejs, prototype, ES_Path_iterator_getValues, (EjsProc) getPathValues);
-    ejsBindMethod(ejs, prototype, ES_Path_hasDrive, (EjsProc) pathHasDrive);
-    ejsBindMethod(ejs, prototype, ES_Path_isAbsolute, (EjsProc) isPathAbsolute);
-    ejsBindMethod(ejs, prototype, ES_Path_isDir, (EjsProc) isPathDir);
-    ejsBindMethod(ejs, prototype, ES_Path_isLink, (EjsProc) isPathLink);
-    ejsBindMethod(ejs, prototype, ES_Path_isRegular, (EjsProc) isPathRegular);
-    ejsBindMethod(ejs, prototype, ES_Path_isRelative, (EjsProc) isPathRelative);
-    ejsBindMethod(ejs, prototype, ES_Path_join, (EjsProc) joinPath);
-    ejsBindMethod(ejs, prototype, ES_Path_joinExt, (EjsProc) joinPathExt);
-    ejsBindMethod(ejs, prototype, ES_Path_length, (EjsProc) pathLength);
-    ejsBindMethod(ejs, prototype, ES_Path_linkTarget, (EjsProc) pathLinkTarget);
-    ejsBindMethod(ejs, prototype, ES_Path_makeDir, (EjsProc) makePathDir);
-    ejsBindMethod(ejs, prototype, ES_Path_makeLink, (EjsProc) makePathLink);
-#if ES_Path_temp
-    ejsBindMethod(ejs, prototype, ES_Path_temp, (EjsProc) pathTemp);
-#endif
-    ejsBindMethod(ejs, prototype, ES_Path_map, (EjsProc) pa_map);
-    ejsBindAccess(ejs, prototype, ES_Path_mimeType, (EjsProc) getMimeType, NULL);
-    ejsBindMethod(ejs, prototype, ES_Path_modified, (EjsProc) getModifiedDate);
-    ejsBindMethod(ejs, prototype, ES_Path_name, (EjsProc) pa_name);
-    ejsBindMethod(ejs, prototype, ES_Path_natural, (EjsProc) getNaturalPath);
-    ejsBindMethod(ejs, prototype, ES_Path_normalize, (EjsProc) normalizePath);
-    ejsBindMethod(ejs, prototype, ES_Path_parent, (EjsProc) getPathParent);
-    ejsBindAccess(ejs, prototype, ES_Path_perms, (EjsProc) getPerms, (EjsProc) setPerms);
-    ejsBindMethod(ejs, prototype, ES_Path_portable, (EjsProc) getPortablePath);
-    ejsBindMethod(ejs, prototype, ES_Path_relative, (EjsProc) relativePath);
-    ejsBindMethod(ejs, prototype, ES_Path_remove, (EjsProc) removePath);
-    ejsBindMethod(ejs, prototype, ES_Path_rename, (EjsProc) renamePathFile);
-    ejsBindMethod(ejs, prototype, ES_Path_resolve, (EjsProc) resolvePath);
-    ejsBindMethod(ejs, prototype, ES_Path_same, (EjsProc) isPathSame);
-    ejsBindMethod(ejs, prototype, ES_Path_separator, (EjsProc) pathSeparator);
-    ejsBindMethod(ejs, prototype, ES_Path_size, (EjsProc) getPathFileSize);
-    ejsBindMethod(ejs, prototype, ES_Path_toJSON, (EjsProc) pathToJSON);
-    ejsBindMethod(ejs, prototype, ES_Path_toString, (EjsProc) pathToString);
-    ejsBindMethod(ejs, prototype, ES_Path_trimExt, (EjsProc) trimExt);
-    ejsBindMethod(ejs, prototype, ES_Path_truncate, (EjsProc) truncatePath);
+    prototype = type->prototype;
+    ejsBindConstructor(ejs, type, pathConstructor);
+    ejsBindMethod(ejs, prototype, ES_Path_absolute, absolutePath);
+    ejsBindMethod(ejs, prototype, ES_Path_accessed, getAccessedDate);
+    ejsBindMethod(ejs, prototype, ES_Path_basename, getPathBasename);
+    ejsBindMethod(ejs, prototype, ES_Path_components, getPathComponents);
+    ejsBindMethod(ejs, prototype, ES_Path_copy, copyPath);
+    ejsBindMethod(ejs, prototype, ES_Path_created, getCreatedDate);
+    ejsBindMethod(ejs, prototype, ES_Path_dirname, getPathDirname);
+    ejsBindMethod(ejs, prototype, ES_Path_exists, getPathExists);
+    ejsBindMethod(ejs, prototype, ES_Path_extension, getPathExtension);
+    ejsBindMethod(ejs, prototype, ES_Path_files, getPathFiles);
+    ejsBindMethod(ejs, prototype, ES_Path_iterator_get, getPathIterator);
+    ejsBindMethod(ejs, prototype, ES_Path_iterator_getValues, getPathValues);
+    ejsBindMethod(ejs, prototype, ES_Path_hasDrive, pathHasDrive);
+    ejsBindMethod(ejs, prototype, ES_Path_isAbsolute, isPathAbsolute);
+    ejsBindMethod(ejs, prototype, ES_Path_isDir, isPathDir);
+    ejsBindMethod(ejs, prototype, ES_Path_isLink, isPathLink);
+    ejsBindMethod(ejs, prototype, ES_Path_isRegular, isPathRegular);
+    ejsBindMethod(ejs, prototype, ES_Path_isRelative, isPathRelative);
+    ejsBindMethod(ejs, prototype, ES_Path_join, joinPath);
+    ejsBindMethod(ejs, prototype, ES_Path_joinExt, joinPathExt);
+    ejsBindMethod(ejs, prototype, ES_Path_length, pathLength);
+    ejsBindMethod(ejs, prototype, ES_Path_linkTarget, pathLinkTarget);
+    ejsBindMethod(ejs, prototype, ES_Path_makeDir, makePathDir);
+    ejsBindMethod(ejs, prototype, ES_Path_makeLink, makePathLink);
+    ejsBindMethod(ejs, prototype, ES_Path_temp, pathTemp);
+    ejsBindMethod(ejs, prototype, ES_Path_map, pa_map);
+    ejsBindAccess(ejs, prototype, ES_Path_mimeType, getMimeType, NULL);
+    ejsBindMethod(ejs, prototype, ES_Path_modified, getModifiedDate);
+    ejsBindMethod(ejs, prototype, ES_Path_name, pa_name);
+    ejsBindMethod(ejs, prototype, ES_Path_natural, getNaturalPath);
+    ejsBindMethod(ejs, prototype, ES_Path_normalize, normalizePath);
+    ejsBindMethod(ejs, prototype, ES_Path_parent, getPathParent);
+    ejsBindAccess(ejs, prototype, ES_Path_perms, getPerms, setPerms);
+    ejsBindMethod(ejs, prototype, ES_Path_portable, getPortablePath);
+    ejsBindMethod(ejs, prototype, ES_Path_relative, relativePath);
+    ejsBindMethod(ejs, prototype, ES_Path_remove, removePath);
+    ejsBindMethod(ejs, prototype, ES_Path_rename, renamePathFile);
+    ejsBindMethod(ejs, prototype, ES_Path_resolve, resolvePath);
+    ejsBindMethod(ejs, prototype, ES_Path_same, isPathSame);
+    ejsBindMethod(ejs, prototype, ES_Path_separator, pathSeparator);
+    ejsBindMethod(ejs, prototype, ES_Path_size, getPathFileSize);
+    ejsBindMethod(ejs, prototype, ES_Path_toJSON, pathToJSON);
+    ejsBindMethod(ejs, prototype, ES_Path_toString, pathToString);
+    ejsBindMethod(ejs, prototype, ES_Path_trimExt, trimExt);
+    ejsBindMethod(ejs, prototype, ES_Path_truncate, truncatePath);
 }
 
 

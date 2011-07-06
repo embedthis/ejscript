@@ -32,10 +32,15 @@ server.on("readable", function (event, request: Request) {
 
 
 //  Refresh options
-proxy("label", "Text", {refresh: "@update"}, '<span id="id_0" data-refresh="/update">Text</span>')
+proxy("label", "Text", {refresh: "@update"}, [
+    '<span id="id',
+    ' data-refresh="/update">Text</span>',
+])
 
 //  With period
-proxy("label", "Text", {refresh: "@update", period: 2000}, 
-    '<span data-refresh-period="2000" id="id_0" data-refresh="/update">Text</span>')
+proxy("label", "Text", {refresh: "@update", period: 2000}, [
+    '<span data-refresh-period="2000" id="id',
+    ' data-refresh="/update">Text</span>',
+])
 
 server.close()

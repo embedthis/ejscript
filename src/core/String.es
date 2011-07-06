@@ -251,9 +251,9 @@ module ejs {
             and replace it with the replace text. If the pattern is a string, only the first occurrence is replaced.
             @param pattern The regular expression or string pattern to search for.
             @param replacement The string to replace the match with or a function to generate the replacement text. The
-                replacement string can contain special replacement patterns: "$$" inserts a "$", "$&" inserts the
-                matched substring, "$`" inserts the portion that preceeds the matched substring, "$'" inserts the
-                portion that follows the matched substring, and "$N" inserts the Nth parenthesized substring.
+                replacement string can contain special replacement patterns: "$$" inserts a "\$", "\$&" inserts the
+                matched substring, "\$`" inserts the portion that preceeds the matched substring, "\$'" inserts the
+                portion that follows the matched substring, and "\$N" inserts the Nth parenthesized substring.
                 The replacement parameter can also be a function which will be invoked and the function return value 
                 will be used as the resplacement text. The function will be invoked multiple times for each match to be 
                 replaced if the regular expression is global. The function will be invoked with the signature:
@@ -494,6 +494,7 @@ module ejs {
         function % (arg: Object): String
             format(arg)
 
+//  MOB - Cleanup
         /** 
             @hide 
             @deprecated 2.0.0

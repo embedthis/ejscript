@@ -6,11 +6,6 @@
 
 module ejs {
 
-    /*
-        TODO 
-            - removeByElement(e) - remove an array element by reference
-     */
-
     /**
         Arrays provide a growable, integer indexed, in-memory store for objects.  An array can be treated as a 
         stack (FIFO or LIFO) or a list (ordered).  Insertions can be done at the beginning or end of the stack or at an 
@@ -214,7 +209,7 @@ module ejs {
         native function join(sep: String = ""): String
 
         /**
-            Find an item searching from the end of the arry.
+            Find an item searching from the end of the array.
             Search for an item using strict equality "===". This call searches from the end of the array for the given 
             element.
             @param element The object to search for.
@@ -246,7 +241,6 @@ module ejs {
             @param mapper Transforming function
          */
         function map(mapper: Function): Array {
-            //  BUG MOB TODO return clone().transform(mapper)
             var result: Array = clone()
             result.transform(mapper)
             return result
@@ -354,6 +348,14 @@ module ejs {
             }
             splice(start, end - start + 1)
         }
+
+        /**
+            Remove specified elements from the array. The elements are removed and not just set 
+            to undefined as the delete operator will do. Indicies are renumbered. 
+            @param elts List of elements to remove.
+            @spec ejs
+         */
+        native function removeElements(...elts): Void
 
         /**
             Reverse the order of the objects in the array. The elements are reversed in the original array.
@@ -487,6 +489,7 @@ module ejs {
         # DOC_ONLY
         native function << (elements: Array): Array
 
+        //  MOB - need a function equivalent for this
         /**
             Array subtraction. Remove any items that appear in the supplied array.
             @param arr The array to remove.

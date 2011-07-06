@@ -22,17 +22,18 @@ module ejs {
         /** 
             Clone the object
             @param deep If true, do a deep copy where all object references are also copied, and so on, recursively.
+            A shallow clone will do 1 level deep. Deep clones are N-level deep.
             @spec ejs
          */
-        native function clone(deep: Boolean = true) : Object
+        native function clone(deep: Boolean = true): Object
 
         /** 
-            Create a new object, set the prototype and properties.
+            Create a new object, set the object prototype and properties.
             @param prototype Prototype object
-            @param props Properties for the new object
+            @param properties Properties for the new object
             @return The created object
          */
-        static native function create(prototype: Object, props: Object = undefined): Object 
+        static native function create(prototype: Object, properties: Object = undefined): Object 
 
         /** 
             Define or redefine a property on the given object
@@ -70,7 +71,7 @@ module ejs {
          */
         static native function freeze(obj: Object): Void
 
-/* MOB 
+/* FUTURE 
         get options
         @option baseClasses Boolean determining if base class properties will be serialized. Defaults to false.
         @option depth Number indiciating the depth to recurse when converting properties to literals. If set to zero, 
@@ -95,13 +96,13 @@ module ejs {
          */
         static native function getOwnPropertyDescriptor(obj: Object, prop: String): Object
 
+//  MOB -- inconsistent with JSON.baseClasses
         /** 
             Return an array of all property names including non-enumerable properties. This returns the bare names
             and does not include the namespace portions of the names. Use getOwnPropertyDescriptor to access property
             namespace values.
             @param obj Object to inspect
             @param options Property selection options
-MOB -- inconsistent with JSON.baseClasses
             @option includeBases Boolean determining if base class properties will included. Defaults to false.
             @option excludeFunctions Boolean determining if function properties will included. Defaults to false.
             @return Array of enumerable property names
@@ -118,7 +119,7 @@ MOB -- inconsistent with JSON.baseClasses
             @param obj Object to inspect
             @return The prototype object for the given object.
          */
-        static native function getOwnPrototypeOf(obj: Object): Type
+        static native function getOwnPrototypeOf(obj: Object): Object
 
         /** 
             Get an iterator for this object to be used by "for each (v in obj)"
@@ -135,7 +136,6 @@ MOB -- inconsistent with JSON.baseClasses
          */
         native function hasOwnProperty(name: String): Boolean
 
-//  MOB -- terminology. dynamic vs extensible
         /** 
             Test if an object is extensible
             @return True if the extensible trait of the object is true

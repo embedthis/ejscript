@@ -61,12 +61,6 @@ EcCompiler *ecCreateCompiler(Ejs *ejs, int flags)
 }
 
         
-//  MOB - remove
-void ecDestroyCompiler(EcCompiler *cp)
-{
-}
-
-
 static void manageCompiler(EcCompiler *cp, int flags)
 {
     if (flags & MPR_MANAGE_MARK) {
@@ -93,23 +87,15 @@ static void manageCompiler(EcCompiler *cp, int flags)
 int ecCompile(EcCompiler *cp, int argc, char **argv)
 {
     Ejs     *ejs;
-    int     rc, saveCompiling, frozen;
+    int     rc, saveCompiling, paused;
 
-#if BLD_DEBUG
-    MprThread   *tp;
-    
-    tp = mprGetCurrentThread();
-#endif
     ejs = cp->ejs;
     saveCompiling = ejs->compiling;
     ejs->compiling = 1;
     
-    //  MOB -- remove this. Should not be required.
-    frozen = ejsFreeze(ejs, -1);
-
+    paused = ejsPauseGC(ejs);
     rc = compileInner(cp, argc, argv);
-
-    ejsFreeze(ejs, frozen);
+    ejsResumeGC(ejs, paused);
     ejs->compiling = saveCompiling;
     return rc;
 }
@@ -124,7 +110,7 @@ static int compileInner(EcCompiler *cp, int argc, char **argv)
     EcLocation  loc;
     cchar       *ext;
     char        *msg;
-    int         i, j, next, nextModule, lflags, rc, frozen;
+    int         next, i, j, nextModule, lflags, rc, paused;
 
     ejs = cp->ejs;
     if ((nodes = mprCreateList(-1, 0)) == 0) {
@@ -182,37 +168,20 @@ static int compileInner(EcCompiler *cp, int argc, char **argv)
                     }
                 }
             }
-            //  MOB -- does this really need to be added?
             mprAddItem(nodes, 0);
         } else  {
             mprAssert(!MPR->marking);
-            
-            //  MOB - move this deeper (gradually)
-            frozen = ejsFreeze(ejs, 1);
-// printf(">>>>>>>>>>> Before parse MUST BE NO GC\n");
+            paused = ejsPauseGC(ejs);
             mprAddItem(nodes, ecParseFile(cp, argv[i]));
-// printf("<<<<<<<<<<<< AFTER parse\n");
-            ejsFreeze(ejs, frozen);
+            ejsResumeGC(ejs, paused);
         }
         mprAssert(!MPR->marking);
-        mprAssert(ejs->result == 0 || (MPR_GET_GEN(MPR_GET_MEM(ejs->result)) != MPR->heap.dead));
-
-#if UNUSED
-        if (!frozen) {
-            mprAssert(ejs->result == 0 || (MPR_GET_GEN(MPR_GET_MEM(ejs->result)) != MPR->heap.dead));
-// printf("Yield after parse\n");
-            mprYield(0);
-// printf("Back from yield after parse\n");
-            mprAssert(ejs->result == 0 || (MPR_GET_GEN(MPR_GET_MEM(ejs->result)) != MPR->heap.dead));
-        }
-#endif
     }
     mprAssert(ejs->result == 0 || (MPR_GET_GEN(MPR_GET_MEM(ejs->result)) != MPR->heap.dead));
 
 
     /*
         Allocate the eval frame stack. This is used for property lookups. We have one dummy block at the top always.
-        MOB -- why ?
      */
     block = ejsCreateBlock(ejs, 0);
     mprSetName(block, "Compiler");
@@ -221,21 +190,21 @@ static int compileInner(EcCompiler *cp, int argc, char **argv)
     /*
         Process the internal representation and generate code
      */
-    frozen = ejsFreeze(ejs, 1);
-// printf("Freeze before AST\n");
+    paused = ejsPauseGC(ejs);
     if (!cp->parseOnly && cp->errorCount == 0) {
         ecResetParser(cp);
         if (ecAstProcess(cp) < 0) {
             ejsPopBlock(ejs);
             cp->nodes = NULL;
+            ejsResumeGC(ejs, paused);
             return EJS_ERR;
         }
-// printf("after AST\n");
         if (cp->errorCount == 0) {
             ecResetParser(cp);
             if (ecCodeGen(cp) < 0) {
                 ejsPopBlock(ejs);
                 cp->nodes = NULL;
+                ejsResumeGC(ejs, paused);
                 return EJS_ERR;
             }
         }
@@ -250,18 +219,15 @@ static int compileInner(EcCompiler *cp, int argc, char **argv)
         ejsAddModule(cp->ejs, mp);
     }
     cp->nodes = NULL;
-    ejsFreeze(ejs, frozen);
-    if (!frozen) {
-// printf("Yield after code gen\n");
+    ejsResumeGC(ejs, paused);
+    if (!paused) {
         mprYield(0);
-// printf("After Yield after code gen\n");
     }
     mprAssert(ejs->result == 0 || (MPR_GET_GEN(MPR_GET_MEM(ejs->result)) != MPR->heap.dead));
     return (cp->errorCount > 0) ? EJS_ERR: 0;
 }
 
 
-//  MOB - remove this
 int ejsInitCompiler(EjsService *service)
 {
     service->loadScriptLiteral = loadScriptLiteral;
@@ -270,7 +236,6 @@ int ejsInitCompiler(EjsService *service)
 }
 
 
-//  MOB -- remove these
 /*
     Load a script file. This indirect routine is used by the core VM to compile a file when required.
  */
@@ -284,7 +249,6 @@ static EjsObj *loadScriptFile(Ejs *ejs, cchar *path, cchar *cache)
 }
 
 
-//  MOB -- remove these
 /*
     Function for ejs->loadScriptLiteral. This indirect routine is used by the core VM to compile a script when required.
  */
@@ -319,11 +283,9 @@ int ejsLoadScriptFile(Ejs *ejs, cchar *path, cchar *cache, int flags)
             ejsThrowSyntaxError(ejs, "%s", ec->errorMsg ? ec->errorMsg : "Can't parse script");
         }
         mprRemoveRoot(ec);
-        ecDestroyCompiler(ec);
         return EJS_ERR;
     }
     mprRemoveRoot(ec);
-    ecDestroyCompiler(ec);
 
     if (ejsRun(ejs) < 0) {
         return EJS_ERR;
@@ -350,10 +312,10 @@ int ejsLoadScriptLiteral(Ejs *ejs, EjsString *script, cchar *cache, int flags)
     } else {
         cp->noout = 1;
     }
+    //  UNICODE -- should this API be multi or unicode
     if (ecOpenMemoryStream(cp, ejsToMulti(ejs, script), script->length) < 0) {
         mprError("Can't open memory stream");
         mprRemoveRoot(cp);
-        ecDestroyCompiler(cp);
         return EJS_ERR;
     }
     path = "__script__";
@@ -362,12 +324,10 @@ int ejsLoadScriptLiteral(Ejs *ejs, EjsString *script, cchar *cache, int flags)
             ejsThrowSyntaxError(ejs, "%s", cp->errorMsg ? cp->errorMsg : "Can't parse script");
         }
         mprRemoveRoot(cp);
-        ecDestroyCompiler(cp);
         return EJS_ERR;
     }
     ecCloseStream(cp);
     mprRemoveRoot(cp);
-    ecDestroyCompiler(cp);
     MPR_VERIFY_MEM();
     
     if (ejsRun(ejs) < 0) {
@@ -383,14 +343,17 @@ int ejsLoadScriptLiteral(Ejs *ejs, EjsString *script, cchar *cache, int flags)
 int ejsEvalFile(cchar *path)
 {
     Ejs     *ejs;
-    Mpr     *mpr;
 
-    mpr = mprCreate(0, NULL, 0);
-    if ((ejs = ejsCreate(NULL, NULL, NULL, 0, NULL, 0)) == 0) {
+    mprCreate(0, 0, 0);
+    if ((ejs = ejsCreateVM(0, 0, 0)) == 0) {
         mprDestroy(0);
         return MPR_ERR_MEMORY;
     }
     mprAddRoot(ejs);
+    if (ejsLoadModules(ejs, 0, 0) < 0) {
+        mprDestroy(0);
+        return MPR_ERR_CANT_READ;
+    }
     if (ejsLoadScriptFile(ejs, path, NULL, EC_FLAGS_NO_OUT | EC_FLAGS_DEBUG) == 0) {
         ejsReportError(ejs, "Error in program");
         mprDestroy(0);
@@ -407,14 +370,17 @@ int ejsEvalFile(cchar *path)
 int ejsEvalScript(cchar *script)
 {
     Ejs     *ejs;
-    Mpr     *mpr;
 
-    mpr = mprCreate(0, NULL, 0);
-    if ((ejs = ejsCreate(NULL, NULL, NULL, 0, NULL, 0)) == 0) {
+    mprCreate(0, 0, 0);
+    if ((ejs = ejsCreateVM(0, 0, 0)) == 0) {
         mprDestroy(0);
         return MPR_ERR_MEMORY;
     }
     mprAddRoot(ejs);
+    if (ejsLoadModules(ejs, 0, 0) < 0) {
+        mprDestroy(0);
+        return MPR_ERR_CANT_READ;
+    }
     if (ejsLoadScriptLiteral(ejs, ejsCreateStringFromAsc(ejs, script), NULL, EC_FLAGS_NO_OUT | EC_FLAGS_DEBUG) == 0) {
         ejsReportError(ejs, "Error in program");
         mprDestroy(0);
@@ -500,9 +466,7 @@ void ecErrorv(EcCompiler *cp, cchar *severity, EcLocation *loc, cchar *fmt, va_l
 {
     cchar   *appName;
     char    *pointer, *errorMsg, *msg;
-    int     errCode;
 
-    errCode = 0;
     appName = mprGetAppName(cp);
     msg = mprAsprintfv(fmt, args);
 

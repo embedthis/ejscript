@@ -1,6 +1,7 @@
 LIBRARY libejs.dll
 EXPORTS
-  dummy_Reflection
+  cloneCopy
+  cloneRef
   ecAddCStringConstant
   ecAddConstants
   ecAddDocConstant
@@ -22,7 +23,6 @@ EXPORTS
   ecCreateModuleSection
   ecCreateNode
   ecCreateStream
-  ecDestroyCompiler
   ecEncodeBlock
   ecEncodeByte
   ecEncodeByteAtPos
@@ -78,15 +78,20 @@ EXPORTS
   ejsAddConstant
   ejsAddDebugLine
   ejsAddException
+  ejsAddImmutable
   ejsAddItem
   ejsAddModule
   ejsAddNamespaceToBlock
   ejsAddNativeModule
   ejsAddObserver
   ejsAlloc
+  ejsAllocPoolVM
   ejsAppendArray
   ejsAppendAttributeToXML
   ejsAppendToXML
+  ejsApplyBlockHelpers
+  ejsApplyObjHelpers
+  ejsApplyPotHelpers
   ejsAtoi
   ejsAttention
   ejsBindAccess
@@ -94,23 +99,26 @@ EXPORTS
   ejsBindFunction
   ejsBindMethod
   ejsBlendObject
-  ejsBootstrapTypes
+  ejsCacheExpire
+  ejsCacheRead
+  ejsCacheReadObj
+  ejsCacheRemove
+  ejsCacheSetLimits
+  ejsCacheWrite
+  ejsCacheWriteObj
   ejsCaptureStack
-  ejsCast
+  ejsCastType
   ejsCatString
   ejsCatStrings
   ejsClearArray
   ejsClearAttention
   ejsClearException
-  ejsClearPotHash
   ejsClone
   ejsCloneArray
   ejsCloneBlock
-  ejsCloneBlockHelpers
   ejsCloneFunction
-  ejsCloneObjHelpers
   ejsClonePot
-  ejsClonePotHelpers
+  ejsCloneVM
   ejsCoerceOperands
   ejsCompactPot
   ejsCompareMulti
@@ -119,6 +127,7 @@ EXPORTS
   ejsCompareWide
   ejsConfigureAppType
   ejsConfigureArrayType
+  ejsConfigureBlockType
   ejsConfigureBooleanType
   ejsConfigureByteArrayType
   ejsConfigureCmdType
@@ -127,17 +136,18 @@ EXPORTS
   ejsConfigureErrorType
   ejsConfigureFileSystemType
   ejsConfigureFileType
+  ejsConfigureFrameType
   ejsConfigureFunctionType
   ejsConfigureGCType
   ejsConfigureGlobalBlock
   ejsConfigureHttpType
   ejsConfigureIteratorType
   ejsConfigureJSONType
-  ejsConfigureLoggerType
+  ejsConfigureLocalCacheType
   ejsConfigureMathType
   ejsConfigureMemoryType
+  ejsConfigureMprLogType
   ejsConfigureNamespaceType
-  ejsConfigureNativeType
   ejsConfigureNullType
   ejsConfigureNumberType
   ejsConfigureObjectType
@@ -159,21 +169,21 @@ EXPORTS
   ejsContainsString
   ejsCopySlots
   ejsCopyToByteArray
-  ejsCreate
   ejsCreateActivation
   ejsCreateArchetype
   ejsCreateArray
   ejsCreateArrayType
   ejsCreateBareString
   ejsCreateBlock
-  ejsCreateBlockType
-  ejsCreateBoolean
+  ejsCreateBlockHelpers
   ejsCreateBooleanType
+  ejsCreateBootstrapTypes
   ejsCreateByteArray
   ejsCreateCode
   ejsCreateCompilerFrame
   ejsCreateConfigType
   ejsCreateConstants
+  ejsCreateCoreType
   ejsCreateDate
   ejsCreateDebug
   ejsCreateDoc
@@ -188,7 +198,7 @@ EXPORTS
   ejsCreateFrameType
   ejsCreateFunction
   ejsCreateFunctionType
-  ejsCreateGlobalBlock
+  ejsCreateGlobalNamespaces
   ejsCreateInstance
   ejsCreateIntern
   ejsCreateIterator
@@ -196,16 +206,16 @@ EXPORTS
   ejsCreateModule
   ejsCreateNamespace
   ejsCreateNamespaceType
-  ejsCreateNativeType
   ejsCreateNonInternedString
   ejsCreateNull
-  ejsCreateNullType
   ejsCreateNumber
   ejsCreateNumberType
   ejsCreateObj
   ejsCreateObjHelpers
   ejsCreatePath
   ejsCreatePathFromAsc
+  ejsCreatePathType
+  ejsCreatePool
   ejsCreatePot
   ejsCreatePotHelpers
   ejsCreateRegExp
@@ -220,11 +230,11 @@ EXPORTS
   ejsCreateStringFromConst
   ejsCreateStringFromMulti
   ejsCreateType
-  ejsCreateTypeType
   ejsCreateUndefined
   ejsCreateUri
   ejsCreateUriFromMulti
   ejsCreateUriFromParts
+  ejsCreateVM
   ejsCreateVoidType
   ejsCreateWorker
   ejsCreateXML
@@ -236,15 +246,17 @@ EXPORTS
   ejsDecodeInt32
   ejsDecodeNum
   ejsDeepCopyXML
+  ejsDefineConfigProperties
   ejsDefineGlobalFunction
+  ejsDefineGlobalNamespaces
   ejsDefineProperty
   ejsDefineReservedNamespace
   ejsDefineTypeNamespaces
   ejsDeleteProperty
   ejsDeletePropertyByName
   ejsDeserialize
-  ejsDestroy
   ejsDestroyIntern
+  ejsDestroyVM
   ejsDisableExit
   ejsDisableFunction
   ejsEmptyName
@@ -258,9 +270,12 @@ EXPORTS
   ejsEvalModule
   ejsEvalScript
   ejsExit
+  ejsFinalizeCoreType
+  ejsFinalizeScriptType
+  ejsFixTraits
   ejsFixupType
   ejsFormatReservedNamespace
-  ejsFreeze
+  ejsFreePoolVM
   ejsFreezeGlobal
   ejsGetBoolean
   ejsGetByteArrayAvailable
@@ -271,10 +286,12 @@ EXPORTS
   ejsGetErrorMsg
   ejsGetException
   ejsGetFirstItem
-  ejsGetGlobalObject
   ejsGetHashSize
   ejsGetHttpLimits
+  ejsGetImmutable
+  ejsGetImmutableByName
   ejsGetInt
+  ejsGetInt64
   ejsGetItem
   ejsGetLastItem
   ejsGetLength
@@ -290,7 +307,6 @@ EXPORTS
   ejsGetPropertyTraits
   ejsGetPrototype
   ejsGetSlot
-  ejsGetSpecial
   ejsGetType
   ejsGetTypeByName
   ejsGetTypeName
@@ -302,11 +318,12 @@ EXPORTS
   ejsHasException
   ejsHasObservers
   ejsInheritBaseClassNamespaces
+  ejsInitBlockType
   ejsInitCompiler
   ejsInitFunction
-  ejsInitSearchPath
-  ejsInitStack
+  ejsInitNullType
   ejsInitStringType
+  ejsInitTypeType
   ejsInsertItem
   ejsInsertPotProperties
   ejsInternAsc
@@ -320,6 +337,7 @@ EXPORTS
   ejsIsTypeSubType
   ejsLoadHttpService
   ejsLoadModule
+  ejsLoadModules
   ejsLoadScriptFile
   ejsLoadScriptLiteral
   ejsLoadXMLCString
@@ -343,6 +361,7 @@ EXPORTS
   ejsManageString
   ejsManageXML
   ejsMarkName
+  ejsMatchName
   ejsModuleReadBlock
   ejsModuleReadByte
   ejsModuleReadConst
@@ -360,16 +379,19 @@ EXPORTS
   ejsOptable
   ejsParse
   ejsParseModuleVersion
+  ejsPauseGC
   ejsPopBlock
   ejsPopBlockNamespaces
   ejsPropertyHasTrait
   ejsPushBlock
+  ejsRedirectLogging
+  ejsRedirectLoggingToFile
   ejsRegExpToString
   ejsRemoveItem
   ejsRemoveItemAtPos
   ejsRemoveLastItem
   ejsRemoveModule
-  ejsRemoveModules
+  ejsRemoveModuleFromAll
   ejsRemoveObserver
   ejsRemovePotProperty
   ejsRemoveWorkers
@@ -377,6 +399,7 @@ EXPORTS
   ejsResetBlockNamespaces
   ejsResetByteArray
   ejsResetByteArrayIfEmpty
+  ejsResumeGC
   ejsRun
   ejsRunFunction
   ejsRunFunctionByName
@@ -387,24 +410,25 @@ EXPORTS
   ejsSendEvent
   ejsSendEventv
   ejsSerialize
+  ejsSerializeWithOptions
   ejsSetByteArrayPositions
+  ejsSetDispatcher
   ejsSetFunctionCode
   ejsSetFunctionName
   ejsSetHttpLimits
-  ejsSetModuleConstants
   ejsSetProperty
   ejsSetPropertyByName
   ejsSetPropertyName
   ejsSetPropertyTraits
   ejsSetSearchPath
-  ejsSetSpecial
+  ejsSetTypeAttributes
+  ejsSetTypeHelpers
   ejsSetTypeName
   ejsSetXML
   ejsSetupTrace
   ejsShowBlockScope
   ejsShowCurrentScope
   ejsSprintf
-  ejsStartMprLogging
   ejsStartsWithMulti
   ejsStringToJSON
   ejsSubstring
@@ -425,6 +449,7 @@ EXPORTS
   ejsThrowResourceError
   ejsThrowStateError
   ejsThrowStopIteration
+  ejsThrowString
   ejsThrowSyntaxError
   ejsThrowTypeError
   ejsToBoolean
@@ -446,14 +471,7 @@ EXPORTS
   ejsXMLToString
   ejsZeroSlots
   g_deserialize
-  getMimeType
   getNextJsonToken
-  http_async
-  http_available
-  http_off
-  http_on
-  http_setHeader
-  http_set_async
   manageFileStream
   manageLoadState
   nodes

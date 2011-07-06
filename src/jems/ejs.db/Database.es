@@ -24,38 +24,38 @@ module ejs.db {
             Initialize a database connection using the supplied database connection string. The first opened database
             will also be defined as the default database.
             @param adapter Database adapter to use. E.g. "sqlite". Sqlite is currently the only supported adapter.
-            @param options Connection options. This may be filename or an object hash of properties. If set to a filename
-                they type must be either String or Path and it should contain the filename of the database on the local
-                system. If options is set ot an object hash. It should contain adapter specific properties that specify 
-                how to attach to the database. Typical fields include:
-                <ul>
-                    <li>name - Database URI
-                        Examples: http://example.com:1234/database.db,
-                        Examples: file://var/spool/db/database.db
-                    </li>
-                    <li>username - Database username</li>
-                    <li>password - Database password</li>
-                    <li>trace - Trace database commands to the log
-                    <li>socket - /var/run/mysqld/mysqld.sock
-                </ul>
+            @param options Connection options. This may be filename or an object hash of properties. If set to a filename,
+             it should contain the filename of the database on the local system. If options is an object hash, it should 
+             contain adapter specific properties that specify how to attach to the database. 
+            @option name Database name
+            @option username Database username
+            @option password Database password
+            @option trace Trace database commands to the log
+            @option socket Database communications socket
+            @option module Module name containing the database connector class. This is a bare module name without ".mod"
+                or any leading path.
+            @option class Class name containing the database backend.
          */
         function Database(adapter: String, options: Object) {
             Database.defaultDb ||= this
-            if (adapter == "sqlite3") adapter = "sqlite"
             if (options is String || options is Path) {
                 let name = Path(options)
                 options = { name: name }
             }
             options.trace ||= false
             this.options = options
-            let adapterClass = adapter.toPascal()
-            if (!global."ejs.db"::[adapterClass]) {
-                load("ejs.db." + adapter + ".mod")
+            adapter ||= "sqlite"
+            options.module ||= ("ejs.db." + adapter)
+            let adapterClass = options["class"] || adapter.toPascal()
+            //BUG - should be able to use (options.module) below
+            let module = options.module
+            if (!global.module::[adapterClass]) {
+                load(module + ".mod", {reload: false})
+                if (!global.module::[adapterClass]) {
+                    throw "Can't find database connector \"" + module + "::" + adapter + "\""
+                }
             }
-            if (!global."ejs.db"::[adapterClass]) {
-                throw "Can't find database connector for " + adapter
-            }
-            this.adapter = new global."ejs.db"::[adapterClass](options)
+            this.adapter = new global.module::[adapterClass](options)
         }
 
         /**
@@ -98,6 +98,7 @@ module ejs.db {
 
         /**
             Commit a database transaction
+            @hide
          */
         function commit(): Void
             adapter.commit()
@@ -136,7 +137,7 @@ module ejs.db {
         /**
             Map the database independant data type to a database dependant SQL data type
             @param dataType Data type to map
-            @returns The corresponding SQL database type
+            @returns A string containing the name of the the corresponding SQL database type
          */
         function dataTypeToSqlType(dataType:String): String
             adapter.dataTypeToSqlType(dataType)
@@ -170,6 +171,7 @@ module ejs.db {
 
         /**
             End a transaction
+            @hide
          */
         function endTransaction(): Void
             adapter.endTransaction()
@@ -213,11 +215,19 @@ module ejs.db {
             @TODO Refactor logging when Log class implemented
          */
         function query(cmd: String, tag: String = "SQL", trace: Boolean = false): Array {
-            //  MOB - refactor tracing. Sqlite does tracing too
-            if (options.trace || trace) {
-                print(tag + ": " + cmd)
+            let mark, size
+            trace ||= options.trace
+            if (trace) {
+                App.log.activity(tag, cmd)
+                mark = new Date
+                size = Memory.resident
             }
-            return adapter.sql(cmd)
+            let result = adapter.sql(cmd)
+            if (trace) {
+                App.log.activity("Stats", "Elapsed %5.2f msec, memory %5.2f".format(mark.elapsed, 
+                    (Memory.resident - size) / (1024 * 1024)))
+            }
+            return result
         }
 
         /**
@@ -288,6 +298,7 @@ module ejs.db {
 
         /**
             Start a new database transaction
+            @hide
          */
         function startTransaction(): Void
             adapter.startTransaction()
@@ -304,6 +315,7 @@ module ejs.db {
         /**
             Execute a database transaction
             @param code Function to run inside a database transaction
+            @hide
          */
         function transaction(code: Function): Void {
             startTransaction()

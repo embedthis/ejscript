@@ -10,9 +10,9 @@
 /*********************************** Methods **********************************/
 /*  
     Get the application command line arguments
-    static function get args(): String
+    static function get args(): Array
  */
-static EjsObj *app_args(Ejs *ejs, EjsObj *unused, int argc, EjsObj **argv)
+static EjsArray *app_args(Ejs *ejs, EjsObj *unused, int argc, EjsObj **argv)
 {
     EjsArray    *args;
     int         i;
@@ -21,7 +21,7 @@ static EjsObj *app_args(Ejs *ejs, EjsObj *unused, int argc, EjsObj **argv)
     for (i = 0; i < ejs->argc; i++) {
         ejsSetProperty(ejs, args, i, ejsCreateStringFromAsc(ejs, ejs->argv[i]));
     }
-    return (EjsObj*) args;
+    return args;
 }
 
 
@@ -29,9 +29,9 @@ static EjsObj *app_args(Ejs *ejs, EjsObj *unused, int argc, EjsObj **argv)
     Get the current working directory
     function get dir(): Path
  */
-static EjsObj *app_dir(Ejs *ejs, EjsObj *unused, int argc, EjsObj **argv)
+static EjsPath *app_dir(Ejs *ejs, EjsObj *unused, int argc, EjsObj **argv)
 {
-    return (EjsObj*) ejsCreatePathFromAsc(ejs, mprGetCurrentPath(ejs));
+    return ejsCreatePathFromAsc(ejs, mprGetCurrentPath(ejs));
 }
 
 
@@ -65,9 +65,9 @@ static EjsObj *app_chdir(Ejs *ejs, EjsObj *unused, int argc, EjsObj **argv)
     Get the directory containing the application's executable file.
     static function get exeDir(): Path
  */
-static EjsObj *app_exeDir(Ejs *ejs, EjsObj *unused, int argc, EjsObj **argv)
+static EjsPath *app_exeDir(Ejs *ejs, EjsObj *unused, int argc, EjsObj **argv)
 {
-    return (EjsObj*) ejsCreatePathFromAsc(ejs, mprGetAppDir(ejs));
+    return ejsCreatePathFromAsc(ejs, mprGetAppDir(ejs));
 }
 
 
@@ -75,15 +75,16 @@ static EjsObj *app_exeDir(Ejs *ejs, EjsObj *unused, int argc, EjsObj **argv)
     Get the application's executable filename.
     static function get exePath(): Path
  */
-static EjsObj *app_exePath(Ejs *ejs, EjsObj *unused, int argc, EjsObj **argv)
+static EjsPath *app_exePath(Ejs *ejs, EjsObj *unused, int argc, EjsObj **argv)
 {
-    return (EjsObj*) ejsCreatePathFromAsc(ejs, mprGetAppPath(ejs));
+    return ejsCreatePathFromAsc(ejs, mprGetAppPath(ejs));
 }
 
 
 /*  
     Exit the application
     static function exit(status: Number, how: String = "default"): void
+    MOB - status is not implemented
  */
 static EjsObj *app_exit(Ejs *ejs, EjsObj *unused, int argc, EjsObj **argv)
 {
@@ -95,7 +96,7 @@ static EjsObj *app_exit(Ejs *ejs, EjsObj *unused, int argc, EjsObj **argv)
         return 0;
     }
     status = argc >= 1 ? ejsGetInt(ejs, argv[0]) : 0;
-    how = ejsToMulti(ejs, argc >= 2 ? ejsToString(ejs, argv[1]): S(empty));
+    how = ejsToMulti(ejs, argc >= 2 ? ejsToString(ejs, argv[1]): ESV(empty));
 
     if (scmp(how, "default") == 0) {
         mode = MPR_EXIT_DEFAULT;
@@ -106,7 +107,7 @@ static EjsObj *app_exit(Ejs *ejs, EjsObj *unused, int argc, EjsObj **argv)
     } else {
         mode = MPR_EXIT_NORMAL;
     }
-    mprTerminate(mode);
+    mprTerminate(mode, status);
     ejsAttention(ejs);
     return 0;
 }
@@ -119,16 +120,20 @@ static EjsObj *app_exit(Ejs *ejs, EjsObj *unused, int argc, EjsObj **argv)
  */
 static EjsAny *app_env(Ejs *ejs, EjsObj *app, int argc, EjsObj **argv)
 {
-    EjsPot    *result;
+#if VXWORKS
+    return ESV(null);
+#else
+    EjsPot  *result;
     char        **ep, *pair, *key, *value;
 
-    result = ejsCreatePot(ejs, S(Object), 0);
+    result = ejsCreatePot(ejs, ESV(Object), 0);
     for (ep = environ; ep && *ep; ep++) {
         pair = sclone(*ep);
         key = stok(pair, "=", &value);
         ejsSetPropertyByName(ejs, result, EN(key), ejsCreateStringFromAsc(ejs, value));
     }
     return result;
+#endif
 }
 #endif
 
@@ -143,7 +148,7 @@ static EjsAny *app_getenv(Ejs *ejs, EjsObj *app, int argc, EjsObj **argv)
 
     value = getenv(ejsToMulti(ejs, argv[0]));
     if (value == 0) {
-        return S(null);
+        return ESV(null);
     }
     return ejsCreateStringFromAsc(ejs, value);
 }
@@ -176,9 +181,9 @@ static EjsObj *app_putenv(Ejs *ejs, EjsObj *app, int argc, EjsObj **argv)
     Get the ejs module search path. Does not actually read the environment.
     function get search(): Array
  */
-static EjsObj *app_search(Ejs *ejs, EjsObj *app, int argc, EjsObj **argv)
+static EjsArray *app_search(Ejs *ejs, EjsObj *app, int argc, EjsObj **argv)
 {
-    return (EjsObj*) ejs->search;
+    return ejs->search;
 }
 
 
@@ -195,14 +200,14 @@ static EjsObj *app_set_search(Ejs *ejs, EjsObj *app, int argc, EjsObj **argv)
 
 /*  
     Get a default search path. NOTE: this does not modify ejs->search.
-    function get createSearch(searchPaths: String): Void
+    function get createSearch(searchPaths: String): Array
  */
-static EjsObj *app_createSearch(Ejs *ejs, EjsObj *app, int argc, EjsObj **argv)
+static EjsArray *app_createSearch(Ejs *ejs, EjsObj *app, int argc, EjsObj **argv)
 {
     cchar   *searchPath;
 
     searchPath = (argc == 0) ? NULL : ejsToMulti(ejs, argv[0]);
-    return (EjsObj*) ejsCreateSearchPath(ejs, searchPath);
+    return ejsCreateSearchPath(ejs, searchPath);
 }
 
 
@@ -216,26 +221,26 @@ static EjsNumber *app_pid(Ejs *ejs, EjsObj *unused, int argc, EjsObj **argv)
 
 
 /*  
-    static function run(timeout: Number = -1, oneEvent: Boolean = false): void
+    static function run(timeout: Number = -1, oneEvent: Boolean = false): Boolean
  */
 static EjsObj *app_run(Ejs *ejs, EjsObj *unused, int argc, EjsObj **argv)
 {
     MprTime     mark, remaining;
-    int         oneEvent, timeout;
+    int         rc, oneEvent, timeout;
 
-    timeout = (argc > 0) ? ejsGetInt(ejs, argv[0]) : INT_MAX;
+    timeout = (argc > 0) ? ejsGetInt(ejs, argv[0]) : MAXINT;
     oneEvent = (argc > 1) ? ejsGetInt(ejs, argv[1]) : 0;
 
     if (timeout < 0) {
-        timeout = INT_MAX;
+        timeout = MAXINT;
     }
     mark = mprGetTime();
     remaining = timeout;
     do {
-        mprWaitForEvent(ejs->dispatcher, (int) remaining); 
+        rc = mprWaitForEvent(ejs->dispatcher, remaining); 
         remaining = mprGetRemainingTime(mark, timeout);
     } while (!oneEvent && !ejs->exiting && remaining > 0 && !mprIsStopping());
-    return 0;
+    return (rc == 0) ? ESV(true) : ESV(false);
 }
 
 
@@ -248,9 +253,9 @@ static EjsObj *app_sleep(Ejs *ejs, EjsObj *unused, int argc, EjsObj **argv)
     MprTime     mark, remaining;
     int         timeout;
 
-    timeout = (argc > 0) ? ejsGetInt(ejs, argv[0]) : INT_MAX;
+    timeout = (argc > 0) ? ejsGetInt(ejs, argv[0]) : MAXINT;
     if (timeout < 0) {
-        timeout = INT_MAX;
+        timeout = MAXINT;
     }
     mark = mprGetTime();
     remaining = timeout;
@@ -268,30 +273,27 @@ void ejsConfigureAppType(Ejs *ejs)
 {
     EjsType     *type;
 
-    type = ejsGetTypeByName(ejs, N("ejs", "App"));
-    mprAssert(type);
-    ejsSetSpecial(ejs, S_App, type);
-
+    if ((type = ejsFinalizeScriptType(ejs, N("ejs", "App"), 0, 0, 0)) == 0) {
+        return;
+    }
     ejsSetProperty(ejs, type, ES_App__inputStream, ejsCreateFileFromFd(ejs, 0, "stdin", O_RDONLY));
     ejsSetProperty(ejs, type, ES_App__outputStream, ejsCreateFileFromFd(ejs, 1, "stdout", O_WRONLY));
     ejsSetProperty(ejs, type, ES_App__errorStream, ejsCreateFileFromFd(ejs, 2, "stderr", O_WRONLY));
 
-    ejsBindMethod(ejs, type, ES_App_args, (EjsProc) app_args);
-    ejsBindMethod(ejs, type, ES_App_createSearch, (EjsProc) app_createSearch);
-    ejsBindMethod(ejs, type, ES_App_dir, (EjsProc) app_dir);
-    ejsBindMethod(ejs, type, ES_App_chdir, (EjsProc) app_chdir);
-    ejsBindMethod(ejs, type, ES_App_exeDir, (EjsProc) app_exeDir);
-    ejsBindMethod(ejs, type, ES_App_exePath, (EjsProc) app_exePath);
-#if ES_App_env
-    ejsBindMethod(ejs, type, ES_App_env, (EjsProc) app_env);
-#endif
-    ejsBindMethod(ejs, type, ES_App_exit, (EjsProc) app_exit);
-    ejsBindMethod(ejs, type, ES_App_getenv, (EjsProc) app_getenv);
-    ejsBindMethod(ejs, type, ES_App_putenv, (EjsProc) app_putenv);
-    ejsBindMethod(ejs, type, ES_App_pid, (EjsProc) app_pid);
-    ejsBindMethod(ejs, type, ES_App_run, (EjsProc) app_run);
-    ejsBindAccess(ejs, type, ES_App_search, (EjsProc) app_search, (EjsProc) app_set_search);
-    ejsBindMethod(ejs, type, ES_App_sleep, (EjsProc) app_sleep);
+    ejsBindMethod(ejs, type, ES_App_args, app_args);
+    ejsBindMethod(ejs, type, ES_App_createSearch, app_createSearch);
+    ejsBindMethod(ejs, type, ES_App_dir, app_dir);
+    ejsBindMethod(ejs, type, ES_App_chdir, app_chdir);
+    ejsBindMethod(ejs, type, ES_App_exeDir, app_exeDir);
+    ejsBindMethod(ejs, type, ES_App_exePath, app_exePath);
+    ejsBindMethod(ejs, type, ES_App_env, app_env);
+    ejsBindMethod(ejs, type, ES_App_exit, app_exit);
+    ejsBindMethod(ejs, type, ES_App_getenv, app_getenv);
+    ejsBindMethod(ejs, type, ES_App_putenv, app_putenv);
+    ejsBindMethod(ejs, type, ES_App_pid, app_pid);
+    ejsBindMethod(ejs, type, ES_App_run, app_run);
+    ejsBindAccess(ejs, type, ES_App_search, app_search, app_set_search);
+    ejsBindMethod(ejs, type, ES_App_sleep, app_sleep);
 }
 
 

@@ -25,7 +25,7 @@ static EjsAny *castRegExp(Ejs *ejs, EjsRegExp *rp, EjsType *type)
 
     switch (type->sid) {
     case S_Boolean:
-        return S(true);
+        return ESV(true);
 
     case S_String:
         flags = makeFlags(rp);
@@ -46,7 +46,7 @@ static EjsAny *castRegExp(Ejs *ejs, EjsRegExp *rp, EjsType *type)
     RegExp(pattern: String, flags: String = null)
  */
 
-static EjsObj *regex_Constructor(Ejs *ejs, EjsRegExp *rp, int argc, EjsObj **argv)
+static EjsRegExp *regex_Constructor(Ejs *ejs, EjsRegExp *rp, int argc, EjsObj **argv)
 {
     cchar       *errMsg;
     int         column, errCode;
@@ -65,13 +65,13 @@ static EjsObj *regex_Constructor(Ejs *ejs, EjsRegExp *rp, int argc, EjsObj **arg
         ejsThrowArgError(ejs, "Can't compile regular expression. Error %s at column %d", errMsg, column);
         return 0;
     }
-    return (EjsObj*) rp;
+    return rp;
 }
 
 
-static EjsObj *regex_getLastIndex(Ejs *ejs, EjsRegExp *rp, int argc, EjsObj **argv)
+static EjsNumber *regex_getLastIndex(Ejs *ejs, EjsRegExp *rp, int argc, EjsObj **argv)
 {
-    return (EjsObj*) ejsCreateNumber(ejs, rp->endLastMatch);
+    return ejsCreateNumber(ejs, rp->endLastMatch);
 }
 
 
@@ -88,7 +88,7 @@ static EjsObj *regex_setLastIndex(Ejs *ejs, EjsRegExp *rp, int argc, EjsObj **ar
 /*
     function exec(str: String, start: Number = 0): Array
  */
-static EjsObj *regex_exec(Ejs *ejs, EjsRegExp *rp, int argc, EjsObj **argv)
+static EjsArray *regex_exec(Ejs *ejs, EjsRegExp *rp, int argc, EjsObj **argv)
 {
     EjsArray    *results;
     EjsString   *match, *str;
@@ -106,7 +106,7 @@ static EjsObj *regex_exec(Ejs *ejs, EjsRegExp *rp, int argc, EjsObj **argv)
     count = pcre_exec(rp->compiled, NULL, str->value, (int) str->length, start, 0, matches, sizeof(matches) / sizeof(int));
     if (count < 0) {
         rp->endLastMatch = 0;
-        return (EjsObj*) S(null);
+        return ESV(null);
     }
     results = ejsCreateArray(ejs, count);
     for (index = 0, i = 0; i < count; i++, index += 2) {
@@ -122,56 +122,56 @@ static EjsObj *regex_exec(Ejs *ejs, EjsRegExp *rp, int argc, EjsObj **argv)
         rp->startLastMatch = matches[0];
         rp->endLastMatch = matches[1];
     }
-    return (EjsObj*) results;
+    return results;
 }
 
 
-static EjsObj *regex_getGlobalFlag(Ejs *ejs, EjsRegExp *rp, int argc, EjsObj **argv)
+static EjsBoolean *regex_getGlobalFlag(Ejs *ejs, EjsRegExp *rp, int argc, EjsObj **argv)
 {
-    return (EjsObj*) ejsCreateBoolean(ejs, rp->global);
+    return ejsCreateBoolean(ejs, rp->global);
 }
 
 
-static EjsObj *regex_getIgnoreCase(Ejs *ejs, EjsRegExp *rp, int argc, EjsObj **argv)
+static EjsBoolean *regex_getIgnoreCase(Ejs *ejs, EjsRegExp *rp, int argc, EjsObj **argv)
 {
-    return (EjsObj*) ejsCreateBoolean(ejs, rp->ignoreCase);
+    return ejsCreateBoolean(ejs, rp->ignoreCase);
 }
 
 
-static EjsObj *regex_getMultiline(Ejs *ejs, EjsRegExp *rp, int argc, EjsObj **argv)
+static EjsBoolean *regex_getMultiline(Ejs *ejs, EjsRegExp *rp, int argc, EjsObj **argv)
 {
-    return (EjsObj*) ejsCreateBoolean(ejs, rp->multiline);
+    return ejsCreateBoolean(ejs, rp->multiline);
 }
 
 
-static EjsObj *regex_getSource(Ejs *ejs, EjsRegExp *rp, int argc, EjsObj **argv)
+static EjsString *regex_getSource(Ejs *ejs, EjsRegExp *rp, int argc, EjsObj **argv)
 {
-    return (EjsObj*) ejsCreateString(ejs, rp->pattern, wlen(rp->pattern));
+    return ejsCreateString(ejs, rp->pattern, wlen(rp->pattern));
 }
 
 
-static EjsObj *regex_matched(Ejs *ejs, EjsRegExp *rp, int argc, EjsObj **argv)
+static EjsString *regex_matched(Ejs *ejs, EjsRegExp *rp, int argc, EjsObj **argv)
 {
     if (rp->matched == 0) {
-        return (EjsObj*) S(null);
+        return ESV(null);
     }
-    return (EjsObj*) rp->matched;
+    return rp->matched;
 }
 
 
-static EjsObj *regex_start(Ejs *ejs, EjsRegExp *rp, int argc, EjsObj **argv)
+static EjsNumber *regex_start(Ejs *ejs, EjsRegExp *rp, int argc, EjsObj **argv)
 {
-    return (EjsObj*) ejsCreateNumber(ejs, rp->startLastMatch);
+    return ejsCreateNumber(ejs, rp->startLastMatch);
 }
 
 
-static EjsObj *regex_sticky(Ejs *ejs, EjsRegExp *rp, int argc, EjsObj **argv)
+static EjsBoolean *regex_sticky(Ejs *ejs, EjsRegExp *rp, int argc, EjsObj **argv)
 {
-    return (EjsObj*) ejsCreateBoolean(ejs, rp->sticky);
+    return ejsCreateBoolean(ejs, rp->sticky);
 }
 
 
-static EjsObj *regex_test(Ejs *ejs, EjsRegExp *rp, int argc, EjsObj **argv)
+static EjsBoolean *regex_test(Ejs *ejs, EjsRegExp *rp, int argc, EjsObj **argv)
 {
     EjsString   *str;
     int         count;
@@ -181,15 +181,15 @@ static EjsObj *regex_test(Ejs *ejs, EjsRegExp *rp, int argc, EjsObj **argv)
     count = pcre_exec(rp->compiled, NULL, str->value, (int) str->length, rp->endLastMatch, 0, 0, 0);
     if (count < 0) {
         rp->endLastMatch = 0;
-        return (EjsObj*) S(false);
+        return ESV(false);
     }
-    return (EjsObj*) S(true);
+    return ESV(true);
 }
 
 
 EjsString *ejsRegExpToString(Ejs *ejs, EjsRegExp *rp)
 {
-    return (EjsString*) castRegExp(ejs, rp, ST(String));
+    return (EjsString*) castRegExp(ejs, rp, ESV(String));
 }
 
 /*********************************** Factory **********************************/
@@ -208,7 +208,7 @@ EjsRegExp *ejsCreateRegExp(Ejs *ejs, EjsString *pattern)
         ejsThrowArgError(ejs, "Bad regular expression pattern. Must start with '/'");
         return 0;
     }
-    rp = ejsCreateObj(ejs, ST(RegExp), 0);
+    rp = ejsCreateObj(ejs, ESV(RegExp), 0);
     if (rp != 0) {
         /*
             Strip off flags for passing to pcre_compile2
@@ -218,7 +218,7 @@ EjsRegExp *ejsCreateRegExp(Ejs *ejs, EjsString *pattern)
             rp->options = parseFlags(rp, &flags[1]);
             *flags = 0;
         }
-        //  MOB - UNICODE is pattern meant to be 
+        //  TODO - UNICODE is pattern meant to be 
         rp->compiled = pcre_compile2(rp->pattern, rp->options, &errCode, &errMsg, &column, NULL);
         if (rp->compiled == NULL) {
             ejsThrowArgError(ejs, "Can't compile regular expression. Error %s at column %d", errMsg, column);
@@ -324,8 +324,8 @@ void ejsCreateRegExpType(Ejs *ejs)
 {
     EjsType     *type;
 
-    type = ejsCreateNativeType(ejs, N("ejs", "RegExp"), sizeof(EjsRegExp), S_RegExp, ES_RegExp_NUM_CLASS_PROP,
-        manageRegExp, EJS_OBJ_HELPERS);
+    type = ejsCreateCoreType(ejs, N("ejs", "RegExp"), sizeof(EjsRegExp), S_RegExp, ES_RegExp_NUM_CLASS_PROP,
+        manageRegExp, EJS_TYPE_OBJ | EJS_TYPE_MUTABLE_INSTANCES);
     type->helpers.cast = (EjsCastHelper) castRegExp;
 }
 
@@ -335,21 +335,22 @@ void ejsConfigureRegExpType(Ejs *ejs)
     EjsType     *type;
     EjsPot      *prototype;
 
-    type = ST(RegExp);
+    if ((type = ejsFinalizeCoreType(ejs, N("ejs", "RegExp"))) == 0) {
+        return;
+    }
     prototype = type->prototype;
-
-    ejsBindConstructor(ejs, type, (EjsProc) regex_Constructor);
-    ejsBindMethod(ejs, prototype, ES_RegExp_exec, (EjsProc) regex_exec);
-    ejsBindAccess(ejs, prototype, ES_RegExp_lastIndex, (EjsProc) regex_getLastIndex, (EjsProc) regex_setLastIndex);
-    ejsBindMethod(ejs, prototype, ES_RegExp_global, (EjsProc) regex_getGlobalFlag);
-    ejsBindMethod(ejs, prototype, ES_RegExp_ignoreCase, (EjsProc) regex_getIgnoreCase);
-    ejsBindMethod(ejs, prototype, ES_RegExp_multiline, (EjsProc) regex_getMultiline);
-    ejsBindMethod(ejs, prototype, ES_RegExp_source, (EjsProc) regex_getSource);
-    ejsBindMethod(ejs, prototype, ES_RegExp_matched, (EjsProc) regex_matched);
-    ejsBindMethod(ejs, prototype, ES_RegExp_start, (EjsProc) regex_start);
-    ejsBindMethod(ejs, prototype, ES_RegExp_sticky, (EjsProc) regex_sticky);
-    ejsBindMethod(ejs, prototype, ES_RegExp_test, (EjsProc) regex_test);
-    ejsBindMethod(ejs, prototype, ES_RegExp_toString, (EjsProc) ejsRegExpToString);
+    ejsBindConstructor(ejs, type, regex_Constructor);
+    ejsBindMethod(ejs, prototype, ES_RegExp_exec, regex_exec);
+    ejsBindAccess(ejs, prototype, ES_RegExp_lastIndex, regex_getLastIndex, regex_setLastIndex);
+    ejsBindMethod(ejs, prototype, ES_RegExp_global, regex_getGlobalFlag);
+    ejsBindMethod(ejs, prototype, ES_RegExp_ignoreCase, regex_getIgnoreCase);
+    ejsBindMethod(ejs, prototype, ES_RegExp_multiline, regex_getMultiline);
+    ejsBindMethod(ejs, prototype, ES_RegExp_source, regex_getSource);
+    ejsBindMethod(ejs, prototype, ES_RegExp_matched, regex_matched);
+    ejsBindMethod(ejs, prototype, ES_RegExp_start, regex_start);
+    ejsBindMethod(ejs, prototype, ES_RegExp_sticky, regex_sticky);
+    ejsBindMethod(ejs, prototype, ES_RegExp_test, regex_test);
+    ejsBindMethod(ejs, prototype, ES_RegExp_toString, ejsRegExpToString);
 }
 
 /*

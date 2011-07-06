@@ -4,7 +4,7 @@
 #   out/include/buildConfig.h -- Windows Build Configuration File.
 #
 #   This file is customized for building on Windows using Visual Studio.
-#   The VisualStudio libmpr project has a custom build step which will install
+#   The Visual Studio libmpr project has a custom build step which will install
 #   this file into out/include at build time.
 #
 ################################################################################

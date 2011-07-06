@@ -1,35 +1,31 @@
 //  Just for general debugging
 {
     cache: {
-        enable: true,
-        reload: true,
+        keys: 2000,
+        memory: 200000,
+        lifespan: 86400,
+        app:      { enable: false, },
+        actions:  { enable: false, lifespan: 1800 },
+        database: { enable: false, lifespan: 3600 },
+        workers:  { enable: false, limit: 10 },
     },
+
     log: {
         enable: true,
-        location: "stdout",
-        level: 5,
-        match: null,
+        location: "stderr",
+        level: 0,
         showClient: true,
     },
-    search: null,
-    scripts: null,
-    session: {
-        enable: true,
-        timeout: 1800,
-    },
     web: {
-        inactivity: 3600,               //  MOB
-        timeout: 3600,                  //  MOB
+        listen: ":4000",
         expires: {
-            "html": 86400,
-            "ejs": 86400,
-            "es": 86400,
-            "": 86400,
+            html: 86400,
+            ejs: 86400,
+            es: 86400,
         },
-        endpoint: "127.0.0.1:4000",
-        view: {
-            connectors: { },
-            formats: { },
+        limits: {
+            inactivityTimeout: 60, 
+            sessionTimeout: 3600
         },
     },
 }

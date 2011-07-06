@@ -29,12 +29,11 @@ EjsModule *ejsCreateModule(Ejs *ejs, EjsString *name, int version, EjsConstants 
     mp->name = name;
     mp->version = version;
     mp->vname = (version) ? ejsSprintf(ejs, "%@-%d", name, version) : mp->name;
-    if (constants) {
-        mp->constants = constants;
-    } else if ((mp->constants = ejsCreateConstants(ejs, EJS_INDEX_INCR, EC_BUFSIZE)) == NULL) {
-        return 0;
+    if ((mp->constants = constants) == 0) {
+        if (ejsCreateConstants(ejs, mp, 0, EC_BUFSIZE, NULL) < 0) {
+            return 0;
+        }
     }
-    mp->constants->mp = mp;
     mprAssert(mp->checksum == 0);
     return mp;
 }
@@ -42,31 +41,27 @@ EjsModule *ejsCreateModule(Ejs *ejs, EjsString *name, int version, EjsConstants 
 
 static void manageModule(EjsModule *mp, int flags)
 {
-    Ejs     *ejs;
-
     if (flags & MPR_MANAGE_MARK) {
         mprMark(mp->name);
         mprMark(mp->vname);
-        mprMark(mp->path);
+        mprMark(mp->vms);
+        mprMark(mp->mutex);
+        mprMark(mp->constants);
+        mprMark(mp->initializer);
         mprMark(mp->loadState);
         mprMark(mp->dependencies);
         mprMark(mp->file);
-        mprMark(mp->code);
-        mprMark(mp->initializer);
-        mprMark(mp->constants);
-        mprMark(mp->doc);
-        mprMark(mp->scope);
-        mprMark(mp->currentMethod);
         mprMark(mp->current);
-        mprMark(mp->ejs);
+        mprMark(mp->currentMethod);
+        mprMark(mp->scope);
+        mprMark(mp->path);
+        mprMark(mp->code);
+        mprMark(mp->doc);
+        mprMark(mp->globalProperties);
 
     } else if (flags & MPR_MANAGE_FREE) {
         mprCloseFile(mp->file);
-        ejs = mp->ejs;
-        if (ejs && ejs->modules) {
-            mprAssert(ejs->name);
-            ejsRemoveModule(ejs, mp);
-        }
+        ejsRemoveModuleFromAll(mp);
     }
 }
 
@@ -109,14 +104,7 @@ int ejsAddNativeModule(Ejs *ejs, cchar *name, EjsNativeCallback callback, int ch
 
 EjsNativeModule *ejsLookupNativeModule(Ejs *ejs, cchar *name) 
 {
-    return mprLookupHash(ejs->service->nativeModules, name);
-}
-
-
-int ejsSetModuleConstants(Ejs *ejs, EjsModule *mp, EjsConstants *constants)
-{
-    mp->constants = constants;
-    return 0;
+    return mprLookupKey(ejs->service->nativeModules, name);
 }
 
 
@@ -153,34 +141,35 @@ EjsModule *ejsLookupModule(Ejs *ejs, EjsString *name, int minVersion, int maxVer
 int ejsAddModule(Ejs *ejs, EjsModule *mp)
 {
     mprAssert(ejs->modules);
-    //MOB
-    mprAssert(ejs->modules->length < 40);
-    mp->ejs = ejs;
-    //MOB printf("Add modules (before) len %d mustYield %d newCount %d\n", ejs->modules->length, MPR->heap.mustYield, MPR->heap.newCount);
+    if (mp->vms == 0) {
+        mp->vms = mprCreateList(-1, 0);
+        mprAddItem(mp->vms, ejs);
+    }
     return mprAddItem(ejs->modules, mp);
 }
 
 
 void ejsRemoveModule(Ejs *ejs, EjsModule *mp)
 {
-    //  MOB
     mprLog(6, "Remove module: %@", mp->name); 
-    mp->ejs = 0;
-    if (ejs->modules) {
-        mprRemoveItem(ejs->modules, mp);
-    }
+    mprRemoveItem(mp->vms, ejs);
+    mprRemoveItem(ejs->modules, mp);
 }
 
 
-void ejsRemoveModules(Ejs *ejs)
+void ejsRemoveModuleFromAll(EjsModule *mp)
 {
-    EjsModule   *mp;
-    int         next;
+    Ejs     *ejs;
+    int     next;
 
-    for (next = 0; (mp = mprGetNextItem(ejs->modules, &next)) != 0; ) {
-        mp->ejs = 0;
+    if (mp->vms) {
+        mprLog(6, "Remove module from all vms: %@", mp->name); 
+        for (next = 0; (ejs = mprGetNextItem(mp->vms, &next)) != 0; ) {
+            if (ejs->modules) {
+                mprRemoveItem(ejs->modules, mp);
+            }
+        }
     }
-    ejs->modules = 0;
 }
 
 
@@ -202,87 +191,113 @@ static void manageConstants(EjsConstants *cp, int flags)
                 mprMark(cp->index[i]);
             }
         }
-    } else if (flags & MPR_MANAGE_FREE) {
-        //MOB
-        i = 7;
-        i = 10;
     }
 }
 
 
-EjsConstants *ejsCreateConstants(Ejs *ejs, int count, ssize size)
+/*
+    Create the module constants. Count is the number of strings in the constant pool. Size is the size of the pool.
+    The optional pool parameter supplies a pre-allocated buffer of constant strings.
+ */
+int ejsCreateConstants(Ejs *ejs, EjsModule *mp, int count, ssize size, char *pool)
 {
     EjsConstants    *constants;
+    char            *pp;
+    int             i;
 
     mprAssert(ejs);
 
     if ((constants = mprAllocObj(EjsConstants, manageConstants)) == 0) {
-        return NULL;
+        return MPR_ERR_MEMORY;
     }
-    if (ejs->compiling) {
-        if ((constants->table = mprCreateHash(EJS_DOC_HASH_SIZE, MPR_HASH_STATIC_VALUES)) == 0) {
-            return 0;
-        }
-    }
-    if ((constants->pool = mprAlloc(size)) == 0) {
-        return 0;
+    lock(mp);
+    mp->constants = constants;
+
+    if (ejs->compiling && ((constants->table = mprCreateHash(EJS_DOC_HASH_SIZE, MPR_HASH_STATIC_VALUES)) == 0)) {
+        unlock(mp);
+        return MPR_ERR_MEMORY;
     }
     constants->poolSize = size;
-    constants->poolLength = 0;
-
-    if ((constants->index = mprAlloc(count * sizeof(EjsString*))) == NULL) {
-        return 0;
-    }
-    constants->index[0] = S(empty);
-    constants->indexCount = 1;
-#if UNUSED
-    //  MOB -- get another solution for hold/release
-    mprHold(constants->index);
-#endif
-    return constants;
-}
-
-
-int ejsGrowConstants(Ejs *ejs, EjsConstants *constants, ssize len)
-{
-    int     indexSize;
-
-    if ((constants->poolLength + len) >= constants->poolSize) {
-        constants->poolSize = ((constants->poolSize + len) + EC_BUFSIZE - 1) / EC_BUFSIZE * EC_BUFSIZE;
-        if ((constants->pool = mprRealloc(constants->pool, constants->poolSize)) == 0) {
+    if ((constants->pool = pool) == 0) {
+        mprAssert(count == 0);
+        if ((constants->pool = mprAlloc(size)) == 0) {
+            unlock(mp);
             return MPR_ERR_MEMORY;
         }
     }
-    if (constants->indexCount >= constants->indexSize) {
-        indexSize = (constants->indexCount + EJS_INDEX_INCR - 1) / EJS_INDEX_INCR * EJS_INDEX_INCR;
-        if ((constants->index = mprRealloc(constants->index, indexSize * sizeof(EjsString*))) == NULL) {
+    if (count) {
+        constants->poolLength = size;
+        if ((constants->index = mprAlloc(count * sizeof(EjsString*))) == NULL) {
+            unlock(mp);
             return MPR_ERR_MEMORY;
         }
-        constants->indexSize = indexSize;
+        mprAssert(pool);
+        if (pool) {
+            for (pp = pool, i = 0; pp < &pool[constants->poolLength]; i++) {
+                constants->index[i] = (void*) (((pp - pool) << 1) | 0x1);
+                pp += slen(pp) + 1;
+            }
+            constants->indexCount = count;
+        }
     }
+    unlock(mp);
     return 0;
 }
 
 
-int ejsAddConstant(Ejs *ejs, EjsConstants *constants, cchar *str)
+int ejsGrowConstants(Ejs *ejs, EjsModule *mp, ssize len)
 {
-    ssize       len, oldLen;
+    EjsConstants    *cp;
+    int             indexSize;
 
-    if (constants->locked) {
+    lock(mp);
+    cp = mp->constants;
+    if ((cp->poolLength + len) >= cp->poolSize) {
+        cp->poolSize = ((cp->poolSize + len) + EC_BUFSIZE - 1) / EC_BUFSIZE * EC_BUFSIZE;
+        if ((cp->pool = mprRealloc(cp->pool, cp->poolSize)) == 0) {
+            unlock(mp);
+            return MPR_ERR_MEMORY;
+        }
+    }
+    if (cp->indexCount >= cp->indexSize) {
+        indexSize = ((cp->indexCount + EJS_INDEX_INCR) / EJS_INDEX_INCR) * EJS_INDEX_INCR;
+        if ((cp->index = mprRealloc(cp->index, indexSize * sizeof(EjsString*))) == NULL) {
+            unlock(mp);
+            return MPR_ERR_MEMORY;
+        }
+        cp->indexSize = indexSize;
+    }
+    unlock(mp);
+    return 0;
+}
+
+
+int ejsAddConstant(Ejs *ejs, EjsModule *mp, cchar *str)
+{
+    EjsConstants    *cp;
+    ssize           len, oldLen;
+    int             index;
+
+    cp = mp->constants;
+    if (cp->locked) {
         mprError("Constant pool for module is locked. Can't add constant \"%s\".",  str);
         return MPR_ERR_CANT_WRITE;
     }
+    lock(mp);
     len = slen(str) + 1;
-    if (ejsGrowConstants(ejs, constants, len) < 0) {
+    if (ejsGrowConstants(ejs, mp, len) < 0) {
+        unlock(mp);
         return MPR_ERR_MEMORY;
     }
-    memcpy(&constants->pool[constants->poolLength], str, len);
-    oldLen = constants->poolLength;
-    constants->poolLength += len;
+    memcpy(&cp->pool[cp->poolLength], str, len);
+    oldLen = cp->poolLength;
+    cp->poolLength += len;
 
-    mprAddKey(constants->table, str, ITOP(constants->indexCount));
-    constants->index[constants->indexCount] = ITOP(oldLen << 1 | 1);
-    return constants->indexCount++;
+    mprAddKey(cp->table, str, ITOP(cp->indexCount));
+    cp->index[cp->indexCount] = ITOP(oldLen << 1 | 1);
+    index = cp->indexCount++;
+    unlock(mp);
+    return index;
 }
 
 
@@ -293,9 +308,11 @@ EjsString *ejsCreateStringFromConst(Ejs *ejs, EjsModule *mp, int index)
     cchar           *str;
     int             value;
 
+    lock(mp);
     constants = mp->constants;
     if (index < 0 || index >= constants->indexCount) {
         mprAssert(!(index < 0 || index >= constants->indexCount));
+        unlock(mp);
         return 0;
     }
     value = PTOI(constants->index[index]);
@@ -303,6 +320,7 @@ EjsString *ejsCreateStringFromConst(Ejs *ejs, EjsModule *mp, int index)
         str = &constants->pool[value >> 1];
         constants->index[index] = sp = ejsInternMulti(ejs, str, slen(str));
     }
+    unlock(mp);
     mprAssert(constants->index[index]);
     return constants->index[index];
 }
@@ -361,8 +379,6 @@ int ejsAddDebugLine(Ejs *ejs, EjsDebug **debugp, int offset, MprChar *source)
     line->source = source;
     line->offset = offset;
     debug->numLines = numLines;
-    //  MOB
-    mprAssert(debug->numLines < 20000);
     return 0;
 }
 
@@ -392,7 +408,7 @@ static EjsDebug *loadDebug(Ejs *ejs, EjsFunction *fun)
     EjsDebug    *debug;
     EjsLine     *line;
     EjsCode     *code;
-    MprOffset   prior;
+    MprOff      prior;
     int         i, length;
 
     mp = fun->body.code->module;
@@ -400,9 +416,14 @@ static EjsDebug *loadDebug(Ejs *ejs, EjsFunction *fun)
     prior = 0;
     debug = NULL;
 
+    /*
+        Synchronize with ejsLoadModule. May be multiple threads using immutable types
+     */
+    lock(mp);
     if (mp->file == 0) {
         if ((mp->file = mprOpenFile(mp->path, O_RDONLY | O_BINARY, 0666)) == NULL) {
             mprLog(5, "Can't open module file %s", mp->path);
+            unlock(mp);
             return NULL;
         }
         mprEnableFileBuffering(mp->file, 0, 0);
@@ -411,7 +432,7 @@ static EjsDebug *loadDebug(Ejs *ejs, EjsFunction *fun)
     }
     if (mprSeekFile(mp->file, SEEK_SET, code->debugOffset) != code->debugOffset) {
         mprSeekFile(mp->file, SEEK_SET, prior);
-        mprAssert(0);
+        unlock(mp);
         return 0;
     }
     length = ejsModuleReadInt(ejs, mp);
@@ -431,6 +452,7 @@ static EjsDebug *loadDebug(Ejs *ejs, EjsFunction *fun)
         mprCloseFile(mp->file);
         mp->file = 0;
     }
+    unlock(mp);
     if (mp->hasError) {
         return NULL;
     }
@@ -635,6 +657,7 @@ int ejsEncodeInt32(Ejs *ejs, uchar *pos, int number)
         mprAssert("Code generation error. Word exceeds maximum");
         return 0;
     }
+    memset(pos, 0, 4);
     len = ejsEncodeNum(ejs, pos, (int64) number);
     mprAssert(len <= 4);
     return 4;
@@ -734,6 +757,7 @@ char *ejsModuleReadMulti(Ejs *ejs, EjsModule *mp)
     mprAssert(mp);
 
     len = ejsModuleReadInt(ejs, mp);
+    mprAssert(len >= 0);
     if (mp->hasError || (buf = mprAlloc(len)) == 0) {
         return NULL;
     }
@@ -752,7 +776,7 @@ MprChar *ejsModuleReadMultiAsWide(Ejs *ejs, EjsModule *mp)
 {
     mprAssert(mp);
 
-    //  MOB OPT - need direct multi to wide without the double copy
+    //  OPT - need direct multi to wide without the double copy
     return amtow(ejsModuleReadMulti(ejs, mp), NULL);
 }
 

@@ -38,23 +38,21 @@ typedef struct EjsHttpServer {
     EjsPot          pot;                        /**< Extends Object */
     Ejs             *ejs;                       /**< Ejscript interpreter handle */
     HttpServer      *server;                    /**< Http server object */
-    MprEvent        *sessionTimer;              /**< Session expiry timer */
     struct MprSsl   *ssl;                       /**< SSL configuration */
     HttpTrace       trace[2];                   /**< Default tracing for requests */
     cchar           *connector;                 /**< Pipeline connector */
-    cchar           *dir;                       /**< Directory containing web documents */
     char            *keyFile;                   /**< SSL key file */
     char            *certFile;                  /**< SSL certificate file */
     char            *protocols;                 /**< SSL protocols */
     char            *ciphers;                   /**< SSL ciphers */
     char            *ip;                        /**< Listening address */
     char            *name;                      /**< Server name */
-    int             port;                       /**< Listening port */
     int             async;                      /**< Async mode */
-    int             cloned;                     /**< Server was cloned */
+    int             port;                       /**< Listening port */
+    int             hosted;                     /**< Server being hosted inside a web server */
+    struct EjsHttpServer *cloned;               /**< Server that was cloned */
     EjsObj          *emitter;                   /**< Event emitter */
     EjsObj          *limits;                    /**< Limits object */
-    EjsPot          *sessions;                  /**< Session cache */
     EjsArray        *incomingStages;            /**< Incoming Http pipeline stages */
     EjsArray        *outgoingStages;            /**< Outgoing Http pipeline stages */
 } EjsHttpServer;
@@ -74,7 +72,7 @@ typedef struct EjsRequest {
     EjsObj          *cookies;           /**< Cached cookies */
     HttpConn        *conn;              /**< Underlying Http connection object */
     EjsHttpServer   *server;            /**< Owning server */
-    EjsObj          *app;               /**< Application build function. Used when threaded */
+    struct EjsRequest *cloned;          /**< Request that was cloned */
     EjsObj          *absHome;           /**< Absolute URI to the home of the application from this request */
     EjsObj          *config;            /**< Request config environment */
     EjsPath         *dir;               /**< Home directory containing the application */
@@ -82,32 +80,35 @@ typedef struct EjsRequest {
     EjsObj          *env;               /**< Request.env */
     EjsPath         *filename;          /**< Physical resource filename */
     EjsObj          *files;             /**< Files object */
+    EjsString       *formData;          /**< Form data as a stable, sorted string */
     EjsObj          *headers;           /**< Headers object */
     EjsUri          *home;              /**< Relative URI to the home of the application from this request */
-    EjsObj          *host;              /**< Host property */
+    EjsString       *host;              /**< Host property */
     EjsObj          *limits;            /**< Limits object */
     EjsObj          *log;               /**< Log object */
-    EjsObj          *originalMethod;    /**< Saved original method */
+    EjsString       *originalMethod;    /**< Saved original method */
     EjsObj          *originalUri;       /**< Saved original URI */
-    EjsObj          *params;            /**< Form variables */
-    EjsObj          *pathInfo;          /**< PathInfo property */
-    EjsObj          *port;              /**< Port property */
-    EjsObj          *query;             /**< Query property */
-    EjsObj          *reference;         /**< Reference property */
+    EjsObj          *params;            /**< Form variables + routing variables */
+    EjsString       *pathInfo;          /**< PathInfo property */
+    EjsNumber       *port;              /**< Port property */
+    EjsString       *query;             /**< Query property */
+    EjsString       *reference;         /**< Reference property */
     EjsObj          *route;             /**< Matching route in route table */
     EjsObj          *responseHeaders;   /**< Headers object */
-    EjsObj          *scheme;            /**< Scheme property */
-    EjsObj          *scriptName;        /**< ScriptName property */
-    EjsObj          *uri;               /**< Complete uri */
+    EjsString       *scheme;            /**< Scheme property */
+    EjsString       *scriptName;        /**< ScriptName property */
+    EjsUri          *uri;               /**< Complete uri */
+    EjsByteArray    *writeBuffer;       /**< Write buffer for capturing output */
 
     Ejs             *ejs;               /**< Ejscript interpreter handle */
     struct EjsSession *session;         /**< Current session */
 
-    int             accepted;           /**< Request has been accepted from the HttpServer */
+    //  OPT - make bit fields
     int             dontAutoFinalize;   /**< Suppress auto-finalization */
     int             probedSession;      /**< Determined if a session exists */
     int             closed;             /**< Request closed and "close" event has been issued */
     int             error;              /**< Request errored and "error" event has been issued */
+    int             finalized;          /**< Request has written all output data */
     int             responded;          /**< Request has done some output or changed status */
     int             running;            /**< Request has started */
     ssize           written;            /**< Count of data bytes written to the client */
@@ -134,47 +135,42 @@ extern EjsRequest *ejsCreateRequest(Ejs *ejs, EjsHttpServer *server, HttpConn *c
 extern EjsRequest *ejsCloneRequest(Ejs *ejs, EjsRequest *req, bool deep);
 
 /** 
-    Session Class
+    Session Class. Requests can access to session state storage via the Session class.
     @description
         Session objects represent a shared session state object into which Http Requests and store and retrieve data
         that persists beyond a single request.
     @stability Prototype
     @defgroup EjsSession EjsSession
-    @see EjsSession ejsCreateSession ejsDestroySession
+    @see EjsSession ejsGetSession ejsDestroySession
  */
 typedef struct EjsSession {
-    EjsPot      pot;
-    MprTime     expire;             /* When the session should expire */
-    cchar       *id;                /* Session ID */
-    int         timeout;            /* Session inactivity lifespan */
-    int         index;              /* Index in sesssions[] */
+    EjsPot      pot;                /* Session properties */
+    EjsString   *key;               /* Session ID key */
+    EjsObj      *cache;             /* Cache store reference */
+    EjsObj      *options;           /* Default write options */
+    MprTime     timeout;            /* Session inactivity timeout (msecs) */
+    int         ready;              /* Data cached from store into pot */
 } EjsSession;
 
 /** 
-    Create a session object
+    Get a session object for a given key. This will create a session if the given key is NULL or has expired.
     @param ejs Ejs interpreter handle returned from $ejsCreate
-    @param req Request object creating the session
-    @param timeout Timeout in milliseconds
-    @param secure If the session is to be given a cookie that is designated as only for secure sessions (SSL)
+    @param key String containing the session ID
+    @param timeout Timeout to use for the session if one is created
+    @param create Create a new session if an existing session cannot be found or it has expired.
     @returns A new session object.
 */
-extern EjsSession *ejsCreateSession(Ejs *ejs, struct EjsRequest *req, int timeout, bool secure);
-extern EjsSession *ejsGetSession(Ejs *ejs, struct EjsRequest *req);
+extern EjsSession *ejsGetSession(Ejs *ejs, EjsString *key, MprTime timeout, int create);
 
 /** 
     Destroy as session. This destroys the session object so that subsequent requests will need to establish a new session.
     @param ejs Ejs interpreter handle returned from $ejsCreate
-    @param server Server object owning the session.
-    @param session Session object created via ejsCreateSession()
+    @param session Session object created via ejsGetSession()
 */
-extern int ejsDestroySession(Ejs *ejs, EjsHttpServer *server, EjsSession *session);
-
-extern void ejsSetSessionTimeout(Ejs *ejs, EjsSession *sp, int timeout);
-extern void ejsUpdateSessionLimits(Ejs *ejs, EjsHttpServer *server);
-
+extern int ejsDestroySession(Ejs *ejs, EjsSession *session);
+extern void ejsSetSessionTimeout(Ejs *ejs, EjsSession *sp, MprTime timeout);
 extern void ejsSendRequestCloseEvent(Ejs *ejs, EjsRequest *req);
 extern void ejsSendRequestErrorEvent(Ejs *ejs, EjsRequest *req);
-extern void ejsStopSessionTimer(EjsHttpServer *server);
 
 /******************************* Internal APIs ********************************/
 

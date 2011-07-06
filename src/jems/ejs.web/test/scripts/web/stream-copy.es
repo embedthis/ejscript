@@ -1,14 +1,16 @@
 require ejs.web
 
 exports.app = function() { 
-    setStatus(200)
-    setHeaders({"Content-Type": "text/plain"})
+    setHeader("Content-Type", "text/plain")
     dontAutoFinalize()
+
+    let sofar = 0
     on("readable", function(request) {
         let data = new ByteArray
-        if (read(data)) {
+        while (rc = read(data)) {
             write(data)
-        } else {
+        }
+        if (rc == null) {
             finalize()
         }
     })
