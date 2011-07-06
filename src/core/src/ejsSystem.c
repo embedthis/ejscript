@@ -8,6 +8,7 @@
 
 #include    "ejs.h"
 
+//  MOB - compare with ejsCmd before deleting
 /************************************ Methods *********************************/
 /*
     function run(cmd: String): String
@@ -79,6 +80,7 @@ static EjsNumber *system_daemon(Ejs *ejs, EjsObj *unused, int argc, EjsObj **arg
 }
 
 
+//  MOB - compare with ejsCmd before deleting
 /*
     function exec(cmd = null): Void
  */

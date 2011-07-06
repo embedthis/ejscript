@@ -1002,6 +1002,7 @@ MOB - DEBUG
         native function get written(): Number
 
         /********************************************** JSGI  ********************************************************/
+        //   MOB - Deprecate
         /** 
             JSGI specification configuration object.
             @spec jsgi-0.3
