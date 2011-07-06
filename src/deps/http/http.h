@@ -1397,6 +1397,7 @@ typedef struct HttpConn {
     void            *ejs;                   /**< Embedding VM */
     void            *pool;                  /**< Pool of VMs */
     void            *mark;                  /**< Reference for GC marking */
+    void            *data;                  /**< Custom data for request */
     char            *boundary;              /**< File upload boundary */
     char            *errorMsg;              /**< Error message for the last request (if any) */
     char            *ip;                    /**< Remote client IP address */
@@ -2887,6 +2888,7 @@ typedef struct HttpHost {
     HttpLoc         *loc;                   /**< Default location */
     MprHashTable    *mimeTypes;             /**< Hash table of mime types (key is extension) */
 
+    //  MOB - rename documents and home
     char            *documentRoot;          /**< Default directory for web documents */
     char            *serverRoot;            /**< Directory for configuration files */
 
