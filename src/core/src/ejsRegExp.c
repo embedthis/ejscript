@@ -60,8 +60,7 @@ static EjsRegExp *regex_Constructor(Ejs *ejs, EjsRegExp *rp, int argc, EjsObj **
     if (rp->compiled) {
         free(rp->compiled);
     }
-    rp->compiled = (void*) pcre_compile2(rp->pattern, rp->options, &errCode, &errMsg, &column, NULL);
-    if (rp->compiled == NULL) {
+    if ((rp->compiled = pcre_compile2(rp->pattern, rp->options, &errCode, &errMsg, &column, NULL)) == 0) {
         ejsThrowArgError(ejs, "Can't compile regular expression. Error %s at column %d", errMsg, column);
         return 0;
     }

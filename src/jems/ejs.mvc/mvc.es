@@ -1415,8 +1415,9 @@ class Templates {
     },
 
     cache : {
+        lifespan: 86400,
         app:     { enable: true, reload: true },
-        actions: { enable: true, lifespan: 1800 },
+        actions: { enable: true, lifespan: 3600 },
         workers: { enable: true, limit: 10},
     },
     database: {

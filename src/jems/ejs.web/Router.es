@@ -720,7 +720,7 @@ module ejs.web {
         var target: String
 
         /**
-            Template pattern for URIs. The template is used to match the request pathInfo. The template can be a 
+            Template pattern for creating links. The template is used to match the request pathInfo. The template can be a 
             string, a regular expression or a function. If it is a string, it may contain tokens enclosed in braces 
             "{}" and it is converted to a regular expression for fast matching. At run-time, request tokens 
             are extracted and stored as items in the Request.params collection.
