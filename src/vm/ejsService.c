@@ -1203,6 +1203,7 @@ void ejsDisableExit(Ejs *ejs)
     }
 }
 
+
 /*
     @copy   default
  

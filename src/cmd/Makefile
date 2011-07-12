@@ -37,21 +37,19 @@ romFiles.c:
 #	Make the compiler
 #
 $(BLD_BIN_DIR)/ejsc$(BLD_EXE): $(OBJECTS)
-	bld --exe $(BLD_BIN_DIR)/ejsc$(BLD_EXE) --search "$(BLD_EJS_LIBPATHS)" --libs "$(BLD_EJS_LIBS)" \
-		"$(BLD_OBJ_DIR)/ejsc$(BLD_OBJ)"
+	bld --exe $(BLD_BIN_DIR)/ejsc$(BLD_EXE) --libs "$(BLD_EJS_LIBS)" "$(BLD_OBJ_DIR)/ejsc$(BLD_OBJ)"
 
 #
 #	Make the Ejscript shell
 #
 $(BLD_BIN_DIR)/ejs$(BLD_EXE): $(OBJECTS) 
-	bld --exe $(BLD_BIN_DIR)/ejs$(BLD_EXE) --search "$(BLD_EJS_LIBPATHS)" --libs "$(BLD_EJS_LIBS) $(LIBS)" $(EJS_OBJECTS)
+	bld --exe $(BLD_BIN_DIR)/ejs$(BLD_EXE) --libs "$(BLD_EJS_LIBS) $(LIBS)" $(EJS_OBJECTS)
 
 #
 #	Make the ejsmod (module manager)
 #
 $(BLD_BIN_DIR)/ejsmod$(BLD_EXE): $(OBJECTS)
-	bld --exe $(BLD_BIN_DIR)/ejsmod$(BLD_EXE) --search "$(BLD_EJS_LIBPATHS)" --libs "$(BLD_EJS_LIBS)" \
-		ejsmod doc docFiles listing slotGen
+	bld --exe $(BLD_BIN_DIR)/ejsmod$(BLD_EXE) --libs "$(BLD_EJS_LIBS)" ejsmod doc docFiles listing slotGen
 
 docFiles: images/banner.jpg doc.css images/inherit.gif
 	$(call setlibpath) ; makerom images/banner.jpg doc.css images/inherit.gif | \

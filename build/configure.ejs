@@ -50,7 +50,6 @@ manageFeatures()
 createFeatureConfig()
 {
 	NAME=$1
-
 	cat >>$NAME <<!EOF_FEATURE_CONFIG1
 #
 #   Ejscript Feature Selection
@@ -66,6 +65,39 @@ BLD_HTTP_PORT=$BLD_HTTP_PORT
 BLD_SSL_PORT=$BLD_SSL_PORT
 
 !EOF_FEATURE_CONFIG1
+}
+
+
+emitExtraComponents()
+{
+    local kind v
+
+    kind=$1
+
+#     local kind libs ssl ssl_libs v
+# 
+#     libs="ejs http"
+#     eval pcre=\$CFG_${kind}_PCRE
+#     eval ssl=\$CFG_${kind}_SSL
+#     eval ssl_libs=\$CFG_${kind}_SSL_LIBS
+#     if [ "$pcre" = 1 ] ; then
+#         libs="$libs pcre"
+#     fi
+#     if [ "$ssl" = 1 ] ; then
+#         libs="$libs ${ssl_libs}"
+#     else
+#         libs="$libs mpr"
+#     fi
+# 	echo -e "BLD_EJS_LIBS=\"$libs\""
+
+ 	echo -e "#\n#   Ejscript Libraries and Directories\n#"
+    eval v=\$BLD_${kind}_JEM_DIR
+    echo -e "${t}BLD_JEM_DIR=\"${v}\""
+    eval v=\${BLD_${kind}_JEM_DIR}
+    v=`eval canonPath "${v}"`
+    echo -e "${t}BLD_ABS_JEM_DIR=\"${v}\""
+    mkdir -p "${v}"
+
 }
 
 

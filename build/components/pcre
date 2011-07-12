@@ -2,7 +2,7 @@
 #   Pcre
 #
 defineComponent() {
-	local builtin iflags libpaths imports path name
+	local builtin iflags libpaths imports path name headers
 
     path=${1:-.}
     iflags=-I`probe --name pcre --dir --search "$path:$path/src/deps/pcre:$path/src/include" "pcre.h"`
@@ -12,6 +12,12 @@ defineComponent() {
             warnComponent pcre "Can't locate libpcre"
             return
         fi
+        headers=`probe --name pcre.h --search "$path:$path/out/include" "pcre.h" `
+        if [ "$headers" = "" ] ; then
+            warnComponent pcre "Can't locate pcre.h"
+            return
+        fi
+        imports="$imports $headers"
     fi
     libpaths="${imports%/*}"
     builtin=`[ $path = . ] && echo --builtin`
