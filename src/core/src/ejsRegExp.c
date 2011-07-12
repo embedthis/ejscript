@@ -51,7 +51,7 @@ static EjsRegExp *regex_Constructor(Ejs *ejs, EjsRegExp *rp, int argc, EjsObj **
     cchar       *errMsg;
     int         column, errCode;
 
-    rp->pattern = wclone(strim(ejsToString(ejs, argv[0])->value, "/", MPR_TRIM_BOTH);
+    rp->pattern = wclone(ejsToString(ejs, argv[0])->value);
     rp->options = PCRE_JAVASCRIPT_COMPAT;
 
     if (argc == 2) {
