@@ -3,11 +3,11 @@
 #
 #	Copyright (c) Embedthis Software LLC, 2003-2011. All Rights Reserved.
 #
-HEADERS     += $(patsubst master/%.h,$(BLD_INC_DIR)/%.h,$(shell find master/*.slots.h))
+MASTERS     += $(patsubst master/%.h,$(BLD_INC_DIR)/%.h,$(shell find master/*.slots.h))
 
 include 	.makedep
 
-compileExtra: $(HEADERS)
+compileExtra: $(MASTERS)
 
 dependExtra:
 	cp master/*slots.h $(BLD_INC_DIR)
