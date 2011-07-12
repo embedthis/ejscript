@@ -44,11 +44,16 @@ defineComponent() {
     withlibs="pcre"
     libs="$libs pcre"
     if [ "$builtin" = "" ] ; then
-        if [ "${incdir}" != "" ] ; then
-            iflags=-I${incdir}
-        fi
         if [ "${libdir}" != "" ] ; then
             libs="$libs ejs.web"
+        fi
+        if [ "${incdir}" != "" ] ; then
+            iflags=-I${incdir}
+        else
+            optional=
+            libs=
+            withlibs=
+            deps=
         fi
         ejsbin=`probe --name ejs --search "$path:$path/out/bin:$SEARCH_PATH" ejs`
     fi

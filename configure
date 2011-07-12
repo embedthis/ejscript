@@ -998,7 +998,9 @@ configureComponent() {
     value=${path}
     [ "$value" = "" ] && value=1
     [ "$iflags" = "-I/usr/include" ] && iflags=
-
+    if [ "$libpaths" = "/usr/lib" -o "$libpaths" = "/lib" ] ; then
+        libpaths=
+    fi
     eval CFG_${kind}_${upper}=\"${value}\"
     eval CFG_${kind}_${upper}_BUILTIN=\"$builtin\"
     eval CFG_${kind}_${upper}_CFLAGS=\"$cflags\"
@@ -1012,10 +1014,12 @@ configureComponent() {
     eval CFG_${kind}_${upper}_LIBPATHS=\"$libpaths\"
     eval CFG_${kind}_${upper}_MANDATORY=\"$mandatory\"
     eval CFG_${kind}_${upper}_OPTIONAL_DEPENDENCIES=\"$optional\"
-    eval CFG_${kind}_${upper}_WITHLIBS=\"$withlibs\"
-    eval CFG_${kind}_${upper}_WITHPATHS=\"$withpaths\"
+    if [ "$builtin" = 1 ] ; then
+        eval CFG_${kind}_${upper}_WITHLIBS=\"$withlibs\"
+        eval CFG_${kind}_${upper}_WITHPATHS=\"$withpaths\"
+    fi
     eval ${kind}_COMPONENTS=\"\$${kind}_COMPONENTS ${name}\"
-    tag=${tag:-system}
+    tag=${tag:-imported}
     [ $quiet = 0 -a $verbose = 0 -a $kind = HOST ] && echo "$tag"
 }
 
@@ -2096,12 +2100,18 @@ Environment Variables:
   LDFLAGS                  Linker flags. For example: use -L<dir> to specify
                            where to find libraries in non-standard directories.
 
-Variables for native compilation of tools needed by the build process.
+  Variables for native compilation of tools needed by the build process:
+
   BUILD_CC                 C/C++ compiler to use for native /local compilation
                            and linking on the build system.
   BUILD_LD                 Linker to use for native /local linking on the
                            build system.
   BUILD_MT                 Windows manifest command.
+
+  Some components also listen for environment variables to set IFLAGS, LIBS and
+  LIBPATHS. For example:  
+
+    PHP_IFLAGS="-I/php" PHP_LIBS=libxml ./configure
 
 Installation Directory Options:
   When doing a "make install" the --prefix and --binDir are used. The other

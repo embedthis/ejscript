@@ -106,17 +106,17 @@ help()
 	cat <<!EOF_HELP
 
 Additional Ejscript Features:
-  --auth=[pam|file]            Build with file or PAM-based http authorization support.
-  --port=PORT                  Set the HTTP test port.
-  --sslPort=PORT               Set the SSL test port.
+  --auth=[pam|file]        Build with file or PAM-based http authorization support.
+  --port=PORT              Set the HTTP test port.
+  --sslPort=PORT           Set the SSL test port.
   
 Optional Components: appweb, matrixssl, openssl, regexp, sqlite
 
-  --with-NAME=[DIR]            Add support for the NAME. The component file in
-                               build/components/NAME will describe compile and 
-                               linker switches. DIR is the base directory to 
-                               find the module libraries and headers.
-  --without-NAME               Do not include support for NAME.
+  --with-NAME=[DIR]        Add support for the NAME. The component file in
+                           build/components/NAME will describe compile and 
+                           linker switches. DIR is the base directory to 
+                           find the module libraries and headers.
+  --without-NAME           Do not include support for NAME.
 
 Examples:
   ./configure --with-openssl=/usr/src/openssl
