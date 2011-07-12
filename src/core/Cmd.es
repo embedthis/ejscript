@@ -79,6 +79,20 @@ module ejs {
          */
         native function flush(dir: Number = Stream.BOTH): Void
 
+
+        /**
+            Locate a program using the application PATH
+         */
+        static function locate(program): Path {
+            for each (dir in App.getenv("PATH").split(App.SearchSeparator)) {
+                let path = Path(dir).join(program)
+                if (path.exists) {
+                    return path
+                }
+            }
+            return null
+        }
+
         /** 
             @duplicate Stream.on
             @event readable Issued when output data to read.
