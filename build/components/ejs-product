@@ -1,0 +1,32 @@
+#
+#   Ejs
+#
+defineComponent() {
+    local deps iflags libs optional path libpaths builtin imports shobj modules
+
+    path="${1:-.}"
+    iflags=-I`probe --name ejs --dir --search "$path:$path/src/deps/ejs:$path/src/include" "ejs.h"`
+    if [ "$path" != "." ] ; then
+        libpaths=`probe --name ejs --dir --search "$path:$path/out/lib" "libejs" `
+        modules=`probe --name ejs --dir --search "$path:$path/out/modules" "ejs.web" `
+        if [ "$libpaths" = "" -a "$path" != "." ] ; then
+            warnComponent ejs "Can't locate libejs"
+            return
+        fi
+        imports="$libpaths/libejs*$SHOBJ $modules/*$SHOBJ"
+    fi
+
+    optional=""
+    if [ "$BLD_FEATURE_EJS_ALL_IN_ONE" = 1 ] ; then
+        if isdefined SQLITE ; then
+            optional="$optional sqlite"
+        fi
+    fi
+    optional="$optional ssl"
+    deps="mpr http"
+    withlibs="$withlibs pcre"
+    libs="$libs pcre"
+    builtin=`[ "$path" = "." ] && echo --builtin`
+    configureComponent --libs "ejs $libs" --libpaths "$libpaths" --iflags "$iflags" --withlibs "$withlibs" $builtin \
+        --dependencies "$deps" --optional-dependencies "$optional" --imports "$imports" ejs
+}
