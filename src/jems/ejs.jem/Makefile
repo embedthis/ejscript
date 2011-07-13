@@ -15,15 +15,6 @@ compileExtra: $(TARGETS)
 
 module:
 
-#	$(BLD_MOD_DIR)/$(MOD): *.es $(BLD_MOD_DIR)/ejs.mod
-#		$(call log) [Compile] "$(MOD)"
-#		rm -f *.mod *.slots.h $(BLD_BUILD_MOD_DIR)/$(MOD) $(BLD_MOD_DIR)/$(MOD)
-#		$(BLD_BUILD_BIN_DIR)/ejsc $(_ESFLAGS) *.es
-#		$(BLD_BUILD_BIN_DIR)/ejsmod --cslots $(MOD)
-#		diff $(NAME).slots.h $(BLD_INC_DIR) >/dev/null 2>&1 || cp $(NAME).slots.h $(BLD_INC_DIR) 
-#		cp *.mod $(BLD_BUILD_MOD_DIR) ; mv *.mod $(BLD_MOD_DIR)
-#		rm -f $(NAME).slots.h
-
 package.json: Makefile $(BLD_INC_DIR)/buildConfig.h
 	jem --field version --value $(BLD_VERSION) edit
 

@@ -16,14 +16,14 @@ compileExtra: modules
 modules: $(EJS_MOD)
 
 #
-#	Modules are (currently) cross-platform. If cross-compiling, BLD_MOD_DIR and BLD_BUILD_MOD_DIR are different.
+#	Modules are (currently) cross-platform. If cross-compiling, BLD_LIB_DIR and BLD_BUILD_LIB_DIR are different.
 #	Copy the module to both places. No harm if they are the same.
 #
 $(EJS_MOD): $(EJS_FILES)
 	$(call log) [Compile] "Core Ejs Classes"
-	rm -f *.mod *.slots.h $(BLD_BUILD_MOD_DIR)/*.mod $(BLD_MOD_DIR)/*.mod
+	rm -f *.mod *.slots.h $(BLD_BUILD_LIB_DIR)/*.mod $(BLD_LIB_DIR)/*.mod
 	$(BLD_BUILD_BIN_DIR)/ejsc $(_ESFLAGS) --out ejs.mod --bind --require "" $(EJS_FILES)
-	cp *.mod $(BLD_BUILD_MOD_DIR) ; mv *.mod $(BLD_MOD_DIR)
+	cp *.mod $(BLD_BUILD_LIB_DIR) ; mv *.mod $(BLD_LIB_DIR)
 	$(call log) [Generate] "Core listings and slot files"
 	$(BLD_BUILD_BIN_DIR)/ejsmod --require "" $(LISTING) --cslots $(call mod, ejs)
 	changed=0 ; \

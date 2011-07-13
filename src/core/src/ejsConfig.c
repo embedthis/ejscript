@@ -64,9 +64,6 @@ void ejsDefineConfigProperties(Ejs *ejs)
 #ifdef BLD_BIN_PREFIX
     ejsDefineProperty(ejs, type, -1, N("public", "BinDir"), 0, att, ejsCreateStringFromAsc(ejs, BLD_BIN_PREFIX));
 #endif
-#ifdef BLD_MOD_PREFIX
-    ejsDefineProperty(ejs, type, -1, N("public", "ModDir"), 0, att, ejsCreateStringFromAsc(ejs, BLD_MOD_PREFIX));
-#endif
 #ifdef BLD_LIB_PREFIX
     ejsDefineProperty(ejs, type, -1, N("public", "LibDir"), 0, att, ejsCreateStringFromAsc(ejs, BLD_LIB_PREFIX));
 #endif

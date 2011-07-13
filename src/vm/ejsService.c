@@ -666,14 +666,14 @@ EjsArray *ejsCreateSearchPath(Ejs *ejs, cchar *search)
 #else
     /*
         Create a default search path
-        "." : APP_EXE_DIR/../modules : /usr/lib/ejs/1.0.0/modules
+        "." : APP_EXE_DIR/../lib : /usr/lib/ejs/1.0.0/lib
      */
     ejsSetProperty(ejs, ap, -1, ejsCreatePathFromAsc(ejs, "."));
-    relModDir = mprAsprintf("%s/../%s", mprGetAppDir(ejs), BLD_MOD_NAME);
+    relModDir = mprAsprintf("%s/../%s", mprGetAppDir(ejs), BLD_LIB_NAME);
     ejsSetProperty(ejs, ap, -1, ejsCreatePathFromAsc(ejs, mprGetAppDir(ejs)));
-    relModDir = mprAsprintf("%s/../%s", mprGetAppDir(ejs), BLD_MOD_NAME);
+    relModDir = mprAsprintf("%s/../%s", mprGetAppDir(ejs), BLD_LIB_NAME);
     ejsSetProperty(ejs, ap, -1, ejsCreatePathFromAsc(ejs, mprGetAbsPath(relModDir)));
-    ejsSetProperty(ejs, ap, -1, ejsCreatePathFromAsc(ejs, BLD_MOD_PREFIX));
+    ejsSetProperty(ejs, ap, -1, ejsCreatePathFromAsc(ejs, BLD_LIB_PREFIX));
 #endif
     return (EjsArray*) ap;
 }

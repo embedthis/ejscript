@@ -33,8 +33,8 @@ ifeq ($(BLD_EJS_DIR),)
 	TOOLS			+= $(BLD_BIN_DIR)/ejsc$(BLD_EXE)
 	TOOLS			+= $(BLD_BIN_DIR)/ejsmod$(BLD_EXE)
 
-	TARGETS		+= $(BLD_MOD_DIR)/ejs.mod
-	# MODULES += $(BLD_MOD_DIR)/mod_ejs$(BLD_SHOBJ)
+	TARGETS		+= $(BLD_LIB_DIR)/ejs.mod
+	# MODULES += $(BLD_LIB_DIR)/mod_ejs$(BLD_SHOBJ)
 	GATE_OBJECTS += ejsAppwebHandler$(BLD_OBJ)
 	ifeq ($(BLD_OS),VXWORKS)
 		EXTRA_GATEWAY_OBJECTS += $(BLD_LIB_DIR)/libejs.out
@@ -70,12 +70,12 @@ compileExtra: $(TARGETS)
 #
 modules: $(MODULES) dummy
 
-$(BLD_MOD_DIR)/ejs.mod: $(BLD_INC_DIR)/ejs.slots.h *.es $(TOOLS)
+$(BLD_LIB_DIR)/ejs.mod: $(BLD_INC_DIR)/ejs.slots.h *.es $(TOOLS)
 	$(call log) "[Generate]" ejs.mod
 	$(call setlibpath) ; \
-		ejsc $(ESFLAGS) --bind --require "" --out $(BLD_MOD_DIR)/ejs.mod ejs.es
-	$(call setlibpath) ; ejsmod --cslots --require "" --out .ejs.slots.h $(BLD_MOD_DIR)/ejs.mod \
-		|| rm -f $(BLD_MOD_DIR)/ejs.mod
+		ejsc $(ESFLAGS) --bind --require "" --out $(BLD_LIB_DIR)/ejs.mod ejs.es
+	$(call setlibpath) ; ejsmod --cslots --require "" --out .ejs.slots.h $(BLD_LIB_DIR)/ejs.mod \
+		|| rm -f $(BLD_LIB_DIR)/ejs.mod
 	if [ "`grep CHECKSUM .ejs.slots.h | sum`" != "`grep CHECKSUM $(BLD_INC_DIR)/ejs.slots.h | sum`" ] ; then \
 		$(call log) "[Generate]" $(BLD_INC_DIR)/ejs.slots.h ; \
 		chmod +w $(BLD_INC_DIR)/ejs.slots.h ; \
@@ -110,8 +110,8 @@ $(BLD_BIN_DIR)/ejsmod$(BLD_EXE): $(OBJECTS)
 $(BLD_BIN_DIR)/ejssql$(BLD_EXE): $(OBJECTS)
 	bld --exe $(BLD_BIN_DIR)/ejssql$(BLD_EXE) --search "$(BLD_EJS_LIBPATHS)" --libs "$(BLD_EJS_LIBS)" ejssql$(BLD_OBJ)
 
-# $(BLD_MOD_DIR)/mod_ejs$(BLD_SHOBJ): $(OBJECTS)
-# 	bld --shared --library $(BLD_MOD_DIR)/mod_ejs --search "$(BLD_APPWEB_LIBPATHS)" \
+# $(BLD_LIB_DIR)/mod_ejs$(BLD_SHOBJ): $(OBJECTS)
+# 	bld --shared --library $(BLD_LIB_DIR)/mod_ejs --search "$(BLD_APPWEB_LIBPATHS)" \
 # 		--libs "$(BLD_APPWEB_LIBS) $(BLD_EJS_LIBS)" ejsAppwebHandler$(BLD_OBJ) $(EXTRA_GATEWAY_OBJECTS)
 
 $(BLD_LIB_DIR)/www: Makefile www/*
