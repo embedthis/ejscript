@@ -285,7 +285,7 @@ module ejs {
                     }
                 }
             } else {
-               cmd.start(["/bin/sh", "-c", "/bin/ps -e"])
+               cmd.start("/bin/ps -e")
                 for each (line in cmd.readLines()) {
                     let fields = line.split(/ +/g)
                     let pid = fields[0]
@@ -330,7 +330,7 @@ module ejs {
                 //  Windows WMIC drops this
                 Path("TempWmicBatchFile.bat").remove()
             } else {
-                cmd.start(["/bin/sh", "-c", "/bin/ps -ef"])
+                cmd.start("/bin/ps -ef")
                 for each (line in cmd.readLines()) {
                     let fields = line.trim().split(/ +/g)
                     let pid = fields[1]
@@ -371,18 +371,19 @@ module ejs {
         //  MOB - should this take options as an arg?
         /**
             Run a command using the system command shell and wait for completion. On Windows, this requires that
-            /bin/sh.exe is installed (See Cygwin). 
+            sh.exe is installed (See Cygwin). 
             @param command The (optional) command line to initialize with. The command may be either a string or
                 an array of arguments. 
          */
         static function sh(command: Object, data: Object = null): String {
             /*
-                The form is:  /bin/sh -c "command args"
+                The form is:  sh -c "command args"
                 The args must be wrapped in single quotes if they contain spaces. 
                 Example:
                     This:       ["showColors", "red", "light blue", "Can't \"render\""]
-                    Becomes:    /bin/sh -c "showColors red 'light blue' 'Can\'t \"render\"'
+                    Becomes:    sh -c "showColors red 'light blue' 'Can\'t \"render\"'
              */
+            let shell = Cmd.locate("sh")
             if (command is Array) {
                 for (let arg in command) {
                     /*  
@@ -393,7 +394,7 @@ module ejs {
                     s = s.replace(/\"/g, '\\\"').replace(/\'/g, '\\\'')
                     command[arg] = "'" + s + "'"
                 }
-                return run(["/bin/sh", "-c"] + [command.join(" ")], data).trimEnd()
+                return run([shell, "-c"] + [command.join(" ")], data).trimEnd()
             }
             /*
                 Must quote single and double quotes as the comand will be wrapped in quotes on Windows.
@@ -404,7 +405,7 @@ module ejs {
                     Cygwin will parse as  argv[1] == c:/path \a \b
                     Windows will parse as argv[1] == c:/path "a b"
              */
-            return run(["/bin/sh", "-c", command.toString().trimEnd('\n')], data).trimEnd()
+            return run([shell, "-c", command.toString().trimEnd('\n')], data).trimEnd()
         }
     }
 }

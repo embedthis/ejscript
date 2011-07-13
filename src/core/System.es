@@ -65,7 +65,8 @@ module ejs {
             MOB - remove
          */
         static function sh(args): String {
-            return System.run("/bin/sh -c \"" + args + "\"").trim('\n')
+            let shell = Cmd.locate("sh")
+            return System.run(shell + " -c \"" + args + "\"").trim('\n')
         }
 
         /**  
