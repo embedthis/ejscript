@@ -1,4 +1,4 @@
-test.skip("MOB - skip XMLHttp")
+test.skip("skip XMLHttp")
 
 /*
 App.config.test.http_port ||= "6700"
