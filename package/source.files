@@ -41,11 +41,11 @@ cpy -f "${samplesFilter}" samples "${DIR}"
 projectsFilter="/Debug|/Release|\.user|\.suo|\.ncb|*.mode1v3|*.pbxuser|/ejs.build/|iphone|ejs-all"
 cpy -f "${projectsFilter}" projects "${DIR}"
 
-cat out/include/buildConfig.h | sed 's/-VERSION-/${BLD_VERSION}/;s/-NUMBER-/${BLD_NUMBER}/' \
-    >"${DIR}/src/include/buildConfig.h"
+# cat ${BLD_INC_DIR}/buildConfig.h | sed 's/-VERSION-/${BLD_VERSION}/;s/-NUMBER-/${BLD_NUMBER}/' \
+#    >"${DIR}/src/include/buildConfig.h"
 
-if [ $TASK = Remove ] ; then
-    if [ "`pwd`" != "$DIR" ] ; then
-        ${RM} -f "${DIR}/buildConfig.*" "${DIR}/src/include/buildConfig.*" "${DIR}/build/bin/buildConfig.*"
-    fi
-fi
+# if [ $TASK = Remove ] ; then
+#     if [ "`pwd`" != "$DIR" ] ; then
+#         ${RM} -f "${DIR}/buildConfig.*" "${DIR}/src/include/buildConfig.*" "${DIR}/build/bin/buildConfig.*"
+#     fi
+# fi
