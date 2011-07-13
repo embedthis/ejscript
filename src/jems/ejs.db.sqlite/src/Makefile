@@ -19,14 +19,14 @@ endif
 
 ifeq ($(BLD_FEATURE_SQLITE),1)
 	TARGETS		+= $(BLD_LIB_DIR)/libsqlite3$(BLD_LIB)
-	TARGETS		+= $(BLD_MOD_DIR)/$(JEM)$(BLD_LIB)
+	TARGETS		+= $(BLD_LIB_DIR)/$(JEM)$(BLD_LIB)
 	TARGETS		+= $(BLD_BIN_DIR)/ejssql$(BLD_EXE)
 endif
 
 compileExtra:   $(TARGETS)
 
-$(BLD_MOD_DIR)/$(JEM)$(BLD_LIB): $(OBJECTS) $(call lib, mpr) $(call vlib, ejs)
-	bld --library $(BLD_MOD_DIR)/$(JEM)$(BLD_LIB) --libs "ejs $(BLD_MPR_LIBS) $(BLD_SQLITE_LIBS)" \
+$(BLD_LIB_DIR)/$(JEM)$(BLD_LIB): $(OBJECTS) $(call lib, mpr) $(call vlib, ejs)
+	bld --library $(BLD_LIB_DIR)/$(JEM)$(BLD_LIB) --libs "ejs $(BLD_MPR_LIBS) $(BLD_SQLITE_LIBS)" \
         $(BLD_OBJ_DIR)/ejsSqlite$(BLD_OBJ)
 
 $(BLD_LIB_DIR)/libsqlite3$(BLD_LIB): $(BLD_OBJ_DIR)/sqlite3$(BLD_OBJ)

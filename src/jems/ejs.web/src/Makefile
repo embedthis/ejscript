@@ -7,7 +7,7 @@
 include 		.makedep
 
 JEM				:= ejs.web
-TARGET			:= $(BLD_MOD_DIR)/$(JEM)$(BLD_LIB)
+TARGET			:= $(BLD_LIB_DIR)/$(JEM)$(BLD_LIB)
 MAKE_IFLAGS		+= $(BLD_MPR_IFLAGS) $(BLD_HTTP_IFLAGS)
 
 compileExtra:	$(TARGET)
