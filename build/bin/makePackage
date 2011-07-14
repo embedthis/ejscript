@@ -31,10 +31,12 @@
 #
 ################################################################################
 
+COMBO=0
 DRY_RUN=
+MD5=
 QUIET=0
 TASK=Package
-MD5=
+
 : ${BLD_OUT_DIR:=$BLD_TOP/out}
 : ${ABS_BLD_REL_DIR:=$BLD_OUT_DIR/releases}
 
@@ -82,16 +84,11 @@ setup() {
 
     . ${BLD_TOP}/build/bin/makePackage.common
 
-    if [ $BLD_BUILD_OS = LINUX -a `id -u` != 0 ] ; then
+    if [ $BLD_BUILD_OS = LINUX -a `id -u` != 0 -a "$COMBO" != 1 ] ; then
         echo -e "\nWARNING: Non-root package. Installed files will be owned by `id -nu`\n"
     fi
-
     preparePrefixes
-
-    log Clean Image area
     mkdir -p ${ABS_BLD_REL_DIR}
-    ${RM} -fr ${ABS_BLD_REL_DIR}/${BLD_PRODUCT}-*
-    ${RM} -fr ${ABS_BLD_REL_DIR}/md5-${BLD_PRODUCT}-*
 
     #
     #   Remove extended attributes on Mac OS X
@@ -114,6 +111,7 @@ setup() {
         exit 255
     fi
 }
+
 
 patchSource() {
     local f
@@ -285,10 +283,8 @@ sum() {
     file="$1"
     base=${file##*/}                # basename
     dir=${file%/*}                  # dirname
-
     cd "$dir" >/dev/null
-    log Checksum "$MD5 ${base}"
-    $MD5 "${base}" | awk '{ print $1 }' > "${dir}/md5-${base}.txt"
+    eval $MD5 "${base}" | awk '{ print $1 }' > "${dir}/md5-${base}.txt"
     chmod 755 "${dir}/md5-${base}.txt"
     chown `id -ru` "${dir}/md5-${base}.txt"
     cd $HOME >/dev/null
@@ -297,7 +293,7 @@ sum() {
 cleanup() {
     log Complete "Package Complete"
 
-    if [ $BLD_BUILD_OS = LINUX -a `id -u` != 0 ] ; then
+    if [ $BLD_BUILD_OS = LINUX -a `id -u` != 0 -a "$COMBO" != 1 ] ; then
         echo -e "\nWARNING: Non-root package. Installed files will be owned by `id -nu`\n"
     fi
     [ "$KEEP" != "1" ] && ${RM} -rf ${ROOT_DIR}
@@ -420,6 +416,12 @@ while [ "${1#--}" != "$1" -o "${1#-}" != "$1" ] ; do
     dry|dry-run)
         DRY_RUN=1
         ;;
+    combo)
+        COMBO=1
+        ;;
+    keep)
+        KEEP=1
+        ;;
     quiet|-q)
         QUIET=1
         ;;
@@ -437,10 +439,15 @@ PACKS=$*
 PACKS=${PACKS:=binary dev}
 
 setup
-createArchives
-createScripts
-createPlatformPackages
-createEnvelopes
-copyImages
+
+if [ "$COMBO" = 1 ] ; then
+    . ${BLD_TOOLS_DIR}/makeComboPackage
+else
+    createArchives
+    createScripts
+    createPlatformPackages
+    createEnvelopes
+    copyImages
+fi
 createChecksums
 cleanup

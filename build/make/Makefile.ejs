@@ -43,7 +43,7 @@ small:
 	./configure --disable-all --tune=size --type=release --enable-shared --number=int 
 
 speed:
-	./configure --type=release --disable-assert --tune=size
+	./configure --type=release --tune=size
 
 vx:
 	unset WIND_HOME WIND_BASE ; \
@@ -130,26 +130,26 @@ uclibc-detailed:
 #
 lines:
 	@echo -n "Lines of C: "
-	@find . -name '*.c' | egrep -v '\.hg|OLD|sav' | xargs cat | wc -l
+	@find . -name '*.c' | egrep -v 'OLD|sav' | xargs cat | wc -l
 	@echo -n "Lines of C Headers: "
-	@find . -name '*.h' | egrep -v '\.hg|OLD|sav' | xargs cat | wc -l
+	@find . -name '*.h' | egrep -v 'OLD|sav' | xargs cat | wc -l
 	@echo -n "Lines of Java: "
-	@find . -name '*.java' | egrep -v '\.hg|OLD|sav' | xargs cat | wc -l
+	@find . -name '*.java' | egrep -v 'OLD|sav' | xargs cat | wc -l
 	@echo -n "Lines of Ejscript: "
-	@find . -name '*.es' -o -name '*.as' | egrep -v '\.hg|OLD|sav' | xargs cat | wc -l
+	@find . -name '*.es' -o -name '*.as' | egrep -v 'OLD|sav' | xargs cat | wc -l
 	@echo -n "MPR: "
-	@find src/mpr -name '*.c' -o -name '*.h' | egrep -v '\.hg|OLD|sav' | xargs cat | wc -l
+	@find src/mpr -name '*.c' -o -name '*.h' | egrep -v 'OLD|sav' | xargs cat | wc -l
 	@echo -n "Tools: "
-	@find build -name '*.c' -o -name '*.h' | egrep -v '\.hg|OLD|sav' | xargs cat | wc -l
+	@find build -name '*.c' -o -name '*.h' | egrep -v 'OLD|sav' | xargs cat | wc -l
 	@echo -n "C VM: "
-	@find src/vm -name '*.c' -o -name '*.h' | egrep -v '\.hg|OLD|sav' | xargs cat | wc -l
+	@find src/vm -name '*.c' -o -name '*.h' | egrep -v 'OLD|sav' | xargs cat | wc -l
 	@echo -n "C Types: "
-	@find src/types -name '*.c' -o -name '*.h' | egrep -v '\.hg|OLD|sav' | xargs cat | wc -l
+	@find src/types -name '*.c' -o -name '*.h' | egrep -v 'OLD|sav' | xargs cat | wc -l
 	@echo -n "Compiler: "
-	@find src/compiler -name '*.c' -o -name '*.h' | egrep -v '\.hg|OLD|sav' | xargs cat | wc -l
+	@find src/compiler -name '*.c' -o -name '*.h' | egrep -v 'OLD|sav' | xargs cat | wc -l
 	@echo -n "Total: "
-	@find . -name '*.c' -o -name '*.h' -o -name '*.java' -o -name '*.es' \
-		-o -name '*.as' | egrep -v '\.hg|OLD|sav' | xargs cat | wc -l
+	@find . -name '*.c' -o -name '*.h' -o -name '*.java' -o -name '*.es' -o -name '*.as' | \
+		egrep -v 'OLD|sav' | xargs cat | wc -l
 
 #
 #	Profile guided optimization build
@@ -166,13 +166,12 @@ pgo:
 	rm -f obj/*.gcda obj/*.gcno
 
 redo:
-	hg pull ; hg update -C
+	git pull
 	$(MAKE) TRACE=0 release clean depend compile install-binary test
 
 update:
-	hg pull ; hg update -C
+	git pull
 	$(MAKE) TRACE=0 clean depend compile install-binary test
 
 debug:
 	open projects/MACOSX/ejs-all/ejs-all.xcodeproj
-

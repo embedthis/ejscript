@@ -18,36 +18,14 @@
 #		make install				# Call install-binary + install-dev
 #		make install-binary			# Install binary files
 #		make install-dev			# Install development libraries and headers
+#		make uninstall				# Uninstall. Also (-binary, -dev)
 #
 #	To remove, use make uninstall-ITEM, where ITEM is a component above.
 
-BUILD_DEPTH	?= 2
+DEPS	= tools mpr pcre http 
 
-include	    build/make/Makefile.top
-include		build/make/Makefile.ejs
-
-ifeq	($(BLD_CROSS),0)
-testExtra: 
-	$(BLD_BIN_DIR)/ejs $(BLD_TOOLS_DIR)/utest -v -d $(BUILD_DEPTH) src
-endif
-
-diff import sync:
-	import.sh --$@ ../tools/out/releases/tools-dist.tgz
-	import.sh --$@ ../mpr/out/releases/mpr-dist.tgz
-	import.sh --$@ ../pcre/out/releases/pcre-dist.tgz
-	import.sh --$@ ../http/out/releases/http-dist.tgz
-
-testExtra: test-projects
-
-test-projects:
-ifeq    ($(BLD_HOST_OS),WIN)
-	if [ "$(BUILD_DEPTH)" -ge 3 ] ; then \
-		$(BLD_TOOLS_DIR)/nativeBuild ; \
-	fi
-endif
-
-ext:
-	./configure --with-mpr=../mpr --with-ssl=../mpr --with-http=../http --with-pcre=../pcre
+include	build/make/Makefile.top
+include	build/make/Makefile.ejs
 
 #
 #   Local variables:

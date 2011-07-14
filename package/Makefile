@@ -6,10 +6,14 @@
 
 include 		.makedep 
 
-PRE_DIRS		= $(BLD_HOST_OS) dist
+PRE_DIRS		= $(BLD_HOST_OS)
 
 dependExtra:
 	[ "$(shell echo *.sh)" != "*.sh" ] && chmod +x *.sh ; true
+
+packageFinal: 
+	$(MAKE) -C .. packageRelease
+	$(MAKE) -C .. packageCombo
 
 #
 #   Local variables:

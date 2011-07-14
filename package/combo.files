@@ -1,0 +1,156 @@
+#
+#	combo.files - Files needed for the combo installation
+#
+#	Copyright (c) Embedthis Software LLC, 2003-2011. All Rights Reserved.
+#
+INC=${BLD_INC_DIR}
+SRC=${BLD_TOP}/src
+JEMS=${SRC}/jems
+
+#
+#   Output directories. Note: these are in the staging directory.
+#
+DIR="${BLD_OUT_DIR}/staging"
+EJS="${DIR}/src/deps/ejs"
+WWW="${EJS}/www"
+DOC="${DIR}/doc"
+
+####
+#   TDIR			:= $(STAGE_DIR)/ejs-$(BLD_VERSION)
+#   DIST_VER_NAME	:= ejs-$(BLD_VERSION)-dist.tgz
+#   DIST_PERM_NAME	:= ejs-dist.tgz
+#   FLAT_VER_NAME	:= ejs-$(BLD_VERSION)-flat.tgz
+#   FLAT_PERM_NAME	:= ejs-flat.tgz
+
+DB_SOURCES=${JEMS}/ejs.db.sqlite/src/ejsSqlite.c
+EJS_HEADERS="${INC}/ejsByteCode.h ${INC}/ejsByteCodeTable.h ${INC}/ejs.h ${INC}/ejsWeb.h"
+EC_HEADERS=${INC}/ecCompiler.h
+SLOT_HEADERS=`ls ${INC}/ejs*slots.h | sort`
+EJS_SOURCES=`find ${SRC}/vm ${SRC}/core -name '*.c' | sort` 
+EC_SOURCES=`find ${SRC}/compiler -name '*.c' | sort`
+ES_SOURCES=`find ${SRC}/core ${JEMS}/ejs.unix ${JEMS}/ejs.db ${JEMS}/ejs.db.mapper \
+    ${JEMS}/ejs.db.sqlite ${JEMS}/ejs.web ${JEMS}/ejs.template -name '*.es' | \
+    egrep -v 'SAVE|save|legacy|Archive|old|sample.es|XmlGlobal.es|mvc.es' | \
+    egrep -v 'Jsdb.es|Mysql.es|ejspage.es|\/test\/' | sort`
+EJSMOD_HEADERS=${SRC}/cmd/ejsmod.h
+EJSMOD_SOURCES="${SRC}/cmd/doc.c ${SRC}/cmd/docFiles.c ${SRC}/cmd/ejsmod.c ${SRC}/cmd/listing.c ${SRC}/cmd/slotGen.c"
+SQLITE_HEADERS=${SRC}/include/sqlite3.h
+SQLITE_SOURCES=${JEMS}/ejs.db.sqlite/src/sqlite3.c
+WEB_SOURCES=`find ${JEMS}/ejs.web -name '*.c' | egrep -v 'SAVE|save|legacy|Archive' | sort`
+
+#   
+#   Build files
+#
+mkdir -p "${EJS}" "${WWW}" "${DOC}/man" "${DOC}/api"
+cp ${BLD_TOP}/package/Makefile.combo "${EJS}/Makefile"
+# cp ${BLD_INC_DIR}/buildConfig.h "${DIR}/buildConfig.h"
+
+#
+#   ejs.h
+#
+combo ${EJS_HEADERS} ${EC_HEADERS} | egrep -v '#include.*ejs|#include.*ec|#include.*sql' >${EJS}/ejs.h
+echo '#include "ejs.slots.h"' >>${EJS}/ejs.h
+
+#
+#   ejs.c
+#
+echo '#include "ejs.h"' >${EJS}/ejs.c
+TITLE="${BLD_NAME} Shell Source" \
+combo ${SRC}/cmd/ejs.c | egrep -v '#inc.*ejs|#inc.*ec|#inc.*sql' >>${EJS}/ejs.c
+
+#
+#   ejs.es
+#
+TITLE="${BLD_NAME} Core Module" \
+combo ${ES_SOURCES}  | egrep -v 'use strict' >${EJS}/ejs.es
+
+#
+#   ejsc.c
+#
+echo '#include "ejs.h"' >${EJS}/ejsc.c
+TITLE="${BLD_NAME} Compiler Source" \
+combo ${SRC}/cmd/ejsc.c | egrep -v '#inc.*ejs|#inc.*ec|#inc.*sql' >>${EJS}/ejsc.c
+
+#
+#   ejsLib.c
+#
+echo '#define EJS_DEFINE_OPTABLE 1' >${EJS}/ejsLib.c
+echo '#include "ejs.h"' >>${EJS}/ejsLib.c
+TITLE="$BLD_NAME Library Source" \
+combo ${EJS_SOURCES} ${DB_SOURCES} ${WEB_SOURCES} ${EC_SOURCES} | csplit -s -f tmpEjsLib. - '/#include.*ejsByteGoto.h/'
+(cat tmpEjsLib.00 ; cat ${SRC}/include/ejsByteGoto.h ; \
+    if [ "${BLD_OS}" = MACOSX -o "${BLD_OS}" = FREEBSD ] ; \
+        then tail +2 tmpEjsLib.01 ; \
+        else tail --lines=+2 tmpEjsLib.01 ; \
+fi ) | egrep -v '#inc.*ejs|#inc.*ec|#inc.*sqlConf' >>${EJS}/ejsLib.c
+rm -f tmpEjsLib.*
+
+#
+#   ejsmod.c
+#
+echo '#include "ejs.h"' >${EJS}/ejsmod.c
+TITLE="${BLD_NAME} Manager Source" \
+combo ${EJSMOD_HEADERS} ${EJSMOD_SOURCES} | egrep -v '#include.*ejs|#include.*ec|#include.*sql' >>${EJS}/ejsmod.c
+
+#
+#   ejssql.c
+#
+TITLE="${BLD_NAME} SQLite Shell Source" \
+combo ${SQLITE_HEADERS} ${SRC}/jems/ejs.db.sqlite/src/ejssql.c | egrep -v '#include.*ejs|#include.*sqlite3' >${EJS}/ejssql.c
+
+#
+#   sqlite3.h
+#
+cp ${BLD_TOP}/src/include/sqlite3.h ${EJS}/sqlite3.h
+
+#
+#   slots.h
+#
+TITLE="${BLD_NAME} Slot files" combo ${SLOT_HEADERS} >${EJS}/slots.h
+
+#
+#   sqlite3.c
+#
+TITLE="${BLD_NAME} SQLite Library Source" \
+combo ${SQLITE_HEADERS} ${SQLITE_SOURCES} | egrep -v '#include.*ejs|#include.*sqlite3' >${EJS}/sqlite3.c
+
+#
+#   Doc
+#
+cp ${BLD_TOP}/doc/api/ejsBare.html ${DOC}/api
+cp ${BLD_TOP}/doc/man/*.1 ${DOC}/man
+
+#
+#   jem and mvc
+#
+cp ${BLD_BIN_DIR}/*.cmd ${BLD_BIN_DIR}/jem ${BLD_BIN_DIR}/mvc ${EJS}
+
+#
+#   www
+#
+cp -r ${BLD_LIB_DIR}/www ${EJS}
+rm -fr ${EJS}/www/js/tree-images
+
+##	$(REL_DIR)/$(DIST_VER_NAME):
+##		$(call log) "[Generate]" "tar cfz $(REL_DIR)/$(DIST_VER_NAME) -C $(STAGE_DIR) ."
+##		tar cfz $(REL_DIR)/$(DIST_VER_NAME) -C $(STAGE_DIR) .
+##		cd $(REL_DIR) ; ln -s $(DIST_VER_NAME) $(DIST_PERM_NAME)
+##	
+##	flat $(REL_DIR)/$(FLAT_VER_NAME):
+##		mv ${DIR}/src/deps/ejs/www ${DIR}
+##		find ${DIR}/src -type f | xargs -I % mv % ${DIR} 
+##		cp ${SRC}/deps/pcre/pcre.h ${SRC}/deps/http/http.h ${SRC}/deps/mpr/mpr.h ${SRC}/deps/mpr/mprSsl.h ${DIR} 
+##		cp ${SRC}/deps/mpr/mprLib.c ${SRC}/deps/mpr/mprSsl.c ${DIR}
+##		cp ${SRC}/deps/http/httpLib.c ${SRC}/deps/pcre/pcre.c ${DIR}
+##		rm -fr ${DIR}/doc ${DIR}/src ${DIR}/Makefile
+##		$(call log) "[Generate]" "tar cfz $(REL_DIR)/$(FLAT_VER_NAME) -C $(STAGE_DIR) ."
+##		tar cfz $(REL_DIR)/$(FLAT_VER_NAME) -C $(STAGE_DIR) .
+##		ln -s $(FLAT_VER_NAME) $(REL_DIR)/$(FLAT_PERM_NAME)
+
+#
+#   Local variables:
+#   tab-width: 4
+#   c-basic-offset: 4
+#   End:
+#   vim: sw=4 ts=4 noexpandtab
+#
