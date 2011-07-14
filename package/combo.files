@@ -10,17 +10,10 @@ JEMS=${SRC}/jems
 #
 #   Output directories. Note: these are in the staging directory.
 #
-DIR="${BLD_OUT_DIR}/staging"
+DIR="${BLD_OUT_DIR}/staging/${BLD_PRODUCT}-${BLD_VERSION}"
 EJS="${DIR}/src/deps/ejs"
 WWW="${EJS}/www"
 DOC="${DIR}/doc"
-
-####
-#   TDIR			:= $(STAGE_DIR)/ejs-$(BLD_VERSION)
-#   DIST_VER_NAME	:= ejs-$(BLD_VERSION)-dist.tgz
-#   DIST_PERM_NAME	:= ejs-dist.tgz
-#   FLAT_VER_NAME	:= ejs-$(BLD_VERSION)-flat.tgz
-#   FLAT_PERM_NAME	:= ejs-flat.tgz
 
 DB_SOURCES=${JEMS}/ejs.db.sqlite/src/ejsSqlite.c
 EJS_HEADERS="${INC}/ejsByteCode.h ${INC}/ejsByteCodeTable.h ${INC}/ejs.h ${INC}/ejsWeb.h"
@@ -130,22 +123,6 @@ cp ${BLD_BIN_DIR}/*.cmd ${BLD_BIN_DIR}/jem ${BLD_BIN_DIR}/mvc ${EJS}
 #
 cp -r ${BLD_LIB_DIR}/www ${EJS}
 rm -fr ${EJS}/www/js/tree-images
-
-##	$(REL_DIR)/$(DIST_VER_NAME):
-##		$(call log) "[Generate]" "tar cfz $(REL_DIR)/$(DIST_VER_NAME) -C $(STAGE_DIR) ."
-##		tar cfz $(REL_DIR)/$(DIST_VER_NAME) -C $(STAGE_DIR) .
-##		cd $(REL_DIR) ; ln -s $(DIST_VER_NAME) $(DIST_PERM_NAME)
-##	
-##	flat $(REL_DIR)/$(FLAT_VER_NAME):
-##		mv ${DIR}/src/deps/ejs/www ${DIR}
-##		find ${DIR}/src -type f | xargs -I % mv % ${DIR} 
-##		cp ${SRC}/deps/pcre/pcre.h ${SRC}/deps/http/http.h ${SRC}/deps/mpr/mpr.h ${SRC}/deps/mpr/mprSsl.h ${DIR} 
-##		cp ${SRC}/deps/mpr/mprLib.c ${SRC}/deps/mpr/mprSsl.c ${DIR}
-##		cp ${SRC}/deps/http/httpLib.c ${SRC}/deps/pcre/pcre.c ${DIR}
-##		rm -fr ${DIR}/doc ${DIR}/src ${DIR}/Makefile
-##		$(call log) "[Generate]" "tar cfz $(REL_DIR)/$(FLAT_VER_NAME) -C $(STAGE_DIR) ."
-##		tar cfz $(REL_DIR)/$(FLAT_VER_NAME) -C $(STAGE_DIR) .
-##		ln -s $(FLAT_VER_NAME) $(REL_DIR)/$(FLAT_PERM_NAME)
 
 #
 #   Local variables:
