@@ -13,7 +13,7 @@ TARGETS		+= $(BLD_JEM_DIR)/$(JEM)
 
 compileExtra: $(TARGETS)
 
-module:
+module:		dummy
 
 package.json: Makefile $(BLD_INC_DIR)/buildConfig.h
 	jem --field version --value $(BLD_VERSION) edit

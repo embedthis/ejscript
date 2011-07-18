@@ -8,7 +8,6 @@ BUILD_CROSS		:= 0
 
 include 		.makedep
 
-MAKE_IFLAGS		+= $(BLD_MPR_IFLAGS) $(BLD_HTTP_IFLAGS) $(BLD_PCRE_IFLAGS)
 TARGETS			+= $(BLD_BIN_DIR)/genbyte$(BLD_EXE)
 
 compileExtra: 	$(TARGETS) 

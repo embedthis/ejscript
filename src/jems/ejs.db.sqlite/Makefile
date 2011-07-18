@@ -20,8 +20,8 @@ module: $(MODULE)
 $(BLD_LIB_DIR)/$(MOD): *.es $(BLD_LIB_DIR)/ejs.mod
 	$(call log) [Compile] "$(MOD)"
 	rm -f *.mod *.slots.h $(BLD_BUILD_LIB_DIR)/$(MOD) $(BLD_LIB_DIR)/$(MOD)
-	$(BLD_BUILD_BIN_DIR)/ejsc $(_ESFLAGS) *.es
-	$(BLD_BUILD_BIN_DIR)/ejsmod --cslots $(MOD)
+	ejsc $(_ESFLAGS) *.es
+	ejsmod --cslots $(MOD)
 	diff $(NAME).slots.h $(BLD_INC_DIR) >/dev/null 2>&1 || cp $(NAME).slots.h $(BLD_INC_DIR) 
 	cp *.mod $(BLD_BUILD_LIB_DIR) ; mv *.mod $(BLD_LIB_DIR)
 	rm -f $(NAME).slots.h

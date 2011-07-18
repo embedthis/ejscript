@@ -6,7 +6,6 @@
 
 include 		.makedep
 
-MAKE_IFLAGS		+= $(BLD_MPR_IFLAGS) $(BLD_HTTP_IFLAGS)
 TARGETS			+= $(BLD_BIN_DIR)/ejsc$(BLD_EXE)
 TARGETS			+= $(BLD_BIN_DIR)/ejsmod$(BLD_EXE) 
 TARGETS			+= $(BLD_BIN_DIR)/ejs$(BLD_EXE) 

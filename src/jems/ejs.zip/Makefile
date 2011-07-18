@@ -6,7 +6,7 @@
 
 include 	.makedep
 
-module:
+module: 	dummy
 
 #
 #   Local variables:

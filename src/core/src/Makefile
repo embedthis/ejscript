@@ -6,8 +6,6 @@
 
 include 	.makedep
 
-MAKE_IFLAGS		+= $(BLD_MPR_IFLAGS) $(BLD_HTTP_IFLAGS) $(BLD_PCRE_IFLAGS)
-
 #
 #   Local variables:
 #   tab-width: 4

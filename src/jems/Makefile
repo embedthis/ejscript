@@ -27,7 +27,7 @@ compileFirst: tools
 compileLast: extraTools
 
 #
-#	Build modules required by build tools (jem)
+#	Modules required by build tools (jem)
 #
 tools:
 	$(MAKE) --no-print-directory TRACE=$(TRACE) BUILDING_NATIVE=$(BUILDING_NATIVE) -C ejs.unix module
@@ -47,7 +47,7 @@ endif
 #
 #	Just for xcode
 #
-xmodules:
+modules:
 	for d in $(LOADABLE) ; do  \
 		$(MAKE) --no-print-directory TRACE=$(TRACE) -C $$d module || exit 255; \
 	done
@@ -58,9 +58,9 @@ doc: $(DOC_DIR)/index.html
 
 $(DOC_DIR)/index.html: Makefile $(DOC_SRC)
 	$(call log) "[Generate]" documentation
-	$(call setlibpath) ; $(BLD_BUILD_BIN_DIR)/ejsc --doc --bind $(_ESFLAGS) --out .doc.mod --require "" $(DOC_SRC)
+	ejsc --doc --bind $(_ESFLAGS) --out .doc.mod --require "" $(DOC_SRC)
 	rm -rf $(DOC_DIR)/*.html $(DOC_DIR)/*.css $(DOC_DIR)/images/*
-	$(call setlibpath) ; $(BLD_BUILD_BIN_DIR)/ejsmod --warn --html $(DOC_DIR) --require "" .doc.mod
+	ejsmod --warn --html $(DOC_DIR) --require "" .doc.mod
 	rm -f .doc.mod
 
 cleanExtra:

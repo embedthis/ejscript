@@ -22,10 +22,14 @@ modules: $(EJS_MOD)
 $(EJS_MOD): $(EJS_FILES)
 	$(call log) [Compile] "Core Ejs Classes"
 	rm -f *.mod *.slots.h $(BLD_BUILD_LIB_DIR)/*.mod $(BLD_LIB_DIR)/*.mod
-	$(BLD_BUILD_BIN_DIR)/ejsc $(_ESFLAGS) --out ejs.mod --bind --require "" $(EJS_FILES)
-	cp *.mod $(BLD_BUILD_LIB_DIR) ; mv *.mod $(BLD_LIB_DIR)
+	ejsc $(_ESFLAGS) --out ejs.mod --bind --require "" $(EJS_FILES)
+	if [ "$(EJS_MOD_DIR)" != "" ] ; then \
+		cp *.mod $(EJS_MOD_DIR) ; \
+	else \
+		cp *.mod $(BLD_BUILD_LIB_DIR) ; mv *.mod $(BLD_LIB_DIR) ; \
+	fi
 	$(call log) [Generate] "Core listings and slot files"
-	$(BLD_BUILD_BIN_DIR)/ejsmod --require "" $(LISTING) --cslots $(call mod, ejs)
+	ejsmod --require "" $(LISTING) --cslots $(call mod, ejs)
 	changed=0 ; \
 	for f in *.slots.h ; do \
 		if [ -f $(BLD_INC_DIR)/$$f ] ; then \
@@ -42,11 +46,6 @@ $(EJS_MOD): $(EJS_FILES)
 		$(call log) [Notice] "Rebuild with Modified Slot Definitions" ; \
 		$(MAKE) TRACE=$(TRACE) RETRY=1 $(MAKECMDGOALS) || exit 255 ; \
 	fi
-
-#
-#	Xcode target to build ejs.mod
-#
-xmodules: modules
 
 cleanExtra:
 	find . -name '*.lst' -o -name '*.mod' -o -name '*.jem' -type f | xargs rm -f

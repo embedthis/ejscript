@@ -30,6 +30,8 @@ $(BLD_LIB_DIR)/$(JEM)$(BLD_LIB): $(OBJECTS) $(call lib, mpr) $(call vlib, ejs)
         $(BLD_OBJ_DIR)/ejsSqlite$(BLD_OBJ)
 
 $(BLD_LIB_DIR)/libsqlite3$(BLD_LIB): $(BLD_OBJ_DIR)/sqlite3$(BLD_OBJ)
+	echo PATH ${PATH}
+	type bld
 	bld --library $(BLD_LIB_DIR)/libsqlite3 --libs "$(BLD_MPR_LIBS)" sqlite3
 
 $(BLD_BIN_DIR)/ejssql$(BLD_EXE): $(BLD_LIB_DIR)/libsqlite3$(BLD_LIB)
