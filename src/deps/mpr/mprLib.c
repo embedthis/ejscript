@@ -21631,6 +21631,12 @@ void mprActivateWorker(MprWorker *worker, MprWorkerProc proc, void *data)
 }
 
 
+void mprSetWorkerStartCallback(MprWorkerProc start)
+{
+    MPR->workerService->startWorker = start;
+}
+
+
 int mprStartWorker(MprWorkerProc proc, void *data)
 {
     MprWorkerService    *ws;
@@ -21797,6 +21803,9 @@ static void workerMain(MprWorker *worker, MprThread *tp)
     mprAssert(worker->state == MPR_WORKER_BUSY);
     mprAssert(!worker->idleCond->triggered);
 
+    if (ws->startWorker) {
+        (*ws->startWorker)(worker->data, worker);
+    }
     mprLock(ws->mutex);
 
     while (!(worker->state & MPR_WORKER_PRUNED) && !mprIsStopping()) {
