@@ -1,5 +1,5 @@
 /*
-    ecCompiler.h - Internal compiler header.
+    ejsCompiler.h - Internal compiler header.
 
     Copyright (c) All Rights Reserved. See details at the end of the file.
  */

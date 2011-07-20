@@ -8,8 +8,7 @@
 
 /********************************** Includes **********************************/
 
-#include    "ejs.h"
-#include    "ecCompiler.h"
+#include    "ejsCompiler.h"
 
 #if BLD_CC_EDITLINE
   #include  <histedit.h>

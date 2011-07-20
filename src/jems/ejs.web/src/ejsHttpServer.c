@@ -6,8 +6,8 @@
 /********************************** Includes **********************************/
 
 #include    "ejs.h"
+#include    "ejsCompiler.h"
 #include    "ejsWeb.h"
-#include    "ecCompiler.h"
 #include    "ejs.web.slots.h"
 
 /********************************** Forwards **********************************/

@@ -15,8 +15,8 @@ WWW="${SRC}/www"
 DOC="${DIR}/doc"
 
 DB_SOURCES=${J}/ejs.db.sqlite/src/ejsSqlite.c
-EJS_HEADERS="${BLD_INC_DIR}/ejsByteCode.h ${BLD_INC_DIR}/ejsByteCodeTable.h ${BLD_INC_DIR}/ejs.h ${BLD_INC_DIR}/ejsWeb.h"
-EC_HEADERS=${BLD_INC_DIR}/ecCompiler.h
+EJS_HEADERS="${BLD_INC_DIR}/ejsByteCode.h ${BLD_INC_DIR}/ejsByteCodeTable.h ${BLD_INC_DIR}/ejs.h ${BLD_INC_DIR}/ejsWeb.h
+	${BLD_INC_DIR}/ejsCompiler.h"
 SLOT_HEADERS=`ls ${BLD_INC_DIR}/ejs*slots.h | sort`
 EJS_SOURCES=`find ${S}/vm ${S}/core -name '*.c' | sort` 
 EC_SOURCES=`find ${S}/compiler -name '*.c' | sort`
@@ -26,7 +26,7 @@ ES_SOURCES=`find ${S}/core ${J}/ejs.unix ${J}/ejs.db ${J}/ejs.db.mapper \
     egrep -v 'Jsdb.es|Mysql.es|ejspage.es|\/test\/' | sort`
 EJSMOD_HEADERS=${S}/cmd/ejsmod.h
 EJSMOD_SOURCES="${S}/cmd/doc.c ${S}/cmd/docFiles.c ${S}/cmd/ejsmod.c ${S}/cmd/listing.c ${S}/cmd/slotGen.c"
-SQLITE_HEADERS=${S}/include/sqlite3.h
+SQLITE_HEADERS=${J}/ejs.db.sqlite/src/sqlite3.h
 SQLITE_SOURCES=${J}/ejs.db.sqlite/src/sqlite3.c
 WEB_SOURCES=`find ${J}/ejs.web -name '*.c' | egrep -v 'SAVE|save|legacy|Archive' | sort`
 
@@ -40,7 +40,7 @@ cp ${BLD_TOP}/package/Makefile.combo "${SRC}/Makefile"
 #
 #   ejs.h
 #
-combo ${EJS_HEADERS} ${EC_HEADERS} | egrep -v '#include.*ejs|#include.*ec|#include.*sql' >${SRC}/ejs.h
+combo ${EJS_HEADERS} | egrep -v '#include.*ejs|#include.*ec|#include.*sql' >${SRC}/ejs.h
 echo '#include "ejs.slots.h"' >>${SRC}/ejs.h
 
 #
@@ -70,7 +70,7 @@ echo '#define EJS_DEFINE_OPTABLE 1' >${SRC}/ejsLib.c
 echo '#include "ejs.h"' >>${SRC}/ejsLib.c
 TITLE="$BLD_NAME Library Source" \
 combo ${EJS_SOURCES} ${DB_SOURCES} ${WEB_SOURCES} ${EC_SOURCES} | csplit -s -f tmpEjsLib. - '/#include.*ejsByteGoto.h/'
-(cat tmpEjsLib.00 ; cat ${S}/include/ejsByteGoto.h ; \
+(cat tmpEjsLib.00 ; cat ${BLD_INC_DIR}/ejsByteGoto.h ; \
     if [ "${BLD_OS}" = MACOSX -o "${BLD_OS}" = FREEBSD ] ; \
         then tail +2 tmpEjsLib.01 ; \
         else tail --lines=+2 tmpEjsLib.01 ; \
@@ -93,7 +93,7 @@ combo ${SQLITE_HEADERS} ${S}/jems/ejs.db.sqlite/src/ejssql.c | egrep -v '#includ
 #
 #   sqlite3.h
 #
-cp ${BLD_TOP}/src/include/sqlite3.h ${SRC}/sqlite3.h
+cp ${BLD_INC_DIR}/sqlite3.h ${SRC}/sqlite3.h
 
 #
 #   slots.h
