@@ -22,10 +22,10 @@
 #
 #	To remove, use make uninstall-ITEM, where ITEM is a component above.
 
-DEPS	= tools mpr pcre http 
+DEPS		= tools mpr pcre http 
 
-include	build/make/Makefile.top
-include	build/make/Makefile.ejs
+include		build/make/Makefile.top
+include		build/make/Makefile.ejs
 
 #
 #   Local variables:

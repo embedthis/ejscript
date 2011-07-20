@@ -7,8 +7,7 @@ DIR="${BLD_SRC_PREFIX}"
 
 usePrefixes SRC
 
-# makeDir "${DIR}/src/include" "${DIR}/build/bin" "${DIR}/obj" "${DIR}/bin" "${DIR}/lib" "${DIR}/modules" "${DIR}/all"
-makeDir "${DIR}/src/include" "${DIR}/build/bin"
+makeDir "${DIR}/build/bin"
 
 cpy -e Makefile "${DIR}"
 cpy -w -e "*.TXT" "${DIR}"
@@ -28,7 +27,7 @@ cpy -p -d package LINUX MACOSX WIN "${DIR}"
 #   Source for mpr, ejs, server, http
 #
 srcFilter="/\.log$"
-cpy -f "${srcFilter}" -p -d src Makefile cmd compiler deps vm include jems utils "${DIR}"
+cpy -f "${srcFilter}" -p -d src Makefile cmd compiler deps vm jems utils "${DIR}"
 
 # cpy -p -d test Makefile cmd db lang lib misc regress ssl stress web *.db *.conf test.* "${DIR}"
 
@@ -41,11 +40,8 @@ cpy -f "${samplesFilter}" samples "${DIR}"
 projectsFilter="/Debug|/Release|\.user|\.suo|\.ncb|*.mode1v3|*.pbxuser|/ejs.build/|iphone|ejs-all"
 cpy -f "${projectsFilter}" projects "${DIR}"
 
-# cat ${BLD_INC_DIR}/buildConfig.h | sed 's/-VERSION-/${BLD_VERSION}/;s/-NUMBER-/${BLD_NUMBER}/' \
-#    >"${DIR}/src/include/buildConfig.h"
-
 # if [ $TASK = Remove ] ; then
 #     if [ "`pwd`" != "$DIR" ] ; then
-#         ${RM} -f "${DIR}/buildConfig.*" "${DIR}/src/include/buildConfig.*" "${DIR}/build/bin/buildConfig.*"
+#         ${RM} -f "${DIR}/out/inc/buildConfig.*"
 #     fi
 # fi
