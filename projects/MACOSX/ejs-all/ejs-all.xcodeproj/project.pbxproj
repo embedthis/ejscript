@@ -203,6 +203,7 @@
 		C987613C0FD87DA200311B7A /* libsqlite.dylib in Frameworks */ = {isa = PBXBuildFile; fileRef = C97627BD0FD077FC009C78E1 /* libsqlite.dylib */; };
 		C9902A691161776B00473F37 /* ejsFrame.c in Sources */ = {isa = PBXBuildFile; fileRef = C9902A681161776B00473F37 /* ejsFrame.c */; };
 		C9A0708010A3573C00F48512 /* ejsSqlite.c in Sources */ = {isa = PBXBuildFile; fileRef = C9A0707F10A3573C00F48512 /* ejsSqlite.c */; };
+		C9A5195413D777D700C16EBA /* ejsWeb.h in Headers */ = {isa = PBXBuildFile; fileRef = C9A5195313D777D700C16EBA /* ejsWeb.h */; };
 		C9B13B341383233F00B2E649 /* ejsCache.c in Sources */ = {isa = PBXBuildFile; fileRef = C9B13B32138322B600B2E649 /* ejsCache.c */; };
 		C9CD7647131245C0007794B0 /* ejsCmd.c in Sources */ = {isa = PBXBuildFile; fileRef = C9CD7646131245C0007794B0 /* ejsCmd.c */; };
 		C9D452B511ECDBA300F029C8 /* http.c in Sources */ = {isa = PBXBuildFile; fileRef = C9D452B411ECDBA300F029C8 /* http.c */; };
@@ -212,7 +213,6 @@
 		C9D7A7ED13D4F346000428C7 /* libmpr.dylib in Frameworks */ = {isa = PBXBuildFile; fileRef = C97627A60FD077A7009C78E1 /* libmpr.dylib */; };
 		C9D7A7F613D4F378000428C7 /* angel.c in Sources */ = {isa = PBXBuildFile; fileRef = C9D7A7F513D4F378000428C7 /* angel.c */; };
 		C9D84AF41051C1940022DB20 /* libmpr.dylib in Frameworks */ = {isa = PBXBuildFile; fileRef = C97627A60FD077A7009C78E1 /* libmpr.dylib */; };
-		C9EA7DB813D4929E0035EB46 /* ejsWeb.h in Headers */ = {isa = PBXBuildFile; fileRef = C9EA7DB713D4929E0035EB46 /* ejsWeb.h */; };
 		C9F4C61F10B5D7B80046EFF4 /* ejsRequest.c in Sources */ = {isa = PBXBuildFile; fileRef = C9F4C61810B5D7B80046EFF4 /* ejsRequest.c */; };
 		C9F4C62110B5D7B80046EFF4 /* ejsSession.c in Sources */ = {isa = PBXBuildFile; fileRef = C9F4C61A10B5D7B80046EFF4 /* ejsSession.c */; };
 		C9F69FD613955531006CC53D /* ejsLocalCache.c in Sources */ = {isa = PBXBuildFile; fileRef = C9F69FD513955531006CC53D /* ejsLocalCache.c */; };
@@ -731,13 +731,6 @@
 			remoteGlobalIDString = C97627B50FD077E7009C78E1;
 			remoteInfo = libmprssl;
 		};
-		C9ED10D21190E3C6006328BF /* PBXContainerItemProxy */ = {
-			isa = PBXContainerItemProxy;
-			containerPortal = C97623C10FD06EC4009C78E1 /* Project object */;
-			proxyType = 1;
-			remoteGlobalIDString = C9222E520FD5813F00AFA5A4;
-			remoteInfo = modules;
-		};
 /* End PBXContainerItemProxy section */
 
 /* Begin PBXFileReference section */
@@ -911,6 +904,8 @@
 		C9A0708C10A3583000F48512 /* package.json */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; name = package.json; path = ../../../src/jems/ejs.web/package.json; sourceTree = SOURCE_ROOT; };
 		C9A070A310A3586E00F48512 /* Request.es */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; name = Request.es; path = ../../../src/jems/ejs.web/Request.es; sourceTree = SOURCE_ROOT; };
 		C9A070A510A3586E00F48512 /* Session.es */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; name = Session.es; path = ../../../src/jems/ejs.web/Session.es; sourceTree = SOURCE_ROOT; };
+		C9A5195313D777D700C16EBA /* ejsWeb.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = ejsWeb.h; path = ../../../src/jems/ejs.web/src/ejsWeb.h; sourceTree = "<group>"; };
+		C9A5195613D7780100C16EBA /* sqlite3.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = sqlite3.h; path = ../../../src/jems/ejs.db.sqlite/src/sqlite3.h; sourceTree = "<group>"; };
 		C9B13B32138322B600B2E649 /* ejsCache.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; name = ejsCache.c; path = ../../../src/core/src/ejsCache.c; sourceTree = "<group>"; };
 		C9CD7646131245C0007794B0 /* ejsCmd.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; name = ejsCmd.c; path = ../../../src/core/src/ejsCmd.c; sourceTree = SOURCE_ROOT; };
 		C9D4528711ECDA4300F029C8 /* http */ = {isa = PBXFileReference; explicitFileType = "compiled.mach-o.executable"; includeInIndex = 0; path = http; sourceTree = BUILT_PRODUCTS_DIR; };
@@ -924,8 +919,6 @@
 		C9EA7DB413D492670035EB46 /* ejsByteCodeTable.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = ejsByteCodeTable.h; path = ../../../src/include/ejsByteCodeTable.h; sourceTree = "<group>"; };
 		C9EA7DB513D492670035EB46 /* ejsByteGoto.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = ejsByteGoto.h; path = ../../../src/include/ejsByteGoto.h; sourceTree = "<group>"; };
 		C9EA7DB613D492860035EB46 /* ecCompiler.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = ecCompiler.h; path = ../include/ecCompiler.h; sourceTree = "<group>"; };
-		C9EA7DB713D4929E0035EB46 /* ejsWeb.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = ejsWeb.h; path = ../../../src/include/ejsWeb.h; sourceTree = "<group>"; };
-		C9EA7DB913D492AB0035EB46 /* sqlite3.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = sqlite3.h; path = ../../../src/include/sqlite3.h; sourceTree = "<group>"; };
 		C9F4C61810B5D7B80046EFF4 /* ejsRequest.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; name = ejsRequest.c; path = ../../../src/jems/ejs.web/src/ejsRequest.c; sourceTree = SOURCE_ROOT; };
 		C9F4C61A10B5D7B80046EFF4 /* ejsSession.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; name = ejsSession.c; path = ../../../src/jems/ejs.web/src/ejsSession.c; sourceTree = SOURCE_ROOT; };
 		C9F69FD513955531006CC53D /* ejsLocalCache.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; name = ejsLocalCache.c; path = ../../../src/core/src/ejsLocalCache.c; sourceTree = "<group>"; };
@@ -1365,7 +1358,7 @@
 		C9A0707710A356CA00F48512 /* ejs.db.sqlite */ = {
 			isa = PBXGroup;
 			children = (
-				C9EA7DB913D492AB0035EB46 /* sqlite3.h */,
+				C9A5195613D7780100C16EBA /* sqlite3.h */,
 				C9818105110EBD4E00F241EF /* ejssql.c */,
 				C9818106110EBD4E00F241EF /* sqlite3.c */,
 				C9A0707F10A3573C00F48512 /* ejsSqlite.c */,
@@ -1387,7 +1380,7 @@
 		C9A0708910A357FC00F48512 /* ejs.web */ = {
 			isa = PBXGroup;
 			children = (
-				C9EA7DB713D4929E0035EB46 /* ejsWeb.h */,
+				C9A5195313D777D700C16EBA /* ejsWeb.h */,
 				C9A0708C10A3583000F48512 /* package.json */,
 				C92F848610F2B80300CA953D /* ejsHttpServer.c */,
 				C9F4C61810B5D7B80046EFF4 /* ejsRequest.c */,
@@ -1460,7 +1453,7 @@
 			isa = PBXHeadersBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				C9EA7DB813D4929E0035EB46 /* ejsWeb.h in Headers */,
+				C9A5195413D777D700C16EBA /* ejsWeb.h in Headers */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -1501,7 +1494,6 @@
 				C9EA940D0FD4FB0C00870DB0 /* PBXTargetDependency */,
 				C9EA7DBC13D4DB0D0035EB46 /* PBXTargetDependency */,
 				C9EA7DBE13D4DB0D0035EB46 /* PBXTargetDependency */,
-				C9ED10D31190E3C6006328BF /* PBXTargetDependency */,
 			);
 			name = ejs;
 			productName = ejs;
@@ -2016,7 +2008,7 @@
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 			shellPath = /bin/sh;
-			shellScript = "cp $SRC/include/ejs*.h $OUT/inc\ncp $SRC/include/master/ejs*.h $OUT/inc";
+			shellScript = "cp $SRC/ejs*.h $SRC/customize.h $OUT/inc\ncp $SRC/slots/ejs*.h $OUT/inc";
 		};
 		C9EA7DC413D4DC490035EB46 /* ShellScript */ = {
 			isa = PBXShellScriptBuildPhase;
@@ -2580,11 +2572,6 @@
 			target = C97627B50FD077E7009C78E1 /* libmprssl */;
 			targetProxy = C9EA94720FD4FCA700870DB0 /* PBXContainerItemProxy */;
 		};
-		C9ED10D31190E3C6006328BF /* PBXTargetDependency */ = {
-			isa = PBXTargetDependency;
-			target = C9222E520FD5813F00AFA5A4 /* modules */;
-			targetProxy = C9ED10D21190E3C6006328BF /* PBXContainerItemProxy */;
-		};
 /* End PBXTargetDependency section */
 
 /* Begin XCBuildConfiguration section */
@@ -2666,6 +2653,7 @@
 				DYLIB_COMPATIBILITY_VERSION = "$(CURRENT_PROJECT_VERSION)";
 				DYLIB_CURRENT_VERSION = "$(CURRENT_PROJECT_VERSION)";
 				GCC_C_LANGUAGE_STANDARD = gnu99;
+				GCC_OPTIMIZATION_LEVEL = 0;
 				GCC_PREPROCESSOR_DEFINITIONS = "DEBUG_IDE=1";
 				GCC_VERSION = "";
 				HEADER_SEARCH_PATHS = $OUT/inc;
