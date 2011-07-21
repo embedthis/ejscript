@@ -1,16 +1,10 @@
 #
-#	Clean assist for Xcode
+#	Makefile for MACOSX projects
 #
-DIR			:= 
 
 include 	.makedep
 
-all:
-
-cleanExtra:
-	rm -fr */build 
-
-#rm -f $(DIR)/*.mod $(DIR)/ejsweb $(DIR)/ejspage $(DIR)/jem
+PRE_DIRS	:=  ejs-all
 
 #
 #   Local variables:

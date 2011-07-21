@@ -100,6 +100,17 @@
 			name = ejspage;
 			productName = ejsweb;
 		};
+		C9BD40CC13D8CC7600CB61A0 /* test */ = {
+			isa = PBXAggregateTarget;
+			buildConfigurationList = C9BD40CE13D8CC7600CB61A0 /* Build configuration list for PBXAggregateTarget "test" */;
+			buildPhases = (
+				C9BD40CD13D8CC7600CB61A0 /* Initialize */,
+			);
+			dependencies = (
+			);
+			name = test;
+			productName = prep;
+		};
 /* End PBXAggregateTarget section */
 
 /* Begin PBXBuildFile section */
@@ -912,6 +923,9 @@
 		C9D452B411ECDBA300F029C8 /* http.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; name = http.c; path = ../../../src/deps/http/http.c; sourceTree = SOURCE_ROOT; };
 		C9D7A7F213D4F346000428C7 /* angel */ = {isa = PBXFileReference; explicitFileType = "compiled.mach-o.executable"; includeInIndex = 0; path = angel; sourceTree = BUILT_PRODUCTS_DIR; };
 		C9D7A7F513D4F378000428C7 /* angel.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; name = angel.c; path = ../../../../appweb/src/deps/mpr/angel.c; sourceTree = "<group>"; };
+		C9E9F12E13D8ACBA00C20E21 /* Debug.xcconfig */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.xcconfig; path = Debug.xcconfig; sourceTree = "<group>"; };
+		C9E9F12F13D8ACBA00C20E21 /* Product.xcconfig */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.xcconfig; path = Product.xcconfig; sourceTree = "<group>"; };
+		C9E9F13013D8ACBA00C20E21 /* Release.xcconfig */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.xcconfig; path = Release.xcconfig; sourceTree = "<group>"; };
 		C9EA7DAB13D41CE20035EB46 /* buildConfig.default */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = buildConfig.default; sourceTree = "<group>"; };
 		C9EA7DB113D492670035EB46 /* customize.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = customize.h; path = ../../../src/include/customize.h; sourceTree = "<group>"; };
 		C9EA7DB213D492670035EB46 /* ejs.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = ejs.h; path = ../../../src/include/ejs.h; sourceTree = "<group>"; };
@@ -1243,8 +1257,8 @@
 		C97623BF0FD06EC4009C78E1 = {
 			isa = PBXGroup;
 			children = (
-				C97623D30FD06EE7009C78E1 /* Products */,
 				C97A5E8F11E7F7CC00BB0981 /* Configurations */,
+				C97623D30FD06EE7009C78E1 /* Products */,
 				C9D84A2F1051B5BA0022DB20 /* Libraries */,
 				C97624110FD06F4C009C78E1 /* Source */,
 			);
@@ -1331,6 +1345,9 @@
 		C97A5E8F11E7F7CC00BB0981 /* Configurations */ = {
 			isa = PBXGroup;
 			children = (
+				C9E9F12F13D8ACBA00C20E21 /* Product.xcconfig */,
+				C9E9F12E13D8ACBA00C20E21 /* Debug.xcconfig */,
+				C9E9F13013D8ACBA00C20E21 /* Release.xcconfig */,
 				C9EA7DAB13D41CE20035EB46 /* buildConfig.default */,
 			);
 			name = Configurations;
@@ -1776,6 +1793,7 @@
 				C903098210A366CA003FF2AB /* ejsmvc */,
 				C99A33CA10C2F14000F6C7BC /* ejspage */,
 				C903098610A366F0003FF2AB /* jem */,
+				C9BD40CC13D8CC7600CB61A0 /* test */,
 			);
 		};
 /* End PBXProject section */
@@ -1925,7 +1943,7 @@
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 			shellPath = /bin/sh;
-			shellScript = "\nexport BLD_TOP=$TOP\nexport BLD_TOOLS_DIR=$BLD_TOP/build/bin\nexport BLD_OUT_DIR=$BLD_TOP/out\n\n. `${BLD_TOOLS_DIR}/cacheConfig ${BLD_OUT_DIR}/inc/buildConfig.h`\n\nset -x\n\nif [ \"$SKIP_INSTALL\" != YES ] ; then\n   cp $BUILT_PRODUCTS_DIR/*.mod $INSTALL_DIR\nfi";
+			shellScript = "\nexport BLD_TOP=$TOP\nexport BLD_TOOLS_DIR=$BLD_TOP/build/bin\nexport BLD_OUT_DIR=$BLD_TOP/out\n\n. `${BLD_TOOLS_DIR}/cacheConfig ${BLD_OUT_DIR}/inc/buildConfig.h`\n\nset -x\n\nif [ \"$SKIP_INSTALL\" != YES ] ; then\n    mkdir -p $INSTALL_DIR\n    cp $BUILT_PRODUCTS_DIR/*.mod $INSTALL_DIR\nfi";
 		};
 		C97A5EC511E81E9B00BB0981 /* Initialize */ = {
 			isa = PBXShellScriptBuildPhase;
@@ -1953,6 +1971,20 @@
 			runOnlyForDeploymentPostprocessing = 0;
 			shellPath = /bin/sh;
 			shellScript = "cp $SRC/jems/ejs.template/ejspage $BUILT_PRODUCTS_DIR/ejspage\nchmod 755 $BUILT_PRODUCTS_DIR/ejspage\nexit 0";
+		};
+		C9BD40CD13D8CC7600CB61A0 /* Initialize */ = {
+			isa = PBXShellScriptBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			inputPaths = (
+			);
+			name = Initialize;
+			outputPaths = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+			shellPath = /bin/sh;
+			shellScript = "cd $SRC ; $TOP/../ejs/out/bin/ejs $BBIN/utest -v";
 		};
 		C9EA7DAC13D491300035EB46 /* Import Libraries and Headers */ = {
 			isa = PBXShellScriptBuildPhase;
@@ -2578,8 +2610,6 @@
 		C903098310A366CB003FF2AB /* Debug */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
-				COPY_PHASE_STRIP = NO;
-				GCC_DYNAMIC_NO_PIC = NO;
 				PRODUCT_NAME = ejsmvc;
 			};
 			name = Debug;
@@ -2587,7 +2617,6 @@
 		C903098410A366CB003FF2AB /* Release */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
-				COPY_PHASE_STRIP = YES;
 				GCC_ENABLE_FIX_AND_CONTINUE = NO;
 				PRODUCT_NAME = ejsmvc;
 			};
@@ -2596,7 +2625,6 @@
 		C903098710A366F0003FF2AB /* Debug */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
-				COPY_PHASE_STRIP = NO;
 				PRODUCT_NAME = jem;
 			};
 			name = Debug;
@@ -2604,7 +2632,6 @@
 		C903098810A366F0003FF2AB /* Release */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
-				COPY_PHASE_STRIP = YES;
 				GCC_ENABLE_FIX_AND_CONTINUE = NO;
 				PRODUCT_NAME = jem;
 			};
@@ -2629,6 +2656,7 @@
 			isa = XCBuildConfiguration;
 			buildSettings = {
 				GCC_ENABLE_FIX_AND_CONTINUE = YES;
+				INSTALL_PATH = "$(INSTALL_PATH)/lib";
 				PRODUCT_NAME = libhttp;
 			};
 			name = Debug;
@@ -2637,79 +2665,22 @@
 			isa = XCBuildConfiguration;
 			buildSettings = {
 				GCC_ENABLE_FIX_AND_CONTINUE = NO;
+				INSTALL_PATH = "$(INSTALL_PATH)/lib";
 				PRODUCT_NAME = libhttp;
 			};
 			name = Release;
 		};
 		C97623C20FD06EC4009C78E1 /* Debug */ = {
 			isa = XCBuildConfiguration;
+			baseConfigurationReference = C9E9F12E13D8ACBA00C20E21 /* Debug.xcconfig */;
 			buildSettings = {
-				ARCHS = "$(ARCHS_STANDARD_64_BIT)";
-				BBIN = $SRCROOT/../../../build/bin;
-				COPY_PHASE_STRIP = NO;
-				CURRENT_PROJECT_VERSION = 2.0.0;
-				DEPLOYMENT_LOCATION = YES;
-				DSTROOT = /tmp/ejs.dst;
-				DYLIB_COMPATIBILITY_VERSION = "$(CURRENT_PROJECT_VERSION)";
-				DYLIB_CURRENT_VERSION = "$(CURRENT_PROJECT_VERSION)";
-				GCC_C_LANGUAGE_STANDARD = gnu99;
-				GCC_OPTIMIZATION_LEVEL = 0;
-				GCC_PREPROCESSOR_DEFINITIONS = "DEBUG_IDE=1";
-				GCC_VERSION = "";
-				HEADER_SEARCH_PATHS = $OUT/inc;
-				INSTALL_PATH = "/usr/lib/ejs/$(CURRENT_PROJECT_VERSION)/lib";
-				JEMS = $SRCROOT/../../../src/jems;
-				LD_DYLIB_INSTALL_NAME = "@rpath/$(EXECUTABLE_PATH)";
-				LIBRARY_SEARCH_PATHS = "$(OUT)/lib";
-				OTHER_LDFLAGS = (
-					"-Wl,-rpath,@executable_path/../lib",
-					"-Wl,-rpath,@executable_path/",
-					"-Wl,-rpath,@loader_path/",
-					"-lcrypto",
-					"-lssl",
-				);
-				OUT = $SRCROOT/../../../out;
-				SDKROOT = macosx10.6;
-				SKIP_INSTALL = YES;
-				SRC = $SRCROOT/../../../src;
-				STRIP_INSTALLED_PRODUCT = NO;
-				TOP = $SRCROOT/../../..;
-				VERSION_INFO_FILE = ver.c;
 			};
 			name = Debug;
 		};
 		C97623C30FD06EC4009C78E1 /* Release */ = {
 			isa = XCBuildConfiguration;
+			baseConfigurationReference = C9E9F13013D8ACBA00C20E21 /* Release.xcconfig */;
 			buildSettings = {
-				ARCHS = "$(ARCHS_STANDARD_64_BIT)";
-				BBIN = $SRCROOT/../../../build/bin;
-				COPY_PHASE_STRIP = YES;
-				CURRENT_PROJECT_VERSION = 2.0.0;
-				DEPLOYMENT_LOCATION = YES;
-				DSTROOT = /tmp/ejs.dst;
-				DYLIB_COMPATIBILITY_VERSION = "$(CURRENT_PROJECT_VERSION)";
-				DYLIB_CURRENT_VERSION = "$(CURRENT_PROJECT_VERSION)";
-				GCC_C_LANGUAGE_STANDARD = gnu99;
-				GCC_PREPROCESSOR_DEFINITIONS = "DEBUG_IDE=1";
-				GCC_VERSION = "";
-				HEADER_SEARCH_PATHS = $OUT/inc;
-				INSTALL_PATH = "/usr/lib/ejs/$(CURRENT_PROJECT_VERSION)/lib";
-				JEMS = $SRCROOT/../../../src/jems;
-				LD_DYLIB_INSTALL_NAME = "@rpath/$(EXECUTABLE_PATH)";
-				LIBRARY_SEARCH_PATHS = "$(OUT)/lib";
-				OTHER_LDFLAGS = (
-					"-Wl,-rpath,@executable_path/../lib",
-					"-Wl,-rpath,@executable_path/",
-					"-Wl,-rpath,@loader_path/",
-					"-lcrypto",
-					"-lssl",
-				);
-				OUT = $SRCROOT/../../../out;
-				SDKROOT = macosx10.6;
-				SKIP_INSTALL = YES;
-				SRC = $SRCROOT/../../../src;
-				TOP = $SRCROOT/../../..;
-				VERSION_INFO_FILE = ver.c;
 			};
 			name = Release;
 		};
@@ -2717,7 +2688,7 @@
 			isa = XCBuildConfiguration;
 			buildSettings = {
 				GCC_ENABLE_FIX_AND_CONTINUE = YES;
-				INSTALL_PATH = "$(INSTALL_PATH)/../bin";
+				INSTALL_PATH = "$(INSTALL_PATH)/bin";
 				OTHER_LDFLAGS = (
 					"$(inherited)",
 					"-Wl,-stack_size",
@@ -2735,7 +2706,7 @@
 			isa = XCBuildConfiguration;
 			buildSettings = {
 				GCC_ENABLE_FIX_AND_CONTINUE = NO;
-				INSTALL_PATH = "$(INSTALL_PATH)/../bin";
+				INSTALL_PATH = "$(INSTALL_PATH)/bin";
 				OTHER_LDFLAGS = (
 					"$(inherited)",
 					"-Wl,-stack_size",
@@ -2753,7 +2724,7 @@
 			isa = XCBuildConfiguration;
 			buildSettings = {
 				GCC_ENABLE_FIX_AND_CONTINUE = YES;
-				INSTALL_PATH = "$(INSTALL_PATH)/../bin";
+				INSTALL_PATH = "$(INSTALL_PATH)/bin";
 				PRODUCT_NAME = ejsc;
 			};
 			name = Debug;
@@ -2762,7 +2733,7 @@
 			isa = XCBuildConfiguration;
 			buildSettings = {
 				GCC_ENABLE_FIX_AND_CONTINUE = NO;
-				INSTALL_PATH = "$(INSTALL_PATH)/../bin";
+				INSTALL_PATH = "$(INSTALL_PATH)/bin";
 				PRODUCT_NAME = ejsc;
 			};
 			name = Release;
@@ -2771,7 +2742,7 @@
 			isa = XCBuildConfiguration;
 			buildSettings = {
 				GCC_ENABLE_FIX_AND_CONTINUE = YES;
-				INSTALL_PATH = "$(INSTALL_PATH)/../bin";
+				INSTALL_PATH = "$(INSTALL_PATH)/bin";
 				PRODUCT_NAME = ejsmod;
 			};
 			name = Debug;
@@ -2780,7 +2751,7 @@
 			isa = XCBuildConfiguration;
 			buildSettings = {
 				GCC_ENABLE_FIX_AND_CONTINUE = NO;
-				INSTALL_PATH = "$(INSTALL_PATH)/../bin";
+				INSTALL_PATH = "$(INSTALL_PATH)/bin";
 				PRODUCT_NAME = ejsmod;
 			};
 			name = Release;
@@ -2789,7 +2760,7 @@
 			isa = XCBuildConfiguration;
 			buildSettings = {
 				GCC_ENABLE_FIX_AND_CONTINUE = YES;
-				INSTALL_PATH = "$(INSTALL_PATH)/../bin";
+				INSTALL_PATH = "$(INSTALL_PATH)/bin";
 				PRODUCT_NAME = ejssql;
 			};
 			name = Debug;
@@ -2798,7 +2769,7 @@
 			isa = XCBuildConfiguration;
 			buildSettings = {
 				GCC_ENABLE_FIX_AND_CONTINUE = NO;
-				INSTALL_PATH = "$(INSTALL_PATH)/../bin";
+				INSTALL_PATH = "$(INSTALL_PATH)/bin";
 				PRODUCT_NAME = ejssql;
 			};
 			name = Release;
@@ -2806,36 +2777,15 @@
 		C97625460FD071E5009C78E1 /* Debug */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
-				COPY_PHASE_STRIP = NO;
-				GCC_DYNAMIC_NO_PIC = NO;
-				GCC_OPTIMIZATION_LEVEL = 0;
-				"HEADER_SEARCH_PATHS[arch=*]" = (
-					../../../out/include,
-					../../../src/include,
-					../../../src/deps/mpr,
-					../../../src/deps/http,
-					../../../src/deps/pcre,
-				);
-				PRODUCT_NAME = ejs;
+				PRODUCT_NAME = All;
 			};
 			name = Debug;
 		};
 		C97625470FD071E5009C78E1 /* Release */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
-				COPY_PHASE_STRIP = YES;
-				DEBUG_INFORMATION_FORMAT = "dwarf-with-dsym";
 				GCC_ENABLE_FIX_AND_CONTINUE = NO;
-				HEADER_SEARCH_PATHS = (
-					../../../out/include,
-					../../../src/include,
-					../../../src/deps/mpr,
-					../../../src/deps/http,
-					../../../src/deps/pcre,
-				);
-				OUT = $SRCROOT/../../../out;
-				PRODUCT_NAME = ejs;
-				ZERO_LINK = NO;
+				PRODUCT_NAME = All;
 			};
 			name = Release;
 		};
@@ -2843,6 +2793,7 @@
 			isa = XCBuildConfiguration;
 			buildSettings = {
 				GCC_ENABLE_FIX_AND_CONTINUE = YES;
+				INSTALL_PATH = "$(INSTALL_PATH)/lib";
 				PRODUCT_NAME = libmpr;
 			};
 			name = Debug;
@@ -2850,8 +2801,8 @@
 		C97627A80FD077A8009C78E1 /* Release */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
-				DEBUG_INFORMATION_FORMAT = "dwarf-with-dsym";
 				GCC_ENABLE_FIX_AND_CONTINUE = NO;
+				INSTALL_PATH = "$(INSTALL_PATH)/lib";
 				PRODUCT_NAME = libmpr;
 			};
 			name = Release;
@@ -2860,6 +2811,7 @@
 			isa = XCBuildConfiguration;
 			buildSettings = {
 				GCC_ENABLE_FIX_AND_CONTINUE = YES;
+				INSTALL_PATH = "$(INSTALL_PATH)/lib";
 				PRODUCT_NAME = libpcre;
 			};
 			name = Debug;
@@ -2868,6 +2820,7 @@
 			isa = XCBuildConfiguration;
 			buildSettings = {
 				GCC_ENABLE_FIX_AND_CONTINUE = NO;
+				INSTALL_PATH = "$(INSTALL_PATH)/lib";
 				PRODUCT_NAME = libpcre;
 			};
 			name = Release;
@@ -2877,6 +2830,7 @@
 			buildSettings = {
 				GCC_ENABLE_FIX_AND_CONTINUE = YES;
 				GCC_VERSION = 4.2;
+				INSTALL_PATH = "$(INSTALL_PATH)/lib";
 				PRODUCT_NAME = libmprssl;
 			};
 			name = Debug;
@@ -2886,6 +2840,7 @@
 			buildSettings = {
 				GCC_ENABLE_FIX_AND_CONTINUE = NO;
 				GCC_VERSION = 4.2;
+				INSTALL_PATH = "$(INSTALL_PATH)/lib";
 				PRODUCT_NAME = libmprssl;
 			};
 			name = Release;
@@ -2894,6 +2849,7 @@
 			isa = XCBuildConfiguration;
 			buildSettings = {
 				GCC_ENABLE_FIX_AND_CONTINUE = YES;
+				INSTALL_PATH = "$(INSTALL_PATH)/lib";
 				PRODUCT_NAME = libsqlite;
 			};
 			name = Debug;
@@ -2902,6 +2858,7 @@
 			isa = XCBuildConfiguration;
 			buildSettings = {
 				GCC_ENABLE_FIX_AND_CONTINUE = NO;
+				INSTALL_PATH = "$(INSTALL_PATH)/lib";
 				PRODUCT_NAME = libsqlite;
 			};
 			name = Release;
@@ -2911,6 +2868,7 @@
 			buildSettings = {
 				ALWAYS_SEARCH_USER_PATHS = NO;
 				GCC_ENABLE_FIX_AND_CONTINUE = YES;
+				INSTALL_PATH = "$(INSTALL_PATH)/lib";
 				PRODUCT_NAME = libejs;
 			};
 			name = Debug;
@@ -2920,6 +2878,7 @@
 			buildSettings = {
 				ALWAYS_SEARCH_USER_PATHS = NO;
 				GCC_ENABLE_FIX_AND_CONTINUE = NO;
+				INSTALL_PATH = "$(INSTALL_PATH)/lib";
 				PRODUCT_NAME = libejs;
 			};
 			name = Release;
@@ -2928,6 +2887,7 @@
 			isa = XCBuildConfiguration;
 			buildSettings = {
 				GCC_ENABLE_FIX_AND_CONTINUE = YES;
+				INSTALL_PATH = "$(INSTALL_PATH)/lib";
 				PRODUCT_NAME = ejs.web;
 			};
 			name = Debug;
@@ -2936,6 +2896,7 @@
 			isa = XCBuildConfiguration;
 			buildSettings = {
 				GCC_ENABLE_FIX_AND_CONTINUE = NO;
+				INSTALL_PATH = "$(INSTALL_PATH)/lib";
 				PRODUCT_NAME = ejs.web;
 			};
 			name = Release;
@@ -2943,9 +2904,6 @@
 		C97A5EC711E81E9B00BB0981 /* Debug */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
-				COPY_PHASE_STRIP = NO;
-				GCC_DYNAMIC_NO_PIC = NO;
-				GCC_OPTIMIZATION_LEVEL = 0;
 				PRODUCT_NAME = prep;
 			};
 			name = Debug;
@@ -2953,11 +2911,8 @@
 		C97A5EC811E81E9B00BB0981 /* Release */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
-				COPY_PHASE_STRIP = YES;
-				DEBUG_INFORMATION_FORMAT = "dwarf-with-dsym";
 				GCC_ENABLE_FIX_AND_CONTINUE = NO;
 				PRODUCT_NAME = prep;
-				ZERO_LINK = NO;
 			};
 			name = Release;
 		};
@@ -2967,6 +2922,7 @@
 				ALWAYS_SEARCH_USER_PATHS = NO;
 				EXECUTABLE_PREFIX = "";
 				GCC_ENABLE_FIX_AND_CONTINUE = YES;
+				INSTALL_PATH = "$(INSTALL_PATH)/lib";
 				PRODUCT_NAME = ejs.db.sqlite;
 			};
 			name = Debug;
@@ -2977,6 +2933,7 @@
 				ALWAYS_SEARCH_USER_PATHS = NO;
 				EXECUTABLE_PREFIX = "";
 				GCC_ENABLE_FIX_AND_CONTINUE = NO;
+				INSTALL_PATH = "$(INSTALL_PATH)/lib";
 				PRODUCT_NAME = ejs.db.sqlite;
 			};
 			name = Release;
@@ -2984,7 +2941,6 @@
 		C99A33CF10C2F14000F6C7BC /* Debug */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
-				COPY_PHASE_STRIP = NO;
 				PRODUCT_NAME = ejspage;
 			};
 			name = Debug;
@@ -2992,9 +2948,23 @@
 		C99A33D010C2F14000F6C7BC /* Release */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
-				COPY_PHASE_STRIP = YES;
 				GCC_ENABLE_FIX_AND_CONTINUE = NO;
 				PRODUCT_NAME = ejspage;
+			};
+			name = Release;
+		};
+		C9BD40CF13D8CC7600CB61A0 /* Debug */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				PRODUCT_NAME = test;
+			};
+			name = Debug;
+		};
+		C9BD40D013D8CC7600CB61A0 /* Release */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				GCC_ENABLE_FIX_AND_CONTINUE = NO;
+				PRODUCT_NAME = test;
 			};
 			name = Release;
 		};
@@ -3002,7 +2972,7 @@
 			isa = XCBuildConfiguration;
 			buildSettings = {
 				GCC_ENABLE_FIX_AND_CONTINUE = YES;
-				INSTALL_PATH = "$(INSTALL_PATH)/../bin";
+				INSTALL_PATH = "$(INSTALL_PATH)/bin";
 				PRODUCT_NAME = http;
 			};
 			name = Debug;
@@ -3011,7 +2981,7 @@
 			isa = XCBuildConfiguration;
 			buildSettings = {
 				GCC_ENABLE_FIX_AND_CONTINUE = NO;
-				INSTALL_PATH = "$(INSTALL_PATH)/../bin";
+				INSTALL_PATH = "$(INSTALL_PATH)/bin";
 				PRODUCT_NAME = http;
 			};
 			name = Release;
@@ -3020,7 +2990,7 @@
 			isa = XCBuildConfiguration;
 			buildSettings = {
 				GCC_ENABLE_FIX_AND_CONTINUE = YES;
-				INSTALL_PATH = "$(INSTALL_PATH)/../bin";
+				INSTALL_PATH = "$(INSTALL_PATH)/bin";
 				PRODUCT_NAME = angel;
 			};
 			name = Debug;
@@ -3029,7 +2999,7 @@
 			isa = XCBuildConfiguration;
 			buildSettings = {
 				GCC_ENABLE_FIX_AND_CONTINUE = NO;
-				INSTALL_PATH = "$(INSTALL_PATH)/../bin";
+				INSTALL_PATH = "$(INSTALL_PATH)/bin";
 				PRODUCT_NAME = angel;
 			};
 			name = Release;
@@ -3204,6 +3174,15 @@
 			buildConfigurations = (
 				C99A33CF10C2F14000F6C7BC /* Debug */,
 				C99A33D010C2F14000F6C7BC /* Release */,
+			);
+			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
+		};
+		C9BD40CE13D8CC7600CB61A0 /* Build configuration list for PBXAggregateTarget "test" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				C9BD40CF13D8CC7600CB61A0 /* Debug */,
+				C9BD40D013D8CC7600CB61A0 /* Release */,
 			);
 			defaultConfigurationIsVisible = 0;
 			defaultConfigurationName = Release;
