@@ -4,7 +4,7 @@
 #	Copyright (c) Embedthis Software LLC, 2003-2011. All Rights Reserved.
 #
 
-PRE_DIRS		+= deps vm compiler
+PRE_DIRS		+= slots deps vm compiler
 POST_DIRS		+= core cmd jems
 EJS_LIB			+= $(BLD_LIB_DIR)/libejs$(BLD_LIB)
 EJS_SOURCES		+= $(shell find core/src vm compiler -name '*.c') 
@@ -13,7 +13,7 @@ SLOTS     		+= $(patsubst slots/%.h,$(BLD_INC_DIR)/%.h,$(shell find slots/*.slot
 
 include 		.makedep
 
-compileFirst: tools 
+compileFirst: $(HEADERS) tools
 
 compileExtra: core library $(SLOTS)
 
@@ -27,6 +27,7 @@ ifeq ($(BLD_CROSS),1)
 	echo
 	$(call log) [Notice] "Building Ejs Toolchain for ($(BLD_BUILD_SYSTEM)) (ejsc, ejs, ejsmod)"
 endif
+	$(MAKE) -S --no-print-directory BUILDING_NATIVE=1 TRACE=$(TRACE) DIR=$(DIR)/slots -C slots compile
 	$(MAKE) -S --no-print-directory BUILDING_NATIVE=1 TRACE=$(TRACE) DIR=$(DIR)/deps -C deps compile
 	$(MAKE) -S --no-print-directory BUILDING_NATIVE=1 TRACE=$(TRACE) DIR=$(DIR)/vm -C vm compile
 	$(MAKE) -S --no-print-directory BUILDING_NATIVE=1 TRACE=$(TRACE) DIR=$(DIR)/compiler -C compiler compile
