@@ -1,0 +1,134 @@
+
+  <PropertyGroup>
+    <BuildDependsOn>
+        Setup;
+        $(BuildDependsOn);
+    </BuildDependsOn>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <CoreFiles Include="$(CORE)\App.es" />
+    <CoreFiles Include="$(CORE)\Array.es" />
+    <CoreFiles Include="$(CORE)\BinaryStream.es" />
+    <CoreFiles Include="$(CORE)\Block.es" />
+    <CoreFiles Include="$(CORE)\Boolean.es" />
+    <CoreFiles Include="$(CORE)\ByteArray.es" />
+    <CoreFiles Include="$(CORE)\Cache.es" />
+    <CoreFiles Include="$(CORE)\Cmd.es" />
+    <CoreFiles Include="$(CORE)\CmdArgs.es" />
+    <CoreFiles Include="$(CORE)\Compat.es" />
+    <CoreFiles Include="$(CORE)\Config.es" />
+    <CoreFiles Include="$(CORE)\Date.es" />
+    <CoreFiles Include="$(CORE)\Debug.es" />
+    <CoreFiles Include="$(CORE)\Emitter.es" />
+    <CoreFiles Include="$(CORE)\Error.es" />
+    <CoreFiles Include="$(CORE)\File.es" />
+    <CoreFiles Include="$(CORE)\FileSystem.es" />
+    <CoreFiles Include="$(CORE)\Frame.es" />
+    <CoreFiles Include="$(CORE)\Function.es" />
+    <CoreFiles Include="$(CORE)\GC.es" />
+    <CoreFiles Include="$(CORE)\Global.es" />
+    <CoreFiles Include="$(CORE)\Http.es" />
+    <CoreFiles Include="$(CORE)\Inflector.es" />
+    <CoreFiles Include="$(CORE)\Iterator.es" />
+    <CoreFiles Include="$(CORE)\JSON.es" />
+    <CoreFiles Include="$(CORE)\Loader.es" />
+    <CoreFiles Include="$(CORE)\LocalCache.es" />
+    <CoreFiles Include="$(CORE)\Locale.es" />
+    <CoreFiles Include="$(CORE)\Logger.es" />
+    <CoreFiles Include="$(CORE)\Math.es" />
+    <CoreFiles Include="$(CORE)\Memory.es" />
+    <CoreFiles Include="$(CORE)\MprLog.es" />
+    <CoreFiles Include="$(CORE)\Name.es" />
+    <CoreFiles Include="$(CORE)\Namespace.es" />
+    <CoreFiles Include="$(CORE)\Null.es" />
+    <CoreFiles Include="$(CORE)\Number.es" />
+    <CoreFiles Include="$(CORE)\Object.es" />
+    <CoreFiles Include="$(CORE)\Path.es" />
+    <CoreFiles Include="$(CORE)\Promise.es" />
+    <CoreFiles Include="$(CORE)\RegExp.es" />
+    <CoreFiles Include="$(CORE)\Socket.es" />
+    <CoreFiles Include="$(CORE)\Stream.es" />
+    <CoreFiles Include="$(CORE)\String.es" />
+    <CoreFiles Include="$(CORE)\System.es" />
+    <CoreFiles Include="$(CORE)\TextStream.es" />
+    <CoreFiles Include="$(CORE)\Timer.es" />
+    <CoreFiles Include="$(CORE)\Type.es" />
+    <CoreFiles Include="$(CORE)\Uri.es" />
+    <CoreFiles Include="$(CORE)\Void.es" />
+    <CoreFiles Include="$(CORE)\Worker.es" />
+    <CoreFiles Include="$(CORE)\XML.es" />
+    <CoreFiles Include="$(CORE)\XMLHttp.es" />
+    <CoreFiles Include="$(CORE)\XMLList.es" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <JemFiles Include="$(JEMS)/ejs.db.mapper/Record.es" />
+    <JemFiles Include="$(JEMS)/ejs.db.sqlite/Sqlite.es" />
+    <JemFiles Include="$(JEMS)/ejs.db/Database.es" />
+    <JemFiles Include="$(JEMS)/ejs.db/DatabaseConnector.es" />
+    <JemFiles Include="$(JEMS)/ejs.tar/Tar.es" />
+    <JemFiles Include="$(JEMS)/ejs.template/TemplateParser.es" />
+    <JemFiles Include="$(JEMS)/ejs.unix/Unix.es" />
+    <JemFiles Include="$(JEMS)/ejs.web/Cascade.es" />
+    <JemFiles Include="$(JEMS)/ejs.web/CommonLog.es" />
+    <JemFiles Include="$(JEMS)/ejs.web/ContentType.es" />
+    <JemFiles Include="$(JEMS)/ejs.web/Controller.es" />
+    <JemFiles Include="$(JEMS)/ejs.web/Dir.es" />
+    <JemFiles Include="$(JEMS)/ejs.web/Google.es" />
+    <JemFiles Include="$(JEMS)/ejs.web/Head.es" />
+    <JemFiles Include="$(JEMS)/ejs.web/Html.es" />
+    <JemFiles Include="$(JEMS)/ejs.web/HttpServer.es" />
+    <JemFiles Include="$(JEMS)/ejs.web/MethodOverride.es" />
+    <JemFiles Include="$(JEMS)/ejs.web/Middleware.es" />
+    <JemFiles Include="$(JEMS)/ejs.web/Mvc.es" />
+    <JemFiles Include="$(JEMS)/ejs.web/Request.es" />
+    <JemFiles Include="$(JEMS)/ejs.web/Router.es" />
+    <JemFiles Include="$(JEMS)/ejs.web/Script.es" />
+    <JemFiles Include="$(JEMS)/ejs.web/Session.es" />
+    <JemFiles Include="$(JEMS)/ejs.web/ShowExceptions.es" />
+    <JemFiles Include="$(JEMS)/ejs.web/Static.es" />
+    <JemFiles Include="$(JEMS)/ejs.web/Template.es" />
+    <JemFiles Include="$(JEMS)/ejs.web/UploadFile.es" />
+    <JemFiles Include="$(JEMS)/ejs.web/UrlMap.es" />
+    <JemFiles Include="$(JEMS)/ejs.web/Utils.es" />
+    <JemFiles Include="$(JEMS)/ejs.web/View.es" />
+  </ItemGroup>
+
+  <ItemGroup>
+	<CoreMod Include="$(OutDir)/ejs.mod" />
+  </ItemGroup>
+
+  <ItemGroup>
+	<Jems Include="$(OutDir)/ejs.db.mapper.mod" />
+	<Jems Include="$(OutDir)/ejs.db.mod" />
+	<Jems Include="$(OutDir)/ejs.db.sqlite.mod" />
+	<Jems Include="$(OutDir)/ejs.tar.mod" />
+	<Jems Include="$(OutDir)/ejs.template.mod" />
+	<Jems Include="$(OutDir)/ejs.unix.mod" />
+	<Jems Include="$(OutDir)/ejs.web.mod" />
+  <ItemGroup>
+
+  <Target Name="Setup">
+    <CallTarget Targets="EjsCore; EjsJems" />
+  </Target>
+
+  <Target Name="EjsCore" Inputs="@(CoreFiles)" Outputs="$(CoreMod)">
+    <Message Text="Building ejs.mod" />
+    <Exec Command="$(OutDir)\ejsc --debug --optimize 9 --bind --require null --out $(TargetDir)/ejs.mod $(CoreFiles)"
+          Outputs="$(CoreMod)"
+          Inputs="$(CoreFiles)" />
+    <Message Text="Generate slot files" />
+    <Exec Command="$(OutDir)\ejsmod --cslots $(CoreMod)"
+          WorkingDirectory="$(BLD_INC_DIR)"
+          Outputs="$(OutDir)/ejs.slots.h" Inputs="$(CoreMod)" />
+  </Target>
+
+  <Target Name="EjsJems" Inputs="@(JemFiles)" Outputs="$(Jems)">
+    <Message Text="Building jems" />
+    <Exec Command="$(OutDir)\ejsc --debug --optimize 9 $(JemFiles)"
+          WorkingDirectory="$(OutDir)"
+          Outputs="$(Jems)" Inputs="$(JemFiles)" />
+    <Exec Command="$(OutDir)\ejsmod --listing --cslots $(Jems)"
+          WorkingDirectory="$(BLD_INC_DIR)" />
+  </Target>

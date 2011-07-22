@@ -153,3 +153,4 @@ rpm.log
 *.stackdump
 src/core/test/cmd/TempWmicBatchFile.bat
 .publisher
+*.guid

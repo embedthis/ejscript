@@ -1,0 +1,17 @@
+
+  <PropertyGroup>
+    <BuildDependsOn>
+        Setup;
+        $(BuildDependsOn);
+    </BuildDependsOn>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <IncludeFiles Include="$(ProjectDir)..\..\..\src\deps\pcre\pcre.h" />
+    <ExportFiles  Include="$(ProjectDir)..\..\..\out\inc\pcre.h" />
+  </ItemGroup>
+
+  <Target Name="Setup" Inputs="@(IncludeFiles)" Outputs="@(ExportFiles)">
+    <Copy SkipUnchangedFiles="true" SourceFiles="@(IncludeFiles)" DestinationFolder="$(ProjectDir)..\..\..\out\inc" />
+  </Target>
+
