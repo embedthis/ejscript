@@ -219,6 +219,7 @@ static int lstOpen(EjsMod *mp, char *moduleFilename, EjsModuleHdr *hdr)
         *ext = '\0';
     }
     path = sjoin(name, EJS_LISTING_EXT, NULL);
+    path = mprJoinPath(mp->outputDir, path);
     if ((mp->file = mprOpenFile(path,  O_CREAT | O_WRONLY | O_TRUNC | O_BINARY, 0664)) == 0) {
         mprError("Can't create %s", path);
         return EJS_ERR;

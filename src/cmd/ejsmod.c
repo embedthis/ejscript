@@ -46,6 +46,7 @@ MAIN(ejsmodMain, int argc, char **argv)
     mp->lstRecords = mprCreateList(0, 0);
     mp->blocks = mprCreateList(0, 0);
     mp->docDir = sclone(".");
+    mp->outputDir = sclone(".");
     
     for (nextArg = 1; nextArg < argc; nextArg++) {
         argp = argv[nextArg];
@@ -61,6 +62,13 @@ MAIN(ejsmodMain, int argc, char **argv)
 
         } else if (strcmp(argp, "--depends") == 0) {
             mp->depends = 1;
+
+        } else if (strcmp(argp, "--dir") == 0) {
+            if (nextArg >= argc) {
+                err++;
+            } else {
+                mp->outputDir = sclone(argv[++nextArg]);
+            }
             
         } else if (strcmp(argp, "--error") == 0) {
             /*

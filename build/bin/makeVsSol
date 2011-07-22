@@ -50,7 +50,6 @@ parseArgs() {
             proj=${_ARG%% *}
             rest=${_ARG#?* }
             eval DEPS_${proj//\./_}=\"$rest\"
-echo SET DEPS_${proj//\./_}=\"$rest\"
             useArg
             ;;
         --name)
@@ -196,7 +195,7 @@ outputSolProjects() {
     local proj base guid xid dguid deps dep
     for proj in $PROJECTS ; do
         if [ ! -f ${proj}.guid ] ; then
-            echo "BB Missing project GUID for $proj"
+            echo "Missing project GUID for $proj"
             continue
         fi
         guid="{"`cat ${proj}.guid`"}"
@@ -207,7 +206,7 @@ outputSolProjects() {
         if [ "$deps" != "" ] ; then
             for dep in $deps ; do
                 if [ ! -f ${dep}.vcxproj.guid ] ; then
-                    echo "AA Missing project GUID for $dep"
+                    echo "Missing project GUID for $dep"
                     continue
                 fi
                 dguid="{"`cat ${dep}.vcxproj.guid`"}"

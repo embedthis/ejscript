@@ -10005,6 +10005,15 @@ void ecSetOutputFile(EcCompiler *cp, cchar *outputFile)
 }
 
 
+void ecSetOutputDir(EcCompiler *cp, cchar *outputDir)
+{
+    if (outputDir) {
+        //  UNICODE
+        cp->outputDir = sclone(outputDir);
+    }
+}
+
+
 void ecSetCertFile(EcCompiler *cp, cchar *certFile)
 {
     //  UNICODE

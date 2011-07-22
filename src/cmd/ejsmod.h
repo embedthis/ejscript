@@ -63,6 +63,7 @@ typedef struct EjsMod {
     int         warningCount;               /* Count of all warnings */
     int         warnOnError;                /* Warn if module file errors are detected */
 
+    char        *outputDir;                 /* Directory for slots and listings */
     char        *docDir;                    /* Directory to generate HTML doc */
     bool        html;                       /* Generate HTML doc */
     bool        xml;                        /* Generate XML doc */

@@ -32,6 +32,7 @@ EcCompiler *ecCreateCompiler(Ejs *ejs, int flags)
     cp->shbang = 1;
     cp->optimizeLevel = 9;
     cp->warnLevel = 1;
+    cp->outputDir = sclone(".");
 
     if (flags & EC_FLAGS_DOC) {
         cp->doc = 1;
@@ -74,6 +75,7 @@ static void manageCompiler(EcCompiler *cp, int flags)
         mprMark(cp->state);
         mprMark(cp->stream);
         mprMark(cp->token);
+        mprMark(cp->outputDir);
         mprMark(cp->outputFile);
         mprMark(cp->fixups);
         mprMark(cp->require);

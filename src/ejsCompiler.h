@@ -749,6 +749,7 @@ typedef struct EcCompiler {
 
     int         strict;                     /* Compiler default strict mode */
     int         lang;                       /* Language compliance level: ecma|plus|fixed */
+    char        *outputDir;                 /* Output directory for modules */
     char        *outputFile;                /* Output module file name override */
     MprFile     *file;                      /* Current output file handle */
 
@@ -818,6 +819,7 @@ extern void         ecSetOptimizeLevel(EcCompiler *cp, int level);
 extern void         ecSetWarnLevel(EcCompiler *cp, int level);
 extern void         ecSetStrictMode(EcCompiler *cp, int on);
 extern void         ecSetTabWidth(EcCompiler *cp, int width);
+extern void         ecSetOutputDir(EcCompiler *cp, cchar *outputDir);
 extern void         ecSetOutputFile(EcCompiler *cp, cchar *outputFile);
 extern void         ecSetCertFile(EcCompiler *cp, cchar *certFile);
 extern EcToken      *ecTakeToken(EcCompiler *cp);

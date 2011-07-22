@@ -30,7 +30,7 @@ MAIN(ejscMain, int argc, char **argv)
     Mpr             *mpr;
     Ejs             *ejs;
     EcCompiler      *cp;
-    char            *argp, *searchPath, *outputFile, *certFile, *name, *tok, *modules;
+    char            *argp, *searchPath, *outputFile, *outputDir, *certFile, *name, *tok, *modules;
     int             nextArg, err, ejsFlags, ecFlags, bind, debug, doc, merge, modver;
     int             warnLevel, noout, parseOnly, tabWidth, optimizeLevel, strict;
 
@@ -62,6 +62,7 @@ MAIN(ejscMain, int argc, char **argv)
     tabWidth = 4;
     warnLevel = 1;
     outputFile = 0;
+    outputDir = 0;
     optimizeLevel = 9;
 
     for (nextArg = 1; nextArg < argc; nextArg++) {
@@ -77,6 +78,16 @@ MAIN(ejscMain, int argc, char **argv)
 
         } else if (strcmp(argp, "--debugger") == 0 || strcmp(argp, "-D") == 0) {
             mprSetDebugMode(1);
+
+        } else if (strcmp(argp, "--dir") == 0) {
+            /*
+                Set the output directory for modules
+             */
+            if (nextArg >= argc) {
+                err++;
+            } else {
+                outputDir = argv[++nextArg];
+            }
 
         } else if (strcmp(argp, "--doc") == 0) {
             doc = 1;
@@ -229,6 +240,7 @@ MAIN(ejscMain, int argc, char **argv)
             "  --bind                 # Bind global properties to slots. Requires --out.\n"
             "  --debug                # Include symbolic debugging information in output\n"
             "  --doc                  # Include documentation strings in output\n"
+            "  --dir directory        # Set the output directory for modules (default: \".\")\n"
             "  --merge                # Merge dependent input modules into the output\n"
             "  --modver version       # Set the default module version\n"
             "  --noout                # Do not generate any output\n"
@@ -278,6 +290,7 @@ MAIN(ejscMain, int argc, char **argv)
     ecSetWarnLevel(cp, warnLevel);
     ecSetStrictMode(cp, strict);
     ecSetTabWidth(cp, tabWidth);
+    ecSetOutputDir(cp, outputDir);
     ecSetOutputFile(cp, outputFile);
     ecSetCertFile(cp, certFile);
 

@@ -2890,7 +2890,7 @@ static EjsModule *createModule(EcCompiler *cp, EcNode *np)
     if (cp->outputFile) {
         np->module.filename = cp->outputFile;
     } else {
-        np->module.filename = mprAsprintf("%@%s", np->qname.name, EJS_MODULE_EXT);
+        np->module.filename = mprJoinPath(cp->outputDir, mprAsprintf("%@%s", np->qname.name, EJS_MODULE_EXT));
     }
     return mp;
 }

@@ -70,6 +70,7 @@ static int createSlotFile(EjsMod *bp, EjsModule *mp, MprFile *file)
 
     if (file == 0) {
         path = sjoin(ejsToMulti(ejs, mp->name), ".slots.h", NULL);
+        path = mprJoinPath(bp->outputDir, path);
         localFile = file = mprOpenFile(path, O_CREAT | O_WRONLY | O_TRUNC | O_BINARY, 0664);
     } else {
         path = sclone(file->path);
