@@ -13,7 +13,7 @@
   </ItemGroup>
 
   <PropertyGroup Label="Globals">
-    <ProjectGuid>{7EA63095-0A56-421A-A281-A5BEC954CA77}</ProjectGuid>
+    <ProjectGuid>{F35BB829-7A49-451F-81E1-9F381AA9CF5D}</ProjectGuid>
     <RootNamespace />
     <Keyword>Win32Proj</Keyword>
   </PropertyGroup>
@@ -85,12 +85,12 @@
   </PropertyGroup>
 
   <ItemGroup>
-    <IncludeFiles Include="$(ProjectDir)..\..\..\src\deps\pcre\pcre.h" />
-    <ExportFiles  Include="$(ProjectDir)..\..\..\out\inc\pcre.h" />
+    <IncludeFiles Include="$(SRC)/deps/pcre/pcre.h" />
+    <ExportFiles  Include="$(BLD_INC_DIR)/pcre.h" />
   </ItemGroup>
 
   <Target Name="Setup" Inputs="@(IncludeFiles)" Outputs="@(ExportFiles)">
-    <Copy SkipUnchangedFiles="true" SourceFiles="@(IncludeFiles)" DestinationFolder="$(ProjectDir)..\..\..\out\inc" />
+    <Copy SkipUnchangedFiles="true" SourceFiles="@(IncludeFiles)" DestinationFolder="$(BLD_INC_DIR)" />
   </Target>
 
   <ImportGroup Label="ExtensionTargets">

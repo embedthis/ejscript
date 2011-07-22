@@ -219,7 +219,7 @@ makeVsProj: usage: makeVsProj [options] objects ....
     --omitstdlibs           Don't use standard libraries (UNIX only)
     --objects "objects..."  String containing objects to link
     --project               Project file name
-    --props "propfiles..."  Project file name
+    --props "propfiles..."  Property files to include
     --quiet                 Run quietly without tracing actions to stdout
     --resources file        Resource file (menus and icons for Windows)
     --rpath path            Specify the executable run-time library search path

@@ -1,4 +1,3 @@
-
   <PropertyGroup>
     <BuildDependsOn>
         Setup;
@@ -7,10 +6,13 @@
   </PropertyGroup>
 
   <ItemGroup>
-    <IncludeFiles Include="$(SRC)/appweb.h" />
+    <IncludeFiles Include="$(SRC)/ejs*.h" />
     <IncludeFiles Include="$(SRC)/customize.h" />
-    <ExportFiles  Include="$(BLD_INC_DIR)/appweb.h" />
+    <ExportFiles  Include="$(BLD_INC_DIR)/ejs.h" />
     <ExportFiles  Include="$(BLD_INC_DIR)/customize.h" />
+    <ExportFiles  Include="$(BLD_INC_DIR)/ejsByteCode.h" />
+    <ExportFiles  Include="$(BLD_INC_DIR)/ejsByteCodeTable.h" />
+    <ExportFiles  Include="$(BLD_INC_DIR)/ejsCompiler.h" />
   </ItemGroup>
 
   <Target Name="Setup" Inputs="@(IncludeFiles)" Outputs="@(ExportFiles)">

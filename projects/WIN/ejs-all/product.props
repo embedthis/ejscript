@@ -3,7 +3,7 @@
   <ImportGroup Label="PropertySheets" />
   <PropertyGroup Label="UserMacros" />
   <PropertyGroup Label="Features">
-     <BLD_FEATURE_XXX>0</BLD_FEATURE_XXX>
+     <BLD_FEATURE_SSL>0</BLD_FEATURE_SSL>
      <BLD_TOP>../../..</BLD_TOP>
      <BLD_OUT_DIR>$(BLD_TOP)/out</BLD_OUT_DIR>
      <BLD_BIN_DIR>$(BLD_OUT_DIR)/bin</BLD_BIN_DIR>
@@ -12,6 +12,7 @@
      <SRC>$(BLD_TOP)/src</SRC>
      <CORE>$(BLD_TOP)/src/core</CORE>
      <JEMS>$(BLD_TOP)/src/jems</JEMS>
+     <BLD_ABS_BIN_DIR>$([System.IO.Path]::GetFullPath('$(BLD_OUT_DIR)/bin'))</BLD_ABS_BIN_DIR>
   </PropertyGroup>
   <ItemDefinitionGroup>
     <ClCompile>

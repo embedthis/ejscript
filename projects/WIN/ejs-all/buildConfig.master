@@ -31,7 +31,7 @@ BLD_TUNE=MPR_TUNE_SIZE
 BLD_CHAR_LEN=1
 BLD_CHAR=char
 BLD_DEFAULTS=standard
-BLD_COMPONENTS= winsdk ar cc make nm strip ld mt rc doxygen pkg pcre mpr http openssl ssl sqlite ejs
+BLD_COMPONENTS=    winsdk ar cc make nm strip ld mt rc doxygen pkg pcre mpr http sqlite ejs   
 BLD_EMBEDTHIS=1
 BLD_DEBUG=1
 
@@ -110,12 +110,6 @@ BLD_BUILD_BIN_DIR=${BLD_OUT_DIR}/bin
 BLD_BUILD_LIB_DIR=${BLD_OUT_DIR}/bin
 
 #
-#   Absolute native build directories
-#
-BLD_ABS_BUILD_BIN_DIR=C:/home/mob/ejs/out/bin
-BLD_ABS_BUILD_LIB_DIR=C:/home/mob/ejs/out/bin
-
-#
 #   Standard Feature Selection
 #
 BLD_FEATURE_ASSERT=1
@@ -127,7 +121,7 @@ BLD_FEATURE_VALLOC=1
 #
 #   All import libraries
 #
-BLD_IMPORTS=${BLD_TOP}/src/ejs.h ${BLD_TOP}/src/ejsByteCode.h ${BLD_TOP}/src/ejsByteCodeTable.h ${BLD_TOP}/src/ejsCompiler.h ${BLD_TOP}/src/customize.h  ${BLD_TOP}/../packages/openssl/openssl-1.0.0d/out32dll/libeay32.dll ${BLD_TOP}/../packages/openssl/openssl-1.0.0d/out32dll/ssleay32.dll  ${BLD_TOP}/src/deps/http/http.h  ${BLD_TOP}/src/deps/mpr/mpr.h ${BLD_TOP}/src/deps/mpr/mprSsl.h  ${BLD_TOP}/src/deps/pcre/pcre.h  
+BLD_IMPORTS=${BLD_TOP}/src/ejs.h ${BLD_TOP}/src/ejsByteCode.h ${BLD_TOP}/src/ejsByteCodeTable.h ${BLD_TOP}/src/ejsCompiler.h ${BLD_TOP}/src/customize.h  ${BLD_TOP}/src/deps/http/http.h  ${BLD_TOP}/src/deps/mpr/mpr.h ${BLD_TOP}/src/deps/mpr/mprSsl.h  ${BLD_TOP}/src/deps/pcre/pcre.h  
 
 #
 #   Ejscript Feature Selection
@@ -205,20 +199,12 @@ BLD_OBJ_DIR=${BLD_OUT_DIR}/obj
 BLD_LIB_DIR=${BLD_OUT_DIR}/bin
 BLD_INC_DIR=${BLD_OUT_DIR}/inc
 
-BLD_ABS_OUT_DIR=C:/home/mob/ejs/out
-BLD_ABS_BIN_DIR=C:/home/mob/ejs/out/bin
-BLD_ABS_LIB_DIR=C:/home/mob/ejs/out/bin
-BLD_ABS_OBJ_DIR=C:/home/mob/ejs/out/obj
-BLD_ABS_INC_DIR=C:/home/mob/ejs/out/inc
-
 #
 #	Environment Variables
 #
 export INCLUDE:=C:/Program Files/Microsoft Visual Studio 10.0/VC/INCLUDE;C:/Program Files/Microsoft SDKs/Windows/v7.1/include;$(INCLUDE)
 
 export LIB:=C:/Program Files/Microsoft SDKs/Windows/v7.1/LIB;C:/Program Files/Microsoft Visual Studio 10.0/VC/lib;$(LIB)
-
-export PATH:=/home/mob/ejs/build/bin:/home/mob/ejs/out/bin:/home/mob/ejs/out/lib:/bin:/usr/bin:/Program Files/Microsoft Visual Studio 10.0/Common7/IDE:/Program Files/Microsoft Visual Studio 10.0/VC/bin:/Program Files/Microsoft Visual Studio 10.0/Common7/Tools:/Program Files/Microsoft Visual Studio 10.0/SDK/v3.5/bin:/Program Files/Microsoft Visual Studio 10.0/VC/VCPackages:/Program Files/Microsoft SDKs/Windows/v7.1/bin:$(PATH)
 
 #
 #	Features
@@ -342,27 +328,6 @@ BLD_HTTP_IMPORTS=${BLD_TOP}/src/deps/http/http.h
 BLD_HTTP_LIBS=http
 
 #
-#	OPENSSL
-#
-BLD_FEATURE_OPENSSL=1
-BLD_OPENSSL_BUILTIN=0
-BLD_OPENSSL_IFLAGS=-I${BLD_TOP}/../packages/openssl/openssl-1.0.0d/inc32 
-BLD_OPENSSL_IMPORTS=${BLD_TOP}/../packages/openssl/openssl-1.0.0d/out32dll/libeay32.dll ${BLD_TOP}/../packages/openssl/openssl-1.0.0d/out32dll/ssleay32.dll 
-BLD_OPENSSL_LIBPATHS=C:/home/mob/packages/openssl/openssl-1.0.0d
-BLD_OPENSSL_LIBS=libeay32 ssleay32
-
-#
-#	SSL
-#
-BLD_FEATURE_SSL=1
-BLD_SSL_BUILTIN=1
-BLD_SSL_DEPENDENCIES= openssl mpr
-BLD_SSL_LIBPATHS=C:/home/mob/packages/openssl/openssl-1.0.0d
-BLD_SSL_LIBS=mprssl libeay32 ssleay32 mpr
-BLD_SSL_WITHLIBS=libeay32 ssleay32 mpr
-BLD_SSL_WITHPATHS=C:/home/mob/packages/openssl/openssl-1.0.0d
-
-#
 #	SQLITE
 #
 BLD_FEATURE_SQLITE=1
@@ -373,21 +338,20 @@ BLD_SQLITE_LIBS=sqlite3
 #	EJS
 #
 BLD_FEATURE_EJS=1
-BLD_EJS=C:/home/mob/ejs/out/bin/ejs
 BLD_EJS_BUILTIN=1
 BLD_EJS_DEPENDENCIES=mpr http
 BLD_EJS_IMPORTS=${BLD_TOP}/src/ejs.h ${BLD_TOP}/src/ejsByteCode.h ${BLD_TOP}/src/ejsByteCodeTable.h ${BLD_TOP}/src/ejsCompiler.h ${BLD_TOP}/src/customize.h 
-BLD_EJS_LIBPATHS=C:/home/mob/packages/openssl/openssl-1.0.0d
-BLD_EJS_LIBS=ejs pcre mprssl libeay32 ssleay32 mpr http
+BLD_EJS_LIBS=ejs pcre mpr http
 BLD_EJS_OPTIONAL_DEPENDENCIES=ssl
-BLD_EJS_WITHLIBS=pcre mprssl libeay32 ssleay32 mpr http
-BLD_EJS_WITHPATHS=C:/home/mob/packages/openssl/openssl-1.0.0d C:/home/mob/packages/openssl/openssl-1.0.0d
+BLD_EJS_WITHLIBS=pcre mpr http
 
+BLD_FEATURE_MATRIXSSL=0
+BLD_FEATURE_OPENSSL=0
+BLD_FEATURE_SSL=0
 #
 #   Ejscript Libraries and Directories
 #
 BLD_JEM_DIR=${BLD_OUT_DIR}/jlocal
-BLD_ABS_JEM_DIR=C:/home/mob/ejs/out/jlocal
 
 EXPORT_OBJECTS ?= 1
 ifeq ($(EXPORT_OBJECTS),0)
@@ -411,7 +375,7 @@ else
     #define BLD_CHAR_LEN 1
     #define BLD_CHAR char
     #define BLD_DEFAULTS "standard"
-    #define BLD_COMPONENTS " winsdk ar cc make nm strip ld mt rc doxygen pkg pcre mpr http openssl ssl sqlite ejs"
+    #define BLD_COMPONENTS "    winsdk ar cc make nm strip ld mt rc doxygen pkg pcre mpr http sqlite ejs   "
     #define BLD_EMBEDTHIS 1
     #define BLD_DEBUG 1
     #define BLD_NUMBER_ONLY "B0"
@@ -465,7 +429,7 @@ else
     #define BLD_FEATURE_FLOAT 1
     #define BLD_FEATURE_LEGACY_API 0
     #define BLD_FEATURE_VALLOC 1
-    #define BLD_IMPORTS "${BLD_TOP}/src/ejs.h ${BLD_TOP}/src/ejsByteCode.h ${BLD_TOP}/src/ejsByteCodeTable.h ${BLD_TOP}/src/ejsCompiler.h ${BLD_TOP}/src/customize.h  ${BLD_TOP}/../packages/openssl/openssl-1.0.0d/out32dll/libeay32.dll ${BLD_TOP}/../packages/openssl/openssl-1.0.0d/out32dll/ssleay32.dll  ${BLD_TOP}/src/deps/http/http.h  ${BLD_TOP}/src/deps/mpr/mpr.h ${BLD_TOP}/src/deps/mpr/mprSsl.h  ${BLD_TOP}/src/deps/pcre/pcre.h  "
+    #define BLD_IMPORTS "${BLD_TOP}/src/ejs.h ${BLD_TOP}/src/ejsByteCode.h ${BLD_TOP}/src/ejsByteCodeTable.h ${BLD_TOP}/src/ejsCompiler.h ${BLD_TOP}/src/customize.h  ${BLD_TOP}/src/deps/http/http.h  ${BLD_TOP}/src/deps/mpr/mpr.h ${BLD_TOP}/src/deps/mpr/mprSsl.h  ${BLD_TOP}/src/deps/pcre/pcre.h  "
     #define BLD_EJS_PRODUCT 1
     #define BLD_FEATURE_AUTH_FILE 1
     #define BLD_FEATURE_AUTH_PAM 0
@@ -573,32 +537,19 @@ else
     #define BLD_HTTP_BUILTIN 1
     #define BLD_HTTP_IMPORTS "${BLD_TOP}/src/deps/http/http.h "
     #define BLD_HTTP_LIBS "http"
-    #define BLD_FEATURE_OPENSSL 1
-    #define BLD_OPENSSL_BUILTIN 0
-    #define BLD_OPENSSL_IFLAGS "-I${BLD_TOP}/../packages/openssl/openssl-1.0.0d/inc32 "
-    #define BLD_OPENSSL_IMPORTS "${BLD_TOP}/../packages/openssl/openssl-1.0.0d/out32dll/libeay32.dll ${BLD_TOP}/../packages/openssl/openssl-1.0.0d/out32dll/ssleay32.dll "
-    #define BLD_OPENSSL_LIBPATHS "C:/home/mob/packages/openssl/openssl-1.0.0d"
-    #define BLD_OPENSSL_LIBS "libeay32 ssleay32"
-    #define BLD_FEATURE_SSL 1
-    #define BLD_SSL_BUILTIN 1
-    #define BLD_SSL_DEPENDENCIES " openssl mpr"
-    #define BLD_SSL_LIBPATHS "C:/home/mob/packages/openssl/openssl-1.0.0d"
-    #define BLD_SSL_LIBS "mprssl libeay32 ssleay32 mpr"
-    #define BLD_SSL_WITHLIBS "libeay32 ssleay32 mpr"
-    #define BLD_SSL_WITHPATHS "C:/home/mob/packages/openssl/openssl-1.0.0d"
     #define BLD_FEATURE_SQLITE 1
     #define BLD_SQLITE_BUILTIN 1
     #define BLD_SQLITE_LIBS "sqlite3"
     #define BLD_FEATURE_EJS 1
-    #define BLD_EJS "C:/home/mob/ejs/out/bin/ejs"
     #define BLD_EJS_BUILTIN 1
     #define BLD_EJS_DEPENDENCIES "mpr http"
     #define BLD_EJS_IMPORTS "${BLD_TOP}/src/ejs.h ${BLD_TOP}/src/ejsByteCode.h ${BLD_TOP}/src/ejsByteCodeTable.h ${BLD_TOP}/src/ejsCompiler.h ${BLD_TOP}/src/customize.h "
-    #define BLD_EJS_LIBPATHS "C:/home/mob/packages/openssl/openssl-1.0.0d"
-    #define BLD_EJS_LIBS "ejs pcre mprssl libeay32 ssleay32 mpr http"
+    #define BLD_EJS_LIBS "ejs pcre mpr http"
     #define BLD_EJS_OPTIONAL_DEPENDENCIES "ssl"
-    #define BLD_EJS_WITHLIBS "pcre mprssl libeay32 ssleay32 mpr http"
-    #define BLD_EJS_WITHPATHS "C:/home/mob/packages/openssl/openssl-1.0.0d C:/home/mob/packages/openssl/openssl-1.0.0d"
+    #define BLD_EJS_WITHLIBS "pcre mpr http"
+    #define BLD_FEATURE_MATRIXSSL 0
+    #define BLD_FEATURE_OPENSSL 0
+    #define BLD_FEATURE_SSL 0
     #define BLD_JEM_DIR "${BLD_OUT_DIR}/jlocal"
 #endif /* IGNORE_IN_C_CODE */
 #if IGNORE_IN_C_CODE

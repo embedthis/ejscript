@@ -4,7 +4,7 @@
 #	Copyright (c) Embedthis Software LLC, 2003-2009. All Rights Reserved.
 #
 
-CONFIG		= buildConfig.default
+CONFIG		= buildConfig.master
 
 include     .makedep
 include     $(CONFIG)
@@ -26,9 +26,8 @@ PHP_IFLAGS	+= $(BLD_PHP_IFLAGS)
 
 PROJECTS	= setup.vcxproj libmpr.vcxproj libsqlite3.vcxproj libmprssl.vcxproj libpcre.vcxproj libhttp.vcxproj \
 			  libejs.vcxproj ejsmod.vcxproj ejsc.vcxproj ejs.vcxproj ejssql.vcxproj ejs.web.vcxproj \
-			  ejs.db.sqlite.vcxproj ejs.web.vcxproj
+			  ejs.db.sqlite.vcxproj
 SOLUTIONS	= ejs-all.sln
-
 PROPS		+= product.props
 
 #
@@ -45,84 +44,88 @@ prep:
 		done ; \
 	fi
 
-ejs-all.sln: Makefile $(CONFIG)
+ejs-all.sln: Makefile
 	$(VSS) --solution ejs-all.sln \
 		--deps "libmpr setup" \
 		--deps "libpcre setup" \
+		--deps "ejs ejsc" \
+		--deps "ejs.web ejsc" \
+		--deps "ejs.db.sqlite ejsc" \
 		$(PROJECTS)
 
-setup.vcxproj: setup.custom Makefile $(CONFIG)
-	$(VSP) --project setup.vcxproj --custom setup.custom
+setup.vcxproj: setup.custom Makefile
+	$(VSP) --project setup.vcxproj --props "$(PROPS)" --custom setup.custom
 
-libmpr.vcxproj: libmpr.custom Makefile $(CONFIG)
+libmpr.vcxproj: libmpr.custom Makefile
 	$(VSP) --project libmpr.vcxproj --library mpr --dflags "$(DFLAGS)" \
 		--props "$(PROPS)" \
 		--custom libmpr.custom \
 		--def libmpr.def --libs "$(LIBS)" $(MPR_HDR) $(MPR_SRC)
 	
-libmprssl.vcxproj: libmprssl.custom Makefile $(CONFIG)
+libmprssl.vcxproj: libmprssl.custom Makefile
 	$(VSP) --project libmprssl.vcxproj --library mprssl --dflags "$(DFLAGS)" \
 		--props "$(PROPS)" --deps libmpr \
 		--custom libmprssl.custom \
 		--iflags "$(SSL_IFLAGS)" --def libmprssl.def --libs "libmpr.lib $(LIBS)" \
 		$(MPR_HDR) $(SRC)/deps/mpr/mprSsl.c
 	
-libpcre.vcxproj: libpcre.custom Makefile $(CONFIG)
+libpcre.vcxproj: libpcre.custom Makefile
 	$(VSP) --project libpcre.vcxproj --library pcre --dflags "$(DFLAGS)" \
 		--props "$(PROPS)" \
 		--custom libpcre.custom \
 		--def libpcre.def --libs "$(LIBS)" $(SRC)/deps/pcre/pcre.c
 	
-libhttp.vcxproj: libhttp.custom Makefile $(CONFIG)
+libhttp.vcxproj: libhttp.custom Makefile
 	$(VSP) --project libhttp.vcxproj --library http --dflags "$(DFLAGS)" \
 		--props "$(PROPS)" --deps "libmpr libmprssl" \
 		--custom libhttp.custom \
 		--def libhttp.def --libs "libmpr.lib libmprssl.lib $(LIBS)" $(HTTP_HDR) $(SRC)/deps/http/httpLib.c
 	
-libsqlite3.vcxproj: Makefile $(CONFIG)
+libsqlite3.vcxproj: Makefile
 	$(VSP) --project libsqlite3.vcxproj --library sqlite3 --dflags "$(DFLAGS)" \
 		--props "$(PROPS)" --deps "libmpr" \
 		--def libsqlite3.def --libs "libmpr.lib $(LIBS)" $(JEMS)/ejs.db.sqlite/src/sqlite3.c
 	
-libejs.vcxproj: Makefile $(CONFIG)
+libejs.vcxproj: Makefile
 	$(VSP) --project libejs.vcxproj --library ejs --dflags "$(DFLAGS)" \
-		--props "$(PROPS)" --deps "libmpr libmprssl libhttp libsqlite3" \
+		--props "$(PROPS)" --deps "libmpr libmprssl libhttp libsqlite3 libpcre" \
+		--custom libejs.custom \
 		--def libejs.def --libs "libmpr.lib libhttp.lib libsqlite3.lib $(LIBS)" \
 	    $(shell find $(SRC)/include -name 'ejs*.h') \
 	    $(shell find $(SRC)/core $(SRC)/vm $(SRC)/compiler -name '*.c')
 	
-ejsc.vcxproj: Makefile $(CONFIG) ejsc.custom
+ejsc.vcxproj: Makefile ejsc.custom
 	$(VSP) --project ejsc.vcxproj --exe ejsc.exe --dflags "$(DFLAGS)" \
 		--props "$(PROPS)" --deps "libmpr libmprssl libejs" \
 		--custom ejsc.custom --libs "$(LIBS) libejs.lib libmpr.lib" $(SRC)/cmd/ejsc.c
 
-ejsmod.vcxproj: Makefile $(CONFIG)
+ejsmod.vcxproj: Makefile
 	$(VSP) --project ejsmod.vcxproj --exe ejsmod.exe --dflags "$(DFLAGS)" \
 		--props "$(PROPS)" --deps "libmpr libmprssl libejs" \
 		--libs "$(LIBS) libejs.lib libmpr.lib" \
 	    $(CMD)/ejsmod.c $(CMD)/doc.c $(CMD)/docFiles.c $(CMD)/listing.c $(CMD)/slotGen.c
 
-ejs.vcxproj: Makefile $(CONFIG)
-	$(VSP) --project ejs.vcxproj --exe ejs.exe --dflags "$(DFLAGS)" \
-		--props "$(PROPS)" --deps "libmpr libmprssl libejs" \
-		--libs "$(LIBS) libejs.lib libmpr.lib" $(SRC)/cmd/ejs.c
-
-ejssql.vcxproj: Makefile $(CONFIG)
-	$(VSP) --project ejssql.vcxproj --exe ejssql.exe --dflags "$(DFLAGS)" \
-		--props "$(PROPS)" --deps "libsqlite3" \
-		--libs "$(LIBS) libsqlite3.lib" $(JEMS)/ejs.db.sqlite/src/ejssql.c
-
-ejs.db.sqlite.vcxproj: Makefile $(CONFIG)
+ejs.db.sqlite.vcxproj: Makefile
 	$(VSP) --project ejs.db.sqlite.vcxproj --library ec --dflags "$(DFLAGS)" \
 		--props "$(PROPS)" --deps "libmpr libmprssl libhttp libejs libsqlite3" \
 		--def ejs.db.sqlite.def --libs "libmpr.lib libhttp.lib libejs.lib libsqlite3.lib $(LIBS)" \
 	    $(JEMS)/ejs.db.sqlite/src/ejsSqlite.c
 
-ejs.web.vcxproj: Makefile $(CONFIG)
+ejs.web.vcxproj: Makefile
 	$(VSP) --project ejs.web.vcxproj --library ec --dflags "$(DFLAGS)" \
 		--props "$(PROPS)" --deps "libmpr libmprssl libhttp libejs" \
 		--def ejs.web.def --libs "libmpr.lib libhttp.lib libejs.lib $(LIBS)" \
 	    $(shell find $(JEMS)/ejs.web/src/ -name '*.c')
+
+ejs.vcxproj: Makefile
+	$(VSP) --project ejs.vcxproj --exe ejs.exe --dflags "$(DFLAGS)" \
+		--props "$(PROPS)" --deps "libmpr libmprssl libejs" \
+		--libs "$(LIBS) libejs.lib libmpr.lib" $(SRC)/cmd/ejs.c
+
+ejssql.vcxproj: Makefile
+	$(VSP) --project ejssql.vcxproj --exe ejssql.exe --dflags "$(DFLAGS)" \
+		--props "$(PROPS)" --deps "libsqlite3" \
+		--libs "$(LIBS) libsqlite3.lib" $(JEMS)/ejs.db.sqlite/src/ejssql.c
 
 cleanExtra:
 	rm -fr Upgrade* _Upgrade* x64 Win32 *.suo *.sdf *.filters
