@@ -355,7 +355,7 @@ int ejsEvalFile(cchar *path)
         mprDestroy(0);
         return MPR_ERR_CANT_READ;
     }
-    if (ejsLoadScriptFile(ejs, path, NULL, EC_FLAGS_NO_OUT | EC_FLAGS_DEBUG) == 0) {
+    if (ejsLoadScriptFile(ejs, path, NULL, EC_FLAGS_NO_OUT | EC_FLAGS_DEBUG) < 0) {
         ejsReportError(ejs, "Error in program");
         mprDestroy(0);
         return MPR_ERR;
@@ -382,7 +382,7 @@ int ejsEvalScript(cchar *script)
         mprDestroy(0);
         return MPR_ERR_CANT_READ;
     }
-    if (ejsLoadScriptLiteral(ejs, ejsCreateStringFromAsc(ejs, script), NULL, EC_FLAGS_NO_OUT | EC_FLAGS_DEBUG) == 0) {
+    if (ejsLoadScriptLiteral(ejs, ejsCreateStringFromAsc(ejs, script), NULL, EC_FLAGS_NO_OUT | EC_FLAGS_DEBUG) < 0) {
         ejsReportError(ejs, "Error in program");
         mprDestroy(0);
         return MPR_ERR;
