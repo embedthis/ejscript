@@ -7,7 +7,7 @@
 usePrefixes DOC INC MAN LIB
 
 docFilter="/xml/|/html/|/dsi/|/master/|Makefile"
-cpy -d ${BLD_INC_DIR} "ejs*.h" customize.h http.h mpr*.h pcre.h sqlite3.h  "${BLD_INC_PREFIX}"
+cpy -d ${BLD_INC_DIR} ejs.h 'ejsByteCode*.h' ejs.slots.h customize.h http.h mpr*.h pcre.h "${BLD_INC_PREFIX}"
 if [ $BLD_WIN_LIKE = 1 ] ; then
     cpy ${BLD_INC_DIR}/buildConfig.h "${BLD_INC_PREFIX}"
 fi
@@ -17,8 +17,7 @@ cpy -f "${docFilter}" -d doc "*" "${BLD_DOC_PREFIX}"
 cpy -w -e -d doc/product index.html "${BLD_DOC_PREFIX}/product"
 cpy -t -w -e -d doc/product README.TXT "${BLD_DOC_PREFIX}/product"
 
-for f in ${BLD_DOC_PREFIX}/man/*.1
-do
+for f in ${BLD_DOC_PREFIX}/man/*.1 ; do
     rm -f $f.gz
     [ ${TASK} = Install ] && gzip $f
 done
