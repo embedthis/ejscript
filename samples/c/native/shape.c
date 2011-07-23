@@ -47,7 +47,7 @@ typedef struct Shape {
  */
 Shape *create(Ejs *ejs, EjsType *type, int size)
 {
-    return (Shape*) ejsAlloc(ejs, type, 0);
+    return ejsAlloc(ejs, type, 0);
 }
 
 /*
@@ -385,11 +385,11 @@ static EjsObj *constructor(Ejs *ejs, Shape *sp, int argc, EjsObj **argv)
 /*
     Compute the area of the shape
 
-    function area() num
+    function area(): Number
  */
-static EjsObj *area(Ejs *ejs, Shape *sp, int argc, EjsObj **argv)
+static EjsNumber *area(Ejs *ejs, Shape *sp, int argc, EjsObj **argv)
 {
-    return (EjsObj*) ejsCreateNumber(ejs, sp->height *sp->width);
+    return ejsCreateNumber(ejs, sp->height *sp->width);
 }
 
 /******************************************************************************/
@@ -401,16 +401,18 @@ EjsType *ejsDefineShapeType(Ejs *ejs)
 {
     EjsHelpers      *helpers;
     EjsType         *type;
+    EjsPot          *prototype;
 
     /*
         Get the Shape class object. This will be created from the mod file for us. But we need to set the object
         instance size.
      */
-    if ((type = (EjsType*) ejsGetPropertyByName(ejs, ejs->global, N(EJS_PUBLIC_NAMESPACE, "Shape"))) == 0) {
+    if ((type = ejsGetPropertyByName(ejs, ejs->global, N(EJS_PUBLIC_NAMESPACE, "Shape"))) == 0) {
         mprError("Can't find class Shape");
         return 0;
     }
     type->instanceSize = sizeof(Shape);
+    prototype = type->prototype;
 
     /*
         Define the helper functions.
@@ -445,8 +447,7 @@ EjsType *ejsDefineShapeType(Ejs *ejs)
         by ejsmod from Shape.es.
      */
     ejsBindConstructor(ejs, type, constructor);
-    ejsBindMethod(ejs, type, ES_sample_Shape_area, area);
-
+    ejsBindMethod(ejs, prototype, ES_sample_Shape_area, area);
     return type;
 }
 

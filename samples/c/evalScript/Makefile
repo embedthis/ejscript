@@ -13,7 +13,7 @@ MAKE_IFLAGS		:= $(BLD_MPR_IFLAGS) $(BLD_HTTP_IFLAGS)
 compileExtra: main$(BLD_EXE)
 
 main$(BLD_EXE) : $(OBJECTS) $(BLD_EJS_MAKEDEP)
-	bld --exe main$(BLD_EXE) --shared --search "$(BLD_LIB_DIR)" --libs "$(BLD_EJS_LIBS)" $(OBJECTS)
+	bld --exe main$(BLD_EXE) --rpath "$(BLD_LIB_DIR)" --libs "$(BLD_EJS_LIBS)" $(OBJECTS)
 
 cleanExtra:
 	rm -f main$(BLD_EXE)

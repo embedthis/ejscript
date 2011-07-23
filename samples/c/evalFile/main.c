@@ -10,7 +10,7 @@
 
 /************************************ Code ************************************/
 
-MAIN(evalFile, int argc, char **argv)
+int main(int argc, char **argv)
 {
     /*
         Load the script and evaluate

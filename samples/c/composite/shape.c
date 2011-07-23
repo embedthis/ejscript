@@ -37,8 +37,7 @@ static EjsObj *constructor(Ejs *ejs, EjsObj *sp, int argc, EjsObj **argv)
     ejsSetProperty(ejs, sp, ES_sample_Shape_y, ESV(zero));
     ejsSetProperty(ejs, sp, ES_sample_Shape_height, argv[0]);
     ejsSetProperty(ejs, sp, ES_sample_Shape_width, argv[1]);
-
-    return (EjsObj*) sp;
+    return sp;
 }
 
 
@@ -47,7 +46,7 @@ static EjsObj *constructor(Ejs *ejs, EjsObj *sp, int argc, EjsObj **argv)
   
     function area(): Number
  */
-static EjsObj *area(Ejs *ejs, EjsObj *sp, int argc, EjsObj **argv)
+static EjsNumber *area(Ejs *ejs, EjsObj *sp, int argc, EjsObj **argv)
 {
     int     height, width;
 
@@ -58,8 +57,7 @@ static EjsObj *area(Ejs *ejs, EjsObj *sp, int argc, EjsObj **argv)
     height = ejsGetInt(ejs, ejsGetProperty(ejs, sp, ES_sample_Shape_height));
     width = ejsGetInt(ejs, ejsGetProperty(ejs, sp, ES_sample_Shape_width));
 
-    return (EjsObj*) ejsCreateNumber(ejs, height * width);
-    return 0;
+    return ejsCreateNumber(ejs, height * width);
 }
 
 
@@ -68,6 +66,7 @@ static EjsObj *area(Ejs *ejs, EjsObj *sp, int argc, EjsObj **argv)
 static int configureSampleTypes(Ejs *ejs)
 {
     EjsType     *type;
+    EjsPot      *prototype;
 
     mprLog(1, "Loading Sample module\n");
 
@@ -79,13 +78,13 @@ static int configureSampleTypes(Ejs *ejs)
         mprError("Can't find type Shape");
         return MPR_ERR;
     }
-
     /*
         Bind the C functions to the JavaScript functions. We use the slot definitions generated
         by ejsmod from Shape.es.
      */
+    prototype = type->prototype;
     ejsBindConstructor(ejs, type, constructor);
-    ejsBindMethod(ejs, type, ES_sample_Shape_area, (EjsNativeFunction) area);
+    ejsBindMethod(ejs, prototype, ES_sample_Shape_area, area);
     return 0;
 }
 

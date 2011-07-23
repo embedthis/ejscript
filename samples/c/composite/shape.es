@@ -2,10 +2,9 @@
     Shape.es - Sample module with Shape class
  */
 
-module sample
-{
-	class Shape 
-	{
+module sample {
+
+	class Shape {
 		var x: num
 		var y: num
 		var height: num

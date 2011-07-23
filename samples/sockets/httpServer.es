@@ -1,7 +1,7 @@
 /*
- *  Demonstrate the Socket API. This is a mini (non-production) HTTP server.
- *  NOTE: Real web servers support Keep-Alive, Chunking, Ranged requests, PUT, DELETE etc.
- *  This web server just responds to simple GET requests.
+    Demonstrate the Socket API. This is a mini (non-production) HTTP server.
+    NOTE: Real web servers support Keep-Alive, Chunking, Ranged requests, PUT, DELETE etc.
+    This web server just responds to simple GET requests.
  */
 
 module HttpServer {
