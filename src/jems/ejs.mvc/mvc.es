@@ -175,7 +175,7 @@ class EjsMvc {
     }
 
     function error(...args): Void
-        App.errorStream.write(args.join(" "))
+        App.errorStream.write(args.join(" ") + "\n")
 
     function processOptions(cmd: CmdArgs) {
         options = cmd.options
