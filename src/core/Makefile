@@ -49,7 +49,8 @@ $(EJS_MOD): $(EJS_FILES)
 
 cleanExtra:
 	find . -name '*.lst' -o -name '*.mod' -o -name '*.jem' -type f | xargs rm -f
-	rm -f *.slots.h
+	rm -f *.slots.h $(BLD_LIB_DIR)/ejs.slots.h
+	rm -f $(BLD_LIB_DIR)/ejs.mod
 
 #
 #   Local variables:
