@@ -70,9 +70,9 @@ dependExtra:
 cleanExtra:
 	find . -name '*.lst' -o -name '*.mod' -o -name '*.jem' -type f | xargs rm -f
 	rm -f *.slots.h
-	rm -f $(BLD_INC_DIR)/ejs*.h
+	rm -f $(BLD_INC_DIR)/ejs*.h f $(BLD_INC_DIR)/ejs.*.h
+	rm -f $(EJS_LIB) $(BLD_LIB_DIR)/ejs.lst
 	mkdir -p $(BLD_INC_DIR)
-	rm -f $(BLD_INC_DIR)/ejs.*.h
 
 .SUFFIXES: .h
 
