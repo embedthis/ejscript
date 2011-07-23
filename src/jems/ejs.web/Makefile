@@ -43,7 +43,7 @@ $(BLD_LIB_DIR)/www: www/*
 	cp -r www/* $(BLD_LIB_DIR)/www
 
 cleanExtra:
-	rm -rf $(BLD_LIB_DIR)/www
+	rm -rf $(BLD_LIB_DIR)/www $(MODULE)
 	rm -fr $(BLD_JEM_DIR)/$(JEM)
 
 #

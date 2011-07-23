@@ -35,7 +35,7 @@ $(BLD_JEM_DIR)/$(JEM): $(BLD_LIB_DIR)/$(MOD) package.json
 	rm -f $(JEM).jem
 
 cleanExtra:
-	rm -fr $(BLD_JEM_DIR)/$(JEM)
+	rm -fr $(BLD_JEM_DIR)/$(JEM) $(MODULE)
 
 #
 #   Local variables:
