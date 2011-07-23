@@ -686,8 +686,7 @@ int ejsEvalModule(cchar *path)
     int             status;
 
     status = 0;
-
-    if ((mpr = mprCreate(0, NULL, 0)) != 0) {
+    if ((mpr = mprCreate(0, NULL, 0)) == 0) {
         status = MPR_ERR_MEMORY;
 
     } else if ((ejs = ejsCreateVM(0, 0, 0)) == 0) {
