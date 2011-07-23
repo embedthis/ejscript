@@ -82,7 +82,7 @@ sleuthPackageFormat() {
 
     name=`createPackageName ${BLD_PRODUCT}-bin`
     FMT=
-    for f in deb rpm tar.gz ; do
+    for f in deb rpm tgz ; do
         if [ -f ${name}.${f} ] ; then
             FMT=${f%.gz}
             break
@@ -206,8 +206,8 @@ installFiles() {
                 echo -e "dpkg -i $NAME"
                 dpkg -i $HOME/$NAME >/dev/null
             else
-                echo tar xfz "$HOME/${NAME}.gz" --strip-components 1 -P -C /
-                tar xfz "$HOME/${NAME}.gz" --strip-components 1 -P -C /
+                echo tar xzf "$HOME/${NAME}" --strip-components 1 -P -C /
+                tar xzf "$HOME/${NAME}" --strip-components 1 -P -C /
             fi
         fi
     done
