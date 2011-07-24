@@ -316,6 +316,7 @@ module ejs.web {
                 break
             case Restful:
                 addHome("@Base/")
+                add("/favicon.ico", { redirect: "/static/favicon.ico" })
                 addHandlers()
                 addRestful()
                 addCatchall()
