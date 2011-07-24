@@ -48,8 +48,8 @@ if [ "${BARE}" = 0 ] ; then
 fi
 
 cpy -d ${BLD_LIB_DIR} "*.mod" "${BLD_LIB_PREFIX}"
-if `ls ${BLD_LIB_DIR}/*${BLD_SHOBJ} >/dev/null 2>&1` ; then
-	cpy -s -m 755 -d ${BLD_LIB_DIR} "*${BLD_SHOBJ}" "${BLD_LIB_PREFIX}"
+if `ls ${BLD_LIB_DIR}/*${BLD_SHOBJ}* >/dev/null 2>&1` ; then
+	cpy -v -s -m 755 -d ${BLD_LIB_DIR} "*${BLD_SHOBJ}*" "${BLD_LIB_PREFIX}"
 fi
 
 if [ $BLD_HOST_OS = WIN ] ; then
