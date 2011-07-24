@@ -1,4 +1,8 @@
 @echo off
 setlocal
 
-call "ejs" ejspage %*
+ejs --cmd "App.exeDir.portable" >mvc.dir
+set /p DIR= <mvc.dir
+del mvc.dir
+
+call "ejs" %DIR%/ejspage %*
