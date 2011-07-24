@@ -1,4 +1,4 @@
-#
+#MOB
 #   Create or modify symlinks for the most recent installed versions of Ejscript
 #
 #   Copyright (c) Embedthis Software LLC, 2003-2011. All Rights Reserved.
@@ -7,16 +7,17 @@
 TASK=$1
 ROOT_DIR="${2%/}"
 PRODUCT=ejs
-EXE=
 INC="${ROOT_DIR}/usr/include"
 MAN="${ROOT_DIR}/usr/share/man"
 PROGRAMS="angel ejs ejsc ejsmod ejssql ejsvm ejsweb mvc ejspage jem"
+LIBRARIES="libmpr libejs"
 
 if [ -x "${ROOT_DIR}/usr/local/bin" ] ; then
     BIN="${ROOT_DIR}/usr/local/bin"
 else 
     BIN="${ROOT_DIR}/usr/bin"
 fi
+LIB="${ROOT_DIR}/usr/lib"
 
 prefix="${ROOT_DIR}/usr/lib/${PRODUCT}"
 version=
@@ -39,19 +40,25 @@ else
     bin=${latest}/bin
     inc=${latest}/inc
     man=${latest}/doc/man
+    lib=${latest}/lib
 
     [ ! -x "${BIN}" ] && mkdir -p "${BIN}"
 
     home=`pwd`
-    for name in $PROGRAMS
-    do
-        name=${name}${EXE}
+    for name in $PROGRAMS ; do
+        name=${name}
         rm -f "${BIN}/${name}"
         if [ -f "${bin}/${name}" ] ; then
             ln -s "${bin}/${name}" "${BIN}/${name}"
         fi
     done
-
+    for name in $LIBRARIES ; do
+        name=${name}
+        rm -f "${LIB}/${name}*"
+        if [ -f "${lib}/${name}*" ] ; then
+            ln -s "${lib}/${name}*" "${LIB}/${name}"
+        fi
+    done
     if [ -d "${inc}" ] ; then
         [ ! -x "${INC}" ] && mkdir -p "${INC}"
         rm -rf  "${INC}/${PRODUCT}"
