@@ -35,7 +35,7 @@ module ejs.web {
                 mod: "mod",
             },
             log: {
-                showClient: true,
+                showErrors: true,
             },
             cache: {
                 adapter: "local",

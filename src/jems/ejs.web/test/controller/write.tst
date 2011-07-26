@@ -37,7 +37,7 @@ server = controllerServer(HTTP)
 
 //  writeError
 let http = fetch(HTTP + "/test/error", 201)
-assert(http.response.contains("log.showClient"))
+assert(http.response.contains("log.showErrors"))
 assert(http.response.contains("error-msg"))
 http.close()
 

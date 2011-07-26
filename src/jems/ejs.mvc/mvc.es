@@ -1449,7 +1449,7 @@ class Templates {
         enable: true,
         location: "stderr",
         level: 1,
-        showClient: true,
+        showErrors: true,
     },
 
     mvc: {

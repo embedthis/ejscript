@@ -12,12 +12,12 @@ load("../utils.es")
 server.on("readable", function (event, request: Request) {
     switch (pathInfo) {
     case "/show-client":
-        config.log.showClient = true
+        config.log.showErrors = true
         writeError(Http.ServerError, "Test Error Message")
         break
 
     case "/no-show-client":
-        config.log.showClient = false
+        config.log.showErrors = false
         writeError(Http.ServerError, "Test Error Message")
         break
 
@@ -39,6 +39,6 @@ assert(http.response.contains("DOCTYPE"))
 assert(http.response.contains("<head>"))
 assert(http.response.contains("<body>"))
 assert(http.response.contains("Test Error Message"))
-assert(http.response.contains("showClient"))
+assert(http.response.contains("showErrors"))
 http.close()
 server.close()
