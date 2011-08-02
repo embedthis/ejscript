@@ -12,7 +12,7 @@ TARGETS		+= $(DEST)/jquery.simplemodal.min.js
 TARGETS		+= $(DEST)/jquery.tablesorter.min.js
 TARGETS		+= $(DEST)/jquery.treeview.min.js
 
-min: $(TARGETS)
+gen: $(TARGETS)
 
 $(DEST)/jquery.ejs.min.js: jquery.ejs.js 
 	$(call log) "[Generate]" "minify $(DEST)/jquery.ejs.min.js"
@@ -36,7 +36,7 @@ $(DEST)/jquery.treeview.min.js: jquery.treeview.js
 	cp -r treeview.css tree-images $(DEST)
 	
 #
-#	Don't generation jquery. Use distributed minified version
+#	Don't generate jquery. Use distributed minified version.
 #
 $(DEST)/jquery.min.js: jquery.js 
 	$(call log) "[Generate]" "minify jquery.min.js"

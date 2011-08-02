@@ -21,6 +21,7 @@ module ejs.template  {
           <li>&lt;%&#64; include "file" %> Include an ejs file</li>
           <li>&lt;%&#64 layout "file" %>  Specify a layout page to use. Use layout "" to disable layout management.</li>
           <li>&lt;%&#64 view "[module::]class" %>  Specify a view class to use with optional module.</li>
+          <li>&lt;%&#64 content Mark the location to substitute content in a layout page
         </ul>
         Directives for use outside of &lt;% %&gt; 
         <ul>
@@ -246,9 +247,9 @@ module ejs.template  {
                     token.write(c)
                     break
 
-                case "\r":
                 case "\n":
                     lineNumber++
+                case "\r":
                     token.write(c)
                     tid = Token.Literal
                     break

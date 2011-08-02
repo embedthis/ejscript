@@ -923,7 +923,6 @@ class EjsMvc {
         makeDir(dirs.views.join("Base"))
         makeDir(dirs.layouts)
         makeDir(dirs.static)
-        makeDir(dirs.static.join("default"))
         makeDir(dirs.static.join("images"))
         makeDir(dirs.static.join("themes"))
 

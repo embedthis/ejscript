@@ -9,7 +9,7 @@ include 	.makedep
 NAME		= ejs.web
 MOD			= $(NAME).mod
 JEM			= $(NAME)-$(BLD_VERSION)
-POST_DIRS	= src
+POST_DIRS	= src js
 MODULE		+= $(BLD_LIB_DIR)/$(NAME).mod 
 TARGETS		+= $(MODULE) $(BLD_LIB_DIR)/www $(BLD_JEM_DIR)/$(JEM)
 
