@@ -4616,7 +4616,7 @@ HttpLoc *httpCreateLocation()
     loc->extensions = mprCreateHash(HTTP_SMALL_HASH_SIZE, MPR_HASH_CASELESS);
     loc->expires = mprCreateHash(HTTP_SMALL_HASH_SIZE, MPR_HASH_STATIC_VALUES);
     loc->expiresByType = mprCreateHash(HTTP_SMALL_HASH_SIZE, MPR_HASH_STATIC_VALUES);
-    loc->keywords = mprCreateHash(HTTP_SMALL_HASH_SIZE, 0);
+    loc->keywords = mprCreateHash(HTTP_SMALL_HASH_SIZE, MPR_HASH_CASELESS);
     loc->inputStages = mprCreateList(-1, 0);
     loc->outputStages = mprCreateList(-1, 0);
     loc->prefix = mprEmptyString();
@@ -5028,9 +5028,9 @@ void *httpGetLocationData(HttpLoc *loc, cchar *key)
 
 static void defineKeywords(HttpLoc *loc)
 {
-    mprAddKey(loc->keywords, "PRODUCT", BLD_PRODUCT);
-    mprAddKey(loc->keywords, "OS", BLD_OS);
-    mprAddKey(loc->keywords, "VERSION", BLD_VERSION);
+    mprAddKey(loc->keywords, "PRODUCT", sclone(BLD_PRODUCT));
+    mprAddKey(loc->keywords, "OS", sclone(BLD_OS));
+    mprAddKey(loc->keywords, "VERSION", sclone(BLD_VERSION));
     mprAddKey(loc->keywords, "DOCUMENT_ROOT", 0);
     mprAddKey(loc->keywords, "SERVER_ROOT", 0);
     mprAddKey(loc->keywords, "DOCUMENT_ROOT", 0);
