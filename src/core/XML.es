@@ -56,13 +56,14 @@ module ejs {
         # FUTURE
         native function addNamespace(ns: Namespace): XML
 
+        //  MOB - should be native
         /**
             Append a child to this XML object.
             @param child The child to add.
             @return This object with the added child.
          */
         function appendChild(child: XML): XML {
-            this[child.name()] = child
+            this[name()][length()] = child
             return this
         }
 

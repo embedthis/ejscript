@@ -654,7 +654,7 @@ static void incomingEjsData(HttpQueue *q, HttpPacket *packet)
         }
         httpPutForService(q, packet, 0);
         if (rx->form) {
-            rx->formVars = httpAddVarsFromQueue(rx->formVars, q);
+            httpAddVarsFromQueue(q);
         }
     } else {
         httpJoinPacketForService(q, packet, 0);
