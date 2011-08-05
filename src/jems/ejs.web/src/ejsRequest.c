@@ -639,7 +639,7 @@ static EjsAny *getRequestProperty(Ejs *ejs, EjsRequest *req, int slotNum)
         return createString(ejs, conn ? conn->ip : NULL);
 
     case ES_ejs_web_Request_responded:
-        return ejsCreateBoolean(ejs, req->responded);
+        return ejsCreateBoolean(ejs, conn->tx->responded);
 
     case ES_ejs_web_Request_responseHeaders:
         return createResponseHeaders(ejs, req);
@@ -832,7 +832,7 @@ static int setRequestProperty(Ejs *ejs, EjsRequest *req, int slotNum,  EjsObj *v
         break;
 
     case ES_ejs_web_Request_responded:
-        req->responded = (value == ESV(true));
+        req->conn->tx->responded = (value == ESV(true));
         break;
 
     case ES_ejs_web_Request_responseHeaders:
@@ -939,7 +939,6 @@ static int setRequestProperty(Ejs *ejs, EjsRequest *req, int slotNum,  EjsObj *v
     case ES_ejs_web_Request_status:
         if (!connOk(ejs, req, 1)) return 0;
         httpSetStatus(req->conn, getNum(ejs, value));
-        req->responded = 1;
         break;
     }
     return 0;
@@ -1039,10 +1038,11 @@ static EjsObj *req_finalize(Ejs *ejs, EjsRequest *req, int argc, EjsObj **argv)
     if (req->conn) {
         if (!req->writeBuffer || req->writeBuffer == ESV(null)) {
             httpFinalize(req->conn);
+        } else {
+            httpSetResponded(req->conn);
         }
     }
     req->finalized = 1;
-    req->responded = 1;
     return 0;
 }
 
@@ -1250,6 +1250,7 @@ static ssize writeResponseData(Ejs *ejs, EjsRequest *req, cchar *buf, ssize len)
             //  MOB - need API to do combined write to ByteArray and inc writePosition
             req->writeBuffer->writePosition += written;
         }
+        httpSetResponded(req->conn);
         return written;
     } else {
         return httpWriteBlock(req->conn->writeq, buf, len);
@@ -1316,7 +1317,6 @@ static EjsNumber *req_write(Ejs *ejs, EjsRequest *req, int argc, EjsObj **argv)
         req->written += written;
         total += written;
     }
-    req->responded = 1;
 
     if (!conn->writeComplete && !conn->error && HTTP_STATE_CONNECTED <= conn->state && conn->state < HTTP_STATE_COMPLETE &&
             conn->writeq->ioCount == 0) {

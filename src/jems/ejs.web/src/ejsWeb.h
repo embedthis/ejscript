@@ -109,7 +109,6 @@ typedef struct EjsRequest {
     int             closed;             /**< Request closed and "close" event has been issued */
     int             error;              /**< Request errored and "error" event has been issued */
     int             finalized;          /**< Request has written all output data */
-    int             responded;          /**< Request has done some output or changed status */
     int             running;            /**< Request has started */
     ssize           written;            /**< Count of data bytes written to the client */
 } EjsRequest;
