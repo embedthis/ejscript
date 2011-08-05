@@ -145,6 +145,7 @@ static EjsAny *sl_inc(Ejs *ejs, EjsLocalCache *cache, int argc, EjsAny **argv)
     //  UNICODE
     if ((item = mprLookupKey(cache->store, key->value)) == 0) {
         if ((item = mprAllocObj(CacheItem, manageCacheItem)) == 0) {
+            unlock(cache);
             ejsThrowMemoryError(ejs);
             return 0;
         }
@@ -379,16 +380,16 @@ static EjsNumber *sl_write(Ejs *ejs, EjsLocalCache *cache, int argc, EjsAny **ar
         item = (CacheItem*) hp->data;
         if (checkVersion) {
             if (item->version != version) {
+                unlock(cache);
                 if (throw) {
                     ejsThrowStateError(ejs, "Key version does not match");
-                } else {
-                    return ESV(null);
                 }
-                unlock(cache);
+                return ESV(null);
             }
         }
     } else {
         if ((item = mprAllocObj(CacheItem, manageCacheItem)) == 0) {
+            unlock(cache);
             ejsThrowMemoryError(ejs);
             return 0;
         }
