@@ -201,7 +201,7 @@ module ejs.web {
 
         /**
             Manually write out cached content to the client.
-            This routine will write is valid (non-expired) cached data to the client. Caching for actions is enabled by
+            This routine will write non-expired cached data to the client. Caching for actions is enabled by
             calling $cache() in the Controller.
             @return True if valid cached content was found to write to the client.
          */

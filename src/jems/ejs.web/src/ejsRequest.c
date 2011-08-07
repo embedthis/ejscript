@@ -69,6 +69,7 @@ static void defineParam(Ejs *ejs, EjsObj *params, cchar *key, cchar *svalue)
 }
 
 
+#if UNUSED
 static int sortForm(MprHash **h1, MprHash **h2)
 {
     return scmp((*h1)->key, (*h2)->key);
@@ -112,6 +113,13 @@ static EjsString *createFormData(Ejs *ejs, EjsRequest *req)
     }
     return req->formData;
 }
+#else
+
+static EjsString *createFormData(Ejs *ejs, EjsRequest *req)
+{
+    return ejsCreateStringFromAsc(ejs, httpGetFormData(req->conn));
+}
+#endif
 
 
 static EjsObj *createParams(Ejs *ejs, EjsRequest *req)
@@ -276,10 +284,6 @@ static EjsObj *createResponseHeaders(Ejs *ejs, EjsRequest *req)
 }
 
 
-/*
-    Return the session object corresponding to a request cookie. Note the Session class on which session instances are
-    based, defines helpers for all accesses to session data objects.
- */
 static EjsString *getSessionKey(Ejs *ejs, EjsRequest *req)
 {
     cchar   *cookies, *cookie;
