@@ -4634,7 +4634,9 @@ ssize mprWriteCache(MprCache *cache, cchar *key, cchar *value, MprTime lifespan,
     append = options & MPR_CACHE_APPEND;
     prepend = options & MPR_CACHE_PREPEND;
     set = options & MPR_CACHE_SET;
-
+    if ((add + append + prepend) == 0) {
+        set = 1;
+    }
     lock(cache);
     if ((hp = mprLookupKeyEntry(cache->store, key)) != 0) {
         exists++;
