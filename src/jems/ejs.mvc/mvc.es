@@ -125,7 +125,7 @@ class EjsMvc {
         let pre = "    " + mvc + " "
         error("  Commands:\n" +
             pre + "clean\n" +
-            pre + "compile [flat | app | controller names | view names]\n" +
+            pre + "compile [flat | app | controller_names | view_names]\n" +
             pre + "compile path/name.ejs ...\n" +
             pre + "generate app name\n" + 
             pre + "generate controller name [action [, action] ...]\n" + 
