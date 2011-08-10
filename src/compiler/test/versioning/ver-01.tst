@@ -17,18 +17,18 @@ var geometry2 = '
 
 //  Create the geometry module and compile drawing which requires it
 Path("geometry.es").write(geometry1)
-sh(locate("ejsc") + " geometry.es")
-sh(locate("ejsc") + " drawing.es")
-sh(locate("ejs") + " drawing.mod")
+Cmd.sh(Cmd.locate("ejsc") + " geometry.es")
+Cmd.sh(Cmd.locate("ejsc") + " drawing.es")
+Cmd.sh(Cmd.locate("ejs") + " drawing.mod")
 
 //  Modify geometry module and re-run drawing. Should fail to run.
 Path("geometry.es").write(geometry2)
-sh(locate("ejsc") + " geometry.es")
+Cmd.sh(Cmd.locate("ejsc") + " geometry.es")
 let caught = false
 //  Don't recompile drawing.es
 try {
     //  This should fail as the required geometry module has changed
-    sh(locate("ejs") + " drawing.mod")
+    Cmd.sh(Cmd.locate("ejs") + " drawing.mod")
 } catch {
     caught = true
 }

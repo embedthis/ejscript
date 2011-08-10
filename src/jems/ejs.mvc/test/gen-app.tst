@@ -4,15 +4,15 @@
 
 require ejs.unix
 
-let mvc = locate("mvc")
-let ejs = locate("ejs")
+let mvc = Cmd.locate("mvc")
+let ejs = Cmd.locate("ejs")
 
 //  Prepare
 rmdir("junk", true)
 assert(!exists("junk"))
 
 //  Generate app
-sh(mvc + " generate app junk")
+Cmd.sh(mvc + " generate app junk")
 assert(exists("junk") && isDir("junk"))
 assert(exists("junk/README"))
 assert(exists("junk/cache") && isDir("junk/cache"))

@@ -55,6 +55,7 @@ with pcre mpr http
 with --host --optional openssl ssl
 with --optional sqlite 
 with ejs
+with ejscript
 
 ###############################################################################
 #

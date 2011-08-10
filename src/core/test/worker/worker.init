@@ -1,2 +1,2 @@
 
-sh(locate("ejsc") + " --out module.mod module.es")
+Cmd.sh(Cmd.locate("ejsc") + " --out module.mod module.es")

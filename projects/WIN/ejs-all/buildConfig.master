@@ -335,15 +335,21 @@ BLD_SQLITE_BUILTIN=1
 BLD_SQLITE_LIBS=sqlite3
 
 #
-#	EJS
+#	EJ
 #
-BLD_FEATURE_EJS=1
-BLD_EJS_BUILTIN=1
-BLD_EJS_DEPENDENCIES=mpr http
-BLD_EJS_IMPORTS=${BLD_TOP}/src/ejs.h ${BLD_TOP}/src/ejsByteCode.h ${BLD_TOP}/src/ejsByteCodeTable.h ${BLD_TOP}/src/ejsCompiler.h ${BLD_TOP}/src/customize.h 
-BLD_EJS_LIBS=ejs pcre mpr http
-BLD_EJS_OPTIONAL_DEPENDENCIES=ssl
-BLD_EJS_WITHLIBS=pcre mpr http
+BLD_FEATURE_EJ=1
+BLD_EJT_BUILTIN=1
+
+#
+#	EJSCRIPT
+#
+BLD_FEATURE_EJSCRIPT=1
+BLD_EJSCRIPT_BUILTIN=1
+BLD_EJSCRIPT_DEPENDENCIES=mpr http
+BLD_EJSCRIPT_IMPORTS=${BLD_TOP}/src/ejs.h ${BLD_TOP}/src/ejsByteCode.h ${BLD_TOP}/src/ejsByteCodeTable.h ${BLD_TOP}/src/ejsCompiler.h ${BLD_TOP}/src/customize.h 
+BLD_EJSCRIPT_LIBS=ejs pcre mpr http
+BLD_EJSCRIPT_OPTIONAL_DEPENDENCIES=ssl
+BLD_EJSCRIPT_WITHLIBS=pcre mpr http
 
 BLD_FEATURE_MATRIXSSL=0
 BLD_FEATURE_OPENSSL=0
@@ -542,11 +548,13 @@ else
     #define BLD_SQLITE_LIBS "sqlite3"
     #define BLD_FEATURE_EJS 1
     #define BLD_EJS_BUILTIN 1
-    #define BLD_EJS_DEPENDENCIES "mpr http"
-    #define BLD_EJS_IMPORTS "${BLD_TOP}/src/ejs.h ${BLD_TOP}/src/ejsByteCode.h ${BLD_TOP}/src/ejsByteCodeTable.h ${BLD_TOP}/src/ejsCompiler.h ${BLD_TOP}/src/customize.h "
-    #define BLD_EJS_LIBS "ejs pcre mpr http"
-    #define BLD_EJS_OPTIONAL_DEPENDENCIES "ssl"
-    #define BLD_EJS_WITHLIBS "pcre mpr http"
+    #define BLD_FEATURE_EJSCRIPT 1
+    #define BLD_EJSCRIPT_BUILTIN 1
+    #define BLD_EJSCRIPT_DEPENDENCIES "mpr http"
+    #define BLD_EJSCRIPT_IMPORTS "${BLD_TOP}/src/ejs.h ${BLD_TOP}/src/ejsByteCode.h ${BLD_TOP}/src/ejsByteCodeTable.h ${BLD_TOP}/src/ejsCompiler.h ${BLD_TOP}/src/customize.h "
+    #define BLD_EJSCRIPT_LIBS "ejs pcre mpr http"
+    #define BLD_EJSCRIPT_OPTIONAL_DEPENDENCIES "ssl"
+    #define BLD_EJSCRIPT_WITHLIBS "pcre mpr http"
     #define BLD_FEATURE_MATRIXSSL 0
     #define BLD_FEATURE_OPENSSL 0
     #define BLD_FEATURE_SSL 0

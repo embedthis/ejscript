@@ -342,11 +342,17 @@ BLD_SQLITE_LIBS=sqlite3
 #
 BLD_FEATURE_EJS=1
 BLD_EJS_BUILTIN=1
-BLD_EJS_DEPENDENCIES=mpr http
-BLD_EJS_IFLAGS=-I${BLD_TOP}/src/include 
-BLD_EJS_LIBS=ejs pcre mprssl libmatrixssl libeay32 ssleay32 mpr http
-BLD_EJS_OPTIONAL_DEPENDENCIES= ssl
-BLD_EJS_WITHLIBS=pcre mprssl libmatrixssl libeay32 ssleay32 mpr http
+
+#
+#	EJSCRIPT
+#
+BLD_FEATURE_EJSCRIPT=1
+BLD_EJSCRIPT_BUILTIN=1
+BLD_EJSCRIPT_DEPENDENCIES=mpr http
+BLD_EJSCRIPT_IFLAGS=-I${BLD_TOP}/src/include 
+BLD_EJSCRIPT_LIBS=ejs pcre mprssl libmatrixssl libeay32 ssleay32 mpr http
+BLD_EJSCRIPT_OPTIONAL_DEPENDENCIES= ssl
+BLD_EJSCRIPT_WITHLIBS=pcre mprssl libmatrixssl libeay32 ssleay32 mpr http
 
 EXPORT_OBJECTS ?= 1
 ifeq ($(EXPORT_OBJECTS),0)

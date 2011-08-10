@@ -1,3 +1,5 @@
+#!/usr/bin/env ejs
+
 /*
     Start http server
 */

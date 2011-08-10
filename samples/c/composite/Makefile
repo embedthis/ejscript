@@ -18,8 +18,8 @@ sample.mod: shape.es
 
 compileExtra: sample.mod sample$(BLD_SHOBJ)
 
-sample$(BLD_SHOBJ) : $(OBJECTS) $(BLD_EJS_MAKEDEP) sample.slots.h
-	bld --library sample --libs "$(BLD_EJS_LIBS)" $(OBJECTS)
+sample$(BLD_SHOBJ) : $(OBJECTS) sample.slots.h
+	bld --library sample --libs "$(BLD_EJSCRIPT_LIBS)" $(OBJECTS)
 
 cleanExtra:
 	rm -f *.lst *.mod *$(BLD_LIB)

@@ -92,7 +92,7 @@ module ejs {
             //  MOB - should search all windows cmd extensions: .bat, .com - see MprCmd/CGI
             for each (dir in App.getenv("PATH").split(App.SearchSeparator)) {
                 let path = Path(dir).join(program)
-                if (path.exists) {
+                if (path.exists && !path.isDir) {
                     return path
                 }
             }

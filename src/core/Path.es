@@ -212,6 +212,7 @@ module ejs {
          */
         native function get isAbsolute(): Boolean
 
+        //  MOB - need isExecutable
         /**
             Is the path a directory. If the path is a symbolic link, the target of the link is tested.
             @return true if the file is a directory

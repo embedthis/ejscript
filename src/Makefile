@@ -52,7 +52,7 @@ endif
 library: $(EJS_LIB)
 
 $(EJS_LIB): $(EJS_SOURCES) $(EJS_OBJECTS)
-	bld --library $(EJS_LIB) --libs "$(BLD_EJS_WITHLIBS)" $(EJS_OBJECTS)
+	bld --library $(EJS_LIB) --libs "$(BLD_EJSCRIPT_WITHLIBS)" $(EJS_OBJECTS)
 
 #
 #	Build extra native tools (ejspage, ejssql, mvc)

@@ -316,12 +316,19 @@ BLD_SQLITE_LIBS=sqlite3
 #	EJS
 #
 BLD_FEATURE_EJS=1
-BLD_EJS=/ejs
+BLD_EJS=ejs
 BLD_EJS_BUILTIN=1
-BLD_EJS_DEPENDENCIES=mpr http
-BLD_EJS_LIBS=ejs pcre mprssl ssl crypto mpr http
-BLD_EJS_OPTIONAL_DEPENDENCIES=ssl
-BLD_EJS_WITHLIBS=pcre mprssl ssl crypto mpr http
+
+#
+#	EJSCRIPT
+#
+BLD_FEATURE_EJSCRIPT=1
+BLD_EJSCRIPT=ejs
+BLD_EJSCRIPT_BUILTIN=1
+BLD_EJSCRIPT_DEPENDENCIES=mpr http
+BLD_EJSCRIPT_LIBS=ejs pcre mprssl ssl crypto mpr http
+BLD_EJSCRIPT_OPTIONAL_DEPENDENCIES=ssl
+BLD_EJSCRIPT_WITHLIBS=pcre mprssl ssl crypto mpr http
 
 #
 #   Ejscript Libraries and Directories
@@ -510,12 +517,15 @@ else
     #define BLD_SQLITE_BUILTIN 1
     #define BLD_SQLITE_LIBS "sqlite3"
     #define BLD_FEATURE_EJS 1
-    #define BLD_EJS "/ejs"
+    #define BLD_EJS "ejs"
     #define BLD_EJS_BUILTIN 1
-    #define BLD_EJS_DEPENDENCIES "mpr http"
-    #define BLD_EJS_LIBS "ejs pcre mprssl ssl crypto mpr http"
-    #define BLD_EJS_OPTIONAL_DEPENDENCIES "ssl"
-    #define BLD_EJS_WITHLIBS "pcre mprssl ssl crypto mpr http"
+    #define BLD_FEATURE_EJSCRIPT 1
+    #define BLD_EJSCRIPT "ejs"
+    #define BLD_EJSCRIPT_BUILTIN 1
+    #define BLD_EJSCRIPT_DEPENDENCIES "mpr http"
+    #define BLD_EJSCRIPT_LIBS "ejs pcre mprssl ssl crypto mpr http"
+    #define BLD_EJSCRIPT_OPTIONAL_DEPENDENCIES "ssl"
+    #define BLD_EJSCRIPT_WITHLIBS "pcre mprssl ssl crypto mpr http"
     #define BLD_JEM_DIR "${BLD_OUT_DIR}/jlocal"
 #endif /* IGNORE_IN_C_CODE */
 #if IGNORE_IN_C_CODE

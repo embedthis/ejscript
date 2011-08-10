@@ -32,10 +32,6 @@ module ejs.test {
     function cleanDir(path) {
     }
 
-    function sh(args): Void {
-        System.runx("/bin/sh -c \"" + env() + args + "\"")
-    }
-
     function testCmd(args): Boolean
         true
 

@@ -8,16 +8,16 @@ const HTTP = ":" + PORT
 
 require ejs.unix
 
-let mvc = locate("mvc")
-let ejs = locate("ejs")
+let mvc = Cmd.locate("mvc")
+let ejs = Cmd.locate("ejs")
 
 //  Prepare
 rmdir("junk", true)
 assert(!exists("junk"))
 
 //  Generate app and scaffold
-sh(mvc + " --listen " + HTTP + " generate app junk")
-sh("cd junk ; " + mvc + " compile")
+Cmd.sh(mvc + " --listen " + HTTP + " generate app junk")
+Cmd.sh("cd junk ; " + mvc + " compile")
 
 //  Start web server. Use ejs start.es so we can kill it. Change to mvc run when Cmd supports kill group
 chdir("junk")
