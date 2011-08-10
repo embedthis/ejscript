@@ -23,5 +23,5 @@ defineComponent() {
         warnComponent ejs
         return
 	fi
-    configureComponent --path "$path" ejs
+    configureComponent $builtin --path "$path" ejs
 }
