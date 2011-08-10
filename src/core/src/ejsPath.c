@@ -324,7 +324,7 @@ static EjsObj *copyPath(Ejs *ejs, EjsPath *fp, int argc, EjsObj **argv)
     }
     to = mprOpenFile(toPath, O_CREAT | O_WRONLY | O_TRUNC | O_BINARY, EJS_FILE_PERMS);
     if (to == 0) {
-        ejsThrowIOError(ejs, "Can't create %s", toPath);
+        ejsThrowIOError(ejs, "Can't create %s, errno %d", toPath, errno);
         mprCloseFile(from);
         return 0;
     }
