@@ -1,214 +1,85 @@
-﻿<?xml version="1.0" encoding="UTF-8"?>
-<VisualStudioProject
-	ProjectType="Visual C++"
-	Version="8.00"
-	Name="ejsc"
-	ProjectGUID="{71A19533-E8CC-41E0-8C56-27DEE236122F}"
-	Keyword="Win32Proj"
-	>
-	<Platforms>
-		<Platform
-			Name="Win32"
-		/>
-	</Platforms>
-	<ToolFiles>
-	</ToolFiles>
-	<Configurations>
-		<Configuration
-			Name="Release|Win32"
-			OutputDirectory="$(PlatformName)\$(ConfigurationName)"
-			IntermediateDirectory="$(PlatformName)\$(ConfigurationName)"
-			ConfigurationType="1"
-			CharacterSet="0"
-			>
-			<Tool
-				Name="VCPreBuildEventTool"
-			/>
-			<Tool
-				Name="VCCustomBuildTool"
-				Description="Build Ejscript Modules"
-				CommandLine="if not exist $(TargetDir)\ejs.mod echo Building ejs.mod &amp; cd $(ProjectDir)/../../../src &amp; $(TargetDir)\ejsc --debug --optimize 9 --bind --require null --out $(TargetDir)/ejs.mod core/App.es core/Array.es core/BinaryStream.es core/Block.es core/Boolean.es core/ByteArray.es core/Cmd.es core/CmdArgs.es core/Compat.es core/Config.es core/Date.es core/Debug.es core/Emitter.es core/Error.es core/File.es core/FileSystem.es core/Frame.es core/Function.es core/GC.es core/Global.es core/Http.es core/Iterator.es core/JSON.es core/Loader.es core/Locale.es core/LogFile.es core/Logger.es core/Math.es core/Memory.es core/Name.es core/Namespace.es core/Null.es core/Number.es core/Object.es core/Path.es core/Promise.es core/Reflect.es core/RegExp.es core/Socket.es core/Stream.es core/String.es core/System.es core/TextStream.es core/Timer.es core/Type.es core/Uri.es core/Void.es core/Worker.es core/XML.es core/XMLHttp.es core/XMLList.es&#x0D;&#x0A;if not exist $(ProjectDir)\..\..\..\out\include\ejs.slots.h echo Building ejs.slots.h &amp; $(TargetDir)\ejsmod --require null --listing --cslots $(TargetDir)\ejs.mod &amp; copy *.slots.h $(ProjectDir)\..\..\..\out\include&#x0D;&#x0A;if not exist $(TargetDir)\ejs.web.mod echo Building jems &amp; cd $(ProjectDir)\..\..\..\src\jems &amp; $(TargetDir)\ejsc --debug --optimize 9 ejs.cjs/CommonJS.es ejs.db/Database.es ejs.db/DatabaseConnector.es ejs.db.couch/Couch.es ejs.db.mapper/Record.es ejs.db.sqlite/Sqlite.es ejs.tar/Tar.es ejs.unix/Unix.es ejs.web/Cascade.es ejs.web/CommonLog.es ejs.web/ContentType.es ejs.web/Controller.es ejs.web/Dir.es ejs.web/Google.es ejs.web/Head.es ejs.web/Html.es ejs.web/HttpServer.es ejs.web/MethodOverride.es ejs.web/Middleware.es ejs.web/Mvc.es ejs.web/Request.es ejs.web/Router.es ejs.web/Session.es ejs.web/ShowExceptions.es ejs.web/Static.es ejs.web/Template.es ejs.web/UploadFile.es ejs.web/UrlMap.es ejs.web/Utils.es ejs.web/View.es ejs.web/Web.es ejs.web.jsgi/Cascade.es ejs.web.jsgi/Head.es ejs.web.jsgi/Static.es ejs.template/TemplateParser.es &amp; copy *.mod $(TargetDir)&#x0D;&#x0A;if not exist $(ProjectDir)\..\..\..\out\include\ejs.web.slots.h echo Building jem slots &amp; cd $(TargetDir) &amp; $(TargetDir)\ejsmod --listing --cslots ejs.db.mod ejs.db.couch.mod ejs.db.mapper.mod ejs.db.sqlite.mod  ejs.tar.mod  ejs.unix.mod ejs.web.mod ejs.template.mod &amp; copy *.slots.h $(ProjectDir)\..\..\..\out\include&#x0D;&#x0A;"
-				Outputs="$(TargetDir)/ejs.mod"
-			/>
-			<Tool
-				Name="VCXMLDataGeneratorTool"
-			/>
-			<Tool
-				Name="VCWebServiceProxyGeneratorTool"
-			/>
-			<Tool
-				Name="VCMIDLTool"
-			/>
-			<Tool
-				Name="VCCLCompilerTool"
-				Optimization="1"
-				EnableIntrinsicFunctions="true"
-				FavorSizeOrSpeed="1"
-				AdditionalIncludeDirectories="../../../src/deps/mpr;../../../src/include/master;../../../src/deps/pcre;../../../src/deps/http;../../../out/include;../../../src/include"
-				PreprocessorDefinitions="WIN32;_DEBUG;_WINDOWS;;_REENTRANT;_MT"
-				StringPooling="true"
-				MinimalRebuild="true"
-				ExceptionHandling="0"
-				RuntimeLibrary="2"
-				EnableFunctionLevelLinking="true"
-				UsePrecompiledHeader="0"
-				WarningLevel="3"
-				DebugInformationFormat="3"
-				CompileAs="0"
-			/>
-			<Tool
-				Name="VCManagedResourceCompilerTool"
-			/>
-			<Tool
-				Name="VCResourceCompilerTool"
-			/>
-			<Tool
-				Name="VCPreLinkEventTool"
-			/>
-			<Tool
-				Name="VCLinkerTool"
-				AdditionalDependencies="ws2_32.lib libejs.lib libmpr.lib"
-				LinkIncremental="1"
-				AdditionalLibraryDirectories="$(OutDir)"
-				GenerateDebugInformation="false"
-				SubSystem="1"
-				OptimizeReferences="2"
-				TargetMachine="1"
-			/>
-			<Tool
-				Name="VCALinkTool"
-			/>
-			<Tool
-				Name="VCManifestTool"
-			/>
-			<Tool
-				Name="VCXDCMakeTool"
-			/>
-			<Tool
-				Name="VCBscMakeTool"
-			/>
-			<Tool
-				Name="VCFxCopTool"
-			/>
-			<Tool
-				Name="VCAppVerifierTool"
-			/>
-			<Tool
-				Name="VCWebDeploymentTool"
-			/>
-			<Tool
-				Name="VCPostBuildEventTool"
-			/>
-		</Configuration>
-		<Configuration
-			Name="Debug|Win32"
-			OutputDirectory="$(PlatformName)\$(ConfigurationName)"
-			IntermediateDirectory="$(PlatformName)\$(ConfigurationName)"
-			ConfigurationType="1"
-			CharacterSet="0"
-			>
-			<Tool
-				Name="VCPreBuildEventTool"
-			/>
+<?xml version="1.0" encoding="utf-8"?>
+<Project DefaultTargets="Build" ToolsVersion="4.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+
+  <ItemGroup Label="ProjectConfigurations">
+    <ProjectConfiguration Include="Debug|Win32">
+      <Configuration>Debug</Configuration>
+      <Platform>Win32</Platform>
+    </ProjectConfiguration>
+    <ProjectConfiguration Include="Release|Win32">
+      <Configuration>Release</Configuration>
+      <Platform>Win32</Platform>
+    </ProjectConfiguration>
+  </ItemGroup>
+
+  <PropertyGroup Label="Globals">
+    <ProjectGuid>{CC744156-DD04-431C-93DC-52C429356C92}</ProjectGuid>
+    <RootNamespace />
+    <Keyword>Win32Proj</Keyword>
+  </PropertyGroup>
+
+  <Import Project="$(VCTargetsPath)\Microsoft.Cpp.Default.props" />
+
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'" Label="Configuration">
+    <ConfigurationType>Application</ConfigurationType>
+    <CharacterSet>NotSet</CharacterSet>
+  </PropertyGroup>
+
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'" Label="Configuration">
+    <ConfigurationType>Application</ConfigurationType>
+    <CharacterSet>NotSet</CharacterSet>
+  </PropertyGroup>
+
+  <Import Project="$(VCTargetsPath)\Microsoft.Cpp.props" />
+
+  <ImportGroup Label="ExtensionSettings">
+  </ImportGroup>
+
+  <ImportGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'" Label="PropertySheets">
+    <Import Project="$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props" Condition="exists('$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props')" Label="LocalAppDataPlatform" />
+    
+    <Import Project="debug.props" />
+  </ImportGroup>
+
+  <ImportGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'" Label="PropertySheets">
+    <Import Project="$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props" Condition="exists('$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props')" Label="LocalAppDataPlatform" />
+    
+    <Import Project="release.props" />
+  </ImportGroup>
+
+  <PropertyGroup Label="UserMacros" />
+
+  <PropertyGroup>
+    <_ProjectFileVersion>10.0.30319.1</_ProjectFileVersion>
+    <OutDir Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">..\..\..\out\bin\</OutDir>
+    <IntDir Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">..\..\..\out\obj\</IntDir>
+    <OutDir Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">..\..\..\out\bin\</OutDir>
+    <IntDir Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">..\..\..\out\obj\</IntDir>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <ClInclude Include="..\..\..\out\include\buildConfig.h" />
+  </ItemGroup>
+
+  <ItemGroup >
+    <ClCompile Include="..\..\..\src\cmd\ejsc.c" />
+  </ItemGroup>
+
+  <ItemDefinitionGroup >
+    <Link>
+      <AdditionalDependencies>ws2_32.lib;libejs.lib;libmpr.lib;%(AdditionalDependencies)</AdditionalDependencies>
+    </Link>
+  </ItemDefinitionGroup>
+  <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
+
 			<Tool
 				Name="VCCustomBuildTool"
 				Description="Build Ejscript Modules"
-				CommandLine="if not exist $(TargetDir)\ejs.mod echo Building ejs.mod &amp; cd $(ProjectDir)/../../../src &amp; $(TargetDir)\ejsc --debug --optimize 9 --bind --require null --out $(TargetDir)/ejs.mod core/App.es core/Array.es core/BinaryStream.es core/Block.es core/Boolean.es core/ByteArray.es core/Cmd.es core/CmdArgs.es core/Compat.es core/Config.es core/Date.es core/Debug.es core/Emitter.es core/Error.es core/File.es core/FileSystem.es core/Frame.es core/Function.es core/GC.es core/Global.es core/Http.es core/Iterator.es core/JSON.es core/Loader.es core/Locale.es core/LogFile.es core/Logger.es core/Math.es core/Memory.es core/Name.es core/Namespace.es core/Null.es core/Number.es core/Object.es core/Path.es core/Promise.es core/Reflect.es core/RegExp.es core/Socket.es core/Stream.es core/String.es core/System.es core/TextStream.es core/Timer.es core/Type.es core/Uri.es core/Void.es core/Worker.es core/XML.es core/XMLHttp.es core/XMLList.es&#x0D;&#x0A;if not exist $(ProjectDir)\..\..\..\out\include\ejs.slots.h echo Building ejs.slots.h &amp; $(TargetDir)\ejsmod --require null --listing --cslots $(TargetDir)\ejs.mod &amp; copy *.slots.h $(ProjectDir)\..\..\..\out\include&#x0D;&#x0A;if not exist $(TargetDir)\ejs.web.mod echo Building jems &amp; cd $(ProjectDir)\..\..\..\src\jems &amp; $(TargetDir)\ejsc --debug --optimize 9 ejs.cjs/CommonJS.es ejs.db/Database.es ejs.db/DatabaseConnector.es ejs.db.couch/Couch.es ejs.db.mapper/Record.es ejs.db.sqlite/Sqlite.es ejs.tar/Tar.es ejs.unix/Unix.es ejs.web/Cascade.es ejs.web/CommonLog.es ejs.web/ContentType.es ejs.web/Controller.es ejs.web/Dir.es ejs.web/Google.es ejs.web/Head.es ejs.web/Html.es ejs.web/HttpServer.es ejs.web/MethodOverride.es ejs.web/Middleware.es ejs.web/Mvc.es ejs.web/Request.es ejs.web/Router.es ejs.web/Session.es ejs.web/ShowExceptions.es ejs.web/Static.es ejs.web/Template.es ejs.web/UploadFile.es ejs.web/UrlMap.es ejs.web/Utils.es ejs.web/View.es ejs.web/Web.es ejs.web.jsgi/Cascade.es ejs.web.jsgi/Head.es ejs.web.jsgi/Static.es ejs.template/TemplateParser.es &amp; copy *.mod $(TargetDir)&#x0D;&#x0A;if not exist $(ProjectDir)\..\..\..\out\include\ejs.web.slots.h echo Building jem slots &amp; cd $(TargetDir) &amp; $(TargetDir)\ejsmod --listing --cslots ejs.db.mod ejs.db.couch.mod ejs.db.mapper.mod ejs.db.sqlite.mod  ejs.tar.mod  ejs.unix.mod ejs.web.mod ejs.template.mod &amp; copy *.slots.h $(ProjectDir)\..\..\..\out\include&#x0D;&#x0A;"
+				CommandLine="if not exist $(TargetDir)\ejs.mod echo Building ejs.mod &amp; cd $(ProjectDir)/../../../src &amp; $(TargetDir)\ejsc --debug --optimize 9 --bind --require null --out $(TargetDir)/ejs.mod core/App.es core/Array.es core/BinaryStream.es core/Block.es core/Boolean.es core/ByteArray.es core/Cmd.es core/CmdArgs.es core/Compat.es core/Config.es core/Date.es core/Debug.es core/Emitter.es core/Error.es core/File.es core/FileSystem.es core/Frame.es core/Function.es core/GC.es core/Global.es core/Http.es core/Iterator.es core/JSON.es core/Loader.es core/Locale.es core/LogFile.es core/Logger.es core/Math.es core/Memory.es core/Name.es core/Namespace.es core/Null.es core/Number.es core/Object.es core/Path.es core/Promise.es core/Reflect.es core/RegExp.es core/Socket.es core/Stream.es core/String.es core/System.es core/TextStream.es core/Timer.es core/Type.es core/Uri.es core/Void.es core/Worker.es core/XML.es core/XMLHttp.es core/XMLList.es&#x0D;&#x0A; if not exist $(ProjectDir)\..\..\..\out\include\ejs.slots.h echo Building ejs.slots.h &amp; $(TargetDir)\ejsmod --require null --listing --cslots $(TargetDir)\ejs.mod &amp; copy *.slots.h $(ProjectDir)\..\..\..\out\include&#x0D;&#x0A; if not exist $(TargetDir)\ejs.web.mod echo Building jems &amp; cd $(ProjectDir)\..\..\..\src\jems &amp; $(TargetDir)\ejsc --debug --optimize 9 ejs.cjs/CommonJS.es ejs.db/Database.es ejs.db/DatabaseConnector.es ejs.db.couch/Couch.es ejs.db.mapper/Record.es ejs.db.sqlite/Sqlite.es ejs.tar/Tar.es ejs.unix/Unix.es ejs.web/Cascade.es ejs.web/CommonLog.es ejs.web/ContentType.es ejs.web/Controller.es ejs.web/Dir.es ejs.web/Google.es ejs.web/Head.es ejs.web/Html.es ejs.web/HttpServer.es ejs.web/MethodOverride.es ejs.web/Middleware.es ejs.web/Mvc.es ejs.web/Request.es ejs.web/Router.es ejs.web/Session.es ejs.web/ShowExceptions.es ejs.web/Static.es ejs.web/Template.es ejs.web/UploadFile.es ejs.web/UrlMap.es ejs.web/Utils.es ejs.web/View.es ejs.web/Web.es ejs.web.jsgi/Cascade.es ejs.web.jsgi/Head.es ejs.web.jsgi/Static.es ejs.template/TemplateParser.es &amp; copy *.mod $(TargetDir)&#x0D;&#x0A; if not exist $(ProjectDir)\..\..\..\out\include\ejs.web.slots.h echo Building jem slots &amp; cd $(TargetDir) &amp; $(TargetDir)\ejsmod --listing --cslots ejs.db.mod ejs.db.couch.mod ejs.db.mapper.mod ejs.db.sqlite.mod  ejs.tar.mod  ejs.unix.mod ejs.web.mod ejs.template.mod &amp; copy *.slots.h $(ProjectDir)\..\..\..\out\include&#x0D;&#x0A;"
 				Outputs="$(TargetDir)/ejs.mod"
 			/>
-			<Tool
-				Name="VCXMLDataGeneratorTool"
-			/>
-			<Tool
-				Name="VCWebServiceProxyGeneratorTool"
-			/>
-			<Tool
-				Name="VCMIDLTool"
-			/>
-			<Tool
-				Name="VCCLCompilerTool"
-				Optimization="0"
-				FavorSizeOrSpeed="1"
-				AdditionalIncludeDirectories="../../../src/deps/mpr;../../../src/include/master;../../../src/deps/pcre;../../../src/deps/http;../../../out/include;../../../src/include"
-				PreprocessorDefinitions="WIN32;_DEBUG;_WINDOWS;;_REENTRANT;_MT"
-				StringPooling="true"
-				MinimalRebuild="true"
-				ExceptionHandling="0"
-				BasicRuntimeChecks="3"
-				RuntimeLibrary="3"
-				UsePrecompiledHeader="0"
-				WarningLevel="3"
-				DebugInformationFormat="4"
-				CompileAs="0"
-			/>
-			<Tool
-				Name="VCManagedResourceCompilerTool"
-			/>
-			<Tool
-				Name="VCResourceCompilerTool"
-			/>
-			<Tool
-				Name="VCPreLinkEventTool"
-			/>
-			<Tool
-				Name="VCLinkerTool"
-				AdditionalDependencies="ws2_32.lib libejs.lib libmpr.lib"
-				LinkIncremental="2"
-				AdditionalLibraryDirectories="$(OutDir)"
-				GenerateDebugInformation="true"
-				SubSystem="1"
-				TargetMachine="1"
-			/>
-			<Tool
-				Name="VCALinkTool"
-			/>
-			<Tool
-				Name="VCManifestTool"
-			/>
-			<Tool
-				Name="VCXDCMakeTool"
-			/>
-			<Tool
-				Name="VCBscMakeTool"
-			/>
-			<Tool
-				Name="VCFxCopTool"
-			/>
-			<Tool
-				Name="VCAppVerifierTool"
-			/>
-			<Tool
-				Name="VCWebDeploymentTool"
-			/>
-			<Tool
-				Name="VCPostBuildEventTool"
-			/>
-		</Configuration>
-	</Configurations>
-	<References>
-	</References>
-	<Files>
-		<Filter
-			Name="Header Files"
-			Filter="h;hpp;hxx;hm;inl;inc;xsd"
-			UniqueIdentifier="{269fe6dc-9f91-490f-ba9e-c3ab1937ac2b}"
-			>
-			<File
-				RelativePath="..\..\..\out\include\buildConfig.h"
-				>
-			</File>
-		</Filter>
-		<Filter
-			Name="Source Files"
-			Filter="cpp;c;cc;cxx;def;odl;idl;hpj;bat;asm;asmx"
-			UniqueIdentifier="{0c5e2dff-2502-4752-8c0e-73e5d05e6ba0}"
-			>
-			<File
-				RelativePath="..\..\..\src\cmd\ejsc.c"
-				>
-			</File>
-		</Filter>
-	</Files>
-	<Globals>
-	</Globals>
-</VisualStudioProject>
+
+
+  <ImportGroup Label="ExtensionTargets">
+  </ImportGroup>
+</Project>

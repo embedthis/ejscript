@@ -123,6 +123,7 @@ EXPORTS
   mprExpireCache
   mprFatalError
   mprFinalizeCmd
+  mprFindFiles
   mprFlushBuf
   mprFlushFile
   mprFlushSocket
@@ -488,6 +489,7 @@ EXPORTS
   mprWriteFile
   mprWriteFileFormat
   mprWriteFileString
+  mprWritePath
   mprWriteRegistry
   mprWriteSocket
   mprWriteSocketString

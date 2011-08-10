@@ -1,474 +1,139 @@
-﻿<?xml version="1.0" encoding="UTF-8"?>
-<VisualStudioProject
-	ProjectType="Visual C++"
-	Version="8.00"
-	Name="libejs"
-	ProjectGUID="{1EABCABF-519E-4B55-9AB7-6151DF029FC4}"
-	Keyword="Win32Proj"
-	>
-	<Platforms>
-		<Platform
-			Name="Win32"
-		/>
-	</Platforms>
-	<ToolFiles>
-	</ToolFiles>
-	<Configurations>
-		<Configuration
-			Name="Release|Win32"
-			OutputDirectory="$(PlatformName)\$(ConfigurationName)"
-			IntermediateDirectory="$(PlatformName)\$(ConfigurationName)"
-			ConfigurationType="2"
-			CharacterSet="0"
-			>
-			<Tool
-				Name="VCPreBuildEventTool"
-			/>
-			<Tool
-				Name="VCCustomBuildTool"
-			/>
-			<Tool
-				Name="VCXMLDataGeneratorTool"
-			/>
-			<Tool
-				Name="VCWebServiceProxyGeneratorTool"
-			/>
-			<Tool
-				Name="VCMIDLTool"
-			/>
-			<Tool
-				Name="VCCLCompilerTool"
-				Optimization="1"
-				EnableIntrinsicFunctions="true"
-				FavorSizeOrSpeed="1"
-				AdditionalIncludeDirectories="../../../src/deps/mpr;../../../src/include/master;../../../src/deps/pcre;../../../src/deps/http;../../../out/include;../../../src/include"
-				PreprocessorDefinitions="WIN32;_DEBUG;_WINDOWS;;_REENTRANT;_MT"
-				StringPooling="true"
-				MinimalRebuild="true"
-				ExceptionHandling="0"
-				RuntimeLibrary="2"
-				EnableFunctionLevelLinking="true"
-				UsePrecompiledHeader="0"
-				WarningLevel="3"
-				DebugInformationFormat="3"
-				CompileAs="0"
-			/>
-			<Tool
-				Name="VCManagedResourceCompilerTool"
-			/>
-			<Tool
-				Name="VCResourceCompilerTool"
-			/>
-			<Tool
-				Name="VCPreLinkEventTool"
-			/>
-			<Tool
-				Name="VCLinkerTool"
-				AdditionalDependencies="libmpr.lib libhttp.lib libsqlite3.lib ws2_32.lib"
-				LinkIncremental="1"
-				AdditionalLibraryDirectories="$(OutDir)"
-				ModuleDefinitionFile="libejs.def"
-				GenerateDebugInformation="false"
-				SubSystem="1"
-				OptimizeReferences="2"
-				TargetMachine="1"
-			/>
-			<Tool
-				Name="VCALinkTool"
-			/>
-			<Tool
-				Name="VCManifestTool"
-			/>
-			<Tool
-				Name="VCXDCMakeTool"
-			/>
-			<Tool
-				Name="VCBscMakeTool"
-			/>
-			<Tool
-				Name="VCFxCopTool"
-			/>
-			<Tool
-				Name="VCAppVerifierTool"
-			/>
-			<Tool
-				Name="VCWebDeploymentTool"
-			/>
-			<Tool
-				Name="VCPostBuildEventTool"
-			/>
-		</Configuration>
-		<Configuration
-			Name="Debug|Win32"
-			OutputDirectory="$(PlatformName)\$(ConfigurationName)"
-			IntermediateDirectory="$(PlatformName)\$(ConfigurationName)"
-			ConfigurationType="2"
-			CharacterSet="0"
-			>
-			<Tool
-				Name="VCPreBuildEventTool"
-			/>
-			<Tool
-				Name="VCCustomBuildTool"
-			/>
-			<Tool
-				Name="VCXMLDataGeneratorTool"
-			/>
-			<Tool
-				Name="VCWebServiceProxyGeneratorTool"
-			/>
-			<Tool
-				Name="VCMIDLTool"
-			/>
-			<Tool
-				Name="VCCLCompilerTool"
-				Optimization="0"
-				FavorSizeOrSpeed="1"
-				AdditionalIncludeDirectories="../../../src/deps/mpr;../../../src/include/master;../../../src/deps/pcre;../../../src/deps/http;../../../out/include;../../../src/include"
-				PreprocessorDefinitions="WIN32;_DEBUG;_WINDOWS;;_REENTRANT;_MT"
-				StringPooling="true"
-				MinimalRebuild="true"
-				ExceptionHandling="0"
-				BasicRuntimeChecks="3"
-				RuntimeLibrary="3"
-				UsePrecompiledHeader="0"
-				WarningLevel="3"
-				DebugInformationFormat="4"
-				CompileAs="0"
-			/>
-			<Tool
-				Name="VCManagedResourceCompilerTool"
-			/>
-			<Tool
-				Name="VCResourceCompilerTool"
-			/>
-			<Tool
-				Name="VCPreLinkEventTool"
-			/>
-			<Tool
-				Name="VCLinkerTool"
-				AdditionalDependencies="libmpr.lib libhttp.lib libsqlite3.lib ws2_32.lib"
-				LinkIncremental="2"
-				AdditionalLibraryDirectories="$(OutDir)"
-				ModuleDefinitionFile="libejs.def"
-				GenerateDebugInformation="true"
-				SubSystem="1"
-				TargetMachine="1"
-			/>
-			<Tool
-				Name="VCALinkTool"
-			/>
-			<Tool
-				Name="VCManifestTool"
-			/>
-			<Tool
-				Name="VCXDCMakeTool"
-			/>
-			<Tool
-				Name="VCBscMakeTool"
-			/>
-			<Tool
-				Name="VCFxCopTool"
-			/>
-			<Tool
-				Name="VCAppVerifierTool"
-			/>
-			<Tool
-				Name="VCWebDeploymentTool"
-			/>
-			<Tool
-				Name="VCPostBuildEventTool"
-			/>
-		</Configuration>
-	</Configurations>
-	<References>
-	</References>
-	<Files>
-		<Filter
-			Name="Header Files"
-			Filter="h;hpp;hxx;hm;inl;inc;xsd"
-			UniqueIdentifier="{b2669593-f2f6-4762-8d42-8d1bc04e58a6}"
-			>
-			<File
-				RelativePath="..\..\..\out\include\buildConfig.h"
-				>
-			</File>
-			<File
-				RelativePath="..\..\..\src\include\master\ejs.cache.slots.h"
-				>
-			</File>
-			<File
-				RelativePath="..\..\..\src\include\master\ejs.db.sqlite.slots.h"
-				>
-			</File>
-			<File
-				RelativePath="..\..\..\src\include\ejs.h"
-				>
-			</File>
-			<File
-				RelativePath="..\..\..\src\include\master\ejs.slots.h"
-				>
-			</File>
-			<File
-				RelativePath="..\..\..\src\include\master\ejs.web.slots.h"
-				>
-			</File>
-			<File
-				RelativePath="..\..\..\src\include\ejsByteCode.h"
-				>
-			</File>
-			<File
-				RelativePath="..\..\..\src\include\ejsByteCodeTable.h"
-				>
-			</File>
-			<File
-				RelativePath="..\..\..\src\include\ejsByteGoto.h"
-				>
-			</File>
-			<File
-				RelativePath="..\..\..\src\include\ejsTune.h"
-				>
-			</File>
-			<File
-				RelativePath="..\..\..\src\include\ejsWeb.h"
-				>
-			</File>
-		</Filter>
-		<Filter
-			Name="Source Files"
-			Filter="cpp;c;cc;cxx;def;odl;idl;hpj;bat;asm;asmx"
-			UniqueIdentifier="{7e80b5ef-e89c-4cf8-820b-fe33fe6606bf}"
-			>
-			<File
-				RelativePath="..\..\..\src\compiler\ecAst.c"
-				>
-			</File>
-			<File
-				RelativePath="..\..\..\src\compiler\ecCodeGen.c"
-				>
-			</File>
-			<File
-				RelativePath="..\..\..\src\compiler\ecCompiler.c"
-				>
-			</File>
-			<File
-				RelativePath="..\..\..\src\compiler\ecLex.c"
-				>
-			</File>
-			<File
-				RelativePath="..\..\..\src\compiler\ecModuleWrite.c"
-				>
-			</File>
-			<File
-				RelativePath="..\..\..\src\compiler\ecParser.c"
-				>
-			</File>
-			<File
-				RelativePath="..\..\..\src\compiler\ecState.c"
-				>
-			</File>
-			<File
-				RelativePath="..\..\..\src\core\src\ejsApp.c"
-				>
-			</File>
-			<File
-				RelativePath="..\..\..\src\core\src\ejsArray.c"
-				>
-			</File>
-			<File
-				RelativePath="..\..\..\src\core\src\ejsBlock.c"
-				>
-			</File>
-			<File
-				RelativePath="..\..\..\src\core\src\ejsBoolean.c"
-				>
-			</File>
-			<File
-				RelativePath="..\..\..\src\core\src\ejsByteArray.c"
-				>
-			</File>
-			<File
-				RelativePath="..\..\..\src\vm\ejsByteCode.c"
-				>
-			</File>
-			<File
-				RelativePath="..\..\..\src\core\src\ejsCmd.c"
-				>
-			</File>
-			<File
-				RelativePath="..\..\..\src\core\src\ejsConfig.c"
-				>
-			</File>
-			<File
-				RelativePath="..\..\..\src\core\src\ejsDate.c"
-				>
-			</File>
-			<File
-				RelativePath="..\..\..\src\core\src\ejsDebug.c"
-				>
-			</File>
-			<File
-				RelativePath="..\..\..\src\core\src\ejsError.c"
-				>
-			</File>
-			<File
-				RelativePath="..\..\..\src\vm\ejsException.c"
-				>
-			</File>
-			<File
-				RelativePath="..\..\..\src\core\src\ejsFile.c"
-				>
-			</File>
-			<File
-				RelativePath="..\..\..\src\core\src\ejsFileSystem.c"
-				>
-			</File>
-			<File
-				RelativePath="..\..\..\src\core\src\ejsFrame.c"
-				>
-			</File>
-			<File
-				RelativePath="..\..\..\src\core\src\ejsFunction.c"
-				>
-			</File>
-			<File
-				RelativePath="..\..\..\src\core\src\ejsGC.c"
-				>
-			</File>
-			<File
-				RelativePath="..\..\..\src\core\src\ejsGlobal.c"
-				>
-			</File>
-			<File
-				RelativePath="..\..\..\src\vm\ejsHelper.c"
-				>
-			</File>
-			<File
-				RelativePath="..\..\..\src\core\src\ejsHttp.c"
-				>
-			</File>
-			<File
-				RelativePath="..\..\..\src\vm\ejsInterp.c"
-				>
-			</File>
-			<File
-				RelativePath="..\..\..\src\core\src\ejsIterator.c"
-				>
-			</File>
-			<File
-				RelativePath="..\..\..\src\core\src\ejsJSON.c"
-				>
-			</File>
-			<File
-				RelativePath="..\..\..\src\vm\ejsLoader.c"
-				>
-			</File>
-			<File
-				RelativePath="..\..\..\src\core\src\ejsLogFile.c"
-				>
-			</File>
-			<File
-				RelativePath="..\..\..\src\core\src\ejsLogger.c"
-				>
-			</File>
-			<File
-				RelativePath="..\..\..\src\core\src\ejsMath.c"
-				>
-			</File>
-			<File
-				RelativePath="..\..\..\src\core\src\ejsMemory.c"
-				>
-			</File>
-			<File
-				RelativePath="..\..\..\src\vm\ejsModule.c"
-				>
-			</File>
-			<File
-				RelativePath="..\..\..\src\core\src\ejsNamespace.c"
-				>
-			</File>
-			<File
-				RelativePath="..\..\..\src\core\src\ejsNull.c"
-				>
-			</File>
-			<File
-				RelativePath="..\..\..\src\core\src\ejsNumber.c"
-				>
-			</File>
-			<File
-				RelativePath="..\..\..\src\core\src\ejsObject.c"
-				>
-			</File>
-			<File
-				RelativePath="..\..\..\src\core\src\ejsPath.c"
-				>
-			</File>
-			<File
-				RelativePath="..\..\..\src\core\src\ejsPot.c"
-				>
-			</File>
-			<File
-				RelativePath="..\..\..\src\core\src\ejsReflect.c"
-				>
-			</File>
-			<File
-				RelativePath="..\..\..\src\core\src\ejsRegExp.c"
-				>
-			</File>
-			<File
-				RelativePath="..\..\..\src\vm\ejsScope.c"
-				>
-			</File>
-			<File
-				RelativePath="..\..\..\src\vm\ejsService.c"
-				>
-			</File>
-			<File
-				RelativePath="..\..\..\src\core\src\ejsSocket.c"
-				>
-			</File>
-			<File
-				RelativePath="..\..\..\src\core\src\ejsString.c"
-				>
-			</File>
-			<File
-				RelativePath="..\..\..\src\core\src\ejsSystem.c"
-				>
-			</File>
-			<File
-				RelativePath="..\..\..\src\core\src\ejsTimer.c"
-				>
-			</File>
-			<File
-				RelativePath="..\..\..\src\core\src\ejsType.c"
-				>
-			</File>
-			<File
-				RelativePath="..\..\..\src\core\src\ejsUri.c"
-				>
-			</File>
-			<File
-				RelativePath="..\..\..\src\core\src\ejsVoid.c"
-				>
-			</File>
-			<File
-				RelativePath="..\..\..\src\core\src\ejsWorker.c"
-				>
-			</File>
-			<File
-				RelativePath="..\..\..\src\core\src\ejsXML.c"
-				>
-			</File>
-			<File
-				RelativePath="..\..\..\src\core\src\ejsXMLList.c"
-				>
-			</File>
-			<File
-				RelativePath="..\..\..\src\core\src\ejsXMLLoader.c"
-				>
-			</File>
-		</Filter>
-	</Files>
-	<Globals>
-	</Globals>
-</VisualStudioProject>
+<?xml version="1.0" encoding="utf-8"?>
+<Project DefaultTargets="Build" ToolsVersion="4.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+
+  <ItemGroup Label="ProjectConfigurations">
+    <ProjectConfiguration Include="Debug|Win32">
+      <Configuration>Debug</Configuration>
+      <Platform>Win32</Platform>
+    </ProjectConfiguration>
+    <ProjectConfiguration Include="Release|Win32">
+      <Configuration>Release</Configuration>
+      <Platform>Win32</Platform>
+    </ProjectConfiguration>
+  </ItemGroup>
+
+  <PropertyGroup Label="Globals">
+    <ProjectGuid>{20DB3121-EA7F-4C8C-950C-98D9AE80EFE5}</ProjectGuid>
+    <RootNamespace />
+    <Keyword>Win32Proj</Keyword>
+  </PropertyGroup>
+
+  <Import Project="$(VCTargetsPath)\Microsoft.Cpp.Default.props" />
+
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'" Label="Configuration">
+    <ConfigurationType>DynamicLibrary</ConfigurationType>
+    <CharacterSet>NotSet</CharacterSet>
+  </PropertyGroup>
+
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'" Label="Configuration">
+    <ConfigurationType>DynamicLibrary</ConfigurationType>
+    <CharacterSet>NotSet</CharacterSet>
+  </PropertyGroup>
+
+  <Import Project="$(VCTargetsPath)\Microsoft.Cpp.props" />
+
+  <ImportGroup Label="ExtensionSettings">
+  </ImportGroup>
+
+  <ImportGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'" Label="PropertySheets">
+    <Import Project="$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props" Condition="exists('$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props')" Label="LocalAppDataPlatform" />
+    
+    <Import Project="debug.props" />
+  </ImportGroup>
+
+  <ImportGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'" Label="PropertySheets">
+    <Import Project="$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props" Condition="exists('$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props')" Label="LocalAppDataPlatform" />
+    
+    <Import Project="release.props" />
+  </ImportGroup>
+
+  <PropertyGroup Label="UserMacros" />
+
+  <PropertyGroup>
+    <_ProjectFileVersion>10.0.30319.1</_ProjectFileVersion>
+    <OutDir Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">..\..\..\out\bin\</OutDir>
+    <IntDir Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">..\..\..\out\obj\</IntDir>
+    <OutDir Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">..\..\..\out\bin\</OutDir>
+    <IntDir Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">..\..\..\out\obj\</IntDir>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <ClInclude Include="..\..\..\out\include\buildConfig.h" />
+  </ItemGroup>
+
+  <ItemGroup >
+    <ClCompile Include="..\..\..\src\core\src\ejsApp.c" />
+    <ClCompile Include="..\..\..\src\core\src\ejsArray.c" />
+    <ClCompile Include="..\..\..\src\core\src\ejsBlock.c" />
+    <ClCompile Include="..\..\..\src\core\src\ejsBoolean.c" />
+    <ClCompile Include="..\..\..\src\core\src\ejsByteArray.c" />
+    <ClCompile Include="..\..\..\src\core\src\ejsCache.c" />
+    <ClCompile Include="..\..\..\src\core\src\ejsCmd.c" />
+    <ClCompile Include="..\..\..\src\core\src\ejsConfig.c" />
+    <ClCompile Include="..\..\..\src\core\src\ejsDate.c" />
+    <ClCompile Include="..\..\..\src\core\src\ejsDebug.c" />
+    <ClCompile Include="..\..\..\src\core\src\ejsError.c" />
+    <ClCompile Include="..\..\..\src\core\src\ejsFile.c" />
+    <ClCompile Include="..\..\..\src\core\src\ejsFileSystem.c" />
+    <ClCompile Include="..\..\..\src\core\src\ejsFrame.c" />
+    <ClCompile Include="..\..\..\src\core\src\ejsFunction.c" />
+    <ClCompile Include="..\..\..\src\core\src\ejsGC.c" />
+    <ClCompile Include="..\..\..\src\core\src\ejsGlobal.c" />
+    <ClCompile Include="..\..\..\src\core\src\ejsHttp.c" />
+    <ClCompile Include="..\..\..\src\core\src\ejsIterator.c" />
+    <ClCompile Include="..\..\..\src\core\src\ejsJSON.c" />
+    <ClCompile Include="..\..\..\src\core\src\ejsLocalCache.c" />
+    <ClCompile Include="..\..\..\src\core\src\ejsMath.c" />
+    <ClCompile Include="..\..\..\src\core\src\ejsMemory.c" />
+    <ClCompile Include="..\..\..\src\core\src\ejsMprLog.c" />
+    <ClCompile Include="..\..\..\src\core\src\ejsNamespace.c" />
+    <ClCompile Include="..\..\..\src\core\src\ejsNull.c" />
+    <ClCompile Include="..\..\..\src\core\src\ejsNumber.c" />
+    <ClCompile Include="..\..\..\src\core\src\ejsObject.c" />
+    <ClCompile Include="..\..\..\src\core\src\ejsPath.c" />
+    <ClCompile Include="..\..\..\src\core\src\ejsPot.c" />
+    <ClCompile Include="..\..\..\src\core\src\ejsRegExp.c" />
+    <ClCompile Include="..\..\..\src\core\src\ejsSocket.c" />
+    <ClCompile Include="..\..\..\src\core\src\ejsString.c" />
+    <ClCompile Include="..\..\..\src\core\src\ejsSystem.c" />
+    <ClCompile Include="..\..\..\src\core\src\ejsTimer.c" />
+    <ClCompile Include="..\..\..\src\core\src\ejsType.c" />
+    <ClCompile Include="..\..\..\src\core\src\ejsUri.c" />
+    <ClCompile Include="..\..\..\src\core\src\ejsVoid.c" />
+    <ClCompile Include="..\..\..\src\core\src\ejsWorker.c" />
+    <ClCompile Include="..\..\..\src\core\src\ejsXML.c" />
+    <ClCompile Include="..\..\..\src\core\src\ejsXMLList.c" />
+    <ClCompile Include="..\..\..\src\core\src\ejsXMLLoader.c" />
+    <ClCompile Include="..\..\..\src\vm\ejsByteCode.c" />
+    <ClCompile Include="..\..\..\src\vm\ejsException.c" />
+    <ClCompile Include="..\..\..\src\vm\ejsHelper.c" />
+    <ClCompile Include="..\..\..\src\vm\ejsInterp.c" />
+    <ClCompile Include="..\..\..\src\vm\ejsLoader.c" />
+    <ClCompile Include="..\..\..\src\vm\ejsModule.c" />
+    <ClCompile Include="..\..\..\src\vm\ejsScope.c" />
+    <ClCompile Include="..\..\..\src\vm\ejsService.c" />
+    <ClCompile Include="..\..\..\src\compiler\ecAst.c" />
+    <ClCompile Include="..\..\..\src\compiler\ecCodeGen.c" />
+    <ClCompile Include="..\..\..\src\compiler\ecCompiler.c" />
+    <ClCompile Include="..\..\..\src\compiler\ecLex.c" />
+    <ClCompile Include="..\..\..\src\compiler\ecModuleWrite.c" />
+    <ClCompile Include="..\..\..\src\compiler\ecParser.c" />
+    <ClCompile Include="..\..\..\src\compiler\ecState.c" />
+  </ItemGroup>
+
+  <ItemDefinitionGroup>
+    <Link>
+      <ModuleDefinitionFile>libejs.def</ModuleDefinitionFile>
+    </Link>
+  </ItemDefinitionGroup>
+
+  <ItemDefinitionGroup >
+    <Link>
+      <AdditionalDependencies>libmpr.lib;libhttp.lib;libsqlite3.lib;ws2_32.lib;%(AdditionalDependencies)</AdditionalDependencies>
+    </Link>
+  </ItemDefinitionGroup>
+  <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
+
+  <ImportGroup Label="ExtensionTargets">
+  </ImportGroup>
+</Project>
