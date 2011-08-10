@@ -309,11 +309,11 @@ module ejs {
 
         /**
             Make a new directory and all required intervening directories. If the directory already exists, 
-                the function returns without throwing an exception.
+                the function returns without any further action. 
             @param options
-            @options permissions Set to a numeric Posix permissions mask
-            @options owner String representing the file owner
-            @options group String representing the file group
+            @options permissions Directory permissions to use for all created directories. Set to a numeric Posix permissions mask.
+            @options owner String representing the file owner for all created directories.
+            @options group String representing the file group for all created directories.
             @return True if the directory can be made or already exists
          */
         native function makeDir(options: Object? = null): Boolean
