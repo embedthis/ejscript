@@ -4617,7 +4617,8 @@ void mprSetCacheLimits(MprCache *cache, int64 keys, MprTime lifespan, int64 memo
 }
 
 
-ssize mprWriteCache(MprCache *cache, cchar *key, cchar *value, MprTime lifespan, int64 version, int options)
+ssize mprWriteCache(MprCache *cache, cchar *key, cchar *value, MprTime modified, MprTime lifespan, 
+    int64 version, int options)
 {
     CacheItem   *item;
     MprHash     *hp;
@@ -4673,7 +4674,7 @@ ssize mprWriteCache(MprCache *cache, cchar *key, cchar *value, MprTime lifespan,
         item->data = sjoin(value, item->data, 0);
     }
     item->lifespan = lifespan;
-    item->lastModified = mprGetTime();
+    item->lastModified = modified ? modified : mprGetTime();
     item->expires = item->lastModified + lifespan;
     item->version++;
     len = slen(item->key) + slen(item->data);
@@ -7000,7 +7001,7 @@ char *mprEncode64(cchar *s)
 
 
 /*
-    Return the MD5 hash of a block. Returns allocated string.
+    Return the MD5 hash of a block. Returns allocated string. A prefix for the result can be supplied.
  */
 char *mprGetMD5Hash(cchar *buf, ssize length, cchar *prefix)
 {
@@ -22915,22 +22916,22 @@ char *mprGetDate(char *fmt)
 char *mprFormatLocalTime(cchar *fmt, MprTime time)
 {
     struct tm   tm;
-    mprDecodeLocalTime(&tm, time);
     if (fmt == 0) {
         fmt = MPR_DEFAULT_DATE;
     }
-    return mprFormatTm(MPR_DEFAULT_DATE, &tm);
+    mprDecodeLocalTime(&tm, time);
+    return mprFormatTm(fmt, &tm);
 }
 
 
 char *mprFormatUniversalTime(cchar *fmt, MprTime time)
 {
     struct tm   tm;
-    mprDecodeUniversalTime(&tm, time);
     if (fmt == 0) {
         fmt = MPR_DEFAULT_DATE;
     }
-    return mprFormatTm(MPR_DEFAULT_DATE, &tm);
+    mprDecodeUniversalTime(&tm, time);
+    return mprFormatTm(fmt, &tm);
 }
 
 

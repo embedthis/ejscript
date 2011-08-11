@@ -7158,7 +7158,8 @@ extern int64 mprIncCache(MprCache *cache, cchar *key, int64 amount);
 extern char *mprReadCache(MprCache *cache, cchar *key, MprTime *modified, int64 *version);
 extern bool mprRemoveCache(MprCache *cache, cchar *key);
 extern void mprSetCacheLimits(MprCache *cache, int64 keys, int64 lifespan, int64 memory, int resolution);
-extern ssize mprWriteCache(MprCache *cache, cchar *key, cchar *value, MprTime expires, int64 version, int options);
+extern ssize mprWriteCache(MprCache *cache, cchar *key, cchar *value, MprTime modified, MprTime expires, 
+        int64 version, int options);
 
 /**
     Mime Type hash table entry (the URL extension is the key)
