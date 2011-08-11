@@ -34,8 +34,6 @@
 
 static EjsAny *castDate(Ejs *ejs, EjsDate *dp, EjsType *type)
 {
-    struct tm   tm;
-
     switch (type->sid) {
     case S_Boolean:
         return ESV(true);
@@ -47,8 +45,7 @@ static EjsAny *castDate(Ejs *ejs, EjsDate *dp, EjsType *type)
         /*
             Format:  Tue Jul 15 2011 10:53:23 GMT-0700 (PDT)
          */
-        mprDecodeLocalTime(&tm, dp->value);
-        return ejsCreateStringFromAsc(ejs, mprFormatTime("%a %b %d %Y %T GMT%z (%Z)", &tm));
+        return ejsCreateStringFromAsc(ejs, mprFormatLocalTime("%a %b %d %Y %T GMT%z (%Z)", dp->value));
 
     default:
         ejsThrowTypeError(ejs, "Can't cast to this type");
@@ -436,10 +433,7 @@ static EjsNumber *date_elapsed(Ejs *ejs, EjsDate *dp, int argc, EjsObj **argv)
  */
 static EjsString *date_format(Ejs *ejs, EjsDate *dp, int argc, EjsObj **argv)
 {
-    struct tm   tm;
-
-    mprDecodeLocalTime(&tm, dp->value);
-    return ejsCreateStringFromAsc(ejs, mprFormatTime(ejsToMulti(ejs, argv[0]), &tm));
+    return ejsCreateStringFromAsc(ejs, mprFormatLocalTime(ejsToMulti(ejs, argv[0]), dp->value));
 }
 
 
@@ -448,10 +442,7 @@ static EjsString *date_format(Ejs *ejs, EjsDate *dp, int argc, EjsObj **argv)
  */
 static EjsString *date_formatUTC(Ejs *ejs, EjsDate *dp, int argc, EjsObj **argv)
 {
-    struct tm   tm;
-
-    mprDecodeUniversalTime(&tm, dp->value);
-    return ejsCreateStringFromAsc(ejs, mprFormatTime(ejsToMulti(ejs, argv[0]), &tm));
+    return ejsCreateStringFromAsc(ejs, mprFormatUniversalTime(ejsToMulti(ejs, argv[0]), dp->value));
 }
 
 
@@ -930,11 +921,9 @@ static EjsNumber *date_set_time(Ejs *ejs, EjsDate *dp, int argc, EjsObj **argv)
 */
 static EjsString *date_toISOString(Ejs *ejs, EjsDate *dp, int argc, EjsObj **argv)
 {
-    struct tm   tm;
-    char        *base, *str;
+    char    *base, *str;
 
-    mprDecodeUniversalTime(&tm, dp->value);
-    base = mprFormatTime("%Y-%m-%dT%H:%M:%S", &tm);
+    base = mprFormatUniversalTime("%Y-%m-%dT%H:%M:%S", dp->value);
     str = mprAsprintf("%s.%03dZ", base, dp->value % MPR_TICKS_PER_SEC);
     return ejsCreateStringFromAsc(ejs, str);
 }
@@ -947,11 +936,9 @@ static EjsString *date_toISOString(Ejs *ejs, EjsDate *dp, int argc, EjsObj **arg
  */
 static EjsString *date_toJSON(Ejs *ejs, EjsDate *dp, int argc, EjsObj **argv)
 {
-    struct tm   tm;
-    char        *base, *str;
+    char    *base, *str;
 
-    mprDecodeUniversalTime(&tm, dp->value);
-    base = mprFormatTime("%Y-%m-%dT%H:%M:%S", &tm);
+    base = mprFormatUniversalTime("%Y-%m-%dT%H:%M:%S", dp->value);
     str = mprAsprintf("\"%sZ\"", base);
     return ejsCreateStringFromAsc(ejs, str);
 }

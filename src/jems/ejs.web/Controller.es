@@ -169,6 +169,8 @@ module ejs.web {
                             if ((hdr = request.header("If-Modified-Since"))) {
                                 if (item.modified <= Date.parse(hdr)) {
                                     status = Http.NotModified
+                                } else {
+                                    status = Http.Ok
                                 }
                             }
                             if (options.client) {
@@ -180,7 +182,6 @@ module ejs.web {
                                 //  MOB - change this trace to just use "actionName"
                                 App.log.debug(5, "Use cached: " + cacheName)
                                 write(item.data)
-                                // MOB request.finalize()
                             } else {
                                 App.log.debug(5, "Use cached content, status: " + status + ", " + cacheName)
                             }
@@ -246,6 +247,7 @@ module ejs.web {
                     App.log.debug(5, "Cache action " + cacheName + ", " + request.writeBuffer.available + " bytes")
                 }
             }
+            //  MOB - should also add headers for Last-Modified and Etag as the output has not yet been sent
             let data = request.writeBuffer
             request.writeBuffer = null
             request.write(data)
