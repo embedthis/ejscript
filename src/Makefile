@@ -13,7 +13,7 @@ SLOTS     		+= $(patsubst slots/%.h,$(BLD_INC_DIR)/%.h,$(shell find slots/*.slot
 
 include 		.makedep
 
-compileFirst: $(HEADERS) tools
+compileFirst: prep $(HEADERS) tools
 
 compileExtra: core library $(SLOTS)
 
@@ -73,6 +73,9 @@ cleanExtra:
 	rm -f $(BLD_INC_DIR)/ejs*.h f $(BLD_INC_DIR)/ejs.*.h
 	rm -f $(EJS_LIB) $(BLD_LIB_DIR)/ejs.lst
 	mkdir -p $(BLD_INC_DIR)
+
+prep:
+	[ -f $(BLD_BIN_DIR)/.ideBuild ] && rm -f $(BLD_BIN_DIR)/* $(BLD_BIN_DIR)/.ideBuild ; true
 
 .SUFFIXES: .h
 
