@@ -858,6 +858,7 @@ module ejs.web {
                         t = t.replace("{" + token + "}", "([^/]*)")
                     }
                 } 
+                //  MOB - is this required?
                 t = t.replace(/\//g, "\\/")
                 pattern = RegExp("^" + t + "$")
                 /*  Splitter ends up looking like "$1:$2:$3:$4" */
