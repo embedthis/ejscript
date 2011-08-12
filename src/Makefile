@@ -75,7 +75,10 @@ cleanExtra:
 	mkdir -p $(BLD_INC_DIR)
 
 prep:
-	[ -f $(BLD_BIN_DIR)/.ideBuild ] && rm -f $(BLD_BIN_DIR)/* $(BLD_BIN_DIR)/.ideBuild ; true
+	if [ -f $(BLD_BIN_DIR)/.ideBuild ] ; then \
+		rm -f $(BLD_BIN_DIR)/* $(BLD_BIN_DIR)/.ideBuild ; \
+		make -C ../build/src ; \
+	fi
 
 .SUFFIXES: .h
 
