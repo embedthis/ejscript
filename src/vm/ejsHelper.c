@@ -898,7 +898,7 @@ static MprNumber parseNumber(Ejs *ejs, MprChar *str)
         return ((EjsNumber*) ESV(nan))->value;
     }
     /*
-        Floatng format: [DIGITS].[DIGITS][(e|E)[+|-]DIGITS]
+        Floating format: [DIGITS].[DIGITS][(e|E)[+|-]DIGITS]
      */
     if (!(*str == '0' && tolower((int) str[1]) == 'x')) {
         for (cp = str; *cp; cp++) {
