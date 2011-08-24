@@ -2740,8 +2740,9 @@ extern char *strim(cchar *str, cchar *set, int where);
 
 //  DOC
 extern char *sreplace(cchar *str, cchar *pattern, cchar *replacement);
-extern bool ssame(cchar *s1, cchar *s2);
-extern bool scasesame(cchar *s1, cchar *s2);
+extern bool smatch(cchar *s1, cchar *s2);
+extern bool scasematch(cchar *s1, cchar *s2);
+extern bool snumber(cchar *s);
 
 /*
     Low-level unicode wide string support. Unicode characters are build-time configurable to be 1, 2 or 4 bytes
@@ -4186,16 +4187,6 @@ extern MprHashTable *mprCloneHash(MprHashTable *table);
  */
 extern MprHashTable *mprCreateHash(int hashSize, int flags);
 
-#if UNUSED
-/**
-    Set the case comparision mechanism for a hash table. The case of keys and values are always preserved, this call
-        only affects lookup.
-    @param table Hash table created via $mprCreateHash
-    @param caseMatters Set to true if case matters in comparisions. Set to zero for case insensitive comparisions
- */
-void mprSetKeyCase(MprHashTable *table, int caseMatters);
-#endif
-
 /**
     Return the first symbol in a symbol entry
     @description Prepares for walking the contents of a symbol table by returning the first entry in the symbol table.
@@ -4674,10 +4665,10 @@ extern int mprGetFileFd(MprFile *file);
     @description MprPath is the cross platform Path (filename) information structure.
     @stability Evolving.
     @see MprPath mprComparePath mprCopyPath mprDeletePath mprGetAbsPath mprGetCurrentPath
-        mprGetPathBase mprGetPathDir mprGetPathFiles mprGetPathExtension mprGetPathLink mprGetPathParent 
+        mprGetPathBase mprGetPathDir mprGetPathFiles mprGetPathExt mprGetPathLink mprGetPathParent 
         mprGetPathNewline mprGetPathSeparators mprGetPortablePath mprGetRelPath mprGetTempPath  mprGetTransformedPath
         mprIsAbsPath mprIsRelPath mprMakeDir mprMakeLink mprGetNormalizedPath mprJoinPath mprJoinPathExt mprMapSeparators 
-        mprPathExists mprResolvePath mprSearchPath mprTruncatePath mprTrimExtension
+        mprPathExists mprResolvePath mprSearchPath mprTruncatePath mprTrimExt
         MprFile
     @defgroup MprPath MprPath
  */
@@ -4833,7 +4824,7 @@ extern MprList *mprGetPathFiles(cchar *dir, bool enumDirs);
     @returns A path extension. 
     @ingroup MprPath
  */
-extern char *mprGetPathExtension(cchar *path);
+extern char *mprGetPathExt(cchar *path);
 
 /**
     Return information about a file represented by a path.
@@ -5088,7 +5079,7 @@ extern char *mprSearchPath(cchar *path, int flags, cchar *search, ...);
     @returns An allocated string with the trimmed path.
     @ingroup MprPath
  */
-extern char *mprTrimPathExtension(cchar *path);
+extern char *mprTrimPathExt(cchar *path);
 
 extern ssize mprWritePath(cchar *path, cchar *buf, ssize len, int mode);
 

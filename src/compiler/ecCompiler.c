@@ -143,7 +143,7 @@ static int compileInner(EcCompiler *cp, int argc, char **argv)
         Compile source files and load any module files
      */
     for (i = 0; i < argc && !cp->fatalError; i++) {
-        ext = mprGetPathExtension(argv[i]);
+        ext = mprGetPathExt(argv[i]);
         if (scasecmp(ext, "mod") == 0 || scasecmp(ext, BLD_SHOBJ) == 0) {
             nextModule = mprGetListLength(ejs->modules);
             lflags = cp->strict ? EJS_LOADER_STRICT : 0;

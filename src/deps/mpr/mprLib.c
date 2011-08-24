@@ -1438,9 +1438,6 @@ static void marker(void *unused, MprThread *tp)
         MPR_MEASURE(7, "GC", "mark", mark());
     }
     heap->mustYield = 0;
-#if UNUSED
-    mprResumeThreads();
-#endif
     MPR->marker = 0;
 }
 
@@ -2760,7 +2757,6 @@ void mprDestroy(int how)
             break;
         }
 #if UNUSED && KEEP
-        //  MOB - cleanup
         printf("marker %d, eventing %d, busyThreads %d, threads %d\n", MPR->marker, MPR->eventing, 
                 MPR->workerService->busyThreads->length,
                 MPR->threadService->threads->length);
@@ -6257,7 +6253,7 @@ int startProcess(MprCmd *cmd)
     }
     program = mprGetPathBase(cmd->program);
     if (entryPoint == 0) {
-        program = mprTrimPathExtension(program);
+        program = mprTrimPathExt(program);
 #if BLD_HOST_CPU_ARCH == MPR_CPU_IX86 || BLD_HOST_CPU_ARCH == MPR_CPU_IX64
         entryPoint = sjoin("_", program, "Main", NULL);
 #else
@@ -7527,7 +7523,7 @@ static int getPathInfo(MprDiskFileSystem *fileSystem, cchar *path, MprPath *info
     info->isDir = (s.st_mode & S_IFDIR) != 0;
     info->isReg = (s.st_mode & S_IFREG) != 0;
     info->isLink = 0;
-    ext = mprGetPathExtension(path);
+    ext = mprGetPathExt(path);
     if (ext && strcmp(ext, "lnk") == 0) {
         info->isLink = 1;
     }
@@ -7552,7 +7548,7 @@ static int getPathInfo(MprDiskFileSystem *fileSystem, cchar *path, MprPath *info
     info->isDir = (s.st_mode & S_IFDIR) != 0;
     info->isReg = (s.st_mode & S_IFREG) != 0;
     info->isLink = 0;
-    ext = mprGetPathExtension(path);
+    ext = mprGetPathExt(path);
     if (ext && strcmp(ext, "lnk") == 0) {
         info->isLink = 1;
     }
@@ -9320,10 +9316,6 @@ static void manageEvent(MprEvent *event, int flags)
         mprMark(event->name);
         mprMark(event->dispatcher);
         mprMark(event->handler);
-#if UNUSED
-        mprMark(event->next);
-        mprMark(event->prev);
-#endif
         if (!(event->flags & MPR_EVENT_STATIC_DATA)) {
             mprMark(event->data);
         }
@@ -14548,13 +14540,16 @@ char *mprGetPathLink(cchar *path)
     Return the extension portion of a pathname.
     Return the extension without the "."
  */
-char *mprGetPathExtension(cchar *path)
+char *mprGetPathExt(cchar *path)
 {
     MprFileSystem  *fs;
     char            *cp;
 
     if ((cp = srchr(path, '.')) != NULL) {
         fs = mprLookupFileSystem(path);
+        /*
+            If there is no separator ("/") after the extension, then use it.
+         */
         if (firstSep(fs, cp) == 0) {
             return sclone(++cp);
         }
@@ -14820,7 +14815,7 @@ char *mprJoinPath(cchar *path, cchar *other)
 
 /*
     Join an extension to a path. If path already has an extension, this call does nothing.
-    MOB - the extension should not have "." But BLD_EXE and buildConfig extensions do.
+    The extension should not have a ".", but this routine is tolerant if it does.
  */
 char *mprJoinPathExt(cchar *path, cchar *ext)
 {
@@ -14835,7 +14830,11 @@ char *mprJoinPathExt(cchar *path, cchar *ext)
     if (cp && firstSep(fs, cp) == 0) {
         return sclone(path);
     }
-    return sjoin(path, ext, NULL);
+    if (ext[0] == '.') {
+        return sjoin(path, ext, NULL);
+    } else {
+        return sjoin(path, ".", ext, NULL);
+    }
 }
 
 
@@ -15444,23 +15443,19 @@ ssize mprWritePath(cchar *path, cchar *buf, ssize len, int mode)
 
 
 
-//  MOB - should be TrimPathExt
-/*
-    Return the extension portion of a pathname.
- */
-char *mprTrimPathExtension(cchar *path)
+char *mprTrimPathExt(cchar *path)
 {
     MprFileSystem   *fs;
-    char            *cp, *ext;
+    char            *cp, *result;
 
     fs = mprLookupFileSystem(path);
-    ext = sclone(path);
-    if ((cp = srchr(ext, '.')) != NULL) {
+    result = sclone(path);
+    if ((cp = srchr(result, '.')) != NULL) {
         if (firstSep(fs, cp) == 0) {
             *cp = '\0';
         }
     } 
-    return ext;
+    return result;
 }
 
 
@@ -19698,6 +19693,19 @@ char *itos(char *buf, ssize count, int64 value, int radix)
 }
 
 
+bool snumber(cchar *token)
+{
+    cchar   *cp;
+
+    for (cp = token; *cp; cp++) {
+        if (!isdigit((int) *cp)) {
+            return 0;
+        }
+    }
+    return 1;
+} 
+
+
 char *schr(cchar *s, int c)
 {
     if (s == 0) {
@@ -19724,7 +19732,7 @@ int scasecmp(cchar *s1, cchar *s2)
 }
 
 
-bool scasesame(cchar *s1, cchar *s2)
+bool scasematch(cchar *s1, cchar *s2)
 {
     return scasecmp(s1, s2) == 0;
 }
@@ -19998,7 +20006,7 @@ ssize slen(cchar *s)
 
 
 /*  
-    Map a string to lower case. Allocates a new string 
+    Map a string to lower case. Allocates a new string.
  */
 char *slower(cchar *str)
 {
@@ -20016,6 +20024,12 @@ char *slower(cchar *str)
         str = s;
     }
     return (char*) str;
+}
+
+
+bool smatch(cchar *s1, cchar *s2)
+{
+    return scmp(s1, s2) == 0;
 }
 
 
@@ -20231,12 +20245,6 @@ char *sreplace(cchar *str, cchar *pattern, cchar *replacement)
 }
 
 
-bool ssame(cchar *s1, cchar *s2)
-{
-    return scmp(s1, s2) == 0;
-}
-
-
 ssize sspn(cchar *str, cchar *set)
 {
 #if KEEP
@@ -20420,7 +20428,7 @@ char *ssub(cchar *str, ssize offset, ssize len)
 
 
 /*
-    Returns a newly allocated string
+    Trim characters from the given set. Returns a newly allocated string.
  */
 char *strim(cchar *str, cchar *set, int where)
 {
@@ -22920,7 +22928,6 @@ char *mprGetDate(char *fmt)
 
     mprDecodeLocalTime(&tm, mprGetTime());
     if (fmt == 0 || *fmt == '\0') {
-        // UNUSED fmt = MPR_LEGACY_DATE;
         fmt = MPR_DEFAULT_DATE;
     }
     return mprFormatTm(fmt, &tm);
@@ -23969,19 +23976,6 @@ static int getNumOrSym(char **token, int sep, int kind, int *isAlpah)
 }
 
 
-static bool allDigits(cchar *token)
-{
-    cchar   *cp;
-
-    for (cp = token; *cp; cp++) {
-        if (!isdigit((int) *cp)) {
-            return 0;
-        }
-    }
-    return 1;
-} 
-
-
 static void swapDayMonth(struct tm *tp)
 {
     int     tmp;
@@ -24046,7 +24040,7 @@ int mprParseTime(MprTime *time, cchar *dateString, int zoneFlags, struct tm *def
     token = stok(str, sep, &next);
 
     while (token && *token) {
-        if (allDigits(token)) {
+        if (snumber(token)) {
             /*
                 Parse either day of month or year. Priority to day of month. Format: <29> Jan <15> <2011>
              */ 

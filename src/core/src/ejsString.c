@@ -845,7 +845,7 @@ static EjsArray *match(Ejs *ejs, EjsString *sp, int argc, EjsObj **argv)
     resultCount = 0;
 
     do {
-        count = (int) pcre_exec(rp->compiled, NULL, sp->value, (int) sp->length, rp->endLastMatch, 0, matches, 
+        count = pcre_exec(rp->compiled, NULL, sp->value, (int) sp->length, rp->endLastMatch, 0, matches, 
             sizeof(matches) / sizeof(int));
         if (count <= 0) {
             break;

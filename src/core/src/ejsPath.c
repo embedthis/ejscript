@@ -313,7 +313,7 @@ static EjsString *getPathExtension(Ejs *ejs, EjsPath *fp, int argc, EjsObj **arg
 {
     char    *ext;
 
-    if ((ext = mprGetPathExtension(fp->value)) == 0) {
+    if ((ext = mprGetPathExt(fp->value)) == 0) {
         return ESV(empty);
     }
     return ejsCreateStringFromAsc(ejs, ext);
@@ -546,7 +546,7 @@ static EjsPath *joinPathExt(Ejs *ejs, EjsPath *fp, int argc, EjsObj **argv)
 {
     cchar   *ext;
 
-    if (mprGetPathExtension(fp->value)) {
+    if (mprGetPathExt(fp->value)) {
         return fp;
     }
     ext = ejsToMulti(ejs, argv[0]);
@@ -1140,7 +1140,7 @@ static EjsString *pathToString(Ejs *ejs, EjsPath *fp, int argc, EjsObj **argv)
  */
 static EjsPath *trimExt(Ejs *ejs, EjsPath *fp, int argc, EjsObj **argv)
 {
-    return ejsCreatePathFromAsc(ejs, mprTrimPathExtension(fp->value));
+    return ejsCreatePathFromAsc(ejs, mprTrimPathExt(fp->value));
 }
 
 

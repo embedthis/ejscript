@@ -40,8 +40,8 @@ static EjsRequest *hs_accept(Ejs *ejs, EjsHttpServer *sp, int argc, EjsObj **arg
     MprEvent    event;
 
     memset(&event, 0, sizeof(MprEvent));
-    event.dispatcher = sp->server->dispatcher;
-    if ((conn = httpAcceptConn(sp->server, &event)) == 0) {
+    event.dispatcher = sp->endpoint->dispatcher;
+    if ((conn = httpAcceptConn(sp->endpoint, &event)) == 0) {
         /* Just ignore */
         mprError("Can't accept connection");
         return 0;
@@ -65,8 +65,8 @@ static EjsObj *hs_async(Ejs *ejs, EjsHttpServer *sp, int argc, EjsObj **argv)
 static EjsObj *hs_set_async(Ejs *ejs, EjsHttpServer *sp, int argc, EjsObj **argv)
 {
     sp->async = ejsGetBoolean(ejs, argv[0]);
-    if (sp->server) {
-        httpSetServerAsync(sp->server, sp->async);
+    if (sp->endpoint) {
+        httpSetEndpointAsync(sp->endpoint, sp->async);
     }
     return 0;
 }
@@ -86,10 +86,10 @@ static EjsPath *hs_hostedHome(Ejs *ejs, EjsHttpServer *sp, int argc, EjsObj **ar
  */
 static EjsObj *hs_close(Ejs *ejs, EjsHttpServer *sp, int argc, EjsObj **argv)
 {
-    if (sp->server) {
+    if (sp->endpoint) {
         ejsSendEvent(ejs, sp->emitter, "close", NULL, sp);
-        httpDestroyServer(sp->server);
-        sp->server = 0;
+        httpDestroyEndpoint(sp->endpoint);
+        sp->endpoint = 0;
     }
     return 0;
 }
@@ -104,7 +104,7 @@ static EjsObj *hs_limits(Ejs *ejs, EjsHttpServer *sp, int argc, EjsObj **argv)
 
     if (sp->limits == 0) {
         sp->limits = ejsCreateEmptyPot(ejs);
-        limits = (sp->server) ? sp->server->limits : ejs->http->serverLimits;
+        limits = (sp->endpoint) ? sp->endpoint->limits : ejs->http->serverLimits;
         mprAssert(limits);
         ejsGetHttpLimits(ejs, sp->limits, limits, 1);
     }
@@ -122,13 +122,13 @@ static EjsObj *hs_setLimits(Ejs *ejs, EjsHttpServer *sp, int argc, EjsObj **argv
 
     if (sp->limits == 0) {
         sp->limits = ejsCreateEmptyPot(ejs);
-        limits = (sp->server) ? sp->server->limits : ejs->http->serverLimits;
+        limits = (sp->endpoint) ? sp->endpoint->limits : ejs->http->serverLimits;
         mprAssert(limits);
         ejsGetHttpLimits(ejs, sp->limits, limits, 1);
     }
     ejsBlendObject(ejs, sp->limits, argv[0], 0, EJS_BLEND_OVERWRITE);
-    if (sp->server) {
-        limits = (sp->server) ? sp->server->limits : ejs->http->serverLimits;
+    if (sp->endpoint) {
+        limits = (sp->endpoint) ? sp->endpoint->limits : ejs->http->serverLimits;
         ejsSetHttpLimits(ejs, limits, sp->limits, 1);
     }
     if ((vp = ejsGetPropertyByName(ejs, sp->limits, EN("sessionTimeout"))) != 0) {
@@ -180,11 +180,11 @@ static EjsVoid *hs_set_hosted(Ejs *ejs, EjsHttpServer *sp, int argc, EjsObj **ar
  */
 static EjsVoid *hs_listen(Ejs *ejs, EjsHttpServer *sp, int argc, EjsObj **argv)
 {
-    HttpServer  *server;
-    HttpHost    *host;
-    EjsString   *address;
-    EjsObj      *endpoint;
-    EjsPath     *home, *documents;
+    HttpEndpoint    *endpoint;
+    HttpHost        *host;
+    EjsString       *address;
+    EjsObj          *loc;
+    EjsPath         *documents;
 
 #if UNUSED
     if (ejs->hosted) {
@@ -194,9 +194,9 @@ static EjsVoid *hs_listen(Ejs *ejs, EjsHttpServer *sp, int argc, EjsObj **argv)
     }
 #endif
     if (!sp->hosted) {
-        endpoint = (argc >= 1) ? argv[0] : ESV(null);
-        if (endpoint != ESV(null)) {
-            address = ejsToString(ejs, endpoint);
+        loc = (argc >= 1) ? argv[0] : ESV(null);
+        if (loc != ESV(null)) {
+            address = ejsToString(ejs, loc);
             mprParseIp(address->value, &sp->ip, &sp->port, 0);
         } else {
             address = 0;
@@ -205,51 +205,57 @@ static EjsVoid *hs_listen(Ejs *ejs, EjsHttpServer *sp, int argc, EjsObj **argv)
             ejsThrowArgError(ejs, "Missing listen endpoint");
             return 0;
         }
-        if (sp->server) {
-            httpDestroyServer(sp->server);
-            sp->server = 0;
+        if (sp->endpoint) {
+            httpDestroyEndpoint(sp->endpoint);
+            sp->endpoint = 0;
         }
         /*
-            The server uses the ejsDispatcher. This is VERY important. All connections will inherit this also.
+            The endpoint uses the ejsDispatcher. This is VERY important. All connections will inherit this also.
             This serializes all activity on one dispatcher.
          */
-        if ((server = httpCreateServer(sp->ip, sp->port, ejs->dispatcher, HTTP_CREATE_HOST)) == 0) {
-            ejsThrowIOError(ejs, "Can't create Http server object");
+        if ((endpoint = httpCreateEndpoint(sp->ip, sp->port, ejs->dispatcher)) == 0) {
+            ejsThrowIOError(ejs, "Can't create Http endpoint object");
             return 0;
         }
-        sp->server = server;
-        host = mprGetFirstItem(server->hosts);
+        sp->endpoint = endpoint;
+        host = httpCreateHost();
+        httpSetHostName(host, sp->ip, sp->port);
+        httpAddHostToEndpoint(endpoint, host);
         if (sp->limits) {
-            ejsSetHttpLimits(ejs, server->limits, sp->limits, 1);
+            ejsSetHttpLimits(ejs, endpoint->limits, sp->limits, 1);
         }
         if (sp->incomingStages || sp->outgoingStages || sp->connector) {
             setHttpPipeline(ejs, sp);
         }
         if (sp->ssl) {
-            httpSecureServer(server, sp->ssl);
+            httpSecureEndpoint(endpoint, sp->ssl);
         }
         if (sp->name) {
             httpSetHostName(host, sp->name, -1);
         }
-        httpSetSoftware(server->http, EJS_HTTPSERVER_NAME);
-        httpSetServerAsync(server, sp->async);
-        httpSetServerContext(server, sp);
-        httpSetServerNotifier(server, stateChangeNotifier);
+        httpSetSoftware(endpoint->http, EJS_HTTPSERVER_NAME);
+        httpSetEndpointAsync(endpoint, sp->async);
+        httpSetEndpointContext(endpoint, sp);
+        httpSetEndpointNotifier(endpoint, stateChangeNotifier);
 
         /*
-            This is only required for when http is using non-ejs handlers and/or filters
+            This is only required when http is using non-ejs handlers and/or filters
          */
         documents = ejsGetProperty(ejs, sp, ES_ejs_web_HttpServer_documents);
         if (ejsIs(ejs, documents, Path)) {
-            httpSetHostDocumentRoot(host, documents->value);
+            httpSetRouteDir(host->route, documents->value);
         }
+#if UNUSED && KEEP
+        //  MOB -- what to do with home?
+        //  MOB - if removed, then the "home" property should be removed?
         home = ejsGetProperty(ejs, sp, ES_ejs_web_HttpServer_home);
         if (ejsIs(ejs, home, Path)) {
-            httpSetHostServerRoot(host, home->value);
+            httpSetRoutDir(host, home->value);
         }
-        if (httpStartServer(server) < 0) {
-            httpDestroyServer(sp->server);
-            sp->server = 0;
+#endif
+        if (httpStartEndpoint(endpoint) < 0) {
+            httpDestroyEndpoint(sp->endpoint);
+            sp->endpoint = 0;
             ejsThrowIOError(ejs, "Can't listen on %s", address->value);
         }
     }
@@ -283,8 +289,8 @@ static EjsObj *hs_set_name(Ejs *ejs, EjsHttpServer *sp, int argc, EjsObj **argv)
     HttpHost    *host;
 
     sp->name = ejsToMulti(ejs, argv[0]);
-    if (sp->server && sp->name) {
-        host = mprGetFirstItem(sp->server->hosts);
+    if (sp->endpoint && sp->name) {
+        host = mprGetFirstItem(sp->endpoint->hosts);
         httpSetHostName(host, sp->name, -1);
     }
     return 0;
@@ -409,7 +415,7 @@ static EjsObj *hs_setPipeline(Ejs *ejs, EjsHttpServer *sp, int argc, EjsObj **ar
     sp->outgoingStages = (EjsArray*) argv[1];
     sp->connector = ejsToMulti(ejs, argv[2]);
 
-    if (sp->server) {
+    if (sp->endpoint) {
         /* NOTE: this will only impact future requests */
         setHttpPipeline(ejs, sp);
     }
@@ -513,18 +519,20 @@ static EjsVoid *hs_passRequest(Ejs *ejs, EjsHttpServer *server, int argc, EjsAny
 static void setHttpPipeline(Ejs *ejs, EjsHttpServer *sp) 
 {
     EjsString       *vs;
-    HttpLoc         *loc;
+    HttpHost        *host;
+    HttpRoute       *route;
     Http            *http;
     HttpStage       *stage;
     cchar           *name;
     int             i;
 
-    mprAssert(sp->server);
-    http = sp->server->http;
-    loc = sp->server->loc;
+    mprAssert(sp->endpoint);
+    http = sp->endpoint->http;
+    host = mprGetFirstItem(sp->endpoint->hosts);
+    route = host->route;
 
     if (sp->outgoingStages) {
-        httpClearStages(loc, HTTP_STAGE_TX);
+        httpClearRouteStages(route, HTTP_STAGE_TX);
         for (i = 0; i < sp->outgoingStages->length; i++) {
             vs = ejsGetProperty(ejs, sp->outgoingStages, i);
             if (vs && ejsIs(ejs, vs, String)) {
@@ -533,12 +541,12 @@ static void setHttpPipeline(Ejs *ejs, EjsHttpServer *sp)
                     ejsThrowArgError(ejs, "Can't find pipeline stage name %s", name);
                     return;
                 }
-                httpAddFilter(loc, name, NULL, HTTP_STAGE_TX);
+                httpAddRouteFilter(route, name, NULL, HTTP_STAGE_TX);
             }
         }
     }
     if (sp->incomingStages) {
-        httpClearStages(loc, HTTP_STAGE_RX);
+        httpClearRouteStages(route, HTTP_STAGE_RX);
         for (i = 0; i < sp->incomingStages->length; i++) {
             vs = ejsGetProperty(ejs, sp->incomingStages, i);
             if (vs && ejsIs(ejs, vs, String)) {
@@ -547,7 +555,7 @@ static void setHttpPipeline(Ejs *ejs, EjsHttpServer *sp)
                     ejsThrowArgError(ejs, "Can't find pipeline stage name %s", name);
                     return;
                 }
-                httpAddFilter(loc, name, NULL, HTTP_STAGE_RX);
+                httpAddRouteFilter(route, name, NULL, HTTP_STAGE_RX);
             }
         }
     }
@@ -556,7 +564,7 @@ static void setHttpPipeline(Ejs *ejs, EjsHttpServer *sp)
             ejsThrowArgError(ejs, "Can't find pipeline stage name %s", sp->connector);
             return;
         }
-        loc->connector = stage;
+        route->connector = stage;
     }
 }
 
@@ -668,7 +676,7 @@ static void setupConnTrace(HttpConn *conn)
     EjsHttpServer   *sp;
     int             i;
 
-    if ((sp = httpGetServerContext(conn->server)) != 0) {
+    if ((sp = httpGetEndpointContext(conn->endpoint)) != 0) {
         for (i = 0; i < HTTP_TRACE_MAX_DIR; i++) {
             conn->trace[i] = sp->trace[i];
         }
@@ -689,7 +697,7 @@ static EjsRequest *createRequest(EjsHttpServer *sp, HttpConn *conn)
         dir = documents->value;
     } else {
         /* Safety fall back */
-        dir = conn->host->documentRoot;
+        dir = conn->host->home;
     }
     req = ejsCreateRequest(ejs, sp, conn, dir);
     httpSetConnContext(conn, req);
@@ -724,17 +732,17 @@ static void startEjsHandler(HttpQueue *q)
     EjsHttpServer   *sp;
     EjsRequest      *req;
     Ejs             *ejs;
-    HttpServer      *server;
+    HttpEndpoint    *endpoint;
     HttpConn        *conn;
     MprSocket       *lp;
 
     conn = q->conn;
-    server = conn->server;
+    endpoint = conn->endpoint;
 
     if (conn->error) {
         return;
     }
-    if ((sp = httpGetServerContext(server)) == 0) {
+    if ((sp = httpGetEndpointContext(endpoint)) == 0) {
         lp = conn->sock->listenSock;
         if ((sp = lookupServer(conn->ejs, lp->ip, lp->port)) == 0) {
             httpError(conn, HTTP_CODE_INTERNAL_SERVER_ERROR, 
@@ -742,11 +750,11 @@ static void startEjsHandler(HttpQueue *q)
             return;
         }
         ejs = sp->ejs;
-        sp->server = server;
-        sp->ip = server->ip;
-        sp->port = server->port;
+        sp->endpoint = endpoint;
+        sp->ip = endpoint->ip;
+        sp->port = endpoint->port;
         if (!ejsIsDefined(ejs, ejsGetProperty(ejs, sp, ES_ejs_web_HttpServer_documents))) {
-            ejsSetProperty(ejs, sp, ES_ejs_web_HttpServer_documents, ejsCreateStringFromAsc(ejs, conn->host->documentRoot));
+            ejsSetProperty(ejs, sp, ES_ejs_web_HttpServer_documents, ejsCreateStringFromAsc(ejs, conn->host->home));
         }
     } else if (conn->ejs) {
         ejs = conn->ejs;
@@ -791,7 +799,7 @@ HttpStage *ejsAddWebHandler(Http *http, MprModule *module)
     if (http->ejsHandler) {
         return http->ejsHandler;
     }
-    handler = httpCreateHandler(http, "ejsHandler", HTTP_STAGE_ALL | HTTP_STAGE_QUERY_VARS | HTTP_STAGE_VIRTUAL, module);
+    handler = httpCreateHandler(http, "ejsHandler", HTTP_STAGE_ALL | HTTP_STAGE_QUERY_VARS, module);
     if (handler == 0) {
         return 0;
     }
@@ -812,7 +820,7 @@ static void manageHttpServer(EjsHttpServer *sp, int flags)
     if (flags & MPR_MANAGE_MARK) {
         ejsManagePot(sp, flags);
         mprMark(sp->ejs);
-        mprMark(sp->server);
+        mprMark(sp->endpoint);
         mprMark(sp->ssl);
         mprMark(sp->connector);
         mprMark(sp->keyFile);
@@ -833,9 +841,9 @@ static void manageHttpServer(EjsHttpServer *sp, int flags)
             mprRemoveItem(sp->ejs->httpServers, sp);
         }
         if (!sp->cloned) {
-            if (sp->server && !sp->hosted) {
-                httpDestroyServer(sp->server);
-                sp->server = 0;
+            if (sp->endpoint && !sp->hosted) {
+                httpDestroyEndpoint(sp->endpoint);
+                sp->endpoint = 0;
             }
         }
     }
@@ -867,7 +875,7 @@ EjsHttpServer *ejsCloneHttpServer(Ejs *ejs, EjsHttpServer *sp, bool deep)
     nsp->cloned = sp;
     nsp->ejs = ejs;
     nsp->async = sp->async;
-    nsp->server = sp->server;
+    nsp->endpoint = sp->endpoint;
     nsp->name = sp->name;
     nsp->ssl = sp->ssl;
     nsp->connector = sp->connector;

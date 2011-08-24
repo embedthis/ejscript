@@ -1216,7 +1216,7 @@ static EjsObj *req_setHeader(Ejs *ejs, EjsRequest *req, int argc, EjsObj **argv)
 static EjsObj *req_setLimits(Ejs *ejs, EjsRequest *req, int argc, EjsObj **argv)
 {
     if (!connOk(ejs, req, 1)) return 0;
-    if (req->conn->limits == req->server->server->limits) {
+    if (req->conn->limits == req->server->endpoint->limits) {
         httpSetUniqueConnLimits(req->conn);
     }
     if (req->limits == 0) {

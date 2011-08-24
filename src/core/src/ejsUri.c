@@ -389,7 +389,7 @@ static EjsObj *uri_set_extension(Ejs *ejs, EjsUri *up, int argc, EjsObj **argv)
 
     uri = up->uri;
     uri->ext = ejsToMulti(ejs, argv[0]);
-    uri->path = sjoin(mprTrimPathExtension(uri->path), uri->ext, NULL);
+    uri->path = sjoin(mprTrimPathExt(uri->path), uri->ext, NULL);
     return 0;
 }
 
@@ -545,7 +545,7 @@ static EjsUri *uri_joinExt(Ejs *ejs, EjsUri *up, int argc, EjsObj **argv)
         ext++;
     }
     nuri->ext = ext;
-    nuri->path = sjoin(mprTrimPathExtension(nuri->path), ".", nuri->ext, NULL);
+    nuri->path = sjoin(mprTrimPathExt(nuri->path), ".", nuri->ext, NULL);
     return np;
 }
 
@@ -604,7 +604,7 @@ static EjsString *uri_path(Ejs *ejs, EjsUri *up, int argc, EjsObj **argv)
 static EjsObj *uri_set_path(Ejs *ejs, EjsUri *up, int argc, EjsObj **argv)
 {
     up->uri->path = httpNormalizeUriPath(ejsToMulti(ejs, argv[0]));
-    up->uri->ext = mprGetPathExtension(up->uri->path);
+    up->uri->ext = mprGetPathExt(up->uri->path);
     return 0;
 }
 
@@ -655,13 +655,13 @@ static EjsUri *uri_replaceExtension(Ejs *ejs, EjsUri *up, int argc, EjsObj **arg
 
     np = cloneUri(ejs, up, 1);
     nuri = np->uri;
-    nuri->path = mprTrimPathExtension(nuri->path);
+    nuri->path = mprTrimPathExt(nuri->path);
     ext = ejsToMulti(ejs, argv[0]);
     if (ext && *ext == '.') {
         ext++;
     }
     nuri->ext = ext;
-    nuri->path = sjoin(mprTrimPathExtension(nuri->path), ".", nuri->ext, NULL);
+    nuri->path = sjoin(mprTrimPathExt(nuri->path), ".", nuri->ext, NULL);
     return np;
 }
 
@@ -876,7 +876,7 @@ static EjsUri *uri_trimExt(Ejs *ejs, EjsUri *up, int argc, EjsObj **argv)
     np = cloneUri(ejs, up, 1);
     nuri = np->uri;
     nuri->ext = 0;
-    nuri->path = mprTrimPathExtension(nuri->path);
+    nuri->path = mprTrimPathExt(nuri->path);
     return np;
 }
 
