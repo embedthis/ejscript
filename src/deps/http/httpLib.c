@@ -1592,7 +1592,7 @@ void __pamAuth() {}
 
 
 static void incomingChunkData(HttpQueue *q, HttpPacket *packet);
-static bool matchChunk(HttpConn *conn, HttpStage *handler, int dir);
+static bool matchChunk(HttpConn *conn, HttpRoute *route, int dir);
 static void openChunk(HttpQueue *q);
 static void outgoingChunkService(HttpQueue *q);
 static void setChunkPrefix(HttpQueue *q, HttpPacket *packet);
@@ -1617,7 +1617,7 @@ int httpOpenChunkFilter(Http *http)
 }
 
 
-static bool matchChunk(HttpConn *conn, HttpStage *handler, int dir)
+static bool matchChunk(HttpConn *conn, HttpRoute *route, int dir)
 {
     HttpTx  *tx;
 
@@ -3118,22 +3118,19 @@ HttpEndpoint *httpCreateConfiguredEndpoint(cchar *home, cchar *documents, cchar 
             if ((endpoint = httpCreateEndpoint(ip, port, NULL)) == 0) {
                 return 0;
             }
-            host = httpCreateHost();
-            httpSetHostName(host, ip, port);
-            httpAddHostToEndpoint(endpoint, host);
         }
     } else {
         if ((endpoint = httpCreateEndpoint(ip, port, NULL)) == 0) {
             return 0;
         }
-        host = httpCreateHost();
-        httpSetHostName(host, ip, port);
-        httpAddHostToEndpoint(endpoint, host);
     }
-    mprAssert(mprGetListLength(endpoint->hosts) == 1);
-    host = mprGetFirstItem(endpoint->hosts);
+    host = httpCreateHost();
+    httpSetHostIpAddr(host, ip, port);
+    httpAddHostToEndpoint(endpoint, host);
     httpSetHostHome(host, home);
+#if UNUSED
     httpSetRouteDir(host->route, documents);
+#endif
     if ((host->mimeTypes = mprCreateMimeTypes("mime.types")) == 0) {
         host->mimeTypes = MPR->mimeTypes;
     }
@@ -3441,7 +3438,7 @@ void httpSetNamedVirtualEndpoint(HttpEndpoint *endpoint)
 }
 
 
-HttpHost *httpLookupHost(HttpEndpoint *endpoint, cchar *name)
+HttpHost *httpLookupHostOnEndpoint(HttpEndpoint *endpoint, cchar *name)
 {
     HttpHost    *host;
     char        *ip;
@@ -3746,8 +3743,10 @@ HttpHost *httpCreateHost()
     host->traceMask = HTTP_TRACE_TX | HTTP_TRACE_RX | HTTP_TRACE_FIRST | HTTP_TRACE_HEADER;
     host->traceLevel = 3;
     host->traceMaxLength = MAXINT;
-
+#if UNUSED
     host->route = httpCreateDefaultRoute(host);
+    //  MOB _ this 
+#endif
     httpAddHost(http, host);
     return host;
 }
@@ -3766,7 +3765,8 @@ HttpHost *httpCloneHost(HttpHost *parent)
     host->mutex = mprCreateLock();
 
     /*  
-        The dirs and routes are all copy-on-write
+        The dirs and routes are all copy-on-write.
+        Don't clone ip, port and name
      */
     host->parent = parent;
     host->dirs = parent->dirs;
@@ -3776,8 +3776,10 @@ HttpHost *httpCloneHost(HttpHost *parent)
     host->mimeTypes = parent->mimeTypes;
     host->limits = mprMemdup(parent->limits, sizeof(HttpLimits));
     host->home = parent->home;
+#if UNUSED
     host->route = httpCreateInheritedRoute(parent->route);
     httpSetRouteHost(host->route, host);
+#endif
     host->traceMask = parent->traceMask;
     host->traceLevel = parent->traceLevel;
     host->traceMaxLength = parent->traceMaxLength;
@@ -3800,7 +3802,9 @@ static void manageHost(HttpHost *host, int flags)
         mprMark(host->parent);
         mprMark(host->dirs);
         mprMark(host->routes);
+#if UNUSED
         mprMark(host->route);
+#endif
         mprMark(host->mimeTypes);
         mprMark(host->home);
         mprMark(host->traceInclude);
@@ -3832,30 +3836,38 @@ void httpSetHostHome(HttpHost *host, cchar *home)
 
 
 /*
-    Set the host name intelligently from the name specified by ip:port. Port may be set to -1 and ip may contain a port
-    specifier, ie. "address:port". This routines sets host->name and host->ip, host->port which is used for vhost matching.
+    IP may be null in which case the host is listening on all interfaces. Port may be set to -1 and ip may contain a port
+    specifier, ie. "address:port".
  */
-void httpSetHostName(HttpHost *host, cchar *ip, int port)
+void httpSetHostIpAddr(HttpHost *host, cchar *ip, int port)
 {
+    char    *pip;
+
     if (port < 0 && schr(ip, ':')) {
-        char *pip;
         mprParseIp(ip, &pip, &port, -1);
         ip = pip;
     }
-    if (ip) {
-        if (port > 0) {
-            host->name = mprAsprintf("%s:%d", ip, port);
+    host->ip = sclone(ip);
+    host->port = port;
+
+    if (!host->name) {
+        if (ip) {
+            if (port > 0) {
+                host->name = sfmt("%s:%d", ip, port);
+            } else {
+                host->name = sclone(ip);
+            }
         } else {
-            host->name = sclone(ip);
+            mprAssert(port > 0);
+            host->name = sfmt("*:%d", port);
         }
-    } else {
-        mprAssert(port > 0);
-        host->name = mprAsprintf("*:%d", port);
     }
-    if (scmp(ip, "default") != 0) {
-        host->ip = sclone(ip);
-        host->port = port;
-    }
+}
+
+
+void httpSetHostName(HttpHost *host, cchar *name)
+{
+    host->name = sclone(name);
 }
 
 
@@ -3882,11 +3894,15 @@ int httpAddRoute(HttpHost *host, HttpRoute *route)
 
 void httpResetRoutes(HttpHost *host)
 {
+#if UNUSED
     HttpRoute   *route;
-
+    //  MOB - is this right to preserve the last route?
     route = mprGetLastItem(host->routes);
+#endif
     host->routes = mprCreateList(-1, 0);
+#if UNUSED
     mprAddItem(host->routes, route);
+#endif
 }
 
 
@@ -4200,6 +4216,9 @@ HttpEndpoint *httpGetFirstEndpoint(Http *http)
 }
 
 
+/*
+    WARNING: this should not be called by users as httpCreateHost will automatically call this.
+ */
 void httpAddHost(Http *http, HttpHost *host)
 {
     mprAddItem(http->hosts, host);
@@ -4212,22 +4231,17 @@ void httpRemoveHost(Http *http, HttpHost *host)
 }
 
 
-HttpRoute *httpCreateConfiguredRoute(HttpHost *host, int serverSide)
+HttpHost *httpLookupHost(Http *http, cchar *name)
 {
-    HttpRoute   *route;
-    Http        *http;
+    HttpHost    *host;
+    int         next;
 
-    /*
-        Create default incoming and outgoing pipelines. Order matters.
-     */
-    http = MPR->httpService;
-    route = httpCreateRoute(host);
-    httpAddRouteFilter(route, http->rangeFilter->name, NULL, HTTP_STAGE_TX);
-    httpAddRouteFilter(route, http->chunkFilter->name, NULL, HTTP_STAGE_RX | HTTP_STAGE_TX);
-    if (serverSide) {
-        httpAddRouteFilter(route, http->uploadFilter->name, NULL, HTTP_STAGE_RX);
+    for (next = 0; (host = mprGetNextItem(http->hosts, &next)) != 0; ) {
+        if (smatch(name, host->name)) {
+            return host;
+        }
     }
-    return route;
+    return 0;
 }
 
 
@@ -4707,7 +4721,7 @@ void httpMatchHost(HttpConn *conn)
         return;
     }
     if (httpIsNamedVirtualEndpoint(endpoint)) {
-        host = httpLookupHost(endpoint, conn->rx->hostHeader);
+        host = httpLookupHostOnEndpoint(endpoint, conn->rx->hostHeader);
     } else {
         host = mprGetFirstItem(endpoint->hosts);
     }
@@ -4748,6 +4762,10 @@ void httpRouteRequest(HttpConn *conn)
             next = 0;
             rewrites++;
         }
+    }
+    if (rx->route == 0) {
+        httpError(conn, HTTP_CODE_INTERNAL_SERVER_ERROR, "Can't find route for request");
+        return;
     }
     if (conn->error || tx->redirected || tx->altBody) {
         tx->handler = conn->http->passHandler;
@@ -5633,10 +5651,11 @@ void httpHandleOptionsTrace(HttpQueue *q)
     if (rx->flags & HTTP_TRACE) {
         if (!conn->limits->enableTraceMethod) {
             tx->status = HTTP_CODE_NOT_ACCEPTABLE;
-            httpFormatBody(conn, "Trace Request Denied", "<p>The TRACE method is disabled on this server.</p>");
+            httpFormatBody(conn, "Trace Request Denied", "The TRACE method is disabled on this server.");
         } else {
-            tx->altBody = mprAsprintf("%s %s %s\r\n", rx->method, rx->uri, conn->protocol);
+            httpFormatResponse(conn, "%s %s %s\r\n", rx->method, rx->uri, conn->protocol);
         }
+        httpFinalize(conn);
 
     } else if (rx->flags & HTTP_OPTIONS) {
         flags = tx->traceMethods;
@@ -5647,6 +5666,8 @@ void httpHandleOptionsTrace(HttpQueue *q)
             (flags & HTTP_STAGE_POST) ? ",POST" : "",
             (flags & HTTP_STAGE_PUT) ? ",PUT" : "",
             (flags & HTTP_STAGE_DELETE) ? ",DELETE" : "");
+        httpOmitBody(conn);
+        httpFinalize(conn);
         tx->length = 0;
     }
 }
@@ -5738,7 +5759,7 @@ int httpOpenPassHandler(Http *http)
 
 
 
-static bool matchFilter(HttpConn *conn, HttpStage *filter, int dir);
+static bool matchFilter(HttpConn *conn, HttpStage *filter, HttpRoute *route, int dir);
 static void openQueues(HttpConn *conn);
 static void pairQueues(HttpConn *conn);
 static void setVars(HttpConn *conn);
@@ -5768,7 +5789,7 @@ void httpCreateTxPipeline(HttpConn *conn, HttpRoute *route)
 
     if (route->outputStages) {
         for (next = 0; (filter = mprGetNextItem(route->outputStages, &next)) != 0; ) {
-            if (matchFilter(conn, filter, HTTP_STAGE_TX)) {
+            if (matchFilter(conn, filter, route, HTTP_STAGE_TX)) {
                 mprAddItem(tx->outputPipeline, filter);
             }
         }
@@ -5796,8 +5817,12 @@ void httpCreateTxPipeline(HttpConn *conn, HttpRoute *route)
 
     setVars(conn);
     pairQueues(conn);
-    openQueues(conn);
+    /*
+        Put the header before opening the queues incase an open routine actually services and completes the request
+        httpHandleOptionsTrace does this when called from openFile() in fileHandler.
+     */
     httpPutForService(conn->writeq, httpCreateHeaderPacket(), 0);
+    openQueues(conn);
 }
 
 
@@ -5820,7 +5845,7 @@ void httpCreateRxPipeline(HttpConn *conn, HttpRoute *route)
     rx->inputPipeline = mprCreateList(-1, 0);
     if (route) {
         for (next = 0; (filter = mprGetNextItem(route->inputStages, &next)) != 0; ) {
-            if (!matchFilter(conn, filter, HTTP_STAGE_RX)) {
+            if (!matchFilter(conn, filter, route, HTTP_STAGE_RX)) {
                 continue;
             }
             mprAddItem(rx->inputPipeline, filter);
@@ -6042,16 +6067,13 @@ static void setVars(HttpConn *conn)
 }
 
 
-/*
-    Match a filter by extension
- */
-static bool matchFilter(HttpConn *conn, HttpStage *filter, int dir)
+static bool matchFilter(HttpConn *conn, HttpStage *filter, HttpRoute *route, int dir)
 {
     HttpTx      *tx;
 
     tx = conn->tx;
     if (filter->match) {
-        return filter->match(conn, filter, dir);
+        return filter->match(conn, route, dir);
     }
     if (filter->extensions && tx->ext) {
         return mprLookupKey(filter->extensions, tx->ext) != 0;
@@ -6140,24 +6162,10 @@ HttpQueue *httpCreateQueue(HttpConn *conn, HttpStage *stage, int dir, HttpQueue 
     if ((q = mprAllocObj(HttpQueue, manageQueue)) == 0) {
         return 0;
     }
+    q->conn = conn;
     httpInitQueue(conn, q, stage->name);
     httpInitSchedulerQueue(q);
-
-    q->conn = conn;
-    q->stage = stage;
-    q->close = stage->close;
-    q->open = stage->open;
-    q->start = stage->start;
-    q->direction = dir;
-
-    if (dir == HTTP_QUEUE_TX) {
-        q->put = stage->outgoingData;
-        q->service = stage->outgoingService;
-        
-    } else {
-        q->put = stage->incomingData;
-        q->service = stage->incomingService;
-    }
+    httpAssignQueue(q, stage, dir);
     if (prev) {
         httpInsertQueue(prev, q);
     }
@@ -6189,6 +6197,23 @@ static void manageQueue(HttpQueue *q, int flags)
             mprMark(q->nextQ);
         }
     }
+}
+
+
+void httpAssignQueue(HttpQueue *q, HttpStage *stage, int dir)
+{
+    q->stage = stage;
+    q->close = stage->close;
+    q->open = stage->open;
+    q->start = stage->start;
+    if (dir == HTTP_QUEUE_TX) {
+        q->put = stage->outgoingData;
+        q->service = stage->outgoingService;
+    } else {
+        q->put = stage->incomingData;
+        q->service = stage->incomingService;
+    }
+    q->owner = stage->name;
 }
 
 
@@ -6735,7 +6760,7 @@ static HttpPacket *createRangePacket(HttpConn *conn, HttpRange *range);
 static HttpPacket *createFinalRangePacket(HttpConn *conn);
 static void outgoingRangeService(HttpQueue *q);
 static bool fixRangeLength(HttpConn *conn);
-static bool matchRange(HttpConn *conn, HttpStage *handler, int dir);
+static bool matchRange(HttpConn *conn, HttpRoute *route, int dir);
 static void startRange(HttpQueue *q);
 
 
@@ -6755,7 +6780,7 @@ int httpOpenRangeFilter(Http *http)
 }
 
 
-static bool matchRange(HttpConn *conn, HttpStage *handler, int dir)
+static bool matchRange(HttpConn *conn, HttpRoute *route, int dir)
 {
     mprAssert(conn->rx);
 
@@ -7086,12 +7111,10 @@ static bool opPresent(MprList *list, HttpRouteOp *op);
 static void manageRoute(HttpRoute *route, int flags);
 static void manageLang(HttpLang *lang, int flags);
 static void manageRouteOp(HttpRouteOp *op, int flags);
-static int mapFile(HttpConn *conn, HttpRoute *route);
+static void mapFile(HttpConn *conn, HttpRoute *route);
 static int matchRoute(HttpConn *conn, HttpRoute *route);
-static int processDirectories(HttpConn *conn, HttpRoute *route);
 static int selectHandler(HttpConn *conn, HttpRoute *route);
 static int testCondition(HttpConn *conn, HttpRoute *route, HttpRouteOp *condition);
-static void trimExtraPath(HttpConn *conn);
 static char *trimQuotes(char *str);
 static int updateRequest(HttpConn *conn, HttpRoute *route, HttpRouteOp *update);
 
@@ -7110,6 +7133,8 @@ HttpRoute *httpCreateRoute(HttpHost *host)
     route->expires = mprCreateHash(HTTP_SMALL_HASH_SIZE, MPR_HASH_STATIC_VALUES);
     route->expiresByType = mprCreateHash(HTTP_SMALL_HASH_SIZE, MPR_HASH_STATIC_VALUES);
     route->extensions = mprCreateHash(HTTP_SMALL_HASH_SIZE, MPR_HASH_CASELESS);
+
+    //  MOB - reconsider this
     route->flags = HTTP_ROUTE_HANDLER_SMART | HTTP_ROUTE_GZIP;
     route->handlers = mprCreateList(-1, 0);
     route->host = host;
@@ -7134,6 +7159,40 @@ HttpRoute *httpCreateDefaultRoute(HttpHost *host)
         return 0;
     }
     httpSetRouteName(route, "default");
+    httpFinalizeRoute(route);
+    return route;
+}
+
+
+HttpRoute *httpCreateConfiguredRoute(HttpHost *host, int serverSide)
+{
+    HttpRoute   *route;
+    Http        *http;
+
+    /*
+        Create default incoming and outgoing pipelines. Order matters.
+     */
+    route = httpCreateRoute(host);
+    http = route->http;
+    httpAddRouteFilter(route, http->rangeFilter->name, NULL, HTTP_STAGE_TX);
+    httpAddRouteFilter(route, http->chunkFilter->name, NULL, HTTP_STAGE_RX | HTTP_STAGE_TX);
+    if (serverSide) {
+        httpAddRouteFilter(route, http->uploadFilter->name, NULL, HTTP_STAGE_RX);
+    }
+    return route;
+}
+
+
+HttpRoute *httpCreateAliasRoute(HttpRoute *parent, cchar *prefix, cchar *path, int status)
+{
+    HttpRoute   *route;
+
+    if ((route = httpCreateInheritedRoute(parent)) == 0) {
+        return 0;
+    }
+    httpSetRoutePattern(route, prefix, 0);
+    httpSetRouteDir(route, path);
+    route->responseStatus = status;
     return route;
 }
 
@@ -7203,20 +7262,6 @@ HttpRoute *httpCreateInheritedRoute(HttpRoute *parent)
     route->virtualTarget = parent->virtualTarget;
     route->writeTarget = parent->writeTarget;
     route->workers = parent->workers;
-    return route;
-}
-
-
-HttpRoute *httpCreateAliasRoute(HttpRoute *parent, cchar *prefix, cchar *path, int status)
-{
-    HttpRoute   *route;
-
-    if ((route = httpCreateInheritedRoute(parent)) == 0) {
-        return 0;
-    }
-    httpSetRoutePattern(route, prefix, 0);
-    httpSetRouteDir(route, path);
-    route->responseStatus = status;
     return route;
 }
 
@@ -7293,6 +7338,9 @@ int httpMatchRoute(HttpConn *conn, HttpRoute *route)
     savePathInfo = rx->pathInfo;
 
     if (route->scriptName) {
+        /*
+            Rewrite the pathInfo and scriptName. If the route fails to match, restore below
+         */
         mprAssert(rx->pathInfo[0] == '/');
         len = route->scriptNameLen;
         if (strncmp(&rx->pathInfo[1], route->scriptName, len) != 0) {
@@ -7311,7 +7359,7 @@ int httpMatchRoute(HttpConn *conn, HttpRoute *route)
         rx->scriptName = route->scriptName;
         mprLog(5, "Route for script name: \"%s\", pathInfo: \"%s\"", rx->scriptName, rx->pathInfo);
     }
-    if ((rc = matchRoute(conn, route)) != HTTP_ROUTE_ACCEPTED) {
+    if ((rc = matchRoute(conn, route)) == 0) {
         rx->pathInfo = savePathInfo;
         rx->scriptName = 0;
     }
@@ -7330,7 +7378,6 @@ static int matchRoute(HttpConn *conn, HttpRoute *route)
 
     rx = conn->rx;
     tx = conn->tx;
-    route->flags &= ~HTTP_ROUTE_MAPPED;
 
     if (route->patternCompiled) {
         if (route->prefix && strncmp(rx->pathInfo, route->prefix, route->prefixLen) != 0) {
@@ -7429,7 +7476,7 @@ static int matchRoute(HttpConn *conn, HttpRoute *route)
         httpError(conn, -1, "Can't find route target name \"%s\"", route->targetOp);
         return 0;
     }
-    mprLog(0, "Run route target \"%s\" target \"%s\"", route->name, route->targetOp);
+    mprLog(4, "Selected route \"%s\" target \"%s\"", route->name, route->targetOp);
     return (*proc)(conn, route, 0);
 }
 
@@ -7445,10 +7492,10 @@ static int selectHandler(HttpConn *conn, HttpRoute *route)
         if (!tx->ext || (tx->handler = mprLookupKey(route->extensions, tx->ext)) == 0) {
             tx->handler = mprLookupKey(route->extensions, "");
         }
-        if (tx->handler && tx->handler->match) {
-            if (!tx->handler->match(conn, tx->handler, 0)) {
-                tx->handler = conn->http->passHandler;
-            }
+    }
+    if (tx->handler && tx->handler->match) {
+        if (!tx->handler->match(conn, route, 0)) {
+            tx->handler = 0;
         }
     }
     return tx->handler ? HTTP_ROUTE_ACCEPTED : 0;
@@ -7456,82 +7503,38 @@ static int selectHandler(HttpConn *conn, HttpRoute *route)
 
 
 /*
-    Map the fileTarget to physical storage. Sets tx->filename, tx->ext, tx->etag.
-    Also handles GZIP alternative content, trims extra path and language roots.
+    Map the fileTarget to physical storage. Sets tx->filename and tx->ext.
  */
-static int mapFile(HttpConn *conn, HttpRoute *route)
+static void mapFile(HttpConn *conn, HttpRoute *route)
 {
     HttpRx      *rx;
     HttpTx      *tx;
-    HttpHost    *host;
     HttpLang    *lang;
-    MprPath     *info, ginfo;
-    cchar       *ext;
-    char        *gfile, *filename;
-    int         rc;
+    MprPath     *info;
+    char        *filename;
 
     rx = conn->rx;
     tx = conn->tx;
-    host = conn->host;
+    lang = rx->lang;
     mprAssert(tx->handler);
 
-    if (route->flags & HTTP_ROUTE_MAPPED) {
-        return HTTP_ROUTE_ACCEPTED;
+    if (route->target) {
+        filename = expandPath(conn, route->fileTarget);
+    } else {
+        filename = &rx->pathInfo[1];
     }
-    route->flags |= HTTP_ROUTE_MAPPED;
-
-    filename = route->fileTarget ? expandPath(conn, route->fileTarget) : rx->pathInfo;
-    if (filename && filename[0] == '/') {
-        filename = sclone(&filename[1]);
-    }
-    if (route->languages) {
-        if ((lang = httpGetLanguage(conn, route->languages)) != 0) {
-            if (lang->path) {
-                tx->filename = mprJoinPath(lang->path, filename);
-            } else if (lang->suffix) {
-                if (lang->flags & HTTP_LANG_AFTER) {
-                    filename = sjoin(filename, ".", lang->suffix, 0);
-                } else if (lang->flags & HTTP_LANG_BEFORE) {
-                    ext = mprGetPathExt(filename);
-                    if (ext && *ext) {
-                        filename = sjoin(mprJoinPathExt(mprTrimPathExt(filename), lang->suffix), ".", ext, 0);
-                    } else {
-                        filename = mprJoinPathExt(mprTrimPathExt(filename), lang->suffix);
-                    }
-                }
-            }
-        }
+    if (lang && lang->path) {
+        tx->filename = mprJoinPath(lang->path, filename);
     }
     tx->filename = mprJoinPath(route->dir, filename);
     tx->ext = httpGetExt(conn);
     info = &tx->fileInfo;
     mprGetPathInfo(tx->filename, info);
-
-    if (info->isDir && (rc = processDirectories(conn, route)) != 0) {
-        return rc;
-    }
-    if (route->flags & HTTP_ROUTE_GZIP) {
-        if (!info->valid && rx->acceptEncoding && strstr(rx->acceptEncoding, "gzip") != 0) {
-            gfile = sfmt("%s.gz", tx->filename);
-            if (mprGetPathInfo(gfile, &ginfo) == 0) {
-                tx->filename = gfile;
-                tx->fileInfo = ginfo;
-                httpSetHeader(conn, "Content-Encoding", "gzip");
-            }
-        }
-    }
-//  MOB - where should this be placed?
-    if (tx->handler->flags & HTTP_STAGE_EXTRA_PATH) {
-        trimExtraPath(conn);
-    }
-    if (info->valid && !info->isDir) {
-        tx->etag = sfmt("\"%x-%Lx-%Lx\"", info->inode, info->size, info->mtime);
-    }
     mprLog(5, "mapFile uri \"%s\", filename: \"%s\", extension: \"%s\"", rx->uri, tx->filename, tx->ext);
-    return HTTP_ROUTE_ACCEPTED;
 }
 
 
+#if UNUSED
 /*
     Manage file requests that resolve to directories. This will either do an external redirect back to the browser 
     or do an internal (transparent) redirection and serve different content back to the browser.
@@ -7552,11 +7555,11 @@ static int processDirectories(HttpConn *conn, HttpRoute *route)
     mprAssert(rx->pathInfo);
     mprAssert(tx->fileInfo.checked);
 
-    if (sends(rx->pathInfo, "/")) {
-        /*  
-            Internal directory redirections. Append index transparently to the client.
-         */
-        if (route->index && *route->index) {
+    if (route->index && *route->index) {
+        if (sends(rx->pathInfo, "/")) {
+            /*  
+                Internal directory redirections. Append index transparently to the client.
+             */
             path = mprJoinPath(tx->filename, route->index);
             if (mprPathExists(path, R_OK)) {
                 /*  
@@ -7565,50 +7568,27 @@ static int processDirectories(HttpConn *conn, HttpRoute *route)
                 pathInfo = mprJoinPath(rx->pathInfo, route->index);
                 uri = httpFormatUri(prior->scheme, prior->host, prior->port, pathInfo, prior->reference, prior->query, 0);
                 httpSetUri(conn, uri, 0);
+                tx->filename = path;
+                tx->ext = httpGetExt(conn);
+                mprGetPathInfo(tx->filename, &tx->fileInfo);
                 return HTTP_ROUTE_REROUTE;
+
+            } else {
             }
+        } else {
+            /* 
+               Append "/" and do an external redirect 
+             */
+            pathInfo = sjoin(rx->pathInfo, "/", NULL);
+            uri = httpFormatUri(prior->scheme, prior->host, prior->port, pathInfo, prior->reference, prior->query, 0);
+            httpRedirect(conn, HTTP_CODE_MOVED_PERMANENTLY, uri);
+            return HTTP_ROUTE_ACCEPTED;
         }
-    } else {
-        /* Must not append the index for the external redirect */
-        pathInfo = sjoin(rx->pathInfo, "/", NULL);
-        uri = httpFormatUri(prior->scheme, prior->host, prior->port, pathInfo, prior->reference, prior->query, 0);
-        httpRedirect(conn, HTTP_CODE_MOVED_PERMANENTLY, uri);
-        return HTTP_ROUTE_ACCEPTED;
     }
     return 0;
 }
+#endif
 
-
-/*
-    Trim extra path information after the uri/filename. This is used by CGI (only).
-    Strategy is to heuristically find the script name in the uri. This is assumed to be either:
-        - the original uri up to and including first path component containing a ".", or
-        - the entire original uri
-    Once found, set the scriptName and trim the extraPath from pathInfo.
-    WARNING: ExtraPath is an old, unreliable, CGI specific technique. Directories with "." will thwart this code.
- */
-static void trimExtraPath(HttpConn *conn)
-{
-    HttpRx      *rx;
-    cchar       *seps;
-    char        *cp, *extra, *start;
-    ssize       len;
-
-    rx = conn->rx;
-
-    //  MOB - this is not right. Circular logic. How can filename be right if it has extra path?
-    start = conn->tx->filename;
-    seps = mprGetPathSeparators(start);
-    if ((cp = strchr(start, '.')) != 0 && (extra = strchr(cp, seps[0])) != 0) {
-        len = extra - start;
-        if (0 < len && len < slen(rx->pathInfo)) {
-            *extra = '\0';
-            rx->extraPath = sclone(&rx->pathInfo[len]);
-            rx->pathInfo[len] = '\0';
-            return;
-        }
-    }
-}
 
 
 int httpAddRouteCondition(HttpRoute *route, cchar *condition, int flags)
@@ -7848,7 +7828,7 @@ void httpAddRouteQuery(HttpRoute *route, cchar *field, cchar *value, int flags)
 
 
 /*
-    Add a route update record
+    Add a route update record. These run to modify a request.
     Update field var value
     kind == "cmd|field"
     details == "var value"
@@ -7977,6 +7957,8 @@ void httpSetRouteData(HttpRoute *route, cchar *key, void *data)
 {
     if (route->data == 0) {
         route->data = mprCreateHash(-1, 0);
+    } else {
+        GRADUATE_HASH(route, data);
     }
     mprAddKey(route->data, key, data);
 }
@@ -8382,7 +8364,7 @@ void httpSetRoutePathVar(HttpRoute *route, cchar *key, cchar *value)
  */
 char *httpMakePath(HttpRoute *route, cchar *file)
 {
-    char    *result, *path;
+    char    *path;
 
     mprAssert(file);
 
@@ -8390,11 +8372,9 @@ char *httpMakePath(HttpRoute *route, cchar *file)
         return 0;
     }
     if (mprIsRelPath(path)) {
-        result = mprJoinPath(route->host->home, path);
-    } else {
-        result = mprGetAbsPath(path);
+        path = mprJoinPath(route->host->home, path);
     }
-    return result;
+    return mprGetAbsPath(path);
 }
 
 
@@ -8413,6 +8393,7 @@ void httpAddRouteLanguage(HttpRoute *route, cchar *lang, cchar *suffix, int flag
     } else {
         mprAddKey(route->languages, lang, createLangDef(0, suffix, flags));
     }
+    httpAddRouteUpdate(route, "lang", 0, 0);
 }
 
 
@@ -8515,13 +8496,14 @@ static int authCondition(HttpConn *conn, HttpRoute *route, HttpRouteOp *op)
 
 static int directoryCondition(HttpConn *conn, HttpRoute *route, HttpRouteOp *op)
 {
-    HttpRx      *rx;
+    HttpTx      *tx;
     MprPath     info;
     char        *path;
 
-    rx = conn->rx;
+    tx = conn->tx;
     mapFile(conn, route);
     path = mprJoinPath(route->dir, expandPath(conn, op->details));
+    tx->ext = tx->filename = 0;
     mprGetPathInfo(path, &info);
     if (info.isDir) {
         return HTTP_ROUTE_ACCEPTED;
@@ -8535,13 +8517,14 @@ static int directoryCondition(HttpConn *conn, HttpRoute *route, HttpRouteOp *op)
  */
 static int existsCondition(HttpConn *conn, HttpRoute *route, HttpRouteOp *op)
 {
-    HttpRx  *rx;
+    HttpTx  *tx;
     char    *path;
 
-    rx = conn->rx;
+    tx = conn->tx;
     /* Must have tx->filename set when expanding op->details, so map fileTarget now */
     mapFile(conn, route);
     path = mprJoinPath(route->dir, expandPath(conn, op->details));
+    tx->ext = tx->filename = 0;
     if (mprPathExists(path, R_OK)) {
         return HTTP_ROUTE_ACCEPTED;
     }
@@ -8608,6 +8591,39 @@ static int fieldUpdate(HttpConn *conn, HttpRoute *route, HttpRouteOp *op)
 }
 
 
+static int langUpdate(HttpConn *conn, HttpRoute *route, HttpRouteOp *op)
+{
+    HttpUri     *prior;
+    HttpRx      *rx;
+    HttpLang    *lang;
+    char        *ext, *pathInfo, *uri;
+
+    rx = conn->rx;
+    prior = rx->parsedUri;
+    mprAssert(route->languages);
+
+    if ((lang = httpGetLanguage(conn, route->languages)) != 0) {
+        rx->lang = lang;
+        if (lang->suffix) {
+            if (lang->flags & HTTP_LANG_AFTER) {
+                pathInfo = sjoin(rx->pathInfo, ".", lang->suffix, 0);
+            } else if (lang->flags & HTTP_LANG_BEFORE) {
+                ext = httpGetExt(conn);
+                if (ext && *ext) {
+                    pathInfo = sjoin(mprJoinPathExt(mprTrimPathExt(pathInfo), lang->suffix), ".", ext, 0);
+                } else {
+                    pathInfo = mprJoinPathExt(mprTrimPathExt(pathInfo), lang->suffix);
+                }
+            }
+            uri = httpFormatUri(prior->scheme, prior->host, prior->port, pathInfo, prior->reference, prior->query, 0);
+            httpSetUri(conn, uri, 0);
+        }
+    }
+    return HTTP_ROUTE_ACCEPTED;
+}
+
+
+
 static int closeTarget(HttpConn *conn, HttpRoute *route, HttpRouteOp *op)
 {
     httpError(conn, HTTP_CODE_RESET, "Route target \"close\" is closing request");
@@ -8620,13 +8636,8 @@ static int closeTarget(HttpConn *conn, HttpRoute *route, HttpRouteOp *op)
 
 static int fileTarget(HttpConn *conn, HttpRoute *route, HttpRouteOp *op)
 {
-    int     rc;
-
-    rc = mapFile(conn, route);
-    if (!conn->tx->fileInfo.valid && !(conn->rx->flags & HTTP_PUT)) {
-        httpError(conn, HTTP_CODE_NOT_FOUND, "Can't open document: %s", conn->tx->filename);
-    }
-    return rc;
+    mapFile(conn, route);
+    return HTTP_ROUTE_ACCEPTED;
 }
 
 
@@ -9004,6 +9015,7 @@ void httpDefineRouteBuiltins()
 
     httpDefineRouteUpdate("field", fieldUpdate);
     httpDefineRouteUpdate("cmd", cmdUpdate);
+    httpDefineRouteUpdate("lang", langUpdate);
 
     httpDefineRouteTarget("close", closeTarget);
     httpDefineRouteTarget("file", fileTarget);
@@ -9311,7 +9323,7 @@ static void manageRx(HttpRx *rx, int flags)
         mprMark(rx->hostHeader);
         mprMark(rx->inputPipeline);
         mprMark(rx->inputRange);
-        mprMark(rx->language);
+        mprMark(rx->lang);
         mprMark(rx->method);
         mprMark(rx->mimeType);
         mprMark(rx->originalUri);
@@ -10960,8 +10972,8 @@ HttpLang *httpGetLanguage(HttpConn *conn, MprHashTable *spoken)
     int         next;
 
     rx = conn->rx;
-    if (rx->language) {
-        return rx->language;
+    if (rx->lang) {
+        return rx->lang;
     }
     if (spoken == 0) {
         return 0;
@@ -10978,12 +10990,44 @@ HttpLang *httpGetLanguage(HttpConn *conn, MprHashTable *spoken)
         mprSortList(list, compareLang);
         for (next = 0; (language = mprGetNextItem(list, &next)) != 0; ) {
             if ((lang = mprLookupKey(rx->route->languages, &language[4])) != 0) {
-                rx->language = lang;
+                rx->lang = lang;
                 return lang;
             }
         }
     }
     return 0;
+}
+
+
+/*
+    Trim extra path information after the uri extension. This is used by CGI and PHP only. The strategy is to 
+    heuristically find the script name in the uri. This is assumed to be the original uri up to and including 
+    first path component containing a "." Any path information after that is regarded as extra path.
+    WARNING: Extra path is an old, unreliable, CGI specific technique. Do not use directories with embedded periods.
+ */
+int httpTrimExtraPath(HttpConn *conn)
+{
+    HttpTx      *tx;
+    HttpRx      *rx;
+    cchar       *seps;
+    char        *cp, *extra, *start;
+    ssize       len;
+
+    rx = conn->rx;
+    tx = conn->tx;
+
+    if ((tx->handler && tx->handler->flags & HTTP_STAGE_EXTRA_PATH) && !(rx->flags & (HTTP_OPTIONS | HTTP_TRACE))) { 
+        start = rx->pathInfo;
+        seps = mprGetPathSeparators(start);
+        if ((cp = strchr(start, '.')) != 0 && (extra = strchr(cp, seps[0])) != 0) {
+            len = extra - start;
+            if (0 < len && len < slen(rx->pathInfo)) {
+                rx->extraPath = sclone(&rx->pathInfo[len]);
+                rx->pathInfo[len] = '\0';
+            }
+        }
+    }
+    return HTTP_ROUTE_ACCEPTED;
 }
 
 /*
@@ -12023,6 +12067,7 @@ void httpSetHeaderString(HttpConn *conn, cchar *key, cchar *value)
 }
 
 
+#if UNUSED
 /*
     Convenience routine to add Cache-Control header:
 
@@ -12034,6 +12079,7 @@ void httpDontCache(HttpConn *conn)
         conn->tx->flags |= HTTP_TX_DONT_CACHE;
     }
 }
+#endif
 
 
 void httpFinalize(HttpConn *conn)
@@ -12128,7 +12174,7 @@ void httpSetResponseBody(HttpConn *conn, int status, cchar *fmt, ...)
     HttpTx      *tx;
     cchar       *msg;
 
-    mprAssert(msg && msg);
+    mprAssert(fmt && fmt);
     tx = conn->tx;
 
     va_start(args, fmt);
@@ -12150,7 +12196,7 @@ void httpSetResponseError(HttpConn *conn, int status, cchar *fmt, ...)
     cchar       *statusMsg;
     char        *msg;
 
-    mprAssert(msg && msg);
+    mprAssert(fmt && fmt);
 
     va_start(args, fmt);
     msg = mprAsprintfv(fmt, args);
@@ -12160,7 +12206,7 @@ void httpSetResponseError(HttpConn *conn, int status, cchar *fmt, ...)
     } else {
         msg = sfmt("<h2>Access Error: %d -- %s</h2>\r\n<pre>%s</pre>\r\n", status, statusMsg, mprEscapeHtml(msg));
     }
-    httpDontCache(conn);
+    httpAddHeaderString(conn, "Cache-Control", "no-cache");
     httpFormatBody(conn, statusMsg, "%s", msg);
     va_end(args);
 }
@@ -12360,10 +12406,13 @@ static void setHeaders(HttpConn *conn, HttpPacket *packet)
             }
         }
     }
+#if UNUSED
     if (tx->flags & HTTP_TX_DONT_CACHE) {
         httpAddHeaderString(conn, "Cache-Control", "no-cache");
 
-    } else if (rx->route) {
+    } else 
+#endif
+    if (rx->route && !mprLookupKey(tx->headers, "Cache-Control")) {
         expires = 0;
         if (tx->ext) {
             expires = PTOL(mprLookupKey(rx->route->expires, tx->ext));
@@ -12650,7 +12699,7 @@ static char *getBoundary(void *buf, ssize bufLen, void *boundary, ssize boundary
 static void incomingUploadData(HttpQueue *q, HttpPacket *packet);
 static void manageHttpUploadFile(HttpUploadFile *file, int flags);
 static void manageUpload(Upload *up, int flags);
-static bool matchUpload(HttpConn *conn, HttpStage *filter, int dir);
+static bool matchUpload(HttpConn *conn, HttpRoute *route, int dir);
 static void openUpload(HttpQueue *q);
 static int  processContentBoundary(HttpQueue *q, char *line);
 static int  processContentHeader(HttpQueue *q, char *line);
@@ -12676,7 +12725,7 @@ int httpOpenUploadFilter(Http *http)
 /*  
     Match if this request needs the upload filter. Return true if needed.
  */
-static bool matchUpload(HttpConn *conn, HttpStage *filter, int dir)
+static bool matchUpload(HttpConn *conn, HttpRoute *route, int dir)
 {
     HttpRx  *rx;
     char    *pat;
@@ -14017,7 +14066,8 @@ void httpCreateCGIVars(HttpConn *conn)
     mprAddKey(vars, "REQUEST_URI", rx->originalUri);
     /*  
         URIs are broken into the following: http://{SERVER_NAME}:{SERVER_PORT}{SCRIPT_NAME}{PATH_INFO} 
-        NOTE: For CGI|PHP, scriptName is empty and pathInfo has the script. PATH_INFO is stored in extraPath.
+        NOTE: Appweb refers to pathInfo as the app relative URI and scriptName as the app address before the pathInfo.
+        In CGI|PHP terms, the scriptName is the appweb rx->pathInfo and the PATH_INFO is the extraPath. 
      */
     mprAddKey(vars, "PATH_INFO", rx->extraPath);
     mprAddKey(vars, "SCRIPT_NAME", rx->pathInfo);

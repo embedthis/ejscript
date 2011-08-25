@@ -182,6 +182,7 @@ static EjsVoid *hs_listen(Ejs *ejs, EjsHttpServer *sp, int argc, EjsObj **argv)
 {
     HttpEndpoint    *endpoint;
     HttpHost        *host;
+    HttpRoute       *route;
     EjsString       *address;
     EjsObj          *loc;
     EjsPath         *documents;
@@ -219,8 +220,9 @@ static EjsVoid *hs_listen(Ejs *ejs, EjsHttpServer *sp, int argc, EjsObj **argv)
         }
         sp->endpoint = endpoint;
         host = httpCreateHost();
-        httpSetHostName(host, sp->ip, sp->port);
+        httpSetHostIpAddr(host, sp->ip, sp->port);
         httpAddHostToEndpoint(endpoint, host);
+
         if (sp->limits) {
             ejsSetHttpLimits(ejs, endpoint->limits, sp->limits, 1);
         }
@@ -231,19 +233,25 @@ static EjsVoid *hs_listen(Ejs *ejs, EjsHttpServer *sp, int argc, EjsObj **argv)
             httpSecureEndpoint(endpoint, sp->ssl);
         }
         if (sp->name) {
-            httpSetHostName(host, sp->name, -1);
+            httpSetHostIpAddr(host, sp->name, -1);
         }
         httpSetSoftware(endpoint->http, EJS_HTTPSERVER_NAME);
         httpSetEndpointAsync(endpoint, sp->async);
         httpSetEndpointContext(endpoint, sp);
         httpSetEndpointNotifier(endpoint, stateChangeNotifier);
 
+        route = httpCreateConfiguredRoute(host, 1);
+        httpSetRouteName(route, "default");
+        httpAddRouteHandler(route, "ejsHandler", "");
+        httpSetRouteTarget(route, "virtual", 0);
+        httpFinalizeRoute(route);
+
         /*
             This is only required when http is using non-ejs handlers and/or filters
          */
         documents = ejsGetProperty(ejs, sp, ES_ejs_web_HttpServer_documents);
         if (ejsIs(ejs, documents, Path)) {
-            httpSetRouteDir(host->route, documents->value);
+            httpSetRouteDir(route, documents->value);
         }
 #if UNUSED && KEEP
         //  MOB -- what to do with home?
@@ -291,7 +299,7 @@ static EjsObj *hs_set_name(Ejs *ejs, EjsHttpServer *sp, int argc, EjsObj **argv)
     sp->name = ejsToMulti(ejs, argv[0]);
     if (sp->endpoint && sp->name) {
         host = mprGetFirstItem(sp->endpoint->hosts);
-        httpSetHostName(host, sp->name, -1);
+        httpSetHostName(host, sp->name);
     }
     return 0;
 }
@@ -529,7 +537,7 @@ static void setHttpPipeline(Ejs *ejs, EjsHttpServer *sp)
     mprAssert(sp->endpoint);
     http = sp->endpoint->http;
     host = mprGetFirstItem(sp->endpoint->hosts);
-    route = host->route;
+    route = mprGetFirstItem(host->routes);
 
     if (sp->outgoingStages) {
         httpClearRouteStages(route, HTTP_STAGE_TX);
@@ -590,9 +598,12 @@ static void stateChangeNotifier(HttpConn *conn, int state, int notifyFlags)
         break;
             
     case HTTP_STATE_FIRST:
+#if UNUSED
         if (!(conn->rx->flags & (HTTP_OPTIONS | HTTP_TRACE))) {
+            //  MOB - is this required with new routing?
             conn->tx->handler = (conn->error) ? conn->http->passHandler : conn->http->ejsHandler;
         }
+#endif
         break;
 
     case HTTP_STATE_COMPLETE:
