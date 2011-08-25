@@ -135,6 +135,17 @@ module ejs.web {
             /* Just need the content length */
             headers["Content-Length"] = filename.size
 
+        } else if (request.method == "OPTIONS") {
+            headers["Allow"] = "OPTIONS,GET,HEAD,POST,PUT,DELETE"
+
+        } else if (request.method == "TRACE") {
+            // body = "TRACE " + request.pathInfo + " " + request.protocol + "\r\n"
+            body = "<!DOCTYPE html>\r\n" +
+                "<html><head><title>Trace Request Denied</title></head>\r\n" +
+                "<body>The TRACE method is disabled on this server.</body>\r\n" +
+                "</html>\r\n"
+            status = Http.NotAcceptable
+
         } else {
             status = Http.BadMethod
             body = errorBody("Unsupported method ", "Method " + escapeHtml(request.method) + " is not supported")
