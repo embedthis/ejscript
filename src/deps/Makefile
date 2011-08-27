@@ -13,18 +13,18 @@ else
 	IMPORTS     += $(BLD_MPR_IMPORTS) $(BLD_SSL_IMPORTS)
 endif
 
-ifeq ($(BLD_HTTP_BUILTIN),1)
-	PRE_DIRS    += http
-else
-	CLOBBER		+= http/*.c http/*.h
-	IMPORTS     += $(BLD_HTTP_IMPORTS)
-endif
-
 ifeq ($(BLD_PCRE_BUILTIN),1)
 	PRE_DIRS    += pcre
 else
 	CLOBBER		+= pcre/*.c pcre/*.h
 	IMPORTS     += $(BLD_PCRE_IMPORTS)
+endif
+
+ifeq ($(BLD_HTTP_BUILTIN),1)
+	PRE_DIRS    += http
+else
+	CLOBBER		+= http/*.c http/*.h
+	IMPORTS     += $(BLD_HTTP_IMPORTS)
 endif
 
 IMPORTED    	+= $(patsubst %,$(BLD_LIB_DIR)/%, $(notdir $(IMPORTS)))
