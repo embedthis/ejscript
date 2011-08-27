@@ -8479,7 +8479,6 @@ static int allowDenyCondition(HttpConn *conn, HttpRoute *route, HttpRouteOp *op)
 
     mprAssert(conn);
     mprAssert(route);
-    mprAssert(op);
 
     rx = conn->rx;
     auth = rx->route->auth;
@@ -8526,7 +8525,6 @@ static int authCondition(HttpConn *conn, HttpRoute *route, HttpRouteOp *op)
 
     mprAssert(conn);
     mprAssert(route);
-    mprAssert(op);
 
     rx = conn->rx;
     if (route->auth == 0 || route->auth->type == 0) {
@@ -8669,7 +8667,6 @@ static int langUpdate(HttpConn *conn, HttpRoute *route, HttpRouteOp *op)
 
     mprAssert(conn);
     mprAssert(route);
-    mprAssert(op);
 
     rx = conn->rx;
     prior = rx->parsedUri;
@@ -8704,7 +8701,6 @@ static int closeTarget(HttpConn *conn, HttpRoute *route, HttpRouteOp *op)
 {
     mprAssert(conn);
     mprAssert(route);
-    mprAssert(op);
 
     httpError(conn, HTTP_CODE_RESET, "Route target \"close\" is closing request");
     if (scmp(route->closeTarget, "immediate") == 0) {
@@ -8733,7 +8729,6 @@ static int redirectTarget(HttpConn *conn, HttpRoute *route, HttpRouteOp *op)
 
     mprAssert(conn);
     mprAssert(route);
-    mprAssert(op);
 
     rx = conn->rx;
     mprAssert(route->redirectTarget && *route->redirectTarget);
@@ -8760,7 +8755,6 @@ static int virtualTarget(HttpConn *conn, HttpRoute *route, HttpRouteOp *op)
 {
     mprAssert(conn);
     mprAssert(route);
-    mprAssert(op);
 
     conn->rx->targetKey = route->virtualTarget ? expandTokens(conn, route->virtualTarget) : sclone(&conn->rx->pathInfo[1]);
     return HTTP_ROUTE_ACCEPTED;
@@ -8773,7 +8767,6 @@ static int writeTarget(HttpConn *conn, HttpRoute *route, HttpRouteOp *op)
 
     mprAssert(conn);
     mprAssert(route);
-    mprAssert(op);
 
     str = route->writeTarget ? expandTokens(conn, route->writeTarget) : sclone(&conn->rx->pathInfo[1]);
     httpSetStatus(conn, route->responseStatus);
@@ -11129,7 +11122,6 @@ int httpTrimExtraPath(HttpConn *conn)
 {
     HttpTx      *tx;
     HttpRx      *rx;
-    cchar       *seps;
     char        *cp, *extra, *start;
     ssize       len;
 
@@ -11138,8 +11130,7 @@ int httpTrimExtraPath(HttpConn *conn)
 
     if ((tx->handler && tx->handler->flags & HTTP_STAGE_EXTRA_PATH) && !(rx->flags & (HTTP_OPTIONS | HTTP_TRACE))) { 
         start = rx->pathInfo;
-        seps = mprGetPathSeparators(start);
-        if ((cp = strchr(start, '.')) != 0 && (extra = strchr(cp, seps[0])) != 0) {
+        if ((cp = strchr(start, '.')) != 0 && (extra = strchr(cp, '/')) != 0) {
             len = extra - start;
             if (0 < len && len < slen(rx->pathInfo)) {
                 rx->extraPath = sclone(&rx->pathInfo[len]);
@@ -11245,6 +11236,11 @@ void httpSendOpen(HttpQueue *q)
     conn = q->conn;
     tx = conn->tx;
 
+    if (tx->connector != conn->http->sendConnector) {
+        httpAssignQueue(q, tx->connector, HTTP_QUEUE_TX);
+        tx->connector->open(q);
+        return;
+    }
     if (!(tx->flags & HTTP_TX_NO_BODY)) {
         mprAssert(tx->fileInfo.valid);
         if (tx->fileInfo.size > conn->limits->transmissionBodySize) {
