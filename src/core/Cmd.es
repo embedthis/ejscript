@@ -84,16 +84,21 @@ module ejs {
             Locate a program using the application PATH
          */
         static function locate(program: Path): Path {
-            if (Config.OS == "WIN") {
-                if (program.extension == "") {
-                    program = program.joinExt(".exe")
-                }
-            }
             //  MOB - should search all windows cmd extensions: .bat, .com - see MprCmd/CGI
             for each (dir in App.getenv("PATH").split(App.SearchSeparator)) {
                 let path = Path(dir).join(program)
                 if (path.exists && !path.isDir) {
                     return path
+                }
+            }
+            if (Config.OS == "WIN") {
+                if (program.extension == "") {
+                    for each (ext in ["exe", "bat", "cmd"]) {
+                        path = locate(program.joinExt(".exe"))
+                        if (path) {
+                            return path;
+                        }
+                    }
                 }
             }
             return null

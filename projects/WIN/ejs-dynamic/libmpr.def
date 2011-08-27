@@ -128,7 +128,8 @@ EXPORTS
   mprFlushFile
   mprFlushSocket
   mprFormatLocalTime
-  mprFormatTime
+  mprFormatTm
+  mprFormatUniversalTime
   mprFprintf
   mprGet
   mprGetAbsPath
@@ -187,7 +188,8 @@ EXPORTS
   mprGetLogFile
   mprGetLogHandler
   mprGetLogLevel
-  mprGetMD5Hash
+  mprGetMD5
+  mprGetMD5WithPrefix
   mprGetMaxWorkers
   mprGetMem
   mprGetMemStats
@@ -204,7 +206,7 @@ EXPORTS
   mprGetPageSize
   mprGetPathBase
   mprGetPathDir
-  mprGetPathExtension
+  mprGetPathExt
   mprGetPathFiles
   mprGetPathInfo
   mprGetPathLink
@@ -456,7 +458,7 @@ EXPORTS
   mprStopSignalService
   mprStopThreadService
   mprTerminate
-  mprTrimPathExtension
+  mprTrimPathExt
   mprTruncateFile
   mprTryLock
   mprTrySpinLock
@@ -506,6 +508,7 @@ EXPORTS
   mprYield
   print
   scasecmp
+  scasematch
   schr
   sclone
   scmp
@@ -520,10 +523,12 @@ EXPORTS
   sjoinv
   slen
   slower
+  smatch
   sncasecmp
   snclone
   sncmp
   sncopy
+  snumber
   spbrk
   srchr
   srejoin
