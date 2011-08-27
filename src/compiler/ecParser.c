@@ -9132,7 +9132,7 @@ static EcNode *parseProgram(EcCompiler *cp, cchar *path)
         np->qname.name = ejs->state->internal->value;
     } else if (path) {
         apath = mprGetAbsPath(path);
-        md5 = mprGetMD5Hash(apath, (int) strlen(apath), NULL);
+        md5 = mprGetMD5(apath);
         np->qname.name = ejsSprintf(cp->ejs, "%s-%s-%d", EJS_INTERNAL_NAMESPACE, md5, cp->uid++);
     } else {
         np->qname.name = ejsCreateStringFromAsc(cp->ejs, EJS_INTERNAL_NAMESPACE);

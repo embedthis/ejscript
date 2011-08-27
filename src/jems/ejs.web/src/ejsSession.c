@@ -38,7 +38,7 @@ static EjsString *makeKey(Ejs *ejs, EjsSession *sp)
 
     /* Thread race here on nextSession++ not critical */
     mprSprintf(idBuf, sizeof(idBuf), "%08x%08x%d", PTOI(ejs) + PTOI(sp), (int) mprGetTime(), nextSession++);
-    return ejsCreateStringFromAsc(ejs, mprGetMD5Hash(idBuf, sizeof(idBuf), "::ejs.web.session::"));
+    return ejsCreateStringFromAsc(ejs, mprGetMD5WithPrefix(idBuf, sizeof(idBuf), "::ejs.web.session::"));
 }
 
 
