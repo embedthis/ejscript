@@ -19,7 +19,7 @@ EjsBlock *ejsCloneBlock(Ejs *ejs, EjsBlock *src, bool deep)
     dest->nobind = src->nobind;
     dest->scope = src->scope;
     mprInitList(&dest->namespaces);
-    mprCopyList(&dest->namespaces, &src->namespaces);
+    mprCopyListContents(&dest->namespaces, &src->namespaces);
     return dest;
 }
 

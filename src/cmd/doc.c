@@ -1678,11 +1678,11 @@ static MprChar *mergeDuplicates(Ejs *ejs, EjsMod *mp, EjsName qname, EjsDoc *doc
             mprError("Can't find @duplicate directive %s for %s", duplicate, qname.name);
         } else {
             crackDoc(mp, dup, WEN(duplicate));
-            mprCopyList(doc->params, dup->params);
-            mprCopyList(doc->options, dup->options);
-            mprCopyList(doc->events, dup->events);
-            mprCopyList(doc->see, dup->see);
-            mprCopyList(doc->throws, dup->throws);
+            mprCopyListContents(doc->params, dup->params);
+            mprCopyListContents(doc->options, dup->options);
+            mprCopyListContents(doc->events, dup->events);
+            mprCopyListContents(doc->see, dup->see);
+            mprCopyListContents(doc->throws, dup->throws);
             doc->brief = dup->brief;
             doc->description = dup->description;
             doc->example = dup->example;
@@ -1831,11 +1831,11 @@ static EjsDoc *crackDoc(EjsMod *mp, EjsDoc *doc, EjsName qname)
                 mprError("Can't find @duplicate directive %s for %@", duplicate, qname.name);
             } else {
                 crackDoc(mp, dup, WEN(duplicate));
-                mprCopyList(doc->params, dup->params);
-                mprCopyList(doc->options, dup->options);
-                mprCopyList(doc->events, dup->events);
-                mprCopyList(doc->see, dup->see);
-                mprCopyList(doc->throws, dup->throws);
+                mprCopyListContents(doc->params, dup->params);
+                mprCopyListContents(doc->options, dup->options);
+                mprCopyListContents(doc->events, dup->events);
+                mprCopyListContents(doc->see, dup->see);
+                mprCopyListContents(doc->throws, dup->throws);
                 doc->brief = mrejoin(doc->brief, " ", dup->brief, NULL);
                 doc->description = mrejoin(doc->description, " ", dup->description, NULL);
                 if (dup->example) {
