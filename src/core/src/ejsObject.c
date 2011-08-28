@@ -682,9 +682,9 @@ static int sortSlots(cvoid *a1, cvoid *a2)
 
 
 /*
-    static function sort(obj: Object, ascending: Boolean = true): Void
+    static function sortProperties(obj: Object, ascending: Boolean = true): Void
  */
-static EjsObj *obj_sort(Ejs *ejs, EjsObj *unused, int argc, EjsObj **argv)
+static EjsObj *obj_sortProperties(Ejs *ejs, EjsObj *unused, int argc, EjsObj **argv)
 {
     EjsPot      *obj;
     int         asc;
@@ -914,7 +914,9 @@ void ejsConfigureObjectType(Ejs *ejs)
         ejsBindMethod(ejs, type, ES_Object_preventExtensions, obj_preventExtensions);
         ejsBindAccess(ejs, type, ES_Object_prototype, obj_prototype, obj_set_prototype);
         ejsBindMethod(ejs, type, ES_Object_seal, obj_seal);
-        ejsBindMethod(ejs, type, ES_Object_sort, obj_sort);
+#if ES_Object_sortProperties
+        ejsBindMethod(ejs, type, ES_Object_sortProperties, obj_sortProperties);
+#endif
 
         /* Reflection */
         ejsBindMethod(ejs, type, ES_Object_getBaseType, obj_getBaseType);

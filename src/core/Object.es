@@ -210,7 +210,7 @@ module ejs {
             Sort and object's properties 
             @hide
          */
-        static native function sort(obj: Object, ascending: Boolean = true): Void
+        static native function sortProperties(obj: Object, ascending: Boolean = true): Void
 
         /** 
             Convert an object to an equivalent JSON encoded string.

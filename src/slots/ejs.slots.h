@@ -1681,7 +1681,7 @@
 #define ES_Object_preventExtensions                                    12
 #define ES_Object_prototype                                            13
 #define ES_Object_seal                                                 14
-#define ES_Object_sort                                                 15
+#define ES_Object_sortProperties                                       15
 #define ES_Object_getBaseType                                          16
 #define ES_Object_getName                                              17
 #define ES_Object_getType                                              18
@@ -1730,8 +1730,8 @@
 #define ES_Object_keys_obj                                             0
 #define ES_Object_preventExtensions_obj                                0
 #define ES_Object_seal_obj                                             0
-#define ES_Object_sort_obj                                             0
-#define ES_Object_sort_ascending                                       1
+#define ES_Object_sortProperties_obj                                   0
+#define ES_Object_sortProperties_ascending                             1
 #define ES_Object_getBaseType_obj                                      0
 #define ES_Object_getName_obj                                          0
 #define ES_Object_getType_obj                                          0
@@ -2344,6 +2344,6 @@
 #define ES_XMLList_NUM_INSTANCE_PROP                                   20
 #define ES_XMLList_NUM_INHERITED_PROP                                  0
 
-#define _ES_CHECKSUM_ejs   1449751
+#define _ES_CHECKSUM_ejs   1450820
 
 #endif
