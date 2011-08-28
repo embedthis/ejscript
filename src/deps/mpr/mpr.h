@@ -5202,7 +5202,15 @@ extern char *mprSearchPath(cchar *path, int flags, cchar *search, ...);
  */
 extern char *mprTrimPathExt(cchar *path);
 
-//  MOB
+/**
+    Create a file and write contents
+    @description The file is created, written and closed. If the file already exists, it is recreated.
+    @param path Filename to create
+    @param buf Buffer of data to write to the file
+    @param len Size of the #buf parameter in bytes
+    @param mode File permissions with which to create the file. E.g. 0644.
+    @return The number of bytes written. Should equal len. Otherwise return a negative MPR error code.
+ */
 extern ssize mprWritePath(cchar *path, cchar *buf, ssize len, int mode);
 
 /**
@@ -5344,8 +5352,19 @@ extern int mprLoadNativeModule(MprModule *mp);
 extern int mprUnloadNativeModule(MprModule *mp);
 #endif
 
-//  MOB
+/**
+    Set a module timeout
+    @param module Module object to modify
+    @param timeout Inactivity timeout in ticks before unloading the module
+    @internal
+ */
 extern void mprSetModuleTimeout(MprModule *module, MprTime timeout);
+
+/**
+    Define a module finalizer that will be called before a module is stopped
+    @param module Module object to modify
+    @param stop Callback function to invoke before stopping the module
+ */
 extern void mprSetModuleFinalizer(MprModule *module, MprModuleProc stop);
 
 /**
@@ -5525,7 +5544,7 @@ extern void mprEnableDispatcher(MprDispatcher *dispatcher);
 #define MPR_SERVICE_ONE_THING   0x4         /**< Wait for one event or one I/O */
 #define MPR_SERVICE_NO_GC       0x8         /**< Don't run GC */
 
-/*
+/**
     Schedule events. This can be called by any thread. Typically an app will dedicate one thread to be an event service 
     thread. This call will service events until the timeout expires or if MPR_SERVICE_ONE_THING is specified in flags, 
     after one event. This will service all enabled dispatcher queues and pending I/O events.
@@ -5538,8 +5557,20 @@ extern void mprEnableDispatcher(MprDispatcher *dispatcher);
  */
 extern int mprServiceEvents(MprTime delay, int flags);
 
-//MOB
+/**
+    Wait for an event to occur on the given dispatcher
+    @param dispatcher Event dispatcher to monitor
+    @timeout Timeout for waiting in ticks
+    @return Zero if successful and an event occurred before the timeout expired. Returns MPR_ERR_TIMEOUT if no event
+        is fired before the timeout expires.
+ */
 extern int mprWaitForEvent(MprDispatcher *dispatcher, MprTime timeout);
+
+/**
+    Signal the dispatcher to wakeup and re-examine its queues
+    @param dispatcher Event dispatcher to monitor
+    @internal
+ */
 extern void mprSignalDispatcher(MprDispatcher *dispatcher);
 
 /**
@@ -5605,7 +5636,7 @@ extern void mprEnableContinuousEvent(MprEvent *event, int enable);
     Create a timer event
     @description Create and queue a timer event for service. This is a convenience wrapper to create continuous
         events over the #mprCreateEvent call.
-    @param dispatcher Dispatcher object created via mprCreateDispatcher
+    @param dispatcher Dispatcher object created via #mprCreateDispatcher
     @param name Debug name of the event
     @param proc Function to invoke when the event is run
     @param period Time in milliseconds used by continuous events between firing of the event.
@@ -5625,14 +5656,22 @@ extern MprEvent *mprCreateTimerEvent(MprDispatcher *dispatcher, cchar *name, int
  */
 extern void mprRescheduleEvent(MprEvent *event, int period);
 
+/**
+    Relay an event to a dispatcher. This invokes the callback proc as though it was invoked from the given dispatcher. 
+    @param dispatcher Dispatcher object created via #mprCreateDispatcher
+    @param proc Procedure to invoke
+    @param data Argument to #proc
+    @param event Event object
+    @internal
+ */
+extern void mprRelayEvent(MprDispatcher *dispatcher, void *proc, void *data, MprEvent *event);
+
 /* Internal API */
-//  MOB - sort and check
 extern MprEvent *mprCreateEventQueue();
 extern MprDispatcher *mprGetNonBlockDispatcher();
 extern void mprWakeDispatchers();
 extern int mprDispatchersAreIdle();
 extern void mprClaimDispatcher(MprDispatcher *dispatcher);
-extern void mprRelayEvent(MprDispatcher *dispatcher, void *proc, void *data, MprEvent *event);
 extern MprEventService *mprCreateEventService();
 extern void mprStopEventService();
 extern MprEvent *mprGetNextEvent(MprDispatcher *dispatcher);
@@ -5682,23 +5721,38 @@ typedef enum MprXmlToken {
     MPR_XMLTOK_SPACE
 } MprXmlToken;
 
-//  MOB
+/**
+    XML callback handler
+    @param xp XML instance reference
+    @param state XML state
+    @param tagName Current XML tag
+    @param attName Current XML attribute
+    @param value Current XML element value
+  */
 typedef int (*MprXmlHandler)(struct MprXml *xp, int state, cchar *tagName, cchar* attName, cchar* value);
+
+/**
+    XML input stream function
+    @param xp XML instance reference
+    @param argument to input stream
+    @param buf Buffer into which to read data
+    @param size Size of buf
+ */
 typedef ssize (*MprXmlInputStream)(struct MprXml *xp, void *arg, char *buf, ssize size);
 
-/*
+/**
     Per XML session structure
  */
 typedef struct MprXml {
-    MprXmlHandler       handler;            /* Callback function */
-    MprXmlInputStream   readFn;             /* Read data function */
-    MprBuf              *inBuf;             /* Input data queue */
-    MprBuf              *tokBuf;            /* Parsed token buffer */
-    int                 quoteChar;          /* XdbAtt quote char */
-    int                 lineNumber;         /* Current line no for debug */
-    void                *parseArg;          /* Arg passed to mprXmlParse() */
-    void                *inputArg;          /* Arg for mprXmlSetInputStream() */
-    char                *errMsg;            /* Error message text */
+    MprXmlHandler       handler;            /**< Callback function */
+    MprXmlInputStream   readFn;             /**< Read data function */
+    MprBuf              *inBuf;             /**< Input data queue */
+    MprBuf              *tokBuf;            /**< Parsed token buffer */
+    int                 quoteChar;          /**< XdbAtt quote char */
+    int                 lineNumber;         /**< Current line no for debug */
+    void                *parseArg;          /**< Arg passed to mprXmlParse() */
+    void                *inputArg;          /**< Arg for mprXmlSetInputStream() */
+    char                *errMsg;            /**< Error message text */
 } MprXml;
 
 /**
@@ -5772,7 +5826,11 @@ typedef struct MprThreadService {
     int             stackSize;          /**< Default thread stack size */
 } MprThreadService;
 
-//MOB
+/**
+    Thread main procedure
+    @param arg Argument to the thread main
+    @param tp Thread instance reference
+ */
 typedef void (*MprThreadProc)(void *arg, struct MprThread *tp);
 
 /*
@@ -5941,7 +5999,6 @@ extern void mprResetYield();
 /*
     Internal APIs
  */
-//  MOB - review
 extern int mprMapMprPriorityToOs(int mprPriority);
 extern int mprMapOsPriorityToMpr(int nativePriority);
 extern void mprSetThreadStackSize(int size);
@@ -6180,10 +6237,9 @@ extern int mprNotifyOn(MprWaitService *ws, MprWaitHandler *wp, int mask);
  */
 typedef int (*MprSocketProc)(void *data, int mask);
 
-/**
+/*
     Socket service provider interface.
  */
-//  MOB
 typedef struct MprSocketProvider {
     cchar             *name;
     void              *data;
@@ -6206,15 +6262,13 @@ typedef int (*MprSocketPrebind)(struct MprSocket *sock);
 /**
     Mpr socket service class
  */
-//  MOB
 typedef struct MprSocketService {
     int             maxClients;                 /**< Maximum client side sockets */
     int             numClients;                 /**< Count of client side sockets */
-    int             next;
-    MprSocketProvider *standardProvider;
-    MprSocketProvider *secureProvider;
-    MprSocketPrebind  prebind;                  /* Prebind callback */
-    MprMutex        *mutex;
+    MprSocketProvider *standardProvider;        /**< Socket provider for non-SSL connections */
+    MprSocketProvider *secureProvider;          /**< Socket provider for SSL connections */
+    MprSocketPrebind  prebind;                  /**< Prebind callback */
+    MprMutex        *mutex;                     /**< Multithread locking */
 } MprSocketService;
 
 
@@ -6223,7 +6277,10 @@ typedef struct MprSocketService {
  */
 extern MprSocketService *mprCreateSocketService();
 
-//  MOB
+/**
+    Set the provider to be the default secure socket provider
+    @param provider Socket provider object
+ */
 extern void mprSetSecureProvider(MprSocketProvider *provider);
 
 /**
@@ -6303,10 +6360,9 @@ typedef struct MprSocket {
 /**
     Vectored write array
  */
-//  MOB
 typedef struct MprIOVec {
-    char            *start;
-    ssize           len;
+    char            *start;             /**< Start of block to write */
+    ssize           len;                /**< Length of block to write */
 } MprIOVec;
 
 
@@ -6604,16 +6660,15 @@ extern void mprRemoveSocketHandler(MprSocket *sp);
 /*
     SSL protocols
  */
-//  MOB
-#define MPR_PROTO_SSLV2    0x1
-#define MPR_PROTO_SSLV3    0x2
-#define MPR_PROTO_TLSV1    0x4
-#define MPR_PROTO_ALL      0x7
+#define MPR_PROTO_SSLV2    0x1              /**< SSL V2 protocol */
+#define MPR_PROTO_SSLV3    0x2              /**< SSL V3 protocol */
+#define MPR_PROTO_TLSV1    0x4              /**< TLS V1 protocol */
+#define MPR_PROTO_ALL      0x7              /**< All SSL protocols */
 
 /*
     Default SSL configuration
  */
-#define MPR_DEFAULT_CIPHER_SUITE    "HIGH:MEDIUM"
+#define MPR_DEFAULT_CIPHER_SUITE "HIGH:MEDIUM"  /**< Default cipher suite */
 
 /**
     Load the SSL module.
@@ -6627,21 +6682,71 @@ extern MprModule *mprLoadSsl(bool lazy);
  */
 extern void mprConfigureSsl(struct MprSsl *ssl);
 
-//  MOB
-extern int mprGetSocketInfo(cchar *host, int port, int *family, int *protocol, struct sockaddr **addr, socklen_t *addrlen);
+/**
+    Get the socket for an IP:Port address
+    @param ip IP address or hostname 
+    @param port Port number 
+    @param family Output parameter to contain the Internet protocol family
+    @param protocol Output parameter to contain the Internet TCP/IP protocol
+    @param addr Output parameter to contain the sockaddr description of the socket address
+    @param addrlen Output parameter to hold the length of the sockaddr object 
+    @return Zero if the call is successful. Otherwise return a negative MPR error code.
+  */
+extern int mprGetSocketInfo(cchar *ip, int port, int *family, int *protocol, struct sockaddr **addr, socklen_t *addrlen);
 
 /*
     Internal
  */
-//  MOB - review
 extern MprModule *mprSslInit(cchar *path);
 extern struct MprSsl *mprCreateSsl();
+
+/**
+    Set the ciphers to use for SSL
+    @param ssl SSL instance returned from #mprCreatessl
+    @param ciphers Cipher string
+ */
 extern void mprSetSslCiphers(struct MprSsl *ssl, cchar *ciphers);
+
+/**
+    Set the key file to use for SSL
+    @param ssl SSL instance returned from #mprCreatessl
+    @param keyFile Path to the SSL key file
+ */
 extern void mprSetSslKeyFile(struct MprSsl *ssl, cchar *keyFile);
+
+/**
+    Set certificate to use for SSL
+    @param ssl SSL instance returned from #mprCreatessl
+    @param certFile Path to the SSL certificate file
+ */
 extern void mprSetSslCertFile(struct MprSsl *ssl, cchar *certFile);
+
+/**
+    Set the client certificate file to use for SSL
+    @param ssl SSL instance returned from #mprCreatessl
+    @param caFile Path to the SSL client certificate file
+ */
 extern void mprSetSslCaFile(struct MprSsl *ssl, cchar *caFile);
+
+/**
+    Set the path for the client certificate directory
+    @param ssl SSL instance returned from #mprCreatessl
+    @param caFile Path to the SSL client certificate directory
+ */
 extern void mprSetSslCaPath(struct MprSsl *ssl, cchar *caPath);
+
+/**
+    Set the SSL protocol to use
+    @param ssl SSL instance returned from #mprCreatessl
+    @param protocol SSL protocol mask
+ */
 extern void mprSetSslProtocols(struct MprSsl *ssl, int protocols);
+
+/**
+    Control the verification of SSL clients
+    @param ssl SSL instance returned from #mprCreatessl
+    @param on Set to true to enable client SSL verification.
+ */
 extern void mprVerifySslClients(struct MprSsl *ssl, bool on);
 
 /**
@@ -7137,7 +7242,11 @@ extern void mprDestroyCmd(MprCmd *cmd);
  */
 extern void mprEnableCmdEvents(MprCmd *cmd, int channel);
 
-//  MOB
+/**
+    Finalize the writing of data to the command process
+    @param cmd MprCmd object created via mprCreateCmd
+    @ingroup MprCmd
+ */
 extern void mprFinalizeCmd(MprCmd *cmd);
 
 /**
@@ -7313,9 +7422,20 @@ extern ssize mprWriteCmd(MprCmd *cmd, int channel, char *buf, ssize bufsize);
  */
 extern int mprIsCmdComplete(MprCmd *cmd);
 
-//  MOB
+/**
+    Set the default environment to use for commands.
+    @description  This environment is used if one is not defined via #mprStartCmd
+    @param cmd MprCmd object created via mprCreateCmd
+    @param env Array of environment "KEY=VALUE" strings. Null terminated.
+ */
 extern void mprSetCmdDefaultEnv(MprCmd *cmd, cchar **env);
-//  MOB
+
+/**
+    Set the default command search path.
+    @description The search path is used to locate the program to run for the command.
+    @param cmd MprCmd object created via mprCreateCmd
+    @param search Search string. This is in a format similar to the PATH environment variable.
+ */
 extern void mprSetCmdSearchPath(MprCmd *cmd, cchar *search);
 
 
@@ -7325,7 +7445,9 @@ extern void mprSetCmdSearchPath(MprCmd *cmd, cchar *search);
 #define MPR_CACHE_APPEND        0x8     /**< Set and append if already existing */
 #define MPR_CACHE_PREPEND       0x10    /**< Set and prepend if already existing */
 
-//  MOB
+/**
+    In-memory caching 
+ */
 typedef struct MprCache
 {
     MprHashTable    *store;             /**< Key/value store */
@@ -7339,8 +7461,18 @@ typedef struct MprCache
     struct MprCache *shared;            /**< Shared common cache */
 } MprCache;
 
-//  MOB
+/**
+    Create a new cache object
+    @param options Set of option flags. Select from #MPR_CACHE_SHARED, #MPR_CACHE_ADD, #MPR_CACHE_ADD, #MPR_CACHE_SET,
+        #MPR_CACHE_APPEND, #MPR_CACHE_PREPEND.
+    @return A cache instance object. On error, return null.
+ */
 extern MprCache *mprCreateCache(int options);
+
+/**
+    Destroy a new cache object
+    @param cache The cache instance object returned from #mprCreateCache.
+ */
 extern void *mprDestroyCache(MprCache *cache);
 extern int mprExpireCache(MprCache *cache, cchar *key, MprTime expires);
 extern int64 mprIncCache(MprCache *cache, cchar *key, int64 amount);
