@@ -95,7 +95,7 @@ proxy("table", data, {
 }, [
     '<table data-sort="color" data-sort-order="descending" class="-ejs-table">',
     '<thead>',
-        '<tr>',
+        '<tr class="-ejs-table-header">',
             '<th>Color</th>',
             '<th>Temp</th>',
         '</tr>',
@@ -120,7 +120,7 @@ proxy("table", data, {
 }, [
     '<table data-pivot="true" class="-ejs-table">',
         '<thead>',
-            '<tr>',
+            '<tr class="-ejs-table-header">',
                 '<th>0</th>',
                 '<th>1</th>',
                 '<th>2</th>',
@@ -277,6 +277,5 @@ proxy("table", data, {
     '<tr data-edit="/1/edit">',
     '<tr data-edit="/2/edit">',
 ])
-
 
 server.close()
