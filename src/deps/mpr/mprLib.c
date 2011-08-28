@@ -24472,7 +24472,7 @@ void mprStopOsService()
 }
 
 
-int mprGetRandomBytes(char *buf, ssize length, int block)
+int mprGetRandomBytes(char *buf, ssize length, bool block)
 {
     ssize   sofar, rc;
     int     fd;
@@ -24481,7 +24481,6 @@ int mprGetRandomBytes(char *buf, ssize length, int block)
     if (fd < 0) {
         return MPR_ERR_CANT_OPEN;
     }
-
     sofar = 0;
     do {
         rc = read(fd, &buf[sofar], length);
@@ -24671,7 +24670,7 @@ int access(const char *path, int mode)
 }
 
 
-int mprGetRandomBytes(char *buf, int length, int block)
+int mprGetRandomBytes(char *buf, int length, bool block)
 {
     int     i;
 
@@ -26331,7 +26330,7 @@ HWND mprGetHwnd()
 }
 
 
-int mprGetRandomBytes(char *buf, ssize length, int block)
+int mprGetRandomBytes(char *buf, ssize length, bool block)
 {
     HCRYPTPROV      prov;
     int             rc;
@@ -26708,13 +26707,12 @@ void mprStopOsService()
 }
 
 
-int mprGetRandomBytes(char *buf, int length, int block)
+int mprGetRandomBytes(char *buf, int length, bool block)
 {
     HCRYPTPROV      prov;
     int             rc;
 
     rc = 0;
-
     if (!CryptAcquireContext(&prov, NULL, NULL, PROV_RSA_FULL, CRYPT_VERIFYCONTEXT | 0x40)) {
         return mprGetError();
     }
