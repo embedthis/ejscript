@@ -399,7 +399,7 @@ static bool setCmdArgs(Ejs *ejs, EjsCmd *cmd, int argc, EjsObj **argv)
 
     } else {
         cmd->command = ejsToMulti(ejs, cmd->command);
-        if (mprMakeArgv(cmd->command, &cmd->argc, &cmd->argv, 0) < 0 || cmd->argv == 0) {
+        if ((cmd->argc = mprMakeArgv(cmd->command, &cmd->argv, 0)) < 0 || cmd->argv == 0) {
             ejsThrowArgError(ejs, "Can't parse command line");
             return 0;
         }
@@ -611,7 +611,7 @@ static EjsObj *cmd_exec(Ejs *ejs, EjsObj *unused, int argc, EjsObj **argv)
     char    **argVector;
     int     argCount;
 
-    mprMakeArgv(ejsToMulti(ejs, argv[0]), &argCount, &argVector, 0);
+    argCount = mprMakeArgv(ejsToMulti(ejs, argv[0]), &argVector, 0);
     execv(argVector[0], argVector);
 #endif
     ejsThrowStateError(ejs, "Can't exec %@", ejsToString(ejs, argv[0]));

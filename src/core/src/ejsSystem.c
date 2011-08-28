@@ -117,7 +117,7 @@ static EjsObj *system_exec(Ejs *ejs, EjsObj *unused, int argc, EjsObj **argv)
             argCount = ap->length;
 
         } else {
-            if (mprMakeArgv(ejsToMulti(ejs, args), &argCount, &argVector, 0) < 0 || argVector == 0) {
+            if ((argCount = mprMakeArgv(ejsToMulti(ejs, args), &argVector, 0)) < 0 || argVector == 0) {
                 ejsThrowArgError(ejs, "Can't parse command line");
                 return 0;
             }

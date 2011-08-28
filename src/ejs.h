@@ -1209,6 +1209,8 @@ extern int       ejsContainsMulti(Ejs *ejs, EjsString *sp, cchar *pat);
 extern int       ejsContainsString(Ejs *ejs, EjsString *sp, EjsString *pat);
 extern int       ejsStartsWithMulti(Ejs *ejs, EjsString *sp, cchar *pat);
 extern char      *ejsToMulti(Ejs *ejs, void *obj);
+
+//  MOB - rethink this name.
 extern EjsString *ejsSprintf(Ejs *ejs, cchar *fmt, ...);
 
 /**

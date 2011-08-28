@@ -2423,7 +2423,8 @@ extern int  mprSyncThreads(MprTime timeout);
     @description The MPR provides a suite of safe ascii string manipulation routines to help prevent buffer overflows
         and other potential security traps.
     @see MprString, 
-        mprAsprintf, mprAsprintfv, mprMemcpy, mprPrintf, mprPrintfError, mprSprintf,
+MOB - deprecate mprMemcpy
+        mprMemcpy, mprPrintf, mprPrintfError, mprSprintf,
         itos, schr, scasecmp, sclone, scmp, scontains, scopy, sends, sfmt, sfmtv, shash, shashlower, sjoin, sjoinv,
         slen, slower, sncasecmp, snclone, sncmp, sncopy, spbrk, srchr, srejoin, srejoinv, sspn, sstarts, stoi, stok,
         ssub, supper, strim
@@ -2533,7 +2534,6 @@ extern int sends(cchar *str, cchar *suffix);
     Format a string. This is a secure verion of printf that can handle null args.
     @description Format the given arguments according to the printf style format. See mprPrintf for a full list of the
         format specifies. This is a secure replacement for sprintf, it can handle null arguments without crashes.
-        This routine is the same as mprAsprintf.
     @param fmt Printf style format string
     @param ... Variable arguments for the format string
     @return Returns a newly allocated string
@@ -2545,7 +2545,6 @@ extern char *sfmt(cchar *fmt, ...);
     Format a string. This is a secure verion of printf that can handle null args.
     @description Format the given arguments according to the printf style format. See mprPrintf for a full list of the
         format specifies. This is a secure replacement for sprintf, it can handle null arguments without crashes.
-        This routine is the same as mprAsprintfv.
     @param fmt Printf style format string
     @param args Varargs argument obtained from va_start.
     @return Returns a newly allocated string
@@ -3016,6 +3015,7 @@ extern char *mprSprintfv(char *buf, ssize maxSize, cchar *fmt, va_list args);
     @param ... Variable arguments to format
     @return Returns the number of characters in the string.
     @ingroup MprString
+    @internal
  */
 extern char *mprAsprintf(cchar *fmt, ...);
 
@@ -3028,6 +3028,7 @@ extern char *mprAsprintf(cchar *fmt, ...);
     @param arg Varargs argument obtained from va_start.
     @return Returns the number of characters in the string.
     @ingroup MprString
+    @internal
  */
 extern char *mprAsprintfv(cchar *fmt, va_list arg);
 
@@ -5355,7 +5356,7 @@ extern int mprUnloadNativeModule(MprModule *mp);
 /**
     Set a module timeout
     @param module Module object to modify
-    @param timeout Inactivity timeout in ticks before unloading the module
+    @param timeout Inactivity timeout in milliseconds before unloading the module
     @internal
  */
 extern void mprSetModuleTimeout(MprModule *module, MprTime timeout);
@@ -5560,7 +5561,7 @@ extern int mprServiceEvents(MprTime delay, int flags);
 /**
     Wait for an event to occur on the given dispatcher
     @param dispatcher Event dispatcher to monitor
-    @timeout Timeout for waiting in ticks
+    @timeout Timeout for waiting in milliseconds
     @return Zero if successful and an event occurred before the timeout expired. Returns MPR_ERR_TIMEOUT if no event
         is fired before the timeout expires.
  */
@@ -7446,7 +7447,9 @@ extern void mprSetCmdSearchPath(MprCmd *cmd, cchar *search);
 #define MPR_CACHE_PREPEND       0x10    /**< Set and prepend if already existing */
 
 /**
-    In-memory caching 
+    In-memory caching. The MprCache provides a fast, in-memory caching of cache items. Cache items are string key / value 
+    pairs. Cache items have a configurable lifespan and the Cache manager will automatically prune expired items. 
+    Items also have an associated version number that can be used when writing to do transactional writes.
  */
 typedef struct MprCache
 {
@@ -7474,25 +7477,107 @@ extern MprCache *mprCreateCache(int options);
     @param cache The cache instance object returned from #mprCreateCache.
  */
 extern void *mprDestroyCache(MprCache *cache);
+
+/**
+    Set the expiry date for a cache item
+    @param cache The cache instance object returned from #mprCreateCache.
+    @param key Cache item key
+    @param expires Time when the cache item will expire. If expires is zero, the item is immediately removed from the cache.
+    @return Zero if the expiry is successfully updated. Return MPR_ERR_CANT_FIND if the cache item is not present in the
+        cache.
+ */
 extern int mprExpireCache(MprCache *cache, cchar *key, MprTime expires);
+
+/**
+    Increment a numeric cache item
+    @param cache The cache instance object returned from #mprCreateCache.
+    @param key Cache item key
+    @param amount Numeric amount to increment the cache item. This may be a negative number to decrement the item.
+    @return The new value for the cache item after incrementing.
+ */
 extern int64 mprIncCache(MprCache *cache, cchar *key, int64 amount);
+
+/**
+    Read an item from the cache.
+    @param cache The cache instance object returned from #mprCreateCache.
+    @param key Cache item key
+    @param modified Optional MprTime value reference to receive the last modified time of the cache item. Set to null
+        if not required.
+    @param version Optional int64 value reference to receive the version number of the cache item. Set to null
+        if not required. Cache items have a version number that is incremented every time the item is updated.
+    @return The cache item value
+  */
 extern char *mprReadCache(MprCache *cache, cchar *key, MprTime *modified, int64 *version);
+
+/**
+    Remove items from the cache
+    @param cache The cache instance object returned from #mprCreateCache.
+    @param key Cache item key. If set to null, then remove all keys from the cache.
+    @return True if the cache item was removed.
+  */
 extern bool mprRemoveCache(MprCache *cache, cchar *key);
+
+/**
+    Set the cache resource limits
+    @param cache The cache instance object returned from #mprCreateCache.
+    @param keys Set the maximum number of keys the cache can store
+    @param lifespan Set the default lifespan for cache items in milliseconds
+    @param resolution Set the cache item pruner resolution. This defines how frequently the cache manager will check
+        items for expiration.
+  */
 extern void mprSetCacheLimits(MprCache *cache, int64 keys, int64 lifespan, int64 memory, int resolution);
-extern ssize mprWriteCache(MprCache *cache, cchar *key, cchar *value, MprTime modified, MprTime expires, 
+
+/**
+    Write a cache item
+    @param cache The cache instance object returned from #mprCreateCache.
+    @param key Cache item key to write
+    @param value Value to set for the cache item
+    @param modified Value to set for the cache last modified time. If set to zero, the current time is obtained via
+        #mprGetTime.
+    @param lifespan Lifespan of the item in milliseconds. The item will be removed from the cache by the Cache manager
+        when the lifetime expires unless it is rewritten to extend the lifespan.
+    @param version Expected version number of the item. This is used to do transactional writes to the cache item.
+        First the version number is retrieved via #mprReadCache and that version number is supplied to mprWriteCache when
+        the item is updated. If another caller updates the item in between the read/write, the version number will not 
+        match when the item is subsequently written and this call will fail with the MPR_BAD_STATE return code. Set to
+        zero if version checking is not required.
+    @param options Options to control how the item value is updated. Use MPR_CACHE_SET to update the cache item and 
+        create if it does not exist. Use MPR_CACHE_ADD to add the item only if it does not already exits. Use 
+        MPR_CACHE_APPEND to append the parameter value to any existing cache item value. Use MPR_CACHE_PREPEND to 
+        prepend the value.
+    @return If writing the cache item was successful this call returns the number of bytes written. Otherwise a negative 
+        MPR error code is returned. MPR_ERR_BAD_STATE will be returned if an invalid version number is supplied.
+        MPR_ERR_ALREADY_EXISTS will be returned if MPR_CACHE_ADD is specified and the cache item already exists.
+ */
+extern ssize mprWriteCache(MprCache *cache, cchar *key, cchar *value, MprTime modified, MprTime lifespan, 
         int64 version, int options);
 
 /**
     Mime Type hash table entry (the URL extension is the key)
     @stability Evolving
     @defgroup MprMime MprMime
-    @see MprMime
+    @see MprMime mprAddMime mprCreateMimeTypes mprLookupMime mprSetMimeType mprGetMimeProgram
  */
 typedef struct MprMime {
-    //  MOB
-    char    *type;
-    char    *program;
+    char    *type;                          /**< Mime type string */
+    char    *program;                       /**< Mime type string */
 } MprMime;
+
+/**
+    Add a mime type to the mime type table
+    @param Mime type hash table returned by #mprCreateMimeTypes
+    @param ext Filename extension to use as a key for the given mime type
+    @param mimeType Mime type string to associate with the ext key
+    @return Mime type entry object. This is owned by the mime type table.
+ */
+extern MprMime *mprAddMime(MprHashTable *table, cchar *ext, cchar *mimeType);
+
+/**
+    Create the mime types
+    @param path Filename of a mime types definition file
+    @return Hash table of mime types keyed by file extension 
+ */
+extern MprHashTable *mprCreateMimeTypes(cchar *path);
 
 /** 
     Get the mime type for an extension.
@@ -7503,11 +7588,22 @@ typedef struct MprMime {
  */
 extern cchar *mprLookupMime(MprHashTable *table, cchar *ext);
 
-//  DOC
-//  MOB
-extern MprHashTable *mprCreateMimeTypes(cchar *path);
-extern MprMime *mprAddMime(MprHashTable *table, cchar *ext, cchar *mimeType);
+/**
+    Set the mime type program
+    @param Mime type hash table returned by #mprCreateMimeTypes
+    @param mimeType Mime type to update
+    @param program Program name to associate with this mime type
+    @return Zero if the update is successful. Otherwise return MPR_ERR_CANT_FIND if the mime type is not present in 
+        the mime type table.
+ */
 extern int mprSetMimeProgram(MprHashTable *table, cchar *mimeType, cchar *program);
+
+/**
+    Get the mime type program for a given mimeType
+    @param Mime type hash table returned by #mprCreateMimeTypes
+    @param mimeType Mime type to update
+    @return The program name associated with this mime type
+ */
 extern cchar *mprGetMimeProgram(MprHashTable *table, cchar *mimeType);
 
 /*
@@ -7565,12 +7661,13 @@ typedef struct Mpr {
     int             exitStrategy;           /**< How to exit the app (normal, immediate, graceful) */
     int             exitStatus;             /**< Proposed program exit status */
     int             flags;                  /**< Misc flags */
-    int             cmdlineLogging;         /**< App has specified --log on the command line */
     int             hasError;               /**< Mpr has an initialization error */
     int             marker;                 /**< Marker thread is active */
     int             marking;                /**< Actually marking objects now */
     int             state;                  /**< Processing state */
     int             sweeper;                /**< Sweeper thread is active */
+
+    bool            cmdlineLogging;         /**< App has specified --log on the command line */
 
     /*
         Service pointers
@@ -7886,15 +7983,40 @@ extern int mprGetOsError();
  */
 extern int mprGetError();
 
-//  MOB
-extern int mprSetCmdlineLogging(int on);
-extern int mprGetCmdlineLogging();
+/**
+    Set if command line logging was requested.
+    @description Logging may be initiated by invoking an MPR based program with a "--log" switch. This API assists
+        programs to tell the MPR that command line logging has been used.
+    @param on Set to true to indicate command line logging is being used.
+    @return True if command line logging was enabled before this call.
+ */
+extern bool mprSetCmdlineLogging(bool on);
+
+/**
+    Get if command line logging is being used.
+    @description Logging may be initiated by invoking an MPR based program with a "--log" switch. This API assists
+        programs to tell the MPR that command line logging has been used.
+    @return True if command line logging is in use.
+*/
+extern bool mprGetCmdlineLogging();
 
 
 #define MPR_ARGV_ARGS_ONLY    0x1     /**< Command is missing program name */
 
-//  MOB
-extern int mprMakeArgv(cchar *cmd, int *argc, char ***argv, int flags);
+/**
+    Make a argv[] style array of command arguments
+    @description The given command is parsed and broken into separate arguments and returned in a null-terminated, argv
+        array. Arguments in the command may be quoted with single or double quotes to group words into one argument. 
+        Use back-quote "\\" to escape quotes.
+    @param command Command string to parse.
+    @param argv Output parameter containing the parsed arguments. 
+    @param flags Set to MPR_ARGV_ARGS_ONLY if the command string does not contain a program name. In this case, argv[0] 
+        will be set to "".
+    @return The count of arguments in argv
+    @example mprMakeArgv("showColors" red 'light blue' "yellow white" 'Can\'t \"render\"', &argv, 0);
+        Returns argv == ["showColors", "red", "light blue", "yellow white", "Can't \"render\""]
+ */
+extern int mprMakeArgv(cchar *command, char ***argv, int flags);
 
 /** 
     Turn on debug mode.
