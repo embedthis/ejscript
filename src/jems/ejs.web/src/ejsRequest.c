@@ -483,7 +483,7 @@ static EjsAny *getRequestProperty(Ejs *ejs, EjsRequest *req, int slotNum)
                 scheme = conn->secure ? "https" : "http";
                 ip = conn->sock ? conn->sock->acceptIp : req->server->ip;
                 port = conn->sock ? conn->sock->acceptPort : req->server->port;
-                uri = mprAsprintf("%s://%s:%d%s/", scheme, ip, port, conn->rx->scriptName);
+                uri = sfmt("%s://%s:%d%s/", scheme, ip, port, conn->rx->scriptName);
                 req->absHome = (EjsObj*) ejsCreateUriFromMulti(ejs, uri);
             } else {
                 req->absHome = ESV(null);

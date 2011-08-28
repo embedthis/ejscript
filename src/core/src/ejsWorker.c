@@ -48,7 +48,7 @@ static EjsWorker *initWorker(Ejs *ejs, EjsWorker *worker, Ejs *baseVM, cchar *na
         worker->name = sclone(name);
     } else {
         lock(ejs);
-        worker->name = mprAsprintf("worker-%d", workerSeqno++);
+        worker->name = sfmt("worker-%d", workerSeqno++);
         unlock(ejs);
     }
 

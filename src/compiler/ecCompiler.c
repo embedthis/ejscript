@@ -148,7 +148,7 @@ static int compileInner(EcCompiler *cp, int argc, char **argv)
             nextModule = mprGetListLength(ejs->modules);
             lflags = cp->strict ? EJS_LOADER_STRICT : 0;
             if ((rc = ejsLoadModule(cp->ejs, ejsCreateStringFromAsc(ejs, argv[i]), -1, -1, lflags)) < 0) {
-                msg = mprAsprintf("Error initializing module %s\n%s", argv[i], ejsGetErrorMsg(cp->ejs, 1));
+                msg = sfmt("Error initializing module %s\n%s", argv[i], ejsGetErrorMsg(cp->ejs, 1));
                 memset(&loc, 0, sizeof(EcLocation));
                 loc.filename = sclone(argv[i]);
                 if (rc == MPR_ERR_CANT_INITIALIZE) {
@@ -469,20 +469,20 @@ void ecErrorv(EcCompiler *cp, cchar *severity, EcLocation *loc, cchar *fmt, va_l
     char    *pointer, *errorMsg, *msg;
 
     appName = mprGetAppName(cp);
-    msg = mprAsprintfv(fmt, args);
+    msg = sfmtv(fmt, args);
 
     if (loc) {
         if (loc->source) {
             pointer = makeHighlight(cp, loc->source, loc->column);
-            errorMsg = mprAsprintf("%s: %s: %s: %d: %s\n  %w  \n  %s", appName, severity, loc->filename, 
+            errorMsg = sfmt("%s: %s: %s: %d: %s\n  %w  \n  %s", appName, severity, loc->filename, 
                 loc->lineNumber, msg, loc->source, pointer);
         } else if (loc->lineNumber >= 0) {
-            errorMsg = mprAsprintf("%s: %s: %s: %d: %s", appName, severity, loc->filename, loc->lineNumber, msg);
+            errorMsg = sfmt("%s: %s: %s: %d: %s", appName, severity, loc->filename, loc->lineNumber, msg);
         } else {
-            errorMsg = mprAsprintf("%s: %s: %s: 0: %s", appName, severity, loc->filename, msg);
+            errorMsg = sfmt("%s: %s: %s: 0: %s", appName, severity, loc->filename, msg);
         }
     } else {
-        errorMsg = mprAsprintf("%s: %s: %s", appName, severity, msg);
+        errorMsg = sfmt("%s: %s: %s", appName, severity, msg);
     }
     cp->errorMsg = srejoin(cp->errorMsg, errorMsg, NULL);
     mprBreakpoint();

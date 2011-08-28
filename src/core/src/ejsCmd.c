@@ -441,7 +441,7 @@ static EjsObj *cmd_start(Ejs *ejs, EjsCmd *cmd, int argc, EjsObj **argv)
         }
         for (i = 0; i < len; i++) {
             qname = ejsGetPropertyName(ejs, cmd->env, i);
-            env[i] = mprAsprintf("%s=%s", qname.name->value, 
+            env[i] = sfmt("%s=%s", qname.name->value, 
                 ejsToMulti(ejs, ejsToString(ejs, ejsGetProperty(ejs, cmd->env, i))));
         }
         env[i] = 0;

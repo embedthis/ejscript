@@ -4094,10 +4094,10 @@ static void processModule(EcCompiler *cp, EjsModule *mp)
     }
     if (! cp->outputFile) {
         if (mp->version) {
-            path = mprAsprintf("%s-%d.%d.%d%s", mp->name, EJS_MAJOR(mp->version), EJS_MINOR(mp->version), 
+            path = sfmt("%s-%d.%d.%d%s", mp->name, EJS_MAJOR(mp->version), EJS_MINOR(mp->version), 
                 EJS_PATCH(mp->version), EJS_MODULE_EXT);
         } else {
-            path = mprAsprintf("%@%s", mp->name, EJS_MODULE_EXT);
+            path = sfmt("%@%s", mp->name, EJS_MODULE_EXT);
         }
         if ((mp->file = openModuleFile(cp, path)) == 0) {
             LEAVE(cp);

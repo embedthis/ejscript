@@ -2090,7 +2090,7 @@ EjsString *ejsSprintf(Ejs *ejs, cchar *fmt, ...)
     mprAssert(fmt);
 
     va_start(ap, fmt);
-    result = mprAsprintfv(fmt, ap);
+    result = sfmt(fmt, ap);
     va_end(ap);
     return ejsCreateStringFromAsc(ejs, result);
 }

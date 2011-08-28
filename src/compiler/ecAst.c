@@ -516,7 +516,7 @@ static EjsType *defineClass(EcCompiler *cp, EcNode *np)
             Reserve one slot for the static initializer to ensure it is the first non-inherited slot.
             This slot may be reclaimed during fixup if not required. Instance initializers are prepended to the constructor.
          */
-        qname.name = ejsCreateStringFromAsc(ejs, mprAsprintf("-%@-", type->qname.name));
+        qname.name = ejsCreateStringFromAsc(ejs, sfmt("-%@-", type->qname.name));
         qname.space = ejsCreateStringFromAsc(ejs, EJS_INIT_NAMESPACE);
         fatt = EJS_TRAIT_HIDDEN | EJS_PROP_STATIC;
         ejsDefineProperty(ejs, type, 0, qname, EST(Function), fatt, ESV(null));
@@ -2890,7 +2890,7 @@ static EjsModule *createModule(EcCompiler *cp, EcNode *np)
     if (cp->outputFile) {
         np->module.filename = cp->outputFile;
     } else {
-        np->module.filename = mprJoinPath(cp->outputDir, mprAsprintf("%@%s", np->qname.name, EJS_MODULE_EXT));
+        np->module.filename = mprJoinPath(cp->outputDir, sfmt("%@%s", np->qname.name, EJS_MODULE_EXT));
     }
     return mp;
 }
@@ -3616,9 +3616,9 @@ static void openBlock(EcCompiler *cp, EcNode *np, EjsBlock *block)
         if (block == 0) {
             static int index = 0;
             if (np->loc.filename == 0) {
-                debugName = mprAsprintf("block_%04d", index++);
+                debugName = sfmt("block_%04d", index++);
             } else {
-                debugName = mprAsprintf("block_%04d_%d", np->loc.lineNumber, index++);
+                debugName = sfmt("block_%04d_%d", np->loc.lineNumber, index++);
             }
             block = ejsCreateBlock(cp->ejs, 0);
             np->qname = N(EJS_BLOCK_NAMESPACE, debugName);
@@ -3691,7 +3691,7 @@ static EjsNamespace *createHoistNamespace(EcCompiler *cp, EjsObj *obj)
     char            *spaceName;
 
     ejs = cp->ejs;
-    spaceName = mprAsprintf("-hoisted-%d", ejsGetLength(ejs, obj));
+    spaceName = sfmt("-hoisted-%d", ejsGetLength(ejs, obj));
     namespace = ejsCreateNamespace(ejs, ejsCreateStringFromAsc(ejs, spaceName));
 
     letBlockNode = cp->state->letBlockNode;

@@ -89,7 +89,7 @@ Ejs *ejsCreateVM(int argc, cchar **argv, int flags)
     ejs->state = mprAllocZeroed(sizeof(EjsState));
     ejs->argc = argc;
     ejs->argv = argv;
-    ejs->name = mprAsprintf("ejs-%d", sp->seqno++);
+    ejs->name = sfmt("ejs-%d", sp->seqno++);
     ejs->dispatcher = mprCreateDispatcher(ejs->name, 1);
     ejs->mutex = mprCreateLock(ejs);
     ejs->dontExit = sp->dontExit;
@@ -669,9 +669,9 @@ EjsArray *ejsCreateSearchPath(Ejs *ejs, cchar *search)
         "." : APP_EXE_DIR/../lib : /usr/lib/ejs/1.0.0/lib
      */
     ejsSetProperty(ejs, ap, -1, ejsCreatePathFromAsc(ejs, "."));
-    relModDir = mprAsprintf("%s/../%s", mprGetAppDir(ejs), BLD_LIB_NAME);
+    relModDir = sfmt("%s/../%s", mprGetAppDir(ejs), BLD_LIB_NAME);
     ejsSetProperty(ejs, ap, -1, ejsCreatePathFromAsc(ejs, mprGetAppDir(ejs)));
-    relModDir = mprAsprintf("%s/../%s", mprGetAppDir(ejs), BLD_LIB_NAME);
+    relModDir = sfmt("%s/../%s", mprGetAppDir(ejs), BLD_LIB_NAME);
     ejsSetProperty(ejs, ap, -1, ejsCreatePathFromAsc(ejs, mprGetAbsPath(relModDir)));
     ejsSetProperty(ejs, ap, -1, ejsCreatePathFromAsc(ejs, BLD_LIB_PREFIX));
 #endif
@@ -958,7 +958,7 @@ static void logHandler(int flags, int level, cchar *msg)
             mprSprintf(buf, sizeof(buf), "%s: %s: %s\n", prefix, tag, msg);
             msg = buf;
         } else {
-            msg = amsg = mprAsprintf("%s: %s: %s\n", prefix, tag, msg);
+            msg = amsg = sfmt("%s: %s: %s\n", prefix, tag, msg);
         }
     }
     if (MPR->logFile) {
@@ -1114,7 +1114,7 @@ void ejsReportError(Ejs *ejs, char *fmt, ...)
         msg = (char*) emsg;
         buf = 0;
     } else {
-        msg = buf = mprAsprintfv(fmt, arg);
+        msg = buf = sfmtv(fmt, arg);
     }
     if (ejs->exception) {
         char *name = MPR->name;

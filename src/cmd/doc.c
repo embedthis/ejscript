@@ -594,7 +594,7 @@ static void generateHtmlHeader(EjsMod *mp, cchar *script, cchar *fmt, ... )
     va_list     args;
 
     va_start(args, fmt);
-    title = mprAsprintfv(fmt, args);
+    title = sfmtv(fmt, args);
     va_end(args);
 
     /*
@@ -619,7 +619,7 @@ static void generateContentHeader(EjsMod *mp, cchar *fmt, ... )
     char        *title;
 
     va_start(args, fmt);
-    title = mprAsprintfv(fmt, args);
+    title = sfmtv(fmt, args);
     va_end(args);
 
     generateHtmlHeader(mp, NULL, title);
@@ -804,7 +804,7 @@ static void prepDocStrings(EjsMod *mp, EjsObj *obj, EjsName qname, EjsTrait *typ
         dp = getDoc(ejs, NULL, obj, slotNum);
         if (dp) {
             pname = ejsGetPropertyName(ejs, obj, slotNum);
-            combined = mprAsprintf("%@.%@", qname.name, pname.name);
+            combined = sfmt("%@.%@", qname.name, pname.name);
             crackDoc(mp, dp, EN(combined)); 
         }
     }
@@ -2185,7 +2185,7 @@ static void out(EjsMod *mp, char *fmt, ...)
         }
     }
     va_start(args, fmt);
-    buf = mprAsprintfv(fmt, args);
+    buf = sfmtv(fmt, args);
     if (mprWriteFileString(mp->file, buf) < 0) {
         mprError("Can't write to buffer");
     }

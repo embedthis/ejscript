@@ -28,7 +28,7 @@ static EjsAny *castError(Ejs *ejs, EjsError *error, EjsType *type)
         stack = (EjsString*) ejsRunFunctionBySlot(ejs, error, ES_Error_formatStack, 0, NULL);
         us = ejsIs(ejs, stack, String) ? stack : ESV(empty);
         msg = ejsGetProperty(ejs, error, ES_Error_message);
-        if ((buf = mprAsprintf("%@ Exception: %@\nStack:\n%@\n", TYPE(error)->qname.name, msg, us)) == NULL) {
+        if ((buf = sfmt("%@ Exception: %@\nStack:\n%@\n", TYPE(error)->qname.name, msg, us)) == NULL) {
             ejsThrowMemoryError(ejs);
         }
         return ejsCreateStringFromAsc(ejs, buf);

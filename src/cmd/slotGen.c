@@ -28,7 +28,7 @@ int emCreateSlotFiles(EjsMod *bp, EjsModule *mp, MprFile *outfile)
     int     rc;
 
     rc = 0;
-    defaultVersion = mprAsprintf("-%d", ejsParseModuleVersion(BLD_VERSION));
+    defaultVersion = sfmt("-%d", ejsParseModuleVersion(BLD_VERSION));
     if (bp->cslots) {
         rc += createSlotFile(bp, mp, outfile);
     }

@@ -961,7 +961,7 @@ static int addFormattedStringToToken(EcToken *tp, char *fmt, ...)
     char        *buf;
 
     va_start(args, fmt);
-    buf = mprAsprintfv(fmt, args);
+    buf = sfmtv(fmt, args);
     addStringToToken(tp, buf);
     va_end(args);
     return 0;

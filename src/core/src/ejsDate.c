@@ -924,7 +924,7 @@ static EjsString *date_toISOString(Ejs *ejs, EjsDate *dp, int argc, EjsObj **arg
     char    *base, *str;
 
     base = mprFormatUniversalTime("%Y-%m-%dT%H:%M:%S", dp->value);
-    str = mprAsprintf("%s.%03dZ", base, dp->value % MPR_TICKS_PER_SEC);
+    str = sfmt("%s.%03dZ", base, dp->value % MPR_TICKS_PER_SEC);
     return ejsCreateStringFromAsc(ejs, str);
 }
 
@@ -939,7 +939,7 @@ static EjsString *date_toJSON(Ejs *ejs, EjsDate *dp, int argc, EjsObj **argv)
     char    *base, *str;
 
     base = mprFormatUniversalTime("%Y-%m-%dT%H:%M:%S", dp->value);
-    str = mprAsprintf("\"%sZ\"", base);
+    str = sfmt("\"%sZ\"", base);
     return ejsCreateStringFromAsc(ejs, str);
 }
 

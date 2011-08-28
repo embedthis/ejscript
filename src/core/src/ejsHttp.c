@@ -1115,7 +1115,7 @@ static void prepForm(Ejs *ejs, EjsHttp *hp, char *prefix, EjsObj *data)
         }
         if (ejsGetLength(ejs, vp) > 0 && !ejsIs(ejs, vp, Array)) {
             if (prefix) {
-                newPrefix = mprAsprintf("%s.%@", prefix, qname.name);
+                newPrefix = sfmt("%s.%@", prefix, qname.name);
                 prepForm(ejs, hp, newPrefix, vp);
             } else {
                 prepForm(ejs, hp, (char*) qname.name->value, vp);

@@ -26,7 +26,7 @@ static EjsAny *createException(Ejs *ejs, EjsType *type, cchar* fmt, va_list fmtA
         mprNop(0);
     }
 #endif
-    msg = mprAsprintfv(fmt, fmtArgs);
+    msg = sfmtv(fmt, fmtArgs);
     argv[0] = ejsCreateStringFromAsc(ejs, msg);
     if (argv[0] == 0) {
         mprAssert(argv[0]);
@@ -102,7 +102,7 @@ EjsAny *ejsCreateException(Ejs *ejs, int slot, cchar *fmt, va_list fmtArgs)
     EjsAny      *error;
 
     if (ejs->exception) {
-        mprError("Double exception: %s", mprAsprintfv(fmt, fmtArgs));
+        mprError("Double exception: %s", sfmtv(fmt, fmtArgs));
         return ejs->exception;
     }
     type = (ejs->initialized) ? ejsGetProperty(ejs, ejs->global, slot) : NULL;
@@ -237,7 +237,7 @@ EjsString *ejsThrowString(Ejs *ejs, cchar *fmt, ...)
 
     mprAssert(fmt);
     va_start(fmtArgs, fmt);
-    msg = mprAsprintfv(fmt, fmtArgs);
+    msg = sfmtv(fmt, fmtArgs);
     va_end(fmtArgs);
 
     /*
@@ -359,16 +359,16 @@ cchar *ejsGetErrorMsg(Ejs *ejs, int withStack)
     if (ejsIs(ejs, error, Error)) {
         stackStr = (stack) ? ejsToMulti(ejs, stack) : 0;
         if (stackStr && *stackStr) {
-            buf = mprAsprintf("%@: %@\nStack:\n%s", tag, msg, (stack) ? ejsToMulti(ejs, stack) : "");
+            buf = sfmt("%@: %@\nStack:\n%s", tag, msg, (stack) ? ejsToMulti(ejs, stack) : "");
         } else {
-            buf = mprAsprintf("%@: %@", tag, msg);
+            buf = sfmt("%@: %@", tag, msg);
         }
 
     } else if (message && ejsIs(ejs, message, String)){
-        buf = mprAsprintf("%@: %@", tag, msg);
+        buf = sfmt("%@: %@", tag, msg);
 
     } else if (message && ejsIs(ejs, message, Number)){
-        buf = mprAsprintf("%@: %g", tag, ((EjsNumber*) msg)->value);
+        buf = sfmt("%@: %g", tag, ((EjsNumber*) msg)->value);
         
     } else if (error) {
         EjsObj *saveException = ejs->exception;
