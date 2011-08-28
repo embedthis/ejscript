@@ -815,7 +815,7 @@ static int hashProperty(Ejs *ejs, EjsPot *obj, int slotNum, EjsName qname)
     If numInstanceProp is < 0, then grow the number of properties by an increment. Otherwise, set the number of properties 
     to numInstanceProp. We currently don't allow reductions.
  */
-//  TODO -- rename
+//  TODO MOB -- rename
 int ejsMakeHash(Ejs *ejs, EjsPot *obj)
 {
     EjsSlot         *sp;

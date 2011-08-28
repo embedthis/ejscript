@@ -647,7 +647,7 @@ static EjsObj *obj_preventExtensions(Ejs *ejs, EjsObj *unused, int argc, EjsObj 
 
 /*
     static function seal(obj: Object): Void
-*/
+ */
 static EjsObj *obj_seal(Ejs *ejs, EjsObj *unused, int argc, EjsObj **argv)
 {
     EjsObj      *obj;
@@ -662,6 +662,37 @@ static EjsObj *obj_seal(Ejs *ejs, EjsObj *unused, int argc, EjsObj **argv)
         }
     }
     SET_DYNAMIC(obj, 0);
+    return 0;
+}
+
+
+static int sortSlots(cvoid *a1, cvoid *a2)
+{
+    EjsSlot *s1, *s2;
+
+    s1 = (EjsSlot*) a1;
+    s2 = (EjsSlot*) a2;
+    if (s1->qname.name->value == s2->qname.name->value) {
+        return 0;
+    } else if (scmp(s1->qname.name->value, s2->qname.name->value) < 0) {
+        return -1;
+    } 
+    return 1;
+}
+
+
+/*
+    static function sort(obj: Object, ascending: Boolean = true): Void
+ */
+static EjsObj *obj_sort(Ejs *ejs, EjsObj *unused, int argc, EjsObj **argv)
+{
+    EjsPot      *obj;
+    int         asc;
+
+    obj = (EjsPot*) argv[0];
+    asc = (argc >= 2 && argv[1] == ESV(true));
+    qsort(obj->properties->slots, obj->numProp, sizeof(EjsSlot), sortSlots);
+    ejsMakeHash(ejs, obj);
     return 0;
 }
 
@@ -883,6 +914,7 @@ void ejsConfigureObjectType(Ejs *ejs)
         ejsBindMethod(ejs, type, ES_Object_preventExtensions, obj_preventExtensions);
         ejsBindAccess(ejs, type, ES_Object_prototype, obj_prototype, obj_set_prototype);
         ejsBindMethod(ejs, type, ES_Object_seal, obj_seal);
+        ejsBindMethod(ejs, type, ES_Object_sort, obj_sort);
 
         /* Reflection */
         ejsBindMethod(ejs, type, ES_Object_getBaseType, obj_getBaseType);

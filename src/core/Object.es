@@ -206,6 +206,12 @@ module ejs {
          */ 
         static native function seal(obj: Object): Void
 
+        /**
+            Sort and object's properties 
+            @hide
+         */
+        static native function sort(obj: Object, ascending: Boolean = true): Void
+
         /** 
             Convert an object to an equivalent JSON encoded string.
             @return This function returns an object literal string.
