@@ -109,7 +109,9 @@ combo ${SQLITE_HEADERS} ${SQLITE_SOURCES} | egrep -v '#include.*ejs|#include.*sq
 #
 #   Doc
 #
+cp ${BLD_TOP}/doc/api/ejs.html ${DOC}/api
 cp ${BLD_TOP}/doc/api/ejsBare.html ${DOC}/api
+cp ${BLD_TOP}/doc/api/ejs.tags ${DOC}/api
 cp ${BLD_TOP}/doc/man/*.1 ${DOC}/man
 
 #

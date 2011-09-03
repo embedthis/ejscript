@@ -491,9 +491,11 @@ static EjsAny *getRequestProperty(Ejs *ejs, EjsRequest *req, int slotNum)
         }
         return req->absHome;
 
+#if UNUSED
     case ES_ejs_web_Request_authGroup:
         return createString(ejs, conn ? conn->authGroup : NULL);
-
+#endif
+            
     case ES_ejs_web_Request_authType:
         return createString(ejs, conn ? conn->authType : NULL);
 

@@ -1260,7 +1260,7 @@ static bool waitForState(EjsHttp *hp, int state, MprTime timeout, int throw)
                     httpFormatError(conn, HTTP_CODE_REQUEST_TIMEOUT, "Request timed out");
                 }
             } else {
-                httpFormatError(conn, HTTP_CODE_CLIENT_ERROR, "Client request error");
+                httpFormatError(conn, HTTP_CODE_NO_RESPONSE, "Client request error");
             }
             break;
         }
