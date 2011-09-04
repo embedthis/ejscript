@@ -483,7 +483,7 @@ static EjsAny *castObj(Ejs *ejs, EjsObj *obj, EjsType *type)
         if (!ejsIsType(ejs, obj) && !ejsIsPrototype(ejs, obj)) {
             if (ejsLookupVar(ejs, obj, EN("toString"), &lookup) >= 0 && lookup.obj != EST(Object)->prototype) {
                 fun = ejsGetProperty(ejs, lookup.obj, lookup.slotNum);
-                if (fun && ejsIsFunction(ejs, fun) && fun->body.proc != (EjsFun) ejsObjToString) {
+                if (fun && ejsIsFunction(ejs, fun) && fun->body.proc != (EjsProc) ejsObjToString) {
                     result = ejsRunFunction(ejs, fun, obj, 0, NULL);
                     return result;
                 }

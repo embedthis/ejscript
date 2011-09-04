@@ -825,6 +825,9 @@ int ejsMakeHash(Ejs *ejs, EjsPot *obj)
     mprAssert(obj);
     mprAssert(ejsIsPot(ejs, obj));
 
+    if (obj->properties == 0) {
+        return 0;
+    }
     if (obj->numProp <= EJS_HASH_MIN_PROP && obj->properties->hash == 0) {
         /* Too few properties */
         return 0;

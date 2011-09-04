@@ -827,7 +827,7 @@ void ejsConfigureXMLListType(Ejs *ejs)
     ejsBindConstructor(ejs, type, xmlListConstructor);
     ejsBindMethod(ejs, prototype, ES_XMLList_length, xlLength);
     ejsBindMethod(ejs, prototype, ES_XMLList_name, getXmlListNodeName);
-    ejsBindMethod(ejs, prototype, ES_XMLList_parent, (EjsNativeFunction) xl_parent);
+    ejsBindMethod(ejs, prototype, ES_XMLList_parent, (EjsProc) xl_parent);
 #if FUTURE
     ejsBindMethod(ejs, prototype, "name", name, NULL);
     ejsBindMethod(ejs, prototype, "valueOf", valueOf, NULL);

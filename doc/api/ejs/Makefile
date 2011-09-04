@@ -23,7 +23,7 @@ gen:
 next:
 	$(call log) "[Transform]" "gendoc"
 	ejs $(BLD_TOOLS_DIR)/gendoc.es --title "Ejscript - Native API" --tags ../mpr.tags --tags ../http.tags \
-		--out ../$(NAME).html xml/$(NAME)_8h.xml xml/group* xml/struct_*.xml >../$(NAME).html
+		--out ../$(NAME).html xml/$(NAME)_8h.xml xml/group* xml/struct_*.xml
 
 rest:
 	ejs $(BLD_TOOLS_DIR)/gendoc.es --bare --title "Ejscript - Native API" --tags ../mpr.tags --tags ../http.tags \

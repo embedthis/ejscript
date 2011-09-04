@@ -410,7 +410,7 @@ EjsString *ejsToJSON(Ejs *ejs, EjsAny *vp, EjsObj *options)
     int             argc;
 
     fn = (EjsFunction*) ejsGetPropertyByName(ejs, TYPE(vp)->prototype, N(NULL, "toJSON"));
-    if (!ejsIsFunction(ejs, fn) || (fn->isNativeProc && fn->body.proc == (EjsFun) ejsObjToJSON)) {
+    if (!ejsIsFunction(ejs, fn) || (fn->isNativeProc && fn->body.proc == (EjsProc) ejsObjToJSON)) {
         result = ejsSerializeWithOptions(ejs, vp, options);
     } else {
         argv[0] = options;
@@ -582,7 +582,7 @@ static EjsString *serialize(Ejs *ejs, EjsAny *vp, Json *json)
             }
             fn = (EjsFunction*) ejsGetPropertyByName(ejs, TYPE(pp)->prototype, N(NULL, "toJSON"));
 // OPT - check that this is going directly to serialize most of the time
-            if (!ejsIsFunction(ejs, fn) || (fn->isNativeProc && fn->body.proc == (EjsFun) ejsObjToJSON)) {
+            if (!ejsIsFunction(ejs, fn) || (fn->isNativeProc && fn->body.proc == (EjsProc) ejsObjToJSON)) {
                 sv = serialize(ejs, pp, json);
             } else {
                 sv = (EjsString*) ejsRunFunction(ejs, fn, pp, 1, &json->options);

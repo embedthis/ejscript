@@ -543,7 +543,7 @@ void ejsCreateFunctionType(Ejs *ejs)
 
     nop = ejsCreateFunction(ejs, ejsCreateStringFromAsc(ejs, "nop"), NULL, 0, -1, 0, 0, NULL, EJS_PROP_NATIVE, NULL, NULL,0);
     ejsAddImmutable(ejs, S_nop, EN("nop"), nop);
-    nop->body.proc = (EjsFun) nopFunction;
+    nop->body.proc = (EjsProc) nopFunction;
     nop->isNativeProc = 1;
 }
 

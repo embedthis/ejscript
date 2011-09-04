@@ -1100,7 +1100,7 @@ void ejsConfigureXMLType(Ejs *ejs)
     ejsBindMethod(ejs, prototype, ES_XML_load, loadXml);
     ejsBindMethod(ejs, prototype, ES_XML_save, saveXml);
     ejsBindMethod(ejs, prototype, ES_XML_name, getXmlNodeName);
-    ejsBindMethod(ejs, prototype, ES_XML_parent, (EjsNativeFunction) xml_parent);
+    ejsBindMethod(ejs, prototype, ES_XML_parent, (EjsProc) xml_parent);
 
     /*
         Override these methods
