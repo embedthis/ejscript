@@ -466,6 +466,7 @@ typedef struct EjsHelpers {
     int     (*setPropertyTraits)(struct Ejs *ejs, EjsAny *obj, int slotNum, struct EjsType *type, int attributes);
 } EjsHelpers;
 
+//  MOB
 typedef struct EjsLoadState {
     MprList         *typeFixups;            /**< Loaded types to fixup */
     int             firstModule;            /**< First module in ejs->modules for this load */
@@ -637,6 +638,7 @@ typedef struct EjsPool {
 } EjsPool;
 
 
+//  MOB
 extern EjsPool *ejsCreatePool(int poolMax, cchar *templateScriptPath, cchar *startScript, cchar *startScriptPath, 
         char *home);
 extern Ejs *ejsAllocPoolVM(EjsPool *pool, int flags);
@@ -681,6 +683,8 @@ extern EjsName ejsWideName(Ejs *ejs, MprChar *space, MprChar *name);
     @ingroup EjsName
  */
 extern EjsName ejsName(Ejs *ejs, cchar *space, cchar *name);
+
+/* FUTURE DOC */
 extern EjsName ejsEmptyWideName(Ejs *ejs, MprChar *name);
 extern EjsName ejsEmptyName(Ejs *ejs, cchar *name);
 
@@ -705,24 +709,25 @@ typedef struct EjsTrait {
 } EjsTrait;
 
 
-//  OPT packing
+//  MOB DOC
 typedef struct EjsSlot {
     EjsName         qname;                  /**< Property name */
-    int             hashChain;              /**< Next property in hash chain */
     EjsTrait        trait;                  /**< Property descriptor traits */
+    int             hashChain;              /**< Next property in hash chain */
     union {
         EjsAny      *ref;                   /**< Property reference */
         MprNumber   *value;                 /**< Immediate number value */
     } value;
 } EjsSlot;
 
-
+//  MOB DOC
 typedef struct EjsHash {
     int             size;                   /**< Size of hash */
     int             *buckets;               /**< Hash buckets and head of link chains */
 } EjsHash;
 
 
+//  MOB DOC
 typedef struct EjsProperties {
     EjsHash         *hash;                  /**< Hash buckets and head of link chains */
     int             size;                   /**< Current size of slots[] in elements */
@@ -954,6 +959,7 @@ extern struct EjsTrait *ejsGetPropertyTraits(Ejs *ejs, EjsAny *obj, int slotNum)
     @ingroup EjsAny
  */
 extern EjsAny *ejsInvokeOperator(Ejs *ejs, EjsAny *obj, int opCode, EjsAny *rhs);
+//  MOB DOC
 extern EjsAny *ejsInvokeOperatorDefault(Ejs *ejs, EjsAny *obj, int opCode, EjsAny *rhs);
 
 /** 
@@ -1019,9 +1025,8 @@ extern int ejsSetPropertyName(Ejs *ejs, EjsAny *obj, int slotNum, EjsName qname)
  */
 extern int ejsSetPropertyTraits(Ejs *ejs, EjsAny *obj, int slotNum, struct EjsType *type, int attributes);
 
-//  TODO - DOC - 
+//  MOB DOC - 
 extern EjsAny *ejsDeserialize(Ejs *ejs, EjsString *value);
-
 //  MOB -- should this be EjsString?
 extern EjsAny *ejsParse(Ejs *ejs, MprChar *str,  int prefType);
 extern void ejsZeroSlots(Ejs *ejs, EjsSlot *slots, int count);
@@ -1048,6 +1053,7 @@ extern EjsAny *ejsCreateEmptyPot(Ejs *ejs);
  */
 extern EjsAny *ejsCreatePot(Ejs *ejs, struct EjsType *type, int size);
 
+//  MOB DOC - 
 extern int ejsCompactPot(Ejs *ejs, EjsPot *obj);
 extern int ejsInsertPotProperties(Ejs *ejs, EjsPot *pot, int numSlots, int offset);
 extern int ejsMakeHash(Ejs *ejs, EjsPot *obj);
@@ -1070,6 +1076,7 @@ extern EjsName ejsGetPotPropertyName(Ejs *ejs, EjsPot *obj, int slotNum);
  */
 extern EjsAny *ejsClonePot(Ejs *ejs, EjsAny *src, bool deep);
 
+//  MOB DOC - 
 extern void ejsFixTraits(Ejs *ejs, EjsPot *obj);
 
 /** 
@@ -1095,6 +1102,7 @@ extern int ejsGrowPot(Ejs *ejs, EjsPot *obj, int numSlots);
  */
 extern void ejsManagePot(void *obj, int flags);
 
+//  MOB DOC - 
 extern int      ejsGetSlot(Ejs *ejs, EjsPot *obj, int slotNum);
 extern EjsAny   *ejsCoerceOperands(Ejs *ejs, EjsObj *lhs, int opcode, EjsObj *rhs);
 extern int      ejsComputeStringHashCode(EjsString *name, int size);
@@ -1103,6 +1111,7 @@ extern int      ejsGetHashSize(int numProp);
 extern void     ejsCreatePotHelpers(Ejs *ejs);
 
 //  MOB -- rename
+//  MOB DOC - 
 extern void     ejsMakePropertyDontDelete(EjsObj *obj, int dontDelete);
 extern int      ejsMakePropertyEnumerable(EjsObj *obj, bool enumerable);
 extern void     ejsMakePropertyReadOnly(EjsObj *obj, int readonly);
@@ -1122,6 +1131,7 @@ extern EjsString *ejsObjToJSON(Ejs *ejs, EjsObj *vp, int argc, EjsObj **argv);
 #define EJS_BLEND_PRIVATE       0x10
 #define EJS_BLEND_TRACE         0x20
 
+//  MOB DOC - 
 extern int ejsBlendObject(Ejs *ejs, EjsObj *dest, EjsObj *src, int overwrite, int flags);
 extern bool ejsMatchName(Ejs *ejs, EjsName *a, EjsName *b);
 
@@ -1151,6 +1161,7 @@ extern bool ejsMatchName(Ejs *ejs, EjsName *a, EjsName *b);
     @ingroup EjsString
  */
 extern EjsString *ejsCreateString(Ejs *ejs, MprChar *value, ssize len);
+//  MOB DOC - 
 extern EjsString *ejsCreateStringFromConst(Ejs *ejs, struct EjsModule *mp, int index);
 extern EjsString *ejsCreateStringFromAsc(Ejs *ejs, cchar *value);
 extern EjsString *ejsCreateStringFromBytes(Ejs *ejs, cchar *value, ssize len);
@@ -1178,14 +1189,15 @@ extern EjsString *ejsCreateNonInternedString(Ejs *ejs, MprChar *value, ssize len
     @ingroup EjsString
  */
 extern EjsString *ejsInternString(EjsString *sp);
+//  MOB DOC - 
 extern EjsString *ejsInternMulti(struct Ejs *ejs, cchar *value, ssize len);
 extern EjsString *ejsInternAsc(struct Ejs *ejs, cchar *value, ssize len);
 extern EjsString *ejsInternWide(struct Ejs *ejs, MprChar *value, ssize len);
 extern void ejsManageIntern(Ejs *ejs, int flags);
 extern void ejsDestroyIntern(EjsIntern *intern);
-
 extern int       ejsAtoi(Ejs *ejs, EjsString *sp, int radix);
 
+//  MOB DOC - 
 //  MOB - rename Join
 extern EjsString *ejsCatString(Ejs *ejs, EjsString *s1, EjsString *s2);
 extern EjsString *ejsCatStrings(Ejs *ejs, EjsString *src, ...);
@@ -1196,6 +1208,7 @@ extern EjsString *ejsToLower(Ejs *ejs, EjsString *sp);
 extern EjsString *ejsToUpper(Ejs *ejs, EjsString *sp);
 extern EjsString *ejsTruncateString(Ejs *ejs, EjsString *sp, ssize len);
 
+//  MOB DOC - 
 //  MIXED modes
 extern int       ejsCompareMulti(Ejs *ejs, EjsString *s1, cchar *s2);
 extern int       ejsCompareWide(Ejs *ejs, EjsString *s1, MprChar *s2, ssize len);
@@ -1206,6 +1219,7 @@ extern int       ejsStartsWithMulti(Ejs *ejs, EjsString *sp, cchar *pat);
 extern char      *ejsToMulti(Ejs *ejs, void *obj);
 
 //  MOB - rethink this name.
+//  MOB DOC - 
 extern EjsString *ejsSprintf(Ejs *ejs, cchar *fmt, ...);
 
 /**
@@ -1218,6 +1232,7 @@ extern EjsString *ejsSprintf(Ejs *ejs, cchar *fmt, ...);
  */
 extern EjsString *ejsToJSON(Ejs *ejs, EjsAny *obj, EjsObj *options);
 
+//  MOB DOC - 
 extern EjsString *ejsSerializeWithOptions(Ejs *ejs, EjsAny *obj, EjsObj *options);
 
 #define EJS_JSON_SHOW_SUBCLASSES    0x1
@@ -1225,6 +1240,7 @@ extern EjsString *ejsSerializeWithOptions(Ejs *ejs, EjsAny *obj, EjsObj *options
 #define EJS_JSON_SHOW_NAMESPACES    0x4
 #define EJS_JSON_SHOW_PRETTY        0x8
 
+//  MOB DOC - 
 extern EjsString *ejsSerialize(Ejs *ejs, EjsAny *obj, int flags);
 
 
@@ -1236,6 +1252,7 @@ extern EjsString *ejsSerialize(Ejs *ejs, EjsAny *obj, int flags);
     @ingroup MOB
  */
 extern EjsString *ejsToString(Ejs *ejs, EjsAny *obj);
+//  MOB DOC - 
 extern EjsString *ejsStringToJSON(Ejs *ejs, EjsObj *obj);
 
 /** 
@@ -1266,6 +1283,7 @@ typedef struct EjsArray {
 extern EjsArray *ejsCreateArray(Ejs *ejs, int size);
 extern EjsArray *ejsCloneArray(Ejs *ejs, EjsArray *ap, bool deep);
 
+//  MOB DOC - 
 extern int ejsAddItem(Ejs *ejs, EjsArray *ap, EjsAny *item);
 extern int ejsAppendArray(Ejs *ejs, EjsArray *dest, EjsArray *src);
 extern void ejsClearArray(Ejs *ejs, EjsArray *ap);
@@ -1338,6 +1356,7 @@ typedef struct EjsBlock {
  */
 extern int ejsBindFunction(Ejs *ejs, EjsAny *obj, int slotNum, void *fun);
 
+//  MOB DOC
 /*  
     This is all an internal API. Native types should probably not be using these routines. Speak up if you find
     you need these routines in your code.
@@ -1347,11 +1366,13 @@ extern int      ejsAddNamespaceToBlock(Ejs *ejs, EjsBlock *blockRef, struct EjsN
 extern int      ejsAddScope(EjsBlock *block, EjsBlock *scopeBlock);
 extern EjsBlock *ejsCreateBlock(Ejs *ejs, int numSlots);
 
+//  MOB DOC
 extern EjsBlock *ejsCloneBlock(Ejs *ejs, EjsBlock *src, bool deep);
 extern int      ejsCaptureScope(Ejs *ejs, EjsBlock *block, struct EjsArray *scopeChain);
 extern int      ejsCopyScope(EjsBlock *block, struct EjsArray *chain);
 extern int      ejsGetNamespaceCount(EjsBlock *block);
 
+//  MOB DOC
 extern EjsBlock *ejsGetTopScope(EjsBlock *block);
 extern void     ejsManageBlock(EjsBlock *block, int flags);
 extern void     ejsPopBlockNamespaces(EjsBlock *block, int count);
@@ -1385,6 +1406,7 @@ typedef struct EjsEx {
 
 #define EJS_INDEX_INCR  256
 
+//  MOB DOC
 typedef struct EjsConstants {
     char          *pool;                    /**< Constant pool string data */
     ssize         poolSize;                 /**< Size of constant pool storage in bytes */
@@ -1398,6 +1420,7 @@ typedef struct EjsConstants {
 
 #define EJS_DEBUG_INCR 16
 
+//  MOB DOC
 typedef struct EjsLine {
     int         offset;                     /**< Optional PC offsets of each line in function */
     MprChar     *source;                    /**< Program source code. Format: path line: code */         
@@ -1407,6 +1430,7 @@ typedef struct EjsLine {
 #define EJS_DEBUG_MAGIC     0x78654423
 #define EJS_CODE_MAGIC      0x91917128
 
+//  MOB DOC
 typedef struct EjsDebug {
     int         magic;
     ssize      size;                        /**< Size of lines[] in elements */
@@ -1553,6 +1577,7 @@ typedef struct EjsFunction {
 extern EjsFunction *ejsCreateFunction(Ejs *ejs, EjsString *name, cuchar *code, int codeLen, int numArgs, int numDefault,
     int numExceptions, struct EjsType *returnType, int attributes, struct EjsModule *module, EjsBlock *scope, 
     int strict);
+//  MOB DOC
 extern int ejsInitFunction(Ejs *ejs, EjsFunction *fun, EjsString *name, cuchar *code, int codeLen, int numArgs, 
     int numDefault, int numExceptions, struct EjsType *returnType, int attributes, struct EjsModule *module, 
     EjsBlock *scope, int strict);
@@ -1602,8 +1627,10 @@ extern EjsAny *ejsRunFunction(Ejs *ejs, EjsFunction *fn, EjsAny *thisObj, int ar
     @ingroup EjsFunction
  */
 extern EjsAny *ejsRunFunctionBySlot(Ejs *ejs, EjsAny *obj, int slotNum, int argc, void *argv);
+//  MOB DOC
 extern EjsAny *ejsRunFunctionByName(Ejs *ejs, EjsAny *container, EjsName qname, EjsAny *obj, int argc, void *argv);
 
+//  MOB DOC
 extern EjsEx *ejsAddException(Ejs *ejs, EjsFunction *mp, uint tryStart, uint tryEnd, struct EjsType *catchType,
     uint handlerStart, uint handlerEnd, int numBlocks, int numStack, int flags, int preferredIndex);
 extern EjsFunction *ejsCloneFunction(Ejs *ejs, EjsFunction *src, int deep);
@@ -1644,6 +1671,7 @@ typedef struct EjsFrame {
     #define ejsIsFrame(ejs, obj) (obj && ejsIsPot(ejs, obj) && ((EjsPot*) (obj))->isFrame)
 #endif
 
+//  MOB DOC
 extern EjsFrame *ejsCreateFrame(Ejs *ejs, EjsFunction *src, EjsObj *thisObj, int argc, EjsObj **argv);
 extern EjsFrame *ejsCreateCompilerFrame(Ejs *ejs, EjsFunction *src);
 extern EjsBlock *ejsPopBlock(Ejs *ejs);
@@ -1785,6 +1813,7 @@ extern void ejsSetByteArrayPositions(Ejs *ejs, EjsByteArray *ba, ssize readPosit
  */
 extern ssize ejsCopyToByteArray(Ejs *ejs, EjsByteArray *ba, ssize offset, cchar *data, ssize length);
 
+//  MOB DOC
 extern void ejsResetByteArray(EjsByteArray *ba);
 extern ssize ejsGetByteArrayAvailable(EjsByteArray *ba);
 extern ssize ejsGetByteArrayRoom(EjsByteArray *ba);
@@ -1854,8 +1883,10 @@ extern EjsDate *ejsCreateDate(Ejs *ejs, MprTime value);
  */
 typedef EjsPot EjsError;
 
+//  MOB DOC
 #define ejsIsError(ejs, obj) (obj && ejsIsA(ejs, obj, ESV(Error)))
 
+//  MOB DOC
 extern EjsError *ejsCreateError(Ejs *ejs, struct EjsType *type, EjsObj *message);
 extern EjsArray *ejsCaptureStack(Ejs *ejs, int uplevels);
 
@@ -1877,7 +1908,7 @@ extern cchar *ejsGetErrorMsg(Ejs *ejs, int withStack);
  */
 extern bool ejsHasException(Ejs *ejs);
 
-// TODO - DOC
+//  MOB DOC
 extern EjsObj *ejsGetException(Ejs *ejs);
 
 /** 
@@ -2058,6 +2089,7 @@ typedef struct EjsFile {
  */
 extern EjsFile *ejsCreateFile(Ejs *ejs, cchar *filename);
 
+//  MOB DOC
 extern EjsFile *ejsCreateFileFromFd(Ejs *ejs, int fd, cchar *name, int mode);
 
 /**
@@ -2090,6 +2122,7 @@ typedef struct EjsPath {
     @ingroup EjsPath
  */
 extern EjsPath *ejsCreatePath(Ejs *ejs, EjsString *path);
+//  MOB DOC
 extern EjsPath *ejsCreatePathFromAsc(Ejs *ejs, cchar *path);
 //  MOB DOC
 extern EjsPath *ejsToPath(Ejs *ejs, EjsAny *obj);
@@ -2116,6 +2149,7 @@ typedef struct EjsUri {
     @ingroup EjsUri
  */
 extern EjsUri *ejsCreateUri(Ejs *ejs, EjsString *uri);
+//  MOB DOC
 extern EjsUri *ejsCreateUriFromMulti(Ejs *ejs, cchar *uri);
 extern EjsUri *ejsCreateUriFromParts(Ejs *ejs, cchar *scheme, cchar *host, int port, cchar *path, cchar *query, 
         cchar *reference, int complete);
@@ -2147,6 +2181,7 @@ typedef struct EjsFileSystem {
     @ingroup EjsPath
  */
 extern EjsFileSystem *ejsCreateFileSystem(Ejs *ejs, cchar *path);
+//  MOB DOC
 extern EjsObj *ejsCreateGlobal(Ejs *ejs);
 extern void ejsFreezeGlobal(Ejs *ejs);
 extern void ejsCreateGlobalNamespaces(Ejs *ejs);
@@ -2192,6 +2227,7 @@ typedef struct EjsHttp {
  */
 extern EjsHttp *ejsCreateHttp(Ejs *ejs);
 
+//  MOB DOC
 extern void ejsSetHttpLimits(Ejs *ejs, HttpLimits *limits, EjsObj *obj, int server);
 extern void ejsGetHttpLimits(Ejs *ejs, EjsObj *obj, HttpLimits *limits, int server);
 
@@ -2253,6 +2289,7 @@ typedef struct EjsNamespace {
  */
 extern EjsNamespace *ejsCreateNamespace(Ejs *ejs, EjsString *name);
 
+//  MOB DOC
 extern EjsNamespace *ejsDefineReservedNamespace(Ejs *ejs, EjsBlock *block, EjsName *typeName, cchar *name);
 extern EjsNamespace *ejsCreateReservedNamespace(Ejs *ejs, EjsName *typeName, EjsString *name);
 extern EjsString *ejsFormatReservedNamespace(Ejs *ejs, EjsName *typeName, EjsString *spaceName);
@@ -2302,6 +2339,7 @@ extern EjsNumber *ejsCreateNumber(Ejs *ejs, MprNumber value);
  */
 extern struct EjsNumber *ejsToNumber(Ejs *ejs, EjsAny *obj);
 
+//  MOB DOC
 extern bool ejsIsInfinite(MprNumber f);
 #if WIN
 #define ejsIsNan(f) (_isnan(f))
@@ -2324,6 +2362,7 @@ typedef struct EjsReflect {
 } EjsReflect;
 
 extern EjsString *ejsGetTypeName(struct Ejs *ejs, EjsAny *obj);
+//  MOB DOC
 extern EjsString *ejsGetTypeOf(struct Ejs *ejs, EjsAny *obj);
 
 /** 
@@ -2357,6 +2396,7 @@ typedef struct EjsRegExp {
  */
 extern EjsRegExp *ejsCreateRegExp(Ejs *ejs, EjsString *pattern);
 
+//  MOB DOC
 EjsString *ejsRegExpToString(Ejs *ejs, EjsRegExp *rp);
 
 /**
@@ -2435,6 +2475,7 @@ typedef struct EjsWorker {
 } EjsWorker;
 
 extern EjsWorker *ejsCreateWorker(Ejs *ejs);
+//  MOB DOC
 extern void ejsRemoveWorkers(Ejs *ejs);
 
 /** 
@@ -2513,6 +2554,7 @@ typedef struct EjsXML {
     #define ejsIsXML(ejs, obj) (ejsIs(ejs, obj, XML) || ejsIs(ejs, obj, XMLList))
 #endif
 
+//  MOB DOC
 extern EjsXML *ejsCreateXML(Ejs *ejs, int kind, EjsName name, EjsXML *parent, EjsString *value);
 extern void  ejsLoadXMLString(Ejs *ejs, EjsXML *xml, EjsString *xmlString);
 extern void  ejsLoadXMLFromMulti(Ejs *ejs, EjsXML *xml, cchar *xmlString);
@@ -2532,6 +2574,7 @@ extern int ejsAppendAttributeToXML(Ejs *ejs, EjsXML *parent, EjsXML *node);
 extern EjsXML *ejsCreateXMLList(Ejs *ejs, EjsXML *targetObject, EjsName targetProperty);
 
 
+//  MOB DOC
 extern int ejsAddObserver(Ejs *ejs, EjsObj **emitterPtr, EjsObj *name, EjsFunction *observer);
 extern int ejsRemoveObserver(Ejs *ejs, EjsObj *emitter, EjsObj *name, EjsFunction *observer);
 extern int ejsSendEventv(Ejs *ejs, EjsObj *emitter, cchar *name, EjsAny *thisObj, int argc, void *argv);
@@ -2555,6 +2598,7 @@ extern MprNumber ejsGetNumber(Ejs *ejs, EjsAny *obj);
     @ingroup EjsNumber
  */
 extern int ejsGetInt(Ejs *ejs, EjsAny *obj);
+//  MOB DOC
 extern int64 ejsGetInt64(Ejs *ejs, EjsAny *obj);
 
 /** 
@@ -2566,6 +2610,7 @@ extern int64 ejsGetInt64(Ejs *ejs, EjsAny *obj);
  */
 extern double ejsGetDouble(Ejs *ejs, EjsAny *obj);
 
+//  MOB DOC
 #define ejsGetDate(ejs, obj) (ejsIs(ejs, obj, Date) ? ((EjsDate*) obj)->value : 0)
 
 typedef EjsAny  *(*EjsCreateHelper)(Ejs *ejs, struct EjsType *type, int size);
@@ -2714,6 +2759,7 @@ extern int ejsDefineGlobalFunction(Ejs *ejs, EjsString *name, EjsProc fn);
     assumption is worth the benefit.
  */
 //  MOB - need doc for this too
+//  MOB DOC
 #define ejsIs(ejs, obj, name) ejsIsA(ejs, obj, EST(name))
 #define ejsIsDefined(ejs, obj) (obj != 0 && !ejsIs(ejs, obj, Null) && !ejsIs(ejs, obj, Void))
 #define ejsCast(ejs, obj, name) ejsCastType(ejs, obj, ESV(name))
@@ -2753,6 +2799,7 @@ extern bool ejsIsTypeSubType(Ejs *ejs, EjsType *target, EjsType *baseType);
     @ingroup EjsType
  */
 extern int ejsBindMethod(Ejs *ejs, EjsAny *obj, int slotNum, void *fn);
+//  MOB DOC
 extern int ejsBindAccess(Ejs *ejs, EjsAny *obj, int slotNum, void *getter, void *setter);
 extern void ejsBindConstructor(Ejs *ejs, EjsType *type, void *nativeProc);
 
@@ -2789,11 +2836,13 @@ extern int ejsDefineInstanceProperty(Ejs *ejs, EjsType *type, int slotNum, EjsNa
  */
 extern EjsType  *ejsGetType(Ejs *ejs, int slotNum);
 
+//  MOB DOC
 extern EjsType  *ejsGetTypeByName(Ejs *ejs, EjsName qname);
 
 #define VSPACE(space) space "-" BLD_VNUM
 #define ejsGetVType(ejs, space, name) ejsGetTypeByName(ejs, space "-" BLD_VNUM, name)
 
+//  MOB DOC
 extern int      ejsCompactClass(Ejs *ejs, EjsType *type);
 extern int      ejsCopyBaseProperties(Ejs *ejs, EjsType *type, EjsType *baseType);
 extern void     ejsDefineTypeNamespaces(Ejs *ejs, EjsType *type);
@@ -2897,6 +2946,7 @@ extern int      ejs_web_Init(Ejs *ejs, MprModule *mp);
     all-in-one ejs.h or the pure ejs.h
  */
 extern HttpStage *ejsAddWebHandler(Http *http, MprModule *module);
+//  MOB DOC
 extern int ejsHostHttpServer(HttpConn *conn);
 
 /**
@@ -2967,6 +3017,7 @@ typedef struct EjsService {
     MprMutex        *mutex;                 /**< Multithread locking */
 } EjsService;
 
+//  MOB DOC
 extern EjsIntern *ejsCreateIntern(EjsService *sp);
 extern int ejsInitCompiler(EjsService *sp);
 extern void ejsAttention(Ejs *ejs);
@@ -3080,6 +3131,7 @@ extern int ejsEvalFile(cchar *path);
 
 //  TODO - DOC
 extern int ejsLoadScriptFile(Ejs *ejs, cchar *path, cchar *cache, int flags);
+//  MOB DOC
 extern int ejsLoadScriptLiteral(Ejs *ejs, EjsString *script, cchar *cache, int flags);
 
 /**
@@ -3136,6 +3188,7 @@ extern int ejsRun(Ejs *ejs);
     @ingroup Ejs
  */
 extern EjsAny *ejsThrowException(Ejs *ejs, EjsAny *error);
+//  MOB DOC
 extern void ejsClearException(Ejs *ejs);
 
 /**
@@ -3149,6 +3202,7 @@ extern void ejsClearException(Ejs *ejs);
  */
 extern void ejsReportError(Ejs *ejs, char *fmt, ...);
 
+//  MOB DOC
 extern EjsAny *ejsCastOperands(Ejs *ejs, EjsAny *lhs, int opcode, EjsAny *rhs);
 extern int ejsCheckModuleLoaded(Ejs *ejs, cchar *name);
 extern void ejsClearExiting(Ejs *ejs);
@@ -3303,6 +3357,7 @@ extern void ejsUnlockService();
  */ 
 #define EJS_ENCODE_MAX_WORD             0x07FFFFFF
 
+//  MOB DOC
 typedef struct EjsTypeFixup
 {
     int              kind;                       /* Kind of fixup */
@@ -3336,6 +3391,7 @@ typedef struct EjsTypeFixup
 /*
     Section types
  */
+//  MOB DOC
 #define EJS_SECT_MODULE         1           /* Module section */
 #define EJS_SECT_MODULE_END     2           /* End of a module */
 #define EJS_SECT_DEBUG          3           /* Module dependency */
@@ -3365,6 +3421,7 @@ typedef struct EjsTypeFixup
 /*
     File format is little-endian. All headers are aligned on word boundaries.
  */
+//  MOB DOC
 typedef struct EjsModuleHdr {
     int32       magic;                      /* Magic number for Ejscript modules */
     int32       fileVersion;                /* Module file format version */
@@ -3376,6 +3433,7 @@ typedef struct EjsModuleHdr {
     MOB DOC
     A module is uniquely defined by the basename of its filename without the ".mod" extension.
  */
+//  MOB DOC
 typedef struct EjsModule {
     EjsString       *name;                  /* Name of this module - basename of the filename without .mod extension */
     //  MOB - document the version format
@@ -3424,6 +3482,7 @@ typedef struct EjsModule {
 
 } EjsModule;
 
+//  MOB DOC
 extern int ejsCreateConstants(Ejs *ejs, EjsModule *mp, int count, ssize size, char *pool);
 extern int ejsGrowConstants(Ejs *ejs, EjsModule *mp, ssize size);
 extern int ejsAddConstant(Ejs *ejs, EjsModule *mp, cchar *str);
@@ -3431,6 +3490,7 @@ extern int ejsAddConstant(Ejs *ejs, EjsModule *mp, cchar *str);
 
 typedef int (*EjsNativeCallback)(Ejs *ejs);
 
+//  MOB DOC
 typedef struct EjsNativeModule {
     EjsNativeCallback callback;             /* Callback to configure module native types and properties */
     char            *name;                  /* Module name */
@@ -3438,6 +3498,7 @@ typedef struct EjsNativeModule {
     int             flags;                  /* Configuration flags */
 } EjsNativeModule;
 
+//  MOB DOC
 /*
     Documentation string information
     Element documentation string. The loader will create if required.
@@ -3476,9 +3537,11 @@ typedef struct EjsDoc {
 #define EJS_LOADER_RELOAD     0x20                  /* Force a reload if already loaded */
 
 //  MOB -- would this be better with an ascii name?
+//  MOB DOC
 extern int          ejsLoadModule(Ejs *ejs, EjsString *name, int minVer, int maxVer, int flags);
 extern char         *ejsSearchForModule(Ejs *ejs, cchar *name, int minVer, int maxVer);
 
+//  MOB DOC
 extern void         ejsModuleReadBlock(Ejs *ejs, EjsModule *module, char *buf, int len);
 extern int          ejsModuleReadByte(Ejs *ejs, EjsModule *module);
 extern EjsString    *ejsModuleReadConst(Ejs *ejs, EjsModule *module);
@@ -3491,16 +3554,19 @@ extern MprChar      *ejsModuleReadMultiAsWide(Ejs *ejs, EjsModule *mp);
 extern int          ejsModuleReadType(Ejs *ejs, EjsModule *module, EjsType **typeRef, EjsTypeFixup **fixup, 
                         EjsName *typeName, int *slotNum);
 
+//  MOB DOC
 extern double       ejsDecodeDouble(Ejs *ejs, uchar **pp);
 extern int          ejsDecodeInt32(Ejs *ejs, uchar **pp);
 extern int64        ejsDecodeNum(Ejs *ejs, uchar **pp);
 
+//  MOB DOC
 extern int          ejsEncodeByteAtPos(Ejs *ejs, uchar *pos, int value);
 extern int          ejsEncodeDouble(Ejs *ejs, uchar *pos, double number);
 extern int          ejsEncodeInt32(Ejs *ejs, uchar *pos, int number);
 extern int          ejsEncodeNum(Ejs *ejs, uchar *pos, int64 number);
 extern int          ejsEncodeInt32AtPos(Ejs *ejs, uchar *pos, int value);
 
+//  MOB DOC
 extern double       ejsSwapDouble(Ejs *ejs, double a);
 extern int          ejsSwapInt32(Ejs *ejs, int word);
 extern int64        ejsSwapInt64(Ejs *ejs, int64 word);

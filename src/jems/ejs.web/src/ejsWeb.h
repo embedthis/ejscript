@@ -168,12 +168,15 @@ extern EjsSession *ejsGetSession(Ejs *ejs, EjsString *key, MprTime timeout, int 
     @param session Session object created via ejsGetSession()
 */
 extern int ejsDestroySession(Ejs *ejs, EjsSession *session);
+
+//  MOB DOC
 extern void ejsSetSessionTimeout(Ejs *ejs, EjsSession *sp, MprTime timeout);
 extern void ejsSendRequestCloseEvent(Ejs *ejs, EjsRequest *req);
 extern void ejsSendRequestErrorEvent(Ejs *ejs, EjsRequest *req);
 
 /******************************* Internal APIs ********************************/
 
+//  MOB DOC
 extern void ejsConfigureHttpServerType(Ejs *ejs);
 extern void ejsConfigureRequestType(Ejs *ejs);
 extern void ejsConfigureSessionType(Ejs *ejs);

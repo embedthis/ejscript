@@ -19,9 +19,11 @@ extern "C" {
 /*
     Compiler validation modes. From "use standard|strict"
  */
+//  MOB DOC
 #define PRAGMA_MODE_STANDARD    1               /* Standard unstrict mode */
 #define PRAGMA_MODE_STRICT      2               /* Strict mode */
 
+//  MOB DOC
 #define STRICT_MODE(cp)         (cp->fileState->strict)
 
 /*
@@ -34,6 +36,7 @@ extern "C" {
 /*
     Phases for AST processing
  */
+//  MOB DOC
 #define EC_PHASE_DEFINE         0           /* Define types, functions and properties in types */
 #define EC_PHASE_CONDITIONAL    1           /* Do conditional processing, hoisting and then type fixups */
 #define EC_PHASE_FIXUP          2           /* Fixup type references */
@@ -111,10 +114,12 @@ typedef struct EcLocation {
 typedef struct EcNode   *Node;
 #endif
 
+//  MOB DOC
 /*
     Structure for code generation buffers
  */
 typedef struct EcCodeGen {
+//  MOB DOC
     MprBuf      *buf;                           /* Code generation buffer */
     MprList     *jumps;                         /* Break/continues to patch for this code block */
     MprList     *exceptions;                    /* Exception handlers for this code block */
@@ -128,6 +133,7 @@ typedef struct EcCodeGen {
 } EcCodeGen;
 
 
+//  MOB DOC
 typedef struct EcNode {
     char                *kindName;              /* Node kind string */
 #if BLD_DEBUG
@@ -566,6 +572,7 @@ typedef int (*EcStreamGet)(struct EcStream *stream);
  */
 #define EC_STREAM_EOL       0x1                 /* End of line */
 
+//  MOB DOC
 
 typedef struct EcStream {
     struct EcCompiler *compiler;                /* Compiler back reference */
@@ -583,6 +590,7 @@ typedef struct EcStream {
 /*
     Parse source code from a file
  */
+//  MOB DOC
 typedef struct EcFileStream {
     EcStream    stream;
     MprFile     *file;
@@ -592,6 +600,7 @@ typedef struct EcFileStream {
 /*
     Parse source code from a memory block
  */
+//  MOB DOC
 typedef struct EcMemStream {
     EcStream    stream;
 } EcMemStream;
@@ -600,6 +609,7 @@ typedef struct EcMemStream {
 /*
     Parse input from the console (or file if using ejsh)
  */
+//  MOB DOC
 typedef struct EcConsoleStream {
     EcStream    stream;
 } EcConsoleStream;
@@ -608,6 +618,7 @@ typedef struct EcConsoleStream {
 /*
     Program source input tokens
  */
+//  MOB DOC
 typedef struct EcToken {
     MprChar     *text;                  /* Token text */
     int         length;                 /* Length of text in characters */
@@ -632,6 +643,7 @@ typedef struct EcToken {
 #define EC_JUMP_CONTINUE    0x2
 #define EC_JUMP_GOTO        0x4
 
+//  MOB DOC
 typedef struct EcJump {
     int             kind;               /* Break, continue */
     int             offset;             /* Code offset to patch */
@@ -643,6 +655,7 @@ typedef struct EcJump {
     Current parse state. Each non-terminal production has its own state.
     Some state fields are inherited. We keep a linked list from EcCompiler.
  */
+//  MOB DOC
 typedef struct EcState {
     struct EcState  *next;                  /* State stack */
     uint            blockIsMethod    : 1;   /* Current function is a method */
@@ -704,6 +717,7 @@ extern void     ecStartBreakableStatement(struct EcCompiler *cp, int kinds);
 /*
     Primary compiler control structure
  */
+//  MOB DOC
 typedef struct EcCompiler {
     /*
         Properties ordered to make debugging easier
@@ -779,6 +793,7 @@ typedef struct EcCompiler {
 /********************************** Prototypes *******************************/
 
 //  MOB -- reorder
+//  MOB DOC
 extern int          ecAddModule(EcCompiler *cp, EjsModule *mp);
 extern EcNode       *ecAppendNode(EcNode *np, EcNode *child);
 extern int          ecAstFixup(EcCompiler *cp, struct EcNode *np);
