@@ -137,6 +137,15 @@ extern "C" {
 #define EC_CODE_BUFSIZE         4096            /**< Initial size of code gen buffer */
 #define EC_NUM_PAK_PROP         32              /**< Initial number of properties */
 
+#if VXWORKS
+/*
+    Old VxWorks can't do array[]
+ */
+#define ARDEC 0
+#else
+#define ARDEC
+#endif
+
 /********************************* Defines ************************************/
 
 #if !DOXYGEN
@@ -970,7 +979,7 @@ typedef struct EjsHash {
 typedef struct EjsProperties {
     EjsHash         *hash;                  /**< Hash buckets and head of link chains */
     int             size;                   /**< Current size of slots[] in elements */
-    struct EjsSlot  slots[];                /**< Vector of slots containing property references */
+    struct EjsSlot  slots[ARDEC];           /**< Vector of slots containing property references */
 } EjsProperties;
 
 
@@ -1306,7 +1315,7 @@ typedef struct EjsString {
     struct EjsString *next;             /**< Next string in hash chain link when interning */
     struct EjsString *prev;             /**< Prev string in hash chain */
     ssize            length;            /**< Length of string */
-    MprChar          value[];           /**< String value */
+    MprChar          value[ARDEC];      /**< String value */
 } EjsString;
 
 /*
@@ -1991,7 +2000,7 @@ typedef struct EjsDebug {
     int         magic;
     ssize      size;                        /**< Size of lines[] in elements */
     int        numLines;                    /**< Number of entries in lines[] */
-    EjsLine    lines[];
+    EjsLine    lines[ARDEC];                /**< Debug lines */
 } EjsDebug;
 
 /*
@@ -2018,7 +2027,7 @@ typedef struct EjsCode {
     int              debugOffset;            /**< Offset in mod file for debug info */
     int              numHandlers;            /**< Number of exception handlers */
     int              sizeHandlers;           /**< Size of handlers array */
-    uchar            byteCode[];             /**< Byte code */
+    uchar            byteCode[ARDEC];        /**< Byte code */
 } EjsCode;
 
 /** 
@@ -2902,50 +2911,33 @@ typedef struct EjsPath {
 
 /** 
     Create a Path object
-    @description Create a file object associated with the given filename. The filename is not opened, just stored.
+    @description Create a path object associated with the given pathname.
     @param ejs Ejs reference returned from #ejsCreateVM
-    @param path Path file name
+    @param path Path object
     @return A new Path object
     @ingroup EjsPath
  */
 extern EjsPath *ejsCreatePath(Ejs *ejs, EjsString *path);
-//  MOB DOC
-extern EjsPath *ejsCreatePathFromAsc(Ejs *ejs, cchar *path);
-//  MOB DOC
-extern EjsPath *ejsToPath(Ejs *ejs, EjsAny *obj);
-
-/******************************************** Uri *************************************************/
-//  MOB - move 
-/** 
-    Uri class
-    @description The Uri class provides file path name services.
-    @stability Prototype
-    @defgroup EjsUri EjsUri 
-    @see EjsFile ejsCreateUri
- */
-typedef struct EjsUri {
-    EjsObj      obj;            /**< Base object */
-    HttpUri     *uri;           /**< Decoded URI */
-} EjsUri;
-
 
 /** 
-    Create a Uri object
-    @description Create a URI object associated with the given URI string.
+    Create a Path object
+    @description Create a path object from the given ascii path string
     @param ejs Ejs reference returned from #ejsCreateVM
-    @param uri Uri string to parse
-    @return A new Uri object
-    @ingroup EjsUri
+    @param path Null terminated Ascii pathname.
+    @return A new Path object
+    @ingroup EjsPath
  */
-extern EjsUri *ejsCreateUri(Ejs *ejs, EjsString *uri);
-//  MOB DOC
-extern EjsUri *ejsCreateUriFromMulti(Ejs *ejs, cchar *uri);
-extern EjsUri *ejsCreateUriFromParts(Ejs *ejs, cchar *scheme, cchar *host, int port, cchar *path, cchar *query, 
-        cchar *reference, int complete);
-extern cchar *ejsGetUri(Ejs *ejs, EjsAny *obj);
+extern EjsPath *ejsCreatePathFromAsc(Ejs *ejs, cchar *path);
 
-//  MOB DOC
-extern EjsUri *ejsToUri(Ejs *ejs, EjsAny *obj);
+/** 
+    Convert the object to a Path
+    @description Convert the object to a string and then to a Path.
+    @param ejs Ejs reference returned from #ejsCreateVM
+    @param obj Object to convert
+    @return A new Path object
+    @ingroup EjsPath
+ */
+extern EjsPath *ejsToPath(Ejs *ejs, EjsAny *obj);
 
 /******************************************** FileSystem*******************************************/
 /** 
@@ -3257,6 +3249,38 @@ typedef struct EjsTimer {
 #define EJS_WORKER_STARTED      2                   /**< Worker has started a script */
 #define EJS_WORKER_CLOSED       3                   /**< Inside worker has finished */
 #define EJS_WORKER_COMPLETE     4                   /**< Worker has completed all messages */
+
+/******************************************** Uri *************************************************/
+/** 
+    Uri class
+    @description The Uri class provides file path name services.
+    @stability Prototype
+    @defgroup EjsUri EjsUri 
+    @see EjsFile ejsCreateUri
+ */
+typedef struct EjsUri {
+    EjsObj      obj;            /**< Base object */
+    HttpUri     *uri;           /**< Decoded URI */
+} EjsUri;
+
+
+/** 
+    Create a Uri object
+    @description Create a URI object associated with the given URI string.
+    @param ejs Ejs reference returned from #ejsCreateVM
+    @param uri Uri string to parse
+    @return A new Uri object
+    @ingroup EjsUri
+ */
+extern EjsUri *ejsCreateUri(Ejs *ejs, EjsString *uri);
+//  MOB DOC
+extern EjsUri *ejsCreateUriFromMulti(Ejs *ejs, cchar *uri);
+extern EjsUri *ejsCreateUriFromParts(Ejs *ejs, cchar *scheme, cchar *host, int port, cchar *path, cchar *query, 
+        cchar *reference, int complete);
+extern cchar *ejsGetUri(Ejs *ejs, EjsAny *obj);
+
+//  MOB DOC
+extern EjsUri *ejsToUri(Ejs *ejs, EjsAny *obj);
 
 /******************************************** Worker **********************************************/
 /** 
