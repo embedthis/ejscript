@@ -1085,11 +1085,25 @@
     <title>EjsError ejsFormatStack ejsGetErrorMsg ejsHasException ejsThrowArgError ejsThrowAssertError</title>
     <filename>group___ejs_error.html</filename>
     <member kind="function">
+      <type>EjsArray *</type>
+      <name>ejsCaptureStack</name>
+      <anchorfile>group___ejs_error.html</anchorfile>
+      <anchor>ga7e5c81aa6006db8540df5835022cc101</anchor>
+      <arglist>(Ejs *ejs, int skip)</arglist>
+    </member>
+    <member kind="function">
       <type>cchar *</type>
       <name>ejsGetErrorMsg</name>
       <anchorfile>group___ejs_error.html</anchorfile>
       <anchor>ga26516321557d20655ded73648c787e46</anchor>
       <arglist>(Ejs *ejs, int withStack)</arglist>
+    </member>
+    <member kind="function">
+      <type>EjsObj *</type>
+      <name>ejsGetException</name>
+      <anchorfile>group___ejs_error.html</anchorfile>
+      <anchor>ga58fdca3d3629fd2020c15a20edb9d26e</anchor>
+      <arglist>(Ejs *ejs)</arglist>
     </member>
     <member kind="function">
       <type>bool</type>
@@ -1228,6 +1242,13 @@
       <anchorfile>group___ejs_file.html</anchorfile>
       <anchor>ga5f2c865e36e54f93f3caa0159982cff9</anchor>
       <arglist>(Ejs *ejs, cchar *filename)</arglist>
+    </member>
+    <member kind="function">
+      <type>EjsFile *</type>
+      <name>ejsCreateFileFromFd</name>
+      <anchorfile>group___ejs_file.html</anchorfile>
+      <anchor>ga2b1b33f9ab920e964d4e34a77fe00acf</anchor>
+      <arglist>(Ejs *ejs, int fd, cchar *name, int mode)</arglist>
     </member>
   </compound>
   <compound kind="group">

@@ -2875,7 +2875,7 @@ extern EjsFile *ejsCreateFile(Ejs *ejs, cchar *filename);
     @param name Filename to associate with the file object
     @param mode O/S file access mode (see man 2 open)
     @return A new file object
-    @ingroup EjsError
+    @ingroup EjsFile
  */
 extern EjsFile *ejsCreateFileFromFd(Ejs *ejs, int fd, cchar *name, int mode);
 
