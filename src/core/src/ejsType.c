@@ -491,7 +491,7 @@ static int inheritProperties(Ejs *ejs, EjsType *type, EjsPot *obj, int destOffse
             }
         }
     }
-    ejsMakeHash(ejs, obj);
+    ejsIndexProperties(ejs, obj);
     return 0;
 }
 

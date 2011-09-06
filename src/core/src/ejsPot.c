@@ -81,7 +81,7 @@ EjsAny *ejsClonePot(Ejs *ejs, EjsAny *obj, bool deep)
         }
     }
     if (dest->numProp > EJS_HASH_MIN_PROP) {
-        ejsMakeHash(ejs, dest);
+        ejsIndexProperties(ejs, dest);
     }
     mprCopyName(dest, src);
     return dest;
@@ -395,7 +395,7 @@ int ejsLookupPotProperty(struct Ejs *ejs, EjsPot *obj, EjsName qname)
     Validate the supplied slot number. If set to -1, then return the next available property slot number.
     Grow the object if required and update numProp
  */
-int ejsGetSlot(Ejs *ejs, EjsPot *obj, int slotNum)
+int ejsCheckSlot(Ejs *ejs, EjsPot *obj, int slotNum)
 {
     mprAssert(ejsIsPot(ejs, obj));
 
@@ -443,7 +443,7 @@ static int setPotProperty(Ejs *ejs, EjsPot *obj, int slotNum, EjsObj *value)
     mprAssert(ejsIsPot(ejs, obj));
     mprAssert(value);
 
-    if ((slotNum = ejsGetSlot(ejs, obj, slotNum)) < 0) {
+    if ((slotNum = ejsCheckSlot(ejs, obj, slotNum)) < 0) {
         return EJS_ERR;
     }
     mprAssert(slotNum < obj->numProp);
@@ -467,7 +467,7 @@ static int setPotPropertyName(Ejs *ejs, EjsPot *obj, int slotNum, EjsName qname)
     mprAssert(qname.name);
     mprAssert(qname.space);
 
-    if ((slotNum = ejsGetSlot(ejs, obj, slotNum)) < 0) {
+    if ((slotNum = ejsCheckSlot(ejs, obj, slotNum)) < 0) {
         return EJS_ERR;
     }
     mprAssert(slotNum < obj->numProp);
@@ -546,7 +546,7 @@ int ejsInsertPotProperties(Ejs *ejs, EjsPot *obj, int incr, int offset)
         slots[i] = *sp;
     }
     ejsZeroSlots(ejs, &slots[offset], incr);
-    if (ejsMakeHash(ejs, obj) < 0) {
+    if (ejsIndexProperties(ejs, obj) < 0) {
         return EJS_ERR;
     }   
     return 0;
@@ -637,7 +637,7 @@ static void removeSlot(Ejs *ejs, EjsPot *obj, int slotNum, int compact)
             i = slotNum;
         }
         ejsZeroSlots(ejs, &slots[i], 1);
-        ejsMakeHash(ejs, obj);
+        ejsIndexProperties(ejs, obj);
     }
 }
 
@@ -724,7 +724,7 @@ static int setPotPropertyTraits(Ejs *ejs, EjsPot *obj, int slotNum, EjsType *typ
     mprAssert(ejsIsPot(ejs, obj));
     mprAssert(slotNum >= 0);
 
-    if ((slotNum = ejsGetSlot(ejs, obj, slotNum)) < 0) {
+    if ((slotNum = ejsCheckSlot(ejs, obj, slotNum)) < 0) {
         return EJS_ERR;
     }
     if (type) {
@@ -772,7 +772,7 @@ static int hashProperty(Ejs *ejs, EjsPot *obj, int slotNum, EjsName qname)
     props = obj->properties;
     if (props == NULL || props->hash == NULL || props->hash->size < obj->numProp) {
         /*  Remake the entire hash */
-        return ejsMakeHash(ejs, obj);
+        return ejsIndexProperties(ejs, obj);
     }
     hash = props->hash;
     slots = props->slots;
@@ -816,7 +816,7 @@ static int hashProperty(Ejs *ejs, EjsPot *obj, int slotNum, EjsName qname)
     to numInstanceProp. We currently don't allow reductions.
  */
 //  TODO MOB -- rename
-int ejsMakeHash(Ejs *ejs, EjsPot *obj)
+int ejsIndexProperties(Ejs *ejs, EjsPot *obj)
 {
     EjsSlot         *sp;
     EjsHash         *oldHash, *hash;
@@ -940,7 +940,7 @@ int ejsCompactPot(Ejs *ejs, EjsPot *obj)
         *dest++ = *src;
     }
     obj->numProp -= removed;
-    ejsMakeHash(ejs, obj);
+    ejsIndexProperties(ejs, obj);
     return obj->numProp;
 }
 
@@ -993,7 +993,7 @@ void *ejsCreatePot(Ejs *ejs, EjsType *type, int numProp)
             }
             ejsZeroSlots(ejs, &obj->properties->slots[prototype->numProp], obj->properties->size - prototype->numProp);
             if (numProp > EJS_HASH_MIN_PROP) {
-                ejsMakeHash(ejs, obj);
+                ejsIndexProperties(ejs, obj);
             }
         } else {
             ejsZeroSlots(ejs, obj->properties->slots, obj->properties->size);

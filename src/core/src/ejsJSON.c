@@ -511,7 +511,7 @@ static EjsString *serialize(Ejs *ejs, EjsAny *vp, Json *json)
         if (!ejsIsDefined(ejs, vp) || ejsIs(ejs, vp, Boolean) || ejsIs(ejs, vp, Number)) {
             return ejsToString(ejs, vp);
         } else {
-            return ejsStringToJSON(ejs, vp);
+            return ejsToLiteralString(ejs, vp);
         }
     }
     obj = vp;

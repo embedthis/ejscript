@@ -246,8 +246,11 @@ static EjsObj *fun_setScope(Ejs *ejs, EjsFunction *fun, int argc, EjsObj **argv)
 
 /*************************************************************************************************************/
 
-void ejsDisableFunction(Ejs *ejs, EjsFunction *fun)
+void ejsRemoveConstructor(Ejs *ejs, EjsType *type)
 {
+    EjsFunction     *fun;
+
+    fun = (EjsFunction*) type;
     fun->block.pot.isFunction = 0;
     fun->isConstructor = 0;
     fun->isInitializer = 0;
@@ -338,6 +341,7 @@ EjsEx *ejsAddException(Ejs *ejs, EjsFunction *fun, uint tryStart, uint tryEnd, E
 }
 
 
+#if UNUSED
 void ejsOffsetExceptions(EjsFunction *fun, int offset)
 {
     EjsEx           *ex;
@@ -353,6 +357,7 @@ void ejsOffsetExceptions(EjsFunction *fun, int offset)
         ex->handlerEnd += offset;
     }
 }
+#endif
 
 
 static void manageCode(EjsCode *code, int flags)
@@ -421,6 +426,7 @@ static EjsObj *nopFunction(Ejs *ejs, EjsObj *obj, int argc, EjsObj **argv)
 }
 
 
+#if UNUSED
 void ejsUseActivation(Ejs *ejs, EjsFunction *fun)
 {
     EjsPot  *activation;
@@ -436,6 +442,7 @@ void ejsUseActivation(Ejs *ejs, EjsFunction *fun)
         fun->block.pot.numProp = numProp;
     }
 }
+#endif
 
 
 EjsPot *ejsCreateActivation(Ejs *ejs, EjsFunction *fun, int numProp)
@@ -447,10 +454,9 @@ EjsPot *ejsCreateActivation(Ejs *ejs, EjsFunction *fun, int numProp)
     return activation;
 }
 
-
 /********************************** Factory **********************************/
 
-EjsFunction *ejsCreateSimpleFunction(Ejs *ejs, EjsString *name, int attributes)
+EjsFunction *ejsCreateBareFunction(Ejs *ejs, EjsString *name, int attributes)
 {
     EjsFunction     *fun;
 
@@ -475,7 +481,7 @@ EjsFunction *ejsCreateFunction(Ejs *ejs, EjsString *name, cuchar *byteCode, int 
 {
     EjsFunction     *fun;
 
-    if ((fun = ejsCreateSimpleFunction(ejs, name, attributes)) == 0) {
+    if ((fun = ejsCreateBareFunction(ejs, name, attributes)) == 0) {
         return 0;
     }
     ejsInitFunction(ejs, fun, name, byteCode, codeLen, numArgs, numDefault, numExceptions, resultType, attributes, 

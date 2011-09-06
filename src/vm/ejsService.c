@@ -286,7 +286,9 @@ static void managePool(EjsPool *pool, int flags)
     }
 }
 
-
+/*
+    Create a pool for virtual machines
+ */
 EjsPool *ejsCreatePool(int poolMax, cchar *templateScript, cchar *startScript, cchar *startScriptPath, char *home)
 {
     EjsPool     *pool;

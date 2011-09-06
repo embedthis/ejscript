@@ -280,7 +280,7 @@ static ssize writeSocketData(Ejs *ejs, EjsSocket *sp)
     ba = sp->data;
     nbytes = 0;
     count = 0;
-    if (ba && (count = ejsGetByteArrayAvailable(ba)) > 0) {
+    if (ba && (count = ejsGetByteArrayAvailableData(ba)) > 0) {
         nbytes = mprWriteSocket(sp->sock, &ba->value[ba->readPosition], count);
         if (nbytes < 0) {
             ejsThrowIOError(ejs, "Can't write to socket");
@@ -288,7 +288,7 @@ static ssize writeSocketData(Ejs *ejs, EjsSocket *sp)
         }
         ba->readPosition += nbytes;
     }
-    if (ejsGetByteArrayAvailable(ba) == 0) {
+    if (ejsGetByteArrayAvailableData(ba) == 0) {
         if (sp->emitter) {
             ejsSendEvent(ejs, sp->emitter, "writable", NULL, sp);
         }
@@ -314,7 +314,7 @@ static EjsNumber *sock_write(Ejs *ejs, EjsSocket *sp, int argc, EjsObj **argv)
     ssize     nbytes;
 
     if (sp->data) {
-        ejsResetByteArray(sp->data);
+        ejsResetByteArray(ejs, sp->data);
     } else {
         sp->data = ejsCreateByteArray(ejs, -1);
     } 

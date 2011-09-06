@@ -195,7 +195,7 @@ static int genType(EjsMod *bp, MprFile *file, EjsModule *mp, EjsType *type, int 
     ejs = bp->ejs;
     lastClassSlot = max(firstClassSlot, lastClassSlot);
 
-    if (!isGlobal || ejsCompareMulti(ejs, mp->name, "ejs") == 0) {
+    if (!isGlobal || ejsCompareAsc(ejs, mp->name, "ejs") == 0) {
         /*
             Only emit global property slots for "ejs"
          */
@@ -238,7 +238,7 @@ static int genType(EjsMod *bp, MprFile *file, EjsModule *mp, EjsType *type, int 
     /*
         For the global type, only emit the count for the "ejs" module
      */
-    if (!isGlobal || ejsCompareMulti(ejs, mp->name, "ejs") == 0) {
+    if (!isGlobal || ejsCompareAsc(ejs, mp->name, "ejs") == 0) {
         defineSlotCount(bp, file, mp, type, "INSTANCE", slotNum);
     }
 

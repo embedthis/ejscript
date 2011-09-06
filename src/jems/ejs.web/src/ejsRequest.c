@@ -1151,7 +1151,7 @@ static EjsNumber *req_read(Ejs *ejs, EjsRequest *req, int argc, EjsObj **argv)
     offset = (argc >= 2) ? ejsGetInt(ejs, argv[1]) : 0;
     count = (argc >= 3) ? ejsGetInt(ejs, argv[2]) : -1;
 
-    ejsResetByteArrayIfEmpty(ejs, ba);
+    ejsResetByteArray(ejs, ba);
     if (!ejsMakeRoomInByteArray(ejs, ba, count >= 0 ? count : MPR_BUFSIZE)) {
         return 0;
     }
@@ -1225,7 +1225,7 @@ static EjsObj *req_setLimits(Ejs *ejs, EjsRequest *req, int argc, EjsObj **argv)
         req->limits = ejsCreateEmptyPot(ejs);
         ejsGetHttpLimits(ejs, req->limits, req->conn->limits, 0);
     }
-    ejsBlendObject(ejs, req->limits, argv[0], 0, EJS_BLEND_OVERWRITE);
+    ejsBlendObject(ejs, req->limits, argv[0], EJS_BLEND_OVERWRITE);
     ejsSetHttpLimits(ejs, req->conn->limits, req->limits, 0);
     if (req->session) {
         ejsSetSessionTimeout(ejs, req->session, req->conn->limits->sessionTimeout);

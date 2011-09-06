@@ -219,7 +219,7 @@ static EjsAny *invokeStringOperator(Ejs *ejs, EjsString *lhs, int opcode, EjsStr
         Binary operators
      */
     case EJS_OP_ADD:
-        return ejsCatString(ejs, lhs, rhs);
+        return ejsJoinString(ejs, lhs, rhs);
 
     case EJS_OP_AND: case EJS_OP_DIV: case EJS_OP_OR:
     case EJS_OP_SHL: case EJS_OP_SHR: case EJS_OP_USHR: case EJS_OP_XOR:
@@ -381,7 +381,7 @@ static EjsString *concatString(Ejs *ejs, EjsString *sp, int argc, EjsObj **argv)
     result = (EjsString*) ejsClone(ejs, sp, 0);
     for (i = 0; i < args->length; i++) {
         str = ejsToString(ejs, ejsGetProperty(ejs, args, i));
-        if ((result = ejsCatString(ejs, result, str)) == NULL) {
+        if ((result = ejsJoinString(ejs, result, str)) == NULL) {
             ejsThrowMemoryError(ejs);
             return 0;
         }
@@ -1406,9 +1406,9 @@ static EjsString *toCamel(Ejs *ejs, EjsString *sp, int argc, EjsObj **argv)
 
 
 /*
-    Convert to a JSON string
+    Convert a string to a literal string representation. Wrap in quotes and backquote any quotes or backquotes.
  */
-EjsString *ejsStringToJSON(Ejs *ejs, EjsObj *vp)
+EjsString *ejsToLiteralString(Ejs *ejs, EjsObj *vp)
 {
     EjsString   *sp;
     MprBuf      *buf;
@@ -1778,8 +1778,7 @@ int ejsAtoi(Ejs *ejs, EjsString *sp, int radix)
 }
 
 
-// TODO - rename to join
-EjsString *ejsCatString(Ejs *ejs, EjsString *s1, EjsString *s2)
+EjsString *ejsJoinString(Ejs *ejs, EjsString *s1, EjsString *s2)
 {
     EjsString   *result;
     ssize       len;
@@ -1802,10 +1801,10 @@ EjsString *ejsCatString(Ejs *ejs, EjsString *s1, EjsString *s2)
 
 
 /*
-    Catenate a set of unicode string arguments onto another.
+    Join a set of unicode string arguments onto another.
     TODO - rename to join
  */
-EjsString *ejsCatStrings(Ejs *ejs, EjsString *src, ...)
+EjsString *ejsJoinStrings(Ejs *ejs, EjsString *src, ...)
 {
     EjsString   *sp, *result;
     va_list     args;
@@ -1831,7 +1830,7 @@ EjsString *ejsCatStrings(Ejs *ejs, EjsString *src, ...)
 }
 
 
-int ejsStartsWithMulti(Ejs *ejs, EjsString *sp, cchar *pat)
+int ejsStartsWithAsc(Ejs *ejs, EjsString *sp, cchar *pat)
 {
     ssize   i;
 
@@ -1847,13 +1846,13 @@ int ejsStartsWithMulti(Ejs *ejs, EjsString *sp, cchar *pat)
         }
     }
     if (pat[i]) {
-        return 0;
+        return -1;
     }
-    return 1;
+    return 0;
 }
 
 
-int ejsCompareMulti(Ejs *ejs, EjsString *sp, cchar *str)
+int ejsCompareAsc(Ejs *ejs, EjsString *sp, cchar *str)
 {
     MprChar     *s1;
     cchar       *s2;
@@ -1983,7 +1982,7 @@ int ejsContainsChar(Ejs *ejs, EjsString *sp, int charPat)
             return i;
         }
     }
-    return 0;
+    return -1;
 }
 
 
@@ -2015,7 +2014,7 @@ int ejsContainsStringAnyCase(Ejs *ejs, EjsString *sp, EjsString *pat)
 #endif
 
 
-int ejsContainsMulti(Ejs *ejs, EjsString *sp, cchar *pat)
+int ejsContainsAsc(Ejs *ejs, EjsString *sp, cchar *pat)
 {
     ssize   len;
     int     i, j, k;
@@ -2038,7 +2037,7 @@ int ejsContainsMulti(Ejs *ejs, EjsString *sp, cchar *pat)
             return 1;
         }
     }
-    return 0;
+    return -1;
 }
 
 
@@ -2063,7 +2062,7 @@ int ejsContainsString(Ejs *ejs, EjsString *sp, EjsString *pat)
             return 1;
         }
     }
-    return 0;
+    return -1;
 }
 
 
@@ -2074,7 +2073,7 @@ char *ejsToMulti(Ejs *ejs, EjsAny *ev)
     }
     if (!ejsIs(ejs, ev, String)) {
         if ((ev = ejsCast(ejs, ev, String)) == 0) {
-            return "";
+            return MPR->emptyString;
         }
     }
     mprAssert(ejsIs(ejs, ev, String));
@@ -2231,6 +2230,7 @@ EjsString *ejsInternString(EjsString *str)
     step = 0;
 
     lock(ip);
+    //  MOB - accesses should be debug only
     ip->accesses++;
     index = whash(str->value, str->length) % ip->size;
     if ((head = &ip->buckets[index]) != NULL) {
@@ -2249,6 +2249,7 @@ EjsString *ejsInternString(EjsString *str)
                     }
                 }
                 if (i == sp->length && i == str->length) {
+                    //  MOB - reuse should be debug only
                     ip->reuse++;
                     /* Revive incase almost stale or dead */
                     mprRevive(sp);
@@ -2286,6 +2287,7 @@ EjsString *ejsInternWide(Ejs *ejs, MprChar *value, ssize len)
     step = 0;
 
     lock(ip);
+    //  MOB - accesses should be debug only
     ip->accesses++;
     index = whash(value, len) % ip->size;
     if ((head = &ip->buckets[index]) != NULL) {
@@ -2298,6 +2300,7 @@ EjsString *ejsInternWide(Ejs *ejs, MprChar *value, ssize len)
                     }
                 }
                 if (i == sp->length) {
+                    //  MOB - reuse should be debug only
                     ip->reuse++;
                     /* Revive incase almost stale or dead */
                     mprRevive(sp);
@@ -2337,6 +2340,7 @@ EjsString *ejsInternAsc(Ejs *ejs, cchar *value, ssize len)
     ip = ejs->service->intern;
 
     lock(ip);
+    //  MOB - accesses should be debug only
     ip->accesses++;
     mprAssert(ip->size > 0);
     index = shash(value, len) % ip->size;
@@ -2350,6 +2354,7 @@ EjsString *ejsInternAsc(Ejs *ejs, cchar *value, ssize len)
                     }
                 }
                 if (i == sp->length) {
+                    //  MOB - reuse should be debug only
                     ip->reuse++;
                     /* Revive incase almost stale or dead */
                     mprRevive(sp);
@@ -2411,6 +2416,7 @@ EjsString *ejsInternMulti(Ejs *ejs, cchar *value, ssize len)
         value = src->value;
     }
     lock(ip);
+    //  MOB - accesses should be debug only
     ip->accesses++;
     index = whash(value, len) % ip->size;
     if ((head = &ip->buckets[index]) != NULL) {
@@ -2422,6 +2428,7 @@ EjsString *ejsInternMulti(Ejs *ejs, cchar *value, ssize len)
                 }
             }
             if (i == sp->length && value[i] == 0) {
+                //  MOB - reuse should be debug only
                 ip->reuse++;
                 /* Revive incase almost stale or dead */
                 mprRevive(sp);
@@ -2585,6 +2592,7 @@ EjsString *ejsCreateBareString(Ejs *ejs, ssize len)
 }
 
 
+#if UNUSED && KEEP
 EjsString *ejsCreateNonInternedString(Ejs *ejs, MprChar *value, ssize len)
 {
     EjsString   *sp;
@@ -2597,6 +2605,7 @@ EjsString *ejsCreateNonInternedString(Ejs *ejs, MprChar *value, ssize len)
     }
     return sp;
 }
+#endif
 
 
 void ejsManageString(EjsString *sp, int flags)
@@ -2714,7 +2723,7 @@ void ejsConfigureStringType(Ejs *ejs)
     ejsBindMethod(ejs, prototype, ES_String_startsWith, startsWith);
     ejsBindMethod(ejs, prototype, ES_String_substring, substring);
     ejsBindMethod(ejs, prototype, ES_String_toCamel, toCamel);
-    ejsBindMethod(ejs, prototype, ES_String_toJSON, ejsStringToJSON);
+    ejsBindMethod(ejs, prototype, ES_String_toJSON, ejsToLiteralString);
     ejsBindMethod(ejs, prototype, ES_String_toLowerCase, toLowerCase);
     ejsBindMethod(ejs, prototype, ES_String_toPascal, toPascal);
     ejsBindMethod(ejs, prototype, ES_String_toString, stringToString);

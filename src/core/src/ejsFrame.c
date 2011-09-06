@@ -84,7 +84,7 @@ EjsFrame *ejsCreateFrame(Ejs *ejs, EjsFunction *fun, EjsObj *thisObj, int argc, 
         //  OPT -- could the function be setup as the prototype and thus avoid doing this?
         //  OPT -- assumes that the function is sealed
         memcpy(obj->properties->slots, activation->properties->slots, numProp * sizeof(EjsSlot));
-        ejsMakeHash(ejs, obj);
+        ejsIndexProperties(ejs, obj);
     }
     ejsZeroSlots(ejs, &obj->properties->slots[numProp], size - numProp);
     //  OPT - should not need to do this

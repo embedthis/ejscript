@@ -302,7 +302,7 @@ static void generateNamespaceList(EjsMod *mp)
         }
         type = ejsGetProperty(ejs, ejs->global, slotNum);
         qname = ejsGetPropertyName(ejs, ejs->global, slotNum);
-        if (type == 0 || !ejsIsType(ejs, type) || qname.name == 0 || ejsStartsWithMulti(ejs, qname.space, "internal-")) {
+        if (type == 0 || !ejsIsType(ejs, type) || qname.name == 0 || ejsStartsWithAsc(ejs, qname.space, "internal-")) {
             continue;
         }
         doc = getDoc(ejs, "class", ejs->global, slotNum);
@@ -459,16 +459,16 @@ static MprList *buildClassList(EjsMod *mp, cchar *namespace)
 
         /* Suppress the core language types (should not appear as classes) */
 
-        if (ejsCompareMulti(ejs, qname.space, EJS_EJS_NAMESPACE) == 0) {
-            if (ejsCompareMulti(ejs, qname.name, "int") == 0 || 
-                ejsCompareMulti(ejs, qname.name, "long") == 0 || ejsCompareMulti(ejs, qname.name, "decimal") == 0 ||
-                ejsCompareMulti(ejs, qname.name, "boolean") == 0 || ejsCompareMulti(ejs, qname.name, "double") == 0 || 
-                ejsCompareMulti(ejs, qname.name, "string") == 0) {
+        if (ejsCompareAsc(ejs, qname.space, EJS_EJS_NAMESPACE) == 0) {
+            if (ejsCompareAsc(ejs, qname.name, "int") == 0 || 
+                ejsCompareAsc(ejs, qname.name, "long") == 0 || ejsCompareAsc(ejs, qname.name, "decimal") == 0 ||
+                ejsCompareAsc(ejs, qname.name, "boolean") == 0 || ejsCompareAsc(ejs, qname.name, "double") == 0 || 
+                ejsCompareAsc(ejs, qname.name, "string") == 0) {
                 continue;
             }
         }
         /* Other fixups */
-        if (ejsStartsWithMulti(ejs, qname.space, "internal") || ejsCompareMulti(ejs, qname.space, "private") == 0) {
+        if (ejsStartsWithAsc(ejs, qname.space, "internal") || ejsCompareAsc(ejs, qname.space, "private") == 0) {
             continue;
         }
         crec = mprAlloc(sizeof(ClassRec));
@@ -692,7 +692,7 @@ static void generateClassPages(EjsMod *mp)
     for (slotNum = mp->firstGlobal; slotNum < count; slotNum++) {
         type = ejsGetProperty(ejs, ejs->global, slotNum);
         qname = ejsGetPropertyName(ejs, ejs->global, slotNum);
-        if (type == 0 || !ejsIsType(ejs, type) || qname.name == 0 || ejsStartsWithMulti(ejs, qname.space, "internal-")) {
+        if (type == 0 || !ejsIsType(ejs, type) || qname.name == 0 || ejsStartsWithAsc(ejs, qname.space, "internal-")) {
             continue;
         }
         /*
@@ -1034,8 +1034,8 @@ static void buildPropertyList(EjsMod *mp, MprList *list, EjsAny *obj, int numInh
         if (ejsIsFunction(ejs, vp) && !(trait->attributes & (EJS_TRAIT_GETTER | EJS_TRAIT_SETTER))) {
             continue;
         }
-        if (ejsCompareMulti(ejs, qname.space, EJS_PRIVATE_NAMESPACE) == 0 || 
-            ejsContainsMulti(ejs, qname.space, ",private]")) {
+        if (ejsCompareAsc(ejs, qname.space, EJS_PRIVATE_NAMESPACE) == 0 || 
+            ejsContainsAsc(ejs, qname.space, ",private]")) {
             continue;
         }
         prec = mprAlloc(sizeof(PropRec));
@@ -1074,7 +1074,7 @@ static int generateClassPropertyTableEntries(EjsMod *mp, EjsObj *obj, MprList *p
         vp = prec->vp;
         trait = prec->trait;
         qname = prec->qname;
-        if (ejsStartsWithMulti(ejs, qname.space, "internal") || ejsContainsMulti(ejs, qname.space, "private")) {
+        if (ejsStartsWithAsc(ejs, qname.space, "internal") || ejsContainsAsc(ejs, qname.space, "private")) {
             continue;
         }
         if (isalpha((int) qname.name->value[0])) {
@@ -1181,14 +1181,14 @@ static void buildMethodList(EjsMod *mp, MprList *methods, EjsObj *obj, EjsObj *o
         if (vp == 0 || !ejsIsFunction(ejs, vp) || qname.name == 0 || trait == 0) {
             continue;
         }
-        if (ejsCompareMulti(ejs, qname.space, EJS_INIT_NAMESPACE) == 0) {
+        if (ejsCompareAsc(ejs, qname.space, EJS_INIT_NAMESPACE) == 0) {
             continue;
         }
-        if (ejsCompareMulti(ejs, qname.space, EJS_PRIVATE_NAMESPACE) == 0 || 
-                ejsContainsMulti(ejs, qname.space, ",private]")) {
+        if (ejsCompareAsc(ejs, qname.space, EJS_PRIVATE_NAMESPACE) == 0 || 
+                ejsContainsAsc(ejs, qname.space, ",private]")) {
             continue;
         }
-        if (ejsStartsWithMulti(ejs, qname.space, "internal")) {
+        if (ejsStartsWithAsc(ejs, qname.space, "internal")) {
             continue;
         }
         fp = mprAlloc(sizeof(FunRec));
@@ -1244,7 +1244,7 @@ static int generateMethodTable(EjsMod *mp, MprList *methods, EjsObj *obj, int in
             emitTable = 1;
         }
 
-        if (ejsCompareMulti(ejs, qname.space, EJS_INIT_NAMESPACE) == 0) {
+        if (ejsCompareAsc(ejs, qname.space, EJS_INIT_NAMESPACE) == 0) {
             continue;
         }
         if (instanceMethods) {
@@ -1360,7 +1360,7 @@ static int findArg(Ejs *ejs, EjsFunction *fun, cchar *name)
     }
     for (i = 0; i < (int) fun->numArgs; i++) {
         argName = ejsGetPropertyName(ejs, fun->activation, i);
-        if (argName.name && ejsCompareMulti(ejs, argName.name, name) == 0) {
+        if (argName.name && ejsCompareAsc(ejs, argName.name, name) == 0) {
             return i;
         }
     }
@@ -2194,7 +2194,7 @@ static void out(EjsMod *mp, char *fmt, ...)
 
 static EjsString *fmtModule(Ejs *ejs, EjsString *name)
 {
-    if (ejsCompareMulti(ejs, name, EJS_DEFAULT_MODULE) == 0) {
+    if (ejsCompareAsc(ejs, name, EJS_DEFAULT_MODULE) == 0) {
         return ESV(empty);
     }
     return name;

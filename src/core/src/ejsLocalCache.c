@@ -407,9 +407,9 @@ static EjsNumber *sl_write(Ejs *ejs, EjsLocalCache *cache, int argc, EjsAny **ar
         }
         item->data = value;
     } else if (append) {
-        item->data = ejsCatString(ejs, item->data, value);
+        item->data = ejsJoinString(ejs, item->data, value);
     } else if (prepend) {
-        item->data = ejsCatString(ejs, value, item->data);
+        item->data = ejsJoinString(ejs, value, item->data);
     }
     if (expires) {
         /* Expires takes precedence over lifespan */

@@ -1393,7 +1393,7 @@ static void VM(Ejs *ejs, EjsFunction *fun, EjsAny *otherThis, int argc, int stac
             str = GET_STRING();
             nsp = ejsCreateNamespace(ejs, str);
             ejsAddNamespaceToBlock(ejs, state->bp, nsp);
-            if (ejsContainsMulti(ejs, str, "internal-")) {
+            if (ejsContainsAsc(ejs, str, "internal-")) {
                 state->internal = nsp;
             }
             BREAK;
@@ -2524,7 +2524,7 @@ static void storeProperty(Ejs *ejs, EjsObj *thisObj, EjsAny *vp, EjsName qname, 
                 if (TYPE(vp)->hasInstanceVars) {
                     /* The prototype properties have been inherited */
                     mprAssert(ejsIsPot(ejs, vp));
-                    slotNum = ejsGetSlot(ejs, vp, slotNum);
+                    slotNum = ejsCheckSlot(ejs, vp, slotNum);
                     pot = (EjsPot*) vp;
                     pot->properties->slots[slotNum].trait = ((EjsPot*) lookup.obj)->properties->slots[slotNum].trait;
                     pot->properties->slots[slotNum].value = ((EjsPot*) lookup.obj)->properties->slots[slotNum].value;
@@ -2577,7 +2577,7 @@ static void storePropertyToScope(Ejs *ejs, EjsName qname, EjsObj *value)
             } else if (TYPE(vp)->hasInstanceVars && ejsIsPot(ejs, vp)) {
                 /* The prototype properties have been inherited */
                 mprAssert(ejsIsPot(ejs, vp));
-                slotNum = ejsGetSlot(ejs, (EjsPot*) vp, slotNum);
+                slotNum = ejsCheckSlot(ejs, (EjsPot*) vp, slotNum);
                 obj = (EjsPot*) vp;
                 mprAssert(slotNum < obj->numProp);
                 mprAssert(slotNum < ((EjsPot*) lookup.obj)->numProp);
@@ -2643,7 +2643,7 @@ int ejsRun(Ejs *ejs)
         if (!mp->initialized) {
             ejs->result = ejsRunInitializer(ejs, mp);
         }
-        if (ejsCompareMulti(ejs, mp->name, EJS_DEFAULT_MODULE) == 0) {
+        if (ejsCompareAsc(ejs, mp->name, EJS_DEFAULT_MODULE) == 0) {
             ejsRemoveModule(ejs, mp);
             next--;
         }
@@ -2723,6 +2723,9 @@ EjsAny *ejsRunFunctionBySlot(Ejs *ejs, EjsAny *thisObj, int slotNum, int argc, v
     return ejsRunFunction(ejs, fun, thisObj, argc, argv);
 }
 
+
+//  MOB - this is inconsistent with ejsRunBySlot. This has a separate container and thisObj, whereas RunBySlot
+//  has only one arg
 
 EjsAny *ejsRunFunctionByName(Ejs *ejs, EjsAny *container, EjsName qname, EjsAny *thisObj, int argc, void *argv)
 {

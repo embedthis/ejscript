@@ -692,7 +692,7 @@ static EjsObj *obj_sortProperties(Ejs *ejs, EjsObj *unused, int argc, EjsObj **a
     obj = (EjsPot*) argv[0];
     asc = (argc >= 2 && argv[1] == ESV(true));
     qsort(obj->properties->slots, obj->numProp, sizeof(EjsSlot), sortSlots);
-    ejsMakeHash(ejs, obj);
+    ejsIndexProperties(ejs, obj);
     return 0;
 }
 

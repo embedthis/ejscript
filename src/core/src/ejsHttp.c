@@ -671,7 +671,7 @@ static EjsObj *http_setLimits(Ejs *ejs, EjsHttp *hp, int argc, EjsObj **argv)
         hp->limits = (EjsObj*) ejsCreateEmptyPot(ejs);
         ejsGetHttpLimits(ejs, hp->limits, hp->conn->limits, 0);
     }
-    ejsBlendObject(ejs, hp->limits, argv[0], 0, EJS_BLEND_OVERWRITE);
+    ejsBlendObject(ejs, hp->limits, argv[0], EJS_BLEND_OVERWRITE);
     ejsSetHttpLimits(ejs, hp->conn->limits, hp->limits, 0);
     return 0;
 }
@@ -851,7 +851,7 @@ static EjsNumber *http_write(Ejs *ejs, EjsHttp *hp, int argc, EjsObj **argv)
     }
     hp->writeCount += nbytes;
     if (hp->conn->async) {
-        if (ejsGetByteArrayAvailable(hp->data) > 0) {
+        if (ejsGetByteArrayAvailableData(hp->data) > 0) {
             httpEnableConnEvents(hp->conn);
         }
     }
@@ -1018,7 +1018,7 @@ static ssize writeHttpData(Ejs *ejs, EjsHttp *hp)
     conn = hp->conn;
     ba = hp->data;
     nbytes = 0;
-    if (ba && (count = ejsGetByteArrayAvailable(ba)) > 0) {
+    if (ba && (count = ejsGetByteArrayAvailableData(ba)) > 0) {
         if (conn->tx->finalized) {
             ejsThrowIOError(ejs, "Can't write to socket");
             return 0;

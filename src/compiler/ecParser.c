@@ -9599,11 +9599,11 @@ static void appendDocString(EcCompiler *cp, EcNode *np, EcNode *parameter, EcNod
     if (np->doc) {
         found = 0;
         mprSprintf(arg, sizeof(arg), "@param %@ ", parameter->qname.name);
-        if (ejsContainsMulti(ejs, np->doc, arg) != 0 || ejsContainsMulti(ejs, np->doc, "@duplicate") != 0) {
+        if (ejsContainsAsc(ejs, np->doc, arg) != 0 || ejsContainsAsc(ejs, np->doc, "@duplicate") != 0) {
             found++;
         } else {
             mprSprintf(arg, sizeof(arg), "@params %@ ", parameter->qname.name);
-            if (ejsContainsMulti(ejs, np->doc, arg) != 0) {
+            if (ejsContainsAsc(ejs, np->doc, arg) != 0) {
                 found++;
             }
         }
@@ -9890,16 +9890,16 @@ static void applyAttributes(EcCompiler *cp, EcNode *np, EcNode *attributeNode, E
     if (state->inFunction) {
         ;
     } else if (state->inClass) {
-        if (ejsCompareMulti(cp->ejs, nspace, EJS_INTERNAL_NAMESPACE) == 0) {
+        if (ejsCompareAsc(cp->ejs, nspace, EJS_INTERNAL_NAMESPACE) == 0) {
             nspace = cp->fileState->nspace;
-        } else if (ejsCompareMulti(cp->ejs, nspace, EJS_PRIVATE_NAMESPACE) == 0 || 
-                   ejsCompareMulti(cp->ejs, nspace, EJS_PROTECTED_NAMESPACE) == 0) {
+        } else if (ejsCompareAsc(cp->ejs, nspace, EJS_PRIVATE_NAMESPACE) == 0 || 
+                   ejsCompareAsc(cp->ejs, nspace, EJS_PROTECTED_NAMESPACE) == 0) {
             nspace = ejsFormatReservedNamespace(cp->ejs, &state->currentClassName, nspace);
         }
     } else {
         if (cp->visibleGlobals && !(attributeNode && attributeNode->qname.space)) {
             nspace = ejsCreateStringFromAsc(cp->ejs, EJS_EMPTY_NAMESPACE);
-        } else if (ejsCompareMulti(cp->ejs, nspace, EJS_INTERNAL_NAMESPACE) == 0) {
+        } else if (ejsCompareAsc(cp->ejs, nspace, EJS_INTERNAL_NAMESPACE) == 0) {
             nspace = cp->fileState->nspace;
         }
     }

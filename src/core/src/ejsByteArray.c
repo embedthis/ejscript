@@ -828,23 +828,12 @@ static EjsString *ba_readString(Ejs *ejs, EjsByteArray *ap, int argc, EjsObj **a
 
 
 /*
-    MOB - this is the same as: void ejsResetByteArray(EjsByteArray *ba)
- */
-void ejsResetByteArrayIfEmpty(Ejs *ejs, EjsByteArray *ap)
-{
-    if (ap->writePosition == ap->readPosition) {
-        ap->writePosition = ap->readPosition = 0;
-    }
-}
-
-
-/*
     Reset the read and write position pointers if there is no available data.
     function reset(): Void
  */
 static EjsObj *ba_reset(Ejs *ejs, EjsByteArray *ap, int argc, EjsObj **argv)
 {
-    ejsResetByteArrayIfEmpty(ejs, ap);
+    ejsResetByteArray(ejs, ap);
     return 0;
 }
 
@@ -1125,7 +1114,7 @@ static int flushByteArray(Ejs *ejs, EjsByteArray *ap)
     Grow the byte array up to the given length, but not over the maximum. Return the length or an error code.
     This routine always throws an exception.
  */
-int ejsGrowByteArray(Ejs *ejs, EjsByteArray *ap, ssize len)
+ssize ejsGrowByteArray(Ejs *ejs, EjsByteArray *ap, ssize len)
 {
     if (len > ap->length) {
         if (!ap->resizable) {
@@ -1140,7 +1129,7 @@ int ejsGrowByteArray(Ejs *ejs, EjsByteArray *ap, ssize len)
         ap->growInc = min(ap->growInc * 2, 32 * 1024);
         ap->length = len;
     }
-    return 0;
+    return ap->length;
 }
 
 
@@ -1171,7 +1160,7 @@ bool ejsMakeRoomInByteArray(Ejs *ejs, EjsByteArray *ap, ssize require)
     ssize   newLen;
 
     /*
-        MOB - should this do ejsResetByteArrayIfEmpty
+        MOB - should this do ejsResetByteArray if empty
      */
     if (room(ap) < require) {
         if (ap->emitter && availableBytes(ap)) {
@@ -1304,10 +1293,7 @@ static int putString(EjsByteArray *ap, EjsString *str, ssize len)
 
 /********************************* Public Support API *****************************/
 
-/*
-    MOB this is the same as: void ejsResetByteArrayIfEmpty(Ejs *ejs, EjsByteArray *ap)
- */
-void ejsResetByteArray(EjsByteArray *ba)
+void ejsResetByteArray(Ejs *ejs, EjsByteArray *ba)
 {
     if (ba->writePosition == ba->readPosition) {
         ba->writePosition = ba->readPosition = 0;
@@ -1349,7 +1335,7 @@ ssize ejsCopyToByteArray(Ejs *ejs, EjsByteArray *ba, ssize offset, cchar *data, 
 }
 
 
-ssize ejsGetByteArrayAvailable(EjsByteArray *ba)
+ssize ejsGetByteArrayAvailableData(EjsByteArray *ba)
 {
     return availableBytes(ba);
 }

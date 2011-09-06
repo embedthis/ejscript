@@ -243,6 +243,50 @@
 </tr>
 <tr class="apiBrief"><td>&nbsp;</td><td>ejsByteCodeTable.h - Master Byte Code Table.</td></tr>
 <tr class="apiDef">
+<td>#define</td><td><a href="#ejs_8h_1a0c30e2a45f842917f77fcfd35c659bcd" class="nameRef">EC_BUFSIZE</a>&nbsp;&nbsp;&nbsp;4096</td>
+</tr>
+<tr class="apiBrief"><td>&nbsp;</td><td>General buffer size.</td></tr>
+<tr class="apiDef">
+<td>#define</td><td><a href="#ejs_8h_1a13c0b49d8183932999405d66bb79f9ef" class="nameRef">EC_CODE_BUFSIZE</a>&nbsp;&nbsp;&nbsp;4096</td>
+</tr>
+<tr class="apiBrief"><td>&nbsp;</td><td>Initial size of code gen buffer.</td></tr>
+<tr class="apiDef">
+<td>#define</td><td><a href="#ejs_8h_1a765fc27a0c02a43b9a5f977e06a390e5" class="nameRef">EC_LINE_INCR</a>&nbsp;&nbsp;&nbsp;1024</td>
+</tr>
+<tr class="apiBrief"><td>&nbsp;</td><td>Growth increment for input lines.</td></tr>
+<tr class="apiDef">
+<td>#define</td><td><a href="#ejs_8h_1aaceffbafb3012d7e61b60ed97e83f612" class="nameRef">EC_MAX_ERRORS</a>&nbsp;&nbsp;&nbsp;25</td>
+</tr>
+<tr class="apiBrief"><td>&nbsp;</td><td>Max compilation errors before giving up.</td></tr>
+<tr class="apiDef">
+<td>#define</td><td><a href="#ejs_8h_1a0767fc5abb9cdc818daf7ef05ae0ca24" class="nameRef">EC_MAX_INCLUDE</a>&nbsp;&nbsp;&nbsp;32</td>
+</tr>
+<tr class="apiBrief"><td>&nbsp;</td><td>Max number of nested includes.</td></tr>
+<tr class="apiDef">
+<td>#define</td><td><a href="#ejs_8h_1a63943cd5b73deadd772423201c48f061" class="nameRef">EC_NUM_PAK_PROP</a>&nbsp;&nbsp;&nbsp;32</td>
+</tr>
+<tr class="apiBrief"><td>&nbsp;</td><td>Initial number of properties.</td></tr>
+<tr class="apiDef">
+<td>#define</td><td><a href="#ejs_8h_1ae32544367e525060e7efe81ef9af7d86" class="nameRef">EC_TOKEN_INCR</a>&nbsp;&nbsp;&nbsp;64</td>
+</tr>
+<tr class="apiBrief"><td>&nbsp;</td><td>Growth increment for tokens.</td></tr>
+<tr class="apiDef">
+<td>#define</td><td><a href="#ejs_8h_1aeb0d9f31b852a28eced7047be6c8dc84" class="nameRef">EJS_ARENA_SIZE</a>&nbsp;&nbsp;&nbsp;((1 * 1024 * 1024) - MPR_HEAP_OVERHEAD)</td>
+</tr>
+<tr class="apiBrief"><td>&nbsp;</td><td>Initial virt memory for objects.</td></tr>
+<tr class="apiDef">
+<td>#define</td><td><a href="#ejs_8h_1a25580acb681771ffb3691b304873c710" class="nameRef">EJS_DIR_PERMS</a>&nbsp;&nbsp;&nbsp;0775</td>
+</tr>
+<tr class="apiBrief"><td>&nbsp;</td><td>Default dir perms.</td></tr>
+<tr class="apiDef">
+<td>#define</td><td><a href="#ejs_8h_1a67eff7cb5f19144f78877050b3d6ca8d" class="nameRef">EJS_DOC_HASH_SIZE</a>&nbsp;&nbsp;&nbsp;1007</td>
+</tr>
+<tr class="apiBrief"><td>&nbsp;</td><td>Hash for doc descriptions.</td></tr>
+<tr class="apiDef">
+<td>#define</td><td><a href="#ejs_8h_1a2bc83a15d3913adbaf437c65b998a7c8" class="nameRef">EJS_FILE_PERMS</a>&nbsp;&nbsp;&nbsp;0664</td>
+</tr>
+<tr class="apiBrief"><td>&nbsp;</td><td>Default file perms.</td></tr>
+<tr class="apiDef">
 <td>#define</td><td><a href="#ejs_8h_1aa54bd5787046f8b13ed747b0554af898" class="nameRef">EJS_FLAG_DOC</a>&nbsp;&nbsp;&nbsp;0x40</td>
 </tr>
 <tr class="apiBrief"><td>&nbsp;</td><td>Load documentation from modules.</td></tr>
@@ -299,6 +343,78 @@
 </tr>
 <tr class="apiBrief"><td>&nbsp;</td><td>Parameter is a &quot;...&quot; rest.</td></tr>
 <tr class="apiDef">
+<td>#define</td><td><a href="#ejs_8h_1a658d832030e8413052b0376a52235e26" class="nameRef">EJS_HASH_MIN_PROP</a>&nbsp;&nbsp;&nbsp;8</td>
+</tr>
+<tr class="apiBrief"><td>&nbsp;</td><td>Min props to hash.</td></tr>
+<tr class="apiDef">
+<td>#define</td><td><a href="#ejs_8h_1ac7ee2162240d04bb6dd65941799c8520" class="nameRef">EJS_INC_ARGS</a>&nbsp;&nbsp;&nbsp;8</td>
+</tr>
+<tr class="apiBrief"><td>&nbsp;</td><td>Frame stack increment.</td></tr>
+<tr class="apiDef">
+<td>#define</td><td><a href="#ejs_8h_1a3ad78366bd13de1a4e08b7c3e06cae6a" class="nameRef">EJS_LOTSA_PROP</a>&nbsp;&nbsp;&nbsp;256</td>
+</tr>
+<tr class="apiBrief"><td>&nbsp;</td><td>Object with lots of properties.</td></tr>
+<tr class="apiDef">
+<td>#define</td><td><a href="#ejs_8h_1ace171a85e4b1483f1f29b4218ce9593a" class="nameRef">EJS_MAX_ARGS</a>&nbsp;&nbsp;&nbsp;(8192)</td>
+</tr>
+<tr class="apiBrief"><td>&nbsp;</td><td>Max number of args.</td></tr>
+<tr class="apiDef">
+<td>#define</td><td><a href="#ejs_8h_1a0bc49cd14df90b08bee7be29be56af74" class="nameRef">EJS_MAX_BASE_CLASSES</a>&nbsp;&nbsp;&nbsp;256</td>
+</tr>
+<tr class="apiBrief"><td>&nbsp;</td><td>Max inheritance chain.</td></tr>
+<tr class="apiDef">
+<td>#define</td><td><a href="#ejs_8h_1a49971145df65c4c3e7568ec8d8d1d175" class="nameRef">EJS_MAX_COLLISIONS</a>&nbsp;&nbsp;&nbsp;4</td>
+</tr>
+<tr class="apiBrief"><td>&nbsp;</td><td>Max intern string collion chain.</td></tr>
+<tr class="apiDef">
+<td>#define</td><td><a href="#ejs_8h_1a9c34bccd4c9cbf67f0cdf5c2fa4ee7ed" class="nameRef">EJS_MAX_EXCEPTIONS</a>&nbsp;&nbsp;&nbsp;(8192)</td>
+</tr>
+<tr class="apiBrief"><td>&nbsp;</td><td>Max number of exceptions.</td></tr>
+<tr class="apiDef">
+<td>#define</td><td><a href="#ejs_8h_1a1dc70dc2784ae8e6a10cdbe45c393d0d" class="nameRef">EJS_MAX_LOCALS</a>&nbsp;&nbsp;&nbsp;(10*1024)</td>
+</tr>
+<tr class="apiBrief"><td>&nbsp;</td><td>Max number of locals.</td></tr>
+<tr class="apiDef">
+<td>#define</td><td><a href="#ejs_8h_1a5f9ffb50ca5fcfe015da5f4ab5648417" class="nameRef">EJS_MAX_OBJ_POOL</a>&nbsp;&nbsp;&nbsp;512</td>
+</tr>
+<tr class="apiBrief"><td>&nbsp;</td><td>Maximum number of objects per type to cache.</td></tr>
+<tr class="apiDef">
+<td>#define</td><td><a href="#ejs_8h_1af88a149e42518f24d026ce8b00c93691" class="nameRef">EJS_MAX_POOL</a>&nbsp;&nbsp;&nbsp;(4*1024*1024)</td>
+</tr>
+<tr class="apiBrief"><td>&nbsp;</td><td>Size of constant pool.</td></tr>
+<tr class="apiDef">
+<td>#define</td><td><a href="#ejs_8h_1ac349b76647b49eb260b5b02f810164a6" class="nameRef">EJS_MAX_RECURSION</a>&nbsp;&nbsp;&nbsp;10000</td>
+</tr>
+<tr class="apiBrief"><td>&nbsp;</td><td>Maximum recursion.</td></tr>
+<tr class="apiDef">
+<td>#define</td><td><a href="#ejs_8h_1a17900e05733e243cb135e8aee0285b39" class="nameRef">EJS_MAX_REGEX_MATCHES</a>&nbsp;&nbsp;&nbsp;32</td>
+</tr>
+<tr class="apiBrief"><td>&nbsp;</td><td>Maximum regular sub-expressions.</td></tr>
+<tr class="apiDef">
+<td>#define</td><td><a href="#ejs_8h_1acbcc8e0ccb373c21456ff8102dd8f2c7" class="nameRef">EJS_MAX_SQLITE_MEM</a>&nbsp;&nbsp;&nbsp;(2*1024*1024)</td>
+</tr>
+<tr class="apiBrief"><td>&nbsp;</td><td>Maximum buffering for Sqlite.</td></tr>
+<tr class="apiDef">
+<td>#define</td><td><a href="#ejs_8h_1a9de76dda3ebc47f4caa55025cb9aed3a" class="nameRef">EJS_MAX_TRAITS</a>&nbsp;&nbsp;&nbsp;(0x7fff)</td>
+</tr>
+<tr class="apiBrief"><td>&nbsp;</td><td>Max number of declared properties per block.</td></tr>
+<tr class="apiDef">
+<td>#define</td><td><a href="#ejs_8h_1ab9da50b88fc6da0280701e846f4a8c47" class="nameRef">EJS_MAX_TYPE</a>&nbsp;&nbsp;&nbsp;256</td>
+</tr>
+<tr class="apiBrief"><td>&nbsp;</td><td>Maximum number of types.</td></tr>
+<tr class="apiDef">
+<td>#define</td><td><a href="#ejs_8h_1a0b196273149ab15e7f5b8f45f51396e5" class="nameRef">EJS_MIN_FRAME_SLOTS</a>&nbsp;&nbsp;&nbsp;16</td>
+</tr>
+<tr class="apiBrief"><td>&nbsp;</td><td>Miniumum number of slots for function frames.</td></tr>
+<tr class="apiDef">
+<td>#define</td><td><a href="#ejs_8h_1a89d1d942788b213bcab054f0d040793e" class="nameRef">EJS_NUM_GLOBAL</a>&nbsp;&nbsp;&nbsp;256</td>
+</tr>
+<tr class="apiBrief"><td>&nbsp;</td><td>Number of globals slots to pre-create.</td></tr>
+<tr class="apiDef">
+<td>#define</td><td><a href="#ejs_8h_1a9228e0c30103469cb3eb1363b6e23a28" class="nameRef">EJS_POOL_INACTIVITY_TIMEOUT</a>&nbsp;&nbsp;&nbsp;(60  * 1000)</td>
+</tr>
+<tr class="apiBrief"><td>&nbsp;</td><td>Prune inactive pooled VMs older than this.</td></tr>
+<tr class="apiDef">
 <td>#define</td><td><a href="#ejs_8h_1a27cb1e509cbe6301bd1de0e910fa5144" class="nameRef">EJS_PROP_ENUMERABLE</a>&nbsp;&nbsp;&nbsp;0x1000</td>
 </tr>
 <tr class="apiBrief"><td>&nbsp;</td><td>Property will be enumerable (compiler use only).</td></tr>
@@ -315,9 +431,25 @@
 </tr>
 <tr class="apiBrief"><td>&nbsp;</td><td>Class static property.</td></tr>
 <tr class="apiDef">
+<td>#define</td><td><a href="#ejs_8h_1a4743377b4aa0bcf6794e47a2007f76cd" class="nameRef">EJS_ROUND_PROP</a>&nbsp;&nbsp;&nbsp;16</td>
+</tr>
+<tr class="apiBrief"><td>&nbsp;</td><td>Rounding for growing properties.</td></tr>
+<tr class="apiDef">
 <td>#define</td><td><a href="#ejs_8h_1a0aae75c2be3c0a5c21bf1a030cdde21a" class="nameRef">EJS_SESSION</a>&nbsp;&nbsp;&nbsp;&quot;-ejs-session-&quot;</td>
 </tr>
 <tr class="apiBrief"><td>&nbsp;</td><td>ejsWeb.h -- Header for the Ejscript Web Framework Copyright (c) All Rights Reserved.</td></tr>
+<tr class="apiDef">
+<td>#define</td><td><a href="#ejs_8h_1afa9ae5ee76d32502b078ddb0432c381b" class="nameRef">EJS_SESSION_TIMER_PERIOD</a>&nbsp;&nbsp;&nbsp;(60 * 1000)</td>
+</tr>
+<tr class="apiBrief"><td>&nbsp;</td><td>Timer checks ever minute.</td></tr>
+<tr class="apiDef">
+<td>#define</td><td><a href="#ejs_8h_1aaca6693ddc6868b3415edae95839a2f3" class="nameRef">EJS_SQLITE_TIMEOUT</a>&nbsp;&nbsp;&nbsp;30000</td>
+</tr>
+<tr class="apiBrief"><td>&nbsp;</td><td>Database busy timeout.</td></tr>
+<tr class="apiDef">
+<td>#define</td><td><a href="#ejs_8h_1a49a7f4a29dd740a950d3c0129e5c9071" class="nameRef">EJS_STACK_MAX</a>&nbsp;&nbsp;&nbsp;(1024 * 32)</td>
+</tr>
+<tr class="apiBrief"><td>&nbsp;</td><td>Stack size without MMU.</td></tr>
 <tr class="apiDef">
 <td>#define</td><td><a href="#ejs_8h_1a5b8d0229e8be1614dd029237e2782d25" class="nameRef">EJS_TRAIT_CAST_NULLS</a>&nbsp;&nbsp;&nbsp;0x1</td>
 </tr>
@@ -423,6 +555,10 @@
 </tr>
 <tr class="apiBrief"><td>&nbsp;</td><td>Type is unsing virtual slots.</td></tr>
 <tr class="apiDef">
+<td>#define</td><td><a href="#ejs_8h_1acac2a19ee3e405709136e5e0a0650b5e" class="nameRef">EJS_WORK_QUOTA</a>&nbsp;&nbsp;&nbsp;1024</td>
+</tr>
+<tr class="apiBrief"><td>&nbsp;</td><td>Allocations required before garbage colllection.</td></tr>
+<tr class="apiDef">
 <td>#define</td><td><a href="#ejs_8h_1aa50fc4411fc6e651069c645f08c1fded" class="nameRef">EJS_WORKER_BEGIN</a>&nbsp;&nbsp;&nbsp;1</td>
 </tr>
 <tr class="apiBrief"><td>&nbsp;</td><td>Worker yet to start.</td></tr>
@@ -438,6 +574,14 @@
 <td>#define</td><td><a href="#ejs_8h_1aac2c8d6907b5143f2b9b3171718b323f" class="nameRef">EJS_WORKER_STARTED</a>&nbsp;&nbsp;&nbsp;2</td>
 </tr>
 <tr class="apiBrief"><td>&nbsp;</td><td>Worker has started a script.</td></tr>
+<tr class="apiDef">
+<td>#define</td><td><a href="#ejs_8h_1a7ac0c501aab0bcd3babb52af2a08e01d" class="nameRef">EJS_XML_BUF_MAX</a>&nbsp;&nbsp;&nbsp;(256 * 1024)</td>
+</tr>
+<tr class="apiBrief"><td>&nbsp;</td><td>Max XML document size.</td></tr>
+<tr class="apiDef">
+<td>#define</td><td><a href="#ejs_8h_1a5eec62e38e74d0c78c0727617c887dde" class="nameRef">EJS_XML_MAX_NODE_DEPTH</a>&nbsp;&nbsp;&nbsp;64</td>
+</tr>
+<tr class="apiBrief"><td>&nbsp;</td><td>Max nesting of tags.</td></tr>
   </table>
 <h1>Ejs</h1>
 <a name="group___ejs"></a>
@@ -4217,6 +4361,6 @@ Property type (prototype).
     <dl><dt><b>API</b> Stability:</dt><dd>Evolving.</dd></dl>
   </div>
 </div>
-<div class="footnote">Generated on Sun Sep 04 2011 00:50:46 GMT-0700 (PDT)<br/>
+<div class="footnote">Generated on Mon Sep 05 2011 13:22:36 GMT-0700 (PDT)<br/>
   Copyright &copy; <a href="http://www.embedthis.com">Embedthis Software</a> 2011.
 </div></div></body></html>

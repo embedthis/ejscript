@@ -1130,7 +1130,7 @@ static void leadin(EjsMod *mp, EjsModule *module, int classDec, int inFunction)
 
 static EjsString *mapSpace(Ejs *ejs, EjsString *space)
 {
-    if (ejsContainsMulti(ejs, space, "internal-") != 0) {
+    if (ejsContainsAsc(ejs, space, "internal-") != 0) {
         return ejsCreateStringFromAsc(ejs, "internal");
     }
     return space;

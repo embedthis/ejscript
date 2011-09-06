@@ -63,7 +63,7 @@ static EjsObj *g_blend(Ejs *ejs, EjsObj *unused, int argc, EjsObj **argv)
     }
     dest = argv[0];
     src = argv[1];
-    ejsBlendObject(ejs, dest, src, 0, flags);
+    ejsBlendObject(ejs, dest, src, flags);
     return dest;
 }
 
@@ -179,7 +179,7 @@ static EjsString *g_md5(Ejs *ejs, EjsObj *unused, int argc, EjsObj **argv)
     things). The blending is done at the primitive property level. If overwrite is true, the property is replaced. If
     overwrite is false, the property will be added if it does not already exist
  */
-int ejsBlendObject(Ejs *ejs, EjsObj *dest, EjsObj *src, int xoverwrite, int flags)
+int ejsBlendObject(Ejs *ejs, EjsObj *dest, EjsObj *src, int flags)
 {
     EjsTrait    *trait;
     EjsObj      *vp, *dp;
@@ -207,7 +207,7 @@ int ejsBlendObject(Ejs *ejs, EjsObj *dest, EjsObj *src, int xoverwrite, int flag
             continue;
         }
         name = ejsGetPropertyName(ejs, src, i);
-        if (!privateProps && ejsContainsMulti(ejs, name.space, ",private")) {
+        if (!privateProps && ejsContainsAsc(ejs, name.space, ",private")) {
             continue;
         }
         if (trace) {
@@ -218,7 +218,7 @@ int ejsBlendObject(Ejs *ejs, EjsObj *dest, EjsObj *src, int xoverwrite, int flag
             if ((dp = ejsGetPropertyByName(ejs, dest, name)) == 0 || ejsGetLength(ejs, dp) == 0) {
                 ejsSetPropertyByName(ejs, dest, name, ejsClonePot(ejs, vp, deep));
             } else {
-                ejsBlendObject(ejs, dp, vp, 0, flags);
+                ejsBlendObject(ejs, dp, vp, flags);
             }
         } else {
             /* Primitive type (including arrays) */

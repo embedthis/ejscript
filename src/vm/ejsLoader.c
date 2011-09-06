@@ -1409,7 +1409,7 @@ static int alreadyLoaded(Ejs *ejs, EjsString *name, int minVersion, int maxVersi
     if ((mp = ejsLookupModule(ejs, name, minVersion, maxVersion)) == 0) {
         return 0;
     }
-    if (mp->compiling && ejsCompareMulti(ejs, name, EJS_DEFAULT_MODULE) != 0) {
+    if (mp->compiling && ejsCompareAsc(ejs, name, EJS_DEFAULT_MODULE) != 0) {
         ejsThrowStateError(ejs, "Attempt to load module \"%@\" that is currently being compiled.", name);
         return MPR_ERR_ALREADY_EXISTS;
     }

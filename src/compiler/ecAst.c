@@ -572,7 +572,7 @@ static void validateClass(EcCompiler *cp, EcNode *np)
     }
     if (type->implements) {
         if (mprGetListLength(type->implements) > 1 || 
-                (type->baseType && ejsCompareMulti(ejs, type->baseType->qname.name, "Object") != 0)) {
+                (type->baseType && ejsCompareAsc(ejs, type->baseType->qname.name, "Object") != 0)) {
             astError(cp, np, "Only one implements or one extends supported");
         }
     }        
@@ -2460,7 +2460,7 @@ static void defineVar(EcCompiler *cp, EcNode *np, int varKind, EjsObj *value)
         if (!(np->attributes & EJS_PROP_ENUMERABLE) && !(state->currentClassNode->attributes & EJS_PROP_ENUMERABLE)) {
             np->attributes |= EJS_TRAIT_HIDDEN;
         }
-        if (ejsContainsMulti(ejs, np->qname.space, ",private")) {
+        if (ejsContainsAsc(ejs, np->qname.space, ",private")) {
             np->attributes |= EJS_TRAIT_HIDDEN;
         }
     }
@@ -2747,7 +2747,7 @@ static void astVar(EcCompiler *cp, EcNode *np, int varKind, EjsObj *value)
             astError(cp, np, "Bad type name");
             return;
         }
-        if (ejsCompareMulti(ejs, np->typeNode->qname.name, "*") != 0) {
+        if (ejsCompareAsc(ejs, np->typeNode->qname.name, "*") != 0) {
             processAstNode(cp, np->typeNode);
         }
     }
@@ -2861,7 +2861,7 @@ static EjsModule *createModule(EcCompiler *cp, EcNode *np)
 
     mprAssert(np->kind == N_MODULE);
 
-    if (np->module.version == 0 && cp->modver && ejsCompareMulti(ejs, np->qname.name, EJS_DEFAULT_MODULE) != 0) {
+    if (np->module.version == 0 && cp->modver && ejsCompareAsc(ejs, np->qname.name, EJS_DEFAULT_MODULE) != 0) {
         np->module.version = cp->modver;
     }
     mp = ecLookupModule(cp, np->qname.name, np->module.version, np->module.version);
@@ -2878,7 +2878,7 @@ static EjsModule *createModule(EcCompiler *cp, EcNode *np)
         /*
             This will prevent the loading of any module that uses this module.
          */
-        if (ejsCompareMulti(ejs, mp->name, EJS_DEFAULT_MODULE) != 0) {
+        if (ejsCompareAsc(ejs, mp->name, EJS_DEFAULT_MODULE) != 0) {
             mp->compiling = 1;
         }
     }
@@ -3305,7 +3305,7 @@ static void fixupClass(EcCompiler *cp, EjsType *type)
         }
         if (!type->hasConstructor) {
             np->klass.constructor = 0;
-            ejsDisableFunction(ejs, (EjsFunction*) type);
+            ejsRemoveConstructor(ejs, type);
             mprAssert(!(np->attributes & EJS_TYPE_HAS_CONSTRUCTOR));
         }
     }

@@ -472,7 +472,7 @@ static void createFunctionSection(EcCompiler *cp, EjsPot *block, int slotNum, Ej
     if (code && code->numHandlers) {
         mp->checksum += sumNum(code->numHandlers);
     }
-    if (ejsContainsMulti(ejs, qname.name, "--fun_")) {
+    if (ejsContainsAsc(ejs, qname.name, "--fun_")) {
         /* Don't sum the name for dynamic functions */
     } else {
         mp->checksum += sumString(qname.name);

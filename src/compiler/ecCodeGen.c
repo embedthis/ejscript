@@ -166,7 +166,7 @@ int ecCodeGen(EcCompiler *cp)
     if (cp->outputFile) {
         for (next = 0; (mp = mprGetNextItem(cp->modules, &next)) != 0; ) {
             if (next <= 1 || mp->globalProperties || mp->hasInitializer || 
-                    ejsCompareMulti(cp->ejs, mp->name, EJS_DEFAULT_MODULE) != 0) {
+                    ejsCompareAsc(cp->ejs, mp->name, EJS_DEFAULT_MODULE) != 0) {
                 break;
             }
         }
@@ -193,7 +193,7 @@ int ecCodeGen(EcCompiler *cp)
             we have more than one module.
          */
         if (mprGetListLength(cp->modules) == 1 || mp->globalProperties || mp->hasInitializer || 
-                ejsCompareMulti(cp->ejs, mp->name, EJS_DEFAULT_MODULE) != 0) {
+                ejsCompareAsc(cp->ejs, mp->name, EJS_DEFAULT_MODULE) != 0) {
             mp->initialized = 0;
             processModule(cp, mp);
         }
