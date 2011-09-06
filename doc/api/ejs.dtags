@@ -845,11 +845,53 @@
     <class kind="struct">EjsEx</class>
     <class kind="struct">EjsLine</class>
     <member kind="function">
+      <type>EjsEx *</type>
+      <name>ejsAddException</name>
+      <anchorfile>group___ejs_function.html</anchorfile>
+      <anchor>gab324330507f71d03691a7ef1bf36e6a6</anchor>
+      <arglist>(Ejs *ejs, EjsFunction *fun, uint tryStart, uint tryEnd, struct EjsType *catchType, uint handlerStart, uint handlerEnd, int numBlocks, int numStack, int flags, int preferredIndex)</arglist>
+    </member>
+    <member kind="function">
+      <type>EjsFunction *</type>
+      <name>ejsCloneFunction</name>
+      <anchorfile>group___ejs_function.html</anchorfile>
+      <anchor>gad0d2bb1726ac4534d9552c16bf37272b</anchor>
+      <arglist>(Ejs *ejs, EjsFunction *src, int deep)</arglist>
+    </member>
+    <member kind="function">
+      <type>EjsPot *</type>
+      <name>ejsCreateActivation</name>
+      <anchorfile>group___ejs_function.html</anchorfile>
+      <anchor>ga66b17be4ac9a1c3fd798617568f8c340</anchor>
+      <arglist>(Ejs *ejs, EjsFunction *fun, int numSlots)</arglist>
+    </member>
+    <member kind="function">
+      <type>EjsFunction *</type>
+      <name>ejsCreateBareFunction</name>
+      <anchorfile>group___ejs_function.html</anchorfile>
+      <anchor>ga7a6c27facb1b996fa170194c7ed5ed8d</anchor>
+      <arglist>(Ejs *ejs, EjsString *name, int attributes)</arglist>
+    </member>
+    <member kind="function">
+      <type>EjsCode *</type>
+      <name>ejsCreateCode</name>
+      <anchorfile>group___ejs_function.html</anchorfile>
+      <anchor>ga4be7f507d1c5e777a9e8022f1cbba201</anchor>
+      <arglist>(Ejs *ejs, EjsFunction *fun, struct EjsModule *module, cuchar *byteCode, ssize len, EjsDebug *debug)</arglist>
+    </member>
+    <member kind="function">
       <type>EjsFunction *</type>
       <name>ejsCreateFunction</name>
       <anchorfile>group___ejs_function.html</anchorfile>
       <anchor>ga5bf8e2a9af6557492e6ba315d5a3188b</anchor>
       <arglist>(Ejs *ejs, EjsString *name, cuchar *code, int codeLen, int numArgs, int numDefault, int numExceptions, struct EjsType *returnType, int attributes, struct EjsModule *module, EjsBlock *scope, int strict)</arglist>
+    </member>
+    <member kind="function">
+      <type>int</type>
+      <name>ejsInitFunction</name>
+      <anchorfile>group___ejs_function.html</anchorfile>
+      <anchor>ga887cfa2cc87c9e0736bebecbbeeee156</anchor>
+      <arglist>(Ejs *ejs, EjsFunction *fun, EjsString *name, cuchar *code, int codeLen, int numArgs, int numDefault, int numExceptions, struct EjsType *returnType, int attributes, struct EjsModule *module, EjsBlock *scope, int strict)</arglist>
     </member>
     <member kind="function">
       <type>bool</type>
@@ -873,11 +915,25 @@
       <arglist>(Ejs *ejs, EjsAny *obj)</arglist>
     </member>
     <member kind="function">
+      <type>void</type>
+      <name>ejsRemoveConstructor</name>
+      <anchorfile>group___ejs_function.html</anchorfile>
+      <anchor>gaef490e640f5b309ffb75596134f40ac0</anchor>
+      <arglist>(Ejs *ejs, struct EjsType *type)</arglist>
+    </member>
+    <member kind="function">
       <type>EjsAny *</type>
       <name>ejsRunFunction</name>
       <anchorfile>group___ejs_function.html</anchorfile>
       <anchor>gad27776daa4c1446ecf1ea222d8ec5080</anchor>
       <arglist>(Ejs *ejs, EjsFunction *fn, EjsAny *thisObj, int argc, void *argv)</arglist>
+    </member>
+    <member kind="function">
+      <type>EjsAny *</type>
+      <name>ejsRunFunctionByName</name>
+      <anchorfile>group___ejs_function.html</anchorfile>
+      <anchor>gaef84de6822a6963fc4fafd12525436ba</anchor>
+      <arglist>(Ejs *ejs, EjsAny *container, EjsName qname, EjsAny *thisObj, int argc, void *argv)</arglist>
     </member>
     <member kind="function">
       <type>EjsAny *</type>
@@ -892,6 +948,25 @@
       <anchorfile>group___ejs_function.html</anchorfile>
       <anchor>ga5a7d2ad5dd3cf09e90d6288ac2ba73fc</anchor>
       <arglist>(Ejs *ejs, struct EjsModule *module)</arglist>
+    </member>
+    <member kind="function">
+      <type>int</type>
+      <name>ejsSetFunctionCode</name>
+      <anchorfile>group___ejs_function.html</anchorfile>
+      <anchor>ga05f702078d910b8ba7d8b4f65f41d18a</anchor>
+      <arglist>(Ejs *ejs, EjsFunction *fun, struct EjsModule *module, cuchar *byteCode, ssize len, EjsDebug *debug)</arglist>
+    </member>
+  </compound>
+  <compound kind="group">
+    <name>EjsFrame</name>
+    <title>EjsFrame</title>
+    <filename>group___ejs_frame.html</filename>
+    <member kind="function">
+      <type>bool</type>
+      <name>ejsIsFrame</name>
+      <anchorfile>group___ejs_frame.html</anchorfile>
+      <anchor>gadedcb4d617bcaae8cb975249a763b36c</anchor>
+      <arglist>(Ejs *ejs, EjsAny *obj)</arglist>
     </member>
   </compound>
   <compound kind="group">
@@ -925,11 +1000,53 @@
     <title>EjsByteArray</title>
     <filename>group___ejs_byte_array.html</filename>
     <member kind="function">
+      <type>ssize</type>
+      <name>ejsCopyToByteArray</name>
+      <anchorfile>group___ejs_byte_array.html</anchorfile>
+      <anchor>ga0a3fff1a0c61911846644a5d3b79943b</anchor>
+      <arglist>(Ejs *ejs, EjsByteArray *ba, ssize offset, cchar *data, ssize length)</arglist>
+    </member>
+    <member kind="function">
       <type>EjsByteArray *</type>
       <name>ejsCreateByteArray</name>
       <anchorfile>group___ejs_byte_array.html</anchorfile>
       <anchor>ga4587936a91ae2826232be299da064cdf</anchor>
       <arglist>(Ejs *ejs, ssize size)</arglist>
+    </member>
+    <member kind="function">
+      <type>ssize</type>
+      <name>ejsGetByteArrayAvailableData</name>
+      <anchorfile>group___ejs_byte_array.html</anchorfile>
+      <anchor>ga826d8a10b067ba49318dc329cb670439</anchor>
+      <arglist>(EjsByteArray *ba)</arglist>
+    </member>
+    <member kind="function">
+      <type>ssize</type>
+      <name>ejsGetByteArrayRoom</name>
+      <anchorfile>group___ejs_byte_array.html</anchorfile>
+      <anchor>gab768a2dedd251a82e37ea3e2b732f425</anchor>
+      <arglist>(EjsByteArray *ba)</arglist>
+    </member>
+    <member kind="function">
+      <type>ssize</type>
+      <name>ejsGrowByteArray</name>
+      <anchorfile>group___ejs_byte_array.html</anchorfile>
+      <anchor>ga7c90ce987f93e29f571a243ebcf5f138</anchor>
+      <arglist>(Ejs *ejs, EjsByteArray *ba, ssize size)</arglist>
+    </member>
+    <member kind="function">
+      <type>bool</type>
+      <name>ejsMakeRoomInByteArray</name>
+      <anchorfile>group___ejs_byte_array.html</anchorfile>
+      <anchor>ga9e27e074496d87d332a6bb4fab13bce9</anchor>
+      <arglist>(Ejs *ejs, EjsByteArray *ba, ssize require)</arglist>
+    </member>
+    <member kind="function">
+      <type>void</type>
+      <name>ejsResetByteArray</name>
+      <anchorfile>group___ejs_byte_array.html</anchorfile>
+      <anchor>gab64a1e0c64be0f33f83a58e66da4f4e8</anchor>
+      <arglist>(Ejs *ejs, EjsByteArray *ba)</arglist>
     </member>
     <member kind="function">
       <type>void</type>
@@ -938,6 +1055,18 @@
       <anchor>gae53317802b2494990f39a29403e74343</anchor>
       <arglist>(Ejs *ejs, EjsByteArray *ba, ssize readPosition, ssize writePosition)</arglist>
     </member>
+    <member kind="function">
+      <type>struct EjsNumber *</type>
+      <name>ejsWriteToByteArray</name>
+      <anchorfile>group___ejs_byte_array.html</anchorfile>
+      <anchor>ga3b2aac807171ed5c62fd35c43e5289d5</anchor>
+      <arglist>(Ejs *ejs, EjsByteArray *ba, int argc, EjsObj **argv)</arglist>
+    </member>
+  </compound>
+  <compound kind="group">
+    <name>EjsCmd</name>
+    <title>EjsCmd</title>
+    <filename>group___ejs_cmd.html</filename>
   </compound>
   <compound kind="group">
     <name>EjsDate</name>
@@ -968,6 +1097,13 @@
       <anchorfile>group___ejs_error.html</anchorfile>
       <anchor>gaba0d6e967d7b71217b76f8166baf7183</anchor>
       <arglist>(Ejs *ejs)</arglist>
+    </member>
+    <member kind="function">
+      <type>bool</type>
+      <name>ejsIsError</name>
+      <anchorfile>group___ejs_error.html</anchorfile>
+      <anchor>ga36484b9505751e953d5be951d171870e</anchor>
+      <arglist>(Ejs *ejs, EjsAny *obj) extern EjsError *ejsCreateError(Ejs *ejs</arglist>
     </member>
     <member kind="function">
       <type>EjsError *</type>
@@ -1352,59 +1488,6 @@
     <name>EjsSession</name>
     <title>EjsSession</title>
     <filename>group___ejs_session.html</filename>
-  </compound>
-  <compound kind="struct">
-    <name>EjsCmd</name>
-    <filename>struct_ejs_cmd.html</filename>
-    <member kind="variable">
-      <type>int</type>
-      <name>async</name>
-      <anchorfile>struct_ejs_cmd.html</anchorfile>
-      <anchor>ab9cafb9a70046c1fea1a4a75c24e2ea8</anchor>
-      <arglist></arglist>
-    </member>
-    <member kind="variable">
-      <type>Ejs *</type>
-      <name>ejs</name>
-      <anchorfile>struct_ejs_cmd.html</anchorfile>
-      <anchor>a6918f37b79a68c1a191e95c1b3f155b2</anchor>
-      <arglist></arglist>
-    </member>
-    <member kind="variable">
-      <type>EjsObj *</type>
-      <name>emitter</name>
-      <anchorfile>struct_ejs_cmd.html</anchorfile>
-      <anchor>ab3e26eb795e6dad9077950a2614b51d7</anchor>
-      <arglist></arglist>
-    </member>
-    <member kind="variable">
-      <type>struct EjsByteArray *</type>
-      <name>error</name>
-      <anchorfile>struct_ejs_cmd.html</anchorfile>
-      <anchor>ae82f246041ce5c472f0dfb43826e8b28</anchor>
-      <arglist></arglist>
-    </member>
-    <member kind="variable">
-      <type>EjsPot</type>
-      <name>pot</name>
-      <anchorfile>struct_ejs_cmd.html</anchorfile>
-      <anchor>ac8c0847572a7a0a3b6f0dd56f79dac90</anchor>
-      <arglist></arglist>
-    </member>
-    <member kind="variable">
-      <type>MprBuf *</type>
-      <name>stderrBuf</name>
-      <anchorfile>struct_ejs_cmd.html</anchorfile>
-      <anchor>a2ca4ec786b7cb3ed8fbe0298b19ec160</anchor>
-      <arglist></arglist>
-    </member>
-    <member kind="variable">
-      <type>MprBuf *</type>
-      <name>stdoutBuf</name>
-      <anchorfile>struct_ejs_cmd.html</anchorfile>
-      <anchor>abda94dfc68de0fa3b72f2652b8d240aa</anchor>
-      <arglist></arglist>
-    </member>
   </compound>
   <compound kind="struct">
     <name>EjsCode</name>

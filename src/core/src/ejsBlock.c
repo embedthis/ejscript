@@ -77,7 +77,7 @@ void ejsInheritBaseClassNamespaces(Ejs *ejs, EjsType *type, EjsType *baseType)
     if (baseNamespaces) {
         for (next = 0; ((nsp = (EjsNamespace*) mprGetNextItem(baseNamespaces, &next)) != 0); ) {
             //  OPT -- must be a better way to do this?
-            if (ejsContainsString(ejs, nsp->value, ESV(commaProt))) {
+            if (ejsContainsString(ejs, nsp->value, ESV(commaProt)) >= 0) {
                 for (i = 0; ((existing = (EjsNamespace*) mprGetNextItem(&block->namespaces, &i)) != 0); ) {
                     if (existing->value == nsp->value) {
                         break;

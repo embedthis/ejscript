@@ -16,9 +16,9 @@
 #define isDelim(fp, c)  (c == fp->delimiter)
 #endif
 
-#define FILE_OPEN           0x1
-#define FILE_READ           0x2
-#define FILE_WRITE          0x4
+#define FILE_OPEN           0x1     /* File is opened */
+#define FILE_READ           0x2     /* File is opened for reading */
+#define FILE_WRITE          0x4     /* File is opened for writing */
 
 /**************************** Forward Declarations ****************************/
 

@@ -2460,7 +2460,7 @@ static void defineVar(EcCompiler *cp, EcNode *np, int varKind, EjsObj *value)
         if (!(np->attributes & EJS_PROP_ENUMERABLE) && !(state->currentClassNode->attributes & EJS_PROP_ENUMERABLE)) {
             np->attributes |= EJS_TRAIT_HIDDEN;
         }
-        if (ejsContainsAsc(ejs, np->qname.space, ",private")) {
+        if (ejsContainsAsc(ejs, np->qname.space, ",private") >= 0) {
             np->attributes |= EJS_TRAIT_HIDDEN;
         }
     }

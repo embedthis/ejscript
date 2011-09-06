@@ -1393,7 +1393,7 @@ static void VM(Ejs *ejs, EjsFunction *fun, EjsAny *otherThis, int argc, int stac
             str = GET_STRING();
             nsp = ejsCreateNamespace(ejs, str);
             ejsAddNamespaceToBlock(ejs, state->bp, nsp);
-            if (ejsContainsAsc(ejs, str, "internal-")) {
+            if (ejsContainsAsc(ejs, str, "internal-") >= 0) {
                 state->internal = nsp;
             }
             BREAK;

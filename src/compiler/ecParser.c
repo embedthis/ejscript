@@ -9599,11 +9599,11 @@ static void appendDocString(EcCompiler *cp, EcNode *np, EcNode *parameter, EcNod
     if (np->doc) {
         found = 0;
         mprSprintf(arg, sizeof(arg), "@param %@ ", parameter->qname.name);
-        if (ejsContainsAsc(ejs, np->doc, arg) != 0 || ejsContainsAsc(ejs, np->doc, "@duplicate") != 0) {
+        if (ejsContainsAsc(ejs, np->doc, arg) >= 0 || ejsContainsAsc(ejs, np->doc, "@duplicate") >= 0) {
             found++;
         } else {
             mprSprintf(arg, sizeof(arg), "@params %@ ", parameter->qname.name);
-            if (ejsContainsAsc(ejs, np->doc, arg) != 0) {
+            if (ejsContainsAsc(ejs, np->doc, arg) >= 0) {
                 found++;
             }
         }

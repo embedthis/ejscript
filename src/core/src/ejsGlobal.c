@@ -207,7 +207,7 @@ int ejsBlendObject(Ejs *ejs, EjsObj *dest, EjsObj *src, int flags)
             continue;
         }
         name = ejsGetPropertyName(ejs, src, i);
-        if (!privateProps && ejsContainsAsc(ejs, name.space, ",private")) {
+        if (!privateProps && ejsContainsAsc(ejs, name.space, ",private") >= 0) {
             continue;
         }
         if (trace) {

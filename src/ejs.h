@@ -2645,9 +2645,24 @@ typedef EjsPot EjsError;
     #define ejsIsError(ejs, obj) (obj && ejsIsA(ejs, obj, ESV(Error)))
 #endif
 
-//  MOB DOC
+/**
+    Create an error object
+    @param ejs Ejs reference returned from #ejsCreateVM
+    @param type Error base type
+    @param message Error message to use when constructing the error object
+    @return Error object
+    @ingroup EjsError
+ */
 extern EjsError *ejsCreateError(Ejs *ejs, struct EjsType *type, EjsObj *message);
-extern EjsArray *ejsCaptureStack(Ejs *ejs, int uplevels);
+
+/**
+    Capture the execution stack
+    @param ejs Ejs reference returned from #ejsCreateVM
+    @param skip How many levels of stack to skip before capturing (counts from the top down)
+    @return Array of stack records.
+    @ingroup EjsError
+ */
+extern EjsArray *ejsCaptureStack(Ejs *ejs, int skip);
 
 /** 
     Get the interpreter error message
@@ -2667,7 +2682,12 @@ extern cchar *ejsGetErrorMsg(Ejs *ejs, int withStack);
  */
 extern bool ejsHasException(Ejs *ejs);
 
-//  MOB DOC
+/**
+    Get the Ejs exception object for this interpreter
+    @param ejs Ejs reference returned from #ejsCreateVM
+    @return The exception object if one exists, otherwise NULL.
+    @ingroup EjsError
+ */
 extern EjsObj *ejsGetException(Ejs *ejs);
 
 /** 
@@ -2848,7 +2868,15 @@ typedef struct EjsFile {
  */
 extern EjsFile *ejsCreateFile(Ejs *ejs, cchar *filename);
 
-//  MOB DOC
+/**
+    Create a file object from an O/S file descriptor
+    @param ejs Ejs reference returned from #ejsCreateVM
+    @param fd O/S file descriptor handle
+    @param name Filename to associate with the file object
+    @param mode O/S file access mode (see man 2 open)
+    @return A new file object
+    @ingroup EjsError
+ */
 extern EjsFile *ejsCreateFileFromFd(Ejs *ejs, int fd, cchar *name, int mode);
 
 /******************************************** Path ************************************************/
@@ -2871,7 +2899,6 @@ typedef struct EjsPath {
     int             hasDriveSpecs;      /**< Paths on this file system have a drive spec */
 #endif
 } EjsPath;
-
 
 /** 
     Create a Path object

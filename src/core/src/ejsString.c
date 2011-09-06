@@ -2009,7 +2009,7 @@ int ejsContainsStringAnyCase(Ejs *ejs, EjsString *sp, EjsString *pat)
             return 1;
         }
     }
-    return 0;
+    return -1;
 }
 #endif
 
