@@ -10,7 +10,7 @@
 
 /************************************* Code ***********************************/
 
-EjsVoid *ejsCacheExpire(Ejs *ejs, EjsObj *cache, EjsString *key, EjsDate *when)
+EjsAny *ejsCacheExpire(Ejs *ejs, EjsObj *cache, EjsString *key, EjsDate *when)
 {
     EjsAny  *argv[3];
     int     prior;
@@ -68,7 +68,7 @@ EjsBoolean *ejsCacheRemove(Ejs *ejs, EjsObj *cache, EjsString *key)
 }
 
 
-EjsVoid *ejsCacheSetLimits(Ejs *ejs, EjsObj *cache, EjsObj *limits)
+EjsAny *ejsCacheSetLimits(Ejs *ejs, EjsObj *cache, EjsObj *limits)
 {
     EjsAny  *argv[2], *result;
     int     prior;

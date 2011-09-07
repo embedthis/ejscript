@@ -837,7 +837,7 @@ static EjsUri *uri_template(Ejs *ejs, EjsUri *up, int argc, EjsObj **argv)
         }
     }
     mprAddNullToBuf(buf);
-    return ejsCreateUriFromMulti(ejs, mprGetBufStart(buf));
+    return ejsCreateUriFromAsc(ejs, mprGetBufStart(buf));
 }
 
 
@@ -1097,7 +1097,7 @@ EjsUri *ejsCreateUri(Ejs *ejs, EjsString *path)
 }
 
 
-EjsUri *ejsCreateUriFromMulti(Ejs *ejs, cchar *path)
+EjsUri *ejsCreateUriFromAsc(Ejs *ejs, cchar *path)
 {
     EjsUri      *up;
     EjsObj      *arg;
@@ -1112,7 +1112,7 @@ EjsUri *ejsCreateUriFromMulti(Ejs *ejs, cchar *path)
 
 
 EjsUri *ejsCreateUriFromParts(Ejs *ejs, cchar *scheme, cchar *host, int port, cchar *path, cchar *query, cchar *reference, 
-    int complete)
+    bool complete)
 {
     EjsUri      *up;
 

@@ -187,7 +187,7 @@ static bool checkTagName(char *name)
 #endif
 
 
-int ejsXMLToString(Ejs *ejs, MprBuf *buf, EjsXML *node, int indentLevel)
+int ejsXMLToBuf(Ejs *ejs, MprBuf *buf, EjsXML *node, int indentLevel)
 {
     EjsXML      *xml, *child, *attribute, *elt;
     int         sawElements, next;
@@ -199,7 +199,7 @@ int ejsXMLToString(Ejs *ejs, MprBuf *buf, EjsXML *node, int indentLevel)
 
     if (node->kind == EJS_XML_LIST) {
         for (next = 0; (elt = mprGetNextItem(node->elements, &next)) != 0; ) {
-            ejsXMLToString(ejs, buf, elt, indentLevel);
+            ejsXMLToBuf(ejs, buf, elt, indentLevel);
         }
         return 0;
     }
@@ -222,7 +222,6 @@ int ejsXMLToString(Ejs *ejs, MprBuf *buf, EjsXML *node, int indentLevel)
                 mprPutFmtToBuf(buf, " %@=\"%@\"",  attribute->qname.name, attribute->value);
             }
         }
-        
         sawElements = 0;
         if (xml->elements) {
             mprPutStringToBuf(buf, ">"); 
@@ -232,7 +231,7 @@ int ejsXMLToString(Ejs *ejs, MprBuf *buf, EjsXML *node, int indentLevel)
                 }
     
                 /* Recurse */
-                if (ejsXMLToString(ejs, buf, child, indentLevel < 0 ? -1 : indentLevel + 1) < 0) {
+                if (ejsXMLToBuf(ejs, buf, child, indentLevel < 0 ? -1 : indentLevel + 1) < 0) {
                     return -1;
                 }
             }

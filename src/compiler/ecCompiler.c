@@ -262,9 +262,6 @@ static EjsObj *loadScriptLiteral(Ejs *ejs, EjsString *script, cchar *cache)
 }
 
 
-/*
-    Load and initialize a script file
- */
 int ejsLoadScriptFile(Ejs *ejs, cchar *path, cchar *cache, int flags)
 {
     EcCompiler      *ec;

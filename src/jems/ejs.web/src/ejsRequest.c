@@ -484,7 +484,7 @@ static EjsAny *getRequestProperty(Ejs *ejs, EjsRequest *req, int slotNum)
                 ip = conn->sock ? conn->sock->acceptIp : req->server->ip;
                 port = conn->sock ? conn->sock->acceptPort : req->server->port;
                 uri = sfmt("%s://%s:%d%s/", scheme, ip, port, conn->rx->scriptName);
-                req->absHome = (EjsObj*) ejsCreateUriFromMulti(ejs, uri);
+                req->absHome = (EjsObj*) ejsCreateUriFromAsc(ejs, uri);
             } else {
                 req->absHome = ESV(null);
             }
@@ -562,7 +562,7 @@ static EjsAny *getRequestProperty(Ejs *ejs, EjsRequest *req, int slotNum)
     case ES_ejs_web_Request_home:
         if (req->home == 0) {
             if (conn) {
-                req->home = ejsCreateUriFromMulti(ejs, makeRelativeHome(ejs, req));
+                req->home = ejsCreateUriFromAsc(ejs, makeRelativeHome(ejs, req));
             } else return ESV(null);
         }
         return req->home;
@@ -1239,7 +1239,7 @@ static EjsObj *req_setLimits(Ejs *ejs, EjsRequest *req, int argc, EjsObj **argv)
  */
 static EjsObj *req_trace(Ejs *ejs, EjsRequest *req, int argc, EjsObj **argv)
 {
-    ejsSetupTrace(ejs, req->conn->trace, argv[0]);
+    ejsSetupHttpTrace(ejs, req->conn->trace, argv[0]);
     return 0;
 }
 

@@ -230,7 +230,6 @@ EjsType *ejsFinalizeScriptType(Ejs *ejs, EjsName qname, int size, void *manager,
         ejsAddImmutable(ejs, type->sid, type->qname, type);
     }
     type->manager = manager ? (MprManager) manager : (MprManager) manageDefault;
-
     type->configured = 1;
     return type;
 }

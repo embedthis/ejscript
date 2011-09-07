@@ -3615,7 +3615,7 @@ static EjsAny *getNthBlock(Ejs *ejs, int nth)
 /*
     Enter a mesage into the log file
  */
-void ejsLog(Ejs *ejs, const char *fmt, ...)
+void ejsLog(Ejs *ejs, cchar *fmt, ...)
 {
     va_list     args;
     char        buf[MPR_MAX_LOG_STRING];

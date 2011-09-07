@@ -30,16 +30,49 @@ static EjsXML *createXml(Ejs *ejs, EjsType *type, int size)
 }
 
 
-static EjsXML *cloneXml(Ejs *ejs, EjsXML *xml, bool deep)
+EjsAny *cloneXml(Ejs *ejs, EjsXML *xml, bool deep)
 {
-    EjsXML  *newXML;
+    EjsXML      *root, *elt;
+    int         next;
 
-    newXML = ejsCreateObj(ejs, TYPE(xml), 0);
-    if (newXML == 0) {
-        ejsThrowMemoryError(ejs);
+    if (xml == 0) {
         return 0;
     }
-    return newXML;
+    if (xml->kind == EJS_XML_LIST) {
+        root = ejsCreateXMLList(ejs, xml->targetObject, xml->targetProperty);
+    } else {
+        root = ejsCreateXML(ejs, xml->kind, xml->qname, NULL, xml->value);
+    }
+    if (root == 0) {
+        return 0;
+    }
+    //  TODO - must copy inScopeNamespaces?
+
+    if (xml->attributes) {
+        root->attributes = mprCreateList(-1, 0);
+        for (next = 0; (elt = (EjsXML*) mprGetNextItem(xml->attributes, &next)) != 0; ) {
+            elt = ejsClone(ejs, elt, 1);
+            if (elt) {
+                elt->parent = root;
+                mprAddItem(root->attributes, elt);
+            }
+        }
+    }
+    if (xml->elements) {
+        root->elements = mprCreateList(-1, 0);
+        for (next = 0; (elt = mprGetNextItem(xml->elements, &next)) != 0; ) {
+            mprAssert(ejsIsXML(ejs, elt));
+            elt = ejsClone(ejs, elt, 1);
+            if (elt) {
+                elt->parent = root;
+                mprAddItem(root->elements, elt);
+            }
+        }
+    }
+    if (mprHasMemError(ejs)) {
+        return 0;
+    }
+    return root;
 }
 
 
@@ -82,7 +115,7 @@ static EjsAny *castXml(Ejs *ejs, EjsXML *xml, EjsType *type)
             }
         }
         buf = mprCreateBuf(MPR_BUFSIZE, -1);
-        if (ejsXMLToString(ejs, buf, xml, -1) < 0) {
+        if (ejsXMLToBuf(ejs, buf, xml, -1) < 0) {
             return 0;
         }
         return ejsCreateStringFromAsc(ejs, (char*) buf->start);
@@ -252,7 +285,7 @@ static EjsObj *getXmlPropertyByName(Ejs *ejs, EjsXML *xml, EjsName qname)
 
     } else if (qname.name->value[0] == '.') {
         /* Decenders (do ..@ also) */
-        result = ejsXMLDescendants(ejs, xml, qname);
+        result = ejsGetXMLDescendants(ejs, xml, qname);
 
     } else {
         /* name and * */
@@ -443,13 +476,13 @@ static int setXmlPropertyByName(Ejs *ejs, EjsXML *xml, EjsName qname, EjsObj *va
     xvalue = (EjsXML*) value;
     if (ejsIsXML(ejs, xvalue)) {
         if (xvalue->kind == EJS_XML_LIST) {
-            value = (EjsObj*) ejsDeepCopyXML(ejs, xvalue);
+            value = cloneXml(ejs, xvalue, 1);
 
         } else if (xvalue->kind == EJS_XML_TEXT || xvalue->kind == EJS_XML_ATTRIBUTE) {
             value = ejsCast(ejs, originalValue, String);
 
         } else {
-            value = (EjsObj*) ejsDeepCopyXML(ejs, xvalue);
+            value = cloneXml(ejs, xvalue, 1);
         }
     } else {
         value = ejsCast(ejs, value, String);
@@ -557,9 +590,7 @@ static bool deepCompare(EjsXML *lhs, EjsXML *rhs)
 }
 
 
-//  TODO - rename ejsGetXMLDescendants. Check all other names.
-
-EjsXML *ejsXMLDescendants(Ejs *ejs, EjsXML *xml, EjsName qname)
+EjsXML *ejsGetXMLDescendants(Ejs *ejs, EjsXML *xml, EjsName qname)
 {
     EjsXML          *item, *result;
     int             next;
@@ -578,7 +609,7 @@ EjsXML *ejsXMLDescendants(Ejs *ejs, EjsXML *xml, EjsName qname)
         }
         if (xml->elements) {
             for (next = 0; (item = mprGetNextItem(xml->elements, &next)) != 0; ) {
-                result = ejsAppendToXML(ejs, result, ejsXMLDescendants(ejs, item, qname));
+                result = ejsAppendToXML(ejs, result, ejsGetXMLDescendants(ejs, item, qname));
             }
         }
 
@@ -588,7 +619,7 @@ EjsXML *ejsXMLDescendants(Ejs *ejs, EjsXML *xml, EjsName qname)
                 if (qname.name->value[0] == '*' || wcmp(item->qname.name->value, &qname.name->value[1]) == 0) {
                     result = ejsAppendToXML(ejs, result, item);
                 } else {
-                    result = ejsAppendToXML(ejs, result, ejsXMLDescendants(ejs, item, qname));
+                    result = ejsAppendToXML(ejs, result, ejsGetXMLDescendants(ejs, item, qname));
                 }
             }
         }
@@ -596,51 +627,6 @@ EjsXML *ejsXMLDescendants(Ejs *ejs, EjsXML *xml, EjsName qname)
     return result;
 }
 
-
-EjsXML *ejsDeepCopyXML(Ejs *ejs, EjsXML *xml)
-{
-    EjsXML      *root, *elt;
-    int         next;
-
-    if (xml == 0) {
-        return 0;
-    }
-    if (xml->kind == EJS_XML_LIST) {
-        root = ejsCreateXMLList(ejs, xml->targetObject, xml->targetProperty);
-    } else {
-        root = ejsCreateXML(ejs, xml->kind, xml->qname, NULL, xml->value);
-    }
-    if (root == 0) {
-        return 0;
-    }
-    //  TODO - must copy inScopeNamespaces?
-
-    if (xml->attributes) {
-        root->attributes = mprCreateList(-1, 0);
-        for (next = 0; (elt = (EjsXML*) mprGetNextItem(xml->attributes, &next)) != 0; ) {
-            elt = ejsDeepCopyXML(ejs, elt);
-            if (elt) {
-                elt->parent = root;
-                mprAddItem(root->attributes, elt);
-            }
-        }
-    }
-    if (xml->elements) {
-        root->elements = mprCreateList(-1, 0);
-        for (next = 0; (elt = mprGetNextItem(xml->elements, &next)) != 0; ) {
-            mprAssert(ejsIsXML(ejs, elt));
-            elt = ejsDeepCopyXML(ejs, elt);
-            if (elt) {
-                elt->parent = root;
-                mprAddItem(root->elements, elt);
-            }
-        }
-    }
-    if (mprHasMemError(ejs)) {
-        return 0;
-    }
-    return root;
-}
 
 /************************************ Methods ********************************/
 /*
@@ -752,10 +738,7 @@ static EjsObj *saveXml(Ejs *ejs, EjsXML *xml, int argc, EjsObj **argv)
     buf = mprCreateBuf(MPR_BUFSIZE, -1);
     mprPutStringToBuf(buf, "<?xml version=\"1.0\"?>\n");
 
-    /*
-       Convert XML to a string
-     */
-    if (ejsXMLToString(ejs, buf, xml, 0) < 0) {
+    if (ejsXMLToBuf(ejs, buf, xml, 0) < 0) {
         return 0;
     }
     file = mprOpenFile(filename,  O_CREAT | O_TRUNC | O_WRONLY | O_TEXT, 0664);
@@ -1042,7 +1025,7 @@ void ejsLoadXMLString(Ejs *ejs, EjsXML *xml, EjsString *xmlString)
 }
 
 
-void ejsLoadXMLCString(Ejs *ejs, EjsXML *xml, cchar *xmlString)
+void ejsLoadXMLAsc(Ejs *ejs, EjsXML *xml, cchar *xmlString)
 {
     ejsLoadXMLString(ejs, xml, ejsCreateStringFromAsc(ejs, xmlString));
 }

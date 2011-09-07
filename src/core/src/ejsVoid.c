@@ -29,7 +29,7 @@ static EjsAny *castVoid(Ejs *ejs, EjsVoid *vp, EjsType *type)
         return ejsCreateStringFromAsc(ejs, "undefined");
 
     case S_Uri:
-        return ejsCreateUriFromMulti(ejs, "undefined");
+        return ejsCreateUriFromAsc(ejs, "undefined");
             
     default:
         ejsThrowTypeError(ejs, "Can't cast to this type");

@@ -100,7 +100,7 @@ static EjsObj *xlCast(Ejs *ejs, EjsXML *vp, EjsType *type)
             }
         }
         for (next = 0; (elt = mprGetNextItem(vp->elements, &next)) != 0; ) {
-            if (ejsXMLToString(ejs, buf, elt, -1) < 0) {
+            if (ejsXMLToBuf(ejs, buf, elt, -1) < 0) {
                 return 0;
             }
             if (next < vp->elements->length) {

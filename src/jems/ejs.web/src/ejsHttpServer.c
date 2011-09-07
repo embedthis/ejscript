@@ -436,7 +436,7 @@ static EjsObj *hs_setPipeline(Ejs *ejs, EjsHttpServer *sp, int argc, EjsObj **ar
  */
 static EjsObj *hs_trace(Ejs *ejs, EjsHttpServer *sp, int argc, EjsObj **argv)
 {
-    ejsSetupTrace(ejs, sp->trace, argv[0]);
+    ejsSetupHttpTrace(ejs, sp->trace, argv[0]);
     return 0;
 }
 
