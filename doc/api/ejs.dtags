@@ -2017,16 +2017,58 @@
     <name>EjsHttpServer</name>
     <title>EjsHttpServer</title>
     <filename>group___ejs_http_server.html</filename>
+    <member kind="function">
+      <type>EjsHttpServer *</type>
+      <name>ejsCloneHttpServer</name>
+      <anchorfile>group___ejs_http_server.html</anchorfile>
+      <anchor>gab1aadc348f8ffa4c6ed2e90e78e681bb</anchor>
+      <arglist>(Ejs *ejs, EjsHttpServer *server, bool deep)</arglist>
+    </member>
   </compound>
   <compound kind="group">
     <name>EjsRequest</name>
     <title>EjsRequest</title>
     <filename>group___ejs_request.html</filename>
+    <member kind="function">
+      <type>EjsRequest *</type>
+      <name>ejsCloneRequest</name>
+      <anchorfile>group___ejs_request.html</anchorfile>
+      <anchor>ga1f8c776a032ffd7b147cbb0dc094c2e7</anchor>
+      <arglist>(Ejs *ejs, EjsRequest *req, bool deep)</arglist>
+    </member>
+    <member kind="function">
+      <type>EjsRequest *</type>
+      <name>ejsCreateRequest</name>
+      <anchorfile>group___ejs_request.html</anchorfile>
+      <anchor>gae4d5165d879868c4cea4a78939c46cb8</anchor>
+      <arglist>(Ejs *ejs, EjsHttpServer *server, HttpConn *conn, cchar *dir)</arglist>
+    </member>
   </compound>
   <compound kind="group">
     <name>EjsSession</name>
     <title>EjsSession</title>
     <filename>group___ejs_session.html</filename>
+    <member kind="function">
+      <type>int</type>
+      <name>ejsDestroySession</name>
+      <anchorfile>group___ejs_session.html</anchorfile>
+      <anchor>gaceee664902b7431cacd92456152c3478</anchor>
+      <arglist>(Ejs *ejs, EjsSession *session)</arglist>
+    </member>
+    <member kind="function">
+      <type>EjsSession *</type>
+      <name>ejsGetSession</name>
+      <anchorfile>group___ejs_session.html</anchorfile>
+      <anchor>ga3d66f176047eb8d0d27509d74fbea6ec</anchor>
+      <arglist>(Ejs *ejs, EjsString *key, MprTime timeout, int create)</arglist>
+    </member>
+    <member kind="function">
+      <type>void</type>
+      <name>ejsSetSessionTimeout</name>
+      <anchorfile>group___ejs_session.html</anchorfile>
+      <anchor>ga2dca539af9c047e86689efaf7daf6de7</anchor>
+      <arglist>(Ejs *ejs, EjsSession *sp, MprTime lifespan)</arglist>
+    </member>
   </compound>
   <compound kind="struct">
     <name>EjsCode</name>

@@ -365,7 +365,7 @@ typedef void EjsAny;
     Qualified name structure
     @description All names in Ejscript consist of a property name and a name space. Namespaces provide discrete
         spaces to manage and minimize name conflicts. These names will soon be converted to unicode.
-    @stability Prototype
+    @stability Evolving
     @defgroup EjsName EjsName
     @see EjsName ejsMarkName
  */       
@@ -503,7 +503,7 @@ extern EjsName ejsEmptyName(struct Ejs *ejs, cchar *name);
     Ejsript VM Structure
     @description The Ejs structure contains the state for a single interpreter. The #ejsCreateVM routine may be used
         to create multiple interpreters and returns a reference to be used in subsequent Ejscript API calls.
-    @stability Prototype.
+    @stability Evolving.
     @defgroup Ejs Ejs
     @see ejsAddImmutable ejsAppendSearchPath ejsClearException ejsCloneVM ejsCreate ejsCreateService ejsCreateVM 
         ejsDestroyVM ejsEvalFile ejsEvalModule ejsEvalScript ejsExit ejsGetImmutable ejsGetImmutableByName 
@@ -1358,7 +1358,6 @@ typedef struct EjsString {
     @param ejs Ejs reference returned from #ejsCreateVM
     @param value C string value to define for the string object. Note: this will soon be changed to unicode.
     @param len Length of string to examine in value
-    @stability Prototype
     @return A string object
     @ingroup EjsString
  */
@@ -2118,7 +2117,7 @@ typedef struct EjsCode {
     @param argc Number of arguments.
     @param argv Array of arguments.
     @returns Returns a result variable or NULL on errors and exceptions.
-    @stability Prototype.
+    @stability Evolving.
  */
 typedef struct EjsObj *(*EjsProc)(Ejs *ejs, EjsAny *thisObj, int argc, struct EjsObj **argv);
 
@@ -3063,7 +3062,7 @@ extern EjsError *ejsThrowTypeError(Ejs *ejs, cchar *fmt, ...);
     @description The File class provides a foundation of I/O services to interact with physical files and directories.
     Each File object represents a single file or directory and provides methods for creating, opening, reading, writing 
     and deleting files, and for accessing and modifying information about the file.
-    @stability Prototype
+    @stability Evolving
     @defgroup EjsFile EjsFile 
     @see EjsFile ejsCreateFile ejsCreateFileFromFd
  */
@@ -3110,7 +3109,7 @@ extern EjsFile *ejsCreateFileFromFd(Ejs *ejs, int fd, cchar *name, int mode);
 /**
     Path class
     @description The Path class provides file path name services.
-    @stability Prototype
+    @stability Evolving
     @defgroup EjsPath EjsPath 
     @see EjsFile ejsCreatePath ejsCreatePathFromAsc ejsToPath
  */
@@ -3161,7 +3160,7 @@ extern EjsPath *ejsToPath(Ejs *ejs, EjsAny *obj);
 /** 
     FileSystem class
     @description The FileSystem class provides file system services.
-    @stability Prototype
+    @stability Evolving
     @defgroup EjsFileSystem EjsFileSystem 
     @see EjsFile ejsCreateFile 
  */
@@ -3196,7 +3195,7 @@ extern void ejsDefineGlobalNamespaces(Ejs *ejs);
         Http objects represents a Hypertext Transfer Protocol version 1.1 client connection and are used 
         HTTP requests and capture responses. This class supports the HTTP/1.1 standard including methods for GET, POST, 
         PUT, DELETE, OPTIONS, and TRACE. It also supports Keep-Alive and SSL connections. 
-    @stability Prototype
+    @stability Evolving
     @defgroup EjsHttp EjsHttp
     @see EjsHttp ejsCreateHttp ejsGetHttpLimits ejsSetHttpLimits ejsSetupHttpTrace ejsLoadHttpService
  */
@@ -3281,7 +3280,7 @@ extern int ejsSetupHttpTrace(Ejs *ejs, HttpTrace *trace, EjsObj *options);
 /** 
     Iterator Class
     @description Iterator is a helper class to implement iterators in other native classes
-    @stability Prototype
+    @stability Evolving
     @defgroup EjsIterator EjsIterator
     @see EjsIterator ejsCreateIterator
  */
@@ -3577,7 +3576,7 @@ typedef struct EjsTimer {
 /** 
     Uri class
     @description The Uri class provides file path name services.
-    @stability Prototype
+    @stability Evolving
     @defgroup EjsUri EjsUri 
     @see EjsFile ejsCreateUri ejsCreateUriFromAsc ejsCreateUriFromParts ejsToUri
  */
@@ -3637,7 +3636,7 @@ extern EjsUri *ejsToUri(Ejs *ejs, EjsAny *obj);
 /** 
     Worker Class
     @description The Worker class provides the ability to create new interpreters in dedicated threads
-    @stability Prototype
+    @stability Evolving
     @defgroup EjsWorker EjsWorker
     @see EjsObj ejsCreateWorker ejsRemoveWorkers
  */
