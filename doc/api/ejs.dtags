@@ -15,27 +15,37 @@
       <type>EjsName</type>
       <name>ejsName</name>
       <anchorfile>group___ejs_name.html</anchorfile>
-      <anchor>ga0ebbe182fcbf0b758756169635fd5cd6</anchor>
-      <arglist>(Ejs *ejs, cchar *space, cchar *name)</arglist>
+      <anchor>ga6c8e3b296ee0bbbcc1516dcc4209003d</anchor>
+      <arglist>(struct Ejs *ejs, cchar *space, cchar *name)</arglist>
     </member>
     <member kind="function">
       <type>EjsName</type>
       <name>ejsWideName</name>
       <anchorfile>group___ejs_name.html</anchorfile>
-      <anchor>gaf8a1e4e971849cee102c8c0e88d4e9d3</anchor>
-      <arglist>(Ejs *ejs, MprChar *space, MprChar *name)</arglist>
+      <anchor>ga4e347416dd84b33c4b3cdd9254ee0fe7</anchor>
+      <arglist>(struct Ejs *ejs, MprChar *space, MprChar *name)</arglist>
     </member>
   </compound>
   <compound kind="group">
     <name>Ejs</name>
     <title>Ejs</title>
     <filename>group___ejs.html</filename>
+    <class kind="struct">EjsIntern</class>
+    <class kind="struct">EjsLookup</class>
+    <class kind="struct">EjsState</class>
     <member kind="function">
       <type>int</type>
       <name>ejsAddImmutable</name>
       <anchorfile>group___ejs.html</anchorfile>
       <anchor>ga98e91f89e0549f029ceac314e19bb4a4</anchor>
       <arglist>(struct Ejs *ejs, int slotNum, EjsName qname, EjsAny *obj)</arglist>
+    </member>
+    <member kind="function">
+      <type>int</type>
+      <name>ejsBlockGC</name>
+      <anchorfile>group___ejs.html</anchorfile>
+      <anchor>ga80b979e0f3538b195f20eecd30cfaf66</anchor>
+      <arglist>(Ejs *ejs)</arglist>
     </member>
     <member kind="function">
       <type>void</type>
@@ -50,13 +60,6 @@
       <anchorfile>group___ejs.html</anchorfile>
       <anchor>ga38ea40a46f5f5cd037c45f65ef6d42f9</anchor>
       <arglist>(Ejs *ejs)</arglist>
-    </member>
-    <member kind="function">
-      <type>struct EjsArray *</type>
-      <name>ejsCreateSearchPath</name>
-      <anchorfile>group___ejs.html</anchorfile>
-      <anchor>ga2074536c4ebc6f82689d783ec5cde5bf</anchor>
-      <arglist>(Ejs *ejs, cchar *searchPath)</arglist>
     </member>
     <member kind="function">
       <type>Ejs *</type>
@@ -123,17 +126,17 @@
     </member>
     <member kind="function">
       <type>int</type>
-      <name>ejsLoadModule</name>
+      <name>ejsLoadScriptFile</name>
       <anchorfile>group___ejs.html</anchorfile>
-      <anchor>gaa2d1411bda71012cd02f0dfb3be3bf85</anchor>
-      <arglist>(Ejs *ejs, EjsString *name, int minVer, int maxVer, int flags)</arglist>
+      <anchor>ga95f98d86be206637b6d6a1e0d5c32fce</anchor>
+      <arglist>(Ejs *ejs, cchar *script, cchar *cache, int flags)</arglist>
     </member>
     <member kind="function">
       <type>int</type>
-      <name>ejsLoadModules</name>
+      <name>ejsLoadScriptLiteral</name>
       <anchorfile>group___ejs.html</anchorfile>
-      <anchor>ga7f5fd9032996838e6093e47ff73cd7e0</anchor>
-      <arglist>(Ejs *ejs, cchar *search, MprList *require)</arglist>
+      <anchor>ga7c5b84ce75c444db377ce916ee869cc5</anchor>
+      <arglist>(Ejs *ejs, EjsString *script, cchar *cache, int flags)</arglist>
     </member>
     <member kind="function">
       <type>void</type>
@@ -178,13 +181,6 @@
       <arglist>(Ejs *ejs)</arglist>
     </member>
     <member kind="function">
-      <type>char *</type>
-      <name>ejsSearchForModule</name>
-      <anchorfile>group___ejs.html</anchorfile>
-      <anchor>gabc0fbad25c55fca2b65754050f462eff</anchor>
-      <arglist>(Ejs *ejs, cchar *name, int minVer, int maxVer)</arglist>
-    </member>
-    <member kind="function">
       <type>void</type>
       <name>ejsSetDispatcher</name>
       <anchorfile>group___ejs.html</anchorfile>
@@ -192,18 +188,18 @@
       <arglist>(Ejs *ejs, MprDispatcher *dispatcher)</arglist>
     </member>
     <member kind="function">
-      <type>void</type>
-      <name>ejsSetSearchPath</name>
-      <anchorfile>group___ejs.html</anchorfile>
-      <anchor>gace4f9f6ccb7c748e5a4a03f4378eca7d</anchor>
-      <arglist>(Ejs *ejs, struct EjsArray *search)</arglist>
-    </member>
-    <member kind="function">
       <type>EjsAny *</type>
       <name>ejsThrowException</name>
       <anchorfile>group___ejs.html</anchorfile>
       <anchor>gad9e9706ca5052d72c1416219fffd0c31</anchor>
       <arglist>(Ejs *ejs, EjsAny *error)</arglist>
+    </member>
+    <member kind="function">
+      <type>void</type>
+      <name>ejsUnblockGC</name>
+      <anchorfile>group___ejs.html</anchorfile>
+      <anchor>gab461a266bf2f25cea1055152c7422cea</anchor>
+      <arglist>(Ejs *ejs, int blocked)</arglist>
     </member>
   </compound>
   <compound kind="group">
@@ -236,9 +232,6 @@
     <name>EjsObj</name>
     <title>EjsObj</title>
     <filename>group___ejs_obj.html</filename>
-    <class kind="struct">EjsHash</class>
-    <class kind="struct">EjsProperties</class>
-    <class kind="struct">EjsSlot</class>
     <member kind="function">
       <type>int</type>
       <name>ejsAddObserver</name>
@@ -468,6 +461,10 @@
     <name>EjsPot</name>
     <title>EjsPot</title>
     <filename>group___ejs_pot.html</filename>
+    <class kind="struct">EjsHash</class>
+    <class kind="struct">EjsProperties</class>
+    <class kind="struct">EjsSlot</class>
+    <class kind="struct">EjsTrait</class>
     <member kind="function">
       <type>int</type>
       <name>ejsBlendObject</name>
@@ -917,7 +914,6 @@
     <name>EjsBlock</name>
     <title>EjsBlock</title>
     <filename>group___ejs_block.html</filename>
-    <class kind="struct">EjsTrait</class>
     <member kind="function">
       <type>bool</type>
       <name>ejsIsBlock</name>
@@ -1217,13 +1213,6 @@
     <name>EjsDate</name>
     <title>EjsDate</title>
     <filename>group___ejs_date.html</filename>
-    <member kind="define">
-      <type>#define</type>
-      <name>ejsGetDate</name>
-      <anchorfile>group___ejs_date.html</anchorfile>
-      <anchor>ga8d2b62421386e8114ab35b2c9bd8d022</anchor>
-      <arglist>(ejs, obj)</arglist>
-    </member>
     <member kind="function">
       <type>EjsDate *</type>
       <name>ejsCreateDate</name>
@@ -1231,10 +1220,17 @@
       <anchor>gad85120109dc8c4d6a399d5e81be3cc78</anchor>
       <arglist>(Ejs *ejs, MprTime value)</arglist>
     </member>
+    <member kind="function">
+      <type>MprTime</type>
+      <name>ejsGetDate</name>
+      <anchorfile>group___ejs_date.html</anchorfile>
+      <anchor>ga3d02ee8066787be16a429f45912357f7</anchor>
+      <arglist>(Ejs *ejs, EjsDate *date)</arglist>
+    </member>
   </compound>
   <compound kind="group">
     <name>EjsError</name>
-    <title>EjsError ejsFormatStack ejsGetErrorMsg ejsHasException ejsThrowArgError ejsThrowAssertError</title>
+    <title>EjsError</title>
     <filename>group___ejs_error.html</filename>
     <member kind="function">
       <type>EjsArray *</type>
@@ -1769,9 +1765,9 @@
     </member>
     <member kind="function">
       <type>EjsXML *</type>
-      <name>ejsSetXML</name>
+      <name>ejsSetXMLElement</name>
       <anchorfile>group___ejs_x_m_l.html</anchorfile>
-      <anchor>ga9e29c6877e1a78281158fdb11f13aacd</anchor>
+      <anchor>ga80d04a5a44c4ce6d2150dba5fefa1d28</anchor>
       <arglist>(Ejs *ejs, EjsXML *xml, int index, EjsXML *node)</arglist>
     </member>
     <member kind="function">
@@ -1964,24 +1960,57 @@
     </member>
     <member kind="function">
       <type>int</type>
-      <name>ejsLoadScriptFile</name>
-      <anchorfile>group___ejs_type.html</anchorfile>
-      <anchor>ga95f98d86be206637b6d6a1e0d5c32fce</anchor>
-      <arglist>(Ejs *ejs, cchar *script, cchar *cache, int flags)</arglist>
-    </member>
-    <member kind="function">
-      <type>int</type>
-      <name>ejsLoadScriptLiteral</name>
-      <anchorfile>group___ejs_type.html</anchorfile>
-      <anchor>ga7c5b84ce75c444db377ce916ee869cc5</anchor>
-      <arglist>(Ejs *ejs, EjsString *script, cchar *cache, int flags)</arglist>
-    </member>
-    <member kind="function">
-      <type>int</type>
       <name>ejsRunProgram</name>
       <anchorfile>group___ejs_type.html</anchorfile>
       <anchor>gab84a2fc08c8fe8a222ed24ff84f6e8b9</anchor>
       <arglist>(Ejs *ejs, cchar *className, cchar *methodName)</arglist>
+    </member>
+  </compound>
+  <compound kind="group">
+    <name>EjsModule</name>
+    <title>EjsModule</title>
+    <filename>group___ejs_module.html</filename>
+    <member kind="typedef">
+      <type>int(*</type>
+      <name>EjsNativeCallback</name>
+      <anchorfile>group___ejs_module.html</anchorfile>
+      <anchor>ga550b9b21fc9598fbe012216e1d9745fe</anchor>
+      <arglist>)(Ejs *ejs)</arglist>
+    </member>
+    <member kind="function">
+      <type>struct EjsArray *</type>
+      <name>ejsCreateSearchPath</name>
+      <anchorfile>group___ejs_module.html</anchorfile>
+      <anchor>ga2074536c4ebc6f82689d783ec5cde5bf</anchor>
+      <arglist>(Ejs *ejs, cchar *searchPath)</arglist>
+    </member>
+    <member kind="function">
+      <type>int</type>
+      <name>ejsLoadModule</name>
+      <anchorfile>group___ejs_module.html</anchorfile>
+      <anchor>gaa2d1411bda71012cd02f0dfb3be3bf85</anchor>
+      <arglist>(Ejs *ejs, EjsString *name, int minVer, int maxVer, int flags)</arglist>
+    </member>
+    <member kind="function">
+      <type>int</type>
+      <name>ejsLoadModules</name>
+      <anchorfile>group___ejs_module.html</anchorfile>
+      <anchor>ga7f5fd9032996838e6093e47ff73cd7e0</anchor>
+      <arglist>(Ejs *ejs, cchar *search, MprList *require)</arglist>
+    </member>
+    <member kind="function">
+      <type>char *</type>
+      <name>ejsSearchForModule</name>
+      <anchorfile>group___ejs_module.html</anchorfile>
+      <anchor>gabc0fbad25c55fca2b65754050f462eff</anchor>
+      <arglist>(Ejs *ejs, cchar *name, int minVer, int maxVer)</arglist>
+    </member>
+    <member kind="function">
+      <type>void</type>
+      <name>ejsSetSearchPath</name>
+      <anchorfile>group___ejs_module.html</anchorfile>
+      <anchor>gace4f9f6ccb7c748e5a4a03f4378eca7d</anchor>
+      <arglist>(Ejs *ejs, struct EjsArray *search)</arglist>
     </member>
   </compound>
   <compound kind="group">
@@ -2400,234 +2429,6 @@
       <name>useThis</name>
       <anchorfile>struct_ejs_lookup.html</anchorfile>
       <anchor>a4c1ddf4708b32bc57e8a285a4eac9e2f</anchor>
-      <arglist></arglist>
-    </member>
-  </compound>
-  <compound kind="struct">
-    <name>EjsModule</name>
-    <filename>struct_ejs_module.html</filename>
-    <member kind="variable">
-      <type>int</type>
-      <name>checksum</name>
-      <anchorfile>struct_ejs_module.html</anchorfile>
-      <anchor>adfb30c36425beafe7f6ddceea892a2ec</anchor>
-      <arglist></arglist>
-    </member>
-    <member kind="variable">
-      <type>struct EcCodeGen *</type>
-      <name>code</name>
-      <anchorfile>struct_ejs_module.html</anchorfile>
-      <anchor>a3d7bcf2c5cad5b3d486880de2827ca16</anchor>
-      <arglist></arglist>
-    </member>
-    <member kind="variable">
-      <type>uint</type>
-      <name>compiling</name>
-      <anchorfile>struct_ejs_module.html</anchorfile>
-      <anchor>a61d7dfebb5ce7d1bd09b56ab7e8a034d</anchor>
-      <arglist></arglist>
-    </member>
-    <member kind="variable">
-      <type>uint</type>
-      <name>configured</name>
-      <anchorfile>struct_ejs_module.html</anchorfile>
-      <anchor>a430b2fb1f5e0a588cde461e0749d5c8e</anchor>
-      <arglist></arglist>
-    </member>
-    <member kind="variable">
-      <type>EjsConstants *</type>
-      <name>constants</name>
-      <anchorfile>struct_ejs_module.html</anchorfile>
-      <anchor>a6e2489708384256562d87263c2bd2260</anchor>
-      <arglist></arglist>
-    </member>
-    <member kind="variable">
-      <type>MprList *</type>
-      <name>current</name>
-      <anchorfile>struct_ejs_module.html</anchorfile>
-      <anchor>a281ad4ab54e08636763949407f22fe7f</anchor>
-      <arglist></arglist>
-    </member>
-    <member kind="variable">
-      <type>EjsFunction *</type>
-      <name>currentMethod</name>
-      <anchorfile>struct_ejs_module.html</anchorfile>
-      <anchor>a82924ef7d5b3247cda6a3651506378d7</anchor>
-      <arglist></arglist>
-    </member>
-    <member kind="variable">
-      <type>MprList *</type>
-      <name>dependencies</name>
-      <anchorfile>struct_ejs_module.html</anchorfile>
-      <anchor>a19c46e3ec766caaf9c02872813474e6a</anchor>
-      <arglist></arglist>
-    </member>
-    <member kind="variable">
-      <type>EjsString *</type>
-      <name>doc</name>
-      <anchorfile>struct_ejs_module.html</anchorfile>
-      <anchor>a0c9cad9eb5f153efdb518b00e489feea</anchor>
-      <arglist></arglist>
-    </member>
-    <member kind="variable">
-      <type>MprFile *</type>
-      <name>file</name>
-      <anchorfile>struct_ejs_module.html</anchorfile>
-      <anchor>a1bf92a0bacba780aa7089b2c58124149</anchor>
-      <arglist></arglist>
-    </member>
-    <member kind="variable">
-      <type>int</type>
-      <name>firstGlobal</name>
-      <anchorfile>struct_ejs_module.html</anchorfile>
-      <anchor>a54155c501e8116e2258246308872fdd5</anchor>
-      <arglist></arglist>
-    </member>
-    <member kind="variable">
-      <type>int</type>
-      <name>flags</name>
-      <anchorfile>struct_ejs_module.html</anchorfile>
-      <anchor>a7441410f7f20da03996fdea47d6498c3</anchor>
-      <arglist></arglist>
-    </member>
-    <member kind="variable">
-      <type>MprList *</type>
-      <name>globalProperties</name>
-      <anchorfile>struct_ejs_module.html</anchorfile>
-      <anchor>a12646b19a87f56117dbf24c6dbc116f6</anchor>
-      <arglist></arglist>
-    </member>
-    <member kind="variable">
-      <type>uint</type>
-      <name>hasError</name>
-      <anchorfile>struct_ejs_module.html</anchorfile>
-      <anchor>a4ebef31e7a9f5b76885c5c35d1d8f0d5</anchor>
-      <arglist></arglist>
-    </member>
-    <member kind="variable">
-      <type>uint</type>
-      <name>hasInitializer</name>
-      <anchorfile>struct_ejs_module.html</anchorfile>
-      <anchor>a8abbf3c00377b4c39b5809cb5a00f317</anchor>
-      <arglist></arglist>
-    </member>
-    <member kind="variable">
-      <type>uint</type>
-      <name>hasNative</name>
-      <anchorfile>struct_ejs_module.html</anchorfile>
-      <anchor>a9a30ed807960aa16a14bda00b1d319d0</anchor>
-      <arglist></arglist>
-    </member>
-    <member kind="variable">
-      <type>uint</type>
-      <name>initialized</name>
-      <anchorfile>struct_ejs_module.html</anchorfile>
-      <anchor>a34537aad02c0844bf4e4868ab14adeea</anchor>
-      <arglist></arglist>
-    </member>
-    <member kind="variable">
-      <type>EjsFunction *</type>
-      <name>initializer</name>
-      <anchorfile>struct_ejs_module.html</anchorfile>
-      <anchor>a199a3c56836e73b019588503225db7d1</anchor>
-      <arglist></arglist>
-    </member>
-    <member kind="variable">
-      <type>int</type>
-      <name>lastGlobal</name>
-      <anchorfile>struct_ejs_module.html</anchorfile>
-      <anchor>af7b2e87022565d902a95736bf42577f7</anchor>
-      <arglist></arglist>
-    </member>
-    <member kind="variable">
-      <type>uint</type>
-      <name>loaded</name>
-      <anchorfile>struct_ejs_module.html</anchorfile>
-      <anchor>a294b9706d8bef13094b9198593bf1a43</anchor>
-      <arglist></arglist>
-    </member>
-    <member kind="variable">
-      <type>EjsLoadState *</type>
-      <name>loadState</name>
-      <anchorfile>struct_ejs_module.html</anchorfile>
-      <anchor>a792fed71bd239e1f2bab865ebcfe42b3</anchor>
-      <arglist></arglist>
-    </member>
-    <member kind="variable">
-      <type>int</type>
-      <name>maxVersion</name>
-      <anchorfile>struct_ejs_module.html</anchorfile>
-      <anchor>a89a4ae4a2d25f4df661e1e815952e90b</anchor>
-      <arglist></arglist>
-    </member>
-    <member kind="variable">
-      <type>int</type>
-      <name>minVersion</name>
-      <anchorfile>struct_ejs_module.html</anchorfile>
-      <anchor>aee971fc8dd3d2574e3e152119f9a1d29</anchor>
-      <arglist></arglist>
-    </member>
-    <member kind="variable">
-      <type>MprMutex *</type>
-      <name>mutex</name>
-      <anchorfile>struct_ejs_module.html</anchorfile>
-      <anchor>a0d818f94b6017e718ae3bca130b68e15</anchor>
-      <arglist></arglist>
-    </member>
-    <member kind="variable">
-      <type>EjsString *</type>
-      <name>name</name>
-      <anchorfile>struct_ejs_module.html</anchorfile>
-      <anchor>a089c3c880fc499074d2206aaf3d20fba</anchor>
-      <arglist></arglist>
-    </member>
-    <member kind="variable">
-      <type>uint</type>
-      <name>nativeLoaded</name>
-      <anchorfile>struct_ejs_module.html</anchorfile>
-      <anchor>aeb0b8178717ec41bc7091c375f82f536</anchor>
-      <arglist></arglist>
-    </member>
-    <member kind="variable">
-      <type>char *</type>
-      <name>path</name>
-      <anchorfile>struct_ejs_module.html</anchorfile>
-      <anchor>aa9ef54f52922a4f517e6c3301191cf0a</anchor>
-      <arglist></arglist>
-    </member>
-    <member kind="variable">
-      <type>EjsBlock *</type>
-      <name>scope</name>
-      <anchorfile>struct_ejs_module.html</anchorfile>
-      <anchor>a26e311e01b8074fe8d68eb2009e97a77</anchor>
-      <arglist></arglist>
-    </member>
-    <member kind="variable">
-      <type>int</type>
-      <name>version</name>
-      <anchorfile>struct_ejs_module.html</anchorfile>
-      <anchor>aa3fa2e8386124d5eafcc9bb408b3ed99</anchor>
-      <arglist></arglist>
-    </member>
-    <member kind="variable">
-      <type>uint</type>
-      <name>visited</name>
-      <anchorfile>struct_ejs_module.html</anchorfile>
-      <anchor>ad1ad967e80af8b644003e13bb1a9a4d5</anchor>
-      <arglist></arglist>
-    </member>
-    <member kind="variable">
-      <type>MprList *</type>
-      <name>vms</name>
-      <anchorfile>struct_ejs_module.html</anchorfile>
-      <anchor>a65fcec3af0f1e5eb31d74e594828a8cb</anchor>
-      <arglist></arglist>
-    </member>
-    <member kind="variable">
-      <type>EjsString *</type>
-      <name>vname</name>
-      <anchorfile>struct_ejs_module.html</anchorfile>
-      <anchor>a50ba91e1765fe35a430ff19a8d358cd7</anchor>
       <arglist></arglist>
     </member>
   </compound>

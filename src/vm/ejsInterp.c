@@ -101,7 +101,6 @@ static MPR_INLINE void checkGetter(Ejs *ejs, EjsAny *value, EjsAny *thisObj, Ejs
 }
 
 #define CHECK_VALUE(value, thisObj, obj, slotNum) checkGetter(ejs, value, thisObj, obj, slotNum)
-
 #define CHECK_GC() if (MPR->heap.mustYield && !(ejs->state->paused)) { mprYield(0); } else 
 
 /*
@@ -2194,7 +2193,7 @@ static void VM(Ejs *ejs, EjsFunction *fun, EjsAny *otherThis, int argc, int stac
              Stack after         []
              */
         CASE (EJS_OP_NEW_ARRAY):
-            paused = ejsPauseGC(ejs);
+            paused = ejsBlockGC(ejs);
             type = GET_TYPE();
             argc = GET_INT();
             argc += ejs->spreadArgs;
@@ -2211,7 +2210,7 @@ static void VM(Ejs *ejs, EjsFunction *fun, EjsAny *otherThis, int argc, int stac
             state->stack -= (argc * 2);
             push(vp);
             state->t1 = 0;
-            ejsResumeGC(ejs, paused);
+            ejsUnblockGC(ejs, paused);
             BREAK;
 
         /*
@@ -2222,7 +2221,7 @@ static void VM(Ejs *ejs, EjsFunction *fun, EjsAny *otherThis, int argc, int stac
                 Stack after         []
          */
         CASE (EJS_OP_NEW_OBJECT):
-            paused = ejsPauseGC(ejs);
+            paused = ejsBlockGC(ejs);
             type = GET_TYPE();
             argc = GET_INT();
             argc += ejs->spreadArgs;
@@ -2244,7 +2243,7 @@ static void VM(Ejs *ejs, EjsFunction *fun, EjsAny *otherThis, int argc, int stac
             state->stack -= (argc * 3);
             push(vp);
             state->t1 = 0;
-            ejsResumeGC(ejs, paused);
+            ejsUnblockGC(ejs, paused);
             BREAK;
 
 

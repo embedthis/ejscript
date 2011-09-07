@@ -345,14 +345,14 @@ Ejs *ejsAllocPoolVM(EjsPool *pool, int flags)
             }
             if (pool->templateScript) {
                 script = ejsCreateStringFromAsc(pool->template, pool->templateScript);
-                paused = ejsPauseGC(pool->template);
+                paused = ejsBlockGC(pool->template);
                 if (ejsLoadScriptLiteral(pool->template, script, NULL, EC_FLAGS_NO_OUT | EC_FLAGS_BIND) < 0) {
                     mprError("Can't execute \"%@\"\n%s", script, ejsGetErrorMsg(pool->template, 1));
                     unlock(pool);
-                    ejsResumeGC(pool->template, paused);
+                    ejsUnblockGC(pool->template, paused);
                     return 0;
                 }
-                ejsResumeGC(pool->template, paused);
+                ejsUnblockGC(pool->template, paused);
             }
         }
         unlock(pool);
@@ -609,7 +609,7 @@ static int loadRequiredModules(Ejs *ejs, MprList *require)
     int     rc, next, paused;
 
     rc = 0;
-    paused = ejsPauseGC(ejs);
+    paused = ejsBlockGC(ejs);
     if (require) {
         for (next = 0; rc == 0 && (name = mprGetNextItem(require, &next)) != 0; ) {
             rc += ejsLoadModule(ejs, ejsCreateStringFromAsc(ejs, name), 0, 0, EJS_LOADER_STRICT);
@@ -618,7 +618,7 @@ static int loadRequiredModules(Ejs *ejs, MprList *require)
         rc += ejsLoadModule(ejs, ejsCreateStringFromAsc(ejs, "ejs"), 0, 0, EJS_LOADER_STRICT);
     }
     ejsFreezeGlobal(ejs);
-    ejsResumeGC(ejs, paused);
+    ejsUnblockGC(ejs, paused);
     return rc;
 }
 
@@ -1019,7 +1019,7 @@ void ejsRedirectLoggingToFile(MprFile *file, int level)
 }
 
 
-int ejsPauseGC(Ejs *ejs)
+int ejsBlockGC(Ejs *ejs)
 {
     int     paused;
 
@@ -1029,7 +1029,7 @@ int ejsPauseGC(Ejs *ejs)
 }
 
 
-void ejsResumeGC(Ejs *ejs, int paused)
+void ejsUnblockGC(Ejs *ejs, int paused)
 {
     mprAssert(paused != -1);
     if (paused != -1) {

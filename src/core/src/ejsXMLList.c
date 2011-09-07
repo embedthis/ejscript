@@ -460,7 +460,7 @@ static int updateElement(Ejs *ejs, EjsXML *list, EjsXML *elt, int index, EjsObj 
         mprAssert(ejsIs(ejs, value, String));
         i = mprLookupItem(elt->parent->elements, elt);
         mprAssert(i >= 0);
-        ejsSetXML(ejs, elt->parent, i, elt);
+        ejsSetXMLElement(ejs, elt->parent, i, elt);
         //  TODO - why do this. Doesn't above do this?
         ejsSetPropertyByName(ejs, elt->parent, elt->qname, value);
         elt->value = (EjsString*) value;

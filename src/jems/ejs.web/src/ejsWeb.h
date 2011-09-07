@@ -13,7 +13,7 @@
 
 /*********************************** Defines **********************************/
 
-#define EJS_SESSION             "-ejs-session-"
+#define EJS_SESSION "-ejs-session-"             /**< Default session cookie string */
 
 #ifdef  __cplusplus
 extern "C" {

@@ -94,9 +94,9 @@ int ecCompile(EcCompiler *cp, int argc, char **argv)
     saveCompiling = ejs->compiling;
     ejs->compiling = 1;
     
-    paused = ejsPauseGC(ejs);
+    paused = ejsBlockGC(ejs);
     rc = compileInner(cp, argc, argv);
-    ejsResumeGC(ejs, paused);
+    ejsUnblockGC(ejs, paused);
     ejs->compiling = saveCompiling;
     return rc;
 }
@@ -172,9 +172,9 @@ static int compileInner(EcCompiler *cp, int argc, char **argv)
             mprAddItem(nodes, 0);
         } else  {
             mprAssert(!MPR->marking);
-            paused = ejsPauseGC(ejs);
+            paused = ejsBlockGC(ejs);
             mprAddItem(nodes, ecParseFile(cp, argv[i]));
-            ejsResumeGC(ejs, paused);
+            ejsUnblockGC(ejs, paused);
         }
         mprAssert(!MPR->marking);
     }
@@ -191,13 +191,13 @@ static int compileInner(EcCompiler *cp, int argc, char **argv)
     /*
         Process the internal representation and generate code
      */
-    paused = ejsPauseGC(ejs);
+    paused = ejsBlockGC(ejs);
     if (!cp->parseOnly && cp->errorCount == 0) {
         ecResetParser(cp);
         if (ecAstProcess(cp) < 0) {
             ejsPopBlock(ejs);
             cp->nodes = NULL;
-            ejsResumeGC(ejs, paused);
+            ejsUnblockGC(ejs, paused);
             return EJS_ERR;
         }
         if (cp->errorCount == 0) {
@@ -205,7 +205,7 @@ static int compileInner(EcCompiler *cp, int argc, char **argv)
             if (ecCodeGen(cp) < 0) {
                 ejsPopBlock(ejs);
                 cp->nodes = NULL;
-                ejsResumeGC(ejs, paused);
+                ejsUnblockGC(ejs, paused);
                 return EJS_ERR;
             }
         }
@@ -220,7 +220,7 @@ static int compileInner(EcCompiler *cp, int argc, char **argv)
         ejsAddModule(cp->ejs, mp);
     }
     cp->nodes = NULL;
-    ejsResumeGC(ejs, paused);
+    ejsUnblockGC(ejs, paused);
     if (!paused) {
         mprYield(0);
     }

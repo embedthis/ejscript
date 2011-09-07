@@ -120,12 +120,12 @@ static int initializeModule(Ejs *ejs, EjsModule *mp)
         }
     }
     mp->configured = 1;
-    paused = ejsPauseGC(ejs);
+    paused = ejsBlockGC(ejs);
     if (ejsRunInitializer(ejs, mp) == 0) {
-        ejsResumeGC(ejs, paused);
+        ejsUnblockGC(ejs, paused);
         return MPR_ERR_CANT_INITIALIZE;
     }
-    ejsResumeGC(ejs, paused);
+    ejsUnblockGC(ejs, paused);
     return 0;
 }
 

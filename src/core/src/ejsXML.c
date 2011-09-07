@@ -537,7 +537,7 @@ static int setXmlPropertyByName(Ejs *ejs, EjsXML *xml, EjsName qname, EjsObj *va
         /*
             Update existing element.
          */
-        xml = ejsSetXML(ejs, xml, index, createValueNode(ejs, elt, value));
+        xml = ejsSetXMLElement(ejs, xml, index, createValueNode(ejs, elt, value));
     }
 
     if (xml == 0) {
@@ -861,7 +861,7 @@ static EjsObj *xml_parent(Ejs *ejs, EjsXML *xml, int argc, EjsObj **argv)
 /*
     Set an indexed element to an XML value
  */
-EjsXML *ejsSetXML(Ejs *ejs, EjsXML *xml, int index, EjsXML *node)
+EjsXML *ejsSetXMLElement(Ejs *ejs, EjsXML *xml, int index, EjsXML *node)
 {
     EjsXML      *old;
 
