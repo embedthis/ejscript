@@ -2676,17 +2676,17 @@ extern EjsAny *ejsCacheReadObj(Ejs *ejs, EjsObj *cache, struct EjsString *key, E
     @param ejs Interpreter instance returned from #ejsCreateVM
     @param cache Cache object
     @param key Cache item key
-    @param options Cache read options
     @return String cache item
     @ingroup EjsCache
  */
 extern EjsBoolean *ejsCacheRemove(Ejs *ejs, EjsObj *cache, struct EjsString *key);
 
+//  MOB - rename ejsSetCacheLimits
 /** 
     Set the cache limits
     @param ejs Interpreter instance returned from #ejsCreateVM
     @param cache Cache object
-    @param limits. Limits is an object hash. Depending on the cache backend in-use, the limits object may have
+    @param limits Limits is an object hash. Depending on the cache backend in-use, the limits object may have
     some of the following properties. Consult the documentation for the actual cache backend for which properties
     are supported by the backend.
     <ul>
@@ -4976,9 +4976,13 @@ typedef void (*EjsLoaderCallback)(struct Ejs *ejs, int kind, ...);
 /*
     Module content version
  */
+
+/**
+    Make an integer  version number
+ */
+#define EJS_MAKE_VERSION(maj, min, patch) (((((maj) * EJS_VERSION_FACTOR) + (min)) * EJS_VERSION_FACTOR) + (patch))
 #define EJS_COMPAT_VERSION(v1, v2) ((v1 / EJS_VERSION_FACTOR) == (v2 / EJS_VERSION_FACTOR))
 #define EJS_MAKE_COMPAT_VERSION(version) (version / EJS_VERSION_FACTOR * EJS_VERSION_FACTOR)
-#define EJS_MAKE_VERSION(maj, min, patch) (((((maj) * EJS_VERSION_FACTOR) + (min)) * EJS_VERSION_FACTOR) + (patch))
 #define EJS_MAJOR(version)      (((version / EJS_VERSION_FACTOR) / EJS_VERSION_FACTOR) % EJS_VERSION_FACTOR)
 #define EJS_MINOR(version)      ((version / EJS_VERSION_FACTOR) % EJS_VERSION_FACTOR)
 #define EJS_PATCH(version)      (version % EJS_VERSION_FACTOR)
@@ -5139,9 +5143,9 @@ typedef struct EjsDoc {
         @li program:line:errorCode:SEVERITY: message
     @param ejs Interpeter object returned from #ejsCreateVM
     @param name Module path name
-    @param max Maximum acceptable version to load. Use #EJS_MAKE_VERSION to create a version number or set to -1 if 
+    @param maxVer Maximum acceptable version to load. Use EJS_MAKE_VERSION to create a version number or set to -1 if 
         any version is acceptable
-    @param minVer Minimum acceptable version to load. Use #EJS_MAKE_VERSION to create a version number or set to -1 if 
+    @param minVer Minimum acceptable version to load. Use EJS_MAKE_VERSION to create a version number or set to -1 if 
         any version is acceptable
     @param flags Module loading flags. Select from: EJS_LOADER_STRICT, EJS_LOADER_NO_INIT, EJS_LOADER_ETERNAL,
         EJS_LOADER_BUILTIN, EJS_LOADER_DEP, EJS_LOADER_RELOAD
@@ -5154,9 +5158,9 @@ extern int ejsLoadModule(Ejs *ejs, EjsString *name, int minVer, int maxVer, int 
     Search for a module in the module search path.
     @param ejs Interpeter object returned from #ejsCreateVM
     @param name Module name
-    @param minVer Minimum acceptable version to load. Use #EJS_MAKE_VERSION to create a version number or set to -1 if 
+    @param minVer Minimum acceptable version to load. Use EJS_MAKE_VERSION to create a version number or set to -1 if 
         any version is acceptable
-    @param max Maximum acceptable version to load. Use #EJS_MAKE_VERSION to create a version number or set to -1 if 
+    @param maxVer Maximum acceptable version to load. Use EJS_MAKE_VERSION to create a version number or set to -1 if 
         any version is acceptable
     @return Path name to the module
     @ingroup Ejs
