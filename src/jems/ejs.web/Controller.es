@@ -38,7 +38,7 @@ module ejs.web {
             Actions to cache. Indexed by controller+action name plus optionally, post and query data. 
             Contains cache options for this action. Created on demand if cache() is called.
          */
-        private static var _cacheOptions: Object = {}
+        private static var _allOptions: Object = {}
 
         private var _afterCheckers: Array
         private var _beforeCheckers: Array
@@ -63,7 +63,6 @@ module ejs.web {
         var request: Request
 
         var cacheIndex: String
-//  MOB - name clash with _cacheOptions
         var cacheOptions: Object
         var cacheName: String
         var cacheItem: Object
@@ -150,7 +149,7 @@ module ejs.web {
          */
         private function fetchCachedResponse(): Object {
             cacheIndex = getCacheIndex(controllerName, actionName)
-            cacheOptions = _cacheOptions[cacheIndex]
+            cacheOptions = _allOptions[cacheIndex]
             if (cacheOptions) {
                 cacheName = getCacheName(cacheIndex, cacheOptions)
                 if ((!cacheOptions.uri || cacheOptions.uri == "*" || cacheName == (cacheIndex + "::" + cacheOptions.uri)) && 
@@ -221,9 +220,6 @@ module ejs.web {
          */
         private function saveCachedResponse(): Void {
             if (request.finalized) {
-                // let cacheIndex = getCacheIndex(controllerName, actionName)
-                // let options = _cacheOptions[cacheIndex]
-                // let cacheName = getCacheName(cacheIndex, cacheOptions)
                 let etag = request.responseHeaders["Etag"] || cacheItem.tag
                 cacheItem.data = request.writeBuffer
                 App.cache.writeObj(cacheName, cacheItem, cacheOptions)
@@ -245,12 +241,9 @@ module ejs.web {
             @return True if valid cached content was found to write to the client.
          */
         function writeCached(): Boolean {
-            // cacheIndex = getCacheIndex(controllerName, actionName)
-            // cacheOptions = _cacheOptions[cacheIndex]
             if (request.finalized || !cacheOptions) {
                 return false
             }
-            // cacheName = getCacheName(cacheIndex, cacheOptions)
             if ((!cacheOptions.uri || cacheOptions.uri == "*" || cacheName == cacheOptions.uri)) {
                 let item
                 if (item = App.cache.readObj(cacheName)) {
@@ -418,7 +411,7 @@ module ejs.web {
             }
             for each (name in actions) {
                 let cacheIndex = getCacheIndex(cname, name)
-                _cacheOptions[cacheIndex] = options
+                _allOptions[cacheIndex] = options
                 if (options.lifespan is Number) {
                     let cacheName = cacheIndex
                     if (options.uri) {
@@ -476,7 +469,7 @@ module ejs.web {
                 } else {
                     let etag = cacheTag(cacheName)
                     App.cache.writeObj(cacheName, 
-                        { tag: etag, modified: Math.floor(Date.now() / 1000) * 1000, data: data}, _cacheOptions[cacheIndex])
+                        { tag: etag, modified: Math.floor(Date.now() / 1000) * 1000, data: data}, _allOptions[cacheIndex])
                     App.log.debug(6, "Update cache " + cacheName)
                 }
             }
