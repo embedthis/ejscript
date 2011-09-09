@@ -699,9 +699,9 @@ static EjsNumber *date_now(Ejs *ejs, EjsDate *unused, int argc, EjsObj **argv)
 
 
 /*
-    static function parse(arg: String): Date
+    static function parse(arg: String): Number
  */
-static EjsDate *date_parse(Ejs *ejs, EjsDate *unused, int argc, EjsObj **argv)
+static EjsNumber *date_parse(Ejs *ejs, EjsDate *unused, int argc, EjsObj **argv)
 {
     MprTime     when;
 
@@ -709,7 +709,7 @@ static EjsDate *date_parse(Ejs *ejs, EjsDate *unused, int argc, EjsObj **argv)
         ejsThrowArgError(ejs, "Can't parse date string: %@", ejsToString(ejs, argv[0]));
         return 0;
     }
-    return ejsCreateDate(ejs, when);
+    return ejsCreateNumber(ejs, (MprNumber) when);
 }
 
 
