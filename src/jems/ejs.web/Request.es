@@ -897,7 +897,7 @@ r.link({product: "candy", quantity: "10", template: "/cart/{product}/{quantity}"
             @param offset Offset in the byte array from which to write. If the offset is -1, then data is
                 written from the buffer read $position which is then updated. 
             @param count Read up to this number of bytes. If -1, write all available data in the buffer. 
-            @returns a count of the bytes actually written. Returns null on eof.
+            @returns a count of the bytes actually written. Returns null on EOF.
             @event writable Issued when the connection can absorb more data.
 
          */

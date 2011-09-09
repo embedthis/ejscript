@@ -227,7 +227,7 @@ module ejs {
             Start a command in the background as a daemon.  The daemon command is detached and the application 
             continues immediately in the foreground. Note: No data can be written to the daemon's stdin.
             @param cmdline Command line to use. The cmdline may be either a string or an array of strings.
-            @return The process ID. This pid can be used with kill().
+            @return The process ID. This PID can be used with kill().
          */
         static function daemon(cmdline: Object, options: Object = null): Number {
             let cmd = new Cmd

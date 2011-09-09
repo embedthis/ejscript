@@ -89,7 +89,7 @@ module ejs {
             @param count Read up to this number of bytes. If -1, read as much as the buffer will hold up. If the 
                 stream is of fixed and known length (such as a file) and the buffer is of sufficient size or is growable, 
                 read the entire stream. 
-            @returns a count of the bytes actually read. Returns null on eof.
+            @returns a count of the bytes actually read. Returns null on EOF.
             @event readable Issued when there is new read data available.
             @event writable Issued when the stream becomes empty.
          */

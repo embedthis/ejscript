@@ -2550,7 +2550,7 @@ extern EjsBoolean *ejsToBoolean(Ejs *ejs, EjsAny *obj);
     which can be set to either LittleEndian or BigEndian. 
     \n\n
     In Stream mode ByteArrays can be configured to run in sync or async mode. Adding observers via the $addObserver
-    method will put a stream into async mode. Events will then be issued for close, eof, read and write events.
+    method will put a stream into async mode. Events will then be issued for close, EOF, read and write events.
     @stability Evolving
     @defgroup EjsByteArray EjsByteArray
     @see EjsByteArray ejsCopyToByteArray ejsCreateByteArray ejsGetByteArrayAvailableData ejsGetByteArrayRoom 

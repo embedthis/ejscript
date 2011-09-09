@@ -151,7 +151,8 @@
                     consistent set of types and prototypes. None of the source files include normal O/S headers like
                     &lt;string.h&gt;. While this does slow the build by including more headers than are required
                     &mdash; it is barely noticeable on modern CPUs.</p>
-                    <p>When porting mpr.h, start by copying the sections in mpr.h that pertain to your base copied O/S.
+                    <p>When porting the mpr.h file, start by copying the sections in mpr.h 
+                    that pertain to your base copied O/S.
                     These will be protected by "#if BASE_OS" defines. In the example of NEWOS, we would look for, and
                     copy, any sections with "#if LINUX" and create "#if NEWOS" sections.</p>
                     <p><b>DO NOT</b> introduce conditional code in other O/S sections. It is better to copy the entire
