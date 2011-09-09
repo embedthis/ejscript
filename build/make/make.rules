@@ -217,7 +217,6 @@ testPrep testFinal testCleanup:
 #
 testExtra::
 	# Execute default test rule only at the outermost make level and not at the topmost directory 
-	echo DIR $(DIR) 
 	if [ "$(DIR)" = "." ] ; then \
         if [ -x "$(BLD_EJS)" -a "$(BLD_CROSS)" != 1 ] ; then \
             if [ -d src -a -f configure ] ; then \
