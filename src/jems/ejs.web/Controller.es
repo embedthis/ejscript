@@ -62,6 +62,10 @@ module ejs.web {
         /** Reference to the current $ejs.web::Request object */
         var request: Request
 
+        var cacheIndex: String
+        var cacheOptions: Object
+        var cacheName: String
+
         /***************************************** Convenience Getters  ***************************************/
 
         /** @duplicate ejs.web::Request.absHome */
@@ -135,17 +139,20 @@ module ejs.web {
             _afterCheckers.append([fn, options])
         }
 
+        private function cacheTag(name: String): String
+            md5(name + Date.now + Date.ticks)
+
         /*
             Fetch cached data from the cache if present.
             @return a response object
          */
         private function fetchCachedResponse(): Object {
-            let cacheIndex = getCacheIndex(controllerName, actionName)
-            let options = _cacheOptions[cacheIndex]
-            if (options) {
-                let cacheName = getCacheName(cacheIndex, options)
-                if ((!options.uri || options.uri == "*" || cacheName == (cacheIndex + "::" + options.uri)) && 
-                        options.mode != "manual") {
+            cacheIndex = getCacheIndex(controllerName, actionName)
+            cacheOptions = _cacheOptions[cacheIndex]
+            if (cacheOptions) {
+                cacheName = getCacheName(cacheIndex, cacheOptions)
+                if ((!cacheOptions.uri || cacheOptions.uri == "*" || cacheName == (cacheIndex + "::" + cacheOptions.uri)) && 
+                        cacheOptions.mode != "manual") {
                     let hdr
                     if ((hdr = request.header("Cache-Control")) && (hdr.contains("max-age=0") || hdr.contains("no-cache"))) {
                         App.log.debug(5, "Cache-control header rejects use of cached content")
@@ -173,11 +180,11 @@ module ejs.web {
                                     status = Http.Ok
                                 }
                             }
-                            if (options.client) {
-                                setHeader("Cache-Control", options.client, false)
+                            if (cacheOptions.client) {
+                                setHeader("Cache-Control", cacheOptions.client, false)
                             }
                             setHeader("Last-Modified", Date(item.modified).toUTCString())
-                            setHeader("Etag", md5(cacheName))
+                            setHeader("Etag", cacheTag(cacheName))
                             if (status == Http.Ok) {
                                 //  MOB - change this trace to just use "actionName"
                                 App.log.debug(5, "Use cached: " + cacheName)
@@ -190,62 +197,29 @@ module ejs.web {
                         App.log.debug(5, "No cached content for: " + cacheName)
                     }
                     request.writeBuffer = new ByteArray
-                    setHeader("Etag", md5(cacheName))
-                    if (options.client) {
-                        setHeader("Cache-Control", options.client, false)
+                    setHeader("Etag", cacheTag(cacheName))
+                    if (cacheOptions.client) {
+                        setHeader("Cache-Control", cacheOptions.client, false)
                     }
                 }
             }
+//  MOB - cached here?
             setHeader("Last-Modified", Date().toUTCString())
             return null
-        }
-
-        /**
-            Manually write out cached content to the client.
-            This routine will write non-expired cached data to the client. Caching for actions is enabled by
-            calling $cache() in the Controller.
-            @return True if valid cached content was found to write to the client.
-         */
-        function writeCached(): Boolean {
-            let cacheIndex = getCacheIndex(controllerName, actionName)
-            let options = _cacheOptions[cacheIndex]
-            if (request.finalized || !options) {
-                return false
-            }
-            let cacheName = getCacheName(cacheIndex, options)
-            if ((!options.uri || options.uri == "*" || cacheName == options.uri)) {
-                let item
-                if (item = App.cache.readObj(cacheName)) {
-                    App.log.debug(5, "Use cached: " + cacheName)
-                    setHeader("Etag", md5(cacheName))
-                    setHeader("Last-Modified", Date(item.modified).toUTCString())
-                    if (options.client) {
-                        setHeader("Cache-Control", options.client, false)
-                    }
-                    request.writeBuffer = null
-                    write(item.data)
-                    request.finalize()
-                    return true
-                }
-            }
-            App.log.debug(5, "no cached: " + cacheName)
-            return false
         }
 
         /*
             Save the output from the action for future requests
          */
         private function saveCachedResponse(): Void {
-            if (request.finalized) {
-                let cacheIndex = getCacheIndex(controllerName, actionName)
-                /* Cache output */
-                let options = _cacheOptions[cacheIndex]
-                if (options) {
-                    let cacheName = getCacheName(cacheIndex, options)
-                    let etag = md5(cacheName)
-                    App.cache.writeObj(cacheName, { tag: etag, modified: Date.now(), data: request.writeBuffer}, options)
-                    App.log.debug(5, "Cache action " + cacheName + ", " + request.writeBuffer.available + " bytes")
-                }
+            if (request.finalized && cacheOptions) {
+                // let cacheIndex = getCacheIndex(controllerName, actionName)
+                // let options = _cacheOptions[cacheIndex]
+                // let cacheName = getCacheName(cacheIndex, cacheOptions)
+                let etag = request.responseHeaders["Etag"] || cacheTag(cacheName)
+                App.cache.writeObj(cacheName, 
+                    { tag: etag, modified: Date.now(), data: request.writeBuffer}, cacheOptions)
+                App.log.debug(5, "Cache action " + cacheName + ", " + request.writeBuffer.available + " bytes")
             }
             //  MOB - should also add headers for Last-Modified and Etag as the output has not yet been sent
             let data = request.writeBuffer
@@ -255,6 +229,38 @@ module ejs.web {
                 /* Now that writeBuffer is cleared, finalize will actually finalize the request */
                 request.finalize()
             }
+        }
+
+        /**
+            Manually write out cached content to the client.
+            This routine will write non-expired cached data to the client. Caching for actions is enabled by
+            calling $cache() in the Controller.
+            @return True if valid cached content was found to write to the client.
+         */
+        function writeCached(): Boolean {
+            // cacheIndex = getCacheIndex(controllerName, actionName)
+            // cacheOptions = _cacheOptions[cacheIndex]
+            if (request.finalized || !cacheOptions) {
+                return false
+            }
+            // cacheName = getCacheName(cacheIndex, cacheOptions)
+            if ((!cacheOptions.uri || cacheOptions.uri == "*" || cacheName == cacheOptions.uri)) {
+                let item
+                if (item = App.cache.readObj(cacheName)) {
+                    App.log.debug(5, "Use cached: " + cacheName)
+                    setHeader("Etag", cacheTag(cacheName))
+                    setHeader("Last-Modified", Date(item.modified).toUTCString())
+                    if (cacheOptions.client) {
+                        setHeader("Cache-Control", cacheOptions.client, false)
+                    }
+                    request.writeBuffer = null
+                    write(item.data)
+                    request.finalize()
+                    return true
+                }
+            }
+            App.log.debug(5, "no cached: " + cacheName)
+            return false
         }
 
         //  MOB - rename
@@ -405,7 +411,7 @@ module ejs.web {
                 options.client ||= "max-age=" + options.lifespan
             }
             for each (name in actions) {
-                cacheIndex = getCacheIndex(cname, name)
+                let cacheIndex = getCacheIndex(cname, name)
                 _cacheOptions[cacheIndex] = options
                 if (options.lifespan is Number) {
                     let cacheName = cacheIndex
@@ -452,7 +458,7 @@ module ejs.web {
                 actions = [actions]
             }
             for each (name in actions) {
-                cacheIndex = getCacheIndex(cname, name)
+                let cacheIndex = getCacheIndex(cname, name)
                 let cacheName = cacheIndex
                 if (options.uri) {
                     cacheName += "::" + options.uri
@@ -461,7 +467,7 @@ module ejs.web {
                     App.log.debug(6, "Expire " + cacheName)
                     App.cache.expire(cacheName, Date())
                 } else {
-                    let etag = md5(cacheName)
+                    let etag = cacheTag(cacheName)
                     App.cache.writeObj(cacheName, { tag: etag, modified: Date.now(), data: data}, _cacheOptions[cacheIndex])
                     App.log.debug(6, "Update cache " + cacheName)
                 }
