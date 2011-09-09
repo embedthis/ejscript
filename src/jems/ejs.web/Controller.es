@@ -63,8 +63,10 @@ module ejs.web {
         var request: Request
 
         var cacheIndex: String
+//  MOB - name clash with _cacheOptions
         var cacheOptions: Object
         var cacheName: String
+        var cacheItem: Object
 
         /***************************************** Convenience Getters  ***************************************/
 
@@ -184,12 +186,13 @@ module ejs.web {
                                 setHeader("Cache-Control", cacheOptions.client, false)
                             }
                             setHeader("Last-Modified", Date(item.modified).toUTCString())
-                            setHeader("Etag", cacheTag(cacheName))
                             if (status == Http.Ok) {
+                                setHeader("Etag", cacheTag(cacheName))
                                 //  MOB - change this trace to just use "actionName"
                                 App.log.debug(5, "Use cached: " + cacheName)
                                 write(item.data)
                             } else {
+                                setHeader("Etag", item.tag)
                                 App.log.debug(5, "Use cached content, status: " + status + ", " + cacheName)
                             }
                             return {status: status}
@@ -197,14 +200,19 @@ module ejs.web {
                         App.log.debug(5, "No cached content for: " + cacheName)
                     }
                     request.writeBuffer = new ByteArray
-                    setHeader("Etag", cacheTag(cacheName))
+                    let when = new Date
+                    cacheItem = { tag: cacheTag(cacheName), modified: Math.floor(when.time / 1000) * 1000}
+                    setHeader("Etag", cacheItem.tag)
+                    setHeader("Last-Modified", when.toUTCString())
                     if (cacheOptions.client) {
                         setHeader("Cache-Control", cacheOptions.client, false)
                     }
+                } else {
+                    setHeader("Last-Modified", Date().toUTCString())
                 }
+            } else {
+                setHeader("Last-Modified", Date().toUTCString())
             }
-//  MOB - cached here?
-            setHeader("Last-Modified", Date().toUTCString())
             return null
         }
 
@@ -212,16 +220,15 @@ module ejs.web {
             Save the output from the action for future requests
          */
         private function saveCachedResponse(): Void {
-            if (request.finalized && cacheOptions) {
+            if (request.finalized) {
                 // let cacheIndex = getCacheIndex(controllerName, actionName)
                 // let options = _cacheOptions[cacheIndex]
                 // let cacheName = getCacheName(cacheIndex, cacheOptions)
-                let etag = request.responseHeaders["Etag"] || cacheTag(cacheName)
-                App.cache.writeObj(cacheName, 
-                    { tag: etag, modified: Date.now(), data: request.writeBuffer}, cacheOptions)
+                let etag = request.responseHeaders["Etag"] || cacheItem.tag
+                cacheItem.data = request.writeBuffer
+                App.cache.writeObj(cacheName, cacheItem, cacheOptions)
                 App.log.debug(5, "Cache action " + cacheName + ", " + request.writeBuffer.available + " bytes")
             }
-            //  MOB - should also add headers for Last-Modified and Etag as the output has not yet been sent
             let data = request.writeBuffer
             request.writeBuffer = null
             request.write(data)
@@ -379,7 +386,6 @@ module ejs.web {
                 "no-store" response may not be stored in a cache.
                 "must-revalidate" forces clients to revalidate the request with the server.
                 "proxy-revalidate" similar to must-revalidate except only for proxy caches>
-
 //  MOB - unclear, clarify
             @option uri URI and parameter to further differentiate cached content. If supplied, different cache data
                 can be stored for each URI that applies to the given controller/action. If the URI is set to "*" all 
@@ -462,13 +468,15 @@ module ejs.web {
                 let cacheName = cacheIndex
                 if (options.uri) {
                     cacheName += "::" + options.uri
+                    //  MOB - this is not clearing cache data with queries
                 }
                 if (data == null) {
                     App.log.debug(6, "Expire " + cacheName)
                     App.cache.expire(cacheName, Date())
                 } else {
                     let etag = cacheTag(cacheName)
-                    App.cache.writeObj(cacheName, { tag: etag, modified: Date.now(), data: data}, _cacheOptions[cacheIndex])
+                    App.cache.writeObj(cacheName, 
+                        { tag: etag, modified: Math.floor(Date.now() / 1000) * 1000, data: data}, _cacheOptions[cacheIndex])
                     App.log.debug(6, "Update cache " + cacheName)
                 }
             }
