@@ -243,7 +243,7 @@ static EjsVoid *hs_listen(Ejs *ejs, EjsHttpServer *sp, int argc, EjsObj **argv)
         route = httpCreateConfiguredRoute(host, 1);
         httpSetRouteName(route, "default");
         httpAddRouteHandler(route, "ejsHandler", "");
-        httpSetRouteTarget(route, "virtual", 0);
+        httpSetRouteTarget(route, "run", 0);
         httpFinalizeRoute(route);
 
         /*
@@ -672,9 +672,11 @@ static void incomingEjsData(HttpQueue *q, HttpPacket *packet)
             httpError(conn, HTTP_CODE_BAD_REQUEST, "Client supplied insufficient body data");
         }
         httpPutForService(q, packet, 0);
+#if UNUSED
         if (rx->form) {
-            httpAddVarsFromQueue(q);
+            httpAddParamsFromQueue(q);
         }
+#endif
     } else {
         httpJoinPacketForService(q, packet, 0);
     }
@@ -745,9 +747,11 @@ static void startEjsHandler(HttpQueue *q)
     Ejs             *ejs;
     HttpEndpoint    *endpoint;
     HttpConn        *conn;
+    HttpRx          *rx;
     MprSocket       *lp;
 
     conn = q->conn;
+    rx = conn->rx;
     endpoint = conn->endpoint;
 
     if (conn->error) {
@@ -779,7 +783,7 @@ static void startEjsHandler(HttpQueue *q)
         ejsSendEvent(ejs, sp->emitter, "readable", req, req);
 
         /* Send EOF if form or upload and all content has been received.  */
-        if (conn->rx->startAfterContent && conn->rx->eof) {
+        if ((rx->form || rx->upload) /* UNUSED rx->startAfterContent */ && rx->eof) {
             HTTP_NOTIFY(conn, 0, HTTP_NOTIFY_READABLE);
         }
     }
@@ -810,7 +814,7 @@ HttpStage *ejsAddWebHandler(Http *http, MprModule *module)
     if (http->ejsHandler) {
         return http->ejsHandler;
     }
-    handler = httpCreateHandler(http, "ejsHandler", HTTP_STAGE_ALL | HTTP_STAGE_QUERY_VARS, module);
+    handler = httpCreateHandler(http, "ejsHandler", HTTP_STAGE_ALL | HTTP_STAGE_PARAMS, module);
     if (handler == 0) {
         return 0;
     }

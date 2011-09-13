@@ -81,7 +81,7 @@ static int sortForm(MprHash **h1, MprHash **h2)
  */
 static EjsString *createFormData(Ejs *ejs, EjsRequest *req)
 {
-    MprHashTable    *formVars;
+    MprHashTable    *params;
     MprHash         *hp;
     MprList         *list;
     char            *buf, *cp;
@@ -89,10 +89,10 @@ static EjsString *createFormData(Ejs *ejs, EjsRequest *req)
     int             next;
 
     if (req->formData == 0) {
-        if (req->conn && (formVars = req->conn->rx->formVars) != 0) {
-            if ((list = mprCreateList(mprGetHashLength(formVars), 0)) != 0) {
+        if (req->conn && (params = req->conn->rx->params) != 0) {
+            if ((list = mprCreateList(mprGetHashLength(params), 0)) != 0) {
                 len = 0;
-                for (hp = 0; (hp = mprGetNextKey(formVars, hp)) != NULL; ) {
+                for (hp = 0; (hp = mprGetNextKey(params, hp)) != NULL; ) {
                     mprAddItem(list, hp);
                     len += slen(hp->key) + slen(hp->data) + 2;
                 }
@@ -125,14 +125,14 @@ static EjsString *createFormData(Ejs *ejs, EjsRequest *req)
 static EjsObj *createParams(Ejs *ejs, EjsRequest *req)
 {
     EjsObj          *params;
-    MprHashTable    *formVars;
+    MprHashTable    *hparams;
     MprHash         *hp;
 
     if ((params = req->params) == 0) {
         params = (EjsObj*) ejsCreateEmptyPot(ejs);
-        if (req->conn && (formVars = req->conn->rx->formVars) != 0) {
+        if (req->conn && (hparams = req->conn->rx->params) != 0) {
             hp = 0;
-            while ((hp = mprGetNextKey(formVars, hp)) != NULL) {
+            while ((hp = mprGetNextKey(hparams, hp)) != NULL) {
                 defineParam(ejs, params, hp->key, hp->data);
             }
         }

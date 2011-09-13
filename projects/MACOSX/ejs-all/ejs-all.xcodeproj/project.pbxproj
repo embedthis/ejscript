@@ -58,6 +58,7 @@
 			buildPhases = (
 			);
 			dependencies = (
+				C95DB5CF141F20AD0047A8F8 /* PBXTargetDependency */,
 				C9D7A7FA13D4F3A0000428C7 /* PBXTargetDependency */,
 				C97A5ECA11E81EB000BB0981 /* PBXTargetDependency */,
 				C97627E70FD0788C009C78E1 /* PBXTargetDependency */,
@@ -369,6 +370,13 @@
 			proxyType = 1;
 			remoteGlobalIDString = C9222E520FD5813F00AFA5A4;
 			remoteInfo = ejs.mod;
+		};
+		C95DB5CE141F20AD0047A8F8 /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = C97623C10FD06EC4009C78E1 /* Project object */;
+			proxyType = 1;
+			remoteGlobalIDString = C95DB5CA141F1FCC0047A8F8;
+			remoteInfo = clean;
 		};
 		C95E4FEB10EBFE5C00982610 /* PBXContainerItemProxy */ = {
 			isa = PBXContainerItemProxy;
@@ -1553,6 +1561,23 @@
 		};
 /* End PBXHeadersBuildPhase section */
 
+/* Begin PBXLegacyTarget section */
+		C95DB5CA141F1FCC0047A8F8 /* clean */ = {
+			isa = PBXLegacyTarget;
+			buildArgumentsString = "${PROJECT_DIR}/clean.sh";
+			buildConfigurationList = C95DB5CB141F1FCC0047A8F8 /* Build configuration list for PBXLegacyTarget "clean" */;
+			buildPhases = (
+			);
+			buildToolPath = /bin/sh;
+			buildWorkingDirectory = "";
+			dependencies = (
+			);
+			name = clean;
+			passBuildSettingsInEnvironment = 1;
+			productName = clean;
+		};
+/* End PBXLegacyTarget section */
+
 /* Begin PBXNativeTarget section */
 		C95E4FD310EBFD9300982610 /* libhttp */ = {
 			isa = PBXNativeTarget;
@@ -1879,6 +1904,7 @@
 				C99A33CA10C2F14000F6C7BC /* ejspage */,
 				C903098610A366F0003FF2AB /* jem */,
 				C9BD40CC13D8CC7600CB61A0 /* test */,
+				C95DB5CA141F1FCC0047A8F8 /* clean */,
 			);
 		};
 /* End PBXProject section */
@@ -2042,7 +2068,7 @@
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 			shellPath = /bin/sh;
-			shellScript = "#\n#   Prepare for build - This imports required libraries, headers and executables\n#\nmkdir -p $OUT/inc $OUT/lib\n\nif [ ! -f $OUT/inc/buildConfig.h -o buildConfig.default -nt $OUT/inc/buildConfig.h ] ; then\n    [ -f $OUT/inc/buildConfig.h ] && chmod +w $OUT/inc/buildConfig.h\n    cp buildConfig.default $OUT/inc/buildConfig.h\n    export BLD_TOP=$TOP\n    export BLD_OUT_DIR=$BLD_TOP/out\n    . `${BLD_TOP}/build/bin/cacheConfig ${BLD_OUT_DIR}/inc/buildConfig.h`\nfi\ntouch $OUT/bin/.ideBuild\nexit 0";
+			shellScript = "#\n#   Prepare for build - This imports required libraries, headers and executables\n#\nmkdir -p $OUT/inc $OUT/lib\n\nif [ ! -f $OUT/inc/buildConfig.h -o buildConfig.default -nt $OUT/inc/buildConfig.h ] ; then\n    [ -f $OUT/inc/buildConfig.h ] && chmod +w $OUT/inc/buildConfig.h\n    cp buildConfig.default $OUT/inc/buildConfig.h\n    export BLD_TOP=$TOP\n    export BLD_OUT_DIR=$BLD_TOP/out\n    . `${BLD_TOP}/build/bin/cacheConfig ${BLD_OUT_DIR}/inc/buildConfig.h`\nfi\ntouch $OUT/bin/.ideBuild\n\nexit 0";
 		};
 		C99A33CD10C2F14000F6C7BC /* ShellScript */ = {
 			isa = PBXShellScriptBuildPhase;
@@ -2419,6 +2445,11 @@
 			target = C9222E520FD5813F00AFA5A4 /* modules */;
 			targetProxy = C955217410840494005CC19C /* PBXContainerItemProxy */;
 		};
+		C95DB5CF141F20AD0047A8F8 /* PBXTargetDependency */ = {
+			isa = PBXTargetDependency;
+			target = C95DB5CA141F1FCC0047A8F8 /* clean */;
+			targetProxy = C95DB5CE141F20AD0047A8F8 /* PBXContainerItemProxy */;
+		};
 		C95E4FEC10EBFE5C00982610 /* PBXTargetDependency */ = {
 			isa = PBXTargetDependency;
 			target = C95E4FD310EBFD9300982610 /* libhttp */;
@@ -2784,6 +2815,59 @@
 			};
 			name = Release;
 		};
+		C95DB5CC141F1FCC0047A8F8 /* Debug */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ALWAYS_SEARCH_USER_PATHS = NO;
+				ARCHS = "$(ARCHS_STANDARD_64_BIT)";
+				COPY_PHASE_STRIP = NO;
+				DEBUGGING_SYMBOLS = YES;
+				GCC_C_LANGUAGE_STANDARD = gnu99;
+				GCC_DYNAMIC_NO_PIC = NO;
+				GCC_ENABLE_OBJC_EXCEPTIONS = YES;
+				GCC_GENERATE_DEBUGGING_SYMBOLS = YES;
+				GCC_OPTIMIZATION_LEVEL = 0;
+				GCC_PREPROCESSOR_DEFINITIONS = (
+					"DEBUG=1",
+					"$(inherited)",
+				);
+				GCC_SYMBOLS_PRIVATE_EXTERN = NO;
+				GCC_VERSION = com.apple.compilers.llvm.clang.1_0;
+				GCC_WARN_64_TO_32_BIT_CONVERSION = YES;
+				GCC_WARN_ABOUT_MISSING_PROTOTYPES = YES;
+				GCC_WARN_ABOUT_RETURN_TYPE = YES;
+				GCC_WARN_UNUSED_VARIABLE = YES;
+				MACOSX_DEPLOYMENT_TARGET = 10.7;
+				ONLY_ACTIVE_ARCH = YES;
+				OTHER_CFLAGS = "";
+				OTHER_LDFLAGS = "";
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				SDKROOT = macosx;
+			};
+			name = Debug;
+		};
+		C95DB5CD141F1FCC0047A8F8 /* Release */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ALWAYS_SEARCH_USER_PATHS = NO;
+				ARCHS = "$(ARCHS_STANDARD_64_BIT)";
+				COPY_PHASE_STRIP = YES;
+				DEBUG_INFORMATION_FORMAT = "dwarf-with-dsym";
+				GCC_C_LANGUAGE_STANDARD = gnu99;
+				GCC_ENABLE_OBJC_EXCEPTIONS = YES;
+				GCC_VERSION = com.apple.compilers.llvm.clang.1_0;
+				GCC_WARN_64_TO_32_BIT_CONVERSION = YES;
+				GCC_WARN_ABOUT_MISSING_PROTOTYPES = YES;
+				GCC_WARN_ABOUT_RETURN_TYPE = YES;
+				GCC_WARN_UNUSED_VARIABLE = YES;
+				MACOSX_DEPLOYMENT_TARGET = 10.7;
+				OTHER_CFLAGS = "";
+				OTHER_LDFLAGS = "";
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				SDKROOT = macosx;
+			};
+			name = Release;
+		};
 		C95E4FD910EBFD9300982610 /* Debug */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
@@ -3135,6 +3219,14 @@
 			);
 			defaultConfigurationIsVisible = 0;
 			defaultConfigurationName = Release;
+		};
+		C95DB5CB141F1FCC0047A8F8 /* Build configuration list for PBXLegacyTarget "clean" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				C95DB5CC141F1FCC0047A8F8 /* Debug */,
+				C95DB5CD141F1FCC0047A8F8 /* Release */,
+			);
+			defaultConfigurationIsVisible = 0;
 		};
 		C95E4FD810EBFD9300982610 /* Build configuration list for PBXNativeTarget "libhttp" */ = {
 			isa = XCConfigurationList;
