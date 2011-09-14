@@ -690,6 +690,7 @@ module ejs.web {
         private function write(str: String): Void
             request.write(str)
 
+        //  TODO OPT
         private function append(str: String, suffix: String): String {
             if (suffix) {
                 return (str) ? (str + " " + suffix) : suffix
