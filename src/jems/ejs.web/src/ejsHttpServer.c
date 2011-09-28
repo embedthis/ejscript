@@ -814,8 +814,7 @@ HttpStage *ejsAddWebHandler(Http *http, MprModule *module)
     if (http->ejsHandler) {
         return http->ejsHandler;
     }
-    handler = httpCreateHandler(http, "ejsHandler", HTTP_STAGE_ALL | HTTP_STAGE_PARAMS, module);
-    if (handler == 0) {
+    if ((handler = httpCreateHandler(http, "ejsHandler", HTTP_STAGE_ALL, module)) == 0) {
         return 0;
     }
     http->ejsHandler = handler;

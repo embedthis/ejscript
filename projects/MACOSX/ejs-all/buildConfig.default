@@ -93,7 +93,7 @@ BLD_BIN_PREFIX=/usr/lib/ejs/2.0.0/bin
 BLD_DOC_PREFIX=/usr/lib/ejs/2.0.0/doc
 BLD_INC_PREFIX=/usr/lib/ejs/2.0.0/inc
 BLD_JEM_PREFIX=/usr/lib/ejs/jems
-BLD_LIB_PREFIX=/usr/lib/ejs/2.0.0/lib
+BLD_LIB_PREFIX=/MOB/usr/lib/ejs/2.0.0/lib
 BLD_LOG_PREFIX=/var/log/ejs
 BLD_MAN_PREFIX=/usr/lib/ejs/2.0.0/man
 BLD_PRD_PREFIX=/usr/lib/ejs
@@ -287,7 +287,8 @@ BLD_MPR_LIBS=mpr
 BLD_FEATURE_HTTP=1
 BLD_HTTP_BUILTIN=1
 BLD_HTTP_IMPORTS=${BLD_TOP}/src/deps/http/http.h 
-BLD_HTTP_LIBS=http
+BLD_HTTP_LIBS=http pcre
+BLD_HTTP_WITHLIBS=pcre
 
 #
 #	OPENSSL
@@ -396,6 +397,7 @@ else
     #define BLD_DOC_PREFIX "/usr/lib/ejs/2.0.0/doc"
     #define BLD_INC_PREFIX "/usr/lib/ejs/2.0.0/inc"
     #define BLD_JEM_PREFIX "/usr/lib/ejs/jems"
+    #undef BLD_LIB_PREFIX
     #define BLD_LIB_PREFIX "/usr/lib/ejs/2.0.0/lib"
     #define BLD_LOG_PREFIX "/var/log/ejs"
     #define BLD_MAN_PREFIX "/usr/lib/ejs/2.0.0/man"
@@ -504,7 +506,8 @@ else
     #define BLD_FEATURE_HTTP 1
     #define BLD_HTTP_BUILTIN 1
     #define BLD_HTTP_IMPORTS "${BLD_TOP}/src/deps/http/http.h "
-    #define BLD_HTTP_LIBS "http"
+    #define BLD_HTTP_LIBS "http pcre"
+    #define BLD_HTTP_WITHLIBS "pcre"
     #define BLD_FEATURE_OPENSSL 1
     #define BLD_OPENSSL_BUILTIN 0
     #define BLD_OPENSSL_LIBS "ssl crypto"
