@@ -137,15 +137,6 @@ extern "C" {
 #define EC_CODE_BUFSIZE         4096            /**< Initial size of code gen buffer */
 #define EC_NUM_PAK_PROP         32              /**< Initial number of properties */
 
-#if VXWORKS
-/*
-    Old VxWorks can't do array[]
- */
-#define ARDEC 0
-#else
-#define ARDEC
-#endif
-
 /********************************* Defines ************************************/
 
 #if !DOXYGEN
@@ -554,7 +545,7 @@ typedef struct Ejs {
     void                *loadData;          /**< Arg to load callbacks */
     void                *httpServer;        /**< HttpServer instance when VM is embedded */
 
-    MprHashTable        *doc;               /**< Documentation */
+    MprHash             *doc;               /**< Documentation */
     void                *sqlite;            /**< Sqlite context information */
 
     Http                *http;              /**< Http service object (copy of EjsService.http) */
@@ -1008,7 +999,7 @@ typedef struct EjsHash {
 typedef struct EjsProperties {
     EjsHash         *hash;                  /**< Hash buckets and head of link chains */
     int             size;                   /**< Current size of slots[] in elements */
-    struct EjsSlot  slots[ARDEC];           /**< Vector of slots containing property references */
+    struct EjsSlot  slots[MPR_FLEX];        /**< Vector of slots containing property references */
 } EjsProperties;
 
 
@@ -1350,7 +1341,7 @@ typedef struct EjsString {
     struct EjsString *next;             /**< Next string in hash chain link when interning */
     struct EjsString *prev;             /**< Prev string in hash chain */
     ssize            length;            /**< Length of string */
-    MprChar          value[ARDEC];      /**< String value */
+    MprChar          value[MPR_FLEX];   /**< String value */
 } EjsString;
 
 /** 
@@ -2054,7 +2045,7 @@ typedef struct EjsConstants {
     int           indexSize;                /**< Size of index in elements */
     int           indexCount;               /**< Number of constants used in index */
     int           locked;                   /**< No more additions allowed */
-    MprHashTable  *table;                   /**< Hash table for fast lookup when compiling */
+    MprHash       *table;                   /**< Hash table for fast lookup when compiling */
     EjsString     **index;                  /**< Interned string index */
 } EjsConstants;
 
@@ -2079,7 +2070,7 @@ typedef struct EjsDebug {
     int         magic;
     ssize      size;                        /**< Size of lines[] in elements */
     int        numLines;                    /**< Number of entries in lines[] */
-    EjsLine    lines[ARDEC];                /**< Debug lines */
+    EjsLine    lines[MPR_FLEX];             /**< Debug lines */
 } EjsDebug;
 
 /*
@@ -2106,7 +2097,7 @@ typedef struct EjsCode {
     int              debugOffset;            /**< Offset in mod file for debug info */
     int              numHandlers;            /**< Number of exception handlers */
     int              sizeHandlers;           /**< Size of handlers array */
-    uchar            byteCode[ARDEC];        /**< Byte code */
+    uchar            byteCode[MPR_FLEX];     /**< Byte code */
 } EjsCode;
 
 /**
@@ -4482,7 +4473,7 @@ typedef struct EjsService {
     EjsObj          *(*loadScriptFile)(Ejs *ejs, cchar *path, cchar *cache);
     MprList         *vmlist;                /**< List of all VM interpreters */
     MprList         *vmpool;                /**< Pool of unused (cached) VM interpreters */
-    MprHashTable    *nativeModules;         /**< Set of loaded native modules */
+    MprHash         *nativeModules;         /**< Set of loaded native modules */
     Http            *http;                  /**< Http service */
     uint            dontExit: 1;            /**< Prevent App.exit() from exiting */
     uint            logging: 1;             /**< Using --log */

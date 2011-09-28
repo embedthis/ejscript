@@ -498,7 +498,7 @@ static EjsString *serialize(Ejs *ejs, EjsAny *vp, Json *json)
     EjsTrait    *trait;
     EjsObj      *pp, *obj, *replacerArgs[2];
     MprChar     *cp;
-    char        key[16];
+    cchar       *key;
     int         c, isArray, i, count, slotNum;
 
     /*
@@ -543,7 +543,7 @@ static EjsString *serialize(Ejs *ejs, EjsAny *vp, Json *json)
                 continue;
             }
             if (isArray) {
-                itos(key, sizeof(key), slotNum, 10);
+                key = itos(slotNum, 10);
                 qname.name = ejsCreateStringFromAsc(ejs, key);
                 qname.space = ESV(empty);
             } else {

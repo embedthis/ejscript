@@ -765,7 +765,7 @@ int ecAddDocConstant(EcCompiler *cp, cchar *tag, void *vp, int slotNum)
 int ecAddModuleConstant(EcCompiler *cp, EjsModule *mp, cchar *str)
 {
     EjsConstants    *constants;
-    MprHash         *hp;
+    MprKey          *kp;
     int             index;
 
     mprAssert(mp);
@@ -775,8 +775,8 @@ int ecAddModuleConstant(EcCompiler *cp, EjsModule *mp, cchar *str)
         return 0;
     }
     constants = mp->constants;
-    if (constants->table && (hp = mprLookupKeyEntry(constants->table, str)) != 0) {
-        return PTOI(hp->data);
+    if (constants->table && (kp = mprLookupKeyEntry(constants->table, str)) != 0) {
+        return PTOI(kp->data);
     }
     index = ejsAddConstant(cp->ejs, mp, str);
     // mprLog(0, "%6d %s", index, str);

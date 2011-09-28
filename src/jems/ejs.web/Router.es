@@ -834,6 +834,8 @@ module ejs.web {
             this.originalTemplate = template
         }
 
+        //  MOB - see ESP. It does this a better way
+
         private function compileTemplate(options: Object): Void {
             if (template is String) {
                 let t = template

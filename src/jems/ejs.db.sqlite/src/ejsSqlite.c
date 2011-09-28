@@ -91,7 +91,7 @@ static EjsObj *sqliteConstructor(Ejs *ejs, EjsSqlite *db, int argc, EjsObj **arg
                 ejsThrowIOError(ejs, "Can't open database %s", path);
                 return 0;
             }
-            //  TODO - should be configurable somewhere
+            //  MOB - should be configurable somewhere
             sqlite3_soft_heap_limit(20 * 1024 * 1024);
             sqlite3_busy_timeout(sdb, EJS_SQLITE_TIMEOUT);
 
@@ -183,6 +183,7 @@ static EjsObj *sqliteSql(Ejs *ejs, EjsSqlite *db, int argc, EjsObj **argv)
                     return 0;
                 }
                 for (i = 0; i < ncol; i++) {
+                    //  MOB OPT - this can be hoisted
                     tableName = (char*) sqlite3_column_table_name(stmt, i);
                     if (defaultTableName == 0) {
                         defaultTableName = tableName;

@@ -17,7 +17,7 @@
 typedef struct EjsLocalCache
 {
     EjsObj          obj;                /* Object base */
-    MprHashTable    *store;             /* Key/value store */
+    MprHash         *store;             /* Key/value store */
     MprMutex        *mutex;             /* Cache lock*/
     MprEvent        *timer;             /* Pruning timer */
     MprTime         lifespan;           /* Default lifespan (msec) */
@@ -132,7 +132,6 @@ static EjsAny *sl_inc(Ejs *ejs, EjsLocalCache *cache, int argc, EjsAny **argv)
     EjsString   *key;
     CacheItem   *item;
     int64       amount;
-    char        nbuf[32];
 
     if (cache->shared) {
         cache = cache->shared;
@@ -155,7 +154,7 @@ static EjsAny *sl_inc(Ejs *ejs, EjsLocalCache *cache, int argc, EjsAny **argv)
     if (item->data) {
         cache->usedMem -= item->data->length;
     }
-    item->data = ejsCreateStringFromAsc(ejs, itos(nbuf, sizeof(nbuf), amount, 10));
+    item->data = ejsCreateStringFromAsc(ejs, itos(amount, 10));
     cache->usedMem += item->data->length;
     item->expires = mprGetTime() + item->lifespan;
     item->version++;
@@ -329,8 +328,8 @@ static EjsNumber *sl_write(Ejs *ejs, EjsLocalCache *cache, int argc, EjsAny **ar
     EjsString   *key, *value, *sp;
     EjsPot      *options;
     EjsAny      *vp;
+    MprKey      *kp;
     MprTime     expires;
-    MprHash     *hp;
     ssize       len, oldLen;
     int64       lifespan, version;
     int         checkVersion, exists, add, set, prepend, append, throw;
@@ -375,9 +374,9 @@ static EjsNumber *sl_write(Ejs *ejs, EjsLocalCache *cache, int argc, EjsAny **ar
         }
     }
     lock(cache);
-    if ((hp = mprLookupKeyEntry(cache->store, key->value)) != 0) {
+    if ((kp = mprLookupKeyEntry(cache->store, key->value)) != 0) {
         exists++;
-        item = (CacheItem*) hp->data;
+        item = (CacheItem*) kp->data;
         if (checkVersion) {
             if (item->version != version) {
                 unlock(cache);
@@ -457,18 +456,18 @@ static void removeItem(EjsLocalCache *cache, CacheItem *item)
 static void localPruner(EjsLocalCache *cache, MprEvent *event)
 {
     MprTime         when, factor;
-    MprHash         *hp;
+    MprKey          *kp;
     CacheItem       *item;
     ssize           excessKeys;
 
     if (mprTryLock(cache->mutex)) {
         when = mprGetTime();
-        for (hp = 0; (hp = mprGetNextKey(cache->store, hp)) != 0; ) {
-            item = (CacheItem*) hp->data;
+        for (kp = 0; (kp = mprGetNextKey(cache->store, kp)) != 0; ) {
+            item = (CacheItem*) kp->data;
             mprLog(6, "LocalCache: \"%@\" lifespan %d, expires in %d secs", item->key, 
                     item->lifespan / 1000, (item->expires - when) / 1000);
             if (item->expires && item->expires <= when) {
-                mprLog(5, "LocalCache prune expired key %s", hp->key);
+                mprLog(5, "LocalCache prune expired key %s", kp->key);
                 removeItem(cache, item);
             }
         }
@@ -481,11 +480,11 @@ static void localPruner(EjsLocalCache *cache, MprEvent *event)
             excessKeys = mprGetHashLength(cache->store) - cache->maxKeys;
             while (excessKeys > 0 || cache->usedMem > cache->maxMem) {
                 for (factor = 3600; excessKeys > 0 && factor < (86400 * 1000); factor *= 4) {
-                    for (hp = 0; (hp = mprGetNextKey(cache->store, hp)) != 0; ) {
-                        item = (CacheItem*) hp->data;
+                    for (kp = 0; (kp = mprGetNextKey(cache->store, kp)) != 0; ) {
+                        item = (CacheItem*) kp->data;
                         if (item->expires && item->expires <= when) {
                             mprLog(5, "LocalCache too big execess keys %Ld, mem %Ld, prune key %s", 
-                                    excessKeys, (cache->maxMem - cache->usedMem), hp->key);
+                                    excessKeys, (cache->maxMem - cache->usedMem), kp->key);
                             removeItem(cache, item);
                         }
                     }

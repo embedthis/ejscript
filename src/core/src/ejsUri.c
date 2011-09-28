@@ -826,6 +826,7 @@ static EjsUri *uri_template(Ejs *ejs, EjsUri *up, int argc, EjsObj **argv)
                     }
                 }
                 if (!ejsIsDefined(ejs, value)) {
+                    //  MOB - remove this. Should not be erasing the prior "/"
                     if (cp >= &pattern[2] && cp[-2] == '/') {
                         mprAdjustBufEnd(buf, -1);
                     }

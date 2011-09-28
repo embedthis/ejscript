@@ -70,7 +70,7 @@ static void defineParam(Ejs *ejs, EjsObj *params, cchar *key, cchar *svalue)
 
 
 #if UNUSED
-static int sortForm(MprHash **h1, MprHash **h2)
+static int sortForm(MprKey **h1, MprKey **h2)
 {
     return scmp((*h1)->key, (*h2)->key);
 }
@@ -81,28 +81,28 @@ static int sortForm(MprHash **h1, MprHash **h2)
  */
 static EjsString *createFormData(Ejs *ejs, EjsRequest *req)
 {
-    MprHashTable    *params;
-    MprHash         *hp;
-    MprList         *list;
-    char            *buf, *cp;
-    ssize           len;
-    int             next;
+    MprHash     *params;
+    MprKey      *kp;
+    MprList     *list;
+    char        *buf, *cp;
+    ssize       len;
+    int         next;
 
     if (req->formData == 0) {
         if (req->conn && (params = req->conn->rx->params) != 0) {
             if ((list = mprCreateList(mprGetHashLength(params), 0)) != 0) {
                 len = 0;
-                for (hp = 0; (hp = mprGetNextKey(params, hp)) != NULL; ) {
-                    mprAddItem(list, hp);
-                    len += slen(hp->key) + slen(hp->data) + 2;
+                for (kp = 0; (kp = mprGetNextKey(params, kp)) != NULL; ) {
+                    mprAddItem(list, kp);
+                    len += slen(kp->key) + slen(kp->data) + 2;
                 }
                 if ((buf = mprAlloc(len + 1)) != 0) {
                     mprSortList(list, sortForm);
                     cp = buf;
-                    for (next = 0; (hp = mprGetNextItem(list, &next)) != 0; ) {
-                        strcpy(cp, hp->key); cp += slen(hp->key);
+                    for (next = 0; (kp = mprGetNextItem(list, &next)) != 0; ) {
+                        strcpy(cp, kp->key); cp += slen(kp->key);
                         *cp++ = '=';
-                        strcpy(cp, hp->data); cp += slen(hp->data);
+                        strcpy(cp, kp->data); cp += slen(kp->data);
                         *cp++ = '&';
                     }
                     cp[-1] = '\0';
@@ -124,16 +124,16 @@ static EjsString *createFormData(Ejs *ejs, EjsRequest *req)
 
 static EjsObj *createParams(Ejs *ejs, EjsRequest *req)
 {
-    EjsObj          *params;
-    MprHashTable    *hparams;
-    MprHash         *hp;
+    EjsObj      *params;
+    MprHash     *hparams;
+    MprKey      *kp;
 
     if ((params = req->params) == 0) {
         params = (EjsObj*) ejsCreateEmptyPot(ejs);
         if (req->conn && (hparams = req->conn->rx->params) != 0) {
-            hp = 0;
-            while ((hp = mprGetNextKey(hparams, hp)) != NULL) {
-                defineParam(ejs, params, hp->key, hp->data);
+            kp = 0;
+            while ((kp = mprGetNextKey(hparams, kp)) != NULL) {
+                defineParam(ejs, params, kp->key, kp->data);
             }
         }
     }
@@ -176,7 +176,7 @@ static EjsObj *createFiles(Ejs *ejs, EjsRequest *req)
     HttpUploadFile  *up;
     HttpConn        *conn;
     EjsObj          *files, *file;
-    MprHash         *hp;
+    MprKey          *kp;
     int             index;
 
     if (req->files == 0) {
@@ -188,15 +188,15 @@ static EjsObj *createFiles(Ejs *ejs, EjsRequest *req)
             return ESV(null);
         }
         req->files = files = (EjsObj*) ejsCreateEmptyPot(ejs);
-        for (index = 0, hp = 0; (hp = mprGetNextKey(conn->rx->files, hp)) != 0; index++) {
-            up = (HttpUploadFile*) hp->data;
+        for (index = 0, kp = 0; (kp = mprGetNextKey(conn->rx->files, kp)) != 0; index++) {
+            up = (HttpUploadFile*) kp->data;
             file = (EjsObj*) ejsCreateEmptyPot(ejs);
             ejsSetPropertyByName(ejs, file, EN("filename"), ejsCreatePathFromAsc(ejs, up->filename));
             ejsSetPropertyByName(ejs, file, EN("clientFilename"), ejsCreateStringFromAsc(ejs, up->clientFilename));
             ejsSetPropertyByName(ejs, file, EN("contentType"), ejsCreateStringFromAsc(ejs, up->contentType));
-            ejsSetPropertyByName(ejs, file, EN("name"), ejsCreateStringFromAsc(ejs, hp->key));
+            ejsSetPropertyByName(ejs, file, EN("name"), ejsCreateStringFromAsc(ejs, kp->key));
             ejsSetPropertyByName(ejs, file, EN("size"), ejsCreateNumber(ejs, (MprNumber) up->size));
-            ejsSetPropertyByName(ejs, files, EN(hp->key), file);
+            ejsSetPropertyByName(ejs, files, EN(kp->key), file);
         }
     }
     return (EjsObj*) req->files;
@@ -209,17 +209,17 @@ static EjsObj *createHeaders(Ejs *ejs, EjsRequest *req)
     EjsString   *value;
     EjsObj      *old;
     HttpConn    *conn;
-    MprHash     *hp;
+    MprKey      *kp;
     
     if (req->headers == 0) {
         req->headers = (EjsObj*) ejsCreateEmptyPot(ejs);
         conn = req->conn;
-        for (hp = 0; conn && (hp = mprGetNextKey(conn->rx->headers, hp)) != 0; ) {
-            n = EN(hp->key);
+        for (kp = 0; conn && (kp = mprGetNextKey(conn->rx->headers, kp)) != 0; ) {
+            n = EN(kp->key);
             if ((old = ejsGetPropertyByName(ejs, req->headers, n)) != 0) {
-                value = ejsCreateStringFromAsc(ejs, sjoin(ejsToMulti(ejs, old), "; ", hp->data, NULL));
+                value = ejsCreateStringFromAsc(ejs, sjoin(ejsToMulti(ejs, old), "; ", kp->data, NULL));
             } else {
-                value = ejsCreateStringFromAsc(ejs, hp->data);
+                value = ejsCreateStringFromAsc(ejs, kp->data);
             }
             ejsSetPropertyByName(ejs, req->headers, n, value);
         }
@@ -265,7 +265,7 @@ static int fillResponseHeaders(EjsRequest *req)
 
 static EjsObj *createResponseHeaders(Ejs *ejs, EjsRequest *req)
 {
-    MprHash     *hp;
+    MprKey      *kp;
     HttpConn    *conn;
     
     if (req->responseHeaders == 0) {
@@ -273,8 +273,8 @@ static EjsObj *createResponseHeaders(Ejs *ejs, EjsRequest *req)
         conn = req->conn;
         if (conn && conn->tx) {
             /* Get default headers */
-            for (hp = 0; (hp = mprGetNextKey(conn->tx->headers, hp)) != 0; ) {
-                ejsSetPropertyByName(ejs, req->responseHeaders, EN(hp->key), ejsCreateStringFromAsc(ejs, hp->data));
+            for (kp = 0; (kp = mprGetNextKey(conn->tx->headers, kp)) != 0; ) {
+                ejsSetPropertyByName(ejs, req->responseHeaders, EN(kp->key), ejsCreateStringFromAsc(ejs, kp->data));
             }
             conn->headersCallback = (HttpHeadersCallback) fillResponseHeaders;
             conn->headersCallbackArg = req;

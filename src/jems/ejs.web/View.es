@@ -7,6 +7,9 @@ module ejs.web {
     require ejs.web
 
     //  MOB - what does option click Boolean mean below??
+    /*
+        data-remote should only take true. Then data-click=URI data-remote=true. Otherwise can define both click and remote.
+     */
     /**
         Base class for web framework Views. This class provides the core functionality for templated Ejscript view 
         web pages. Ejscript web pages are compiled to create a new View class which extends the View base class.  
@@ -52,7 +55,7 @@ module ejs.web {
             supports using custom key names. NOTE: this option cannot be used if using cell clicks or edits. In that
             case, set click/edit to a callback function and explicitly construct the required URI and parameters.
         @option keyFormat String Define how the keys will be handled for click and edit URIs. 
-            Set to one of the set: ["body", "path", "query"]. Default is "path".
+            Set to one of the set: ["params", "path", "query"]. Default is "path".
             Set to "query" to add the key/value pairs to the request URI. Each pair is separated using "&" and the
                 key and value are formatted as "key=value".
             Set to "params" to add the key/value pair to the request body parameters. 
@@ -73,7 +76,7 @@ module ejs.web {
             milliseconds. If period is undefined or zero, a persistent connection may be used to refresh data.
             The refresh option may use the "\@Controller/action" form.
         @option size (Number|String) Size of the element.
-        @option style String CSS Style to use for the table.
+        @option style String CSS Style to use for the element.
         @option value Object Override value to display if used without a form control record.
         @option width (Number|String) Width of the control. Can be a number of pixels or a percentage string. Defaults to
             unlimited.
@@ -172,12 +175,13 @@ module ejs.web {
         }
 
         /**
-            Emit an anchor. This is lable inside an anchor reference. 
+            Emit an anchor. This is a label inside an anchor reference. 
             @param text Link text to display
             @param options Optional extra options. See $View for a list of the standard options.
          */
         function anchor(text: String, options: Object = {}): Void {
             options = getOptions(options)
+            //  MOB - should got to anchor
             getConnector("label", options).label(text, options)
         }
 
@@ -199,16 +203,18 @@ module ejs.web {
             getConnector("button", options).button(name, label, options)
         }
 
+        //  MOB - this really should have a URI parameter instead of relying on options conversion via options.click 
         /**
             Render a link button. This creates a button suitable for use outside an input form. When the button 
             is clicked, the associated URI will be invoked.
             @param text Text to display in the button. The text can contain embedded HTML.
             @param options Options specifying the target URI to invoke. See $View for a list of the standard options.
             @example
-                buttonLink("Cancel" "\@")
+                buttonLink("Cancel", "\@")
          */
         function buttonLink(text: String, options: Object = {}): Void {
             options = getOptions(options)
+            //  MOB - why is this here - inconsistent
             if (currentRecord) {
                 options.id ||= currentRecord.id
             }
@@ -328,7 +334,7 @@ MOB -- much more doc here
             @param record Record to display and optionally update
             @param options Optional extra options. See $View for a list of the standard options.
             @option hideErrors Don't display model errors. Models retain error diagnostics from a failed write. Setting
-                thish option will prevent their display.
+                this option will prevent their display.
             @option modal String Make a form a modal dialog.
             @option nosecurity Don't generate a security token for the form.
             @option securityToken String Override CSRF security token to include when the form is submitted. A default 

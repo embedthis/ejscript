@@ -933,7 +933,7 @@ static int searchForMethod(Ejs *ejs, cchar *methodName, EjsType **typeReturn)
 
 static void logHandler(int flags, int level, cchar *msg)
 {
-    char        *prefix, *tag, *amsg, lbuf[16], buf[MPR_MAX_STRING];
+    char        *prefix, *tag, *amsg, buf[MPR_MAX_STRING];
     static int  solo = 0;
 
     if (solo > 0) {
@@ -952,7 +952,7 @@ static void logHandler(int flags, int level, cchar *msg)
     } else if (flags & MPR_RAW) {
         tag = NULL;
     } else {
-        tag = itos(lbuf, sizeof(lbuf), level, 10);
+        tag = itos(level, 10);
     }
     if (tag) {
         if (strlen(msg) < (MPR_MAX_STRING - 32)) {

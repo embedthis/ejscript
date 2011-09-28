@@ -549,23 +549,32 @@ r.link({action: "Admin/logout")
 r.link({action: "\@Admin/logout")
 r.link({uri: "http://example.com/checkout"})
 r.link({route: "default", action: "\@checkout")
-r.link({product: "candy", quantity: "10", template: "/cart/{product}/{quantity}")
+r.link({product: "candy", quantity: "10", template: "/cart/{product}/{quantity}}")
          */
         function link(target: Object): Uri {
+            /*
+                MOB - refactor:
+                Don't update target as the object hash. Don't use target.uri as the intermediate form. 
+                Don't support outside use of target.uri to tunnel a URI
+             */
             if (target is Uri) {
                 target = target.toString()
             }
             if (target is String) {
                 if (target[0] == '@') {
+                    //  MOB - what about a possible controller in the target?
                     target = {action: target}
                 } else {
                     /* Non-mvc URI string */
                     target = {uri: (target[0] == '/') ? (scriptName + target) : target}
                 }
             }
+            //  MOB - remove target.uri tunneling except internally in this routine
             if (!target.uri) {
                 target = target.clone()
                 if (target.action) {
+                    //  MOB - this should be genericized and take request.params to get a default action / controller
+                    //  and all other params
                     if (target.action[0] == '@') {
                         target.action = target.action.slice(1)
                     }

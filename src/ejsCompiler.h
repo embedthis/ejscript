@@ -728,7 +728,7 @@ typedef struct EcCompiler {
     EcToken     *token;                     /* Current input token */
 
     /*  Lexer */
-    MprHashTable *keywords;
+    MprHash     *keywords;
     EcStream    *stream;
     EcToken     *putback;                   /* List of active putback tokens */
     char        *docToken;                  /* Last doc token */

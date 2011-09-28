@@ -286,14 +286,14 @@ static EjsObj *http_get(Ejs *ejs, EjsHttp *hp, int argc, EjsObj **argv)
  */
 static EjsPot *http_getRequestHeaders(Ejs *ejs, EjsHttp *hp, int argc, EjsObj **argv)
 {
-    MprHash         *p;
+    MprKey          *kp;
     HttpConn        *conn;
     EjsPot          *headers;
 
     conn = hp->conn;
     headers = ejsCreateEmptyPot(ejs);
-    for (p = 0; conn->tx && (p = mprGetNextKey(conn->tx->headers, p)) != 0; ) {
-        ejsSetPropertyByName(ejs, headers, EN(p->key), ejsCreateStringFromAsc(ejs, p->data));
+    for (kp = 0; conn->tx && (kp = mprGetNextKey(conn->tx->headers, kp)) != 0; ) {
+        ejsSetPropertyByName(ejs, headers, EN(kp->key), ejsCreateStringFromAsc(ejs, kp->data));
     }
     return headers;
 }
@@ -336,8 +336,8 @@ static EjsString *http_header(Ejs *ejs, EjsHttp *hp, int argc, EjsObj **argv)
  */
 static EjsPot *http_headers(Ejs *ejs, EjsHttp *hp, int argc, EjsObj **argv)
 {
-    MprHashTable    *hash;
-    MprHash         *p;
+    MprHash         *hash;
+    MprKey          *kp;
     EjsPot          *results;
     int             i;
 
@@ -349,8 +349,8 @@ static EjsPot *http_headers(Ejs *ejs, EjsHttp *hp, int argc, EjsObj **argv)
     if (hash == 0) {
         return results;
     }
-    for (i = 0, p = mprGetFirstKey(hash); p; p = mprGetNextKey(hash, p), i++) {
-        ejsSetPropertyByName(ejs, results, EN(p->key), ejsCreateStringFromAsc(ejs, p->data));
+    for (i = 0, kp = mprGetFirstKey(hash); kp; kp = mprGetNextKey(hash, kp), i++) {
+        ejsSetPropertyByName(ejs, results, EN(kp->key), ejsCreateStringFromAsc(ejs, kp->data));
     }
     return results;
 }

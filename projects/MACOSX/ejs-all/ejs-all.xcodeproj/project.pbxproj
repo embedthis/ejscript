@@ -1016,7 +1016,6 @@
 		C9E9F12F13D8ACBA00C20E21 /* Product.xcconfig */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.xcconfig; path = Product.xcconfig; sourceTree = "<group>"; };
 		C9E9F13013D8ACBA00C20E21 /* Release.xcconfig */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.xcconfig; path = Release.xcconfig; sourceTree = "<group>"; };
 		C9EA7DAB13D41CE20035EB46 /* buildConfig.default */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = buildConfig.default; sourceTree = "<group>"; };
-		C9EA7DB613D492860035EB46 /* ecCompiler.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = ecCompiler.h; path = ../include/ecCompiler.h; sourceTree = "<group>"; };
 		C9F4C61810B5D7B80046EFF4 /* ejsRequest.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; name = ejsRequest.c; path = ../../../src/jems/ejs.web/src/ejsRequest.c; sourceTree = SOURCE_ROOT; };
 		C9F4C61A10B5D7B80046EFF4 /* ejsSession.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; name = ejsSession.c; path = ../../../src/jems/ejs.web/src/ejsSession.c; sourceTree = SOURCE_ROOT; };
 		C9F69FD513955531006CC53D /* ejsLocalCache.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; name = ejsLocalCache.c; path = ../../../src/core/src/ejsLocalCache.c; sourceTree = "<group>"; };
@@ -1399,7 +1398,6 @@
 		C97624240FD06F8B009C78E1 /* compiler */ = {
 			isa = PBXGroup;
 			children = (
-				C9EA7DB613D492860035EB46 /* ecCompiler.h */,
 				C97624260FD06F8B009C78E1 /* ecAst.c */,
 				C97624270FD06F8B009C78E1 /* ecCodeGen.c */,
 				C919245A129601190045B8A0 /* ecCompiler.c */,
@@ -3227,6 +3225,7 @@
 				C95DB5CD141F1FCC0047A8F8 /* Release */,
 			);
 			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
 		};
 		C95E4FD810EBFD9300982610 /* Build configuration list for PBXNativeTarget "libhttp" */ = {
 			isa = XCConfigurationList;

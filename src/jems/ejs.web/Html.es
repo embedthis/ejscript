@@ -363,6 +363,7 @@ module ejs.web {
                 if (options.styleRows && options.styleRows[row]) {
                     styleRow = ' class="' + options.styleRows[row] + '"'
                 }
+                //  MOB - why not set these above when defining rowOptions
                 rowOptions.record = r
                 rowOptions.field = null
                 rowOptions.values = values
@@ -558,6 +559,7 @@ module ejs.web {
                 setLinkOptions(options.click, options, "data-click")
 
             } else if (options.remote) {
+                //  MOB cleanup - data-remote only ever allow a boolean value.
                 if (options.remote == true && options.action) {
                     options.remote = options.action
                 }
