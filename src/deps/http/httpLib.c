@@ -7429,7 +7429,6 @@ static int matchRoute(HttpConn *conn, HttpRoute *route)
         }
     }
     if (route->params) {
-        httpAddParams(conn);
         for (next = 0; (op = mprGetNextItem(route->params, &next)) != 0; ) {
             mprLog(6, "Test route \"%s\" field \"%s\"", route->name, op->name);
             if ((field = httpGetParam(conn, op->name, "")) != 0) {
@@ -7474,9 +7473,6 @@ static int matchRoute(HttpConn *conn, HttpRoute *route)
     if (route->prefix) {
         //  MOB - call this {app} or {prefix}
         httpSetParam(conn, "app", route->prefix);
-    }
-    if (tx->handler->flags & HTTP_STAGE_PARAMS) {
-        httpAddParams(conn);
     }
     if (route->tokens) {
         for (next = 0; (token = mprGetNextItem(route->tokens, &next)) != 0; ) {
@@ -8298,6 +8294,7 @@ static void finalizePattern(HttpRoute *route)
                     token = snclone(&cp[1], ep - cp - 1);
                     if ((field = schr(token, '=')) != 0) {
                         *field++ = '\0';
+                        field = sfmt("(%s)", field);
                     } else {
                         field = "([^/]*)";
                     }
@@ -8593,7 +8590,7 @@ char *httpLink(HttpConn *conn, cchar *target, MprHash *options)
         target = httpTemplate(conn, target, 0);
     } else  {
         if (options) {
-            httpBlendOptions(options, target);
+            options = mprBlendHash(httpGetOptions(target), options);
         } else {
             options = httpGetOptions(target);
         }
@@ -9826,6 +9823,7 @@ static char *trimQuotes(char *str)
 }
 
 
+#if UNUSED
 /*
     Options parser. This is a sub-set of JSON. Does not support arrays.
  */
@@ -9885,6 +9883,7 @@ static MprHash *deserializeOptions(MprHash *hash, cchar **token)
     *token = cp;
     return hash;
 }
+#endif
 
 
 MprHash *httpGetOptions(cchar *options)
@@ -9896,25 +9895,11 @@ MprHash *httpGetOptions(cchar *options)
         /* Allow embedded URIs as options */
         options = sfmt("click: '%s'", options);
     }
+#if UNUSED
     return deserializeOptions(NULL, &options);
-}
-
-
-void httpBlendOptions(MprHash *options, cchar *optionString)
-{
-    MprHash     *hash;
-    MprKey      *kp;
-
-    mprAssert(options);
-    if (*optionString == '@') {
-        /* Allow embedded URIs as options */
-        optionString = sfmt("click: '%s'", optionString);
-    }
-    if ((hash = deserializeOptions(NULL, &optionString)) != 0) {
-        for (ITERATE_KEYS(hash, kp)) {
-            mprAddKey(options, kp->key, kp->data);
-        }
-    }
+#else
+    return mprParseHash(options);
+#endif
 }
 
 
@@ -9961,6 +9946,16 @@ void httpAddOption(MprHash *options, cchar *field, cchar *value)
     } else {
         mprAddKey(options, field, value);
     }
+}
+
+
+void httpRemoveOption(MprHash *options, cchar *field)
+{
+    if (options == 0) {
+        mprAssert(options);
+        return;
+    }
+    mprRemoveKey(options, field);
 }
 
 
@@ -10047,6 +10042,7 @@ static void parseRequestLine(HttpConn *conn, HttpPacket *packet);
 static void parseResponseLine(HttpConn *conn, HttpPacket *packet);
 static bool processCompletion(HttpConn *conn);
 static bool processContent(HttpConn *conn, HttpPacket *packet);
+static void parseMethod(HttpConn *conn);
 static bool processParsed(HttpConn *conn);
 static bool processRunning(HttpConn *conn);
 static void routeRequest(HttpConn *conn);
@@ -10255,11 +10251,31 @@ static bool parseIncoming(HttpConn *conn, HttpPacket *packet)
 }
 
 
+static void mapMethod(HttpConn *conn)
+{
+    HttpRx      *rx;
+    cchar       *method;
+
+    rx = conn->rx;
+    if (rx->flags & HTTP_POST) {
+        if ((method = httpGetParam(conn, "-http-method-", 0)) != 0) {
+            if (!scasematch(method, rx->method)) {
+                mprLog(3, "Change method from %s to %s for %s", rx->method, method, rx->uri);
+                rx->method = (char*) method;
+                parseMethod(conn);
+            }
+        }
+    }
+}
+
+
 static void routeRequest(HttpConn *conn)
 {
     HttpRx  *rx;
 
     rx = conn->rx;
+    httpAddParams(conn);
+    mapMethod(conn);
     httpRouteRequest(conn);  
     httpCreateRxPipeline(conn, rx->route);
     httpCreateTxPipeline(conn, rx->route);
@@ -10311,28 +10327,17 @@ static void traceRequest(HttpConn *conn, HttpPacket *packet)
 }
 
 
-/*  
-    Parse the first line of a http request. Return true if the first line parsed. This is only called once all the headers
-    have been read and buffered. Requests look like: METHOD URL HTTP/1.X.
- */
-static void parseRequestLine(HttpConn *conn, HttpPacket *packet)
+static void parseMethod(HttpConn *conn)
 {
     HttpRx      *rx;
-    char        *method, *uri, *protocol;
+    cchar       *method;
     int         methodFlags;
 
     rx = conn->rx;
-    uri = 0;
+    method = rx->method;
     methodFlags = 0;
 
-#if BLD_DEBUG
-    conn->startTime = conn->http->now;
-    conn->startTicks = mprGetTicks();
-#endif
-    traceRequest(conn, packet);
-
-    method = getToken(conn, " ");
-    rx->method = method = supper(method);
+    rx->flags &= (HTTP_DELETE | HTTP_GET | HTTP_HEAD | HTTP_POST | HTTP_PUT | HTTP_TRACE | HTTP_UNKNOWN);
 
     switch (method[0]) {
     case 'D':
@@ -10344,17 +10349,6 @@ static void parseRequestLine(HttpConn *conn, HttpPacket *packet)
     case 'G':
         if (strcmp(method, "GET") == 0) {
             methodFlags = HTTP_GET;
-        }
-        break;
-
-    case 'P':
-        if (strcmp(method, "POST") == 0) {
-            methodFlags = HTTP_POST;
-            rx->needInputPipeline = 1;
-
-        } else if (strcmp(method, "PUT") == 0) {
-            methodFlags = HTTP_PUT;
-            rx->needInputPipeline = 1;
         }
         break;
 
@@ -10371,6 +10365,17 @@ static void parseRequestLine(HttpConn *conn, HttpPacket *packet)
         }
         break;
 
+    case 'P':
+        if (strcmp(method, "POST") == 0) {
+            methodFlags = HTTP_POST;
+            rx->needInputPipeline = 1;
+
+        } else if (strcmp(method, "PUT") == 0) {
+            methodFlags = HTTP_PUT;
+            rx->needInputPipeline = 1;
+        }
+        break;
+
     case 'T':
         if (strcmp(method, "TRACE") == 0) {
             methodFlags = HTTP_TRACE;
@@ -10380,6 +10385,30 @@ static void parseRequestLine(HttpConn *conn, HttpPacket *packet)
     if (methodFlags == 0) {
         methodFlags = HTTP_UNKNOWN;
     }
+    rx->flags |= methodFlags;
+}
+
+
+/*  
+    Parse the first line of a http request. Return true if the first line parsed. This is only called once all the headers
+    have been read and buffered. Requests look like: METHOD URL HTTP/1.X.
+ */
+static void parseRequestLine(HttpConn *conn, HttpPacket *packet)
+{
+    HttpRx      *rx;
+    char        *method, *uri, *protocol;
+
+    rx = conn->rx;
+#if BLD_DEBUG
+    conn->startTime = conn->http->now;
+    conn->startTicks = mprGetTicks();
+#endif
+    traceRequest(conn, packet);
+
+    method = getToken(conn, " ");
+    rx->method = method = supper(method);
+    parseMethod(conn);
+
     uri = getToken(conn, " ");
     if (*uri == '\0') {
         httpError(conn, HTTP_CLOSE | HTTP_CODE_BAD_REQUEST, "Bad HTTP request. Empty URI");
@@ -10388,7 +10417,7 @@ static void parseRequestLine(HttpConn *conn, HttpPacket *packet)
     }
     protocol = conn->protocol = supper(getToken(conn, "\r\n"));
     if (strcmp(protocol, "HTTP/1.0") == 0) {
-        if (methodFlags & (HTTP_POST|HTTP_PUT)) {
+        if (rx->flags & (HTTP_POST|HTTP_PUT)) {
             rx->remainingContent = MAXINT;
             rx->needInputPipeline = 1;
         }
@@ -10400,7 +10429,6 @@ static void parseRequestLine(HttpConn *conn, HttpPacket *packet)
         conn->protocol = sclone("HTTP/1.1");
         httpError(conn, HTTP_CLOSE | HTTP_CODE_NOT_ACCEPTABLE, "Unsupported HTTP protocol");
     }
-    rx->flags |= methodFlags;
     rx->originalUri = rx->uri = sclone(uri);
     httpSetState(conn, HTTP_STATE_FIRST);
 }
@@ -10710,18 +10738,21 @@ static void parseHeaders(HttpConn *conn, HttpPacket *packet)
             }
             break;
 
-#if BLD_DEBUG
         case 'x':
-            if (strcmp(key, "x-chunk-size") == 0) {
+            if (strcmp(key, "x-http_method_override") == 0) {
+                rx->method = sclone(value);
+                parseMethod(conn);
+#if BLD_DEBUG
+            } else if (strcmp(key, "x-chunk-size") == 0) {
                 tx->chunkSize = atoi(value);
                 if (tx->chunkSize <= 0) {
                     tx->chunkSize = 0;
                 } else if (tx->chunkSize > conn->limits->chunkSize) {
                     tx->chunkSize = conn->limits->chunkSize;
                 }
+#endif
             }
             break;
-#endif
 
         case 'u':
             if (strcmp(key, "user-agent") == 0) {

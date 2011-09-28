@@ -3979,7 +3979,7 @@ extern int mprLookupItem(MprList *list, cvoid *item);
     @return Returns the positive index of the removed item, otherwise a negative MPR error code.
     @ingroup MprList
  */
-extern int mprRemoveItem(MprList *list, void *item);
+extern int mprRemoveItem(MprList *list, cvoid *item);
 
 /**
     Remove an item from the list
@@ -4264,7 +4264,7 @@ extern int print(cchar *fmt, ...);
     Each hash entry has a descriptor entry. This is used to manage the hash table link chains.
     @see MprKey MprHashProc MprHash mprAddDuplicateHash mprAddKey mprAddKeyFmt mprCloneHash mprCreateHash 
         mprGetFirstKey mprGetHashLength mprGetKeyBits mprGetNextKey mprLookupKey mprLookupKeyEntry mprRemoveKey 
-        mprSetKeyBits 
+        mprSetKeyBits mprBlendHash
     @stability Evolving.
     @defgroup MprHash MprHash
  */
@@ -4453,6 +4453,12 @@ extern int mprRemoveKey(MprHash *table, cvoid *key);
  */
 extern void mprSetKeyBits(MprKey *hp, int bits);
 #endif
+
+//  MOB DOC
+#define MPR_HASH_PRETTY 0x1
+extern MprHash *mprBlendHash(MprHash *hash, MprHash *extra);
+extern MprHash *mprParseHash(cchar *str);
+extern cchar *mprHashToString(MprHash *hash, int flags);
 
 /*
     Prototypes for file system switch methods
