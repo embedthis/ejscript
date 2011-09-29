@@ -3579,7 +3579,7 @@ static void httpErrorV(HttpConn *conn, int flags, cchar *fmt, va_list args)
 
     mprAssert(fmt);
     if (conn == 0) {
-        return 0;
+        return;
     }
     if (flags & HTTP_ABORT) {
         conn->connError = 1;
@@ -3815,6 +3815,7 @@ static void manageHost(HttpHost *host, int flags)
         mprMark(host->parent);
         mprMark(host->dirs);
         mprMark(host->routes);
+        mprMark(host->defaultRoute);
         mprMark(host->mimeTypes);
         mprMark(host->home);
         mprMark(host->traceInclude);
@@ -3833,20 +3834,38 @@ static void manageHost(HttpHost *host, int flags)
 }
 
 
+static void printRoute(HttpRoute *route)
+{
+    cchar   *methods, *pattern, *target;
+
+    methods = httpGetRouteMethods(route);
+    pattern = (route->pattern && *route->pattern) ? route->pattern : "^/";
+    target = (route->target && *route->target) ? route->target : "$&";
+    mprLog(0, "  %-20s %-12s %-40s %-14s", route->name, methods ? methods : "*", pattern, target);
+}
+
+
+HttpRoute *httpGetHostDefaultRoute(HttpHost *host)
+{
+    return host->defaultRoute;
+}
+
+
 //  MOB - support different formats (one line or multi-line)
 void httpLogRoutes(HttpHost *host)
 {
     HttpRoute   *route;
-    cchar       *methods;
-    int         next;
+    int         next, foundDefault;
 
-    for (next = 0; (route = mprGetNextItem(host->routes, &next)) != 0; ) {
-        methods = httpGetRouteMethods(route);
-        if (route->target) {
-            mprLog(0, "  %-20s %-12s %-40s %-14s", route->name, methods ? methods : "*", route->pattern, route->target);
-        } else {
-            mprLog(0, "  %-20s %-12s %-40s", route->name, methods ? methods : "*", route->pattern);
+    mprLog(0, "  %-20s %-12s %-40s %-14s", "Name", "Methods", "Pattern", "Target");
+    for (foundDefault = next = 0; (route = mprGetNextItem(host->routes, &next)) != 0; ) {
+        printRoute(route);
+        if (route == host->defaultRoute) {
+            foundDefault++;
         }
+    }
+    if (!foundDefault && host->defaultRoute) {
+        printRoute(host->defaultRoute);
     }
 }
 
@@ -3906,7 +3925,7 @@ void httpSetHostProtocol(HttpHost *host, cchar *protocol)
 }
 
 
-int httpAddRouteToHost(HttpHost *host, HttpRoute *route)
+int httpAddRoute(HttpHost *host, HttpRoute *route)
 {
     mprAssert(route);
     
@@ -3942,6 +3961,12 @@ HttpRoute *httpLookupRoute(HttpHost *host, cchar *name)
 void httpResetRoutes(HttpHost *host)
 {
     host->routes = mprCreateList(-1, 0);
+}
+
+
+void httpSetHostDefaultRoute(HttpHost *host, HttpRoute *route)
+{
+    host->defaultRoute = route;
 }
 
 
@@ -4795,18 +4820,19 @@ void httpRouteRequest(HttpConn *conn)
             break;
         }
         if ((match = httpMatchRoute(conn, route)) == HTTP_ROUTE_OK) {
-            rx->route = route;
             mprAssert(tx->handler);
             break;
         } else if (match == HTTP_ROUTE_REROUTE) {
             next = 0;
+            route = 0;
             rewrites++;
         }
     }
-    if (rx->route == 0) {
-        httpError(conn, HTTP_CODE_INTERNAL_SERVER_ERROR, "Can't find route for request");
+    if (route == 0 || tx->handler == 0) {
+        httpError(conn, HTTP_CODE_INTERNAL_SERVER_ERROR, "Can't find suitable route for request");
         return;
     }
+    rx->route = route;
     if (conn->error || tx->redirected || tx->altBody) {
         tx->handler = conn->http->passHandler;
         if (rewrites >= HTTP_MAX_REWRITE) {
@@ -7166,61 +7192,6 @@ HttpRoute *httpCreateRoute(HttpHost *host)
 }
 
 
-HttpRoute *httpCreateDefaultRoute(HttpHost *host)
-{
-    HttpRoute   *route;
-
-    mprAssert(host);
-    if ((route = httpCreateRoute(host)) == 0) {
-        return 0;
-    }
-    httpSetRouteName(route, "default");
-    httpFinalizeRoute(route);
-    return route;
-}
-
-
-/*
-    Host may be null
- */
-HttpRoute *httpCreateConfiguredRoute(HttpHost *host, int serverSide)
-{
-    HttpRoute   *route;
-    Http        *http;
-
-    /*
-        Create default incoming and outgoing pipelines. Order matters.
-     */
-    route = httpCreateRoute(host);
-    http = route->http;
-    httpAddRouteFilter(route, http->rangeFilter->name, NULL, HTTP_STAGE_TX);
-    httpAddRouteFilter(route, http->chunkFilter->name, NULL, HTTP_STAGE_RX | HTTP_STAGE_TX);
-    if (serverSide) {
-        httpAddRouteFilter(route, http->uploadFilter->name, NULL, HTTP_STAGE_RX);
-    }
-    return route;
-}
-
-
-HttpRoute *httpCreateAliasRoute(HttpRoute *parent, cchar *pattern, cchar *path, int status)
-{
-    HttpRoute   *route;
-
-    mprAssert(parent);
-    mprAssert(pattern && *pattern);
-
-    if ((route = httpCreateInheritedRoute(parent)) == 0) {
-        return 0;
-    }
-    httpSetRoutePattern(route, pattern, 0);
-    if (path) {
-        httpSetRouteDir(route, path);
-    }
-    route->responseStatus = status;
-    return route;
-}
-
-
 /*  
     Create a new location block. Inherit from the parent. We use a copy-on-write scheme if these are modified later.
  */
@@ -7329,6 +7300,62 @@ static void manageRoute(HttpRoute *route, int flags)
             free(route->patternCompiled);
         }
     }
+}
+
+
+HttpRoute *httpCreateDefaultRoute(HttpHost *host)
+{
+    HttpRoute   *route;
+
+    mprAssert(host);
+    if ((route = httpCreateRoute(host)) == 0) {
+        return 0;
+    }
+    httpSetRouteName(route, "default");
+    httpFinalizeRoute(route);
+    return route;
+}
+
+
+/*
+    Create and configure a basic route. This is mainly used for client side piplines.
+    Host may be null.
+ */
+HttpRoute *httpCreateConfiguredRoute(HttpHost *host, int serverSide)
+{
+    HttpRoute   *route;
+    Http        *http;
+
+    /*
+        Create default incoming and outgoing pipelines. Order matters.
+     */
+    route = httpCreateRoute(host);
+    http = route->http;
+    httpAddRouteFilter(route, http->rangeFilter->name, NULL, HTTP_STAGE_TX);
+    httpAddRouteFilter(route, http->chunkFilter->name, NULL, HTTP_STAGE_RX | HTTP_STAGE_TX);
+    if (serverSide) {
+        httpAddRouteFilter(route, http->uploadFilter->name, NULL, HTTP_STAGE_RX);
+    }
+    return route;
+}
+
+
+HttpRoute *httpCreateAliasRoute(HttpRoute *parent, cchar *pattern, cchar *path, int status)
+{
+    HttpRoute   *route;
+
+    mprAssert(parent);
+    mprAssert(pattern && *pattern);
+
+    if ((route = httpCreateInheritedRoute(parent)) == 0) {
+        return 0;
+    }
+    httpSetRoutePattern(route, pattern, 0);
+    if (path) {
+        httpSetRouteDir(route, path);
+    }
+    route->responseStatus = status;
+    return route;
 }
 
 
@@ -7459,8 +7486,8 @@ static int matchRoute(HttpConn *conn, HttpRoute *route)
             if (condition->flags & HTTP_ROUTE_NOT) {
                 rc = !rc;
             }
-            if (!rc) {
-                return HTTP_ROUTE_REJECT;
+            if (rc == HTTP_ROUTE_REJECT) {
+                return rc;
             }
         }
     }
@@ -8495,7 +8522,7 @@ void httpFinalizeRoute(HttpRoute *route)
         This is important as requests process routes in-order.
      */
     mprAssert(route);
-    httpAddRouteToHost(route->host, route);
+    httpAddRoute(route->host, route);
 #if BLD_FEATURE_SSL
     mprConfigureSsl(route->ssl);
 #endif
@@ -9140,7 +9167,8 @@ static int writeTarget(HttpConn *conn, HttpRoute *route, HttpRouteOp *op)
 
 
 
-HttpRoute *httpAddRoute(HttpRoute *parent, cchar *name, cchar *methods, cchar *pattern, cchar *target, cchar *source)
+HttpRoute *httpAddConfiguredRoute(HttpRoute *parent, cchar *name, cchar *methods, cchar *pattern, cchar *target, 
+        cchar *source)
 {
     HttpRoute   *route;
 
@@ -9195,40 +9223,40 @@ static char *qualifyName(HttpRoute *route, cchar *controller, cchar *name)
 /*
     Add a restful route. The parent route may supply a route prefix. If defined, the route name will prepend the prefix.
  */
-static void addRoute(HttpRoute *parent, cchar *name, cchar *methods, cchar *pattern, cchar *target, cchar *source, 
+static void addRestful(HttpRoute *parent, cchar *name, cchar *methods, cchar *pattern, cchar *target, cchar *source, 
         cchar *prefix, cchar *controller)
 {
     pattern = sfmt(pattern, prefix);
     target = sfmt(target, controller);
     source = sfmt(source, controller);
     name = qualifyName(parent, prefix, name);
-    httpAddRoute(parent, name, methods, pattern, target, source);
+    httpAddConfiguredRoute(parent, name, methods, pattern, target, source);
 }
 
 
 void httpAddResourceGroup(HttpRoute *parent, cchar *prefix, cchar *controller)
 {
-    addRoute(parent, "index",   "GET",    "^/%s(/)*$",                  "%s-index",     "%s.c", prefix, controller);
-    addRoute(parent, "init",    "GET",    "^/%s/init$",                 "%s-init",      "%s.c", prefix, controller);
-    addRoute(parent, "create",  "POST",   "^/%s(/)*$",                  "%s-create",    "%s.c", prefix, controller);
-    addRoute(parent, "edit",    "GET",    "^/%s/{id=[0-9]+}/edit$",     "%s-edit",      "%s.c", prefix, controller);
-    addRoute(parent, "show",    "GET",    "^/%s/{id=[0-9]+}$",          "%s-show",      "%s.c", prefix, controller);
-    addRoute(parent, "update",  "PUT",    "^/%s/{id=[0-9]+}$",          "%s-update",    "%s.c", prefix, controller);
-    addRoute(parent, "destroy", "DELETE", "^/%s/{id=[0-9]+}$",          "%s-destroy",   "%s.c", prefix, controller);
-    addRoute(parent, "custom",  "POST",   "^/%s/{action}/{id=[0-9]+}$", "%s-${action}", "%s.c", prefix, controller);
-    addRoute(parent, "default", "POST",   "^/%s/{action}$",             "%s-${action}", "%s.c", prefix, controller);
+    addRestful(parent, "index",   "GET",    "^/%s(/)*$",                  "%s-index",     "%s.c", prefix, controller);
+    addRestful(parent, "init",    "GET",    "^/%s/init$",                 "%s-init",      "%s.c", prefix, controller);
+    addRestful(parent, "create",  "POST",   "^/%s(/)*$",                  "%s-create",    "%s.c", prefix, controller);
+    addRestful(parent, "edit",    "GET",    "^/%s/{id=[0-9]+}/edit$",     "%s-edit",      "%s.c", prefix, controller);
+    addRestful(parent, "show",    "GET",    "^/%s/{id=[0-9]+}$",          "%s-show",      "%s.c", prefix, controller);
+    addRestful(parent, "update",  "PUT",    "^/%s/{id=[0-9]+}$",          "%s-update",    "%s.c", prefix, controller);
+    addRestful(parent, "destroy", "DELETE", "^/%s/{id=[0-9]+}$",          "%s-destroy",   "%s.c", prefix, controller);
+    addRestful(parent, "custom",  "POST",   "^/%s/{action}/{id=[0-9]+}$", "%s-${action}", "%s.c", prefix, controller);
+    addRestful(parent, "default", "POST",   "^/%s/{action}$",             "%s-${action}", "%s.c", prefix, controller);
 }
 
 
 void httpAddResource(HttpRoute *parent, cchar *prefix, cchar *controller)
 {
-    addRoute(parent, "init",    "GET",    "^/%s/init$",         "%s-init",      "%s.c", prefix, controller);
-    addRoute(parent, "create",  "POST",   "^/%s(/)*$",          "%s-create",    "%s.c", prefix, controller);
-    addRoute(parent, "edit",    "GET",    "^/%s/edit$",         "%s-edit",      "%s.c", prefix, controller);
-    addRoute(parent, "show",    "GET",    "^/%s$",              "%s-show",      "%s.c", prefix, controller);
-    addRoute(parent, "update",  "PUT",    "^/%s$",              "%s-update",    "%s.c", prefix, controller);
-    addRoute(parent, "destroy", "DELETE", "^/%s$",              "%s-destroy",   "%s.c", prefix, controller);
-    addRoute(parent, "default", "POST",   "^/%s/{action}$",     "%s-${action}", "%s.c", prefix, controller);
+    addRestful(parent, "init",    "GET",    "^/%s/init$",         "%s-init",      "%s.c", prefix, controller);
+    addRestful(parent, "create",  "POST",   "^/%s(/)*$",          "%s-create",    "%s.c", prefix, controller);
+    addRestful(parent, "edit",    "GET",    "^/%s/edit$",         "%s-edit",      "%s.c", prefix, controller);
+    addRestful(parent, "show",    "GET",    "^/%s$",              "%s-show",      "%s.c", prefix, controller);
+    addRestful(parent, "update",  "PUT",    "^/%s$",              "%s-update",    "%s.c", prefix, controller);
+    addRestful(parent, "destroy", "DELETE", "^/%s$",              "%s-destroy",   "%s.c", prefix, controller);
+    addRestful(parent, "default", "POST",   "^/%s/{action}$",     "%s-${action}", "%s.c", prefix, controller);
 }
 
 
@@ -9239,11 +9267,11 @@ void httpAddDefaultRoutes(HttpRoute *parent)
     source = parent->sourceName;
     name = qualifyName(parent, NULL, "home");
     path = stemplate("${STATIC_DIR}/index.esp", parent->pathTokens);
-    httpAddRoute(parent, name, "GET,POST,PUT", "^/$", path, source);
+    httpAddConfiguredRoute(parent, name, "GET,POST,PUT", "^/$", path, source);
 
     name = qualifyName(parent, NULL, "static");
     path = stemplate("${STATIC_DIR}/$1", parent->pathTokens);
-    httpAddRoute(parent, name, "GET", "^/static/(.*)", path, source);
+    httpAddConfiguredRoute(parent, name, "GET", "^/static/(.*)", path, source);
 }
 
 
@@ -9254,7 +9282,8 @@ void httpAddRouteSet(HttpRoute *parent, cchar *set, cchar *controllerPattern, cc
 
     } else if (scasematch(set, "mvc")) {
         httpAddDefaultRoutes(parent);
-        httpAddRoute(parent, "default", NULL, "^/{controller}(~/{action}~)", "${controller}-${action}", "${controller}.c");
+        httpAddConfiguredRoute(parent, "default", NULL, "^/{controller}(~/{action}~)", "${controller}-${action}", 
+            "${controller}.c");
 
     } else if (scasematch(set, "restful")) {
         httpAddDefaultRoutes(parent);
@@ -11770,19 +11799,24 @@ void httpTrimExtraPath(HttpConn *conn)
 {
     HttpTx      *tx;
     HttpRx      *rx;
-    char        *cp, *extra, *start;
+    char        *cp, *extra;
     ssize       len;
 
     rx = conn->rx;
     tx = conn->tx;
 
     if (!(rx->flags & (HTTP_OPTIONS | HTTP_TRACE))) { 
-        start = rx->pathInfo;
-        if ((cp = strchr(start, '.')) != 0 && (extra = strchr(cp, '/')) != 0) {
-            len = extra - start;
+        if ((cp = strchr(rx->pathInfo, '.')) != 0 && (extra = strchr(cp, '/')) != 0) {
+            len = extra - rx->pathInfo;
             if (0 < len && len < slen(rx->pathInfo)) {
                 rx->extraPath = sclone(&rx->pathInfo[len]);
                 rx->pathInfo[len] = '\0';
+            }
+        }
+        if ((cp = strchr(rx->target, '.')) != 0 && (extra = strchr(cp, '/')) != 0) {
+            len = extra - rx->target;
+            if (0 < len && len < slen(rx->target)) {
+                rx->target[len] = '\0';
             }
         }
     }
