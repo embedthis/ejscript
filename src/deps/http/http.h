@@ -2834,21 +2834,25 @@ typedef struct HttpLang {
 typedef struct HttpRoute {
     /* Ordered for debugging */
     char            *name;                  /**< Route name */
+    char            *pattern;               /**< Original matching URI pattern for the route (includes prefix) */
+    char            *startSegment;          /**< Starting literal segment of pattern (includes prefix) */
+    char            *startWith;             /**< Starting literal segment of pattern (includes prefix) */
+    char            *optimizedPattern;      /**< Processed pattern (excludes prefix) */
+    char            *prefix;                /**< Application scriptName prefix */
+    char            *template;              /**< URI template for forming links based on this route (includes prefix) */
+    char            *targetRule;            /**< Target rule */
+    char            *target;                /**< Route target details */
     char            *dir;                   /**< Directory filename */
     char            *index;                 /**< Default index document name */
     char            *methodSpec;            /**< Supported HTTP methods */
-    char            *pattern;               /**< Original matching URI pattern for the route */
-    char            *processedPattern;      /**< Expanded {tokens} => $N */
-    char            *targetRule;            /**< Target rule */
-    char            *target;                /**< Route target details */
-    int             responseStatus;         /**< Response status code */
-    char            *literalPattern;        /**< Starting literal segment of pattern */
-    ssize           literalPatternLen;      /**< Length of literalPattern */
-    char            *prefix;                /**< Application scriptName prefix */
-    ssize           prefixLen;              /**< Prefix length */
-
-    char            *template;              /**< URI template for forming links based on this route */
     HttpStage       *handler;               /**< Fixed handler */
+
+    int             nextGroup;              /**< Next route with a different startWith */
+    int             responseStatus;         /**< Response status code */
+    ssize           prefixLen;              /**< Prefix length */
+    ssize           startWithLen;           /**< Length of startWith */
+    ssize           startSegmentLen;        /**< Prefix length */
+
 
     HttpAuth        *auth;                  /**< Per route block authentication */
     Http            *http;                  /**< Http service object (copy of appweb->http) */
@@ -2919,10 +2923,10 @@ typedef struct HttpRouteOp {
 typedef int (HttpRouteProc)(HttpConn *conn, HttpRoute *route, HttpRouteOp *item);
 
 //  MOB DOC
-extern void httpAddResource(HttpRoute *parent, cchar *prefix, cchar *controller);
-extern void httpAddResourceGroup(HttpRoute *parent, cchar *prefix, cchar *controller);
+extern void httpAddResource(HttpRoute *parent, cchar *resource);
+extern void httpAddResourceGroup(HttpRoute *parent, cchar *resource);
 extern void httpAddDefaultRoutes(HttpRoute *parent);
-extern void httpAddRouteSet(HttpRoute *parent, cchar *pack, cchar *patternPrefix, cchar *controller);
+extern void httpAddRouteSet(HttpRoute *parent, cchar *pack);
 
 /**
     Add a route condition
@@ -4856,7 +4860,7 @@ extern HttpHost *httpCreateHost();
 extern HttpRoute *httpGetHostDefaultRoute(HttpHost *host);
 
 //  MOB DOC
-extern void httpLogRoutes(HttpHost *host);
+extern void httpLogRoutes(HttpHost *host, bool full);
 
 /**
     Lookup a route by name

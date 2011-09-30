@@ -102,6 +102,9 @@ module ejs.web {
             request.params.controller = request.params.controller.toPascal()
             cname ||= (request.params.controller + "Controller")
             _initRequest = request
+            if (!global[cname]) {
+                throw "Can't locate controller "
+            }
             let c: Controller = new global[cname](request)
             _initRequest = null
             return c
