@@ -1,5 +1,5 @@
 #
-#	Makefile to build the SQLite Classe
+#	Makefile to build the SQLite Class
 #
 #	Copyright (c) Embedthis Software LLC, 2003-2011. All Rights Reserved.
 #
@@ -34,8 +34,6 @@ $(BLD_LIB_DIR)/libsqlite3$(BLD_LIB): $(BLD_OBJ_DIR)/sqlite3$(BLD_OBJ)
 
 $(BLD_BIN_DIR)/ejssql$(BLD_EXE): $(BLD_LIB_DIR)/libsqlite3$(BLD_LIB)
 	bld --exe $(BLD_BIN_DIR)/ejssql$(BLD_EXE) --libs "$(BLD_MPR_LIBS)" ejssql sqlite3
-
-
 
 #
 #   Local variables:

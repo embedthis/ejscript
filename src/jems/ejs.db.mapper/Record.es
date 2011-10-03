@@ -224,6 +224,7 @@ module ejs.db.mapper {
         }
 
         private static function checkNumber(thisObj: Record, field: String, value, options): Void {
+            //  MOB - what about decimal, +-
             if (! RegExp(/^[0-9]+$/).test(value)) {
                 thisObj._errors[field] = options.message ? options.message : ErrorMessages.notNumber
             }
