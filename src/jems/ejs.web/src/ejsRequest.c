@@ -1437,7 +1437,7 @@ EjsRequest *ejsCreateRequest(Ejs *ejs, EjsHttpServer *server, HttpConn *conn, cc
     req->ejs = ejs;
     req->server = server;
     rx = conn->rx;
-    if (mprIsRelPath(dir)) {
+    if (mprIsPathRel(dir)) {
         req->dir = ejsCreatePathFromAsc(ejs, dir);
     } else {
         req->dir = ejsCreatePathFromAsc(ejs, mprGetRelPath(dir));

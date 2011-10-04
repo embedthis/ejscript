@@ -198,7 +198,7 @@ static EjsVoid *hs_listen(Ejs *ejs, EjsHttpServer *sp, int argc, EjsObj **argv)
         loc = (argc >= 1) ? argv[0] : ESV(null);
         if (loc != ESV(null)) {
             address = ejsToString(ejs, loc);
-            mprParseIp(address->value, &sp->ip, &sp->port, 0);
+            mprParseSocketAddress(address->value, &sp->ip, &sp->port, 0);
         } else {
             address = 0;
         }

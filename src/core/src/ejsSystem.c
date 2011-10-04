@@ -94,7 +94,7 @@ static EjsObj *system_exec(Ejs *ejs, EjsObj *unused, int argc, EjsObj **argv)
 
     if (argc == 0) {
         path = MPR->argv[0];
-        if (!mprIsAbsPath(path)) {
+        if (!mprIsPathAbs(path)) {
             path = mprGetAppPath();
         }
         for (i = 3; i < MPR_MAX_FILE; i++) {

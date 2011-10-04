@@ -462,7 +462,7 @@ static EjsBoolean *pathHasDrive(Ejs *ejs, EjsPath *fp, int argc, EjsObj **argv)
  */
 static EjsBoolean *isPathAbsolute(Ejs *ejs, EjsPath *fp, int argc, EjsObj **argv)
 {
-    return (mprIsAbsPath(fp->value) ? ESV(true): ESV(false));
+    return (mprIsPathAbs(fp->value) ? ESV(true): ESV(false));
 }
 
 
@@ -511,7 +511,7 @@ static EjsBoolean *isPathRegular(Ejs *ejs, EjsPath *fp, int argc, EjsObj **argv)
  */
 static EjsBoolean *isPathRelative(Ejs *ejs, EjsPath *fp, int argc, EjsObj **argv)
 {
-    return (mprIsRelPath(fp->value) ? ESV(true): ESV(false));
+    return (mprIsPathRel(fp->value) ? ESV(true): ESV(false));
 }
 
 
