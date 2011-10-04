@@ -9,27 +9,14 @@
 
 include 		.makedep
 
-#
-#   Cygwin can't handle -g for sqlite
-#
-ifeq ($(BLD_HOST_OS),CYGWIN)
-_CFLAGS 		:= $(shell echo $(_CFLAGS) | sed 's/-W3/-W1/;s/-Wall/-w/;s/-g3//')
-endif
-
 ESFLAGS 			+= $(_ESFLAGS)
 
 ifeq ($(BLD_EJS_DIR),)
 	EJS_OBJECTS		+= ejsLib
-	ifeq ($(BLD_FEATURE_SQLITE),1)
-		TARGETS		+= $(BLD_LIB_DIR)/libsqlite$(BLD_LIB)
-	endif
 	TARGETS			+= $(BLD_LIB_DIR)/libejs$(BLD_LIB)
 	TARGETS			+= $(BLD_BIN_DIR)/ejs$(BLD_EXE)
 	TARGETS			+= $(BLD_BIN_DIR)/ejsc$(BLD_EXE)
 	TARGETS			+= $(BLD_BIN_DIR)/ejsmod$(BLD_EXE)
-	ifeq ($(BLD_FEATURE_SQLITE),1)
-		TARGETS		+= $(BLD_BIN_DIR)/ejssql$(BLD_EXE)
-	endif
 	TOOLS			+= $(BLD_BIN_DIR)/ejsc$(BLD_EXE)
 	TOOLS			+= $(BLD_BIN_DIR)/ejsmod$(BLD_EXE)
 
@@ -58,11 +45,6 @@ MAKE_IFLAGS		+= $(BLD_MPR_IFLAGS) $(BLD_HTTP_IFLAGS) $(BLD_PCRE_IFLAGS) $(BLD_EJ
 #	TODO - remove this
 DOC_DIR		:= $(BLD_TOP)/doc/api/ejscript
 
-#
-#	Suppress warnings for sqlite
-#
-_CFLAGS 	:= $(shell echo $(_CFLAGS) | sed 's/-W3/-W1/;s/-Wall/-w/')
-
 compileExtra: $(TARGETS)
 
 #
@@ -88,15 +70,11 @@ $(BLD_LIB_DIR)/ejs.mod: $(BLD_INC_DIR)/ejs.slots.h *.es $(TOOLS)
 	fi
 
 #
-#	Build the ejs, ejsc, and sqlite libraries
+#	Build the ejs and ejsc libraries
 #	
 $(BLD_LIB_DIR)/libejs$(BLD_LIB): $(OBJECTS)
 	bld --library $(BLD_LIB_DIR)/libejs --search "$(BLD_EJS_WITHPATHS)" \
 		--libs "mpr http $(BLD_EJS_WITHLIBS)" $(EJS_OBJECTS)
-
-$(BLD_LIB_DIR)/libsqlite$(BLD_LIB): $(OBJECTS)
-	bld --library $(BLD_LIB_DIR)/libsqlite --search "$(BLD_SQLITE_WITHPATHS)" --libs "$(BLD_SQLITE_WITHLIBS)" \
-		sqlite$(BLD_OBJ)
 
 $(BLD_BIN_DIR)/ejsc$(BLD_EXE): $(OBJECTS)
 	bld --exe $(BLD_BIN_DIR)/ejsc$(BLD_EXE) --search "$(BLD_EJS_LIBPATHS)" --libs "$(BLD_EJS_LIBS)" ejsc$(BLD_OBJ)
@@ -106,9 +84,6 @@ $(BLD_BIN_DIR)/ejs$(BLD_EXE): $(OBJECTS)
 
 $(BLD_BIN_DIR)/ejsmod$(BLD_EXE): $(OBJECTS)
 	bld --exe $(BLD_BIN_DIR)/ejsmod$(BLD_EXE) --search "$(BLD_EJS_LIBPATHS)" --libs "$(BLD_EJS_LIBS)" ejsmod$(BLD_OBJ)
-
-$(BLD_BIN_DIR)/ejssql$(BLD_EXE): $(OBJECTS)
-	bld --exe $(BLD_BIN_DIR)/ejssql$(BLD_EXE) --search "$(BLD_EJS_LIBPATHS)" --libs "$(BLD_EJS_LIBS)" ejssql$(BLD_OBJ)
 
 # $(BLD_LIB_DIR)/mod_ejs$(BLD_SHOBJ): $(OBJECTS)
 # 	bld --shared --library $(BLD_LIB_DIR)/mod_ejs --search "$(BLD_APPWEB_LIBPATHS)" \

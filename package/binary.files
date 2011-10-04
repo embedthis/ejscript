@@ -40,7 +40,7 @@ if [ "${BARE}" = 0 ] ; then
         cpy -m 755 -d ${BLD_BIN_DIR} mvc.cmd ejspage.cmd jem.cmd "${BLD_BIN_PREFIX}"
     fi
     if [ "$BLD_FEATURE_SQLITE" = 1 ] ; then
-        cpy -m 755 -s -d ${BLD_BIN_DIR} ejssql${BLD_EXE} "${BLD_BIN_PREFIX}"
+        cpy -m 755 -s -d ${BLD_BIN_DIR} sqlite${BLD_EXE} "${BLD_BIN_PREFIX}"
     fi
     if [ -x "${BLD_JEM_DIR}" ] ; then
         cpy -d ${BLD_JEM_DIR} "*" "${BLD_JEM_PREFIX}"
