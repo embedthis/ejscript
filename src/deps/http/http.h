@@ -2995,7 +2995,7 @@ extern void httpAddHomeRoute(HttpRoute *parent);
     @param set Route set to select. Use "simple", "mvc", "restful" or "none". 
         \n\n
         The "simple" pack will invoke 
-        #httpAddDefaultRoutes to add "home", and "static" routes. 
+        #httpAddHomeRoute and #httpAddStaticRoute to add "home", and "static" routes. 
         \n\n
         The "mvc" selection will add the default routes and then add the route:
         <table>
@@ -3005,7 +3005,7 @@ extern void httpAddHomeRoute(HttpRoute *parent);
         \n\n
     @ingroup HttpRoute
  */
-extern void httpAddRouteSet(HttpRoute *parent, cchar *pack);
+extern void httpAddRouteSet(HttpRoute *parent, cchar *set);
 
 /**
     Add a route condition
@@ -3324,15 +3324,12 @@ extern cchar *httpGetRouteMethods(HttpRoute *route);
     are supplied using the current request and route tables. The resulting URI is a normalized, server-local 
     URI (that begins with "/"). The URI will include any defined route prefix, but will not include scheme, host or 
     port components.
-    @param route Route to modify
-
-        - If target does not start with "@" or "{" it will be treated as a template and tokens resolved from the request
-            parameters
-        - If "~" or "${app}" is present at the start of a link, it is replaced with the route prefix (app prefix).
-
+    @param conn HttpConn connection object 
     @param target The URI target. The target parameter can be a URI string or JSON style set of options. 
         The target will have any embedded "{tokens}" expanded by using token values from the request parameters.
-        If the target has an absolute URI path, that path is used directly after tokenization. 
+        If the target has an absolute URI path, that path is used directly after tokenization. If the target begins with
+        "~", that character will be replaced with the route prefix. This is a very convenient way to create application 
+        top-level relative links.
         \n\n
         If the target is a string that begins with "{AT}" it will be interpreted as a controller/action pair of the 
         form "{AT}Controller/action". If the "controller/" portion is absent, the current controller is used. If 
@@ -3364,7 +3361,9 @@ extern cchar *httpGetRouteMethods(HttpRoute *route);
                 {AT}Controller/action.</li>
             <li>route String Route name to use for the URI template</li>
         </ul>
+    @param options Hash of option values for embedded tokens.
     @return A normalized, server-local Uri string.
+
     <pre>
     httpLink(conn, "http://example.com/index.html", 0);
     httpLink(conn, "/path/to/index.html", 0);
@@ -3382,7 +3381,6 @@ extern cchar *httpGetRouteMethods(HttpRoute *route);
     httpLink(conn, "{ product: 'candy', quantity: '10', template: '/cart/${product}/${quantity}' }", 0);
     httpLink(conn, "{ route: '~/STAR/edit', action: 'checkout', id: '99' }", 0);
     httpLink(conn, "{ template: '~/static/images/${theme}/background.jpg', theme: 'blue' }", 0);
-
     </pre>
 */
 extern char *httpLink(HttpConn *conn, cchar *target, MprHash *options);
@@ -3716,13 +3714,13 @@ extern int httpSetRouteTarget(HttpRoute *route, cchar *name, cchar *details);
 
 /**
     Set the route template
-    @description Set the route URI template uses when constructing URIs via #httpLink.
+    @description Set the route URI template uses when constructing URIs via httpLink.
     @param route Route to modify
     @param template URI template to use. Templates may contain embedded tokens "{token}" where the token names correspond
         to the token names in the route pattern. 
     @ingroup HttpRoute
  */
-extern void httpSetRouteTemplate(HttpRoute *route, cchar *name);
+extern void httpSetRouteTemplate(HttpRoute *route, cchar *template);
 
 /**
     Define the maximum number of workers for a route
@@ -4553,7 +4551,7 @@ extern void httpSetContentType(HttpConn *conn, cchar *mimeType);
     @param path URI path to which the cookie applies
     @param domain Domain in which the cookie applies. Must have 2-3 dots.
     @param lifespan Duration for the cookie to persist in msec
-    @param flags. Select from HTTP_COOKIE_SECURE for a "secure" cookie, or HTTP_COOKIE_HTTP for a "httponly" cookie.
+    @param flags Select from HTTP_COOKIE_SECURE for a "secure" cookie, or HTTP_COOKIE_HTTP for a "httponly" cookie.
         See RFC 2109 for details about secure and httponly cookies.
     @ingroup HttpTx
  */
@@ -5107,7 +5105,7 @@ extern char *httpGetPathExt(cchar *path);
 
 /**
     Extract a field value from an option string. 
-    @param options. Option string of the form: "field='value' field='value'..."
+    @param options Option string of the form: "field='value' field='value'..."
     @param field Field key name
     @param defaultValue Value to use if "field" is not found in options
     @return Allocated value string.
@@ -5127,7 +5125,7 @@ extern MprHash *httpGetOptionHash(MprHash *options, cchar *field);
 
 /**
     Convert an options string into an options table
-    @param options. Option string of the form: "{field:'value', field:'value'}"
+    @param options Option string of the form: "{field:'value', field:'value'}"
         This is a sub-set of the JSON syntax. Arrays are not supported.
     @return Options table
  */
@@ -5135,7 +5133,7 @@ extern MprHash *httpGetOptions(cchar *options);
 
 /**
     Add an option to the options table
-    @param options. Option table returned from #httpGetOptions
+    @param options Option table returned from httpGetOptions
     @param field Field key name
     @param value Value to use for the field
  */
@@ -5144,7 +5142,7 @@ extern void httpAddOption(MprHash *options, cchar *field, cchar *value);
 /**
     Set an option
     @description Set a property in an options hash
-    @param options Options table returned from #httpGetOptions
+    @param options Options table returned from httpGetOptions
     @param field Property field to set
     @param value Property value to use
     @ingroup HttpRoute
@@ -5154,7 +5152,7 @@ extern void httpSetOption(MprHash *options, cchar *field, cchar *value);
 /**
     Remove an option
     @description Remove a property from an options hash
-    @param options Options table returned from #httpGetOptions
+    @param options Options table returned from httpGetOptions
     @param field Property field to remove
     @ingroup HttpRoute
  */

@@ -1414,8 +1414,8 @@
       <type>void</type>
       <name>httpAddRouteSet</name>
       <anchorfile>group___http_route.html</anchorfile>
-      <anchor>gae843ac11f83c85d6736f48dc373f28b2</anchor>
-      <arglist>(HttpRoute *parent, cchar *pack)</arglist>
+      <anchor>gae5a3fe25fd0e8ed6038fc076f40aa2e6</anchor>
+      <arglist>(HttpRoute *parent, cchar *set)</arglist>
     </member>
     <member kind="function">
       <type>int</type>
@@ -1722,8 +1722,8 @@
       <type>void</type>
       <name>httpSetRouteTemplate</name>
       <anchorfile>group___http_route.html</anchorfile>
-      <anchor>ga0ae5a56999bf04d056dfebb2cdded2cb</anchor>
-      <arglist>(HttpRoute *route, cchar *name)</arglist>
+      <anchor>gaece79ff5a2253f29a0fa4b9c9880b4ac</anchor>
+      <arglist>(HttpRoute *route, cchar *template)</arglist>
     </member>
     <member kind="function">
       <type>void</type>
