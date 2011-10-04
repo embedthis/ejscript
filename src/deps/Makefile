@@ -8,34 +8,19 @@ include 		.makedep
 
 ifeq ($(BLD_MPR_BUILTIN),1)
 	PRE_DIRS    += mpr
-else
-	CLOBBER		+= mpr/*.c mpr/*.h
-	IMPORTS     += $(BLD_MPR_IMPORTS) $(BLD_SSL_IMPORTS)
 endif
 
 ifeq ($(BLD_PCRE_BUILTIN),1)
 	PRE_DIRS    += pcre
-else
-	CLOBBER		+= pcre/*.c pcre/*.h
-	IMPORTS     += $(BLD_PCRE_IMPORTS)
 endif
 
 ifeq ($(BLD_HTTP_BUILTIN),1)
 	PRE_DIRS    += http
-else
-	CLOBBER		+= http/*.c http/*.h
-	IMPORTS     += $(BLD_HTTP_IMPORTS)
 endif
 
-IMPORTED    	+= $(patsubst %,$(BLD_LIB_DIR)/%, $(notdir $(IMPORTS)))
-
-compileFirst:	$(IMPORTED)
-
-$(IMPORTED): $(IMPORTS)
-	getlib $^
-
-clobberExtra:
-	rm -f $(CLOBBERIT)
+ifeq ($(BLD_SQLITE_BUILTIN),1)
+	PRE_DIRS    += sqlite
+endif
 
 #
 #   Local variables:

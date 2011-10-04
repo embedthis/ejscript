@@ -199,7 +199,7 @@ static EjsObj *sqliteSql(Ejs *ejs, EjsSqlite *db, int argc, EjsObj **argv)
                             Prefix with "_". ie. "_TableColumn"
                             MOB - remove singularization.
                          */
-                        len = strlen(tableName) + 1;
+                        len = (int) strlen(tableName) + 1;
                         tableName = sjoin("_", tableName, colName, NULL);
                         if (len > 3 && tableName[len - 1] == 's' && tableName[len - 2] == 'e' && tableName[len - 3] == 'i') {
                             tableName[len - 3] = 'y';
@@ -285,7 +285,7 @@ static void *reallocBlock(void *ptr, int size)
 
 static int blockSize(void *ptr)
 {
-    return mprGetBlockSize(ptr);
+    return (int) mprGetBlockSize(ptr);
 }
 
 

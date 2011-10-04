@@ -159,6 +159,7 @@ module ejs.web {
 
         /** 
             Emit a status alert area
+MOB - review?
             @param text Initial message text to display. Status messages may be updated by calling the 
                 $Controller.status function.
             @param options Optional extra options. See $View for a list of the standard options.
@@ -174,6 +175,7 @@ module ejs.web {
             getConnector("alert", options).alert(text, options)
         }
 
+        //  MOB - should have a URI argument (ESP)
         /**
             Emit an anchor. This is a label inside an anchor reference. 
             @param text Link text to display
@@ -189,9 +191,7 @@ module ejs.web {
             Render a form button. This creates a button suitable for use inside an input form. When the button is clicked,
             the input form will be submitted.
             @param name Name for the input button. This defines the HTML element name and provides the source of the
-                initial value to display. The field should be a property of the form control record. It can be a simple 
-                property of the record or it can have multiple parts, such as: field.field.field. If this call is used 
-                without a form control record, the actual data value should be supplied via the options.value property.
+                initial value to display.
             @param label Text label to display in the button and value to send when the form is submitted.
             @param options Optional extra options. See $View for a list of the standard options.
             Examples:
@@ -423,8 +423,6 @@ MOB -- much more doc here
                     throw "input control: Unknown field type: " + datatype + " for field " + name
                 }
             } catch (e) {
-//  MOB
-print("CATCH " + e)
                 text(name, options)
             }
         }
@@ -525,6 +523,7 @@ print("CATCH " + e)
             getConnector("radio", options).radio(name, value, choices, options)
         }
 
+        //  DOC
         function refresh(on: Uri, off: Uri, options: Object = {}): Void {
             let connector = getConnector("refresh", options)
             options = getOptions(options)
@@ -651,12 +650,12 @@ print("CATCH " + e)
 
         /**
             Render a tab control. 
-            The tab control can manage a set of panes and selectively show and hide or invoke the selected panes. 
+            The tab control can manage a set of panes and will selectively show and hide or invoke the selected panes. 
             If the click option is defined (default), the selected pane will be invoked via a foreground click. If the
             remote option is defined, the selected pane will be invoked via a background click. If the toggle option is
             defined the selected pane will be made visible and other panes will be hidden.
             If using show/hide tabs, define the initial visible pane to be of the class "-ejs-pane-visible" and define
-            other panes to be "-ejs-pane-hidden". The Control's client side code will toggle these classes to make panes
+            other panes to be "-ejs-pane-hidden". The control's client side code will toggle these classes to make panes
             visible or hidden.
             @param data Tab data for the control. Tab data can be be a single object where the tab text is the property 
                 key and the target to invoke is the property value. It can also be an an array of objects, one per tab. 
