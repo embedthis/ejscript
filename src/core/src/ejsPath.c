@@ -732,7 +732,7 @@ static EjsPath *getNaturalPath(Ejs *ejs, EjsPath *fp, int argc, EjsObj **argv)
  */
 static EjsPath *normalizePath(Ejs *ejs, EjsPath *fp, int argc, EjsObj **argv)
 {
-    return ejsCreatePathFromAsc(ejs, mprGetNormalizedPath(fp->value));
+    return ejsCreatePathFromAsc(ejs, mprNormalizePath(fp->value));
 }
 
 

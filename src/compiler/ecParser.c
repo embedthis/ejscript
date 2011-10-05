@@ -466,7 +466,7 @@ EcNode *ecParseFile(EcCompiler *cp, char *path)
     mprAssert(path);
 
     opened = 0;
-    path = mprGetNormalizedPath(path);
+    path = mprNormalizePath(path);
     if (cp->stream == 0) {
         if (ecOpenFileStream(cp, path) < 0) {
             parseError(cp, "Can't open %s", path);

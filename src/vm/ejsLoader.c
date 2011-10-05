@@ -1258,7 +1258,7 @@ static char *searchForModule(Ejs *ejs, cchar *moduleName, int minVersion, int ma
         maxVersion = MAXINT;
     }
     withDotMod = makeModuleName(moduleName);
-    name = mprGetNormalizedPath(withDotMod);
+    name = mprNormalizePath(withDotMod);
 
     mprLog(7, "Search for module \"%s\"", name);
 
@@ -1378,7 +1378,7 @@ char *ejsSearchForModule(Ejs *ejs, cchar *moduleName, int minVersion, int maxVer
         maxVersion = MAXINT;
     }
     withDotMod = makeModuleName(moduleName);
-    name = mprGetNormalizedPath(withDotMod);
+    name = mprNormalizePath(withDotMod);
 
     path = searchForModule(ejs, name, minVersion, maxVersion);
     if (path) {

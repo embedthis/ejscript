@@ -208,7 +208,7 @@ static EjsFile *fileConstructor(Ejs *ejs, EjsFile *fp, int argc, EjsObj **argv)
         ejsThrowIOError(ejs, "Bad path");
         return 0;
     }
-    fp->path = mprGetNormalizedPath(path);
+    fp->path = mprNormalizePath(path);
     if (argc == 2) {
         openFile(ejs, fp, 1, &argv[1]);
     }
