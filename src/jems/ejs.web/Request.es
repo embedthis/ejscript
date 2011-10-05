@@ -389,7 +389,7 @@ module ejs.web {
             Create a session state object. The session state object can be used to share state between requests.
             If a session has not already been created, this call will create a new session and initialize the 
             $session property with the new session. It will also set the $sessionID property and a cookie containing 
-            a session ID will be sent to the client with the response. Sessions can also be used/created by simply
+            a session ID that will be sent to the client with the response. Sessions can also be used/created by simply
             accessing the session property.  Objects are stored in the session state using JSON serialization.
             @param timeout Optional session state timeout in seconds. Set to zero for no timeout. After the timeout has 
                 expired, the session will be deleted. 
