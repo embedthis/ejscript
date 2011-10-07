@@ -212,8 +212,6 @@
 		C97628790FD07C7F009C78E1 /* libsqlite.dylib in Frameworks */ = {isa = PBXBuildFile; fileRef = C97627BD0FD077FC009C78E1 /* libsqlite.dylib */; };
 		C976CCDC140556EB00D21AFA /* libpcre.dylib in Frameworks */ = {isa = PBXBuildFile; fileRef = C97627AF0FD077C3009C78E1 /* libpcre.dylib */; };
 		C97D30781263AF2900262E95 /* ejsHelper.c in Sources */ = {isa = PBXBuildFile; fileRef = C97D30771263AF2900262E95 /* ejsHelper.c */; };
-		C9818119110EBDA800F241EF /* ejssql.c in Sources */ = {isa = PBXBuildFile; fileRef = C9818105110EBD4E00F241EF /* ejssql.c */; };
-		C981811F110EBDC400F241EF /* sqlite3.c in Sources */ = {isa = PBXBuildFile; fileRef = C9818106110EBD4E00F241EF /* sqlite3.c */; };
 		C98761380FD87DA200311B7A /* libmpr.dylib in Frameworks */ = {isa = PBXBuildFile; fileRef = C97627A60FD077A7009C78E1 /* libmpr.dylib */; };
 		C98761390FD87DA200311B7A /* libpcre.dylib in Frameworks */ = {isa = PBXBuildFile; fileRef = C97627AF0FD077C3009C78E1 /* libpcre.dylib */; };
 		C987613A0FD87DA200311B7A /* libmprssl.dylib in Frameworks */ = {isa = PBXBuildFile; fileRef = C97627B60FD077E7009C78E1 /* libmprssl.dylib */; };
@@ -231,6 +229,8 @@
 		C9D7A7ED13D4F346000428C7 /* libmpr.dylib in Frameworks */ = {isa = PBXBuildFile; fileRef = C97627A60FD077A7009C78E1 /* libmpr.dylib */; };
 		C9D7A7F613D4F378000428C7 /* angel.c in Sources */ = {isa = PBXBuildFile; fileRef = C9D7A7F513D4F378000428C7 /* angel.c */; };
 		C9D84AF41051C1940022DB20 /* libmpr.dylib in Frameworks */ = {isa = PBXBuildFile; fileRef = C97627A60FD077A7009C78E1 /* libmpr.dylib */; };
+		C9F1C544143E038700FC8D31 /* sqlite3.c in Sources */ = {isa = PBXBuildFile; fileRef = C9F1C543143E038700FC8D31 /* sqlite3.c */; };
+		C9F1C546143E03D200FC8D31 /* sqlite.c in Sources */ = {isa = PBXBuildFile; fileRef = C9F1C545143E03D200FC8D31 /* sqlite.c */; };
 		C9F4C61F10B5D7B80046EFF4 /* ejsRequest.c in Sources */ = {isa = PBXBuildFile; fileRef = C9F4C61810B5D7B80046EFF4 /* ejsRequest.c */; };
 		C9F4C62110B5D7B80046EFF4 /* ejsSession.c in Sources */ = {isa = PBXBuildFile; fileRef = C9F4C61A10B5D7B80046EFF4 /* ejsSession.c */; };
 		C9F69FD613955531006CC53D /* ejsLocalCache.c in Sources */ = {isa = PBXBuildFile; fileRef = C9F69FD513955531006CC53D /* ejsLocalCache.c */; };
@@ -976,7 +976,7 @@
 		C97D30771263AF2900262E95 /* ejsHelper.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; name = ejsHelper.c; path = ../../../src/vm/ejsHelper.c; sourceTree = SOURCE_ROOT; };
 		C9818105110EBD4E00F241EF /* ejssql.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; name = ejssql.c; path = ../../../src/jems/ejs.db.sqlite/src/ejssql.c; sourceTree = SOURCE_ROOT; };
 		C9818106110EBD4E00F241EF /* sqlite3.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; name = sqlite3.c; path = ../../../src/jems/ejs.db.sqlite/src/sqlite3.c; sourceTree = SOURCE_ROOT; };
-		C98D7153110FBEEA00F2ED80 /* ejssql */ = {isa = PBXFileReference; explicitFileType = "compiled.mach-o.executable"; includeInIndex = 0; path = ejssql; sourceTree = BUILT_PRODUCTS_DIR; };
+		C98D7153110FBEEA00F2ED80 /* sqlite */ = {isa = PBXFileReference; explicitFileType = "compiled.mach-o.executable"; includeInIndex = 0; path = sqlite; sourceTree = BUILT_PRODUCTS_DIR; };
 		C9902A681161776B00473F37 /* ejsFrame.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; name = ejsFrame.c; path = ../../../src/core/src/ejsFrame.c; sourceTree = SOURCE_ROOT; };
 		C99A33E110C2F29C00F6C7BC /* Utils.es */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; name = Utils.es; path = ../../../src/jems/ejs.web/Utils.es; sourceTree = SOURCE_ROOT; };
 		C99FDD7F120386B600231D3E /* Cascade.es */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; name = Cascade.es; path = ../../../src/jems/ejs.web/Cascade.es; sourceTree = SOURCE_ROOT; };
@@ -1016,6 +1016,8 @@
 		C9E9F12F13D8ACBA00C20E21 /* Product.xcconfig */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.xcconfig; path = Product.xcconfig; sourceTree = "<group>"; };
 		C9E9F13013D8ACBA00C20E21 /* Release.xcconfig */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.xcconfig; path = Release.xcconfig; sourceTree = "<group>"; };
 		C9EA7DAB13D41CE20035EB46 /* buildConfig.default */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = buildConfig.default; sourceTree = "<group>"; };
+		C9F1C543143E038700FC8D31 /* sqlite3.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; name = sqlite3.c; path = ../../../src/deps/sqlite/sqlite3.c; sourceTree = "<group>"; };
+		C9F1C545143E03D200FC8D31 /* sqlite.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; name = sqlite.c; path = ../../../src/deps/sqlite/sqlite.c; sourceTree = "<group>"; };
 		C9F4C61810B5D7B80046EFF4 /* ejsRequest.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; name = ejsRequest.c; path = ../../../src/jems/ejs.web/src/ejsRequest.c; sourceTree = SOURCE_ROOT; };
 		C9F4C61A10B5D7B80046EFF4 /* ejsSession.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; name = ejsSession.c; path = ../../../src/jems/ejs.web/src/ejsSession.c; sourceTree = SOURCE_ROOT; };
 		C9F69FD513955531006CC53D /* ejsLocalCache.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; name = ejsLocalCache.c; path = ../../../src/core/src/ejsLocalCache.c; sourceTree = "<group>"; };
@@ -1362,7 +1364,7 @@
 				C97627CB0FD07828009C78E1 /* libejs.dylib */,
 				C97627D90FD07850009C78E1 /* ejs.web.dylib */,
 				C9FB52EF0FD9E92700882CC3 /* ejs.db.sqlite.dylib */,
-				C98D7153110FBEEA00F2ED80 /* ejssql */,
+				C98D7153110FBEEA00F2ED80 /* sqlite */,
 				C9D4528711ECDA4300F029C8 /* http */,
 				C9D7A7F213D4F346000428C7 /* angel */,
 			);
@@ -1380,6 +1382,7 @@
 				C9566A4010A16EB200AF4E04 /* jems */,
 				C95E4FB510EBFD2B00982610 /* mpr */,
 				C95E4FE310EBFDE400982610 /* pcre */,
+				C9F1C541143E034D00FC8D31 /* sqlite */,
 				C97628390FD079EF009C78E1 /* vm */,
 			);
 			name = Source;
@@ -1532,6 +1535,15 @@
 			name = Libraries;
 			sourceTree = "<group>";
 		};
+		C9F1C541143E034D00FC8D31 /* sqlite */ = {
+			isa = PBXGroup;
+			children = (
+				C9F1C545143E03D200FC8D31 /* sqlite.c */,
+				C9F1C543143E038700FC8D31 /* sqlite3.c */,
+			);
+			name = sqlite;
+			sourceTree = "<group>";
+		};
 /* End PBXGroup section */
 
 /* Begin PBXHeadersBuildPhase section */
@@ -1662,9 +1674,9 @@
 			productReference = C97623E20FD06EFC009C78E1 /* ejsmod */;
 			productType = "com.apple.product-type.tool";
 		};
-		C97623E80FD06F04009C78E1 /* ejssql */ = {
+		C97623E80FD06F04009C78E1 /* sqlite */ = {
 			isa = PBXNativeTarget;
-			buildConfigurationList = C97623F60FD06F0D009C78E1 /* Build configuration list for PBXNativeTarget "ejssql" */;
+			buildConfigurationList = C97623F60FD06F0D009C78E1 /* Build configuration list for PBXNativeTarget "sqlite" */;
 			buildPhases = (
 				C97623E60FD06F04009C78E1 /* Sources */,
 				C97623E70FD06F04009C78E1 /* Frameworks */,
@@ -1679,9 +1691,9 @@
 				C9EA941E0FD4FB2F00870DB0 /* PBXTargetDependency */,
 				C9EA94200FD4FB2F00870DB0 /* PBXTargetDependency */,
 			);
-			name = ejssql;
+			name = sqlite;
 			productName = ejssql;
-			productReference = C98D7153110FBEEA00F2ED80 /* ejssql */;
+			productReference = C98D7153110FBEEA00F2ED80 /* sqlite */;
 			productType = "com.apple.product-type.tool";
 		};
 		C97627A50FD077A7009C78E1 /* libmpr */ = {
@@ -1895,7 +1907,7 @@
 				C97623D10FD06EE7009C78E1 /* ejs */,
 				C97623DA0FD06EF4009C78E1 /* ejsc */,
 				C97623E10FD06EFC009C78E1 /* ejsmod */,
-				C97623E80FD06F04009C78E1 /* ejssql */,
+				C97623E80FD06F04009C78E1 /* sqlite */,
 				C9D4528611ECDA4300F029C8 /* http */,
 				C9222E520FD5813F00AFA5A4 /* modules */,
 				C903098210A366CA003FF2AB /* ejsmvc */,
@@ -2210,7 +2222,7 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				C9818119110EBDA800F241EF /* ejssql.c in Sources */,
+				C9F1C546143E03D200FC8D31 /* sqlite.c in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -2242,7 +2254,7 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				C981811F110EBDC400F241EF /* sqlite3.c in Sources */,
+				C9F1C544143E038700FC8D31 /* sqlite3.c in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -2535,7 +2547,7 @@
 		};
 		C9A06FFA10A34EBD00F48512 /* PBXTargetDependency */ = {
 			isa = PBXTargetDependency;
-			target = C97623E80FD06F04009C78E1 /* ejssql */;
+			target = C97623E80FD06F04009C78E1 /* sqlite */;
 			targetProxy = C9A06FF910A34EBD00F48512 /* PBXContainerItemProxy */;
 		};
 		C9A0700010A34EBD00F48512 /* PBXTargetDependency */ = {
@@ -2966,7 +2978,7 @@
 			isa = XCBuildConfiguration;
 			buildSettings = {
 				INSTALL_PATH = "$(INSTALL_PATH)/bin";
-				PRODUCT_NAME = ejssql;
+				PRODUCT_NAME = sqlite;
 			};
 			name = Debug;
 		};
@@ -2974,7 +2986,7 @@
 			isa = XCBuildConfiguration;
 			buildSettings = {
 				INSTALL_PATH = "$(INSTALL_PATH)/bin";
-				PRODUCT_NAME = ejssql;
+				PRODUCT_NAME = sqlite;
 			};
 			name = Release;
 		};
@@ -3272,7 +3284,7 @@
 			defaultConfigurationIsVisible = 0;
 			defaultConfigurationName = Release;
 		};
-		C97623F60FD06F0D009C78E1 /* Build configuration list for PBXNativeTarget "ejssql" */ = {
+		C97623F60FD06F0D009C78E1 /* Build configuration list for PBXNativeTarget "sqlite" */ = {
 			isa = XCConfigurationList;
 			buildConfigurations = (
 				C97623EB0FD06F04009C78E1 /* Debug */,
