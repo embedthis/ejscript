@@ -26,8 +26,6 @@ ES_SOURCES=`find ${S}/core ${J}/ejs.unix ${J}/ejs.db ${J}/ejs.db.mapper \
     egrep -v 'Jsdb.es|Mysql.es|ejspage.es|\/test\/' | sort`
 EJSMOD_HEADERS=${S}/cmd/ejsmod.h
 EJSMOD_SOURCES="${S}/cmd/doc.c ${S}/cmd/docFiles.c ${S}/cmd/ejsmod.c ${S}/cmd/listing.c ${S}/cmd/slotGen.c"
-SQLITE_HEADERS=${J}/ejs.db.sqlite/src/sqlite3.h
-SQLITE_SOURCES=${J}/ejs.db.sqlite/src/sqlite3.c
 WEB_SOURCES=`find ${J}/ejs.web -name '*.c' | egrep -v 'SAVE|save|legacy|Archive' | sort`
 
 #   
@@ -85,31 +83,16 @@ TITLE="${BLD_NAME} Manager Source" \
 combo ${EJSMOD_HEADERS} ${EJSMOD_SOURCES} | egrep -v '#include.*ejs|#include.*ec|#include.*sql' >>${SRC}/ejsmod.c
 
 #
-#   ejssql.c
-#
-TITLE="${BLD_NAME} SQLite Shell Source" \
-combo ${SQLITE_HEADERS} ${S}/jems/ejs.db.sqlite/src/ejssql.c | egrep -v '#include.*ejs|#include.*sqlite3' >${SRC}/ejssql.c
-
-#
-#   sqlite3.h
-#
-cp ${BLD_INC_DIR}/sqlite3.h ${SRC}/sqlite3.h
-
-#
 #   slots.h
 #
 TITLE="${BLD_NAME} Slot files" combo ${SLOT_HEADERS} >${SRC}/slots.h
 
 #
-#   sqlite3.c
-#
-TITLE="${BLD_NAME} SQLite Library Source" \
-combo ${SQLITE_HEADERS} ${SQLITE_SOURCES} | egrep -v '#include.*ejs|#include.*sqlite3' >${SRC}/sqlite3.c
-
-#
 #   Doc
 #
+cp ${BLD_TOP}/doc/api/ejs.html ${DOC}/api
 cp ${BLD_TOP}/doc/api/ejsBare.html ${DOC}/api
+cp ${BLD_TOP}/doc/api/ejs.tags ${DOC}/api
 cp ${BLD_TOP}/doc/man/*.1 ${DOC}/man
 
 #

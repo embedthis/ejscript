@@ -120,12 +120,12 @@ static int initializeModule(Ejs *ejs, EjsModule *mp)
         }
     }
     mp->configured = 1;
-    paused = ejsPauseGC(ejs);
+    paused = ejsBlockGC(ejs);
     if (ejsRunInitializer(ejs, mp) == 0) {
-        ejsResumeGC(ejs, paused);
+        ejsUnblockGC(ejs, paused);
         return MPR_ERR_CANT_INITIALIZE;
     }
-    ejsResumeGC(ejs, paused);
+    ejsUnblockGC(ejs, paused);
     return 0;
 }
 
@@ -1258,7 +1258,7 @@ static char *searchForModule(Ejs *ejs, cchar *moduleName, int minVersion, int ma
         maxVersion = MAXINT;
     }
     withDotMod = makeModuleName(moduleName);
-    name = mprGetNormalizedPath(withDotMod);
+    name = mprNormalizePath(withDotMod);
 
     mprLog(7, "Search for module \"%s\"", name);
 
@@ -1378,7 +1378,7 @@ char *ejsSearchForModule(Ejs *ejs, cchar *moduleName, int minVersion, int maxVer
         maxVersion = MAXINT;
     }
     withDotMod = makeModuleName(moduleName);
-    name = mprGetNormalizedPath(withDotMod);
+    name = mprNormalizePath(withDotMod);
 
     path = searchForModule(ejs, name, minVersion, maxVersion);
     if (path) {
@@ -1409,7 +1409,7 @@ static int alreadyLoaded(Ejs *ejs, EjsString *name, int minVersion, int maxVersi
     if ((mp = ejsLookupModule(ejs, name, minVersion, maxVersion)) == 0) {
         return 0;
     }
-    if (mp->compiling && ejsCompareMulti(ejs, name, EJS_DEFAULT_MODULE) != 0) {
+    if (mp->compiling && ejsCompareAsc(ejs, name, EJS_DEFAULT_MODULE) != 0) {
         ejsThrowStateError(ejs, "Attempt to load module \"%@\" that is currently being compiled.", name);
         return MPR_ERR_ALREADY_EXISTS;
     }
@@ -1665,7 +1665,7 @@ static void popScope(EjsModule *mp, int keepScope)
     under the terms of the GNU General Public License as published by the
     Free Software Foundation; either version 2 of the License, or (at your
     option) any later version. See the GNU General Public License for more
-    details at: http://www.embedthis.com/downloads/gplLicense.html
+    details at: http://embedthis.com/downloads/gplLicense.html
 
     This program is distributed WITHOUT ANY WARRANTY; without even the
     implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.
@@ -1674,7 +1674,7 @@ static void popScope(EjsModule *mp, int keepScope)
     proprietary programs. If you are unable to comply with the GPL, you must
     acquire a commercial license to use this software. Commercial licenses
     for this software and support services are available from Embedthis
-    Software at http://www.embedthis.com
+    Software at http://embedthis.com
 
     Local variables:
     tab-width: 4

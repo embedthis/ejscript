@@ -20,7 +20,7 @@ let result = http.response
 assert(http.response.contains("Session ID: SET to "))
 let firstSession = http.response.match(/"(.*)"/)[1]
 let cookie = http.header("Set-Cookie").match(/(-ejs-session-=.*);/)[1]
-assert(firstSession == cookie.match(/-ejs-session-=(.*)/)[1])
+assert(firstSession == cookie.match(/-ejs-session-=(.*);/)[1])
 assert(firstSession != "")
 http.close()
 

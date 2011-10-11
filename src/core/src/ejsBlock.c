@@ -19,7 +19,7 @@ EjsBlock *ejsCloneBlock(Ejs *ejs, EjsBlock *src, bool deep)
     dest->nobind = src->nobind;
     dest->scope = src->scope;
     mprInitList(&dest->namespaces);
-    mprCopyList(&dest->namespaces, &src->namespaces);
+    mprCopyListContents(&dest->namespaces, &src->namespaces);
     return dest;
 }
 
@@ -77,7 +77,7 @@ void ejsInheritBaseClassNamespaces(Ejs *ejs, EjsType *type, EjsType *baseType)
     if (baseNamespaces) {
         for (next = 0; ((nsp = (EjsNamespace*) mprGetNextItem(baseNamespaces, &next)) != 0); ) {
             //  OPT -- must be a better way to do this?
-            if (ejsContainsString(ejs, nsp->value, ESV(commaProt))) {
+            if (ejsContainsString(ejs, nsp->value, ESV(commaProt)) >= 0) {
                 for (i = 0; ((existing = (EjsNamespace*) mprGetNextItem(&block->namespaces, &i)) != 0); ) {
                     if (existing->value == nsp->value) {
                         break;
@@ -195,7 +195,7 @@ void ejsConfigureBlockType(Ejs *ejs)
     under the terms of the GNU General Public License as published by the
     Free Software Foundation; either version 2 of the License, or (at your
     option) any later version. See the GNU General Public License for more
-    details at: http://www.embedthis.com/downloads/gplLicense.html
+    details at: http://embedthis.com/downloads/gplLicense.html
 
     This program is distributed WITHOUT ANY WARRANTY; without even the
     implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.
@@ -204,7 +204,7 @@ void ejsConfigureBlockType(Ejs *ejs)
     proprietary programs. If you are unable to comply with the GPL, you must
     acquire a commercial license to use this software. Commercial licenses
     for this software and support services are available from Embedthis
-    Software at http://www.embedthis.com
+    Software at http://embedthis.com
 
     Local variables:
     tab-width: 4

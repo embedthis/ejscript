@@ -826,6 +826,7 @@ static EjsUri *uri_template(Ejs *ejs, EjsUri *up, int argc, EjsObj **argv)
                     }
                 }
                 if (!ejsIsDefined(ejs, value)) {
+                    //  MOB - remove this. Should not be erasing the prior "/"
                     if (cp >= &pattern[2] && cp[-2] == '/') {
                         mprAdjustBufEnd(buf, -1);
                     }
@@ -837,7 +838,7 @@ static EjsUri *uri_template(Ejs *ejs, EjsUri *up, int argc, EjsObj **argv)
         }
     }
     mprAddNullToBuf(buf);
-    return ejsCreateUriFromMulti(ejs, mprGetBufStart(buf));
+    return ejsCreateUriFromAsc(ejs, mprGetBufStart(buf));
 }
 
 
@@ -1097,7 +1098,7 @@ EjsUri *ejsCreateUri(Ejs *ejs, EjsString *path)
 }
 
 
-EjsUri *ejsCreateUriFromMulti(Ejs *ejs, cchar *path)
+EjsUri *ejsCreateUriFromAsc(Ejs *ejs, cchar *path)
 {
     EjsUri      *up;
     EjsObj      *arg;
@@ -1112,7 +1113,7 @@ EjsUri *ejsCreateUriFromMulti(Ejs *ejs, cchar *path)
 
 
 EjsUri *ejsCreateUriFromParts(Ejs *ejs, cchar *scheme, cchar *host, int port, cchar *path, cchar *query, cchar *reference, 
-    int complete)
+    bool complete)
 {
     EjsUri      *up;
 
@@ -1206,7 +1207,7 @@ void ejsConfigureUriType(Ejs *ejs)
     under the terms of the GNU General Public License as published by the
     Free Software Foundation; either version 2 of the License, or (at your
     option) any later version. See the GNU General Public License for more
-    details at: http://www.embedthis.com/downloads/gplLicense.html
+    details at: http://embedthis.com/downloads/gplLicense.html
 
     This program is distributed WITHOUT ANY WARRANTY; without even the
     implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.
@@ -1215,7 +1216,7 @@ void ejsConfigureUriType(Ejs *ejs)
     proprietary programs. If you are unable to comply with the GPL, you must
     acquire a commercial license to use this software. Commercial licenses
     for this software and support services are available from Embedthis
-    Software at http://www.embedthis.com
+    Software at http://embedthis.com
 
     Local variables:
     tab-width: 4

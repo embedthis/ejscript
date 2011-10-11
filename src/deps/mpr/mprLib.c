@@ -621,7 +621,9 @@ static MprMem *allocFromHeap(ssize required, int flags)
             }
             groupMap &= ~(((ssize) 1) << group);
             heap->groupMap &= ~(((ssize) 1) << group);
+#if UNUSED && KEEP
             triggerGC(0);
+#endif
         }
     }
     unlockHeap();
@@ -668,7 +670,11 @@ static MprMem *growHeap(ssize required, int flags)
     mp = (MprMem*) region->start;
     hasManager = (flags & MPR_ALLOC_MANAGER) ? 1 : 0;
     spareLen = size - required - rsize;
-    INIT_BLK(mp, required, hasManager, (spareLen > 0) ? 0 : 1, NULL);
+    if (spareLen < sizeof(MprFreeMem)) {
+        required = size - rsize; 
+        spareLen = 0;
+    }
+    INIT_BLK(mp, required, hasManager, spareLen > 0 ? 0 : 1, NULL);
     if (hasManager) {
         SET_MANAGER(mp, dummyManager);
     }
@@ -679,6 +685,7 @@ static MprMem *growHeap(ssize required, int flags)
     } while (!mprAtomicCas((void* volatile*) &heap->regions, region->next, region));
 
     if (spareLen > 0) {
+        mprAssert(spareLen > sizeof(MprFreeMem));
         spare = (MprMem*) ((char*) mp + required);
         INIT_BLK(spare, spareLen, 0, 1, mp);
         CHECK(spare);
@@ -1157,7 +1164,6 @@ static void mark()
     LOG(7, "GC: mark started");
 
     /*
-        TODO here on how marking strategy works
         When parallel, we mark blocks using the current heap->active mark. After marking, synchronization will rotate
         the active/stale/dead markers. After this, existing alive blocks may be marked stale. No blocks will be marked
         active.
@@ -2555,7 +2561,7 @@ static void checkYielded()
     under the terms of the GNU General Public License as published by the
     Free Software Foundation; either version 2 of the License, or (at your
     option) any later version. See the GNU General Public License for more
-    details at: http://www.embedthis.com/downloads/gplLicense.html
+    details at: http://embedthis.com/downloads/gplLicense.html
 
     This program is distributed WITHOUT ANY WARRANTY; without even the
     implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.
@@ -2564,7 +2570,7 @@ static void checkYielded()
     proprietary programs. If you are unable to comply with the GPL, you must
     acquire a commercial license to use this software. Commercial licenses
     for this software and support services are available from Embedthis
-    Software at http://www.embedthis.com
+    Software at http://embedthis.com
 
     Local variables:
     tab-width: 4
@@ -2698,6 +2704,7 @@ static void manageMpr(Mpr *mpr, int flags)
         mprMark(mpr->httpService);
         mprMark(mpr->appwebService);
         mprMark(mpr->testService);
+        mprMark(mpr->espService);
         mprMark(mpr->mutex);
         mprMark(mpr->spin);
         mprMark(mpr->emptyString);
@@ -2816,11 +2823,11 @@ static void getArgs(Mpr *mpr, int argc, char **argv)
 #if WINCE
     MprArgs *args = (MprArgs*) argv;
     command = mprToMulti((uni*) args->command);
-    mprMakeArgv(command, &argc, &argv, MPR_ARGV_ARGS_ONLY);
+    argc = mprMakeArgv(command, &argv, MPR_ARGV_ARGS_ONLY);
     argv[0] = sclone(args->program);
 #elif VXWORKS
     MprArgs *args = (MprArgs*) argv;
-    mprMakeArgv("", &argc, &argv, MPR_ARGV_ARGS_ONLY);
+    argc = mprMakeArgv("", &argv, MPR_ARGV_ARGS_ONLY);
     argv[0] = sclone(args->program);
 #endif
     mpr->argc = argc;
@@ -3007,7 +3014,7 @@ static int parseArgs(char *args, char **argv)
 /*
     Make an argv array
  */
-int mprMakeArgv(cchar *command, int *argcp, char ***argvp, int flags)
+int mprMakeArgv(cchar *command, char ***argvp, int flags)
 {
     char    **argv, *vector, *args;
     ssize   len;
@@ -3033,12 +3040,9 @@ int mprMakeArgv(cchar *command, int *argcp, char ***argvp, int flags)
 
     parseArgs(args, argv);
     if (flags & MPR_ARGV_ARGS_ONLY) {
-        argv[0] = sclone("");
+        argv[0] = MPR->emptyString;
     }
     argv[argc] = 0;
-    if (argcp) {
-        *argcp = argc;
-    }
     *argvp = argv;
     return argc;
 }
@@ -3233,7 +3237,7 @@ void mprNop(void *ptr) {}
     under the terms of the GNU General Public License as published by the
     Free Software Foundation; either version 2 of the License, or (at your
     option) any later version. See the GNU General Public License for more
-    details at: http://www.embedthis.com/downloads/gplLicense.html
+    details at: http://embedthis.com/downloads/gplLicense.html
 
     This program is distributed WITHOUT ANY WARRANTY; without even the
     implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.
@@ -3242,7 +3246,7 @@ void mprNop(void *ptr) {}
     proprietary programs. If you are unable to comply with the GPL, you must
     acquire a commercial license to use this software. Commercial licenses
     for this software and support services are available from Embedthis
-    Software at http://www.embedthis.com
+    Software at http://embedthis.com
 
     Local variables:
     tab-width: 4
@@ -3525,7 +3529,7 @@ void stubMprAsync() {}
     under the terms of the GNU General Public License as published by the 
     Free Software Foundation; either version 2 of the License, or (at your 
     option) any later version. See the GNU General Public License for more 
-    details at: http://www.embedthis.com/downloads/gplLicense.html
+    details at: http://embedthis.com/downloads/gplLicense.html
     
     This program is distributed WITHOUT ANY WARRANTY; without even the 
     implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. 
@@ -3534,7 +3538,7 @@ void stubMprAsync() {}
     proprietary programs. If you are unable to comply with the GPL, you must
     acquire a commercial license to use this software. Commercial licenses 
     for this software and support services are available from Embedthis 
-    Software at http://www.embedthis.com 
+    Software at http://embedthis.com 
     
     Local variables:
     tab-width: 4
@@ -3718,7 +3722,7 @@ void mprAtomicListInsert(void * volatile *head, volatile void **link, void *item
     under the terms of the GNU General Public License as published by the
     Free Software Foundation; either version 2 of the License, or (at your
     option) any later version. See the GNU General Public License for more
-    details at: http://www.embedthis.com/downloads/gplLicense.html
+    details at: http://embedthis.com/downloads/gplLicense.html
 
     This program is distributed WITHOUT ANY WARRANTY; without even the
     implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.
@@ -3727,7 +3731,7 @@ void mprAtomicListInsert(void * volatile *head, volatile void **link, void *item
     proprietary programs. If you are unable to comply with the GPL, you must
     acquire a commercial license to use this software. Commercial licenses
     for this software and support services are available from Embedthis
-    Software at http://www.embedthis.com
+    Software at http://embedthis.com
 
     Local variables:
     tab-width: 4
@@ -3989,7 +3993,7 @@ ssize mprGetBufSpace(MprBuf *bp)
 }
 
 
-char *mprGetBufOrigin(MprBuf *bp)
+char *mprGetBuf(MprBuf *bp)
 {
     return (char*) bp->data;
 }
@@ -4143,7 +4147,7 @@ ssize mprPutFmtToBuf(MprBuf *bp, cchar *fmt, ...)
         return 0;
     }
     va_start(ap, fmt);
-    buf = mprAsprintfv(fmt, ap);
+    buf = sfmtv(fmt, ap);
     va_end(ap);
     return mprPutStringToBuf(bp, buf);
 }
@@ -4202,12 +4206,9 @@ int mprGrowBuf(MprBuf *bp, ssize need)
  */
 ssize mprPutIntToBuf(MprBuf *bp, int64 i)
 {
-    char        numBuf[16];
     ssize       rc;
 
-    itos(numBuf, sizeof(numBuf), i, 10);
-    rc = mprPutStringToBuf(bp, numBuf);
-
+    rc = mprPutStringToBuf(bp, itos(i, 10));
     if (bp->end < bp->endbuf) {
         *((char*) bp->end) = (char) '\0';
     }
@@ -4312,7 +4313,7 @@ int mprPutFmtToWideBuf(MprBuf *bp, cchar *fmt, ...)
     va_start(ap, fmt);
     space = mprGetBufSpace(bp);
     space += (bp->maxsize - bp->buflen);
-    buf = mprAsprintfv(fmt, ap);
+    buf = sfmtv(fmt, ap);
     wbuf = amtow(bp, buf, &len);
     rc = mprPutBlockToBuf(bp, (char*) wbuf, len * sizeof(MprChar));
     va_end(ap);
@@ -4350,7 +4351,7 @@ int mprPutStringToWideBuf(MprBuf *bp, cchar *str)
     under the terms of the GNU General Public License as published by the 
     Free Software Foundation; either version 2 of the License, or (at your 
     option) any later version. See the GNU General Public License for more 
-    details at: http://www.embedthis.com/downloads/gplLicense.html
+    details at: http://embedthis.com/downloads/gplLicense.html
     
     This program is distributed WITHOUT ANY WARRANTY; without even the 
     implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. 
@@ -4359,7 +4360,7 @@ int mprPutStringToWideBuf(MprBuf *bp, cchar *str)
     proprietary programs. If you are unable to comply with the GPL, you must
     acquire a commercial license to use this software. Commercial licenses 
     for this software and support services are available from Embedthis 
-    Software at http://www.embedthis.com 
+    Software at http://embedthis.com 
     
     Local variables:
     tab-width: 4
@@ -4486,7 +4487,7 @@ int mprExpireCache(MprCache *cache, cchar *key, MprTime expires)
 int64 mprIncCache(MprCache *cache, cchar *key, int64 amount)
 {
     CacheItem   *item;
-    char        nbuf[32];
+    int64       value;
 
     mprAssert(cache);
     mprAssert(key && *key);
@@ -4495,6 +4496,7 @@ int64 mprIncCache(MprCache *cache, cchar *key, int64 amount)
         cache = cache->shared;
         mprAssert(cache == shared);
     }
+    value = amount;
 
     lock(cache);
     if ((item = mprLookupKey(cache->store, key)) == 0) {
@@ -4502,16 +4504,16 @@ int64 mprIncCache(MprCache *cache, cchar *key, int64 amount)
             return 0;
         }
     } else {
-        amount += stoi(item->data, 10, 0);
+        value += stoi(item->data, 10, 0);
     }
     if (item->data) {
         cache->usedMem -= slen(item->data);
     }
-    item->data = itos(nbuf, sizeof(nbuf), amount, 10);
+    item->data = itos(value, 10);
     cache->usedMem += slen(item->data);
     item->version++;
     unlock(cache);
-    return stoi(item->data, 10, 0);
+    return value;
 }
 
 
@@ -4617,13 +4619,13 @@ ssize mprWriteCache(MprCache *cache, cchar *key, cchar *value, MprTime modified,
     int64 version, int options)
 {
     CacheItem   *item;
-    MprHash     *hp;
+    MprKey      *kp;
     ssize       len, oldLen;
     int         exists, add, set, prepend, append, throw;
 
     mprAssert(cache);
     mprAssert(key && *key);
-    mprAssert(value && *value);
+    mprAssert(value);
 
     if (cache->shared) {
         cache = cache->shared;
@@ -4638,9 +4640,9 @@ ssize mprWriteCache(MprCache *cache, cchar *key, cchar *value, MprTime modified,
         set = 1;
     }
     lock(cache);
-    if ((hp = mprLookupKeyEntry(cache->store, key)) != 0) {
+    if ((kp = mprLookupKeyEntry(cache->store, key)) != 0) {
         exists++;
-        item = (CacheItem*) hp->data;
+        item = (CacheItem*) kp->data;
         if (version) {
             if (item->version != version) {
                 unlock(cache);
@@ -4665,9 +4667,9 @@ ssize mprWriteCache(MprCache *cache, cchar *key, cchar *value, MprTime modified,
         }
         item->data = sclone(value);
     } else if (append) {
-        item->data = sjoin(item->data, value, 0);
+        item->data = sjoin(item->data, value, NULL);
     } else if (prepend) {
-        item->data = sjoin(value, item->data, 0);
+        item->data = sjoin(value, item->data, NULL);
     }
     item->lifespan = lifespan;
     item->lastModified = modified ? modified : mprGetTime();
@@ -4707,7 +4709,7 @@ static void removeItem(MprCache *cache, CacheItem *item)
 static void localPruner(MprCache *cache, MprEvent *event)
 {
     MprTime         when, factor;
-    MprHash         *hp;
+    MprKey          *kp;
     CacheItem       *item;
     ssize           excessKeys;
 
@@ -4716,12 +4718,12 @@ static void localPruner(MprCache *cache, MprEvent *event)
 
     if (mprTryLock(cache->mutex)) {
         when = mprGetTime();
-        for (hp = 0; (hp = mprGetNextKey(cache->store, hp)) != 0; ) {
-            item = (CacheItem*) hp->data;
+        for (kp = 0; (kp = mprGetNextKey(cache->store, kp)) != 0; ) {
+            item = (CacheItem*) kp->data;
             mprLog(6, "Cache: \"%@\" lifespan %d, expires in %d secs", item->key, 
                     item->lifespan / 1000, (item->expires - when) / 1000);
             if (item->expires && item->expires <= when) {
-                mprLog(5, "Cache prune expired key %s", hp->key);
+                mprLog(5, "Cache prune expired key %s", kp->key);
                 removeItem(cache, item);
             }
         }
@@ -4734,11 +4736,11 @@ static void localPruner(MprCache *cache, MprEvent *event)
             excessKeys = mprGetHashLength(cache->store) - cache->maxKeys;
             while (excessKeys > 0 || cache->usedMem > cache->maxMem) {
                 for (factor = 3600; excessKeys > 0 && factor < (86400 * 1000); factor *= 4) {
-                    for (hp = 0; (hp = mprGetNextKey(cache->store, hp)) != 0; ) {
-                        item = (CacheItem*) hp->data;
+                    for (kp = 0; (kp = mprGetNextKey(cache->store, kp)) != 0; ) {
+                        item = (CacheItem*) kp->data;
                         if (item->expires && item->expires <= when) {
                             mprLog(5, "Cache too big execess keys %Ld, mem %Ld, prune key %s", 
-                                    excessKeys, (cache->maxMem - cache->usedMem), hp->key);
+                                    excessKeys, (cache->maxMem - cache->usedMem), kp->key);
                             removeItem(cache, item);
                         }
                     }
@@ -4798,7 +4800,7 @@ static void manageCacheItem(CacheItem *item, int flags)
     under the terms of the GNU General Public License as published by the
     Free Software Foundation; either version 2 of the License, or (at your
     option) any later version. See the GNU General Public License for more
-    details at: http://www.embedthis.com/downloads/gplLicense.html
+    details at: http://embedthis.com/downloads/gplLicense.html
 
     This program is distributed WITHOUT ANY WARRANTY; without even the
     implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.
@@ -4807,7 +4809,7 @@ static void manageCacheItem(CacheItem *item, int flags)
     proprietary programs. If you are unable to comply with the GPL, you must
     acquire a commercial license to use this software. Commercial licenses
     for this software and support services are available from Embedthis
-    Software at http://www.embedthis.com
+    Software at http://embedthis.com
 
     Local variables:
     tab-width: 4
@@ -5133,7 +5135,7 @@ int mprRunCmd(MprCmd *cmd, cchar *command, char **out, char **err, int flags)
     int     argc;
 
     mprAssert(cmd);
-    if (mprMakeArgv(command, &argc, &argv, 0) < 0 || argv == 0) {
+    if ((argc = mprMakeArgv(command, &argv, 0)) < 0 || argv == 0) {
         return 0;
     }
     cmd->makeArgv = argv;
@@ -5200,11 +5202,11 @@ int mprRunCmdV(MprCmd *cmd, int argc, char **argv, char **out, char **err, int f
     if (rc < 0) {
         if (err) {
             if (rc == MPR_ERR_CANT_ACCESS) {
-                *err = mprAsprintf("Can't access command %s", cmd->program);
+                *err = sfmt("Can't access command %s", cmd->program);
             } else if (MPR_ERR_CANT_OPEN) {
-                *err = mprAsprintf("Can't open standard I/O for command %s", cmd->program);
+                *err = sfmt("Can't open standard I/O for command %s", cmd->program);
             } else if (rc == MPR_ERR_CANT_CREATE) {
-                *err = mprAsprintf("Can't create process for %s", cmd->program);
+                *err = sfmt("Can't create process for %s", cmd->program);
             }
         }
         return rc;
@@ -5760,10 +5762,10 @@ static int sanitizeArgs(MprCmd *cmd, int argc, char **argv, char **env)
             Add PATH and LD_LIBRARY_PATH 
          */
         if (!hasPath && (cp = getenv("PATH")) != 0) {
-            envp[index++] = mprAsprintf("PATH=%s", cp);
+            envp[index++] = sfmt("PATH=%s", cp);
         }
         if (!hasLibPath && (cp = getenv(LD_LIBRARY_PATH)) != 0) {
-            envp[index++] = mprAsprintf("%s=%s", LD_LIBRARY_PATH, cp);
+            envp[index++] = sfmt("%s=%s", LD_LIBRARY_PATH, cp);
         }
         envp[index++] = '\0';
         mprLog(4, "mprStartCmd %s", cmd->program);
@@ -5888,7 +5890,7 @@ static int sanitizeArgs(MprCmd *cmd, int argc, char **argv, char **env)
         dp = (char*) mprAlloc(len);
         endp = &dp[len];
         cmd->env = (char**) dp;
-        for (ep = env; ep && *ep; ep++) {
+        for (ep = env, i = 0; ep && *ep; ep++, i++) {
             mprLog(4, "    env[%d]: %s", i, *ep);
             strcpy(dp, *ep);
             dp += slen(*ep) + 1;
@@ -6047,7 +6049,7 @@ static int makeChannel(MprCmd *cmd, int index)
     now = ((int) mprGetTime() & 0xFFFF) % 64000;
 
     lock(MPR->cmdService);
-    pipeName = mprAsprintf("\\\\.\\pipe\\MPR_%d_%d_%d.tmp", getpid(), (int) now, ++tempSeed);
+    pipeName = sfmt("\\\\.\\pipe\\MPR_%d_%d_%d.tmp", getpid(), (int) now, ++tempSeed);
     unlock(MPR->cmdService);
 
     /*
@@ -6120,7 +6122,7 @@ static int makeChannel(MprCmd *cmd, int index)
     static int      tempSeed = 0;
 
     file = &cmd->files[index];
-    file->name = mprAsprintf("/pipe/%s_%d_%d", BLD_PRODUCT, taskIdSelf(), tempSeed++);
+    file->name = sfmt("/pipe/%s_%d_%d", BLD_PRODUCT, taskIdSelf(), tempSeed++);
 
     if (pipeDevCreate(file->name, 5, MPR_BUFSIZE) < 0) {
         mprError("Can't create pipes to run %s", cmd->program);
@@ -6436,7 +6438,7 @@ static char **fixenv(MprCmd *cmd)
     under the terms of the GNU General Public License as published by the 
     Free Software Foundation; either version 2 of the License, or (at your 
     option) any later version. See the GNU General Public License for more 
-    details at: http://www.embedthis.com/downloads/gplLicense.html
+    details at: http://embedthis.com/downloads/gplLicense.html
     
     This program is distributed WITHOUT ANY WARRANTY; without even the 
     implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. 
@@ -6445,7 +6447,7 @@ static char **fixenv(MprCmd *cmd)
     proprietary programs. If you are unable to comply with the GPL, you must
     acquire a commercial license to use this software. Commercial licenses 
     for this software and support services are available from Embedthis 
-    Software at http://www.embedthis.com 
+    Software at http://embedthis.com 
     
     Local variables:
     tab-width: 4
@@ -6751,7 +6753,7 @@ void mprSignalMultiCond(MprCond *cp)
     under the terms of the GNU General Public License as published by the
     Free Software Foundation; either version 2 of the License, or (at your
     option) any later version. See the GNU General Public License for more
-    details at: http://www.embedthis.com/downloads/gplLicense.html
+    details at: http://embedthis.com/downloads/gplLicense.html
 
     This program is distributed WITHOUT ANY WARRANTY; without even the
     implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.
@@ -6760,7 +6762,7 @@ void mprSignalMultiCond(MprCond *cp)
     proprietary programs. If you are unable to comply with the GPL, you must
     acquire a commercial license to use this software. Commercial licenses
     for this software and support services are available from Embedthis
-    Software at http://www.embedthis.com
+    Software at http://embedthis.com
 
     Local variables:
     tab-width: 4
@@ -7787,7 +7789,7 @@ MprDiskFileSystem *mprCreateDiskFileSystem(cchar *path)
     under the terms of the GNU General Public License as published by the 
     Free Software Foundation; either version 2 of the License, or (at your 
     option) any later version. See the GNU General Public License for more 
-    details at: http://www.embedthis.com/downloads/gplLicense.html
+    details at: http://embedthis.com/downloads/gplLicense.html
     
     This program is distributed WITHOUT ANY WARRANTY; without even the 
     implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. 
@@ -7796,7 +7798,7 @@ MprDiskFileSystem *mprCreateDiskFileSystem(cchar *path)
     proprietary programs. If you are unable to comply with the GPL, you must
     acquire a commercial license to use this software. Commercial licenses 
     for this software and support services are available from Embedthis 
-    Software at http://www.embedthis.com 
+    Software at http://embedthis.com 
     
     Local variables:
     tab-width: 4
@@ -7961,8 +7963,6 @@ static void manageDispatcher(MprDispatcher *dispatcher, int flags)
     es = dispatcher->service;
 
     if (flags & MPR_MANAGE_MARK) {
-        //  MOB -- remove this assert -- when shutting down, stopping may not be set
-        mprAssert(!dispatcher->destroyed || mprIsStopping());
         mprMark(dispatcher->name);
         mprMark(dispatcher->eventQ);
         mprMark(dispatcher->cond);
@@ -8086,8 +8086,7 @@ int mprServiceEvents(MprTime timeout, int flags)
 /*
     Wait for an event to occur. Expect the event to signal the cond var.
     WARNING: this will enable GC while sleeping
-    Return MPR_ERR_TIMEOUT if no event was seen before the timeout.
-    MOB - should this return a count of events?
+    Return Return 0 if an event was signalled. Return MPR_ERR_TIMEOUT if no event was seen before the timeout.
  */
 int mprWaitForEvent(MprDispatcher *dispatcher, MprTime timeout)
 {
@@ -8625,7 +8624,7 @@ void mprSignalDispatcher(MprDispatcher *dispatcher)
     under the terms of the GNU General Public License as published by the 
     Free Software Foundation; either version 2 of the License, or (at your 
     option) any later version. See the GNU General Public License for more 
-    details at: http://www.embedthis.com/downloads/gplLicense.html
+    details at: http://embedthis.com/downloads/gplLicense.html
     
     This program is distributed WITHOUT ANY WARRANTY; without even the 
     implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. 
@@ -8634,7 +8633,7 @@ void mprSignalDispatcher(MprDispatcher *dispatcher)
     proprietary programs. If you are unable to comply with the GPL, you must
     acquire a commercial license to use this software. Commercial licenses 
     for this software and support services are available from Embedthis 
-    Software at http://www.embedthis.com 
+    Software at http://embedthis.com 
     
     Local variables:
     tab-width: 4
@@ -8902,7 +8901,7 @@ char *mprEscapeHtml(cchar *html)
     under the terms of the GNU General Public License as published by the
     Free Software Foundation; either version 2 of the License, or (at your
     option) any later version. See the GNU General Public License for more
-    details at: http://www.embedthis.com/downloads/gplLicense.html
+    details at: http://embedthis.com/downloads/gplLicense.html
 
     This program is distributed WITHOUT ANY WARRANTY; without even the
     implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.
@@ -8911,7 +8910,7 @@ char *mprEscapeHtml(cchar *html)
     proprietary programs. If you are unable to comply with the GPL, you must
     acquire a commercial license to use this software. Commercial licenses
     for this software and support services are available from Embedthis
-    Software at http://www.embedthis.com
+    Software at http://embedthis.com
 
     Local variables:
     tab-width: 4
@@ -9222,7 +9221,7 @@ void stubMmprEpoll() {}
     under the terms of the GNU General Public License as published by the
     Free Software Foundation; either version 2 of the License, or (at your
     option) any later version. See the GNU General Public License for more
-    details at: http://www.embedthis.com/downloads/gplLicense.html
+    details at: http://embedthis.com/downloads/gplLicense.html
 
     This program is distributed WITHOUT ANY WARRANTY; without even the
     implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.
@@ -9231,7 +9230,7 @@ void stubMmprEpoll() {}
     proprietary programs. If you are unable to comply with the GPL, you must
     acquire a commercial license to use this software. Commercial licenses
     for this software and support services are available from Embedthis
-    Software at http://www.embedthis.com
+    Software at http://embedthis.com
 
     Local variables:
     tab-width: 4
@@ -9582,7 +9581,7 @@ static void dequeueEvent(MprEvent *event)
     under the terms of the GNU General Public License as published by the 
     Free Software Foundation; either version 2 of the License, or (at your 
     option) any later version. See the GNU General Public License for more 
-    details at: http://www.embedthis.com/downloads/gplLicense.html
+    details at: http://embedthis.com/downloads/gplLicense.html
     
     This program is distributed WITHOUT ANY WARRANTY; without even the 
     implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. 
@@ -9591,7 +9590,7 @@ static void dequeueEvent(MprEvent *event)
     proprietary programs. If you are unable to comply with the GPL, you must
     acquire a commercial license to use this software. Commercial licenses 
     for this software and support services are available from Embedthis 
-    Software at http://www.embedthis.com 
+    Software at http://embedthis.com 
     
     Local variables:
     tab-width: 4
@@ -9676,7 +9675,6 @@ int mprFlushFile(MprFile *file)
     if (file->buf == 0) {
         return 0;
     }
-
     if (file->mode & (O_WRONLY | O_RDWR)) {
         fs = file->fileSystem;
         bp = file->buf;
@@ -9800,12 +9798,11 @@ static char *findNewline(cchar *str, cchar *newline, ssize len, ssize *nlen)
 }
 
 
-//  MOB -- reanem mprReadFileLine
 /*
     Get a string from the file. This will put the file into buffered mode.
     Return NULL on eof.
  */
-char *mprGetFileString(MprFile *file, ssize maxline, ssize *lenp)
+char *mprReadLine(MprFile *file, ssize maxline, ssize *lenp)
 {
     MprBuf          *bp;
     MprFileSystem   *fs;
@@ -10143,8 +10140,7 @@ ssize mprWriteFileString(MprFile *file, cchar *str)
 }
 
 
-//  MOB - rethink name
-ssize mprWriteFileFormat(MprFile *file, cchar *fmt, ...)
+ssize mprWriteFileFmt(MprFile *file, cchar *fmt, ...)
 {
     va_list     ap;
     char        *buf;
@@ -10152,7 +10148,7 @@ ssize mprWriteFileFormat(MprFile *file, cchar *fmt, ...)
 
     rc = -1;
     va_start(ap, fmt);
-    if ((buf = mprAsprintfv(fmt, ap)) != NULL) {
+    if ((buf = sfmtv(fmt, ap)) != NULL) {
         rc = mprWriteFileString(file, buf);
     }
     va_end(ap);
@@ -10238,7 +10234,7 @@ int mprGetFileFd(MprFile *file)
     under the terms of the GNU General Public License as published by the 
     Free Software Foundation; either version 2 of the License, or (at your 
     option) any later version. See the GNU General Public License for more 
-    details at: http://www.embedthis.com/downloads/gplLicense.html
+    details at: http://embedthis.com/downloads/gplLicense.html
     
     This program is distributed WITHOUT ANY WARRANTY; without even the 
     implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. 
@@ -10247,7 +10243,7 @@ int mprGetFileFd(MprFile *file)
     proprietary programs. If you are unable to comply with the GPL, you must
     acquire a commercial license to use this software. Commercial licenses 
     for this software and support services are available from Embedthis 
-    Software at http://www.embedthis.com 
+    Software at http://embedthis.com 
     
     Local variables:
     tab-width: 4
@@ -10411,7 +10407,7 @@ void mprSetPathNewline(cchar *path, cchar *newline)
     under the terms of the GNU General Public License as published by the 
     Free Software Foundation; either version 2 of the License, or (at your 
     option) any later version. See the GNU General Public License for more 
-    details at: http://www.embedthis.com/downloads/gplLicense.html
+    details at: http://embedthis.com/downloads/gplLicense.html
     
     This program is distributed WITHOUT ANY WARRANTY; without even the 
     implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. 
@@ -10420,7 +10416,7 @@ void mprSetPathNewline(cchar *path, cchar *newline)
     proprietary programs. If you are unable to comply with the GPL, you must
     acquire a commercial license to use this software. Commercial licenses 
     for this software and support services are available from Embedthis 
-    Software at http://www.embedthis.com 
+    Software at http://embedthis.com 
     
     Local variables:
     tab-width: 4
@@ -10445,9 +10441,9 @@ void mprSetPathNewline(cchar *path, cchar *newline)
 /************************************************************************/
 
 /*
-    mprHash.c - Fast hashing table lookup module
+    mprHash.c - Fast hashing hash lookup module
 
-    This hash table uses a fast key lookup mechanism. Keys may be C strings or unicode strings. The hash value entries 
+    This hash hash uses a fast key lookup mechanism. Keys may be C strings or unicode strings. The hash value entries 
     are arbitrary pointers. The keys are hashed into a series of buckets which then have a chain of hash entries.
     The chain in in collating sequence so search time through the chain is on average (N/hashSize)/2.
 
@@ -10460,221 +10456,246 @@ void mprSetPathNewline(cchar *path, cchar *newline)
 
 
 
-static void *dupKey(MprHashTable *table, MprHash *sp, cvoid *key);
-static MprHash  *lookupHash(int *index, MprHash **prevSp, MprHashTable *table, cvoid *key);
-static void manageHashTable(MprHashTable *table, int flags);
+static void *dupKey(MprHash *hash, MprKey *sp, cvoid *key);
+static MprKey *lookupHash(int *index, MprKey **prevSp, MprHash *hash, cvoid *key);
+static void manageHashTable(MprHash *hash, int flags);
 
 /*
-    Create a new hash table of a given size. Caller should provide a size that is a prime number for the greatest efficiency.
+    Create a new hash hash of a given size. Caller should provide a size that is a prime number for the greatest efficiency.
  */
-MprHashTable *mprCreateHash(int hashSize, int flags)
+MprHash *mprCreateHash(int hashSize, int flags)
 {
-    MprHashTable    *table;
+    MprHash     *hash;
 
-    if ((table = mprAllocObj(MprHashTable, manageHashTable)) == 0) {
+    if ((hash = mprAllocObj(MprHash, manageHashTable)) == 0) {
         return 0;
     }
     if (hashSize < MPR_DEFAULT_HASH_SIZE) {
         hashSize = MPR_DEFAULT_HASH_SIZE;
     }
-    if ((table->buckets = mprAllocZeroed(sizeof(MprHash*) * hashSize)) == 0) {
+    if ((hash->buckets = mprAllocZeroed(sizeof(MprKey*) * hashSize)) == 0) {
         return NULL;
     }
-    table->hashSize = hashSize;
-    table->flags = flags;
-    table->length = 0;
-    table->mutex = mprCreateLock();
+    hash->size = hashSize;
+    hash->flags = flags;
+    hash->length = 0;
+    hash->mutex = mprCreateLock();
 #if BLD_CHAR_LEN > 1
-    if (table->flags & MPR_HASH_UNICODE) {
-        if (table->flags & MPR_HASH_CASELESS) {
-            table->hash = (MprHashProc) whashlower;
+    if (hash->flags & MPR_HASH_UNICODE) {
+        if (hash->flags & MPR_HASH_CASELESS) {
+            hash->fn = (MprHashProc) whashlower;
         } else {
-            table->hash = (MprHashProc) whash;
+            hash->fn = (MprHashProc) whash;
         }
     } else 
 #endif
     {
-        if (table->flags & MPR_HASH_CASELESS) {
-            table->hash = (MprHashProc) shashlower;
+        if (hash->flags & MPR_HASH_CASELESS) {
+            hash->fn = (MprHashProc) shashlower;
         } else {
-            table->hash = (MprHashProc) shash;
+            hash->fn = (MprHashProc) shash;
         }
     }
-    return table;
+    return hash;
 }
 
 
-static void manageHashTable(MprHashTable *table, int flags)
+static void manageHashTable(MprHash *hash, int flags)
 {
-    MprHash     *sp;
+    MprKey      *sp;
     int         i;
 
     if (flags & MPR_MANAGE_MARK) {
-        mprMark(table->mutex);
-        mprMark(table->buckets);
-        lock(table);
-        for (i = 0; i < table->hashSize; i++) {
-            for (sp = (MprHash*) table->buckets[i]; sp; sp = sp->next) {
+        mprMark(hash->mutex);
+        mprMark(hash->buckets);
+        lock(hash);
+        for (i = 0; i < hash->size; i++) {
+            for (sp = (MprKey*) hash->buckets[i]; sp; sp = sp->next) {
                 mprAssert(mprIsValid(sp));
                 mprMark(sp);
-                if (!(table->flags & MPR_HASH_STATIC_VALUES)) {
+                if (!(hash->flags & MPR_HASH_STATIC_VALUES)) {
                     mprAssert(sp->data == 0 || mprIsValid(sp->data));
                     mprMark(sp->data);
                 }
-                if (!(table->flags & MPR_HASH_STATIC_KEYS)) {
+                if (!(hash->flags & MPR_HASH_STATIC_KEYS)) {
                     mprAssert(mprIsValid(sp->key));
                     mprMark(sp->key);
                 }
             }
         }
-        unlock(table);
+        unlock(hash);
     }
-}
-
-
-MprHashTable *mprCloneHash(MprHashTable *master)
-{
-    MprHash         *hp;
-    MprHashTable    *table;
-
-    table = mprCreateHash(master->hashSize, master->flags);
-    if (table == 0) {
-        return 0;
-    }
-    hp = mprGetFirstKey(master);
-    while (hp) {
-        mprAddKey(table, hp->key, hp->data);
-        hp = mprGetNextKey(master, hp);
-    }
-    return table;
 }
 
 
 /*
-    Insert an entry into the hash table. If the entry already exists, update its value. 
+    Insert an entry into the hash hash. If the entry already exists, update its value. 
     Order of insertion is not preserved.
  */
-MprHash *mprAddKey(MprHashTable *table, cvoid *key, cvoid *ptr)
+MprKey *mprAddKey(MprHash *hash, cvoid *key, cvoid *ptr)
 {
-    MprHash     *sp, *prevSp;
+    MprKey      *sp, *prevSp;
     int         index;
 
-    lock(table);
-    sp = lookupHash(&index, &prevSp, table, key);
+    if (hash == 0) {
+        return 0;
+    }
+    lock(hash);
+    sp = lookupHash(&index, &prevSp, hash, key);
     if (sp != 0) {
         /*
             Already exists. Just update the data.
          */
         sp->data = ptr;
-        unlock(table);
+        unlock(hash);
         return sp;
     }
     /*
         Hash entries are managed by manageHashTable
      */
-    if ((sp = mprAllocStruct(MprHash)) == 0) {
-        unlock(table);
+    if ((sp = mprAllocStruct(MprKey)) == 0) {
+        unlock(hash);
         return 0;
     }
     sp->data = ptr;
-    if (!(table->flags & MPR_HASH_STATIC_KEYS)) {
-        sp->key = dupKey(table, sp, key);
+    if (!(hash->flags & MPR_HASH_STATIC_KEYS)) {
+        sp->key = dupKey(hash, sp, key);
     } else {
         sp->key = (void*) key;
     }
     sp->bucket = index;
-    sp->next = table->buckets[index];
-    table->buckets[index] = sp;
-    table->length++;
-    unlock(table);
+    sp->next = hash->buckets[index];
+    hash->buckets[index] = sp;
+    hash->length++;
+    unlock(hash);
     return sp;
 }
 
 
-MprHash *mprAddKeyFmt(MprHashTable *table, cvoid *key, cchar *fmt, ...)
+MprKey *mprAddKeyFmt(MprHash *hash, cvoid *key, cchar *fmt, ...)
 {
     va_list     ap;
     char        *value;
 
     va_start(ap, fmt);
-    value = mprAsprintfv(fmt, ap);
+    value = sfmtv(fmt, ap);
     va_end(ap);
-    return mprAddKey(table, key, value);
+    return mprAddKey(hash, key, value);
 }
 
 
 /*
-    Multiple insertion. Insert an entry into the hash table allowing for multiple entries with the same key.
+    Multiple insertion. Insert an entry into the hash hash allowing for multiple entries with the same key.
     Order of insertion is not preserved. Lookup cannot be used to retrieve all duplicate keys, some will be shadowed. 
     Use enumeration to retrieve the keys.
  */
-MprHash *mprAddDuplicateKey(MprHashTable *table, cvoid *key, cvoid *ptr)
+MprKey *mprAddDuplicateKey(MprHash *hash, cvoid *key, cvoid *ptr)
 {
-    MprHash     *sp;
+    MprKey      *sp;
     int         index;
 
-    if ((sp = mprAllocStruct(MprHash)) == 0) {
+    mprAssert(hash);
+    mprAssert(key);
+
+    if ((sp = mprAllocStruct(MprKey)) == 0) {
         return 0;
     }
     sp->data = ptr;
-    if (!(table->flags & MPR_HASH_STATIC_KEYS)) {
-        sp->key = dupKey(table, sp, key);
+    if (!(hash->flags & MPR_HASH_STATIC_KEYS)) {
+        sp->key = dupKey(hash, sp, key);
     } else {
         sp->key = (void*) key;
     }
-    lock(table);
-    index = table->hash(key, -1) % table->hashSize;
+    lock(hash);
+    index = hash->fn(key, slen(key)) % hash->size;
     sp->bucket = index;
-    sp->next = table->buckets[index];
-    table->buckets[index] = sp;
-    table->length++;
-    unlock(table);
+    sp->next = hash->buckets[index];
+    hash->buckets[index] = sp;
+    hash->length++;
+    unlock(hash);
     return sp;
 }
 
 
-int mprRemoveKey(MprHashTable *table, cvoid *key)
+int mprRemoveKey(MprHash *hash, cvoid *key)
 {
-    MprHash     *sp, *prevSp;
+    MprKey      *sp, *prevSp;
     int         index;
 
-    lock(table);
-    if ((sp = lookupHash(&index, &prevSp, table, key)) == 0) {
-        unlock(table);
+    mprAssert(hash);
+    mprAssert(key);
+
+    lock(hash);
+    if ((sp = lookupHash(&index, &prevSp, hash, key)) == 0) {
+        unlock(hash);
         return MPR_ERR_CANT_FIND;
     }
     if (prevSp) {
         prevSp->next = sp->next;
     } else {
-        table->buckets[index] = sp->next;
+        hash->buckets[index] = sp->next;
     }
-    table->length--;
-    unlock(table);
+    hash->length--;
+    unlock(hash);
     return 0;
+}
+
+
+MprHash *mprBlendHash(MprHash *hash, MprHash *extra)
+{
+    MprKey      *kp;
+
+    if (hash == 0 || extra == 0) {
+        return hash;
+    }
+    for (ITERATE_KEYS(extra, kp)) {
+        mprAddKey(hash, kp->key, kp->data);
+    }
+    return hash;
+}
+
+
+MprHash *mprCloneHash(MprHash *master)
+{
+    MprKey      *kp;
+    MprHash     *hash;
+
+    hash = mprCreateHash(master->size, master->flags);
+    if (hash == 0) {
+        return 0;
+    }
+    kp = mprGetFirstKey(master);
+    while (kp) {
+        mprAddKey(hash, kp->key, kp->data);
+        kp = mprGetNextKey(master, kp);
+    }
+    return hash;
 }
 
 
 /*
     Lookup a key and return the hash entry
  */
-MprHash *mprLookupKeyEntry(MprHashTable *table, cvoid *key)
+MprKey *mprLookupKeyEntry(MprHash *hash, cvoid *key)
 {
     mprAssert(key);
+    mprAssert(hash);
 
-    return lookupHash(0, 0, table, key);
+    return lookupHash(0, 0, hash, key);
 }
 
 
 /*
     Lookup a key and return the hash entry data
  */
-void *mprLookupKey(MprHashTable *table, cvoid *key)
+void *mprLookupKey(MprHash *hash, cvoid *key)
 {
-    MprHash     *sp;
+    MprKey      *sp;
 
     mprAssert(key);
+    mprAssert(hash);
 
-    if ((sp = lookupHash(0, 0, table, key)) == 0) {
+    if ((sp = lookupHash(0, 0, hash, key)) == 0) {
         return 0;
     }
     return (void*) sp->data;
@@ -10705,27 +10726,28 @@ static int getHashSize(int numKeys)
 /*
     This is unlocked because it is read-only
  */
-static MprHash *lookupHash(int *bucketIndex, MprHash **prevSp, MprHashTable *table, cvoid *key)
+static MprKey *lookupHash(int *bucketIndex, MprKey **prevSp, MprHash *hash, cvoid *key)
 {
-    MprHash     *sp, *prev, *next;
-    MprHash     **buckets;
+    MprKey      *sp, *prev, *next;
+    MprKey      **buckets;
     int         hashSize, i, index, rc;
 
     mprAssert(key);
+    mprAssert(hash);
 
-    if (key == 0 || table == 0) {
+    if (key == 0 || hash == 0) {
         return 0;
     }
-    if (table->length > table->hashSize) {
-        hashSize = getHashSize(table->length * 4 / 3);
-        if (table->hashSize < hashSize) {
-            if ((buckets = mprAllocZeroed(sizeof(MprHash*) * hashSize)) != 0) {
-                table->length = 0;
-                for (i = 0; i < table->hashSize; i++) {
-                    for (sp = table->buckets[i]; sp; sp = next) {
+    if (hash->length > hash->size) {
+        hashSize = getHashSize(hash->length * 4 / 3);
+        if (hash->size < hashSize) {
+            if ((buckets = mprAllocZeroed(sizeof(MprKey*) * hashSize)) != 0) {
+                hash->length = 0;
+                for (i = 0; i < hash->size; i++) {
+                    for (sp = hash->buckets[i]; sp; sp = next) {
                         next = sp->next;
                         mprAssert(next != sp);
-                        index = table->hash(sp->key, slen(sp->key)) % hashSize;
+                        index = hash->fn(sp->key, slen(sp->key)) % hashSize;
                         if (buckets[index]) {
                             sp->next = buckets[index];
                         } else {
@@ -10733,36 +10755,36 @@ static MprHash *lookupHash(int *bucketIndex, MprHash **prevSp, MprHashTable *tab
                         }
                         buckets[index] = sp;
                         sp->bucket = index;
-                        table->length++;
+                        hash->length++;
                     }
                 }
-                table->hashSize = hashSize;
-                table->buckets = buckets;
+                hash->size = hashSize;
+                hash->buckets = buckets;
             }
         }
     }
-    index = table->hash(key, slen(key)) % table->hashSize;
+    index = hash->fn(key, slen(key)) % hash->size;
     if (bucketIndex) {
         *bucketIndex = index;
     }
-    sp = table->buckets[index];
+    sp = hash->buckets[index];
     prev = 0;
 
     while (sp) {
 #if BLD_CHAR_LEN > 1
-        if (table->flags & MPR_HASH_UNICODE) {
+        if (hash->flags & MPR_HASH_UNICODE) {
             MprChar *u1, *u2;
             u1 = (MprChar*) sp->key;
             u2 = (MprChar*) key;
             rc = -1;
-            if (table->flags & MPR_HASH_CASELESS) {
+            if (hash->flags & MPR_HASH_CASELESS) {
                 rc = wcasecmp(u1, u2);
             } else {
                 rc = wcmp(u1, u2);
             }
         } else 
 #endif
-        if (table->flags & MPR_HASH_CASELESS) {
+        if (hash->flags & MPR_HASH_CASELESS) {
             rc = scasecmp(sp->key, key);
         } else {
             rc = strcmp(sp->key, key);
@@ -10781,24 +10803,24 @@ static MprHash *lookupHash(int *bucketIndex, MprHash **prevSp, MprHashTable *tab
 }
 
 
-int mprGetHashLength(MprHashTable *table)
+int mprGetHashLength(MprHash *hash)
 {
-    return table->length;
+    return hash->length;
 }
 
 
 /*
-    Return the first entry in the table.
+    Return the first entry in the hash.
  */
-MprHash *mprGetFirstKey(MprHashTable *table)
+MprKey *mprGetFirstKey(MprHash *hash)
 {
-    MprHash     *sp;
+    MprKey      *sp;
     int         i;
 
-    mprAssert(table);
+    mprAssert(hash);
 
-    for (i = 0; i < table->hashSize; i++) {
-        if ((sp = (MprHash*) table->buckets[i]) != 0) {
+    for (i = 0; i < hash->size; i++) {
+        if ((sp = (MprKey*) hash->buckets[i]) != 0) {
             return sp;
         }
     }
@@ -10807,23 +10829,24 @@ MprHash *mprGetFirstKey(MprHashTable *table)
 
 
 /*
-    Return the next entry in the table
+    Return the next entry in the hash
  */
-MprHash *mprGetNextKey(MprHashTable *table, MprHash *last)
+MprKey *mprGetNextKey(MprHash *hash, MprKey *last)
 {
-    MprHash     *sp;
+    MprKey      *sp;
     int         i;
 
-    mprAssert(table);
-
+    if (hash == 0) {
+        return 0;
+    }
     if (last == 0) {
-        return mprGetFirstKey(table);
+        return mprGetFirstKey(hash);
     }
     if (last->next) {
         return last->next;
     }
-    for (i = last->bucket + 1; i < table->hashSize; i++) {
-        if ((sp = (MprHash*) table->buckets[i]) != 0) {
+    for (i = last->bucket + 1; i < hash->size; i++) {
+        if ((sp = (MprKey*) hash->buckets[i]) != 0) {
             return sp;
         }
     }
@@ -10831,14 +10854,29 @@ MprHash *mprGetNextKey(MprHashTable *table, MprHash *last)
 }
 
 
-static void *dupKey(MprHashTable *table, MprHash *sp, cvoid *key)
+static void *dupKey(MprHash *hash, MprKey *sp, cvoid *key)
 {
 #if BLD_CHAR_LEN > 1
-    if (table->flags & MPR_HASH_UNICODE) {
+    if (hash->flags & MPR_HASH_UNICODE) {
         return wclone(sp, (MprChar*) key, -1);
     } else
 #endif
         return sclone(key);
+}
+
+
+MprHash *mprCreateHashFromWords(cchar *str)
+{
+    MprHash     *hash;
+    char        *word, *next;
+
+    hash = mprCreateHash(0, 0);
+    word = stok(sclone(str), ", \t\n\r", &next);
+    while (word) {
+        mprAddKey(hash, word, word);
+        word = stok(NULL, " \t\n\r", &next);
+    }
+    return hash;
 }
 
 
@@ -10858,7 +10896,7 @@ static void *dupKey(MprHashTable *table, MprHash *sp, cvoid *key)
     under the terms of the GNU General Public License as published by the
     Free Software Foundation; either version 2 of the License, or (at your
     option) any later version. See the GNU General Public License for more
-    details at: http://www.embedthis.com/downloads/gplLicense.html
+    details at: http://embedthis.com/downloads/gplLicense.html
 
     This program is distributed WITHOUT ANY WARRANTY; without even the
     implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.
@@ -10867,7 +10905,7 @@ static void *dupKey(MprHashTable *table, MprHash *sp, cvoid *key)
     proprietary programs. If you are unable to comply with the GPL, you must
     acquire a commercial license to use this software. Commercial licenses
     for this software and support services are available from Embedthis
-    Software at http://www.embedthis.com
+    Software at http://embedthis.com
 
     Local variables:
     tab-width: 4
@@ -10880,6 +10918,454 @@ static void *dupKey(MprHashTable *table, MprHash *sp, cvoid *key)
 /************************************************************************/
 /*
  *  End of file "./src/mprHash.c"
+ */
+/************************************************************************/
+
+
+
+/************************************************************************/
+/*
+ *  Start of file "./src/mprJSON.c"
+ */
+/************************************************************************/
+
+/**
+    mprJSON.c - A JSON parser and serializer. 
+
+    Copyright (c) All Rights Reserved. See details at the end of the file.
+ */
+
+
+
+static MprObj *deserialize(MprJson *jp);
+static char advanceToken(MprJson *jp);
+static cchar *findEndKeyword(MprJson *jp, cchar *str);
+static cchar *findQuote(cchar *tok, int quote);
+static MprObj *makeObj(MprJson *jp, bool list);
+static cchar *parseComment(MprJson *jp);
+static void jsonParseError(MprJson *jp, cchar *msg);
+static cchar *parseName(MprJson *jp);
+static cchar *parseValue(MprJson *jp);
+static int setValue(MprJson *jp, MprObj *obj, int index, cchar *name, cchar *value, int type);
+
+
+MprObj *mprDeserializeCustom(cchar *str, MprJsonCallback callback, void *data)
+{
+    MprJson     jp;
+
+    /*
+        There is no need for GC management as this routine does not yield
+     */
+    memset(&jp, 0, sizeof(jp));
+    jp.lineNumber = 1;
+    jp.tok = str;
+    jp.callback = callback;
+    jp.data = data;
+    return deserialize(&jp);
+}
+
+
+/*
+    Deserialize a JSON string into an MprHash object. Objects and lists "[]" are stored in hashes. 
+ */
+MprObj *mprDeserialize(cchar *str)
+{
+    MprJsonCallback cb;
+
+    cb.checkState = 0;
+    cb.makeObj = makeObj;
+    cb.parseError = jsonParseError;
+    cb.setValue = setValue;
+    return mprDeserializeCustom(str, cb, 0); 
+}
+
+
+static MprObj *deserialize(MprJson *jp)
+{
+    cvoid   *value;
+    MprObj  *obj;
+    cchar   *name;
+    int     token, rc, index, valueType;
+
+    if ((token = advanceToken(jp)) == '[') {
+        obj = jp->callback.makeObj(jp, 1);
+        index = 0;
+    } else if (token == '{') {
+        obj = jp->callback.makeObj(jp, 0);
+        index = -1;
+    } else {
+        return (MprObj*) parseValue(jp);
+    }
+    jp->tok++;
+
+    while (*jp->tok) {
+        switch (advanceToken(jp)) {
+        case '\0':
+            break;
+
+        case ',':
+            if (index >= 0) {
+                index++;
+            }
+            jp->tok++;
+            continue;
+
+        case '/':
+            if (jp->tok[1] == '/' || jp->tok[1] == '*') {
+                jp->tok = parseComment(jp);
+            } else {
+                mprJsonParseError(jp, "Unexpected character '%c'", *jp->tok);
+                return 0;
+            }
+            continue;
+
+        case '}':
+        case ']':
+            /* End of object or array */
+            if (jp->callback.checkState && jp->callback.checkState(jp, NULL) < 0) {
+                return 0;
+            }
+            jp->tok++;
+            return obj;
+            
+        default:
+            /*
+                Value: String, "{" or "]"
+             */
+            if (index < 0) {
+                if ((name = parseName(jp)) == 0) {
+                    return 0;
+                }
+                if (advanceToken(jp) != ':') {
+                    mprJsonParseError(jp, "Bad separator '%c'", *jp->tok);
+                    return 0;
+                }
+                jp->tok++;
+            }
+            advanceToken(jp);
+            if (jp->callback.checkState && jp->callback.checkState(jp, name) < 0) {
+                return 0;
+            }
+            if (*jp->tok == '{') {
+                value = deserialize(jp);
+                valueType = MPR_JSON_OBJ;
+
+            } else if (*jp->tok == '[') {
+                value = deserialize(jp);
+                valueType = MPR_JSON_ARRAY;
+
+            } else {
+                value = parseValue(jp);
+                valueType = MPR_JSON_STRING;
+            }
+            if (value == 0) {
+                /* Error already reported */
+                return 0;
+            }
+            if ((rc = jp->callback.setValue(jp, obj, index, name, value, valueType)) < 0) {
+                return 0;
+            }
+        }
+    }
+    return obj;
+}
+
+
+static cchar *parseComment(MprJson *jp)
+{
+    cchar   *tok;
+
+    tok = jp->tok;
+    if (*tok == '/') {
+        for (tok++; *tok && *tok != '\n'; tok++) ;
+
+    } else if (*jp->tok == '*') {
+        tok++;
+        for (tok++; tok[0] && (tok[0] != '*' || tok[1] != '/'); tok++) {
+            if (*tok == '\n') {
+                jp->lineNumber++;
+            }
+        }
+    }
+    return tok - 1;
+}
+
+
+static cchar *parseQuotedName(MprJson *jp)
+{
+    cchar    *etok, *name;
+    int      quote;
+
+    quote = *jp->tok;
+    if ((etok = findQuote(++jp->tok, quote)) == 0) {
+        mprJsonParseError(jp, "Missing closing quote");
+        return 0;
+    }
+    name = snclone(jp->tok, etok - jp->tok);
+    jp->tok = ++etok;
+    return name;
+}
+
+
+static cchar *parseUnquotedName(MprJson *jp)
+{
+    cchar    *etok, *name;
+
+    etok = findEndKeyword(jp, jp->tok);
+    name = snclone(jp->tok, etok - jp->tok);
+    jp->tok = etok;
+    return name;
+}
+
+
+static cchar *parseName(MprJson *jp)
+{
+    char    token;
+
+    token = advanceToken(jp);
+    if (token == '"' || token == '\'') {
+        return parseQuotedName(jp);
+    } else {
+        return parseUnquotedName(jp);
+    }
+}
+
+
+static cchar *parseValue(MprJson *jp)
+{
+    cchar   *etok, *value;
+    int     quote;
+
+    value = 0;
+    if (*jp->tok == '"' || *jp->tok == '\'') {
+        quote = *jp->tok;
+        if ((etok = findQuote(++jp->tok, quote)) == 0) {
+            mprJsonParseError(jp, "Missing closing quote");
+            return 0;
+        }
+        value = snclone(jp->tok, etok - jp->tok);
+        jp->tok = etok + 1;
+
+    } else {
+        etok = findEndKeyword(jp, jp->tok);
+        value = snclone(jp->tok, etok - jp->tok);
+        jp->tok = etok;
+    }
+    return value;
+}
+
+
+static int setValue(MprJson *jp, MprObj *obj, int index, cchar *key, cchar *value, int type)
+{
+    MprKey  *kp;
+    char    keybuf[32];
+
+    if (index >= 0) {
+        itosbuf(keybuf, sizeof(keybuf), index, 10);
+        key = keybuf;
+    }
+    if ((kp = mprAddKey(obj, key, value)) == 0) {
+        return MPR_ERR_MEMORY;
+    }
+    kp->type = type;
+    return 0;
+}
+
+
+static MprObj *makeObj(MprJson *jp, bool list)
+{
+    return (MprObj*) mprCreateHash(0, 0);
+}
+
+
+static void quoteValue(MprBuf *buf, cchar *str)
+{
+    cchar   *cp;
+
+    mprPutCharToBuf(buf, '\'');
+    for (cp = str; *cp; cp++) {
+        if (*cp == '\'') {
+            mprPutCharToBuf(buf, '\\');
+        }
+        mprPutCharToBuf(buf, *cp);
+    }
+    mprPutCharToBuf(buf, '\'');
+}
+
+
+/*
+    Supports hashes where properties are strings or hashes of strings. N-level nest is supported.
+ */
+static cchar *objToString(MprBuf *buf, MprObj *obj, int type, int pretty)
+{
+    MprKey  *kp;
+    char    numbuf[32];
+    int     i, len;
+
+    if (type == MPR_JSON_ARRAY) {
+        mprPutCharToBuf(buf, '[');
+        if (pretty) mprPutCharToBuf(buf, '\n');
+        len = mprGetHashLength(obj);
+        for (i = 0; i < len; i++) {
+            itosbuf(numbuf, sizeof(numbuf), i, 10);
+            if (pretty) mprPutStringToBuf(buf, "    ");
+            if ((kp = mprLookupKeyEntry(obj, numbuf)) == 0) {
+                mprAssert(kp);
+                continue;
+            }
+            if (kp->type == MPR_JSON_ARRAY || kp->type == MPR_JSON_OBJ) {
+                objToString(buf, (MprObj*) kp->data, kp->type, pretty);
+            } else {
+                quoteValue(buf, kp->data);
+            }
+            mprPutCharToBuf(buf, ',');
+            if (pretty) mprPutCharToBuf(buf, '\n');
+        }
+        mprPutCharToBuf(buf, ']');
+
+    } else if (type == MPR_JSON_OBJ) {
+        mprPutCharToBuf(buf, '{');
+        if (pretty) mprPutCharToBuf(buf, '\n');
+        for (ITERATE_KEYS(obj, kp)) {
+            if (kp->key == 0 || kp->data == 0) continue;
+            if (pretty) mprPutStringToBuf(buf, "    ");
+            mprPutStringToBuf(buf, kp->key);
+            mprPutStringToBuf(buf, ": ");
+            if (kp->type == MPR_JSON_ARRAY || kp->type == MPR_JSON_OBJ) {
+                objToString(buf, (MprObj*) kp->data, kp->type, pretty);
+            } else {
+                quoteValue(buf, kp->data);
+            }
+            mprPutCharToBuf(buf, ',');
+            if (pretty) mprPutCharToBuf(buf, '\n');
+        }
+        mprPutCharToBuf(buf, '}');
+    }
+    if (pretty) mprPutCharToBuf(buf, '\n');
+    return sclone(mprGetBufStart(buf));
+}
+
+
+/*
+    Serialize into JSON format.
+ */
+cchar *mprSerialize(MprObj *obj, int flags)
+{
+    MprBuf  *buf;
+    int     pretty;
+
+    pretty = (flags & MPR_JSON_PRETTY);
+    if ((buf = mprCreateBuf(0, 0)) == 0) {
+        return 0;
+    }
+    objToString(buf, obj, MPR_JSON_OBJ, pretty);
+    return mprGetBuf(buf);
+}
+
+
+static char advanceToken(MprJson *jp)
+{
+    while (isspace((int) *jp->tok)) {
+        if (*jp->tok == '\n') {
+            jp->lineNumber++;
+        }
+        jp->tok++;
+    }
+    return *jp->tok;
+}
+
+
+static cchar *findQuote(cchar *tok, int quote)
+{
+    cchar   *cp;
+
+    mprAssert(tok);
+    for (cp = tok; *cp; cp++) {
+        if (*cp == quote && (cp == tok || *cp != '\\')) {
+            return cp;
+        }
+    }
+    return 0;
+}
+
+
+static cchar *findEndKeyword(MprJson *jp, cchar *str)
+{
+    cchar   *cp, *etok;
+
+    mprAssert(str);
+    for (cp = jp->tok; *cp; cp++) {
+        if ((etok = strpbrk(cp, " \t\n\r:,}]")) != 0) {
+            if (etok == jp->tok || *etok != '\\') {
+                return etok;
+            }
+        }
+    }
+    return &str[strlen(str)];
+}
+
+
+static void jsonParseError(MprJson *jp, cchar *msg)
+{
+    if (jp->path) {
+        mprLog(4, "%s\nIn file '%s' at line %d", msg, jp->path, jp->lineNumber);
+    } else {
+        mprLog(4, "%s\nAt line %d", msg, jp->lineNumber);
+    }
+}
+
+
+void mprJsonParseError(MprJson *jp, cchar *fmt, ...)
+{
+    va_list     args;
+    cchar       *msg;
+
+    va_start(args, fmt);
+    msg = sfmtv(fmt, args);
+    (jp->callback.parseError)(jp, msg);
+    va_end(args);
+}
+
+
+
+/*
+    @copy   default
+    
+    Copyright (c) Embedthis Software LLC, 2003-2011. All Rights Reserved.
+    Copyright (c) Michael O'Brien, 1993-2011. All Rights Reserved.
+    
+    This software is distributed under commercial and open source licenses.
+    You may use the GPL open source license described below or you may acquire 
+    a commercial license from Embedthis Software. You agree to be fully bound 
+    by the terms of either license. Consult the LICENSE.TXT distributed with 
+    this software for full details.
+    
+    This software is open source; you can redistribute it and/or modify it 
+    under the terms of the GNU General Public License as published by the 
+    Free Software Foundation; either version 2 of the License, or (at your 
+    option) any later version. See the GNU General Public License for more 
+    details at: http://embedthis.com/downloads/gplLicense.html
+    
+    This program is distributed WITHOUT ANY WARRANTY; without even the 
+    implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. 
+    
+    This GPL license does NOT permit incorporating this software into 
+    proprietary programs. If you are unable to comply with the GPL, you must
+    acquire a commercial license to use this software. Commercial licenses 
+    for this software and support services are available from Embedthis 
+    Software at http://embedthis.com 
+    
+    Local variables:
+    tab-width: 4
+    c-basic-offset: 4
+    End:
+    vim: sw=4 ts=4 expandtab
+
+    @end
+ */
+/************************************************************************/
+/*
+ *  End of file "./src/mprJSON.c"
  */
 /************************************************************************/
 
@@ -11207,7 +11693,7 @@ void stubMprKqueue() {}
     under the terms of the GNU General Public License as published by the
     Free Software Foundation; either version 2 of the License, or (at your
     option) any later version. See the GNU General Public License for more
-    details at: http://www.embedthis.com/downloads/gplLicense.html
+    details at: http://embedthis.com/downloads/gplLicense.html
 
     This program is distributed WITHOUT ANY WARRANTY; without even the
     implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.
@@ -11216,7 +11702,7 @@ void stubMprKqueue() {}
     proprietary programs. If you are unable to comply with the GPL, you must
     acquire a commercial license to use this software. Commercial licenses
     for this software and support services are available from Embedthis
-    Software at http://www.embedthis.com
+    Software at http://embedthis.com
 
     Local variables:
     tab-width: 4
@@ -11339,7 +11825,7 @@ int mprSetListLimits(MprList *lp, int initialSize, int maxSize)
 }
 
 
-int mprCopyList(MprList *dest, MprList *src)
+int mprCopyListContents(MprList *dest, MprList *src)
 {
     void        *item;
     int         next;
@@ -11371,7 +11857,7 @@ MprList *mprCloneList(MprList *src)
     if ((lp = mprCreateList(src->capacity, src->flags)) == 0) {
         return 0;
     }
-    if (mprCopyList(lp, src) < 0) {
+    if (mprCopyListContents(lp, src) < 0) {
         return 0;
     }
     return lp;
@@ -11530,7 +12016,7 @@ int mprInsertItemAtPos(MprList *lp, int index, cvoid *item)
 /*
     Remove an item from the list. Return the index where the item resided.
  */
-int mprRemoveItem(MprList *lp, void *item)
+int mprRemoveItem(MprList *lp, cvoid *item)
 {
     int     index;
 
@@ -11569,7 +12055,6 @@ int mprRemoveLastItem(MprList *lp)
 int mprRemoveItemAtPos(MprList *lp, int index)
 {
     void    **items;
-    int     i;
 
     mprAssert(lp);
     mprAssert(lp->capacity > 0);
@@ -11596,9 +12081,12 @@ int mprRemoveItemAtPos(MprList *lp, int index)
         lp->length--;
     }
 #else
+    memmove(&items[index], &items[index + 1], (lp->length - index - 1) * sizeof(void*));
+#if OLD
     for (i = index; i < (lp->length - 1); i++) {
         items[i] = items[i + 1];
     }
+#endif
     lp->length--;
 #endif
     lp->items[lp->length] = 0;
@@ -11901,7 +12389,7 @@ MprKeyValue *mprCreateKeyPair(cchar *key, cchar *value)
     under the terms of the GNU General Public License as published by the 
     Free Software Foundation; either version 2 of the License, or (at your 
     option) any later version. See the GNU General Public License for more 
-    details at: http://www.embedthis.com/downloads/gplLicense.html
+    details at: http://embedthis.com/downloads/gplLicense.html
     
     This program is distributed WITHOUT ANY WARRANTY; without even the 
     implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. 
@@ -11910,7 +12398,7 @@ MprKeyValue *mprCreateKeyPair(cchar *key, cchar *value)
     proprietary programs. If you are unable to comply with the GPL, you must
     acquire a commercial license to use this software. Commercial licenses 
     for this software and support services are available from Embedthis 
-    Software at http://www.embedthis.com 
+    Software at http://embedthis.com 
     
     Local variables:
     tab-width: 4
@@ -12334,7 +12822,7 @@ void mprSpinUnlock(MprSpin *lock)
     under the terms of the GNU General Public License as published by the
     Free Software Foundation; either version 2 of the License, or (at your
     option) any later version. See the GNU General Public License for more
-    details at: http://www.embedthis.com/downloads/gplLicense.html
+    details at: http://embedthis.com/downloads/gplLicense.html
 
     This program is distributed WITHOUT ANY WARRANTY; without even the
     implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.
@@ -12343,7 +12831,7 @@ void mprSpinUnlock(MprSpin *lock)
     proprietary programs. If you are unable to comply with the GPL, you must
     acquire a commercial license to use this software. Commercial licenses
     for this software and support services are available from Embedthis
-    Software at http://www.embedthis.com
+    Software at http://embedthis.com
 
     Local variables:
     tab-width: 4
@@ -12424,7 +12912,7 @@ void mprRawLog(int level, cchar *fmt, ...)
         return;
     }
     va_start(args, fmt);
-    buf = mprAsprintfv(fmt, args);
+    buf = sfmtv(fmt, args);
     va_end(args);
 
     logOutput(MPR_RAW, 0, buf);
@@ -12595,9 +13083,9 @@ void mprSetLogLevel(int level)
 }
 
 
-int mprSetCmdlineLogging(int on)
+bool mprSetCmdlineLogging(bool on)
 {
-    int     wasLogging;
+    bool    wasLogging;
 
     wasLogging = MPR->cmdlineLogging;
     MPR->cmdlineLogging = on;
@@ -12605,7 +13093,7 @@ int mprSetCmdlineLogging(int on)
 }
 
 
-int mprGetCmdlineLogging()
+bool mprGetCmdlineLogging()
 {
     return MPR->cmdlineLogging;
 }
@@ -12771,7 +13259,7 @@ int _cmp(char *s1, char *s2)
     under the terms of the GNU General Public License as published by the 
     Free Software Foundation; either version 2 of the License, or (at your 
     option) any later version. See the GNU General Public License for more 
-    details at: http://www.embedthis.com/downloads/gplLicense.html
+    details at: http://embedthis.com/downloads/gplLicense.html
     
     This program is distributed WITHOUT ANY WARRANTY; without even the 
     implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. 
@@ -12780,7 +13268,7 @@ int _cmp(char *s1, char *s2)
     proprietary programs. If you are unable to comply with the GPL, you must
     acquire a commercial license to use this software. Commercial licenses 
     for this software and support services are available from Embedthis 
-    Software at http://www.embedthis.com 
+    Software at http://embedthis.com 
     
     Local variables:
     tab-width: 4
@@ -12911,16 +13399,16 @@ static char *standardMimeTypes[] = {
 };
 
 
-static void addStandardMimeTypes(MprHashTable *table);
+static void addStandardMimeTypes(MprHash *table);
 static void manageMimeType(MprMime *mt, int flags);
 
 
-MprHashTable *mprCreateMimeTypes(cchar *path)
+MprHash *mprCreateMimeTypes(cchar *path)
 {
-    MprHashTable    *table;
-    MprFile         *file;
-    char            *buf, *tok, *ext, *type;
-    int             line;
+    MprHash     *table;
+    MprFile     *file;
+    char        *buf, *tok, *ext, *type;
+    int         line;
 
     if (path) {
         if ((file = mprOpenFile(path, O_RDONLY | O_TEXT, 0)) == 0) {
@@ -12931,7 +13419,7 @@ MprHashTable *mprCreateMimeTypes(cchar *path)
             return 0;
         }
         line = 0;
-        while ((buf = mprGetFileString(file, 0, NULL)) != 0) {
+        while ((buf = mprReadLine(file, 0, NULL)) != 0) {
             line++;
             if (buf[0] == '#' || isspace((int) buf[0])) {
                 continue;
@@ -12959,7 +13447,7 @@ MprHashTable *mprCreateMimeTypes(cchar *path)
 }
 
 
-static void addStandardMimeTypes(MprHashTable *table)
+static void addStandardMimeTypes(MprHash *table)
 {
     char    **cp;
 
@@ -12978,7 +13466,7 @@ static void manageMimeType(MprMime *mt, int flags)
 }
 
 
-MprMime *mprAddMime(MprHashTable *table, cchar *ext, cchar *mimeType)
+MprMime *mprAddMime(MprHash *table, cchar *ext, cchar *mimeType)
 {
     MprMime  *mt;
 
@@ -12994,15 +13482,15 @@ MprMime *mprAddMime(MprHashTable *table, cchar *ext, cchar *mimeType)
 }
 
 
-int mprSetMimeProgram(MprHashTable *table, cchar *mimeType, cchar *program)
+int mprSetMimeProgram(MprHash *table, cchar *mimeType, cchar *program)
 {
-    MprHash     *hp;
+    MprKey      *kp;
     MprMime     *mt;
     
-    hp = 0;
+    kp = 0;
     mt = 0;
-    while ((hp = mprGetNextKey(table, hp)) != 0) {
-        mt = (MprMime*) hp->data;
+    while ((kp = mprGetNextKey(table, kp)) != 0) {
+        mt = (MprMime*) kp->data;
         if (mt->type[0] == mimeType[0] && strcmp(mt->type, mimeType) == 0) {
             break;
         }
@@ -13016,7 +13504,7 @@ int mprSetMimeProgram(MprHashTable *table, cchar *mimeType, cchar *program)
 }
 
 
-cchar *mprGetMimeProgram(MprHashTable *table, cchar *mimeType)
+cchar *mprGetMimeProgram(MprHash *table, cchar *mimeType)
 {
     MprMime      *mt;
 
@@ -13030,7 +13518,7 @@ cchar *mprGetMimeProgram(MprHashTable *table, cchar *mimeType)
 }
 
 
-cchar *mprLookupMime(MprHashTable *table, cchar *ext)
+cchar *mprLookupMime(MprHash *table, cchar *ext)
 {
     MprMime     *mt;
     cchar       *ep;
@@ -13067,7 +13555,7 @@ cchar *mprLookupMime(MprHashTable *table, cchar *ext)
     under the terms of the GNU General Public License as published by the 
     Free Software Foundation; either version 2 of the License, or (at your 
     option) any later version. See the GNU General Public License for more 
-    details at: http://www.embedthis.com/downloads/gplLicense.html
+    details at: http://embedthis.com/downloads/gplLicense.html
     
     This program is distributed WITHOUT ANY WARRANTY; without even the 
     implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. 
@@ -13076,7 +13564,7 @@ cchar *mprLookupMime(MprHashTable *table, cchar *ext)
     proprietary programs. If you are unable to comply with the GPL, you must
     acquire a commercial license to use this software. Commercial licenses 
     for this software and support services are available from Embedthis 
-    Software at http://www.embedthis.com 
+    Software at http://embedthis.com 
     
     Local variables:
     tab-width: 4
@@ -13204,7 +13692,7 @@ MprChar *mfmt(cchar *fmt, ...)
     mprAssert(fmt);
 
     va_start(ap, fmt);
-    mresult = mprAsprintfv(fmt, ap);
+    mresult = sfmtv(fmt, ap);
     va_end(ap);
     return amtow(mresult, NULL);
 }
@@ -13215,7 +13703,7 @@ MprChar *mfmtv(cchar *fmt, va_list arg)
     char    *mresult;
 
     mprAssert(fmt);
-    mresult = mprAsprintfv(fmt, arg);
+    mresult = sfmtv(fmt, arg);
     return amtow(mresult, NULL);
 }
 
@@ -13525,7 +14013,7 @@ void dummyWide() {}
     under the terms of the GNU General Public License as published by the
     Free Software Foundation; either version 2 of the License, or (at your
     option) any later version. See the GNU General Public License for more
-    details at: http://www.embedthis.com/downloads/gplLicense.html
+    details at: http://embedthis.com/downloads/gplLicense.html
 
     This program is distributed WITHOUT ANY WARRANTY; without even the
     implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.
@@ -13534,7 +14022,7 @@ void dummyWide() {}
     proprietary programs. If you are unable to comply with the GPL, you must
     acquire a commercial license to use this software. Commercial licenses
     for this software and support services are available from Embedthis
-    Software at http://www.embedthis.com
+    Software at http://embedthis.com
 
     Local variables:
     tab-width: 4
@@ -13582,7 +14070,10 @@ MprModuleService *mprCreateModuleService()
         return 0;
     }
     ms->modules = mprCreateList(-1, 0);
-    ms->searchPath = sfmt(".:%s:%s/../%s:%s", mprGetAppDir(), mprGetAppDir(), BLD_LIB_NAME, BLD_LIB_PREFIX);
+    ms->searchPath = sfmt(".%s%s%s/../%s%s%s", \
+        mprGetAppDir(), MPR_SEARCH_SEP, 
+        mprGetAppDir(), BLD_LIB_NAME, MPR_SEARCH_SEP, 
+        BLD_LIB_PREFIX);
     ms->mutex = mprCreateLock();
     return ms;
 }
@@ -13651,22 +14142,21 @@ MprModule *mprCreateModule(cchar *name, cchar *path, cchar *entry, void *data)
 
     if (path) {
         if ((at = mprSearchForModule(path)) == 0) {
-            mprError("Can't find module \"%s\", cwd: \"%s\" search path \"%s\"", path, mprGetCurrentPath(),
+            mprError("Can't find module \"%s\", cwd: \"%s\", search path \"%s\"", path, mprGetCurrentPath(),
                 mprGetModuleSearchPath());
             return 0;
         }
         path = at;
+        mprGetPathInfo(path, &info);
     }
     if ((mp = mprAllocObj(MprModule, manageModule)) == 0) {
         return 0;
     }
-    mprGetPathInfo(path, &info);
     mp->name = sclone(name);
     mp->path = sclone(path);
     mp->entry = sclone(entry);
     mp->moduleData = data;
     mp->modified = info.mtime;
-    //  MOB - this is not fully implemented
     mp->lastActivity = mprGetTime();
     index = mprAddItem(ms->modules, mp);
     if (index < 0 || mp->name == 0) {
@@ -13682,8 +14172,6 @@ static void manageModule(MprModule *mp, int flags)
         mprMark(mp->name);
         mprMark(mp->path);
         mprMark(mp->entry);
-    } else if (flags & MPR_MANAGE_FREE) {
-        //  TODO - should this unload the module?
     }
 }
 
@@ -13750,6 +14238,9 @@ void *mprLookupModuleData(cchar *name)
 
 void mprSetModuleTimeout(MprModule *module, MprTime timeout)
 {
+    /*
+        Module timeouts are not yet implemented
+     */
     module->timeout = timeout;
 }
 
@@ -13861,7 +14352,7 @@ char *mprSearchForModule(cchar *filename)
 #if BLD_CC_DYN_LOAD
     char    *path, *f, *searchPath, *dir, *tok;
 
-    filename = mprGetNormalizedPath(filename);
+    filename = mprNormalizePath(filename);
 
     /*
         Search for the path directly
@@ -13906,7 +14397,7 @@ char *mprSearchForModule(cchar *filename)
     under the terms of the GNU General Public License as published by the
     Free Software Foundation; either version 2 of the License, or (at your
     option) any later version. See the GNU General Public License for more
-    details at: http://www.embedthis.com/downloads/gplLicense.html
+    details at: http://embedthis.com/downloads/gplLicense.html
 
     This program is distributed WITHOUT ANY WARRANTY; without even the
     implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.
@@ -13915,7 +14406,7 @@ char *mprSearchForModule(cchar *filename)
     proprietary programs. If you are unable to comply with the GPL, you must
     acquire a commercial license to use this software. Commercial licenses
     for this software and support services are available from Embedthis
-    Software at http://www.embedthis.com
+    Software at http://embedthis.com
 
     Local variables:
     tab-width: 4
@@ -14136,12 +14627,6 @@ static MprList *findFiles(MprList *list, cchar *dir, int flags)
 }
 
 
-MprList *mprFindFiles(cchar *dir, int flags)
-{
-    return findFiles(mprCreateList(-1, 0), dir, flags);
-}
-
-
 /*
     Return an absolute (normalized) path.
  */
@@ -14155,12 +14640,12 @@ char *mprGetAbsPath(cchar *pathArg)
     }
 
 #if BLD_FEATURE_ROMFS
-    return mprGetNormalizedPath(pathArg);
+    return mprNormalizePath(pathArg);
 #endif
 
     fs = mprLookupFileSystem(pathArg);
     if (isFullPath(fs, pathArg)) {
-        return mprGetNormalizedPath(pathArg);
+        return mprNormalizePath(pathArg);
     }
 
 #if BLD_WIN_LIKE && !WINCE
@@ -14168,7 +14653,7 @@ char *mprGetAbsPath(cchar *pathArg)
     char    buf[MPR_MAX_PATH];
     GetFullPathName(pathArg, sizeof(buf) - 1, buf, NULL);
     buf[sizeof(buf) - 1] = '\0';
-    path = mprGetNormalizedPath(buf);
+    path = mprNormalizePath(buf);
 }
 #elif VXWORKS
 {
@@ -14257,9 +14742,9 @@ char *mprGetAppPath()
     char    pbuf[MPR_MAX_STRING], *path;
     int     len;
 #if SOLARIS
-    path = mprAsprintf("/proc/%i/path/a.out", getpid()); 
+    path = sfmt("/proc/%i/path/a.out", getpid()); 
 #else
-    path = mprAsprintf("/proc/%i/exe", getpid()); 
+    path = sfmt("/proc/%i/exe", getpid()); 
 #endif
     len = readlink(path, pbuf, sizeof(pbuf) - 1);
     if (len < 0) {
@@ -14401,6 +14886,31 @@ char *mprGetPathDir(cchar *path)
 }
 
 
+/*
+    Return the extension portion of a pathname.
+    Return the extension without the "."
+ */
+char *mprGetPathExt(cchar *path)
+{
+    MprFileSystem  *fs;
+    char            *cp;
+
+    if ((cp = srchr(path, '.')) != NULL) {
+        fs = mprLookupFileSystem(path);
+        /*
+            If there is no separator ("/") after the extension, then use it.
+         */
+        if (firstSep(fs, cp) == 0) {
+            return sclone(++cp);
+        }
+    } 
+    return 0;
+}
+
+
+/*
+    This returns a list of MprDirEntry objects
+ */
 #if BLD_WIN_LIKE
 MprList *mprGetPathFiles(cchar *dir, bool enumDirs)
 {
@@ -14533,37 +15043,6 @@ MprList *mprGetPathFiles(cchar *path, bool enumDirs)
 #endif
 
 
-char *mprGetPathLink(cchar *path)
-{
-    MprFileSystem  *fs;
-
-    fs = mprLookupFileSystem(path);
-    return fs->getPathLink(fs, path);
-}
-
-
-/*
-    Return the extension portion of a pathname.
-    Return the extension without the "."
- */
-char *mprGetPathExt(cchar *path)
-{
-    MprFileSystem  *fs;
-    char            *cp;
-
-    if ((cp = srchr(path, '.')) != NULL) {
-        fs = mprLookupFileSystem(path);
-        /*
-            If there is no separator ("/") after the extension, then use it.
-         */
-        if (firstSep(fs, cp) == 0) {
-            return sclone(++cp);
-        }
-    } 
-    return 0;
-}
-
-
 //  MOB - better boolean?
 int mprGetPathInfo(cchar *path, MprPath *info)
 {
@@ -14571,6 +15050,15 @@ int mprGetPathInfo(cchar *path, MprPath *info)
 
     fs = mprLookupFileSystem(path);
     return fs->getPathInfo(fs, path, info);
+}
+
+
+char *mprGetPathLink(cchar *path)
+{
+    MprFileSystem  *fs;
+
+    fs = mprLookupFileSystem(path);
+    return fs->getPathLink(fs, path);
 }
 
 
@@ -14596,6 +15084,15 @@ char *mprGetPathParent(cchar *path)
         return mprGetPathDir(dir);
     }
     return mprGetPathDir(path);
+}
+
+
+/*
+    This returns a list of filenames
+ */
+MprList *mprGetPathTree(cchar *dir, int flags)
+{
+    return findFiles(mprCreateList(-1, 0), dir, flags);
 }
 
 
@@ -14632,7 +15129,7 @@ char *mprGetRelPath(cchar *pathArg)
     /*
         Must clean to ensure a minimal relative path result.
      */
-    path = mprGetNormalizedPath(pathArg);
+    path = mprNormalizePath(pathArg);
 
     if (!isAbsPath(fs, path)) {
         return path;
@@ -14717,6 +15214,71 @@ char *mprGetRelPath(cchar *pathArg)
 }
 
 
+/*
+    Return a pointer into the path at the last path separator or null if none found
+ */
+cchar *mprGetLastPathSeparator(cchar *path) 
+{
+    MprFileSystem   *fs;
+
+    fs = mprLookupFileSystem(path);
+    return lastSep(fs, path);
+}
+
+
+cchar *mprGetFirstPathSeparator(cchar *path) 
+{
+    MprFileSystem   *fs;
+
+    fs = mprLookupFileSystem(path);
+    return firstSep(fs, path);
+}
+
+
+char *mprGetTempPath(cchar *tempDir)
+{
+    MprFile         *file;
+    char            *dir, *path;
+    int             i, now;
+    static int      tempSeed = 0;
+
+    if (tempDir == 0) {
+#if WINCE
+        dir = sclone("/Temp");
+#elif BLD_WIN_LIKE
+{
+        MprFileSystem   *fs;
+        fs = mprLookupFileSystem(tempDir ? tempDir : (cchar*) "/");
+        dir = sclone(getenv("TEMP"));
+        mprMapSeparators(dir, defaultSep(fs));
+}
+#elif VXWORKS
+        dir = sclone(".");
+#else
+        dir = sclone("/tmp");
+#endif
+    } else {
+        dir = sclone(tempDir);
+    }
+    now = ((int) mprGetTime() & 0xFFFF) % 64000;
+    file = 0;
+    path = 0;
+
+    for (i = 0; i < 128; i++) {
+        path = sfmt("%s/MPR_%d_%d_%d.tmp", dir, getpid(), now, ++tempSeed);
+        file = mprOpenFile(path, O_CREAT | O_EXCL | O_BINARY, 0664);
+        if (file) {
+            mprCloseFile(file);
+            break;
+        }
+    }
+    if (file == 0) {
+        return 0;
+    }
+    return path;
+}
+
+
 // TODO - handle cygwin paths and converting to and from.
 /*
     This normalizes a path. Returns a normalized path according to flags. Default is absolute. 
@@ -14744,7 +15306,7 @@ char *mprGetTransformedPath(cchar *path, int flags)
         result = mprGetRelPath(path);
 
     } else {
-        result = mprGetNormalizedPath(path);
+        result = mprNormalizePath(path);
     }
 
 #if BLD_WIN_LIKE
@@ -14753,24 +15315,6 @@ char *mprGetTransformedPath(cchar *path, int flags)
     }
 #endif
     return result;
-}
-
-
-bool mprIsAbsPath(cchar *path)
-{
-    MprFileSystem   *fs;
-
-    fs = mprLookupFileSystem(path);
-    return isAbsPath(fs, path);
-}
-
-
-bool mprIsRelPath(cchar *path)
-{
-    MprFileSystem   *fs;
-
-    fs = mprLookupFileSystem(path);
-    return !isAbsPath(fs, path);
 }
 
 
@@ -14800,11 +15344,11 @@ char *mprJoinPath(cchar *path, cchar *other)
             }
             return sjoin(drive, other, NULL);
         } else {
-            return mprGetNormalizedPath(other);
+            return mprNormalizePath(other);
         }
     }
     if (path == NULL || *path == '\0') {
-        return mprGetNormalizedPath(other);
+        return mprNormalizePath(other);
     }
     if ((cp = firstSep(fs, path)) != 0) {
         sep = *cp;
@@ -14813,10 +15357,10 @@ char *mprJoinPath(cchar *path, cchar *other)
     } else {
         sep = defaultSep(fs);
     }
-    if ((join = mprAsprintf("%s%c%s", path, sep, other)) == 0) {
+    if ((join = sfmt("%s%c%s", path, sep, other)) == 0) {
         return 0;
     }
-    return mprGetNormalizedPath(join);
+    return mprNormalizePath(join);
 }
 
 
@@ -14885,50 +15429,6 @@ int mprMakeLink(cchar *path, cchar *target, bool hard)
 }
 
 
-char *mprGetTempPath(cchar *tempDir)
-{
-    MprFile         *file;
-    char            *dir, *path;
-    int             i, now;
-    static int      tempSeed = 0;
-
-    if (tempDir == 0) {
-#if WINCE
-        dir = sclone("/Temp");
-#elif BLD_WIN_LIKE
-{
-        MprFileSystem   *fs;
-        fs = mprLookupFileSystem(tempDir ? tempDir : (cchar*) "/");
-        dir = sclone(getenv("TEMP"));
-        mprMapSeparators(dir, defaultSep(fs));
-}
-#elif VXWORKS
-        dir = sclone(".");
-#else
-        dir = sclone("/tmp");
-#endif
-    } else {
-        dir = sclone(tempDir);
-    }
-    now = ((int) mprGetTime() & 0xFFFF) % 64000;
-    file = 0;
-    path = 0;
-
-    for (i = 0; i < 128; i++) {
-        path = mprAsprintf("%s/MPR_%d_%d_%d.tmp", dir, getpid(), now, ++tempSeed);
-        file = mprOpenFile(path, O_CREAT | O_EXCL | O_BINARY, 0664);
-        if (file) {
-            mprCloseFile(file);
-            break;
-        }
-    }
-    if (file == 0) {
-        return 0;
-    }
-    return path;
-}
-
-
 #if BLD_WIN_LIKE && FUTURE
 /*
     Normalize to a cygwin path without a drive spec
@@ -14958,7 +15458,7 @@ static char *toCygPath(cchar *path)
             /*
                 Path is like: "c:/some/other/path". Prepend "/cygdrive/c/"
              */
-            result = mprAsprintf("%s/%c%s", fs->cygdrive, path[0], &path[2]);
+            result = sfmt("%s/%c%s", fs->cygdrive, path[0], &path[2]);
             len = slen(result);
             if (isSep(result[len-1])) {
                 result[len-1] = '\0';
@@ -14992,13 +15492,13 @@ static char *fromCygPath(cchar *path)
             /*
                 Has a "/cygdrive/c/" style prefix
              */
-            buf = mprAsprintf("%c:", path[len+1], &path[len + 2]);
+            buf = sfmt("%c:", path[len+1], &path[len + 2]);
 
         } else {
             /*
                 Cygwin path. Prepend "c:/cygdrive"
              */
-            buf = mprAsprintf("%s/%s", fs->cygdrive, path);
+            buf = sfmt("%s/%s", fs->cygdrive, path);
         }
         result = mprGetAbsPath(buf);
 
@@ -15011,12 +15511,11 @@ static char *fromCygPath(cchar *path)
 #endif
 
 
-//  TODO -- should this be mprNormalizePath?  apply to all APIs
 /*
     Normalize a path to remove redundant "./" and cleanup "../" and make separator uniform. Does not make an abs path.
     It does not map separators nor change case. 
  */
-char *mprGetNormalizedPath(cchar *pathArg)
+char *mprNormalizePath(cchar *pathArg)
 {
     MprFileSystem   *fs;
     char            *path, *sp, *dp, *mark, **segments;
@@ -15178,33 +15677,30 @@ char *mprGetNormalizedPath(cchar *pathArg)
 }
 
 
+bool mprIsPathAbs(cchar *path)
+{
+    MprFileSystem   *fs;
+
+    fs = mprLookupFileSystem(path);
+    return isAbsPath(fs, path);
+}
+
+
+bool mprIsPathRel(cchar *path)
+{
+    MprFileSystem   *fs;
+
+    fs = mprLookupFileSystem(path);
+    return !isAbsPath(fs, path);
+}
+
+
 bool mprIsPathSeparator(cchar *path, cchar c)
 {
     MprFileSystem   *fs;
 
     fs = mprLookupFileSystem(path);
     return isSep(fs, c);
-}
-
-
-/*
-    Return a pointer into the path at the last path separator or null if none found
- */
-cchar *mprGetLastPathSeparator(cchar *path) 
-{
-    MprFileSystem   *fs;
-
-    fs = mprLookupFileSystem(path);
-    return lastSep(fs, path);
-}
-
-
-cchar *mprGetFirstPathSeparator(cchar *path) 
-{
-    MprFileSystem   *fs;
-
-    fs = mprLookupFileSystem(path);
-    return firstSep(fs, path);
 }
 
 
@@ -15226,13 +15722,15 @@ bool mprPathExists(cchar *path, int omode)
 {
     MprFileSystem  *fs;
 
+    if (path == 0 || *path == '\0') {
+        return 0;
+    }
     fs = mprLookupFileSystem(path);
-
     return fs->accessPath(fs, path, omode);
 }
 
 
-char *mprReadPath(cchar *path)
+char *mprReadPathContents(cchar *path, ssize *lenp)
 {
     MprFile     *file;
     MprPath     info;
@@ -15254,7 +15752,16 @@ char *mprReadPath(cchar *path)
         return 0;
     }
     buf[len] = '\0';
+    if (lenp) {
+        *lenp = len;
+    }
     return buf;
+}
+
+
+char *mprReplacePathExt(cchar *path, cchar *ext)
+{
+    return mprJoinPathExt(mprTrimPathExt(path), ext);
 }
 
 
@@ -15295,16 +15802,16 @@ char *mprResolvePath(cchar *base, cchar *path)
             }
             return sjoin(drive, path, NULL);
         }
-        return mprGetNormalizedPath(path);
+        return mprNormalizePath(path);
     }
     if (base == NULL || *base == '\0') {
-        return mprGetNormalizedPath(path);
+        return mprNormalizePath(path);
     }
     dir = mprGetPathDir(base);
-    if ((join = mprAsprintf("%s/%s", dir, path)) == 0) {
+    if ((join = sfmt("%s/%s", dir, path)) == 0) {
         return 0;
     }
-    return mprGetNormalizedPath(join);
+    return mprNormalizePath(join);
 }
 
 
@@ -15319,17 +15826,18 @@ int mprSamePath(cchar *path1, cchar *path2)
     fs = mprLookupFileSystem(path1);
 
     /*
-        Convert to absolute (normalized) paths to compare. TODO - resolve symlinks.
+        Convert to absolute (normalized) paths to compare. 
+        TODO - resolve symlinks.
      */
     if (!isFullPath(fs, path1)) {
         path1 = mprGetAbsPath(path1);
     } else {
-        path1 = mprGetNormalizedPath(path1);
+        path1 = mprNormalizePath(path1);
     }
     if (!isFullPath(fs, path2)) {
         path2 = mprGetAbsPath(path2);
     } else {
-        path2 = mprGetNormalizedPath(path2);
+        path2 = mprNormalizePath(path2);
     }
     if (fs->caseSensitive) {
         for (p1 = path1, p2 = path2; *p1 && *p2; p1++, p2++) {
@@ -15360,7 +15868,8 @@ int mprSamePathCount(cchar *path1, cchar *path2, ssize len)
     fs = mprLookupFileSystem(path1);
 
     /*
-        Convert to absolute paths to compare. TODO - resolve symlinks.
+        Convert to absolute paths to compare. 
+        TODO - resolve symlinks.
      */
     if (!isFullPath(fs, path1)) {
         path1 = mprGetAbsPath(path1);
@@ -15412,13 +15921,13 @@ char *mprSearchPath(cchar *file, int flags, cchar *search, ...)
             path = mprJoinPath(dir, file);
             if (mprPathExists(path, access)) {
                 mprLog(7, "mprSearchForFile: found %s", path);
-                return mprGetNormalizedPath(path);
+                return mprNormalizePath(path);
             }
             if ((flags & MPR_SEARCH_EXE) && *BLD_EXE) {
                 path = mprJoinPathExt(path, BLD_EXE);
                 if (mprPathExists(path, access)) {
                     mprLog(7, "mprSearchForFile: found %s", path);
-                    return mprGetNormalizedPath(path);
+                    return mprNormalizePath(path);
                 }
             }
             dir = stok(0, MPR_SEARCH_SEP, &tok);
@@ -15429,6 +15938,7 @@ char *mprSearchPath(cchar *file, int flags, cchar *search, ...)
 }
 
 
+//  MOB - should be writePathContents
 ssize mprWritePath(cchar *path, cchar *buf, ssize len, int mode)
 {
     MprFile     *file;
@@ -15482,7 +15992,7 @@ char *mprTrimPathExt(cchar *path)
     under the terms of the GNU General Public License as published by the 
     Free Software Foundation; either version 2 of the License, or (at your 
     option) any later version. See the GNU General Public License for more 
-    details at: http://www.embedthis.com/downloads/gplLicense.html
+    details at: http://embedthis.com/downloads/gplLicense.html
     
     This program is distributed WITHOUT ANY WARRANTY; without even the 
     implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. 
@@ -15491,7 +16001,7 @@ char *mprTrimPathExt(cchar *path)
     proprietary programs. If you are unable to comply with the GPL, you must
     acquire a commercial license to use this software. Commercial licenses 
     for this software and support services are available from Embedthis 
-    Software at http://www.embedthis.com 
+    Software at http://embedthis.com 
     
     Local variables:
     tab-width: 4
@@ -15827,7 +16337,7 @@ void stubMprPollWait() {}
     under the terms of the GNU General Public License as published by the
     Free Software Foundation; either version 2 of the License, or (at your
     option) any later version. See the GNU General Public License for more
-    details at: http://www.embedthis.com/downloads/gplLicense.html
+    details at: http://embedthis.com/downloads/gplLicense.html
 
     This program is distributed WITHOUT ANY WARRANTY; without even the
     implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.
@@ -15836,7 +16346,7 @@ void stubMprPollWait() {}
     proprietary programs. If you are unable to comply with the GPL, you must
     acquire a commercial license to use this software. Commercial licenses
     for this software and support services are available from Embedthis
-    Software at http://www.embedthis.com
+    Software at http://embedthis.com
 
     Local variables:
     tab-width: 4
@@ -16775,7 +17285,7 @@ char *mprDtoa(double value, int ndigits, int mode, int flags)
     char    *intermediate, *ip;
     int     period, sign, len, exponentForm, fixedForm, exponent, count, totalDigits, npad;
 
-    buf = mprCreateBuf(MPR_MAX_STRING, -1);
+    buf = mprCreateBuf(64, -1);
     intermediate = 0;
     exponentForm = 0;
     fixedForm = 0;
@@ -16977,7 +17487,7 @@ int print(cchar *fmt, ...)
     under the terms of the GNU General Public License as published by the 
     Free Software Foundation; either version 2 of the License, or (at your 
     option) any later version. See the GNU General Public License for more 
-    details at: http://www.embedthis.com/downloads/gplLicense.html
+    details at: http://embedthis.com/downloads/gplLicense.html
     
     This program is distributed WITHOUT ANY WARRANTY; without even the 
     implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. 
@@ -16986,7 +17496,7 @@ int print(cchar *fmt, ...)
     proprietary programs. If you are unable to comply with the GPL, you must
     acquire a commercial license to use this software. Commercial licenses 
     for this software and support services are available from Embedthis 
-    Software at http://www.embedthis.com 
+    Software at http://embedthis.com 
     
     Local variables:
     tab-width: 4
@@ -17324,7 +17834,7 @@ void stubRomfs() {}
     under the terms of the GNU General Public License as published by the 
     Free Software Foundation; either version 2 of the License, or (at your 
     option) any later version. See the GNU General Public License for more 
-    details at: http://www.embedthis.com/downloads/gplLicense.html
+    details at: http://embedthis.com/downloads/gplLicense.html
     
     This program is distributed WITHOUT ANY WARRANTY; without even the 
     implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. 
@@ -17333,7 +17843,7 @@ void stubRomfs() {}
     proprietary programs. If you are unable to comply with the GPL, you must
     acquire a commercial license to use this software. Commercial licenses 
     for this software and support services are available from Embedthis 
-    Software at http://www.embedthis.com 
+    Software at http://embedthis.com 
     
     Local variables:
     tab-width: 4
@@ -17680,7 +18190,7 @@ void stubMprSelectWait() {}
     under the terms of the GNU General Public License as published by the
     Free Software Foundation; either version 2 of the License, or (at your
     option) any later version. See the GNU General Public License for more
-    details at: http://www.embedthis.com/downloads/gplLicense.html
+    details at: http://embedthis.com/downloads/gplLicense.html
 
     This program is distributed WITHOUT ANY WARRANTY; without even the
     implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.
@@ -17689,7 +18199,7 @@ void stubMprSelectWait() {}
     proprietary programs. If you are unable to comply with the GPL, you must
     acquire a commercial license to use this software. Commercial licenses
     for this software and support services are available from Embedthis
-    Software at http://www.embedthis.com
+    Software at http://embedthis.com
 
     Local variables:
     tab-width: 4
@@ -18001,7 +18511,7 @@ static void signalEvent(MprSignal *sp, MprEvent *event)
 
 /*
     Standard signal handler.  Ignore signals SIGPIPE and SIGXFSZ. 
-    Do graceful shutdown for SIGTERM, immediate exit for SIGABRT.  All other signals do normal exit.
+    Do graceful shutdown for SIGTERM, immediate exit for SIGINT.  All other signals do normal exit.
  */
 static void standardSignalHandler(void *ignored, MprSignal *sp)
 {
@@ -18038,7 +18548,9 @@ void mprAddStandardSignals()
     mprAddItem(ssp->standard, mprAddSignalHandler(SIGINT,  standardSignalHandler, 0, 0, MPR_SIGNAL_AFTER));
     mprAddItem(ssp->standard, mprAddSignalHandler(SIGQUIT, standardSignalHandler, 0, 0, MPR_SIGNAL_AFTER));
     mprAddItem(ssp->standard, mprAddSignalHandler(SIGTERM, standardSignalHandler, 0, 0, MPR_SIGNAL_AFTER));
+#if UNUSED && KEEP
     mprAddItem(ssp->standard, mprAddSignalHandler(SIGUSR1, standardSignalHandler, 0, 0, MPR_SIGNAL_AFTER));
+#endif
     mprAddItem(ssp->standard, mprAddSignalHandler(SIGPIPE, standardSignalHandler, 0, 0, MPR_SIGNAL_AFTER));
 #if SIGXFSZ
     mprAddItem(ssp->standard, mprAddSignalHandler(SIGXFSZ, standardSignalHandler, 0, 0, MPR_SIGNAL_AFTER));
@@ -18070,7 +18582,7 @@ void mprAddStandardSignals()
     under the terms of the GNU General Public License as published by the
     Free Software Foundation; either version 2 of the License, or (at your
     option) any later version. See the GNU General Public License for more
-    details at: http://www.embedthis.com/downloads/gplLicense.html
+    details at: http://embedthis.com/downloads/gplLicense.html
 
     This program is distributed WITHOUT ANY WARRANTY; without even the
     implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.
@@ -18079,7 +18591,7 @@ void mprAddStandardSignals()
     proprietary programs. If you are unable to comply with the GPL, you must
     acquire a commercial license to use this software. Commercial licenses
     for this software and support services are available from Embedthis
-    Software at http://www.embedthis.com
+    Software at http://embedthis.com
 
     Local variables:
     tab-width: 4
@@ -18151,7 +18663,6 @@ MprSocketService *mprCreateSocketService()
     if (ss == 0) {
         return 0;
     }
-    ss->next = 0;
     ss->maxClients = MAXINT;
     ss->numClients = 0;
 
@@ -19305,12 +19816,10 @@ int mprGetSocketInfo(cchar *ip, int port, int *family, int *protocol, struct soc
 {
     MprSocketService    *ss;
     struct addrinfo     hints, *res, *r;
-    char                portBuf[MPR_MAX_IP_PORT];
+    char                *portStr;
     int                 v6;
 
-    mprAssert(ip);
     mprAssert(addr);
-
     ss = MPR->socketService;
 
     mprLock(ss->mutex);
@@ -19331,13 +19840,13 @@ int mprGetSocketInfo(cchar *ip, int port, int *family, int *protocol, struct soc
     } else {
         hints.ai_family = AF_UNSPEC;
     }
-    itos(portBuf, sizeof(portBuf), port, 10);
+    portStr = itos(port, 10);
 
     /*  
         Try to sleuth the address to avoid duplicate address lookups. Then try IPv4 first then IPv6.
      */
     res = 0;
-    if (getaddrinfo(ip, portBuf, &hints, &res) != 0) {
+    if (getaddrinfo(ip, portStr, &hints, &res) != 0) {
         mprUnlock(ss->mutex);
         return MPR_ERR_CANT_OPEN;
     }
@@ -19507,7 +20016,7 @@ static int ipv6(cchar *ip)
     or
         [aaaa:bbbb:cccc:dddd:eeee:ffff:gggg:hhhh:iiii]:port
  */
-int mprParseIp(cchar *ipAddrPort, char **pip, int *pport, int defaultPort)
+int mprParseSocketAddress(cchar *ipAddrPort, char **pip, int *pport, int defaultPort)
 {
     char    *ip;
     char    *cp;
@@ -19615,7 +20124,7 @@ void mprSetSocketPrebindCallback(MprSocketPrebind callback)
     under the terms of the GNU General Public License as published by the
     Free Software Foundation; either version 2 of the License, or (at your
     option) any later version. See the GNU General Public License for more
-    details at: http://www.embedthis.com/downloads/gplLicense.html
+    details at: http://embedthis.com/downloads/gplLicense.html
 
     This program is distributed WITHOUT ANY WARRANTY; without even the
     implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.
@@ -19624,7 +20133,7 @@ void mprSetSocketPrebindCallback(MprSocketPrebind callback)
     proprietary programs. If you are unable to comply with the GPL, you must
     acquire a commercial license to use this software. Commercial licenses
     for this software and support services are available from Embedthis
-    Software at http://www.embedthis.com
+    Software at http://embedthis.com
 
     Local variables:
     tab-width: 4
@@ -19662,10 +20171,10 @@ void mprSetSocketPrebindCallback(MprSocketPrebind callback)
 /*
     Format a number as a string. Support radix 10 and 16.
  */
-char *itos(char *buf, ssize count, int64 value, int radix)
+char *itos(int64 value, int radix)
 {
     char    numBuf[32];
-    char    *cp, *dp, *endp;
+    char    *cp;
     char    digits[] = "0123456789ABCDEF";
     int     negative;
 
@@ -19678,7 +20187,6 @@ char *itos(char *buf, ssize count, int64 value, int radix)
     if (value < 0) {
         negative = 1;
         value = -value;
-        count--;
     } else {
         negative = 0;
     }
@@ -19690,28 +20198,64 @@ char *itos(char *buf, ssize count, int64 value, int radix)
     if (negative) {
         *--cp = '-';
     }
-    dp = buf;
-    endp = &buf[count];
-    while (dp < endp && *cp) {
-        *dp++ = *cp++;
+    return sclone(cp);
+}
+
+
+char *itosbuf(char *buf, ssize size, int64 value, int radix)
+{
+    char    *cp, *end;
+    char    digits[] = "0123456789ABCDEF";
+    int     negative;
+
+    if ((radix != 10 && radix != 16) || size < 2) {
+        return 0;
     }
-    *dp = '\0';
+    end = cp = &buf[size];
+    *--cp = '\0';
+
+    if (value < 0) {
+        negative = 1;
+        value = -value;
+        size--;
+    } else {
+        negative = 0;
+    }
+    do {
+        *--cp = digits[value % radix];
+        value /= radix;
+    } while (value > 0 && cp > buf);
+
+    if (negative) {
+        if (cp <= buf) {
+            return 0;
+        }
+        *--cp = '-';
+    }
+    if (buf < cp) {
+        /* Move the null too */
+        memmove(buf, cp, end - cp + 1);
+    }
     return buf;
 }
 
 
-bool snumber(cchar *s)
+char *scamel(cchar *str)
 {
-    return s && *s && strspn(s, "1234567890") == strlen(s);
-} 
+    char    *ptr;
+    ssize   size, len;
 
-
-char *schr(cchar *s, int c)
-{
-    if (s == 0) {
-        return 0;
+    if (str == 0) {
+        str = "";
     }
-    return strchr(s, c);
+    len = slen(str);
+    size = len + 1;
+    if ((ptr = mprAlloc(size)) != 0) {
+        memcpy(ptr, str, len);
+        ptr[len] = '\0';
+    }
+    ptr[0] = (char) tolower((int) ptr[0]);
+    return ptr;
 }
 
 
@@ -19735,6 +20279,15 @@ int scasecmp(cchar *s1, cchar *s2)
 bool scasematch(cchar *s1, cchar *s2)
 {
     return scasecmp(s1, s2) == 0;
+}
+
+
+char *schr(cchar *s, int c)
+{
+    if (s == 0) {
+        return 0;
+    }
+    return strchr(s, c);
 }
 
 
@@ -19816,6 +20369,7 @@ int scmp(cchar *s1, cchar *s2)
 }
 
 
+//  MOB should return bool
 int sends(cchar *str, cchar *suffix)
 {
     if (str == 0 || suffix == 0) {
@@ -20152,6 +20706,31 @@ ssize sncopy(char *dest, ssize destMax, cchar *src, ssize count)
 }
 
 
+bool snumber(cchar *s)
+{
+    return s && *s && strspn(s, "1234567890") == strlen(s);
+} 
+
+
+char *spascal(cchar *str)
+{
+    char    *ptr;
+    ssize   size, len;
+
+    if (str == 0) {
+        str = "";
+    }
+    len = slen(str);
+    size = len + 1;
+    if ((ptr = mprAlloc(size)) != 0) {
+        memcpy(ptr, str, len);
+        ptr[len] = '\0';
+    }
+    ptr[0] = (char) toupper((int) ptr[0]);
+    return ptr;
+}
+
+
 char *spbrk(cchar *str, cchar *set)
 {
     cchar       *sp;
@@ -20229,7 +20808,7 @@ char *sreplace(cchar *str, cchar *pattern, cchar *replacement)
     ssize       plen;
 
     buf = mprCreateBuf(-1, -1);
-    if (pattern && *pattern && replacement && *replacement) {
+    if (pattern && *pattern && replacement) {
         plen = slen(pattern);
         for (s = str; *s; s++) {
             if (sncmp(s, pattern, plen) == 0) {
@@ -20274,6 +20853,7 @@ ssize sspn(cchar *str, cchar *set)
 }
  
 
+//  MOB should return bool
 int sstarts(cchar *str, cchar *prefix)
 {
     if (str == 0 || prefix == 0) {
@@ -20376,7 +20956,7 @@ int64 stoi(cchar *str, int radix, int *err)
 
 /*
     Note "str" is modifed as per strtok()
-    MOB - warning this does not allocate
+    MOB - warning this does not allocate - should it?
  */
 char *stok(char *str, cchar *delim, char **last)
 {
@@ -20481,7 +21061,7 @@ char *supper(cchar *str)
     Expand ${token} references in a path or string.
     Currently support DOCUMENT_ROOT, SERVER_ROOT and PRODUCT, OS and VERSION.
  */
-char *stemplate(cchar *str, MprHashTable *keys)
+char *stemplate(cchar *str, MprHash *keys)
 {
     MprBuf      *buf;
     char        *src, *result, *cp, *tok, *value;
@@ -20543,7 +21123,7 @@ char *stemplate(cchar *str, MprHashTable *keys)
     under the terms of the GNU General Public License as published by the 
     Free Software Foundation; either version 2 of the License, or (at your 
     option) any later version. See the GNU General Public License for more 
-    details at: http://www.embedthis.com/downloads/gplLicense.html
+    details at: http://embedthis.com/downloads/gplLicense.html
     
     This program is distributed WITHOUT ANY WARRANTY; without even the 
     implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. 
@@ -20552,7 +21132,7 @@ char *stemplate(cchar *str, MprHashTable *keys)
     proprietary programs. If you are unable to comply with the GPL, you must
     acquire a commercial license to use this software. Commercial licenses 
     for this software and support services are available from Embedthis 
-    Software at http://www.embedthis.com 
+    Software at http://embedthis.com 
     
     Local variables:
     tab-width: 4
@@ -21327,7 +21907,7 @@ static bool filterTestCast(MprTestGroup *gp, MprTestCase *tc)
         See if this test has been filtered
      */
     if (mprGetListLength(testFilter) > 0) {
-        fullName = mprAsprintf("%s.%s", gp->fullName, tc->name);
+        fullName = sfmt("%s.%s", gp->fullName, tc->name);
         next = 0;
         pattern = mprGetNextItem(testFilter, &next);
         while (pattern) {
@@ -21591,7 +22171,7 @@ static int setLogging(char *logSpec)
     under the terms of the GNU General Public License as published by the 
     Free Software Foundation; either version 2 of the License, or (at your 
     option) any later version. See the GNU General Public License for more 
-    details at: http://www.embedthis.com/downloads/gplLicense.html
+    details at: http://embedthis.com/downloads/gplLicense.html
     
     This program is distributed WITHOUT ANY WARRANTY; without even the 
     implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. 
@@ -21600,7 +22180,7 @@ static int setLogging(char *logSpec)
     proprietary programs. If you are unable to comply with the GPL, you must
     acquire a commercial license to use this software. Commercial licenses 
     for this software and support services are available from Embedthis 
-    Software at http://www.embedthis.com 
+    Software at http://embedthis.com 
     
     Local variables:
     tab-width: 4
@@ -21690,7 +22270,6 @@ void mprStopThreadService()
     mprAssert(ts);
     mprAssert(ts->mainThread);
 
-    //  MOB - why
     ts->threads->mutex = 0;
     ts->mutex = 0;
     mprRemoveItem(ts->threads, ts->mainThread);
@@ -22641,7 +23220,7 @@ static int changeState(MprWorker *worker, int state)
     under the terms of the GNU General Public License as published by the 
     Free Software Foundation; either version 2 of the License, or (at your 
     option) any later version. See the GNU General Public License for more 
-    details at: http://www.embedthis.com/downloads/gplLicense.html
+    details at: http://embedthis.com/downloads/gplLicense.html
     
     This program is distributed WITHOUT ANY WARRANTY; without even the 
     implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. 
@@ -22650,7 +23229,7 @@ static int changeState(MprWorker *worker, int state)
     proprietary programs. If you are unable to comply with the GPL, you must
     acquire a commercial license to use this software. Commercial licenses 
     for this software and support services are available from Embedthis 
-    Software at http://www.embedthis.com 
+    Software at http://embedthis.com 
     
     Local variables:
     tab-width: 4
@@ -23417,7 +23996,7 @@ char *mprFormatTm(cchar *fmt, struct tm *tp)
 
             case 'C':
                 dp--;
-                itos(dp, size, (1900 + tp->tm_year) / 100, 10);
+                itosbuf(dp, size, (1900 + tp->tm_year) / 100, 10);
                 dp += slen(dp);
                 cp++;
                 break;
@@ -23433,7 +24012,7 @@ char *mprFormatTm(cchar *fmt, struct tm *tp)
                 if (tp->tm_mday < 10) {
                     *dp++ = ' ';
                 }
-                itos(dp, size - 1, (int64) tp->tm_mday, 10);
+                itosbuf(dp, size - 1, (int64) tp->tm_mday, 10);
                 dp += slen(dp);
                 cp++;
                 break;
@@ -23459,7 +24038,7 @@ char *mprFormatTm(cchar *fmt, struct tm *tp)
                 if (tp->tm_hour < 10) {
                     *dp++ = ' ';
                 }
-                itos(dp, size - 1, (int64) tp->tm_hour, 10);
+                itosbuf(dp, size - 1, (int64) tp->tm_hour, 10);
                 dp += slen(dp);
                 cp++;
                 break;
@@ -23473,7 +24052,7 @@ char *mprFormatTm(cchar *fmt, struct tm *tp)
                 if (value > 12) {
                     value -= 12;
                 }
-                itos(dp, size - 1, (int64) value, 10);
+                itosbuf(dp, size - 1, (int64) value, 10);
                 dp += slen(dp);
                 cp++;
                 break;
@@ -23509,7 +24088,7 @@ char *mprFormatTm(cchar *fmt, struct tm *tp)
 
             case 's':
                 dp--;
-                itos(dp, size, (int64) mprMakeTime(tp) / MS_PER_SEC, 10);
+                itosbuf(dp, size, (int64) mprMakeTime(tp) / MS_PER_SEC, 10);
                 dp += slen(dp);
                 cp++;
                 break;
@@ -23531,7 +24110,7 @@ char *mprFormatTm(cchar *fmt, struct tm *tp)
                 if (value == 0) {
                     value = 7;
                 }
-                itos(dp, size, (int64) value, 10);
+                itosbuf(dp, size, (int64) value, 10);
                 dp += slen(dp);
                 cp++;
                 break;
@@ -23542,7 +24121,7 @@ char *mprFormatTm(cchar *fmt, struct tm *tp)
                 if (tp->tm_mday < 10) {
                     *dp++ = ' ';
                 }
-                itos(dp, size - 1, (int64) tp->tm_mday, 10);
+                itosbuf(dp, size - 1, (int64) tp->tm_mday, 10);
                 dp += slen(dp);
                 cp++;
                 strcpy(dp, "-%b-%Y");
@@ -24392,7 +24971,7 @@ int gettimeofday(struct timeval *tv, struct timezone *tz)
     under the terms of the GNU General Public License as published by the
     Free Software Foundation; either version 2 of the License, or (at your
     option) any later version. See the GNU General Public License for more
-    details at: http://www.embedthis.com/downloads/gplLicense.html
+    details at: http://embedthis.com/downloads/gplLicense.html
 
     This program is distributed WITHOUT ANY WARRANTY; without even the
     implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.
@@ -24401,7 +24980,7 @@ int gettimeofday(struct timeval *tv, struct timezone *tz)
     proprietary programs. If you are unable to comply with the GPL, you must
     acquire a commercial license to use this software. Commercial licenses
     for this software and support services are available from Embedthis
-    Software at http://www.embedthis.com
+    Software at http://embedthis.com
 
     Local variables:
     tab-width: 4
@@ -24466,7 +25045,7 @@ void mprStopOsService()
 }
 
 
-int mprGetRandomBytes(char *buf, ssize length, int block)
+int mprGetRandomBytes(char *buf, ssize length, bool block)
 {
     ssize   sofar, rc;
     int     fd;
@@ -24475,7 +25054,6 @@ int mprGetRandomBytes(char *buf, ssize length, int block)
     if (fd < 0) {
         return MPR_ERR_CANT_OPEN;
     }
-
     sofar = 0;
     do {
         rc = read(fd, &buf[sofar], length);
@@ -24597,7 +25175,7 @@ void stubMprUnix() {}
     under the terms of the GNU General Public License as published by the 
     Free Software Foundation; either version 2 of the License, or (at your 
     option) any later version. See the GNU General Public License for more 
-    details at: http://www.embedthis.com/downloads/gplLicense.html
+    details at: http://embedthis.com/downloads/gplLicense.html
     
     This program is distributed WITHOUT ANY WARRANTY; without even the 
     implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. 
@@ -24606,7 +25184,7 @@ void stubMprUnix() {}
     proprietary programs. If you are unable to comply with the GPL, you must
     acquire a commercial license to use this software. Commercial licenses 
     for this software and support services are available from Embedthis 
-    Software at http://www.embedthis.com 
+    Software at http://embedthis.com 
     
     Local variables:
     tab-width: 4
@@ -24665,7 +25243,7 @@ int access(const char *path, int mode)
 }
 
 
-int mprGetRandomBytes(char *buf, int length, int block)
+int mprGetRandomBytes(char *buf, int length, bool block)
 {
     int     i;
 
@@ -24818,7 +25396,7 @@ void stubMprVxWorks() {}
     under the terms of the GNU General Public License as published by the 
     Free Software Foundation; either version 2 of the License, or (at your 
     option) any later version. See the GNU General Public License for more 
-    details at: http://www.embedthis.com/downloads/gplLicense.html
+    details at: http://embedthis.com/downloads/gplLicense.html
     
     This program is distributed WITHOUT ANY WARRANTY; without even the 
     implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. 
@@ -24827,7 +25405,7 @@ void stubMprVxWorks() {}
     proprietary programs. If you are unable to comply with the GPL, you must
     acquire a commercial license to use this software. Commercial licenses 
     for this software and support services are available from Embedthis 
-    Software at http://www.embedthis.com 
+    Software at http://embedthis.com 
     
     Local variables:
     tab-width: 4
@@ -25125,7 +25703,7 @@ void mprDoWaitRecall(MprWaitService *ws)
     under the terms of the GNU General Public License as published by the
     Free Software Foundation; either version 2 of the License, or (at your
     option) any later version. See the GNU General Public License for more
-    details at: http://www.embedthis.com/downloads/gplLicense.html
+    details at: http://embedthis.com/downloads/gplLicense.html
 
     This program is distributed WITHOUT ANY WARRANTY; without even the
     implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.
@@ -25134,7 +25712,7 @@ void mprDoWaitRecall(MprWaitService *ws)
     proprietary programs. If you are unable to comply with the GPL, you must
     acquire a commercial license to use this software. Commercial licenses
     for this software and support services are available from Embedthis
-    Software at http://www.embedthis.com
+    Software at http://embedthis.com
 
     Local variables:
     tab-width: 4
@@ -25342,7 +25920,7 @@ MprChar *wfmt(MprChar *fmt, ...)
 
     va_start(ap, fmt);
     mfmt = awtom(fmt, NULL);
-    mresult = mprAsprintfv(mfmt, ap);
+    mresult = sfmtv(mfmt, ap);
     va_end(ap);
     return amtow(mresult, NULL);
 }
@@ -25354,7 +25932,7 @@ MprChar *wfmtv(MprChar *fmt, va_list arg)
 
     mprAssert(fmt);
     mfmt = awtom(fmt, NULL);
-    mresult = mprAsprintfv(mfmt, arg);
+    mresult = sfmtv(mfmt, arg);
     return amtow(mresult, NULL);
 }
 
@@ -26240,7 +26818,7 @@ char *awtom(MprChar *src, ssize *len)
     under the terms of the GNU General Public License as published by the
     Free Software Foundation; either version 2 of the License, or (at your
     option) any later version. See the GNU General Public License for more
-    details at: http://www.embedthis.com/downloads/gplLicense.html
+    details at: http://embedthis.com/downloads/gplLicense.html
 
     This program is distributed WITHOUT ANY WARRANTY; without even the
     implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.
@@ -26249,7 +26827,7 @@ char *awtom(MprChar *src, ssize *len)
     proprietary programs. If you are unable to comply with the GPL, you must
     acquire a commercial license to use this software. Commercial licenses
     for this software and support services are available from Embedthis
-    Software at http://www.embedthis.com
+    Software at http://embedthis.com
 
     Local variables:
     tab-width: 4
@@ -26325,7 +26903,7 @@ HWND mprGetHwnd()
 }
 
 
-int mprGetRandomBytes(char *buf, ssize length, int block)
+int mprGetRandomBytes(char *buf, ssize length, bool block)
 {
     HCRYPTPROV      prov;
     int             rc;
@@ -26610,7 +27188,7 @@ void stubMprWin() {}
     under the terms of the GNU General Public License as published by the 
     Free Software Foundation; either version 2 of the License, or (at your 
     option) any later version. See the GNU General Public License for more 
-    details at: http://www.embedthis.com/downloads/gplLicense.html
+    details at: http://embedthis.com/downloads/gplLicense.html
     
     This program is distributed WITHOUT ANY WARRANTY; without even the 
     implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. 
@@ -26619,7 +27197,7 @@ void stubMprWin() {}
     proprietary programs. If you are unable to comply with the GPL, you must
     acquire a commercial license to use this software. Commercial licenses 
     for this software and support services are available from Embedthis 
-    Software at http://www.embedthis.com 
+    Software at http://embedthis.com 
     
     Local variables:
     tab-width: 4
@@ -26702,13 +27280,12 @@ void mprStopOsService()
 }
 
 
-int mprGetRandomBytes(char *buf, int length, int block)
+int mprGetRandomBytes(char *buf, int length, bool block)
 {
     HCRYPTPROV      prov;
     int             rc;
 
     rc = 0;
-
     if (!CryptAcquireContext(&prov, NULL, NULL, PROV_RSA_FULL, CRYPT_VERIFYCONTEXT | 0x40)) {
         return mprGetError();
     }
@@ -26985,7 +27562,7 @@ int access(cchar *path, int flags)
     char    *tmpPath;
     int     rc;
 
-    if (!mprIsAbsPath(MPR, path)) {
+    if (!mprIsPathAbs(MPR, path)) {
         path = (cchar*) tmpPath = mprJoinPath(MPR, currentDir, path);
     } else {
         tmpPath = 0;
@@ -27061,7 +27638,7 @@ int mkdir(cchar *dir, int mode)
     uni     *wdir;
     int     rc;
 
-    if (!mprIsAbsPath(MPR, dir)) {
+    if (!mprIsPathAbs(MPR, dir)) {
         dir = (cchar*) tmpDir = mprJoinPath(MPR, currentDir, dir);
     } else {
         tmpDir = 0;
@@ -27108,7 +27685,7 @@ uint open(cchar *path, int mode, va_list arg)
     DWORD   accessFlags, shareFlags, createFlags;
     HANDLE  h;
 
-    if (!mprIsAbsPath(MPR, path)) {
+    if (!mprIsPathAbs(MPR, path)) {
         path = (cchar*) tmpPath = mprGetAbsPath(MPR, path);
     } else {
         tmpPath = 0;
@@ -27152,12 +27729,12 @@ int rename(cchar *oldname, cchar *newname)
     char    *tmpOld, *tmpNew;
     int     rc;
 
-    if (!mprIsAbsPath(MPR, oldname)) {
+    if (!mprIsPathAbs(MPR, oldname)) {
         oldname = (cchar*) tmpOld = mprJoinPath(MPR, currentDir, oldname);
     } else {
         tmpOld = 0;
     }
-    if (!mprIsAbsPath(MPR, newname)) {
+    if (!mprIsPathAbs(MPR, newname)) {
         newname = (cchar*) tmpNew = mprJoinPath(MPR, currentDir, newname);
     } else {
         tmpNew = 0;
@@ -27175,7 +27752,7 @@ int rmdir(cchar *dir)
     char    *tmpDir;
     int     rc;
 
-    if (!mprIsAbsPath(MPR, dir)) {
+    if (!mprIsPathAbs(MPR, dir)) {
         dir = (cchar*) tmpDir = mprJoinPath(MPR, currentDir, dir);
     } else {
         tmpDir = 0;
@@ -27201,7 +27778,7 @@ int stat(cchar *path, struct stat *sbuf)
 
     memset(sbuf, 0, sizeof(struct stat));
 
-    if (!mprIsAbsPath(MPR, path)) {
+    if (!mprIsPathAbs(MPR, path)) {
         path = (cchar*) tmpPath = mprJoinPath(MPR, currentDir, path);
     } else {
         tmpPath = 0;
@@ -27525,7 +28102,7 @@ void stubMprWince() {}
     under the terms of the GNU General Public License as published by the
     Free Software Foundation; either version 2 of the License, or (at your
     option) any later version. See the GNU General Public License for more
-    details at: http://www.embedthis.com/downloads/gplLicense.html
+    details at: http://embedthis.com/downloads/gplLicense.html
 
     This program is distributed WITHOUT ANY WARRANTY; without even the
     implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.
@@ -27534,7 +28111,7 @@ void stubMprWince() {}
     proprietary programs. If you are unable to comply with the GPL, you must
     acquire a commercial license to use this software. Commercial licenses
     for this software and support services are available from Embedthis
-    Software at http://www.embedthis.com
+    Software at http://embedthis.com
 
     Local variables:
     tab-width: 4
@@ -27944,7 +28521,6 @@ static MprXmlToken getXmlToken(MprXml *xp, int state)
             If all white space, then zero the token buffer
          */
         for (cp = tokBuf->start; *cp; cp++) {
-            //  MOB - temp
             if (!isspace((int) *cp & 0x7f)) {
                 return MPR_XMLTOK_TEXT;
             }
@@ -28179,9 +28755,9 @@ static void xmlError(MprXml *xp, char *fmt, ...)
     mprAssert(fmt);
 
     va_start(args, fmt);
-    buf = mprAsprintfv(fmt, args);
+    buf = sfmtv(fmt, args);
     va_end(args);
-    xp->errMsg = mprAsprintf("XML error: %s\nAt line %d\n", buf, xp->lineNumber);
+    xp->errMsg = sfmt("XML error: %s\nAt line %d\n", buf, xp->lineNumber);
 }
 
 
@@ -28228,7 +28804,7 @@ int mprXmlGetLineNumber(MprXml *xp)
     under the terms of the GNU General Public License as published by the 
     Free Software Foundation; either version 2 of the License, or (at your 
     option) any later version. See the GNU General Public License for more 
-    details at: http://www.embedthis.com/downloads/gplLicense.html
+    details at: http://embedthis.com/downloads/gplLicense.html
     
     This program is distributed WITHOUT ANY WARRANTY; without even the 
     implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. 
@@ -28237,7 +28813,7 @@ int mprXmlGetLineNumber(MprXml *xp)
     proprietary programs. If you are unable to comply with the GPL, you must
     acquire a commercial license to use this software. Commercial licenses 
     for this software and support services are available from Embedthis 
-    Software at http://www.embedthis.com 
+    Software at http://embedthis.com 
     
     Local variables:
     tab-width: 4

@@ -401,7 +401,7 @@ module ejs {
         //  TODO - great if this could take a regexp
         /**
             Returns a trimmed copy of the string. Normally used to trim white space, but can be used to trim any 
-            substring from the start or end of the string.
+            substring from the start and end of the string.
             @param str May be set to a substring to trim from the string. If not set, it defaults to any white space.
             @return Returns a (possibly) modified copy of the string
          */

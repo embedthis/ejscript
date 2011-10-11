@@ -91,7 +91,7 @@ static EjsObj *sqliteConstructor(Ejs *ejs, EjsSqlite *db, int argc, EjsObj **arg
                 ejsThrowIOError(ejs, "Can't open database %s", path);
                 return 0;
             }
-            //  TODO - should be configurable somewhere
+            //  MOB - should be configurable somewhere
             sqlite3_soft_heap_limit(20 * 1024 * 1024);
             sqlite3_busy_timeout(sdb, EJS_SQLITE_TIMEOUT);
 
@@ -183,6 +183,7 @@ static EjsObj *sqliteSql(Ejs *ejs, EjsSqlite *db, int argc, EjsObj **argv)
                     return 0;
                 }
                 for (i = 0; i < ncol; i++) {
+                    //  MOB OPT - this can be hoisted
                     tableName = (char*) sqlite3_column_table_name(stmt, i);
                     if (defaultTableName == 0) {
                         defaultTableName = tableName;
@@ -198,7 +199,7 @@ static EjsObj *sqliteSql(Ejs *ejs, EjsSqlite *db, int argc, EjsObj **argv)
                             Prefix with "_". ie. "_TableColumn"
                             MOB - remove singularization.
                          */
-                        len = strlen(tableName) + 1;
+                        len = (int) strlen(tableName) + 1;
                         tableName = sjoin("_", tableName, colName, NULL);
                         if (len > 3 && tableName[len - 1] == 's' && tableName[len - 2] == 'e' && tableName[len - 3] == 'i') {
                             tableName[len - 3] = 'y';
@@ -284,7 +285,7 @@ static void *reallocBlock(void *ptr, int size)
 
 static int blockSize(void *ptr)
 {
-    return mprGetBlockSize(ptr);
+    return (int) mprGetBlockSize(ptr);
 }
 
 
@@ -478,7 +479,7 @@ int ejs_db_sqlite_Init(Ejs *ejs, MprModule *mp)
     under the terms of the GNU General Public License as published by the
     Free Software Foundation; either version 2 of the License, or (at your
     option) any later version. See the GNU General Public License for more
-    details at: http://www.embedthis.com/downloads/gplLicense.html
+    details at: http://embedthis.com/downloads/gplLicense.html
 
     This program is distributed WITHOUT ANY WARRANTY; without even the
     implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.
@@ -487,7 +488,7 @@ int ejs_db_sqlite_Init(Ejs *ejs, MprModule *mp)
     proprietary programs. If you are unable to comply with the GPL, you must
     acquire a commercial license to use this software. Commercial licenses
     for this software and support services are available from Embedthis
-    Software at http://www.embedthis.com
+    Software at http://embedthis.com
 
     Local variables:
     tab-width: 4

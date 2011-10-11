@@ -127,7 +127,7 @@ static void footer(MprFile *file)
  *  under the terms of the GNU General Public License as published by the\n\
  *  Free Software Foundation; either version 2 of the License, or (at your\n\
  *  option) any later version. See the GNU General Public License for more\n\
- *  details at: http://www.embedthis.com/downloads/gplLicense.html\n\
+ *  details at: http://embedthis.com/downloads/gplLicense.html\n\
  *\n\
  *  This program is distributed WITHOUT ANY WARRANTY; without even the\n\
  *  implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.\n\
@@ -136,7 +136,7 @@ static void footer(MprFile *file)
  *  proprietary programs. If you are unable to comply with the GPL, you must\n\
  *  acquire a commercial license to use this software. Commercial licenses\n\
  *  for this software and support services are available from Embedthis\n\
- *  Software at http://www.embedthis.com\n\
+ *  Software at http://embedthis.com\n\
  */\n");
 }
 

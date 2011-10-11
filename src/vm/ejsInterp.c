@@ -101,7 +101,6 @@ static MPR_INLINE void checkGetter(Ejs *ejs, EjsAny *value, EjsAny *thisObj, Ejs
 }
 
 #define CHECK_VALUE(value, thisObj, obj, slotNum) checkGetter(ejs, value, thisObj, obj, slotNum)
-
 #define CHECK_GC() if (MPR->heap.mustYield && !(ejs->state->paused)) { mprYield(0); } else 
 
 /*
@@ -1393,7 +1392,7 @@ static void VM(Ejs *ejs, EjsFunction *fun, EjsAny *otherThis, int argc, int stac
             str = GET_STRING();
             nsp = ejsCreateNamespace(ejs, str);
             ejsAddNamespaceToBlock(ejs, state->bp, nsp);
-            if (ejsContainsMulti(ejs, str, "internal-")) {
+            if (ejsContainsAsc(ejs, str, "internal-") >= 0) {
                 state->internal = nsp;
             }
             BREAK;
@@ -2194,7 +2193,7 @@ static void VM(Ejs *ejs, EjsFunction *fun, EjsAny *otherThis, int argc, int stac
              Stack after         []
              */
         CASE (EJS_OP_NEW_ARRAY):
-            paused = ejsPauseGC(ejs);
+            paused = ejsBlockGC(ejs);
             type = GET_TYPE();
             argc = GET_INT();
             argc += ejs->spreadArgs;
@@ -2211,7 +2210,7 @@ static void VM(Ejs *ejs, EjsFunction *fun, EjsAny *otherThis, int argc, int stac
             state->stack -= (argc * 2);
             push(vp);
             state->t1 = 0;
-            ejsResumeGC(ejs, paused);
+            ejsUnblockGC(ejs, paused);
             BREAK;
 
         /*
@@ -2222,7 +2221,7 @@ static void VM(Ejs *ejs, EjsFunction *fun, EjsAny *otherThis, int argc, int stac
                 Stack after         []
          */
         CASE (EJS_OP_NEW_OBJECT):
-            paused = ejsPauseGC(ejs);
+            paused = ejsBlockGC(ejs);
             type = GET_TYPE();
             argc = GET_INT();
             argc += ejs->spreadArgs;
@@ -2244,7 +2243,7 @@ static void VM(Ejs *ejs, EjsFunction *fun, EjsAny *otherThis, int argc, int stac
             state->stack -= (argc * 3);
             push(vp);
             state->t1 = 0;
-            ejsResumeGC(ejs, paused);
+            ejsUnblockGC(ejs, paused);
             BREAK;
 
 
@@ -2524,7 +2523,7 @@ static void storeProperty(Ejs *ejs, EjsObj *thisObj, EjsAny *vp, EjsName qname, 
                 if (TYPE(vp)->hasInstanceVars) {
                     /* The prototype properties have been inherited */
                     mprAssert(ejsIsPot(ejs, vp));
-                    slotNum = ejsGetSlot(ejs, vp, slotNum);
+                    slotNum = ejsCheckSlot(ejs, vp, slotNum);
                     pot = (EjsPot*) vp;
                     pot->properties->slots[slotNum].trait = ((EjsPot*) lookup.obj)->properties->slots[slotNum].trait;
                     pot->properties->slots[slotNum].value = ((EjsPot*) lookup.obj)->properties->slots[slotNum].value;
@@ -2577,7 +2576,7 @@ static void storePropertyToScope(Ejs *ejs, EjsName qname, EjsObj *value)
             } else if (TYPE(vp)->hasInstanceVars && ejsIsPot(ejs, vp)) {
                 /* The prototype properties have been inherited */
                 mprAssert(ejsIsPot(ejs, vp));
-                slotNum = ejsGetSlot(ejs, (EjsPot*) vp, slotNum);
+                slotNum = ejsCheckSlot(ejs, (EjsPot*) vp, slotNum);
                 obj = (EjsPot*) vp;
                 mprAssert(slotNum < obj->numProp);
                 mprAssert(slotNum < ((EjsPot*) lookup.obj)->numProp);
@@ -2643,7 +2642,7 @@ int ejsRun(Ejs *ejs)
         if (!mp->initialized) {
             ejs->result = ejsRunInitializer(ejs, mp);
         }
-        if (ejsCompareMulti(ejs, mp->name, EJS_DEFAULT_MODULE) == 0) {
+        if (ejsCompareAsc(ejs, mp->name, EJS_DEFAULT_MODULE) == 0) {
             ejsRemoveModule(ejs, mp);
             next--;
         }
@@ -2723,6 +2722,9 @@ EjsAny *ejsRunFunctionBySlot(Ejs *ejs, EjsAny *thisObj, int slotNum, int argc, v
     return ejsRunFunction(ejs, fun, thisObj, argc, argv);
 }
 
+
+//  MOB - this is inconsistent with ejsRunBySlot. This has a separate container and thisObj, whereas RunBySlot
+//  has only one arg
 
 EjsAny *ejsRunFunctionByName(Ejs *ejs, EjsAny *container, EjsName qname, EjsAny *thisObj, int argc, void *argv)
 {
@@ -3612,7 +3614,7 @@ static EjsAny *getNthBlock(Ejs *ejs, int nth)
 /*
     Enter a mesage into the log file
  */
-void ejsLog(Ejs *ejs, const char *fmt, ...)
+void ejsLog(Ejs *ejs, cchar *fmt, ...)
 {
     va_list     args;
     char        buf[MPR_MAX_LOG_STRING];
@@ -3843,7 +3845,7 @@ void ejsShowOpFrequency(Ejs *ejs)
     under the terms of the GNU General Public License as published by the
     Free Software Foundation; either version 2 of the License, or (at your
     option) any later version. See the GNU General Public License for more
-    details at: http://www.embedthis.com/downloads/gplLicense.html
+    details at: http://embedthis.com/downloads/gplLicense.html
 
     This program is distributed WITHOUT ANY WARRANTY; without even the
     implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.
@@ -3852,7 +3854,7 @@ void ejsShowOpFrequency(Ejs *ejs)
     proprietary programs. If you are unable to comply with the GPL, you must
     acquire a commercial license to use this software. Commercial licenses
     for this software and support services are available from Embedthis
-    Software at http://www.embedthis.com
+    Software at http://embedthis.com
 
     Local variables:
     tab-width: 4

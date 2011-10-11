@@ -483,7 +483,7 @@ static EjsAny *castObj(Ejs *ejs, EjsObj *obj, EjsType *type)
         if (!ejsIsType(ejs, obj) && !ejsIsPrototype(ejs, obj)) {
             if (ejsLookupVar(ejs, obj, EN("toString"), &lookup) >= 0 && lookup.obj != EST(Object)->prototype) {
                 fun = ejsGetProperty(ejs, lookup.obj, lookup.slotNum);
-                if (fun && ejsIsFunction(ejs, fun) && fun->body.proc != (EjsFun) ejsObjToString) {
+                if (fun && ejsIsFunction(ejs, fun) && fun->body.proc != (EjsProc) ejsObjToString) {
                     result = ejsRunFunction(ejs, fun, obj, 0, NULL);
                     return result;
                 }
@@ -1054,7 +1054,7 @@ void ejsMarkName(EjsName *qname)
     under the terms of the GNU General Public License as published by the
     Free Software Foundation; either version 2 of the License, or (at your
     option) any later version. See the GNU General Public License for more
-    details at: http://www.embedthis.com/downloads/gplLicense.html
+    details at: http://embedthis.com/downloads/gplLicense.html
 
     This program is distributed WITHOUT ANY WARRANTY; without even the
     implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.
@@ -1063,7 +1063,7 @@ void ejsMarkName(EjsName *qname)
     proprietary programs. If you are unable to comply with the GPL, you must
     acquire a commercial license to use this software. Commercial licenses
     for this software and support services are available from Embedthis
-    Software at http://www.embedthis.com
+    Software at http://embedthis.com
 
     Local variables:
     tab-width: 4

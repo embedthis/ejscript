@@ -28,7 +28,7 @@ int emCreateSlotFiles(EjsMod *bp, EjsModule *mp, MprFile *outfile)
     int     rc;
 
     rc = 0;
-    defaultVersion = mprAsprintf("-%d", ejsParseModuleVersion(BLD_VERSION));
+    defaultVersion = sfmt("-%d", ejsParseModuleVersion(BLD_VERSION));
     if (bp->cslots) {
         rc += createSlotFile(bp, mp, outfile);
     }
@@ -195,7 +195,7 @@ static int genType(EjsMod *bp, MprFile *file, EjsModule *mp, EjsType *type, int 
     ejs = bp->ejs;
     lastClassSlot = max(firstClassSlot, lastClassSlot);
 
-    if (!isGlobal || ejsCompareMulti(ejs, mp->name, "ejs") == 0) {
+    if (!isGlobal || ejsCompareAsc(ejs, mp->name, "ejs") == 0) {
         /*
             Only emit global property slots for "ejs"
          */
@@ -238,7 +238,7 @@ static int genType(EjsMod *bp, MprFile *file, EjsModule *mp, EjsType *type, int 
     /*
         For the global type, only emit the count for the "ejs" module
      */
-    if (!isGlobal || ejsCompareMulti(ejs, mp->name, "ejs") == 0) {
+    if (!isGlobal || ejsCompareAsc(ejs, mp->name, "ejs") == 0) {
         defineSlotCount(bp, file, mp, type, "INSTANCE", slotNum);
     }
 
@@ -466,7 +466,7 @@ static char *mapNamespace(cchar *space)
     under the terms of the GNU General Public License as published by the
     Free Software Foundation; either version 2 of the License, or (at your
     option) any later version. See the GNU General Public License for more
-    details at: http://www.embedthis.com/downloads/gplLicense.html
+    details at: http://embedthis.com/downloads/gplLicense.html
   
     This program is distributed WITHOUT ANY WARRANTY; without even the
     implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.
@@ -475,7 +475,7 @@ static char *mapNamespace(cchar *space)
     proprietary programs. If you are unable to comply with the GPL, you must
     acquire a commercial license to use this software. Commercial licenses
     for this software and support services are available from Embedthis
-    Software at http://www.embedthis.com
+    Software at http://embedthis.com
   
     Local variables:
     tab-width: 4

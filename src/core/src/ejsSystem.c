@@ -94,7 +94,7 @@ static EjsObj *system_exec(Ejs *ejs, EjsObj *unused, int argc, EjsObj **argv)
 
     if (argc == 0) {
         path = MPR->argv[0];
-        if (!mprIsAbsPath(path)) {
+        if (!mprIsPathAbs(path)) {
             path = mprGetAppPath();
         }
         for (i = 3; i < MPR_MAX_FILE; i++) {
@@ -117,7 +117,7 @@ static EjsObj *system_exec(Ejs *ejs, EjsObj *unused, int argc, EjsObj **argv)
             argCount = ap->length;
 
         } else {
-            if (mprMakeArgv(ejsToMulti(ejs, args), &argCount, &argVector, 0) < 0 || argVector == 0) {
+            if ((argCount = mprMakeArgv(ejsToMulti(ejs, args), &argVector, 0)) < 0 || argVector == 0) {
                 ejsThrowArgError(ejs, "Can't parse command line");
                 return 0;
             }
@@ -216,7 +216,7 @@ void ejsConfigureSystemType(Ejs *ejs)
     under the terms of the GNU General Public License as published by the
     Free Software Foundation; either version 2 of the License, or (at your
     option) any later version. See the GNU General Public License for more
-    details at: http://www.embedthis.com/downloads/gplLicense.html
+    details at: http://embedthis.com/downloads/gplLicense.html
 
     This program is distributed WITHOUT ANY WARRANTY; without even the
     implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.
@@ -225,7 +225,7 @@ void ejsConfigureSystemType(Ejs *ejs)
     proprietary programs. If you are unable to comply with the GPL, you must
     acquire a commercial license to use this software. Commercial licenses
     for this software and support services are available from Embedthis
-    Software at http://www.embedthis.com
+    Software at http://embedthis.com
 
     Local variables:
     tab-width: 4

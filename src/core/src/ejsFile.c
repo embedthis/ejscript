@@ -16,9 +16,9 @@
 #define isDelim(fp, c)  (c == fp->delimiter)
 #endif
 
-#define FILE_OPEN           0x1
-#define FILE_READ           0x2
-#define FILE_WRITE          0x4
+#define FILE_OPEN           0x1     /* File is opened */
+#define FILE_READ           0x2     /* File is opened for reading */
+#define FILE_WRITE          0x4     /* File is opened for writing */
 
 /**************************** Forward Declarations ****************************/
 
@@ -208,7 +208,7 @@ static EjsFile *fileConstructor(Ejs *ejs, EjsFile *fp, int argc, EjsObj **argv)
         ejsThrowIOError(ejs, "Bad path");
         return 0;
     }
-    fp->path = mprGetNormalizedPath(path);
+    fp->path = mprNormalizePath(path);
     if (argc == 2) {
         openFile(ejs, fp, 1, &argv[1]);
     }
@@ -946,7 +946,7 @@ void ejsConfigureFileType(Ejs *ejs)
     under the terms of the GNU General Public License as published by the
     Free Software Foundation; either version 2 of the License, or (at your
     option) any later version. See the GNU General Public License for more
-    details at: http://www.embedthis.com/downloads/gplLicense.html
+    details at: http://embedthis.com/downloads/gplLicense.html
 
     This program is distributed WITHOUT ANY WARRANTY; without even the
     implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.
@@ -955,7 +955,7 @@ void ejsConfigureFileType(Ejs *ejs)
     proprietary programs. If you are unable to comply with the GPL, you must
     acquire a commercial license to use this software. Commercial licenses
     for this software and support services are available from Embedthis
-    Software at http://www.embedthis.com
+    Software at http://embedthis.com
 
     Local variables:
     tab-width: 4

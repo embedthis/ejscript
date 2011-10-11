@@ -156,3 +156,5 @@ src/core/test/cmd/TempWmicBatchFile.bat
 *.guid
 *.opensdf
 *.tmp
+.DS_Store
+src/test/tt.es

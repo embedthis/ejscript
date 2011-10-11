@@ -13,7 +13,7 @@
 
 /*********************************** Defines **********************************/
 
-#define EJS_SESSION             "-ejs-session-"
+#define EJS_SESSION "-ejs-session-"             /**< Default session cookie string */
 
 #ifdef  __cplusplus
 extern "C" {
@@ -33,7 +33,7 @@ extern "C" {
         PUT, DELETE, OPTIONS, and TRACE. It also supports Keep-Alive and SSL connections. 
     @stability Prototype
     @defgroup EjsHttpServer EjsHttpServer
-    @see EjsHttpServer
+    @see EjsHttpServer ejsCloneHttpServer
  */
 typedef struct EjsHttpServer {
     EjsPot          pot;                        /**< Extends Object */
@@ -58,6 +58,14 @@ typedef struct EjsHttpServer {
     EjsArray        *outgoingStages;            /**< Outgoing Http pipeline stages */
 } EjsHttpServer;
 
+/** 
+    Clone a http server
+    @param ejs Ejs interpreter handle returned from $ejsCreate
+    @param server HttpServer object
+    @param deep Ignored
+    @returns A new server object.
+    @ingroup EjsHttpServer
+*/
 extern EjsHttpServer *ejsCloneHttpServer(Ejs *ejs, EjsHttpServer *server, bool deep);
 
 /** 
@@ -66,7 +74,7 @@ extern EjsHttpServer *ejsCloneHttpServer(Ejs *ejs, EjsHttpServer *server, bool d
         Request objects represent a single Http request.
     @stability Prototype
     @defgroup EjsRequest EjsRequest
-    @see EjsRequest ejsCreateRequest
+    @see EjsRequest ejsCloneRequest ejsCreateRequest 
  */
 typedef struct EjsRequest {
     EjsPot          pot;                /**< Base object storage */
@@ -114,6 +122,15 @@ typedef struct EjsRequest {
     ssize           written;            /**< Count of data bytes written to the client */
 } EjsRequest;
 
+/** 
+    Clone a request into another interpreter.
+    @param ejs Ejs interpreter handle returned from $ejsCreate
+    @param req Original request to copy
+    @param deep Ignored
+    @return A new request object.
+    @ingroup EjsRequest
+*/
+extern EjsRequest *ejsCloneRequest(Ejs *ejs, EjsRequest *req, bool deep);
 
 /** 
     Create a new request. Create a new request object associated with the given Http connection.
@@ -122,17 +139,10 @@ typedef struct EjsRequest {
     @param conn Http connection object
     @param dir Default directory containing web documents
     @return A new request object.
+    @ingroup EjsRequest
 */
 extern EjsRequest *ejsCreateRequest(Ejs *ejs, EjsHttpServer *server, HttpConn *conn, cchar *dir);
 
-/** 
-    Clone a request into another interpreter.
-    @param ejs Ejs interpreter handle returned from $ejsCreate
-    @param req Original request to copy
-    @param deep Ignored
-    @return A new request object.
-*/
-extern EjsRequest *ejsCloneRequest(Ejs *ejs, EjsRequest *req, bool deep);
 
 /** 
     Session Class. Requests can access to session state storage via the Session class.
@@ -159,6 +169,7 @@ typedef struct EjsSession {
     @param timeout Timeout to use for the session if one is created
     @param create Create a new session if an existing session cannot be found or it has expired.
     @returns A new session object.
+    @ingroup EjsSession
 */
 extern EjsSession *ejsGetSession(Ejs *ejs, EjsString *key, MprTime timeout, int create);
 
@@ -166,11 +177,18 @@ extern EjsSession *ejsGetSession(Ejs *ejs, EjsString *key, MprTime timeout, int 
     Destroy as session. This destroys the session object so that subsequent requests will need to establish a new session.
     @param ejs Ejs interpreter handle returned from $ejsCreate
     @param session Session object created via ejsGetSession()
-*/
+    @ingroup EjsSession
+ */
 extern int ejsDestroySession(Ejs *ejs, EjsSession *session);
-extern void ejsSetSessionTimeout(Ejs *ejs, EjsSession *sp, MprTime timeout);
-extern void ejsSendRequestCloseEvent(Ejs *ejs, EjsRequest *req);
-extern void ejsSendRequestErrorEvent(Ejs *ejs, EjsRequest *req);
+
+/** 
+    Set a session timeout
+    @param ejs Ejs interpreter handle returned from $ejsCreate
+    @param sp Session object
+    @param lifespan Lifespan in milliseconds
+    @ingroup EjsSession
+*/
+extern void ejsSetSessionTimeout(Ejs *ejs, EjsSession *sp, MprTime lifespan);
 
 /******************************* Internal APIs ********************************/
 
@@ -178,6 +196,8 @@ extern void ejsConfigureHttpServerType(Ejs *ejs);
 extern void ejsConfigureRequestType(Ejs *ejs);
 extern void ejsConfigureSessionType(Ejs *ejs);
 extern void ejsConfigureWebTypes(Ejs *ejs);
+extern void ejsSendRequestCloseEvent(Ejs *ejs, EjsRequest *req);
+extern void ejsSendRequestErrorEvent(Ejs *ejs, EjsRequest *req);
 
 #ifdef  __cplusplus
 }

@@ -52,12 +52,7 @@ typedef struct MprSsl {
      */
     int             verifyClient;
     int             verifyDepth;
-
     int             protocols;
-#if UNUSED
-    bool            initialized;
-    bool            connTraced;
-#endif
 
     /*
         Per-SSL provider context information
@@ -124,7 +119,7 @@ extern int mprCreateMatrixSslModule(bool lazy);
     under the terms of the GNU General Public License as published by the 
     Free Software Foundation; either version 2 of the License, or (at your 
     option) any later version. See the GNU General Public License for more 
-    details at: http://www.embedthis.com/downloads/gplLicense.html
+    details at: http://embedthis.com/downloads/gplLicense.html
     
     This program is distributed WITHOUT ANY WARRANTY; without even the 
     implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. 
@@ -133,7 +128,7 @@ extern int mprCreateMatrixSslModule(bool lazy);
     proprietary programs. If you are unable to comply with the GPL, you must
     acquire a commercial license to use this software. Commercial licenses 
     for this software and support services are available from Embedthis 
-    Software at http://www.embedthis.com 
+    Software at http://embedthis.com 
     
     Local variables:
     tab-width: 4

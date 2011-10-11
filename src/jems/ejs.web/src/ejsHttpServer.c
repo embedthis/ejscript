@@ -126,7 +126,7 @@ static EjsObj *hs_setLimits(Ejs *ejs, EjsHttpServer *sp, int argc, EjsObj **argv
         mprAssert(limits);
         ejsGetHttpLimits(ejs, sp->limits, limits, 1);
     }
-    ejsBlendObject(ejs, sp->limits, argv[0], 0, EJS_BLEND_OVERWRITE);
+    ejsBlendObject(ejs, sp->limits, argv[0], EJS_BLEND_OVERWRITE);
     if (sp->endpoint) {
         limits = (sp->endpoint) ? sp->endpoint->limits : ejs->http->serverLimits;
         ejsSetHttpLimits(ejs, limits, sp->limits, 1);
@@ -198,7 +198,7 @@ static EjsVoid *hs_listen(Ejs *ejs, EjsHttpServer *sp, int argc, EjsObj **argv)
         loc = (argc >= 1) ? argv[0] : ESV(null);
         if (loc != ESV(null)) {
             address = ejsToString(ejs, loc);
-            mprParseIp(address->value, &sp->ip, &sp->port, 0);
+            mprParseSocketAddress(address->value, &sp->ip, &sp->port, 0);
         } else {
             address = 0;
         }
@@ -243,7 +243,7 @@ static EjsVoid *hs_listen(Ejs *ejs, EjsHttpServer *sp, int argc, EjsObj **argv)
         route = httpCreateConfiguredRoute(host, 1);
         httpSetRouteName(route, "default");
         httpAddRouteHandler(route, "ejsHandler", "");
-        httpSetRouteTarget(route, "virtual", 0);
+        httpSetRouteTarget(route, "run", 0);
         httpFinalizeRoute(route);
 
         /*
@@ -436,7 +436,7 @@ static EjsObj *hs_setPipeline(Ejs *ejs, EjsHttpServer *sp, int argc, EjsObj **ar
  */
 static EjsObj *hs_trace(Ejs *ejs, EjsHttpServer *sp, int argc, EjsObj **argv)
 {
-    ejsSetupTrace(ejs, sp->trace, argv[0]);
+    ejsSetupHttpTrace(ejs, sp->trace, argv[0]);
     return 0;
 }
 
@@ -672,9 +672,11 @@ static void incomingEjsData(HttpQueue *q, HttpPacket *packet)
             httpError(conn, HTTP_CODE_BAD_REQUEST, "Client supplied insufficient body data");
         }
         httpPutForService(q, packet, 0);
+#if UNUSED
         if (rx->form) {
-            httpAddVarsFromQueue(q);
+            httpAddParamsFromQueue(q);
         }
+#endif
     } else {
         httpJoinPacketForService(q, packet, 0);
     }
@@ -745,9 +747,11 @@ static void startEjsHandler(HttpQueue *q)
     Ejs             *ejs;
     HttpEndpoint    *endpoint;
     HttpConn        *conn;
+    HttpRx          *rx;
     MprSocket       *lp;
 
     conn = q->conn;
+    rx = conn->rx;
     endpoint = conn->endpoint;
 
     if (conn->error) {
@@ -779,7 +783,7 @@ static void startEjsHandler(HttpQueue *q)
         ejsSendEvent(ejs, sp->emitter, "readable", req, req);
 
         /* Send EOF if form or upload and all content has been received.  */
-        if (conn->rx->startAfterContent && conn->rx->eof) {
+        if ((rx->form || rx->upload) /* UNUSED rx->startAfterContent */ && rx->eof) {
             HTTP_NOTIFY(conn, 0, HTTP_NOTIFY_READABLE);
         }
     }
@@ -810,8 +814,7 @@ HttpStage *ejsAddWebHandler(Http *http, MprModule *module)
     if (http->ejsHandler) {
         return http->ejsHandler;
     }
-    handler = httpCreateHandler(http, "ejsHandler", HTTP_STAGE_ALL | HTTP_STAGE_QUERY_VARS, module);
-    if (handler == 0) {
+    if ((handler = httpCreateHandler(http, "ejsHandler", HTTP_STAGE_ALL, module)) == 0) {
         return 0;
     }
     http->ejsHandler = handler;
@@ -979,7 +982,7 @@ void ejsConfigureHttpServerType(Ejs *ejs)
     under the terms of the GNU General Public License as published by the
     Free Software Foundation; either version 2 of the License, or (at your
     option) any later version. See the GNU General Public License for more
-    details at: http://www.embedthis.com/downloads/gplLicense.html
+    details at: http://embedthis.com/downloads/gplLicense.html
 
     This program is distributed WITHOUT ANY WARRANTY; without even the
     implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.
@@ -988,7 +991,7 @@ void ejsConfigureHttpServerType(Ejs *ejs)
     proprietary programs. If you are unable to comply with the GPL, you must
     acquire a commercial license to use this software. Commercial licenses
     for this software and support services are available from Embedthis
-    Software at http://www.embedthis.com
+    Software at http://embedthis.com
 
     Local variables:
     tab-width: 4

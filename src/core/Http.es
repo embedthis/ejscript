@@ -840,6 +840,7 @@ FUTURE & KEEP
         # Config.Legacy
         native function trace_old(uri: Uri? = null): Void
 
+        //  MOB - missing timeout legacy getter/setter method
     }
 }
 

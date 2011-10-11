@@ -524,6 +524,8 @@ module ejs.web {
         public function route(request): Route {
             let log = request.log
             log.debug(5, "Routing " + request.pathInfo)
+
+            //  MOB - this is now done by http for "-http-method"
             if (request.method == "POST") {
                 let method = request.params["-ejs-method-"] || request.header("X-HTTP-METHOD-OVERRIDE")
                 if (method && method.toUpperCase() != request.method) {
@@ -833,6 +835,8 @@ module ejs.web {
             }
             this.originalTemplate = template
         }
+
+        //  MOB - see ESP. It does this a better way
 
         private function compileTemplate(options: Object): Void {
             if (template is String) {

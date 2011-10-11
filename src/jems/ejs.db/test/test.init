@@ -1,2 +1,2 @@
 require ejs.unix
-Cmd.sh(Cmd.locate("ejssql").portable + " test.sdb < test.sql")
+Cmd.sh(Cmd.locate("sqlite").portable + " test.sdb < test.sql")

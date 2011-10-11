@@ -187,7 +187,7 @@ static bool checkTagName(char *name)
 #endif
 
 
-int ejsXMLToString(Ejs *ejs, MprBuf *buf, EjsXML *node, int indentLevel)
+int ejsXMLToBuf(Ejs *ejs, MprBuf *buf, EjsXML *node, int indentLevel)
 {
     EjsXML      *xml, *child, *attribute, *elt;
     int         sawElements, next;
@@ -199,7 +199,7 @@ int ejsXMLToString(Ejs *ejs, MprBuf *buf, EjsXML *node, int indentLevel)
 
     if (node->kind == EJS_XML_LIST) {
         for (next = 0; (elt = mprGetNextItem(node->elements, &next)) != 0; ) {
-            ejsXMLToString(ejs, buf, elt, indentLevel);
+            ejsXMLToBuf(ejs, buf, elt, indentLevel);
         }
         return 0;
     }
@@ -222,7 +222,6 @@ int ejsXMLToString(Ejs *ejs, MprBuf *buf, EjsXML *node, int indentLevel)
                 mprPutFmtToBuf(buf, " %@=\"%@\"",  attribute->qname.name, attribute->value);
             }
         }
-        
         sawElements = 0;
         if (xml->elements) {
             mprPutStringToBuf(buf, ">"); 
@@ -232,7 +231,7 @@ int ejsXMLToString(Ejs *ejs, MprBuf *buf, EjsXML *node, int indentLevel)
                 }
     
                 /* Recurse */
-                if (ejsXMLToString(ejs, buf, child, indentLevel < 0 ? -1 : indentLevel + 1) < 0) {
+                if (ejsXMLToBuf(ejs, buf, child, indentLevel < 0 ? -1 : indentLevel + 1) < 0) {
                     return -1;
                 }
             }
@@ -296,7 +295,7 @@ static void indent(MprBuf *bp, int level)
     under the terms of the GNU General Public License as published by the 
     Free Software Foundation; either version 2 of the License, or (at your 
     option) any later version. See the GNU General Public License for more 
-    details at: http://www.embedthis.com/downloads/gplLicense.html
+    details at: http://embedthis.com/downloads/gplLicense.html
     
     This program is distributed WITHOUT ANY WARRANTY; without even the 
     implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. 
@@ -305,7 +304,7 @@ static void indent(MprBuf *bp, int level)
     proprietary programs. If you are unable to comply with the GPL, you must
     acquire a commercial license to use this software. Commercial licenses 
     for this software and support services are available from Embedthis 
-    Software at http://www.embedthis.com 
+    Software at http://embedthis.com 
     
     Local variables:
     tab-width: 4

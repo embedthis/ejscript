@@ -286,14 +286,14 @@ static EjsObj *http_get(Ejs *ejs, EjsHttp *hp, int argc, EjsObj **argv)
  */
 static EjsPot *http_getRequestHeaders(Ejs *ejs, EjsHttp *hp, int argc, EjsObj **argv)
 {
-    MprHash         *p;
+    MprKey          *kp;
     HttpConn        *conn;
     EjsPot          *headers;
 
     conn = hp->conn;
     headers = ejsCreateEmptyPot(ejs);
-    for (p = 0; conn->tx && (p = mprGetNextKey(conn->tx->headers, p)) != 0; ) {
-        ejsSetPropertyByName(ejs, headers, EN(p->key), ejsCreateStringFromAsc(ejs, p->data));
+    for (kp = 0; conn->tx && (kp = mprGetNextKey(conn->tx->headers, kp)) != 0; ) {
+        ejsSetPropertyByName(ejs, headers, EN(kp->key), ejsCreateStringFromAsc(ejs, kp->data));
     }
     return headers;
 }
@@ -336,8 +336,8 @@ static EjsString *http_header(Ejs *ejs, EjsHttp *hp, int argc, EjsObj **argv)
  */
 static EjsPot *http_headers(Ejs *ejs, EjsHttp *hp, int argc, EjsObj **argv)
 {
-    MprHashTable    *hash;
-    MprHash         *p;
+    MprHash         *hash;
+    MprKey          *kp;
     EjsPot          *results;
     int             i;
 
@@ -349,8 +349,8 @@ static EjsPot *http_headers(Ejs *ejs, EjsHttp *hp, int argc, EjsObj **argv)
     if (hash == 0) {
         return results;
     }
-    for (i = 0, p = mprGetFirstKey(hash); p; p = mprGetNextKey(hash, p), i++) {
-        ejsSetPropertyByName(ejs, results, EN(p->key), ejsCreateStringFromAsc(ejs, p->data));
+    for (i = 0, kp = mprGetFirstKey(hash); kp; kp = mprGetNextKey(hash, kp), i++) {
+        ejsSetPropertyByName(ejs, results, EN(kp->key), ejsCreateStringFromAsc(ejs, kp->data));
     }
     return results;
 }
@@ -671,7 +671,7 @@ static EjsObj *http_setLimits(Ejs *ejs, EjsHttp *hp, int argc, EjsObj **argv)
         hp->limits = (EjsObj*) ejsCreateEmptyPot(ejs);
         ejsGetHttpLimits(ejs, hp->limits, hp->conn->limits, 0);
     }
-    ejsBlendObject(ejs, hp->limits, argv[0], 0, EJS_BLEND_OVERWRITE);
+    ejsBlendObject(ejs, hp->limits, argv[0], EJS_BLEND_OVERWRITE);
     ejsSetHttpLimits(ejs, hp->conn->limits, hp->limits, 0);
     return 0;
 }
@@ -735,7 +735,7 @@ static void setupTrace(Ejs *ejs, HttpTrace *trace, int dir, EjsObj *options)
 }
 
 
-int ejsSetupTrace(Ejs *ejs, HttpTrace *trace, EjsObj *options)
+int ejsSetupHttpTrace(Ejs *ejs, HttpTrace *trace, EjsObj *options)
 {
     EjsObj      *rx, *tx;
 
@@ -754,7 +754,7 @@ int ejsSetupTrace(Ejs *ejs, HttpTrace *trace, EjsObj *options)
  */
 static EjsObj *http_trace(Ejs *ejs, EjsHttp *hp, int argc, EjsObj **argv)
 {
-    ejsSetupTrace(ejs, hp->conn->trace, argv[0]);
+    ejsSetupHttpTrace(ejs, hp->conn->trace, argv[0]);
     return 0;
 }
 
@@ -764,7 +764,7 @@ static EjsObj *http_trace(Ejs *ejs, EjsHttp *hp, int argc, EjsObj **argv)
  */
 static EjsUri *http_uri(Ejs *ejs, EjsHttp *hp, int argc, EjsObj **argv)
 {
-    return ejsCreateUriFromMulti(ejs, hp->uri);
+    return ejsCreateUriFromAsc(ejs, hp->uri);
 }
 
 
@@ -851,7 +851,7 @@ static EjsNumber *http_write(Ejs *ejs, EjsHttp *hp, int argc, EjsObj **argv)
     }
     hp->writeCount += nbytes;
     if (hp->conn->async) {
-        if (ejsGetByteArrayAvailable(hp->data) > 0) {
+        if (ejsGetByteArrayAvailableData(hp->data) > 0) {
             httpEnableConnEvents(hp->conn);
         }
     }
@@ -1018,7 +1018,7 @@ static ssize writeHttpData(Ejs *ejs, EjsHttp *hp)
     conn = hp->conn;
     ba = hp->data;
     nbytes = 0;
-    if (ba && (count = ejsGetByteArrayAvailable(ba)) > 0) {
+    if (ba && (count = ejsGetByteArrayAvailableData(ba)) > 0) {
         if (conn->tx->finalized) {
             ejsThrowIOError(ejs, "Can't write to socket");
             return 0;
@@ -1115,7 +1115,7 @@ static void prepForm(Ejs *ejs, EjsHttp *hp, char *prefix, EjsObj *data)
         }
         if (ejsGetLength(ejs, vp) > 0 && !ejsIs(ejs, vp, Array)) {
             if (prefix) {
-                newPrefix = mprAsprintf("%s.%@", prefix, qname.name);
+                newPrefix = sfmt("%s.%@", prefix, qname.name);
                 prepForm(ejs, hp, newPrefix, vp);
             } else {
                 prepForm(ejs, hp, (char*) qname.name->value, vp);
@@ -1260,7 +1260,7 @@ static bool waitForState(EjsHttp *hp, int state, MprTime timeout, int throw)
                     httpFormatError(conn, HTTP_CODE_REQUEST_TIMEOUT, "Request timed out");
                 }
             } else {
-                httpFormatError(conn, HTTP_CODE_CLIENT_ERROR, "Client request error");
+                httpFormatError(conn, HTTP_CODE_NO_RESPONSE, "Client request error");
             }
             break;
         }
@@ -1325,7 +1325,7 @@ static bool waitForResponseHeaders(EjsHttp *hp)
 /*
     Get limits:  obj[*] = limits
  */
-void ejsGetHttpLimits(Ejs *ejs, EjsObj *obj, HttpLimits *limits, int server) 
+void ejsGetHttpLimits(Ejs *ejs, EjsObj *obj, HttpLimits *limits, bool server) 
 {
     ejsSetPropertyByName(ejs, obj, EN("chunk"), ejsCreateNumber(ejs, (MprNumber) limits->chunkSize));
     ejsSetPropertyByName(ejs, obj, EN("connReuse"), ejsCreateNumber(ejs, limits->keepAliveCount));
@@ -1365,7 +1365,7 @@ static int64 setLimit(Ejs *ejs, EjsObj *obj, cchar *field, int factor)
 }
 
 
-void ejsSetHttpLimits(Ejs *ejs, HttpLimits *limits, EjsObj *obj, int server) 
+void ejsSetHttpLimits(Ejs *ejs, HttpLimits *limits, EjsObj *obj, bool server) 
 {
     limits->chunkSize = (ssize) setLimit(ejs, obj, "chunk", 1);
     limits->inactivityTimeout = (int) setLimit(ejs, obj, "inactivityTimeout", MPR_TICKS_PER_SEC);
@@ -1520,7 +1520,7 @@ void ejsConfigureHttpType(Ejs *ejs)
     under the terms of the GNU General Public License as published by the
     Free Software Foundation; either version 2 of the License, or (at your
     option) any later version. See the GNU General Public License for more
-    details at: http://www.embedthis.com/downloads/gplLicense.html
+    details at: http://embedthis.com/downloads/gplLicense.html
   
     This program is distributed WITHOUT ANY WARRANTY; without even the
     implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.
@@ -1529,7 +1529,7 @@ void ejsConfigureHttpType(Ejs *ejs)
     proprietary programs. If you are unable to comply with the GPL, you must
     acquire a commercial license to use this software. Commercial licenses
     for this software and support services are available from Embedthis
-    Software at http://www.embedthis.com
+    Software at http://embedthis.com
   
     Local variables:
     tab-width: 4

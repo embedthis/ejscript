@@ -4,8 +4,7 @@
 
 require ejs.unix
 
-let mvc = Cmd.locate("mvc")
-let ejs = Cmd.locate("ejs")
+let mvc = Cmd.locate("mvc").portable
 
 //  Prepare
 rmdir("junk", true)

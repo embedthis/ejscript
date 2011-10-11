@@ -100,7 +100,7 @@ static EjsObj *xlCast(Ejs *ejs, EjsXML *vp, EjsType *type)
             }
         }
         for (next = 0; (elt = mprGetNextItem(vp->elements, &next)) != 0; ) {
-            if (ejsXMLToString(ejs, buf, elt, -1) < 0) {
+            if (ejsXMLToBuf(ejs, buf, elt, -1) < 0) {
                 return 0;
             }
             if (next < vp->elements->length) {
@@ -460,7 +460,7 @@ static int updateElement(Ejs *ejs, EjsXML *list, EjsXML *elt, int index, EjsObj 
         mprAssert(ejsIs(ejs, value, String));
         i = mprLookupItem(elt->parent->elements, elt);
         mprAssert(i >= 0);
-        ejsSetXML(ejs, elt->parent, i, elt);
+        ejsSetXMLElement(ejs, elt->parent, i, elt);
         //  TODO - why do this. Doesn't above do this?
         ejsSetPropertyByName(ejs, elt->parent, elt->qname, value);
         elt->value = (EjsString*) value;
@@ -827,7 +827,7 @@ void ejsConfigureXMLListType(Ejs *ejs)
     ejsBindConstructor(ejs, type, xmlListConstructor);
     ejsBindMethod(ejs, prototype, ES_XMLList_length, xlLength);
     ejsBindMethod(ejs, prototype, ES_XMLList_name, getXmlListNodeName);
-    ejsBindMethod(ejs, prototype, ES_XMLList_parent, (EjsNativeFunction) xl_parent);
+    ejsBindMethod(ejs, prototype, ES_XMLList_parent, (EjsProc) xl_parent);
 #if FUTURE
     ejsBindMethod(ejs, prototype, "name", name, NULL);
     ejsBindMethod(ejs, prototype, "valueOf", valueOf, NULL);
@@ -855,7 +855,7 @@ void ejsConfigureXMLListType(Ejs *ejs)
     under the terms of the GNU General Public License as published by the
     Free Software Foundation; either version 2 of the License, or (at your
     option) any later version. See the GNU General Public License for more
-    details at: http://www.embedthis.com/downloads/gplLicense.html
+    details at: http://embedthis.com/downloads/gplLicense.html
 
     This program is distributed WITHOUT ANY WARRANTY; without even the
     implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.
@@ -864,7 +864,7 @@ void ejsConfigureXMLListType(Ejs *ejs)
     proprietary programs. If you are unable to comply with the GPL, you must
     acquire a commercial license to use this software. Commercial licenses
     for this software and support services are available from Embedthis
-    Software at http://www.embedthis.com
+    Software at http://embedthis.com
 
     Local variables:
     tab-width: 4

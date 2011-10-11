@@ -946,7 +946,7 @@ class EjsMvc {
         if (verbose) {
             print("\nChange directory into your application directory: " + appName)
             print("Then run the web server via: \"" + mvc + " run\"")
-            print("and point your browser at: http://localhost:4000/ to view your app.")
+            print("and point your browser at: http://localhost:" + endpoint + "/ to view your app.")
         }
     }
 
@@ -1447,7 +1447,7 @@ class Templates {
     log: {
         enable: true,
         location: "stderr",
-        level: 1,
+        level: 0,
         showErrors: true,
     },
 

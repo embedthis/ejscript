@@ -63,7 +63,7 @@ static EjsObj *g_blend(Ejs *ejs, EjsObj *unused, int argc, EjsObj **argv)
     }
     dest = argv[0];
     src = argv[1];
-    ejsBlendObject(ejs, dest, src, 0, flags);
+    ejsBlendObject(ejs, dest, src, flags);
     return dest;
 }
 
@@ -179,7 +179,7 @@ static EjsString *g_md5(Ejs *ejs, EjsObj *unused, int argc, EjsObj **argv)
     things). The blending is done at the primitive property level. If overwrite is true, the property is replaced. If
     overwrite is false, the property will be added if it does not already exist
  */
-int ejsBlendObject(Ejs *ejs, EjsObj *dest, EjsObj *src, int xoverwrite, int flags)
+int ejsBlendObject(Ejs *ejs, EjsObj *dest, EjsObj *src, int flags)
 {
     EjsTrait    *trait;
     EjsObj      *vp, *dp;
@@ -207,7 +207,7 @@ int ejsBlendObject(Ejs *ejs, EjsObj *dest, EjsObj *src, int xoverwrite, int flag
             continue;
         }
         name = ejsGetPropertyName(ejs, src, i);
-        if (!privateProps && ejsContainsMulti(ejs, name.space, ",private")) {
+        if (!privateProps && ejsContainsAsc(ejs, name.space, ",private") >= 0) {
             continue;
         }
         if (trace) {
@@ -218,7 +218,7 @@ int ejsBlendObject(Ejs *ejs, EjsObj *dest, EjsObj *src, int xoverwrite, int flag
             if ((dp = ejsGetPropertyByName(ejs, dest, name)) == 0 || ejsGetLength(ejs, dp) == 0) {
                 ejsSetPropertyByName(ejs, dest, name, ejsClonePot(ejs, vp, deep));
             } else {
-                ejsBlendObject(ejs, dp, vp, 0, flags);
+                ejsBlendObject(ejs, dp, vp, flags);
             }
         } else {
             /* Primitive type (including arrays) */
@@ -407,7 +407,7 @@ void ejsConfigureGlobalBlock(Ejs *ejs)
     under the terms of the GNU General Public License as published by the
     Free Software Foundation; either version 2 of the License, or (at your
     option) any later version. See the GNU General Public License for more
-    details at: http://www.embedthis.com/downloads/gplLicense.html
+    details at: http://embedthis.com/downloads/gplLicense.html
 
     This program is distributed WITHOUT ANY WARRANTY; without even the
     implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.
@@ -416,7 +416,7 @@ void ejsConfigureGlobalBlock(Ejs *ejs)
     proprietary programs. If you are unable to comply with the GPL, you must
     acquire a commercial license to use this software. Commercial licenses
     for this software and support services are available from Embedthis
-    Software at http://www.embedthis.com
+    Software at http://embedthis.com
 
     Local variables:
     tab-width: 4

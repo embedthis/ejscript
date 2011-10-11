@@ -174,7 +174,7 @@ module ejs {
 
         /** 
             Read a line from the stream.
-            @returns A string containing the next line without newline characters ("\r", "\n"). Return null on eof.
+            @returns A string containing the next line without newline characters ("\r", "\n"). Return null on EOF.
             @throws IOError if an I/O error occurs.
          */
         function readLine(): String {
@@ -214,7 +214,7 @@ module ejs {
             Read a required number of lines of data from the stream.
             @param numLines of lines to read. Defaults to read all lines.
             @returns Array containing the read lines. Lines are stripped of newline characters ("\r", "\n"). 
-            Return null on eof.
+            Return null on EOF.
             @throws IOError if an I/O error occurs.
          */
         function readLines(numLines: Number = -1): Array {
@@ -240,7 +240,7 @@ module ejs {
         /** 
             Read a string from the stream. 
             @param count of bytes to read. Returns the entire stream contents if count is -1.
-            @returns a string or null on eof.
+            @returns a string or null on EOF.
             @throws IOError if an I/O error occurs.
          */
         function readString(count: Number = -1): String

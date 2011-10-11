@@ -246,8 +246,11 @@ static EjsObj *fun_setScope(Ejs *ejs, EjsFunction *fun, int argc, EjsObj **argv)
 
 /*************************************************************************************************************/
 
-void ejsDisableFunction(Ejs *ejs, EjsFunction *fun)
+void ejsRemoveConstructor(Ejs *ejs, EjsType *type)
 {
+    EjsFunction     *fun;
+
+    fun = (EjsFunction*) type;
     fun->block.pot.isFunction = 0;
     fun->isConstructor = 0;
     fun->isInitializer = 0;
@@ -338,6 +341,7 @@ EjsEx *ejsAddException(Ejs *ejs, EjsFunction *fun, uint tryStart, uint tryEnd, E
 }
 
 
+#if UNUSED
 void ejsOffsetExceptions(EjsFunction *fun, int offset)
 {
     EjsEx           *ex;
@@ -353,6 +357,7 @@ void ejsOffsetExceptions(EjsFunction *fun, int offset)
         ex->handlerEnd += offset;
     }
 }
+#endif
 
 
 static void manageCode(EjsCode *code, int flags)
@@ -421,6 +426,7 @@ static EjsObj *nopFunction(Ejs *ejs, EjsObj *obj, int argc, EjsObj **argv)
 }
 
 
+#if UNUSED
 void ejsUseActivation(Ejs *ejs, EjsFunction *fun)
 {
     EjsPot  *activation;
@@ -436,6 +442,7 @@ void ejsUseActivation(Ejs *ejs, EjsFunction *fun)
         fun->block.pot.numProp = numProp;
     }
 }
+#endif
 
 
 EjsPot *ejsCreateActivation(Ejs *ejs, EjsFunction *fun, int numProp)
@@ -447,10 +454,9 @@ EjsPot *ejsCreateActivation(Ejs *ejs, EjsFunction *fun, int numProp)
     return activation;
 }
 
-
 /********************************** Factory **********************************/
 
-EjsFunction *ejsCreateSimpleFunction(Ejs *ejs, EjsString *name, int attributes)
+EjsFunction *ejsCreateBareFunction(Ejs *ejs, EjsString *name, int attributes)
 {
     EjsFunction     *fun;
 
@@ -475,7 +481,7 @@ EjsFunction *ejsCreateFunction(Ejs *ejs, EjsString *name, cuchar *byteCode, int 
 {
     EjsFunction     *fun;
 
-    if ((fun = ejsCreateSimpleFunction(ejs, name, attributes)) == 0) {
+    if ((fun = ejsCreateBareFunction(ejs, name, attributes)) == 0) {
         return 0;
     }
     ejsInitFunction(ejs, fun, name, byteCode, codeLen, numArgs, numDefault, numExceptions, resultType, attributes, 
@@ -543,7 +549,7 @@ void ejsCreateFunctionType(Ejs *ejs)
 
     nop = ejsCreateFunction(ejs, ejsCreateStringFromAsc(ejs, "nop"), NULL, 0, -1, 0, 0, NULL, EJS_PROP_NATIVE, NULL, NULL,0);
     ejsAddImmutable(ejs, S_nop, EN("nop"), nop);
-    nop->body.proc = (EjsFun) nopFunction;
+    nop->body.proc = (EjsProc) nopFunction;
     nop->isNativeProc = 1;
 }
 
@@ -584,7 +590,7 @@ void ejsConfigureFunctionType(Ejs *ejs)
     under the terms of the GNU General Public License as published by the
     Free Software Foundation; either version 2 of the License, or (at your
     option) any later version. See the GNU General Public License for more
-    details at: http://www.embedthis.com/downloads/gplLicense.html
+    details at: http://embedthis.com/downloads/gplLicense.html
 
     This program is distributed WITHOUT ANY WARRANTY; without even the
     implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.
@@ -593,7 +599,7 @@ void ejsConfigureFunctionType(Ejs *ejs)
     proprietary programs. If you are unable to comply with the GPL, you must
     acquire a commercial license to use this software. Commercial licenses
     for this software and support services are available from Embedthis
-    Software at http://www.embedthis.com
+    Software at http://embedthis.com
 
     Local variables:
     tab-width: 4

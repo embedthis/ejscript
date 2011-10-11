@@ -287,7 +287,7 @@ static bool parseArgs(int argc, char **argv)
                     app->host = &app->host[1];
                 } 
                 if (isPort(app->host)) {
-                    app->host = mprAsprintf("http://127.0.0.1:%s", app->host);
+                    app->host = sfmt("http://127.0.0.1:%s", app->host);
                 } else {
                     app->host = sclone(app->host);
                 }
@@ -357,7 +357,7 @@ static bool parseArgs(int argc, char **argv)
             } else {
                 //  TODO - should allow multiple ranges
                 if (app->ranges == 0) {
-                    app->ranges = mprAsprintf("bytes=%s", argv[++nextArg]);
+                    app->ranges = sfmt("bytes=%s", argv[++nextArg]);
                 } else {
                     app->ranges = srejoin(app->ranges, ",", argv[++nextArg], NULL);
                 }
@@ -481,7 +481,7 @@ static void showUsage()
         "  --chunk size          # Request response data to use this chunk size.\n"
         "  --continue            # Continue on errors.\n"
         "  --cookie CookieString # Define a cookie header. Multiple uses okay.\n"
-        "  --data                # Body data to send with PUT or POST.\n"
+        "  --data bodyData       # Body data to send with PUT or POST.\n"
         "  --debugger            # Disable timeouts to make running in a debugger easier.\n"
         "  --delete              # Use the DELETE method. Shortcut for --method DELETE..\n"
         "  --form string         # Form data. Must already be form-www-urlencoded.\n"
@@ -504,8 +504,8 @@ static void showUsage()
         "  --showHeaders         # Output response headers.\n"
         "  --showStatus          # Output the Http response status code.\n"
         "  --single              # Single step. Pause for input between requests.\n"
-        "  --timeout secs        # Request timeout period in seconds.\n"
         "  --threads count       # Number of thread instances to spawn.\n"
+        "  --timeout secs        # Request timeout period in seconds.\n"
         "  --upload              # Use multipart mime upload.\n"
         "  --user name           # User name for authentication.\n"
         "  --verbose             # Verbose operation. Trace progress.\n"
@@ -521,7 +521,7 @@ static void processing()
     int         j;
 
     if (app->chunkSize > 0) {
-        mprAddItem(app->headers, mprCreateKeyPair("X-Appweb-Chunk-Size", mprAsprintf("%d", app->chunkSize)));
+        mprAddItem(app->headers, mprCreateKeyPair("X-Appweb-Chunk-Size", sfmt("%d", app->chunkSize)));
     }
     app->activeLoadThreads = app->loadThreads;
     app->threadData = mprCreateList(app->loadThreads, 0);
@@ -637,7 +637,7 @@ static int processThread(HttpConn *conn, MprEvent *event)
 static int prepRequest(HttpConn *conn, MprList *files, int retry)
 {
     MprKeyValue     *header;
-    char            seqBuf[16];
+    char            *seq;
     int             next;
 
     httpPrepClientConn(conn, retry);
@@ -654,8 +654,8 @@ static int prepRequest(HttpConn *conn, MprList *files, int retry)
     }
     if (app->sequence) {
         static int next = 0;
-        itos(seqBuf, sizeof(seqBuf), next++, 10);
-        httpSetHeader(conn, "X-Http-Seq", seqBuf);
+        seq = itos(next++, 10);
+        httpSetHeader(conn, "X-Http-Seq", seq);
     }
     if (app->ranges) {
         httpSetHeader(conn, "Range", app->ranges);
@@ -1032,21 +1032,21 @@ static char *resolveUrl(HttpConn *conn, cchar *url)
     if (*url == '/') {
         if (app->host) {
             if (sncasecmp(app->host, "http://", 7) != 0 && sncasecmp(app->host, "https://", 8) != 0) {
-                return mprAsprintf("http://%s%s", app->host, url);
+                return sfmt("http://%s%s", app->host, url);
             } else {
-                return mprAsprintf("%s%s", app->host, url);
+                return sfmt("%s%s", app->host, url);
             }
         } else {
-            return mprAsprintf("http://127.0.0.1%s", url);
+            return sfmt("http://127.0.0.1%s", url);
         }
     } 
     if (sncasecmp(url, "http://", 7) != 0 && sncasecmp(url, "https://", 8) != 0) {
         if (*url == ':' && isPort(&url[1])) {
-            return mprAsprintf("http://127.0.0.1%s", url);
+            return sfmt("http://127.0.0.1%s", url);
         } else if (isPort(url)) {
-            return mprAsprintf("http://127.0.0.1:%s", url);
+            return sfmt("http://127.0.0.1:%s", url);
         } else {
-            return mprAsprintf("http://%s", url);
+            return sfmt("http://%s", url);
         }
     }
     return sclone(url);
@@ -1266,7 +1266,7 @@ int _exit() {
     under the terms of the GNU General Public License as published by the 
     Free Software Foundation; either version 2 of the License, or (at your 
     option) any later version. See the GNU General Public License for more 
-    details at: http://www.embedthis.com/downloads/gplLicense.html
+    details at: http://embedthis.com/downloads/gplLicense.html
     
     This program is distributed WITHOUT ANY WARRANTY; without even the 
     implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. 
@@ -1275,7 +1275,7 @@ int _exit() {
     proprietary programs. If you are unable to comply with the GPL, you must
     acquire a commercial license to use this software. Commercial licenses 
     for this software and support services are available from Embedthis 
-    Software at http://www.embedthis.com 
+    Software at http://embedthis.com 
     
     Local variables:
     tab-width: 4

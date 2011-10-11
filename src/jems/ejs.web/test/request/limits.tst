@@ -5,7 +5,6 @@ require ejs.web
 
 const HTTP = ":" + (App.config.test.http_port || "6700")
 
-breakpoint()
 server = new HttpServer
 server.listen(HTTP)
 load("../utils.es")

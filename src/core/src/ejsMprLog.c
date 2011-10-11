@@ -28,7 +28,7 @@ static EjsNumber *lf_emit(Ejs *ejs, EjsObj *unused, int argc, EjsObj **argv)
     args = (EjsArray*) argv[1];
     written = 0;
     msg = 0;
-    paused = ejsPauseGC(ejs);
+    paused = ejsBlockGC(ejs);
 
     for (i = 0; i < args->length; i++) {
         vp = ejsGetProperty(ejs, args, i);
@@ -56,7 +56,7 @@ static EjsNumber *lf_emit(Ejs *ejs, EjsObj *unused, int argc, EjsObj **argv)
         mprRawLog(level, "%s", msg);
         written += slen(msg);
     }
-    ejsResumeGC(ejs, paused);
+    ejsUnblockGC(ejs, paused);
     return ejsCreateNumber(ejs, (MprNumber) slen(msg));
 }
 
@@ -154,7 +154,7 @@ void ejsConfigureMprLogType(Ejs *ejs)
     under the terms of the GNU General Public License as published by the
     Free Software Foundation; either version 2 of the License, or (at your
     option) any later version. See the GNU General Public License for more
-    details at: http://www.embedthis.com/downloads/gplLicense.html
+    details at: http://embedthis.com/downloads/gplLicense.html
 
     This program is distributed WITHOUT ANY WARRANTY; without even the
     implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.
@@ -163,7 +163,7 @@ void ejsConfigureMprLogType(Ejs *ejs)
     proprietary programs. If you are unable to comply with the GPL, you must
     acquire a commercial license to use this software. Commercial licenses
     for this software and support services are available from Embedthis
-    Software at http://www.embedthis.com
+    Software at http://embedthis.com
 
     Local variables:
     tab-width: 4

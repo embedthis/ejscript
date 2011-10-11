@@ -230,7 +230,6 @@ EjsType *ejsFinalizeScriptType(Ejs *ejs, EjsName qname, int size, void *manager,
         ejsAddImmutable(ejs, type->sid, type->qname, type);
     }
     type->manager = manager ? (MprManager) manager : (MprManager) manageDefault;
-
     type->configured = 1;
     return type;
 }
@@ -491,7 +490,7 @@ static int inheritProperties(Ejs *ejs, EjsType *type, EjsPot *obj, int destOffse
             }
         }
     }
-    ejsMakeHash(ejs, obj);
+    ejsIndexProperties(ejs, obj);
     return 0;
 }
 
@@ -1042,7 +1041,7 @@ void ejsInitTypeType(Ejs *ejs, EjsType *type)
     under the terms of the GNU General Public License as published by the
     Free Software Foundation; either version 2 of the License, or (at your
     option) any later version. See the GNU General Public License for more
-    details at: http://www.embedthis.com/downloads/gplLicense.html
+    details at: http://embedthis.com/downloads/gplLicense.html
 
     This program is distributed WITHOUT ANY WARRANTY; without even the
     implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.
@@ -1051,7 +1050,7 @@ void ejsInitTypeType(Ejs *ejs, EjsType *type)
     proprietary programs. If you are unable to comply with the GPL, you must
     acquire a commercial license to use this software. Commercial licenses
     for this software and support services are available from Embedthis
-    Software at http://www.embedthis.com
+    Software at http://embedthis.com
 
     Local variables:
     tab-width: 4

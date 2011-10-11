@@ -410,7 +410,7 @@ EjsString *ejsToJSON(Ejs *ejs, EjsAny *vp, EjsObj *options)
     int             argc;
 
     fn = (EjsFunction*) ejsGetPropertyByName(ejs, TYPE(vp)->prototype, N(NULL, "toJSON"));
-    if (!ejsIsFunction(ejs, fn) || (fn->isNativeProc && fn->body.proc == (EjsFun) ejsObjToJSON)) {
+    if (!ejsIsFunction(ejs, fn) || (fn->isNativeProc && fn->body.proc == (EjsProc) ejsObjToJSON)) {
         result = ejsSerializeWithOptions(ejs, vp, options);
     } else {
         argv[0] = options;
@@ -498,7 +498,7 @@ static EjsString *serialize(Ejs *ejs, EjsAny *vp, Json *json)
     EjsTrait    *trait;
     EjsObj      *pp, *obj, *replacerArgs[2];
     MprChar     *cp;
-    char        key[16];
+    cchar       *key;
     int         c, isArray, i, count, slotNum;
 
     /*
@@ -511,7 +511,7 @@ static EjsString *serialize(Ejs *ejs, EjsAny *vp, Json *json)
         if (!ejsIsDefined(ejs, vp) || ejsIs(ejs, vp, Boolean) || ejsIs(ejs, vp, Number)) {
             return ejsToString(ejs, vp);
         } else {
-            return ejsStringToJSON(ejs, vp);
+            return ejsToLiteralString(ejs, vp);
         }
     }
     obj = vp;
@@ -543,7 +543,7 @@ static EjsString *serialize(Ejs *ejs, EjsAny *vp, Json *json)
                 continue;
             }
             if (isArray) {
-                itos(key, sizeof(key), slotNum, 10);
+                key = itos(slotNum, 10);
                 qname.name = ejsCreateStringFromAsc(ejs, key);
                 qname.space = ESV(empty);
             } else {
@@ -582,7 +582,7 @@ static EjsString *serialize(Ejs *ejs, EjsAny *vp, Json *json)
             }
             fn = (EjsFunction*) ejsGetPropertyByName(ejs, TYPE(pp)->prototype, N(NULL, "toJSON"));
 // OPT - check that this is going directly to serialize most of the time
-            if (!ejsIsFunction(ejs, fn) || (fn->isNativeProc && fn->body.proc == (EjsFun) ejsObjToJSON)) {
+            if (!ejsIsFunction(ejs, fn) || (fn->isNativeProc && fn->body.proc == (EjsProc) ejsObjToJSON)) {
                 sv = serialize(ejs, pp, json);
             } else {
                 sv = (EjsString*) ejsRunFunction(ejs, fn, pp, 1, &json->options);
@@ -655,7 +655,7 @@ void ejsConfigureJSONType(Ejs *ejs)
     under the terms of the GNU General Public License as published by the
     Free Software Foundation; either version 2 of the License, or (at your
     option) any later version. See the GNU General Public License for more
-    details at: http://www.embedthis.com/downloads/gplLicense.html
+    details at: http://embedthis.com/downloads/gplLicense.html
 
     This program is distributed WITHOUT ANY WARRANTY; without even the
     implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.
@@ -664,5 +664,5 @@ void ejsConfigureJSONType(Ejs *ejs)
     proprietary programs. If you are unable to comply with the GPL, you must
     acquire a commercial license to use this software. Commercial licenses
     for this software and support services are available from Embedthis
-    Software at http://www.embedthis.com
+    Software at http://embedthis.com
  */

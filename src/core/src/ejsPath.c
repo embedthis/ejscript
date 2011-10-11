@@ -462,7 +462,7 @@ static EjsBoolean *pathHasDrive(Ejs *ejs, EjsPath *fp, int argc, EjsObj **argv)
  */
 static EjsBoolean *isPathAbsolute(Ejs *ejs, EjsPath *fp, int argc, EjsObj **argv)
 {
-    return (mprIsAbsPath(fp->value) ? ESV(true): ESV(false));
+    return (mprIsPathAbs(fp->value) ? ESV(true): ESV(false));
 }
 
 
@@ -511,7 +511,7 @@ static EjsBoolean *isPathRegular(Ejs *ejs, EjsPath *fp, int argc, EjsObj **argv)
  */
 static EjsBoolean *isPathRelative(Ejs *ejs, EjsPath *fp, int argc, EjsObj **argv)
 {
-    return (mprIsRelPath(fp->value) ? ESV(true): ESV(false));
+    return (mprIsPathRel(fp->value) ? ESV(true): ESV(false));
 }
 
 
@@ -732,7 +732,7 @@ static EjsPath *getNaturalPath(Ejs *ejs, EjsPath *fp, int argc, EjsObj **argv)
  */
 static EjsPath *normalizePath(Ejs *ejs, EjsPath *fp, int argc, EjsObj **argv)
 {
-    return ejsCreatePathFromAsc(ejs, mprGetNormalizedPath(fp->value));
+    return ejsCreatePathFromAsc(ejs, mprNormalizePath(fp->value));
 }
 
 
@@ -1331,7 +1331,7 @@ void ejsConfigurePathType(Ejs *ejs)
     under the terms of the GNU General Public License as published by the
     Free Software Foundation; either version 2 of the License, or (at your
     option) any later version. See the GNU General Public License for more
-    details at: http://www.embedthis.com/downloads/gplLicense.html
+    details at: http://embedthis.com/downloads/gplLicense.html
 
     This program is distributed WITHOUT ANY WARRANTY; without even the
     implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.
@@ -1340,7 +1340,7 @@ void ejsConfigurePathType(Ejs *ejs)
     proprietary programs. If you are unable to comply with the GPL, you must
     acquire a commercial license to use this software. Commercial licenses
     for this software and support services are available from Embedthis
-    Software at http://www.embedthis.com
+    Software at http://embedthis.com
 
     Local variables:
     tab-width: 4

@@ -699,9 +699,9 @@ static EjsNumber *date_now(Ejs *ejs, EjsDate *unused, int argc, EjsObj **argv)
 
 
 /*
-    static function parse(arg: String): Date
+    static function parse(arg: String): Number
  */
-static EjsDate *date_parse(Ejs *ejs, EjsDate *unused, int argc, EjsObj **argv)
+static EjsNumber *date_parse(Ejs *ejs, EjsDate *unused, int argc, EjsObj **argv)
 {
     MprTime     when;
 
@@ -709,7 +709,7 @@ static EjsDate *date_parse(Ejs *ejs, EjsDate *unused, int argc, EjsObj **argv)
         ejsThrowArgError(ejs, "Can't parse date string: %@", ejsToString(ejs, argv[0]));
         return 0;
     }
-    return ejsCreateDate(ejs, when);
+    return ejsCreateNumber(ejs, (MprNumber) when);
 }
 
 
@@ -924,7 +924,7 @@ static EjsString *date_toISOString(Ejs *ejs, EjsDate *dp, int argc, EjsObj **arg
     char    *base, *str;
 
     base = mprFormatUniversalTime("%Y-%m-%dT%H:%M:%S", dp->value);
-    str = mprAsprintf("%s.%03dZ", base, dp->value % MPR_TICKS_PER_SEC);
+    str = sfmt("%s.%03dZ", base, dp->value % MPR_TICKS_PER_SEC);
     return ejsCreateStringFromAsc(ejs, str);
 }
 
@@ -939,7 +939,7 @@ static EjsString *date_toJSON(Ejs *ejs, EjsDate *dp, int argc, EjsObj **argv)
     char    *base, *str;
 
     base = mprFormatUniversalTime("%Y-%m-%dT%H:%M:%S", dp->value);
-    str = mprAsprintf("\"%sZ\"", base);
+    str = sfmt("\"%sZ\"", base);
     return ejsCreateStringFromAsc(ejs, str);
 }
 
@@ -1108,7 +1108,7 @@ void ejsConfigureDateType(Ejs *ejs)
     under the terms of the GNU General Public License as published by the
     Free Software Foundation; either version 2 of the License, or (at your
     option) any later version. See the GNU General Public License for more
-    details at: http://www.embedthis.com/downloads/gplLicense.html
+    details at: http://embedthis.com/downloads/gplLicense.html
 
     This program is distributed WITHOUT ANY WARRANTY; without even the
     implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.
@@ -1117,7 +1117,7 @@ void ejsConfigureDateType(Ejs *ejs)
     proprietary programs. If you are unable to comply with the GPL, you must
     acquire a commercial license to use this software. Commercial licenses
     for this software and support services are available from Embedthis
-    Software at http://www.embedthis.com
+    Software at http://embedthis.com
 
     Local variables:
     tab-width: 4

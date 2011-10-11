@@ -89,7 +89,7 @@ Ejs *ejsCreateVM(int argc, cchar **argv, int flags)
     ejs->state = mprAllocZeroed(sizeof(EjsState));
     ejs->argc = argc;
     ejs->argv = argv;
-    ejs->name = mprAsprintf("ejs-%d", sp->seqno++);
+    ejs->name = sfmt("ejs-%d", sp->seqno++);
     ejs->dispatcher = mprCreateDispatcher(ejs->name, 1);
     ejs->mutex = mprCreateLock(ejs);
     ejs->dontExit = sp->dontExit;
@@ -286,7 +286,9 @@ static void managePool(EjsPool *pool, int flags)
     }
 }
 
-
+/*
+    Create a pool for virtual machines
+ */
 EjsPool *ejsCreatePool(int poolMax, cchar *templateScript, cchar *startScript, cchar *startScriptPath, char *home)
 {
     EjsPool     *pool;
@@ -343,14 +345,14 @@ Ejs *ejsAllocPoolVM(EjsPool *pool, int flags)
             }
             if (pool->templateScript) {
                 script = ejsCreateStringFromAsc(pool->template, pool->templateScript);
-                paused = ejsPauseGC(pool->template);
+                paused = ejsBlockGC(pool->template);
                 if (ejsLoadScriptLiteral(pool->template, script, NULL, EC_FLAGS_NO_OUT | EC_FLAGS_BIND) < 0) {
                     mprError("Can't execute \"%@\"\n%s", script, ejsGetErrorMsg(pool->template, 1));
                     unlock(pool);
-                    ejsResumeGC(pool->template, paused);
+                    ejsUnblockGC(pool->template, paused);
                     return 0;
                 }
-                ejsResumeGC(pool->template, paused);
+                ejsUnblockGC(pool->template, paused);
             }
         }
         unlock(pool);
@@ -607,7 +609,7 @@ static int loadRequiredModules(Ejs *ejs, MprList *require)
     int     rc, next, paused;
 
     rc = 0;
-    paused = ejsPauseGC(ejs);
+    paused = ejsBlockGC(ejs);
     if (require) {
         for (next = 0; rc == 0 && (name = mprGetNextItem(require, &next)) != 0; ) {
             rc += ejsLoadModule(ejs, ejsCreateStringFromAsc(ejs, name), 0, 0, EJS_LOADER_STRICT);
@@ -616,7 +618,7 @@ static int loadRequiredModules(Ejs *ejs, MprList *require)
         rc += ejsLoadModule(ejs, ejsCreateStringFromAsc(ejs, "ejs"), 0, 0, EJS_LOADER_STRICT);
     }
     ejsFreezeGlobal(ejs);
-    ejsResumeGC(ejs, paused);
+    ejsUnblockGC(ejs, paused);
     return rc;
 }
 
@@ -669,9 +671,9 @@ EjsArray *ejsCreateSearchPath(Ejs *ejs, cchar *search)
         "." : APP_EXE_DIR/../lib : /usr/lib/ejs/1.0.0/lib
      */
     ejsSetProperty(ejs, ap, -1, ejsCreatePathFromAsc(ejs, "."));
-    relModDir = mprAsprintf("%s/../%s", mprGetAppDir(ejs), BLD_LIB_NAME);
+    relModDir = sfmt("%s/../%s", mprGetAppDir(ejs), BLD_LIB_NAME);
     ejsSetProperty(ejs, ap, -1, ejsCreatePathFromAsc(ejs, mprGetAppDir(ejs)));
-    relModDir = mprAsprintf("%s/../%s", mprGetAppDir(ejs), BLD_LIB_NAME);
+    relModDir = sfmt("%s/../%s", mprGetAppDir(ejs), BLD_LIB_NAME);
     ejsSetProperty(ejs, ap, -1, ejsCreatePathFromAsc(ejs, mprGetAbsPath(relModDir)));
     ejsSetProperty(ejs, ap, -1, ejsCreatePathFromAsc(ejs, BLD_LIB_PREFIX));
 #endif
@@ -931,7 +933,7 @@ static int searchForMethod(Ejs *ejs, cchar *methodName, EjsType **typeReturn)
 
 static void logHandler(int flags, int level, cchar *msg)
 {
-    char        *prefix, *tag, *amsg, lbuf[16], buf[MPR_MAX_STRING];
+    char        *prefix, *tag, *amsg, buf[MPR_MAX_STRING];
     static int  solo = 0;
 
     if (solo > 0) {
@@ -950,7 +952,7 @@ static void logHandler(int flags, int level, cchar *msg)
     } else if (flags & MPR_RAW) {
         tag = NULL;
     } else {
-        tag = itos(lbuf, sizeof(lbuf), level, 10);
+        tag = itos(level, 10);
     }
     if (tag) {
         if (strlen(msg) < (MPR_MAX_STRING - 32)) {
@@ -958,7 +960,7 @@ static void logHandler(int flags, int level, cchar *msg)
             mprSprintf(buf, sizeof(buf), "%s: %s: %s\n", prefix, tag, msg);
             msg = buf;
         } else {
-            msg = amsg = mprAsprintf("%s: %s: %s\n", prefix, tag, msg);
+            msg = amsg = sfmt("%s: %s: %s\n", prefix, tag, msg);
         }
     }
     if (MPR->logFile) {
@@ -1017,7 +1019,7 @@ void ejsRedirectLoggingToFile(MprFile *file, int level)
 }
 
 
-int ejsPauseGC(Ejs *ejs)
+int ejsBlockGC(Ejs *ejs)
 {
     int     paused;
 
@@ -1027,7 +1029,7 @@ int ejsPauseGC(Ejs *ejs)
 }
 
 
-void ejsResumeGC(Ejs *ejs, int paused)
+void ejsUnblockGC(Ejs *ejs, int paused)
 {
     mprAssert(paused != -1);
     if (paused != -1) {
@@ -1114,7 +1116,7 @@ void ejsReportError(Ejs *ejs, char *fmt, ...)
         msg = (char*) emsg;
         buf = 0;
     } else {
-        msg = buf = mprAsprintfv(fmt, arg);
+        msg = buf = sfmtv(fmt, arg);
     }
     if (ejs->exception) {
         char *name = MPR->name;
@@ -1219,7 +1221,7 @@ void ejsDisableExit(Ejs *ejs)
     under the terms of the GNU General Public License as published by the
     Free Software Foundation; either version 2 of the License, or (at your
     option) any later version. See the GNU General Public License for more
-    details at: http://www.embedthis.com/downloads/gplLicense.html
+    details at: http://embedthis.com/downloads/gplLicense.html
 
     This program is distributed WITHOUT ANY WARRANTY; without even the
     implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.
@@ -1228,7 +1230,7 @@ void ejsDisableExit(Ejs *ejs)
     proprietary programs. If you are unable to comply with the GPL, you must
     acquire a commercial license to use this software. Commercial licenses
     for this software and support services are available from Embedthis
-    Software at http://www.embedthis.com
+    Software at http://embedthis.com
 
     Local variables:
     tab-width: 4

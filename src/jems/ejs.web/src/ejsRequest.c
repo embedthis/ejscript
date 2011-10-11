@@ -70,7 +70,7 @@ static void defineParam(Ejs *ejs, EjsObj *params, cchar *key, cchar *svalue)
 
 
 #if UNUSED
-static int sortForm(MprHash **h1, MprHash **h2)
+static int sortForm(MprKey **h1, MprKey **h2)
 {
     return scmp((*h1)->key, (*h2)->key);
 }
@@ -81,28 +81,28 @@ static int sortForm(MprHash **h1, MprHash **h2)
  */
 static EjsString *createFormData(Ejs *ejs, EjsRequest *req)
 {
-    MprHashTable    *formVars;
-    MprHash         *hp;
-    MprList         *list;
-    char            *buf, *cp;
-    ssize           len;
-    int             next;
+    MprHash     *params;
+    MprKey      *kp;
+    MprList     *list;
+    char        *buf, *cp;
+    ssize       len;
+    int         next;
 
     if (req->formData == 0) {
-        if (req->conn && (formVars = req->conn->rx->formVars) != 0) {
-            if ((list = mprCreateList(mprGetHashLength(formVars), 0)) != 0) {
+        if (req->conn && (params = req->conn->rx->params) != 0) {
+            if ((list = mprCreateList(mprGetHashLength(params), 0)) != 0) {
                 len = 0;
-                for (hp = 0; (hp = mprGetNextKey(formVars, hp)) != NULL; ) {
-                    mprAddItem(list, hp);
-                    len += slen(hp->key) + slen(hp->data) + 2;
+                for (kp = 0; (kp = mprGetNextKey(params, kp)) != NULL; ) {
+                    mprAddItem(list, kp);
+                    len += slen(kp->key) + slen(kp->data) + 2;
                 }
                 if ((buf = mprAlloc(len + 1)) != 0) {
                     mprSortList(list, sortForm);
                     cp = buf;
-                    for (next = 0; (hp = mprGetNextItem(list, &next)) != 0; ) {
-                        strcpy(cp, hp->key); cp += slen(hp->key);
+                    for (next = 0; (kp = mprGetNextItem(list, &next)) != 0; ) {
+                        strcpy(cp, kp->key); cp += slen(kp->key);
                         *cp++ = '=';
-                        strcpy(cp, hp->data); cp += slen(hp->data);
+                        strcpy(cp, kp->data); cp += slen(kp->data);
                         *cp++ = '&';
                     }
                     cp[-1] = '\0';
@@ -124,16 +124,16 @@ static EjsString *createFormData(Ejs *ejs, EjsRequest *req)
 
 static EjsObj *createParams(Ejs *ejs, EjsRequest *req)
 {
-    EjsObj          *params;
-    MprHashTable    *formVars;
-    MprHash         *hp;
+    EjsObj      *params;
+    MprHash     *hparams;
+    MprKey      *kp;
 
     if ((params = req->params) == 0) {
         params = (EjsObj*) ejsCreateEmptyPot(ejs);
-        if (req->conn && (formVars = req->conn->rx->formVars) != 0) {
-            hp = 0;
-            while ((hp = mprGetNextKey(formVars, hp)) != NULL) {
-                defineParam(ejs, params, hp->key, hp->data);
+        if (req->conn && (hparams = req->conn->rx->params) != 0) {
+            kp = 0;
+            while ((kp = mprGetNextKey(hparams, kp)) != NULL) {
+                defineParam(ejs, params, kp->key, kp->data);
             }
         }
     }
@@ -176,7 +176,7 @@ static EjsObj *createFiles(Ejs *ejs, EjsRequest *req)
     HttpUploadFile  *up;
     HttpConn        *conn;
     EjsObj          *files, *file;
-    MprHash         *hp;
+    MprKey          *kp;
     int             index;
 
     if (req->files == 0) {
@@ -188,15 +188,15 @@ static EjsObj *createFiles(Ejs *ejs, EjsRequest *req)
             return ESV(null);
         }
         req->files = files = (EjsObj*) ejsCreateEmptyPot(ejs);
-        for (index = 0, hp = 0; (hp = mprGetNextKey(conn->rx->files, hp)) != 0; index++) {
-            up = (HttpUploadFile*) hp->data;
+        for (index = 0, kp = 0; (kp = mprGetNextKey(conn->rx->files, kp)) != 0; index++) {
+            up = (HttpUploadFile*) kp->data;
             file = (EjsObj*) ejsCreateEmptyPot(ejs);
             ejsSetPropertyByName(ejs, file, EN("filename"), ejsCreatePathFromAsc(ejs, up->filename));
             ejsSetPropertyByName(ejs, file, EN("clientFilename"), ejsCreateStringFromAsc(ejs, up->clientFilename));
             ejsSetPropertyByName(ejs, file, EN("contentType"), ejsCreateStringFromAsc(ejs, up->contentType));
-            ejsSetPropertyByName(ejs, file, EN("name"), ejsCreateStringFromAsc(ejs, hp->key));
+            ejsSetPropertyByName(ejs, file, EN("name"), ejsCreateStringFromAsc(ejs, kp->key));
             ejsSetPropertyByName(ejs, file, EN("size"), ejsCreateNumber(ejs, (MprNumber) up->size));
-            ejsSetPropertyByName(ejs, files, EN(hp->key), file);
+            ejsSetPropertyByName(ejs, files, EN(kp->key), file);
         }
     }
     return (EjsObj*) req->files;
@@ -209,17 +209,17 @@ static EjsObj *createHeaders(Ejs *ejs, EjsRequest *req)
     EjsString   *value;
     EjsObj      *old;
     HttpConn    *conn;
-    MprHash     *hp;
+    MprKey      *kp;
     
     if (req->headers == 0) {
         req->headers = (EjsObj*) ejsCreateEmptyPot(ejs);
         conn = req->conn;
-        for (hp = 0; conn && (hp = mprGetNextKey(conn->rx->headers, hp)) != 0; ) {
-            n = EN(hp->key);
+        for (kp = 0; conn && (kp = mprGetNextKey(conn->rx->headers, kp)) != 0; ) {
+            n = EN(kp->key);
             if ((old = ejsGetPropertyByName(ejs, req->headers, n)) != 0) {
-                value = ejsCreateStringFromAsc(ejs, sjoin(ejsToMulti(ejs, old), "; ", hp->data, NULL));
+                value = ejsCreateStringFromAsc(ejs, sjoin(ejsToMulti(ejs, old), "; ", kp->data, NULL));
             } else {
-                value = ejsCreateStringFromAsc(ejs, hp->data);
+                value = ejsCreateStringFromAsc(ejs, kp->data);
             }
             ejsSetPropertyByName(ejs, req->headers, n, value);
         }
@@ -265,7 +265,7 @@ static int fillResponseHeaders(EjsRequest *req)
 
 static EjsObj *createResponseHeaders(Ejs *ejs, EjsRequest *req)
 {
-    MprHash     *hp;
+    MprKey      *kp;
     HttpConn    *conn;
     
     if (req->responseHeaders == 0) {
@@ -273,8 +273,8 @@ static EjsObj *createResponseHeaders(Ejs *ejs, EjsRequest *req)
         conn = req->conn;
         if (conn && conn->tx) {
             /* Get default headers */
-            for (hp = 0; (hp = mprGetNextKey(conn->tx->headers, hp)) != 0; ) {
-                ejsSetPropertyByName(ejs, req->responseHeaders, EN(hp->key), ejsCreateStringFromAsc(ejs, hp->data));
+            for (kp = 0; (kp = mprGetNextKey(conn->tx->headers, kp)) != 0; ) {
+                ejsSetPropertyByName(ejs, req->responseHeaders, EN(kp->key), ejsCreateStringFromAsc(ejs, kp->data));
             }
             conn->headersCallback = (HttpHeadersCallback) fillResponseHeaders;
             conn->headersCallbackArg = req;
@@ -483,17 +483,19 @@ static EjsAny *getRequestProperty(Ejs *ejs, EjsRequest *req, int slotNum)
                 scheme = conn->secure ? "https" : "http";
                 ip = conn->sock ? conn->sock->acceptIp : req->server->ip;
                 port = conn->sock ? conn->sock->acceptPort : req->server->port;
-                uri = mprAsprintf("%s://%s:%d%s/", scheme, ip, port, conn->rx->scriptName);
-                req->absHome = (EjsObj*) ejsCreateUriFromMulti(ejs, uri);
+                uri = sfmt("%s://%s:%d%s/", scheme, ip, port, conn->rx->scriptName);
+                req->absHome = (EjsObj*) ejsCreateUriFromAsc(ejs, uri);
             } else {
                 req->absHome = ESV(null);
             }
         }
         return req->absHome;
 
+#if UNUSED
     case ES_ejs_web_Request_authGroup:
         return createString(ejs, conn ? conn->authGroup : NULL);
-
+#endif
+            
     case ES_ejs_web_Request_authType:
         return createString(ejs, conn ? conn->authType : NULL);
 
@@ -560,7 +562,7 @@ static EjsAny *getRequestProperty(Ejs *ejs, EjsRequest *req, int slotNum)
     case ES_ejs_web_Request_home:
         if (req->home == 0) {
             if (conn) {
-                req->home = ejsCreateUriFromMulti(ejs, makeRelativeHome(ejs, req));
+                req->home = ejsCreateUriFromAsc(ejs, makeRelativeHome(ejs, req));
             } else return ESV(null);
         }
         return req->home;
@@ -1149,7 +1151,7 @@ static EjsNumber *req_read(Ejs *ejs, EjsRequest *req, int argc, EjsObj **argv)
     offset = (argc >= 2) ? ejsGetInt(ejs, argv[1]) : 0;
     count = (argc >= 3) ? ejsGetInt(ejs, argv[2]) : -1;
 
-    ejsResetByteArrayIfEmpty(ejs, ba);
+    ejsResetByteArray(ejs, ba);
     if (!ejsMakeRoomInByteArray(ejs, ba, count >= 0 ? count : MPR_BUFSIZE)) {
         return 0;
     }
@@ -1223,7 +1225,7 @@ static EjsObj *req_setLimits(Ejs *ejs, EjsRequest *req, int argc, EjsObj **argv)
         req->limits = ejsCreateEmptyPot(ejs);
         ejsGetHttpLimits(ejs, req->limits, req->conn->limits, 0);
     }
-    ejsBlendObject(ejs, req->limits, argv[0], 0, EJS_BLEND_OVERWRITE);
+    ejsBlendObject(ejs, req->limits, argv[0], EJS_BLEND_OVERWRITE);
     ejsSetHttpLimits(ejs, req->conn->limits, req->limits, 0);
     if (req->session) {
         ejsSetSessionTimeout(ejs, req->session, req->conn->limits->sessionTimeout);
@@ -1237,7 +1239,7 @@ static EjsObj *req_setLimits(Ejs *ejs, EjsRequest *req, int argc, EjsObj **argv)
  */
 static EjsObj *req_trace(Ejs *ejs, EjsRequest *req, int argc, EjsObj **argv)
 {
-    ejsSetupTrace(ejs, req->conn->trace, argv[0]);
+    ejsSetupHttpTrace(ejs, req->conn->trace, argv[0]);
     return 0;
 }
 
@@ -1435,7 +1437,7 @@ EjsRequest *ejsCreateRequest(Ejs *ejs, EjsHttpServer *server, HttpConn *conn, cc
     req->ejs = ejs;
     req->server = server;
     rx = conn->rx;
-    if (mprIsRelPath(dir)) {
+    if (mprIsPathRel(dir)) {
         req->dir = ejsCreatePathFromAsc(ejs, dir);
     } else {
         req->dir = ejsCreatePathFromAsc(ejs, mprGetRelPath(dir));
@@ -1570,7 +1572,7 @@ void ejsConfigureRequestType(Ejs *ejs)
     under the terms of the GNU General Public License as published by the
     Free Software Foundation; either version 2 of the License, or (at your
     option) any later version. See the GNU General Public License for more
-    details at: http://www.embedthis.com/downloads/gplLicense.html
+    details at: http://embedthis.com/downloads/gplLicense.html
  
     This program is distributed WITHOUT ANY WARRANTY; without even the
     implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.
@@ -1579,7 +1581,7 @@ void ejsConfigureRequestType(Ejs *ejs)
     proprietary programs. If you are unable to comply with the GPL, you must
     acquire a commercial license to use this software. Commercial licenses
     for this software and support services are available from Embedthis
-    Software at http://www.embedthis.com
+    Software at http://embedthis.com
  
     Local variables:
     tab-width: 4

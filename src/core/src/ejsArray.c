@@ -101,7 +101,7 @@ EjsArray *ejsCloneArray(Ejs *ejs, EjsArray *ap, bool deep)
 
 
 /*
-    Delete a property and update the length
+    Delete a property and update the length. Return the index where the property was deleted.
  */
 static int deleteArrayProperty(Ejs *ejs, EjsArray *ap, int slot)
 {
@@ -115,7 +115,7 @@ static int deleteArrayProperty(Ejs *ejs, EjsArray *ap, int slot)
     if ((slot + 1) == ap->length) {
         ap->length--;
     }
-    return 0;
+    return slot;
 }
 
 
@@ -909,9 +909,9 @@ static EjsString *joinArray(Ejs *ejs, EjsArray *ap, int argc, EjsObj **argv)
             continue;
         }
         if (i > 0 && sep) {
-            result = ejsCatString(ejs, result, sep);
+            result = ejsJoinString(ejs, result, sep);
         }
-        result = ejsCatString(ejs, result, ejsToString(ejs, vp));
+        result = ejsJoinString(ejs, result, ejsToString(ejs, vp));
     }
     return result;
 }
@@ -1402,10 +1402,10 @@ static EjsString *arrayToString(Ejs *ejs, EjsArray *ap, int argc, EjsObj **argv)
         vp = ap->data[i];
         rc = 0;
         if (i > 0) {
-            result = ejsCatString(ejs, result, comma);
+            result = ejsJoinString(ejs, result, comma);
         }
         if (ejsIsDefined(ejs, vp)) {
-            result = ejsCatString(ejs, result, ejsToString(ejs, vp));
+            result = ejsJoinString(ejs, result, ejsToString(ejs, vp));
         }
         if (rc < 0) {
             ejsThrowMemoryError(ejs);
@@ -1548,19 +1548,6 @@ int ejsAddItem(Ejs *ejs, EjsArray *ap, EjsAny *item)
 }
 
 
-int ejsAppendArray(Ejs *ejs, EjsArray *dest, EjsArray *src)
-{
-    int     next;
-
-    for (next = 0; next < src->length; next++) {
-        if (ejsSetProperty(ejs, dest, dest->length, src->data[next]) < 0) {
-            return MPR_ERR_MEMORY;
-        }
-    }
-    return 0;
-}
-
-
 void ejsClearArray(Ejs *ejs, EjsArray *ap)
 {
     ap->length = 0;
@@ -1573,17 +1560,21 @@ void ejsClearArray(Ejs *ejs, EjsArray *ap)
  */
 int ejsInsertItem(Ejs *ejs, EjsArray *ap, int index, EjsAny *item)
 {
-    return insertArray(ejs, ap, index, item) != 0;
+    if (insertArray(ejs, ap, index, item) == 0) {
+        /* Should never fail - only for memory errors */
+        return -1;
+    }
+    return index;
 }
 
 
-void *ejsGetItem(Ejs *ejs, EjsArray *ap, int index)
+EjsAny *ejsGetItem(Ejs *ejs, EjsArray *ap, int index)
 {
     return ejsGetProperty(ejs, ap, index);
 }
 
 
-void *ejsGetFirstItem(Ejs *ejs, EjsArray *ap)
+EjsAny *ejsGetFirstItem(Ejs *ejs, EjsArray *ap)
 {
     mprAssert(ap);
 
@@ -1594,7 +1585,7 @@ void *ejsGetFirstItem(Ejs *ejs, EjsArray *ap)
 }
 
 
-void *ejsGetLastItem(Ejs *ejs, EjsArray *ap)
+EjsAny *ejsGetLastItem(Ejs *ejs, EjsArray *ap)
 {
     mprAssert(ap);
 
@@ -1605,9 +1596,9 @@ void *ejsGetLastItem(Ejs *ejs, EjsArray *ap)
 }
 
 
-void *ejsGetNextItem(Ejs *ejs, EjsArray *ap, int *next)
+EjsAny *ejsGetNextItem(Ejs *ejs, EjsArray *ap, int *next)
 {
-    void    *item;
+    EjsAny  *item;
     int     index;
 
     mprAssert(next);
@@ -1626,7 +1617,7 @@ void *ejsGetNextItem(Ejs *ejs, EjsArray *ap, int *next)
 }
 
 
-void *ejsGetPrevItem(Ejs *ejs, EjsArray *ap, int *next)
+EjsAny *ejsGetPrevItem(Ejs *ejs, EjsArray *ap, int *next)
 {
     int     index;
 
@@ -1643,6 +1634,19 @@ void *ejsGetPrevItem(Ejs *ejs, EjsArray *ap, int *next)
     if (--index < ap->length && index >= 0) {
         *next = index;
         return ap->data[index];
+    }
+    return 0;
+}
+
+
+int ejsJoinArray(Ejs *ejs, EjsArray *dest, EjsArray *src)
+{
+    int     next;
+
+    for (next = 0; next < src->length; next++) {
+        if (ejsSetProperty(ejs, dest, dest->length, src->data[next]) < 0) {
+            return MPR_ERR_MEMORY;
+        }
     }
     return 0;
 }
@@ -1832,7 +1836,7 @@ void ejsConfigureArrayType(Ejs *ejs)
     under the terms of the GNU General Public License as published by the
     Free Software Foundation; either version 2 of the License, or (at your
     option) any later version. See the GNU General Public License for more
-    details at: http://www.embedthis.com/downloads/gplLicense.html
+    details at: http://embedthis.com/downloads/gplLicense.html
 
     This program is distributed WITHOUT ANY WARRANTY; without even the
     implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.
@@ -1841,7 +1845,7 @@ void ejsConfigureArrayType(Ejs *ejs)
     proprietary programs. If you are unable to comply with the GPL, you must
     acquire a commercial license to use this software. Commercial licenses
     for this software and support services are available from Embedthis
-    Software at http://www.embedthis.com
+    Software at http://embedthis.com
 
     Local variables:
     tab-width: 4

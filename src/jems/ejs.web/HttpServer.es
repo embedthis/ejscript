@@ -460,7 +460,7 @@ let mark = new Date
                 if (body.async) {
                     request.async = true
                     //  Should we wait on request being writable or on the body stream being readable?
-//  MOB Must detect eof and do a finalize()
+//  MOB Must detect EOF and do a finalize()
                     request.on("readable", function(event, request) {
                         let data = new ByteArray
                         if (request.read(data)) {

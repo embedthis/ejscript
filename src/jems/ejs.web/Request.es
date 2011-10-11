@@ -389,7 +389,7 @@ module ejs.web {
             Create a session state object. The session state object can be used to share state between requests.
             If a session has not already been created, this call will create a new session and initialize the 
             $session property with the new session. It will also set the $sessionID property and a cookie containing 
-            a session ID will be sent to the client with the response. Sessions can also be used/created by simply
+            a session ID that will be sent to the client with the response. Sessions can also be used/created by simply
             accessing the session property.  Objects are stored in the session state using JSON serialization.
             @param timeout Optional session state timeout in seconds. Set to zero for no timeout. After the timeout has 
                 expired, the session will be deleted. 
@@ -549,23 +549,32 @@ r.link({action: "Admin/logout")
 r.link({action: "\@Admin/logout")
 r.link({uri: "http://example.com/checkout"})
 r.link({route: "default", action: "\@checkout")
-r.link({product: "candy", quantity: "10", template: "/cart/{product}/{quantity}")
+r.link({product: "candy", quantity: "10", template: "/cart/{product}/{quantity}}")
          */
         function link(target: Object): Uri {
+            /*
+                MOB - refactor:
+                Don't update target as the object hash. Don't use target.uri as the intermediate form. 
+                Don't support outside use of target.uri to tunnel a URI
+             */
             if (target is Uri) {
                 target = target.toString()
             }
             if (target is String) {
                 if (target[0] == '@') {
+                    //  MOB - what about a possible controller in the target?
                     target = {action: target}
                 } else {
                     /* Non-mvc URI string */
                     target = {uri: (target[0] == '/') ? (scriptName + target) : target}
                 }
             }
+            //  MOB - remove target.uri tunneling except internally in this routine
             if (!target.uri) {
                 target = target.clone()
                 if (target.action) {
+                    //  MOB - this should be genericized and take request.params to get a default action / controller
+                    //  and all other params
                     if (target.action[0] == '@') {
                         target.action = target.action.slice(1)
                     }
@@ -897,7 +906,7 @@ r.link({product: "candy", quantity: "10", template: "/cart/{product}/{quantity}"
             @param offset Offset in the byte array from which to write. If the offset is -1, then data is
                 written from the buffer read $position which is then updated. 
             @param count Read up to this number of bytes. If -1, write all available data in the buffer. 
-            @returns a count of the bytes actually written. Returns null on eof.
+            @returns a count of the bytes actually written. Returns null on EOF.
             @event writable Issued when the connection can absorb more data.
 
          */

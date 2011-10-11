@@ -25,7 +25,7 @@ makeDep() {
 #               This will be replaced when "make depend" is run.
 #
 
-all: compile
+all: headers compile
 
 BLD_TOP     := ${BLD_TOP:-${top}}
 BLD_INC_DIR := ${BLD_INC_DIR:-${top}/out/inc}

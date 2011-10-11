@@ -1130,7 +1130,7 @@ static void leadin(EjsMod *mp, EjsModule *module, int classDec, int inFunction)
 
 static EjsString *mapSpace(Ejs *ejs, EjsString *space)
 {
-    if (ejsContainsMulti(ejs, space, "internal-") != 0) {
+    if (ejsContainsAsc(ejs, space, "internal-") != 0) {
         return ejsCreateStringFromAsc(ejs, "internal");
     }
     return space;
@@ -1153,7 +1153,7 @@ static EjsString *mapSpace(Ejs *ejs, EjsString *space)
     under the terms of the GNU General Public License as published by the
     Free Software Foundation; either version 2 of the License, or (at your
     option) any later version. See the GNU General Public License for more
-    details at: http://www.embedthis.com/downloads/gplLicense.html
+    details at: http://embedthis.com/downloads/gplLicense.html
 
     This program is distributed WITHOUT ANY WARRANTY; without even the
     implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.
@@ -1162,7 +1162,7 @@ static EjsString *mapSpace(Ejs *ejs, EjsString *space)
     proprietary programs. If you are unable to comply with the GPL, you must
     acquire a commercial license to use this software. Commercial licenses
     for this software and support services are available from Embedthis
-    Software at http://www.embedthis.com
+    Software at http://embedthis.com
 
     Local variables:
     tab-width: 4

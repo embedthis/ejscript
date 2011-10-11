@@ -8,8 +8,8 @@ const HTTP = ":" + PORT
 
 require ejs.unix
 
-let mvc = Cmd.locate("mvc")
-let ejs = Cmd.locate("ejs")
+let mvc = Cmd.locate("mvc").portable
+let ejs = Cmd.locate("ejs").portable
 
 //  Prepare
 rmdir("junk", true)

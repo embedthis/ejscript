@@ -170,8 +170,7 @@ int main(int argc, char *argv[])
         return -1;
     }
     if (nextArg < argc) {
-        /* TODO - replace with mprJoin() */
-        app->serviceProgram = argv[nextArg++];
+        app->serviceProgram = sclone(argv[nextArg++]);
         for (len = 0, i = nextArg; i < argc; i++) {
             len += slen(argv[i]) + 1;
         }
@@ -295,7 +294,7 @@ static void angel()
                     close(i);
                 }
                 if (app->serviceArgs && *app->serviceArgs) {
-                    mprMakeArgv(app->serviceArgs, &ac, &av, 0);
+                    ac = mprMakeArgv(app->serviceArgs, &av, 0);
                 } else {
                     ac = 0;
                 }
@@ -621,7 +620,7 @@ int APIENTRY WinMain(HINSTANCE inst, HINSTANCE junk, char *args, int junk2)
         mprError("Can't initialize application Window");
         return FALSE;
     }
-    if (mprMakeArgv(args, &argc, &argv, MPR_ARGV_ARGS_ONLY) < 0) {
+    if ((argc = mprMakeArgv(args, &argv, MPR_ARGV_ARGS_ONLY)) < 0) {
         return FALSE;
     }
     for (nextArg = 1; nextArg < argc; nextArg++) {
@@ -1364,7 +1363,7 @@ void stubAngel() {
     under the terms of the GNU General Public License as published by the
     Free Software Foundation; either version 2 of the License, or (at your
     option) any later version. See the GNU General Public License for more
-    details at: http://www.embedthis.com/downloads/gplLicense.html
+    details at: http://embedthis.com/downloads/gplLicense.html
 
     This program is distributed WITHOUT ANY WARRANTY; without even the
     implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.
@@ -1373,7 +1372,7 @@ void stubAngel() {
     proprietary programs. If you are unable to comply with the GPL, you must
     acquire a commercial license to use this software. Commercial licenses
     for this software and support services are available from Embedthis
-    Software at http://www.embedthis.com
+    Software at http://embedthis.com
 
     Local variables:
     tab-width: 4

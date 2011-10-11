@@ -166,7 +166,7 @@ int ecCodeGen(EcCompiler *cp)
     if (cp->outputFile) {
         for (next = 0; (mp = mprGetNextItem(cp->modules, &next)) != 0; ) {
             if (next <= 1 || mp->globalProperties || mp->hasInitializer || 
-                    ejsCompareMulti(cp->ejs, mp->name, EJS_DEFAULT_MODULE) != 0) {
+                    ejsCompareAsc(cp->ejs, mp->name, EJS_DEFAULT_MODULE) != 0) {
                 break;
             }
         }
@@ -193,7 +193,7 @@ int ecCodeGen(EcCompiler *cp)
             we have more than one module.
          */
         if (mprGetListLength(cp->modules) == 1 || mp->globalProperties || mp->hasInitializer || 
-                ejsCompareMulti(cp->ejs, mp->name, EJS_DEFAULT_MODULE) != 0) {
+                ejsCompareAsc(cp->ejs, mp->name, EJS_DEFAULT_MODULE) != 0) {
             mp->initialized = 0;
             processModule(cp, mp);
         }
@@ -4094,10 +4094,10 @@ static void processModule(EcCompiler *cp, EjsModule *mp)
     }
     if (! cp->outputFile) {
         if (mp->version) {
-            path = mprAsprintf("%s-%d.%d.%d%s", mp->name, EJS_MAJOR(mp->version), EJS_MINOR(mp->version), 
+            path = sfmt("%s-%d.%d.%d%s", mp->name, EJS_MAJOR(mp->version), EJS_MINOR(mp->version), 
                 EJS_PATCH(mp->version), EJS_MODULE_EXT);
         } else {
-            path = mprAsprintf("%@%s", mp->name, EJS_MODULE_EXT);
+            path = sfmt("%@%s", mp->name, EJS_MODULE_EXT);
         }
         if ((mp->file = openModuleFile(cp, path)) == 0) {
             LEAVE(cp);
@@ -4421,7 +4421,7 @@ static void badNode(EcCompiler *cp, EcNode *np)
     under the terms of the GNU General Public License as published by the
     Free Software Foundation; either version 2 of the License, or (at your
     option) any later version. See the GNU General Public License for more
-    details at: http://www.embedthis.com/downloads/gplLicense.html
+    details at: http://embedthis.com/downloads/gplLicense.html
   
     This program is distributed WITHOUT ANY WARRANTY; without even the
     implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.
@@ -4430,7 +4430,7 @@ static void badNode(EcCompiler *cp, EcNode *np)
     proprietary programs. If you are unable to comply with the GPL, you must
     acquire a commercial license to use this software. Commercial licenses
     for this software and support services are available from Embedthis
-    Software at http://www.embedthis.com
+    Software at http://embedthis.com
   
     Local variables:
     tab-width: 4

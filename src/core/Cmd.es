@@ -84,16 +84,21 @@ module ejs {
             Locate a program using the application PATH
          */
         static function locate(program: Path): Path {
-            if (Config.OS == "WIN") {
-                if (program.extension == "") {
-                    program = program.joinExt(".exe")
-                }
-            }
             //  MOB - should search all windows cmd extensions: .bat, .com - see MprCmd/CGI
             for each (dir in App.getenv("PATH").split(App.SearchSeparator)) {
                 let path = Path(dir).join(program)
                 if (path.exists && !path.isDir) {
                     return path
+                }
+            }
+            if (Config.OS == "WIN") {
+                if (program.extension == "") {
+                    for each (ext in ["exe", "bat", "cmd"]) {
+                        path = locate(program.joinExt(".exe"))
+                        if (path) {
+                            return path;
+                        }
+                    }
                 }
             }
             return null
@@ -222,7 +227,7 @@ module ejs {
             Start a command in the background as a daemon.  The daemon command is detached and the application 
             continues immediately in the foreground. Note: No data can be written to the daemon's stdin.
             @param cmdline Command line to use. The cmdline may be either a string or an array of strings.
-            @return The process ID. This pid can be used with kill().
+            @return The process ID. This PID can be used with kill().
          */
         static function daemon(cmdline: Object, options: Object = null): Number {
             let cmd = new Cmd

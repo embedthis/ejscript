@@ -647,7 +647,7 @@ static EjsObj *obj_preventExtensions(Ejs *ejs, EjsObj *unused, int argc, EjsObj 
 
 /*
     static function seal(obj: Object): Void
-*/
+ */
 static EjsObj *obj_seal(Ejs *ejs, EjsObj *unused, int argc, EjsObj **argv)
 {
     EjsObj      *obj;
@@ -662,6 +662,37 @@ static EjsObj *obj_seal(Ejs *ejs, EjsObj *unused, int argc, EjsObj **argv)
         }
     }
     SET_DYNAMIC(obj, 0);
+    return 0;
+}
+
+
+static int sortSlots(cvoid *a1, cvoid *a2)
+{
+    EjsSlot *s1, *s2;
+
+    s1 = (EjsSlot*) a1;
+    s2 = (EjsSlot*) a2;
+    if (s1->qname.name->value == s2->qname.name->value) {
+        return 0;
+    } else if (scmp(s1->qname.name->value, s2->qname.name->value) < 0) {
+        return -1;
+    } 
+    return 1;
+}
+
+
+/*
+    static function sortProperties(obj: Object, ascending: Boolean = true): Void
+ */
+static EjsObj *obj_sortProperties(Ejs *ejs, EjsObj *unused, int argc, EjsObj **argv)
+{
+    EjsPot      *obj;
+    int         asc;
+
+    obj = (EjsPot*) argv[0];
+    asc = (argc >= 2 && argv[1] == ESV(true));
+    qsort(obj->properties->slots, obj->numProp, sizeof(EjsSlot), sortSlots);
+    ejsIndexProperties(ejs, obj);
     return 0;
 }
 
@@ -883,6 +914,9 @@ void ejsConfigureObjectType(Ejs *ejs)
         ejsBindMethod(ejs, type, ES_Object_preventExtensions, obj_preventExtensions);
         ejsBindAccess(ejs, type, ES_Object_prototype, obj_prototype, obj_set_prototype);
         ejsBindMethod(ejs, type, ES_Object_seal, obj_seal);
+#if ES_Object_sortProperties
+        ejsBindMethod(ejs, type, ES_Object_sortProperties, obj_sortProperties);
+#endif
 
         /* Reflection */
         ejsBindMethod(ejs, type, ES_Object_getBaseType, obj_getBaseType);
@@ -931,7 +965,7 @@ void ejsConfigureObjectType(Ejs *ejs)
     under the terms of the GNU General Public License as published by the
     Free Software Foundation; either version 2 of the License, or (at your
     option) any later version. See the GNU General Public License for more
-    details at: http://www.embedthis.com/downloads/gplLicense.html
+    details at: http://embedthis.com/downloads/gplLicense.html
 
     This program is distributed WITHOUT ANY WARRANTY; without even the
     implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.
@@ -940,7 +974,7 @@ void ejsConfigureObjectType(Ejs *ejs)
     proprietary programs. If you are unable to comply with the GPL, you must
     acquire a commercial license to use this software. Commercial licenses
     for this software and support services are available from Embedthis
-    Software at http://www.embedthis.com
+    Software at http://embedthis.com
 
     Local variables:
     tab-width: 4
