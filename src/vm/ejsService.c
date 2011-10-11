@@ -374,7 +374,7 @@ Ejs *ejsAllocPoolVM(EjsPool *pool, int flags)
         } else if (pool->startScript) {
             script = ejsCreateStringFromAsc(ejs, pool->startScript);
             if (ejsLoadScriptLiteral(ejs, script, NULL, EC_FLAGS_NO_OUT | EC_FLAGS_BIND) < 0) {
-                mprError("Can't load \"%s\"\n%s", script, ejsGetErrorMsg(ejs, 1));
+                mprError("Can't load \"%@\"\n%s", script, ejsGetErrorMsg(ejs, 1));
                 mprRemoveRoot(ejs);
                 return 0;
             }

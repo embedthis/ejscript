@@ -24,6 +24,7 @@ if (!Path("/bin").exists) {
     cmd.write(" ")
     cmd.write(new Date)
     cmd.finalize()
+print(new Date)
     assert(cmd.response.contains("123 true "))
     assert(cmd.response.contains("GMT"))
     assert(cmd.status == 0)
