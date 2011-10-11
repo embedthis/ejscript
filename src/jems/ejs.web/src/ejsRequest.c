@@ -33,16 +33,13 @@ static void defineParam(Ejs *ejs, EjsObj *params, cchar *key, cchar *svalue)
     EjsName     qname;
     EjsAny      *value;
     EjsObj      *vp;
-    char        *subkey, *end;
+    char        *subkey, *nextkey;
     int         slotNum;
 
     mprAssert(params);
 
-    if (*svalue == '[') {
-        value = ejsDeserialize(ejs, ejsCreateStringFromAsc(ejs, svalue));
-    } else {
-        value = ejsCreateStringFromAsc(ejs, svalue);
-    }
+    value = ejsCreateStringFromAsc(ejs, svalue);
+
     /*  
         name.name.name
      */
@@ -51,16 +48,21 @@ static void defineParam(Ejs *ejs, EjsObj *params, cchar *key, cchar *svalue)
         ejsSetPropertyByName(ejs, params, qname, value);
 
     } else {
-        subkey = sclone(key);
-        for (end = strchr(subkey, '.'); end; subkey = end, end = strchr(subkey, '.')) {
-            *end++ = '\0';
+        subkey = stok(sclone(key), ".", &nextkey);
+        while (nextkey) {
             qname = ejsName(ejs, "", subkey);
             vp = ejsGetPropertyByName(ejs, params, qname);
             if (vp == 0) {
-                slotNum = ejsSetPropertyByName(ejs, params, qname, ejsCreateEmptyPot(ejs));
+                if (snumber(nextkey)) {
+                    vp = (EjsObj*) ejsCreateArray(ejs, 0);
+                } else {
+                    vp = ejsCreateEmptyPot(ejs);
+                }
+                slotNum = ejsSetPropertyByName(ejs, params, qname, vp);
                 vp = ejsGetProperty(ejs, params, slotNum);
             }
             params = vp;
+            subkey = stok(NULL, ".", &nextkey);
         }
         mprAssert(params);
         qname = ejsName(ejs, "", subkey);

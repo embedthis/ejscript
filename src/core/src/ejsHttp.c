@@ -13,7 +13,7 @@ static EjsDate  *getDateHeader(Ejs *ejs, EjsHttp *hp, cchar *key);
 static EjsString *getStringHeader(Ejs *ejs, EjsHttp *hp, cchar *key);
 static void     httpIOEvent(HttpConn *conn, MprEvent *event);
 static void     httpNotify(HttpConn *conn, int state, int notifyFlags);
-static void     prepForm(Ejs *ejs, EjsHttp *hp, char *prefix, EjsObj *data);
+static void     prepForm(Ejs *ejs, EjsHttp *hp, cchar *prefix, EjsObj *data);
 static ssize    readHttpData(Ejs *ejs, EjsHttp *hp, ssize count);
 static void     sendHttpCloseEvent(Ejs *ejs, EjsHttp *hp);
 static void     sendHttpErrorEvent(Ejs *ejs, EjsHttp *hp);
@@ -1096,7 +1096,7 @@ static EjsString *getStringHeader(Ejs *ejs, EjsHttp *hp, cchar *key)
     mprSetHttpFormData. Objects are flattened into a one level key/value pairs. Keys can have embedded "." separators.
     E.g.  name=value&address=77%20Park%20Lane
  */
-static void prepForm(Ejs *ejs, EjsHttp *hp, char *prefix, EjsObj *data)
+static void prepForm(Ejs *ejs, EjsHttp *hp, cchar *prefix, EjsObj *data)
 {
     EjsName     qname;
     EjsObj      *vp;
@@ -1107,26 +1107,25 @@ static void prepForm(Ejs *ejs, EjsHttp *hp, char *prefix, EjsObj *data)
 
     count = ejsGetLength(ejs, data);
     for (i = 0; i < count; i++) {
-        qname = ejsGetPropertyName(ejs, data, i);
-
+        if (ejsIs(ejs, data, Array)) {
+            key = itos(i, 10);
+        } else {
+            qname = ejsGetPropertyName(ejs, data, i);
+            key = ejsToMulti(ejs, qname.name);
+        }
         vp = ejsGetProperty(ejs, data, i);
         if (vp == 0) {
             continue;
         }
-        if (ejsGetLength(ejs, vp) > 0 && !ejsIs(ejs, vp, Array)) {
+        if (ejsGetLength(ejs, vp) > 0) {
             if (prefix) {
-                newPrefix = sfmt("%s.%@", prefix, qname.name);
+                newPrefix = sfmt("%s.%s", prefix, key);
                 prepForm(ejs, hp, newPrefix, vp);
             } else {
-                prepForm(ejs, hp, (char*) qname.name->value, vp);
+                prepForm(ejs, hp, key, vp);
             }
         } else {
-            key = ejsToMulti(ejs, qname.name);
-            if (ejsIs(ejs, vp, Array)) {
-                value = ejsToJSON(ejs, vp, NULL);
-            } else {
-                value = ejsToString(ejs, vp);
-            }
+            value = ejsToString(ejs, vp);
             sep = (mprGetBufLength(hp->requestContent) > 0) ? "&" : "";
             if (prefix) {
                 newKey = sjoin(prefix, ".", key, NULL);
