@@ -34,7 +34,7 @@ server.on("readable", function (event, request: Request) {
     assert(localAddress == "127.0.0.1")
     assert(log == App.log)
     assert(method == "GET")
-    assert(originalMethod == null)
+    assert(originalMethod == "GET")
     assert(originalUri == "http://localhost:6700/index.html")
     assert(params.toJSON() == "{}")
     assert(pathInfo == "/index.html")

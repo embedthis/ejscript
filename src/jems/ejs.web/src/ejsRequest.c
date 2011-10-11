@@ -596,7 +596,7 @@ static EjsAny *getRequestProperty(Ejs *ejs, EjsRequest *req, int slotNum)
         return createString(ejs, conn ? conn->rx->method : NULL);
 
     case ES_ejs_web_Request_originalMethod:
-        return mapNull(ejs, req->originalMethod);
+            return createString(ejs, conn ? conn->rx->originalMethod : NULL);
 
     case ES_ejs_web_Request_originalUri:
         if (req->originalUri == 0) {
@@ -938,10 +938,14 @@ static int setRequestProperty(Ejs *ejs, EjsRequest *req, int slotNum,  EjsObj *v
      */
     case ES_ejs_web_Request_method:
         if (!connOk(ejs, req, 1)) return 0;
+#if UNUSED
         if (req->originalMethod == 0) {
             req->originalMethod = ejsCreateStringFromAsc(ejs, req->conn->rx->method);
         }
         req->conn->rx->method = sclone(getRequestString(ejs, value));
+#else
+        httpSetMethod(req->conn, getRequestString(ejs, value));
+#endif
         break;
 
     case ES_ejs_web_Request_status:
@@ -1498,7 +1502,6 @@ static void manageRequest(EjsRequest *req, int flags)
         mprMark(req->home);
         mprMark(req->host);
         mprMark(req->limits);
-        mprMark(req->originalMethod);
         mprMark(req->originalUri);
         mprMark(req->params);
         mprMark(req->pathInfo);

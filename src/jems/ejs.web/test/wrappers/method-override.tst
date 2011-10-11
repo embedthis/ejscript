@@ -7,7 +7,7 @@ const HTTP = ":" + (App.config.test.http_port || "6700")
 var http: Http = new Http
 
 //  Override the POST method to be DELETE using params
-http.form(HTTP + "/dispatch.es", { route: "override", "-ejs-method-": "DELETE"})
+http.form(HTTP + "/dispatch.es", { route: "override", "-http-method-": "DELETE"})
 let response = deserialize(http.response)
 assert(response.originalMethod == "POST")
 assert(response.method == "DELETE")

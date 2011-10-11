@@ -95,7 +95,6 @@ typedef struct EjsRequest {
     EjsString       *host;              /**< Host property */
     EjsObj          *limits;            /**< Limits object */
     EjsObj          *log;               /**< Log object */
-    EjsString       *originalMethod;    /**< Saved original method */
     EjsObj          *originalUri;       /**< Saved original URI */
     EjsObj          *params;            /**< Form variables + routing variables */
     EjsString       *pathInfo;          /**< PathInfo property */
