@@ -3230,6 +3230,9 @@ bool httpValidateLimits(HttpEndpoint *endpoint, int event, HttpConn *conn)
 
     switch (event) {
     case HTTP_VALIDATE_OPEN_CONN:
+        /*
+            MOB - this isn't really active clients. It is active client systems.
+         */
         if (endpoint->clientCount >= limits->clientCount) {
             unlock(endpoint->http);
             httpError(conn, HTTP_ABORT | HTTP_CODE_SERVICE_UNAVAILABLE, 
@@ -3249,7 +3252,7 @@ bool httpValidateLimits(HttpEndpoint *endpoint, int event, HttpConn *conn)
             mprRemoveKey(endpoint->clientLoad, conn->ip);
         }
         endpoint->clientCount = (int) mprGetHashLength(endpoint->clientLoad);
-        mprLog(4, "Close connection %d. Active requests %d, active clients %d.", conn->seqno, endpoint->requestCount, 
+        mprLog(4, "Close connection %d. Active requests %d, active client IP %d.", conn->seqno, endpoint->requestCount, 
             endpoint->clientCount);
         break;
     
@@ -3266,10 +3269,10 @@ bool httpValidateLimits(HttpEndpoint *endpoint, int event, HttpConn *conn)
     case HTTP_VALIDATE_CLOSE_REQUEST:
         endpoint->requestCount--;
         mprAssert(endpoint->requestCount >= 0);
-        mprLog(4, "Close request. Active requests %d, active clients %d.", endpoint->requestCount, endpoint->clientCount);
+        mprLog(4, "Close request. Active requests %d, active client IP %d.", endpoint->requestCount, endpoint->clientCount);
         break;
     }
-    mprLog(6, "Validate request. Active conn %d, requests: %d/%d, active clients %d/%d", 
+    mprLog(6, "Validate request. Active connections %d, active requests: %d/%d, active client IP addresses %d/%d", 
         mprGetListLength(endpoint->http->connections), endpoint->requestCount, limits->requestCount, 
         endpoint->clientCount, limits->clientCount);
     unlock(endpoint->http);
@@ -3296,6 +3299,7 @@ HttpConn *httpAcceptConn(HttpEndpoint *endpoint, MprEvent *event)
         This will block in sync mode until a connection arrives
      */
     if ((sock = mprAcceptSocket(endpoint->sock)) == 0) {
+        mprWaitOn(endpoint->waitHandler, MPR_READABLE);
         return 0;
     }
     if (endpoint->waitHandler) {
