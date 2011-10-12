@@ -35,6 +35,7 @@ if [ "${BARE}" = 0 ] ; then
     # cpy -m 644 -d "${BLD_LIB_DIR}/www" "*" "${BLD_VER_PREFIX}/web"
     makeDir "${BLD_LIB_PREFIX}/www"
     cpy -m 644 -d "${BLD_LIB_DIR}/www" "*" "${BLD_LIB_PREFIX}/www"
+    cpy -s -m 755 ${BLD_BIN_DIR}/http${BLD_EXE} "${BLD_BIN_PREFIX}"
     cpy -m 755 -d ${BLD_BIN_DIR} mvc ejspage jem "${BLD_BIN_PREFIX}"
     if [ $BLD_HOST_OS = WIN ] ; then
         cpy -m 755 -d ${BLD_BIN_DIR} mvc.cmd ejspage.cmd jem.cmd "${BLD_BIN_PREFIX}"
