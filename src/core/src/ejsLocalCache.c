@@ -464,8 +464,10 @@ static void localPruner(EjsLocalCache *cache, MprEvent *event)
         when = mprGetTime();
         for (kp = 0; (kp = mprGetNextKey(cache->store, kp)) != 0; ) {
             item = (CacheItem*) kp->data;
+#if UNUSED && KEEP
             mprLog(6, "LocalCache: \"%@\" lifespan %d, expires in %d secs", item->key, 
                     item->lifespan / 1000, (item->expires - when) / 1000);
+#endif
             if (item->expires && item->expires <= when) {
                 mprLog(5, "LocalCache prune expired key %s", kp->key);
                 removeItem(cache, item);
