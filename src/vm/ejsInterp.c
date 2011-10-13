@@ -2543,8 +2543,11 @@ static void storeProperty(Ejs *ejs, EjsObj *thisObj, EjsAny *vp, EjsName qname, 
     }
     if (slotNum < 0) {
         slotNum = ejsSetPropertyName(ejs, vp, slotNum, qname);
+#if UNUSED
+        //  MOB - cant set names to values which may be collected.
         //  UNICODE
         mprSetName(value, qname.name->value);
+#endif
     }
     if (!ejs->exception) {
         storePropertyToSlot(ejs, thisObj, vp, slotNum, value);
@@ -2592,8 +2595,11 @@ static void storePropertyToScope(Ejs *ejs, EjsName qname, EjsObj *value)
     } else {
         thisObj = vp = fp->function.moduleInitializer ? ejs->global : (EjsObj*) fp;
         slotNum = ejsSetPropertyName(ejs, vp, slotNum, qname);
+#if UNUSED
+        //  MOB - can't set name to a value that may be collected
         //  UNICODE
         mprSetName(value, qname.name->value);
+#endif
     }
     storePropertyToSlot(ejs, thisObj, vp, slotNum, value);
 }
