@@ -647,7 +647,7 @@ static EjsAny *getRequestProperty(Ejs *ejs, EjsRequest *req, int slotNum)
         return createString(ejs, conn ? conn->ip : NULL);
 
     case ES_ejs_web_Request_responded:
-        return ejsCreateBoolean(ejs, conn->tx->responded);
+        return ejsCreateBoolean(ejs, conn->responded);
 
     case ES_ejs_web_Request_responseHeaders:
         return createResponseHeaders(ejs, req);
@@ -840,7 +840,7 @@ static int setRequestProperty(Ejs *ejs, EjsRequest *req, int slotNum,  EjsObj *v
         break;
 
     case ES_ejs_web_Request_responded:
-        req->conn->tx->responded = (value == ESV(true));
+        req->conn->responded = (value == ESV(true));
         break;
 
     case ES_ejs_web_Request_responseHeaders:
@@ -1064,7 +1064,7 @@ static EjsObj *req_finalize(Ejs *ejs, EjsRequest *req, int argc, EjsObj **argv)
  */
 static EjsBoolean *req_finalized(Ejs *ejs, EjsRequest *req, int argc, EjsObj **argv)
 {
-    return ejsCreateBoolean(ejs, req->conn == 0 || req->finalized || req->conn->tx->finalized);
+    return ejsCreateBoolean(ejs, req->conn == 0 || req->finalized || req->conn->finalized);
 }
 
 

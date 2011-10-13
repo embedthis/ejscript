@@ -194,8 +194,8 @@ static EjsObj *http_finalize(Ejs *ejs, EjsHttp *hp, int argc, EjsObj **argv)
  */
 static EjsBoolean *http_finalized(Ejs *ejs, EjsHttp *hp, int argc, EjsObj **argv)
 {
-    if (hp->conn && hp->conn->tx) {
-        return ejsCreateBoolean(ejs, hp->conn->tx->finalized);
+    if (hp->conn) {
+        return ejsCreateBoolean(ejs, hp->conn->finalized);
     }
     return ESV(false);
 }
@@ -1019,7 +1019,7 @@ static ssize writeHttpData(Ejs *ejs, EjsHttp *hp)
     ba = hp->data;
     nbytes = 0;
     if (ba && (count = ejsGetByteArrayAvailableData(ba)) > 0) {
-        if (conn->tx->finalized) {
+        if (conn->finalized) {
             ejsThrowIOError(ejs, "Can't write to socket");
             return 0;
         }
