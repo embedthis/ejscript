@@ -15,11 +15,16 @@ module ejs.tar {
         use default namespace public
 
         function Tar(path: Path) {
-            this.path = path.portable
-            if (this.path.hasDrive) {
+            path = path.portable
+            if (path.hasDrive) {
+                //  CYGWIN tar can't handle drive specs. Ugh!!
                 //  MOB - temp hack until we have proper zip class
-                this.path = this.path.toString().slice(2)
+                path = path.toString().slice(2)
+                if (path.toString().startsWith("/cygwin")) {
+                    path = path.toString().trimStart("/cygwin")
+                }
             }
+            this.path = path
         }
         function add(path: Path): Void {
             path = path.portable
