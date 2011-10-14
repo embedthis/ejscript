@@ -7,12 +7,12 @@
 include 	.makedep
 
 DEST		:= ../www/js
-TARGETS		+= $(DEST)/jquery.ejs.min.js
-TARGETS		+= $(DEST)/jquery.simplemodal.min.js
-TARGETS		+= $(DEST)/jquery.tablesorter.min.js
-TARGETS		+= $(DEST)/jquery.treeview.min.js
+MINFILES	+= $(DEST)/jquery.ejs.min.js
+MINFILES	+= $(DEST)/jquery.simplemodal.min.js
+MINFILES	+= $(DEST)/jquery.tablesorter.min.js
+MINFILES	+= $(DEST)/jquery.treeview.min.js
 
-gen: $(TARGETS)
+gen: $(MINFILES)
 
 $(DEST)/jquery.ejs.min.js: jquery.ejs.js 
 	$(call log) "[Generate]" "minify $(DEST)/jquery.ejs.min.js"
