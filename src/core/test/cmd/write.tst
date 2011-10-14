@@ -10,7 +10,7 @@ if (!Path("/bin").exists) {
 
     //  Test write and finalize
     cmd = new Cmd
-    cmd.start("/bin/cat", {detach: true})
+    cmd.start("cat", {detach: true})
     cmd.write("Hello World")
     cmd.finalize()
     assert(cmd.response == "Hello World")
@@ -18,7 +18,7 @@ if (!Path("/bin").exists) {
 
     //  Test various write data types
     cmd = new Cmd
-    cmd.start("/bin/cat", {detach: true})
+    cmd.start("cat", {detach: true})
     cmd.write(1, 2, 3, " ")
     cmd.write(true)
     cmd.write(" ")

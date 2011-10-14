@@ -9,22 +9,22 @@ if (!Path("/bin").exists) {
 } else {
 
     //  Read response as a string
-    cmd = Cmd("/bin/echo Hello World")
+    cmd = Cmd("echo Hello World")
     assert(cmd.readString().trim() == "Hello World")
 
     //  Can also read via the response property (multiple times)
-    cmd = Cmd("/bin/echo Hello World")
+    cmd = Cmd("echo Hello World")
     assert(cmd.response.trim() == "Hello World")
     assert(cmd.response.trim() == "Hello World")
 
     //  read() into a byte array
-    cmd = Cmd("/bin/echo Hello World")
+    cmd = Cmd("echo Hello World")
     ba = new ByteArray
     assert(cmd.read(ba) >= 11)
     assert(ba.toString().trim() == "Hello World")
 
     //  readLines()
-    cmd = Cmd("/bin/ls -1 ..")
+    cmd = Cmd("ls -1 ..")
     assert(cmd.readLines().length > 30)
 
 }

@@ -5,13 +5,16 @@ EXPORTS
   httpAcceptConn
   httpAddConn
   httpAddEndpoint
-  httpAddFormVars
   httpAddGroup
   httpAddHeader
   httpAddHeaderString
+  httpAddHomeRoute
   httpAddHost
   httpAddHostToEndpoint
-  httpAddQueryVars
+  httpAddOption
+  httpAddParams
+  httpAddResource
+  httpAddResourceGroup
   httpAddRoute
   httpAddRouteCondition
   httpAddRouteErrorDocument
@@ -20,18 +23,17 @@ EXPORTS
   httpAddRouteFilter
   httpAddRouteHandler
   httpAddRouteHeader
-  httpAddRouteLanguage
-  httpAddRouteLanguageRoot
-  httpAddRouteLoad
-  httpAddRouteQuery
+  httpAddRouteLanguageDir
+  httpAddRouteLanguageSuffix
+  httpAddRouteParam
+  httpAddRouteSet
   httpAddRouteUpdate
   httpAddStage
+  httpAddStaticRoute
   httpAddUploadFile
   httpAddUser
   httpAddUserToGroup
   httpAddUsersToGroup
-  httpAddVars
-  httpAddVarsFromQueue
   httpAdjustPacketEnd
   httpAdjustPacketStart
   httpAppendHeader
@@ -49,6 +51,7 @@ EXPORTS
   httpCloseRx
   httpCompleteUri
   httpCompleteWriting
+  httpConfigureNamedVirtualEndpoints
   httpConnTimeout
   httpConnect
   httpConsumeLastRequest
@@ -56,7 +59,7 @@ EXPORTS
   httpCreate
   httpCreateAliasRoute
   httpCreateAuth
-  httpCreateCGIVars
+  httpCreateCGIParams
   httpCreateConfiguredEndpoint
   httpCreateConfiguredRoute
   httpCreateConn
@@ -89,6 +92,7 @@ EXPORTS
   httpCreateUriFromParts
   httpCreateUser
   httpDefaultOutgoingServiceStage
+  httpDefineRoute
   httpDefineRouteBuiltins
   httpDefineRouteCondition
   httpDefineRouteTarget
@@ -115,16 +119,18 @@ EXPORTS
   httpError
   httpEvent
   httpFileExists
+  httpFilterChunkData
   httpFinalize
   httpFinalizeRoute
   httpFindPreviousQueue
   httpFlush
   httpFlushQueue
   httpFollowRedirects
-  httpFormatBody
   httpFormatError
   httpFormatErrorV
   httpFormatResponse
+  httpFormatResponseBody
+  httpFormatResponseError
   httpFormatResponsev
   httpFormatUri
   httpGetAsync
@@ -137,43 +143,49 @@ EXPORTS
   httpGetDateString
   httpGetDefaultClientHost
   httpGetDefaultClientPort
-  httpGetEndpointAsync
   httpGetEndpointContext
   httpGetError
   httpGetExt
+  httpGetFilePassword
   httpGetFirstEndpoint
   httpGetFormData
-  httpGetFormVar
-  httpGetFormVars
   httpGetGroupAcl
   httpGetHeader
   httpGetHeaderHash
   httpGetHeaders
-  httpGetIntFormVar
+  httpGetHostDefaultRoute
+  httpGetIntParam
   httpGetLanguage
-  httpGetNativePassword
   httpGetNextQueueForService
+  httpGetOption
+  httpGetOptionHash
+  httpGetOptions
   httpGetPacket
+  httpGetParam
+  httpGetParams
   httpGetPathExt
   httpGetQueryString
   httpGetQueueData
   httpGetQueueRoom
   httpGetRelativeUri
   httpGetRouteData
+  httpGetRouteDir
+  httpGetRouteMethods
   httpGetStageData
   httpGetStatus
   httpGetStatusMessage
   httpHandleOptionsTrace
+  httpHasNamedVirtualHosts
   httpInitAuth
   httpInitLimits
   httpInitQueue
   httpInitSchedulerQueue
   httpInitTrace
   httpInsertQueue
+  httpIsEndpointAsync
   httpIsEof
   httpIsFinalized
   httpIsGroupEnabled
-  httpIsNamedVirtualEndpoint
   httpIsPacketTooBig
   httpIsQueueEmpty
   httpIsUserEnabled
@@ -182,10 +194,13 @@ EXPORTS
   httpJoinPackets
   httpJoinUri
   httpJoinUriPath
+  httpLink
   httpLoadSsl
+  httpLogRoutes
   httpLookupEndpoint
   httpLookupHost
   httpLookupHostOnEndpoint
+  httpLookupRoute
   httpLookupRouteErrorDocument
   httpLookupStage
   httpLookupStageData
@@ -193,10 +208,11 @@ EXPORTS
   httpMakePath
   httpMakeUriLocal
   httpManageTrace
+  httpMapFile
   httpMatchEtag
-  httpMatchFormVar
   httpMatchHost
   httpMatchModified
+  httpMatchParam
   httpMatchRoute
   httpMemoryError
   httpNeedRetry
@@ -217,6 +233,9 @@ EXPORTS
   httpProcessPipeline
   httpPutBackPacket
   httpPutForService
+  httpPutPacket
+  httpPutPacketToNext
+  httpPutPackets
   httpRead
   httpReadGroupFile
   httpReadString
@@ -228,6 +247,7 @@ EXPORTS
   httpRemoveGroup
   httpRemoveHeader
   httpRemoveHost
+  httpRemoveOption
   httpRemoveQueue
   httpRemoveUploadFile
   httpRemoveUser
@@ -243,18 +263,15 @@ EXPORTS
   httpScheduleQueue
   httpSecureEndpoint
   httpSecureEndpointByName
+  httpSendClose
   httpSendOpen
   httpSendOutgoingService
-  httpSendPacket
-  httpSendPacketToNext
-  httpSendPackets
   httpServiceQueue
   httpServiceQueues
   httpSetAsync
   httpSetAuthAllow
   httpSetAuthAnyValidUser
   httpSetAuthDeny
-  httpSetAuthGroup
   httpSetAuthOrder
   httpSetAuthQop
   httpSetAuthRealm
@@ -278,11 +295,12 @@ EXPORTS
   httpSetEndpointNotifier
   httpSetEntityLength
   httpSetForkCallback
-  httpSetFormVar
   httpSetGroupAcl
+  httpSetHasNamedVirtualHosts
   httpSetHeader
   httpSetHeaderString
   httpSetHeadersCallback
+  httpSetHostDefaultRoute
   httpSetHostHome
   httpSetHostIpAddr
   httpSetHostLogRotation
@@ -291,19 +309,17 @@ EXPORTS
   httpSetHostTrace
   httpSetHostTraceFilter
   httpSetIOCallback
-  httpSetIntFormVar
+  httpSetIntParam
   httpSetKeepAliveCount
   httpSetListenCallback
-  httpSetMatchCallback
-  httpSetNamedVirtualEndpoint
-  httpSetNamedVirtualEndpoints
+  httpSetMethod
+  httpSetOption
+  httpSetParam
   httpSetPipelineHandler
   httpSetProtocol
   httpSetProxy
   httpSetRequiredAcl
   httpSetResponded
-  httpSetResponseBody
-  httpSetResponseError
   httpSetRetries
   httpSetRouteAuth
   httpSetRouteAutoDelete
@@ -324,6 +340,7 @@ EXPORTS
   httpSetRouteScript
   httpSetRouteSource
   httpSetRouteTarget
+  httpSetRouteTemplate
   httpSetRouteWorkers
   httpSetSendConnector
   httpSetSoftware
@@ -334,13 +351,13 @@ EXPORTS
   httpSetUniqueConnLimits
   httpSetUri
   httpSetWriteBlocked
-  httpSetupTrace
   httpShouldTrace
   httpSplitPacket
   httpStartEndpoint
   httpStartPipeline
   httpStopEndpoint
-  httpTestFormVar
+  httpTemplate
+  httpTestParam
   httpTokenize
   httpTokenizev
   httpTraceContent
@@ -349,8 +366,8 @@ EXPORTS
   httpUriToString
   httpUsePrimary
   httpUseWorker
+  httpValidateFileCredentials
   httpValidateLimits
-  httpValidateNativeCredentials
   httpWait
   httpWillNextQueueAcceptPacket
   httpWillNextQueueAcceptSize
@@ -359,6 +376,7 @@ EXPORTS
   httpWriteBlock
   httpWriteGroupFile
   httpWriteHeaders
+  httpWriteSafeString
   httpWriteString
   httpWriteUploadData
   httpWriteUserFile
