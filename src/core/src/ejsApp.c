@@ -55,6 +55,15 @@ static EjsObj *app_chdir(Ejs *ejs, EjsObj *unused, int argc, EjsObj **argv)
         ejsThrowIOError(ejs, "Bad path");
         return NULL;
     }
+#if WIN
+{
+    MprFileSystem   *fs;
+    fs = mprLookupFileSystem(path);
+    if (!mprPathExists(path, X_OK) && *path == '/') {
+        path = sjoin(fs->cygwin, path, NULL);
+    }
+}
+#endif
     if (chdir((char*) path) < 0) {
         ejsThrowIOError(ejs, "Can't change the current directory");
     }
