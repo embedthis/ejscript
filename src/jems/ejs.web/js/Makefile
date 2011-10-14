@@ -43,9 +43,6 @@ $(DEST)/jquery.min.js: jquery.js
 	minify jquery.js
 	mv jquery.min.js $(DEST)
 	
-cleanExtra:
-	rm -rf *.min.js
-
 #
 #   Local variables:
 #   tab-width: 4

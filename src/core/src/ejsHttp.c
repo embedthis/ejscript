@@ -544,11 +544,9 @@ static EjsNumber *http_read(Ejs *ejs, EjsHttp *hp, int argc, EjsObj **argv)
 static EjsString *http_readString(Ejs *ejs, EjsHttp *hp, int argc, EjsObj **argv)
 {
     EjsString   *result;
-    HttpConn    *conn;
     ssize       count;
     
     count = (argc == 1) ? ejsGetInt(ejs, argv[0]) : -1;
-    conn = hp->conn;
     if (!waitForState(hp, HTTP_STATE_CONTENT, -1, 1)) {
         return 0;
     }

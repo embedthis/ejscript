@@ -1347,14 +1347,12 @@ static EjsObj *req_writeFile(Ejs *ejs, EjsRequest *req, int argc, EjsObj **argv)
 {
     EjsPath         *path;
     HttpConn        *conn;
-    HttpRx          *rx;
     HttpTx          *tx;
     HttpPacket      *packet;
     MprPath         *info;
 
     if (!connOk(ejs, req, 1)) return 0;
     conn = req->conn;
-    rx = conn->rx;
     tx = conn->tx;
 
     if (tx->outputRanges || conn->secure || tx->chunkSize > 0) {

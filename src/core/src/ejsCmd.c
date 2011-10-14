@@ -609,9 +609,8 @@ static EjsObj *cmd_exec(Ejs *ejs, EjsObj *unused, int argc, EjsObj **argv)
 {
 #if BLD_UNIX_LIKE
     char    **argVector;
-    int     argCount;
 
-    argCount = mprMakeArgv(ejsToMulti(ejs, argv[0]), &argVector, 0);
+    mprMakeArgv(ejsToMulti(ejs, argv[0]), &argVector, 0);
     execv(argVector[0], argVector);
 #endif
     ejsThrowStateError(ejs, "Can't exec %@", ejsToString(ejs, argv[0]));
