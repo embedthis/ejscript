@@ -1879,7 +1879,7 @@
 		C97623C10FD06EC4009C78E1 /* Project object */ = {
 			isa = PBXProject;
 			attributes = {
-				LastUpgradeCheck = 0410;
+				LastUpgradeCheck = 0420;
 			};
 			buildConfigurationList = C97623C40FD06EC4009C78E1 /* Build configuration list for PBXProject "ejs-all" */;
 			compatibilityVersion = "Xcode 3.2";
