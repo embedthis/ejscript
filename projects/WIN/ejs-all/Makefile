@@ -25,8 +25,8 @@ SSL_IFLAGS	+= $(BLD_OPENSSL_IFLAGS)
 PHP_IFLAGS	+= $(BLD_PHP_IFLAGS)
 
 PROJECTS	= setup.vcxproj libmpr.vcxproj libsqlite3.vcxproj libmprssl.vcxproj libpcre.vcxproj libhttp.vcxproj \
-			  libejs.vcxproj ejsmod.vcxproj ejsc.vcxproj ejs.vcxproj ejssql.vcxproj ejs.web.vcxproj \
-			  ejs.db.sqlite.vcxproj
+			  libejs.vcxproj ejsmod.vcxproj ejsc.vcxproj ejs.vcxproj sqlite.vcxproj ejs.web.vcxproj \
+			  ejs.db.sqlite.vcxproj http.vcxproj
 SOLUTIONS	= ejs-all.sln
 PROPS		+= product.props
 
@@ -48,7 +48,8 @@ ejs-all.sln: Makefile
 	$(VSS) --solution ejs-all.sln \
 		--deps "libmpr setup" \
 		--deps "libpcre setup" \
-		--deps "ejs ejsc" \
+		--deps "ejsmod ejsc" \
+		--deps "ejs ejsc ejsmod" \
 		--deps "ejs.web ejsc" \
 		--deps "ejs.db.sqlite ejsc" \
 		$(PROJECTS)
@@ -77,14 +78,14 @@ libpcre.vcxproj: libpcre.custom Makefile
 	
 libhttp.vcxproj: libhttp.custom Makefile
 	$(VSP) --project libhttp.vcxproj --library http --dflags "$(DFLAGS)" \
-		--props "$(PROPS)" --deps "libmpr libmprssl" \
+		--props "$(PROPS)" --deps "libmpr libmprssl libpcre" \
 		--custom libhttp.custom \
 		--def libhttp.def --libs "libmpr.lib libmprssl.lib $(LIBS)" $(HTTP_HDR) $(SRC)/deps/http/httpLib.c
 	
 libsqlite3.vcxproj: Makefile
 	$(VSP) --project libsqlite3.vcxproj --library sqlite3 --dflags "$(DFLAGS)" \
 		--props "$(PROPS)" --deps "libmpr" \
-		--def libsqlite3.def --libs "libmpr.lib $(LIBS)" $(JEMS)/ejs.db.sqlite/src/sqlite3.c
+		--def libsqlite3.def --libs "libmpr.lib $(LIBS)" $(SRC)/deps/sqlite/sqlite3.c
 	
 libejs.vcxproj: Makefile
 	$(VSP) --project libejs.vcxproj --library ejs --dflags "$(DFLAGS)" \
@@ -122,10 +123,15 @@ ejs.vcxproj: Makefile
 		--props "$(PROPS)" --deps "libmpr libmprssl libejs" \
 		--libs "$(LIBS) libejs.lib libmpr.lib" $(SRC)/cmd/ejs.c
 
-ejssql.vcxproj: Makefile
-	$(VSP) --project ejssql.vcxproj --exe ejssql.exe --dflags "$(DFLAGS)" \
+sqlite.vcxproj: Makefile
+	$(VSP) --project sqlite.vcxproj --exe sqlite.exe --dflags "$(DFLAGS)" \
 		--props "$(PROPS)" --deps "libsqlite3" \
-		--libs "$(LIBS) libsqlite3.lib" $(JEMS)/ejs.db.sqlite/src/ejssql.c
+		--libs "$(LIBS) libsqlite3.lib" $(SRC)/deps/sqlite/sqlite.c
+
+http.vcxproj: Makefile
+	$(VSP) --project http.vcxproj --exe http.exe --dflags "$(DFLAGS)" \
+		--props "$(PROPS)" --deps "libmpr libmprssl libhttp" \
+		--libs "$(LIBS) libhttp.lib libmpr.lib" $(SRC)/deps/http/http.c
 
 cleanExtra:
 	rm -fr Upgrade* _Upgrade* x64 Win32 *.suo *.sdf *.filters

@@ -13,7 +13,7 @@
   </ItemGroup>
 
   <PropertyGroup Label="Globals">
-    <ProjectGuid>{2FC704A0-98FB-4719-8463-F199D8C8F57A}</ProjectGuid>
+    <ProjectGuid>{D97A7BE4-FAF8-4F39-AF43-CDCD5C87B065}</ProjectGuid>
     <RootNamespace />
     <Keyword>Win32Proj</Keyword>
   </PropertyGroup>
@@ -21,12 +21,12 @@
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.Default.props" />
 
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'" Label="Configuration">
-    <ConfigurationType>DynamicLibrary</ConfigurationType>
+    <ConfigurationType>Application</ConfigurationType>
     <CharacterSet>NotSet</CharacterSet>
   </PropertyGroup>
 
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'" Label="Configuration">
-    <ConfigurationType>DynamicLibrary</ConfigurationType>
+    <ConfigurationType>Application</ConfigurationType>
     <CharacterSet>NotSet</CharacterSet>
   </PropertyGroup>
 
@@ -54,28 +54,18 @@
   <PropertyGroup>
     <_ProjectFileVersion>10.0.30319.1</_ProjectFileVersion>
     <OutDir Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">..\..\..\out\bin\</OutDir>
-    <IntDir Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">..\..\..\out\obj\ejs.web\</IntDir>
+    <IntDir Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">..\..\..\out\obj\http\</IntDir>
     <OutDir Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">..\..\..\out\bin\</OutDir>
-    <IntDir Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">..\..\..\out\obj\ejs.web\</IntDir>
+    <IntDir Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">..\..\..\out\obj\http\</IntDir>
   </PropertyGroup>
 
   <ItemGroup >
-    <ClCompile Include="..\..\..\src\jems\ejs.web\src\ejsFilter.c" />
-    <ClCompile Include="..\..\..\src\jems\ejs.web\src\ejsHttpServer.c" />
-    <ClCompile Include="..\..\..\src\jems\ejs.web\src\ejsRequest.c" />
-    <ClCompile Include="..\..\..\src\jems\ejs.web\src\ejsSession.c" />
-    <ClCompile Include="..\..\..\src\jems\ejs.web\src\ejsWeb.c" />
+    <ClCompile Include="..\..\..\src\deps\http\http.c" />
   </ItemGroup>
-
-  <ItemDefinitionGroup>
-    <Link>
-      <ModuleDefinitionFile>ejs.web.def</ModuleDefinitionFile>
-    </Link>
-  </ItemDefinitionGroup>
 
   <ItemDefinitionGroup >
     <Link>
-      <AdditionalDependencies>libmpr.lib;libhttp.lib;libejs.lib;ws2_32.lib;%(AdditionalDependencies)</AdditionalDependencies>
+      <AdditionalDependencies>ws2_32.lib;libhttp.lib;libmpr.lib;%(AdditionalDependencies)</AdditionalDependencies>
     </Link>
   </ItemDefinitionGroup>
 
@@ -96,13 +86,6 @@
   <ItemGroup>
     <ProjectReference Include="libhttp.vcxproj">
       <Project>{F8297B01-3510-4A47-ABF4-A3BE0D02140A}</Project>
-      <ReferenceOutputAssembly>false</ReferenceOutputAssembly>
-    </ProjectReference>
-  </ItemGroup>
-
-  <ItemGroup>
-    <ProjectReference Include="libejs.vcxproj">
-      <Project>{2E4735CD-9B27-431D-B210-4407EF50D39E}</Project>
       <ReferenceOutputAssembly>false</ReferenceOutputAssembly>
     </ProjectReference>
   </ItemGroup>

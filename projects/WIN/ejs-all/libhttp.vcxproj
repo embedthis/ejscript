@@ -13,7 +13,7 @@
   </ItemGroup>
 
   <PropertyGroup Label="Globals">
-    <ProjectGuid>{383DD5A0-4838-4E6D-B7BA-D9EF9B1F41ED}</ProjectGuid>
+    <ProjectGuid>{F8297B01-3510-4A47-ABF4-A3BE0D02140A}</ProjectGuid>
     <RootNamespace />
     <Keyword>Win32Proj</Keyword>
   </PropertyGroup>
@@ -54,9 +54,9 @@
   <PropertyGroup>
     <_ProjectFileVersion>10.0.30319.1</_ProjectFileVersion>
     <OutDir Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">..\..\..\out\bin\</OutDir>
-    <IntDir Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">..\..\..\out\obj\</IntDir>
+    <IntDir Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">..\..\..\out\obj\libhttp\</IntDir>
     <OutDir Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">..\..\..\out\bin\</OutDir>
-    <IntDir Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">..\..\..\out\obj\</IntDir>
+    <IntDir Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">..\..\..\out\obj\libhttp\</IntDir>
   </PropertyGroup>
 
   <ItemGroup>
@@ -81,14 +81,21 @@
 
   <ItemGroup>
     <ProjectReference Include="libmpr.vcxproj">
-      <Project>{B9DE5A78-0358-4D4D-880E-CA03F6DEE82C}</Project>
+      <Project>{FED943A5-22A1-4F94-B346-121F8EBD38ED}</Project>
       <ReferenceOutputAssembly>false</ReferenceOutputAssembly>
     </ProjectReference>
   </ItemGroup>
 
   <ItemGroup>
     <ProjectReference Include="libmprssl.vcxproj">
-      <Project>{6DECEEA6-CA63-427A-8290-25DC67E5DCE1}</Project>
+      <Project>{10E9C853-410D-4CF3-9758-D9D81323FA82}</Project>
+      <ReferenceOutputAssembly>false</ReferenceOutputAssembly>
+    </ProjectReference>
+  </ItemGroup>
+
+  <ItemGroup>
+    <ProjectReference Include="libpcre.vcxproj">
+      <Project>{63B99652-25E4-4298-96A2-0DBDD3FCEC97}</Project>
       <ReferenceOutputAssembly>false</ReferenceOutputAssembly>
     </ProjectReference>
   </ItemGroup>

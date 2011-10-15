@@ -13,7 +13,7 @@
   </ItemGroup>
 
   <PropertyGroup Label="Globals">
-    <ProjectGuid>{D8BE26FD-6ABF-4781-B536-0FBEBFDB4C28}</ProjectGuid>
+    <ProjectGuid>{656DED39-57BB-45FD-BDE7-5A2E9F54E1D0}</ProjectGuid>
     <RootNamespace />
     <Keyword>Win32Proj</Keyword>
   </PropertyGroup>
@@ -54,13 +54,13 @@
   <PropertyGroup>
     <_ProjectFileVersion>10.0.30319.1</_ProjectFileVersion>
     <OutDir Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">..\..\..\out\bin\</OutDir>
-    <IntDir Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">..\..\..\out\obj\</IntDir>
+    <IntDir Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">..\..\..\out\obj\libsqlite3\</IntDir>
     <OutDir Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">..\..\..\out\bin\</OutDir>
-    <IntDir Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">..\..\..\out\obj\</IntDir>
+    <IntDir Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">..\..\..\out\obj\libsqlite3\</IntDir>
   </PropertyGroup>
 
   <ItemGroup >
-    <ClCompile Include="..\..\..\src\jems\ejs.db.sqlite\src\sqlite3.c" />
+    <ClCompile Include="..\..\..\src\deps\sqlite\sqlite3.c" />
   </ItemGroup>
 
   <ItemDefinitionGroup>
@@ -77,7 +77,7 @@
 
   <ItemGroup>
     <ProjectReference Include="libmpr.vcxproj">
-      <Project>{B9DE5A78-0358-4D4D-880E-CA03F6DEE82C}</Project>
+      <Project>{FED943A5-22A1-4F94-B346-121F8EBD38ED}</Project>
       <ReferenceOutputAssembly>false</ReferenceOutputAssembly>
     </ProjectReference>
   </ItemGroup>

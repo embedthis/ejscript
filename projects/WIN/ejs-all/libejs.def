@@ -2,6 +2,7 @@ LIBRARY libejs.dll
 EXPORTS
   cloneCopy
   cloneRef
+  cloneXml
   ecAddCStringConstant
   ecAddConstants
   ecAddDocConstant
@@ -87,7 +88,6 @@ EXPORTS
   ejsAddObserver
   ejsAlloc
   ejsAllocPoolVM
-  ejsAppendArray
   ejsAppendAttributeToXML
   ejsAppendToXML
   ejsApplyBlockHelpers
@@ -100,6 +100,7 @@ EXPORTS
   ejsBindFunction
   ejsBindMethod
   ejsBlendObject
+  ejsBlockGC
   ejsCacheExpire
   ejsCacheRead
   ejsCacheReadObj
@@ -109,8 +110,7 @@ EXPORTS
   ejsCacheWriteObj
   ejsCaptureStack
   ejsCastType
-  ejsCatString
-  ejsCatStrings
+  ejsCheckSlot
   ejsClearArray
   ejsClearAttention
   ejsClearException
@@ -122,7 +122,7 @@ EXPORTS
   ejsCloneVM
   ejsCoerceOperands
   ejsCompactPot
-  ejsCompareMulti
+  ejsCompareAsc
   ejsCompareString
   ejsCompareSubstring
   ejsCompareWide
@@ -165,8 +165,8 @@ EXPORTS
   ejsConfigureXML
   ejsConfigureXMLListType
   ejsConfigureXMLType
+  ejsContainsAsc
   ejsContainsChar
-  ejsContainsMulti
   ejsContainsString
   ejsCopySlots
   ejsCopyToByteArray
@@ -174,6 +174,7 @@ EXPORTS
   ejsCreateArchetype
   ejsCreateArray
   ejsCreateArrayType
+  ejsCreateBareFunction
   ejsCreateBareString
   ejsCreateBlock
   ejsCreateBlockHelpers
@@ -207,7 +208,6 @@ EXPORTS
   ejsCreateModule
   ejsCreateNamespace
   ejsCreateNamespaceType
-  ejsCreateNonInternedString
   ejsCreateNull
   ejsCreateNumber
   ejsCreateNumberType
@@ -223,7 +223,6 @@ EXPORTS
   ejsCreateRegExpType
   ejsCreateReservedNamespace
   ejsCreateSearchPath
-  ejsCreateSimpleFunction
   ejsCreateSocket
   ejsCreateString
   ejsCreateStringFromAsc
@@ -233,7 +232,7 @@ EXPORTS
   ejsCreateType
   ejsCreateUndefined
   ejsCreateUri
-  ejsCreateUriFromMulti
+  ejsCreateUriFromAsc
   ejsCreateUriFromParts
   ejsCreateVM
   ejsCreateVoidType
@@ -246,7 +245,6 @@ EXPORTS
   ejsDecodeDouble
   ejsDecodeInt32
   ejsDecodeNum
-  ejsDeepCopyXML
   ejsDefineConfigProperties
   ejsDefineGlobalFunction
   ejsDefineGlobalNamespaces
@@ -259,7 +257,6 @@ EXPORTS
   ejsDestroyIntern
   ejsDestroyVM
   ejsDisableExit
-  ejsDisableFunction
   ejsEmptyName
   ejsEmptyWideName
   ejsEncodeByteAtPos
@@ -279,7 +276,7 @@ EXPORTS
   ejsFreePoolVM
   ejsFreezeGlobal
   ejsGetBoolean
-  ejsGetByteArrayAvailable
+  ejsGetByteArrayAvailableData
   ejsGetByteArrayRoom
   ejsGetDebugInfo
   ejsGetDebugLine
@@ -307,17 +304,18 @@ EXPORTS
   ejsGetPropertyName
   ejsGetPropertyTraits
   ejsGetPrototype
-  ejsGetSlot
   ejsGetType
   ejsGetTypeByName
   ejsGetTypeName
   ejsGetTypeOf
   ejsGetVarByName
+  ejsGetXMLDescendants
   ejsGrowByteArray
   ejsGrowConstants
   ejsGrowPot
   ejsHasException
   ejsHasObservers
+  ejsIndexProperties
   ejsInheritBaseClassNamespaces
   ejsInitBlockType
   ejsInitCompiler
@@ -336,12 +334,15 @@ EXPORTS
   ejsIsA
   ejsIsInfinite
   ejsIsTypeSubType
+  ejsJoinArray
+  ejsJoinString
+  ejsJoinStrings
   ejsLoadHttpService
   ejsLoadModule
   ejsLoadModules
   ejsLoadScriptFile
   ejsLoadScriptLiteral
-  ejsLoadXMLCString
+  ejsLoadXMLAsc
   ejsLoadXMLString
   ejsLockService
   ejsLockVm
@@ -354,7 +355,6 @@ EXPORTS
   ejsLookupScope
   ejsLookupVar
   ejsLookupVarWithNamespaces
-  ejsMakeHash
   ejsMakeRoomInByteArray
   ejsManageBlock
   ejsManageFunction
@@ -376,11 +376,9 @@ EXPORTS
   ejsName
   ejsObjToJSON
   ejsObjToString
-  ejsOffsetExceptions
   ejsOptable
   ejsParse
   ejsParseModuleVersion
-  ejsPauseGC
   ejsPopBlock
   ejsPopBlockNamespaces
   ejsPropertyHasTrait
@@ -388,6 +386,7 @@ EXPORTS
   ejsRedirectLogging
   ejsRedirectLoggingToFile
   ejsRegExpToString
+  ejsRemoveConstructor
   ejsRemoveItem
   ejsRemoveItemAtPos
   ejsRemoveLastItem
@@ -399,8 +398,6 @@ EXPORTS
   ejsReportError
   ejsResetBlockNamespaces
   ejsResetByteArray
-  ejsResetByteArrayIfEmpty
-  ejsResumeGC
   ejsRun
   ejsRunFunction
   ejsRunFunctionByName
@@ -425,13 +422,12 @@ EXPORTS
   ejsSetTypeAttributes
   ejsSetTypeHelpers
   ejsSetTypeName
-  ejsSetXML
-  ejsSetupTrace
+  ejsSetXMLElement
+  ejsSetupHttpTrace
   ejsShowBlockScope
   ejsShowCurrentScope
   ejsSprintf
-  ejsStartsWithMulti
-  ejsStringToJSON
+  ejsStartsWithAsc
   ejsSubstring
   ejsSwapDouble
   ejsSwapInt32
@@ -455,6 +451,7 @@ EXPORTS
   ejsThrowTypeError
   ejsToBoolean
   ejsToJSON
+  ejsToLiteralString
   ejsToLower
   ejsToMulti
   ejsToNumber
@@ -463,13 +460,12 @@ EXPORTS
   ejsToUpper
   ejsToUri
   ejsTruncateString
+  ejsUnblockGC
   ejsUnlockService
   ejsUnlockVm
-  ejsUseActivation
   ejsWideName
   ejsWriteToByteArray
-  ejsXMLDescendants
-  ejsXMLToString
+  ejsXMLToBuf
   ejsZeroSlots
   g_deserialize
   getNextJsonToken
