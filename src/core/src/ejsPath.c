@@ -183,6 +183,47 @@ static EjsDate *getAccessedDate(Ejs *ejs, EjsPath *fp, int argc, EjsObj **argv)
 
 
 /*
+    Get file attributes
+    function get attributes(): Object
+ */
+static EjsObj *getAttributes(Ejs *ejs, EjsPath *fp, int argc, EjsObj **argv)
+{
+    MprPath     info;
+    EjsObj      *attributes;
+
+    mprGetPathInfo(fp->value, &info);
+    if (!info.valid) {
+        return ESV(null);
+    }
+    attributes = ejsCreateEmptyPot(ejs);
+    ejsSetPropertyByName(ejs, attributes, EN("owner"), itos(info.owner, 10));
+    ejsSetPropertyByName(ejs, attributes, EN("group"), itos(info.group, 10));
+    ejsSetPropertyByName(ejs, attributes, EN("permissions"), sfmt("0%0d", info.perms));
+    return attributes;
+}
+
+
+/*
+    Set file attributes
+    function attributes(options: Object)
+ */
+static EjsObj *setAttributes(Ejs *ejs, EjsPath *fp, int argc, EjsObj **argv)
+{
+    MprPath     info;
+    EjsObj      *attributes;
+
+    attributes = argv[0];
+    mprGetPathInfo(fp->value, &info);
+    if (!info.valid) {
+        ejsThrowIOError(ejs, "Can't access %s", fp->value);
+        return ESV(null);
+    }
+    ejsSetPathAttributes(ejs, fp->value, attributes);
+    return 0;
+}
+
+
+/*
     Get the base name of a file
     function basename(): Path
  */
@@ -220,19 +261,50 @@ static EjsArray *getPathComponents(Ejs *ejs, EjsPath *fp, int argc, EjsObj **arg
 }
 
 
+int ejsSetPathAttributes(Ejs *ejs, cchar *path, EjsObj *attributes)
+{
+    EjsObj  *ownerName, *groupName, *permissions;
+    int     owner, group, perms;
+
+    if (attributes == 0) {
+        return 0;
+    }
+    group = owner = -1;
+    if ((groupName = ejsGetPropertyByName(ejs, attributes, EN("group"))) != 0) {
+        group = ejsGetInt(ejs, groupName);
+    }
+    if ((ownerName = ejsGetPropertyByName(ejs, attributes, EN("owner"))) != 0) {
+        owner = ejsGetInt(ejs, ownerName);
+    }
+    if (owner >= 0 || group >= 0) {
+        if (chown(path, owner, group) < 0) {
+            ejsThrowStateError(ejs, "Can't change group. Error %d", mprGetError());
+        }
+    }
+    if ((permissions = ejsGetPropertyByName(ejs, attributes, EN("permissions"))) != 0) {
+        perms = ejsGetInt(ejs, permissions);
+        if (chmod(path, perms) < 0) {
+            ejsThrowIOError(ejs, "Can't change permissions. Error %d", mprGetError());
+        }
+    }
+    return 0;
+}
+
+
 /*
     Copy a file
     function copy(to: Object, options: Object = null): Void
-    TODO - not implementing copy options parameter.
  */
 static EjsObj *copyPath(Ejs *ejs, EjsPath *fp, int argc, EjsObj **argv)
 {
     MprFile     *from, *to;
+    EjsObj      *options;
     cchar       *toPath;
     ssize       bytes;
     char        *buf;
 
-    mprAssert(argc == 1);
+    mprAssert(argc >= 1);
+    options = (argc >= 2) ? argv[1] : 0;
 
     from = to = 0;
     if ((toPath = getPathString(ejs, argv[0])) == 0) {
@@ -240,14 +312,17 @@ static EjsObj *copyPath(Ejs *ejs, EjsPath *fp, int argc, EjsObj **argv)
     }
     from = mprOpenFile(fp->value, O_RDONLY | O_BINARY, 0);
     if (from == 0) {
-        ejsThrowIOError(ejs, "Cant open %s", fp->value);
+        ejsThrowIOError(ejs, "Can't open %s", fp->value);
         return 0;
     }
     to = mprOpenFile(toPath, O_CREAT | O_WRONLY | O_TRUNC | O_BINARY, EJS_FILE_PERMS);
     if (to == 0) {
-        ejsThrowIOError(ejs, "Cant create %s", toPath);
+        ejsThrowIOError(ejs, "Can't create %s", toPath);
         mprCloseFile(from);
         return 0;
+    }
+    if (options) {
+        ejsSetPathAttributes(ejs, toPath, options);
     }
     if ((buf = mprAlloc(MPR_BUFSIZE)) == NULL) {
         ejsThrowMemoryError(ejs);
@@ -583,31 +658,20 @@ static EjsPath *pathLinkTarget(Ejs *ejs, EjsPath *fp, int argc, EjsObj **argv)
 
 
 /*
-    function makeDir(options: Object = null): Void
+    function makeDir(attributes: Object = null): Void
   
     Options: permissions, owner, group
  */
 static EjsObj *makePathDir(Ejs *ejs, EjsPath *fp, int argc, EjsObj **argv)
 {
     MprPath     info;
-    EjsObj      *options, *permissions;
-#if FUTURE
-    EjsObj      *owner, *group;
-    cchar       *ownerName, *groupName;
-#endif
+    EjsObj      *attributes, *permissions;
     int         perms;
     
+    attributes = (argc >= 1) ? argv[0] : 0;
     perms = 0755;
-
     if (argc == 1) {
-        options = argv[0];
-
-        permissions = ejsGetPropertyByName(ejs, options, N(EJS_PUBLIC_NAMESPACE, "permissions"));
-#if FUTURE
-        owner = ejsGetPropertyByName(ejs, options, N(EJS_PUBLIC_NAMESPACE, "owner"));
-        group = ejsGetPropertyByName(ejs, options, N(EJS_PUBLIC_NAMESPACE, "group"));
-#endif
-        if (permissions) {
+        if ((permissions = ejsGetPropertyByName(ejs, attributes, EN("permissions"))) != 0) {
             perms = ejsGetInt(ejs, permissions);
         }
     }
@@ -615,17 +679,10 @@ static EjsObj *makePathDir(Ejs *ejs, EjsPath *fp, int argc, EjsObj **argv)
         return 0;
     }
     if (mprMakeDir(fp->value, perms, 1) < 0) {
-        ejsThrowIOError(ejs, "Cant create directory %s", fp->value);
+        ejsThrowIOError(ejs, "Can't create directory %s", fp->value);
         return 0;
     }
-#if FUTURE
-    if (owner) {
-        ownerName = ejsToMulti(ejs, owner);
-    }
-    if (group) {
-        groupName = ejsToMulti(ejs, group);
-    }
-#endif
+    ejsSetPathAttributes(ejs, fp->value, attributes);
     return 0;
 }
 
@@ -1019,7 +1076,7 @@ static EjsObj *renamePathFile(Ejs *ejs, EjsPath *fp, int argc, EjsObj **argv)
     to = ejsToMulti(ejs, argv[0]);
     unlink((char*) to);
     if (rename(fp->value, to) < 0) {
-        ejsThrowIOError(ejs, "Cant rename file %s to %s", fp->value, to);
+        ejsThrowIOError(ejs, "Can't rename file %s to %s", fp->value, to);
         return 0;
     }
     return 0;
@@ -1153,7 +1210,7 @@ static EjsObj *truncatePath(Ejs *ejs, EjsPath *fp, int argc, EjsObj **argv)
 
     size = ejsGetInt(ejs, argv[0]);
     if (mprTruncateFile(fp->value, size) < 0) {
-        ejsThrowIOError(ejs, "Cant truncate %s", fp->value);
+        ejsThrowIOError(ejs, "Can't truncate %s", fp->value);
     }
     return 0;
 }
@@ -1184,7 +1241,7 @@ static EjsObj *writeToFile(Ejs *ejs, EjsPath *fp, int argc, EjsObj **argv)
     mprDeletePath(path);
     file = mprOpenFile(path, O_CREAT | O_WRONLY | O_BINARY, permissions);
     if (file == 0) {
-        ejsThrowIOError(ejs, "Cant create %s", path);
+        ejsThrowIOError(ejs, "Can't create %s", path);
         mprCloseFile(file);
         return 0;
     }
@@ -1269,6 +1326,9 @@ void ejsConfigurePathType(Ejs *ejs)
     ejsBindConstructor(ejs, type, pathConstructor);
     ejsBindMethod(ejs, prototype, ES_Path_absolute, absolutePath);
     ejsBindMethod(ejs, prototype, ES_Path_accessed, getAccessedDate);
+#if ES_Path_attributes
+    ejsBindAccess(ejs, prototype, ES_Path_attributes, getAttributes, setAttributes);
+#endif
     ejsBindMethod(ejs, prototype, ES_Path_basename, getPathBasename);
     ejsBindMethod(ejs, prototype, ES_Path_components, getPathComponents);
     ejsBindMethod(ejs, prototype, ES_Path_copy, copyPath);
