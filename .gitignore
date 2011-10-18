@@ -158,3 +158,4 @@ src/core/test/cmd/TempWmicBatchFile.bat
 *.tmp
 .DS_Store
 src/test/tt.es
+main

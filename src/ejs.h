@@ -2832,6 +2832,7 @@ extern EjsDate *ejsCreateDate(Ejs *ejs, MprTime value);
 #endif
 
 /******************************************** Error ***********************************************/
+//  MOB - missing SecurityException PermissionsException
 /** 
     Error classes
     @description Base class for error exception objects. Exception objects are created by programs and by the system 
@@ -3146,6 +3147,21 @@ extern EjsPath *ejsCreatePathFromAsc(Ejs *ejs, cchar *path);
     @ingroup EjsPath
  */
 extern EjsPath *ejsToPath(Ejs *ejs, EjsAny *obj);
+
+/** 
+    Set the owner, group and permissions of a file.
+    @description Convert the object to a string and then to a Path.
+    @param ejs Ejs reference returned from #ejsCreateVM
+    @param path Path name to modify
+    @options options Owner, group and permissions options.
+    @arg permissions optional Posix permissions number mask. Defaults to 0664.
+    @arg owner String representing the file owner
+    @arg group String representing the file group
+    @return A new Path object
+    @ingroup EjsPath
+    @internal
+ */
+int ejsSetPathAttributes(Ejs *ejs, cchar *path, EjsObj *options);
 
 /******************************************** FileSystem*******************************************/
 /** 

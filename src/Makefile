@@ -5,7 +5,7 @@
 #
 
 PRE_DIRS		+= slots deps vm compiler
-POST_DIRS		+= core cmd jems
+POST_DIRS		+= core cmd jems samples
 EJS_LIB			+= $(BLD_LIB_DIR)/libejs$(BLD_LIB)
 EJS_SOURCES		+= $(shell find core/src vm compiler -name '*.c') 
 EJS_OBJECTS		+= $(patsubst %.c,$(BLD_OBJ_DIR)/%$(BLD_OBJ),$(notdir $(EJS_SOURCES)))
