@@ -1,0 +1,6 @@
+LIBRARY sample.dll
+EXPORTS
+  configureSampleTypes
+  create
+  ejsDefineShapeType
+  sample_Init
