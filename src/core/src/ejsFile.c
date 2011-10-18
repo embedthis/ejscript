@@ -192,7 +192,7 @@ static cchar *getStrOption(Ejs *ejs, EjsObj *options, cchar *field, cchar *defau
  */
 static EjsFile *fileConstructor(Ejs *ejs, EjsFile *fp, int argc, EjsObj **argv)
 {
-    EjsObj      *pp;
+    EjsObj      *pp, *options;
     cchar       *path;
 
     if (argc < 1 || argc > 2) {
@@ -210,7 +210,8 @@ static EjsFile *fileConstructor(Ejs *ejs, EjsFile *fp, int argc, EjsObj **argv)
     }
     fp->path = mprNormalizePath(path);
     if (argc == 2) {
-        openFile(ejs, fp, 1, &argv[1]);
+        options = (argc >= 2) ? argv[1] : 0;
+        openFile(ejs, fp, 1, &options);
     }
     return fp;
 }
@@ -455,7 +456,9 @@ static EjsObj *openFile(Ejs *ejs, EjsFile *fp, int argc, EjsObj **argv)
         ejsThrowIOError(ejs, "Can't open %s", fp->path);
         return 0;
     }
-
+    if (options) {
+        ejsSetPathAttributes(ejs, fp->path, options);
+    }
 #if BLD_CC_MMU && FUTURE
     mprGetPathInfo(&fp->info);
     fp->mapped = mapFile(fp, fp->info.size, MPR_MAP_READ | MPR_MAP_WRITE);
