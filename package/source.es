@@ -9,8 +9,10 @@ var bare: Boolean = App.args[3] == "1"
 var options = copySetup({task: App.args[1], root: Path(App.args[2])})
 options.trace = 1
 var build = options.build
-var src: Path = options.build.BLD_SRC_PREFIX
+var src: Path = build.BLD_SRC_PREFIX
 src.makeDir()
+
+print("SRC " + src)
 
 copy("Makefile", src)
 copy("LICENSE.TXT", src, {from: "doc/licenses", fold: true, expand: true})

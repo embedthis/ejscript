@@ -157,14 +157,7 @@ public function preparePrefixes(options)
         build["ORIG_" + prefix] = Path(build[prefix]).absolute.portable
         let tree: Path
         if (options.task == "Package") {
-            if (prefix == "SRC_PREFIX") {
-                tree = "/SRC"
-            } else if (prefix == "INC_PREFIX" || prefix == "DOC_PREFIX" || prefix == "SAM_PREFIX" || prefix == "MAN_PREFIX") {
-                tree = "/DEV"
-                throw "Dev packaging not supported"
-            } else {
-                tree = "/BIN"
-            }
+            tree = (prefix == "BLD_SRC_PREFIX") ? "/SRC" : "/BIN"
         }
         build[prefix] = Path("" + options.root + tree + build[prefix]).portable
     }

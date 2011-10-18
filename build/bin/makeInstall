@@ -46,7 +46,6 @@ processPackage() {
     
     if [ -f package/$1.es ] ; then
         [ "$QUIET" = 0 ] && log ${VERB} package/$1.es ...
-        echo ejs package/$1.es $TASK $BARE
         ejs package/$1.es $TASK $ROOT_DIR $BARE
     elif [ -f package/$1.files ] ; then
         [ "$QUIET" = 0 ] && log ${VERB} package/$1.files ...
@@ -196,7 +195,6 @@ copyRemoveFiles() {
         processPackage ${packName}
         installRemoveLog ${packName}
     done
-
     configureProduct --quiet copy
 
     #
