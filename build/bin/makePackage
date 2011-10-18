@@ -142,7 +142,7 @@ patchSource() {
                 ${ABS_BLD_TOOLS_DIR}/defeature ${ABS_BLD_TOP}/out/inc/.buildConfig.sh $f
             done
         fi
-        cd ${HOME}
+        cd $HOME >/dev/null
     fi
 }
 
@@ -250,6 +250,7 @@ createScripts() {
     if [ -f doc/product/COPYRIGHT.TXT ] ; then
         cp doc/product/COPYRIGHT.TXT ${ROOT_DIR}
     fi
+
     cd ${ROOT_DIR} >/dev/null
     patchFile install uninstall COPYRIGHT.TXT README.TXT LICENSE.TXT
     chmod 755 install uninstall
