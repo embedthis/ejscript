@@ -118,7 +118,7 @@ module ejs {
             @return true if the path does begin with the suffix
          */
         function endsWith(suffix: String): Boolean
-            name.endsWith(suffix)
+            portable.name.endsWith(Path(suffix).portable)
 
         /**
             Does a file exist for this path.
@@ -576,7 +576,7 @@ module ejs {
             @return true if the path does begin with the prefix
          */
         function startsWith(prefix: String): Boolean
-            this.toString().startsWith(prefix)
+            portable.name.startsWith(Path(prefix).portable)
 
         /**
             Convert the path to a JSON string. 
@@ -604,6 +604,7 @@ module ejs {
             @return a Path containing the trimmed path name
          */
         function trimEnd(pat: String): Path {
+            pat = Path(pat).portable
             if (name.endsWith(pat)) {
                 loc = name.lastIndexOf(pat)
                 if (loc >= 0) {
