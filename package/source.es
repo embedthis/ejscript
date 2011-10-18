@@ -12,8 +12,6 @@ var build = options.build
 var src: Path = build.BLD_SRC_PREFIX
 src.makeDir()
 
-print("SRC " + src)
-
 copy("Makefile", src)
 copy("LICENSE.TXT", src, {from: "doc/licenses", fold: true, expand: true})
 copy("*.TXT", src, {from: "doc/product", fold: true, expand: true})
