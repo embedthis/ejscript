@@ -4,7 +4,7 @@
 #	Copyright (c) Embedthis Software LLC, 2003-2011. All Rights Reserved.
 #
 
-PRE_DIRS	:= composite native eval*
+PRE_DIRS	:= composite native evalScript evalModule evalFile
 
 include 	.makedep
 
