@@ -69,9 +69,9 @@ copy("*.mod", lib, {from: slib})
 copy("*" + build.BLD_SHOBJ, lib, {from: slib, permissions: 0755, strip: true})
 
 if (build.BLD_HOST_OS == "WIN") {
-    if (Build.BLD_CC_CL_VERSION == 16) {
-        copy(build.BLD_VS.join("msvcrt.lib"), bin)
-        copy(build.BLD_VS.parent.join("redist/x86/Microsoft.VC100.CRT/msvcr100.dll"), bin)
+    if (build.BLD_CC_CL_VERSION == 16) {
+        copy("msvcrt.lib", bin, {from: build.BLD_VS})
+        copy("msvcr100.dll", bin, {from: build.BLD_VS.parent.join("redist/x86/Microsoft.VC100.CRT")})
     }
     copy(sbin.join("removeFiles*"), bin)
 }
