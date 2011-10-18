@@ -202,6 +202,11 @@ module ejs {
          */
         native static function getenv(name: String): String
 
+        /**
+            The group ID of the user account running the application. Only supported on Unix.
+         */
+        native static function get gid(): Number
+        
         /** 
             Set the standard input stream. Changing the input stream will close and reopen stdin.
          */
@@ -337,6 +342,11 @@ module ejs {
         }
 
         /**
+            The user ID of the user account running the application. Only supported on Unix.
+         */
+        native static function get uid(): Number
+        
+        /**
             Redirect the Application's logger based on the App.config.log setting
             Ignored if app is invoked with --log on the command line.
          */
@@ -416,7 +426,7 @@ UNUSED */
             } else {
                 App.mprLog.redirect(location, level)
             }
-            App.log = new Logger(App.name, location, log.level)
+            App.log = new Logger(App.name, location, level)
             if (log.match) {
                 App.log.match = log.match
             }
