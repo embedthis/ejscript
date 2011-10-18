@@ -163,6 +163,15 @@ static EjsAny *app_getenv(Ejs *ejs, EjsObj *app, int argc, EjsObj **argv)
 }
 
 
+/*
+    static function get gid (): Number
+ */
+static EjsNumber *app_gid(Ejs *ejs, EjsObj *unused, int argc, EjsObj **argv)
+{
+    return ejsCreateNumber(ejs, getgid());
+}
+
+
 /*  
     Put an environment var
     function putenv(key: String, value: String): void
@@ -220,8 +229,8 @@ static EjsArray *app_createSearch(Ejs *ejs, EjsObj *app, int argc, EjsObj **argv
 }
 
 
-/*  
-    static function get pid (): void
+/*
+    static function get pid (): Number
  */
 static EjsNumber *app_pid(Ejs *ejs, EjsObj *unused, int argc, EjsObj **argv)
 {
@@ -276,6 +285,15 @@ static EjsObj *app_sleep(Ejs *ejs, EjsObj *unused, int argc, EjsObj **argv)
 }
 
 
+/*  
+    static function get uid (): Number
+ */
+static EjsNumber *app_uid(Ejs *ejs, EjsObj *unused, int argc, EjsObj **argv)
+{
+    return ejsCreateNumber(ejs, getuid());
+}
+
+
 /*********************************** Factory **********************************/
 
 void ejsConfigureAppType(Ejs *ejs)
@@ -298,11 +316,17 @@ void ejsConfigureAppType(Ejs *ejs)
     ejsBindMethod(ejs, type, ES_App_env, app_env);
     ejsBindMethod(ejs, type, ES_App_exit, app_exit);
     ejsBindMethod(ejs, type, ES_App_getenv, app_getenv);
+#if ES_App_gid
+    ejsBindMethod(ejs, type, ES_App_gid, app_gid);
+#endif
     ejsBindMethod(ejs, type, ES_App_putenv, app_putenv);
     ejsBindMethod(ejs, type, ES_App_pid, app_pid);
     ejsBindMethod(ejs, type, ES_App_run, app_run);
     ejsBindAccess(ejs, type, ES_App_search, app_search, app_set_search);
     ejsBindMethod(ejs, type, ES_App_sleep, app_sleep);
+#if ES_App_uid
+    ejsBindMethod(ejs, type, ES_App_uid, app_uid);
+#endif
 }
 
 
