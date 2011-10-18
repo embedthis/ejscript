@@ -15226,8 +15226,8 @@ char *mprGetRelPath(cchar *pathArg)
             }
         } else {
             if (*hp == *cp) {
-				;
-			} else if (tolower((int) *hp) != tolower((int) *cp)) {
+                ;
+            } else if (tolower((int) *hp) != tolower((int) *cp)) {
                 break;
             }
         }
