@@ -208,11 +208,11 @@
 
   <Target Name="EjsCore" Inputs="@(CoreFiles)" Outputs="@(CoreMod)">
     <Exec Outputs="$(CoreMod)" 
-        Command="$(BLD_ABS_BIN_DIR)\ejsc --debug --optimize 9 --bind --require null --out $(BLD_BIN_DIR)/ejs.mod @(CoreFiles -> '%(Identity)', ' ')" />
+        Command="'$(BLD_ABS_BIN_DIR)\ejsc\' --debug --optimize 9 --bind --require null --out $(BLD_BIN_DIR)/ejs.mod @(CoreFiles -> '%(Identity)', ' ')" />
   </Target>
 
   <Target Name="EjsSlots" Inputs="@(CoreMod)" Outputs="$(BLD_INC_DIR)/ejs.slots.h">
-    <Exec Command="$(BLD_ABS_BIN_DIR)\ejsmod --require null --cslots --dir $(BLD_INC_DIR) @(CoreMod)"
+    <Exec Command="'$(BLD_ABS_BIN_DIR)\ejsmod' --mob $(BLD_OUT_DIR) --require null --cslots --dir $(BLD_INC_DIR) @(CoreMod)"
           Outputs="$(BLD_ABS_INC_DIR)/ejs.slots.h" />
   </Target>
 

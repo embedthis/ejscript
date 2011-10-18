@@ -263,12 +263,16 @@ static EjsArray *getPathComponents(Ejs *ejs, EjsPath *fp, int argc, EjsObj **arg
 
 int ejsSetPathAttributes(Ejs *ejs, cchar *path, EjsObj *attributes)
 {
-    EjsObj  *ownerName, *groupName, *permissions;
-    int     owner, group, perms;
+    EjsObj  *permissions;
+    int     perms;
 
     if (attributes == 0) {
         return 0;
     }
+#if BLD_UNIX_LIKE
+{
+    EjsObj  *ownerName, *groupName;
+    int     owner, group;
     group = owner = -1;
     if ((groupName = ejsGetPropertyByName(ejs, attributes, EN("group"))) != 0) {
         group = ejsGetInt(ejs, groupName);
@@ -281,6 +285,8 @@ int ejsSetPathAttributes(Ejs *ejs, cchar *path, EjsObj *attributes)
             ejsThrowStateError(ejs, "Can't change group. Error %d", mprGetError());
         }
     }
+}
+#endif
     if ((permissions = ejsGetPropertyByName(ejs, attributes, EN("permissions"))) != 0) {
         perms = ejsGetInt(ejs, permissions);
         if (chmod(path, perms) < 0) {

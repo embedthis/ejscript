@@ -16,6 +16,7 @@ var build = options.build
 /*
     Sources
  */
+var sout: Path = build.BLD_OUT_DIR
 var sbin: Path = build.BLD_BIN_DIR
 var slib: Path = build.BLD_LIB_DIR
 var sjem: Path = build.BLD_JEM_DIR
@@ -68,12 +69,9 @@ copy("*.mod", lib, {from: slib})
 copy("*" + build.BLD_SHOBJ, lib, {from: slib, permissions: 0755, strip: true})
 
 if (build.BLD_HOST_OS == "WIN") {
-    let clversion = build.BLD_CC_CL_VERSION
-    if (clversion == 15) {
-        copy("lib/msvcrt/15/msvcr90.dll", bin)
-        copy("lib/msvcrt/15/Microsoft.VC90.CRT.manifest", bin)
-    } else if (clversion == 16) {
-        copy("lib/msvcrt/16/msvcr100.dll", bin)
+    if (Build.BLD_CC_CL_VERSION == 16) {
+        copy(build.BLD_VS.join("msvcrt.lib"), bin)
+        copy(build.BLD_VS.parent.join("redist/x86/Microsoft.VC100.CRT/msvcr100.dll"), bin)
     }
     copy(sbin.join("removeFiles*"), bin)
 }

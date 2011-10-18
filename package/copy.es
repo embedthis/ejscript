@@ -48,7 +48,7 @@ public function copy(src: Path, target: Path = Dir, options = {})
     let files = options.top.join(dir).find(pat, options.recurse)
 
     for each (let file: Path in files) {
-        file = file.relative
+        file = file.relative.portable
         if (file.isDir) {
             continue
         }
@@ -66,13 +66,14 @@ public function copy(src: Path, target: Path = Dir, options = {})
         }
         let dest: Path
         if (target.isDir) {
+
 /*
 print("FROM " + from)
 print("DIR  " + dir)
 print("FILE " + file)
 print("TARG " + target)
 */
-            dest = Path("" + target + "/" + file.trimStart(from)).normalize
+            dest = Path("" + target + "/" + file.trimStart(from)).normalize.portable
         } else {
             dest = target
         }
@@ -84,7 +85,7 @@ print("TARG " + target)
             if (verbose) log.activity("Remove", dest)
             dest.remove()
         } else {
-            let parent = dest.parent
+            let parent = dest.parent.relative.portable
             if (!dest.parent.isDir) {
                 if (verbose) log.activity("MakeDir", parent)
                 parent.makeDir({ group: group, owner: owner, permissions: 0755})
@@ -129,7 +130,7 @@ public function readBuildConfig(options)
     options.build = {}
     data = options.top.join("out/inc/buildConfig.h").readLines()
     for each (line in data) {
-        if (line.startsWith("#") || line.trim() == "") continue
+        if (line.startsWith("#") || line.trim() == "" || line.startsWith("if")) continue
         if (line.contains("EXPORT_OBJECTS")) {
             break
         }
@@ -153,7 +154,7 @@ public function preparePrefixes(options)
     for each (prefix in ["BLD_PREFIX", "BLD_ROOT_PREFIX", "BLD_BIN_PREFIX", "BLD_CFG_PREFIX", "BLD_DOC_PREFIX", "BLD_JEM_PREFIX", 
             "BLD_INC_PREFIX", "BLD_LIB_PREFIX", "BLD_LOG_PREFIX", "BLD_MAN_PREFIX", "BLD_PRD_PREFIX", "BLD_SAM_PREFIX", 
             "BLD_SRC_PREFIX", "BLD_VER_PREFIX", "BLD_WEB_PREFIX"]) {
-        build["ORIG_" + prefix] = build[prefix] = Path(build[prefix]).absolute
+        build["ORIG_" + prefix] = Path(build[prefix]).absolute.portable
         let tree: Path
         if (options.task == "Package") {
             if (prefix == "SRC_PREFIX") {
@@ -165,7 +166,7 @@ public function preparePrefixes(options)
                 tree = "/BIN"
             }
         }
-        build[prefix] = Path("" + options.root + tree + build[prefix])
+        build[prefix] = Path("" + options.root + tree + build[prefix]).portable
     }
     let out = options.top.join("out")
     for (key in build) {
@@ -179,10 +180,10 @@ public function preparePrefixes(options)
             build[key] = Path(build[key])
         }
     }
-    build.ABS_BLD_TOP = Path(build.BLD_TOP).absolute
-    build.ABS_BLD_OUT_DIR = Path(build.BLD_OUT_DIR).absolute
-    build.ABS_BLD_BIN_DIR = Path(build.BLD_BIN_DIR).absolute
-    build.ABS_BLD_TOOLS_DIR = Path(build.BLD_TOOLS_DIR).absolute
+    build.ABS_BLD_TOP = Path(build.BLD_TOP).absolute.portable
+    build.ABS_BLD_OUT_DIR = Path(build.BLD_OUT_DIR).absolute.portable
+    build.ABS_BLD_BIN_DIR = Path(build.BLD_BIN_DIR).absolute.portable
+    build.ABS_BLD_TOOLS_DIR = Path(build.BLD_TOOLS_DIR).absolute.portable
 }
 
 /*
@@ -190,20 +191,29 @@ public function preparePrefixes(options)
  */
 public function fold(path: Path, options)
 {
-    let data = path.readLines()
-    for each (line in data) {
-        if (options.fold) {
-            if (line.length > 80) {
-                for (i = 79; i >= 0; i--) {
-                    if (line[i] == ' ') {
-                        line[i] = '\n'
-                        break
-                    }
+    let lines = path.readLines()
+    let out = new TextStream(new File(path, "wt"))
+    for (l = 0; l < lines.length; l++) {
+        let line = lines[l]
+        if (options.fold && line.length > 80) {
+            for (i = 79; i >= 0; i--) {
+                if (line[i] == ' ') {
+                    lines[l] = line.slice(0, i)
+                    lines.insert(l + 1, line.slice(i + 1))
+                    break
                 }
             }
+            if (i == 0) {
+                lines[l] = line.slice(0, 80)
+                lines.insert(l + 1, line.slice(80))
+            }
         }
+        out.writeLine(lines[l])
     }
-    path.write(data)
+    for each (line in lines) {
+        out.writeLine(line)
+    }
+    out.close()
 }
 
 
@@ -212,7 +222,7 @@ public function fold(path: Path, options)
 public function expand(path: Path, options)
 {
     let data = path.readString()
-    for each (token in options.build) {
+    for (token in options.build) {
         data.replace(RegExp("!!" + token + "!!", "g"), options.build[token])
     }
     path.write(data)

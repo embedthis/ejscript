@@ -12,7 +12,7 @@
      <SRC>$(BLD_TOP)/src</SRC>
      <CORE>$(BLD_TOP)/src/core</CORE>
      <JEMS>$(BLD_TOP)/src/jems</JEMS>
-     <BLD_ABS_BIN_DIR>$([System.IO.Path]::GetFullPath('$(BLD_OUT_DIR)/bin'))</BLD_ABS_BIN_DIR>
+     <BLD_ABS_BIN_DIR>$([System.IO.Path]::GetFullPath('$(BLD_OUT_DIR)'))\bin</BLD_ABS_BIN_DIR>
   </PropertyGroup>
   <ItemDefinitionGroup>
     <ClCompile>

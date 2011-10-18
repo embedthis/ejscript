@@ -7344,7 +7344,7 @@ static int getPathInfo(MprDiskFileSystem *fs, cchar *path, MprPath *info);
 /*
     Open a file with support for cygwin paths. Tries windows path first then under /cygwin.
  */
-static int cygOpen(cchar *path, int omode, int perms)
+static int cygOpen(MprFileSystem *fs, cchar *path, int omode, int perms)
 {
     int     fd;
 
@@ -7372,7 +7372,7 @@ static MprFile *openFile(MprFileSystem *fs, cchar *path, int omode, int perms)
         return NULL;
     }
     file->path = sclone(path);
-    file->fd = cygOpen(path, omode, perms);
+    file->fd = cygOpen(fs, path, omode, perms);
     if (file->fd < 0) {
 #if WIN
         /*
@@ -15225,7 +15225,9 @@ char *mprGetRelPath(cchar *pathArg)
                 break;
             }
         } else {
-            if (*hp != *cp) {
+            if (*hp == *cp) {
+				;
+			} else if (tolower((int) *hp) != tolower((int) *cp)) {
                 break;
             }
         }

@@ -12,11 +12,9 @@ var build = options.build
 var src: Path = options.build.BLD_SRC_PREFIX
 src.makeDir()
 
-
 copy("Makefile", src)
-
-copy("*.TXT", src, {fold: true, expand: true})
-
+copy("LICENSE.TXT", src, {from: "doc/licenses", fold: true, expand: true})
+copy("*.TXT", src, {from: "doc/product", fold: true, expand: true})
 copy("configure", src, {permissions: 0755})
 
 copy("build/*", src, {
@@ -52,7 +50,7 @@ copy("package/*", src, {
 copy("src/*", src, {
     recurse: true,
     include: /^src\/Makefile|^src\/cmd|^src\/compiler|^src\/core|^src\/slots|^src\/deps|^src\/vm|^src\/jems|^src\/utils|\.h$/,
-    exclude: /\.log$|fcgi/
+    exclude: /\.log$|fcgi|ejs.debugger|ejs.cgi|\.lst$|ejs.zip|\.stackdump$/
 })
 
 copy("doc/*", src, {
