@@ -61,16 +61,12 @@ module ejs {
             @options owner String representing the file owner
             @options group String representing the file group
             @options permissions Number File Posix permissions mask
-            @hide
          */
-        #FUTURE
         native function get attributes(): Object
 
         /**
             @duplicate Path.attributes
-            @hide
          */
-        #FUTURE
         native function set attributes(attributes: Object): Void
 
         /**
@@ -99,6 +95,8 @@ module ejs {
             @param target New file location
             @param options Object hash
             @options permissions Set to a numeric Posix permissions mask. Not implemented.
+            @options owner String representing the file owner
+            @options group String representing the file group
          */
         native function copy(target: Object, options: Object? = null): Void
 
@@ -138,7 +136,7 @@ module ejs {
             @param recurse Set to true to examine sub-directories. 
             @return Return a list of matching files and directories
          */
-        function find(glob: String = "*", recurse: Boolean = true): Array {
+        function find(glob = "*", recurse: Boolean = true): Array {
             function recursiveFind(path: Path, pattern: RegExp, level: Number): Array {
                 let result: Array = []
                 if (path.isDir && (recurse || level == 0)) {
@@ -150,6 +148,7 @@ module ejs {
                     }
                 }
                 if (Config.OS == "WIN") {
+                    //  MOB - better to do caseless match
                     if (path.basename.toString().toLowerCase().match(pattern)) {
                         result.append(path)
                     }
@@ -160,11 +159,31 @@ module ejs {
                 }
                 return result
             }
-            if (Config.OS == "WIN") {
-                glob = glob.toLowerCase()
+            if (glob is RegExp) {
+                pattern = glob
+            } else {
+                if (Config.OS == "WIN") {
+                    //  MOB - better to do caseless match
+                    glob = glob.toString().toLowerCase()
+                }
+                pattern = RegExp("^" + glob.toString().replace(/\./g, "\\.").replace(/\*/g, ".*") + "$")
             }
-            pattern = RegExp("^" + glob.replace(/\./g, "\\.").replace(/\*/g, ".*") + "$")
-            return recursiveFind(this, pattern, recurse, 0)
+            return recursiveFind(this, pattern, 0)
+        }
+
+        /*
+            TODO - should do pattern matching like find()
+            @hide
+         */
+        function findAbove(name: String): Path {
+            let dir: Path = this
+            do {
+                if (dir.join(name).exists) {
+                    return dir.join(name)
+                }
+                dir = dir.parent
+            } while (dir != dir.parent)
+            return null
         }
 
         /**
@@ -266,8 +285,8 @@ module ejs {
                 the function returns without throwing an exception.
             @param options
             @options permissions Set to a numeric Posix permissions mask
-            @options owner String representing the file owner (Not implemented)
-            @options group String representing the file group (Not implemented)
+            @options owner String representing the file owner
+            @options group String representing the file group
             @throws IOError if the directory cannot be created.
          */
         native function makeDir(options: Object? = null): Void
@@ -293,6 +312,14 @@ module ejs {
             @return a new Path after mapping separators
          */
         native function map(sep: String = separator): Path
+
+        /**
+            Match the path to a regular expression pattern
+            @param pattern The regular expression pattern to search for
+            @return Returns an array of matching substrings in the path
+         */
+        function match(pattern: RegExp): Array
+            this.toString().match(pattern)
 
         /** 
             Get the mime type for a path or extension string. The path's extension is used to lookup the corresponding
@@ -330,8 +357,8 @@ module ejs {
             @options mode optional file access mode string. Use "r" for read, "w" for write, "a" for append to existing
                 content, "+" never truncate.
             @options permissions optional Posix permissions number mask. Defaults to 0664.
-            @options owner String representing the file owner (Not implemented)
-            @options group String representing the file group (Not implemented)
+            @options owner String representing the file owner
+            @options group String representing the file group
             @return a File object which implements the Stream interface.
             @throws IOError if the path or file cannot be created.
          */
@@ -345,8 +372,8 @@ module ejs {
                 content, "+" never truncate.
             @options encoding Text encoding format
             @options permissions optional Posix permissions number mask. Defaults to 0664.
-            @options owner String representing the file owner (Not implemented)
-            @options group String representing the file group (Not implemented)
+            @options owner String representing the file owner
+            @options group String representing the file group
             @return a TextStream object which implements the Stream interface.
             @throws IOError if the path or file cannot be opened or created.
          */
@@ -359,8 +386,8 @@ module ejs {
             @options mode optional file access mode with values ored from: Read, Write, Append, Create, Open, Truncate. 
                 Defaults to Read.
             @options permissions optional Posix permissions number mask. Defaults to 0664.
-            @options owner String representing the file owner (Not implemented)
-            @options group String representing the file group (Not implemented)
+            @options owner String representing the file owner
+            @options group String representing the file group
             @return a BinaryStream object which implements the Stream interface.
             @throws IOError if the path or file cannot be opened or created.
          */
