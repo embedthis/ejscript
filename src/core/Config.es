@@ -56,9 +56,9 @@ module ejs {
         native static const BinDir: String
 
         /**
-            Modules directory
+            Include directory
          */
-        native static const ModDir: String
+        native static const IncDir: String
 
         /** @hide */
         native static const Legacy: Boolean
