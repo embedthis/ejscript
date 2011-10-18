@@ -45,7 +45,6 @@ public function copy(src: Path, target: Path = Dir, options = {})
         dir = src.dirname
         from = ""
     }
-
     let files = options.top.join(dir).find(pat, options.recurse)
 
     for each (let file: Path in files) {
@@ -64,6 +63,13 @@ public function copy(src: Path, target: Path = Dir, options = {})
         }
         let dest: Path
         if (target.isDir) {
+
+/*
+print("FROM " + from)
+print("DIR  " + dir)
+print("FILE " + file)
+print("TARG " + target)
+*/
             dest = Path("" + target + "/" + file.trimStart(from)).normalize.portable
         } else {
             dest = target
@@ -168,7 +174,6 @@ public function preparePrefixes(options)
     build.ABS_BLD_OUT_DIR = Path(build.BLD_OUT_DIR).absolute.portable
     build.ABS_BLD_BIN_DIR = Path(build.BLD_BIN_DIR).absolute.portable
     build.ABS_BLD_TOOLS_DIR = Path(build.BLD_TOOLS_DIR).absolute.portable
-    build.BLD_VS = Path(build.BLD_VS).absolute.portable
 }
 
 /*

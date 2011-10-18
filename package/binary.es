@@ -10,7 +10,6 @@ var top = App.dir.findAbove("configure").dirname
 load(top.join("package/copy.es"))
 var bare: Boolean = App.args[3] == "1"
 var options = copySetup({task: App.args[1], root: Path(App.args[2])})
-options.trace = 1
 var build = options.build
 
 /*
@@ -48,15 +47,12 @@ if (!bare) {
     copy("*.TXT", ver, { from: "doc/product", fold: true, expand: true })
     copy("uninstall.sh", bin.join("uninstall"), {from: "package", permissions: 0755, expand: true})
     copy("linkup", bin.join("linkup"), {from: "package", permissions: 0755, expand: true})
-    if (build.BLD_HOST_OS != "VXWORKS") {
-        copy("angel*", bin, {from: sbin, permissions: 0755, strip: true})
-    }
     copy("www/*", lib, {from: slib, permissions: 0644, recurse: true})
 
     let cmdFilter = (Config.OS == "WIN") ? /undefined/ : /\.cmd/
     copy("*", bin, {
         from: sbin,
-        include: /ejs*|mvc*|ejspage*|jem*|http*|sqlite*/
+        include: /ejs*|mvc*|ejspage*|jem*|http*|sqlite*|angel**/
         exclude: cmdFilter,
         permissions: 0755,
     })

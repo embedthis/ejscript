@@ -2,12 +2,10 @@
     Source files
  */
 
-
 var top = App.dir.findAbove("configure").dirname
 load(top.join("package/copy.es"))
 var bare: Boolean = App.args[3] == "1"
 var options = copySetup({task: App.args[1], root: Path(App.args[2])})
-options.trace = 1
 var build = options.build
 var src: Path = build.BLD_SRC_PREFIX
 src.makeDir()
@@ -49,7 +47,7 @@ copy("package/*", src, {
 
 copy("src/*", src, {
     recurse: true,
-    include: /^src\/Makefile|^src\/cmd|^src\/compiler|^src\/core|^src\/slots|^src\/deps|^src\/vm|^src\/jems|^src\/utils|\.h$/,
+    include: /^src\/Makefile|^src\/cmd|^src\/compiler|^src\/core|^src\/slots|^src\/deps|^src\/vm|^src\/jems|^src\/utils|^src\/samples|\.h$/,
     exclude: /\.log$|fcgi|ejs.debugger|ejs.cgi|\.lst$|ejs.zip|\.stackdump$/
 })
 
