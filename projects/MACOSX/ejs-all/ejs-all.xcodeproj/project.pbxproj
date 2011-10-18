@@ -1931,7 +1931,7 @@
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 			shellPath = /bin/sh;
-			shellScript = "cp $SRC/jems/ejs.mvc/mvc.es $BUILT_PRODUCTS_DIR/mvc\nchmod 755 $BUILT_PRODUCTS_DIR/mvc   \nexit 0";
+			shellScript = "if [ $SRC/jems/ejs.mvc/mvc.es -nt $BUILT_PRODUCTS_DIR/mvc ] ; then\n    cp $SRC/jems/ejs.mvc/mvc.es $BUILT_PRODUCTS_DIR/mvc\n    chmod 755 $BUILT_PRODUCTS_DIR/mvc\nfi\nexit 0";
 		};
 		C903098510A366F0003FF2AB /* ShellScript */ = {
 			isa = PBXShellScriptBuildPhase;
@@ -1944,7 +1944,7 @@
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 			shellPath = /bin/sh;
-			shellScript = "cp $SRC/jems/ejs.jem/jem.es $BUILT_PRODUCTS_DIR/jem\nchmod 755 $BUILT_PRODUCTS_DIR/jem\nexit 0";
+			shellScript = "if [ $SRC/jems/ejs.jem/jem.es -nt $BUILT_PRODUCTS_DIR/jem ] ; then\n    cp $SRC/jems/ejs.jem/jem.es $BUILT_PRODUCTS_DIR/jem\n    chmod 755 $BUILT_PRODUCTS_DIR/jem\nfi\nexit 0";
 		};
 		C9222E510FD5813F00AFA5A4 /* Build */ = {
 			isa = PBXShellScriptBuildPhase;
@@ -2091,7 +2091,7 @@
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 			shellPath = /bin/sh;
-			shellScript = "cp $SRC/jems/ejs.template/ejspage $BUILT_PRODUCTS_DIR/ejspage\nchmod 755 $BUILT_PRODUCTS_DIR/ejspage\nexit 0";
+			shellScript = "if [ $SRC/jems/ejs.template/ejspage -nt $BUILT_PRODUCTS_DIR/ejspage ] ; then\n    cp $SRC/jems/ejs.template/ejspage $BUILT_PRODUCTS_DIR/ejspage\n    chmod 755 $BUILT_PRODUCTS_DIR/ejspage\nfi\nexit 0";
 		};
 		C9BD40CD13D8CC7600CB61A0 /* Initialize */ = {
 			isa = PBXShellScriptBuildPhase;
