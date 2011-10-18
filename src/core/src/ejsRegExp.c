@@ -61,7 +61,7 @@ static EjsRegExp *regex_Constructor(Ejs *ejs, EjsRegExp *rp, int argc, EjsObj **
         free(rp->compiled);
     }
     if ((rp->compiled = pcre_compile2(rp->pattern, rp->options, &errCode, &errMsg, &column, NULL)) == 0) {
-        ejsThrowArgError(ejs, "Can't compile regular expression. Error %s at column %d", errMsg, column);
+        ejsThrowArgError(ejs, "Can't compile regular expression '%s'. Error %s at column %d", rp->pattern, errMsg, column);
         return 0;
     }
     return rp;
@@ -220,7 +220,7 @@ EjsRegExp *ejsCreateRegExp(Ejs *ejs, EjsString *pattern)
         //  TODO - UNICODE is pattern meant to be 
         rp->compiled = pcre_compile2(rp->pattern, rp->options, &errCode, &errMsg, &column, NULL);
         if (rp->compiled == NULL) {
-            ejsThrowArgError(ejs, "Can't compile regular expression. Error %s at column %d", errMsg, column);
+            ejsThrowArgError(ejs, "Can't compile regular expression '%s'. Error %s at column %d", rp->pattern, errMsg, column);
             return 0;
         }
     }
