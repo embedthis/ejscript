@@ -513,6 +513,7 @@ static EjsObj *cmd_stop(Ejs *ejs, EjsCmd *cmd, int argc, EjsObj **argv)
         ejsThrowStateError(ejs, "No active command");
         return 0;
     }
+	mprFinalizeCmd(cmd->mc);
     if (mprStopCmd(cmd->mc, signal) < 0) {
         ejsThrowIOError(ejs, "Can't kill %d with signal %d, errno %d", cmd->mc->pid, signal, errno);
         return ESV(false);
