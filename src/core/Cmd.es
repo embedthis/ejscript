@@ -193,7 +193,7 @@ module ejs {
             Stop the current command. After stopping, the command exit status and any response or error data are
             available for interrogation.
             @param signal Signal to send the the active process.
-            @param timeout Time in seconds to wait for the command to complete. If unspecified, the $timeout propoperty
+            @param timeout Time in milliseconds to wait for the command to complete. If unspecified, the $timeout propoperty
                 value is used instead.
             @return True if successful
           */
@@ -209,7 +209,7 @@ module ejs {
 
         /**
             Wait for a command to complete. 
-            @param timeout Time in seconds to wait for the command to complete. If unspecified, the $timeout propoperty
+            @param timeout Time in milliseconds to wait for the command to complete. If unspecified, the $timeout propoperty
                 value is used instead.
             @return True if the request successfully completes.
          */
