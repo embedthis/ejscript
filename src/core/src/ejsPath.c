@@ -1077,14 +1077,12 @@ static EjsObj *removePath(Ejs *ejs, EjsPath *fp, int argc, EjsObj **argv)
  */
 static EjsObj *renamePathFile(Ejs *ejs, EjsPath *fp, int argc, EjsObj **argv)
 {
-    EjsPath     *toPath;
-    cchar       *to;
+    EjsPath     *to;
 
     mprAssert(argc == 1 && ejsIs(ejs, argv[0], Path));
-    toPath = (EjsPath*) argv[0];
-    to = ejsToMulti(ejs, (void*) toPath->value);
-    unlink((char*) to);
-    if (rename(fp->value, to) < 0) {
+    to = (EjsPath*) argv[0];
+    unlink((char*) to->value);
+    if (rename(fp->value, to->value) < 0) {
         return ESV(false);
     }
     return ESV(true);
