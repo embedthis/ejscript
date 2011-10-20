@@ -68,7 +68,7 @@ if (!bare) {
 copy("*.mod", lib, {from: slib})
 copy("*" + build.BLD_SHOBJ, lib, {from: slib, permissions: 0755, strip: true})
 
-if (build.BLD_UNIX_LIKE = 1) {
+if (build.BLD_UNIX_LIKE == 1) {
     copy("*.1", man.join("man1"), {from: "doc/man", compress: true })
 }
 
