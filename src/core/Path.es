@@ -144,28 +144,38 @@ module ejs {
         /**
             Find matching files. Files are listed in depth first order.
             @param glob Glob style Pattern that files must match. This is similar to a ls() style pattern.
-            @param recurse Set to true to examine sub-directories. 
+            @param options Find options
+            @option recurse Set to true to examine sub-directories. 
+            @option dirsLast Set to true to list directories last in the list. By default, directories are first.
             @return Return a list of matching files and directories
          */
-        function find(glob = "*", recurse: Boolean = true): Array {
+        function find(glob = "*", options = {recurse: true}): Array {
             function recursiveFind(path: Path, pattern: RegExp, level: Number): Array {
                 let result: Array = []
-                if (Config.OS == "WIN") {
-                    //  MOB - better to do caseless match
-                    if (path.basename.toString().toLowerCase().match(pattern)) {
-                        result.append(path)
-                    }
-                } else {
-                    if (path.basename.toString().match(pattern)) {
+                if (!options.dirsLast) {
+                    if (Config.OS == "WIN") {
+                        if (path.basename.toString().toLowerCase().match(pattern)) {
+                            result.append(path)
+                        }
+                    } else if (path.basename.toString().match(pattern)) {
                         result.append(path)
                     }
                 }
-                if (path.isDir && (recurse || level == 0)) {
+                if (path.isDir && (options.recurse || level == 0)) {
                     for each (f in path.files(true)) {
                         let got: Array = recursiveFind(f, pattern, level + 1)
                         for each (i in got) {
                             result.append(i)
                         }
+                    }
+                }
+                if (options.dirsLast) {
+                    if (Config.OS == "WIN") {
+                        if (path.basename.toString().toLowerCase().match(pattern)) {
+                            result.append(path)
+                        }
+                    } else if (path.basename.toString().match(pattern)) {
+                        result.append(path)
                     }
                 }
                 return result
@@ -523,7 +533,7 @@ module ejs {
             if (name == "" || name == "/") {
                 throw new ArgError("Bad path for removeAll")
             }
-            for each (f in find('*')) {
+            for each (f in find('*', {recurse: true, dirsLast: true})) {
                 if (!f.remove()) {
                     passed = false
                 }
