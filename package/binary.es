@@ -40,7 +40,7 @@ if (options.task == "Remove" && bin.join("linkup").exists) {
     bin.join("linkup").copy(saveLink)
 }
 
-copy("ejs*", bin, {from: sbin, permissions: 0755, strip: true})
+copy("ejs*", bin, {from: sbin, permissions: 0755, strip: true, exclude: /ejspage/})
 
 if (!bare) {
     copy("LICENSE.TXT", ver, { from: "doc/licenses", fold: true, expand: true })
