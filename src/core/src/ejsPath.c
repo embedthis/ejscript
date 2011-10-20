@@ -681,15 +681,16 @@ static EjsObj *makePathDir(Ejs *ejs, EjsPath *fp, int argc, EjsObj **argv)
             perms = ejsGetInt(ejs, permissions);
         }
     }
-    if (mprGetPathInfo(fp->value, &info) == 0 && info.isDir) {
-        return 0;
-    }
-    if (mprMakeDir(fp->value, perms, 1) < 0) {
-        ejsThrowIOError(ejs, "Can't create directory %s", fp->value);
-        return 0;
+    if (mprGetPathInfo(fp->value, &info) < 0) {
+        if (mprMakeDir(fp->value, perms, 1) < 0) {
+            return ESV(false);
+        }
+    } else if (!info.isDir) {
+        /* Not a directory */
+        return ESV(false);
     }
     ejsSetPathAttributes(ejs, fp->value, attributes);
-    return 0;
+    return ESV(true);
 }
 
 
@@ -1072,7 +1073,7 @@ static EjsObj *removePath(Ejs *ejs, EjsPath *fp, int argc, EjsObj **argv)
 /*
     Rename the file
   
-    function rename(to: String): Void
+    function rename(to: String): Boolean
  */
 static EjsObj *renamePathFile(Ejs *ejs, EjsPath *fp, int argc, EjsObj **argv)
 {
@@ -1082,10 +1083,9 @@ static EjsObj *renamePathFile(Ejs *ejs, EjsPath *fp, int argc, EjsObj **argv)
     to = ejsToMulti(ejs, argv[0]);
     unlink((char*) to);
     if (rename(fp->value, to) < 0) {
-        ejsThrowIOError(ejs, "Can't rename file %s to %s", fp->value, to);
-        return 0;
+        return ESV(false);
     }
-    return 0;
+    return ESV(true);
 }
 
 

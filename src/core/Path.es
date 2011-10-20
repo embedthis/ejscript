@@ -287,9 +287,9 @@ module ejs {
             @options permissions Set to a numeric Posix permissions mask
             @options owner String representing the file owner
             @options group String representing the file group
-            @throws IOError if the directory cannot be created.
+            @return True if the directory can be made or already exists
          */
-        native function makeDir(options: Object? = null): Void
+        native function makeDir(options: Object? = null): Boolean
 
         /**
             Create a link to a file. Not available on some platforms such as Windows and VxWorks.
@@ -522,13 +522,12 @@ module ejs {
             return passed
         }
 
-        //  MOB - type target as path, will auto convert
         /**
             Rename a file. If the new path exists it is removed before the rename.
-            @param target New name of the path. Can be either a Path or String.
-            @throws IOError if the original file does not exist or cannot be renamed.
+            @param target New name of the path
+            @return True if the file is renamed.
          */
-        native function rename(target: Object): Void
+        native function rename(target: Path): Boolean
         
         /**
             Replace the path extension and return a new path.
