@@ -27,12 +27,16 @@ var bin: Path = build.BLD_BIN_PREFIX
 var lib: Path = build.BLD_LIB_PREFIX
 var ver: Path = build.BLD_VER_PREFIX
 var jem: Path = build.BLD_JEM_PREFIX
+var man: Path = build.BLD_MAN_PREFIX
 
 bin.makeDir()
 lib.makeDir()
-lib.join("www").makeDir()
 ver.makeDir()
 jem.makeDir()
+if (!bare) {
+    man.join("man1").makeDir()
+    lib.join("www").makeDir()
+}
 
 var saveLink 
 if (options.task == "Remove" && bin.join("linkup").exists) {
@@ -63,6 +67,10 @@ if (!bare) {
 
 copy("*.mod", lib, {from: slib})
 copy("*" + build.BLD_SHOBJ, lib, {from: slib, permissions: 0755, strip: true})
+
+if (build.BLD_UNIX_LIKE = 1) {
+    copy("*.1", man.join("man1"), {from: "doc/man", compress: true })
+}
 
 if (build.BLD_HOST_OS == "WIN") {
     if (build.BLD_CC_CL_VERSION == 16) {
