@@ -1073,14 +1073,16 @@ static EjsObj *removePath(Ejs *ejs, EjsPath *fp, int argc, EjsObj **argv)
 /*
     Rename the file
   
-    function rename(to: String): Boolean
+    function rename(to: Path): Boolean
  */
 static EjsObj *renamePathFile(Ejs *ejs, EjsPath *fp, int argc, EjsObj **argv)
 {
-    cchar    *to;
+    EjsPath     *toPath;
+    cchar       *to;
 
-    mprAssert(argc == 1 && ejsIs(ejs, argv[0], String));
-    to = ejsToMulti(ejs, argv[0]);
+    mprAssert(argc == 1 && ejsIs(ejs, argv[0], Path));
+    toPath = (EjsPath*) argv[0];
+    to = ejsToMulti(ejs, (void*) toPath->value);
     unlink((char*) to);
     if (rename(fp->value, to) < 0) {
         return ESV(false);
