@@ -26,12 +26,12 @@ $(BLD_LIB_DIR)/$(MOD): *.es $(BLD_LIB_DIR)/ejs.mod
 	rm -f $(NAME).slots.h
 
 package.json: Makefile $(BLD_INC_DIR)/buildConfig.h
-	jem --field version --value $(BLD_VERSION) edit
+	ejs $(BLD_BIN_DIR)/jem --field version --value $(BLD_VERSION) edit
 
 $(BLD_JEM_DIR)/$(JEM): $(BLD_LIB_DIR)/$(MOD) package.json
-	jem setdeps $(BLD_LIB_DIR)/$(MOD)
-	jem build
-	jem --to $(BLD_JEM_DIR) publish $(JEM)
+	ejs $(BLD_BIN_DIR)/jem setdeps $(BLD_LIB_DIR)/$(MOD)
+	ejs $(BLD_BIN_DIR)/jem build
+	ejs $(BLD_BIN_DIR)/jem --to $(BLD_JEM_DIR) publish $(JEM)
 	rm -f $(JEM).jem
 
 cleanExtra:

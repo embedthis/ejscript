@@ -16,11 +16,11 @@ compileExtra: $(TARGETS)
 module:		dummy
 
 package.json: Makefile $(BLD_INC_DIR)/buildConfig.h
-	jem --field version --value $(BLD_VERSION) edit
+	ejs $(BLD_BIN_DIR)/jem --field version --value $(BLD_VERSION) edit
 
 $(BLD_JEM_DIR)/$(JEM): $(BLD_BIN_DIR)/jem package.json
-	jem build
-	jem --to $(BLD_JEM_DIR) publish $(JEM)
+	ejs $(BLD_BIN_DIR)/jem build
+	ejs $(BLD_BIN_DIR)/jem --to $(BLD_JEM_DIR) publish $(JEM)
 	rm -f $(JEM).jem
 
 $(BLD_BIN_DIR)/jem: jem.es
