@@ -1063,7 +1063,9 @@ static EjsObj *removePath(Ejs *ejs, EjsPath *fp, int argc, EjsObj **argv)
 {
     MprPath     info;
 
-    if (mprGetPathInfo(fp->value, &info) == 0) {
+    //  MOB - workaround for isLink
+    info.isLink = 0;
+    if (mprGetPathInfo(fp->value, &info) == 0 || info.isLink == 1) {
         if (mprDeletePath(fp->value) < 0) {
             return ESV(false);
         }
