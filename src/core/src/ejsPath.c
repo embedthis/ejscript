@@ -567,11 +567,10 @@ static EjsBoolean *isPathDir(Ejs *ejs, EjsPath *fp, int argc, EjsObj **argv)
 static EjsBoolean *isPathLink(Ejs *ejs, EjsPath *fp, int argc, EjsObj **argv)
 {
     MprPath     info;
-    int         rc;
 
     //  MOB -work around. GetPathInfo will return err if the target of the symlink does not exist.
     info.isLink = 0;
-    rc = mprGetPathInfo(fp->value, &info);
+    mprGetPathInfo(fp->value, &info);
     return ejsCreateBoolean(ejs, info.isLink);
 }
 
