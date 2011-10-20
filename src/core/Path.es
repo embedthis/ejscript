@@ -511,11 +511,16 @@ module ejs {
                 throw new ArgError("Bad path for removeAll")
             }
             for each (f in find('*')) {
-                f.remove()
+                if (!f.remove()) {
+                    throw new IOError("Can't remove '" + f + "'")
+                }
             }
-            remove()
+            if (!remove()) {
+                throw new IOError("Can't remove '" + name + "'")
+            }
         }
 
+        //  MOB - type target as path, will auto convert
         /**
             Rename a file. If the new path exists it is removed before the rename.
             @param target New name of the path. Can be either a Path or String.
