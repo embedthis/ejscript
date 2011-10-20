@@ -504,20 +504,22 @@ module ejs {
             Removes a directory and its contents
             If the path is a directory, this call will remove all subdirectories and their contents and finally the
             directory itself. If the directory does not exist, this call does not error and does nothing.
-            @throws IOError if the directory exists and cannot be removed.
+            @return True if all the contents are sucessfully deleted. Otherwise return false.
          */
-        function removeAll(): Void {
+        function removeAll(): Boolean {
+            let passed = true
             if (name == "" || name == "/") {
                 throw new ArgError("Bad path for removeAll")
             }
             for each (f in find('*')) {
                 if (!f.remove()) {
-                    throw new IOError("Can't remove '" + f + "'")
+                    passed = false
                 }
             }
             if (!remove()) {
-                throw new IOError("Can't remove '" + name + "'")
+                passed = false
             }
+            return passed
         }
 
         //  MOB - type target as path, will auto convert
