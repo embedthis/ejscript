@@ -56,6 +56,17 @@ module ejs {
         native function get accessed(): Date 
 
         /**
+            Append data to a file.
+            @param data Data to append to the file
+            @param options File open options. Defaults to "atw"
+         */
+        function append(data, options = "atw"): Void {
+            let file = open(options)
+            file.write(data)
+            file.close()
+        }
+
+        /**
             File security permissions.
             @return the file attributes object hash. Fields include: 
             @options owner String representing the file owner
@@ -139,14 +150,6 @@ module ejs {
         function find(glob = "*", recurse: Boolean = true): Array {
             function recursiveFind(path: Path, pattern: RegExp, level: Number): Array {
                 let result: Array = []
-                if (path.isDir && (recurse || level == 0)) {
-                    for each (f in path.files(true)) {
-                        let got: Array = recursiveFind(f, pattern, level + 1)
-                        for each (i in got) {
-                            result.append(i)
-                        }
-                    }
-                }
                 if (Config.OS == "WIN") {
                     //  MOB - better to do caseless match
                     if (path.basename.toString().toLowerCase().match(pattern)) {
@@ -155,6 +158,14 @@ module ejs {
                 } else {
                     if (path.basename.toString().match(pattern)) {
                         result.append(path)
+                    }
+                }
+                if (path.isDir && (recurse || level == 0)) {
+                    for each (f in path.files(true)) {
+                        let got: Array = recursiveFind(f, pattern, level + 1)
+                        for each (i in got) {
+                            result.append(i)
+                        }
                     }
                 }
                 return result
