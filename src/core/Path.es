@@ -496,7 +496,7 @@ module ejs {
 
         /**
             Delete the file associated with the Path object. If this is a directory without contents it will be removed.
-            @return True if the file is sucessfully deleted
+            @return True if the file is sucessfully deleted or does not exist.
          */
         native function remove(): Boolean 
 
@@ -504,7 +504,8 @@ module ejs {
             Removes a directory and its contents
             If the path is a directory, this call will remove all subdirectories and their contents and finally the
             directory itself. If the directory does not exist, this call does not error and does nothing.
-            @return True if all the contents are sucessfully deleted. Otherwise return false.
+            @return True if all the contents are sucessfully deleted or if the directory does not exist. 
+                Otherwise return false.
          */
         function removeAll(): Boolean {
             let passed = true
