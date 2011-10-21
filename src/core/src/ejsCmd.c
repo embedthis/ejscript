@@ -499,26 +499,23 @@ static EjsNumber *cmd_status(Ejs *ejs, EjsCmd *cmd, int argc, EjsObj **argv)
 
 
 /**
-    function stop(signal: Number = 2, timeout: Number = -1): Boolean
+    function stop(signal: Number = 2): Boolean
  */
 static EjsObj *cmd_stop(Ejs *ejs, EjsCmd *cmd, int argc, EjsObj **argv)
 {
-    MprTime     timeout;
-    int         signal;
+    int     signal;
 
     signal = (argc >= 1) ? ejsGetInt(ejs, argv[0]) : SIGINT;
-    timeout = argc >= 2 ? ejsGetInt(ejs, argv[1]) : cmd->timeout;
 
     if (cmd->mc == 0) {
         ejsThrowStateError(ejs, "No active command");
         return 0;
     }
-	mprFinalizeCmd(cmd->mc);
-    if (mprStopCmd(cmd->mc, signal) < 0) {
-        ejsThrowIOError(ejs, "Can't kill %d with signal %d, errno %d", cmd->mc->pid, signal, errno);
-        return ESV(false);
+    mprFinalizeCmd(cmd->mc);
+    if (!mprIsCmdRunning(cmd->mc)) {
+        return ESV(true);
     }
-    if (mprWaitForCmd(cmd->mc, timeout) < 0) {
+    if (mprStopCmd(cmd->mc, signal) < 0) {
         return ESV(false);
     }
     return ESV(true);
