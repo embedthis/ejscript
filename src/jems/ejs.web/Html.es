@@ -150,11 +150,13 @@ module ejs.web {
         }
 
         function icon(uri: String, options: Object): Void {
-            //MOB uri = request.link(uri)
+            //  MOB - what other places should support use request.link
+            uri = request.link(uri)
             write('    <link href="' + uri + '" rel="shortcut icon" />\r\n')
         }
 
         function image(src: String, options: Object): Void {
+            src = request.link(src)
             write('<img src="' + src + '"' + getAttributes(options) + '/>\r\n')
         }
 

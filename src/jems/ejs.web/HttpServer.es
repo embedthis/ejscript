@@ -27,7 +27,9 @@ module ejs.web {
             dirs: {
                 cache: Path("cache"),
                 layouts: Path("layouts"),
+/*
                 views: Path("views"),
+ */
             },
             extensions: {
                 es:  "es",
@@ -245,6 +247,7 @@ server.listen("127.0.0.1:7777")
                 documents = options.documents || "."
                 home = options.home || "."
             }
+            home = home.relative
             config = options.config || App.config
             this.options = options
             let ejsrc = options.ejsrc || config.files.ejsrc
@@ -258,6 +261,7 @@ server.listen("127.0.0.1:7777")
                     App.updateLog()
                 }
             }
+            /* Prefix dirs with the home directory */
             let dirs = config.dirs
             for (let [key, value] in dirs) {
                 dirs[key] = home.join(value)
@@ -396,7 +400,7 @@ server.listen("127.0.0.1:7777")
             @param app Web application function 
          */
         function process(app: Function, request: Request, finalize: Boolean = true): Void {
-let mark = new Date
+// let mark = new Date
             request.config = config
             try {
                 if (request.route && request.route.middleware) {

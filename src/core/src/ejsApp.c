@@ -253,6 +253,9 @@ static EjsObj *app_run(Ejs *ejs, EjsObj *unused, int argc, EjsObj **argv)
     timeout = (argc > 0) ? ejsGetInt(ejs, argv[0]) : MAXINT;
     oneEvent = (argc > 1) ? ejsGetInt(ejs, argv[1]) : 0;
 
+    if (ejs->hosted) {
+        return ESV(true);
+    }
     if (timeout < 0) {
         timeout = MAXINT;
     }

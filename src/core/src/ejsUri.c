@@ -666,6 +666,7 @@ static EjsUri *uri_replaceExtension(Ejs *ejs, EjsUri *up, int argc, EjsObj **arg
 }
 
 
+//  MOB - Uri should get a cast helper. Then this API and others can be typed.
 /*  
     function resolve(target): Uri
  */
@@ -807,7 +808,20 @@ static EjsUri *uri_template(Ejs *ejs, EjsUri *up, int argc, EjsObj **argv)
 
     buf = mprCreateBuf(-1, -1);
     for (cp = pattern; *cp; cp++) {
-        if (*cp == '{' && (cp == pattern || cp[-1] != '\\')) {
+        if (*cp == '~' && (cp == pattern || cp[-1] != '\\')) {
+            for (i = 0; i < options->length; i++) {
+                obj = options->data[i];
+                if ((value = ejsGetPropertyByName(ejs, obj, N(NULL, "scriptName"))) != 0 && ejsIsDefined(ejs, value)) {
+                    str = ejsToMulti(ejs, value);
+                    if (str && *str) {
+                        mprPutStringToBuf(buf, str);
+                        break;
+                    } else {
+                        value = 0;
+                    }
+                }
+            }
+        } else if (*cp == '{' && (cp == pattern || cp[-1] != '\\')) {
             if ((ep = strchr(++cp, '}')) != 0) {
                 len = (int) (ep - cp);
                 token = mprMemdup(cp, len + 1);
@@ -1141,6 +1155,7 @@ void ejsConfigureUriType(Ejs *ejs)
     if ((type = ejsFinalizeScriptType(ejs, N("ejs", "Uri"), sizeof(EjsUri), manageUri,
             EJS_TYPE_OBJ | EJS_TYPE_MUTABLE_INSTANCES)) != 0) {
         type->helpers.clone = (EjsCloneHelper) cloneUri;
+        //  MOB - Add cast helper to cast from Strings, Paths etc.
         type->helpers.invokeOperator = (EjsInvokeOperatorHelper) invokeUriOperator;
 
         ejsBindMethod(ejs, type, ES_Uri_decode, uri_decode);

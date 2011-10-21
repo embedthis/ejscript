@@ -289,7 +289,7 @@ module ejs.web {
             corresponding to the application, but middleware may modify this to be an arbitrary string representing 
             the application.  The script name is often determined by the Router as it parses the request using 
             the routing tables. The scriptName will be set to the empty string if not defined, otherwise is should begin
-            with a "/" character. NOTE: changing script name will not update home or absHome.
+            with a "/" character. NOTE: changing script name will not update the home property.
          */
         native enumerable var scriptName: String
 
@@ -529,7 +529,7 @@ module ejs.web {
             @option action String Action to invoke. This can be a URI string or a Controller action of the form
                 @Controller/action.
             @option route String Route name to use for the URI template
-            @return A normalized, server-local Uri object.
+            @return A normalized, server-local Uri object. The returned URI will be an absolute URI.
             @example
 Given a current request of http://example.com/samples/demo" and "r" == the current request:
 
@@ -565,8 +565,16 @@ r.link({product: "candy", quantity: "10", template: "/cart/{product}/{quantity}}
                     //  MOB - what about a possible controller in the target?
                     target = {action: target}
                 } else {
-                    /* Non-mvc URI string */
-                    target = {uri: (target[0] == '/') ? (scriptName + target) : target}
+                    if (target[0] == '~') {
+                        target = scriptName + target.slice(1)
+                    } else if (target[0] == '/') {
+                        target = scriptName + target
+            /*
+                    } else if (!target.contains("/")) {
+                        return new Uri(target)
+            */
+                    }
+                    target = {uri: target}
                 }
             }
             //  MOB - remove target.uri tunneling except internally in this routine
@@ -594,6 +602,7 @@ r.link({product: "candy", quantity: "10", template: "/cart/{product}/{quantity}}
                 }
             }
             if (target.route && target.template) {
+                target.scriptName = scriptName
                 target = Uri.template(target.template, target).path
             }
             return uri.local.resolve(target).normalize

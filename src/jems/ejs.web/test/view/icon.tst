@@ -32,6 +32,6 @@ server.on("readable", function (event, request: Request) {
 })
 
 
-proxy("icon", "favicon.ico", '<link href="favicon.ico" rel="shortcut icon" />')
+proxy("icon", "favicon.ico", '<link href="/favicon.ico" rel="shortcut icon" />')
 
 server.close()

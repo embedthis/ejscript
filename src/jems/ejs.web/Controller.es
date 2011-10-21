@@ -90,6 +90,7 @@ module ejs.web {
             request ? request.uri : null
 
         /********************************************* Methods *******************************************/
+//  MOB - better name
         /** 
             Static factory method to create and initialize a controller. The controller class is specified by 
             params["controller"] which should be set to the controller name without the "Controller" suffix. 
@@ -103,7 +104,8 @@ module ejs.web {
             cname ||= (request.params.controller + "Controller")
             _initRequest = request
             if (!global[cname]) {
-                throw "Can't locate controller "
+print("URI " + request.uri)
+                throw "Can't locate controller: '" + cname + "'"
             }
             let c: Controller = new global[cname](request)
             _initRequest = null

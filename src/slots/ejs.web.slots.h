@@ -290,18 +290,19 @@
    Prototype (instance) slots for "Mvc" type 
  */
 #define ES_ejs_web_Mvc_config                                          0
-#define ES_ejs_web_Mvc_loadConfig                                      1
-#define ES_ejs_web_Mvc_loadRequest                                     2
-#define ES_ejs_web_Mvc_loadComponent                                   3
-#define ES_ejs_web_Mvc_rebuildComponent                                4
-#define ES_ejs_web_Mvc_NUM_INSTANCE_PROP                               5
+#define ES_ejs_web_Mvc_loadRequest                                     1
+#define ES_ejs_web_Mvc_loadComponent                                   2
+#define ES_ejs_web_Mvc_rebuildComponent                                3
+#define ES_ejs_web_Mvc_NUM_INSTANCE_PROP                               4
 #define ES_ejs_web_Mvc_NUM_INHERITED_PROP                              0
 
 /*
     Local slots for methods in type "Mvc" 
  */
-#define ES_ejs_web_Mvc_load_dir                                        0
-#define ES_ejs_web_Mvc_load_config                                     1
+#define ES_ejs_web_Mvc_load_request                                    0
+#define ES_ejs_web_Mvc_load_dir                                        1
+#define ES_ejs_web_Mvc_load_config                                     2
+#define ES_ejs_web_Mvc_openDatabase_home                               0
 
 
 /*
@@ -616,6 +617,6 @@
 #define ES_ejs_web_View_plainFormatter_value                           1
 #define ES_ejs_web_View_plainFormatter_options                         2
 
-#define _ES_CHECKSUM_ejs_web   833003
+#define _ES_CHECKSUM_ejs_web   831193
 
 #endif

@@ -34,8 +34,6 @@ public function proxy(tag, ...args): Http {
     let response = http.response.trim()
     try {
         //  Validate generated control response
-        //  print("EXPECTED " + expected)
-        //  print("RESPONSE " + response)
         if (expected is String) {
             assert(response == expected)
         } else if (expected is Array) {
@@ -57,7 +55,6 @@ public function proxy(tag, ...args): Http {
         print("Assertion failure:")
         print("Expected: \"" + expected + "\"\n")
         print("Actual:   \"" + response + "\"\n")
-        // print(response)
         print(response.length, expected.length)
         throw e
     }

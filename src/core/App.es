@@ -275,8 +275,9 @@ module ejs {
 
         /** 
             Run the application event loop. 
-            A script may call run() to service events. The ejs shell will exit when it has executed the last statement
-            in the script. Calling run() will cause the ejs shell to wait and service events until instructed to exit.
+            A script may call run() to service events. Calling run() will cause the ejs shell to wait and service 
+            events until instructed to exit via App.exit. If the application is hosted in a web server, this routine will
+            return true immediately without blocking. 
             @param timeout Timeout to block waiting for an event in milliseconds before returning. If an event occurs, the
                 call returns immediately. Set to -1 for no timeout.
             @param oneEvent If true, return immediately after servicing at least one ejs event.

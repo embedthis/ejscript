@@ -442,16 +442,19 @@ static char *makeRelativeHome(Ejs *ejs, EjsRequest *req)
         return sclone("/");
     }
     rx = req->conn->rx;
-    mprAssert(rx->pathInfo);
-
     path = rx->pathInfo;
+    mprAssert(path && *path == '/');
     end = &path[strlen(path)];
-    for (levels = 1, sp = &path[1]; sp < end; sp++) {
-        if (*sp == '/' && sp[-1] != '/') {
-            levels++;
+    if (path[1]) {
+        for (levels = 1, sp = &path[1]; sp < end; sp++) {
+            if (*sp == '/' && sp[-1] != '/') {
+                levels++;
+            }
         }
+    } else {
+        levels = 0;
     }
-    home = mprAlloc(levels * 3 + 2);
+    home = mprAlloc(levels * 3 + 1);
     if (levels) {
         for (cp = home; levels > 0; levels--) {
             strcpy(cp, "../");
@@ -459,7 +462,8 @@ static char *makeRelativeHome(Ejs *ejs, EjsRequest *req)
         }
         *cp = '\0';
     } else {
-        strcpy(home, "./");
+        //  MOB - was "./" -- if this is reverted, change mprAlloc to be +2 
+        *home = '\0';
     }
     return home;
 }
@@ -937,20 +941,15 @@ static int setRequestProperty(Ejs *ejs, EjsRequest *req, int slotNum,  EjsObj *v
         These tests require a connection
      */
     case ES_ejs_web_Request_method:
-        if (!connOk(ejs, req, 1)) return 0;
-#if UNUSED
-        if (req->originalMethod == 0) {
-            req->originalMethod = ejsCreateStringFromAsc(ejs, req->conn->rx->method);
+        if (connOk(ejs, req, 0)) {
+            httpSetMethod(req->conn, getRequestString(ejs, value));
         }
-        req->conn->rx->method = sclone(getRequestString(ejs, value));
-#else
-        httpSetMethod(req->conn, getRequestString(ejs, value));
-#endif
         break;
 
     case ES_ejs_web_Request_status:
-        if (!connOk(ejs, req, 1)) return 0;
-        httpSetStatus(req->conn, getNum(ejs, value));
+        if (connOk(ejs, req, 0)) {
+            httpSetStatus(req->conn, getNum(ejs, value));
+        }
         break;
     }
     return 0;

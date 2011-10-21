@@ -116,18 +116,20 @@ module ejs.unix {
         Find matching files. Files are listed in a depth first order.
         @param path Starting path from which to find matching files.
         @param glob Glob style Pattern that files must match. This is similar to a ls() style pattern.
-        @param recurse Set to true to examine sub-directories. 
+        @param options Find options
+        @option recurse Set to true to examine sub-directories. 
+        @option dirsLast Set to true to list directories last in the list. By default, directories are first.
         @return Return a list of matching files
      */
-    function find(path: Object, glob: String = "*", recurse: Boolean = true): Array {
+    function find(path: Object, glob: String = "*", options = {recurse: true}): Array {
         let result = []
         if (path is Array) {
             let paths = path
             for each (path in paths) {
-                result += Path(path).find(glob, recurse)
+                result += Path(path).find(glob, options)
             }
         } else {
-            result += Path(path).find(glob, recurse)
+            result += Path(path).find(glob, options)
         }
         return result
     }
