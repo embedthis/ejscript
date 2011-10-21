@@ -1157,7 +1157,7 @@ static int trimModule(Ejs *ejs, char *name)
         return 0;
     }
     *vp++ = '\0';
-    if (isdigit(*vp)) {
+    if (isdigit((int) *vp)) {
         return ejsParseModuleVersion(vp);
     }
     return 0;
