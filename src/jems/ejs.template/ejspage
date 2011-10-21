@@ -18,9 +18,9 @@ class EjsPage {
 
     function usage(e = null): Void {
         if (e) {
-            error(e)
+            App.log.error(e)
         }
-        error("\nUsage: ejspage [options] [commands] ...\n" +
+        App.log.error("\nUsage: ejspage [options] [commands] ...\n" +
             "  Options:\n" + 
             "    --layout layoutPage\n" + 
             "    --overwrite\n" + 
@@ -54,8 +54,7 @@ class EjsPage {
                 script.write(result)
             }
         } catch (e) {
-            throw e
-            error("ejspage: Error: " + ((e is String) ? e : e.message) + "\n")
+            App.log.error("ejspage: Error: " + ((e is String) ? e : e.message) + "\n")
             App.exit(2)
         }
     }

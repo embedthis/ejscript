@@ -23,7 +23,7 @@ EC_SOURCES=`find ${S}/compiler -name '*.c' | sort`
 ES_SOURCES=`find ${S}/core ${J}/ejs.unix ${J}/ejs.db ${J}/ejs.db.mapper \
     ${J}/ejs.db.sqlite ${J}/ejs.web ${J}/ejs.template -name '*.es' | \
     egrep -v 'SAVE|save|legacy|Archive|old|sample.es|XmlGlobal.es|mvc.es' | \
-    egrep -v 'Jsdb.es|Mysql.es|ejspage.es|\/test\/' | sort`
+    egrep -v 'Jsdb.es|Mysql.es|ejspage|\/test\/' | sort`
 EJSMOD_HEADERS=${S}/cmd/ejsmod.h
 EJSMOD_SOURCES="${S}/cmd/doc.c ${S}/cmd/docFiles.c ${S}/cmd/ejsmod.c ${S}/cmd/listing.c ${S}/cmd/slotGen.c"
 WEB_SOURCES=`find ${J}/ejs.web -name '*.c' | egrep -v 'SAVE|save|legacy|Archive' | sort`
