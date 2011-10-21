@@ -153,7 +153,7 @@ module ejs {
             function recursiveFind(path: Path, pattern: RegExp, level: Number): Array {
                 let result: Array = []
                 if (!options.dirsLast) {
-                    if (Config.OS == "WIN") {
+                    if (Config.OS == "WIN" || Config.OS == "CYGWIN") {
                         if (path.basename.toString().toLowerCase().match(pattern)) {
                             result.append(path)
                         }
@@ -170,7 +170,7 @@ module ejs {
                     }
                 }
                 if (options.dirsLast) {
-                    if (Config.OS == "WIN") {
+                    if (Config.OS == "WIN" || Config.OS == "CYGWIN") {
                         if (path.basename.toString().toLowerCase().match(pattern)) {
                             result.append(path)
                         }
@@ -183,7 +183,7 @@ module ejs {
             if (glob is RegExp) {
                 pattern = glob
             } else {
-                if (Config.OS == "WIN") {
+                if (Config.OS == "WIN" || Config.OS == "CYGWIN") {
                     //  MOB - better to do caseless match
                     glob = glob.toString().toLowerCase()
                 }
