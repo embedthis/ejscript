@@ -193,11 +193,9 @@ module ejs {
             Stop the current command. After stopping, the command exit status and any response or error data are
             available for interrogation.
             @param signal Signal to send the the active process.
-            @param timeout Time in milliseconds to wait for the command to complete. If unspecified, the $timeout propoperty
-                value is used instead.
-            @return True if successful
+            @return True if the command is successfully stopped or the command has completed.
           */
-        native function stop(signal: Number = 2, timeout: Number = -1): Boolean
+        native function stop(signal: Number = 2): Boolean
 
         /**
             Default command timeout for wait(), read(), and blocking start(). If the timeout expires, the command is
