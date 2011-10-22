@@ -19,7 +19,7 @@ module ejs {
             Create a new FileSystem object for the file system that contains the given path.
             @param path String or Path of a file that would reside in the file system.
          */
-        native function FileSystem(path: Object? = null)
+        native function FileSystem(path: Path? = null)
 
         /** 
             Are path names on this file system case sensitive. ie. are uppercase and lowercase path names equivalent
