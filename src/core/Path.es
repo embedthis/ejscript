@@ -44,9 +44,14 @@ module ejs {
          */
         native function Path(path: String)
 
-//  MOB -- uses default native separator
         /**
-            An equivalent absolute path equivalent for the current path. The path is normalized.
+            An equivalent absolute path equivalent for the current path. The path is normalized and uses the native system
+            directory separator.
+            On Windows, this path with contain a drive specifier and will have back-slash directory separators.
+            On Cygwin, this path will be a Cygwin style path without a drive specifier and with forward-slash 
+            directory separators. If the path is outside the cygwin filesystem (outside c:/cygwin), the path 
+            will have a /cygdrive/DRIVE prefix. 
+            To get a windows style path, use the $windows property accessor.
          */
         native function get absolute(): Path
 
@@ -669,7 +674,16 @@ module ejs {
          */
         native function truncate(size: Number): Void
 
+        /**
+            An equivalent normalized windows path equivalent for the current path.
+            On Windows, this path with contain a drive specifier and will have back-slash directory separators.
+            On Cygwin, if the path is outside the c:/cygwin directory, the path will have a /cygdrive/DRIVE prefix.
+            On other systems, this will return an absolute path in the native system format.
+         */
+        native function get windows(): Path
+
         //  MOB rename? - bit confusing "write". This really does a "save"
+        //  MOB - rename to writecContents or save
         /**
             Write the file contents. This method opens the file, writes the contents and closes the file.
             @param args The data to write to the file. Data is serialized in before writing. Note that numbers will not 

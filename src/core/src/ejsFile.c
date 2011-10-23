@@ -16,9 +16,9 @@
 #define isDelim(fp, c)  (c == fp->delimiter)
 #endif
 
-#define FILE_OPEN           0x1     /* File is opened */
-#define FILE_READ           0x2     /* File is opened for reading */
-#define FILE_WRITE          0x4     /* File is opened for writing */
+#define EJS_FILE_OPEN           0x1     /* File is opened */
+#define EJS_FILE_READ           0x2     /* File is opened for reading */
+#define EJS_FILE_WRITE          0x4     /* File is opened for writing */
 
 /**************************** Forward Declarations ****************************/
 
@@ -41,12 +41,12 @@ static EjsNumber *getFileProperty(Ejs *ejs, EjsFile *fp, int slotNum)
     MprOff  offset;
     int     c;
 
-    if (!(fp->mode & FILE_OPEN)) {
+    if (!(fp->mode & EJS_FILE_OPEN)) {
         ejsThrowIOError(ejs, "File is not open");
         return 0;
     }
 #if KEEP
-    if (fp->mode & FILE_READ) {
+    if (fp->mode & EJS_FILE_READ) {
         if (slotNum >= fp->info.size) {
             ejsThrowOutOfBoundsError(ejs, "Bad file index");
             return 0;
@@ -87,7 +87,7 @@ static int lookupFileProperty(Ejs *ejs, EjsFile *fp, EjsName qname)
     if (qname.name == 0 || !isdigit((int) qname.name->value[0])) {
         return EJS_ERR;
     }
-    if (!(fp->mode & FILE_OPEN)) {
+    if (!(fp->mode & EJS_FILE_OPEN)) {
         ejsThrowIOError(ejs, "File is not open");
         return 0;
     }
@@ -107,11 +107,11 @@ static int setFileProperty(Ejs *ejs, EjsFile *fp, int slotNum, EjsObj *value)
     MprOff  offset;
     int     c;
 
-    if (!(fp->mode & FILE_OPEN)) {
+    if (!(fp->mode & EJS_FILE_OPEN)) {
         ejsThrowIOError(ejs, "File is not open");
         return 0;
     }
-    if (!(fp->mode & FILE_WRITE)) {
+    if (!(fp->mode & EJS_FILE_WRITE)) {
         ejsThrowIOError(ejs, "File is not opened for writing");
         return 0;
     }
@@ -222,7 +222,7 @@ static EjsFile *fileConstructor(Ejs *ejs, EjsFile *fp, int argc, EjsObj **argv)
  */
 static EjsBoolean *canReadFile(Ejs *ejs, EjsFile *fp, int argc, EjsObj **argv)
 {
-    return ejsCreateBoolean(ejs, fp->mode & FILE_OPEN && (fp->mode & FILE_READ));
+    return ejsCreateBoolean(ejs, fp->mode & EJS_FILE_OPEN && (fp->mode & EJS_FILE_READ));
 }
 
 
@@ -231,7 +231,7 @@ static EjsBoolean *canReadFile(Ejs *ejs, EjsFile *fp, int argc, EjsObj **argv)
  */
 static EjsBoolean *canWriteFile(Ejs *ejs, EjsFile *fp, int argc, EjsObj **argv)
 {
-    return ejsCreateBoolean(ejs, fp->mode & FILE_OPEN && (fp->mode & FILE_WRITE));
+    return ejsCreateBoolean(ejs, fp->mode & EJS_FILE_OPEN && (fp->mode & EJS_FILE_WRITE));
 }
 
 /*  
@@ -240,7 +240,7 @@ static EjsBoolean *canWriteFile(Ejs *ejs, EjsFile *fp, int argc, EjsObj **argv)
  */
 static EjsObj *closeFile(Ejs *ejs, EjsFile *fp, int argc, EjsObj **argv)
 {
-    if (fp->mode & FILE_OPEN && fp->mode & FILE_WRITE) {
+    if (fp->mode & EJS_FILE_OPEN && fp->mode & EJS_FILE_WRITE) {
         if (mprFlushFile(fp->file) < 0) {
             if (ejs) {
                 ejsThrowIOError(ejs, "Can't flush file data");
@@ -401,7 +401,7 @@ static EjsObj *setFilePosition(Ejs *ejs, EjsFile *fp, int argc, EjsObj **argv)
  */
 static EjsObj *isFileOpen(Ejs *ejs, EjsFile *fp, int argc, EjsObj **argv)
 {
-    return (EjsObj*) ejsCreateBoolean(ejs, fp->mode & FILE_OPEN);
+    return (EjsObj*) ejsCreateBoolean(ejs, fp->mode & EJS_FILE_OPEN);
 }
 
 
@@ -424,7 +424,7 @@ static EjsObj *openFile(Ejs *ejs, EjsFile *fp, int argc, EjsObj **argv)
     if (argc == 0 || !ejsIsDefined(ejs, options)) {
         omode = O_RDONLY | O_BINARY;
         perms = EJS_FILE_PERMS;
-        fp->mode = FILE_READ;
+        fp->mode = EJS_FILE_READ;
         mode = "r";
     } else {
         if (ejsIs(ejs, options, String)) {
@@ -439,10 +439,10 @@ static EjsObj *openFile(Ejs *ejs, EjsFile *fp, int argc, EjsObj **argv)
         }
         omode = mapMode(mode);
         if (!(omode & O_WRONLY)) {
-            fp->mode |= FILE_READ;
+            fp->mode |= EJS_FILE_READ;
         }
         if (omode & (O_WRONLY | O_RDWR)) {
-            fp->mode |= FILE_WRITE;
+            fp->mode |= EJS_FILE_WRITE;
         }
     }
     fp->modeString = sclone(mode);
@@ -463,7 +463,7 @@ static EjsObj *openFile(Ejs *ejs, EjsFile *fp, int argc, EjsObj **argv)
     mprGetPathInfo(&fp->info);
     fp->mapped = mapFile(fp, fp->info.size, MPR_MAP_READ | MPR_MAP_WRITE);
 #endif
-    fp->mode |= FILE_OPEN;
+    fp->mode |= EJS_FILE_OPEN;
     return (EjsObj*) fp;
 }
 
@@ -502,7 +502,7 @@ static EjsObj *readFileBytes(Ejs *ejs, EjsFile *fp, int argc, EjsObj **argv)
         ejsThrowStateError(ejs, "File not open");
         return 0;
     }
-    if (!(fp->mode & FILE_READ)) {
+    if (!(fp->mode & EJS_FILE_READ)) {
         ejsThrowStateError(ejs, "File not opened for reading");
         return 0;
     }
@@ -558,7 +558,7 @@ static EjsString *readFileString(Ejs *ejs, EjsFile *fp, int argc, EjsObj **argv)
         ejsThrowStateError(ejs, "File not open");
         return 0;
     }
-    if (!(fp->mode & FILE_READ)) {
+    if (!(fp->mode & EJS_FILE_READ)) {
         ejsThrowStateError(ejs, "File not opened for reading");
         return 0;
     }
@@ -605,7 +605,7 @@ static EjsNumber *readFile(Ejs *ejs, EjsFile *fp, int argc, EjsObj **argv)
         ejsThrowStateError(ejs, "File not open");
         return 0;
     }
-    if (!(fp->mode & FILE_READ)) {
+    if (!(fp->mode & EJS_FILE_READ)) {
         ejsThrowStateError(ejs, "File not opened for reading");
         return 0;
     }
@@ -687,7 +687,7 @@ EjsObj *writeFile(Ejs *ejs, EjsFile *fp, int argc, EjsObj **argv)
 
     args = (EjsArray*) argv[0];
 
-    if (!(fp->mode & FILE_WRITE)) {
+    if (!(fp->mode & EJS_FILE_WRITE)) {
         ejsThrowStateError(ejs, "File not opened for writing");
         return 0;
     }
@@ -864,12 +864,12 @@ EjsFile *ejsCreateFileFromFd(Ejs *ejs, int fd, cchar *name, int mode)
         return NULL;
     }
     fp->perms = EJS_FILE_PERMS;
-    fp->mode = FILE_OPEN;
+    fp->mode = EJS_FILE_OPEN;
     if (!(mode & O_WRONLY)) {
-        fp->mode |= FILE_READ;
+        fp->mode |= EJS_FILE_READ;
     }
     if (mode & (O_WRONLY | O_RDWR)) {
-        fp->mode |= FILE_WRITE;
+        fp->mode |= EJS_FILE_WRITE;
     }
     if ((fp->file = mprAttachFileFd(fd, name, mode)) == 0) {
         return 0;

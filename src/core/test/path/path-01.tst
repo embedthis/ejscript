@@ -56,6 +56,22 @@ assert(Path("./a.b").relative == "a.b")
 assert(Path("/tmp/a.b").relative.toString().indexOf("../") >= 0)
 assert(Path("/tmp/a.b").relative.isRelative)
 assert(Path("/tmp/a.b").absolute.isAbsolute)
+assert(!Path(".").absolute.endsWith("/"))
+
+if (Config.OS == "CYGWIN") {
+    assert(Path("/a/b").absolute == "/a/b")
+    assert(Path("/a/b").windows == "C:\\cygwin\\a\\b")
+    assert(Path("c:/a/b").absolute == "/cygdrive/c/a/b")
+    assert(Path("c:/a/b").windows == "C:\\a\\b")
+    assert(Path("c:/cygwin/a/b").absolute == "/a/b")
+    assert(Path("c:/cygwin/a/b").windows == "C:\\cygwin\\a\\b")
+} else if (Config.OS == "WIN") {
+    assert(Path("/a/b").absolute == "c:\\cygwin\\a\\b")
+    assert(Path("/a/b").windows == "C:\\cygwin\\a\\b")
+} else {
+    assert(Path("/a/b").absolute == "/a/b")
+    assert(Path("/a/b").windows == "/a/b")
+}
 
 
 //  portable, natural
@@ -307,14 +323,11 @@ assert(count > 2)
 //  accessed, modified, created
 
 assert(Path("unknown").accessed == null)
-
 assert(Path("unknown").created == null)
 assert(Path("unknown").modified == null)
-
 assert(Path("file.dat").accessed is Date)
 assert(Path("file.dat").created is Date)
 assert(Path("file.dat").modified is Date)
-
 
 /*
     -- FUTURE attributes
@@ -336,17 +349,7 @@ assert(Path("file.dat").modified is Date)
     assert(p.size == 20)
     p.remove()
 
-
-    -- FUTURE
-
-    if (Config.OS == "WIN") {
-        p = Path("/a/b/c").absolute
-        p.setRepresentation(Path.NATIVE)
-        assert(p.indexOf("\\") >= 0)
-        assert(p.hasDrive)
-    }
-
-    -- FUTURE - components
+    // components
 
     parts = Path("/a/b/c").components
     assert(parts.length == 4)

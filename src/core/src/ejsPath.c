@@ -1225,6 +1225,16 @@ static EjsObj *truncatePath(Ejs *ejs, EjsPath *fp, int argc, EjsObj **argv)
 }
 
 
+/*
+    Return a windows path name for the path on Windows|Cygwin systems. Otherwise returns and absolute path.
+    function get absolute(): Path
+ */
+static EjsPath *windowsPath(Ejs *ejs, EjsPath *fp, int argc, EjsObj **argv)
+{
+    return ejsCreatePathFromAsc(ejs, mprGetWinPath(fp->value));
+}
+
+
 #if KEEP
 /*
     Put the file contents
@@ -1381,6 +1391,9 @@ void ejsConfigurePathType(Ejs *ejs)
     ejsBindMethod(ejs, prototype, ES_Path_toString, pathToString);
     ejsBindMethod(ejs, prototype, ES_Path_trimExt, trimExt);
     ejsBindMethod(ejs, prototype, ES_Path_truncate, truncatePath);
+#if ES_Path_windows
+    ejsBindMethod(ejs, prototype, ES_Path_windows, windowsPath);
+#endif
 }
 
 
