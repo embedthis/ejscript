@@ -14717,6 +14717,13 @@ char *mprGetAbsPath(cchar *path)
 #elif CYGWIN
     {
         ssize   len;
+        /*
+            cygwin_conf_path has a bug for paths that attempt to address a directory above the root. ie. "../../../.."
+            So must convert to a windows path first.
+         */
+        if (strncmp(path, "../", 3) == 0) {
+            path = mprGetWinPath(path);
+        }
         if ((len = cygwin_conv_path(CCP_WIN_A_TO_POSIX | CCP_ABSOLUTE, path, NULL, 0)) >= 0) {
             /* Len includes room for the null */
             if ((result = mprAlloc(len)) == 0) {
@@ -14917,6 +14924,9 @@ cchar *mprGetLastPathSeparator(cchar *path)
 }
 
 
+/*
+    Return a path with native separators. This means "\\" on windows and cygwin
+ */
 char *mprGetNativePath(cchar *path)
 {
     return mprTransformPath(path, MPR_PATH_NATIVE_SEP);
@@ -15412,10 +15422,10 @@ char *mprTransformPath(cchar *path, int flags)
 
 #if CYGWIN
     if (flags & MPR_PATH_ABS) {
-        if (flags & MPR_PATH_CYGWIN) {
-            result = mprGetAbsPath(path);
-        } else {
+        if (flags & MPR_PATH_WIN) {
             result = mprGetWinPath(path);
+        } else {
+            result = mprGetAbsPath(path);
         }
 #else
     if (flags & MPR_PATH_ABS) {
@@ -15429,7 +15439,7 @@ char *mprTransformPath(cchar *path, int flags)
         result = mprNormalizePath(path);
     }
 
-#if BLD_WIN_LIKE
+#if BLD_WIN_LIKE || CYGWIN
     if (flags & MPR_PATH_NATIVE_SEP) {
         mprMapSeparators(result, '\\');
     }

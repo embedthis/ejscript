@@ -5327,7 +5327,7 @@ extern char *mprSearchPath(cchar *path, int flags, cchar *search, ...);
  */
 #define MPR_PATH_ABS            0x1     /* Normalize to an absolute path */
 #define MPR_PATH_REL            0x2     /* Normalize to an relative path */
-#define MPR_PATH_CYGWIN         0x4     /* Normalize to a cygwin path */
+#define MPR_PATH_WIN            0x4     /* Normalize to a windows path */
 #define MPR_PATH_NATIVE_SEP     0x8     /* Use native path separators */
 
 /**
