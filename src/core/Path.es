@@ -49,9 +49,9 @@ module ejs {
             directory separator.
             On Windows, this path with contain a drive specifier and will have back-slash directory separators.
             On Cygwin, this path will be a Cygwin style path without a drive specifier and with forward-slash 
-            directory separators. If the path is outside the cygwin filesystem (outside c:/cygwin), the path 
+            directory separators. If the path is outside the Cygwin filesystem (outside c:/cygwin), the path 
             will have a /cygdrive/DRIVE prefix. 
-            To get a windows style path, use the $windows property accessor.
+            To get a Windows style path, use the $windows property accessor.
          */
         native function get absolute(): Path
 
@@ -93,7 +93,7 @@ module ejs {
         /**
             Path components. This is the path converted to an absolute path and then broken into components for each
             directory level. It is set to an array object with an element for each segment of the path. The first 
-                element represents the file system root and will be the empty string or drive spec on a windows 
+                element represents the file system root and will be the empty string or drive spec on a Windows 
                 like systems. Array.join("/") can be used to put components back into a complete path.
          */
         native function get components(): Array
@@ -365,8 +365,9 @@ module ejs {
         native function get name(): String 
 
         /**
-            Natural (native) respresentation of the path. This uses the default O/S file system path separator, 
-            this is "\" on windows and "/" on unix and is normalized. See also $portable for a portable representation.
+            Natural (native) respresentation of the path for the platform. This uses the platform file system path 
+            separator, this is "\" on Windows and "/" on unix and Cygwin. The returned path is normalized. 
+            See also $portable for a portable representation.
          */
         native function get natural(): Path 
 
@@ -675,7 +676,7 @@ module ejs {
         native function truncate(size: Number): Void
 
         /**
-            An equivalent normalized windows path equivalent for the current path.
+            An equivalent normalized Windows path equivalent for the current path.
             On Windows, this path with contain a drive specifier and will have back-slash directory separators.
             On Cygwin, if the path is outside the c:/cygwin directory, the path will have a /cygdrive/DRIVE prefix.
             On other systems, this will return an absolute path in the native system format.
