@@ -76,13 +76,8 @@ class EjsMvc {
         dirs = config.dirs
         dirs.home = App.dir
         //  TODO -- should these come from ejsrc
-        if (Config.OS == "WIN") {
-            dirs.lib = App.exeDir.join("../bin")
-            dirs.mod = App.exeDir.join("../bin")
-        } else {
-            dirs.lib = App.exeDir.join("../lib")
-            dirs.mod = App.exeDir.join("../modules")
-        }
+        dirs.lib = Config.LibDir
+        dirs.mod = Config.LibDir
         for (d in dirs) {
             dirs[d] = Path(dirs[d])
         }

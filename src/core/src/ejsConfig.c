@@ -51,27 +51,18 @@ void ejsDefineConfigProperties(Ejs *ejs)
     ejsDefineProperty(ejs, type, -1, N("public", "SSL"), 0, att, ejsCreateBoolean(ejs, BLD_FEATURE_SSL));
     ejsDefineProperty(ejs, type, -1, N("public", "SQLITE"), 0, att, ejsCreateBoolean(ejs, BLD_FEATURE_SQLITE));
 
-#if BLD_WIN_LIKE
-{
-    EjsString    *path;
-
-    path = ejsCreateStringFromAsc(ejs, mprGetAppDir(ejs));
-    ejsDefineProperty(ejs, type, -1, N("public", "BinDir"), 0, att, path);
-    ejsDefineProperty(ejs, type, -1, N("public", "IncDir"), 0, att, 
-        ejsCreateStringFromAsc(ejs, mprNormalizePath(mprJoinPath(mprGetAppDir(ejs), "../inc"))));
-    ejsDefineProperty(ejs, type, -1, N("public", "LibDir"), 0, att, path);
-}
-#else
-#ifdef BLD_BIN_PREFIX
-    ejsDefineProperty(ejs, type, -1, N("public", "BinDir"), 0, att, ejsCreateStringFromAsc(ejs, BLD_BIN_PREFIX));
-#endif
-#ifdef BLD_LIB_PREFIX
-    ejsDefineProperty(ejs, type, -1, N("public", "LibDir"), 0, att, ejsCreateStringFromAsc(ejs, BLD_LIB_PREFIX));
-#endif
-#ifdef BLD_INC_PREFIX
-    ejsDefineProperty(ejs, type, -1, N("public", "IncDir"), 0, att, ejsCreateStringFromAsc(ejs, BLD_INC_PREFIX));
-#endif
-#endif
+    if (mprSamePath(mprGetAppDir(ejs), BLD_BIN_PREFIX)) {
+        ejsDefineProperty(ejs, type, -1, N("public", "BinDir"), 0, att, ejsCreateStringFromAsc(ejs, BLD_BIN_PREFIX));
+        ejsDefineProperty(ejs, type, -1, N("public", "LibDir"), 0, att, ejsCreateStringFromAsc(ejs, BLD_LIB_PREFIX));
+        ejsDefineProperty(ejs, type, -1, N("public", "IncDir"), 0, att, ejsCreateStringFromAsc(ejs, BLD_INC_PREFIX));
+    } else {
+        ejsDefineProperty(ejs, type, -1, N("public", "BinDir"), 0, att, 
+            ejsCreateStringFromAsc(ejs, mprGetAppDir(ejs)));
+        ejsDefineProperty(ejs, type, -1, N("public", "IncDir"), 0, att, 
+            ejsCreateStringFromAsc(ejs, mprNormalizePath(mprJoinPath(mprGetAppDir(ejs), "../" BLD_INC_NAME))));
+        ejsDefineProperty(ejs, type, -1, N("public", "LibDir"), 0, att, 
+            ejsCreateStringFromAsc(ejs, mprNormalizePath(mprJoinPath(mprGetAppDir(ejs), "../" BLD_LIB_NAME))));
+    }
 }
 
 
