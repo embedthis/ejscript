@@ -1440,6 +1440,13 @@
     </member>
     <member kind="function">
       <type>int</type>
+      <name>ejsSetPathAttributes</name>
+      <anchorfile>group___ejs_path.html</anchorfile>
+      <anchor>ga8c5d44c2920c45a03e5d432668339e34</anchor>
+      <arglist>(Ejs *ejs, cchar *path, EjsObj *options)</arglist>
+    </member>
+    <member kind="function">
+      <type>int</type>
       <name>ejsSetupHttpTrace</name>
       <anchorfile>group___ejs_path.html</anchorfile>
       <anchor>gaad418e9cce3ebf26addcddf7c6355a3a</anchor>
@@ -2077,8 +2084,8 @@
       <type>uchar</type>
       <name>byteCode</name>
       <anchorfile>struct_ejs_code.html</anchorfile>
-      <anchor>ade5787c5cae4ad786b976fa9e6bf2106</anchor>
-      <arglist>[ARDEC]</arglist>
+      <anchor>ad7dae4c391c4da29cabdacb1ea44c08f</anchor>
+      <arglist>[MPR_FLEX]</arglist>
     </member>
     <member kind="variable">
       <type>int</type>
@@ -2190,10 +2197,10 @@
       <arglist></arglist>
     </member>
     <member kind="variable">
-      <type>MprHashTable *</type>
+      <type>MprHash *</type>
       <name>table</name>
       <anchorfile>struct_ejs_constants.html</anchorfile>
-      <anchor>a4bbec049399e3a1973b08ca21f9eb81c</anchor>
+      <anchor>aad042de3a33b1cd9c228867955d8c169</anchor>
       <arglist></arglist>
     </member>
   </compound>
@@ -2204,8 +2211,8 @@
       <type>EjsLine</type>
       <name>lines</name>
       <anchorfile>struct_ejs_debug.html</anchorfile>
-      <anchor>aded8d3c3d415ef6e2f84ab0c5752c1c1</anchor>
-      <arglist>[ARDEC]</arglist>
+      <anchor>a48dc78dbcb56939ddcfa14a5d7aaaff2</anchor>
+      <arglist>[MPR_FLEX]</arglist>
     </member>
     <member kind="variable">
       <type>int</type>
@@ -2506,8 +2513,8 @@
       <type>struct EjsSlot</type>
       <name>slots</name>
       <anchorfile>struct_ejs_properties.html</anchorfile>
-      <anchor>abcd0c3e225a7f856a737907c455b5b7d</anchor>
-      <arglist>[ARDEC]</arglist>
+      <anchor>a6025750968c1c7c96c0dc168307f28de</anchor>
+      <arglist>[MPR_FLEX]</arglist>
     </member>
   </compound>
   <compound kind="struct">
@@ -2570,10 +2577,10 @@
       <arglist></arglist>
     </member>
     <member kind="variable">
-      <type>MprHashTable *</type>
+      <type>MprHash *</type>
       <name>nativeModules</name>
       <anchorfile>struct_ejs_service.html</anchorfile>
-      <anchor>a97efd2f39a6f98e5845ba19894a30817</anchor>
+      <anchor>a858a9467cdbd6cc8e68914501ae00d01</anchor>
       <arglist></arglist>
     </member>
     <member kind="variable">

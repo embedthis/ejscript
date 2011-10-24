@@ -3153,7 +3153,7 @@ extern EjsPath *ejsToPath(Ejs *ejs, EjsAny *obj);
     @description Convert the object to a string and then to a Path.
     @param ejs Ejs reference returned from #ejsCreateVM
     @param path Path name to modify
-    @options options Owner, group and permissions options.
+    @param options Owner, group and permissions options.
     @arg permissions optional Posix permissions number mask. Defaults to 0664.
     @arg owner String representing the file owner
     @arg group String representing the file group

@@ -342,6 +342,7 @@
 <tr class="apiDef"><td class="apiType">void</td><td><a href="#group___ejs_1ga3c02a492aa3f1d710feefc959730ad73" class="nameRef">ejsSetDispatcher</a>(<a href="#group___ejs" class="ref">Ejs</a> *ejs, <a href="http.html#mpr.html#struct_mpr_dispatcher" class="ref">MprDispatcher</a> *dispatcher)</td></tr><tr class="apiBrief"><td>&nbsp;</td><td>Set the MPR dispatcher to use for an interpreter.</td></tr>
 <tr class="apiDef"><td class="apiType">int</td><td><a href="#group___ejs_function_1ga05f702078d910b8ba7d8b4f65f41d18a" class="nameRef">ejsSetFunctionCode</a>(<a href="#group___ejs" class="ref">Ejs</a> *ejs, <a href="#group___ejs_function" class="ref">EjsFunction</a> *fun, struct EjsModule *module, <a href="http.html#mpr.html#mpr_8h_1ad5d9ae5e2ea7e75aa605e36485987fc2" class="ref">cuchar</a> *byteCode, <a href="http.html#mpr.html#mpr_8h_1a7d08ccc1e981eb4d5a238641ac4ccfc1" class="ref">ssize</a> len, <a href="#struct_ejs_debug" class="ref">EjsDebug</a> *debug)</td></tr><tr class="apiBrief"><td>&nbsp;</td><td>Set the byte code for a function.</td></tr>
 <tr class="apiDef"><td class="apiType">void</td><td><a href="#group___ejs_http_1gaf24460df769dbdfc75e5cb162acf64c0" class="nameRef">ejsSetHttpLimits</a>(<a href="#group___ejs" class="ref">Ejs</a> *ejs, <a href="http.html#group___http_limits" class="ref">HttpLimits</a> *limits, <a href="#group___ejs_obj" class="ref">EjsObj</a> *obj, <a href="http.html#mpr.html#mpr_8h_1a1062901a7428fdd9c7f180f5e01ea056" class="ref">bool</a> server)</td></tr><tr class="apiBrief"><td>&nbsp;</td><td>Set a Http limits.</td></tr>
+<tr class="apiDef"><td class="apiType">int</td><td><a href="#group___ejs_path_1ga8c5d44c2920c45a03e5d432668339e34" class="nameRef">ejsSetPathAttributes</a>(<a href="#group___ejs" class="ref">Ejs</a> *ejs, <a href="http.html#mpr.html#mpr_8h_1a0f128c3e0c83721af0220c00554e9c4e" class="ref">cchar</a> *path, <a href="#group___ejs_obj" class="ref">EjsObj</a> *options)</td></tr><tr class="apiBrief"><td>&nbsp;</td><td>Set the owner, group and permissions of a file.</td></tr>
 <tr class="apiDef"><td class="apiType">int</td><td><a href="#group___ejs_obj_1ga1ec2f882ca5a1396e47f62079bc2e0d5" class="nameRef">ejsSetProperty</a>(<a href="#group___ejs" class="ref">Ejs</a> *ejs, void *obj, int slotNum, void *value)</td></tr><tr class="apiBrief"><td>&nbsp;</td><td>Set a property&apos;s value.</td></tr>
 <tr class="apiDef"><td class="apiType">int</td><td><a href="#group___ejs_obj_1ga45cd5640470482063816220547248eb2" class="nameRef">ejsSetPropertyByName</a>(<a href="#group___ejs" class="ref">Ejs</a> *ejs, void *obj, <a href="#group___ejs_name" class="ref">EjsName</a> qname, void *value)</td></tr><tr class="apiBrief"><td>&nbsp;</td><td>Set a property&apos;s value.</td></tr>
 <tr class="apiDef"><td class="apiType">int</td><td><a href="#group___ejs_obj_1gafb4a386b0f091bde2cb1a966a07ae4e8" class="nameRef">ejsSetPropertyName</a>(<a href="#group___ejs" class="ref">Ejs</a> *ejs, <a href="#ejs_8h_1a6b33ea7ff8884b09e08ff69d698eb4e9" class="ref">EjsAny</a> *obj, int slotNum, <a href="#group___ejs_name" class="ref">EjsName</a> qname)</td></tr><tr class="apiBrief"><td>&nbsp;</td><td>Set a property&apos;s name.</td></tr>
@@ -739,7 +740,7 @@
 <tr class="apiDef">
 <td>#define</td><td><a href="#ejs_8h_1a0aae75c2be3c0a5c21bf1a030cdde21a" class="nameRef">EJS_SESSION</a>&nbsp;&nbsp;&nbsp;&quot;-ejs-session-&quot;</td>
 </tr>
-<tr class="apiBrief"><td>&nbsp;</td><td>ejsWeb.h -- Header for the Ejscript Web Framework Copyright (c) All Rights Reserved.</td></tr>
+<tr class="apiBrief"><td>&nbsp;</td><td>ejsWeb.h &mdash; Header for the Ejscript Web Framework Copyright (c) All Rights Reserved.</td></tr>
 <tr class="apiDef">
 <td>#define</td><td><a href="#ejs_8h_1afa9ae5ee76d32502b078ddb0432c381b" class="nameRef">EJS_SESSION_TIMER_PERIOD</a>&nbsp;&nbsp;&nbsp;(60 * 1000)</td>
 </tr>
@@ -957,7 +958,7 @@ Interpreter is being destroyed.
     <tr><td class="param">MprDispatcher *</td><td><td>dispatcher</td><td>
 Event dispatcher.
 </td>
-    <tr><td class="param"><a class="ref" BBB href="#struct_mpr_hash_table" external="mpr.dtags">MprHashTable</a> *</td><td><td>doc</td><td>
+    <tr><td class="param"><a class="ref" BBB href="#struct_mpr_hash" external="mpr.dtags">MprHash</a> *</td><td><td>doc</td><td>
 Documentation.
 </td>
     <tr><td class="param"><a class="ref" BBB href="#mpr_8h_1a91ad9478d81a7aaf2593e8d9c3d06a14" external="mpr.dtags">uint</a></td><td><td>dontExit</td><td>
@@ -2011,7 +2012,7 @@ Boolean value.
  When used as a simple byte array, the ByteArray class offers a low level set of methods to insert and extract bytes. The index operator [] can be used to access individual bytes and the copyIn and copyOut methods can be used to get and put blocks of data. In this mode, the read and write position properties are ignored. Access to the byte array is from index zero up to the size defined by the length property. When constructed, the ByteArray can be designated as resizable, in which case the initial size will grow as required to accomodate data and the length property will be updated accordingly. <br/><br/>
  When used as a Stream, the byte array additional write methods to store data at the location specified by the $writePosition property and read methods to read from the $readPosition property. The $available method indicates how much data is available between the read and write position pointers. The $reset method can reset the pointers to the start of the array. When used with for/in, ByteArrays will iterate or enumerate over the available data between the read and write pointers. <br/><br/>
  If numeric values are read or written, they will be encoded according to the value of the endian property which can be set to either LittleEndian or BigEndian. <br/><br/>
- In Stream mode ByteArrays can be configured to run in sync or async mode. Adding observers via the $addObserver method will put a stream into async mode. Events will then be issued for close, eof, read and write events.</dd></dl>
+ In Stream mode ByteArrays can be configured to run in sync or async mode. Adding observers via the $addObserver method will put a stream into async mode. Events will then be issued for close, EOF, read and write events.</dd></dl>
     <dl><dt><b>API</b> Stability:</dt><dd>Evolving.</dd></dl>
     <dl><dt>See Also:</dt><dd>
     <a href="#group___ejs_byte_array_1ga0a3fff1a0c61911846644a5d3b79943b" class="ref">ejsCopyToByteArray</a>, <a href="#group___ejs_byte_array_1ga4587936a91ae2826232be299da064cdf" class="ref">ejsCreateByteArray</a>, <a href="#group___ejs_byte_array_1ga826d8a10b067ba49318dc329cb670439" class="ref">ejsGetByteArrayAvailableData</a>, <a href="#group___ejs_byte_array_1gab768a2dedd251a82e37ea3e2b732f425" class="ref">ejsGetByteArrayRoom</a>, <a href="#group___ejs_byte_array_1ga7c90ce987f93e29f571a243ebcf5f138" class="ref">ejsGrowByteArray</a>, <a href="#group___ejs_byte_array_1ga9e27e074496d87d332a6bb4fab13bce9" class="ref">ejsMakeRoomInByteArray</a>, <a href="#group___ejs_byte_array_1gab64a1e0c64be0f33f83a58e66da4f4e8" class="ref">ejsResetByteArray</a>, <a href="#group___ejs_byte_array_1gae53317802b2494990f39a29403e74343" class="ref">ejsSetByteArrayPositions</a>, <a href="#group___ejs_byte_array_1ga3b2aac807171ed5c62fd35c43e5289d5" class="ref">ejsWriteToByteArray</a></dd></dl>
@@ -5266,6 +5267,27 @@ Filename path.
     <a href="#group___ejs_file" class="ref">EjsFile</a>, <a href="#group___ejs_path_1ga89c88658e009637fe471fef151e9b599" class="ref">ejsCreatePath</a>, <a href="#group___ejs_path_1gacb5b025bc35d864fc937fe4ad6a24224" class="ref">ejsCreatePathFromAsc</a>, <a href="#group___ejs_path_1gacd5f3e05c6dfd42be0bc63a684f2c138" class="ref">ejsToPath</a></dd></dl>
   </div>
 </div>
+<a name="group___ejs_path_1ga8c5d44c2920c45a03e5d432668339e34"></a>
+<div class="api">
+  <div class="prototype">
+    int
+    ejsSetPathAttributes
+(<a href="#group___ejs" class="ref">Ejs</a> *ejs, <a href="http.html#mpr.html#mpr_8h_1a0f128c3e0c83721af0220c00554e9c4e" class="ref">cchar</a> *path, <a href="#struct_ejs_obj" class="ref">EjsObj</a> *options)
+  </div>
+  <div class="apiDetail">
+<p>Set the owner, group and permissions of a file.</p>
+    <dl><dt><b>Description</b>:</dt><dd>Convert the object to a string and then to a Path.</dd></dl>
+    <dl><dt>Parameters:</dt><dd>
+    <table class="parameters" summary="Parameters">
+    <tr><td class="param">ejs</td><td>Ejs reference returned from <a class="ref" BBB href="#group___ejs_1ga98a567fe16481c6bf5368749d831ae77">ejsCreateVM</a></td>
+    <tr><td class="param">path</td><td>Path name to modify.</td>
+    </table></dd></dl>
+    <dl><dt><b>Configure</b> options:</dt><dd>Options Owner, group and permissions options. <ul><li>permissions optional Posix permissions number mask. Defaults to 0664. </li><li>owner String representing the file owner </li><li>group String representing the file group </li></ul></dd></dl>
+    <dl><dt>Returns:</dt><dd>A new Path object.</dd></dl>
+    <dl><dt>See Also:</dt><dd>
+    <a href="#group___ejs_file" class="ref">EjsFile</a>, <a href="#group___ejs_path_1ga89c88658e009637fe471fef151e9b599" class="ref">ejsCreatePath</a>, <a href="#group___ejs_path_1gacb5b025bc35d864fc937fe4ad6a24224" class="ref">ejsCreatePathFromAsc</a>, <a href="#group___ejs_path_1gacd5f3e05c6dfd42be0bc63a684f2c138" class="ref">ejsToPath</a></dd></dl>
+  </div>
+</div>
 <a name="group___ejs_path_1gaad418e9cce3ebf26addcddf7c6355a3a"></a>
 <div class="api">
   <div class="prototype">
@@ -5946,9 +5968,6 @@ Limits object.
     <tr><td class="param"><a class="ref" BBB href="#struct_ejs_obj">EjsObj</a> *</td><td><td>log</td><td>
 Log object.
 </td>
-    <tr><td class="param">EjsString *</td><td><td>originalMethod</td><td>
-Saved original method.
-</td>
     <tr><td class="param"><a class="ref" BBB href="#struct_ejs_obj">EjsObj</a> *</td><td><td>originalUri</td><td>
 Saved original URI.
 </td>
@@ -6211,7 +6230,7 @@ Base object.
     <tr><td class="param">struct EjsString *</td><td><td>prev</td><td>
 Prev string in hash chain.
 </td>
-    <tr><td class="param">MprChar</td><td><td>value[ARDEC]</td><td>
+    <tr><td class="param">MprChar</td><td><td>value[MPR_FLEX]</td><td>
 String value.
 </td>
     </table></dd></dl>
@@ -7777,7 +7796,7 @@ Worker state.
   <div class="prototype">EjsXML</div>
   <div class="apiDetail">
 <p>XML and XMLList class.</p>
-    <dl><dt><b>Description</b>:</dt><dd>The XML class and API is based on ECMA-357 -- ECMAScript for XML (E4X). The XML class is a core class in the E4X specification; it provides the ability to load, parse and save XML documents.</dd></dl>
+    <dl><dt><b>Description</b>:</dt><dd>The XML class and API is based on ECMA-357 &mdash; ECMAScript for XML (E4X). The XML class is a core class in the E4X specification; it provides the ability to load, parse and save XML documents.</dd></dl>
     <dl><dt><b>API</b> Stability:</dt><dd>Evolving.</dd></dl>
     <dl><dt>See Also:</dt><dd>
     <a href="#group___ejs_x_m_l_1ga432be67ad5f8a5b68b19b95b1346693d" class="ref">ejsAppendAttributeToXML</a>, <a href="#group___ejs_x_m_l_1ga30a98eec819837236f296ff8e9fe8560" class="ref">ejsAppendToXML</a>, <a href="#group___ejs_x_m_l_1ga0fe5fac1a54834bb2f00bcdc955c4aa2" class="ref">ejsCreateXML</a>, <a href="#group___ejs_x_m_l_1ga06ebe56f1b1705be503969940047a7c5" class="ref">ejsCreateXMLList</a>, <a href="#group___ejs_x_m_l_1ga93c3341f3b56dd28b760b3b3e88a4f2c" class="ref">ejsGetXMLDescendants</a>, <a href="#group___ejs_x_m_l_1ga6d2d73f2c1b4a483838bca1343f7ab5b" class="ref">ejsIsXML</a>, <a href="#group___ejs_x_m_l_1ga3d1eae3555c74b08fa0ea38fbaac4cea" class="ref">ejsLoadXMLAsc</a>, <a href="#group___ejs_x_m_l_1gaa12c4363491d3ec4c889db2caff2ec96" class="ref">ejsLoadXMLString</a>, <a href="#group___ejs_x_m_l_1ga585079d3c5054298dc0d6a2bc5aea973" class="ref">ejsXMLToBuf</a></dd></dl>
@@ -8140,7 +8159,7 @@ Value of text|attribute|comment|pi.
     <dl><dt><b>Description</b>:</dt><dd>This structure describes a sequence of byte code for a function. It also defines a set of execption handlers pertaining to this byte code.</dd></dl>
     <dl><dt>Fields:</dt><dd>
     <table class="parameters" summary="Parameters">
-    <tr><td class="param"><a class="ref" BBB href="#mpr_8h_1a65f85814a8290f9797005d3b28e7e5fc" external="mpr.dtags">uchar</a></td><td><td>byteCode[ARDEC]</td><td>
+    <tr><td class="param"><a class="ref" BBB href="#mpr_8h_1a65f85814a8290f9797005d3b28e7e5fc" external="mpr.dtags">uchar</a></td><td><td>byteCode[MPR_FLEX]</td><td>
 Byte code.
 </td>
     <tr><td class="param">int</td><td><td>codeLen</td><td>
@@ -8198,7 +8217,7 @@ Length of used bytes in constant pool.
     <tr><td class="param"><a class="ref" BBB href="#mpr_8h_1a7d08ccc1e981eb4d5a238641ac4ccfc1" external="mpr.dtags">ssize</a></td><td><td>poolSize</td><td>
 Size of constant pool storage in bytes.
 </td>
-    <tr><td class="param"><a class="ref" BBB href="#struct_mpr_hash_table" external="mpr.dtags">MprHashTable</a> *</td><td><td>table</td><td>
+    <tr><td class="param"><a class="ref" BBB href="#struct_mpr_hash" external="mpr.dtags">MprHash</a> *</td><td><td>table</td><td>
 Hash table for fast lookup when compiling.
 </td>
     </table></dd></dl>
@@ -8211,7 +8230,7 @@ Hash table for fast lookup when compiling.
 <p>Debug record for module files.</p>
     <dl><dt>Fields:</dt><dd>
     <table class="parameters" summary="Parameters">
-    <tr><td class="param"><a class="ref" BBB href="#struct_ejs_line">EjsLine</a></td><td><td>lines[ARDEC]</td><td>
+    <tr><td class="param"><a class="ref" BBB href="#struct_ejs_line">EjsLine</a></td><td><td>lines[MPR_FLEX]</td><td>
 Debug lines.
 </td>
     <tr><td class="param">int</td><td><td>numLines</td><td>
@@ -8345,10 +8364,10 @@ Property is an instance property.
 Name and namespace used to find the property.
 </td>
     <tr><td class="param"><a class="ref" BBB href="#mpr_8h_1a91ad9478d81a7aaf2593e8d9c3d06a14" external="mpr.dtags">uint</a></td><td><td>nthBase</td><td>
-Property on Nth super type -- count from the object.
+Property on Nth super type &mdash; count from the object.
 </td>
     <tr><td class="param"><a class="ref" BBB href="#mpr_8h_1a91ad9478d81a7aaf2593e8d9c3d06a14" external="mpr.dtags">uint</a></td><td><td>nthBlock</td><td>
-Property on Nth block in the scope chain -- count from the end.
+Property on Nth block in the scope chain &mdash; count from the end.
 </td>
     <tr><td class="param">EjsAny *</td><td><td>obj</td><td>
 Final object / Type containing the variable.
@@ -8406,7 +8425,7 @@ Hash buckets and head of link chains.
     <tr><td class="param">int</td><td><td>size</td><td>
 Current size of slots[] in elements.
 </td>
-    <tr><td class="param">struct <a class="ref" BBB href="#struct_ejs_slot">EjsSlot</a></td><td><td>slots[ARDEC]</td><td>
+    <tr><td class="param">struct <a class="ref" BBB href="#struct_ejs_slot">EjsSlot</a></td><td><td>slots[MPR_FLEX]</td><td>
 Vector of slots containing property references.
 </td>
     </table></dd></dl>
@@ -8439,12 +8458,12 @@ Immutable types are initialized.
 Interned Unicode string hash - shared over all interps.
 </td>
     <tr><td class="param"><a class="ref" BBB href="#mpr_8h_1a91ad9478d81a7aaf2593e8d9c3d06a14" external="mpr.dtags">uint</a></td><td><td>logging</td><td>
-Using --log.
+Using &mdash;log.
 </td>
     <tr><td class="param"><a class="ref" BBB href="#struct_mpr_mutex" external="mpr.dtags">MprMutex</a> *</td><td><td>mutex</td><td>
 Multithread locking.
 </td>
-    <tr><td class="param"><a class="ref" BBB href="#struct_mpr_hash_table" external="mpr.dtags">MprHashTable</a> *</td><td><td>nativeModules</td><td>
+    <tr><td class="param"><a class="ref" BBB href="#struct_mpr_hash" external="mpr.dtags">MprHash</a> *</td><td><td>nativeModules</td><td>
 Set of loaded native modules.
 </td>
     <tr><td class="param"><a class="ref" BBB href="#struct_ejs_helpers">EjsHelpers</a></td><td><td>objHelpers</td><td>

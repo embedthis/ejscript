@@ -6,16 +6,22 @@
 
 include		.makedep
 
-gen: prep mpr.html ejs.html
+gen: prep mpr.html http.html ejs.html
 
 prep:
-	rm -f mpr.html ejs.html 
+	rm -f mpr.html http.html ejs.html 
 
 mpr.html: Makefile mprBare.html *.tem
 	rm -f mpr.html
 	$(call log) "[Generate]" "mpr.html"
 	cat mprHeader.tem >mpr.html
 	cat mprBare.html apiFooter.tem >>mpr.html
+
+http.html: Makefile httpBare.html *.tem
+	rm -f http.html
+	$(call log) "[Generate]" "http.html"
+	cat httpHeader.tem >http.html
+	cat httpBare.html apiFooter.tem >>http.html
 
 ejs.html: Makefile ejsBare.html *.tem
 	make -C ejs gen
