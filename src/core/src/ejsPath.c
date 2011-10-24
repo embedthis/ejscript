@@ -82,7 +82,8 @@ static EjsAny *invokePathOperator(Ejs *ejs, EjsPath *lhs, int opcode,  EjsPath *
         }
     }
 
-    /*  Types now match, both paths
+    /*  
+        Types now match, both paths
      */
     switch (opcode) {
     case EJS_OP_COMPARE_STRICTLY_EQ:
@@ -90,11 +91,11 @@ static EjsAny *invokePathOperator(Ejs *ejs, EjsPath *lhs, int opcode,  EjsPath *
         if (lhs == rhs || (lhs->value == rhs->value)) {
             return ESV(true);
         }
-        return ejsCreateBoolean(ejs,  scmp(lhs->value, rhs->value) == 0);
+        return ejsCreateBoolean(ejs,  mprSamePath(lhs->value, rhs->value));
 
     case EJS_OP_COMPARE_NE:
     case EJS_OP_COMPARE_STRICTLY_NE:
-        return ejsCreateBoolean(ejs,  scmp(lhs->value, rhs->value) != 0);
+        return ejsCreateBoolean(ejs,  !mprSamePath(lhs->value, rhs->value));
 
     case EJS_OP_COMPARE_LT:
         return ejsCreateBoolean(ejs,  scmp(lhs->value, rhs->value) < 0);
@@ -1124,6 +1125,7 @@ static EjsPath *resolvePath(Ejs *ejs, EjsPath *fp, int argc, EjsObj **argv)
 static EjsBoolean *isPathSame(Ejs *ejs, EjsPath *fp, int argc, EjsObj **argv)
 {
     cchar   *other;
+int rc;
 
     if (ejsIs(ejs, argv[0], String)) {
         other = ejsToMulti(ejs, argv[0]);
@@ -1132,7 +1134,12 @@ static EjsBoolean *isPathSame(Ejs *ejs, EjsPath *fp, int argc, EjsObj **argv)
     } else {
         return ESV(false);
     }
-    return (mprSamePath(fp->value, other) ? ESV(true) : ESV(false));
+    rc = mprSamePath(fp->value, other);
+    if (rc) {
+        return ESV(true);
+    }
+    return ESV(false);
+    // return (mprSamePath(fp->value, other) ? ESV(true) : ESV(false));
 }
 
 
