@@ -153,7 +153,7 @@ static void generateImages(EjsMod *mp)
 
     for (df = docFiles; df->path; df++) {
         path = mprJoinPath(mp->docDir, df->path);
-        mprMakeDir(mprGetPathDir(path), 0775, 1);
+        mprMakeDir(mprGetPathDir(path), 0775, -1, -1, 1);
         file = mprOpenFile(path, O_WRONLY | O_CREAT | O_TRUNC | O_BINARY, 0644);
         if (file == 0) {
             mprError("Can't create %s", path);

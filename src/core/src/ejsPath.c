@@ -674,17 +674,27 @@ static EjsObj *makePathDir(Ejs *ejs, EjsPath *fp, int argc, EjsObj **argv)
 {
     MprPath     info;
     EjsObj      *attributes, *permissions;
-    int         perms;
+    int         perms, owner, group;
     
     attributes = (argc >= 1) ? argv[0] : 0;
     perms = 0755;
+    group = owner = -1;
     if (argc == 1) {
+#if BLD_UNIX_LIKE
+        EjsObj  *ownerName, *groupName;
+        if ((groupName = ejsGetPropertyByName(ejs, attributes, EN("group"))) != 0) {
+            group = ejsGetInt(ejs, groupName);
+        }
+        if ((ownerName = ejsGetPropertyByName(ejs, attributes, EN("owner"))) != 0) {
+            owner = ejsGetInt(ejs, ownerName);
+        }
+#endif
         if ((permissions = ejsGetPropertyByName(ejs, attributes, EN("permissions"))) != 0) {
             perms = ejsGetInt(ejs, permissions);
         }
     }
     if (mprGetPathInfo(fp->value, &info) < 0) {
-        if (mprMakeDir(fp->value, perms, 1) < 0) {
+        if (mprMakeDir(fp->value, perms, owner, group, 1) < 0) {
             return ESV(false);
         }
     } else if (!info.isDir) {
