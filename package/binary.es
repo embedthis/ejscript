@@ -40,8 +40,9 @@ if (!bare) {
 
 var saveLink 
 if (options.task == "Remove" && bin.join("linkup").exists) {
-    saveLink = Path.temp()
+    saveLink = Path(".").temp()
     bin.join("linkup").copy(saveLink)
+    saveLink.attributes = {permissions: 0755}
 }
 
 copy("ejs*", bin, {from: sbin, permissions: 0755, strip: true, exclude: /ejspage/})

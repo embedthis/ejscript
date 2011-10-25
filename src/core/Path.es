@@ -71,6 +71,7 @@ module ejs {
             file.close()
         }
 
+        //  MOB - should this be setter - probably not
         /**
             File security permissions.
             @return the file attributes object hash. Fields include: 

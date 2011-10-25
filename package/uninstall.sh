@@ -52,6 +52,7 @@ BLD_LIB_PREFIX="!!ORIG_BLD_LIB_PREFIX!!"
 BLD_MAN_PREFIX="!!ORIG_BLD_MAN_PREFIX!!"
 BLD_PRD_PREFIX="!!ORIG_BLD_PRD_PREFIX!!"
 BLD_SAM_PREFIX="!!ORIG_BLD_SAM_PREFIX!!"
+BLD_SPL_PREFIX="!!ORIG_BLD_SPL_PREFIX!!"
 BLD_SRC_PREFIX="!!ORIG_BLD_SRC_PREFIX!!"
 BLD_VER_PREFIX="!!ORIG_BLD_VER_PREFIX!!"
 BLD_WEB_PREFIX="!!ORIG_BLD_WEB_PREFIX!!"
@@ -188,6 +189,7 @@ postClean() {
 		fi
 		cleanDir "$BLD_MAN_PREFIX"
 		cleanDir "$BLD_SAM_PREFIX"
+		cleanDir "$BLD_SPL_PREFIX"
 		cleanDir "$BLD_INC_PREFIX"
 		cleanDir "$BLD_DOC_PREFIX"
 	fi
@@ -195,6 +197,7 @@ postClean() {
 		cleanDir "$BLD_CFG_PREFIX"
 		cleanDir "$BLD_VER_PREFIX"
 		cleanDir "$BLD_LIB_PREFIX"
+		cleanDir "$BLD_SPL_PREFIX"
 		cleanDir "$BLD_WEB_PREFIX"
 	fi
 	if [ "$removesrc" = "Y" ] ; then
