@@ -1398,9 +1398,7 @@ void ejsConfigurePathType(Ejs *ejs)
     ejsBindMethod(ejs, prototype, ES_Path_toString, pathToString);
     ejsBindMethod(ejs, prototype, ES_Path_trimExt, trimExt);
     ejsBindMethod(ejs, prototype, ES_Path_truncate, truncatePath);
-#if ES_Path_windows
     ejsBindMethod(ejs, prototype, ES_Path_windows, windowsPath);
-#endif
 }
 
 

@@ -1816,9 +1816,10 @@
 #define ES_Path_trimExt                                                63
 #define ES_Path_trimStart                                              64
 #define ES_Path_truncate                                               65
-#define ES_Path_write                                                  66
-#define ES_Path_makeTemp                                               67
-#define ES_Path_NUM_INSTANCE_PROP                                      68
+#define ES_Path_windows                                                66
+#define ES_Path_write                                                  67
+#define ES_Path_makeTemp                                               68
+#define ES_Path_NUM_INSTANCE_PROP                                      69
 #define ES_Path_NUM_INHERITED_PROP                                     0
 
 
@@ -2350,6 +2351,6 @@
 #define ES_XMLList_NUM_INSTANCE_PROP                                   20
 #define ES_XMLList_NUM_INHERITED_PROP                                  0
 
-#define _ES_CHECKSUM_ejs   1461353
+#define _ES_CHECKSUM_ejs   1461357
 
 #endif
