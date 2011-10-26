@@ -11,12 +11,15 @@ load(top.join("package/copy.es"))
 var bare: Boolean = App.args[3] == "1"
 var options = copySetup({task: App.args[1], root: Path(App.args[2])})
 var build = options.build
+var os = build.BLD_HOST_OS
+var product = build.BLD_PRODUCT
 
 /*
     Sources
  */
 var sout: Path = build.BLD_OUT_DIR
 var sbin: Path = build.BLD_BIN_DIR
+var sinc: Path = build.BLD_INC_DIR
 var slib: Path = build.BLD_LIB_DIR
 var sjem: Path = build.BLD_JEM_DIR
 
@@ -25,17 +28,19 @@ var sjem: Path = build.BLD_JEM_DIR
  */
 var bin: Path = build.BLD_BIN_PREFIX
 var lib: Path = build.BLD_LIB_PREFIX
+var inc: Path = build.BLD_INC_PREFIX
 var ver: Path = build.BLD_VER_PREFIX
 var jem: Path = build.BLD_JEM_PREFIX
 var man: Path = build.BLD_MAN_PREFIX
 
-bin.makeDir()
-lib.makeDir()
-ver.makeDir()
-jem.makeDir()
+dperms = {permissions: 0755, owner: '0', group: '0'}
+bin.makeDir(dperms)
+lib.makeDir(dperms)
+ver.makeDir(dperms)
+jem.makeDir(dperms)
 if (!bare) {
-    man.join("man1").makeDir()
-    lib.join("www").makeDir()
+    man.join("man1").makeDir(dperms)
+    lib.join("www").makeDir(dperms)
 }
 
 var saveLink 
@@ -52,7 +57,12 @@ if (!bare) {
     copy("*.TXT", ver, { from: "doc/product", fold: true, expand: true })
     copy("uninstall.sh", bin.join("uninstall"), {from: "package", permissions: 0755, expand: true})
     copy("linkup", bin.join("linkup"), {from: "package", permissions: 0755, expand: true})
-    copy("www/*", lib, {from: slib, permissions: 0644, recurse: true})
+    copy("www/*", lib, {
+        from: slib, 
+        exclude: /treeview/,
+        permissions: 0644, 
+        recurse: true
+    })
 
     let cmdFilter = (Config.OS == "WIN") ? /undefined/ : /\.cmd/
     copy("*", bin, {

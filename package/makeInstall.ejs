@@ -26,6 +26,12 @@ configureProduct() {
 		rm -f "${BLD_CFG_PREFIX}/${BLD_PRODUCT}/fileList.txt"
 		rm -f "${BLD_INC_PREFIX}/fileList.txt"
 		rm -f "/usr/share/${BLD_PRODUCT}/fileList.txt"
+        rm -f "${BLD_LIB_PREFIX}/libcrypto"* 
+        rm -f "${BLD_LIB_PREFIX}/libssl"*
+        rm -f "${BLD_LIB_PREFIX}/*.mod"
+        rm -f "${BLD_LIB_PREFIX}/*.so"
+        rm -rf "${BLD_SPL_PREFIX}"
+        rm -rf "${BLD_INC_PREFIX}"
 		;;
 
     complete)
