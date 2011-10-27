@@ -119,7 +119,7 @@ static EjsString *createFormData(Ejs *ejs, EjsRequest *req)
 
 static EjsString *createFormData(Ejs *ejs, EjsRequest *req)
 {
-    return ejsCreateStringFromAsc(ejs, httpGetFormData(req->conn));
+    return ejsCreateStringFromAsc(ejs, httpGetParamsString(req->conn));
 }
 #endif
 
