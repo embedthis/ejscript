@@ -1134,7 +1134,9 @@ static EjsObj *req_on(Ejs *ejs, EjsRequest *req, int argc, EjsAny **argv)
     if (conn->readq->count > 0) {
         ejsSendEvent(ejs, req->emitter, "readable", NULL, req);
     }
-    if (!conn->writeComplete && !conn->error && HTTP_STATE_CONNECTED <= conn->state && conn->state < HTTP_STATE_COMPLETE &&
+    if (!conn->connectorComplete && 
+            !conn->error && HTTP_STATE_CONNECTED <= conn->state && 
+            conn->state < HTTP_STATE_COMPLETE &&
             conn->writeq->ioCount == 0) {
         ejsSendEvent(ejs, req->emitter, "writable", NULL, req);
     }
@@ -1328,8 +1330,9 @@ static EjsNumber *req_write(Ejs *ejs, EjsRequest *req, int argc, EjsObj **argv)
         req->written += written;
         total += written;
     }
-
-    if (!conn->writeComplete && !conn->error && HTTP_STATE_CONNECTED <= conn->state && conn->state < HTTP_STATE_COMPLETE &&
+    if (!conn->connectorComplete && 
+            !conn->error && HTTP_STATE_CONNECTED <= conn->state && 
+            conn->state < HTTP_STATE_COMPLETE &&
             conn->writeq->ioCount == 0) {
         ejsSendEvent(ejs, req->emitter, "writable", NULL, req);
     }

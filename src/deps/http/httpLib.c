@@ -125,14 +125,6 @@ void httpSetAuthDeny(HttpAuth *auth, cchar *client)
 }
 
 
-#if UNUSED && KEEP
-void httpSetAuthGroup(HttpConn *conn, cchar *group)
-{
-    conn->authGroup = sclone(group);
-}
-#endif
-
-
 void httpSetAuthOrder(HttpAuth *auth, int order)
 {
     auth->order = order;
@@ -1570,6 +1562,510 @@ void __pamAuth() {}
 
 /************************************************************************/
 /*
+ *  Start of file "./src/cache.c"
+ */
+/************************************************************************/
+
+/*
+    cache.c -- Http request route caching 
+
+    Caching operates as both a handler and an output filter. If acceptable cached content is found, the 
+    cacheHandler will serve it instead of the normal handler. If no content is acceptable and caching is enabled
+    for the request, the cacheFilter will capture and save the response.
+
+    Copyright (c) All Rights Reserved. See copyright notice at the bottom of the file.
+ */
+
+
+
+
+static void clientCache(HttpConn *conn);
+static bool fetchCachedResponse(HttpConn *conn);
+static HttpCache *lookupCacheControl(HttpConn *conn);
+static char *makeCacheKey(HttpConn *conn);
+static void manageHttpCache(HttpCache *cache, int flags);
+static int matchCacheFilter(HttpConn *conn, HttpRoute *route, int dir);
+static int matchCacheHandler(HttpConn *conn, HttpRoute *route, int dir);
+static void outgoingCacheFilterService(HttpQueue *q);
+static void processCacheHandler(HttpQueue *q);
+static void saveCachedResponse(HttpConn *conn);
+
+
+int httpOpenCacheHandler(Http *http)
+{
+    HttpStage     *handler, *filter;
+
+    /*
+        Create the cache handler to serve cached content 
+     */
+    if ((handler = httpCreateHandler(http, "cacheHandler", HTTP_STAGE_ALL, NULL)) == 0) {
+        return MPR_ERR_CANT_CREATE;
+    }
+    http->cacheHandler = handler;
+    handler->match = matchCacheHandler;
+    handler->process = processCacheHandler;
+
+    /*
+        Create the cache filter to capture and cache response content
+     */
+    if ((filter = httpCreateFilter(http, "cacheFilter", HTTP_STAGE_ALL, NULL)) == 0) {
+        return MPR_ERR_CANT_CREATE;
+    }
+    http->cacheFilter = filter;
+    filter->match = matchCacheFilter;
+    filter->outgoingService = outgoingCacheFilterService;
+    return 0;
+}
+
+
+/*
+    See if there is acceptable cached content to serve
+ */
+static int matchCacheHandler(HttpConn *conn, HttpRoute *route, int dir)
+{
+    HttpCache   *cache;
+
+    mprAssert(route->caching);
+
+    if ((cache = conn->tx->cache = lookupCacheControl(conn)) == 0) {
+        /* Caching not configured for this route */
+        return HTTP_ROUTE_REJECT;
+    }
+    if (cache->flags & HTTP_CACHE_CLIENT) {
+        clientCache(conn);
+        /* Doing client side caching and so don't need the cacheHandler */
+        return HTTP_ROUTE_REJECT;
+
+    } else if (!(cache->flags & HTTP_CACHE_MANUAL) && fetchCachedResponse(conn)) {
+        /* Found cached content */
+        return HTTP_ROUTE_OK;
+    }
+    /*
+        Caching is configured but no acceptable cached content. Create a capture buffer for the cacheFilter.
+     */
+    conn->tx->cacheBuffer = mprCreateBuf(-1, -1);
+    return HTTP_ROUTE_REJECT;
+}
+
+
+static void processCacheHandler(HttpQueue *q) 
+{
+    HttpConn    *conn;
+    HttpTx      *tx;
+
+    conn = q->conn;
+    tx = conn->tx;
+    if (tx->cachedContent) {
+        mprLog(3, "cacheHandler: write cached content for '%s'", conn->rx->uri);
+        httpWriteString(q, tx->cachedContent);
+    }
+    httpFinalize(conn);
+}
+
+
+static int matchCacheFilter(HttpConn *conn, HttpRoute *route, int dir)
+{
+    if ((dir & HTTP_STAGE_TX) && conn->tx->cacheBuffer) {
+        mprLog(3, "cacheFilter: Cache response content for '%s'", conn->rx->uri);
+        return HTTP_ROUTE_OK;
+    }
+    return HTTP_ROUTE_REJECT;
+}
+
+
+/*
+    This will be enabled when caching is enabled for the route and there is no acceptable cache data to use.
+    OR - manual caching has been enabled.
+ */
+static void outgoingCacheFilterService(HttpQueue *q)
+{
+    HttpPacket  *packet;
+    HttpConn    *conn;
+    HttpTx      *tx;
+    int         useCache;
+
+    conn = q->conn;
+    tx = conn->tx;
+    useCache = 0;
+
+    if (mprLookupKey(conn->tx->headers, "X-SendCache") != 0) {
+        if (fetchCachedResponse(conn)) {
+            mprLog(3, "cacheFilter: write cached content for '%s'", conn->rx->uri);
+            useCache = 1;
+        }
+    }
+    for (packet = httpGetPacket(q); packet; packet = httpGetPacket(q)) {
+        if (!httpWillNextQueueAcceptPacket(q, packet)) {
+            httpPutBackPacket(q, packet);
+            return;
+        }
+        if (packet->flags & HTTP_PACKET_DATA) {
+            if (useCache) {
+                mprFlushBuf(packet->content);
+                mprPutBlockToBuf(packet->content, tx->cachedContent, slen(tx->cachedContent));
+
+            } else if (tx->cacheBuffer) {
+                mprPutBlockToBuf(tx->cacheBuffer, mprGetBufStart(packet->content), mprGetBufLength(packet->content));
+            }
+
+        } else if (packet->flags & HTTP_PACKET_END && !useCache && tx->cacheBuffer) {
+            saveCachedResponse(conn);
+        }
+        httpPutPacketToNext(q, packet);
+    }
+}
+
+
+/*
+    Find a qualifying cache control entry. Any configured uri,method,extension,type must match.
+ */
+static HttpCache *lookupCacheControl(HttpConn *conn)
+{
+    HttpRx      *rx;
+    HttpTx      *tx;
+    HttpCache   *cache;
+    cchar       *mimeType, *ukey;
+    int         next;
+
+    rx = conn->rx;
+    tx = conn->tx;
+
+    /*
+        Find first qualifying cache control entry. Any configured uri,method,extension,type must match.
+     */
+    for (next = 0; (cache = mprGetNextItem(rx->route->caching, &next)) != 0; ) {
+        if (cache->uris) {
+            if (cache->flags & HTTP_CACHE_ONLY) {
+                ukey = sfmt("%s?%s", rx->pathInfo, httpGetParamsString(conn));
+            } else {
+                ukey = rx->pathInfo;
+            }
+            if (!mprLookupKey(cache->uris, ukey)) {
+                continue;
+            }
+        }
+        if (cache->methods && !mprLookupKey(cache->methods, rx->method)) {
+            continue;
+        }
+        if (cache->extensions && !mprLookupKey(cache->extensions, tx->ext)) {
+            continue;
+        }
+        if (cache->types) {
+            if ((mimeType = (char*) mprLookupMime(conn->host->mimeTypes, tx->ext)) != 0) {
+                if (!mprLookupKey(cache->types, mimeType)) {
+                    continue;
+                }
+            }
+        }
+        /* All match */
+        break;
+    }
+    return cache;
+}
+
+
+static void clientCache(HttpConn *conn)
+{
+    HttpTx      *tx;
+    HttpCache   *cache;
+    cchar       *value;
+
+    tx = conn->tx;
+    cache = conn->tx->cache;
+
+    if (!mprLookupKey(tx->headers, "Cache-Control")) {
+        if ((value = mprLookupKey(conn->tx->headers, "Cache-Control")) != 0) {
+            if (strstr(value, "max-age") == 0) {
+                httpAppendHeader(conn, "Cache-Control", "max-age=%d", cache->lifespan / MPR_TICKS_PER_SEC);
+            }
+        } else {
+            httpAddHeader(conn, "Cache-Control", "max-age=%d", cache->lifespan / MPR_TICKS_PER_SEC);
+        }
+#if UNUSED && KEEP
+        {
+            /* Old HTTP/1.0 clients don't understand Cache-Control */
+            struct tm   tm;
+            mprDecodeUniversalTime(&tm, conn->http->now + (expires * MPR_TICKS_PER_SEC));
+            httpAddHeader(conn, "Expires", "%s", mprFormatTime(MPR_HTTP_DATE, &tm));
+        }
+#endif
+    }
+}
+
+
+/*
+    See if there is acceptable cached content for this request. If so, return true.
+    Will setup tx->cacheBuffer as a side-effect if the output should be captured and cached.
+ */
+static bool fetchCachedResponse(HttpConn *conn)
+{
+    HttpRx      *rx;
+    HttpTx      *tx;
+    HttpRoute   *route;
+    MprTime     modified, when;
+    HttpCache   *cache;
+    cchar       *value, *key, *tag;
+    int         status, cacheOk, canUseClientCache;
+
+    rx = conn->rx;
+    tx = conn->tx;
+    route = rx->route;
+    cache = tx->cache;
+    mprAssert(cache);
+
+    /*
+        Transparent caching. Manual caching must manually call httpWriteCached()
+     */
+    key = makeCacheKey(conn);
+    if ((value = httpGetHeader(conn, "Cache-Control")) != 0 && 
+            (scontains(value, "max-age=0", -1) == 0 || scontains(value, "no-cache", -1) == 0)) {
+        mprLog(3, "Client reload. Cache-control header '%s' rejects use of cached content.", value);
+
+    } else if ((tx->cachedContent = mprReadCache(conn->host->cache, key, &modified, 0)) != 0) {
+        /*
+            See if a NotModified response can be served. This is much faster than sending the response.
+            Observe headers:
+                If-None-Match: "ec18d-54-4d706a63"
+                If-Modified-Since: Fri, 04 Mar 2011 04:28:19 GMT
+            Set status to OK when content must be transmitted.
+         */
+        cacheOk = 1;
+        canUseClientCache = 0;
+        tag = mprGetMD5(key);
+        if ((value = httpGetHeader(conn, "If-None-Match")) != 0) {
+            canUseClientCache = 1;
+            if (scmp(value, tag) != 0) {
+                cacheOk = 0;
+            }
+        }
+        if (cacheOk && (value = httpGetHeader(conn, "If-Modified-Since")) != 0) {
+            canUseClientCache = 1;
+            mprParseTime(&when, value, 0, 0);
+            if (modified > when) {
+                cacheOk = 0;
+            }
+        }
+        mprLog(3, "cacheHandler: Use cached content for %s, status %d", key, status);
+        status = (canUseClientCache && cacheOk) ? HTTP_CODE_NOT_MODIFIED : HTTP_CODE_OK;
+        httpSetStatus(conn, status);
+        httpSetHeader(conn, "Etag", mprGetMD5(key));
+        httpSetHeader(conn, "Last-Modified", mprFormatUniversalTime(MPR_HTTP_DATE, modified));
+        return 1;
+    }
+    mprLog(3, "cacheHandler: No cached content for %s", key);
+    return 0;
+}
+
+
+static void saveCachedResponse(HttpConn *conn)
+{
+    HttpTx      *tx;
+    MprBuf      *buf;
+    MprTime     modified;
+
+    tx = conn->tx;
+
+    mprAssert(conn->finalized && tx->cacheBuffer);
+    buf = tx->cacheBuffer;
+    mprAddNullToBuf(buf);
+    tx->cacheBuffer = 0;
+    /* 
+        Truncate modified time to get a 1 sec resolution. This is the resolution for If-Modified headers.  
+     */
+    modified = mprGetTime() / MPR_TICKS_PER_SEC * MPR_TICKS_PER_SEC;
+    mprWriteCache(conn->host->cache, makeCacheKey(conn), mprGetBufStart(buf), modified, tx->cache->lifespan, 0, 0);
+}
+
+
+ssize httpWriteCached(HttpConn *conn)
+{
+    HttpRoute   *route;
+    MprTime     modified;
+    cchar       *key, *content;
+
+    route = conn->rx->route;
+    if (!conn->tx->cache) {
+        return MPR_ERR_CANT_FIND;
+    }
+    key = makeCacheKey(conn);
+    if ((content = mprReadCache(conn->host->cache, key, &modified, 0)) == 0) {
+        mprLog(3, "No cached data for ", key);
+        return 0;
+    }
+    mprLog(5, "Used cached ", key);
+    httpSetHeader(conn, "Etag", mprGetMD5(key));
+    httpSetHeader(conn, "Last-Modified", mprFormatUniversalTime(MPR_HTTP_DATE, modified));
+    conn->tx->cacheBuffer = 0;
+    httpWriteString(conn->writeq, content);
+    httpFinalize(conn);
+    return slen(content);
+}
+
+
+int httpUpdateCache(HttpConn *conn, cchar *data)
+{
+    HttpCache   *cache;
+
+    if ((cache = conn->tx->cache) == 0) {
+        return MPR_ERR_CANT_FIND;
+    }
+    mprWriteCache(conn->host->cache, makeCacheKey(conn), data, 0, cache->lifespan, 0, 0);
+    return 0;
+}
+
+
+/*
+    Add cache configuration to the route. This can be called multiple times.
+    Uris, extensions and methods may optionally provide a space or comma separated list of items.
+    If URI is NULL or "*", cache all URIs for this route. Otherwise, cache only the given URIs. 
+    The URIs may contain an ordered set of request parameters. For example: "/user/show?name=john&posts=true"
+    Note: the URI should not include the route prefix (scriptName)
+    The extensions should not contain ".". The methods may contain "*" for all methods.
+ */
+void httpAddCache(HttpRoute *route, cchar *methods, cchar *uris, cchar *extensions, cchar *types, MprTime lifespan, 
+        int flags)
+{
+    HttpCache   *cache;
+    char        *item, *tok;
+
+    cache = 0;
+    if (!route->caching) {
+        httpAddRouteHandler(route, "cacheHandler", "");
+        httpAddRouteFilter(route, "cacheFilter", "", HTTP_STAGE_TX);
+        route->caching = mprCreateList(0, 0);
+
+    } else if (flags & HTTP_CACHE_RESET) {
+        route->caching = mprCreateList(0, 0);
+
+    } else if (route->parent && route->caching == route->parent->caching) {
+        route->caching = mprCloneList(route->parent->caching);
+    }
+    if ((cache = mprAllocObj(HttpCache, manageHttpCache)) == 0) {
+        return;
+    }
+    if (extensions) {
+        cache->extensions = mprCreateHash(0, 0);
+        for (item = stok(sclone(extensions), " \t,", &tok); item; item = stok(0, " \t,", &tok)) {
+            mprAddKey(cache->extensions, item, cache);
+        }
+    } else if (types) {
+        cache->types = mprCreateHash(0, 0);
+        for (item = stok(sclone(types), " \t,", &tok); item; item = stok(0, " \t,", &tok)) {
+            mprAddKey(cache->types, item, cache);
+        }
+    }
+    if (methods) {
+        cache->methods = mprCreateHash(0, MPR_HASH_CASELESS);
+        for (item = stok(sclone(methods), " \t,", &tok); item; item = stok(0, " \t,", &tok)) {
+            if (smatch(item, "*")) {
+                methods = 0;
+            } else {
+                mprAddKey(cache->methods, item, cache);
+            }
+        }
+    }
+    if (uris) {
+        cache->uris = mprCreateHash(0, 0);
+        for (item = stok(sclone(uris), " \t,", &tok); item; item = stok(0, " \t,", &tok)) {
+            if (flags & HTTP_CACHE_ONLY && route->prefix && !scontains(item, sfmt("prefix=%s", route->prefix), -1)) {
+                /*
+                    Auto-add ?prefix=ROUTE_NAME if there is no query
+                 */
+                if (!schr(item, '?')) {
+                    item = sfmt("%s?prefix=%s", item, route->prefix); 
+                }
+            }
+            mprAddKey(cache->uris, item, cache);
+        }
+    }
+    if (lifespan <= 0) {
+        lifespan = route->lifespan;
+    }
+    cache->lifespan = lifespan;
+    cache->flags = flags;
+    mprAddItem(route->caching, cache);
+
+    mprLog(3, "Caching route %s for methods %s, URIs %s, extensions %s, types %s, lifespan %d", 
+        route->name,
+        (methods) ? methods: "*",
+        (uris) ? uris: "*",
+        (extensions) ? extensions: "*",
+        (types) ? types: "*",
+        cache->lifespan / MPR_TICKS_PER_SEC);
+}
+
+
+static void manageHttpCache(HttpCache *cache, int flags)
+{
+    if (flags & MPR_MANAGE_MARK) {
+        mprMark(cache->uris);
+        mprMark(cache->extensions);
+        mprMark(cache->methods);
+        mprMark(cache->types);
+    }
+}
+
+
+static char *makeCacheKey(HttpConn *conn)
+{
+    HttpRx      *rx;
+    HttpRoute   *route;
+
+    rx = conn->rx;
+    route = rx->route;
+    if (conn->tx->cache->flags & (HTTP_CACHE_ONLY | HTTP_CACHE_UNIQUE)) {
+        return sfmt("http::response-%s?%s", rx->pathInfo, httpGetParamsString(conn));
+    } else {
+        return sfmt("http::response-%s", rx->pathInfo);
+    }
+}
+
+
+/*
+    @copy   default
+    
+    Copyright (c) Embedthis Software LLC, 2003-2011. All Rights Reserved.
+    Copyright (c) Michael O'Brien, 1993-2011. All Rights Reserved.
+    
+    This software is distributed under commercial and open source licenses.
+    You may use the GPL open source license described below or you may acquire 
+    a commercial license from Embedthis Software. You agree to be fully bound 
+    by the terms of either license. Consult the LICENSE.TXT distributed with 
+    this software for full details.
+    
+    This software is open source; you can redistribute it and/or modify it 
+    under the terms of the GNU General Public License as published by the 
+    Free Software Foundation; either version 2 of the License, or (at your 
+    option) any later version. See the GNU General Public License for more 
+    details at: http://embedthis.com/downloads/gplLicense.html
+    
+    This program is distributed WITHOUT ANY WARRANTY; without even the 
+    implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. 
+    
+    This GPL license does NOT permit incorporating this software into 
+    proprietary programs. If you are unable to comply with the GPL, you must
+    acquire a commercial license to use this software. Commercial licenses 
+    for this software and support services are available from Embedthis 
+    Software at http://embedthis.com 
+    
+    Local variables:
+    tab-width: 4
+    c-basic-offset: 4
+    End:
+    vim: sw=4 ts=4 expandtab
+
+    @end
+ */
+/************************************************************************/
+/*
+ *  End of file "./src/cache.c"
+ */
+/************************************************************************/
+
+
+
+/************************************************************************/
+/*
  *  Start of file "./src/chunkFilter.c"
  */
 /************************************************************************/
@@ -1637,112 +2133,6 @@ static void openChunk(HttpQueue *q)
     conn = q->conn;
     q->packetSize = min(conn->limits->chunkSize, q->max);
 }
-
-
-#if UNUSED
-/*  
-    Get the next chunk size. Chunked data format is:
-        Chunk spec <CRLF>
-        Data <CRLF>
-        Chunk spec (size == 0) <CRLF>
-        <CRLF>
-    Chunk spec is: "HEX_COUNT; chunk length DECIMAL_COUNT\r\n". The "; chunk length DECIMAL_COUNT is optional.
-    As an optimization, use "\r\nSIZE ...\r\n" as the delimiter so that the CRLF after data does not special consideration.
-    Achive this by parseHeaders reversing the input start by 2.
- */
-void httpIncomingChunkData(HttpQueue *q, HttpPacket *packet)
-{
-    HttpConn    *conn;
-    HttpRx      *rx;
-    MprBuf      *buf;
-    ssize       chunkSize;
-    char        *start, *cp;
-    int         bad;
-
-    conn = q->conn;
-    rx = conn->rx;
-
-    if (!(rx->flags & HTTP_CHUNKED)) {
-        httpPutPacketToNext(q, packet);
-        return;
-    }
-    buf = packet->content;
-
-    if (buf == 0) {
-        if (rx->chunkState == HTTP_CHUNK_DATA) {
-            httpError(conn, HTTP_ABORT | HTTP_CODE_BAD_REQUEST, "Bad chunk state");
-            return;
-        }
-        rx->chunkState = HTTP_CHUNK_EOF;
-    }
-    
-    /*  
-        NOTE: the request head ensures that packets are correctly sized by packet inspection. The packet will never
-        have more data than the chunk state expects.
-     */
-    switch (rx->chunkState) {
-    case HTTP_CHUNK_START:
-        /*  
-            Validate:  "\r\nSIZE.*\r\n"
-         */
-        if (mprGetBufLength(buf) < 5) {
-            break;
-        }
-        start = mprGetBufStart(buf);
-        bad = (start[0] != '\r' || start[1] != '\n');
-        for (cp = &start[2]; cp < buf->end && *cp != '\n'; cp++) {}
-        if (*cp != '\n' && (cp - start) < 80) {
-            break;
-        }
-        bad += (cp[-1] != '\r' || cp[0] != '\n');
-        if (bad) {
-            httpError(conn, HTTP_ABORT | HTTP_CODE_BAD_REQUEST, "Bad chunk specification");
-            return;
-        }
-        chunkSize = (int) stoi(&start[2], 16, NULL);
-        if (!isxdigit((int) start[2]) || chunkSize < 0) {
-            httpError(conn, HTTP_ABORT | HTTP_CODE_BAD_REQUEST, "Bad chunk specification");
-            return;
-        }
-        mprAdjustBufStart(buf, (cp - start + 1));
-        rx->remainingContent = chunkSize;
-        if (chunkSize == 0) {
-            /*
-                We are lenient if the request does not have a trailing "\r\n" after the last chunk
-             */
-            cp = mprGetBufStart(buf);
-            if (mprGetBufLength(buf) == 2 && *cp == '\r' && cp[1] == '\n') {
-                mprAdjustBufStart(buf, 2);
-            }
-            rx->chunkState = HTTP_CHUNK_EOF;
-            rx->eof = 1;
-        } else {
-            rx->chunkState = HTTP_CHUNK_DATA;
-        }
-        mprAssert(mprGetBufLength(buf) == 0);
-        mprLog(7, "chunkFilter: start incoming chunk of %d bytes", chunkSize);
-        break;
-
-    case HTTP_CHUNK_DATA:
-        mprLog(7, "chunkFilter: data %d bytes, rx->remainingContent %d", httpGetPacketLength(packet), rx->remainingContent);
-        httpPutPacketToNext(q, packet);
-        if (rx->remainingContent == 0) {
-            rx->chunkState = HTTP_CHUNK_START;
-            rx->remainingContent = HTTP_BUFSIZE;
-        }
-        break;
-
-    case HTTP_CHUNK_EOF:
-        mprAssert(httpGetPacketLength(packet) == 0);
-        httpPutPacketToNext(q, packet);
-        mprLog(7, "chunkFilter: last chunk");
-        break;    
-
-    default:
-        mprAssert(0);
-    }
-}
-#endif
 
 
 /*  
@@ -1861,6 +2251,7 @@ static void outgoingChunkService(HttpQueue *q)
             }
         }
     }
+    //  MOB - refactor to setting altBody also sets tx->length
     if (tx->chunkSize <= 0 || tx->altBody) {
         httpDefaultOutgoingServiceStage(q);
     } else {
@@ -2420,9 +2811,6 @@ static void manageConn(HttpConn *conn, int flags)
     if (flags & MPR_MANAGE_MARK) {
         mprMark(conn->authCnonce);
         mprMark(conn->authDomain);
-#if UNUSED && KEEP
-        mprMark(conn->authGroup);
-#endif
         mprMark(conn->authNonce);
         mprMark(conn->authOpaque);
         mprMark(conn->authPassword);
@@ -2533,7 +2921,8 @@ static void commonPrep(HttpConn *conn)
     conn->state = 0;
     conn->responded = 0;
     conn->finalized = 0;
-    conn->writeComplete = 0;
+    conn->refinalize = 0;
+    conn->connectorComplete = 0;
     conn->lastActivity = conn->http->now;
     httpSetState(conn, HTTP_STATE_BEGIN);
     httpInitSchedulerQueue(conn->serviceq);
@@ -3646,6 +4035,7 @@ int httpConfigureNamedVirtualEndpoints(Http *http, cchar *ip, int port)
 
 
 static void httpErrorV(HttpConn *conn, int flags, cchar *fmt, va_list args);
+static void httpFormatErrorV(HttpConn *conn, int status, cchar *fmt, va_list args);
 
 
 void httpDisconnect(HttpConn *conn)
@@ -3676,6 +4066,7 @@ void httpError(HttpConn *conn, int flags, cchar *fmt, ...)
     overrides the normal output with an alternate error message. If the output has alread started (headers sent), then
     the connection MUST be closed so the client can get some indication the request failed.
  */
+//  MOB - remove the http prefix. Make V lower case
 static void httpErrorV(HttpConn *conn, int flags, cchar *fmt, va_list args)
 {
     HttpTx      *tx;
@@ -3694,7 +4085,6 @@ static void httpErrorV(HttpConn *conn, int flags, cchar *fmt, va_list args)
         conn->rx->eof = 1;
     }
     conn->error = 1;
-    conn->responded = 1;
     status = flags & HTTP_CODE_MASK;
     if (status == 0) {
         status = HTTP_CODE_INTERNAL_SERVER_ERROR;
@@ -3719,13 +4109,11 @@ static void httpErrorV(HttpConn *conn, int flags, cchar *fmt, va_list args)
         }
     } else {
         if (flags & HTTP_ABORT || (tx && tx->flags & HTTP_TX_HEADERS_CREATED)) {
-#if UNUSED
-            httpCloseConn(conn);
-#else
             httpDisconnect(conn);
-#endif
         }
     }
+    conn->responded = 1;
+    httpFinalize(conn);
 }
 
 
@@ -3733,7 +4121,8 @@ static void httpErrorV(HttpConn *conn, int flags, cchar *fmt, va_list args)
     Just format conn->errorMsg and set status - nothing more
     NOTE: this is an internal API. Users should use httpError()
  */
-void httpFormatErrorV(HttpConn *conn, int status, cchar *fmt, va_list args)
+//  MOB - rename to remove the http prefix
+static void httpFormatErrorV(HttpConn *conn, int status, cchar *fmt, va_list args)
 {
     if (conn->errorMsg == 0) {
         conn->errorMsg = sfmtv(fmt, args);
@@ -3863,6 +4252,9 @@ HttpHost *httpCreateHost()
     if ((host = mprAllocObj(HttpHost, manageHost)) == 0) {
         return 0;
     }
+    if ((host->cache = mprCreateCache(MPR_CACHE_SHARED)) == 0) {
+        return 0;
+    }
     host->mutex = mprCreateLock();
     host->dirs = mprCreateList(-1, 0);
     host->routes = mprCreateList(-1, 0);
@@ -3921,6 +4313,7 @@ HttpHost *httpCloneHost(HttpHost *parent)
 static void manageHost(HttpHost *host, int flags)
 {
     if (flags & MPR_MANAGE_MARK) {
+        mprMark(host->cache);
         mprMark(host->name);
         mprMark(host->ip);
         mprMark(host->parent);
@@ -4334,6 +4727,7 @@ Http *httpCreate()
     httpOpenRangeFilter(http);
     httpOpenChunkFilter(http);
     httpOpenUploadFilter(http);
+    httpOpenCacheHandler(http);
     httpOpenPassHandler(http);
 
     http->clientLimits = httpCreateLimits(0);
@@ -4975,18 +5369,19 @@ static void netOutgoingService(HttpQueue *q)
     tx = conn->tx;
     conn->lastActivity = conn->http->now;
     mprAssert(conn->sock);
+    mprAssert(!conn->connectorComplete);
     
-    if (!conn->sock) {
+    if (!conn->sock || conn->connectorComplete) {
         return;
     }
-    if (tx->flags & HTTP_TX_NO_BODY || conn->writeComplete) {
+    if (tx->flags & HTTP_TX_NO_BODY) {
         httpDiscardData(q, 1);
     }
     if ((tx->bytesWritten + q->count) > conn->limits->transmissionBodySize) {
         httpError(conn, HTTP_CODE_REQUEST_TOO_LARGE | ((tx->bytesWritten) ? HTTP_ABORT : 0),
             "Http transmission aborted. Exceeded transmission max body of %d bytes", conn->limits->transmissionBodySize);
         if (tx->bytesWritten) {
-            httpCompleteWriting(conn);
+            httpConnectorComplete(conn);
             return;
         }
     }
@@ -5026,7 +5421,7 @@ static void netOutgoingService(HttpQueue *q)
                 LOG(5, "netOutgoingService write failed, error %d", errCode);
             }
             httpError(conn, HTTP_ABORT | HTTP_CODE_COMMS_ERROR, "Write error %d", errCode);
-            httpCompleteWriting(conn);
+            httpConnectorComplete(conn);
             break;
 
         } else if (written == 0) {
@@ -5042,7 +5437,7 @@ static void netOutgoingService(HttpQueue *q)
     }
     if (q->ioCount == 0) {
         if ((q->flags & HTTP_QUEUE_EOF)) {
-            httpCompleteWriting(conn);
+            httpConnectorComplete(conn);
         } else {
             httpWritable(conn);
         }
@@ -5763,7 +6158,9 @@ void httpHandleOptionsTrace(HttpConn *conn)
             (flags & HTTP_STAGE_DELETE) ? ",DELETE" : "");
         httpOmitBody(conn);
         httpFinalize(conn);
+#if UNUSED
         tx->length = 0;
+#endif
     }
 }
 
@@ -5779,6 +6176,7 @@ static void openPass(HttpQueue *q)
 
 static void processPass(HttpQueue *q)
 {
+    mprAssert(q->conn->finalized);
     httpFinalize(q->conn);
 }
 
@@ -5866,7 +6264,7 @@ void httpCreateTxPipeline(HttpConn *conn, HttpRoute *route)
     HttpRx      *rx;
     HttpQueue   *q;
     HttpStage   *stage, *filter;
-    int         next;
+    int         next, hasOutputFilters;
 
     mprAssert(conn);
     mprAssert(route);
@@ -5881,17 +6279,19 @@ void httpCreateTxPipeline(HttpConn *conn, HttpRoute *route)
     }
     mprAddItem(tx->outputPipeline, tx->handler);
 
+    hasOutputFilters = 0;
     if (route->outputStages) {
         for (next = 0; (filter = mprGetNextItem(route->outputStages, &next)) != 0; ) {
             if (matchFilter(conn, filter, route, HTTP_STAGE_TX) == HTTP_ROUTE_OK) {
                 mprAddItem(tx->outputPipeline, filter);
+                hasOutputFilters = 1;
             }
         }
     }
     if (tx->connector == 0) {
-        if (tx->handler == http->fileHandler && rx->flags & HTTP_GET && !tx->outputRanges && 
-                !conn->secure && tx->chunkSize <= 0 &&
-                httpShouldTrace(conn, HTTP_TRACE_TX, HTTP_TRACE_BODY, tx->ext) < 0) {
+        //  MOB - must disable send connector if there are output filters
+        if (tx->handler == http->fileHandler && (rx->flags & HTTP_GET) && !hasOutputFilters && 
+                !conn->secure && httpShouldTrace(conn, HTTP_TRACE_TX, HTTP_TRACE_BODY, tx->ext) < 0) {
             tx->connector = http->sendConnector;
         } else if (route && route->connector) {
             tx->connector = route->connector;
@@ -5916,6 +6316,14 @@ void httpCreateTxPipeline(HttpConn *conn, HttpRoute *route)
      */
     httpPutForService(conn->writeq, httpCreateHeaderPacket(), HTTP_DELAY_SERVICE);
     openQueues(conn);
+
+    /*
+        Refinalize if httpFinalize was called before the Tx pipeline was created
+     */
+    if (conn->refinalize) {
+        conn->finalized = 0;
+        httpFinalize(conn);
+    }
 }
 
 
@@ -6043,14 +6451,15 @@ void httpStartPipeline(HttpConn *conn)
 {
     HttpQueue   *qhead, *q, *prevQ, *nextQ;
     HttpTx      *tx;
+    HttpRx      *rx;
     
     tx = conn->tx;
     if (tx->started) {
         return;
     }
     tx->started = 1;
-
-    if (conn->rx->needInputPipeline) {
+    rx = conn->rx;
+    if (rx->needInputPipeline) {
         qhead = tx->queue[HTTP_QUEUE_RX];
         for (q = qhead->nextQ; q->nextQ != qhead; q = nextQ) {
             nextQ = q->nextQ;
@@ -6077,7 +6486,7 @@ void httpStartPipeline(HttpConn *conn)
         q->flags |= HTTP_QUEUE_STARTED;
         HTTP_TIME(conn, q->stage->name, "start", q->stage->start(q));
     }
-    if (!conn->error && !conn->writeComplete && conn->rx->remainingContent > 0) {
+    if (!conn->error && !conn->connectorComplete && rx->remainingContent > 0) {
         /* If no remaining content, wait till the processing stage to avoid duplicate writable events */
         httpWritable(conn);
     }
@@ -6321,7 +6730,8 @@ void httpDisableQueue(HttpQueue *q)
 
 
 /*  
-    Remove all data from non-header, non-eof packets in the queue. If removePackets is true, actually remove the packet too.
+    Remove all data in the queue. If removePackets is true, actually remove the packet too.
+    This preserves the header and EOT packets.
  */
 void httpDiscardData(HttpQueue *q, bool removePackets)
 {
@@ -7231,18 +7641,15 @@ HttpRoute *httpCreateRoute(HttpHost *host)
     route->defaultLanguage = sclone("en");
     route->dir = mprGetCurrentPath(".");
     route->errorDocuments = mprCreateHash(HTTP_SMALL_HASH_SIZE, 0);
-    route->expires = mprCreateHash(HTTP_SMALL_HASH_SIZE, MPR_HASH_STATIC_VALUES);
-    route->expiresByType = mprCreateHash(HTTP_SMALL_HASH_SIZE, MPR_HASH_STATIC_VALUES);
     route->extensions = mprCreateHash(HTTP_SMALL_HASH_SIZE, MPR_HASH_CASELESS);
     route->flags = HTTP_ROUTE_GZIP;
-#if UNUSED 
-    route->flags = HTTP_ROUTE_GZIP | HTTP_ROUTE_PUT_DELETE;
-#endif
     route->handlers = mprCreateList(-1, 0);
+    route->handlersWithMatch = mprCreateList(-1, 0);
     route->host = host;
     route->http = MPR->httpService;
     route->index = sclone("index.html");
     route->inputStages = mprCreateList(-1, 0);
+    route->lifespan = HTTP_CACHE_LIFESPAN;
     route->outputStages = mprCreateList(-1, 0);
     route->pathTokens = mprCreateHash(HTTP_SMALL_HASH_SIZE, MPR_HASH_CASELESS);
     route->pattern = MPR->emptyString;
@@ -7268,18 +7675,18 @@ HttpRoute *httpCreateInheritedRoute(HttpRoute *parent)
     route->parent = parent;
     route->auth = httpCreateInheritedAuth(parent->auth);
     route->autoDelete = parent->autoDelete;
+    route->caching = parent->caching;
     route->conditions = parent->conditions;
     route->connector = parent->connector;
     route->defaultLanguage = parent->defaultLanguage;
     route->dir = parent->dir;
     route->data = parent->data;
     route->errorDocuments = parent->errorDocuments;
-    route->expires = parent->expires;
-    route->expiresByType = parent->expiresByType;
     route->extensions = parent->extensions;
     route->flags = parent->flags;
     route->handler = parent->handler;
     route->handlers = parent->handlers;
+    route->handlersWithMatch = parent->handlersWithMatch;
     route->headers = parent->headers;
     route->http = MPR->httpService;
     route->host = parent->host;
@@ -7317,6 +7724,7 @@ static void manageRoute(HttpRoute *route, int flags)
 {
     if (flags & MPR_MANAGE_MARK) {
         mprMark(route->auth);
+        mprMark(route->caching);
         mprMark(route->conditions);
         mprMark(route->connector);
         mprMark(route->context);
@@ -7324,11 +7732,10 @@ static void manageRoute(HttpRoute *route, int flags)
         mprMark(route->defaultLanguage);
         mprMark(route->dir);
         mprMark(route->errorDocuments);
-        mprMark(route->expires);
-        mprMark(route->expiresByType);
         mprMark(route->extensions);
         mprMark(route->handler);
         mprMark(route->handlers);
+        mprMark(route->handlersWithMatch);
         mprMark(route->headers);
         mprMark(route->http);
         mprMark(route->index);
@@ -7464,8 +7871,7 @@ void httpRouteRequest(HttpConn *conn)
     }
     rx->route = route;
 
-    //  MOB - be good to have one flag for this test
-    if (conn->error || tx->redirected || tx->altBody) {
+    if (conn->finalized) {
         tx->handler = conn->http->passHandler;
         if (rewrites >= HTTP_MAX_REWRITE) {
             httpError(conn, HTTP_CODE_INTERNAL_SERVER_ERROR, "Too many request rewrites");
@@ -7616,12 +8022,12 @@ static int testRoute(HttpConn *conn, HttpRoute *route)
             }
         }
     }
+    if (route->prefix) {
+        /* This is needed by some handler match routines */
+        httpSetParam(conn, "prefix", route->prefix);
+    }
     if ((rc = selectHandler(conn, route)) != HTTP_ROUTE_OK) {
         return rc;
-    }
-    if (route->prefix) {
-        //  MOB - call this {app} or {prefix}
-        httpSetParam(conn, "app", route->prefix);
     }
     if (route->tokens) {
         for (next = 0; (token = mprGetNextItem(route->tokens, &next)) != 0; ) {
@@ -7637,11 +8043,8 @@ static int testRoute(HttpConn *conn, HttpRoute *route)
     if ((rc = (*proc)(conn, route, 0)) != HTTP_ROUTE_OK) {
         return rc;
     }
-    //  MOB - be good to have one flag for this test
-    if (!conn->error && !tx->redirected && !tx->altBody) {
-        if (tx->handler->check) {
-            rc = tx->handler->check(conn, route);
-        }
+    if (!conn->finalized && tx->handler->check) {
+        rc = tx->handler->check(conn, route);
     }
     return rc;
 }
@@ -7650,7 +8053,7 @@ static int testRoute(HttpConn *conn, HttpRoute *route)
 static int selectHandler(HttpConn *conn, HttpRoute *route)
 {
     HttpTx      *tx;
-    int         rc;
+    int         next, rc;
 
     mprAssert(conn);
     mprAssert(route);
@@ -7658,16 +8061,24 @@ static int selectHandler(HttpConn *conn, HttpRoute *route)
     tx = conn->tx;
     if (route->handler) {
         tx->handler = route->handler;
-    } else {
+        return HTTP_ROUTE_OK;
+    }
+    /*
+        Handlers with match routines are examined first (in-order)
+     */
+    for (next = 0; (tx->handler = mprGetNextItem(route->handlersWithMatch, &next)) != 0; ) {
+        rc = tx->handler->match(conn, route, 0);
+        if (rc == HTTP_ROUTE_OK || rc == HTTP_ROUTE_REROUTE) {
+            return rc;
+        }
+    }
+    if (!tx->handler) {
+        /*
+            Now match by extensions
+         */
         if (!tx->ext || (tx->handler = mprLookupKey(route->extensions, tx->ext)) == 0) {
             tx->handler = mprLookupKey(route->extensions, "");
         }
-    }
-    if (tx->handler && tx->handler->match) {
-        if ((rc = tx->handler->match(conn, route, 0)) != HTTP_ROUTE_OK) {
-            tx->handler = 0;
-        }
-        return rc;
     }
     return tx->handler ? HTTP_ROUTE_OK : HTTP_ROUTE_REJECT;
 }
@@ -7749,42 +8160,6 @@ int httpAddRouteCondition(HttpRoute *route, cchar *name, cchar *details, int fla
     }
     addUniqueItem(route->conditions, op);
     return 0;
-}
-
-
-void httpAddRouteExpiry(HttpRoute *route, MprTime when, cchar *extensions)
-{
-    char    *types, *ext, *tok;
-
-    mprAssert(route);
-
-    if (extensions && *extensions) {
-        GRADUATE_HASH(route, expires);
-        types = sclone(extensions);
-        ext = stok(types, " ,\t\r\n", &tok);
-        while (ext) {
-            mprAddKey(route->expires, ext, ITOP(when));
-            ext = stok(0, " \t\r\n", &tok);
-        }
-    }
-}
-
-
-void httpAddRouteExpiryByType(HttpRoute *route, MprTime when, cchar *mimeTypes)
-{
-    char    *types, *mime, *tok;
-
-    mprAssert(route);
-
-    if (mimeTypes && *mimeTypes) {
-        GRADUATE_HASH(route, expiresByType);
-        types = sclone(mimeTypes);
-        mime = stok(types, " ,\t\r\n", &tok);
-        while (mime) {
-            mprAddKey(route->expiresByType, mime, ITOP(when));
-            mime = stok(0, " \t\r\n", &tok);
-        }
-    }
 }
 
 
@@ -7875,15 +8250,20 @@ int httpAddRouteHandler(HttpRoute *route, cchar *name, cchar *extensions)
         }
 
     } else {
-        if (handler->match == 0) {
+        if (mprLookupItem(route->handlers, handler) < 0) {
+            GRADUATE_LIST(route, handlers);
+            mprAddItem(route->handlers, handler);
+        }
+        if (handler->match) {
+            if (mprLookupItem(route->handlersWithMatch, handler) < 0) {
+                GRADUATE_LIST(route, handlersWithMatch);
+                mprAddItem(route->handlersWithMatch, handler);
+            }
+        } else {
             /*
                 Only match by extensions if no-match routine provided.
              */
             mprAddKey(route->extensions, "", handler);
-        }
-        if (mprLookupItem(route->handlers, handler) < 0) {
-            GRADUATE_LIST(route, handlers);
-            mprAddItem(route->handlers, handler);
         }
     }
     return 0;
@@ -8067,9 +8447,10 @@ void httpResetRoutePipeline(HttpRoute *route)
 
     if (route->parent == 0) {
         route->errorDocuments = mprCreateHash(HTTP_SMALL_HASH_SIZE, 0);
-        route->expires = mprCreateHash(0, MPR_HASH_STATIC_VALUES);
-        route->extensions = mprCreateHash(0, MPR_HASH_CASELESS);
+        route->caching = 0;
+        route->extensions = 0;
         route->handlers = mprCreateList(-1, 0);
+        route->handlersWithMatch = mprCreateList(-1, 0);
         route->inputStages = mprCreateList(-1, 0);
     }
     route->outputStages = mprCreateList(-1, 0);
@@ -8080,6 +8461,7 @@ void httpResetHandlers(HttpRoute *route)
 {
     mprAssert(route);
     route->handlers = mprCreateList(-1, 0);
+    route->handlersWithMatch = mprCreateList(-1, 0);
 }
 
 
@@ -9238,6 +9620,7 @@ static int writeTarget(HttpConn *conn, HttpRoute *route, HttpRouteOp *op)
     }
     httpSetStatus(conn, route->responseStatus);
     httpFormatResponse(conn, "%s", str);
+    httpFinalize(conn);
     return HTTP_ROUTE_OK;
 }
 
@@ -9375,9 +9758,6 @@ void httpAddRouteSet(HttpRoute *parent, cchar *set)
 {
     if (scasematch(set, "simple")) {
         httpAddHomeRoute(parent);
-#if UNUSED
-        httpAddStaticRoute(parent);
-#endif
 
     } else if (scasematch(set, "mvc")) {
         httpAddHomeRoute(parent);
@@ -10325,6 +10705,8 @@ static void routeRequest(HttpConn *conn)
 {
     HttpRx  *rx;
 
+    mprAssert(conn->endpoint);
+
     rx = conn->rx;
     httpAddParams(conn);
     mapMethod(conn);
@@ -11131,7 +11513,7 @@ static bool processRunning(HttpConn *conn)
     } else {
         if (conn->endpoint) {
             httpProcessPipeline(conn);
-            if (conn->connError || conn->writeComplete) {
+            if (conn->connError || conn->connectorComplete) {
                 httpSetState(conn, HTTP_STATE_COMPLETE);
             } else {
                 httpWritable(conn);
@@ -11209,64 +11591,6 @@ void httpCloseRx(HttpConn *conn)
         httpProcess(conn, NULL);
     }
 }
-
-
-#if UNUSED
-/*  
-    Optimization to correctly size the packets to the chunk filter.
- */
-static ssize getChunkPacketSize(HttpConn *conn, MprBuf *buf)
-{
-    HttpRx      *rx;
-    char        *start, *cp;
-    ssize       size, need;
-
-    rx = conn->rx;
-    need = 0;
-
-    switch (rx->chunkState) {
-    case HTTP_CHUNK_DATA:
-        need = (ssize) min(MAXSSIZE, rx->remainingContent);
-        if (need != 0) {
-            break;
-        }
-        /* Fall through */
-
-    case HTTP_CHUNK_START:
-        start = mprGetBufStart(buf);
-        if (mprGetBufLength(buf) < 3) {
-            return 0;
-        }
-        if (start[0] != '\r' || start[1] != '\n') {
-            httpError(conn, HTTP_ABORT | HTTP_CODE_BAD_REQUEST, "Bad chunk specification");
-            return 0;
-        }
-        for (cp = &start[2]; cp < (char*) buf->end && *cp != '\n'; cp++) {}
-        if ((cp - start) < 2 || (cp[-1] != '\r' || cp[0] != '\n')) {
-            /* Insufficient data */
-            if ((cp - start) > 80) {
-                httpError(conn, HTTP_ABORT | HTTP_CODE_BAD_REQUEST, "Bad chunk specification");
-                return 0;
-            }
-            return 0;
-        }
-        need = (cp - start + 1);
-        size = (ssize) stoi(&start[2], 16, NULL);
-        if (size == 0 && &cp[2] < buf->end && cp[1] == '\r' && cp[2] == '\n') {
-            /*
-                This is the last chunk (size == 0). Now need to consume the trailing "\r\n".
-                We are lenient if the request does not have the trailing "\r\n" as required by the spec.
-             */
-            need += 2;
-        }
-        break;
-
-    default:
-        mprAssert(0);
-    }
-    return need;
-}
-#endif
 
 
 bool httpContentNotModified(HttpConn *conn)
@@ -11499,7 +11823,7 @@ int httpWait(HttpConn *conn, int state, MprTime timeout)
     conn->async = 1;
 
     eventMask = MPR_READABLE;
-    if (!conn->writeComplete) {
+    if (!conn->connectorComplete) {
         eventMask |= MPR_WRITABLE;
     }
     if (conn->waitHandler == 0) {
@@ -12009,17 +12333,17 @@ void httpSendOutgoingService(HttpQueue *q)
     conn->lastActivity = conn->http->now;
     mprAssert(conn->sock);
 
-    if (!conn->sock) {
+    if (!conn->sock || conn->connectorComplete) {
         return;
     }
-    if (tx->flags & HTTP_TX_NO_BODY || conn->writeComplete) {
+    if (tx->flags & HTTP_TX_NO_BODY) {
         httpDiscardData(q, 1);
     }
     if ((tx->bytesWritten + q->ioCount) > conn->limits->transmissionBodySize) {
         httpError(conn, HTTP_ABORT | HTTP_CODE_REQUEST_TOO_LARGE | ((tx->bytesWritten) ? HTTP_ABORT : 0),
             "Http transmission aborted. Exceeded max body of %d bytes", conn->limits->transmissionBodySize);
         if (tx->bytesWritten) {
-            httpCompleteWriting(conn);
+            httpConnectorComplete(conn);
             return;
         }
     }
@@ -12049,7 +12373,7 @@ void httpSendOutgoingService(HttpQueue *q)
                 mprLog(7, "SendFileToSocket failed, errCode %d", errCode);
             }
             httpError(conn, HTTP_ABORT | HTTP_CODE_COMMS_ERROR, "SendFileToSocket failed, errCode %d", errCode);
-            httpCompleteWriting(conn);
+            httpConnectorComplete(conn);
             break;
 
         } else if (written == 0) {
@@ -12065,7 +12389,7 @@ void httpSendOutgoingService(HttpQueue *q)
     }
     if (q->ioCount == 0) {
         if ((q->flags & HTTP_QUEUE_EOF)) {
-            httpCompleteWriting(conn);
+            httpConnectorComplete(conn);
         } else {
             httpWritable(conn);
         }
@@ -12782,6 +13106,8 @@ void httpDestroyTx(HttpTx *tx)
 static void manageTx(HttpTx *tx, int flags)
 {
     if (flags & MPR_MANAGE_MARK) {
+        mprMark(tx->cache);
+        mprMark(tx->cachedContent);
         mprMark(tx->conn);
         mprMark(tx->outputPipeline);
         mprMark(tx->handler);
@@ -12952,24 +13278,30 @@ void httpSetHeaderString(HttpConn *conn, cchar *key, cchar *value)
 /*
     Called by connectors (ONLY) when writing the transmission is complete
  */
-void httpCompleteWriting(HttpConn *conn)
+void httpConnectorComplete(HttpConn *conn)
 {
-    conn->writeComplete = 1;
+    conn->connectorComplete = 1;
     conn->finalized = 1;
 }
 
 
 void httpFinalize(HttpConn *conn)
 {
-    if (conn->finalized || conn->state < HTTP_STATE_CONNECTED || conn->writeq == 0 || conn->sock == 0) {
+    if (conn->finalized) {
         return;
     }
-    conn->finalized = 1;
     conn->responded = 1;
-    httpPutForService(conn->writeq, httpCreateEndPacket(), HTTP_SERVICE_NOW);
-    httpServiceQueues(conn);
-    if (conn->state == HTTP_STATE_RUNNING && conn->writeComplete && !conn->advancing) {
-        httpProcess(conn, NULL);
+    conn->finalized = 1;
+    if (conn->state >= HTTP_STATE_CONNECTED && conn->writeq && conn->sock) {
+        httpPutForService(conn->writeq, httpCreateEndPacket(), HTTP_SERVICE_NOW);
+        httpServiceQueues(conn);
+        if (conn->state == HTTP_STATE_RUNNING && conn->connectorComplete && !conn->advancing) {
+            httpProcess(conn, NULL);
+        }
+        conn->refinalize = 0;
+    } else {
+        /* Pipeline has not been setup yet */
+        conn->refinalize = 1;
     }
 }
 
@@ -13001,9 +13333,10 @@ ssize httpFormatResponsev(HttpConn *conn, cchar *fmt, va_list args)
     tx = conn->tx;
     conn->responded = 1;
     body = sfmtv(fmt, args);
-    tx->altBody = body;
     httpOmitBody(conn);
-    return slen(tx->altBody);
+    tx->altBody = body;
+    tx->length = slen(tx->altBody);
+    return tx->length;
 }
 
 
@@ -13082,9 +13415,11 @@ void *httpGetQueueData(HttpConn *conn)
 }
 
 
+//  MOB - refactor and remove this
 void httpOmitBody(HttpConn *conn)
 {
     if (conn->tx) {
+        //  MOB - refactor and remove this flag
         conn->tx->flags |= HTTP_TX_NO_BODY;
     }
     if (conn->tx->flags & HTTP_TX_HEADERS_CREATED) {
@@ -13148,16 +13483,16 @@ void httpRedirect(HttpConn *conn, int status, cchar *targetUri)
         targetUri = uri;
     }
     httpSetHeader(conn, "Location", "%s", targetUri);
-    mprAssert(tx->altBody == 0);
     msg = httpLookupStatus(conn->http, status);
-    tx->altBody = sfmt(
+    httpFormatResponse(conn, 
         "<!DOCTYPE html>\r\n"
         "<html><head><title>%s</title></head>\r\n"
         "<body><h1>%s</h1>\r\n<p>The document has moved <a href=\"%s\">here</a>.</p></body></html>\r\n",
         msg, msg, targetUri);
-    conn->responded = 1;
+#if UNUSED
     tx->redirected = 1;
-    httpOmitBody(conn);
+#endif
+    httpFinalize(conn);
 }
 
 
@@ -13251,14 +13586,15 @@ static void setHeaders(HttpConn *conn, HttpPacket *packet)
 {
     HttpRx      *rx;
     HttpTx      *tx;
+    HttpRoute   *route;
     HttpRange   *range;
-    MprTime     expires;
-    cchar       *mimeType, *value;
+    cchar       *mimeType;
 
     mprAssert(packet->flags == HTTP_PACKET_HEADER);
 
     rx = conn->rx;
     tx = conn->tx;
+    route = rx->route;
 
     httpAddHeaderString(conn, "Date", conn->http->currentDate);
 
@@ -13271,18 +13607,19 @@ static void setHeaders(HttpConn *conn, HttpPacket *packet)
             }
         }
     }
-    if (rx->route && !mprLookupKey(tx->headers, "Cache-Control")) {
+#if UNUSED
+    if (route && !mprLookupKey(tx->headers, "Cache-Control")) {
         expires = 0;
         if (tx->ext) {
-            expires = PTOL(mprLookupKey(rx->route->expires, tx->ext));
+            expires = PTOL(mprLookupKey(route->cacheExtensions, tx->ext));
         }
         if (expires == 0 && (mimeType = mprLookupKey(tx->headers, "Content-Type")) != 0) {
-            expires = PTOL(mprLookupKey(rx->route->expiresByType, mimeType));
+            expires = PTOL(mprLookupKey(route->cacheTypes, mimeType));
         }
         if (expires == 0) {
-            expires = PTOL(mprLookupKey(rx->route->expires, ""));
+            expires = PTOL(mprLookupKey(route->cacheExtensions, ""));
             if (expires == 0) {
-                expires = PTOL(mprLookupKey(rx->route->expiresByType, ""));
+                expires = PTOL(mprLookupKey(route->cacheTypes, ""));
             }
         }
         if (expires) {
@@ -13301,12 +13638,17 @@ static void setHeaders(HttpConn *conn, HttpPacket *packet)
 #endif
         }
     }
+#endif
     if (tx->etag) {
         httpAddHeader(conn, "ETag", "%s", tx->etag);
     }
+    //MOB REMOVE
+#if UNUSED || 1
     if (tx->altBody) {
+        mprAssert(tx->length > 0);
         tx->length = (int) strlen(tx->altBody);
     }
+#endif
     if (tx->chunkSize > 0 && !tx->altBody) {
         if (!(rx->flags & HTTP_HEAD)) {
             httpSetHeaderString(conn, "Transfer-Encoding", "chunked");

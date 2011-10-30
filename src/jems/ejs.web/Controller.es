@@ -480,7 +480,7 @@ print("URI " + request.uri)
             }
         }
 
-        /** @duplicate ejs.web::Request.clearCache */
+        /** @duplicate ejs.web::Request.clearFlash */
         function clearFlash(): Void
             request.clearFlash()
 

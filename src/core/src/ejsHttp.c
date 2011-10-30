@@ -465,7 +465,9 @@ static EjsObj *http_on(Ejs *ejs, EjsHttp *hp, int argc, EjsObj **argv)
     if (conn->readq && conn->readq->count > 0) {
         ejsSendEvent(ejs, hp->emitter, "readable", NULL, hp);
     }
-    if (!conn->writeComplete && !conn->error && HTTP_STATE_CONNECTED <= conn->state && conn->state < HTTP_STATE_COMPLETE &&
+    if (!conn->connectorComplete && 
+            !conn->error && HTTP_STATE_CONNECTED <= conn->state && 
+            conn->state < HTTP_STATE_COMPLETE &&
             conn->writeq->ioCount == 0) {
         ejsSendEvent(ejs, hp->emitter, "writable", NULL, hp);
     }
