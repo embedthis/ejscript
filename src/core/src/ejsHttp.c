@@ -272,6 +272,7 @@ static EjsObj *http_set_followRedirects(Ejs *ejs, EjsHttp *hp, int argc, EjsObj 
  */
 static EjsObj *http_get(Ejs *ejs, EjsHttp *hp, int argc, EjsObj **argv)
 {
+    httpPrepClientConn(hp->conn, 1);
     startHttpRequest(ejs, hp, "GET", argc, argv);
     if (hp->conn) {
         httpFinalize(hp->conn);
@@ -304,6 +305,7 @@ static EjsPot *http_getRequestHeaders(Ejs *ejs, EjsHttp *hp, int argc, EjsObj **
  */
 static EjsObj *http_head(Ejs *ejs, EjsHttp *hp, int argc, EjsObj **argv)
 {
+    httpPrepClientConn(hp->conn, 1);
     return startHttpRequest(ejs, hp, "HEAD", argc, argv);
 }
 
@@ -480,6 +482,7 @@ static EjsObj *http_on(Ejs *ejs, EjsHttp *hp, int argc, EjsObj **argv)
  */
 static EjsObj *http_post(Ejs *ejs, EjsHttp *hp, int argc, EjsObj **argv)
 {
+    httpPrepClientConn(hp->conn, 1);
     return startHttpRequest(ejs, hp, "POST", argc, argv);
 }
 
@@ -489,6 +492,7 @@ static EjsObj *http_post(Ejs *ejs, EjsHttp *hp, int argc, EjsObj **argv)
  */
 static EjsObj *http_put(Ejs *ejs, EjsHttp *hp, int argc, EjsObj **argv)
 {
+    httpPrepClientConn(hp->conn, 1);
     return startHttpRequest(ejs, hp, "PUT", argc, argv);
 }
 
