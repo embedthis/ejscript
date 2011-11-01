@@ -20,7 +20,7 @@ server.on("readable", function (event, request: Request) {
     autoFinalizing = false
     assert(!autoFinalizing)
 
-    assert(headers && headers.host && headers.date && headers.connection && headers["user-agent"])
+    assert(headers && header("Host") && header("Date") && header("Connection") && header("User-Agent"))
     headers["Custom-Header"] = 1234
     assert(headers["Custom-Header"] == 1234)
 

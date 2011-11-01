@@ -8,6 +8,6 @@ var http: Http = new Http
 http.get(HTTP + "/require-module.es")
 assert(http.status == 200)
 assert(http.response == "Hello World - Custom Header\n")
-assert(http.headers["custom-header"] == "Custom Data")
+assert(http.header("Custom-Header") == "Custom Data")
 http.close()
 

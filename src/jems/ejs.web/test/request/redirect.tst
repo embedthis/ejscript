@@ -34,18 +34,18 @@ server.on("readable", function (event, request: Request) {
 //  redirect-string
 let http = fetch(HTTP + "/redirect-string", Http.MovedPermanently)
 assert(http.status == Http.MovedPermanently)
-assert(http.headers.location == "http://localhost:6700/elsewhere/")
+assert(http.header("location") == "http://localhost:6700/elsewhere/")
 http.close()
 
 //  redirect-object
 let http = fetch(HTTP + "/redirect-object", Http.MovedTemporarily)
 assert(http.status == Http.MovedTemporarily)
-assert(http.headers.location == "http://example.com:8080/home?color=blue")
+assert(http.header("Location") == "http://example.com:8080/home?color=blue")
 http.close()
 
 //  redirect-relative
 let http = fetch(HTTP + "/redirect/relative", Http.MovedTemporarily)
 assert(http.status == Http.MovedTemporarily)
-assert(http.headers.location == "http://localhost:6700/absolute/dir.html")
+assert(http.header("Location") == "http://localhost:6700/absolute/dir.html")
 
 server.close()

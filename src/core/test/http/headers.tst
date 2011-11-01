@@ -18,5 +18,5 @@ assert(connection == "keep-alive" || connection == "close")
 
 http.get(HTTP + "/index.html?mob=1")
 assert(http.contentType == "text/html")
-assert(http.headers.date.contains("GMT"))
+assert(http.header("Date").contains("GMT"))
 http.close()

@@ -15,9 +15,6 @@ assert(http.header("date").contains("GMT"))
 assert(http.header("Content-Length") == null)
 assert(http.header("Keep-Alive"))
 assert(http.header("Transfer-Encoding"))
-
-//  Should not be a transfer-encoding header
-assert(http.headers["transfer-encoding"])
-assert(http.headers.connection == "keep-alive")
+assert(http.header("connection") == "keep-alive")
 assert(http.response)
 http.close()

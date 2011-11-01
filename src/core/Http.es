@@ -388,6 +388,7 @@ FUTURE & KEEP
 
         /** 
             Get the value of a single response header. This is a higher performance API than using response.headers["key"].
+            @param key Header key value to lookup. The lookup is caseless, i.e. the key can be any case of mix of case.
             @return The header field value as a string or null if not known.
          */
         native function header(key: String): String

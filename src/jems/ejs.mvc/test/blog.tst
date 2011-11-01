@@ -55,7 +55,7 @@ try {
     //  Post the form to create a post
     http.form(HTTP + "/Post", { "post.title": "Test Post 1", "post.body": "The quick brown fox", "commit": "OK" })
     assert(http.status == 302)
-    assert(http.headers["location"].contains("/Post"))
+    assert(http.header("Location").contains("/Post"))
 
     //  Get the post index
     http.get(HTTP + "/Post")
