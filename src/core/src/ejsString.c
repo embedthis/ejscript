@@ -1105,7 +1105,7 @@ static EjsString *replace(Ejs *ejs, EjsString *sp, int argc, EjsObj **argv)
                     default:
                         /* Insert the nth submatch */
                         if (isdigit((int) *cp)) {
-                            submatch = (int) wtoi(cp, 10, NULL);
+                            submatch = (int) wtoi(cp);
                             while (isdigit((int) *++cp))
                                 ;
                             cp--;

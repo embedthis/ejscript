@@ -517,7 +517,7 @@ int ejsGetDebugInfo(Ejs *ejs, EjsFunction *fun, uchar *pc, char **pathp, int *li
         *pathp = wclone(path);
     }
     if (linep) {
-        *linep = (int) wtoi(lineno, 10, NULL);
+        *linep = (int) wtoi(lineno);
     }
     if (sourcep) {
         *sourcep = wclone(source);

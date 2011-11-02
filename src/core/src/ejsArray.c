@@ -125,7 +125,7 @@ static int deleteArrayProperty(Ejs *ejs, EjsArray *ap, int slot)
 static int deleteArrayPropertyByName(Ejs *ejs, EjsArray *ap, EjsName qname)
 {
     if (isdigit((int) qname.name->value[0])) {
-        return deleteArrayProperty(ejs, ap, (int) wtoi(qname.name->value, 10, NULL));
+        return deleteArrayProperty(ejs, ap, (int) wtoi(qname.name->value));
     }
     return (ejs->service->potHelpers.deletePropertyByName)(ejs, ap, qname);
 }

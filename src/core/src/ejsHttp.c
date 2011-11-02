@@ -1108,7 +1108,7 @@ static void prepForm(Ejs *ejs, EjsHttp *hp, cchar *prefix, EjsObj *data)
     count = ejsGetLength(ejs, data);
     for (i = 0; i < count; i++) {
         if (ejsIs(ejs, data, Array)) {
-            key = itos(i, 10);
+            key = itos(i);
         } else {
             qname = ejsGetPropertyName(ejs, data, i);
             key = ejsToMulti(ejs, qname.name);

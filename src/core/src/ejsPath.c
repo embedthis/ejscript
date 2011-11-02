@@ -197,8 +197,8 @@ static EjsObj *getAttributes(Ejs *ejs, EjsPath *fp, int argc, EjsObj **argv)
         return ESV(null);
     }
     attributes = ejsCreateEmptyPot(ejs);
-    ejsSetPropertyByName(ejs, attributes, EN("owner"), itos(info.owner, 10));
-    ejsSetPropertyByName(ejs, attributes, EN("group"), itos(info.group, 10));
+    ejsSetPropertyByName(ejs, attributes, EN("owner"), itos(info.owner));
+    ejsSetPropertyByName(ejs, attributes, EN("group"), itos(info.group));
     ejsSetPropertyByName(ejs, attributes, EN("permissions"), sfmt("0%0d", info.perms));
     return attributes;
 }

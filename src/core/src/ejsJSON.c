@@ -543,7 +543,7 @@ static EjsString *serialize(Ejs *ejs, EjsAny *vp, Json *json)
                 continue;
             }
             if (isArray) {
-                key = itos(slotNum, 10);
+                key = itos(slotNum);
                 qname.name = ejsCreateStringFromAsc(ejs, key);
                 qname.space = ESV(empty);
             } else {

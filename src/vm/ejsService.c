@@ -952,7 +952,7 @@ static void logHandler(int flags, int level, cchar *msg)
     } else if (flags & MPR_RAW) {
         tag = NULL;
     } else {
-        tag = itos(level, 10);
+        tag = itos(level);
     }
     if (tag) {
         if (strlen(msg) < (MPR_MAX_STRING - 32)) {

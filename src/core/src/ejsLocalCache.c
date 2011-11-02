@@ -149,12 +149,12 @@ static EjsAny *sl_inc(Ejs *ejs, EjsLocalCache *cache, int argc, EjsAny **argv)
             return 0;
         }
     } else {
-        amount += stoi(item->data->value, 10, 0);
+        amount += stoi(item->data->value);
     }
     if (item->data) {
         cache->usedMem -= item->data->length;
     }
-    item->data = ejsCreateStringFromAsc(ejs, itos(amount, 10));
+    item->data = ejsCreateStringFromAsc(ejs, itos(amount));
     cache->usedMem += item->data->length;
     item->expires = mprGetTime() + item->lifespan;
     item->version++;

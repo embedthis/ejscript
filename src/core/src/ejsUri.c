@@ -1038,7 +1038,7 @@ static HttpUri *createHttpUriFromHash(Ejs *ejs, EjsObj *arg, int complete)
         if (ejsIs(ejs, portObj, Number)) {
             port = ejsGetInt(ejs, portObj);
         } else if (ejsIs(ejs, portObj, String)) {
-            port = (int) stoi(ejsToMulti(ejs, portObj), 10, NULL);
+            port = (int) stoi(ejsToMulti(ejs, portObj));
         }
     }
     pathObj = ejsGetPropertyByName(ejs, arg, EN("path"));

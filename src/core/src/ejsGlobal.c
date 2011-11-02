@@ -272,7 +272,7 @@ static EjsNumber *g_parseInt(Ejs *ejs, EjsObj *unused, int argc, EjsObj **argv)
         str++;
     }
     if (*str == '-' || *str == '+' || isdigit((int) *str)) {
-        n = (MprNumber) stoi(str, radix, &err);
+        n = (MprNumber) stoiradix(str, radix, &err);
         if (err) {
             return ESV(nan);
         }

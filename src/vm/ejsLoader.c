@@ -1126,12 +1126,12 @@ int ejsParseModuleVersion(cchar *name)
     int     major, minor, patch;
 
     minor = patch = 0;
-    major = (int) stoi(name, 10, NULL);
+    major = (int) stoi(name);
     if ((tok = strchr(name, '.')) != 0) {
-        minor = (int) stoi(++tok, 10, NULL);
+        minor = (int) stoi(++tok);
     }
     if (tok && (tok = strchr(tok, '.')) != 0) {
-        patch = (int) stoi(++tok, 10, NULL);
+        patch = (int) stoi(++tok);
     }
     return EJS_MAKE_VERSION(major, minor, patch);
 }

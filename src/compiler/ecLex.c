@@ -840,7 +840,7 @@ static int decodeNumber(EcCompiler *cp, int radix, int length)
         putBackChar(cp->stream, c);
     }
     buf[i] = '\0';
-    return (int) stoi(buf, radix, NULL);
+    return (int) stoiradix(buf, radix, NULL);
 }
 
 

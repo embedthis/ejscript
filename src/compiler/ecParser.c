@@ -8825,13 +8825,13 @@ static int parseVersion(EcCompiler *cp, int parseMax)
     }
     str = wclone(cp->token->text);
     if ((p = mtok(str, ".", &next)) != 0) {
-        major = (int) wtoi(p, 10, NULL);
+        major = (int) wtoi(p);
     }
     if ((p = mtok(next, ".", &next)) != 0) {
-        minor = (int) wtoi(p, 10, NULL);
+        minor = (int) wtoi(p);
     }
     if ((p = mtok(next, ".", &next)) != 0) {
-        patch = (int) wtoi(p, 10, NULL);
+        patch = (int) wtoi(p);
     }
     return EJS_MAKE_VERSION(major, minor, patch);
 }
