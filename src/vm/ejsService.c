@@ -10,7 +10,6 @@
 
 /*********************************** Forward **********************************/
 
-static int allocNotifier(int flags, ssize size);
 static void cloneProperties(Ejs *ejs, Ejs *master);
 static int  configureEjs(Ejs *ejs);
 static void defineSharedTypes(Ejs *ejs);
@@ -38,7 +37,9 @@ static EjsService *createService()
     }
     mprGlobalUnlock();
     MPR->ejsService = sp;
+#if FUTURE && KEEP
     mprSetMemNotifier((MprMemNotifier) allocNotifier);
+#endif
     if (mprUsingDefaultLogHandler()) {
         ejsRedirectLogging(0);
     }
@@ -1035,25 +1036,6 @@ void ejsUnblockGC(Ejs *ejs, int paused)
     if (paused != -1) {
         ejs->state->paused = paused;
     }
-}
-
-
-/*  
-    Global memory allocation handler. This is invoked when there is no notifier to handle an allocation failure.
-    The interpreter has an allocNotifier (see ejsService: allocNotifier) and it will handle allocation errors.
- */
-static int allocNotifier(int flags, ssize size)
-{
-    if (flags & MPR_MEM_DEPLETED) {
-        mprPrintfError("Can't allocate memory block of size %d\n", size);
-        mprPrintfError("Total memory used %d\n", (int) mprGetMem());
-        exit(255);
-
-    } else if (flags & MPR_MEM_LOW) {
-        mprPrintfError("Memory request for %d bytes exceeds memory red-line\n", size);
-        mprPrintfError("Total memory used %d\n", (int) mprGetMem());
-    }
-    return 0;
 }
 
 

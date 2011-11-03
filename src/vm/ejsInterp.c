@@ -3739,7 +3739,7 @@ static void bkpt(Ejs *ejs)
             mprGetCurrentThreadName(fp), offset, (int) (state->stack - fp->stackReturn),
             (uchar) opcode, optable[opcode].name, fp->filename, fp->lineNumber, fp->currentLine);
     if (stop && once++ == 0) {
-        mprSleep(ejs, 0);
+        mprNap(0);
     }
     mprAssert(state->stack >= fp->stackReturn);
 }
