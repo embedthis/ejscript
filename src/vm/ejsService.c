@@ -279,11 +279,13 @@ static void managePool(EjsPool *pool, int flags)
 {
     if (flags & MPR_MANAGE_MARK) {
         mprMark(pool->list);
+        mprMark(pool->timer);
         mprMark(pool->mutex);
         mprMark(pool->template);
         mprMark(pool->templateScript);
         mprMark(pool->startScript);
         mprMark(pool->startScriptPath);
+        mprMark(pool->hostedHome);
     }
 }
 
