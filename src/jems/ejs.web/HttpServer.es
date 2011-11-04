@@ -516,13 +516,9 @@ server.listen("127.0.0.1:7777")
             This is normally run every PrunePeriod. It may be also be called manually at any time.
          */
         function pruneWorkers(): Void {
-print("MOB PRUNE WORKERS");
-print("idleWorkers " + idleWorkers)
-print("idleWorkers.length " + idleWorkers.length)
             if (idleWorkers.length > 0) {
                 App.log.debug(6, "HttpServer prune " + idleWorkers.length + " workers")
                 idleWorkers = []
-print("RUN GC")
                 GC.run()
             }
         }

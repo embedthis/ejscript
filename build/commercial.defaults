@@ -21,6 +21,5 @@ BLD_DEFAULTS="commercial"
 BLD_TYPE="RELEASE" 
 BLD_DEBUG=0
 BLD_FEATURE_ASSERT="0" 
-BLD_FEATURE_DOC="1"
 
 without matrixssl
