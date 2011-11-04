@@ -394,6 +394,7 @@ static void manageDebug(EjsDebug *debug, int flags)
             mprMark(debug->lines[i].source);
         }
     } else if (flags & MPR_MANAGE_FREE) {
+        /* Value to signify the debug record has been freed */
         debug->magic = 7;
     }
 }

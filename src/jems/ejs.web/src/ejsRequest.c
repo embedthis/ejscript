@@ -1490,6 +1490,7 @@ static void manageRequest(EjsRequest *req, int flags)
     if (flags & MPR_MANAGE_MARK) {
         ejsManagePot(req, flags);
         mprMark(req->absHome);
+        mprMark(req->cloned);
         mprMark(req->config);
         mprMark(req->conn);
         mprMark(req->cookies);
@@ -1498,10 +1499,12 @@ static void manageRequest(EjsRequest *req, int flags)
         mprMark(req->env);
         mprMark(req->filename);
         mprMark(req->files);
+        mprMark(req->formData);
         mprMark(req->headers);
         mprMark(req->home);
         mprMark(req->host);
         mprMark(req->limits);
+        mprMark(req->log);
         mprMark(req->originalUri);
         mprMark(req->params);
         mprMark(req->pathInfo);
@@ -1513,11 +1516,10 @@ static void manageRequest(EjsRequest *req, int flags)
         mprMark(req->scheme);
         mprMark(req->scriptName);
         mprMark(req->server);
-        mprMark(req->session);
         mprMark(req->uri);
-        mprMark(req->cloned);
         mprMark(req->writeBuffer);
-        mprMark(req->formData);
+        mprMark(req->ejs);
+        mprMark(req->session);
     }
 }
 

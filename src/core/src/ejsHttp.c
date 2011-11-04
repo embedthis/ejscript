@@ -1424,10 +1424,11 @@ static void sendHttpErrorEvent(Ejs *ejs, EjsHttp *hp)
 static void manageHttp(EjsHttp *http, int flags)
 {
     if (flags & MPR_MANAGE_MARK) {
-        mprMark(http->responseCache);
         mprMark(http->emitter);
         mprMark(http->data);
         mprMark(http->limits);
+        mprMark(http->responseCache);
+        mprMark(http->conn);
         mprMark(http->requestContent);
         mprMark(http->responseContent);
         mprMark(http->uri);
@@ -1435,7 +1436,6 @@ static void manageHttp(EjsHttp *http, int flags)
         mprMark(http->keyFile);
         mprMark(http->certFile);
         mprMark(TYPE(http));
-        mprMark(http->conn);
 
     } else if (flags & MPR_MANAGE_FREE) {
         if (http->conn) {

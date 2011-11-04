@@ -509,12 +509,12 @@ typedef struct Ejs {
     struct EjsState     *state;             /**< Current evaluation state and stack */
     struct EjsService   *service;           /**< Back pointer to the service */
     EjsAny              *global;            /**< The "global" object */
-    cchar               *bootSearch;        /**< Module search when bootstrapping the VM */
+    cchar               *bootSearch;        /**< Module search when bootstrapping the VM (not alloced) */
     struct EjsArray     *search;            /**< Module load search path */
     cchar               *className;         /**< Name of a specific class to run for a program */
     cchar               *methodName;        /**< Name of a specific method to run for a program */
     char                *errorMsg;          /**< Error message */
-    cchar               **argv;             /**< Command line args */
+    cchar               **argv;             /**< Command line args (not alloced) */
     char                *hostedHome;        /**< Home directory for hosted HttpServer */
     int                 argc;               /**< Count of command line args */
     int                 flags;              /**< Execution flags */
@@ -3500,7 +3500,7 @@ extern struct EjsNumber *ejsToNumber(Ejs *ejs, EjsAny *obj);
 typedef struct EjsRegExp {
     EjsObj          obj;                /**< Base object */
     MprChar         *pattern;           /**< Pattern to match */
-    void            *compiled;          /**< Compiled pattern */
+    void            *compiled;          /**< Compiled pattern (not alloced) */
     bool            global;             /**< Search for pattern globally (multiple times) */
     bool            ignoreCase;         /**< Do case insensitive matching */
     bool            multiline;          /**< Match patterns over multiple lines */

@@ -835,13 +835,13 @@ EjsWorker *ejsCreateWorker(Ejs *ejs)
 static void manageWorker(EjsWorker *worker, int flags)
 {
     if (flags & MPR_MANAGE_MARK) {
-        mprMark(worker->ejs);
         ejsManagePot(worker, flags);
-        mprMark(worker->event);
         mprMark(worker->name);
+        mprMark(worker->ejs);
+        mprMark(worker->event);
+        mprMark(worker->pair);
         mprMark(worker->scriptFile);
         mprMark(worker->scriptLiteral);
-        mprMark(worker->pair);
 
     } else if (flags & MPR_MANAGE_FREE) {
         if (!worker->inside) {

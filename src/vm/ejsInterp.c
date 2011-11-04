@@ -3530,6 +3530,9 @@ static void callFunction(Ejs *ejs, EjsFunction *fun, EjsAny *thisObj, int argc, 
         state->stack -= (argc + stackAdjust);
 
     } else {
+        if (fun->body.code && fun->body.code->debug) {
+            mprAssert(fun->body.code->debug->magic == EJS_DEBUG_MAGIC);
+        }
         mprAssert(thisObj);
         if ((fp = ejsCreateFrame(ejs, fun, thisObj, argc, argv)) == 0) {
             return;

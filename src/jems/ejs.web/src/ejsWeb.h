@@ -78,12 +78,11 @@ extern EjsHttpServer *ejsCloneHttpServer(Ejs *ejs, EjsHttpServer *server, bool d
  */
 typedef struct EjsRequest {
     EjsPot          pot;                /**< Base object storage */
-    EjsObj          *cookies;           /**< Cached cookies */
-    HttpConn        *conn;              /**< Underlying Http connection object */
-    EjsHttpServer   *server;            /**< Owning server */
-    struct EjsRequest *cloned;          /**< Request that was cloned */
     EjsObj          *absHome;           /**< Absolute URI to the home of the application from this request */
+    struct EjsRequest *cloned;          /**< Request that was cloned */
     EjsObj          *config;            /**< Request config environment */
+    HttpConn        *conn;              /**< Underlying Http connection object */
+    EjsObj          *cookies;           /**< Cached cookies */
     EjsPath         *dir;               /**< Home directory containing the application */
     EjsObj          *emitter;           /**< Event emitter */
     EjsObj          *env;               /**< Request.env */
@@ -101,10 +100,11 @@ typedef struct EjsRequest {
     EjsNumber       *port;              /**< Port property */
     EjsString       *query;             /**< Query property */
     EjsString       *reference;         /**< Reference property */
-    EjsObj          *route;             /**< Matching route in route table */
     EjsObj          *responseHeaders;   /**< Headers object */
+    EjsObj          *route;             /**< Matching route in route table */
     EjsString       *scheme;            /**< Scheme property */
     EjsString       *scriptName;        /**< ScriptName property */
+    EjsHttpServer   *server;            /**< Owning server */
     EjsUri          *uri;               /**< Complete uri */
     EjsByteArray    *writeBuffer;       /**< Write buffer for capturing output */
 

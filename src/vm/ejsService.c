@@ -224,27 +224,9 @@ static void manageEjs(Ejs *ejs, int flags)
     int         next;
 
     if (flags & MPR_MANAGE_MARK) {
-        mprMark(ejs->global);
         mprMark(ejs->name);
-        mprMark(ejs->doc);
-        mprMark(ejs->errorMsg);
         mprMark(ejs->exception);
-        mprMark(ejs->exceptionArg);
-        mprMark(ejs->mutex);
         mprMark(ejs->result);
-        mprMark(ejs->search);
-        mprMark(ejs->dispatcher);
-        mprMark(ejs->httpServers);
-        mprMark(ejs->workers);
-        mprMark(ejs->hostedHome);
-
-        for (next = 0; (mp = mprGetNextItem(ejs->modules, &next)) != 0;) {
-            if (!mp->initialized) {
-                mprMark(mp);
-            }
-        }
-        mprMark(ejs->modules);
-
         /*
             Mark active call stack
          */
@@ -268,6 +250,26 @@ static void manageEjs(Ejs *ejs, int flags)
                 }
             }
         }
+        mprMark(ejs->service);
+        mprMark(ejs->global);
+        mprMark(ejs->search);
+        mprMark(ejs->className);
+        mprMark(ejs->methodName);
+        mprMark(ejs->errorMsg);
+        mprMark(ejs->hostedHome);
+        mprMark(ejs->exceptionArg);
+        mprMark(ejs->dispatcher);
+        mprMark(ejs->workers);
+        for (next = 0; (mp = mprGetNextItem(ejs->modules, &next)) != 0;) {
+            if (!mp->initialized) {
+                mprMark(mp);
+            }
+        }
+        mprMark(ejs->modules);
+        mprMark(ejs->httpServers);
+        mprMark(ejs->doc);
+        mprMark(ejs->http);
+        mprMark(ejs->mutex);
 
     } else if (flags & MPR_MANAGE_FREE) {
         ejsDestroyVM(ejs);
@@ -729,8 +731,12 @@ int ejsRunProgram(Ejs *ejs, cchar *className, cchar *methodName)
 {
     mprAssert(ejs->result == 0 || (MPR_GET_GEN(MPR_GET_MEM(ejs->result)) != MPR->heap.dead));
 
-    ejs->className = className;
-    ejs->methodName = methodName;
+    if (className) {
+        ejs->className = sclone(className);
+    }
+    if (methodName) {
+        ejs->methodName = sclone(methodName);
+    }
     mprRelayEvent(ejs->dispatcher, (MprEventProc) runProgram, ejs, NULL);
 
     if (ejs->exception) {
@@ -755,13 +761,17 @@ static int runSpecificMethod(Ejs *ejs, cchar *className, cchar *methodName)
     if (className == 0 && methodName == 0) {
         return 0;
     }
+    if (className) {
+        className = sclone(className);
+    }
     if (methodName == 0) {
         methodName = "main";
     }
+    methodName = sclone(methodName);
     /*  
         Search for the first class with the given name
      */
-    if (className == 0) {
+    if (className == 0 || *className == '\0') {
         if (searchForMethod(ejs, methodName, &type) < 0) {
             return EJS_ERR;
         }

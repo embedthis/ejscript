@@ -187,11 +187,11 @@ static EjsObj *timer_stop(Ejs *ejs, EjsTimer *tp, int argc, EjsObj **argv)
 static void manageTimer(EjsTimer *tp, int flags)
 {
     if (flags & MPR_MANAGE_MARK) {
+        mprMark(tp->ejs);
         mprMark(tp->event);
         mprMark(tp->callback);
-        mprMark(tp->args);
         mprMark(tp->onerror);
-        mprMark(tp->ejs);
+        mprMark(tp->args);
 
     } else if (flags & MPR_MANAGE_FREE) {
         if (tp->event) {

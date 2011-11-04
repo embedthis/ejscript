@@ -1006,10 +1006,7 @@ static void manageType(EjsType *type, int flags)
         mprMark(type->qname.space);
         mprMark(type->prototype);
         mprMark(type->baseType);
-        if (type->mutex) {
-            mprNop(NULL);
-            mprMark(type->mutex);
-        }
+        mprMark(type->mutex);
         mprMark(type->implements);
         mprMark(type->module);
         mprMark(type->typeData);

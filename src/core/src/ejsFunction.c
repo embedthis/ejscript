@@ -365,13 +365,10 @@ static void manageCode(EjsCode *code, int flags)
     int     i;
 
     mprAssert(code->magic == EJS_CODE_MAGIC);
-
     if (flags & MPR_MANAGE_MARK) {
+        mprAssert(code->debug == 0 || code->debug->magic == EJS_DEBUG_MAGIC);        
         mprMark(code->module);
         mprMark(code->debug);
-        if (code->debug) {
-            mprAssert(code->debug->magic == EJS_DEBUG_MAGIC);
-        }
         if (code->handlers) {
             mprMark(code->handlers);
             for (i = 0; i < code->numHandlers; i++) {
@@ -392,6 +389,7 @@ EjsCode *ejsCreateCode(Ejs *ejs, EjsFunction *fun, EjsModule *module, cuchar *by
     mprAssert(module);
     mprAssert(byteCode);
     mprAssert(len >= 0);
+    mprAssert(debug == 0 || debug->magic == EJS_DEBUG_MAGIC);
 
     if ((code = mprAllocBlock(sizeof(EjsCode) + len, MPR_ALLOC_ZERO | MPR_ALLOC_MANAGER)) == 0) {
         return NULL;
@@ -414,6 +412,7 @@ int ejsSetFunctionCode(Ejs *ejs, EjsFunction *fun, EjsModule *module, cuchar *by
     mprAssert(fun);
     mprAssert(byteCode);
     mprAssert(len >= 0);
+    mprAssert(debug == 0 || debug->magic == EJS_DEBUG_MAGIC);
 
     fun->body.code = ejsCreateCode(ejs, fun, module, byteCode, len, debug);
     return 0;
@@ -520,16 +519,16 @@ void ejsManageFunction(EjsFunction *fun, int flags)
 {
     if (flags & MPR_MANAGE_MARK) {
         ejsManageBlock((EjsBlock*) fun, flags);
-        mprMark(fun->name);
         mprMark(fun->activation);
+        mprMark(fun->name);
         mprMark(fun->setter);
         mprMark(fun->archetype);
-        mprMark(fun->resultType);
-        mprMark(fun->boundThis);
-        mprMark(fun->boundArgs);
         if (!fun->isNativeProc) {
             mprMark(fun->body.code);
         }
+        mprMark(fun->boundArgs);
+        mprMark(fun->boundThis);
+        mprMark(fun->resultType);
     }
 }
 

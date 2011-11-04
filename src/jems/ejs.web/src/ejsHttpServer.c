@@ -836,6 +836,8 @@ static void manageHttpServer(EjsHttpServer *sp, int flags)
         mprMark(sp->ejs);
         mprMark(sp->endpoint);
         mprMark(sp->ssl);
+        httpManageTrace(&sp->trace[0], flags);
+        httpManageTrace(&sp->trace[1], flags);
         mprMark(sp->connector);
         mprMark(sp->keyFile);
         mprMark(sp->certFile);
@@ -847,8 +849,6 @@ static void manageHttpServer(EjsHttpServer *sp, int flags)
         mprMark(sp->limits);
         mprMark(sp->outgoingStages);
         mprMark(sp->incomingStages);
-        httpManageTrace(&sp->trace[0], flags);
-        httpManageTrace(&sp->trace[1], flags);
         
     } else {
         if (sp->ejs && sp->ejs->httpServers) {

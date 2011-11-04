@@ -406,6 +406,7 @@ static void manageSocket(EjsSocket *sp, int flags)
         mprMark(sp->data);
         mprMark(sp->sock);
         mprMark(sp->address);
+        mprMark(sp->mutex);
     }
 }
 
