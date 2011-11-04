@@ -4,7 +4,6 @@
     BUGS
     - Inconsistent trace. Build does, publish doesnt
  */
-GC.enabled = false
 
 /*
     Background
