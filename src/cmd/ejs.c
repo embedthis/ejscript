@@ -21,6 +21,7 @@ typedef struct App {
     MprList     *modules;
     Ejs         *ejs;
     EcCompiler  *compiler;
+    int         iterations;
 } App;
 
 static App *app;
@@ -47,7 +48,7 @@ MAIN(ejsMain, int argc, char **argv)
     Ejs             *ejs;
     cchar           *cmd, *className, *method, *homeDir;
     char            *argp, *searchPath, *modules, *name, *tok, *extraFiles;
-    int             nextArg, err, ecFlags, stats, merge, bind, noout, debug, optimizeLevel, warnLevel, strict;
+    int             nextArg, err, ecFlags, stats, merge, bind, noout, debug, optimizeLevel, warnLevel, strict, i;
 
     /*  
         Initialize Multithreaded Portable Runtime (MPR)
@@ -75,13 +76,13 @@ MAIN(ejsMain, int argc, char **argv)
     optimizeLevel = 9;
     strict = 0;
     app->files = mprCreateList(-1, 0);
+    app->iterations = 1;
 
     for (nextArg = 1; nextArg < argc; nextArg++) {
         argp = argv[nextArg];
         if (*argp != '-') {
             break;
         }
-
         if (strcmp(argp, "--bind") == 0) {
             bind = 1;
 
@@ -145,6 +146,13 @@ MAIN(ejsMain, int argc, char **argv)
                     mprAddItem(app->files, sclone(name));
                     name = stok(NULL, " \t", &tok);
                 }
+            }
+
+        } else if (strcmp(argp, "--iterations") == 0 || strcmp(argp, "-i") == 0) {
+            if (nextArg >= argc) {
+                err++;
+            } else {
+                app->iterations = atoi(argv[++nextArg]);
             }
 
         } else if (strcmp(argp, "--log") == 0) {
@@ -292,20 +300,22 @@ MAIN(ejsMain, int argc, char **argv)
     if (nextArg < argc) {
         mprAddItem(app->files, sclone(argv[nextArg]));
     }
-    if (cmd) {
-        if (interpretCommands(cp, cmd) < 0) {
-            err++;
-        }
-    } else if (mprGetListLength(app->files) > 0) {
-        if (interpretFiles(cp, app->files, argc - nextArg, &argv[nextArg], className, method) < 0) {
-            err++;
-        }
-    } else {
-        /*  
-            No args - run as an interactive shell
-         */
-        if (interpretCommands(cp, NULL) < 0) {
-            err++;
+    for (i = 0; !err && i < app->iterations; i++) {
+        if (cmd) {
+            if (interpretCommands(cp, cmd) < 0) {
+                err++;
+            }
+        } else if (mprGetListLength(app->files) > 0) {
+            if (interpretFiles(cp, app->files, argc - nextArg, &argv[nextArg], className, method) < 0) {
+                err++;
+            }
+        } else {
+            /*  
+                No args - run as an interactive shell
+             */
+            if (interpretCommands(cp, NULL) < 0) {
+                err++;
+            }
         }
     }
 #if BLD_DEBUG
