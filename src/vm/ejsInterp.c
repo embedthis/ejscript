@@ -3771,6 +3771,7 @@ static EjsOpCode traceCode(Ejs *ejs, EjsOpCode opcode)
     state = ejs->state;
     fp = state->fp;
     opcount[opcode]++;
+    mprAssert(ejs->exception || (state->stack >= fp->stackReturn));
 
     if (1 || (ejs->initialized && doDebug)) {
         offset = (int) (fp->pc - fp->function.body.code->byteCode) - 1;
@@ -3784,7 +3785,7 @@ static EjsOpCode traceCode(Ejs *ejs, EjsOpCode opcode)
             ejsShowOpFrequency(ejs);
         }
 #endif
-        mprAssert(state->stack >= fp->stackReturn);
+        mprAssert(ejs->exception || (state->stack >= fp->stackReturn));
     }
     ejsOpCount++;
     return opcode;

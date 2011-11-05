@@ -117,6 +117,7 @@ Ejs *ejsCreateVM(int argc, cchar **argv, int flags)
         mprError("Can't create VM");
         return 0;
     }
+    mprLog(5, "ejs: create VM");
     return ejs;
 }
 
@@ -213,6 +214,7 @@ void ejsDestroyVM(Ejs *ejs)
             mprDestroyDispatcher(ejs->dispatcher);
         }
     }
+    mprLog(5, "ejs: destroy VM");
 }
 
 
@@ -391,8 +393,8 @@ Ejs *ejsAllocPoolVM(EjsPool *pool, int flags)
     mprLog(5, "ejs: Alloc VM active %d, allocated %d, max %d", pool->count - mprGetListLength(pool->list), 
         pool->count, pool->max);
 
-    if (!mprGetDebugMode()) {
-        pool->timer = mprCreateTimerEvent(NULL, "ejsPoolTimer", HTTP_TIMER_PERIOD, poolTimer, pool,
+    if (!pool->timer && !mprGetDebugMode()) {
+        pool->timer = mprCreateTimerEvent(NULL, "ejsPoolTimer", EJS_POOL_INACTIVITY_TIMEOUT, poolTimer, pool,
             MPR_EVENT_CONTINUOUS | MPR_EVENT_QUICK);
     }
     return ejs;
@@ -403,7 +405,9 @@ void ejsFreePoolVM(EjsPool *pool, Ejs *ejs)
 {
     mprAssert(pool);
     mprAssert(ejs);
+    mprAssert(!ejs->exception);
 
+    ejs->exception = 0;
     pool->lastActivity = mprGetTime();
     mprPushItem(pool->list, ejs);
     mprLog(5, "ejs: Free VM, active %d, allocated %d, max %d", pool->count - mprGetListLength(pool->list), pool->count,
@@ -416,6 +420,9 @@ static void poolTimer(EjsPool *pool, MprEvent *event)
     if (mprGetElapsedTime(pool->lastActivity) > EJS_POOL_INACTIVITY_TIMEOUT && !mprGetDebugMode()) {
         pool->template = 0;
         mprClearList(pool->list);
+        pool->count = 0;
+        mprLog(5, "ejs: Release %d VMs in inactive pool. Invoking GC.", pool->count);
+        mprRequestGC(MPR_FORCE_GC);
     }
 }
 
@@ -514,13 +521,9 @@ static void cloneProperties(Ejs *ejs, Ejs *master)
             vp = ejs->global;
             immutable = 1;
         }
-        if (immutable) {
-            //  MOB - cleanup
-            // mprLog(0, "REF   %d, %N", i, qname);
-        } else {
+        if (!immutable) {
             mvp = vp;
             vp = ejsClone(ejs, mvp, 1);
-            // mprLog(0, "CLONE %d %N from %p to %p", i, qname, mvp, vp);
         }
         ejsSetProperty(ejs, ejs->global, i, vp);
     }
