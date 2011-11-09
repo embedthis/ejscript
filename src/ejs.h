@@ -5236,7 +5236,7 @@ extern int64 ejsSwapInt64(Ejs *ejs, int64 word);
 /*
     Allow user overrides
  */
-#include    "customize.h"
+#include    "ejsCustomize.h"
 
 #endif /* _h_EJS_CORE */
 
