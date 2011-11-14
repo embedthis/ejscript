@@ -2161,7 +2161,7 @@
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 			shellPath = /bin/sh;
-			shellScript = "cp $SRC/ejs*.h $SRC/customize.h $OUT/inc\ncp $SRC/slots/ejs*.h $OUT/inc";
+			shellScript = "cp $SRC/ejs*.h $SRC/ejsCustomize.h $OUT/inc\ncp $SRC/slots/ejs*.h $OUT/inc";
 		};
 		C9EA7DC413D4DC490035EB46 /* ShellScript */ = {
 			isa = PBXShellScriptBuildPhase;

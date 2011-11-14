@@ -159,7 +159,7 @@ MAIN(ejsMain, int argc, char **argv)
             if (nextArg >= argc) {
                 err++;
             } else {
-                ejsRedirectLogging(argv[++nextArg]);
+                mprStartLogging(argv[++nextArg], 0);
                 mprSetCmdlineLogging(1);
             }
 
@@ -222,7 +222,7 @@ MAIN(ejsMain, int argc, char **argv)
             }
 
         } else if (strcmp(argp, "--verbose") == 0 || strcmp(argp, "-v") == 0) {
-            ejsRedirectLogging("stderr:2");
+            mprStartLogging("stderr:2", 0);
             mprSetCmdlineLogging(1);
 
         } else if (strcmp(argp, "--version") == 0 || strcmp(argp, "-V") == 0) {

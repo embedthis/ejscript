@@ -99,7 +99,7 @@ MAIN(ejscMain, int argc, char **argv)
             if (nextArg >= argc) {
                 err++;
             } else {
-                ejsRedirectLogging(argv[++nextArg]);
+                mprStartLogging(argv[++nextArg], 0);
                 mprSetCmdlineLogging(1);
             }
 

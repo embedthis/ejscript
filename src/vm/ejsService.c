@@ -16,7 +16,6 @@ static void defineSharedTypes(Ejs *ejs);
 static void initSearchPath(Ejs *ejs, cchar *search);
 static void initStack(Ejs *ejs);
 static int  loadRequiredModules(Ejs *ejs, MprList *require);
-static void logHandler(int flags, int level, cchar *msg);
 static void manageEjs(Ejs *ejs, int flags);
 static void manageEjsService(EjsService *service, int flags);
 static void poolTimer(EjsPool *pool, MprEvent *event);
@@ -40,9 +39,11 @@ static EjsService *createService()
 #if FUTURE && KEEP
     mprSetMemNotifier((MprMemNotifier) allocNotifier);
 #endif
+#if UNUSED
     if (mprUsingDefaultLogHandler()) {
         ejsRedirectLogging(0);
     }
+#endif
     sp->nativeModules = mprCreateHash(-1, MPR_HASH_STATIC_KEYS);
     sp->mutex = mprCreateLock();
     sp->vmlist = mprCreateList(-1, MPR_LIST_STATIC_VALUES);
@@ -947,6 +948,7 @@ static int searchForMethod(Ejs *ejs, cchar *methodName, EjsType **typeReturn)
 }
 
 
+#if UNUSED
 static void logHandler(int flags, int level, cchar *msg)
 {
     char        *prefix, *tag, *amsg, buf[MPR_MAX_STRING];
@@ -986,8 +988,10 @@ static void logHandler(int flags, int level, cchar *msg)
     }
     solo = 0;
 }
+#endif
 
 
+#if UNUSED
 int ejsRedirectLogging(cchar *logSpec)
 {
     MprFile     *file;
@@ -1005,10 +1009,10 @@ int ejsRedirectLogging(cchar *logSpec)
         level = atoi(levelSpec);
     }
     if (strcmp(spec, "stdout") == 0) {
-        file = MPR->fileSystem->stdOutput;
+        file = MPR->stdOutput;
 
     } else if (strcmp(spec, "stderr") == 0) {
-        file = MPR->fileSystem->stdError;
+        file = MPR->stdError;
 
     } else {
         //  TODO - should provide some means to append to the log
@@ -1022,6 +1026,7 @@ int ejsRedirectLogging(cchar *logSpec)
     mprSetLogFile(file);
     return 0;
 }
+#endif
 
 
 void ejsRedirectLoggingToFile(MprFile *file, int level)

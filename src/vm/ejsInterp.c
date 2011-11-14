@@ -3627,7 +3627,7 @@ static EjsAny *getNthBlock(Ejs *ejs, int nth)
 void ejsLog(Ejs *ejs, cchar *fmt, ...)
 {
     va_list     args;
-    char        buf[MPR_MAX_LOG_STRING];
+    char        buf[MPR_MAX_LOG];
 
     va_start(args, fmt);
     mprSprintfv(buf, sizeof(buf) - 1, fmt, args);

@@ -221,6 +221,14 @@ static EjsVoid *hs_listen(Ejs *ejs, EjsHttpServer *sp, int argc, EjsObj **argv)
         sp->endpoint = endpoint;
         host = httpCreateHost();
         httpSetHostIpAddr(host, sp->ip, sp->port);
+
+        route = httpCreateConfiguredRoute(host, 1);
+        httpSetRouteName(route, "default");
+        httpAddRouteHandler(route, "ejsHandler", "");
+        httpSetRouteTarget(route, "run", 0);
+        httpFinalizeRoute(route);
+        httpSetHostDefaultRoute(host, route);
+
         httpAddHostToEndpoint(endpoint, host);
 
         if (sp->limits) {
@@ -239,12 +247,6 @@ static EjsVoid *hs_listen(Ejs *ejs, EjsHttpServer *sp, int argc, EjsObj **argv)
         httpSetEndpointAsync(endpoint, sp->async);
         httpSetEndpointContext(endpoint, sp);
         httpSetEndpointNotifier(endpoint, stateChangeNotifier);
-
-        route = httpCreateConfiguredRoute(host, 1);
-        httpSetRouteName(route, "default");
-        httpAddRouteHandler(route, "ejsHandler", "");
-        httpSetRouteTarget(route, "run", 0);
-        httpFinalizeRoute(route);
 
         /*
             This is only required when http is using non-ejs handlers and/or filters
