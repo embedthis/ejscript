@@ -11,6 +11,7 @@
 /************************************ Forwards ********************************/
 
 static cchar *getPathString(Ejs *ejs, EjsObj *vp);
+static void getUserGroup(Ejs *ejs, EjsObj *attributes, int *owner, int *group);
 
 /************************************ Helpers *********************************/
 
@@ -272,15 +273,9 @@ int ejsSetPathAttributes(Ejs *ejs, cchar *path, EjsObj *attributes)
     }
 #if BLD_UNIX_LIKE
 {
-    EjsObj  *ownerName, *groupName;
     int     owner, group;
-    group = owner = -1;
-    if ((groupName = ejsGetPropertyByName(ejs, attributes, EN("group"))) != 0) {
-        group = ejsGetInt(ejs, groupName);
-    }
-    if ((ownerName = ejsGetPropertyByName(ejs, attributes, EN("owner"))) != 0) {
-        owner = ejsGetInt(ejs, ownerName);
-    }
+
+    getUserGroup(ejs, attributes, &owner, &group);
     if (owner >= 0 || group >= 0) {
         if (chown(path, owner, group) < 0) {
             ejsThrowStateError(ejs, "Can't change group. Error %d", mprGetError());
@@ -665,6 +660,43 @@ static EjsPath *pathLinkTarget(Ejs *ejs, EjsPath *fp, int argc, EjsObj **argv)
 }
 
 
+static void getUserGroup(Ejs *ejs, EjsObj *attributes, int *owner, int *group)
+{
+#if BLD_UNIX_LIKE
+    EjsAny          *ownerName, *groupName;
+    struct passwd   *pp;
+    struct group    *gp;
+
+    *owner = *group = -1;
+    if ((groupName = ejsGetPropertyByName(ejs, attributes, EN("group"))) != 0) {
+        if (ejsIs(ejs, groupName, Number)) {
+            *group = ejsGetInt(ejs, groupName);
+        } else {
+            groupName = ejsToString(ejs, groupName);
+            if ((gp = getgrnam(ejsToMulti(ejs, groupName))) == 0) {
+                ejsThrowArgError(ejs, "Can't find group %@", groupName);
+                return;
+            }
+            *group = gp->gr_gid;
+        }
+    }
+    if ((ownerName = ejsGetPropertyByName(ejs, attributes, EN("owner"))) != 0) {
+        if (ejsIs(ejs, ownerName, Number)) {
+            *owner = ejsGetInt(ejs, ownerName);
+        } else {
+            if ((pp = getpwnam(ejsToMulti(ejs, ownerName))) == 0) {
+                ejsThrowArgError(ejs, "Can't find user %@", ownerName);
+                return;
+            }
+            *owner = pp->pw_uid;
+        }
+    }
+#else
+    *owner = *group = -1;
+#endif
+}
+
+
 /*
     function makeDir(attributes: Object = null): Void
   
@@ -680,21 +712,14 @@ static EjsObj *makePathDir(Ejs *ejs, EjsPath *fp, int argc, EjsObj **argv)
     perms = 0755;
     group = owner = -1;
     if (argc == 1) {
-#if BLD_UNIX_LIKE
-        EjsObj  *ownerName, *groupName;
-        if ((groupName = ejsGetPropertyByName(ejs, attributes, EN("group"))) != 0) {
-            group = ejsGetInt(ejs, groupName);
-        }
-        if ((ownerName = ejsGetPropertyByName(ejs, attributes, EN("owner"))) != 0) {
-            owner = ejsGetInt(ejs, ownerName);
-        }
-#endif
+        getUserGroup(ejs, attributes, &owner, &group);
         if ((permissions = ejsGetPropertyByName(ejs, attributes, EN("permissions"))) != 0) {
             perms = ejsGetInt(ejs, permissions);
         }
     }
     if (mprGetPathInfo(fp->value, &info) < 0) {
         if (mprMakeDir(fp->value, perms, owner, group, 1) < 0) {
+            ejsThrowStateError(ejs, "Can't make directory. Error %d", mprGetError());
             return ESV(false);
         }
     } else if (!info.isDir) {
