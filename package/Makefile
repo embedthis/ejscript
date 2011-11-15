@@ -13,7 +13,8 @@ dependExtra:
 
 packageFinal: 
 	$(MAKE) -C .. packageRelease
-	$(MAKE) -C .. packageCombo
+	priv $(MAKE) -C .. packageCombo
+	priv $(MAKE) -C .. packageFlat
 
 #
 #   Local variables:
