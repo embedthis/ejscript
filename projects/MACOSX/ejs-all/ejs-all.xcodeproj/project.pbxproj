@@ -1002,7 +1002,6 @@
 		C9A5195313D777D700C16EBA /* ejsWeb.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = ejsWeb.h; path = ../../../src/jems/ejs.web/src/ejsWeb.h; sourceTree = "<group>"; };
 		C9A5195613D7780100C16EBA /* sqlite3.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = sqlite3.h; path = ../../../src/jems/ejs.db.sqlite/src/sqlite3.h; sourceTree = "<group>"; };
 		C9B13B32138322B600B2E649 /* ejsCache.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; name = ejsCache.c; path = ../../../src/core/src/ejsCache.c; sourceTree = "<group>"; };
-		C9C4772E140AB8820022E73F /* customize.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = customize.h; path = ../../../src/customize.h; sourceTree = "<group>"; };
 		C9C4772F140AB8820022E73F /* ejs.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = ejs.h; path = ../../../src/ejs.h; sourceTree = "<group>"; };
 		C9C47730140AB8820022E73F /* ejsByteCode.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = ejsByteCode.h; path = ../../../src/ejsByteCode.h; sourceTree = "<group>"; };
 		C9C47731140AB8820022E73F /* ejsByteCodeTable.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = ejsByteCodeTable.h; path = ../../../src/ejsByteCodeTable.h; sourceTree = "<group>"; };
@@ -1176,7 +1175,6 @@
 		C9188AF6115DAB760018846C /* core */ = {
 			isa = PBXGroup;
 			children = (
-				C9C4772E140AB8820022E73F /* customize.h */,
 				C9C4772F140AB8820022E73F /* ejs.h */,
 				C9C47730140AB8820022E73F /* ejsByteCode.h */,
 				C9C47731140AB8820022E73F /* ejsByteCodeTable.h */,
