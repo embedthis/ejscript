@@ -373,7 +373,7 @@ module ejs {
             return cmd.readString()
         }
 
-        //  MOB - should this take options as an arg?
+        //  MOB - should this take options as an arg? YES
         /**
             Run a command using the system command shell and wait for completion. On Windows, this requires that
             sh.exe is installed (See Cygwin). 
