@@ -562,8 +562,12 @@ module ejs {
             Replace the path extension and return a new path.
             @return A new path with the given extension.
          */
-        function replaceExt(ext: String): Path
-            this.trimExt().joinExt(ext)
+        function replaceExt(ext: String): Path {
+            if (ext[0] != '.') {
+                ext = "." + ext
+            }
+            return this.trimExt() + ext
+        }
 
         /**
             Resolve paths in the neighborhood of this path. Resolve operates like join, except that it joins the 
