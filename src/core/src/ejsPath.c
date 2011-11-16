@@ -263,6 +263,7 @@ static EjsArray *getPathComponents(Ejs *ejs, EjsPath *fp, int argc, EjsObj **arg
 }
 
 
+//  MOB - push into MPR
 int ejsSetPathAttributes(Ejs *ejs, cchar *path, EjsObj *attributes)
 {
     EjsObj  *permissions;
