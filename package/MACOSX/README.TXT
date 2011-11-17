@@ -4,7 +4,7 @@ Welcome to the Embedthis Ejscript distribution for MAC OS X.
 
 This document describes the procedure for installing Ejscript. This package contains the Ejscript compiler, virtual machine, and module manager programs. It also contains the Ejscript libraries and program headers necessary to embed Ejscript in an application. Once installed, you can you may read the Ejscript online documentation and samples for further information. You can also read the documentation for the latest release online at:
 
-    http://www.embedthis.com/products/ejscript/doc/index.html
+    http://embedthis.com/products/ejscript/doc/index.html
 
 This software is copyrighted and distributed under license. Please read the LICENSE.TXT for details.
 

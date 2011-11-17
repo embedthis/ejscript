@@ -8,7 +8,7 @@ usePrefixes CFG BIN LIB LOG PRD VER WEB SPL
 
 if [ "$ORIGINAL_ROOT_DIR" = "" ] ; then
     # Incase product executing, necessary to overwrite appweb
-    for p in ejs ejsc ejsmod http ; do
+    for p in ejs ejsc ejsmod ehttp ; do
         rm -f $BLD_BIN_PREFIX/$p 2>/dev/null
     done
     rm -f $BLD_LIB_PREFIX/*.so* 2>/dev/null

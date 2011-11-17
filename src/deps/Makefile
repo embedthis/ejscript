@@ -6,21 +6,18 @@
 
 include 		.makedep
 
-ifeq ($(BLD_MPR_BUILTIN),1)
-	PRE_DIRS    += mpr
-endif
+PRE_DIRS    	+= mpr pcre http sqlite
+EJSMAN          := $(BLD_BIN_DIR)/ejsman$(BLD_EXE)
+EHTTP           := $(BLD_BIN_DIR)/ehttp$(BLD_EXE)
+TARGETS			+= $(EJSMAN) $(EHTTP)
 
-ifeq ($(BLD_PCRE_BUILTIN),1)
-	PRE_DIRS    += pcre
-endif
+compileExtra:   $(TARGETS)
 
-ifeq ($(BLD_HTTP_BUILTIN),1)
-	PRE_DIRS    += http
-endif
+$(EJSMAN): $(BLD_BIN_DIR)/manager$(BLD_EXE)
+	cp $(BLD_BIN_DIR)/manager$(BLD_EXE) $(EJSMAN)
 
-ifeq ($(BLD_SQLITE_BUILTIN),1)
-	PRE_DIRS    += sqlite
-endif
+$(EHTTP): $(BLD_BIN_DIR)/http$(BLD_EXE)
+	cp $(BLD_BIN_DIR)/http$(BLD_EXE) $(EHTTP)
 
 #
 #   Local variables:
