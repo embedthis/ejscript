@@ -1858,17 +1858,13 @@ static void cacheAtClient(HttpConn *conn)
  */
 static bool fetchCachedResponse(HttpConn *conn)
 {
-    HttpRx      *rx;
     HttpTx      *tx;
-    HttpRoute   *route;
     MprTime     modified, when;
     HttpCache   *cache;
     cchar       *value, *key, *tag;
     int         status, cacheOk, canUseClientCache;
 
-    rx = conn->rx;
     tx = conn->tx;
-    route = rx->route;
     cache = tx->cache;
     mprAssert(cache);
 
@@ -1939,11 +1935,9 @@ static void saveCachedResponse(HttpConn *conn)
 
 ssize httpWriteCached(HttpConn *conn)
 {
-    HttpRoute   *route;
     MprTime     modified;
     cchar       *cacheKey, *data, *content;
 
-    route = conn->rx->route;
     if (!conn->tx->cache) {
         return MPR_ERR_CANT_FIND;
     }
@@ -2093,10 +2087,8 @@ static void manageHttpCache(HttpCache *cache, int flags)
 static char *makeCacheKey(HttpConn *conn)
 {
     HttpRx      *rx;
-    HttpRoute   *route;
 
     rx = conn->rx;
-    route = rx->route;
     if (conn->tx->cache->flags & (HTTP_CACHE_ONLY | HTTP_CACHE_UNIQUE)) {
         return sfmt("http::response-%s?%s", rx->pathInfo, httpGetParamsString(conn));
     } else {
@@ -3703,6 +3695,7 @@ HttpEndpoint *httpCreateConfiguredEndpoint(cchar *home, cchar *documents, cchar 
     if ((route = httpCreateRoute(host)) == 0) {
         return 0;
     }
+    httpSetHostDefaultRoute(host, route);
     httpSetHostIpAddr(host, ip, port);
     httpAddHostToEndpoint(endpoint, host);
     httpSetHostHome(host, home);
@@ -5634,7 +5627,6 @@ void httpWriteRouteLog(HttpRoute *route, cchar *buf, ssize len)
 
 void httpLogRequest(HttpConn *conn)
 {
-    HttpHost    *host;
     HttpRx      *rx;
     HttpTx      *tx;
     HttpRoute   *route;
@@ -5648,7 +5640,6 @@ void httpLogRequest(HttpConn *conn)
     if (!route->log) {
         return;
     }
-    host = httpGetConnContext(conn);
     fmt = route->logFormat;
     if (fmt == 0) {
         fmt = HTTP_LOG_FORMAT;
@@ -8787,7 +8778,7 @@ int httpAddRouteHandler(HttpRoute *route, cchar *name, cchar *extensions)
 {
     Http            *http;
     HttpStage       *handler;
-    char            *extlist, *word, *tok, *hostName;
+    char            *extlist, *word, *tok;
 
     mprAssert(route);
 
@@ -8796,7 +8787,6 @@ int httpAddRouteHandler(HttpRoute *route, cchar *name, cchar *extensions)
         mprError("Can't find stage %s", name); 
         return MPR_ERR_CANT_FIND;
     }
-    hostName = route->host->name ? route->host->name : "default"; 
     GRADUATE_HASH(route, extensions);
 
     if (extensions && *extensions) {
