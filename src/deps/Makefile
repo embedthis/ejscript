@@ -9,7 +9,11 @@ include 		.makedep
 PRE_DIRS    	+= mpr pcre http sqlite
 EJSMAN          := $(BLD_BIN_DIR)/ejsman$(BLD_EXE)
 EHTTP           := $(BLD_BIN_DIR)/ehttp$(BLD_EXE)
-TARGETS			+= $(EJSMAN) $(EHTTP)
+
+ifneq ($(BLD_OS),VXWORKS)
+	TARGETS		+= $(EJSMAN)
+endif
+TARGETS			+= $(EHTTP)
 
 compileExtra:   $(TARGETS)
 
