@@ -7,21 +7,6 @@
 include 		.makedep
 
 PRE_DIRS    	+= mpr pcre http sqlite
-EJSMAN          := $(BLD_BIN_DIR)/ejsman$(BLD_EXE)
-EHTTP           := $(BLD_BIN_DIR)/ehttp$(BLD_EXE)
-
-ifneq ($(BLD_OS),VXWORKS)
-	TARGETS		+= $(EJSMAN)
-endif
-TARGETS			+= $(EHTTP)
-
-compileExtra:   $(TARGETS)
-
-$(EJSMAN): $(BLD_BIN_DIR)/manager$(BLD_EXE)
-	cp $(BLD_BIN_DIR)/manager$(BLD_EXE) $(EJSMAN)
-
-$(EHTTP): $(BLD_BIN_DIR)/http$(BLD_EXE)
-	cp $(BLD_BIN_DIR)/http$(BLD_EXE) $(EHTTP)
 
 #
 #   Local variables:
