@@ -5657,7 +5657,6 @@ int mprWaitForCmd(MprCmd *cmd, MprTime timeout)
  */
 static void reapCmd(MprCmd *cmd, MprSignal *sp)
 {
-//  sp->signo
     ssize   got, nbytes;
     int     status, rc;
 
@@ -5668,10 +5667,12 @@ static void reapCmd(MprCmd *cmd, MprSignal *sp)
         return;
     }
 #if BLD_UNIX_LIKE
+#if UNUSED
     if (sp && sp->info.siginfo.si_pid != cmd->pid) {
         mprLog(0, "reapCmd signal for pid %d, not for this cmd pid %d", sp->info.siginfo.si_pid, cmd->pid);
         return;
     }
+#endif
     if ((rc = waitpid(cmd->pid, &status, WNOHANG | __WALL)) < 0) {
         mprLog(0, "waitpid failed for pid %d, errno %d", cmd->pid, errno);
 
@@ -18630,7 +18631,8 @@ static void hookSignal(int signo, MprSignal *sp)
         memset(&act, 0, sizeof(act));
         act.sa_sigaction = signalHandler;
         act.sa_flags |= SA_SIGINFO | SA_RESTART;
-        sigfillset(&act.sa_mask);
+        act.sa_flags &= ~SA_NODEFER;
+        sigemptyset(&act.sa_mask);
         if (sigaction(signo, &act, 0) != 0) {
             mprError("Can't hook signal %d, errno %d", signo, mprGetOsError());
         }
@@ -18657,13 +18659,31 @@ static void unhookSignal(int signo)
 }
 
 
+#if UNUSED
 static void maskSignal(int signo)
 {
     sigset_t    set;
 
+#if UNUSED
     sigprocmask(0, 0, &set);
     sigaddset(&set, signo);
     sigprocmask(SIG_BLOCK, &set, 0);
+#else
+    pthread_sigmask(0, 0, &set);
+    sigaddset(&set, signo);
+    sigprocmask(SIG_BLOCK, &set, 0);
+    pthread_sigmask(0, 0, &set);
+#endif
+#if UNUSED
+    struct sigaction    act, old;
+    sigaction(signo, 0, &act);
+    act.sa_flags |= SA_SIGINFO | SA_RESTART;
+    act.sa_flags &= ~SA_NODEFER;
+    sigfillset(&act.sa_mask);
+    if (sigaction(signo, &act, 0) != 0) {
+        mprError("Can't hook signal %d, errno %d", signo, mprGetOsError());
+    }
+#endif
 }
 
 
@@ -18671,10 +18691,17 @@ static void unmaskSignal(int signo)
 {
     sigset_t    set;
 
+#if UNUSED
     sigprocmask(0, 0, &set);
     sigaddset(&set, signo);
     sigprocmask(SIG_UNBLOCK, &set, 0);
+#else
+    pthread_sigmask(0, 0, &set);
+    sigaddset(&set, signo);
+    pthread_sigmask(SIG_UNBLOCK, &set, 0);
+#endif
 }
+#endif
 
 
 /*
@@ -18686,6 +18713,7 @@ static void signalHandler(int signo, siginfo_t *info, void *arg)
 {
     MprSignalService    *ssp;
     MprSignalInfo       *ip;
+    int                 saveErrno;
 
     if (signo <= 0 || signo >= MPR_MAX_SIGNALS || MPR == 0) {
         return;
@@ -18694,14 +18722,97 @@ static void signalHandler(int signo, siginfo_t *info, void *arg)
         exit(1);
     }
     ssp = MPR->signalService;
-    maskSignal(signo);
     ip = &ssp->info[signo];
-    ip->siginfo = *info;
+    saveErrno = errno;
+#if UNUSED
+    maskSignal(signo);
+    mprSleep(10 * 1000);
+
     ip->siginfo.si_signo = signo;
     ip->arg = arg;
+    mprAssert(!ip->triggered);
+#endif
     ip->triggered = 1;
     ssp->hasSignals = 1;
     mprWakeNotifier();
+    errno = saveErrno;
+}
+
+
+/*
+    Called by mprServiceEvents after a signal has been received. Create an event and queue on the appropriate dispatcher
+ */
+void mprServiceSignals()
+{
+    MprSignalService    *ssp;
+    MprSignal           *sp;
+    MprSignalInfo       *ip;
+    int                 signo;
+
+    ssp = MPR->signalService;
+    ssp->hasSignals = 0;
+    for (ip = ssp->info; ip < &ssp->info[MPR_MAX_SIGNALS]; ip++) {
+        if (ip->triggered) {
+            ip->triggered = 0;
+#if UNUSED
+            signo = ip->siginfo.si_signo;
+            mprAssert(0 <= signo && signo < MPR_MAX_SIGNALS);
+            mprLog(5, "Caught signal %d", signo);
+#endif
+            signo = ip - ssp->info;
+            /*
+                Create an event for the head of the signal handler chain for this signal
+                Copy info from Thread.sigInfo to MprSignal structure.
+             */
+            if ((sp = ssp->signals[signo]) != 0) {
+#if UNUSED
+                sp->info = *ip;
+#endif
+                mprCreateEvent(sp->dispatcher, "signalEvent", 0, signalEvent, sp, 0);
+            }
+#if UNUSED
+            unmaskSignal(signo);
+#endif
+        }
+    }
+}
+
+
+/*
+    Invoke the next signal handler. Runs from the dispatcher so signal handlers don't have to be async-safe.
+ */
+static void signalEvent(MprSignal *sp, MprEvent *event)
+{
+    MprSignal   *np;
+    
+    mprAssert(sp);
+    mprAssert(event);
+
+    mprLog(7, "signalEvent signo %d, flags %x", sp->signo, sp->flags);
+
+    if (sp->flags & MPR_SIGNAL_BEFORE) {
+        (sp->handler)(sp->data, sp);
+    } 
+    if (sp->sigaction) {
+        /*
+            Call the original (foreign) action handler
+         */
+#if UNUSED
+        (sp->sigaction)(sp->signo, &sp->info.siginfo, sp->info.arg);
+#else
+        (sp->sigaction)(sp->signo, NULL, NULL);
+#endif
+    }
+    if (sp->flags & MPR_SIGNAL_AFTER) {
+        (sp->handler)(sp->data, sp);
+    }
+    if ((np = sp->next) != 0) {
+        /* 
+            Call all chained signal handlers. Create new event for each handler so we get the right dispatcher.
+         */
+        np->info = sp->info;
+        mprCreateEvent(np->dispatcher, "signalEvent", 0, signalEvent, np, 0);
+    }
 }
 
 
@@ -18784,66 +18895,6 @@ void mprRemoveSignalHandler(MprSignal *sp)
 {
     if (sp) {
         unlinkSignalHandler(sp);
-    }
-}
-
-
-/*
-    Called by mprServiceEvents after a signal has been received. Create an event and queue on the appropriate dispatcher
- */
-void mprServiceSignals()
-{
-    MprSignalService    *ssp;
-    MprSignal           *sp;
-    MprSignalInfo       *ip;
-    int                 signo;
-
-    ssp = MPR->signalService;
-    ssp->hasSignals = 0;
-    for (ip = ssp->info; ip < &ssp->info[MPR_MAX_SIGNALS]; ip++) {
-        if (ip->triggered) {
-            ip->triggered = 0;
-            signo = ip->siginfo.si_signo;
-            mprAssert(0 <= signo && signo < MPR_MAX_SIGNALS);
-            mprLog(5, "Caught signal %d", signo);
-            sp = ssp->signals[signo];
-            if (sp) {
-                sp->info = *ip;
-                mprCreateEvent(sp->dispatcher, "signalEvent", 0, signalEvent, sp, 0);
-            }
-            unmaskSignal(signo);
-        }
-    }
-}
-
-
-/*
-    Invoke the next signal handler. Runs from the dispatcher so signal handlers don't have to be async-safe.
- */
-static void signalEvent(MprSignal *sp, MprEvent *event)
-{
-    MprSignal   *np;
-    
-    mprAssert(sp);
-    mprAssert(event);
-
-    mprLog(7, "signalEvent signo %d, flags %x", sp->signo, sp->flags);
-
-    np = sp->next;
-
-    if (sp->flags & MPR_SIGNAL_BEFORE) {
-        (sp->handler)(sp->data, sp);
-    } 
-    if (sp->sigaction) {
-        (sp->sigaction)(sp->signo, &sp->info.siginfo, sp->info.arg);
-    }
-    if (sp->flags & MPR_SIGNAL_AFTER) {
-        (sp->handler)(sp->data, sp);
-    }
-    if (np) {
-        /* Create new event for each handler so we get the right dispatcher */
-        np->info = sp->info;
-        mprCreateEvent(np->dispatcher, "signalEvent", 0, signalEvent, np, 0);
     }
 }
 
