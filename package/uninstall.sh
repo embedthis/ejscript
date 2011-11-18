@@ -58,8 +58,6 @@ BLD_VER_PREFIX="!!ORIG_BLD_VER_PREFIX!!"
 BLD_WEB_PREFIX="!!ORIG_BLD_WEB_PREFIX!!"
 
 removebin=Y
-removedev=Y
-removesrc=N
 
 PATH=$PATH:/sbin:/usr/sbin
 unset CDPATH
@@ -157,22 +155,18 @@ preClean() {
 		cd "$cdir"
 	fi
 
-	if [ "$removedev" = "Y" ] ; then
-		if [ -d "$BLD_INC_PREFIX" ] ; then
-			cd "$BLD_INC_PREFIX"
-			removeIntermediateFiles '*.o' '*.lo' '*.so' '*.dylib' '*.a' make.rules .config.h.sav make.log .changes
-			cd "$cdir"
-		fi
+    if [ -d "$BLD_INC_PREFIX" ] ; then
+        cd "$BLD_INC_PREFIX"
+        removeIntermediateFiles '*.o' '*.lo' '*.so' '*.dylib' '*.a' make.rules .config.h.sav make.log .changes
+        cd "$cdir"
 	fi
 
-	if [ "$removesrc" = "Y" ] ; then
-		if [ -d "$BLD_SRC_PREFIX" ] ; then
-			cd "$BLD_SRC_PREFIX"
-			make clean >/dev/null 2>&1 || true
-			removeIntermediateFiles '*.o' '*.lo' '*.so' '*.dylib' '*.a' make.rules .config.h.sav make.log \
-                .changes access.log error.log '*.log.old' .dummy $BLD_PRODUCT.conf make.log
-			cd "$cdir"
-		fi
+    if [ -d "$BLD_SRC_PREFIX" ] ; then
+        cd "$BLD_SRC_PREFIX"
+        make clean >/dev/null 2>&1 || true
+        removeIntermediateFiles '*.o' '*.lo' '*.so' '*.dylib' '*.a' make.rules .config.h.sav make.log \
+            .changes access.log error.log '*.log.old' .dummy $BLD_PRODUCT.conf make.log
+        cd "$cdir"
 	fi
 }
 
@@ -183,26 +177,19 @@ postClean() {
 
 	rm -f ${BLD_VER_PREFIX}/install.conf
 
-	if [ "$removedev" = "Y" ] ; then
-		if [ -d "$BLD_MAN_PREFIX" ] ; then
-			rm -rf "$BLD_MAN_PREFIX"/man*
-		fi
-		cleanDir "$BLD_MAN_PREFIX"
-		cleanDir "$BLD_SAM_PREFIX"
-		cleanDir "$BLD_SPL_PREFIX"
-		cleanDir "$BLD_INC_PREFIX"
-		cleanDir "$BLD_DOC_PREFIX"
-	fi
-	if [ "$removebin" = "Y" ] ; then
-		cleanDir "$BLD_CFG_PREFIX"
-		cleanDir "$BLD_VER_PREFIX"
-		cleanDir "$BLD_LIB_PREFIX"
-		cleanDir "$BLD_SPL_PREFIX"
-		cleanDir "$BLD_WEB_PREFIX"
-	fi
-	if [ "$removesrc" = "Y" ] ; then
-		cleanDir "$BLD_SRC_PREFIX"
-	fi
+    if [ -d "$BLD_MAN_PREFIX" ] ; then
+        rm -rf "$BLD_MAN_PREFIX"/man*
+    fi
+    cleanDir "$BLD_MAN_PREFIX"
+    cleanDir "$BLD_SAM_PREFIX"
+    cleanDir "$BLD_SPL_PREFIX"
+    cleanDir "$BLD_INC_PREFIX"
+    cleanDir "$BLD_DOC_PREFIX"
+    cleanDir "$BLD_CFG_PREFIX"
+    cleanDir "$BLD_VER_PREFIX"
+    cleanDir "$BLD_LIB_PREFIX"
+    cleanDir "$BLD_SPL_PREFIX"
+    cleanDir "$BLD_WEB_PREFIX"
 	if [ $BLD_HOST_OS != WIN ] ; then
         if [ -x /usr/share/$BLD_PRODUCT ] ; then
             cleanDir /usr/share/$BLD_PRODUCT
@@ -321,8 +308,6 @@ setup() {
 	fi
 	
 	binDir=${binDir:-$BLD_VER_PREFIX}
-	devDir=${devDir:-$BLD_INC_PREFIX}
-	srcDir=${srcDir:-$BLD_SRC_PREFIX}
 
 	echo -e "\n$BLD_NAME !!BLD_VERSION!!-!!BLD_NUMBER!! Removal\n"
 }
@@ -344,14 +329,8 @@ askUser() {
 		else
 			removebin=N
 		fi
-		if [ -d "$devDir" ] ; then
-			removedev=`yesno "Remove development headers and samples package" "$removedev"`
-		else
-			removedev=N
-		fi
 		echo -e "\nProceed removing with these instructions:" 
 		[ $removebin = Y ] && echo -e "  Remove binary package: $removebin"
-		[ $removedev = Y ] && echo -e "  Remove development package: $removedev"
 
 		echo
 		finished=`yesno "Accept these instructions" "Y"`

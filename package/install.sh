@@ -11,9 +11,7 @@
 #   The configFile is of the format:
 #       FMT=[rpm|deb|tar]               # Package format to use
 #       srcDir=sourcePath               # Where to install the src
-#       devDir=documentationPath        # Where to install the doc
 #       installbin=[YN]                 # Install binary package
-#       installdev=[YN]                 # Install dev headers package
 #
 
 HOME=`pwd`
@@ -41,7 +39,6 @@ BLD_VER_PREFIX="!!ORIG_BLD_VER_PREFIX!!"
 BLD_WEB_PREFIX="!!ORIG_BLD_WEB_PREFIX!!"
 
 installbin=Y
-installdev=Y
 
 PATH=$PATH:/sbin:/usr/sbin
 
@@ -105,16 +102,14 @@ askUser() {
     while [ "$finished" = "N" ]
     do
         installbin=`yesno "Install binary package" "$installbin"`
-        installdev=`yesno "Install development headers and samples package" "$installdev"`
     
         echo -e "\nInstalling with this configuration:" 
         echo -e "    Install binary package: $installbin"
-        echo -e "    Install development doc, headers and samples package: $installdev"
         echo
         finished=`yesno "Accept this configuration" "Y"`
     done
     
-    if [ "$installbin" = "N" -a "$installdev" = "N" ] ; then
+    if [ "$installbin" = "N" ] ; then
         echo -e "\nNothing to install, exiting. "
         exit 0
     fi
@@ -181,8 +176,7 @@ saveSetup() {
     local firstChar
 
     mkdir -p "$BLD_VER_PREFIX"
-    echo -e "FMT=$FMT\nbinDir=$BLD_VER_PREFIX\ninstallbin=$installbin\ninstalldev=$installdev" \
-        >"${BLD_VER_PREFIX}/install.conf"
+    echo -e "FMT=$FMT\nbinDir=$BLD_VER_PREFIX\ninstallbin=$installbin\n" >"${BLD_VER_PREFIX}/install.conf"
 }
 
 installFiles() {
@@ -190,7 +184,7 @@ installFiles() {
 
     echo -e "\nExtracting files ...\n"
 
-    for pkg in bin dev ; do
+    for pkg in bin ; do
         
         doins=`eval echo \\$install${pkg}`
         if [ "$doins" = Y ] ; then
@@ -273,7 +267,7 @@ startBrowser() {
         return
     fi
     echo -e "\nStarting browser to view the $BLD_NAME Home Page."
-    url=$BLD_DOC_PREFIX/index.html
+    url=http://ejscript.org/products/ejs/doc/ejs-2/product/index.html
     if [ $BLD_HOST_OS = WIN ] ; then
         cygstart --shownormal "$url"
     elif [ $BLD_HOST_OS = MACOSX ] ; then
@@ -298,6 +292,9 @@ setup $*
 askUser
 legacyPrep
 installFiles $FMT
-startBrowser
+#
+#   Don't start browser as doc is not online
+#
+#   startBrowser
 
 echo -e "\n$BLD_NAME installation successful.\n"
