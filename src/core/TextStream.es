@@ -184,9 +184,9 @@ module ejs {
             //  All systems strip both \n and \r\n to normalize text lines
             //  MOB -- this should be a configurable option on a TextStream
             let nl = "\r\n"
+            let nlchar = nl.charCodeAt(nl.length - 1)
+            let nlchar0 = nl.charCodeAt(0)
             while (true) {
-                let nlchar = nl.charCodeAt(nl.length - 1)
-                let nlchar0 = nl.charCodeAt(0)
                 for (let i = inbuf.readPosition; i < inbuf.writePosition; i++) {
                     //  MOB OPT. If ByteArray had indexOf(nl), then this could be MUCH faster
                     if (inbuf[i] == nlchar) {
@@ -263,8 +263,9 @@ module ejs {
             let written = 0
             for each (let line in lines) {
                 nextStream.write(line)
-                nextStream.write(newline)
-                written += line.length + newline.length
+                /* If the file is opened in text mode, the lower layers will add "\r" for windows */
+                nextStream.write("\n");
+                written += line.length + 1
             }
             return written
         }
