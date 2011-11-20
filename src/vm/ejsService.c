@@ -34,7 +34,7 @@ static EjsService *createService()
     if ((sp = mprAllocObj(EjsService, manageEjsService)) == NULL) {
         return 0;
     }
-    mprGlobalUnlock();
+    mprGlobalLock();
     MPR->ejsService = sp;
 #if FUTURE && KEEP
     mprSetMemNotifier((MprMemNotifier) allocNotifier);
