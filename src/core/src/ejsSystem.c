@@ -8,6 +8,7 @@
 
 #include    "ejs.h"
 
+//  MOB - DEPRECATE and remove
 //  MOB - compare with ejsCmd before deleting
 /************************************ Methods *********************************/
 /*
@@ -25,7 +26,7 @@ static EjsString *system_run(Ejs *ejs, EjsObj *unused, int argc, EjsObj **argv)
     cmd = mprCreateCmd(ejs->dispatcher);
     ejs->result = cmd;
     cmdline = ejsToMulti(ejs, argv[0]);
-    status = mprRunCmd(cmd, cmdline, &output, &err, 0);
+    status = mprRunCmd(cmd, cmdline, &output, &err, -1, 0);
     if (status) {
         ejsThrowError(ejs, "Command failed: status: %d\n\nError Output: \n%s\nPrevious Output: \n%s\n", status, err, output);
         mprDestroyCmd(cmd);
@@ -49,7 +50,7 @@ static EjsObj *system_runx(Ejs *ejs, EjsObj *unused, int argc, EjsObj **argv)
 
     cmd = mprCreateCmd(ejs->dispatcher);
     ejs->result = cmd;
-    status = mprRunCmd(cmd, ejsToMulti(ejs, argv[0]), NULL, &err, 0);
+    status = mprRunCmd(cmd, ejsToMulti(ejs, argv[0]), NULL, &err, -1, 0);
     if (status) {
         ejsThrowError(ejs, "Can't run command: %@\nDetails: %s", ejsToString(ejs, argv[0]), err);
     }
@@ -70,7 +71,7 @@ static EjsNumber *system_daemon(Ejs *ejs, EjsObj *unused, int argc, EjsObj **arg
 
     cmd = mprCreateCmd(ejs->dispatcher);
     ejs->result = cmd;
-    status = mprRunCmd(cmd, ejsToMulti(ejs, argv[0]), NULL, NULL, MPR_CMD_DETACH);
+    status = mprRunCmd(cmd, ejsToMulti(ejs, argv[0]), NULL, NULL, -1, MPR_CMD_DETACH);
     if (status) {
         ejsThrowError(ejs, "Can't run command: %@", ejsToString(ejs, argv[0]));
     }
