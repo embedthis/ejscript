@@ -247,7 +247,7 @@ static void setAppDefaults()
     } else {
         app->pidDir = sclone(".");
     }
-    app->pidPath = sjoin(app->pidDir, app->serviceName, ".pid", NULL);
+    app->pidPath = sjoin(app->pidDir, "/", app->appName, ".pid", NULL);
 }
 
 
@@ -604,17 +604,18 @@ static void cleanup()
  */
 static int readPid()
 {
+    char    pbuf[32];
     int     pid, fd;
 
     if ((fd = open(app->pidPath, O_RDONLY, 0666)) < 0) {
         return -1;
     }
-    if (read(fd, &pid, sizeof(pid)) != sizeof(pid)) {
+    if (read(fd, pbuf, sizeof(pid)) <= 0) {
         close(fd);
         return -1;
     }
     close(fd);
-    return pid;
+    return (int) stoi(pbuf);
 }
 
 
@@ -634,13 +635,17 @@ static bool killPid()
  */ 
 static int writePid(int pid)
 {
+    char    *pbuf;
+    ssize   len;
     int     fd;
 
     if ((fd = open(app->pidPath, O_CREAT | O_RDWR | O_TRUNC, 0666)) < 0) {
         mprError("Could not create pid file %s\n", app->pidPath);
         return MPR_ERR_CANT_CREATE;
     }
-    if (write(fd, &pid, sizeof(pid)) != sizeof(pid)) {
+    pbuf = sfmt("%d\n", pid);
+    len = slen(pbuf);
+    if (write(fd, pbuf, len) != len) {
         mprError("Write to file %s failed\n", app->pidPath);
         return MPR_ERR_CANT_WRITE;
     }
@@ -879,33 +884,6 @@ int APIENTRY WinMain(HINSTANCE inst, HINSTANCE junk, char *args, int junk2)
             } else {
                 app->serviceProgram = sclone(argv[++nextArg]);
             }
-
-#if UNUSED
-        } else if (strcmp(argp, "--start") == 0) {
-            /*
-                Start the manager
-             */
-            if (startService() < 0) {
-                return FALSE;
-            }
-            mprSleep(2000);    /* Time for service to really start */
-
-        } else if (strcmp(argp, "--stop") == 0) {
-            /*
-                Stop the  manager
-             */
-            if (removeService(0) < 0) {
-                return FALSE;
-            }
-
-        } else if (strcmp(argp, "--uninstall") == 0) {
-            /*
-                Remove the  manager
-             */
-            if (removeService(1) < 0) {
-                return FALSE;
-            }
-#endif
 
         } else if (strcmp(argp, "--verbose") == 0 || strcmp(argp, "-v") == 0) {
             mprSetLogLevel(1);
