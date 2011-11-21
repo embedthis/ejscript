@@ -9,7 +9,7 @@ include		.makedep
 gen: prep mpr.html http.html ejs.html
 
 prep:
-	rm -f mpr.html http.html ejs.html 
+	touch Makefile
 
 mpr.html: Makefile mprBare.html *.tem
 	rm -f mpr.html
