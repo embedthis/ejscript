@@ -18659,55 +18659,16 @@ static void unhookSignal(int signo)
 }
 
 
-#if UNUSED
-static void maskSignal(int signo)
-{
-    sigset_t    set;
-
-#if UNUSED
-    sigprocmask(0, 0, &set);
-    sigaddset(&set, signo);
-    sigprocmask(SIG_BLOCK, &set, 0);
-#else
-    pthread_sigmask(0, 0, &set);
-    sigaddset(&set, signo);
-    sigprocmask(SIG_BLOCK, &set, 0);
-    pthread_sigmask(0, 0, &set);
-#endif
-#if UNUSED
-    struct sigaction    act, old;
-    sigaction(signo, 0, &act);
-    act.sa_flags |= SA_SIGINFO | SA_RESTART;
-    act.sa_flags &= ~SA_NODEFER;
-    sigfillset(&act.sa_mask);
-    if (sigaction(signo, &act, 0) != 0) {
-        mprError("Can't hook signal %d, errno %d", signo, mprGetOsError());
-    }
-#endif
-}
-
-
-static void unmaskSignal(int signo)
-{
-    sigset_t    set;
-
-#if UNUSED
-    sigprocmask(0, 0, &set);
-    sigaddset(&set, signo);
-    sigprocmask(SIG_UNBLOCK, &set, 0);
-#else
-    pthread_sigmask(0, 0, &set);
-    sigaddset(&set, signo);
-    pthread_sigmask(SIG_UNBLOCK, &set, 0);
-#endif
-}
-#endif
-
-
 /*
     Actual signal handler - must be async-safe. Do very, very little here. Just set a global flag and wakeup
     the wait service (mprWakeWaitService is async safe).
     WARNING: Don't put memory allocation or logging here.
+
+    NOTES: The problems here are several fold. The signalHandler may be invoked re-entrantly for different threads for
+    the same signal (SIGCHLD). Masked signals are blocked by a single bit and so siginfo will only store one such instance, 
+    so you can't use siginfo to get the pid for SIGCHLD. So you really can't save state here, only set an indication that
+    a signal has occurred. MprServiceSignals will then process. Signal handlers must then all be invoked and they must
+    test if the signal is valid for them. 
  */
 static void signalHandler(int signo, siginfo_t *info, void *arg)
 {
@@ -18724,14 +18685,6 @@ static void signalHandler(int signo, siginfo_t *info, void *arg)
     ssp = MPR->signalService;
     ip = &ssp->info[signo];
     saveErrno = errno;
-#if UNUSED
-    maskSignal(signo);
-    mprSleep(10 * 1000);
-
-    ip->siginfo.si_signo = signo;
-    ip->arg = arg;
-    mprAssert(!ip->triggered);
-#endif
     ip->triggered = 1;
     ssp->hasSignals = 1;
     mprWakeNotifier();
@@ -18754,25 +18707,14 @@ void mprServiceSignals()
     for (ip = ssp->info; ip < &ssp->info[MPR_MAX_SIGNALS]; ip++) {
         if (ip->triggered) {
             ip->triggered = 0;
-#if UNUSED
-            signo = ip->siginfo.si_signo;
-            mprAssert(0 <= signo && signo < MPR_MAX_SIGNALS);
-            mprLog(5, "Caught signal %d", signo);
-#endif
-            signo = ip - ssp->info;
             /*
                 Create an event for the head of the signal handler chain for this signal
                 Copy info from Thread.sigInfo to MprSignal structure.
              */
+            signo = (int) (ip - ssp->info);
             if ((sp = ssp->signals[signo]) != 0) {
-#if UNUSED
-                sp->info = *ip;
-#endif
                 mprCreateEvent(sp->dispatcher, "signalEvent", 0, signalEvent, sp, 0);
             }
-#if UNUSED
-            unmaskSignal(signo);
-#endif
         }
     }
 }
@@ -18795,7 +18737,8 @@ static void signalEvent(MprSignal *sp, MprEvent *event)
     } 
     if (sp->sigaction) {
         /*
-            Call the original (foreign) action handler
+            Call the original (foreign) action handler. Can't pass on siginfo, because there is no reliable and scalable
+            way to save siginfo state when the signalHandler is reentrant for a given signal across multiple threads.
          */
 #if UNUSED
         (sp->sigaction)(sp->signo, &sp->info.siginfo, sp->info.arg);
