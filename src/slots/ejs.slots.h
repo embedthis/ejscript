@@ -1588,8 +1588,8 @@
  */
 #define ES_MprLog_async                                                0
 #define ES_MprLog_close                                                1
-#define ES_MprLog_cmdline                                              2
-#define ES_MprLog_emit                                                 3
+#define ES_MprLog_emit                                                 2
+#define ES_MprLog_fixed                                                3
 #define ES_MprLog_flush                                                4
 #define ES_MprLog_level                                                5
 #define ES_MprLog_off                                                  6
@@ -2351,6 +2351,6 @@
 #define ES_XMLList_NUM_INSTANCE_PROP                                   20
 #define ES_XMLList_NUM_INHERITED_PROP                                  0
 
-#define _ES_CHECKSUM_ejs   1461357
+#define _ES_CHECKSUM_ejs   1460951
 
 #endif

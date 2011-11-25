@@ -39,19 +39,19 @@ module ejs {
          */
         function close(): Void {}
 
-        /**
-            Did the Application initiate logging via a command line --log switch. This overrides default application
-            settings.
-         */
-        native function get cmdline(): Boolean
-        native function set cmdline(on: Boolean): Void
-
         /** 
             Emit messages to the MprLog stream at a given level
             @param level Verbosity level at which to emit the message (0-9).
             @param data Data messages to emit
          */
         native function emit(level: Number, ...data): Number
+
+        /**
+            Is the MPR logging fixed. Set to true if the application logging has been fixed by a hosting environment or
+            if the application initiated logging via a command line --log switch.
+         */
+        native function get fixed(): Boolean
+        native function set fixed(on: Boolean): Void
 
         /**
             @hide

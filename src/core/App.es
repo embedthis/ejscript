@@ -353,7 +353,7 @@ module ejs {
          */
         static function updateLog(): Void {
             let log = config.log
-            if (log && log.enable && !App.mprLog.cmdline) {
+            if (log && log.enable && !App.mprLog.fixed) {
                 App.log.redirect(log.location, log.level)
                 App.mprLog.redirect(log.location, log.level)
             }
@@ -405,22 +405,9 @@ module ejs {
         let log = config.log
         let stream
         if (log.enable) {
-/* UNUSED
-            if (App.mprLog.cmdline) {
-                // App invoked with a --log switch
-                log.level = App.mprLog.level
-                stream = App.mprLog;
-            } else if (log.location == "stdout") {
-                stream = App.outputStream
-            } else if (log.location == "stderr") {
-                stream = App.errorStream
-            } else {
-                stream = File(log.location, "w")
-            }
-UNUSED */
             let level = log.level
             let location = log.location
-            if (App.mprLog.cmdline) {
+            if (App.mprLog.fixed) {
                 /* App invoked with a --log switch */
                 level = App.mprLog.level
                 location = App.mprLog;

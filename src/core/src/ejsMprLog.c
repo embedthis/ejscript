@@ -61,19 +61,19 @@ static EjsNumber *lf_emit(Ejs *ejs, EjsObj *unused, int argc, EjsObj **argv)
 }
 
 
-/*  
-    function get cmdline(): Boolean
+/*
+    function get fixed(): Boolean
  */
-static EjsBoolean *lf_cmdline(Ejs *ejs, EjsObj *unused, int argc, EjsObj **argv)
+static EjsBoolean *lf_fixed(Ejs *ejs, EjsObj *unused, int argc, EjsObj **argv)
 {
-    return ejsCreateBoolean(ejs, mprGetCmdlineLogging());
+    return ejsCreateBoolean(ejs, ejs->hosted || mprGetCmdlineLogging());
 }
 
 
 /*  
-    function set cmdline(yes: Boolean)
+    function set fixed(yes: Boolean)
  */
-static EjsVoid *lf_set_cmdline(Ejs *ejs, EjsObj *unused, int argc, EjsObj **argv)
+static EjsVoid *lf_set_fixed(Ejs *ejs, EjsObj *unused, int argc, EjsObj **argv)
 {
     int     yes;
 
@@ -131,8 +131,8 @@ void ejsConfigureMprLogType(Ejs *ejs)
         return;
     }
     prototype = type->prototype;
-    ejsBindAccess(ejs, prototype, ES_MprLog_cmdline, lf_cmdline, lf_set_cmdline);
     ejsBindMethod(ejs, prototype, ES_MprLog_emit, lf_emit);
+    ejsBindAccess(ejs, prototype, ES_MprLog_fixed, lf_fixed, lf_set_fixed);
     ejsBindAccess(ejs, prototype, ES_MprLog_level, lf_level, lf_set_level);
     ejsBindMethod(ejs, prototype, ES_MprLog_redirect, lf_redirect);
 }
