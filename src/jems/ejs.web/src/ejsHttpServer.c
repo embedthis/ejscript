@@ -812,7 +812,7 @@ HttpStage *ejsAddWebHandler(Http *http, MprModule *module)
     HttpStage   *handler;
 
     mprAssert(http);
-    if (!http->ejsHandler) {
+    if ((handler = http->ejsHandler) == 0) {
         if ((handler = httpCreateHandler(http, "ejsHandler", HTTP_STAGE_ALL, module)) == 0) {
             return 0;
         }
