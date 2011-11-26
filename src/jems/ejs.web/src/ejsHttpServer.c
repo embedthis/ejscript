@@ -812,12 +812,10 @@ HttpStage *ejsAddWebHandler(Http *http, MprModule *module)
     HttpStage   *handler;
 
     mprAssert(http);
-
-    if (http->ejsHandler) {
-        return http->ejsHandler;
-    }
-    if ((handler = httpCreateHandler(http, "ejsHandler", HTTP_STAGE_ALL, module)) == 0) {
-        return 0;
+    if (!http->ejsHandler) {
+        if ((handler = httpCreateHandler(http, "ejsHandler", HTTP_STAGE_ALL, module)) == 0) {
+            return 0;
+        }
     }
     http->ejsHandler = handler;
     handler->close = closeEjsHandler;
