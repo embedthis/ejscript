@@ -141,6 +141,9 @@ module ejs {
          */
         function read(buffer: ByteArray, offset: Number = 0, count: Number = -1): Number {
             let total = 0
+            if (buffer == undefined) {
+                throw new ArgError("Insufficient args")
+            }
             if (count < 0) {
                 count = Number.MaxValue
             }
