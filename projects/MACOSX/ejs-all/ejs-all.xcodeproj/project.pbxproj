@@ -218,6 +218,7 @@
 		C987613B0FD87DA200311B7A /* libejs.dylib in Frameworks */ = {isa = PBXBuildFile; fileRef = C97627CB0FD07828009C78E1 /* libejs.dylib */; };
 		C987613C0FD87DA200311B7A /* libsqlite.dylib in Frameworks */ = {isa = PBXBuildFile; fileRef = C97627BD0FD077FC009C78E1 /* libsqlite.dylib */; };
 		C9902A691161776B00473F37 /* ejsFrame.c in Sources */ = {isa = PBXBuildFile; fileRef = C9902A681161776B00473F37 /* ejsFrame.c */; };
+		C996C00914840C5300C989EE /* manager.c in Sources */ = {isa = PBXBuildFile; fileRef = C996C00814840C5300C989EE /* manager.c */; };
 		C9A0708010A3573C00F48512 /* ejsSqlite.c in Sources */ = {isa = PBXBuildFile; fileRef = C9A0707F10A3573C00F48512 /* ejsSqlite.c */; };
 		C9A5195413D777D700C16EBA /* ejsWeb.h in Headers */ = {isa = PBXBuildFile; fileRef = C9A5195313D777D700C16EBA /* ejsWeb.h */; };
 		C9B13B341383233F00B2E649 /* ejsCache.c in Sources */ = {isa = PBXBuildFile; fileRef = C9B13B32138322B600B2E649 /* ejsCache.c */; };
@@ -227,7 +228,6 @@
 		C9D452C811ECDC0600F029C8 /* libmpr.dylib in Frameworks */ = {isa = PBXBuildFile; fileRef = C97627A60FD077A7009C78E1 /* libmpr.dylib */; };
 		C9D452CB11ECDC1000F029C8 /* libmprssl.dylib in Frameworks */ = {isa = PBXBuildFile; fileRef = C97627B60FD077E7009C78E1 /* libmprssl.dylib */; };
 		C9D7A7ED13D4F346000428C7 /* libmpr.dylib in Frameworks */ = {isa = PBXBuildFile; fileRef = C97627A60FD077A7009C78E1 /* libmpr.dylib */; };
-		C9D7A7F613D4F378000428C7 /* angel.c in Sources */ = {isa = PBXBuildFile; fileRef = C9D7A7F513D4F378000428C7 /* angel.c */; };
 		C9D84AF41051C1940022DB20 /* libmpr.dylib in Frameworks */ = {isa = PBXBuildFile; fileRef = C97627A60FD077A7009C78E1 /* libmpr.dylib */; };
 		C9F1C544143E038700FC8D31 /* sqlite3.c in Sources */ = {isa = PBXBuildFile; fileRef = C9F1C543143E038700FC8D31 /* sqlite3.c */; };
 		C9F1C546143E03D200FC8D31 /* sqlite.c in Sources */ = {isa = PBXBuildFile; fileRef = C9F1C545143E03D200FC8D31 /* sqlite.c */; };
@@ -489,6 +489,34 @@
 			proxyType = 1;
 			remoteGlobalIDString = C97623E10FD06EFC009C78E1;
 			remoteInfo = ejsmod;
+		};
+		C996C00A14840C6400C989EE /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = C97623C10FD06EC4009C78E1 /* Project object */;
+			proxyType = 1;
+			remoteGlobalIDString = C97627A50FD077A7009C78E1;
+			remoteInfo = libmpr;
+		};
+		C996C00C14840C6400C989EE /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = C97623C10FD06EC4009C78E1 /* Project object */;
+			proxyType = 1;
+			remoteGlobalIDString = C97627B50FD077E7009C78E1;
+			remoteInfo = libmprssl;
+		};
+		C996C00E14840C6400C989EE /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = C97623C10FD06EC4009C78E1 /* Project object */;
+			proxyType = 1;
+			remoteGlobalIDString = C97627AE0FD077C3009C78E1;
+			remoteInfo = libpcre;
+		};
+		C996C01014840C6F00C989EE /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = C97623C10FD06EC4009C78E1 /* Project object */;
+			proxyType = 1;
+			remoteGlobalIDString = C97627BC0FD077FC009C78E1;
+			remoteInfo = libsqlite3;
 		};
 		C99A33D110C2F15E00F6C7BC /* PBXContainerItemProxy */ = {
 			isa = PBXContainerItemProxy;
@@ -978,6 +1006,7 @@
 		C9818106110EBD4E00F241EF /* sqlite3.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; name = sqlite3.c; path = ../../../src/jems/ejs.db.sqlite/src/sqlite3.c; sourceTree = SOURCE_ROOT; };
 		C98D7153110FBEEA00F2ED80 /* sqlite */ = {isa = PBXFileReference; explicitFileType = "compiled.mach-o.executable"; includeInIndex = 0; path = sqlite; sourceTree = BUILT_PRODUCTS_DIR; };
 		C9902A681161776B00473F37 /* ejsFrame.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; name = ejsFrame.c; path = ../../../src/core/src/ejsFrame.c; sourceTree = SOURCE_ROOT; };
+		C996C00814840C5300C989EE /* manager.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = manager.c; sourceTree = "<group>"; };
 		C99A33E110C2F29C00F6C7BC /* Utils.es */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; name = Utils.es; path = ../../../src/jems/ejs.web/Utils.es; sourceTree = SOURCE_ROOT; };
 		C99FDD7F120386B600231D3E /* Cascade.es */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; name = Cascade.es; path = ../../../src/jems/ejs.web/Cascade.es; sourceTree = SOURCE_ROOT; };
 		C99FDD80120386B600231D3E /* CommonLog.es */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; name = CommonLog.es; path = ../../../src/jems/ejs.web/CommonLog.es; sourceTree = SOURCE_ROOT; };
@@ -1010,7 +1039,6 @@
 		C9D4528711ECDA4300F029C8 /* http */ = {isa = PBXFileReference; explicitFileType = "compiled.mach-o.executable"; includeInIndex = 0; path = http; sourceTree = BUILT_PRODUCTS_DIR; };
 		C9D452B411ECDBA300F029C8 /* http.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; name = http.c; path = ../../../src/deps/http/http.c; sourceTree = SOURCE_ROOT; };
 		C9D7A7F213D4F346000428C7 /* angel */ = {isa = PBXFileReference; explicitFileType = "compiled.mach-o.executable"; includeInIndex = 0; path = angel; sourceTree = BUILT_PRODUCTS_DIR; };
-		C9D7A7F513D4F378000428C7 /* angel.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; name = angel.c; path = ../../../../appweb/src/deps/mpr/angel.c; sourceTree = "<group>"; };
 		C9E9F12E13D8ACBA00C20E21 /* Debug.xcconfig */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.xcconfig; path = Debug.xcconfig; sourceTree = "<group>"; };
 		C9E9F12F13D8ACBA00C20E21 /* Product.xcconfig */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.xcconfig; path = Product.xcconfig; sourceTree = "<group>"; };
 		C9E9F13013D8ACBA00C20E21 /* Release.xcconfig */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.xcconfig; path = Release.xcconfig; sourceTree = "<group>"; };
@@ -1313,7 +1341,7 @@
 		C95E4FB510EBFD2B00982610 /* mpr */ = {
 			isa = PBXGroup;
 			children = (
-				C9D7A7F513D4F378000428C7 /* angel.c */,
+				C996C00814840C5300C989EE /* manager.c */,
 				C95E4FBA10EBFD2B00982610 /* mprLib.c */,
 				C95E4FBB10EBFD2B00982610 /* mprSsl.c */,
 			);
@@ -1598,6 +1626,9 @@
 			buildRules = (
 			);
 			dependencies = (
+				C996C00B14840C6400C989EE /* PBXTargetDependency */,
+				C996C00D14840C6400C989EE /* PBXTargetDependency */,
+				C996C00F14840C6400C989EE /* PBXTargetDependency */,
 			);
 			name = libhttp;
 			productName = libmpr;
@@ -1775,6 +1806,7 @@
 			buildRules = (
 			);
 			dependencies = (
+				C996C01114840C6F00C989EE /* PBXTargetDependency */,
 				C9EA946F0FD4FCA700870DB0 /* PBXTargetDependency */,
 				C9EA94710FD4FCA700870DB0 /* PBXTargetDependency */,
 				C9EA94730FD4FCA700870DB0 /* PBXTargetDependency */,
@@ -1852,9 +1884,9 @@
 			productReference = C9D4528711ECDA4300F029C8 /* http */;
 			productType = "com.apple.product-type.tool";
 		};
-		C9D7A7E213D4F346000428C7 /* angel */ = {
+		C9D7A7E213D4F346000428C7 /* ejsman */ = {
 			isa = PBXNativeTarget;
-			buildConfigurationList = C9D7A7EF13D4F346000428C7 /* Build configuration list for PBXNativeTarget "angel" */;
+			buildConfigurationList = C9D7A7EF13D4F346000428C7 /* Build configuration list for PBXNativeTarget "ejsman" */;
 			buildPhases = (
 				C9D7A7E913D4F346000428C7 /* Sources */,
 				C9D7A7EB13D4F346000428C7 /* Frameworks */,
@@ -1866,7 +1898,7 @@
 				C9D7A7E513D4F346000428C7 /* PBXTargetDependency */,
 				C9D7A7E713D4F346000428C7 /* PBXTargetDependency */,
 			);
-			name = angel;
+			name = ejsman;
 			productName = http;
 			productReference = C9D7A7F213D4F346000428C7 /* angel */;
 			productType = "com.apple.product-type.tool";
@@ -1901,7 +1933,7 @@
 				C97627CA0FD07828009C78E1 /* libejs */,
 				C987612F0FD87D7300311B7A /* ejs.db.sqlite */,
 				C97627D80FD07850009C78E1 /* ejs.web */,
-				C9D7A7E213D4F346000428C7 /* angel */,
+				C9D7A7E213D4F346000428C7 /* ejsman */,
 				C97623D10FD06EE7009C78E1 /* ejs */,
 				C97623DA0FD06EF4009C78E1 /* ejsc */,
 				C97623E10FD06EFC009C78E1 /* ejsmod */,
@@ -1930,6 +1962,7 @@
 			runOnlyForDeploymentPostprocessing = 0;
 			shellPath = /bin/sh;
 			shellScript = "if [ $SRC/jems/ejs.mvc/mvc.es -nt $BUILT_PRODUCTS_DIR/mvc ] ; then\n    cp $SRC/jems/ejs.mvc/mvc.es $BUILT_PRODUCTS_DIR/mvc\n    chmod 755 $BUILT_PRODUCTS_DIR/mvc\nfi\nexit 0";
+			showEnvVarsInLog = 0;
 		};
 		C903098510A366F0003FF2AB /* ShellScript */ = {
 			isa = PBXShellScriptBuildPhase;
@@ -1943,6 +1976,7 @@
 			runOnlyForDeploymentPostprocessing = 0;
 			shellPath = /bin/sh;
 			shellScript = "if [ $SRC/jems/ejs.jem/jem.es -nt $BUILT_PRODUCTS_DIR/jem ] ; then\n    cp $SRC/jems/ejs.jem/jem.es $BUILT_PRODUCTS_DIR/jem\n    chmod 755 $BUILT_PRODUCTS_DIR/jem\nfi\nexit 0";
+			showEnvVarsInLog = 0;
 		};
 		C9222E510FD5813F00AFA5A4 /* Build */ = {
 			isa = PBXShellScriptBuildPhase;
@@ -2035,6 +2069,7 @@
 			runOnlyForDeploymentPostprocessing = 0;
 			shellPath = /bin/sh;
 			shellScript = "export DYLD_LIBRARY_PATH=$BUILT_PRODUCTS_DIR\nexport PATH=$OUT/build/bin:$BUILT_PRODUCTS_DIR:${PATH}\nmake -C $SRC/core TRACE=1 BLD_LIB_DIR=$BUILT_PRODUCTS_DIR BLD_BUILD_LIB_DIR=$BUILT_PRODUCTS_DIR modules || exit 255\nmake -C $SRC/jems TRACE=1 BLD_LIB_DIR=$BUILT_PRODUCTS_DIR BLD_BUILD_LIB_DIR=$BUILT_PRODUCTS_DIR modules || exit 255\nexit 0";
+			showEnvVarsInLog = 0;
 		};
 		C97235E713D4EAF900C7DCC6 /* ShellScript */ = {
 			isa = PBXShellScriptBuildPhase;
@@ -2063,6 +2098,7 @@
 			runOnlyForDeploymentPostprocessing = 0;
 			shellPath = /bin/sh;
 			shellScript = "\nexport BLD_TOP=$TOP\nexport BLD_TOOLS_DIR=$BLD_TOP/build/bin\nexport BLD_OUT_DIR=$BLD_TOP/out\n\n. `${BLD_TOOLS_DIR}/cacheConfig ${BLD_OUT_DIR}/inc/buildConfig.h`\n\nset -x\n\nif [ \"$SKIP_INSTALL\" != YES ] ; then\n    mkdir -p $INSTALL_DIR\n    cp $BUILT_PRODUCTS_DIR/*.mod $INSTALL_DIR\nfi";
+			showEnvVarsInLog = 0;
 		};
 		C97A5EC511E81E9B00BB0981 /* Initialize */ = {
 			isa = PBXShellScriptBuildPhase;
@@ -2077,6 +2113,7 @@
 			runOnlyForDeploymentPostprocessing = 0;
 			shellPath = /bin/sh;
 			shellScript = "#\n#   Prepare for build - This imports required libraries, headers and executables\n#\nmkdir -p $OUT/inc $OUT/lib\n\nif [ ! -f $OUT/inc/buildConfig.h -o buildConfig.default -nt $OUT/inc/buildConfig.h ] ; then\n    [ -f $OUT/inc/buildConfig.h ] && chmod +w $OUT/inc/buildConfig.h\n    cp buildConfig.default $OUT/inc/buildConfig.h\n    export BLD_TOP=$TOP\n    export BLD_OUT_DIR=$BLD_TOP/out\n    . `${BLD_TOP}/build/bin/cacheConfig ${BLD_OUT_DIR}/inc/buildConfig.h`\nfi\ntouch $OUT/bin/.ideBuild\n\nexit 0";
+			showEnvVarsInLog = 0;
 		};
 		C99A33CD10C2F14000F6C7BC /* ShellScript */ = {
 			isa = PBXShellScriptBuildPhase;
@@ -2090,6 +2127,7 @@
 			runOnlyForDeploymentPostprocessing = 0;
 			shellPath = /bin/sh;
 			shellScript = "if [ $SRC/jems/ejs.template/ejspage -nt $BUILT_PRODUCTS_DIR/ejspage ] ; then\n    cp $SRC/jems/ejs.template/ejspage $BUILT_PRODUCTS_DIR/ejspage\n    chmod 755 $BUILT_PRODUCTS_DIR/ejspage\nfi\nexit 0";
+			showEnvVarsInLog = 0;
 		};
 		C9BD40CD13D8CC7600CB61A0 /* Initialize */ = {
 			isa = PBXShellScriptBuildPhase;
@@ -2104,6 +2142,7 @@
 			runOnlyForDeploymentPostprocessing = 0;
 			shellPath = /bin/sh;
 			shellScript = "cd $SRC ; $TOP/../ejs/out/bin/ejs $BBIN/utest -v";
+			showEnvVarsInLog = 0;
 		};
 		C9EA7DAC13D491300035EB46 /* Import Libraries and Headers */ = {
 			isa = PBXShellScriptBuildPhase;
@@ -2118,6 +2157,7 @@
 			runOnlyForDeploymentPostprocessing = 0;
 			shellPath = /bin/sh;
 			shellScript = "export BLD_TOP=$TOP\n. `${TOP}/build/bin/cacheConfig ${OUT}/inc/buildConfig.h`\n\n$TOP/build/bin/getImports $BUILT_PRODUCTS_DIR $BLD_MPR_IMPORTS";
+			showEnvVarsInLog = 0;
 		};
 		C9EA7DAD13D491620035EB46 /* Import Libraries and Headers */ = {
 			isa = PBXShellScriptBuildPhase;
@@ -2132,6 +2172,7 @@
 			runOnlyForDeploymentPostprocessing = 0;
 			shellPath = /bin/sh;
 			shellScript = "export BLD_TOP=$TOP\n. `${TOP}/build/bin/cacheConfig ${OUT}/inc/buildConfig.h`\n\n$TOP/build/bin/getImports $BUILT_PRODUCTS_DIR $BLD_PCRE_IMPORTS";
+			showEnvVarsInLog = 0;
 		};
 		C9EA7DAE13D491830035EB46 /* Import Libraries and Headers */ = {
 			isa = PBXShellScriptBuildPhase;
@@ -2146,6 +2187,7 @@
 			runOnlyForDeploymentPostprocessing = 0;
 			shellPath = /bin/sh;
 			shellScript = "export BLD_TOP=$TOP\n. `${TOP}/build/bin/cacheConfig ${OUT}/inc/buildConfig.h`\n\n$TOP/build/bin/getImports $BUILT_PRODUCTS_DIR $BLD_HTTP_IMPORTS";
+			showEnvVarsInLog = 0;
 		};
 		C9EA7DAF13D491AC0035EB46 /* Export Headers */ = {
 			isa = PBXShellScriptBuildPhase;
@@ -2160,6 +2202,7 @@
 			runOnlyForDeploymentPostprocessing = 0;
 			shellPath = /bin/sh;
 			shellScript = "cp $SRC/ejs*.h $SRC/ejsCustomize.h $OUT/inc\ncp $SRC/slots/ejs*.h $OUT/inc";
+			showEnvVarsInLog = 0;
 		};
 		C9EA7DC413D4DC490035EB46 /* ShellScript */ = {
 			isa = PBXShellScriptBuildPhase;
@@ -2351,7 +2394,7 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				C9D7A7F613D4F378000428C7 /* angel.c in Sources */,
+				C996C00914840C5300C989EE /* manager.c in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -2538,6 +2581,26 @@
 			target = C97623E10FD06EFC009C78E1 /* ejsmod */;
 			targetProxy = C98761350FD87D7B00311B7A /* PBXContainerItemProxy */;
 		};
+		C996C00B14840C6400C989EE /* PBXTargetDependency */ = {
+			isa = PBXTargetDependency;
+			target = C97627A50FD077A7009C78E1 /* libmpr */;
+			targetProxy = C996C00A14840C6400C989EE /* PBXContainerItemProxy */;
+		};
+		C996C00D14840C6400C989EE /* PBXTargetDependency */ = {
+			isa = PBXTargetDependency;
+			target = C97627B50FD077E7009C78E1 /* libmprssl */;
+			targetProxy = C996C00C14840C6400C989EE /* PBXContainerItemProxy */;
+		};
+		C996C00F14840C6400C989EE /* PBXTargetDependency */ = {
+			isa = PBXTargetDependency;
+			target = C97627AE0FD077C3009C78E1 /* libpcre */;
+			targetProxy = C996C00E14840C6400C989EE /* PBXContainerItemProxy */;
+		};
+		C996C01114840C6F00C989EE /* PBXTargetDependency */ = {
+			isa = PBXTargetDependency;
+			target = C97627BC0FD077FC009C78E1 /* libsqlite3 */;
+			targetProxy = C996C01014840C6F00C989EE /* PBXContainerItemProxy */;
+		};
 		C99A33D210C2F15E00F6C7BC /* PBXTargetDependency */ = {
 			isa = PBXTargetDependency;
 			target = C99A33CA10C2F14000F6C7BC /* ejspage */;
@@ -2635,7 +2698,7 @@
 		};
 		C9D7A7FA13D4F3A0000428C7 /* PBXTargetDependency */ = {
 			isa = PBXTargetDependency;
-			target = C9D7A7E213D4F346000428C7 /* angel */;
+			target = C9D7A7E213D4F346000428C7 /* ejsman */;
 			targetProxy = C9D7A7F913D4F3A0000428C7 /* PBXContainerItemProxy */;
 		};
 		C9E750B410A367E1004E03DD /* PBXTargetDependency */ = {
@@ -3399,7 +3462,7 @@
 			defaultConfigurationIsVisible = 0;
 			defaultConfigurationName = Release;
 		};
-		C9D7A7EF13D4F346000428C7 /* Build configuration list for PBXNativeTarget "angel" */ = {
+		C9D7A7EF13D4F346000428C7 /* Build configuration list for PBXNativeTarget "ejsman" */ = {
 			isa = XCConfigurationList;
 			buildConfigurations = (
 				C9D7A7F013D4F346000428C7 /* Debug */,
