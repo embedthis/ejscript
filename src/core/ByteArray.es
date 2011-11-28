@@ -160,7 +160,7 @@ module ejs {
 
         /** 
             Length of the byte array. This is not the amount of read or write data, but is the size of the total 
-            array storage.
+            array storage. Use $available to get the amount of data between the read and write positions.
          */
         native function get length(): Number
 
