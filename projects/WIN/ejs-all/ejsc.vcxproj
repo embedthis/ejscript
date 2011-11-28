@@ -13,7 +13,7 @@
   </ItemGroup>
 
   <PropertyGroup Label="Globals">
-    <ProjectGuid>{602483E9-D3A3-4A65-A18E-C892684FAFE8}</ProjectGuid>
+    <ProjectGuid>{48C2424A-DA3E-452F-9BD0-6F57D939F08B}</ProjectGuid>
     <RootNamespace />
     <Keyword>Win32Proj</Keyword>
   </PropertyGroup>
@@ -71,21 +71,21 @@
 
   <ItemGroup>
     <ProjectReference Include="libmpr.vcxproj">
-      <Project>{348FE9F4-61E4-4710-ACD6-FF879E2AD343}</Project>
+      <Project>{3B4576D8-CC33-42C7-8CA6-898CFB83E26A}</Project>
       <ReferenceOutputAssembly>false</ReferenceOutputAssembly>
     </ProjectReference>
   </ItemGroup>
 
   <ItemGroup>
     <ProjectReference Include="libmprssl.vcxproj">
-      <Project>{802593F5-37AD-4F2F-9636-1E86CD593DAE}</Project>
+      <Project>{FE19E391-BF87-4832-81D2-42DCB2675D94}</Project>
       <ReferenceOutputAssembly>false</ReferenceOutputAssembly>
     </ProjectReference>
   </ItemGroup>
 
   <ItemGroup>
     <ProjectReference Include="libejs.vcxproj">
-      <Project>{2502346D-CA58-45CC-AD59-93E1DDE74A7A}</Project>
+      <Project>{79377567-385C-4BCB-BADF-70835520B972}</Project>
       <ReferenceOutputAssembly>false</ReferenceOutputAssembly>
     </ProjectReference>
   </ItemGroup>
@@ -208,11 +208,11 @@
 
   <Target Name="EjsCore" Inputs="@(CoreFiles)" Outputs="@(CoreMod)">
     <Exec Outputs="$(CoreMod)" 
-        Command="'$(BLD_ABS_BIN_DIR)\ejsc\' --debug --optimize 9 --bind --require null --out $(BLD_BIN_DIR)/ejs.mod @(CoreFiles -> '%(Identity)', ' ')" />
+        Command="$(BLD_ABS_BIN_DIR)\ejsc --debug --optimize 9 --bind --require null --out $(BLD_BIN_DIR)/ejs.mod @(CoreFiles -> '%(Identity)', ' ')" />
   </Target>
 
   <Target Name="EjsSlots" Inputs="@(CoreMod)" Outputs="$(BLD_INC_DIR)/ejs.slots.h">
-    <Exec Command="'$(BLD_ABS_BIN_DIR)\ejsmod' --mob $(BLD_OUT_DIR) --require null --cslots --dir $(BLD_INC_DIR) @(CoreMod)"
+    <Exec Command="$(BLD_ABS_BIN_DIR)\ejsmod --require null --cslots --dir $(BLD_INC_DIR) @(CoreMod)"
           Outputs="$(BLD_ABS_INC_DIR)/ejs.slots.h" />
   </Target>
 

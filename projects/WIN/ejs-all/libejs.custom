@@ -7,9 +7,9 @@
 
   <ItemGroup>
     <IncludeFiles Include="$(SRC)/ejs*.h" />
-    <IncludeFiles Include="$(SRC)/customize.h" />
+    <IncludeFiles Include="$(SRC)/ejsCustomize.h" />
     <ExportFiles  Include="$(BLD_INC_DIR)/ejs.h" />
-    <ExportFiles  Include="$(BLD_INC_DIR)/customize.h" />
+    <ExportFiles  Include="$(BLD_INC_DIR)/ejsCustomize.h" />
     <ExportFiles  Include="$(BLD_INC_DIR)/ejsByteCode.h" />
     <ExportFiles  Include="$(BLD_INC_DIR)/ejsByteCodeTable.h" />
     <ExportFiles  Include="$(BLD_INC_DIR)/ejsCompiler.h" />

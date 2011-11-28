@@ -7,7 +7,7 @@
 
   <ItemGroup>
     <IncludeFiles Include="$(SRC)/slots/*.h" />
-    <IncludeFiles Include="$(ProjectDir)buildConfig.master" />
+    <IncludeFiles Include="$(ProjectDir)buildConfig.default" />
     <ExportFiles Include="$(BLD_INC_DIR)/ejs.slots.h" />
     <ExportFiles Include="$(BLD_INC_DIR)/buildConfig.h" />
   </ItemGroup>
