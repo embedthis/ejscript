@@ -48,7 +48,7 @@ ejs-all.sln: Makefile
 	$(VSS) --solution ejs-all.sln \
 		--deps "libmpr setup" \
 		--deps "libpcre setup" \
-		--deps "ejsmod ejsc" \
+		--deps "ejsc ejsmod" \
 		--deps "ejs ejsc ejsmod" \
 		--deps "ejs.web ejsc" \
 		--deps "ejs.db.sqlite ejsc" \
