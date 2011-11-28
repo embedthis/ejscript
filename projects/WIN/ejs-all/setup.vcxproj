@@ -13,7 +13,7 @@
   </ItemGroup>
 
   <PropertyGroup Label="Globals">
-    <ProjectGuid>{BD3D318F-5528-4A90-BF7C-8A95AB0D690C}</ProjectGuid>
+    <ProjectGuid>{3C0F2AA3-3ED3-4ECB-807F-F6429F3CF7FE}</ProjectGuid>
     <RootNamespace />
     <Keyword>Win32Proj</Keyword>
   </PropertyGroup>
@@ -69,7 +69,7 @@
 
   <ItemGroup>
     <IncludeFiles Include="$(SRC)/slots/*.h" />
-    <IncludeFiles Include="$(ProjectDir)buildConfig.master" />
+    <IncludeFiles Include="$(ProjectDir)buildConfig.default" />
     <ExportFiles Include="$(BLD_INC_DIR)/ejs.slots.h" />
     <ExportFiles Include="$(BLD_INC_DIR)/buildConfig.h" />
   </ItemGroup>

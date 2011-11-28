@@ -13,7 +13,7 @@
   </ItemGroup>
 
   <PropertyGroup Label="Globals">
-    <ProjectGuid>{2502346D-CA58-45CC-AD59-93E1DDE74A7A}</ProjectGuid>
+    <ProjectGuid>{79377567-385C-4BCB-BADF-70835520B972}</ProjectGuid>
     <RootNamespace />
     <Keyword>Win32Proj</Keyword>
   </PropertyGroup>
@@ -133,35 +133,35 @@
 
   <ItemGroup>
     <ProjectReference Include="libmpr.vcxproj">
-      <Project>{348FE9F4-61E4-4710-ACD6-FF879E2AD343}</Project>
+      <Project>{893982F8-9E53-4B14-97AF-8CA800E18D69}</Project>
       <ReferenceOutputAssembly>false</ReferenceOutputAssembly>
     </ProjectReference>
   </ItemGroup>
 
   <ItemGroup>
     <ProjectReference Include="libmprssl.vcxproj">
-      <Project>{802593F5-37AD-4F2F-9636-1E86CD593DAE}</Project>
+      <Project>{D5BC5CDF-8174-411F-B4E3-C89EA76C5F17}</Project>
       <ReferenceOutputAssembly>false</ReferenceOutputAssembly>
     </ProjectReference>
   </ItemGroup>
 
   <ItemGroup>
     <ProjectReference Include="libhttp.vcxproj">
-      <Project>{DE9A60D2-43FF-4CFD-89B7-A11D57319CD3}</Project>
+      <Project>{931E8F94-5C2A-422E-9351-E0BEF65870D9}</Project>
       <ReferenceOutputAssembly>false</ReferenceOutputAssembly>
     </ProjectReference>
   </ItemGroup>
 
   <ItemGroup>
     <ProjectReference Include="libsqlite3.vcxproj">
-      <Project>{E7F63F30-7FB1-420D-BF83-B948D084AA7B}</Project>
+      <Project>{5CB84A07-0EC5-48A3-9F03-F45269D2D5A3}</Project>
       <ReferenceOutputAssembly>false</ReferenceOutputAssembly>
     </ProjectReference>
   </ItemGroup>
 
   <ItemGroup>
     <ProjectReference Include="libpcre.vcxproj">
-      <Project>{2D5E91C0-A243-401A-BD90-550BC07E90E1}</Project>
+      <Project>{27A06BD4-F380-41A0-900F-3884DB1E8A26}</Project>
       <ReferenceOutputAssembly>false</ReferenceOutputAssembly>
     </ProjectReference>
   </ItemGroup>
@@ -176,9 +176,9 @@
 
   <ItemGroup>
     <IncludeFiles Include="$(SRC)/ejs*.h" />
-    <IncludeFiles Include="$(SRC)/customize.h" />
+    <IncludeFiles Include="$(SRC)/ejsCustomize.h" />
     <ExportFiles  Include="$(BLD_INC_DIR)/ejs.h" />
-    <ExportFiles  Include="$(BLD_INC_DIR)/customize.h" />
+    <ExportFiles  Include="$(BLD_INC_DIR)/ejsCustomize.h" />
     <ExportFiles  Include="$(BLD_INC_DIR)/ejsByteCode.h" />
     <ExportFiles  Include="$(BLD_INC_DIR)/ejsByteCodeTable.h" />
     <ExportFiles  Include="$(BLD_INC_DIR)/ejsCompiler.h" />

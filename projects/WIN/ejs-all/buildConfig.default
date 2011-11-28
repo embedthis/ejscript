@@ -34,6 +34,7 @@ BLD_DEFAULTS=standard
 BLD_COMPONENTS=    winsdk ar cc make nm strip ld mt rc doxygen pkg pcre mpr http sqlite ejs   
 BLD_EMBEDTHIS=1
 BLD_DEBUG=1
+BLD_CONFIG_CMD=
 
 #
 #   Version information
@@ -121,7 +122,7 @@ BLD_FEATURE_VALLOC=1
 #
 #   All import libraries
 #
-BLD_IMPORTS=${BLD_TOP}/src/ejs.h ${BLD_TOP}/src/ejsByteCode.h ${BLD_TOP}/src/ejsByteCodeTable.h ${BLD_TOP}/src/ejsCompiler.h ${BLD_TOP}/src/customize.h  ${BLD_TOP}/src/deps/http/http.h  ${BLD_TOP}/src/deps/mpr/mpr.h ${BLD_TOP}/src/deps/mpr/mprSsl.h  ${BLD_TOP}/src/deps/pcre/pcre.h  
+BLD_IMPORTS=${BLD_TOP}/src/ejs.h ${BLD_TOP}/src/ejsByteCode.h ${BLD_TOP}/src/ejsByteCodeTable.h ${BLD_TOP}/src/ejsCompiler.h ${BLD_TOP}/src/ejsCustomize.h  ${BLD_TOP}/src/deps/http/http.h  ${BLD_TOP}/src/deps/mpr/mpr.h ${BLD_TOP}/src/deps/mpr/mprSsl.h  ${BLD_TOP}/src/deps/pcre/pcre.h  
 
 #
 #   Ejscript Feature Selection
@@ -346,7 +347,7 @@ BLD_EJT_BUILTIN=1
 BLD_FEATURE_EJSCRIPT=1
 BLD_EJSCRIPT_BUILTIN=1
 BLD_EJSCRIPT_DEPENDENCIES=mpr http
-BLD_EJSCRIPT_IMPORTS=${BLD_TOP}/src/ejs.h ${BLD_TOP}/src/ejsByteCode.h ${BLD_TOP}/src/ejsByteCodeTable.h ${BLD_TOP}/src/ejsCompiler.h ${BLD_TOP}/src/customize.h 
+BLD_EJSCRIPT_IMPORTS=${BLD_TOP}/src/ejs.h ${BLD_TOP}/src/ejsByteCode.h ${BLD_TOP}/src/ejsByteCodeTable.h ${BLD_TOP}/src/ejsCompiler.h ${BLD_TOP}/src/ejsCustomize.h 
 BLD_EJSCRIPT_LIBS=ejs pcre mpr http
 BLD_EJSCRIPT_OPTIONAL_DEPENDENCIES=ssl
 BLD_EJSCRIPT_WITHLIBS=pcre mpr http
@@ -384,6 +385,7 @@ else
     #define BLD_COMPONENTS "    winsdk ar cc make nm strip ld mt rc doxygen pkg pcre mpr http sqlite ejs   "
     #define BLD_EMBEDTHIS 1
     #define BLD_DEBUG 1
+    #define BLD_CONFIG_CMD ""
     #define BLD_NUMBER_ONLY "B0"
     #define BLD_MAJOR_VERSION 2
     #define BLD_MINOR_VERSION 0
@@ -435,7 +437,7 @@ else
     #define BLD_FEATURE_FLOAT 1
     #define BLD_FEATURE_LEGACY_API 0
     #define BLD_FEATURE_VALLOC 1
-    #define BLD_IMPORTS "${BLD_TOP}/src/ejs.h ${BLD_TOP}/src/ejsByteCode.h ${BLD_TOP}/src/ejsByteCodeTable.h ${BLD_TOP}/src/ejsCompiler.h ${BLD_TOP}/src/customize.h  ${BLD_TOP}/src/deps/http/http.h  ${BLD_TOP}/src/deps/mpr/mpr.h ${BLD_TOP}/src/deps/mpr/mprSsl.h  ${BLD_TOP}/src/deps/pcre/pcre.h  "
+    #define BLD_IMPORTS "${BLD_TOP}/src/ejs.h ${BLD_TOP}/src/ejsByteCode.h ${BLD_TOP}/src/ejsByteCodeTable.h ${BLD_TOP}/src/ejsCompiler.h ${BLD_TOP}/src/ejsCustomize.h  ${BLD_TOP}/src/deps/http/http.h  ${BLD_TOP}/src/deps/mpr/mpr.h ${BLD_TOP}/src/deps/mpr/mprSsl.h  ${BLD_TOP}/src/deps/pcre/pcre.h  "
     #define BLD_EJS_PRODUCT 1
     #define BLD_FEATURE_AUTH_FILE 1
     #define BLD_FEATURE_AUTH_PAM 0
@@ -551,7 +553,7 @@ else
     #define BLD_FEATURE_EJSCRIPT 1
     #define BLD_EJSCRIPT_BUILTIN 1
     #define BLD_EJSCRIPT_DEPENDENCIES "mpr http"
-    #define BLD_EJSCRIPT_IMPORTS "${BLD_TOP}/src/ejs.h ${BLD_TOP}/src/ejsByteCode.h ${BLD_TOP}/src/ejsByteCodeTable.h ${BLD_TOP}/src/ejsCompiler.h ${BLD_TOP}/src/customize.h "
+    #define BLD_EJSCRIPT_IMPORTS "${BLD_TOP}/src/ejs.h ${BLD_TOP}/src/ejsByteCode.h ${BLD_TOP}/src/ejsByteCodeTable.h ${BLD_TOP}/src/ejsCompiler.h ${BLD_TOP}/src/ejsCustomize.h "
     #define BLD_EJSCRIPT_LIBS "ejs pcre mpr http"
     #define BLD_EJSCRIPT_OPTIONAL_DEPENDENCIES "ssl"
     #define BLD_EJSCRIPT_WITHLIBS "pcre mpr http"

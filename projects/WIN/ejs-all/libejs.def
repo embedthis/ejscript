@@ -383,7 +383,6 @@ EXPORTS
   ejsPopBlockNamespaces
   ejsPropertyHasTrait
   ejsPushBlock
-  ejsRedirectLogging
   ejsRedirectLoggingToFile
   ejsRegExpToString
   ejsRemoveConstructor
@@ -414,6 +413,7 @@ EXPORTS
   ejsSetFunctionCode
   ejsSetFunctionName
   ejsSetHttpLimits
+  ejsSetPathAttributes
   ejsSetProperty
   ejsSetPropertyByName
   ejsSetPropertyName
