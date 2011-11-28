@@ -85,6 +85,7 @@ libhttp.vcxproj: libhttp.custom Makefile
 libsqlite3.vcxproj: Makefile
 	$(VSP) --project libsqlite3.vcxproj --library sqlite3 --dflags "$(DFLAGS)" \
 		--props "$(PROPS)" --deps "libmpr" \
+		--custom libsqlite3.custom \
 		--def libsqlite3.def --libs "libmpr.lib $(LIBS)" $(SRC)/deps/sqlite/sqlite3.c
 	
 libejs.vcxproj: Makefile
