@@ -4,8 +4,8 @@ clean () {
     echo "Cleaning..."
     echo OUT $OUT
     echo TOP $TOP
-    rm -f $OUT/lib/*
-    rm -f $OUT/bin/*
+    rm -fr $OUT/lib/*
+    rm -fr $OUT/bin/*
 }
 
 # MAIN
