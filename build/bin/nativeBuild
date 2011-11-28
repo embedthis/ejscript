@@ -58,7 +58,7 @@ vsBuild() {
         rm -fr projects/WIN/*/Win32
 
         status=0
-        for f in ejs ejsc ejsmod ejssql http
+        for f in ejs ejsc ejsmod sqlite http
         do
             if [ ! -x "$BLD_BIN_DIR/${f}${BLD_EXE}" ] ; then
                 echo Missing target $BLD_BIN_DIR/${f}${BLD_EXE} >&2
@@ -91,7 +91,7 @@ msBuild() {
     rm -fr Win32
     cd $home >/dev/null 2>&1
     status=0
-    for f in ejs ejsc ejsmod ejssql http
+    for f in ejs ejsc ejsmod sqlite http
     do
         if [ ! -x "${BLD_BIN_DIR}/${f}${BLD_EXE}" ] ; then
             echo Missing target ${BLD_BIN_DIR}/${f}${BLD_EXE} >&2
