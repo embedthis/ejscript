@@ -126,5 +126,5 @@
   <Target Name="EjsJems" Inputs="@(JemFiles)" Outputs="@(Jems)">
     <Exec Outputs="@(Jems)"
           Command="$(BLD_ABS_BIN_DIR)\ejsc --debug --optimize 9 --dir $(BLD_BIN_DIR) @(JemFiles -> '%(Identity)', ' ')" />
-    <Exec Command="$(BLD_ABS_BIN_DIR)\ejsmod --listing --cslots --dir $(BLD_INC_DIR) @(Jems)" />
+    <Exec Command="$(BLD_ABS_BIN_DIR)\ejsmod --listing --cslots --dir $(BLD_INC_DIR) @(Jems -> '%(Identity)', ' ')" />
   </Target>

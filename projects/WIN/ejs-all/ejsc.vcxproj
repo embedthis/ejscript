@@ -13,7 +13,7 @@
   </ItemGroup>
 
   <PropertyGroup Label="Globals">
-    <ProjectGuid>{F04D67D6-4D7B-49B4-9E2C-4D2D0B9BDB70}</ProjectGuid>
+    <ProjectGuid>{0C4A79F4-0D73-4EA6-A1B5-DD7ACC3C8123}</ProjectGuid>
     <RootNamespace />
     <Keyword>Win32Proj</Keyword>
   </PropertyGroup>
@@ -219,7 +219,7 @@
   <Target Name="EjsJems" Inputs="@(JemFiles)" Outputs="@(Jems)">
     <Exec Outputs="@(Jems)"
           Command="$(BLD_ABS_BIN_DIR)\ejsc --debug --optimize 9 --dir $(BLD_BIN_DIR) @(JemFiles -> '%(Identity)', ' ')" />
-    <Exec Command="$(BLD_ABS_BIN_DIR)\ejsmod --listing --cslots --dir $(BLD_INC_DIR) @(Jems)" />
+    <Exec Command="$(BLD_ABS_BIN_DIR)\ejsmod --listing --cslots --dir $(BLD_INC_DIR) @(Jems -> '%(Identity)', ' ')" />
   </Target>
   <ImportGroup Label="ExtensionTargets">
   </ImportGroup>
