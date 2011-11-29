@@ -9,7 +9,7 @@ ROOT_DIR="${2%/}"
 PRODUCT=ejs
 INC="${ROOT_DIR}/usr/include"
 MAN="${ROOT_DIR}/usr/share/man"
-PROGRAMS="angel ejs ejsc ejsmod sqlite mvc ejspage jem"
+PROGRAMS="ejs ejsc ejsmod sqlite mvc ejspage jem"
 LIBRARIES="libmpr libejs"
 
 if [ -x "${ROOT_DIR}/usr/local/bin" ] ; then
