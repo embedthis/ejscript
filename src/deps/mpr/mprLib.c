@@ -2833,6 +2833,7 @@ void mprTerminate(int how, int status)
         /* Already stopping and done the code below */
         return;
     }
+    MPR->state = MPR_STOPPING;
 
     /*
         Invoke terminators, set stopping state and wake up everybody
@@ -2842,7 +2843,6 @@ void mprTerminate(int how, int status)
     for (ITERATE_ITEMS(MPR->terminators, terminator, next)) {
         (terminator)(how, status);
     }
-    MPR->state = MPR_STOPPING;
     mprWakeWorkers();
     mprWakeGCService();
     mprWakeDispatchers();
@@ -8303,6 +8303,9 @@ int mprServiceEvents(MprTime timeout, int flags)
                 es->willAwake = es->now + delay;
                 unlock(es);
                 if (mprIsStopping()) {
+                    if (mprServicesAreIdle()) {
+                        break;
+                    }
                     delay = 10;
                 }
                 mprWaitForIO(MPR->waitService, delay);
@@ -22431,7 +22434,7 @@ static void adjustThreadCount(int adj)
     mprLock(sp->mutex);
     sp->activeThreadCount += adj;
     if (sp->activeThreadCount <= 0) {
-        mprTerminate(MPR_EXIT_DEFAULT, -1);
+        mprTerminate(MPR_EXIT_DEFAULT, 0);
     }
     mprUnlock(sp->mutex);
 }
