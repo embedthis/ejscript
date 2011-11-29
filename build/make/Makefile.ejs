@@ -8,6 +8,8 @@
 #	Top level test targets to test installing and removing packages
 #
 testExtra::
+
+futureTestExtra::
 	if [ "$(BUILD_DEPTH)" -ge 3 -a "$(BLD_TYPE)" = RELEASE ] ; then \
 		$(MAKE) package ; \
 		$(MAKE) uninstall ; \
@@ -69,14 +71,13 @@ test-install-native-package:
 		echo "Dir=$(STAGE_DIR)" >>unattended.ans ; \
 		./$(BASE_NAME).exe /loadinf=/tmp/unattended.ans /silent ; \
 	elif [ $(BLD_HOST_OS) = MACOSX ] ; then \
-		set -x ; \
 		hdiutil eject /Volumes/$(BLD_PRODUCT)-$(BLD_VERSION) >/dev/null 2>&1 || true ; \
 		hdid $(BLD_OUT_DIR)/releases/$(BASE_NAME).dmg >/dev/null ; \
 		priv installer -package /Volumes/$(BLD_PRODUCT)-$(BLD_VERSION)/$(BLD_PRODUCT).mpkg -target /; \
 		hdiutil eject /Volumes/$(BLD_PRODUCT)-$(BLD_VERSION) >/dev/null 2>&1 ; \
 	else \
 		name="$(BASE_NAME).tgz" ; \
-		tar -C /tmp xvfz $(BLD_OUT_DIR)/releases/$$name ; \
+		tar -C /tmp xzf $(BLD_OUT_DIR)/releases/$$name ; \
 		priv $(BLD_PRODUCT)_HEADLESS=1 ./install ; \
 	fi
 
