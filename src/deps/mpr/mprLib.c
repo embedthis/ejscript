@@ -3006,17 +3006,10 @@ bool mprServicesAreIdle()
 {
     bool    idle;
 
-#if UNUSED && KEEP
-    idle = mprGetListLength(MPR->workerService->busyThreads) == 0 && 
-           mprGetListLength(MPR->cmdService->cmds) == 0 && 
-           mprDispatchersAreIdle() && !MPR->eventing;
-#else
     /*
         Only test top level services. Dispatchers may have timers scheduled, but that is okay.
      */
-    idle = mprGetListLength(MPR->workerService->busyThreads) == 0 && 
-           mprGetListLength(MPR->cmdService->cmds) == 0 && !MPR->eventing;
-#endif
+    idle = mprGetListLength(MPR->workerService->busyThreads) == 0 && mprGetListLength(MPR->cmdService->cmds) == 0;
     if (!idle) {
         mprLog(4, "Not idle: cmds %d, busy threads %d, eventing %d",
             mprGetListLength(MPR->cmdService->cmds), mprGetListLength(MPR->workerService->busyThreads), MPR->eventing);
@@ -8310,9 +8303,9 @@ int mprServiceEvents(MprTime timeout, int flags)
                 es->willAwake = es->now + delay;
                 unlock(es);
                 if (mprIsStopping()) {
-                    break;
+                    delay = 10;
                 }
-                mprWaitForIO(MPR->waitService, (int) delay);
+                mprWaitForIO(MPR->waitService, delay);
             } else {
                 unlock(es);
             }
