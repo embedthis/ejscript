@@ -13,6 +13,8 @@ var options = copySetup({task: App.args[1], root: Path(App.args[2])})
 var build = options.build
 var os = build.BLD_HOST_OS
 var product = build.BLD_PRODUCT
+var debug: Boolean = build.BLD_DEBUG
+var strip = !debug
 
 /*
     Sources
@@ -50,7 +52,7 @@ if (options.task == "Remove" && bin.join("linkup").exists) {
     saveLink.attributes = {permissions: 0755}
 }
 
-copy("ejs*", bin, {from: sbin, permissions: 0755, strip: true, exclude: /ejspage/})
+copy("ejs*", bin, {from: sbin, permissions: 0755, strip: strip, exclude: /ejspage/})
 
 if (!bare) {
     copy("LICENSE.TXT", ver, { from: "doc/licenses", fold: true, expand: true })
@@ -81,9 +83,9 @@ copy("*.mod", lib, {from: slib})
 /*
     Copy libraries and symlink to sonames
  */
-copy("*" + build.BLD_SHOBJ, lib, {from: slib, permissions: 0755, strip: true})
+copy("*" + build.BLD_SHOBJ, lib, {from: slib, permissions: 0755, strip: strip})
 if (options.task != "Remove" && build.BLD_FEATURE_SSL == 1 && os == "LINUX") {
-    copy("*" + build.BLD_SHOBJ + ".*", lib, {from: slib, permissions: 0755, strip: true})
+    copy("*" + build.BLD_SHOBJ + ".*", lib, {from: slib, permissions: 0755, strip: strip})
     for each (f in slib.find("*.so.*")) {
         let withver = f.basename
         let nover = withver.name.replace(/\.[0-9]*.*/, ".so")
