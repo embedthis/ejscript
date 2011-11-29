@@ -840,6 +840,7 @@ static int      startDispatcher(LPSERVICE_MAIN_FUNCTION svcMain);
 static bool     startService();
 static bool     stopService(int cmd);
 static int      tellSCM(long state, long exitCode, long wait);
+static void     terminating(int how, int status);
 static void     updateStatus(int status, int exitCode);
 static void     writeToOsLog(cchar *message);
 
@@ -1565,6 +1566,12 @@ static void logHandler(int flags, int level, cchar *msg)
         MessageBoxEx(NULL, msg, mprGetAppTitle(), MB_OK, 0);
     }
     mprWriteToOsLog(msg, 0, 0);
+}
+
+
+static void terminating(int how, int status)
+{
+    cleanup();
 }
 
 
