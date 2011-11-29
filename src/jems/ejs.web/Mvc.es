@@ -192,7 +192,9 @@ module ejs.web {
             let dbconfig = App.config.database
             if (dbconfig) {
                 for each (kind in ["debug", "test", "production"]) {
-                    dbconfig[kind].name = home.join(dbconfig[kind].name)
+                    if (dbconfig[kind]) {
+                        dbconfig[kind].name = home.join(dbconfig[kind].name)
+                    }
                 }
                 global.load("ejs.db.mod", {reload: false})
                 blend(dbconfig, dbconfig[App.config.mode])
