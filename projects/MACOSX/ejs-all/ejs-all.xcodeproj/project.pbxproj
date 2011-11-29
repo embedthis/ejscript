@@ -1038,7 +1038,7 @@
 		C9CD7646131245C0007794B0 /* ejsCmd.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; name = ejsCmd.c; path = ../../../src/core/src/ejsCmd.c; sourceTree = SOURCE_ROOT; };
 		C9D4528711ECDA4300F029C8 /* http */ = {isa = PBXFileReference; explicitFileType = "compiled.mach-o.executable"; includeInIndex = 0; path = http; sourceTree = BUILT_PRODUCTS_DIR; };
 		C9D452B411ECDBA300F029C8 /* http.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; name = http.c; path = ../../../src/deps/http/http.c; sourceTree = SOURCE_ROOT; };
-		C9D7A7F213D4F346000428C7 /* angel */ = {isa = PBXFileReference; explicitFileType = "compiled.mach-o.executable"; includeInIndex = 0; path = angel; sourceTree = BUILT_PRODUCTS_DIR; };
+		C9D7A7F213D4F346000428C7 /* ejsman */ = {isa = PBXFileReference; explicitFileType = "compiled.mach-o.executable"; includeInIndex = 0; path = ejsman; sourceTree = BUILT_PRODUCTS_DIR; };
 		C9E9F12E13D8ACBA00C20E21 /* Debug.xcconfig */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.xcconfig; path = Debug.xcconfig; sourceTree = "<group>"; };
 		C9E9F12F13D8ACBA00C20E21 /* Product.xcconfig */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.xcconfig; path = Product.xcconfig; sourceTree = "<group>"; };
 		C9E9F13013D8ACBA00C20E21 /* Release.xcconfig */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.xcconfig; path = Release.xcconfig; sourceTree = "<group>"; };
@@ -1392,7 +1392,7 @@
 				C9FB52EF0FD9E92700882CC3 /* ejs.db.sqlite.dylib */,
 				C98D7153110FBEEA00F2ED80 /* sqlite */,
 				C9D4528711ECDA4300F029C8 /* http */,
-				C9D7A7F213D4F346000428C7 /* angel */,
+				C9D7A7F213D4F346000428C7 /* ejsman */,
 			);
 			name = Products;
 			sourceTree = "<group>";
@@ -1900,7 +1900,7 @@
 			);
 			name = ejsman;
 			productName = http;
-			productReference = C9D7A7F213D4F346000428C7 /* angel */;
+			productReference = C9D7A7F213D4F346000428C7 /* ejsman */;
 			productType = "com.apple.product-type.tool";
 		};
 /* End PBXNativeTarget section */
@@ -3249,7 +3249,7 @@
 			isa = XCBuildConfiguration;
 			buildSettings = {
 				INSTALL_PATH = "$(INSTALL_PATH)/bin";
-				PRODUCT_NAME = angel;
+				PRODUCT_NAME = ejsman;
 			};
 			name = Debug;
 		};
@@ -3257,7 +3257,7 @@
 			isa = XCBuildConfiguration;
 			buildSettings = {
 				INSTALL_PATH = "$(INSTALL_PATH)/bin";
-				PRODUCT_NAME = angel;
+				PRODUCT_NAME = ejsman;
 			};
 			name = Release;
 		};
