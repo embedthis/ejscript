@@ -39,15 +39,14 @@ BLD_VER_PREFIX="!!ORIG_BLD_VER_PREFIX!!"
 BLD_WEB_PREFIX="!!ORIG_BLD_WEB_PREFIX!!"
 
 installbin=Y
+headless=${!!BLD_PRODUCT!!_HEADLESS:-0}
 
 PATH=$PATH:/sbin:/usr/sbin
 
 ###############################################################################
 
 setup() {
-
     umask 022
-
     if [ $BLD_HOST_OS != WIN -a `id -u` != "0" ] ; then
         echo "You must be root to install this product."
         exit 255
@@ -67,7 +66,7 @@ setup() {
         exit 0
     fi
     sleuthPackageFormat
-    echo -e "\n$BLD_NAME !!BLD_VERSION!!-!!BLD_NUMBER!! Installation\n"
+    [ "$headless" != 1 ] && echo -e "\n$BLD_NAME !!BLD_VERSION!!-!!BLD_NUMBER!! Installation\n"
 
 }
 
@@ -103,9 +102,11 @@ askUser() {
     do
         installbin=`yesno "Install binary package" "$installbin"`
     
-        echo -e "\nInstalling with this configuration:" 
-        echo -e "    Install binary package: $installbin"
-        echo
+        if [ "$headless" != 1 ] ; then
+            echo -e "\nInstalling with this configuration:" 
+            echo -e "    Install binary package: $installbin"
+            echo
+        fi
         finished=`yesno "Accept this configuration" "Y"`
     done
     
@@ -113,7 +114,6 @@ askUser() {
         echo -e "\nNothing to install, exiting. "
         exit 0
     fi
-    
     #
     #   Save the install settings. Remove.sh will need this
     #
@@ -131,7 +131,7 @@ createPackageName() {
 yesno() {
     local ans
 
-    if [ "$!!BLD_PRODUCT!!_HEADLESS" = 1 ] ; then
+    if [ "$headless" = 1 ] ; then
         echo "Y"
         return
     fi
@@ -159,7 +159,7 @@ ask() {
 
     default=$2
 
-    if [ "$!!BLD_PRODUCT!!_HEADLESS" = 1 ] ; then
+    if [ "$headless" = 1 ] ; then
         echo "$default"
         return
     fi
@@ -182,7 +182,7 @@ saveSetup() {
 installFiles() {
     local dir pkg doins NAME upper
 
-    echo -e "\nExtracting files ...\n"
+    [ "$headless" != 1 ] && echo -e "\nExtracting files ...\n"
 
     for pkg in bin ; do
         
@@ -194,13 +194,13 @@ installFiles() {
             #
             NAME=`createPackageName ${BLD_PRODUCT}${suffix}`.$FMT
             if [ "$FMT" = "rpm" ] ; then
-                echo -e "rpm -Uhv $NAME"
+                [ "$headless" != 1 ] && echo -e "rpm -Uhv $NAME"
                 rpm -Uhv $HOME/$NAME
             elif [ "$FMT" = "deb" ] ; then
-                echo -e "dpkg -i $NAME"
+                [ "$headless" != 1 ] && echo -e "dpkg -i $NAME"
                 dpkg -i $HOME/$NAME >/dev/null
             else
-                echo tar xzf "$HOME/${NAME}" --strip-components 1 -P -C /
+                [ "$headless" != 1 ] && echo tar xzf "$HOME/${NAME}" --strip-components 1 -P -C /
                 tar xzf "$HOME/${NAME}" --strip-components 1 -P -C /
             fi
         fi
@@ -226,12 +226,12 @@ installFiles() {
     "$BLD_BIN_PREFIX/linkup" Install /
 
     if [ $BLD_HOST_OS = WIN ] ; then
-        echo -e "\nSetting file permissions ..."
+        [ "$headless" != 1 ] && echo -e "\nSetting file permissions ..."
         find "$BLD_PRD_PREFIX" -type d -exec chmod 755 {} \;
         find "$BLD_PRD_PREFIX" -type f -exec chmod g+r,o+r {} \;
         chmod 755 "$BLD_BIN_PREFIX"/*.dll "$BLD_BIN_PREFIX"/*.exe
     fi
-    echo
+    [ "$headless" != 1 ] && echo
 }
 
 #
@@ -263,7 +263,7 @@ legacyPrep() {
 startBrowser() {
     local url
 
-    if [ "$!!BLD_PRODUCT!!_HEADLESS" = 1 ] ; then
+    if [ "$headless" = 1 ] ; then
         return
     fi
     echo -e "\nStarting browser to view the $BLD_NAME Home Page."
@@ -297,4 +297,6 @@ installFiles $FMT
 #
 #   startBrowser
 
-echo -e "\n$BLD_NAME installation successful.\n"
+[ "$headless" != 1 ] && echo
+echo -e "$BLD_NAME installation successful."
+exit 0
