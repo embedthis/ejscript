@@ -2068,7 +2068,7 @@
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 			shellPath = /bin/sh;
-			shellScript = "export DYLD_LIBRARY_PATH=$BUILT_PRODUCTS_DIR\nexport PATH=$OUT/build/bin:$BUILT_PRODUCTS_DIR:${PATH}\nmake -C $SRC/core TRACE=1 BLD_LIB_DIR=$BUILT_PRODUCTS_DIR BLD_BUILD_LIB_DIR=$BUILT_PRODUCTS_DIR modules || exit 255\nmake -C $SRC/jems TRACE=1 BLD_LIB_DIR=$BUILT_PRODUCTS_DIR BLD_BUILD_LIB_DIR=$BUILT_PRODUCTS_DIR modules || exit 255\nexit 0";
+			shellScript = "set -x\nexport DYLD_LIBRARY_PATH=$BUILT_PRODUCTS_DIR\nexport PATH=$OUT/build/bin:$BUILT_PRODUCTS_DIR:${PATH}\nINC=$OUT/INC\n\n# make -C $SRC/core TRACE=1 BLD_LIB_DIR=$BUILT_PRODUCTS_DIR BLD_BUILD_LIB_DIR=$BUILT_PRODUCTS_DIR modules || exit 255\n\ncd $SRC/core\nrm -f *.mod *.slots.h $BUILT_PRODUCTS_DIR/ejs*.mod $BUILT_PRODUCTS_DIR/ejs*.mod\nejsc  --debug --optimize 9 --out ejs.mod --bind --require \"\" App.es Array.es BinaryStream.es Block.es Boolean.es \\\n    ByteArray.es Cache.es Cmd.es CmdArgs.es Compat.es Config.es Date.es Debug.es Emitter.es Error.es File.es \\\n    FileSystem.es Frame.es Function.es GC.es Global.es Http.es Inflector.es Iterator.es JSON.es Loader.es \\\n    LocalCache.es Locale.es Logger.es Math.es Memory.es MprLog.es Name.es Namespace.es Null.es Number.es Object.es \\\n    Path.es Promise.es RegExp.es Socket.es Stream.es String.es System.es TextStream.es Timer.es Type.es Uri.es Void.es \\\n    Worker.es XML.es XMLHttp.es XMLList.es\n\nmv *.mod $BUILT_PRODUCTS_DIR\nejsmod --require \"\" --listing --cslots $BUILT_PRODUCTS_DIR/ejs.mod\nfor f in *.slots.h ; do\n    if [ -f $INC/$f ] ; then\n        if ! diff $f $INC/$f >/dev/null 2>&1; then\n            cp $f $INC\n            echo INSTALL $f to $INC\n        fi\n    fi\n    rm -f $f\ndone\n\n# make -C $SRC/jems TRACE=1 BLD_LIB_DIR=$BUILT_PRODUCTS_DIR BLD_BUILD_LIB_DIR=$BUILT_PRODUCTS_DIR modules || exit 255\n\ncd $SRC/jems\nfor n in unix db db.mapper db.sqlite web template tar\ndo\n    cd ejs.${n}\n    ejsc  --debug --optimize 9 *.es\n    ejsmod --cslots ejs.${n}.mod\n    diff ejs.${n}.slots.h $INC >/dev/null 2>&1 || cp ejs.${n}.slots.h $INC\n    mv ejs.${n}.mod $BUILT_PRODUCTS_DIR\n    rm -f *.slots.h\n    cd ..\ndone\n\nexit 0\n";
 			showEnvVarsInLog = 0;
 		};
 		C97235E713D4EAF900C7DCC6 /* ShellScript */ = {
@@ -2959,6 +2959,7 @@
 			isa = XCBuildConfiguration;
 			baseConfigurationReference = C9E9F12E13D8ACBA00C20E21 /* Debug.xcconfig */;
 			buildSettings = {
+				TOP = "$(SRCROOT)/../../..";
 			};
 			name = Debug;
 		};
@@ -2966,6 +2967,7 @@
 			isa = XCBuildConfiguration;
 			baseConfigurationReference = C9E9F13013D8ACBA00C20E21 /* Release.xcconfig */;
 			buildSettings = {
+				TOP = "$(SRCROOT)/../../..";
 			};
 			name = Release;
 		};
