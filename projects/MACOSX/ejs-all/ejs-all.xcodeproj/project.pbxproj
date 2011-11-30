@@ -2068,7 +2068,7 @@
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 			shellPath = /bin/sh;
-			shellScript = "set -x\nexport DYLD_LIBRARY_PATH=$BUILT_PRODUCTS_DIR\nexport PATH=$OUT/build/bin:$BUILT_PRODUCTS_DIR:${PATH}\nINC=$OUT/INC\n\n# make -C $SRC/core TRACE=1 BLD_LIB_DIR=$BUILT_PRODUCTS_DIR BLD_BUILD_LIB_DIR=$BUILT_PRODUCTS_DIR modules || exit 255\n\ncd $SRC/core\nrm -f *.mod *.slots.h $BUILT_PRODUCTS_DIR/ejs*.mod $BUILT_PRODUCTS_DIR/ejs*.mod\nejsc  --debug --optimize 9 --out ejs.mod --bind --require \"\" App.es Array.es BinaryStream.es Block.es Boolean.es \\\n    ByteArray.es Cache.es Cmd.es CmdArgs.es Compat.es Config.es Date.es Debug.es Emitter.es Error.es File.es \\\n    FileSystem.es Frame.es Function.es GC.es Global.es Http.es Inflector.es Iterator.es JSON.es Loader.es \\\n    LocalCache.es Locale.es Logger.es Math.es Memory.es MprLog.es Name.es Namespace.es Null.es Number.es Object.es \\\n    Path.es Promise.es RegExp.es Socket.es Stream.es String.es System.es TextStream.es Timer.es Type.es Uri.es Void.es \\\n    Worker.es XML.es XMLHttp.es XMLList.es\n\nmv *.mod $BUILT_PRODUCTS_DIR\nejsmod --require \"\" --listing --cslots $BUILT_PRODUCTS_DIR/ejs.mod\nfor f in *.slots.h ; do\n    if [ -f $INC/$f ] ; then\n        if ! diff $f $INC/$f >/dev/null 2>&1; then\n            cp $f $INC\n            echo INSTALL $f to $INC\n        fi\n    fi\n    rm -f $f\ndone\n\n# make -C $SRC/jems TRACE=1 BLD_LIB_DIR=$BUILT_PRODUCTS_DIR BLD_BUILD_LIB_DIR=$BUILT_PRODUCTS_DIR modules || exit 255\n\ncd $SRC/jems\nfor n in unix db db.mapper db.sqlite web template tar\ndo\n    cd ejs.${n}\n    ejsc  --debug --optimize 9 *.es\n    ejsmod --cslots ejs.${n}.mod\n    diff ejs.${n}.slots.h $INC >/dev/null 2>&1 || cp ejs.${n}.slots.h $INC\n    mv ejs.${n}.mod $BUILT_PRODUCTS_DIR\n    rm -f *.slots.h\n    cd ..\ndone\n\nexit 0\n";
+			shellScript = "\nexport DYLD_LIBRARY_PATH=$BUILT_PRODUCTS_DIR\nexport PATH=$OUT/build/bin:$BUILT_PRODUCTS_DIR:${PATH}\nINC=$OUT/INC\n\n# make -C $SRC/core TRACE=1 BLD_LIB_DIR=$BUILT_PRODUCTS_DIR BLD_BUILD_LIB_DIR=$BUILT_PRODUCTS_DIR modules || exit 255\nFILES=\"App.es Array.es BinaryStream.es Block.es Boolean.es \\\nByteArray.es Cache.es Cmd.es CmdArgs.es Compat.es Config.es Date.es Debug.es Emitter.es Error.es File.es \\\nFileSystem.es Frame.es Function.es GC.es Global.es Http.es Inflector.es Iterator.es JSON.es Loader.es \\\nLocalCache.es Locale.es Logger.es Math.es Memory.es MprLog.es Name.es Namespace.es Null.es Number.es Object.es \\\nPath.es Promise.es RegExp.es Socket.es Stream.es String.es System.es TextStream.es Timer.es Type.es Uri.es Void.es \\\nWorker.es XML.es XMLHttp.es XMLList.es\"\n\ncd $SRC/core\nchanged=0\nfor f in $FILES\ndo\n    [ $f -nt $BUILT_PRODUCTS_DIR/ejs.mod ] && changed=1\ndone\n\nif [ \"$changed\" = 1 ] ; then\n    echo \"Rebuilding ejs.mod\"\n    rm -f *.mod *.slots.h $BUILT_PRODUCTS_DIR/ejs*.mod $BUILT_PRODUCTS_DIR/ejs*.mod\n    ejsc  --debug --optimize 9 --out ejs.mod --bind --require \"\" $FILES\n    mv *.mod $BUILT_PRODUCTS_DIR\n    ejsmod --require \"\" --listing --cslots $BUILT_PRODUCTS_DIR/ejs.mod\n    for f in *.slots.h ; do\n        if [ -f $INC/$f ] ; then\n            if ! diff $f $INC/$f >/dev/null 2>&1; then\n                cp $f $INC\n                echo INSTALL $f to $INC\n            fi\n        fi\n        rm -f $f\n    done\nfi \n[ \"$changed\" = 0 ] && echo No changes to core\n\n# make -C $SRC/jems TRACE=1 BLD_LIB_DIR=$BUILT_PRODUCTS_DIR BLD_BUILD_LIB_DIR=$BUILT_PRODUCTS_DIR modules || exit 255\n\ncd $SRC/jems\nfor n in unix db db.mapper db.sqlite web template tar\ndo\n    cd ejs.${n}\n    changed=0\n    for f in *.es\n    do\n        [ $f -nt $BUILT_PRODUCTS_DIR/ejs.${n}.mod ] && changed=1\n    done\n    if [ \"$changed\" = 1 ] ; then\n        echo \"Rebuilding ${n}\"\n        ejsc  --debug --optimize 9 *.es\n        ejsmod --cslots ejs.${n}.mod\n        diff ejs.${n}.slots.h $INC >/dev/null 2>&1 || cp ejs.${n}.slots.h $INC\n        mv ejs.${n}.mod $BUILT_PRODUCTS_DIR\n        rm -f *.slots.h\n    fi\n    cd ..\ndone\n[ \"$changed\" = 0 ] && echo No changes to jems\n\nexit 0\n";
 			showEnvVarsInLog = 0;
 		};
 		C97235E713D4EAF900C7DCC6 /* ShellScript */ = {
@@ -2097,7 +2097,7 @@
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 			shellPath = /bin/sh;
-			shellScript = "\nexport BLD_TOP=$TOP\nexport BLD_TOOLS_DIR=$BLD_TOP/build/bin\nexport BLD_OUT_DIR=$BLD_TOP/out\n\n. `${BLD_TOOLS_DIR}/cacheConfig ${BLD_OUT_DIR}/inc/buildConfig.h`\n\nset -x\n\nif [ \"$SKIP_INSTALL\" != YES ] ; then\n    mkdir -p $INSTALL_DIR\n    cp $BUILT_PRODUCTS_DIR/*.mod $INSTALL_DIR\nfi";
+			shellScript = "\nexport BLD_TOP=$TOP\nexport BLD_TOOLS_DIR=$BLD_TOP/build/bin\nexport BLD_OUT_DIR=$BLD_TOP/out\n\n. `${BLD_TOOLS_DIR}/cacheConfig ${BLD_OUT_DIR}/inc/buildConfig.h`\n\nif [ \"$SKIP_INSTALL\" != YES ] ; then\n    echo \"Installing to $INSTALL_DIR\"\n    mkdir -p $INSTALL_DIR\n    cp $BUILT_PRODUCTS_DIR/*.mod $INSTALL_DIR\nfi";
 			showEnvVarsInLog = 0;
 		};
 		C97A5EC511E81E9B00BB0981 /* Initialize */ = {
@@ -2112,7 +2112,7 @@
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 			shellPath = /bin/sh;
-			shellScript = "#\n#   Prepare for build - This imports required libraries, headers and executables\n#\nmkdir -p $OUT/inc $OUT/lib\n\nif [ ! -f $OUT/inc/buildConfig.h -o buildConfig.default -nt $OUT/inc/buildConfig.h ] ; then\n    [ -f $OUT/inc/buildConfig.h ] && chmod +w $OUT/inc/buildConfig.h\n    cp buildConfig.default $OUT/inc/buildConfig.h\n    export BLD_TOP=$TOP\n    export BLD_OUT_DIR=$BLD_TOP/out\n    . `${BLD_TOP}/build/bin/cacheConfig ${BLD_OUT_DIR}/inc/buildConfig.h`\nfi\ntouch $OUT/bin/.ideBuild\n\nexit 0";
+			shellScript = "#\n#   Prepare for build - This imports required libraries, headers and executables\n#\nmkdir -p $OUT/inc $OUT/lib\n\nif [ ! -f $OUT/inc/buildConfig.h -o buildConfig.default -nt $OUT/inc/buildConfig.h ] ; then\n    echo Update $OUT/inc/buildConfig.h\n    [ -f $OUT/inc/buildConfig.h ] && chmod +w $OUT/inc/buildConfig.h\n    cp buildConfig.default $OUT/inc/buildConfig.h\n    export BLD_TOP=$TOP\n    export BLD_OUT_DIR=$BLD_TOP/out\n    . `${BLD_TOP}/build/bin/cacheConfig ${BLD_OUT_DIR}/inc/buildConfig.h`\nfi\ntouch $OUT/bin/.ideBuild\n\nexit 0";
 			showEnvVarsInLog = 0;
 		};
 		C99A33CD10C2F14000F6C7BC /* ShellScript */ = {
@@ -2201,7 +2201,7 @@
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 			shellPath = /bin/sh;
-			shellScript = "cp $SRC/ejs*.h $SRC/ejsCustomize.h $OUT/inc\ncp $SRC/slots/ejs*.h $OUT/inc";
+			shellScript = "FILES=\"$SRC/ejs*.h $SRC/slots/ejs*.h\"\nfor f in $FILES\ndo\n    base=${f##*/}\n    if [ $f -nt $OUT/inc/$base ] ; then\n        echo Install $f to $OUT/inc\n        cp $f $OUT/inc\n    fi\ndone";
 			showEnvVarsInLog = 0;
 		};
 		C9EA7DC413D4DC490035EB46 /* ShellScript */ = {
@@ -2876,6 +2876,7 @@
 			isa = XCBuildConfiguration;
 			buildSettings = {
 				PRODUCT_NAME = ejs.mod;
+				SKIP_INSTALL = YES;
 			};
 			name = Debug;
 		};
@@ -2883,6 +2884,7 @@
 			isa = XCBuildConfiguration;
 			buildSettings = {
 				PRODUCT_NAME = ejs.mod;
+				SKIP_INSTALL = YES;
 			};
 			name = Release;
 		};
