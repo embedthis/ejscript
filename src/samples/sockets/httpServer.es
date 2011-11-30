@@ -4,6 +4,8 @@
     This web server just responds to simple GET requests.
  */
 
+//  MOB - pick different name 
+
 module HttpServer {
 
     var methods = { "DELETE", "GET", "OPTIONS", "POST", "PUT", "TRACE" }
