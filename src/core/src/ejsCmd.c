@@ -100,23 +100,11 @@ static EjsObj *cmd_flush(Ejs *ejs, EjsCmd *cmd, int argc, EjsObj **argv)
 /**
     static function kill(pid: Number, signal: Number = 2): Boolean
  */
-static EjsObj *cmd_kill(Ejs *ejs, EjsCmd *cmd, int argc, EjsObj **argv)
+static EjsObj *cmd_kill(Ejs *ejs, EjsAny *unused, int argc, EjsObj **argv)
 {
-    int     rc, pid, signal;
+    int     rc, pid;
 
-    signal = SIGINT;
-
-    pid = 0;
-    if (argc == 0) {
-        if (cmd->mc && cmd->mc->pid) {
-            pid = cmd->mc->pid;
-        }
-    } else if (argc >= 1) {
-        pid = ejsGetInt(ejs, argv[0]);
-    } 
-    if (argc >= 2) {
-        signal = ejsGetInt(ejs, argv[1]);
-    }
+    pid = ejsGetInt(ejs, argv[0]);
     if (pid == 0) {
         ejsThrowStateError(ejs, "No process to kill");
         return 0;
@@ -132,15 +120,18 @@ static EjsObj *cmd_kill(Ejs *ejs, EjsCmd *cmd, int argc, EjsObj **argv)
     rc = TerminateProcess(handle, signal) == 0;
 }
 #elif VXWORKS
-    // CRASH    rc = taskDelete(cmd->pid);
     rc = taskDelete(pid);
 #else
+{
+    int signal = SIGINT;
+    if (argc >= 2) {
+        signal = ejsGetInt(ejs, argv[1]);
+    }
     rc = kill(pid, signal);
+}
 #endif
     if (rc < 0) {
-        if (cmd->throw) {
-            ejsThrowIOError(ejs, "Can't kill %d with signal %d, errno %d", pid, signal, errno);
-        }
+        ejsThrowIOError(ejs, "Can't kill %d with signal %d, errno %d", pid, signal, errno);
         return ESV(false);
     }
     return ESV(true);
