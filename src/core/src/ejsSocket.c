@@ -230,8 +230,8 @@ static EjsNumber *sock_read(Ejs *ejs, EjsSocket *sp, int argc, EjsObj **argv)
     ssize           nbytes, offset, count;
 
     ba = (EjsByteArray*) argv[0];
-    offset = (argc >= 1) ? ejsGetInt(ejs, argv[1]) : 0;
-    count = (argc >= 2) ? ejsGetInt(ejs, argv[2]) : -1;
+    offset = (argc >= 2) ? ejsGetInt(ejs, argv[1]) : 0;
+    count = (argc >= 3) ? ejsGetInt(ejs, argv[2]) : -1;
 
     if (offset < 0) {
         offset = ba->writePosition;
