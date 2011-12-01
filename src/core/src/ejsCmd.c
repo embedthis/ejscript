@@ -102,8 +102,16 @@ static EjsObj *cmd_flush(Ejs *ejs, EjsCmd *cmd, int argc, EjsObj **argv)
  */
 static EjsObj *cmd_kill(Ejs *ejs, EjsAny *unused, int argc, EjsObj **argv)
 {
-    int     rc, pid;
+    int     rc, pid, signal;
 
+#if BLD_UNIX_LIKE
+    signal = SIGINT;
+#else
+    signal = 2;
+#endif
+    if (argc >= 2) {
+        signal = ejsGetInt(ejs, argv[1]);
+    }
     pid = ejsGetInt(ejs, argv[0]);
     if (pid == 0) {
         ejsThrowStateError(ejs, "No process to kill");
@@ -122,13 +130,7 @@ static EjsObj *cmd_kill(Ejs *ejs, EjsAny *unused, int argc, EjsObj **argv)
 #elif VXWORKS
     rc = taskDelete(pid);
 #else
-{
-    int signal = SIGINT;
-    if (argc >= 2) {
-        signal = ejsGetInt(ejs, argv[1]);
-    }
     rc = kill(pid, signal);
-}
 #endif
     if (rc < 0) {
         ejsThrowIOError(ejs, "Can't kill %d with signal %d, errno %d", pid, signal, errno);
