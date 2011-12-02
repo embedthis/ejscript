@@ -159,3 +159,4 @@ src/core/test/cmd/TempWmicBatchFile.bat
 .DS_Store
 src/test/tt.es
 main
+val.log
