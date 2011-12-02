@@ -132,7 +132,7 @@ static MPR_INLINE void checkGetter(Ejs *ejs, EjsAny *value, EjsAny *thisObj, Ejs
 #define THIS            FRAME->function.boundThis
 #define FILL(mark)      while (mark < FRAME->pc) { *mark++ = EJS_OP_NOP; }
 
-#define DEBUG_IDE 1
+#define DEBUG_IDE 0
 #if DEBUG_IDE
     static EjsOpCode traceCode(Ejs *ejs, EjsOpCode opcode);
     static int opcount[256];
@@ -3760,9 +3760,9 @@ static EjsOpCode traceCode(Ejs *ejs, EjsOpCode opcode)
 {
     EjsFrame        *fp;
     EjsState        *state;
-    EjsOptable      *optable;
     int             offset;
 #if FUTURE
+    EjsOptable      *optable;
     static int      showFrequency = 1;
 #endif
 
@@ -3778,9 +3778,9 @@ static EjsOpCode traceCode(Ejs *ejs, EjsOpCode opcode)
         if (offset < 0) {
             offset = 0;
         }
-        optable = ejsGetOptable();
         fp->line = ejsGetDebugLine(ejs, (EjsFunction*) fp, fp->pc);
 #if FUTURE
+        optable = ejsGetOptable();
         if (showFrequency && ((once % 1000) == 999)) {
             ejsShowOpFrequency(ejs);
         }
