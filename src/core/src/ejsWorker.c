@@ -362,6 +362,8 @@ static int join(Ejs *ejs, EjsObj *workers, int timeout)
             break;
         }
         mprWaitForEvent(ejs->dispatcher, remaining);
+        mprAssert(ejs->dispatcher->magic == MPR_DISPATCHER_MAGIC);
+
         mprAssert(!MPR->marking);
         remaining = (int) mprGetRemainingTime(mark, timeout);
         mprAssert(!MPR->marking);
