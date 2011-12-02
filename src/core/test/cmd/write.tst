@@ -15,6 +15,7 @@ if (!Path("/bin").exists) {
     cmd.finalize()
     assert(cmd.response == "Hello World")
     assert(cmd.status == 0)
+    cmd.close()
 
     //  Test various write data types
     cmd = new Cmd
@@ -27,4 +28,5 @@ if (!Path("/bin").exists) {
     assert(cmd.response.contains("123 true "))
     assert(cmd.response.contains("GMT"))
     assert(cmd.status == 0)
+    cmd.close()
 }

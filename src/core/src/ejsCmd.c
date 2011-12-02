@@ -276,6 +276,7 @@ static ssize cmdIOCallback(MprCmd *mc, int channel, void *data)
      */
     cmd = data;
     buf = 0;
+
     switch (channel) {
     case MPR_CMD_STDIN:
         ejsSendEvent(cmd->ejs, cmd->emitter, "writable", NULL, cmd);
@@ -303,6 +304,7 @@ static ssize cmdIOCallback(MprCmd *mc, int channel, void *data)
         }
         space = mprGetBufSpace(buf);
     }
+    mprAssert(mc->files[channel].fd >= 0);
     len = mprReadCmd(mc, channel, mprGetBufEnd(buf), space);
     if (len <= 0) {
         if (len == 0 || (len < 0 && !(errno == EAGAIN || errno == EWOULDBLOCK))) {

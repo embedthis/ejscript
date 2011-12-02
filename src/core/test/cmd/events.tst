@@ -32,10 +32,10 @@ if (!Path("/bin").exists) {
         gotEvent = event
     })
     cmd.wait()
+    assert(input.available > 0)
     assert(input.available == count)
     assert(cmd.status == 0)
     assert(gotEvent == "complete")
-
 
     //  Error event
     cmd = Cmd("ls /asdf", {detach: true})
@@ -46,5 +46,4 @@ if (!Path("/bin").exists) {
     cmd.finalize()
     cmd.wait()
     assert(gotEvent == "error")
-}
 }

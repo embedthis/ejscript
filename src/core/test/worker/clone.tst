@@ -11,11 +11,13 @@ assert(y == x)
 Worker.join(w)
 
 
-//  Clone new worker. Preload a module into the first worker, clone to the second and should already be loaded
-w = new Worker
-w.preload("ejs.web.mod")
-w.preeval('assert("ejs.web"::Request != null)')
-w2 = w.clone()
-w2.eval('assert("ejs.web"::Request != null)')
-
-Worker.join(w, w2)
+/*
+    //  Clone new worker. Preload a module into the first worker, clone to the second and should already be loaded
+    //  MOB - should not use ejs.web here - creates a forward dependency
+    w = new Worker
+    w.preload("ejs.web.mod")
+    w.preeval('assert("ejs.web"::Request != null)')
+    w2 = w.clone()
+    w2.eval('assert("ejs.web"::Request != null)')
+    Worker.join(w, w2)
+*/
