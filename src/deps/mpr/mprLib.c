@@ -5755,8 +5755,6 @@ static void reapCmd(MprCmd *cmd, MprSignal *sp)
             if (cmd->files[MPR_CMD_STDOUT].fd >= 0) {
                 mprCloseCmdFd(cmd, MPR_CMD_STDOUT);
             }
-            mprAssert(cmd->eofCount == cmd->requiredEof);
-            mprAssert(cmd->complete);
         }
     }
 }
