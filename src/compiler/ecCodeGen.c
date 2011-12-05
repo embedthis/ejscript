@@ -113,12 +113,7 @@ static void     setStack(EcCompiler *cp, int count);
  */
 void ecGenConditionalCode(EcCompiler *cp, EcNode *np, EjsModule *mp)
 {
-    EcState         *state;
-
     ENTER(cp);
-
-    state = cp->state;
-    mprAssert(state);
 
     addModule(cp, mp);
     genDirectives(cp, np, 1);
@@ -2994,7 +2989,6 @@ static void genThrow(EcCompiler *cp, EcNode *np)
 static void genTry(EcCompiler *cp, EcNode *np)
 {
     Ejs             *ejs;
-    EjsFunction     *fun;
     EcNode          *child, *arg;
     EcCodeGen       *saveCode;
     EcState         *state;
@@ -3006,8 +3000,6 @@ static void genTry(EcCompiler *cp, EcNode *np)
 
     ejs = cp->ejs;
     state = cp->state;
-    fun = state->currentFunction;
-    mprAssert(fun);
 
     /*
         Switch to a new code buffer for the try block
@@ -3583,12 +3575,9 @@ static void copyCodeBuffer(EcCompiler *cp, EcCodeGen *dest, EcCodeGen *src)
     EjsEx           *exception;
     EjsDebug        *debug;
     EcJump          *jump;
-    EcState         *state;
     uint            baseOffset;
     int             next, len, i;
 
-    state = cp->state;
-    mprAssert(state);
     mprAssert(dest != src);
 
     len = getCodeLength(cp, src);
@@ -3696,7 +3685,6 @@ static void createInitializer(EcCompiler *cp, EjsModule *mp)
     EjsFunction     *fun;
     EcState         *state;
     EcCodeGen       *code;
-    int             len;
 
     ENTER(cp);
 
@@ -3720,8 +3708,6 @@ static void createInitializer(EcCompiler *cp, EjsModule *mp)
     state->code = mp->code;
     cp->directiveState = state;
     code = cp->state->code;
-    len = (int) mprGetBufLength(code->buf);
-    mprAssert(len > 0);
     ecEncodeOpcode(cp, EJS_OP_END_CODE);
 
     /*
