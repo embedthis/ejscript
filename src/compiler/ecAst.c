@@ -278,14 +278,11 @@ static void defineBlock(EcCompiler *cp, EcNode *np)
 static void bindBlock(EcCompiler *cp, EcNode *np)
 {
     Ejs         *ejs;
-    EjsBlock    *block;
     
     mprAssert(cp->phase == EC_PHASE_BIND);
     mprAssert(np->kind == N_BLOCK || np->kind == N_MODULE);
 
     ejs = cp->ejs;
-    block = np->blockRef;
-    mprAssert(block);
 
     resolveName(cp, np, NULL, np->qname);
     if (np->blockCreated) {

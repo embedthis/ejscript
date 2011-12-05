@@ -3067,7 +3067,6 @@ static void checkExceptionHandlers(Ejs *ejs)
     EjsFrame        *fp;
     EjsCode         *code;
     EjsEx           *ex;
-    uint            pc;
 
     ex = 0;
     fp = ejs->state->fp;
@@ -3076,13 +3075,15 @@ static void checkExceptionHandlers(Ejs *ejs)
     if (code->numHandlers == 0) {
         return;
     }
-
+#if UNUSED
     /*
         The PC is always one advanced from the throwing instruction. ie. the PC has advanced past the offending 
         instruction so reverse by one.
      */
+    uint            pc;
     pc = (uint) (fp->pc - code->byteCode - 1);
     mprAssert(pc >= 0);
+#endif
 
 rescan:
     if (!fp->function.inException || (ejs->exception == EST(StopIteration))) {

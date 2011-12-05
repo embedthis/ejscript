@@ -661,7 +661,8 @@ int ejsEncodeInt32(Ejs *ejs, uchar *pos, int number)
     memset(pos, 0, 4);
     len = ejsEncodeNum(ejs, pos, (int64) number);
     mprAssert(len <= 4);
-    return 4;
+    len = 4;
+    return len;
 }
 
 
