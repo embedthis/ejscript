@@ -5685,7 +5685,7 @@ static void reapCmd(MprCmd *cmd, MprSignal *sp)
             mprRemoveSignalHandler(cmd->signal);
             cmd->signal = 0;
         } else {
-            mprLog(6, "waitpid ELSE pid %d, errno %d", cmd->pid, errno);
+            mprLog(7, "waitpid ELSE pid %d, errno %d", cmd->pid, errno);
         }
     } else {
         mprLog(6, "waitpid still running pid %d, thread %s", cmd->pid, mprGetCurrentThreadName());
@@ -5755,8 +5755,16 @@ static void reapCmd(MprCmd *cmd, MprSignal *sp)
             if (cmd->files[MPR_CMD_STDOUT].fd >= 0) {
                 mprCloseCmdFd(cmd, MPR_CMD_STDOUT);
             }
+            /*
+                May not close stdin/stdout if command times out
+             */
+#if UNUSED && DONT_USE && KEEP
+            if (cmd->eofCount != cmd->requiredEof) {
+                mprLog(0, "reapCmd: insufficient EOFs %d %d, complete %d", cmd->eofCount, cmd->requiredEof, cmd->complete);
+            }
             mprAssert(cmd->eofCount == cmd->requiredEof);
             mprAssert(cmd->complete);
+#endif
         }
     }
 }
@@ -5826,6 +5834,9 @@ static void stdinCallback(MprCmd *cmd, MprEvent *event)
 
 static void stdoutCallback(MprCmd *cmd, MprEvent *event)
 {
+    /*
+        reapCmd can consume data from the client and close the fd
+     */
     if (cmd->callback && cmd->files[MPR_CMD_STDOUT].fd >= 0) {
         (cmd->callback)(cmd, MPR_CMD_STDOUT, cmd->callbackData);
     }
@@ -5834,6 +5845,9 @@ static void stdoutCallback(MprCmd *cmd, MprEvent *event)
 
 static void stderrCallback(MprCmd *cmd, MprEvent *event)
 {
+    /*
+        reapCmd can consume data from the client and close the fd
+     */
     if (cmd->callback && cmd->files[MPR_CMD_STDERR].fd >= 0) {
         (cmd->callback)(cmd, MPR_CMD_STDERR, cmd->callbackData);
     }
@@ -13377,9 +13391,9 @@ void mprAssertError(cchar *loc, cchar *msg)
 
     if (loc) {
 #if BLD_UNIX_LIKE
-        snprintf(buf, sizeof(buf), "Assertion %s, failed at %s\n", msg, loc);
+        snprintf(buf, sizeof(buf), "Assertion %s, failed at %s", msg, loc);
 #else
-        sprintf(buf, "Assertion %s, failed at %s\n", msg, loc);
+        sprintf(buf, "Assertion %s, failed at %s", msg, loc);
 #endif
         msg = buf;
     }
