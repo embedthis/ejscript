@@ -5492,6 +5492,7 @@ ssize mprReadCmd(MprCmd *cmd, int channel, char *buf, ssize bufsize)
     /*
         Need to detect EOF in windows. Pipe always in blocking mode, but reads block even with no one on the other end.
      */
+    mprAssert(cmd->files[channel].handle);
     rc = PeekNamedPipe(cmd->files[channel].handle, NULL, 0, NULL, &count, NULL);
     if (rc > 0 && count > 0) {
         return read(cmd->files[channel].fd, buf, (uint) bufsize);
@@ -5505,6 +5506,7 @@ ssize mprReadCmd(MprCmd *cmd, int channel, char *buf, ssize bufsize)
     return -1;
 }
 #else
+    mprAssert(cmd->files[channel].fd >= 0);
     return read(cmd->files[channel].fd, buf, bufsize);
 #endif
 }
@@ -13381,7 +13383,7 @@ void mprAssertError(cchar *loc, cchar *msg)
 #endif
         msg = buf;
     }
-    mprLog(1, "%s", buf);
+    mprLog(0, "%s", buf);
 #endif
 }
 
