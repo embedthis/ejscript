@@ -225,19 +225,19 @@ b {
     color: #222;
 }
 
-h1 {
+h1, h2 {
+	padding: 12px 0 4px 0;
+	margin: 0;
+	color: #284898; 
+	font-size: 130%;
+}
+
+h1.title {
 	padding: 20px 0 10px 0;
 	margin: 0;
 	color: #284898; 
 	font-size: 160%;
 	font-weight: bold;
-}
-
-h2 {
-	padding: 12px 0 4px 0;
-	margin: 0;
-	color: #284898; 
-	font-size: 130%;
 }
 
 h2.section {
@@ -295,9 +295,10 @@ pre {
 	margin: 16px 0 20px 0;
 	background-color: #20344D;
 	color: #FFFFFF;
-	-moz-border-radius: 7px;
 	-webkit-border-radius: 7px;
 	-webkit-box-shadow: 5px 5px 9px #888;
+	-moz-border-radius: 7px;
+	-moz-box-shadow: 5px 5px 9px #888;
 }
 
 pre a {
@@ -317,6 +318,7 @@ pre.paper {
 	background-color: #FFFFFF;
 	color: #102070; 
 	-moz-border-radius: 0px;
+	-moz-box-shadow: 0px 0px 0px #FFF;
 	-webkit-border-radius: 0px;
 	-webkit-box-shadow: 0px 0px 0px #FFF;
 }
@@ -335,6 +337,7 @@ table {
 	font-size: 100%;
 	border: 1px solid #AAAAAA;
 	border-collapse: collapse;
+	-moz-box-shadow: 2px 2px 4px #BBB;
 	-webkit-box-shadow: 2px 2px 4px #BBB;
 }
 
@@ -425,6 +428,7 @@ img.bare-screen {
     margin: 8px 0 4px 0;
 	border: 1px solid #AAA;
 	-moz-border-radius: 7px;
+	-moz-box-shadow: 9px 9px 9px #AAA;
 	-webkit-border-radius: 7px;
 	-webkit-box-shadow: 9px 9px 9px #AAA;
 }
@@ -479,6 +483,7 @@ div.note {
 	background-color: #FFDDDD;
 	color: #102070; 
 	-moz-border-radius: 7px;
+	-moz-box-shadow: 5px 5px 9px #888;
 	-webkit-border-radius: 7px;
 	-webkit-box-shadow: 5px 5px 9px #888;
 }
@@ -493,6 +498,7 @@ tt {
 .shadow {
     margin: 8px 0 4px 0;
 	border: 1px solid #AAA;
+	-moz-box-shadow: 9px 9px 9px #CCC;
 	-webkit-box-shadow: 9px 9px 9px #CCC;
 }
 

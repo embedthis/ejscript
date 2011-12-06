@@ -904,7 +904,7 @@ static MprNumber parseNumber(Ejs *ejs, MprChar *str)
         for (cp = str; *cp; cp++) {
             if (*cp == '.' || tolower((int) *cp) == 'e') {
                 // OPT
-                for (sp = str, dp = nbuf; *str && dp < &nbuf[sizeof(nbuf) - 1]; ) {
+                for (sp = str, dp = nbuf; *sp && dp < &nbuf[sizeof(nbuf) - 1]; ) {
                     *dp++ = *sp++;
                 }
                 *dp = '\0';
