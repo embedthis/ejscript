@@ -276,6 +276,7 @@ static ssize cmdIOCallback(MprCmd *mc, int channel, void *data)
      */
     cmd = data;
     buf = 0;
+
     switch (channel) {
     case MPR_CMD_STDIN:
         ejsSendEvent(cmd->ejs, cmd->emitter, "writable", NULL, cmd);
