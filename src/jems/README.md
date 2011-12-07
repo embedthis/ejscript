@@ -4,7 +4,7 @@ Ejscript Jems
 This directory contains the standard Jem extensions for Ejscript. This includes
 the core language libraries, web framework and database interfaces.
 
-## Inline Documentation
+### Inline Documentation
 
 The ejsc compiler will parse documentation comments within the /** comment */ comment
 delimiters. The first line of text is assumed to be the brief overview. The rest of
