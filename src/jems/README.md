@@ -1,12 +1,10 @@
-README.TXT for the jems directory.
---------------------------------------------------------------------------------
+Ejscript Jems
+===
 
 This directory contains the standard Jem extensions for Ejscript. This includes
 the core language libraries, web framework and database interfaces.
 
---------------------------------------------------------------------------------
-
-Inline Documentation
+## Inline Documentation
 
 The ejsc compiler will parse documentation comments within the /** comment */ comment
 delimiters. The first line of text is assumed to be the brief overview. The rest of
@@ -24,9 +22,3 @@ Ejs documentation also supports the following documentation directives:
     @spec                               (ecma-262, ecma-357, ejs-11)
     @hide                               (Hides this entry. API exists but is not documented)
 
---------------------------------------------------------------------------------
-Copyright (c) 2003-2011 Embedthis Software, LLC. All Rights Reserved.
-Embedthis and AppWeb are trademarks of Embedthis Software, LLC. Other 
-brands and their products are trademarks of their respective holders.
-
-See LICENSE.TXT for software license details.
