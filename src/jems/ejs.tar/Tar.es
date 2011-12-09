@@ -19,9 +19,11 @@ module ejs.tar {
             if (path.hasDrive) {
                 //  CYGWIN tar can't handle drive specs. Ugh!!
                 //  MOB - temp hack until we have proper zip class
-                path = path.toString().slice(2)
-                if (path.toString().startsWith("/cygwin")) {
-                    path = path.toString().trimStart("/cygwin")
+                let base = path.toString().slice(2)
+                if (base.toString().startsWith("/cygwin")) {
+                    path = base.toString().trimStart("/cygwin")
+                } else {
+                    path = "/cygdrive/" + path.toString()[0] + base
                 }
             }
             this.path = path

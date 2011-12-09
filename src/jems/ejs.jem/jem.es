@@ -998,7 +998,7 @@ print(e)
             //  TODO - really need to update the catalog
             let from = jem.path
             let dir = repo.join(jem.vername)
-            let target = dir.join(jem.path.basename).absolute
+            let target = dir.join(jem.path.basename).absolute.portable
             //  MOB -- must cleanup if cp or makedir fails
             makeDir(target.dirname)
             cp(from, target)
