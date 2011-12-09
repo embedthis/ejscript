@@ -7,6 +7,7 @@
  */
 
 var top = App.dir.findAbove("configure").dirname
+
 load(top.join("package/copy.es"))
 var bare: Boolean = App.args[3] == "1"
 var options = copySetup({task: App.args[1], root: Path(App.args[2])})
@@ -52,13 +53,12 @@ if (options.task == "Remove" && bin.join("linkup").exists) {
     saveLink.attributes = {permissions: 0755}
 }
 
-copy("ejs*", bin, {from: sbin, permissions: 0755, strip: strip, exclude: /ejspage/})
-
 if (!bare) {
     copy("LICENSE.TXT", ver, { from: "doc/licenses", fold: true, expand: true })
     copy("*.TXT", ver, { from: "doc/product", fold: true, expand: true })
     copy("uninstall.sh", bin.join("uninstall"), {from: "package", permissions: 0755, expand: true})
     copy("linkup", bin.join("linkup"), {from: "package", permissions: 0755, expand: true})
+
     copy("www/*", lib, {
         from: slib, 
         exclude: /treeview/,
@@ -78,6 +78,7 @@ if (!bare) {
     }
 }
 
+copy("ejs*", bin, {from: sbin, permissions: 0755, strip: strip, exclude: /ejspage/})
 copy("*.mod", lib, {from: slib})
 
 /*
@@ -107,10 +108,12 @@ if (build.BLD_HOST_OS == "WIN") {
 }
 
 if (options.task == "Install") {
-    if (!bare) {
-        Cmd.sh(bin.join("linkup") + " " + options.task + " " + options.root)
+    if (!bare && build.BLD_HOST_OS != "WIN") {
+        Cmd.sh([bin.join("linkup"), options.task, options.root])
     }
 } else if (saveLink && saveLink.exists) {
-    Cmd.sh(saveLink + " " + options.task + " " + options.root)
+    if (build.BLD_HOST_OS != "WIN") {
+        Cmd.sh([saveLink, options.task, options.root])
+    }
     saveLink.remove()
 }
