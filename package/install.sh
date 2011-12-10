@@ -42,6 +42,7 @@ installbin=Y
 headless=${!!BLD_PRODUCT!!_HEADLESS:-0}
 
 PATH=$PATH:/sbin:/usr/sbin
+export CYGWIN=nodosfilewarning
 
 ###############################################################################
 

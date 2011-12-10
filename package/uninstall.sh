@@ -60,6 +60,7 @@ BLD_WEB_PREFIX="!!ORIG_BLD_WEB_PREFIX!!"
 removebin=Y
 
 PATH=$PATH:/sbin:/usr/sbin
+export CYGWIN=nodosfilewarning
 unset CDPATH
 
 ###############################################################################
