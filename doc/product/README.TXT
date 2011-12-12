@@ -1,12 +1,13 @@
 Embedthis Ejscript(TM)
 
-Welcome to the Embedthis Ejscript distribution. Ejscript is a powerful server-side JavaScript framework for web applications. It includes an enhanced implementation of the JavaScript language and fully supports ECMAScript Edition 3 and adds enhancments for classes, modules and an extensive system library and powerful web framework.
+Welcome to the Embedthis Ejscript distribution. Ejscript is a powerful server-side JavaScript framework for web
+applications. It includes an enhanced implementation of the JavaScript language, supports ECMAScript Edition 3, and adds enhancments for classes, modules and an extensive system library and powerful web framework.
 
 This document describes the installation procedure for the binary Ejscript package. This package contains pre-built language tools including an interpreter, compiler, vm, documentation generator and assembler listing program as well as the development libraries and headers needed to embed Ejscript in an application. 
 
 You can read the documentation for the latest release online at:
 
-    http://www.embedthis.com/products/ejs/doc/product/index.html
+    http://embedthis.com/products/ejs/doc/product/index.html
 
 This software is copyrighted and distributed under license. Please read the LICENSE.TXT for details.
 
@@ -202,5 +203,5 @@ Embedthis Software, LLC.
 4616 25th Ave NE, #733
 Seattle, WA 98105.
 +1 (425) 329-3490
-www.embedthis.com
+embedthis.com.com
 info@embedthis.com

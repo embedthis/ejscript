@@ -24,8 +24,7 @@ module ejs {
 
 //  MOB - or would it be better to have the accepted socket passed in as a callback parameter?
         /** 
-            Receive a client socket in response to a "connect" event. The accept call must be called after invoking
-            $listen and receiving a client connection.
+            Receive a client socket in response to a "connect" event. Accept must be called after invoking $listen.
             @returns A socket connected to the client endpoint.
          */
         native function accept(): Socket

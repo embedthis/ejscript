@@ -17,7 +17,7 @@
         <a class="logo" href="http://www.ejscript.org/">&nbsp;</a>
         <div class="topRight">
              <div class="search">
-                 <form method="get" action="http://www.google.com/search" title="Search www.embedthis.com">
+                 <form method="get" action="http://www.google.com/search" title="Search embedthis.com.com">
                      <p>
                         <label title="Search">Search</label> 
                         <input type="text" id="q" name="q" size="15" maxlength="255" />

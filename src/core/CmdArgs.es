@@ -4,23 +4,28 @@
  */
 
 module ejs {
-
     /**
-        The CmdArgs class parses the Application's command line options and arguments. The template of permissible args is 
-        passed to the CmdArgs constructor. CmdArgs supports command options that begin with "-" or "--" and parses
+        The CmdArgs class parses the Application's command line. A template of permissible args is 
+        passed to the CmdArgs constructor. The CmdArgs class supports command options that begin with "-" or "--" and parses
         option arguments of the forms: "-flag x" and "-flag=x". An option may have multiple forms (e.g. --verbose or -v).
         The primary option form must be specified first as it is the first option that will have its value defined in
         the options hash.
+
+        The template contains args with three parts: Name, Range, Default. The name will be used to create a property
+        in cmd.options. The Range may be a type or regular expression that constrains the permissible values for the
+        argument. If a default value is provide, the property in cmd.options will always be created and will be set to 
+        the default value if the users does not provide a value.
+
         @spec ejs
         @stability prototype
         @example 
-cmd = CmdArgs({
+cmd = CmdArgs([
     [ "depth", Number ]
     [ "quiet", null, false ]
     [ [ "verbose", "v", ], true ]
     [ "log", /\w+(:\d)/, "stderr:4" ],
     [ "mode", [ "low", "medium", "high" ], "high" ]
-})
+])
 let options = cmd.options
 if (options.verbose) { }
 for each (file in cmd.args) {
@@ -28,10 +33,10 @@ for each (file in cmd.args) {
 }
      */
     class CmdArgs {
-        /* User supplied arguments */
+        /* User supplied arguments that follow the switches */
         public var args: Array = []
 
-        /* User supplied options */
+        /* User supplied options (switches) */
         public var options: Object = {}
 
         private var ranges: Object = {}
@@ -46,12 +51,6 @@ for each (file in cmd.args) {
          */
         private function parseTemplate(template: Object): Void {
             for each (item in template) {
-/*
-            UNUSED
-                let key = item[0]
-                let range = item[1] || null
-                let defaultValue = item[2]
-*/
                 let [key, range, defaultValue] = item
                 if (key is Array) {
                     for each (k in key) {
@@ -123,19 +122,20 @@ for each (file in cmd.args) {
         }
 
         /**
-             The CmdArgs constructor creates a new instance of the CmdArgs. It parses the command line options and 
-             arguments and stores the parsed options in the $options and $args properties. 
+             The CmdArgs constructor creates a new instance of the CmdArgs. It parses the command line 
+             and stores the parsed options in the $options and $args properties. 
              CmdArgs supports command options that begin with "-" or "--" and parses option arguments of the forms: 
              "-flag x" and "-flag=x".
              @param template Array of permissible command option patterns. Each template element corresponds to a
-                command option. Each template element is tuple (array) whose first item is the option text. 
+                command option. Each template element is tuple (array) with three elements: Name, Range and Default.
+                Tirst item is the option name. 
                 The second item specifies the set of permissible values for the option argument. If the option does not
                 take an argument, set this to null. If this argument is set to a regular expression, the option argument
-                is validated against it. If set to a Type, the option must have a value of this type. The third item is 
-                an optional default value. This is the value that options[NAME] will be set to when the option is absent.
-                If an option without an argument is specified by the user, its value in options[NAME] will be set to true. 
-                To support options with aliases (such as --verbose and -v), the option text item can be an array of 
-                option text names.
+                is validated against it. If set to a Type, the option must have a value that is castable to this type. 
+                The third item is an optional default value. This is the value that options[NAME] will be set to when
+                the option is absent.  If an option without an argument is specified by the user, its value in
+                options[NAME] will be set to true.  To support options with aliases (such as --verbose and -v), the
+                option text item can be an array of option text names.
              @param argv Array of command arguments to parse. Defaults to App.args.
              @example
                 cmd = CmdArgs([
