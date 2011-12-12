@@ -115,10 +115,6 @@ askUser() {
         echo -e "\nNothing to install, exiting. "
         exit 0
     fi
-    #
-    #   Save the install settings. Remove.sh will need this
-    #
-    saveSetup
 }
 
 createPackageName() {
@@ -284,6 +280,23 @@ startBrowser() {
     fi
 }
 
+removeOld() {
+    if [ -x /usr/lib/ejs/bin/uninstall ] ; then
+        ejs_HEADLESS=1 /usr/lib/ejs/bin/uninstall </dev/null 2>&1 >/dev/null
+    else 
+        for v in `ls $prefix 2>/dev/null | egrep -v '[a-zA-Z@!_\-]' | sort -n -r`
+        do
+            if [ -x "$prefix/$v/bin/ejs" ] ; then
+                version=$v
+                break
+            fi
+        done
+        if [ -x /usr/lib/ejs/bin/$version/uninstall ] ; then
+            ejs_HEADLESS=1 /usr/lib/ejs/bin/$version/uninstall </dev/null 2>&1 >/dev/null
+        fi
+    fi
+}
+
 ###############################################################################
 #
 #   Main program for install script
@@ -292,6 +305,8 @@ startBrowser() {
 setup $*
 askUser
 legacyPrep
+removeOld
+saveSetup
 installFiles $FMT
 #
 #   Don't start browser as doc is not online
