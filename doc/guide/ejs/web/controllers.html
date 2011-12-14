@@ -7,6 +7,7 @@
         Embedded, AJAX, language"/>
 	<meta name="description" content="Ejscript -- Embedded Server-Side JavaScript Language."/>
 	<meta name="robots" content="index,follow" />
+    <link href="http://www.google.com/cse/style/look/default.css" type="text/css" rel="stylesheet" />
 	<link href="../../../doc.css" rel="stylesheet" type="text/css" />
 	<link href="../../../print.css" rel="stylesheet" type="text/css" media="print"/>
     <!--[if IE]>
@@ -16,20 +17,25 @@
 
 <body>
     <div class="top">
-        <a class="logo"  href="http://www.ejscript.org/">&nbsp;</a>
+        <a class="logo"  href="http://ejscript.org/">&nbsp;</a>
         <div class="topRight">
-             <div class="search">
-                 <form id="search" method="get" action="http://www.google.com/search" title="Search embedthis.com.com">
-                     <p>
-                        <label for="search" title="Search">Search</label> 
-                        <input type="text" id="q" name="q" size="15" maxlength="255" />
-                        <input type="submit" id="submit" value="Go" /> 
-                        <input type="hidden" name="domains" value="embedthis.com" /> 
-                        <input type="hidden" name="sitesearch" value="embedthis.com" />
-                    </p>
-                 </form>
-              </div>
-            <!--TITLE-->Embedthis Ejscript 2.0.0
+            <div class="search">
+                <div id="cse-search-form">Loading</div>
+                <script src="http://www.google.com/jsapi" type="text/javascript"></script>
+                <script type="text/javascript"> 
+                  google.load('search', '1', {language : 'en'});
+                  google.setOnLoadCallback(function() {
+                    var customSearchControl = new google.search.CustomSearchControl(
+                      'partner-pub-9935546676162772:ysvxxv4n9rx');
+
+                    customSearchControl.setResultSetSize(google.search.Search.FILTERED_CSE_RESULTSET);
+                    var options = new google.search.DrawOptions();
+                    options.enableSearchboxOnly("http://ejscript.org/search.html");
+                    customSearchControl.draw('cse-search-form', options);
+                  }, true);
+                </script>
+                <div class='version'>Embedthis Ejscript 2.0.0</div>
+            </div>
         </div>
         <div class="crumbs">
             <a href="../../../product/index.html">Home</a>
@@ -39,7 +45,7 @@
     </div>
     <div class="content">
         <div class="contentRight">
-            <h2>Quick Nav</h2>
+            <h1>Quick Nav</h1>
             <ul>
                 <li><a href="#flow">Processing Flow</a></li>
                 <li><a href="#routing">Routing Requests</a></li>
@@ -55,7 +61,7 @@
                 <!-- <li><a href="#tips">Tips and Tricks</a></li> -->
             </ul>
 <!-- BeginDsi "dsi/ejsWebSeeAlso.html" -->
-		        <h2>See Also</h2>
+		        <h1>See Also</h1>
 		        <ul>
 		          <li><a href="../../../guide/ejs/web/webTour.html">Web Framework Tour</a></li>
 		          <li><a href="../../../guide/ejs/web/mvc.html">Model-View-Controller</a></li>
@@ -76,7 +82,7 @@
             <h1>Controllers and Actions</h1>
             <p>Ejscript controllers manage the application and respond to client requests. They are the conductors of
             the application and orchestrate the application's activities. <a name="flow" id="flow"></a></p>
-            <h3>Processing Flow</h3>
+            <h2>Processing Flow</h2>
             <p>Ejscript controllers process requests in stages:</p>
             <ol>
                 <li>Decode the URL and web request</li>
@@ -92,8 +98,8 @@
             <pre>
 http://embedthis.com/APP/CONTROLLER/ACTION/ID
 </pre>
-            <p>Where <tt>APP</tt> is the (optional) name of the application, <tt>CONTROLLER</tt> is the controller
-            name, <tt>ACTION</tt> is the name of the action method to run and <tt>ID</tt> is a selector for an element
+            <p>Where <em>APP</em> is the (optional) name of the application, <em>CONTROLLER</em> is the controller
+            name, <em>ACTION</em> is the name of the action method to run and <em>ID</em> is a selector for an element
             in the Model.</p>
             <p>When a request is received, Ejscript will create an instance of the controller and invoke the requested
             action method.</p><a name="anatomy" id="anatomy"></a>
@@ -127,21 +133,21 @@ public class CartController extends ApplicationController {
 }
 </pre>
             <p>This is a simplified controller &mdash; definitely not production code as it does not validate user
-            input. This controller provides five actions which are decorated by an <tt>action</tt> qualifier. This
+            input. This controller provides five actions which are decorated by an <em>action</em> qualifier. This
             qualifier makes a JavaScript function visible as a controller action method.</p>
             <p>If the client issues a request for:</p>
             <pre>
 http://embedthis.com/myApp/cart/create
 </pre>
-            <p>The <tt>create</tt> action will be invoked. It will create a new product and then render the
-            <tt>edit.ejs</tt> view back to the client.</p><a name="actions" id="actions"></a>
+            <p>The <em>create</em> action will be invoked. It will create a new product and then render the
+            <em>edit.ejs</em> view back to the client.</p><a name="actions" id="actions"></a>
             <h2 class="section">Actions</h2>
             <p>Actions are where the controller does its work. In Ejscript, actions are simple JavaScript functions
-            prefixed with an <tt>action</tt> qualifier. They don't need to be registered or otherwise configured before
+            prefixed with an <em>action</em> qualifier. They don't need to be registered or otherwise configured before
             use. When Ejscript receives a request from the client, it will parse the request and invoke the request
             action specified in the URL.</p>
             <p>When a request is received, the controller framework looks for an action method of the required name. If
-            one is not found, it invokes the <tt>missing</tt> action method which renders a default error message back
+            one is not found, it invokes the <em>missing</em> action method which renders a default error message back
             to the client.</p><a name="context" id="context"></a>
             <h3>Controller Context</h3>
             <p>Ejscript establishes a request context for the controller before invoking the action. This consists of
@@ -162,7 +168,7 @@ http://embedthis.com/myApp/cart/create
             <p>The action method can perform any processing it desires. There are no real restrictions except you don't
             want to block for too long without giving the client some feedback.</p>
             <p>Actions often retrieve a database record via the Model and store an object representing the model in a
-            public variable for easy access by the view. NOTE: the controller is not peristent across client
+            public variable for easy access by the view. NOTE: the controller is not persistent across client
             requests.</p><a name="models" id="models"></a>
             <h2 class="section">Model Data</h2>
             <p>Ejscript provides an Object Relational Mapping (ORM) layer for accessing database data via convenient
@@ -173,25 +179,25 @@ http://embedthis.com/myApp/cart/create
             <p>For more details, please see <a href="models.html">Database Models</a>.</p><a name="forms" id=
             "forms"></a>
             <h2 class="section">Form Data</h2>
-            <p>HTTP Form data is marshalled by Ejscript into the <tt>params</tt> object which is accessible to actions.
-            Each HTML input element posted by the client will become a property of <tt>params</tt>. Ejscript can also
+            <p>HTTP Form data is marshalled by Ejscript into the <em>params</em> object which is accessible to actions.
+            Each HTML input element posted by the client will become a property of <em>params</em>. Ejscript can also
             organize form data into nested objects. If an input element name contains a period, then Ejscript will
             create nested objects to match the input element name.</p><a name="views" id="views"></a>
             <h3>Rendering Views</h3>
             <p>After processing the request, the controller is responsible for rendering a view back to the client. If
             the action method does not explicitly render a view, Ejscript will look for a view with the same name as
             the action method.</p>
-            <p>In the prior <a href="#example">example</a>, the <tt>edit</tt> action did not call any <tt>render</tt>
+            <p>In the prior <a href="#example">example</a>, the <em>edit</em> action did not call any <em>render</em>
             function, so the framework will look for, and if found, run a view
-            <tt>views/cart/edit.ejs</tt>.</p><a name="generating" id="generating"></a>
+            <em>views/cart/edit.ejs</em>.</p><a name="generating" id="generating"></a>
             <h2 class="section">Generating Controllers and Actions</h2>
-            <p>Ejscript includes an an application generator, called <tt>ejsweb</tt> to make it quick and easy to
+            <p>Ejscript includes an an application generator, called <em>ejsweb</em> to make it quick and easy to
             create controllers, actions and controller scaffolds. To generate a new controller, run:</p>
             <pre>
 ejsweb generate controller NAMES...
 </pre>
-            <p><tt>NAMES...</tt> are the names of the controllers you want to generate. This command will create
-            controller source files under the <tt>controllers</tt> directory. Each controller will contain an empty
+            <p><em>NAMES...</em> are the names of the controllers you want to generate. This command will create
+            controller source files under the <em>controllers</em> directory. Each controller will contain an empty
             controller class with an empty index action function. You can edit the controller source to meet your
             needs.</p>
             <p>When you create a controller, you can also (optionally) generate a set of named action functions. To
@@ -199,7 +205,7 @@ ejsweb generate controller NAMES...
             <pre>
 ejsweb generate controller NAME ACTIONS...
 </pre>
-            <p>If <tt>ACTIONS</tt> are provided, action functions and views pages will be created for the given
+            <p>If <em>ACTIONS</em> are provided, action functions and views pages will be created for the given
             names.</p>
             <h3>Generating Scaffolds</h3>
             <p>A scaffold is a generated set of actions and views that provide add, edit, and list functionality for a
@@ -208,23 +214,23 @@ ejsweb generate controller NAME ACTIONS...
             <pre>
 ejsweb generate scaffold MODEL [field:type ...]
 </pre>
-            <p>When creating a scaffold for a database model, <tt>ejsweb</tt> will create a database model, database
+            <p>When creating a scaffold for a database model, <em>ejsweb</em> will create a database model, database
             migration, controller and edit and list view pages.</p>
             <p>If field:type pairs are supplied, the database migration will include code to create a column for each
-            specified field of the requested type. The valid database types are: <tt>binary, boolean, date, datetime,
-            decimal, float, integer, number, string, text, time, timestamp</tt>.</p>The scaffold will include an
-            <tt>edit</tt> action and view that provides <tt>add</tt> and <tt>edit</tt> capability. The <tt>list</tt>
+            specified field of the requested type. The valid database types are: <em>binary, boolean, date, datetime,
+            decimal, float, integer, number, string, text, time, timestamp</em>.</p>The scaffold will include an
+            <em>edit</em> action and view that provides <em>add</em> and <em>edit</em> capability. The <em>list</em>
             action and view, provides the ability to list the database table rows and select an entry to edit. <a name=
             "controller" id="controller"></a>
             <h2 class="section">Controller Class</h2>
             <p>The Controller class has a large set of methods and properties. See the <a href=
             "../../../api/ejscript/index.html">Ejscript Library</a> for full details. Some of the more important
             properties:</p>
-            <table summary="controllerProperties" width="100%">
+            <table title="controllerProperties" class="full">
                 <thead>
                     <tr>
-                        <td>Property</td>
-                        <td>Description</td>
+                        <th>Property</th>
+                        <th>Description</th>
                     </tr>
                 </thead>
                 <tbody>
@@ -271,11 +277,11 @@ ejsweb generate scaffold MODEL [field:type ...]
                 </tbody>
             </table>
             <p>The controller class provides the following methods:</p>
-            <table summary="viewClass" width="100%">
+            <table title="viewClass" class="full">
                 <thead>
                     <tr>
-                        <td>Method / Property</td>
-                        <td>Description</td>
+                        <th>Method / Property</th>
+                        <th>Description</th>
                     </tr>
                 </thead>
                 <tbody>
@@ -361,7 +367,7 @@ ejsweb generate scaffold MODEL [field:type ...]
             <p>Filters enable a controller to perform processing before and after actions are run. Filters are useful
             to do authentication and logging. Filters run in the same context as an action method and can access the
             controller instance and the Request, Response, Http, session and flash objects.</p>
-            <p>To run a filter before the action method, use the <tt>beforeFilter</tt> method. This should be run in
+            <p>To run a filter before the action method, use the <em>beforeFilter</em> method. This should be run in
             the constructor for the controller. For example:</p>
             <pre>
 public class TaskController extends BaseController {
@@ -375,25 +381,25 @@ public class TaskController extends BaseController {
         }
     }</b>
 </pre>
-            <p>This will cause the <tt>authorize</tt> to run before any action method except for the <tt>login</tt>
-            action. The <tt>authorize</tt> function can test the user name and password and if not authorized, it can
+            <p>This will cause the <em>authorize</em> to run before any action method except for the <em>login</em>
+            action. The <em>authorize</em> function can test the user name and password and if not authorized, it can
             fail the request and redirect the user back to the login page. Filters can be run after the request by
-            using the <tt>afterFilter</tt> method.</p>
+            using the <em>afterFilter</em> method.</p>
             <p>The filter methods take an options object as the second parameter. Two option properties are
             defined:</p>
             <ul>
                 <li><b>except</b> &mdash; Run filter for all actions except the nominated action.</li>
                 <li><b>only</b> &mdash; Run filter only for the specified actions.</li>
             </ul>
-            <p>When specifying the argument to <tt>except</tt> and <tt>only</tt>, you can provide either a single
+            <p>When specifying the argument to <em>except</em> and <em>only</em>, you can provide either a single
             action name as a string or an array of action names.</p><!--
         <a name="tips"></a>
         <h2 class="section">Tips and Tricks</h2>
         <p>The following hits provide solutions for common tasks:</p>
         <h3>Redirect the Client</h3>
         <p>To redirect the client to a new URL, use the redirect method. This will construct a redirection URL 
-        using the requested <tt>action</tt> parameter. It appends this to the  application and controller names. If an
-        <tt>id</tt> is provided (723 in this example below), this is appended after the action name.
+        using the requested <em>action</em> parameter. It appends this to the  application and controller names. If an
+        <em>id</em> is provided (723 in this example below), this is appended after the action name.
         <pre>redirect("edit", 723, null)</pre>
         <p>This will create a URL like:
         <pre>http://embedthis.com/myApp/currentController/<b>edit</b>/723</pre>

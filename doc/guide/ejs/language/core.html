@@ -7,6 +7,7 @@
         Embedded, AJAX, language"/>
 	<meta name="description" content="Ejscript -- Embedded Server-Side JavaScript Language."/>
 	<meta name="robots" content="index,follow" />
+    <link href="http://www.google.com/cse/style/look/default.css" type="text/css" rel="stylesheet" />
 	<link href="../../../doc.css" rel="stylesheet" type="text/css" />
 	<link href="../../../print.css" rel="stylesheet" type="text/css" media="print"/>
     <!--[if IE]>
@@ -16,20 +17,25 @@
 
 <body>
     <div class="top">
-        <a class="logo"  href="http://www.ejscript.org/">&nbsp;</a>
+        <a class="logo"  href="http://ejscript.org/">&nbsp;</a>
         <div class="topRight">
-             <div class="search">
-                 <form id="search" method="get" action="http://www.google.com/search" title="Search embedthis.com.com">
-                     <p>
-                        <label for="search" title="Search">Search</label> 
-                        <input type="text" id="q" name="q" size="15" maxlength="255" />
-                        <input type="submit" id="submit" value="Go" /> 
-                        <input type="hidden" name="domains" value="embedthis.com" /> 
-                        <input type="hidden" name="sitesearch" value="embedthis.com" />
-                    </p>
-                 </form>
-              </div>
-            <!--TITLE-->Embedthis Ejscript 2.0.0
+            <div class="search">
+                <div id="cse-search-form">Loading</div>
+                <script src="http://www.google.com/jsapi" type="text/javascript"></script>
+                <script type="text/javascript"> 
+                  google.load('search', '1', {language : 'en'});
+                  google.setOnLoadCallback(function() {
+                    var customSearchControl = new google.search.CustomSearchControl(
+                      'partner-pub-9935546676162772:ysvxxv4n9rx');
+
+                    customSearchControl.setResultSetSize(google.search.Search.FILTERED_CSE_RESULTSET);
+                    var options = new google.search.DrawOptions();
+                    options.enableSearchboxOnly("http://ejscript.org/search.html");
+                    customSearchControl.draw('cse-search-form', options);
+                  }, true);
+                </script>
+                <div class='version'>Embedthis Ejscript 2.0.0</div>
+            </div>
         </div>
         <div class="crumbs">
             <a href="../../../product/index.html">Home</a>
@@ -39,7 +45,7 @@
     </div>
     <div class="content">
         <div class="contentRight">
-            <h2>Quick Nav</h2>
+            <h1>Quick Nav</h1>
             <ul>
                 <li><a href="#number">Number</a></li>
                 <li><a href="#boolean">Boolean</a></li>
@@ -49,7 +55,7 @@
                 <li><a href="#typeConversions">Type Conversions</a></li>
             </ul>
 <!-- BeginDsi "dsi/ejsLanguageSeeAlso.html" -->
-		        <h2>See Also</h2>
+		        <h1>See Also</h1>
 		        <ul>
 		          <li><a href="../../../guide/ejs/overview.html">Overview</a></li>
 		          <li><a href="../../../guide/ejs/features.html">Language Features</a></li>
@@ -79,7 +85,7 @@
             "#function">Function</a> and <a href="#string">String</a> types. Also see the <a href=
             "objects.html">Objects and Arrays</a> document and the <a href="../../../api/ejscript/index.html">Class
             Library Reference</a>.</p>
-            <h3>References</h3>
+            <h2>References</h2>
             <p>These references contain extensive material about the JavaScript core language types.</p>
             <ul>
                 <li><a href="https://developer.mozilla.org/en/Core_JavaScript_1.5_Guide">Mozilla JavaScript 1.5
@@ -165,11 +171,11 @@ var str = "Happy Birthday " + name
 var greek = "&amp;lambda expression"
 </pre>
             <p>JavaScripts supports the following escaped characters inside string literals:</p>
-            <table border="1" summary="">
+            <table border="1" title="escape">
                 <thead>
                     <tr>
-                        <td>Escape Sequence</td>
-                        <td>Description</td>
+                        <th>Escape Sequence</th>
+                        <th>Description</th>
                     </tr>
                 </thead>
                 <tbody>
@@ -264,13 +270,13 @@ var x = myPoint(1, y + 7)
             another.</p>
             <p>Adding a string to a number will cause the number to be converted to a string. Subtracting zero from a
             string will convert it to a number.</p>
-            <table summary="">
+            <table title="types">
                 <thead>
                     <tr>
-                        <td>Initial Type</td>
-                        <td>Target Type</td>
-                        <td>Initial Value</td>
-                        <td>Final Value</td>
+                        <th>Initial Type</th>
+                        <th>Target Type</th>
+                        <th>Initial Value</th>
+                        <th>Final Value</th>
                     </tr>
                 </thead>
                 <tbody>
@@ -404,7 +410,7 @@ var x = myPoint(1, y + 7)
             </table>
             <h3>Implicit Conversion Idioms</h3>
             <p>To explicitly force a type conversion, use the following idioms.</p>
-            <table border="1" width="90%" summary="">
+            <table border="1" title="idioms">
                 <thead>
                     <tr>
                         <th>Initial Type</th>

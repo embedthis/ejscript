@@ -7,6 +7,7 @@
         Embedded, AJAX, language"/>
 	<meta name="description" content="Ejscript -- Embedded Server-Side JavaScript Language."/>
 	<meta name="robots" content="index,follow" />
+    <link href="http://www.google.com/cse/style/look/default.css" type="text/css" rel="stylesheet" />
 	<link href="../../../doc.css" rel="stylesheet" type="text/css" />
 	<link href="../../../print.css" rel="stylesheet" type="text/css" media="print"/>
     <!--[if IE]>
@@ -16,20 +17,25 @@
 
 <body>
     <div class="top">
-        <a class="logo"  href="http://www.ejscript.org/">&nbsp;</a>
+        <a class="logo"  href="http://ejscript.org/">&nbsp;</a>
         <div class="topRight">
-             <div class="search">
-                 <form id="search" method="get" action="http://www.google.com/search" title="Search embedthis.com.com">
-                     <p>
-                        <label for="search" title="Search">Search</label> 
-                        <input type="text" id="q" name="q" size="15" maxlength="255" />
-                        <input type="submit" id="submit" value="Go" /> 
-                        <input type="hidden" name="domains" value="embedthis.com" /> 
-                        <input type="hidden" name="sitesearch" value="embedthis.com" />
-                    </p>
-                 </form>
-              </div>
-            <!--TITLE-->Embedthis Ejscript 2.0.0
+            <div class="search">
+                <div id="cse-search-form">Loading</div>
+                <script src="http://www.google.com/jsapi" type="text/javascript"></script>
+                <script type="text/javascript"> 
+                  google.load('search', '1', {language : 'en'});
+                  google.setOnLoadCallback(function() {
+                    var customSearchControl = new google.search.CustomSearchControl(
+                      'partner-pub-9935546676162772:ysvxxv4n9rx');
+
+                    customSearchControl.setResultSetSize(google.search.Search.FILTERED_CSE_RESULTSET);
+                    var options = new google.search.DrawOptions();
+                    options.enableSearchboxOnly("http://ejscript.org/search.html");
+                    customSearchControl.draw('cse-search-form', options);
+                  }, true);
+                </script>
+                <div class='version'>Embedthis Ejscript 2.0.0</div>
+            </div>
         </div>
         <div class="crumbs">
             <a href="../../../product/index.html">Home</a>
@@ -39,7 +45,7 @@
     </div>
     <div class="content">
         <div class="contentRight">
-            <h2>Quick Nav</h2>
+            <h1>Quick Nav</h1>
             <ul>
                 <li><a href="#objects">Objects</a></li>
                 <li><a href="#creatingObjects">Creating Objects</a></li>
@@ -53,7 +59,7 @@
                 <li><a href="#iteration">Iteration</a></li>
             </ul>
 <!-- BeginDsi "dsi/ejsLanguageSeeAlso.html" -->
-		        <h2>See Also</h2>
+		        <h1>See Also</h1>
 		        <ul>
 		          <li><a href="../../../guide/ejs/overview.html">Overview</a></li>
 		          <li><a href="../../../guide/ejs/features.html">Language Features</a></li>
@@ -159,14 +165,15 @@ var empty = {}
             document.</p><a name="arrays" id="arrays"></a>
             <h2 class="section">Arrays</h2>
             <p>A JavaScript array is an ordered collection of values. Arrays can store arbitrary values with numerical
-            indicies that begin at zero. Like objects, new arrays are created using the <b>new</b> operator. Values are
+            indices that begin at zero. Like objects, new arrays are created using the <b>new</b> operator. Values are
             accessed using the array bracket notation.</p>
             <pre>
 var colors = new Array
 colors[1] = "red"
 colors[0] = "blue"
-</pre><a name="arrayConstructor" id="arrayConstructor"></a> <a name="arrayConstructor" id="arrayConstructor">
-            </a>
+</pre>
+            
+            <a name="arrayConstructor" id="arrayConstructor"></a>
             <h3>Array Constructor</h3>
             <p>There are several ways to use the Array constructor. You can create an empty array, an empty array of a
             specific size, and an initialized array.</p>
@@ -188,7 +195,7 @@ colors["Favorite Color"] = "red"
             it behaves more like a classical array. In both cases, arrays will grow on demand as new elements are
             stored in the array and may be garbage collected when the array is no longer referenced.</p>
             <p>Ejscript compacts and optimizes the storage of Array elements and stores the elements with numerical
-            indicies separately from those with alphabetical indicies.</p><a name="arrayLiterals" id=
+            indices separately from those with alphabetical indices.</p><a name="arrayLiterals" id=
             "arrayLiterals"></a>
             <h3>Array Literals</h3>
             <p>Arrays can also be created and initialized by using an array literal syntax. This consists of a comma
@@ -214,9 +221,9 @@ print(element)
 </pre><a name="iteration" id="iteration"></a>
             <h2 class="section">Iteration and Enumeration</h2>
             <p>There are two different approaches to walking array or object elements: Iteration and Enumeration.
-            Iteration is where you step through the array indicies or object property names. Enumeration is where you
+            Iteration is where you step through the array indices or object property names. Enumeration is where you
             step through the the array element or object property values. If you need the actual values, but not the
-            indicies or property names, then enumeration is the preferred and faster approach.</p>
+            indices or property names, then enumeration is the preferred and faster approach.</p>
             <h3>Iteration</h3>
             <p>You can iterate step through array elements in two ways. The first way is to use a simple, traditional
             <b>for</b> loop.</p>

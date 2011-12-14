@@ -7,6 +7,7 @@
         Embedded, AJAX, language"/>
 	<meta name="description" content="Ejscript -- Embedded Server-Side JavaScript Language."/>
 	<meta name="robots" content="index,follow" />
+    <link href="http://www.google.com/cse/style/look/default.css" type="text/css" rel="stylesheet" />
 	<link href="../../../doc.css" rel="stylesheet" type="text/css" />
 	<link href="../../../print.css" rel="stylesheet" type="text/css" media="print"/>
     <!--[if IE]>
@@ -16,20 +17,25 @@
 
 <body>
     <div class="top">
-        <a class="logo"  href="http://www.ejscript.org/">&nbsp;</a>
+        <a class="logo"  href="http://ejscript.org/">&nbsp;</a>
         <div class="topRight">
-             <div class="search">
-                 <form id="search" method="get" action="http://www.google.com/search" title="Search embedthis.com.com">
-                     <p>
-                        <label for="search" title="Search">Search</label> 
-                        <input type="text" id="q" name="q" size="15" maxlength="255" />
-                        <input type="submit" id="submit" value="Go" /> 
-                        <input type="hidden" name="domains" value="embedthis.com" /> 
-                        <input type="hidden" name="sitesearch" value="embedthis.com" />
-                    </p>
-                 </form>
-              </div>
-            <!--TITLE-->Embedthis Ejscript 2.0.0
+            <div class="search">
+                <div id="cse-search-form">Loading</div>
+                <script src="http://www.google.com/jsapi" type="text/javascript"></script>
+                <script type="text/javascript"> 
+                  google.load('search', '1', {language : 'en'});
+                  google.setOnLoadCallback(function() {
+                    var customSearchControl = new google.search.CustomSearchControl(
+                      'partner-pub-9935546676162772:ysvxxv4n9rx');
+
+                    customSearchControl.setResultSetSize(google.search.Search.FILTERED_CSE_RESULTSET);
+                    var options = new google.search.DrawOptions();
+                    options.enableSearchboxOnly("http://ejscript.org/search.html");
+                    customSearchControl.draw('cse-search-form', options);
+                  }, true);
+                </script>
+                <div class='version'>Embedthis Ejscript 2.0.0</div>
+            </div>
         </div>
         <div class="crumbs">
             <a href="../../../product/index.html">Home</a>
@@ -39,14 +45,14 @@
     </div>
     <div class="content">
         <div class="contentRight">
-            <h2>Quick Nav</h2>
+            <h1>Quick Nav</h1>
             <ul>
                 <li><a href="#script">Script Modules</a></li>
                 <li><a href="#native">Native Modules</a></li>
                 <li><a href="#api">Native API</a></li>
             </ul>
 <!-- BeginDsi "dsi/ejsGuideSeeAlso.html" -->
-        <h2>See Also</h2>
+        <h1>See Also</h1>
         <ul>
           <li><a href="../../../guide/ejs/language/index.html">Language Guide</a></li>
           <li><a href="../../../guide/ejs/programmers/index.html">Programmers Guide</a></li>
@@ -68,14 +74,14 @@
             "script"></a>
             <h2 class="section">Script Library Modules</h2>
             <p>Script code can be compiled and the byte code saved for use by other users as a module file. When script
-            code is compiled, the Ejscript <b>ec</b> compiler saves the output in a module file with a <b>.mod</b>
+            code is compiled, the Ejscript <b>ejsc</b> compiler saves the output in a module file with a <b>.mod</b>
             extension. This is often referred to as a <b>mod</b> file.</p>
             <pre>
 ejsc --out Library.mod file1.es file2.es
 </pre>
             <p>This example creates a pre-compiled mod file with the byte code for file1 and file2. It can be reused by
-            other script programs without having to reparse or recompile the script files. The <b>ejs</b> shell,
-            <b>ec</b> compiler and <b>ejsvm</b> VM interpreter, all accept mod files on the command line. For
+            other script programs without having to parse or recompile the script files. The <b>ejs</b> shell,
+            <b>ejsc</b> compiler and <b>ejsvm</b> VM interpreter, all accept mod files on the command line. For
             example:</p>
             <pre>
 ejs Library.mod program.es
@@ -95,9 +101,9 @@ module mytools {
 }
 </pre>
             <p>This example creates a function called <b>myFunction</b> which is included in the <b>mytools</b> module.
-            When compiled by <b>ec</b>, this will create a module file with the same name as the module directive
+            When compiled by <b>ejsc</b>, this will create a module file with the same name as the module directive
             name.</p>
-            <p>If we put the above script code into a source file called anyname.es, and then compile with <b>ec</b>,
+            <p>If we put the above script code into a source file called anyname.es, and then compile with <b>ejsc</b>,
             we will get a module file called <b>mytools.mod</b>.</p>
             <pre>
 ejsc anyname.es
@@ -105,7 +111,7 @@ ls -l mytools*
 <b>-rw-r--r--  1 bethr  wheel  78 Feb 19 19:38 mytools.mod</b>
 </pre>
             <p>If the compiler is invoked without the --out switch, it will automatically create module files
-            corresponding to each module directive. Note that module blocks may span several files and that the ec
+            corresponding to each module directive. Note that module blocks may span several files and that the ejsc
             compiler will aggregate the code from each source file into the correct module file.</p>
             <p>When compiled, the module can be used in another program and be brought into scope via the <b>use
             module</b> directive.</p>
@@ -114,7 +120,7 @@ ls -l mytools*
 require testlib
 myFunction()
 </pre>
-            <p>To run the program wth the <b>ejs</b> shell you now do not need to specify the module name. The compiler
+            <p>To run the program with the <b>ejs</b> shell you now do not need to specify the module name. The compiler
             and loader will automatically resolve and load the mytools.mod module file in response to the <b>use
             module</b> directive.</p>
             <pre>
@@ -135,7 +141,9 @@ ejs program.es
             module files that contain only global code with no module directives will need to be explicitly loaded and
             cannot be installed in the module repository. Without a module directive, the loader cannot locate the
             module. Users of such a module will need to explicitly load the module. A solution is to create a dummy
-            module directive purely to give the module a name. <a name="native" id="native"></a></p><a name="native"
+            module directive purely to give the module a name. </p>
+           
+            <a name="native"
             id="native"></a>
             <h2 class="section">Native Modules</h2>
             <p>Native modules are Ejscript modules that have their implementation provided by native C code rather than
@@ -149,7 +157,7 @@ ejs program.es
                 <li>Compile into a shared or static library</li>
             </ol>
             <h3>Module Interface</h3>
-            <p>Defining and specifying traits of all module declations in C can be tedious. You need to specify the
+            <p>Defining and specifying traits of all module declarations in C can be tedious. You need to specify the
             names, types and qualifiers for all types, functions, function parameters, return types and variable.
             However, there is an easier way.</p>
             <p>By creating a scripted module interface file and compiling this into a mod file, you are relieved of
@@ -184,7 +192,7 @@ module acme {
             <h3>Generate the Module C header</h3>
             <p>After compiling the module interface into a mod file, we can generate a C header that describes the
             locations of the declarations in the VM. Where possible, the Ejscript compiler early-binds declarations
-            into slot offsets which are property indicies into the relevant objects. Early binding enhances the speed
+            into slot offsets which are property indices into the relevant objects. Early binding enhances the speed
             and quality of the generated byte code. For example, variables can often be accessed by numerical slot
             offset rather than doing a costly run-time lookup by name through the scope chain.</p>
             <p>The <b>ejsmod</b> module manager tool is used to generate the C header.</p>
@@ -277,7 +285,7 @@ static EjsVar *blastOff(Ejs *ejs, EjsVar *rocket, int argc, EjsVar **argv)
             the correct type. This greatly simplifies writing native functions &mdash; you don't need to check type
             number or types of the arguments.</p>
             <p>For each function, think if it should be created in script code or in native code. You can often code
-            functions that are not executed as frequently in script code without impacting perfomance. It is a good
+            functions that are not executed as frequently in script code without impacting performance. It is a good
             strategy to prototype the module in script first and then convert the prototype to native code on a
             function-by-function basis.</p><a name="api" id="api"></a>
             <h2 class="section">Native API</h2>
@@ -285,11 +293,11 @@ static EjsVar *blastOff(Ejs *ejs, EjsVar *rocket, int argc, EjsVar **argv)
             are themselves objects, the API offers a consistent way to access properties from objects or classes. Some
             of the more important API functions are listed below. See the full <a href="../../../api/ejs.html">Ejscript
             API</a> and the <a href="../../../api/mpr.html">MPR API</a> reference for full details.</p>
-            <table summary="" width="100%">
+            <table title="details">
                 <thead>
                     <tr>
-                        <td>API Name</td>
-                        <td>API Description</td>
+                        <th>API Name</th>
+                        <th>API Description</th>
                     </tr>
                 </thead>
                 <tbody>
@@ -383,7 +391,7 @@ static EjsVar *blastOff(Ejs *ejs, EjsVar *rocket, int argc, EjsVar **argv)
                     </tr>
                     <tr>
                         <td>ejsDupString</td>
-                        <td>Duplice a string object</td>
+                        <td>Duplicate a string object</td>
                     </tr>
                     <tr>
                         <td>ejsExit</td>

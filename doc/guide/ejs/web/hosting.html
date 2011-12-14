@@ -7,6 +7,7 @@
         Embedded, AJAX, language"/>
 	<meta name="description" content="Ejscript -- Embedded Server-Side JavaScript Language."/>
 	<meta name="robots" content="index,follow" />
+    <link href="http://www.google.com/cse/style/look/default.css" type="text/css" rel="stylesheet" />
 	<link href="../../../doc.css" rel="stylesheet" type="text/css" />
 	<link href="../../../print.css" rel="stylesheet" type="text/css" media="print"/>
     <!--[if IE]>
@@ -16,20 +17,25 @@
 
 <body>
     <div class="top">
-        <a class="logo"  href="http://www.ejscript.org/">&nbsp;</a>
+        <a class="logo"  href="http://ejscript.org/">&nbsp;</a>
         <div class="topRight">
-             <div class="search">
-                 <form id="search" method="get" action="http://www.google.com/search" title="Search embedthis.com.com">
-                     <p>
-                        <label for="search" title="Search">Search</label> 
-                        <input type="text" id="q" name="q" size="15" maxlength="255" />
-                        <input type="submit" id="submit" value="Go" /> 
-                        <input type="hidden" name="domains" value="embedthis.com" /> 
-                        <input type="hidden" name="sitesearch" value="embedthis.com" />
-                    </p>
-                 </form>
-              </div>
-            <!--TITLE-->Embedthis Ejscript 2.0.0
+            <div class="search">
+                <div id="cse-search-form">Loading</div>
+                <script src="http://www.google.com/jsapi" type="text/javascript"></script>
+                <script type="text/javascript"> 
+                  google.load('search', '1', {language : 'en'});
+                  google.setOnLoadCallback(function() {
+                    var customSearchControl = new google.search.CustomSearchControl(
+                      'partner-pub-9935546676162772:ysvxxv4n9rx');
+
+                    customSearchControl.setResultSetSize(google.search.Search.FILTERED_CSE_RESULTSET);
+                    var options = new google.search.DrawOptions();
+                    options.enableSearchboxOnly("http://ejscript.org/search.html");
+                    customSearchControl.draw('cse-search-form', options);
+                  }, true);
+                </script>
+                <div class='version'>Embedthis Ejscript 2.0.0</div>
+            </div>
         </div>
         <div class="crumbs">
             <a href="../../../product/index.html">Home</a>
@@ -39,7 +45,7 @@
     </div>
     <div class="content">
         <div class="contentRight">
-            <h2>Quick Nav</h2>
+            <h1>Quick Nav</h1>
             <ul>
                 <li><a href="#builtin">Built-in Web Server</a></li>
                 <li><a href="#hosted">Hosted Web Server</a></li>
@@ -52,7 +58,7 @@
                 <li><a href="#lighttpd">Configuring Lighttpd</a></li>
             </ul>
 <!-- BeginDsi "dsi/ejsWebSeeAlso.html" -->
-		        <h2>See Also</h2>
+		        <h1>See Also</h1>
 		        <ul>
 		          <li><a href="../../../guide/ejs/web/webTour.html">Web Framework Tour</a></li>
 		          <li><a href="../../../guide/ejs/web/mvc.html">Model-View-Controller</a></li>
@@ -68,8 +74,7 @@
         <div class="contentLeft">
             <h1>Web Framework Hosting in Web Servers</h1>
             <blockquote>
-                <h3>WARNING: This document is is under construction and the instructions herein have not been fully
-                tested.</h3>
+                <em>WARNING:</em> This document is is under construction and the instructions herein have not been fully
             </blockquote>
             <p>Ejscript includes a web server for easy development and deployment. You can use this built-in web
             server, or you can configure Ejscript to run in a supported web server of your choosing.</p>
@@ -109,7 +114,7 @@ app: {
     webserver: "ejswebserver --ejs /app/:/var/www/app/ --log /dev/tty:2"
 },
 </pre>
-            <p>You can vary the verbosy of trace to the console level by chaning the log level. Zero disables, two is
+            <p>You can vary the verbosity of trace to the console level by changing the log level. Zero disables, two is
             quiet and displays important errors. Level four will trace all requests.</p>
             <p>Please see the <a href=
             "http://www.appwebserver.org/products/appweb/doc/guide/appweb/users/configuration.html">Configuring
@@ -122,7 +127,9 @@ app: {
                 <li>CGI &mdash; via the <b>ejscgi</b> program.</li>
                 <li>FastCGI &mdash; via the <b>ejsfast</b> program.</li>
                 <li>Custom in-memory module &mdash; via the <b>mod_ejs</b> loadable module.</li>
-            </ul><img src="../../../images/hosting.jpg" alt="" /> <a name="cgi" id="cgi"></a>
+            </ul><img src="../../../images/hosting.jpg" alt="hosting" /> 
+            
+            <a name="cgi" id="cgi"></a>
             <div class="note">
                 <b>NOTE:</b> The <b>mod_ejs</b> in-memory module is the recommended configuration for using Ejscript.
                 It offers the best performance and when used with a reverse-proxy, offers excellent stability and
@@ -132,8 +139,9 @@ app: {
             <p>The <a href="http://en.wikipedia.org/wiki/Common_Gateway_Interface">Common Gateway Interface</a> (CGI)
             is a standard protocol for hosting applications in a web server. CGI offers good stability but low
             performance. It is a reliable lowest common denominator that will run on most web servers. The
-            <b>ejscgi</b> program is a CGI conformant program which hosts the Ejscript Web Framework.</p><a name=
-            "fastcgi" id="fastcgi"></a>
+            <b>ejscgi</b> program is a CGI conformant program which hosts the Ejscript Web Framework.</p>
+            
+            <a name="fastcgi" id="fastcgi"></a>
             <h3>FastCGI</h3>
             <p><a href="http://www.fastcgi.com/">FastCGI</a> is a replacement for CGI. It provides higher performance
             than CGI by supporting multiple Http requests per FastCGI instance. It also offers improved stability by
@@ -163,8 +171,6 @@ app: {
             <ul>
                 <li><a href="#module">In-memory Module</a></li>
                 <li><a href="#proxy">Reverse Proxy</a></li>
-                <li><a href="#fastCGI">FastCGI</a></li>
-                <li><a href="#CGI">CGI</a></li>
             </ul>
             <ol>
                 <li style="list-style: none"><a name="module" id="module"></a></li>
@@ -261,12 +267,10 @@ Listen 7000
                     requests.</p>
                 </li>
                 <li>
-                    <a name="fastCGI" id="fastCGI"></a>
                     <h3>Apache with FastCGI</h3>
                     <p>Coming Soon ...</p>
                 </li>
                 <li>
-                    <a name="CGI" id="CGI"></a>
                     <h3>Apache with CGI</h3>
                     <p>To configure Apache to support Ejscript via CGI, you need to add a Virtual Host or Named Virtual
                     Host to define the application directory. Then add a ScriptAlias directive to enable CGI
@@ -333,7 +337,7 @@ fastcgi.server = (
     ".ejs" =&gt; (( "host" =&gt; "127.0.0.1", "port" =&gt; 1026, "bin-path" =&gt; "/usr/bin/ejsfast" ))
 )
 </pre>
-            <p>This will configure Ejscript to receive requests begining with <b>/ejs/</b>.</p>
+            <p>This will configure Ejscript to receive requests beginning with <b>/ejs/</b>.</p>
             <pre>
 fastcgi.server = (
   "/ejs/" =&gt; (( "host" =&gt; "127.0.0.1", "port" =&gt; 1026, "bin-path" =&gt; "/usr/bin/ejsfast" ))

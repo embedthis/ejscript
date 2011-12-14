@@ -7,6 +7,7 @@
         Embedded, AJAX, language"/>
 	<meta name="description" content="Ejscript -- Embedded Server-Side JavaScript Language."/>
 	<meta name="robots" content="index,follow" />
+    <link href="http://www.google.com/cse/style/look/default.css" type="text/css" rel="stylesheet" />
 	<link href="../../../doc.css" rel="stylesheet" type="text/css" />
 	<link href="../../../print.css" rel="stylesheet" type="text/css" media="print"/>
     <!--[if IE]>
@@ -16,20 +17,25 @@
 
 <body>
     <div class="top">
-        <a class="logo"  href="http://www.ejscript.org/">&nbsp;</a>
+        <a class="logo"  href="http://ejscript.org/">&nbsp;</a>
         <div class="topRight">
-             <div class="search">
-                 <form id="search" method="get" action="http://www.google.com/search" title="Search embedthis.com.com">
-                     <p>
-                        <label for="search" title="Search">Search</label> 
-                        <input type="text" id="q" name="q" size="15" maxlength="255" />
-                        <input type="submit" id="submit" value="Go" /> 
-                        <input type="hidden" name="domains" value="embedthis.com" /> 
-                        <input type="hidden" name="sitesearch" value="embedthis.com" />
-                    </p>
-                 </form>
-              </div>
-            <!--TITLE-->Embedthis Ejscript 2.0.0
+            <div class="search">
+                <div id="cse-search-form">Loading</div>
+                <script src="http://www.google.com/jsapi" type="text/javascript"></script>
+                <script type="text/javascript"> 
+                  google.load('search', '1', {language : 'en'});
+                  google.setOnLoadCallback(function() {
+                    var customSearchControl = new google.search.CustomSearchControl(
+                      'partner-pub-9935546676162772:ysvxxv4n9rx');
+
+                    customSearchControl.setResultSetSize(google.search.Search.FILTERED_CSE_RESULTSET);
+                    var options = new google.search.DrawOptions();
+                    options.enableSearchboxOnly("http://ejscript.org/search.html");
+                    customSearchControl.draw('cse-search-form', options);
+                  }, true);
+                </script>
+                <div class='version'>Embedthis Ejscript 2.0.0</div>
+            </div>
         </div>
         <div class="crumbs">
             <a href="../../../product/index.html">Home</a>
@@ -39,7 +45,7 @@
     </div>
     <div class="content">
         <div class="contentRight">
-            <h2>Quick Nav</h2>
+            <h1>Quick Nav</h1>
             <ul>
                 <li><a href="#oneLine">One Line Embedding</a></li>
                 <li><a href="#file">Evaluate Script Files</a></li>
@@ -48,7 +54,7 @@
                 <li><a href="#control">Full Control Embedding</a></li>
             </ul>
 <!-- BeginDsi "dsi/ejsGuideSeeAlso.html" -->
-        <h2>See Also</h2>
+        <h1>See Also</h1>
         <ul>
           <li><a href="../../../guide/ejs/language/index.html">Language Guide</a></li>
           <li><a href="../../../guide/ejs/programmers/index.html">Programmers Guide</a></li>
@@ -69,7 +75,7 @@
                 <li>Full control APIs</li>
             </ul><a name="oneLine" id="oneLine"></a>
             <h2 class="section">One Line Embedding</h2>
-            <p>Ejscript provides three variety of one-line embedding APIs. These permit you to evaulate a script file,
+            <p>Ejscript provides three variety of one-line embedding APIs. These permit you to evaluate a script file,
             a script literal or a pre-compiled script module.</p><a name="file" id="file"></a>
             <h3>Evaluate a Script File</h3>
             <p>To create an application that can evaluate script files, use the <b>ejsEvalFile</b> API.</p>
@@ -146,7 +152,7 @@ cc -o main main.c -lejs
             abstract the operating system. The MPR enhances the security of Ejscript by providing secure,
             high-performance, and well proven routines for managing memory, strings, lists, files, network sockets,
             http and threads. MPR APIs all begin with an <b>mpr</b> prefix whereas all Ejscript APIs begin with
-            <b>ejs</b> for the VM or <b>ec</b> for the compiler.</p>
+            <b>ejs</b> for the VM or <b>ejsc</b> for the compiler.</p>
             <p>The sample below demonstrates the full control steps to compile and evaluate a file.</p>
             <pre>
 int ejsEvalFile(int fileCount, char **fileList)
@@ -203,9 +209,9 @@ int ejsEvalFile(int fileCount, char **fileList)
 }
 </pre>
             <p>Consult the <a href="../../../api/ejs.html">Ejscript Native API</a> and <a href=
-            "../../../api/mpr.html">MPR Native API</a> for details on each API. The MPR provides a hierachical memory
+            "../../../api/mpr.html">MPR Native API</a> for details on each API. The MPR provides a hierarchical memory
             allocation service, so calls to <b>mprFree</b> will free the MPR instance and everything allocated off the
-            MPR. This includes the Ejscript service, VM, interpeter and compiler. Be sure to read the <a href=
+            MPR. This includes the Ejscript service, VM, interpreter and compiler. Be sure to read the <a href=
             "../../../api/mpr.html#group___mpr_mem">MPR Memory Allocation Service</a> for details.</p>
             <p>See the <a href="extending.html">Extending Ejscript</a> for how to interact with the interpreter,
             objects, types, run methods, create types and properties, delete properties, throw exceptions, cast types

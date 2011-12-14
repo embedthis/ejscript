@@ -18,14 +18,14 @@ patch:
 	for f in dsi/head.html api/*Header.tem ; do \
 		cp $$f /tmp/dsi$$.tmp ; \
 		sed -e "s^<title>.*</title>^<title>$(BLD_NAME) $(BLD_VERSION) Documentation</title>^g;" < /tmp/dsi$$.tmp | \
-		sed -e "s^TITLE-->.*^TITLE-->$(BLD_NAME) $(BLD_VERSION)^g;" > $$f ; \
+		sed -e "s^<div class='version'.*^<div class='version'>$(BLD_NAME) $(BLD_VERSION)</div>^g;" > $$f ; \
 		rm -f /tmp/dsi$$.tmp ; \
 	done
 	( find api -name '*.html' ; find guide licenses product ref man -name '*.html' ) | egrep -v 'Bare.html' | dsi -v -I.
 
 tidy:
 	chmod +w *.html
-	find . -name '*.html' -print | egrep -v 'dsi|old|sav|archive|/html/|Bare' | \
+	find . -name '*.html' -print | egrep -v 'dsi|old|sav|archive|/html/|Bare|/api/' | \
 	while read f ; do \
 		echo tidy -q -config tidy.conf "$$f" ; \
 		tidy -q -config tidy.conf "$$f" ; \
@@ -33,7 +33,7 @@ tidy:
 
 validate:
 	rm -rf ../dtmp ; cp -r . ../dtmp ; cd ../dtmp ; \
-	find . -type f -name '*.html' | while read f ; do \
+	find . -type f -name '*.html' | egrep -v 'dsi|old|sav|/api/|\/man\/' | while read f ; do \
 		echo ejs $(BLD_TOOLS_DIR)/depre $$f ; \
 		chmod +w $$f ; \
 		ejs $(BLD_TOOLS_DIR)/depre $$f ; \

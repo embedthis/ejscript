@@ -2545,6 +2545,9 @@ static void unlinkString(EjsString *sp)
 EjsString *ejsCreateString(Ejs *ejs, MprChar *value, ssize len)
 {
     mprAssert(0 <= len && len < MAXINT);
+    if (value == 0 || len < 0) {
+        return ESV(empty);
+    }
     return ejsInternWide(ejs, value, len);
 }
 
@@ -2560,10 +2563,10 @@ EjsString *ejsCreateStringFromAsc(Ejs *ejs, cchar *value)
 
 EjsString *ejsCreateStringFromMulti(Ejs *ejs, cchar *value, ssize len)
 {
-    if (value == NULL) {
-        value = "";
-    }
     mprAssert(0 <= len && len < MAXINT);
+    if (value == 0 || len < 0) {
+        return ESV(empty);
+    }
     return ejsInternMulti(ejs, value, len);
 }
 

@@ -7,6 +7,7 @@
         Embedded, AJAX, language"/>
 	<meta name="description" content="Ejscript -- Embedded Server-Side JavaScript Language."/>
 	<meta name="robots" content="index,follow" />
+    <link href="http://www.google.com/cse/style/look/default.css" type="text/css" rel="stylesheet" />
 	<link href="../../../doc.css" rel="stylesheet" type="text/css" />
 	<link href="../../../print.css" rel="stylesheet" type="text/css" media="print"/>
     <!--[if IE]>
@@ -16,20 +17,25 @@
 
 <body>
     <div class="top">
-        <a class="logo"  href="http://www.ejscript.org/">&nbsp;</a>
+        <a class="logo"  href="http://ejscript.org/">&nbsp;</a>
         <div class="topRight">
-             <div class="search">
-                 <form id="search" method="get" action="http://www.google.com/search" title="Search embedthis.com.com">
-                     <p>
-                        <label for="search" title="Search">Search</label> 
-                        <input type="text" id="q" name="q" size="15" maxlength="255" />
-                        <input type="submit" id="submit" value="Go" /> 
-                        <input type="hidden" name="domains" value="embedthis.com" /> 
-                        <input type="hidden" name="sitesearch" value="embedthis.com" />
-                    </p>
-                 </form>
-              </div>
-            <!--TITLE-->Embedthis Ejscript 2.0.0
+            <div class="search">
+                <div id="cse-search-form">Loading</div>
+                <script src="http://www.google.com/jsapi" type="text/javascript"></script>
+                <script type="text/javascript"> 
+                  google.load('search', '1', {language : 'en'});
+                  google.setOnLoadCallback(function() {
+                    var customSearchControl = new google.search.CustomSearchControl(
+                      'partner-pub-9935546676162772:ysvxxv4n9rx');
+
+                    customSearchControl.setResultSetSize(google.search.Search.FILTERED_CSE_RESULTSET);
+                    var options = new google.search.DrawOptions();
+                    options.enableSearchboxOnly("http://ejscript.org/search.html");
+                    customSearchControl.draw('cse-search-form', options);
+                  }, true);
+                </script>
+                <div class='version'>Embedthis Ejscript 2.0.0</div>
+            </div>
         </div>
         <div class="crumbs">
             <a href="../../../product/index.html">Home</a>
@@ -39,13 +45,13 @@
     </div>
     <div class="content">
         <div class="contentRight">
-            <h2>Quick Nav</h2>
+            <h1>Quick Nav</h1>
             <ul>
                 <li><a href="#questions">Questions</a></li>
                 <li><a href="#answers">Answers</a></li>
             </ul>
 <!-- BeginDsi "dsi/ejsGuideSeeAlso.html" -->
-        <h2>See Also</h2>
+        <h1>See Also</h1>
         <ul>
           <li><a href="../../../guide/ejs/language/index.html">Language Guide</a></li>
           <li><a href="../../../guide/ejs/programmers/index.html">Programmers Guide</a></li>
@@ -57,7 +63,7 @@
         <div class="contentLeft">
             <h1>Ejscript FAQ</h1>
             <p>If your question is not answered here, please see the support <a href=
-            "http://www.ejscript.org/forum/">Forum.</a></p><a name="questions" id="questions"></a>
+            "http://ejscript.org/forum/">Forum.</a></p><a name="questions" id="questions"></a>
             <h2 class="section">Questions</h2>
             <div class="questions">
                 <p><a href="#print">How do I print to the console?</a></p>
@@ -116,12 +122,12 @@ ejs --log logName[:logLevel]
                 of the <a href="../../../licenses/gpl.html">GPL License</a>. If you are using a commercial license, you
                 may keep your modifications private. You are however, very welcome to share your enhancements with us
                 for inclusion in future releases. See the <a href=
-                "http://www.ejscript.org/developers/index.html">Developers</a> section for details.</p>
+                "http://ejscript.org/developers/index.html">Developers</a> section for details.</p>
             </div>
             <p class="question"><a name="contributeGpl" id="contributeGpl"></a>Will my patches make it into the Open
             Source version?</p>
             <div class="answer">
-                <p>The <a href="http://www.ejscript.org/contributors.html">contributors agreement</a> ensures that if
+                <p>The <a href="http://ejscript.org/contributors.html">contributors agreement</a> ensures that if
                 your patches are included in the commercial version of Ejscript, they will always be included in the
                 open source version. All patches are examined for suitability and sometimes several individuals submit
                 similar patches. As such, we cannot guarantee that your code will be included in the product.</p>
@@ -158,7 +164,7 @@ ejs --log logName[:logLevel]
             </div>
             <h2 class="section">More Questions</h2>
             <p>If you have any further questions, please ask a question at the <a href=
-            "http://www.ejscript.org/forum/">Forum</a>.</p>
+            "http://ejscript.org/forum/">Forum</a>.</p>
         </div>
     </div>
 <!-- BeginDsi "dsi/bottom.html" -->

@@ -7,6 +7,7 @@
         Embedded, AJAX, language"/>
 	<meta name="description" content="Ejscript -- Embedded Server-Side JavaScript Language."/>
 	<meta name="robots" content="index,follow" />
+    <link href="http://www.google.com/cse/style/look/default.css" type="text/css" rel="stylesheet" />
 	<link href="../../../doc.css" rel="stylesheet" type="text/css" />
 	<link href="../../../print.css" rel="stylesheet" type="text/css" media="print"/>
     <!--[if IE]>
@@ -16,20 +17,25 @@
 
 <body>
     <div class="top">
-        <a class="logo"  href="http://www.ejscript.org/">&nbsp;</a>
+        <a class="logo"  href="http://ejscript.org/">&nbsp;</a>
         <div class="topRight">
-             <div class="search">
-                 <form id="search" method="get" action="http://www.google.com/search" title="Search embedthis.com.com">
-                     <p>
-                        <label for="search" title="Search">Search</label> 
-                        <input type="text" id="q" name="q" size="15" maxlength="255" />
-                        <input type="submit" id="submit" value="Go" /> 
-                        <input type="hidden" name="domains" value="embedthis.com" /> 
-                        <input type="hidden" name="sitesearch" value="embedthis.com" />
-                    </p>
-                 </form>
-              </div>
-            <!--TITLE-->Embedthis Ejscript 2.0.0
+            <div class="search">
+                <div id="cse-search-form">Loading</div>
+                <script src="http://www.google.com/jsapi" type="text/javascript"></script>
+                <script type="text/javascript"> 
+                  google.load('search', '1', {language : 'en'});
+                  google.setOnLoadCallback(function() {
+                    var customSearchControl = new google.search.CustomSearchControl(
+                      'partner-pub-9935546676162772:ysvxxv4n9rx');
+
+                    customSearchControl.setResultSetSize(google.search.Search.FILTERED_CSE_RESULTSET);
+                    var options = new google.search.DrawOptions();
+                    options.enableSearchboxOnly("http://ejscript.org/search.html");
+                    customSearchControl.draw('cse-search-form', options);
+                  }, true);
+                </script>
+                <div class='version'>Embedthis Ejscript 2.0.0</div>
+            </div>
         </div>
         <div class="crumbs">
             <a href="../../../product/index.html">Home</a>
@@ -41,7 +47,7 @@
         <div class="contentRight">
             
 <!-- BeginDsi "dsi/ejsLanguageSeeAlso.html" -->
-		        <h2>See Also</h2>
+		        <h1>See Also</h1>
 		        <ul>
 		          <li><a href="../../../guide/ejs/overview.html">Overview</a></li>
 		          <li><a href="../../../guide/ejs/features.html">Language Features</a></li>
@@ -69,7 +75,7 @@
             <h1>Using the Compiler</h1>
             <p>Ejscript programs can be run on-demand by using the <a href="shell.html"><strong>ejs</strong></a>
             command or they can be compiled once and the resulting byte code can be run without having to recompile the
-            program. For production use, it is typically many times faster and more compact to pre-compile scipts.</p>
+            program. For production use, it is typically many times faster and more compact to pre-compile scripts.</p>
             <p>The Ejscript compiler is called <strong>ejsc</strong> and it compiles Ejscript files to produce binary
             byte code files called Ejscript module files that can then be run by the <a href=
             "ejsvm.html"><strong>ejsvm</strong></a> virtual machine command.</p>
@@ -83,13 +89,13 @@
             reserved for global declarations. Each module file will be named the same as the module directive name, but
             with a ".mod" extension.</p>
             <p>For example, if two script files contained the following code:</p>
-            <h4>geometry.es:</h4>
+            <h3>geometry.es:</h3>
             <pre>
 module "acme.geometry" {
   class Shape {}
 }
 </pre>
-            <h4>widgets.es</h4>
+            <h3>widgets.es</h3>
             <pre>
 module "acme.widgets" { 
   class Widget {}
@@ -127,11 +133,11 @@ ejsc --out acme.mod geometry.es widgets.es
             </ol>
             <p>By default the ejsc command runs in enhanced compliance mode. This mode corrects several issues with
             JavaScript that remain in the language due to browser compatibility requirements. Ejscript, by targeting
-            non-browser envirnonments can rectify these issues without impact to legacy applications. These changes
+            non-browser environments can rectify these issues without impact to legacy applications. These changes
             are:</p>
             <ul>
                 <li>Assignments to non-existent properties create local variables rather than globals.</li>
-                <li>The == and != operators will perform like their more rigorous conterparts === and !===.</li>
+                <li>The == and != operators will perform like their more rigorous counterparts === and !===.</li>
                 <li>All var declarations are always block local in scope and are equivalent to the newer let
                 declarations.</li>
                 <li>The eval command is not supported.</li>
@@ -146,13 +152,14 @@ ejsc --out acme.mod geometry.es widgets.es
     [--version] [--warn level] files...
 </pre>The ejs command will parse and execute the given <strong>file</strong> with the supplied arguments passed into
 the App.args property.
-            <table summary="">
+            <table title="args">
                 <thead>
                     <tr>
-                        <td>Switch</td>
-                        <td>Description</td>
+                        <th>Switch</th>
+                        <th>Description</th>
                     </tr>
                 </thead>
+                <tbody>
                 <tr>
                     <td>--debug</td>
                     <td>Run in debug mode with symbolic stack backtraces in exceptions.</td>
@@ -165,7 +172,7 @@ the App.args property.
                 </tr>
                 <tr>
                     <td>--ecma</td>
-                    <td>Run in ECMAScript Edition 3 (ES3) compilance mode. The ejs command normally runs in
+                    <td>Run in ECMAScript Edition 3 (ES3) compliance mode. The ejs command normally runs in
                     non-compliant, enhanced mode. This enhanced mode eliminates browser specific portions of the ES3
                     standard to give a safer, faster language. For example: in ES3 compliant mode, function variables
                     used without an accompanying var declaration are global variables, whereas in enhanced mode, they
@@ -183,12 +190,12 @@ the App.args property.
                     script syntax only.</td>
                 </tr>
                 <tr>
-                    <td nowrap="nowrap">--optimize level</td>
+                    <td class="nowrap">--optimize level</td>
                     <td>Set the code optimization level. Level values must be between 0 (least) and 9 (most). Default
                     is 9.</td>
                 </tr>
                 <tr>
-                    <td nowrap="nowrap">--searchPath ejsPath</td>
+                    <td class="nowrap">--searchPath ejsPath</td>
                     <td>
                         <p>Override the module search path. The module search path is a set of directories that the ejs
                         command will use when locating and loading Ejscript modules. Given a module named "a.b.c" in a
@@ -197,7 +204,7 @@ the App.args property.
                         <p>2. Search for a module file named "a/b/c.mod"</p>
                         <p>3. Search for a module file named "a.b.c.mod" in EJSPATH</p>
                         <p>4. Search for a module file named c.mod in EJSPATH</p>
-                        <p>The search path is initiallly specified via the environment variable EJSPATH and may be
+                        <p>The search path is initially specified via the environment variable EJSPATH and may be
                         overridden via the --searchPath ejsPath switch. EJSPATH and the ejsPath command line value are
                         similar to the system PATH formats. On windows, path segments are separated by ";" and on
                         Linux, Unix, FreeBSD and MAC, the path segments are separated by ":" delimiters.</p>
@@ -222,6 +229,7 @@ the App.args property.
                     <td>Set the compiler warning verbosity level. Level values must be between 0 (least verbose) and 9
                     (most). Default is 0.</td>
                 </tr>
+                </tbody>
             </table>
         </div>
 <!-- BeginDsi "dsi/bottom.html" -->

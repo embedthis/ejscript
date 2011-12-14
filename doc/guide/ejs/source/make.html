@@ -7,6 +7,7 @@
         Embedded, AJAX, language"/>
 	<meta name="description" content="Ejscript -- Embedded Server-Side JavaScript Language."/>
 	<meta name="robots" content="index,follow" />
+    <link href="http://www.google.com/cse/style/look/default.css" type="text/css" rel="stylesheet" />
 	<link href="../../../doc.css" rel="stylesheet" type="text/css" />
 	<link href="../../../print.css" rel="stylesheet" type="text/css" media="print"/>
     <!--[if IE]>
@@ -16,20 +17,25 @@
 
 <body>
     <div class="top">
-        <a class="logo"  href="http://www.ejscript.org/">&nbsp;</a>
+        <a class="logo"  href="http://ejscript.org/">&nbsp;</a>
         <div class="topRight">
-             <div class="search">
-                 <form id="search" method="get" action="http://www.google.com/search" title="Search embedthis.com.com">
-                     <p>
-                        <label for="search" title="Search">Search</label> 
-                        <input type="text" id="q" name="q" size="15" maxlength="255" />
-                        <input type="submit" id="submit" value="Go" /> 
-                        <input type="hidden" name="domains" value="embedthis.com" /> 
-                        <input type="hidden" name="sitesearch" value="embedthis.com" />
-                    </p>
-                 </form>
-              </div>
-            <!--TITLE-->Embedthis Ejscript 2.0.0
+            <div class="search">
+                <div id="cse-search-form">Loading</div>
+                <script src="http://www.google.com/jsapi" type="text/javascript"></script>
+                <script type="text/javascript"> 
+                  google.load('search', '1', {language : 'en'});
+                  google.setOnLoadCallback(function() {
+                    var customSearchControl = new google.search.CustomSearchControl(
+                      'partner-pub-9935546676162772:ysvxxv4n9rx');
+
+                    customSearchControl.setResultSetSize(google.search.Search.FILTERED_CSE_RESULTSET);
+                    var options = new google.search.DrawOptions();
+                    options.enableSearchboxOnly("http://ejscript.org/search.html");
+                    customSearchControl.draw('cse-search-form', options);
+                  }, true);
+                </script>
+                <div class='version'>Embedthis Ejscript 2.0.0</div>
+            </div>
         </div>
         <div class="crumbs">
             <a href="../../../product/index.html">Home</a>
@@ -39,7 +45,7 @@
     </div>
     <div class="content">
         <div class="contentRight">
-            <h2>Quick Nav</h2>
+            <h1>Quick Nav</h1>
             <ul>
                 <li><a href="#components">Components</a></li>
                 <li><a href="#tour">Quick Tour</a></li>
@@ -48,7 +54,7 @@
                 <li><a href="#variables">Configuration Variables</a></li>
                 <li><a href="#bld">The bld Program</a></li>
             </ul>
-            <h2>See Also</h2>
+            <h1>See Also</h1>
             <ul>
                 <li><a href="building.html">Building From Source</a></li>
                 <li><a href="steps.html">Build Steps</a></li>
@@ -71,7 +77,7 @@
                 <li>Run on systems using standard tools</li>
                 <li>Reduce the code required per Makefile</li>
             </ul>
-            <h3>Overview</h3>
+            <h2>Overview</h2>
             <p>The scheme uses recursive compilation and building where each directory contains a <b>Makefile</b>. Each
             Makefile includes a single dependency file called ".makedep". The ".makedep" file contains target
             dependencies and includes the necessary rules and configuration files.</p><a name="components" id=
@@ -89,13 +95,14 @@
             <p>The make scheme operates similarly to many open source projects and supports the following targets.
             These operate recursively applying the same target to relevant subdirectories. The directories recursed are
             specified in the <b>PRE_DIRS</b> and <b>POST_DIRS</b> variables.</p>
-            <table summary="" width="100%">
+            <table title="details">
                 <thead>
                     <tr>
-                        <td>Target</td>
-                        <td>Description</td>
+                        <th>Target</th>
+                        <th>Description</th>
                     </tr>
                 </thead>
+                <tbody>
                 <tr>
                     <td>clean</td>
                     <td>Remove intermediate and generated targets</td>
@@ -124,6 +131,7 @@
                     <td>uninstall</td>
                     <td>Uninstall the software</td>
                 </tr>
+                </tbody>
             </table>
             <p>A Makefile looks similar to this example:</p>
             <pre>
@@ -144,14 +152,15 @@ myProg$(BLD_EXE): $(FILES)
             <h3>Make Variables</h3>
             <p>The following table describes the some of the make variables that are defined for you by the
             <b>configure</b> program.</p>
-            <table summary="">
+            <table title="varaibles">
                 <thead>
                     <tr>
-                        <td>Variable</td>
-                        <td>Typical Value</td>
-                        <td>Description</td>
+                        <th>Variable</th>
+                        <th>Typical Value</th>
+                        <th>Description</th>
                     </tr>
                 </thead>
+                <tbody>
                 <tr>
                     <td>BLD_ARCH</td>
                     <td>.a</td>
@@ -172,17 +181,21 @@ myProg$(BLD_EXE): $(FILES)
                     <td>.so</td>
                     <td>Platform specific extension for shared libraries.</td>
                 </tr>
+                </tbody>
             </table>
+
             <p>The following table describes the some of the supported make variables that you can define in your
             Makefile.</p>
-            <table summary="">
+
+            <table title="variables">
                 <thead>
                     <tr>
-                        <td>Variable</td>
-                        <td>Typical Value</td>
-                        <td>Description</td>
+                        <th>Variable</th>
+                        <th>Typical Value</th>
+                        <th>Description</th>
                     </tr>
                 </thead>
+                <tbody>
                 <tr>
                     <td>BUILD_CROSS</td>
                     <td>0</td>
@@ -229,7 +242,10 @@ myProg$(BLD_EXE): $(FILES)
                     <td></td>
                     <td>List of directories to be recursed after making the current directory.</td>
                 </tr>
-            </table><a name="cross" id="cross"></a>
+                </tbody>
+            </table>
+            
+            <a name="cross" id="cross"></a>
             <h2 class="section">Cross Compiling</h2>
             <p>If you are cross-compiling, the make scheme will automatically run twice: once for building for the
             development system and once for the target (host).</p>
@@ -272,14 +288,15 @@ include $(BLD_TOP)/build/make/make.$(BLD_BUILD_OS)
             <p>The <b>configure</b> program will create the "buildConfig.h" file. This file will contain the
             following variables. To ensure the entire source tree is relocatable, all paths are always paths relative
             to the top of the source tree.</p>
-            <table summary="">
+            <table title="variables">
                 <thead>
                     <tr>
-                        <td>Variable</td>
-                        <td>Typical Value (Linux)</td>
-                        <td>Description</td>
+                        <th>Variable</th>
+                        <th>Typical Value (Linux)</th>
+                        <th>Description</th>
                     </tr>
                 </thead>
+                <tbody>
                 <tr>
                     <td>BLD_ARCH</td>
                     <td>.a</td>
@@ -360,6 +377,7 @@ include $(BLD_TOP)/build/make/make.$(BLD_BUILD_OS)
                     <td>${BLD_TOP}/build/bin</td>
                     <td>Directory to hold build tools.</td>
                 </tr>
+                </tbody>
             </table><a name="bld" id="bld"></a>
             <h2 class="section">The bld Program</h2>
             <p>The <b>bld</b> program is used to create executables and libraries. It provides a cross-platform
@@ -367,11 +385,11 @@ include $(BLD_TOP)/build/make/make.$(BLD_BUILD_OS)
             include file. The bld program is not run as a stand-alone command and must be invoked from within a
             Makefile.</p>
             <p>These make variables are defined in the make.rules file and are passed to the bld program.</p>
-            <table summary="" width="100%">
+            <table title="details">
                 <thead>
                     <tr>
-                        <td>Variable</td>
-                        <td>Description</td>
+                        <th>Variable</th>
+                        <th>Description</th>
                     </tr>
                 </thead>
                 <tbody>
@@ -401,16 +419,18 @@ include $(BLD_TOP)/build/make/make.$(BLD_BUILD_OS)
                     </tr>
                 </tbody>
             </table>
+
             <h3>Bld Program Switches</h3>
             <p>In addition to the environment variables defined in the buildConfig.sh file, the bld program takes the
             following command line switches:</p>
-            <table summary="">
+            <table title="switches">
                 <thead>
                     <tr>
-                        <td>Switch</td>
-                        <td>Description</td>
+                        <th>Switch</th>
+                        <th>Description</th>
                     </tr>
                 </thead>
+                <tbody>
                 <tr>
                     <td>--c++</td>
                     <td>Program includes C++ components</td>
@@ -476,8 +496,8 @@ include $(BLD_TOP)/build/make/make.$(BLD_BUILD_OS)
                     <td>Only make a static library</td>
                 </tr>
                 <tr>
-                    <td nowrap="nowrap">--syslibs "LIBRARIES ..."</td>
-                    <td>Extra system libraries ot link with</td>
+                    <td class="nowrap">--syslibs "LIBRARIES ..."</td>
+                    <td>Extra system libraries to link with</td>
                 </tr>
                 <tr>
                     <td>--version</td>
@@ -491,15 +511,17 @@ include $(BLD_TOP)/build/make/make.$(BLD_BUILD_OS)
                     <td>--verbose</td>
                     <td>Verbose operation. Traces internal searching strategies.</td>
                 </tr>
+                </tbody>
             </table>
             <p>The bld program also uses the following environment variables:</p>
-            <table summary="" width="100%">
+            <table title="details">
                 <thead>
                     <tr>
-                        <td>Variable</td>
-                        <td>Description</td>
+                        <th>Variable</th>
+                        <th>Description</th>
                     </tr>
                 </thead>
+                <tbody>
                 <tr>
                     <td>BLD_TOP</td>
                     <td>Top of the source tree. This is automatically set by the genDepend program in the .makedep
@@ -509,6 +531,7 @@ include $(BLD_TOP)/build/make/make.$(BLD_BUILD_OS)
                     <td>BLD_STATIC</td>
                     <td>Build static libraries where relevant. This is defined by the configure --static switch.</td>
                 </tr>
+                </tbody>
             </table>
         </div>
     </div>

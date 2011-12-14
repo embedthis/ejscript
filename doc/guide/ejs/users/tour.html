@@ -7,6 +7,7 @@
         Embedded, AJAX, language"/>
 	<meta name="description" content="Ejscript -- Embedded Server-Side JavaScript Language."/>
 	<meta name="robots" content="index,follow" />
+    <link href="http://www.google.com/cse/style/look/default.css" type="text/css" rel="stylesheet" />
 	<link href="../../../doc.css" rel="stylesheet" type="text/css" />
 	<link href="../../../print.css" rel="stylesheet" type="text/css" media="print"/>
     <!--[if IE]>
@@ -16,20 +17,25 @@
 
 <body>
     <div class="top">
-        <a class="logo"  href="http://www.ejscript.org/">&nbsp;</a>
+        <a class="logo"  href="http://ejscript.org/">&nbsp;</a>
         <div class="topRight">
-             <div class="search">
-                 <form id="search" method="get" action="http://www.google.com/search" title="Search embedthis.com.com">
-                     <p>
-                        <label for="search" title="Search">Search</label> 
-                        <input type="text" id="q" name="q" size="15" maxlength="255" />
-                        <input type="submit" id="submit" value="Go" /> 
-                        <input type="hidden" name="domains" value="embedthis.com" /> 
-                        <input type="hidden" name="sitesearch" value="embedthis.com" />
-                    </p>
-                 </form>
-              </div>
-            <!--TITLE-->Embedthis Ejscript 2.0.0
+            <div class="search">
+                <div id="cse-search-form">Loading</div>
+                <script src="http://www.google.com/jsapi" type="text/javascript"></script>
+                <script type="text/javascript"> 
+                  google.load('search', '1', {language : 'en'});
+                  google.setOnLoadCallback(function() {
+                    var customSearchControl = new google.search.CustomSearchControl(
+                      'partner-pub-9935546676162772:ysvxxv4n9rx');
+
+                    customSearchControl.setResultSetSize(google.search.Search.FILTERED_CSE_RESULTSET);
+                    var options = new google.search.DrawOptions();
+                    options.enableSearchboxOnly("http://ejscript.org/search.html");
+                    customSearchControl.draw('cse-search-form', options);
+                  }, true);
+                </script>
+                <div class='version'>Embedthis Ejscript 2.0.0</div>
+            </div>
         </div>
         <div class="crumbs">
             <a href="../../../product/index.html">Home</a>
@@ -39,7 +45,7 @@
     </div>
     <div class="content">
         <div class="contentRight">
-            <h2>Quick Nav</h2>
+            <h1>Quick Nav</h1>
             <ul>
                 <li><a href="#shell">Running the Shell</a></li>
                 <li><a href="#hello">Hello World</a></li>
@@ -60,7 +66,7 @@
                 <li><a href="#library">Script Library</a></li>
             </ul>
 <!-- BeginDsi "dsi/ejsGuideSeeAlso.html" -->
-        <h2>See Also</h2>
+        <h1>See Also</h1>
         <ul>
           <li><a href="../../../guide/ejs/language/index.html">Language Guide</a></li>
           <li><a href="../../../guide/ejs/programmers/index.html">Programmers Guide</a></li>
@@ -140,7 +146,7 @@ Hello World</font></strong>
 <font color="#FFFF00">ejs-0&gt;</font> add(5,5)
 <font color="#FFFF00"><strong>10</strong></font>
 </pre>
-            <p>Expecially useful, is that functions are objects and you can assign them to variables and pass them as
+            <p>Especially useful, is that functions are objects and you can assign them to variables and pass them as
             arguments to other functions. More on this later.</p>
             <pre>
 <font color="#FFFF00">ejs-0&gt;</font> var math = function (x, y) { return x + y; }
@@ -214,7 +220,7 @@ Hello World</font></strong>
 <strong><font color="#FFFF00">Favorite Color</font></strong>
 </pre>
             <p>To access hash elements, use "[]" to lookup by a key string.</p>
-            <p>Classes and Interaces are also objects in their own right. You can store them and assign them. This is
+            <p>Classes and Interfaces are also objects in their own right. You can store them and assign them. This is
             very useful in creating type factories. Continuing the previous example, we can store the Shape and Circle
             class types into a factory hash.</p>
             <pre>
@@ -225,7 +231,7 @@ ejs-2&gt;</font> factory = {}
 <font color="#FFFF00">ejs-0&gt;</font> kind = "shape"
 <font color="#FFFF00">ejs-0&gt;</font> thing = new factory[kind]
 </pre>
-            <p>In this example we used "factory = {}". This is a fequently used shorthand for saying factory = new
+            <p>In this example we used "factory = {}". This is a frequently used shorthand for saying factory = new
             Object.</p>
             <h2><a name="arrays" id="arrays"></a>Arrays</h2>
             <p>Arrays are created using the new keyword. There are several forms of constructor usage for Arrays, the
@@ -307,13 +313,13 @@ demo.test(0, 10)
             <p>There were a couple of unusual constructs in that snippet to discuss.</p>
             <h3>Let Declarations and Block Scope</h3>
             <p>Variables may be declared with either <strong>var</strong> or <strong>let</strong>. Let will always
-            define variables at the block level in which they are declared. ie. always block scoped. In ECMAScript, var
+            define variables at the block level in which they are declared. i.e. always block scoped. In ECMAScript, var
             declarations always hoist to the nearest enclosing function, class or global space.</p>
             <h3>For ... in</h3>
             <p>The "for (i in 10)" statement seems a little unusual. Isn't 10 a primitive type? The answer is yes, but
             Ejscript treats all numbers as objects. You can invoke methods on numbers and you can iterate through their
-            values. This for/in statement will iterate through all the numbers from 0 up to but not including 10. ie.
-            0-9. Much easier than typing "for (i = 0; i &lt; 10; i++)" eh?</p>
+            values. This for/in statement will iterate through all the numbers from 0 up to but not including 10. i.e.
+            0-9. Much easier than typing "<em>for (i = 0; i &lt; 10; i++)</em>" eh?</p>
             <h2><a name="iteration" id="iteration"></a>Iteration</h2>
             <p>Ejscript has powerful iteration capabilities and most types have built-in iterators for common tasks.
             Here are a few examples:</p>
@@ -367,7 +373,7 @@ o</font></strong>
             two-dimensional variable name space. Instead of just the variable name, the fully qualified variable name
             consists of the name plus the namespace name.</p>
             <p>Namespaces are useful to prevent names from different contexts clashing. In other languages such as
-            Java, packages and imports are used to group and seggregate declarations. In Ejscript, namespaces are also
+            Java, packages and imports are used to group and segregate declarations. In Ejscript, namespaces are also
             used for this purpose.</p>
             <p>With namespaces you can now have two variables named x in the same block.</p>
             <pre>

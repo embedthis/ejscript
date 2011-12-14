@@ -7,6 +7,7 @@
         Embedded, AJAX, language"/>
 	<meta name="description" content="Ejscript -- Embedded Server-Side JavaScript Language."/>
 	<meta name="robots" content="index,follow" />
+    <link href="http://www.google.com/cse/style/look/default.css" type="text/css" rel="stylesheet" />
 	<link href="../../../doc.css" rel="stylesheet" type="text/css" />
 	<link href="../../../print.css" rel="stylesheet" type="text/css" media="print"/>
     <!--[if IE]>
@@ -16,20 +17,25 @@
 
 <body>
     <div class="top">
-        <a class="logo"  href="http://www.ejscript.org/">&nbsp;</a>
+        <a class="logo"  href="http://ejscript.org/">&nbsp;</a>
         <div class="topRight">
-             <div class="search">
-                 <form id="search" method="get" action="http://www.google.com/search" title="Search embedthis.com.com">
-                     <p>
-                        <label for="search" title="Search">Search</label> 
-                        <input type="text" id="q" name="q" size="15" maxlength="255" />
-                        <input type="submit" id="submit" value="Go" /> 
-                        <input type="hidden" name="domains" value="embedthis.com" /> 
-                        <input type="hidden" name="sitesearch" value="embedthis.com" />
-                    </p>
-                 </form>
-              </div>
-            <!--TITLE-->Embedthis Ejscript 2.0.0
+            <div class="search">
+                <div id="cse-search-form">Loading</div>
+                <script src="http://www.google.com/jsapi" type="text/javascript"></script>
+                <script type="text/javascript"> 
+                  google.load('search', '1', {language : 'en'});
+                  google.setOnLoadCallback(function() {
+                    var customSearchControl = new google.search.CustomSearchControl(
+                      'partner-pub-9935546676162772:ysvxxv4n9rx');
+
+                    customSearchControl.setResultSetSize(google.search.Search.FILTERED_CSE_RESULTSET);
+                    var options = new google.search.DrawOptions();
+                    options.enableSearchboxOnly("http://ejscript.org/search.html");
+                    customSearchControl.draw('cse-search-form', options);
+                  }, true);
+                </script>
+                <div class='version'>Embedthis Ejscript 2.0.0</div>
+            </div>
         </div>
         <div class="crumbs">
             <a href="../../../product/index.html">Home</a>
@@ -39,7 +45,7 @@
     </div>
     <div class="content">
         <div class="contentRight">
-            <h2>Quick Nav</h2>
+            <h1>Quick Nav</h1>
             <ul>
                 <li><a href="#env">Define the Environment</a></li>
                 <li><a href="#configuring">Configuring the Build</a></li>
@@ -49,7 +55,7 @@
                 <li><a href="#repository">Source Repository</a></li>
                 <li><a href="#keyFiles">Key File and Directories</a></li>
             </ul>
-            <h2>See Also</h2>
+            <h1>See Also</h1>
             <ul>
                 <li><a href="building.html">Building From Source</a></li>
                 <li><a href="configure.html">Configure Program</a></li>
@@ -110,7 +116,7 @@ export LD_LIBRARY_PATH=/usr/src/ejs/lib:$LD_LIBRARY_PATH
                 "http://www.cygwin.com">www.cygwin.com</a>. 
             You will need to install the binutils package. If you have the disk space, it is simplest to install all 
             cygwin packages. Once installed, you should add the Cygwin programs directories
-            to your PATH enviroment variable.</p><a name="configuring" id="configuring"></a>
+            to your PATH environment variable.</p><a name="configuring" id="configuring"></a>
             <h2 class="section">Configuring the Build</h2>
             <p>The <b>configure</b> program is used to tailor the software's configuration to suit your needs. It is
             the master configuration tool and it will create the "build/buildConfig.*" configuration files. These files
@@ -195,14 +201,15 @@ sudo make install
 sudo make uninstall
 </pre>
             <p>You can also install other components by typing the following commands.</p>
-            <table summary="" width="100%">
+            <table title="details">
                 <thead>
                     <tr>
-                        <td>Command</td>
-                        <td>Description</td>
-                        <td>Configure Location Option</td>
+                        <th>Command</th>
+                        <th>Description</th>
+                        <th>Configure Location Option</th>
                     </tr>
                 </thead>
+                <tbody>
                 <tr>
                     <td>make install</td>
                     <td>Install the binaries and dev headers (same as make install-binary install-dev)</td>
@@ -218,6 +225,7 @@ sudo make uninstall
                     <td>Install the product documentation</td>
                     <td>--libDir --incDir</td>
                 </tr>
+                </tbody>
             </table>
             <p>You can remove the components by using make uninstall-ITEM. Where ITEM is one of the above components.
             If you want to see what files get installed and where, set TRACE=1.</p>
@@ -242,14 +250,15 @@ make TRACE=1 install
             "keyFiles"></a>
             <h2 class="section">Key Files and Directories</h2>
             <p>Source trees contain the following key directories under the top directory.</p>
-            <table summary="">
+            <table title="directories">
                 <thead>
                     <tr>
-                        <td>Directory</td>
-                        <td>Subdir</td>
-                        <td>Description</td>
+                        <th>Directory</th>
+                        <th>Subdir</th>
+                        <th>Description</th>
                     </tr>
                 </thead>
+                <tbody>
                 <tr>
                     <td>bin</td>
                     <td>&nbsp;</td>
@@ -337,13 +346,14 @@ make TRACE=1 install
                 </tr>
             </table>
             <h3>Key Build Files</h3>
-            <table summary="" width="100%">
+            <table title="details">
                 <thead>
                     <tr>
-                        <td>Name</td>
-                        <td>Description</td>
+                        <th>Name</th>
+                        <th>Description</th>
                     </tr>
                 </thead>
+                <tbody>
                 <tr>
                     <td>build/make/make.rules</td>
                     <td>Key make targets and rules for all make files. This is a copy of the relevant make.rules.OS
@@ -367,6 +377,7 @@ make TRACE=1 install
                     <td>Configuration defaults for each operating system. Configure uses these as the default O/S
                     settings.</td>
                 </tr>
+                </tbody>
             </table>
         </div>
     </div>

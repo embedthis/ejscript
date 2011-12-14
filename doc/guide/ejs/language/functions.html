@@ -7,6 +7,7 @@
         Embedded, AJAX, language"/>
 	<meta name="description" content="Ejscript -- Embedded Server-Side JavaScript Language."/>
 	<meta name="robots" content="index,follow" />
+    <link href="http://www.google.com/cse/style/look/default.css" type="text/css" rel="stylesheet" />
 	<link href="../../../doc.css" rel="stylesheet" type="text/css" />
 	<link href="../../../print.css" rel="stylesheet" type="text/css" media="print"/>
     <!--[if IE]>
@@ -16,20 +17,25 @@
 
 <body>
     <div class="top">
-        <a class="logo"  href="http://www.ejscript.org/">&nbsp;</a>
+        <a class="logo"  href="http://ejscript.org/">&nbsp;</a>
         <div class="topRight">
-             <div class="search">
-                 <form id="search" method="get" action="http://www.google.com/search" title="Search embedthis.com.com">
-                     <p>
-                        <label for="search" title="Search">Search</label> 
-                        <input type="text" id="q" name="q" size="15" maxlength="255" />
-                        <input type="submit" id="submit" value="Go" /> 
-                        <input type="hidden" name="domains" value="embedthis.com" /> 
-                        <input type="hidden" name="sitesearch" value="embedthis.com" />
-                    </p>
-                 </form>
-              </div>
-            <!--TITLE-->Embedthis Ejscript 2.0.0
+            <div class="search">
+                <div id="cse-search-form">Loading</div>
+                <script src="http://www.google.com/jsapi" type="text/javascript"></script>
+                <script type="text/javascript"> 
+                  google.load('search', '1', {language : 'en'});
+                  google.setOnLoadCallback(function() {
+                    var customSearchControl = new google.search.CustomSearchControl(
+                      'partner-pub-9935546676162772:ysvxxv4n9rx');
+
+                    customSearchControl.setResultSetSize(google.search.Search.FILTERED_CSE_RESULTSET);
+                    var options = new google.search.DrawOptions();
+                    options.enableSearchboxOnly("http://ejscript.org/search.html");
+                    customSearchControl.draw('cse-search-form', options);
+                  }, true);
+                </script>
+                <div class='version'>Embedthis Ejscript 2.0.0</div>
+            </div>
         </div>
         <div class="crumbs">
             <a href="../../../product/index.html">Home</a>
@@ -39,7 +45,7 @@
     </div>
     <div class="content">
         <div class="contentRight">
-            <h2>Quick Nav</h2>
+            <h1>Quick Nav</h1>
             <ul>
                 <li><a href="#literals">Function Literals</a></li>
                 <li><a href="#return">Return Statement</a></li>
@@ -48,7 +54,7 @@
                 <li><a href="#enhancemens">Enhancements</a></li>
             </ul>
 <!-- BeginDsi "dsi/ejsLanguageSeeAlso.html" -->
-		        <h2>See Also</h2>
+		        <h1>See Also</h1>
 		        <ul>
 		          <li><a href="../../../guide/ejs/overview.html">Overview</a></li>
 		          <li><a href="../../../guide/ejs/features.html">Language Features</a></li>
@@ -89,7 +95,7 @@ function add(x, y) {
             <pre>
 add(10, 5)
 </pre><a name="literals" id="literals"></a>
-            <h3>Function Literals</h3>
+            <h2>Function Literals</h2>
             <p>Unlike many other languages, JavaScript functions are values like any other JavaScript type and they can
             be assigned and stored in variables. Function literals are just like normal function declarations except
             they can optionally omit the function name and the function reference can be assigned to a variable.</p>
@@ -104,11 +110,11 @@ subtractByAnotherName(7, 3)
             <p>The above function expression creates a function and assigns it to a variable named <b>subtract</b>.
             Invoking function expressions is indistinguishable from invoking regular functions. And so, you can use
             either form for declaring function expressions. It is your choice.</p><a name="return" id="return"></a>
-            <h3>Return Statement</h3>
+            <h2>Return Statement</h2>
             <p>The <b>return</b> statement instructs the function to cease executing the function and return
             immediately to its caller. The return may take an optional result expression.</p><a name="locals" id=
             "locals"></a>
-            <h3>Local Variables</h3>
+            <h2>Local Variables</h2>
             <p>Variables declared inside functions are visible only within the function and are called local variables.
             You can declare variables using either the <b>var</b> or <b>let</b> keywords. Declarations made with var,
             will take effect from the start of the function and be visible in all blocks. Declarations made with let
@@ -129,7 +135,7 @@ Inner: blue
 Outer: red
 </b>
 </pre><a name="nesting" id="nesting"></a>
-            <h3>Nested Functions</h3>
+            <h2>Nested Functions</h2>
             <p>Function declarations nest inside other functions. When the inner function executes, it has access to
             all the variables defined in the outer blocks.</p>
             <pre>

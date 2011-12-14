@@ -7,6 +7,7 @@
         Embedded, AJAX, language"/>
 	<meta name="description" content="Ejscript -- Embedded Server-Side JavaScript Language."/>
 	<meta name="robots" content="index,follow" />
+    <link href="http://www.google.com/cse/style/look/default.css" type="text/css" rel="stylesheet" />
 	<link href="../../../doc.css" rel="stylesheet" type="text/css" />
 	<link href="../../../print.css" rel="stylesheet" type="text/css" media="print"/>
     <!--[if IE]>
@@ -16,20 +17,25 @@
 
 <body>
     <div class="top">
-        <a class="logo"  href="http://www.ejscript.org/">&nbsp;</a>
+        <a class="logo"  href="http://ejscript.org/">&nbsp;</a>
         <div class="topRight">
-             <div class="search">
-                 <form id="search" method="get" action="http://www.google.com/search" title="Search embedthis.com.com">
-                     <p>
-                        <label for="search" title="Search">Search</label> 
-                        <input type="text" id="q" name="q" size="15" maxlength="255" />
-                        <input type="submit" id="submit" value="Go" /> 
-                        <input type="hidden" name="domains" value="embedthis.com" /> 
-                        <input type="hidden" name="sitesearch" value="embedthis.com" />
-                    </p>
-                 </form>
-              </div>
-            <!--TITLE-->Embedthis Ejscript 2.0.0
+            <div class="search">
+                <div id="cse-search-form">Loading</div>
+                <script src="http://www.google.com/jsapi" type="text/javascript"></script>
+                <script type="text/javascript"> 
+                  google.load('search', '1', {language : 'en'});
+                  google.setOnLoadCallback(function() {
+                    var customSearchControl = new google.search.CustomSearchControl(
+                      'partner-pub-9935546676162772:ysvxxv4n9rx');
+
+                    customSearchControl.setResultSetSize(google.search.Search.FILTERED_CSE_RESULTSET);
+                    var options = new google.search.DrawOptions();
+                    options.enableSearchboxOnly("http://ejscript.org/search.html");
+                    customSearchControl.draw('cse-search-form', options);
+                  }, true);
+                </script>
+                <div class='version'>Embedthis Ejscript 2.0.0</div>
+            </div>
         </div>
         <div class="crumbs">
             <a href="../../../product/index.html">Home</a>
@@ -39,7 +45,7 @@
     </div>
     <div class="content">
         <div class="contentRight">
-            <h2>Quick Nav</h2>
+            <h1>Quick Nav</h1>
             <ul>
                 <li><a href="#record">Record Class</a></li>
                 <li><a href="#columnMap">Columns to Properties</a></li>
@@ -57,7 +63,7 @@
                 <li><a href="#accessing">Accessing Models</a></li>
             </ul>
 <!-- BeginDsi "dsi/ejsWebSeeAlso.html" -->
-		        <h2>See Also</h2>
+		        <h1>See Also</h1>
 		        <ul>
 		          <li><a href="../../../guide/ejs/web/webTour.html">Web Framework Tour</a></li>
 		          <li><a href="../../../guide/ejs/web/mvc.html">Model-View-Controller</a></li>
@@ -80,7 +86,7 @@
             data.</p><a name="record" id="record"></a>
             <h2 class="section">Record Class</h2>
             <p>Ejscript Models map database tables to classes, rows to objects, and columns to object properties. The
-            foundation for Models is the <tt>Record</tt> class. Record instances represent database records. New models
+            foundation for Models is the <em>Record</em> class. Record instances represent database records. New models
             are created by implementing the Record class.</p>
             <pre>
 public dynamic class Product implements Record {
@@ -93,9 +99,9 @@ public dynamic class Product implements Record {
             table, column or primary key names names. Ejscript follows the <a href=
             "http://en.wikipedia.org/wiki/Convention_over_Configuration">Convention over Configuration</a> design
             paradigm where developers need only specify the unusual parts of their application. In this example,
-            Ejscript will look for a database table named <tt>Products</tt> and will map that to the <tt>Product</tt>
+            Ejscript will look for a database table named <em>Products</em> and will map that to the <em>Product</em>
             class. By convention, Ejscript assumes that database table names are plural and Record classes are
-            singluar. You can override this if you need to by calling the <tt>setTableName</tt> Record method. However,
+            singular. You can override this if you need to by calling the <em>setTableName</em> Record method. However,
             it is best to work with the Ejscript conventions and defaults &mdash; life is much easier this
             way.</p><a name="columnMap" id="columnMap"></a>
             <h3>Columns to Properties</h3>
@@ -105,13 +111,13 @@ public dynamic class Product implements Record {
             <h2>Quick Tour of Record</h2>
             <p>Assume we have a database with a Products table that has columns for id, name, description and
             price.</p>
-            <table summary="" width="75%">
+            <table title="example" class="full">
                 <thead>
                     <tr>
-                        <td>id</td>
-                        <td>name</td>
-                        <td>description</td>
-                        <td>price</td>
+                        <th>id</th>
+                        <th>name</th>
+                        <th>description</th>
+                        <th>price</th>
                     </tr>
                 </thead>
                 <tbody>
@@ -154,12 +160,12 @@ print(products)</b>
             reading database data, Ejscript will select the best JavaScript type to hold the database data. The
             following type conversions will occur when reading and writing data to and from the database. Note: Mysql
             is not yet fully supported.</p>
-            <table summary="" width="75%">
+            <table title="types" class="full">
                 <thead>
                     <tr>
-                        <td>Ejscript Type</td>
-                        <td>SQLite Type</td>
-                        <td>Mysql</td>
+                        <th>Ejscript Type</th>
+                        <th>SQLite Type</th>
+                        <th>Mysql</th>
                     </tr>
                 </thead>
                 <tbody>
@@ -191,8 +197,8 @@ print(products)</b>
                 </tbody>
             </table><a name="keys" id="keys"></a>
             <h2 class="section">Table Keys</h2>
-            <p>Ejscript assumes that database tables will have a primary key column named <tt>id</tt>. If you need the
-            primary key column to be some other name, use the <tt>setKeyName</tt> method.</p><a name="connections" id=
+            <p>Ejscript assumes that database tables will have a primary key column named <em>id</em>. If you need the
+            primary key column to be some other name, use the <em>setKeyName</em> method.</p><a name="connections" id=
             "connections"></a>
             <h2 class="section">Database Connections</h2>
             <p>Database connections are one of the few items that are setup by configuration files. The application
@@ -209,19 +215,19 @@ debug: {
 },
 </pre>
             <p>This is an excerpt from the debug database configuration. Currently, Ejscript only supports the SQLite
-            database. The <tt>database</tt> option is set to the filename of the database. Setting <tt>trace</tt> to
+            database. The <em>database</em> option is set to the filename of the database. Setting <em>trace</em> to
             true will trace all SQL statements that are executed against the database to the application
             log.</p><a name="modelClasses" id="modelClasses"></a>
             <h2 class="section">Creating Model Classes</h2>
-            <p>The Ejscript <tt>ejsweb</tt> command can be used to generate models and database migrations.</p>
+            <p>The Ejscript <em>ejsweb</em> command can be used to generate models and database migrations.</p>
             <pre>
 ejsweb generate model [field:type ...]
 </pre>
-            <p>When generating a model, <tt>ejsweb</tt> will create a database model class and a database migration
+            <p>When generating a model, <em>ejsweb</em> will create a database model class and a database migration
             script.</p>
             <p>If field:type pairs are supplied, the database migration will include code to create a column for each
-            specified field of the requested type. The valid database types are: <tt>binary, boolean, date, datetime,
-            decimal, float, integer, number, string, text, time, timestamp</tt>.</p>
+            specified field of the requested type. The valid database types are: <em>binary, boolean, date, datetime,
+            decimal, float, integer, number, string, text, time, timestamp</em>.</p>
             <p>Once the model is generated, you can add methods to implement logic to manage updates and validate model
             data. Models typically provide a suite of methods for controllers and views to access.</p><a name="crud"
             id="crud"></a>
@@ -240,8 +246,8 @@ product.price = 19.99
             <p>That will create a new product, initialize its properties, and save it to the database.</p><a name=
             "read" id="read"></a>
             <h3>Reading a Record</h3>
-            <p>Reading a record from the database is done with the <tt>find</tt> family of Record static methods. The
-            basic <tt>find</tt> method will return a record with a given <tt>id</tt> field. Other find methods include:
+            <p>Reading a record from the database is done with the <em>find</em> family of Record static methods. The
+            basic <em>find</em> method will return a record with a given <em>id</em> field. Other find methods include:
             findAll, findWhere and findOneWhere. These provide powerful query capabilities and are able to do
             conditional queries and table joins.</p>
             <pre>
@@ -252,15 +258,15 @@ product = Product.find(null, {conditions: ["price &gt; 5.0"]})
             -->
             <a name="update" id="update"></a>
             <h3>Updating a Record</h3>
-            <p>To update a record, first read it using one of the <tt>find</tt> methods. Then update any of the object
-            properties. Finally, call the <tt>save</tt> method to save the changes to the database.</p>
+            <p>To update a record, first read it using one of the <em>find</em> methods. Then update any of the object
+            properties. Finally, call the <em>save</em> method to save the changes to the database.</p>
             <pre>
 product = Product.find(3)
 product.name = "Stock Car"
 <b>product.save()</b>
 </pre><a name="delete" id="delete"></a>
             <h3>Deleting a Record</h3>
-            <p>Records have a static method <tt>remove</tt> which will remove the record with the given primary key
+            <p>Records have a static method <em>remove</em> which will remove the record with the given primary key
             id.</p>
             <pre>
 <b>Product.remove(1)</b>
@@ -270,14 +276,14 @@ Product.remove(id)
 </pre><a name="manual" id="manual"></a>
             <h2 class="section">Manual SQL Statements</h2>
             <p>Ejscript supports the execution of manual SQL statements and provides routines to assist the creation of
-            SQL statements. The <tt>getDb</tt> method will return a Database object on which, manual SQL queries can be
+            SQL statements. The <em>getDb</em> method will return a Database object on which, manual SQL queries can be
             performed</p>
             <pre>
 db = Product.getDb()
 db.query("SELECT * FROM Products WHERE id &gt;= 1;")
 </pre>
             <h3>Assisted SQL</h3>
-            <p>The <tt>find</tt> methods can assist to create SQL statements via an options parameter that takes a set
+            <p>The <em>find</em> methods can assist to create SQL statements via an options parameter that takes a set
             of SQL-like modifiers. Ejscript Records use these when building the SQL statements to implement a query.
             For example:</p>
             <pre>
@@ -304,7 +310,7 @@ Product.findAll({order: "price DESC", limit: 2})
                 <li>Controller facilitated model access</li>
             </ul>
             <h4>Direct Model Access</h4>
-            <p>In <tt>direct model</tt> access, controllers or views query the model using a <tt>find</tt> method to
+            <p>In <em>direct model</em> access, controllers or views query the model using a <em>find</em> method to
             return a record object instance. They then directly access the model via object properties. Views can
             directly insert these values into web pages and controllers can use them just like any JavaScript
             property.</p>
@@ -312,12 +318,12 @@ Product.findAll({order: "price DESC", limit: 2})
 &lt;p&gt;Price: @@Product.find(1).price &lt;/p&gt;
 </pre>
             <p>This is a fragment from a View that directly accesses the model to extract the price for the first
-            product. The <tt>@@</tt> is the way Views can substitue dynamic data from JavaScript variables at
+            product. The <em>@@</em> is the way Views can substitute dynamic data from JavaScript variables at
             run-time.</p>
             <h4>Bound Access</h4>
-            <p>Ejscript models can also be <tt>bound</tt> to View Controls for easy display. Many of the View Controls
+            <p>Ejscript models can also be <em>bound</em> to View Controls for easy display. Many of the View Controls
             can take a model instance as a parameter with options to select the properties to display. The
-            <tt>table</tt> View Control method is a good example. It can bind to a model and, via a one-line statement,
+            <em>table</em> View Control method is a good example. It can bind to a model and, via a one-line statement,
             display the table. It has options to sort, filter, and select columns and dynamically refresh the table
             contents as the underlying database data changes.</p>
             <pre>
@@ -361,7 +367,7 @@ public dynamic class Task implements Record {
 </b>
 </pre>
             <p>The validation methods take either a field name or array of field names as the first parameter. The
-            second parameter is an options hash which can contain a <tt>message</tt> option to override the standard
+            second parameter is an options hash which can contain a <em>message</em> option to override the standard
             validation failure message.</p>
             <h4>validatePresence</h4>
             <p>This validates that the field is defined with a non-empty value.</p>
@@ -371,12 +377,12 @@ public dynamic class Task implements Record {
             <p>This validates that the field's value is unique in the database.</p>
             <h4>validateFormat</h4>
             <p>This validates that the field's value conforms to the regular expression format supplied via the
-            <tt>format</tt> option.</p>
+            <em>format</em> option.</p>
             <h3>Custom Validation</h3>
             <p>In addition to the standard validation methods, a model can do custom validation by defining a
-            <tt>validation</tt> method. This will be called along with the standard validation methods before saving
-            database data or when the <tt>validateModel</tt> method is called. A validation method should call the
-            <tt>error</tt> method for each invalid field and supply a suitable message.</p>
+            <em>validation</em> method. This will be called along with the standard validation methods before saving
+            database data or when the <em>validateModel</em> method is called. A validation method should call the
+            <em>error</em> method for each invalid field and supply a suitable message.</p>
             <pre>
 public function validate() {
     if (user.phone.length &gt; 10) {
