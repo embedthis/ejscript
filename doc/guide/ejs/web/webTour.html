@@ -64,7 +64,7 @@
 		        <ul>
 		          <li><a href="../../../guide/ejs/web/webTour.html">Web Framework Tour</a></li>
 		          <li><a href="../../../guide/ejs/web/mvc.html">Model-View-Controller</a></li>
-		          <li><a href="../../../guide/ejs/web/ejsweb.html">Application Generator</a></li>
+		          <li><a href="../../../guide/ejs/web/mvc.html">Application Generator</a></li>
 		          <li><a href="../../../guide/ejs/web/controllers.html">Controllers and Actions</a></li>
 		          <li><a href="../../../guide/ejs/web/views.html">Views and Layouts</a></li>
 		          <li><a href="../../../guide/ejs/web/controls.html">Ajax View Controls</a></li>
@@ -80,16 +80,16 @@
             <p>First make sure you have read the <a href="../users/quickStart.html">Quick Start</a> and the Ejscript
             <a href="../users/tour.html">Language Tour</a>, and that you have Ejscript installed on your system so you
             can type along as you go. This web framework tour will work with the Ejscript <a href=
-            "../users/shell.html">Command Shell</a> and the web framework <a href="ejsweb.html">ejsweb</a> application
+            "../users/shell.html">Command Shell</a> and the web framework <a href="mvc.html">mvc</a> application
             generator to run scripts.</p><a name="blog" id="blog"></a>
             <h2 class="section">A Demonstration Blog Application</h2>
             <p>Command sessions are presented in blue boxes. Output from the system is highlighted in yellow. Bold
             yellow is used to highlight some output of specific interest.</p>
             <h2 class="section"><a name="create" id="create"></a>Creating a New Application</h2>
-            <p>To create a new Ejscript application, you will use <b>ejsweb</b>, the Ejscript application generator
-            program. Type the following ejsweb command in a command terminal window:</p>
+            <p>To create a new Ejscript application, you will use <b>mvc</b>, the Ejscript application generator
+            program. Type the following mvc command in a command terminal window:</p>
             <pre>
-<b>home&gt;</b> ejsweb -v generate app blog<b>
+<b>home&gt;</b> mvc -v generate app blog<b>
 [CREATED] Directory: blog
 [CREATED] Directory: blog/.tmp
 [CREATED] Directory: blog/.ejs
@@ -177,7 +177,7 @@
                     </tr>
                 </tbody>
             </table>
-            <p>See the <a href="ejsweb.html">ejsweb</a> documentation for an explanation of the other generated
+            <p>See the <a href="mvc.html">mvc</a> documentation for an explanation of the other generated
             directories.</p><!--
             <p>The purpose of the other directories:</p>
             <table summary="directories">
@@ -206,7 +206,7 @@
             Ejscript in web servers, read the <a href="hosting.html">Hosting</a> document.</p>
             <p>To run the web server:</p>
             <pre>
-ejsweb run
+mvc run
 <b>[RUN]: /usr/lib/ejs/appweb --home /usr/lib/ejs \
     --ejs /:/var/www/blog/ --log /dev/tty:1
 appweb: 1: Starting host named: "127.0.0.1:4000"
@@ -266,12 +266,12 @@ appweb: 1: HTTP services are ready (single-threaded)</b>
             document for full details about all the Ejscript web page directives.</p><a name="views" id="views"></a>
             <a name="scaffolds" id="scaffolds"></a>
             <h2 class="scaffolds">Scaffolds</h2>
-            <p>Scaffolding is a quick way to generate major pieces of your application. The ejsweb command can generate
+            <p>Scaffolding is a quick way to generate major pieces of your application. The mvc command can generate
             database migrations, models, views and controllers for you. The command below will create a "Post" model
             with a blog post title and post comment body. The "title" is a string datatype and the "body" is a
             multi-line text field.</p>
             <pre>
-ejsweb generate scaffold Post title:string body:text
+mvc generate scaffold Post title:string body:text
 <b>[CREATED] Directory: views/Post
 [CREATED] Migration: "db/migrations/20110331134831_Create_Scaffold_Post.es"
 [CREATED] Model: "models/Post.es"
@@ -283,9 +283,9 @@ ejsweb generate scaffold Post title:string body:text
             <p>This command created a model for the Post under the models directory, and Post controller and
             <em>list</em> and <em>edit</em> views. It also created a database migration script to update the database
             and create a Post table with <em>title</em> and <em>body</em> columns.</p>
-            <p>To run the migration and update the database, we use ejsweb again.</p>
+            <p>To run the migration and update the database, we use mvc again.</p>
             <pre>
-ejsweb migrate
+mvc migrate
 <b>[MIGRATE]: Apply 20110331134831_Create_Scaffold_Post.es</b>
 </pre>
             <p>Now if you set your browser to the URL for the post controller, you will see your post listing screen.
@@ -350,9 +350,9 @@ public class PostController extends BaseController {
             <p>After modifying the layout, you will need to re-compile the cached web pages. Normally, Ejscript
             transparently compiles the web pages into pure Ejscript byte-code for fast execution. It will automatically
             do this whenever you modify a view or controller. However, if you change a layout or model, you may need to
-            recompile the app. This is easy to do via the ejsweb command.</p>
+            recompile the app. This is easy to do via the mvc command.</p>
             <pre>
-ejsweb compile
+mvc compile
 </pre><img src="../../../images/webtour-tabs.png" alt="tabs" class="bare-screen" /> <a name="validations" id="validations">
             </a>
             <h2 class="section">Validations</h2>

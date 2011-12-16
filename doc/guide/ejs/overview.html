@@ -75,23 +75,26 @@
 
 		          <li><a href="../../guide/ejs/users/compiler.html">Using the Compiler</a></li>
 		          <li><a href="../../guide/ejs/users/shell.html">Command Shell</a></li>
-		          <li><a href="../../guide/ejs/users/ejsvm.html">Virtual Machine</a></li>
 		        </ul>
 <!-- EndDsi -->
         </div>
         <div class="contentLeft">
             <h1>EmbedThis Ejscript&trade; Overview</h1>
-            <p>Ejscript is a powerful <b>server-side <a href=
-            "http://en.wikipedia.org/wiki/JavaScript">JavaScript</a></b> framework for web applications. It
-            dramatically eases development by enabling developers to use the same language on the server as in the
-            browser.</p>
-            <p>The Ejscript language is an extended version of JavaScript that fully supports and complies with the
-            standardized version of JavaScript known as <a href=
+            <p>Ejscript is a complete and integrated <b>server-side <a href=
+                    "http://en.wikipedia.org/wiki/JavaScript">JavaScript</a></b> framework for web applications. Unlike other
+            JavaScript frameworks, it is not a "bunch of parts" that you have to locate and integrate. Rather, it is a
+            cohesive set of components and features that have been designed to work together.</p>
+            <p>Ejscript doesn't force you to use async-programming, unless you want to. Ejscript gives you freedom to
+            choose the best and most natural design paradigm for your application. Ejscript uses an event-driven,
+            non-blocking design to it can effortlessly run async applications. Ejscript couples this with a scalable
+            multithreaded core so it can also run sync applications that need to block without callbacks.</p>
+            <p>The Ejscript language is a version of JavaScript enhanced with features from the Harmony JavaScript
+            proposals. It fully supports and complies with the standardized version of JavaScript known as <a href=
             "http://www.ecma-international.org/publications/standards/Ecma-262.htm">ECMAScript Edition 3
             (ECMA-262-3)</a>. It adds enhancements for classes, modules, an extensive system library and powerful web
             framework.</p>
             <p>The <b>Ejscript Web Framework</b> provides a complete environment for high-performance web applications.
-            It is a Model / View / Controller web framework with integrated SQLite database and Object Relational
+            It is a Model-View-Controller web framework with integrated SQLite database and Object Relational
             Mapper (ORM). It has a library of data-binding Ajax view controls and includes jQuery for client side
             integration.</p>
             <p>Ejscript is <b>fast</b>, <b>compact</b> and is optimized for server-side web applications. A
@@ -105,7 +108,7 @@
                     JavaScript features to enable quick development of web applications.</p>
                 </li>
                 <li>
-                    <p><b>Minimal Resource Requirements</b>. Ejscript is fast and very <b>compact</b> (from 400KB). It
+                    <p><b>Minimal Resource Requirements</b>. Ejscript is fast and very <b>compact</b> (from 1MB). It
                     demands minimal resources from your system so your system can focus devote vital system resources
                     to running your application.</p>
                 </li>
@@ -126,8 +129,9 @@
             <ul>
                 <li>
                     <p><b>Web Framework</b> The Ejscript web framework enables Ajax based web applications with few
-                    lines of code. It includes a Model, View, Controller framework, ORM layer, code generator, database
-                    migrations, a web page templating engine and a suite of Ajax view controls.</p>
+                    lines of code. It includes a flexible request routing, Model-View-Controller framework, ORM layer,
+                    code generator, database migrations, integrated caching, a web page templating engine and a suite of
+                    Ajax view controls.</p>
                 </li>
                 <li>
                     <p><b>High Performance Virtual Machines</b>. Ejscript has a direct-threaded VM with generational
@@ -163,7 +167,9 @@
                 </li>
             </ul>
             <p>See the Ejscript <a href="features.html">Feature List</a> for an extended list of
-            capabilities.</p><a name="standards" id="standards"></a>
+            capabilities.</p>
+            
+            <a name="standards" id="standards"></a>
             <h2 class="section">Standards</h2>
             <p>Ejscript fully supports and complies with the standardized version of JavaScript known as ECMAScript
             Edition 3 (<a href="http://www.ecma-international.org/publications/standards/Ecma-262.htm">ECMA-262-3</a>).
@@ -174,11 +180,13 @@
             <ul>
                 <li><a href="http://www.ecmascript.org/">ECMAScript Harmony</a> &mdash; The next generation JavaScript
                 language standards effort.</li>
-                <li><a href="https://wiki.mozilla.org/ServerJS">ServerJS</a> &mdash; An effort to create standardized
+                <li><a href="https://www.commonjs.org/CommonJS">CommonJS</a> &mdash; An effort to create standardized
                 Server-Side JavaScript libraries.</li>
             </ul>
             <p>Ejscript enhances standard JavaScript with the addition of a comprehensive web framework and language
-            extensions such as modules and classes.</p><a name="design" id="design"></a>
+            extensions such as modules and classes.</p>
+            
+            <a name="design" id="design"></a>
             <h2 class="section">Ejscript Design</h2>
             <p>The goal of Ejscript is to create a standards-based JavaScript environment that excels at hosting
             <a href="http://en.wikipedia.org/wiki/Server-side_JavaScript">server-side JavaScript</a> web applications.
@@ -211,10 +219,6 @@
             <p>Ejscript corrects these issues with a set of extensions to the JavaScript language and environment that
             make Ejscript ideal for server-side web applications.</p><a name="enhancements" id="enhancements"></a>
             <h3>Ejscript Language Enhancements</h3>
-            <p>Credit where credit is due. Ejscript has learned from the ongoing JavaScript <a href=
-            "http://wiki.ecmascript.org/doku.php">research and standardization</a> efforts and from Adobe's <a href=
-            "http://www.actionscript.org">ActionScript</a>. For the Ejscript web framework, <a href=
-            "http://www.rubyonrails.org">Ruby on Rails</a> has also provided many good patterns.</p>
             <p>Ejscript adds the following language enhancements:</p>
             <ul>
                 <li>Block and file scope</li>
@@ -222,7 +226,7 @@
                 <li>Let variable declarations</li>
                 <li>Variable visibility controls</li>
                 <li>Optional type annotations</li>
-                <li>Bound methods that capture the <b>this</b> object</li>
+                <li>Bound methods that capture the <em>this</em> object</li>
                 <li>Function rest arguments</li>
                 <li>Class, extends, super and interface directives</li>
                 <li>Extended language library: Http, File I/O, Sockets, Stream I/O, XML, Eventing</li>

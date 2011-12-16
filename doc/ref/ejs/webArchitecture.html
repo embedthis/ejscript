@@ -168,9 +168,9 @@ EjsAppAlias /myAppName/ "/Directory/to/myApp"
             <p>MVC applications are more powerful. They have database models, controllers, views and layouts and
             typically start life by using the application generator. This creates an application directory and
             populates it with the necessary directories, configuration files and stubs to begin the application.</p>
-            <p>The application generator is a program named <b>ejsweb</b>. To create a new application called test:</p>
+            <p>The application generator is a program named <b>mvc</b>. To create a new application called test:</p>
             <pre>
-ejsweb -v generate app test
+mvc -v generate app test
 </pre>
             <p>This will create the following directories:</p>
             <ul>
@@ -194,12 +194,12 @@ ejsweb -v generate app test
                 <li>test/controllers/Application.es</li>
                 <li>test/README</li>
             </ul>
-            <p>The ejsweb program can also generate controllers. It is currently being enhanced to generate models,
-            views and entire scaffolds. To compile your application, use the ejsweb program:</p>
+            <p>The mvc program can also generate controllers. It is currently being enhanced to generate models,
+            views and entire scaffolds. To compile your application, use the mvc program:</p>
             <pre>
-ejsweb -v compile
+mvc -v compile
 </pre>
-            <p>During development time, the web framework uses <b>ejsweb</b> behind the scenes to transparently
+            <p>During development time, the web framework uses <b>mvc</b> behind the scenes to transparently
             recompile all or portions of the application if the developer modifies any model, view or
             controller.</p><a name="mvc" id="mvc"></a>
             <h2 class="section">Model, View, Controller Framework</h2>

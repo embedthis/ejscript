@@ -79,7 +79,6 @@
 
 		          <li><a href="../../../guide/ejs/users/compiler.html">Using the Compiler</a></li>
 		          <li><a href="../../../guide/ejs/users/shell.html">Command Shell</a></li>
-		          <li><a href="../../../guide/ejs/users/ejsvm.html">Virtual Machine</a></li>
 		        </ul>
 <!-- EndDsi -->
         </div>
@@ -191,10 +190,9 @@ print(version)                /* Prints Module2::version */
 </pre>
             <p>In this case, the acme.rockets and the acme.dynamite modules are both saved into the one output
             file.</p>
-            <p>To run a module file, you can use either the <b>ejs</b> shell command or better still, use the
-            <b>ejsvm</b> command which is a compact virtual machine that can load and execute mod files.</p>
+            <p>To run a module file, you can use the <tt>ejs</tt> shell command.</p>
             <pre>
-ejsvm acme.mod
+ejs acme.mod
 </pre><a name="search" id="search"></a>
             <h3>Locating Modules</h3>
             <p>When the Ejscript compiler, VM or shell commands are used, they will search for modules according to the

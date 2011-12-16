@@ -70,7 +70,7 @@
 		        <ul>
 		          <li><a href="../../../guide/ejs/web/webTour.html">Web Framework Tour</a></li>
 		          <li><a href="../../../guide/ejs/web/mvc.html">Model-View-Controller</a></li>
-		          <li><a href="../../../guide/ejs/web/ejsweb.html">Application Generator</a></li>
+		          <li><a href="../../../guide/ejs/web/mvc.html">Application Generator</a></li>
 		          <li><a href="../../../guide/ejs/web/controllers.html">Controllers and Actions</a></li>
 		          <li><a href="../../../guide/ejs/web/views.html">Views and Layouts</a></li>
 		          <li><a href="../../../guide/ejs/web/controls.html">Ajax View Controls</a></li>
@@ -180,10 +180,10 @@ views
          |
          + View pages...
 </pre>
-            <p>The <a href="ejsweb.html"><b>ejsweb</b></a> application generator program will create these directories
+            <p>The <a href="mvc.html"><b>mvc</b></a> application generator program will create these directories
             for you when you run</p>
             <pre>
-ejsweb generate appName
+mvc generate appName
 </pre>
             <p>After creating the application, you should place all content views for a controller under the
             "views/ControllerName" directory. The "ControllerName" directories should by convention begin with an upper
@@ -343,16 +343,16 @@ ejsweb generate appName
             page, whereas the theme style sheet specifies the fonts, font sizes, weights and foreground and background
             colors.</p>
             <p>Ejscript supports this organization by providing a providing a directory for theme style sheet. The
-            <b>ejsweb</b> application will also generate a default theme style sheet for scaffolds and
+            <b>mvc</b> application will also generate a default theme style sheet for scaffolds and
             views.</p><a name="compilation" id="compilation"></a>
             <h2 class="section">Compilation</h2>
             <p>When developing, Ejscript will automatically detect changes made to the applications code and will
             intelligently recompile the necessary portions of the application. You can manually force a recompilation
-            via the <b>ejsweb</b> command.</p>
+            via the <b>mvc</b> command.</p>
             <pre>
-ejsweb compile
+mvc compile
 </pre>
-            <p>See the <a href="ejsweb.html">Application Generator</a> documentation for full details about compiling
+            <p>See the <a href="mvc.html">Application Generator</a> documentation for full details about compiling
             views and applications.</p><!--
             <h2 class="section">Common Tasks</h2>
                 <h3>Managing Links</h3>

@@ -80,7 +80,7 @@
             <ol>
                 <li>Uncompress and extract the image:
                     <pre>
-tar xvfz ejs-VERSION-DIST-LINUX-i686.FMT.tar.gz
+tar xvfz ejs-VERSION-DIST-LINUX-CPU.FMT.tgz
 </pre>
                     <p>Where VERSION is the current version (e.g. 1.2.3-1), and DIST is the name of the Linux
                     distribution (e.g. fedora), and FMT is either <b>rpm</b> or <b>deb</b>.</p>
@@ -95,7 +95,7 @@ sudo ./install
             <ol>
                 <li>Uncompress and extract the image:
                     <pre>
-tar xvfz ejs-VERSION-DIST-LINUX-i686.tar.tar.gz
+tar xvfz ejs-VERSION-DIST-LINUX-CPU.tgz
 </pre>
                 </li>
                 <li>Then start the installation with administrator privilege:
@@ -142,12 +142,7 @@ ejs-0&gt; print("Hello World")
                 <tr>
                     <td>ejsc</td>
                     <td>The Ejscript compiler. This command can compile scripts into byte code form for later running
-                    via ejsvm.</td>
-                </tr>
-                <tr>
-                    <td>ejsvm</td>
-                    <td>The Ejscript virtual machine. This command executes Ejscript modules that have been compiled
-                    from scripts by the ec command.</td>
+                        via the <em>ejs</em> shell.</td>
                 </tr>
                 <tr>
                     <td>ejsmod</td>
@@ -155,9 +150,9 @@ ejs-0&gt; print("Hello World")
                     documentation and symbolic slot offset header files.</td>
                 </tr>
                 <tr>
-                    <td>ejsweb</td>
-                    <td>The Ejscript web framework generator and manager. This command assists to create Ejscript Web
-                    applications that use the Ejscript Web Framework.</td>
+                    <td>mvc</td>
+                    <td>The Ejscript Model-View-Controller application generator. This command creates and manages
+                        Ejscript Web applications.</td>
                 </tr>
                 </tbody>
             </table>

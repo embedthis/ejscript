@@ -67,7 +67,7 @@
 		        <ul>
 		          <li><a href="../../../guide/ejs/web/webTour.html">Web Framework Tour</a></li>
 		          <li><a href="../../../guide/ejs/web/mvc.html">Model-View-Controller</a></li>
-		          <li><a href="../../../guide/ejs/web/ejsweb.html">Application Generator</a></li>
+		          <li><a href="../../../guide/ejs/web/mvc.html">Application Generator</a></li>
 		          <li><a href="../../../guide/ejs/web/controllers.html">Controllers and Actions</a></li>
 		          <li><a href="../../../guide/ejs/web/views.html">Views and Layouts</a></li>
 		          <li><a href="../../../guide/ejs/web/controls.html">Ajax View Controls</a></li>
@@ -219,11 +219,11 @@ debug: {
             true will trace all SQL statements that are executed against the database to the application
             log.</p><a name="modelClasses" id="modelClasses"></a>
             <h2 class="section">Creating Model Classes</h2>
-            <p>The Ejscript <em>ejsweb</em> command can be used to generate models and database migrations.</p>
+            <p>The Ejscript <em>mvc</em> command can be used to generate models and database migrations.</p>
             <pre>
-ejsweb generate model [field:type ...]
+mvc generate model [field:type ...]
 </pre>
-            <p>When generating a model, <em>ejsweb</em> will create a database model class and a database migration
+            <p>When generating a model, <em>mvc</em> will create a database model class and a database migration
             script.</p>
             <p>If field:type pairs are supplied, the database migration will include code to create a column for each
             specified field of the requested type. The valid database types are: <em>binary, boolean, date, datetime,

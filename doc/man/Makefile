@@ -7,8 +7,8 @@
 include		.makedep
 
 compileExtra: \
-	ejsc.txt  ejsweb.txt  ejs.txt  ejsmod.txt  ejsvm.txt  http.txt\
-	ejsc.html ejsweb.html ejs.html ejsmod.html ejsvm.html http.html \
+	ejsc.txt  mvc.txt  ejs.txt  ejsmod.txt  http.txt\
+	ejsc.html mvc.html ejs.html ejsmod.html http.html \
 	regexp.txt \
 	regexp.html
 

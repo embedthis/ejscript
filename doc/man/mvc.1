@@ -1,19 +1,21 @@
-.TH EJSWEB "1" "March 2010" "ejsweb" "User Commands"
+.TH MVC "1" "December 2011" "mvc" "User Commands"
 .SH NAME
-ejsweb \- Ejscript Application Generator for Server-Side JavaScript Web Applications.
+mvc \- Ejscript Application Generator for Server-Side JavaScript Web Applications.
 .SH SYNOPSIS
-.B ejsweb
+.B mvc
 [\fI--apply]\fR] 
 [\fI--database DB]\fR] 
+[\fI--full\fR]
 [\fI--keep\fR]
 [\fI--layout layoutPage\fR]
+[\fI--listen port\R]
+[\fI--min\R]
 [\fI--overwrite\R]
 [\fI--quiet\R]
-[\fI--reverse\R]
 [\fI--verbose\fR]
 [commands ...]
 .SH DESCRIPTION
-The \fBejsweb\fR command generates, manages and runs Ejscript web applications.
+The \fBmvc\fR command generates, manages and runs Ejscript web applications.
 It can generate Ejscript web applications, controllers, database migrations, models, scaffolds and views.
 .PP
 Ejsweb will create directories and generate configuration and source code files which can then be manually 
@@ -23,18 +25,18 @@ the \fB--overwrite\fR switch.
 .PP
 Ejsweb can run your application by invoking a configured web server.
 .SH GENERATING APPLICATIONS
-To start a new web application, run \fBejsweb\fR to create the application directory and generate the application
+To start a new web application, run \fBmvc\fR to create the application directory and generate the application
 configuration and essential script files. For example:
 
 .RS 5
- \fBejsweb generate app myApp\fR
+ \fBmvc generate app myApp\fR
 .RE
 .PP
 This will will create a set of directories which have the following meaning: 
 
 .RS 5
  .tmp           - Temporary working directory
- .ejs           - State files used by ejsweb
+ .ejs           - State files used by mvc
  bin            - Programs and scripts
  config         - Configuration files
  controllers    - Controller source
@@ -77,12 +79,12 @@ Controllers are the primary mechanism for responding to client requests. To gene
 run:
 .RS 5
 
- \fBejsweb generate controller NAME [actions...]\fR
+ \fBmvc generate controller NAME [actions...]\fR
 .RE
 .PP
 This will create a controller of the requested name. It will create a controller class file in the \fBcontrollers\fR
 directory. If action names are requested, the controller class will define an action method for each
-name. If not action names are requested, ejsweb will define a default action named \fBindex\fR.
+name. If not action names are requested, mvc will define a default action named \fBindex\fR.
 Actions are controller functions that are invoked in response to client requests. You can edit the controller
 source to meet your needs.
 .SH GENERATING MODELS
@@ -90,7 +92,7 @@ Database models are Ejscript classes that encapsulate database data and provide 
 conduit to interact with the database. To generate a model:
 .RS 5
 
- \fBejsweb generate model MODEL [field:type ...]\fR
+ \fBmvc generate model MODEL [field:type ...]\fR
 .RE
 
 This will create a database model and will generate a model class under the \fBmodels\fR directory.
@@ -108,7 +110,7 @@ managing a datbase table.
 To generate a scaffold:
 .RS 5
 
- \fBejsweb generate scaffold MODEL [field:type ...]\fR
+ \fBmvc generate scaffold MODEL [field:type ...]\fR
 .RE
 .PP
 This will create a scaffold for the specified database model and will generate a controller of the same name.
@@ -121,25 +123,25 @@ provides the ability to list the database table rows and select an entry to edit
 You can use the --apply switch to apply the database migration to upgrade the database.
 .SH GENERATING MIGRATIONS
 Database migrations are scripts which modify the database schema or content. You can create database migrations 
-by the \fBejsweb generate migration\fR command. This command generates a migration
+by the \fBmvc generate migration\fR command. This command generates a migration
 for a specific model by creating or removing tables and columns. To generate a migration:
 .RS 5
 
- \fBejsweb generate migration description MODEL [field:type ...]\fR
+ \fBmvc generate migration description MODEL [field:type ...]\fR
 .RE
 .PP
 This will create a migration script under the \fBdb/migrations\fR directory. Migration scripts filenames are timestamped
 and use the description is used as part of the filename for the migration script (so keep it short and sweet). 
 .PP
-For each specified field:type pair, ejsweb
+For each specified field:type pair, mvc
 will generate add column code in the migration script. If the --reverse switch is specified, then remove column code
 will be generated. To change the type or name of a column, remove then re-add the column. 
 .PP
 .SH APPLYING MIGRATIONS
-Migration scripts can be run via the \fBejsweb migrate\fR command. With not other parameters, the command will run
-all migrations that have not yet been applied to the database. You can also use \fBejsweb migrate forward\fR to apply
-apply the next unapplied migration. Similarly \fBejsweb migrate backward\fR will reverse the last applied migration.
-You can also use \fBejsweb migrate NNN\fR to migrate forward or backward to a specific migration. NNN is the migration 
+Migration scripts can be run via the \fBmvc migrate\fR command. With not other parameters, the command will run
+all migrations that have not yet been applied to the database. You can also use \fBmvc migrate forward\fR to apply
+apply the next unapplied migration. Similarly \fBmvc migrate backward\fR will reverse the last applied migration.
+You can also use \fBmvc migrate NNN\fR to migrate forward or backward to a specific migration. NNN is the migration 
 sequence number which is the number at the start of the migration script file name.
 
 .SH COMPILING
@@ -153,7 +155,7 @@ can also explicilty recompile portions or the complete appliction.
 .PP
 Ejsweb can recompile everything via:
 .RS 5
- \fBejsweb compile ...\fR.
+ \fBmvc compile ...\fR.
 .RE
 This will compile each controller and view and also recompile the application and module source code. Module files for
 each component will be generated.
@@ -161,28 +163,28 @@ each component will be generated.
 Ejsweb also provides options for you to individually compile controllers and views. To recompile named views or controllers:
 .RS 5
 
- \fBejsweb compile view NAMES...\fR.
+ \fBmvc compile view NAMES...\fR.
 
- \fBejsweb compile controller NAMES...\fR.
+ \fBmvc compile controller NAMES...\fR.
 
 .RE
 .PP
 Models are compiled with application code into a single module file. To recompile the models and application source code:
 .RS 5
 
- \fBejsweb compile app\fR.
+ \fBmvc compile app\fR.
 .RE
 .PP
 To compile the entire application and produce a single module file:
 .RS 5
 
- \fBejsweb compile all\fR.
+ \fBmvc compile all\fR.
 .RE
 .PP
 To compile stand-alone Ejscript web pages:
 .RS 5
 
- \fBejsweb compile path/name.ejs...\fR.
+ \fBmvc compile path/name.ejs...\fR.
 .RE
 .PP
 When compiling views, you can use the \fB--keep\fR switch to preserve the intermediate generated Ejscript source file.
@@ -191,7 +193,7 @@ When compiling views, you can use the \fB--keep\fR switch to preserve the interm
 To run your application:
 .RS 5
 
- \fBejsweb run\fR
+ \fBmvc run\fR
 .RE
 .PP
 This requires that your config/config.ecf file be modified to define command to run your web server.
@@ -199,19 +201,19 @@ This requires that your config/config.ecf file be modified to define command to 
 To clean all generated module files:
 .RS 5
 
- \fBejsweb clean\fR
+ \fBmvc clean\fR
 .RE
 .SH OPTIONS
 .PP 
 Ejsweb has the following command usage patterns:
 
 .RS 5
- ejsweb clean
- ejsweb compile [all | app | controller names | model names | view names]
- ejsweb compile path/name.ejs ...
- ejsweb generate [app name | controller name [action [, action] ...]| model name]
- ejsweb generate scaffold model [controller] [action [, action]...]
- ejsweb run
+ mvc clean
+ mvc compile [all | app | controller names | model names | view names]
+ mvc compile path/name.ejs ...
+ mvc generate [app name | controller name [action [, action] ...]| model name]
+ mvc generate scaffold model [controller] [action [, action]...]
+ mvc run
 .RE
 .TP 6
 \fB\--database connector\fR
@@ -230,16 +232,16 @@ previously generated files.
 
 .TP 6
 \fB\--search ejsPath\fR
-Set the module search path. The module search path is a set of directories that the \fBejsweb\fR command will use
+Set the module search path. The module search path is a set of directories that the \fBmvc\fR command will use
 when locating and loading Ejscript modules.  The search path will always have some system directories appended 
 to the end. These include paths specified via the \fB\ EJSPATH\fR environment variable and key system directories
-such as the Ejscript system module directory and the directory containing the \fBejsweb\fR command.
+such as the Ejscript system module directory and the directory containing the \fBmvc\fR command.
 .IP
 The search path value is similar in format to the system PATH variable format. 
 On windows, path segments are separated by ";" and on Linux, Unix, FreeBSD and MAC, the path segments are separated 
 by ":" delimiters.
 .IP
-Given a module named "a.b.c" in a script, \fBejsweb\fR will use the following search strategy to locate the module:
+Given a module named "a.b.c" in a script, \fBmvc\fR will use the following search strategy to locate the module:
 .IP
 1. Search for a module file named "a.b.c.mod"
 .IP
@@ -261,4 +263,4 @@ Copyright \(co 2004-2010 Embedthis Software.  Ejscript is a trademark of Embedth
 
 .br
 .SH "SEE ALSO"
-ejsc, ejs, ejsmod, ejsvm
+ejsc, ejs, ejsmod

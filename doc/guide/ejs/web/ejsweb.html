@@ -63,7 +63,7 @@
 		        <ul>
 		          <li><a href="../../../guide/ejs/web/webTour.html">Web Framework Tour</a></li>
 		          <li><a href="../../../guide/ejs/web/mvc.html">Model-View-Controller</a></li>
-		          <li><a href="../../../guide/ejs/web/ejsweb.html">Application Generator</a></li>
+		          <li><a href="../../../guide/ejs/web/mvc.html">Application Generator</a></li>
 		          <li><a href="../../../guide/ejs/web/controllers.html">Controllers and Actions</a></li>
 		          <li><a href="../../../guide/ejs/web/views.html">Views and Layouts</a></li>
 		          <li><a href="../../../guide/ejs/web/controls.html">Ajax View Controls</a></li>
@@ -73,9 +73,9 @@
 <!-- EndDsi -->
         </div>
         <div class="contentLeft">
-            <h1>Application Generator &mdash; ejsweb</h1>
-            <p>Ejscript provides an application generator and manager, called <b>ejsweb</b>. This tool makes it easier
-            and quicker to create and manage your web applications. The <b>ejsweb</b> command generates Ejscript web
+            <h1>Application Generator &mdash; mvc</h1>
+            <p>Ejscript provides an application generator and manager, called <b>mvc</b>. This tool makes it easier
+            and quicker to create and manage your web applications. The <b>mvc</b> command generates Ejscript web
             applications, database migrations, database models, scaffolds and views.</p>
             <p>Ejsweb will create directories and generate configuration and source code files which can then be
             manually edited as required. Ejsweb is intelligent and will not overwrite existing files, so you can safely
@@ -84,10 +84,10 @@
             <p>Ejsweb can also be used to run your application by invoking a configured web server.</p><a name="app"
             id="app"></a>
             <h2 class="section">Generating Applications</h2>
-            <p>To start a new web application, run <b>ejsweb</b> to create the application directory and generate the
+            <p>To start a new web application, run <b>mvc</b> to create the application directory and generate the
             essential application configuration and script files. For example:</p>
             <pre>
-ejsweb generate app myApp
+mvc generate app myApp
 </pre>
             <h3>Created Directories</h3>
             <p>This will create the following directories. Most of these directories are initially empty, but may be
@@ -107,7 +107,7 @@ ejsweb generate app myApp
                     </tr>
                     <tr>
                         <td>.ejs</td>
-                        <td>State files used by ejsweb</td>
+                        <td>State files used by mvc</td>
                     </tr>
                     <tr>
                         <td>bin</td>
@@ -233,17 +233,17 @@ ejsweb generate app myApp
             <h2 class="section">Generating Controllers</h2>
             <p>Controllers are the primary mechanism for responding to client requests. To generate a controller:</p>
             <pre>
-ejsweb generate controller NAME [actions...]
+mvc generate controller NAME [actions...]
 </pre>
             <p>This will create the named controller in the <em>controllers</em> directory. A controller manages the
             web application and the controller action methods are invoked by Ejscript to respond to client requests and
             generate responses.</p>
-            <p>If no actions are requested, ejsweb will create a default <em>index</em> action method. If other actions
-            are requested, ejsweb will create an empty action method for each requested action. You can edit the
+            <p>If no actions are requested, mvc will create a default <em>index</em> action method. If other actions
+            are requested, mvc will create an empty action method for each requested action. You can edit the
             controller source to meet your needs.</p>
             <p>If you use the command:</p>
             <pre>
-ejsweb generate controller Admin edit login logout command.
+mvc generate controller Admin edit login logout command.
 </pre>The following controller code will be generated.
             <pre>
 public class AdminController extends BaseController {
@@ -261,7 +261,7 @@ public class AdminController extends BaseController {
             <p>Database models are Ejscript classes that encapsulate database data and provide access methods. They
             provide a conduit to interact with the database. To generate a model:</p>
             <pre>
-ejsweb generate model MODEL [field:type ...]
+mvc generate model MODEL [field:type ...]
 </pre>
             <p>This will create a database model and will generate a model class under the <em>models</em> directory.
             It will also create a database migration to create a database table of the same name as the model.</p>
@@ -274,7 +274,7 @@ ejsweb generate model MODEL [field:type ...]
             add, edit and list functionality for a database model. Scaffolds are useful to quickly generate prototype
             web pages and actions for managing a database table. To generate a scaffold:</p>
             <pre>
-ejsweb generate scaffold MODEL [field:type ...]
+mvc generate scaffold MODEL [field:type ...]
 </pre>
             <p>This will create a scaffold for the database model and will generate a controller of the same name. If
             field:type values are supplied, the database migration will include code to create a database column for
@@ -286,22 +286,22 @@ ejsweb generate scaffold MODEL [field:type ...]
             database.</p><a name="migrations" id="migrations"></a>
             <h2 class="section">Generating Migrations</h2>
             <p>Database migrations are scripts which modify the database schema or content. You can create database
-            migrations by the "<em>ejsweb generate migration</em>" command. This command generates a migration for a
+            migrations by the "<em>mvc generate migration</em>" command. This command generates a migration for a
             specific model by creating or removing tables and columns. To generate a migration:</p>
             <pre>
-ejsweb generate migration description MODEL [field:type ...]
+mvc generate migration description MODEL [field:type ...]
 </pre>
             <p>This will create a migration script under the db/migrations directory. Migration scripts filenames are
             time stamped and use the description as part of the filename for the migration script (so keep it short and
             sweet).</p>
-            <p>For each specified <em>field:type</em> pair, ejsweb will generate add column code in the migration
+            <p>For each specified <em>field:type</em> pair, mvc will generate add column code in the migration
             script. If the --reverse switch is specified, then remove column code will be generated. To change the type
             or name of a column, remove then re-add the column. <a name="runMigrations" id="runMigrations"></a></p>
             <h2 class="section">Running Migrations</h2>
-            <p>Migration scripts can be run via the "<em>ejsweb migrate</em>" command. Without other parameters, the
+            <p>Migration scripts can be run via the "<em>mvc migrate</em>" command. Without other parameters, the
             command will run all migrations that have not yet been applied to the database. You can also use
-            "<em>ejsweb migrate forward</em>" to apply the next unapplied migration. Similarly, "<em>ejsweb migrate
-            backward</em>" will reverse the last applied migration. You can also use "<em>ejsweb migrate NNN</em>" to
+            "<em>mvc migrate forward</em>" to apply the next unapplied migration. Similarly, "<em>mvc migrate
+            backward</em>" will reverse the last applied migration. You can also use "<em>mvc migrate NNN</em>" to
             migrate forward or backward to a specific migration. NNN is the migration sequence number which is the
             number at the start of the migration script file name.</p><a name="compiling" id="compiling"></a>
             <h2 class="section">Compiling</h2>
@@ -314,7 +314,7 @@ ejsweb generate migration description MODEL [field:type ...]
             <h3>Compile Everything</h3>
             <p>Ejsweb can recompile everything via:</p>
             <pre>
-ejsweb compile ...
+mvc compile ...
 </pre>
             <p>This will compile each controller and view and also recompile the application and module source code.
             Module files for each component will be generated.</p>
@@ -322,8 +322,8 @@ ejsweb compile ...
             <p>Ejsweb also provides options for you to individually compile controllers and views. To recompile named
             views or controllers:</p>
             <pre>
-ejsweb compile view NAMES...
-ejsweb compile controller NAMES...
+mvc compile view NAMES...
+mvc compile controller NAMES...
 </pre>
             <p>When compiling views, you can use the <em>--keep</em> switch to preserve the intermediate generated
             Ejscript source file. This can sometimes be helpful for debugging.</p>
@@ -331,43 +331,43 @@ ejsweb compile controller NAMES...
             <p>Models are compiled with application code into a single module file. To recompile the models and
             application source code:</p>
             <pre>
-ejsweb compile app
+mvc compile app
 </pre>
             <h3>Compile Application as One Module</h3>
             <p>To compile the entire application and produce a single module file:</p>
             <pre>
-ejsweb compile all
+mvc compile all
 </pre>
             <h3>Compile Stand-Alone Web Pages</h3>
             <p>To compile stand-alone Ejscript web pages:</p>
             <pre>
-ejsweb compile path/name.ejs...
+mvc compile path/name.ejs...
 </pre><a name="running" id="running"></a>
             <h2 class="section">Running</h2>
             <p>To run your application:</p>
             <pre>
-ejsweb run
+mvc run
 </pre>
             <p>This requires that your config/config.ecf file be modified to define command to run your web
             server.</p><a name="cleaning" id="cleaning"></a>
             <h2 class="section">Cleaning</h2>
             <p>To clean all generated module files:</p>
             <pre>
-ejsweb clean
+mvc clean
 </pre><a name="options" id="options"></a>
             <h2 class="section">Command Options</h2>
             <p>Ejsweb has the following command usage patterns:</p>
             <pre>
-ejsweb clean
-ejsweb compile [all | app | controller names... | model names... | view names...]
-ejsweb compile path/name.ejs...
-ejsweb generate app name
-ejsweb generate controller name [actions...]
-ejsweb generate migration description model [field:type...]
-ejsweb generate model name
-ejsweb generate scaffold model [field:type ...]
-ejsweb migrate [forward|backward|NNN]
-ejsweb run
+mvc clean
+mvc compile [all | app | controller names... | model names... | view names...]
+mvc compile path/name.ejs...
+mvc generate app name
+mvc generate controller name [actions...]
+mvc generate migration description model [field:type...]
+mvc generate model name
+mvc generate scaffold model [field:type ...]
+mvc migrate [forward|backward|NNN]
+mvc run
 </pre>
             <table title="details">
                 <thead>
@@ -380,7 +380,7 @@ ejsweb run
                     <tr>
                         <td class="nowrap">--apply</td>
                         <td>Apply the database migration when generating a scaffold. This is the same as running
-                        <em>ejsweb migrate</em>.</td>
+                        <em>mvc migrate</em>.</td>
                     </tr>
                     <tr>
                         <td class="nowrap">--database connector</td>
