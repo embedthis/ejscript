@@ -1,6 +1,6 @@
 change() {
     cp $3 $3.bak
-    if sed -e "1,\$s^$1^$2^g" <$3.bak >$3
+    if sed -e "1,\$s!$1!$2!g" <$3.bak >$3
     then 
         echo "$3"
         rm -f $3.bak

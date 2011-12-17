@@ -64,7 +64,7 @@
 		        <ul>
 		          <li><a href="../../../guide/ejs/web/webTour.html">Web Framework Tour</a></li>
 		          <li><a href="../../../guide/ejs/web/mvc.html">Model-View-Controller</a></li>
-		          <li><a href="../../../guide/ejs/web/mvc.html">Application Generator</a></li>
+		          <li><a href="../../../guide/ejs/web/generator.html">Application Generator</a></li>
 		          <li><a href="../../../guide/ejs/web/controllers.html">Controllers and Actions</a></li>
 		          <li><a href="../../../guide/ejs/web/views.html">Views and Layouts</a></li>
 		          <li><a href="../../../guide/ejs/web/controls.html">Ajax View Controls</a></li>
@@ -80,7 +80,7 @@
             <p>First make sure you have read the <a href="../users/quickStart.html">Quick Start</a> and the Ejscript
             <a href="../users/tour.html">Language Tour</a>, and that you have Ejscript installed on your system so you
             can type along as you go. This web framework tour will work with the Ejscript <a href=
-            "../users/shell.html">Command Shell</a> and the web framework <a href="mvc.html">mvc</a> application
+            "../users/shell.html">Command Shell</a> and the web framework <a href="generator.html">mvc</a> application
             generator to run scripts.</p><a name="blog" id="blog"></a>
             <h2 class="section">A Demonstration Blog Application</h2>
             <p>Command sessions are presented in blue boxes. Output from the system is highlighted in yellow. Bold
@@ -90,50 +90,49 @@
             program. Type the following mvc command in a command terminal window:</p>
             <pre>
 <b>home&gt;</b> mvc -v generate app blog<b>
-[CREATED] Directory: blog
-[CREATED] Directory: blog/.tmp
-[CREATED] Directory: blog/.ejs
-[CREATED] Directory: blog/bin
-[CREATED] Directory: blog/config
-[CREATED] Directory: blog/controllers
-[CREATED] Directory: blog/db
-[CREATED] Directory: blog/doc
-[CREATED] Directory: blog/logs
-[CREATED] Directory: blog/models
-[CREATED] Directory: blog/messages
-[CREATED] Directory: blog/test
-[CREATED] Directory: blog/src
-[CREATED] Directory: blog/utils
-[CREATED] Directory: blog/views
-[CREATED] Directory: blog/views/layouts
-[CREATED] Directory: blog/web
-[CREATED] Directory: blog/web/images
-[CREATED] Directory: blog/web/themes
-[CREATED] Config File: "blog/config/config.ecf"
-[CREATED] Config File: "blog/config/compiler.ecf"
-[CREATED] Config File: "blog/config/database.ecf"
-[CREATED] Config File: "blog/config/view.ecf"
-[CREATED] Theme: "blog/web/themes/default.css"
-[CREATED] Layout Style: "blog/web/layout.css"
-[CREATED] Index: "blog/web/index.ejs"
-[CREATED] Directory: blog/web/default
-[CREATED] Web File: "blog/web/favicon.ico"
-[CREATED] Web File: "blog/web/images/banner.jpg"
-[CREATED] Web File: "blog/web/images/splash.jpg"
-[CREATED] BaseController: "blog/controllers/Base.es"
-[CREATED] Layout: "blog/views/layouts/default.ejs"
-[CREATED] README: "blog/README"
-[BUILD]   /Users/mob/hg/ejs/bin/ejsc --debug --web --out App.mod controllers/Base.es</b>
+  [CREATED] Directory: blog
+  [CREATED] Directory: cache
+  [CREATED] Directory: controllers
+  [CREATED] Directory: db
+  [CREATED] Directory: db/migrations
+  [CREATED] Directory: models
+  [CREATED] Directory: src
+  [CREATED] Directory: views
+  [CREATED] Directory: views/Base
+  [CREATED] Directory: layouts
+  [CREATED] Directory: static
+  [CREATED] Directory: static/images
+  [CREATED] Directory: static/themes
+  [CREATED] start.es: "start.es"
+  [CREATED] App: "src/App.es"
+  [CREATED] Config File: "ejsrc"
+  [CREATED] Layout: "layouts/default.ejs"
+  [CREATED] HomePage: "views/Base/index.ejs"
+  [CREATED] Static web page: "static/images/banner.jpg"
+  [CREATED] Static web page: "static/images/favicon.ico"
+  [CREATED] Static web page: "static/images/splash.jpg"
+  [CREATED] Static web page: "static/js"
+  [CREATED] Static web page: "static/js/jquery.ejs.min.js"
+  [CREATED] Static web page: "static/js/jquery.min.js"
+  [CREATED] Static web page: "static/js/jquery.simplemodal.min.js"
+  [CREATED] Static web page: "static/layout.css"
+  [CREATED] Static web page: "static/themes/default.css"
+  [CREATED] BaseController: "controllers/Base.es"
+  [CREATED] README: "README"
+  [BUILD]: src/App.es controllers/Base.es
+Change directory into your application directory: blog
+Then run the web server via: "mvc run"
+and point your browser at: http://localhost::4000/ to view your app.</b>
 </pre>
             <p>This simple command accomplished quite a bit. It first created a new directory called <b>blog</b> for
             the application, and then created subdirectories for various parts of the application. Initially, most of
             these directories are empty. They are used as your application grows.</p>
-            <p>The command also created a few configuration files in the config directory. These allow you to define
-            database name, and other configuration settings. The Ejscript web framework follows the <i>"convention over
-            configuration"</i> philosophy popularized by <a href="http://www.rubyonrails.org">Ruby on Rails</a>. This
-            means that Ejscript adopts certain conventions about where files and directories should be placed and about
-            how names are used. If you work with these conventions, then you need to do little or no configuration.
-            Things will just work.</p>
+            <p>The command also created an <em>ejsrc</em> configuration file. This allows you to define a
+            database name, and set other configuration settings. The Ejscript web framework follows the 
+            <i>"convention over configuration"</i> philosophy popularized by 
+            <a href="http://www.rubyonrails.org">Ruby on Rails</a>. This means that Ejscript adopts certain conventions
+            about where files and directories should be placed and about how names are used. If you work with these
+            conventions, then you need to do little or no configuration.  Things will just work.</p>
             <p>Here are the most important directories:</p>
             <table title="directories">
                 <thead>
@@ -144,8 +143,8 @@
                 </thead>
                 <tbody>
                     <tr>
-                        <td>config</td>
-                        <td>Application configuration files</td>
+                        <td>cache</td>
+                        <td>Compiled views and web pages</td>
                     </tr>
                     <tr>
                         <td>controllers</td>
@@ -156,6 +155,10 @@
                         <td>Database file and database initialization scripts</td>
                     </tr>
                     <tr>
+                        <td>layouts</td>
+                        <td>View layout template pages</td>
+                    </tr>
+                    <tr>
                         <td>models</td>
                         <td>Database model classes</td>
                     </tr>
@@ -164,39 +167,18 @@
                         <td>Application source code classes</td>
                     </tr>
                     <tr>
+                        <td>static</td>
+                        <td>Static web pages</td>
+                    </tr>
+                    <tr>
                         <td>views</td>
                         <td>View web pages</td>
                     </tr>
-                    <tr>
-                        <td>views/layouts</td>
-                        <td>View layout template pages</td>
-                    </tr>
-                    <tr>
-                        <td>web</td>
-                        <td>Static web pages</td>
-                    </tr>
                 </tbody>
             </table>
-            <p>See the <a href="mvc.html">mvc</a> documentation for an explanation of the other generated
-            directories.</p><!--
-            <p>The purpose of the other directories:</p>
-            <table summary="directories">
-                <thead>
-                    <tr>
-                        <td>Name</td><td>Description</td>
-                    </tr>
-                </thead>
-                <tbody>
-                    <tr><td>.tmp</td><td>Temporary files</td></tr>
-                    <tr><td>bin</td><td>Binary programs and tools</td></tr>
-                    <tr><td>doc</td><td>Generated documentation for the application</td></tr>
-                    <tr><td>logs</td><td>Application logs</td></tr>
-                    <tr><td>messages</td><td>Message catalogues for internationalized applications</td></tr>
-                    <tr><td>test</td><td>Unit tests</td></tr>
-                    <tr><td>utils</td><td>Source for utility scripts and programs</td></tr>
-                </tbody>
-            </table>
--->
+            <p>See the <a href="generator.html">mvc</a> command documentation for an explanation of the other generated
+            directories.</p>
+            
             <a name="run" id="run"></a>
             <h2 class="section">Running your Application</h2>
             <p>You can immediately run your application after generation. Ejscript includes a built-in web server so
@@ -273,21 +255,17 @@ appweb: 1: HTTP services are ready (single-threaded)</b>
             <pre>
 mvc generate scaffold Post title:string body:text
 <b>[CREATED] Directory: views/Post
-[CREATED] Migration: "db/migrations/20110331134831_Create_Scaffold_Post.es"
-[CREATED] Model: "models/Post.es"
-[CREATED] Controller: "controllers/Post.es"
-[CREATED] View: "views/Post/list.ejs"
-[CREATED] View: "views/Post/edit.ejs"
-[BUILD]: ejsc --web --out App.mod models/Post.es controllers/Base.es</b> 
+  [CREATED] Migration: "db/migrations/20111216231137_Create_Scaffold_Post.es"
+  [CREATED] Model: "models/Post.es"
+  [CREATED] Controller: "controllers/Post.es"
+  [CREATED] View: "views/Post/index.ejs"
+  [CREATED] View: "views/Post/edit.ejs"
+  [BUILD]: src/App.es models/Post.es controllers/Base.es
+  [MIGRATE]: Apply 20111216231137_Create_Scaffold_Post.es</b>
 </pre>
             <p>This command created a model for the Post under the models directory, and Post controller and
             <em>list</em> and <em>edit</em> views. It also created a database migration script to update the database
             and create a Post table with <em>title</em> and <em>body</em> columns.</p>
-            <p>To run the migration and update the database, we use mvc again.</p>
-            <pre>
-mvc migrate
-<b>[MIGRATE]: Apply 20110331134831_Create_Scaffold_Post.es</b>
-</pre>
             <p>Now if you set your browser to the URL for the post controller, you will see your post listing screen.
             <img src="../../../images/webtour-postList.png" alt="postList" class="bare-screen" /> <a name="newPosts" id=
             "newPosts"></a></p>
@@ -334,7 +312,7 @@ public class PostController extends BaseController {
             <p>Alternatively, you may wish to add some tabs to navigate your blog app. Ejscript provides a layout
             template engine that is used by all views to provide a common look and feel to your application. View pages
             leverage templates so they don't need to repeat page elements that are common across the application. Edit
-            the master layout template file <em>views/layouts/default.ejs</em> and change it to use the <em>tabs</em>
+            the master layout template file <em>layouts/default.ejs</em> and change it to use the <em>tabs</em>
             view control.</p>
             <pre>
 &lt;body&gt;
@@ -394,6 +372,6 @@ public function validate() {
             All rights reserved. Embedthis, Ejscript and Appweb are trademarks of Embedthis Software LLC.</a>
 		</p>
 	</div>
-<!-- EndDsi -->
 </body>
 </html>
+<!-- EndDsi -->

@@ -63,7 +63,7 @@
 		        <ul>
 		          <li><a href="../../../guide/ejs/web/webTour.html">Web Framework Tour</a></li>
 		          <li><a href="../../../guide/ejs/web/mvc.html">Model-View-Controller</a></li>
-		          <li><a href="../../../guide/ejs/web/mvc.html">Application Generator</a></li>
+		          <li><a href="../../../guide/ejs/web/generator.html">Application Generator</a></li>
 		          <li><a href="../../../guide/ejs/web/controllers.html">Controllers and Actions</a></li>
 		          <li><a href="../../../guide/ejs/web/views.html">Views and Layouts</a></li>
 		          <li><a href="../../../guide/ejs/web/controls.html">Ajax View Controls</a></li>
@@ -77,11 +77,11 @@
             <p>Ejscript provides an application generator and manager, called <b>mvc</b>. This tool makes it easier
             and quicker to create and manage your web applications. The <b>mvc</b> command generates Ejscript web
             applications, database migrations, database models, scaffolds and views.</p>
-            <p>Ejsweb will create directories and generate configuration and source code files which can then be
-            manually edited as required. Ejsweb is intelligent and will not overwrite existing files, so you can safely
+            <p>Mvc will create directories and generate configuration and source code files which can then be
+            manually edited as required. Mvc is intelligent and will not overwrite existing files, so you can safely
             edit and regenerate without losing your changes. You can overwrite your changes if you wish to by using the
             <b>--overwrite</b> switch.</p>
-            <p>Ejsweb can also be used to run your application by invoking a configured web server.</p><a name="app"
+            <p>Mvc can also be used to run your application by invoking a configured web server.</p><a name="app"
             id="app"></a>
             <h2 class="section">Generating Applications</h2>
             <p>To start a new web application, run <b>mvc</b> to create the application directory and generate the
@@ -102,20 +102,8 @@ mvc generate app myApp
                 </thead>
                 <tbody>
                     <tr>
-                        <td>.tmp</td>
-                        <td>Temporary working directory</td>
-                    </tr>
-                    <tr>
-                        <td>.ejs</td>
-                        <td>State files used by mvc</td>
-                    </tr>
-                    <tr>
-                        <td>bin</td>
-                        <td>Programs and scripts</td>
-                    </tr>
-                    <tr>
-                        <td>config</td>
-                        <td>Configuration files</td>
+                        <td>cache</td>
+                        <td>Compiled views and web pages</td>
                     </tr>
                     <tr>
                         <td>controllers</td>
@@ -130,60 +118,40 @@ mvc generate app myApp
                         <td>Database migration scripts</td>
                     </tr>
                     <tr>
-                        <td>doc</td>
-                        <td>Documentation for the application</td>
-                    </tr>
-                    <tr>
-                        <td>logs</td>
-                        <td>Log files</td>
+                        <td>layouts</td>
+                        <td>View layout files</td>
                     </tr>
                     <tr>
                         <td>models</td>
                         <td>Database model code</td>
                     </tr>
                     <tr>
-                        <td>messages</td>
-                        <td>Internationalization messages</td>
-                    </tr>
-                    <tr>
-                        <td>test</td>
-                        <td>Unit tests</td>
-                    </tr>
-                    <tr>
                         <td>src</td>
                         <td>Extra application source code</td>
                     </tr>
                     <tr>
-                        <td>utils</td>
-                        <td>Program utilities</td>
+                        <td>static</td>
+                        <td>Static web page directory</td>
+                    </tr>
+                    <tr>
+                        <td>static/images</td>
+                        <td>Static images</td>
+                    </tr>
+                    <tr>
+                        <td>static/js</td>
+                        <td>Client side JavaScripts</td>
+                    </tr>
+                    <tr>
+                        <td>Application/themes</td>
+                        <td>Application HTML themes</td>
                     </tr>
                     <tr>
                         <td>views</td>
                         <td>View source files</td>
                     </tr>
-                    <tr>
-                        <td>views/layouts</td>
-                        <td>View layout files</td>
-                    </tr>
-                    <tr>
-                        <td>web</td>
-                        <td>Public web directory</td>
-                    </tr>
-                    <tr>
-                        <td>web/images</td>
-                        <td>Public images</td>
-                    </tr>
-                    <tr>
-                        <td>web/js</td>
-                        <td>Client side JavaScripts</td>
-                    </tr>
-                    <tr>
-                        <td>web/themes</td>
-                        <td>Application HTML themes</td>
-                    </tr>
                 </tbody>
             </table>
-            <p>Ejsweb will also create some files which have the following meaning:</p>
+            <p>Mvc will also create some files which have the following meaning:</p>
             <table title="Files" class="full">
                 <thead>
                     <tr>
@@ -193,43 +161,29 @@ mvc generate app myApp
                 </thead>
                 <tbody>
                     <tr>
-                        <td>config/config.ecf</td>
-                        <td>Application configuration file</td>
-                    </tr>
-                    <tr>
-                        <td>config/compiler.ecf</td>
-                        <td>Compiler configuration file</td>
-                    </tr>
-                    <tr>
-                        <td>config/database.ecf</td>
-                        <td>Database configuration file</td>
-                    </tr>
-                    <tr>
-                        <td>config/view.ecf</td>
-                        <td>View connector configuration file</td>
-                    </tr>
-                    <tr>
-                        <td>web/themes/default.css</td>
-                        <td>Default theme CSS file</td>
-                    </tr>
-                    <tr>
-                        <td>web/layout.css</td>
-                        <td>Default layout CSS file</td>
-                    </tr>
-                    <tr>
-                        <td>controllers/Application.es</td>
+                        <td>controllers/Base.es</td>
                         <td>Application base controller class</td>
                     </tr>
                     <tr>
-                        <td>views/layouts/default.ejs</td>
+                        <td>ejsrc</td>
+                        <td>Application configuration file</td>
+                    </tr>
+                    <tr>
+                        <td>layouts/default.ejs</td>
                         <td>Default layout web page</td>
                     </tr>
                     <tr>
-                        <td>README</td>
-                        <td>Documentation explaining these files and directories</td>
+                        <td>static/themes/default.css</td>
+                        <td>Default theme CSS file</td>
+                    </tr>
+                    <tr>
+                        <td>static/layout.css</td>
+                        <td>Default layout CSS file</td>
                     </tr>
                 </tbody>
-            </table><a name="controllers" id="controllers"></a>
+            </table>
+            
+            <a name="controllers" id="controllers"></a>
             <h2 class="section">Generating Controllers</h2>
             <p>Controllers are the primary mechanism for responding to client requests. To generate a controller:</p>
             <pre>
@@ -312,14 +266,14 @@ mvc generate migration description MODEL [field:type ...]
             source code is modified. It can intelligently recompile views, actions, controllers and database models as
             required. However, you can also explicitly recompile portions or the complete application.</p>
             <h3>Compile Everything</h3>
-            <p>Ejsweb can recompile everything via:</p>
+            <p>Mvc can recompile everything via:</p>
             <pre>
 mvc compile ...
 </pre>
             <p>This will compile each controller and view and also recompile the application and module source code.
             Module files for each component will be generated.</p>
             <h3>Compile Views and Controllers</h3>
-            <p>Ejsweb also provides options for you to individually compile controllers and views. To recompile named
+            <p>Mvc also provides options for you to individually compile controllers and views. To recompile named
             views or controllers:</p>
             <pre>
 mvc compile view NAMES...
@@ -356,7 +310,7 @@ mvc run
 mvc clean
 </pre><a name="options" id="options"></a>
             <h2 class="section">Command Options</h2>
-            <p>Ejsweb has the following command usage patterns:</p>
+            <p>Mvc has the following command usage patterns:</p>
             <pre>
 mvc clean
 mvc compile [all | app | controller names... | model names... | view names...]
@@ -399,7 +353,7 @@ mvc run
                     </tr>
                     <tr>
                         <td>--overwrite</td>
-                        <td>Overwrite existing files. Ejsweb normally will not overwrite existing files. This is to
+                        <td>Overwrite existing files. Mvc normally will not overwrite existing files. This is to
                         preserve user changes to previously generated files.</td>
                     </tr>
                     <tr>
@@ -426,6 +380,6 @@ mvc run
             All rights reserved. Embedthis, Ejscript and Appweb are trademarks of Embedthis Software LLC.</a>
 		</p>
 	</div>
-<!-- EndDsi -->
 </body>
 </html>
+<!-- EndDsi -->
