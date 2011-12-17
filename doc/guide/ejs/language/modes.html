@@ -64,7 +64,6 @@
 		        <ul>
 		          <li><a href="../../../guide/ejs/overview.html">Overview</a></li>
 		          <li><a href="../../../guide/ejs/features.html">Language Features</a></li>
-		          <li><a href="../../../guide/ejs/language/modes.html">Language Modes</a></li>
 		          <li><a href="../../../guide/ejs/language/syntax.html">Language Syntax</a></li>
 		          <li><a href="../../../guide/ejs/language/statements.html">Statements</a></li>
 		          <li><a href="../../../guide/ejs/language/expressions.html">Expressions</a></li>
@@ -90,110 +89,9 @@
             also offers a set of enhancements and fixes designed to improve the language and correct some longstanding
             JavaScript design issues. Use of these enhancements and fixes is optional and controlled via <i>opt-in</i>
             configuration and script pragma directives. Language modes can be selected on a source file-by-file basis.
-            So you can mix and match ECMA-262 pure JavaScript with enhanced Ejscript code if you wish.</p><a name=
-            "modes" id="modes"></a>
-            <h2>Mode Controls</h2>
-            <p>Ejscript provides two control mechanisms:</p>
-            <ul>
-                <li>A <a href="#lang">Language Compliance Mode</a> control</li>
-                <li>A <a href="#compiler">Compiler Error Checking Mode</a> control</li>
-            </ul><a name="lang" id="lang"></a>
-            <h2 class="section">Language Compliance Mode</h2>
-            <p>The language compliance mode dictates what language statements and directives are available. The
-            language mode can be configured by a <b>use lang</b> pragma directive in your scripts. This pragma takes
-            effect on a file by file basis and so allows libraries and programs from various sources to select the mode
-            that best suits their needs.</p>
-            <p>Ejscript supports three language compliance modes.</p>
-            <ol>
-                <li><b>ecma</b> &mdash; Strict ECMA-262 3.X compliance.</li>
-                <li><b>plus</b> &mdash; Close ECMA-262 3.X compliance with enhancements.</li>
-                <li><b>fixed</b> &mdash; Close ECMA-262 3.X compliant with enhancements and some compatibility breaking
-                fixes.</li>
-            </ol><a name="ecma" id="ecma"></a>
-            <h2>Ecma Mode</h2>
-            <p>Code running in <b>ecma</b> mode has all the available features and capabilities of the ECMA-262
-            specification. No Ejscript enhancements or fixes are available. This mode is useful for JavaScript code
-            designed for browsers or other JavaScript engines.</p><a name="plus" id="plus"></a>
-            <h2>Plus Mode</h2>
-            <p>Code running in <b>plus</b> mode has access to all of ECMA-262 and the Ejscript enhancements which are
-            closely compatible with ECMA-262. This mode is useful to migrate code from ecma mode and to gradually take
-            advantage of Ejscript enhancements.</p>
-            <p>This mode does introduce new keywords, directives and statements into the language. The enhancements
-            available in this mode include:</p>
-            <ul>
-                <li>Variable visibility controls</li>
-                <li>Block and file scope</li>
-                <li>Optional type annotations</li>
-                <li>Class, extends, super directives</li>
-                <li>Interface directive</li>
-                <li>Module directive</li>
-                <li>Namespaces</li>
-                <li>Use pragmas</li>
-                <li>Extended language library: Http, File I/O, Sockets, Stream I/O, XML, Eventing</li>
-                <li>Cast, is operators</li>
-                <li>E4X XML support</li>
-                <li>Iterators and Generators</li>
-                <li>Assertions</li>
-                <li>Conditional compilation</li>
-                <li>Let variable declarations</li>
-                <li>Automatic type conversion for function arguments</li>
-                <li>Extended try / catch syntax</li>
-                <li>Extended operators</li>
-                <li>Reflection</li>
-                <li>Function rest arguments</li>
-            </ul><a name="fixed" id="fixed"></a>
-            <h2>Fixed Mode</h2>
-            <p>Code running in <b>fixed</b> mode has access to all of ECMA-262 and all the Ejscript enhancements.
-            Further, this mode fixes some ECMA-262 deficiencies and thus introduces some breaking changes. This mode is
-            the most secure and capable language mode.</p>
-            <p>The fixes include:</p>
-            <ul>
-                <li>Assignments to undeclared variables inside functions will create local variables instead of
-                creating unwanted globals.</li>
-                <li>Multiple declarations of a variable name at the same scope are prohibited.</li>
-                <li>Warn if a function call supplies insufficient actual parameters.</li>
-            </ul><a name="mixing" id="mixing"></a>
-            <h2>Mixing Modes</h2>
-            <p>The language mode applies at the source file level and it is perfectly acceptable to include code in one
-            program that uses different modes. For example: a library provided by one vendor may be designed to run in
-            fixed mode, whereas the main program from another vendor may expect to run in ecma mode. The Ejscript
-            compiler and VM apply the appropriate language specification depending on the function code that is being
-            compiled or run from time-to-time.</p><a name="setLang" id="setLang"></a>
-            <h2 class="section">Setting the Language Mode</h2>
-            <p>The language mode control is set to a default value by the <b>configure</b> program when Ejscript is
-            build from source. The default value can then be modified by command line switches to the <b>ejs</b> shell
-            or <b>ec</b> compiler. In turn, this can be overridden by an Ejscript pragma directive in your script
-            files.</p>
-            <h2>Configure Language Switch</h2>
-            <p>To set the language mode for the configure command when building Ejscript from source, use the
-            <b>--lang</b> switch. The switch takes the values: ecma, plus or fixed. The default is <b>plus</b>. This
-            setting defines the global default setting for the language compliance mode.</p>
-            <pre>
-./configure --lang=ecma
-./configure --lang=plus
-./configure --lang=fixed
-</pre>
-            <h2>Command Line Language Switch</h2>
-            <p>To set the language mode on the <b>ejs</b> or <b>ec</b> commands, use the <b>--lang</b> switch. The
-            switch takes the values: ecma, plus or fixed. This will override the value defined by the <b>configure</b>
-            command and defines the default setting when compiling or interpreting programs.</p>
-            <pre>
-ejs --lang=ecma script1.es
-ejs --lang=plus script2.es
-ejs --lang=fixed scrip3t.es
-</pre>
-            <h2>Use Language Pragma</h2>
-            <p>To set the language mode for a source file, utilize the <b>use lang</b> pragma directive. The directive
-            takes the values: ecma, plus or fixed. This pragma will override the value defined by the <b>configure</b>
-            command or by the <b>ec</b> or <b>ejs</b> commands.</p>
-            <pre>
-/* In source file 1 */
-use lang ecma
-/* In source file 2 */
-use lang fixed
-/* In source file 3 */
-/* No use pragma - just accept the current default */
-</pre><a name="compiler" id="compiler"></a>
+            So you can mix and match ECMA-262 pure JavaScript with enhanced Ejscript code if you wish.</p>
+            
+            <a name= "modes" id="modes"></a>
             <h2 class="section">Compiler Checking Mode</h2>
             <p>The Compiler checking mode controls how aggressively the compiler warns about potential program
             errors.</p>
@@ -238,8 +136,10 @@ ejs --strict script2.es
             <pre>
 /* In source file 1 */
 use strict
+
 /* In source file 2 */
 use standard
+
 /* In source file 3 */
 /* No use pragma - just accept the current default */
 </pre>

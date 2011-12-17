@@ -56,13 +56,12 @@
 		        <ul>
 		          <li><a href="../../../guide/ejs/overview.html">Overview</a></li>
 		          <li><a href="../../../guide/ejs/features.html">Language Features</a></li>
-		          <li><a href="../../../guide/ejs/language/modes.html">Language Modes</a></li>
 		          <li><a href="../../../guide/ejs/language/syntax.html">Language Syntax</a></li>
 		          <li><a href="../../../guide/ejs/language/statements.html">Statements</a></li>
 		          <li><a href="../../../guide/ejs/language/expressions.html">Expressions</a></li>
 		          <li><a href="../../../guide/ejs/language/objects.html">Objects and Arrays</a></li>
 		          <li><a href="../../../guide/ejs/language/functions.html">Functions and Methods</a></li>
-		          <li><a href="../../../guide/ejs/language/core.html">Core Language Classes</a></li>
+		          <li><a href="../../../guide/ejs/language/core.html">Core Language Types</a></li>
 		          <li><a href="../../../guide/ejs/language/types.html">Types and Declarations</a></li>
 		          <li><a href="../../../guide/ejs/language/classes.html">Classes</a></li>
 		          <li><a href="../../../guide/ejs/language/modules.html">Modules</a></li>
@@ -83,36 +82,41 @@
             <h2>App</h2>
             <p>Application status class. Provides methods for the current working directory, command line arguments,
             environment strings and the ability to exit the application.</p>
-            <h2>Application</h2>
-            <p>Web framework Application object.</p>
             <h2>Array</h2>
-            <p>Standard JavaScript Array class.</p>
+                <p>Standard JavaScript Array class.</p>
             <h2>BinaryStream</h2>
-            <p>Stream I/O class for reading binary data.</p>
+                <p>Stream I/O class for reading binary data.</p>
             <h2>Block</h2>
-            <p>Internal base class for program blocks.</p><a name="boolean" id="boolean"></a>
+                <p>Internal base class for program blocks.</p><a name="boolean" id="boolean"></a>
             <h2>Boolean</h2>
-            <p>Standard JavaScript Boolean class.</p>
+                <p>Standard JavaScript Boolean class.</p>
             <h2>ByteArray</h2>
-            <p>Array for binary data. More efficient than the standard Array class when using binary data.</p>
+                <p>Array for binary data. More efficient than the standard Array class when using binary data.</p>
+            <h2>Cache</h2>
+                <p>In-memory caching of key values.</p>
+            <h2>Cmd</h2>
+                <p>Invoke commands on the local system.</p>
+            <h2>CmdArgs</h2>
+                <p>Parse and manage the application's command line.</p>
             <h2>Config</h2>
-            <p>Ejscript configuration on your system.</p>
+                <p>Ejscript configuration on your system.</p>
             <h2>Controller</h2>
-            <p>Web framework Controller class.</p>
+                <p>Web framework Controller class.</p>
             <h2>Cookie</h2>
-            <p>Web framework Http cookies class.</p>
+                <p>Web framework Http cookies class.</p>
             <h2>Database</h2>
-            <p>Web framework Database adapter class.</p>
+                <p>Web framework Database adapter class.</p>
             <h2>Date</h2>
-            <p>Standard JavaScript Date class.</p>
-            <h2>Dispatcher</h2>
+                <p>Standard JavaScript Date class.</p>
+            <h2>Emitter</h2>
             <p>Event dispatch and servicing.</p>
             <h2>Error</h2>
             <p>Standard JavaScript Error class. Base class for all exception objects.</p>
-            <h2>Event</h2>
-            <p>Event base class.</p>
             <h2>File</h2>
-            <p>File and directory I/O.</p>
+                <p>File and directory I/O.</p>
+            <h2>FileSystem</h2>
+                <p>File system management class.</p>
+            <h2>FileSystem</h2>
             <h2>Function</h2>
             <p>Standard JavaScript Function class.</p>
             <h2>GC</h2>
@@ -120,7 +124,9 @@
             <h2>Host</h2>
             <p>Web framework Http Host class.</p>
             <h2>Http</h2>
-            <p>Http client class for comprehensive Http and Http over SSL client services.</p>
+                <p>Http client class for comprehensive Http and Http over SSL client services.</p>
+            <h2>HttpServer</h2>
+                <p>Http server class.</p>
             <h2>Iterator</h2>
             <p>Base helper class for creating iterators for use in native classes.</p>
             <h2>JSON</h2>
@@ -139,6 +145,10 @@
             <p>Standard JavaScript Number class.</p>
             <h2>Object</h2>
             <p>Standard JavaScript Object class.</p>
+            <h2>Path</h2>
+                <p>Filename path management class.</p>
+            <h2>Promise</h2>
+                <p>Deferred processing class.</p>
             <h2>Record</h2>
             <p>Web framework Record class for modelling database records.</p>
             <h2>Reflect</h2>
@@ -146,9 +156,9 @@
             <h2>RegExp</h2>
             <p>Standard JavaScript RegExp class for regular expressions.</p>
             <h2>Request</h2>
-            <p>Web framework Http Request class.</p>
-            <h2>Response</h2>
-            <p>Web framework Http Response class.</p>
+                <p>Web framework Http Request class.</p>
+            <h2>Router</h2>
+                <p>Web request router.</p>
             <h2>Session</h2>
             <p>Web framework persistent Session class.</p>
             <h2>Socket</h2>
@@ -156,7 +166,11 @@
             <h2>Stream</h2>
             <p>Stream I/O interface class.</p><a name="string" id="string"></a>
             <h2>String</h2>
-            <p>Standard JavaScript String class.</p>
+                <p>Standard JavaScript String class.</p>
+            <h2>System</h2>
+                <p>System configuration class.</p>
+            <h2>Template</h2>
+                <p>Web page templates.</p>
             <h2>TextStream</h2>
             <p>Stream I/O class for reading text data.</p>
             <h2>Timer</h2>
@@ -167,8 +181,8 @@
             <p>Posix-like layer for Unix compatibility.</p>
             <h2>UploadFile</h2>
             <p>Web framework file upload management class.</p>
-            <h2>Url</h2>
-            <p>Web framework URL management class.</p>
+            <h2>Uri</h2>
+            <p>URI management class.</p>
             <h2>View</h2>
             <p>Web framework View class.</p>
             <h2>ViewConnector</h2>
@@ -181,9 +195,6 @@
             <p>Standard XMLHttp class.</p>
             <h2>XMLList</h2>
             <p>ECMA-357 E4X XML class.</p>
-            <p>The Ejscript Web Framework provides additional classes to implement a Model, View, Controller based
-            framework for web applications, including: Controller, Model, View and ViewConnector, HtmlConnector,
-            GoogleConnector classes.</p>
         </div>
     </div>
 <!-- BeginDsi "dsi/bottom.html" -->

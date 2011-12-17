@@ -3,6 +3,7 @@
     Copyright (c) All Rights Reserved. See details at the end of the file.
  */
 
+//  MOB - should this be named Args. If so, rename "args" property.
 module ejs {
     /**
         The CmdArgs class parses the Application's command line. A template of permissible args is 
