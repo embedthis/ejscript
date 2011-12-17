@@ -105,9 +105,9 @@ ejsmod --html ./htmlDir *.mod
             <h2>Command Options</h2>
             <p>The ejsmod command may be invoked with the following command options:</p>
             <pre>
-<strong>ejsmod</strong> [--cslots] [--empty] [--html  path] [--listing] 
-       [--searchPath ejsPath] [--showDebug] [--showNative] 
-       [--version] modules ...
+<strong>ejsmod</strong> [--cslots] [--html path] [--listing] [--out slot-file] 
+       [--require modules] [--searchPath ejsPath] [--version] [--warn]
+       <b>modules ...</b>
 </pre>The meaning of each switch is listed below:
             <table title="switches">
                 <thead>
@@ -122,12 +122,6 @@ ejsmod --html ./htmlDir *.mod
                     <td>Generate slot binding headers for the input modules.</td>
                 </tr>
                 <tr>
-                    <td>--empty</td>
-                    <td>Start with an empty interpreter without the core language types such as Object, Array, Number
-                    etc. This option is used to build the foundation Ejscript module ejs.mod which contains the system
-                    core types.</td>
-                </tr>
-                <tr>
                     <td>--html dir</td>
                     <td>Generate HTML documentation to the specified directory. The source files must have been
                     compiled by <b>ejsc</b> with the --doc switch to include the documentation strings in the module
@@ -136,6 +130,14 @@ ejsmod --html ./htmlDir *.mod
                 <tr>
                     <td class="nowrap">--listing</td>
                     <td>Generate symbolic assembler files for each input module.</td>
+                </tr>
+                <tr>
+                    <td>--out file</td>
+                    <td>Output file for generate slot definitions.</td>
+                </tr>
+                <tr>
+                    <td>--require modules</td>
+                    <td>Required modules to pre-load before generating.</td>
                 </tr>
                 <tr>
                     <td class="nowrap">--searchPath ejsPath</td>
@@ -154,16 +156,12 @@ ejsmod --html ./htmlDir *.mod
                     </td>
                 </tr>
                 <tr>
-                    <td>--showDebug</td>
-                    <td>Show debug instructions in the symbolic assembler listings.</td>
-                </tr>
-                <tr>
-                    <td>--showNative</td>
-                    <td>Show native properties in HTML documentation, assembler listings and slot binding files.</td>
-                </tr>
-                <tr>
                     <td>--version</td>
                     <td>Print the ejsmod command version and exit.</td>
+                </tr>
+                <tr>
+                    <td>--warn</td>
+                    <td>Warn about undocumented methods or parameters in documentation.</td>
                 </tr>
                 </tbody>
             </table>

@@ -107,15 +107,16 @@ class EjsMvc {
             "  Options:\n" + 
             "    --apply                      # Apply migrations\n" + 
             "    --database [sqlite | mysql]  # Sqlite only currently supported adapter\n" + 
-            "    --full\n" + 
-            "    --keep\n" + 
-            "    --layout layoutPage\n" + 
-            "    --listen port\n" + 
-            "    --min\n" + 
+            "    --full                       # Generate all directories\n" + 
+            "    --keep                       # Keep intermediate source in cache\n" + 
+            "    --layout layoutPage          # Specify a default layout page\n" + 
+            "    --listen port                # Port on which to listen for Http\n" + 
+            "    --min                        # Generate mininally\n" + 
             "    --reverse                    # Reverse generated migrations\n" + 
-            "    --overwrite\n" + 
-            "    --quiet\n" + 
-            "    --verbose\n")
+            "    --overwrite                  # Overwrite existing files\n" + 
+            "    --quiet                      # Don't trace activity to console\n" + 
+            "    --search searchPath          # Specify a module search path\n" + 
+            "    --verbose                    # Increase trace verbosity\n")
 
         let pre = "    " + mvc + " "
         error("  Commands:\n" +
@@ -179,6 +180,7 @@ class EjsMvc {
         }
         if (options.quiet) {
             options.verbose = 0
+            verbose = 0;
         }
         if (options.verbose) {
             verbose += (options.verbose cast Number)
@@ -1377,7 +1379,7 @@ class EjsMvc {
     }
 
     function trace(tag: String, ...args): Void {
-        if (verbose) {
+        if (verbose > 0) {
             print("  " + tag + ": " + args.join(" "))
         }
     }

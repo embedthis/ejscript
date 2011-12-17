@@ -101,7 +101,6 @@
 </pre>
             <p>If myscript.es contained the following script:</p>
             <pre>
-use namespace "ejs.sys"
 print(App.args)
 </pre>
             <p>the following would be output:</p>
@@ -130,11 +129,12 @@ ejs --class MyClass --method "main" myscript.es
             <h2>Command Options</h2>
             <p>The ejs command may be invoked with the following command options:</p>
             <pre>
-ejs [--class className] [--debug] [--ecma] [--files "files..."] 
-    [--log logSpec] [--method methodName] [--nodebug] 
-    [--optimize level] [--searchPath ejsPath] [--standard] 
-    [--stats] [--strict] [--version]
-    [--warn level] <strong>file</strong> [arguments ...]
+ejs [--class className] [--cmd "literal script"] [--debug] 
+    [--debugger] [--files "files..."] [--log logSpec] 
+    [--method methodName] [--nodebug] [--optimize level] 
+    [--require "modules"] [--searchPath ejsPath] [--standard]
+    [--stats] [--strict] [--verbose] [--version] [--warn level] 
+    <b>file [arguments ...]</b>
 </pre>The ejs command will parse and execute the given <strong>file</strong> with the supplied arguments passed into
 the App.args property.
             <table title="switches">
@@ -151,16 +151,16 @@ the App.args property.
                     by default.</td>
                 </tr>
                 <tr>
-                    <td>--debug</td>
-                    <td>Run in debug mode with symbolic stack backtraces in exceptions.</td>
+                    <td class="nowrap">--cmd "literal script"</td>
+                    <td>Run the given script text instead of reading a script file.</td>
                 </tr>
                 <tr>
-                    <td>--ecma</td>
-                    <td>Run in ECMAScript Edition 3 (ES3) compliance mode. The ejs command normally runs in
-                    non-compliant, enhanced mode. This enhanced mode eliminates browser specific portions of the ES3
-                    standard to give a safer, faster language. For example: in ES3 compliant mode, function variables
-                    used without an accompanying var declaration are global variables, whereas in enhanced mode, they
-                    are local variables.</td>
+                    <td>--debug</td>
+                    <td>Include symbolic debug information in the byte code.</td>
+                </tr>
+                <tr>
+                    <td>--debugger</td>
+                    <td>Run in debug mode with symbolic stack backtraces in exceptions.</td>
                 </tr>
                 <tr>
                     <td>--files "files..."</td>
@@ -188,6 +188,10 @@ the App.args property.
                     <td>--optimize level</td>
                     <td>Set the code optimization level. Level values must be between 0 (least) and 9 (most). Default
                     is 9.</td>
+                </tr>
+                <tr>
+                    <td>--require modules ...</td>
+                    <td>Pre-load the required modules before running the script.</td>
                 </tr>
                 <tr>
                     <td>--searchPath ejsPath</td>

@@ -420,7 +420,20 @@ print(x)
 </pre>
             <p>Multiple require directives can be employed and they stack and nest as expected. A require
             directive only applies to the block in which it is defined and from the point of declaration
-            onward.</p><a name="return" id="return"></a>
+            onward.</p>
+            
+            
+            <a name="require" id="require"></a>
+            <h2 class="section">require</h2>
+            <p>To load and access a module, you need to add a <b>require</b> pragma to you code.</p>
+            <pre>
+require moduleName
+</pre>
+            <p>This will add the module named "moduleName" to your program. This adds the module to the set of open
+            namespaces in the current file scope.</p>
+            
+            
+            <a name="return" id="return"></a>
             <h2 class="section">return</h2>
             <p>The <b>return</b> statement is used to supply a return value inside a function. The <b>return</b>
             statement may appear without an expression to cause the function's execution to terminate and return to the
@@ -486,19 +499,7 @@ catch (error){
             <h2 class="section">use</h2>
             <p>The <b>use</b> statement applies various modifiers to the code environment. These are typically called
             <b>pragma</b> directives.</p>
-            <h3>Use Module</h3>
-            <p>To load and access a module, you need to add a <b>require</b> pragma to you code.</p>
-            <pre>
-require moduleName
-</pre>
-            <p>This will add the module named "moduleName" to your program. This adds the module to the set of open
-            namespaces in the current file scope.</p>
-            <h3>Use Lang</h3>
-            <p>To set the language compliance mode, add the <b>use lang [ecma|plus|fixed]</b> pragma.</p>
-            <pre>
-use lang ecma
-</pre>
-            <p>This will set the language compliance to strict ECMA compatibility.</p>
+
             <pre>
 use namespace
 </pre>

@@ -145,10 +145,11 @@ ejsc --out acme.mod geometry.es widgets.es
             <h2><a name="options" id="options"></a>Command Options</h2>
             <p>The ejsc command may be invoked with the following command options:</p>
             <pre>
-<strong>ejsc</strong>  [--debug] [--doc] [--ecma] [--empty] [--noout] 
-    [--optimize level] [--out filename] [--parse] 
-    [--searchPath ejsPath] [--standard] [--strict] 
-    [--version] [--warn level] files...
+<strong>ejsc</strong> [--debug] [--dir directory] [--doc] [--merge] [--modver version] 
+    [--noout] [--optimize level] [--out filename] [--parse] 
+    [--require modules] [--searchPath ejsPath] [--standard] 
+    [--strict] [--version] [--warn level] 
+    <b>files or modules ...</b>
 </pre>The ejs command will parse and execute the given <strong>file</strong> with the supplied arguments passed into
 the App.args property.
             <table title="args">
@@ -170,18 +171,16 @@ the App.args property.
                     that of Javadoc.</td>
                 </tr>
                 <tr>
-                    <td>--ecma</td>
-                    <td>Run in ECMAScript Edition 3 (ES3) compliance mode. The ejs command normally runs in
-                    non-compliant, enhanced mode. This enhanced mode eliminates browser specific portions of the ES3
-                    standard to give a safer, faster language. For example: in ES3 compliant mode, function variables
-                    used without an accompanying var declaration are global variables, whereas in enhanced mode, they
-                    are local variables.</td>
+                    <td>--merge</td>
+                    <td>Merge dependent input modules into the output.</td>
                 </tr>
                 <tr>
-                    <td>--empty</td>
-                    <td>Start with an empty interpreter without the core language types such as Object, Array, Number
-                    etc. This option is used to build the foundation Ejscript module ejs.mod which contains the system
-                    core types.</td>
+                    <td>--modver version</td>
+                    <td>Set the default module version.</td>
+                </tr>
+                <tr>
+                    <td>--noout</td>
+                    <td>Don't generate any output modules.</td>
                 </tr>
                 <tr>
                     <td>--parse</td>
@@ -192,6 +191,10 @@ the App.args property.
                     <td class="nowrap">--optimize level</td>
                     <td>Set the code optimization level. Level values must be between 0 (least) and 9 (most). Default
                     is 9.</td>
+                </tr>
+                <tr>
+                    <td class="nowrap">--require modules</td>
+                    <td>Required modules to pre-load before compiling.</td>
                 </tr>
                 <tr>
                     <td class="nowrap">--searchPath ejsPath</td>
@@ -231,6 +234,7 @@ the App.args property.
                 </tbody>
             </table>
         </div>
+    </div>
 <!-- BeginDsi "dsi/bottom.html" -->
 	<div class="bottom">
 		<p class="footnote"> 
@@ -239,6 +243,5 @@ the App.args property.
 		</p>
 	</div>
 <!-- EndDsi -->
-    </div>
 </body>
 </html>

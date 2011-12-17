@@ -263,11 +263,11 @@ MAIN(ejsMain, int argc, char **argv)
             "  --method methodName      # Name of method to run. Defaults to main\n"
             "  --nodebug                # Omit symbolic debugging information\n"
             "  --optimize level         # Set the optimization level (0-9 default is 9)\n"
+            "  --require 'module,...'   # Required list of modules to pre-load\n"
             "  --search ejsPath         # Module search path\n"
             "  --standard               # Default compilation mode to standard (default)\n"
             "  --stats                  # Print memory stats on exit\n"
             "  --strict                 # Default compilation mode to strict\n"
-            "  --require 'module,...'   # Required list of modules to pre-load\n"
             "  --verbose | -v           # Same as --log stderr:2 \n"
             "  --version                # Emit the compiler version information\n"
             "  --warn level             # Set the warning message level (0-9 default is 0)\n\n",

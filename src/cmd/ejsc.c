@@ -234,10 +234,11 @@ MAIN(ejscMain, int argc, char **argv)
                 ejsc Person.es User.es Customer.es
                 ejsc --out group.mod Person.es User.es Customer.es
                 ejsc --out group.mod Person.es User.es Customer.es
+
+            NOTE: bind is deliberately not documented and is for internal use only.
          */
         mprPrintfError("Usage: %s [options] files...\n"
             "  Ejscript compiler options:\n"
-            "  --bind                 # Bind global properties to slots. Requires --out.\n"
             "  --debug                # Include symbolic debugging information in output\n"
             "  --doc                  # Include documentation strings in output\n"
             "  --dir directory        # Set the output directory for modules (default: \".\")\n"
@@ -247,6 +248,7 @@ MAIN(ejscMain, int argc, char **argv)
             "  --optimize level       # Set optimization level (0-9)\n"
             "  --out filename         # Name a single output module (default: \"default.mod\")\n"
             "  --parse                # Just parse source. No output\n"
+            "  --require 'module ...' # List of required modules to pre-load\n"
             "  --search ejsPath       # Module search path\n"
             "  --standard             # Default compilation mode to standard (default)\n"
             "  --strict               # Default compilation mode to strict\n"
@@ -255,7 +257,6 @@ MAIN(ejscMain, int argc, char **argv)
             "  --strip                # Strip all symbolic names (Can't import)\n"
             "  --tabwidth             # Tab width for '^' error reporting\n"
 #endif
-            "  --require 'module ...' # List of required modules to pre-load\n"
             "  --version              # Emit the compiler version information\n"
             "  --warn level           # Set the warning message level (0-9)\n\n",
             mpr->name);

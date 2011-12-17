@@ -18,12 +18,12 @@ mvc \- Ejscript Application Generator for Server-Side JavaScript Web Application
 The \fBmvc\fR command generates, manages and runs Ejscript web applications.
 It can generate Ejscript web applications, controllers, database migrations, models, scaffolds and views.
 .PP
-Ejsweb will create directories and generate configuration and source code files which can then be manually 
-edited as required.  Ejsweb is intelligent and will not overwrite existing files, so you can safely edit 
+Mvc will create directories and generate configuration and source code files which can then be manually 
+edited as required.  Mvc is intelligent and will not overwrite existing files, so you can safely edit 
 and regenerate without losing your changes. You can overwrite your changes if you wish to by using 
 the \fB--overwrite\fR switch.
 .PP
-Ejsweb can run your application by invoking a configured web server.
+Mvc can run your application by invoking a configured web server.
 .SH GENERATING APPLICATIONS
 To start a new web application, run \fBmvc\fR to create the application directory and generate the application
 configuration and essential script files. For example:
@@ -35,43 +35,32 @@ configuration and essential script files. For example:
 This will will create a set of directories which have the following meaning: 
 
 .RS 5
- .tmp           - Temporary working directory
- .ejs           - State files used by mvc
  bin            - Programs and scripts
- config         - Configuration files
+ cache          - Cached views and web pages
  controllers    - Controller source
  db             - Databases and scripts
  db/migrations  - Databases migration scripts
- doc            - Documentation for the application
- logs           - Log files
+ layouts        - Template layout files
  models         - Database model code
- messages       - Internationalization messages
- test           - Unit tests
  src            - Extra application source code
- utils          - Program utilities
  views          - View source files
- views/layouts  - View layout files
- web            - Public web directory
- web/images     - Public images
- web/js         - Client side JavaScripts
- web/themes     - Application HTML themes
+ static         - Public web directory
+ static/images  - Public images
+ static/js      - Client side JavaScripts
+ static/themes  - Application HTML themes
 .RE
 .PP
-Most of these directories are initially empty, but may be used over time. Ejscript follows conventions
-where specific files are stored. This greatly simplifies configuring a web application.
+Ejscript follows conventions where specific files are stored. This greatly simplifies configuring a web application.
 .PP
-Ejsweb will also create some files which have the following meaning:
+Mvc will also create some files which have the following meaning:
 .RS 5
 
- config/config.ecf           - Application configuration file
- config/compiler.ecf         - Compiler configuration file
- config/database.ecf         - Database configuration file
- config/view.ecf             - View connector configuration file
+ ejsrc                       - Application configuration file
  controllers/Base.es         - Application base controller class
- views/layouts/default.ejs   - Default layout web page
- web/layout.css              - Default layout CSS file
- web/themes/default.css      - Default theme CSS file
- web/js/jquery.js            - Jquery client side script
+ layouts/default.ejs         - Default layout web page
+ static/layout.css           - Default layout CSS file
+ static/themes/default.css   - Default theme CSS file
+ static/js/jquery.js         - Jquery client side script
  README                      - Documentation explaining files and directories
 .RE
 .SH GENERATING CONTROLLERS
@@ -153,32 +142,34 @@ In development mode, Ejscript will automatically compile the relevant portions o
 is modified. It can intelligently recompile views, actions, controllers and database models as required. However, you
 can also explicilty recompile portions or the complete appliction.
 .PP
-Ejsweb can recompile everything via:
+Mvc can recompile everything via:
+
 .RS 5
- \fBmvc compile ...\fR.
+ \fBmvc compile\fR
+
 .RE
 This will compile each controller and view and also recompile the application and module source code. Module files for
 each component will be generated.
 .PP
-Ejsweb also provides options for you to individually compile controllers and views. To recompile named views or controllers:
+Mvc also provides options for you to individually compile controllers and views. To recompile named views or controllers:
 .RS 5
 
- \fBmvc compile view NAMES...\fR.
+ \fBmvc compile view NAMES ...\fR
 
- \fBmvc compile controller NAMES...\fR.
+ \fBmvc compile controller NAMES ...\fR
 
 .RE
 .PP
 Models are compiled with application code into a single module file. To recompile the models and application source code:
 .RS 5
 
- \fBmvc compile app\fR.
+ \fBmvc compile app\fR
 .RE
 .PP
 To compile the entire application and produce a single module file:
 .RS 5
 
- \fBmvc compile all\fR.
+ \fBmvc compile all\fR
 .RE
 .PP
 To compile stand-alone Ejscript web pages:
@@ -205,7 +196,7 @@ To clean all generated module files:
 .RE
 .SH OPTIONS
 .PP 
-Ejsweb has the following command usage patterns:
+Mvc has the following command usage patterns:
 
 .RS 5
  mvc clean
@@ -227,7 +218,7 @@ layout pages.
 Change the name of the default layout page if a view does not explicitly specify a layout page.
 .TP 6
 \fB\--overwrite\fR
-Overwrite existing files. Ejsweb normally will not overwrite existing files. This is to preserve user changes to 
+Overwrite existing files. Mvc normally will not overwrite existing files. This is to preserve user changes to 
 previously generated files.
 
 .TP 6

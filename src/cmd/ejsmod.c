@@ -173,7 +173,7 @@ MAIN(ejsmodMain, int argc, char **argv)
             "  --cslots              # Generate a C slot definitions file\n"
             "  --html dir            # Generate HTML documentation to the specified directory\n"
             "  --listing             # Create assembler listing files (default)\n"
-            "  --out                 # Output file for all C slots (implies --cslots)\n"
+            "  --out file            # Output file for all C slots (implies --cslots)\n"
             "  --require \"modules\"   # List of modules to preload\n"
             "  --search ejsPath      # Module file search path\n"
             "  --version             # Emit the program version information\n"
