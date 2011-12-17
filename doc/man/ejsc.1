@@ -6,7 +6,6 @@ ejsc \- Ejscript compiler.
 [\fI--bind\fR]
 [\fI--debug\fR]
 [\fI--doc\fR]
-[\fI--lang [ecma|plus|fixed]\fR]
 [\fI--noout\fR]
 [\fI--optimize level\fR]
 [\fI--out filename\fR]
@@ -49,26 +48,6 @@ the --out switch must only be used to create a complete application including al
 .SH COMPLIANCE
 Ejscript is fully compliant with the JavaScript (ECMA-262 3.X) standards, but it also offers a set of 
 enhancements and fixes designed to improve the language and correct some longstanding JavaScript design issues. 
-Use of these enhancements and fixes is optional and controlled via opt-in configuration switches and script pragmas.
-.PP
-The \fBejsc\fR compiler supports three language compliance modes: 
-.IP "" 4
-* \fBecma\fR  for strict ECMAScript compliance.
-.IP "" 4
-* \fBplus\fR  for close compliance plus compatible Ejscript enhancements.
-.IP "" 4
-* \fBfixed\fR  for close compliance, plus compatible Ejscript enhancements and breaking fixes.
-.PP
-When Ejscript is built, the default compliance mode is defined. By default, this is \fBplus\fR mode.
-The \fBfixed\fR mode corrects several issues with Javascript that remain in the language due to browser compatibility 
-requirements. Ejscript, by targeting non-browser envirnonments, can rectify these issues without impact to 
-legacy applications. These changes are:
-.IP "" 4
-* Assignments to non-existent properties inside functions, will create local variables rather than global variables.
-.IP "" 4
-* Multiple declarations of the same variable in the same scope are not permitted.
-.IP "" 4
-* The == and != operators will perform like their more rigorous conterparts === and !===.
 .SH OPTIONS
 .TP
 \fB\--bind\fR
@@ -82,11 +61,6 @@ stack backtraces to include line number information.
 \fB\--doc\fR
 Include documentation strings from input scripts in the output modules. The \fBejsmod\fR command can then generate
 HTML documentation using these doc strings. The format of the doc strings resembles that of Javadoc.
-.TP
-\fB\--lang [ecma|plus|fixed]\fR
-Set the language compliance mode. Use \fBecma\fR for strict ECMAScript Edition 3 compliance. Use \fBplus\fR for 
-close ECMAScript compliance plus Ejscript enhancements. Select \fBfixed\fR mode for ECMAScript features plus
-enhancements and some compatibility breaking fixes.
 .TP
 \fB\--merge\fR
 Merge all input files and modules together into a single output module. This option acts like a link-editor combining

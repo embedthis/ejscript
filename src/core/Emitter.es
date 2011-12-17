@@ -6,8 +6,7 @@
 module ejs {
     /** 
         The emitter class provides a publish/subscribe model of communication via events. It supports the 
-        registration of observers
-        who want to subscribe to events of interest. 
+        registration of observers who want to subscribe to events of interest. 
         @example
             events.on(event, function (event, ...args) {
                 //  Do something

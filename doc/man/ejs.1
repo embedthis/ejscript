@@ -6,7 +6,6 @@ ejs \- Interpreted object-oriented scripting language (Javascript) shell.
 [\fI--class className\fR] 
 [\fI--cmd literalScript\fR] 
 [\fI--debug\fR]
-[\fI--lang [ecma|plus|fixed]\fR]
 [\fI--files "files..."\fR]
 [\fI--log logSpec\fR]
 [\fI--method methodName\fR]
@@ -64,26 +63,7 @@ supplied, then \fBejs\fR will run the requested static method after the input fi
 .SH COMPLIANCE
 Ejscript is fully compliant with the JavaScript (ECMA-262 3.X) standards, but it also offers a set of 
 enhancements and fixes designed to improve the language and correct some longstanding JavaScript design issues. 
-Use of these enhancements and fixes is optional and controlled via opt-in configuration switches and script pragmas.
 .PP
-The \fBec\fR compiler supports three language compliance modes: 
-.IP "" 4
-* \fBecma\fR  for strict ECMAScript compliance.
-.IP "" 4
-* \fBplus\fR  for close compliance plus compatible Ejscript enhancements.
-.IP "" 4
-* \fBfixed\fR  for close compliance, plus compatible Ejscript enhancements and breaking fixes.
-.PP
-When Ejscript is built, the default compliance mode is defined. By default, this is \fBplus\fR mode.
-The \fBfixed\fR mode corrects several issues with Javascript that remain in the language due to browser compatibility 
-requirements. Ejscript, by targeting non-browser environments, can rectify these issues without impact to 
-legacy applications. These changes are:
-.IP "" 4
-* Assignments to non-existent properties inside functions, will create local variables rather than global variables.
-.IP "" 4
-* Multiple declarations of the same variable in the same scope are not permitted.
-.IP "" 4
-* The == and != operators will perform like their more rigorous conterparts === and !===.
 .SH OPTIONS
 .TP
 \fB\--class className\fR
@@ -103,11 +83,6 @@ The --files switch allows extra script to be compiled after the primary script, 
 Specify a file to log internal execution messages. Ejs will log execution related trace to the log file. The log level
 specifies the desired verbosity of output. Level 0 is the least verbose and level 9 is the most. Level 2 will include
 trace of each source statement and assembler instruction executed (provided --nodebug is not specifiec).
-.TP
-\fB\--lang [ecma|plus|fixed]\fR
-Set the language compliance mode. Use \fBecma\fR for strict ECMAScript Edition 3 compliance. Use \fBplus\fR for 
-close ECMAScript compliance plus Ejscript enhancements. Select \fBfixed\fR mode for ECMAScript features plus
-enhancements and some compatibility breaking fixes.
 .TP
 \fB\---method methodName\fR
 Set the startup method name. Defaults to "main" if a --className is specified and --method is not.

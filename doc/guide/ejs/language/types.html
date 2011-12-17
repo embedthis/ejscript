@@ -151,13 +151,12 @@ because <b>var</b> declarations hoist to the top of the function. Whereas, the <
             <p>All variables declared by using <b>let</b> will be block local and are scoped to the block enclosing its
             declaration.</p>
             <h3>Global Variables</h3>
-            <p>Variables declared with var and outside classes, interfaces and functions are global variables. In
-            <b>ecma</b> mode, global variables are visible to all other global program code whether declared in the
-            same source file or not. In Ejscript <b>plus</b> or <b>fixed</b> mode, global variables are by default
+            <p>Variables declared with var and outside classes, interfaces and functions are global variables. 
+            In Ejscript, global variables are by default
             limited in their visibility to the source file in which they are declared. If the variable is defined with
             a <b>public</b> qualifier, the variable will be visible to code defined in other source files.</p>
             <h3>Class Static Variables</h3>
-            <p>In <b>plus</b> or <b>fixed</b> mode, classes can be defined. Variables declared inside classes and
+            <p>Variables declared inside classes and
             decorated with the <b>static</b> keyword will be class variables and will be shared among all instances of
             the class. The visibility of class variables can be modified by using <a href="#visibility">visibility
             qualifiers</a>.</p>
@@ -230,14 +229,16 @@ BlastOff()
             standard JavaScript, assigning to an such an undeclared variable will create a new global variable. In
             other words, forgetting to declare a variable, even when done in function code, will transparently create
             an unintended global declaration.</p>
-            <p>Ejscript <b>fixed</b> mode treats assignments to undeclared variables differently by creating local
+            <p>Ejscript mode treats assignments to undeclared variables differently by creating local
             variables instead of global variables. This is much safer and more secure. If you really need to create a
             global variable, you can use the <b>global</b> object.</p>
             <pre>
-global.globalVar = 7
+global.name = 7
 </pre>
             <p>This will create a new global variable called <b>globalVar</b> not matter where and what scope this code
-            is executed in.</p><a name="typeAnnotations" id="typeAnnotations"></a>
+            is executed in.</p>
+            
+            <a name="typeAnnotations" id="typeAnnotations"></a>
             <h2 class="section">Optional Type Annotations</h2>
             <p>In JavaScript, variables are not explicitly typed. The type of a variable is defined by the value of the
             data assigned to the variable. Consequently, variables can change their type at run-time. One minute, they

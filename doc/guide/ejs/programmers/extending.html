@@ -169,7 +169,6 @@ ejs program.es
             parameters are typically fully typed using <a href="../language/types.html#typeAnnotations">type
             annotations</a>.</p>
             <pre>
-use lang plus
 use strict
 module acme {
     native var launchAttempts: Number
@@ -182,8 +181,7 @@ module acme {
     }
 }
 </pre>
-            <p>There are several things to explain in this example. Because this code uses uses modules and classes, we
-            need to use the <b>use lang plus</b> to enable Ejscript enhancements. We also put the compiler into strict
+            <p>There are several things to explain in this example.  We put the compiler into strict
             mode to warn if we omit the type of any variable, function parameter and or return value.</p>
             <h4>Blended Modules</h4>
             <p>The module interface can blend native code and script code. i.e. It can contain actual script code
