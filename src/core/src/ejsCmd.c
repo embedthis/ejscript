@@ -609,6 +609,11 @@ static EjsObj *cmd_exec(Ejs *ejs, EjsObj *unused, int argc, EjsObj **argv)
 #if BLD_UNIX_LIKE
     char    **argVector;
 
+#if FUTURE
+    for (i = 3; i < MPR_MAX_FILE; i++) {
+        close(i);
+    }
+#endif
     mprMakeArgv(ejsToMulti(ejs, argv[0]), &argVector, 0);
     execv(argVector[0], argVector);
 #endif

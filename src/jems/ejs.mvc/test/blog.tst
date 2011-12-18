@@ -26,7 +26,7 @@ let pid
 
 try {
     chdir("junk")
-    pid = System.daemon(ejs + " start.es")
+    pid = Cmd.daemon(ejs + " start.es")
     assert(pid)
     chdir("..")
 

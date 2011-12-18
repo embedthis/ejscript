@@ -412,7 +412,7 @@ class EjsMvc {
         // cmd = 'ejs --use "' + appName + '"'
         let cmd = "ejs"
         //  TODO - this won't work without stdin
-        System.run(cmd)
+        Cmd.run(cmd)
     }
 
     function buildController(file: Path) {
@@ -593,7 +593,7 @@ class EjsMvc {
             cmd = cmd.trim('"').replace(/^[^ ]+/, App.exeDir.join("$&"))
         }
         trace("[RUN]", cmd)
-        System.run(cmd)
+        Cmd.run(cmd)
     }
 
     function deploy(args: Array): Void {
@@ -1363,7 +1363,7 @@ class EjsMvc {
     function runCommand(command: String): String {
         let results
         try {
-            results = System.run(command)
+            results = Cmd.run(command)
         } 
         catch (e) {
             msg = "Compilation failure, for " + command + "\n\n" +

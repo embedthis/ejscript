@@ -43,6 +43,7 @@ module ejs {
             @hide
             MOB - remove
          */
+        # DEPRECATED
         native static function run(cmd: String): String
 
         /**
@@ -50,12 +51,14 @@ module ejs {
             @hide
             MOB - remove
          */
+        # DEPRECATED
         native static function runx(cmd: String): Void
 
         /** 
             @hide 
             MOB - remove
          */
+        # DEPRECATED
         native static function daemon(cmd: String): Number
 
         /**
@@ -64,6 +67,7 @@ module ejs {
             @hide
             MOB - remove
          */
+        # DEPRECATED
         static function sh(args): String {
             let shell = Cmd.locate("sh")
             return System.run(shell + " -c \"" + args + "\"").trim('\n')
@@ -73,6 +77,7 @@ module ejs {
             @hide
             MOB - remove
         */
+        # DEPRECATED
         static function cmd(args): String
             sh(args)
 

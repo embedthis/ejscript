@@ -21,7 +21,7 @@ Cmd.sh("cd junk ; " + mvc + " compile")
 
 //  Start web server. Use ejs start.es so we can kill it. Change to mvc run when Cmd supports kill group
 chdir("junk")
-let pid = System.daemon(ejs + " start.es")
+let pid = Cmd.daemon(ejs + " start.es")
 assert(pid)
 chdir("..")
 sleep(2000)

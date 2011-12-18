@@ -11,6 +11,7 @@
 //  MOB - DEPRECATE and remove
 //  MOB - compare with ejsCmd before deleting
 /************************************ Methods *********************************/
+#if UNUSED
 /*
     function run(cmd: String): String
  */
@@ -132,6 +133,7 @@ static EjsObj *system_exec(Ejs *ejs, EjsObj *unused, int argc, EjsObj **argv)
 #endif
     return 0;
 }
+#endif /* UNUSED */
 
 
 /*
@@ -193,10 +195,12 @@ void ejsConfigureSystemType(Ejs *ejs)
     if ((type = ejsFinalizeScriptType(ejs, N("ejs", "System"), 0, 0, 0)) == 0) {
         return;
     }
+#if UNUSED
     ejsBindMethod(ejs, type, ES_System_daemon, system_daemon);
     ejsBindMethod(ejs, type, ES_System_exec, system_exec);
     ejsBindMethod(ejs, type, ES_System_run, system_run);
     ejsBindMethod(ejs, type, ES_System_runx, system_runx);
+#endif
     ejsBindMethod(ejs, type, ES_System_hostname, system_hostname);
     ejsBindMethod(ejs, type, ES_System_ipaddr, system_ipaddr);
 }
