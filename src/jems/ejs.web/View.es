@@ -524,7 +524,10 @@ MOB -- much more doc here
             getConnector("radio", options).radio(name, value, choices, options)
         }
 
-        //  DOC
+        /**
+            Refresh control
+            @hide
+         */
         function refresh(on: Uri, off: Uri, options: Object = {}): Void {
             let connector = getConnector("refresh", options)
             options = getOptions(options)

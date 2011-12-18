@@ -63,6 +63,7 @@ This is the number of milliseconds for the call to complete.</td></tr>
    <tr class='apiDef'><td class='apiType'> static </td><td><a href='#daemon'><b>daemon</b></a>(cmdline: <a href='Object.html'>Object</a>, options: <a href='Object.html'>Object</a> = null): <a href='Number.html'>Number</a></tr><tr class='apiBrief'><td>&nbsp;</td><td>Start a command in the background as a daemon.</td></tr>
    <tr class='apiDef'><td class='apiType'> static </td><td><a href='#exec'><b>exec</b></a>(cmdline: <a href='String.html'>String</a> = null, options: <a href='Object.html'>Object</a> = expression): <a href='Void.html'>Void</a></tr><tr class='apiBrief'><td>&nbsp;</td><td>Execute a new program by the current process.</td></tr>
    <tr class='apiDef'><td class='apiType'> static </td><td><a href='#kill'><b>kill</b></a>(pid: <a href='Number.html'>Number</a>, signal: <a href='Number.html'>Number</a> = 2): <a href='Boolean.html'>Boolean</a></tr><tr class='apiBrief'><td>&nbsp;</td><td>Kill the specified process.</td></tr>
+   <tr class='apiDef'><td class='apiType'> static </td><td><a href='#locate'><b>locate</b></a>(program: <a href='Path.html'>Path</a>): <a href='Path.html'>Path</a></tr><tr class='apiBrief'><td>&nbsp;</td><td>Locate a program using the application PATH.</td></tr>
    <tr class='apiDef'><td class='apiType'> static </td><td><a href='#run'><b>run</b></a>(command: <a href='Object.html'>Object</a>, data: <a href='Object.html'>Object</a> = null): <a href='String.html'>String</a></tr><tr class='apiBrief'><td>&nbsp;</td><td>Execute a command/program.</td></tr>
    <tr class='apiDef'><td class='apiType'> static </td><td><a href='#sh'><b>sh</b></a>(command: <a href='Object.html'>Object</a>, data: <a href='Object.html'>Object</a> = null): <a href='String.html'>String</a></tr><tr class='apiBrief'><td>&nbsp;</td><td>Run a command using the system command shell and wait for completion.</td></tr>
 </table>
@@ -133,7 +134,7 @@ continues immediately in the foreground. Note: No data can be written to the dae
 <dd><table class='parameters' summary ='parameters'>
 <tr class='param'><td class='param'>cmdline: <a href='Object.html'>Object</a> </td><td>Command line to use. The cmdline may be either a string or an array of strings.</td></tr><tr class='param'><td class='param'>options: <a href='Object.html'>Object</a> </td><td>null [default: null]</td></tr></table></dd>
 </dl><dl><dt>Returns</dt>
-<dd>The process ID. This pid can be used with kill().</dd></dl>
+<dd>The process ID. This PID can be used with kill().</dd></dl>
 </div>
 </div>
 <hr />
@@ -180,6 +181,18 @@ signify the end of write data.</dd></dl>
 </dl></div>
 </div>
 <hr />
+<a name='locate'></a>
+<div class='api'>
+<div class='apiSig'>static     locate(program: <a href='Path.html'>Path</a>): <a href='Path.html'>Path</a>
+</div>
+<div class='apiDetail'>
+<dl><dt>Description</dt></dd><dd>Locate a program using the application PATH. </dd></dl>
+<dl><dt>Parameters</dt>
+<dd><table class='parameters' summary ='parameters'>
+<tr class='param'><td class='param'>program: <a href='Path.html'>Path</a> </td><td>Program to find.</td></tr></table></dd>
+</dl></div>
+</div>
+<hr />
 <a name='on'></a>
 <div class='api'>
 <div class='apiSig'>    on(name, observer: <a href='Function.html'>Function</a>): <a href='Void.html'>Void</a>
@@ -219,7 +232,7 @@ In this case a "readable" event will be issued when data is available for readin
 <td class='param'>writable</td><td>Issued when the stream becomes empty.</td></tr>
 </table></dd>
 </dl><dl><dt>Returns</dt>
-<dd>A count of the bytes actually read. Returns null on eof.</dd></dl>
+<dd>A count of the bytes actually read. Returns null on EOF.</dd></dl>
 </div>
 </div>
 <hr />
@@ -294,7 +307,7 @@ In this case a "readable" event will be issued when data is available for readin
 </div>
 <div class='apiDetail'>
 <dl><dt>Description</dt></dd><dd>Run a command using the system command shell and wait for completion. On Windows, this requires that
-/bin/sh.exe is installed (See Cygwin).</dd></dl>
+sh.exe is installed (See Cygwin).</dd></dl>
 <dl><dt>Parameters</dt>
 <dd><table class='parameters' summary ='parameters'>
 <tr class='param'><td class='param'>command: <a href='Object.html'>Object</a> </td><td>The (optional) command line to initialize with. The command may be either a string or an array of arguments.</td></tr><tr class='param'><td class='param'>data: <a href='Object.html'>Object</a> </td><td>null [default: null]</td></tr></table></dd>
@@ -327,7 +340,7 @@ available for interrogation.</dd></dl>
 <dd><table class='parameters' summary ='parameters'>
 <tr class='param'><td class='param'>signal: <a href='Number.html'>Number</a> </td><td>Signal to send the the active process. [default: 2]</td></tr></table></dd>
 </dl><dl><dt>Returns</dt>
-<dd>True if successful.</dd></dl>
+<dd>True if the command is successfully stopped or the command has completed.</dd></dl>
 </div>
 </div>
 <hr />
@@ -339,7 +352,7 @@ available for interrogation.</dd></dl>
 <dl><dt>Description</dt></dd><dd>Wait for a command to complete. </dd></dl>
 <dl><dt>Parameters</dt>
 <dd><table class='parameters' summary ='parameters'>
-<tr class='param'><td class='param'>timeout: <a href='Number.html'>Number</a> </td><td>Time in seconds to wait for the command to complete. If unspecified, the <a href='#timeout'>timeout</a> propoperty value is used instead. [default: -1]</td></tr></table></dd>
+<tr class='param'><td class='param'>timeout: <a href='Number.html'>Number</a> </td><td>Time in milliseconds to wait for the command to complete. If unspecified, the <a href='#timeout'>timeout</a> propoperty value is used instead. [default: -1]</td></tr></table></dd>
 </dl><dl><dt>Returns</dt>
 <dd>True if the request successfully completes.</dd></dl>
 </div>
@@ -374,9 +387,9 @@ from exiting.</dd></dl>
 <hr />
 <div class="terms">
    <p class="terms">
-       <a href="http://embedthis.com.com/">       Embedthis Software LLC, 2003-2011. All rights reserved. Embedthis is a trademark of Embedthis Software LLC.</a>
+       <a href="http://embedthis.com/">       Embedthis Software LLC, 2003-2011. All rights reserved. Embedthis is a trademark of Embedthis Software LLC.</a>
    </p>
 </div></div>
 </div>
-
-
+</body>
+</html>

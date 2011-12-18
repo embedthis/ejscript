@@ -211,7 +211,7 @@ may filter the message out before logging.</dd></dl>
 If writing more data than the stream can absorb in sync mode, the call will block until the data is written.
 If writing more data than the stream can absorb in async mode, the call will not block and will buffer the
 data and return immediately. Some streams will require a <a href='#flush'>flush()</a> call to actually send the data.
-A "writable" event will be issued when the stream can again absorb more data.</dd></dl>
+A "writable" event will be issued when the stream can again absorb more data.NOTE: for the Logger class, I/O errors will not throw exceptions.</dd></dl>
 <dl><dt>Parameters</dt>
 <dd><table class='parameters' summary ='parameters'>
 <tr class='param'><td class='param'>data: <a href='Array.html'>Array</a> </td><td>Data to write.</td></tr></table></dd>
@@ -230,9 +230,9 @@ A "writable" event will be issued when the stream can again absorb more data.</d
 <hr />
 <div class="terms">
    <p class="terms">
-       <a href="http://embedthis.com.com/">       Embedthis Software LLC, 2003-2011. All rights reserved. Embedthis is a trademark of Embedthis Software LLC.</a>
+       <a href="http://embedthis.com/">       Embedthis Software LLC, 2003-2011. All rights reserved. Embedthis is a trademark of Embedthis Software LLC.</a>
    </p>
 </div></div>
 </div>
-
-
+</body>
+</html>

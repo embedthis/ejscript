@@ -57,8 +57,8 @@ This is invoked as: function (event) { }.</td></tr>
 <h2 class='classSection'>Worker Class Methods</h2>
 <table class='apiIndex' summary='methods'>
    <tr><th>Qualifiers</th><th width='95%'>Method</th></tr>
-   <tr class='apiDef'><td class='apiType'> static </td><td><a href='#cloneSelf'><b>cloneSelf</b></a>(): <a href='Worker.html'>Worker</a></tr><tr class='apiBrief'><td>&nbsp;</td><td>Create a new worker by cloning the current interpreter.</td></tr>
    <tr class='apiDef'><td class='apiType'> static </td><td><a href='#exit'><b>exit</b></a>(): <a href='Void.html'>Void</a></tr><tr class='apiBrief'><td>&nbsp;</td><td>Exit the worker.</td></tr>
+   <tr class='apiDef'><td class='apiType'> static </td><td><a href='#fork'><b>fork</b></a>(): <a href='Worker.html'>Worker</a></tr><tr class='apiBrief'><td>&nbsp;</td><td>Create a new worker by cloning the current interpreter.</td></tr>
    <tr class='apiDef'><td class='apiType'> static </td><td><a href='#join'><b>join</b></a>(workers: <a href='Object.html'>Object</a> = null, timeout: <a href='Number.html'>Number</a> = -1): <a href='Boolean.html'>Boolean</a></tr><tr class='apiBrief'><td>&nbsp;</td><td>Wait for Workers to exit.</td></tr>
    <tr class='apiDef'><td class='apiType'> static </td><td><a href='#lookup'><b>lookup</b></a>(name: <a href='String.html'>String</a>): <a href='Worker.html'>Worker</a></tr><tr class='apiBrief'><td>&nbsp;</td><td>Lookup a Worker by name.</td></tr>
 </table>
@@ -119,17 +119,6 @@ outside worker.</dd></dl>
 </div>
 </div>
 <hr />
-<a name='cloneSelf'></a>
-<div class='api'>
-<div class='apiSig'>static     cloneSelf(): <a href='Worker.html'>Worker</a>
-</div>
-<div class='apiDetail'>
-<dl><dt>Description</dt></dd><dd>Create a new worker by cloning the current interpreter. </dd></dl>
-<dl><dt>Specified</dt>
-<dd>ejscript-2.0</dd></dl>
-</div>
-</div>
-<hr />
 <a name='eval'></a>
 <div class='api'>
 <div class='apiSig'>    eval(script: <a href='String.html'>String</a>, timeout: <a href='Number.html'>Number</a> = -1): <a href='Object.html'>Object</a>
@@ -157,6 +146,17 @@ share any data the the invoking interpreter. The result is serialized in the wor
 </div>
 <div class='apiDetail'>
 <dl><dt>Description</dt></dd><dd>Exit the worker. </dd></dl>
+<dl><dt>Specified</dt>
+<dd>ejscript-2.0</dd></dl>
+</div>
+</div>
+<hr />
+<a name='fork'></a>
+<div class='api'>
+<div class='apiSig'>static     fork(): <a href='Worker.html'>Worker</a>
+</div>
+<div class='apiDetail'>
+<dl><dt>Description</dt></dd><dd>Create a new worker by cloning the current interpreter. </dd></dl>
 <dl><dt>Specified</dt>
 <dd>ejscript-2.0</dd></dl>
 </div>
@@ -264,9 +264,9 @@ use load() or Worker(script) instead.</dd></dl>
 <hr />
 <div class="terms">
    <p class="terms">
-       <a href="http://embedthis.com.com/">       Embedthis Software LLC, 2003-2011. All rights reserved. Embedthis is a trademark of Embedthis Software LLC.</a>
+       <a href="http://embedthis.com/">       Embedthis Software LLC, 2003-2011. All rights reserved. Embedthis is a trademark of Embedthis Software LLC.</a>
    </p>
 </div></div>
 </div>
-
-
+</body>
+</html>

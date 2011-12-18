@@ -51,6 +51,14 @@ call <a href='#finalize'>finalize()</a> to signal the end of write data. If auto
 call finalize at the conclusion of the request.
 Applications that wish to keep the request open to the client can suppress auto-finalization by 
 setting autoFinalizing to false or by calling dontAutoFinalize(). This property defaults to true.</td></tr>
+<a name='cacheIndex'></a>
+   <tr><td nowrap align='center'></td><td>cacheIndex</td><td><a href='String.html'>String</a></td><td>null </td></tr>
+<a name='cacheItem'></a>
+   <tr><td nowrap align='center'></td><td>cacheItem</td><td><a href='Object.html'>Object</a></td><td>null </td></tr>
+<a name='cacheName'></a>
+   <tr><td nowrap align='center'></td><td>cacheName</td><td><a href='String.html'>String</a></td><td>null </td></tr>
+<a name='cacheOptions'></a>
+   <tr><td nowrap align='center'></td><td>cacheOptions</td><td><a href='Object.html'>Object</a></td><td>null </td></tr>
 <a name='config'></a>
    <tr><td nowrap align='center'></td><td>config</td><td><a href='Object.html'>Object</a></td><td>Configuration settings. This is a reference to <a href='ejs.web-Request.html#config.'>Request.config</a>. </td></tr>
 <a name='controllerName'></a>
@@ -94,7 +102,9 @@ The "uri" property has fields for: scheme, host, port, path, query and reference
 <h2 class='classSection'>Controller Class Methods</h2>
 <table class='apiIndex' summary='methods'>
    <tr><th>Qualifiers</th><th width='95%'>Method</th></tr>
+   <tr class='apiDef'><td class='apiType'>static </td><td><a href='#cache'><b>cache</b></a>(controller, actions: <a href='Object.html'>Object</a>, options: <a href='Object.html'>Object</a> = expression): <a href='Void.html'>Void</a></tr><tr class='apiBrief'><td>&nbsp;</td><td>Controler action caching.</td></tr>
    <tr class='apiDef'><td class='apiType'>static </td><td><a href='#create'><b>create</b></a>(request: <a href='ejs.web-Request.html'>Request</a>, cname: <a href='String.html'>String</a> = null): <a href='ejs.web-Controller.html'>Controller</a></tr><tr class='apiBrief'><td>&nbsp;</td><td>Static factory method to create and initialize a controller.</td></tr>
+   <tr class='apiDef'><td class='apiType'>static </td><td><a href='#updateCache'><b>updateCache</b></a>(controller, actions: <a href='Object.html'>Object</a>, data: <a href='Object.html'>Object</a>, options: <a href='Object.html'>Object</a> = expression): <a href='Void.html'>Void</a></tr><tr class='apiBrief'><td>&nbsp;</td><td>Update the cache contents.</td></tr>
 </table>
 
 <p class='inheritedLink'><a href='Object.html#InstanceMethods'><i>Inherited Methods</i></a></p>
@@ -109,6 +119,7 @@ The "uri" property has fields for: scheme, host, port, path, query and reference
    <tr class='apiDef'><td class='apiType'></td><td><a href='#app'><b>app</b></a>(request: <a href='ejs.web-Request.html'>Request</a>, aname: <a href='String.html'>String</a> = null): <a href='Object.html'>Object</a></tr><tr class='apiBrief'><td>&nbsp;</td><td>Controller web application.</td></tr>
    <tr class='apiDef'><td class='apiType'></td><td><a href='#autoFinalize'><b>autoFinalize</b></a>(): <a href='Void.html'>Void</a></tr><tr class='apiBrief'><td>&nbsp;</td><td>Finalize the request if <a href='#autoFinalizing'>autoFinalizing</a> is true.</td></tr>
    <tr class='apiDef'><td class='apiType'></td><td><a href='#before'><b>before</b></a>(fn, options: <a href='Object.html'>Object</a> = null): <a href='Void.html'>Void</a></tr><tr class='apiBrief'><td>&nbsp;</td><td>Run an action checker before running the action.</td></tr>
+   <tr class='apiDef'><td class='apiType'></td><td><a href='#clearFlash'><b>clearFlash</b></a>(): <a href='Void.html'>Void</a></tr><tr class='apiBrief'><td>&nbsp;</td><td>Clear previous flags messages.</td></tr>
    <tr class='apiDef'><td class='apiType'></td><td><a href='#dontAutoFinalize'><b>dontAutoFinalize</b></a>(): <a href='Void.html'>Void</a></tr><tr class='apiBrief'><td>&nbsp;</td><td>Stop auto-finalizing the request.</td></tr>
    <tr class='apiDef'><td class='apiType'></td><td><a href='#error'><b>error</b></a>(msg: <a href='String.html'>String</a>): <a href='Void.html'>Void</a></tr><tr class='apiBrief'><td>&nbsp;</td><td>Set an error flash notification message.</td></tr>
    <tr class='apiDef'><td class='apiType'></td><td><a href='#finalize'><b>finalize</b></a>(): <a href='Void.html'>Void</a></tr><tr class='apiBrief'><td>&nbsp;</td><td>Signals the end of any and all response data and flushes any buffered write data to the client.</td></tr>
@@ -127,7 +138,9 @@ The "uri" property has fields for: scheme, host, port, path, query and reference
    <tr class='apiDef'><td class='apiType'></td><td><a href='#setStatus'><b>setStatus</b></a>(status: <a href='Number.html'>Number</a>): <a href='Void.html'>Void</a></tr><tr class='apiBrief'><td>&nbsp;</td><td>Convenience routine to set the (proposed) Http response status code.</td></tr>
    <tr class='apiDef'><td class='apiType'></td><td><a href='#warn'><b>warn</b></a>(msg: <a href='String.html'>String</a>): <a href='Void.html'>Void</a></tr><tr class='apiBrief'><td>&nbsp;</td><td>Set a warning flash notification.</td></tr>
    <tr class='apiDef'><td class='apiType'></td><td><a href='#write'><b>write</b></a>(args: <a href='Array.html'>Array</a>): <a href='Number.html'>Number</a></tr><tr class='apiBrief'><td>&nbsp;</td><td>Low-level write data to the client.</td></tr>
-   <tr class='apiDef'><td class='apiType'></td><td><a href='#writeContent'><b>writeContent</b></a>(data): <a href='Void.html'>Void</a></tr><tr class='apiBrief'><td>&nbsp;</td><td>Write content based on the requested accept mime type.</td></tr>
+   <tr class='apiDef'><td class='apiType'></td><td><a href='#writeCached'><b>writeCached</b></a>(): <a href='Boolean.html'>Boolean</a></tr><tr class='apiBrief'><td>&nbsp;</td><td>Manually write out cached content to the client.</td></tr>
+   <tr class='apiDef'><td class='apiType'></td><td><a href='#writeContent'><b>writeContent</b></a>(data): <a href='Void.html'>Void</a></tr><tr class='apiBrief'><td>&nbsp;</td><td>MOB - DEBUG
+Write content based on the requested accept mime type.</td></tr>
    <tr class='apiDef'><td class='apiType'></td><td><a href='#writeError'><b>writeError</b></a>(status: <a href='Number.html'>Number</a>, msgs: <a href='Array.html'>Array</a>): <a href='Void.html'>Void</a></tr><tr class='apiBrief'><td>&nbsp;</td><td>Render an error message as the response.</td></tr>
    <tr class='apiDef'><td class='apiType'></td><td><a href='#writeFile'><b>writeFile</b></a>(filename: <a href='Path.html'>Path</a>): <a href='Void.html'>Void</a></tr><tr class='apiBrief'><td>&nbsp;</td><td>Render file content back to the client.</td></tr>
    <tr class='apiDef'><td class='apiType'></td><td><a href='#writePartialTemplate'><b>writePartialTemplate</b></a>(path: <a href='Path.html'>Path</a>, options: <a href='Object.html'>Object</a> = expression): <a href='Void.html'>Void</a></tr><tr class='apiBrief'><td>&nbsp;</td><td>Render a partial response using template file.</td></tr>
@@ -213,6 +226,43 @@ checker does write a response, it must call finalize.</dd></dl>
 <td class='param'>except</td><td>[String|Array] Run the checker for all actions except this name This can be a string action name or an array of action names.</td></tr>
 </table></dd>
 </dl></div>
+</div>
+<hr />
+<a name='cache'></a>
+<div class='api'>
+<div class='apiSig'>static  cache(controller, actions: <a href='Object.html'>Object</a>, options: <a href='Object.html'>Object</a> = expression): <a href='Void.html'>Void</a>
+</div>
+<div class='apiDetail'>
+<dl><dt>Description</dt></dd><dd>Controler action caching. This caches the entire output of an action (including generated view).
+Caching is disabled/enabled via the ejsrc config.cache.actions.enable field. It is enabled by default.
+Caching may be used for any HTTP method, though typically it is most useful for state-less GET requests.
+Output data is uniquely cached for requests with different URI post data or query parameters.</dd></dl>
+<dl><dt>Parameters</dt>
+<dd><table class='parameters' summary ='parameters'>
+<tr class='param'><td class='param'>controller </td><td>Controller class. This can be a Controller class object, "this" or a String controller name. You can specify "this" in static code or can also use "this" in class instance code and this routine will determine the underlying controller class.</td></tr><tr class='param'><td class='param'>actions: <a href='Object.html'>Object</a> </td><td>Action string or array of actions.</td></tr><tr class='param'><td class='param'>options: <a href='Object.html'>Object</a> </td><td>Cache control options. Default options for all action caching can be provided via the  ejsrc config.cache.actions field. This is frequently used to specifiy a default lifespan for cached data. [default: expression]</td></tr></table></dd>
+</dl><dl><dt>Options</dt>
+<dd><table class='parameters' summary ='options'>
+<td class='param'>mode</td><td>Client caching mode. Defaults to "server" if unset. If mode is set to "client", a Cache-Control  header will be sent to the client with the caching "max-age" set to the lifespan. This causes the client  to serve client-cached content and to not contact the server at all until the max-age expires.  If mode is set to "manual", the output from the action will be cached, but the action routine will  always be called. To use the cached content in this mode, call <a href='#writeCached'>writeCached()</a> in the action method.  The default mode is "server" which caches content at the server for the specified lifespan. In server mode,  the client will cache requests, but will always revalidate the request with the server. If the server-side  content has not expired, a HTTP Not-Modified (304) response will be given and the client will use its  client-side cached content.  Use "client" mode for static content that will rarely change and for which using "reload" in the browser is an adequate solution to force a refresh. Use "server" mode for dynamic content in conjunction with  <a href='#updateCache'>updateCache</a> to expire or update cache contents. Use "manual" mode when the action routine needs to  determine if cached content can be used on a case by case basis.  If a client browser clicks reload, the client cached and server cached content will be ignored and the  action method will be always invoked.</td></tr>
+<td class='param'>lifespan</td><td>Time in seconds for the cached output to persist.</td></tr>
+<td class='param'>client</td><td>Cache-Control header to send to the client to control caching in the client. Use this for explicit control of the Cache-Control header and thus control of caching in the client. This can be used to set a "max-age" for cached data in the client. These are some of the HTTP/1.1 Cache-Control keywords that can be used in the client option are: "max-age" Max time in seconds the resource is considered fresh. "s-maxage" Max time in seconds the resource is considered fresh from a shared cache. "public" marks authenticated responses as cacheable. "private" shared caches may not store the response. "no-cache" cache must re-submit request for validation before using cached copy. "no-store" response may not be stored in a cache. "must-revalidate" forces clients to revalidate the request with the server. "proxy-revalidate" similar to must-revalidate except only for proxy caches> //  MOB - unclear, clarify.</td></tr>
+<td class='param'>uri</td><td>URI and parameter to further differentiate cached content. If supplied, different cache data can be stored for each URI that applies to the given controller/action. If the URI is set to "*"" all  URIs for that action/controller are uniquely cached. If the request has POST data, the URI may include such post data in a query format. E.g. {uri: /buy?item=scarf&quantity=1}.</td></tr>
+</table></dd>
+</dl><dl><dt>Example</dt>
+<dd><pre>cache(DashController, "index", {lifespan: 200})
+cache(this, ["index", "edit", "show"])
+cache(this, "index", false)</pre></dd></dl>
+</div>
+</div>
+<hr />
+<a name='clearFlash'></a>
+<div class='api'>
+<div class='apiSig'>  ejs.web  clearFlash(): <a href='Void.html'>Void</a>
+</div>
+<div class='apiDetail'>
+<dl><dt>Description</dt></dd><dd>Clear previous flags messages. Useful when using client mode caching for an action.</dd></dl>
+<dl><dt>Stability</dt>
+<dd>Prototype.</dd></dl>
+</div>
 </div>
 <hr />
 <a name='create'></a>
@@ -337,7 +387,7 @@ port components.</dd></dl>
 <td class='param'>route</td><td>String Route name to use for the URI template.</td></tr>
 </table></dd>
 </dl><dl><dt>Returns</dt>
-<dd>A normalized, server-local Uri object.</dd></dl>
+<dd>A normalized, server-local Uri object. The returned URI will be an absolute URI.</dd></dl>
 <dl><dt>Example</dt>
 <dd><pre>Given a current request of http://example.com/samples/demo" and "r" == the current request:
 
@@ -357,7 +407,7 @@ r.link({action: "Admin/logout")
 r.link({action: "\@Admin/logout")
 r.link({uri: "http://example.com/checkout"})
 r.link({route: "default", action: "\@checkout")
-r.link({product: "candy", quantity: "10", template: "/cart/{product}/{quantity}")</pre></dd></dl>
+r.link({product: "candy", quantity: "10", template: "/cart/{product}/{quantity}}")</pre></dd></dl>
 </div>
 </div>
 <hr />
@@ -431,7 +481,7 @@ connection becomes "readable".</dd></dl>
 <td class='param'>writable</td><td>Issued when the stream becomes empty.</td></tr>
 </table></dd>
 </dl><dl><dt>Returns</dt>
-<dd>A count of the bytes actually read. Returns null on eof.</dd></dl>
+<dd>A count of the bytes actually read. Returns null on EOF.</dd></dl>
 <dl><dt>Example</dt>
 <dd><pre>request.on("readable", function(event, request) {
     var data = new byteArray
@@ -503,6 +553,23 @@ to the <a href='#status'>status</a> property.</dd></dl>
 </div>
 </div>
 <hr />
+<a name='updateCache'></a>
+<div class='api'>
+<div class='apiSig'>static  updateCache(controller, actions: <a href='Object.html'>Object</a>, data: <a href='Object.html'>Object</a>, options: <a href='Object.html'>Object</a> = expression): <a href='Void.html'>Void</a>
+</div>
+<div class='apiDetail'>
+<dl><dt>Description</dt></dd><dd>Update the cache contents. This will manually update the cache contents for the given actions with the supplied data. If data is null,
+then cached content will be immediately expired.</dd></dl>
+<dl><dt>Parameters</dt>
+<dd><table class='parameters' summary ='parameters'>
+<tr class='param'><td class='param'>controller </td><td>Controller class. This can be a Controller class object, "this" or a String controller name. You can specify "this" in static code or can also use "this" in class instance code and this routine will determine the underlying controller class.</td></tr><tr class='param'><td class='param'>actions: <a href='Object.html'>Object</a> </td><td>Action string or array of actions.</td></tr><tr class='param'><td class='param'>data: <a href='Object.html'>Object</a> </td><td>Object data to cache. Data is serialized using JSON and stored in the cache. Set to null to invalidate/expire cached data.</td></tr><tr class='param'><td class='param'>options: <a href='Object.html'>Object</a> </td><td>Cache control options. [default: expression]</td></tr></table></dd>
+</dl><dl><dt>Options</dt>
+<dd><table class='parameters' summary ='options'>
+<td class='param'>uri</td><td>URI and parameter to further differentiate cached content. If supplied, different cache data can be stored for each URI that applies to the given controller/action. If the URI is set to "*"" all  URIs for that action/controller are uniquely cached. If the request has POST data, the URI may include such post data in a query format. E.g. {uri: /buy?item=scarf&quantity=1}.</td></tr>
+</table></dd>
+</dl></div>
+</div>
+<hr />
 <a name='warn'></a>
 <div class='api'>
 <div class='apiSig'>  ejs.web  warn(msg: <a href='String.html'>String</a>): <a href='Void.html'>Void</a>
@@ -535,12 +602,25 @@ dontAutoFinalize(), a default view template will be generated when the action me
 </div>
 </div>
 <hr />
+<a name='writeCached'></a>
+<div class='api'>
+<div class='apiSig'>  ejs.web  writeCached(): <a href='Boolean.html'>Boolean</a>
+</div>
+<div class='apiDetail'>
+<dl><dt>Description</dt></dd><dd>Manually write out cached content to the client. This routine will write non-expired cached data to the client. Caching for actions is enabled by
+calling <a href='#cache'>cache()</a> in the Controller.</dd></dl>
+<dl><dt>Returns</dt>
+<dd>True if valid cached content was found to write to the client.</dd></dl>
+</div>
+</div>
+<hr />
 <a name='writeContent'></a>
 <div class='api'>
 <div class='apiSig'>  ejs.web  writeContent(data): <a href='Void.html'>Void</a>
 </div>
 <div class='apiDetail'>
-<dl><dt>Description</dt></dd><dd>Write content based on the requested accept mime type. </dd></dl>
+<dl><dt>Description</dt></dd><dd>MOB - DEBUG
+Write content based on the requested accept mime type. </dd></dl>
 <dl><dt>Parameters</dt>
 <dd><table class='parameters' summary ='parameters'>
 <tr class='param'><td class='param'>data </td><td>Data to send to the client.</td></tr></table></dd>
@@ -638,9 +718,9 @@ dontAutoFinalize(), a default view template will be generated when the action me
 <hr />
 <div class="terms">
    <p class="terms">
-       <a href="http://embedthis.com.com/">       Embedthis Software LLC, 2003-2011. All rights reserved. Embedthis is a trademark of Embedthis Software LLC.</a>
+       <a href="http://embedthis.com/">       Embedthis Software LLC, 2003-2011. All rights reserved. Embedthis is a trademark of Embedthis Software LLC.</a>
    </p>
 </div></div>
 </div>
-
-
+</body>
+</html>

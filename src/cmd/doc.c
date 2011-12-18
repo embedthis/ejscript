@@ -302,7 +302,7 @@ static void generateNamespaceList(EjsMod *mp)
         }
         type = ejsGetProperty(ejs, ejs->global, slotNum);
         qname = ejsGetPropertyName(ejs, ejs->global, slotNum);
-        if (type == 0 || !ejsIsType(ejs, type) || qname.name == 0 || ejsStartsWithAsc(ejs, qname.space, "internal-")) {
+        if (type == 0 || !ejsIsType(ejs, type) || qname.name == 0 || ejsStartsWithAsc(ejs, qname.space, "internal-") >= 0) {
             continue;
         }
         doc = getDoc(ejs, "class", ejs->global, slotNum);
@@ -468,7 +468,7 @@ static MprList *buildClassList(EjsMod *mp, cchar *namespace)
             }
         }
         /* Other fixups */
-        if (ejsStartsWithAsc(ejs, qname.space, "internal") || ejsCompareAsc(ejs, qname.space, "private") == 0) {
+        if (ejsStartsWithAsc(ejs, qname.space, "internal")  >= 0|| ejsCompareAsc(ejs, qname.space, "private") == 0) {
             continue;
         }
         crec = mprAlloc(sizeof(ClassRec));
@@ -692,7 +692,7 @@ static void generateClassPages(EjsMod *mp)
     for (slotNum = mp->firstGlobal; slotNum < count; slotNum++) {
         type = ejsGetProperty(ejs, ejs->global, slotNum);
         qname = ejsGetPropertyName(ejs, ejs->global, slotNum);
-        if (type == 0 || !ejsIsType(ejs, type) || qname.name == 0 || ejsStartsWithAsc(ejs, qname.space, "internal-")) {
+        if (type == 0 || !ejsIsType(ejs, type) || qname.name == 0 || ejsStartsWithAsc(ejs, qname.space, "internal-") >= 0) {
             continue;
         }
         /*
@@ -1035,7 +1035,7 @@ static void buildPropertyList(EjsMod *mp, MprList *list, EjsAny *obj, int numInh
             continue;
         }
         if (ejsCompareAsc(ejs, qname.space, EJS_PRIVATE_NAMESPACE) == 0 || 
-            ejsContainsAsc(ejs, qname.space, ",private]")) {
+            ejsContainsAsc(ejs, qname.space, ",private]") >= 0) {
             continue;
         }
         prec = mprAlloc(sizeof(PropRec));
@@ -1074,7 +1074,7 @@ static int generateClassPropertyTableEntries(EjsMod *mp, EjsObj *obj, MprList *p
         vp = prec->vp;
         trait = prec->trait;
         qname = prec->qname;
-        if (ejsStartsWithAsc(ejs, qname.space, "internal") || ejsContainsAsc(ejs, qname.space, "private")) {
+        if (ejsStartsWithAsc(ejs, qname.space, "internal")  >= 0|| ejsContainsAsc(ejs, qname.space, "private") >= 0) {
             continue;
         }
         if (isalpha((int) qname.name->value[0])) {
@@ -1185,10 +1185,10 @@ static void buildMethodList(EjsMod *mp, MprList *methods, EjsObj *obj, EjsObj *o
             continue;
         }
         if (ejsCompareAsc(ejs, qname.space, EJS_PRIVATE_NAMESPACE) == 0 || 
-                ejsContainsAsc(ejs, qname.space, ",private]")) {
+                ejsContainsAsc(ejs, qname.space, ",private]") >= 0) {
             continue;
         }
-        if (ejsStartsWithAsc(ejs, qname.space, "internal")) {
+        if (ejsStartsWithAsc(ejs, qname.space, "internal") >= 0) {
             continue;
         }
         fp = mprAlloc(sizeof(FunRec));

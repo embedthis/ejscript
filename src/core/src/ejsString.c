@@ -2009,7 +2009,7 @@ int ejsContainsStringAnyCase(Ejs *ejs, EjsString *sp, EjsString *pat)
             return 1;
         }
     }
-    return -1;
+    return 0;
 }
 #endif
 
@@ -2034,7 +2034,7 @@ int ejsContainsAsc(Ejs *ejs, EjsString *sp, cchar *pat)
             }
         }
         if (j == len) {
-            return 1;
+            return i;
         }
     }
     return -1;

@@ -82,6 +82,7 @@ module ejs {
 
         /**
             Locate a program using the application PATH
+            @param program Program to find
          */
         static function locate(program: Path): Path {
             //  MOB - should search all windows cmd extensions: .bat, .com - see MprCmd/CGI

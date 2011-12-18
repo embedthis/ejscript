@@ -101,6 +101,9 @@ Each element is named by the file upload HTML input element ID in the HTML page 
    <tr><td nowrap align='center'> </td><td>flash</td><td><a href='Object.html'>Object</a></td><td>Notification "flash" messages to pass to the next request (only). By convention, the following keys are used.
 error: Negative errors (Warnings and errors), inform: Informational / postitive feedback (note),
 warn: Negative feedback (Warnings and errors), *:: Other feedback (reminders, suggestions...).</td></tr>
+<a name='formData'></a>
+   <tr><td nowrap align='center'> </td><td>formData</td><td><a href='String.html'>String</a></td><td>The request form parameters as a string. This parameters are www-url decoded from the POST request body data. 
+This is useful to get a stable, sorted string representing the form parameters.</td></tr>
 <a name='headers'></a>
    <tr><td nowrap align='center'> </td><td>headers</td><td><a href='Object.html'>Object</a></td><td>Request Http headers. This is an object hash filled with lower-case request headers from the client. If multiple 
 headers of the same key value are defined, their contents will be catenated with a ", " separator as per the 
@@ -142,7 +145,7 @@ line of the Http request. It is combined with the HttpServer scheme, host and po
 fully qualified URI. The "uri" property has fields for: scheme, host, port, path, query and reference.
 The "uri" property is read-only.</td></tr>
 <a name='params'></a>
-   <tr><td nowrap align='center'> </td><td>params</td><td><a href='Object.html'>Object</a></td><td>The request form parameters. This parameters are www-url decoded from the POST request body data.</td></tr>
+   <tr><td nowrap align='center'> </td><td>params</td><td><a href='Object.html'>Object</a></td><td>The request form parameters plus other routing parameters. The form parameters are www-url decoded from the POST request body data. See also <a href='#form'>form</a>. </td></tr>
 <a name='pathInfo'></a>
    <tr><td nowrap align='center'> </td><td>pathInfo</td><td><a href='String.html'>String</a></td><td>Location of the request within the application. This is the portion of the request URL after the scriptName. 
 The pathInfo is originally derrived from uri.path after splitting off the scriptName. Changes to the uri or 
@@ -179,7 +182,7 @@ and "type" which classifies the type of request.</td></tr>
 corresponding to the application, but middleware may modify this to be an arbitrary string representing 
 the application.  The script name is often determined by the Router as it parses the request using 
 the routing tables. The scriptName will be set to the empty string if not defined, otherwise is should begin
-with a "/" character. NOTE: changing script name will not update home or absHome.</td></tr>
+with a "/" character. NOTE: changing script name will not update the home property.</td></tr>
 <a name='securityToken'></a>
    <tr><td nowrap align='center'> get </td><td>securityToken</td><td><a href='Object.html'>Object</a></td><td>Get a security token to help mitigate CSRF threats. The security token is submitted by forms and requests and
 can be validated by controllers. The token is stored in session["__ejs-security-token__"].</td></tr>
@@ -202,6 +205,8 @@ Objects are stored in the session state using JSON serialization.</td></tr>
    <tr><td nowrap align='center'> </td><td>uri</td><td><a href='Uri.html'>Uri</a></td><td>The current request URI. This property is read-only and is dynamically computed from the originalUri combined
 with the current scheme, host, port, scriptName, pathInfo, query and reference property values. 
 The "uri" property has fields for: scheme, host, port, path, query and reference.</td></tr>
+<a name='writeBuffer'></a>
+   <tr><td nowrap align='center'> </td><td>writeBuffer</td><td><a href='ByteArray.html'>ByteArray</a></td><td>Write buffer when capturing output. </td></tr>
 <a name='written'></a>
    <tr><td nowrap align='center'> get </td><td>written</td><td><a href='Number.html'>Number</a></td><td>The number of bytes written to the client. This is the count of bytes passed to <a href='#write'>write</a> and buffered, 
 not the actual number of bytes sent to the network connection.</td></tr>
@@ -253,7 +258,6 @@ not the actual number of bytes sent to the network connection.</td></tr>
    <tr class='apiDef'><td class='apiType'> </td><td><a href='#trace'><b>trace</b></a>(options: <a href='Object.html'>Object</a>): <a href='Void.html'>Void</a></tr><tr class='apiBrief'><td>&nbsp;</td><td>Configure tracing for this request.</td></tr>
    <tr class='apiDef'><td class='apiType'> </td><td><a href='#warn'><b>warn</b></a>(msg: <a href='String.html'>String</a>): <a href='Void.html'>Void</a></tr><tr class='apiBrief'><td>&nbsp;</td><td>Set a warning flash notification.</td></tr>
    <tr class='apiDef'><td class='apiType'> </td><td><a href='#write'><b>write</b></a>(data: <a href='Array.html'>Array</a>): <a href='Number.html'>Number</a></tr><tr class='apiBrief'><td>&nbsp;</td><td>Write data to the stream.Write data to the client.</td></tr>
-   <tr class='apiDef'><td class='apiType'> </td><td><a href='#writeContent'><b>writeContent</b></a>(data): <a href='Void.html'>Void</a></tr><tr class='apiBrief'><td>&nbsp;</td><td>Write content based on the requested accept mime type.</td></tr>
    <tr class='apiDef'><td class='apiType'> </td><td><a href='#writeError'><b>writeError</b></a>(status: <a href='Number.html'>Number</a>, msgs: <a href='Array.html'>Array</a>): <a href='Void.html'>Void</a></tr><tr class='apiBrief'><td>&nbsp;</td><td>Write an error message back to the user and finalize the request.</td></tr>
    <tr class='apiDef'><td class='apiType'> </td><td><a href='#writeFile'><b>writeFile</b></a>(file: <a href='Path.html'>Path</a>): <a href='Boolean.html'>Boolean</a></tr><tr class='apiBrief'><td>&nbsp;</td><td>Send a static file back to the client.</td></tr>
    <tr class='apiDef'><td class='apiType'> </td><td><a href='#writeResponse'><b>writeResponse</b></a>(response: <a href='Object.html'>Object</a>): <a href='Void.html'>Void</a></tr><tr class='apiBrief'><td>&nbsp;</td><td>Send a response to the client.</td></tr>
@@ -325,7 +329,7 @@ request is silently ignored.</dd></dl>
 <dl><dt>Description</dt></dd><dd>Create a session state object. The session state object can be used to share state between requests.
 If a session has not already been created, this call will create a new session and initialize the 
 <a href='#session'>session</a> property with the new session. It will also set the <a href='#sessionID'>sessionID</a> property and a cookie containing 
-a session ID will be sent to the client with the response. Sessions can also be used/created by simply
+a session ID that will be sent to the client with the response. Sessions can also be used/created by simply
 accessing the session property.  Objects are stored in the session state using JSON serialization.</dd></dl>
 <dl><dt>Parameters</dt>
 <dd><table class='parameters' summary ='parameters'>
@@ -461,7 +465,7 @@ port components.</dd></dl>
 <td class='param'>route</td><td>String Route name to use for the URI template.</td></tr>
 </table></dd>
 </dl><dl><dt>Returns</dt>
-<dd>A normalized, server-local Uri object.</dd></dl>
+<dd>A normalized, server-local Uri object. The returned URI will be an absolute URI.</dd></dl>
 <dl><dt>Example</dt>
 <dd><pre>Given a current request of http://example.com/samples/demo" and "r" == the current request:
 
@@ -481,7 +485,7 @@ r.link({action: "Admin/logout")
 r.link({action: "\@Admin/logout")
 r.link({uri: "http://example.com/checkout"})
 r.link({route: "default", action: "\@checkout")
-r.link({product: "candy", quantity: "10", template: "/cart/{product}/{quantity}")</pre></dd></dl>
+r.link({product: "candy", quantity: "10", template: "/cart/{product}/{quantity}}")</pre></dd></dl>
 </div>
 </div>
 <hr />
@@ -571,7 +575,7 @@ connection becomes "readable".</dd></dl>
 <td class='param'>writable</td><td>Issued when the stream becomes empty.</td></tr>
 </table></dd>
 </dl><dl><dt>Returns</dt>
-<dd>A count of the bytes actually read. Returns null on eof.</dd></dl>
+<dd>A count of the bytes actually read. Returns null on EOF.</dd></dl>
 <dl><dt>Example</dt>
 <dd><pre>request.on("readable", function(event, request) {
     var data = new byteArray
@@ -765,18 +769,6 @@ A "writable" event will be issued when the stream can again absorb more data.Thi
 </dl></div>
 </div>
 <hr />
-<a name='writeContent'></a>
-<div class='api'>
-<div class='apiSig'>    writeContent(data): <a href='Void.html'>Void</a>
-</div>
-<div class='apiDetail'>
-<dl><dt>Description</dt></dd><dd>Write content based on the requested accept mime type. </dd></dl>
-<dl><dt>Parameters</dt>
-<dd><table class='parameters' summary ='parameters'>
-<tr class='param'><td class='param'>data </td><td>Data to send to the client.</td></tr></table></dd>
-</dl></div>
-</div>
-<hr />
 <a name='writeError'></a>
 <div class='api'>
 <div class='apiSig'>    writeError(status: <a href='Number.html'>Number</a>, msgs: <a href='Array.html'>Array</a>): <a href='Void.html'>Void</a>
@@ -836,9 +828,9 @@ body properties. The respond method replaces previously defined status and heade
 <hr />
 <div class="terms">
    <p class="terms">
-       <a href="http://embedthis.com.com/">       Embedthis Software LLC, 2003-2011. All rights reserved. Embedthis is a trademark of Embedthis Software LLC.</a>
+       <a href="http://embedthis.com/">       Embedthis Software LLC, 2003-2011. All rights reserved. Embedthis is a trademark of Embedthis Software LLC.</a>
    </p>
 </div></div>
 </div>
-
-
+</body>
+</html>

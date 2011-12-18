@@ -87,7 +87,8 @@ Objects are stored in the session state using JSON serialization.</td></tr>
 <table class='apiIndex' summary='methods'>
    <tr><th>Qualifiers</th><th width='95%'>Method</th></tr>
    <tr class='apiDef'><td class='apiType'></td><td><a href='#View'><b>View</b></a>(request: <a href='Object.html'>Object</a>)</tr><tr class='apiBrief'><td>&nbsp;</td><td>Constructor method to initialize a new View.</td></tr>
-   <tr class='apiDef'><td class='apiType'></td><td><a href='#alert'><b>alert</b></a>(text: <a href='String.html'>String</a>, options: <a href='Object.html'>Object</a> = expression): <a href='Void.html'>Void</a></tr><tr class='apiBrief'><td>&nbsp;</td><td>Emit a status alert area.</td></tr>
+   <tr class='apiDef'><td class='apiType'></td><td><a href='#alert'><b>alert</b></a>(text: <a href='String.html'>String</a>, options: <a href='Object.html'>Object</a> = expression): <a href='Void.html'>Void</a></tr><tr class='apiBrief'><td>&nbsp;</td><td>Emit a status alert area
+MOB - review?.</td></tr>
    <tr class='apiDef'><td class='apiType'></td><td><a href='#anchor'><b>anchor</b></a>(text: <a href='String.html'>String</a>, options: <a href='Object.html'>Object</a> = expression): <a href='Void.html'>Void</a></tr><tr class='apiBrief'><td>&nbsp;</td><td>Emit an anchor.</td></tr>
    <tr class='apiDef'><td class='apiType'></td><td><a href='#button'><b>button</b></a>(name: <a href='String.html'>String</a>, label: <a href='String.html'>String</a>, options: <a href='Object.html'>Object</a> = expression): <a href='Void.html'>Void</a></tr><tr class='apiBrief'><td>&nbsp;</td><td>Render a form button.</td></tr>
    <tr class='apiDef'><td class='apiType'></td><td><a href='#buttonLink'><b>buttonLink</b></a>(text: <a href='String.html'>String</a>, options: <a href='Object.html'>Object</a> = expression): <a href='Void.html'>Void</a></tr><tr class='apiBrief'><td>&nbsp;</td><td>Render a link button.</td></tr>
@@ -148,7 +149,8 @@ Objects are stored in the session state using JSON serialization.</td></tr>
 <div class='apiSig'>  ejs.web  alert(text: <a href='String.html'>String</a>, options: <a href='Object.html'>Object</a> = expression): <a href='Void.html'>Void</a>
 </div>
 <div class='apiDetail'>
-<dl><dt>Description</dt></dd><dd>Emit a status alert area. </dd></dl>
+<dl><dt>Description</dt></dd><dd>Emit a status alert area
+MOB - review?. </dd></dl>
 <dl><dt>Parameters</dt>
 <dd><table class='parameters' summary ='parameters'>
 <tr class='param'><td class='param'>text: <a href='String.html'>String</a> </td><td>Initial message text to display. Status messages may be updated by calling the  Controller.status function.</td></tr><tr class='param'><td class='param'>options: <a href='Object.html'>Object</a> </td><td>Optional extra options. See <a href='#View'>View</a> for a list of the standard options. [default: expression]</td></tr></table></dd>
@@ -166,7 +168,7 @@ Objects are stored in the session state using JSON serialization.</td></tr>
 <div class='apiSig'>  ejs.web  anchor(text: <a href='String.html'>String</a>, options: <a href='Object.html'>Object</a> = expression): <a href='Void.html'>Void</a>
 </div>
 <div class='apiDetail'>
-<dl><dt>Description</dt></dd><dd>Emit an anchor. This is lable inside an anchor reference.</dd></dl>
+<dl><dt>Description</dt></dd><dd>Emit an anchor. This is a label inside an anchor reference.</dd></dl>
 <dl><dt>Parameters</dt>
 <dd><table class='parameters' summary ='parameters'>
 <tr class='param'><td class='param'>text: <a href='String.html'>String</a> </td><td>Link text to display.</td></tr><tr class='param'><td class='param'>options: <a href='Object.html'>Object</a> </td><td>Optional extra options. See <a href='#View'>View</a> for a list of the standard options. [default: expression]</td></tr></table></dd>
@@ -182,7 +184,7 @@ Objects are stored in the session state using JSON serialization.</td></tr>
 the input form will be submitted.</dd></dl>
 <dl><dt>Parameters</dt>
 <dd><table class='parameters' summary ='parameters'>
-<tr class='param'><td class='param'>name: <a href='String.html'>String</a> </td><td>Name for the input button. This defines the HTML element name and provides the source of the initial value to display. The field should be a property of the form control record. It can be a simple  property of the record or it can have multiple parts, such as: field.field.field. If this call is used  without a form control record, the actual data value should be supplied via the options.value property.</td></tr><tr class='param'><td class='param'>label: <a href='String.html'>String</a> </td><td>Text label to display in the button and value to send when the form is submitted.</td></tr><tr class='param'><td class='param'>options: <a href='Object.html'>Object</a> </td><td>Optional extra options. See <a href='#View'>View</a> for a list of the standard options. Examples: button("commit", "OK") button("commit", "Cancel"). [default: expression]</td></tr></table></dd>
+<tr class='param'><td class='param'>name: <a href='String.html'>String</a> </td><td>Name for the input button. This defines the HTML element name and provides the source of the initial value to display.</td></tr><tr class='param'><td class='param'>label: <a href='String.html'>String</a> </td><td>Text label to display in the button and value to send when the form is submitted.</td></tr><tr class='param'><td class='param'>options: <a href='Object.html'>Object</a> </td><td>Optional extra options. See <a href='#View'>View</a> for a list of the standard options. Examples: button("commit", "OK") button("commit", "Cancel"). [default: expression]</td></tr></table></dd>
 </dl></div>
 </div>
 <hr />
@@ -197,7 +199,7 @@ is clicked, the associated URI will be invoked.</dd></dl>
 <dd><table class='parameters' summary ='parameters'>
 <tr class='param'><td class='param'>text: <a href='String.html'>String</a> </td><td>Text to display in the button. The text can contain embedded HTML.</td></tr><tr class='param'><td class='param'>options: <a href='Object.html'>Object</a> </td><td>Options specifying the target URI to invoke. See <a href='#View'>View</a> for a list of the standard options. [default: expression]</td></tr></table></dd>
 </dl><dl><dt>Example</dt>
-<dd><pre>buttonLink("Cancel" "\@")</pre></dd></dl>
+<dd><pre>buttonLink("Cancel", "\@")</pre></dd></dl>
 </div>
 </div>
 <hr />
@@ -323,7 +325,7 @@ security tokens outside a form, you need to manually call <a href='#securityToke
 <tr class='param'><td class='param'>record: <a href='Object.html'>Object</a> </td><td>Record to display and optionally update.</td></tr><tr class='param'><td class='param'>options: <a href='Object.html'>Object</a> </td><td>Optional extra options. See <a href='#View'>View</a> for a list of the standard options. [default: expression]</td></tr></table></dd>
 </dl><dl><dt>Options</dt>
 <dd><table class='parameters' summary ='options'>
-<td class='param'>hideErrors</td><td>Don't display model errors. Models retain error diagnostics from a failed write. Setting thish option will prevent their display.</td></tr>
+<td class='param'>hideErrors</td><td>Don't display model errors. Models retain error diagnostics from a failed write. Setting this option will prevent their display.</td></tr>
 <td class='param'>modal</td><td>String Make a form a modal dialog.</td></tr>
 <td class='param'>nosecurity</td><td>Don't generate a security token for the form.</td></tr>
 <td class='param'>securityToken</td><td>String Override CSRF security token to include when the form is submitted. A default  security token will always be generated unless options.nosecurity is defined to be true.</td></tr>
@@ -436,7 +438,7 @@ port components.</dd></dl>
 <td class='param'>route</td><td>String Route name to use for the URI template.</td></tr>
 </table></dd>
 </dl><dl><dt>Returns</dt>
-<dd>A normalized, server-local Uri object.</dd></dl>
+<dd>A normalized, server-local Uri object. The returned URI will be an absolute URI.</dd></dl>
 <dl><dt>Example</dt>
 <dd><pre>Given a current request of http://example.com/samples/demo" and "r" == the current request:
 
@@ -456,7 +458,7 @@ r.link({action: "Admin/logout")
 r.link({action: "\@Admin/logout")
 r.link({uri: "http://example.com/checkout"})
 r.link({route: "default", action: "\@checkout")
-r.link({product: "candy", quantity: "10", template: "/cart/{product}/{quantity}")</pre></dd></dl>
+r.link({product: "candy", quantity: "10", template: "/cart/{product}/{quantity}}")</pre></dd></dl>
 </div>
 </div>
 <hr />
@@ -654,7 +656,7 @@ to the <a href='#status'>status</a> property.</dd></dl>
 </div>
 <div class='apiDetail'>
 <dl><dt>Description</dt></dd><dd>Render a table. The table control can display static or dynamic tabular data. The client table control 
-manages sorting by column, dynamic data refreshes, pagination and clicking on rows or cells.</dd></dl>
+manages sorting by column, dynamic data refreshes and clicking on rows or cells.</dd></dl>
 <dl><dt>Parameters</dt>
 <dd><table class='parameters' summary ='parameters'>
 <tr class='param'><td class='param'>data </td><td>Data to display. The data must be a grid of data, ie. an Array of objects where each object  represents the data for a row. The column names are the object property names and the cell text is  the object property values.</td></tr><tr class='param'><td class='param'>options: <a href='Object.html'>Object</a> </td><td>Optional extra options. See <a href='#View'>View</a> for a list of the standard options. [default: expression]</td></tr></table></dd>
@@ -694,12 +696,12 @@ manages sorting by column, dynamic data refreshes, pagination and clicking on ro
 <div class='apiSig'>  ejs.web  tabs(data: <a href='Object.html'>Object</a>, options: <a href='Object.html'>Object</a> = expression): <a href='Void.html'>Void</a>
 </div>
 <div class='apiDetail'>
-<dl><dt>Description</dt></dd><dd>Render a tab control. The tab control can manage a set of panes and selectively show and hide or invoke the selected panes. 
+<dl><dt>Description</dt></dd><dd>Render a tab control. The tab control can manage a set of panes and will selectively show and hide or invoke the selected panes. 
 If the click option is defined (default), the selected pane will be invoked via a foreground click. If the
 remote option is defined, the selected pane will be invoked via a background click. If the toggle option is
 defined the selected pane will be made visible and other panes will be hidden.
 If using show/hide tabs, define the initial visible pane to be of the class "-ejs-pane-visible" and define
-other panes to be "-ejs-pane-hidden". The Control's client side code will toggle these classes to make panes
+other panes to be "-ejs-pane-hidden". The control's client side code will toggle these classes to make panes
 visible or hidden.</dd></dl>
 <dl><dt>Parameters</dt>
 <dd><table class='parameters' summary ='parameters'>
@@ -808,9 +810,9 @@ A "writable" event will be issued when the stream can again absorb more data.Thi
 <hr />
 <div class="terms">
    <p class="terms">
-       <a href="http://embedthis.com.com/">       Embedthis Software LLC, 2003-2011. All rights reserved. Embedthis is a trademark of Embedthis Software LLC.</a>
+       <a href="http://embedthis.com/">       Embedthis Software LLC, 2003-2011. All rights reserved. Embedthis is a trademark of Embedthis Software LLC.</a>
    </p>
 </div></div>
 </div>
-
-
+</body>
+</html>

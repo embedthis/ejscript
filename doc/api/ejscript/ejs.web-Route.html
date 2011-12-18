@@ -70,22 +70,22 @@ after rewriting the request.</td></tr>
 <a name='target'></a>
    <tr><td nowrap align='center'> </td><td>target</td><td><a href='String.html'>String</a></td><td>Target mapping for the route. The route maps from the template to the target.</td></tr>
 <a name='template'></a>
-   <tr><td nowrap align='center'> </td><td>template</td><td><a href='Object.html'>Object</a></td><td>Template pattern for URIs. The template is used to match the request pathInfo. The template can be a 
+   <tr><td nowrap align='center'> </td><td>template</td><td><a href='Object.html'>Object</a></td><td>Template pattern for creating links. The template is used to match the request pathInfo. The template can be a 
 string, a regular expression or a function. If it is a string, it may contain tokens enclosed in braces 
 "{}" and it is converted to a regular expression for fast matching. At run-time, request tokens 
 are extracted and stored as items in the Request.params collection.<br/><br/>If the template is a regular expression, it is used to match against the request pathInfo. If it matches, 
 then sub-expressions may be referenced in the <a href='#params'>params</a> values by using <a href='#1'>1</a> <a href='#2'>2</a> and so on. 
 e.g. params: { priority: "<a href='#1"'>1"</a> }<br/><br/>If the template is a function, it is run to test for a request match. The function should return true to 
 match the request. The function can directly set parameters in request.params.</td></tr>
-<a name='threaded'></a>
-   <tr><td nowrap align='center'> </td><td>threaded</td><td><a href='Boolean.html'>Boolean</a></td><td>If true, the request should execute in a worker thread if possible. This thread will not be dedicated, 
-but will be assigned as the request requires CPU resources.</td></tr>
 <a name='tokens'></a>
    <tr><td nowrap align='center'> </td><td>tokens</td><td><a href='Array.html'>Array</a></td><td>Key tokens in the route template. </td></tr>
 <a name='trace'></a>
    <tr><td nowrap align='center'> </td><td>trace</td><td><a href='Object.html'>Object</a></td><td>Trace options for the request. Note: the route is created after the Request object is created so the tracing 
 of the connections and request headers will be controlled by the owning server. 
 See HttpServer.trace for trace property fields.</td></tr>
+<a name='workers'></a>
+   <tr><td nowrap align='center'> </td><td>workers</td><td><a href='Boolean.html'>Boolean</a></td><td>If true, requests should execute using a worker thread if possible. The worker thread will be pooled when
+the request completes and be available for use by subsequent requests.</td></tr>
 </table>
 
 <p class='inheritedLink'><a href='Object.html#Properties'><i>Inherited Properties</i></a></p>
@@ -123,7 +123,7 @@ create and install routes into the Router.</dd></dl>
 <tr class='param'><td class='param'>template: <a href='Object.html'>Object</a> </td><td>String or Regular Expression defining the form of a matching URI (Request.pathInfo).</td></tr><tr class='param'><td class='param'>options: <a href='Object.html'>Object</a> </td><td>Route options representing the URI and options to use when servicing the request. If it is a string, it may begin with an " @" and be of the form " @[controller/]action". In this case, if there is a "/" delimiter, the first portion is a controller and the second is the controller action to invoke. The controller or action may be absent. For example: " @Controller/", " @action", " @controller/action". If the string does not begin with an " @", it is interpreted as a literal URI.  For example: "/web/index.html". If the options is an object hash, it may contain the options below:.</td></tr><tr class='param'><td class='param'>router: <a href='ejs.web-Router.html'>Router</a> </td><td>Owning router object.</td></tr></table></dd>
 </dl><dl><dt>Options</dt>
 <dd><table class='parameters' summary ='options'>
-<td class='param'>action</td><td>Action method to service the request. This may be of the form "controller/action" or "controller/".</td></tr>
+<td class='param'>action</td><td>Action method to service the request. This may be of the form "action", "controller/action" or  "controller/".  If the action portion omitted, the default action (index) will be used.</td></tr>
 <td class='param'>controller</td><td>Controller to service the request.</td></tr>
 <td class='param'>name</td><td>Name to give to the route. If absent, the name is created from the controller and action names.</td></tr>
 <td class='param'>outer</td><td>Parent route. The parent's template and parameters are appended to this route.</td></tr>
@@ -137,9 +137,9 @@ Route("/User/login", {name: "login" })</pre></dd></dl>
 <hr />
 <div class="terms">
    <p class="terms">
-       <a href="http://embedthis.com.com/">       Embedthis Software LLC, 2003-2011. All rights reserved. Embedthis is a trademark of Embedthis Software LLC.</a>
+       <a href="http://embedthis.com/">       Embedthis Software LLC, 2003-2011. All rights reserved. Embedthis is a trademark of Embedthis Software LLC.</a>
    </p>
 </div></div>
 </div>
-
-
+</body>
+</html>

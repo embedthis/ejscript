@@ -33,9 +33,11 @@ int ejsLookupScope(Ejs *ejs, EjsName name, EjsLookup *lookup)
     memset(lookup, 0, sizeof(*lookup));
 
     //  OPT -- remove nthBlock. Not needed if not binding
-    for (lookup->nthBlock = 0, bp = ejs->state->bp; bp; bp = bp->scope, lookup->nthBlock++) {
-        if ((slotNum = lookupVarInBlock(ejs, bp, name, lookup)) >= 0) {
-            return slotNum;
+    if (ejs->state) {
+        for (lookup->nthBlock = 0, bp = ejs->state->bp; bp; bp = bp->scope, lookup->nthBlock++) {
+            if ((slotNum = lookupVarInBlock(ejs, bp, name, lookup)) >= 0) {
+                return slotNum;
+            }
         }
     }
     return lookupVarInBlock(ejs, ejs->global, name, lookup);

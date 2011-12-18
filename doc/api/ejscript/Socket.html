@@ -94,8 +94,7 @@ is not bound.</td></tr>
 <div class='apiSig'>    accept(): <a href='Socket.html'>Socket</a>
 </div>
 <div class='apiDetail'>
-<dl><dt>Description</dt></dd><dd>Receive a client socket in response to a "connect" event. The accept call must be called after invoking
-<a href='#listen'>listen</a> and receiving a client connection.</dd></dl>
+<dl><dt>Description</dt></dd><dd>Receive a client socket in response to a "connect" event. Accept must be called after invoking <a href='#listen'>listen</a>. </dd></dl>
 <dl><dt>Returns</dt>
 <dd>A socket connected to the client endpoint.</dd></dl>
 </div>
@@ -226,7 +225,7 @@ In this case a "readable" event will be issued when data is available for readin
 <td class='param'>writable</td><td>Issued when the stream becomes empty.</td></tr>
 </table></dd>
 </dl><dl><dt>Returns</dt>
-<dd>A count of the bytes actually read. Returns null on eof.</dd></dl>
+<dd>A count of the bytes actually read. Returns null on EOF.</dd></dl>
 </div>
 </div>
 <hr />
@@ -258,9 +257,9 @@ A "writable" event will be issued when the stream can again absorb more data.</d
 <hr />
 <div class="terms">
    <p class="terms">
-       <a href="http://embedthis.com.com/">       Embedthis Software LLC, 2003-2011. All rights reserved. Embedthis is a trademark of Embedthis Software LLC.</a>
+       <a href="http://embedthis.com/">       Embedthis Software LLC, 2003-2011. All rights reserved. Embedthis is a trademark of Embedthis Software LLC.</a>
    </p>
 </div></div>
 </div>
-
-
+</body>
+</html>

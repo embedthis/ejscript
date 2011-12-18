@@ -198,7 +198,7 @@ module ejs {
             return recursiveFind(this, pattern, 0)
         }
 
-        /*
+        /**
             TODO - should do pattern matching like find()
             @hide
          */

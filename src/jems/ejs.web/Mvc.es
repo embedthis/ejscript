@@ -46,7 +46,7 @@ module ejs.web {
         /** 
             Load an MVC application and the optional application specific ejsrc file
             @param home Base directory for the MVC app
-            @param request Request object
+            @param config Configuration object
          */
         function Mvc(home: Path, config = App.config) {
             this.config = config
@@ -67,7 +67,7 @@ module ejs.web {
 
         /**
             Factory to load an MVC application.
-            @param req Request object
+            @param request Request object
             @param dir Base directory containing the MVC application. Defaults to "."
             @param config Default configuration for the application
             @return An Mvc application object
@@ -176,7 +176,7 @@ module ejs.web {
             }
         }
 
-        /*
+        /**
             Open database. Expects ejsrc configuration:
                 mode: "debug",
                 database: {
@@ -187,6 +187,7 @@ module ejs.web {
                     test: { name: "db/blog.sdb", trace: true },
                     production: { name: "db/blog.sdb", trace: true },
                 }
+            @hide
          */
         public static function openDatabase(home: Path) {
             let dbconfig = App.config.database

@@ -58,14 +58,16 @@ Set the standard error stream. Changing the error stream will close and reopen s
    <tr><td nowrap align='center'> static get </td><td>exeDir</td><td><a href='Path.html'>Path</a></td><td>The directory containing the application executable. </td></tr>
 <a name='exePath'></a>
    <tr><td nowrap align='center'> static get </td><td>exePath</td><td><a href='Path.html'>Path</a></td><td>The application executable path. </td></tr>
+<a name='gid'></a>
+   <tr><td nowrap align='center'> static get </td><td>gid</td><td><a href='Number.html'>Number</a></td><td>The group ID of the user account running the application. Only supported on Unix.</td></tr>
 <a name='inputStream'></a>
    <tr><td nowrap align='center'> static get set </td><td>inputStream</td><td><a href='Stream.html'>Stream</a></td><td>Set the standard input stream. Changing the input stream will close and reopen stdin.</td></tr>
 <a name='log'></a>
    <tr><td nowrap align='center'> static </td><td>log</td><td><a href='Logger.html'>Logger</a></td><td>Application logger. This singleton object respresents the Application default logger.
 If the ejsrc startup configuration file defines a log.location field, the log logger will send messages to
-the defined location. Otherwise, messages will be sent to the LogFile stream.</td></tr>
-<a name='logFile'></a>
-   <tr><td nowrap align='center'> static </td><td>logFile</td><td><a href='LogFile.html'>LogFile</a></td><td>Application LogFile object. This singleton object represents the Application log file specified via the
+the defined location. Otherwise, messages will be sent to the MprLog stream.</td></tr>
+<a name='mprLog'></a>
+   <tr><td nowrap align='center'> static </td><td>mprLog</td><td><a href='MprLog.html'>MprLog</a></td><td>Application MPR log object. This singleton object represents the Application log file specified via the
 --log command line switch.</td></tr>
 <a name='name'></a>
    <tr><td nowrap align='center'> static </td><td>name</td><td><a href='String.html'>String</a></td><td>Application name. Single word, lower-case name for the application. This is initialized to the name of
@@ -76,9 +78,13 @@ the script or "ejs" if running interactively.</td></tr>
    <tr><td nowrap align='center'> static get </td><td>pid</td><td><a href='Number.html'>Number</a></td><td>The process ID of the application. </td></tr>
 <a name='search'></a>
    <tr><td nowrap align='center'> static get set </td><td>search</td><td><a href='Array.html'>Array</a></td><td>The current module search path. Set to an array of Paths.</td></tr>
+<a name='started'></a>
+   <tr><td nowrap align='center'> static </td><td>started</td><td><a href='Date.html'>Date</a></td><td>Application start time. </td></tr>
 <a name='title'></a>
    <tr><td nowrap align='center'> static </td><td>title</td><td><a href='String.html'>String</a></td><td>Application title name. Multi-word, Camel Case name for the application suitable for display. This is 
 initialized to the name of the script or "Embedthis Ejscript" if running interactively.</td></tr>
+<a name='uid'></a>
+   <tr><td nowrap align='center'> static get </td><td>uid</td><td><a href='Number.html'>Number</a></td><td>The user ID of the user account running the application. Only supported on Unix.</td></tr>
 <a name='version'></a>
    <tr><td nowrap align='center'> static </td><td>version</td><td><a href='String.html'>String</a></td><td>Application version string. Set to a version string [format Major.Minor.Patch-Build]. For example: 1.1.2-3.
 Initialized to the ejs version.</td></tr>
@@ -100,7 +106,8 @@ This loads an Ejscript configuration file and blends the contents with App.confi
    <tr class='apiDef'><td class='apiType'> static </td><td><a href='#putenv'><b>putenv</b></a>(name: <a href='String.html'>String</a>, value: <a href='String.html'>String</a>): <a href='Void.html'>Void</a></tr><tr class='apiBrief'><td>&nbsp;</td><td>Update an environment variable.</td></tr>
    <tr class='apiDef'><td class='apiType'> static </td><td><a href='#run'><b>run</b></a>(timeout: <a href='Number.html'>Number</a> = -1, oneEvent: <a href='Boolean.html'>Boolean</a> = false): <a href='Boolean.html'>Boolean</a></tr><tr class='apiBrief'><td>&nbsp;</td><td>Run the application event loop.</td></tr>
    <tr class='apiDef'><td class='apiType'> static </td><td><a href='#sleep'><b>sleep</b></a>(delay: <a href='Number.html'>Number</a> = -1): <a href='Void.html'>Void</a></tr><tr class='apiBrief'><td>&nbsp;</td><td>Sleep the application for the given number of milliseconds.</td></tr>
-   <tr class='apiDef'><td class='apiType'> static </td><td><a href='#updateLog'><b>updateLog</b></a>(): <a href='Void.html'>Void</a></tr><tr class='apiBrief'><td>&nbsp;</td><td>Redirect the Application's logger based on the App.config.log setting.</td></tr>
+   <tr class='apiDef'><td class='apiType'> static </td><td><a href='#updateLog'><b>updateLog</b></a>(): <a href='Void.html'>Void</a></tr><tr class='apiBrief'><td>&nbsp;</td><td>Redirect the Application's logger based on the App.config.log setting
+Ignored if app is invoked with --log on the command line.</td></tr>
 </table>
 
 <p class='inheritedLink'><a href='Object.html#InstanceMethods'><i>Inherited Methods</i></a></p>
@@ -199,8 +206,9 @@ This loads an Ejscript configuration file and blends the contents with App.confi
 <div class='apiSig'>static     run(timeout: <a href='Number.html'>Number</a> = -1, oneEvent: <a href='Boolean.html'>Boolean</a> = false): <a href='Boolean.html'>Boolean</a>
 </div>
 <div class='apiDetail'>
-<dl><dt>Description</dt></dd><dd>Run the application event loop. A script may call run() to service events. The ejs shell will exit when it has executed the last statement
-in the script. Calling run() will cause the ejs shell to wait and service events until instructed to exit.</dd></dl>
+<dl><dt>Description</dt></dd><dd>Run the application event loop. A script may call run() to service events. Calling run() will cause the ejs shell to wait and service 
+events until instructed to exit via App.exit. If the application is hosted in a web server, this routine will
+return true immediately without blocking.</dd></dl>
 <dl><dt>Parameters</dt>
 <dd><table class='parameters' summary ='parameters'>
 <tr class='param'><td class='param'>timeout: <a href='Number.html'>Number</a> </td><td>Timeout to block waiting for an event in milliseconds before returning. If an event occurs, the call returns immediately. Set to -1 for no timeout. [default: -1]</td></tr><tr class='param'><td class='param'>oneEvent: <a href='Boolean.html'>Boolean</a> </td><td>If true, return immediately after servicing at least one ejs event. [default: false]</td></tr></table></dd>
@@ -227,15 +235,16 @@ An alternative to sleep is <a href='App.html#run'>App.run</a> which can be confi
 <div class='apiSig'>static     updateLog(): <a href='Void.html'>Void</a>
 </div>
 <div class='apiDetail'>
-<dl><dt>Description</dt></dd><dd>Redirect the Application's logger based on the App.config.log setting. </dd></dl>
+<dl><dt>Description</dt></dd><dd>Redirect the Application's logger based on the App.config.log setting
+Ignored if app is invoked with --log on the command line. </dd></dl>
 </div>
 </div>
 <hr />
 <div class="terms">
    <p class="terms">
-       <a href="http://embedthis.com.com/">       Embedthis Software LLC, 2003-2011. All rights reserved. Embedthis is a trademark of Embedthis Software LLC.</a>
+       <a href="http://embedthis.com/">       Embedthis Software LLC, 2003-2011. All rights reserved. Embedthis is a trademark of Embedthis Software LLC.</a>
    </p>
 </div></div>
 </div>
-
-
+</body>
+</html>

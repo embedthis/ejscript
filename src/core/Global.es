@@ -260,6 +260,7 @@ module ejs {
         Print the arguments to the standard output using the supplied format template. This call evaluates the arguments, 
         converts the result to strings and invokes String.format to format the args. The result is then printed to the
         standard output. Arguments are converted to strings by calling their toString method. 
+        @param fmt Format specifier
         @param args Variables to print
         @spec ejs
      */

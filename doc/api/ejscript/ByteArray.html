@@ -37,7 +37,7 @@ data between the read and write pointers.<br/><br/>If numeric values are read or
 which can be set to either LittleEndian or BigEndian.  If strings values are read or written, they will 
 be encoded according to the value of the character set <a href='#encoding'>encoding</a> property.<br/><br/>When used as loop-back streams, data written to ByteArrays is immediately available for reading. 
 ByteArrays can be run in sync or async mode. ByteArrays will issue events for key state transitions such as 
-close, eof, readable and writable events. All event observers are called with the following signature:
+close, EOF, readable and writable events. All event observers are called with the following signature:
 function callback(event: String, ba: ByteArray): Void.</p>
 
 </div>
@@ -66,7 +66,7 @@ If no encoding, string character points are stored as a pairs of two byte in lit
    <tr><td nowrap align='center'> get set </td><td>endian</td><td><a href='Number.html'>Number</a></td><td>Current byte ordering for storing and retrieving numbers. Set to either LittleEndian or BigEndian.</td></tr>
 <a name='length'></a>
    <tr><td nowrap align='center'> get </td><td>length</td><td><a href='Number.html'>Number</a></td><td>Length of the byte array. This is not the amount of read or write data, but is the size of the total 
-array storage.</td></tr>
+array storage. Use <a href='#available'>available</a> to get the amount of data between the read and write positions.</td></tr>
 <a name='readPosition'></a>
    <tr><td nowrap align='center'> get set </td><td>readPosition</td><td><a href='Number.html'>Number</a></td><td>Current read position offset. </td></tr>
 <a name='resizable'></a>
@@ -189,7 +189,7 @@ read and write positions. This call does not issue events.</dd></dl>
 <dd><table class='parameters' summary ='parameters'>
 <tr class='param'><td class='param'>srcOffset: <a href='Number.html'>Number</a> </td><td>Location in the source array from which to copy data.</td></tr><tr class='param'><td class='param'>dest: <a href='ByteArray.html'>ByteArray</a> </td><td>Destination byte array.</td></tr><tr class='param'><td class='param'>destOffset: <a href='Number.html'>Number</a> </td><td>Location in the destination array to copy the data. Defaults to the start. [default: 0]</td></tr><tr class='param'><td class='param'>count: <a href='Number.html'>Number</a> </td><td>Number of bytes to read. Set to -1 to read all available data. [default: -1]</td></tr></table></dd>
 </dl><dl><dt>Returns</dt>
-<dd>The count of bytes read. Returns null on eof.</dd></dl>
+<dd>The count of bytes read. Returns null on EOF.</dd></dl>
 </div>
 </div>
 <hr />
@@ -274,7 +274,7 @@ one past the last byte read.</dd></dl>
 <td class='param'>writable</td><td>Issued when the stream becomes empty.</td></tr>
 </table></dd>
 </dl><dl><dt>Returns</dt>
-<dd>A count of the bytes actually read. Returns null on eof.</dd></dl>
+<dd>A count of the bytes actually read. Returns null on EOF.</dd></dl>
 </div>
 </div>
 <hr />
@@ -286,11 +286,11 @@ one past the last byte read.</dd></dl>
 <dl><dt>Description</dt></dd><dd>Read a boolean from the array. Data is read from the current read <a href='#position'>position</a> pointer.
 If insufficient data, a "writable" event will be issued indicating that the byte array is writable. This enables 
 observers to write data into the byte array.  If there is no data available, the call 
-will return return null indicating eof.</dd></dl>
+will return return null indicating EOF.</dd></dl>
 <dl><dt>Returns</dt>
-<dd>A boolean or null on eof.</dd></dl>
+<dd>A boolean or null on EOF.</dd></dl>
 <dl><dt>Throws</dt><dd>
-<a href='IOError.html'>IOError</a>: if an I/O error occurs or premature eof.
+<a href='IOError.html'>IOError</a>: if an I/O error occurs or premature EOF.
 </dd>
 </dl></div>
 </div>
@@ -303,9 +303,9 @@ will return return null indicating eof.</dd></dl>
 <dl><dt>Description</dt></dd><dd>Read a byte from the array. Data is read from the current read <a href='#position'>position</a> pointer.
 If insufficient data, a "write" event will be issued indicating that the byte array is 
 writable.  This enables observers to write data into the byte array.  If there is no data available, the call 
-will return return null indicating eof.</dd></dl>
+will return return null indicating EOF.</dd></dl>
 <dl><dt>Throws</dt><dd>
-<a href='IOError.html'>IOError</a>: if an I/O error occurs or premature eof.
+<a href='IOError.html'>IOError</a>: if an I/O error occurs or premature EOF.
 </dd>
 </dl></div>
 </div>
@@ -318,9 +318,9 @@ will return return null indicating eof.</dd></dl>
 <dl><dt>Description</dt></dd><dd>Read a date from the array. Data is read from the current read <a href='#position'>position</a> pointer.
 If insufficient data, a "write" event will be issued indicating that the byte array is 
 writable.  This enables observers to write data into the byte array.  If there is no data available, the call 
-will return return null indicating eof.</dd></dl>
+will return return null indicating EOF.</dd></dl>
 <dl><dt>Throws</dt><dd>
-<a href='IOError.html'>IOError</a>: if an I/O error occurs or premature eof.
+<a href='IOError.html'>IOError</a>: if an I/O error occurs or premature EOF.
 </dd>
 </dl></div>
 </div>
@@ -333,11 +333,11 @@ will return return null indicating eof.</dd></dl>
 <dl><dt>Description</dt></dd><dd>Read a double from the array. The data will be decoded according to the endian property. Data is read 
 from the current read <a href='#position'>position</a> pointer. If insufficient data, a "write" event will be issued indicating 
 that the byte array is writable. This enables observers to write data into the byte array. If there is 
-no data available, the call will return return null indicating eof.</dd></dl>
+no data available, the call will return return null indicating EOF.</dd></dl>
 <dl><dt>Returns</dt>
-<dd>A double or null on eof.</dd></dl>
+<dd>A double or null on EOF.</dd></dl>
 <dl><dt>Throws</dt><dd>
-<a href='IOError.html'>IOError</a>: if an I/O error occurs or premature eof.
+<a href='IOError.html'>IOError</a>: if an I/O error occurs or premature EOF.
 </dd>
 </dl></div>
 </div>
@@ -351,9 +351,9 @@ no data available, the call will return return null indicating eof.</dd></dl>
 Data is read from the current read <a href='#position'>position</a> pointer.
 If insufficient data, a "write" event will be issued indicating that the byte array is 
 writable.  This enables observers to write data into the byte array.  If there is no data available, the call 
-will return return null indicating eof.</dd></dl>
+will return return null indicating EOF.</dd></dl>
 <dl><dt>Throws</dt><dd>
-<a href='IOError.html'>IOError</a>: if an I/O error occurs or premature eof.
+<a href='IOError.html'>IOError</a>: if an I/O error occurs or premature EOF.
 </dd>
 </dl></div>
 </div>
@@ -366,9 +366,9 @@ will return return null indicating eof.</dd></dl>
 <dl><dt>Description</dt></dd><dd>Read a 64-bit long from the array.The data will be decoded according to the endian property. Data is read from the current read <a href='#position'>position</a> pointer.
 If insufficient data, a "write" event will be issued indicating that the byte array is 
 writable.  This enables observers to write data into the byte array.  If there is no data available, the call 
-will return return null indicating eof.</dd></dl>
+will return return null indicating EOF.</dd></dl>
 <dl><dt>Throws</dt><dd>
-<a href='IOError.html'>IOError</a>: if an I/O error occurs or premature eof.
+<a href='IOError.html'>IOError</a>: if an I/O error occurs or premature EOF.
 </dd>
 </dl></div>
 </div>
@@ -381,11 +381,11 @@ will return return null indicating eof.</dd></dl>
 <dl><dt>Description</dt></dd><dd>Read a 16-bit short integer from the array.The data will be decoded according to the endian property. Data is read from the current read <a href='#position'>position</a> pointer.
 If insufficient data, a "write" event will be issued indicating that the byte array is 
 writable.  This enables observers to write data into the byte array.  If there is no data available, the call 
-will return return null indicating eof. If there is insufficient data.</dd></dl>
+will return return null indicating EOF. If there is insufficient data.</dd></dl>
 <dl><dt>Returns</dt>
-<dd>A short int or null on eof.</dd></dl>
+<dd>A short int or null on EOF.</dd></dl>
 <dl><dt>Throws</dt><dd>
-<a href='IOError.html'>IOError</a>: if an I/O error occurs or premature eof.
+<a href='IOError.html'>IOError</a>: if an I/O error occurs or premature EOF.
 </dd>
 </dl></div>
 </div>
@@ -399,14 +399,14 @@ will return return null indicating eof. If there is insufficient data.</dd></dl>
 '>writePosition,
 </a> but not more than count characters. If insufficient data, a "writable" event will be issued indicating that 
 the byte array is writable. This enables observers to write data into the byte array.  If there is no data 
-available, the call will return return null indicating eof. If there is insufficient data.</dd></dl>
+available, the call will return return null indicating EOF. If there is insufficient data.</dd></dl>
 <dl><dt>Parameters</dt>
 <dd><table class='parameters' summary ='parameters'>
 <tr class='param'><td class='param'>count: <a href='Number.html'>Number</a> </td><td>Of bytes  to read. If -1, convert the data up to the <a href='#writePosition'>writePosition</a>.  [default: -1]</td></tr></table></dd>
 </dl><dl><dt>Returns</dt>
-<dd>A string or null on eof.</dd></dl>
+<dd>A string or null on EOF.</dd></dl>
 <dl><dt>Throws</dt><dd>
-<a href='IOError.html'>IOError</a>: if an I/O error occurs or a premature eof.
+<a href='IOError.html'>IOError</a>: if an I/O error occurs or a premature EOF.
 </dd>
 </dl></div>
 </div>
@@ -578,9 +578,9 @@ See <a href='#write'>write</a> for details about sync, async modes and event han
 <hr />
 <div class="terms">
    <p class="terms">
-       <a href="http://embedthis.com.com/">       Embedthis Software LLC, 2003-2011. All rights reserved. Embedthis is a trademark of Embedthis Software LLC.</a>
+       <a href="http://embedthis.com/">       Embedthis Software LLC, 2003-2011. All rights reserved. Embedthis is a trademark of Embedthis Software LLC.</a>
    </p>
 </div></div>
 </div>
-
-
+</body>
+</html>

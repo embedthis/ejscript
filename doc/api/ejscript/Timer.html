@@ -47,7 +47,9 @@ delay other low priority events or timers, if necessary to ensure non-drifting t
 The callback is invoked with the following signature:
 function callback(error: Error): Void. </td></tr>
 <a name='period'></a>
-   <tr><td nowrap align='center'> get set </td><td>period</td><td><a href='Number.html'>Number</a></td><td>Timer delay period in milliseconds. </td></tr>
+   <tr><td nowrap align='center'> get set </td><td>period</td><td><a href='Number.html'>Number</a></td><td>Timer delay period in milliseconds. Changing a timer period will not reschedule a currently scheduled timer.
+The period will be used to schedule the next invocation. To change the current period, stop the timer and
+restart it.</td></tr>
 <a name='repeat'></a>
    <tr><td nowrap align='center'> get set </td><td>repeat</td><td><a href='Boolean.html'>Boolean</a></td><td>Timer repeatability. If true, the timer will be repeated invoked every <a href='#period'>period</a> milliseconds.</td></tr>
 </table>
@@ -69,7 +71,8 @@ function callback(error: Error): Void. </td></tr>
 <table class='apiIndex' summary='methods'>
    <tr><th>Qualifiers</th><th width='95%'>Method</th></tr>
    <tr class='apiDef'><td class='apiType'></td><td><a href='#Timer'><b>Timer</b></a>(period: <a href='Number.html'>Number</a>, callback: <a href='Function.html'>Function</a>, args: <a href='Array.html'>Array</a>)</tr><tr class='apiBrief'><td>&nbsp;</td><td>Constructor for Timer.</td></tr>
-   <tr class='apiDef'><td class='apiType'> </td><td><a href='#start'><b>start</b></a>(): <a href='Void.html'>Void</a></tr><tr class='apiBrief'><td>&nbsp;</td><td>Start a timer running.</td></tr>
+   <tr class='apiDef'><td class='apiType'> </td><td><a href='#restart'><b>restart</b></a>(when: <a href='Number.html'>Number</a> = null): <a href='Void.html'>Void</a></tr><tr class='apiBrief'><td>&nbsp;</td><td>Reschedule a timer.</td></tr>
+   <tr class='apiDef'><td class='apiType'> </td><td><a href='#start'><b>start</b></a>(): <a href='Timer.html'>Timer</a></tr><tr class='apiBrief'><td>&nbsp;</td><td>Start a timer running.</td></tr>
    <tr class='apiDef'><td class='apiType'> </td><td><a href='#stop'><b>stop</b></a>(): <a href='Void.html'>Void</a></tr><tr class='apiBrief'><td>&nbsp;</td><td>Stop a timer running.</td></tr>
 </table>
 
@@ -89,15 +92,30 @@ function callback(error: Error): Void. </td></tr>
 </dl></div>
 </div>
 <hr />
+<a name='restart'></a>
+<div class='api'>
+<div class='apiSig'>    restart(when: <a href='Number.html'>Number</a> = null): <a href='Void.html'>Void</a>
+</div>
+<div class='apiDetail'>
+<dl><dt>Description</dt></dd><dd>Reschedule a timer. This will stop the timer if it is currently scheduled, then reschedule the timer.
+If the <a href='#when'>when</a> argument is provided, the timer period will be set before starting.</dd></dl>
+<dl><dt>Parameters</dt>
+<dd><table class='parameters' summary ='parameters'>
+<tr class='param'><td class='param'>when: <a href='Number.html'>Number</a> </td><td>Time period for when to next run the timer. [default: null]</td></tr></table></dd>
+</dl></div>
+</div>
+<hr />
 <a name='start'></a>
 <div class='api'>
-<div class='apiSig'>    start(): <a href='Void.html'>Void</a>
+<div class='apiSig'>    start(): <a href='Timer.html'>Timer</a>
 </div>
 <div class='apiDetail'>
 <dl><dt>Description</dt></dd><dd>Start a timer running. The timer will be repeatedly invoked if the <a href='#repeat'>repeat</a> property is true, otherwise it 
 will be invoked once.
 When the timer callback is invoked, it will be invoked with the value of "this" set to the timer unless the
 function has bound a "this" value via Function.bind.</dd></dl>
+<dl><dt>Returns</dt>
+<dd>The timer instance. This helps chaining. For example: var timer = Timer(1000, sayHello).start().</dd></dl>
 </div>
 </div>
 <hr />
@@ -112,9 +130,9 @@ function has bound a "this" value via Function.bind.</dd></dl>
 <hr />
 <div class="terms">
    <p class="terms">
-       <a href="http://embedthis.com.com/">       Embedthis Software LLC, 2003-2011. All rights reserved. Embedthis is a trademark of Embedthis Software LLC.</a>
+       <a href="http://embedthis.com/">       Embedthis Software LLC, 2003-2011. All rights reserved. Embedthis is a trademark of Embedthis Software LLC.</a>
    </p>
 </div></div>
 </div>
-
-
+</body>
+</html>

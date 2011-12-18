@@ -61,7 +61,7 @@ $(DOC_DIR)/index.html: Makefile $(DOC_SRC)
 	ejsc --doc --bind $(_ESFLAGS) --out .doc.mod --require "" $(DOC_SRC)
 	rm -rf $(DOC_DIR)/*.html $(DOC_DIR)/*.css $(DOC_DIR)/images/*
 	ejsmod --warn --html $(DOC_DIR) --require "" .doc.mod
-	rm -f .doc.mod
+	#rm -f .doc.mod
 
 cleanExtra:
 	rm -f *.mod *.lst *.slots.h

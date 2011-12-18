@@ -37,15 +37,23 @@ path value cannot be changed.</p>
 <table class='itemTable' summary='properties'>
    <tr><th>Qualifiers</th><th>Property</th><th>Type</th><th width='95%'>Description</th></tr>
 <a name='absolute'></a>
-   <tr><td nowrap align='center'> get </td><td>absolute</td><td><a href='Path.html'>Path</a></td><td>An equivalent absolute path equivalent for the current path. The path is normalized.</td></tr>
+   <tr><td nowrap align='center'> get </td><td>absolute</td><td><a href='Path.html'>Path</a></td><td>An equivalent absolute path equivalent for the current path. The path is normalized and uses the native system
+directory separator.
+On Windows, this path with contain a drive specifier and will have back-slash directory separators.
+On Cygwin, this path will be a Cygwin style path without a drive specifier and with forward-slash 
+directory separators. If the path is outside the Cygwin filesystem (outside c:/cygwin), the path 
+will have a /cygdrive/DRIVE prefix. 
+To get a Windows style path, use the <a href='#windows'>windows</a> property accessor.</td></tr>
 <a name='accessed'></a>
    <tr><td nowrap align='center'> get </td><td>accessed</td><td><a href='Date.html'>Date</a></td><td>When the file represented by the path was last accessed. Set to null if the file does not exist.</td></tr>
+<a name='attributes'></a>
+   <tr><td nowrap align='center'> get set </td><td>attributes</td><td><a href='Object.html'>Object</a></td><td>File security permissions. </td></tr>
 <a name='basename'></a>
    <tr><td nowrap align='center'> get </td><td>basename</td><td><a href='Path.html'>Path</a></td><td>The base of portion of the path. The base portion is the trailing portion without any directory elements.</td></tr>
 <a name='components'></a>
    <tr><td nowrap align='center'> get </td><td>components</td><td><a href='Array.html'>Array</a></td><td>Path components. This is the path converted to an absolute path and then broken into components for each
 directory level. It is set to an array object with an element for each segment of the path. The first 
-element represents the file system root and will be the empty string or drive spec on a windows 
+element represents the file system root and will be the empty string or drive spec on a Windows 
 like systems. Array.join("/") can be used to put components back into a complete path.</td></tr>
 <a name='created'></a>
    <tr><td nowrap align='center'> get </td><td>created</td><td><a href='Date.html'>Date</a></td><td>When the file represented by the path was created. Set to null if the file does not exist.</td></tr>
@@ -82,8 +90,9 @@ mime type.</td></tr>
 <a name='name'></a>
    <tr><td nowrap align='center'> get </td><td>name</td><td><a href='String.html'>String</a></td><td>Name of the Path as a string. This is the same as <a href='#toString'>toString()</a>. </td></tr>
 <a name='natural'></a>
-   <tr><td nowrap align='center'> get </td><td>natural</td><td><a href='Path.html'>Path</a></td><td>Natural (native) respresentation of the path. This uses the default O/S file system path separator, 
-this is "\" on windows and "/" on unix and is normalized.</td></tr>
+   <tr><td nowrap align='center'> get </td><td>natural</td><td><a href='Path.html'>Path</a></td><td>Natural (native) respresentation of the path for the platform. This uses the platform file system path 
+separator, this is "\" on Windows and "/" on unix and Cygwin. The returned path is normalized. 
+See also <a href='#portable'>portable</a> for a portable representation.</td></tr>
 <a name='normalize'></a>
    <tr><td nowrap align='center'> get </td><td>normalize</td><td><a href='Path.html'>Path</a></td><td>Normalized representation of the path. This removes "segment/.." and "./" components. Separators are made 
 uniform by converting all separators to be the same as the first separator found in the path. Note: the 
@@ -95,7 +104,7 @@ result is not converted to an absolute path.</td></tr>
 does not exist. NOTE: this is not a string representation of an octal posix mask.</td></tr>
 <a name='portable'></a>
    <tr><td nowrap align='center'> get </td><td>portable</td><td><a href='Path.html'>Path</a></td><td>The path in a portable (like Unix) representation. This uses "/" separators. The value is is normalized and 
-the separators are mapped to "/".</td></tr>
+the separators are mapped to "/". See also <a href='#natural'>natural</a> for convertion to the O/S native path representation.</td></tr>
 <a name='relative'></a>
    <tr><td nowrap align='center'> get </td><td>relative</td><td><a href='Path.html'>Path</a></td><td>That path in a form relative to the application's current working directory. The value is normalized.</td></tr>
 <a name='separator'></a>
@@ -107,6 +116,10 @@ Use <a href='#natural'>natural</a> or <a href='#portable'>portable</a> to create
 <a name='size'></a>
    <tr><td nowrap align='center'> get </td><td>size</td><td><a href='Number.html'>Number</a></td><td>Size of the file associated with this Path object. Set to the number of bytes in the file or -1 if the
 size determination failed.</td></tr>
+<a name='windows'></a>
+   <tr><td nowrap align='center'> get </td><td>windows</td><td><a href='Path.html'>Path</a></td><td>An equivalent normalized Windows path equivalent for the current path. On Windows, this path with contain a drive specifier and will have back-slash directory separators.
+On Cygwin, if the path is outside the c:/cygwin directory, the path will have a /cygdrive/DRIVE prefix.
+On other systems, this will return an absolute path in the native system format.</td></tr>
 </table>
 
 <p class='inheritedLink'><a href='Object.html#Properties'><i>Inherited Properties</i></a></p>
@@ -126,18 +139,20 @@ size determination failed.</td></tr>
 <table class='apiIndex' summary='methods'>
    <tr><th>Qualifiers</th><th width='95%'>Method</th></tr>
    <tr class='apiDef'><td class='apiType'></td><td><a href='#Path'><b>Path</b></a>(path: <a href='String.html'>String</a>)</tr><tr class='apiBrief'><td>&nbsp;</td><td>Create a new Path object and set the path's location.</td></tr>
+   <tr class='apiDef'><td class='apiType'> </td><td><a href='#append'><b>append</b></a>(data, options = atw): <a href='Void.html'>Void</a></tr><tr class='apiBrief'><td>&nbsp;</td><td>Append data to a file.</td></tr>
    <tr class='apiDef'><td class='apiType'> </td><td><a href='#contains'><b>contains</b></a>(pattern: <a href='String.html'>String</a>): <a href='Boolean.html'>Boolean</a></tr><tr class='apiBrief'><td>&nbsp;</td><td>Test if the path name contains a substring.</td></tr>
    <tr class='apiDef'><td class='apiType'> </td><td><a href='#copy'><b>copy</b></a>(target: <a href='Object.html'>Object</a>, options: <a href='Object.html'>Object</a> = null): <a href='Void.html'>Void</a></tr><tr class='apiBrief'><td>&nbsp;</td><td>Copy a file.</td></tr>
    <tr class='apiDef'><td class='apiType'> </td><td><a href='#endsWith'><b>endsWith</b></a>(suffix: <a href='String.html'>String</a>): <a href='Boolean.html'>Boolean</a></tr><tr class='apiBrief'><td>&nbsp;</td><td>Return true if the path ends with the given suffix.</td></tr>
    <tr class='apiDef'><td class='apiType'> </td><td><a href='#files'><b>files</b></a>(enumDirs: <a href='Boolean.html'>Boolean</a> = false): <a href='Array.html'>Array</a></tr><tr class='apiBrief'><td>&nbsp;</td><td>Get a list of files in a directory.</td></tr>
-   <tr class='apiDef'><td class='apiType'> </td><td><a href='#find'><b>find</b></a>(glob: <a href='String.html'>String</a> = *, recurse: <a href='Boolean.html'>Boolean</a> = true): <a href='Array.html'>Array</a></tr><tr class='apiBrief'><td>&nbsp;</td><td>Find matching files.</td></tr>
+   <tr class='apiDef'><td class='apiType'> </td><td><a href='#find'><b>find</b></a>(glob = *, options = expression): <a href='Array.html'>Array</a></tr><tr class='apiBrief'><td>&nbsp;</td><td>Find matching files.</td></tr>
    <tr class='apiDef'><td class='apiType'>iterator override </td><td><a href='#get'><b>get</b></a>(): <a href='iterator-Iterator.html'>Iterator</a></tr><tr class='apiBrief'><td>&nbsp;</td><td>Get iterate over any files contained under this path (assuming it is a directory) "for (v in files)".</td></tr>
    <tr class='apiDef'><td class='apiType'>iterator override </td><td><a href='#getValues'><b>getValues</b></a>(): <a href='iterator-Iterator.html'>Iterator</a></tr><tr class='apiBrief'><td>&nbsp;</td><td>Get an iterator for this file to be used by "for each (v in obj)".</td></tr>
    <tr class='apiDef'><td class='apiType'> </td><td><a href='#join'><b>join</b></a>(other: <a href='Array.html'>Array</a>): <a href='Path.html'>Path</a></tr><tr class='apiBrief'><td>&nbsp;</td><td>Join paths.</td></tr>
    <tr class='apiDef'><td class='apiType'> </td><td><a href='#joinExt'><b>joinExt</b></a>(ext: <a href='String.html'>String</a>): <a href='Path.html'>Path</a></tr><tr class='apiBrief'><td>&nbsp;</td><td>Join an extension to a path.</td></tr>
-   <tr class='apiDef'><td class='apiType'> </td><td><a href='#makeDir'><b>makeDir</b></a>(options: <a href='Object.html'>Object</a> = null): <a href='Void.html'>Void</a></tr><tr class='apiBrief'><td>&nbsp;</td><td>Make a new directory and all required intervening directories.</td></tr>
+   <tr class='apiDef'><td class='apiType'> </td><td><a href='#makeDir'><b>makeDir</b></a>(options: <a href='Object.html'>Object</a> = null): <a href='Boolean.html'>Boolean</a></tr><tr class='apiBrief'><td>&nbsp;</td><td>Make a new directory and all required intervening directories.</td></tr>
    <tr class='apiDef'><td class='apiType'> </td><td><a href='#makeLink'><b>makeLink</b></a>(target: <a href='Path.html'>Path</a>, hard: <a href='Boolean.html'>Boolean</a> = false): <a href='Void.html'>Void</a></tr><tr class='apiBrief'><td>&nbsp;</td><td>Create a link to a file.</td></tr>
    <tr class='apiDef'><td class='apiType'> </td><td><a href='#map'><b>map</b></a>(sep: <a href='String.html'>String</a> = separator): <a href='Path.html'>Path</a></tr><tr class='apiBrief'><td>&nbsp;</td><td>Get a path after mapping the path directory separator.</td></tr>
+   <tr class='apiDef'><td class='apiType'> </td><td><a href='#match'><b>match</b></a>(pattern: <a href='RegExp.html'>RegExp</a>): <a href='Array.html'>Array</a></tr><tr class='apiBrief'><td>&nbsp;</td><td>Match the path to a regular expression pattern.</td></tr>
    <tr class='apiDef'><td class='apiType'> </td><td><a href='#open'><b>open</b></a>(options: <a href='Object.html'>Object</a> = null): <a href='File.html'>File</a></tr><tr class='apiBrief'><td>&nbsp;</td><td>Open a path and return a File object.</td></tr>
    <tr class='apiDef'><td class='apiType'> </td><td><a href='#openBinaryStream'><b>openBinaryStream</b></a>(options: <a href='Object.html'>Object</a> = null): <a href='BinaryStream.html'>BinaryStream</a></tr><tr class='apiBrief'><td>&nbsp;</td><td>Open a file and return a BinaryStream object.</td></tr>
    <tr class='apiDef'><td class='apiType'> </td><td><a href='#openTextStream'><b>openTextStream</b></a>(options: <a href='Object.html'>Object</a> = null): <a href='TextStream.html'>TextStream</a></tr><tr class='apiBrief'><td>&nbsp;</td><td>Open a file and return a TextStream object.</td></tr>
@@ -147,10 +162,10 @@ size determination failed.</td></tr>
    <tr class='apiDef'><td class='apiType'> </td><td><a href='#readString'><b>readString</b></a>(): <a href='String.html'>String</a></tr><tr class='apiBrief'><td>&nbsp;</td><td>Read the file contents as a string.</td></tr>
    <tr class='apiDef'><td class='apiType'> </td><td><a href='#readXML'><b>readXML</b></a>(): <a href='XML.html'>XML</a></tr><tr class='apiBrief'><td>&nbsp;</td><td>Read the file contents as an XML object.</td></tr>
    <tr class='apiDef'><td class='apiType'> </td><td><a href='#remove'><b>remove</b></a>(): <a href='Boolean.html'>Boolean</a></tr><tr class='apiBrief'><td>&nbsp;</td><td>Delete the file associated with the Path object.</td></tr>
-   <tr class='apiDef'><td class='apiType'> </td><td><a href='#removeAll'><b>removeAll</b></a>(): <a href='Void.html'>Void</a></tr><tr class='apiBrief'><td>&nbsp;</td><td>Removes a directory and its contents
+   <tr class='apiDef'><td class='apiType'> </td><td><a href='#removeAll'><b>removeAll</b></a>(): <a href='Boolean.html'>Boolean</a></tr><tr class='apiBrief'><td>&nbsp;</td><td>Removes a directory and its contents
 If the path is a directory, this call will remove all subdirectories and their contents and finally the
 directory itself.</td></tr>
-   <tr class='apiDef'><td class='apiType'> </td><td><a href='#rename'><b>rename</b></a>(target: <a href='Object.html'>Object</a>): <a href='Void.html'>Void</a></tr><tr class='apiBrief'><td>&nbsp;</td><td>Rename a file.</td></tr>
+   <tr class='apiDef'><td class='apiType'> </td><td><a href='#rename'><b>rename</b></a>(target: <a href='Path.html'>Path</a>): <a href='Boolean.html'>Boolean</a></tr><tr class='apiBrief'><td>&nbsp;</td><td>Rename a file.</td></tr>
    <tr class='apiDef'><td class='apiType'> </td><td><a href='#replaceExt'><b>replaceExt</b></a>(ext: <a href='String.html'>String</a>): <a href='Path.html'>Path</a></tr><tr class='apiBrief'><td>&nbsp;</td><td>Replace the path extension and return a new path.</td></tr>
    <tr class='apiDef'><td class='apiType'> </td><td><a href='#resolve'><b>resolve</b></a>(otherPaths: <a href='Array.html'>Array</a>): <a href='Path.html'>Path</a></tr><tr class='apiBrief'><td>&nbsp;</td><td>Resolve paths in the neighborhood of this path.</td></tr>
    <tr class='apiDef'><td class='apiType'> </td><td><a href='#same'><b>same</b></a>(other: <a href='Object.html'>Object</a>): <a href='Boolean.html'>Boolean</a></tr><tr class='apiBrief'><td>&nbsp;</td><td>Compare two paths test if they represent the same file.</td></tr>
@@ -184,6 +199,18 @@ NOTE: this does a case-sensitive match.</td></tr>
 </dl></div>
 </div>
 <hr />
+<a name='append'></a>
+<div class='api'>
+<div class='apiSig'>    append(data, options = atw): <a href='Void.html'>Void</a>
+</div>
+<div class='apiDetail'>
+<dl><dt>Description</dt></dd><dd>Append data to a file. </dd></dl>
+<dl><dt>Parameters</dt>
+<dd><table class='parameters' summary ='parameters'>
+<tr class='param'><td class='param'>data </td><td>Data to append to the file.</td></tr><tr class='param'><td class='param'>options </td><td>File open options. Defaults to "atw". [default: atw]</td></tr></table></dd>
+</dl></div>
+</div>
+<hr />
 <a name='contains'></a>
 <div class='api'>
 <div class='apiSig'>    contains(pattern: <a href='String.html'>String</a>): <a href='Boolean.html'>Boolean</a>
@@ -210,6 +237,8 @@ NOTE: this does a case-sensitive match.</td></tr>
 </dl><dl><dt>Options</dt>
 <dd><table class='parameters' summary ='options'>
 <td class='param'>permissions</td><td>Set to a numeric Posix permissions mask. Not implemented.</td></tr>
+<td class='param'>owner</td><td>String representing the file owner.</td></tr>
+<td class='param'>group</td><td>String representing the file group.</td></tr>
 </table></dd>
 </dl></div>
 </div>
@@ -246,13 +275,18 @@ use find().</dd></dl>
 <hr />
 <a name='find'></a>
 <div class='api'>
-<div class='apiSig'>    find(glob: <a href='String.html'>String</a> = *, recurse: <a href='Boolean.html'>Boolean</a> = true): <a href='Array.html'>Array</a>
+<div class='apiSig'>    find(glob = *, options = expression): <a href='Array.html'>Array</a>
 </div>
 <div class='apiDetail'>
 <dl><dt>Description</dt></dd><dd>Find matching files. Files are listed in depth first order.</dd></dl>
 <dl><dt>Parameters</dt>
 <dd><table class='parameters' summary ='parameters'>
-<tr class='param'><td class='param'>glob: <a href='String.html'>String</a> </td><td>Glob style Pattern that files must match. This is similar to a ls() style pattern. [default: *]</td></tr><tr class='param'><td class='param'>recurse: <a href='Boolean.html'>Boolean</a> </td><td>Set to true to examine sub-directories. [default: true]</td></tr></table></dd>
+<tr class='param'><td class='param'>glob </td><td>Glob style Pattern that files must match. This is similar to a ls() style pattern. [default: *]</td></tr><tr class='param'><td class='param'>options </td><td>Find options. [default: expression]</td></tr></table></dd>
+</dl><dl><dt>Options</dt>
+<dd><table class='parameters' summary ='options'>
+<td class='param'>recurse</td><td>Set to true to examine sub-directories.</td></tr>
+<td class='param'>dirsLast</td><td>Set to true to list directories last in the list. By default, directories are first.</td></tr>
+</table></dd>
 </dl><dl><dt>Returns</dt>
 <dd>Return a list of matching files and directories.</dd></dl>
 </div>
@@ -311,24 +345,23 @@ either path. If none found, the default file system path separator is used.</dd>
 <hr />
 <a name='makeDir'></a>
 <div class='api'>
-<div class='apiSig'>    makeDir(options: <a href='Object.html'>Object</a> = null): <a href='Void.html'>Void</a>
+<div class='apiSig'>    makeDir(options: <a href='Object.html'>Object</a> = null): <a href='Boolean.html'>Boolean</a>
 </div>
 <div class='apiDetail'>
 <dl><dt>Description</dt></dd><dd>Make a new directory and all required intervening directories. If the directory already exists, 
-the function returns without throwing an exception.</dd></dl>
+the function returns without any further action.</dd></dl>
 <dl><dt>Parameters</dt>
 <dd><table class='parameters' summary ='parameters'>
 <tr class='param'><td class='param'>options: <a href='Object.html'>Object</a> </td><td>null [default: null]</td></tr><tr class='param'><td class='param'>options: <a href='Object.html'>Object</a> </td><td>null [default: null]</td></tr></table></dd>
 </dl><dl><dt>Options</dt>
 <dd><table class='parameters' summary ='options'>
-<td class='param'>permissions</td><td>Set to a numeric Posix permissions mask.</td></tr>
-<td class='param'>owner</td><td>String representing the file owner (Not implemented).</td></tr>
-<td class='param'>group</td><td>String representing the file group (Not implemented).</td></tr>
+<td class='param'>permissions</td><td>Directory permissions to use for all created directories. Set to a numeric Posix permissions mask.</td></tr>
+<td class='param'>owner</td><td>String representing the file owner for all created directories.</td></tr>
+<td class='param'>group</td><td>String representing the file group for all created directories.</td></tr>
 </table></dd>
-</dl><dl><dt>Throws</dt><dd>
-<a href='IOError.html'>IOError</a>: if the directory cannot be created.
-</dd>
-</dl></div>
+</dl><dl><dt>Returns</dt>
+<dd>True if the directory can be made or already exists.</dd></dl>
+</div>
 </div>
 <hr />
 <a name='makeLink'></a>
@@ -359,6 +392,20 @@ the function returns without throwing an exception.</dd></dl>
 </div>
 </div>
 <hr />
+<a name='match'></a>
+<div class='api'>
+<div class='apiSig'>    match(pattern: <a href='RegExp.html'>RegExp</a>): <a href='Array.html'>Array</a>
+</div>
+<div class='apiDetail'>
+<dl><dt>Description</dt></dd><dd>Match the path to a regular expression pattern. </dd></dl>
+<dl><dt>Parameters</dt>
+<dd><table class='parameters' summary ='parameters'>
+<tr class='param'><td class='param'>pattern: <a href='RegExp.html'>RegExp</a> </td><td>The regular expression pattern to search for.</td></tr></table></dd>
+</dl><dl><dt>Returns</dt>
+<dd>Returns an array of matching substrings in the path.</dd></dl>
+</div>
+</div>
+<hr />
 <a name='open'></a>
 <div class='api'>
 <div class='apiSig'>    open(options: <a href='Object.html'>Object</a> = null): <a href='File.html'>File</a>
@@ -372,8 +419,8 @@ the function returns without throwing an exception.</dd></dl>
 <dd><table class='parameters' summary ='options'>
 <td class='param'>mode</td><td>Optional file access mode string. Use "r" for read, "w" for write, "a" for append to existing content, "+" never truncate.</td></tr>
 <td class='param'>permissions</td><td>Optional Posix permissions number mask. Defaults to 0664.</td></tr>
-<td class='param'>owner</td><td>String representing the file owner (Not implemented).</td></tr>
-<td class='param'>group</td><td>String representing the file group (Not implemented).</td></tr>
+<td class='param'>owner</td><td>String representing the file owner.</td></tr>
+<td class='param'>group</td><td>String representing the file group.</td></tr>
 </table></dd>
 </dl><dl><dt>Returns</dt>
 <dd>A File object which implements the Stream interface.</dd></dl>
@@ -396,8 +443,8 @@ the function returns without throwing an exception.</dd></dl>
 <dd><table class='parameters' summary ='options'>
 <td class='param'>mode</td><td>Optional file access mode with values ored from: Read, Write, Append, Create, Open, Truncate.  Defaults to Read.</td></tr>
 <td class='param'>permissions</td><td>Optional Posix permissions number mask. Defaults to 0664.</td></tr>
-<td class='param'>owner</td><td>String representing the file owner (Not implemented).</td></tr>
-<td class='param'>group</td><td>String representing the file group (Not implemented).</td></tr>
+<td class='param'>owner</td><td>String representing the file owner.</td></tr>
+<td class='param'>group</td><td>String representing the file group.</td></tr>
 </table></dd>
 </dl><dl><dt>Returns</dt>
 <dd>A BinaryStream object which implements the Stream interface.</dd></dl>
@@ -421,8 +468,8 @@ the function returns without throwing an exception.</dd></dl>
 <td class='param'>mode</td><td>Optional file access mode string. Use "r" for read, "w" for write, "a" for append to existing content, "+" never truncate.</td></tr>
 <td class='param'>encoding</td><td>Text encoding format.</td></tr>
 <td class='param'>permissions</td><td>Optional Posix permissions number mask. Defaults to 0664.</td></tr>
-<td class='param'>owner</td><td>String representing the file owner (Not implemented).</td></tr>
-<td class='param'>group</td><td>String representing the file group (Not implemented).</td></tr>
+<td class='param'>owner</td><td>String representing the file owner.</td></tr>
+<td class='param'>group</td><td>String representing the file group.</td></tr>
 </table></dd>
 </dl><dl><dt>Returns</dt>
 <dd>A TextStream object which implements the Stream interface.</dd></dl>
@@ -519,37 +566,35 @@ contents and closes the file.</dd></dl>
 <div class='apiDetail'>
 <dl><dt>Description</dt></dd><dd>Delete the file associated with the Path object. If this is a directory without contents it will be removed.</dd></dl>
 <dl><dt>Returns</dt>
-<dd>True if the file is sucessfully deleted.</dd></dl>
+<dd>True if the file is sucessfully deleted or does not exist.</dd></dl>
 </div>
 </div>
 <hr />
 <a name='removeAll'></a>
 <div class='api'>
-<div class='apiSig'>    removeAll(): <a href='Void.html'>Void</a>
+<div class='apiSig'>    removeAll(): <a href='Boolean.html'>Boolean</a>
 </div>
 <div class='apiDetail'>
 <dl><dt>Description</dt></dd><dd>Removes a directory and its contents
 If the path is a directory, this call will remove all subdirectories and their contents and finally the
 directory itself. If the directory does not exist, this call does not error and does nothing.</dd></dl>
-<dl><dt>Throws</dt><dd>
-<a href='IOError.html'>IOError</a>: if the directory exists and cannot be removed.
-</dd>
-</dl></div>
+<dl><dt>Returns</dt>
+<dd>True if all the contents are sucessfully deleted or if the directory does not exist.  Otherwise return false.</dd></dl>
+</div>
 </div>
 <hr />
 <a name='rename'></a>
 <div class='api'>
-<div class='apiSig'>    rename(target: <a href='Object.html'>Object</a>): <a href='Void.html'>Void</a>
+<div class='apiSig'>    rename(target: <a href='Path.html'>Path</a>): <a href='Boolean.html'>Boolean</a>
 </div>
 <div class='apiDetail'>
 <dl><dt>Description</dt></dd><dd>Rename a file. If the new path exists it is removed before the rename.</dd></dl>
 <dl><dt>Parameters</dt>
 <dd><table class='parameters' summary ='parameters'>
-<tr class='param'><td class='param'>target: <a href='Object.html'>Object</a> </td><td>New name of the path. Can be either a Path or String.</td></tr></table></dd>
-</dl><dl><dt>Throws</dt><dd>
-<a href='IOError.html'>IOError</a>: if the original file does not exist or cannot be renamed.
-</dd>
-</dl></div>
+<tr class='param'><td class='param'>target: <a href='Path.html'>Path</a> </td><td>New name of the path.</td></tr></table></dd>
+</dl><dl><dt>Returns</dt>
+<dd>True if the file is renamed.</dd></dl>
+</div>
 </div>
 <hr />
 <a name='replaceExt'></a>
@@ -723,9 +768,9 @@ NOTE: this does a case-sensitive match. </dd></dl>
 <hr />
 <div class="terms">
    <p class="terms">
-       <a href="http://embedthis.com.com/">       Embedthis Software LLC, 2003-2011. All rights reserved. Embedthis is a trademark of Embedthis Software LLC.</a>
+       <a href="http://embedthis.com/">       Embedthis Software LLC, 2003-2011. All rights reserved. Embedthis is a trademark of Embedthis Software LLC.</a>
    </p>
 </div></div>
 </div>
-
-
+</body>
+</html>

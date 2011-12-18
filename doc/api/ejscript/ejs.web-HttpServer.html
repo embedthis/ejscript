@@ -35,6 +35,8 @@ including methods for GET, POST, PUT, DELETE, OPTIONS, and TRACE. It also suppor
 <h2 class='classSection'>Properties</h2>
 <table class='itemTable' summary='properties'>
    <tr><th>Qualifiers</th><th>Property</th><th>Type</th><th width='95%'>Description</th></tr>
+<a name='PrunePeriod'></a>
+   <tr><td nowrap align='center'> static </td><td>PrunePeriod</td><td>&nbsp;</td><td>Frequency to check and release excess worker threads. </td></tr>
 <a name='address'></a>
    <tr><td nowrap align='center'> get </td><td>address</td><td><a href='String.html'>String</a></td><td>Get the local IP address bound to this socket. </td></tr>
 <a name='async'></a>
@@ -47,6 +49,8 @@ App.config settings.</td></tr>
    <tr><td nowrap align='center'> </td><td>documents</td><td><a href='Path.html'>Path</a></td><td>Default local directory for web documents to serve. This is used as the default Request.dir value.</td></tr>
 <a name='home'></a>
    <tr><td nowrap align='center'> </td><td>home</td><td><a href='Path.html'>Path</a></td><td>Default root directory for the server. The app does not change its current directory to this path.</td></tr>
+<a name='hosted'></a>
+   <tr><td nowrap align='center'> get set </td><td>hosted</td><td><a href='Boolean.html'>Boolean</a></td><td>Flag indicating if the server is running hosted inside a web server. </td></tr>
 <a name='indicies'></a>
    <tr><td nowrap align='center'> static </td><td>indicies</td><td><a href='Array.html'>Array</a></td><td>Index files list. Index files are used by various handlers when requests to directories are made. The 
 indicies are tried in turn for the first valid index file.</td></tr>
@@ -94,6 +98,7 @@ function onrequest(request: Request): Void.</td></tr>
    <tr class='apiDef'><td class='apiType'> </td><td><a href='#on'><b>on</b></a>(name, observer: <a href='Function.html'>Function</a>): <a href='Void.html'>Void</a></tr><tr class='apiBrief'><td>&nbsp;</td><td>Add an observer for server events.</td></tr>
    <tr class='apiDef'><td class='apiType'> </td><td><a href='#passRequest'><b>passRequest</b></a>(request: <a href='ejs.web-Request.html'>Request</a>, worker: <a href='Worker.html'>Worker</a>)</tr><tr class='apiBrief'><td>&nbsp;</td><td>Pass a request into a worker VM.</td></tr>
    <tr class='apiDef'><td class='apiType'> </td><td><a href='#process'><b>process</b></a>(app: <a href='Function.html'>Function</a>, request: <a href='ejs.web-Request.html'>Request</a>, finalize: <a href='Boolean.html'>Boolean</a> = true): <a href='Void.html'>Void</a></tr><tr class='apiBrief'><td>&nbsp;</td><td>Process a web request.</td></tr>
+   <tr class='apiDef'><td class='apiType'> </td><td><a href='#pruneWorkers'><b>pruneWorkers</b></a>(): <a href='Void.html'>Void</a></tr><tr class='apiBrief'><td>&nbsp;</td><td>Prune idle worker threads.</td></tr>
    <tr class='apiDef'><td class='apiType'> </td><td><a href='#run'><b>run</b></a>(): <a href='Void.html'>Void</a></tr><tr class='apiBrief'><td>&nbsp;</td><td>Run the application event loop to service requests.</td></tr>
    <tr class='apiDef'><td class='apiType'> </td><td><a href='#secure'><b>secure</b></a>(keyFile: <a href='Path.html'>Path</a>, certFile: <a href='Path.html'>Path</a>, protocols: <a href='Array.html'>Array</a> = null, ciphers: <a href='Array.html'>Array</a> = null): <a href='Void.html'>Void</a></tr><tr class='apiBrief'><td>&nbsp;</td><td>Define the Secure Sockets Layer (SSL) protocol credentials.</td></tr>
    <tr class='apiDef'><td class='apiType'> </td><td><a href='#serve'><b>serve</b></a>(request: <a href='ejs.web-Request.html'>Request</a>, router: <a href='ejs.web-Router.html'>Router</a> = expression): <a href='Void.html'>Void</a></tr><tr class='apiBrief'><td>&nbsp;</td><td>Serve a web request.</td></tr>
@@ -113,8 +118,8 @@ function onrequest(request: Request): Void.</td></tr>
 <div class='apiSig'>  ejs.web  HttpServer(options: <a href='Object.html'>Object</a> = expression)
 </div>
 <div class='apiDetail'>
-<dl><dt>Description</dt></dd><dd>Create a HttpServer object. The server is created in async mode by default.
-If an "ejsrc" file exists in the server root, it will be loaded and update the "<a href='#config"'>config"</a> properties.</dd></dl>
+<dl><dt>Description</dt></dd><dd>Create a HttpServer object. The server is set to async mode by default.
+If an "ejsrc" file exists in the server root, it will be loaded.</dd></dl>
 <dl><dt>Parameters</dt>
 <dd><table class='parameters' summary ='parameters'>
 <tr class='param'><td class='param'>options: <a href='Object.html'>Object</a> </td><td>Set of options to configure the server. [default: expression]</td></tr><tr class='param'><td class='param'>options: <a href='Object.html'>Object</a> </td><td>null [default: expression]</td></tr></table></dd>
@@ -124,7 +129,7 @@ If an "ejsrc" file exists in the server root, it will be loaded and update the "
 <td class='param'>home</td><td>Base directory for the server and the "ejsrc" configuration file. If unset and the HttpServer is  hosted, the <a href='#home'>home</a> property will be defined by the web server.</td></tr>
 <td class='param'>ejsrc</td><td>Alternate path to the "ejsrc" configuration file.</td></tr>
 <td class='param'>config</td><td>Alternate App.config settings.</td></tr>
-<td class='param'>own</td><td>If hosted inside a web server, set to true to bypass any web server listening endpoints and  create a new stand-alone listening connection.</td></tr>
+<td class='param'>unhosted</td><td>If hosted inside a web server, set to true to bypass any web server listening endpoints and  create a new stand-alone (unhosted) listening connection.</td></tr>
 </table></dd>
 </dl><dl><dt>Specified</dt>
 <dd>ejscript-2.0</dd></dl>
@@ -213,9 +218,10 @@ variety of content using the given specified route tables.</dd></dl>
 </div>
 <div class='apiDetail'>
 <dl><dt>Description</dt></dd><dd>Listen for client connections. This creates a HTTP server listening on a single socket endpoint. It can
-also be used to attach to an existing listening connection if embedded in a web server. <br/><br/>When used inside a web server, the web server should define the listening endpoints and ensure the 
-EjsScript startup script is executed. Then, when listen is called, the HttpServer object will be bound to
-the web server's listening connection. In this case, the endpoint argument is not required and is ignored.<br/><br/>HttpServer supports both sync and async modes of operation.  In sync mode, after listen call is made, 
+also be used to attach to an existing listening connection if embedded in a web server. <br/><br/>When hosted inside a web server, the web server will define the listening endpoints and ensure the 
+EjsScript startup script is executed. Then, when listen() is called, the HttpServer object will be bound to
+the actual web server's listening connection. In this case, the endpoint argument is not required and 
+is ignored.<br/><br/>HttpServer supports both sync and async modes of operation.  In sync mode, after listen call is made, 
 <a href='#accept'>accept</a> must be called to wait for and receive client connections. The <a href='#accept'>accept</a> call will create the 
 Request object.  In async mode, Request objects will be created automatically and passed to registered 
 observers via "readable" events.</dd></dl>
@@ -293,12 +299,24 @@ Request and HttpServer objects into the worker VM.</dd></dl>
 </dl></div>
 </div>
 <hr />
+<a name='pruneWorkers'></a>
+<div class='api'>
+<div class='apiSig'>    pruneWorkers(): <a href='Void.html'>Void</a>
+</div>
+<div class='apiDetail'>
+<dl><dt>Description</dt></dd><dd>Prune idle worker threads. This will release cached worker interpreters and reduce memory footprint. 
+After calling, the next request will be a little slower as it will need to recreate a worker interpreter.
+This is normally run every PrunePeriod. It may be also be called manually at any time.</dd></dl>
+</div>
+</div>
+<hr />
 <a name='run'></a>
 <div class='api'>
 <div class='apiSig'>    run(): <a href='Void.html'>Void</a>
 </div>
 <div class='apiDetail'>
-<dl><dt>Description</dt></dd><dd>Run the application event loop to service requests. If the HttpServer is hosted in a web server, this call does nothing as the web server will service events.</dd></dl>
+<dl><dt>Description</dt></dd><dd>Run the application event loop to service requests. If the HttpServer is hosted in a web server, this call does nothing as the web server will service events and
+will return immediately.</dd></dl>
 </div>
 </div>
 <hr />
@@ -414,9 +432,9 @@ caCertPath takes precedence.</dd></dl>
 <hr />
 <div class="terms">
    <p class="terms">
-       <a href="http://embedthis.com.com/">       Embedthis Software LLC, 2003-2011. All rights reserved. Embedthis is a trademark of Embedthis Software LLC.</a>
+       <a href="http://embedthis.com/">       Embedthis Software LLC, 2003-2011. All rights reserved. Embedthis is a trademark of Embedthis Software LLC.</a>
    </p>
 </div></div>
 </div>
-
-
+</body>
+</html>

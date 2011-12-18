@@ -63,7 +63,7 @@ module ejs {
         native function get repeat(): Boolean
         native function set repeat(enable: Boolean): Void
 
-        /*
+        /**
             Reschedule a timer. This will stop the timer if it is currently scheduled, then reschedule the timer.
             If the $when argument is provided, the timer period will be set before starting.
             @param when Time period for when to next run the timer
