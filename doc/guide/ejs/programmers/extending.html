@@ -21,19 +21,6 @@
         <div class="topRight">
             <div class="search">
                 <div id="cse-search-form">Loading</div>
-                <script src="http://www.google.com/jsapi" type="text/javascript"></script>
-                <script type="text/javascript"> 
-                  google.load('search', '1', {language : 'en'});
-                  google.setOnLoadCallback(function() {
-                    var customSearchControl = new google.search.CustomSearchControl(
-                      'partner-pub-9935546676162772:ysvxxv4n9rx');
-
-                    customSearchControl.setResultSetSize(google.search.Search.FILTERED_CSE_RESULTSET);
-                    var options = new google.search.DrawOptions();
-                    options.enableSearchboxOnly("http://ejscript.org/search.html");
-                    customSearchControl.draw('cse-search-form', options);
-                  }, true);
-                </script>
                 <div class='version'>Embedthis Ejscript 2.0.0</div>
             </div>
         </div>
@@ -203,20 +190,22 @@ ejsmod --cslots acme.mod
             <p>The header contains definitions like:</p>
             <pre>
 /**
- *   Class property slots for the "Rocket" class
+     Class property slots for the "Rocket" class
   */
 #define ES_acme_Rocket__origin             5
 #define ES_acme_Rocket_Rocket              5
 #define ES_acme_Rocket_blastOff            6
 #define ES_acme_Rocket_NUM_CLASS_PROP      7
+
 /**
- * Instance slots for "Rocket" type
+   Instance slots for "Rocket" type
   */
 #define ES_acme_Rocket_kind                0
 #define ES_acme_Rocket_timeToOrbit         1
 #define ES_acme_Rocket_NUM_INSTANCE_PROP   2
+
 /**
- *    Local slots for methods in type Rocket
+      Local slots for methods in type Rocket
  */
 #define ES_acme_Rocket_blastOff_kind       0
 </pre>
@@ -234,25 +223,18 @@ ejsmod --cslots acme.mod
             <pre>
 #include "ejs/ejs.h"
 #include "acme.slots.h"
-MprModule *acmeModuleInit(Ejs *ejs)
+
+int acmeModuleInit(Ejs *ejs, MprModule *module)
 {
-    MprModule   *module;
     EjsType     *type;
     EjsName     qname;
-    /*
-     *  Create (and later return) a module object for the run-time
-     */
-    module = mprCreateModule(ejs, "rocket", BLD_VERSION, 0, 0, 0);
-    /*
-     *  Get the Rocket class object. This will be created from the mod file for us.
-     */
-    ejsName(&amp;qname, "acme", "Rocket");
-    type = (EjsType*) ejsGetPropertyByName(ejs, ejs-&gt;global, &amp;qname);
-    /*
-     *  Bind the C functions to the JavaScript functions
-     */
-    ejsBindMethod(ejs, type, ES_acme_Rocket_Rocket, constructor);
-    ejsBindMethod(ejs, type, ES_acme_Rocket_blastOff, blastOff);
+
+    /* Get the Rocket class object */
+    type = ejsGetTypeByName(ejs, ejsName(ejs, "acme", "Shape"));
+
+    /* Bind the C functions to the JavaScript functions */
+    ejsBindConstructor(ejs, type, constructor);
+    ejsBindMethod(ejs, type->prototype, ES_acme_Rocket_blastOff, blastOff);
     return module;
 }
 </pre>
@@ -266,15 +248,16 @@ MprModule *acmeModuleInit(Ejs *ejs)
             functions. In this case, we bind the constructor function and the blastOff function.</p>
             <h4>Create the Native C functions</h4>
             <pre>
-static EjsVar *constructor(Ejs *ejs, EjsVar *rocket, int argc, EjsVar **argv)
+static EjsObj *constructor(Ejs *ejs, EjsObj *rocket, int argc, EjsObj **argv)
 {
     ejsSetProperty(ejs, rocket, ES_acme_Rocket_kind, argv[0]);
-    return (EjsVar*) rocket;
+    return rocket;
 }
-static EjsVar *blastOff(Ejs *ejs, EjsVar *rocket, int argc, EjsVar **argv)
+
+static EjsObj *blastOff(Ejs *ejs, EjsObj *rocket, int argc, EjsObj **argv)
 {
     ejsSetProperty(ejs, rocket, ES_acme_Rocket_timeToOrbit, 
-        (EjsVar*) ejsCreateNumber(ejs, 600));
+        ejsCreateNumber(ejs, 600));
     return 0;
 }
 </pre>
@@ -300,19 +283,19 @@ static EjsVar *blastOff(Ejs *ejs, EjsVar *rocket, int argc, EjsVar **argv)
                 </thead>
                 <tbody>
                     <tr>
-                        <td>ejsAllocVar</td>
-                        <td>Allocate a new variable</td>
+                        <td>ejsAlloc</td>
+                        <td>Allocate a new object instance</td>
                     </tr>
                     <tr>
                         <td>ejsBindMethod</td>
                         <td>Bind a native C function to a JavaScript property</td>
                     </tr>
                     <tr>
-                        <td>ejsCastVar</td>
+                        <td>ejsCast</td>
                         <td>Cast a variable to another type</td>
                     </tr>
                     <tr>
-                        <td>ejsCloneVar</td>
+                        <td>ejsClone</td>
                         <td>Create a clone copy of a variable</td>
                     </tr>
                     <tr>
@@ -344,10 +327,6 @@ static EjsVar *blastOff(Ejs *ejs, EjsVar *rocket, int argc, EjsVar **argv)
                         <td>Create a Function object</td>
                     </tr>
                     <tr>
-                        <td>ejsCreateInstance</td>
-                        <td>Create an object instance and call the constructor</td>
-                    </tr>
-                    <tr>
                         <td>ejsCreateIterator</td>
                         <td>Create an Iterator object</td>
                     </tr>
@@ -368,10 +347,6 @@ static EjsVar *blastOff(Ejs *ejs, EjsVar *rocket, int argc, EjsVar **argv)
                         <td>Create a simple, empty object</td>
                     </tr>
                     <tr>
-                        <td>ejsCreateVar</td>
-                        <td>Create a new variable of the required type</td>
-                    </tr>
-                    <tr>
                         <td>ejsDefineGlobalFunction</td>
                         <td>Define a public global function and bind to a C function</td>
                     </tr>
@@ -382,14 +357,6 @@ static EjsVar *blastOff(Ejs *ejs, EjsVar *rocket, int argc, EjsVar **argv)
                     <tr>
                         <td>ejsDeserialize</td>
                         <td>Deserialize a string and create an equivalent object</td>
-                    </tr>
-                    <tr>
-                        <td>ejsDestroyVar</td>
-                        <td>Destroy a variable</td>
-                    </tr>
-                    <tr>
-                        <td>ejsDupString</td>
-                        <td>Duplicate a string object</td>
                     </tr>
                     <tr>
                         <td>ejsExit</td>
@@ -490,5 +457,18 @@ static EjsVar *blastOff(Ejs *ejs, EjsVar *rocket, int argc, EjsVar **argv)
 		</p>
 	</div>
 </body>
+    <script src="http://www.google.com/jsapi" type="text/javascript"></script>
+    <script type="text/javascript"> 
+      google.load('search', '1', {language : 'en'});
+      google.setOnLoadCallback(function() {
+        var customSearchControl = new google.search.CustomSearchControl(
+          'partner-pub-9935546676162772:ysvxxv4n9rx');
+
+        customSearchControl.setResultSetSize(google.search.Search.FILTERED_CSE_RESULTSET);
+        var options = new google.search.DrawOptions();
+        options.enableSearchboxOnly("http://ejscript.org/search.html");
+        customSearchControl.draw('cse-search-form', options);
+      }, true);
+    </script>
 </html>
 <!-- EndDsi -->

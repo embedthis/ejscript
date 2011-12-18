@@ -21,19 +21,6 @@
         <div class="topRight">
             <div class="search">
                 <div id="cse-search-form">Loading</div>
-                <script src="http://www.google.com/jsapi" type="text/javascript"></script>
-                <script type="text/javascript"> 
-                  google.load('search', '1', {language : 'en'});
-                  google.setOnLoadCallback(function() {
-                    var customSearchControl = new google.search.CustomSearchControl(
-                      'partner-pub-9935546676162772:ysvxxv4n9rx');
-
-                    customSearchControl.setResultSetSize(google.search.Search.FILTERED_CSE_RESULTSET);
-                    var options = new google.search.DrawOptions();
-                    options.enableSearchboxOnly("http://ejscript.org/search.html");
-                    customSearchControl.draw('cse-search-form', options);
-                  }, true);
-                </script>
                 <div class='version'>Embedthis Ejscript 2.0.0</div>
             </div>
         </div>
@@ -67,20 +54,20 @@
             </thead>
             <tbody>
             <tr>
-                <td><a href="../../../man/ejsc.html">ejsc</a></td>
-                <td>Ejscript compiler</td>
-            </tr>
-            <tr>
-                <td><a href="../../../man/mvc.html">mvc</a></td>
-                <td>Ejscript Web Framework application generator</td>
-            </tr>
-            <tr>
                 <td><a href="../../../man/ejs.html">ejs</a></td>
                 <td>Ejscript shell</td>
             </tr>
             <tr>
+                <td><a href="../../../man/ejsc.html">ejsc</a></td>
+                <td>Ejscript compiler</td>
+            </tr>
+            <tr>
                 <td><a href="../../../man/ejsmod.html">ejsmod</a></td>
                 <td>Ejscript module manager</td>
+            </tr>
+            <tr>
+                <td><a href="../../../man/mvc.html">mvc</a></td>
+                <td>Ejscript Web Framework application generator</td>
             </tr>
             </tbody>
         </table>
@@ -93,5 +80,18 @@
 		</p>
 	</div>
 </body>
+    <script src="http://www.google.com/jsapi" type="text/javascript"></script>
+    <script type="text/javascript"> 
+      google.load('search', '1', {language : 'en'});
+      google.setOnLoadCallback(function() {
+        var customSearchControl = new google.search.CustomSearchControl(
+          'partner-pub-9935546676162772:ysvxxv4n9rx');
+
+        customSearchControl.setResultSetSize(google.search.Search.FILTERED_CSE_RESULTSET);
+        var options = new google.search.DrawOptions();
+        options.enableSearchboxOnly("http://ejscript.org/search.html");
+        customSearchControl.draw('cse-search-form', options);
+      }, true);
+    </script>
 </html>
 <!-- EndDsi -->

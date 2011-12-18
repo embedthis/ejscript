@@ -21,26 +21,13 @@
         <div class="topRight">
             <div class="search">
                 <div id="cse-search-form">Loading</div>
-                <script src="http://www.google.com/jsapi" type="text/javascript"></script>
-                <script type="text/javascript"> 
-                  google.load('search', '1', {language : 'en'});
-                  google.setOnLoadCallback(function() {
-                    var customSearchControl = new google.search.CustomSearchControl(
-                      'partner-pub-9935546676162772:ysvxxv4n9rx');
-
-                    customSearchControl.setResultSetSize(google.search.Search.FILTERED_CSE_RESULTSET);
-                    var options = new google.search.DrawOptions();
-                    options.enableSearchboxOnly("http://ejscript.org/search.html");
-                    customSearchControl.draw('cse-search-form', options);
-                  }, true);
-                </script>
                 <div class='version'>Embedthis Ejscript 2.0.0</div>
             </div>
         </div>
         <div class="crumbs">
             <a href="../../product/index.html">Home</a>
 <!-- EndDsi -->
-             &gt;<a href="index.html">Programmer Reference</a>&gt; Ejscript Language Architecture
+        &gt;<a href="index.html">Programmer Reference</a>&gt; <b>Ejscript Language Architecture</b>
         </div>
     </div>
     <div class="content">
@@ -75,7 +62,7 @@
             <h2>Ejscript Language Architecture</h2>
             <p>Ejscript consists of an optimizing compiler, an embeddable virtual machine, a system library and a set
             of tools. All were designed and implemented to provide a high performance and compact server-side
-            JavaScript programming environment.</p><img src="../../images/architecture.jpg" alt="" />
+            JavaScript programming environment.</p><img src="../../images/tools.jpg" alt="" />
             <p>The main components of the Ejscript language environment:</p>
             <ul>
                 <li><a href="#tools">Command Tools</a> - Programs to compile, interpret and manage Ejscript
@@ -93,8 +80,8 @@
             <ul>
                 <li>ejs - Ejscript command shell</li>
                 <li>ejsc - Ejscript compiler</li>
-                <li>mvc - Web framework generator</li>
                 <li>ejsmod - Module manager and documentation generator</li>
+                <li>mvc - Web framework generator</li>
             </ul>
             <p>For full details about the command line options, please see the <a href=
             "../../guide/ejs/programmers/man.html">Manual Pages</a> for these commands. <a name="vm" id="vm"></a></p>
@@ -146,9 +133,8 @@
             native classes down to the minimum storage required to represent the objects state. Composite native
             classes have several benefits:</p>
             <ul>
-                <li>They run much faster because they can access properties natively without going via the VM.</li>
-                <li>The memory footprint requirements are much smaller, typically more than a 10x reduction in
-                size.</li>
+                <li>Native classes can directly access properties without going via the VM.</li>
+                <li>The memory footprint is much smaller, typically more than a 10x reduction in size.</li>
             </ul>
             <p>For example: A video class may have height and width coordinate properties. In a normal scripted or
             native class, these would be discrete Ejscript numeric objects with their own storage. In a composite
@@ -255,40 +241,28 @@
             other names. Module writers can version packages by adding a version namespace in addition to the module
             namespace. The user of the module can then put a "use namespace" directive in their code to request a
             specific version of the module.</p><a name="library" id="library"></a>
+
             <h2 class="section">Core Class Library</h2>
             <p>The core Ejscript class library provides an extensive suite of classes that cover common programming
             tasks and requirements. These are divided into the following modules:</p>
             <ul>
                 <li>intrinsic - Core system types</li>
                 <li>ejs.db - Database</li>
-                <li>ejs.events - Events and Timers</li>
-                <li>ejs.io - File and Network I/O</li>
-                <li>ejs.sys - System Interfacing</li>
                 <li>ejs.web - Web Framework</li>
             </ul>
             <p>See the <a href="../../api/ejscript/index.html">API reference</a> for full details
             regarding the script programming API.</p>
             <h2>Intrinsic</h2>
-            <p>Some of the classes in the intrinsic module: Array, Boolean, ByteArray, Date, Error, Function, Number,
-            Object, Reflect, RegExp, Stream, String and XML</p>
+            <p>Some of the classes in the intrinsic module: Array, Boolean, ByteArray, Date, Emitter, Error, 
+            Function, Http, Number, Object, Reflect, RegExp, Socket, Stream, String, TextStream and XML</p>
             <h2>ejs.db</h2>
             <p>The ejs.db module provides the Database and Record classes which provide a low level SQLite access API
             and also a higher level Object Relational Mapping layer that is used by the <a href=
             "webArchitecture.html">Web Framework</a>.</p>
             <h2>ejs.db</h2>
-            <p>The ejs.events module provides the event dispatching and timer services. It includes the classes:
-            Dispatcher, Event, Timer and TimerEvent.</p>
-            <h2>ejs.io</h2>
-            <p>The ejs.io module provides file and network I/O services. It includes the classes: BinaryStream, File,
-            Http, TextStream, XMLHttp.</p>
-            <h2>ejs.sys</h2>
-            <p>The ejs.sys module provides system interface services. It includes the classes: App for application
-            management, GC for managing the garbage collector, Memory for monitoring memory usage and System for
-            invoking system commands.</p>
             <h2>ejs.web</h2>
-            <p>The web framework provides a complete web application framework. It includes the classes: Application,
-            Controller, Cookie, GoogleConnector, Host, HtmlConnector, Request, Response, Session, UploadFile, View and
-            ViewConnector.</p>
+            <p>The web framework provides a complete web application framework. It includes the classes: 
+            Controller, Cookie, HttpServer, Request, Session, UploadFile, and View.</p>
         </div>
     </div>
 <!-- BeginDsi "dsi/bottom.html" -->
@@ -299,5 +273,18 @@
 		</p>
 	</div>
 </body>
+    <script src="http://www.google.com/jsapi" type="text/javascript"></script>
+    <script type="text/javascript"> 
+      google.load('search', '1', {language : 'en'});
+      google.setOnLoadCallback(function() {
+        var customSearchControl = new google.search.CustomSearchControl(
+          'partner-pub-9935546676162772:ysvxxv4n9rx');
+
+        customSearchControl.setResultSetSize(google.search.Search.FILTERED_CSE_RESULTSET);
+        var options = new google.search.DrawOptions();
+        options.enableSearchboxOnly("http://ejscript.org/search.html");
+        customSearchControl.draw('cse-search-form', options);
+      }, true);
+    </script>
 </html>
 <!-- EndDsi -->

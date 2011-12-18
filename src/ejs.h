@@ -1330,7 +1330,7 @@ extern bool ejsMatchName(Ejs *ejs, EjsName *a, EjsName *b);
     @see EjsString ejsAtoi ejsCompareAsc ejsCompareString ejsCompareSubstring ejsCompareWide ejsContainsAsc 
         ejsContainsChar ejsContainsString ejsCreateBareString ejsCreateString ejsCreateStringFromAsc 
         ejsCreateStringFromBytes ejsCreateStringFromConst ejsCreateStringFromMulti ejsCreateStringWithLength 
-        ejsDestroyIntern ejsDupString ejsInternAsc ejsInternMulti ejsInternString ejsInternWide ejsJoinString 
+        ejsDestroyIntern ejsInternAsc ejsInternMulti ejsInternString ejsInternWide ejsJoinString 
         ejsJoinStrings ejsSerialize ejsSerializeWithOptions ejsSprintf ejsStartsWithAsc ejsStrcat ejsStrdup 
         ejsSubstring ejsToJSON ejsToLiteralString ejsToMulti ejsToString ejsToUpper ejsTruncateString ejsVarToString 
         ejstoLower 

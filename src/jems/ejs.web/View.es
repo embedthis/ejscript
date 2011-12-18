@@ -350,6 +350,7 @@ MOB -- much more doc here
             connector.form(record, options)
         }
 
+        //  MOB - is this required if we have image()
         /** 
             Emit an icon link.
             @param src Source name for the icon.

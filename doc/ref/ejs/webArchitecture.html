@@ -21,26 +21,13 @@
         <div class="topRight">
             <div class="search">
                 <div id="cse-search-form">Loading</div>
-                <script src="http://www.google.com/jsapi" type="text/javascript"></script>
-                <script type="text/javascript"> 
-                  google.load('search', '1', {language : 'en'});
-                  google.setOnLoadCallback(function() {
-                    var customSearchControl = new google.search.CustomSearchControl(
-                      'partner-pub-9935546676162772:ysvxxv4n9rx');
-
-                    customSearchControl.setResultSetSize(google.search.Search.FILTERED_CSE_RESULTSET);
-                    var options = new google.search.DrawOptions();
-                    options.enableSearchboxOnly("http://ejscript.org/search.html");
-                    customSearchControl.draw('cse-search-form', options);
-                  }, true);
-                </script>
                 <div class='version'>Embedthis Ejscript 2.0.0</div>
             </div>
         </div>
         <div class="crumbs">
             <a href="../../product/index.html">Home</a>
 <!-- EndDsi -->
-             &gt;<a href="index.html">Programmer Reference</a>&gt; Web Framework Architecture
+&gt;<a href="index.html">Programmer Reference</a>&gt; <b>Web Framework Architecture</b>
         </div>
     </div>
     <div class="content">
@@ -174,25 +161,20 @@ mvc -v generate app test
 </pre>
             <p>This will create the following directories:</p>
             <ul>
-                <li>test/config</li>
                 <li>test/controllers</li>
                 <li>test/db</li>
+                <li>test/layouts</li>
                 <li>test/models</li>
                 <li>test/src</li>
                 <li>test/views</li>
-                <li>test/views/layouts</li>
                 <li>test/web</li>
             </ul>
             <p>It will also create the following files:</p>
             <ul>
-                <li>test/config/config.ecf</li>
-                <li>test/config/compiler.ecf</li>
-                <li>test/config/database.ecf</li>
-                <li>test/config/view.ecf</li>
-                <li>test/views/layouts/default.ejs</li>
+                <li>test/ejsrc</li>
+                <li>test/layouts/default.ejs</li>
                 <li>test/src/Test.es</li>
-                <li>test/controllers/Application.es</li>
-                <li>test/README</li>
+                <li>test/controllers/Base.es</li>
             </ul>
             <p>The mvc program can also generate controllers. It is currently being enhanced to generate models,
             views and entire scaffolds. To compile your application, use the mvc program:</p>
@@ -335,17 +317,19 @@ mvc -v compile
             to specific actions within the controls. When a controller receives an incoming Http message, the requested
             action is run. The action will typically mutate the state of the application in some manner and then render
             a response view to the user.</p><a name="routing" id="routing"></a>
+
             <h3>Routing</h3>
-            <p>The Ejscript web framework routes incoming URL requests by tokenizing the request URL. The format used
-            is:</p>
+            <p>The Ejscript web framework routes incoming URL requests by tokenizing the request URL. The Router class
+            uses regular expression patterns to parse the URL and to determine which controller and action should
+            receive the request. A typicaly URL pattern is:</p>
             <blockquote>
                 <p>http://site/APP/CONTROLLER/ACTION</p>
             </blockquote>
             <p>Where APP is the name of the application, CONTROLLER the name of the controller and ACTION is the name
             of an action method within the controller. When such a URL request is received by Ejscript, it routes the
-            request to the specified controller and invokes the action method. The routing format is currently fixed
-            and not configurable but it is anticipated that user controlled routing will be added in a future
-            release.</p><a name="actions" id="actions"></a>
+            request to the specified controller and invokes the action method. The routing format is fully 
+            configurable and can be customized to suit your exact needs.</p>
+            <a name="actions" id="actions"></a>
             <h3>Actions</h3>
             <p>When a controller receives a request to service, it is dispatched to the action method specified in the
             URL. The action is a simple function defined with an "action" namespace qualifier. The job of the action
@@ -397,5 +381,18 @@ action function update() {
 		</p>
 	</div>
 </body>
+    <script src="http://www.google.com/jsapi" type="text/javascript"></script>
+    <script type="text/javascript"> 
+      google.load('search', '1', {language : 'en'});
+      google.setOnLoadCallback(function() {
+        var customSearchControl = new google.search.CustomSearchControl(
+          'partner-pub-9935546676162772:ysvxxv4n9rx');
+
+        customSearchControl.setResultSetSize(google.search.Search.FILTERED_CSE_RESULTSET);
+        var options = new google.search.DrawOptions();
+        options.enableSearchboxOnly("http://ejscript.org/search.html");
+        customSearchControl.draw('cse-search-form', options);
+      }, true);
+    </script>
 </html>
 <!-- EndDsi -->

@@ -21,19 +21,6 @@
         <div class="topRight">
             <div class="search">
                 <div id="cse-search-form">Loading</div>
-                <script src="http://www.google.com/jsapi" type="text/javascript"></script>
-                <script type="text/javascript"> 
-                  google.load('search', '1', {language : 'en'});
-                  google.setOnLoadCallback(function() {
-                    var customSearchControl = new google.search.CustomSearchControl(
-                      'partner-pub-9935546676162772:ysvxxv4n9rx');
-
-                    customSearchControl.setResultSetSize(google.search.Search.FILTERED_CSE_RESULTSET);
-                    var options = new google.search.DrawOptions();
-                    options.enableSearchboxOnly("http://ejscript.org/search.html");
-                    customSearchControl.draw('cse-search-form', options);
-                  }, true);
-                </script>
                 <div class='version'>Embedthis Ejscript 2.0.0</div>
             </div>
         </div>
@@ -84,8 +71,7 @@
                     <p>Edit the build/standard.defaults configuration file. This file contains the factory defaults for
                     the configure program. Select the features you wish to support. But start with the smallest set
                     possible.</p>
-                    <p>You should turn BLD_FEATURE_MULTITHREAD off (use configure --disable-multi-thread) for your
-                    first porting effort as it will make debugging much easier. Disable all the features that your O/S
+                    <p>Disable all the features that your O/S
                     does not support. See the <a href="building.html">Building from Source</a> document for definitions
                     of all the build variables used in these files.</p>
                 </li>
@@ -239,5 +225,18 @@ make test
 		</p>
 	</div>
 </body>
+    <script src="http://www.google.com/jsapi" type="text/javascript"></script>
+    <script type="text/javascript"> 
+      google.load('search', '1', {language : 'en'});
+      google.setOnLoadCallback(function() {
+        var customSearchControl = new google.search.CustomSearchControl(
+          'partner-pub-9935546676162772:ysvxxv4n9rx');
+
+        customSearchControl.setResultSetSize(google.search.Search.FILTERED_CSE_RESULTSET);
+        var options = new google.search.DrawOptions();
+        options.enableSearchboxOnly("http://ejscript.org/search.html");
+        customSearchControl.draw('cse-search-form', options);
+      }, true);
+    </script>
 </html>
 <!-- EndDsi -->

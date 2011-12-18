@@ -21,19 +21,6 @@
         <div class="topRight">
             <div class="search">
                 <div id="cse-search-form">Loading</div>
-                <script src="http://www.google.com/jsapi" type="text/javascript"></script>
-                <script type="text/javascript"> 
-                  google.load('search', '1', {language : 'en'});
-                  google.setOnLoadCallback(function() {
-                    var customSearchControl = new google.search.CustomSearchControl(
-                      'partner-pub-9935546676162772:ysvxxv4n9rx');
-
-                    customSearchControl.setResultSetSize(google.search.Search.FILTERED_CSE_RESULTSET);
-                    var options = new google.search.DrawOptions();
-                    options.enableSearchboxOnly("http://ejscript.org/search.html");
-                    customSearchControl.draw('cse-search-form', options);
-                  }, true);
-                </script>
                 <div class='version'>Embedthis Ejscript 2.0.0</div>
             </div>
         </div>
@@ -63,15 +50,19 @@
             <p>The Ejscript source code is hosted in a Git <a href="http://github.com/embedthis/ejs-2">repository</a>.
             We provide open read-only access. Write access is available to regular contributing developers.</p>
             <h2><a href="http://github.com/embedthis/ejs-2/issues" target="new">Project Issue Database</a></h2>
+
             <p>The Ejscript open issue and bug list is stored in a 
             <a href="http://github.com/embedthis/ejs-2/issues">GitHub</a>
-            database. 
+            database. </p>
+
+        <!--
             <h2><a href="http://embedthis.com.com/mailman/">Developer Mailing List</a></h2>
             <p>The best source of information for developers interested in participating or observing progress with
             Ejscript is the mailing list. Go to the Ejscript <a href=
             "http://embedthis.com.com/mailman/listinfo/ejs">mailman</a> page to sign up.</p>
+        -->
             <h2><a href="http://ejscript.org/forum/index.php">Community Support Forum</a></h2>
-            <p>For free technical support at our community support <a href="http://ejscript.org/">forum</a>. This
+            <p>For free technical support at our community support <a href="http://ejscript.org/forum/">forum</a>. This
             is a community based forum where users can share ideas and ask questions. You can also search the forum for
             answers to past questions.</p>
             <h2><a href="contributors.html">Developer Contributors Agreement</a></h2>
@@ -91,5 +82,18 @@
 		</p>
 	</div>
 </body>
+    <script src="http://www.google.com/jsapi" type="text/javascript"></script>
+    <script type="text/javascript"> 
+      google.load('search', '1', {language : 'en'});
+      google.setOnLoadCallback(function() {
+        var customSearchControl = new google.search.CustomSearchControl(
+          'partner-pub-9935546676162772:ysvxxv4n9rx');
+
+        customSearchControl.setResultSetSize(google.search.Search.FILTERED_CSE_RESULTSET);
+        var options = new google.search.DrawOptions();
+        options.enableSearchboxOnly("http://ejscript.org/search.html");
+        customSearchControl.draw('cse-search-form', options);
+      }, true);
+    </script>
 </html>
 <!-- EndDsi -->

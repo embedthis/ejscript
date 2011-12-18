@@ -21,26 +21,13 @@
         <div class="topRight">
             <div class="search">
                 <div id="cse-search-form">Loading</div>
-                <script src="http://www.google.com/jsapi" type="text/javascript"></script>
-                <script type="text/javascript"> 
-                  google.load('search', '1', {language : 'en'});
-                  google.setOnLoadCallback(function() {
-                    var customSearchControl = new google.search.CustomSearchControl(
-                      'partner-pub-9935546676162772:ysvxxv4n9rx');
-
-                    customSearchControl.setResultSetSize(google.search.Search.FILTERED_CSE_RESULTSET);
-                    var options = new google.search.DrawOptions();
-                    options.enableSearchboxOnly("http://ejscript.org/search.html");
-                    customSearchControl.draw('cse-search-form', options);
-                  }, true);
-                </script>
                 <div class='version'>Embedthis Ejscript 2.0.0</div>
             </div>
         </div>
         <div class="crumbs">
             <a href="../../../product/index.html">Home</a>
 <!-- EndDsi -->
-             &gt;<a href="index.html">Standards</a> &gt; <strong>References</strong>
+             &gt;<a href="index.html">Standards</a> &gt; <b>References</b>
         </div>
     </div>
     <div class="content">
@@ -79,7 +66,7 @@
                 </tr>
                 <tr>
                     <td><a href="http://oreilly.com/catalog/9780596000486/">JavaScript the Definitive Guide</a>.</td>
-                    <td>For more information about JavaScript Edition 3, we recommend the excellent book on JavaScript
+                    <td>For more information about JavaScript Edition 4, we recommend the excellent book on JavaScript
                     by David Flanagan, JavaScript the Definitive Guide by O'Reilly, ISBN: 0-596-00048-0, 2002.</td>
                 </tr>
                 </tbody>
@@ -94,5 +81,18 @@
 		</p>
 	</div>
 </body>
+    <script src="http://www.google.com/jsapi" type="text/javascript"></script>
+    <script type="text/javascript"> 
+      google.load('search', '1', {language : 'en'});
+      google.setOnLoadCallback(function() {
+        var customSearchControl = new google.search.CustomSearchControl(
+          'partner-pub-9935546676162772:ysvxxv4n9rx');
+
+        customSearchControl.setResultSetSize(google.search.Search.FILTERED_CSE_RESULTSET);
+        var options = new google.search.DrawOptions();
+        options.enableSearchboxOnly("http://ejscript.org/search.html");
+        customSearchControl.draw('cse-search-form', options);
+      }, true);
+    </script>
 </html>
 <!-- EndDsi -->

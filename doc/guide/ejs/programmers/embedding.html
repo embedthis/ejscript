@@ -21,19 +21,6 @@
         <div class="topRight">
             <div class="search">
                 <div id="cse-search-form">Loading</div>
-                <script src="http://www.google.com/jsapi" type="text/javascript"></script>
-                <script type="text/javascript"> 
-                  google.load('search', '1', {language : 'en'});
-                  google.setOnLoadCallback(function() {
-                    var customSearchControl = new google.search.CustomSearchControl(
-                      'partner-pub-9935546676162772:ysvxxv4n9rx');
-
-                    customSearchControl.setResultSetSize(google.search.Search.FILTERED_CSE_RESULTSET);
-                    var options = new google.search.DrawOptions();
-                    options.enableSearchboxOnly("http://ejscript.org/search.html");
-                    customSearchControl.draw('cse-search-form', options);
-                  }, true);
-                </script>
                 <div class='version'>Embedthis Ejscript 2.0.0</div>
             </div>
         </div>
@@ -81,7 +68,8 @@
             <p>To create an application that can evaluate script files, use the <b>ejsEvalFile</b> API.</p>
             <pre>
 #include    "ejs/ejs.h"
-int main(int argc, char **argv) {
+int main(int argc, char **argv) 
+{
     <b>if (ejsEvalFile("test.es") &lt; 0) {</b>
         fprintf(stderr, "Error executing test.es\n");
         exit(1);
@@ -89,18 +77,18 @@ int main(int argc, char **argv) {
     return 0;
 }
 </pre>
-            <p>To build this program, you just need to compile and link with Ejscript compiler library <b>libec</b>.
+            <p>To build this program, you just need to compile and link with Ejscript compiler library <b>libejs</b>.
             Here is the command for building such a test program called <b>main.c</b> on a MAC system.</p>
             <pre>
-cc -o main main.c -lec
+cc -o main main.c -lejs
 </pre>
-            <p>If building statically, then you will need to explicitly add <b>libejs.a</b> and <b>libmpr.a</b> to your
-            build line.</p><a name="literal" id="literal"></a>
+            <a name="literal" id="literal"></a>
             <h3>Evaluate a Script Literal</h3>
             <p>To create an application that can evaluate script literals, use the <b>ejsEvalScript</b> API.</p>
             <pre>
 #include    "ejs/ejs.h"
-int main(int argc, char **argv) {
+int main(int argc, char **argv) 
+{
     if (argc != 2) {
         fprintf(stderr, "usage: main script\n");
         exit(1);
@@ -121,7 +109,8 @@ int main(int argc, char **argv) {
             <b>ejsEvalModule</b> API.</p>
             <pre>
 #include    "ejs/ejs.h"
-int main(int argc, char **argv) {
+int main(int argc, char **argv) 
+{
     <b>if (ejsEvalModule("test.mod") &lt; 0) {</b>
         fprintf(stderr, "Error executing test.mod\n");
         exit(1);
@@ -134,8 +123,7 @@ int main(int argc, char **argv) {
             <pre>
 cc -o main main.c -lejs
 </pre>
-            <p>If building statically, then you will need to explicitly add <b>libmpr.a</b> to your build
-            line.</p><a name="control" id="control"></a>
+            <a name="control" id="control"></a>
             <h2 class="section">Full Control Embedding</h2>
             <p>In some situations, your application may need full control over the Ejscript service. Some reasons for
             this include:</p>
@@ -157,54 +145,23 @@ cc -o main main.c -lejs
             <pre>
 int ejsEvalFile(int fileCount, char **fileList)
 {
-    EjsService      *vm;                    //  Handle to the Ejscript VM service   
-    Ejs             *ejs;                   //  Handle to an Ejscript interpreter
-    EcCompiler      *ec;                    //  Handle to a compiler instance
-    Mpr             *mpr;
-    /*
-     *  Create an MPR instance
-     */
-    mpr = mprCreate(0, NULL, NULL);
-    /*
-     *  Create the Ejscript service. This can handle many interpreters
-     */
-    if ((vm = ejsCreateService(mpr)) == 0) {
-        mprFree(mpr);
-        return MPR_ERR_NO_MEMORY;
+    Ejs     *ejs;         //  Handle to an Ejscript interpreter
+    int     status;
+
+    mprCreate(0, 0, 0);
+    if ((ejs = ejsCreateVM(0, 0, 0)) == 0) {
+        exit(1);
     }
-    /*
-     *  Create an interpreter that will use the compiler
-     */
-    if ((ejs = ejsCreate(vm, NULL, EJS_FLAG_COMPILER)) == 0) {
-        mprFree(mpr);
-        return MPR_ERR_NO_MEMORY;
+    mprAddRoot(ejs);
+    if (ejsLoadModules(ejs, 0, 0) < 0) {
+        exit(2);
+    } 
+    if (ejsLoadScriptFile(ejs, path, NULL, 
+            EC_FLAGS_NO_OUT | EC_FLAGS_DEBUG) < 0) {
+        ejsReportError(ejs, "Error in program");
+        exit(3);
     }
-    /*
-     *  Create the compiler
-     */
-    if ((ec = ecCreateCompiler(ejs, EC_FLAGS_RUN | EC_FLAGS_NO_OUT | EC_FLAGS_DEBUG | 
-        EC_FLAGS_BIND_GLOBALS, BLD_FEATURE_EJS_LANG)) == 0) {
-        mprFree(mpr);
-        return MPR_ERR_NO_MEMORY;
-    }
-    /*
-     *  Compile the source files
-     */
-    if (ecCompile(ec, fileCount, fileList, 0) &lt; 0) {
-        mprFree(mpr);
-        return EJS_ERR;
-    }
-    /*
-     *  Run all the compiled code
-     */
-    if (ejsRun(ejs) &lt; 0) {
-        mprFree(mpr);
-        return EJS_ERR;
-    }
-    /*
-     *  Free everything including the VM, interpreter and compiler
-     */
-    mprFree(mpr);
+    mprDestroy(MPR_EXIT_DEFAULT);
     return 0;
 }
 </pre>
@@ -226,5 +183,18 @@ int ejsEvalFile(int fileCount, char **fileList)
 		</p>
 	</div>
 </body>
+    <script src="http://www.google.com/jsapi" type="text/javascript"></script>
+    <script type="text/javascript"> 
+      google.load('search', '1', {language : 'en'});
+      google.setOnLoadCallback(function() {
+        var customSearchControl = new google.search.CustomSearchControl(
+          'partner-pub-9935546676162772:ysvxxv4n9rx');
+
+        customSearchControl.setResultSetSize(google.search.Search.FILTERED_CSE_RESULTSET);
+        var options = new google.search.DrawOptions();
+        options.enableSearchboxOnly("http://ejscript.org/search.html");
+        customSearchControl.draw('cse-search-form', options);
+      }, true);
+    </script>
 </html>
 <!-- EndDsi -->

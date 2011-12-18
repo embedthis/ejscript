@@ -21,19 +21,6 @@
         <div class="topRight">
             <div class="search">
                 <div id="cse-search-form">Loading</div>
-                <script src="http://www.google.com/jsapi" type="text/javascript"></script>
-                <script type="text/javascript"> 
-                  google.load('search', '1', {language : 'en'});
-                  google.setOnLoadCallback(function() {
-                    var customSearchControl = new google.search.CustomSearchControl(
-                      'partner-pub-9935546676162772:ysvxxv4n9rx');
-
-                    customSearchControl.setResultSetSize(google.search.Search.FILTERED_CSE_RESULTSET);
-                    var options = new google.search.DrawOptions();
-                    options.enableSearchboxOnly("http://ejscript.org/search.html");
-                    customSearchControl.draw('cse-search-form', options);
-                  }, true);
-                </script>
                 <div class='version'>Embedthis Ejscript 2.0.0</div>
             </div>
         </div>
@@ -90,12 +77,12 @@
             normally set to the build prefix (/usr/lib/ejs).</p>
             <p>LD_LIBRARY_PATH has a format similar to PATH and can be set via the command:</p>
             <pre>
-export LD_LIBRARY_PATH=/usr/src/ejs/lib:$LD_LIBRARY_PATH
+export LD_LIBRARY_PATH=/usr/src/ejs/VERSION/lib:$LD_LIBRARY_PATH
 </pre>
             <p>This command may vary if you specify a non-default source installation directory, but normally this
             location is:</p>
             <pre>
-/usr/src/ejs/lib
+/usr/src/ejs/VERSION/lib
 </pre>
             <p>If you have installed Ejscript in a non-default location, replace the path with the current installation
             directory for the source. You may wish to include these commands in your <b>.profile</b> or <b>.bashrc</b>
@@ -200,35 +187,7 @@ sudo make install
             <pre>
 sudo make uninstall
 </pre>
-            <p>You can also install other components by typing the following commands.</p>
-            <table title="details">
-                <thead>
-                    <tr>
-                        <th>Command</th>
-                        <th>Description</th>
-                        <th>Configure Location Option</th>
-                    </tr>
-                </thead>
-                <tbody>
-                <tr>
-                    <td>make install</td>
-                    <td>Install the binaries and dev headers (same as make install-binary install-dev)</td>
-                    <td>--prefix</td>
-                </tr>
-                <tr>
-                    <td>make install-binary</td>
-                    <td>Install minimal binary files only</td>
-                    <td>--prefix --webDir</td>
-                </tr>
-                <tr>
-                    <td>make install-dev</td>
-                    <td>Install the product documentation</td>
-                    <td>--libDir --incDir</td>
-                </tr>
-                </tbody>
-            </table>
-            <p>You can remove the components by using make uninstall-ITEM. Where ITEM is one of the above components.
-            If you want to see what files get installed and where, set TRACE=1.</p>
+            <p>If you want to see what files get installed and where, set TRACE=1.</p>
             <pre>
 make TRACE=1 install
 </pre>
@@ -260,11 +219,6 @@ make TRACE=1 install
                 </thead>
                 <tbody>
                 <tr>
-                    <td>bin</td>
-                    <td>&nbsp;</td>
-                    <td>Directory to hold generated executables and DLLs on windows.</td>
-                </tr>
-                <tr>
                     <td>build</td>
                     <td></td>
                     <td>Build configuration and tools.</td>
@@ -281,8 +235,8 @@ make TRACE=1 install
                 </tr>
                 <tr>
                     <td></td>
-                    <td>packages</td>
-                    <td>Default settings for 3rd party packages.</td>
+                    <td>components</td>
+                    <td>Search script for eternal components.</td>
                 </tr>
                 <tr>
                     <td></td>
@@ -305,9 +259,29 @@ make TRACE=1 install
                     <td>Product documentation.</td>
                 </tr>
                 <tr>
-                    <td>obj</td>
+                    <td>out</td>
+                    <td>&nbsp;</td>
+                    <td>Build output products.</td>
+                </tr>
+                <tr>
                     <td></td>
+                    <td>bin</td>
+                    <td>Directory to hold generated executables and DLLs on windows.</td>
+                </tr>
+                <tr>
+                    <td></td>
+                    <td>lib</td>
+                    <td>Directory to hold generated libraries.</td>
+                </tr>
+                <tr>
+                    <td></td>
+                    <td>obj</td>
                     <td>Directory to hold generated objects.</td>
+                </tr>
+                <tr>
+                    <td></td>
+                    <td>releases</td>
+                    <td>Directory to hold generated installable images.</td>
                 </tr>
                 <tr>
                     <td>package</td>
@@ -331,17 +305,12 @@ make TRACE=1 install
                 </tr>
                 <tr>
                     <td>&nbsp;</td>
-                    <td>all</td>
-                    <td>Staging directory for all-in-one builds.</td>
+                    <td>deps</td>
+                    <td>Dependant packages.</td>
                 </tr>
                 <tr>
-                    <td>&nbsp;</td>
-                    <td>mpr</td>
-                    <td>Embedthis Portable Runtime (MPR) for cross-platform O/S services.</td>
-                </tr>
-                <tr>
+                    <td></td>
                     <td>test</td>
-                    <td>&nbsp;</td>
                     <td>Unit and integration tests.</td>
                 </tr>
             </table>
@@ -360,11 +329,6 @@ make TRACE=1 install
                     file from the conf directory.</td>
                 </tr>
                 <tr>
-                    <td>buildConfig.h</td>
-                    <td>Build header created by configure and included in all makefiles and source files. 
-                    On Windows, this file may be edited to modify the build.</td>
-                </tr>
-                <tr>
                     <td>configure</td>
                     <td>Build configuration program.</td>
                 </tr>
@@ -376,6 +340,11 @@ make TRACE=1 install
                     <td>build/config/config.OS</td>
                     <td>Configuration defaults for each operating system. Configure uses these as the default O/S
                     settings.</td>
+                </tr>
+                <tr>
+                    <td>out/inc/buildConfig.h</td>
+                    <td>Build header created by configure and included in all makefiles and source files. 
+                    On Windows, this file may be edited to modify the build.</td>
                 </tr>
                 </tbody>
             </table>
@@ -389,5 +358,18 @@ make TRACE=1 install
 		</p>
 	</div>
 </body>
+    <script src="http://www.google.com/jsapi" type="text/javascript"></script>
+    <script type="text/javascript"> 
+      google.load('search', '1', {language : 'en'});
+      google.setOnLoadCallback(function() {
+        var customSearchControl = new google.search.CustomSearchControl(
+          'partner-pub-9935546676162772:ysvxxv4n9rx');
+
+        customSearchControl.setResultSetSize(google.search.Search.FILTERED_CSE_RESULTSET);
+        var options = new google.search.DrawOptions();
+        options.enableSearchboxOnly("http://ejscript.org/search.html");
+        customSearchControl.draw('cse-search-form', options);
+      }, true);
+    </script>
 </html>
 <!-- EndDsi -->
