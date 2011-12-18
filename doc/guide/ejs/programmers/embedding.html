@@ -147,7 +147,6 @@ int ejsEvalFile(int fileCount, char **fileList)
 {
     Ejs     *ejs;         //  Handle to an Ejscript interpreter
     int     status;
-
     mprCreate(0, 0, 0);
     if ((ejs = ejsCreateVM(0, 0, 0)) == 0) {
         exit(1);

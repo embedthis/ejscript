@@ -196,14 +196,12 @@ ejsmod --cslots acme.mod
 #define ES_acme_Rocket_Rocket              5
 #define ES_acme_Rocket_blastOff            6
 #define ES_acme_Rocket_NUM_CLASS_PROP      7
-
 /**
    Instance slots for "Rocket" type
   */
 #define ES_acme_Rocket_kind                0
 #define ES_acme_Rocket_timeToOrbit         1
 #define ES_acme_Rocket_NUM_INSTANCE_PROP   2
-
 /**
       Local slots for methods in type Rocket
  */
@@ -223,15 +221,12 @@ ejsmod --cslots acme.mod
             <pre>
 #include "ejs/ejs.h"
 #include "acme.slots.h"
-
 int acmeModuleInit(Ejs *ejs, MprModule *module)
 {
     EjsType     *type;
     EjsName     qname;
-
     /* Get the Rocket class object */
     type = ejsGetTypeByName(ejs, ejsName(ejs, "acme", "Shape"));
-
     /* Bind the C functions to the JavaScript functions */
     ejsBindConstructor(ejs, type, constructor);
     ejsBindMethod(ejs, type->prototype, ES_acme_Rocket_blastOff, blastOff);
@@ -253,7 +248,6 @@ static EjsObj *constructor(Ejs *ejs, EjsObj *rocket, int argc, EjsObj **argv)
     ejsSetProperty(ejs, rocket, ES_acme_Rocket_kind, argv[0]);
     return rocket;
 }
-
 static EjsObj *blastOff(Ejs *ejs, EjsObj *rocket, int argc, EjsObj **argv)
 {
     ejsSetProperty(ejs, rocket, ES_acme_Rocket_timeToOrbit, 
