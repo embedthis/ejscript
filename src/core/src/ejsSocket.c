@@ -3,6 +3,13 @@
     Copyright (c) All Rights Reserved. See details at the end of the file.
  */
 
+#if TODO
+- SSL ?
+- graceful close
+- readString, readBytes, readXML, readJSON
+- Test IPv6
+#endif
+
 /********************************** Includes **********************************/
 
 #include    "ejs.h"
@@ -22,7 +29,6 @@ static int socketListenEvent(EjsSocket *listen, MprEvent *event);
  */
 static EjsSocket *sock_Socket(Ejs *ejs, EjsSocket *sp, int argc, EjsObj **argv)
 {
-    //  TODO -- ssl?
     sp->ejs = ejs;
     sp->sock = mprCreateSocket(NULL);
     if (sp->sock == 0) {
@@ -48,6 +54,7 @@ EjsSocket *sock_accept(Ejs *ejs, EjsSocket *listen, int argc, EjsObj **argv)
         ejsThrowIOError(ejs, "Can't accept new socket");
         return 0;
     }
+    //  MOB - CreateSocket should take sock and async as args
     sp = ejsCreateSocket(ejs);
     sp->sock = sock;
     sp->async = listen->async;
@@ -124,6 +131,9 @@ static EjsObj *sock_connect(Ejs *ejs, EjsSocket *sp, int argc, EjsObj **argv)
         if ((cp = strchr(sp->address, ':')) != 0) {
             *cp++ = '\0';
             sp->port = atoi(cp);
+        } else if (snumber(sp->address)) {
+            sp->port = atoi(sp->address);
+            sp->address = sclone("127.0.0.1");
         } else {
             ejsThrowArgError(ejs, "Address must have a port");
             return 0;
@@ -169,6 +179,9 @@ static EjsObj *sock_listen(Ejs *ejs, EjsSocket *sp, int argc, EjsObj **argv)
         if ((cp = strchr(sp->address, ':')) != 0) {
             *cp++ = '\0';
             sp->port = atoi(cp);
+        } else if (snumber(sp->address)) {
+            sp->port = atoi(sp->address);
+            sp->address = sclone("127.0.0.1");
         } else {
             ejsThrowArgError(ejs, "Address must have a port");
             return 0;
@@ -339,6 +352,8 @@ static void enableSocketEvents(EjsSocket *sp, int (*proc)(EjsSocket *sp, MprEven
     Ejs     *ejs;
 
     ejs = sp->ejs;
+    mprAssert(sp->sock);
+    
     if (sp->sock->handler == 0) {
         mprAddSocketHandler(sp->sock, sp->mask, ejs->dispatcher, (MprEventProc) proc, sp, 0);
     } else {
@@ -390,7 +405,9 @@ static int socketIOEvent(EjsSocket *sp, MprEvent *event)
     if (event->mask & MPR_WRITABLE) {
         writeSocketData(ejs, sp);
     }
-    enableSocketEvents(sp, socketIOEvent);
+    if (sp->sock) {
+        enableSocketEvents(sp, socketIOEvent);
+    }
     return 0;
 }
 
