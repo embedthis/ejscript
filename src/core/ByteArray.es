@@ -7,6 +7,7 @@ module ejs {
 
     // use strict
 
+    //  MOB - consider switching length =>  size, available => length
     /** 
         ByteArrays provide a resizable, integer indexed, in-memory store for bytes. ByteArrays can be used as a simple 
         array type to store and encode data as bytes or they can be used as buffered loop-back Streams.
