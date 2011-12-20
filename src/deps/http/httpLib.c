@@ -1245,10 +1245,8 @@ int httpReadGroupFile(HttpAuth *auth, char *path)
     }
     while ((buf = mprReadLine(file, MPR_BUFSIZE, NULL)) != NULL) {
         enabled = stok(buf, " :\t", &tok);
-        for (cp = enabled; isspace((int) *cp); cp++) {
-            ;
-        }
-        if (*cp == '\0' || *cp == '#') {
+        for (cp = enabled; cp && isspace((int) *cp); cp++) { }
+        if (cp == 0 || *cp == '\0' || *cp == '#') {
             continue;
         }
         aclSpec = stok(NULL, " :\t", &tok);
@@ -1278,10 +1276,8 @@ int httpReadUserFile(HttpAuth *auth, char *path)
     }
     while ((buf = mprReadLine(file, MPR_BUFSIZE, NULL)) != NULL) {
         enabled = stok(buf, " :\t", &tok);
-        for (cp = enabled; isspace((int) *cp); cp++) {
-            ;
-        }
-        if (*cp == '\0' || *cp == '#') {
+        for (cp = enabled; cp && isspace((int) *cp); cp++) { }
+        if (cp == 0 || *cp == '\0' || *cp == '#') {
             continue;
         }
         user = stok(NULL, ":", &tok);
@@ -3778,9 +3774,9 @@ int httpStartEndpoint(HttpEndpoint *endpoint)
     proto = mprIsSocketSecure(endpoint->sock) ? "HTTPS" : "HTTP ";
     ip = *endpoint->ip ? endpoint->ip : "*";
     if (mprIsSocketV6(endpoint->sock)) {
-        mprLog(1, "Started %s service on \"[%s]:%d\" %s", proto, ip, endpoint->port);
+        mprLog(1, "Started %s service on \"[%s]:%d\"", proto, ip, endpoint->port);
     } else {
-        mprLog(1, "Started %s service on \"%s:%d\" %s", proto, ip, endpoint->port);
+        mprLog(1, "Started %s service on \"%s:%d\"", proto, ip, endpoint->port);
     }
     return 0;
 }
@@ -15336,7 +15332,7 @@ HttpUri *httpCompleteUri(HttpUri *uri, HttpUri *missing)
 char *httpFormatUri(cchar *scheme, cchar *host, int port, cchar *path, cchar *reference, cchar *query, int flags)
 {
     char    *uri;
-    cchar   *portStr, *hostDelim, *portDelim, *pathDelim, *queryDelim, *referenceDelim, *cp;
+    cchar   *portStr, *hostDelim, *portDelim, *pathDelim, *queryDelim, *referenceDelim;
 
     portDelim = "";
     portStr = "";
@@ -15352,14 +15348,18 @@ char *httpFormatUri(cchar *scheme, cchar *host, int port, cchar *path, cchar *re
     } else {
         host = hostDelim = "";
     }
-    /*  
-        Hosts with integral port specifiers override
-     */
     if (host) {
-        cp = (*host == '[') ? strchr(host, ']') : host;
-        if (cp && strchr(cp, ':')) {
-            port = 0;
+        if (mprIsIPv6(host) && *host != '[') {
+            host = sfmt("[%s]", host);
         }
+#if UNUSED
+        cp = (*host == '[') ? strchr(host, ']') : host;
+        } else {
+            if (strchr(cp, ':')) {
+                port = 0;
+            }
+        }
+#endif
     }
     if (port != 0 && port != getDefaultPort(scheme)) {
         portStr = itos(port);
