@@ -120,6 +120,7 @@ module ejs {
          */
         native function indexOf(pattern: String, startIndex: Number = 0): Number
 
+        //  MOB - should be isNumber
         /**
             Is there is at least one character in the string and all characters are digits.
             @spec ejs

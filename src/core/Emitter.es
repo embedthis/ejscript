@@ -155,7 +155,7 @@ module ejs {
             var observers: Array? = endpoints[name]
             for (let i in observers) {
                 var e: Endpoint = observers[i]
-                if (e.callback == callback && e.name == name) {
+                if (e.name == name && (callback == null || e.callback == callback)) {
                     fire("off", name, callback)
                     observers.splice(i, 1)
                 }
@@ -163,9 +163,10 @@ module ejs {
         }
 
         /** 
-            Turn off and Remove a registered observer.
+            Turn off and remove a registered observer.
             @param name Event name used when the observer was added.
-            @param callback Callback function used when the observer was added.
+            @param callback Callback function used when the observer was added. If null is supplied, all callbacks 
+                will be removed.
          */
         function off(name: Object!, callback: Function): Void {
             if (name is String) {

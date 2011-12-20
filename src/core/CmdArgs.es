@@ -21,11 +21,11 @@ module ejs {
         @stability prototype
         @example 
 cmd = CmdArgs([
-    [ "depth", Number ]
-    [ "quiet", null, false ]
-    [ [ "verbose", "v", ], true ]
+    [ "depth", Number ],
+    [ "quiet", null, false ],
+    [ [ "verbose", "v", ], true ],
     [ "log", /\w+(:\d)/, "stderr:4" ],
-    [ "mode", [ "low", "medium", "high" ], "high" ]
+    [ "mode", [ "low", "medium", "high" ], "high" ],
 ])
 let options = cmd.options
 if (options.verbose) { }

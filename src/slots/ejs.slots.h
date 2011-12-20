@@ -1901,14 +1901,15 @@
 #define ES_Socket_connect                                              4
 #define ES_Socket_encoding                                             5
 #define ES_Socket_flush                                                6
-#define ES_Socket_listen                                               7
-#define ES_Socket_off                                                  8
-#define ES_Socket_on                                                   9
-#define ES_Socket_port                                                 10
-#define ES_Socket_read                                                 11
-#define ES_Socket_remoteAddress                                        12
-#define ES_Socket_write                                                13
-#define ES_Socket_NUM_INSTANCE_PROP                                    14
+#define ES_Socket_isClosed                                             7
+#define ES_Socket_listen                                               8
+#define ES_Socket_off                                                  9
+#define ES_Socket_on                                                   10
+#define ES_Socket_port                                                 11
+#define ES_Socket_read                                                 12
+#define ES_Socket_remoteAddress                                        13
+#define ES_Socket_write                                                14
+#define ES_Socket_NUM_INSTANCE_PROP                                    15
 #define ES_Socket_NUM_INHERITED_PROP                                   0
 
 
@@ -2005,13 +2006,8 @@
 #define ES_System_Bufsize                                              1
 #define ES_System_hostname                                             2
 #define ES_System_ipaddr                                               3
-#define ES_System_run                                                  4
-#define ES_System_runx                                                 5
-#define ES_System_daemon                                               6
-#define ES_System_sh                                                   7
-#define ES_System_cmd                                                  8
-#define ES_System_exec                                                 9
-#define ES_System_NUM_CLASS_PROP                                       10
+#define ES_System_exec                                                 4
+#define ES_System_NUM_CLASS_PROP                                       5
 
 /*
    Prototype (instance) slots for "System" type 
@@ -2022,11 +2018,6 @@
 /*
     Local slots for methods in type "System" 
  */
-#define ES_System_run_cmd                                              0
-#define ES_System_runx_cmd                                             0
-#define ES_System_daemon_cmd                                           0
-#define ES_System_sh_args                                              0
-#define ES_System_cmd_args                                             0
 #define ES_System_exec_args                                            0
 
 
@@ -2351,6 +2342,6 @@
 #define ES_XMLList_NUM_INSTANCE_PROP                                   20
 #define ES_XMLList_NUM_INHERITED_PROP                                  0
 
-#define _ES_CHECKSUM_ejs   1461380
+#define _ES_CHECKSUM_ejs   1457917
 
 #endif

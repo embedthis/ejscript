@@ -86,6 +86,12 @@ module ejs {
         # FUTURE
         native function compress(): Void
 
+        /**
+            Test if the buffer contains a pattern
+         */
+        # FUTURE
+        native function contains(pattern): Boolean
+
         /** 
             Copy data into the array. This is a low-level data copy routine that does not update read and write positions.
             Data is written at the destOffset index. This call does not issue events unless required to make room

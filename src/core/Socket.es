@@ -63,6 +63,11 @@ module ejs {
         /** @duplicate Stream.flush */
         function flush(dir: Number = Stream.BOTH): Void {}
 
+        /**
+            True if the socket has been closed
+         */
+        native function get isClosed(): Boolean
+
         /** 
             Listen on a socket for client connections. This will put the socket into a server role for communcations.
             If the socket is in sync mode, the listen call will block until a client connection is received after which
