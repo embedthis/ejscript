@@ -25,7 +25,7 @@ http.close()
 http = new Http
 http.get(HTTP)
 
-//  Pump events to allow rhe requests to be serviced
+//  Pump events to allow the requests to be serviced
 App.run(250)
 try {
     //  This should throw because the request limit will prevent the connection from succeeding.
