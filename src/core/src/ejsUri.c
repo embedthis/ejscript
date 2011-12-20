@@ -12,7 +12,7 @@
 
 static EjsUri *completeUri(Ejs *ejs, EjsUri *up, EjsObj *missing, int includeQuery);
 static int same(Ejs *ejs, HttpUri *u1, HttpUri *u2, int exact);
-static HttpUri *createHttpUriFromHash(Ejs *ejs, EjsObj *arg, int complete);
+static HttpUri *createHttpUriFromHash(Ejs *ejs, EjsObj *arg, int flags);
 static HttpUri *toHttpUri(Ejs *ejs, EjsObj *arg, int dup);
 static EjsUri *uri_join(Ejs *ejs, EjsUri *up, int argc, EjsObj **argv);
 
@@ -58,7 +58,7 @@ static EjsUri *cloneUri(Ejs *ejs, EjsUri *src, bool deep)
         return 0;
     }
     /*  NOTE: a deep copy will complete the uri */
-    dest->uri = httpCloneUri(src->uri, deep);
+    dest->uri = httpCloneUri(src->uri, deep ? HTTP_COMPLETE_URI : 0);
     return dest;
 }
 
@@ -926,7 +926,7 @@ static EjsUri *completeUri(Ejs *ejs, EjsUri *up, EjsObj *missing, int includeQue
         missingUri = 0;
     } else if (ejsGetLength(ejs, missing) > 0) {
         missingUri = ejsCreateObj(ejs, ESV(Uri), 0);
-        missingUri->uri = createHttpUriFromHash(ejs, missing, 1);
+        missingUri->uri = createHttpUriFromHash(ejs, missing, HTTP_COMPLETE_URI);
     } else {
         missingUri = ejsToUri(ejs, missing);
     }
@@ -1014,7 +1014,7 @@ static int same(Ejs *ejs, HttpUri *u1, HttpUri *u2, int exact)
 }
 
 
-static HttpUri *createHttpUriFromHash(Ejs *ejs, EjsObj *arg, int complete)
+static HttpUri *createHttpUriFromHash(Ejs *ejs, EjsObj *arg, int flags)
 {
     EjsObj      *schemeObj, *hostObj, *portObj, *pathObj, *referenceObj, *queryObj, *uriObj;
     cchar       *scheme, *host, *path, *reference, *query;
@@ -1050,7 +1050,7 @@ static HttpUri *createHttpUriFromHash(Ejs *ejs, EjsObj *arg, int complete)
     queryObj = ejsGetPropertyByName(ejs, arg, EN("query"));
     query = ejsIs(ejs, queryObj, String) ? ejsToMulti(ejs, queryObj) : 0;
 
-    return httpCreateUriFromParts(scheme, host, port, path, reference, query, complete);
+    return httpCreateUriFromParts(scheme, host, port, path, reference, query, flags);
 }
 
 
@@ -1127,14 +1127,14 @@ EjsUri *ejsCreateUriFromAsc(Ejs *ejs, cchar *path)
 
 
 EjsUri *ejsCreateUriFromParts(Ejs *ejs, cchar *scheme, cchar *host, int port, cchar *path, cchar *query, cchar *reference, 
-    bool complete)
+    int flags)
 {
     EjsUri      *up;
 
     if ((up = ejsCreateObj(ejs, ESV(Uri), 0)) == 0) {
         return 0;
     }
-    up->uri = httpCreateUriFromParts(scheme, host, port, path, reference, query, complete);
+    up->uri = httpCreateUriFromParts(scheme, host, port, path, reference, query, flags);
     return up;
 }
 

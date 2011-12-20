@@ -101,7 +101,7 @@ module ejs {
         /** @duplicate Stream.read */
         native function read(buffer: ByteArray, offset: Number = 0, count: Number = -1): Number 
 
-        //  MOB - readString, readBytes, readXML
+        //  FUTURE - readString, readBytes, readXML
 
         /** 
             The remote address bound to this socket. Set to the remote address in dot notation or empty string if it 

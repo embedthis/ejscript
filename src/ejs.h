@@ -3543,7 +3543,7 @@ typedef struct EjsSocket {
     EjsObj          *emitter;           /**< Event emitter */
     EjsByteArray    *data;              /**< Buffered write data */
     MprSocket       *sock;              /**< Underlying MPR socket object */
-    cchar           *address;           /**< Remote address */
+    char            *address;           /**< Remote address */
     int             port;               /**< Remote port */
     int             async;              /**< In async mode */
     int             mask;               /**< IO event mask */
@@ -3622,12 +3622,12 @@ extern EjsUri *ejsCreateUriFromAsc(Ejs *ejs, cchar *uri);
     @param path The URI path to the requested document.
     @param reference URI reference with an HTML document. This is the URI component after the "#" in the URI path.
     @param query URI query component. This is the URI component after the "?" in the URI.
-    @param complete Set to true to complete the URI by supplying missing URI parts with default values.
+    @param flags Set to HTTP_COMPLETE_URI to complete the URI by supplying missing URI parts with default values.
     @return A new URI 
     @ingroup EjsUri
  */
 extern EjsUri *ejsCreateUriFromParts(Ejs *ejs, cchar *scheme, cchar *host, int port, cchar *path, cchar *query, 
-        cchar *reference, bool complete);
+        cchar *reference, int flags);
 
 /** 
     Convert an object to a URI

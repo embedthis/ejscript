@@ -3,12 +3,6 @@
     Copyright (c) All Rights Reserved. See details at the end of the file.
  */
 
-#if TODO && MOB
-- graceful close
-- readString, readBytes, readXML, readJSON
-- Test IPv6
-#endif
-
 /********************************** Includes **********************************/
 
 #include    "ejs.h"
@@ -166,7 +160,6 @@ static EjsObj *sock_isClosed(Ejs *ejs, EjsSocket *sp, int argc, EjsObj **argv)
 static EjsObj *sock_listen(Ejs *ejs, EjsSocket *sp, int argc, EjsObj **argv)
 {
     EjsString   *address;
-    char        *cp;
 
     address = (EjsString*) argv[0];
     if (ejsIs(ejs, address, Number)) {
@@ -177,6 +170,8 @@ static EjsObj *sock_listen(Ejs *ejs, EjsSocket *sp, int argc, EjsObj **argv)
             address = ejsToString(ejs, address);
         }
         sp->address = ejsToMulti(ejs, address);
+        mprParseSocketAddress(sp->address, &sp->address, &sp->port, 80);
+#if UNUSED
         if ((cp = strchr(sp->address, ':')) != 0) {
             *cp++ = '\0';
             sp->port = atoi(cp);
@@ -187,6 +182,7 @@ static EjsObj *sock_listen(Ejs *ejs, EjsSocket *sp, int argc, EjsObj **argv)
             ejsThrowArgError(ejs, "Address must have a port");
             return 0;
         }
+#endif
     }
     if (!sp->sock) {
         ejsThrowStateError(ejs, "Socket is closed");

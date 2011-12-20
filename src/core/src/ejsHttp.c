@@ -39,7 +39,7 @@ static EjsHttp *httpConstructor(Ejs *ejs, EjsHttp *hp, int argc, EjsObj **argv)
     httpSetConnNotifier(hp->conn, httpNotify);
     httpSetConnContext(hp->conn, hp);
     if (argc == 1 && ejsIs(ejs, argv[0], Null)) {
-        hp->uri = httpUriToString(((EjsUri*) argv[0])->uri, 1);
+        hp->uri = httpUriToString(((EjsUri*) argv[0])->uri, HTTP_COMPLETE_URI);
     }
     hp->method = sclone("GET");
     hp->requestContent = mprCreateBuf(HTTP_BUFSIZE, -1);
@@ -773,7 +773,7 @@ static EjsUri *http_uri(Ejs *ejs, EjsHttp *hp, int argc, EjsObj **argv)
  */
 static EjsObj *http_set_uri(Ejs *ejs, EjsHttp *hp, int argc, EjsObj **argv)
 {
-    hp->uri = httpUriToString(((EjsUri*) argv[0])->uri, 1);
+    hp->uri = httpUriToString(((EjsUri*) argv[0])->uri, HTTP_COMPLETE_URI);
     return 0;
 }
 
@@ -879,7 +879,7 @@ static EjsObj *startHttpRequest(Ejs *ejs, EjsHttp *hp, char *method, int argc, E
 
     if (argc >= 1 && !ejsIs(ejs, argv[0], Null)) {
         uriObj = (EjsUri*) argv[0];
-        hp->uri = httpUriToString(uriObj->uri, 1);
+        hp->uri = httpUriToString(uriObj->uri, HTTP_COMPLETE_URI);
     }
     if (argc == 2 && ejsIs(ejs, argv[1], Array)) {
         args = (EjsArray*) argv[1];
@@ -1244,7 +1244,7 @@ static bool waitForState(EjsHttp *hp, int state, MprTime timeout, int throw)
                 if (url) {
                     uri = httpCreateUri(url, 0);
                     httpCompleteUri(uri, httpCreateUri(hp->uri, 0));
-                    hp->uri = httpUriToString(uri, 1);
+                    hp->uri = httpUriToString(uri, HTTP_COMPLETE_URI);
                 }
                 count--; 
                 redirectCount++;
