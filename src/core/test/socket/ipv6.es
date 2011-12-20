@@ -10,14 +10,11 @@ server = new Socket
 server.listen(PORT)
 
 while (sock = server.accept()) {
-print("ACCEPT")
     data = new ByteArray
     while (sock.read(data)) {
-print("GOT " + data)
         sock.write("ECHO " + data.toString().trim())
         if (data.toString().contains("\r\n\r\n")) {
             sock.close()
-print("DONE")
             App.exit()
             break
         }
