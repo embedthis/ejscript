@@ -41,15 +41,13 @@ EjsSocket *sock_accept(Ejs *ejs, EjsSocket *listen, int argc, EjsObj **argv)
         ejsThrowIOError(ejs, "Can't accept new socket");
         return 0;
     }
-    //  MOB - CreateSocket should take sock and async as args
-    sp = ejsCreateSocket(ejs);
-    sp->sock = sock;
-    sp->async = listen->async;
-    if (sp->async) {
-        sp->mask |= MPR_READABLE;
-        enableSocketEvents(sp, socketIOEvent);
-    } else {
-        mprSetSocketBlockingMode(sp->sock, 1);
+    if ((sp = ejsCreateSocket(ejs, sock, listen->async)) != 0) {
+        if (sp->async) {
+            sp->mask |= MPR_READABLE;
+            enableSocketEvents(sp, socketIOEvent);
+        } else {
+            mprSetSocketBlockingMode(sp->sock, 1);
+        }
     }
     return sp;
 }
@@ -142,11 +140,11 @@ static EjsObj *sock_connect(Ejs *ejs, EjsSocket *sp, int argc, EjsObj **argv)
 
 
 /**
-    function get isClosed(): Boolean
+    function get isEof(): Boolean
  */
-static EjsObj *sock_isClosed(Ejs *ejs, EjsSocket *sp, int argc, EjsObj **argv)
+static EjsObj *sock_isEof(Ejs *ejs, EjsSocket *sp, int argc, EjsObj **argv)
 {
-    return (sp->sock) ? ESV(false) : ESV(true);
+    return (sp->sock == 0 || mprIsSocketEof(sp->sock)) ? ESV(true) : ESV(false);
 }
 
 
@@ -168,18 +166,6 @@ static EjsObj *sock_listen(Ejs *ejs, EjsSocket *sp, int argc, EjsObj **argv)
         }
         sp->address = ejsToMulti(ejs, address);
         mprParseSocketAddress(sp->address, &sp->address, &sp->port, 80);
-#if UNUSED
-        if ((cp = strchr(sp->address, ':')) != 0) {
-            *cp++ = '\0';
-            sp->port = atoi(cp);
-        } else if (snumber(sp->address)) {
-            sp->port = atoi(sp->address);
-            sp->address = sclone("127.0.0.1");
-        } else {
-            ejsThrowArgError(ejs, "Address must have a port");
-            return 0;
-        }
-#endif
     }
     if (!sp->sock) {
         ejsThrowStateError(ejs, "Socket is closed");
@@ -254,17 +240,8 @@ static EjsNumber *sock_read(Ejs *ejs, EjsSocket *sp, int argc, EjsObj **argv)
         return ESV(zero);
     }
     nbytes = mprReadSocket(sp->sock, &ba->value[offset], count);
-    if (nbytes < 0) {
-        //  MOB -- should not be using EOF event
-        ejsSendEvent(ejs, sp->emitter, "eof", NULL, sp);
-        //  MOB - do we need to set the mask here?
-        return ESV(null);
-    }
-    if (nbytes == 0) {
-        //  MOB - but in async, this does not mean eof. See mpr for how to tell eof
-        //  MOB -- should not be using EOF event
-        ejsSendEvent(ejs, sp->emitter, "eof", NULL, sp);
-        //  MOB - do we need to set the mask here?
+    if (nbytes <= 0) {
+        /* If async, Caller must test "eof" to determine if no data or eof */
         return ESV(null);
     }
     ba->writePosition += nbytes;
@@ -329,11 +306,11 @@ static EjsNumber *sock_write(Ejs *ejs, EjsSocket *sp, int argc, EjsObj **argv)
     ssize     nbytes;
 
     if (sp->data) {
+        /* Reset pointers if empty */
         ejsResetByteArray(ejs, sp->data);
     } else {
         sp->data = ejsCreateByteArray(ejs, -1);
     } 
-    //  MOB - OPT. Could not copy and write directly from original source if source is a byte array
     if (ejsWriteToByteArray(ejs, sp->data, 1, &argv[0]) < 0) {
         return 0;
     }
@@ -418,12 +395,14 @@ static void manageSocket(EjsSocket *sp, int flags)
 }
 
 
-EjsSocket *ejsCreateSocket(Ejs *ejs)
+EjsSocket *ejsCreateSocket(Ejs *ejs, MprSocket *sock, bool async)
 {
     EjsSocket   *sp;
 
     sp = ejsCreateObj(ejs, ejsGetTypeByName(ejs, N(EJS_EJS_NAMESPACE, "Socket")), 0);
     sp->ejs = ejs;
+    sp->sock = sock;
+    sp->async = async;
     return sp;
 }
 
@@ -444,7 +423,7 @@ void ejsConfigureSocketType(Ejs *ejs)
     ejsBindAccess(ejs, prototype, ES_Socket_async, sock_async, sock_set_async);
     ejsBindMethod(ejs, prototype, ES_Socket_close, sock_close);
     ejsBindMethod(ejs, prototype, ES_Socket_connect, sock_connect);
-    ejsBindAccess(ejs, prototype, ES_Socket_isClosed, sock_isClosed, NULL);
+    ejsBindMethod(ejs, prototype, ES_Socket_isEof, sock_isEof);
     ejsBindMethod(ejs, prototype, ES_Socket_listen, sock_listen);
     ejsBindMethod(ejs, prototype, ES_Socket_off, sock_off);
     ejsBindMethod(ejs, prototype, ES_Socket_on, sock_on);

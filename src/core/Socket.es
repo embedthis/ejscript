@@ -64,9 +64,9 @@ module ejs {
         function flush(dir: Number = Stream.BOTH): Void {}
 
         /**
-            True if the socket has been closed
+            Is the socket at end of input. i.e. Is closed or has the other end sent a FIN packet.
          */
-        native function get isClosed(): Boolean
+        native function get isEof(): Boolean
 
         /** 
             Listen on a socket for client connections. This will put the socket into a server role for communcations.

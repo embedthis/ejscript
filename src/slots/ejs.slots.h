@@ -1901,7 +1901,7 @@
 #define ES_Socket_connect                                              4
 #define ES_Socket_encoding                                             5
 #define ES_Socket_flush                                                6
-#define ES_Socket_isClosed                                             7
+#define ES_Socket_isEof                                                7
 #define ES_Socket_listen                                               8
 #define ES_Socket_off                                                  9
 #define ES_Socket_on                                                   10
@@ -2342,6 +2342,6 @@
 #define ES_XMLList_NUM_INSTANCE_PROP                                   20
 #define ES_XMLList_NUM_INHERITED_PROP                                  0
 
-#define _ES_CHECKSUM_ejs   1457917
+#define _ES_CHECKSUM_ejs   1457597
 
 #endif

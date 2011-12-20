@@ -3553,10 +3553,12 @@ typedef struct EjsSocket {
 /** 
     Create a new Socket object
     @param ejs Ejs reference returned from #ejsCreateVM
+    @param sock Socket object
+    @param async True if running in async non-blocking mode
     @return a new Socket object
     @ingroup EjsSocket
  */
-extern EjsSocket *ejsCreateSocket(Ejs *ejs);
+extern EjsSocket *ejsCreateSocket(Ejs *ejs, MprSocket *sock, bool async);
 
 /******************************************** Timer ***********************************************/
 /** 
