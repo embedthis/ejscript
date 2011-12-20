@@ -144,15 +144,12 @@ class Conn {
         data = new ByteArray
         req = new Request(this)
         sock.on("readable", function() {
-            data.reset()
-            if (sock.read(data, -1) == null) {
-                sock.close()
-            } else if (data.toString().contains("\r\n\r\n")) {
+            if (sock.read(data, -1) && data.toString().contains("\r\n\r\n")) {
                 req.serve(new TextStream(data))
-                if (keepAlive-- <= 0) {
-                    sock.close()
-                }
+                data.reset()
+                if (keepAlive-- > 0) return
             }
+            sock.close()
         })
     }
 
