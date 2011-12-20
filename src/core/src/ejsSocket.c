@@ -103,7 +103,6 @@ static EjsObj *sock_close(Ejs *ejs, EjsSocket *sp, int argc, EjsObj **argv)
 static EjsObj *sock_connect(Ejs *ejs, EjsSocket *sp, int argc, EjsObj **argv)
 {
     EjsString       *address;
-    char            *cp;
 
     address = (EjsString*) argv[0];
     if (ejsIs(ejs, address, Number)) {
@@ -114,13 +113,11 @@ static EjsObj *sock_connect(Ejs *ejs, EjsSocket *sp, int argc, EjsObj **argv)
             address = ejsToString(ejs, address);
         }
         sp->address = ejsToMulti(ejs, address);
-        if ((cp = strchr(sp->address, ':')) != 0) {
-            *cp++ = '\0';
-            sp->port = atoi(cp);
-        } else if (snumber(sp->address)) {
-            sp->port = atoi(sp->address);
+        mprParseSocketAddress(sp->address, &sp->address, &sp->port, 0);
+        if (sp->address == 0) {
             sp->address = sclone("127.0.0.1");
-        } else {
+        }
+        if (sp->port == 0) {
             ejsThrowArgError(ejs, "Address must have a port");
             return 0;
         }
