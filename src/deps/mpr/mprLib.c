@@ -2612,7 +2612,6 @@ static void checkYielded()
 
 
 
-static void getArgs(Mpr *mpr, int argc, char **argv);
 static void manageMpr(Mpr *mpr, int flags);
 static void serviceEventsThread(void *data, MprThread *tp);
 
@@ -2623,7 +2622,6 @@ Mpr *mprCreate(int argc, char **argv, int flags)
 {
     MprFileSystem   *fs;
     Mpr             *mpr;
-    char            *cp, *name;
 
     srand((uint) time(NULL));
 
@@ -2649,22 +2647,14 @@ Mpr *mprCreate(int argc, char **argv, int flags)
     fs = mprCreateFileSystem("/");
     mprAddFileSystem(fs);
     mprCreateLogService();
-
+    
     if (argv) {
-        getArgs(mpr, argc, argv);
+        mpr->argc = argc;
+        mpr->argv = argv;
+        mpr->argv[0] = mprGetAppPath();
+        mpr->name = mprTrimPathExt(mprGetPathBase(mpr->argv[0]));
     }
-    if (mpr->argv && mpr->argv[0] && *mpr->argv[0]) {
-        name = mpr->argv[0];
-        if ((cp = strrchr(name, '/')) != 0 || (cp = strrchr(name, '\\')) != 0) {
-            name = &cp[1];
-        }
-        mpr->name = sclone(name);
-        if ((cp = strrchr(mpr->name, '.')) != 0) {
-            *cp = '\0';
-        }
-    } else {
-        mpr->name = sclone(BLD_PRODUCT);
-    }
+
     mpr->signalService = mprCreateSignalService();
     mpr->threadService = mprCreateThreadService();
     mpr->moduleService = mprCreateModuleService();
@@ -2894,35 +2884,6 @@ void mprRestart()
 }
 
 
-/*
-    Wince and Vxworks passes an arg via argc, and the program name in argv. NOTE: this will only work on 32-bit systems.
- */
-static void getArgs(Mpr *mpr, int argc, char **argv) 
-{
-    if (argv) {
-#if WINCE
-        MprArgs *args = (MprArgs*) argv;
-        command = mprToMulti((uni*) args->command);
-        argc = mprMakeArgv(command, &argv, MPR_ARGV_ARGS_ONLY);
-        mprHold(argv);
-        argv[0] = sclone(args->program);
-        mprHold(argv[0]);
-#elif VXWORKS
-        MprArgs *args = (MprArgs*) argv;
-        argc = mprMakeArgv("", &argv, MPR_ARGV_ARGS_ONLY);
-        mprHold(argv);
-        argv[0] = sclone(args->program);
-        mprHold(argv[0]);
-#else
-        argv[0] = mprGetAppPath();
-        mprHold(argv[0]);
-#endif
-        mpr->argc = argc;
-        mpr->argv = argv;
-    }
-}
-
-
 int mprStart()
 {
     int     rc;
@@ -3044,7 +3005,7 @@ bool mprIsIdle()
     Parse the args and return the count of args. If argv is NULL, the args are parsed read-only. If argv is set,
     then the args will be extracted, back-quotes removed and argv will be set to point to all the args.
  */
-static int parseArgs(char *args, char **argv)
+int mprParseArgs(char *args, char **argv, int maxArgc)
 {
     char    *dest, *src, *start;
     int     quote, argc;
@@ -3053,7 +3014,7 @@ static int parseArgs(char *args, char **argv)
         Example     "showColors" red 'light blue' "yellow white" 'Can\'t \"render\"'
         Becomes:    ["showColors", "red", "light blue", "yellow white", "Can't \"render\""]
      */
-    for (argc = 0, src = args; src && *src != '\0'; argc++) {
+    for (argc = 0, src = args; src && *src != '\0' && argc < maxArgc; argc++) {
         while (isspace((int) *src)) {
             src++;
         }
@@ -3102,8 +3063,7 @@ static int parseArgs(char *args, char **argv)
 /*
     Make an argv array. All args are in a single memory block of which argv points to the start.
     Set MPR_ARGV_ARGS_ONLY if not passing in a program name. 
-    Always returns and argv[0] reserved for the program name or empty string.
-    First arg starts at argv[1]
+    Always returns and argv[0] reserved for the program name or empty string.  First arg starts at argv[1].
  */
 int mprMakeArgv(cchar *command, char ***argvp, int flags)
 {
@@ -3117,7 +3077,7 @@ int mprMakeArgv(cchar *command, char ***argvp, int flags)
         Allocate one vector for argv and the actual args themselves
      */
     len = slen(command) + 1;
-    argc = parseArgs((char*) command, NULL);
+    argc = mprParseArgs((char*) command, NULL, INT_MAX);
     if (flags & MPR_ARGV_ARGS_ONLY) {
         argc++;
     }
@@ -3130,10 +3090,10 @@ int mprMakeArgv(cchar *command, char ***argvp, int flags)
     argv = (char**) vector;
 
     if (flags & MPR_ARGV_ARGS_ONLY) {
-        parseArgs(args, &argv[1]);
+        mprParseArgs(args, &argv[1], argc);
         argv[0] = MPR->emptyString;
     } else {
-        parseArgs(args, argv);
+        mprParseArgs(args, argv, argc);
     }
     argv[argc] = 0;
     *argvp = argv;
@@ -3687,10 +3647,14 @@ void mprAtomicBarrier()
         MemoryBarrier();
     #elif BLD_CC_SYNC
         __sync_synchronize();
-    #elif BLD_UNIX_LIKE
-        asm volatile ("" : : : "memory");
-    #elif MPR_CPU_IX86
+#if UNUSED
+/*  BLD_UNIX_LIKE
+        asm volatile ("sync : : : "memory");
+        asm volatile ("mfence : : : "memory");
+    MPR_CPU_IX86
         asm volatile ("lock; add %eax,0");
+*/
+#endif
     #else
         mprGlobalLock();
         mprGlobalUnlock();
@@ -3751,7 +3715,7 @@ void mprAtomicAdd(volatile int *ptr, int value)
         OSAtomicAdd32(value, ptr);
     #elif BLD_WIN_LIKE
         InterlockedExchangeAdd(ptr, value);
-    #elif (BLD_CPU_ARCH == MPR_CPU_IX86 || BLD_CPU_ARCH == MPR_CPU_IX64) && 0
+    #elif (BLD_CPU_ARCH == MPR_CPU_IX86 || BLD_CPU_ARCH == MPR_CPU_IX64) && FUTURE
         asm volatile ("lock; xaddl %0,%1"
             : "=r" (value), "=m" (*ptr)
             : "0" (value), "m" (*ptr)
@@ -13257,6 +13221,7 @@ int mprStartLogging(cchar *logSpec, int showConfig)
                 mprLog(MPR_CONFIG, "Distribution:       %s %s", BLD_DIST, BLD_DIST_VER);
             }
             mprLog(MPR_CONFIG, "Host:               %s", mprGetHostName());
+            mprLog(MPR_CONFIG, "Dir:                %s", mprGetCurrentPath());
             mprLog(MPR_CONFIG, "Configure:          %s", BLD_CONFIG_CMD);
             mprLog(MPR_CONFIG, "---------------------------------------------");
         }
@@ -14459,14 +14424,14 @@ static void manageModuleService(MprModuleService *ms, int flags);
 MprModuleService *mprCreateModuleService()
 {
     MprModuleService    *ms;
+    cchar               *libdir;
 
     if ((ms = mprAllocObj(MprModuleService, manageModuleService)) == 0) {
         return 0;
     }
     ms->modules = mprCreateList(-1, 0);
-    ms->searchPath = sfmt(".%s%s%s/../%s%s%s", \
-        mprGetAppDir(), MPR_SEARCH_SEP, 
-        mprGetAppDir(), BLD_LIB_NAME, MPR_SEARCH_SEP, 
+    libdir = mprJoinPath(mprGetAppDir(), "../lib");
+    ms->searchPath = sfmt("%s%s%s%s%s", mprGetAppDir(), MPR_SEARCH_SEP, libdir, MPR_SEARCH_SEP, 
         BLD_LIB_PREFIX);
     ms->mutex = mprCreateLock();
     return ms;
@@ -14927,7 +14892,7 @@ static MPR_INLINE bool isFullPath(MprFileSystem *fs, cchar *path)
     mprAssert(fs);
     mprAssert(path);
 
-#if BLD_WIN_LIKE && !WINCE
+#if (BLD_WIN_LIKE || VXWORKS) && !WINCE
 {
     char    *cp, *endDrive;
 
@@ -15003,8 +14968,7 @@ int mprCopyPath(cchar *fromName, cchar *toName, int mode)
 }
 
 
-//  MOB - need a rename too
-//  MOB - should this be called remove?
+//  MOB - need a rename too - should this be called remove?
 int mprDeletePath(cchar *path)
 {
     MprFileSystem   *fs;
@@ -15091,7 +15055,6 @@ char *mprGetAbsPath(cchar *path)
         return mprNormalizePath(path);
     }
 
-//  MOB - what does WINCE require?
 #if BLD_WIN_LIKE && !WINCE
 {
     char    buf[MPR_MAX_PATH];
@@ -15316,7 +15279,7 @@ char *mprGetPathBase(cchar *path)
 char *mprGetPathDir(cchar *path)
 {
     MprFileSystem   *fs;
-    cchar           *cp;
+    cchar           *cp, *start;
     char            *result;
     ssize          len;
 
@@ -15329,22 +15292,25 @@ char *mprGetPathDir(cchar *path)
     fs = mprLookupFileSystem(path);
     len = slen(path);
     cp = &path[len - 1];
+    start = hasDrive(fs, path) ? strchr(path, ':') + 1 : path;
 
     /*
         Step back over trailing slashes
      */
-    while (cp > path && isSep(fs, *cp)) {
+    while (cp > start && isSep(fs, *cp)) {
         cp--;
     }
-    for (; cp > path && !isSep(fs, *cp); cp--) {
-        ;
-    }
-    if (cp == path) {
+    for (; cp > start && !isSep(fs, *cp); cp--) { }
+
+    if (cp == start) {
         if (!isSep(fs, *cp)) {
             /* No slashes found, parent is current dir */
             return sclone(".");
         }
+        cp++;
+#if UNUSED
         return sclone(fs->root);
+#endif
     }
     len = (cp - path);
     result = mprAlloc(len + 1);
@@ -15618,7 +15584,7 @@ char *mprGetRelPath(cchar *pathArg)
 
 #if (BLD_WIN_LIKE && !WINCE)
     path = mprGetAbsPath(path);
-#elif CYGWIN
+#elif CYGWIN || VXWORKS
     if (hasDrive(fs, path)) {
         path = mprGetAbsPath(path);
     }
@@ -17120,6 +17086,7 @@ static int getState(char c, int state)
 }
 
 
+//  MOB - rename arg to args
 static char *sprintfCore(char *buf, ssize maxsize, cchar *spec, va_list arg)
 {
     Format        fmt;
@@ -25823,7 +25790,7 @@ int mprLoadNativeModule(MprModule *mp)
     }
     close(fd);
     if (mp->entry) {
-#if BLD_HOST_CPU_ARCH == MPR_CPU_IX86 || BLD_HOST_CPU_ARCH == MPR_CPU_IX64
+#if UNUSED && (BLD_HOST_CPU_ARCH == MPR_CPU_IX86 || BLD_HOST_CPU_ARCH == MPR_CPU_IX64)
         mprSprintf(entryPoint, sizeof(entryPoint), "_%s", mp->entry);
 #else
         scopy(entryPoint, sizeof(entryPoint), mp->entry);
