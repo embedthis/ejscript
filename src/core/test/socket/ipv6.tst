@@ -6,6 +6,7 @@ const TIMEOUT = 5000
 
 if (!App.getenv("NOSERVER")) {
     var server = Cmd("ejs ipv6.es " + PORT, {detach: true})
+    server.finalize()
     if (server.wait(100)) {
         App.log.error("Can't start ipv6.es " + server.error)
     }

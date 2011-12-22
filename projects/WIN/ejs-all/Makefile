@@ -93,7 +93,7 @@ libejs.vcxproj: Makefile
 		--props "$(PROPS)" --deps "libmpr libmprssl libhttp libsqlite3 libpcre" \
 		--custom libejs.custom \
 		--def libejs.def --libs "libmpr.lib libhttp.lib libsqlite3.lib $(LIBS)" \
-	    $(shell find $(SRC)/include -name 'ejs*.h') \
+	    $(shell find $(SRC)/inc -name 'ejs*.h') \
 	    $(shell find $(SRC)/core $(SRC)/vm $(SRC)/compiler -name '*.c')
 	
 ejsc.vcxproj: Makefile ejsc.custom

@@ -5,7 +5,8 @@ const PORT: Number = ((App.config.test.http_port cast Number) || 6700) + 1
 const TIMEOUT = 5000
 
 if (!App.getenv("NOSERVER")) {
-    var server = Cmd("ejs blocking.es " + PORT, {detach: true})
+    var server = Cmd("c:/cygwin/home/mob/ejs/out/bin/ejs.exe blocking.es " + PORT, {detach: true})
+    server.finalize()
     if (server.wait(100)) {
         App.log.error("Can't start blocking.es " + server.error)
     }
@@ -17,7 +18,7 @@ for (i in TIMEOUT / 100) {
     try {
         client.connect(PORT)
         break
-    } catch { App.sleep(100) }
+    } catch { App.sleep(100); }
 }
 let count = client.write("ABCDEF\r\n\r\n")
 assert(count == 10)
@@ -30,7 +31,7 @@ assert(data == "ECHO ABCDEF")
 client.close()
 
 if (server) {
-    if (!server.wait(TIMEOUT)) {
+    if (!server.wait(600 * 1000)) {
         Cmd.kill(server.pid)
         assert(server.wait(0))
     }

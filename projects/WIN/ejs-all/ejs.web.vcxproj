@@ -13,7 +13,7 @@
   </ItemGroup>
 
   <PropertyGroup Label="Globals">
-    <ProjectGuid>{B7FA6F99-60A6-4226-B339-9A0F5BC09250}</ProjectGuid>
+    <ProjectGuid>{307EB174-2B4E-4D90-9810-8582D8056890}</ProjectGuid>
     <RootNamespace />
     <Keyword>Win32Proj</Keyword>
   </PropertyGroup>
@@ -81,28 +81,28 @@
 
   <ItemGroup>
     <ProjectReference Include="libmpr.vcxproj">
-      <Project>{8CC6BD0E-2BD2-42AA-865C-DDDD6A41C7B7}</Project>
+      <Project>{B7730FD7-D8CC-488C-9377-EE9ACFD11A97}</Project>
       <ReferenceOutputAssembly>false</ReferenceOutputAssembly>
     </ProjectReference>
   </ItemGroup>
 
   <ItemGroup>
     <ProjectReference Include="libmprssl.vcxproj">
-      <Project>{2770FE49-648E-47CE-9BEF-3D4D439CE12F}</Project>
+      <Project>{405C817E-4593-4D10-B944-A358A18E3E9E}</Project>
       <ReferenceOutputAssembly>false</ReferenceOutputAssembly>
     </ProjectReference>
   </ItemGroup>
 
   <ItemGroup>
     <ProjectReference Include="libhttp.vcxproj">
-      <Project>{EBFFF32F-322D-4095-8964-D29EDC589D3A}</Project>
+      <Project>{8578CF73-BDB1-48C5-8E62-61FA78508CF5}</Project>
       <ReferenceOutputAssembly>false</ReferenceOutputAssembly>
     </ProjectReference>
   </ItemGroup>
 
   <ItemGroup>
     <ProjectReference Include="libejs.vcxproj">
-      <Project>{42D49714-9973-4E5A-B233-05C755CBAED1}</Project>
+      <Project>{CF658FE9-8CF1-4D52-8FCA-A59300030ED7}</Project>
       <ReferenceOutputAssembly>false</ReferenceOutputAssembly>
     </ProjectReference>
   </ItemGroup>
