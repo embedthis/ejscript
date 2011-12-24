@@ -607,15 +607,23 @@ static EjsNumber *cmd_write(Ejs *ejs, EjsCmd *cmd, int argc, EjsObj **argv)
 static EjsObj *cmd_exec(Ejs *ejs, EjsObj *unused, int argc, EjsObj **argv)
 {
 #if BLD_UNIX_LIKE
-    char    **argVector;
+    char    **argVector, *path;
 
 #if FUTURE
     for (i = 3; i < MPR_MAX_FILE; i++) {
         close(i);
     }
 #endif
-    mprMakeArgv(ejsToMulti(ejs, argv[0]), &argVector, 0);
-    execv(argVector[0], argVector);
+    if (argc == 0) {
+        path = MPR->argv[0];
+        if (!mprIsPathAbs(path)) {
+            path = mprGetAppPath();
+        }
+        execv(path, MPR->argv);
+    } else {
+        mprMakeArgv(ejsToMulti(ejs, argv[0]), &argVector, 0);
+        execv(argVector[0], argVector);
+    }
 #endif
     ejsThrowStateError(ejs, "Can't exec %@", ejsToString(ejs, argv[0]));
     return 0;
