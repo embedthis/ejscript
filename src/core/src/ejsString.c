@@ -857,11 +857,14 @@ static EjsArray *match(Ejs *ejs, EjsString *sp, int argc, EjsObj **argv)
             len = matches[i + 1] - matches[i];
             match = ejsCreateString(ejs, &sp->value[matches[i]], len);
             ejsSetProperty(ejs, results, resultCount++, match);
+#if UNUSED
+            rp->endLastMatch = matches[i + 1];
+#endif
             if (rp->global) {
-                if (matches[0] == rp->endLastMatch) {
+                if (matches[1] == rp->endLastMatch) {
                     rp->endLastMatch++;
                 } else {
-                    rp->endLastMatch = matches[0];
+                    rp->endLastMatch = matches[1];
                 }
                 break;
             }
