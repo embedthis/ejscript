@@ -79,7 +79,6 @@ module ejs {
          */
         native function flush(dir: Number = Stream.BOTH): Void
 
-
         /**
             Locate a program using the application PATH
             @param program Program to find
