@@ -77,7 +77,6 @@ module ejs {
                 ejsrc: Path("ejsrc"),
             },
             init: { },
-            test: { },
         }
 
         /**
@@ -113,6 +112,11 @@ module ejs {
             Application start time
          */
         static var started: Date = new Date
+
+        /**
+            Test object for unit tests when run via utest
+         */
+        static var test 
 
         /** 
             Application title name. Multi-word, Camel Case name for the application suitable for display. This is 
