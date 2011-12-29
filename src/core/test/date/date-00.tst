@@ -118,16 +118,12 @@ assert(d.toDateString() == "Sun Mar 07 1999")
 assert(d.toString().indexOf("Sun Mar 07 1999 11:30:10") == 0)
 assert(d.toTimeString().indexOf("11:30:10 ") == 0)
 
-if (this.EJSCRIPT) {
-    // Platforms provide different output for these
-    assert(d.toLocaleTimeString() == "11:30:10")
-    assert(d.toLocaleString().indexOf("Sun, 07 Mar 1999 11:30:10") == 0)
-    assert(d.toLocaleDateString().indexOf("Sun, 07 Mar 1999") == 0)
-}
+// Platforms provide different output for these
+assert(d.toLocaleTimeString() == "11:30:10")
+assert(d.toLocaleString().indexOf("Sun, 07 Mar 1999 11:30:10") == 0)
+assert(d.toLocaleDateString().indexOf("Sun, 07 Mar 1999") == 0)
 
 d = new Date(Date.UTC(1999, 2, 7, 11, 30, 10, 700))
 assert(d.toUTCString() == "Sun, 07 Mar 1999 11:30:10 GMT")
-if (global.EJSCRIPT) {
-    assert(d.toISOString() == "1999-03-07T11:30:10.700Z")
-    assert(serialize(d).startsWith("\"1999-03-07T11:30:10"))
-}
+assert(d.toISOString() == "1999-03-07T11:30:10.700Z")
+assert(serialize(d).startsWith("\"1999-03-07T11:30:10"))

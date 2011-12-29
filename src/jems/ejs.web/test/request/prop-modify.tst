@@ -3,8 +3,7 @@
  */
 require ejs.web
 
-const PORT = (App.config.test.http_port || "6700")
-const HTTP = ":" + PORT
+const HTTP = App.config.uris.http
 
 server = new HttpServer
 server.listen(HTTP)
@@ -12,9 +11,9 @@ load("../utils.es")
 
 server.on("readable", function (event, request: Request) {
 
-    assert(absHome == "http://127.0.0.1" + HTTP + "/")
-    absHome = "http://localhost:" + PORT + "/"
-    assert(absHome == "http://localhost:" + PORT + "/")
+    assert(absHome == HTTP + "/")
+    absHome = "http://localhost:1234/"
+    assert(absHome == "http://localhost:1234/")
 
     assert(autoFinalizing == true)
     autoFinalizing = false
@@ -34,16 +33,16 @@ server.on("readable", function (event, request: Request) {
     assert(method == "POST")
     assert(originalMethod == old)
 
-    assert(host == "localhost")
-    host = "127.0.0.1"
-    assert(host == "127.0.0.1")
+    assert(host == Uri(HTTP).host)
+    host = "127.1.2.3"
+    assert(host == "127.1.2.3")
 
-    assert(uri == "http://127.0.0.1:6700/index.html")
+    assert(uri == "http://127.1.2.3:6700/index.html")
     host = "localhost"
     uri = "http://localhost:9000/test.html"
     assert(uri == "http://localhost:9000/test.html")
 
-    assert(originalUri == "http://localhost:6700/index.html")
+    assert(originalUri == (HTTP + "/index.html"))
 
     assert(pathInfo == "/index.html")
     pathInfo = "/list/"
@@ -70,7 +69,7 @@ server.on("readable", function (event, request: Request) {
     assert(scriptName == "")
     scriptName = "/myApp"
     assert(uri == "http://localhost:6700/myApp/index.html")
-    assert(originalUri == "http://localhost:6700/index.html")
+    assert(originalUri == (HTTP + "/index.html"))
     assert(pathInfo == "/index.html")
     scriptName = ""
     assert(uri == "http://localhost:6700/index.html")

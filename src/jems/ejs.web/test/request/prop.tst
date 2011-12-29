@@ -3,7 +3,7 @@
  */
 require ejs.web
 
-const HTTP = ":" + (App.config.test.http_port || "6700")
+const HTTP = App.config.uris.http
 
 server = new HttpServer
 server.listen(HTTP)
@@ -11,7 +11,7 @@ load("../utils.es")
 
 server.on("readable", function (event, request: Request) {
 
-    assert(absHome == "http://127.0.0.1" + HTTP + "/")
+    assert(absHome == (HTTP + "/"))
     assert(authGroup == null)
     assert(authType == null)
     assert(authUser == null)
@@ -29,14 +29,14 @@ server.on("readable", function (event, request: Request) {
     assert(headers && header("Host") && header("Date") && header("Connection") && header("User-Agent"))
     assert(headers && header("host") && header("date") && header("coNNECTion") && header("user-AGENT"))
     assert(home == "../")
-    assert(host == "localhost")
+    assert(host == Uri(HTTP).host)
     assert(isSecure == false)
     assert(limits)
     assert(localAddress == "127.0.0.1")
     assert(log == App.log)
     assert(method == "GET")
     assert(originalMethod == "GET")
-    assert(originalUri == "http://localhost:6700/index.html")
+    assert(originalUri == (HTTP + "/index.html"))
     assert(params.toJSON() == "{}")
     assert(pathInfo == "/index.html")
     assert(port == 6700)
@@ -52,7 +52,7 @@ server.on("readable", function (event, request: Request) {
     assert(server && server.documents == "." && server.home == ".")
     assert(sessionID == null)
     assert(status == 200)
-    assert(uri == "http://localhost:6700/index.html")
+    assert(uri == (HTTP + "/index.html"))
     finalize()
 })
 

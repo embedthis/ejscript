@@ -2,8 +2,7 @@
     Put tests
  */
 
-const HTTP = ":" + (App.config.test.http_port || "6700")
-
+const HTTP = App.config.uris.http
 var http: Http = new Http
 
 //  Test put with data

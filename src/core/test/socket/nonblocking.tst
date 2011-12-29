@@ -1,11 +1,11 @@
 /*
     Test client and server in blocking mode
  */
-const PORT: Number = ((App.config.test.http_port cast Number) || 6700) + 1
+const ADDRESS = App.config.uris.http
 const TIMEOUT = 5000
 
 if (!App.getenv("NOSERVER")) {
-    var server = Cmd("ejs nonblocking.es " + PORT, {detach: true})
+    var server = Cmd("ejs nonblocking.es " + ADDRESS, {detach: true})
     server.finalize()
     if (server.wait(100)) {
         App.log.error("Can't start nonblocking.es " + server.error)
@@ -15,7 +15,7 @@ var client: Socket = new Socket
 
 for (i in TIMEOUT/100) {
     try {
-        client.connect(PORT)
+        client.connect(ADDRESS)
         break
     } catch { App.sleep(100) }
 }

@@ -246,31 +246,32 @@
 #define ES_App_name                                                    10
 #define ES_App_cache                                                   11
 #define ES_App_started                                                 12
-#define ES_App_title                                                   13
-#define ES_App_version                                                 14
-#define ES_App_args                                                    15
-#define ES_App_chdir                                                   16
-#define ES_App_createSearch                                            17
-#define ES_App_dir                                                     18
-#define ES_App_env                                                     19
-#define ES_App_exeDir                                                  20
-#define ES_App_exePath                                                 21
-#define ES_App_errorStream                                             22
-#define ES_App_exit                                                    23
-#define ES_App_getenv                                                  24
-#define ES_App_gid                                                     25
-#define ES_App_inputStream                                             26
-#define ES_App_loadrc                                                  27
-#define ES_App_outputStream                                            28
-#define ES_App_pid                                                     29
-#define ES_App_putenv                                                  30
-#define ES_App_run                                                     31
-#define ES_App_search                                                  32
-#define ES_App_sleep                                                   33
-#define ES_App_uid                                                     34
-#define ES_App_updateLog                                               35
-#define ES_App_waitForEvent                                            36
-#define ES_App_NUM_CLASS_PROP                                          37
+#define ES_App_test                                                    13
+#define ES_App_title                                                   14
+#define ES_App_version                                                 15
+#define ES_App_args                                                    16
+#define ES_App_chdir                                                   17
+#define ES_App_createSearch                                            18
+#define ES_App_dir                                                     19
+#define ES_App_env                                                     20
+#define ES_App_exeDir                                                  21
+#define ES_App_exePath                                                 22
+#define ES_App_errorStream                                             23
+#define ES_App_exit                                                    24
+#define ES_App_getenv                                                  25
+#define ES_App_gid                                                     26
+#define ES_App_inputStream                                             27
+#define ES_App_loadrc                                                  28
+#define ES_App_outputStream                                            29
+#define ES_App_pid                                                     30
+#define ES_App_putenv                                                  31
+#define ES_App_run                                                     32
+#define ES_App_search                                                  33
+#define ES_App_sleep                                                   34
+#define ES_App_uid                                                     35
+#define ES_App_updateLog                                               36
+#define ES_App_waitForEvent                                            37
+#define ES_App_NUM_CLASS_PROP                                          38
 
 /*
    Prototype (instance) slots for "App" type 
@@ -2342,6 +2343,6 @@
 #define ES_XMLList_NUM_INSTANCE_PROP                                   20
 #define ES_XMLList_NUM_INHERITED_PROP                                  0
 
-#define _ES_CHECKSUM_ejs   1457597
+#define _ES_CHECKSUM_ejs   1458046
 
 #endif

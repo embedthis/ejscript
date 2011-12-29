@@ -1,7 +1,7 @@
 /*
     Server for blocking.tst
  */
-let PORT = App.args[1] || 6701
+let ADDRESS = App.args[1] || 6701
 server = new Socket
 server.async = true
 
@@ -16,5 +16,5 @@ server.on("accept", function(event, listenSock) {
         }
     })
 })
-server.listen(PORT)
+server.listen(ADDRESS)
 App.run()

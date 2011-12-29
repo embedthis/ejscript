@@ -1,7 +1,7 @@
 /*
     Test bigger dynamic output
  */
-const HTTP = ":" + (App.config.test.http_port || "6700")
+const HTTP = App.config.uris.http
 
 const BIG = HTTP + "/big.ejs"
 var http: Http = new Http

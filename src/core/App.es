@@ -77,6 +77,7 @@ module ejs {
                 ejsrc: Path("ejsrc"),
             },
             init: { },
+            uris: { },
         }
 
         /**

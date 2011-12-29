@@ -2,7 +2,7 @@
     Test CommonLog wrapper
  */
 
-const HTTP = ":" + (App.config.test.http_port || "6700")
+const HTTP = App.config.uris.http
 const LOG = Path("access.log")
 
 var http: Http = new Http

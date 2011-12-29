@@ -1,4 +1,3 @@
-//  Just for general debugging
 {
     app: {
         cache: false,
@@ -10,7 +9,8 @@
         level: 0,
         showClient: true,
     },
-    web: {
-        _listen: "127.0.0.1:4000",
-    },
+    uris: {
+        http: "http://127.0.0.1:6700",
+        ssl: "https://127.0.0.1:6743",
+    }
 }

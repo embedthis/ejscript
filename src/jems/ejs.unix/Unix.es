@@ -112,6 +112,7 @@ module ejs.unix {
         Path(path).files(enumDirs)
 
     //  TODO - need option to exclude directories
+    //  MOB - better to support full glob style:  */[a-b]/*.html
     /**
         Find matching files. Files are listed in a depth first order.
         @param path Starting path from which to find matching files.
@@ -188,17 +189,25 @@ module ejs.unix {
     function read(file: File, count: Number): ByteArray
         file.read(count)
 
-    //  TODO - nice to allow wild cards for the path. Also allow ... for more files
     /**
-        Remove a file from the file system.
-        @param path Filename path to delete.
+        Remove file from the file system.
+        @param paths Filename paths to delete.
         @throws IOError if the file exists and cannot be removed.
      */
-    function rm(path: Path): void {
-        if (path.isDir) {
-            throw new ArgError(path.toString() + " is a directory")
-        } 
-        Path(path).remove()
+    function rm(...paths): void {
+        for each (path in paths) {
+            if (path is Array) {
+                for each (p in path) {
+                    rm(p)
+                }
+            } else {
+                path = Path(path)
+                if (path.isDir) {
+                    throw new ArgError(path.toString() + " is a directory")
+                } 
+                path.remove()
+            }
+        }
     }
 
     /**

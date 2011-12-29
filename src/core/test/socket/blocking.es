@@ -1,13 +1,13 @@
 /*
     Server for blocking.tst
 
-    ejs blocking.es PORT
+    ejs blocking.es ADDRESS
     Echo back received data. Terminate on "\r\n\r\n".
  */
 
-let PORT = App.args[1] || 6701
+let ADDRESS = App.args[1] || 6701
 server = new Socket
-server.listen(PORT)
+server.listen(ADDRESS)
 
 while (sock = server.accept()) {
     data = new ByteArray

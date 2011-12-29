@@ -3,7 +3,7 @@
  */
 require ejs.web
 
-const HTTP = ":" + (App.config.test.http_port || "6700")
+const HTTP = App.config.uris.http
 load("../utils.es")
 
 var success
@@ -19,7 +19,7 @@ w.onmessage = function(e) {
 w.eval('
     //  Run web serer inside a worker so we can do a sync server
     require ejs.web
-    const HTTP = ":" + (App.config.test.http_port || "6700")
+    const HTTP = App.config.uris.http
     let server = new HttpServer
     server.async = false
     server.listen(HTTP)
@@ -38,9 +38,3 @@ w.eval('
 //  Wait for worker to complete
 Worker.join(null, 4000)
 assert(success)
-
-
-/*
-
-
-*/

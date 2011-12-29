@@ -3,8 +3,7 @@
  */
 require ejs.web
 
-const PORT = (App.config.test.http_port || 6700)
-const HTTP = ":" + PORT
+const HTTP = App.config.uris.http
 
 public class TestController extends Controller {
     use namespace action
@@ -20,10 +19,9 @@ public class TestController extends Controller {
         assert(request)
         assert(request.controller == this)
         assert(pathInfo == "/test/echo")
-        assert(absHome == "http://127.0.0.1:" + PORT + "/")
+        assert(absHome == HTTP + "/")
         assert(home == "../../")
-        assert(uri == "http://localhost:6700/test/echo?color=red&temp=cold")
-
+        assert(uri == HTTP + "/test/echo?color=red&temp=cold")
         write("Echo Hello World")
     }
 } 

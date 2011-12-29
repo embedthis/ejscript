@@ -2,11 +2,9 @@
     blog.tst - Blog mini app
  */
 
-//  TODO -- should use the test http port for this
-const PORT = (App.config.test.http_port || 6700)
-const HTTP = ":" + PORT
-
 require ejs.unix
+
+const HTTP = App.config.uris.http
 
 let mvc = Cmd.locate("mvc").portable
 let ejs = Cmd.locate("ejs").portable

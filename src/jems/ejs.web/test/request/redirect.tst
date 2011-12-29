@@ -3,8 +3,7 @@
  */
 require ejs.web
 
-const PORT = App.config.test.http_port || 6700
-const HTTP = ":" + PORT
+const HTTP = App.config.uris.http
 
 server = new HttpServer
 server.listen(HTTP)
@@ -34,7 +33,7 @@ server.on("readable", function (event, request: Request) {
 //  redirect-string
 let http = fetch(HTTP + "/redirect-string", Http.MovedPermanently)
 assert(http.status == Http.MovedPermanently)
-assert(http.header("location") == "http://localhost:6700/elsewhere/")
+assert(http.header("location") == (HTTP + "/elsewhere/"))
 http.close()
 
 //  redirect-object
@@ -46,6 +45,6 @@ http.close()
 //  redirect-relative
 let http = fetch(HTTP + "/redirect/relative", Http.MovedTemporarily)
 assert(http.status == Http.MovedTemporarily)
-assert(http.header("Location") == "http://localhost:6700/absolute/dir.html")
+assert(http.header("Location") == (HTTP + "/absolute/dir.html"))
 
 server.close()
