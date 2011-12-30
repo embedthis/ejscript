@@ -41,6 +41,12 @@ module ejs {
           */
         native function absolute(base = null): Uri
 
+        /**
+            Return the TCP/IP address of the URI. This is the IP:PORT portion.
+         */
+        function get address(): String
+            host + ":" + port
+
         /** 
             The base of portion of the URI. The base portion is the trailing portion of the path without any directory 
             elements.
