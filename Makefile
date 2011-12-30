@@ -10,19 +10,15 @@
 #		make clean					# Removes generated objects
 #		make compile				# Compiles the source
 #		make depend					# Generates the make dependencies
-#		make test 					# Runs unit tests
-#		make package				# Creates an installable package
-#
-#	Installation targets. Use "make ROOT_DIR=myDir" to do a custom local install:
-#
-#		make install				# Call install-binary + install-dev
-#		make install-binary			# Install binary files
-#		make install-dev			# Install development libraries and headers
 #		make deploy					# Deploy binary files to a directory
+#		make install				# Install product
+#		make package				# Creates an installable package
+#		make test 					# Runs unit tests
 #
 #	To remove, use make uninstall-ITEM, where ITEM is a component above.
 
 DEPS		= tools mpr pcre http sqlite
+PRE_DIRS	= build src doc test projects package
 
 include		build/make/Makefile.top
 include		build/make/Makefile.ejs

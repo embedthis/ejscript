@@ -29,8 +29,8 @@
 #define ES_Boolean                                                     8
 #define ES_ByteArray                                                   9
 #define ES_Cache                                                       10
-#define ES_CmdArgs                                                     11
-#define ES_Cmd                                                         12
+#define ES_Cmd                                                         11
+#define ES_CmdArgs                                                     12
 #define ES_gc                                                          13
 #define ES_readFile                                                    14
 #define ES_Config                                                      15
@@ -489,24 +489,6 @@
 
 
 /*
-    Class property slots for the "CmdArgs" type 
- */
-#define ES_CmdArgs_NUM_CLASS_PROP                                      0
-
-/*
-   Prototype (instance) slots for "CmdArgs" type 
- */
-#define ES_CmdArgs_args                                                0
-#define ES_CmdArgs_options                                             1
-#define ES_CmdArgs_ranges                                              2
-#define ES_CmdArgs_aliases                                             3
-#define ES_CmdArgs_parseTemplate                                       4
-#define ES_CmdArgs_validate                                            5
-#define ES_CmdArgs_NUM_INSTANCE_PROP                                   6
-#define ES_CmdArgs_NUM_INHERITED_PROP                                  0
-
-
-/*
     Class property slots for the "Cmd" type 
  */
 #define ES_Cmd_locate                                                  0
@@ -565,6 +547,24 @@
 #define ES_Cmd_run_data                                                1
 #define ES_Cmd_sh_command                                              0
 #define ES_Cmd_sh_data                                                 1
+
+
+/*
+    Class property slots for the "CmdArgs" type 
+ */
+#define ES_CmdArgs_NUM_CLASS_PROP                                      0
+
+/*
+   Prototype (instance) slots for "CmdArgs" type 
+ */
+#define ES_CmdArgs_args                                                0
+#define ES_CmdArgs_options                                             1
+#define ES_CmdArgs_ranges                                              2
+#define ES_CmdArgs_aliases                                             3
+#define ES_CmdArgs_parseTemplate                                       4
+#define ES_CmdArgs_validate                                            5
+#define ES_CmdArgs_NUM_INSTANCE_PROP                                   6
+#define ES_CmdArgs_NUM_INHERITED_PROP                                  0
 
 
 /*
