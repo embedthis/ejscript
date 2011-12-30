@@ -29,8 +29,8 @@
 #define ES_Boolean                                                     8
 #define ES_ByteArray                                                   9
 #define ES_Cache                                                       10
-#define ES_Cmd                                                         11
-#define ES_CmdArgs                                                     12
+#define ES_CmdArgs                                                     11
+#define ES_Cmd                                                         12
 #define ES_gc                                                          13
 #define ES_readFile                                                    14
 #define ES_Config                                                      15
@@ -489,6 +489,24 @@
 
 
 /*
+    Class property slots for the "CmdArgs" type 
+ */
+#define ES_CmdArgs_NUM_CLASS_PROP                                      0
+
+/*
+   Prototype (instance) slots for "CmdArgs" type 
+ */
+#define ES_CmdArgs_args                                                0
+#define ES_CmdArgs_options                                             1
+#define ES_CmdArgs_ranges                                              2
+#define ES_CmdArgs_aliases                                             3
+#define ES_CmdArgs_parseTemplate                                       4
+#define ES_CmdArgs_validate                                            5
+#define ES_CmdArgs_NUM_INSTANCE_PROP                                   6
+#define ES_CmdArgs_NUM_INHERITED_PROP                                  0
+
+
+/*
     Class property slots for the "Cmd" type 
  */
 #define ES_Cmd_locate                                                  0
@@ -547,24 +565,6 @@
 #define ES_Cmd_run_data                                                1
 #define ES_Cmd_sh_command                                              0
 #define ES_Cmd_sh_data                                                 1
-
-
-/*
-    Class property slots for the "CmdArgs" type 
- */
-#define ES_CmdArgs_NUM_CLASS_PROP                                      0
-
-/*
-   Prototype (instance) slots for "CmdArgs" type 
- */
-#define ES_CmdArgs_args                                                0
-#define ES_CmdArgs_options                                             1
-#define ES_CmdArgs_ranges                                              2
-#define ES_CmdArgs_aliases                                             3
-#define ES_CmdArgs_parseTemplate                                       4
-#define ES_CmdArgs_validate                                            5
-#define ES_CmdArgs_NUM_INSTANCE_PROP                                   6
-#define ES_CmdArgs_NUM_INHERITED_PROP                                  0
 
 
 /*
@@ -2097,47 +2097,48 @@
    Prototype (instance) slots for "Uri" type 
  */
 #define ES_Uri_absolute                                                0
-#define ES_Uri_basename                                                1
-#define ES_Uri_complete                                                2
-#define ES_Uri_components                                              3
-#define ES_Uri_dirname                                                 4
-#define ES_Uri_endsWith                                                5
-#define ES_Uri_extension                                               6
-#define ES_Uri_filename                                                7
-#define ES_Uri_hasExtension                                            8
-#define ES_Uri_hasHost                                                 9
-#define ES_Uri_hasPort                                                 10
-#define ES_Uri_hasQuery                                                11
-#define ES_Uri_hasReference                                            12
-#define ES_Uri_hasScheme                                               13
-#define ES_Uri_host                                                    14
-#define ES_Uri_isAbsolute                                              15
-#define ES_Uri_isDir                                                   16
-#define ES_Uri_isRegular                                               17
-#define ES_Uri_isRelative                                              18
-#define ES_Uri_join                                                    19
-#define ES_Uri_joinExt                                                 20
-#define ES_Uri_local                                                   21
-#define ES_Uri_mimeType                                                22
-#define ES_Uri_normalize                                               23
-#define ES_Uri_path                                                    24
-#define ES_Uri_port                                                    25
-#define ES_Uri_query                                                   26
-#define ES_Uri_reference                                               27
-#define ES_Uri_relative                                                28
-#define ES_Uri_replaceExt                                              29
-#define ES_Uri_resolve                                                 30
-#define ES_Uri_same                                                    31
-#define ES_Uri_scheme                                                  32
-#define ES_Uri_startsWith                                              33
-#define ES_Uri_toJSON                                                  34
-#define ES_Uri_toString                                                35
-#define ES_Uri_toLocalString                                           36
-#define ES_Uri_trimEnd                                                 37
-#define ES_Uri_trimExt                                                 38
-#define ES_Uri_trimStart                                               39
-#define ES_Uri_uri                                                     40
-#define ES_Uri_NUM_INSTANCE_PROP                                       41
+#define ES_Uri_address                                                 1
+#define ES_Uri_basename                                                2
+#define ES_Uri_complete                                                3
+#define ES_Uri_components                                              4
+#define ES_Uri_dirname                                                 5
+#define ES_Uri_endsWith                                                6
+#define ES_Uri_extension                                               7
+#define ES_Uri_filename                                                8
+#define ES_Uri_hasExtension                                            9
+#define ES_Uri_hasHost                                                 10
+#define ES_Uri_hasPort                                                 11
+#define ES_Uri_hasQuery                                                12
+#define ES_Uri_hasReference                                            13
+#define ES_Uri_hasScheme                                               14
+#define ES_Uri_host                                                    15
+#define ES_Uri_isAbsolute                                              16
+#define ES_Uri_isDir                                                   17
+#define ES_Uri_isRegular                                               18
+#define ES_Uri_isRelative                                              19
+#define ES_Uri_join                                                    20
+#define ES_Uri_joinExt                                                 21
+#define ES_Uri_local                                                   22
+#define ES_Uri_mimeType                                                23
+#define ES_Uri_normalize                                               24
+#define ES_Uri_path                                                    25
+#define ES_Uri_port                                                    26
+#define ES_Uri_query                                                   27
+#define ES_Uri_reference                                               28
+#define ES_Uri_relative                                                29
+#define ES_Uri_replaceExt                                              30
+#define ES_Uri_resolve                                                 31
+#define ES_Uri_same                                                    32
+#define ES_Uri_scheme                                                  33
+#define ES_Uri_startsWith                                              34
+#define ES_Uri_toJSON                                                  35
+#define ES_Uri_toString                                                36
+#define ES_Uri_toLocalString                                           37
+#define ES_Uri_trimEnd                                                 38
+#define ES_Uri_trimExt                                                 39
+#define ES_Uri_trimStart                                               40
+#define ES_Uri_uri                                                     41
+#define ES_Uri_NUM_INSTANCE_PROP                                       42
 #define ES_Uri_NUM_INHERITED_PROP                                      0
 
 /*
@@ -2343,6 +2344,6 @@
 #define ES_XMLList_NUM_INSTANCE_PROP                                   20
 #define ES_XMLList_NUM_INHERITED_PROP                                  0
 
-#define _ES_CHECKSUM_ejs   1458046
+#define _ES_CHECKSUM_ejs   1458789
 
 #endif
