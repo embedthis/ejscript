@@ -1,2 +1,0 @@
-
-Cmd.run(Cmd.locate("ejsc") + " --out module.mod module.es")

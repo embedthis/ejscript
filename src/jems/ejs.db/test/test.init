@@ -1,2 +1,0 @@
-require ejs.unix
-Cmd.sh(Cmd.locate("sqlite").portable + " test.sdb < test.sql")
