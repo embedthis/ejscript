@@ -296,6 +296,7 @@ module ejs {
         native static function get search(): Array
         native static function set search(paths: Array): Void
 
+        //  MOB - sleep should not throw
         /** 
             Sleep the application for the given number of milliseconds. Events will be serviced while asleep.
             An alternative to sleep is $App.run which can be configured to sleep and return early if an event is received.

@@ -272,6 +272,8 @@ static EjsObj *app_run(Ejs *ejs, EjsObj *unused, int argc, EjsObj **argv)
 /*  
     Pause the application. This services events while asleep.
     static function sleep(delay: Number = -1): void
+    MOB - sleep currently throws if an exception is generated in an event callback (worker).
+    It should not.
  */
 static EjsObj *app_sleep(Ejs *ejs, EjsObj *unused, int argc, EjsObj **argv)
 {

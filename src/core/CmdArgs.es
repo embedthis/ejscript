@@ -4,6 +4,9 @@
  */
 
 //  MOB - should this be named Args. If so, rename "args" property.
+//  MOB - Should be able to pass in a usage message/function which is emitted before throwing
+//  MOB - document that this function throws
+//  MOB - not ideal that all option types are Strings. Must document or fix this.
 module ejs {
     /**
         The CmdArgs class parses the Application's command line. A template of permissible args is 
@@ -17,10 +20,11 @@ module ejs {
         argument. If a default value is provide, the property in cmd.options will always be created and will be set to 
         the default value if the users does not provide a value.
 
+
         @spec ejs
         @stability prototype
         @example 
-cmd = CmdArgs([
+let cmd = CmdArgs([
     [ "depth", Number ],
     [ "quiet", null, false ],
     [ [ "verbose", "v", ], true ],
@@ -69,7 +73,7 @@ for each (file in cmd.args) {
         }
 
         /*
-            Validate options[] against the range of permissible values .
+            Validate options[] against the range of permissible values
          */
         private function validate(): Void {
             for (key in options) {
@@ -80,8 +84,12 @@ for each (file in cmd.args) {
                 }
                 if (range === Number) {
                     if (value) {
-                        if (! value.match(/^\d+$/)) {
-                           throw new ArgError("Option \"" + key + "\" must be a number")
+                        if (!(value is Number)) {
+                            if (value.toString().match(/^\d+$/)) {
+                                options[key] = value cast Number
+                            } else { 
+                               throw new ArgError("Option \"" + key + "\" must be a number")
+                            }
                         }
                     } else {
                         value = 0
@@ -94,15 +102,20 @@ for each (file in cmd.args) {
                     } else {
                         value = false
                     }
+                    //  MOB - would it not be better to cast to Boolean?
                     if (value != "true" && value != "false") {
                        throw new ArgError("Option \"" + key + "\" must be true or false")
                     }
+                    options[key] = value cast Boolean
+
                 } else if (range === String) {
                     ;
                 } else if (range is RegExp) {
+                    options[key] = value.toString()
                     if (!value.match(range)) {
                         throw new ArgError("Option \"" + key + "\" has bad value: \"" + value + "\"")
                     }
+
                 } else if (range is Array) {
                     let ok = false
                     for each (v in range) {
