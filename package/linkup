@@ -1,4 +1,5 @@
-#MOB
+#!/bin/bash
+#
 #   Create or modify symlinks for the most recent installed versions of Ejscript
 #
 #   Copyright (c) Embedthis Software LLC, 2003-2012. All Rights Reserved.
@@ -21,6 +22,7 @@ LIB="${ROOT_DIR}/usr/lib"
 
 prefix="${ROOT_DIR}/usr/lib/${PRODUCT}"
 version=
+
 for v in `ls $prefix 2>/dev/null | egrep -v '[a-zA-Z@!_\-]' | sort -n -r`
 do
     if [ -x "$prefix/$v/bin/ejs" ] ; then
@@ -36,6 +38,7 @@ if [ "$version" = "" ] ; then
     done
     rm -fr "${INC}/${PRODUCT}"
 else
+
     latest=${prefix}/$version
     rm -f ${prefix}/latest
     ln -s ${version} ${prefix}/latest
