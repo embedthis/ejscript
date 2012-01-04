@@ -93,6 +93,7 @@ MAIN(ejsMain, int argc, char **argv)
                 className = argv[++nextArg];
             }
 
+        //  MOB - should this be called --home
         } else if (strcmp(argp, "--chdir") == 0) {
             if (nextArg >= argc) {
                 err++;

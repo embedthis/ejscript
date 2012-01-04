@@ -14513,6 +14513,7 @@ void mprSetModuleSearchPath(char *searchPath)
         ms->searchPath = sclone(searchPath);
     }
 
+#if UNUSED
 #if BLD_WIN_LIKE && !WINCE
     {
         /*
@@ -14522,6 +14523,7 @@ void mprSetModuleSearchPath(char *searchPath)
         mprMapSeparators(path, '\\');
         putenv(path);
     }
+#endif
 #endif
 }
 
