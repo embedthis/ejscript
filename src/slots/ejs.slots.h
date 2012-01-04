@@ -29,8 +29,8 @@
 #define ES_Boolean                                                     8
 #define ES_ByteArray                                                   9
 #define ES_Cache                                                       10
-#define ES_Cmd                                                         11
-#define ES_CmdArgs                                                     12
+#define ES_CmdArgs                                                     11
+#define ES_Cmd                                                         12
 #define ES_gc                                                          13
 #define ES_readFile                                                    14
 #define ES_Config                                                      15
@@ -268,10 +268,12 @@
 #define ES_App_run                                                     32
 #define ES_App_search                                                  33
 #define ES_App_sleep                                                   34
-#define ES_App_uid                                                     35
-#define ES_App_updateLog                                               36
-#define ES_App_waitForEvent                                            37
-#define ES_App_NUM_CLASS_PROP                                          38
+#define ES_App_searchPath                                              35
+#define ES_App_serviceEvents                                           36
+#define ES_App_uid                                                     37
+#define ES_App_updateLog                                               38
+#define ES_App_waitForEvent                                            39
+#define ES_App_NUM_CLASS_PROP                                          40
 
 /*
    Prototype (instance) slots for "App" type 
@@ -294,6 +296,8 @@
 #define ES_App_run_timeout                                             0
 #define ES_App_run_oneEvent                                            1
 #define ES_App_sleep_delay                                             0
+#define ES_App_serviceEvents_count                                     0
+#define ES_App_serviceEvents_timeout                                   1
 #define ES_App_waitForEvent_obj                                        0
 #define ES_App_waitForEvent_events                                     1
 #define ES_App_waitForEvent_timeout                                    2
@@ -461,7 +465,9 @@
 #define ES_ByteArray_writeInteger                                      34
 #define ES_ByteArray_writeLong                                         35
 #define ES_ByteArray_writePosition                                     36
-#define ES_ByteArray_NUM_INSTANCE_PROP                                 37
+#define ES_ByteArray_input                                             37
+#define ES_ByteArray_output                                            38
+#define ES_ByteArray_NUM_INSTANCE_PROP                                 39
 #define ES_ByteArray_NUM_INHERITED_PROP                                0
 
 
@@ -486,6 +492,24 @@
 #define ES_Cache_writeObj                                              10
 #define ES_Cache_NUM_INSTANCE_PROP                                     11
 #define ES_Cache_NUM_INHERITED_PROP                                    0
+
+
+/*
+    Class property slots for the "CmdArgs" type 
+ */
+#define ES_CmdArgs_NUM_CLASS_PROP                                      0
+
+/*
+   Prototype (instance) slots for "CmdArgs" type 
+ */
+#define ES_CmdArgs_args                                                0
+#define ES_CmdArgs_options                                             1
+#define ES_CmdArgs_ranges                                              2
+#define ES_CmdArgs_aliases                                             3
+#define ES_CmdArgs_parseTemplate                                       4
+#define ES_CmdArgs_validate                                            5
+#define ES_CmdArgs_NUM_INSTANCE_PROP                                   6
+#define ES_CmdArgs_NUM_INHERITED_PROP                                  0
 
 
 /*
@@ -547,24 +571,6 @@
 #define ES_Cmd_run_data                                                1
 #define ES_Cmd_sh_command                                              0
 #define ES_Cmd_sh_data                                                 1
-
-
-/*
-    Class property slots for the "CmdArgs" type 
- */
-#define ES_CmdArgs_NUM_CLASS_PROP                                      0
-
-/*
-   Prototype (instance) slots for "CmdArgs" type 
- */
-#define ES_CmdArgs_args                                                0
-#define ES_CmdArgs_options                                             1
-#define ES_CmdArgs_ranges                                              2
-#define ES_CmdArgs_aliases                                             3
-#define ES_CmdArgs_parseTemplate                                       4
-#define ES_CmdArgs_validate                                            5
-#define ES_CmdArgs_NUM_INSTANCE_PROP                                   6
-#define ES_CmdArgs_NUM_INHERITED_PROP                                  0
 
 
 /*
@@ -1207,7 +1213,8 @@
 #define ES_Http_ServiceUnavailable                                     35
 #define ES_Http_GatewayTimeout                                         36
 #define ES_Http_VersionNotSupported                                    37
-#define ES_Http_NUM_CLASS_PROP                                         38
+#define ES_Http_mimeType                                               38
+#define ES_Http_NUM_CLASS_PROP                                         39
 
 /*
    Prototype (instance) slots for "Http" type 
@@ -1262,8 +1269,25 @@
 #define ES_Http_uri                                                    47
 #define ES_Http_wait                                                   48
 #define ES_Http_write                                                  49
-#define ES_Http_NUM_INSTANCE_PROP                                      50
+#define ES_Http_addHeader                                              50
+#define ES_Http_available                                              51
+#define ES_Http_bodyLength                                             52
+#define ES_Http_chunked                                                53
+#define ES_Http_code                                                   54
+#define ES_Http_codeString                                             55
+#define ES_Http_contentEncoding                                        56
+#define ES_Http_del                                                    57
+#define ES_Http_expires                                                58
+#define ES_Http_options                                                59
+#define ES_Http_setCallback                                            60
+#define ES_Http_trace_old                                              61
+#define ES_Http_NUM_INSTANCE_PROP                                      62
 #define ES_Http_NUM_INHERITED_PROP                                     0
+
+/*
+    Local slots for methods in type "Http" 
+ */
+#define ES_Http_mimeType_path                                          0
 
 
 /*
@@ -2344,6 +2368,6 @@
 #define ES_XMLList_NUM_INSTANCE_PROP                                   20
 #define ES_XMLList_NUM_INHERITED_PROP                                  0
 
-#define _ES_CHECKSUM_ejs   1458789
+#define _ES_CHECKSUM_ejs   1488889
 
 #endif

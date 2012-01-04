@@ -17,7 +17,7 @@ compileExtra: $(TARGETS)
 module: $(MODULE)
 
 $(BLD_LIB_DIR)/$(MOD): *.es $(BLD_LIB_DIR)/ejs.mod
-	echo AAA ; $(call log) [Compile] "$(MOD)"
+	$(call log) [Compile] "$(MOD)"
 	rm -f *.mod *.slots.h $(BLD_BUILD_LIB_DIR)/$(MOD) $(BLD_LIB_DIR)/$(MOD)
 	ejsc $(_ESFLAGS) *.es
 	ejsmod --cslots $(MOD)
