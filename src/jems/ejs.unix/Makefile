@@ -17,7 +17,7 @@ compileExtra: $(TARGETS)
 module: $(MODULE)
 
 $(BLD_LIB_DIR)/$(MOD): *.es $(BLD_LIB_DIR)/ejs.mod
-	$(call log) [Compile] "$(MOD)"
+	echo AAA ; $(call log) [Compile] "$(MOD)"
 	rm -f *.mod *.slots.h $(BLD_BUILD_LIB_DIR)/$(MOD) $(BLD_LIB_DIR)/$(MOD)
 	ejsc $(_ESFLAGS) *.es
 	ejsmod --cslots $(MOD)
@@ -28,7 +28,7 @@ $(BLD_LIB_DIR)/$(MOD): *.es $(BLD_LIB_DIR)/ejs.mod
 package.json: Makefile $(BLD_INC_DIR)/buildConfig.h
 	ejs $(BLD_BIN_DIR)/jem --field version --value $(BLD_VERSION) edit
 
-$(BLD_JEM_DIR)/$(JEM): $(BLD_LIB_DIR)/$(MOD) package.json
+$(BLD_JEM_DIR)/$(JEM): $(BLD_LIB_DIR)/$(MOD)
 	ejs $(BLD_BIN_DIR)/jem setdeps $(BLD_LIB_DIR)/$(MOD)
 	ejs $(BLD_BIN_DIR)/jem build
 	ejs $(BLD_BIN_DIR)/jem --to $(BLD_JEM_DIR) publish $(JEM)

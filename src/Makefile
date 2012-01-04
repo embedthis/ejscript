@@ -17,16 +17,16 @@ compileFirst: prep $(HEADERS) tools
 
 compileExtra: core library $(SLOTS)
 
-compileFinal: extraTools
+##MOB compileFinal: extraTools
 
 #
 #	These are the required tools to build Ejscript: (ejs, ejsc, ejsmod, jem)
 #
 tools:
-ifeq ($(BLD_CROSS),1)
-	echo
-	$(call log) [Notice] "Building Ejs Toolchain for ($(BLD_BUILD_SYSTEM)) (ejsc, ejs, ejsmod)"
-endif
+## ifeq ($(BLD_CROSS),1)
+## 	echo
+## 	$(call log) [@@@@@ Notice] "Building Ejs Toolchain for ($(BLD_BUILD_SYSTEM)) (ejsc, ejs, ejsmod)"
+## endif
 	$(MAKE) -S --no-print-directory BUILDING_NATIVE=1 TRACE=$(TRACE) DIR=$(DIR)/slots -C slots compile
 	$(MAKE) -S --no-print-directory BUILDING_NATIVE=1 TRACE=$(TRACE) DIR=$(DIR)/deps -C deps compile
 	$(MAKE) -S --no-print-directory BUILDING_NATIVE=1 TRACE=$(TRACE) DIR=$(DIR)/vm -C vm compile
@@ -44,9 +44,9 @@ endif
 	$(MAKE) -S --no-print-directory BUILDING_NATIVE=1 TRACE=$(TRACE) DIR=$(DIR)/jems -C jems tools
 
 core: dummy
-ifeq ($(BLD_CROSS),1)
-	$(call log) [Notice] "Building $(BLD_NAME) for ($(BLD_HOST_SYSTEM))"
-endif
+## ifeq ($(BLD_CROSS),1)
+##	$(call log) [Notice] "Building $(BLD_NAME) for ($(BLD_HOST_SYSTEM))"
+## endif
 	$(MAKE) -S --no-print-directory TRACE=$(TRACE) DIR=$(DIR)/core -C core 
 
 library: $(EJS_LIB)
@@ -54,15 +54,15 @@ library: $(EJS_LIB)
 $(EJS_LIB): $(EJS_SOURCES) $(EJS_OBJECTS)
 	bld --library $(EJS_LIB) --libs "$(BLD_EJSCRIPT_WITHLIBS)" $(EJS_OBJECTS)
 
-#
-#	Build extra native tools (ejspage, ejssql, mvc)
-#
-extraTools:
-ifeq ($(BLD_CROSS),1)
-	echo
-	$(call log) "[Notice]" "Build extra native tools (ejspage, ejssql, mvc)"
-	$(MAKE) -S --no-print-directory BUILDING_NATIVE=1 TRACE=$(TRACE) DIR=$(DIR)/jems -C jems extraTools
-endif
+##	#
+##	#	Build extra native tools (ejspage, ejssql, mvc)
+##	#
+##	extraTools:
+##	ifeq ($(BLD_CROSS),1)
+##		echo
+##		$(call log) "[@@@@ Notice]" "Build extra native tools (ejspage, ejssql, mvc)"
+##		$(MAKE) -S --no-print-directory BUILDING_NATIVE=1 TRACE=$(TRACE) DIR=$(DIR)/jems -C jems extraTools
+##	endif
 
 dependExtra:
 	cp slots/*slots.h $(BLD_INC_DIR)
