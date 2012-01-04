@@ -37,6 +37,8 @@ if [ "$version" = "" ] ; then
     rm -fr "${INC}/${PRODUCT}"
 else
     latest=${prefix}/$version
+    rm -f ${prefix}/latest
+    ln -s ${version} ${prefix}/latest
     bin=${latest}/bin
     inc=${latest}/inc
     man=${latest}/doc/man
