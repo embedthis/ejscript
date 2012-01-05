@@ -83,10 +83,10 @@ MAIN(ejsMain, int argc, char **argv)
         if (*argp != '-') {
             break;
         }
-        if (strcmp(argp, "--bind") == 0) {
+        if (smatch(argp, "--bind")) {
             bind = 1;
 
-        } else if (strcmp(argp, "--class") == 0) {
+        } else if (smatch(argp, "--class")) {
             if (nextArg >= argc) {
                 err++;
             } else {
@@ -94,7 +94,7 @@ MAIN(ejsMain, int argc, char **argv)
             }
 
         //  MOB - should this be called --home
-        } else if (strcmp(argp, "--chdir") == 0) {
+        } else if (smatch(argp, "--chdir") || smatch(argp, "--home")) {
             if (nextArg >= argc) {
                 err++;
             } else {
@@ -105,7 +105,7 @@ MAIN(ejsMain, int argc, char **argv)
             }
 
 #if BLD_UNIX_LIKE
-        } else if (strcmp(argp, "--chroot") == 0) {
+        } else if (smatch(argp, "--chroot")) {
             /* Not documented or supported */
             if (nextArg >= argc) {
                 err++;
@@ -123,20 +123,20 @@ MAIN(ejsMain, int argc, char **argv)
             }
 #endif
 
-        } else if (strcmp(argp, "--cmd") == 0 || strcmp(argp, "-c") == 0) {
+        } else if (smatch(argp, "--cmd") || smatch(argp, "-c")) {
             if (nextArg >= argc) {
                 err++;
             } else {
                 cmd = argv[++nextArg];
             }
 
-        } else if (strcmp(argp, "--debug") == 0) {
+        } else if (smatch(argp, "--debug")) {
             debug = 1;
 
-        } else if (strcmp(argp, "--debugger") == 0 || strcmp(argp, "-D") == 0) {
+        } else if (smatch(argp, "--debugger") || smatch(argp, "-D")) {
             mprSetDebugMode(1);
 
-        } else if (strcmp(argp, "--files") == 0 || strcmp(argp, "-f") == 0) {
+        } else if (smatch(argp, "--files") || smatch(argp, "-f")) {
             /* Compatibility with mozilla shell */
             if (nextArg >= argc) {
                 err++;
@@ -149,14 +149,14 @@ MAIN(ejsMain, int argc, char **argv)
                 }
             }
 
-        } else if (strcmp(argp, "--iterations") == 0 || strcmp(argp, "-i") == 0) {
+        } else if (smatch(argp, "--iterations") || smatch(argp, "-i")) {
             if (nextArg >= argc) {
                 err++;
             } else {
                 app->iterations = atoi(argv[++nextArg]);
             }
 
-        } else if (strcmp(argp, "--log") == 0) {
+        } else if (smatch(argp, "--log")) {
             if (nextArg >= argc) {
                 err++;
             } else {
@@ -164,50 +164,50 @@ MAIN(ejsMain, int argc, char **argv)
                 mprSetCmdlineLogging(1);
             }
 
-        } else if (strcmp(argp, "--method") == 0) {
+        } else if (smatch(argp, "--method")) {
             if (nextArg >= argc) {
                 err++;
             } else {
                 method = argv[++nextArg];
             }
 
-        } else if (strcmp(argp, "--name") == 0) {
+        } else if (smatch(argp, "--name")) {
             /* Just ignore. Used to tag commands with a unique command line */ 
             nextArg++;
 
-        } else if (strcmp(argp, "--nobind") == 0) {
+        } else if (smatch(argp, "--nobind")) {
             bind = 0;
 
-        } else if (strcmp(argp, "--nodebug") == 0) {
+        } else if (smatch(argp, "--nodebug")) {
             debug = 0;
 
-        } else if (strcmp(argp, "--optimize") == 0) {
+        } else if (smatch(argp, "--optimize")) {
             if (nextArg >= argc) {
                 err++;
             } else {
                 optimizeLevel = atoi(argv[++nextArg]);
             }
 
-        } else if (strcmp(argp, "-s") == 0) {
+        } else if (smatch(argp, "-s")) {
             /* Compatibility with mozilla shell. Just ignore */
 
-        } else if (strcmp(argp, "--search") == 0 || strcmp(argp, "--searchpath") == 0) {
+        } else if (smatch(argp, "--search") || smatch(argp, "--searchpath")) {
             if (nextArg >= argc) {
                 err++;
             } else {
                 searchPath = argv[++nextArg];
             }
 
-        } else if (strcmp(argp, "--standard") == 0) {
+        } else if (smatch(argp, "--standard")) {
             strict = 0;
 
-        } else if (strcmp(argp, "--stats") == 0) {
+        } else if (smatch(argp, "--stats")) {
             stats = 1;
 
-        } else if (strcmp(argp, "--strict") == 0) {
+        } else if (smatch(argp, "--strict")) {
             strict = 1;
 
-        } else if (strcmp(argp, "--require") == 0) {
+        } else if (smatch(argp, "--require")) {
             if (nextArg >= argc) {
                 err++;
             } else {
@@ -222,15 +222,15 @@ MAIN(ejsMain, int argc, char **argv)
                 }
             }
 
-        } else if (strcmp(argp, "--verbose") == 0 || strcmp(argp, "-v") == 0) {
+        } else if (smatch(argp, "--verbose") || smatch(argp, "-v")) {
             mprStartLogging("stderr:2", 0);
             mprSetCmdlineLogging(1);
 
-        } else if (strcmp(argp, "--version") == 0 || strcmp(argp, "-V") == 0) {
+        } else if (smatch(argp, "--version") || smatch(argp, "-V")) {
             mprPrintfError("%s %s-%s\n", BLD_NAME, BLD_VERSION, BLD_NUMBER);
             return 0;
 
-        } else if (strcmp(argp, "--warn") == 0) {
+        } else if (smatch(argp, "--warn")) {
             if (nextArg >= argc) {
                 err++;
             } else {
