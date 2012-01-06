@@ -315,6 +315,8 @@ static ssize cmdIOCallback(MprCmd *mc, int channel, void *data)
     }
     if (len > 0) {
         mprEnableCmdEvents(mc, channel);
+    } else if (len < 0) {
+        len = 0;
     }
     if (channel == MPR_CMD_STDERR) {
         if (cmd->error == 0) {
