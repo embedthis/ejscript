@@ -14,7 +14,7 @@
  */
 static EjsBoolean *gc_enabled(Ejs *ejs, EjsObj *thisObj, int argc, EjsObj **argv)
 {
-    return ((mprGetMpr()->heap.enabled) ? ESV(true): ESV(false));
+    return ((mprGetMpr()->heap->enabled) ? ESV(true): ESV(false));
 }
 
 
@@ -24,7 +24,7 @@ static EjsBoolean *gc_enabled(Ejs *ejs, EjsObj *thisObj, int argc, EjsObj **argv
 static EjsObj *gc_set_enabled(Ejs *ejs, EjsObj *thisObj, int argc, EjsObj **argv)
 {
     mprAssert(argc == 1 && ejsIs(ejs, argv[0], Boolean));
-    mprGetMpr()->heap.enabled = ejsGetBoolean(ejs, argv[0]);
+    mprGetMpr()->heap->enabled = ejsGetBoolean(ejs, argv[0]);
     return 0;
 }
 
@@ -52,7 +52,7 @@ static EjsObj *gc_run(Ejs *ejs, EjsObj *thisObj, int argc, EjsObj **argv)
  */
 static EjsNumber *gc_newQuota(Ejs *ejs, EjsObj *thisObj, int argc, EjsObj **argv)
 {
-    return ejsCreateNumber(ejs, mprGetMpr()->heap.newQuota);
+    return ejsCreateNumber(ejs, mprGetMpr()->heap->newQuota);
 }
 
 
@@ -70,7 +70,7 @@ static EjsObj *gc_set_newQuota(Ejs *ejs, EjsObj *thisObj, int argc, EjsObj **arg
         ejsThrowArgError(ejs, "Bad work quota");
         return 0;
     }
-    mprGetMpr()->heap.newQuota = quota;
+    mprGetMpr()->heap->newQuota = quota;
     return 0;
 }
 

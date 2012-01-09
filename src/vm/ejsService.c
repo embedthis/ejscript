@@ -733,7 +733,7 @@ static int runProgram(Ejs *ejs, MprEvent *event)
 
 int ejsRunProgram(Ejs *ejs, cchar *className, cchar *methodName)
 {
-    mprAssert(ejs->result == 0 || (MPR_GET_GEN(MPR_GET_MEM(ejs->result)) != MPR->heap.dead));
+    mprAssert(ejs->result == 0 || (MPR_GET_GEN(MPR_GET_MEM(ejs->result)) != MPR->heap->dead));
 
     if (className) {
         ejs->className = sclone(className);

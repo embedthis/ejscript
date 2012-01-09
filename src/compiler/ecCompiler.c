@@ -178,7 +178,7 @@ static int compileInner(EcCompiler *cp, int argc, char **argv)
         }
         mprAssert(!MPR->marking);
     }
-    mprAssert(ejs->result == 0 || (MPR_GET_GEN(MPR_GET_MEM(ejs->result)) != MPR->heap.dead));
+    mprAssert(ejs->result == 0 || (MPR_GET_GEN(MPR_GET_MEM(ejs->result)) != MPR->heap->dead));
 
 
     /*
@@ -211,7 +211,7 @@ static int compileInner(EcCompiler *cp, int argc, char **argv)
         }
     }
     ejsPopBlock(ejs);
-    mprAssert(ejs->result == 0 || (MPR_GET_GEN(MPR_GET_MEM(ejs->result)) != MPR->heap.dead));
+    mprAssert(ejs->result == 0 || (MPR_GET_GEN(MPR_GET_MEM(ejs->result)) != MPR->heap->dead));
 
     /*
         Add compiled modules to the interpreter
@@ -224,7 +224,7 @@ static int compileInner(EcCompiler *cp, int argc, char **argv)
     if (!paused) {
         mprYield(0);
     }
-    mprAssert(ejs->result == 0 || (MPR_GET_GEN(MPR_GET_MEM(ejs->result)) != MPR->heap.dead));
+    mprAssert(ejs->result == 0 || (MPR_GET_GEN(MPR_GET_MEM(ejs->result)) != MPR->heap->dead));
     return (cp->errorCount > 0) ? EJS_ERR: 0;
 }
 

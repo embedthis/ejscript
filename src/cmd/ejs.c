@@ -363,7 +363,7 @@ static int interpretFiles(EcCompiler *cp, MprList *files, int argc, char **argv,
         mprRawLog(0, "%s\n", cp->errorMsg);
         return EJS_ERR;
     }
-    mprAssert(ejs->result == 0 || (MPR_GET_GEN(MPR_GET_MEM(ejs->result)) != MPR->heap.dead));
+    mprAssert(ejs->result == 0 || (MPR_GET_GEN(MPR_GET_MEM(ejs->result)) != MPR->heap->dead));
 
     if (cp->errorCount == 0) {
         if (ejsRunProgram(ejs, className, method) < 0) {

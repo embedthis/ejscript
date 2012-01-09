@@ -101,7 +101,7 @@ static MPR_INLINE void checkGetter(Ejs *ejs, EjsAny *value, EjsAny *thisObj, Ejs
 }
 
 #define CHECK_VALUE(value, thisObj, obj, slotNum) checkGetter(ejs, value, thisObj, obj, slotNum)
-#define CHECK_GC() if (MPR->heap.mustYield && !(ejs->state->paused)) { mprYield(0); } else 
+#define CHECK_GC() if (MPR->heap->mustYield && !(ejs->state->paused)) { mprYield(0); } else 
 
 /*
     Set a slot value when we don't know if the object is an EjsObj
