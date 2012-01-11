@@ -25,7 +25,7 @@ static void require(cchar *name);
 
 /************************************ Code ************************************/
 
-MAIN(ejscMain, int argc, char **argv)
+MAIN(ejscMain, int argc, char **argv, char **envp)
 {
     Mpr             *mpr;
     Ejs             *ejs;
