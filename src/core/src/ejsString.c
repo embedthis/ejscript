@@ -459,9 +459,9 @@ static void getPropertyValue(Ejs *ejs, EjsObj *obj, char *token, MprBuf *buf, cc
                 if (*fill) {
                     mprPutStringToBuf(buf, fill);
                 } else {
+                    mprPutStringToBuf(buf, "${");
                     mprPutStringToBuf(buf, token);
-                    mprPutCharToBuf(buf, '_');
-                    mprPutStringToBuf(buf, "UNKNOWN");
+                    mprPutCharToBuf(buf, '}');
                 }
             } else {
                 ejsThrowReferenceError(ejs, "Missing property %s", token);
