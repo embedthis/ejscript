@@ -39,11 +39,6 @@ static EjsService *createService()
 #if FUTURE && KEEP
     mprSetMemNotifier((MprMemNotifier) allocNotifier);
 #endif
-#if UNUSED
-    if (mprUsingDefaultLogHandler()) {
-        ejsRedirectLogging(0);
-    }
-#endif
     sp->nativeModules = mprCreateHash(-1, MPR_HASH_STATIC_KEYS);
     sp->mutex = mprCreateLock();
     sp->vmlist = mprCreateList(-1, MPR_LIST_STATIC_VALUES);
@@ -130,15 +125,11 @@ Ejs *ejsCloneVM(Ejs *master)
     int         next;
 
     if (master) {
-        //  MOB - cleanup
-        extern int cloneCopy;
         mprAssert(!master->empty);
-        cloneCopy = 0;
         if ((ejs = ejsCreateVM(master->argc, master->argv, master ? master->flags : 0)) == 0) {
             return 0;
         }
         cloneProperties(ejs, master);
-        // printf("CLONE copied %d properties\n", cloneCopy);
         ejsFixTraits(ejs, ejs->global);
         ejs->sqlite = master->sqlite;
         ejs->http = master->http;
@@ -671,19 +662,16 @@ EjsArray *ejsCreateSearchPath(Ejs *ejs, cchar *search)
         }
         return (EjsArray*) ap;
     }
-    relModDir = 0;
-#if VXWORKS
-    ejsSetProperty(ejs, ap, -1, ejsCreatePathFromAsc(ejs, mprGetCurrentPath(ejs)));
-#else
+
     /*
         Create a default search path
         "." : APP_EXE_DIR/../lib : /usr/lib/ejs/1.0.0/lib
      */
     ejsSetProperty(ejs, ap, -1, ejsCreatePathFromAsc(ejs, "."));
-    relModDir = sfmt("%s/../%s", mprGetAppDir(ejs), BLD_LIB_NAME);
     ejsSetProperty(ejs, ap, -1, ejsCreatePathFromAsc(ejs, mprGetAppDir(ejs)));
-    relModDir = sfmt("%s/../%s", mprGetAppDir(ejs), BLD_LIB_NAME);
+    relModDir = mprNormalizePath(sfmt("%s/../%s", mprGetAppDir(ejs), mprGetPathBase(BLD_LIB_NAME)));
     ejsSetProperty(ejs, ap, -1, ejsCreatePathFromAsc(ejs, mprGetAbsPath(relModDir)));
+#if !VXWORKS
     ejsSetProperty(ejs, ap, -1, ejsCreatePathFromAsc(ejs, BLD_LIB_PREFIX));
 #endif
     return (EjsArray*) ap;
@@ -946,87 +934,6 @@ static int searchForMethod(Ejs *ejs, cchar *methodName, EjsType **typeReturn)
     }
     return 0;
 }
-
-
-#if UNUSED
-static void logHandler(int flags, int level, cchar *msg)
-{
-    char        *prefix, *tag, *amsg, buf[MPR_MAX_STRING];
-    static int  solo = 0;
-
-    if (solo > 0) {
-        return;
-    }
-    solo = 1;
-    prefix = MPR->name;
-    amsg = NULL;
-
-    if (flags & MPR_WARN_SRC) {
-        tag = "Warning";
-    } else if (flags & MPR_ERROR_SRC) {
-        tag = "Error";
-    } else if (flags & MPR_FATAL_SRC) {
-        tag = "Fatal";
-    } else if (flags & MPR_RAW) {
-        tag = NULL;
-    } else {
-        tag = itos(level);
-    }
-    if (tag) {
-        if (strlen(msg) < (MPR_MAX_STRING - 32)) {
-            /* Avoid allocation if possible */
-            mprSprintf(buf, sizeof(buf), "%s: %s: %s\n", prefix, tag, msg);
-            msg = buf;
-        } else {
-            msg = amsg = sfmt("%s: %s: %s\n", prefix, tag, msg);
-        }
-    }
-    if (MPR->logFile) {
-        mprFprintf(MPR->logFile, "%s", msg);
-    } else {
-        mprPrintfError("%s", msg);
-    }
-    solo = 0;
-}
-#endif
-
-
-#if UNUSED
-int ejsRedirectLogging(cchar *logSpec)
-{
-    MprFile     *file;
-    char        *spec, *levelSpec;
-    int         level;
-
-    level = 0;
-    if (logSpec == 0) {
-        logSpec = "stderr:1";
-    }
-    spec = sclone(logSpec);
-
-    if ((levelSpec = strchr(spec, ':')) != 0) {
-        *levelSpec++ = '\0';
-        level = atoi(levelSpec);
-    }
-    if (strcmp(spec, "stdout") == 0) {
-        file = MPR->stdOutput;
-
-    } else if (strcmp(spec, "stderr") == 0) {
-        file = MPR->stdError;
-
-    } else {
-        //  TODO - should provide some means to append to the log
-        if ((file = mprOpenFile(spec, O_CREAT | O_WRONLY | O_TRUNC | O_TEXT, 0664)) == 0) {
-            mprPrintfError("Can't open log file %s\n", spec);
-            return EJS_ERR;
-        }
-    }
-    mprSetLogLevel(level);
-    mprSetLogHandler(logHandler);
-    mprSetLogFile(file);
-    return 0;
-}
-#endif
 
 
 void ejsRedirectLoggingToFile(MprFile *file, int level)

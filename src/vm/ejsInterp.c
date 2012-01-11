@@ -195,9 +195,6 @@ static void VM(Ejs *ejs, EjsFunction *fun, EjsAny *otherThis, int argc, int stac
     EjsFunction *f1, *f2;
     EjsNamespace *nsp;
     EjsString   *str;
-#if UNUSED
-    uchar       *mark;
-#endif
     int         i, offset, count, opcode, attributes, paused;
 
 #if BLD_UNIX_LIKE || (VXWORKS && !BLD_CC_DIAB)
@@ -674,9 +671,6 @@ static void VM(Ejs *ejs, EjsFunction *fun, EjsAny *otherThis, int argc, int stac
                 Stack after         [value]
          */
         CASE (EJS_OP_GET_SCOPED_NAME):
-#if UNUSED
-            mark = FRAME->pc - 1;
-#endif
             qname = GET_NAME();
             vp = ejsGetVarByName(ejs, NULL, qname, &lookup);
             if (unlikely(vp == 0)) {
@@ -695,9 +689,6 @@ static void VM(Ejs *ejs, EjsFunction *fun, EjsAny *otherThis, int argc, int stac
                 Stack after         [value]
          */
         CASE (EJS_OP_GET_SCOPED_NAME_EXPR):
-#if UNUSED
-            mark = FRAME->pc - 1;
-#endif
             qname.name = ejsToString(ejs, pop(ejs));
             v1 = pop(ejs);
             if (ejsIs(ejs, v1, Namespace)) {
@@ -2543,11 +2534,6 @@ static void storeProperty(Ejs *ejs, EjsObj *thisObj, EjsAny *vp, EjsName qname, 
     }
     if (slotNum < 0) {
         slotNum = ejsSetPropertyName(ejs, vp, slotNum, qname);
-#if UNUSED
-        //  MOB - cant set names to values which may be collected.
-        //  UNICODE
-        mprSetName(value, qname.name->value);
-#endif
     }
     if (!ejs->exception) {
         storePropertyToSlot(ejs, thisObj, vp, slotNum, value);
@@ -2595,11 +2581,6 @@ static void storePropertyToScope(Ejs *ejs, EjsName qname, EjsObj *value)
     } else {
         thisObj = vp = fp->function.moduleInitializer ? ejs->global : (EjsObj*) fp;
         slotNum = ejsSetPropertyName(ejs, vp, slotNum, qname);
-#if UNUSED
-        //  MOB - can't set name to a value that may be collected
-        //  UNICODE
-        mprSetName(value, qname.name->value);
-#endif
     }
     storePropertyToSlot(ejs, thisObj, vp, slotNum, value);
 }
@@ -2643,7 +2624,7 @@ int ejsRun(Ejs *ejs)
     EjsModule   *mp;
     int         next;
 
-    //  MOB OPT - should not examine all modules just to run a script
+    //  OPT - should not examine all modules just to run a script
     for (next = 0; (mp = mprGetNextItem(ejs->modules, &next)) != 0;) {
         if (!mp->initialized) {
             ejs->result = ejsRunInitializer(ejs, mp);
@@ -3074,16 +3055,6 @@ static void checkExceptionHandlers(Ejs *ejs)
     if (code->numHandlers == 0) {
         return;
     }
-#if UNUSED
-    /*
-        The PC is always one advanced from the throwing instruction. ie. the PC has advanced past the offending 
-        instruction so reverse by one.
-     */
-    uint            pc;
-    pc = (uint) (fp->pc - code->byteCode - 1);
-    mprAssert(pc >= 0);
-#endif
-
 rescan:
     if (!fp->function.inException || (ejs->exception == EST(StopIteration))) {
         /*
