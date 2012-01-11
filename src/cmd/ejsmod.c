@@ -17,7 +17,7 @@ static void require(MprList *list, cchar *name);
 
 /************************************ Code ************************************/
 
-MAIN(ejsmodMain, int argc, char **argv)
+MAIN(ejsmodMain, int argc, char **argv, char **envp)
 {
     Mpr             *mpr;
     EjsMod          *mp;

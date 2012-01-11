@@ -41,7 +41,7 @@ static void require(cchar *name);
 
 /************************************ Code ************************************/
 
-MAIN(ejsMain, int argc, char **argv)
+MAIN(ejsMain, int argc, char **argv, char **envp)
 {
     Mpr             *mpr;
     EcCompiler      *cp;

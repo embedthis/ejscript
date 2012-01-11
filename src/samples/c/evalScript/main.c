@@ -10,7 +10,7 @@
 
 /************************************ Code ************************************/
 
-MAIN(evalScript, int argc, char **argv)
+MAIN(evalScript, int argc, char **argv, char **envp)
 {
     if (argc != 2) {
         fprintf(stderr, "usage: main \"literalScript\"\n");

@@ -187,13 +187,6 @@ static EjsVoid *hs_listen(Ejs *ejs, EjsHttpServer *sp, int argc, EjsObj **argv)
     EjsObj          *loc;
     EjsPath         *documents;
 
-#if UNUSED
-    if (ejs->hosted) {
-        if ((options = ejsGetProperty(ejs, sp, ES_ejs_web_HttpServer_options)) != 0) {
-            sp->hosted = ejsGetPropertyByName(ejs, options, EN("unhosted")) != ESV(true);
-        }
-    }
-#endif
     if (!sp->hosted) {
         loc = (argc >= 1) ? argv[0] : ESV(null);
         if (loc != ESV(null)) {
@@ -219,7 +212,7 @@ static EjsVoid *hs_listen(Ejs *ejs, EjsHttpServer *sp, int argc, EjsObj **argv)
             return 0;
         }
         sp->endpoint = endpoint;
-        host = httpCreateHost();
+        host = httpCreateHost(NULL);
         httpSetHostIpAddr(host, sp->ip, sp->port);
 
         route = httpCreateConfiguredRoute(host, 1);
