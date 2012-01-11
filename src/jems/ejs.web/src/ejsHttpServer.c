@@ -667,11 +667,6 @@ static void incomingEjsData(HttpQueue *q, HttpPacket *packet)
             httpError(conn, HTTP_CODE_BAD_REQUEST, "Client supplied insufficient body data");
         }
         httpPutForService(q, packet, 0);
-#if UNUSED
-        if (rx->form) {
-            httpAddParamsFromQueue(q);
-        }
-#endif
     } else {
         httpJoinPacketForService(q, packet, 0);
     }
@@ -778,7 +773,7 @@ static void startEjsHandler(HttpQueue *q)
         ejsSendEvent(ejs, sp->emitter, "readable", req, req);
 
         /* Send EOF if form or upload and all content has been received.  */
-        if ((rx->form || rx->upload) /* UNUSED rx->startAfterContent */ && rx->eof) {
+        if ((rx->form || rx->upload) && rx->eof) {
             HTTP_NOTIFY(conn, 0, HTTP_NOTIFY_READABLE);
         }
     }
