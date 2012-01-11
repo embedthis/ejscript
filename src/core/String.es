@@ -80,6 +80,16 @@ module ejs {
         native function endsWith(test: String): Boolean
 
         /**
+            Expand tokens 
+            @param object containing tokens to expand
+            @param options Options hash
+            @option fill Set to a string to use for missing properties. Set to null to throw an exception for
+                missing properties.
+            @return Expanded string
+         */ 
+        native function expand(obj: Object, options: Object = null): String
+
+        /**
             Format arguments as a string. Use the string as a format specifier. The format specifier has the form:
             %[-+ #,][width][precision][type]. See printf(1) for the meaning of the various fields.
             @param args Array containing the data to format. 

@@ -439,6 +439,102 @@ static EjsBoolean *endsWith(Ejs *ejs, EjsString *sp, int argc, EjsObj **argv)
 }
 
 
+static void getPropertyValue(Ejs *ejs, EjsObj *obj, char *token, MprBuf *buf, cchar *fill)
+{
+    EjsAny      *vp;
+    EjsString   *svalue;
+    char        *rest;
+
+    do {
+        token = stok(token, ".", &rest);
+        if ((vp = ejsGetPropertyByName(ejs, obj, EN(token))) != 0) {
+            if (rest && ejsGetLength(ejs, vp) > 0) {
+                getPropertyValue(ejs, vp, rest, buf, fill);
+            } else {
+                svalue = ejsToString(ejs, vp);
+                mprPutStringToBuf(buf, svalue->value);
+            }
+        } else {
+            if (fill) {
+                if (*fill) {
+                    mprPutStringToBuf(buf, fill);
+                } else {
+                    mprPutStringToBuf(buf, token);
+                    mprPutCharToBuf(buf, '_');
+                    mprPutStringToBuf(buf, "UNKNOWN");
+                }
+            } else {
+                ejsThrowReferenceError(ejs, "Missing property %s", token);
+            }
+        }
+    } while ((token = schr(rest, '.')) != 0);
+}
+
+
+#if ES_String_expand
+/*
+    function expand(obj: Object, options: Object): String
+
+    Options:
+        fill: String to use for missing properties. Set to null to throw.
+
+    Expand ${token} references. Tokens are be simple properties that may include "." references.
+ */
+static EjsString *expandString(Ejs *ejs, EjsString *sp, int argc, EjsObj **argv)
+{
+    MprBuf      *buf;
+    EjsAny      *obj, *options, *vp;
+    char        *src, *cp, *tok, *fill;
+
+    fill = 0;
+
+    if (argc < 1) {
+        ejsThrowArgError(ejs, "Missing object argument");
+        return 0;
+    }
+    obj = argv[0];
+    options = (argc >= 2) ? argv[1] : 0;
+    if (options) {
+        if ((vp = ejsGetPropertyByName(ejs, options, EN("fill"))) != 0) {
+            if (vp != ESV(null) && vp != ESV(undefined)) {
+                fill = ejsToMulti(ejs, vp);
+            }
+        }
+    }
+    if (sp->length == 0) {
+        return ESV(empty);
+    }
+    //  UNICODE
+    if (schr(sp->value, '$') == 0) {
+        return sp;
+    }
+    buf = mprCreateBuf(0, 0);
+    for (src = (char*) sp->value; src < &sp->value[sp->length]; ) {
+        if (*src == '$') {
+            if (*++src == '{') {
+                for (cp = ++src; *cp && *cp != '}'; cp++) ;
+                tok = snclone(src, cp - src);
+            } else {
+                for (cp = src; *cp && (isalnum((int) *cp) || *cp == '_'); cp++) ;
+                tok = snclone(src, cp - src);
+            }
+            getPropertyValue(ejs, obj, tok, buf, fill);
+            if (src > sp->value && src[-1] == '{') {
+                src = cp + 1;
+            } else {
+                src = cp;
+            }
+
+        } else {
+            mprPutCharToBuf(buf, *src++);
+        }
+    }
+    mprAddNullToBuf(buf);
+    return ejsCreateString(ejs, mprGetBufStart(buf), mprGetBufLength(buf));
+}
+#endif /* ES_String_expand */
+
+
 /**
     Format the arguments
 
@@ -2706,6 +2802,9 @@ void ejsConfigureStringType(Ejs *ejs)
     ejsBindMethod(ejs, prototype, ES_String_concat, concatString);
     ejsBindMethod(ejs, prototype, ES_String_contains, containsString);
     ejsBindMethod(ejs, prototype, ES_String_endsWith, endsWith);
+#if ES_String_expand
+    ejsBindMethod(ejs, prototype, ES_String_expand, expandString);
+#endif /* ES_String_expand */
     ejsBindMethod(ejs, prototype, ES_String_format, formatString);
     ejsBindMethod(ejs, prototype, ES_String_iterator_get, getStringIterator);
     ejsBindMethod(ejs, prototype, ES_String_iterator_getValues, getStringValues);
