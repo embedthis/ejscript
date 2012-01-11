@@ -153,11 +153,15 @@ module ejs {
             @param options Find options
             @option recurse Set to true to examine sub-directories. 
             @option dirsLast Set to true to list directories last in the list. By default, directories are first.
+            @option exclude Regular expression of files to exclude
             @return Return a list of matching files and directories
          */
         function find(glob = "*", options = {recurse: true}): Array {
             function recursiveFind(path: Path, pattern: RegExp, level: Number): Array {
                 let result: Array = []
+                if (options.exclude && path.match(options.exclude)) {
+                    return result
+                }
                 if (!options.dirsLast) {
                     if (Config.OS == "WIN" || Config.OS == "CYGWIN") {
                         if (path.basename.toString().toLowerCase().match(pattern)) {
@@ -217,7 +221,7 @@ module ejs {
             Get a list of files in a directory. The returned array contains the base path portion only, relative to the
             path itself. This routine does not recurse into sub-directories. To get a list of files in sub-directories,
             use find().
-            @param enumDirs If set to true, then dirList will include sub-directories in the returned list of files.
+            @param enumDirs If set to true, then files will include sub-directories in the returned list of files.
             @return An Array of Path objects for each file in the directory.
          */
         native function files(enumDirs: Boolean = false): Array 
