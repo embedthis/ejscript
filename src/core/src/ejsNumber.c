@@ -375,8 +375,7 @@ int ejsIsNan(double f)
 #if BLD_WIN_LIKE
     return _isnan(f);
 #elif VXWORKS
-    /* TODO */
-    return 0;
+    return isnan(f);
 #else
     return (f == FP_NAN);
 #endif
@@ -389,8 +388,7 @@ bool ejsIsInfinite(MprNumber f)
 #if BLD_WIN_LIKE
     return !_finite(f);
 #elif VXWORKS
-    /* TODO */
-    return 0;
+    return isinf(f);
 #else
     return (f == FP_INFINITE);
 #endif
