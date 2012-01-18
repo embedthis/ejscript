@@ -20,7 +20,6 @@
         Path.perms = NNN                        Permissions getter / setter
         Path.append(line)                       Append a line to a file (open, write, close)
         Path.isReadable, isWritable, isHidden, isSpecial, is Mount
-        Path.files(/regexp/)                    
         Path.rmtree()                           Recursive removal
         Path.validate                           Validate a path.
  */
@@ -42,7 +41,7 @@ module ejs {
             Create a new Path object and set the path's location.
             @param path Name of the path to associate with this path object. 
          */
-        native function Path(path: String)
+        native function Path(path: String = ".")
 
         /**
             An equivalent absolute path equivalent for the current path. The path is normalized and uses the native system
@@ -156,6 +155,7 @@ module ejs {
             @option exclude Regular expression of files to exclude
             @return Return a list of matching files and directories
          */
+        # DEPRECATED
         function find(glob = "*", options = {recurse: true}): Array {
             function recursiveFind(path: Path, pattern: RegExp, level: Number): Array {
                 let result: Array = []
@@ -203,7 +203,7 @@ module ejs {
         }
 
         /**
-            TODO - should do pattern matching like find()
+            TODO - should do pattern matching
             @hide
          */
         function findAbove(name: String): Path {
@@ -218,20 +218,31 @@ module ejs {
         }
 
         /**
-            Get a list of files in a directory. The returned array contains the base path portion only, relative to the
-            path itself. This routine does not recurse into sub-directories. To get a list of files in sub-directories,
-            use find().
-            @param enumDirs If set to true, then files will include sub-directories in the returned list of files.
+            Get a list of files in a directory or subdirectory.
+            Use the $glob method for shell style wild card support.
+            @param options If set to true, then files will include sub-directories in the returned list of files.
+            @param basenames Set to true to include only the basename portion of filenames in the results. If selected,
+                any "include" or "exclude" patterns will only match the basename and not the full path.
+            @option depthFirst Do a depth first traversal. If "dirs" is specified, the directories will be shown after
+                the files in the directory. Otherwise, directories will be listed first.
+            @option descend Descend into subdirectories
+            @option exclude Regular expression pattern of files to exclude from the results. Matches the entire path unless
+                "basenames" is selected.
+            @option hidden Show hidden files starting with "."
+            @option include Regular expression pattern of files to include in the results. Matches the entire returned path
+                unless "basenames" is selected.
+            @option missing Report missing directories by throwing an exception.
+            @option nodirs Exclude directories in the file list. The default is to include directories.
             @return An Array of Path objects for each file in the directory.
          */
-        native function files(enumDirs: Boolean = false): Array 
-
+        native function files(options: Object = null): Array 
+        
         /**
             The file system containing this Path 
-            @hide
+            @return The FileSystem object for this path
          */
-        #FUTURE
-        native function get fileSystem(): FileSystem
+        function get fileSystem(): FileSystem
+            FileSystem(this)
 
         /**
             Get iterate over any files contained under this path (assuming it is a directory) "for (v in files)". 
@@ -250,6 +261,24 @@ module ejs {
                 for each (f in Path("."))
          */
         override iterator native function getValues(): Iterator
+
+        /**
+            Do Posix glob style file matching.
+            @param pattern String pattern to match with files. The wildcards "*", "**" and "?" are the only wild card 
+                patterns supported. The "**" pattern matches any number of directories. The Posix "[]" and "{a,b}" style
+                expressions are not supported.
+            @param options If set to true, then files will include sub-directories in the returned list of files.
+            @option depthFirst Do a depth first traversal. If "dirs" is specified, the directories will be shown after
+                the files in the directory. Otherwise, directories will be listed first.
+            @option descend Descend into subdirectories
+            @option exclude Regular expression pattern of files to exclude from the results. Matches the entire path.
+            @option hidden Show hidden files starting with "."
+            @option include Regular expression pattern of files to include in the results. Matches the entire returned path.
+            @option missing Report missing directories by throwing an exception.
+            @option nodirs Exclude directories in the file list. The default is to include directories.
+            @return An Array of Path objects for each file in the directory.
+         */
+        native function glob(pattern: String, options: Object = null): Array 
 
         /**
             Does the file path have a drive spec (C:) in it's name. Only relevant on Windows like systems.
@@ -315,7 +344,8 @@ module ejs {
             Make a new directory and all required intervening directories. If the directory already exists, 
                 the function returns without any further action. 
             @param options
-            @options permissions Directory permissions to use for all created directories. Set to a numeric Posix permissions mask.
+            @options permissions Directory permissions to use for all created directories. Set to a numeric 
+                Posix permissions mask.
             @options owner String representing the file owner for all created directories.
             @options group String representing the file group for all created directories.
             @return True if the directory can be made or already exists
@@ -331,6 +361,7 @@ module ejs {
         native function makeLink(target: Path, hard: Boolean = false): Void
 
         //  TODO - make an auto cleanup temporary. ie. remove automatically somehow
+        //  MOB - how to create a temp in the standard system temp location
         /**
             Create a new temporary file. The temp file is located in the directory specified by the Path object. 
             @returns a new Path object for the temp file.
@@ -544,7 +575,7 @@ module ejs {
             if (name == "" || name == "/") {
                 throw new ArgError("Bad path for removeAll")
             }
-            for each (f in find('*', {recurse: true, dirsLast: true})) {
+            for each (f in files({descend: true, depthFirst: true})) {
                 if (!f.remove()) {
                     passed = false
                 }
@@ -567,7 +598,7 @@ module ejs {
             @return A new path with the given extension.
          */
         function replaceExt(ext: String): Path {
-            if (ext[0] != '.') {
+            if (ext && ext[0] != '.') {
                 ext = "." + ext
             }
             return this.trimExt() + ext

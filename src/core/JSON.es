@@ -70,6 +70,7 @@ module ejs {
         @param obj Object to serialize. If options is null, each option takes the defaults described.
         @param options Serialization options
         @option baseClasses Boolean determining if base class properties will be serialized. Defaults to false.
+        @option commas Boolean Always put commas after the last property in an object. Defaults to false.
         @option depth Number indiciating the depth to recurse when converting properties to literals. If set to zero, 
             the depth is infinite. Defaults to zero.
         @option indent Number|String Indentation of nested structures. If omitted, the result is packed without any

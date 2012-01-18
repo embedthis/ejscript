@@ -64,7 +64,9 @@ module ejs {
 
         /**
             See if the array contains an element using strict equality "===". This call searches from the start of the 
-            array for the specified element.  
+            array for the specified element. Note that some types are not interned like strings and so contains may
+            return false if a different object with the same value is contained in the array. This can happen with Path
+            types.
             @param element The object to search for.
             @return True if the element is found. Otherwise false.
             @spec ejs

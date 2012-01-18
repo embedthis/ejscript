@@ -1204,7 +1204,7 @@ static char *probe(Ejs *ejs, cchar *path, int minVersion, int maxVersion)
     if ((ext = strrchr(base, '.')) != 0) {
         *ext++ = '\0';
     }
-    files = mprGetPathFiles(dir, 0);
+    files = mprGetPathFiles(dir, MPR_PATH_RELATIVE);
     nameLen = (int) strlen(base);
     bestVersion = -1;
     best = 0;

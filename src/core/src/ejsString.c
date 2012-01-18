@@ -439,39 +439,45 @@ static EjsBoolean *endsWith(Ejs *ejs, EjsString *sp, int argc, EjsObj **argv)
 }
 
 
-static void getPropertyValue(Ejs *ejs, EjsObj *obj, char *token, MprBuf *buf, cchar *fill)
+/*
+    Lookup a token value. This will be called recursively for each name portion of a token. i.e. ${part.part.part}
+ */
+static void getTokenValue(Ejs *ejs, EjsObj *obj, cchar *fullToken, cchar *token, MprBuf *buf, cchar *fill, EjsString *join)
 {
     EjsAny      *vp;
     EjsString   *svalue;
-    char        *rest;
+    char        *rest, *first;
 
-    do {
-        token = stok(token, ".", &rest);
-        if ((vp = ejsGetPropertyByName(ejs, obj, EN(token))) != 0) {
-            if (rest && ejsGetLength(ejs, vp) > 0) {
-                getPropertyValue(ejs, vp, rest, buf, fill);
+    rest = (char*) (schr(token, '.') ? sclone(token) : token);
+    first = stok(rest, ".", &rest);
+    
+    if ((vp = ejsGetPropertyByName(ejs, obj, EN(first))) != 0) {
+        if (rest && ejsGetLength(ejs, vp) > 0) {
+            getTokenValue(ejs, vp, fullToken, rest, buf, fill, join);
+        } else {
+            if (ejsIs(ejs, vp, Array)) {
+                svalue = ejsJoinArray(ejs, vp, join); 
             } else {
                 svalue = ejsToString(ejs, vp);
-                mprPutStringToBuf(buf, svalue->value);
+            }
+            mprPutStringToBuf(buf, svalue->value);
+        }
+    } else {
+        if (fill) {
+            if (smatch(fill, "${}")) {
+                mprPutStringToBuf(buf, "${");
+                mprPutStringToBuf(buf, fullToken);
+                mprPutCharToBuf(buf, '}');
+            } else if (*fill) {
+                mprPutStringToBuf(buf, fill);
             }
         } else {
-            if (fill) {
-                if (*fill) {
-                    mprPutStringToBuf(buf, fill);
-                } else {
-                    mprPutStringToBuf(buf, "${");
-                    mprPutStringToBuf(buf, token);
-                    mprPutCharToBuf(buf, '}');
-                }
-            } else {
-                ejsThrowReferenceError(ejs, "Missing property %s", token);
-            }
+            ejsThrowReferenceError(ejs, "Missing property %s", fullToken);
         }
-    } while ((token = schr(rest, '.')) != 0);
+    }
 }
 
 
-#if ES_String_expand
 /*
     function expand(obj: Object, options: Object): String
 
@@ -484,10 +490,11 @@ static EjsString *expandString(Ejs *ejs, EjsString *sp, int argc, EjsObj **argv)
 {
     MprBuf      *buf;
     EjsAny      *obj, *options, *vp;
+    EjsString   *join;
     char        *src, *cp, *tok, *fill;
 
     fill = 0;
-
+    join = ejsCreateStringFromAsc(ejs, " ");
     if (argc < 1) {
         ejsThrowArgError(ejs, "Missing object argument");
         return 0;
@@ -498,6 +505,11 @@ static EjsString *expandString(Ejs *ejs, EjsString *sp, int argc, EjsObj **argv)
         if ((vp = ejsGetPropertyByName(ejs, options, EN("fill"))) != 0) {
             if (vp != ESV(null) && vp != ESV(undefined)) {
                 fill = ejsToMulti(ejs, vp);
+            }
+        }
+        if ((vp = ejsGetPropertyByName(ejs, options, EN("join"))) != 0) {
+            if (vp != ESV(null) && vp != ESV(undefined)) {
+                join = ejsToString(ejs, vp);
             }
         }
     }
@@ -518,7 +530,7 @@ static EjsString *expandString(Ejs *ejs, EjsString *sp, int argc, EjsObj **argv)
                 for (cp = src; *cp && (isalnum((int) *cp) || *cp == '_'); cp++) ;
                 tok = snclone(src, cp - src);
             }
-            getPropertyValue(ejs, obj, tok, buf, fill);
+            getTokenValue(ejs, obj, tok, tok, buf, fill, join);
             if (src > sp->value && src[-1] == '{') {
                 src = cp + 1;
             } else {
@@ -532,7 +544,6 @@ static EjsString *expandString(Ejs *ejs, EjsString *sp, int argc, EjsObj **argv)
     mprAddNullToBuf(buf);
     return ejsCreateString(ejs, mprGetBufStart(buf), mprGetBufLength(buf));
 }
-#endif /* ES_String_expand */
 
 
 /**
@@ -2644,9 +2655,11 @@ static void unlinkString(EjsString *sp)
 
 EjsString *ejsCreateString(Ejs *ejs, MprChar *value, ssize len)
 {
-    mprAssert(0 <= len && len < MAXINT);
-    if (value == 0 || len < 0) {
+    if (value == 0) {
         return ESV(empty);
+    }
+    if (len < 0) {
+        len = slen(value);
     }
     return ejsInternWide(ejs, value, len);
 }
@@ -2802,9 +2815,7 @@ void ejsConfigureStringType(Ejs *ejs)
     ejsBindMethod(ejs, prototype, ES_String_concat, concatString);
     ejsBindMethod(ejs, prototype, ES_String_contains, containsString);
     ejsBindMethod(ejs, prototype, ES_String_endsWith, endsWith);
-#if ES_String_expand
     ejsBindMethod(ejs, prototype, ES_String_expand, expandString);
-#endif /* ES_String_expand */
     ejsBindMethod(ejs, prototype, ES_String_format, formatString);
     ejsBindMethod(ejs, prototype, ES_String_iterator_get, getStringIterator);
     ejsBindMethod(ejs, prototype, ES_String_iterator_getValues, getStringValues);

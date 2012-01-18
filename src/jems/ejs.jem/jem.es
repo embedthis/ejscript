@@ -439,10 +439,10 @@ print(e)
             //  TODO - remove 1 ||
             if (jem.package && (1 || jem.package.ejs)) {
                 for each (e in [ext.es, ext.js]) {
-                    files += find(dir, "*" + e, true)
+                    files += find(dir, "*" + e, {descend: true})
                 }
             } else {
-                files = find(dir.join("lib"), "*" + ext.js, true)
+                files = find(dir.join("lib"), "*" + ext.js, {descend: true})
             }
             //  TODO - our should be just do lib as per CommonJS
             files -= ["build.es", "install.es", "remove.es"]
@@ -482,13 +482,13 @@ print(e)
                 }
             } else {
                 //  MOB -- need better filtering. Perhaps a file list would be better
-                files =  find(".", "*" + libext, true)
-                files += find(".", "*.mod", true)
-                files += find(".", "*.es", true)
-                files += find("doc", "*", true)
-                files += find("bin", "*", true)
-                files += find("lib", "*", true)
-                files += find("test", "*", true)
+                files =  find(".", "*" + libext, {descend: true})
+                files += find(".", "*.mod", {descend: true})
+                files += find(".", "*.es", {descend: true})
+                files += find("doc", "*", {descend: true})
+                files += find("bin", "*", {descend: true})
+                files += find("lib", "*", {descend: true})
+                files += find("test", "*", {descend: true})
                 for each (f in files) {
                     if (f.isRegular) {
                         addToTar(tar, f)
@@ -705,14 +705,14 @@ print(e)
     function copyTree(from: Path, to: Path, pattern: String? = null) {
         from = from.relative
         makeDir(to.join(from.dirname))
-        for each (f in find(from, pattern, true)) {
+        for each (f in find(from, pattern, {descend: true})) {
             cp(f, to.join(f))
         }
     }
 */
 
     function installModules(jem: Jem): Void {
-        for each (f in find(jem.local.join(filenames.cache), "*" + ext.mod, true)) {
+        for each (f in find(jem.local.join(filenames.cache), "*" + ext.mod, {descend: true})) {
             let dest = dirs.modules.join(Path(f).basename)
             log(1, "INSTALL", dest)
             cp(f, dest)
@@ -720,7 +720,7 @@ print(e)
     }
 
     function installNativeModules(jem: Jem): Void {
-        for each (f in find(jem.local.join(filenames.cache), "*" + ext.so, true)) {
+        for each (f in find(jem.local.join(filenames.cache), "*" + ext.so, {descend: true})) {
             let dest = dirs.lib.join(Path(f).basename)
             log(1, "INSTALL", dest)
             cp(f, dest)

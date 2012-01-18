@@ -83,8 +83,10 @@ module ejs {
             Expand tokens 
             @param object containing tokens to expand
             @param options Options hash
-            @option fill Set to a string to use for missing properties. Set to null to throw an exception for
-                missing properties.
+            @option fill Set to a string to use for missing properties. Set to undefined or omit options to 
+                throw an exception for missing properties. Set fill to '${}' to preserve undefined tokens as-is. 
+                This permits multi-pass expansions.
+            @option join Character to use to join array elements. Defaults to space.
             @return Expanded string
          */ 
         native function expand(obj: Object, options: Object = null): String

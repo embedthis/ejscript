@@ -193,6 +193,9 @@ module ejs {
         @param dest Destination object
         @param src Source object
         @param options Control options
+        @option combine Boolean. If true, then support key prefixes "+", "=", "-" to add, assign and subtract key values.
+            When combining string properties, values will be appended using a space separator. Extra spaces will not be removed on subtraction.
+            Arrays with string values may also be combined using the key prefixes. 
         @option overwrite Boolean. If true, then overwrite existing properties in the destination object. Defaults to true.
         @option deep Boolean. If true, then recursively copy the properties of any objects referenced in the source object.
             Otherwise, the copy is only one level deep. Defaults to true.

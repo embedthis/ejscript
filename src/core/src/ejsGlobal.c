@@ -52,9 +52,12 @@ static EjsObj *g_blend(Ejs *ejs, EjsObj *unused, int argc, EjsObj **argv)
     options = (argc >= 3) ? argv[2] : 0;
     if (options) {
         flags = 0;
+        /* Default to true */
+        flags |= ejsGetPropertyByName(ejs, options, EN("combine")) == ESV(true) ? EJS_BLEND_COMBINE : 0;
         flags |= ejsGetPropertyByName(ejs, options, EN("functions")) == ESV(true) ? EJS_BLEND_FUNCTIONS : 0;
         flags |= ejsGetPropertyByName(ejs, options, EN("trace")) == ESV(true) ? EJS_BLEND_TRACE : 0;
 
+        /* Default to false */
         flags |= ejsGetPropertyByName(ejs, options, EN("overwrite")) == ESV(false) ? 0 : EJS_BLEND_OVERWRITE;
         flags |= ejsGetPropertyByName(ejs, options, EN("subclass")) == ESV(false) ? 0 : EJS_BLEND_SUBCLASSES;
         flags |= ejsGetPropertyByName(ejs, options, EN("deep")) == ESV(false) ? 0 : EJS_BLEND_DEEP;
@@ -182,14 +185,17 @@ static EjsString *g_md5(Ejs *ejs, EjsObj *unused, int argc, EjsObj **argv)
 int ejsBlendObject(Ejs *ejs, EjsObj *dest, EjsObj *src, int flags)
 {
     EjsTrait    *trait;
-    EjsObj      *vp, *dp;
-    EjsName     name;
-    int         i, count, start, deep, functions, overwrite, privateProps, trace;
+    EjsObj      *vp, *dp, *item;
+    EjsName     qname, trimmedName;
+    EjsArray    *ap;
+    char        *str;
+    int         i, j, count, start, deep, functions, overwrite, privateProps, trace, kind, combine, cflags;
 
     count = ejsGetLength(ejs, src);
     start = (flags & EJS_BLEND_SUBCLASSES) ? 0 : TYPE(src)->numInherited;
     deep = (flags & EJS_BLEND_DEEP) ? 1 : 0;
     overwrite = (flags & EJS_BLEND_OVERWRITE) ? 1 : 0;
+    combine = (flags & EJS_BLEND_COMBINE) ? 1 : 0;
     functions = (flags & EJS_BLEND_FUNCTIONS) ? 1 : 0;
     privateProps = (flags & EJS_BLEND_PRIVATE) ? 1 : 0;
     trace = (flags & EJS_BLEND_TRACE) ? 1 : 0;
@@ -206,26 +212,105 @@ int ejsBlendObject(Ejs *ejs, EjsObj *dest, EjsObj *src, int flags)
         if (!functions && ejsIsFunction(ejs, ejsGetProperty(ejs, src, i))) {
             continue;
         }
-        name = ejsGetPropertyName(ejs, src, i);
-        if (!privateProps && ejsContainsAsc(ejs, name.space, ",private") >= 0) {
+        qname = ejsGetPropertyName(ejs, src, i);
+        if (!privateProps && ejsContainsAsc(ejs, qname.space, ",private") >= 0) {
             continue;
         }
         if (trace) {
-            mprLog(0, "NAME %N", name);
+            mprLog(0, "Blend name %N", qname);
         }
-        /* NOTE: treats arrays as primitive types */
-        if (deep && !ejsIs(ejs, vp, Array) && !ejsIsXML(ejs, vp) && ejsGetLength(ejs, vp) > 0) {
-            if ((dp = ejsGetPropertyByName(ejs, dest, name)) == 0 || ejsGetLength(ejs, dp) == 0) {
-                ejsSetPropertyByName(ejs, dest, name, ejsClonePot(ejs, vp, deep));
+
+        if (combine) {
+            kind = qname.name->value[0];
+            cflags = flags;
+            if (kind == '+') {
+                cflags |= EJS_BLEND_ADD;
+                trimmedName = N(qname.space->value, &qname.name->value[1]);
+            } else if (kind == '-') {
+                cflags |= EJS_BLEND_SUB;
+                trimmedName = N(qname.space->value, &qname.name->value[1]);
+            } else if (kind == '=') {
+                cflags |= EJS_BLEND_ASSIGN;
+                trimmedName = N(qname.space->value, &qname.name->value[1]);
             } else {
-                ejsBlendObject(ejs, dp, vp, flags);
+                trimmedName = qname;
             }
+            if ((dp = ejsGetPropertyByName(ejs, dest, trimmedName)) == 0) {
+                /* Destination property missing */
+                if (cflags & EJS_BLEND_SUB) {
+                    return 0;
+                }
+                if (!ejsIsPot(ejs, vp)) {
+                    ejsSetPropertyByName(ejs, dest, trimmedName, ejsClone(ejs, vp, 1));
+                    continue;
+                }
+                dp = ejsCreateObj(ejs, vp->type, 0);
+                ejsSetPropertyByName(ejs, dest, trimmedName, dp);
+            }
+            /* Destination present */
+            if (ejsIs(ejs, dp, Array)) {
+                if (cflags & EJS_BLEND_ADD) {
+                    if (ejsIs(ejs, vp, Array)) {
+                        ap = (EjsArray*) vp;
+                        for (j = 0; j < ap->length; j++) {
+                            item = ejsGetProperty(ejs, ap, j);
+                            if (ejsLookupItem(ejs, (EjsArray*) dp, item) < 0) {
+                                ejsAddItem(ejs, (EjsArray*) dp, ejsGetProperty(ejs, ap, j));
+                            }
+                        }
+                    } else {
+                        ejsAddItem(ejs, (EjsArray*) dp, vp);
+                    }
+                } else if (cflags & EJS_BLEND_SUB) {
+                    if (ejsIs(ejs, vp, Array)) {
+                        ap = (EjsArray*) vp;
+                        for (j = 0; j < ap->length; j++) {
+                            ejsRemoveItem(ejs, (EjsArray*) dp, ejsGetProperty(ejs, ap, j), 1);
+                        }
+                    } else {
+                        ejsRemoveItem(ejs, (EjsArray*) dp, ejsToString(ejs, vp), 1);
+                    }
+                } else {
+                    /* Assign */
+                    ejsSetPropertyByName(ejs, dest, trimmedName, ejsClone(ejs, vp, deep));
+                }
+
+            } else if (ejsIsPot(ejs, dp)) {
+                ejsBlendObject(ejs, dp, vp, flags);
+
+            } else if (ejsIs(ejs, dp, String)) {
+                if (cflags & EJS_BLEND_ADD) {
+                    str = sjoin(((EjsString*) dp)->value, " ", ejsToMulti(ejs, vp), NULL);
+                    ejsSetPropertyByName(ejs, dest, trimmedName, ejsCreateString(ejs, str, -1));
+                    
+                } else if (cflags & EJS_BLEND_SUB) {
+                    str = sreplace(sclone(((EjsString*) dp)->value), ejsToMulti(ejs, vp), "");
+                    ejsSetPropertyByName(ejs, dest, trimmedName, ejsCreateString(ejs, str, -1));
+                    
+                } else {
+                    /* Assign */
+                    ejsSetPropertyByName(ejs, dest, trimmedName, ejsClone(ejs, vp, deep));
+                }
+            }
+
         } else {
-            /* Primitive type (including arrays) */
-            if (overwrite) {
-                ejsSetPropertyByName(ejs, dest, name, vp);
-            } else if (ejsLookupProperty(ejs, dest, name) < 0) {
-                ejsSetPropertyByName(ejs, dest, name, vp);
+            /* 
+                NOTE: non-combine blend treats arrays as primitive types 
+             */
+            if (deep && !ejsIs(ejs, vp, Array) && !ejsIsXML(ejs, vp) && ejsGetLength(ejs, vp) > 0) {
+                if ((dp = ejsGetPropertyByName(ejs, dest, qname)) == 0 || ejsGetLength(ejs, dp) == 0) {
+                    ejsSetPropertyByName(ejs, dest, qname, ejsClonePot(ejs, vp, deep));
+                } else {
+                    ejsBlendObject(ejs, dp, vp, flags);
+                }
+            } else {
+                /*  Primitive type (including arrays) */
+                //  MOB - rethink this. Should the array be cloned?
+                if (overwrite) {
+                    ejsSetPropertyByName(ejs, dest, qname, vp);
+                } else if (ejsLookupProperty(ejs, dest, qname) < 0) {
+                    ejsSetPropertyByName(ejs, dest, qname, vp);
+                }
             }
         }
     }

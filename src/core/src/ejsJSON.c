@@ -24,6 +24,7 @@ typedef struct Json {
     EjsFunction *replacer;
     char        *indent;
     int         baseClasses;
+    int         commas;
     int         depth;
     int         hidden;
     int         namespaces;
@@ -49,7 +50,7 @@ EjsObj *g_deserialize(Ejs *ejs, EjsObj *unused, int argc, EjsObj **argv)
 
 /*
     function serialize(obj: Object, options: Object = null): String
-        Options: baseClasses, depth, indent, hidden, pretty, replacer
+        Options: baseClasses, commas, depth, indent, hidden, pretty, replacer
  */
 static EjsString *g_serialize(Ejs *ejs, EjsObj *unused, int argc, EjsObj **argv)
 {
@@ -455,6 +456,9 @@ EjsString *ejsSerializeWithOptions(Ejs *ejs, EjsAny *vp, EjsObj *options)
                 }
             }
         }
+        if ((arg = ejsGetPropertyByName(ejs, options, EN("commas"))) != 0) {
+            json.commas = (arg == ESV(true));
+        }
         if ((arg = ejsGetPropertyByName(ejs, options, EN("hidden"))) != 0) {
             json.hidden = (arg == ESV(true));
         }
@@ -483,6 +487,7 @@ EjsString *ejsSerialize(Ejs *ejs, EjsAny *vp, int flags)
     memset(&json, 0, sizeof(Json));
     json.depth = 99;
     json.pretty = (flags & EJS_JSON_SHOW_PRETTY) ? 1 : 0;
+    json.commas = (flags & EJS_JSON_SHOW_COMMAS) ? 1 : 0;
     json.hidden = (flags & EJS_JSON_SHOW_HIDDEN) ? 1 : 0;
     json.namespaces = (flags & EJS_JSON_SHOW_NAMESPACES) ? 1 : 0;
     json.baseClasses = (flags & EJS_JSON_SHOW_SUBCLASSES) ? 1 : 0;
@@ -553,8 +558,8 @@ static EjsString *serialize(Ejs *ejs, EjsAny *vp, Json *json)
                 for (i = 0; i < ejs->serializeDepth; i++) {
                     mprPutStringToWideBuf(json->buf, "  ");
                 }
-            } else {
-                if (json->indent) {
+            } else if (json->indent) {
+                for (i = 0; i < ejs->serializeDepth; i++) {
                     mprPutStringToWideBuf(json->buf, json->indent);
                 }
             }
@@ -603,7 +608,7 @@ static EjsString *serialize(Ejs *ejs, EjsAny *vp, Json *json)
                 }
                 mprPutBlockToBuf(json->buf, sv->value, sv->length * sizeof(MprChar));
             }
-            if ((slotNum + 1) < count) {
+            if ((slotNum + 1) < count || json->commas) {
                 mprPutCharToWideBuf(json->buf, ',');
             }
             if (json->pretty || json->indent) {
@@ -615,7 +620,11 @@ static EjsString *serialize(Ejs *ejs, EjsAny *vp, Json *json)
     --ejs->serializeDepth; 
     if (json->pretty || json->indent) {
         for (i = ejs->serializeDepth; i > 0; i--) {
-            mprPutStringToWideBuf(json->buf, "  ");
+            if (json->indent) {
+                mprPutStringToWideBuf(json->buf, json->indent);
+            } else {
+                mprPutStringToWideBuf(json->buf, "  ");
+            }
         }
     }
     mprPutCharToWideBuf(json->buf, isArray ? ']' : '}');

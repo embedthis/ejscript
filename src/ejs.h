@@ -496,7 +496,7 @@ extern EjsName ejsEmptyName(struct Ejs *ejs, cchar *name);
         to create multiple interpreters and returns a reference to be used in subsequent Ejscript API calls.
     @stability Evolving.
     @defgroup Ejs Ejs
-    @see ejsAddImmutable ejsAppendSearchPath ejsClearException ejsCloneVM ejsCreate ejsCreateService ejsCreateVM 
+    @see ejsAddImmutable ejsAppendSearchPath ejsClearException ejsCloneVM ejsCreateService ejsCreateVM 
         ejsDestroyVM ejsEvalFile ejsEvalModule ejsEvalScript ejsExit ejsGetImmutable ejsGetImmutableByName 
         ejsGetVarByName ejsGethandle ejsLog ejsLookupScope ejsLookupVar ejsLookupVarWithNamespaces ejsReportError 
         ejsRun ejsRunProgram ejsSetDispatcher ejsSetSearchPath ejsThrowException 
@@ -1275,12 +1275,16 @@ extern struct EjsString *ejsObjToJSON(Ejs *ejs, EjsObj *obj, int argc, EjsObj **
 /*
     ejsBlendObject flags
  */
-#define EJS_BLEND_DEEP          0x1         /**< Flag for ejsBlendObject to copy nested object recursively */
-#define EJS_BLEND_FUNCTIONS     0x2         /**< Flag for ejsBlendObject to copy function properties */
-#define EJS_BLEND_OVERWRITE     0x4         /**< Flag for ejsBlendObject to overwrite existing properties */
-#define EJS_BLEND_SUBCLASSES    0x8         /**< Flag for ejsBlendObject to copy subclassed properties */
-#define EJS_BLEND_PRIVATE       0x10        /**< Flag for ejsBlendObject to copy private properties */
-#define EJS_BLEND_TRACE         0x20        /**< Flag for ejsBlendObject to trace blend operations to the log */
+#define EJS_BLEND_COMBINE       0x1         /**< Flag for ejsBlendObject to combine key values */
+#define EJS_BLEND_DEEP          0x2         /**< Flag for ejsBlendObject to copy nested object recursively */
+#define EJS_BLEND_FUNCTIONS     0x4         /**< Flag for ejsBlendObject to copy function properties */
+#define EJS_BLEND_OVERWRITE     0x8         /**< Flag for ejsBlendObject to overwrite existing properties */
+#define EJS_BLEND_SUBCLASSES    0x10        /**< Flag for ejsBlendObject to copy subclassed properties */
+#define EJS_BLEND_PRIVATE       0x20        /**< Flag for ejsBlendObject to copy private properties */
+#define EJS_BLEND_TRACE         0x40        /**< Flag for ejsBlendObject to trace blend operations to the log */
+#define EJS_BLEND_ADD           0x80        /**< Flag for ejsBlendObject for "+" property blend */
+#define EJS_BLEND_SUB           0x100       /**< Flag for ejsBlendObject for "-" property blend */
+#define EJS_BLEND_ASSIGN        0x200       /**< Flag for ejsBlendObject for "=" property blend */
 
 //  MOB - rename ejsBlend
 /**
@@ -1644,10 +1648,11 @@ extern EjsString *ejsToJSON(Ejs *ejs, EjsAny *obj, EjsObj *options);
 /*
     Serialization flags
  */
-#define EJS_JSON_SHOW_SUBCLASSES    0x1     /**< ejsSerialize flag to include subclass properties */
+#define EJS_JSON_SHOW_COMMAS        0x1     /**< ejsSerialize flag to always put commas after properties*/
 #define EJS_JSON_SHOW_HIDDEN        0x2     /**< ejsSerialize flag to include hidden properties */
 #define EJS_JSON_SHOW_NAMESPACES    0x4     /**< ejsSerialize flag to include namespaces in names */
 #define EJS_JSON_SHOW_PRETTY        0x8     /**< ejsSerialize flag to render in human-readible multiline format */
+#define EJS_JSON_SHOW_SUBCLASSES    0x10    /**< ejsSerialize flag to include subclass properties */
 
 /**
     Serialize a variable into JSON format
@@ -1655,10 +1660,11 @@ extern EjsString *ejsToJSON(Ejs *ejs, EjsAny *obj, EjsObj *options);
     @param obj Value to cast
     @param flags Serialization options. The supported options are:
         <ul>
-        <li> EJS_JSON_SHOW_SUBCLASSES - Include subclass properties </li>
+        <li> EJS_JSON_SHOW_COMMAS - Always use commas after properties</li> 
         <li> EJS_JSON_SHOW_HIDDEN - Include hidden properties </li>
         <li> EJS_JSON_SHOW_NAMESPACES - Include namespaces in property names </li>
         <li> EJS_JSON_SHOW_PRETTY - Use human-readable multiline presentation </li> 
+        <li> EJS_JSON_SHOW_SUBCLASSES - Include subclass properties </li>
         </ul>
     @return A string object
     @ingroup EjsString
@@ -1719,7 +1725,7 @@ extern void ejsManageString(struct EjsString *sp, int flags);
     @stability Evolving
     @defgroup EjsArray EjsArray
     @see EjsArray ejsAddItem ejsClearArray ejsCloneArray ejsCreateArray ejsGetFirstItem ejsGetItem ejsGetLastItem 
-        ejsGetNextItem ejsGetPrevItem ejsInsertItem ejsJoinArray ejsLookupItem ejsRemoveItem ejsRemoveItemAtPos 
+        ejsGetNextItem ejsGetPrevItem ejsInsertItem ejsAppendArray ejsLookupItem ejsRemoveItem ejsRemoveItemAtPos 
         ejsRemoveLastItem 
  */
 typedef struct EjsArray {
@@ -1728,6 +1734,17 @@ typedef struct EjsArray {
     int             length;             /**< Array length property */
 } EjsArray;
 
+
+/** 
+    Append an array
+    @description This will append the contents of the source array to the destination array
+    @param ejs Ejs reference returned from #ejsCreateVM
+    @param dest Destination array to modify
+    @param src Source array from which to copy elements
+    @return Zero if successful, otherwise a negative MPR error code.
+    @ingroup EjsArray
+ */
+extern int ejsAppendArray(Ejs *ejs, EjsArray *dest, EjsArray *src);
 
 /** 
     Create an array
@@ -1770,19 +1787,6 @@ extern int ejsAddItem(Ejs *ejs, EjsArray *ap, EjsAny *item);
     @ingroup EjsArray
  */
 extern void ejsClearArray(Ejs *ejs, EjsArray *ap);
-
-/** 
-    Insert an item
-    @description This will insert an item at the given index. Items at the index and above will be moved upward to 
-        make room for the inserted item.
-    @param ejs Ejs reference returned from #ejsCreateVM
-    @param ap Source array to modify
-    @param index Index at which to insert the item. The item will be inserted at the "index" position.
-    @param item Item to insert
-    @return The index.
-    @ingroup EjsArray
- */
-extern int ejsInsertItem(Ejs *ejs, EjsArray *ap, int index, EjsAny *item);
 
 /** 
     Get an item from an array
@@ -1838,15 +1842,28 @@ extern EjsAny *ejsGetNextItem(Ejs *ejs, EjsArray *ap, int *next);
 extern EjsAny *ejsGetPrevItem(Ejs *ejs, EjsArray *ap, int *prev);
 
 /** 
-    Join an array
-    @description This will append the contents of the source array to the destination array
+    Insert an item
+    @description This will insert an item at the given index. Items at the index and above will be moved upward to 
+        make room for the inserted item.
     @param ejs Ejs reference returned from #ejsCreateVM
-    @param dest Destination array to modify
-    @param src Source array from which to copy elements
-    @return Zero if successful, otherwise a negative MPR error code.
+    @param ap Source array to modify
+    @param index Index at which to insert the item. The item will be inserted at the "index" position.
+    @param item Item to insert
+    @return The index.
     @ingroup EjsArray
  */
-extern int ejsJoinArray(Ejs *ejs, EjsArray *dest, EjsArray *src);
+extern int ejsInsertItem(Ejs *ejs, EjsArray *ap, int index, EjsAny *item);
+
+/** 
+    Join an array
+    @description This will join the array elements using the given join string separator.
+    @param ejs Ejs reference returned from #ejsCreateVM
+    @param ap Source array to modify
+    @param join String to use as a delimiter between elements.
+    @return The result string
+    @ingroup EjsArray
+ */
+extern EjsString *ejsJoinArray(Ejs *ejs, EjsArray *ap, EjsString *join);
 
 /** 
     Lookup an item in the array
@@ -1866,10 +1883,11 @@ extern int ejsLookupItem(Ejs *ejs, EjsArray *ap, EjsAny *item);
     @param ejs Ejs reference returned from #ejsCreateVM
     @param ap Source array to modify
     @param item Item to remove
+    @param compact Set to true to compact following properties 
     @return The index where the item was found. Otherwise return MPR_ERR_CANT_FIND.
     @ingroup EjsArray
  */
-extern int ejsRemoveItem(Ejs *ejs, EjsArray *ap, EjsAny *item);
+extern int ejsRemoveItem(Ejs *ejs, EjsArray *ap, EjsAny *item, int compact);
 
 /** 
     Remove the last item from the array
@@ -1887,10 +1905,11 @@ extern int ejsRemoveLastItem(Ejs *ejs, EjsArray *ap);
     @param ejs Ejs reference returned from #ejsCreateVM
     @param ap Source array to modify
     @param index Array index from which to remove the item
+    @param compact Set to true to compact following properties 
     @return The index where the item was found. Otherwise return MPR_ERR_CANT_FIND.
     @ingroup EjsArray
  */
-extern int ejsRemoveItemAtPos(Ejs *ejs, EjsArray *ap, int index);
+extern int ejsRemoveItemAtPos(Ejs *ejs, EjsArray *ap, int index, int compact);
 
 /************************************************ Block ********************************************************/
 /** 

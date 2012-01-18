@@ -894,7 +894,7 @@ static EjsArray *insertArray(Ejs *ejs, EjsArray *ap, int argc, EjsObj **argv)
 static EjsString *joinArray(Ejs *ejs, EjsArray *ap, int argc, EjsObj **argv)
 {
     EjsString       *result, *sep;
-    EjsObj              *vp;
+    EjsObj          *vp;
     int             i;
 
     sep = (argc == 1) ? (EjsString*) argv[0] : NULL;
@@ -1541,30 +1541,29 @@ int ejsAddItem(Ejs *ejs, EjsArray *ap, EjsAny *item)
     int     index;
 
     index = ap->length;
-    if (setArrayProperty(ejs, ap, index, &item) < 0) {
+    if (setArrayProperty(ejs, ap, index, item) < 0) {
         return MPR_ERR_MEMORY;
     }
     return index;
 }
 
 
-void ejsClearArray(Ejs *ejs, EjsArray *ap)
+int ejsAppendArray(Ejs *ejs, EjsArray *dest, EjsArray *src)
 {
-    ap->length = 0;
+    int     next;
+
+    for (next = 0; next < src->length; next++) {
+        if (ejsSetProperty(ejs, dest, dest->length, src->data[next]) < 0) {
+            return MPR_ERR_MEMORY;
+        }
+    }
+    return 0;
 }
 
 
-/*
-    Insert an item to the list at a specified position. We insert before the item at "index".
-    ie. The inserted item will go into the "index" location and the other elements will be moved up.
- */
-int ejsInsertItem(Ejs *ejs, EjsArray *ap, int index, EjsAny *item)
+void ejsClearArray(Ejs *ejs, EjsArray *ap)
 {
-    if (insertArray(ejs, ap, index, item) == 0) {
-        /* Should never fail - only for memory errors */
-        return -1;
-    }
-    return index;
+    ap->length = 0;
 }
 
 
@@ -1639,16 +1638,23 @@ EjsAny *ejsGetPrevItem(Ejs *ejs, EjsArray *ap, int *next)
 }
 
 
-int ejsJoinArray(Ejs *ejs, EjsArray *dest, EjsArray *src)
+/*
+    Insert an item to the list at a specified position. We insert before the item at "index".
+    ie. The inserted item will go into the "index" location and the other elements will be moved up.
+ */
+int ejsInsertItem(Ejs *ejs, EjsArray *ap, int index, EjsAny *item)
 {
-    int     next;
-
-    for (next = 0; next < src->length; next++) {
-        if (ejsSetProperty(ejs, dest, dest->length, src->data[next]) < 0) {
-            return MPR_ERR_MEMORY;
-        }
+    if (insertArray(ejs, ap, index, item) == 0) {
+        /* Should never fail - only for memory errors */
+        return -1;
     }
-    return 0;
+    return index;
+}
+
+
+EjsString *ejsJoinArray(Ejs *ejs, EjsArray *ap, EjsString *join)
+{
+    return joinArray(ejs, ap, 1, (EjsObj**) &join);
 }
 
 
@@ -1667,16 +1673,17 @@ int ejsLookupItem(Ejs *ejs, EjsArray *ap, EjsAny *item)
 }
 
 
-/*
-    Remove an item. The array is not compacted
- */
-int ejsRemoveItem(Ejs *ejs, EjsArray *ap, EjsAny *item)
+int ejsRemoveItem(Ejs *ejs, EjsArray *ap, EjsAny *item, int compact)
 {
     int     i;
 
     for (i = 0; i < ap->length; i++) {
         if (ap->data[i] == item) {
-            return deleteArrayProperty(ejs, ap, i);
+            deleteArrayProperty(ejs, ap, i);
+            if (compact) {
+                compactArray(ejs, ap, 0, NULL);
+            }
+            return i;
         }
     }
     return MPR_ERR_CANT_FIND;
@@ -1694,14 +1701,20 @@ int ejsRemoveLastItem(Ejs *ejs, EjsArray *ap)
 }
 
 
-int ejsRemoveItemAtPos(Ejs *ejs, EjsArray *ap, int index)
+int ejsRemoveItemAtPos(Ejs *ejs, EjsArray *ap, int index, int compact)
 {
+    int     rc;
+
     mprAssert(ap);
 
     if (ap->length <= 0) {
         return MPR_ERR_CANT_FIND;
     }
-    return deleteArrayProperty(ejs, ap, index);
+    rc = deleteArrayProperty(ejs, ap, index);
+    if (compact) {
+        compactArray(ejs, ap, 0, NULL);
+    }
+    return rc;
 }
 
 

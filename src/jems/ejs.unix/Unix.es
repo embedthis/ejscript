@@ -100,37 +100,53 @@ module ejs.unix {
     function kill(pid: Number, signal: Number = 2): Void 
         Cmd.kill(pid, signal)
 
-    //  TODO - good to add ability to do a regexp on the path or a filter function
-    //  TODO - good to add ** to go recursively to any depth
     /**
-        Get a list of files in a directory. The returned array contains the base file name portion only.
-        @param path Directory path to enumerate.
-        @param enumDirs If set to true, then dirList will include sub-directories in the returned list of files.
-        @return An Array of strings containing the filenames in the directory.
+        Get a list of files in a directory.
+        @param pattern String pattern to match with files. The wildcards "*", "**" and "?" are the wild card
+            patterns supported. The "**" pattern matches any number of directories.  The Posix "[]" and "{a,b}" style
+            expressions are not supported.
+        @param options If set to true, then files will include sub-directories in the returned list of files.
+        @option descend Descend into subdirectories
+        @option dirs Include directories in the file list
+        @option depthFirst Do a depth first traversal. If "dirs" is specified, the directories will be shown after
+        the files in the directory. Otherwise, directories will be listed first.
+        @option exclude Regular expression pattern of files to exclude from the results. Matches the entire path.
+        @option hidden Show hidden files starting with "."
+        @option include Regular expression pattern of files to include in the results. Matches the entire returned path.
+        @return An Array of Path objects for each matching file.
      */
-    function ls(path: String = ".", enumDirs: Boolean = false): Array
-        Path(path).files(enumDirs)
+    function ls(pattern: Path = "*", options: Object = null): Array {
+        if (pattern.exists && pattern.isDir) {
+            pattern = pattern.join("*")
+        }
+        return Path(".").glob(pattern, options)
+    }
 
-    //  TODO - need option to exclude directories
-    //  MOB - better to support full glob style:  */[a-b]/*.html
+
     /**
-        Find matching files. Files are listed in a depth first order.
-        @param path Starting path from which to find matching files.
-        @param glob Glob style Pattern that files must match. This is similar to a ls() style pattern.
-        @param options Find options
-        @option recurse Set to true to examine sub-directories. 
-        @option dirsLast Set to true to list directories last in the list. By default, directories are first.
-        @return Return a list of matching files
+        Find files. Do Posix glob style pattern matching.
+        @param pattern String pattern to match with files. The wildcards "*", "**" and "?" are the wild card
+            patterns supported. The "**" pattern matches any number of directories.  The Posix "[]" and "{a,b}" style
+            expressions are not supported.
+        @param options If set to true, then files will include sub-directories in the returned list of files.
+        @option descend Descend into subdirectories
+        @option dirs Include directories in the file list
+        @option depthFirst Do a depth first traversal. If "dirs" is specified, the directories will be shown after
+        the files in the directory. Otherwise, directories will be listed first.
+        @option exclude Regular expression pattern of files to exclude from the results. Matches the entire path.
+        @option hidden Show hidden files starting with "."
+        @option include Regular expression pattern of files to include in the results. Matches the entire returned path.
+        @return An Array of Path objects for each matching file.
      */
-    function find(path: Object, glob: String = "*", options = {recurse: true}): Array {
+    function find(path: Object, pattern: String = "*", options = {descend: true}): Array {
         let result = []
         if (path is Array) {
             let paths = path
             for each (path in paths) {
-                result += Path(path).find(glob, options)
+                result += Path(path).glob(pattern, options)
             }
         } else {
-            result += Path(path).find(glob, options)
+            result += Path(path).glob(pattern, options)
         }
         return result
     }

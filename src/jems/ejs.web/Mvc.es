@@ -84,8 +84,8 @@ module ejs.web {
                     let dirs = config.dirs
                     let ext = config.extensions
                     deps = [dir.join(EJSRC)]
-                    files = dirs.models.find("*" + ext.es)
-                    files += dirs.src.find("*" + ext.es)
+                    files = dirs.models.glob("*" + ext.es)
+                    files += dirs.src.glob("*" + ext.es)
                     files += [dirs.controllers.join("Base").joinExt(ext.es)]
                 }
                 request ||= new Request("/")
@@ -117,8 +117,8 @@ module ejs.web {
                 let files, deps
                 if (config.cache.app.reload) {
                     deps = [dir.join(EJSRC)]
-                    files = dirs.models.find("*" + ext.es)
-                    files += dirs.src.find("*" + ext.es)
+                    files = dirs.models.glob("*" + ext.es)
+                    files += dirs.src.glob("*" + ext.es)
                     files += [dirs.controllers.join("Base").joinExt(ext.es)]
                 }
                 loadComponent(request, appmod, files, deps)

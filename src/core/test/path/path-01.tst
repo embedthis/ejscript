@@ -187,14 +187,6 @@ assert(Path(another).isDir)
 Path(another).remove()
 
 
-//  files
-
-files = Path(".").files(true)
-assert(files is Array)
-assert(files.length >= 2)
-assert(files.find(function (e) { return e.same("file.dat"); }) != null)
-
-
 //	makeDir, remove
 
 name = "tempDir-" + hashcode(global) + ".tdat"
