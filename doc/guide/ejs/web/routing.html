@@ -66,334 +66,300 @@
             </ul>
         </div>
         <div class="contentLeft">
-            <h1>Routing Requests</h1>
-            <p>Ejscript controllers manage the application and respond to client requests. They are the conductors of
-            the application and orchestrate the application's activities. <a name="flow" id="flow"></a></p>
-            <h2>Processing Flow</h2>
-            <p>Ejscript controllers process requests in stages:</p>
+            <h1>Request Routing</h1>
+            <a name="overview"></a>
+            <h2>Overview</h2>
+            <p>Ejscript includes a powerful request routing engine that processes client HTTP requests. The engine
+            is configured with a set of routes and when a request is received, it tests various routes and selects
+            the best route to handle the request.  In the process, routes may redirect or rewrite the request 
+            as required.</p>
+
+            <img src="../../../images/routing.jpg" alt="routing"/>
+            <p>An Ejscript application will typically have many routes. The configured routes 
+            are tested in-order by matching the route pattern against the request URI. 
+            A route may require that further preconditions be met before it is suitable to process the
+            request. If the required conditions are not met, the next route in the configuration will be tested. There 
+            is always a catch-all route that will process the request if all prior routes fail to qualify.</p>
+            <p>A route may modify the request during processing by changing the request URI or request data. The
+            route may also run commands as a side-effect during processing.</p>
+            <a name="configuration"></a>
+
+            <h2 class="section">Route Configuration</h2>
+            <p>Routes are defined using the Router class and methods. Here is an example of a simple web server with
+            route configuration.</p>
+<pre>
+require ejs.web
+let server: HttpServer = new HttpServer
+var r = new Router
+r.add("/User/{action}", {controller: "User"})
+r.addRestful()
+r.show()
+</pre>
+            <p>This example defines a route for URIs that begin with <em>"/User/"</em>.
+            The route pattern is an extended regular expression pattern that is used to match against the 
+            client request URI. If the route pattern matches the URI, the route is selected to process 
+            the request.</p>
+
+            <h3>Route Ordering</h3>
+            <p>Routes are processed in the order in which they are defined. Each route is tested in turn and the first
+            matching route is used to process the request.  So ordering route definitions is very important. Routes
+            with longer or more qualified route criteria should be defined first before more general routes.</p>
+
+            <h2 class="section">Route Processing</h2>
+            <p>To process a request, The Ejscript route engine examines each of the configured routes to determine the 
+            best matching route for a request.  It does this by considering each route in the order they are defined in
+            the configuration file. Each route is tested over a sequence of steps. 
+            Not all steps are required. However, the selected route will always perform pattern match, param definition and 
+            target execution.  If a route fails to match at a step, the route is discarded and the next configured route 
+            is considered.</p>
+            <img src="../../../images/routeSteps.jpg" alt="steps"/>
+            <h3>Routing Steps</h3>
             <ol>
-                <li>Decode the URL and web request</li>
-                <li>Route an incoming request to the appropriate controller</li>
-                <li>Invoke the requested action</li>
-                <li>Access and update the application state</li>
-                <li>Render a response view to the client</li>
-            </ol><a name="routing" id="routing"></a>
-            <h2 class="section">Routing Requests</h2>
-            <p>Ejscript receives client requests, and parses and decodes the HTTP request URL. Ejscript assumes, by
-            convention, a format for URLs that facilitates mapping requests to controllers and actions. URLs have the
-            form:</p>
-            <pre>
-http://embedthis.com/APP/CONTROLLER/ACTION/ID
+                <li><a href="#step-pattern">Pattern Matching</a> &mdash; Test if the request URI matches route pattern.</li>
+                <li><a href="#step-method">Optional Method Matching</a> &mdash; Test if the request method is valid.</li>
+                <li>Optional <a href="#step-header">Header Matching</a> &mdash; Test if the request has the require headers.</li>
+                <li>Optional <a href="#step-form">Form Field Matching</a> &mdash; Test if form data has required values.</li>
+                <li>Optional <a href="#step-condition">Condition Matching</a> &mdash; Test if the required conditions are true.</li>
+                <li>Optional <a href="#step-update">Updates</a> &mdash; Modify the request with specified updates.</li>
+                <li><a href="#step-param">Param Definition</a> &mdash; Define tokens as request 
+                    <a href="#params">params</a>.</li>
+                <li><a href="#step-target">Target Execution</a> &mdash; Select the Ejscript handler and determine the target resource.</li>
+            </ol>
+            <h3>Route Timing</h3>
+            <p>Ejscript will initiate request routing at a different time depending on whether the request has form data. 
+            If a request has form data, it is worthwhile to delay routing until after the form data
+            has been read from the client. This enables the routing directives to take action based on the received form
+            data. If a request has no form data, it is routed immediately after the HTTP headers have been read and 
+            parsed.</p>
+            <p>A request with form data has a <em>Content-Type</em> header of
+            <em>application/x-www-form-urlencoded</em>. Requests with a <em>Content-Type</em> set to 
+            <em>multipart/form-data</em> which indicates form based file upload, will also delay routing until the uploaded
+            file has been fully received.</p>
+            <a name="step-pattern"></a>
+            <h3>Pattern Matching</h3>
+            <p>A route pattern is a specially prepared regular expression that can be quickly matched against the 
+            request URI. The route pattern may match the entire request URI, just a subset at the start of the URI
+            or any portion in between. Regular expressions are ideal for route patterns as they can express a wide 
+            variety of URI formats and can also extract sub-expressions for later evaluation.</p>
+            <h4>URI Tokens</h4>
+            <p>Often the request URI will not only provide a path to a resource, but it will contain tokens of 
+            information that must be isolated and extracted from the URI. Ejscript route patterns provide an easy and
+            efficient means to extract such tokens and define them as request <a href="#params">params</a>.
+            To do this, Ejscript route patterns extend the standard regular expression syntax via embedded tokens.</p>
+            
+            <p>A token is a 
+            portion of the URI that is enclosed in braces "{token}". The token name is a symbolic name that will be used
+            later to define a request parameter. In the request URI, any sequence of characters except 
+            "/" are acceptable in the token name. For example the route pattern:</p>
+<pre>
+&lt;Route ^/{controller}/{action}$>
 </pre>
-            <p>Where <em>APP</em> is the (optional) name of the application, <em>CONTROLLER</em> is the controller
-            name, <em>ACTION</em> is the name of the action method to run and <em>ID</em> is a selector for an element
-            in the Model.</p>
-            <p>When a request is received, Ejscript will create an instance of the controller and invoke the requested
-            action method.</p><a name="anatomy" id="anatomy"></a>
-            <h2 class="section">Anatomy of a Controller</h2>
-            <p>So what does a controller look like?</p><a name="example" id="example"></a>
-            <pre>
-public class CartController extends ApplicationController {
-    public var product: Product
-    action function index() { 
-        renderView("list")
-    }
-    action function create() {
-        product = new Product
-        renderView("edit")
-    }
-    action function edit() {
-        /* Read a product from the database */
-        product = Product.find(params.id)
-    }
-    action function list() { 
-        /* Will render list.ejs by default */
-    }
-    action function update() {
-        product = Product.find(params.id)
-        /*  Update the product based on user input */
-        if (product.saveUpdate(params.product)) {
-            inform("Product updated successfully.")
-            redirect("list")
-        }
-    }
-}
+will match the URI:
+<pre class="paper">
+/user/login
 </pre>
-            <p>This is a simplified controller &mdash; definitely not production code as it does not validate user
-            input. This controller provides five actions which are decorated by an <em>action</em> qualifier. This
-            qualifier makes a JavaScript function visible as a controller action method.</p>
-            <p>If the client issues a request for:</p>
-            <pre>
-http://embedthis.com/myApp/cart/create
+            <p>After pattern matching, the request param <em>controller</em> will be set to "user" and 
+            <em>action</em> will be set to "login".</p>
+            <p>Token values can be accessed in condition, update and target directives via the <em>${token}</em> syntax.</p>
+            <p>To enable the extension token syntax, the standard regular expression syntax for repeat sub-expressions 
+                that uses braces: {m,n} needs to be back-quoted. i.e. \{m,n}.</p>
+            <h4>Sub-Expressions</h4>
+            <p>In addition to route tokens, standard regular expression sub-patterns can be defined by wrapping a 
+            sub-expression in parentheses. For example:</p>
+<pre>
+&lt;Route /(user|admin)/{cmd}>
 </pre>
-            <p>The <em>create</em> action will be invoked. It will create a new product and then render the
-            <em>edit.ejs</em> view back to the client.</p><a name="actions" id="actions"></a>
-            <h2 class="section">Actions</h2>
-            <p>Actions are where the controller does its work. In Ejscript, actions are simple JavaScript functions
-            prefixed with an <em>action</em> qualifier. They don't need to be registered or otherwise configured before
-            use. When Ejscript receives a request from the client, it will parse the request and invoke the request
-            action specified in the URL.</p>
-            <p>When a request is received, the controller framework looks for an action method of the required name. If
-            one is not found, it invokes the <em>missing</em> action method which renders a default error message back
-            to the client.</p><a name="context" id="context"></a>
-            <h3>Controller Context</h3>
-            <p>Ejscript establishes a request context for the controller before invoking the action. This consists of
-            the following objects which are visible to actions:</p>
-            <ul>
-                <li>application object &mdash; represents your application.</li>
-                <li>host &mdash; describes the web server hosting the application.</li>
-                <li>request object &mdash; describes the client HTTP request.</li>
-                <li>response object &mdash; describes the client HTTP response.</li>
-                <li>params &mdash; request form data</li>
-                <li>flash &mdash; informational messages to pass to the next action (and view)</li>
-                <li>session object &mdash; session state information.</li>
-            </ul>
-            <p>The controller can add to this context by declaring public variables in the controller class or the
-            ApplicationController which is the base class for all controllers. Views can automatically access any such
-            public controller variables.</p><a name="processing" id="processing"></a>
-            <h3>Processing the Request</h3>
-            <p>The action method can perform any processing it desires. There are no real restrictions except you don't
-            want to block for too long without giving the client some feedback.</p>
-            <p>Actions often retrieve a database record via the Model and store an object representing the model in a
-            public variable for easy access by the view. NOTE: the controller is not persistent across client
-            requests.</p><a name="models" id="models"></a>
-            <h2 class="section">Model Data</h2>
-            <p>Ejscript provides an Object Relational Mapping (ORM) layer for accessing database data via convenient
-            JavaScript objects. The ORM layer is a collection of database Model classes for the application.
-            controllers use this layer to access the database via these Model classes. A typical paradigm is for action
-            methods to read a database record and store the record in a public controller property. The view can then
-            simply access the database data via this property.</p>
-            <p>For more details, please see <a href="models.html">Database Models</a>.</p><a name="forms" id=
-            "forms"></a>
-            <h2 class="section">Form Data</h2>
-            <p>HTTP Form data is marshalled by Ejscript into the <em>params</em> object which is accessible to actions.
-            Each HTML input element posted by the client will become a property of <em>params</em>. Ejscript can also
-            organize form data into nested objects. If an input element name contains a period, then Ejscript will
-            create nested objects to match the input element name.</p><a name="views" id="views"></a>
-            <h3>Rendering Views</h3>
-            <p>After processing the request, the controller is responsible for rendering a view back to the client. If
-            the action method does not explicitly render a view, Ejscript will look for a view with the same name as
-            the action method.</p>
-            <p>In the prior <a href="#example">example</a>, the <em>edit</em> action did not call any <em>render</em>
-            function, so the framework will look for, and if found, run a view
-            <em>views/cart/edit.ejs</em>.</p><a name="generating" id="generating"></a>
-            <h2 class="section">Generating Controllers and Actions</h2>
-            <p>Ejscript includes an an application generator, called <em>mvc</em> to make it quick and easy to
-            create controllers, actions and controller scaffolds. To generate a new controller, run:</p>
-            <pre>
-mvc generate controller NAMES...
+            <p>This will allow URIs that begin with either <em>/user</em> or <em>/admin</em>. Sub-expression and token
+            values are made available to Conditions, Updates and Targets by using <em>$N</em> in the directive details. 
+            The first sub-expression or token is assigned to <em>$1</em>, the second to <em>$2</em> and so on. 
+            If a request with the URI <em>/user/login</em> was received, the route above would set <em>$1</em> to 
+            "user" and <em>$2</em> to "login".</p>
+            <h4>Conditional Sub-Expressions</h4>
+            <p>Conditional sub-expressions can be defined by wrapping in "(~" and "~)". This means the wrapped
+            sub-expression is valid but not required. For example:</p>
+<pre>
+&lt;Route /{controller}(~/{action}~) >
 </pre>
-            <p><em>NAMES...</em> are the names of the controllers you want to generate. This command will create
-            controller source files under the <em>controllers</em> directory. Each controller will contain an empty
-            controller class with an empty index action function. You can edit the controller source to meet your
-            needs.</p>
-            <p>When you create a controller, you can also (optionally) generate a set of named action functions. To
-            generate actions when you create a controller, run:</p>
-            <pre>
-mvc generate controller NAME ACTIONS...
+will match any of the URIs:
+<pre class="paper">
+/user
+/user/
+/user/login
 </pre>
-            <p>If <em>ACTIONS</em> are provided, action functions and views pages will be created for the given
-            names.</p>
-            <h3>Generating Scaffolds</h3>
-            <p>A scaffold is a generated set of actions and views that provide add, edit, and list functionality for a
-            database model. Scaffolds are useful to quickly generate prototype web pages and actions for managing a
-            database table. To generate a scaffold:</p>
-            <pre>
-mvc generate scaffold MODEL [field:type ...]
+            <h4>Anchoring Route Patterns</h4>
+            <p>It is wise to anchor route patterns to the start of the URI. This is done by using the <em>"^"</em> character
+            at the start of the URI. If the pattern describes the full request URI, the pattern can anchor to the end
+            of the URI by appending <em>"$"</em>. For example:</p>
+<pre>
+^/{controller}(~/{action}~)$
 </pre>
-            <p>When creating a scaffold for a database model, <em>mvc</em> will create a database model, database
-            migration, controller and edit and list view pages.</p>
-            <p>If field:type pairs are supplied, the database migration will include code to create a column for each
-            specified field of the requested type. The valid database types are: <em>binary, boolean, date, datetime,
-            decimal, float, integer, number, string, text, time, timestamp</em>.</p>The scaffold will include an
-            <em>edit</em> action and view that provides <em>add</em> and <em>edit</em> capability. The <em>list</em>
-            action and view, provides the ability to list the database table rows and select an entry to edit. <a name=
-            "controller" id="controller"></a>
-            <h2 class="section">Controller Class</h2>
-            <p>The Controller class has a large set of methods and properties. See the <a href=
-            "../../../api/ejscript/index.html">Ejscript Library</a> for full details. Some of the more important
-            properties:</p>
-            <table title="controllerProperties" class="full">
-                <thead>
-                    <tr>
-                        <th>Property</th>
-                        <th>Description</th>
-                    </tr>
-                </thead>
-                <tbody>
-                    <tr>
-                        <td>actionName</td>
-                        <td>Name of the action method being run.</td>
-                    </tr>
-                    <tr>
-                        <td>application</td>
-                        <td>Application global data.</td>
-                    </tr>
-                    <tr>
-                        <td>controllerName</td>
-                        <td>Name of the controller method being run.</td>
-                    </tr>
-                    <tr>
-                        <td>flash</td>
-                        <td>Lower case name of the controller.</td>
-                    </tr>
-                    <tr>
-                        <td>flash</td>
-                        <td>Flash message object for the next view.</td>
-                    </tr>
-                    <tr>
-                        <td>host</td>
-                        <td>HTTP host object.</td>
-                    </tr>
-                    <tr>
-                        <td>params</td>
-                        <td>Form parameters object.</td>
-                    </tr>
-                    <tr>
-                        <td>request</td>
-                        <td>HTTP request object.</td>
-                    </tr>
-                    <tr>
-                        <td>response</td>
-                        <td>HTTP response object.</td>
-                    </tr>
-                    <tr>
-                        <td>session</td>
-                        <td>Session state information.</td>
-                    </tr>
-                </tbody>
-            </table>
-            <p>The controller class provides the following methods:</p>
-            <table title="viewClass" class="full">
-                <thead>
-                    <tr>
-                        <th>Method / Property</th>
-                        <th>Description</th>
-                    </tr>
-                </thead>
-                <tbody>
-                    <tr>
-                        <td>cache</td>
-                        <td>Add a cache-control HTTP header.</td>
-                    </tr>
-                    <tr>
-                        <td>createSession</td>
-                        <td>Enable session control.</td>
-                    </tr>
-                    <tr>
-                        <td>destroySession</td>
-                        <td>Destroy a session.</td>
-                    </tr>
-                    <tr>
-                        <td>discardOutput</td>
-                        <td>Discard all prior buffered output.</td>
-                    </tr>
-                    <tr>
-                        <td>error</td>
-                        <td>Send an error response back to the client.</td>
-                    </tr>
-                    <tr>
-                        <td>escapeHtml</td>
-                        <td>Transform a string to be safe for output in a HTML web page.</td>
-                    </tr>
-                    <tr>
-                        <td>html</td>
-                        <td>HTML encode the arguments.</td>
-                    </tr>
-                    <tr>
-                        <td>inform</td>
-                        <td>Send a positive notification to the client in the flash area.</td>
-                    </tr>
-                    <tr>
-                        <td>makeUrl</td>
-                        <td>Make a URL suitable for invoking actions.</td>
-                    </tr>
-                    <tr>
-                        <td>redirect</td>
-                        <td>Redirect the client to a new URL.</td>
-                    </tr>
-                    <tr>
-                        <td>render</td>
-                        <td>Render the raw arguments back to the client.</td>
-                    </tr>
-                    <tr>
-                        <td>renderFile</td>
-                        <td>Render a file's contents back to the client.</td>
-                    </tr>
-                    <tr>
-                        <td>renderRaw</td>
-                        <td>Render raw data.</td>
-                    </tr>
-                    <tr>
-                        <td>setCookie</td>
-                        <td>Define a cookie to include in the response.</td>
-                    </tr>
-                    <tr>
-                        <td>statusMessage</td>
-                        <td>Send a status message to any registered view controls.</td>
-                    </tr>
-                    <tr>
-                        <td>unescapeHtml</td>
-                        <td>Transform an escaped string back to its original contents.</td>
-                    </tr>
-                    <tr>
-                        <td>warn</td>
-                        <td>Send a warning message to the client in the flash area.</td>
-                    </tr>
-                    <tr>
-                        <td>write</td>
-                        <td>Write text back to the client.</td>
-                    </tr>
-                    <tr>
-                        <td>writeHtml</td>
-                        <td>Write HTML escaped data back to the client.</td>
-                    </tr>
-                </tbody>
-            </table>
-            <h2 class="section">Filters</h2>
-            <p>Filters enable a controller to perform processing before and after actions are run. Filters are useful
-            to do authentication and logging. Filters run in the same context as an action method and can access the
-            controller instance and the Request, Response, Http, session and flash objects.</p>
-            <p>To run a filter before the action method, use the <em>beforeFilter</em> method. This should be run in
-            the constructor for the controller. For example:</p>
-            <pre>
-public class TaskController extends BaseController {
-    function TaskController() {
-<b>        beforeFilter(authorize, { except: "login"})</b>
-    }
-<b>    private function authorize() {
-        if (params.username != "goodname" &amp;&amp; params.password != "abracadabra") {
-            error("Invalid Login")
-            redirect("login")
-        }
-    }</b>
+            <a name="step-method"></a>
+            <h3>Method Matching</h3>
+            <p>Method matching is an optional step. Routes can be configured to only match certain HTTP methods. 
+            Method matching tests the supported route methods against the actual request HTTP method. 
+            By default a route supports all methods</p>
+            <a name="step-header"></a>
+            <h3>Header Matching</h3>
+            <p>Header matching is an optional step. Routes can be configured to require that the request has HTTP
+            headers with or without defined values. For example: a route may wish to only be relevant for a 
+            particular browser:</p>
+<pre>
+&lt;Route /info/>
+    Header User-Agent /Chrome/
+&lt;/Route>
 </pre>
-            <p>This will cause the <em>authorize</em> to run before any action method except for the <em>login</em>
-            action. The <em>authorize</em> function can test the user name and password and if not authorized, it can
-            fail the request and redirect the user back to the login page. Filters can be run after the request by
-            using the <em>afterFilter</em> method.</p>
-            <p>The filter methods take an options object as the second parameter. Two option properties are
-            defined:</p>
-            <ul>
-                <li><b>except</b> &mdash; Run filter for all actions except the nominated action.</li>
-                <li><b>only</b> &mdash; Run filter only for the specified actions.</li>
-            </ul>
-            <p>When specifying the argument to <em>except</em> and <em>only</em>, you can provide either a single
-            action name as a string or an array of action names.</p><!--
-        <a name="tips"></a>
-        <h2 class="section">Tips and Tricks</h2>
-        <p>The following hits provide solutions for common tasks:</p>
-        <h3>Redirect the Client</h3>
-        <p>To redirect the client to a new URL, use the redirect method. This will construct a redirection URL 
-        using the requested <em>action</em> parameter. It appends this to the  application and controller names. If an
-        <em>id</em> is provided (723 in this example below), this is appended after the action name.
-        <pre>redirect("edit", 723, null)</pre>
-        <p>This will create a URL like:
-        <pre>http://embedthis.com/myApp/currentController/<b>edit</b>/723</pre>
-            Flash
-            cookies
-            sessions
-            -->
+            <a name="step-form"></a>
+            <h3>Form Value Matching</h3>
+            <p>Form value matching is an optional step. Routes can be configured to require that the request has 
+            form data with or without defined values. Form data is sourced from the request URI query string and from
+            form body (POST) data. Form data must have a Content-Type of "application/x-www-form-urlencoded" &mdash;
+            normal HTML forms are encoded this way.</p>
+<pre>
+&lt;Route ^/info/>
+    Query name /(Mary)|(John)/
+&lt;/Route>
+</pre>
+            <p>This route will match the URIs: </p>
+<pre class="paper">
+/info/file.html?name=Mary
+/info/file.html?name=John
+</pre>
+            <a name="step-condition"></a>
+            <h3>Condition Matching</h3>
+            <p>Condition matching is an optional step where extra conditions can be tested before the route is selected.
+            Conditions can test if a file exists or not and whether a file is a directory or not. Condition rules
+            can also test any request parameter against a regular expression.</p>
+            <a name="step-update"></a>
+            <h3>Request Update</h3>
+            <p>Request update matching is an optional step where the request <a href="#params">params</a> 
+            can be modified.</p>
+            <a name="step-param"></a>
+            <h3>Param Definition</h3>
+            <p>After a route fully qualifies, request <a href="#params">params</a>
+            are created for route pattern tokens. This provides an
+            easy mechanism for extracting useful information from the request URI and passing it to the web page or
+            controller for processing.</p>
+            <a name="step-target"></a>
+            <h3>Target Execution</h3>
+            <p>Route targets have responsibility to generate the actual response to the client.
+            But, before the target can be executed, the appropriate request handler must be selected.
+            If a route has an explicit handler defined via <em>SetHandler</em> then that handler will be used.
+            If a set of handlers have been defined via <em>AddHandler</em> directives, then the handler defined with 
+            the corresponding URI extension will be selected.</p>
+            The target has four possible rules: <em>close</em>, <em>redirect</em>, <em>run</em> and
+            <em>write</em>.  Of these, all except for the <em>close</em> rule take parameters that are 
+            expanded using the matching sub-expressions and/or route tokens derived when matching the route pattern.
+            <p>Target rule parameters can use <em>"${token}"</em> to be replaced with the value of the token.
+            Target rule parameters can also use <em>"$N"</em> to be replaced with the Nth matching sub-expression, 
+            <em>"$&amp;"</em> to be replaced with the entire
+            matched pattern, <em>"$`"</em> to be replaced with the portion that precedes the matched pattern and 
+            <em>"$'"</em> to be replaced with the portion that follows the matched pattern. 
+            <p>For example:</p>
+<pre>
+Target write 200 "Running controller ${controller} action ${action}\n\n"
+</pre>
+            <p>This will write the message back to the client with a HTML status code of 200 .</p>
+            <p>Note: to be more secure, the <em>write</em> rule will escape embedded HTML sequences. If you need to emit
+            HTML, use the <em>-r</em> switch for raw write output.</p>
+            <h3>Prefix Removal</h3>
+            <p>If Ejscript is running several applications, Ejscript will need to be able to route and distinguish 
+            requests for each application. There are two primary ways to achieve this: run each application
+            in a separate virtual host or uniquely prefix the URIs for each application. If using the latter approach,
+            routes can be defined for each application that specify the URI prefix for each application. However, it is
+            often convenient to have the application prefix removed from the URI once the route is selected. The Prefix
+            directive defines a URI prefix that will be stripped from the start of the request URI once the route
+            is selected. If the route defines a header, form or condition that is not satisfied, the prefix is restored
+            to let other routes see the full URI.</p>
+            <a name="examples"></a>
+            <h2 class="section">Route Examples</h2>
+            <h3>Redirecting Old URIs</h3>
+            <p>To redirect requests for old documents to newer versions:</p>
+<pre>
+&lt;Route ^/public/oldFile.html$>
+    Target redirect 302 /public/newFile.html
+&lt;/Route>
+</pre>
+            <h3>Authenticating Private Content</h3>
+            <p>To secure private content :</p>
+<pre>
+&lt;Route /private/>
+    DocumentRoot /private-docs
+    AuthType digest
+    AuthName "Top-Secret"
+    Require valid-user
+&lt;/Route>
+</pre>
+            <h3>Hiding PHP extensions</h3>
+            <p>To hide the PHP extension in all URIs. This will automatically add the ".php" extension to the 
+                request document filename.</p>
+<pre>
+&lt;Route ^/store/>
+    DocumentRoot /store-app
+    SetHandler phpHandler
+    Target run $&.php
+&lt;/Route>
+</pre>
+            <h3>Serving Compressed Content</h3>
+            <p>This example enables the serving of compressed content where an equivalent compressed document exists. i.e.
+               A request for <em>/manual/overview.html</em> may return <em>/manual/overview.html.gz</em> if it exists. If
+               there is no compressed content, the uncompressed version is returned.</p>
+<pre>
+&lt;Route ^/manual/>
+    Compress gzip
+&lt;/Route>
+</pre>
+            <h3>Multi-Language Content</h3>
+            <p>This example stores English content under the <em>"english-docs"</em> directory and French under the 
+            <em>"french-docs"</em> directory. The client's browser should include an <em>Accept-Language</em> 
+            header which stipulates what language is preferred.
+            If the accept header is missing or the requested language is not English or French, then the DefaultLanguage
+            directive indicates that english content should be returned.</p>
+<pre>
+&lt;Route />
+    DefaultLanguage en
+    AddLanguageDir en /path/to/english-docs
+    AddLanguageDir fr /path/to/french-docs
+&lt;/Route>
+</pre>
+            <h3>Multi-Language by Suffix</h3>
+            <p>This example stores content for all languages together and includes a language suffix to the request document
+            filename. If the client requested a French version of <em>index.html</em>, then the document 
+            <em>index.fr.html</em> would be served.</p>
+<pre>
+&lt;Route />
+    DefaultLanguage en
+    AddLanguageSuffix en en before
+    AddLanguageSuffix fr fr
+&lt;/Route>
+</pre>
+            <h3>Application Isolation</h3>
+            <p>To group routes for an application, enclose in a Route block and use a Prefix directive to remove the
+                application prefix.</p>
+<pre>
+&lt;Route /manage/>
+    Prefix /manage
+    DocumentRoot manage-app
+    SetHandler espHandler
+    &lt;Route /manage/{controller}/{action}>
+        Target run ${controller}-${action}
+    &lt;/Route>
+&lt;/Route>
+</pre>
+            <h3>Denial of Service Protection</h3>
+            <p>To immediately close a connection without responding use the <em>Target close</em> directive.
+<pre>
+&lt;Route /hacked-url/>
+    target close
+&lt;/Route>
+</pre>
+            <h3>Missing File</h3>
+            <p>To match a missing document without redirection:</p>
+<pre>
+&lt;Route />
+    Condition ! exists ${request:filename}
+    Target run /missing.html
+&lt;/Route>
+</pre>
         </div>
     </div>
 <!-- BeginDsi "dsi/bottom.html" -->
