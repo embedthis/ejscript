@@ -897,7 +897,6 @@
 		C9188B1B115DABA30018846C /* Object.es */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; name = Object.es; path = ../../../src/core/Object.es; sourceTree = SOURCE_ROOT; };
 		C9188B1D115DABA30018846C /* Path.es */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; name = Path.es; path = ../../../src/core/Path.es; sourceTree = SOURCE_ROOT; };
 		C9188B1E115DABA30018846C /* Promise.es */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; name = Promise.es; path = ../../../src/core/Promise.es; sourceTree = SOURCE_ROOT; };
-		C9188B1F115DABA30018846C /* Reflect.es */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; name = Reflect.es; path = ../../../src/core/Reflect.es; sourceTree = SOURCE_ROOT; };
 		C9188B20115DABA30018846C /* Reflect.nes */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; name = Reflect.nes; path = ../../../src/core/Reflect.nes; sourceTree = SOURCE_ROOT; };
 		C9188B21115DABA30018846C /* RegExp.es */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; name = RegExp.es; path = ../../../src/core/RegExp.es; sourceTree = SOURCE_ROOT; };
 		C9188B22115DABA30018846C /* Socket.es */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; name = Socket.es; path = ../../../src/core/Socket.es; sourceTree = SOURCE_ROOT; };
@@ -967,8 +966,6 @@
 		C9248E5C10A4933400B29BDD /* slotGen.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = slotGen.c; sourceTree = "<group>"; };
 		C92A433F1381885200BAD2A4 /* Inflector.es */ = {isa = PBXFileReference; lastKnownFileType = text; name = Inflector.es; path = ../../../src/core/Inflector.es; sourceTree = "<group>"; };
 		C92A43401381885200BAD2A4 /* Loader.es */ = {isa = PBXFileReference; lastKnownFileType = text; name = Loader.es; path = ../../../src/core/Loader.es; sourceTree = "<group>"; };
-		C92A43411381885200BAD2A4 /* LogFile.es */ = {isa = PBXFileReference; lastKnownFileType = text; name = LogFile.es; path = ../../../src/core/LogFile.es; sourceTree = "<group>"; };
-		C92A43421381885200BAD2A4 /* Store.es */ = {isa = PBXFileReference; lastKnownFileType = text; name = Store.es; path = ../../../src/core/Store.es; sourceTree = "<group>"; };
 		C92F848510F2B7DE00CA953D /* HttpServer.es */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; name = HttpServer.es; path = ../../../src/jems/ejs.web/HttpServer.es; sourceTree = SOURCE_ROOT; };
 		C92F848610F2B80300CA953D /* ejsHttpServer.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; name = ejsHttpServer.c; path = ../../../src/jems/ejs.web/src/ejsHttpServer.c; sourceTree = SOURCE_ROOT; };
 		C92F848710F2B80300CA953D /* ejsWeb.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; name = ejsWeb.c; path = ../../../src/jems/ejs.web/src/ejsWeb.c; sourceTree = SOURCE_ROOT; };
@@ -1259,8 +1256,6 @@
 			children = (
 				C92A433F1381885200BAD2A4 /* Inflector.es */,
 				C92A43401381885200BAD2A4 /* Loader.es */,
-				C92A43411381885200BAD2A4 /* LogFile.es */,
-				C92A43421381885200BAD2A4 /* Store.es */,
 				C9188AF7115DABA30018846C /* App.es */,
 				C9188AF8115DABA30018846C /* Array.es */,
 				C9188AF9115DABA30018846C /* BinaryStream.es */,
@@ -1297,7 +1292,6 @@
 				C9188B1B115DABA30018846C /* Object.es */,
 				C9188B1D115DABA30018846C /* Path.es */,
 				C9188B1E115DABA30018846C /* Promise.es */,
-				C9188B1F115DABA30018846C /* Reflect.es */,
 				C9188B20115DABA30018846C /* Reflect.nes */,
 				C9188B21115DABA30018846C /* RegExp.es */,
 				C9188B22115DABA30018846C /* Socket.es */,
