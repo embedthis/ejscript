@@ -9,12 +9,15 @@ require ejs.template
 class EjsPage {
     private var verbose: Number = 1
 
-    private var cmdOptions = [
-        [ "layout", String ],
-        [ "overwrite", null, false ],
-        [ [ "quiet", "q" ], null, false ],
-        [ [ "verbose", "v" ], null, true ],
-    ]
+    private var argsTemplate = {
+        options: {
+            layout: { range: String },
+            overwrite: {},
+            quiet: { alias: 'q' },
+            verbose: { alias: 'v', value: true },
+        },
+        usage: usage,
+    }
 
     function usage(e = null): Void {
         if (e) {
@@ -30,20 +33,20 @@ class EjsPage {
     }
 
     function main() {
-        let cmd
+        let args
         try {
-            cmd = CmdArgs(cmdOptions)
-            processOptions(cmd)
-            if (cmd.args.length == 0) {
+            args = Args(argsTemplate)
+            processOptions(args)
+            if (args.rest.length == 0) {
                 usage()
             }
         } catch (e) {
             usage(e)
         }
         try {
-            let options = cmd.options
+            let options = args.options
             let parser = new TemplateParser
-            for each (f in cmd.args) {
+            for each (f in args.rest) {
                 f = Path(f)
                 options.dir = f.dirname
                 result = parser.build(f.readString(), options)
@@ -59,8 +62,8 @@ class EjsPage {
         }
     }
 
-    function processOptions(cmd) {
-        let options = cmd.options
+    function processOptions(args) {
+        let options = args.options
         if (options.version) {
             print(Config.version)
             App.exit(0)

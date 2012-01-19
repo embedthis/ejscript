@@ -275,6 +275,7 @@ module ejs {
             @option hidden Show hidden files starting with "."
             @option include Regular expression pattern of files to include in the results. Matches the entire returned path.
             @option missing Report missing directories by throwing an exception.
+            @option sort Sort the results
             @option nodirs Exclude directories in the file list. The default is to include directories.
             @return An Array of Path objects for each file in the directory.
          */

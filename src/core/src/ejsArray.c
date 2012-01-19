@@ -1248,7 +1248,7 @@ void quickSort(Ejs *ejs, EjsArray *ap, EjsFunction *compare, int direction, int 
     Where compare is defined as:
         function compare(a,b): Number
  */
-static EjsArray *sortArray(Ejs *ejs, EjsArray *ap, int argc, EjsObj **argv)
+EjsArray *ejsSortArray(Ejs *ejs, EjsArray *ap, int argc, EjsObj **argv)
 {
     EjsFunction     *compare;
     int             direction;
@@ -1812,7 +1812,7 @@ void ejsConfigureArrayType(Ejs *ejs)
     ejsBindMethod(ejs, prototype, ES_Array_reverse, reverseArray);
     ejsBindMethod(ejs, prototype, ES_Array_shift, shiftArray);
     ejsBindMethod(ejs, prototype, ES_Array_slice, sliceArray);
-    ejsBindMethod(ejs, prototype, ES_Array_sort, sortArray);
+    ejsBindMethod(ejs, prototype, ES_Array_sort, ejsSortArray);
     ejsBindMethod(ejs, prototype, ES_Array_splice, spliceArray);
     ejsBindMethod(ejs, prototype, ES_Array_unique, uniqueArray);
     ejsBindMethod(ejs, prototype, ES_Array_unshift, unshiftArray);

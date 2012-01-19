@@ -480,7 +480,8 @@ static EjsAny *getPathValues(Ejs *ejs, EjsPath *fp, int argc, EjsObj **argv)
 #define FILES_HIDDEN        MPR_PATH_INC_HIDDEN
 #define FILES_NODIRS        MPR_PATH_NODIRS
 #define FILES_RELATIVE      MPR_PATH_RELATIVE
-#define FILES_MISSING       0x1000
+#define FILES_MISSING       0x10000
+#define FILES_SORT          0x20000
 
 /*
     Get the files in a directory and subdirectories
@@ -625,6 +626,9 @@ static EjsArray *path_glob(Ejs *ejs, EjsPath *fp, int argc, EjsObj **argv)
         if (ejsGetPropertyByName(ejs, options, EN("relative")) == ESV(true)) {
             flags |= FILES_RELATIVE;
         } 
+        if (ejsGetPropertyByName(ejs, options, EN("sort")) == ESV(true)) {
+            flags |= FILES_SORT;
+        } 
     }
     path = mprJoinPath(fp->value, pattern);
     return globMatch(ejs, ejsCreateArray(ejs, 0), path, flags, exclude, include, mprGetPathSeparators(path));
@@ -716,6 +720,9 @@ static EjsArray *globMatch(Ejs *ejs, EjsArray *results, char *pattern, int flags
             }
         }
     } while (list);
+    if (flags & FILES_SORT) {
+        ejsSortArray(ejs, results, 0, NULL);
+    }
     return results;
 }
 

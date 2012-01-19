@@ -27,7 +27,7 @@ class EjsMvc {
 
     private var appName: String
     private var buildAll: Boolean
-    private var cmd: CmdArgs
+    private var args: Args
     private var database: String = "sqlite"
     private var dirs: Object
     private var config: Object = {}
@@ -86,21 +86,24 @@ class EjsMvc {
         mvc = Path(App.args[0]).basename
     }
 
-    private var cmdOptions = [
-        [ [ "apply", "a" ] ],
-        [ "database", String ],
-        [ "debug" ],
-        [ "full" ],
-        [ [ "keep", "k" ] ],
-        [ "layout", String ],
-        [ "listen", String ],
-        [ "min" ],
-        [ "overwrite" ],
-        [ [ "quiet", "q" ] ],
-        [ "reverse" ],
-        [ "search", String ],
-        [ [ "verbose", "v" ] ],
-    ]
+    private var argsTemplate = {
+        options: {
+            apply: { alias: 'a' },
+            database: { range: String },
+            debug: {},
+            full: {},
+            keep: { alias: 'k' },
+            layout: { range: String },
+            listen: { range: String },
+            min: {},
+            overwrite: {},
+            quiet: { alias: 'q' },
+            reverse: {}
+            search: { range: String },
+            verbose: { alias: 'v' },
+        },
+        usage: usage,
+    }
 
     function usage(): Void {
         error("\nUsage: " + mvc + " [options] [commands] ...\n" +
@@ -146,15 +149,10 @@ class EjsMvc {
         App.exit(1)
     }
     function main() {
+        args = Args(argsTemplate)
         try {
-            cmd = CmdArgs(cmdOptions)
-        } catch (e) {
-            error(e cast String)
-            usage()
-        }
-        try {
-            processOptions(cmd)
-            if (cmd.args.length == 0) {
+            processOptions(args)
+            if (args.rest.length == 0) {
                 usage()
             }
             process()
@@ -173,8 +171,8 @@ class EjsMvc {
     function error(...args): Void
         App.errorStream.write(args.join(" ") + "\n")
 
-    function processOptions(cmd: CmdArgs) {
-        options = cmd.options
+    function processOptions(args: Args) {
+        options = args.options
         if (options.search) {
             App.search = options.search.split(App.SearchSeparator)
         }
@@ -192,8 +190,8 @@ class EjsMvc {
     }
 
     function process() {
-        let task = cmd.args.shift()
-        let rest = cmd.args
+        let task = args.rest.shift()
+        let rest = args.rest
 
         switch (task) {
         case "browse":

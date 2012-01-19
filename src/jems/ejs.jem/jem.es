@@ -99,7 +99,7 @@ class JemCmd
     private const DIR_PERMS: Number = 0775
 
     private var appName: String = "jem"
-    private var cmd: CmdArgs
+    private var args: Args
     private var config: Object
     //  MOB -- rename to extensions, move with dirs?
     private var libext: String
@@ -184,26 +184,29 @@ class JemCmd
     }
 
 //  MOB -- these options dont match usage below
-    private var cmdOptions = [
-        [ "all" ],
-        [ "code", String ],
-        [ "debug" ],
-        [ "details" ],
-        [ "dir", String ],
-        [ "field", String ],
-        [ "force" ],
-        [ "from", String ],
-        [ "log", /\w+(:\d)/, "stderr:1" ],
-        [ "repository", String ],
-        [ ["quiet", "q"] ],
-        [ "to", String ],
-        [ "user" ],
-        [ "user", String ],
-        [ "value", String ],
-        [ ["verbose", "v"] ],
-        [ "version", String ],
-        [ "versions" ],
-    ]
+    private var argTemplate = {
+        options: {
+            all: {},
+            code: { range: String },
+            debug: {},
+            details: {},
+            dir: { range: String },
+            field: { range: String },
+            force: {},
+            from: { range: String },
+            log: { range: /\w+(:\d)/, value: 'stderr:1' },
+            repository: { range: String },
+            quiet: { alias: 'q' },
+            to: { range: String },
+            user: { range: String },
+            value: { range: String },
+            verbose: { alias: 'v' },
+            version: { range: String },
+            versions: {},
+        },
+        usage: usage,
+        onerror: 'exit',
+    }
 
     function usage(): Void {
         print("\nUsage: " + appName + " [options] [commands] ...\n" +
@@ -252,16 +255,10 @@ class JemCmd
     }
 
     function main() {
-        //  MOB -- refactor. Shouldn't need to use try with CmdArgs every time
+        args = Args(argTemplate)
         try {
-            cmd = CmdArgs(cmdOptions)
-        } catch (e) {
-            error(e)
-            usage()
-        }
-        try {
-            processOptions(cmd)
-            if (cmd.args.length == 0) {
+            processOptions(args)
+            if (args.rest.length == 0) {
                 usage()
             }
             process()
@@ -273,7 +270,7 @@ print(e)
             } else {
                 msg = e.message
                 error("jem: Error: " + msg + "\n")
-                if (!cmd || cmd.options.debug) {
+                if (!args || args.options.debug) {
                     error(e.stack + "\n")
                 }
             }
@@ -283,8 +280,8 @@ print(e)
         }
     }
 
-    function processOptions(cmd: CmdArgs) {
-        let options = cmd.options
+    function processOptions(args: Args) {
+        let options = args.options
         if (options.version) {
             print(Config.version)
             App.exit(0)
@@ -314,36 +311,36 @@ print(e)
     }
 
     function process() {
-        let args = cmd.args
-        let task = args.shift()
+        let rest = args.rest
+        let task = rest.shift()
 
         switch (task) {
         case "build":
             //  MOB -- what are build args?
-            build(args)
+            build(rest)
             break
         case "catalog":
         case "catalogue":
-            catalog(args)
+            catalog(rest)
             break
         case "create":
-            create(args)
+            create(rest)
             break
         case "depend":
-            if (args.length == 0) {
+            if (rest.length == 0) {
                 dependAll()
-            } else for each (jem in args) {
+            } else for each (jem in rest) {
                 depend(Jem(jem))
             }
             break
         case "dir":
-            App.dir = args[0]
+            App.dir = rest[0]
             break
         case "edit":
-            if (args.length == 0) {
+            if (rest.length == 0) {
                 edit(".")
             } else {
-                for each (path in args) {
+                for each (path in rest) {
                     edit(path)
                 }
             }
@@ -352,15 +349,15 @@ print(e)
             usage()
             break
         case "install":
-            for each (jem in args) {
+            for each (jem in rest) {
                 install(Jem(jem))
             }
             break
         case "list":
-            list(args)
+            list(rest)
             break
         case "publish":
-            for each (jem in args) {
+            for each (jem in rest) {
                 publish(Jem(jem))
             }
             break
@@ -368,19 +365,19 @@ print(e)
             rebuild()
             break
         case "retract":
-            for each (jem in args) {
+            for each (jem in rest) {
                 retract(Jem(jem))
             }
             break
         case "uninstall":
-            for each (jem in args) {
+            for each (jem in rest) {
                 uninstall(Jem(jem))
             }
             break
         case "upgrade":
-            if (args.length == 0) {
+            if (rest.length == 0) {
                 upgradeAll()
-            } else for each (jem in args) {
+            } else for each (jem in rest) {
                 upgrade(Jem(jem))
             }
             break
@@ -548,7 +545,7 @@ print(e)
     }
 
     function create() {
-        if (ls(".", true).length != 0 && !cmd.options.force) {
+        if (ls(".", true).length != 0 && !args.options.force) {
             throw "Create must be run in an empty directory"
         }
         let path = Path(".")
@@ -585,14 +582,14 @@ print(e)
     }
 
     function edit(path: Path): Void {
-        if (!cmd.options.field) {
+        if (!args.options.field) {
             erorr("Missing --field option")
         }
-        if (!cmd.options.value) {
+        if (!args.options.value) {
             erorr("Missing --value option")
         }
         let package = loadPackageDescription(path)
-        package[cmd.options.field] = cmd.options.value
+        package[args.options.field] = args.options.value
         path.join(filenames.package).write(serialize(package, {pretty: true}))
     }
 
@@ -644,7 +641,7 @@ print(e)
      */
     function install(jem: Jem) {
         if (checkInstalled(jem)) {
-            if (!cmd.options.force) {
+            if (!args.options.force) {
                 throw "Jem \"" + jem + "\" is already installed"
             }
         } else {
@@ -688,7 +685,7 @@ print(e)
                     install(dep.name)
                 } catch (e) {
 print(e)
-                    if (cmd.options.force) {
+                    if (args.options.force) {
                         log(0, "WARN", "Can't install required dependency \"" + dep.name + "\"" )
                     } else {
                         throw "Can't install required dependency \"" + dep.name + "\"" 
@@ -786,7 +783,7 @@ print(e)
             }
         } else {
             buildJem(jem)
-            if (cmd.options.test) {
+            if (args.options.test) {
                 // runTests(jem)
             }
             installModules(jem)
@@ -818,7 +815,7 @@ print(e)
             --details      # List jem details
      */
     function list(args: Array): Void {
-        let options = cmd.options
+        let options = args.options
         if (options.help) {
             listHelp()
         }
@@ -986,7 +983,7 @@ print(e)
     }
 
     function publish(jem: Jem): Void {
-        let repo = Path(cmd.options.to)
+        let repo = Path(args.options.to)
         if (!repo) {
             repo = dirs.repositories[0]
         }
@@ -1040,7 +1037,7 @@ print(e)
     }
 
     function removeJem(jem: Jem): Void {
-        if (!cmd.options.force && requiredJem(jem)) {
+        if (!args.options.force && requiredJem(jem)) {
             return
         }
         log(1, "REMOVE", "Removing \"" + jem + "\"")
@@ -1073,7 +1070,7 @@ print(e)
         jem can be a path to a physical jem, a bare jem name or a versioned jem name.
      */
     private function search(jem: Jem): Path {
-        let options = cmd.options
+        let options = args.options
         log(3, "DEBUG", "Searching repositories: for " + jem)
         for each (rep in dirs.repositories) {
             log(4, "DEBUG", "Checking \"" + rep + "\" repository")
@@ -1098,7 +1095,7 @@ print(e)
             throw "Missing " + filenames.package + ". Run jem in the directory containing the package description file"
         }
         moddeps = []
-        for each (f in cmd.args) {
+        for each (f in args.rest) {
             moddeps += Cmd.sh("ejsmod --depends " + f).trim().split(" ")
         }
         let package = loadPackageDescription(".")
@@ -1190,7 +1187,7 @@ print(e)
 
     function uninstall(jem: Jem): Void {
         if (!checkInstalled(jem)) {
-            if (!cmd.options.force) {
+            if (!args.options.force) {
                 throw "Jem \"" + jem + "\" is not installed"
             }
         }
@@ -1210,7 +1207,7 @@ print(e)
                         count++
                     }
                 }
-                if (count > 1 && !cmd.options.force) {
+                if (count > 1 && !args.options.force) {
                     throw "Multiple matching jems: " + jems
                 }
             }

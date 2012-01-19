@@ -1911,6 +1911,11 @@ extern int ejsRemoveLastItem(Ejs *ejs, EjsArray *ap);
  */
 extern int ejsRemoveItemAtPos(Ejs *ejs, EjsArray *ap, int index, int compact);
 
+/*
+    Internal
+ */
+extern EjsArray *ejsSortArray(Ejs *ejs, EjsArray *ap, int argc, EjsObj **argv);
+
 /************************************************ Block ********************************************************/
 /** 
     Block class

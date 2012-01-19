@@ -7,10 +7,10 @@ let dir = Path('.')
 //  Wild card patterns
 assert(dir.glob('file.xml*') == 'file.xml')
 assert(dir.glob('*.xml') == 'file.xml')
-assert(dir.glob('file.*') == 'file.dat,file.xml')
-assert(dir.glob('file*') == 'file.dat,file.xml,files.tst')
-assert(dir.glob('file.???') == 'file.dat,file.xml')
-assert(dir.glob('f*.???') == 'file.dat,file.xml,files.tst')
+assert(dir.glob('file.*').sort() == 'file.dat,file.xml')
+assert(dir.glob('file*').sort() == 'file.dat,file.xml,files.tst')
+assert(dir.glob('file.???').sort() == 'file.dat,file.xml')
+assert(dir.glob('f*.???').sort() == 'file.dat,file.xml,files.tst')
 assert(dir.glob('g?o?.tst') == 'glob.tst')
 
 //  Directory matching
@@ -28,7 +28,7 @@ assert(!Path('../..').glob("**.tst").toString().contains('"../app"'))
 assert(Path('../../../core').glob('*.json') == '../../../core/package.json')
 
 //  relative
-assert(dir.glob('../http/w*/n*', {relative: true}) == 'numbers.html,numbers.txt')
+assert(dir.glob('../http/w*/n*', {relative: true}).sort() == 'numbers.html,numbers.txt')
 
 //  No directories
 assert(!dir.glob('../*', {nodirs: true}).toString().contains('../app'))
