@@ -63,7 +63,7 @@ if (!bare) {
         from: slib, 
         exclude: /treeview/,
         permissions: 0644, 
-        recurse: true
+        descend: true
     })
 
     let cmdFilter = (Config.OS == "WIN") ? /undefined/ : /\.cmd/
@@ -74,7 +74,7 @@ if (!bare) {
         permissions: 0755,
     })
     if (jem.exists) {
-        copy("*", jem, {from: sjem, recurse: true})
+        copy("*", jem, {from: sjem, descend: true})
     }
 }
 
