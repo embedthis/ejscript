@@ -47,7 +47,7 @@ public function copy(src: Path, target: Path = Dir, options = {})
         dir = src.dirname
         from = ""
     }
-    let files = options.top.join(dir).find(pat, options)
+    let files = options.top.join(dir).glob(pat, options)
 
     for each (let file: Path in files) {
         file = file.relative.portable
@@ -123,6 +123,7 @@ public function copy(src: Path, target: Path = Dir, options = {})
     }
     if (options.task != "Remove" && copied == 0) {
         log.error("No files copied for " + src)
+        log.error("From: " + options.top.join(dir) + " pat " + pat)
     }
 }
 
