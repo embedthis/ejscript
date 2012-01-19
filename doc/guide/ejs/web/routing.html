@@ -72,7 +72,6 @@
             is configured with a set of routes and when a request is received, it tests various routes and selects
             the best route to handle the request.  In the process, routes may redirect or rewrite the request 
             as required.</p>
-
             <img src="../../../images/routing.jpg" alt="routing"/>
             <p>An Ejscript application will typically have many routes. The configured routes 
             are tested in-order by matching the route pattern against the request URI. 
@@ -82,7 +81,6 @@
             <p>A route may modify the request during processing by changing the request URI or request data. The
             route may also run commands as a side-effect during processing.</p>
             <a name="configuration"></a>
-
             <h2 class="section">Route Configuration</h2>
             <p>Routes are defined using the Router class and the <em>add</em>method. 
             Here is an example of a simple web server with route configuration.</p>
@@ -98,12 +96,10 @@ router.show()
             The route pattern is an extended regular expression pattern that is used to match against the 
             client request URI. If the route pattern matches the URI, the route is selected to process 
             the request.</p>
-
             <h3>Route Ordering</h3>
             <p>Routes are processed in the order in which they are defined. Each route is tested in turn and the first
             matching route is used to process the request.  So ordering route definitions is very important. Routes
             with longer or more qualified route criteria should be defined first before more general routes.</p>
-
             <h2 class="section">Route Processing</h2>
             <p>To process a request, The Ejscript route engine examines each of the configured routes to determine the 
             best matching route for a request.  It does this by considering each route in the order they are defined in
@@ -111,7 +107,6 @@ router.show()
             Not all steps are required. However, the selected route will always perform pattern match, param definition and 
             target execution.  If a route fails to match at a step, the route is discarded and the next configured route 
             is considered.</p>
-
             <h3>Route Timing</h3>
             <p>Ejscript will initiate request routing at a different time depending on whether the request has form data. 
             If a request has form data, it is worthwhile to delay routing until after the form data
@@ -128,7 +123,6 @@ router.show()
             request URI. The route pattern may match the entire request URI, just a subset at the start of the URI
             or any portion in between. Regular expressions are ideal for route patterns as they can express a wide 
             variety of URI formats and can also extract sub-expressions for later evaluation.</p>
-
             <h4>URI Tokens</h4>
             <p>Often the request URI will not only provide a path to a resource, but it will contain tokens of 
             information that must be isolated and extracted from the URI. Ejscript route patterns provide an easy and
@@ -150,7 +144,6 @@ will match the URI:
             <p>After pattern matching, the request param <em>product</em> will be set to "firefox".<p>
             <p>To enable the extension token syntax, the standard regular expression syntax for repeat sub-expressions 
                 that uses braces: {m,n} needs to be back-quoted. i.e. \{m,n}.</p>
-
             <h4>Conditional Sub-Expressions</h4>
             <p>Conditional sub-expressions can be defined by wrapping in "(" and ")". This means the wrapped
             sub-expression is valid but not required. For example:</p>
@@ -178,7 +171,6 @@ will match any of the URIs:
 router.add("/Dash/product/buy", {method: "POST"})
 </pre>
             By default a route supports all methods</p>
-
             <a name="step-header"></a>
             <h3>Header Matching</h3>
             <p>Header matching is an optional step. Routes can be configured to require that the request has HTTP
@@ -190,7 +182,6 @@ r.add(function (request) request.header("user-agent").contains("Chrome"))
 </pre>
             <p>This defines a route with a custom matching function. The function is invoked to test the request. If
             it returns true, the route is selected.</p>
-
             <a name="step-form"></a>
             <h3>Form Value Matching</h3>
             <p>Form value matching is an optional step. Routes can be configured to require that the request has 
@@ -211,7 +202,6 @@ r.add(function (request) request.params("name").match(/(Mary)|(John)))
             are created for route pattern tokens. This provides an
             easy mechanism for extracting useful information from the request URI and passing it to the web page or
             controller for processing.</p>
-
         </div>
     </div>
 <!-- BeginDsi "dsi/bottom.html" -->
