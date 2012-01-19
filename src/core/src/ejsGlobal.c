@@ -244,7 +244,7 @@ int ejsBlendObject(Ejs *ejs, EjsObj *dest, EjsObj *src, int flags)
                     ejsSetPropertyByName(ejs, dest, trimmedName, ejsClone(ejs, vp, 1));
                     continue;
                 }
-                dp = ejsCreateObj(ejs, vp->type, 0);
+                dp = ejsCreateObj(ejs, TYPE(vp), 0);
                 ejsSetPropertyByName(ejs, dest, trimmedName, dp);
             }
             /* Destination present */
