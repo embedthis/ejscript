@@ -88,6 +88,7 @@ EXPORTS
   ejsAddObserver
   ejsAlloc
   ejsAllocPoolVM
+  ejsAppendArray
   ejsAppendAttributeToXML
   ejsAppendToXML
   ejsApplyBlockHelpers
@@ -426,6 +427,7 @@ EXPORTS
   ejsSetupHttpTrace
   ejsShowBlockScope
   ejsShowCurrentScope
+  ejsSortArray
   ejsSprintf
   ejsStartsWithAsc
   ejsSubstring
@@ -471,7 +473,6 @@ EXPORTS
   getNextJsonToken
   manageFileStream
   manageLoadState
-  nodes
   parseXMLAttribute
   parseXMLAttributes
   parseXMLElement
@@ -486,6 +487,5 @@ EXPORTS
   sock_async
   sock_on
   sock_set_async
-  tokenNames
   truncateFile
   writeFile

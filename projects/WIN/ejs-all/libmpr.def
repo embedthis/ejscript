@@ -4,6 +4,7 @@ EXPORTS
   amtow
   assertTrue
   awtom
+  classMap
   dtoa
   dummyWide
   floorDiv
@@ -59,7 +60,6 @@ EXPORTS
   mprCompareTime
   mprConnectSocket
   mprCopyListContents
-  mprCopyName
   mprCopyPath
   mprCopyright
   mprCreate
@@ -208,12 +208,12 @@ EXPORTS
   mprGetPathDir
   mprGetPathExt
   mprGetPathFiles
+  mprGetPathFirstDir
   mprGetPathInfo
   mprGetPathLink
   mprGetPathNewline
   mprGetPathParent
   mprGetPathSeparators
-  mprGetPathTree
   mprGetPortablePath
   mprGetPrevItem
   mprGetRandomBytes
@@ -258,6 +258,7 @@ EXPORTS
   mprIsInfinite
   mprIsNan
   mprIsPathAbs
+  mprIsPathDir
   mprIsPathRel
   mprIsPathSeparator
   mprIsSocketEof
@@ -276,6 +277,7 @@ EXPORTS
   mprLock
   mprLockDtoa
   mprLog
+  mprLogHeader
   mprLookAtLastCharInBuf
   mprLookAtNextCharInBuf
   mprLookupFileSystem
@@ -352,6 +354,7 @@ EXPORTS
   mprRemoveSignalHandler
   mprRemoveSocketHandler
   mprRemoveWaitHandler
+  mprRenamePath
   mprReplacePathExt
   mprReportTestResults
   mprRequestGC
@@ -381,8 +384,8 @@ EXPORTS
   mprServiceSignals
   mprServiceWinIO
   mprServicesAreIdle
-  mprSetAllocName
   mprSetAppName
+  mprSetAppPath
   mprSetBufMax
   mprSetBufRefillProc
   mprSetBufSize
@@ -473,6 +476,7 @@ EXPORTS
   mprStopThreadService
   mprTerminate
   mprTransformPath
+  mprTrimPathDrive
   mprTrimPathExt
   mprTruncateFile
   mprTryLock
@@ -556,12 +560,11 @@ EXPORTS
   sspn
   sstarts
   ssub
+  stateMap
   stemplate
   stoi
   stoiradix
   stok
-  stopAlloc
-  stopSeqno
   strim
   stubMmprEpoll
   stubMprKqueue

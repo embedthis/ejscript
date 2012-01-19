@@ -13,7 +13,7 @@
   </ItemGroup>
 
   <PropertyGroup Label="Globals">
-    <ProjectGuid>{CF658FE9-8CF1-4D52-8FCA-A59300030ED7}</ProjectGuid>
+    <ProjectGuid>{CEB65B91-E1F3-44C5-A7A5-05F290E41A58}</ProjectGuid>
     <RootNamespace />
     <Keyword>Win32Proj</Keyword>
   </PropertyGroup>
@@ -133,35 +133,35 @@
 
   <ItemGroup>
     <ProjectReference Include="libmpr.vcxproj">
-      <Project>{B7730FD7-D8CC-488C-9377-EE9ACFD11A97}</Project>
+      <Project>{3EE649A4-3FF6-4E96-8BD8-926F009EB7FA}</Project>
       <ReferenceOutputAssembly>false</ReferenceOutputAssembly>
     </ProjectReference>
   </ItemGroup>
 
   <ItemGroup>
     <ProjectReference Include="libmprssl.vcxproj">
-      <Project>{405C817E-4593-4D10-B944-A358A18E3E9E}</Project>
+      <Project>{D92223E5-7267-46A1-AF0A-D97A9B54073B}</Project>
       <ReferenceOutputAssembly>false</ReferenceOutputAssembly>
     </ProjectReference>
   </ItemGroup>
 
   <ItemGroup>
     <ProjectReference Include="libhttp.vcxproj">
-      <Project>{8578CF73-BDB1-48C5-8E62-61FA78508CF5}</Project>
+      <Project>{EB3DB44C-827B-46A7-88EB-88B09474662B}</Project>
       <ReferenceOutputAssembly>false</ReferenceOutputAssembly>
     </ProjectReference>
   </ItemGroup>
 
   <ItemGroup>
     <ProjectReference Include="libsqlite3.vcxproj">
-      <Project>{5707ED87-7560-4947-B386-1E694C94BED6}</Project>
+      <Project>{73F45375-ECBB-4CE6-8DE9-052A1FEB5C69}</Project>
       <ReferenceOutputAssembly>false</ReferenceOutputAssembly>
     </ProjectReference>
   </ItemGroup>
 
   <ItemGroup>
     <ProjectReference Include="libpcre.vcxproj">
-      <Project>{5339CD6F-7549-48A4-A6B0-E371E2F5EEA4}</Project>
+      <Project>{F1EA2DB8-4E1C-48A8-937A-7C69823F5D27}</Project>
       <ReferenceOutputAssembly>false</ReferenceOutputAssembly>
     </ProjectReference>
   </ItemGroup>
