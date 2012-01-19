@@ -31,8 +31,8 @@ assert(Path('../../../core').glob('*.json') == '../../../core/package.json')
 assert(dir.glob('../http/w*/n*', {relative: true}).sort() == 'numbers.html,numbers.txt')
 
 //  No directories
-assert(!dir.glob('../*', {nodirs: true}).toString().contains('../app'))
-assert(dir.glob('../*', {nodirs: false}).toString().contains('../app'))
+assert(!dir.glob('../*', {nodirs: true}).sort().toString().contains('app,'))
+assert(dir.glob('../*', {nodirs: false}).sort().toString().contains('app,'))
 
 //  descend
 assert(Path('..').glob('*.tst') == '')
@@ -46,11 +46,16 @@ assert(dir.glob('*', {include: /regress/}) == 'regress')
 assert(dir.glob('*', {include: /file/}).toString().contains("file"))
 
 //  Depth first
-assert(Path('..').glob('app', {descend: true, depthFirst: true}).toString().endsWith('../app'))
-assert(Path('..').glob('app', {descend: true, depthFirst: false}).toString().startsWith('../app'))
+let app = Path('../app').natural
+assert(Path('..').glob('app', {descend: true, depthFirst: true}).toString().endsWith(app))
+assert(Path('..').glob('app', {descend: true, depthFirst: false}).toString().startsWith(app))
 
 //  nodirs
-assert(Path('..').glob('app', {nodirs: true, descend: true}).sort() == '../app/09100-app.tst,../app/io.tst')
+if (FileSystem('.').separators[0] == '\\') {
+    assert(Path('..').glob('app', {nodirs: true, descend: true}).sort() == '..\\app\\09100-app.tst,..\\app\\io.tst')
+} else {
+    assert(Path('..').glob('app', {nodirs: true, descend: true}).sort() == '../app/09100-app.tst,../app/io.tst')
+}
 
 /*
     hidden
