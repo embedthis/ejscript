@@ -147,62 +147,6 @@ module ejs {
         native function get extension(): String 
 
         /**
-            Find matching files. Files are listed in depth first order.
-            @param glob Glob style Pattern that files must match. This is similar to a ls() style pattern.
-            @param options Find options
-            @option recurse Set to true to examine sub-directories. 
-            @option dirsLast Set to true to list directories last in the list. By default, directories are first.
-            @option exclude Regular expression of files to exclude
-            @return Return a list of matching files and directories
-         */
-        # DEPRECATED
-        function find(glob = "*", options = {recurse: true}): Array {
-            function recursiveFind(path: Path, pattern: RegExp, level: Number): Array {
-                let result: Array = []
-                if (options.exclude && path.match(options.exclude)) {
-                    return result
-                }
-                if (!options.dirsLast) {
-                    if (Config.OS == "WIN" || Config.OS == "CYGWIN") {
-                        if (path.basename.toString().toLowerCase().match(pattern)) {
-                            result.append(path)
-                        }
-                    } else if (path.basename.toString().match(pattern)) {
-                        result.append(path)
-                    }
-                }
-                if (path.isDir && (options.recurse || level == 0)) {
-                    for each (f in path.files(true)) {
-                        let got: Array = recursiveFind(f, pattern, level + 1)
-                        for each (i in got) {
-                            result.append(i)
-                        }
-                    }
-                }
-                if (options.dirsLast) {
-                    if (Config.OS == "WIN" || Config.OS == "CYGWIN") {
-                        if (path.basename.toString().toLowerCase().match(pattern)) {
-                            result.append(path)
-                        }
-                    } else if (path.basename.toString().match(pattern)) {
-                        result.append(path)
-                    }
-                }
-                return result
-            }
-            if (glob is RegExp) {
-                pattern = glob
-            } else {
-                if (Config.OS == "WIN" || Config.OS == "CYGWIN") {
-                    //  MOB - better to do caseless match
-                    glob = glob.toString().toLowerCase()
-                }
-                pattern = RegExp("^" + glob.toString().replace(/\./g, "\\.").replace(/\*/g, ".*") + "$")
-            }
-            return recursiveFind(this, pattern, 0)
-        }
-
-        /**
             TODO - should do pattern matching
             @hide
          */
