@@ -649,6 +649,7 @@ static EjsArray *globMatch(Ejs *ejs, EjsArray *results, char *pattern, int flags
         Find longest non-wild portion of the pattern 
      */
     dir = pattern;
+    isDir = 0;
     if ((wild = strpbrk(dir, "*?")) != 0) {
         for (cp = wild; cp > dir && !strchr(seps, *cp); cp--) { }
         if (cp > dir) {
