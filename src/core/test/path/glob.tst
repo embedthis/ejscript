@@ -50,7 +50,7 @@ assert(Path('..').glob('app', {descend: true, depthFirst: true}).toString().ends
 assert(Path('..').glob('app', {descend: true, depthFirst: false}).toString().startsWith('../app'))
 
 //  nodirs
-assert(Path('..').glob('app', {nodirs: true, descend: true}) == '../app/09100-app.tst,../app/io.tst')
+assert(Path('..').glob('app', {nodirs: true, descend: true}).sort() == '../app/09100-app.tst,../app/io.tst')
 
 /*
     hidden
