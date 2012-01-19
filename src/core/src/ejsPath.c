@@ -495,6 +495,7 @@ static EjsArray *path_files(Ejs *ejs, EjsPath *fp, int argc, EjsObj **argv)
 
     mprAssert(argc == 0 || argc == 1);
     options = (argc == 1) ? argv[0]: 0;
+    exclude = include = 0;
     flags = 0;
 
     if (options) {
