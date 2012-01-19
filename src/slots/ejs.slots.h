@@ -308,11 +308,12 @@
 /*
    Prototype (instance) slots for "Args" type 
  */
-#define ES_Args_rest                                                   0
-#define ES_Args_options                                                1
-#define ES_Args_template                                               2
-#define ES_Args_validate                                               3
-#define ES_Args_NUM_INSTANCE_PROP                                      4
+#define ES_Args_program                                                0
+#define ES_Args_rest                                                   1
+#define ES_Args_options                                                2
+#define ES_Args_template                                               3
+#define ES_Args_validate                                               4
+#define ES_Args_NUM_INSTANCE_PROP                                      5
 #define ES_Args_NUM_INHERITED_PROP                                     0
 
 
@@ -2363,6 +2364,6 @@
 #define ES_XMLList_NUM_INSTANCE_PROP                                   20
 #define ES_XMLList_NUM_INHERITED_PROP                                  0
 
-#define _ES_CHECKSUM_ejs   1466286
+#define _ES_CHECKSUM_ejs   1467554
 
 #endif
