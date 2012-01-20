@@ -5,13 +5,13 @@
 o = {
     something: 7,
 }
-str = serialize(o, { indent: "______________" })
+str = serialize(o, { pretty: true, indent: "______________" })
 assert(str == '{
 ______________"something": 7
 }')
 
 
-str = serialize(o, { indent: 20 })
+str = serialize(o, { pretty: true, indent: 20 })
 assert(str = '{
                     "something": 7
 }')

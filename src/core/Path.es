@@ -496,11 +496,18 @@ module ejs {
             return new XML(data)
         }
 
-        //  TODO - should support an optional relativeTo: Path = "/" argument
         /**
             That path in a form relative to the application's current working directory. The value is normalized.
          */
         native function get relative(): Path
+
+        /**
+            Get a relative path from an origin
+            @param origin The origin path to use when calculating a relative path to the destination (this path).
+                If origin is null, the current working directory is used as the origin.
+            @return A new relative path
+         */
+        native function relativeFrom(origin: Path = null): Path
 
         /**
             Delete the file associated with the Path object. If this is a directory without contents it will be removed.

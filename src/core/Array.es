@@ -452,10 +452,11 @@ module ejs {
             @param mapper Transforming function
             @spec ejs
          */
-        function transform(mapper: Function): Void {
+        function transform(mapper: Function): Array {
             for (let i: Number in this) {
                 this[i] = mapper(this[i], i, this);
             }
+            return this
         }
 
         /**

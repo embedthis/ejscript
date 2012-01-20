@@ -1653,6 +1653,7 @@ extern EjsString *ejsToJSON(Ejs *ejs, EjsAny *obj, EjsObj *options);
 #define EJS_JSON_SHOW_NAMESPACES    0x4     /**< ejsSerialize flag to include namespaces in names */
 #define EJS_JSON_SHOW_PRETTY        0x8     /**< ejsSerialize flag to render in human-readible multiline format */
 #define EJS_JSON_SHOW_SUBCLASSES    0x10    /**< ejsSerialize flag to include subclass properties */
+#define EJS_JSON_SHOW_NOQUOTES      0x20    /**< ejsSerialize flag to omit quotes if property has no spaces */
 
 /**
     Serialize a variable into JSON format
@@ -1662,6 +1663,7 @@ extern EjsString *ejsToJSON(Ejs *ejs, EjsAny *obj, EjsObj *options);
         <ul>
         <li> EJS_JSON_SHOW_COMMAS - Always use commas after properties</li> 
         <li> EJS_JSON_SHOW_HIDDEN - Include hidden properties </li>
+        <li> EJS_JSON_SHOW_NOQUOTES - Omit quotes on properties if possible</li> 
         <li> EJS_JSON_SHOW_NAMESPACES - Include namespaces in property names </li>
         <li> EJS_JSON_SHOW_PRETTY - Use human-readable multiline presentation </li> 
         <li> EJS_JSON_SHOW_SUBCLASSES - Include subclass properties </li>

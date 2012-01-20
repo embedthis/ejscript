@@ -28,6 +28,7 @@ typedef struct Json {
     int         depth;
     int         hidden;
     int         namespaces;
+    int         quotes;
     int         pretty;
     int         nest;              /* Json serialize nest level */
 } Json;
@@ -431,6 +432,8 @@ EjsString *ejsSerializeWithOptions(Ejs *ejs, EjsAny *vp, EjsObj *options)
 
     memset(&json, 0, sizeof(Json));
     json.depth = 99;
+    json.quotes = 1;
+    json.indent = sclone("  ");
 
     if (options) {
         json.options = options;
@@ -444,13 +447,11 @@ EjsString *ejsSerializeWithOptions(Ejs *ejs, EjsAny *vp, EjsObj *options)
             if (ejsIs(ejs, arg, String)) {
                json.indent = (char*) ejsToMulti(ejs, arg);
                 //  TODO - get another solution to hold
-                mprHold(json.indent);
             } else if (ejsIs(ejs, arg, Number)) {
                 i = ejsGetInt(ejs, arg);
                 if (0 <= i && i < MPR_MAX_STRING) {
                     json.indent = mprAlloc(i + 1);
                     //  TODO - get another solution to hold
-                    mprHold(json.indent);
                     memset(json.indent, ' ', i);
                     json.indent[i] = '\0';
                 }
@@ -465,6 +466,9 @@ EjsString *ejsSerializeWithOptions(Ejs *ejs, EjsAny *vp, EjsObj *options)
         if ((arg = ejsGetPropertyByName(ejs, options, EN("namespaces"))) != 0) {
             json.namespaces = (arg == ESV(true));
         }
+        if ((arg = ejsGetPropertyByName(ejs, options, EN("quotes"))) != 0) {
+            json.quotes = (arg != ESV(false));
+        }
         if ((arg = ejsGetPropertyByName(ejs, options, EN("pretty"))) != 0) {
             json.pretty = (arg == ESV(true));
         }
@@ -473,9 +477,10 @@ EjsString *ejsSerializeWithOptions(Ejs *ejs, EjsAny *vp, EjsObj *options)
             json.replacer = NULL;
         }
     }
+    mprRelease(json.indent);
+    mprHold(json.indent);
     result = serialize(ejs, vp, &json);
     //  TODO - get another solution to hold
-    mprRelease(json.indent);
     return result;
 }
 
@@ -486,11 +491,12 @@ EjsString *ejsSerialize(Ejs *ejs, EjsAny *vp, int flags)
 
     memset(&json, 0, sizeof(Json));
     json.depth = 99;
-    json.pretty = (flags & EJS_JSON_SHOW_PRETTY) ? 1 : 0;
+    json.baseClasses = (flags & EJS_JSON_SHOW_SUBCLASSES) ? 1 : 0;
     json.commas = (flags & EJS_JSON_SHOW_COMMAS) ? 1 : 0;
     json.hidden = (flags & EJS_JSON_SHOW_HIDDEN) ? 1 : 0;
     json.namespaces = (flags & EJS_JSON_SHOW_NAMESPACES) ? 1 : 0;
-    json.baseClasses = (flags & EJS_JSON_SHOW_SUBCLASSES) ? 1 : 0;
+    json.pretty = (flags & EJS_JSON_SHOW_PRETTY) ? 1 : 0;
+    json.quotes = (flags & EJS_JSON_SHOW_NOQUOTES) ? 0 : 1;
     return serialize(ejs, vp, &json);
 }
 
@@ -527,7 +533,7 @@ static EjsString *serialize(Ejs *ejs, EjsAny *vp, Json *json)
     }
     isArray = ejsIs(ejs, vp, Array);
     mprPutCharToWideBuf(json->buf, isArray ? '[' : '{');
-    if (json->pretty || json->indent) {
+    if (json->pretty) {
         mprPutCharToWideBuf(json->buf, '\n');
     }
     if (++ejs->serializeDepth <= json->depth && !VISITED(obj)) {
@@ -556,10 +562,6 @@ static EjsString *serialize(Ejs *ejs, EjsAny *vp, Json *json)
             }
             if (json->pretty) {
                 for (i = 0; i < ejs->serializeDepth; i++) {
-                    mprPutStringToWideBuf(json->buf, "  ");
-                }
-            } else if (json->indent) {
-                for (i = 0; i < ejs->serializeDepth; i++) {
                     mprPutStringToWideBuf(json->buf, json->indent);
                 }
             }
@@ -570,7 +572,9 @@ static EjsString *serialize(Ejs *ejs, EjsAny *vp, Json *json)
                     }
                 }
 //  TODO -- should this be in unicode?  yes?
-                mprPutCharToWideBuf(json->buf, '"');
+                if (json->quotes || strpbrk(qname.name->value, " \t+-=")) {
+                    mprPutCharToWideBuf(json->buf, '"');
+                }
                 for (cp = qname.name->value; cp && *cp; cp++) {
                     c = *cp;
                     if (c == '"' || c == '\\') {
@@ -580,8 +584,11 @@ static EjsString *serialize(Ejs *ejs, EjsAny *vp, Json *json)
                         mprPutCharToWideBuf(json->buf, c);
                     }
                 }
-                mprPutStringToWideBuf(json->buf, "\":");
-                if (json->pretty || json->indent) {
+                if (json->quotes || strpbrk(qname.name->value, " \t+-=")) {
+                    mprPutCharToWideBuf(json->buf, '"');
+                }
+                mprPutCharToWideBuf(json->buf, ':');
+                if (json->pretty) {
                     mprPutCharToWideBuf(json->buf, ' ');
                 }
             }
@@ -611,20 +618,16 @@ static EjsString *serialize(Ejs *ejs, EjsAny *vp, Json *json)
             if ((slotNum + 1) < count || json->commas) {
                 mprPutCharToWideBuf(json->buf, ',');
             }
-            if (json->pretty || json->indent) {
+            if (json->pretty) {
                 mprPutCharToWideBuf(json->buf, '\n');
             }
         }
         SET_VISITED(obj, 0);
     }
     --ejs->serializeDepth; 
-    if (json->pretty || json->indent) {
+    if (json->pretty) {
         for (i = ejs->serializeDepth; i > 0; i--) {
-            if (json->indent) {
-                mprPutStringToWideBuf(json->buf, json->indent);
-            } else {
-                mprPutStringToWideBuf(json->buf, "  ");
-            }
+            mprPutStringToWideBuf(json->buf, json->indent);
         }
     }
     mprPutCharToWideBuf(json->buf, isArray ? ']' : '}');

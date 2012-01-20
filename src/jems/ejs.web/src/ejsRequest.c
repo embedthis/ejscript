@@ -1446,7 +1446,7 @@ EjsRequest *ejsCreateRequest(Ejs *ejs, EjsHttpServer *server, HttpConn *conn, cc
     if (mprIsPathRel(dir)) {
         req->dir = ejsCreatePathFromAsc(ejs, dir);
     } else {
-        req->dir = ejsCreatePathFromAsc(ejs, mprGetRelPath(dir));
+        req->dir = ejsCreatePathFromAsc(ejs, mprGetRelPath(dir, 0));
     }
     mprAssert(!VISITED(req->dir));
     //  OPT -- why replicate these two

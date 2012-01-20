@@ -1353,7 +1353,21 @@ static EjsXML *readXML(Ejs *ejs, EjsPath *fp, int argc, EjsObj **argv)
  */
 static EjsPath *relativePath(Ejs *ejs, EjsPath *fp, int argc, EjsObj **argv)
 {
-    return ejsCreatePathFromAsc(ejs, mprGetRelPath(fp->value));
+    return ejsCreatePathFromAsc(ejs, mprGetRelPath(fp->value, 0));
+}
+
+
+/*
+    Return a relative path name for the file from the given origin
+  
+    function relativeFrom(origin: Path = null): Path
+ */
+static EjsPath *relativeFromPath(Ejs *ejs, EjsPath *fp, int argc, EjsObj **argv)
+{
+    cchar   *origin;
+
+    origin = (argc >= 1) ? ((EjsPath*) argv[0])->value : 0;
+    return ejsCreatePathFromAsc(ejs, mprGetRelPath(fp->value, origin));
 }
 
 
@@ -1690,6 +1704,7 @@ void ejsConfigurePathType(Ejs *ejs)
     ejsBindAccess(ejs, prototype, ES_Path_perms, getPerms, setPerms);
     ejsBindMethod(ejs, prototype, ES_Path_portable, getPortablePath);
     ejsBindMethod(ejs, prototype, ES_Path_relative, relativePath);
+    ejsBindMethod(ejs, prototype, ES_Path_relativeFrom, relativeFromPath);
     ejsBindMethod(ejs, prototype, ES_Path_remove, removePath);
     ejsBindMethod(ejs, prototype, ES_Path_rename, renamePathFile);
     ejsBindMethod(ejs, prototype, ES_Path_resolve, resolvePath);
