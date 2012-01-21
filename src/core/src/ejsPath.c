@@ -651,11 +651,16 @@ static EjsArray *globMatch(Ejs *ejs, EjsArray *results, char *pattern, int flags
     dir = pattern;
     isDir = 0;
     if ((wild = strpbrk(dir, "*?")) != 0) {
-        for (cp = wild; cp > dir && !strchr(seps, *cp); cp--) { }
-        if (cp > dir) {
-            *cp++ = '\0';
-        } else {
+        if (wild == dir) {
             dir = ".";
+            cp = wild;
+        } else {
+            for (cp = wild; cp > dir && !strchr(seps, *cp); cp--) { }
+            if (cp > dir) {
+                *cp++ = '\0';
+            } else {
+                dir = snclone(dir, 1);
+            }
         }
         pattern = stok(cp, seps, &nextPartPattern);
         if (scontains(pattern, "**", -1)) {
