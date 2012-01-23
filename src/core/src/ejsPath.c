@@ -646,20 +646,27 @@ static EjsArray *globMatch(Ejs *ejs, EjsArray *results, char *pattern, int flags
     int             next, included, isDir, rc;
 
     /* 
-        Find longest non-wild portion of the pattern 
+        Optimize by finding the longest non-wild portion of the pattern and set "dir" to that.
+        This minimizes the number of directories searched. Must handle "file*", "*file", "/file*", "C:/file*"
      */
     dir = pattern;
     isDir = 0;
     if ((wild = strpbrk(dir, "*?")) != 0) {
         if (wild == dir) {
+            // *file
             dir = ".";
             cp = wild;
         } else {
             for (cp = wild; cp > dir && !strchr(seps, *cp); cp--) { }
             if (cp > dir) {
+                //  c:/file* or /path/file*
                 *cp++ = '\0';
-            } else {
+            } else if (*cp == seps[0]) {
+                //  /file*
                 dir = snclone(dir, 1);
+            } else {
+                //  file*
+                dir = ".";
             }
         }
         pattern = stok(cp, seps, &nextPartPattern);
