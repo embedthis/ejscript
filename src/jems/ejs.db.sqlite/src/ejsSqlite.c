@@ -150,13 +150,10 @@ static EjsObj *sqliteSql(Ejs *ejs, EjsSqlite *db, int argc, EjsObj **argv)
         ejsThrowIOError(ejs, "Database is closed");
         return 0;
     }
-    mprAssert(sdb);
-
     result = ejsCreateArray(ejs, 0);
     if (result == 0) {
         return 0;
     }
-
     rc = SQLITE_OK;
     while (cmd && *cmd && (rc == SQLITE_OK || (rc == SQLITE_SCHEMA && ++retries < 2))) {
         stmt = 0;
@@ -183,7 +180,6 @@ static EjsObj *sqliteSql(Ejs *ejs, EjsSqlite *db, int argc, EjsObj **argv)
                     return 0;
                 }
                 for (i = 0; i < ncol; i++) {
-                    //  MOB OPT - this can be hoisted
                     tableName = (char*) sqlite3_column_table_name(stmt, i);
                     if (defaultTableName == 0) {
                         defaultTableName = tableName;

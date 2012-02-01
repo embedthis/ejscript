@@ -510,7 +510,7 @@ static EjsString *serialize(Ejs *ejs, EjsAny *vp, Json *json)
     EjsObj      *pp, *obj, *replacerArgs[2];
     MprChar     *cp;
     cchar       *key;
-    int         c, isArray, i, count, slotNum;
+    int         c, isArray, i, count, slotNum, quotes;
 
     /*
         The main code below can handle Arrays, Objects, objects derrived from Object and also native classes with properties.
@@ -560,6 +560,17 @@ static EjsString *serialize(Ejs *ejs, EjsAny *vp, Json *json)
             } else {
                 qname = ejsGetPropertyName(ejs, vp, slotNum);
             }
+
+            quotes = json->quotes;
+            if (!quotes) {
+                //  UNICODE
+                for (cp = qname.name->value; cp < &qname.name->value[qname.name->length]; cp++) {
+                    if (!isalnum(*cp) && *cp != '_') {
+                        quotes = 1;
+                        break;
+                    }
+                }
+            }
             if (json->pretty) {
                 for (i = 0; i < ejs->serializeDepth; i++) {
                     mprPutStringToWideBuf(json->buf, json->indent);
@@ -571,8 +582,7 @@ static EjsString *serialize(Ejs *ejs, EjsAny *vp, Json *json)
                         mprPutFmtToWideBuf(json->buf, "\"%@\"::", qname.space);
                     }
                 }
-//  TODO -- should this be in unicode?  yes?
-                if (json->quotes || strpbrk(qname.name->value, " \t+-=")) {
+                if (quotes) {
                     mprPutCharToWideBuf(json->buf, '"');
                 }
                 for (cp = qname.name->value; cp && *cp; cp++) {
@@ -584,7 +594,7 @@ static EjsString *serialize(Ejs *ejs, EjsAny *vp, Json *json)
                         mprPutCharToWideBuf(json->buf, c);
                     }
                 }
-                if (json->quotes || strpbrk(qname.name->value, " \t+-=")) {
+                if (quotes) {
                     mprPutCharToWideBuf(json->buf, '"');
                 }
                 mprPutCharToWideBuf(json->buf, ':');

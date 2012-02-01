@@ -137,11 +137,8 @@ module ejs.db.sqlite {
 
         /** @duplicate ejs.db::Database.createTable */
         function createTable(table: String, columns: Array? = null): Void {
-            let cmd: String
-
             query("DROP TABLE IF EXISTS " + table + ";")
             query("CREATE TABLE " + table + "(id INTEGER PRIMARY KEY AUTOINCREMENT NOT NULL);")
-
             if (columns) {
                 for each (let colspec: String in columns) {
                     //  TODO - destructuring assignment would be good here

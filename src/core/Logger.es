@@ -248,9 +248,7 @@ module ejs {
         function activity(tag: String, ...args): Void {
             let msg = args.join(" ")
             let msg = "%12s %s" % (["[" + tag + "]"] + [msg]) + "\n"
-            //  UNUSED if (_level > 0) {
-                write(msg)
-            // UNUSED }
+            write(msg)
         }
 
         /** 

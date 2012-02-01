@@ -313,7 +313,8 @@
 #define ES_Args_options                                                2
 #define ES_Args_template                                               3
 #define ES_Args_validate                                               4
-#define ES_Args_NUM_INSTANCE_PROP                                      5
+#define ES_Args_validateItem                                           5
+#define ES_Args_NUM_INSTANCE_PROP                                      6
 #define ES_Args_NUM_INHERITED_PROP                                     0
 
 
@@ -1821,7 +1822,7 @@
 #define ES_Path_readString                                             48
 #define ES_Path_readXML                                                49
 #define ES_Path_relative                                               50
-#define ES_Path_relativeFrom                                           51
+#define ES_Path_relativeTo                                             51
 #define ES_Path_remove                                                 52
 #define ES_Path_removeAll                                              53
 #define ES_Path_rename                                                 54

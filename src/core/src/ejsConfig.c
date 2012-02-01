@@ -39,7 +39,7 @@ void ejsDefineConfigProperties(Ejs *ejs)
      */
     att = EJS_PROP_STATIC | EJS_PROP_ENUMERABLE;
     ejsDefineProperty(ejs, type, -1, N("public", "Debug"), 0, att, BLD_DEBUG ? ESV(true): ESV(false));
-    ejsDefineProperty(ejs, type, -1, N("public", "CPU"), 0, att, ejsCreateStringFromAsc(ejs, BLD_HOST_CPU));
+    ejsDefineProperty(ejs, type, -1, N("public", "CPU"), 0, att, ejsCreateStringFromAsc(ejs, BLD_CPU));
     ejsDefineProperty(ejs, type, -1, N("public", "OS"), 0, att, ejsCreateStringFromAsc(ejs, BLD_OS));
     ejsDefineProperty(ejs, type, -1, N("public", "Product"), 0, att, 
         ejsCreateStringFromAsc(ejs, BLD_PRODUCT));

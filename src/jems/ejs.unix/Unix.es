@@ -32,13 +32,47 @@ module ejs.unix {
     function chmod(path: String, perms: Number): Void
         Path(path).perms = perms
 
-    /*
-        Close the file and free up all associated resources.
-        @param file Open file object previously opened via $open or $File
+    //  MOB - rename to cp
+    /**
+        Copy files like unix cp
+        @param files File or array of files to copy. Each file member can contain wild-cards suitable for Path.glob()
+        @param dest Destination file or directory.
+        @param options Reserved
         @hide
-        @deprecated 2.0.0
-    function close(file: File): Void
-     */
+    */
+    function copy(files, dest: Path, options = {}) {
+        if (!(files is Array)) files = [files]
+        for each (pat in files) {
+            for each (let file: Path in Path('.').glob(pat)) {
+                if (file.isDir) {
+                    if (dest.isDir) {
+                        let target = dest.join(file.basename)
+                        target.makeDir()
+                        for each (f in file.files()) {
+                            copy(f, target)
+                        }
+                    } else if (dest.exists && dest.isRegular) {
+                        throw 'Destination is not a directory'
+                    } else {
+                        /* dir, missing */
+                        dest.makeDir()
+                        for each (f in file.files()) {
+                            copy(f, dest.join(f.basename))
+                        }
+                    }
+                } else {
+                    if (dest.isDir) {
+                        /*OK file, dir */
+                        let target = dest.join(file.basename)
+                        file.copy(target)
+                    } else {
+                        /*OK file, file */
+                        file.copy(dest)
+                    }
+                }
+            }
+        }
+    }
 
     /**
         Copy a file. If the destination file already exists, the old copy will be overwritten as part of the 

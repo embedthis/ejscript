@@ -646,20 +646,27 @@ static EjsArray *globMatch(Ejs *ejs, EjsArray *results, char *pattern, int flags
     int             next, included, isDir, rc;
 
     /* 
-        Find longest non-wild portion of the pattern 
+        Optimize by finding the longest non-wild portion of the pattern and set "dir" to that.
+        This minimizes the number of directories searched. Must handle "file*", "*file", "/file*", "C:/file*"
      */
     dir = pattern;
     isDir = 0;
     if ((wild = strpbrk(dir, "*?")) != 0) {
         if (wild == dir) {
+            // *file
             dir = ".";
             cp = wild;
         } else {
             for (cp = wild; cp > dir && !strchr(seps, *cp); cp--) { }
             if (cp > dir) {
+                //  c:/file* or /path/file*
                 *cp++ = '\0';
-            } else {
+            } else if (*cp == seps[0]) {
+                //  /file*
                 dir = snclone(dir, 1);
+            } else {
+                //  file*
+                dir = ".";
             }
         }
         pattern = stok(cp, seps, &nextPartPattern);
@@ -746,7 +753,7 @@ static int gmatch(cchar *pattern, cchar *filename, int isDir, int flags, int *in
     }
     markFile = markPat = 0;
     for (cp = filename, p = pattern; *cp && *p; cp++, p++) {
-        if (*p == '*' && p[1] == '*' && isDir) {
+        if (*p == '*' && p[1] == '*' && (isDir || p[2] == '\0')) {
             p--;
         } else if (*p == '*') {
             if (p[1] == '\0') {
@@ -782,10 +789,16 @@ static int gmatch(cchar *pattern, cchar *filename, int isDir, int flags, int *in
             *included = 1;
             return 1;
         } 
-        if (isDir && p[1] == '*') {
-            /* Double wildcard on a directory */
-            *included =  (p[2] == '\0') ? 1 : 0;
-            return 1;
+        if (p[1] == '*') {
+#if UNUSED
+            if (isDir) {
+#endif
+                /* Double wildcard on a directory */
+                *included =  (p[2] == '\0') ? 1 : 0;
+                return 1;
+#if UNUSED
+            }
+#endif
         }
     }
     return 0;
@@ -1365,9 +1378,9 @@ static EjsPath *relativePath(Ejs *ejs, EjsPath *fp, int argc, EjsObj **argv)
 /*
     Return a relative path name for the file from the given origin
   
-    function relativeFrom(origin: Path = null): Path
+    function relativeTo(origin: Path = null): Path
  */
-static EjsPath *relativeFromPath(Ejs *ejs, EjsPath *fp, int argc, EjsObj **argv)
+static EjsPath *relativeToPath(Ejs *ejs, EjsPath *fp, int argc, EjsObj **argv)
 {
     cchar   *origin;
 
@@ -1709,7 +1722,7 @@ void ejsConfigurePathType(Ejs *ejs)
     ejsBindAccess(ejs, prototype, ES_Path_perms, getPerms, setPerms);
     ejsBindMethod(ejs, prototype, ES_Path_portable, getPortablePath);
     ejsBindMethod(ejs, prototype, ES_Path_relative, relativePath);
-    ejsBindMethod(ejs, prototype, ES_Path_relativeFrom, relativeFromPath);
+    ejsBindMethod(ejs, prototype, ES_Path_relativeTo, relativeToPath);
     ejsBindMethod(ejs, prototype, ES_Path_remove, removePath);
     ejsBindMethod(ejs, prototype, ES_Path_rename, renamePathFile);
     ejsBindMethod(ejs, prototype, ES_Path_resolve, resolvePath);

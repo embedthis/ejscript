@@ -101,16 +101,13 @@ static EjsObj *g_eval(Ejs *ejs, EjsObj *unused, int argc, EjsObj **argv)
     } else {
         cache = ejsToMulti(ejs, argv[1]);
     }
-    MPR_VERIFY_MEM();
     if (ejsLoadScriptLiteral(ejs, script, cache, EC_FLAGS_NO_OUT | EC_FLAGS_DEBUG | EC_FLAGS_THROW | EC_FLAGS_VISIBLE) < 0) {
         return 0;
     }
-    MPR_VERIFY_MEM();
     return ejs->result;
 }
 
 
-#if ES_hashcode
 /*  
     Get the hash code for the object.
     function hashcode(o: Object): Number
@@ -120,7 +117,6 @@ static EjsNumber *g_hashcode(Ejs *ejs, EjsObj *vp, int argc, EjsObj **argv)
     mprAssert(argc == 1);
     return ejsCreateNumber(ejs, (MprNumber) PTOL(argv[0]));
 }
-#endif
 
 
 /*  
@@ -220,9 +216,28 @@ int ejsBlendObject(Ejs *ejs, EjsObj *dest, EjsObj *src, int flags)
             mprLog(0, "Blend name %N", qname);
         }
 
+        //  MOB - refactor into a function
         if (combine) {
-            kind = qname.name->value[0];
             cflags = flags;
+#if SUFFIX
+            //  MOB - could support suffixes for append and prefixes for prepend?
+            kind = qname.name->value[qname.name->length];
+            trimmedName = qname;
+            if (kind == '+') {
+                cflags |= EJS_BLEND_ADD;
+            } else if (kind == '-') {
+                cflags |= EJS_BLEND_SUB;
+            } else if (kind == '=') {
+                cflags |= EJS_BLEND_ASSIGN;
+            } else {
+                trimmedName = qname;
+            }
+            if (cflags & (EJS_BLEND_ADD | EJS_BLEND_SUB | EJS_BLEND_ASSIGN)) {
+                //  MOB - unicode
+                trimmedName.name = ejsInternAsc(ejs, qname.name->value, qname.name->length - 1);
+            }
+#else
+            kind = qname.name->value[0];
             if (kind == '+') {
                 cflags |= EJS_BLEND_ADD;
                 trimmedName = N(qname.space->value, &qname.name->value[1]);
@@ -233,8 +248,10 @@ int ejsBlendObject(Ejs *ejs, EjsObj *dest, EjsObj *src, int flags)
                 cflags |= EJS_BLEND_ASSIGN;
                 trimmedName = N(qname.space->value, &qname.name->value[1]);
             } else {
+                cflags |= EJS_BLEND_ASSIGN;
                 trimmedName = qname;
             }
+#endif
             if ((dp = ejsGetPropertyByName(ejs, dest, trimmedName)) == 0) {
                 /* Destination property missing */
                 if (cflags & EJS_BLEND_SUB) {
@@ -291,6 +308,10 @@ int ejsBlendObject(Ejs *ejs, EjsObj *dest, EjsObj *src, int flags)
                     /* Assign */
                     ejsSetPropertyByName(ejs, dest, trimmedName, ejsClone(ejs, vp, deep));
                 }
+            } else {
+                /* Assign */
+                ejsSetPropertyByName(ejs, dest, trimmedName, vp);
+                
             }
 
         } else {

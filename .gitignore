@@ -154,3 +154,4 @@ src/core/test/cmd/TempWmicBatchFile.bat
 src/test/tt.es
 main
 val.log
+local.bit

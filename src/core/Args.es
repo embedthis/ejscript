@@ -5,18 +5,17 @@
 
 module ejs {
     /**
-        The Args class parses the Application's command line. A template of permissible arguments is passed to the 
-        Args constructor. The Args class supports command options that begin with "-" or "--" and parses
-        option arguments of the forms: "-flag x" and "-flag=x". An option may have multiple forms (e.g. --verbose or -v).
+        The Args class parses the Application's command line. A template of permissible command line options
+        is passed to the Args constructor. The Args class supports command options that begin with "-" or "--" and parses
+        option arguments of the forms: "-flag x" and "-flag=x". An option may have aliased forms (i.e. -v for --verbose).
 
-        The template contains properties for options, usage message should invalid arguments be submitted and 
-        an error handling policy. The options can provide a range of valid values for an option. The Range may be an
-        Ejscript type or regular expression that constrains the permissible values for the argument. A default value
-        may be provided for each option. The property in args.options will always be created and will be set to 
-        the default value if the users does not provide a value.
+        The command template contains properties for options, usage message, and error handling policy should 
+        invalid options or arguments be submitted. The template can provide a range of valid values for a command option.
+        The option range may be an Ejscript type, regular expression or set of values that constrains the permissible 
+        option argument values. A default value may be provided for each option argument. 
         
         Once parsed, the arguments are accessible via args.options. The remaining command line arguments are available 
-        in cmd.rest.
+        in args.rest.
 
         @spec ejs
         @stability prototype
@@ -25,38 +24,44 @@ module ejs {
         /* Program name from App.args[0] */
         public var program: Path
 
-        /* Rest of the User supplied arguments that follow the switche options */
+        /* Rest of the User supplied arguments that follow the command options */
         public var rest: Array = []
 
-        /** User supplied options (switches) */
+        /** User supplied command line options */
         public var options: Object = {}
 
         /* Copy of the argument template specification */
         public var template: Object
 
         /**
-             The Args constructor creates a new instance of the Args. It parses the command line 
-             and stores the parsed options in the $options and $args properties. 
-             Args supports command options that begin with "-" or "--" and parses option arguments of the forms: 
-             "-flag x" and "-flag=x".
-             @param template Array of permissible command option patterns. Each template element corresponds to a
-                command option. Each template element is tuple (array) with three elements: Name, Range and Default.
-                Tirst item is the option name. 
-                The second item specifies the set of permissible values for the option argument. If the option does not
-                take an argument, set this to null. If this argument is set to a regular expression, the option argument
-                is validated against it. If set to a Type, the option must have a value that is castable to this type. 
-                The third item is an optional default value. This is the value that options[NAME] will be set to when
-                the option is absent.  If an option without an argument is specified by the user, its value in
-                options[NAME] will be set to true.  To support options with aliases (such as --verbose and -v), the
-                option text item can be an array of option text names.
-             @param argv Array of command arguments to parse. Defaults to App.args.
-             @option onerror
+            The Args constructor creates a new instance of the Args. It parses the command line 
+            and stores the parsed options in the $options and $args properties. 
+            Args supports command options that begin with "-" or "--" and parses option arguments of the forms: 
+            "-flag x" and "-flag=x".
+            @param template Command argument template. The template is an object with option properties for:
+                options, usage, onerror ad silent.
+            @param argv Array of command arguments to parse. Defaults to App.args.
+            @option options This is an object with properties for each command line option. The value of each property
+                is an object with properties: 'alias', 'range', 'value' and 'separator'. The 'alias' property defines
+                a String alias for the option. This is typically used to define a single character alias for the full
+                command line option name. The 'range' property defines what permissible values an option parameter may take.
+                It may be set to either an Ejscript type, a Regular Expression or it may be set to an array of values.
+
+                The 'value' property may define a default value for the option if it is not defined.
+                This is the value that args.options[OPTION] will be set to when the command line option is absent.  If
+                an option without an argument is specified by the user, its value in options[NAME] will be set to true.  
+
+                If the 'separator' property is defined, multiple command line options of this name are permitted.
+                If 'separator' is set to a string, then the multiple command line option values are catenated
+                using the 'separator'. If set to array, the option values are stored in an array.
+            @option usage Function to invoke for argument parse errors 
+            @option onerror
                 If set to 'throw', an exception will be thrown for argument parse errors. The usage function will not be 
                 called and no message will be written to the application log.
                 If set to 'exit', a message will be written to the console for argument parse errors and any usage
                 function will be invoked before exiting the application with a non-zero exit status.
             @option silent Don't emit any message on argument parse errors
-             @example
+            @example
 let args = Args({
     options: {
         depth: { range: Number },
@@ -64,6 +69,7 @@ let args = Args({
         verbose: { alias: 'v', value: true, },
         log: { range: /\w+(:\d)/, value: 'stderr:4' },
         mode: { range: ['low', 'medium', 'high'], value: 'high' },
+        with: { range: String, separator: ',' },
     },
     usage: usage,
     onerror: 'exit|throw',
@@ -78,9 +84,7 @@ for each (file in args.rest) {
         function Args(template: Object, argv: Array = App.args) {
             this.template = template.clone()
             for each (item in template.options) {
-                if (item.alias) {
-                    template.options[item.alias] = item
-                }
+                if (item.alias) template.options[item.alias] = item
             }
             try {
                 program = Path(argv[0])
@@ -91,19 +95,26 @@ for each (file in args.rest) {
                         let [key,value] = name.split("=")
                         let item = template.options[key]
                         if (!item) {
-                            throw "Undefined option " + key
+                            throw "Undefined option '" + key + "'"
                         }
-                        if (value) {
-                            template.options[key].value = value
-                            continue
-                        }
-                        if (!item.range) {
-                            template.options[key].value = true
-                        } else {
-                            if (++i >= argv.length) {
-                                throw "Missing option for " + key
+                        if (!value) {
+                            if (!item.range) {
+                                value = true
+                            } else {
+                                if (++i >= argv.length) {
+                                    throw "Missing option for " + key
+                                }
+                                value = argv[i]
                             }
-                            template.options[key].value = argv[i]
+                        }
+                        if (item.separator) {
+                            if (item.value is Array) {
+                                item.value.push(value)
+                            } else {
+                                item.value = [value]
+                            }
+                        } else {
+                            item.value = value
                         }
                     } else {
                         rest.append(arg)
@@ -130,66 +141,84 @@ for each (file in args.rest) {
             Validate options against the range of permissible values
          */
         private function validate(): Void {
-            for (key in template.options) {
-                let item = template.options[key]
-                let value = item.value
-                if (value == undefined) {
+            for (let [key,item]  in template.options) {
+                if (item.value == undefined) {
                     continue
                 }
-                if (item.range === Number) {
-                    if (value) {
-                        if (!(value is Number)) {
-                            if (value.toString().match(/^\d+$/)) {
-                                options[key] = value cast Number
-                            } else { 
-                               throw "Option \"" + key + "\" must be a number"
-                            }
+                if (item.separator == Array) {
+                    options[key] = []
+                    for each (value in item.value) {
+                        let v = validateItem(item, value)
+                        options[key].push(v)
+                    }
+                } else if (item.separator is String) {
+                    options[key] = ''
+                    for each (value in item.value) {
+                        if (options[key]) {
+                            options[key] += item.separator + validateItem(item, value)
+                        } else {
+                            options[key] += validateItem(item, value)
                         }
-                    } else {
-                        item.value = 0
-                    }
-                } else if (item.range === Boolean) {
-                    if (value is Boolean) {
-                        value = value.toString()
-                    } else {
-                        value = value.toString().toLowerCase()
-                    }
-                    if (value != "true" && value != "false") {
-                       throw 'Option "' + key + '" must be true or false'
-                    }
-                    item.value = value cast Boolean
-
-                } else if (item.range === String) {
-                    item.value = item.value.toString();
-
-                } else if (item.range === Path) {
-                    item.value = Path(item.value)
-
-                } else if (item.range is RegExp) {
-                    value = value.toString()
-                    if (!value.match(item.range)) {
-                        throw 'Option "' + key + '" has bad value: "' + value + '"'
-                    }
-                    item.value = value
-
-                } else if (item.range is Array) {
-                    let ok = false
-                    for each (v in item.range) {
-                        if (value == v) {
-                            ok = true
-                            break
-                        }
-                    }
-                    if (! ok) {
-                        throw 'Option "' + key + '" has bad value: "' + value + '"'
                     }
                 } else {
-                    if (item.range && value != item.range) {
-                        throw 'Option "' + key + '" has bad value: "' + value + '"'
+                    options[key] = validateItem(item, item.value)
+                }
+            }
+        }
+
+        private function validateItem(item, value): Object {
+            if (item.range === Number) {
+                if (value) {
+                    if (!(value is Number)) {
+                        if (value.toString().match(/^\d+$/)) {
+                            value = value cast Number
+                        } else { 
+                           throw "Option \"" + key + "\" must be a number"
+                        }
+                    }
+                } else {
+                    value = 0
+                }
+            } else if (item.range === Boolean) {
+                if (value is Boolean) {
+                    value = value.toString()
+                } else {
+                    value = value.toString().toLowerCase()
+                }
+                if (value != "true" && value != "false") {
+                   throw 'Option "' + key + '" must be true or false'
+                }
+                value = value cast Boolean
+
+            } else if (item.range === String) {
+                value = value.toString();
+
+            } else if (item.range === Path) {
+                value = Path(value)
+
+            } else if (item.range is RegExp) {
+                value = value.toString()
+                if (!value.match(item.range)) {
+                    throw 'Option "' + key + '" has bad value: "' + value + '"'
+                }
+
+            } else if (item.range is Array) {
+                let ok = false
+                for each (v in item.range) {
+                    if (value == v) {
+                        ok = true
+                        break
                     }
                 }
-                options[key] = item.value
+                if (! ok) {
+                    throw 'Option "' + key + '" has bad value: "' + value + '"'
+                }
+            } else {
+                if (item.range && value != item.range) {
+                    throw 'Option "' + key + '" has bad value: "' + value + '"'
+                }
             }
+            return value
         }
     }
 }

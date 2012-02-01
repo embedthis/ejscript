@@ -332,7 +332,7 @@ cchar *ejsGetErrorMsg(Ejs *ejs, int withStack)
         tag = TYPE(error)->qname.name;
         if (ejsIs(ejs, error, Error)) {
             message = ejsGetProperty(ejs, error, ES_Error_message);
-            if (withStack && ejs->initialized) {
+            if (withStack && ejs->initialized && ejs->state) {
                 saveException = ejs->exception;
                 ejsClearException(ejs);
                 stack = ejsRunFunctionBySlot(ejs, error, ES_Error_formatStack, 0, NULL);
