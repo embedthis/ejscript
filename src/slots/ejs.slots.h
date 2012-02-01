@@ -1119,7 +1119,8 @@
 /*
     Class property slots for the "FileSystem" type 
  */
-#define ES_FileSystem_NUM_CLASS_PROP                                   0
+#define ES_FileSystem_drives                                           0
+#define ES_FileSystem_NUM_CLASS_PROP                                   1
 
 /*
    Prototype (instance) slots for "FileSystem" type 
@@ -2365,6 +2366,6 @@
 #define ES_XMLList_NUM_INSTANCE_PROP                                   20
 #define ES_XMLList_NUM_INHERITED_PROP                                  0
 
-#define _ES_CHECKSUM_ejs   1469468
+#define _ES_CHECKSUM_ejs   1470122
 
 #endif

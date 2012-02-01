@@ -15,6 +15,8 @@ module ejs {
 
         use default namespace public
 
+        native static function drives(): Array 
+
         /** 
             Create a new FileSystem object for the file system that contains the given path.
             @param path String or Path of a file that would reside in the file system.

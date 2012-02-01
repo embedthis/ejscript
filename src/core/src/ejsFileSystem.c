@@ -10,6 +10,35 @@
 
 /************************************ Methods *********************************/
 /*
+    static function drives(): Array
+ */
+static EjsArray *fs_drives(Ejs *ejs, EjsFileSystem *unused, int argc, EjsObj **argv)
+{
+    EjsArray    *ap;
+
+    if ((ap = ejsCreateArray(ejs, 0)) == 0) {
+        return 0;
+    }
+#if BLD_WIN_LIKE
+{
+    char        dbuf[2];
+    int         i, mask;
+
+    mask = GetLogicalDrives();
+    for (i = 0; i < 26; i++) {
+        if (mask & (1 << i)) {
+            dbuf[0] = 'A' + i;
+            dbuf[1] = '\0';
+            ejsAddItem(ejs, ap, ejsCreateStringFromAsc(ejs, dbuf));
+        }
+    }
+}
+#endif
+    return ap;
+}
+
+
+/*
     Constructor
 
     function FileSystem(path: String)
@@ -201,6 +230,7 @@ void ejsConfigureFileSystemType(Ejs *ejs)
     }
     prototype = type->prototype;
     ejsBindConstructor(ejs, type, fileSystemConstructor);
+    ejsBindMethod(ejs, type, ES_FileSystem_drives, fs_drives);
 #if ES_space
     ejsBindMethod(ejs, prototype, ES_FileSystem_space, fileSystemSpace);
 #endif
