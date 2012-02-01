@@ -101,16 +101,13 @@ static EjsObj *g_eval(Ejs *ejs, EjsObj *unused, int argc, EjsObj **argv)
     } else {
         cache = ejsToMulti(ejs, argv[1]);
     }
-    MPR_VERIFY_MEM();
     if (ejsLoadScriptLiteral(ejs, script, cache, EC_FLAGS_NO_OUT | EC_FLAGS_DEBUG | EC_FLAGS_THROW | EC_FLAGS_VISIBLE) < 0) {
         return 0;
     }
-    MPR_VERIFY_MEM();
     return ejs->result;
 }
 
 
-#if ES_hashcode
 /*  
     Get the hash code for the object.
     function hashcode(o: Object): Number
@@ -120,7 +117,6 @@ static EjsNumber *g_hashcode(Ejs *ejs, EjsObj *vp, int argc, EjsObj **argv)
     mprAssert(argc == 1);
     return ejsCreateNumber(ejs, (MprNumber) PTOL(argv[0]));
 }
-#endif
 
 
 /*  

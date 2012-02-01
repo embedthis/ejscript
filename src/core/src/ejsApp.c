@@ -182,19 +182,11 @@ static EjsNumber *app_gid(Ejs *ejs, EjsObj *unused, int argc, EjsObj **argv)
  */
 static EjsObj *app_putenv(Ejs *ejs, EjsObj *app, int argc, EjsObj **argv)
 {
-#if !WINCE
-#if BLD_UNIX_LIKE
     char    *key, *value;
 
     key = sclone(ejsToMulti(ejs, argv[0]));
     value = sclone(ejsToMulti(ejs, argv[1]));
-    setenv(key, value, 1);
-#else
-    //  TODO OPT
-    char *cmd = sjoin(ejsToMulti(ejs, argv[0]), "=", ejsToMulti(ejs, argv[1]), NULL);
-    putenv(cmd);
-#endif
-#endif
+    mprSetEnv(key, value);
     return 0;
 }
 

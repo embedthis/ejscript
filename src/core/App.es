@@ -388,8 +388,8 @@ module ejs {
         @hide
      */
     function appInit(): Void {
-        App.name = App.args[0] || Config.Product
-        App.title = App.args[0] || Config.Title
+        App.name = Path(App.args[0] || Config.Product).basename
+        App.title = App.name
         App.version = Config.Version
         App.mprLog = new MprLog
 

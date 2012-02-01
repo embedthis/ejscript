@@ -70,7 +70,7 @@ module ejs {
             file.close()
         }
 
-        //  MOB - should this be setter - probably not
+        //  MOB - should not be setter 
         /**
             File security permissions.
             @return the file attributes object hash. Fields include: 
@@ -409,6 +409,7 @@ module ejs {
 
         /*  MOB -- different to File.permissions. Should have something that returns an object with full path/file
             attributes including group/user. The perms should be broken down into world:group:user */
+        //  MOB - should not be getter/setter but should be functions
         /**
             The file permissions of a path. This number contains the Posix style permissions value or null if the file 
             does not exist. NOTE: this is not a string representation of an octal posix mask. 
@@ -502,12 +503,12 @@ module ejs {
         native function get relative(): Path
 
         /**
-            Get a relative path from an origin
+            Get a relative path to an origin
             @param origin The origin path to use when calculating a relative path to the destination (this path).
                 If origin is null, the current working directory is used as the origin.
             @return A new relative path
          */
-        native function relativeFrom(origin: Path = null): Path
+        native function relativeTo(origin: Path = null): Path
 
         /**
             Delete the file associated with the Path object. If this is a directory without contents it will be removed.
@@ -677,6 +678,7 @@ module ejs {
 
         //  MOB rename? - bit confusing "write". This really does a "save"
         //  MOB - rename to writecContents or save
+        //  MOB - last arg should be permissions?
         /**
             Write the file contents. This method opens the file, writes the contents and closes the file.
             @param args The data to write to the file. Data is serialized in before writing. Note that numbers will not 

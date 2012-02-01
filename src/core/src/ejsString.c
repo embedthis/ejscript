@@ -452,7 +452,7 @@ static void getTokenValue(Ejs *ejs, EjsObj *obj, cchar *fullToken, cchar *token,
     first = stok(rest, ".", &rest);
     
     if ((vp = ejsGetPropertyByName(ejs, obj, EN(first))) != 0) {
-        if (rest && ejsGetLength(ejs, vp) > 0) {
+        if (rest && ejsIsPot(ejs, vp)) {
             getTokenValue(ejs, vp, fullToken, rest, buf, fill, join);
         } else {
             if (ejsIs(ejs, vp, Array)) {

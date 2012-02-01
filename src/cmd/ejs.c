@@ -278,10 +278,10 @@ MAIN(ejsMain, int argc, char **argv, char **envp)
     if ((ejs = ejsCreateVM(argc - nextArg, (cchar **) &argv[nextArg], 0)) == 0) {
         return MPR_ERR_MEMORY;
     }
+    app->ejs = ejs;
     if (ejsLoadModules(ejs, searchPath, app->modules) < 0) {
         return MPR_ERR_CANT_READ;
     }
-    app->ejs = ejs;
 
     ecFlags = 0;
     ecFlags |= (merge) ? EC_FLAGS_MERGE: 0;
