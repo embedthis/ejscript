@@ -21,6 +21,7 @@ typedef struct App {
     MprList     *modules;
     Ejs         *ejs;
     EcCompiler  *compiler;
+    char        *cygroot;
     int         iterations;
 } App;
 
@@ -48,7 +49,7 @@ MAIN(ejsMain, int argc, char **argv, char **envp)
     Ejs             *ejs;
     cchar           *cmd, *className, *method, *homeDir;
     char            *argp, *searchPath, *modules, *name, *tok, *extraFiles;
-    int             nextArg, err, ecFlags, stats, merge, bind, noout, debug, optimizeLevel, warnLevel, strict, i;
+    int             nextArg, err, ecFlags, stats, merge, bind, noout, debug, optimizeLevel, warnLevel, strict, i, next;
 
     /*  
         Initialize Multithreaded Portable Runtime (MPR)
@@ -77,6 +78,8 @@ MAIN(ejsMain, int argc, char **argv, char **envp)
     strict = 0;
     app->files = mprCreateList(-1, 0);
     app->iterations = 1;
+    argc = mpr->argc;
+    argv = mpr->argv;
 
     for (nextArg = 1; nextArg < argc; nextArg++) {
         argp = argv[nextArg];
@@ -130,6 +133,14 @@ MAIN(ejsMain, int argc, char **argv, char **envp)
                 cmd = argv[++nextArg];
             }
 
+#if BLD_WIN_LIKE
+        } else if (smatch(argp, "--cygroot")) {
+            if (nextArg >= argc) {
+                err++;
+            } else {
+                app->cygroot = sclone(argv[++nextArg]);
+            }
+#endif
         } else if (smatch(argp, "--debug")) {
             debug = 1;
 
@@ -257,6 +268,7 @@ MAIN(ejsMain, int argc, char **argv, char **envp)
             "  Ejscript shell program options:\n"
             "  --class className        # Name of class containing method to run\n"
             "  --cmd ejscriptCode       # Literal ejscript statements to execute\n"
+            "  --cygroot path           # Set cygwin root for resolving script paths\n"
             "  --debug                  # Use symbolic debugging information (default)\n"
             "  --debugger               # Disable timeouts to make using a debugger easier\n"
             "  --files \"files..\"        # Extra source to compile\n"
@@ -301,6 +313,14 @@ MAIN(ejsMain, int argc, char **argv, char **envp)
     if (nextArg < argc) {
         mprAddItem(app->files, sclone(argv[nextArg]));
     }
+    if (app->cygroot) {
+        /* Map cygwin absolute paths to the cygroot */
+        for (next = 0; (name = mprGetNextItem(app->files, &next)) != 0; ) {
+            if (*name == '/' || *name == '\\') {
+                mprSetItem(app->files, next - 1, sjoin(app->cygroot, name, NULL));
+            }
+        }
+    }
     for (i = 0; !err && i < app->iterations; i++) {
         if (cmd) {
             if (interpretCommands(cp, cmd) < 0) {
@@ -342,6 +362,7 @@ static void manageApp(App *app, int flags)
         mprMark(app->files);
         mprMark(app->ejs);
         mprMark(app->compiler);
+        mprMark(app->cygroot);
         mprMark(app->modules);
     }
 }
