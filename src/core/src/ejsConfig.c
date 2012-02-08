@@ -47,7 +47,9 @@ void ejsDefineConfigProperties(Ejs *ejs)
     mprSprintf(version, sizeof(version), "%s-%s", BLD_VERSION, BLD_NUMBER);
     ejsDefineProperty(ejs, type, -1, N("public", "Version"), 0, att, ejsCreateStringFromAsc(ejs, version));
 
+#if UNUSED
     ejsDefineProperty(ejs, type, -1, N("public", "Legacy"), 0, att, ejsCreateBoolean(ejs, BLD_FEATURE_LEGACY_API));
+#endif
     ejsDefineProperty(ejs, type, -1, N("public", "SSL"), 0, att, ejsCreateBoolean(ejs, BLD_FEATURE_SSL));
     ejsDefineProperty(ejs, type, -1, N("public", "SQLITE"), 0, att, ejsCreateBoolean(ejs, BLD_FEATURE_SQLITE));
 
@@ -59,7 +61,7 @@ void ejsDefineConfigProperties(Ejs *ejs)
         ejsDefineProperty(ejs, type, -1, N("public", "BinDir"), 0, att, 
             ejsCreateStringFromAsc(ejs, mprGetAppDir(ejs)));
         ejsDefineProperty(ejs, type, -1, N("public", "IncDir"), 0, att, 
-            ejsCreateStringFromAsc(ejs, mprNormalizePath(mprJoinPath(mprGetAppDir(ejs), "../" BLD_INC_NAME))));
+            ejsCreateStringFromAsc(ejs, mprNormalizePath(mprJoinPath(mprGetAppDir(ejs), "../inc"))));
         ejsDefineProperty(ejs, type, -1, N("public", "LibDir"), 0, att, 
             ejsCreateStringFromAsc(ejs, mprNormalizePath(mprJoinPath(mprGetAppDir(ejs), "../" BLD_LIB_NAME))));
     }

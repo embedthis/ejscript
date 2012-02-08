@@ -51,6 +51,25 @@
 
 #include "buildConfig.h"
 
+
+#ifndef BLD_FEATURE_FLOAT
+    #define BLD_FEATURE_FLOAT 1
+#endif
+#ifndef BLD_FEATURE_ASSERT
+    #define BLD_FEATURE_ASSERT 0
+#endif
+#ifndef BLD_FEATURE_ROMFS
+    #define BLD_FEATURE_ROMFS 0
+#endif
+#ifndef BLD_TUNE
+    #define BLD_TUNE MPR_TUNE_SIZE
+#endif
+#if BLD_FEATURE_MATRIXSSL || BLD_FEATURE_OPENSSL
+    #define BLD_FEATURE_SSL 1
+#else
+    #define BLD_FEATURE_SSL 0
+#endif
+
 /*
     CPU families
  */
@@ -1046,10 +1065,6 @@ struct  MprXml;
 #define MPR_TUNE_SIZE       1       /**< Tune for size */
 #define MPR_TUNE_BALANCED   2       /**< Tune balancing speed and size */
 #define MPR_TUNE_SPEED      3       /**< Tune for speed, program will use memory more aggressively */
-
-#ifndef BLD_TUNE
-#define BLD_TUNE MPR_TUNE_BALANCED
-#endif
 
 #if BLD_CC_MMU
     /* 
@@ -8243,6 +8258,7 @@ typedef struct Mpr {
     char            *version;               /**< Product version */
     int             argc;                   /**< Count of command line args */
     char            **argv;                 /**< Application command line args (not alloced) */
+    char            **argBuf;               /**< Space for allocated argv */
     char            *domainName;            /**< Domain portion */
     char            *hostName;              /**< Host name (fully qualified name) */
     char            *ip;                    /**< Public IP Address */

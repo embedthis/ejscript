@@ -6,8 +6,7 @@ require ejs.unix
 
 let mvc = Cmd.locate("mvc").portable
 
-//  Prepare
-rmdir("junk", true)
+rm("junk", {descend: true})
 assert(!exists("junk"))
 
 //  Generate app and scaffold
@@ -23,5 +22,4 @@ assert(exists("junk/views/Post/edit.ejs"))
 Cmd.sh("cd junk ; " + mvc + " compile")
 assert(exists("junk/cache/Post.mod"))
 
-rmdir("junk", true)
-
+rm("junk", {descend: true})

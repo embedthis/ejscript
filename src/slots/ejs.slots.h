@@ -564,6 +564,7 @@
 #define ES_Cmd_ps_pattern                                              0
 #define ES_Cmd_run_command                                             0
 #define ES_Cmd_run_data                                                1
+#define ES_Cmd_run_options                                             2
 #define ES_Cmd_sh_command                                              0
 #define ES_Cmd_sh_data                                                 1
 
@@ -2367,6 +2368,6 @@
 #define ES_XMLList_NUM_INSTANCE_PROP                                   20
 #define ES_XMLList_NUM_INHERITED_PROP                                  0
 
-#define _ES_CHECKSUM_ejs   1470122
+#define _ES_CHECKSUM_ejs   1473572
 
 #endif

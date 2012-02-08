@@ -746,62 +746,52 @@ static EjsArray *globMatch(Ejs *ejs, EjsArray *results, char *pattern, int flags
  */
 static int gmatch(cchar *pattern, cchar *filename, int isDir, int flags, int *included)
 {
-    cchar   *cp, *p, *markFile, *markPat;
+    cchar   *fp, *pp;
+    int     star;
 
-    if (filename[0] == '.' && !(flags & FILES_HIDDEN)) {
+    if (*filename == '.' && !(flags & FILES_HIDDEN)) {
         return 0;
     }
-    markFile = markPat = 0;
-    for (cp = filename, p = pattern; *cp && *p; cp++, p++) {
-        if (*p == '*' && p[1] == '*' && (isDir || p[2] == '\0')) {
-            p--;
-        } else if (*p == '*') {
-            if (p[1] == '\0') {
-                return 1;
-            } else if (p[1] == '*') {
-                /* Double start for regular file */
-                p++;
-            }
-            markFile = cp--;
-            markPat = p;
-
-        } else if (*p != *cp) {
-            if (*p != '?') {
-                if (markPat) {
-                    p = markPat;
-                } else {
-                    return 0;
+    star = 0;
+    
+rescan:
+    for (fp = filename, pp = pattern; *fp && *pp; fp++, pp++) {
+        if (*pp == '*') {
+            star = 1;
+            if (*++pp == '*') {
+                if (isDir) {
+                    if (*pp) {
+                        *included = 0;
+                    }
+                    return 1;
                 }
+                ++pp;
             }
+            if (*pp == '\0') {
+                return 1;
+            }
+            filename = fp + 1;
+            pattern = pp;
+            goto rescan;
+        } 
+        if (*pp != *fp && *pp != '?') {
+            if (!star) {
+                return 0;
+            }
+            filename++;
+            goto rescan;
         }
     }
-    if (*cp) {
+    if (*fp) {
         return 0;
     }
-    if (*p == '\0') {
-        /* End of both pattern and filename */
-        *included = 1;
-        return 1;
-    }
-    if (*p == '*') { 
-        if (p[1] == '\0') {
-            /* Single wildcard */
-            *included = 1;
-            return 1;
-        } 
-        if (p[1] == '*') {
-#if UNUSED
-            if (isDir) {
-#endif
-                /* Double wildcard on a directory */
-                *included =  (p[2] == '\0') ? 1 : 0;
-                return 1;
-#if UNUSED
-            }
-#endif
+    if (*pp == '*') ++pp;
+    if (*pp == '*') {
+        if (*++pp) {
+            *included = 0;
         }
     }
-    return 0;
+    return (*pp == '\0');
 }
 
 

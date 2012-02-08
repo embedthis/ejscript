@@ -49,6 +49,7 @@ module ejs {
          */
         native function call(thisObject: Object, ...args): Object 
 
+        //  MOB this should return a bound function
         /** 
             Bind the value of "this" for the function. This can set the value of "this" for the function. If
             $overwrite is false, it will only define the value of "this" if it is not already defined.

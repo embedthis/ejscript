@@ -209,12 +209,13 @@ module ejs {
         /**
             Do Posix glob style file matching.
             @param pattern String pattern to match with files. The wildcards "*", "**" and "?" are the only wild card 
-                patterns supported. The "**" pattern matches any number of directories. The Posix "[]" and "{a,b}" style
+                patterns supported. The "**" pattern matches every directory. The Posix "[]" and "{a,b}" style
                 expressions are not supported.
-            @param options If set to true, then files will include sub-directories in the returned list of files.
+            @param options Optional properties to control the matching.
             @option depthFirst Do a depth first traversal. If "dirs" is specified, the directories will be shown after
                 the files in the directory. Otherwise, directories will be listed first.
-            @option descend Descend into subdirectories
+            @option descend Descend into subdirectories. When selected, the pattern is used to match each file underneath
+                the given path.
             @option exclude Regular expression pattern of files to exclude from the results. Matches the entire path.
             @option hidden Show hidden files starting with "."
             @option include Regular expression pattern of files to include in the results. Matches the entire returned path.
@@ -516,6 +517,7 @@ module ejs {
          */
         native function remove(): Boolean 
 
+        //  MOB - consider remove({contents: true})
         /**
             Removes a directory and its contents
             If the path is a directory, this call will remove all subdirectories and their contents and finally the
@@ -528,7 +530,7 @@ module ejs {
             if (name == "" || name == "/") {
                 throw new ArgError("Bad path for removeAll")
             }
-            for each (f in files({descend: true, depthFirst: true})) {
+            for each (f in files({descend: true, depthFirst: true, hidden: true})) {
                 if (!f.remove()) {
                     passed = false
                 }

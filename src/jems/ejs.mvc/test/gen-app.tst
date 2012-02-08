@@ -6,8 +6,7 @@ require ejs.unix
 
 let mvc = Cmd.locate("mvc").portable
 
-//  Prepare
-rmdir("junk", true)
+rm("junk", {descend: true})
 assert(!exists("junk"))
 
 //  Generate app
@@ -30,5 +29,4 @@ assert(exists("junk/start.es"))
 assert(exists("junk/static") && isDir("junk/static"))
 assert(exists("junk/views") && isDir("junk/views"))
 
-rmdir("junk", true)
-
+rm("junk", {descend: true})
