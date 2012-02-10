@@ -68,6 +68,7 @@ endif
 endif
 
 diff import:
+	@set -e ; \
 	for dep in $(DEPS) ; do \
 		if [ -x ../$$dep/releases ] ; then \
 			rel=../$$dep/releases ; \
@@ -77,6 +78,7 @@ diff import:
 	echo
 
 sync:
+	@set -e ; \
 	for dep in $(DEPS) ; do \
 		if [ -x ../$$dep/releases ] ; then \
 			rel=../$$dep/releases ; \
