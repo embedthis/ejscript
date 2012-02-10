@@ -208,9 +208,9 @@ module ejs {
 
         /**
             Do Posix glob style file matching.
-            @param pattern String pattern to match with files. The wildcards "*", "**" and "?" are the only wild card 
-                patterns supported. The "**" pattern matches every directory. The Posix "[]" and "{a,b}" style
-                expressions are not supported.
+            @param patterns Pattern to match files. This can be a String, Path or array of String/Paths. 
+            The wildcards "*", "**" and "?" are the only wild card patterns supported. The "**" pattern matches 
+                every directory. The Posix "[]" and "{a,b}" style expressions are not supported.
             @param options Optional properties to control the matching.
             @option depthFirst Do a depth first traversal. If "dirs" is specified, the directories will be shown after
                 the files in the directory. Otherwise, directories will be listed first.
@@ -224,7 +224,7 @@ module ejs {
             @option nodirs Exclude directories in the file list. The default is to include directories.
             @return An Array of Path objects for each file in the directory.
          */
-        native function glob(pattern: String, options: Object = null): Array 
+        native function glob(patterns, options: Object = null): Array 
 
         /**
             Does the file path have a drive spec (C:) in it's name. Only relevant on Windows like systems.

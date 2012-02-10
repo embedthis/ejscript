@@ -1,24 +1,3 @@
-
-/******************************************************************************/
-/* 
-    This file is an amalgamation of all the individual source code files for the
-    Multithreaded Portable Runtime Header.
-  
-    Catenating all the source into a single file makes embedding simpler and
-    the resulting application faster, as many compilers can do whole file
-    optimization.
-  
-    If you want to modify the product, you can still get the whole source as 
-    individual files if you need.
- */
-
-
-/************************************************************************/
-/*
- *  Start of file "./out/inc/mpr.h"
- */
-/************************************************************************/
-
 /*
     mpr.h -- Header for the Multithreaded Portable Runtime (MPR).
 
@@ -48,15 +27,21 @@
 #ifndef _h_MPR
 #define _h_MPR 1
 
+/********************************** Includes **********************************/
 
 #include "buildConfig.h"
 
+/******************************* Default Features *****************************/
 
 #ifndef BLD_FEATURE_FLOAT
     #define BLD_FEATURE_FLOAT 1
 #endif
 #ifndef BLD_FEATURE_ASSERT
-    #define BLD_FEATURE_ASSERT 0
+    #if BLD_DEBUG
+        #define BLD_FEATURE_ASSERT 1
+    #else
+        #define BLD_FEATURE_ASSERT 0
+    #endif
 #endif
 #ifndef BLD_FEATURE_ROMFS
     #define BLD_FEATURE_ROMFS 0
@@ -70,6 +55,7 @@
     #define BLD_FEATURE_SSL 0
 #endif
 
+/********************************* CPU Families *******************************/
 /*
     CPU families
  */
@@ -87,6 +73,7 @@
 #define MPR_CPU_UNIVERSAL   11          /* MAC OS X universal binaries */
 #define MPR_CPU_SH4         12
 
+/********************************* O/S Includes *******************************/
 
 #if __WORDSIZE == 64 || __amd64 || __x86_64 || __x86_64__ || _WIN64
     #define MPR_64_BIT 1
@@ -307,11 +294,13 @@
 #endif
 #endif
 
+/************************************** Defaults ******************************/
 
 #ifndef BLD_FEATURE_ROMFS
     #define BLD_FEATURE_ROMFS 0
 #endif
 
+/************************************** Defines *******************************/
 /*
     Standard types
  */
@@ -480,7 +469,9 @@ typedef int64 MprOff;
 /*
     Socklen_t
  */
-#if VXWORKS
+#if DOXYGEN
+    typedef int MprSocklen;
+#elif VXWORKS
     typedef int MprSocklen;
 #else
     typedef socklen_t MprSocklen;
@@ -653,6 +644,7 @@ typedef int64 MprTime;
 #define MPR_FLEX
 #endif
 
+/*********************************** Fixups ***********************************/
 
 #if BLD_UNIX_LIKE || VXWORKS
     #define MPR_TEXT        ""
@@ -874,6 +866,7 @@ typedef int64 MprTime;
     #define gethostbyname2(a,b) gethostbyname(a)
 #endif /* WINCE */
 
+/*********************************** Externs **********************************/
 
 #ifdef __cplusplus
 extern "C" {
@@ -1024,6 +1017,7 @@ extern "C" {
 }
 #endif
 
+/*********************************** Forwards *********************************/
 
 #ifdef __cplusplus
 extern "C" {
@@ -1059,6 +1053,7 @@ struct  MprWorker;
 struct  MprWorkerService;
 struct  MprXml;
 
+/******************************* Tunable Constants ****************************/
 /*
     Build tuning
  */
@@ -1274,6 +1269,7 @@ struct  MprXml;
  */
 #define MPR_MIN_TIME_FOR_GC     2       /**< Wait till 2 milliseconds of idle time possible */
     
+/************************************ Error Codes *****************************/
 
 /* Prevent collisions with 3rd party software */
 #undef UNUSED
@@ -1452,6 +1448,7 @@ struct  MprXml;
 #define MPR_BIG_ENDIAN      2
 #define MPR_ENDIAN          BLD_ENDIAN
 
+/************************************** Debug *********************************/
 /**
     Trigger a breakpoint.
     @description Triggers a breakpoint and traps to the debugger. 
@@ -1465,6 +1462,7 @@ extern void mprBreakpoint();
     #define mprAssert(C)    if (1) ; else
 #endif
 
+/*********************************** Thread Sync ******************************/
 /**
     Multithreaded Synchronization Services
     @see MprCond MprMutex MprSpin mprAtomicAdd mprAtomicAdd64 mprAtomicBarrier mprAtomicCas mprAtomicExchange 
@@ -1813,6 +1811,7 @@ extern void mprAtomicAdd64(volatile int64 *target, int value);
  */
 extern void *mprAtomicExchange(void * volatile *target, cvoid *value);
 
+/********************************* Memory Allocator ***************************/
 /*
     Allocator debug and stats selection
  */
@@ -2470,6 +2469,7 @@ extern void mprCheckBlock(MprMem *bp);
 extern void mprStartGCService();
 extern void mprStopGCService();
 
+/******************************** Garbage Coolector ***************************/
 /**
     Add a memory block as a root for garbage collection
     @param ptr Any memory pointer
@@ -2569,6 +2569,7 @@ extern void mprWakeGCService();
 extern void mprResumeThreads();
 extern int  mprSyncThreads(MprTime timeout);
 
+/********************************** Safe Strings ******************************/
 /**
     Safe String Module
     @description The MPR provides a suite of safe ascii string manipulation routines to help prevent buffer overflows
@@ -3013,6 +3014,7 @@ extern char *strim(cchar *str, cchar *set, int where);
  */
 extern char *supper(cchar *str);
 
+/************************************ Unicode *********************************/
 /*
     Low-level unicode wide string support. Unicode characters are build-time configurable to be 1, 2 or 4 bytes
 
@@ -3097,6 +3099,7 @@ extern MprChar  *wupper(MprChar *s);
 
 #endif /* BLD_CHAR_LEN > 1 */
 
+/********************************* Mixed Strings ******************************/
 /*
     These routines operate on wide strings mixed with a multibyte/ascii operand
     This API is not yet public
@@ -3145,6 +3148,7 @@ extern MprChar *mtrim(MprChar *str, cchar *set, int where);
 #define mtrim(str, set, where)          strim(str, set, where)
 #endif /* BLD_CHAR_LEN > 1 */
 
+/************************************ Formatting ******************************/
 /**
     Print a formatted message to the standard error channel
     @description This is a secure replacement for fprintf(stderr). 
@@ -3231,6 +3235,7 @@ extern char *mprAsprintf(cchar *fmt, ...);
  */
 extern char *mprAsprintfv(cchar *fmt, va_list arg);
 
+/********************************* Floating Point *****************************/
 #if BLD_FEATURE_FLOAT
 /**
     Floating Point Services
@@ -3288,6 +3293,7 @@ extern int mprIsZero(double value);
 extern int mprIsNan(double value);
 
 #endif /* BLD_FEATURE_FLOAT */
+/********************************* Buffering **********************************/
 /**
     Buffer refill callback function
     @description Function to call when the buffer is depleted and needs more data.
@@ -3708,6 +3714,7 @@ extern int mprPutFmtToWideBuf(MprBuf *buf, cchar *fmt, ...);
 #define mprGetBufEnd(bp) ((bp)->end)
 #endif
 
+/******************************** Date and Time *******************************/
 /**
     Format a date according to RFC822: (Fri, 07 Jan 2003 12:12:21 PDT)
  */
@@ -3904,6 +3911,7 @@ extern int mprParseTime(MprTime *time, cchar *dateString, int timezone, struct t
  */
 extern int mprGetTimeZoneOffset(MprTime when);
 
+/*********************************** Lists ************************************/
 /**
     List data structure.
     @description The MprList is a dynamic, growable list suitable for storing pointers to arbitrary objects.
@@ -4220,6 +4228,7 @@ extern int mprPushItem(MprList *list, cvoid *item);
 #define mprGetListLength(lp) ((lp) ? (lp)->length : 0)
 #endif
 
+/********************************** Logging ***********************************/
 /**
     Logging Services
     @stability Evolving
@@ -4447,6 +4456,7 @@ extern void mprWarn(cchar *fmt, ...);
  */
 extern int print(cchar *fmt, ...);
 
+/************************************ Hash ************************************/
 /**
     Hash table entry structure.
     @description The hash structure supports growable hash tables with high performance, collision resistant hashes.
@@ -4637,6 +4647,7 @@ extern int mprRemoveKey(MprHash *table, cvoid *key);
  */
 extern MprHash *mprBlendHash(MprHash *target, MprHash *other);
 
+/*********************************** Files ************************************/
 /*
     Prototypes for file system switch methods
  */
@@ -5068,6 +5079,7 @@ extern ssize mprWriteFileFmt(MprFile *file, cchar *fmt, ...);
  */
 extern ssize mprWriteFileString(MprFile *file, cchar *str);
 
+/*********************************** Paths ************************************/
 /**
     Path (filename) Information
     @description MprPath is the cross platform Path (filename) information structure.
@@ -5227,7 +5239,7 @@ extern char *mprGetPathExt(cchar *path);
     Create a list of files in a directory or subdirectories.
     @description Get the list of files in a directory and return a list.
     @param dir Directory to list.
-    @param flags The flags may be set to #MPR_PATH_DESCEND to traverse subdirectories. Set #MPR_PATH_NO_DIRS 
+    @param flags The flags may be set to #MPR_PATH_DESCEND to traverse subdirectories. Set $MPR_PATH_NO_DIRS 
         to exclude directories from the results. Set to MPR_PATH_HIDDEN to include hidden files that start with ".".
         Set to MPR_PATH_DEPTH_FIRST to do a depth-first traversal, i.e. traverse subdirectories before considering 
         adding the directory to the list.
@@ -5571,6 +5583,7 @@ extern char *mprTrimPathDrive(cchar *path);
  */
 extern ssize mprWritePathContents(cchar *path, cchar *buf, ssize len, int mode);
 
+/********************************** O/S Dep ***********************************/
 /**
     Create and initialze the O/S dependent subsystem
     @ingroup Mpr
@@ -5589,6 +5602,7 @@ extern int mprStartOsService();
  */
 extern void mprStopOsService();
 
+/********************************* Modules ************************************/
 /**
     Loadable module service
     @see mprCreateModuleService mprStartModuleService mprStopModuleService
@@ -5800,6 +5814,7 @@ extern int mprStopModule(MprModule *mp);
  */
 extern int mprUnloadModule(MprModule *mp);
 
+/********************************* Events *************************************/
 /*
     Flags for mprCreateEvent
  */
@@ -6055,6 +6070,7 @@ extern void mprReleaseWorkerFromDispatcher(MprDispatcher *dispatcher, struct Mpr
 extern bool mprDispatcherHasEvents(MprDispatcher *dispatcher);
 extern void mprWakePendingDispatchers();
 
+/*********************************** XML **************************************/
 /*
     XML parser states. The states that are passed to the user handler have "U" appended to the comment.
     The error states (ERR and EOF) must be negative.
@@ -6200,6 +6216,7 @@ extern void mprXmlSetParseArg(MprXml *xp, void *parseArg);
  */
 extern void mprXmlSetParserHandler(MprXml *xp, MprXmlHandler h);
 
+/******************************** JSON ****************************************/
 /*
     Flags for mprSerialize
  */
@@ -6308,6 +6325,7 @@ extern MprObj *mprDeserialize(cchar *str);
  */
 extern void mprJsonParseError(MprJson *jp, cchar *fmt, ...);
 
+/********************************* Threads ************************************/
 /**
     Thread service
     @ingroup MprThread
@@ -6507,6 +6525,7 @@ extern int mprSetThreadData(MprThreadLocal *tls, void *value);
 extern void *mprGetThreadData(MprThreadLocal *tls);
 extern MprThreadLocal *mprCreateThreadLocal();
 
+/******************************** I/O Wait ************************************/
 
 #define MPR_READABLE           0x2          /**< Read event mask */
 #define MPR_WRITABLE           0x4          /**< Write event mask */
@@ -6725,6 +6744,7 @@ extern void mprWaitOn(MprWaitHandler *wp, int desiredMask);
  */
 extern void mprDoWaitRecall(MprWaitService *ws);
 
+/******************************* Notification *********************************/
 /*
     Internal
  */
@@ -6738,6 +6758,7 @@ extern int mprCreateNotifierService(MprWaitService *ws);
  */
 extern int mprNotifyOn(MprWaitService *ws, MprWaitHandler *wp, int mask);
 
+/********************************** Sockets ***********************************/
 /**
     Socket I/O callback procedure. Proc returns non-zero if the socket has been deleted.
     @ingroup MprSocket
@@ -6870,7 +6891,7 @@ typedef struct MprSocket {
     int             flags;              /**< Current state flags */
     MprSocketProvider *provider;        /**< Socket implementation provider */
     struct MprSocket *listenSock;       /**< Listening socket */
-    struct MprSslSocket *sslSocket;     /**< Extended ssl socket state. If set, then using ssl */
+    void            *sslSocket;         /**< Extended SSL socket provider state */
     struct MprSsl   *ssl;               /**< SSL configuration */
     MprMutex        *mutex;             /**< Multi-thread sync */
 } MprSocket;
@@ -7016,7 +7037,7 @@ extern int mprGetSocketFd(MprSocket *sp);
     @return Zero if the call is successful. Otherwise return a negative MPR error code.
     @ingroup MprSocket
   */
-extern int mprGetSocketInfo(cchar *ip, int port, int *family, int *protocol, struct sockaddr **addr, socklen_t *addrlen);
+extern int mprGetSocketInfo(cchar *ip, int port, int *family, int *protocol, struct sockaddr **addr, MprSocklen *addrlen);
 
 /**
     Get the port used by a socket
@@ -7211,6 +7232,37 @@ extern ssize mprWriteSocketString(MprSocket *sp, cchar *str);
  */
 extern ssize mprWriteSocketVector(MprSocket *sp, MprIOVec *iovec, int count);
 
+/************************************ SSL *************************************/
+
+#define MPR_DEFAULT_SERVER_CERT_FILE    "server.crt"
+#define MPR_DEFAULT_SERVER_KEY_FILE     "server.key.pem"
+#define MPR_DEFAULT_CLIENT_CERT_FILE    "client.crt"
+#define MPR_DEFAULT_CLIENT_CERT_PATH    "certs"
+
+typedef struct MprSsl {
+    /*
+        Server key and certificate configuration
+     */
+    char            *key;               /* Key string */
+    char            *cert;              /* Cert string */
+    char            *keyFile;           /* Alternatively, locate the key in a file */
+    char            *certFile;          /* Alternatively, locate the cert in a file */
+    char            *caFile;            /* Client verification cert file or bundle */
+    char            *caPath;            /* Client verification cert directory */
+    char            *ciphers;
+    int             configured;
+
+    /*
+        Client configuration
+     */
+    int             verifyClient;
+    int             verifyDepth;
+    int             protocols;
+
+    void            *providerData;      /* Provider SSL configuration */
+} MprSsl;
+
+
 /*
     SSL protocols
  */
@@ -7305,6 +7357,14 @@ extern void mprSetSslProtocols(struct MprSsl *ssl, int protocols);
  */
 extern void mprVerifySslClients(struct MprSsl *ssl, bool on);
 
+#if BLD_FEATURE_MATRIXSSL
+    extern int mprCreateMatrixSslModule(bool lazy);
+#endif
+#if BLD_FEATURE_OPENSSL
+    extern int mprCreateOpenSslModule(bool lazy);
+#endif
+
+/******************************* Worker Threads *******************************/
 /**
     Worker thread callback signature
     @param data worker callback data. Set via mprStartWorker or mprActivateWorker
@@ -7464,6 +7524,7 @@ extern int mprStartWorker(MprWorkerProc proc, void *data);
 /* Internal */
 extern int mprAvailableWorkers();
 
+/********************************** Crypto ************************************/
 /**
     Return a random number
     @returns A random integer
@@ -7505,6 +7566,7 @@ extern char *mprGetMD5(cchar *s);
  */
 extern char *mprGetMD5WithPrefix(cchar *buf, ssize len, cchar *prefix);
 
+/********************************* Encoding ***********************************/
 /*  
     Character encoding masks
  */
@@ -7553,6 +7615,7 @@ extern char *mprUriEncode(cchar *uri, int map);
  */
 extern char *mprUriDecode(cchar *uri);
 
+/********************************* Signals ************************************/
 
 #if MACOSX
     #define MPR_MAX_SIGNALS 40              /**< Max signals that can be managed */
@@ -7642,6 +7705,7 @@ extern void mprAddStandardSignals();
  */
 extern MprSignal *mprAddSignalHandler(int signo, void *handler, void *arg, MprDispatcher *dispatcher, int flags);
 
+/******************************** Commands ************************************/
 /**
     Callback function before doing a fork()
     @ingroup MprCmd
@@ -8014,6 +8078,7 @@ extern int mprWaitForCmd(MprCmd *cmd, MprTime timeout);
  */
 extern ssize mprWriteCmd(MprCmd *cmd, int channel, char *buf, ssize bufsize);
 
+/********************************** Cache *************************************/
 
 #define MPR_CACHE_SHARED        0x1     /**< Use shared cache */
 #define MPR_CACHE_ADD           0x2     /**< Add key if not already existing */
@@ -8145,6 +8210,7 @@ extern void mprSetCacheLimits(MprCache *cache, int64 keys, int64 lifespan, int64
 extern ssize mprWriteCache(MprCache *cache, cchar *key, cchar *value, MprTime modified, MprTime lifespan, 
         int64 version, int options);
 
+/******************************** Mime Types **********************************/
 /**
     Mime Type hash table entry (the URL extension is the key)
     @stability Evolving
@@ -8204,6 +8270,7 @@ extern cchar *mprLookupMime(MprHash *table, cchar *ext);
  */
 extern int mprSetMimeProgram(MprHash *table, cchar *mimeType, cchar *program);
 
+/************************************ MPR *************************************/
 /*
     Mpr state
  */
@@ -8626,7 +8693,7 @@ extern int mprSetAppName(cchar *name, cchar *title, cchar *version);
 
 /**
     Set the application executable path
-    @param A string containing the application executable path.
+    @param path A string containing the application executable path.
     @ingroup Mpr
  */
 extern void mprSetAppPath(cchar *path);
@@ -8837,12 +8904,14 @@ extern void mprWriteToOsLog(cchar *msg, int flags, int level);
 extern void mprUnlockDtoa(int n);
 extern void mprLockDtoa(int n);
 
+/*********************************** External *********************************/
 /*
    Double conversions
  */
 extern char *dtoa(double d, int mode, int ndigits, int* decpt, int* sign, char** rve);
 extern void freedtoa(char* ptr);
 
+/************************************* Test ***********************************/
 
 struct MprTestGroup;
 
@@ -9112,9 +9181,3 @@ typedef struct MprTestFailure {
 
     @end
  */
-/************************************************************************/
-/*
- *  End of file "./out/inc/mpr.h"
- */
-/************************************************************************/
-

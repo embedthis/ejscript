@@ -589,13 +589,14 @@ static EjsArray *getPathFiles(Ejs *ejs, EjsArray *results, cchar *dir, int flags
 static EjsArray *path_glob(Ejs *ejs, EjsPath *fp, int argc, EjsObj **argv)
 {
     EjsObj      *options;
+    EjsArray    *result, *patterns;
     EjsRegExp   *exclude, *include;
-    char        *path, *pattern;
-    int         flags;
+    char        *path;
+    int         flags, i;
 
-    pattern = ejsToMulti(ejs, argv[0]);
     options = (argc >= 2) ? argv[1]: 0;
     include = exclude = 0;
+    result = ejsCreateArray(ejs, 0);
     flags = 0;
 
     if (options) {
@@ -631,8 +632,19 @@ static EjsArray *path_glob(Ejs *ejs, EjsPath *fp, int argc, EjsObj **argv)
             flags |= FILES_SORT;
         } 
     }
-    path = mprJoinPath(fp->value, pattern);
-    return globMatch(ejs, ejsCreateArray(ejs, 0), path, flags, exclude, include, mprGetPathSeparators(path));
+    if (!ejsIs(ejs, argv[0], Array)) {
+        patterns = ejsCreateArray(ejs, 0);
+        ejsAddItem(ejs, patterns, ejsToString(ejs, argv[0]));
+    } else {
+        patterns = (EjsArray*) argv[0];
+    }
+    for (i = 0; i < patterns->length; i++) {
+        path = mprJoinPath(fp->value, ejsToMulti(ejs, ejsGetItem(ejs, patterns, i)));
+        if (!globMatch(ejs, result, path, flags, exclude, include, mprGetPathSeparators(path))) {
+            return 0;
+        }
+    }
+    return result;
 }
 
 
@@ -676,6 +688,7 @@ static EjsArray *globMatch(Ejs *ejs, EjsArray *results, char *pattern, int flags
         if ((list = mprGetPathFiles(dir, flags | MPR_PATH_RELATIVE)) == 0) {
             if (flags & FILES_MISSING) {
                 ejsThrowIOError(ejs, "Can't read directory");
+                return 0;
             }
             return results;
         }
@@ -683,6 +696,7 @@ static EjsArray *globMatch(Ejs *ejs, EjsArray *results, char *pattern, int flags
         if (mprGetPathInfo(dir, &info) < 0) {
             if (flags & FILES_MISSING) {
                 ejsThrowIOError(ejs, "Can't read directory");
+                return 0;
             }
             return results;
         }
@@ -1450,7 +1464,7 @@ static EjsPath *resolvePath(Ejs *ejs, EjsPath *fp, int argc, EjsObj **argv)
 static EjsBoolean *isPathSame(Ejs *ejs, EjsPath *fp, int argc, EjsObj **argv)
 {
     cchar   *other;
-int rc;
+    int     rc;
 
     if (ejsIs(ejs, argv[0], String)) {
         other = ejsToMulti(ejs, argv[0]);

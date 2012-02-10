@@ -1,0 +1,34 @@
+/*
+    web.bit -- Bit File for ejs.web
+ */
+
+Bit.load({
+
+    targets: {
+        'ejs.web.mod': {
+            path: '${LIB}/ejs.web.mod',
+            files: [ '*.es' ],
+            build: "
+                trace('Compile', 'ejs.web.mod')
+                run('ejsc --out ${LIB}/ejs.web.mod ${settings.esflags} --optimize 9 ' + Path('.').glob('*.es').sort().join(' '))
+                run('ejsmod --cslots ${LIB}/ejs.web.mod')
+                let header = Path('ejs.web.slots.h')
+                let dest = bit.dir.inc.join(header)
+                if (!dest.exists || header.readString() != dest.readString()) {
+                    trace('Install', header)
+                    cp(header, dest)
+                }
+            ",
+            depends: [ 'ejsc', 'ejsmod', 'ejs.mod' ],
+        },
+
+        'ejs.web': {
+            type: 'lib',
+            sources: [ 
+                'src/*.c',
+            ],
+            includes: [ 'src' ],
+            depends: [ 'libmpr', 'libhttp', 'libpcre', 'libejs', 'ejs.mod' ],
+        },
+	},
+})

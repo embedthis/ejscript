@@ -1,0 +1,35 @@
+/*
+    mvc.bit -- Bit File for ejs.mvc
+ */
+
+Bit.load({
+
+    targets: {
+        mvc: {
+            path: '${BIN}/mvc',
+            files: [ 'mvc.es' ],
+            build: "
+                trace('Export', bit.target.files)
+                cp('mvc.es', bit.dir.bin.join('mvc'), {permissions: 0755})
+            "
+        },
+
+        'mvc.cmd': {
+            path: '${BIN}/mvc.cmd',
+            files: [ 'mvc.cmd' ],
+            build: "
+                trace('Export', bit.target.files)
+                cp('mvc.cmd', bit.dir.bin.join('mvc.cmd'), {permissions: 0755})
+            "
+        },
+        'ejs.mvc.mod': {
+            path: '${LIB}/ejs.mvc.mod',
+            files: [ '*.es' ],
+            build: "
+                trace('Compile', 'ejs.mvc.mod')
+                run('ejsc --out ${LIB}/ejs.mvc.mod ${settings.esflags} --optimize 9 ' + Path('.').glob('*.es').sort().join(' '))
+            ",
+            depends: [ 'ejsc', 'ejsmod', 'ejs.mod' ],
+        },
+	},
+})

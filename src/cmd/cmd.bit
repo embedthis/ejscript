@@ -1,0 +1,27 @@
+/*
+    cmd.bit -- Bit File for the Ejs commands
+ */
+
+Bit.load({
+
+    targets: {
+        ejs: {
+            type: 'exe'
+            sources: [ 'ejs.c', ],
+            depends: [ 'libejs' ],
+        },
+
+        ejsc: {
+            type: 'exe'
+            sources: [ 'ejsc.c', ],
+            depends: [ 'libejs' ],
+        },
+
+        ejsmod: {
+            type: 'exe'
+            includes: [ '.' ],
+            sources: [ 'ejsmod.c', 'doc.c', 'docFiles.c', 'listing.c', 'slotGen.c' ],
+            depends: [ 'libejs' ],
+        },
+	},
+})

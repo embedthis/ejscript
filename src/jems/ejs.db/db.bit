@@ -1,0 +1,18 @@
+/*
+    db.bit -- Bit File for ejs.db
+ */
+
+Bit.load({
+
+    targets: {
+        'ejs.db.mod': {
+            path: '${LIB}/ejs.db.mod',
+            files: [ '*.es' ],
+            build: "
+                trace('Compile', 'ejs.db.mod')
+                run('ejsc --out ${LIB}/ejs.db.mod ${settings.esflags} --optimize 9 ' + Path('.').glob('*.es').sort().join(' '))
+            ",
+            depends: [ 'ejsc', 'ejsmod', 'ejs.mod' ],
+        },
+	},
+})

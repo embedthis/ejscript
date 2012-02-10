@@ -1,0 +1,41 @@
+/*
+    libejs.bit -- Bit File for the Ejs library
+ */
+
+Bit.load({
+
+    defaults: {
+        '+includes': [ 'slots' ],
+    },
+
+    targets: {
+        slots: {
+            path: '${INC}/ejs.slots.h',
+            files: [ 'slots/*.h' ],
+            build: "
+                for each (header in bit.target.files) {
+                    let dest = bit.dir.inc.join(header.basename)
+                    if (!dest.exists) {
+                        trace('Export', header)
+                        cp(header, dest)
+                    }
+                }
+            "
+        },
+
+        libejs: {
+            type: 'lib',
+            sources: [ 
+                'compiler/*.c',
+                'core/src/*.c',
+                'vm/*.c'
+            ],
+            depends: [ 'libmpr', 'libpcre', 'libhttp', 'slots' ],
+            scripts: {
+                prebuild: "
+                    }
+                ",
+            }
+        },
+	},
+})

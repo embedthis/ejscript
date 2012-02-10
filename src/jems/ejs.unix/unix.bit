@@ -1,0 +1,18 @@
+/*
+    unix.bit -- Bit File for ejs.unix
+ */
+
+Bit.load({
+
+    targets: {
+        'ejs.unix.mod': {
+            path: '${LIB}/ejs.unix.mod',
+            files: [ '*.es' ],
+            build: "
+                trace('Compile', 'ejs.unix.mod')
+                run('ejsc --out ${LIB}/ejs.unix.mod ${settings.esflags} --optimize 9 ' + Path('.').glob('*.es').sort().join(' '))
+            ",
+            depends: [ 'ejsc', 'ejsmod', 'ejs.mod' ],
+        },
+	},
+})
