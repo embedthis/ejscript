@@ -801,6 +801,10 @@ static bool compareArrayElement(Ejs *ejs, EjsObj *v1, EjsObj *v2)
     if (ejsIs(ejs, v1, String)) {
         return (EjsString*) v1 == (EjsString*) v2;
     }
+    if (ejsIs(ejs, v1, Path)) {
+        return smatch(((EjsPath*) v1)->value, ((EjsPath*) v2)->value);
+    }
+    //  MOB - should expand for other types 
     return 0;
 }
 

@@ -27,7 +27,7 @@ module ejs {
 
         /* 
             Data input and output buffers. The buffers are used to marshall the data for encoding and decoding. The inbuf 
-            also  hold excess input data. The outbuf is only used to encode data -- no buffering occurs.
+            also hold excess input data. The outbuf is only used to encode data -- no buffering occurs.
          */
         private var inbuf: ByteArray
         private var outbuf: ByteArray

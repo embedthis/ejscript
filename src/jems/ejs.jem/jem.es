@@ -209,7 +209,7 @@ class JemCmd
     }
 
     function usage(): Void {
-        print("\nUsage: " + appName + " [options] [commands] ...\n" +
+        print("\nUsage: jem " + " [options] [commands] ...\n" +
             "  Commands:\n" + 
     //MOB -- missing build
             "    create files ...     # Create a new jem package\n" +

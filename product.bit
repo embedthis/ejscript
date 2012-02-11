@@ -1,0 +1,68 @@
+/*
+    product.bit -- Product Bit File for Ejscript
+ */
+
+Bit.load({
+    blend: [
+        'src/deps/mpr/mpr.bit',
+        'src/deps/pcre/pcre.bit',
+        'src/deps/http/http.bit',
+        'src/deps/sqlite/sqlite.bit',
+
+        'src/libejs.bit',
+        'src/cmd/cmd.bit',
+        'src/core/core.bit',
+
+        'src/jems/ejs.unix/unix.bit',
+        'src/jems/ejs.jem/jem.bit',
+        'src/jems/ejs.db/db.bit',
+        'src/jems/ejs.db.mapper/mapper.bit',
+        'src/jems/ejs.db.sqlite/sqlite.bit',
+        'src/jems/ejs.web/web.bit',
+        'src/jems/ejs.template/template.bit',
+        'src/jems/ejs.tar/tar.bit',
+        'src/jems/ejs.mvc/mvc.bit',
+        '.bit/embedthis.bit',
+    ],
+
+    settings: {
+        /* Default settings overridden by build.bit */
+		product: 'appweb',
+		title: 'Embedthis Appweb',
+        company: 'Embedthis',
+		version: '4.0.0',
+		buildNumber: 'B2',
+        sync: ['http', 'mpr', 'pcre', 'sqlite'],
+    },
+
+    usage: {
+        assert: 'Enable program assertions',
+        debug: 'Enable a debug build',
+        tune: 'Optimize for size|speed|balanced',
+    },
+
+    profiles: {
+        debug: { settings: { 
+            debug: true, 
+            assert: true,
+        }, },
+        release: { settings: { 
+            debug: false, 
+            assert: false,
+        } },
+    },
+
+    '+optional': [ 'doxygen', 'openssl', 'matrixssl', 'sqlite' ],
+    '+required': [ 'pcre', 'http' ]
+
+    defaults: {
+        '+includes': [ 'src' ]
+    },
+
+    packs: {
+        ejs: {
+            /* Define for utest target */
+            path: '${BIN}/ejs'
+        },
+    }
+})

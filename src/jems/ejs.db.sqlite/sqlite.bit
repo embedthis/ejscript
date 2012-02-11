@@ -1,0 +1,33 @@
+/*
+    sqlite.bit -- Bit File for ejs.db.sqlite
+ */
+
+Bit.load({
+
+    targets: {
+        'ejs.db.sqlite.mod': {
+            path: '${LIB}/ejs.db.sqlite.mod',
+            files: [ '*.es' ],
+            build: "
+                trace('Compile', 'ejs.db.sqlite.mod')
+                run('ejsc --out ${LIB}/ejs.db.sqlite.mod ${settings.esflags} --optimize 9 ' + Path('.').glob('*.es').sort().join(' '))
+                run('ejsmod --cslots ${LIB}/ejs.db.sqlite.mod')
+                let header = Path('ejs.db.sqlite.slots.h')
+                let dest = bit.dir.inc.join(header)
+                if (!dest.exists || header.readString() != dest.readString()) {
+                    trace('Install', header)
+                    cp(header, dest)
+                }
+            ",
+            depends: [ 'ejsc', 'ejsmod', 'ejs.mod' ],
+        },
+
+        'ejs.db.sqlite': {
+            type: 'lib',
+            sources: [ 
+                'src/*.c',
+            ],
+            depends: [ 'libmpr', 'libejs', 'ejs.mod', 'ejs.db.sqlite.mod', 'libsqlite3' ],
+        },
+	},
+})

@@ -11,7 +11,7 @@ JEM			= $(NAME)-$(BLD_VERSION)
 TARGETS		+= $(BLD_BIN_DIR)/jem $(BLD_BIN_DIR)/jem.cmd
 TARGETS		+= $(BLD_JEM_DIR)/$(JEM)
 
-compileExtra: $(TARGETS)
+compileExtra: package.json $(TARGETS)
 
 module:		dummy
 

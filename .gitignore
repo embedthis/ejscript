@@ -155,3 +155,7 @@ src/test/tt.es
 main
 val.log
 local.bit
+*-debug
+*-release
+ejs.db.sqlite.slots.h
+ejs.web.slots.h

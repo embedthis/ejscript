@@ -1,6 +1,6 @@
 /*
     Unix.es -- Unix compatibility functions
- *
+
     Copyright (c) All Rights Reserved. See details at the end of the file.
  */
 
@@ -32,43 +32,67 @@ module ejs.unix {
     function chmod(path: String, perms: Number): Void
         Path(path).perms = perms
 
-    //  MOB - rename to cp
     /**
-        Copy files like unix cp
-        @param files File or array of files to copy. Each file member can contain wild-cards suitable for Path.glob()
-        @param dest Destination file or directory.
-        @param options Reserved
+        Copy files
+        @param patterns Pattern to match files to copy. This can be a String, Path or array of String/Paths. 
+            The wildcards "*", "**" and "?" are the only wild card patterns supported. The "**" pattern matches
+            every directory. The Posix "[]" and "{a,b}" style expressions are not supported.
+        @param dest Destination file or directory. If multiple files are copied, dest is assumed to be a directory and 
+            will be created if required.
+        @param options File attributes
+        @options expand Set to hash of properties to use when expanding '${token}' tokens in src or dest filenames.
+        @options owner String representing the file owner                                                     
+        @options group String representing the file group                                                     
+        @options permissions Number File Posix permissions mask
+        @options process Optional callback function to process the copied file. This function must do the actual copy 
+            and any required post-processing. Signature is function process(src: Path, dest: Path, options)
         @hide
     */
-    function copy(files, dest: Path, options = {}) {
-        if (!(files is Array)) files = [files]
-        for each (pat in files) {
-            for each (let file: Path in Path('.').glob(pat)) {
-                if (file.isDir) {
-                    if (dest.isDir) {
-                        let target = dest.join(file.basename)
-                        target.makeDir()
-                        for each (f in file.files()) {
-                            copy(f, target)
-                        }
-                    } else if (dest.exists && dest.isRegular) {
-                        throw 'Destination is not a directory'
-                    } else {
-                        /* dir, missing */
-                        dest.makeDir()
-                        for each (f in file.files()) {
-                            copy(f, dest.join(f.basename))
-                        }
+    function cp(patterns, dest: Path, options = {}) {
+        if (options.expand) {
+             dest = dest.toString().expand(options.expand, options)
+        }
+        let list = Path('.').glob(patterns)
+        if (list.length == 0 && options.warn) {
+            throw 'Can\'t find files for pattern ' + patterns
+        }
+        for each (let file: Path in list) {
+            if (options.expand) {
+                 file = file.toString().expand(options.expand, options)
+            }
+            if (file.isDir) {
+                if (dest.isDir) {
+                    let target = dest.join(file.basename)
+                    target.makeDir()
+                    for each (f in file.files()) {
+                        cp(f, target, options)
                     }
+                } else if (dest.exists && dest.isRegular) {
+                    throw 'Destination is not a directory'
                 } else {
-                    if (dest.isDir) {
-                        /*OK file, dir */
-                        let target = dest.join(file.basename)
-                        file.copy(target)
-                    } else {
-                        /*OK file, file */
-                        file.copy(dest)
+                    /* dir, missing */
+                    dest.makeDir()
+                    for each (f in file.files()) {
+                        cp(f, dest.join(f.basename), options)
                     }
+                }
+            } else {
+                let target = dest
+                if (dest.isDir) {
+                    /* file, dir */
+                    target = dest.join(file.basename)
+                } else if (!options.cat && list.length > 1) {
+                    /* Copying multiple files to target is a directory, the cat option is implemented by Bit */
+                    dest.makeDir()
+                    target = dest.join(file.basename)
+                }
+                if (options.process) {
+                    /* Call this way to ensure we get any bound this value */
+                    let fn = options.process
+                    fn(file, target, options)
+                } else {
+                    file.parent.makeDir()
+                    file.copy(target, options)
                 }
             }
         }
@@ -81,7 +105,8 @@ module ejs.unix {
         @param toPath New destination file path name.
         @throws IOError if the copy is not successful.
      */
-    function cp(fromPath: String, toPath: String): void
+    # DEPRECATED
+    function _cp(fromPath: String, toPath: String): void
         Path(fromPath).copy(toPath) 
 
     /**
@@ -149,7 +174,7 @@ module ejs.unix {
         @option include Regular expression pattern of files to include in the results. Matches the entire returned path.
         @return An Array of Path objects for each matching file.
      */
-    function ls(pattern: Path = "*", options: Object = null): Array {
+    function ls(pattern = "*", options: Object = null): Array {
         if (pattern.exists && pattern.isDir) {
             pattern = pattern.join("*")
         }
@@ -240,38 +265,45 @@ module ejs.unix {
         file.read(count)
 
     /**
-        Remove file from the file system.
-        @param paths Filename paths to delete.
-        @throws IOError if the file exists and cannot be removed.
-     */
-    function rm(...paths): void {
-        for each (path in paths) {
-            if (path is Array) {
-                for each (p in path) {
-                    rm(p)
-                }
-            } else {
-                path = Path(path)
-                if (path.isDir) {
-                    throw new ArgError(path.toString() + " is a directory")
-                } 
-                path.remove()
+        Remove files from the file system. With options, this will remove files and empty directories. If options.descend is 
+            true, this call will descend into subdirectories and remove files there also.
+        @param patterns Pattern to match files to remove. This can be a String, Path or array of String/Paths. 
+            The wildcards "*", "**" and "?" are the only wild card patterns supported. The "**" pattern matches
+            every directory. The Posix "[]" and "{a,b}" style expressions are not supported.
+        @param options Options to modify the removal
+        @option descend Descend into subdirectories. Defaults to false.
+        @option exclude Regular expression pattern of files to exclude from removal. Matches the entire path.
+        @option hidden Remove hidden files starting with "." Defaults to true.
+        @option include Regular expression pattern of files to remove. Matches the entire returned path.
+        @option nodirs Exclude directories from removal. The default is to include directories if descend is true.
+        @return True if all the contents are sucessfully deleted. Otherwise return false.
+    */
+    function rm(patterns, options = {}): Boolean {
+        options = blend({depthFirst: true, hidden: true}, options)
+        let success = true
+        for each (let path in Path('.').glob(patterns, options)) {
+            if (!path.remove()) {
+                success = false
             }
         }
+        return success
     }
 
     /**
-        Removes a directory. This can remove a directory and its contents.  
-        @param path Filename path to remove.
-        @param contents If true, remove the directory contents including files and sub-directories.
-        @throws IOError if the directory exists and cannot be removed.
+        Removes a directory and contents
+        @param patterns Pattern to match files to delete. This can be a String, Path or array of String/Paths. 
+            The wildcards "*", "**" and "?" are the only wild card patterns supported. The "**" pattern matches
+            every directory. The Posix "[]" and "{a,b}" style expressions are not supported.
+        @param options Options to modify the removal
+        @option descend Descend into subdirectories. Defaults to true.
+        @option exclude Regular expression pattern of files to exclude from removal. Matches the entire path.
+        @option hidden Remove hidden files starting with "."
+        @option include Regular expression pattern of files to remove. Matches the entire returned path.
+        @return True if all the contents are sucessfully deleted or if the directory does not exist. Otherwise return false.
      */
-    function rmdir(path: Path, contents: Boolean = false): void {
-        if (contents) {
-            Path(path).removeAll()
-        } else {
-            Path(path).remove()
-        }
+    function rmdir(patterns, options = {}): Boolean {
+        options = blend({descend: true, depthFirst: true, hidden: true}, options)
+        return rm(patterns, options)
     }
 
     /** 

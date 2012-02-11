@@ -1,0 +1,39 @@
+/*
+    core.bit -- Bit File for the Ejs core script library
+ */
+
+Bit.load({
+
+    defaults: {
+        scripts: {
+            '+preblend': "
+                if (bit.settings.profile == 'debug') {
+                    bit.settings.esflags = '--debug --optimize 9'
+                }
+            ",
+        }
+    },
+
+    targets: {
+        'ejs.mod': {
+            path: '${LIB}/ejs.mod',
+            files: [ '*.es' ],
+            build: "
+                trace('Compile', 'Core EJS classes')
+                run('ejsc --out ${LIB}/ejs.mod ${settings.esflags} --optimize 9 --bind --require null ' + 
+                    Path('.').glob('*.es').sort().join(' '))
+                trace('Generate', 'Core slot files and listings')
+                run('ejsmod --require null --listing --cslots ${LIB}/ejs.mod')
+                for each (file in Path('.').glob('*.slots.h')) {
+                    let dest = bit.dir.inc.join(file.basename)
+                    if (!dest.exists || file.readString() != dest.readString()) {
+                        trace('Install', dest)
+                        cp(file, dest)
+                        bit.rebuild = 'Rebuild because slot files have been modified'
+                    }
+                }
+            ",
+            depends: [ 'ejsc', 'ejsmod' ],
+        },
+	},
+})

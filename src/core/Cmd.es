@@ -34,6 +34,8 @@ module ejs {
             @options exception Boolean If true, throw exceptions if the command returns a non-zero status code. 
                 Defaults to false.
             @options timeout Number This is the default number of milliseconds for the command to complete.
+            @options noio Don't capture stdout from the command. If true, the command's standard output will go to the 
+                application's current standard output. Defaults to false.
          */
         native function Cmd(command: Object = null, options: Object = null)
 
@@ -355,11 +357,11 @@ module ejs {
             Execute a command/program. The call blocks while executing the command.
             @param command Command or program to execute
             @param data Optional data to write to the command on it's standard input.
-            @returns The command output from it's standard output.
+            @returns The command output from the standard output.
             @throws IOError if the command exits with non-zero status. The exception object will contain the command's
                 standard error output. 
          */
-        static function run(command: Object, data: Object = null): String {
+        static function run(command: Object, data: Object = null, options = {}): String {
             let cmd = new Cmd
             cmd.start(command, {detach: true})
             if (data) {
@@ -379,6 +381,9 @@ module ejs {
             sh.exe is installed (See Cygwin). 
             @param command The (optional) command line to initialize with. The command may be either a string or
                 an array of arguments. 
+            @return The command output from the standard output.
+            @throws IOError if the command exits with non-zero status. The exception object will contain the command's
+                standard error output. 
          */
         static function sh(command: Object, data: Object = null): String {
             /*

@@ -1,0 +1,18 @@
+/*
+    template.bit -- Bit File for ejs.template
+ */
+
+Bit.load({
+
+    targets: {
+        'ejs.template.mod': {
+            path: '${LIB}/ejs.template.mod',
+            files: [ '*.es' ],
+            build: "
+                trace('Compile', 'ejs.template.mod')
+                run('ejsc --out ${LIB}/ejs.template.mod ${settings.esflags} --optimize 9 ' + Path('.').glob('*.es').sort().join(' '))
+            ",
+            depends: [ 'ejsc', 'ejsmod', 'ejs.mod' ],
+        },
+	},
+})

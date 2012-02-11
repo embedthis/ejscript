@@ -1,4 +1,4 @@
-	/*
+/*
     ejsCmd.c -- Cmd class
 
     Copyright (c) All Rights Reserved. See details at the end of the file.
@@ -354,6 +354,11 @@ static int parseOptions(Ejs *ejs, EjsCmd *cmd)
     cmd->throw = 0;    
     flags = MPR_CMD_IN | MPR_CMD_OUT | MPR_CMD_ERR;
     if (cmd->options) {
+        if ((value = ejsGetPropertyByName(ejs, cmd->options, EN("noio"))) != 0) {
+            if (value == ESV(true)) {
+                flags &= ~(MPR_CMD_OUT | MPR_CMD_ERR);
+            }
+        }
         if ((value = ejsGetPropertyByName(ejs, cmd->options, EN("detach"))) != 0) {
             if (value == ESV(true)) {
                 flags |= MPR_CMD_DETACH;
