@@ -575,7 +575,9 @@ static EjsArray *getPathFiles(Ejs *ejs, EjsArray *results, cchar *dir, int flags
             }
         }
 #else
-        ejsSetProperty(ejs, results, -1, ejsCreatePathFromAsc(ejs, path));
+        if (included) {
+            ejsSetProperty(ejs, results, -1, ejsCreatePathFromAsc(ejs, path));
+        }
 #endif
     }
     return results;
@@ -746,12 +748,12 @@ static EjsArray *globMatch(Ejs *ejs, EjsArray *results, char *pattern, int flags
  */
 static int gmatch(cchar *pattern, cchar *filename, int isDir, int flags, int *included)
 {
-    cchar   *cp, *p, *markFile, *markPat;
+    cchar   *cp, *p, *markPat;
 
     if (filename[0] == '.' && !(flags & FILES_HIDDEN)) {
         return 0;
     }
-    markFile = markPat = 0;
+    markPat = 0;
     for (cp = filename, p = pattern; *cp && *p; cp++, p++) {
         if (*p == '*' && p[1] == '*' && (isDir || p[2] == '\0')) {
             p--;
@@ -762,7 +764,7 @@ static int gmatch(cchar *pattern, cchar *filename, int isDir, int flags, int *in
                 /* Double start for regular file */
                 p++;
             }
-            markFile = cp--;
+            cp--;
             markPat = p;
 
         } else if (*p != *cp) {
