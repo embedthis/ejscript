@@ -522,21 +522,12 @@ static EjsString *expandString(Ejs *ejs, EjsString *sp, int argc, EjsObj **argv)
     }
     buf = mprCreateBuf(0, 0);
     for (src = (char*) sp->value; src < &sp->value[sp->length]; ) {
-        if (*src == '$') {
-            if (*++src == '{') {
-                for (cp = ++src; *cp && *cp != '}'; cp++) ;
-                tok = snclone(src, cp - src);
-            } else {
-                for (cp = src; *cp && (isalnum((int) *cp) || *cp == '_'); cp++) ;
-                tok = snclone(src, cp - src);
-            }
+        if (*src == '$' && src[1] == '{') {
+            src += 2;
+            for (cp = src; *cp != '}' && cp < &sp->value[sp->length]; cp++) ;
+            tok = snclone(src, cp - src);
             getTokenValue(ejs, obj, tok, tok, buf, fill, join);
-            if (src > sp->value && src[-1] == '{') {
-                src = cp + 1;
-            } else {
-                src = cp;
-            }
-
+            src = cp + 1;
         } else {
             mprPutCharToBuf(buf, *src++);
         }
