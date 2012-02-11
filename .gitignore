@@ -159,3 +159,6 @@ local.bit
 *-release
 ejs.db.sqlite.slots.h
 ejs.web.slots.h
+
+xcode
+macosx-x86_64.bit
