@@ -575,7 +575,9 @@ static EjsArray *getPathFiles(Ejs *ejs, EjsArray *results, cchar *dir, int flags
             }
         }
 #else
-        ejsSetProperty(ejs, results, -1, ejsCreatePathFromAsc(ejs, path));
+        if (included) {
+            ejsSetProperty(ejs, results, -1, ejsCreatePathFromAsc(ejs, path));
+        }
 #endif
     }
     return results;
