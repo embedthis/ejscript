@@ -9,6 +9,15 @@ Bit.load({
             type: 'exe'
             sources: [ 'ejs.c', ],
             depends: [ 'libejs' ],
+            scripts: {
+                prebuild: [{
+                    script: "
+                        if (bit.settings.hasLibEdit) {
+                            bit.target.libraries.push('edit')
+                        }
+                    ",
+                }],
+            }
         },
 
         ejsc: {

@@ -37,5 +37,10 @@ Bit.load({
                 ",
             }
         },
+
+        'clean-slots': {
+            type: 'clean',
+            action: "rm('${INC}/*.slots.h')",
+        }
 	},
 })

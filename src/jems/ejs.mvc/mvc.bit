@@ -29,7 +29,7 @@ Bit.load({
                 trace('Compile', 'ejs.mvc.mod')
                 run('ejsc --out ${LIB}/ejs.mvc.mod ${settings.esflags} --optimize 9 ' + Path('.').glob('*.es').sort().join(' '))
             ",
-            depends: [ 'ejsc', 'ejsmod', 'ejs.mod' ],
+            depends: [ 'ejsc', 'ejsmod', 'ejs.mod', 'ejs.web.mod' ],
         },
 	},
 })
