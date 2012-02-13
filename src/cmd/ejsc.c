@@ -160,12 +160,10 @@ MAIN(ejscMain, int argc, char **argv, char **envp)
                     app->modules = mprCreateList(-1, 0);
                 }
                 modules = sclone(argv[++nextArg]);
-#if MACOSX || WIN
                 /*  Fix for Xcode and Visual Studio */
                 if (modules[0] == ' ' || scmp(modules, "null") == 0) {
                     modules[0] = '\0';                    
                 }
-#endif
                 name = stok(modules, " \t,", &tok);
                 while (name != NULL) {
                     require(name);
