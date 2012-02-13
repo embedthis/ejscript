@@ -162,4 +162,8 @@ ejs.web.slots.h
 
 xcode
 macosx-x86_64.bit
+<<<<<<< HEAD
 *-*.bit
+=======
+linux-i686.bit
+>>>>>>> b0e06a98011ce093bb6fded5ee6248ff669e33ce
