@@ -8,7 +8,7 @@ Bit.load({
         scripts: {
             '+preblend': "
                 if (bit.settings.profile == 'debug') {
-                    bit.settings.esflags = '--debug --optimize 9'
+                    bit.settings.esflags = '--debug'
                 }
             ",
         }
