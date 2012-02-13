@@ -12,6 +12,19 @@ Bit.load({
         obj:   'o',
         exe:   'out',
     },
+    prefixes: {
+        config:     '.',
+        product:    '.',
+        productver: '.',
+        bin:        '.',
+        lib:        '.',
+        log:        '.',
+        include:    '.',
+        spool:      '.',
+        src:        '.',
+        web:        '.',
+    },
+
     '+required': [ 'compiler' ],
     '+optional': [ ],
 
