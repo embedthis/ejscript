@@ -32,7 +32,6 @@ $(EJS_MOD): $(EJS_FILES)
 	ejsmod --require "" $(LISTING) --cslots $(call mod, ejs)
 	changed=0 ; \
 	for f in *.slots.h ; do \
-	echo compare $$f ; \
 		if [ -f $(BLD_INC_DIR)/$$f ] ; then \
 			if ! diff -w $$f $(BLD_INC_DIR)/$$f >/dev/null 2>&1; then \
 				printf "%12s %s\n" "[Install]" $$f ; \

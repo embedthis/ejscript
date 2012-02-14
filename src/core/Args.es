@@ -108,11 +108,8 @@ for each (file in args.rest) {
                             }
                         }
                         if (item.separator) {
-                            if (item.value is Array) {
-                                item.value.push(value)
-                            } else {
-                                item.value = [value]
-                            }
+                            item.value ||= []
+                            item.value += (item.commas && value.contains(',')) ? value.split(',') : [value]
                         } else {
                             item.value = value
                         }
