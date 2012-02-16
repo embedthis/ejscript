@@ -11387,21 +11387,29 @@ int mprRandom()
 
 char *mprDecode64(cchar *s)
 {
+    return mprDecode64Block(s, slen(s), MPR_DECODE_TOKEQ);
+}
+
+
+char *mprDecode64Block(cchar *s, ssize len, int flags)
+{
     uint    bitBuf;
     char    *buffer, *bp;
-    ssize   len;
+    cchar   *end;
+    ssize   size;
     int     c, i, j, shift;
 
-    len = slen(s);
-    if ((buffer = mprAlloc(len + 1)) == 0) {
+    size = len;
+    if ((buffer = mprAlloc(size + 1)) == 0) {
         return NULL;
     }
     bp = buffer;
     *bp = '\0';
-    while (*s && *s != '=') {
+    end = &s[len];
+    while (s < end && (*s != '=' || !(flags & MPR_DECODE_TOKEQ))) {
         bitBuf = 0;
         shift = 18;
-        for (i = 0; i < 4 && *s && *s != '='; i++, s++) {
+        for (i = 0; i < 4 && (s < end && (*s != '=' || !(flags & MPR_DECODE_TOKEQ))); i++, s++) {
             c = decodeMap[*s & 0xff];
             if (c == -1) {
                 return NULL;
@@ -11410,7 +11418,7 @@ char *mprDecode64(cchar *s)
             shift -= 6;
         }
         --i;
-        mprAssert((bp + i) < &buffer[len]);
+        mprAssert((bp + i) < &buffer[size]);
         for (j = 0; j < i; j++) {
             *bp++ = (char) ((bitBuf >> (8 * (2 - j))) & 0xff);
         }
@@ -11422,24 +11430,32 @@ char *mprDecode64(cchar *s)
 
 char *mprEncode64(cchar *s)
 {
+    return mprEncode64Block(s, slen(s));
+}
+
+
+char *mprEncode64Block(cchar *s, ssize len)
+{
     uint    shiftbuf;
     char    *buffer, *bp;
-    ssize   len;
+    cchar   *end;
+    ssize   size;
     int     i, j, shift;
 
-    len = slen(s) * 2;
-    if ((buffer = mprAlloc(len + 1)) == 0) {
+    size = len * 2;
+    if ((buffer = mprAlloc(size + 1)) == 0) {
         return NULL;
     }
     bp = buffer;
     *bp = '\0';
-    while (*s) {
+    end = &s[len];
+    while (s < end) {
         shiftbuf = 0;
         for (j = 2; j >= 0 && *s; j--, s++) {
             shiftbuf |= ((*s & 0xff) << (j * 8));
         }
         shift = 18;
-        for (i = ++j; i < 4 && bp < &buffer[len] ; i++) {
+        for (i = ++j; i < 4 && bp < &buffer[size] ; i++) {
             *bp++ = encodeMap[(shiftbuf >> shift) & 0x3f];
             shift -= 6;
         }
@@ -19188,9 +19204,11 @@ int mprDeletePath(cchar *path)
         return MPR_ERR_CANT_ACCESS;
     }
     fs = mprLookupFileSystem(path);
+#if UNUSED
     if (!mprPathExists(path, F_OK)) {
         return 0;
     }
+#endif
     return fs->deletePath(fs, path);
 }
 
@@ -19453,12 +19471,37 @@ char *mprGetPathBase(cchar *path)
         if (cp[1] == '\0') {
             return sclone(path);
         }
-    } else {
-        if (cp[1] == '\0') {
-            return sclone("");
-        }
+    } else if (cp[1] == '\0') {
+        return sclone("");
     }
     return sclone(&cp[1]);
+}
+
+
+/*
+    Return the last portion of a pathname. The separators are not mapped and the path is not cleaned.
+    This returns a reference into the original string
+ */
+cchar *mprGetPathBaseRef(cchar *path)
+{
+    MprFileSystem   *fs;
+    char            *cp;
+
+    if (path == 0) {
+        return sclone("");
+    }
+    fs = mprLookupFileSystem(path);
+    if ((cp = (char*) lastSep(fs, path)) == 0) {
+        return path;
+    } 
+    if (cp == path) {
+        if (cp[1] == '\0') {
+            return path;
+        }
+    } else if (cp[1] == '\0') {
+        return "";
+    }
+    return &cp[1];
 }
 
 
@@ -19567,15 +19610,13 @@ static MprList *getDirFiles(cchar *dir, int flags)
 #if UNUSED
         if (!(findData.dwFileAttributes & FILE_ATTRIBUTE_DIRECTORY) || !(flags & MPR_PATH_NODIRS)) {
 #endif
-            dp = mprAlloc(sizeof(MprDirEntry));
-            if (dp == 0) {
+            if ((dp = mprAlloc(sizeof(MprDirEntry))) == 0) {
                 return 0;
             }
             dp->name = sclone(findData.cFileName);
             if (dp->name == 0) {
                 return 0;
             }
-
             /* dp->lastModified = (uint) findData.ftLastWriteTime.dwLowDateTime; */
 
             if (mprSprintf(pbuf, sizeof(pbuf), "%s%c%s", dir, seps[0], dp->name) < 0) {

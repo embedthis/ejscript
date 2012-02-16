@@ -655,7 +655,9 @@ static EjsArray *globMatch(Ejs *ejs, EjsArray *results, char *pattern, int flags
 {
     MprDirEntry     *dp;
     MprList         *list;
+#if UNUSED
     MprPath         info;
+#endif
     char            *dir, *cp, *path, *nextPartPattern, *wild, *nextPath;
     int             next, included, isDir, rc;
 
@@ -687,14 +689,26 @@ static EjsArray *globMatch(Ejs *ejs, EjsArray *results, char *pattern, int flags
         if (scontains(pattern, "**", -1)) {
             flags |= MPR_PATH_DESCEND;
         }
-        if ((list = mprGetPathFiles(dir, flags | MPR_PATH_RELATIVE)) == 0) {
-            if (flags & FILES_MISSING) {
-                ejsThrowIOError(ejs, "Can't read directory");
-                return 0;
-            }
-            return results;
-        }
     } else {
+        dir = pattern;
+        pattern = (char*) mprGetPathBaseRef(dir);
+        if (pattern > dir) {
+            pattern[-1] = '\0';
+        } else {
+            dir = ".";
+        }
+        nextPartPattern = 0;
+    }
+    if ((list = mprGetPathFiles(dir, flags | MPR_PATH_RELATIVE)) == 0) {
+        if (flags & FILES_MISSING) {
+            ejsThrowIOError(ejs, "Can't read directory");
+            return 0;
+        }
+        return results;
+    }
+#if UNUSED
+    } else {
+        /* No wild card */
         if (mprGetPathInfo(dir, &info) < 0) {
             if (flags & FILES_MISSING) {
                 ejsThrowIOError(ejs, "Can't read directory");
@@ -702,10 +716,19 @@ static EjsArray *globMatch(Ejs *ejs, EjsArray *results, char *pattern, int flags
             }
             return results;
         }
-        isDir = info.isDir;
+        list = mprCreateList(0, 0);
+        if ((dp = mprAlloc(sizeof(MprDirEntry))) == 0) {
+            return 0;
+        }
+        dp->name = sclone(".");
+        dp->isDir = 1;
+        mprAddItem(list, dp);
+        dir = ".";
         nextPartPattern = 0;
+        isDir = info.isDir;
         list = 0;
     }
+#endif
     next = 0;
     do {
         included = 1;
@@ -714,7 +737,7 @@ static EjsArray *globMatch(Ejs *ejs, EjsArray *results, char *pattern, int flags
                 return results;
             }
             isDir = dp->isDir;
-            if (!(rc = gmatch(pattern, dp->name, isDir, flags, &included))) {
+            if (!(rc = gmatch(pattern, mprGetPathBaseRef(dp->name), isDir, flags, &included))) {
                 continue;
             }
             path = (flags & MPR_PATH_RELATIVE) ? dp->name : mprJoinPath(dir, dp->name);

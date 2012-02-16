@@ -11,7 +11,7 @@ let mvc = Cmd.locate("mvc").portable
 let ejs = Cmd.locate("ejs").portable
 
 //  Prepare
-rm("junk", {descend: true})
+rmdir("junk")
 assert(!exists("junk"))
 
 //  Generate app and scaffold
@@ -34,6 +34,6 @@ try {
 
 } finally {
     Cmd.kill(pid, 9)
-    rm("junk", {descend: true})
+    rmdir("junk")
 }
 

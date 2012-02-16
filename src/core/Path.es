@@ -214,8 +214,8 @@ module ejs {
             @param options Optional properties to control the matching.
             @option depthFirst Do a depth first traversal. If "dirs" is specified, the directories will be shown after
                 the files in the directory. Otherwise, directories will be listed first.
-            @option descend Descend into subdirectories. When selected, the pattern is used to match each file underneath
-                the given path.
+            @option descend Descend into subdirectories to get an initial file list that is then matched against the
+                patterns. NOTE: the patterns match only the basename portion of the filename.
             @option exclude Regular expression pattern of files to exclude from the results. Matches the entire path.
             @option hidden Show hidden files starting with "."
             @option include Regular expression pattern of files to include in the results. Matches the entire returned path.

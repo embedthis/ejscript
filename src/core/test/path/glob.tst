@@ -52,9 +52,9 @@ assert(Path('..').glob('app', {descend: true, depthFirst: false}).toString().sta
 
 //  nodirs
 if (FileSystem('.').separators[0] == '\\') {
-    assert(Path('..').glob('app', {nodirs: true, descend: true}).sort() == '..\\app\\09100-app.tst,..\\app\\io.tst')
+    assert(Path('..').glob('*app*', {nodirs: true, descend: true}).sort() == '..\\app\\09100-app.tst')
 } else {
-    assert(Path('..').glob('app', {nodirs: true, descend: true}).sort() == '../app/09100-app.tst,../app/io.tst')
+    assert(Path('..').glob('*app*', {nodirs: true, descend: true}).sort() == '../app/09100-app.tst')
 }
 
 /*

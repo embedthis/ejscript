@@ -52,7 +52,7 @@ module ejs.unix {
         if (options.expand) {
              dest = dest.toString().expand(options.expand, options)
         }
-        let list = Path('.').glob(patterns)
+        let list = Path('.').glob(patterns, options)
         if (list.length == 0 && options.warn) {
             throw 'Can\'t find files for pattern ' + patterns
         }
@@ -161,9 +161,9 @@ module ejs.unix {
 
     /**
         Get a list of files in a directory.
-        @param pattern String pattern to match with files. The wildcards "*", "**" and "?" are the wild card
-            patterns supported. The "**" pattern matches any number of directories.  The Posix "[]" and "{a,b}" style
-            expressions are not supported.
+        @param patterns Pattern to match files. This can be a String, Path or array of String/Paths. 
+            The wildcards "*", "**" and "?" are the only wild card patterns supported. The "**" pattern matches
+            every directory. The Posix "[]" and "{a,b}" style expressions are not supported.
         @param options If set to true, then files will include sub-directories in the returned list of files.
         @option descend Descend into subdirectories
         @option dirs Include directories in the file list
@@ -174,11 +174,18 @@ module ejs.unix {
         @option include Regular expression pattern of files to include in the results. Matches the entire returned path.
         @return An Array of Path objects for each matching file.
      */
-    function ls(pattern = "*", options: Object = null): Array {
-        if (pattern.exists && pattern.isDir) {
-            pattern = pattern.join("*")
+    function ls(patterns = "*", options: Object = null): Array {
+        if (!(patterns is Array)) {
+            patterns = [patterns]
         }
-        return Path(".").glob(pattern, options)
+        let results = []
+        for each (let pat: Path in patterns) {
+            if (pat.exists && pat.isDir) {
+                pat = pat.join("*")
+            }
+            results += Path(".").glob(pat, options)
+        }
+        return results
     }
 
 
@@ -265,13 +272,14 @@ module ejs.unix {
         file.read(count)
 
     /**
-        Remove files from the file system. With options, this will remove files and empty directories. If options.descend is 
-            true, this call will descend into subdirectories and remove files there also.
+        Remove files from the file system. If options.descend is 
+            true, this call will descend into subdirectories and remove subdirectories and files.
         @param patterns Pattern to match files to remove. This can be a String, Path or array of String/Paths. 
             The wildcards "*", "**" and "?" are the only wild card patterns supported. The "**" pattern matches
             every directory. The Posix "[]" and "{a,b}" style expressions are not supported.
         @param options Options to modify the removal
-        @option descend Descend into subdirectories. Defaults to false.
+        @option descend Descend into subdirectories to get an initial file list that is then matched against the
+            patterns. NOTE: the patterns match only the basename portion of the filename.
         @option exclude Regular expression pattern of files to exclude from removal. Matches the entire path.
         @option hidden Remove hidden files starting with "." Defaults to true.
         @option include Regular expression pattern of files to remove. Matches the entire returned path.
@@ -281,9 +289,14 @@ module ejs.unix {
     function rm(patterns, options = {}): Boolean {
         options = blend({depthFirst: true, hidden: true}, options)
         let success = true
-        for each (let path in Path('.').glob(patterns, options)) {
-            if (!path.remove()) {
-                success = false
+        if (!(patterns is Array)) {
+            patterns = [patterns]
+        }
+        for each (let pat:Path in patterns) {
+            for each (let path: Path in Path('.').glob(pat, options)) {
+                if (!path.remove()) {
+                    success = false
+                }
             }
         }
         return success
@@ -303,7 +316,21 @@ module ejs.unix {
      */
     function rmdir(patterns, options = {}): Boolean {
         options = blend({descend: true, depthFirst: true, hidden: true}, options)
-        return rm(patterns, options)
+        let success = true
+        if (!(patterns is Array)) {
+            patterns = [patterns]
+        }
+        for each (let pat:Path in patterns) {
+            for each (let path: Path in Path('.').glob(pat, options)) {
+                if (path.isDir) {
+                    rmdir(path.join('*'), options)
+                }
+                if (!path.remove()) {
+                    success = false
+                }
+            }
+        }
+        return success
     }
 
     /** 
