@@ -546,11 +546,7 @@ static EjsArray *getPathFiles(Ejs *ejs, EjsArray *results, cchar *dir, int flags
         return results;
     }
     for (next = 0; (dp = mprGetNextItem(list, &next)) != 0; ) {
-#if UNUSED
-        path = mprJoinPath(dir, dp->name);
-#else
         path = dp->name;
-#endif
         included = 1;
         if (include && pcre_exec(include->compiled, NULL, path, (int) slen(path), 0, 0, NULL, 0) < 0) {
             included = 0;
@@ -558,27 +554,9 @@ static EjsArray *getPathFiles(Ejs *ejs, EjsArray *results, cchar *dir, int flags
         if (exclude && pcre_exec(exclude->compiled, NULL, path, (int) slen(path), 0, 0, NULL, 0) >= 0) {
             continue;
         }
-#if UNUSED
-        if (!(flags & FILES_DEPTH_FIRST) && included) {
-            if (!(dp->isDir && flags & FILES_NODIRS)) {
-                ejsSetProperty(ejs, results, -1, ejsCreatePathFromAsc(ejs, path));
-            }
-        }
-        if (dp->isDir) {
-            if (flags & FILES_DESCEND) {
-                getPathFiles(ejs, results, path, flags, exclude, include);
-            } 
-        }
-        if (flags & FILES_DEPTH_FIRST && included) {
-            if (!(dp->isDir && flags & FILES_NODIRS)) {
-                ejsSetProperty(ejs, results, -1, ejsCreatePathFromAsc(ejs, path));
-            }
-        }
-#else
         if (included) {
             ejsSetProperty(ejs, results, -1, ejsCreatePathFromAsc(ejs, path));
         }
-#endif
     }
     return results;
 }
@@ -655,15 +633,13 @@ static EjsArray *globMatch(Ejs *ejs, EjsArray *results, char *pattern, int flags
 {
     MprDirEntry     *dp;
     MprList         *list;
-#if UNUSED
-    MprPath         info;
-#endif
     char            *dir, *cp, *path, *nextPartPattern, *wild, *nextPath;
     int             next, included, isDir, rc;
 
     /* 
-        Optimize by finding the longest non-wild portion of the pattern and set "dir" to that.
-        This minimizes the number of directories searched. Must handle "file*", "*file", "/file*", "C:/file*"
+        The pattern is of the form: /dir/base where path and base can optionally include wildcards.
+        The pattern is split into dir, pattern and nextPattern where dir is a fixed path segment without wildcards. If the
+        first segment has wildcards, dir is set to '.'. Must handle "file*", "*file", "/file*", "C:/file*"
      */
     dir = pattern;
     isDir = 0;
@@ -699,36 +675,13 @@ static EjsArray *globMatch(Ejs *ejs, EjsArray *results, char *pattern, int flags
         }
         nextPartPattern = 0;
     }
-    if ((list = mprGetPathFiles(dir, flags | MPR_PATH_RELATIVE)) == 0) {
+    if ((list = mprGetPathFiles(dir, (flags & ~MPR_PATH_DESCEND) | MPR_PATH_RELATIVE)) == 0) {
         if (flags & FILES_MISSING) {
             ejsThrowIOError(ejs, "Can't read directory");
             return 0;
         }
         return results;
     }
-#if UNUSED
-    } else {
-        /* No wild card */
-        if (mprGetPathInfo(dir, &info) < 0) {
-            if (flags & FILES_MISSING) {
-                ejsThrowIOError(ejs, "Can't read directory");
-                return 0;
-            }
-            return results;
-        }
-        list = mprCreateList(0, 0);
-        if ((dp = mprAlloc(sizeof(MprDirEntry))) == 0) {
-            return 0;
-        }
-        dp->name = sclone(".");
-        dp->isDir = 1;
-        mprAddItem(list, dp);
-        dir = ".";
-        nextPartPattern = 0;
-        isDir = info.isDir;
-        list = 0;
-    }
-#endif
     next = 0;
     do {
         included = 1;
@@ -799,6 +752,7 @@ rescan:
             star = 1;
             if (*++pp == '*') {
                 if (isDir) {
+                    /* Double star matches all directories. If the directory is terminal, it is included itself */
                     if (*pp) {
                         *included = 0;
                     }
