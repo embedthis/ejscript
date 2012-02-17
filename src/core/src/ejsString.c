@@ -1120,34 +1120,7 @@ static EjsString *replace(Ejs *ejs, EjsString *sp, int argc, EjsObj **argv)
         replacement = (EjsString*) ejsToString(ejs, argv[1]);
         replacementFunction = 0;
     }
-    if (ejsIs(ejs, argv[0], String)) {
-        pattern = (EjsString*) argv[0];
-        patternLength = pattern->length;
-
-        index = indexof(sp->value, sp->length, pattern, patternLength, 1);
-        if (index >= 0) {
-            if ((result = ejsCreateBareString(ejs, MPR_BUFSIZE)) == NULL) {
-                return 0;
-            }
-            result->length = 0;
-            result = buildString(ejs, result, sp->value, index);
-            if (replacementFunction) {
-                matches[0] = matches[2] = (int) index;
-                matches[1] = matches[3] = (int) (index + patternLength);
-                enabled = mprEnableGC(0);
-                replacement = getReplacementText(ejs, replacementFunction, 2, matches, sp);
-                mprEnableGC(enabled);
-            }
-            result = buildString(ejs, result, replacement->value, replacement->length);
-            index += patternLength;
-            if (index < sp->length) {
-                result = buildString(ejs, result, &sp->value[index], sp->length - index);
-            }
-        } else {
-            result = ejsClone(ejs, sp, 0);
-        }
-
-    } else if (ejsIs(ejs, argv[0], RegExp)) {
+    if (ejsIs(ejs, argv[0], RegExp)) {
         EjsRegExp   *rp;
         MprChar     *cp, *lastReplace, *end;
         int         count, endLastMatch, startNextMatch, submatch;
@@ -1237,10 +1210,31 @@ static EjsString *replace(Ejs *ejs, EjsString *sp, int argc, EjsObj **argv)
             /* Append remaining string text */
             result = buildString(ejs, result, &sp->value[endLastMatch], sp->length - endLastMatch);
         }
-
     } else {
-        ejsThrowTypeError(ejs, "Wrong argument type");
-        return 0;
+        pattern = ejsToString(ejs, argv[0]);
+        patternLength = pattern->length;
+        index = indexof(sp->value, sp->length, pattern, patternLength, 1);
+        if (index >= 0) {
+            if ((result = ejsCreateBareString(ejs, MPR_BUFSIZE)) == NULL) {
+                return 0;
+            }
+            result->length = 0;
+            result = buildString(ejs, result, sp->value, index);
+            if (replacementFunction) {
+                matches[0] = matches[2] = (int) index;
+                matches[1] = matches[3] = (int) (index + patternLength);
+                enabled = mprEnableGC(0);
+                replacement = getReplacementText(ejs, replacementFunction, 2, matches, sp);
+                mprEnableGC(enabled);
+            }
+            result = buildString(ejs, result, replacement->value, replacement->length);
+            index += patternLength;
+            if (index < sp->length) {
+                result = buildString(ejs, result, &sp->value[index], sp->length - index);
+            }
+        } else {
+            result = ejsClone(ejs, sp, 0);
+        }
     }
     return ejsInternString(result);
 }

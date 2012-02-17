@@ -154,16 +154,9 @@ src/core/test/cmd/TempWmicBatchFile.bat
 src/test/tt.es
 main
 val.log
-local.bit
-*-debug
-*-release
 ejs.db.sqlite.slots.h
 ejs.web.slots.h
-
 xcode
-macosx-x86_64.bit
-<<<<<<< HEAD
-*-*.bit
-=======
-linux-i686.bit
->>>>>>> b0e06a98011ce093bb6fded5ee6248ff669e33ce
+/*-*.bit
+/*-*-debug/
+/*-*-release/

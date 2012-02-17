@@ -287,6 +287,7 @@ module ejs.unix {
         @return True if all the contents are sucessfully deleted. Otherwise return false.
     */
     function rm(patterns, options = {}): Boolean {
+        /* Use depth first incase user specifies descend */
         options = blend({depthFirst: true, hidden: true}, options)
         let success = true
         if (!(patterns is Array)) {
@@ -315,15 +316,16 @@ module ejs.unix {
         @return True if all the contents are sucessfully deleted or if the directory does not exist. Otherwise return false.
      */
     function rmdir(patterns, options = {}): Boolean {
-        options = blend({descend: true, depthFirst: true, hidden: true}, options)
+        options = blend({depthFirst: true, hidden: true}, options)
         let success = true
         if (!(patterns is Array)) {
             patterns = [patterns]
         }
+        let dirOptions = blend({descend: true}, options)
         for each (let pat:Path in patterns) {
-            for each (let path: Path in Path('.').glob(pat, options)) {
+            for each (let path: Path in Path('.').glob(pat)) {
                 if (path.isDir) {
-                    rmdir(path.join('*'), options)
+                    rmdir(path.join('*'), dirOptions)
                 }
                 if (!path.remove()) {
                     success = false
