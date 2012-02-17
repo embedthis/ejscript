@@ -785,13 +785,15 @@ static EjsArray *globMatch(Ejs *ejs, EjsArray *results, char *pattern, int flags
  */
 static int gmatch(cchar *pattern, cchar *filename, int isDir, int flags, int *included)
 {
-    cchar   *fp, *pp;
-    int     star;
+    MprFileSystem   *fs;
+    cchar           *fp, *pp;
+    int             star, match;
 
     if (*filename == '.' && !(flags & FILES_HIDDEN)) {
         return 0;
     }
     star = 0;
+    fs = mprLookupFileSystem(filename);
     
 rescan:
     for (fp = filename, pp = pattern; *fp && *pp; fp++, pp++) {
@@ -813,7 +815,8 @@ rescan:
             pattern = pp;
             goto rescan;
         } 
-        if (*pp != *fp && *pp != '?') {
+        match = fs->caseSensitive ? (*pp == *fp) : (tolower((int) *pp) == tolower((int) *fp));
+        if (!match && *pp != '?') {
             if (!star) {
                 return 0;
             }
