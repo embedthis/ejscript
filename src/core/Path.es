@@ -172,11 +172,11 @@ module ejs {
             @option descend Descend into subdirectories
             @option exclude Regular expression pattern of files to exclude from the results. Matches the entire path unless
                 "basenames" is selected.
+            @option files Include only files in the results. The default is to include directories.
             @option hidden Show hidden files starting with "."
             @option include Regular expression pattern of files to include in the results. Matches the entire returned path
                 unless "basenames" is selected.
             @option missing Report missing directories by throwing an exception.
-            @option nodirs Exclude directories in the file list. The default is to include directories.
             @return An Array of Path objects for each file in the directory.
          */
         native function files(options: Object = null): Array 
@@ -214,14 +214,13 @@ module ejs {
             @param options Optional properties to control the matching.
             @option depthFirst Do a depth first traversal. If "dirs" is specified, the directories will be shown after
                 the files in the directory. Otherwise, directories will be listed first.
-            @option descend Descend into subdirectories to get an initial file list that is then matched against the
-                patterns. NOTE: the patterns match only the basename portion of the filename.
             @option exclude Regular expression pattern of files to exclude from the results. Matches the entire path.
+            @option files Include only files in the results. The default is to include directories.
             @option hidden Show hidden files starting with "."
             @option include Regular expression pattern of files to include in the results. Matches the entire returned path.
-            @option missing Report missing directories by throwing an exception.
+            @option missing Report patterns that don't resolve into any files or directories by throwing an exception.
+            @option relative Return paths relative to the Path, otherwise result entries include the Path. Defaults to false.
             @option sort Sort the results
-            @option nodirs Exclude directories in the file list. The default is to include directories.
             @return An Array of Path objects for each file in the directory.
          */
         native function glob(patterns, options: Object = null): Array 

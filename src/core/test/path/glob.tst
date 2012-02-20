@@ -14,13 +14,13 @@ assert(dir.glob('f*.???').sort() == 'file.dat,file.xml,files.tst')
 assert(dir.glob('g?o?.tst') == 'glob.tst')
 
 //  Directory matching
-assert(dir.glob('../*/*.tst').length > 200)
-assert(dir.glob('../http/w*/n*').length == 2)
-assert(dir.glob('../../../core/*.json') == '../../../core/package.json')
+assert(Path('..').glob('*/*.tst').length > 200)
+assert(Path('..').glob('http/w*/n*').length == 2)
+assert(Path('../../..').glob('core/*.json') == '../../../core/package.json')
 
 //  Double star (should not contain directories)
-assert(Path().glob("../**/*.tst").length > 200)
-assert(!Path().glob("../**/*.tst").toString().contains('"../app"'))
+assert(Path('..').glob("**/*.tst").length > 200)
+assert(!Path('..').glob("**/*.tst").toString().contains('"../app"'))
 assert(Path('../..').glob("**.tst").length > 200)
 assert(!Path('../..').glob("**.tst").toString().contains('"../app"'))
 
@@ -28,15 +28,15 @@ assert(!Path('../..').glob("**.tst").toString().contains('"../app"'))
 assert(Path('../../../core').glob('*.json') == '../../../core/package.json')
 
 //  relative
-assert(dir.glob('../http/w*/n*', {relative: true}).sort() == 'numbers.html,numbers.txt')
+assert(Path('..').glob('http/w*/n*', {relative: true}).sort() == 'http/web/numbers.html,http/web/numbers.txt')
 
 //  No directories
-assert(!dir.glob('../*', {nodirs: true}).sort().toString().contains('app,'))
-assert(dir.glob('../*', {nodirs: false}).sort().toString().contains('app,'))
+assert(!Path('..').glob('*', {files: true}).sort().toString().contains('app,'))
+assert(Path('..').glob('*', {files: false}).sort().toString().contains('app,'))
 
 //  descend
 assert(Path('..').glob('*.tst') == '')
-assert(Path('..').glob('*.tst', {descend: true}).length > 200)
+assert(Path('..').glob('**.tst').length > 200)
 
 //  exclude
 assert(!dir.glob('*', {exclude: /file/}).toString().contains("file"))
@@ -47,14 +47,14 @@ assert(dir.glob('*', {include: /file/}).toString().contains("file"))
 
 //  Depth first
 let app = Path('../app').natural
-assert(Path('..').glob('app', {descend: true, depthFirst: true}).toString().endsWith(app))
-assert(Path('..').glob('app', {descend: true, depthFirst: false}).toString().startsWith(app))
+assert(Path('..').glob('app/**', {depthFirst: true}).toString().endsWith(app))
+assert(Path('..').glob('app/**', {depthFirst: false}).toString().startsWith(app))
 
-//  nodirs
+//  files
 if (FileSystem('.').separators[0] == '\\') {
-    assert(Path('..').glob('*app*', {nodirs: true, descend: true}).sort() == '..\\app\\09100-app.tst')
+    assert(Path('..').glob('*app*', {files: true, descend: true}).sort() == '..\\app\\09100-app.tst')
 } else {
-    assert(Path('..').glob('*app*', {nodirs: true, descend: true}).sort() == '../app/09100-app.tst')
+    assert(Path('..').glob('*app*', {files: true, descend: true}).sort() == '../app/09100-app.tst')
 }
 
 /*

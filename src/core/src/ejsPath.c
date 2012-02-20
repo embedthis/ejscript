@@ -14,9 +14,9 @@
 static EjsArray *getPathFiles(Ejs *ejs, EjsArray *results, cchar *dir, int flags, EjsRegExp *exclude, EjsRegExp *include);
 static cchar *getPathString(Ejs *ejs, EjsObj *vp);
 static void getUserGroup(Ejs *ejs, EjsObj *attributes, int *owner, int *group);
-static EjsArray *globMatch(Ejs *ejs, EjsArray *results, char *pattern, int flags, EjsRegExp *exclude, EjsRegExp *include,
-      cchar *sep);
-static int gmatch(cchar *pattern, cchar *filename, int isDir, int flags, int *included);
+static EjsArray *glob(Ejs *ejs, EjsArray *results, cchar *path, cchar *base, cchar *pattern, int flags, 
+        EjsRegExp *exclude, EjsRegExp *include);
+static int gmatch(MprDirEntry *dp, cchar *pattern, cchar **nextPartPattern, int flags);
 
 /************************************ Helpers *********************************/
 
@@ -482,6 +482,9 @@ static EjsAny *getPathValues(Ejs *ejs, EjsPath *fp, int argc, EjsObj **argv)
 #define FILES_RELATIVE      MPR_PATH_RELATIVE
 #define FILES_MISSING       0x10000
 #define FILES_SORT          0x20000
+#if UNUSED
+#define FILES_DWILD         0x40000
+#endif
 
 /*
     Get the files in a directory and subdirectories
@@ -571,7 +574,6 @@ static EjsArray *path_glob(Ejs *ejs, EjsPath *fp, int argc, EjsObj **argv)
     EjsObj      *options;
     EjsArray    *result, *patterns;
     EjsRegExp   *exclude, *include;
-    char        *path;
     int         flags, i;
 
     options = (argc >= 2) ? argv[1]: 0;
@@ -580,14 +582,11 @@ static EjsArray *path_glob(Ejs *ejs, EjsPath *fp, int argc, EjsObj **argv)
     flags = 0;
 
     if (options) {
-        if (ejsGetPropertyByName(ejs, options, EN("descend")) == ESV(true)) {
-            flags |= FILES_DESCEND;
-        } 
-        if (ejsGetPropertyByName(ejs, options, EN("nodirs")) == ESV(true)) {
-            flags |= FILES_NODIRS;
-        }
         if (ejsGetPropertyByName(ejs, options, EN("depthFirst")) == ESV(true)) {
             flags |= FILES_DEPTH_FIRST;
+        }
+        if (ejsGetPropertyByName(ejs, options, EN("files")) == ESV(true)) {
+            flags |= FILES_NODIRS;
         }
         if (ejsGetPropertyByName(ejs, options, EN("hidden")) == ESV(true)) {
             flags |= FILES_HIDDEN;
@@ -619,8 +618,8 @@ static EjsArray *path_glob(Ejs *ejs, EjsPath *fp, int argc, EjsObj **argv)
         patterns = (EjsArray*) argv[0];
     }
     for (i = 0; i < patterns->length; i++) {
-        path = mprJoinPath(fp->value, ejsToMulti(ejs, ejsGetItem(ejs, patterns, i)));
-        if (!globMatch(ejs, result, path, flags, exclude, include, mprGetPathSeparators(path))) {
+        if (!glob(ejs, result, fp->value, "", ejsToMulti(ejs, ejsGetItem(ejs, patterns, i)), 
+                flags, exclude, include)) {
             return 0;
         }
     }
@@ -628,166 +627,132 @@ static EjsArray *path_glob(Ejs *ejs, EjsPath *fp, int argc, EjsObj **argv)
 }
 
 
-static EjsArray *globMatch(Ejs *ejs, EjsArray *results, char *pattern, int flags, EjsRegExp *exclude, EjsRegExp *include,
-       cchar *seps)
+/*
+    Minimal glob. Supports "*", "**" and "?"
+    "**" matches zero or more directories and is also a wild "*" prefix.
+    NOTE:
+        ** / *.tst  finds all *.tst in directories including the current directory
+        **.tst      finds all *.tst in any directory including the current directory
+ */
+static int gmatch(MprDirEntry *dp, cchar *pattern, cchar **nextPartPattern, int flags)
+{
+    MprFileSystem   *fs;
+    cchar           *fp, *pp, *filename;
+    int             wild, match;
+
+    *nextPartPattern = 0;
+    filename = dp->name;
+    if (*filename == '.' && !(flags & FILES_HIDDEN)) {
+        return 0;
+    }
+    wild = 0;
+    fs = mprLookupFileSystem(filename);
+    
+rescan:
+    for (fp = filename, pp = pattern; *fp && *pp && *pp != fs->separators[0] && *pp != fs->separators[1]; fp++, pp++) {
+        if (*pp != '*') {
+            match = fs->caseSensitive ? (*pp == *fp) : (tolower((int) *pp) == tolower((int) *fp));
+            if (!match && *pp != '?') {
+                if (wild) {
+                    pp--;
+                } else {
+                    return 0;
+                }
+            }
+        } else {
+            if (*++pp == '\0') {
+                /* Terminal star matches files|directories */
+                return 1;
+            }
+            wild = 1;
+            if (*pp == '*') {
+                if (dp->isDir) {
+#if UNUSED
+                    if (pp[1]) {
+                        *nextPartPattern = pattern;
+                    }
+#else
+                    *nextPartPattern = pattern;
+#endif
+                    return 1;
+                } else if (pp[1] == fs->separators[0] || pp[1] == fs->separators[1]) {
+                    /* Support zsh ** / to mean zero or more directories */
+                    pp += 2;
+                }
+            }
+            pattern = pp;
+            goto rescan;
+        } 
+    }
+    if (*pp == '*' && *++pp == '*') {
+        ++pp;
+    }
+    if (*pp == '\0') {
+        return 1;
+    }
+    if (*pp == fs->separators[0] || *pp == fs->separators[1]) {
+        if (*++pp) {
+            *nextPartPattern = pp;
+        }
+        return 1;
+    }
+    return 0;
+}
+
+
+static EjsArray *glob(Ejs *ejs, EjsArray *results, cchar *path, cchar *base, cchar *pattern, int flags, 
+        EjsRegExp *exclude, EjsRegExp *include)
 {
     MprDirEntry     *dp;
     MprList         *list;
-    char            *dir, *cp, *path, *nextPartPattern, *wild, *nextPath;
-    int             next, included, isDir, rc;
+    cchar           *filename, *nextPartPattern, *nextPath;
+    int             next, show;
 
-    /* 
-        The pattern is of the form: /dir/base where path and base can optionally include wildcards.
-        The pattern is split into dir, pattern and nextPattern where dir is a fixed path segment without wildcards. If the
-        first segment has wildcards, dir is set to '.'. Must handle "file*", "*file", "/file*", "C:/file*"
-     */
-    dir = pattern;
-    isDir = 0;
-    if ((wild = strpbrk(dir, "*?")) != 0) {
-        if (wild == dir) {
-            // *file
-            dir = ".";
-            cp = wild;
-        } else {
-            for (cp = wild; cp > dir && !strchr(seps, *cp); cp--) { }
-            if (cp > dir) {
-                //  c:/file* or /path/file*
-                *cp++ = '\0';
-            } else if (*cp == seps[0]) {
-                //  /file*
-                dir = snclone(dir, 1);
-            } else {
-                //  file*
-                dir = ".";
-            }
-        }
-        pattern = stok(cp, seps, &nextPartPattern);
-        if (scontains(pattern, "**", -1)) {
-            flags |= MPR_PATH_DESCEND;
-        }
-    } else {
-        dir = pattern;
-        pattern = (char*) mprGetPathBaseRef(dir);
-        if (pattern > dir) {
-            pattern[-1] = '\0';
-        } else {
-            dir = ".";
-        }
-        nextPartPattern = 0;
-    }
-    if ((list = mprGetPathFiles(dir, (flags & ~MPR_PATH_DESCEND) | MPR_PATH_RELATIVE)) == 0) {
+    //  MOB - does this work if the path is not a directory?
+
+    if ((list = mprGetPathFiles(path, flags | MPR_PATH_RELATIVE)) == 0) {
         if (flags & FILES_MISSING) {
             ejsThrowIOError(ejs, "Can't read directory");
             return 0;
         }
         return results;
     }
-    next = 0;
-    do {
-        included = 1;
-        if (list) {
-            if ((dp = mprGetNextItem(list, &next)) == 0) {
-                return results;
+    if (!(flags & FILES_NODIRS) && mprGetListLength(list) == 0) {
+        if (smatch(pattern, "*") || smatch(pattern, "**") || smatch(pattern, "**/")) {
+            ejsSetProperty(ejs, results, -1, ejsCreatePathFromAsc(ejs, path));
+        }
+        return results;
+    }
+    for (next = 0; (dp = mprGetNextItem(list, &next)) != 0; ) {
+        show = 1;
+        if (!gmatch(dp, pattern, &nextPartPattern, flags)) {
+            continue;
+        }
+        filename = (flags & MPR_PATH_RELATIVE) ? mprJoinPath(base, dp->name) : mprJoinPath(path, dp->name);
+        if (!nextPartPattern) {
+            if (include && pcre_exec(include->compiled, NULL, filename, (int) slen(filename), 0, 0, NULL, 0) < 0) {
+                show = 0;
             }
-            isDir = dp->isDir;
-            if (!(rc = gmatch(pattern, mprGetPathBaseRef(dp->name), isDir, flags, &included))) {
+            if (exclude && pcre_exec(exclude->compiled, NULL, filename, (int) slen(filename), 0, 0, NULL, 0) >= 0) {
                 continue;
             }
-            path = (flags & MPR_PATH_RELATIVE) ? dp->name : mprJoinPath(dir, dp->name);
-        } else {
-            path = (flags & MPR_PATH_RELATIVE) ? mprGetPathBase(dir) : dir;
-        }
-        if (nextPartPattern && !isDir) {
-            continue;
-        }
-        if (include && pcre_exec(include->compiled, NULL, path, (int) slen(path), 0, 0, NULL, 0) < 0) {
-            included = 0;
-        }
-        if (exclude && pcre_exec(exclude->compiled, NULL, path, (int) slen(path), 0, 0, NULL, 0) >= 0) {
-            continue;
-        }
-        if (!(flags & FILES_DEPTH_FIRST) && included) {
-            /* Exclude mid-pattern directories and terminal directories if no-dirs */
-            if (!nextPartPattern && !(isDir && flags & FILES_NODIRS)) {
-                ejsSetProperty(ejs, results, -1, ejsCreatePathFromAsc(ejs, path));
+            if (!(flags & FILES_DEPTH_FIRST) && show) {
+                /* Exclude mid-pattern directories and terminal directories if only "files" */
+                ejsSetProperty(ejs, results, -1, ejsCreatePathFromAsc(ejs, filename));
             }
         }
-        if (isDir) {
-            //  MOB - added !list when doing /a/b/c/d and mprGetPathFiles returns a tree. This prevents double entries.
-            if (nextPartPattern || ((flags & FILES_DESCEND) && !list)) {
-                nextPath = (flags & MPR_PATH_RELATIVE) ? mprJoinPath(dir, path) : path;
-                nextPath = mprJoinPath(nextPath, nextPartPattern ? nextPartPattern : "*");
-                globMatch(ejs, results, nextPath, flags, exclude, include, seps);
-            } 
+        if (dp->isDir && nextPartPattern) {
+            nextPath = (flags & MPR_PATH_RELATIVE) ? mprJoinPath(path, dp->name) : filename;
+            glob(ejs, results, nextPath, filename, nextPartPattern, flags, exclude, include);
         }
-        if ((flags & FILES_DEPTH_FIRST) && included) {
-            if (!nextPartPattern && !(isDir && flags & FILES_NODIRS)) {
-                ejsSetProperty(ejs, results, -1, ejsCreatePathFromAsc(ejs, path));
-            }
+        if (!nextPartPattern && (flags & FILES_DEPTH_FIRST) && show) {
+            ejsSetProperty(ejs, results, -1, ejsCreatePathFromAsc(ejs, filename));
         }
-    } while (list);
+    }
     if (flags & FILES_SORT) {
         ejsSortArray(ejs, results, 0, NULL);
     }
     return results;
-}
-
-
-/*
-    Minimal glob. Supports "*", "**" and "?"
- */
-static int gmatch(cchar *pattern, cchar *filename, int isDir, int flags, int *included)
-{
-    MprFileSystem   *fs;
-    cchar           *fp, *pp;
-    int             star, match;
-
-    if (*filename == '.' && !(flags & FILES_HIDDEN)) {
-        return 0;
-    }
-    star = 0;
-    fs = mprLookupFileSystem(filename);
-    
-rescan:
-    for (fp = filename, pp = pattern; *fp && *pp; fp++, pp++) {
-        if (*pp == '*') {
-            star = 1;
-            if (*++pp == '*') {
-                if (isDir) {
-                    /* Double star matches all directories. If the directory is terminal, it is included itself */
-                    if (*pp) {
-                        *included = 0;
-                    }
-                    return 1;
-                }
-                ++pp;
-            }
-            if (*pp == '\0') {
-                return 1;
-            }
-            filename = fp + 1;
-            pattern = pp;
-            goto rescan;
-        } 
-        match = fs->caseSensitive ? (*pp == *fp) : (tolower((int) *pp) == tolower((int) *fp));
-        if (!match && *pp != '?') {
-            if (!star) {
-                return 0;
-            }
-            filename++;
-            goto rescan;
-        }
-    }
-    if (*fp) {
-        return 0;
-    }
-    if (*pp == '*') ++pp;
-    if (*pp == '*') {
-        if (*++pp) {
-            *included = 0;
-        }
-    }
-    return (*pp == '\0');
 }
 
 
