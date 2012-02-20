@@ -1829,21 +1829,22 @@
 #define ES_Path_rename                                                 54
 #define ES_Path_replaceExt                                             55
 #define ES_Path_resolve                                                56
-#define ES_Path_same                                                   57
-#define ES_Path_separator                                              58
-#define ES_Path_size                                                   59
-#define ES_Path_startsWith                                             60
-#define ES_Path_toJSON                                                 61
-#define ES_Path_toLowerCase                                            62
-#define ES_Path_toString                                               63
-#define ES_Path_trimEnd                                                64
-#define ES_Path_trimExt                                                65
-#define ES_Path_trimStart                                              66
-#define ES_Path_truncate                                               67
-#define ES_Path_windows                                                68
-#define ES_Path_write                                                  69
-#define ES_Path_makeTemp                                               70
-#define ES_Path_NUM_INSTANCE_PROP                                      71
+#define ES_Path_root                                                   57
+#define ES_Path_same                                                   58
+#define ES_Path_separator                                              59
+#define ES_Path_size                                                   60
+#define ES_Path_startsWith                                             61
+#define ES_Path_toJSON                                                 62
+#define ES_Path_toLowerCase                                            63
+#define ES_Path_toString                                               64
+#define ES_Path_trimEnd                                                65
+#define ES_Path_trimExt                                                66
+#define ES_Path_trimStart                                              67
+#define ES_Path_truncate                                               68
+#define ES_Path_windows                                                69
+#define ES_Path_write                                                  70
+#define ES_Path_makeTemp                                               71
+#define ES_Path_NUM_INSTANCE_PROP                                      72
 #define ES_Path_NUM_INHERITED_PROP                                     0
 
 
@@ -2368,6 +2369,6 @@
 #define ES_XMLList_NUM_INSTANCE_PROP                                   20
 #define ES_XMLList_NUM_INHERITED_PROP                                  0
 
-#define _ES_CHECKSUM_ejs   1473687
+#define _ES_CHECKSUM_ejs   1474140
 
 #endif

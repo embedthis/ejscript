@@ -7,10 +7,9 @@
 /*
     FUTURE
         Path.expand(hash: Object = null)        Expand $VARS or ${vars} in path. Also expand ~user
-        Path.split(): Array                     Return dir + base. Useful if you have destructuring assignment
-        Path.splitDrive(): Array                Return drive + rest
+        Path.split(): Array                     Return dir + base
+        Path.splitRoot(): Array                 Return root + rest
         Path.splitExtension(): Array            Return rest + extension
-        Path.splitUNC(): Array                  Return unc + rest (\\host)
         Path.normalizeCase                      Map to lower case
         Path.canonicalize()                     Resolve symbolic links and return normalized, validated, fully resolved path.
                                                 Error if the path does not exist.
@@ -575,6 +574,11 @@ module ejs {
             @return A new Path object that is resolved against the prior path. 
          */
         native function resolve(...otherPaths): Path
+
+        /**
+            That root directory component of the path. On windows, this includes the drive spec if present in the path.
+          */
+        native function get root(): Path
 
         /**
             Compare two paths test if they represent the same file

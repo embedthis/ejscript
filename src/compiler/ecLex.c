@@ -53,7 +53,9 @@ static ReservedWord keywords[] =
   { "if",               G_RESERVED,         T_IF,                       0, },
   { "implements",       G_CONREV,           T_IMPLEMENTS,               0, },
   { "in",               G_RESERVED,         T_IN,                       0, },
+#if UNUSED
   { "include",          G_CONREV,           T_INCLUDE,                  0, },
+#endif
   { "instanceof",       G_RESERVED,         T_INSTANCEOF,               0, },
   { "interface",        G_CONREV,           T_INTERFACE,                0, },
   { "internal",         G_CONREV,           T_RESERVED_NAMESPACE,       T_INTERNAL, },
