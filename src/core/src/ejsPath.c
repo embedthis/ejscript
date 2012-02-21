@@ -630,7 +630,7 @@ static EjsArray *path_glob(Ejs *ejs, EjsPath *fp, int argc, EjsObj **argv)
         pattern = ejsToMulti(ejs, ejsGetItem(ejs, patterns, i));
         path = fp->value;
         base = "";
-        if (mprIsPathAbs(fp->value)) {
+        if (mprIsPathAbs(pattern)) {
             start = pattern;
             if ((special = strpbrk(start, "*?")) != 0) {
                 if (special > start) {
