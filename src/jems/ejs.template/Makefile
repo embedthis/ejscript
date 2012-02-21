@@ -10,8 +10,7 @@ NAME		= ejs.template
 MOD			= $(NAME).mod
 JEM			= $(NAME)-$(BLD_VERSION)
 MODULE		+= $(BLD_LIB_DIR)/$(NAME).mod 
-TARGETS		+= $(MODULE) $(BLD_JEM_DIR)/$(JEM)
-TARGETS		+= $(BLD_BIN_DIR)/ejspage $(BLD_BIN_DIR)/ejspage.cmd
+TARGETS		+= $(MODULE) $(BLD_BIN_DIR)/ejspage $(BLD_BIN_DIR)/ejspage.cmd
 
 compileExtra: $(TARGETS)
 
@@ -26,15 +25,6 @@ $(BLD_LIB_DIR)/$(MOD): *.es $(BLD_LIB_DIR)/ejs.mod
 	cp *.mod $(BLD_BUILD_LIB_DIR) ; mv *.mod $(BLD_LIB_DIR)
 	rm -f $(NAME).slots.h
 
-package.json: Makefile $(BLD_INC_DIR)/buildConfig.h
-	ejs $(BLD_BIN_DIR)/jem --field version --value $(BLD_VERSION) edit
-
-$(BLD_JEM_DIR)/$(JEM): $(BLD_LIB_DIR)/$(MOD)
-	ejs $(BLD_BIN_DIR)/jem setdeps $(BLD_LIB_DIR)/$(MOD)
-	ejs $(BLD_BIN_DIR)/jem build
-	ejs $(BLD_BIN_DIR)/jem --to $(BLD_JEM_DIR) publish $(JEM)
-	rm -f $(JEM).jem
-
 $(BLD_BIN_DIR)/ejspage: ejspage
 	@$(call log) "[Update]" ejspage
 	cp ejspage $(BLD_BIN_DIR)/ejspage
@@ -43,9 +33,6 @@ $(BLD_BIN_DIR)/ejspage: ejspage
 $(BLD_BIN_DIR)/ejspage.cmd: ejspage.cmd
 	cp ejspage.cmd $(BLD_BIN_DIR)/ejspage.cmd
 	chmod 755 $(BLD_BIN_DIR)/ejspage.cmd
-
-cleanExtra:
-	rm -fr $(BLD_JEM_DIR)/$(JEM)
 
 #
 #   Local variables:

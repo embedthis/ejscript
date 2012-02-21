@@ -11,7 +11,7 @@ MOD			= $(NAME).mod
 JEM			= $(NAME)-$(BLD_VERSION)
 POST_DIRS	= src js
 MODULE		+= $(BLD_LIB_DIR)/$(NAME).mod 
-TARGETS		+= $(MODULE) $(BLD_LIB_DIR)/www $(BLD_JEM_DIR)/$(JEM)
+TARGETS		+= $(MODULE) $(BLD_LIB_DIR)/www
 
 compileExtra: $(TARGETS)
 
@@ -26,15 +26,6 @@ $(BLD_LIB_DIR)/$(MOD): *.es $(BLD_LIB_DIR)/ejs.mod
 	cp *.mod $(BLD_BUILD_LIB_DIR) ; mv *.mod $(BLD_LIB_DIR)
 	rm -f $(NAME).slots.h
 
-package.json: Makefile $(BLD_INC_DIR)/buildConfig.h
-	ejs $(BLD_BIN_DIR)/jem --field version --value $(BLD_VERSION) edit
-
-$(BLD_JEM_DIR)/$(JEM): $(BLD_LIB_DIR)/$(MOD)
-	ejs $(BLD_BIN_DIR)/jem setdeps $(BLD_LIB_DIR)/$(MOD)
-	ejs $(BLD_BIN_DIR)/jem build
-	ejs $(BLD_BIN_DIR)/jem --to $(BLD_JEM_DIR) publish $(JEM)
-	rm -f $(JEM).jem
-
 $(BLD_LIB_DIR)/www: www/*
 	$(call log) [Copy] "www to $(BLD_LIB_DIR)/www"
 	rm -fr $(BLD_LIB_DIR)/www
@@ -44,7 +35,6 @@ $(BLD_LIB_DIR)/www: www/*
 
 cleanExtra:
 	rm -rf $(BLD_LIB_DIR)/www $(MODULE)
-	rm -fr $(BLD_JEM_DIR)/$(JEM)
 
 #
 #   Local variables:

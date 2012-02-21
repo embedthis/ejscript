@@ -10,7 +10,7 @@ NAME		= ejs.db
 MOD			= $(NAME).mod
 JEM			= $(NAME)-$(BLD_VERSION)
 MODULE		+= $(BLD_LIB_DIR)/$(NAME).mod 
-TARGETS		+= $(MODULE) $(BLD_JEM_DIR)/$(JEM)
+TARGETS		+= $(MODULE)
 
 compileExtra: $(TARGETS)
 
@@ -24,18 +24,6 @@ $(BLD_LIB_DIR)/$(MOD): *.es $(BLD_LIB_DIR)/ejs.mod
 	diff $(NAME).slots.h $(BLD_INC_DIR) >/dev/null 2>&1 || cp $(NAME).slots.h $(BLD_INC_DIR) 
 	cp *.mod $(BLD_BUILD_LIB_DIR) ; mv *.mod $(BLD_LIB_DIR)
 	rm -f $(NAME).slots.h
-
-package.json: Makefile $(BLD_INC_DIR)/buildConfig.h
-	ejs $(BLD_BIN_DIR)/jem --field version --value $(BLD_VERSION) edit
-
-$(BLD_JEM_DIR)/$(JEM): $(BLD_LIB_DIR)/$(MOD)
-	ejs $(BLD_BIN_DIR)/jem setdeps $(BLD_LIB_DIR)/$(MOD)
-	ejs $(BLD_BIN_DIR)/jem build
-	ejs $(BLD_BIN_DIR)/jem --to $(BLD_JEM_DIR) publish $(JEM)
-	rm -f $(JEM).jem
-
-cleanExtra:
-	rm -fr $(BLD_JEM_DIR)/$(JEM)
 
 #
 #   Local variables:
