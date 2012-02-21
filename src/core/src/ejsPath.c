@@ -974,7 +974,7 @@ static EjsObj *makePathDir(Ejs *ejs, EjsPath *fp, int argc, EjsObj **argv)
 {
     MprPath     info;
     EjsObj      *attributes, *permissions;
-    int         perms, owner, group;
+    int         rc, perms, owner, group;
     
     attributes = (argc >= 1) ? argv[0] : 0;
     perms = 0755;
@@ -986,8 +986,12 @@ static EjsObj *makePathDir(Ejs *ejs, EjsPath *fp, int argc, EjsObj **argv)
         }
     }
     if (mprGetPathInfo(fp->value, &info) < 0) {
-        if (mprMakeDir(fp->value, perms, owner, group, 1) < 0) {
-            ejsThrowStateError(ejs, "Can't make directory. Error %d", mprGetError());
+        if ((rc = mprMakeDir(fp->value, perms, owner, group, 1)) < 0) {
+            if (rc == MPR_ERR_CANT_COMPLETE) {
+                ejsThrowStateError(ejs, "Can't set directory permissions. Error %d", mprGetError());
+            } else {
+                ejsThrowStateError(ejs, "Can't make directory. Error %d", mprGetError());
+            }
             return ESV(false);
         }
     } else if (!info.isDir) {
