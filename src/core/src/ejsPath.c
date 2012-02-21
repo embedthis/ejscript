@@ -14,9 +14,9 @@
 static EjsArray *getPathFiles(Ejs *ejs, EjsArray *results, cchar *dir, int flags, EjsRegExp *exclude, EjsRegExp *include);
 static cchar *getPathString(Ejs *ejs, EjsObj *vp);
 static void getUserGroup(Ejs *ejs, EjsObj *attributes, int *owner, int *group);
-static EjsArray *glob(Ejs *ejs, EjsArray *results, cchar *path, cchar *base, cchar *pattern, int flags, 
+static EjsArray *globPath(Ejs *ejs, EjsArray *results, cchar *path, cchar *base, cchar *pattern, int flags, 
         EjsRegExp *exclude, EjsRegExp *include);
-static int gmatch(MprDirEntry *dp, cchar *pattern, cchar **nextPartPattern, int flags);
+static int globMatch(Ejs *ejs, cchar *s, cchar *pat, int isDir, int flags, cchar *seps, int count, cchar **nextPartPattern);
 
 /************************************ Helpers *********************************/
 
@@ -481,10 +481,7 @@ static EjsAny *getPathValues(Ejs *ejs, EjsPath *fp, int argc, EjsObj **argv)
 #define FILES_NODIRS        MPR_PATH_NODIRS
 #define FILES_RELATIVE      MPR_PATH_RELATIVE
 #define FILES_MISSING       0x10000
-#define FILES_SORT          0x20000
-#if UNUSED
-#define FILES_DWILD         0x40000
-#endif
+#define FILES_CASELESS      0x20000
 
 /*
     Get the files in a directory and subdirectories
@@ -589,9 +586,6 @@ static EjsArray *path_glob(Ejs *ejs, EjsPath *fp, int argc, EjsObj **argv)
         if (ejsGetPropertyByName(ejs, options, EN("depthFirst")) == ESV(true)) {
             flags |= FILES_DEPTH_FIRST;
         }
-        if (ejsGetPropertyByName(ejs, options, EN("files")) == ESV(true)) {
-            flags |= FILES_NODIRS;
-        }
         if (ejsGetPropertyByName(ejs, options, EN("hidden")) == ESV(true)) {
             flags |= FILES_HIDDEN;
         }
@@ -610,9 +604,6 @@ static EjsArray *path_glob(Ejs *ejs, EjsPath *fp, int argc, EjsObj **argv)
         }
         if (ejsGetPropertyByName(ejs, options, EN("relative")) == ESV(true)) {
             flags |= FILES_RELATIVE;
-        } 
-        if (ejsGetPropertyByName(ejs, options, EN("sort")) == ESV(true)) {
-            flags |= FILES_SORT;
         } 
     }
     if (!ejsIs(ejs, argv[0], Array)) {
@@ -650,7 +641,7 @@ static EjsArray *path_glob(Ejs *ejs, EjsPath *fp, int argc, EjsObj **argv)
                 }
             }
         }
-        if (!glob(ejs, result, path, base, pattern, flags, exclude, include)) {
+        if (!globPath(ejs, result, path, base, pattern, flags, exclude, include)) {
             return 0;
         }
     }
@@ -659,129 +650,145 @@ static EjsArray *path_glob(Ejs *ejs, EjsPath *fp, int argc, EjsObj **argv)
 
 
 /*
-    Minimal glob. Supports "*", "**" and "?"
-    "**" matches zero or more directories and is also a wild "*" prefix.
-    NOTE:
-        ** / *.tst  finds all *.tst in directories including the current directory
-        **.tst      finds all *.tst in any directory including the current directory
- */
-static int gmatch(MprDirEntry *dp, cchar *pattern, cchar **nextPartPattern, int flags)
-{
-    MprFileSystem   *fs;
-    cchar           *fp, *pp, *filename;
-    int             dwild, wild, match;
+    Match a string against a pattern using glob style matching.
+    Pat may contain a fully path of patterns. Only the first portion up to a file separator is used. The remaining portion
+        is returned in nextPartPattern.
+    seps contains the file system separator characters
 
+    Wildcard Patterns:
+    ?           Matches any single character
+    *           Matches zero or more characters of the file or directory
+    ** /        Matches zero or more directories (spaces introduced to avoid closing comment)
+    **          Matches zero or more files or directories. Equivlane to ** / *
+    trailing/   Trailing slash matches only directory
+ */
+static int globMatch(Ejs *ejs, cchar *s, cchar *pat, int isDir, int flags, cchar *seps, int count, cchar **nextPartPattern)
+{
+    int     match;
+//  MOB - need recursion limits
     *nextPartPattern = 0;
-    filename = dp->name;
-    if (*filename == '.' && !(flags & FILES_HIDDEN)) {
-        return 0;
-    }
-    dwild = wild = 0;
-    fs = mprLookupFileSystem(filename);
-    
-rescan:
-    for (fp = filename, pp = pattern; *fp && *pp && *pp != fs->separators[0] && *pp != fs->separators[1]; fp++, pp++) {
-        if (*pp != '*') {
-            match = fs->caseSensitive ? (*pp == *fp) : (tolower((int) *pp) == tolower((int) *fp));
-            if (!match && *pp != '?') {
-                if ((wild || dwild)) {
-                    pp--;
-                } else {
-                    return 0;
-                }
-            }
-            if (*fp == '.') {
-                wild = 0;
-            }
-        } else {
-            if (*++pp == '\0') {
-                /* Terminal star matches files|directories */
+
+    while (*s && *pat && *pat != seps[0] && *pat != seps[1]) {
+        match = (flags & FILES_CASELESS) ? (*pat == *s) : (tolower((int) *pat) == tolower((int) *s));
+        if (match || *pat == '?') {
+            ++pat; ++s;
+        } else if (*pat == '*') {
+            if (*++pat == '\0') {
+                /* Terminal star matches files and directories */
                 return 1;
             }
-            if (*pp == '*') {
-                if (pp[1] == fs->separators[0] || pp[1] == fs->separators[1]) {
-                    if (dp->isDir) {
-                        *nextPartPattern = pattern;
-                        return 1;
-                    }
-                    pp += 2;
-                    if (*pp == '\0') {
-                        /* No more pattern and not a directory */
+            if (*pat == '*') {
+                /* Double star - matches zero or more directories */
+                if (isDir) {
+                    *nextPartPattern = pat - 1;
+                    return 1;
+                }
+                if (pat[1] && (pat[1] == seps[0] || pat[1] == seps[1])) {
+                    /* Double star/ */
+                    if (pat[2] == '\0') {
+                        /* Trailing slash and not a directory */
                         return 0;
                     }
+                    pat += 2;
+                } else {
+                    /* Plain double star matches all (alias for ** / *) */
+                    if (pat[1] == '\0') {
+                        *nextPartPattern = pat - 1;
+                        return 1;
+                    }
                 }
-                dwild = 1;
             } else {
-                wild = 1;
+                /* Single star */
+                if (count > 2000) {
+                    ejsThrowArgError(ejs, "Glob match is too recursive");
+                    return 0;
+                }
+                if (*pat == seps[0] || *pat == seps[1]) {
+                    s = "";
+                    break;
+                }
+                while (*s) {
+                    if (globMatch(ejs, s++, pat, isDir, flags, seps, count + 1, nextPartPattern)) {
+                        return 1;
+                    }
+                }
+                return 0;
             }
-            pattern = pp;
-            goto rescan;
-        } 
+        } else {
+            return 0;
+        }
     }
-    if (*pp == '*') {
-        /* Allow trailing wild */
-        ++pp;
-    } else if (*fp && !wild) {
+    if (*pat == '*') {
+        ++pat;
+    }
+    if (*s) {
         return 0;
     }
-    if (*pp == '\0') {
+    if (*pat == '\0') {
         return 1;
     }
-    if (*pp == fs->separators[0] || *pp == fs->separators[1]) {
-        if (*++pp) {
-            *nextPartPattern = pp;
+    if (*pat && (*pat == seps[0] || *pat == seps[1])) {
+        if (*++pat == '\0') {
+            /* Terminal / matches only directories */
+            return isDir;
         }
+        *nextPartPattern = pat;
         return 1;
     }
     return 0;
 }
 
 
-static EjsArray *glob(Ejs *ejs, EjsArray *results, cchar *path, cchar *base, cchar *pattern, int flags, 
+static EjsArray *globPath(Ejs *ejs, EjsArray *results, cchar *path, cchar *base, cchar *pattern, int flags, 
         EjsRegExp *exclude, EjsRegExp *include)
 {
+    MprFileSystem   *fs;
     MprDirEntry     *dp;
     MprList         *list;
-    cchar           *filename, *nextPartPattern, *nextPath;
-    int             next, show, dwildonly;
+    cchar           *filename, *nextPartPattern, *nextPath, *matchFile;
+    int             next, add;
 
-    if ((list = mprGetPathFiles(path, (flags & ~MPR_PATH_NODIRS) | MPR_PATH_RELATIVE)) == 0) {
+    if ((list = mprGetPathFiles(path, flags | MPR_PATH_RELATIVE)) == 0) {
         if (flags & FILES_MISSING) {
             ejsThrowIOError(ejs, "Can't read directory");
             return 0;
         }
         return results;
     }
-    dwildonly = smatch(pattern, "**/") && !(flags & FILES_NODIRS);
+    fs = mprLookupFileSystem(path);
 
     for (next = 0; (dp = mprGetNextItem(list, &next)) != 0; ) {
-        show = (dp->isDir && flags & FILES_NODIRS) ? 0 : 1;
-        if (!gmatch(dp, pattern, &nextPartPattern, flags)) {
+        if (!globMatch(ejs, dp->name, pattern, dp->isDir, flags, fs->separators, 0, &nextPartPattern)) {
             continue;
-        } 
+        }
+        add = 1;
+        //  MOB - OPT
+        if (nextPartPattern && strcmp(nextPartPattern, "**") != 0 && strcmp(nextPartPattern, "**/") != 0
+                   && strcmp(nextPartPattern, "**/*") != 0) {
+            /* Double star matches zero or more */
+            add = 0;
+        }
         filename = (flags & MPR_PATH_RELATIVE) ? mprJoinPath(base, dp->name) : mprJoinPath(path, dp->name);
-        if (!nextPartPattern || dwildonly) {
-            if (include && pcre_exec(include->compiled, NULL, filename, (int) slen(filename), 0, 0, NULL, 0) < 0) {
-                show = 0;
+        if (add && (include || exclude)) {
+            matchFile = dp->isDir ? sfmt("%s%c", filename, fs->separators[0]) : filename;
+            if (include && pcre_exec(include->compiled, NULL, matchFile, (int) slen(matchFile), 0, 0, NULL, 0) < 0) {
+                add = 0;
             }
-            if (exclude && pcre_exec(exclude->compiled, NULL, filename, (int) slen(filename), 0, 0, NULL, 0) >= 0) {
+            if (exclude && pcre_exec(exclude->compiled, NULL, matchFile, (int) slen(matchFile), 0, 0, NULL, 0) >= 0) {
                 continue;
             }
-            if (!(flags & FILES_DEPTH_FIRST) && show) {
-                /* Exclude mid-pattern directories and terminal directories if only "files" */
-                ejsSetProperty(ejs, results, -1, ejsCreatePathFromAsc(ejs, filename));
-            }
+        }
+        if (!(flags & FILES_DEPTH_FIRST) && add) {
+            /* Exclude mid-pattern directories and terminal directories if only "files" */
+            ejsSetProperty(ejs, results, -1, ejsCreatePathFromAsc(ejs, filename));
         }
         if (dp->isDir && nextPartPattern) {
             nextPath = (flags & MPR_PATH_RELATIVE) ? mprJoinPath(path, dp->name) : filename;
-            glob(ejs, results, nextPath, filename, nextPartPattern, flags, exclude, include);
+            globPath(ejs, results, nextPath, filename, nextPartPattern, flags, exclude, include);
         }
-        if ((!nextPartPattern || dwildonly) && (flags & FILES_DEPTH_FIRST) && show) {
+        if ((flags & FILES_DEPTH_FIRST) && add) {
             ejsSetProperty(ejs, results, -1, ejsCreatePathFromAsc(ejs, filename));
         }
-    }
-    if (flags & FILES_SORT) {
-        ejsSortArray(ejs, results, 0, NULL);
     }
     return results;
 }

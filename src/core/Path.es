@@ -208,18 +208,23 @@ module ejs {
         /**
             Do Posix glob style file matching.
             @param patterns Pattern to match files. This can be a String, Path or array of String/Paths. 
-            The wildcards "*", "**" and "?" are the only wild card patterns supported. The "**" pattern matches 
-                every directory. The Posix "[]" and "{a,b}" style expressions are not supported.
+            The wildcard '?' matches any single character, '*' matches zero or more characters in a filename or 
+                directory, '** /' matches zero or more files or directories and matches recursively in a directory
+                tree.  If a pattern terminates with "/" it will only match directories. 
+                The pattern '**' is equivalent to '** / *' (ignore spaces). 
+                The Posix "[]" and "{a,b}" style expressions are not supported.
             @param options Optional properties to control the matching.
             @option depthFirst Do a depth first traversal. If "dirs" is specified, the directories will be shown after
                 the files in the directory. Otherwise, directories will be listed first.
             @option exclude Regular expression pattern of files to exclude from the results. Matches the entire path.
+                Only for the purpose of this match, directories will have "/" appended. To exclude directories in the
+                results, use {exclude: /\/$/}
             @option files Include only files in the results. The default is to include directories.
-            @option hidden Show hidden files starting with "."
             @option include Regular expression pattern of files to include in the results. Matches the entire returned path.
+                Only for the purpose of this match, directories will have "/" appended. To include only directories in the
+                results, use {include: /\/$/}
             @option missing Report patterns that don't resolve into any files or directories by throwing an exception.
             @option relative Return paths relative to the Path, otherwise result entries include the Path. Defaults to false.
-            @option sort Sort the results
             @return An Array of Path objects for each file in the directory.
          */
         native function glob(patterns, options: Object = null): Array 
