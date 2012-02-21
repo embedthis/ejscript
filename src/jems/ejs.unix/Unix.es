@@ -54,7 +54,7 @@ module ejs.unix {
         }
         let list = Path('.').glob(patterns, options)
         if (list.length == 0 && options.warn) {
-            throw 'Can\'t find files for pattern ' + patterns
+            throw 'cp: Can\'t find files for pattern ' + patterns
         }
         for each (let file: Path in list) {
             if (options.expand) {

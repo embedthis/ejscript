@@ -64,6 +64,10 @@ if (!bare) {
         exclude: /treeview/,
         permissions: 0644, 
     })
+    copy("bits/**/*", lib, {
+        from: slib, 
+        permissions: 0644, 
+    })
 
     let cmdFilter = (Config.OS == "WIN") ? /undefined/ : /\.cmd/
     copy("*", bin, {
@@ -72,9 +76,9 @@ if (!bare) {
         exclude: cmdFilter,
         permissions: 0755,
     })
-    if (jem.exists) {
-        copy("**/*", jem, {from: sjem})
-    }
+    //  if (jem.exists) {
+    //      copy("**/*", jem, {from: sjem})
+    //  }
 }
 
 copy("ejs*", bin, {from: sbin, permissions: 0755, strip: strip, exclude: /ejspage/})

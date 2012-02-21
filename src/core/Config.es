@@ -48,17 +48,17 @@ module ejs {
         /**
             Installation library directory
          */
-        native static const LibDir: String
+        native static const LibDir: Path
 
         /**
             Binaries directory
          */
-        native static const BinDir: String
+        native static const BinDir: Path
 
         /**
             Include directory
          */
-        native static const IncDir: String
+        native static const IncDir: Path
 
         /** @hide */
         native static const Legacy: Boolean
