@@ -59,11 +59,10 @@ if (!bare) {
     copy("uninstall.sh", bin.join("uninstall"), {from: "package", permissions: 0755, expand: true})
     copy("linkup", bin.join("linkup"), {from: "package", permissions: 0755, expand: true})
 
-    copy("www/*", lib, {
+    copy("www/**/*", lib, {
         from: slib, 
         exclude: /treeview/,
         permissions: 0644, 
-        descend: true
     })
 
     let cmdFilter = (Config.OS == "WIN") ? /undefined/ : /\.cmd/
@@ -74,7 +73,7 @@ if (!bare) {
         permissions: 0755,
     })
     if (jem.exists) {
-        copy("*", jem, {from: sjem, descend: true})
+        copy("**/*", jem, {from: sjem})
     }
 }
 
