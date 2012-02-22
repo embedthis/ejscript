@@ -67,6 +67,17 @@ Bit.load({
     },
 
     targets: {
+        bits: {
+            path: '${LIB}/bits',
+            files: [ '.bit' ],
+            build: "
+                rmdir('out/lib/bits')
+                cp('.bit', 'out/lib/bits', {hidden: true})
+                rmdir(bit.dir.lib.join('bits'))
+                cp('.bit', bit.dir.lib.join('bits'), {hidden: true})
+            ",
+        },
+
         /*
             MOB - how can this do install, uninstall
             Options:

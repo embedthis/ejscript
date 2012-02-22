@@ -65,6 +65,7 @@ $(DOC_DIR)/index.html: Makefile $(DOC_SRC)
 
 cleanExtra:
 	rm -f *.mod *.lst *.slots.h
+	rm -f $(BLD_LIB_DIR)/*.mod
 	find . -name '*.lst' -o -name '*.mod' -o -name '*.slots.h' -o -name '*.jem' -type f | xargs rm -f
 
 makeListForVs:
