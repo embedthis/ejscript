@@ -15,8 +15,12 @@ include 		.makedep
 
 compileFirst: prep $(HEADERS) tools
 
-compileExtra: core library $(SLOTS)
+compileExtra: core library $(SLOTS) $(BLD_LIB_DIR)/bits
 
+$(BLD_LIB_DIR)/bits: ../.bit
+	rm -fr $(BLD_LIB_DIR)/bits
+	cp -r ../.bit $(BLD_LIB_DIR)/bits
+	
 #
 #	These are the required tools to build Ejscript: (ejs, ejsc, ejsmod, jem)
 #
@@ -52,7 +56,8 @@ cleanExtra:
 	find . -name '*.lst' -o -name '*.mod' -o -name '*.jem' -type f | xargs rm -f
 	rm -f *.slots.h
 	rm -f $(BLD_INC_DIR)/ejs*.h f $(BLD_INC_DIR)/ejs.*.h
-	rm -f $(EJS_LIB) $(BLD_LIB_DIR)/ejs.lst
+	rm -f $(EJS_LIB) $(BLD_LIB_DIR)/ejs.lst 
+	rm -fr $(BLD_LIB_DIR)/bits
 	mkdir -p $(BLD_INC_DIR)
 
 prep:

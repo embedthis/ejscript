@@ -64,9 +64,10 @@ if (!bare) {
         exclude: /treeview/,
         permissions: 0644, 
     })
-    copy("bits/**/*", lib, {
+    copy("bits/**", lib, {
         from: slib, 
         permissions: 0644, 
+        hidden: true,
     })
 
     let cmdFilter = (Config.OS == "WIN") ? /undefined/ : /\.cmd/
