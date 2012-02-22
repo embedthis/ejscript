@@ -314,7 +314,10 @@ MAIN(ejsMain, int argc, char **argv, char **envp)
         mprAddItem(app->files, sclone(argv[nextArg]));
     }
     if (app->cygroot) {
-        /* Map cygwin absolute paths to the cygroot */
+        /*  
+            When cygwin invokes a script with shebang, it passes a cygwin path to the script
+            The ejs --cygroot option permits ejscript to conver this to a native path
+         */
         for (next = 0; (name = mprGetNextItem(app->files, &next)) != 0; ) {
             if (*name == '/' || *name == '\\') {
                 mprSetItem(app->files, next - 1, sjoin(app->cygroot, name, NULL));
