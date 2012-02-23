@@ -22,17 +22,17 @@ Bit.load({
         'src/jems/ejs.template/template.bit',
         'src/jems/ejs.tar/tar.bit',
         'src/jems/ejs.mvc/mvc.bit',
-        '.bit/embedthis.bit',
+        '${BITS}/embedthis.bit',
     ],
 
     settings: {
-        /* Default settings overridden by build.bit */
 		product: 'appweb',
 		title: 'Embedthis Appweb',
         company: 'Embedthis',
 		version: '4.0.0',
 		buildNumber: 'B2',
         sync: ['http', 'mpr', 'pcre', 'sqlite'],
+        packs: [ 'bits/packs' ],
     },
 
     usage: {
@@ -67,17 +67,6 @@ Bit.load({
     },
 
     targets: {
-        bits: {
-            path: '${LIB}/bits',
-            files: [ '.bit' ],
-            build: "
-                rmdir('out/lib/bits')
-                cp('.bit', 'out/lib/bits', {hidden: true})
-                rmdir(bit.dir.lib.join('bits'))
-                cp('.bit', bit.dir.lib.join('bits'), {hidden: true})
-            ",
-        },
-
         /*
             MOB - how can this do install, uninstall
             Options:
@@ -92,6 +81,7 @@ Bit.load({
         package: {
             depends: ['build'],
             action: "
+                //  MOB - must install bits
                 safeRemove(bit.dir.pkg)
                 let strip = bit.settings.profile == 'debug'
                 let p = {}

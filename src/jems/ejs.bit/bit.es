@@ -115,12 +115,7 @@ public class Bit {
         let path = Path('product.bit')
         if (path.exists) {
             try {
-                let standard = Path('.bit/standard.bit')
-                if (standard.exists) {
-                    b.loadWrapper('.bit/standard.bit')
-                } else {
-                    b.loadWrapper(Config.LibDir.join('bits/standard.bit'))
-                }
+                b.loadWrapper(Config.LibDir.join('bits/standard.bit'))
                 b.loadWrapper(path)
                 if (bit.usage) {
                     print('Feature Selection: ')
@@ -259,18 +254,16 @@ public class Bit {
             currentPlatform = platform
             let [os, arch] = platform.split('-') 
             global.bit = bit = bareBit.clone(true)
-            let bits = bit.dir.bits = Config.LibDir.join('bits')
+            let bits = src.join('bits/standard.bit').exists ?  src.join('bits') : Config.LibDir.join('bits')
+            bit.dir.bits = bits;
             bit.dir.src = Path(src)
             bit.dir.top = Path('.')
             bit.platform = { name: platform, os: os, arch: arch, like: like(os) }
             bit.settings.profile = options.profile || 'debug'
             bit.emulating = options.emulate
             /* Read to get settings */
-            loadWrapper(bit.dir.bits.join('standard.bit'))
+            loadWrapper(bits.join('standard.bit'))
             /* Fix bit.dirs to be paths */
-            if (!bit.dir.bits.exists) {
-                bit.dir.bits = bits
-            }
             setTypes()
             loadWrapper(bit.dir.bits.join('os/' + os + '.bit'))
             loadWrapper(src.join('product.bit'))
@@ -319,6 +312,9 @@ public class Bit {
             blend(nbit, envSettings, {combine: true})
         }
         nbit.platform.like = like(bit.platform.os)
+        if (bit.dir.bits != Config.LibDir.join('bits')) {
+            nbit.dir.bits = bit.dir.bits
+        }
         if (bit.env) {
             nbit.env = bit.env
         }
@@ -728,6 +724,14 @@ public class Bit {
             }
             let path = bit.dir.bits.join('packs', pack + '.bit')
             vtrace('Search', 'Pack ' + pack)
+            if (!path.exists) {
+                for each (d in bit.settings.packs) {
+                    path = bit.dir.src.join(d, pack + '.bit')
+                    if (path.exists) {
+                        break
+                    }
+                }
+            }
             if (path.exists) {
                 try {
                     bit.packs[pack] ||= {enable: true}
@@ -1139,7 +1143,9 @@ public class Bit {
             throw 'Current directory already contains a bits directory'
         }
         cp(Config.LibDir.join('bits'), 'bits')
-        mv('bits/sample.bit', 'product.bit')
+        if (!Path('product.bit').exits) {
+            mv('bits/sample.bit', 'product.bit')
+        }
         print('Initialization complete.')
         print('Edit product.bit and run "bit configure" to prepare for building.')
         print('Then run "bit" to build.')
@@ -1882,7 +1888,7 @@ public class Bit {
      */
     function setPathEnvVar() {
         outbin = Path('.').join(localPlatform + '-' + bit.settings.profile, 'bin').absolute
-        bitbin = Config.LibDir.join('bits/bin').absolute
+        bitbin = bit.dir.bits.join('bin')
         let sep = App.SearchSeparator
         if (generating) {
             outbin = outbin.relative

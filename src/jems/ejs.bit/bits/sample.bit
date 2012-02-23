@@ -7,6 +7,10 @@ Bit.load({
         // Load other bit files
     ],
 
+    dir: {
+        bits: 'bits',
+    },
+
     settings: {
         /* 
             Define for your product

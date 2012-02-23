@@ -119,6 +119,7 @@ MAIN(ejsMain, int argc, char **argv, char **envp)
     path = mprJoinPath(mprGetAppDir(), mprGetPathBase(argv[0]));
 #endif
     path = mprReplacePathExt(path, ".es");
+    mprAddRoot(path);
     argv[0] = path;
     if ((ejs = ejsCreateVM(argc, (cchar **) &argv[0], 0)) == 0) {
         return MPR_ERR_MEMORY;
