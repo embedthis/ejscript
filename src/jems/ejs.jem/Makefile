@@ -7,19 +7,20 @@
 include 	.makedep
 
 NAME		= ejs.jem
-TARGETS		+= $(BLD_BIN_DIR)/jem $(BLD_BIN_DIR)/jem.cmd
+TARGETS		+= $(BLD_BIN_DIR)/jem.es \
+			   $(BLD_BIN_DIR)/jem$(BLD_EXE)
 
 compileExtra: $(TARGETS)
 
-$(BLD_BIN_DIR)/jem: jem.es
+$(BLD_BIN_DIR)/jem.es: jem.es
 	$(call log) "[Generate]" jem
-	cp jem.es $(BLD_BIN_DIR)/jem
-	chmod 755 $(BLD_BIN_DIR)/jem
+	ejsc jem.es ; # Just do a compilation check
+	cp jem.es $(BLD_BIN_DIR)/jem.es
 
-$(BLD_BIN_DIR)/jem.cmd: jem.cmd
-	$(call log) "[Generate]" "jem.cmd"
-	cp jem.cmd $(BLD_BIN_DIR)/jem.cmd
-	chmod 755 $(BLD_BIN_DIR)/jem.cmd
+$(BLD_BIN_DIR)/jem$(BLD_EXE): $(BLD_BIN_DIR)/ejsrun$(BLD_EXE)
+	$(call log) "[Create]" "jem$(BLD_EXE)"
+	cp $(BLD_BIN_DIR)/ejsrun$(BLD_EXE) $(BLD_BIN_DIR)/jem$(BLD_EXE)
+	chmod 755 $(BLD_BIN_DIR)/jem$(BLD_EXE)
 
 #
 #   Local variables:

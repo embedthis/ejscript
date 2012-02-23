@@ -5,29 +5,19 @@
 Bit.load({
 
     targets: {
-        bit: {
-            path: '${BIN}/bit',
+        'bit.es': {
+            path: '${BIN}/bit.es',
             files: [ 'bit.es' ],
             build: "
                 trace('Export', bit.target.files)
-                cp('bit.es', bit.dir.bin.join('bit'), {permissions: 0755})
-            "
-        },
-
-        'bit.cmd': {
-            path: '${BIN}/bit.cmd',
-            files: [ 'bit.cmd' ],
-            build: "
-                trace('Export', bit.target.files)
-                cp('bit.cmd', bit.dir.bin.join('bit.cmd'), {permissions: 0755})
-            "
+                cp('bit.es', bit.dir.bin.join('bit.es'))
+            ",
         },
 
         'bit.exe': {
-            enable: 'OS == "WIN"',
             type: 'file',
-            path: '${BIN}/bit.exe',
-            files: [ '${BIN}/ejsrun.exe' ],
+            path: '${BIN}/bit${EXE}',
+            files: [ '${BIN}/ejsrun${EXE}' ],
         },
 
         bits: {

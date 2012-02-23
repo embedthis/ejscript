@@ -5,22 +5,19 @@
 Bit.load({
 
     targets: {
-        jem: {
-            path: '${BIN}/jem',
+        'jem.es': {
+            path: '${BIN}/jem.es',
             files: [ 'jem.es' ],
             build: "
                 trace('Export', bit.target.files)
-                cp('jem.es', bit.dir.bin.join('jem'), {permissions: 0755})
-            "
+                cp('jem.es', bit.dir.bin.join('jem.es'))
+            ",
         },
 
-        'jem.cmd': {
-            path: '${BIN}/jem.cmd',
-            files: [ 'jem.cmd' ],
-            build: "
-                trace('Export', bit.target.files)
-                cp('jem.cmd', bit.dir.bin.join('jem.cmd'), {permissions: 0755})
-            "
+        'jem.exe': {
+            type: 'file',
+            path: '${BIN}/jem${EXE}',
+            files: [ '${BIN}/ejsrun${EXE}' ],
         },
 	},
 })

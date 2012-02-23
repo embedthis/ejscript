@@ -10,7 +10,7 @@ NAME		= ejs.template
 MOD			= $(NAME).mod
 JEM			= $(NAME)-$(BLD_VERSION)
 MODULE		+= $(BLD_LIB_DIR)/$(NAME).mod 
-TARGETS		+= $(MODULE) $(BLD_BIN_DIR)/ejspage $(BLD_BIN_DIR)/ejspage.cmd
+TARGETS		+= $(MODULE) $(BLD_BIN_DIR)/ejspage.es $(BLD_BIN_DIR)/ejspage$(BLD_EXE)
 
 compileExtra: $(TARGETS)
 
@@ -25,15 +25,14 @@ $(BLD_LIB_DIR)/$(MOD): *.es $(BLD_LIB_DIR)/ejs.mod
 	cp *.mod $(BLD_BUILD_LIB_DIR) ; mv *.mod $(BLD_LIB_DIR)
 	rm -f $(NAME).slots.h
 
-$(BLD_BIN_DIR)/ejspage: ejspage
-	@$(call log) "[Update]" ejspage
-	cp ejspage $(BLD_BIN_DIR)/ejspage
-	chmod 755 $(BLD_BIN_DIR)/ejspage
+$(BLD_BIN_DIR)/ejspage.es: ejspage.es
+	@$(call log) "[Update]" ejspage.es
+	cp ejspage.es $(BLD_BIN_DIR)/ejspage.es
 
-$(BLD_BIN_DIR)/ejspage.cmd: ejspage.cmd
-	cp ejspage.cmd $(BLD_BIN_DIR)/ejspage.cmd
-	chmod 755 $(BLD_BIN_DIR)/ejspage.cmd
-
+$(BLD_BIN_DIR)/ejspage$(BLD_EXE): $(BLD_BIN_DIR)/ejsrun$(BLD_EXE)
+	$(call log) "[Create]" "ejspage$(BLD_EXE)"
+	cp $(BLD_BIN_DIR)/ejsrun$(BLD_EXE) $(BLD_BIN_DIR)/ejspage$(BLD_EXE)
+	chmod 755 $(BLD_BIN_DIR)/ejspage$(BLD_EXE)
 #
 #   Local variables:
 #   tab-width: 4

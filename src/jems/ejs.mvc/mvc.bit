@@ -5,23 +5,21 @@
 Bit.load({
 
     targets: {
-        mvc: {
-            path: '${BIN}/mvc',
+        'mvc.es': {
+            path: '${BIN}/mvc.es',
             files: [ 'mvc.es' ],
             build: "
                 trace('Export', bit.target.files)
-                cp('mvc.es', bit.dir.bin.join('mvc'), {permissions: 0755})
+                cp('mvc.es', bit.dir.bin.join('mvc.es'))
             "
         },
 
-        'mvc.cmd': {
-            path: '${BIN}/mvc.cmd',
-            files: [ 'mvc.cmd' ],
-            build: "
-                trace('Export', bit.target.files)
-                cp('mvc.cmd', bit.dir.bin.join('mvc.cmd'), {permissions: 0755})
-            "
+        'mvc.exe': {
+            type: 'file',
+            path: '${BIN}/mvc${EXE}',
+            files: [ '${BIN}/ejsrun${EXE}' ],
         },
+
         'ejs.mvc.mod': {
             path: '${LIB}/ejs.mvc.mod',
             files: [ '*.es' ],
