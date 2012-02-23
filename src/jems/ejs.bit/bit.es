@@ -5,7 +5,6 @@
 
     Copyright (c) All Rights Reserved. See copyright notice at the bottom of the file.
  */
-
 module embedthis.bit {
 
 require ejs.unix
@@ -46,7 +45,7 @@ public class Bit {
     private var selectedTargets: Array
 
     private var posix = ['macosx', 'linux', 'unix', 'freebsd', 'solaris']
-    private var windows = ['windows', 'wince']
+    private var windows = ['win', 'wince']
     private var start: Date
     private var targetsToBuildByDefault = { exe: true, file: true, lib: true, obj: true, script: true }
     private var targetsToBlend = { exe: true, lib: true, obj: true }
@@ -392,9 +391,6 @@ public class Bit {
         f.writeLine('#define BIT_VNUM ' + ((((ver[0] * 1000) + ver[1]) * 1000) + ver[2]))
 
         f.writeLine('#define BIT_OS "' + bit.platform.os.toUpper() + '"')
-        if (bit.platform.os == 'windows') {
-            f.writeLine('#define WIN 1')
-        }
         f.writeLine('#define BIT_CPU "' + bit.platform.arch + '"')
         f.writeLine('#define BIT_CPU_ARCH ' + getMprArch(bit.platform.arch))
         // f.writeLine('#define BIT_PROFILE "' + settings.profile + '"')
@@ -460,11 +456,7 @@ public class Bit {
         f.writeLine('#define BLD_MINOR_VERSION ' + ver[1])
         f.writeLine('#define BLD_PATCH_VERSION ' + ver[2])
         f.writeLine('#define BLD_VNUM ' + ((((ver[0] * 1000) + ver[1]) * 1000) + ver[2]))
-        if (bit.platform.os == 'windows') {
-            f.writeLine('#define WIN 1')
-        } else {
-            f.writeLine('#define ' + bit.platform.os.toUpper() + ' 1')
-        }
+        f.writeLine('#define ' + bit.platform.os.toUpper() + ' 1')
         if (bit.platform.like == "posix") {
             f.writeLine('#define BLD_UNIX_LIKE 1')
         } else if (bit.platform.like == "windows") {
@@ -809,21 +801,17 @@ public class Bit {
     function process(path: Path) {
         if (!path) {
             let file = findLocalBitFile()
-            if (file) {
-                App.log.debug(1, 'Change directory to ' + file.dirname)
-                App.chdir(file.dirname)
-                home = App.dir
-                path = file.basename
-            }
+            App.log.debug(1, 'Change directory to ' + file.dirname)
+            App.chdir(file.dirname)
+            home = App.dir
+            path = file.basename
         }
         global.bit = bit = bareBit.clone(true)
         bit.dir.bits = Config.LibDir.join('bits')
         if (options.profile) {
             bit.settings.profile = options.profile
         }
-        if (path) {
-            loadWrapper(path)
-        }
+        loadWrapper(path)
         loadModules()
         applyProfile()
         makeDirsAbsolute()
@@ -832,9 +820,7 @@ public class Bit {
         currentPlatform = startPlatform
         this.src = bit.dir.src
 
-        if (path) {
-            prepBuild()
-        }
+        prepBuild()
         build()
 
         //  MOB - should have a variable for this
@@ -864,10 +850,13 @@ public class Bit {
      */
     public function loadWrapper(path) {
         let saveCurrent = currentBitFile
-        currentBitFile = path
-        vtrace('Loading', currentBitFile)
-        global.load(path)
-        currentBitFile = saveCurrent
+        try {
+            currentBitFile = path
+            vtrace('Loading', currentBitFile)
+            global.load(path)
+        } finally {
+            currentBitFile = saveCurrent
+        }
     }
 
     /*
@@ -1031,9 +1020,12 @@ public class Bit {
                 return f
             }
         }
+        throw 'Can\'t find ' + name + '. Run "configure" or "bit config" first.'
+/*
+    UNUSED
         if (!options.config) {
-            throw 'Can\'t find ' + name + '. Run "configure" or "bit config" first.'
         }
+ */
         return null
     }
 
@@ -1951,7 +1943,7 @@ public class Bit {
         Map libraries into the appropriate O/S dependant format
      */
     function mapLibs(libs: Array): Array {
-        if (bit.platform.os == 'windows') {
+        if (bit.platform.os == 'win') {
             libs = libs.clone()
             for (i in libs) {
                 let llib = bit.dir.lib.join("lib" + libs[i]).joinExt(bit.ext.shlib)

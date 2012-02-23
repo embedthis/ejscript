@@ -24,10 +24,11 @@ static void manageApp(App *app, int flags);
 
 MAIN(ejsMain, int argc, char **argv, char **envp)
 {
-    Mpr     *mpr;
-    Ejs     *ejs;
+    Mpr         *mpr;
+    Ejs         *ejs;
+    EcCompiler  *ec;
     char    *argp, *searchPath, *path, *homeDir;
-    int     nextArg, err;
+    int     nextArg, err, flags;
 
     /*  
         Initialize Multithreaded Portable Runtime (MPR)
@@ -127,14 +128,13 @@ MAIN(ejsMain, int argc, char **argv, char **envp)
         return MPR_ERR_CANT_READ;
     }
     mprLog(1, "Load script \"%s\"", path);
+    flags = EC_FLAGS_BIND | EC_FLAGS_DEBUG | EC_FLAGS_NO_OUT | EC_FLAGS_THROW;
 #if UNUSED
-    if (ejsLoadScriptFile(ejs, path, NULL, EC_FLAGS_DEBUG | EC_FLAGS_THROW) < 0) {
+    if (ejsLoadScriptFile(ejs, path, NULL, flags) < 0) {
         ejsReportError(ejs, "Error in script");
         err = MPR_ERR;
     }
 #else
-    EcCompiler      *ec;
-    int             flags = EC_FLAGS_BIND | EC_FLAGS_DEBUG | EC_FLAGS_NO_OUT | EC_FLAGS_THROW;
     if ((ec = ecCreateCompiler(ejs, flags)) == 0) {
         return MPR_ERR_MEMORY;
     }
