@@ -8,7 +8,7 @@
 #	Order matters
 #
 LOADABLE	= ejs.jem ejs.unix ejs.db ejs.db.mapper ejs.db.sqlite ejs.web ejs.template ejs.tar
-TOOLS		= ejs.jem ejs.mvc
+TOOLS		= ejs.jem ejs.mvc ejs.bit
 FILTER	 	= /sample/|/legacy/|^ejs.jem/|ejsmvc|Archive|\/test\/
 DOC_SRC		= $(shell find ../core -name '*.es' | egrep -v "$(FILTER)")
 DOC_SRC		+= $(shell find $(LOADABLE) -name '*.es' | egrep -v "$(FILTER)")

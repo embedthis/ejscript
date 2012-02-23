@@ -76,7 +76,7 @@ static EjsObj *app_chdir(Ejs *ejs, EjsObj *unused, int argc, EjsObj **argv)
  */
 static EjsPath *app_exeDir(Ejs *ejs, EjsObj *unused, int argc, EjsObj **argv)
 {
-    return ejsCreatePathFromAsc(ejs, mprGetAppDir(ejs));
+    return ejsCreatePathFromAsc(ejs, mprGetAppDir());
 }
 
 
@@ -86,7 +86,7 @@ static EjsPath *app_exeDir(Ejs *ejs, EjsObj *unused, int argc, EjsObj **argv)
  */
 static EjsPath *app_exePath(Ejs *ejs, EjsObj *unused, int argc, EjsObj **argv)
 {
-    return ejsCreatePathFromAsc(ejs, mprGetAppPath(ejs));
+    return ejsCreatePathFromAsc(ejs, mprGetAppPath());
 }
 
 

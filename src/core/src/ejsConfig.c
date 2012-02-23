@@ -53,17 +53,17 @@ void ejsDefineConfigProperties(Ejs *ejs)
     ejsDefineProperty(ejs, type, -1, N("public", "SSL"), 0, att, ejsCreateBoolean(ejs, BLD_FEATURE_SSL));
     ejsDefineProperty(ejs, type, -1, N("public", "SQLITE"), 0, att, ejsCreateBoolean(ejs, BLD_FEATURE_SQLITE));
 
-    if (mprSamePath(mprGetAppDir(ejs), BLD_BIN_PREFIX)) {
+    if (mprSamePath(mprGetAppDir(), BLD_BIN_PREFIX)) {
         ejsDefineProperty(ejs, type, -1, N("public", "BinDir"), 0, att, ejsCreatePathFromAsc(ejs, BLD_BIN_PREFIX));
         ejsDefineProperty(ejs, type, -1, N("public", "LibDir"), 0, att, ejsCreatePathFromAsc(ejs, BLD_LIB_PREFIX));
         ejsDefineProperty(ejs, type, -1, N("public", "IncDir"), 0, att, ejsCreatePathFromAsc(ejs, BLD_INC_PREFIX));
     } else {
         ejsDefineProperty(ejs, type, -1, N("public", "BinDir"), 0, att, 
-            ejsCreatePathFromAsc(ejs, mprGetAppDir(ejs)));
+            ejsCreatePathFromAsc(ejs, mprGetAppDir()));
         ejsDefineProperty(ejs, type, -1, N("public", "IncDir"), 0, att, 
-            ejsCreatePathFromAsc(ejs, mprNormalizePath(mprJoinPath(mprGetAppDir(ejs), "../inc"))));
+            ejsCreatePathFromAsc(ejs, mprNormalizePath(mprJoinPath(mprGetAppDir(), "../inc"))));
         ejsDefineProperty(ejs, type, -1, N("public", "LibDir"), 0, att, 
-            ejsCreatePathFromAsc(ejs, mprNormalizePath(mprJoinPath(mprGetAppDir(ejs), "../" BLD_LIB_NAME))));
+            ejsCreatePathFromAsc(ejs, mprNormalizePath(mprJoinPath(mprGetAppDir(), "../" BLD_LIB_NAME))));
     }
 }
 

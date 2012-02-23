@@ -96,8 +96,7 @@ MAIN(ejsMain, int argc, char **argv, char **envp)
                 className = argv[++nextArg];
             }
 
-        //  MOB - should this be called --home
-        } else if (smatch(argp, "--chdir") || smatch(argp, "--home")) {
+        } else if (smatch(argp, "--chdir") || smatch(argp, "--home") || smatch(argp, "-C")) {
             if (nextArg >= argc) {
                 err++;
             } else {
@@ -342,7 +341,7 @@ MAIN(ejsMain, int argc, char **argv, char **envp)
             }
         }
     }
-     if (stats) {
+    if (stats) {
 #if BLD_DEBUG
         mprSetLogLevel(1);
         mprPrintMem("Memory Usage", 1);

@@ -9,6 +9,7 @@ include 		.makedep
 TARGETS			+= $(BLD_BIN_DIR)/ejsc$(BLD_EXE)
 TARGETS			+= $(BLD_BIN_DIR)/ejsmod$(BLD_EXE) 
 TARGETS			+= $(BLD_BIN_DIR)/ejs$(BLD_EXE) 
+TARGETS			+= $(BLD_BIN_DIR)/ejsrun$(BLD_EXE) 
 
 ifeq	($(BLD_CC_EDITLINE),1)
 	LIBS		+= edit curses
@@ -49,6 +50,12 @@ $(BLD_BIN_DIR)/ejs$(BLD_EXE): $(OBJECTS)
 #
 $(BLD_BIN_DIR)/ejsmod$(BLD_EXE): $(OBJECTS)
 	bld --exe $(BLD_BIN_DIR)/ejsmod$(BLD_EXE) --libs "$(BLD_EJSCRIPT_LIBS)" ejsmod doc docFiles listing slotGen
+
+#
+#	Make the ejsrun command
+#
+$(BLD_BIN_DIR)/ejsrun$(BLD_EXE): $(OBJECTS)
+	bld --exe $(BLD_BIN_DIR)/ejsrun$(BLD_EXE) --libs "$(BLD_EJSCRIPT_LIBS)" "$(BLD_OBJ_DIR)/ejsrun$(BLD_OBJ)"
 
 docFiles: images/banner.jpg doc.css images/inherit.gif
 	$(call setlibpath) ; makerom images/banner.jpg doc.css images/inherit.gif | \

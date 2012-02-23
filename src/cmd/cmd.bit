@@ -32,5 +32,12 @@ Bit.load({
             sources: [ 'ejsmod.c', 'doc.c', 'docFiles.c', 'listing.c', 'slotGen.c' ],
             depends: [ 'libejs' ],
         },
+
+        ejsrun: {
+            type: 'exe'
+            sources: [ 'ejsrun.c', ],
+            depends: [ 'libejs' ],
+        },
+
 	},
 })

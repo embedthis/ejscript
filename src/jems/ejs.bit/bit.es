@@ -1845,7 +1845,7 @@ public class Bit {
         bit.ARCH = bit.platform.arch
         bit.PLATFORM = bit.platform.name
         bit.LIKE = bit.platform.like
-        for each (["ARCH", "BIN", "CFG", "FLAT", "INC", "LIB", "LIKE", "OBJ", "OS", "PACKS", "PKG", "PLATFORM", 
+        for each (name in ["ARCH", "BIN", "CFG", "FLAT", "INC", "LIB", "LIKE", "OBJ", "OS", "PACKS", "PKG", "PLATFORM",
                 "REL", "SHLIB", "SHOBJ", "SRC", "TOP"]) {
             global[name] = bit[name]
         }
