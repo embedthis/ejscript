@@ -58,6 +58,7 @@
 			buildPhases = (
 			);
 			dependencies = (
+				C97C5B5614F6B9C70095BDD1 /* PBXTargetDependency */,
 				C95DB5CF141F20AD0047A8F8 /* PBXTargetDependency */,
 				C9D7A7FA13D4F3A0000428C7 /* PBXTargetDependency */,
 				C97A5ECA11E81EB000BB0981 /* PBXTargetDependency */,
@@ -211,6 +212,11 @@
 		C97628740FD07C69009C78E1 /* libmpr.dylib in Frameworks */ = {isa = PBXBuildFile; fileRef = C97627A60FD077A7009C78E1 /* libmpr.dylib */; };
 		C97628790FD07C7F009C78E1 /* libsqlite.dylib in Frameworks */ = {isa = PBXBuildFile; fileRef = C97627BD0FD077FC009C78E1 /* libsqlite.dylib */; };
 		C976CCDC140556EB00D21AFA /* libpcre.dylib in Frameworks */ = {isa = PBXBuildFile; fileRef = C97627AF0FD077C3009C78E1 /* libpcre.dylib */; };
+		C97C5B4914F6B9710095BDD1 /* libmpr.dylib in Frameworks */ = {isa = PBXBuildFile; fileRef = C97627A60FD077A7009C78E1 /* libmpr.dylib */; };
+		C97C5B4A14F6B9710095BDD1 /* libpcre.dylib in Frameworks */ = {isa = PBXBuildFile; fileRef = C97627AF0FD077C3009C78E1 /* libpcre.dylib */; };
+		C97C5B4B14F6B9710095BDD1 /* libmprssl.dylib in Frameworks */ = {isa = PBXBuildFile; fileRef = C97627B60FD077E7009C78E1 /* libmprssl.dylib */; };
+		C97C5B4C14F6B9710095BDD1 /* libejs.dylib in Frameworks */ = {isa = PBXBuildFile; fileRef = C97627CB0FD07828009C78E1 /* libejs.dylib */; };
+		C97C5B5414F6B9A20095BDD1 /* ejsrun.c in Sources */ = {isa = PBXBuildFile; fileRef = C97C5B5314F6B9A20095BDD1 /* ejsrun.c */; };
 		C97D30781263AF2900262E95 /* ejsHelper.c in Sources */ = {isa = PBXBuildFile; fileRef = C97D30771263AF2900262E95 /* ejsHelper.c */; };
 		C98761380FD87DA200311B7A /* libmpr.dylib in Frameworks */ = {isa = PBXBuildFile; fileRef = C97627A60FD077A7009C78E1 /* libmpr.dylib */; };
 		C98761390FD87DA200311B7A /* libpcre.dylib in Frameworks */ = {isa = PBXBuildFile; fileRef = C97627AF0FD077C3009C78E1 /* libpcre.dylib */; };
@@ -475,6 +481,55 @@
 			proxyType = 1;
 			remoteGlobalIDString = C97A5EC611E81E9B00BB0981;
 			remoteInfo = prep;
+		};
+		C97C5B3B14F6B9710095BDD1 /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = C97623C10FD06EC4009C78E1 /* Project object */;
+			proxyType = 1;
+			remoteGlobalIDString = C97A5EC611E81E9B00BB0981;
+			remoteInfo = prep;
+		};
+		C97C5B3D14F6B9710095BDD1 /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = C97623C10FD06EC4009C78E1 /* Project object */;
+			proxyType = 1;
+			remoteGlobalIDString = C97627A50FD077A7009C78E1;
+			remoteInfo = libmpr;
+		};
+		C97C5B3F14F6B9710095BDD1 /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = C97623C10FD06EC4009C78E1 /* Project object */;
+			proxyType = 1;
+			remoteGlobalIDString = C97627AE0FD077C3009C78E1;
+			remoteInfo = libpcre;
+		};
+		C97C5B4114F6B9710095BDD1 /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = C97623C10FD06EC4009C78E1 /* Project object */;
+			proxyType = 1;
+			remoteGlobalIDString = C97627B50FD077E7009C78E1;
+			remoteInfo = libmprssl;
+		};
+		C97C5B4314F6B9710095BDD1 /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = C97623C10FD06EC4009C78E1 /* Project object */;
+			proxyType = 1;
+			remoteGlobalIDString = C97627BC0FD077FC009C78E1;
+			remoteInfo = libsqlite3;
+		};
+		C97C5B4514F6B9710095BDD1 /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = C97623C10FD06EC4009C78E1 /* Project object */;
+			proxyType = 1;
+			remoteGlobalIDString = C97627CA0FD07828009C78E1;
+			remoteInfo = libejs;
+		};
+		C97C5B5514F6B9C70095BDD1 /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = C97623C10FD06EC4009C78E1 /* Project object */;
+			proxyType = 1;
+			remoteGlobalIDString = C97C5B3914F6B9710095BDD1;
+			remoteInfo = ejsrun;
 		};
 		C98761330FD87D7B00311B7A /* PBXContainerItemProxy */ = {
 			isa = PBXContainerItemProxy;
@@ -998,6 +1053,8 @@
 		C97627BD0FD077FC009C78E1 /* libsqlite.dylib */ = {isa = PBXFileReference; explicitFileType = "compiled.mach-o.dylib"; includeInIndex = 0; path = libsqlite.dylib; sourceTree = BUILT_PRODUCTS_DIR; };
 		C97627CB0FD07828009C78E1 /* libejs.dylib */ = {isa = PBXFileReference; explicitFileType = "compiled.mach-o.dylib"; includeInIndex = 0; path = libejs.dylib; sourceTree = BUILT_PRODUCTS_DIR; };
 		C97627D90FD07850009C78E1 /* ejs.web.dylib */ = {isa = PBXFileReference; explicitFileType = "compiled.mach-o.dylib"; includeInIndex = 0; path = ejs.web.dylib; sourceTree = BUILT_PRODUCTS_DIR; };
+		C97C5B5014F6B9710095BDD1 /* ejsrun */ = {isa = PBXFileReference; explicitFileType = "compiled.mach-o.executable"; includeInIndex = 0; path = ejsrun; sourceTree = BUILT_PRODUCTS_DIR; };
+		C97C5B5314F6B9A20095BDD1 /* ejsrun.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = ejsrun.c; sourceTree = "<group>"; };
 		C97D30771263AF2900262E95 /* ejsHelper.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; name = ejsHelper.c; path = ../../../src/vm/ejsHelper.c; sourceTree = SOURCE_ROOT; };
 		C9818105110EBD4E00F241EF /* ejssql.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; name = ejssql.c; path = ../../../src/jems/ejs.db.sqlite/src/ejssql.c; sourceTree = SOURCE_ROOT; };
 		C9818106110EBD4E00F241EF /* sqlite3.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; name = sqlite3.c; path = ../../../src/jems/ejs.db.sqlite/src/sqlite3.c; sourceTree = SOURCE_ROOT; };
@@ -1152,6 +1209,17 @@
 				C97628560FD07ACD009C78E1 /* libmprssl.dylib in Frameworks */,
 				C97628570FD07ACD009C78E1 /* libejs.dylib in Frameworks */,
 				C92F849B10F2B93200CA953D /* libhttp.dylib in Frameworks */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		C97C5B4814F6B9710095BDD1 /* Frameworks */ = {
+			isa = PBXFrameworksBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				C97C5B4914F6B9710095BDD1 /* libmpr.dylib in Frameworks */,
+				C97C5B4A14F6B9710095BDD1 /* libpcre.dylib in Frameworks */,
+				C97C5B4B14F6B9710095BDD1 /* libmprssl.dylib in Frameworks */,
+				C97C5B4C14F6B9710095BDD1 /* libejs.dylib in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -1387,6 +1455,7 @@
 				C98D7153110FBEEA00F2ED80 /* sqlite */,
 				C9D4528711ECDA4300F029C8 /* http */,
 				C9D7A7F213D4F346000428C7 /* ejsman */,
+				C97C5B5014F6B9710095BDD1 /* ejsrun */,
 			);
 			name = Products;
 			sourceTree = "<group>";
@@ -1411,6 +1480,7 @@
 		C976241C0FD06F8B009C78E1 /* cmd */ = {
 			isa = PBXGroup;
 			children = (
+				C97C5B5314F6B9A20095BDD1 /* ejsrun.c */,
 				C976241F0FD06F8B009C78E1 /* ejs.c */,
 				C97624200FD06F8B009C78E1 /* ejsc.c */,
 			);
@@ -1836,6 +1906,28 @@
 			productReference = C97627D90FD07850009C78E1 /* ejs.web.dylib */;
 			productType = "com.apple.product-type.library.dynamic";
 		};
+		C97C5B3914F6B9710095BDD1 /* ejsrun */ = {
+			isa = PBXNativeTarget;
+			buildConfigurationList = C97C5B4D14F6B9710095BDD1 /* Build configuration list for PBXNativeTarget "ejsrun" */;
+			buildPhases = (
+				C97C5B4614F6B9710095BDD1 /* Sources */,
+				C97C5B4814F6B9710095BDD1 /* Frameworks */,
+			);
+			buildRules = (
+			);
+			dependencies = (
+				C97C5B3A14F6B9710095BDD1 /* PBXTargetDependency */,
+				C97C5B3C14F6B9710095BDD1 /* PBXTargetDependency */,
+				C97C5B3E14F6B9710095BDD1 /* PBXTargetDependency */,
+				C97C5B4014F6B9710095BDD1 /* PBXTargetDependency */,
+				C97C5B4214F6B9710095BDD1 /* PBXTargetDependency */,
+				C97C5B4414F6B9710095BDD1 /* PBXTargetDependency */,
+			);
+			name = ejsrun;
+			productName = ejsc;
+			productReference = C97C5B5014F6B9710095BDD1 /* ejsrun */;
+			productType = "com.apple.product-type.tool";
+		};
 		C987612F0FD87D7300311B7A /* ejs.db.sqlite */ = {
 			isa = PBXNativeTarget;
 			buildConfigurationList = C98761370FD87D9900311B7A /* Build configuration list for PBXNativeTarget "ejs.db.sqlite" */;
@@ -1930,6 +2022,7 @@
 				C9D7A7E213D4F346000428C7 /* ejsman */,
 				C97623D10FD06EE7009C78E1 /* ejs */,
 				C97623DA0FD06EF4009C78E1 /* ejsc */,
+				C97C5B3914F6B9710095BDD1 /* ejsrun */,
 				C97623E10FD06EFC009C78E1 /* ejsmod */,
 				C97623E80FD06F04009C78E1 /* sqlite */,
 				C9D4528611ECDA4300F029C8 /* http */,
@@ -2368,6 +2461,14 @@
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
+		C97C5B4614F6B9710095BDD1 /* Sources */ = {
+			isa = PBXSourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				C97C5B5414F6B9A20095BDD1 /* ejsrun.c in Sources */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
 		C987612D0FD87D7300311B7A /* Sources */ = {
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
@@ -2564,6 +2665,41 @@
 			isa = PBXTargetDependency;
 			target = C97A5EC611E81E9B00BB0981 /* prep */;
 			targetProxy = C97A5EC911E81EB000BB0981 /* PBXContainerItemProxy */;
+		};
+		C97C5B3A14F6B9710095BDD1 /* PBXTargetDependency */ = {
+			isa = PBXTargetDependency;
+			target = C97A5EC611E81E9B00BB0981 /* prep */;
+			targetProxy = C97C5B3B14F6B9710095BDD1 /* PBXContainerItemProxy */;
+		};
+		C97C5B3C14F6B9710095BDD1 /* PBXTargetDependency */ = {
+			isa = PBXTargetDependency;
+			target = C97627A50FD077A7009C78E1 /* libmpr */;
+			targetProxy = C97C5B3D14F6B9710095BDD1 /* PBXContainerItemProxy */;
+		};
+		C97C5B3E14F6B9710095BDD1 /* PBXTargetDependency */ = {
+			isa = PBXTargetDependency;
+			target = C97627AE0FD077C3009C78E1 /* libpcre */;
+			targetProxy = C97C5B3F14F6B9710095BDD1 /* PBXContainerItemProxy */;
+		};
+		C97C5B4014F6B9710095BDD1 /* PBXTargetDependency */ = {
+			isa = PBXTargetDependency;
+			target = C97627B50FD077E7009C78E1 /* libmprssl */;
+			targetProxy = C97C5B4114F6B9710095BDD1 /* PBXContainerItemProxy */;
+		};
+		C97C5B4214F6B9710095BDD1 /* PBXTargetDependency */ = {
+			isa = PBXTargetDependency;
+			target = C97627BC0FD077FC009C78E1 /* libsqlite3 */;
+			targetProxy = C97C5B4314F6B9710095BDD1 /* PBXContainerItemProxy */;
+		};
+		C97C5B4414F6B9710095BDD1 /* PBXTargetDependency */ = {
+			isa = PBXTargetDependency;
+			target = C97627CA0FD07828009C78E1 /* libejs */;
+			targetProxy = C97C5B4514F6B9710095BDD1 /* PBXContainerItemProxy */;
+		};
+		C97C5B5614F6B9C70095BDD1 /* PBXTargetDependency */ = {
+			isa = PBXTargetDependency;
+			target = C97C5B3914F6B9710095BDD1 /* ejsrun */;
+			targetProxy = C97C5B5514F6B9C70095BDD1 /* PBXContainerItemProxy */;
 		};
 		C98761340FD87D7B00311B7A /* PBXTargetDependency */ = {
 			isa = PBXTargetDependency;
@@ -3179,6 +3315,22 @@
 			};
 			name = Release;
 		};
+		C97C5B4E14F6B9710095BDD1 /* Debug */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				INSTALL_PATH = "$(INSTALL_PATH)/bin";
+				PRODUCT_NAME = ejsrun;
+			};
+			name = Debug;
+		};
+		C97C5B4F14F6B9710095BDD1 /* Release */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				INSTALL_PATH = "$(INSTALL_PATH)/bin";
+				PRODUCT_NAME = ejsrun;
+			};
+			name = Release;
+		};
 		C98761310FD87D7300311B7A /* Debug */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
@@ -3420,6 +3572,15 @@
 			buildConfigurations = (
 				C97A5EC711E81E9B00BB0981 /* Debug */,
 				C97A5EC811E81E9B00BB0981 /* Release */,
+			);
+			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
+		};
+		C97C5B4D14F6B9710095BDD1 /* Build configuration list for PBXNativeTarget "ejsrun" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				C97C5B4E14F6B9710095BDD1 /* Debug */,
+				C97C5B4F14F6B9710095BDD1 /* Release */,
 			);
 			defaultConfigurationIsVisible = 0;
 			defaultConfigurationName = Release;

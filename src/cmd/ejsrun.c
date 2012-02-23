@@ -8,7 +8,7 @@
 
 /********************************** Includes **********************************/
 
-#include    "ejs.h"
+#include    "ejsCompiler.h"
 
 /*********************************** Locals ***********************************/
 
@@ -112,7 +112,11 @@ MAIN(ejsMain, int argc, char **argv, char **envp)
         return -1;
     }
 #endif
+#if DEBUG_IDE || 1
+    path = mprJoinPath(mprGetAppDir(), "bit");
+#else
     path = mprJoinPath(mprGetAppDir(), mprGetPathBase(argv[0]));
+#endif
     path = mprReplacePathExt(path, ".es");
     argv[0] = path;
     if ((ejs = ejsCreateVM(argc, (cchar **) &argv[0], 0)) == 0) {
@@ -123,10 +127,33 @@ MAIN(ejsMain, int argc, char **argv, char **envp)
         return MPR_ERR_CANT_READ;
     }
     mprLog(1, "Load script \"%s\"", path);
-    if (ejsLoadScriptFile(ejs, path, NULL, EC_FLAGS_THROW) < 0) {
+#if UNUSED
+    if (ejsLoadScriptFile(ejs, path, NULL, EC_FLAGS_DEBUG | EC_FLAGS_THROW) < 0) {
         ejsReportError(ejs, "Error in script");
         err = MPR_ERR;
     }
+#else
+    EcCompiler      *ec;
+    int             flags = EC_FLAGS_BIND | EC_FLAGS_DEBUG | EC_FLAGS_NO_OUT | EC_FLAGS_THROW;
+    if ((ec = ecCreateCompiler(ejs, flags)) == 0) {
+        return MPR_ERR_MEMORY;
+    }
+    mprAddRoot(ec);
+    ecSetOptimizeLevel(ec, 9);
+    ecSetWarnLevel(ec, 1);
+    if (ecCompile(ec, 1, (char**) &path) < 0) {
+        if (flags & EC_FLAGS_THROW) {
+            ejsThrowSyntaxError(ejs, "%s", ec->errorMsg ? ec->errorMsg : "Can't parse script");
+        }
+        err = MPR_ERR;
+    } else {
+        mprRemoveRoot(ec);
+        if (ejsRunProgram(ejs, NULL, NULL) < 0) {
+            ejsReportError(ejs, "Error in script");
+            err = MPR_ERR;
+        }
+    }
+#endif
     app->ejs = 0;
     mprTerminate(MPR_EXIT_DEFAULT, err);
     ejsDestroyVM(ejs);

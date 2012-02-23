@@ -7,7 +7,9 @@
 include 	.makedep
 
 NAME		= ejs.bit
-TARGETS		+= $(BLD_BIN_DIR)/bit.es $(BLD_BIN_DIR)/bit$(BLD_EXE)
+TARGETS		+= $(BLD_BIN_DIR)/bit.es \
+			   $(BLD_BIN_DIR)/bit$(BLD_EXE) \
+			   $(BLD_LIB_DIR)/bits
 
 compileExtra: $(TARGETS)
 
@@ -19,6 +21,11 @@ $(BLD_BIN_DIR)/bit$(BLD_EXE): $(BLD_BIN_DIR)/ejsrun$(BLD_EXE)
 	$(call log) "[Create]" "bit$(BLD_EXE)"
 	cp $(BLD_BIN_DIR)/ejsrun$(BLD_EXE) $(BLD_BIN_DIR)/bit$(BLD_EXE)
 	chmod 755 $(BLD_BIN_DIR)/bit$(BLD_EXE)
+
+$(BLD_LIB_DIR)/bits: bits bits/* bits/*/*
+	$(call log) "[Export]" "bits"
+	rm -fr $(BLD_LIB_DIR)/bits
+	cp -r bits $(BLD_LIB_DIR)
 
 #
 #   Local variables:

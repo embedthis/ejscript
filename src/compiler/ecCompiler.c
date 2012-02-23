@@ -284,7 +284,6 @@ int ejsLoadScriptFile(Ejs *ejs, cchar *path, cchar *cache, int flags)
         return EJS_ERR;
     }
     mprRemoveRoot(ec);
-
     if (ejsRun(ejs) < 0) {
         return EJS_ERR;
     }

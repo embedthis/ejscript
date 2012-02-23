@@ -99,12 +99,6 @@ Bit.load({
             ",
         },
 
-        _package2: {
-            action: "
-                load(bit.dirs.src.join('.bit/combo.es'))
-            ",
-        },
-
         _uninstall: {
             action: "
                 let parts = bit.settings.package || 'binary dev'
@@ -147,7 +141,7 @@ Bit.load({
             type: 'test',
             action: "
                 if (bit.packs.ejs && bit.packs.ejs.path) {
-                    run(bit.packs.ejs.path + ' ' + bit.dir.top.join('.bit/bin/utest') + ' -v -d ' + bit.settings.depth, 
+                    run(bit.packs.ejs.path + ' ' + App.exeDir.join('utest') + ' -v -d ' + bit.settings.depth, 
                         {dir: bit.dir.src.join('src')})
                 }
             ",
@@ -177,11 +171,11 @@ Bit.load({
                     trace('Generate', 'API documentation for ' + name)
                     run('doxygen ' + dox, {dir: '${SRC}/doc/api'})
                     trace('Process', 'Post-process ' + name + ' API documentation (may take a while)')
-                    run('ejs ${SRC}/.bit/bin/gendoc.es ' + 
-                        '--title \"MPR - Multithreaded Portable Runtime Native API\" --out ' + name + '.html ' + 
+                    run('ejs ' + App.exeDir.join('gendoc.es') + 
+                        ' --title \"MPR - Multithreaded Portable Runtime Native API\" --out ' + name + '.html ' + 
                         (['xml/' + name + '_8h.xml'] + ls('xml/group*') + ls('xml/struct_*.xml')).join(' '), 
                         {dir: '${SRC}/doc/api'})
-                    run('ejs ${SRC}/.bit/bin/gendoc.es --bare ' + 
+                    run('ejs ' + App.exeDir.join('gendoc.es' + ' --bare ' + 
                         '--title \"MPR - Multithreaded Portable Runtime Native API\" --out ' + name + 'Bare.html ' + 
                         (['xml/' + name + '_8h.xml'] + ls('xml/group*') + ls('xml/struct_*.xml')).join(' '), 
                         {dir: '${SRC}/doc/api'})

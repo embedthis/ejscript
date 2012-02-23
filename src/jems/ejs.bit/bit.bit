@@ -29,5 +29,14 @@ Bit.load({
             path: '${BIN}/bit.exe',
             files: [ '${BIN}/ejsrun.exe' ],
         },
+
+        bits: {
+            path: '${LIB}/bits',
+            files: [ '${BIN}/ejsrun.exe' ],
+            build: "
+                rmdir(bit.dir.lib.join('bits'))
+                cp('bits', bit.dir.lib.join('bits'))
+            "
+        },
 	},
 })

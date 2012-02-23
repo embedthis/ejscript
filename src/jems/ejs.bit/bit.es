@@ -11,8 +11,7 @@ module embedthis.bit {
 require ejs.unix
 
 public class Bit {
-    private const RC: String = '.bitrc'
-    private const VERSION: Number = 0.1
+    private const VERSION: Number = 0.2
 
     /*
         Filter for files that look like temp files and should not be installed
@@ -36,7 +35,7 @@ public class Bit {
     private var src: Path
 
     private var home: Path
-    private var bareSpec: Object = { platform: {}, dir: {}, settings: {}, packs: {}, targets: {}, env: {} }
+    private var bareBit: Object = { platform: {}, dir: {}, settings: {}, packs: {}, targets: {}, env: {} }
     private var bit: Object = {}
     private var gen: Object
     private var platform: Object
@@ -64,7 +63,7 @@ public class Bit {
             diagnose: { alias: 'd' },
             emulate: { range: String },
             gen: { alias: 'g', range: String, separator: Array, commas: true },
-            init: { range: Boolean },
+            import: { range: Boolean },
             log: { alias: 'l', range: String },
             out: { range: String },
             pre: { range: String, separator: Array },
@@ -97,7 +96,7 @@ public class Bit {
             '    --diagnose                         # Emit diagnostic trace \n' +
             '    --emulate os-arch                  # Emulate platform for build tools\n' +
             '    --gen [make|sh|vs|xcode]           # Generate project file\n' + 
-            '    --init                             # Initialize project to use bit\n' + 
+            '    --import                           # Import standard bit configuration\n' + 
             '    --log logSpec                      # Save errors to a log file\n' +
             '    --out path                         # Save output to a file\n' +
             '    --profile [debug|release|...]      # Use the build profile\n' +
@@ -117,7 +116,12 @@ public class Bit {
         let path = Path('product.bit')
         if (path.exists) {
             try {
-                b.loadWrapper('.bit/standard.bit')
+                let standard = Path('.bit/standard.bit')
+                if (standard.exists) {
+                    b.loadWrapper('.bit/standard.bit')
+                } else {
+                    b.loadWrapper(Config.LibDir.join('bits/standard.bit'))
+                }
                 b.loadWrapper(path)
                 if (bit.usage) {
                     print('Feature Selection: ')
@@ -139,8 +143,8 @@ public class Bit {
         home = App.dir
         try {
             setup(args)
-            if (options.init) {
-                init()
+            if (options.import) {
+                import()
                 App.exit()
             } 
             if (options.config) {
@@ -201,8 +205,8 @@ public class Bit {
         } else if (options.gen) {
             args.rest.push('generate')
         }
-        if (args.rest.contains('init')) {
-            options.init = true
+        if (args.rest.contains('import')) {
+            options.import = true
         }
         if (options.profile && !options.config) {
             App.log.error('Can only set profile when configuring via --config dir')
@@ -251,22 +255,25 @@ public class Bit {
      */
     function configure() {
         this.src = Path(options.config)
-        if (!src.join('.bit/standard.bit').exists) {
-            throw 'Can\'t find bit configuration at "' + src + '"'
-        }
         for each (platform in platforms) {
             vtrace('Init', platform)
             currentPlatform = platform
             let [os, arch] = platform.split('-') 
-            global.bit = bit = bareSpec.clone(true)
+            global.bit = bit = bareBit.clone(true)
+            let bits = bit.dir.bits = Config.LibDir.join('bits')
             bit.dir.src = Path(src)
             bit.dir.top = Path('.')
             bit.platform = { name: platform, os: os, arch: arch, like: like(os) }
             bit.settings.profile = options.profile || 'debug'
             bit.emulating = options.emulate
             /* Read to get settings */
-            loadWrapper(src.join('.bit/standard.bit'))
-            loadWrapper(src.join('.bit/os/' + os + '.bit'))
+            loadWrapper(bit.dir.bits.join('standard.bit'))
+            /* Fix bit.dirs to be paths */
+            if (!bit.dir.bits.exists) {
+                bit.dir.bits = bits
+            }
+            setTypes()
+            loadWrapper(bit.dir.bits.join('os/' + os + '.bit'))
             loadWrapper(src.join('product.bit'))
             applyProfile()
             makeDirsAbsolute()
@@ -280,7 +287,6 @@ public class Bit {
             makeOutDirs()
             makeBitFile(platform)
             makeBuildConfig(platform)
-            import()
             cross = true
         }
     }
@@ -295,8 +301,8 @@ public class Bit {
         }
         blend(nbit, {
             blend : [
-                Path(src.join('.bit/standard.bit')).absolute,
-                Path(src.join('.bit/os/' + bit.platform.os + '.bit')).absolute,
+                Path(bit.dir.bits.join('standard.bit')).absolute,
+                Path(bit.dir.bits.join('os/' + bit.platform.os + '.bit')).absolute,
                 Path(src.join('product.bit')).absolute,
             ],
             platform: bit.platform,
@@ -728,7 +734,7 @@ public class Bit {
             if (bit.packs[pack] && !bit.packs[pack].enable) {
                 continue
             }
-            let path = src.join('.bit/packs', pack + '.bit')
+            let path = bit.dir.bits.join('packs', pack + '.bit')
             vtrace('Search', 'Pack ' + pack)
             if (path.exists) {
                 try {
@@ -810,7 +816,8 @@ public class Bit {
                 path = file.basename
             }
         }
-        global.bit = bit = bareSpec.clone(true)
+        global.bit = bit = bareBit.clone(true)
+        bit.dir.bits = Config.LibDir.join('bits')
         if (options.profile) {
             bit.settings.profile = options.profile
         }
@@ -994,7 +1001,7 @@ public class Bit {
         /* 
             Blending is depth-first. Blend this bit object after loading blend references.
             Save the blend[] property for the current bit object
-            Special case for the local.bit to provide early definition of platform and dir properties
+            Special case for the local plaform bit file to provide early definition of platform and dir properties
          */
         if (bit.dir && !bit.dir.top) {
             if (o.dir) {
@@ -1007,6 +1014,8 @@ public class Bit {
         }
         let toBlend = blend({}, o, {combine: true})
         for each (path in toBlend.blend) {
+            bit.BITS = bit.dir.bits
+            path = path.expand(bit, {fill: '.'})
             loadWrapper(home.join(path))
         }
         global.bit = blend(bit, o, {combine: true})
@@ -1099,13 +1108,13 @@ public class Bit {
 
     function generateVstudio(base: Path) {
         mkdir(base)
-        global.load('.bit/vstudio.es')
+        global.load(bit.dir.bits.join('vstudio.es'))
         vstudio(base)
     }
 
     function generateXcode(base: Path) {
         mkdir(base)
-        global.load('.bit/xcode.es')
+        global.load(bit.dir.bits.join('xcode.es'))
         xcode(base)
     }
 
@@ -1133,13 +1142,12 @@ public class Bit {
         return all.join(' \\\n        ') + '\n'
     }
 
-    function init() {
-        if (Path('.bit').exists) {
-            throw 'Current directory already contains a .bit directory'
+    function import() {
+        if (Path('bits').exists) {
+            throw 'Current directory already contains a bits directory'
         }
-        let dir = Path(Config.LibDir)
-        cp(dir.join('bits'), '.bit')
-        mv('.bit/sample.bit', 'product.bit')
+        cp(Config.LibDir.join('bits'), 'bits')
+        mv('bits/sample.bit', 'product.bit')
         print('Initialization complete.')
         print('Edit product.bit and run "bit configure" to prepare for building.')
         print('Then run "bit" to build.')
@@ -1476,6 +1484,9 @@ public class Bit {
         NOTE: this is called multiple times during the blending process
      */
     function setTypes() {
+        for (let [key,value] in bit.dir) {
+            bit.dir[key] = Path(value)
+        }
         for each (target in bit.targets) {
             if (target.path) {
                 target.path = Path(target.path)
@@ -1832,6 +1843,7 @@ public class Bit {
 
         bit.CFG = bit.dir.cfg
         bit.BIN = bit.dir.bin
+        bit.BITS = bit.dir.bits
         bit.FLAT = bit.dir.flat
         bit.INC = bit.dir.inc
         bit.LIB = bit.dir.lib
@@ -1877,8 +1889,8 @@ public class Bit {
         Set the PATH and LD_LIBRARY_PATH environment variables
      */
     function setPathEnvVar() {
-        outbin =  Path('.').join(localPlatform + '-' + bit.settings.profile, 'bin').absolute
-        bitbin =  bit.dir.src.join('.bit/bin').absolute
+        outbin = Path('.').join(localPlatform + '-' + bit.settings.profile, 'bin').absolute
+        bitbin = Config.LibDir.join('bits/bin').absolute
         let sep = App.SearchSeparator
         if (generating) {
             outbin = outbin.relative

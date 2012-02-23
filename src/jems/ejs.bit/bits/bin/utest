@@ -341,7 +341,7 @@ enumerable class Test {
     }
 
     function initWorker(w: Worker, export: Object) {
-        w.preload(_top.join(".bit/bin/utest.worker"))
+        w.preload(App.exeDir.join("utest.worker"))
         let estr = serialize(export)
         w.preeval('
             let data = deserialize(\'' + estr.replace(/\\/g, "\\\\") + '\')
