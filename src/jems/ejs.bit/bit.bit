@@ -1,0 +1,33 @@
+/*
+    bit.bit -- Bit File for ejs.bit
+ */
+
+Bit.load({
+
+    targets: {
+        bit: {
+            path: '${BIN}/bit',
+            files: [ 'bit.es' ],
+            build: "
+                trace('Export', bit.target.files)
+                cp('bit.es', bit.dir.bin.join('bit'), {permissions: 0755})
+            "
+        },
+
+        'bit.cmd': {
+            path: '${BIN}/bit.cmd',
+            files: [ 'bit.cmd' ],
+            build: "
+                trace('Export', bit.target.files)
+                cp('bit.cmd', bit.dir.bin.join('bit.cmd'), {permissions: 0755})
+            "
+        },
+
+        'bit.exe': {
+            enable: 'OS == "WIN"',
+            type: 'file',
+            path: '${BIN}/bit.exe',
+            files: [ '${BIN}/ejsrun.exe' ],
+        },
+	},
+})

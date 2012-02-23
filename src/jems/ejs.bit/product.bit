@@ -1,0 +1,52 @@
+/*
+    product.bit -- Product Bit File for Bit
+ */
+
+Bit.load({
+    blend: [
+        '.bit/embedthis.bit',
+    ],
+    settings: {
+        /* Default settings overridden by build.bit */
+		product: 'bit',
+		title: 'Built It',
+        company: 'Embedthis',
+		version: '0.1.0',
+		buildNumber: 'B0',
+    },
+
+    profiles: {
+        release: { settings: { } },
+    },
+
+    targets: {
+        install: {
+            action: "
+                if (Config.OS == 'WIN') {
+                    // For use by cygwin
+                    let data = Path('bit.es').readString().replace('#!/usr/bin/env ejs', 
+                        '#!' + App.exePath.portable + ' --cygroot c:/cygwin')
+                    Path('c:/cygwin/usr/local/bin/bit').write(data)
+                } else {
+                    Path('bit.es').copy('/usr/local/bin/bit', {permissions: 0755})
+                }
+            ",
+        },
+        push: {
+            action: "
+                for each (d in ['mpr', 'pcre', 'sqlite', 'http', 'ejs', 'appweb']) {
+                    cp('.bit', '../' + d, {hidden: true})
+                    run('chown -R mob ../' + d + '/.bit')
+                }
+                cp('bit.es', '../ejs/build/bin/bit', {permissions: 0755})
+                rmdir('../ejs/out/lib/bits')
+                cp('.bit', '../ejs/out/lib/bits', {hidden: true})
+                if (Path('../ejs/macosx-x86_64-debug').exists) {
+                    rmdir('../ejs/macosx-x86_64-debug/bits')
+                    cp('.bit', '../ejs/macosx-x86_64-debug/bits', {hidden: true})
+                    cp('bit.es', '../ejs/.bit/bin/bit', {permissions: 0755})
+                }
+            ",
+        },
+	},
+})
