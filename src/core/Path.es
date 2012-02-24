@@ -274,9 +274,12 @@ module ejs {
 
         /**
             Join an extension to a path. If the base name of the path already has an extension, this call does nothing.
+            @param ext Extension to add. The extension may or may not contain a leading period. Best practice is to 
+                not have leading periods on extensions.
+            @param force Set to true to always add the extension.
             @return A new Path object with the given extension if the path did not already have one.
          */
-        native function joinExt(ext: String): Path
+        native function joinExt(ext: String, force: Boolean = false): Path
 
         /**
             The length of the path name in bytes. Note: this is not the file size. For that, use Path.size

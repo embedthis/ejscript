@@ -887,15 +887,18 @@ static EjsPath *joinPath(Ejs *ejs, EjsPath *fp, int argc, EjsObj **argv)
 
 
 /*
-    Join extension
+    Join extension. This will add an extension if one does not already exist. 
+    If force is true, the extension will be added. This is for path names that have embedded periods.
   
-    function joinExt(ext: String): Path
+    function joinExt(ext: String, force: Boolean = false): Path
  */
 static EjsPath *joinPathExt(Ejs *ejs, EjsPath *fp, int argc, EjsObj **argv)
 {
     cchar   *ext;
+    int     force;
 
-    if (mprGetPathExt(fp->value)) {
+    force = (argc >= 2 && argv[1] == ESV(true)) ? 1 : 0;
+    if (mprGetPathExt(fp->value) && !force) {
         return fp;
     }
     ext = ejsToMulti(ejs, argv[0]);
