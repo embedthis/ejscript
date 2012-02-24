@@ -1268,12 +1268,11 @@ public class Bit {
         for each (target in bit.targets) {
             if (!target.path) {
                 if (target.type == 'lib') {
-                    /* Use addition rather than joinExt because joinExt wont work for names with embedded periods */
-                    target.path = bit.dir.lib.join(target.name) + '.' + bit.ext.shobj
+                    target.path = bit.dir.lib.join(target.name).joinExt(bit.ext.shobj, true)
                 } else if (target.type == 'obj') {
-                    target.path = bit.dir.obj.join(target.name) + '.' + bit.ext.obj
+                    target.path = bit.dir.obj.join(target.name).joinExt(bit.ext.obj, true)
                 } else if (target.type == 'exe') {
-                    target.path = bit.dir.bin.join(target.name) + '.' + bit.ext.exe
+                    target.path = bit.dir.bin.join(target.name).joinExt(bit.ext.exe, true)
                 } else if (target.type == 'file') {
                     target.path = bit.dir.lib.join(target.name)
                 }
