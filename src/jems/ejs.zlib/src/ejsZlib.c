@@ -96,8 +96,8 @@ static EjsObj *zlib_uncompress(Ejs *ejs, EjsObj *unused, int argc, EjsObj **argv
             return 0;
         }
     }
-    mprCloseFile(in);
-    gzclose(out);
+    mprCloseFile(out);
+    gzclose(in);
     return 0;
 }
 
@@ -121,10 +121,10 @@ static EjsObj *zlib_compressBytes(Ejs *ejs, EjsObj *unused, int argc, EjsObj **a
     zs.zfree = Z_NULL;
     zs.opaque = Z_NULL;
     level = Z_DEFAULT_COMPRESSION;
-
     deflateInit(&zs, level);
+    zs.avail_in = (int) ejsGetByteArrayAvailableData(in);
+    zs.next_in = (uchar*) &in->value[in->readPosition];
     do {
-        zs.avail_in = (int) ejsGetByteArrayAvailableData(in);
         flush = (zs.avail_in == 0) ? Z_FINISH : Z_NO_FLUSH;
         do {
             zs.avail_out = ZBUFSIZE;
@@ -136,10 +136,10 @@ static EjsObj *zlib_compressBytes(Ejs *ejs, EjsObj *unused, int argc, EjsObj **a
                 deflateEnd(&zs);
                 return 0;
             }
+            out->writePosition += nbytes;
         } while (zs.avail_out == 0);
         mprAssert(zs.avail_in == 0);
     } while (flush != Z_FINISH);
-
     deflateEnd(&zs);
     return (EjsObj*) out;
 }
@@ -157,7 +157,7 @@ static EjsObj *zlib_uncompressBytes(Ejs *ejs, EjsObj *unused, int argc, EjsObj *
     int             rc;
 
     in = (EjsByteArray*) argv[0];
-    if ((out = ejsCreateByteArray(ejs, ZBUFSIZE)) == 0) {
+    if ((out = ejsCreateByteArray(ejs, in->length)) == 0) {
         return 0;
     }
     if ((size = (int) ejsGetByteArrayAvailableData(in)) == 0) {
@@ -167,16 +167,14 @@ static EjsObj *zlib_uncompressBytes(Ejs *ejs, EjsObj *unused, int argc, EjsObj *
     zs.zfree = Z_NULL;
     zs.opaque = Z_NULL;
     zs.avail_in = 0;
-    zs.next_in = Z_NULL;
     rc = inflateInit(&zs);
+    zs.next_in = &in->value[in->readPosition];
+    zs.avail_in = (int) size;
 
     do {
-        zs.avail_in = (int) size;
         if (zs.avail_in == 0) {
             break;
         }
-//  MOB - do we ever go round this loop?
-        zs.next_in = &in->value[in->readPosition];
         do {
             zs.avail_out = ZBUFSIZE;
             zs.next_out = (uchar*) outbuf;
@@ -187,14 +185,14 @@ static EjsObj *zlib_uncompressBytes(Ejs *ejs, EjsObj *unused, int argc, EjsObj *
                 inflateEnd(&zs);
                 return 0;
             } else {
-                nbytes = zs.avail_out;
+                nbytes = ZBUFSIZE - zs.avail_out;
             }
-            nbytes = ZBUFSIZE - zs.avail_out;
             if (ejsCopyToByteArray(ejs, out, -1, (char*) outbuf, nbytes) != nbytes) {
                 ejsThrowIOError(ejs, "Can't copy to byte array");
                 inflateEnd(&zs);
                 return 0;
             }
+            out->writePosition += nbytes;
         } while (zs.avail_out == 0);
         mprAssert(zs.avail_in == 0);
     } while (rc != Z_STREAM_END);
@@ -213,10 +211,13 @@ static EjsString *zlib_compressString(Ejs *ejs, EjsObj *unused, int argc, EjsObj
     MprBuf          *out;
     z_stream        zs;
     uchar           outbuf[ZBUFSIZE];
-    ssize           nbytes;
+    ssize           size, nbytes;
     int             level, flush;
 
     in = (EjsString*) argv[0];
+    if ((size = in->length) == 0) {
+        return ESV(empty);
+    }
     if ((out = mprCreateBuf(in->length, 0)) == 0) {
         return 0;
     }
@@ -224,10 +225,10 @@ static EjsString *zlib_compressString(Ejs *ejs, EjsObj *unused, int argc, EjsObj
     zs.zfree = Z_NULL;
     zs.opaque = Z_NULL;
     level = Z_DEFAULT_COMPRESSION;
-
     deflateInit(&zs, level);
+    zs.next_in = (uchar*) in->value;
+    zs.avail_in = (int) size;
     do {
-        zs.avail_in = (int) in->length;
         flush = (zs.avail_in == 0) ? Z_FINISH : Z_NO_FLUSH;
         do {
             zs.avail_out = ZBUFSIZE;
@@ -271,16 +272,14 @@ static EjsString *zlib_uncompressString(Ejs *ejs, EjsObj *unused, int argc, EjsO
     zs.zfree = Z_NULL;
     zs.opaque = Z_NULL;
     zs.avail_in = 0;
-    zs.next_in = Z_NULL;
     rc = inflateInit(&zs);
+    zs.next_in = (uchar*) in->value;
+    zs.avail_in = (int) size;
 
     do {
-        zs.avail_in = (int) size;
         if (zs.avail_in == 0) {
             break;
         }
-//  MOB - do we ever go round this loop?
-        zs.next_in = (uchar*) in->value;
         do {
             zs.avail_out = ZBUFSIZE;
             zs.next_out = outbuf;
@@ -291,9 +290,8 @@ static EjsString *zlib_uncompressString(Ejs *ejs, EjsObj *unused, int argc, EjsO
                 inflateEnd(&zs);
                 return 0;
             } else {
-                nbytes = zs.avail_out;
+                nbytes = ZBUFSIZE - zs.avail_out;
             }
-            nbytes = ZBUFSIZE - zs.avail_out;
             if (mprPutBlockToBuf(out, (char*) outbuf, nbytes) != nbytes) {
                 ejsThrowIOError(ejs, "Can't copy to byte array");
                 inflateEnd(&zs);
