@@ -902,7 +902,7 @@ static EjsObj *startHttpRequest(Ejs *ejs, EjsHttp *hp, char *method, int argc, E
         ejsThrowArgError(ejs, "HTTP Method is not defined");
         return 0;
     }
-    if (httpConnect(conn, hp->method, hp->uri) < 0) {
+    if (httpConnect(conn, hp->method, hp->uri, NULL) < 0) {
         ejsThrowIOError(ejs, "Can't issue request for \"%s\"", hp->uri);
         return 0;
     }

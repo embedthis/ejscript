@@ -65,8 +65,8 @@ static EjsObj *zlib_compress(Ejs *ejs, EjsObj *unused, int argc, EjsObj **argv)
  */
 static EjsObj *zlib_uncompress(Ejs *ejs, EjsObj *unused, int argc, EjsObj **argv)
 {
-    MprFile     *in;
-    gzFile      out;
+    MprFile     *out;
+    gzFile      in;
     cchar       *src, *dest;
     uchar       inbuf[MPR_BUFSIZE];
     ssize       nbytes;

@@ -342,8 +342,10 @@ static EjsObj *copyPath(Ejs *ejs, EjsPath *fp, int argc, EjsObj **argv)
         mprCloseFile(from);
         return 0;
     }
-    if (options) {
+    if (options && ejsGetLength(ejs, options) > 0) {
         ejsSetPathAttributes(ejs, toPath, options);
+    } else {
+        ejsSetPathAttributes(ejs, toPath, getAttributes(ejs, fp, 0, NULL));
     }
     if ((buf = mprAlloc(MPR_BUFSIZE)) == NULL) {
         ejsThrowMemoryError(ejs);

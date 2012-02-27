@@ -669,7 +669,7 @@ EjsArray *ejsCreateSearchPath(Ejs *ejs, cchar *search)
      */
     ejsSetProperty(ejs, ap, -1, ejsCreatePathFromAsc(ejs, "."));
     ejsSetProperty(ejs, ap, -1, ejsCreatePathFromAsc(ejs, mprGetAppDir()));
-    relModDir = mprNormalizePath(sfmt("%s/../%s", mprGetAppDir(), mprGetPathBase(BLD_LIB_NAME)));
+    relModDir = mprNormalizePath(sfmt("%s/../%s", mprGetAppDir(), BLD_LIB_NAME));
     ejsSetProperty(ejs, ap, -1, ejsCreatePathFromAsc(ejs, mprGetAbsPath(relModDir)));
 #if !VXWORKS
     ejsSetProperty(ejs, ap, -1, ejsCreatePathFromAsc(ejs, BLD_LIB_PREFIX));

@@ -332,6 +332,8 @@ module ejs {
         //  MOB - how to create a temp in the standard system temp location
         /**
             Create a new temporary file. The temp file is located in the directory specified by the Path object. 
+            If the path object is created with an empty path value, the temporary file will be created in the standard
+            system location for temp files. This is typically /tmp or /temp.
             @returns a new Path object for the temp file.
          */
         native function temp(): Path

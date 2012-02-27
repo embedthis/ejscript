@@ -20,7 +20,7 @@ Bit.load({
             sources: [ 
                 'src/*.c',
             ],
-            depends: [ 'libmpr', 'libejs', 'ejs.mod', 'ejs.zlib.mod', 'libzlib3' ],
+            depends: [ 'libmpr', 'libejs', 'ejs.mod', 'ejs.zlib.mod', 'zlib' ],
         },
 	},
 })

@@ -1344,9 +1344,7 @@ static char *searchForModule(Ejs *ejs, cchar *moduleName, int minVersion, int ma
 
         } else {
             /* Search bin/../lib */
-            dp = mprGetAppDir();
-            dp = mprGetPathParent(dp);
-            dp = mprJoinPath(dp, BLD_LIB_NAME);
+            dp = mprJoinPath(mprGetPathParent(mprGetAppDir()), BLD_LIB_NAME);
             filename = mprJoinPath(dp, basename);
             if ((path = probe(ejs, filename, minVersion, maxVersion)) != 0) {
                 return path;
