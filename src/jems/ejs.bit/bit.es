@@ -279,6 +279,7 @@ public class Bit {
             makeOutDirs()
             makeBitFile(platform)
             makeBuildConfig(platform)
+            importPacks()
             cross = true
         }
     }
@@ -690,7 +691,7 @@ public class Bit {
     /*
         Import pack files
      */
-    function import() {
+    function importPacks() {
         for (let [pname, pack] in bit.packs) {
             for each (file in pack.imports) {
                 vtrace('Import', file)

@@ -28,8 +28,10 @@ if (bit.platform.os == 'win') {
     }
 
 } else if (bit.platform.os == 'macosx') {
+print("PP", path)
     let search = [path, '/usr/lib']
     let lib = probe('libz.dylib', {fullpath: true, search: search}).absolute
+print("LL", lib)
     let dir = lib.parent
     search = [path, '/usr/include']
     let incdir = probe('zlib.h', {search: search}).absolute
@@ -39,7 +41,7 @@ if (bit.platform.os == 'win') {
         includes: [ incdir ],
         libraries: [ 'z' ],
         linker: [ '-L' + lib.parent ],
-        imports: [ lib.parent.glob('libz*.dylib') ]
+        imports: lib.parent.glob('libz*.dylib')
     }
 
 } else {

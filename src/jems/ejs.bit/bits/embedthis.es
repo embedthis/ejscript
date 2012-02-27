@@ -217,10 +217,13 @@ public function package(formats) {
         let s = bit.settings
         let dist = { macosx: 'Apple' }
         let name = [s.product, s.version, s.buildNumber, dist, OS.toUpper(), ARCH].join('-')
-        let files = pkg.glob('**')
+        let files = pkg.glob('**', {exclude: /\/$/})
 
         if (fmt == 'tar') {
-            //  tar
+            //  MOB - file list
+            let tar = new Tar(bit.dir.rel.join(name).joinExt('tar'))
+            tar.create(files)
+            Zlib.compress(tar, tar.replaceExt('tgz') 
         }
         if (fmt == 'native') {
         }
