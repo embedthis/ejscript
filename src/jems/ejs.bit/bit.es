@@ -466,7 +466,11 @@ public class Bit {
         f.writeLine('#define BLD_CONFIG_CMD "' + App.args.join(' ') + '"')
 
         //  MOB - this is used in mprModule which does a basename anyway
-        f.writeLine('#define BLD_LIB_NAME "' + platform + '/lib' + '"')
+        if (bit.platform.like == 'windows') {
+            f.writeLine('#define BLD_LIB_NAME "' + 'bin' + '"')
+        } else {
+            f.writeLine('#define BLD_LIB_NAME "' + 'lib' + '"')
+        }
 
         /* Prefixes */
         let base = (settings.name == 'ejs') ? bit.prefixes.productver : bit.prefixes.product
@@ -916,35 +920,48 @@ public class Bit {
             target.name ||= tname
             target.home ||= home
             if (target.path) {
+                //  MOB - functionalize this
                 if (!target.path.startsWith('${')) {
                     target.path = target.home.join(target.path)
                 }
             }
             if (target.includes is Array) {
                 for (i in target.includes) {
-                    target.includes[i] = home.join(target.includes[i])
+                    if (!target.includes[i].startsWith('${')) {
+                        target.includes[i] = home.join(target.includes[i])
+                    }
                 }
             } else if (target.includes is RegExp) {
                 ;
             } else if (target.includes) {
-                target.includes = home.join(target.includes)
+                if (!target.includes.startsWith('${')) {
+                    target.includes = home.join(target.includes)
+                }
             }
             for (i in target.sources) {
                 if (target.sources is Array) {
-                    target.sources[i] = home.join(target.sources[i])
+                    if (!target.sources[i].startsWith('${')) {
+                        target.sources[i] = home.join(target.sources[i])
+                    }
                 } else if (target.includes is Regexp) {
                     ;
                 } else if (target.sources) {
-                    target.sources = home.join(target.sources)
+                    if (!target.sources.startsWith('${')) {
+                        target.sources = home.join(target.sources)
+                    }
                 }
             }
             for (i in target.files) {
                 if (target.files is Array) {
-                    target.files[i] = home.join(target.files[i])
+                    if (!target.files[i].startsWith('${')) {
+                        target.files[i] = home.join(target.files[i])
+                    }
                 } else if (target.includes is Regexp) {
                     ;
                 } else if (target.files) {
-                    target.files = home.join(target.files)
+                    if (!target.files.startsWith('${')) {
+                        target.files = home.join(target.files)
+                    }
                 }
             }
             /* Convert strings scripts into an array of scripts structures */

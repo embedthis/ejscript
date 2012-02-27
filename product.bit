@@ -13,6 +13,7 @@ Bit.load({
         'src/cmd/cmd.bit',
         'src/core/core.bit',
 
+        'src/jems/ejs.bit/bit.bit',
         'src/jems/ejs.unix/unix.bit',
         'src/jems/ejs.jem/jem.bit',
         'src/jems/ejs.db/db.bit',
@@ -21,15 +22,16 @@ Bit.load({
         'src/jems/ejs.web/web.bit',
         'src/jems/ejs.template/template.bit',
         'src/jems/ejs.tar/tar.bit',
+        'src/jems/ejs.zlib/zlib.bit',
         'src/jems/ejs.mvc/mvc.bit',
         '${BITS}/embedthis.bit',
     ],
 
     settings: {
-		product: 'appweb',
-		title: 'Embedthis Appweb',
+		product: 'ejs',
+		title: 'Embedthis Ejscript',
         company: 'Embedthis',
-		version: '4.0.0',
+		version: '2.0.0',
 		buildNumber: 'B2',
         sync: ['http', 'mpr', 'pcre', 'sqlite'],
         packs: [ 'bits/packs' ],
@@ -94,10 +96,10 @@ Bit.load({
                 install('uninstall.sh', p.bin.join('uninstall'), {permissions: 0755, expand: true})
                 install('linkup', p.bin, {permissions: 0755, expand: true})
                 install(bit.dir.bin + '/*', p.bin, {
-                    include: /appweb|appman|esp|http|auth|makerom|libappweb|libmpr/,
+                    include: /ejs|appman|esp|http|auth|makerom|libejs|libmpr/,
                     permissions: 0755, 
                 })
-                install(bit.dir.bin.join('appweb')', p.bin, {
+                install(bit.dir.bin.join('ejs')', p.bin, {
                     permissions: 0755, 
                     strip: strip,
                 }

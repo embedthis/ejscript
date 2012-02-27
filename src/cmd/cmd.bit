@@ -6,7 +6,7 @@ Bit.load({
 
     targets: {
         ejs: {
-            type: 'exe'
+            type: 'exe',
             sources: [ 'ejs.c', ],
             depends: [ 'libejs' ],
             scripts: {
@@ -21,20 +21,20 @@ Bit.load({
         },
 
         ejsc: {
-            type: 'exe'
+            type: 'exe',
             sources: [ 'ejsc.c', ],
             depends: [ 'libejs' ],
         },
 
         ejsmod: {
-            type: 'exe'
+            type: 'exe',
             includes: [ '.' ],
             sources: [ 'ejsmod.c', 'doc.c', 'docFiles.c', 'listing.c', 'slotGen.c' ],
             depends: [ 'libejs' ],
         },
 
         ejsrun: {
-            type: 'exe'
+            type: 'exe',
             sources: [ 'ejsrun.c', ],
             depends: [ 'libejs' ],
         },
