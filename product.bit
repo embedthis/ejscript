@@ -52,7 +52,7 @@ Bit.load({
         } },
     },
 
-    '+optional': [ 'doxygen', 'openssl', 'matrixssl', 'sqlite' ],
+    '+optional': [ 'doxygen', 'zlib', 'openssl', 'matrixssl', 'sqlite' ],
     '+required': [ 'pcre', 'http' ]
 
     defaults: {

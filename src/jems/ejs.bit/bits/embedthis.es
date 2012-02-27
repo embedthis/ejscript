@@ -57,8 +57,10 @@ function installCallback(src: Path, dest: Path, options = {}): Boolean {
         return true
     }
     let attributes = { 
-        owner: options.owner || -1, 
-        group: options.group || -1, 
+        uid: options.uid
+        gid: options.gid
+        user: options.user
+        group: options.group
         permissions: options.permissions || (src.extension.match(/exe|lib|so|dylib|sh|es/) ? 0755 : 0644)
     }
     if (options.cat) {
@@ -83,7 +85,7 @@ function installCallback(src: Path, dest: Path, options = {}): Boolean {
             data = data.replace(options.filter, '')
         }
         dest.append(data)
-        dest.attributes = attributes
+        dest.setAttributes(attributes)
     } else {
         vtrace(options.task.toPascal(), dest.relative)
         dest.parent.makeDir()
@@ -92,12 +94,12 @@ function installCallback(src: Path, dest: Path, options = {}): Boolean {
     if (options.patch) {
         trace('Patch', dest)
         dest.write(dest.readString().expand(bit))
-        dest.attributes = attributes
+        dest.setAttributes(attributes)
     }
     if (options.fold && bit.platform.like == 'windows') {
         trace('Fold', dest)
         fold(dest, options)
-        dest.attributes = attributes
+        dest.setAttributes(attributes)
     }
     if (options.strip && bit.packs.strip) {
         trace('Strip', dest)
@@ -194,18 +196,35 @@ public function package(formats) {
             }
             pkg = flat
         }
-        name = rel.join(s.product + '-' + s.version + '-' + s.buildNumber + '-' + fmt + '.tgz')
-        generic = rel.join(s.product + '-' + fmt + '.tgz')
-        if (bit.platform.os == 'linux') {
-            run('tar -C ' + pkg + ' --owner 0 --group 0 -czf ' + name + ' .')
-        } else {
-            run('tar -C ' + pkg + ' -czf ' + name + ' .')
+        if (fmt == 'flat' || fmt == 'combo') {
+            name = rel.join(s.product + '-' + s.version + '-' + s.buildNumber + '-' + fmt + '.tgz')
+            generic = rel.join(s.product + '-' + fmt + '.tgz')
+            if (bit.platform.os == 'linux') {
+                run('tar -C ' + pkg + ' --owner 0 --group 0 -czf ' + name + ' .')
+            } else {
+                run('tar -C ' + pkg + ' -czf ' + name + ' .')
+            }
+            Path(generic).remove()
+            Path(name).symlink(generic)
+            trace('Package', name)
+            trace('Package', generic)
+        } 
+        /*
+            - remove extended attributes
+                   for i in $(ls -Rl@ | grep '^    ' | awk '{print $1}' | sort -u); do \
+                               find . | xargs xattr -d $i 2>/dev/null ; done
+
+        let s = bit.settings
+        let dist = { macosx: 'Apple' }
+        let name = [s.product, s.version, s.buildNumber, dist, OS.toUpper(), ARCH].join('-')
+        let files = pkg.glob('**')
+
+        if (fmt == 'tar') {
+            //  tar
         }
-        //MOB  Path(name).symlink(generic)
-        Path(generic).remove()
-        run('ln -s ' + name + ' ' + generic)
-        trace('Package', name)
-        trace('Package', generic)
+        if (fmt == 'native') {
+        }
+         */
     }
 }
 

@@ -526,6 +526,7 @@ static EjsObj *ba_flush(Ejs *ejs, EjsByteArray *ap, int argc, EjsObj **argv)
 {
     flushByteArray(ejs, ap);
     ap->writePosition = ap->readPosition = 0;
+    memset(ap->value, 0, ap->length);
     return 0;
 }
 
@@ -1297,6 +1298,7 @@ void ejsResetByteArray(Ejs *ejs, EjsByteArray *ba)
 {
     if (ba->writePosition == ba->readPosition) {
         ba->writePosition = ba->readPosition = 0;
+        memset(ba->value, 0, ba->length);
     }
 }
 
@@ -1329,6 +1331,7 @@ ssize ejsCopyToByteArray(Ejs *ejs, EjsByteArray *ba, ssize offset, cchar *data, 
         return EJS_ERR;
     }
     for (i = 0; i < length; i++) {
+        //  MOB OPT - memcpy
         ba->value[offset++] = data[i];
     }
     return length;

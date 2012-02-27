@@ -99,7 +99,7 @@ cp ${BLD_TOP}/doc/man/*.1 ${DOC}/man
 #
 #   jem and mvc
 #
-cp ${BLD_BIN_DIR}/*.cmd ${BLD_BIN_DIR}/jem ${BLD_BIN_DIR}/mvc ${SRC}
+cp ${BLD_BIN_DIR}/jem.es ${BLD_BIN_DIR}/mvc.es ${BLD_BIN_DIR}/bit.es ${SRC}
 
 #
 #   www

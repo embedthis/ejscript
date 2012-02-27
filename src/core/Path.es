@@ -69,20 +69,28 @@ module ejs {
             file.close()
         }
 
-        //  MOB - should not be setter 
         /**
             File security permissions.
             @return the file attributes object hash. Fields include: 
-            @options owner String representing the file owner
-            @options group String representing the file group
+            @options user String representing the file user name
+            @options group String representing the file group name
+            @options uid Number representing the file user id
+            @options gid Number representing the file group id
             @options permissions Number File Posix permissions mask
          */
         native function get attributes(): Object
 
         /**
-            @duplicate Path.attributes
+            Define file security permissions.
+            @options user String representing the file user name
+            If both user and uid are specified, uid takes precedence. 
+            @options group String representing the file group name
+            If both group and gid are specified, gid takes precedence.
+            @options uid Number representing the file user id
+            @options gid Number representing the file group id
+            @options permissions Number File Posix permissions mask
          */
-        native function set attributes(attributes: Object): Void
+        native function setAttributes(attributes: Object): Void
 
         /**
             The base of portion of the path. The base portion is the trailing portion without any directory elements.
@@ -110,8 +118,12 @@ module ejs {
             @param target New file location
             @param options Object hash
             @options permissions Set to a numeric Posix permissions mask. Not implemented.
-            @options owner String representing the file owner
-            @options group String representing the file group
+            @options user String representing the file user name
+            If both user and uid are specified, uid takes precedence. 
+            @options group String representing the file group name
+            If both group and gid are specified, gid takes precedence.
+            @options uid Number representing the file user id
+            @options gid Number representing the file group id
          */
         native function copy(target: Object, options: Object? = null): Void
 
@@ -298,8 +310,12 @@ module ejs {
             @param options
             @options permissions Directory permissions to use for all created directories. Set to a numeric 
                 Posix permissions mask.
-            @options owner String representing the file owner for all created directories.
+            @options user String representing the file user for all created directories.
+                If both user and uid are specified, uid takes precedence. 
             @options group String representing the file group for all created directories.
+                If both group and gid are specified, gid takes precedence.
+            @options uid Number representing the file user id
+            @options gid Number representing the file group id
             @return True if the directory can be made or already exists
          */
         native function makeDir(options: Object? = null): Boolean
@@ -372,7 +388,7 @@ module ejs {
             @options mode optional file access mode string. Use "r" for read, "w" for write, "a" for append to existing
                 content, "+" never truncate.
             @options permissions optional Posix permissions number mask. Defaults to 0664.
-            @options owner String representing the file owner
+            @options user String representing the file user
             @options group String representing the file group
             @return a File object which implements the Stream interface.
             @throws IOError if the path or file cannot be created.
@@ -387,7 +403,7 @@ module ejs {
                 content, "+" never truncate.
             @options encoding Text encoding format
             @options permissions optional Posix permissions number mask. Defaults to 0664.
-            @options owner String representing the file owner
+            @options user String representing the file user
             @options group String representing the file group
             @return a TextStream object which implements the Stream interface.
             @throws IOError if the path or file cannot be opened or created.
@@ -401,7 +417,7 @@ module ejs {
             @options mode optional file access mode with values ored from: Read, Write, Append, Create, Open, Truncate. 
                 Defaults to Read.
             @options permissions optional Posix permissions number mask. Defaults to 0664.
-            @options owner String representing the file owner
+            @options user String representing the file user
             @options group String representing the file group
             @return a BinaryStream object which implements the Stream interface.
             @throws IOError if the path or file cannot be opened or created.
@@ -416,7 +432,7 @@ module ejs {
 
         /*  MOB -- different to File.permissions. Should have something that returns an object with full path/file
             attributes including group/user. The perms should be broken down into world:group:user */
-        //  MOB - should not be getter/setter but should be functions
+        //  MOB - should not use a setter should be functions
         /**
             The file permissions of a path. This number contains the Posix style permissions value or null if the file 
             does not exist. NOTE: this is not a string representation of an octal posix mask. 
@@ -617,6 +633,12 @@ module ejs {
          */
         function startsWith(prefix: String): Boolean
             portable.name.startsWith(Path(prefix).portable)
+
+        /**
+            Create a symbolic link
+            @param target Symbolic link to create. This link will refer to the target.
+          */
+        native function symlink(target: String): Void
 
         /**
             Convert the path to a JSON string. 

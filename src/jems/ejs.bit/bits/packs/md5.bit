@@ -1,0 +1,13 @@
+/*
+    md5.bit - Strip package for Bit
+ */
+
+let md5 = probe('md5', {nothrow: true, fullpath: true})
+if (!md5) md5 = probe('md5sum', {nothrow: true, fullpath: true})
+
+if (!md5) {
+    /* This will throw */
+    probe('md5sum')
+}
+Bit.load({packs: { md5: {path: md5}}})
+

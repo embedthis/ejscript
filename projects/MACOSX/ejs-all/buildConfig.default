@@ -315,6 +315,15 @@ BLD_SQLITE_BUILTIN=1
 BLD_SQLITE_LIBS=sqlite3
 
 #
+#   ZLIB
+#
+BLD_FEATURE_ZLIB=1
+BLD_ZLIB_BUILTIN=0
+BLD_ZLIB_DEPENDENCIES=mpr
+BLD_ZLIB_IMPORTS=${BLD_TOP}/../../../../usr/lib/libz.dylib
+BLD_ZLIB_LIBS=z mpr
+
+#
 #	EJS
 #
 BLD_FEATURE_EJS=1
@@ -521,6 +530,11 @@ else
     #define BLD_FEATURE_SQLITE 1
     #define BLD_SQLITE_BUILTIN 1
     #define BLD_SQLITE_LIBS "sqlite3"
+    #define BLD_FEATURE_ZLIB 1
+    #define BLD_ZLIB_BUILTIN 0
+    #define BLD_ZLIB_DEPENDENCIES "mpr"
+    #define BLD_ZLIB_IMPORTS "${BLD_TOP}/../../../../usr/lib/libz.dylib "
+    #define BLD_ZLIB_LIBS "z mpr"
     #define BLD_FEATURE_EJS 1
     #define BLD_EJS "ejs"
     #define BLD_EJS_BUILTIN 1

@@ -27,6 +27,9 @@ $(BLD_LIB_DIR)/bits: bits bits/* bits/*/*
 	rm -fr $(BLD_LIB_DIR)/bits
 	cp -r bits $(BLD_LIB_DIR)
 
+cleanExtra:
+	rm -fr $(BLD_LIB_DIR)/bits
+
 #
 #   Local variables:
 #   tab-width: 4

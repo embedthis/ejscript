@@ -742,9 +742,11 @@ static ssize readData(Ejs *ejs, EjsFile *fp, EjsByteArray *ap, ssize offset, ssi
         if (ap->resizable) {
             ejsGrowByteArray(ejs, ap, ap->length + (count - len));
         }
+#if UNUSED
         len = ap->length - offset;
+#endif
     }
-    bytes = mprReadFile(fp->file, &ap->value[offset], len);
+    bytes = mprReadFile(fp->file, &ap->value[offset], count);
     if (bytes < 0) {
         ejsThrowIOError(ejs, "Error reading from %s", fp->path);
     }

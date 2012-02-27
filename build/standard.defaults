@@ -54,6 +54,7 @@ with --os=win --build --optional pkg
 with pcre mpr http
 with --host --optional openssl ssl
 with --optional sqlite 
+with --optional zlib 
 with ejs
 with ejscript
 

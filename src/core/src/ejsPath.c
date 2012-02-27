@@ -13,7 +13,7 @@
 
 static EjsArray *getPathFiles(Ejs *ejs, EjsArray *results, cchar *dir, int flags, EjsRegExp *exclude, EjsRegExp *include);
 static cchar *getPathString(Ejs *ejs, EjsObj *vp);
-static void getUserGroup(Ejs *ejs, EjsObj *attributes, int *owner, int *group);
+static void getUserGroup(Ejs *ejs, EjsObj *attributes, int *uid, int *gid);
 static EjsArray *globPath(Ejs *ejs, EjsArray *results, cchar *path, cchar *base, cchar *pattern, int flags, 
         EjsRegExp *exclude, EjsRegExp *include);
 static int globMatch(Ejs *ejs, cchar *s, cchar *pat, int isDir, int flags, cchar *seps, int count, cchar **nextPartPattern);
@@ -206,9 +206,20 @@ static EjsObj *getAttributes(Ejs *ejs, EjsPath *fp, int argc, EjsObj **argv)
         return ESV(null);
     }
     attributes = ejsCreateEmptyPot(ejs);
-    ejsSetPropertyByName(ejs, attributes, EN("owner"), itos(info.owner));
-    ejsSetPropertyByName(ejs, attributes, EN("group"), itos(info.group));
-    ejsSetPropertyByName(ejs, attributes, EN("permissions"), sfmt("0%0d", info.perms));
+    ejsSetPropertyByName(ejs, attributes, EN("permissions"), ejsCreateStringFromAsc(ejs, sfmt("0%0o", info.perms)));
+    ejsSetPropertyByName(ejs, attributes, EN("uid"), ejsCreateNumber(ejs, info.owner));
+    ejsSetPropertyByName(ejs, attributes, EN("gid"), ejsCreateNumber(ejs, info.group));
+
+#if BLD_UNIX_LIKE
+    struct passwd   *pw;
+    struct group    *gp;
+    if ((pw = getpwuid(info.owner)) != 0) {
+        ejsSetPropertyByName(ejs, attributes, EN("user"), ejsCreateStringFromAsc(ejs, pw->pw_name));
+    }
+    if ((gp = getgrgid(info.group)) != 0) {
+        ejsSetPropertyByName(ejs, attributes, EN("group"), ejsCreateStringFromAsc(ejs, gp->gr_name));
+    }
+#endif
     return attributes;
 }
 
@@ -226,7 +237,7 @@ static EjsObj *setAttributes(Ejs *ejs, EjsPath *fp, int argc, EjsObj **argv)
     mprGetPathInfo(fp->value, &info);
     if (!info.valid) {
         ejsThrowIOError(ejs, "Can't access %s", fp->value);
-        return ESV(null);
+        return 0;
     }
     ejsSetPathAttributes(ejs, fp->value, attributes);
     return 0;
@@ -271,7 +282,6 @@ static EjsArray *getPathComponents(Ejs *ejs, EjsPath *fp, int argc, EjsObj **arg
 }
 
 
-//  MOB - push into MPR
 int ejsSetPathAttributes(Ejs *ejs, cchar *path, EjsObj *attributes)
 {
     EjsObj  *permissions;
@@ -282,11 +292,11 @@ int ejsSetPathAttributes(Ejs *ejs, cchar *path, EjsObj *attributes)
     }
 #if BLD_UNIX_LIKE
 {
-    int     owner, group;
+    int     uid, gid;
 
-    getUserGroup(ejs, attributes, &owner, &group);
-    if (owner >= 0 || group >= 0) {
-        if (chown(path, owner, group) < 0) {
+    getUserGroup(ejs, attributes, &uid, &gid);
+    if (uid >= 0 || gid >= 0) {
+        if (chown(path, uid, gid) < 0) {
             ejsThrowStateError(ejs, "Can't change group. Error %d", mprGetError());
         }
     }
@@ -938,39 +948,40 @@ static EjsPath *pathLinkTarget(Ejs *ejs, EjsPath *fp, int argc, EjsObj **argv)
 }
 
 
-static void getUserGroup(Ejs *ejs, EjsObj *attributes, int *owner, int *group)
+static void getUserGroup(Ejs *ejs, EjsObj *attributes, int *uid, int *gid)
 {
 #if BLD_UNIX_LIKE
     EjsAny          *ownerName, *groupName;
     struct passwd   *pp;
     struct group    *gp;
 
-    *owner = *group = -1;
-    if ((groupName = ejsGetPropertyByName(ejs, attributes, EN("group"))) != 0) {
+    *uid = *gid = -1;
+    if ((groupName = ejsGetPropertyByName(ejs, attributes, EN("gid"))) != 0) {
         if (ejsIs(ejs, groupName, Number)) {
-            *group = ejsGetInt(ejs, groupName);
-        } else {
-            groupName = ejsToString(ejs, groupName);
-            if ((gp = getgrnam(ejsToMulti(ejs, groupName))) == 0) {
-                ejsThrowArgError(ejs, "Can't find group %@", groupName);
-                return;
-            }
-            *group = gp->gr_gid;
+            *gid = ejsGetInt(ejs, groupName);
         }
+    } else if ((groupName = ejsGetPropertyByName(ejs, attributes, EN("group"))) != 0) {
+        groupName = ejsToString(ejs, groupName);
+        //  MOB - these are thread-safe on mac, but not on all systems. use getgrnam_r
+        if ((gp = getgrnam(ejsToMulti(ejs, groupName))) == 0) {
+            ejsThrowArgError(ejs, "Can't find group %@", groupName);
+            return;
+        }
+        *gid = gp->gr_gid;
     }
     if ((ownerName = ejsGetPropertyByName(ejs, attributes, EN("owner"))) != 0) {
         if (ejsIs(ejs, ownerName, Number)) {
-            *owner = ejsGetInt(ejs, ownerName);
-        } else {
-            if ((pp = getpwnam(ejsToMulti(ejs, ownerName))) == 0) {
-                ejsThrowArgError(ejs, "Can't find user %@", ownerName);
-                return;
-            }
-            *owner = pp->pw_uid;
+            *uid = ejsGetInt(ejs, ownerName);
         }
+    } else if ((ownerName = ejsGetPropertyByName(ejs, attributes, EN("owner"))) != 0) {
+        if ((pp = getpwnam(ejsToMulti(ejs, ownerName))) == 0) {
+            ejsThrowArgError(ejs, "Can't find user %@", ownerName);
+            return;
+        }
+        *uid = pp->pw_uid;
     }
 #else
-    *owner = *group = -1;
+    *uid = *group = -1;
 #endif
 }
 
@@ -984,19 +995,19 @@ static EjsObj *makePathDir(Ejs *ejs, EjsPath *fp, int argc, EjsObj **argv)
 {
     MprPath     info;
     EjsObj      *attributes, *permissions;
-    int         rc, perms, owner, group;
+    int         rc, perms, uid, gid;
     
     attributes = (argc >= 1) ? argv[0] : 0;
     perms = 0755;
-    group = owner = -1;
+    gid = uid = -1;
     if (argc == 1) {
-        getUserGroup(ejs, attributes, &owner, &group);
+        getUserGroup(ejs, attributes, &uid, &gid);
         if ((permissions = ejsGetPropertyByName(ejs, attributes, EN("permissions"))) != 0) {
             perms = ejsGetInt(ejs, permissions);
         }
     }
     if (mprGetPathInfo(fp->value, &info) < 0) {
-        if ((rc = mprMakeDir(fp->value, perms, owner, group, 1)) < 0) {
+        if ((rc = mprMakeDir(fp->value, perms, uid, gid, 1)) < 0) {
             if (rc == MPR_ERR_CANT_COMPLETE) {
                 ejsThrowStateError(ejs, "Can't set directory permissions. Error %d", mprGetError());
             } else {
@@ -1523,6 +1534,29 @@ static EjsNumber *getPathFileSize(Ejs *ejs, EjsPath *fp, int argc, EjsObj **argv
 }
 
 
+/**
+    function symlink(target: String): Void
+  */
+static EjsVoid *path_symlink(Ejs *ejs, EjsPath *fp, int argc, EjsObj **argv)
+{
+    cchar   *target;
+
+    target = ejsToMulti(ejs, argv[0]);
+#if BLD_UNIX_LIKE
+    if (symlink(fp->value, target) < 0) {
+        ejsThrowIOError(ejs, "Can't create symlink from %s to %s, error %d", fp->value, target, errno);
+        return 0;
+    }
+#else
+    if (mprCopyPath(fp->value, target, 0644) < 0) {
+        ejsThrowIOError(ejs, "Can't copy from %s to %s, error %d", fp->value, target, errno);
+        return 0;
+    }
+#endif
+    return 0;
+}
+
+
 /*
     override function toJSON(): String
  */
@@ -1702,7 +1736,7 @@ void ejsConfigurePathType(Ejs *ejs)
     ejsBindConstructor(ejs, type, pathConstructor);
     ejsBindMethod(ejs, prototype, ES_Path_absolute, absolutePath);
     ejsBindMethod(ejs, prototype, ES_Path_accessed, getAccessedDate);
-    ejsBindAccess(ejs, prototype, ES_Path_attributes, getAttributes, setAttributes);
+    ejsBindAccess(ejs, prototype, ES_Path_attributes, getAttributes, NULL);
     ejsBindMethod(ejs, prototype, ES_Path_basename, getPathBasename);
     ejsBindMethod(ejs, prototype, ES_Path_components, getPathComponents);
     ejsBindMethod(ejs, prototype, ES_Path_copy, copyPath);
@@ -1741,12 +1775,12 @@ void ejsConfigurePathType(Ejs *ejs)
     ejsBindMethod(ejs, prototype, ES_Path_remove, removePath);
     ejsBindMethod(ejs, prototype, ES_Path_rename, renamePathFile);
     ejsBindMethod(ejs, prototype, ES_Path_resolve, resolvePath);
-#if ES_Path_root
     ejsBindMethod(ejs, prototype, ES_Path_root, rootPath);
-#endif
     ejsBindMethod(ejs, prototype, ES_Path_same, isPathSame);
     ejsBindMethod(ejs, prototype, ES_Path_separator, pathSeparator);
+    ejsBindMethod(ejs, prototype, ES_Path_setAttributes, setAttributes);
     ejsBindMethod(ejs, prototype, ES_Path_size, getPathFileSize);
+    ejsBindMethod(ejs, prototype, ES_Path_symlink, path_symlink);
     ejsBindMethod(ejs, prototype, ES_Path_toJSON, pathToJSON);
     ejsBindMethod(ejs, prototype, ES_Path_toString, pathToString);
     ejsBindMethod(ejs, prototype, ES_Path_trimExt, trimExt);

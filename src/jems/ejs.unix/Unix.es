@@ -165,7 +165,6 @@ module ejs.unix {
             The wildcards "*", "**" and "?" are the only wild card patterns supported. The "**" pattern matches
             every directory. The Posix "[]" and "{a,b}" style expressions are not supported.
         @param options If set to true, then files will include sub-directories in the returned list of files.
-        @option descend Descend into subdirectories
         @option dirs Include directories in the file list
         @option depthFirst Do a depth first traversal. If "dirs" is specified, the directories will be shown after
         the files in the directory. Otherwise, directories will be listed first.
@@ -195,7 +194,6 @@ module ejs.unix {
             patterns supported. The "**" pattern matches any number of directories.  The Posix "[]" and "{a,b}" style
             expressions are not supported.
         @param options If set to true, then files will include sub-directories in the returned list of files.
-        @option descend Descend into subdirectories
         @option dirs Include directories in the file list
         @option depthFirst Do a depth first traversal. If "dirs" is specified, the directories will be shown after
         the files in the directory. Otherwise, directories will be listed first.
@@ -204,7 +202,7 @@ module ejs.unix {
         @option include Regular expression pattern of files to include in the results. Matches the entire returned path.
         @return An Array of Path objects for each matching file.
      */
-    function find(path: Object, pattern: String = "*", options = {descend: true}): Array {
+    function find(path: Object, pattern: String = "*", options = {}): Array {
         let result = []
         if (path is Array) {
             let paths = path
@@ -272,22 +270,18 @@ module ejs.unix {
         file.read(count)
 
     /**
-        Remove files from the file system. If options.descend is 
-            true, this call will descend into subdirectories and remove subdirectories and files.
+        Remove files from the file system.
         @param patterns Pattern to match files to remove. This can be a String, Path or array of String/Paths. 
             The wildcards "*", "**" and "?" are the only wild card patterns supported. The "**" pattern matches
             every directory. The Posix "[]" and "{a,b}" style expressions are not supported.
         @param options Options to modify the removal
-        @option descend Descend into subdirectories to get an initial file list that is then matched against the
-            patterns. NOTE: the patterns match only the basename portion of the filename.
         @option exclude Regular expression pattern of files to exclude from removal. Matches the entire path.
         @option hidden Remove hidden files starting with "." Defaults to true.
         @option include Regular expression pattern of files to remove. Matches the entire returned path.
-        @option nodirs Exclude directories from removal. The default is to include directories if descend is true.
+        @option nodirs Exclude directories from removal. The default is to include directories.
         @return True if all the contents are sucessfully deleted. Otherwise return false.
     */
     function rm(patterns, options = {}): Boolean {
-        /* Use depth first incase user specifies descend */
         options = blend({depthFirst: true, hidden: true}, options)
         let success = true
         if (!(patterns is Array)) {
@@ -309,7 +303,6 @@ module ejs.unix {
             The wildcards "*", "**" and "?" are the only wild card patterns supported. The "**" pattern matches
             every directory. The Posix "[]" and "{a,b}" style expressions are not supported.
         @param options Options to modify the removal
-        @option descend Descend into subdirectories. Defaults to true.
         @option exclude Regular expression pattern of files to exclude from removal. Matches the entire path.
         @option hidden Remove hidden files starting with "."
         @option include Regular expression pattern of files to remove. Matches the entire returned path.
@@ -321,11 +314,10 @@ module ejs.unix {
         if (!(patterns is Array)) {
             patterns = [patterns]
         }
-        let dirOptions = blend({descend: true}, options)
         for each (let pat:Path in patterns) {
             for each (let path: Path in Path('.').glob(pat)) {
                 if (path.isDir) {
-                    rmdir(path.join('*'), dirOptions)
+                    rmdir(path.join('*'), options)
                 }
                 if (!path.remove()) {
                     success = false

@@ -605,7 +605,13 @@ static EjsString *formatString(Ejs *ejs, EjsString *sp, int argc, EjsObj **argv)
             buf = 0;
             //  OPT
             switch (kind) {
-            case 'd': case 'i': case 'o': case 'u':
+            case 'o':
+                value = ejsToNumber(ejs, value);
+                flen = sizeof(fmt) - len + 1;
+                mtow(&fmt[len - 1], flen, "Lo", 2);
+                buf = wfmt(fmt, (int64) ejsGetNumber(ejs, value));
+                break;
+            case 'd': case 'i': case 'u':
                 value = ejsToNumber(ejs, value);
                 flen = sizeof(fmt) - len + 1;
                 mtow(&fmt[len - 1], flen, ".0f", 3);
@@ -628,6 +634,10 @@ static EjsString *formatString(Ejs *ejs, EjsString *sp, int argc, EjsObj **argv)
 
             case 'n':
                 buf = wfmt(fmt, 0);
+                break;
+                    
+            case 'c':
+                buf = wfmt(fmt, (int) ejsGetNumber(ejs, value));
                 break;
 
             default:

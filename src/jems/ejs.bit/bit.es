@@ -789,7 +789,10 @@ public class Bit {
             path ||= Cmd.locate(file)
         }
         if (!path) {
-            throw 'File ' + file + ' not found for package ' + currentPack
+            if (!control.nothrow) {
+                throw 'File ' + file + ' not found for package ' + currentPack
+            }
+            return null
         }
         App.log.debug(2, 'Probe for ' + file + ' found at ' + path)
         if (control.fullpath) {

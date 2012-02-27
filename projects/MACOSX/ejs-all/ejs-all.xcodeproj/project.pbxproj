@@ -58,6 +58,7 @@
 			buildPhases = (
 			);
 			dependencies = (
+				C92069C014FAFCD700E10C9B /* PBXTargetDependency */,
 				C97C5B5614F6B9C70095BDD1 /* PBXTargetDependency */,
 				C95DB5CF141F20AD0047A8F8 /* PBXTargetDependency */,
 				C9D7A7FA13D4F3A0000428C7 /* PBXTargetDependency */,
@@ -159,6 +160,12 @@
 		C9188B7F115DAC060018846C /* ejsXMLList.c in Sources */ = {isa = PBXBuildFile; fileRef = C9188B57115DAC060018846C /* ejsXMLList.c */; };
 		C9188B80115DAC060018846C /* ejsXMLLoader.c in Sources */ = {isa = PBXBuildFile; fileRef = C9188B58115DAC060018846C /* ejsXMLLoader.c */; };
 		C919245B129601190045B8A0 /* ecCompiler.c in Sources */ = {isa = PBXBuildFile; fileRef = C919245A129601190045B8A0 /* ecCompiler.c */; };
+		C92069B214FAF44800E10C9B /* libmpr.dylib in Frameworks */ = {isa = PBXBuildFile; fileRef = C97627A60FD077A7009C78E1 /* libmpr.dylib */; };
+		C92069B314FAF44800E10C9B /* libpcre.dylib in Frameworks */ = {isa = PBXBuildFile; fileRef = C97627AF0FD077C3009C78E1 /* libpcre.dylib */; };
+		C92069B414FAF44800E10C9B /* libmprssl.dylib in Frameworks */ = {isa = PBXBuildFile; fileRef = C97627B60FD077E7009C78E1 /* libmprssl.dylib */; };
+		C92069B514FAF44800E10C9B /* libejs.dylib in Frameworks */ = {isa = PBXBuildFile; fileRef = C97627CB0FD07828009C78E1 /* libejs.dylib */; };
+		C92069B614FAF44800E10C9B /* libsqlite.dylib in Frameworks */ = {isa = PBXBuildFile; fileRef = C97627BD0FD077FC009C78E1 /* libsqlite.dylib */; };
+		C92069BE14FAF4A100E10C9B /* ejsZlib.c in Sources */ = {isa = PBXBuildFile; fileRef = C92069BD14FAF4A100E10C9B /* ejsZlib.c */; };
 		C9248E5D10A4933400B29BDD /* doc.c in Sources */ = {isa = PBXBuildFile; fileRef = C9248E5810A4933400B29BDD /* doc.c */; };
 		C9248E5E10A4933400B29BDD /* docFiles.c in Sources */ = {isa = PBXBuildFile; fileRef = C9248E5910A4933400B29BDD /* docFiles.c */; };
 		C9248E5F10A4933400B29BDD /* ejsmod.c in Sources */ = {isa = PBXBuildFile; fileRef = C9248E5A10A4933400B29BDD /* ejsmod.c */; };
@@ -278,6 +285,48 @@
 			proxyType = 1;
 			remoteGlobalIDString = C95E4FD310EBFD9300982610;
 			remoteInfo = libhttp;
+		};
+		C92069A614FAF44800E10C9B /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = C97623C10FD06EC4009C78E1 /* Project object */;
+			proxyType = 1;
+			remoteGlobalIDString = C903098610A366F0003FF2AB;
+			remoteInfo = jem;
+		};
+		C92069A814FAF44800E10C9B /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = C97623C10FD06EC4009C78E1 /* Project object */;
+			proxyType = 1;
+			remoteGlobalIDString = C97623D10FD06EE7009C78E1;
+			remoteInfo = ejs;
+		};
+		C92069AA14FAF44800E10C9B /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = C97623C10FD06EC4009C78E1 /* Project object */;
+			proxyType = 1;
+			remoteGlobalIDString = C9222E520FD5813F00AFA5A4;
+			remoteInfo = ejs.mod;
+		};
+		C92069AC14FAF44800E10C9B /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = C97623C10FD06EC4009C78E1 /* Project object */;
+			proxyType = 1;
+			remoteGlobalIDString = C97623DA0FD06EF4009C78E1;
+			remoteInfo = ejsc;
+		};
+		C92069AE14FAF44800E10C9B /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = C97623C10FD06EC4009C78E1 /* Project object */;
+			proxyType = 1;
+			remoteGlobalIDString = C97623E10FD06EFC009C78E1;
+			remoteInfo = ejsmod;
+		};
+		C92069BF14FAFCD700E10C9B /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = C97623C10FD06EC4009C78E1 /* Project object */;
+			proxyType = 1;
+			remoteGlobalIDString = C92069A414FAF44800E10C9B;
+			remoteInfo = ejs.zlib;
 		};
 		C92F849C10F2B93900CA953D /* PBXContainerItemProxy */ = {
 			isa = PBXContainerItemProxy;
@@ -1014,6 +1063,8 @@
 		C91A68BF11F7A5130051551E /* Static.es */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; name = Static.es; path = ../../../src/jems/ejs.web/Static.es; sourceTree = SOURCE_ROOT; };
 		C91A68C011F7A5130051551E /* Template.es */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; name = Template.es; path = ../../../src/jems/ejs.web/Template.es; sourceTree = SOURCE_ROOT; };
 		C91A68C111F7A5130051551E /* View.es */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; name = View.es; path = ../../../src/jems/ejs.web/View.es; sourceTree = SOURCE_ROOT; };
+		C92069BB14FAF44800E10C9B /* ejs.zlib.dylib */ = {isa = PBXFileReference; explicitFileType = "compiled.mach-o.dylib"; includeInIndex = 0; path = ejs.zlib.dylib; sourceTree = BUILT_PRODUCTS_DIR; };
+		C92069BD14FAF4A100E10C9B /* ejsZlib.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; name = ejsZlib.c; path = ../../../src/jems/ejs.zlib/src/ejsZlib.c; sourceTree = "<group>"; };
 		C9248E5810A4933400B29BDD /* doc.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = doc.c; sourceTree = "<group>"; };
 		C9248E5910A4933400B29BDD /* docFiles.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = docFiles.c; sourceTree = "<group>"; };
 		C9248E5A10A4933400B29BDD /* ejsmod.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = ejsmod.c; sourceTree = "<group>"; };
@@ -1107,6 +1158,18 @@
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
+		C92069B114FAF44800E10C9B /* Frameworks */ = {
+			isa = PBXFrameworksBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				C92069B214FAF44800E10C9B /* libmpr.dylib in Frameworks */,
+				C92069B314FAF44800E10C9B /* libpcre.dylib in Frameworks */,
+				C92069B414FAF44800E10C9B /* libmprssl.dylib in Frameworks */,
+				C92069B514FAF44800E10C9B /* libejs.dylib in Frameworks */,
+				C92069B614FAF44800E10C9B /* libsqlite.dylib in Frameworks */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
 		C95E4FD710EBFD9300982610 /* Frameworks */ = {
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
@@ -1386,6 +1449,14 @@
 			name = ejs.template;
 			sourceTree = "<group>";
 		};
+		C92069BC14FAF46A00E10C9B /* ejs.zlib */ = {
+			isa = PBXGroup;
+			children = (
+				C92069BD14FAF4A100E10C9B /* ejsZlib.c */,
+			);
+			name = ejs.zlib;
+			sourceTree = "<group>";
+		};
 		C9566A4010A16EB200AF4E04 /* jems */ = {
 			isa = PBXGroup;
 			children = (
@@ -1396,6 +1467,7 @@
 				C91A68B411F7A4980051551E /* ejs.template */,
 				C9A0708510A357AC00F48512 /* ejs.unix */,
 				C9A0708910A357FC00F48512 /* ejs.web */,
+				C92069BC14FAF46A00E10C9B /* ejs.zlib */,
 			);
 			name = jems;
 			sourceTree = "<group>";
@@ -1456,6 +1528,7 @@
 				C9D4528711ECDA4300F029C8 /* http */,
 				C9D7A7F213D4F346000428C7 /* ejsman */,
 				C97C5B5014F6B9710095BDD1 /* ejsrun */,
+				C92069BB14FAF44800E10C9B /* ejs.zlib.dylib */,
 			);
 			name = Products;
 			sourceTree = "<group>";
@@ -1679,6 +1752,28 @@
 /* End PBXLegacyTarget section */
 
 /* Begin PBXNativeTarget section */
+		C92069A414FAF44800E10C9B /* ejs.zlib */ = {
+			isa = PBXNativeTarget;
+			buildConfigurationList = C92069B814FAF44800E10C9B /* Build configuration list for PBXNativeTarget "ejs.zlib" */;
+			buildPhases = (
+				C92069AF14FAF44800E10C9B /* Sources */,
+				C92069B114FAF44800E10C9B /* Frameworks */,
+				C92069B714FAF44800E10C9B /* ShellScript */,
+			);
+			buildRules = (
+			);
+			dependencies = (
+				C92069A514FAF44800E10C9B /* PBXTargetDependency */,
+				C92069A714FAF44800E10C9B /* PBXTargetDependency */,
+				C92069A914FAF44800E10C9B /* PBXTargetDependency */,
+				C92069AB14FAF44800E10C9B /* PBXTargetDependency */,
+				C92069AD14FAF44800E10C9B /* PBXTargetDependency */,
+			);
+			name = ejs.zlib;
+			productName = ejs.db.sqlite.mod;
+			productReference = C92069BB14FAF44800E10C9B /* ejs.zlib.dylib */;
+			productType = "com.apple.product-type.library.dynamic";
+		};
 		C95E4FD310EBFD9300982610 /* libhttp */ = {
 			isa = PBXNativeTarget;
 			buildConfigurationList = C95E4FD810EBFD9300982610 /* Build configuration list for PBXNativeTarget "libhttp" */;
@@ -2019,6 +2114,7 @@
 				C97627CA0FD07828009C78E1 /* libejs */,
 				C987612F0FD87D7300311B7A /* ejs.db.sqlite */,
 				C97627D80FD07850009C78E1 /* ejs.web */,
+				C92069A414FAF44800E10C9B /* ejs.zlib */,
 				C9D7A7E213D4F346000428C7 /* ejsman */,
 				C97623D10FD06EE7009C78E1 /* ejs */,
 				C97623DA0FD06EF4009C78E1 /* ejsc */,
@@ -2063,6 +2159,22 @@
 			runOnlyForDeploymentPostprocessing = 0;
 			shellPath = /bin/sh;
 			shellScript = "if [ $SRC/jems/ejs.jem/jem.es -nt $BUILT_PRODUCTS_DIR/jem ] ; then\n    cp $SRC/jems/ejs.jem/jem.es $BUILT_PRODUCTS_DIR/jem\n    chmod 755 $BUILT_PRODUCTS_DIR/jem\nfi\nexit 0";
+			showEnvVarsInLog = 0;
+		};
+		C92069B714FAF44800E10C9B /* ShellScript */ = {
+			isa = PBXShellScriptBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			inputPaths = (
+				"$(JEM)/ejs.db/sqlite/Sqlite.es",
+			);
+			outputPaths = (
+				"$(DERIVED_FILE_DIR)/ejs.db.sqlite.mod",
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+			shellPath = /bin/sh;
+			shellScript = "\nexport DYLD_LIBRARY_PATH=$BUILT_PRODUCTS_DIR\nexport PATH=$TOP/build/bin:$BUILT_PRODUCTS_DIR:${PATH}\n\nmake -C $SRC/jems/ejs.db.sqlite TRACE=1 BLD_LIB_DIR=$BUILT_PRODUCTS_DIR BLD_BUILD_LIB_DIR=$BUILT_PRODUCTS_DIR module || exit 255";
 			showEnvVarsInLog = 0;
 		};
 		C9222E510FD5813F00AFA5A4 /* Build */ = {
@@ -2155,7 +2267,7 @@
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 			shellPath = /bin/sh;
-			shellScript = "\nexport DYLD_LIBRARY_PATH=$BUILT_PRODUCTS_DIR\nexport PATH=$OUT/build/bin:$BUILT_PRODUCTS_DIR:${PATH}\nINC=$OUT/INC\n\n# make -C $SRC/core TRACE=1 BLD_LIB_DIR=$BUILT_PRODUCTS_DIR BLD_BUILD_LIB_DIR=$BUILT_PRODUCTS_DIR modules || exit 255\nFILES=\"App.es Args.es Array.es BinaryStream.es Block.es Boolean.es \\\nByteArray.es Cache.es Cmd.es Compat.es Config.es Date.es Debug.es Emitter.es Error.es File.es \\\nFileSystem.es Frame.es Function.es GC.es Global.es Http.es Inflector.es Iterator.es JSON.es Loader.es \\\nLocalCache.es Locale.es Logger.es Math.es Memory.es MprLog.es Name.es Namespace.es Null.es Number.es Object.es \\\nPath.es Promise.es RegExp.es Socket.es Stream.es String.es System.es TextStream.es Timer.es Type.es Uri.es Void.es \\\nWorker.es XML.es XMLHttp.es XMLList.es\"\n\ncd $SRC/core\nchanged=0\nfor f in $FILES\ndo\n    [ $f -nt $BUILT_PRODUCTS_DIR/ejs.mod ] && changed=1\ndone\n\nif [ \"$changed\" = 1 ] ; then\n    echo \"Rebuilding ejs.mod\"\n    rm -f *.mod *.slots.h $BUILT_PRODUCTS_DIR/ejs*.mod $BUILT_PRODUCTS_DIR/ejs*.mod\n    ejsc  --debug --optimize 9 --out ejs.mod --bind --require \"\" $FILES\n    mv *.mod $BUILT_PRODUCTS_DIR\n    ejsmod --require \"\" --listing --cslots $BUILT_PRODUCTS_DIR/ejs.mod\n    for f in *.slots.h ; do\n        if [ -f $INC/$f ] ; then\n            if ! diff $f $INC/$f >/dev/null 2>&1; then\n                cp $f $INC\n                echo INSTALL $f to $INC\n            fi\n        fi\n        rm -f $f\n    done\nfi \n[ \"$changed\" = 0 ] && echo No changes to core\n\n# make -C $SRC/jems TRACE=1 BLD_LIB_DIR=$BUILT_PRODUCTS_DIR BLD_BUILD_LIB_DIR=$BUILT_PRODUCTS_DIR modules || exit 255\n\ncd $SRC/jems\nfor n in unix db db.mapper db.sqlite web template tar\ndo\n    cd ejs.${n}\n    changed=0\n    for f in *.es\n    do\n        [ $f -nt $BUILT_PRODUCTS_DIR/ejs.${n}.mod ] && changed=1\n    done\n    if [ \"$changed\" = 1 ] ; then\n        echo \"Rebuilding ${n}\"\n        ejsc  --debug --optimize 9 *.es\n        ejsmod --cslots ejs.${n}.mod\n        diff ejs.${n}.slots.h $INC >/dev/null 2>&1 || cp ejs.${n}.slots.h $INC\n        mv ejs.${n}.mod $BUILT_PRODUCTS_DIR\n        rm -f *.slots.h\n    fi\n    cd ..\ndone\n[ \"$changed\" = 0 ] && echo No changes to jems\n\nexit 0\n";
+			shellScript = "\nexport DYLD_LIBRARY_PATH=$BUILT_PRODUCTS_DIR\nexport PATH=$OUT/build/bin:$BUILT_PRODUCTS_DIR:${PATH}\nINC=$OUT/INC\n\n# make -C $SRC/core TRACE=1 BLD_LIB_DIR=$BUILT_PRODUCTS_DIR BLD_BUILD_LIB_DIR=$BUILT_PRODUCTS_DIR modules || exit 255\nFILES=\"App.es Args.es Array.es BinaryStream.es Block.es Boolean.es \\\nByteArray.es Cache.es Cmd.es Compat.es Config.es Date.es Debug.es Emitter.es Error.es File.es \\\nFileSystem.es Frame.es Function.es GC.es Global.es Http.es Inflector.es Iterator.es JSON.es Loader.es \\\nLocalCache.es Locale.es Logger.es Math.es Memory.es MprLog.es Name.es Namespace.es Null.es Number.es Object.es \\\nPath.es Promise.es RegExp.es Socket.es Stream.es String.es System.es TextStream.es Timer.es Type.es Uri.es Void.es \\\nWorker.es XML.es XMLHttp.es XMLList.es\"\n\ncd $SRC/core\nchanged=0\nfor f in $FILES\ndo\n    [ $f -nt $BUILT_PRODUCTS_DIR/ejs.mod ] && changed=1\ndone\n\nif [ \"$changed\" = 1 ] ; then\n    echo \"Rebuilding ejs.mod\"\n    rm -f *.mod *.slots.h $BUILT_PRODUCTS_DIR/ejs*.mod $BUILT_PRODUCTS_DIR/ejs*.mod\n    ejsc  --debug --optimize 9 --out ejs.mod --bind --require \"\" $FILES\n    mv *.mod $BUILT_PRODUCTS_DIR\n    ejsmod --require \"\" --listing --cslots $BUILT_PRODUCTS_DIR/ejs.mod\n    for f in *.slots.h ; do\n        if [ -f $INC/$f ] ; then\n            if ! diff $f $INC/$f >/dev/null 2>&1; then\n                cp $f $INC\n                echo INSTALL $f to $INC\n            fi\n        fi\n        rm -f $f\n    done\nfi \n[ \"$changed\" = 0 ] && echo No changes to core\n\n# make -C $SRC/jems TRACE=1 BLD_LIB_DIR=$BUILT_PRODUCTS_DIR BLD_BUILD_LIB_DIR=$BUILT_PRODUCTS_DIR modules || exit 255\n\ncd $SRC/jems\nfor n in unix db db.mapper db.sqlite web template tar zlib\ndo\n    cd ejs.${n}\n    changed=0\n    for f in *.es\n    do\n        [ $f -nt $BUILT_PRODUCTS_DIR/ejs.${n}.mod ] && changed=1\n    done\n    if [ \"$changed\" = 1 ] ; then\n        echo \"Rebuilding ${n}\"\n        ejsc  --debug --optimize 9 *.es\n        ejsmod --cslots ejs.${n}.mod\n        diff ejs.${n}.slots.h $INC >/dev/null 2>&1 || cp ejs.${n}.slots.h $INC\n        mv ejs.${n}.mod $BUILT_PRODUCTS_DIR\n        rm -f *.slots.h\n    fi\n    cd ..\ndone\n[ \"$changed\" = 0 ] && echo No changes to jems\n\nexit 0\n";
 			showEnvVarsInLog = 0;
 		};
 		C97235E713D4EAF900C7DCC6 /* ShellScript */ = {
@@ -2310,6 +2422,14 @@
 /* End PBXShellScriptBuildPhase section */
 
 /* Begin PBXSourcesBuildPhase section */
+		C92069AF14FAF44800E10C9B /* Sources */ = {
+			isa = PBXSourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				C92069BE14FAF4A100E10C9B /* ejsZlib.c in Sources */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
 		C95E4FD510EBFD9300982610 /* Sources */ = {
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
@@ -2520,6 +2640,36 @@
 			isa = PBXTargetDependency;
 			target = C95E4FD310EBFD9300982610 /* libhttp */;
 			targetProxy = C90E4B47114FE978004F97DD /* PBXContainerItemProxy */;
+		};
+		C92069A514FAF44800E10C9B /* PBXTargetDependency */ = {
+			isa = PBXTargetDependency;
+			target = C903098610A366F0003FF2AB /* jem */;
+			targetProxy = C92069A614FAF44800E10C9B /* PBXContainerItemProxy */;
+		};
+		C92069A714FAF44800E10C9B /* PBXTargetDependency */ = {
+			isa = PBXTargetDependency;
+			target = C97623D10FD06EE7009C78E1 /* ejs */;
+			targetProxy = C92069A814FAF44800E10C9B /* PBXContainerItemProxy */;
+		};
+		C92069A914FAF44800E10C9B /* PBXTargetDependency */ = {
+			isa = PBXTargetDependency;
+			target = C9222E520FD5813F00AFA5A4 /* modules */;
+			targetProxy = C92069AA14FAF44800E10C9B /* PBXContainerItemProxy */;
+		};
+		C92069AB14FAF44800E10C9B /* PBXTargetDependency */ = {
+			isa = PBXTargetDependency;
+			target = C97623DA0FD06EF4009C78E1 /* ejsc */;
+			targetProxy = C92069AC14FAF44800E10C9B /* PBXContainerItemProxy */;
+		};
+		C92069AD14FAF44800E10C9B /* PBXTargetDependency */ = {
+			isa = PBXTargetDependency;
+			target = C97623E10FD06EFC009C78E1 /* ejsmod */;
+			targetProxy = C92069AE14FAF44800E10C9B /* PBXContainerItemProxy */;
+		};
+		C92069C014FAFCD700E10C9B /* PBXTargetDependency */ = {
+			isa = PBXTargetDependency;
+			target = C92069A414FAF44800E10C9B /* ejs.zlib */;
+			targetProxy = C92069BF14FAFCD700E10C9B /* PBXContainerItemProxy */;
 		};
 		C92F849D10F2B93900CA953D /* PBXTargetDependency */ = {
 			isa = PBXTargetDependency;
@@ -3002,6 +3152,46 @@
 			};
 			name = Release;
 		};
+		C92069B914FAF44800E10C9B /* Debug */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ALWAYS_SEARCH_USER_PATHS = NO;
+				EXECUTABLE_PREFIX = "";
+				INSTALL_PATH = "$(INSTALL_PATH)/lib";
+				OTHER_LDFLAGS = (
+					"-lz",
+					"-Wl,-rpath,@executable_path/",
+					"-Wl,-rpath,@executable_path/../bin",
+					"-Wl,-rpath,@executable_path/../lib",
+					"-Wl,-rpath,@executable_path/bin",
+					"-Wl,-rpath,@loader_path/",
+					"-lcrypto",
+					"-lssl",
+				);
+				PRODUCT_NAME = ejs.zlib;
+			};
+			name = Debug;
+		};
+		C92069BA14FAF44800E10C9B /* Release */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ALWAYS_SEARCH_USER_PATHS = NO;
+				EXECUTABLE_PREFIX = "";
+				INSTALL_PATH = "$(INSTALL_PATH)/lib";
+				OTHER_LDFLAGS = (
+					"-lz",
+					"-Wl,-rpath,@executable_path/",
+					"-Wl,-rpath,@executable_path/../bin",
+					"-Wl,-rpath,@executable_path/../lib",
+					"-Wl,-rpath,@executable_path/bin",
+					"-Wl,-rpath,@loader_path/",
+					"-lcrypto",
+					"-lssl",
+				);
+				PRODUCT_NAME = ejs.zlib;
+			};
+			name = Release;
+		};
 		C9222E530FD5813F00AFA5A4 /* Debug */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
@@ -3428,6 +3618,15 @@
 			buildConfigurations = (
 				C903098310A366CB003FF2AB /* Debug */,
 				C903098410A366CB003FF2AB /* Release */,
+			);
+			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
+		};
+		C92069B814FAF44800E10C9B /* Build configuration list for PBXNativeTarget "ejs.zlib" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				C92069B914FAF44800E10C9B /* Debug */,
+				C92069BA14FAF44800E10C9B /* Release */,
 			);
 			defaultConfigurationIsVisible = 0;
 			defaultConfigurationName = Release;
