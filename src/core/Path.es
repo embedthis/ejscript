@@ -83,9 +83,9 @@ module ejs {
         /**
             Define file security permissions.
             @options user String representing the file user name
-            If both user and uid are specified, uid takes precedence. 
+            If both user and uid are specified, user takes precedence. 
             @options group String representing the file group name
-            If both group and gid are specified, gid takes precedence.
+            If both group and gid are specified, group takes precedence.
             @options uid Number representing the file user id
             @options gid Number representing the file group id
             @options permissions Number File Posix permissions mask
@@ -119,9 +119,9 @@ module ejs {
             @param options Object hash
             @options permissions Set to a numeric Posix permissions mask. Not implemented.
             @options user String representing the file user name
-            If both user and uid are specified, uid takes precedence. 
+            If both user and uid are specified, user takes precedence. 
             @options group String representing the file group name
-            If both group and gid are specified, gid takes precedence.
+            If both group and gid are specified, group takes precedence.
             @options uid Number representing the file user id
             @options gid Number representing the file group id
          */
@@ -311,9 +311,9 @@ module ejs {
             @options permissions Directory permissions to use for all created directories. Set to a numeric 
                 Posix permissions mask.
             @options user String representing the file user for all created directories.
-                If both user and uid are specified, uid takes precedence. 
+                If both user and uid are specified, user takes precedence. 
             @options group String representing the file group for all created directories.
-                If both group and gid are specified, gid takes precedence.
+                If both group and gid are specified, group takes precedence.
             @options uid Number representing the file user id
             @options gid Number representing the file group id
             @return True if the directory can be made or already exists

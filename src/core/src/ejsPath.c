@@ -228,7 +228,7 @@ static EjsObj *getAttributes(Ejs *ejs, EjsPath *fp, int argc, EjsObj **argv)
     Set file attributes
     function attributes(options: Object)
  */
-static EjsObj *setAttributes(Ejs *ejs, EjsPath *fp, int argc, EjsObj **argv)
+static EjsObj *path_setAttributes(Ejs *ejs, EjsPath *fp, int argc, EjsObj **argv)
 {
     MprPath     info;
     EjsObj      *attributes;
@@ -293,7 +293,6 @@ int ejsSetPathAttributes(Ejs *ejs, cchar *path, EjsObj *attributes)
 #if BLD_UNIX_LIKE
 {
     int     uid, gid;
-
     getUserGroup(ejs, attributes, &uid, &gid);
     if (uid >= 0 || gid >= 0) {
         if (chown(path, uid, gid) < 0) {
@@ -787,7 +786,7 @@ static EjsArray *globPath(Ejs *ejs, EjsArray *results, cchar *path, cchar *base,
                 add = 0;
             }
             if (exclude && pcre_exec(exclude->compiled, NULL, matchFile, (int) slen(matchFile), 0, 0, NULL, 0) >= 0) {
-                continue;
+                add = 0;
             }
         }
         if (!(flags & FILES_DEPTH_FIRST) && add) {
@@ -950,37 +949,42 @@ static EjsPath *pathLinkTarget(Ejs *ejs, EjsPath *fp, int argc, EjsObj **argv)
 }
 
 
+/*
+    Get user/group from an attributes hash. Looks at group, user, gid and uid. If both user and uid are specified,
+    user takes precedence. If both group and gid are specified, then group takes precedence.
+ */
 static void getUserGroup(Ejs *ejs, EjsObj *attributes, int *uid, int *gid)
 {
 #if BLD_UNIX_LIKE
-    EjsAny          *ownerName, *groupName;
+    EjsAny          *vp;
     struct passwd   *pp;
     struct group    *gp;
 
     *uid = *gid = -1;
-    if ((groupName = ejsGetPropertyByName(ejs, attributes, EN("gid"))) != 0) {
-        if (ejsIs(ejs, groupName, Number)) {
-            *gid = ejsGetInt(ejs, groupName);
-        }
-    } else if ((groupName = ejsGetPropertyByName(ejs, attributes, EN("group"))) != 0) {
-        groupName = ejsToString(ejs, groupName);
+    if ((vp = ejsGetPropertyByName(ejs, attributes, EN("group"))) != 0 && ejsIsDefined(ejs, vp)) {
+        vp = ejsToString(ejs, vp);
         //  MOB - these are thread-safe on mac, but not on all systems. use getgrnam_r
-        if ((gp = getgrnam(ejsToMulti(ejs, groupName))) == 0) {
-            ejsThrowArgError(ejs, "Can't find group %@", groupName);
+        if ((gp = getgrnam(ejsToMulti(ejs, vp))) == 0) {
+            ejsThrowArgError(ejs, "Can't find group %@", vp);
             return;
         }
         *gid = gp->gr_gid;
-    }
-    if ((ownerName = ejsGetPropertyByName(ejs, attributes, EN("owner"))) != 0) {
-        if (ejsIs(ejs, ownerName, Number)) {
-            *uid = ejsGetInt(ejs, ownerName);
+
+    } else if ((vp = ejsGetPropertyByName(ejs, attributes, EN("gid"))) != 0 && ejsIsDefined(ejs, vp)) {
+        if (ejsIs(ejs, vp, Number)) {
+            *gid = ejsGetInt(ejs, vp);
         }
-    } else if ((ownerName = ejsGetPropertyByName(ejs, attributes, EN("owner"))) != 0) {
-        if ((pp = getpwnam(ejsToMulti(ejs, ownerName))) == 0) {
-            ejsThrowArgError(ejs, "Can't find user %@", ownerName);
+    }
+    if ((vp = ejsGetPropertyByName(ejs, attributes, EN("user"))) != 0 && ejsIsDefined(ejs, vp)) {
+        if ((pp = getpwnam(ejsToMulti(ejs, vp))) == 0) {
+            ejsThrowArgError(ejs, "Can't find user %@", vp);
             return;
         }
         *uid = pp->pw_uid;
+    } else if ((vp = ejsGetPropertyByName(ejs, attributes, EN("uid"))) != 0 && ejsIsDefined(ejs, vp)) {
+        if (ejsIs(ejs, vp, Number)) {
+            *uid = ejsGetInt(ejs, vp);
+        }
     }
 #else
     *uid = *group = -1;
@@ -1780,7 +1784,7 @@ void ejsConfigurePathType(Ejs *ejs)
     ejsBindMethod(ejs, prototype, ES_Path_root, rootPath);
     ejsBindMethod(ejs, prototype, ES_Path_same, isPathSame);
     ejsBindMethod(ejs, prototype, ES_Path_separator, pathSeparator);
-    ejsBindMethod(ejs, prototype, ES_Path_setAttributes, setAttributes);
+    ejsBindMethod(ejs, prototype, ES_Path_setAttributes, path_setAttributes);
     ejsBindMethod(ejs, prototype, ES_Path_size, getPathFileSize);
     ejsBindMethod(ejs, prototype, ES_Path_symlink, path_symlink);
     ejsBindMethod(ejs, prototype, ES_Path_toJSON, pathToJSON);

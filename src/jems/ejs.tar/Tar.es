@@ -13,8 +13,126 @@ module ejs.tar {
         Operations
      */
     const Extract: Number = 1
-    const Read: Number = 2
+    const List: Number = 2
+    const Read: Number = 3
 
+    class Tar {
+        private var path: Path
+        private var options: Object
+
+        use default namespace public
+
+        /*
+            @param options
+            @option relativeTo Path
+            @option uid
+            @option gid
+            @option user
+            @option group
+         */
+        function Tar(path: Path, options: Object = {}) {
+            this.path = path
+            this.options = options
+        }
+
+        function get name(): Path
+            this.path
+
+        private function flatten(args: Array): Array {
+            let files = []
+            for each (file in args) {
+                if (file is Array) {
+                    files += file
+                } else {
+                    files.push(file)
+                }
+            }
+            for (i in files) {
+                files[i] = Path(files[i])
+            }
+            return files
+        }
+
+        function create(...args): Void {
+            var archive: File  = File(path, 'w')
+            for each (file in flatten(args)) {
+                if (!file.exists) {
+                    throw 'File does not exist: ' + file
+                }
+                let header = new TarHeader(options)
+                header.createHeader(file)
+                header.write(archive)
+                let fp = File(file, 'r')
+                let data = new ByteArray
+                while (fp.read(data)) {
+                    archive.write(data)
+                }
+                data.flush()
+                let remainder = 512 - (file.size % 512)
+                if (remainder < 512) {
+                    data.writePosition = remainder;
+                    archive.write(data)
+                }
+                fp.close()
+            }
+            archive.close()
+        }
+
+        function operate(files: Array, operation) {
+            let archive = File(path, 'r')
+            let data: ByteArray
+            let list = []
+            while ((data = archive.readBytes(BlockSize)) != null && data[0]) {
+                let header = new TarHeader(options)
+                header.parse(data)
+                let path = header.path
+                if (files.contains(path) || files.length == 0) {
+
+                    if (operation == Extract) {
+                        let fp = new File(header.name, 'w')
+                        let len = header.size
+                        while (len > 0) {
+                            count = len.min(data.length)
+                            bytes = archive.read(data, 0, count)
+                            fp.write(data)
+                            len -= count
+                        }
+                        fp.close()
+                        path.setAttributes(header.attributes)
+
+                    } else if (operation == List) {
+                        list.push(path)
+                        archive.position += header.size
+
+                    } else if (operation == Read) {
+                        let result = new ByteArray(header.size)
+                        archive.read(result, 0, header.size)
+                        return result
+                    }
+                } else {
+                    archive.position += header.size
+                }
+                let remainder = 512 - (header.size % 512)
+                if (remainder < 512) {
+                    archive.position += remainder;
+                }
+            }
+            archive.close()
+            return list
+        }
+
+        function extract(...args): Void
+            operate(flatten(args), Extract)
+
+        function list(...args): Array
+            operate(flatten(args), List)
+
+        function read(...args): ByteArray
+            operate(flatten(args), Read)
+
+        function readString(...args): String
+            operate(flatten(args), Read)
+    }
 
     internal class TarHeader {
         var name: String            /* File name. Up to 100 characters. Null terminated if room */
@@ -57,8 +175,11 @@ module ejs.tar {
                 path = path.relativeTo(options.relativeTo)
             }
             if (path.length > 100) {
-                name = path.name.slice(0, 100)
-                prefix = path.name.slice(100, 255)
+                name = path.basename
+                prefix = path.dirname
+                if (name.length > 100 || prefix.length > 155) {
+                    throw 'Path name ' + path + ' is too long'
+                }
             } else {
                 name = path
             }
@@ -94,6 +215,10 @@ module ejs.tar {
             if (user) att.user = user
             if (group) att.group = group
             return att
+        }
+
+        function get path(): Path {
+            return Path((prefix) ? (Path(prefix).join(name)) : name)
         }
 
         function show(ba) {
@@ -165,9 +290,9 @@ module ejs.tar {
         }
 
         private function parseStr(data: ByteArray, count: Number): String {
-            let i
-            for (i = 0; i < count; i++) {
-                if (data[i] == 0) {
+            let i, j
+            for (i = 0, j = data.readPosition; i < count; i++, j++) {
+                if (data[j] == 0) {
                     break
                 }
             }
@@ -182,110 +307,6 @@ module ejs.tar {
         }
     }
 
-    class Tar {
-        private var path: Path
-        private var options: Object
-
-        use default namespace public
-
-        /*
-            @param options
-            @option relativeTo Path
-            @option uid
-            @option gid
-            @option user
-            @option group
-         */
-        function Tar(path: Path, options: Object = {}) {
-            this.path = path
-            this.options = options
-        }
-
-        function get name(): Path
-            this.path
-
-        private function flatten(args: Array): Array {
-            let files = []
-            for each (file in args) {
-                if (file is Array) {
-                    files += file
-                } else {
-                    files.push(file)
-                }
-            }
-            for (i in files) {
-                files[i] = Path(files[i])
-            }
-            return files
-        }
-
-        function create(...args): Void {
-            var archive: File  = File(path, 'w')
-            for each (file in flatten(args)) {
-                if (!file.exists) {
-                    throw 'File does not exist: ' + file
-                }
-                let header = new TarHeader(options)
-                header.createHeader(file)
-                header.write(archive)
-                let fp = File(file, 'r')
-                let data = new ByteArray
-                while (fp.read(data)) {
-                    archive.write(data)
-                }
-                data.flush()
-                let remainder = 512 - (file.size % 512)
-                data.writePosition = remainder;
-                archive.write(data)
-                fp.close()
-            }
-            archive.close()
-        }
-
-        function operate(files: Array, operation) {
-            let archive = File(path, 'r')
-            let data: ByteArray
-            while ((data = archive.readBytes(BlockSize)) != null && data[0]) {
-                let header = new TarHeader(options)
-                header.parse(data)
-                let path = Path(header.name)
-                if (files.contains(path)) {
-                    if (operation == Extract) {
-                        let fp = new File(header.name, 'w')
-                        let len = header.size
-                        while (len > 0) {
-                            count = len.min(data.length)
-                            bytes = archive.read(data, 0, count)
-                            fp.write(data)
-                            len -= count
-                        }
-                        fp.close()
-dump('ATT', header.attributes)
-                        path.setAttributes(header.attributes)
-
-                    } else if (operation == Read) {
-                        let result = new ByteArray(header.size)
-                        archive.read(result, 0, header.size)
-                        return result
-                    }
-                } else {
-                    archive.position += header.size
-                }
-                let remainder = 512 - (header.size % 512)
-                archive.position += remainder;
-            }
-            archive.close()
-        }
-
-        function extract(...args): Void
-            operate(flatten(args), Extract)
-
-        function read(...args): ByteArray
-            operate(flatten(args), Read)
-
-        function readString(...args): String
-            operate(flatten(args), Read)
-    }
 }
 
 /*

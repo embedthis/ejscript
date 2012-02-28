@@ -1,11 +1,12 @@
 /*
     Support functions for Embedthis products
-
     Exporting: install(), package()
 
     Copyright (c) All Rights Reserved. See copyright notice at the bottom of the file.
  */
 
+require ejs.tar
+require ejs.zlib
 require ejs.unix
 
 public function getWebUser(): String {
@@ -134,7 +135,7 @@ function installCallback(src: Path, dest: Path, options = {}): Boolean {
     @option fold Fold long lines on windows at column 80 and convert new line endings.
     @option group Set file group
     @option include Include files that match the pattern. The pattern should be in portable file format.
-    @option owner Set file owner
+    @option user Set file file user
     @option patch Object hash containing properties to use when replacing tokens of the form ${token} in the
         destination file contents.  
     @option perms Set file perms
@@ -191,43 +192,44 @@ public function package(formats) {
         if (fmt == 'flat') {
             safeRemove(flat)
             flat.makeDir()
-            for each (f in pkg.glob("**", {nodirs: true})) {
+            for each (f in pkg.glob("**", {exclude: /\/$/})) {
                 f.copy(flat.join(f.basename))
             }
             pkg = flat
         }
         if (fmt == 'flat' || fmt == 'combo') {
-            name = rel.join(s.product + '-' + s.version + '-' + s.buildNumber + '-' + fmt + '.tgz')
+            let name = rel.join(s.product + '-' + s.version + '-' + s.buildNumber + '-' + fmt + '.tar')
+            let zname = name.replaceExt('tgz')
+            let tar = new Tar(name, {relativeTo: pkg})
+            tar.create(pkg.glob('**', {exclude: /\/$/}))
+            Zlib.compress(tar.name, zname)
             generic = rel.join(s.product + '-' + fmt + '.tgz')
-            if (bit.platform.os == 'linux') {
-                run('tar -C ' + pkg + ' --owner 0 --group 0 -czf ' + name + ' .')
-            } else {
-                run('tar -C ' + pkg + ' -czf ' + name + ' .')
+            generic.remove()
+            Path(zname).symlink(generic)
+            trace('Package', zname)
+
+        } else if (fmt == 'tar' || fmt == 'native') {
+            /*
+                - remove extended attributes
+                       for i in $(ls -Rl@ | grep '^    ' | awk '{print $1}' | sort -u); do \
+                                   find . | xargs xattr -d $i 2>/dev/null ; done
+             */
+
+            //  MOB - need other distributions here
+            let dist = { macosx: 'Apple' }
+            let name = [s.product, s.version, s.buildNumber, dist[OS], OS.toUpper(), ARCH].join('-')
+            let name = rel.join(name).joinExt('tar', true)
+            let zname = name.replaceExt('tgz')
+            let files = pkg.glob('**', {exclude: /\/$/})
+            if (fmt == 'tar') {
+                //  MOB - file list
+                let tar = new Tar(name, {relativeTo: pkg})
+                tar.create(files)
+                Zlib.compress(name, zname)
             }
-            Path(generic).remove()
-            Path(name).symlink(generic)
-            trace('Package', name)
-            trace('Package', generic)
-        } 
-        /*
-            - remove extended attributes
-                   for i in $(ls -Rl@ | grep '^    ' | awk '{print $1}' | sort -u); do \
-                               find . | xargs xattr -d $i 2>/dev/null ; done
-
-        let s = bit.settings
-        let dist = { macosx: 'Apple' }
-        let name = [s.product, s.version, s.buildNumber, dist, OS.toUpper(), ARCH].join('-')
-        let files = pkg.glob('**', {exclude: /\/$/})
-
-        if (fmt == 'tar') {
-            //  MOB - file list
-            let tar = new Tar(bit.dir.rel.join(name).joinExt('tar'))
-            tar.create(files)
-            Zlib.compress(tar, tar.replaceExt('tgz') 
+            if (fmt == 'native') {
+            }
         }
-        if (fmt == 'native') {
-        }
-         */
     }
 }
 
