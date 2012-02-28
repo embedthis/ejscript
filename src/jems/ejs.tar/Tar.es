@@ -34,41 +34,34 @@ module ejs.tar {
         var prefix: String          /* Prefix to file name. Null-terminated if room */
         var sum: Number             /* Header checksum */
         var version: String         /* Version string */
+        var options: Object         /* Tar object options */
 
-        function create(path: Path) {
+        function TarHeader(options) {
+            this.options = options
+        }
+
+        /*
+            Create a new header entry
+         */
+        function createHeader(path: Path) {
             let attributes = path.attributes
             mode = attributes.permissions
-            uid = attributes.uid
-            gid = attributes.gid
-            uname = attributes.user
-            gname = attributes.group
+            uid = options.uid || attributes.uid
+            gid = options.gid || attributes.gid
+            uname = options.user || attributes.user
+            gname = options.group || attributes.group
             size = path.size
             modified = path.modified
             link = 0
+            if (options.relativeTo) {
+                path = path.relativeTo(options.relativeTo)
+            }
             if (path.length > 100) {
                 name = path.name.slice(0, 100)
                 prefix = path.name.slice(100, 255)
             } else {
                 name = path
             }
-            //  MOB - setup uname, gname - should be in attributes
-        }
-
-        function parseStr(data: ByteArray, count: Number): String {
-            let i
-            for (i = 0; i < count; i++) {
-                if (data[i] == 0) {
-                    break
-                }
-            }
-            let s = data.readString(i)
-            data.readPosition += count - i
-            return s
-        }
-
-        function parseNum(data: ByteArray, count: Number) {
-            field = data.readString(count)
-            return parseInt(field, 8)
         }
 
         function parse(header: ByteArray) {
@@ -94,6 +87,15 @@ module ejs.tar {
             }
         }
 
+        function get attributes() {
+            let att = {}
+            if (uid) att.uid = uid
+            if (gid) att.gid = gid
+            if (user) att.user = user
+            if (group) att.group = group
+            return att
+        }
+
         function show(ba) {
             for (i = 0; i < ba.available; i += 16) {
                 stdout.write(['%07o    ' % [i]])
@@ -113,8 +115,6 @@ module ejs.tar {
             let ba = new ByteArray
             ba.write(name)
             ba.writePosition = 100
-            /* The checksum is stored as as 6 octal digits followed by a null + space */
-
             ba.write('%06o ' % [mode]) ; ba.writePosition++
             ba.write('%06o ' % [uid]) ; ba.writePosition++
             ba.write('%06o ' % [gid]) ; ba.writePosition++
@@ -135,6 +135,9 @@ module ejs.tar {
                 ba.write(prefix)
             }
             ba.writePosition = 512
+            /* 
+                The checksum is stored as as 6 octal digits followed by a null + space 
+             */
             let csum = checksum(ba)
             ba.writePosition = 148
             ba.write('%06o' % [csum])
@@ -143,23 +146,40 @@ module ejs.tar {
             ba.writePosition = 512
             fp.write(ba)
         }
-    }
 
-    /*
-        Calculate a checksum of the 512-byte header
-     */
-    function checksum(data: ByteArray): Number {
-        let total = 0
-        for (i = 0; i < 512; i++) {
-            if (i == 148) {
-                /* Skip the checksum field */
-                total += ' '.charCodeAt() * 8
-                i += 7
-            } else {
-                total += data[i]
+        /*
+            Calculate a checksum of the 512-byte header
+         */
+        private function checksum(data: ByteArray): Number {
+            let total = 0
+            for (i = 0; i < 512; i++) {
+                if (i == 148) {
+                    /* Skip the checksum field */
+                    total += ' '.charCodeAt() * 8
+                    i += 7
+                } else {
+                    total += data[i]
+                }
             }
+            return total
         }
-        return total
+
+        private function parseStr(data: ByteArray, count: Number): String {
+            let i
+            for (i = 0; i < count; i++) {
+                if (data[i] == 0) {
+                    break
+                }
+            }
+            let s = data.readString(i)
+            data.readPosition += count - i
+            return s
+        }
+
+        private function parseNum(data: ByteArray, count: Number) {
+            field = data.readString(count)
+            return parseInt(field, 8)
+        }
     }
 
     class Tar {
@@ -168,10 +188,21 @@ module ejs.tar {
 
         use default namespace public
 
+        /*
+            @param options
+            @option relativeTo Path
+            @option uid
+            @option gid
+            @option user
+            @option group
+         */
         function Tar(path: Path, options: Object = {}) {
             this.path = path
             this.options = options
         }
+
+        function get name(): Path
+            this.path
 
         private function flatten(args: Array): Array {
             let files = []
@@ -194,8 +225,8 @@ module ejs.tar {
                 if (!file.exists) {
                     throw 'File does not exist: ' + file
                 }
-                let header = new TarHeader
-                header.create(file)
+                let header = new TarHeader(options)
+                header.createHeader(file)
                 header.write(archive)
                 let fp = File(file, 'r')
                 let data = new ByteArray
@@ -215,9 +246,10 @@ module ejs.tar {
             let archive = File(path, 'r')
             let data: ByteArray
             while ((data = archive.readBytes(BlockSize)) != null && data[0]) {
-                let header = new TarHeader
+                let header = new TarHeader(options)
                 header.parse(data)
-                if (files.contains(Path(header.name))) {
+                let path = Path(header.name)
+                if (files.contains(path)) {
                     if (operation == Extract) {
                         let fp = new File(header.name, 'w')
                         let len = header.size
@@ -228,6 +260,9 @@ module ejs.tar {
                             len -= count
                         }
                         fp.close()
+dump('ATT', header.attributes)
+                        path.setAttributes(header.attributes)
+
                     } else if (operation == Read) {
                         let result = new ByteArray(header.size)
                         archive.read(result, 0, header.size)
