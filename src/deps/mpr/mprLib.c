@@ -405,6 +405,7 @@ void *mprReallocMem(void *ptr, ssize usize)
 }
 
 
+//  MOB rename
 void *mprMemdupMem(cvoid *ptr, ssize usize)
 {
     char    *newp;
@@ -31389,6 +31390,7 @@ MprChar *amtow(cchar *src, ssize *lenp)
 }
 
 
+//  MOB - need a version that can supply a length
 char *awtom(MprChar *src, ssize *lenp)
 {
     char    *dest;
