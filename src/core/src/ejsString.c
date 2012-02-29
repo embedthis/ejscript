@@ -2183,7 +2183,19 @@ char *ejsToMulti(Ejs *ejs, EjsAny *ev)
         }
     }
     mprAssert(ejsIs(ejs, ev, String));
+    //  UNICODE
+#if BLD_CHAR_LEN == 1
+{
+    EjsString   *s = (EjsString*) ev;
+    char        *ptr;
+    ptr = mprMemdupMem(s->value, s->length + 1);
+    ptr[s->length] = '\0';
+    return ptr;
+}
+#else
+    //  MOB - this currently will only copy ascii strings and not binary strings with embedded nulls
     return awtom(((EjsString*) ev)->value, NULL);
+#endif
 }
 
 

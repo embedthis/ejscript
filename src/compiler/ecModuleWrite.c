@@ -948,6 +948,7 @@ void ecEncodeWideAsMulti(EcCompiler *cp, MprChar *str)
     mprAssert(cp);
 
     mstr = awtom(str, &len);
+    //  UNICODE - why calculate len again?
     len = strlen(mstr) + 1;
     mprAssert(len > 0);
     ecEncodeNum(cp, (int) len);

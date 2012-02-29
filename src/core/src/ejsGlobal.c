@@ -166,7 +166,6 @@ static EjsString *g_md5(Ejs *ejs, EjsObj *unused, int argc, EjsObj **argv)
     EjsString   *str;
     char        *hash;
 
-    MPR_VERIFY_MEM();
     str = (EjsString*) argv[0];
     hash = mprGetMD5WithPrefix(ejsToMulti(ejs, str), str->length, NULL);
     return ejsCreateStringFromAsc(ejs, hash);

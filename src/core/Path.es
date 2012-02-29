@@ -119,9 +119,9 @@ module ejs {
             @param options Object hash
             @options permissions Set to a numeric Posix permissions mask. Not implemented.
             @options user String representing the file user name
-            If both user and uid are specified, user takes precedence. 
+                If both user and uid are specified, user takes precedence. 
             @options group String representing the file group name
-            If both group and gid are specified, group takes precedence.
+                If both group and gid are specified, group takes precedence.
             @options uid Number representing the file user id
             @options gid Number representing the file group id
          */
@@ -232,6 +232,7 @@ module ejs {
                 Only for the purpose of this match, directories will have "/" appended. To exclude directories in the
                 results, use {exclude: /\/$/}
             @option files Include only files in the results. The default is to include directories.
+            @option hidden Include hidden files starting with "."
             @option include Regular expression pattern of files to include in the results. Matches the entire returned path.
                 Only for the purpose of this match, directories will have "/" appended. To include only directories in the
                 results, use {include: /\/$/}
