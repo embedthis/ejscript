@@ -180,9 +180,10 @@ function fold(path: Path, options) {
 }
 
 public function package(formats) {
+    let s = bit.settings
+    let vname = s.product + '-' + s.version + '-' + s.buildNumber
     let rel = bit.dir.rel
     let flat = bit.dir.flat
-    let s = bit.settings
     let name, generic
     let pkg
     if (!(formats is Array)) formats = [formats]
@@ -191,45 +192,83 @@ public function package(formats) {
         pkg = bit.dir.pkg
         if (fmt == 'flat') {
             safeRemove(flat)
-            flat.makeDir()
+            let vflat = flat.join(vname)
+            vflat.makeDir()
             for each (f in pkg.glob("**", {exclude: /\/$/})) {
-                f.copy(flat.join(f.basename))
+                f.copy(vflat.join(f.basename))
             }
             pkg = flat
         }
+        let options = {relativeTo: pkg, user: 'root', group: 'root', uid: 0, gid: 0}
+        if (bit.platform.os == 'macosx') {
+            options.group = 'wheel'
+        }
+        let name, zname
         if (fmt == 'flat' || fmt == 'combo') {
-            let name = rel.join(s.product + '-' + s.version + '-' + s.buildNumber + '-' + fmt + '.tar')
-            let zname = name.replaceExt('tgz')
-            let tar = new Tar(name, {relativeTo: pkg})
+            name = rel.join(vname + '-' + fmt + '.tar')
+            zname = name.replaceExt('tgz')
+            let tar = new Tar(name, options)
             tar.create(pkg.glob('**', {exclude: /\/$/}))
             Zlib.compress(tar.name, zname)
-            generic = rel.join(s.product + '-' + fmt + '.tgz')
+            name.remove()
+            zname.joinExt('txt', true).write(md5(zname.readString()))
+            let generic = rel.join(s.product + '-' + fmt + '.tgz')
             generic.remove()
             Path(zname).symlink(generic)
-            trace('Package', zname)
 
         } else if (fmt == 'tar' || fmt == 'native') {
-            /*
-                - remove extended attributes
-                       for i in $(ls -Rl@ | grep '^    ' | awk '{print $1}' | sort -u); do \
-                                   find . | xargs xattr -d $i 2>/dev/null ; done
-             */
-
             //  MOB - need other distributions here
             let dist = { macosx: 'Apple' }
-            let name = [s.product, s.version, s.buildNumber, dist[OS], OS.toUpper(), ARCH].join('-')
-            let name = rel.join(name).joinExt('tar', true)
-            let zname = name.replaceExt('tgz')
+            let base = [s.product, s.version, s.buildNumber, dist[OS], OS.toUpper(), ARCH].join('-')
+            name = rel.join(base).joinExt('tar', true)
+            zname = name.replaceExt('tgz')
             let files = pkg.glob('**', {exclude: /\/$/})
             if (fmt == 'tar') {
-                //  MOB - file list
-                let tar = new Tar(name, {relativeTo: pkg})
+                let tar = new Tar(name, options)
                 tar.create(files)
                 Zlib.compress(name, zname)
+                name.remove()
+                zname.joinExt('txt', true).write(md5(zname.readString()))
             }
             if (fmt == 'native') {
+                if (bit.platform.os == 'macosx') {
+                    if (!bit.packs.pmaker || !bit.packs.pmaker.path) {
+                        throw 'Configured without PackageMaker'
+                    }
+                    let size = 20
+                    for each (file in pkg.glob('**', {exclude: /\/$/})) {
+                        size += ((file.size + 999) / 1000)
+                    }
+                    bit.PACKAGE_SIZE = size
+                    let mpkg = pkg.join(bit.settings.product + '.mpkg')
+                    cp('package/' + OS.toUpper() + '/' + bit.settings.product + '.mpkg', pkg, {expand: true, hidden: true})
+                    let contents = mpkg.join('Contents')
+                    let packages = contents.join('Packages')
+                    packages.makeDir()
+                    let proj = contents.join('Resources/en.lproj')
+                    proj.makeDir()
+                    cp(pkg.join('README.TXT'), proj.join('ReadMe'))
+                    cp(pkg.join('LICENSE.md'), proj.join('License'))
+                    let scripts = pkg.join('scripts')
+                    scripts.makeDir()
+                    cp('package/' + OS.toUpper() + '/scripts/bin/*', scripts, {expand: true})
+
+                    let pname = bit.dir.rel.join(base).joinExt('pkg', true)
+                    run(bit.packs.pmaker.path + ' --domain system --root ' + pkg.join(vname) + 
+                        ' --id com.embedthis.' + bit.settings.product + '.' + bit.settings.product + 'bin.pkg' +  
+                        ' --root-volume-only --domain system --verbose --no-relocate' +
+                        ' --scripts ' + scripts + ' --out ' + pname)
+                    pname.joinExt('txt', true).write(md5(pname.readString()))
+                    // packages.join('bin.pkg'))
+                    // scripts.removeAll()
+                    // mpkg.removeAll()
+                }
             }
+            let generic = rel.join(s.product + '-' + fmt + '.tgz')
+            generic.remove()
+            Path(zname).symlink(generic)
         }
+        trace('Package', zname)
     }
 }
 

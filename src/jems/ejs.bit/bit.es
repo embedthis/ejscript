@@ -491,7 +491,11 @@ public class Bit {
 
         /* Suffixes */
         //  MOB - migrate to not use "." prefix
-        f.writeLine('#define BLD_EXE ".' + bit.ext.exe + '"')
+        if (bit.ext.exe != '') {
+            f.writeLine('#define BLD_EXE ".' + bit.ext.exe + '"')
+        } else {
+            f.writeLine('#define BLD_EXE ""')
+        }
         f.writeLine('#define BLD_SHLIB ".' + bit.ext.shlib + '"')
         f.writeLine('#define BLD_SHOBJ ".' + bit.ext.shobj + '"')
         f.writeLine('#define BLD_LIB ".' + bit.ext.lib + '"')

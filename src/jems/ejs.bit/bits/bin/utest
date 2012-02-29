@@ -46,6 +46,7 @@ enumerable class Test {
     var iterations: Number = 1              // Number of iterations to run the test 
     var nth: Number = 0                     // Current iteration
     var noserver: Boolean = false           // Omit running a server (sets NOSERVER=1)
+    var originalHome: Path                  // Original home directory for utest
     var second: Boolean = false             // Second instance. Bypass some initializations
     var skipTest: Boolean = false           // Skip a test
     var skippedMsg: String                  // Test skipped message
@@ -123,6 +124,7 @@ enumerable class Test {
         Parse args and invoke required commands
      */
     function parseArgs(): Void {
+        originalHome = App.dir
         args = Args(argsTemplate, App.args)
         options = args.options
         filters += args.rest
@@ -341,7 +343,12 @@ enumerable class Test {
     }
 
     function initWorker(w: Worker, export: Object) {
-        w.preload(App.exeDir.join("utest.worker"))
+        let uarg = Path(App.args[0])
+        if (uarg.exists) {
+            w.preload(uarg + '.worker')
+        } else {
+            w.preload(App.exeDir.join("utest.worker"))
+        }
         let estr = serialize(export)
         w.preeval('
             let data = deserialize(\'' + estr.replace(/\\/g, "\\\\") + '\')

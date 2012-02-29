@@ -47,7 +47,7 @@ Bit.load({
 
         projects: {
             action: "
-                let ejs = 'ejs ' + Cmd.locate('bit')
+                let ejs = 'ejs ' + Cmd.locate('bit.es')
                 run(ejs + ' -without ssl configure generate', bit.target.runopt)
                 run(ejs + ' -emulate linux-i686 -without ssl configure -gen sh,make', bit.target.runopt)
                 run(ejs + ' -emulate macosx-i686 -without ssl configure -gen sh,make', bit.target.runopt)
@@ -140,9 +140,11 @@ Bit.load({
         utest: {
             type: 'test',
             action: "
-                if (bit.packs.ejs && bit.packs.ejs.path) {
-                    run(bit.packs.ejs.path + ' ' + App.exeDir.join('utest') + ' -v -d ' + bit.settings.depth, 
-                        {dir: bit.dir.src.join('src')})
+                if (bit.packs.ejs && bit.packs.ejs.path && bit.packs.utest && bit.packs.utest.path) {
+                    print(bit.packs.ejs.path + ' ' + bit.packs.utest.path + ' -v -d ' + bit.settings.depth,
+                        {show: true, dir: bit.dir.src.join('src')})
+                    run(bit.packs.ejs.path + ' ' + bit.packs.utest.path + ' -v -d ' + bit.settings.depth,
+                        {show: true, dir: bit.dir.src.join('src')})
                 }
             ",
         }

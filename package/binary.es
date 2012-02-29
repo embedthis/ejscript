@@ -36,7 +36,7 @@ var ver: Path = build.BLD_VER_PREFIX
 var jem: Path = build.BLD_JEM_PREFIX
 var man: Path = build.BLD_MAN_PREFIX
 
-dperms = {permissions: 0755, owner: 0, group: 0}
+dperms = {permissions: 0755, uid: 0, gid: 0}
 bin.makeDir(dperms)
 lib.makeDir(dperms)
 ver.makeDir(dperms)
