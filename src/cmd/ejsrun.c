@@ -93,31 +93,10 @@ MAIN(ejsMain, int argc, char **argv, char **envp)
             return 0;
 
         } else {
-            err++;
-            break;
+            /* Ignore */
         }
     }
-#if UNUSED
-    if (err) {
-        /*  
-         */
-        mprPrintfError("Usage: %s [options] script.es [arguments] ...\n"
-            "  Options:\n"
-            "  --debugger               # Disable timeouts to make using a debugger easier\n"
-            "  --log logSpec            # Internal compiler diagnostics logging\n"
-            "  --search ejsPath         # Module search path\n"
-            "  --standard               # Default compilation mode to standard (default)\n"
-            "  --verbose | -v           # Same as --log stderr:2 \n"
-            "  --version                # Emit the version information\n",
-            mpr->name);
-        return -1;
-    }
-#endif
-#if DEBUG_IDE || 1
-    path = mprJoinPath(mprGetAppDir(), "bit");
-#else
     path = mprJoinPath(mprGetAppDir(), mprGetPathBase(argv[0]));
-#endif
     path = mprReplacePathExt(path, ".es");
     mprAddRoot(path);
     argv[0] = path;
@@ -145,6 +124,7 @@ MAIN(ejsMain, int argc, char **argv, char **envp)
     if (ecCompile(ec, 1, (char**) &path) < 0) {
         if (flags & EC_FLAGS_THROW) {
             ejsThrowSyntaxError(ejs, "%s", ec->errorMsg ? ec->errorMsg : "Can't parse script");
+            ejsReportError(ejs, "Error in script");
         }
         err = MPR_ERR;
     } else {
