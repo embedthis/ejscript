@@ -277,7 +277,7 @@ int ejsLoadScriptFile(Ejs *ejs, cchar *path, cchar *cache, int flags)
         ec->noout = 1;
     }
     if (ecCompile(ec, 1, (char**) &path) < 0) {
-        if (flags & EC_FLAGS_THROW) {
+        if (flags & EC_FLAGS_THROW && !ejs->exception) {
             ejsThrowSyntaxError(ejs, "%s", ec->errorMsg ? ec->errorMsg : "Can't parse script");
         }
         mprRemoveRoot(ec);

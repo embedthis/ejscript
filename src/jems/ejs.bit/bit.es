@@ -62,7 +62,7 @@ public class Bit {
             diagnose: { alias: 'd' },
             emulate: { range: String },
             gen: { alias: 'g', range: String, separator: Array, commas: true },
-            import: { range: Boolean },
+            import: { alias: 'init', range: Boolean },
             log: { alias: 'l', range: String },
             out: { range: String },
             pre: { range: String, separator: Array },
@@ -117,7 +117,7 @@ public class Bit {
             try {
                 b.loadWrapper(Config.LibDir.join('bits/standard.bit'))
                 b.loadWrapper(path)
-                if (bit.usage) {
+                if (global.bit && bit.usage) {
                     print('Feature Selection: ')
                     for (let [item,msg] in bit.usage) {
                         print('  --set %-14s %s' % [item + '=value', msg])
@@ -731,6 +731,9 @@ public class Bit {
         let packs = (bit.required + bit.optional).sort().unique()
         for each (pack in bit.required + bit.optional) {
             if (bit.packs[pack] && !bit.packs[pack].enable) {
+                if (bit.required.contains(pack)) { 
+                    throw 'Required pack ' + pack + ' is not enabled'
+                }
                 continue
             }
             let path = bit.dir.bits.join('packs', pack + '.bit')
@@ -1098,6 +1101,7 @@ public class Bit {
         genEnv()
         build()
         genout.close()
+        path.setAttributes({permissions: 0755})
     }
 
     function generateMake(base: Path) {

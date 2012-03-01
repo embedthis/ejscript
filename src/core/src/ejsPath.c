@@ -318,6 +318,7 @@ int ejsSetPathAttributes(Ejs *ejs, cchar *path, EjsObj *attributes)
 static EjsObj *copyPath(Ejs *ejs, EjsPath *fp, int argc, EjsObj **argv)
 {
     MprFile     *from, *to;
+    MprPath     info;
     EjsObj      *options;
     cchar       *toPath;
     ssize       bytes;
@@ -344,7 +345,10 @@ static EjsObj *copyPath(Ejs *ejs, EjsPath *fp, int argc, EjsObj **argv)
     if (options && ejsGetLength(ejs, options) > 0) {
         ejsSetPathAttributes(ejs, toPath, options);
     } else {
-        ejsSetPathAttributes(ejs, toPath, getAttributes(ejs, fp, 0, NULL));
+        /* Keep perms of original file, don't inherit user/group (may not have permissions to create) */
+        if (mprGetPathInfo(fp->value, &info) >= 0 && !info.valid) {
+            chmod(toPath, info.perms);
+        }
     }
     if ((buf = mprAlloc(MPR_BUFSIZE)) == NULL) {
         ejsThrowMemoryError(ejs);

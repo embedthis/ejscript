@@ -66,7 +66,7 @@ EjsAny *ejsClonePot(Ejs *ejs, EjsAny *obj, bool deep)
         *dp = *sp;
         dp->hashChain = -1;
         vp = sp->value.ref;
-        if (deep) {
+        if (deep && vp) {
             if (ejsIsFunction(ejs, vp) && !ejsIsType(ejs, vp)) {
                 ;
             } else if ((ejsIsType(ejs, vp) && ((EjsType*) vp)->mutable) || 

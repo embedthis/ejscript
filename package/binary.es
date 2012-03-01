@@ -73,7 +73,7 @@ if (!bare) {
     let cmdFilter = (Config.OS == "WIN") ? /undefined/ : /\.cmd/
     copy("*", bin, {
         from: sbin,
-        include: /ejs|mvc|ejspage|jem|http|manager|sqlite/
+        include: /bit|ejs|mvc|ejspage|jem|http|manager|sqlite/
         exclude: cmdFilter,
         permissions: 0755,
     })
@@ -83,6 +83,7 @@ if (!bare) {
 }
 
 copy("ejs*", bin, {from: sbin, permissions: 0755, strip: strip, exclude: /ejspage/})
+copy("bit.es", bin, {from: sbin, permissions: 0755})
 copy("*.mod", lib, {from: slib})
 
 /*
