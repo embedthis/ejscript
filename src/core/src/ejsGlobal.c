@@ -254,7 +254,7 @@ int ejsBlendObject(Ejs *ejs, EjsObj *dest, EjsObj *src, int flags)
             if ((dp = ejsGetPropertyByName(ejs, dest, trimmedName)) == 0) {
                 /* Destination property missing */
                 if (cflags & EJS_BLEND_SUB) {
-                    return 0;
+                    continue;
                 }
                 if (!ejsIsPot(ejs, vp)) {
                     ejsSetPropertyByName(ejs, dest, trimmedName, ejsClone(ejs, vp, 1));
