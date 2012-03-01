@@ -54,7 +54,7 @@ if (options.task == "Remove" && bin.join("linkup").exists) {
 }
 
 if (!bare) {
-    copy("LICENSE.TXT", ver, { from: "doc/licenses", fold: true, expand: true })
+    copy("LICENSE.md", ver, { fold: true, expand: true })
     copy("*.TXT", ver, { from: "doc/product", fold: true, expand: true })
     copy("uninstall.sh", bin.join("uninstall"), {from: "package", permissions: 0755, expand: true})
     copy("linkup", bin.join("linkup"), {from: "package", permissions: 0755, expand: true})
