@@ -48,7 +48,7 @@ public class Bit {
     private var windows = ['win', 'wince']
     private var start: Date
     private var targetsToBuildByDefault = { exe: true, file: true, lib: true, obj: true, script: true }
-    private var targetsToBlend = { exe: true, lib: true, obj: true, action: true }
+    private var targetsToBlend = { exe: true, lib: true, obj: true, action: true, script: true }
     private var targetsToClean = { exe: true, file: true, lib: true, obj: true, script: true }
 
     private var argTemplate = {
