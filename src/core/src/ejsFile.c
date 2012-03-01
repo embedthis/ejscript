@@ -732,19 +732,18 @@ EjsObj *writeFile(Ejs *ejs, EjsFile *fp, int argc, EjsObj **argv)
  */
 static ssize readData(Ejs *ejs, EjsFile *fp, EjsByteArray *ap, ssize offset, ssize count)
 {
-    ssize   len, bytes;
+    ssize   room, bytes;
 
     if (count <= 0) {
         return 0;
     }
-    len = ap->length - offset;
-    if (len < count) {
+    room = ap->length - offset;
+    if (room < count) {
         if (ap->resizable) {
-            ejsGrowByteArray(ejs, ap, ap->length + (count - len));
+            ejsGrowByteArray(ejs, ap, ap->length + (count - room));
+        } else {
+            count = min(room, count);
         }
-#if UNUSED
-        len = ap->length - offset;
-#endif
     }
     bytes = mprReadFile(fp->file, &ap->value[offset], count);
     if (bytes < 0) {
