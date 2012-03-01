@@ -26,7 +26,7 @@ updateReadme()  {
     cp "${ABS_BLD_TOP}/doc/product/README.TXT" ${DestD}/ReadMe
     patchFile "${DestD}/ReadMe"
 
-    cp "${ABS_BLD_TOP}/doc/licenses/LICENSE.TXT" ${DestD}/License
+    cp "${ABS_BLD_TOP}/LICENSE.md" ${DestD}/License
     patchFile "${DestD}/License"
 }
 
