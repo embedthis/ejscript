@@ -434,7 +434,7 @@ public class Bit {
         f.writeLine('#define BLD_PRODUCT "' + settings.product + '"')
         f.writeLine('#define BLD_NAME "' + settings.title + '"')
         f.writeLine('#define BLD_COMPANY "' + settings.company + '"')
-        f.writeLine('#define BLD_' + settings.product.toUpper() + ' 1')
+        f.writeLine('#define BLD_' + settings.product.toUpper() + 'PRODUCT 1')
         f.writeLine('#define BLD_VERSION "' + settings.version + '"')
         f.writeLine('#define BLD_NUMBER "' + settings.buildNumber + '"')
         if (settings.charlen) {
@@ -828,6 +828,7 @@ public class Bit {
             bit.settings.profile = options.profile
         }
         loadWrapper(path)
+
         loadModules()
         applyProfile()
         makeDirsAbsolute()
@@ -1448,7 +1449,7 @@ public class Bit {
     }
 
     /*
-        Blend bit.defults into targets
+        Blend bit.defaults into targets
      */
     function blendDefaults() {
         if (bit.defaults) {
@@ -1458,9 +1459,11 @@ public class Bit {
         for (name in bit.defaults) {
             defaults['+' + name] = bit.defaults[name]
         }
-        for each (target in bit.targets) {
+        for (let [tname, target] in bit.targets) {
             if (targetsToBlend[target.type]) {
                 blend(target, defaults, {combine: true})
+                // bit.targets[tname] = blend(defaults.clone(), target, {combine: true})
+                // dump('RESULT', bit.targets[tname])
                 runScript(target.scripts, 'postblend')
                 if (target.scripts && target.scripts.preblend) {
                     delete target.scripts.preblend
