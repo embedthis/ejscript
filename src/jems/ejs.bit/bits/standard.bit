@@ -16,6 +16,12 @@ Bit.load({
         rel:        '${dir.top}/releases',
 	},
 
+    defaults: {
+        '+includes': [
+            '${dir.inc}',
+        ],
+    },
+
     targets: {
         clean: {
             action: "

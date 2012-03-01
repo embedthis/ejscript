@@ -57,10 +57,6 @@ Bit.load({
     '+optional': [ 'doxygen', 'zlib', 'openssl', 'matrixssl', 'sqlite' ],
     '+required': [ 'pcre', 'http' ]
 
-    defaults: {
-        '+includes': [ 'src' ]
-    },
-
     packs: {
         ejs: {
             /* Define for utest target */

@@ -13,16 +13,16 @@ Bit.load({
     },
 
     defaults: {
-        '+compiler': [ '-fPIC', '-Wall' ],
-        '+defines':  [ '-DPIC' ],
-        '+libraries':[ 'pthread', 'm' ],
-        '+linker':   [
+        'compiler': [ '-fPIC', '-Wall' ],
+        'defines':  [ '-DPIC' ],
+        'libraries':[ 'pthread', 'm' ],
+        'linker':   [
             '-Wl,-rpath,@executable_path/../lib',
             '-Wl,-rpath,@executable_path/',
             '-Wl,-rpath,@loader_path/',
         ],
         scripts: {
-            '+preblend': "
+            'preblend': "
                 let defaults = bit.defaults
                 let arch = bit.platform.arch
                 if (bit.settings.preprocess) {

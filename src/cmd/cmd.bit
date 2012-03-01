@@ -28,8 +28,8 @@ Bit.load({
 
         ejsmod: {
             type: 'exe',
-            includes: [ '.' ],
             sources: [ 'ejsmod.c', 'doc.c', 'docFiles.c', 'listing.c', 'slotGen.c' ],
+            '+includes': [ '.' ],
             depends: [ 'libejs' ],
         },
 

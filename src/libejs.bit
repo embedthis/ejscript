@@ -5,7 +5,7 @@
 Bit.load({
 
     defaults: {
-        '+includes': [ 'slots' ],
+        '+includes': [ '.', 'slots' ],
     },
 
     targets: {

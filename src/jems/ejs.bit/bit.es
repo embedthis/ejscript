@@ -48,7 +48,7 @@ public class Bit {
     private var windows = ['win', 'wince']
     private var start: Date
     private var targetsToBuildByDefault = { exe: true, file: true, lib: true, obj: true, script: true }
-    private var targetsToBlend = { exe: true, lib: true, obj: true }
+    private var targetsToBlend = { exe: true, lib: true, obj: true, action: true }
     private var targetsToClean = { exe: true, file: true, lib: true, obj: true, script: true }
 
     private var argTemplate = {
@@ -304,9 +304,11 @@ public class Bit {
                 top: bit.dir.top,
             },
             settings: bit.settings,
+    /*
             defaults: {
                 '+includes': [ '${dir.inc}' ],
             },
+     */
             packs: bit.packs,
         })
         if (envSettings) {
@@ -878,12 +880,28 @@ public class Bit {
 
     /*
         Rebase paths in a bit file object to be relative to the directory containing the bit file
-     */
-    function rebase(home: Path, list: Array) {
+        UNUSED
+    function rebaseOld(home: Path, list: Array) {
         for (item in list) {
             let value = list[item]
-            //  MOB -should this check if value contains ${}
-            list[item] = home.join(value)
+            if (!value.startsWith('${')) {
+                list[item] = home.join(value)
+            }
+        }
+    }
+     */
+
+    function rebase(home: Path, o: Object, field: String) {
+        if (o[field] is Array) {
+            for (i in o[field]) {
+                if (!o[field][i].startsWith('${')) {
+                    o[field][i] = home.join(o[field][i])
+                }
+            }
+        } else if (o[field]) {
+            if (!o[field].startsWith('${')) {
+                o[field] = home.join(o[field])
+            }
         }
     }
 
@@ -898,10 +916,10 @@ public class Bit {
         for (i in o['+modules']) {
             o['+modules'][i] = home.join(o['+modules'][i])
         }
+        //  Functionalize
         if (o.defaults) {
-            //  Functionalize and repeat for internal
-            rebase(home, o.defaults.includes)
-            rebase(home, o.defaults['+includes'])
+            rebase(home, o.defaults, 'includes')
+            rebase(home, o.defaults, '+includes')
             for (let [when,item] in o.defaults.scripts) {
                 if (item is String) {
                     o.defaults.scripts[when] = [{ home: home, script: item }]
@@ -911,8 +929,8 @@ public class Bit {
             }
         }
         if (o.internal) {
-            rebase(home, o.internal.includes)
-            rebase(home, o.internal['+includes'])
+            rebase(home, o.internal, 'includes')
+            rebase(home, o.internal, '+includes')
             for (let [when,item] in o.internal.scripts) {
                 if (item is String) {
                     o.internal.scripts[when] = [{ home: home, script: item }]
@@ -930,45 +948,11 @@ public class Bit {
                     target.path = target.home.join(target.path)
                 }
             }
-            if (target.includes is Array) {
-                for (i in target.includes) {
-                    if (!target.includes[i].startsWith('${')) {
-                        target.includes[i] = home.join(target.includes[i])
-                    }
-                }
-            } else if (target.includes is RegExp) {
-                ;
-            } else if (target.includes) {
-                if (!target.includes.startsWith('${')) {
-                    target.includes = home.join(target.includes)
-                }
-            }
-            for (i in target.sources) {
-                if (target.sources is Array) {
-                    if (!target.sources[i].startsWith('${')) {
-                        target.sources[i] = home.join(target.sources[i])
-                    }
-                } else if (target.includes is Regexp) {
-                    ;
-                } else if (target.sources) {
-                    if (!target.sources.startsWith('${')) {
-                        target.sources = home.join(target.sources)
-                    }
-                }
-            }
-            for (i in target.files) {
-                if (target.files is Array) {
-                    if (!target.files[i].startsWith('${')) {
-                        target.files[i] = home.join(target.files[i])
-                    }
-                } else if (target.includes is Regexp) {
-                    ;
-                } else if (target.files) {
-                    if (!target.files.startsWith('${')) {
-                        target.files = home.join(target.files)
-                    }
-                }
-            }
+            rebase(home, target, 'includes')
+            rebase(home, target, '+includes')
+            rebase(home, target, 'sources')
+            rebase(home, target, 'files')
+
             /* Convert strings scripts into an array of scripts structures */
             for (let [when,item] in target.scripts) {
                 if (item is String) {
@@ -981,28 +965,31 @@ public class Bit {
                 /*
                     Build scripts run at 'build' time. They have a type of 'script' so they run by default 
                  */
+                target.type ||= 'script'
                 target.scripts ||= {}
                 target.scripts['+build'] ||= []
                 target.scripts['+build'] += [{ home: home, script: target.build }]
-                target.type ||= 'script'
                 delete target.build
             }
             if (target.action) {
-                /*
-                    Actions run at 'build' time. They have a type of 'action' so they do not run by default
-                    unless requested as an action on the command line
-                 */
-                target.scripts ||= {}
-                target.scripts['+build'] ||= []
-                target.scripts['+build'] += [{ home: home, script: target.action }]
                 target.type ||= 'action'
-                delete target.action
+                if (targetsToBlend[target.type]) {
+                    /*
+                        Actions do not run at 'build' time. They have a type of 'action' so they do not run by default
+                        unless requested as an action on the command line.
+                     */
+                    target.scripts ||= {}
+                    target.scripts['+build'] ||= []
+                    target.scripts['+build'] += [{ home: home, script: target.action }]
+                    delete target.action
+                }
             }
 
             /*
                 Blend internal for only the targets in this file
              */
             if (o.internal) {
+//MOB - AA
                 blend(target, o.internal, {combine: true})
             }
             if (target.inherit) {
@@ -1037,7 +1024,11 @@ public class Bit {
             path = path.expand(bit, {fill: '.'})
             loadWrapper(home.join(path))
         }
-        global.bit = blend(bit, o, {combine: true})
+        bit = blend(bit, o, {combine: true})
+        for (let [tname, target] in o.targets) {
+            /* Overwrite targets with original unblended target. This delays blending to preserve +/-properties  */  
+            bit.targets[tname] = target
+        }
         expandTokens(bit)
     }
 
@@ -1455,15 +1446,16 @@ public class Bit {
         if (bit.defaults) {
             runScript(bit.defaults.scripts, 'preblend')
         }
+/* UNUSED
         let defaults = {}
         for (name in bit.defaults) {
             defaults['+' + name] = bit.defaults[name]
         }
+*/
         for (let [tname, target] in bit.targets) {
             if (targetsToBlend[target.type]) {
-                blend(target, defaults, {combine: true})
-                // bit.targets[tname] = blend(defaults.clone(), target, {combine: true})
-                // dump('RESULT', bit.targets[tname])
+                let def = blend({}, bit.defaults, {combine: true})
+                bit.targets[tname] = blend(def, target, {combine: true})
                 runScript(target.scripts, 'postblend')
                 if (target.scripts && target.scripts.preblend) {
                     delete target.scripts.preblend

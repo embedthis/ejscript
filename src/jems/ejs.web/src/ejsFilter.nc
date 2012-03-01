@@ -1,5 +1,5 @@
 /*
-    ejsFilter.c - Transfer chunk endociding filter.
+    ejsFilter.c - Transfer chunk endcoding filter.
 
     Copyright (c) All Rights Reserved. See details at the end of the file.
  */
