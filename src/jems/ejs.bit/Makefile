@@ -30,6 +30,12 @@ $(BLD_LIB_DIR)/bits: bits bits/* bits/*/*
 cleanExtra:
 	rm -fr $(BLD_LIB_DIR)/bits
 
+manual:
+	rm -fr $(BLD_TOP)/xcode/lib/bits
+	cp -r bits $(BLD_TOP)/xcode/lib
+	cp bit.es $(BLD_TOP)/xcode/bin
+	echo Copied to xcode
+
 #
 #   Local variables:
 #   tab-width: 4

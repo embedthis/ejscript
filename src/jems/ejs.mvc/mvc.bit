@@ -18,6 +18,7 @@ Bit.load({
             type: 'file',
             path: '${BIN}/mvc${EXE}',
             files: [ '${BIN}/ejsrun${EXE}' ],
+            depends: ['ejsrun'],
         },
 
         'ejs.mvc.mod': {

@@ -12,7 +12,7 @@ Bit.load({
                 trace('Compile', 'ejs.zlib.mod')
                 run('ejsc --out ${LIB}/ejs.zlib.mod ${settings.esflags} --optimize 9 ' + Path('.').glob('*.es').sort().join(' '))
             ",
-            depends: [ 'ejsc', 'ejsmod', 'ejs.mod', 'ejs.zlib.mod' ],
+            depends: [ 'ejsc', 'ejsmod', 'ejs.mod' ],
         },
 
         'ejs.zlib': {

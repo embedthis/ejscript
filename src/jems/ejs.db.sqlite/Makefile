@@ -11,6 +11,7 @@ NAME		= ejs.db.sqlite
 MOD			= $(NAME).mod
 JEM			= $(NAME)-$(BLD_VERSION)
 MODULE		+= $(BLD_LIB_DIR)/$(NAME).mod 
+TARGETS		= $(MODULE)
 
 compileExtra: $(TARGETS)
 

@@ -1554,6 +1554,10 @@ public class Bit {
         if (target.built || !target.enable) {
             return
         }
+        if (target.building) {
+            throw 'Possible recursive dependancy: target ' + target.name + ' is already building'
+        }
+        target.building = true
         bit.target = target
         target.linker ||= []
         target.includes ||= []
@@ -1577,6 +1581,10 @@ public class Bit {
                 if (!dep.enable || dep.built) {
                     continue
                 }
+                if (dep.building) {
+                    throw 'Possible recursive dependancy in target ' + target.name + 
+                        ', dependancy ' + dep.name + ' is already building.'
+                }
                 buildTarget(dep)
             }
         }
@@ -1599,6 +1607,7 @@ public class Bit {
         } else if (target.type == 'generate') {
             generate()
         }
+        target.building = false
         target.built = true
     }
 

@@ -39,14 +39,15 @@
 /*
     Local slots for methods in type "Zlib" 
  */
-#define ES_ejs_zlib_Zlib_compress_file                                 0
-#define ES_ejs_zlib_Zlib_compress_extension                            1
-#define ES_ejs_zlib_Zlib_uncompress_file                               0
+#define ES_ejs_zlib_Zlib_compress_src                                  0
+#define ES_ejs_zlib_Zlib_compress_dest                                 1
+#define ES_ejs_zlib_Zlib_uncompress_src                                0
+#define ES_ejs_zlib_Zlib_uncompress_dest                               1
 #define ES_ejs_zlib_Zlib_compressBytes_data                            0
 #define ES_ejs_zlib_Zlib_uncompressBytes_data                          0
 #define ES_ejs_zlib_Zlib_compressString_data                           0
 #define ES_ejs_zlib_Zlib_uncompressString_data                         0
 
-#define _ES_CHECKSUM_ejs_zlib   14804
+#define _ES_CHECKSUM_ejs_zlib   14504
 
 #endif

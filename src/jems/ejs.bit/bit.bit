@@ -18,6 +18,7 @@ Bit.load({
             type: 'file',
             path: '${BIN}/bit${EXE}',
             files: [ '${BIN}/ejsrun${EXE}' ],
+            depends: ['ejsrun'],
         },
 
         bits: {

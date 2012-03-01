@@ -151,7 +151,7 @@ int ejsAddModule(Ejs *ejs, EjsModule *mp)
 
 void ejsRemoveModule(Ejs *ejs, EjsModule *mp)
 {
-    mprLog(6, "Remove module: %@", mp->name); 
+    mprLog(7, "Remove module: %@", mp->name); 
     mprRemoveItem(mp->vms, ejs);
     mprRemoveItem(ejs->modules, mp);
 }
@@ -163,7 +163,7 @@ void ejsRemoveModuleFromAll(EjsModule *mp)
     int     next;
 
     if (mp->vms) {
-        mprLog(6, "Remove module from all vms: %@", mp->name); 
+        mprLog(7, "Remove module from all vms: %@", mp->name); 
         for (next = 0; (ejs = mprGetNextItem(mp->vms, &next)) != 0; ) {
             if (ejs->modules) {
                 mprRemoveItem(ejs->modules, mp);
