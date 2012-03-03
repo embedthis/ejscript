@@ -1450,12 +1450,6 @@ public class Bit {
         if (bit.defaults) {
             runScript(bit.defaults.scripts, 'preblend')
         }
-/* UNUSED
-        let defaults = {}
-        for (name in bit.defaults) {
-            defaults['+' + name] = bit.defaults[name]
-        }
-*/
         for (let [tname, target] in bit.targets) {
             if (targetsToBlend[target.type]) {
                 let def = blend({}, bit.defaults, {combine: true})
@@ -1781,15 +1775,15 @@ public class Bit {
             return
         }
         runScript(target.scripts, 'prebuild')
-        //  MOB - need a way to set or preserve perms
+        setRuleVars(target, 'file')
         for each (let file: Path in target.files) {
             trace('Copy', file.relativeTo('.'))
             if (generating == 'sh') {
                 genout.writeLine('rm -f ' + target.path + '\n')
                 genout.writeLine('cp ' + file + ' ' + target.path + '\n')
             } else if (generating == 'make') {
-                genout.writeLine(target.path + ': ' + getTargetDeps(target) + '\n')
-                genout.writeLine('\trm -f ' + target.path + '\n')
+                genout.writeLine(target.path.relative + ': ' + getTargetDeps(target))
+                genout.writeLine('\trm -f ' + target.path)
                 genout.writeLine('\tcp ' + file + ' ' + target.path + '\n')
             } else {
                 safeRemove(target.path)
@@ -1811,8 +1805,27 @@ public class Bit {
         }
         bit.ARCH = bit.platform.arch
         trace(target.type.toPascal(), target.name)
+        setRuleVars(target, 'file')
         if (generating == 'sh') {
-            genout.writeLine('#  Omit script ' + target.path + ' ' + target.scripts[build])
+            let command = target['generate-sh']
+            if (command) {
+                command = command.replace(/^[ \t]*/mg, '\t')
+                command = command.trim()
+                genout.writeLine(command.expand(bit))
+            } else {
+                genout.writeLine('#  Omit build script ' + target.path)
+            }
+        } else if (generating == 'make') {
+            genout.writeLine(target.path.relative + ': ' + getTargetDeps(target))
+            let command ||= target['generate-make']
+            let command ||= target['generate-sh']
+            if (command) {
+                command = command.replace(/^[ \t]*/mg, '\t')
+                command = command.trim()
+                genout.writeLine('\t' + command.expand(bit) + '\n')
+            } else {
+                genout.writeLine('#  Omit build script ' + target.path + '\n')
+            }
         } else {
             runScript(target.scripts, 'build')
         }
@@ -1848,13 +1861,17 @@ public class Bit {
      */
     function getTargetDeps(target): String {
         let deps = []
-        for each (let dname in target.depends) {
-            let dep = bit.targets[dname]
-            if (dep && dep.enable) {
-                deps.push(dep.path.relative)
+        if (!target.depends || target.depends.length == 0) {
+            return ''
+        } else {
+            for each (let dname in target.depends) {
+                let dep = bit.targets[dname]
+                if (dep && dep.enable) {
+                    deps.push(dep.path.relative)
+                }
             }
+            return ' \\\n        ' + deps.join(' \\\n        ')
         }
-        return ' \\\n        ' + deps.join(' \\\n        ')
     }
 
     /*
@@ -1898,6 +1915,8 @@ public class Bit {
      */
     function setRuleVars(target, kind, file = null) {
         bit.OUT = target.path
+        bit.TARGET = target
+        bit.HOME = target.home
         if (kind == 'exe') {
             bit.IN = target.files.join(' ')
             bit.LIBS = mapLibs(target.libraries)
@@ -2225,7 +2244,7 @@ public class Bit {
                     /* Pre-built targets must be preserved */
                     if (target.path.startsWith(bit.dir.cfg) && !target.built) {
                         if (generating == 'make') {
-                            genout.writeLine('\trm -f ' + genReplace(target.path))
+                            genout.writeLine('\trm -rf ' + genReplace(target.path))
                         } else if (generating == 'sh') {
                             genout.writeLine('rm -f ' + genReplace(target.path))
                         } else if (target.path.exists) {

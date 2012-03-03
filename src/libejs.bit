@@ -21,6 +21,9 @@ Bit.load({
                     }
                 }
             "
+            'generate-sh': "\
+                cp ${SRC}/src/slots/*.h ${INC}
+            "
         },
 
         libejs: {

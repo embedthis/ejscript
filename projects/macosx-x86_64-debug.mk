@@ -46,119 +46,119 @@ all: \
         macosx-x86_64-debug/lib/ejs.mvc.mod
 
 clean:
-	rm -f macosx-x86_64-debug/lib/libmpr.dylib
-	rm -f macosx-x86_64-debug/lib/libmprssl.dylib
-	rm -f macosx-x86_64-debug/bin/manager
-	rm -f macosx-x86_64-debug/bin/makerom
-	rm -f macosx-x86_64-debug/lib/libpcre.dylib
-	rm -f macosx-x86_64-debug/lib/libhttp.dylib
-	rm -f macosx-x86_64-debug/bin/http
-	rm -f macosx-x86_64-debug/lib/libsqlite3.dylib
-	rm -f macosx-x86_64-debug/inc/ejs.slots.h
-	rm -f macosx-x86_64-debug/lib/libejs.dylib
-	rm -f macosx-x86_64-debug/bin/ejs
-	rm -f macosx-x86_64-debug/bin/ejsc
-	rm -f macosx-x86_64-debug/bin/ejsmod
-	rm -f macosx-x86_64-debug/bin/ejsrun
-	rm -f macosx-x86_64-debug/lib/ejs.mod
-	rm -f macosx-x86_64-debug/bin/bit.es
-	rm -f macosx-x86_64-debug/bin/bit
-	rm -f macosx-x86_64-debug/lib/bits
-	rm -f macosx-x86_64-debug/lib/ejs.unix.mod
-	rm -f macosx-x86_64-debug/bin/jem.es
-	rm -f macosx-x86_64-debug/bin/jem
-	rm -f macosx-x86_64-debug/lib/ejs.db.mod
-	rm -f macosx-x86_64-debug/lib/ejs.db.mapper.mod
-	rm -f macosx-x86_64-debug/lib/ejs.db.sqlite.mod
-	rm -f macosx-x86_64-debug/lib/ejs.db.sqlite.dylib
-	rm -f macosx-x86_64-debug/lib/ejs.web.mod
-	rm -f macosx-x86_64-debug/lib/ejs.web.dylib
-	rm -f macosx-x86_64-debug/lib/ejs.template.mod
-	rm -f macosx-x86_64-debug/lib/ejs.tar.mod
-	rm -f macosx-x86_64-debug/lib/ejs.zlib.mod
-	rm -f macosx-x86_64-debug/lib/ejs.zlib.dylib
-	rm -f macosx-x86_64-debug/bin/mvc.es
-	rm -f macosx-x86_64-debug/bin/mvc
-	rm -f macosx-x86_64-debug/lib/ejs.mvc.mod
-	rm -f macosx-x86_64-debug/obj/mprLib.o
-	rm -f macosx-x86_64-debug/obj/mprSsl.o
-	rm -f macosx-x86_64-debug/obj/manager.o
-	rm -f macosx-x86_64-debug/obj/makerom.o
-	rm -f macosx-x86_64-debug/obj/pcre.o
-	rm -f macosx-x86_64-debug/obj/httpLib.o
-	rm -f macosx-x86_64-debug/obj/http.o
-	rm -f macosx-x86_64-debug/obj/sqlite3.o
-	rm -f macosx-x86_64-debug/obj/ecAst.o
-	rm -f macosx-x86_64-debug/obj/ecCodeGen.o
-	rm -f macosx-x86_64-debug/obj/ecCompiler.o
-	rm -f macosx-x86_64-debug/obj/ecLex.o
-	rm -f macosx-x86_64-debug/obj/ecModuleWrite.o
-	rm -f macosx-x86_64-debug/obj/ecParser.o
-	rm -f macosx-x86_64-debug/obj/ecState.o
-	rm -f macosx-x86_64-debug/obj/ejsApp.o
-	rm -f macosx-x86_64-debug/obj/ejsArray.o
-	rm -f macosx-x86_64-debug/obj/ejsBlock.o
-	rm -f macosx-x86_64-debug/obj/ejsBoolean.o
-	rm -f macosx-x86_64-debug/obj/ejsByteArray.o
-	rm -f macosx-x86_64-debug/obj/ejsCache.o
-	rm -f macosx-x86_64-debug/obj/ejsCmd.o
-	rm -f macosx-x86_64-debug/obj/ejsConfig.o
-	rm -f macosx-x86_64-debug/obj/ejsDate.o
-	rm -f macosx-x86_64-debug/obj/ejsDebug.o
-	rm -f macosx-x86_64-debug/obj/ejsError.o
-	rm -f macosx-x86_64-debug/obj/ejsFile.o
-	rm -f macosx-x86_64-debug/obj/ejsFileSystem.o
-	rm -f macosx-x86_64-debug/obj/ejsFrame.o
-	rm -f macosx-x86_64-debug/obj/ejsFunction.o
-	rm -f macosx-x86_64-debug/obj/ejsGC.o
-	rm -f macosx-x86_64-debug/obj/ejsGlobal.o
-	rm -f macosx-x86_64-debug/obj/ejsHttp.o
-	rm -f macosx-x86_64-debug/obj/ejsIterator.o
-	rm -f macosx-x86_64-debug/obj/ejsJSON.o
-	rm -f macosx-x86_64-debug/obj/ejsLocalCache.o
-	rm -f macosx-x86_64-debug/obj/ejsMath.o
-	rm -f macosx-x86_64-debug/obj/ejsMemory.o
-	rm -f macosx-x86_64-debug/obj/ejsMprLog.o
-	rm -f macosx-x86_64-debug/obj/ejsNamespace.o
-	rm -f macosx-x86_64-debug/obj/ejsNull.o
-	rm -f macosx-x86_64-debug/obj/ejsNumber.o
-	rm -f macosx-x86_64-debug/obj/ejsObject.o
-	rm -f macosx-x86_64-debug/obj/ejsPath.o
-	rm -f macosx-x86_64-debug/obj/ejsPot.o
-	rm -f macosx-x86_64-debug/obj/ejsRegExp.o
-	rm -f macosx-x86_64-debug/obj/ejsSocket.o
-	rm -f macosx-x86_64-debug/obj/ejsString.o
-	rm -f macosx-x86_64-debug/obj/ejsSystem.o
-	rm -f macosx-x86_64-debug/obj/ejsTimer.o
-	rm -f macosx-x86_64-debug/obj/ejsType.o
-	rm -f macosx-x86_64-debug/obj/ejsUri.o
-	rm -f macosx-x86_64-debug/obj/ejsVoid.o
-	rm -f macosx-x86_64-debug/obj/ejsWorker.o
-	rm -f macosx-x86_64-debug/obj/ejsXML.o
-	rm -f macosx-x86_64-debug/obj/ejsXMLList.o
-	rm -f macosx-x86_64-debug/obj/ejsXMLLoader.o
-	rm -f macosx-x86_64-debug/obj/ejsByteCode.o
-	rm -f macosx-x86_64-debug/obj/ejsException.o
-	rm -f macosx-x86_64-debug/obj/ejsHelper.o
-	rm -f macosx-x86_64-debug/obj/ejsInterp.o
-	rm -f macosx-x86_64-debug/obj/ejsLoader.o
-	rm -f macosx-x86_64-debug/obj/ejsModule.o
-	rm -f macosx-x86_64-debug/obj/ejsScope.o
-	rm -f macosx-x86_64-debug/obj/ejsService.o
-	rm -f macosx-x86_64-debug/obj/ejs.o
-	rm -f macosx-x86_64-debug/obj/ejsc.o
-	rm -f macosx-x86_64-debug/obj/ejsmod.o
-	rm -f macosx-x86_64-debug/obj/doc.o
-	rm -f macosx-x86_64-debug/obj/docFiles.o
-	rm -f macosx-x86_64-debug/obj/listing.o
-	rm -f macosx-x86_64-debug/obj/slotGen.o
-	rm -f macosx-x86_64-debug/obj/ejsrun.o
-	rm -f macosx-x86_64-debug/obj/ejsSqlite.o
-	rm -f macosx-x86_64-debug/obj/ejsHttpServer.o
-	rm -f macosx-x86_64-debug/obj/ejsRequest.o
-	rm -f macosx-x86_64-debug/obj/ejsSession.o
-	rm -f macosx-x86_64-debug/obj/ejsWeb.o
-	rm -f macosx-x86_64-debug/obj/ejsZlib.o
+	rm -rf macosx-x86_64-debug/lib/libmpr.dylib
+	rm -rf macosx-x86_64-debug/lib/libmprssl.dylib
+	rm -rf macosx-x86_64-debug/bin/manager
+	rm -rf macosx-x86_64-debug/bin/makerom
+	rm -rf macosx-x86_64-debug/lib/libpcre.dylib
+	rm -rf macosx-x86_64-debug/lib/libhttp.dylib
+	rm -rf macosx-x86_64-debug/bin/http
+	rm -rf macosx-x86_64-debug/lib/libsqlite3.dylib
+	rm -rf macosx-x86_64-debug/inc/ejs.slots.h
+	rm -rf macosx-x86_64-debug/lib/libejs.dylib
+	rm -rf macosx-x86_64-debug/bin/ejs
+	rm -rf macosx-x86_64-debug/bin/ejsc
+	rm -rf macosx-x86_64-debug/bin/ejsmod
+	rm -rf macosx-x86_64-debug/bin/ejsrun
+	rm -rf macosx-x86_64-debug/lib/ejs.mod
+	rm -rf macosx-x86_64-debug/bin/bit.es
+	rm -rf macosx-x86_64-debug/bin/bit
+	rm -rf macosx-x86_64-debug/lib/bits
+	rm -rf macosx-x86_64-debug/lib/ejs.unix.mod
+	rm -rf macosx-x86_64-debug/bin/jem.es
+	rm -rf macosx-x86_64-debug/bin/jem
+	rm -rf macosx-x86_64-debug/lib/ejs.db.mod
+	rm -rf macosx-x86_64-debug/lib/ejs.db.mapper.mod
+	rm -rf macosx-x86_64-debug/lib/ejs.db.sqlite.mod
+	rm -rf macosx-x86_64-debug/lib/ejs.db.sqlite.dylib
+	rm -rf macosx-x86_64-debug/lib/ejs.web.mod
+	rm -rf macosx-x86_64-debug/lib/ejs.web.dylib
+	rm -rf macosx-x86_64-debug/lib/ejs.template.mod
+	rm -rf macosx-x86_64-debug/lib/ejs.tar.mod
+	rm -rf macosx-x86_64-debug/lib/ejs.zlib.mod
+	rm -rf macosx-x86_64-debug/lib/ejs.zlib.dylib
+	rm -rf macosx-x86_64-debug/bin/mvc.es
+	rm -rf macosx-x86_64-debug/bin/mvc
+	rm -rf macosx-x86_64-debug/lib/ejs.mvc.mod
+	rm -rf macosx-x86_64-debug/obj/mprLib.o
+	rm -rf macosx-x86_64-debug/obj/mprSsl.o
+	rm -rf macosx-x86_64-debug/obj/manager.o
+	rm -rf macosx-x86_64-debug/obj/makerom.o
+	rm -rf macosx-x86_64-debug/obj/pcre.o
+	rm -rf macosx-x86_64-debug/obj/httpLib.o
+	rm -rf macosx-x86_64-debug/obj/http.o
+	rm -rf macosx-x86_64-debug/obj/sqlite3.o
+	rm -rf macosx-x86_64-debug/obj/ecAst.o
+	rm -rf macosx-x86_64-debug/obj/ecCodeGen.o
+	rm -rf macosx-x86_64-debug/obj/ecCompiler.o
+	rm -rf macosx-x86_64-debug/obj/ecLex.o
+	rm -rf macosx-x86_64-debug/obj/ecModuleWrite.o
+	rm -rf macosx-x86_64-debug/obj/ecParser.o
+	rm -rf macosx-x86_64-debug/obj/ecState.o
+	rm -rf macosx-x86_64-debug/obj/ejsApp.o
+	rm -rf macosx-x86_64-debug/obj/ejsArray.o
+	rm -rf macosx-x86_64-debug/obj/ejsBlock.o
+	rm -rf macosx-x86_64-debug/obj/ejsBoolean.o
+	rm -rf macosx-x86_64-debug/obj/ejsByteArray.o
+	rm -rf macosx-x86_64-debug/obj/ejsCache.o
+	rm -rf macosx-x86_64-debug/obj/ejsCmd.o
+	rm -rf macosx-x86_64-debug/obj/ejsConfig.o
+	rm -rf macosx-x86_64-debug/obj/ejsDate.o
+	rm -rf macosx-x86_64-debug/obj/ejsDebug.o
+	rm -rf macosx-x86_64-debug/obj/ejsError.o
+	rm -rf macosx-x86_64-debug/obj/ejsFile.o
+	rm -rf macosx-x86_64-debug/obj/ejsFileSystem.o
+	rm -rf macosx-x86_64-debug/obj/ejsFrame.o
+	rm -rf macosx-x86_64-debug/obj/ejsFunction.o
+	rm -rf macosx-x86_64-debug/obj/ejsGC.o
+	rm -rf macosx-x86_64-debug/obj/ejsGlobal.o
+	rm -rf macosx-x86_64-debug/obj/ejsHttp.o
+	rm -rf macosx-x86_64-debug/obj/ejsIterator.o
+	rm -rf macosx-x86_64-debug/obj/ejsJSON.o
+	rm -rf macosx-x86_64-debug/obj/ejsLocalCache.o
+	rm -rf macosx-x86_64-debug/obj/ejsMath.o
+	rm -rf macosx-x86_64-debug/obj/ejsMemory.o
+	rm -rf macosx-x86_64-debug/obj/ejsMprLog.o
+	rm -rf macosx-x86_64-debug/obj/ejsNamespace.o
+	rm -rf macosx-x86_64-debug/obj/ejsNull.o
+	rm -rf macosx-x86_64-debug/obj/ejsNumber.o
+	rm -rf macosx-x86_64-debug/obj/ejsObject.o
+	rm -rf macosx-x86_64-debug/obj/ejsPath.o
+	rm -rf macosx-x86_64-debug/obj/ejsPot.o
+	rm -rf macosx-x86_64-debug/obj/ejsRegExp.o
+	rm -rf macosx-x86_64-debug/obj/ejsSocket.o
+	rm -rf macosx-x86_64-debug/obj/ejsString.o
+	rm -rf macosx-x86_64-debug/obj/ejsSystem.o
+	rm -rf macosx-x86_64-debug/obj/ejsTimer.o
+	rm -rf macosx-x86_64-debug/obj/ejsType.o
+	rm -rf macosx-x86_64-debug/obj/ejsUri.o
+	rm -rf macosx-x86_64-debug/obj/ejsVoid.o
+	rm -rf macosx-x86_64-debug/obj/ejsWorker.o
+	rm -rf macosx-x86_64-debug/obj/ejsXML.o
+	rm -rf macosx-x86_64-debug/obj/ejsXMLList.o
+	rm -rf macosx-x86_64-debug/obj/ejsXMLLoader.o
+	rm -rf macosx-x86_64-debug/obj/ejsByteCode.o
+	rm -rf macosx-x86_64-debug/obj/ejsException.o
+	rm -rf macosx-x86_64-debug/obj/ejsHelper.o
+	rm -rf macosx-x86_64-debug/obj/ejsInterp.o
+	rm -rf macosx-x86_64-debug/obj/ejsLoader.o
+	rm -rf macosx-x86_64-debug/obj/ejsModule.o
+	rm -rf macosx-x86_64-debug/obj/ejsScope.o
+	rm -rf macosx-x86_64-debug/obj/ejsService.o
+	rm -rf macosx-x86_64-debug/obj/ejs.o
+	rm -rf macosx-x86_64-debug/obj/ejsc.o
+	rm -rf macosx-x86_64-debug/obj/ejsmod.o
+	rm -rf macosx-x86_64-debug/obj/doc.o
+	rm -rf macosx-x86_64-debug/obj/docFiles.o
+	rm -rf macosx-x86_64-debug/obj/listing.o
+	rm -rf macosx-x86_64-debug/obj/slotGen.o
+	rm -rf macosx-x86_64-debug/obj/ejsrun.o
+	rm -rf macosx-x86_64-debug/obj/ejsSqlite.o
+	rm -rf macosx-x86_64-debug/obj/ejsHttpServer.o
+	rm -rf macosx-x86_64-debug/obj/ejsRequest.o
+	rm -rf macosx-x86_64-debug/obj/ejsSession.o
+	rm -rf macosx-x86_64-debug/obj/ejsWeb.o
+	rm -rf macosx-x86_64-debug/obj/ejsZlib.o
 
 macosx-x86_64-debug/obj/mprLib.o: \
         src/deps/mpr/mprLib.c \
@@ -267,6 +267,9 @@ macosx-x86_64-debug/obj/sqlite3.o: \
 macosx-x86_64-debug/lib/libsqlite3.dylib:  \
         macosx-x86_64-debug/obj/sqlite3.o
 	$(CC) -dynamiclib -o macosx-x86_64-debug/lib/libsqlite3.dylib -arch x86_64 $(LDFLAGS) -install_name @rpath/libsqlite3.dylib macosx-x86_64-debug/obj/sqlite3.o $(LIBS)
+
+macosx-x86_64-debug/inc/ejs.slots.h: 
+	cp /Users/mob/git/ejs/src/slots/*.h /Users/mob/git/ejs/macosx-x86_64-debug/inc
 
 macosx-x86_64-debug/obj/ecAst.o: \
         src/compiler/ecAst.c \
@@ -750,6 +753,58 @@ macosx-x86_64-debug/bin/ejsrun:  \
         macosx-x86_64-debug/obj/ejsrun.o
 	$(CC) -o macosx-x86_64-debug/bin/ejsrun -arch x86_64 $(LDFLAGS) -L/Users/mob/git/packages-macosx-x86_64/openssl/openssl-1.0.0d -L/Users/mob/git/packages-macosx-x86_64/matrixssl/matrixssl-3-3-open -Lmacosx-x86_64-debug/lib macosx-x86_64-debug/obj/ejsrun.o $(LIBS) -lejs -lmpr -lpcre -lhttp -lmprssl -lssl -lcrypto -lmatrixssl
 
+macosx-x86_64-debug/lib/ejs.mod:  \
+        macosx-x86_64-debug/bin/ejsc \
+        macosx-x86_64-debug/bin/ejsmod
+	ejsc --out /Users/mob/git/ejs/macosx-x86_64-debug/lib/ejs.mod --debug --optimize 9 --bind --require null /Users/mob/git/ejs/src/core/*.es 
+	ejsmod --require null --listing --cslots /Users/mob/git/ejs/macosx-x86_64-debug/lib/ejs.mod
+	cp ejs.slots.h /Users/mob/git/ejs/macosx-x86_64-debug/inc
+
+macosx-x86_64-debug/bin/bit.es: 
+	cp /Users/mob/git/ejs/src/jems/ejs.bit/bit.es /Users/mob/git/ejs/macosx-x86_64-debug/bin
+
+macosx-x86_64-debug/bin/bit:  \
+        macosx-x86_64-debug/bin/ejsrun
+	rm -f /Users/mob/git/ejs/macosx-x86_64-debug/bin/bit
+	cp /Users/mob/git/ejs/macosx-x86_64-debug/bin/ejsrun /Users/mob/git/ejs/macosx-x86_64-debug/bin/bit
+
+macosx-x86_64-debug/lib/bits: 
+	rm -fr /Users/mob/git/ejs/macosx-x86_64-debug/lib/bits
+	cp -r /Users/mob/git/ejs/src/jems/ejs.bit/bits /Users/mob/git/ejs/macosx-x86_64-debug/lib
+
+macosx-x86_64-debug/lib/ejs.unix.mod:  \
+        macosx-x86_64-debug/bin/ejsc \
+        macosx-x86_64-debug/bin/ejsmod \
+        macosx-x86_64-debug/lib/ejs.mod
+	ejsc --out /Users/mob/git/ejs/macosx-x86_64-debug/lib/ejs.unix.mod --debug --optimize 9 /Users/mob/git/ejs/src/jems/ejs.unix/Unix.es
+
+macosx-x86_64-debug/bin/jem.es: 
+	cp /Users/mob/git/ejs/src/jems/ejs.jem/jem.es /Users/mob/git/ejs/macosx-x86_64-debug/bin
+
+macosx-x86_64-debug/bin/jem:  \
+        macosx-x86_64-debug/bin/ejsrun
+	rm -f /Users/mob/git/ejs/macosx-x86_64-debug/bin/jem
+	cp /Users/mob/git/ejs/macosx-x86_64-debug/bin/ejsrun /Users/mob/git/ejs/macosx-x86_64-debug/bin/jem
+
+macosx-x86_64-debug/lib/ejs.db.mod:  \
+        macosx-x86_64-debug/bin/ejsc \
+        macosx-x86_64-debug/bin/ejsmod \
+        macosx-x86_64-debug/lib/ejs.mod
+	ejsc --out /Users/mob/git/ejs/macosx-x86_64-debug/lib/ejs.db.mod --debug --optimize 9 /Users/mob/git/ejs/src/jems/ejs.db/*.es
+
+macosx-x86_64-debug/lib/ejs.db.mapper.mod:  \
+        macosx-x86_64-debug/bin/ejsc \
+        macosx-x86_64-debug/bin/ejsmod \
+        macosx-x86_64-debug/lib/ejs.mod \
+        macosx-x86_64-debug/lib/ejs.db.mod
+	ejsc --out /Users/mob/git/ejs/macosx-x86_64-debug/lib/ejs.db.mapper.mod --debug --optimize 9 /Users/mob/git/ejs/src/jems/ejs.db.mapper/*.es
+
+macosx-x86_64-debug/lib/ejs.db.sqlite.mod:  \
+        macosx-x86_64-debug/bin/ejsc \
+        macosx-x86_64-debug/bin/ejsmod \
+        macosx-x86_64-debug/lib/ejs.mod
+	ejsc --out /Users/mob/git/ejs/macosx-x86_64-debug/lib/ejs.db.sqlite.mod --debug --optimize 9 /Users/mob/git/ejs/src/jems/ejs.db.sqlite/*.es
+
 macosx-x86_64-debug/obj/ejsSqlite.o: \
         src/jems/ejs.db.sqlite/src/ejsSqlite.c \
         macosx-x86_64-debug/inc/bit.h \
@@ -766,6 +821,14 @@ macosx-x86_64-debug/lib/ejs.db.sqlite.dylib:  \
         macosx-x86_64-debug/lib/libsqlite3.dylib \
         macosx-x86_64-debug/obj/ejsSqlite.o
 	$(CC) -dynamiclib -o macosx-x86_64-debug/lib/ejs.db.sqlite.dylib -arch x86_64 $(LDFLAGS) -L/Users/mob/git/packages-macosx-x86_64/openssl/openssl-1.0.0d -L/Users/mob/git/packages-macosx-x86_64/matrixssl/matrixssl-3-3-open -install_name @rpath/ejs.db.sqlite.dylib macosx-x86_64-debug/obj/ejsSqlite.o $(LIBS) -lmpr -lejs -lpcre -lhttp -lmprssl -lssl -lcrypto -lmatrixssl -lsqlite3
+
+macosx-x86_64-debug/lib/ejs.web.mod:  \
+        macosx-x86_64-debug/bin/ejsc \
+        macosx-x86_64-debug/bin/ejsmod \
+        macosx-x86_64-debug/lib/ejs.mod
+	ejsc --out /Users/mob/git/ejs/macosx-x86_64-debug/lib/ejs.web.mod --debug --optimize 9 /Users/mob/git/ejs/src/jems/ejs.web/*.es
+	ejsmod --cslots /Users/mob/git/ejs/macosx-x86_64-debug/lib/ejs.web.mod
+	cp ejs.web.slots.h /Users/mob/git/ejs/macosx-x86_64-debug/inc
 
 macosx-x86_64-debug/obj/ejsHttpServer.o: \
         src/jems/ejs.web/src/ejsHttpServer.c \
@@ -813,6 +876,24 @@ macosx-x86_64-debug/lib/ejs.web.dylib:  \
         macosx-x86_64-debug/obj/ejsWeb.o
 	$(CC) -dynamiclib -o macosx-x86_64-debug/lib/ejs.web.dylib -arch x86_64 $(LDFLAGS) -L/Users/mob/git/packages-macosx-x86_64/openssl/openssl-1.0.0d -L/Users/mob/git/packages-macosx-x86_64/matrixssl/matrixssl-3-3-open -install_name @rpath/ejs.web.dylib macosx-x86_64-debug/obj/ejsHttpServer.o macosx-x86_64-debug/obj/ejsRequest.o macosx-x86_64-debug/obj/ejsSession.o macosx-x86_64-debug/obj/ejsWeb.o $(LIBS) -lmpr -lhttp -lpcre -lmprssl -lssl -lcrypto -lmatrixssl -lpcre -lejs
 
+macosx-x86_64-debug/lib/ejs.template.mod:  \
+        macosx-x86_64-debug/bin/ejsc \
+        macosx-x86_64-debug/bin/ejsmod \
+        macosx-x86_64-debug/lib/ejs.mod
+	ejsc --out /Users/mob/git/ejs/macosx-x86_64-debug/lib/ejs.template.mod --debug --optimize 9 /Users/mob/git/ejs/src/jems/ejs.template/*.es
+
+macosx-x86_64-debug/lib/ejs.tar.mod:  \
+        macosx-x86_64-debug/bin/ejsc \
+        macosx-x86_64-debug/bin/ejsmod \
+        macosx-x86_64-debug/lib/ejs.mod
+	ejsc --out /Users/mob/git/ejs/macosx-x86_64-debug/lib/ejs.tar.mod/ --debug --optimize 9 /Users/mob/git/ejs/src/jems/ejs.tar/*.es
+
+macosx-x86_64-debug/lib/ejs.zlib.mod:  \
+        macosx-x86_64-debug/bin/ejsc \
+        macosx-x86_64-debug/bin/ejsmod \
+        macosx-x86_64-debug/lib/ejs.mod
+	ejsc --out /Users/mob/git/ejs/macosx-x86_64-debug/lib/ejs.zlib.mod/ --debug --optimize 9 /Users/mob/git/ejs/src/jems/ejs.zlib/*.es
+
 macosx-x86_64-debug/obj/ejsZlib.o: \
         src/jems/ejs.zlib/src/ejsZlib.c \
         macosx-x86_64-debug/inc/bit.h \
@@ -828,4 +909,21 @@ macosx-x86_64-debug/lib/ejs.zlib.dylib:  \
         macosx-x86_64-debug/lib/ejs.zlib.mod \
         macosx-x86_64-debug/obj/ejsZlib.o
 	$(CC) -dynamiclib -o macosx-x86_64-debug/lib/ejs.zlib.dylib -arch x86_64 $(LDFLAGS) -L/Users/mob/git/packages-macosx-x86_64/openssl/openssl-1.0.0d -L/Users/mob/git/packages-macosx-x86_64/matrixssl/matrixssl-3-3-open -L/usr/lib -install_name @rpath/ejs.zlib.dylib macosx-x86_64-debug/obj/ejsZlib.o $(LIBS) -lmpr -lejs -lpcre -lhttp -lmprssl -lssl -lcrypto -lmatrixssl -lz
+
+macosx-x86_64-debug/bin/mvc.es: 
+	cp /Users/mob/git/ejs/src/jems/ejs.mvc/mvc.es /Users/mob/git/ejs/macosx-x86_64-debug/bin
+
+macosx-x86_64-debug/bin/mvc:  \
+        macosx-x86_64-debug/bin/ejsrun
+	rm -f /Users/mob/git/ejs/macosx-x86_64-debug/bin/mvc
+	cp /Users/mob/git/ejs/macosx-x86_64-debug/bin/ejsrun /Users/mob/git/ejs/macosx-x86_64-debug/bin/mvc
+
+macosx-x86_64-debug/lib/ejs.mvc.mod:  \
+        macosx-x86_64-debug/bin/ejsc \
+        macosx-x86_64-debug/bin/ejsmod \
+        macosx-x86_64-debug/lib/ejs.mod \
+        macosx-x86_64-debug/lib/ejs.web.mod \
+        macosx-x86_64-debug/lib/ejs.template.mod \
+        macosx-x86_64-debug/lib/ejs.unix.mod
+	ejsc --out /Users/mob/git/ejs/macosx-x86_64-debug/lib/ejs.mvc.mod/ --debug --optimize 9 /Users/mob/git/ejs/src/jems/ejs.mvc/*.es
 

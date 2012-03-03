@@ -12,6 +12,9 @@ Bit.load({
                 trace('Export', bit.target.files)
                 cp('bit.es', bit.dir.bin.join('bit.es'))
             ",
+            'generate-sh': "\
+                cp ${HOME}/bit.es ${BIN}
+            ",
         },
 
         'bit.exe': {
@@ -28,6 +31,10 @@ Bit.load({
                 rmdir(bit.dir.lib.join('bits'))
                 cp('bits', bit.dir.lib.join('bits'))
             "
+            'generate-sh': "\
+                rm -fr ${LIB}/bits
+                cp -r ${HOME}/bits ${LIB}
+            ",
         },
 	},
 })

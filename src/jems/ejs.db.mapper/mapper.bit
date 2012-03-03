@@ -10,7 +10,10 @@ Bit.load({
             files: [ '*.es' ],
             build: "
                 trace('Compile', 'ejs.db.mapper.mod')
-                run('ejsc --out ${LIB}/ejs.db.mapper.mod ${settings.esflags} --optimize 9 ' + Path('.').glob('*.es').sort().join(' '))
+                run('ejsc --out ${OUT} ${settings.esflags} --optimize 9 ' + Path('.').glob('*.es').sort().join(' '))
+            ",
+            'generate-sh': "\
+                ejsc --out ${OUT} ${settings.esflags} --optimize 9 ${HOME}/*.es
             ",
             depends: [ 'ejsc', 'ejsmod', 'ejs.mod', 'ejs.db.mod' ],
         },

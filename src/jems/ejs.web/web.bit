@@ -20,6 +20,11 @@ Bit.load({
                     cp(header, dest)
                 }
             ",
+            'generate-sh': "\
+                ejsc --out ${OUT} ${settings.esflags} --optimize 9 ${HOME}/*.es
+                ejsmod --cslots ${OUT}
+                cp ejs.web.slots.h ${INC}
+            ",
             depends: [ 'ejsc', 'ejsmod', 'ejs.mod' ],
         },
 

@@ -41,7 +41,7 @@ ${CC} -c -o macosx-x86_64-debug/obj/sqlite3.o -arch x86_64 -fPIC -g ${DFLAGS} -I
 
 ${CC} -dynamiclib -o macosx-x86_64-debug/lib/libsqlite3.dylib -arch x86_64 ${LDFLAGS} -install_name @rpath/libsqlite3.dylib macosx-x86_64-debug/obj/sqlite3.o ${LIBS}
 
-#  Omit script /Users/mob/git/ejs/macosx-x86_64-debug/inc/ejs.slots.h undefined
+cp /Users/mob/git/ejs/src/slots/*.h /Users/mob/git/ejs/macosx-x86_64-debug/inc
 ${CC} -c -o macosx-x86_64-debug/obj/ecAst.o -arch x86_64 ${CFLAGS} ${DFLAGS} -Imacosx-x86_64-debug/inc -Isrc/deps/mpr -Isrc/deps/pcre -Isrc/deps/http -Isrc/deps/sqlite -Isrc -Isrc/slots src/compiler/ecAst.c
 
 ${CC} -c -o macosx-x86_64-debug/obj/ecCodeGen.o -arch x86_64 ${CFLAGS} ${DFLAGS} -Imacosx-x86_64-debug/inc -Isrc/deps/mpr -Isrc/deps/pcre -Isrc/deps/http -Isrc/deps/sqlite -Isrc -Isrc/slots src/compiler/ecCodeGen.c
@@ -182,19 +182,32 @@ ${CC} -c -o macosx-x86_64-debug/obj/ejsrun.o -arch x86_64 ${CFLAGS} ${DFLAGS} -I
 
 ${CC} -o macosx-x86_64-debug/bin/ejsrun -arch x86_64 ${LDFLAGS} -L/Users/mob/git/packages-macosx-x86_64/openssl/openssl-1.0.0d -L/Users/mob/git/packages-macosx-x86_64/matrixssl/matrixssl-3-3-open -Lmacosx-x86_64-debug/lib macosx-x86_64-debug/obj/ejsrun.o ${LIBS} -lejs -lmpr -lpcre -lhttp -lmprssl -lssl -lcrypto -lmatrixssl
 
-#  Omit script /Users/mob/git/ejs/macosx-x86_64-debug/lib/ejs.mod undefined
-#  Omit script /Users/mob/git/ejs/macosx-x86_64-debug/bin/bit.es undefined
-#  Omit script /Users/mob/git/ejs/macosx-x86_64-debug/lib/bits undefined
-#  Omit script /Users/mob/git/ejs/macosx-x86_64-debug/lib/ejs.unix.mod undefined
-#  Omit script /Users/mob/git/ejs/macosx-x86_64-debug/bin/jem.es undefined
-#  Omit script /Users/mob/git/ejs/macosx-x86_64-debug/lib/ejs.db.mod undefined
-#  Omit script /Users/mob/git/ejs/macosx-x86_64-debug/lib/ejs.db.mapper.mod undefined
-#  Omit script /Users/mob/git/ejs/macosx-x86_64-debug/lib/ejs.db.sqlite.mod undefined
+ejsc --out /Users/mob/git/ejs/macosx-x86_64-debug/lib/ejs.mod --debug --optimize 9 --bind --require null /Users/mob/git/ejs/src/core/*.es 
+	ejsmod --require null --listing --cslots /Users/mob/git/ejs/macosx-x86_64-debug/lib/ejs.mod
+	cp ejs.slots.h /Users/mob/git/ejs/macosx-x86_64-debug/inc
+cp /Users/mob/git/ejs/src/jems/ejs.bit/bit.es /Users/mob/git/ejs/macosx-x86_64-debug/bin
+rm -f /Users/mob/git/ejs/macosx-x86_64-debug/bin/bit
+
+cp /Users/mob/git/ejs/macosx-x86_64-debug/bin/ejsrun /Users/mob/git/ejs/macosx-x86_64-debug/bin/bit
+
+rm -fr /Users/mob/git/ejs/macosx-x86_64-debug/lib/bits
+	cp -r /Users/mob/git/ejs/src/jems/ejs.bit/bits /Users/mob/git/ejs/macosx-x86_64-debug/lib
+ejsc --out /Users/mob/git/ejs/macosx-x86_64-debug/lib/ejs.unix.mod --debug --optimize 9 /Users/mob/git/ejs/src/jems/ejs.unix/Unix.es
+cp /Users/mob/git/ejs/src/jems/ejs.jem/jem.es /Users/mob/git/ejs/macosx-x86_64-debug/bin
+rm -f /Users/mob/git/ejs/macosx-x86_64-debug/bin/jem
+
+cp /Users/mob/git/ejs/macosx-x86_64-debug/bin/ejsrun /Users/mob/git/ejs/macosx-x86_64-debug/bin/jem
+
+ejsc --out /Users/mob/git/ejs/macosx-x86_64-debug/lib/ejs.db.mod --debug --optimize 9 /Users/mob/git/ejs/src/jems/ejs.db/*.es
+ejsc --out /Users/mob/git/ejs/macosx-x86_64-debug/lib/ejs.db.mapper.mod --debug --optimize 9 /Users/mob/git/ejs/src/jems/ejs.db.mapper/*.es
+ejsc --out /Users/mob/git/ejs/macosx-x86_64-debug/lib/ejs.db.sqlite.mod --debug --optimize 9 /Users/mob/git/ejs/src/jems/ejs.db.sqlite/*.es
 ${CC} -c -o macosx-x86_64-debug/obj/ejsSqlite.o -arch x86_64 ${CFLAGS} ${DFLAGS} -Imacosx-x86_64-debug/inc -Isrc/deps/mpr -Isrc/deps/pcre -Isrc/deps/http -Isrc/deps/sqlite -Isrc -Isrc/slots src/jems/ejs.db.sqlite/src/ejsSqlite.c
 
 ${CC} -dynamiclib -o macosx-x86_64-debug/lib/ejs.db.sqlite.dylib -arch x86_64 ${LDFLAGS} -L/Users/mob/git/packages-macosx-x86_64/openssl/openssl-1.0.0d -L/Users/mob/git/packages-macosx-x86_64/matrixssl/matrixssl-3-3-open -install_name @rpath/ejs.db.sqlite.dylib macosx-x86_64-debug/obj/ejsSqlite.o ${LIBS} -lmpr -lejs -lpcre -lhttp -lmprssl -lssl -lcrypto -lmatrixssl -lsqlite3
 
-#  Omit script /Users/mob/git/ejs/macosx-x86_64-debug/lib/ejs.web.mod undefined
+ejsc --out /Users/mob/git/ejs/macosx-x86_64-debug/lib/ejs.web.mod --debug --optimize 9 /Users/mob/git/ejs/src/jems/ejs.web/*.es
+	ejsmod --cslots /Users/mob/git/ejs/macosx-x86_64-debug/lib/ejs.web.mod
+	cp ejs.web.slots.h /Users/mob/git/ejs/macosx-x86_64-debug/inc
 ${CC} -c -o macosx-x86_64-debug/obj/ejsHttpServer.o -arch x86_64 ${CFLAGS} ${DFLAGS} -Imacosx-x86_64-debug/inc -Isrc/deps/mpr -Isrc/deps/pcre -Isrc/deps/http -Isrc/deps/sqlite -Isrc -Isrc/slots -Isrc/jems/ejs.web/src src/jems/ejs.web/src/ejsHttpServer.c
 
 ${CC} -c -o macosx-x86_64-debug/obj/ejsRequest.o -arch x86_64 ${CFLAGS} ${DFLAGS} -Imacosx-x86_64-debug/inc -Isrc/deps/mpr -Isrc/deps/pcre -Isrc/deps/http -Isrc/deps/sqlite -Isrc -Isrc/slots -Isrc/jems/ejs.web/src src/jems/ejs.web/src/ejsRequest.c
@@ -205,12 +218,16 @@ ${CC} -c -o macosx-x86_64-debug/obj/ejsWeb.o -arch x86_64 ${CFLAGS} ${DFLAGS} -I
 
 ${CC} -dynamiclib -o macosx-x86_64-debug/lib/ejs.web.dylib -arch x86_64 ${LDFLAGS} -L/Users/mob/git/packages-macosx-x86_64/openssl/openssl-1.0.0d -L/Users/mob/git/packages-macosx-x86_64/matrixssl/matrixssl-3-3-open -install_name @rpath/ejs.web.dylib macosx-x86_64-debug/obj/ejsHttpServer.o macosx-x86_64-debug/obj/ejsRequest.o macosx-x86_64-debug/obj/ejsSession.o macosx-x86_64-debug/obj/ejsWeb.o ${LIBS} -lmpr -lhttp -lpcre -lmprssl -lssl -lcrypto -lmatrixssl -lpcre -lejs
 
-#  Omit script /Users/mob/git/ejs/macosx-x86_64-debug/lib/ejs.template.mod undefined
-#  Omit script /Users/mob/git/ejs/macosx-x86_64-debug/lib/ejs.tar.mod undefined
-#  Omit script /Users/mob/git/ejs/macosx-x86_64-debug/lib/ejs.zlib.mod undefined
+ejsc --out /Users/mob/git/ejs/macosx-x86_64-debug/lib/ejs.template.mod --debug --optimize 9 /Users/mob/git/ejs/src/jems/ejs.template/*.es
+ejsc --out /Users/mob/git/ejs/macosx-x86_64-debug/lib/ejs.tar.mod/ --debug --optimize 9 /Users/mob/git/ejs/src/jems/ejs.tar/*.es
+ejsc --out /Users/mob/git/ejs/macosx-x86_64-debug/lib/ejs.zlib.mod/ --debug --optimize 9 /Users/mob/git/ejs/src/jems/ejs.zlib/*.es
 ${CC} -c -o macosx-x86_64-debug/obj/ejsZlib.o -arch x86_64 ${CFLAGS} ${DFLAGS} -Imacosx-x86_64-debug/inc -Isrc/deps/mpr -Isrc/deps/pcre -Isrc/deps/http -Isrc/deps/sqlite -Isrc -Isrc/slots -I../packages-macosx-x86_64/zlib/zlib-1.2.6 src/jems/ejs.zlib/src/ejsZlib.c
 
 ${CC} -dynamiclib -o macosx-x86_64-debug/lib/ejs.zlib.dylib -arch x86_64 ${LDFLAGS} -L/Users/mob/git/packages-macosx-x86_64/openssl/openssl-1.0.0d -L/Users/mob/git/packages-macosx-x86_64/matrixssl/matrixssl-3-3-open -L/usr/lib -install_name @rpath/ejs.zlib.dylib macosx-x86_64-debug/obj/ejsZlib.o ${LIBS} -lmpr -lejs -lpcre -lhttp -lmprssl -lssl -lcrypto -lmatrixssl -lz
 
-#  Omit script /Users/mob/git/ejs/macosx-x86_64-debug/bin/mvc.es undefined
-#  Omit script /Users/mob/git/ejs/macosx-x86_64-debug/lib/ejs.mvc.mod undefined
+cp /Users/mob/git/ejs/src/jems/ejs.mvc/mvc.es /Users/mob/git/ejs/macosx-x86_64-debug/bin
+rm -f /Users/mob/git/ejs/macosx-x86_64-debug/bin/mvc
+
+cp /Users/mob/git/ejs/macosx-x86_64-debug/bin/ejsrun /Users/mob/git/ejs/macosx-x86_64-debug/bin/mvc
+
+ejsc --out /Users/mob/git/ejs/macosx-x86_64-debug/lib/ejs.mvc.mod/ --debug --optimize 9 /Users/mob/git/ejs/src/jems/ejs.mvc/*.es
