@@ -346,7 +346,7 @@ static EjsObj *copyPath(Ejs *ejs, EjsPath *fp, int argc, EjsObj **argv)
         ejsSetPathAttributes(ejs, toPath, options);
     } else {
         /* Keep perms of original file, don't inherit user/group (may not have permissions to create) */
-        if (mprGetPathInfo(fp->value, &info) >= 0 && !info.valid) {
+        if (mprGetPathInfo(fp->value, &info) >= 0 && info.valid) {
             chmod(toPath, info.perms);
         }
     }
