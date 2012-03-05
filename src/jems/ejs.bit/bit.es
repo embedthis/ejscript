@@ -530,7 +530,7 @@ public class Bit {
             f.writeLine('#define BLD_FEATURE_MDB ' + (settings.mdb ? '1' : '0'))
         }
         if (settings.sdb != undefined) {
-            f.writeLine('#define BLD_FEATURE_MDB ' + (settings.sdb ? '1' : '0'))
+            f.writeLine('#define BLD_FEATURE_SDB ' + (settings.sdb ? '1' : '0'))
         }
         if (settings.manager != undefined) {
             f.writeLine('#define BLD_MANAGER "' + settings.manager + '"')
@@ -1060,6 +1060,7 @@ public class Bit {
         selectedTargets = defaultTargets
         if (generating) return
         gen = {
+            platform:   bit.platform.name + '-' + bit.settings.profile
             compiler:   bit.defaults.compiler.join(' '),
             defines:    bit.defaults.defines.join(' '),
             includes:   bit.defaults.includes.map(function(e) '-I' + e).join(' '),
@@ -1069,7 +1070,6 @@ public class Bit {
         let base = bit.dir.projects.join(localPlatform + '-' + bit.settings.profile)
         for each (item in options.gen) {
             generating = item
-            trace('Generate', 'project file: ' + base.relative + '.' + generating)
             if (generating == 'sh') {
                 generateShell(base)
             } else if (generating == 'make') {
@@ -1089,14 +1089,16 @@ public class Bit {
     }
 
     function generateShell(base: Path) {
+        trace('Generate', 'project file: ' + base.relative + '.sh')
         let path = base.joinExt('sh')
         genout = TextStream(File(path, 'w'))
         genout.writeLine('#\n#   build.sh -- Build It Shell Script to build ' + bit.settings.title + '\n#\n')
+        genout.writeLine('PLATFORM="' + bit.platform.name + '-' + bit.settings.profile + '"')
         genout.writeLine('CC="' + bit.packs.compiler.path + '"')
         genout.writeLine('CFLAGS="' + gen.compiler + '"')
         genout.writeLine('DFLAGS="' + gen.defines + '"')
         genout.writeLine('IFLAGS="' + bit.defaults.includes.map(function(path) '-I' + path.relative).join(' ') + '"')
-        genout.writeLine('LDFLAGS="' + gen.linker + '"')
+        genout.writeLine('LDFLAGS="' + platformReplace(gen.linker) + '"')
         genout.writeLine('LIBS="' + gen.libraries + '"\n')
         genEnv()
         build()
@@ -1105,18 +1107,27 @@ public class Bit {
     }
 
     function generateMake(base: Path) {
+        trace('Generate', 'project file: ' + base.relative + '.mk')
         let path = base.joinExt('mk')
         genout = TextStream(File(path, 'w'))
         genout.writeLine('#\n#   build.mk -- Build It Makefile to build ' + bit.settings.title + 
             ' for ' + bit.platform.os + ' on ' + bit.platform.arch + '\n#\n')
+        genout.writeLine('PLATFORM  := ' + bit.platform.name + '-' + bit.settings.profile)
         genout.writeLine('CC        := ' + bit.packs.compiler.path)
         genout.writeLine('CFLAGS    := ' + gen.compiler)
         genout.writeLine('DFLAGS    := ' + gen.defines)
-        genout.writeLine('IFLAGS    := ' + bit.defaults.includes.map(function(path) '-I' + path.relative).join(' '))
-        genout.writeLine('LDFLAGS   := ' + gen.linker)
+        genout.writeLine('IFLAGS    := ' + 
+            platformReplace(bit.defaults.includes.map(function(path) '-I' + path.relative).join(' ')))
+        genout.writeLine('LDFLAGS   := ' + platformReplace(gen.linker))
         genout.writeLine('LIBS      := ' + gen.libraries + '\n')
         genEnv()
-        genout.writeLine('all: \\\n        ' + genAll() + '\nclean:')
+        genout.writeLine('all: \\\n        ' + genAll())
+        genout.writeLine('.PHONY: prep\n\nprep:')
+        genout.writeLine('\t@if [ ! -x $(PLATFORM)/inc ] ; then \\\n' +
+            '\t\tmkdir -p $(PLATFORM)/inc $(PLATFORM)/obj $(PLATFORM)/lib $(PLATFORM)/bin ; \\\n' + 
+            '\t\tcp src/buildConfig.default $(PLATFORM)/inc\\\n' +
+            '\tfi\n') 
+        genout.writeLine('clean:')
         action('cleanTargets')
         genout.writeLine('')
         build()
@@ -1124,6 +1135,7 @@ public class Bit {
     }
 
     function generateVstudio(base: Path) {
+        trace('Generate', 'project file: ' + base.relative)
         mkdir(base)
         global.load(bit.dir.bits.join('vstudio.es'))
         vstudio(base)
@@ -1153,7 +1165,7 @@ public class Bit {
         for each (tname in selectedTargets) {
             let target = bit.targets[tname]
             if (target.path && target.enable) {
-                all.push(target.path.relative)
+                all.push(platformReplace(target.path.relative))
             }
         }
         return all.join(' \\\n        ') + '\n'
@@ -1635,7 +1647,8 @@ public class Bit {
             genout.writeLine(command + '\n')
         } else if (generating == 'make') {
             command = genReplace(command)
-            genout.writeLine(target.path.relative + ': ' + getTargetDeps(target) + '\n\t' + command + '\n')
+            genout.writeLine(platformReplace(target.path.relative) + ': ' + platformReplace(getTargetDeps(target)) +
+                '\n\t' + command + '\n')
         } else {
             trace('Link', target.name)
             let cmd = runCmd(command)
@@ -1675,7 +1688,8 @@ public class Bit {
             genout.writeLine(command + '\n')
         } else if (generating == 'make') {
             command = genReplace(command)
-            genout.writeLine(target.path.relative + ': ' + getTargetDeps(target) + '\n\t' + command + '\n')
+            genout.writeLine(platformReplace(target.path.relative) + ': ' + 
+                platformReplace(getTargetDeps(target)) + '\n\t' + command + '\n')
         } else {
             trace('Link', target.name)
             let cmd = runCmd(command)
@@ -1753,8 +1767,8 @@ public class Bit {
                 genout.writeLine(command + '\n')
             } else if (generating == 'make') {
                 command = genReplace(command)
-                genout.writeLine(target.path.relative + ': \\\n        ' + 
-                    file.relative + getTargetDeps(target) + '\n\t' + command + '\n')
+                genout.writeLine(platformReplace(target.path.relative) + ': \\\n        ' + 
+                    file.relative + platformReplace(getTargetDeps(target)) + '\n\t' + command + '\n')
             } else {
                 trace('Compile', file.relativeTo('.'))
                 let cmd = runCmd(command)
@@ -1779,12 +1793,12 @@ public class Bit {
         for each (let file: Path in target.files) {
             trace('Copy', file.relativeTo('.'))
             if (generating == 'sh') {
-                genout.writeLine('rm -f ' + target.path + '\n')
-                genout.writeLine('cp ' + file + ' ' + target.path + '\n')
+                genout.writeLine('rm -rf ' + target.path + '\n')
+                genout.writeLine('cp -r ' + file + ' ' + target.path + '\n')
             } else if (generating == 'make') {
-                genout.writeLine(target.path.relative + ': ' + getTargetDeps(target))
-                genout.writeLine('\trm -f ' + target.path)
-                genout.writeLine('\tcp ' + file + ' ' + target.path + '\n')
+                genout.writeLine(target.path.relative + ': ' + platformReplace(getTargetDeps(target)))
+                genout.writeLine('\trm -fr ' + target.path)
+                genout.writeLine('\tcp -r ' + file + ' ' + target.path + '\n')
             } else {
                 safeRemove(target.path)
                 cp(file, target.path)
@@ -1809,14 +1823,14 @@ public class Bit {
         if (generating == 'sh') {
             let command = target['generate-sh']
             if (command) {
-                command = command.replace(/^[ \t]*/mg, '\t')
+                command = command.replace(/^[ \t]*/mg, '')
                 command = command.trim()
                 genout.writeLine(command.expand(bit))
             } else {
                 genout.writeLine('#  Omit build script ' + target.path)
             }
         } else if (generating == 'make') {
-            genout.writeLine(target.path.relative + ': ' + getTargetDeps(target))
+            genout.writeLine(target.path.relative + ': ' + platformReplace(getTargetDeps(target)))
             let command ||= target['generate-make']
             let command ||= target['generate-sh']
             if (command) {
@@ -1837,6 +1851,7 @@ public class Bit {
      */
     function genReplace(command: String): String {
         if (generating == 'make') {
+            command = command.replace(RegExp(gen.platform, 'g'), '$$(PLATFORM)')
             command = command.replace(gen.compiler, '$(CFLAGS)')
             command = command.replace(gen.defines, '$(DFLAGS)')
             command = command.replace(gen.includes, '$(IFLAGS)')
@@ -1844,6 +1859,7 @@ public class Bit {
             command = command.replace(gen.linker, '$(LDFLAGS)')
             command = command.replace(bit.packs.compiler.path, '$(CC)')
         } else if (generating == 'sh') {
+            command = command.replace(RegExp(gen.platform, 'g'), '$${PLATFORM}')
             command = command.replace(gen.compiler, '${CFLAGS}')
             command = command.replace(gen.defines, '${DFLAGS}')
             command = command.replace(gen.includes, '${IFLAGS}')
@@ -1853,6 +1869,15 @@ public class Bit {
         }
         command = command.replace(RegExp(bit.dir.top + '/', 'g'), '')
         command = command.replace(/  */g, ' ')
+        return command
+    }
+
+    function platformReplace(command: String): String {
+        if (generating == 'make') {
+            command = command.replace(RegExp(gen.platform, 'g'), '$$(PLATFORM)')
+        } else if (generating == 'sh') {
+            command = command.replace(RegExp(gen.platform, 'g'), '$${PLATFORM}')
+        }
         return command
     }
 
@@ -2244,9 +2269,9 @@ public class Bit {
                     /* Pre-built targets must be preserved */
                     if (target.path.startsWith(bit.dir.cfg) && !target.built) {
                         if (generating == 'make') {
-                            genout.writeLine('\trm -rf ' + genReplace(target.path))
+                            genout.writeLine('\trm -rf ' + platformReplace(target.path.relative))
                         } else if (generating == 'sh') {
-                            genout.writeLine('rm -f ' + genReplace(target.path))
+                            genout.writeLine('rm -f ' + platformReplace(target.path.relative))
                         } else if (target.path.exists) {
                             if (options.show) {
                                 trace('Clean', target.path)
