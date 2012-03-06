@@ -346,7 +346,7 @@ public class Bit {
     }
 
     /*
-        Make a (legacy) buildConfig.h file
+        Make a buildConfig.h file.
      */
     function makeBuildConfig(platform) {
         let path = bit.dir.inc.join('buildConfig.h')
@@ -358,6 +358,9 @@ public class Bit {
         writeOldDefinitions(f, platform)
         f.close()
 
+        /*
+            FUTURE - transition to bit.h
+         */
         let path = bit.dir.inc.join('bit.h')
         let f = TextStream(File(path, 'w'))
         f.writeLine('/*\n    bit.h -- Build It Configuration Header for ' + platform + '\n\n' +
@@ -1121,11 +1124,11 @@ public class Bit {
         genout.writeLine('LDFLAGS   := ' + platformReplace(gen.linker))
         genout.writeLine('LIBS      := ' + gen.libraries + '\n')
         genEnv()
-        genout.writeLine('all: \\\n        ' + genAll())
+        genout.writeLine('all: prep \\\n        ' + genAll())
         genout.writeLine('.PHONY: prep\n\nprep:')
         genout.writeLine('\t@if [ ! -x $(PLATFORM)/inc ] ; then \\\n' +
             '\t\tmkdir -p $(PLATFORM)/inc $(PLATFORM)/obj $(PLATFORM)/lib $(PLATFORM)/bin ; \\\n' + 
-            '\t\tcp src/buildConfig.default $(PLATFORM)/inc\\\n' +
+            '\t\tcp src/buildConfig.default $(PLATFORM)/inc/buildConfig.h ; \\\n' +
             '\tfi\n') 
         genout.writeLine('clean:')
         action('cleanTargets')
@@ -2130,7 +2133,8 @@ public class Bit {
                 includes += more
             }
         }
-        let depends = [ bit.dir.inc.join('bit.h') ]
+        /*  FUTURE let depends = [ bit.dir.inc.join('bit.h') ] */
+        let depends = [ bit.dir.inc.join('buildConfig.h') ]
         for each (item in includes) {
             let ifile = item.replace(/#include.*"(.*)"/, '$1')
             let path
