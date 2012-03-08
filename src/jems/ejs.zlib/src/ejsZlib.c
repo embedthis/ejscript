@@ -10,8 +10,8 @@
 
 #if BLD_FEATURE_ZLIB
 
-#include    "zlib.h"
-#include    "ejs.zlib.slots.h"
+    #include    "zlib.h"
+    #include    "ejs.zlib.slots.h"
 
 #define     ZBUFSIZE (16 * 1024)
 

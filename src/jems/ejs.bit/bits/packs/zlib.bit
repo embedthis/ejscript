@@ -22,9 +22,9 @@ if (bit.platform.os == 'win') {
         dir: dir,
         path: lib,
         includes: [ incdir ],
-        libraries: [ 'libeay32', 'ssleay32' ],
+        libraries: [ 'z' ],
         linker: [ '-libpath:' + lib.parent ],
-        imports: [ lib.parent.join('libeay32.dll'), lib.parent.join('ssleay32.dll') ],
+        imports: [ lib.parent.join('libz.dll') ],
     }
 
 } else if (bit.platform.os == 'macosx') {
@@ -44,7 +44,7 @@ if (bit.platform.os == 'win') {
 
 } else {
     let search = [path, '/usr/lib', '/lib' ] + Path('/lib').glob('*-linux-gnu')
-    let lib = probe('libcrypto.so', {fullpath: true, search: search}).absolute
+    let lib = probe('libz.so', {fullpath: true, search: search}).absolute
     let dir = lib.parent
     search = [path.join('include'), '/usr/include']
     let incdir = probe('zlib.h', {search: search}).absolute
@@ -52,9 +52,9 @@ if (bit.platform.os == 'win') {
         dir: dir,
         path: lib,
         includes: [ incdir ],
-        libraries: [ 'ssl', 'crypto' ],
+        libraries: [ 'z' ],
         linker: [ '-L' + lib.parent ],
-        imports: lib.parent.glob('libssl*.dylib*') + lib.parent.glob('libcrypto*.dylib*'),
+        imports: lib.parent.glob('libz*.dylib*'),
     }
 }
 

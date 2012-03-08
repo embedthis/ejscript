@@ -54,8 +54,8 @@ Bit.load({
         } },
     },
 
-    '+optional': [ 'doxygen', 'openssl', 'matrixssl', 'sqlite' ],
-    '+required': [ 'pcre', 'http', 'zlib' ]
+    '+optional': [ 'doxygen', 'openssl', 'matrixssl', 'sqlite', 'zlib' ],
+    '+required': [ 'pcre', 'http' ]
 
     packs: {
         ejs: {

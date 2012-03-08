@@ -93,7 +93,7 @@ public class Bit {
             '    --continue                         # Continue on errors\n' +
             '    --debug                            # Same as --profile debug\n' +
             '    --diagnose                         # Emit diagnostic trace \n' +
-            '    --emulate os-arch                  # Emulate platform for build tools\n' +
+            '    --emulate os-arch                  # Emulate platform\n' +
             '    --gen [make|sh|vs|xcode]           # Generate project file\n' + 
             '    --import                           # Import standard bit configuration\n' + 
             '    --log logSpec                      # Save errors to a log file\n' +
@@ -848,8 +848,10 @@ public class Bit {
         prepBuild()
         build()
 
-        //  MOB - should have a variable for this
-        trace('Complete', currentPlatform + '-' + bit.settings.profile)
+        if (!generating) {
+            //  MOB - should have a variable for this
+            trace('Complete', currentPlatform + '-' + bit.settings.profile)
+        }
 
         /*
             Do any required cross building
@@ -866,7 +868,11 @@ public class Bit {
         App.log.debug(2, "Bit Modules: " + serialize(bit.modules, {pretty: true}))
         for each (let module in bit.modules) {
             App.log.debug(2, "Load bit module: " + module)
-            global.load(module)
+            try {
+                global.load(module)
+            } catch (e) {
+                throw new Error('When loading: ' + module + '\n' + e)
+            }
         }
     }
 
@@ -883,19 +889,6 @@ public class Bit {
             currentBitFile = saveCurrent
         }
     }
-
-    /*
-        Rebase paths in a bit file object to be relative to the directory containing the bit file
-        UNUSED
-    function rebaseOld(home: Path, list: Array) {
-        for (item in list) {
-            let value = list[item]
-            if (!value.startsWith('${')) {
-                list[item] = home.join(value)
-            }
-        }
-    }
-     */
 
     function rebase(home: Path, o: Object, field: String) {
         if (o[field] is Array) {
@@ -964,8 +957,12 @@ public class Bit {
                 if (item is String) {
                     item = { script: item }
                     target.scripts[when] = [item]
+                    item.home ||= home
+                } else if (item is Array) {
+                    item[0].home ||= home
+                } else {
+                    item.home ||= home
                 }
-                item.home ||= home
             }
             if (target.build) {
                 /*
@@ -995,7 +992,6 @@ public class Bit {
                 Blend internal for only the targets in this file
              */
             if (o.internal) {
-//MOB - AA
                 blend(target, o.internal, {combine: true})
             }
             if (target.inherit) {
@@ -1468,7 +1464,7 @@ public class Bit {
         for (let [tname, target] in bit.targets) {
             if (targetsToBlend[target.type]) {
                 let def = blend({}, bit.defaults, {combine: true})
-                bit.targets[tname] = blend(def, target, {combine: true})
+                target = bit.targets[tname] = blend(def, target, {combine: true})
                 runScript(target.scripts, 'postblend')
                 if (target.scripts && target.scripts.preblend) {
                     delete target.scripts.preblend
@@ -1821,7 +1817,6 @@ public class Bit {
             dump('TARGET', target)
         }
         bit.ARCH = bit.platform.arch
-        trace(target.type.toPascal(), target.name)
         setRuleVars(target, 'file')
         if (generating == 'sh') {
             let command = target['generate-sh']
@@ -1844,6 +1839,7 @@ public class Bit {
                 genout.writeLine('#  Omit build script ' + target.path + '\n')
             }
         } else {
+            trace(target.type.toPascal(), target.name)
             runScript(target.scripts, 'build')
         }
     }

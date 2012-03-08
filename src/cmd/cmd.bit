@@ -10,13 +10,11 @@ Bit.load({
             sources: [ 'ejs.c', ],
             depends: [ 'libejs' ],
             scripts: {
-                prebuild: [{
-                    script: "
-                        if (bit.settings.hasLibEdit) {
-                            bit.target.libraries.push('edit')
-                        }
-                    ",
-                }],
+                prebuild: "
+                    if (bit.settings.hasLibEdit) {
+                        bit.target.libraries.push('edit')
+                    }
+                ",
             },
         },
 

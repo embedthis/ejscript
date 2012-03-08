@@ -34,11 +34,6 @@ Bit.load({
                 'vm/*.c'
             ],
             depends: [ 'libmpr', 'libpcre', 'libhttp', 'slots' ],
-            scripts: {
-                prebuild: "
-                    }
-                ",
-            }
         },
 
         'clean-slots': {

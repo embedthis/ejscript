@@ -10,8 +10,11 @@ PRE_DIRS	= src
 NAME		= ejs.zlib
 MOD			= $(NAME).mod
 JEM			= $(NAME)-$(BLD_VERSION)
-MODULE		+= $(BLD_LIB_DIR)/$(NAME).mod 
-TARGETS		= $(MODULE)
+
+ifeq		($(BLD_FEATURE_ZLIB),1)
+	MODULE	+= $(BLD_LIB_DIR)/$(NAME).mod 
+	TARGETS	= $(MODULE)
+endif
 
 compileExtra: $(TARGETS)
 

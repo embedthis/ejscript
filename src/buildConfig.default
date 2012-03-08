@@ -1,0 +1,68 @@
+/*
+    buildConfig.h -- Default Configuration Header when building without Bit.
+ */
+
+#undef BLD_LIB_PREFIX
+#define BLD_PRODUCT "ejs"
+#define BLD_NAME "Embedthis Ejscript"
+#define BLD_COMPANY "Embedthis"
+#define BLD_EJSPRODUCT 1
+#define BLD_VERSION "2.0.0"
+#define BLD_NUMBER "B2"
+#define BLD_DEBUG 1
+#define BLD_MAJOR_VERSION 2
+#define BLD_MINOR_VERSION 0
+#define BLD_PATCH_VERSION 0
+#define BLD_VNUM 200000000
+#define MACOSX 1
+#define BLD_UNIX_LIKE 1
+#define BLD_TYPE "debug"
+#define BLD_CPU "x86_64"
+#define BIT_CPU_ARCH MPR_CPU_IX64
+#define BLD_OS "MACOSX"
+#define BLD_CONFIG_CMD "/Users/mob/git/ejs/out/bin/bit.es configure"
+#define BLD_LIB_NAME "lib"
+#define BLD_CFG_PREFIX "/etc/ejs"
+#define BLD_BIN_PREFIX "/usr/lib/ejs/2.0.0/bin"
+#define BLD_DOC_PREFIX "/usr/lib/ejs/doc"
+#define BLD_INC_PREFIX "/usr/include/ejs"
+#define BLD_JEM_PREFIX "/usr/lib/ejs/jems"
+#define BLD_LIB_PREFIX "/usr/lib/ejs/2.0.0/lib"
+#define BLD_LOG_PREFIX "/var/log/ejs"
+#define BLD_MAN_PREFIX "/usr/lib/ejs/man"
+#define BLD_PRD_PREFIX "/usr/lib/ejs"
+#define BLD_SAM_PREFIX "/usr/lib/ejs/samples"
+#define BLD_SPL_PREFIX "/var/spool/ejs"
+#define BLD_SRC_PREFIX "/usr/src/ejs-2.0.0"
+#define BLD_VER_PREFIX "/usr/lib/ejs/2.0.0"
+#define BLD_WEB_PREFIX "/var/www/ejs-default"
+#define BLD_EXE ""
+#define BLD_SHLIB ".dylib"
+#define BLD_SHOBJ ".dylib"
+#define BLD_LIB ".a"
+#define BLD_OBJ ".o"
+#define BLD_CC_DOUBLE_BRACES 1
+#define BLD_CC_DYN_LOAD 1
+#define BLD_CC_EDITLINE 1
+#define BLD_CC_MMU 1
+#define BLD_CC_MTUNE 1
+#define BLD_CC_PAM 0
+#define BLD_CC_STACK_PROTECTOR 1
+#define BLD_CC_SYNC 1
+#define BLD_CC_SYNC_CAS 1
+#define BLD_CC_UNNAMED_UNIONS 1
+#define BLD_CC_WARN_64TO32 1
+#define BLD_CC_WARN_UNUSED 0
+#define BLD_FEATURE_EJS 1
+#define BLD_EJS "${BIN}/ejs"
+#define BLD_FEATURE_CC 1
+#define BLD_CC "/usr/bin/cc"
+#define BLD_FEATURE_PCRE 1
+#define BLD_PCRE "src/deps/pcre"
+#define BLD_FEATURE_HTTP 0
+#define BLD_FEATURE_ZLIB 0
+#define BLD_FEATURE_DOXYGEN 0
+#define BLD_FEATURE_OPENSSL 0
+#define BLD_FEATURE_MATRIXSSL 0
+#define BLD_FEATURE_SQLITE 1
+#define BLD_SQLITE "src/deps/sqlite"

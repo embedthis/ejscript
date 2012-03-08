@@ -6,6 +6,7 @@ Bit.load({
 
     targets: {
         'ejs.zlib.mod': {
+            enable: 'bit.packs.zlib.enable',
             path: '${LIB}/ejs.zlib.mod',
             files: [ '*.es' ],
             build: "
@@ -19,6 +20,7 @@ Bit.load({
         },
 
         'ejs.zlib': {
+            enable: 'bit.packs.zlib.enable',
             type: 'lib',
             sources: [ 
                 'src/*.c',

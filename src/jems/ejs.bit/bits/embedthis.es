@@ -6,7 +6,6 @@
  */
 
 require ejs.tar
-require ejs.zlib
 require ejs.unix
 
 public function getWebUser(): String {
@@ -186,6 +185,11 @@ public function package(formats) {
     let flat = bit.dir.flat
     let name, generic
     let pkg
+
+    /*
+        Dynamically load to avoid a zlib dependency
+     */
+    global.load('ejs.zlib.mod')
     if (!(formats is Array)) formats = [formats]
 
     for each (fmt in formats) {
@@ -209,7 +213,7 @@ public function package(formats) {
             zname = name.replaceExt('tgz')
             let tar = new Tar(name, options)
             tar.create(pkg.glob('**', {exclude: /\/$/}))
-            Zlib.compress(tar.name, zname)
+            global.Zlib.compress(tar.name, zname)
             name.remove()
             zname.joinExt('txt', true).write(md5(zname.readString()))
             let generic = rel.join(s.product + '-' + fmt + '.tgz')
@@ -226,7 +230,7 @@ public function package(formats) {
             if (fmt == 'tar') {
                 let tar = new Tar(name, options)
                 tar.create(files)
-                Zlib.compress(name, zname)
+                global.Zlib.compress(name, zname)
                 name.remove()
                 zname.joinExt('txt', true).write(md5(zname.readString()))
             }
