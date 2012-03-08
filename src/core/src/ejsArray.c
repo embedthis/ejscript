@@ -1756,6 +1756,7 @@ static void manageArray(EjsArray *ap, int flags)
             }
         }
         mprMark(data);
+        ejsManagePot((EjsPot*) ap, flags);
     }
 }
 
