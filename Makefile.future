@@ -1,5 +1,5 @@
 #
-#	Makefile.bit - Makefile to build Ejscript with bit.
+#	Makefile.future - Future Makefile to build Ejscript with bit.
 #
 #	This Makefile is used to build Ejscript the first time before bit is available.
 #	Once built, bit can be used directly.

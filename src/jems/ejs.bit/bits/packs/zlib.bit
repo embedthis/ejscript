@@ -3,7 +3,7 @@
  */
 
 let cfg
-let path = bit.packs.zlib.path
+let path: Path = bit.packs.zlib.path
 if (!path) {
     let vers = bit.dir.packs.join('zlib').glob('zlib-*').sort().reverse()
     path = vers[0]

@@ -190,6 +190,7 @@ public function package(formats) {
         Dynamically load to avoid a zlib dependency
      */
     global.load('ejs.zlib.mod')
+    use namespace 'ejs.zlib'
     if (!(formats is Array)) formats = [formats]
 
     for each (fmt in formats) {

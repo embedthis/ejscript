@@ -6,7 +6,7 @@ if (bit.packs.ssl && bit.packs.ssl.enable == false) {
     throw "SSL has been disabled"
 }
 
-let path = bit.packs.matrixssl.path
+let path: Path = bit.packs.matrixssl.path
 if (!path) {
     let vers = bit.dir.packs.join('matrixssl').glob('matrixssl-3*').sort().reverse()
     if (!vers.length || vers.length == 0) {

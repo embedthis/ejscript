@@ -7,16 +7,20 @@ if (bit.packs.ssl && bit.packs.ssl.enable == false) {
 }
 
 let cfg
-let path = bit.packs.openssl.path
+let path: Path = bit.packs.openssl.path
 if (!path) {
     let vers = bit.dir.packs.join('openssl').glob('openssl-*').sort().reverse()
     path = vers[0]
+    if (!path) {
+        if (bit.platform.os == 'win') {
+            throw 'Can\'t find openssl source distribution'
+        } else {
+            path = '/usr'
+        }
+    }
 }
 
 if (bit.platform.os == 'win') {
-    if (!path) {
-        throw 'Can\'t find openssl source distribution'
-    }
     let search = [path.join('out32dll')]
     let lib = probe('libeay32.dll', {fullpath: true, search: search}).absolute
     let dir = lib.parent.parent
