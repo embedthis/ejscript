@@ -51,9 +51,9 @@ with --os=wince ld
 with --build --optional doxygen
 with --os=win --build --optional pkg
 
-with pcre mpr http zlib
+with pcre mpr http
 with --host --optional openssl ssl
-with --optional sqlite 
+with --optional sqlite zlib
 with ejs
 with ejscript
 
