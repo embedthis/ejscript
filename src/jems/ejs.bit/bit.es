@@ -143,7 +143,7 @@ public class Bit {
             } 
             if (options.config) {
                 configure()
-            } 
+            }
             process(options.build)
         } catch (e) {
             let msg: String
@@ -1624,7 +1624,7 @@ public class Bit {
         } else if (target.type == 'file') {
             buildFile(target)
         } else if (target.type == 'header') {
-            buildHeader(target)
+            buildFile(target)
         } else if (target.type == 'script') {
             buildScript(target)
         } else if (target.scripts && target.scripts['build']) {
@@ -1813,7 +1813,6 @@ command = command.expand(bit, {fill: ''})
         runScript(target.scripts, 'prebuild')
         setRuleVars(target, 'file')
         for each (let file: Path in target.files) {
-            trace('Copy', file.relativeTo('.'))
             if (generating == 'sh') {
                 genout.writeLine('rm -rf ' + target.path + '\n')
                 genout.writeLine('cp -r ' + file + ' ' + target.path + '\n')
@@ -1822,32 +1821,7 @@ command = command.expand(bit, {fill: ''})
                 genout.writeLine('\trm -fr ' + target.path)
                 genout.writeLine('\tcp -r ' + file + ' ' + target.path + '\n')
             } else {
-                safeRemove(target.path)
-                cp(file, target.path)
-            }
-        }
-    }
-
-    /*
-        Copy files[] to path
-     */
-    function buildHeader(target) {
-        if (!stale(target)) {
-            whySkip(target.path, 'is up to date')
-            return
-        }
-        runScript(target.scripts, 'prebuild')
-        setRuleVars(target, 'file')
-        for each (let file: Path in target.files) {
-            trace('Copy', target.path.relativeTo('.'))
-            if (generating == 'sh') {
-                genout.writeLine('rm -rf ' + target.path + '\n')
-                genout.writeLine('cp -r ' + file + ' ' + target.path + '\n')
-            } else if (generating == 'make') {
-                genout.writeLine(target.path.relative + ': ' + platformReplace(getTargetDeps(target)))
-                genout.writeLine('\trm -fr ' + target.path)
-                genout.writeLine('\tcp -r ' + file + ' ' + target.path + '\n')
-            } else {
+                trace('Copy', target.path.relativeTo('.'))
                 safeRemove(target.path)
                 cp(file, target.path)
             }
@@ -1888,7 +1862,7 @@ command = command.expand(bit, {fill: ''})
                 genout.writeLine('#  Omit build script ' + target.path + '\n')
             }
         } else {
-            trace(target.type.toPascal(), target.name)
+            vtrace(target.type.toPascal(), target.name)
             runScript(target.scripts, 'build')
         }
     }
@@ -2192,10 +2166,13 @@ command = command.expand(bit, {fill: ''})
             }
             if (path) {
                 depends.push(path)
+        /*
+                Best to not warn. The compiler will warn anyway
             } else {
                 if (selectedTargets != 'clobber') {
                     App.log.error('Can\'t find include file "' + ifile + '" for ' + target.name)
                 }
+         */
             }
         }
         return depends

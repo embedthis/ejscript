@@ -5,14 +5,16 @@
 Bit.load({
 
     defaults: {
-        '+includes': [ '.', 'slots' ],
+        '+xincludes': [ '.', 'slots' ],
     },
 
     targets: {
         slots: {
+            enable: false,
             path: '${INC}/ejs.slots.h',
             files: [ 'slots/*.h' ],
             build: "
+throw 'boom'
                 for each (header in bit.target.files) {
                     let dest = bit.dir.inc.join(header.basename)
                     if (!dest.exists) {
@@ -28,6 +30,7 @@ Bit.load({
 
         libejs: {
             type: 'lib',
+            headers: [ 'slots/*.h', '*.h' ], 
             sources: [ 
                 'compiler/*.c',
                 'core/src/*.c',
