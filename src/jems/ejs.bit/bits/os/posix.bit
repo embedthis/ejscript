@@ -3,6 +3,7 @@
  */
 
 Bit.load({
+
     ext: {
         lib:   'a',
         shlib: 'so',

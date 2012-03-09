@@ -7,13 +7,15 @@ Bit.load({
         '+compiler': [ '-Wall', ],
         '+defines':  [ '-D_REENTRANT', '-DCPU=' + '${ARCH}'.toUpper() ],
         '+libraries':[ ],
+        '+linker':[ '-LMOB' ],
 
         scripts: {
             '+preblend': "
-                let defaults = bit.defaults
                 let arch = bit.platform.arch
-
-                blend(defaults, {compiler: [], defines: [], libraries: [], linker: []})
+                let defaults = bit.defaults
+                blend(defaults, {
+                    '+compiler': [], '+defines': [], '+libraries': [], '+linker': []}, {combine: true}
+                )
                 if (bit.platform.os != 'vxworks') {
                     defaults.compiler.push('-fPIC')
                     defaults.defines.push('-DPIC')
@@ -52,7 +54,6 @@ Bit.load({
                     targ = 'generic'
                 }
                 defaults.compiler.push(tunesw + '=' + targ)
-                
             ",
         },
     },
