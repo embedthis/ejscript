@@ -949,6 +949,7 @@ public class Bit {
             }
             rebase(home, target, 'includes')
             rebase(home, target, '+includes')
+            rebase(home, target, 'headers')
             rebase(home, target, 'sources')
             rebase(home, target, 'files')
 
@@ -1423,6 +1424,21 @@ public class Bit {
             if (target.files) {
                 target.files = buildFileList(target.files)
             }
+            if (target.headers) {
+                /*
+                    Create a target for each header file
+                 */
+                target.files ||= []
+                let files = buildFileList(target.headers, target.exclude)
+                for each (file in files) {
+                    let header = bit.dir.inc.join(file.basename)
+                    if (!bit.targets[header]) {
+                        bit.targets[file] = { name: file, enable: true, path: header, type: 'header', files: [ file ] }
+                        target.depends ||= []
+                        target.depends.push(file)
+                    }
+                }
+            }
             if (target.sources) {
                 target.files ||= []
                 let files = buildFileList(target.sources, target.exclude)
@@ -1442,6 +1458,9 @@ public class Bit {
                     target.depends ||= []
                     target.depends.push(obj)
 
+                    /*
+                        Create targets for each header (if not already present)
+                     */
                     objTarget.depends = makeDepends(objTarget)
                     for each (header in objTarget.depends) {
                         if (!bit.targets[header]) {
@@ -1604,6 +1623,8 @@ public class Bit {
             buildObj(target)
         } else if (target.type == 'file') {
             buildFile(target)
+        } else if (target.type == 'header') {
+            buildHeader(target)
         } else if (target.type == 'script') {
             buildScript(target)
         } else if (target.scripts && target.scripts['build']) {
@@ -1760,6 +1781,8 @@ public class Bit {
             bit.ARCH = bit.platform.arch
 
             let command = rule.expand(bit, {fill: ''})
+//  MOB - just to allow tokens in target.defines
+command = command.expand(bit, {fill: ''})
 
             if (generating == 'sh') {
                 command = genReplace(command)
@@ -1791,6 +1814,32 @@ public class Bit {
         setRuleVars(target, 'file')
         for each (let file: Path in target.files) {
             trace('Copy', file.relativeTo('.'))
+            if (generating == 'sh') {
+                genout.writeLine('rm -rf ' + target.path + '\n')
+                genout.writeLine('cp -r ' + file + ' ' + target.path + '\n')
+            } else if (generating == 'make') {
+                genout.writeLine(target.path.relative + ': ' + platformReplace(getTargetDeps(target)))
+                genout.writeLine('\trm -fr ' + target.path)
+                genout.writeLine('\tcp -r ' + file + ' ' + target.path + '\n')
+            } else {
+                safeRemove(target.path)
+                cp(file, target.path)
+            }
+        }
+    }
+
+    /*
+        Copy files[] to path
+     */
+    function buildHeader(target) {
+        if (!stale(target)) {
+            whySkip(target.path, 'is up to date')
+            return
+        }
+        runScript(target.scripts, 'prebuild')
+        setRuleVars(target, 'file')
+        for each (let file: Path in target.files) {
+            trace('Copy', target.path.relativeTo('.'))
             if (generating == 'sh') {
                 genout.writeLine('rm -rf ' + target.path + '\n')
                 genout.writeLine('cp -r ' + file + ' ' + target.path + '\n')
