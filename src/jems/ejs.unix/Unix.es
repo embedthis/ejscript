@@ -91,7 +91,7 @@ module ejs.unix {
                     let fn = options.process
                     fn(file, target, options)
                 } else {
-                    file.parent.makeDir()
+                    target.parent.makeDir()
                     file.copy(target, options)
                 }
             }
