@@ -4,30 +4,10 @@
 
 Bit.load({
 
-    defaults: {
-        '+includes': [ '.', 'slots' ],
-    },
-
     targets: {
-        slots: {
-            path: '${INC}/ejs.slots.h',
-            files: [ 'slots/*.h' ],
-            build: "
-                for each (header in bit.target.files) {
-                    let dest = bit.dir.inc.join(header.basename)
-                    if (!dest.exists) {
-                        trace('Export', header)
-                        cp(header, dest)
-                    }
-                }
-            "
-            'generate-sh': "\
-                cp ${SRC}/src/slots/*.h ${INC}
-            "
-        },
-
         libejs: {
             type: 'lib',
+            headers: [ 'slots/*.h', '*.h' ], 
             sources: [ 
                 'compiler/*.c',
                 'core/src/*.c',

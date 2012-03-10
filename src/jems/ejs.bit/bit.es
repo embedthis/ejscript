@@ -143,7 +143,7 @@ public class Bit {
             } 
             if (options.config) {
                 configure()
-            } 
+            }
             process(options.build)
         } catch (e) {
             let msg: String
@@ -949,6 +949,7 @@ public class Bit {
             }
             rebase(home, target, 'includes')
             rebase(home, target, '+includes')
+            rebase(home, target, 'headers')
             rebase(home, target, 'sources')
             rebase(home, target, 'files')
 
@@ -1423,6 +1424,21 @@ public class Bit {
             if (target.files) {
                 target.files = buildFileList(target.files)
             }
+            if (target.headers) {
+                /*
+                    Create a target for each header file
+                 */
+                target.files ||= []
+                let files = buildFileList(target.headers, target.exclude)
+                for each (file in files) {
+                    let header = bit.dir.inc.join(file.basename)
+                    if (!bit.targets[header]) {
+                        bit.targets[file] = { name: file, enable: true, path: header, type: 'header', files: [ file ] }
+                        target.depends ||= []
+                        target.depends.push(file)
+                    }
+                }
+            }
             if (target.sources) {
                 target.files ||= []
                 let files = buildFileList(target.sources, target.exclude)
@@ -1442,6 +1458,9 @@ public class Bit {
                     target.depends ||= []
                     target.depends.push(obj)
 
+                    /*
+                        Create targets for each header (if not already present)
+                     */
                     objTarget.depends = makeDepends(objTarget)
                     for each (header in objTarget.depends) {
                         if (!bit.targets[header]) {
@@ -1604,6 +1623,8 @@ public class Bit {
             buildObj(target)
         } else if (target.type == 'file') {
             buildFile(target)
+        } else if (target.type == 'header') {
+            buildFile(target)
         } else if (target.type == 'script') {
             buildScript(target)
         } else if (target.scripts && target.scripts['build']) {
@@ -1760,6 +1781,8 @@ public class Bit {
             bit.ARCH = bit.platform.arch
 
             let command = rule.expand(bit, {fill: ''})
+//  MOB - just to allow tokens in target.defines
+command = command.expand(bit, {fill: ''})
 
             if (generating == 'sh') {
                 command = genReplace(command)
@@ -1790,7 +1813,6 @@ public class Bit {
         runScript(target.scripts, 'prebuild')
         setRuleVars(target, 'file')
         for each (let file: Path in target.files) {
-            trace('Copy', file.relativeTo('.'))
             if (generating == 'sh') {
                 genout.writeLine('rm -rf ' + target.path + '\n')
                 genout.writeLine('cp -r ' + file + ' ' + target.path + '\n')
@@ -1799,6 +1821,7 @@ public class Bit {
                 genout.writeLine('\trm -fr ' + target.path)
                 genout.writeLine('\tcp -r ' + file + ' ' + target.path + '\n')
             } else {
+                trace('Copy', target.path.relativeTo('.'))
                 safeRemove(target.path)
                 cp(file, target.path)
             }
@@ -1839,7 +1862,7 @@ public class Bit {
                 genout.writeLine('#  Omit build script ' + target.path + '\n')
             }
         } else {
-            trace(target.type.toPascal(), target.name)
+            vtrace(target.type.toPascal(), target.name)
             runScript(target.scripts, 'build')
         }
     }
@@ -2143,10 +2166,13 @@ public class Bit {
             }
             if (path) {
                 depends.push(path)
+        /*
+                Best to not warn. The compiler will warn anyway
             } else {
                 if (selectedTargets != 'clobber') {
                     App.log.error('Can\'t find include file "' + ifile + '" for ' + target.name)
                 }
+         */
             }
         }
         return depends
