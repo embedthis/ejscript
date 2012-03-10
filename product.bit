@@ -95,10 +95,10 @@ Bit.load({
                     include: /ejs|appman|esp|http|auth|makerom|libejs|libmpr/,
                     permissions: 0755, 
                 })
-                install(bit.dir.bin.join('ejs')', p.bin, {
+                install(bit.dir.bin.join('ejs'), p.bin, {
                     permissions: 0755, 
                     strip: strip,
-                }
+                })
                 install(bit.dir.lib + '/*', p.lib, {
                     permissions: 0755, 
                     exclude: /file-save|www|simple|sample/,
@@ -106,7 +106,7 @@ Bit.load({
                 install('src/server/appweb.conf', p.config)
                 install('src/server/mime.types', p.config)
                 install('src/server/php.ini', p.config)
-                install('src/server/web/**/*', p.web, {exclude: /mgmt\//})
+                install('src/server/web/**/*', p.web, {exclude: /mgmt\// })
                 install('src/server/web/test/*', p.web.join('test'))
                 install('src/esp/web/test/*', p.web.join('test'))
                 install('src/esp/web/test/*', p.web.join('test'), {

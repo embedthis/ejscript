@@ -216,14 +216,14 @@ public function package(formats) {
             tar.create(pkg.glob('**', {exclude: /\/$/}))
             global.Zlib.compress(tar.name, zname)
             name.remove()
-            zname.joinExt('txt', true).write(md5(zname.readString()))
             let generic = rel.join(s.product + '-' + fmt + '.tgz')
             generic.remove()
             Path(zname).symlink(generic)
+            rel.join('md5-' + vname + '-' + fmt + '.tar.txt').write(md5(zname.readString()))
 
         } else if (fmt == 'tar' || fmt == 'native') {
             //  MOB - need other distributions here
-            let dist = { macosx: 'Apple' }
+let dist = { macosx: 'Apple', linux: 'ubuntu' }
             let base = [s.product, s.version, s.buildNumber, dist[OS], OS.toUpper(), ARCH].join('-')
             name = rel.join(base).joinExt('tar', true)
             zname = name.replaceExt('tgz')
@@ -233,7 +233,7 @@ public function package(formats) {
                 tar.create(files)
                 global.Zlib.compress(name, zname)
                 name.remove()
-                zname.joinExt('txt', true).write(md5(zname.readString()))
+                rel.join('md5-' + base).joinExt('tar.txt', true).write(md5(zname.readString()))
             }
             if (fmt == 'native') {
                 if (bit.platform.os == 'macosx') {
@@ -263,7 +263,7 @@ public function package(formats) {
                         ' --id com.embedthis.' + bit.settings.product + '.' + bit.settings.product + 'bin.pkg' +  
                         ' --root-volume-only --domain system --verbose --no-relocate' +
                         ' --scripts ' + scripts + ' --out ' + pname)
-                    pname.joinExt('txt', true).write(md5(pname.readString()))
+                    bit.dir.rel.join('md5-' + base).joinExt('pkg', true).write(md5(pname.readString()))
                     // packages.join('bin.pkg'))
                     // scripts.removeAll()
                     // mpkg.removeAll()
