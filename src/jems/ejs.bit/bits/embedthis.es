@@ -186,6 +186,25 @@ public function package(formats) {
     let name, generic
     let pkg
 
+    let dist = { macosx: 'Apple', win: 'MS', 'linux': 'ubuntu' }[OS]
+    if (OS == 'linux') {
+        let relfile = Path('/etc/redhat-release')
+        if (relfile.exists) {
+            let rver = relfile.readString()
+            if (rver.contains('Fedora')) {
+                dist = 'fedora'
+            } else if (rver.contains('Red Hat Enterprise')) {
+                dist = 'rhl'
+            } else {
+                dist = 'fedora'
+            }
+        } else if (Path('/etc/SuSE-release').exists) {
+            dist = 'suse'
+        } else if (Path('/etc/gentoo-release').exists) {
+            dist = 'gentoo'
+        }
+    }
+
     /*
         Dynamically load to avoid a zlib dependency
      */
@@ -221,57 +240,57 @@ public function package(formats) {
             Path(zname).symlink(generic)
             rel.join('md5-' + vname + '-' + fmt + '.tar.txt').write(md5(zname.readString()))
 
-        } else if (fmt == 'tar' || fmt == 'native') {
-            //  MOB - need other distributions here
-let dist = { macosx: 'Apple', linux: 'ubuntu' }
-            let base = [s.product, s.version, s.buildNumber, dist[OS], OS.toUpper(), ARCH].join('-')
+        } else if (fmt == 'tar') {
+            let base = [s.product, s.version, s.buildNumber, dist, OS.toUpper(), ARCH].join('-')
             name = rel.join(base).joinExt('tar', true)
             zname = name.replaceExt('tgz')
             let files = pkg.glob('**', {exclude: /\/$/})
-            if (fmt == 'tar') {
-                let tar = new Tar(name, options)
-                tar.create(files)
-                global.Zlib.compress(name, zname)
-                name.remove()
-                rel.join('md5-' + base).joinExt('tar.txt', true).write(md5(zname.readString()))
-            }
-            if (fmt == 'native') {
-                if (bit.platform.os == 'macosx') {
-                    if (!bit.packs.pmaker || !bit.packs.pmaker.path) {
-                        throw 'Configured without PackageMaker'
-                    }
-                    let size = 20
-                    for each (file in pkg.glob('**', {exclude: /\/$/})) {
-                        size += ((file.size + 999) / 1000)
-                    }
-                    bit.PACKAGE_SIZE = size
-                    let mpkg = pkg.join(bit.settings.product + '.mpkg')
-                    cp('package/' + OS.toUpper() + '/' + bit.settings.product + '.mpkg', pkg, {expand: true, hidden: true})
-                    let contents = mpkg.join('Contents')
-                    let packages = contents.join('Packages')
-                    packages.makeDir()
-                    let proj = contents.join('Resources/en.lproj')
-                    proj.makeDir()
-                    cp(pkg.join('README.TXT'), proj.join('ReadMe'))
-                    cp(pkg.join('LICENSE.md'), proj.join('License'))
-                    let scripts = pkg.join('scripts')
-                    scripts.makeDir()
-                    cp('package/' + OS.toUpper() + '/scripts/bin/*', scripts, {expand: true})
-
-                    let pname = bit.dir.rel.join(base).joinExt('pkg', true)
-                    run(bit.packs.pmaker.path + ' --domain system --root ' + pkg.join(vname) + 
-                        ' --id com.embedthis.' + bit.settings.product + '.' + bit.settings.product + 'bin.pkg' +  
-                        ' --root-volume-only --domain system --verbose --no-relocate' +
-                        ' --scripts ' + scripts + ' --out ' + pname)
-                    bit.dir.rel.join('md5-' + base).joinExt('pkg', true).write(md5(pname.readString()))
-                    // packages.join('bin.pkg'))
-                    // scripts.removeAll()
-                    // mpkg.removeAll()
-                }
-            }
+            let tar = new Tar(name, options)
+            tar.create(files)
+            global.Zlib.compress(name, zname)
+            name.remove()
+            rel.join('md5-' + base).joinExt('tar.txt', true).write(md5(zname.readString()))
             let generic = rel.join(s.product + '-' + fmt + '.tgz')
             generic.remove()
             Path(zname).symlink(generic)
+
+        } else if (fmt == 'native') {
+            let base = [s.product, s.version, s.buildNumber, dist, OS.toUpper(), ARCH].join('-')
+            name = rel.join(base).joinExt('tar', true)
+            let files = pkg.glob('**', {exclude: /\/$/})
+            if (bit.platform.os == 'macosx') {
+                if (!bit.packs.pmaker || !bit.packs.pmaker.path) {
+                    throw 'Configured without PackageMaker'
+                }
+                let size = 20
+                for each (file in pkg.glob('**', {exclude: /\/$/})) {
+                    size += ((file.size + 999) / 1000)
+                }
+                bit.PACKAGE_SIZE = size
+                let mpkg = pkg.join(bit.settings.product + '.mpkg')
+                cp('package/' + OS.toUpper() + '/' + bit.settings.product + '.mpkg', pkg, {expand: true, hidden: true})
+                let contents = mpkg.join('Contents')
+                let packages = contents.join('Packages')
+                packages.makeDir()
+                let proj = contents.join('Resources/en.lproj')
+                proj.makeDir()
+                cp(pkg.join('README.TXT'), proj.join('ReadMe'))
+                cp(pkg.join('LICENSE.md'), proj.join('License'))
+                let scripts = pkg.join('scripts')
+                scripts.makeDir()
+                cp('package/' + OS.toUpper() + '/scripts/bin/*', scripts, {expand: true})
+
+                let pname = bit.dir.rel.join(base).joinExt('pkg', true)
+                run(bit.packs.pmaker.path + ' --target 10.5 --domain system --root ' + pkg.join(vname) + 
+                    ' --id com.embedthis.' + bit.settings.product + '.' + bit.settings.product + 'bin.pkg' +  
+                    ' --root-volume-only --domain system --verbose --no-relocate' +
+                    ' --scripts ' + scripts + ' --out ' + pname)
+                bit.dir.rel.join('md5-' + base).joinExt('pkg', true).write(md5(pname.readString()))
+                zname = pname
+                // packages.join('bin.pkg'))
+                // scripts.removeAll()
+                // mpkg.removeAll()
+            }
         }
         trace('Package', zname)
     }

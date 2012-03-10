@@ -1671,10 +1671,12 @@ public class Bit {
                 '\n\t' + command + '\n')
         } else {
             trace('Link', target.name)
-            let cmd = runCmd(command)
+            run(command)
+        /*
             if (cmd.status != 0) {
                 throw 'Build failure for ' + target.path + '\n' + cmd.error + "\n" + cmd.response
             }
+         */
         }
     }
 
@@ -1712,10 +1714,12 @@ public class Bit {
                 platformReplace(getTargetDeps(target)) + '\n\t' + command + '\n')
         } else {
             trace('Link', target.name)
-            let cmd = runCmd(command)
+            run(command)
+        /*
             if (cmd.status != 0) {
                 throw 'Build failure for ' + target.path + '\n' + cmd.error + "\n" + cmd.response
             }
+         */
         }
     }
 
@@ -1732,10 +1736,12 @@ public class Bit {
         let command = rule.expand(bit, {fill: ''})
         command = command.expand(bit, {fill: ''})
         trace('Symbols', target.name)
-        let cmd = runCmd(command, {noshow: true})
+        run(command, {noshow: true})
+    /*
         if (cmd.status != 0) {
             throw 'Build failure for ' + target.path + '\n' + cmd.error + "\n" + cmd.response
         }
+     */
         let data = cmd.response
         let result = []
         let lines = data.match(/SECT.*External *\| .*/gm)
@@ -1793,10 +1799,12 @@ command = command.expand(bit, {fill: ''})
                     file.relative + platformReplace(getTargetDeps(target)) + '\n\t' + command + '\n')
             } else {
                 trace('Compile', file.relativeTo('.'))
-                let cmd = runCmd(command)
+                run(command)
+            /*
                 if (cmd.status != 0) {
                     throw 'Build failure for ' + target.path + '\n' + cmd.error + "\n" + cmd.response
                 }
+             */
             }
         }
     }
@@ -2195,9 +2203,9 @@ command = command.expand(bit, {fill: ''})
     }
 
     /*
-        Run a command and trace output
+        Run a command and trace output if cmdOptions.true or options.show
      */
-    public function runCmd(command, cmdOptions = {}): Cmd {
+    public function run(command, cmdOptions = {}): String {
         if (options.show) {
             if (command is Array) {
                 trace('Run', command.join(' '))
@@ -2232,7 +2240,7 @@ command = command.expand(bit, {fill: ''})
                 out.write(cmd.error)
             }
         }
-        return cmd
+        return cmd.response
     }
 
     /*
@@ -2397,8 +2405,8 @@ public function install(src, dest: Path, options = {})
 public function package(formats)
     b.package(formats)
 
-public function run(command, options = {show: true})
-    b.runCmd(command, options)
+public function run(command, options = {})
+    b.run(command, options)
 
 public function safeRemove(dir: Path)
     b.safeRemove(dir)
