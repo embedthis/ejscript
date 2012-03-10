@@ -15,10 +15,5 @@ Bit.load({
             ],
             depends: [ 'libmpr', 'libpcre', 'libhttp' ],
         },
-
-        'clean-slots': {
-            type: 'clean',
-            action: "rm('${INC}/*.slots.h')",
-        }
 	},
 })

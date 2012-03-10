@@ -8,7 +8,9 @@ defineComponent() {
     if [ $BLD_HOST_OS = MACOSX ] ; then
         path=${1:-/usr/include:/usr/lib}
     else
-        path="${1:-.}"
+        arch=`uname -m`
+        [ "${arch}" = "i686" ] && arch=i386
+        path="${1:-/usr/lib/${arch}-linux-gnu}"
     fi
     packages=../packages-`echo ${BLD_HOST_OS}-${BLD_HOST_CPU} | tr '[:upper:]' '[:lower:]'`
 
