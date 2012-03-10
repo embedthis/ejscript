@@ -43,7 +43,10 @@ if (bit.platform.os == 'win') {
     }
 
 } else {
-    let search = [path, '/usr/lib', '/lib' ] + Path('/lib').glob('*-linux-gnu')
+    let arch = (bit.platform.arch == 'i686') ? 'i386' : bit.platform.arch
+    let search = [path, '/usr/lib', '/lib' ] + 
+        Path('/usr/lib').glob(arch + '-linux-gnu') +
+        Path('/lib').glob(arch + '-linux-gnu')
     let lib = probe('libz.so', {fullpath: true, search: search}).absolute
     let dir = lib.parent
     search = [path.join('include'), '/usr/include']

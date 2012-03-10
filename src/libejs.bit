@@ -7,13 +7,13 @@ Bit.load({
     targets: {
         libejs: {
             type: 'lib',
-            headers: [ 'slots/*.h', '*.h' ], 
+            headers: [ 'slots/*.h', '*.h', 'compiler/*.h' ], 
             sources: [ 
                 'compiler/*.c',
                 'core/src/*.c',
                 'vm/*.c'
             ],
-            depends: [ 'libmpr', 'libpcre', 'libhttp', 'slots' ],
+            depends: [ 'libmpr', 'libpcre', 'libhttp' ],
         },
 
         'clean-slots': {
