@@ -46,16 +46,14 @@ module ejs.unix {
         @options permissions Number File Posix permissions mask
         @options process Optional callback function to process the copied file. This function must do the actual copy 
             and any required post-processing. Signature is function process(src: Path, dest: Path, options)
-        @hide
+        @return Number of files copied
     */
-    function cp(patterns, dest: Path, options = {}) {
+    function cp(patterns, dest: Path, options = {}, level: Number = 0): Number {
+        let count = 0
         if (options.expand) {
              dest = dest.toString().expand(options.expand, options)
         }
-        let list = Path('.').glob(patterns, options)
-        if (list.length == 0 && options.warn) {
-            throw new ArgError('cp: Can\'t find files for "' + patterns + '" to ' + dest)
-        }
+        let list = Path('.').glob(patterns, blend(options, {exclude: /\/$/}))
         for each (let file: Path in list) {
             if (options.expand) {
                  file = file.toString().expand(options.expand, options)
@@ -65,7 +63,7 @@ module ejs.unix {
                     let target = dest.join(file.basename)
                     target.makeDir()
                     for each (f in file.files()) {
-                        cp(f, target, options)
+                        count += cp(f, target, options, ++level)
                     }
                 } else if (dest.exists && dest.isRegular) {
                     throw 'Destination is not a directory'
@@ -73,7 +71,7 @@ module ejs.unix {
                     /* dir, missing */
                     dest.makeDir()
                     for each (f in file.files()) {
-                        cp(f, dest.join(f.basename), options)
+                        count += cp(f, dest.join(f.basename), options, ++level)
                     }
                 }
             } else {
@@ -87,27 +85,21 @@ module ejs.unix {
                     target = dest.join(file.basename)
                 }
                 if (options.process) {
-                    /* Call this way to ensure we get any bound this value */
+                    /* Ensure we get any bound "this" value */
                     let fn = options.process
                     fn(file, target, options)
                 } else {
                     target.parent.makeDir()
                     file.copy(target, options)
                 }
+                count++
             }
         }
+        if (count == 0 && level == 0 && options.warn) {
+            throw new ArgError('cp: Can\'t find files for "' + patterns + '" to ' + dest)
+        }
+        return count
     }
-
-    /**
-        Copy a file. If the destination file already exists, the old copy will be overwritten as part of the 
-        copy operation.
-        @param fromPath Original file to copy.
-        @param toPath New destination file path name.
-        @throws IOError if the copy is not successful.
-     */
-    # DEPRECATED
-    function _cp(fromPath: String, toPath: String): void
-        Path(fromPath).copy(toPath) 
 
     /**
         Get the directory name portion of a file. The dirname name portion is the leading portion including all 
