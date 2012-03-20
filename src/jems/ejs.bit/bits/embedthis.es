@@ -61,7 +61,8 @@ function installCallback(src: Path, dest: Path, options = {}): Boolean {
         gid: options.gid
         user: options.user
         group: options.group
-        permissions: options.permissions || (src.extension.match(/exe|lib|so|dylib|sh|es/) ? 0755 : 0644)
+        permissions: options.permissions || 
+            ((src.isDir || src.extension.match(/exe|lib|so|dylib|sh|es/)) ? 0755 : 0644)
     }
     if (options.cat) {
         vtrace('Combine', dest.relative + ' += ' + src.relative)
@@ -89,7 +90,12 @@ function installCallback(src: Path, dest: Path, options = {}): Boolean {
     } else {
         vtrace(options.task.toPascal(), dest.relative)
         dest.parent.makeDir()
-        src.copy(dest, attributes)
+        if (src.isDir) {
+            dest.makeDir()
+            dest.setAttributes(attributes)
+        } else {
+            src.copy(dest, attributes)
+        }
     }
     if (options.patch) {
         trace('Patch', dest)

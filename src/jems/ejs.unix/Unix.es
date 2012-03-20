@@ -63,7 +63,7 @@ If a pattern is an existing directory, then a MOB
                 if (!dest.exists) {
                     dest.makeDir()
                 } else if (!dest.isDir) {
-                    throw "Destination is not a directory"
+                    throw 'Destination "' + dest + '" is not a directory'
                 }
             }
             for each (let file: Path in list) {
