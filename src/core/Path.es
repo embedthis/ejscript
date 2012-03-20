@@ -98,10 +98,10 @@ module ejs {
         native function get basename(): Path
         
         /**
-            Path components. This is the path converted to an absolute path and then broken into components for each
-            directory level. It is set to an array object with an element for each segment of the path. The first 
-                element represents the file system root and will be the empty string or drive spec on a Windows 
-                like systems. Array.join("/") can be used to put components back into a complete path.
+            Path components. The path is normalized and then broken into components for each directory level. 
+            The result is an array object with an element for each segment of the path. If the path is an absolute path, 
+            the first element represents the file system root and will be the empty string or drive spec 
+            on a Windows like systems. Array.join("/") can be used to put components back into a complete path.
          */
         native function get components(): Array
   

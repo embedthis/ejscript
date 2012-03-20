@@ -2,7 +2,7 @@
     args.tst
  */
 
-let ejs = App.exePath.portable
+let ejs = Cmd.locate('ejs')
 
 //  MOB -- should run on windows too!
 if (!Path("/bin").exists) {

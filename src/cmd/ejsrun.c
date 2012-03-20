@@ -85,7 +85,7 @@ MAIN(ejsMain, int argc, char **argv, char **envp)
             }
 
         } else if (smatch(argp, "--verbose") || smatch(argp, "-v")) {
-            mprStartLogging("stderr:2", 0);
+            mprStartLogging("stderr:1", 0);
             mprSetCmdlineLogging(1);
 
         } else if (smatch(argp, "--version") || smatch(argp, "-V")) {
@@ -135,6 +135,9 @@ MAIN(ejsMain, int argc, char **argv, char **envp)
         }
     }
 #endif
+    if (!err) {
+        err = mpr->exitStatus;
+    }
     app->ejs = 0;
     mprTerminate(MPR_EXIT_DEFAULT, err);
     ejsDestroyVM(ejs);

@@ -182,7 +182,6 @@ public function package(formats) {
     let s = bit.settings
     let vname = s.product + '-' + s.version + '-' + s.buildNumber
     let rel = bit.dir.rel
-    let flat = bit.dir.flat
     let name, generic
     let pkg
 
@@ -215,6 +214,7 @@ public function package(formats) {
     for each (fmt in formats) {
         pkg = bit.dir.pkg
         if (fmt == 'flat') {
+            let flat = bit.dir.flat
             safeRemove(flat)
             let vflat = flat.join(vname)
             vflat.makeDir()
@@ -228,7 +228,8 @@ public function package(formats) {
             options.group = 'wheel'
         }
         let name, zname
-        if (fmt == 'flat' || fmt == 'combo') {
+        if (fmt == 'flat' || fmt == 'combo' || fmt == 'src') {
+            /* Flat (no directories),  combined (into few files), or source distribution */
             name = rel.join(vname + '-' + fmt + '.tar')
             zname = name.replaceExt('tgz')
             let tar = new Tar(name, options)
@@ -241,6 +242,7 @@ public function package(formats) {
             rel.join('md5-' + vname + '-' + fmt + '.tar.txt').write(md5(zname.readString()))
 
         } else if (fmt == 'tar') {
+            /* Binary tar format */
             let base = [s.product, s.version, s.buildNumber, dist, OS.toUpper(), ARCH].join('-')
             name = rel.join(base).joinExt('tar', true)
             zname = name.replaceExt('tgz')
@@ -255,6 +257,7 @@ public function package(formats) {
             Path(zname).symlink(generic)
 
         } else if (fmt == 'native') {
+            /* Binary native O/S package */
             let base = [s.product, s.version, s.buildNumber, dist, OS.toUpper(), ARCH].join('-')
             name = rel.join(base).joinExt('tar', true)
             let files = pkg.glob('**', {exclude: /\/$/})
@@ -267,8 +270,8 @@ public function package(formats) {
                     size += ((file.size + 999) / 1000)
                 }
                 bit.PACKAGE_SIZE = size
-                let mpkg = pkg.join(bit.settings.product + '.mpkg')
-                cp('package/' + OS.toUpper() + '/' + bit.settings.product + '.mpkg', pkg, {expand: true, hidden: true})
+                let mpkg = pkg.join(s.product + '.mpkg')
+                cp('package/' + OS.toUpper() + '/' + s.product + '.mpkg', pkg, {expand: true, hidden: true})
                 let contents = mpkg.join('Contents')
                 let packages = contents.join('Packages')
                 packages.makeDir()
@@ -282,7 +285,7 @@ public function package(formats) {
 
                 let pname = bit.dir.rel.join(base).joinExt('pkg', true)
                 run(bit.packs.pmaker.path + ' --target 10.5 --domain system --root ' + pkg.join(vname) + 
-                    ' --id com.embedthis.' + bit.settings.product + '.' + bit.settings.product + 'bin.pkg' +  
+                    ' --id com.embedthis.' + s.product + '.' + s.product + 'bin.pkg' +  
                     ' --root-volume-only --domain system --verbose --no-relocate' +
                     ' --scripts ' + scripts + ' --out ' + pname)
                 bit.dir.rel.join('md5-' + base).joinExt('pkg', true).write(md5(pname.readString()))

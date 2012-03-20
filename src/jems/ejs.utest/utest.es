@@ -1,6 +1,5 @@
-#!/usr/bin/env ejs
 /*
-    utest -- Embedthis Unit Test Framework
+    utest.es -- Embedthis Unit Test Framework
  */
 module ejs.test {
 
@@ -100,7 +99,8 @@ enumerable class Test {
     }
 
     function usage(): Void {
-        error("Usage: " + program + " [options] [filter patterns...]\n" +
+        let program = Path(App.args[0]).basename
+        App.log.error("Usage: " + program + " [options] [filter patterns...]\n" +
             "  --chdir dir           # Change to directory before testing\n" + 
             "  --continue            # Continue on errors\n" + 
             "  --depth number        # Zero == basic, 1 == throrough, 2 extensive\n" + 
@@ -186,11 +186,7 @@ enumerable class Test {
             App.log.redirect(options.log)
             App.mprLog.redirect(options.log)
         }
-        if (options.out) {
-            out = File(options.out, "w")
-        } else {
-            out = stdout
-        }
+        out = (options.out) ? File(options.out, "w") : stdout
         if (echo) {
             activity("Test", App.args.join(" "))
         }
@@ -203,6 +199,8 @@ enumerable class Test {
             throw "Can't find configure"
         }
         _top = path.dirname.absolute
+
+/*
         let out: Path out = _top.join('out')
         if (!out.join('inc/buildConfig.h').exists) {
             out = Path(_top).glob(Config.OS.toLower() + '-' + Config.CPU + '-*').sort()[0]
@@ -210,6 +208,8 @@ enumerable class Test {
         if (!out) {
             throw 'Can\'t locate configure files, run configure'
         }
+ */
+        let out: Path = App.exeDir.parent
         parseBuildConfig(out.join('inc/buildConfig.h'))
 
         //  MOB - these are currently being set to the ejs bin and lib
@@ -345,7 +345,7 @@ enumerable class Test {
     function initWorker(w: Worker, export: Object) {
         let uarg = Path(App.args[0])
         if (uarg.exists) {
-            w.preload(uarg + '.worker')
+            w.preload(uarg.replaceExt('.worker'))
         } else {
             w.preload(App.exeDir.join("utest.worker"))
         }

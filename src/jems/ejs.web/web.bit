@@ -36,5 +36,20 @@ Bit.load({
             '+includes': [ 'src' ],
             depends: [ 'libmpr', 'libhttp', 'libpcre', 'libejs', 'ejs.mod' ],
         },
+
+        www: {
+            path: '${LIB}/www',
+            files: [ 'www' ],
+            build: "
+                trace('Copy', 'ejs.web www')
+                rmdir(bit.dir.lib.join('www'))
+                mkdir(bit.dir.lib.join('www'))
+                cp('www', bit.dir.lib)
+            "
+            'generate-sh': "\
+                rm -fr ${LIB}/www
+                cp -r ${HOME}/www ${LIB}                                                                  
+            ",
+        },
 	},
 })

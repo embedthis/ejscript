@@ -7,13 +7,14 @@ Bit.load({
     targets: {
         'ejs.template.mod': {
             path: '${LIB}/ejs.template.mod',
-            files: [ '*.es' ],
+            files: [ 'TemplateParser.es' ],
             build: "
                 trace('Compile', 'ejs.template.mod')
-                run('ejsc --out ${LIB}/ejs.template.mod ${settings.esflags} --optimize 9 ' + Path('.').glob('*.es').sort().join(' '))
+                run('ejsc --out ${LIB}/ejs.template.mod ${settings.esflags} --optimize 9 ' + 
+                    Path('.').glob('TemplateParser.es').sort().join(' '))
             ",
             'generate-sh': "\
-                ejsc --out ${OUT} ${settings.esflags} --optimize 9 ${HOME}/*.es
+                ejsc --out ${OUT} ${settings.esflags} --optimize 9 ${HOME}/TemplateParser.es
             ",
             depends: [ 'ejsc', 'ejsmod', 'ejs.mod' ],
         },

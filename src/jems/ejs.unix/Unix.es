@@ -37,6 +37,7 @@ module ejs.unix {
         @param patterns Pattern to match files to copy. This can be a String, Path or array of String/Paths. 
             The wildcards "*", "**" and "?" are the only wild card patterns supported. The "**" pattern matches
             every directory. The Posix "[]" and "{a,b}" style expressions are not supported.
+If a pattern is an existing directory, then a MOB
         @param dest Destination file or directory. If multiple files are copied, dest is assumed to be a directory and 
             will be created if required.
         @param options File attributes
@@ -46,59 +47,61 @@ module ejs.unix {
         @options permissions Number File Posix permissions mask
         @options process Optional callback function to process the copied file. This function must do the actual copy 
             and any required post-processing. Signature is function process(src: Path, dest: Path, options)
+        @options tree Copy the entire subtree identified by the patterns by prepending the entire subtree path.
         @return Number of files copied
+        @note Using cp with a directory as the pattern will not copy anything. Use 'dir/**' instead as the source pattern
+            to select all files and directories.
     */
-    function cp(patterns, dest: Path, options = {}, level: Number = 0): Number {
-        let count = 0
-        if (options.expand) {
-             dest = dest.toString().expand(options.expand, options)
-        }
-        let list = Path('.').glob(patterns, blend(options, {exclude: /\/$/}))
-        for each (let file: Path in list) {
+    function cp(patterns, dest: Path, options = {}): Number {
+        function inner(patterns, dest: Path, options, level: Number): Number {
+            let count = 0
             if (options.expand) {
-                 file = file.toString().expand(options.expand, options)
+                 dest = dest.toString().expand(options.expand, options)
             }
-            if (file.isDir) {
-                if (dest.isDir) {
-                    let target = dest.join(file.basename)
-                    target.makeDir()
-                    for each (f in file.files()) {
-                        count += cp(f, target, options, ++level)
-                    }
-                } else if (dest.exists && dest.isRegular) {
-                    throw 'Destination is not a directory'
+            let list = Path('.').glob(patterns, options)
+            if (list.length > 1 && !options.cat) {
+                if (!dest.exists) {
+                    dest.makeDir()
+                } else if (!dest.isDir) {
+                    throw "Destination is not a directory"
+                }
+            }
+            for each (let file: Path in list) {
+                if (options.expand) {
+                     file = file.toString().expand(options.expand, options)
+                }
+                let target
+                if (options.tree) {
+                    // target = dest.join(file.components.slice(1).join('/')).normalize
+                    //  Don't use join to allow for file to be absolute
+                    target = Path(dest + "/" + file).normalize
+                } else if (dest.isDir) {
+                    target = dest.join(file.basename)
                 } else {
-                    /* dir, missing */
-                    dest.makeDir()
-                    for each (f in file.files()) {
-                        count += cp(f, dest.join(f.basename), options, ++level)
-                    }
+                    target = dest
                 }
-            } else {
-                let target = dest
-                if (dest.isDir) {
-                    /* file, dir */
-                    target = dest.join(file.basename)
-                } else if (!options.cat && list.length > 1) {
-                    /* Copying multiple files to target is a directory, the cat option is implemented by Bit */
-                    dest.makeDir()
-                    target = dest.join(file.basename)
-                }
+                target.dirname.makeDir()
                 if (options.process) {
                     /* Ensure we get any bound "this" value */
                     let fn = options.process
                     fn(file, target, options)
+                } else if (file.isDir) {
+                    target.makeDir()
                 } else {
-                    target.parent.makeDir()
                     file.copy(target, options)
                 }
                 count++
             }
+            if (count == 0 && level == 0 && options.warn) {
+                throw new ArgError('cp: Can\'t find files for "' + patterns + '" to ' + dest)
+            }
+            return count
         }
-        if (count == 0 && level == 0 && options.warn) {
-            throw new ArgError('cp: Can\'t find files for "' + patterns + '" to ' + dest)
+        if (Path(patterns).isDir) {
+            patterns = patterns + '/**'
+            options = blend({tree: true}, options)
         }
-        return count
+        return inner(patterns, dest, options, 0)
     }
 
     /**

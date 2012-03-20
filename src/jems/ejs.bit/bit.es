@@ -10,6 +10,8 @@ module embedthis.bit {
 require ejs.unix
 
 public class Bit {
+    public var simpleLoad: Boolean
+
     private const VERSION: Number = 0.2
 
     /*
@@ -115,16 +117,16 @@ public class Bit {
         let path = Path('product.bit')
         if (path.exists) {
             try {
-                b.loadWrapper(Config.LibDir.join('bits/standard.bit'))
+                b.simpleLoad = true
+                global.bit = bit = b.bit
                 b.loadWrapper(path)
-                if (global.bit && bit.usage) {
+                if (bit.usage) {
                     print('Feature Selection: ')
                     for (let [item,msg] in bit.usage) {
                         print('  --set %-14s %s' % [item + '=value', msg])
                     }
                 }
             } catch (e) { print('CATCH: ' + e)}
-
         }
         App.exit(1)
     }
@@ -304,11 +306,6 @@ public class Bit {
                 top: bit.dir.top,
             },
             settings: bit.settings,
-    /*
-            defaults: {
-                '+includes': [ '${dir.inc}' ],
-            },
-     */
             packs: bit.packs,
         })
         if (envSettings) {
@@ -1005,6 +1002,10 @@ public class Bit {
         Load a bit file object
      */
     public function loadInternal(o) {
+        if (simpleLoad) {
+            blend(bit, o)
+            return
+        }
         let home = currentBitFile.dirname
         fixup(o)
         /* 
@@ -1672,11 +1673,6 @@ public class Bit {
         } else {
             trace('Link', target.name)
             run(command)
-        /*
-            if (cmd.status != 0) {
-                throw 'Build failure for ' + target.path + '\n' + cmd.error + "\n" + cmd.response
-            }
-         */
         }
     }
 
@@ -1715,11 +1711,6 @@ public class Bit {
         } else {
             trace('Link', target.name)
             run(command)
-        /*
-            if (cmd.status != 0) {
-                throw 'Build failure for ' + target.path + '\n' + cmd.error + "\n" + cmd.response
-            }
-         */
         }
     }
 
@@ -1737,11 +1728,7 @@ public class Bit {
         command = command.expand(bit, {fill: ''})
         trace('Symbols', target.name)
         run(command, {noshow: true})
-    /*
-        if (cmd.status != 0) {
-            throw 'Build failure for ' + target.path + '\n' + cmd.error + "\n" + cmd.response
-        }
-     */
+     
         let data = cmd.response
         let result = []
         let lines = data.match(/SECT.*External *\| .*/gm)
@@ -1800,11 +1787,6 @@ command = command.expand(bit, {fill: ''})
             } else {
                 trace('Compile', file.relativeTo('.'))
                 run(command)
-            /*
-                if (cmd.status != 0) {
-                    throw 'Build failure for ' + target.path + '\n' + cmd.error + "\n" + cmd.response
-                }
-             */
             }
         }
     }
@@ -2036,7 +2018,8 @@ command = command.expand(bit, {fill: ''})
     function runScript(scripts, when) {
         if (scripts) {
             for each (item in scripts[when]) {
-                let script = item.script.expand(bit, {fill: ''}).replace(/\\/g, '\\\\')
+                // let script = item.script.expand(bit, {fill: ''}).replace(/\\/g, '\\\\')
+                let script = item.script.expand(bit, {fill: ''})
                 let pwd = App.dir
                 if (item.home && item.home != pwd) {
                     App.chdir(item.home)

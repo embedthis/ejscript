@@ -266,9 +266,11 @@ static EjsArray *getPathComponents(Ejs *ejs, EjsPath *fp, int argc, EjsObj **arg
     int             index;
 
     fs = mprLookupFileSystem(fp->value);
-    ap = ejsCreateArray(ejs, 0);
+    if ((ap = ejsCreateArray(ejs, 0)) == 0) {
+        return 0;
+    }
     index = 0;
-    for (last = cp = mprGetAbsPath(fp->value); *cp; cp++) {
+    for (last = cp = mprNormalizePath(fp->value); *cp; cp++) {
         if (*cp == fs->separators[0] || *cp == fs->separators[1]) {
             *cp++ = '\0';
             ejsSetProperty(ejs, ap, index++, ejsCreateStringFromAsc(ejs, last));
@@ -342,13 +344,12 @@ static EjsObj *copyPath(Ejs *ejs, EjsPath *fp, int argc, EjsObj **argv)
         mprCloseFile(from);
         return 0;
     }
-    if (options && ejsGetLength(ejs, options) > 0) {
+    /* Keep perms of original file, don't inherit user/group (may not have permissions to create) */
+    if (mprGetPathInfo(fp->value, &info) >= 0 && info.valid) {
+        chmod(toPath, info.perms);
+    }
+    if (options) {
         ejsSetPathAttributes(ejs, toPath, options);
-    } else {
-        /* Keep perms of original file, don't inherit user/group (may not have permissions to create) */
-        if (mprGetPathInfo(fp->value, &info) >= 0 && info.valid) {
-            chmod(toPath, info.perms);
-        }
     }
     if ((buf = mprAlloc(MPR_BUFSIZE)) == NULL) {
         ejsThrowMemoryError(ejs);
@@ -523,7 +524,7 @@ static EjsArray *path_files(Ejs *ejs, EjsPath *fp, int argc, EjsObj **argv)
         if (ejsGetPropertyByName(ejs, options, EN("hidden")) == ESV(true)) {
             flags |= FILES_HIDDEN;
         }
-        if (ejsGetPropertyByName(ejs, options, EN("nodirs")) == ESV(true)) {
+        if (ejsGetPropertyByName(ejs, options, EN("files")) == ESV(true)) {
             flags |= FILES_NODIRS;
         }
         exclude = ejsGetPropertyByName(ejs, options, EN("exclude"));

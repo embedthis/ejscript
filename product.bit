@@ -24,6 +24,7 @@ Bit.load({
         'src/jems/ejs.tar/tar.bit',
         'src/jems/ejs.zlib/zlib.bit',
         'src/jems/ejs.mvc/mvc.bit',
+        'src/jems/ejs.utest/utest.bit',
         '${BITS}/embedthis.bit',
     ],
 
@@ -54,13 +55,15 @@ Bit.load({
         } },
     },
 
-    '+optional': [ 'doxygen', 'openssl', 'matrixssl', 'sqlite', 'zlib' ],
+    '+optional': [ 'doxygen', 'openssl', 'matrixssl', 'sqlite', 'utest', 'zlib' ],
     '+required': [ 'pcre', 'http' ]
 
     packs: {
         ejs: {
-            /* Define for utest target */
             path: '${BIN}/ejs'
+        },
+        utest: {
+            path: '${BIN}/utest'
         },
     },
 
