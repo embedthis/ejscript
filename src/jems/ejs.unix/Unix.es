@@ -37,7 +37,7 @@ module ejs.unix {
         @param patterns Pattern to match files to copy. This can be a String, Path or array of String/Paths. 
             The wildcards "*", "**" and "?" are the only wild card patterns supported. The "**" pattern matches
             every directory. The Posix "[]" and "{a,b}" style expressions are not supported.
-If a pattern is an existing directory, then a MOB
+            If patterns is an existing directory, then the pattern is converted to 'dir/**' and the tree option is enabled.
         @param dest Destination file or directory. If multiple files are copied, dest is assumed to be a directory and 
             will be created if required.
         @param options File attributes
@@ -49,8 +49,6 @@ If a pattern is an existing directory, then a MOB
             and any required post-processing. Signature is function process(src: Path, dest: Path, options)
         @options tree Copy the entire subtree identified by the patterns by prepending the entire subtree path.
         @return Number of files copied
-        @note Using cp with a directory as the pattern will not copy anything. Use 'dir/**' instead as the source pattern
-            to select all files and directories.
     */
     function cp(patterns, dest: Path, options = {}): Number {
         function inner(patterns, dest: Path, options, level: Number): Number {
