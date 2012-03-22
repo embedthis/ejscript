@@ -442,7 +442,7 @@ static EjsBoolean *endsWith(Ejs *ejs, EjsString *sp, int argc, EjsObj **argv)
 /*
     Lookup a token value. This will be called recursively for each name portion of a token. i.e. ${part.part.part}
  */
-static void getTokenValue(Ejs *ejs, EjsObj *obj, cchar *fullToken, cchar *token, MprBuf *buf, cchar *fill, EjsString *join)
+static int getTokenValue(Ejs *ejs, EjsObj *obj, cchar *fullToken, cchar *token, MprBuf *buf, cchar *fill, EjsString *join)
 {
     EjsAny      *vp;
     EjsString   *svalue;
@@ -453,7 +453,7 @@ static void getTokenValue(Ejs *ejs, EjsObj *obj, cchar *fullToken, cchar *token,
     
     if ((vp = ejsGetPropertyByName(ejs, obj, EN(first))) != 0) {
         if (rest && ejsIsPot(ejs, vp)) {
-            getTokenValue(ejs, vp, fullToken, rest, buf, fill, join);
+            return getTokenValue(ejs, vp, fullToken, rest, buf, fill, join);
         } else {
             if (ejsIs(ejs, vp, Array)) {
                 svalue = ejsJoinArray(ejs, vp, join); 
@@ -473,8 +473,10 @@ static void getTokenValue(Ejs *ejs, EjsObj *obj, cchar *fullToken, cchar *token,
             }
         } else {
             ejsThrowReferenceError(ejs, "Missing property %s", fullToken);
+            return 0;
         }
     }
+    return 1;
 }
 
 
@@ -526,7 +528,9 @@ static EjsString *expandString(Ejs *ejs, EjsString *sp, int argc, EjsObj **argv)
             src += 2;
             for (cp = src; *cp != '}' && cp < &sp->value[sp->length]; cp++) ;
             tok = snclone(src, cp - src);
-            getTokenValue(ejs, obj, tok, tok, buf, fill, join);
+            if (!getTokenValue(ejs, obj, tok, tok, buf, fill, join)) {
+                return 0;
+            }
             src = cp + 1;
         } else {
             mprPutCharToBuf(buf, *src++);
