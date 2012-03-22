@@ -92,30 +92,38 @@ function installCallback(src: Path, dest: Path, options = {}): Boolean {
         dest.parent.makeDir()
         if (src.isDir) {
             dest.makeDir()
+            attributes.permissions = 0755
             dest.setAttributes(attributes)
         } else {
             src.copy(dest, attributes)
         }
     }
-    if (options.patch) {
-        trace('Patch', dest)
-        dest.write(dest.readString().expand(bit))
+    if (options.expand) {
+        vtrace('Patch', dest)
+        let o = bit
+        if (options.expand != true) {
+            o = options.expand
+        }
+        dest.write(dest.readString().expand(o, {fill: '${}'}))
         dest.setAttributes(attributes)
     }
     if (options.fold && bit.platform.like == 'windows') {
-        trace('Fold', dest)
+        vtrace('Fold', dest)
         fold(dest, options)
         dest.setAttributes(attributes)
     }
     if (options.strip && bit.packs.strip) {
-        trace('Strip', dest)
+        vtrace('Strip', dest)
         Cmd.run(bit.packs.strip.path + ' ' + dest)
     }
     if (options.compress) {
-        trace('Compress', dest)
-        dest = Path(dest.name + '.gz')
+        vtrace('Compress', dest.relative)
+        let zname = Path(dest.name + '.gz')
+        zname.remove()
+        global.load('ejs.zlib.mod')
+        use namespace 'ejs.zlib'
+        global.Zlib.compress(dest.name, zname)
         dest.remove()
-        Cmd.run('gzip --best ' + dest)
     }
     if (App.uid == 0 && dest.extension == 'so' && Config.OS == 'LINUX' && options.task == 'install') {
         trace('Ldconfig', dest)
@@ -135,14 +143,12 @@ function installCallback(src: Path, dest: Path, options = {}): Boolean {
     @option compress Compress target file
     @option copytemp Copy files that look like temp files
     @option exclude Exclude files that match the pattern. The pattern should be in portable file format.
-    @option expand Object hash containing properties to use when replacing tokens of the form ${token} in the
-        src and dest filenames. Defaults to 'bit'.
+    @option expand Expand tokens. Set to true or an Object hash containing properties to use when replacing 
+        tokens of the form ${token} in the src and dest filenames. If set to true, the 'bit' object is used.
     @option fold Fold long lines on windows at column 80 and convert new line endings.
     @option group Set file group
     @option include Include files that match the pattern. The pattern should be in portable file format.
     @option user Set file file user
-    @option patch Object hash containing properties to use when replacing tokens of the form ${token} in the
-        destination file contents.  
     @option perms Set file perms
     @option strip Strip object or executable
  */
@@ -155,7 +161,7 @@ public function install(src, dest: Path, options = {}) {
         }
         src = files.unique()
     }
-    cp(src, dest, blend({process: this.installCallback, expand: bit, warn: true}, options))
+    cp(src, dest, blend({process: this.installCallback, warn: true}, options))
 }
 
 /*
@@ -184,125 +190,195 @@ function fold(path: Path, options) {
     out.close()
 }
 
-public function package(formats) {
-    let s = bit.settings
-    let vname = s.product + '-' + s.version + '-' + s.buildNumber
-    let rel = bit.dir.rel
-    let name, generic
-    let pkg
-
-    let dist = { macosx: 'Apple', win: 'MS', 'linux': 'ubuntu' }[OS]
-    if (OS == 'linux') {
-        let relfile = Path('/etc/redhat-release')
-        if (relfile.exists) {
-            let rver = relfile.readString()
-            if (rver.contains('Fedora')) {
-                dist = 'fedora'
-            } else if (rver.contains('Red Hat Enterprise')) {
-                dist = 'rhl'
-            } else {
-                dist = 'fedora'
-            }
-        } else if (Path('/etc/SuSE-release').exists) {
-            dist = 'suse'
-        } else if (Path('/etc/gentoo-release').exists) {
-            dist = 'gentoo'
-        }
-    }
-
+public function package(pkg: Path, formats) {
     /*
-        Dynamically load to avoid a zlib dependency
+        Dynamically zlib load to avoid a hard dependency
      */
     global.load('ejs.zlib.mod')
-    use namespace 'ejs.zlib'
     if (!(formats is Array)) formats = [formats]
 
-    for each (fmt in formats) {
-        pkg = bit.dir.pkg
-        if (fmt == 'flat') {
-            let flat = bit.dir.flat
-            safeRemove(flat)
-            let vflat = flat.join(vname)
-            vflat.makeDir()
-            for each (f in pkg.glob("**", {exclude: /\/$/})) {
-                f.copy(vflat.join(f.basename))
-            }
-            pkg = flat
-        }
-        let options = {relativeTo: pkg, user: 'root', group: 'root', uid: 0, gid: 0}
-        if (bit.platform.os == 'macosx') {
-            options.group = 'wheel'
-        }
-        let name, zname
-        if (fmt == 'flat' || fmt == 'combo' || fmt == 'src') {
-            /* Flat (no directories),  combined (into few files), or source distribution */
-            name = rel.join(vname + '-' + fmt + '.tar')
-            zname = name.replaceExt('tgz')
-            let tar = new Tar(name, options)
-            tar.create(pkg.glob('**', {exclude: /\/$/}))
-            global.Zlib.compress(tar.name, zname)
-            name.remove()
-            let generic = rel.join(s.product + '-' + fmt + '.tgz')
-            generic.remove()
-            Path(zname).symlink(generic)
-            rel.join('md5-' + vname + '-' + fmt + '.tar.txt').write(md5(zname.readString()))
-
-        } else if (fmt == 'tar') {
-            /* Binary tar format */
-            let base = [s.product, s.version, s.buildNumber, dist, OS.toUpper(), ARCH].join('-')
-            name = rel.join(base).joinExt('tar', true)
-            zname = name.replaceExt('tgz')
-            let files = pkg.glob('**', {exclude: /\/$/})
-            let tar = new Tar(name, options)
-            tar.create(files)
-            global.Zlib.compress(name, zname)
-            name.remove()
-            rel.join('md5-' + base).joinExt('tar.txt', true).write(md5(zname.readString()))
-            let generic = rel.join(s.product + '-' + fmt + '.tgz')
-            generic.remove()
-            Path(zname).symlink(generic)
-
-        } else if (fmt == 'native') {
-            /* Binary native O/S package */
-            let base = [s.product, s.version, s.buildNumber, dist, OS.toUpper(), ARCH].join('-')
-            name = rel.join(base).joinExt('tar', true)
-            let files = pkg.glob('**', {exclude: /\/$/})
-            if (bit.platform.os == 'macosx') {
-                if (!bit.packs.pmaker || !bit.packs.pmaker.path) {
-                    throw 'Configured without PackageMaker'
-                }
-                let size = 20
-                for each (file in pkg.glob('**', {exclude: /\/$/})) {
-                    size += ((file.size + 999) / 1000)
-                }
-                bit.PACKAGE_SIZE = size
-                let mpkg = pkg.join(s.product + '.mpkg')
-                cp('package/' + OS.toUpper() + '/' + s.product + '.mpkg', pkg, {expand: true, hidden: true})
-                let contents = mpkg.join('Contents')
-                let packages = contents.join('Packages')
-                packages.makeDir()
-                let proj = contents.join('Resources/en.lproj')
-                proj.makeDir()
-                cp(pkg.join('README.TXT'), proj.join('ReadMe'))
-                cp(pkg.join('LICENSE.md'), proj.join('License'))
-                let scripts = pkg.join('scripts')
-                scripts.makeDir()
-                cp('package/' + OS.toUpper() + '/scripts/bin/*', scripts, {expand: true})
-
-                let pname = bit.dir.rel.join(base).joinExt('pkg', true)
-                run(bit.packs.pmaker.path + ' --target 10.5 --domain system --root ' + pkg.join(vname) + 
-                    ' --id com.embedthis.' + s.product + '.' + s.product + 'bin.pkg' +  
-                    ' --root-volume-only --domain system --verbose --no-relocate' +
-                    ' --scripts ' + scripts + ' --out ' + pname)
-                bit.dir.rel.join('md5-' + base).joinExt('pkg', true).write(md5(pname.readString()))
-                zname = pname
-                // packages.join('bin.pkg'))
-                // scripts.removeAll()
-                // mpkg.removeAll()
-            }
-        }
-        trace('Package', zname)
+    let options = {relativeTo: pkg, user: 'root', group: 'root', uid: 0, gid: 0}
+    if (bit.platform.os == 'macosx') {
+        options.group = 'wheel'
     }
+    options.vname = bit.settings.product + '-' + bit.settings.version + '-' + bit.settings.buildNumber
+
+    for each (fmt in formats) {
+        switch (fmt) {
+        case 'flat':
+            packageFlat(pkg, options)
+            break
+        case 'combo':
+            packageCombo(pkg, options)
+            break
+        case 'src':
+            packageSrc(pkg, options)
+            break
+        case 'tar':
+            packageTar(pkg, options)
+            break
+        case 'native':
+            packageNative(pkg, options)
+            break
+        default:
+            throw 'Unknown package format: ' + pkg
+        }
+    }
+}
+
+function packageSimple(pkg: Path, options, fmt) {
+    let s = bit.settings
+    let rel = bit.dir.rel
+    let name = rel.join(options.vname + '-' + fmt + '.tar')
+    let zname = name.replaceExt('tgz')
+
+    trace('Package', zname)
+    let tar = new Tar(name, options)
+    tar.create(pkg.glob('**', {exclude: /\/$/}))
+    use namespace 'ejs.zlib'
+    global.Zlib.compress(tar.name, zname)
+    name.remove()
+    let generic = rel.join(s.product + '-' + fmt + '.tgz')
+    generic.remove()
+    Path(zname).symlink(generic)
+    rel.join('md5-' + options.vname + '-' + fmt + '.tar.txt').write(md5(zname.readString()))
+}
+
+function packageFlat(pkg: Path, options) {
+    let s = bit.settings
+    let flat: Path = bit.dir.flat
+    safeRemove(flat)
+    let vflat = flat.join(options.vname)
+    vflat.makeDir()
+    for each (f in pkg.glob('**', {exclude: /\/$/})) {
+        f.copy(vflat.join(f.basename))
+    }
+    packageSimple(flat, options, 'flat')
+}
+
+function packageCombo(pkg: Path, options) {
+    packageSimple(pkg, options, 'combo')
+}
+
+function packageSrc(pkg: Path, options) {
+    packageSimple(pkg, options, 'src')
+}
+
+function packageTar(pkg: Path, options) {
+    let s = bit.settings
+    let rel = bit.dir.rel
+    let base = [s.product, s.version, s.buildNumber, bit.platform.dist, OS.toUpper(), ARCH].join('-')
+    let name = rel.join(base).joinExt('tar', true)
+    let zname = name.replaceExt('tgz')
+    let files = pkg.glob('**', {exclude: /\/$/})
+    let tar = new Tar(name, options)
+
+    trace('Package', zname)
+    tar.create(files)
+
+    use namespace 'ejs.zlib'
+    global.Zlib.compress(name, zname)
+    name.remove()
+    rel.join('md5-' + base).joinExt('tar.txt', true).write(md5(zname.readString()))
+    let generic = rel.join(s.product + '-tar' + '.tgz')
+    generic.remove()
+    Path(zname).symlink(generic)
+}
+
+function packageNative(pkg: Path, options) {
+    switch (bit.platform.os) {
+    case 'macosx':
+        packageMacosx(pkg, options)
+        break
+    default:
+        throw 'Can\'t package for ' + bit.platform.os
+    }
+}
+
+var staffDir = {
+    'var/www': true,
+}
+
+function createContents(pkg: Path, options) {
+    let s = bit.settings
+    let contents = pkg.join(options.vname, 'contents')
+    let cp: File = pkg.join(s.product + '.pmdoc', '01contents-contents.xml').open('w')
+    cp.write('<pkg-contents spec="1.12">')
+    cp.write('<f n="contents" o="root" g="wheel" p="16877" pt="' + contents + '" m="false" t="file">')
+    options.staff = staffDir
+    for each (dir in contents.glob('*', {include: /\/$/})) {
+        inner(pkg, options, cp, dir)
+    }
+
+    function inner(pkg: Path, options, cp: File, dir: Path) {
+        let perms = dir.attributes.permissions cast Number
+        let contents = pkg.join(options.vname, 'contents')
+        cp.write('<f n="' + dir.basename + '" o="root" g="wheel" p="' + perms + '" />')
+        for each (f in dir.files()) {
+            if (f.isDir) {
+                inner(pkg, options, cp, f)
+            } else {
+                perms = f.attributes.permissions cast Number
+                cp.write('<f n="' + f.basename + '" o="root" g="wheel" p="' + perms + '" />')
+            }
+        }
+        cp.write('</f>')
+    }
+    cp.write('</pkg-contents>\n')
+    cp.close()
+}
+
+function packageMacosx(pkg: Path, options) {
+/*
+    if (App.uid != 0) {
+        throw 'Must be root to create packages for MacOSX'
+    }
+*/
+    if (!bit.packs.pmaker || !bit.packs.pmaker.path) {
+        throw 'Configured without PackageMaker'
+    }
+    let s = bit.settings
+    let rel = bit.dir.rel
+    let base = [s.product, s.version, s.buildNumber, bit.platform.dist, OS.toUpper(), ARCH].join('-')
+    let name = rel.join(base).joinExt('tar', true)
+    let files = pkg.glob('**', {exclude: /\/$/})
+    let size = 20
+    for each (file in pkg.glob('**', {exclude: /\/$/})) {
+        size += ((file.size + 999) / 1000)
+    }
+    bit.PACKAGE_SIZE = size
+    let pm = s.product + '.pmdoc'
+    let pmdoc = pkg.join(pm)
+    let opak = Path('package/' + OS.toUpper())
+    install(opak.join('background.png'), pkg)
+    install(opak.join('license.rtf'), pkg)
+    install(opak.join('readme.rtf'), pkg)
+    install(opak.join(pm + '/*'), pmdoc, {expand: true, hidden: true})
+    let scripts = pkg.join('scripts')
+    scripts.makeDir()
+    install('package/' + OS.toUpper() + '/scripts/*', scripts, {expand: true})
+    createContents(pkg, options)
+
+    /* Remove extended attributes */
+    Cmd.sh("cd " + pkg + "; for i in $(ls -Rl@ | grep '^    ' | awk '{print $1}' | sort -u); do \
+        find . | xargs xattr -d $i 2>/dev/null ; done")
+
+    let outfile = bit.dir.rel.join(base).joinExt('pkg', true)
+    trace('Package', outfile)
+
+    run(bit.packs.pmaker.path + ' --target 10.5 --domain system --doc ' + pmdoc + 
+        ' --id com.embedthis.' + s.product + '.bin.pkg --root-volume-only --no-relocate' +
+        ' --discard-forks --out ' + outfile)
+
+    /*
+    run(bit.packs.pmaker.path + ' --target 10.5 --domain system --root ' + pkg + 
+        ' --id com.embedthis.' + s.product + '.bin.pkg --root-volume-only --verbose --no-relocate' +
+        ' --discard-forks --scripts ' + scripts + ' --out ' + outfile)
+     */
+    bit.dir.rel.join('md5-' + base).joinExt('pkg', true).write(md5(outfile.readString()))
+    // packages.join('bin.pkg'))
+    // scripts.removeAll()
+    // mpkg.removeAll()
 }
 
 /*

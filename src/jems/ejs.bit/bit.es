@@ -260,7 +260,7 @@ public class Bit {
             bit.dir.bits = bits;
             bit.dir.src = Path(src)
             bit.dir.top = Path('.')
-            bit.platform = { name: platform, os: os, arch: arch, like: like(os) }
+            bit.platform = { name: platform, os: os, arch: arch, like: like(os), dist: dist(os) }
             bit.settings.profile = options.profile || 'debug'
             bit.emulating = options.emulate
             /* Read to get settings */
@@ -2309,6 +2309,28 @@ command = command.expand(bit, {fill: ''})
             return "windows"
         }
         return ""
+    }
+
+    function dist(os) {
+        let dist = { macosx: 'apple', win: 'ms', 'linux': 'ubuntu' }[os]
+        if (os == 'linux') {
+            let relfile = Path('/etc/redhat-release')
+            if (relfile.exists) {
+                let rver = relfile.readString()
+                if (rver.contains('Fedora')) {
+                    dist = 'fedora'
+                } else if (rver.contains('Red Hat Enterprise')) {
+                    dist = 'rhl'
+                } else {
+                    dist = 'fedora'
+                }
+            } else if (Path('/etc/SuSE-release').exists) {
+                dist = 'suse'
+            } else if (Path('/etc/gentoo-release').exists) {
+                dist = 'gentoo'
+            }
+        }
+        return dist
     }
 
     /*
