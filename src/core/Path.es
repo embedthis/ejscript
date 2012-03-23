@@ -17,7 +17,6 @@
         Path.md5(): Number                      Calculate an MD5 digest of the file contents
         Path.touch(date: Date = null): Void     Update modified time. Create if non-existant
         Path.perms = NNN                        Permissions getter / setter
-        Path.append(line)                       Append a line to a file (open, write, close)
         Path.isReadable, isWritable, isHidden, isSpecial, is Mount
         Path.rmtree()                           Recursive removal
         Path.validate                           Validate a path.
@@ -638,10 +637,11 @@ module ejs {
             portable.name.startsWith(Path(prefix).portable)
 
         /**
-            Create a symbolic link
-            @param target Symbolic link to create. This link will refer to the target.
+            Create a symbolic link.
+            This will remove any pre-existing file with the same name as the path.
+            @param link Create the named link that will refer to the path. 
           */
-        native function symlink(target: String): Void
+        native function symlink(link: Path): Void
 
         /**
             Convert the path to a JSON string. 
