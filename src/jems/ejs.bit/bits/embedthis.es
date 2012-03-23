@@ -329,11 +329,6 @@ function createContents(pkg: Path, options) {
 }
 
 function packageMacosx(pkg: Path, options) {
-/*
-    if (App.uid != 0) {
-        throw 'Must be root to create packages for MacOSX'
-    }
-*/
     if (!bit.packs.pmaker || !bit.packs.pmaker.path) {
         throw 'Configured without PackageMaker'
     }
@@ -365,20 +360,10 @@ function packageMacosx(pkg: Path, options) {
 
     let outfile = bit.dir.rel.join(base).joinExt('pkg', true)
     trace('Package', outfile)
-
     run(bit.packs.pmaker.path + ' --target 10.5 --domain system --doc ' + pmdoc + 
         ' --id com.embedthis.' + s.product + '.bin.pkg --root-volume-only --no-relocate' +
         ' --discard-forks --out ' + outfile)
-
-    /*
-    run(bit.packs.pmaker.path + ' --target 10.5 --domain system --root ' + pkg + 
-        ' --id com.embedthis.' + s.product + '.bin.pkg --root-volume-only --verbose --no-relocate' +
-        ' --discard-forks --scripts ' + scripts + ' --out ' + outfile)
-     */
     bit.dir.rel.join('md5-' + base).joinExt('pkg', true).write(md5(outfile.readString()))
-    // packages.join('bin.pkg'))
-    // scripts.removeAll()
-    // mpkg.removeAll()
 }
 
 /*
