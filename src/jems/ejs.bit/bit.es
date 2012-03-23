@@ -1434,9 +1434,9 @@ public class Bit {
                 for each (file in files) {
                     let header = bit.dir.inc.join(file.basename)
                     if (!bit.targets[header]) {
-                        bit.targets[file] = { name: file, enable: true, path: header, type: 'header', files: [ file ] }
+                        bit.targets[header] = { name: header, enable: true, path: header, type: 'header', files: [ file ] }
                         target.depends ||= []
-                        target.depends.push(file)
+                        target.depends.push(header)
                     }
                 }
             }
@@ -1807,7 +1807,7 @@ command = command.expand(bit, {fill: ''})
                 genout.writeLine('rm -rf ' + target.path + '\n')
                 genout.writeLine('cp -r ' + file + ' ' + target.path + '\n')
             } else if (generating == 'make') {
-                genout.writeLine(target.path.relative + ': ' + platformReplace(getTargetDeps(target)))
+                genout.writeLine(platformReplace(target.path.relative) + ': ' + platformReplace(getTargetDeps(target)))
                 genout.writeLine('\trm -fr ' + target.path)
                 genout.writeLine('\tcp -r ' + file + ' ' + target.path + '\n')
             } else {
@@ -2137,7 +2137,7 @@ command = command.expand(bit, {fill: ''})
         let includes: Array = []
         for each (path in target.files) {
             let str = path.readString()
-            //  MOB - remove when array += null is a NOP
+            //  MOB - refactor when array += null is a NOP
             let more = str.match(/^#include.*"$/gm)
             if (more) {
                 includes += more
@@ -2145,6 +2145,10 @@ command = command.expand(bit, {fill: ''})
         }
         /*  FUTURE let depends = [ bit.dir.inc.join('bit.h') ] */
         let depends = [ bit.dir.inc.join('buildConfig.h') ]
+
+        /*
+            Resolve includes 
+         */
         for each (item in includes) {
             let ifile = item.replace(/#include.*"(.*)"/, '$1')
             let path
@@ -2155,15 +2159,8 @@ command = command.expand(bit, {fill: ''})
                 }
                 path = null
             }
-            if (path) {
+            if (path && !depends.contains(path)) {
                 depends.push(path)
-        /*
-                Best to not warn. The compiler will warn anyway
-            } else {
-                if (selectedTargets != 'clobber') {
-                    App.log.error('Can\'t find include file "' + ifile + '" for ' + target.name)
-                }
-         */
             }
         }
         return depends
