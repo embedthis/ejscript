@@ -1102,6 +1102,10 @@ public class Bit {
         genout.writeLine('LDFLAGS="' + platformReplace(gen.linker) + '"')
         genout.writeLine('LIBS="' + gen.libraries + '"\n')
         genEnv()
+        genout.writeLine('[ ! -x ${PLATFORM}/inc ] && ' + 
+            'mkdir -p ${PLATFORM}/inc ${PLATFORM}/obj ${PLATFORM}/lib ${PLATFORM}/bin')
+        genout.writeLine('[ ! -f ${PLATFORM}/inc/buildConfig.h ] && ' + 
+            'cp src/buildConfig.default ${PLATFORM}/inc/buildConfig.h\n')
         build()
         genout.close()
         path.setAttributes({permissions: 0755})
@@ -1124,10 +1128,10 @@ public class Bit {
         genEnv()
         genout.writeLine('all: prep \\\n        ' + genAll())
         genout.writeLine('.PHONY: prep\n\nprep:')
-        genout.writeLine('\t@if [ ! -x $(PLATFORM)/inc ] ; then \\\n' +
-            '\t\tmkdir -p $(PLATFORM)/inc $(PLATFORM)/obj $(PLATFORM)/lib $(PLATFORM)/bin ; \\\n' + 
-            '\t\tcp src/buildConfig.default $(PLATFORM)/inc/buildConfig.h ; \\\n' +
-            '\tfi\n') 
+        genout.writeLine('\t@[ ! -x $(PLATFORM)/inc ] && ' + 
+            'mkdir -p $(PLATFORM)/inc $(PLATFORM)/obj $(PLATFORM)/lib $(PLATFORM)/bin ; true')
+        genout.writeLine('\t@[ ! -f $(PLATFORM)/inc/buildConfig.h ] && ' + 
+            'cp src/buildConfig.default $(PLATFORM)/inc/buildConfig.h ; true\n')
         genout.writeLine('clean:')
         action('cleanTargets')
         genout.writeLine('')
@@ -1803,8 +1807,10 @@ command = command.expand(bit, {fill: ''})
         runScript(target.scripts, 'prebuild')
         setRuleVars(target, 'file')
         for each (let file: Path in target.files) {
+            /* Auto-generated headers targets for includes have file == target.path */
+            if (file == target.path) continue
             if (generating == 'sh') {
-                genout.writeLine('rm -rf ' + target.path + '\n')
+                genout.writeLine('rm -rf ' + target.path)
                 genout.writeLine('cp -r ' + file + ' ' + target.path + '\n')
             } else if (generating == 'make') {
                 genout.writeLine(platformReplace(target.path.relative) + ': ' + platformReplace(getTargetDeps(target)))
