@@ -51,12 +51,13 @@ module ejs.unix {
         @return Number of files copied
     */
     function cp(patterns, dest: Path, options = {}): Number {
-        function inner(patterns, dest: Path, options, level: Number): Number {
+        //  MOB - refactor as it doesn't use recursion anyway
+        function inner(path: Path, patterns, dest: Path, options, level: Number): Number {
             let count = 0
             if (options.expand) {
                  dest = dest.toString().expand(options.expand, options)
             }
-            let list = Path('.').glob(patterns, options)
+            let list = path.glob(patterns, options)
             if (list.length > 1 && !options.cat) {
                 if (!dest.exists) {
                     dest.makeDir()
@@ -65,12 +66,12 @@ module ejs.unix {
                 }
             }
             for each (let file: Path in list) {
+                let from = path.join(file)
                 if (options.expand) {
                      file = file.toString().expand(options.expand, options)
                 }
                 let target
                 if (options.tree) {
-                    // target = dest.join(file.components.slice(1).join('/')).normalize
                     //  Don't use join to allow for file to be absolute
                     target = Path(dest + "/" + file).normalize
                 } else if (dest.isDir) {
@@ -82,11 +83,11 @@ module ejs.unix {
                 if (options.process) {
                     /* Ensure we get any bound "this" value */
                     let fn = options.process
-                    fn(file, target, options)
-                } else if (file.isDir) {
+                    fn(from, target, options)
+                } else if (from.isDir) {
                     target.makeDir()
                 } else {
-                    file.copy(target, options)
+                    from.copy(target, options)
                 }
                 count++
             }
@@ -95,11 +96,16 @@ module ejs.unix {
             }
             return count
         }
+        let path = Path('.')
         if (Path(patterns).isDir) {
-            patterns = patterns + '/**'
-            options = blend({tree: true}, options)
+            path = Path(patterns)
+            patterns = '**'
+            if (dest.isDir) {
+                dest = dest.join(path.basename)
+            }
+            options = blend({tree: true, relative: true}, options)
         }
-        return inner(patterns, dest, options, 0)
+        return inner(path, patterns, dest, options, 0)
     }
 
     /**
