@@ -45,6 +45,14 @@ Bit.load({
             ",
         },
 
+        install: {
+            action: "
+                let parts = bit.settings.package || 'binary dev'
+                run('priv makeInstall --install --root=' + bit.dir.out.join('pkg') + 
+                    ' pre ' + parts + ' post', bit.target.runopt)
+            ",
+        },
+
         projects: {
             action: "
                 let ejs = 'ejs ' + Cmd.locate('bit.es')
@@ -68,14 +76,6 @@ Bit.load({
             "
         },
 
-        _install: {
-            action: "
-                let parts = bit.settings.package || 'binary dev'
-                run('priv makeInstall --install --root=' + bit.dir.out.join('pkg') + 
-                    ' pre ' + parts + ' post', bit.target.runopt)
-            ",
-        },
-
         sync: {
             action: "
                 for each (peer in bit.settings.sync) {
@@ -84,21 +84,6 @@ Bit.load({
                         dir = bit.dir.src.parent.join(peer + '/out/releases')
                     }
                     syncup(dir.join(peer + '-combo.tgz'), bit.dir.src)
-                }
-            ",
-        },
-
-        _package: {
-            action: "
-                if (bit.settings.depth >= 2) {
-                    let keep = (bit.settings.keep) ? ' --keep' : ''
-                    let parts = bit.settings.package || 'binary dev'
-                    run('fakePriv build/bin/makeInstall --package --root=' + bit.dir.out.join('pkg') +
-                        ' pre ' + parts + ' post', bit.target.runopt)
-                    run('fakePriv build/bin/makePackage --root=' + bit.dir.out.join('pkg') + keep + 
-                        ' pre ' + parts + ' post', bit.target.runopt)
-                } else {
-                    trace('Info', 'Packaging skipped at build depth ' + bit.settings.depth)
                 }
             ",
         },

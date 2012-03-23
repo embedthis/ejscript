@@ -205,20 +205,23 @@ public function package(pkg: Path, formats) {
 
     for each (fmt in formats) {
         switch (fmt) {
+        case 'combo':
+            packageCombo(pkg, options)
+            break
         case 'flat':
             packageFlat(pkg, options)
             break
-        case 'combo':
-            packageCombo(pkg, options)
+        case 'install':
+            packageInstall(pkg, options)
+            break
+        case 'native':
+            packageNative(pkg, options)
             break
         case 'src':
             packageSrc(pkg, options)
             break
         case 'tar':
             packageTar(pkg, options)
-            break
-        case 'native':
-            packageNative(pkg, options)
             break
         default:
             throw 'Unknown package format: ' + pkg
@@ -283,6 +286,44 @@ function packageTar(pkg: Path, options) {
     let generic = rel.join(s.product + '-tar' + '.tgz')
     generic.remove()
     Path(zname).symlink(generic)
+}
+
+function packageInstall(pkg: Path, options) {
+    if (App.uid != 0) {
+        throw 'Must run as root. Use "sudo bit install"'
+    }
+    let s = bit.settings
+    let rel = bit.dir.rel
+    let base = [s.product, s.version, s.buildNumber, bit.platform.dist, OS.toUpper(), ARCH].join('-')
+    let name = rel.join(base).joinExt('tar', true)
+    let contents = pkg.join(options.vname, 'contents')
+    let files = contents.glob('**')
+    let log = []
+    for each (file in files) {
+        let target = Path('/' + file.relativeTo(contents))
+        if (file.isDir) {
+            target.makeDir()
+        } else {
+            file.copy(target)
+            log.push(target)
+        }
+    }
+    name.remove()
+    bit.prefixes.productver.join('files.log').write(log.join('\n') + '\n')
+    packageInstallConfigure()
+}
+
+function packageInstallConfigure() {
+    let ldconfigSwitch = (OS == 'freebsd') ? '-m' : '-n'
+    let ldconfig = Cmd.locate('ldconfig')
+    if (ldconfig) {
+        // Cmd.run(ldconfig + ' /usr/lib/lib${PRODUCT}.so.?.?.?
+        Cmd.run(ldconfig + ' ' + ldconfigSwitch + ' /usr/lib/' + bit.settings.product)
+        Cmd.run(ldconfig + ' ' + ldconfigSwitch + ' /usr/lib/' + bit.settings.product + '/modules')
+    }
+    if (bit.platform.dist == 'fedora') {
+        Cmd.run('chcon /usr/bin/chcon -t texrel_shlib_t ' + bit.prefixes.lib + '/*.so')
+    }
 }
 
 function packageNative(pkg: Path, options) {
