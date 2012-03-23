@@ -63,6 +63,7 @@ public class Bit {
             debug: {},
             diagnose: { alias: 'd' },
             emulate: { range: String },
+            force: {},
             gen: { alias: 'g', range: String, separator: Array, commas: true },
             import: { alias: 'init', range: Boolean },
             log: { alias: 'l', range: String },
@@ -96,6 +97,7 @@ public class Bit {
             '    --debug                            # Same as --profile debug\n' +
             '    --diagnose                         # Emit diagnostic trace \n' +
             '    --emulate os-arch                  # Emulate platform\n' +
+            '    --force                            # Override warnings\n' +
             '    --gen [make|sh|vs|xcode]           # Generate project file\n' + 
             '    --import                           # Import standard bit configuration\n' + 
             '    --log logSpec                      # Save errors to a log file\n' +
@@ -244,6 +246,7 @@ public class Bit {
             }
         }
         selectedTargets = args.rest
+        bareBit.options = options
     }
 
     /*  
@@ -843,6 +846,12 @@ public class Bit {
         this.src = bit.dir.src
 
         prepBuild()
+        if (selectedTargets[0] == 'version') {
+            print(bit.settings.version + '-' + bit.settings.buildNumber)
+            return
+        }
+        trace('Build', currentPlatform + '-' + bit.settings.profile + ': ' + 
+                ((selectedTargets != '') ? selectedTargets: 'nothing to do'))
         build()
 
         if (!generating) {
@@ -1045,12 +1054,7 @@ public class Bit {
                 return f
             }
         }
-        throw 'Can\'t find ' + name + '. Run "configure" or "bit config" first.'
-/*
-    UNUSED
-        if (!options.config) {
-        }
- */
+        throw 'Can\'t find ' + name + '. Run "configure" or "bit configure" first.'
         return null
     }
 
@@ -1217,8 +1221,6 @@ public class Bit {
             trace('Save', 'Combined Bit files to: ' + options.save)
             App.exit()
         }
-        trace('Build', currentPlatform + '-' + bit.settings.profile + ': ' + 
-                ((selectedTargets != '') ? selectedTargets: 'nothing to do'))
     }
 
     /*

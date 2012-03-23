@@ -13,8 +13,9 @@ module ejs.tar {
         Operations
      */
     const Extract: Number = 1
-    const List: Number = 2
-    const Read: Number = 3
+    const Info: Number = 2
+    const List: Number = 3
+    const Read: Number = 4
 
     class Tar {
         private var path: Path
@@ -100,6 +101,19 @@ module ejs.tar {
                         fp.close()
                         path.setAttributes(header.attributes)
 
+                    } else if (operation == Info) {
+                        list.push({
+                            path: header.path,
+                            mode: header.mode,
+                            uid: header.uid,
+                            gid: header.gid,
+                            size: header.size,
+                            modified: header.modified,
+                            uname: header.uname,
+                            gname: header.gname,
+                        })
+                        archive.position += header.size
+
                     } else if (operation == List) {
                         list.push(path)
                         archive.position += header.size
@@ -123,6 +137,9 @@ module ejs.tar {
 
         function extract(...args): Void
             operate(flatten(args), Extract)
+
+        function info(...args): Array
+            operate(flatten(args), Info)
 
         function list(...args): Array
             operate(flatten(args), List)

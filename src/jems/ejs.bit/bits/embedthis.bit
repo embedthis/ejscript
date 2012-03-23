@@ -83,8 +83,7 @@ Bit.load({
                     if (!dir.exists) {
                         dir = bit.dir.src.parent.join(peer + '/out/releases')
                     }
-                    let from = dir.join(peer + '-combo.tgz')
-                    run('syncup --sync ' + from, bit.target.runopt)
+                    syncup(dir.join(peer + '-combo.tgz'), bit.dir.src)
                 }
             ",
         },

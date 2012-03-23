@@ -366,6 +366,39 @@ function packageMacosx(pkg: Path, options) {
     bit.dir.rel.join('md5-' + base).joinExt('pkg', true).write(md5(outfile.readString()))
 }
 
+public function syncup(from: Path, to: Path) {
+    let tartemp: Path
+    if (from.name.endsWith('.tgz') || from.name.endsWith('.gz')) {
+        use namespace 'ejs.zlib'
+        global.load('ejs.zlib.mod')
+        global.Zlib.uncompress(from, from.replaceExt('tartemp'))
+        from = from.replaceExt('tartemp')
+        tartemp = from
+    }
+    let tar = new Tar(from)
+    for each (item in tar.list()) {
+        let path = to.join(item.components.slice(1).join('/'))
+        let fromData = tar.readString(item)
+        let toData = path.readString()
+        if (fromData != toData) {
+            let modified = tar.info(item)[0].modified
+            if (modified <= path.modified) {
+                if (!bit.options.force) {
+                    trace('WARNING', path.relative + ' has been modified. Update skipped for this file.')
+                    continue
+                }
+                trace('Update', 'Force update of ' + path)
+            } else {
+                vtrace('Update', path)
+            }
+            path.write(fromData)
+        }
+    }
+    if (tartemp) {
+        tartemp.remove()
+    }
+}
+
 /*
     @copy   default
   
