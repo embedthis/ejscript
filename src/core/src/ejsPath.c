@@ -333,13 +333,11 @@ static EjsObj *copyPath(Ejs *ejs, EjsPath *fp, int argc, EjsObj **argv)
     if ((toPath = getPathString(ejs, argv[0])) == 0) {
         return 0;
     }
-    from = mprOpenFile(fp->value, O_RDONLY | O_BINARY, 0);
-    if (from == 0) {
+    if ((from = mprOpenFile(fp->value, O_RDONLY | O_BINARY, 0)) == 0) {
         ejsThrowIOError(ejs, "Can't open %s", fp->value);
         return 0;
     }
-    to = mprOpenFile(toPath, O_CREAT | O_WRONLY | O_TRUNC | O_BINARY, EJS_FILE_PERMS);
-    if (to == 0) {
+    if ((to = mprOpenFile(toPath, O_CREAT | O_WRONLY | O_TRUNC | O_BINARY, EJS_FILE_PERMS)) == 0) {
         ejsThrowIOError(ejs, "Can't create %s, errno %d", toPath, errno);
         mprCloseFile(from);
         return 0;
@@ -1026,11 +1024,11 @@ static EjsObj *makePathDir(Ejs *ejs, EjsPath *fp, int argc, EjsObj **argv)
             }
             return ESV(false);
         }
+        ejsSetPathAttributes(ejs, fp->value, attributes);
     } else if (!info.isDir) {
         /* Not a directory */
         return ESV(false);
     }
-    ejsSetPathAttributes(ejs, fp->value, attributes);
     return ESV(true);
 }
 
@@ -1546,21 +1544,28 @@ static EjsNumber *getPathFileSize(Ejs *ejs, EjsPath *fp, int argc, EjsObj **argv
 
 
 /**
-    function symlink(target: String): Void
+    function symlink(link: Path): Void
+
+    Create the link to refer to the path.
+    NOTE: this will copy the file on systems that don't support symlinks
+    NOTE: this will re-create the link if it already exists
   */
 static EjsVoid *path_symlink(Ejs *ejs, EjsPath *fp, int argc, EjsObj **argv)
 {
-    cchar   *target;
+    cchar   *link;
 
-    target = ejsToMulti(ejs, argv[0]);
+    if ((link = ejsToMulti(ejs, argv[0])) == 0) {
+        return 0;
+    }
+    unlink(link);
 #if BLD_UNIX_LIKE
-    if (symlink(fp->value, target) < 0) {
-        ejsThrowIOError(ejs, "Can't create symlink from %s to %s, error %d", fp->value, target, errno);
+    if (symlink(fp->value, link) < 0) {
+        ejsThrowIOError(ejs, "Can't create symlink from %s to %s, error %d", fp->value, link, errno);
         return 0;
     }
 #else
-    if (mprCopyPath(fp->value, target, 0644) < 0) {
-        ejsThrowIOError(ejs, "Can't copy from %s to %s, error %d", fp->value, target, errno);
+    if (mprCopyPath(fp->value, link, 0644) < 0) {
+        ejsThrowIOError(ejs, "Can't copy from %s to %s, error %d", fp->value, link, errno);
         return 0;
     }
 #endif
