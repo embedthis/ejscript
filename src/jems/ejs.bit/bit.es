@@ -1819,12 +1819,12 @@ command = command.expand(bit, {fill: ''})
             /* Auto-generated headers targets for includes have file == target.path */
             if (file == target.path) continue
             if (generating == 'sh') {
-                genout.writeLine('rm -rf ' + target.path)
-                genout.writeLine('cp -r ' + file + ' ' + target.path + '\n')
+                genout.writeLine('rm -rf ' + target.path.relative)
+                genout.writeLine('cp -r ' + file + ' ' + target.path.relative + '\n')
             } else if (generating == 'make') {
                 genout.writeLine(platformReplace(target.path.relative) + ': ' + platformReplace(getTargetDeps(target)))
-                genout.writeLine('\trm -fr ' + target.path)
-                genout.writeLine('\tcp -r ' + file + ' ' + target.path + '\n')
+                genout.writeLine('\trm -fr ' + target.path.relative)
+                genout.writeLine('\tcp -r ' + file + ' ' + target.path.relative + '\n')
             } else {
                 trace('Copy', target.path.relativeTo('.'))
                 safeRemove(target.path)
