@@ -129,11 +129,12 @@ Bit.load({
         utest: {
             type: 'test',
             action: "
-                if (bit.packs.ejs && bit.packs.ejs.path && bit.packs.utest && bit.packs.utest.path) {
-                    print(bit.packs.ejs.path + ' ' + bit.packs.utest.path + ' -v -d ' + bit.settings.depth,
-                        {show: true, dir: bit.dir.src.join('src')})
-                    run(bit.packs.ejs.path + ' ' + bit.packs.utest.path + ' -v -d ' + bit.settings.depth,
-                        {show: true, dir: bit.dir.src.join('src')})
+                let utest = Cmd.locate('utest')
+                if (utest) {
+                    run(utest + ' -v -d ' + bit.settings.depth,
+                        {noio: true, dir: bit.dir.src.join('src')})
+                } else {
+                    trace('Test', 'The utest program cannot be located')
                 }
             ",
         }

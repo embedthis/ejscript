@@ -50,7 +50,7 @@ public class Bit {
     private var windows = ['win', 'wince']
     private var start: Date
     private var targetsToBuildByDefault = { exe: true, file: true, lib: true, obj: true, script: true }
-    private var targetsToBlend = { exe: true, lib: true, obj: true, action: true, script: true }
+    private var targetsToBlend = { exe: true, lib: true, obj: true, action: true, script: true, clean: true }
     private var targetsToClean = { exe: true, file: true, lib: true, obj: true, script: true }
 
     private var argTemplate = {
@@ -977,20 +977,21 @@ public class Bit {
                  */
                 target.type ||= 'script'
                 target.scripts ||= {}
-                target.scripts['+build'] ||= []
-                target.scripts['+build'] += [{ home: home, script: target.build }]
+                target.scripts['build'] ||= []
+                target.scripts['build'] += [{ home: home, script: target.build }]
                 delete target.build
             }
             if (target.action) {
                 target.type ||= 'action'
-                if (targetsToBlend[target.type]) {
+                //  MOB - refactor
+                if (true || targetsToBlend[target.type]) {
                     /*
                         Actions do not run at 'build' time. They have a type of 'action' so they do not run by default
-                        unless requested as an action on the command line.
+                        unless requested as an action on the command line AND they don't have the same type as a target. 
                      */
                     target.scripts ||= {}
-                    target.scripts['+build'] ||= []
-                    target.scripts['+build'] += [{ home: home, script: target.action }]
+                    target.scripts['build'] ||= []
+                    target.scripts['build'] += [{ home: home, script: target.action }]
                     delete target.action
                 }
             }
@@ -1570,8 +1571,10 @@ public class Bit {
                 buildTarget(target)
             }
             for each (t in bit.targets) {
-                if (t.type == name && t.enable) {
-                    buildTarget(t)
+                if (t.type == name) {
+                    if (t.enable) {
+                        buildTarget(t)
+                    }
                 }
             }
         }
@@ -1638,6 +1641,10 @@ public class Bit {
             buildScript(target)
         } else if (target.type == 'generate') {
             generate()
+        } else {
+            if (target.scripts && target.scripts.build) {
+                buildScript(target)
+            }
         }
         target.building = false
         target.built = true

@@ -107,7 +107,7 @@ MAIN(ejsMain, int argc, char **argv, char **envp)
     if (ejsLoadModules(ejs, searchPath, NULL) < 0) {
         return MPR_ERR_CANT_READ;
     }
-    mprLog(1, "Load script \"%s\"", path);
+    mprLog(2, "Load script \"%s\"", path);
     flags = EC_FLAGS_BIND | EC_FLAGS_DEBUG | EC_FLAGS_NO_OUT | EC_FLAGS_THROW;
 #if UNUSED
     if (ejsLoadScriptFile(ejs, path, NULL, flags) < 0) {
