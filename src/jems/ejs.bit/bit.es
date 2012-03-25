@@ -1074,6 +1074,7 @@ public class Bit {
             libraries:  mapLibs(bit.defaults.libraries).join(' ')
         }
         let base = bit.dir.projects.join(localPlatform + '-' + bit.settings.profile)
+
         for each (item in options.gen) {
             generating = item
             if (generating == 'sh') {
@@ -1820,11 +1821,11 @@ command = command.expand(bit, {fill: ''})
             if (file == target.path) continue
             if (generating == 'sh') {
                 genout.writeLine('rm -rf ' + target.path.relative)
-                genout.writeLine('cp -r ' + file + ' ' + target.path.relative + '\n')
+                genout.writeLine('cp -r ' + file.relative + ' ' + target.path.relative + '\n')
             } else if (generating == 'make') {
                 genout.writeLine(platformReplace(target.path.relative) + ': ' + platformReplace(getTargetDeps(target)))
                 genout.writeLine('\trm -fr ' + target.path.relative)
-                genout.writeLine('\tcp -r ' + file + ' ' + target.path.relative + '\n')
+                genout.writeLine('\tcp -r ' + file.relative + ' ' + target.path.relative + '\n')
             } else {
                 trace('Copy', target.path.relativeTo('.'))
                 safeRemove(target.path)
@@ -1849,6 +1850,7 @@ command = command.expand(bit, {fill: ''})
         if (generating == 'sh') {
             let command = target['generate-sh']
             if (command) {
+                command = platformReplace(command)
                 command = command.replace(/^[ \t]*/mg, '')
                 command = command.trim()
                 genout.writeLine(command.expand(bit))
@@ -1860,6 +1862,7 @@ command = command.expand(bit, {fill: ''})
             let command ||= target['generate-make']
             let command ||= target['generate-sh']
             if (command) {
+                command = platformReplace(command)
                 command = command.replace(/^[ \t]*/mg, '\t')
                 command = command.trim()
                 genout.writeLine('\t' + command.expand(bit) + '\n')
@@ -1900,6 +1903,7 @@ command = command.expand(bit, {fill: ''})
     }
 
     function platformReplace(command: String): String {
+        command = command.replace(RegExp(bit.dir.top + '/', 'g'), '')
         if (generating == 'make') {
             command = command.replace(RegExp(gen.platform, 'g'), '$$(PLATFORM)')
         } else if (generating == 'sh') {
@@ -1969,6 +1973,12 @@ command = command.expand(bit, {fill: ''})
         bit.OUT = target.path
         bit.TARGET = target
         bit.HOME = target.home
+        //  MOB - can we do this universally?
+        if (generating) {
+            if (bit.HOME) {
+                bit.HOME = bit.HOME.relative
+            }
+        }
         if (kind == 'exe') {
             bit.IN = target.files.join(' ')
             bit.LIBS = mapLibs(target.libraries)
