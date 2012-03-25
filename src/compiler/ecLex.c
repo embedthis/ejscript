@@ -1015,7 +1015,7 @@ static void putBackChar(EcStream *stream, int c)
 {
     if (stream->buf < stream->nextChar && c) {
         stream->nextChar--;
-        mprAssert(c == (uchar) *stream->nextChar);
+        mprAssert(c == (int) *stream->nextChar);
         if (c == '\n') {
             stream->loc = stream->lastLoc;
             stream->loc.column = 0;
