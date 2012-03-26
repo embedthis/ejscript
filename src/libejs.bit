@@ -15,5 +15,15 @@ Bit.load({
             ],
             depends: [ 'libmpr', 'libpcre', 'libhttp' ],
         },
+
+        importSlots: {
+            action: "
+                for each (file in Path('slots').glob('*.h')) {
+                    let src = bit.dir.inc.join(file.basename)
+                    trace('Import', src)
+                    src.copy(file)
+                }
+            ",
+        },
 	},
 })
