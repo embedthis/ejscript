@@ -76,14 +76,15 @@ if (platform.like == 'posix') {
 }
 
 let settings = {}
+
 if (bit.emulating) {
-    if (platform.like == 'windows' || platform.like == 'linux') {
+    if (platform.like == 'windows') {
         settings = {
             hasMmu: true,
             hasDynLoad: true,
             hasUnnamedUnions: true,
         }
-    } else if (platform.like == 'linux') {
+    } else if (platform.os == 'linux') {
         settings = {
             hasDoubleBraces: true,
             hasDynLoad: true,
