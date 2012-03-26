@@ -20,7 +20,6 @@ if (!path) {
     }
 }
 
-print("HERE")
 if (bit.platform.os == 'win') {
     let search = [path.join('out32dll')]
     let lib = probe('libeay32.dll', {fullpath: true, search: search}).absolute
