@@ -229,7 +229,7 @@ module ejs {
                 the files in the directory. Otherwise, directories will be listed first.
             @option exclude Regular expression pattern of files to exclude from the results. Matches the entire path.
                 Only for the purpose of this match, directories will have "/" appended. To exclude directories in the
-                results, use {exclude: /\/$/}
+                results, use {exclude: /\/$/}. The trailing "/" will not be returned in the results.
             @option files Include only files in the results. The default is to include directories.
             @option hidden Include hidden files starting with "."
             @option include Regular expression pattern of files to include in the results. Matches the entire returned path.
