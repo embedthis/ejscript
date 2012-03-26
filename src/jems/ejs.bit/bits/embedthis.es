@@ -243,7 +243,7 @@ function packageSimple(pkg: Path, options, fmt) {
     name.remove()
     let generic = rel.join(s.product + '-' + fmt + '.tgz')
     generic.remove()
-    Path(zname).symlink(generic)
+    Path(generic).symlink(zname)
     rel.join('md5-' + options.vname + '-' + fmt + '.tar.txt').write(md5(zname.readString()))
 }
 
@@ -285,7 +285,7 @@ function packageTar(pkg: Path, options) {
     rel.join('md5-' + base).joinExt('tar.txt', true).write(md5(zname.readString()))
     let generic = rel.join(s.product + '-tar' + '.tgz')
     generic.remove()
-    Path(zname).symlink(generic)
+    Path(generic).symlink(zname)
 }
 
 function packageInstall(pkg: Path, options) {
@@ -330,6 +330,13 @@ function packageNative(pkg: Path, options) {
     switch (bit.platform.os) {
     case 'macosx':
         packageMacosx(pkg, options)
+        break
+    case 'linux':
+        if (bit.platform.dist == 'ubuntu') {
+            packageUbuntu(pkg, options)
+        } else {
+            throw 'Can\'t package for linux distribution ' + bit.platform.dist
+        }
         break
     default:
         throw 'Can\'t package for ' + bit.platform.os
@@ -404,6 +411,33 @@ function packageMacosx(pkg: Path, options) {
     run(bit.packs.pmaker.path + ' --target 10.5 --domain system --doc ' + pmdoc + 
         ' --id com.embedthis.' + s.product + '.bin.pkg --root-volume-only --no-relocate' +
         ' --discard-forks --out ' + outfile)
+    bit.dir.rel.join('md5-' + base).joinExt('pkg', true).write(md5(outfile.readString()))
+}
+
+function packageUbuntu(pkg: Path, options) {
+    if (!bit.packs.dpkg || !bit.packs.dpkg.path) {
+        throw 'Configured without dpkg'
+    }
+    let s = bit.settings
+    let rel = bit.dir.rel
+    let cpu = bit.platform.arch
+    if (cpu == 'i686') {
+        cpu = 'i386'
+    } else if (cpu == 'x86_64') {
+        cpu = 'amd64'
+    }
+    bit.platform.mappedCpu = cpu
+    let contents = pkg.join(options.vname, 'contents')
+    let DEBIAN = contents.join('DEBIAN')
+    let opak = Path('package/' + OS.toUpper())
+
+    install(opak.join('deb.bin/c*'), DEBIAN, {expand: true, permissions: 0644})
+    install(opak.join('deb.bin/p*'), DEBIAN, {expand: true, permissions: 0755})
+
+    let base = [s.product, s.version, s.buildNumber, bit.platform.dist, OS.toUpper(), ARCH].join('-')
+    let outfile = bit.dir.rel.join(base).joinExt('deb', true)
+    trace('Package', outfile)
+    run(bit.packs.dpkg.path + ' --build ' + DEBIAN.dirname + ' ' + outfile)
     bit.dir.rel.join('md5-' + base).joinExt('pkg', true).write(md5(outfile.readString()))
 }
 

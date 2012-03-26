@@ -646,11 +646,11 @@ module ejs {
             portable.name.startsWith(Path(prefix).portable)
 
         /**
-            Create a symbolic link.
-            This will remove any pre-existing file with the same name as the path.
-            @param link Create the named link that will refer to the path. 
+            Create the path as a symbolic link.
+            This will remove any pre-existing path and then create a symbolic link to refer to the target.
+            @param target Target the path will refer to.
           */
-        native function symlink(link: Path): Void
+        native function symlink(target: Path): Void
 
         /**
             Convert the path to a JSON string. 

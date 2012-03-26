@@ -1544,28 +1544,29 @@ static EjsNumber *getPathFileSize(Ejs *ejs, EjsPath *fp, int argc, EjsObj **argv
 
 
 /**
-    function symlink(link: Path): Void
+    function symlink(target: Path): Void
 
-    Create the link to refer to the path.
-    NOTE: this will copy the file on systems that don't support symlinks
+    Create the path as a symbolic link.
+    This will remove any pre-existing path and then create a symbolic link to refer to the target.
+    NOTE: this will copy the target on systems that don't support symlinks
     NOTE: this will re-create the link if it already exists
   */
 static EjsVoid *path_symlink(Ejs *ejs, EjsPath *fp, int argc, EjsObj **argv)
 {
-    cchar   *link;
+    cchar   *target;
 
-    if ((link = ejsToMulti(ejs, argv[0])) == 0) {
+    if ((target = ejsToMulti(ejs, argv[0])) == 0) {
         return 0;
     }
-    unlink(link);
+    unlink(fp->value);
 #if BLD_UNIX_LIKE
-    if (symlink(fp->value, link) < 0) {
-        ejsThrowIOError(ejs, "Can't create symlink from %s to %s, error %d", fp->value, link, errno);
+    if (symlink(target, fp->value) < 0) {
+        ejsThrowIOError(ejs, "Can't create symlink %s to refer to %s, error %d", fp->value, target, errno);
         return 0;
     }
 #else
-    if (mprCopyPath(fp->value, link, 0644) < 0) {
-        ejsThrowIOError(ejs, "Can't copy from %s to %s, error %d", fp->value, link, errno);
+    if (mprCopyPath(target, fp->value, 0644) < 0) {
+        ejsThrowIOError(ejs, "Can't copy %s to %s, error %d", target, fp->value, errno);
         return 0;
     }
 #endif
