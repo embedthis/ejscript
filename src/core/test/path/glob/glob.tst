@@ -53,7 +53,7 @@ assert(d.glob("**.dat").length == 8)
 assert(Path('../glob').glob('mid/*.dat') == '../glob/mid/middle.dat')
 
 //  relative
-assert(d.glob('mid/*.dat', {relative: true}).sort() == 'mid/middle.dat')
+assert(d.glob('mid/*.dat', {relative: true})[0].portable == 'mid/middle.dat')
 
 //  exclude
 assert(!d.glob('*', {exclude: /\/$/}).contains(Path('mid')))
@@ -69,7 +69,7 @@ assert(d.glob('*.tst') == 'glob.tst')
 assert(d.parent.parent.glob('**/*.tst').length > 200)
 
 //  Depth first
-let files = d.glob('**/')
+let files = d.glob('**/').transform(function(p) p.portable)
 assert(files.indexOf(Path('mid')) < files.indexOf(Path('mid/sub1')))
 files = d.glob('**/', {depthFirst: true})
 assert(files.indexOf(Path('mid')) > files.indexOf(Path('mid/sub1')))
