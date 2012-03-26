@@ -24,7 +24,7 @@ if (bit.platform.os == 'win') {
         includes: [ incdir ],
         libraries: [ 'z' ],
         linker: [ '-libpath:' + lib.parent ],
-        imports: [ lib.parent.join('libz.dll') ],
+        imports: [ lib.parent.join('libz.dll'), lib.parent.join('libz.lib') ],
     }
 
 } else if (bit.platform.os == 'macosx') {

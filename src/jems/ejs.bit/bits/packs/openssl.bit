@@ -32,7 +32,8 @@ if (bit.platform.os == 'win') {
         includes: [ incdir ],
         libraries: [ 'libeay32', 'ssleay32' ],
         linker: [ '-libpath:' + lib.parent ],
-        imports: [ lib.parent.join('libeay32.dll'), lib.parent.join('ssleay32.dll') ],
+        imports: [ lib.parent.join('libeay32.dll'), lib.parent.join('libeay32.lib'),
+                   lib.parent.join('ssleay32.dll'), lib.parent.join('ssleay32.lib') ],
     }
 
 } else if (bit.platform.os == 'macosx') {
