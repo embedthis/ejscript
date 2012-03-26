@@ -13,10 +13,10 @@ if (bit.platform.os == 'win') {
     if (!path) {
         throw 'Can\'t find zlib source distribution'
     }
-    let search = [path.join('out32dll')]
-    let lib = probe('libeay32.dll', {fullpath: true, search: search}).absolute
-    let dir = lib.parent.parent
-    search = [path.join('inc32')]
+    let search = [path]
+    let lib = probe('libz.dll', {fullpath: true, search: search}).absolute
+    let dir = lib.parent
+    search = [path]
     let incdir = probe('zlib.h', {search: search}).absolute
     cfg = {
         dir: dir,
