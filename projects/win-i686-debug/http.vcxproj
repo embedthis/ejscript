@@ -30,7 +30,7 @@
 </ItemGroup>
 
 <PropertyGroup Label="Globals">
-  <ProjectGuid>{12786da6-5434-40ac-85e6-6860602be50c}</ProjectGuid>
+  <ProjectGuid>{5d1ae16d-b4d5-432d-beaa-c30842013770}</ProjectGuid>
   <RootNamespace />
   <Keyword>Win32Proj</Keyword>
 </PropertyGroup>
@@ -67,7 +67,7 @@
 
 <ItemGroup>
   <ProjectReference Include="libhttp.vcxproj">
-  <Project>bf8e9059-6355-44a8-8e62-af415db74502</Project>
+  <Project>eeb18e11-913b-4187-bc52-25dcf9942aa4</Project>
   <ReferenceOutputAssembly>false</ReferenceOutputAssembly>
   </ProjectReference>
 </ItemGroup>
