@@ -30,7 +30,7 @@
 </ItemGroup>
 
 <PropertyGroup Label="Globals">
-  <ProjectGuid>{e7323cdc-3a7a-46fb-b9ae-ed20157e0082}</ProjectGuid>
+  <ProjectGuid>{db5ec676-8ccd-495a-8bec-6f035fb702e7}</ProjectGuid>
   <RootNamespace />
   <Keyword>Win32Proj</Keyword>
 </PropertyGroup>
