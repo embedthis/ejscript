@@ -527,10 +527,7 @@ enumerable class Test {
         features["bld_debug"] = getKey(data, "BLD_DEBUG")
         let str = data.match(/BLD_FEATURE.*|BLD_HTTP_PORT.*|BLD_SSL_PORT.*/g)
         for each (item in str) {
-            if (!item.contains("=")) {
-                continue
-            }
-            let [key, value] = item.split("=")
+            let [key, value] = item.split(" ")
             key = key.replace(/BLD_FEATURE_/, "")
             key = key.replace(/BLD_/, "").toLowerCase()
             if (value == "1" || value == "0") {
