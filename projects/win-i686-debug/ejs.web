@@ -6,7 +6,7 @@
   <ItemDefinitionGroup>
     <ClCompile>
       <WarningLevel>Level3</WarningLevel>
-      <AdditionalIncludeDirectories>..\..\win-i686-debug\inc;..\..\src\deps\mpr;..\..\src\deps\pcre;..\..\src\deps\http;..\..\src\deps\sqlite;..\..\src;..\..\src\slots;..\..\src\jems\ejs.web\src;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>..\..\win-i686-debug\inc;..\..\src\jems\ejs.web\src;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
     
   <PreprocessorDefinitions>WIN32;_DEBUG;_WINDOWS;DEBUG_IDE;_REENTRANT;_MT;%(PreprocessorDefinitions)</PreprocessorDefinitions>
     <Optimization>Disabled</Optimization>
@@ -30,7 +30,7 @@
 </ItemGroup>
 
 <PropertyGroup Label="Globals">
-  <ProjectGuid>{5fac5fe5-c60b-49d1-a249-fd9fdbe84167}</ProjectGuid>
+  <ProjectGuid>{414a031c-7106-4628-bb8e-1a4e20cac66c}</ProjectGuid>
   <RootNamespace />
   <Keyword>Win32Proj</Keyword>
 </PropertyGroup>
@@ -70,28 +70,28 @@
 
 <ItemGroup>
   <ProjectReference Include="libmpr.vcxproj">
-  <Project>0cc7b0f1-0fd8-42d6-99c4-a66354fd08cb</Project>
+  <Project>0c2f8e6c-ab36-4b37-a29f-ac4d8cdf6f03</Project>
   <ReferenceOutputAssembly>false</ReferenceOutputAssembly>
   </ProjectReference>
 </ItemGroup>
 
 <ItemGroup>
   <ProjectReference Include="libhttp.vcxproj">
-  <Project>c8bdaea4-0413-48f5-b012-56d61468bdbc</Project>
+  <Project>bf8e9059-6355-44a8-8e62-af415db74502</Project>
   <ReferenceOutputAssembly>false</ReferenceOutputAssembly>
   </ProjectReference>
 </ItemGroup>
 
 <ItemGroup>
   <ProjectReference Include="libpcre.vcxproj">
-  <Project>4fce294a-c264-4697-ad59-6016481a6e50</Project>
+  <Project>3334cbb2-9d90-40ac-bdb7-57ed9470bd52</Project>
   <ReferenceOutputAssembly>false</ReferenceOutputAssembly>
   </ProjectReference>
 </ItemGroup>
 
 <ItemGroup>
   <ProjectReference Include="libejs.vcxproj">
-  <Project>4272a02f-fe33-4edd-8fce-2545a96d0647</Project>
+  <Project>333ef5c4-e908-441c-866d-17ab59376c37</Project>
   <ReferenceOutputAssembly>false</ReferenceOutputAssembly>
   </ProjectReference>
 </ItemGroup>

@@ -6,7 +6,7 @@
   <ItemDefinitionGroup>
     <ClCompile>
       <WarningLevel>Level3</WarningLevel>
-      <AdditionalIncludeDirectories>..\..\win-i686-debug\inc;..\..\src\deps\mpr;..\..\src\deps\pcre;..\..\src\deps\http;..\..\src\deps\sqlite;..\..\src;..\..\src\slots;..\..\src\cmd;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>..\..\win-i686-debug\inc;..\..\src\cmd;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
     
   <PreprocessorDefinitions>WIN32;_DEBUG;_WINDOWS;DEBUG_IDE;_REENTRANT;_MT;%(PreprocessorDefinitions)</PreprocessorDefinitions>
     <Optimization>Disabled</Optimization>
@@ -30,7 +30,7 @@
 </ItemGroup>
 
 <PropertyGroup Label="Globals">
-  <ProjectGuid>{41efe702-8784-4a53-b9e9-af2a1000a170}</ProjectGuid>
+  <ProjectGuid>{360d810f-505e-4eb6-9c2b-8c798de6a686}</ProjectGuid>
   <RootNamespace />
   <Keyword>Win32Proj</Keyword>
 </PropertyGroup>
@@ -71,7 +71,7 @@
 
 <ItemGroup>
   <ProjectReference Include="libejs.vcxproj">
-  <Project>4272a02f-fe33-4edd-8fce-2545a96d0647</Project>
+  <Project>333ef5c4-e908-441c-866d-17ab59376c37</Project>
   <ReferenceOutputAssembly>false</ReferenceOutputAssembly>
   </ProjectReference>
 </ItemGroup>
