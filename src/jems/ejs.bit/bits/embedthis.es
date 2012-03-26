@@ -430,7 +430,7 @@ public function syncup(from: Path, to: Path) {
                 }
                 trace('Update', 'Force update of ' + path)
             } else {
-                vtrace('Update', path)
+                trace('Update', path)
             }
             path.write(fromData)
         }
