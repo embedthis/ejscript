@@ -20,6 +20,7 @@ Bit.load({
             files: [ '*.es' ],
             build: "
                 trace('Compile', 'Core EJS classes')
+print('lib is ${LIB}')
                 run('ejsc --out ${LIB}/ejs.mod ${settings.esflags} --optimize 9 --bind --require null ' + 
                     Path('.').glob('*.es').sort().join(' '))
                 trace('Generate', 'Core slot files and listings')

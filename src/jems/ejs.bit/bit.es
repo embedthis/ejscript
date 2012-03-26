@@ -1755,9 +1755,7 @@ public class Bit {
         let command = rule.expand(bit, {fill: ''})
         command = command.expand(bit, {fill: ''})
         trace('Symbols', target.name)
-        run(command, {noshow: true})
-     
-        let data = cmd.response
+        let data = run(command, {noshow: true})
         let result = []
         let lines = data.match(/SECT.*External *\| .*/gm)
         for each (l in lines) {
@@ -1960,18 +1958,18 @@ command = command.expand(bit, {fill: ''})
         bit.SHOBJ = '.' + bit.ext.shobj
         bit.SHLIB = '.' + bit.ext.shlib
 
-        bit.CFG = bit.dir.cfg
-        bit.BIN = bit.dir.bin
-        bit.BITS = bit.dir.bits
-        bit.FLAT = bit.dir.flat
-        bit.INC = bit.dir.inc
-        bit.LIB = bit.dir.lib
-        bit.OBJ = bit.dir.obj
+        bit.CFG = bit.dir.cfg.portable
+        bit.BIN = bit.dir.bin.portable
+        bit.BITS = bit.dir.bits.portable
+        bit.FLAT = bit.dir.flat.portable
+        bit.INC = bit.dir.inc.portable
+        bit.LIB = bit.dir.lib.portable
+        bit.OBJ = bit.dir.obj.portable
         bit.PACKS = bit.dir.packs
-        bit.PKG = bit.dir.pkg
-        bit.REL = bit.dir.rel
-        bit.SRC = bit.dir.src
-        bit.TOP = bit.dir.top
+        bit.PKG = bit.dir.pkg.portable
+        bit.REL = bit.dir.rel.portable
+        bit.SRC = bit.dir.src.portable
+        bit.TOP = bit.dir.top.portable
         bit.OS = bit.platform.os
         bit.ARCH = bit.platform.arch
         bit.PLATFORM = bit.platform.name
