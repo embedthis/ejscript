@@ -850,8 +850,13 @@ public class Bit {
             print(bit.settings.version + '-' + bit.settings.buildNumber)
             return
         }
-        trace('Build', currentPlatform + '-' + bit.settings.profile + ': ' + 
-                ((selectedTargets != '') ? selectedTargets: 'nothing to do'))
+
+        if (options.verbose) {
+            vtrace('Build', currentPlatform + '-' + bit.settings.profile + ': ' + 
+                    ((selectedTargets != '') ? selectedTargets: 'nothing to do'))
+        } else {
+            trace('Build', currentPlatform + '-' + bit.settings.profile)
+        }
         build()
 
         if (!generating) {
