@@ -566,6 +566,15 @@ module ejs {
         }
 
         /**
+            Remove the drive specifier from a path
+            @hide
+         */
+        function removeDrive(): Path {
+            let sep = separator
+            return hasDrive ? (sep + components.slice(1).join(sep)) : this
+        }
+
+        /**
             Rename a file. If the new path exists it is removed before the rename.
             @param target New name of the path
             @return True if the file is renamed.
