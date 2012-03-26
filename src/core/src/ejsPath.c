@@ -990,7 +990,7 @@ static void getUserGroup(Ejs *ejs, EjsObj *attributes, int *uid, int *gid)
         }
     }
 #else
-    *uid = *group = -1;
+    *uid = *gid = -1;
 #endif
 }
 
