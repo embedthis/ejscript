@@ -20,6 +20,7 @@ if (!path) {
     }
 }
 
+print("HERE")
 if (bit.platform.os == 'win') {
     let search = [path.join('out32dll')]
     let lib = probe('libeay32.dll', {fullpath: true, search: search}).absolute
@@ -51,7 +52,8 @@ if (bit.platform.os == 'win') {
     }
 
 } else {
-    let search = [path, '/usr/lib', '/lib' ] + Path('/lib').glob('*-linux-gnu')
+    let search = [path, '/usr/lib', '/lib' ]
+    search += Path('/usr/lib').glob('*-linux-gnu') + Path('/lib').glob('*-linux-gnu')
     let lib = probe('libcrypto.so', {fullpath: true, search: search}).absolute
     let dir = lib.parent
     search = [path.join('include'), '/usr/include']
