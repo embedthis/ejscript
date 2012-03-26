@@ -61,7 +61,7 @@ assert(!d.glob('*', {exclude: /file/}).toString().contains("file"))
 
 //  include
 assert(d.glob('*', {include: /\/$/}) == 'mid')
-assert(d.glob('*', {include: /file.dat/}) == 'file.dat,pre-file.dat')
+assert(d.glob('*', {include: /file.dat/}).sort() == 'file.dat,pre-file.dat')
 assert(d.glob('*', {include: /file/}).contains(Path("file.dat")))
 
 //  descend
