@@ -1108,7 +1108,7 @@ public class Bit {
         genout.writeLine('LDFLAGS   := ' + platformReplace(gen.linker))
         genout.writeLine('LIBS      := ' + gen.libraries + '\n')
         genEnv()
-        genout.writeLine('all: prep \\\n        ' + genAll())
+        genout.writeLine('\nall: prep \\\n        ' + genAll())
         genout.writeLine('.PHONY: prep\n\nprep:')
         genout.writeLine('\t@[ ! -x $(PLATFORM)/inc ] && ' + 
             'mkdir -p $(PLATFORM)/inc $(PLATFORM)/obj $(PLATFORM)/lib $(PLATFORM)/bin ; true')
