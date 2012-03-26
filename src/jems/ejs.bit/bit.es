@@ -1859,10 +1859,11 @@ command = command.expand(bit, {fill: ''})
         if (generating == 'sh') {
             let command = target['generate-sh']
             if (command) {
-                command = platformReplace(command)
                 command = command.replace(/^[ \t]*/mg, '')
                 command = command.trim()
-                genout.writeLine(command.expand(bit))
+                command = command.expand(bit)
+                command = platformReplace(command)
+                genout.writeLine(command)
             } else {
                 genout.writeLine('#  Omit build script ' + target.path)
             }
@@ -1871,10 +1872,11 @@ command = command.expand(bit, {fill: ''})
             let command ||= target['generate-make']
             let command ||= target['generate-sh']
             if (command) {
-                command = platformReplace(command)
                 command = command.replace(/^[ \t]*/mg, '\t')
                 command = command.trim()
-                genout.writeLine('\t' + command.expand(bit) + '\n')
+                command = command.expand(bit)
+                command = platformReplace(command)
+                genout.writeLine('\t' + command + '\n')
             } else {
                 genout.writeLine('#  Omit build script ' + target.path + '\n')
             }
