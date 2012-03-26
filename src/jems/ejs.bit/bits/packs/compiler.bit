@@ -2,8 +2,9 @@
     compiler.bit - Compile package for Bit
  */
 var cc: Path
+let platform = bit.platform
 
-if (bit.platform.like == 'posix') {
+if (platform.like == 'posix') {
     if (!bit.emulating) {
         cc = probe('cc', {fullpath: true})
     } else {
@@ -11,13 +12,13 @@ if (bit.platform.like == 'posix') {
     }
     Bit.load({packs: { compiler: { path: cc }}})
 
-} else if (bit.platform.like == 'windows') {
+} else if (platform.like == 'windows') {
     let search = []
     for each (drive in (FileSystem.drives() - ['A', 'B'])) {
         search += Path(drive + ':/').glob('Program Files*/Microsoft Visual Studio*/VC/Bin')
     }
     /*
-    if (bit.platform.arch == 'x86_64') {
+    if (platform.arch == 'x86_64') {
         if (CROSS) {
             search.map(function(e) Path(e).join('x86_64'))
         } else {
@@ -51,31 +52,39 @@ if (bit.platform.like == 'posix') {
         Path(vsdir.join('VC/lib').toString().replace(/x86_amd64/, 'amd64'))
     ]
 
-} else if (bit.platform.os == 'vxworks') {
+} else if (platform.os == 'vxworks') {
     let name
-    if (bit.platform.arch.match(/^i386$|^i486$/)) {
+    if (platform.arch.match(/^i386$|^i486$/)) {
         name = 'cc386'
-    } else if (bit.platform.arch.match(/^i[56]86$/)) {
+    } else if (platform.arch.match(/^i[56]86$/)) {
         name = 'ccpentium'
-    } else if (bit.platform.arch.match(/^ppc/)) {
+    } else if (platform.arch.match(/^ppc/)) {
         name = 'ccppc'
-    } else if (bit.platform.arch.match(/^xscale|^arm/)) {
+    } else if (platform.arch.match(/^xscale|^arm/)) {
         name = 'ccarm'
-    } else if (bit.platform.arch.match(/^68/)) {
+    } else if (platform.arch.match(/^68/)) {
         name = 'cc68k'
-    } else if (bit.platform.arch.match(/^sh/)) {
+    } else if (platform.arch.match(/^sh/)) {
         name = 'ccsh'
-    } else if (bit.platform.arch.match(/^mips$/)) {
+    } else if (platform.arch.match(/^mips$/)) {
         name = 'ccmips'
     } else {
-        throw 'Unsupported CPU architecture: ' + bit.platform.arch
+        throw 'Unsupported CPU architecture: ' + platform.arch
     }
     cc = probe(name, {fullpath: true, search: bit.packs.vxworks.search})
     Bit.load({packs: { compiler: { path: cc }}})
 }
 
 let settings = {}
-if ((bit.platform.like == 'posix' || bit.platform.os == 'vxworks') && !bit.emulating) {
+if (bit.emulating) {
+    if (platform.like == 'windows' || platform.like == 'linux') {
+        settings = {
+            hasMmu: true,
+            hasDynLoad: true,
+            hasUnnamedUnions: true,
+        }
+    }
+} else if (platform.like == 'posix' || platform.os == 'vxworks') {
     settings.hasDoubleBraces = compile(cc, '', '#include <stdarg.h>\nva_list d = {{0}};')
     //  MOB - if env CFLAGS has -mtune=xxx then it should be used instead
     settings.hasMtune = compile(cc, '-mtune=generic', 'int main() { return 0;}')
@@ -85,7 +94,7 @@ if ((bit.platform.like == 'posix' || bit.platform.os == 'vxworks') && !bit.emula
         '#include <stdio.h>\n#include <stdlib.h>\nint main() { realloc(0, 1024); return 0; }')
     settings.warn64to32 = compile(cc, '-Wshorten-64-to-32', 'int main() { return 0;}')
 
-    if (bit.platform.os != 'vxworks') {
+    if (platform.os != 'vxworks') {
         settings.hasDynLoad = compile(cc, '',
             '#include <stdio.h>\n#include <dlfcn.h>\nint main() { dlopen(\"test.so\", 0); return 0; }')
         settings.hasLibEdit = compile(cc, '',
@@ -100,12 +109,6 @@ if ((bit.platform.like == 'posix' || bit.platform.os == 'vxworks') && !bit.emula
             '#include <stdio.h>\nint main() { struct test { union { int x; int y; };}; return 0; }')
     }
 
-} else if (bit.platform.like == 'windows') {
-    settings = {
-        hasMmu: true,
-        hasDynLoad: true,
-        hasUnnamedUnions: true,
-    }
 }
 Bit.load({ settings: settings })
 
@@ -117,7 +120,7 @@ function compile(cc: Path, command: String, contents: String = null): Boolean {
     let file
     if (contents) {
         file = Path('/tmp/bit-' + App.pid + '.c')
-        if (bit.platform.os == 'VXWORKS') {
+        if (platform.os == 'VXWORKS') {
             contents = '#define _VSB_CONFIG_FILE "vsbConfig.h\n' + contents
         }
         file.write(contents + '\n')
