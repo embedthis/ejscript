@@ -243,7 +243,7 @@ function packageSimple(pkg: Path, options, fmt) {
     name.remove()
     let generic = rel.join(s.product + '-' + fmt + '.tgz')
     generic.remove()
-    Path(zname).symlink(generic)
+    Path(generic).symlink(zname)
     rel.join('md5-' + options.vname + '-' + fmt + '.tar.txt').write(md5(zname.readString()))
 }
 
@@ -285,7 +285,7 @@ function packageTar(pkg: Path, options) {
     rel.join('md5-' + base).joinExt('tar.txt', true).write(md5(zname.readString()))
     let generic = rel.join(s.product + '-tar' + '.tgz')
     generic.remove()
-    Path(zname).symlink(generic)
+    Path(generic).symlink(zname)
 }
 
 function packageInstall(pkg: Path, options) {
