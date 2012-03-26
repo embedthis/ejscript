@@ -35,6 +35,32 @@ public function getWebGroup(): String {
 }
 
 
+/*
+    Fold long lines at column 80. On windows, will also convert line terminatations to <CR><LF>.
+ */
+function foldLines(path: Path, options) {
+    let lines = path.readLines()
+    let out = new TextStream(new File(path, 'wt'))
+    for (l = 0; l < lines.length; l++) {
+        let line = lines[l]
+        if (options.fold && line.length > 80) {
+            for (i = 79; i >= 0; i--) {
+                if (line[i] == ' ') {
+                    lines[l] = line.slice(0, i)
+                    lines.insert(l + 1, line.slice(i + 1))
+                    break
+                }
+            }
+            if (i == 0) {
+                lines[l] = line.slice(0, 80)
+                lines.insert(l + 1, line.slice(80))
+            }
+        }
+        out.writeLine(lines[l])
+    }
+    out.close()
+}
+
 function installCallback(src: Path, dest: Path, options = {}): Boolean {
     options.task ||= 'install'
 
@@ -109,7 +135,7 @@ function installCallback(src: Path, dest: Path, options = {}): Boolean {
     }
     if (options.fold && bit.platform.like == 'windows') {
         vtrace('Fold', dest)
-        fold(dest, options)
+        foldLines(dest, options)
         dest.setAttributes(attributes)
     }
     if (options.strip && bit.packs.strip) {
@@ -162,32 +188,6 @@ public function install(src, dest: Path, options = {}) {
         src = files.unique()
     }
     cp(src, dest, blend({process: this.installCallback, warn: true}, options))
-}
-
-/*
-    Fold long lines at column 80. On windows, will also convert line terminatations to <CR><LF>.
- */
-function fold(path: Path, options) {
-    let lines = path.readLines()
-    let out = new TextStream(new File(path, 'wt'))
-    for (l = 0; l < lines.length; l++) {
-        let line = lines[l]
-        if (options.fold && line.length > 80) {
-            for (i = 79; i >= 0; i--) {
-                if (line[i] == ' ') {
-                    lines[l] = line.slice(0, i)
-                    lines.insert(l + 1, line.slice(i + 1))
-                    break
-                }
-            }
-            if (i == 0) {
-                lines[l] = line.slice(0, 80)
-                lines.insert(l + 1, line.slice(80))
-            }
-        }
-        out.writeLine(lines[l])
-    }
-    out.close()
 }
 
 public function package(pkg: Path, formats) {
