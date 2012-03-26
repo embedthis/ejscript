@@ -45,27 +45,21 @@ Bit.load({
             ",
         },
 
-        install: {
-            action: "
-                let parts = bit.settings.package || 'binary dev'
-                run('priv makeInstall --install --root=' + bit.dir.out.join('pkg') + 
-                    ' pre ' + parts + ' post', bit.target.runopt)
-            ",
-        },
-
         projects: {
             action: "
-                let ejs = 'ejs ' + Cmd.locate('bit.es')
-                trace('Generate', '${PLATFORM} project')
-                run(ejs + ' -without all configure generate', bit.target.runopt)
+                let bitcmd = 'ejs ' + Cmd.locate('bit.es')
                 trace('Generate', 'linux-i686 project')
-                run(ejs + ' -emulate linux-i686 -without all configure -gen sh,make', bit.target.runopt)
+                run(bitcmd + ' -emulate linux-i686 -without all configure -gen sh,make', bit.target.runopt)
                 trace('Generate', 'macosx-i686 project')
-                run(ejs + ' -emulate macosx-i686 -without all configure -gen sh,make', bit.target.runopt)
+                run(bitcmd + ' -emulate macosx-i686 -without all configure -gen sh,make', bit.target.runopt)
+                trace('Generate', 'macosx-x86_64 project')
+                run(bitcmd + ' -emulate macosx-x86_64 -without all configure -gen sh,make', bit.target.runopt)
                 trace('Generate', 'solaris-i686 project')
-                run(ejs + ' -emulate solaris-i686 -without all configure -gen sh,make', bit.target.runopt)
+                run(bitcmd + ' -emulate solaris-i686 -without all configure -gen sh,make', bit.target.runopt)
                 trace('Generate', 'win-i686 project')
-                run(ejs + ' -emulate win-i686 -without all configure -gen sh,make,vs', bit.target.runopt)
+                run(bitcmd + ' -emulate win-i686 -without all configure -gen sh,make,vs', bit.target.runopt)
+                /* Leave a normal configuration */ 
+                run(bitcmd + ' configure', bit.target.runopt)
             ",
         },
 
@@ -85,13 +79,6 @@ Bit.load({
                     }
                     syncup(dir.join(peer + '-combo.tgz'), bit.dir.src)
                 }
-            ",
-        },
-
-        _uninstall: {
-            action: "
-                let parts = bit.settings.package || 'binary dev'
-                run('priv build/bin/makeInstall --remove pre ' + parts + ' post', bit.target.runopt)
             ",
         },
 
