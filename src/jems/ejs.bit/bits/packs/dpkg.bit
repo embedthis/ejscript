@@ -1,0 +1,10 @@
+/*
+    dpkg.bit - PackageMaker on dpkg for Bit
+ */
+
+if (bit.platform.os == 'linux' && bit.platform.dist == 'ubuntu') {
+    let dpkg = probe('dpkg', {fullpath: true})
+    Bit.load({packs: { dpkg: {path: dpkg}}})
+}
+
+
