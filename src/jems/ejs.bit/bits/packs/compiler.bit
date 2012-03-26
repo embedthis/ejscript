@@ -123,7 +123,12 @@ if (bit.emulating) {
         settings.hasUnnamedUnions = compile(cc, '', 
             '#include <stdio.h>\nint main() { struct test { union { int x; int y; };}; return 0; }')
     }
-
+} else if (platform.like == 'windows') {
+    settings = {
+        hasMmu: true,
+        hasDynLoad: true,
+        hasUnnamedUnions: true,
+    }
 }
 Bit.load({ settings: settings })
 
