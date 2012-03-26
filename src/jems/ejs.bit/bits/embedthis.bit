@@ -57,15 +57,15 @@ Bit.load({
             action: "
                 let ejs = 'ejs ' + Cmd.locate('bit.es')
                 trace('Generate', '${PLATFORM} project')
-                run(ejs + ' -without ssl configure generate', bit.target.runopt)
+                run(ejs + ' -without all configure generate', bit.target.runopt)
                 trace('Generate', 'linux-i686 project')
-                run(ejs + ' -emulate linux-i686 -without ssl configure -gen sh,make', bit.target.runopt)
+                run(ejs + ' -emulate linux-i686 -without all configure -gen sh,make', bit.target.runopt)
                 trace('Generate', 'macosx-i686 project')
-                run(ejs + ' -emulate macosx-i686 -without ssl configure -gen sh,make', bit.target.runopt)
+                run(ejs + ' -emulate macosx-i686 -without all configure -gen sh,make', bit.target.runopt)
                 trace('Generate', 'solaris-i686 project')
-                run(ejs + ' -emulate solaris-i686 -without ssl configure -gen sh,make', bit.target.runopt)
+                run(ejs + ' -emulate solaris-i686 -without all configure -gen sh,make', bit.target.runopt)
                 trace('Generate', 'win-i686 project')
-                run(ejs + ' -emulate win-i686 -without ssl configure -gen sh,make,vs', bit.target.runopt)
+                run(ejs + ' -emulate win-i686 -without all configure -gen sh,make,vs', bit.target.runopt)
             ",
         },
 

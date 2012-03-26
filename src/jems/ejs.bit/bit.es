@@ -238,9 +238,11 @@ public class Bit {
                 poptions.without ||= []
                 poptions.without.push(App.args[++i])
             } else if (arg == '--set' || arg == '-set') {
+                /* Map set to enable */
                 poptions.enable ||= []
                 poptions.enable.push(App.args[++i])
             } else if (arg == '--unset' || arg == '-unset') {
+                /* Map set to disable */
                 poptions.disable ||= []
                 poptions.disable.push(App.args[++i])
             }
@@ -631,6 +633,7 @@ public class Bit {
         if (!poptions) {
             return
         }
+        /* Disable/enable was originally --unset|--set */
         for each (field in poptions.disable) {
             bit.settings[field] = false
         }
@@ -655,6 +658,12 @@ public class Bit {
             }
         }
         for each (field in poptions['without']) {
+            if (field == 'all' && bit.settings.minimal) {
+                for each (f in bit.settings.minimal) {
+                    bit.packs[f] = { enable: false, diagnostic: 'configured --without ' + f }
+                }
+                continue
+            }
             bit.packs[field] = { enable: false, diagnostic: 'configured --without ' + field }
         }
         for each (field in poptions['prefix']) {
