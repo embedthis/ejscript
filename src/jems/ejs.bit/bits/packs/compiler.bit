@@ -83,6 +83,20 @@ if (bit.emulating) {
             hasDynLoad: true,
             hasUnnamedUnions: true,
         }
+    } else if (platform.like == 'linux') {
+        settings = {
+            hasDoubleBraces: true,
+            hasDynLoad: true,
+            hasMmu: true,
+            hasMtune: true,
+            hasPam: true,
+            hasStackProtector: true,
+            hasSync: true,
+            hasSyncCas: true,
+            hasUnnamedUnions: true,
+            warn64to32: false,
+            warnUnused: true,
+        }
     }
 } else if (platform.like == 'posix' || platform.os == 'vxworks') {
     settings.hasDoubleBraces = compile(cc, '', '#include <stdarg.h>\nva_list d = {{0}};')
@@ -120,7 +134,7 @@ function compile(cc: Path, command: String, contents: String = null): Boolean {
     let file
     if (contents) {
         file = Path('/tmp/bit-' + App.pid + '.c')
-        if (platform.os == 'VXWORKS') {
+        if (bit.platform.os == 'VXWORKS') {
             contents = '#define _VSB_CONFIG_FILE "vsbConfig.h\n' + contents
         }
         file.write(contents + '\n')

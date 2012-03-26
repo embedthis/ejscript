@@ -45,7 +45,7 @@ Bit.load({
 
         bits: {
             path: '${LIB}/bits',
-            files: [ 'bits' ],
+            files: [ 'bits/**' ],
             build: "
                 trace('Copy', 'Bit bits')
                 rmdir(bit.dir.lib.join('bits'))
