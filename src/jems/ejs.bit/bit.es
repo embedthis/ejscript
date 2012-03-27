@@ -1471,11 +1471,10 @@ public class Bit {
                 let files = buildFileList(target.headers, target.exclude)
                 for each (file in files) {
                     let header = bit.dir.inc.join(file.basename)
-                    if (!bit.targets[header]) {
-                        bit.targets[header] = { name: header, enable: true, path: header, type: 'header', files: [ file ] }
-                        target.depends ||= []
-                        target.depends.push(header)
-                    }
+                    /* Always overwrite dynamically created targets created via makeDepends */
+                    bit.targets[header] = { name: header, enable: true, path: header, type: 'header', files: [ file ] }
+                    target.depends ||= []
+                    target.depends.push(header)
                 }
             }
             if (target.sources) {

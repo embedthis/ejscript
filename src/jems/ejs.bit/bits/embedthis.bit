@@ -59,7 +59,7 @@ Bit.load({
                 trace('Generate', 'win-i686 project')
                 run(bitcmd + ' -emulate win-i686 -without all configure -gen sh,nmake,vs', bit.target.runopt)
                 /* Leave a normal configuration */ 
-                run(bitcmd + ' clobber configure', bit.target.runopt)
+                run(bitcmd + ' configure', bit.target.runopt)
             ",
         },
 
