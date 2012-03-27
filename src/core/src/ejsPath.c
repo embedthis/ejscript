@@ -591,7 +591,7 @@ static EjsArray *getPathFiles(Ejs *ejs, EjsArray *results, cchar *dir, int flags
     Get the files in a directory and subdirectories
     function glob(patterns: Array|String|Path, options: Object = null): Array
  */
-static EjsArray *path_glob(Ejs *ejs, EjsPath *fp, int argc, EjsObj **argv)
+EjsArray *ejsGlobPath(Ejs *ejs, EjsPath *fp, int argc, EjsObj **argv)
 {
     MprFileSystem   *fs;
     EjsAny          *vp, *fill;
@@ -1788,7 +1788,7 @@ void ejsConfigurePathType(Ejs *ejs)
     ejsBindMethod(ejs, prototype, ES_Path_exists, getPathExists);
     ejsBindMethod(ejs, prototype, ES_Path_extension, getPathExtension);
     ejsBindMethod(ejs, prototype, ES_Path_files, path_files);
-    ejsBindMethod(ejs, prototype, ES_Path_glob, path_glob);
+    ejsBindMethod(ejs, prototype, ES_Path_glob, ejsGlobPath);
     ejsBindMethod(ejs, prototype, ES_Path_iterator_get, getPathIterator);
     ejsBindMethod(ejs, prototype, ES_Path_iterator_getValues, getPathValues);
     ejsBindMethod(ejs, prototype, ES_Path_hasDrive, pathHasDrive);

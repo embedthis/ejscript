@@ -1,4 +1,4 @@
-/** 
+/* 
     ejsc.c - Ejscript Compiler main program
 
     This compiler will compile the files given on the command line.
@@ -20,6 +20,7 @@ typedef struct App {
 
 static App *app;
 
+static MprList *expandWild(Ejs *ejs, int argc, char **argv);
 static void manageApp(App *app, int flags);
 static void require(cchar *name);
 
@@ -28,6 +29,7 @@ static void require(cchar *name);
 MAIN(ejscMain, int argc, char **argv, char **envp)
 {
     Mpr             *mpr;
+    MprList         *args;
     Ejs             *ejs;
     EcCompiler      *cp;
     char            *argp, *searchPath, *outputFile, *outputDir, *certFile, *name, *tok, *modules;
@@ -298,7 +300,9 @@ MAIN(ejscMain, int argc, char **argv, char **envp)
             Compile the source files supplied on the command line. This will compile in-memory and
             optionally also save to module files.
          */
-        if (ecCompile(cp, argc - nextArg, &argv[nextArg]) < 0) {
+        if ((args = expandWild(ejs, argc - nextArg, &argv[nextArg])) == 0) {
+            err++;
+        } else if (ecCompile(cp, args->length, (char**) args->items) < 0) {
             err++;
         }
         if (cp->warningCount > 0 || cp->errorCount > 0) {
@@ -310,6 +314,36 @@ MAIN(ejscMain, int argc, char **argv, char **envp)
     }
     mprDestroy(MPR_EXIT_DEFAULT);
     return err;
+}
+
+
+static MprList *expandWild(Ejs *ejs, int argc, char **argv)
+{
+    MprList     *list;
+    EjsArray    *files;
+    EjsPath     *path, *dot;
+    int         i, j;
+
+    if ((list = mprCreateList(-1, 0)) == 0) {
+        return 0;
+    }
+    for (i = 0; i < argc; i++) {
+        if (schr(argv[i], '*')) {
+            dot = ejsCreatePathFromAsc(ejs, ".");
+            path = ejsCreatePathFromAsc(ejs, argv[i]);
+            if ((files = ejsGlobPath(ejs, dot, 1, (EjsObj**) &path)) == 0) {
+                ejsClearException(ejs);
+                mprAddItem(list, sclone(argv[i]));
+            } else {
+                for (j = 0; j < files->length; j++) {
+                    mprAddItem(list, ((EjsPath*) files->data[j])->value);
+                }
+            }
+        } else {
+            mprAddItem(list, sclone(argv[i]));
+        }
+    }
+    return list;
 }
 
 
