@@ -1082,7 +1082,7 @@ public class Bit {
         genout.writeLine('CFLAGS="' + gen.compiler + '"')
         genout.writeLine('DFLAGS="' + gen.defines + '"')
         genout.writeLine('IFLAGS="' + bit.defaults.includes.map(function(path) '-I' + path.relative).join(' ') + '"')
-        genout.writeLine('LDFLAGS="' + platformReplace(gen.linker) + '"')
+        genout.writeLine('LDFLAGS="' + platformReplace(gen.linker).replace(/\$ORIGIN/g, '$$$$ORIGIN' + '"'))
         genout.writeLine('LIBS="' + gen.libraries + '"\n')
         genEnv()
         genout.writeLine('[ ! -x ${PLATFORM}/inc ] && ' + 
@@ -1108,7 +1108,7 @@ public class Bit {
         genout.writeLine('DFLAGS    := ' + gen.defines)
         genout.writeLine('IFLAGS    := ' + 
             platformReplace(bit.defaults.includes.map(function(path) '-I' + path.relative).join(' ')))
-        genout.writeLine('LDFLAGS   := ' + platformReplace(gen.linker))
+        genout.writeLine('LDFLAGS   := ' + platformReplace(gen.linker).replace(/\$ORIGIN/g, '$$$$ORIGIN'))
         genout.writeLine('LIBS      := ' + gen.libraries + '\n')
         genEnv()
         genout.writeLine('\nall: prep \\\n        ' + genAll())
@@ -1146,7 +1146,11 @@ public class Bit {
         genout.writeLine('DFLAGS    = ' + gen.defines)
         genout.writeLine('IFLAGS    = ' + 
             platformReplace(bit.defaults.includes.map(function(path) '-I' + path.relative).join(' ')))
-        genout.writeLine('LDFLAGS   = ' + platformReplace(gen.linker).replace(/\//g, '\\'))
+
+//  MOB -- need this in generateMake and generateShell
+
+        genout.writeLine('LDFLAGS   = ' + 
+            platformReplace(gen.linker).replace(/\$ORIGIN/g, '$$$$ORIGIN').replace(/\//g, '\\'))
         genout.writeLine('LIBS      = ' + gen.libraries + '\n')
         genout.writeLine('\nall: prep \\\n        ' + genAll())
         genout.writeLine('.PHONY: prep\n\nprep:')
@@ -1947,20 +1951,23 @@ command = command.expand(bit, {fill: ''})
      */
     function genReplace(command: String): String {
         if (generating == 'make' || generating == 'nmake') {
-            command = command.replace(RegExp(gen.platform, 'g'), '$$(PLATFORM)')
+            //  Twice because ldflags are repeated
+            command = command.replace(gen.linker, '$(LDFLAGS)')
+            command = command.replace(gen.linker, '$(LDFLAGS)')
             command = command.replace(gen.compiler, '$(CFLAGS)')
             command = command.replace(gen.defines, '$(DFLAGS)')
             command = command.replace(gen.includes, '$(IFLAGS)')
             command = command.replace(gen.libraries, '$(LIBS)')
-            command = command.replace(gen.linker, '$(LDFLAGS)')
+            command = command.replace(RegExp(gen.platform, 'g'), '$$(PLATFORM)')
             command = command.replace(bit.packs.compiler.path, '$(CC)')
         } else if (generating == 'sh') {
-            command = command.replace(RegExp(gen.platform, 'g'), '$${PLATFORM}')
+            command = command.replace(gen.linker, '${LDFLAGS}')
+            command = command.replace(gen.linker, '${LDFLAGS}')
             command = command.replace(gen.compiler, '${CFLAGS}')
             command = command.replace(gen.defines, '${DFLAGS}')
             command = command.replace(gen.includes, '${IFLAGS}')
             command = command.replace(gen.libraries, '${LIBS}')
-            command = command.replace(gen.linker, '${LDFLAGS}')
+            command = command.replace(RegExp(gen.platform, 'g'), '$${PLATFORM}')
             command = command.replace(bit.packs.compiler.path, '${CC}')
         }
         command = command.replace(RegExp(bit.dir.top + '/', 'g'), '')
