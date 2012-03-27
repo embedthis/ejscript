@@ -2043,7 +2043,7 @@ command = command.expand(bit, {fill: ''})
             libs = libs.clone()
             for (i in libs) {
                 let llib = bit.dir.lib.join("lib" + libs[i]).joinExt(bit.ext.shlib)
-                if (llib.exists) {
+                if (llib.exists || generating) {
                     libs[i] = llib
                 } else {
                     libs[i] = Path(libs[i]).replaceExt(bit.ext.shlib).relative

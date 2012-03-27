@@ -10,6 +10,7 @@ IFLAGS    := -I$(PLATFORM)/inc
 LDFLAGS   := -Wl,--enable-new-dtags -Wl,-rpath,$ORIGIN/ -Wl,-rpath,$ORIGIN/../lib -L$(PLATFORM)/lib -g -ldl
 LIBS      := -lpthread -lm
 
+
 all: prep \
         $(PLATFORM)/lib/libmpr.so \
         $(PLATFORM)/bin/makerom \

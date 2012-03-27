@@ -13,6 +13,7 @@ LIBS      := ws2_32.lib advapi32.lib user32.lib kernel32.lib oldnames.lib msvcrt
 export PATH := %VS%/Bin:%VS%/VC/Bin:%VS%/Common7/IDE:%VS%/Common7/Tools:%VS%/SDK/v3.5/bin:%VS%/VC/VCPackages
 export INCLUDE := %VS%/INCLUDE:%VS%/VC/INCLUDE
 export LIB := %VS%/lib:%VS%/VC/lib
+
 all: prep \
         $(PLATFORM)/bin/libmpr.dll \
         $(PLATFORM)/bin/makerom.exe \
@@ -189,7 +190,7 @@ $(PLATFORM)/bin/libmpr.dll:  \
         $(PLATFORM)/inc/mpr.h \
         $(PLATFORM)/inc/mprSsl.h \
         $(PLATFORM)/obj/mprLib.obj
-	"link" -dll -out:$(PLATFORM)/bin/libmpr.dll -entry:_DllMainCRTStartup@12 -def:$(PLATFORM)/bin/libmpr.def -nologo -nodefaultlib -incremental:no -libpath:$(PLATFORM)/bin -debug -machine:x86 $(PLATFORM)/obj/mprLib.obj $(LIBS)
+	"link" -dll -out:$(PLATFORM)/bin/libmpr.dll -entry:_DllMainCRTStartup@12 -def:$(PLATFORM)/bin/libmpr.def -nologo -nodefaultlib -incremental:no -libpath:$(PLATFORM)/bin -debug -machine:x86 $(PLATFORM)/obj/mprLib.obj $(PLATFORM)/bin/libws2_32.lib $(PLATFORM)/bin/libadvapi32.lib $(PLATFORM)/bin/libuser32.lib $(PLATFORM)/bin/libkernel32.lib $(PLATFORM)/bin/liboldnames.lib $(PLATFORM)/bin/libmsvcrt.lib
 
 $(PLATFORM)/obj/makerom.obj: \
         src/deps/mpr/makerom.c \
@@ -199,7 +200,7 @@ $(PLATFORM)/obj/makerom.obj: \
 $(PLATFORM)/bin/makerom.exe:  \
         $(PLATFORM)/bin/libmpr.dll \
         $(PLATFORM)/obj/makerom.obj
-	"link" -out:$(PLATFORM)/bin/makerom.exe -entry:mainCRTStartup -subsystem:console -nologo -nodefaultlib -incremental:no -libpath:$(PLATFORM)/bin -debug -machine:x86 $(PLATFORM)/obj/makerom.obj $(LIBS) mpr.lib
+	"link" -out:$(PLATFORM)/bin/makerom.exe -entry:mainCRTStartup -subsystem:console -nologo -nodefaultlib -incremental:no -libpath:$(PLATFORM)/bin -debug -machine:x86 $(PLATFORM)/obj/makerom.obj $(PLATFORM)/bin/libws2_32.lib $(PLATFORM)/bin/libadvapi32.lib $(PLATFORM)/bin/libuser32.lib $(PLATFORM)/bin/libkernel32.lib $(PLATFORM)/bin/liboldnames.lib $(PLATFORM)/bin/libmsvcrt.lib $(PLATFORM)/bin/libmpr.lib
 
 $(PLATFORM)/inc/pcre.h: 
 	rm -fr win-i686-debug/inc/pcre.h
@@ -213,7 +214,7 @@ $(PLATFORM)/obj/pcre.obj: \
 $(PLATFORM)/bin/libpcre.dll:  \
         $(PLATFORM)/inc/pcre.h \
         $(PLATFORM)/obj/pcre.obj
-	"link" -dll -out:$(PLATFORM)/bin/libpcre.dll -entry:_DllMainCRTStartup@12 -def:$(PLATFORM)/bin/libpcre.def -nologo -nodefaultlib -incremental:no -libpath:$(PLATFORM)/bin -debug -machine:x86 $(PLATFORM)/obj/pcre.obj $(LIBS)
+	"link" -dll -out:$(PLATFORM)/bin/libpcre.dll -entry:_DllMainCRTStartup@12 -def:$(PLATFORM)/bin/libpcre.def -nologo -nodefaultlib -incremental:no -libpath:$(PLATFORM)/bin -debug -machine:x86 $(PLATFORM)/obj/pcre.obj $(PLATFORM)/bin/libws2_32.lib $(PLATFORM)/bin/libadvapi32.lib $(PLATFORM)/bin/libuser32.lib $(PLATFORM)/bin/libkernel32.lib $(PLATFORM)/bin/liboldnames.lib $(PLATFORM)/bin/libmsvcrt.lib
 
 $(PLATFORM)/inc/http.h: 
 	rm -fr win-i686-debug/inc/http.h
@@ -229,7 +230,7 @@ $(PLATFORM)/bin/libhttp.dll:  \
         $(PLATFORM)/bin/libpcre.dll \
         $(PLATFORM)/inc/http.h \
         $(PLATFORM)/obj/httpLib.obj
-	"link" -dll -out:$(PLATFORM)/bin/libhttp.dll -entry:_DllMainCRTStartup@12 -def:$(PLATFORM)/bin/libhttp.def -nologo -nodefaultlib -incremental:no -libpath:$(PLATFORM)/bin -debug -machine:x86 $(PLATFORM)/obj/httpLib.obj $(LIBS) mpr.lib pcre.lib
+	"link" -dll -out:$(PLATFORM)/bin/libhttp.dll -entry:_DllMainCRTStartup@12 -def:$(PLATFORM)/bin/libhttp.def -nologo -nodefaultlib -incremental:no -libpath:$(PLATFORM)/bin -debug -machine:x86 $(PLATFORM)/obj/httpLib.obj $(PLATFORM)/bin/libws2_32.lib $(PLATFORM)/bin/libadvapi32.lib $(PLATFORM)/bin/libuser32.lib $(PLATFORM)/bin/libkernel32.lib $(PLATFORM)/bin/liboldnames.lib $(PLATFORM)/bin/libmsvcrt.lib $(PLATFORM)/bin/libmpr.lib $(PLATFORM)/bin/libpcre.lib
 
 $(PLATFORM)/obj/http.obj: \
         src/deps/http/http.c \
@@ -239,7 +240,7 @@ $(PLATFORM)/obj/http.obj: \
 $(PLATFORM)/bin/http.exe:  \
         $(PLATFORM)/bin/libhttp.dll \
         $(PLATFORM)/obj/http.obj
-	"link" -out:$(PLATFORM)/bin/http.exe -entry:mainCRTStartup -subsystem:console -nologo -nodefaultlib -incremental:no -libpath:$(PLATFORM)/bin -debug -machine:x86 $(PLATFORM)/obj/http.obj $(LIBS) http.lib mpr.lib pcre.lib
+	"link" -out:$(PLATFORM)/bin/http.exe -entry:mainCRTStartup -subsystem:console -nologo -nodefaultlib -incremental:no -libpath:$(PLATFORM)/bin -debug -machine:x86 $(PLATFORM)/obj/http.obj $(PLATFORM)/bin/libws2_32.lib $(PLATFORM)/bin/libadvapi32.lib $(PLATFORM)/bin/libuser32.lib $(PLATFORM)/bin/libkernel32.lib $(PLATFORM)/bin/liboldnames.lib $(PLATFORM)/bin/libmsvcrt.lib $(PLATFORM)/bin/libhttp.lib $(PLATFORM)/bin/libmpr.lib $(PLATFORM)/bin/libpcre.lib
 
 $(PLATFORM)/inc/sqlite3.h: 
 	rm -fr win-i686-debug/inc/sqlite3.h
@@ -253,7 +254,7 @@ $(PLATFORM)/obj/sqlite3.obj: \
 $(PLATFORM)/bin/libsqlite3.dll:  \
         $(PLATFORM)/inc/sqlite3.h \
         $(PLATFORM)/obj/sqlite3.obj
-	"link" -dll -out:$(PLATFORM)/bin/libsqlite3.dll -entry:_DllMainCRTStartup@12 -def:$(PLATFORM)/bin/libsqlite3.def -nologo -nodefaultlib -incremental:no -libpath:$(PLATFORM)/bin -debug -machine:x86 $(PLATFORM)/obj/sqlite3.obj $(LIBS)
+	"link" -dll -out:$(PLATFORM)/bin/libsqlite3.dll -entry:_DllMainCRTStartup@12 -def:$(PLATFORM)/bin/libsqlite3.def -nologo -nodefaultlib -incremental:no -libpath:$(PLATFORM)/bin -debug -machine:x86 $(PLATFORM)/obj/sqlite3.obj $(PLATFORM)/bin/libws2_32.lib $(PLATFORM)/bin/libadvapi32.lib $(PLATFORM)/bin/libuser32.lib $(PLATFORM)/bin/libkernel32.lib $(PLATFORM)/bin/liboldnames.lib $(PLATFORM)/bin/libmsvcrt.lib
 
 $(PLATFORM)/inc/ejs.cache.local.slots.h: 
 	rm -fr win-i686-debug/inc/ejs.cache.local.slots.h
@@ -651,7 +652,7 @@ $(PLATFORM)/bin/libejs.dll:  \
         $(PLATFORM)/obj/ejsModule.obj \
         $(PLATFORM)/obj/ejsScope.obj \
         $(PLATFORM)/obj/ejsService.obj
-	"link" -dll -out:$(PLATFORM)/bin/libejs.dll -entry:_DllMainCRTStartup@12 -def:$(PLATFORM)/bin/libejs.def -nologo -nodefaultlib -incremental:no -libpath:$(PLATFORM)/bin -debug -machine:x86 $(PLATFORM)/obj/ecAst.obj $(PLATFORM)/obj/ecCodeGen.obj $(PLATFORM)/obj/ecCompiler.obj $(PLATFORM)/obj/ecLex.obj $(PLATFORM)/obj/ecModuleWrite.obj $(PLATFORM)/obj/ecParser.obj $(PLATFORM)/obj/ecState.obj $(PLATFORM)/obj/ejsApp.obj $(PLATFORM)/obj/ejsArray.obj $(PLATFORM)/obj/ejsBlock.obj $(PLATFORM)/obj/ejsBoolean.obj $(PLATFORM)/obj/ejsByteArray.obj $(PLATFORM)/obj/ejsCache.obj $(PLATFORM)/obj/ejsCmd.obj $(PLATFORM)/obj/ejsConfig.obj $(PLATFORM)/obj/ejsDate.obj $(PLATFORM)/obj/ejsDebug.obj $(PLATFORM)/obj/ejsError.obj $(PLATFORM)/obj/ejsFile.obj $(PLATFORM)/obj/ejsFileSystem.obj $(PLATFORM)/obj/ejsFrame.obj $(PLATFORM)/obj/ejsFunction.obj $(PLATFORM)/obj/ejsGC.obj $(PLATFORM)/obj/ejsGlobal.obj $(PLATFORM)/obj/ejsHttp.obj $(PLATFORM)/obj/ejsIterator.obj $(PLATFORM)/obj/ejsJSON.obj $(PLATFORM)/obj/ejsLocalCache.obj $(PLATFORM)/obj/ejsMath.obj $(PLATFORM)/obj/ejsMemory.obj $(PLATFORM)/obj/ejsMprLog.obj $(PLATFORM)/obj/ejsNamespace.obj $(PLATFORM)/obj/ejsNull.obj $(PLATFORM)/obj/ejsNumber.obj $(PLATFORM)/obj/ejsObject.obj $(PLATFORM)/obj/ejsPath.obj $(PLATFORM)/obj/ejsPot.obj $(PLATFORM)/obj/ejsRegExp.obj $(PLATFORM)/obj/ejsSocket.obj $(PLATFORM)/obj/ejsString.obj $(PLATFORM)/obj/ejsSystem.obj $(PLATFORM)/obj/ejsTimer.obj $(PLATFORM)/obj/ejsType.obj $(PLATFORM)/obj/ejsUri.obj $(PLATFORM)/obj/ejsVoid.obj $(PLATFORM)/obj/ejsWorker.obj $(PLATFORM)/obj/ejsXML.obj $(PLATFORM)/obj/ejsXMLList.obj $(PLATFORM)/obj/ejsXMLLoader.obj $(PLATFORM)/obj/ejsByteCode.obj $(PLATFORM)/obj/ejsException.obj $(PLATFORM)/obj/ejsHelper.obj $(PLATFORM)/obj/ejsInterp.obj $(PLATFORM)/obj/ejsLoader.obj $(PLATFORM)/obj/ejsModule.obj $(PLATFORM)/obj/ejsScope.obj $(PLATFORM)/obj/ejsService.obj $(LIBS) mpr.lib pcre.lib http.lib
+	"link" -dll -out:$(PLATFORM)/bin/libejs.dll -entry:_DllMainCRTStartup@12 -def:$(PLATFORM)/bin/libejs.def -nologo -nodefaultlib -incremental:no -libpath:$(PLATFORM)/bin -debug -machine:x86 $(PLATFORM)/obj/ecAst.obj $(PLATFORM)/obj/ecCodeGen.obj $(PLATFORM)/obj/ecCompiler.obj $(PLATFORM)/obj/ecLex.obj $(PLATFORM)/obj/ecModuleWrite.obj $(PLATFORM)/obj/ecParser.obj $(PLATFORM)/obj/ecState.obj $(PLATFORM)/obj/ejsApp.obj $(PLATFORM)/obj/ejsArray.obj $(PLATFORM)/obj/ejsBlock.obj $(PLATFORM)/obj/ejsBoolean.obj $(PLATFORM)/obj/ejsByteArray.obj $(PLATFORM)/obj/ejsCache.obj $(PLATFORM)/obj/ejsCmd.obj $(PLATFORM)/obj/ejsConfig.obj $(PLATFORM)/obj/ejsDate.obj $(PLATFORM)/obj/ejsDebug.obj $(PLATFORM)/obj/ejsError.obj $(PLATFORM)/obj/ejsFile.obj $(PLATFORM)/obj/ejsFileSystem.obj $(PLATFORM)/obj/ejsFrame.obj $(PLATFORM)/obj/ejsFunction.obj $(PLATFORM)/obj/ejsGC.obj $(PLATFORM)/obj/ejsGlobal.obj $(PLATFORM)/obj/ejsHttp.obj $(PLATFORM)/obj/ejsIterator.obj $(PLATFORM)/obj/ejsJSON.obj $(PLATFORM)/obj/ejsLocalCache.obj $(PLATFORM)/obj/ejsMath.obj $(PLATFORM)/obj/ejsMemory.obj $(PLATFORM)/obj/ejsMprLog.obj $(PLATFORM)/obj/ejsNamespace.obj $(PLATFORM)/obj/ejsNull.obj $(PLATFORM)/obj/ejsNumber.obj $(PLATFORM)/obj/ejsObject.obj $(PLATFORM)/obj/ejsPath.obj $(PLATFORM)/obj/ejsPot.obj $(PLATFORM)/obj/ejsRegExp.obj $(PLATFORM)/obj/ejsSocket.obj $(PLATFORM)/obj/ejsString.obj $(PLATFORM)/obj/ejsSystem.obj $(PLATFORM)/obj/ejsTimer.obj $(PLATFORM)/obj/ejsType.obj $(PLATFORM)/obj/ejsUri.obj $(PLATFORM)/obj/ejsVoid.obj $(PLATFORM)/obj/ejsWorker.obj $(PLATFORM)/obj/ejsXML.obj $(PLATFORM)/obj/ejsXMLList.obj $(PLATFORM)/obj/ejsXMLLoader.obj $(PLATFORM)/obj/ejsByteCode.obj $(PLATFORM)/obj/ejsException.obj $(PLATFORM)/obj/ejsHelper.obj $(PLATFORM)/obj/ejsInterp.obj $(PLATFORM)/obj/ejsLoader.obj $(PLATFORM)/obj/ejsModule.obj $(PLATFORM)/obj/ejsScope.obj $(PLATFORM)/obj/ejsService.obj $(PLATFORM)/bin/libws2_32.lib $(PLATFORM)/bin/libadvapi32.lib $(PLATFORM)/bin/libuser32.lib $(PLATFORM)/bin/libkernel32.lib $(PLATFORM)/bin/liboldnames.lib $(PLATFORM)/bin/libmsvcrt.lib $(PLATFORM)/bin/libmpr.lib $(PLATFORM)/bin/libpcre.lib $(PLATFORM)/bin/libhttp.lib
 
 $(PLATFORM)/obj/ejs.obj: \
         src/cmd/ejs.c \
@@ -661,7 +662,7 @@ $(PLATFORM)/obj/ejs.obj: \
 $(PLATFORM)/bin/ejs.exe:  \
         $(PLATFORM)/bin/libejs.dll \
         $(PLATFORM)/obj/ejs.obj
-	"link" -out:$(PLATFORM)/bin/ejs.exe -entry:mainCRTStartup -subsystem:console -nologo -nodefaultlib -incremental:no -libpath:$(PLATFORM)/bin -debug -machine:x86 $(PLATFORM)/obj/ejs.obj $(LIBS) ejs.lib mpr.lib pcre.lib http.lib
+	"link" -out:$(PLATFORM)/bin/ejs.exe -entry:mainCRTStartup -subsystem:console -nologo -nodefaultlib -incremental:no -libpath:$(PLATFORM)/bin -debug -machine:x86 $(PLATFORM)/obj/ejs.obj $(PLATFORM)/bin/libws2_32.lib $(PLATFORM)/bin/libadvapi32.lib $(PLATFORM)/bin/libuser32.lib $(PLATFORM)/bin/libkernel32.lib $(PLATFORM)/bin/liboldnames.lib $(PLATFORM)/bin/libmsvcrt.lib $(PLATFORM)/bin/libejs.lib $(PLATFORM)/bin/libmpr.lib $(PLATFORM)/bin/libpcre.lib $(PLATFORM)/bin/libhttp.lib
 
 $(PLATFORM)/obj/ejsc.obj: \
         src/cmd/ejsc.c \
@@ -671,7 +672,7 @@ $(PLATFORM)/obj/ejsc.obj: \
 $(PLATFORM)/bin/ejsc.exe:  \
         $(PLATFORM)/bin/libejs.dll \
         $(PLATFORM)/obj/ejsc.obj
-	"link" -out:$(PLATFORM)/bin/ejsc.exe -entry:mainCRTStartup -subsystem:console -nologo -nodefaultlib -incremental:no -libpath:$(PLATFORM)/bin -debug -machine:x86 $(PLATFORM)/obj/ejsc.obj $(LIBS) ejs.lib mpr.lib pcre.lib http.lib
+	"link" -out:$(PLATFORM)/bin/ejsc.exe -entry:mainCRTStartup -subsystem:console -nologo -nodefaultlib -incremental:no -libpath:$(PLATFORM)/bin -debug -machine:x86 $(PLATFORM)/obj/ejsc.obj $(PLATFORM)/bin/libws2_32.lib $(PLATFORM)/bin/libadvapi32.lib $(PLATFORM)/bin/libuser32.lib $(PLATFORM)/bin/libkernel32.lib $(PLATFORM)/bin/liboldnames.lib $(PLATFORM)/bin/libmsvcrt.lib $(PLATFORM)/bin/libejs.lib $(PLATFORM)/bin/libmpr.lib $(PLATFORM)/bin/libpcre.lib $(PLATFORM)/bin/libhttp.lib
 
 $(PLATFORM)/obj/ejsmod.obj: \
         src/cmd/ejsmod.c \
@@ -710,7 +711,7 @@ $(PLATFORM)/bin/ejsmod.exe:  \
         $(PLATFORM)/obj/docFiles.obj \
         $(PLATFORM)/obj/listing.obj \
         $(PLATFORM)/obj/slotGen.obj
-	"link" -out:$(PLATFORM)/bin/ejsmod.exe -entry:mainCRTStartup -subsystem:console -nologo -nodefaultlib -incremental:no -libpath:$(PLATFORM)/bin -debug -machine:x86 $(PLATFORM)/obj/ejsmod.obj $(PLATFORM)/obj/doc.obj $(PLATFORM)/obj/docFiles.obj $(PLATFORM)/obj/listing.obj $(PLATFORM)/obj/slotGen.obj $(LIBS) ejs.lib mpr.lib pcre.lib http.lib
+	"link" -out:$(PLATFORM)/bin/ejsmod.exe -entry:mainCRTStartup -subsystem:console -nologo -nodefaultlib -incremental:no -libpath:$(PLATFORM)/bin -debug -machine:x86 $(PLATFORM)/obj/ejsmod.obj $(PLATFORM)/obj/doc.obj $(PLATFORM)/obj/docFiles.obj $(PLATFORM)/obj/listing.obj $(PLATFORM)/obj/slotGen.obj $(PLATFORM)/bin/libws2_32.lib $(PLATFORM)/bin/libadvapi32.lib $(PLATFORM)/bin/libuser32.lib $(PLATFORM)/bin/libkernel32.lib $(PLATFORM)/bin/liboldnames.lib $(PLATFORM)/bin/libmsvcrt.lib $(PLATFORM)/bin/libejs.lib $(PLATFORM)/bin/libmpr.lib $(PLATFORM)/bin/libpcre.lib $(PLATFORM)/bin/libhttp.lib
 
 $(PLATFORM)/obj/ejsrun.obj: \
         src/cmd/ejsrun.c \
@@ -720,7 +721,7 @@ $(PLATFORM)/obj/ejsrun.obj: \
 $(PLATFORM)/bin/ejsrun.exe:  \
         $(PLATFORM)/bin/libejs.dll \
         $(PLATFORM)/obj/ejsrun.obj
-	"link" -out:$(PLATFORM)/bin/ejsrun.exe -entry:mainCRTStartup -subsystem:console -nologo -nodefaultlib -incremental:no -libpath:$(PLATFORM)/bin -debug -machine:x86 $(PLATFORM)/obj/ejsrun.obj $(LIBS) ejs.lib mpr.lib pcre.lib http.lib
+	"link" -out:$(PLATFORM)/bin/ejsrun.exe -entry:mainCRTStartup -subsystem:console -nologo -nodefaultlib -incremental:no -libpath:$(PLATFORM)/bin -debug -machine:x86 $(PLATFORM)/obj/ejsrun.obj $(PLATFORM)/bin/libws2_32.lib $(PLATFORM)/bin/libadvapi32.lib $(PLATFORM)/bin/libuser32.lib $(PLATFORM)/bin/libkernel32.lib $(PLATFORM)/bin/liboldnames.lib $(PLATFORM)/bin/libmsvcrt.lib $(PLATFORM)/bin/libejs.lib $(PLATFORM)/bin/libmpr.lib $(PLATFORM)/bin/libpcre.lib $(PLATFORM)/bin/libhttp.lib
 
 win-i686-debug/bin/ejs.mod:  \
         $(PLATFORM)/bin/ejsc.exe \
@@ -779,7 +780,7 @@ $(PLATFORM)/bin/ejs.db.sqlite.dll:  \
         $(PLATFORM)/bin/ejs.db.sqlite.mod \
         $(PLATFORM)/bin/libsqlite3.dll \
         $(PLATFORM)/obj/ejsSqlite.obj
-	"link" -dll -out:$(PLATFORM)/bin/ejs.db.sqlite.dll -entry:_DllMainCRTStartup@12 -def:$(PLATFORM)/bin/ejs.db.sqlite.def -nologo -nodefaultlib -incremental:no -libpath:$(PLATFORM)/bin -debug -machine:x86 $(PLATFORM)/obj/ejsSqlite.obj $(LIBS) mpr.lib ejs.lib pcre.lib http.lib sqlite3.lib
+	"link" -dll -out:$(PLATFORM)/bin/ejs.db.sqlite.dll -entry:_DllMainCRTStartup@12 -def:$(PLATFORM)/bin/ejs.db.sqlite.def -nologo -nodefaultlib -incremental:no -libpath:$(PLATFORM)/bin -debug -machine:x86 $(PLATFORM)/obj/ejsSqlite.obj $(PLATFORM)/bin/libws2_32.lib $(PLATFORM)/bin/libadvapi32.lib $(PLATFORM)/bin/libuser32.lib $(PLATFORM)/bin/libkernel32.lib $(PLATFORM)/bin/liboldnames.lib $(PLATFORM)/bin/libmsvcrt.lib $(PLATFORM)/bin/libmpr.lib $(PLATFORM)/bin/libejs.lib $(PLATFORM)/bin/libpcre.lib $(PLATFORM)/bin/libhttp.lib $(PLATFORM)/bin/libsqlite3.lib
 
 win-i686-debug/bin/ejs.web.mod:  \
         $(PLATFORM)/bin/ejsc.exe \
@@ -823,7 +824,7 @@ $(PLATFORM)/bin/ejs.web.dll:  \
         $(PLATFORM)/obj/ejsRequest.obj \
         $(PLATFORM)/obj/ejsSession.obj \
         $(PLATFORM)/obj/ejsWeb.obj
-	"link" -dll -out:$(PLATFORM)/bin/ejs.web.dll -entry:_DllMainCRTStartup@12 -def:$(PLATFORM)/bin/ejs.web.def -nologo -nodefaultlib -incremental:no -libpath:$(PLATFORM)/bin -debug -machine:x86 $(PLATFORM)/obj/ejsHttpServer.obj $(PLATFORM)/obj/ejsRequest.obj $(PLATFORM)/obj/ejsSession.obj $(PLATFORM)/obj/ejsWeb.obj $(LIBS) mpr.lib http.lib pcre.lib pcre.lib ejs.lib
+	"link" -dll -out:$(PLATFORM)/bin/ejs.web.dll -entry:_DllMainCRTStartup@12 -def:$(PLATFORM)/bin/ejs.web.def -nologo -nodefaultlib -incremental:no -libpath:$(PLATFORM)/bin -debug -machine:x86 $(PLATFORM)/obj/ejsHttpServer.obj $(PLATFORM)/obj/ejsRequest.obj $(PLATFORM)/obj/ejsSession.obj $(PLATFORM)/obj/ejsWeb.obj $(PLATFORM)/bin/libws2_32.lib $(PLATFORM)/bin/libadvapi32.lib $(PLATFORM)/bin/libuser32.lib $(PLATFORM)/bin/libkernel32.lib $(PLATFORM)/bin/liboldnames.lib $(PLATFORM)/bin/libmsvcrt.lib $(PLATFORM)/bin/libmpr.lib $(PLATFORM)/bin/libhttp.lib $(PLATFORM)/bin/libpcre.lib $(PLATFORM)/bin/libpcre.lib $(PLATFORM)/bin/libejs.lib
 
 win-i686-debug/bin/www: 
 	rm -fr $(PLATFORM)/bin/www

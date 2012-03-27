@@ -10,6 +10,7 @@ IFLAGS    := -I$(PLATFORM)/inc
 LDFLAGS   := -L$(PLATFORM)/lib -g
 LIBS      := -llxnet -lrt -lsocket -lpthread -lm
 
+
 all: prep \
         $(PLATFORM)/lib/libmpr.so \
         $(PLATFORM)/bin/makerom \
