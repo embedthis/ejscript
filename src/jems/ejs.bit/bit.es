@@ -29,7 +29,7 @@ public class Bit {
     private var envSettings: Object
     private var local: Object
     private var localPlatform: String
-    private var missing
+    private var missing = undefined
     private var options: Object = { control: {}}
     private var out: Stream
     private var platforms: Array
@@ -1229,7 +1229,9 @@ public class Bit {
             When cross generating, certain wild cards can't be resolved.
             Setting missing to empty will cause missing glob patterns to be replaced with the pattern itself 
          */
-        missing = ''
+        if (generating) {
+            missing = ''
+        }
         setTypes()
         expandTokens(bit)
         setConstVars()
