@@ -2216,8 +2216,8 @@ command = command.expand(bit, {fill: ''})
             }
         }
         if (options.show || cmdOptions.show) {
-            out.write(cmd.response)
             if (!cmdOptions.noshow) {
+                out.write(cmd.response)
                 out.write(cmd.error)
             }
         }
