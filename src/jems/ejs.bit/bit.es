@@ -196,7 +196,7 @@ public class Bit {
         }
         if (args.rest.contains('generate')) {
             if (local.like == 'windows') {
-                options.gen = ['sh', 'make', 'vs']
+                options.gen = ['sh', 'nmake', 'vs']
             } else {
                 options.gen = ['sh', 'make']
             }
@@ -1055,6 +1055,8 @@ public class Bit {
                 generateShell(base)
             } else if (generating == 'make') {
                 generateMake(base)
+            } else if (generating == 'nmake') {
+                generateNmake(base)
             } else if (generating == 'vstudio' || generating == 'vs') {
                 generateVstudio(base)
             } else if (generating == 'xcode') {
@@ -1096,6 +1098,7 @@ public class Bit {
         trace('Generate', 'project file: ' + base.relative + '.mk')
         let path = base.joinExt('mk')
         genout = TextStream(File(path, 'w'))
+        //  MOB - change build.* name
         genout.writeLine('#\n#   build.mk -- Build It Makefile to build ' + bit.settings.title + 
             ' for ' + bit.platform.os + ' on ' + bit.platform.arch + '\n#\n')
         genout.writeLine('PLATFORM  := ' + bit.platform.name + '-' + bit.settings.profile)
@@ -1114,6 +1117,44 @@ public class Bit {
             'mkdir -p $(PLATFORM)/inc $(PLATFORM)/obj $(PLATFORM)/lib $(PLATFORM)/bin ; true')
         genout.writeLine('\t@[ ! -f $(PLATFORM)/inc/buildConfig.h ] && ' + 
             'cp projects/buildConfig.$(PLATFORM) $(PLATFORM)/inc/buildConfig.h ; true\n')
+        genout.writeLine('clean:')
+        action('cleanTargets')
+        genout.writeLine('')
+        build()
+        genout.close()
+    }
+
+    function generateNmake(base: Path) {
+        trace('Generate', 'project file: ' + base.relative + '.nmake')
+        let path = base.joinExt('nmake')
+        genout = TextStream(File(path, 'w'))
+        //  MOB - change build.* name
+        genout.writeLine('#\n#   build.nmake -- Build It Makefile to build ' + bit.settings.title + 
+            ' for ' + bit.platform.os + ' on ' + bit.platform.arch + '\n#\n')
+
+        // genEnv()
+        genout.writeLine('VS        = $(PROGRAMFILES)\\Microsoft Visual Studio 10.0')
+        genout.writeLine('SDK       = $(PROGRAMFILES)\\Microsoft SDKs\\Windows\\v7.0A')
+        genout.writeLine('INCLUDE   = $(INCLUDE);$(VS)\\VC\\INCLUDE;$(SDK)\\INCLUDE')
+        genout.writeLine('LIB       = $(LIB);$(VS)\\VC\\lib;$(SDK)\\lib')
+        genout.writeLine('PATH      = $(VS)\\Bin;$(VS)\\VC\\Bin;$(VS)\\Common7\\IDE;$(VS)\\Common7\\Tools;$(VS)\\SDK\\v3.5\\bin;$(VS)\\VC\\VCPackages;$(PATH)\n')
+
+        genout.writeLine('PLATFORM  = ' + bit.platform.name + '-' + bit.settings.profile)
+        genout.writeLine('CC        = ' + bit.packs.compiler.path)
+        let os = bit.platform.os.toUpper()
+        genout.writeLine('CFLAGS    = ' + gen.compiler)
+        genout.writeLine('DFLAGS    = ' + gen.defines)
+        genout.writeLine('IFLAGS    = ' + 
+            platformReplace(bit.defaults.includes.map(function(path) '-I' + path.relative).join(' ')))
+        genout.writeLine('LDFLAGS   = ' + platformReplace(gen.linker).replace(/\//g, '\\'))
+        genout.writeLine('LIBS      = ' + gen.libraries + '\n')
+        genout.writeLine('\nall: prep \\\n        ' + genAll())
+        genout.writeLine('.PHONY: prep\n\nprep:')
+        genout.writeLine('\tif not exist $(PLATFORM)\\inc mkdir $(PLATFORM)\\inc')
+        genout.writeLine('\tif not exist $(PLATFORM)\\obj mkdir $(PLATFORM)\\obj')
+        genout.writeLine('\tif not exist $(PLATFORM)\\bin mkdir $(PLATFORM)\\bin')
+        genout.writeLine('\tif not exist $(PLATFORM)\\inc\\buildConfig.h ' +
+            'copy projects\\buildConfig.$(PLATFORM) $(PLATFORM)\\inc\\buildConfig.h\n')
         genout.writeLine('clean:')
         action('cleanTargets')
         genout.writeLine('')
@@ -1141,6 +1182,10 @@ public class Bit {
             }
             if (generating == 'make') {
                 genout.writeLine('export ' + key + ' := ' + value)
+
+            } else if (generating == 'nmake') {
+                genout.writeLine(key + ' = ' + value)
+
             } else if (generating == 'sh') {
                 genout.writeLine('export ' + key + '="' + value + '"')
             }
@@ -1656,10 +1701,17 @@ public class Bit {
         if (generating == 'sh') {
             command = genReplace(command)
             genout.writeLine(command + '\n')
+
         } else if (generating == 'make') {
             command = genReplace(command)
             genout.writeLine(platformReplace(target.path.relative) + ': ' + platformReplace(getTargetDeps(target)) +
                 '\n\t' + command + '\n')
+
+        } else if (generating == 'nmake') {
+            command = genReplace(command)
+            genout.writeLine(platformReplace(target.path.relative) + ': ' + platformReplace(getTargetDeps(target)) +
+                '\n\t' + command + '\n')
+
         } else {
             trace('Link', target.name)
             run(command)
@@ -1694,10 +1746,17 @@ public class Bit {
         if (generating == 'sh') {
             command = genReplace(command)
             genout.writeLine(command + '\n')
+
         } else if (generating == 'make') {
             command = genReplace(command)
             genout.writeLine(platformReplace(target.path.relative) + ': ' + 
                 platformReplace(getTargetDeps(target)) + '\n\t' + command + '\n')
+
+        } else if (generating == 'nmake') {
+            command = genReplace(command)
+            genout.writeLine(platformReplace(target.path.relative) + ': ' + 
+                platformReplace(getTargetDeps(target)) + '\n\t' + command + '\n')
+
         } else {
             trace('Link', target.name)
             run(command)
@@ -1768,10 +1827,17 @@ command = command.expand(bit, {fill: ''})
             if (generating == 'sh') {
                 command = genReplace(command)
                 genout.writeLine(command + '\n')
+
             } else if (generating == 'make') {
                 command = genReplace(command)
                 genout.writeLine(platformReplace(target.path.relative) + ': \\\n        ' + 
                     file.relative + platformReplace(getTargetDeps(target)) + '\n\t' + command + '\n')
+
+            } else if (generating == 'nmake') {
+                command = genReplace(command)
+                genout.writeLine(platformReplace(target.path.relative) + ': \\\n        ' + 
+                    file.relative.windows + platformReplace(getTargetDeps(target)) + '\n\t' + command + '\n')
+
             } else {
                 trace('Compile', file.relativeTo('.'))
                 run(command)
@@ -1796,10 +1862,17 @@ command = command.expand(bit, {fill: ''})
             if (generating == 'sh') {
                 genout.writeLine('rm -rf ' + target.path.relative)
                 genout.writeLine('cp -r ' + file.relative + ' ' + target.path.relative + '\n')
+
             } else if (generating == 'make') {
                 genout.writeLine(platformReplace(target.path.relative) + ': ' + platformReplace(getTargetDeps(target)))
                 genout.writeLine('\trm -fr ' + target.path.relative)
                 genout.writeLine('\tcp -r ' + file.relative + ' ' + target.path.relative + '\n')
+
+            } else if (generating == 'nmake') {
+                genout.writeLine(platformReplace(target.path.relative) + ': ' + platformReplace(getTargetDeps(target)))
+                genout.writeLine('\tif exist ' + target.path.relative.windows + ' del /Q ' + target.path.relative.windows)
+                genout.writeLine('\txcopy /S ' + file.relative.windows + ' ' + target.path.relative.windows + '\n')
+
             } else {
                 trace('Copy', target.path.relativeTo('.'))
                 safeRemove(target.path)
@@ -1832,6 +1905,7 @@ command = command.expand(bit, {fill: ''})
             } else {
                 genout.writeLine('#  Omit build script ' + target.path)
             }
+
         } else if (generating == 'make') {
             genout.writeLine(target.path.relative + ': ' + platformReplace(getTargetDeps(target)))
             let command ||= target['generate-make']
@@ -1842,21 +1916,37 @@ command = command.expand(bit, {fill: ''})
                 command = command.expand(bit)
                 command = platformReplace(command)
                 genout.writeLine('\t' + command + '\n')
+            }
+
+        } else if (generating == 'nmake') {
+            genout.writeLine(target.path.relative.windows + ': ' + platformReplace(getTargetDeps(target)))
+            let command ||= target['generate-nmake']
+            let command ||= target['generate-make']
+            let command ||= target['generate-sh']
+            if (command) {
+                command = command.replace(/^[ \t]*/mg, '\t')
+                command = command.trim()
+                command = command.expand(bit)
+                command = platformReplace(command)
+                command = command.replace(/\//g, '\\')
+                genout.writeLine('\t' + command + '\n')
             } else {
                 genout.writeLine('#  Omit build script ' + target.path + '\n')
             }
+
         } else {
             vtrace(target.type.toPascal(), target.name)
             runScript(target.scripts, 'build')
         }
     }
 
+    //  MOB - rename
     /*
         Replace default defines, includes, libraries etc with token equivalents. This allows
         Makefiles and script to be use variables to control various flag settings.
      */
     function genReplace(command: String): String {
-        if (generating == 'make') {
+        if (generating == 'make' || generating == 'nmake') {
             command = command.replace(RegExp(gen.platform, 'g'), '$$(PLATFORM)')
             command = command.replace(gen.compiler, '$(CFLAGS)')
             command = command.replace(gen.defines, '$(DFLAGS)')
@@ -1875,13 +1965,20 @@ command = command.expand(bit, {fill: ''})
         }
         command = command.replace(RegExp(bit.dir.top + '/', 'g'), '')
         command = command.replace(/  */g, ' ')
+        if (generating == 'nmake') {
+            command = command.replace(/\//g, '\\')
+        }
         return command
     }
 
+    //  MOB - rename
     function platformReplace(command: String): String {
         command = command.replace(RegExp(bit.dir.top + '/', 'g'), '')
         if (generating == 'make') {
             command = command.replace(RegExp(gen.platform, 'g'), '$$(PLATFORM)')
+        } else if (generating == 'nmake') {
+            command = command.replace(RegExp(gen.platform, 'g'), '$$(PLATFORM)')
+            command = command.replace(/\//g, '\\')
         } else if (generating == 'sh') {
             command = command.replace(RegExp(gen.platform, 'g'), '$${PLATFORM}')
         }
@@ -1992,6 +2089,12 @@ command = command.expand(bit, {fill: ''})
                 genout.writeLine('export LD_LIBRARY_PATH := ' + outbin + sep + bitbin + sep + '${LD_LIBRARY_PATH}')
             }
             genout.writeLine('')
+
+        } else if (generating == 'nmake') {
+            if (local.os == 'WIN') sep = ';'
+            genout.writeLine('PATH = ' + outbin + sep + bitbin + sep + '${PATH}')
+            genout.writeLine('')
+
         } else if (generating == 'sh') {
             if (local.os == 'WIN') sep = ';'
             genout.writeLine('export PATH="' + outbin + sep + bitbin + sep + '${PATH}' + '"')
@@ -2001,6 +2104,7 @@ command = command.expand(bit, {fill: ''})
                 genout.writeLine('export LD_LIBRARY_PATH="' + outbin + sep + bitbin + sep + '${LD_LIBRARY_PATH}' + '"')
             }
             genout.writeLine('')
+
         } else {
             App.putenv('PATH', outbin + sep + bitbin + sep + App.getenv('PATH'))
             App.log.debug(2, "PATH=" + App.getenv('PATH'))
@@ -2285,8 +2389,14 @@ command = command.expand(bit, {fill: ''})
                     if (target.path.startsWith(bit.dir.cfg) && !target.built) {
                         if (generating == 'make') {
                             genout.writeLine('\trm -rf ' + platformReplace(target.path.relative))
+
+                        } else if (generating == 'nmake') {
+                            genout.writeLine('\tif exist ' + platformReplace(target.path.relative) + ' del /Q ' +
+                                platformReplace(target.path.relative))
+
                         } else if (generating == 'sh') {
                             genout.writeLine('rm -f ' + platformReplace(target.path.relative))
+
                         } else if (target.path.exists) {
                             if (options.show) {
                                 trace('Clean', target.path)
