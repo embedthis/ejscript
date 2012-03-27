@@ -328,15 +328,18 @@ function packageInstallConfigure() {
 
 function packageNative(pkg: Path, options) {
     switch (bit.platform.os) {
-    case 'macosx':
-        packageMacosx(pkg, options)
-        break
     case 'linux':
         if (bit.platform.dist == 'ubuntu') {
             packageUbuntu(pkg, options)
         } else {
             throw 'Can\'t package for linux distribution ' + bit.platform.dist
         }
+        break
+    case 'macosx':
+        packageMacosx(pkg, options)
+        break
+    case 'win':
+        packageWin(pkg, options)
         break
     default:
         throw 'Can\'t package for ' + bit.platform.os
@@ -347,7 +350,7 @@ var staffDir = {
     'var/www': true,
 }
 
-function createContents(pkg: Path, options) {
+function createMacContents(pkg: Path, options) {
     let s = bit.settings
     let contents = pkg.join(options.vname, 'contents')
     let cp: File = pkg.join(s.product + '.pmdoc', '01contents-contents.xml').open('w')
@@ -400,7 +403,7 @@ function packageMacosx(pkg: Path, options) {
     let scripts = pkg.join('scripts')
     scripts.makeDir()
     install('package/' + OS.toUpper() + '/scripts/*', scripts, {expand: true})
-    createContents(pkg, options)
+    createMacContents(pkg, options)
 
     /* Remove extended attributes */
     Cmd.sh("cd " + pkg + "; for i in $(ls -Rl@ | grep '^    ' | awk '{print $1}' | sort -u); do \
@@ -411,7 +414,7 @@ function packageMacosx(pkg: Path, options) {
     run(bit.packs.pmaker.path + ' --target 10.5 --domain system --doc ' + pmdoc + 
         ' --id com.embedthis.' + s.product + '.bin.pkg --root-volume-only --no-relocate' +
         ' --discard-forks --out ' + outfile)
-    bit.dir.rel.join('md5-' + base).joinExt('pkg', true).write(md5(outfile.readString()))
+    bit.dir.rel.join('md5-' + base).joinExt('pkg.txt', true).write(md5(outfile.readString()))
 }
 
 function packageUbuntu(pkg: Path, options) {
@@ -438,7 +441,37 @@ function packageUbuntu(pkg: Path, options) {
     let outfile = bit.dir.rel.join(base).joinExt('deb', true)
     trace('Package', outfile)
     run(bit.packs.dpkg.path + ' --build ' + DEBIAN.dirname + ' ' + outfile)
-    bit.dir.rel.join('md5-' + base).joinExt('pkg', true).write(md5(outfile.readString()))
+    bit.dir.rel.join('md5-' + base).joinExt('deb.txt', true).write(md5(outfile.readString()))
+}
+
+function packageWin(pkg: Path, options) {
+    if (!bit.packs.inno || !bit.packs.inno.path) {
+        throw 'Configured without Inno Setup'
+    }
+    let s = bit.settings
+    let rel = bit.dir.rel
+    let opak = Path('package/' + OS.toUpper())
+
+    install(opak.join('LICENSE.TXT'), pkg)
+    let iss = pkg.join('install.iss')
+    install(opak.join('install.iss'), iss, {expand: true})
+    let cp: File = iss.open('atw')
+    let files = pkg.glob('**', {exclude: /\/$/})
+    for each (file in files) {
+        let src = file.relativeTo(pkg)
+        let dest = bit.prefixes.product.join(file)
+        let dir = src.dirname
+        cp.write('Source: "' + src + '"; DestDir: "{app}\\' + dir + '"; ' +
+            'DestName: "' + src.basename + '"; Components: bin\n')
+
+    }
+    cp.close()
+    let base = [s.product, s.version, s.buildNumber, bit.platform.dist, OS.toUpper(), ARCH].join('-')
+    let outfile = bit.dir.rel.join(base).joinExt('exe', true)
+    trace('Package', outfile)
+    run([bit.packs.inno.path, iss])
+    pkg.join('Output/setup.exe').copy(outfile)
+    bit.dir.rel.join('md5-' + base).joinExt('exe.txt', true).write(md5(outfile.readString()))
 }
 
 public function syncup(from: Path, to: Path) {
