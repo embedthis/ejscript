@@ -744,7 +744,6 @@ $(PLATFORM)/lib/ejs.mod:  \
 $(PLATFORM)/bin/bit.es: 
 	cp src/jems/ejs.bit/bit.es $(PLATFORM)/bin
 
-#@@@
 $(PLATFORM)/bin/bit:  \
         $(PLATFORM)/bin/ejsrun
 	rm -fr linux-i686-debug/bin/bit

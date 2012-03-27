@@ -230,11 +230,20 @@ ejsc --out ${PLATFORM}/lib/ejs.mod --debug --optimize 9 --bind --require null sr
 ejsmod --require null --cslots ${PLATFORM}/lib/ejs.mod
 if ! diff ejs.slots.h ${PLATFORM}/inc/ejs.slots.h >/dev/null; then mv ejs.slots.h ${PLATFORM}/inc; fi
 cp src/jems/ejs.bit/bit.es ${PLATFORM}/bin
+rm -rf linux-i686-debug/bin/bit
+cp -r linux-i686-debug/bin/ejsrun linux-i686-debug/bin/bit
+
 cp src/jems/ejs.utest/utest.es ${PLATFORM}/bin
+rm -rf linux-i686-debug/bin/utest
+cp -r linux-i686-debug/bin/ejsrun linux-i686-debug/bin/utest
+
 rm -fr ${PLATFORM}/lib/bits
 cp -r src/jems/ejs.bit/bits ${PLATFORM}/lib
 ejsc --out ${PLATFORM}/lib/ejs.unix.mod --debug --optimize 9 src/jems/ejs.unix/Unix.es
 cp src/jems/ejs.jem/jem.es ${PLATFORM}/bin
+rm -rf linux-i686-debug/bin/jem
+cp -r linux-i686-debug/bin/ejsrun linux-i686-debug/bin/jem
+
 ejsc --out ${PLATFORM}/lib/ejs.db.mod --debug --optimize 9 src/jems/ejs.db/*.es
 ejsc --out ${PLATFORM}/lib/ejs.db.mapper.mod --debug --optimize 9 src/jems/ejs.db.mapper/*.es
 ejsc --out ${PLATFORM}/lib/ejs.db.sqlite.mod --debug --optimize 9 src/jems/ejs.db.sqlite/*.es
@@ -260,5 +269,8 @@ cp -r src/jems/ejs.web/www ${PLATFORM}/lib
 ejsc --out ${PLATFORM}/lib/ejs.template.mod --debug --optimize 9 src/jems/ejs.template/TemplateParser.es
 ejsc --out ${PLATFORM}/lib/ejs.tar.mod/ --debug --optimize 9 src/jems/ejs.tar/*.es
 cp src/jems/ejs.mvc/mvc.es ${PLATFORM}/bin
+rm -rf linux-i686-debug/bin/mvc
+cp -r linux-i686-debug/bin/ejsrun linux-i686-debug/bin/mvc
+
 ejsc --out ${PLATFORM}/lib/ejs.mvc.mod/ --debug --optimize 9 src/jems/ejs.mvc/*.es
 cp src/jems/ejs.utest/utest.worker ${PLATFORM}/bin

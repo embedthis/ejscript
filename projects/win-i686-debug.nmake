@@ -749,8 +749,18 @@ $(PLATFORM)\bin\ejs.mod:  \
 $(PLATFORM)\bin\bit.es: 
 	cp src\jems\ejs.bit\bit.es $(PLATFORM)\bin
 
+$(PLATFORM)\bin\bit.exe:  \
+        $(PLATFORM)\bin\ejsrun.exe
+	if exist win-i686-debug\bin\bit.exe del /Q win-i686-debug\bin\bit.exe
+	xcopy /S win-i686-debug\bin\ejsrun.exe win-i686-debug\bin\bit.exe
+
 $(PLATFORM)\bin\utest.es: 
 	cp src\jems\ejs.utest\utest.es $(PLATFORM)\bin
+
+$(PLATFORM)\bin\utest.exe:  \
+        $(PLATFORM)\bin\ejsrun.exe
+	if exist win-i686-debug\bin\utest.exe del /Q win-i686-debug\bin\utest.exe
+	xcopy /S win-i686-debug\bin\ejsrun.exe win-i686-debug\bin\utest.exe
 
 $(PLATFORM)\bin\bits: 
 	rm -fr $(PLATFORM)\bin\bits
@@ -764,6 +774,11 @@ $(PLATFORM)\bin\ejs.unix.mod:  \
 
 $(PLATFORM)\bin\jem.es: 
 	cp src\jems\ejs.jem\jem.es $(PLATFORM)\bin
+
+$(PLATFORM)\bin\jem.exe:  \
+        $(PLATFORM)\bin\ejsrun.exe
+	if exist win-i686-debug\bin\jem.exe del /Q win-i686-debug\bin\jem.exe
+	xcopy /S win-i686-debug\bin\ejsrun.exe win-i686-debug\bin\jem.exe
 
 $(PLATFORM)\bin\ejs.db.mod:  \
         $(PLATFORM)\bin\ejsc.exe \
@@ -860,6 +875,11 @@ $(PLATFORM)\bin\ejs.tar.mod:  \
 
 $(PLATFORM)\bin\mvc.es: 
 	cp src\jems\ejs.mvc\mvc.es $(PLATFORM)\bin
+
+$(PLATFORM)\bin\mvc.exe:  \
+        $(PLATFORM)\bin\ejsrun.exe
+	if exist win-i686-debug\bin\mvc.exe del /Q win-i686-debug\bin\mvc.exe
+	xcopy /S win-i686-debug\bin\ejsrun.exe win-i686-debug\bin\mvc.exe
 
 $(PLATFORM)\bin\ejs.mvc.mod:  \
         $(PLATFORM)\bin\ejsc.exe \

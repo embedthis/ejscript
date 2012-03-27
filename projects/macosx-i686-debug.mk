@@ -746,8 +746,18 @@ $(PLATFORM)/lib/ejs.mod:  \
 $(PLATFORM)/bin/bit.es: 
 	cp src/jems/ejs.bit/bit.es $(PLATFORM)/bin
 
+$(PLATFORM)/bin/bit:  \
+        $(PLATFORM)/bin/ejsrun
+	rm -fr macosx-i686-debug/bin/bit
+	cp -r macosx-i686-debug/bin/ejsrun macosx-i686-debug/bin/bit
+
 $(PLATFORM)/bin/utest.es: 
 	cp src/jems/ejs.utest/utest.es $(PLATFORM)/bin
+
+$(PLATFORM)/bin/utest:  \
+        $(PLATFORM)/bin/ejsrun
+	rm -fr macosx-i686-debug/bin/utest
+	cp -r macosx-i686-debug/bin/ejsrun macosx-i686-debug/bin/utest
 
 $(PLATFORM)/lib/bits: 
 	rm -fr $(PLATFORM)/lib/bits
@@ -761,6 +771,11 @@ $(PLATFORM)/lib/ejs.unix.mod:  \
 
 $(PLATFORM)/bin/jem.es: 
 	cp src/jems/ejs.jem/jem.es $(PLATFORM)/bin
+
+$(PLATFORM)/bin/jem:  \
+        $(PLATFORM)/bin/ejsrun
+	rm -fr macosx-i686-debug/bin/jem
+	cp -r macosx-i686-debug/bin/ejsrun macosx-i686-debug/bin/jem
 
 $(PLATFORM)/lib/ejs.db.mod:  \
         $(PLATFORM)/bin/ejsc \
@@ -876,6 +891,11 @@ $(PLATFORM)/lib/ejs.zlib.dylib:  \
 
 $(PLATFORM)/bin/mvc.es: 
 	cp src/jems/ejs.mvc/mvc.es $(PLATFORM)/bin
+
+$(PLATFORM)/bin/mvc:  \
+        $(PLATFORM)/bin/ejsrun
+	rm -fr macosx-i686-debug/bin/mvc
+	cp -r macosx-i686-debug/bin/ejsrun macosx-i686-debug/bin/mvc
 
 $(PLATFORM)/lib/ejs.mvc.mod:  \
         $(PLATFORM)/bin/ejsc \

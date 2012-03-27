@@ -115,7 +115,7 @@ sync:
 compileFinal: 
 	if [ -f .publisher -a "$(BUILDING_TARGET)" = 1 ] ; then \
         echo ; \
-        $(MAKE) TRACE=$(TRACE) --no-print-directory packageCombo ; true ; \
+        $(MAKE) TRACE=$(TRACE) --no-print-directory -f Makefile.old packageCombo ; true ; \
     fi
 
 dependExtra:
