@@ -2,6 +2,12 @@
 #   build.mk -- Build It Makefile to build Embedthis Ejscript for win on i686
 #
 
+VS        = $(PROGRAMFILES)\Microsoft Visual Studio 10.0
+SDK       = $(PROGRAMFILES)\Microsoft SDKs\Windows\v7.0A
+INCLUDE   = $(INCLUDE);$(VS)\VC\INCLUDE;$(SDK)\INCLUDE
+LIB       = $(LIB);$(VS)\VC\lib;$(SDK)\lib
+PATH      = $(VS)\Bin;$(VS)\VC\Bin;$(VS)\Common7\IDE;$(VS)\Common7\Tools;$(VS)\SDK\v3.5\bin;$(VS)\VC\VCPackages;$(PATH)
+
 PLATFORM  = win-i686-debug
 CC        = cl
 CFLAGS    = -nologo -GR- -W3 -Zi -Od -MDd
@@ -10,15 +16,6 @@ IFLAGS    = -I$(PLATFORM)/inc
 LDFLAGS   = -nologo -nodefaultlib -incremental:no -libpath:$(PLATFORM)/bin -debug -machine:x86
 LIBS      = ws2_32.lib advapi32.lib user32.lib kernel32.lib oldnames.lib msvcrt.lib
 SHELL     = bash
-
-# PF may be (x86)
-# MOB - should have $(INCLUDE)
-
-VS      = c:\Program Files\Microsoft Visual Studio 10.0
-SDK     = c:\Program Files\Microsoft SDKs\Windows\v7.0A
-INCLUDE = $(INCLUDE);$(VS)\VC\INCLUDE;$(SDK)\INCLUDE
-LIB     = $(LIB);$(VS)\VC\lib;$(SDK)\lib
-XPATH   = $(VS)\Bin:$(VS)\VC\Bin:$(VS)\Common7\IDE:$(VS)\Common7\Tools:$(VS)\SDK\v3.5\bin:$(VS)\VC\VCPackages:\bin:\usr\bin:\usr\local\bin
 
 all: prep \
         $(PLATFORM)\bin\libmpr.dll \
@@ -192,9 +189,6 @@ $(PLATFORM)\inc\mprSsl.h:
 $(PLATFORM)\obj\mprLib.obj: \
         src\deps\mpr\mprLib.c \
         $(PLATFORM)\inc\buildConfig.h
-	echo XPATH $(XPATH)
-	echo VS $(VS)
-	echo VSP %VS%
 	cl -c -Fo$(PLATFORM)\obj\mprLib.obj -Fd$(PLATFORM)\obj $(CFLAGS) $(DFLAGS) -I$(PLATFORM)\inc src\deps\mpr\mprLib.c
 
 $(PLATFORM)\bin\libmpr.dll:  \
