@@ -67,10 +67,10 @@ if (Config.OS == "CYGWIN") {
     assert(Path("c:/cygwin/a/b").windows == "C:\\cygwin\\a\\b")
 } else if (Config.OS == "WIN") {
     assert(Path("/a/b").absolute == "C:\\a\\b")
-    assert(Path("/a/b").windows == "C:\\a\\b")
+    assert(Path("/a/b").windows == "\\a\\b")
 } else {
     assert(Path("/a/b").absolute == "/a/b")
-    assert(Path("/a/b").windows == "/a/b")
+    assert(Path("/a/b").windows == "\\a\\b")
 }
 
 

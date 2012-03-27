@@ -489,13 +489,13 @@ static EjsAny *getPathValues(Ejs *ejs, EjsPath *fp, int argc, EjsObj **argv)
 /*
     Flags for path_files and getPathFiles
  */
-#define FILES_DESCEND       MPR_PATH_DESCEND
-#define FILES_DEPTH_FIRST   MPR_PATH_DEPTH_FIRST
-#define FILES_HIDDEN        MPR_PATH_INC_HIDDEN
-#define FILES_NODIRS        MPR_PATH_NODIRS
-#define FILES_RELATIVE      MPR_PATH_RELATIVE
-#define FILES_MISSING       0x10000
-#define FILES_CASELESS      0x20000
+#define FILES_DESCEND           MPR_PATH_DESCEND
+#define FILES_DEPTH_FIRST       MPR_PATH_DEPTH_FIRST
+#define FILES_HIDDEN            MPR_PATH_INC_HIDDEN
+#define FILES_NODIRS            MPR_PATH_NODIRS
+#define FILES_RELATIVE          MPR_PATH_RELATIVE
+#define FILES_NOMATCH_EXC       0x10000                 /* Throw an exception if no matching files */
+#define FILES_CASELESS          0x20000
 
 /*
     Get the files in a directory and subdirectories
@@ -504,6 +504,7 @@ static EjsAny *getPathValues(Ejs *ejs, EjsPath *fp, int argc, EjsObj **argv)
 static EjsArray *path_files(Ejs *ejs, EjsPath *fp, int argc, EjsObj **argv)
 {
     EjsObj      *options;
+    EjsAny      *vp;
     EjsRegExp   *exclude, *include;
     int         flags;
 
@@ -535,8 +536,13 @@ static EjsArray *path_files(Ejs *ejs, EjsPath *fp, int argc, EjsObj **argv)
             ejsThrowArgError(ejs, "Include option must be a regular expression");
             return 0;
         }
-        if (ejsGetPropertyByName(ejs, options, EN("missing")) == ESV(true)) {
-            flags |= FILES_MISSING;
+        if ((vp = ejsGetPropertyByName(ejs, options, EN("missing"))) != 0) {
+            if (vp == ESV(undefined)) {
+                flags |= FILES_NOMATCH_EXC;
+            } else {
+                ejsThrowArgError(ejs, "Invalid option value for \"missing\" property");
+                return 0;
+            }
         }
         if (ejsGetPropertyByName(ejs, options, EN("relative")) == ESV(true)) {
             flags |= FILES_RELATIVE;
@@ -554,7 +560,7 @@ static EjsArray *getPathFiles(Ejs *ejs, EjsArray *results, cchar *dir, int flags
     int         next, included;
 
     if ((list = mprGetPathFiles(dir, flags)) == 0) {
-        if (flags & FILES_MISSING) {
+        if (flags & FILES_NOMATCH_EXC) {
             ejsThrowIOError(ejs, "Can't read directory");
         }
         return results;
@@ -572,17 +578,23 @@ static EjsArray *getPathFiles(Ejs *ejs, EjsArray *results, cchar *dir, int flags
             ejsSetProperty(ejs, results, -1, ejsCreatePathFromAsc(ejs, path));
         }
     }
+    if (ejsGetLength(ejs, results) == 0) {
+        if (flags & FILES_NOMATCH_EXC) {
+            ejsThrowIOError(ejs, "Can't find any matching files for directory: %s", dir);
+        }
+    }
     return results;
 }
 
 
 /*
     Get the files in a directory and subdirectories
-    function glob(pattern: String, options: Object = null): Array
+    function glob(patterns: Array|String|Path, options: Object = null): Array
  */
 static EjsArray *path_glob(Ejs *ejs, EjsPath *fp, int argc, EjsObj **argv)
 {
     MprFileSystem   *fs;
+    EjsAny          *vp, *fill;
     EjsObj          *options;
     EjsArray        *result, *patterns;
     EjsRegExp       *exclude, *include;
@@ -595,6 +607,14 @@ static EjsArray *path_glob(Ejs *ejs, EjsPath *fp, int argc, EjsObj **argv)
     result = ejsCreateArray(ejs, 0);
     fs = mprLookupFileSystem(fp->value);
     flags = 0;
+    fill = 0;
+
+    if (!ejsIs(ejs, argv[0], Array)) {
+        patterns = ejsCreateArray(ejs, 0);
+        ejsAddItem(ejs, patterns, ejsToString(ejs, argv[0]));
+    } else {
+        patterns = (EjsArray*) argv[0];
+    }
 
     if (options) {
         if (ejsGetPropertyByName(ejs, options, EN("depthFirst")) == ESV(true)) {
@@ -613,20 +633,19 @@ static EjsArray *path_glob(Ejs *ejs, EjsPath *fp, int argc, EjsObj **argv)
             ejsThrowArgError(ejs, "Include option must be a regular expression");
             return 0;
         }
-        if (ejsGetPropertyByName(ejs, options, EN("missing")) == ESV(true)) {
-            flags |= FILES_MISSING;
+        if ((vp = ejsGetPropertyByName(ejs, options, EN("missing"))) != 0) {
+            if (vp == ESV(undefined)) {
+                flags |= FILES_NOMATCH_EXC;
+            } else if (vp == ESV(empty)) {
+                fill = ejsToString(ejs, patterns);
+            } else if (vp != ESV(null)) {
+                fill = vp;
+            }
         }
         if (ejsGetPropertyByName(ejs, options, EN("relative")) == ESV(true)) {
             flags |= FILES_RELATIVE;
         } 
     }
-    if (!ejsIs(ejs, argv[0], Array)) {
-        patterns = ejsCreateArray(ejs, 0);
-        ejsAddItem(ejs, patterns, ejsToString(ejs, argv[0]));
-    } else {
-        patterns = (EjsArray*) argv[0];
-    }
-
     for (i = 0; i < patterns->length; i++) {
         /* 
             Optimize by converting absolute pattern path prefixes into the base directory.
@@ -657,6 +676,13 @@ static EjsArray *path_glob(Ejs *ejs, EjsPath *fp, int argc, EjsObj **argv)
         }
         if (!globPath(ejs, result, path, base, pattern, flags, exclude, include)) {
             return 0;
+        }
+    }
+    if (ejsGetLength(ejs, result) == 0) {
+        if (flags & FILES_NOMATCH_EXC) {
+            ejsThrowIOError(ejs, "Can't find any matching files for patterns: %@", ejsToString(ejs, patterns));
+        } else if (fill) {
+            ejsSetProperty(ejs, result, -1, fill);
         }
     }
     return result;
@@ -763,7 +789,7 @@ static EjsArray *globPath(Ejs *ejs, EjsArray *results, cchar *path, cchar *base,
     int             next, add;
 
     if ((list = mprGetPathFiles(path, flags | MPR_PATH_RELATIVE)) == 0) {
-        if (flags & FILES_MISSING) {
+        if (flags & FILES_NOMATCH_EXC) {
             ejsThrowIOError(ejs, "Can't read directory");
             return 0;
         }

@@ -29,6 +29,7 @@ public class Bit {
     private var envSettings: Object
     private var local: Object
     private var localPlatform: String
+    private var missing
     private var options: Object = { control: {}}
     private var out: Stream
     private var platforms: Array
@@ -1224,6 +1225,11 @@ public class Bit {
         if (!bit.dir.inc.join('buildConfig.h').exists && args.rest[0] != 'clobber') {
             throw 'Can\'t load buildConfig.h. Run configure or "bit configure".'
         }
+        /* 
+            When cross generating, certain wild cards can't be resolved.
+            Setting missing to empty will cause missing glob patterns to be replaced with the pattern itself 
+         */
+        missing = ''
         setTypes()
         expandTokens(bit)
         setConstVars()
@@ -1357,14 +1363,14 @@ public class Bit {
         let files
         if (include is RegExp) {
             //  MOB - should be relative to the bit file that created this
-            files = Path(src).glob('*', {include: include})
+            files = Path(src).glob('*', {include: include, missing: missing})
         } else {
             if (!(include is Array)) {
                 include = [ include ]
             }
             files = []
             for each (pattern in include) {
-                files += Path('.').glob(pattern)
+                files += Path('.').glob(pattern, {missing: missing})
             }
         }
         if (exclude) {
@@ -1650,6 +1656,7 @@ public class Bit {
             trace('Info', target.message)
         }
         bit.target = target
+
         if (target.type == 'lib') {
             buildLib(target)
         } else if (target.type == 'exe') {
@@ -1869,7 +1876,6 @@ command = command.expand(bit, {fill: ''})
                 genout.writeLine('cp -r ' + file.relative + ' ' + target.path.relative + '\n')
 
             } else if (generating == 'make') {
-if (target.name == 'bit.exe') genout.writeLine('#@@@')
                 genout.writeLine(platformReplace(target.path.relative) + ': ' + platformReplace(getTargetDeps(target)))
                 genout.writeLine('\trm -fr ' + target.path.relative)
                 genout.writeLine('\tcp -r ' + file.relative + ' ' + target.path.relative + '\n')

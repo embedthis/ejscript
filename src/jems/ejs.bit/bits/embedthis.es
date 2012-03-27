@@ -183,7 +183,7 @@ public function install(src, dest: Path, options = {}) {
     if (options.cat) {
         let files = []
         for each (pat in src) {
-            files += Path('.').glob(pat)
+            files += Path('.').glob(pat, {missing: undefined})
         }
         src = files.unique()
     }
@@ -237,7 +237,7 @@ function packageSimple(pkg: Path, options, fmt) {
 
     trace('Package', zname)
     let tar = new Tar(name, options)
-    tar.create(pkg.glob('**', {exclude: /\/$/}))
+    tar.create(pkg.glob('**', {exclude: /\/$/, missing: undefined}))
     use namespace 'ejs.zlib'
     global.Zlib.compress(tar.name, zname)
     name.remove()
@@ -253,7 +253,7 @@ function packageFlat(pkg: Path, options) {
     safeRemove(flat)
     let vflat = flat.join(options.vname)
     vflat.makeDir()
-    for each (f in pkg.glob('**', {exclude: /\/$/})) {
+    for each (f in pkg.glob('**', {exclude: /\/$/, missing: undefined})) {
         f.copy(vflat.join(f.basename))
     }
     packageSimple(flat, options, 'flat')
@@ -273,7 +273,7 @@ function packageTar(pkg: Path, options) {
     let base = [s.product, s.version, s.buildNumber, bit.platform.dist, OS.toUpper(), ARCH].join('-')
     let name = rel.join(base).joinExt('tar', true)
     let zname = name.replaceExt('tgz')
-    let files = pkg.glob('**', {exclude: /\/$/})
+    let files = pkg.glob('**', {exclude: /\/$/, missing: undefined})
     let tar = new Tar(name, options)
 
     trace('Package', zname)
@@ -297,7 +297,7 @@ function packageInstall(pkg: Path, options) {
     let base = [s.product, s.version, s.buildNumber, bit.platform.dist, OS.toUpper(), ARCH].join('-')
     let name = rel.join(base).joinExt('tar', true)
     let contents = pkg.join(options.vname, 'contents')
-    let files = contents.glob('**')
+    let files = contents.glob('**', {missing: undefined})
     let log = []
     for each (file in files) {
         let target = Path('/' + file.relativeTo(contents))
@@ -357,7 +357,7 @@ function createMacContents(pkg: Path, options) {
     cp.write('<pkg-contents spec="1.12">')
     cp.write('<f n="contents" o="root" g="wheel" p="16877" pt="' + contents + '" m="false" t="file">')
     options.staff = staffDir
-    for each (dir in contents.glob('*', {include: /\/$/})) {
+    for each (dir in contents.glob('*', {include: /\/$/, missing: undefined})) {
         inner(pkg, options, cp, dir)
     }
 
@@ -387,9 +387,9 @@ function packageMacosx(pkg: Path, options) {
     let rel = bit.dir.rel
     let base = [s.product, s.version, s.buildNumber, bit.platform.dist, OS.toUpper(), ARCH].join('-')
     let name = rel.join(base).joinExt('tar', true)
-    let files = pkg.glob('**', {exclude: /\/$/})
+    let files = pkg.glob('**', {exclude: /\/$/, missing: undefined})
     let size = 20
-    for each (file in pkg.glob('**', {exclude: /\/$/})) {
+    for each (file in pkg.glob('**', {exclude: /\/$/, missing: undefined})) {
         size += ((file.size + 999) / 1000)
     }
     bit.PACKAGE_SIZE = size
@@ -456,7 +456,7 @@ function packageWin(pkg: Path, options) {
     let iss = pkg.join('install.iss')
     install(opak.join('install.iss'), iss, {expand: true})
     let cp: File = iss.open('atw')
-    let files = pkg.glob('**', {exclude: /\/$/})
+    let files = pkg.glob('**', {exclude: /\/$/, missing: undefined})
     for each (file in files) {
         let src = file.relativeTo(pkg)
         let dest = bit.prefixes.product.join(file)

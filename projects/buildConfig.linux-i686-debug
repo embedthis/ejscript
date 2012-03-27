@@ -24,7 +24,7 @@
 #define BLD_CPU "i686"
 #define BIT_CPU_ARCH MPR_CPU_IX86
 #define BLD_OS "LINUX"
-#define BLD_CONFIG_CMD "bit -emulate linux-i686 -without all configure -gen sh,make"
+#define BLD_CONFIG_CMD "bit -emulate linux-i686 -without all configure -gen make"
 #define BLD_LIB_NAME "lib"
 #define BLD_CFG_PREFIX "/etc/ejs"
 #define BLD_BIN_PREFIX "/usr/lib/ejs/2.0.0/bin"

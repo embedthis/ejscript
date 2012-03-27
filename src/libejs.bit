@@ -7,7 +7,7 @@ Bit.load({
     targets: {
         libejs: {
             type: 'lib',
-            headers: [ 'slots/*.h', '*.h', 'compiler/*.h' ], 
+            headers: [ 'slots/*.h', '*.h' ], 
             sources: [ 
                 'compiler/*.c',
                 'core/src/*.c',
