@@ -1,3 +1,4 @@
+<<<<<<< HEAD
 Microsoft Visual Studio Solution File, Format Version 11.00
 # Visual Studio 2010
 Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "libmpr", "win-i686-debug\libmpr.vcxproj", "{7E61D7A9-2399-4FEA-B5BD-7C3CE09D67A7}"
@@ -138,3 +139,125 @@ EndGlobalSection
     HideSolutionNode = FALSE
   EndGlobalSection
 EndGlobal
+=======
+Microsoft Visual Studio Solution File, Format Version 11.00
+# Visual Studio 2010
+Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "libmpr", "win-i686-debug\libmpr.vcxproj", "{26F84B58-09C6-400A-91F6-20CF2BCC83CC}"
+EndProject
+Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "makerom", "win-i686-debug\makerom.vcxproj", "{44325A57-1752-4C2C-AC38-DB6D24AD5BC5}"
+	ProjectSection(ProjectDependencies) = postProject
+		{26F84B58-09C6-400A-91F6-20CF2BCC83CC} = {26F84B58-09C6-400A-91F6-20CF2BCC83CC}
+	EndProjectSection
+EndProject
+Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "libpcre", "win-i686-debug\libpcre.vcxproj", "{70C0CD68-DE2A-4960-88C8-3DF5AA3D2AB3}"
+EndProject
+Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "libhttp", "win-i686-debug\libhttp.vcxproj", "{01D7BA07-31B9-4DA4-91EE-06F79A073791}"
+	ProjectSection(ProjectDependencies) = postProject
+		{26F84B58-09C6-400A-91F6-20CF2BCC83CC} = {26F84B58-09C6-400A-91F6-20CF2BCC83CC}
+	EndProjectSection
+	ProjectSection(ProjectDependencies) = postProject
+		{70C0CD68-DE2A-4960-88C8-3DF5AA3D2AB3} = {70C0CD68-DE2A-4960-88C8-3DF5AA3D2AB3}
+	EndProjectSection
+EndProject
+Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "http", "win-i686-debug\http.vcxproj", "{9C5216B0-3090-44EF-A5C0-B73740F47157}"
+	ProjectSection(ProjectDependencies) = postProject
+		{01D7BA07-31B9-4DA4-91EE-06F79A073791} = {01D7BA07-31B9-4DA4-91EE-06F79A073791}
+	EndProjectSection
+EndProject
+Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "libsqlite3", "win-i686-debug\libsqlite3.vcxproj", "{29CD7F5C-39F4-4336-8252-A714E8440237}"
+EndProject
+Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "libejs", "win-i686-debug\libejs.vcxproj", "{E9688778-5117-4F8E-80E3-187F110B9E01}"
+	ProjectSection(ProjectDependencies) = postProject
+		{26F84B58-09C6-400A-91F6-20CF2BCC83CC} = {26F84B58-09C6-400A-91F6-20CF2BCC83CC}
+	EndProjectSection
+	ProjectSection(ProjectDependencies) = postProject
+		{70C0CD68-DE2A-4960-88C8-3DF5AA3D2AB3} = {70C0CD68-DE2A-4960-88C8-3DF5AA3D2AB3}
+	EndProjectSection
+	ProjectSection(ProjectDependencies) = postProject
+		{01D7BA07-31B9-4DA4-91EE-06F79A073791} = {01D7BA07-31B9-4DA4-91EE-06F79A073791}
+	EndProjectSection
+EndProject
+Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "ejs", "win-i686-debug\ejs.vcxproj", "{B0CF7376-9C95-46E9-97C3-807689B0AA40}"
+	ProjectSection(ProjectDependencies) = postProject
+		{E9688778-5117-4F8E-80E3-187F110B9E01} = {E9688778-5117-4F8E-80E3-187F110B9E01}
+	EndProjectSection
+EndProject
+Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "ejsc", "win-i686-debug\ejsc.vcxproj", "{2A2EF086-0175-429B-B6CC-761F04360A8A}"
+	ProjectSection(ProjectDependencies) = postProject
+		{E9688778-5117-4F8E-80E3-187F110B9E01} = {E9688778-5117-4F8E-80E3-187F110B9E01}
+	EndProjectSection
+EndProject
+Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "ejsmod", "win-i686-debug\ejsmod.vcxproj", "{68211EFA-B250-497E-8F5E-A78A0ED863F7}"
+	ProjectSection(ProjectDependencies) = postProject
+		{E9688778-5117-4F8E-80E3-187F110B9E01} = {E9688778-5117-4F8E-80E3-187F110B9E01}
+	EndProjectSection
+EndProject
+Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "ejsrun", "win-i686-debug\ejsrun.vcxproj", "{6876EDE9-F6D8-4E61-8175-90303C6A8F30}"
+	ProjectSection(ProjectDependencies) = postProject
+		{E9688778-5117-4F8E-80E3-187F110B9E01} = {E9688778-5117-4F8E-80E3-187F110B9E01}
+	EndProjectSection
+EndProject
+Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "ejs.db.sqlite", "win-i686-debug\ejs.db.sqlite", "{EFADFCD7-73B0-4456-AE3E-5A95111C83C4}"
+	ProjectSection(ProjectDependencies) = postProject
+		{26F84B58-09C6-400A-91F6-20CF2BCC83CC} = {26F84B58-09C6-400A-91F6-20CF2BCC83CC}
+	EndProjectSection
+	ProjectSection(ProjectDependencies) = postProject
+		{E9688778-5117-4F8E-80E3-187F110B9E01} = {E9688778-5117-4F8E-80E3-187F110B9E01}
+	EndProjectSection
+	ProjectSection(ProjectDependencies) = postProject
+		{29CD7F5C-39F4-4336-8252-A714E8440237} = {29CD7F5C-39F4-4336-8252-A714E8440237}
+	EndProjectSection
+EndProject
+Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "ejs.web", "win-i686-debug\ejs.web", "{29C5A464-36F5-4101-99CB-DF53E63F61F5}"
+	ProjectSection(ProjectDependencies) = postProject
+		{26F84B58-09C6-400A-91F6-20CF2BCC83CC} = {26F84B58-09C6-400A-91F6-20CF2BCC83CC}
+	EndProjectSection
+	ProjectSection(ProjectDependencies) = postProject
+		{01D7BA07-31B9-4DA4-91EE-06F79A073791} = {01D7BA07-31B9-4DA4-91EE-06F79A073791}
+	EndProjectSection
+	ProjectSection(ProjectDependencies) = postProject
+		{70C0CD68-DE2A-4960-88C8-3DF5AA3D2AB3} = {70C0CD68-DE2A-4960-88C8-3DF5AA3D2AB3}
+	EndProjectSection
+	ProjectSection(ProjectDependencies) = postProject
+		{E9688778-5117-4F8E-80E3-187F110B9E01} = {E9688778-5117-4F8E-80E3-187F110B9E01}
+	EndProjectSection
+EndProject
+
+Global
+	GlobalSection(SolutionConfigurationPlatforms) = preSolution
+		Debug|Win32 = Debug|Win32
+	EndGlobalSection
+	GlobalSection(ProjectConfigurationPlatforms) = postSolution
+{26F84B58-09C6-400A-91F6-20CF2BCC83CC}.Debug|Win32.ActiveCfg = Debug|Win32
+{26F84B58-09C6-400A-91F6-20CF2BCC83CC}.Debug|Win32.Build.0 = Debug|Win32
+{44325A57-1752-4C2C-AC38-DB6D24AD5BC5}.Debug|Win32.ActiveCfg = Debug|Win32
+{44325A57-1752-4C2C-AC38-DB6D24AD5BC5}.Debug|Win32.Build.0 = Debug|Win32
+{70C0CD68-DE2A-4960-88C8-3DF5AA3D2AB3}.Debug|Win32.ActiveCfg = Debug|Win32
+{70C0CD68-DE2A-4960-88C8-3DF5AA3D2AB3}.Debug|Win32.Build.0 = Debug|Win32
+{01D7BA07-31B9-4DA4-91EE-06F79A073791}.Debug|Win32.ActiveCfg = Debug|Win32
+{01D7BA07-31B9-4DA4-91EE-06F79A073791}.Debug|Win32.Build.0 = Debug|Win32
+{9C5216B0-3090-44EF-A5C0-B73740F47157}.Debug|Win32.ActiveCfg = Debug|Win32
+{9C5216B0-3090-44EF-A5C0-B73740F47157}.Debug|Win32.Build.0 = Debug|Win32
+{29CD7F5C-39F4-4336-8252-A714E8440237}.Debug|Win32.ActiveCfg = Debug|Win32
+{29CD7F5C-39F4-4336-8252-A714E8440237}.Debug|Win32.Build.0 = Debug|Win32
+{E9688778-5117-4F8E-80E3-187F110B9E01}.Debug|Win32.ActiveCfg = Debug|Win32
+{E9688778-5117-4F8E-80E3-187F110B9E01}.Debug|Win32.Build.0 = Debug|Win32
+{B0CF7376-9C95-46E9-97C3-807689B0AA40}.Debug|Win32.ActiveCfg = Debug|Win32
+{B0CF7376-9C95-46E9-97C3-807689B0AA40}.Debug|Win32.Build.0 = Debug|Win32
+{2A2EF086-0175-429B-B6CC-761F04360A8A}.Debug|Win32.ActiveCfg = Debug|Win32
+{2A2EF086-0175-429B-B6CC-761F04360A8A}.Debug|Win32.Build.0 = Debug|Win32
+{68211EFA-B250-497E-8F5E-A78A0ED863F7}.Debug|Win32.ActiveCfg = Debug|Win32
+{68211EFA-B250-497E-8F5E-A78A0ED863F7}.Debug|Win32.Build.0 = Debug|Win32
+{6876EDE9-F6D8-4E61-8175-90303C6A8F30}.Debug|Win32.ActiveCfg = Debug|Win32
+{6876EDE9-F6D8-4E61-8175-90303C6A8F30}.Debug|Win32.Build.0 = Debug|Win32
+{EFADFCD7-73B0-4456-AE3E-5A95111C83C4}.Debug|Win32.ActiveCfg = Debug|Win32
+{EFADFCD7-73B0-4456-AE3E-5A95111C83C4}.Debug|Win32.Build.0 = Debug|Win32
+{29C5A464-36F5-4101-99CB-DF53E63F61F5}.Debug|Win32.ActiveCfg = Debug|Win32
+{29C5A464-36F5-4101-99CB-DF53E63F61F5}.Debug|Win32.Build.0 = Debug|Win32
+EndGlobalSection
+
+  GlobalSection(SolutionProperties) = preSolution
+    HideSolutionNode = FALSE
+  EndGlobalSection
+EndGlobal
+>>>>>>> 20276e93968ce288b1caa11f6cc5228045e05759

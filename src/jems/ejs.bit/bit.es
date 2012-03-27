@@ -1108,7 +1108,7 @@ public class Bit {
         genout.writeLine('LDFLAGS   := ' + platformReplace(gen.linker))
         genout.writeLine('LIBS      := ' + gen.libraries + '\n')
         genEnv()
-        genout.writeLine('all: prep \\\n        ' + genAll())
+        genout.writeLine('\nall: prep \\\n        ' + genAll())
         genout.writeLine('.PHONY: prep\n\nprep:')
         genout.writeLine('\t@[ ! -x $(PLATFORM)/inc ] && ' + 
             'mkdir -p $(PLATFORM)/inc $(PLATFORM)/obj $(PLATFORM)/lib $(PLATFORM)/bin ; true')
@@ -2043,7 +2043,7 @@ command = command.expand(bit, {fill: ''})
             libs = libs.clone()
             for (i in libs) {
                 let llib = bit.dir.lib.join("lib" + libs[i]).joinExt(bit.ext.shlib)
-                if (llib.exists) {
+                if (llib.exists || generating) {
                     libs[i] = llib
                 } else {
                     libs[i] = Path(libs[i]).replaceExt(bit.ext.shlib).relative
