@@ -1784,7 +1784,7 @@ public class Bit {
         /* Double expand so rules tokens can use ${OUT} */
         let command = rule.expand(bit, {fill: ''})
         command = command.expand(bit, {fill: ''})
-        trace('Symbols', target.name)
+        // trace('Symbols', target.name)
         let data = run(command, {noshow: true})
         let result = []
         let lines = data.match(/SECT.*External *\| .*/gm)
@@ -2057,7 +2057,6 @@ command = command.expand(bit, {fill: ''})
         Set essential bit variables for build rules
      */
     function setRuleVars(target, kind, file = null) {
-        bit.OUT = target.path
         bit.TARGET = target
         bit.HOME = target.home
         //  MOB - can we do this universally?
@@ -2065,16 +2064,24 @@ command = command.expand(bit, {fill: ''})
             if (bit.HOME) {
                 bit.HOME = bit.HOME.relative
             }
+            bit.OUT = target.path.relative
+        } else {
+            bit.OUT = target.path
         }
         if (kind == 'exe') {
             bit.IN = target.files.join(' ')
-            bit.LIBS = mapLibs(target.libraries)
+            if (!generating) {
+                bit.LIBS = mapLibs(target.libraries)
+            }
         } else if (kind == 'lib') {
-            bit.OUT = target.path
             bit.LIBNAME = target.path.basename
             bit.IN = target.files.join(' ')
-            bit.DEF = Path(target.path.toString().replace(/dll$/, 'def'))
-            bit.LIBS = mapLibs(target.libraries)
+            bit.DEF = Path(target.path.relative.toString().replace(/dll$/, 'def'))
+            if (generating) {
+                bit.LIBS = target.libraries
+            } else {
+                bit.LIBS = mapLibs(target.libraries)
+            }
         } else if (kind == 'obj') {
             bit.IN = file
             bit.CFLAGS = (target.compiler) ? target.compiler.join(' ') : ''
