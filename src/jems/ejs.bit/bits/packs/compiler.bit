@@ -98,6 +98,20 @@ if (bit.emulating) {
             warn64to32: false,
             warnUnused: true,
         }
+    } else if (platform.os == 'macosx') {
+        settings = {
+            hasDoubleBraces: true,
+            hasDynLoad: true,
+            hasMmu: true,
+            hasMtune: true,
+            hasPam: false,
+            hasStackProtector: true,
+            hasSync: true,
+            hasSyncCas: true,
+            hasUnnamedUnions: true,
+            warn64to32: false,
+            warnUnused: false,
+        }
     }
 } else if (platform.like == 'posix' || platform.os == 'vxworks') {
     settings.hasDoubleBraces = compile(cc, '', '#include <stdarg.h>\nva_list d = {{0}};')

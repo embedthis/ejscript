@@ -1119,7 +1119,7 @@ public class Bit {
             'cp projects/buildConfig.$(PLATFORM) $(PLATFORM)/inc/buildConfig.h ; true\n')
         genout.writeLine('clean:')
         action('cleanTargets')
-        genout.writeLine('')
+        genout.writeLine('\nclobber: clean\n\trm -fr ./$(PLATFORM)\n')
         build()
         genout.close()
     }
@@ -1353,8 +1353,7 @@ public class Bit {
     /*
         Build a file list and apply include/exclude filters
      */
-    function buildFileList(include, exclude = null)
-    {
+    function buildFileList(include, exclude = null) {
         let files
         if (include is RegExp) {
             //  MOB - should be relative to the bit file that created this
@@ -1862,12 +1861,15 @@ command = command.expand(bit, {fill: ''})
         setRuleVars(target, 'file')
         for each (let file: Path in target.files) {
             /* Auto-generated headers targets for includes have file == target.path */
-            if (file == target.path) continue
+            if (file == target.path) {
+                continue
+            }
             if (generating == 'sh') {
                 genout.writeLine('rm -rf ' + target.path.relative)
                 genout.writeLine('cp -r ' + file.relative + ' ' + target.path.relative + '\n')
 
             } else if (generating == 'make') {
+if (target.name == 'bit.exe') genout.writeLine('#@@@')
                 genout.writeLine(platformReplace(target.path.relative) + ': ' + platformReplace(getTargetDeps(target)))
                 genout.writeLine('\trm -fr ' + target.path.relative)
                 genout.writeLine('\tcp -r ' + file.relative + ' ' + target.path.relative + '\n')
@@ -1911,7 +1913,7 @@ command = command.expand(bit, {fill: ''})
             }
 
         } else if (generating == 'make') {
-            genout.writeLine(target.path.relative + ': ' + platformReplace(getTargetDeps(target)))
+            genout.writeLine(platformReplace(target.path.relative) + ': ' + platformReplace(getTargetDeps(target)))
             let command ||= target['generate-make']
             let command ||= target['generate-sh']
             if (command) {
@@ -1923,7 +1925,7 @@ command = command.expand(bit, {fill: ''})
             }
 
         } else if (generating == 'nmake') {
-            genout.writeLine(target.path.relative.windows + ': ' + platformReplace(getTargetDeps(target)))
+            genout.writeLine(platformReplace(target.path.relative.windows) + ': ' + platformReplace(getTargetDeps(target)))
             let command ||= target['generate-nmake']
             let command ||= target['generate-make']
             let command ||= target['generate-sh']

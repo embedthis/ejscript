@@ -1,8 +1,10 @@
 #
-#	Makefile.future - Future Makefile to build Ejscript with bit.
+#	Makefile - Makefile to build Ejscript with bit.
 #
-#	This Makefile is used to build Ejscript the first time before bit is available.
-#	Once built, bit can be used directly.
+#	This Makefile will build a "minimal" Ejscript without external packages.
+#	It is used to build Ejscript the first time before bit is available.
+#	Once built, use bit to configure and rebuild as required:
+#		bit configure build
 #	
 
 ARCH 	:= $(shell uname -m)
@@ -22,11 +24,15 @@ ifeq ($(UNAME),Cygwin)
 	OS	:=	win
 endif
 
-all clean compile:
+all compile:
 	make -f projects/$(OS)-$(ARCH)-$(PROFILE).mk $@
+	@echo ; echo 'You can now use "bit" to configure and re-build Ejscript.'
 
 build configure generate test package:
 	@bit $@
+
+clean clobber:
+	make -f projects/$(OS)-$(ARCH)-$(PROFILE).mk $@
 
 version:
 	@bit -q version

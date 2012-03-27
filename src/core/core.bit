@@ -23,7 +23,7 @@ Bit.load({
                 run('ejsc --out ${LIB}/ejs.mod ${settings.esflags} --optimize 9 --bind --require null ' + 
                     Path('.').glob('*.es').sort().join(' '))
                 trace('Generate', 'Core slot files and listings')
-                run('ejsmod --require null --listing --cslots ${LIB}/ejs.mod')
+                run('ejsmod --require null --cslots ${LIB}/ejs.mod')
                 for each (file in Path('.').glob('*.slots.h')) {
                     let dest = bit.dir.inc.join(file.basename)
                     if (!dest.exists || file.readString() != dest.readString()) {
@@ -35,8 +35,8 @@ Bit.load({
             ",
             "generate-sh": "\
                 ejsc --out ${LIB}/ejs.mod ${settings.esflags} --optimize 9 --bind --require null ${SRC}/src/core/*.es 
-                ejsmod --require null --listing --cslots ${LIB}/ejs.mod
-                cp ejs.slots.h ${INC}
+                ejsmod --require null --cslots ${LIB}/ejs.mod
+                if ! diff ejs.slots.h ${INC}/ejs.slots.h >/dev/null; then mv ejs.slots.h ${INC}; fi
             ",
             depends: [ 'ejsc', 'ejsmod' ],
         },
