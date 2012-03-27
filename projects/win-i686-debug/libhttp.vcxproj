@@ -1,4 +1,3 @@
-<<<<<<< HEAD
 <?xml version="1.0" encoding="utf-8"?>
 <Project DefaultTargets="Build" ToolsVersion="4.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
   <ImportGroup Label="PropertySheets" />
@@ -31,7 +30,7 @@
 </ItemGroup>
 
 <PropertyGroup Label="Globals">
-  <ProjectGuid>{c57e1a00-dd49-4b15-a5ff-9068ad19ae7b}</ProjectGuid>
+  <ProjectGuid>{2d699a29-6d88-4d37-931c-a6c9d287abdd}</ProjectGuid>
   <RootNamespace />
   <Keyword>Win32Proj</Keyword>
 </PropertyGroup>
@@ -67,100 +66,6 @@
     </ItemDefinitionGroup>
 <ItemDefinitionGroup>
 <Link>
-  <AdditionalDependencies>C:\cygwin\home\mob\ejs\win-i686-debug\bin\libmpr.lib;C:\cygwin\home\mob\ejs\win-i686-debug\bin\libpcre.lib;C:\cygwin\home\mob\ejs\win-i686-debug\bin\libmprssl.lib;libeay32.lib;ssleay32.lib;%(AdditionalDependencies)</AdditionalDependencies>
-  <AdditionalLibraryDirectories>$(OutDir);C:\cygwin\home\mob\ejs\win-i686-debug\bin;C:\cygwin\home\mob\packages-win-i686\openssl\openssl-1.0.0d\out32dll;%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
-</Link>
-</ItemDefinitionGroup>
-
-<ItemGroup>
-  <ProjectReference Include="libmpr.vcxproj">
-  <Project>7e61d7a9-2399-4fea-b5bd-7c3ce09d67a7</Project>
-  <ReferenceOutputAssembly>false</ReferenceOutputAssembly>
-  </ProjectReference>
-</ItemGroup>
-
-<ItemGroup>
-  <ProjectReference Include="libpcre.vcxproj">
-  <Project>336821a0-5e34-4a51-8834-5749deedf8a7</Project>
-  <ReferenceOutputAssembly>false</ReferenceOutputAssembly>
-  </ProjectReference>
-</ItemGroup>
-
-<ItemGroup>
-  <ProjectReference Include="libmprssl.vcxproj">
-  <Project>e6d710da-41c0-45f3-8287-a7ad915ed2d4</Project>
-  <ReferenceOutputAssembly>false</ReferenceOutputAssembly>
-  </ProjectReference>
-</ItemGroup>
-
-<Import Project="$(VCTargetsPath)Microsoft.Cpp.targets" />
-<ImportGroup Label="ExtensionTargets">
-</ImportGroup>
-
-</Project>
-=======
-<?xml version="1.0" encoding="utf-8"?>
-<Project DefaultTargets="Build" ToolsVersion="4.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
-  <ImportGroup Label="PropertySheets" />
-  <PropertyGroup Label="UserMacros" />
-  <PropertyGroup />
-  <ItemDefinitionGroup>
-    <ClCompile>
-      <WarningLevel>Level3</WarningLevel>
-      <AdditionalIncludeDirectories>..\..\win-i686-debug\inc;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
-    
-  <PreprocessorDefinitions>WIN32;_DEBUG;_WINDOWS;DEBUG_IDE;_REENTRANT;_MT;%(PreprocessorDefinitions)</PreprocessorDefinitions>
-    <Optimization>Disabled</Optimization>
-    <BasicRuntimeChecks>EnableFastChecks</BasicRuntimeChecks>
-    <RuntimeLibrary>MultiThreadedDebugDLL</RuntimeLibrary>
-    </ClCompile>
-    <Link>
-      <AdditionalDependencies>ws2_32.lib;%(AdditionalDependencies)</AdditionalDependencies>
-      <AdditionalLibraryDirectories>$(OutDir);%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
-      <SubSystem>Console</SubSystem>
-      <GenerateDebugInformation>true</GenerateDebugInformation>
-    </Link>
-  </ItemDefinitionGroup>
-  <ItemGroup />
-
-<ItemGroup Label="ProjectConfigurations">
-  <ProjectConfiguration Include="Debug|Win32">
-    <Configuration>Debug</Configuration>
-    <Platform>Win32</Platform>
-  </ProjectConfiguration>
-</ItemGroup>
-
-<PropertyGroup Label="Globals">
-  <ProjectGuid>{01d7ba07-31b9-4da4-91ee-06f79a073791}</ProjectGuid>
-  <RootNamespace />
-  <Keyword>Win32Proj</Keyword>
-</PropertyGroup>
-
-<Import Project="$(VCTargetsPath)Microsoft.Cpp.Default.props" />
-
-<PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'" Label="Configuration">
-  <ConfigurationType>DynamicLibrary</ConfigurationType>
-  <CharacterSet>NotSet</CharacterSet>
-</PropertyGroup>
-
-<Import Project="$(VCTargetsPath)Microsoft.Cpp.props" />
-
-<ImportGroup Label="ExtensionSettings">
-</ImportGroup>
-
-<PropertyGroup Label="UserMacros" />
-
-<PropertyGroup>
-  <_ProjectFileVersion>10</_ProjectFileVersion>
-  <OutDir Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">..\..\win-i686-debug\bin\</OutDir>
-  <IntDir Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">..\..\win-i686-debug\obj\libhttp\</IntDir>
-</PropertyGroup>
-    
-<ItemGroup>
-  <ClCompile Include="..\..\src\deps\http\httpLib.c" />
-</ItemGroup>
-<ItemDefinitionGroup>
-<Link>
   <AdditionalDependencies>mpr.lib;pcre.lib;%(AdditionalDependencies)</AdditionalDependencies>
   <AdditionalLibraryDirectories>$(OutDir);/Users/mob/git/ejs/win-i686-debug/bin;%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
 </Link>
@@ -168,14 +73,14 @@
 
 <ItemGroup>
   <ProjectReference Include="libmpr.vcxproj">
-  <Project>26f84b58-09c6-400a-91f6-20cf2bcc83cc</Project>
+  <Project>30e929b0-2107-4202-b2bd-cc1cb58758cd</Project>
   <ReferenceOutputAssembly>false</ReferenceOutputAssembly>
   </ProjectReference>
 </ItemGroup>
 
 <ItemGroup>
   <ProjectReference Include="libpcre.vcxproj">
-  <Project>70c0cd68-de2a-4960-88c8-3df5aa3d2ab3</Project>
+  <Project>d8e0fd25-afcf-48e4-b5ee-15fd3555a02a</Project>
   <ReferenceOutputAssembly>false</ReferenceOutputAssembly>
   </ProjectReference>
 </ItemGroup>
@@ -185,4 +90,3 @@
 </ImportGroup>
 
 </Project>
->>>>>>> 20276e93968ce288b1caa11f6cc5228045e05759

@@ -45,6 +45,7 @@
 #define BLD_SHOBJ ".so"
 #define BLD_LIB ".a"
 #define BLD_OBJ ".o"
+#define BLD_MANAGER "ejsman"
 #define BLD_CC_DOUBLE_BRACES 0
 #define BLD_CC_DYN_LOAD 0
 #define BLD_CC_EDITLINE 0

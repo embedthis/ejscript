@@ -23,6 +23,10 @@ ${CC} -c -o ${PLATFORM}/obj/mprLib.o -arch i686 ${CFLAGS} ${DFLAGS} -I${PLATFORM
 
 ${CC} -dynamiclib -o ${PLATFORM}/lib/libmpr.dylib -arch i686 -Wl,-rpath,@executable_path/../lib -Wl,-rpath,@executable_path/ -Wl,-rpath,@loader_path/ -L${PLATFORM}/lib -g -install_name @rpath/libmpr.dylib ${PLATFORM}/obj/mprLib.o ${LIBS}
 
+${CC} -c -o ${PLATFORM}/obj/manager.o -arch i686 ${CFLAGS} ${DFLAGS} -I${PLATFORM}/inc src/deps/mpr/manager.c
+
+${CC} -o ${PLATFORM}/bin/ejsman -arch i686 -Wl,-rpath,@executable_path/../lib -Wl,-rpath,@executable_path/ -Wl,-rpath,@loader_path/ -L${PLATFORM}/lib -g -L${PLATFORM}/lib ${PLATFORM}/obj/manager.o ${LIBS} -lmpr
+
 ${CC} -c -o ${PLATFORM}/obj/makerom.o -arch i686 ${CFLAGS} ${DFLAGS} -I${PLATFORM}/inc src/deps/mpr/makerom.c
 
 ${CC} -o ${PLATFORM}/bin/makerom -arch i686 -Wl,-rpath,@executable_path/../lib -Wl,-rpath,@executable_path/ -Wl,-rpath,@loader_path/ -L${PLATFORM}/lib -g -L${PLATFORM}/lib ${PLATFORM}/obj/makerom.o ${LIBS} -lmpr

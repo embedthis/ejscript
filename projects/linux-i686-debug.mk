@@ -13,6 +13,7 @@ LIBS      := -lpthread -lm
 
 all: prep \
         $(PLATFORM)/lib/libmpr.so \
+        $(PLATFORM)/bin/ejsman \
         $(PLATFORM)/bin/makerom \
         $(PLATFORM)/lib/libpcre.so \
         $(PLATFORM)/lib/libhttp.so \
@@ -55,7 +56,7 @@ prep:
 clean:
 	rm -rf $(PLATFORM)/lib/libmpr.so
 	rm -rf $(PLATFORM)/lib/libmprssl.so
-	rm -rf $(PLATFORM)/bin/${settings.manager}
+	rm -rf $(PLATFORM)/bin/ejsman
 	rm -rf $(PLATFORM)/bin/makerom
 	rm -rf $(PLATFORM)/lib/libpcre.so
 	rm -rf $(PLATFORM)/lib/libhttp.so
@@ -188,6 +189,16 @@ $(PLATFORM)/lib/libmpr.so:  \
         $(PLATFORM)/inc/mprSsl.h \
         $(PLATFORM)/obj/mprLib.o
 	$(CC) -shared -o $(PLATFORM)/lib/libmpr.so -Wl,--enable-new-dtags -Wl,-rpath,$ORIGIN/ -Wl,-rpath,$ORIGIN/../lib -L$(PLATFORM)/lib -g -ldl $(PLATFORM)/obj/mprLib.o $(LIBS)
+
+$(PLATFORM)/obj/manager.o: \
+        src/deps/mpr/manager.c \
+        $(PLATFORM)/inc/buildConfig.h
+	$(CC) -c -o $(PLATFORM)/obj/manager.o $(CFLAGS) $(DFLAGS) -I$(PLATFORM)/inc src/deps/mpr/manager.c
+
+$(PLATFORM)/bin/ejsman:  \
+        $(PLATFORM)/lib/libmpr.so \
+        $(PLATFORM)/obj/manager.o
+	$(CC) -o $(PLATFORM)/bin/ejsman -Wl,--enable-new-dtags -Wl,-rpath,$ORIGIN/ -Wl,-rpath,$ORIGIN/../lib -L$(PLATFORM)/lib -g -ldl -L$(PLATFORM)/lib $(PLATFORM)/obj/manager.o $(LIBS) -lmpr -Wl,--enable-new-dtags -Wl,-rpath,$ORIGIN/ -Wl,-rpath,$ORIGIN/../lib -L$(PLATFORM)/lib -g -ldl
 
 $(PLATFORM)/obj/makerom.o: \
         src/deps/mpr/makerom.c \

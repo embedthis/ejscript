@@ -1,4 +1,3 @@
-<<<<<<< HEAD
 <?xml version="1.0" encoding="utf-8"?>
 <Project DefaultTargets="Build" ToolsVersion="4.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
   <ImportGroup Label="PropertySheets" />
@@ -31,87 +30,7 @@
 </ItemGroup>
 
 <PropertyGroup Label="Globals">
-  <ProjectGuid>{3826bf24-1397-4d94-98be-d9e68f3ce06a}</ProjectGuid>
-  <RootNamespace />
-  <Keyword>Win32Proj</Keyword>
-</PropertyGroup>
-
-<Import Project="$(VCTargetsPath)Microsoft.Cpp.Default.props" />
-
-<PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'" Label="Configuration">
-  <ConfigurationType>Application</ConfigurationType>
-  <CharacterSet>NotSet</CharacterSet>
-</PropertyGroup>
-
-<Import Project="$(VCTargetsPath)Microsoft.Cpp.props" />
-
-<ImportGroup Label="ExtensionSettings">
-</ImportGroup>
-
-<PropertyGroup Label="UserMacros" />
-
-<PropertyGroup>
-  <_ProjectFileVersion>10</_ProjectFileVersion>
-  <OutDir Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">..\..\win-i686-debug\bin\</OutDir>
-  <IntDir Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">..\..\win-i686-debug\obj\http\</IntDir>
-</PropertyGroup>
-    
-<ItemGroup>
-  <ClCompile Include="..\..\src\deps\http\http.c" />
-</ItemGroup>
-<ItemDefinitionGroup>
-<Link>
-  <AdditionalDependencies>C:\cygwin\home\mob\ejs\win-i686-debug\bin\libhttp.lib;C:\cygwin\home\mob\ejs\win-i686-debug\bin\libmpr.lib;C:\cygwin\home\mob\ejs\win-i686-debug\bin\libpcre.lib;C:\cygwin\home\mob\ejs\win-i686-debug\bin\libmprssl.lib;libeay32.lib;ssleay32.lib;%(AdditionalDependencies)</AdditionalDependencies>
-  <AdditionalLibraryDirectories>$(OutDir);C:\cygwin\home\mob\ejs\win-i686-debug\bin;C:\cygwin\home\mob\packages-win-i686\openssl\openssl-1.0.0d\out32dll;%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
-</Link>
-</ItemDefinitionGroup>
-
-<ItemGroup>
-  <ProjectReference Include="libhttp.vcxproj">
-  <Project>c57e1a00-dd49-4b15-a5ff-9068ad19ae7b</Project>
-  <ReferenceOutputAssembly>false</ReferenceOutputAssembly>
-  </ProjectReference>
-</ItemGroup>
-
-<Import Project="$(VCTargetsPath)Microsoft.Cpp.targets" />
-<ImportGroup Label="ExtensionTargets">
-</ImportGroup>
-
-</Project>
-=======
-<?xml version="1.0" encoding="utf-8"?>
-<Project DefaultTargets="Build" ToolsVersion="4.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
-  <ImportGroup Label="PropertySheets" />
-  <PropertyGroup Label="UserMacros" />
-  <PropertyGroup />
-  <ItemDefinitionGroup>
-    <ClCompile>
-      <WarningLevel>Level3</WarningLevel>
-      <AdditionalIncludeDirectories>..\..\win-i686-debug\inc;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
-    
-  <PreprocessorDefinitions>WIN32;_DEBUG;_WINDOWS;DEBUG_IDE;_REENTRANT;_MT;%(PreprocessorDefinitions)</PreprocessorDefinitions>
-    <Optimization>Disabled</Optimization>
-    <BasicRuntimeChecks>EnableFastChecks</BasicRuntimeChecks>
-    <RuntimeLibrary>MultiThreadedDebugDLL</RuntimeLibrary>
-    </ClCompile>
-    <Link>
-      <AdditionalDependencies>ws2_32.lib;%(AdditionalDependencies)</AdditionalDependencies>
-      <AdditionalLibraryDirectories>$(OutDir);%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
-      <SubSystem>Console</SubSystem>
-      <GenerateDebugInformation>true</GenerateDebugInformation>
-    </Link>
-  </ItemDefinitionGroup>
-  <ItemGroup />
-
-<ItemGroup Label="ProjectConfigurations">
-  <ProjectConfiguration Include="Debug|Win32">
-    <Configuration>Debug</Configuration>
-    <Platform>Win32</Platform>
-  </ProjectConfiguration>
-</ItemGroup>
-
-<PropertyGroup Label="Globals">
-  <ProjectGuid>{9c5216b0-3090-44ef-a5c0-b73740f47157}</ProjectGuid>
+  <ProjectGuid>{c2ca489d-8db5-4f24-908b-c837affd329f}</ProjectGuid>
   <RootNamespace />
   <Keyword>Win32Proj</Keyword>
 </PropertyGroup>
@@ -148,7 +67,7 @@
 
 <ItemGroup>
   <ProjectReference Include="libhttp.vcxproj">
-  <Project>01d7ba07-31b9-4da4-91ee-06f79a073791</Project>
+  <Project>2d699a29-6d88-4d37-931c-a6c9d287abdd</Project>
   <ReferenceOutputAssembly>false</ReferenceOutputAssembly>
   </ProjectReference>
 </ItemGroup>
@@ -158,4 +77,3 @@
 </ImportGroup>
 
 </Project>
->>>>>>> 20276e93968ce288b1caa11f6cc5228045e05759

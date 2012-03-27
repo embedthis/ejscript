@@ -57,7 +57,7 @@ Bit.load({
                 trace('Generate', 'solaris-i686 project')
                 run(bitcmd + ' -emulate solaris-i686 -without all configure -gen sh,make', bit.target.runopt)
                 trace('Generate', 'win-i686 project')
-                run(bitcmd + ' -emulate win-i686 -without all configure -gen sh,make,vs', bit.target.runopt)
+                run(bitcmd + ' -emulate win-i686 -without all configure -gen sh,nmake,vs', bit.target.runopt)
                 /* Leave a normal configuration */ 
                 run(bitcmd + ' configure', bit.target.runopt)
             ",

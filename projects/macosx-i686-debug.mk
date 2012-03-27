@@ -13,6 +13,7 @@ LIBS      := -lpthread -lm
 
 all: prep \
         $(PLATFORM)/lib/libmpr.dylib \
+        $(PLATFORM)/bin/ejsman \
         $(PLATFORM)/bin/makerom \
         $(PLATFORM)/lib/libpcre.dylib \
         $(PLATFORM)/lib/libhttp.dylib \
@@ -57,7 +58,7 @@ prep:
 clean:
 	rm -rf $(PLATFORM)/lib/libmpr.dylib
 	rm -rf $(PLATFORM)/lib/libmprssl.dylib
-	rm -rf $(PLATFORM)/bin/${settings.manager}
+	rm -rf $(PLATFORM)/bin/ejsman
 	rm -rf $(PLATFORM)/bin/makerom
 	rm -rf $(PLATFORM)/lib/libpcre.dylib
 	rm -rf $(PLATFORM)/lib/libhttp.dylib
@@ -190,6 +191,16 @@ $(PLATFORM)/lib/libmpr.dylib:  \
         $(PLATFORM)/inc/mprSsl.h \
         $(PLATFORM)/obj/mprLib.o
 	$(CC) -dynamiclib -o $(PLATFORM)/lib/libmpr.dylib -arch i686 -Wl,-rpath,@executable_path/../lib -Wl,-rpath,@executable_path/ -Wl,-rpath,@loader_path/ -L$(PLATFORM)/lib -g -install_name @rpath/libmpr.dylib $(PLATFORM)/obj/mprLib.o $(LIBS)
+
+$(PLATFORM)/obj/manager.o: \
+        src/deps/mpr/manager.c \
+        $(PLATFORM)/inc/buildConfig.h
+	$(CC) -c -o $(PLATFORM)/obj/manager.o -arch i686 $(CFLAGS) $(DFLAGS) -I$(PLATFORM)/inc src/deps/mpr/manager.c
+
+$(PLATFORM)/bin/ejsman:  \
+        $(PLATFORM)/lib/libmpr.dylib \
+        $(PLATFORM)/obj/manager.o
+	$(CC) -o $(PLATFORM)/bin/ejsman -arch i686 -Wl,-rpath,@executable_path/../lib -Wl,-rpath,@executable_path/ -Wl,-rpath,@loader_path/ -L$(PLATFORM)/lib -g -L$(PLATFORM)/lib $(PLATFORM)/obj/manager.o $(LIBS) -lmpr
 
 $(PLATFORM)/obj/makerom.o: \
         src/deps/mpr/makerom.c \
