@@ -717,9 +717,6 @@ module ejs {
 
         /**
             An equivalent normalized Windows path equivalent for the current path.
-            On Windows, this path with contain a drive specifier and will have back-slash directory separators.
-            On Cygwin, if the path is outside the c:/cygwin directory, the path will have a /cygdrive/DRIVE prefix.
-            On other systems, this will return an absolute path in the native system format.
          */
         native function get windows(): Path
 
