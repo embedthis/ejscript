@@ -86,7 +86,7 @@ if (bit.emulating) {
         }
     } else if (platform.os == 'linux') {
         settings = {
-            hasDoubleBraces: true,
+            hasDoubleBraces: false,
             hasDynLoad: true,
             hasMmu: true,
             hasMtune: true,
