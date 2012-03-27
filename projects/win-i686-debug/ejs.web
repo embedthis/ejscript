@@ -30,7 +30,7 @@
 </ItemGroup>
 
 <PropertyGroup Label="Globals">
-  <ProjectGuid>{c9740bea-705d-4a4e-84c4-d2df518a76b5}</ProjectGuid>
+  <ProjectGuid>{789ac92e-e4ad-498d-ba6b-b6e9eabb52ee}</ProjectGuid>
   <RootNamespace />
   <Keyword>Win32Proj</Keyword>
 </PropertyGroup>
@@ -57,9 +57,9 @@
     
 <ItemGroup>
   <ClCompile Include="..\..\src\jems\ejs.web\src\ejsHttpServer.c" />
+  <ClCompile Include="..\..\src\jems\ejs.web\src\ejsWeb.c" />
   <ClCompile Include="..\..\src\jems\ejs.web\src\ejsRequest.c" />
   <ClCompile Include="..\..\src\jems\ejs.web\src\ejsSession.c" />
-  <ClCompile Include="..\..\src\jems\ejs.web\src\ejsWeb.c" />
 </ItemGroup>
 
     <ItemDefinitionGroup>
@@ -70,34 +70,34 @@
 <ItemDefinitionGroup>
 <Link>
   <AdditionalDependencies>mpr.lib;http.lib;pcre.lib;pcre.lib;ejs.lib;%(AdditionalDependencies)</AdditionalDependencies>
-  <AdditionalLibraryDirectories>$(OutDir);/Users/mob/git/ejs/win-i686-debug/bin;%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
+  <AdditionalLibraryDirectories>$(OutDir);/home/mob/ejs/win-i686-debug/bin;%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
 </Link>
 </ItemDefinitionGroup>
 
 <ItemGroup>
   <ProjectReference Include="libmpr.vcxproj">
-  <Project>4d78f00f-016a-41e9-842e-251f2bd2b8dd</Project>
+  <Project>9edc1687-5396-4784-8bdc-3f3b9569dd01</Project>
   <ReferenceOutputAssembly>false</ReferenceOutputAssembly>
   </ProjectReference>
 </ItemGroup>
 
 <ItemGroup>
   <ProjectReference Include="libhttp.vcxproj">
-  <Project>6cef00e0-7c1c-4264-842a-7fb82a6385c8</Project>
+  <Project>78bf132a-f3c5-47f6-94ef-1423fbb51efd</Project>
   <ReferenceOutputAssembly>false</ReferenceOutputAssembly>
   </ProjectReference>
 </ItemGroup>
 
 <ItemGroup>
   <ProjectReference Include="libpcre.vcxproj">
-  <Project>87d18b18-1a5a-4c21-b4c3-321ebcf06976</Project>
+  <Project>15d31783-78a1-49b1-9cfb-1591ce58aa75</Project>
   <ReferenceOutputAssembly>false</ReferenceOutputAssembly>
   </ProjectReference>
 </ItemGroup>
 
 <ItemGroup>
   <ProjectReference Include="libejs.vcxproj">
-  <Project>2e2f81eb-f310-470a-8cec-7ae736a78db1</Project>
+  <Project>5b276ccb-1299-4187-86f1-9c619c561378</Project>
   <ReferenceOutputAssembly>false</ReferenceOutputAssembly>
   </ProjectReference>
 </ItemGroup>

@@ -30,7 +30,7 @@
 </ItemGroup>
 
 <PropertyGroup Label="Globals">
-  <ProjectGuid>{eb4696fc-f7cf-448b-beac-c0baa610db53}</ProjectGuid>
+  <ProjectGuid>{4060b5f0-a3c7-4f65-90be-ae8fd0d2f590}</ProjectGuid>
   <RootNamespace />
   <Keyword>Win32Proj</Keyword>
 </PropertyGroup>
@@ -67,27 +67,27 @@
 <ItemDefinitionGroup>
 <Link>
   <AdditionalDependencies>mpr.lib;ejs.lib;pcre.lib;http.lib;sqlite3.lib;%(AdditionalDependencies)</AdditionalDependencies>
-  <AdditionalLibraryDirectories>$(OutDir);/Users/mob/git/ejs/win-i686-debug/bin;%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
+  <AdditionalLibraryDirectories>$(OutDir);/home/mob/ejs/win-i686-debug/bin;%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
 </Link>
 </ItemDefinitionGroup>
 
 <ItemGroup>
   <ProjectReference Include="libmpr.vcxproj">
-  <Project>4d78f00f-016a-41e9-842e-251f2bd2b8dd</Project>
+  <Project>9edc1687-5396-4784-8bdc-3f3b9569dd01</Project>
   <ReferenceOutputAssembly>false</ReferenceOutputAssembly>
   </ProjectReference>
 </ItemGroup>
 
 <ItemGroup>
   <ProjectReference Include="libejs.vcxproj">
-  <Project>2e2f81eb-f310-470a-8cec-7ae736a78db1</Project>
+  <Project>5b276ccb-1299-4187-86f1-9c619c561378</Project>
   <ReferenceOutputAssembly>false</ReferenceOutputAssembly>
   </ProjectReference>
 </ItemGroup>
 
 <ItemGroup>
   <ProjectReference Include="libsqlite3.vcxproj">
-  <Project>13d4eb79-fc87-42c8-a00f-de49cdb264ea</Project>
+  <Project>ee160eb8-0d1a-437b-a4fd-6360fb30f4a4</Project>
   <ReferenceOutputAssembly>false</ReferenceOutputAssembly>
   </ProjectReference>
 </ItemGroup>

@@ -46,7 +46,7 @@
 #define BLD_LIB ".a"
 #define BLD_OBJ ".o"
 #define BLD_MANAGER "ejsman"
-#define BLD_CC_DOUBLE_BRACES 1
+#define BLD_CC_DOUBLE_BRACES 0
 #define BLD_CC_DYN_LOAD 0
 #define BLD_CC_EDITLINE 0
 #define BLD_CC_MMU 0
@@ -72,10 +72,9 @@
 #define BLD_FEATURE_PCRE 1
 #define BLD_PCRE "src/deps/pcre"
 #define BLD_FEATURE_HTTP 1
-#define BLD_HTTP "macosx-x86_64-debug/bin/http"
+#define BLD_HTTP "linux-i686-debug/bin/http"
 #define BLD_FEATURE_OPENSSL 0
 #define BLD_FEATURE_MATRIXSSL 0
 #define BLD_FEATURE_SQLITE 1
 #define BLD_SQLITE "src/deps/sqlite"
-#define BLD_FEATURE_ZLIB 1
-#define BLD_ZLIB "../../../../usr/lib/libz.dylib"
+#define BLD_FEATURE_ZLIB 0
