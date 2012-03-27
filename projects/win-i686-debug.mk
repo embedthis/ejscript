@@ -61,122 +61,122 @@ xprep:
 prep:
 
 clean:
-	rm -rf $(PLATFORM)\bin\libmpr.dll
-	rm -rf $(PLATFORM)\bin\libmprssl.dll
-	rm -rf $(PLATFORM)\bin\appman.exe
-	rm -rf $(PLATFORM)\bin\makerom.exe
-	rm -rf $(PLATFORM)\bin\libpcre.dll
-	rm -rf $(PLATFORM)\bin\libhttp.dll
-	rm -rf $(PLATFORM)\bin\http.exe
-	rm -rf $(PLATFORM)\bin\libsqlite3.dll
-	rm -rf $(PLATFORM)\bin\libejs.dll
-	rm -rf $(PLATFORM)\bin\ejs.exe
-	rm -rf $(PLATFORM)\bin\ejsc.exe
-	rm -rf $(PLATFORM)\bin\ejsmod.exe
-	rm -rf $(PLATFORM)\bin\ejsrun.exe
-	rm -rf $(PLATFORM)\bin\ejs.mod
-	rm -rf $(PLATFORM)\bin\bit.es
-	rm -rf $(PLATFORM)\bin\bit.exe
-	rm -rf $(PLATFORM)\bin\utest.es
-	rm -rf $(PLATFORM)\bin\utest.exe
-	rm -rf $(PLATFORM)\bin\bits
-	rm -rf $(PLATFORM)\bin\ejs.unix.mod
-	rm -rf $(PLATFORM)\bin\jem.es
-	rm -rf $(PLATFORM)\bin\jem.exe
-	rm -rf $(PLATFORM)\bin\ejs.db.mod
-	rm -rf $(PLATFORM)\bin\ejs.db.mapper.mod
-	rm -rf $(PLATFORM)\bin\ejs.db.sqlite.mod
-	rm -rf $(PLATFORM)\bin\ejs.db.sqlite.dll
-	rm -rf $(PLATFORM)\bin\ejs.web.mod
-	rm -rf $(PLATFORM)\bin\ejs.web.dll
-	rm -rf $(PLATFORM)\bin\www
-	rm -rf $(PLATFORM)\bin\ejs.template.mod
-	rm -rf $(PLATFORM)\bin\ejs.tar.mod
-	rm -rf $(PLATFORM)\bin\ejs.zlib.mod
-	rm -rf $(PLATFORM)\bin\ejs.zlib.dll
-	rm -rf $(PLATFORM)\bin\mvc.es
-	rm -rf $(PLATFORM)\bin\mvc.exe
-	rm -rf $(PLATFORM)\bin\ejs.mvc.mod
-	rm -rf $(PLATFORM)\bin\utest.worker
-	rm -rf $(PLATFORM)\obj\mprLib.obj
-	rm -rf $(PLATFORM)\obj\mprSsl.obj
-	rm -rf $(PLATFORM)\obj\manager.obj
-	rm -rf $(PLATFORM)\obj\makerom.obj
-	rm -rf $(PLATFORM)\obj\pcre.obj
-	rm -rf $(PLATFORM)\obj\httpLib.obj
-	rm -rf $(PLATFORM)\obj\http.obj
-	rm -rf $(PLATFORM)\obj\sqlite3.obj
-	rm -rf $(PLATFORM)\obj\ecAst.obj
-	rm -rf $(PLATFORM)\obj\ecCodeGen.obj
-	rm -rf $(PLATFORM)\obj\ecCompiler.obj
-	rm -rf $(PLATFORM)\obj\ecLex.obj
-	rm -rf $(PLATFORM)\obj\ecModuleWrite.obj
-	rm -rf $(PLATFORM)\obj\ecParser.obj
-	rm -rf $(PLATFORM)\obj\ecState.obj
-	rm -rf $(PLATFORM)\obj\ejsApp.obj
-	rm -rf $(PLATFORM)\obj\ejsArray.obj
-	rm -rf $(PLATFORM)\obj\ejsBlock.obj
-	rm -rf $(PLATFORM)\obj\ejsBoolean.obj
-	rm -rf $(PLATFORM)\obj\ejsByteArray.obj
-	rm -rf $(PLATFORM)\obj\ejsCache.obj
-	rm -rf $(PLATFORM)\obj\ejsCmd.obj
-	rm -rf $(PLATFORM)\obj\ejsConfig.obj
-	rm -rf $(PLATFORM)\obj\ejsDate.obj
-	rm -rf $(PLATFORM)\obj\ejsDebug.obj
-	rm -rf $(PLATFORM)\obj\ejsError.obj
-	rm -rf $(PLATFORM)\obj\ejsFile.obj
-	rm -rf $(PLATFORM)\obj\ejsFileSystem.obj
-	rm -rf $(PLATFORM)\obj\ejsFrame.obj
-	rm -rf $(PLATFORM)\obj\ejsFunction.obj
-	rm -rf $(PLATFORM)\obj\ejsGC.obj
-	rm -rf $(PLATFORM)\obj\ejsGlobal.obj
-	rm -rf $(PLATFORM)\obj\ejsHttp.obj
-	rm -rf $(PLATFORM)\obj\ejsIterator.obj
-	rm -rf $(PLATFORM)\obj\ejsJSON.obj
-	rm -rf $(PLATFORM)\obj\ejsLocalCache.obj
-	rm -rf $(PLATFORM)\obj\ejsMath.obj
-	rm -rf $(PLATFORM)\obj\ejsMemory.obj
-	rm -rf $(PLATFORM)\obj\ejsMprLog.obj
-	rm -rf $(PLATFORM)\obj\ejsNamespace.obj
-	rm -rf $(PLATFORM)\obj\ejsNull.obj
-	rm -rf $(PLATFORM)\obj\ejsNumber.obj
-	rm -rf $(PLATFORM)\obj\ejsObject.obj
-	rm -rf $(PLATFORM)\obj\ejsPath.obj
-	rm -rf $(PLATFORM)\obj\ejsPot.obj
-	rm -rf $(PLATFORM)\obj\ejsRegExp.obj
-	rm -rf $(PLATFORM)\obj\ejsSocket.obj
-	rm -rf $(PLATFORM)\obj\ejsString.obj
-	rm -rf $(PLATFORM)\obj\ejsSystem.obj
-	rm -rf $(PLATFORM)\obj\ejsTimer.obj
-	rm -rf $(PLATFORM)\obj\ejsType.obj
-	rm -rf $(PLATFORM)\obj\ejsUri.obj
-	rm -rf $(PLATFORM)\obj\ejsVoid.obj
-	rm -rf $(PLATFORM)\obj\ejsWorker.obj
-	rm -rf $(PLATFORM)\obj\ejsXML.obj
-	rm -rf $(PLATFORM)\obj\ejsXMLList.obj
-	rm -rf $(PLATFORM)\obj\ejsXMLLoader.obj
-	rm -rf $(PLATFORM)\obj\ejsByteCode.obj
-	rm -rf $(PLATFORM)\obj\ejsException.obj
-	rm -rf $(PLATFORM)\obj\ejsHelper.obj
-	rm -rf $(PLATFORM)\obj\ejsInterp.obj
-	rm -rf $(PLATFORM)\obj\ejsLoader.obj
-	rm -rf $(PLATFORM)\obj\ejsModule.obj
-	rm -rf $(PLATFORM)\obj\ejsScope.obj
-	rm -rf $(PLATFORM)\obj\ejsService.obj
-	rm -rf $(PLATFORM)\obj\ejs.obj
-	rm -rf $(PLATFORM)\obj\ejsc.obj
-	rm -rf $(PLATFORM)\obj\ejsmod.obj
-	rm -rf $(PLATFORM)\obj\doc.obj
-	rm -rf $(PLATFORM)\obj\docFiles.obj
-	rm -rf $(PLATFORM)\obj\listing.obj
-	rm -rf $(PLATFORM)\obj\slotGen.obj
-	rm -rf $(PLATFORM)\obj\ejsrun.obj
-	rm -rf $(PLATFORM)\obj\ejsSqlite.obj
-	rm -rf $(PLATFORM)\obj\ejsHttpServer.obj
-	rm -rf $(PLATFORM)\obj\ejsRequest.obj
-	rm -rf $(PLATFORM)\obj\ejsSession.obj
-	rm -rf $(PLATFORM)\obj\ejsWeb.obj
-	rm -rf $(PLATFORM)\obj\ejsZlib.obj
+	if exist $(PLATFORM)\bin\libmpr.dll del /Q $(PLATFORM)\bin\libmpr.dll
+	if exist $(PLATFORM)\bin\libmprssl.dll del /Q $(PLATFORM)\bin\libmprssl.dll
+	if exist $(PLATFORM)\bin\appman.exe del /Q $(PLATFORM)\bin\appman.exe
+	if exist $(PLATFORM)\bin\makerom.exe del /Q $(PLATFORM)\bin\makerom.exe
+	if exist $(PLATFORM)\bin\libpcre.dll del /Q $(PLATFORM)\bin\libpcre.dll
+	if exist $(PLATFORM)\bin\libhttp.dll del /Q $(PLATFORM)\bin\libhttp.dll
+	if exist $(PLATFORM)\bin\http.exe del /Q $(PLATFORM)\bin\http.exe
+	if exist $(PLATFORM)\bin\libsqlite3.dll del /Q $(PLATFORM)\bin\libsqlite3.dll
+	if exist $(PLATFORM)\bin\libejs.dll del /Q $(PLATFORM)\bin\libejs.dll
+	if exist $(PLATFORM)\bin\ejs.exe del /Q $(PLATFORM)\bin\ejs.exe
+	if exist $(PLATFORM)\bin\ejsc.exe del /Q $(PLATFORM)\bin\ejsc.exe
+	if exist $(PLATFORM)\bin\ejsmod.exe del /Q $(PLATFORM)\bin\ejsmod.exe
+	if exist $(PLATFORM)\bin\ejsrun.exe del /Q $(PLATFORM)\bin\ejsrun.exe
+	if exist $(PLATFORM)\bin\ejs.mod del /Q $(PLATFORM)\bin\ejs.mod
+	if exist $(PLATFORM)\bin\bit.es del /Q $(PLATFORM)\bin\bit.es
+	if exist $(PLATFORM)\bin\bit.exe del /Q $(PLATFORM)\bin\bit.exe
+	if exist $(PLATFORM)\bin\utest.es del /Q $(PLATFORM)\bin\utest.es
+	if exist $(PLATFORM)\bin\utest.exe del /Q $(PLATFORM)\bin\utest.exe
+	if exist $(PLATFORM)\bin\bits del /Q $(PLATFORM)\bin\bits
+	if exist $(PLATFORM)\bin\ejs.unix.mod del /Q $(PLATFORM)\bin\ejs.unix.mod
+	if exist $(PLATFORM)\bin\jem.es del /Q $(PLATFORM)\bin\jem.es
+	if exist $(PLATFORM)\bin\jem.exe del /Q $(PLATFORM)\bin\jem.exe
+	if exist $(PLATFORM)\bin\ejs.db.mod del /Q $(PLATFORM)\bin\ejs.db.mod
+	if exist $(PLATFORM)\bin\ejs.db.mapper.mod del /Q $(PLATFORM)\bin\ejs.db.mapper.mod
+	if exist $(PLATFORM)\bin\ejs.db.sqlite.mod del /Q $(PLATFORM)\bin\ejs.db.sqlite.mod
+	if exist $(PLATFORM)\bin\ejs.db.sqlite.dll del /Q $(PLATFORM)\bin\ejs.db.sqlite.dll
+	if exist $(PLATFORM)\bin\ejs.web.mod del /Q $(PLATFORM)\bin\ejs.web.mod
+	if exist $(PLATFORM)\bin\ejs.web.dll del /Q $(PLATFORM)\bin\ejs.web.dll
+	if exist $(PLATFORM)\bin\www del /Q $(PLATFORM)\bin\www
+	if exist $(PLATFORM)\bin\ejs.template.mod del /Q $(PLATFORM)\bin\ejs.template.mod
+	if exist $(PLATFORM)\bin\ejs.tar.mod del /Q $(PLATFORM)\bin\ejs.tar.mod
+	if exist $(PLATFORM)\bin\ejs.zlib.mod del /Q $(PLATFORM)\bin\ejs.zlib.mod
+	if exist $(PLATFORM)\bin\ejs.zlib.dll del /Q $(PLATFORM)\bin\ejs.zlib.dll
+	if exist $(PLATFORM)\bin\mvc.es del /Q $(PLATFORM)\bin\mvc.es
+	if exist $(PLATFORM)\bin\mvc.exe del /Q $(PLATFORM)\bin\mvc.exe
+	if exist $(PLATFORM)\bin\ejs.mvc.mod del /Q $(PLATFORM)\bin\ejs.mvc.mod
+	if exist $(PLATFORM)\bin\utest.worker del /Q $(PLATFORM)\bin\utest.worker
+	if exist $(PLATFORM)\obj\mprLib.obj del /Q $(PLATFORM)\obj\mprLib.obj
+	if exist $(PLATFORM)\obj\mprSsl.obj del /Q $(PLATFORM)\obj\mprSsl.obj
+	if exist $(PLATFORM)\obj\manager.obj del /Q $(PLATFORM)\obj\manager.obj
+	if exist $(PLATFORM)\obj\makerom.obj del /Q $(PLATFORM)\obj\makerom.obj
+	if exist $(PLATFORM)\obj\pcre.obj del /Q $(PLATFORM)\obj\pcre.obj
+	if exist $(PLATFORM)\obj\httpLib.obj del /Q $(PLATFORM)\obj\httpLib.obj
+	if exist $(PLATFORM)\obj\http.obj del /Q $(PLATFORM)\obj\http.obj
+	if exist $(PLATFORM)\obj\sqlite3.obj del /Q $(PLATFORM)\obj\sqlite3.obj
+	if exist $(PLATFORM)\obj\ecAst.obj del /Q $(PLATFORM)\obj\ecAst.obj
+	if exist $(PLATFORM)\obj\ecCodeGen.obj del /Q $(PLATFORM)\obj\ecCodeGen.obj
+	if exist $(PLATFORM)\obj\ecCompiler.obj del /Q $(PLATFORM)\obj\ecCompiler.obj
+	if exist $(PLATFORM)\obj\ecLex.obj del /Q $(PLATFORM)\obj\ecLex.obj
+	if exist $(PLATFORM)\obj\ecModuleWrite.obj del /Q $(PLATFORM)\obj\ecModuleWrite.obj
+	if exist $(PLATFORM)\obj\ecParser.obj del /Q $(PLATFORM)\obj\ecParser.obj
+	if exist $(PLATFORM)\obj\ecState.obj del /Q $(PLATFORM)\obj\ecState.obj
+	if exist $(PLATFORM)\obj\ejsApp.obj del /Q $(PLATFORM)\obj\ejsApp.obj
+	if exist $(PLATFORM)\obj\ejsArray.obj del /Q $(PLATFORM)\obj\ejsArray.obj
+	if exist $(PLATFORM)\obj\ejsBlock.obj del /Q $(PLATFORM)\obj\ejsBlock.obj
+	if exist $(PLATFORM)\obj\ejsBoolean.obj del /Q $(PLATFORM)\obj\ejsBoolean.obj
+	if exist $(PLATFORM)\obj\ejsByteArray.obj del /Q $(PLATFORM)\obj\ejsByteArray.obj
+	if exist $(PLATFORM)\obj\ejsCache.obj del /Q $(PLATFORM)\obj\ejsCache.obj
+	if exist $(PLATFORM)\obj\ejsCmd.obj del /Q $(PLATFORM)\obj\ejsCmd.obj
+	if exist $(PLATFORM)\obj\ejsConfig.obj del /Q $(PLATFORM)\obj\ejsConfig.obj
+	if exist $(PLATFORM)\obj\ejsDate.obj del /Q $(PLATFORM)\obj\ejsDate.obj
+	if exist $(PLATFORM)\obj\ejsDebug.obj del /Q $(PLATFORM)\obj\ejsDebug.obj
+	if exist $(PLATFORM)\obj\ejsError.obj del /Q $(PLATFORM)\obj\ejsError.obj
+	if exist $(PLATFORM)\obj\ejsFile.obj del /Q $(PLATFORM)\obj\ejsFile.obj
+	if exist $(PLATFORM)\obj\ejsFileSystem.obj del /Q $(PLATFORM)\obj\ejsFileSystem.obj
+	if exist $(PLATFORM)\obj\ejsFrame.obj del /Q $(PLATFORM)\obj\ejsFrame.obj
+	if exist $(PLATFORM)\obj\ejsFunction.obj del /Q $(PLATFORM)\obj\ejsFunction.obj
+	if exist $(PLATFORM)\obj\ejsGC.obj del /Q $(PLATFORM)\obj\ejsGC.obj
+	if exist $(PLATFORM)\obj\ejsGlobal.obj del /Q $(PLATFORM)\obj\ejsGlobal.obj
+	if exist $(PLATFORM)\obj\ejsHttp.obj del /Q $(PLATFORM)\obj\ejsHttp.obj
+	if exist $(PLATFORM)\obj\ejsIterator.obj del /Q $(PLATFORM)\obj\ejsIterator.obj
+	if exist $(PLATFORM)\obj\ejsJSON.obj del /Q $(PLATFORM)\obj\ejsJSON.obj
+	if exist $(PLATFORM)\obj\ejsLocalCache.obj del /Q $(PLATFORM)\obj\ejsLocalCache.obj
+	if exist $(PLATFORM)\obj\ejsMath.obj del /Q $(PLATFORM)\obj\ejsMath.obj
+	if exist $(PLATFORM)\obj\ejsMemory.obj del /Q $(PLATFORM)\obj\ejsMemory.obj
+	if exist $(PLATFORM)\obj\ejsMprLog.obj del /Q $(PLATFORM)\obj\ejsMprLog.obj
+	if exist $(PLATFORM)\obj\ejsNamespace.obj del /Q $(PLATFORM)\obj\ejsNamespace.obj
+	if exist $(PLATFORM)\obj\ejsNull.obj del /Q $(PLATFORM)\obj\ejsNull.obj
+	if exist $(PLATFORM)\obj\ejsNumber.obj del /Q $(PLATFORM)\obj\ejsNumber.obj
+	if exist $(PLATFORM)\obj\ejsObject.obj del /Q $(PLATFORM)\obj\ejsObject.obj
+	if exist $(PLATFORM)\obj\ejsPath.obj del /Q $(PLATFORM)\obj\ejsPath.obj
+	if exist $(PLATFORM)\obj\ejsPot.obj del /Q $(PLATFORM)\obj\ejsPot.obj
+	if exist $(PLATFORM)\obj\ejsRegExp.obj del /Q $(PLATFORM)\obj\ejsRegExp.obj
+	if exist $(PLATFORM)\obj\ejsSocket.obj del /Q $(PLATFORM)\obj\ejsSocket.obj
+	if exist $(PLATFORM)\obj\ejsString.obj del /Q $(PLATFORM)\obj\ejsString.obj
+	if exist $(PLATFORM)\obj\ejsSystem.obj del /Q $(PLATFORM)\obj\ejsSystem.obj
+	if exist $(PLATFORM)\obj\ejsTimer.obj del /Q $(PLATFORM)\obj\ejsTimer.obj
+	if exist $(PLATFORM)\obj\ejsType.obj del /Q $(PLATFORM)\obj\ejsType.obj
+	if exist $(PLATFORM)\obj\ejsUri.obj del /Q $(PLATFORM)\obj\ejsUri.obj
+	if exist $(PLATFORM)\obj\ejsVoid.obj del /Q $(PLATFORM)\obj\ejsVoid.obj
+	if exist $(PLATFORM)\obj\ejsWorker.obj del /Q $(PLATFORM)\obj\ejsWorker.obj
+	if exist $(PLATFORM)\obj\ejsXML.obj del /Q $(PLATFORM)\obj\ejsXML.obj
+	if exist $(PLATFORM)\obj\ejsXMLList.obj del /Q $(PLATFORM)\obj\ejsXMLList.obj
+	if exist $(PLATFORM)\obj\ejsXMLLoader.obj del /Q $(PLATFORM)\obj\ejsXMLLoader.obj
+	if exist $(PLATFORM)\obj\ejsByteCode.obj del /Q $(PLATFORM)\obj\ejsByteCode.obj
+	if exist $(PLATFORM)\obj\ejsException.obj del /Q $(PLATFORM)\obj\ejsException.obj
+	if exist $(PLATFORM)\obj\ejsHelper.obj del /Q $(PLATFORM)\obj\ejsHelper.obj
+	if exist $(PLATFORM)\obj\ejsInterp.obj del /Q $(PLATFORM)\obj\ejsInterp.obj
+	if exist $(PLATFORM)\obj\ejsLoader.obj del /Q $(PLATFORM)\obj\ejsLoader.obj
+	if exist $(PLATFORM)\obj\ejsModule.obj del /Q $(PLATFORM)\obj\ejsModule.obj
+	if exist $(PLATFORM)\obj\ejsScope.obj del /Q $(PLATFORM)\obj\ejsScope.obj
+	if exist $(PLATFORM)\obj\ejsService.obj del /Q $(PLATFORM)\obj\ejsService.obj
+	if exist $(PLATFORM)\obj\ejs.obj del /Q $(PLATFORM)\obj\ejs.obj
+	if exist $(PLATFORM)\obj\ejsc.obj del /Q $(PLATFORM)\obj\ejsc.obj
+	if exist $(PLATFORM)\obj\ejsmod.obj del /Q $(PLATFORM)\obj\ejsmod.obj
+	if exist $(PLATFORM)\obj\doc.obj del /Q $(PLATFORM)\obj\doc.obj
+	if exist $(PLATFORM)\obj\docFiles.obj del /Q $(PLATFORM)\obj\docFiles.obj
+	if exist $(PLATFORM)\obj\listing.obj del /Q $(PLATFORM)\obj\listing.obj
+	if exist $(PLATFORM)\obj\slotGen.obj del /Q $(PLATFORM)\obj\slotGen.obj
+	if exist $(PLATFORM)\obj\ejsrun.obj del /Q $(PLATFORM)\obj\ejsrun.obj
+	if exist $(PLATFORM)\obj\ejsSqlite.obj del /Q $(PLATFORM)\obj\ejsSqlite.obj
+	if exist $(PLATFORM)\obj\ejsHttpServer.obj del /Q $(PLATFORM)\obj\ejsHttpServer.obj
+	if exist $(PLATFORM)\obj\ejsRequest.obj del /Q $(PLATFORM)\obj\ejsRequest.obj
+	if exist $(PLATFORM)\obj\ejsSession.obj del /Q $(PLATFORM)\obj\ejsSession.obj
+	if exist $(PLATFORM)\obj\ejsWeb.obj del /Q $(PLATFORM)\obj\ejsWeb.obj
+	if exist $(PLATFORM)\obj\ejsZlib.obj del /Q $(PLATFORM)\obj\ejsZlib.obj
 
 $(PLATFORM)\inc\mpr.h: 
 	rm -fr win-i686-debug\inc\mpr.h
