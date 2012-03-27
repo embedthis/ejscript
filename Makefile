@@ -27,6 +27,7 @@ endif
 all compile:
 	make -f projects/$(OS)-$(ARCH)-$(PROFILE).mk $@
 	@echo ; echo 'You can now use "bit" to configure and re-build Ejscript.'
+	@echo 'Run "bit configure build"'
 
 build configure generate test package:
 	@bit $@
