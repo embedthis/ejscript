@@ -28,7 +28,7 @@ if (platform.like == 'posix') {
 */
     let vsdir: Path
     if (bit.emulating) {
-        cc = 'cl'
+        cc = 'cl.exe'
         vsdir = Path('$(VS)')
     } else {
         cc = probe('cl.exe', {fullpath: true, search: search.sort().reverse()})

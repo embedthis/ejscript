@@ -1081,6 +1081,7 @@ public class Bit {
         genout = TextStream(File(path, 'w'))
         let pname = bit.platform.name + '-' + bit.settings.profile
         genout.writeLine('#\n#   ' + pname + '.sh -- Build It Shell Script to build ' + bit.settings.title + '\n#\n')
+        genEnv()
         genout.writeLine('PLATFORM="' + bit.platform.name + '-' + bit.settings.profile + '"')
         genout.writeLine('CC="' + bit.packs.compiler.path + '"')
         if (bit.packs.link) {
@@ -1091,7 +1092,6 @@ public class Bit {
         genout.writeLine('IFLAGS="' + bit.defaults.includes.map(function(path) '-I' + path.relative).join(' ') + '"')
         genout.writeLine('LDFLAGS="' + repvar(gen.linker).replace(/\$ORIGIN/g, '$$$$ORIGIN' + '"'))
         genout.writeLine('LIBS="' + gen.libraries + '"\n')
-        genEnv()
         genout.writeLine('[ ! -x ${PLATFORM}/inc ] && ' + 
             'mkdir -p ${PLATFORM}/inc ${PLATFORM}/obj ${PLATFORM}/lib ${PLATFORM}/bin')
         genout.writeLine('[ ! -f ${PLATFORM}/inc/buildConfig.h ] && ' + 
@@ -1108,18 +1108,18 @@ public class Bit {
         let pname = bit.platform.name + '-' + bit.settings.profile
         genout.writeLine('#\n#   ' + pname + '.mk -- Build It Makefile to build ' + bit.settings.title + 
             ' for ' + bit.platform.os + ' on ' + bit.platform.arch + '\n#\n')
-        genout.writeLine('PLATFORM  := ' + bit.platform.name + '-' + bit.settings.profile)
-        genout.writeLine('CC        := ' + bit.packs.compiler.path)
-        if (bit.packs.link) {
-            genout.writeLine('LD        := ' + bit.packs.link.path)
-        }
-        genout.writeLine('CFLAGS    := ' + gen.compiler)
-        genout.writeLine('DFLAGS    := ' + gen.defines)
-        genout.writeLine('IFLAGS    := ' + 
-            repvar(bit.defaults.includes.map(function(path) '-I' + path.relative).join(' ')))
-        genout.writeLine('LDFLAGS   := ' + repvar(gen.linker).replace(/\$ORIGIN/g, '$$$$ORIGIN'))
-        genout.writeLine('LIBS      := ' + gen.libraries + '\n')
         genEnv()
+        genout.writeLine('PLATFORM       := ' + bit.platform.name + '-' + bit.settings.profile)
+        genout.writeLine('CC             := ' + bit.packs.compiler.path)
+        if (bit.packs.link) {
+            genout.writeLine('LD             := ' + bit.packs.link.path)
+        }
+        genout.writeLine('CFLAGS         := ' + gen.compiler)
+        genout.writeLine('DFLAGS         := ' + gen.defines)
+        genout.writeLine('IFLAGS         := ' + 
+            repvar(bit.defaults.includes.map(function(path) '-I' + path.relative).join(' ')))
+        genout.writeLine('LDFLAGS        := ' + repvar(gen.linker).replace(/\$ORIGIN/g, '$$$$ORIGIN'))
+        genout.writeLine('LIBS           := ' + gen.libraries + '\n')
         genout.writeLine('all: prep \\\n        ' + genAll())
         genout.writeLine('.PHONY: prep\n\nprep:')
         genout.writeLine('\t@[ ! -x $(PLATFORM)/inc ] && ' + 
@@ -1141,11 +1141,14 @@ public class Bit {
         genout.writeLine('#\n#   ' + pname + '.nmake -- Build It Makefile to build ' + bit.settings.title + 
             ' for ' + bit.platform.os + ' on ' + bit.platform.arch + '\n#\n')
 
+        genEnv()
+        /*
         genout.writeLine('VS        = $(PROGRAMFILES)\\Microsoft Visual Studio 10.0')
         genout.writeLine('SDK       = $(PROGRAMFILES)\\Microsoft SDKs\\Windows\\v7.0A')
         genout.writeLine('INCLUDE   = $(INCLUDE);' + bit.env.INCLUDE.join(';'))
         genout.writeLine('LIB       = $(LIB);' + bit.env.LIB.join(';'))
         genout.writeLine('PATH      = ' + bit.env.PATH.join(';') + '$(PATH)\n')
+        */
 
         genout.writeLine('PLATFORM  = ' + pname)
         genout.writeLine('CC        = cl')
@@ -1188,15 +1191,32 @@ public class Bit {
 
     function genEnv() {
         let found
+        if (bit.platform.os == 'win') {
+            if (generating == 'nmake') {
+                genout.writeLine('VS        = $(PROGRAMFILES)\\Microsoft Visual Studio 10.0')
+                genout.writeLine('SDK       = $(PROGRAMFILES)\\Microsoft SDKs\\Windows\\v7.0A')
+            } else if (generating == 'make') {
+                genout.writeLine('export VS      := $(PROGRAMFILES)\\Microsoft Visual Studio 10.0')
+                genout.writeLine('export SDK     := $(PROGRAMFILES)\\Microsoft SDKs\\Windows\\v7.0A')
+            } else {
+                genout.writeLine('export VS="$(PROGRAMFILES)\\Microsoft Visual Studio 10.0"')
+                genout.writeLine('export SDK="$(PROGRAMFILES)\\Microsoft SDKs\\Windows\\v7.0A"')
+            }
+            /*
+            genout.writeLine('INCLUDE   := $(INCLUDE);' + bit.env.INCLUDE.join(';'))
+            genout.writeLine('LIB       := $(LIB);' + bit.env.LIB.join(';'))
+            genout.writeLine('PATH      := ' + bit.env.PATH.join(';') + '$(PATH)\n')
+            */
+        }
         for (let [key,value] in bit.env) {
             if (value is Array) {
                 value = value.join(App.SearchSeparator)
             }
             if (generating == 'make') {
-                genout.writeLine('export ' + key + ' := ' + value)
+                genout.writeLine('export %-7s := %s' % [key, value])
 
             } else if (generating == 'nmake') {
-                genout.writeLine(key + ' = ' + value)
+                genout.writeLine('%-9s = %s' % [key, value])
 
             } else if (generating == 'sh') {
                 genout.writeLine('export ' + key + '="' + value + '"')
