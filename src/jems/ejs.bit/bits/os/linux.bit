@@ -10,8 +10,8 @@ Bit.load({
     defaults: {
         '+linker': [ 
             '-Wl,--enable-new-dtags', 
-            "'-Wl,-rpath,$ORIGIN/'",
-            "'-Wl,-rpath,$ORIGIN/../lib'", 
+            '-Wl,-rpath,$ORIGIN/',
+            '-Wl,-rpath,$ORIGIN/../lib',
         ],
     },
 })
