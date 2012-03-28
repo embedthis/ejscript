@@ -1213,6 +1213,13 @@ public class Bit {
             if (value is Array) {
                 value = value.join(App.SearchSeparator)
             }
+            if (bit.platform.os == 'win') {
+                if (key == 'INCLUDE' || key == 'LIB') {
+                    value = '$(' + key + ');' + value
+                } else if (key == 'PATH')
+                    value = value + ';$(' + key + ')'
+                } 
+            }
             if (generating == 'make') {
                 genout.writeLine('export %-7s := %s' % [key, value])
 
