@@ -2206,7 +2206,6 @@ command = command.expand(bit, {fill: ''})
                     //  MOB this messes up reg expressions
                     // script = 'require ejs.unix\n' + script.replace(/\\/g, '\\\\')
                     script = 'require ejs.unix\n' + script
-//print('SCRIPT', script)
                     eval(script)
                 } finally {
                     App.chdir(pwd)
