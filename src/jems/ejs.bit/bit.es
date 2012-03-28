@@ -2227,14 +2227,28 @@ command = command.expand(bit, {fill: ''})
     function mapLibs(libs: Array): Array {
         if (bit.platform.os == 'win') {
             libs = libs.clone()
-            for (i in libs) {
-                let base = Path('lib' + libs[i]).joinExt(bit.ext.shlib)
-                let llib = bit.dir.lib.join(base)
-                if (llib.exists) {
-                    libs[i] = base ; // MOB llib.relative
+            for (let [i,name] in libs) {
+                let libname = Path('lib' + name).joinExt(bit.ext.shlib)
+/*
+   MOB - lookup O/S libs
+                if (bit.defaults.libraries.contains(name)) {
+                    libs[i] = Path(name)
+                } else {
+                    libs[i] = libname
+                }
+*/
+                if (bit.targets['lib' + name]) {
+                    libs[i] = libname
+                }
+/*
+   MOB - original
+                let llib = bit.dir.lib.join(libname)
+                } else if (llib.exists) {
+                    libs[i] = libname
                 } else {
                     libs[i] = Path(libs[i]).replaceExt(bit.ext.shlib).relative
                 }
+*/
             }
         } else if (bit.platform.os == 'vxworks') {
             libs = libs.clone()
