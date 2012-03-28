@@ -21,6 +21,9 @@ Bit.load({
                     defaults.defines.push('-DPIC')
                     defaults.libraries += ['pthread', 'm']
                 }
+                if (bit.settings.hasDynLoad) {
+                    defaults.libraries += ['dl']
+                }
                 if (bit.settings.preprocess) {
                     defaults.compiler.push('-E')
                 }
@@ -38,9 +41,6 @@ Bit.load({
                 }
                 if (bit.settings.warn64to32) {
                     defaults.compiler.push('-Wshorten-64-to-32')
-                }
-                if (bit.settings.hasDynLoad) {
-                    defaults.linker.push('-ldl')
                 }
                 if (arch.startsWith('arm')) {
                     defaults.compiler.push('-mno-sched-prolog')

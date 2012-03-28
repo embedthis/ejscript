@@ -1090,7 +1090,7 @@ public class Bit {
         genout.writeLine('CFLAGS="' + gen.compiler + '"')
         genout.writeLine('DFLAGS="' + gen.defines + '"')
         genout.writeLine('IFLAGS="' + bit.defaults.includes.map(function(path) '-I' + path.relative).join(' ') + '"')
-        genout.writeLine('LDFLAGS="' + repvar(gen.linker).replace(/\$ORIGIN/g, '$$$$ORIGIN') + '"')
+        genout.writeLine('LDFLAGS="' + repvar(gen.linker).replace(/\$ORIGIN/g, '\\$$ORIGIN') + '"')
         genout.writeLine('LIBS="' + gen.libraries + '"\n')
         genout.writeLine('[ ! -x ${PLATFORM}/inc ] && ' + 
             'mkdir -p ${PLATFORM}/inc ${PLATFORM}/obj ${PLATFORM}/lib ${PLATFORM}/bin')
@@ -1118,7 +1118,8 @@ public class Bit {
         genout.writeLine('DFLAGS         := ' + gen.defines)
         genout.writeLine('IFLAGS         := ' + 
             repvar(bit.defaults.includes.map(function(path) '-I' + path.relative).join(' ')))
-        genout.writeLine('LDFLAGS        := ' + repvar(gen.linker).replace(/\$ORIGIN/g, '$$$$ORIGIN'))
+        let linker = defaults.linker.map(function(s) "'" + s + "'").join(' ')
+        genout.writeLine('LDFLAGS        := ' + repvar(linker).replace(/\$ORIGIN/g, '$$$$ORIGIN'))
         genout.writeLine('LIBS           := ' + gen.libraries + '\n')
         genout.writeLine('all: prep \\\n        ' + genAll())
         genout.writeLine('.PHONY: prep\n\nprep:')
