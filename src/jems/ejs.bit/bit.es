@@ -1216,7 +1216,7 @@ public class Bit {
             if (bit.platform.os == 'win') {
                 if (key == 'INCLUDE' || key == 'LIB') {
                     value = '$(' + key + ');' + value
-                } else if (key == 'PATH')
+                } else if (key == 'PATH') {
                     value = value + ';$(' + key + ')'
                 } 
             }
