@@ -30,7 +30,7 @@
 </ItemGroup>
 
 <PropertyGroup Label="Globals">
-  <ProjectGuid>{4db6ff08-9342-4fdb-94cb-e0a25d5993a8}</ProjectGuid>
+  <ProjectGuid>{bef20a5c-b05a-4262-84ed-c8240e125b29}</ProjectGuid>
   <RootNamespace />
   <Keyword>Win32Proj</Keyword>
 </PropertyGroup>
@@ -66,28 +66,28 @@
     </ItemDefinitionGroup>
 <ItemDefinitionGroup>
 <Link>
-  <AdditionalDependencies>mpr.lib;ejs.lib;pcre.lib;http.lib;sqlite3.lib;%(AdditionalDependencies)</AdditionalDependencies>
-  <AdditionalLibraryDirectories>$(OutDir);/Users/mob/git/ejs/win-i686-debug/bin;%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
+  <AdditionalDependencies>C:\cygwin\home\mob\ejs\win-i686-debug\bin\libmpr.lib;C:\cygwin\home\mob\ejs\win-i686-debug\bin\libejs.lib;C:\cygwin\home\mob\ejs\win-i686-debug\bin\libpcre.lib;C:\cygwin\home\mob\ejs\win-i686-debug\bin\libhttp.lib;C:\cygwin\home\mob\ejs\win-i686-debug\bin\libmprssl.lib;libeay32.lib;ssleay32.lib;C:\cygwin\home\mob\ejs\win-i686-debug\bin\libsqlite3.lib;%(AdditionalDependencies)</AdditionalDependencies>
+  <AdditionalLibraryDirectories>$(OutDir);C:\cygwin\home\mob\ejs\win-i686-debug\bin;C:\cygwin\home\mob\packages-win-i686\openssl\openssl-1.0.0d\out32dll;%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
 </Link>
 </ItemDefinitionGroup>
 
 <ItemGroup>
   <ProjectReference Include="libmpr.vcxproj">
-  <Project>f1e1c0df-d0f8-4c65-8d68-be45101518c0</Project>
+  <Project>d15e47c0-9aae-47c4-aed5-ff632019bea4</Project>
   <ReferenceOutputAssembly>false</ReferenceOutputAssembly>
   </ProjectReference>
 </ItemGroup>
 
 <ItemGroup>
   <ProjectReference Include="libejs.vcxproj">
-  <Project>62872a99-b41c-44fc-92d8-70d87f23c1c7</Project>
+  <Project>d155b7ff-f8dc-4c95-9081-443b141fbe80</Project>
   <ReferenceOutputAssembly>false</ReferenceOutputAssembly>
   </ProjectReference>
 </ItemGroup>
 
 <ItemGroup>
   <ProjectReference Include="libsqlite3.vcxproj">
-  <Project>a9cd8706-f018-43e5-afec-8e39c9b0943c</Project>
+  <Project>baee9dc8-4ae0-40f1-9ae5-badf5c564e7d</Project>
   <ReferenceOutputAssembly>false</ReferenceOutputAssembly>
   </ProjectReference>
 </ItemGroup>

@@ -2,4 +2,5 @@
     ejs.bit - Ejs package for Bit
  */
 
+print('@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@')
 program('ejs')

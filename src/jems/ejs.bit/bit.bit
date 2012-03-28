@@ -12,9 +12,8 @@ Bit.load({
                 trace('Export', bit.target.files)
                 cp('bit.es', bit.dir.bin)
             ",
-            'generate-sh': "\
-                cp ${HOME}/bit.es ${BIN}
-            ",
+            'generate-nmake': "copy ${HOME}\\bit.es ${BIN}",
+            'generate-sh': "cp ${HOME}/bit.es ${BIN}",
         },
 
         'bit.exe': {
@@ -31,9 +30,8 @@ Bit.load({
                 trace('Export', bit.target.files)
                 cp('utest.es', bit.dir.bin)
             ",
-            'generate-sh': "\
-                cp ${HOME}/bit.es ${BIN}
-            ",
+            'generate-nmake': "copy ${HOME}\\bit.es ${BIN}",
+            'generate-sh': "cp ${HOME}/bit.es ${BIN}",
         },
 
         'utest.exe': {
@@ -52,6 +50,11 @@ Bit.load({
                 mkdir(bit.dir.lib.join('bits'))
                 cp('bits', bit.dir.lib)
             "
+            'generate-nmake': "\
+                -rmdir /Q /S ${LIB}\\bits
+                -mkdir ${LIB}\\bits
+                xcopy /S /Y ${HOME}\\bits ${LIB}\\bits
+            ",
             'generate-sh': "\
                 rm -fr ${LIB}/bits
                 cp -r ${HOME}/bits ${LIB}

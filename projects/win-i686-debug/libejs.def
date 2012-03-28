@@ -311,6 +311,7 @@ EXPORTS
   ejsGetTypeOf
   ejsGetVarByName
   ejsGetXMLDescendants
+  ejsGlobPath
   ejsGrowByteArray
   ejsGrowConstants
   ejsGrowPot

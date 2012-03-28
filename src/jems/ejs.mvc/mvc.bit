@@ -12,9 +12,8 @@ Bit.load({
                 trace('Export', bit.target.files)
                 cp('mvc.es', bit.dir.bin.join('mvc.es'))
             "
-            'generate-sh': "\
-                cp ${HOME}/mvc.es ${BIN}
-            ",
+            'generate-nmake': "copy ${HOME}\\mvc.es ${BIN}",
+            'generate-sh': "cp ${HOME}/mvc.es ${BIN}",
         },
 
         'mvc.exe': {
@@ -31,9 +30,7 @@ Bit.load({
                 trace('Compile', 'ejs.mvc.mod')
                 run('ejsc --out ${LIB}/ejs.mvc.mod ${settings.esflags} --optimize 9 ' + Path('.').glob('*.es').sort().join(' '))
             ",
-            'generate-sh': "\
-                ejsc --out ${OUT}/ ${settings.esflags} --optimize 9 ${HOME}/*.es
-            ",
+            'generate-sh': "ejsc --out ${OUT} ${settings.esflags} --optimize 9 ${HOME}/*.es",
             depends: [ 'ejsc', 'ejsmod', 'ejs.mod', 'ejs.web.mod', 'ejs.template.mod', 'ejs.unix.mod' ],
         },
 	},

@@ -30,7 +30,7 @@
 </ItemGroup>
 
 <PropertyGroup Label="Globals">
-  <ProjectGuid>{8001b917-bbf4-4436-9203-6543451ab0b2}</ProjectGuid>
+  <ProjectGuid>{66c22e07-32a1-4b57-bf17-d646afd18a76}</ProjectGuid>
   <RootNamespace />
   <Keyword>Win32Proj</Keyword>
 </PropertyGroup>
@@ -66,21 +66,28 @@
     </ItemDefinitionGroup>
 <ItemDefinitionGroup>
 <Link>
-  <AdditionalDependencies>mpr.lib;pcre.lib;%(AdditionalDependencies)</AdditionalDependencies>
-  <AdditionalLibraryDirectories>$(OutDir);/Users/mob/git/ejs/win-i686-debug/bin;%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
+  <AdditionalDependencies>C:\cygwin\home\mob\ejs\win-i686-debug\bin\libmpr.lib;C:\cygwin\home\mob\ejs\win-i686-debug\bin\libpcre.lib;C:\cygwin\home\mob\ejs\win-i686-debug\bin\libmprssl.lib;libeay32.lib;ssleay32.lib;%(AdditionalDependencies)</AdditionalDependencies>
+  <AdditionalLibraryDirectories>$(OutDir);C:\cygwin\home\mob\ejs\win-i686-debug\bin;C:\cygwin\home\mob\packages-win-i686\openssl\openssl-1.0.0d\out32dll;%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
 </Link>
 </ItemDefinitionGroup>
 
 <ItemGroup>
   <ProjectReference Include="libmpr.vcxproj">
-  <Project>f1e1c0df-d0f8-4c65-8d68-be45101518c0</Project>
+  <Project>d15e47c0-9aae-47c4-aed5-ff632019bea4</Project>
   <ReferenceOutputAssembly>false</ReferenceOutputAssembly>
   </ProjectReference>
 </ItemGroup>
 
 <ItemGroup>
   <ProjectReference Include="libpcre.vcxproj">
-  <Project>20cc8d5d-284a-4dd5-84cf-f6b6063b65af</Project>
+  <Project>71e9c330-b053-4ff8-8860-ff5bd0fb0054</Project>
+  <ReferenceOutputAssembly>false</ReferenceOutputAssembly>
+  </ProjectReference>
+</ItemGroup>
+
+<ItemGroup>
+  <ProjectReference Include="libmprssl.vcxproj">
+  <Project>996e5e0a-5d60-4828-a71a-29ee5a0235ef</Project>
   <ReferenceOutputAssembly>false</ReferenceOutputAssembly>
   </ProjectReference>
 </ItemGroup>

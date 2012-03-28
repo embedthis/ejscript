@@ -33,6 +33,12 @@ Bit.load({
                     }
                 }
             ",
+            "generate-nmake": "\
+                ejsc --out ${LIB}\\ejs.mod ${settings.esflags} --optimize 9 --bind --require null ${SRC}\\src\\core\\*.es 
+                ejsmod --require null --cslots ${LIB}\\ejs.mod
+                copy ejs.slots.h ${INC}\\ejs.slots.h
+                del ejs.slots.h
+            ",
             "generate-sh": "\
                 ejsc --out ${LIB}/ejs.mod ${settings.esflags} --optimize 9 --bind --require null ${SRC}/src/core/*.es 
                 ejsmod --require null --cslots ${LIB}/ejs.mod

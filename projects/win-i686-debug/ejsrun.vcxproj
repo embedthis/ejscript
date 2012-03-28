@@ -30,7 +30,7 @@
 </ItemGroup>
 
 <PropertyGroup Label="Globals">
-  <ProjectGuid>{9deb2957-0778-44e8-8992-f57e217136ca}</ProjectGuid>
+  <ProjectGuid>{8cf5e4e8-67ac-4e20-92eb-247e79ac00ac}</ProjectGuid>
   <RootNamespace />
   <Keyword>Win32Proj</Keyword>
 </PropertyGroup>
@@ -60,14 +60,14 @@
 </ItemGroup>
 <ItemDefinitionGroup>
 <Link>
-  <AdditionalDependencies>ejs.lib;mpr.lib;pcre.lib;http.lib;%(AdditionalDependencies)</AdditionalDependencies>
-  <AdditionalLibraryDirectories>$(OutDir);/Users/mob/git/ejs/win-i686-debug/bin;%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
+  <AdditionalDependencies>C:\cygwin\home\mob\ejs\win-i686-debug\bin\libejs.lib;C:\cygwin\home\mob\ejs\win-i686-debug\bin\libmpr.lib;C:\cygwin\home\mob\ejs\win-i686-debug\bin\libpcre.lib;C:\cygwin\home\mob\ejs\win-i686-debug\bin\libhttp.lib;C:\cygwin\home\mob\ejs\win-i686-debug\bin\libmprssl.lib;libeay32.lib;ssleay32.lib;%(AdditionalDependencies)</AdditionalDependencies>
+  <AdditionalLibraryDirectories>$(OutDir);C:\cygwin\home\mob\ejs\win-i686-debug\bin;C:\cygwin\home\mob\packages-win-i686\openssl\openssl-1.0.0d\out32dll;%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
 </Link>
 </ItemDefinitionGroup>
 
 <ItemGroup>
   <ProjectReference Include="libejs.vcxproj">
-  <Project>62872a99-b41c-44fc-92d8-70d87f23c1c7</Project>
+  <Project>d155b7ff-f8dc-4c95-9081-443b141fbe80</Project>
   <ReferenceOutputAssembly>false</ReferenceOutputAssembly>
   </ProjectReference>
 </ItemGroup>

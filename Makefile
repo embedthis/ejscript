@@ -10,22 +10,26 @@
 ARCH 	:= $(shell uname -m)
 PROFILE	:= debug
 UNAME 	:= $(shell uname)
+MAKE	:= make
+EXT 	:= mk
 
 ifeq ($(UNAME),Darwin)
-	OS	:=	macosx
+	OS	:= macosx
 endif
 ifeq ($(UNAME),Linux)
-	OS	:=	linux
+	OS	:= linux
 endif
 ifeq ($(UNAME),Solaris)
-	OS	:=	SOLARIS
+	OS	:= SOLARIS
 endif
-ifeq ($(UNAME),Cygwin)
-	OS	:=	win
+ifeq ($(UNAME),CYGWIN_NT-5.1)
+	OS	:= win
+	MAKE:= nmake
+	EXT := nmake
 endif
 
 all compile:
-	make -f projects/$(OS)-$(ARCH)-$(PROFILE).mk $@
+	$(MAKE) -f projects/$(OS)-$(ARCH)-$(PROFILE).$(EXT) $@
 	@echo ; echo 'You can now use "bit" to configure and re-build Ejscript.'
 	@echo 'Run "bit configure build"'
 
@@ -33,7 +37,7 @@ build configure generate test package:
 	@bit $@
 
 clean clobber:
-	make -f projects/$(OS)-$(ARCH)-$(PROFILE).mk $@
+	$(MAKE) -f projects/$(OS)-$(ARCH)-$(PROFILE).$(EXT) $@
 
 version:
 	@bit -q version
