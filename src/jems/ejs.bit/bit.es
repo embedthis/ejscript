@@ -2462,7 +2462,7 @@ command = command.expand(bit, {fill: ''})
             for each (target in bit.targets) {
                 if (target.path && targetsToClean[target.type]) {
                     /* Pre-built targets must be preserved */
-                    if (target.path.startsWith(bit.dir.cfg) && !target.built) {
+                    if (target.path.startsWith(bit.dir.cfg) && !target.built && !target.precious) {
                         if (generating == 'make') {
                             genWrite('\trm -rf ' + reppath(target.path))
 
