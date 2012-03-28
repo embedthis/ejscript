@@ -820,9 +820,9 @@ $(PLATFORM)\bin\ejs.web.mod:  \
         $(PLATFORM)/bin/ejsc.exe \
         $(PLATFORM)/bin/ejsmod.exe \
         $(PLATFORM)/bin/ejs.mod
-	ejsc --out $(PLATFORM)\bin\ejs.web.mod --debug --optimize 9 src\jems\ejs.web\*.es
-	ejsmod --cslots $(PLATFORM)\bin\ejs.web.mod
-	copy ejs.web.slots.h $(PLATFORM)\inc\ejs.web.slots.h
+	ejsc --out $(PLATFORM)/bin/ejs.web.mod --debug --optimize 9 src/jems/ejs.web/*.es
+	ejsmod --cslots $(PLATFORM)/bin/ejs.web.mod
+	copy ejs.web.slots.h $(PLATFORM)/inc/ejs.web.slots.h
 	del ejs.web.slots.h
 
 $(PLATFORM)/obj/ejsHttpServer.obj: \

@@ -814,8 +814,7 @@ $(PLATFORM)/lib/ejs.web.mod:  \
         $(PLATFORM)/lib/ejs.mod
 	ejsc --out $(PLATFORM)/lib/ejs.web.mod --debug --optimize 9 src/jems/ejs.web/*.es
 	ejsmod --cslots $(PLATFORM)/lib/ejs.web.mod
-	copy ejs.web.slots.h $(PLATFORM)/inc/ejs.web.slots.h
-	del ejs.web.slots.h
+	if ! diff ejs.web.slots.h $(PLATFORM)/inc/ejs.web.slots.h >/dev/null; then mv ejs.web.slots.h $(PLATFORM)/inc; fi
 
 $(PLATFORM)/obj/ejsHttpServer.o: \
         src/jems/ejs.web/src/ejsHttpServer.c \
