@@ -266,7 +266,9 @@ public class Bit {
             bit.dir.bits = bits;
             bit.dir.src = Path(src)
             bit.dir.top = Path('.')
-            bit.platform = { name: platform, os: os, arch: arch, like: like(os), dist: dist(os) }
+            let kind = like(os)
+            bit.dir.programs = (kind == 'windows') ? programFiles() : Path('/usr/local/bin')
+            bit.platform = { name: platform, os: os, arch: arch, like: kind, dist: dist(os) }
             bit.settings.profile = options.profile || 'debug'
             bit.emulating = options.emulate
             /* Read to get settings */
@@ -814,6 +816,7 @@ public class Bit {
         let startPlatform = bit.platform.os + '-' + bit.platform.arch
         currentPlatform = startPlatform
         this.src = bit.dir.src
+        bit.dir.programs = (bit.platform.os == 'win') ? programFiles() : Path('/usr/local/bin')
 
         prepBuild()
         if (selectedTargets[0] == 'version') {
@@ -1076,13 +1079,13 @@ public class Bit {
         trace('Generate', 'project file: ' + base.relative + '.sh')
         let path = base.joinExt('sh')
         genout = TextStream(File(path, 'w'))
-        genout.writeLine('#\n#   build.sh -- Build It Shell Script to build ' + bit.settings.title + '\n#\n')
+        let pname = bit.platform.name + '-' + bit.settings.profile
+        genout.writeLine('#\n#   ' + pname + '.sh -- Build It Shell Script to build ' + bit.settings.title + '\n#\n')
         genout.writeLine('PLATFORM="' + bit.platform.name + '-' + bit.settings.profile + '"')
         genout.writeLine('CC="' + bit.packs.compiler.path + '"')
         if (bit.packs.link) {
             genout.writeLine('LD="' + bit.packs.link.path + '"')
         }
-        let os = bit.platform.os.toUpper()
         genout.writeLine('CFLAGS="' + gen.compiler + '"')
         genout.writeLine('DFLAGS="' + gen.defines + '"')
         genout.writeLine('IFLAGS="' + bit.defaults.includes.map(function(path) '-I' + path.relative).join(' ') + '"')
@@ -1102,15 +1105,14 @@ public class Bit {
         trace('Generate', 'project file: ' + base.relative + '.mk')
         let path = base.joinExt('mk')
         genout = TextStream(File(path, 'w'))
-        //  MOB - change build.* name
-        genout.writeLine('#\n#   build.mk -- Build It Makefile to build ' + bit.settings.title + 
+        let pname = bit.platform.name + '-' + bit.settings.profile
+        genout.writeLine('#\n#   ' + pname + '.mk -- Build It Makefile to build ' + bit.settings.title + 
             ' for ' + bit.platform.os + ' on ' + bit.platform.arch + '\n#\n')
         genout.writeLine('PLATFORM  := ' + bit.platform.name + '-' + bit.settings.profile)
+        genout.writeLine('CC        := ' + bit.packs.compiler.path)
         if (bit.packs.link) {
-            genout.writeLine('CC        := ' + bit.packs.compiler.path)
+            genout.writeLine('LD        := ' + bit.packs.link.path)
         }
-        genout.writeLine('LD        := ' + bit.packs.link.path)
-        let os = bit.platform.os.toUpper()
         genout.writeLine('CFLAGS    := ' + gen.compiler)
         genout.writeLine('DFLAGS    := ' + gen.defines)
         genout.writeLine('IFLAGS    := ' + 
@@ -1135,20 +1137,19 @@ public class Bit {
         trace('Generate', 'project file: ' + base.relative + '.nmake')
         let path = base.joinExt('nmake')
         genout = TextStream(File(path, 'w'))
-        //  MOB - change build.* name
-        genout.writeLine('#\n#   build.nmake -- Build It Makefile to build ' + bit.settings.title + 
+        let pname = bit.platform.name + '-' + bit.settings.profile
+        genout.writeLine('#\n#   ' + pname + '.nmake -- Build It Makefile to build ' + bit.settings.title + 
             ' for ' + bit.platform.os + ' on ' + bit.platform.arch + '\n#\n')
 
         genout.writeLine('VS        = $(PROGRAMFILES)\\Microsoft Visual Studio 10.0')
         genout.writeLine('SDK       = $(PROGRAMFILES)\\Microsoft SDKs\\Windows\\v7.0A')
-        genout.writeLine('INCLUDE   = $(INCLUDE);$(VS)\\VC\\INCLUDE;$(SDK)\\INCLUDE')
-        genout.writeLine('LIB       = $(LIB);$(VS)\\VC\\lib;$(SDK)\\lib')
-        genout.writeLine('PATH      = $(VS)\\Bin;$(VS)\\VC\\Bin;$(VS)\\Common7\\IDE;$(VS)\\Common7\\Tools;$(VS)\\SDK\\v3.5\\bin;$(VS)\\VC\\VCPackages;$(PATH)\n')
+        genout.writeLine('INCLUDE   = $(INCLUDE);' + bit.env.INCLUDE.join(';'))
+        genout.writeLine('LIB       = $(LIB);' + bit.env.LIB.join(';'))
+        genout.writeLine('PATH      = ' + bit.env.PATH.join(';') + '$(PATH)\n')
 
-        genout.writeLine('PLATFORM  = ' + bit.platform.name + '-' + bit.settings.profile)
-        genout.writeLine('CC        = cl' /* + bit.packs.compiler.path */)
-        genout.writeLine('LD        = link' /* + bit.packs.link.path */)
-        let os = bit.platform.os.toUpper()
+        genout.writeLine('PLATFORM  = ' + pname)
+        genout.writeLine('CC        = cl')
+        genout.writeLine('LD        = link')
         genout.writeLine('CFLAGS    = ' + gen.compiler)
         genout.writeLine('DFLAGS    = ' + gen.defines)
         genout.writeLine('IFLAGS    = ' + 
@@ -1186,6 +1187,7 @@ public class Bit {
     }
 
     function genEnv() {
+        let found
         for (let [key,value] in bit.env) {
             if (value is Array) {
                 value = value.join(App.SearchSeparator)
@@ -1199,8 +1201,11 @@ public class Bit {
             } else if (generating == 'sh') {
                 genout.writeLine('export ' + key + '="' + value + '"')
             }
+            found = true
         }
-        genout.writeLine('')
+        if (found) {
+            genout.writeLine('')
+        }
     }
 
     function genAll() {
@@ -2463,6 +2468,19 @@ command = command.expand(bit, {fill: ''})
             return "windows"
         }
         return ""
+    }
+
+    function programFiles(): Path {
+        let programs = Config.OS == 'WIN' ? Path(App.getenv('PROGRAMFILES')) : 'UNKNOWN'
+        if (!programs) {
+            for each (drive in (FileSystem.drives() - ['A', 'B'])) {
+                let pf = Path(drive + ':\\').glob('Program Files*')
+                if (pf.length > 0) {
+                    return pf[0]
+                }
+            }
+        }
+        return programs
     }
 
     function dist(os) {

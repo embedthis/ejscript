@@ -15,6 +15,7 @@ module ejs {
 
         use default namespace public
 
+        //  MOB - getter
         native static function drives(): Array 
 
         /** 
