@@ -70,17 +70,15 @@ Bit.load({
     },
 
     targets: {
-        /*
-            MOB - how can this do install, uninstall
-            Options:
-                install
-                uninstall
-                package
-                flat
+        clean: {
+            action: "
+                safeRemove('${REL}')
+                safeRemove('${PKG}')
+                safeRemove('${FLAT}')
+                trace('Clean', 'Clean abbreviated as bit requires libraries. Use \"bit clobber\" to erase all.')
+            ",
+        },
 
-            TODO:
-                init.d, init, ssl
-         */
         package: {
             depends: ['build'],
             action: "
