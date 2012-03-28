@@ -1,9 +1,10 @@
 #
-#   build.sh -- Build It Shell Script to build Embedthis Ejscript
+#   macosx-i686-debug.sh -- Build It Shell Script to build Embedthis Ejscript
 #
 
 PLATFORM="macosx-i686-debug"
 CC="cc"
+LD="/usr/bin/ld"
 CFLAGS="-fPIC -Wall -g"
 DFLAGS="-DPIC -DCPU=I686"
 IFLAGS="-Imacosx-i686-debug/inc"
@@ -267,15 +268,10 @@ ${CC} -dynamiclib -o ${PLATFORM}/lib/ejs.web.dylib -arch i686 ${LDFLAGS} -instal
 rm -fr ${PLATFORM}/lib/www
 cp -r src/jems/ejs.web/www ${PLATFORM}/lib
 ejsc --out ${PLATFORM}/lib/ejs.template.mod --debug --optimize 9 src/jems/ejs.template/TemplateParser.es
-ejsc --out ${PLATFORM}/lib/ejs.tar.mod/ --debug --optimize 9 src/jems/ejs.tar/*.es
-ejsc --out ${PLATFORM}/lib/ejs.zlib.mod/ --debug --optimize 9 src/jems/ejs.zlib/*.es
-${CC} -c -o ${PLATFORM}/obj/ejsZlib.o -arch i686 ${CFLAGS} ${DFLAGS} -I${PLATFORM}/inc -I../../../../usr/include src/jems/ejs.zlib/src/ejsZlib.c
-
-${CC} -dynamiclib -o ${PLATFORM}/lib/ejs.zlib.dylib -arch i686 ${LDFLAGS} -L/usr/lib -install_name @rpath/ejs.zlib.dylib ${PLATFORM}/obj/ejsZlib.o ${LIBS} -lmpr -lejs -lpcre -lhttp -lz
-
+ejsc --out ${PLATFORM}/lib/ejs.tar.mod --debug --optimize 9 src/jems/ejs.tar/*.es
 cp src/jems/ejs.mvc/mvc.es ${PLATFORM}/bin
 rm -rf macosx-i686-debug/bin/mvc
 cp -r macosx-i686-debug/bin/ejsrun macosx-i686-debug/bin/mvc
 
-ejsc --out ${PLATFORM}/lib/ejs.mvc.mod/ --debug --optimize 9 src/jems/ejs.mvc/*.es
+ejsc --out ${PLATFORM}/lib/ejs.mvc.mod --debug --optimize 9 src/jems/ejs.mvc/*.es
 cp src/jems/ejs.utest/utest.worker ${PLATFORM}/bin

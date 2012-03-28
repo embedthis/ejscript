@@ -67,8 +67,11 @@
 #define BLD_FEATURE_MAN 0
 #define BLD_FEATURE_MAN2HTML 0
 #define BLD_FEATURE_SSL 0
+#define BLD_FEATURE_ZLIB 0
 #define BLD_FEATURE_CC 1
 #define BLD_CC "cc"
+#define BLD_FEATURE_LINK 1
+#define BLD_LINK "../../../../usr/bin/ld"
 #define BLD_FEATURE_PCRE 1
 #define BLD_PCRE "src/deps/pcre"
 #define BLD_FEATURE_HTTP 1
@@ -77,4 +80,3 @@
 #define BLD_FEATURE_MATRIXSSL 0
 #define BLD_FEATURE_SQLITE 1
 #define BLD_SQLITE "src/deps/sqlite"
-#define BLD_FEATURE_ZLIB 0

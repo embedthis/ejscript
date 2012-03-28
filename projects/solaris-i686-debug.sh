@@ -1,9 +1,10 @@
 #
-#   build.sh -- Build It Shell Script to build Embedthis Ejscript
+#   solaris-i686-debug.sh -- Build It Shell Script to build Embedthis Ejscript
 #
 
 PLATFORM="solaris-i686-debug"
 CC="cc"
+LD="/usr/bin/ld"
 CFLAGS="-Wall -fPIC -g -mcpu=i686"
 DFLAGS="-D_REENTRANT -DCPU=i686 -DPIC"
 IFLAGS="-Isolaris-i686-debug/inc"
@@ -267,10 +268,10 @@ ${CC} -shared -o ${PLATFORM}/lib/ejs.web.so ${LDFLAGS} ${PLATFORM}/obj/ejsHttpSe
 rm -fr ${PLATFORM}/lib/www
 cp -r src/jems/ejs.web/www ${PLATFORM}/lib
 ejsc --out ${PLATFORM}/lib/ejs.template.mod --debug --optimize 9 src/jems/ejs.template/TemplateParser.es
-ejsc --out ${PLATFORM}/lib/ejs.tar.mod/ --debug --optimize 9 src/jems/ejs.tar/*.es
+ejsc --out ${PLATFORM}/lib/ejs.tar.mod --debug --optimize 9 src/jems/ejs.tar/*.es
 cp src/jems/ejs.mvc/mvc.es ${PLATFORM}/bin
 rm -rf solaris-i686-debug/bin/mvc
 cp -r solaris-i686-debug/bin/ejsrun solaris-i686-debug/bin/mvc
 
-ejsc --out ${PLATFORM}/lib/ejs.mvc.mod/ --debug --optimize 9 src/jems/ejs.mvc/*.es
+ejsc --out ${PLATFORM}/lib/ejs.mvc.mod --debug --optimize 9 src/jems/ejs.mvc/*.es
 cp src/jems/ejs.utest/utest.worker ${PLATFORM}/bin

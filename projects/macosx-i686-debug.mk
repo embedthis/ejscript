@@ -1,15 +1,15 @@
 #
-#   build.mk -- Build It Makefile to build Embedthis Ejscript for macosx on i686
+#   macosx-i686-debug.mk -- Build It Makefile to build Embedthis Ejscript for macosx on i686
 #
 
-PLATFORM  := macosx-i686-debug
-CC        := cc
-CFLAGS    := -fPIC -Wall -g
-DFLAGS    := -DPIC -DCPU=I686
-IFLAGS    := -I$(PLATFORM)/inc
-LDFLAGS   := -Wl,-rpath,@executable_path/../lib -Wl,-rpath,@executable_path/ -Wl,-rpath,@loader_path/ -L$(PLATFORM)/lib -g -ldl
-LIBS      := -lpthread -lm
-
+PLATFORM       := macosx-i686-debug
+CC             := cc
+LD             := /usr/bin/ld
+CFLAGS         := -fPIC -Wall -g
+DFLAGS         := -DPIC -DCPU=I686
+IFLAGS         := -I$(PLATFORM)/inc
+LDFLAGS        := -Wl,-rpath,@executable_path/../lib -Wl,-rpath,@executable_path/ -Wl,-rpath,@loader_path/ -L$(PLATFORM)/lib -g -ldl
+LIBS           := -lpthread -lm
 
 all: prep \
         $(PLATFORM)/lib/libmpr.dylib \
@@ -42,8 +42,6 @@ all: prep \
         $(PLATFORM)/lib/www \
         $(PLATFORM)/lib/ejs.template.mod \
         $(PLATFORM)/lib/ejs.tar.mod \
-        $(PLATFORM)/lib/ejs.zlib.mod \
-        $(PLATFORM)/lib/ejs.zlib.dylib \
         $(PLATFORM)/bin/mvc.es \
         $(PLATFORM)/bin/mvc \
         $(PLATFORM)/lib/ejs.mvc.mod \
@@ -816,7 +814,8 @@ $(PLATFORM)/lib/ejs.web.mod:  \
         $(PLATFORM)/lib/ejs.mod
 	ejsc --out $(PLATFORM)/lib/ejs.web.mod --debug --optimize 9 src/jems/ejs.web/*.es
 	ejsmod --cslots $(PLATFORM)/lib/ejs.web.mod
-	if ! diff ejs.web.slots.h $(PLATFORM)/inc/ejs.web.slots.h >/dev/null; then mv ejs.web.slots.h $(PLATFORM)/inc; fi
+	copy ejs.web.slots.h $(PLATFORM)/inc/ejs.web.slots.h
+	del ejs.web.slots.h
 
 $(PLATFORM)/obj/ejsHttpServer.o: \
         src/jems/ejs.web/src/ejsHttpServer.c \
@@ -868,26 +867,7 @@ $(PLATFORM)/lib/ejs.tar.mod:  \
         $(PLATFORM)/bin/ejsc \
         $(PLATFORM)/bin/ejsmod \
         $(PLATFORM)/lib/ejs.mod
-	ejsc --out $(PLATFORM)/lib/ejs.tar.mod/ --debug --optimize 9 src/jems/ejs.tar/*.es
-
-$(PLATFORM)/lib/ejs.zlib.mod:  \
-        $(PLATFORM)/bin/ejsc \
-        $(PLATFORM)/bin/ejsmod \
-        $(PLATFORM)/lib/ejs.mod
-	ejsc --out $(PLATFORM)/lib/ejs.zlib.mod/ --debug --optimize 9 src/jems/ejs.zlib/*.es
-
-$(PLATFORM)/obj/ejsZlib.o: \
-        src/jems/ejs.zlib/src/ejsZlib.c \
-        $(PLATFORM)/inc/buildConfig.h
-	$(CC) -c -o $(PLATFORM)/obj/ejsZlib.o -arch i686 $(CFLAGS) $(DFLAGS) -I$(PLATFORM)/inc -I../../../../usr/include src/jems/ejs.zlib/src/ejsZlib.c
-
-$(PLATFORM)/lib/ejs.zlib.dylib:  \
-        $(PLATFORM)/lib/libmpr.dylib \
-        $(PLATFORM)/lib/libejs.dylib \
-        $(PLATFORM)/lib/ejs.mod \
-        $(PLATFORM)/lib/ejs.zlib.mod \
-        $(PLATFORM)/obj/ejsZlib.o
-	$(CC) -dynamiclib -o $(PLATFORM)/lib/ejs.zlib.dylib -arch i686 $(LDFLAGS) -L/usr/lib -install_name @rpath/ejs.zlib.dylib $(PLATFORM)/obj/ejsZlib.o $(LIBS) -lmpr -lejs -lpcre -lhttp -lz
+	ejsc --out $(PLATFORM)/lib/ejs.tar.mod --debug --optimize 9 src/jems/ejs.tar/*.es
 
 $(PLATFORM)/bin/mvc.es: 
 	cp src/jems/ejs.mvc/mvc.es $(PLATFORM)/bin
@@ -904,7 +884,7 @@ $(PLATFORM)/lib/ejs.mvc.mod:  \
         $(PLATFORM)/lib/ejs.web.mod \
         $(PLATFORM)/lib/ejs.template.mod \
         $(PLATFORM)/lib/ejs.unix.mod
-	ejsc --out $(PLATFORM)/lib/ejs.mvc.mod/ --debug --optimize 9 src/jems/ejs.mvc/*.es
+	ejsc --out $(PLATFORM)/lib/ejs.mvc.mod --debug --optimize 9 src/jems/ejs.mvc/*.es
 
 $(PLATFORM)/bin/utest.worker: 
 	cp src/jems/ejs.utest/utest.worker $(PLATFORM)/bin

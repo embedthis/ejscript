@@ -1,15 +1,15 @@
 #
-#   build.mk -- Build It Makefile to build Embedthis Ejscript for solaris on i686
+#   solaris-i686-debug.mk -- Build It Makefile to build Embedthis Ejscript for solaris on i686
 #
 
-PLATFORM  := solaris-i686-debug
-CC        := cc
-CFLAGS    := -Wall -fPIC -g -mcpu=i686
-DFLAGS    := -D_REENTRANT -DCPU=i686 -DPIC
-IFLAGS    := -I$(PLATFORM)/inc
-LDFLAGS   := -L$(PLATFORM)/lib -g
-LIBS      := -llxnet -lrt -lsocket -lpthread -lm
-
+PLATFORM       := solaris-i686-debug
+CC             := cc
+LD             := /usr/bin/ld
+CFLAGS         := -Wall -fPIC -g -mcpu=i686
+DFLAGS         := -D_REENTRANT -DCPU=i686 -DPIC
+IFLAGS         := -I$(PLATFORM)/inc
+LDFLAGS        := -L$(PLATFORM)/lib -g
+LIBS           := -llxnet -lrt -lsocket -lpthread -lm
 
 all: prep \
         $(PLATFORM)/lib/libmpr.so \
@@ -814,7 +814,8 @@ $(PLATFORM)/lib/ejs.web.mod:  \
         $(PLATFORM)/lib/ejs.mod
 	ejsc --out $(PLATFORM)/lib/ejs.web.mod --debug --optimize 9 src/jems/ejs.web/*.es
 	ejsmod --cslots $(PLATFORM)/lib/ejs.web.mod
-	if ! diff ejs.web.slots.h $(PLATFORM)/inc/ejs.web.slots.h >/dev/null; then mv ejs.web.slots.h $(PLATFORM)/inc; fi
+	copy ejs.web.slots.h $(PLATFORM)/inc/ejs.web.slots.h
+	del ejs.web.slots.h
 
 $(PLATFORM)/obj/ejsHttpServer.o: \
         src/jems/ejs.web/src/ejsHttpServer.c \
@@ -866,7 +867,7 @@ $(PLATFORM)/lib/ejs.tar.mod:  \
         $(PLATFORM)/bin/ejsc \
         $(PLATFORM)/bin/ejsmod \
         $(PLATFORM)/lib/ejs.mod
-	ejsc --out $(PLATFORM)/lib/ejs.tar.mod/ --debug --optimize 9 src/jems/ejs.tar/*.es
+	ejsc --out $(PLATFORM)/lib/ejs.tar.mod --debug --optimize 9 src/jems/ejs.tar/*.es
 
 $(PLATFORM)/bin/mvc.es: 
 	cp src/jems/ejs.mvc/mvc.es $(PLATFORM)/bin
@@ -883,7 +884,7 @@ $(PLATFORM)/lib/ejs.mvc.mod:  \
         $(PLATFORM)/lib/ejs.web.mod \
         $(PLATFORM)/lib/ejs.template.mod \
         $(PLATFORM)/lib/ejs.unix.mod
-	ejsc --out $(PLATFORM)/lib/ejs.mvc.mod/ --debug --optimize 9 src/jems/ejs.mvc/*.es
+	ejsc --out $(PLATFORM)/lib/ejs.mvc.mod --debug --optimize 9 src/jems/ejs.mvc/*.es
 
 $(PLATFORM)/bin/utest.worker: 
 	cp src/jems/ejs.utest/utest.worker $(PLATFORM)/bin

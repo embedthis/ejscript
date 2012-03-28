@@ -2491,7 +2491,7 @@ command = command.expand(bit, {fill: ''})
     }
 
     function programFiles(): Path {
-        let programs = Config.OS == 'WIN' ? Path(App.getenv('PROGRAMFILES')) : 'UNKNOWN'
+        let programs = Config.OS == 'WIN' ? Path(App.getenv('PROGRAMFILES')) : '.'
         if (!programs) {
             for each (drive in (FileSystem.drives() - ['A', 'B'])) {
                 let pf = Path(drive + ':\\').glob('Program Files*')
