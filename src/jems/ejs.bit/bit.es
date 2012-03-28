@@ -1090,7 +1090,7 @@ public class Bit {
         genout.writeLine('CFLAGS="' + gen.compiler + '"')
         genout.writeLine('DFLAGS="' + gen.defines + '"')
         genout.writeLine('IFLAGS="' + bit.defaults.includes.map(function(path) '-I' + path.relative).join(' ') + '"')
-        genout.writeLine('LDFLAGS="' + repvar(gen.linker).replace(/\$ORIGIN/g, '$$$$ORIGIN' + '"'))
+        genout.writeLine('LDFLAGS="' + repvar(gen.linker).replace(/\$ORIGIN/g, '$$$$ORIGIN') + '"')
         genout.writeLine('LIBS="' + gen.libraries + '"\n')
         genout.writeLine('[ ! -x ${PLATFORM}/inc ] && ' + 
             'mkdir -p ${PLATFORM}/inc ${PLATFORM}/obj ${PLATFORM}/lib ${PLATFORM}/bin')
@@ -1233,7 +1233,7 @@ public class Bit {
         for each (tname in selectedTargets) {
             let target = bit.targets[tname]
             if (target.path && target.enable) {
-                all.push(repvar(target.path.relative))
+                all.push(reppath(target.path))
             }
         }
         return all.join(' \\\n        ') + '\n'
@@ -1741,17 +1741,17 @@ public class Bit {
         command = command.expand(bit, {fill: ''})
         diagnose(2, command)
         if (generating == 'sh') {
-            command = genReplace(command)
+            command = repgen(command)
             genout.writeLine(command + '\n')
 
         } else if (generating == 'make') {
-            command = genReplace(command)
-            genout.writeLine(repvar(target.path.relative) + ': ' + repvar(getTargetDeps(target)) +
+            command = repgen(command)
+            genout.writeLine(reppath(target.path) + ': ' + repvar(getTargetDeps(target)) +
                 '\n\t' + command + '\n')
 
         } else if (generating == 'nmake') {
-            command = genReplace(command)
-            genout.writeLine(repvar(target.path.relative) + ': ' + repvar(getTargetDeps(target)) +
+            command = repgen(command)
+            genout.writeLine(reppath(target.path) + ': ' + repvar(getTargetDeps(target)) +
                 '\n\t' + command + '\n')
 
         } else {
@@ -1786,18 +1786,16 @@ public class Bit {
         let command = rule.expand(bit, {fill: ''})
         command = command.expand(bit, {fill: ''})
         if (generating == 'sh') {
-            command = genReplace(command)
+            command = repgen(command)
             genout.writeLine(command + '\n')
 
         } else if (generating == 'make') {
-            command = genReplace(command)
-            genout.writeLine(repvar(target.path.relative) + ': ' + 
-                repvar(getTargetDeps(target)) + '\n\t' + command + '\n')
+            command = repgen(command)
+            genout.writeLine(reppath(target.path) + ': ' + repvar(getTargetDeps(target)) + '\n\t' + command + '\n')
 
         } else if (generating == 'nmake') {
-            command = genReplace(command)
-            genout.writeLine(repvar(target.path.relative) + ': ' + 
-                repvar(getTargetDeps(target)) + '\n\t' + command + '\n')
+            command = repgen(command)
+            genout.writeLine(reppath(target.path) + ': ' + repvar(getTargetDeps(target)) + '\n\t' + command + '\n')
 
         } else {
             trace('Link', target.name)
@@ -1867,17 +1865,17 @@ public class Bit {
 command = command.expand(bit, {fill: ''})
 
             if (generating == 'sh') {
-                command = genReplace(command)
+                command = repgen(command)
                 genout.writeLine(command + '\n')
 
             } else if (generating == 'make') {
-                command = genReplace(command)
-                genout.writeLine(repvar(target.path.relative) + ': \\\n        ' + 
+                command = repgen(command)
+                genout.writeLine(reppath(target.path) + ': \\\n        ' + 
                     file.relative + repvar(getTargetDeps(target)) + '\n\t' + command + '\n')
 
             } else if (generating == 'nmake') {
-                command = genReplace(command)
-                genout.writeLine(repvar(target.path.relative) + ': \\\n        ' + 
+                command = repgen(command)
+                genout.writeLine(reppath(target.path) + ': \\\n        ' + 
                     file.relative.windows + repvar(getTargetDeps(target)) + '\n\t' + command + '\n')
 
             } else {
@@ -1908,12 +1906,12 @@ command = command.expand(bit, {fill: ''})
                 genout.writeLine('cp -r ' + file.relative + ' ' + target.path.relative + '\n')
 
             } else if (generating == 'make') {
-                genout.writeLine(repvar(target.path.relative) + ': ' + repvar(getTargetDeps(target)))
+                genout.writeLine(reppath(target.path) + ': ' + repvar(getTargetDeps(target)))
                 genout.writeLine('\trm -fr ' + target.path.relative)
                 genout.writeLine('\tcp -r ' + file.relative + ' ' + target.path.relative + '\n')
 
             } else if (generating == 'nmake') {
-                genout.writeLine(repvar(target.path.relative) + ': ' + repvar(getTargetDeps(target)))
+                genout.writeLine(reppath(target.path) + ': ' + repvar(getTargetDeps(target)))
                 genout.writeLine('\t-if exist ' + target.path.relative.windows + ' del /Q ' + target.path.relative.windows)
                 if (file.isDir) {
                     //  MOB - all nmake paths will need .windows
@@ -1997,7 +1995,7 @@ command = command.expand(bit, {fill: ''})
         Replace default defines, includes, libraries etc with token equivalents. This allows
         Makefiles and script to be use variables to control various flag settings.
      */
-    function genReplace(command: String): String {
+    function repgen(command: String): String {
         if (generating == 'make' || generating == 'nmake') {
             /* Twice because ldflags are repeated and replace only changes the first occurrence */
             command = command.replace(gen.linker, '$(LDFLAGS)')
@@ -2049,6 +2047,14 @@ command = command.expand(bit, {fill: ''})
         return command
     }
 
+    function reppath(path: Path): String {
+        path = path.relative
+        if (bit.platform.like == 'windows') {
+            path = path.windows
+        }
+        return repvar(path)
+    }
+
     /*
         Get the dependencies of a target as a string
      */
@@ -2060,7 +2066,7 @@ command = command.expand(bit, {fill: ''})
             for each (let dname in target.depends) {
                 let dep = bit.targets[dname]
                 if (dep && dep.enable) {
-                    deps.push(dep.path.relative)
+                    deps.push(reppath(dep.path))
                 }
             }
             return ' \\\n        ' + deps.join(' \\\n        ')
@@ -2196,7 +2202,10 @@ command = command.expand(bit, {fill: ''})
                     App.chdir(item.home)
                 }
                 try {
-                    script = 'require ejs.unix\n' + script.replace(/\\/g, '\\\\')
+                    //  MOB this messes up reg expressions
+                    // script = 'require ejs.unix\n' + script.replace(/\\/g, '\\\\')
+                    script = 'require ejs.unix\n' + script
+//print('SCRIPT', script)
                     eval(script)
                 } finally {
                     App.chdir(pwd)
@@ -2455,11 +2464,10 @@ command = command.expand(bit, {fill: ''})
                     /* Pre-built targets must be preserved */
                     if (target.path.startsWith(bit.dir.cfg) && !target.built) {
                         if (generating == 'make') {
-                            genWrite('\trm -rf ' + target.path.relative)
+                            genWrite('\trm -rf ' + reppath(target.path))
 
                         } else if (generating == 'nmake') {
-                            genout.writeLine('\t-if exist ' + repvar(target.path.relative) + 
-                                ' del /Q ' + repvar(target.path.relative))
+                            genout.writeLine('\t-if exist ' + reppath(target.path) + ' del /Q ' + reppath(target.path))
 
                         } else if (generating == 'sh') {
                             genWrite('rm -rf ' + target.path.relative)

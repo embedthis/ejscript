@@ -4,11 +4,11 @@
 
 PLATFORM="linux-i686-debug"
 CC="cc"
-LD="/usr/bin/ld"
+LD="ld"
 CFLAGS="-Wall -fPIC -g -Wno-unused-result -mtune=i686"
 DFLAGS="-D_REENTRANT -DCPU=i686 -DPIC"
 IFLAGS="-Ilinux-i686-debug/inc"
-LDFLAGS="-Wl,--enable-new-dtags '-Wl,-rpath,$$ORIGIN"/' '-Wl,-rpath,$$ORIGIN"/../lib' -L${PLATFORM}/lib -g -ldl
+LDFLAGS="-Wl,--enable-new-dtags '-Wl,-rpath,$$ORIGIN/' '-Wl,-rpath,$$ORIGIN/../lib' -L${PLATFORM}/lib -g -ldl"
 LIBS="-lpthread -lm"
 
 [ ! -x ${PLATFORM}/inc ] && mkdir -p ${PLATFORM}/inc ${PLATFORM}/obj ${PLATFORM}/lib ${PLATFORM}/bin
@@ -229,7 +229,8 @@ ${CC} -o ${PLATFORM}/bin/ejsrun ${LDFLAGS} -L${PLATFORM}/lib ${PLATFORM}/obj/ejs
 
 ejsc --out ${PLATFORM}/lib/ejs.mod --debug --optimize 9 --bind --require null src/core/*.es 
 ejsmod --require null --cslots ${PLATFORM}/lib/ejs.mod
-if ! diff ejs.slots.h ${PLATFORM}/inc/ejs.slots.h >/dev/null; then mv ejs.slots.h ${PLATFORM}/inc; fi
+if ! diff ejs.slots.h ${PLATFORM}/inc/ejs.slots.h >/dev/null; then cp ejs.slots.h ${PLATFORM}/inc; fi
+rm -f ejs.slots.h
 cp src/jems/ejs.bit/bit.es ${PLATFORM}/bin
 rm -rf linux-i686-debug/bin/bit
 cp -r linux-i686-debug/bin/ejsrun linux-i686-debug/bin/bit
@@ -254,7 +255,8 @@ ${CC} -shared -o ${PLATFORM}/lib/ejs.db.sqlite.so ${LDFLAGS} ${PLATFORM}/obj/ejs
 
 ejsc --out ${PLATFORM}/lib/ejs.web.mod --debug --optimize 9 src/jems/ejs.web/*.es
 ejsmod --cslots ${PLATFORM}/lib/ejs.web.mod
-if ! diff ejs.web.slots.h ${PLATFORM}/inc/ejs.web.slots.h >/dev/null; then mv ejs.web.slots.h ${PLATFORM}/inc; fi
+if ! diff ejs.web.slots.h ${PLATFORM}/inc/ejs.web.slots.h >/dev/null; then cp ejs.web.slots.h ${PLATFORM}/inc; fi
+rm -f ejs.web.slots.h
 ${CC} -c -o ${PLATFORM}/obj/ejsHttpServer.o ${CFLAGS} ${DFLAGS} -I${PLATFORM}/inc -Isrc/jems/ejs.web/src src/jems/ejs.web/src/ejsHttpServer.c
 
 ${CC} -c -o ${PLATFORM}/obj/ejsRequest.o ${CFLAGS} ${DFLAGS} -I${PLATFORM}/inc -Isrc/jems/ejs.web/src src/jems/ejs.web/src/ejsRequest.c

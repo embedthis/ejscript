@@ -5,10 +5,10 @@ var cc: Path
 let platform = bit.platform
 
 if (platform.like == 'posix') {
-    if (!bit.emulating) {
-        cc = probe('cc', {fullpath: true})
-    } else {
+    if (bit.emulating) {
         cc = 'cc'
+    } else {
+        cc = probe('cc', {fullpath: true})
     }
     Bit.load({packs: { compiler: { path: cc }}})
 

@@ -29,7 +29,8 @@ Bit.load({
             'generate-sh': "\
                 ejsc --out ${OUT} ${settings.esflags} --optimize 9 ${HOME}/*.es
                 ejsmod --cslots ${OUT}
-                if ! diff ejs.web.slots.h ${INC}/ejs.web.slots.h >/dev/null; then mv ejs.web.slots.h ${INC}; fi
+                if ! diff ejs.web.slots.h ${INC}/ejs.web.slots.h >/dev/null; then cp ejs.web.slots.h ${INC}; fi
+                rm -f ejs.web.slots.h
             ",
             depends: [ 'ejsc', 'ejsmod', 'ejs.mod' ],
         },

@@ -47,17 +47,16 @@ Bit.load({
 
         projects: {
             action: "
-                let bitcmd = 'ejs ' + Cmd.locate('bit.es')
-                trace('Generate', 'linux-i686 project')
-                run(bitcmd + ' -emulate linux-i686 -without all configure -gen sh,make', bit.target.runopt)
-                trace('Generate', 'macosx-i686 project')
-                run(bitcmd + ' -emulate macosx-i686 -without all configure -gen sh,make', bit.target.runopt)
-                trace('Generate', 'macosx-x86_64 project')
-                run(bitcmd + ' -emulate macosx-x86_64 -without all configure -gen sh,make', bit.target.runopt)
-                trace('Generate', 'solaris-i686 project')
-                run(bitcmd + ' -emulate solaris-i686 -without all configure -gen sh,make', bit.target.runopt)
-                trace('Generate', 'win-i686 project')
-                run(bitcmd + ' -emulate win-i686 -without all configure -gen sh,nmake,vs', bit.target.runopt)
+                let bitcmd = Cmd.locate('bit')
+                for each (name in ['linux-i686', 'macosx-x86_64', 'solaris-i686', 'win-i686']) {
+                    trace('Generate', name + ' project')
+                    let formats = name == 'win-i686' ? 'sh,make,nmake,vs' : 'sh,make'
+                    run(bitcmd + ' -emulate ' + name + ' -without all configure -gen ' + formats, bit.target.runopt)
+                    if (name != bit.platform.name) {
+                        rm(bit.dir.top.join(name + '.bit'))
+                        rmdir(bit.dir.top.join(name + '-debug'))
+                    }
+                }
                 /* Leave a normal configuration */ 
                 run(bitcmd + ' configure', bit.target.runopt)
             ",

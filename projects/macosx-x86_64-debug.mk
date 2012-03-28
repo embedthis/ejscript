@@ -4,7 +4,7 @@
 
 PLATFORM       := macosx-x86_64-debug
 CC             := cc
-LD             := /usr/bin/ld
+LD             := ld
 CFLAGS         := -fPIC -Wall -g
 DFLAGS         := -DPIC -DCPU=X86_64
 IFLAGS         := -I$(PLATFORM)/inc
@@ -811,7 +811,8 @@ $(PLATFORM)/lib/ejs.mod:  \
         $(PLATFORM)/bin/ejsmod
 	ejsc --out $(PLATFORM)/lib/ejs.mod --debug --optimize 9 --bind --require null src/core/*.es 
 	ejsmod --require null --cslots $(PLATFORM)/lib/ejs.mod
-	if ! diff ejs.slots.h $(PLATFORM)/inc/ejs.slots.h >/dev/null; then mv ejs.slots.h $(PLATFORM)/inc; fi
+	if ! diff ejs.slots.h $(PLATFORM)/inc/ejs.slots.h >/dev/null; then cp ejs.slots.h $(PLATFORM)/inc; fi
+	rm -f ejs.slots.h
 
 $(PLATFORM)/bin/bit.es: 
 	cp src/jems/ejs.bit/bit.es $(PLATFORM)/bin
@@ -889,7 +890,8 @@ $(PLATFORM)/lib/ejs.web.mod:  \
         $(PLATFORM)/lib/ejs.mod
 	ejsc --out $(PLATFORM)/lib/ejs.web.mod --debug --optimize 9 src/jems/ejs.web/*.es
 	ejsmod --cslots $(PLATFORM)/lib/ejs.web.mod
-	if ! diff ejs.web.slots.h $(PLATFORM)/inc/ejs.web.slots.h >/dev/null; then mv ejs.web.slots.h $(PLATFORM)/inc; fi
+	if ! diff ejs.web.slots.h $(PLATFORM)/inc/ejs.web.slots.h >/dev/null; then cp ejs.web.slots.h $(PLATFORM)/inc; fi
+	rm -f ejs.web.slots.h
 
 $(PLATFORM)/obj/ejsHttpServer.o: \
         src/jems/ejs.web/src/ejsHttpServer.c \

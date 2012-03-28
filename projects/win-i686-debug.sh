@@ -14,7 +14,7 @@ LD="link.exe"
 CFLAGS="-nologo -GR- -W3 -Zi -Od -MDd"
 DFLAGS="-D_REENTRANT -D_MT"
 IFLAGS="-Iwin-i686-debug/inc"
-LDFLAGS="-nologo -nodefaultlib -incremental:no -libpath:${PLATFORM}/bin -debug -machine:x86
+LDFLAGS="-nologo -nodefaultlib -incremental:no -libpath:${PLATFORM}/bin -debug -machine:x86"
 LIBS="ws2_32.lib advapi32.lib user32.lib kernel32.lib oldnames.lib msvcrt.lib"
 
 [ ! -x ${PLATFORM}/inc ] && mkdir -p ${PLATFORM}/inc ${PLATFORM}/obj ${PLATFORM}/lib ${PLATFORM}/bin
@@ -235,7 +235,8 @@ cp -r src/ejsCustomize.h win-i686-debug/inc/ejsCustomize.h
 
 ejsc --out ${PLATFORM}/bin/ejs.mod --debug --optimize 9 --bind --require null src/core/*.es 
 ejsmod --require null --cslots ${PLATFORM}/bin/ejs.mod
-if ! diff ejs.slots.h ${PLATFORM}/inc/ejs.slots.h >/dev/null; then mv ejs.slots.h ${PLATFORM}/inc; fi
+if ! diff ejs.slots.h ${PLATFORM}/inc/ejs.slots.h >/dev/null; then cp ejs.slots.h ${PLATFORM}/inc; fi
+rm -f ejs.slots.h
 cp src/jems/ejs.bit/bit.es ${PLATFORM}/bin
 rm -rf win-i686-debug/bin/bit.exe
 cp -r win-i686-debug/bin/ejsrun.exe win-i686-debug/bin/bit.exe
@@ -260,7 +261,8 @@ ejsc --out ${PLATFORM}/bin/ejs.db.sqlite.mod --debug --optimize 9 src/jems/ejs.d
 
 ejsc --out ${PLATFORM}/bin/ejs.web.mod --debug --optimize 9 src/jems/ejs.web/*.es
 ejsmod --cslots ${PLATFORM}/bin/ejs.web.mod
-if ! diff ejs.web.slots.h ${PLATFORM}/inc/ejs.web.slots.h >/dev/null; then mv ejs.web.slots.h ${PLATFORM}/inc; fi
+if ! diff ejs.web.slots.h ${PLATFORM}/inc/ejs.web.slots.h >/dev/null; then cp ejs.web.slots.h ${PLATFORM}/inc; fi
+rm -f ejs.web.slots.h
 "${CC}" -c -Fo${PLATFORM}/obj/ejsHttpServer.obj -Fd${PLATFORM}/obj ${CFLAGS} ${DFLAGS} -I${PLATFORM}/inc -Isrc/jems/ejs.web/src src/jems/ejs.web/src/ejsHttpServer.c
 
 "${CC}" -c -Fo${PLATFORM}/obj/ejsRequest.obj -Fd${PLATFORM}/obj ${CFLAGS} ${DFLAGS} -I${PLATFORM}/inc -Isrc/jems/ejs.web/src src/jems/ejs.web/src/ejsRequest.c

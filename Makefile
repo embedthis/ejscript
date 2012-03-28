@@ -30,8 +30,8 @@ endif
 
 all compile:
 	$(MAKE) -f projects/$(OS)-$(ARCH)-$(PROFILE).$(EXT) $@
-	@echo ; echo 'You can now use "bit" to configure and re-build Ejscript.'
-	@echo 'Run "bit configure build"'
+	@echo ; echo 'You can now use Ejscript or use "bit" to customize and re-build Ejscript, via:'
+	@echo ; echo '	bit configure build' ; echo
 
 build configure generate test package:
 	@bit $@
