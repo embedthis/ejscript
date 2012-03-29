@@ -8,7 +8,8 @@ LD             := ld
 CFLAGS         := -Wall -fPIC -g -Wno-unused-result -mtune=i686
 DFLAGS         := -D_REENTRANT -DCPU=i686 -DPIC
 IFLAGS         := -I$(PLATFORM)/inc
-LDFLAGS        := '-Wl,--enable-new-dtags' '-Wl,-rpath,$$ORIGIN/' '-Wl,-rpath,$$ORIGIN/../lib' '-L$(PLATFORM)/lib' '-g'
+LDFLAGS        := '-Wl,--enable-new-dtags' '-Wl,-rpath,$$ORIGIN/' '-Wl,-rpath,$$ORIGIN/../lib' '-g'
+LIBPATHS       := -L$(PLATFORM)/lib
 LIBS           := -lpthread -lm -ldl
 
 all: prep \
@@ -191,7 +192,7 @@ $(PLATFORM)/lib/libmpr.so:  \
         $(PLATFORM)/inc/mpr.h \
         $(PLATFORM)/inc/mprSsl.h \
         $(PLATFORM)/obj/mprLib.o
-	$(CC) -shared -o $(PLATFORM)/lib/libmpr.so $(LDFLAGS) $(PLATFORM)/obj/mprLib.o $(LIBS)
+	$(CC) -shared -o $(PLATFORM)/lib/libmpr.so $(LDFLAGS) $(LIBPATHS) $(PLATFORM)/obj/mprLib.o $(LIBS)
 
 $(PLATFORM)/obj/manager.o: \
         src/deps/mpr/manager.c \
@@ -201,7 +202,7 @@ $(PLATFORM)/obj/manager.o: \
 $(PLATFORM)/bin/ejsman:  \
         $(PLATFORM)/lib/libmpr.so \
         $(PLATFORM)/obj/manager.o
-	$(CC) -o $(PLATFORM)/bin/ejsman $(LDFLAGS) -L$(PLATFORM)/lib $(PLATFORM)/obj/manager.o $(LIBS) -lmpr $(LDFLAGS)
+	$(CC) -o $(PLATFORM)/bin/ejsman $(LDFLAGS) $(LIBPATHS) $(PLATFORM)/obj/manager.o $(LIBS) -lmpr $(LDFLAGS)
 
 $(PLATFORM)/obj/makerom.o: \
         src/deps/mpr/makerom.c \
@@ -211,7 +212,7 @@ $(PLATFORM)/obj/makerom.o: \
 $(PLATFORM)/bin/makerom:  \
         $(PLATFORM)/lib/libmpr.so \
         $(PLATFORM)/obj/makerom.o
-	$(CC) -o $(PLATFORM)/bin/makerom $(LDFLAGS) -L$(PLATFORM)/lib $(PLATFORM)/obj/makerom.o $(LIBS) -lmpr $(LDFLAGS)
+	$(CC) -o $(PLATFORM)/bin/makerom $(LDFLAGS) $(LIBPATHS) $(PLATFORM)/obj/makerom.o $(LIBS) -lmpr $(LDFLAGS)
 
 $(PLATFORM)/inc/pcre.h: 
 	rm -fr linux-i686-debug/inc/pcre.h
@@ -225,7 +226,7 @@ $(PLATFORM)/obj/pcre.o: \
 $(PLATFORM)/lib/libpcre.so:  \
         $(PLATFORM)/inc/pcre.h \
         $(PLATFORM)/obj/pcre.o
-	$(CC) -shared -o $(PLATFORM)/lib/libpcre.so $(LDFLAGS) $(PLATFORM)/obj/pcre.o $(LIBS)
+	$(CC) -shared -o $(PLATFORM)/lib/libpcre.so $(LDFLAGS) $(LIBPATHS) $(PLATFORM)/obj/pcre.o $(LIBS)
 
 $(PLATFORM)/inc/http.h: 
 	rm -fr linux-i686-debug/inc/http.h
@@ -241,7 +242,7 @@ $(PLATFORM)/lib/libhttp.so:  \
         $(PLATFORM)/lib/libpcre.so \
         $(PLATFORM)/inc/http.h \
         $(PLATFORM)/obj/httpLib.o
-	$(CC) -shared -o $(PLATFORM)/lib/libhttp.so $(LDFLAGS) $(PLATFORM)/obj/httpLib.o $(LIBS) -lmpr -lpcre
+	$(CC) -shared -o $(PLATFORM)/lib/libhttp.so $(LDFLAGS) $(LIBPATHS) $(PLATFORM)/obj/httpLib.o $(LIBS) -lmpr -lpcre
 
 $(PLATFORM)/obj/http.o: \
         src/deps/http/http.c \
@@ -251,7 +252,7 @@ $(PLATFORM)/obj/http.o: \
 $(PLATFORM)/bin/http:  \
         $(PLATFORM)/lib/libhttp.so \
         $(PLATFORM)/obj/http.o
-	$(CC) -o $(PLATFORM)/bin/http $(LDFLAGS) -L$(PLATFORM)/lib $(PLATFORM)/obj/http.o $(LIBS) -lhttp -lmpr -lpcre $(LDFLAGS)
+	$(CC) -o $(PLATFORM)/bin/http $(LDFLAGS) $(LIBPATHS) $(PLATFORM)/obj/http.o $(LIBS) -lhttp -lmpr -lpcre $(LDFLAGS)
 
 $(PLATFORM)/inc/sqlite3.h: 
 	rm -fr linux-i686-debug/inc/sqlite3.h
@@ -265,7 +266,7 @@ $(PLATFORM)/obj/sqlite3.o: \
 $(PLATFORM)/lib/libsqlite3.so:  \
         $(PLATFORM)/inc/sqlite3.h \
         $(PLATFORM)/obj/sqlite3.o
-	$(CC) -shared -o $(PLATFORM)/lib/libsqlite3.so $(LDFLAGS) $(PLATFORM)/obj/sqlite3.o $(LIBS)
+	$(CC) -shared -o $(PLATFORM)/lib/libsqlite3.so $(LDFLAGS) $(LIBPATHS) $(PLATFORM)/obj/sqlite3.o $(LIBS)
 
 $(PLATFORM)/inc/ejs.cache.local.slots.h: 
 	rm -fr linux-i686-debug/inc/ejs.cache.local.slots.h
@@ -663,7 +664,7 @@ $(PLATFORM)/lib/libejs.so:  \
         $(PLATFORM)/obj/ejsModule.o \
         $(PLATFORM)/obj/ejsScope.o \
         $(PLATFORM)/obj/ejsService.o
-	$(CC) -shared -o $(PLATFORM)/lib/libejs.so $(LDFLAGS) $(PLATFORM)/obj/ecAst.o $(PLATFORM)/obj/ecCodeGen.o $(PLATFORM)/obj/ecCompiler.o $(PLATFORM)/obj/ecLex.o $(PLATFORM)/obj/ecModuleWrite.o $(PLATFORM)/obj/ecParser.o $(PLATFORM)/obj/ecState.o $(PLATFORM)/obj/ejsApp.o $(PLATFORM)/obj/ejsArray.o $(PLATFORM)/obj/ejsBlock.o $(PLATFORM)/obj/ejsBoolean.o $(PLATFORM)/obj/ejsByteArray.o $(PLATFORM)/obj/ejsCache.o $(PLATFORM)/obj/ejsCmd.o $(PLATFORM)/obj/ejsConfig.o $(PLATFORM)/obj/ejsDate.o $(PLATFORM)/obj/ejsDebug.o $(PLATFORM)/obj/ejsError.o $(PLATFORM)/obj/ejsFile.o $(PLATFORM)/obj/ejsFileSystem.o $(PLATFORM)/obj/ejsFrame.o $(PLATFORM)/obj/ejsFunction.o $(PLATFORM)/obj/ejsGC.o $(PLATFORM)/obj/ejsGlobal.o $(PLATFORM)/obj/ejsHttp.o $(PLATFORM)/obj/ejsIterator.o $(PLATFORM)/obj/ejsJSON.o $(PLATFORM)/obj/ejsLocalCache.o $(PLATFORM)/obj/ejsMath.o $(PLATFORM)/obj/ejsMemory.o $(PLATFORM)/obj/ejsMprLog.o $(PLATFORM)/obj/ejsNamespace.o $(PLATFORM)/obj/ejsNull.o $(PLATFORM)/obj/ejsNumber.o $(PLATFORM)/obj/ejsObject.o $(PLATFORM)/obj/ejsPath.o $(PLATFORM)/obj/ejsPot.o $(PLATFORM)/obj/ejsRegExp.o $(PLATFORM)/obj/ejsSocket.o $(PLATFORM)/obj/ejsString.o $(PLATFORM)/obj/ejsSystem.o $(PLATFORM)/obj/ejsTimer.o $(PLATFORM)/obj/ejsType.o $(PLATFORM)/obj/ejsUri.o $(PLATFORM)/obj/ejsVoid.o $(PLATFORM)/obj/ejsWorker.o $(PLATFORM)/obj/ejsXML.o $(PLATFORM)/obj/ejsXMLList.o $(PLATFORM)/obj/ejsXMLLoader.o $(PLATFORM)/obj/ejsByteCode.o $(PLATFORM)/obj/ejsException.o $(PLATFORM)/obj/ejsHelper.o $(PLATFORM)/obj/ejsInterp.o $(PLATFORM)/obj/ejsLoader.o $(PLATFORM)/obj/ejsModule.o $(PLATFORM)/obj/ejsScope.o $(PLATFORM)/obj/ejsService.o $(LIBS) -lmpr -lpcre -lhttp
+	$(CC) -shared -o $(PLATFORM)/lib/libejs.so $(LDFLAGS) $(LIBPATHS) $(PLATFORM)/obj/ecAst.o $(PLATFORM)/obj/ecCodeGen.o $(PLATFORM)/obj/ecCompiler.o $(PLATFORM)/obj/ecLex.o $(PLATFORM)/obj/ecModuleWrite.o $(PLATFORM)/obj/ecParser.o $(PLATFORM)/obj/ecState.o $(PLATFORM)/obj/ejsApp.o $(PLATFORM)/obj/ejsArray.o $(PLATFORM)/obj/ejsBlock.o $(PLATFORM)/obj/ejsBoolean.o $(PLATFORM)/obj/ejsByteArray.o $(PLATFORM)/obj/ejsCache.o $(PLATFORM)/obj/ejsCmd.o $(PLATFORM)/obj/ejsConfig.o $(PLATFORM)/obj/ejsDate.o $(PLATFORM)/obj/ejsDebug.o $(PLATFORM)/obj/ejsError.o $(PLATFORM)/obj/ejsFile.o $(PLATFORM)/obj/ejsFileSystem.o $(PLATFORM)/obj/ejsFrame.o $(PLATFORM)/obj/ejsFunction.o $(PLATFORM)/obj/ejsGC.o $(PLATFORM)/obj/ejsGlobal.o $(PLATFORM)/obj/ejsHttp.o $(PLATFORM)/obj/ejsIterator.o $(PLATFORM)/obj/ejsJSON.o $(PLATFORM)/obj/ejsLocalCache.o $(PLATFORM)/obj/ejsMath.o $(PLATFORM)/obj/ejsMemory.o $(PLATFORM)/obj/ejsMprLog.o $(PLATFORM)/obj/ejsNamespace.o $(PLATFORM)/obj/ejsNull.o $(PLATFORM)/obj/ejsNumber.o $(PLATFORM)/obj/ejsObject.o $(PLATFORM)/obj/ejsPath.o $(PLATFORM)/obj/ejsPot.o $(PLATFORM)/obj/ejsRegExp.o $(PLATFORM)/obj/ejsSocket.o $(PLATFORM)/obj/ejsString.o $(PLATFORM)/obj/ejsSystem.o $(PLATFORM)/obj/ejsTimer.o $(PLATFORM)/obj/ejsType.o $(PLATFORM)/obj/ejsUri.o $(PLATFORM)/obj/ejsVoid.o $(PLATFORM)/obj/ejsWorker.o $(PLATFORM)/obj/ejsXML.o $(PLATFORM)/obj/ejsXMLList.o $(PLATFORM)/obj/ejsXMLLoader.o $(PLATFORM)/obj/ejsByteCode.o $(PLATFORM)/obj/ejsException.o $(PLATFORM)/obj/ejsHelper.o $(PLATFORM)/obj/ejsInterp.o $(PLATFORM)/obj/ejsLoader.o $(PLATFORM)/obj/ejsModule.o $(PLATFORM)/obj/ejsScope.o $(PLATFORM)/obj/ejsService.o $(LIBS) -lmpr -lpcre -lhttp
 
 $(PLATFORM)/obj/ejs.o: \
         src/cmd/ejs.c \
@@ -673,7 +674,7 @@ $(PLATFORM)/obj/ejs.o: \
 $(PLATFORM)/bin/ejs:  \
         $(PLATFORM)/lib/libejs.so \
         $(PLATFORM)/obj/ejs.o
-	$(CC) -o $(PLATFORM)/bin/ejs $(LDFLAGS) -L$(PLATFORM)/lib $(PLATFORM)/obj/ejs.o $(LIBS) -lejs -lmpr -lpcre -lhttp $(LDFLAGS)
+	$(CC) -o $(PLATFORM)/bin/ejs $(LDFLAGS) $(LIBPATHS) $(PLATFORM)/obj/ejs.o $(LIBS) -lejs -lmpr -lpcre -lhttp $(LDFLAGS)
 
 $(PLATFORM)/obj/ejsc.o: \
         src/cmd/ejsc.c \
@@ -683,7 +684,7 @@ $(PLATFORM)/obj/ejsc.o: \
 $(PLATFORM)/bin/ejsc:  \
         $(PLATFORM)/lib/libejs.so \
         $(PLATFORM)/obj/ejsc.o
-	$(CC) -o $(PLATFORM)/bin/ejsc $(LDFLAGS) -L$(PLATFORM)/lib $(PLATFORM)/obj/ejsc.o $(LIBS) -lejs -lmpr -lpcre -lhttp $(LDFLAGS)
+	$(CC) -o $(PLATFORM)/bin/ejsc $(LDFLAGS) $(LIBPATHS) $(PLATFORM)/obj/ejsc.o $(LIBS) -lejs -lmpr -lpcre -lhttp $(LDFLAGS)
 
 $(PLATFORM)/obj/ejsmod.o: \
         src/cmd/ejsmod.c \
@@ -722,7 +723,7 @@ $(PLATFORM)/bin/ejsmod:  \
         $(PLATFORM)/obj/docFiles.o \
         $(PLATFORM)/obj/listing.o \
         $(PLATFORM)/obj/slotGen.o
-	$(CC) -o $(PLATFORM)/bin/ejsmod $(LDFLAGS) -L$(PLATFORM)/lib $(PLATFORM)/obj/ejsmod.o $(PLATFORM)/obj/doc.o $(PLATFORM)/obj/docFiles.o $(PLATFORM)/obj/listing.o $(PLATFORM)/obj/slotGen.o $(LIBS) -lejs -lmpr -lpcre -lhttp $(LDFLAGS)
+	$(CC) -o $(PLATFORM)/bin/ejsmod $(LDFLAGS) $(LIBPATHS) $(PLATFORM)/obj/ejsmod.o $(PLATFORM)/obj/doc.o $(PLATFORM)/obj/docFiles.o $(PLATFORM)/obj/listing.o $(PLATFORM)/obj/slotGen.o $(LIBS) -lejs -lmpr -lpcre -lhttp $(LDFLAGS)
 
 $(PLATFORM)/obj/ejsrun.o: \
         src/cmd/ejsrun.c \
@@ -732,7 +733,7 @@ $(PLATFORM)/obj/ejsrun.o: \
 $(PLATFORM)/bin/ejsrun:  \
         $(PLATFORM)/lib/libejs.so \
         $(PLATFORM)/obj/ejsrun.o
-	$(CC) -o $(PLATFORM)/bin/ejsrun $(LDFLAGS) -L$(PLATFORM)/lib $(PLATFORM)/obj/ejsrun.o $(LIBS) -lejs -lmpr -lpcre -lhttp $(LDFLAGS)
+	$(CC) -o $(PLATFORM)/bin/ejsrun $(LDFLAGS) $(LIBPATHS) $(PLATFORM)/obj/ejsrun.o $(LIBS) -lejs -lmpr -lpcre -lhttp $(LDFLAGS)
 
 $(PLATFORM)/lib/ejs.mod:  \
         $(PLATFORM)/bin/ejsc \
@@ -807,7 +808,7 @@ $(PLATFORM)/lib/ejs.db.sqlite.so:  \
         $(PLATFORM)/lib/ejs.db.sqlite.mod \
         $(PLATFORM)/lib/libsqlite3.so \
         $(PLATFORM)/obj/ejsSqlite.o
-	$(CC) -shared -o $(PLATFORM)/lib/ejs.db.sqlite.so $(LDFLAGS) $(PLATFORM)/obj/ejsSqlite.o $(LIBS) -lmpr -lejs -lpcre -lhttp -lsqlite3
+	$(CC) -shared -o $(PLATFORM)/lib/ejs.db.sqlite.so $(LDFLAGS) $(LIBPATHS) $(PLATFORM)/obj/ejsSqlite.o $(LIBS) -lmpr -lejs -lpcre -lhttp -lsqlite3
 
 $(PLATFORM)/lib/ejs.web.mod:  \
         $(PLATFORM)/bin/ejsc \
@@ -852,7 +853,7 @@ $(PLATFORM)/lib/ejs.web.so:  \
         $(PLATFORM)/obj/ejsRequest.o \
         $(PLATFORM)/obj/ejsSession.o \
         $(PLATFORM)/obj/ejsWeb.o
-	$(CC) -shared -o $(PLATFORM)/lib/ejs.web.so $(LDFLAGS) $(PLATFORM)/obj/ejsHttpServer.o $(PLATFORM)/obj/ejsRequest.o $(PLATFORM)/obj/ejsSession.o $(PLATFORM)/obj/ejsWeb.o $(LIBS) -lmpr -lhttp -lpcre -lpcre -lejs
+	$(CC) -shared -o $(PLATFORM)/lib/ejs.web.so $(LDFLAGS) $(LIBPATHS) $(PLATFORM)/obj/ejsHttpServer.o $(PLATFORM)/obj/ejsRequest.o $(PLATFORM)/obj/ejsSession.o $(PLATFORM)/obj/ejsWeb.o $(LIBS) -lmpr -lhttp -lpcre -lpcre -lejs
 
 $(PLATFORM)/lib/www: 
 	rm -fr $(PLATFORM)/lib/www

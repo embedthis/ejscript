@@ -2,20 +2,20 @@
     winsdk.bit - WinSDK tools
  */
 
-let search = bit.dir.programs.glob('Microsoft SDKs\\Windows\\*')
+let search = bit.dir.programs.glob('Microsoft SDKs/Windows/*')
 let winsdk: Path = '$(SDK)'
 if (!bit.emulating) {
     if (search.length == 0) {
         throw 'Can\'t find the Windows SDK. Download from http://msdn.microsoft.com/en-us/windowsserver/bb980924.aspx'
     }
-    winsdk = probe('Include\\WinBase.h', {fullpath: true, search: search.sort().reverse()})
+    winsdk = probe('Include/WinBase.h', {fullpath: true, search: search.sort().reverse()})
     winsdk = winsdk.dirname.dirname
 }
 Bit.load({packs: { winsdk: { path: winsdk }}})
-bit.env.PATH = [ winsdk.join('Bin').map('\\'), ]
-bit.env.INCLUDE = [ winsdk.join('INCLUDE').map('\\') ]
+bit.env.PATH = [ winsdk.join('Bin') ]
+bit.env.INCLUDE = [ winsdk.join('INCLUDE') ]
 if (bit.platform.arch == 'x86_64') {
-    bit.env.LIB = [ winsdk.join('lib\\x64').map('\\') ]
+    bit.env.LIB = [ winsdk.join('lib/x64') ]
 } else {
-    bit.env.LIB = [ winsdk.join('lib').map('\\') ]
+    bit.env.LIB = [ winsdk.join('lib') ]
 }

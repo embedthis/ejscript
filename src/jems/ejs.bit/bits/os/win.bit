@@ -33,10 +33,11 @@ Bit.load({
     '+optional': [ 'inno' ],
 
     defaults: {
-        '+compiler': [ '-nologo', '-GR-', '-W3' ],
-        '+defines':  [ '-D_REENTRANT', '-D_MT' ],
-        '+libraries':[ 'ws2_32.lib', 'advapi32.lib', 'user32.lib', 'kernel32.lib', 'oldnames.lib', 'msvcrt.lib', 'shell32.lib' ],
-        '+linker':   [
+        '+compiler':  [ '-nologo', '-GR-', '-W3' ],
+        '+defines':   [ '-D_REENTRANT', '-D_MT' ],
+        '+libraries': [ 'ws2_32.lib', 'advapi32.lib', 'user32.lib', 'kernel32.lib', 'oldnames.lib', 'msvcrt.lib', 'shell32.lib' ],
+        '+libpaths':  [ ],
+        '+linker':    [
             '-nologo',
             '-nodefaultlib',
             '-incremental:no',
@@ -47,7 +48,7 @@ Bit.load({
                 let defaults = bit.defaults
                 let settings = bit.settings
                 if (settings.preprocess) defaults.compiler += [ '-E' ]
-                defaults.linker.push('-libpath:' + bit.dir.lib)
+                defaults.libpaths.push(bit.dir.lib)
                 if (settings.profile == 'debug') {
                     defaults.compiler += [ '-Zi', '-Od', '-MDd' ]
                     defaults.linker += [ '-debug' ]
@@ -62,9 +63,9 @@ Bit.load({
     rules: {
         //  MOB -Fd{DIR} should this be named uniquely per target?
         'c->obj': '"${packs.compiler.path}" -c -Fo${OUT} -Fd${dir.obj} ${CFLAGS} ${target.defines} ${INCLUDES} ${PREPROCESS} ${IN}',
-        'lib':  '"${packs.link.path}" -dll -out:${OUT} -entry:_DllMainCRTStartup@12 -def:${DEF} ${target.linker} ${IN} ${LIBS}',
-        'exe':  '"${packs.link.path}" -out:${OUT} -entry:mainCRTStartup -subsystem:console ${target.linker} ${IN} ${LIBS}',
-        'gui':  '"${packs.link.path}" -out:${OUT} -entry:WinMainCRTStartup -subsystem:Windows ${target.linker} ${IN} ${LIBS}',
+        'lib':  '"${packs.link.path}" -dll -out:${OUT} -entry:_DllMainCRTStartup@12 -def:${DEF} ${target.linker} ${LIBPATHS} ${IN} ${LIBS}',
+        'exe':  '"${packs.link.path}" -out:${OUT} -entry:mainCRTStartup -subsystem:console ${target.linker} ${LIBPATHS} ${IN} ${LIBS}',
+        'gui':  '"${packs.link.path}" -out:${OUT} -entry:WinMainCRTStartup -subsystem:Windows ${target.linker} ${LIBPATHS} ${IN} ${LIBS}',
         'sym':   '"${packs.dumpbin.path}" /symbols ${IN}',
     },
 })

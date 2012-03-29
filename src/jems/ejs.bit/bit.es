@@ -264,8 +264,8 @@ public class Bit {
             global.bit = bit = bareBit.clone(true)
             let bits = src.join('bits/standard.bit').exists ?  src.join('bits') : Config.LibDir.join('bits')
             bit.dir.bits = bits;
-            bit.dir.src = Path(src)
-            bit.dir.top = Path('.')
+            bit.dir.src = src
+            bit.dir.top = '.'
             let kind = like(os)
             bit.dir.programs = (kind == 'windows') ? programFiles() : Path('/usr/local/bin')
             bit.platform = { name: platform, os: os, arch: arch, like: kind, dist: dist(os) }
@@ -787,6 +787,7 @@ public class Bit {
         if (control.fullpath) {
             return path
         }
+        //  MOB - what does this do?
         let pat = RegExp('.' + file.toString().replace(/[\/\\]/g, '.') + '$')
         return path.toString().replace(pat, '')
     }
@@ -823,7 +824,6 @@ public class Bit {
             print(bit.settings.version + '-' + bit.settings.buildNumber)
             return
         }
-
         if (options.verbose) {
             vtrace('Build', currentPlatform + '-' + bit.settings.profile + ': ' + 
                     ((selectedTargets != '') ? selectedTargets: 'nothing to do'))
@@ -1049,6 +1049,7 @@ public class Bit {
             defines:    bit.defaults.defines.join(' '),
             includes:   bit.defaults.includes.map(function(e) '-I' + e).join(' '),
             linker:     bit.defaults.linker.join(' '),
+            libpaths:   mapLibPaths(bit.defaults.libpaths)
             libraries:  mapLibs(bit.defaults.libraries).join(' ')
         }
         let base = bit.dir.projects.join(localPlatform + '-' + bit.settings.profile)
@@ -1091,6 +1092,7 @@ public class Bit {
         genout.writeLine('DFLAGS="' + gen.defines + '"')
         genout.writeLine('IFLAGS="' + bit.defaults.includes.map(function(path) '-I' + path.relative).join(' ') + '"')
         genout.writeLine('LDFLAGS="' + repvar(gen.linker).replace(/\$ORIGIN/g, '\\$$ORIGIN') + '"')
+        genout.writeLine('LIBPATHS="' + repvar(gen.libpaths) + '"')
         genout.writeLine('LIBS="' + gen.libraries + '"\n')
         genout.writeLine('[ ! -x ${PLATFORM}/inc ] && ' + 
             'mkdir -p ${PLATFORM}/inc ${PLATFORM}/obj ${PLATFORM}/lib ${PLATFORM}/bin')
@@ -1120,6 +1122,7 @@ public class Bit {
             repvar(bit.defaults.includes.map(function(path) '-I' + path.relative).join(' ')))
         let linker = defaults.linker.map(function(s) "'" + s + "'").join(' ')
         genout.writeLine('LDFLAGS        := ' + repvar(linker).replace(/\$ORIGIN/g, '$$$$ORIGIN'))
+        genout.writeLine('LIBPATHS       := ' + repvar(gen.libpaths))
         genout.writeLine('LIBS           := ' + gen.libraries + '\n')
         genout.writeLine('all: prep \\\n        ' + genAll())
         genout.writeLine('.PHONY: prep\n\nprep:')
@@ -1143,23 +1146,17 @@ public class Bit {
             ' for ' + bit.platform.os + ' on ' + bit.platform.arch + '\n#\n')
 
         genEnv()
-        /*
-        genout.writeLine('VS        = $(PROGRAMFILES)\\Microsoft Visual Studio 10.0')
-        genout.writeLine('SDK       = $(PROGRAMFILES)\\Microsoft SDKs\\Windows\\v7.0A')
-        genout.writeLine('INCLUDE   = $(INCLUDE);' + bit.env.INCLUDE.join(';'))
-        genout.writeLine('LIB       = $(LIB);' + bit.env.LIB.join(';'))
-        genout.writeLine('PATH      = ' + bit.env.PATH.join(';') + '$(PATH)\n')
-        */
-
         genout.writeLine('PLATFORM  = ' + pname)
         genout.writeLine('CC        = cl')
         genout.writeLine('LD        = link')
         genout.writeLine('CFLAGS    = ' + gen.compiler)
         genout.writeLine('DFLAGS    = ' + gen.defines)
         genout.writeLine('IFLAGS    = ' + 
-            repvar(bit.defaults.includes.map(function(path) '-I' + path.relative).join(' ')))
+            repvar(bit.defaults.includes.map(function(path) '-I' + reppath(path)).join(' ')))
 
+//MOB ZZZ - should not be necessary
         genout.writeLine('LDFLAGS   = ' + repvar(gen.linker).replace(/\//g, '\\'))
+        genout.writeLine('LIBPATHS  = ' + repvar(gen.libpaths).replace(/\//g, '\\'))
         genout.writeLine('LIBS      = ' + gen.libraries + '\n')
         genout.writeLine('all: prep \\\n        ' + genAll())
         genout.writeLine('.PHONY: prep\n\nprep:')
@@ -1203,11 +1200,6 @@ public class Bit {
                 genout.writeLine('export VS="$(PROGRAMFILES)\\Microsoft Visual Studio 10.0"')
                 genout.writeLine('export SDK="$(PROGRAMFILES)\\Microsoft SDKs\\Windows\\v7.0A"')
             }
-            /*
-            genout.writeLine('INCLUDE   := $(INCLUDE);' + bit.env.INCLUDE.join(';'))
-            genout.writeLine('LIB       := $(LIB);' + bit.env.LIB.join(';'))
-            genout.writeLine('PATH      := ' + bit.env.PATH.join(';') + '$(PATH)\n')
-            */
         }
         for (let [key,value] in bit.env) {
             if (value is Array) {
@@ -1224,7 +1216,7 @@ public class Bit {
                 genout.writeLine('export %-7s := %s' % [key, value])
 
             } else if (generating == 'nmake') {
-                genout.writeLine('%-9s = %s' % [key, value])
+                genout.writeLine('%-9s = %s' % [key, repstr(value)])
 
             } else if (generating == 'sh') {
                 genout.writeLine('export ' + key + '="' + value + '"')
@@ -1304,6 +1296,7 @@ public class Bit {
         for (let [tname, target] in bit.targets) {
             if (target.enable) {
                 if (!(target.enable is Boolean)) {
+//MOB ZZZ - should not be necessary
                     let script = target.enable.expand(bit, {fill: ''}).replace(/\\/g, '\\\\')
                     if (!eval(script)) {
                         vtrace('Skip', 'Target ' + tname + ' is disabled on this platform') 
@@ -1458,6 +1451,12 @@ public class Bit {
                             target.linker.push(option)
                         }
                     }
+                    for each (option in dep.libpaths) {
+                        target.libpaths ||= []
+                        if (!target.libpaths.contains(option)) {
+                            target.libpaths.push(option)
+                        }
+                    }
                 }
             } else {
                 let pack = bit.packs[dname]
@@ -1478,6 +1477,10 @@ public class Bit {
                     if (pack.linker) {
                         target.linker ||= []
                         target.linker += pack.linker
+                    }
+                    if (pack.libpaths) {
+                        target.libpaths ||= []
+                        target.libpaths += pack.libpaths
                     }
                 }
             }
@@ -1569,6 +1572,7 @@ public class Bit {
                 }
                 if (target.type == 'obj') { 
                     delete target.linker 
+                    delete target.libpaths 
                     delete target.libraries 
                 }
             }
@@ -1664,6 +1668,7 @@ public class Bit {
         target.building = true
         bit.target = target
         target.linker ||= []
+        target.libpaths ||= []
         target.includes ||= []
         target.libraries ||= []
 
@@ -1749,16 +1754,16 @@ public class Bit {
         command = command.expand(bit, {fill: ''})
         diagnose(2, command)
         if (generating == 'sh') {
-            command = repgen(command)
+            command = repcmd(command)
             genout.writeLine(command + '\n')
 
         } else if (generating == 'make') {
-            command = repgen(command)
+            command = repcmd(command)
             genout.writeLine(reppath(target.path) + ': ' + repvar(getTargetDeps(target)) +
                 '\n\t' + command + '\n')
 
         } else if (generating == 'nmake') {
-            command = repgen(command)
+            command = repcmd(command)
             genout.writeLine(reppath(target.path) + ': ' + repvar(getTargetDeps(target)) +
                 '\n\t' + command + '\n')
 
@@ -1794,15 +1799,15 @@ public class Bit {
         let command = rule.expand(bit, {fill: ''})
         command = command.expand(bit, {fill: ''})
         if (generating == 'sh') {
-            command = repgen(command)
+            command = repcmd(command)
             genout.writeLine(command + '\n')
 
         } else if (generating == 'make') {
-            command = repgen(command)
+            command = repcmd(command)
             genout.writeLine(reppath(target.path) + ': ' + repvar(getTargetDeps(target)) + '\n\t' + command + '\n')
 
         } else if (generating == 'nmake') {
-            command = repgen(command)
+            command = repcmd(command)
             genout.writeLine(reppath(target.path) + ': ' + repvar(getTargetDeps(target)) + '\n\t' + command + '\n')
 
         } else {
@@ -1873,16 +1878,16 @@ public class Bit {
 command = command.expand(bit, {fill: ''})
 
             if (generating == 'sh') {
-                command = repgen(command)
+                command = repcmd(command)
                 genout.writeLine(command + '\n')
 
             } else if (generating == 'make') {
-                command = repgen(command)
+                command = repcmd(command)
                 genout.writeLine(reppath(target.path) + ': \\\n        ' + 
                     file.relative + repvar(getTargetDeps(target)) + '\n\t' + command + '\n')
 
             } else if (generating == 'nmake') {
-                command = repgen(command)
+                command = repcmd(command)
                 genout.writeLine(reppath(target.path) + ': \\\n        ' + 
                     file.relative.windows + repvar(getTargetDeps(target)) + '\n\t' + command + '\n')
 
@@ -2003,11 +2008,12 @@ command = command.expand(bit, {fill: ''})
         Replace default defines, includes, libraries etc with token equivalents. This allows
         Makefiles and script to be use variables to control various flag settings.
      */
-    function repgen(command: String): String {
+    function repcmd(command: String): String {
         if (generating == 'make' || generating == 'nmake') {
             /* Twice because ldflags are repeated and replace only changes the first occurrence */
             command = command.replace(gen.linker, '$(LDFLAGS)')
             command = command.replace(gen.linker, '$(LDFLAGS)')
+            command = command.replace(gen.libpaths, '$(LIBPATHS)')
             command = command.replace(gen.compiler, '$(CFLAGS)')
             command = command.replace(gen.defines, '$(DFLAGS)')
             command = command.replace(gen.includes, '$(IFLAGS)')
@@ -2018,6 +2024,7 @@ command = command.expand(bit, {fill: ''})
         } else if (generating == 'sh') {
             command = command.replace(gen.linker, '${LDFLAGS}')
             command = command.replace(gen.linker, '${LDFLAGS}')
+            command = command.replace(gen.libpaths, '${LIBPATHS}')
             command = command.replace(gen.compiler, '${CFLAGS}')
             command = command.replace(gen.defines, '${DFLAGS}')
             command = command.replace(gen.includes, '${IFLAGS}')
@@ -2026,7 +2033,12 @@ command = command.expand(bit, {fill: ''})
             command = command.replace(bit.packs.compiler.path, '${CC}')
             command = command.replace(bit.packs.link.path, '${LD}')
         }
-        command = command.replace(RegExp(bit.dir.top + '/', 'g'), '')
+        if (bit.platform.like == 'windows') {
+            let pat = (bit.dir.top + '\\').replace(/\\/g, '\\\\')
+            command = command.replace(RegExp(pat, 'g'), '')
+        } else {
+            command = command.replace(RegExp(bit.dir.top + '/', 'g'), '')
+        }
         command = command.replace(/  */g, ' ')
         if (generating == 'nmake') {
             command = command.replace(/\//g, '\\')
@@ -2039,11 +2051,11 @@ command = command.expand(bit, {fill: ''})
         Replaces the top directory and the PLATFORM
      */
     function repvar(command: String): String {
-        if (bit.dir.top.separator == '\\') {
+        command = command.replace(RegExp(bit.dir.top + '/', 'g'), '')
+        if (bit.platform.like == 'windows') {
+            //  MOB - is this needed
             let pat = (bit.dir.top + '\\').replace(/\\/g, '\\\\')
             command = command.replace(RegExp(pat, 'g'), '')
-        } else {
-            command = command.replace(RegExp(bit.dir.top + '/', 'g'), '')
         }
         if (generating == 'make') {
             command = command.replace(RegExp(gen.platform, 'g'), '$$(PLATFORM)')
@@ -2057,11 +2069,18 @@ command = command.expand(bit, {fill: ''})
 
     function reppath(path: Path): String {
         path = path.relative
-        if (bit.platform.like == 'windows') {
+        if (bit.platform.like == 'windows' && generating == 'nmake') {
             path = path.windows
         }
         return repvar(path)
     }
+
+    //  MOB - rename
+    function repstr(str: String)
+        bit.platform.like == 'windows' ? str.replace(/\//g, '\\\\') : str
+
+    function natural(path: Path): Path
+        bit.platform.like == 'windows' ? path.windows : path
 
     /*
         Get the dependencies of a target as a string
@@ -2112,6 +2131,15 @@ command = command.expand(bit, {fill: ''})
         bit.PLATFORM = bit.platform.name
         bit.LIKE = bit.platform.like
 
+        if (bit.platform.like == 'windows' && Config.OS != 'WIN') {
+            for each (n in ['CFG', 'BIN', 'BITS', 'FLAT', 'INC', 'LIB', 'OBJ', 'PACKS', 'PKG', 'REL', 'SRC', 'TOP']) {
+                bit['WIN_' + n] = bit[n].relative.windows
+            }
+        }
+
+        /*
+            Make meta-globals
+         */
         for each (name in ["ARCH", "BIN", "CFG", "FLAT", "INC", "LIB", "LIKE", "OBJ", "OS", "PACKS", "PKG", "PLATFORM",
                 "REL", "SHLIB", "SHOBJ", "SRC", "TOP"]) {
             global[name] = bit[name]
@@ -2133,6 +2161,10 @@ command = command.expand(bit, {fill: ''})
         } else {
             bit.OUT = target.path
         }
+        if (bit.HOME) {
+            bit.WIN_HOME = bit.HOME.relative.windows
+        }
+        bit.LIBPATHS = mapLibPaths(target.libpaths)
         if (kind == 'exe') {
             bit.IN = target.files.map(function(p) p.relative).join(' ')
             bit.LIBS = mapLibs(target.libraries)
@@ -2218,6 +2250,14 @@ command = command.expand(bit, {fill: ''})
                     App.chdir(pwd)
                 }
             }
+        }
+    }
+
+    function mapLibPaths(libpaths: Array): String {
+        if (bit.platform.os == 'win') {
+            return libpaths.map(function(p) '-libpath:' + p).join(' ')
+        } else {
+            return libpaths.map(function(p) '-L' + p).join(' ')
         }
     }
 

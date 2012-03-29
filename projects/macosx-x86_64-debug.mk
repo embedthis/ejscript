@@ -8,7 +8,8 @@ LD             := ld
 CFLAGS         := -fPIC -Wall -g
 DFLAGS         := -DPIC -DCPU=X86_64
 IFLAGS         := -I$(PLATFORM)/inc
-LDFLAGS        := '-Wl,-rpath,@executable_path/../lib' '-Wl,-rpath,@executable_path/' '-Wl,-rpath,@loader_path/' '-L$(PLATFORM)/lib' '-g' '-ldl'
+LDFLAGS        := '-Wl,-rpath,@executable_path/../lib' '-Wl,-rpath,@executable_path/' '-Wl,-rpath,@loader_path/' '-g' '-ldl'
+LIBPATHS       := -L$(PLATFORM)/lib
 LIBS           := -lpthread -lm
 
 all: prep \
@@ -192,7 +193,7 @@ $(PLATFORM)/lib/libmpr.dylib:  \
         $(PLATFORM)/inc/mpr.h \
         $(PLATFORM)/inc/mprSsl.h \
         $(PLATFORM)/obj/mprLib.o
-	$(CC) -dynamiclib -o $(PLATFORM)/lib/libmpr.dylib -arch x86_64 $(LDFLAGS) -install_name @rpath/libmpr.dylib $(PLATFORM)/obj/mprLib.o $(LIBS)
+	$(CC) -dynamiclib -o $(PLATFORM)/lib/libmpr.dylib -arch x86_64 $(LDFLAGS) $(LIBPATHS) -install_name @rpath/libmpr.dylib $(PLATFORM)/obj/mprLib.o $(LIBS)
 
 $(PLATFORM)/obj/manager.o: \
         src/deps/mpr/manager.c \
@@ -203,7 +204,7 @@ $(PLATFORM)/obj/manager.o: \
 $(PLATFORM)/bin/ejsman:  \
         $(PLATFORM)/lib/libmpr.dylib \
         $(PLATFORM)/obj/manager.o
-	$(CC) -o $(PLATFORM)/bin/ejsman -arch x86_64 $(LDFLAGS) -L$(PLATFORM)/lib $(PLATFORM)/obj/manager.o $(LIBS) -lmpr
+	$(CC) -o $(PLATFORM)/bin/ejsman -arch x86_64 $(LDFLAGS) $(LIBPATHS) $(PLATFORM)/obj/manager.o $(LIBS) -lmpr
 
 $(PLATFORM)/obj/makerom.o: \
         src/deps/mpr/makerom.c \
@@ -214,7 +215,7 @@ $(PLATFORM)/obj/makerom.o: \
 $(PLATFORM)/bin/makerom:  \
         $(PLATFORM)/lib/libmpr.dylib \
         $(PLATFORM)/obj/makerom.o
-	$(CC) -o $(PLATFORM)/bin/makerom -arch x86_64 $(LDFLAGS) -L$(PLATFORM)/lib $(PLATFORM)/obj/makerom.o $(LIBS) -lmpr
+	$(CC) -o $(PLATFORM)/bin/makerom -arch x86_64 $(LDFLAGS) $(LIBPATHS) $(PLATFORM)/obj/makerom.o $(LIBS) -lmpr
 
 $(PLATFORM)/inc/pcre.h: 
 	rm -fr macosx-x86_64-debug/inc/pcre.h
@@ -229,7 +230,7 @@ $(PLATFORM)/obj/pcre.o: \
 $(PLATFORM)/lib/libpcre.dylib:  \
         $(PLATFORM)/inc/pcre.h \
         $(PLATFORM)/obj/pcre.o
-	$(CC) -dynamiclib -o $(PLATFORM)/lib/libpcre.dylib -arch x86_64 $(LDFLAGS) -install_name @rpath/libpcre.dylib $(PLATFORM)/obj/pcre.o $(LIBS)
+	$(CC) -dynamiclib -o $(PLATFORM)/lib/libpcre.dylib -arch x86_64 $(LDFLAGS) $(LIBPATHS) -install_name @rpath/libpcre.dylib $(PLATFORM)/obj/pcre.o $(LIBS)
 
 $(PLATFORM)/inc/http.h: 
 	rm -fr macosx-x86_64-debug/inc/http.h
@@ -247,7 +248,7 @@ $(PLATFORM)/lib/libhttp.dylib:  \
         $(PLATFORM)/lib/libpcre.dylib \
         $(PLATFORM)/inc/http.h \
         $(PLATFORM)/obj/httpLib.o
-	$(CC) -dynamiclib -o $(PLATFORM)/lib/libhttp.dylib -arch x86_64 $(LDFLAGS) -install_name @rpath/libhttp.dylib $(PLATFORM)/obj/httpLib.o $(LIBS) -lmpr -lpcre
+	$(CC) -dynamiclib -o $(PLATFORM)/lib/libhttp.dylib -arch x86_64 $(LDFLAGS) $(LIBPATHS) -install_name @rpath/libhttp.dylib $(PLATFORM)/obj/httpLib.o $(LIBS) -lmpr -lpcre
 
 $(PLATFORM)/obj/http.o: \
         src/deps/http/http.c \
@@ -258,7 +259,7 @@ $(PLATFORM)/obj/http.o: \
 $(PLATFORM)/bin/http:  \
         $(PLATFORM)/lib/libhttp.dylib \
         $(PLATFORM)/obj/http.o
-	$(CC) -o $(PLATFORM)/bin/http -arch x86_64 $(LDFLAGS) -L$(PLATFORM)/lib $(PLATFORM)/obj/http.o $(LIBS) -lhttp -lmpr -lpcre
+	$(CC) -o $(PLATFORM)/bin/http -arch x86_64 $(LDFLAGS) $(LIBPATHS) $(PLATFORM)/obj/http.o $(LIBS) -lhttp -lmpr -lpcre
 
 $(PLATFORM)/inc/sqlite3.h: 
 	rm -fr macosx-x86_64-debug/inc/sqlite3.h
@@ -273,7 +274,7 @@ $(PLATFORM)/obj/sqlite3.o: \
 $(PLATFORM)/lib/libsqlite3.dylib:  \
         $(PLATFORM)/inc/sqlite3.h \
         $(PLATFORM)/obj/sqlite3.o
-	$(CC) -dynamiclib -o $(PLATFORM)/lib/libsqlite3.dylib -arch x86_64 $(LDFLAGS) -install_name @rpath/libsqlite3.dylib $(PLATFORM)/obj/sqlite3.o $(LIBS)
+	$(CC) -dynamiclib -o $(PLATFORM)/lib/libsqlite3.dylib -arch x86_64 $(LDFLAGS) $(LIBPATHS) -install_name @rpath/libsqlite3.dylib $(PLATFORM)/obj/sqlite3.o $(LIBS)
 
 $(PLATFORM)/inc/ejs.cache.local.slots.h: 
 	rm -fr macosx-x86_64-debug/inc/ejs.cache.local.slots.h
@@ -731,7 +732,7 @@ $(PLATFORM)/lib/libejs.dylib:  \
         $(PLATFORM)/obj/ejsModule.o \
         $(PLATFORM)/obj/ejsScope.o \
         $(PLATFORM)/obj/ejsService.o
-	$(CC) -dynamiclib -o $(PLATFORM)/lib/libejs.dylib -arch x86_64 $(LDFLAGS) -install_name @rpath/libejs.dylib $(PLATFORM)/obj/ecAst.o $(PLATFORM)/obj/ecCodeGen.o $(PLATFORM)/obj/ecCompiler.o $(PLATFORM)/obj/ecLex.o $(PLATFORM)/obj/ecModuleWrite.o $(PLATFORM)/obj/ecParser.o $(PLATFORM)/obj/ecState.o $(PLATFORM)/obj/ejsApp.o $(PLATFORM)/obj/ejsArray.o $(PLATFORM)/obj/ejsBlock.o $(PLATFORM)/obj/ejsBoolean.o $(PLATFORM)/obj/ejsByteArray.o $(PLATFORM)/obj/ejsCache.o $(PLATFORM)/obj/ejsCmd.o $(PLATFORM)/obj/ejsConfig.o $(PLATFORM)/obj/ejsDate.o $(PLATFORM)/obj/ejsDebug.o $(PLATFORM)/obj/ejsError.o $(PLATFORM)/obj/ejsFile.o $(PLATFORM)/obj/ejsFileSystem.o $(PLATFORM)/obj/ejsFrame.o $(PLATFORM)/obj/ejsFunction.o $(PLATFORM)/obj/ejsGC.o $(PLATFORM)/obj/ejsGlobal.o $(PLATFORM)/obj/ejsHttp.o $(PLATFORM)/obj/ejsIterator.o $(PLATFORM)/obj/ejsJSON.o $(PLATFORM)/obj/ejsLocalCache.o $(PLATFORM)/obj/ejsMath.o $(PLATFORM)/obj/ejsMemory.o $(PLATFORM)/obj/ejsMprLog.o $(PLATFORM)/obj/ejsNamespace.o $(PLATFORM)/obj/ejsNull.o $(PLATFORM)/obj/ejsNumber.o $(PLATFORM)/obj/ejsObject.o $(PLATFORM)/obj/ejsPath.o $(PLATFORM)/obj/ejsPot.o $(PLATFORM)/obj/ejsRegExp.o $(PLATFORM)/obj/ejsSocket.o $(PLATFORM)/obj/ejsString.o $(PLATFORM)/obj/ejsSystem.o $(PLATFORM)/obj/ejsTimer.o $(PLATFORM)/obj/ejsType.o $(PLATFORM)/obj/ejsUri.o $(PLATFORM)/obj/ejsVoid.o $(PLATFORM)/obj/ejsWorker.o $(PLATFORM)/obj/ejsXML.o $(PLATFORM)/obj/ejsXMLList.o $(PLATFORM)/obj/ejsXMLLoader.o $(PLATFORM)/obj/ejsByteCode.o $(PLATFORM)/obj/ejsException.o $(PLATFORM)/obj/ejsHelper.o $(PLATFORM)/obj/ejsInterp.o $(PLATFORM)/obj/ejsLoader.o $(PLATFORM)/obj/ejsModule.o $(PLATFORM)/obj/ejsScope.o $(PLATFORM)/obj/ejsService.o $(LIBS) -lmpr -lpcre -lhttp
+	$(CC) -dynamiclib -o $(PLATFORM)/lib/libejs.dylib -arch x86_64 $(LDFLAGS) $(LIBPATHS) -install_name @rpath/libejs.dylib $(PLATFORM)/obj/ecAst.o $(PLATFORM)/obj/ecCodeGen.o $(PLATFORM)/obj/ecCompiler.o $(PLATFORM)/obj/ecLex.o $(PLATFORM)/obj/ecModuleWrite.o $(PLATFORM)/obj/ecParser.o $(PLATFORM)/obj/ecState.o $(PLATFORM)/obj/ejsApp.o $(PLATFORM)/obj/ejsArray.o $(PLATFORM)/obj/ejsBlock.o $(PLATFORM)/obj/ejsBoolean.o $(PLATFORM)/obj/ejsByteArray.o $(PLATFORM)/obj/ejsCache.o $(PLATFORM)/obj/ejsCmd.o $(PLATFORM)/obj/ejsConfig.o $(PLATFORM)/obj/ejsDate.o $(PLATFORM)/obj/ejsDebug.o $(PLATFORM)/obj/ejsError.o $(PLATFORM)/obj/ejsFile.o $(PLATFORM)/obj/ejsFileSystem.o $(PLATFORM)/obj/ejsFrame.o $(PLATFORM)/obj/ejsFunction.o $(PLATFORM)/obj/ejsGC.o $(PLATFORM)/obj/ejsGlobal.o $(PLATFORM)/obj/ejsHttp.o $(PLATFORM)/obj/ejsIterator.o $(PLATFORM)/obj/ejsJSON.o $(PLATFORM)/obj/ejsLocalCache.o $(PLATFORM)/obj/ejsMath.o $(PLATFORM)/obj/ejsMemory.o $(PLATFORM)/obj/ejsMprLog.o $(PLATFORM)/obj/ejsNamespace.o $(PLATFORM)/obj/ejsNull.o $(PLATFORM)/obj/ejsNumber.o $(PLATFORM)/obj/ejsObject.o $(PLATFORM)/obj/ejsPath.o $(PLATFORM)/obj/ejsPot.o $(PLATFORM)/obj/ejsRegExp.o $(PLATFORM)/obj/ejsSocket.o $(PLATFORM)/obj/ejsString.o $(PLATFORM)/obj/ejsSystem.o $(PLATFORM)/obj/ejsTimer.o $(PLATFORM)/obj/ejsType.o $(PLATFORM)/obj/ejsUri.o $(PLATFORM)/obj/ejsVoid.o $(PLATFORM)/obj/ejsWorker.o $(PLATFORM)/obj/ejsXML.o $(PLATFORM)/obj/ejsXMLList.o $(PLATFORM)/obj/ejsXMLLoader.o $(PLATFORM)/obj/ejsByteCode.o $(PLATFORM)/obj/ejsException.o $(PLATFORM)/obj/ejsHelper.o $(PLATFORM)/obj/ejsInterp.o $(PLATFORM)/obj/ejsLoader.o $(PLATFORM)/obj/ejsModule.o $(PLATFORM)/obj/ejsScope.o $(PLATFORM)/obj/ejsService.o $(LIBS) -lmpr -lpcre -lhttp
 
 $(PLATFORM)/obj/ejs.o: \
         src/cmd/ejs.c \
@@ -742,7 +743,7 @@ $(PLATFORM)/obj/ejs.o: \
 $(PLATFORM)/bin/ejs:  \
         $(PLATFORM)/lib/libejs.dylib \
         $(PLATFORM)/obj/ejs.o
-	$(CC) -o $(PLATFORM)/bin/ejs -arch x86_64 $(LDFLAGS) -L$(PLATFORM)/lib $(PLATFORM)/obj/ejs.o $(LIBS) -lejs -lmpr -lpcre -lhttp
+	$(CC) -o $(PLATFORM)/bin/ejs -arch x86_64 $(LDFLAGS) $(LIBPATHS) $(PLATFORM)/obj/ejs.o $(LIBS) -lejs -lmpr -lpcre -lhttp
 
 $(PLATFORM)/obj/ejsc.o: \
         src/cmd/ejsc.c \
@@ -753,7 +754,7 @@ $(PLATFORM)/obj/ejsc.o: \
 $(PLATFORM)/bin/ejsc:  \
         $(PLATFORM)/lib/libejs.dylib \
         $(PLATFORM)/obj/ejsc.o
-	$(CC) -o $(PLATFORM)/bin/ejsc -arch x86_64 $(LDFLAGS) -L$(PLATFORM)/lib $(PLATFORM)/obj/ejsc.o $(LIBS) -lejs -lmpr -lpcre -lhttp
+	$(CC) -o $(PLATFORM)/bin/ejsc -arch x86_64 $(LDFLAGS) $(LIBPATHS) $(PLATFORM)/obj/ejsc.o $(LIBS) -lejs -lmpr -lpcre -lhttp
 
 $(PLATFORM)/obj/ejsmod.o: \
         src/cmd/ejsmod.c \
@@ -793,7 +794,7 @@ $(PLATFORM)/bin/ejsmod:  \
         $(PLATFORM)/obj/docFiles.o \
         $(PLATFORM)/obj/listing.o \
         $(PLATFORM)/obj/slotGen.o
-	$(CC) -o $(PLATFORM)/bin/ejsmod -arch x86_64 $(LDFLAGS) -L$(PLATFORM)/lib $(PLATFORM)/obj/ejsmod.o $(PLATFORM)/obj/doc.o $(PLATFORM)/obj/docFiles.o $(PLATFORM)/obj/listing.o $(PLATFORM)/obj/slotGen.o $(LIBS) -lejs -lmpr -lpcre -lhttp
+	$(CC) -o $(PLATFORM)/bin/ejsmod -arch x86_64 $(LDFLAGS) $(LIBPATHS) $(PLATFORM)/obj/ejsmod.o $(PLATFORM)/obj/doc.o $(PLATFORM)/obj/docFiles.o $(PLATFORM)/obj/listing.o $(PLATFORM)/obj/slotGen.o $(LIBS) -lejs -lmpr -lpcre -lhttp
 
 $(PLATFORM)/obj/ejsrun.o: \
         src/cmd/ejsrun.c \
@@ -804,7 +805,7 @@ $(PLATFORM)/obj/ejsrun.o: \
 $(PLATFORM)/bin/ejsrun:  \
         $(PLATFORM)/lib/libejs.dylib \
         $(PLATFORM)/obj/ejsrun.o
-	$(CC) -o $(PLATFORM)/bin/ejsrun -arch x86_64 $(LDFLAGS) -L$(PLATFORM)/lib $(PLATFORM)/obj/ejsrun.o $(LIBS) -lejs -lmpr -lpcre -lhttp
+	$(CC) -o $(PLATFORM)/bin/ejsrun -arch x86_64 $(LDFLAGS) $(LIBPATHS) $(PLATFORM)/obj/ejsrun.o $(LIBS) -lejs -lmpr -lpcre -lhttp
 
 $(PLATFORM)/lib/ejs.mod:  \
         $(PLATFORM)/bin/ejsc \
@@ -882,7 +883,7 @@ $(PLATFORM)/lib/ejs.db.sqlite.dylib:  \
         $(PLATFORM)/lib/ejs.db.sqlite.mod \
         $(PLATFORM)/lib/libsqlite3.dylib \
         $(PLATFORM)/obj/ejsSqlite.o
-	$(CC) -dynamiclib -o $(PLATFORM)/lib/ejs.db.sqlite.dylib -arch x86_64 $(LDFLAGS) -install_name @rpath/ejs.db.sqlite.dylib $(PLATFORM)/obj/ejsSqlite.o $(LIBS) -lmpr -lejs -lpcre -lhttp -lsqlite3
+	$(CC) -dynamiclib -o $(PLATFORM)/lib/ejs.db.sqlite.dylib -arch x86_64 $(LDFLAGS) $(LIBPATHS) -install_name @rpath/ejs.db.sqlite.dylib $(PLATFORM)/obj/ejsSqlite.o $(LIBS) -lmpr -lejs -lpcre -lhttp -lsqlite3
 
 $(PLATFORM)/lib/ejs.web.mod:  \
         $(PLATFORM)/bin/ejsc \
@@ -937,7 +938,7 @@ $(PLATFORM)/lib/ejs.web.dylib:  \
         $(PLATFORM)/obj/ejsRequest.o \
         $(PLATFORM)/obj/ejsSession.o \
         $(PLATFORM)/obj/ejsWeb.o
-	$(CC) -dynamiclib -o $(PLATFORM)/lib/ejs.web.dylib -arch x86_64 $(LDFLAGS) -install_name @rpath/ejs.web.dylib $(PLATFORM)/obj/ejsHttpServer.o $(PLATFORM)/obj/ejsRequest.o $(PLATFORM)/obj/ejsSession.o $(PLATFORM)/obj/ejsWeb.o $(LIBS) -lmpr -lhttp -lpcre -lpcre -lejs
+	$(CC) -dynamiclib -o $(PLATFORM)/lib/ejs.web.dylib -arch x86_64 $(LDFLAGS) $(LIBPATHS) -install_name @rpath/ejs.web.dylib $(PLATFORM)/obj/ejsHttpServer.o $(PLATFORM)/obj/ejsRequest.o $(PLATFORM)/obj/ejsSession.o $(PLATFORM)/obj/ejsWeb.o $(LIBS) -lmpr -lhttp -lpcre -lpcre -lejs
 
 $(PLATFORM)/lib/www: 
 	rm -fr $(PLATFORM)/lib/www

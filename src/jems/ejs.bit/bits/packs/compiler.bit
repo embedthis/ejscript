@@ -13,7 +13,7 @@ if (platform.like == 'posix') {
     Bit.load({packs: { compiler: { path: cc }}})
 
 } else if (platform.like == 'windows') {
-    let search = bit.dir.programs.glob('Microsoft Visual Studio*\\VC\\Bin')
+    let search = bit.dir.programs.glob('Microsoft Visual Studio*/VC/Bin')
 
 /*
     if (platform.arch == 'x86_64') {
@@ -37,17 +37,17 @@ if (platform.like == 'posix') {
     Bit.load({packs: { compiler: { path: cc }}})
 
     bit.env.PATH += [
-        vsdir.join('VC\\Bin').map('\\'),
-        vsdir.join('Common7\\IDE').map('\\'),
-        vsdir.join('Common7\\Tools').map('\\'),
-        vsdir.join('SDK\\v3.5\\bin').map('\\'),
-        vsdir.join('VC\\VCPackages').map('\\'),
+        vsdir.join('VC/Bin'),
+        vsdir.join('Common7/IDE'),
+        vsdir.join('Common7/Tools'),
+        vsdir.join('SDK/v3.5/bin'),
+        vsdir.join('VC/VCPackages'),
     ]
     bit.env.INCLUDE += [
-        vsdir.join('VC\\INCLUDE').map('\\')
+        vsdir.join('VC/INCLUDE')
     ]
     bit.env.LIB += [
-        Path(vsdir.join('VC\\lib').map('\\').toString().replace(/x86_amd64/, 'amd64'))
+        Path(vsdir.join('VC/lib').toString().replace(/x86_amd64/, 'amd64'))
     ]
 
 } else if (platform.os == 'vxworks') {

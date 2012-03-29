@@ -35,12 +35,9 @@ Bit.load({
         '+compiler': [
             '-fno-builtin -fno-defer-pop -fvolatile'
         ],
-        '+libraries': [
-            'gcc'
-        ],
-        '+linker': [
-            '-Wl,-r'
-        ],
+        '+libraries': [ 'gcc' ],
+        '+libpaths': [ ],
+        '+linker': [ '-Wl,-r' ],
         scripts: {
             '+preblend': "
                 //  MOB - move to pack
@@ -56,13 +53,14 @@ Bit.load({
                 }
                 defaults.defines.push('-DCPU=' + cpu)
                 defaults.includes += bit.packs.vxworks.includes
+                defaults.libpaths.push(bit.dir.lib)
             ",
         },
     },
     rules: {
         'c->o': '${packs.compiler.path} -c -o ${OUT} ${CFLAGS} ${target.defines} ${INCLUDES} ${PREPROCESS} ${IN}',
-        'lib':  '${packs.compiler.path} -r -o ${OUT} ${target.linker} ${IN} ${LIBS}'
-        'exe':  '${packs.compiler.path} -o ${OUT} ${target.linker} -L${dir.lib} ${IN} ${LIBS} ${target.linker}'
-        'gui':  '${packs.compiler.path} -o ${OUT} ${target.linker} -L${dir.lib} ${IN} ${LIBS} ${target.linker}'
+        'lib':  '${packs.compiler.path} -r -o ${OUT} ${target.linker} ${LIBPATHS} ${IN} ${LIBS}'
+        'exe':  '${packs.compiler.path} -o ${OUT} ${target.linker} ${LIBPATHS} ${IN} ${LIBS} ${target.linker}'
+        'gui':  '${packs.compiler.path} -o ${OUT} ${target.linker} ${LIBPATHS} ${IN} ${LIBS} ${target.linker}'
     },
 })

@@ -258,7 +258,6 @@ module ejs {
          */
         native function remove(start: Number, end: Number = -1): String
 
-//  MOB firefox replace(pattern, replacement, flags)
         /**
             Search and replace. Search for the given pattern which can be either a string or a regular expression 
             and replace it with the replace text. If the pattern is a string, only the first occurrence is replaced.
@@ -275,7 +274,7 @@ module ejs {
             @return Returns a new string.
             @spec ejs
          */
-        native function replace(pattern: Object, replacement: Object): String
+        native function replace(pattern: Object, replacement: Object, flags: String = null): String
 
         /**
             Reverse a string. 

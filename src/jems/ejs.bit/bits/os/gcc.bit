@@ -7,6 +7,7 @@ Bit.load({
         '+compiler': [ '-Wall', ],
         '+defines':  [ '-D_REENTRANT', '-DCPU=' + '${ARCH}'.toUpper() ],
         '+libraries':[ ],
+        '+libpaths':[ ],
         '+linker':[ ],
 
         scripts: {
@@ -14,7 +15,7 @@ Bit.load({
                 let arch = bit.platform.arch
                 let defaults = bit.defaults
                 blend(defaults, {
-                    '+compiler': [], '+defines': [], '+libraries': [], '+linker': []}, {combine: true}
+                    '+compiler': [], '+defines': [], '+libraries': [], '+libpaths': [], '+linker': []}, {combine: true}
                 )
                 if (bit.platform.os != 'vxworks') {
                     defaults.compiler.push('-fPIC')
@@ -27,7 +28,7 @@ Bit.load({
                 if (bit.settings.preprocess) {
                     defaults.compiler.push('-E')
                 }
-                defaults.linker.push('-L' + bit.dir.lib)
+                defaults.libpaths.push(bit.dir.lib)
                 if (bit.settings.profile == 'debug') {
                     defaults.compiler.push('-g')
                     defaults.linker.push('-g')
@@ -59,8 +60,8 @@ Bit.load({
     },
     rules: {
         'c->o': '${packs.compiler.path} -c -o ${OUT} ${CFLAGS} ${target.defines} ${INCLUDES} ${PREPROCESS} ${IN}',
-        'lib':  '${packs.compiler.path} -shared -o ${OUT} ${target.linker} ${IN} ${LIBS}'
-        'exe':  '${packs.compiler.path} -o ${OUT} ${target.linker} -L${dir.lib} ${IN} ${LIBS} ${target.linker}'
-        'gui':  '${packs.compiler.path} -o ${OUT} ${target.linker} -L${dir.lib} ${IN} ${LIBS} ${target.linker}'
+        'lib':  '${packs.compiler.path} -shared -o ${OUT} ${target.linker} ${LIBPATHS} ${IN} ${LIBS}'
+        'exe':  '${packs.compiler.path} -o ${OUT} ${target.linker} ${LIBPATHS} ${IN} ${LIBS} ${target.linker}'
+        'gui':  '${packs.compiler.path} -o ${OUT} ${target.linker} ${LIBPATHS} ${IN} ${LIBS} ${target.linker}'
     },
 })

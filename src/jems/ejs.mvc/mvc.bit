@@ -12,7 +12,7 @@ Bit.load({
                 trace('Export', bit.target.files)
                 cp('mvc.es', bit.dir.bin.join('mvc.es'))
             "
-            'generate-nmake': "copy ${HOME}\\mvc.es ${BIN}",
+            'generate-nmake': "copy ${WIN_HOME}\\mvc.es ${WIN_BIN}",
             'generate-sh': "cp ${HOME}/mvc.es ${BIN}",
         },
 

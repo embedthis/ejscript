@@ -630,7 +630,7 @@ module ejs {
             or the default file system path separator if the path has no separators. On Windows, a path may contain
             "/" and "\" separators.  This will be set to a string containing the first separator found in the path.
             Will typically be either "/" or "/\\" depending on the path, platform and file system.
-            Use $natural or $portable to create a new path with different path separators.
+            Use $natural, $portable or $windows to create a new path with different path separators.
          */
         native function get separator(): String
 
