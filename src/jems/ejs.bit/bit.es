@@ -1193,15 +1193,24 @@ public class Bit {
     function genEnv() {
         let found
         if (bit.platform.os == 'win') {
+            let winsdk = (bit.packs.winsdk && bit.packs.winsdk.path) ? 
+                bit.packs.winsdk.path.windows.name.replace(/.*ProgramFiles.*Microsoft/, '$(PROGRAMFILES)\\Microsoft') :
+                '$(PROGRAMFILES)\\Microsoft SDKs\\Windows\\v6.1'
+            let vs = (bit.packs.compiler && bit.packs.compiler.dir) ? 
+                bit.packs.compiler.dir.windows.name.replace(/.*ProgramFiles.*Microsoft/, '$(PROGRAMFILES)\\Microsoft') :
+                '$(PROGRAMFILES)\\Microsoft Visual Studio 9.0'
+print("getEnv() SDK", winsdk)
+print("getEnv() VS ", vs)
+//  MOB - below should use winsdk and vs
             if (generating == 'nmake') {
                 genout.writeLine('VS        = $(PROGRAMFILES)\\Microsoft Visual Studio 10.0')
-                genout.writeLine('SDK       = $(PROGRAMFILES)\\Microsoft SDKs\\Windows\\v7.0A')
+                genout.writeLine('SDK       = $(PROGRAMFILES)\\Microsoft SDKs\\Windows\\v7.1')
             } else if (generating == 'make') {
                 genout.writeLine('export VS      := $(PROGRAMFILES)\\Microsoft Visual Studio 10.0')
-                genout.writeLine('export SDK     := $(PROGRAMFILES)\\Microsoft SDKs\\Windows\\v7.0A')
+                genout.writeLine('export SDK     := $(PROGRAMFILES)\\Microsoft SDKs\\Windows\\v7.1')
             } else {
                 genout.writeLine('export VS="$(PROGRAMFILES)\\Microsoft Visual Studio 10.0"')
-                genout.writeLine('export SDK="$(PROGRAMFILES)\\Microsoft SDKs\\Windows\\v7.0A"')
+                genout.writeLine('export SDK="$(PROGRAMFILES)\\Microsoft SDKs\\Windows\\v7.1"')
             }
         }
         for (let [key,value] in bit.env) {
@@ -2448,10 +2457,13 @@ command = command.expand(bit, {fill: ''})
             let env = {}
             for (let [key,value] in bit.env) {
                 if (value is Array) {
-                    env[key] = value.join(App.SearchSeparator)
-                } else {
-                    env[key] = value
+                    value = value.join(App.SearchSeparator)
                 }
+                if (bit.platform.os == 'win') {
+                    value = value.replace(/\$\(VS\)/g, bit.packs.compiler.dir)
+                    value = value.replace(/\$\(SDK\)/g, bit.packs.winsdk.path)
+                }
+                env[key] = value
             }
             cmd.env = env
         }

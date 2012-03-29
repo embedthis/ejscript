@@ -35,7 +35,7 @@ if (platform.like == 'posix') {
         cc = probe('cl.exe', {fullpath: true, search: search.sort().reverse()})
         vsdir = cc.dirname.dirname.dirname
     }
-    Bit.load({packs: { compiler: { path: cc }}})
+    Bit.load({packs: { compiler: { path: cc, dir: vsdir }}})
 
     bit.env.PATH += [
         vv.join('VC/Bin'),
