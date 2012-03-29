@@ -262,7 +262,7 @@ public class Bit {
             currentPlatform = platform
             let [os, arch] = platform.split('-') 
             global.bit = bit = bareBit.clone(true)
-            let bits = src.join('bits/standard.bit').exists ?  src.join('bits') : Config.LibDir.join('bits')
+            let bits = src.join('bits/standard.bit').exists ?  src.join('bits') : Config.LibDir.join('bits').portable
             bit.dir.bits = bits;
             bit.dir.src = src
             bit.dir.top = '.'
@@ -304,14 +304,14 @@ public class Bit {
         }
         blend(nbit, {
             blend : [
-                Path(bit.dir.bits.join('standard.bit')).absolute,
-                Path(bit.dir.bits.join('os/' + bit.platform.os + '.bit')).absolute,
-                Path(src.join('product.bit')).absolute,
+                Path(bit.dir.bits.join('standard.bit')).absolute.portable,
+                Path(bit.dir.bits.join('os/' + bit.platform.os + '.bit')).absolute.portable,
+                Path(src.join('product.bit')).absolute.portable,
             ],
             platform: bit.platform,
             dir: { 
-                src: src.absolute,
-                top: bit.dir.top,
+                src: src.absolute.portable,
+                top: bit.dir.top.portable,
             },
             settings: bit.settings,
             packs: bit.packs,
@@ -767,7 +767,7 @@ public class Bit {
                 }
                 search += control.search
             }
-            App.log.debug(2,"Probe for " + file + ' in ' + search)
+            App.log.debug(2,"Probe for " + file + ' in search path: ' + search)
             for each (let s: Path in search) {
                 App.log.debug(2, "Probe for " + s.join(file) + ' exists: ' + s.join(file).exists)
                 if (s.join(file).exists) {
@@ -785,11 +785,14 @@ public class Bit {
         }
         App.log.debug(2, 'Probe for ' + file + ' found at ' + path)
         if (control.fullpath) {
-            return path
+            return path.portable
         }
-        //  MOB - what does this do?
+        /*
+            Trim the pattern we have been searching for and return the base prefix only
+            Need to allow for both / and \ separators
+         */
         let pat = RegExp('.' + file.toString().replace(/[\/\\]/g, '.') + '$')
-        return path.toString().replace(pat, '')
+        return path.portable.name.replace(pat, '')
     }
 
     /*
@@ -866,7 +869,7 @@ public class Bit {
     public function loadWrapper(path) {
         let saveCurrent = currentBitFile
         try {
-            currentBitFile = path
+            currentBitFile = path.portable
             vtrace('Loading', currentBitFile)
             global.load(path)
         } finally {
@@ -1296,7 +1299,10 @@ public class Bit {
         for (let [tname, target] in bit.targets) {
             if (target.enable) {
                 if (!(target.enable is Boolean)) {
-//MOB ZZZ - should not be necessary
+/* MOB
+                    let script = target.enable.expand(bit, {fill: ''}).replace(/\\/g, '\\\\')
+ */
+//ZZZ2 - remove replace()
                     let script = target.enable.expand(bit, {fill: ''}).replace(/\\/g, '\\\\')
                     if (!eval(script)) {
                         vtrace('Skip', 'Target ' + tname + ' is disabled on this platform') 
@@ -1584,11 +1590,11 @@ public class Bit {
      */
     function makeDirsAbsolute() {
         for (let [key,value] in bit.dir) {
-            bit.dir[key] = Path(value).absolute
+            bit.dir[key] = Path(value).absolute.portable
         }
         if (bit.defaults) {
             for (let [key,value] in bit.defaults.includes) {
-                bit.defaults.includes[key] = Path(value).absolute
+                bit.defaults.includes[key] = Path(value).absolute.portable
             }
         }
     }
@@ -1598,11 +1604,11 @@ public class Bit {
      */
     function makePathsAbsolute() {
         for (let [key,value] in bit.blend) {
-            bit.blend[key] = Path(value).absolute
+            bit.blend[key] = Path(value).absolute.portable
         }
         for each (target in bit.targets) {
             if (target.path) {
-                target.path = Path(target.path).absolute
+                target.path = Path(target.path).absolute.portable
             }
         }
     }
@@ -1988,9 +1994,8 @@ command = command.expand(bit, {fill: ''})
                 // command = command.replace(RegExp(gen.platform, 'g'), '$$(PLATFORM)')
                 command = repvar(command)
                 if (!target['generate-nmake']) {
-                    //MOB ZZZ - should not be necessary
+//MOB ZZ2 - should be only for generate-nmake ! is wrong
                     command = command.replace(/\//g, '\\')
-                } else {
                 }
                 genout.writeLine('\t' + command + '\n')
             } else {
@@ -2034,6 +2039,7 @@ command = command.expand(bit, {fill: ''})
             command = command.replace(bit.packs.link.path, '${LD}')
         }
         if (bit.platform.like == 'windows') {
+//ZZ2
             let pat = (bit.dir.top + '\\').replace(/\\/g, '\\\\')
             command = command.replace(RegExp(pat, 'g'), '')
         } else {
@@ -2041,6 +2047,7 @@ command = command.expand(bit, {fill: ''})
         }
         command = command.replace(/  */g, ' ')
         if (generating == 'nmake') {
+//ZZ2
             command = command.replace(/\//g, '\\')
         }
         return command
@@ -2054,6 +2061,7 @@ command = command.expand(bit, {fill: ''})
         command = command.replace(RegExp(bit.dir.top + '/', 'g'), '')
         if (bit.platform.like == 'windows') {
             //  MOB - is this needed
+//ZZ2
             let pat = (bit.dir.top + '\\').replace(/\\/g, '\\\\')
             command = command.replace(RegExp(pat, 'g'), '')
         }
@@ -2075,7 +2083,7 @@ command = command.expand(bit, {fill: ''})
         return repvar(path)
     }
 
-    //  MOB - rename
+    //  MOB - rename (only used in one place)
     function repstr(str: String)
         bit.platform.like == 'windows' ? str.replace(/\//g, '\\\\') : str
 
@@ -2131,7 +2139,7 @@ command = command.expand(bit, {fill: ''})
         bit.PLATFORM = bit.platform.name
         bit.LIKE = bit.platform.like
 
-        if (bit.platform.like == 'windows' && Config.OS != 'WIN') {
+        if (bit.platform.like == 'windows') {
             for each (n in ['CFG', 'BIN', 'BITS', 'FLAT', 'INC', 'LIB', 'OBJ', 'PACKS', 'PKG', 'REL', 'SRC', 'TOP']) {
                 bit['WIN_' + n] = bit[n].relative.windows
             }
@@ -2235,7 +2243,6 @@ command = command.expand(bit, {fill: ''})
     function runScript(scripts, when) {
         if (scripts) {
             for each (item in scripts[when]) {
-                // let script = item.script.expand(bit, {fill: ''}).replace(/\\/g, '\\\\')
                 let script = item.script.expand(bit, {fill: ''})
                 let pwd = App.dir
                 if (item.home && item.home != pwd) {
@@ -2277,7 +2284,7 @@ command = command.expand(bit, {fill: ''})
                     libs[i] = libname
                 }
 */
-                if (bit.targets['lib' + name]) {
+                if (bit.targets['lib' + name] || bit.dir.lib.join(libname).exists) {
                     libs[i] = libname
                 }
 /*
@@ -2416,6 +2423,7 @@ command = command.expand(bit, {fill: ''})
             if (value is String) {
                 o[key] = value.expand(bit, {fill: '${}'})
             } else if (value is Path) {
+
                 o[key] = Path(value.toString().expand(bit, {fill: '${}'}))
             } else if (Object.getOwnPropertyCount(value) > 0) {
                 o[key] = expandTokens(value)
@@ -2565,11 +2573,11 @@ command = command.expand(bit, {fill: ''})
             for each (drive in (FileSystem.drives() - ['A', 'B'])) {
                 let pf = Path(drive + ':\\').glob('Program Files*')
                 if (pf.length > 0) {
-                    return pf[0]
+                    return pf[0].portable
                 }
             }
         }
-        return programs
+        return programs.portable
     }
 
     function dist(os) {

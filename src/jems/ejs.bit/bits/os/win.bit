@@ -16,6 +16,7 @@ Bit.load({
     },
 
     prefixes: {
+        //  MOB - should use PF
         product: 'C:/Program Files/${settings.title}',
         productver: 'C:/Program Files/${settings.title}',
 
