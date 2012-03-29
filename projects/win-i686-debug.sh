@@ -4,13 +4,13 @@
 
 export VS="$(PROGRAMFILES)\Microsoft Visual Studio 10.0"
 export SDK="$(PROGRAMFILES)\Microsoft SDKs\Windows\v7.0A"
-export PATH="$(SDK)/Bin:$(VS)/VC/Bin:$(VS)/Common7/IDE:$(VS)/Common7/Tools:$(VS)/SDK/v3.5/bin:$(VS)/VC/VCPackages;$(PATH)"
-export INCLUDE="$(INCLUDE);$(SDK)/INCLUDE:$(VS)/VC/INCLUDE"
-export LIB="$(LIB);$(SDK)/lib:$(VS)/VC/lib"
+export PATH="$(SDK)/Bin;$(VS)/VC/Bin;$(VS)/Common7/IDE;$(VS)/Common7/Tools;$(VS)/SDK/v3.5/bin;$(VS)/VC/VCPackages;$(PATH)"
+export INCLUDE="$(INCLUDE);$(SDK)/INCLUDE;$(VS)/VC/INCLUDE"
+export LIB="$(LIB);$(SDK)/lib;$(VS)/VC/lib"
 
 PLATFORM="win-i686-debug"
-CC="cl.exe"
-LD="link.exe"
+CC="C:/Program Files/Microsoft Visual Studio 10.0/VC/bin/cl.exe"
+LD="C:/Program Files/Microsoft Visual Studio 10.0/VC/bin/link.exe"
 CFLAGS="-nologo -GR- -W3 -Zi -Od -MDd"
 DFLAGS="-D_REENTRANT -D_MT"
 IFLAGS="-Iwin-i686-debug/inc"
