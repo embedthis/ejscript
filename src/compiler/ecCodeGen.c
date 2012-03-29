@@ -4375,9 +4375,9 @@ static void genError(EcCompiler *cp, EcNode *np, char *fmt, ...)
     cp->noout = 1;
     if (np) {
         loc = &np->loc;
-        ecError(cp, "Error", loc, fmt, args);
+        ecErrorv(cp, "Error", loc, fmt, args);
     } else {
-        ecError(cp, "Error", NULL, fmt, args);
+        ecErrorv(cp, "Error", NULL, fmt, args);
     }
     va_end(args);
 }
