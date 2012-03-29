@@ -30,7 +30,7 @@
 </ItemGroup>
 
 <PropertyGroup Label="Globals">
-  <ProjectGuid>{35f0699d-08e6-49d7-9e3f-0bda24d500d9}</ProjectGuid>
+  <ProjectGuid>{03a80cee-018e-4a16-b8fd-6a1914e1831b}</ProjectGuid>
   <RootNamespace />
   <Keyword>Win32Proj</Keyword>
 </PropertyGroup>
@@ -60,14 +60,14 @@
 </ItemGroup>
 <ItemDefinitionGroup>
 <Link>
-  <AdditionalDependencies>http.lib;mpr.lib;pcre.lib;%(AdditionalDependencies)</AdditionalDependencies>
+  <AdditionalDependencies>C:/cygwin/home/mob/ejs/win-i686-debug/bin/libhttp.lib;C:/cygwin/home/mob/ejs/win-i686-debug/bin/libmpr.lib;C:/cygwin/home/mob/ejs/win-i686-debug/bin/libpcre.lib;%(AdditionalDependencies)</AdditionalDependencies>
   <AdditionalLibraryDirectories>$(OutDir);;%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
 </Link>
 </ItemDefinitionGroup>
 
 <ItemGroup>
   <ProjectReference Include="libhttp.vcxproj">
-  <Project>7cc99c31-2bf7-4b81-ba77-33d4880a5846</Project>
+  <Project>8d887664-eef6-42e7-8a46-c2d1f8e2f74d</Project>
   <ReferenceOutputAssembly>false</ReferenceOutputAssembly>
   </ProjectReference>
 </ItemGroup>

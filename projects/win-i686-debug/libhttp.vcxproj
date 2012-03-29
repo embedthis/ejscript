@@ -30,7 +30,7 @@
 </ItemGroup>
 
 <PropertyGroup Label="Globals">
-  <ProjectGuid>{7cc99c31-2bf7-4b81-ba77-33d4880a5846}</ProjectGuid>
+  <ProjectGuid>{8d887664-eef6-42e7-8a46-c2d1f8e2f74d}</ProjectGuid>
   <RootNamespace />
   <Keyword>Win32Proj</Keyword>
 </PropertyGroup>
@@ -66,21 +66,21 @@
     </ItemDefinitionGroup>
 <ItemDefinitionGroup>
 <Link>
-  <AdditionalDependencies>mpr.lib;pcre.lib;%(AdditionalDependencies)</AdditionalDependencies>
+  <AdditionalDependencies>C:/cygwin/home/mob/ejs/win-i686-debug/bin/libmpr.lib;C:/cygwin/home/mob/ejs/win-i686-debug/bin/libpcre.lib;%(AdditionalDependencies)</AdditionalDependencies>
   <AdditionalLibraryDirectories>$(OutDir);;%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
 </Link>
 </ItemDefinitionGroup>
 
 <ItemGroup>
   <ProjectReference Include="libmpr.vcxproj">
-  <Project>ba56dd26-5bba-4212-8022-1006cc5c1f95</Project>
+  <Project>c4a62dfc-6166-4e9e-9888-b239a92679e3</Project>
   <ReferenceOutputAssembly>false</ReferenceOutputAssembly>
   </ProjectReference>
 </ItemGroup>
 
 <ItemGroup>
   <ProjectReference Include="libpcre.vcxproj">
-  <Project>e21912a4-887c-495c-822d-7cb310bb361c</Project>
+  <Project>c893c629-8529-4b21-8289-77660a969ba0</Project>
   <ReferenceOutputAssembly>false</ReferenceOutputAssembly>
   </ProjectReference>
 </ItemGroup>
