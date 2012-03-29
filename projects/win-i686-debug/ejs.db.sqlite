@@ -30,7 +30,7 @@
 </ItemGroup>
 
 <PropertyGroup Label="Globals">
-  <ProjectGuid>{4e7b4e70-14d1-49d6-b6f7-0bda2eddd58b}</ProjectGuid>
+  <ProjectGuid>{a98c12a8-5ee5-4d19-bcfd-8caf3f6e02fb}</ProjectGuid>
   <RootNamespace />
   <Keyword>Win32Proj</Keyword>
 </PropertyGroup>
@@ -73,21 +73,21 @@
 
 <ItemGroup>
   <ProjectReference Include="libmpr.vcxproj">
-  <Project>5c6906d2-de59-40c5-9627-d57488631105</Project>
+  <Project>ba56dd26-5bba-4212-8022-1006cc5c1f95</Project>
   <ReferenceOutputAssembly>false</ReferenceOutputAssembly>
   </ProjectReference>
 </ItemGroup>
 
 <ItemGroup>
   <ProjectReference Include="libejs.vcxproj">
-  <Project>d71b420a-6170-461d-8d1f-a3c7f38a095f</Project>
+  <Project>f7e2c473-8f08-46fc-a647-cab7bd3288df</Project>
   <ReferenceOutputAssembly>false</ReferenceOutputAssembly>
   </ProjectReference>
 </ItemGroup>
 
 <ItemGroup>
   <ProjectReference Include="libsqlite3.vcxproj">
-  <Project>23f7765f-ce24-44db-98dd-c7bb91c2cacb</Project>
+  <Project>88a0a705-6600-4901-b85e-85213bb68d70</Project>
   <ReferenceOutputAssembly>false</ReferenceOutputAssembly>
   </ProjectReference>
 </ItemGroup>

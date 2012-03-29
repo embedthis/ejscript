@@ -30,7 +30,7 @@
 </ItemGroup>
 
 <PropertyGroup Label="Globals">
-  <ProjectGuid>{72d811a5-c98e-4bd0-93d3-c199069a3893}</ProjectGuid>
+  <ProjectGuid>{230d42e2-2d2f-4542-af01-87b323c9df86}</ProjectGuid>
   <RootNamespace />
   <Keyword>Win32Proj</Keyword>
 </PropertyGroup>
@@ -67,7 +67,7 @@
 
 <ItemGroup>
   <ProjectReference Include="libejs.vcxproj">
-  <Project>d71b420a-6170-461d-8d1f-a3c7f38a095f</Project>
+  <Project>f7e2c473-8f08-46fc-a647-cab7bd3288df</Project>
   <ReferenceOutputAssembly>false</ReferenceOutputAssembly>
   </ProjectReference>
 </ItemGroup>

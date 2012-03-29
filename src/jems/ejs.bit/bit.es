@@ -1160,9 +1160,9 @@ public class Bit {
         genout.writeLine('LIBS      = ' + gen.libraries + '\n')
         genout.writeLine('all: prep \\\n        ' + genAll())
         genout.writeLine('.PHONY: prep\n\nprep:')
-        genout.writeLine('\t@if not exist $(PLATFORM)\\inc mkdir $(PLATFORM)\\inc')
-        genout.writeLine('\t@if not exist $(PLATFORM)\\obj mkdir $(PLATFORM)\\obj')
-        genout.writeLine('\t@if not exist $(PLATFORM)\\bin mkdir $(PLATFORM)\\bin')
+        genout.writeLine('\t@if not exist $(PLATFORM)\\inc md $(PLATFORM)\\inc')
+        genout.writeLine('\t@if not exist $(PLATFORM)\\obj md $(PLATFORM)\\obj')
+        genout.writeLine('\t@if not exist $(PLATFORM)\\bin md $(PLATFORM)\\bin')
         genout.writeLine('\t@if not exist $(PLATFORM)\\inc\\buildConfig.h ' +
             'copy projects\\buildConfig.$(PLATFORM) $(PLATFORM)\\inc\\buildConfig.h')
         genout.writeLine('\t@if not exist $(PLATFORM)\\bin\\libmpr.def ' +

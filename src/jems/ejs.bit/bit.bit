@@ -51,8 +51,8 @@ Bit.load({
                 cp('bits', bit.dir.lib)
             "
             'generate-nmake': "\
-                -rmdir /Q /S ${WIN_LIB}\\bits
-                -mkdir ${WIN_LIB}\\bits
+                -rd /Q /S ${WIN_LIB}\\bits
+                -md ${WIN_LIB}\\bits
                 xcopy /S /Y ${WIN_HOME}\\bits ${WIN_LIB}\\bits
             ",
             'generate-sh': "\
