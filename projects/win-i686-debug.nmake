@@ -57,9 +57,9 @@ all: prep \
 .PHONY: prep
 
 prep:
-	@if not exist $(PLATFORM)\inc mkdir $(PLATFORM)\inc
-	@if not exist $(PLATFORM)\obj mkdir $(PLATFORM)\obj
-	@if not exist $(PLATFORM)\bin mkdir $(PLATFORM)\bin
+	@if not exist $(PLATFORM)\inc md $(PLATFORM)\inc
+	@if not exist $(PLATFORM)\obj md $(PLATFORM)\obj
+	@if not exist $(PLATFORM)\bin md $(PLATFORM)\bin
 	@if not exist $(PLATFORM)\inc\buildConfig.h copy projects\buildConfig.$(PLATFORM) $(PLATFORM)\inc\buildConfig.h
 	@if not exist $(PLATFORM)\bin\libmpr.def xcopy /Y /S projects\$(PLATFORM)\*.def $(PLATFORM)\bin
 
@@ -766,8 +766,8 @@ $(PLATFORM)\bin\utest.exe:  \
 	copy /Y win-i686-debug\bin\ejsrun.exe win-i686-debug\bin\utest.exe
 
 $(PLATFORM)\bin\bits: 
-	-rmdir /Q /S $(PLATFORM)\bin\bits
-	-mkdir $(PLATFORM)\bin\bits
+	-rd /Q /S $(PLATFORM)\bin\bits
+	-md $(PLATFORM)\bin\bits
 	xcopy /S /Y src\jems\ejs.bit\bits $(PLATFORM)\bin\bits
 
 $(PLATFORM)\bin\ejs.unix.mod:  \
@@ -823,7 +823,7 @@ $(PLATFORM)\bin\ejs.web.mod:  \
         $(PLATFORM)\bin\ejs.mod
 	ejsc --out $(PLATFORM)/bin/ejs.web.mod --debug --optimize 9 src\jems\ejs.web/*.es
 	ejsmod --cslots $(PLATFORM)/bin/ejs.web.mod
-	copy ejs.web.slots.h $(PLATFORM)\inc/ejs.web.slots.h
+	copy ejs.web.slots.h $(PLATFORM)\inc\ejs.web.slots.h
 	del ejs.web.slots.h
 
 $(PLATFORM)\obj\ejsHttpServer.obj: \
@@ -863,8 +863,8 @@ $(PLATFORM)\bin\ejs.web.dll:  \
 	"$(LD)" -dll -out:$(PLATFORM)\bin\ejs.web.dll -entry:_DllMainCRTStartup@12 -def:$(PLATFORM)\bin\ejs.web.def $(LDFLAGS) $(LIBPATHS) $(PLATFORM)\obj\ejsHttpServer.obj $(PLATFORM)\obj\ejsRequest.obj $(PLATFORM)\obj\ejsSession.obj $(PLATFORM)\obj\ejsWeb.obj $(LIBS) libmpr.lib libhttp.lib libpcre.lib libpcre.lib libejs.lib
 
 $(PLATFORM)\bin\www: 
-	-rmdir /Q /S $(PLATFORM)\bin\www
-	-mkdir $(PLATFORM)\bin\www
+	-rd /Q /S $(PLATFORM)\bin\www
+	-md $(PLATFORM)\bin\www
 	xcopy /S /Y src\jems\ejs.web\www $(PLATFORM)\bin\www
 
 $(PLATFORM)\bin\ejs.template.mod:  \
