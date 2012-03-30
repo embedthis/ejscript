@@ -1978,7 +1978,7 @@ command = command.expand(bit, {fill: ''})
 
             } else {
                 trace('Copy', target.path.relativeTo('.'))
-                if (target.active) {
+                if (target.active && bit.platform.like == 'windows') {
                     let active = target.path.relative.replaceExt('old')
                     trace('Preserve', 'Active target ' + target.path.relative + ' as ' + active)
                     active.remove()
