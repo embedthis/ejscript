@@ -1290,6 +1290,7 @@ public class Bit {
         resolveDependencies()
         expandWildcards()
         setTargetPaths()
+        inlineStatic()
         setTypes()
         setPathEnvVar()
         makeOutDirs()
@@ -1403,6 +1404,37 @@ public class Bit {
             }
             if (target.path) {
                 target.path = Path(target.path.toString().expand(bit, {fill: '${}'}))
+            }
+        }
+    }
+
+    function getDepends(target): Array {
+        let libs = []
+        for each (dname in target.depends) {
+            let dep = bit.targets[dname]
+            if (dep && dep.type == 'lib') {
+                libs += getDepends(dep)
+                libs.push(dname)
+            }
+        }
+        return libs
+    }
+
+    /*
+        Implement static linking by inlining all libraries
+     */
+    function inlineStatic() {
+        for each (target in bit.targets) {
+            if (target.static && target.type == 'exe') {
+                let resolved = []
+                for each (dname in getDepends(target).unique()) {
+                    let dep = bit.targets[dname]
+                    if (dep && dep.type == 'lib') {
+                        target.files += dep.files
+                        resolved.push(dname.replace('lib', ''))
+                    }
+                }
+                target.libraries -= resolved
             }
         }
     }
@@ -1775,13 +1807,11 @@ public class Bit {
 
         } else if (generating == 'make') {
             command = repcmd(command)
-            genout.writeLine(reppath(target.path) + ': ' + repvar(getTargetDeps(target)) +
-                '\n\t' + command + '\n')
+            genout.writeLine(reppath(target.path) + ': ' + repvar(getTargetDeps(target)) + '\n\t' + command + '\n')
 
         } else if (generating == 'nmake') {
             command = repcmd(command)
-            genout.writeLine(reppath(target.path) + ': ' + repvar(getTargetDeps(target)) +
-                '\n\t' + command + '\n')
+            genout.writeLine(reppath(target.path) + ': ' + repvar(getTargetDeps(target)) + '\n\t' + command + '\n')
 
         } else {
             trace('Link', target.name)
@@ -1951,7 +1981,14 @@ command = command.expand(bit, {fill: ''})
 
             } else {
                 trace('Copy', target.path.relativeTo('.'))
-                safeRemove(target.path)
+                if (target.active) {
+                    let active = target.path.relative.replaceExt('old')
+                    trace('Preserve', 'Active target ' + target.path.relative + ' as ' + active)
+                    active.remove()
+                    target.path.rename(target.path.replaceExt('old'))
+                } else {
+                    safeRemove(target.path)
+                }
                 cp(file, target.path)
             }
         }

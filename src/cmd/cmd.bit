@@ -35,6 +35,7 @@ Bit.load({
             type: 'exe',
             sources: [ 'ejsrun.c', ],
             depends: [ 'libejs' ],
+            static: true,
         },
 
 	},
