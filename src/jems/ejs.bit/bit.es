@@ -937,6 +937,7 @@ public class Bit {
             rebase(home, target, 'includes')
             rebase(home, target, '+includes')
             rebase(home, target, 'headers')
+            rebase(home, target, 'resources')
             rebase(home, target, 'sources')
             rebase(home, target, 'files')
 
@@ -1406,6 +1407,8 @@ public class Bit {
                     target.path = bit.dir.bin.join(target.name).joinExt(bit.ext.exe, true)
                 } else if (target.type == 'file') {
                     target.path = bit.dir.lib.join(target.name)
+                } else if (target.type == 'res') {
+                    target.path = bit.dir.res.join(target.name).joinExt(bit.ext.res, true)
                 }
             }
             if (target.path) {
@@ -1553,7 +1556,7 @@ public class Bit {
     }
 
     /*
-        Expand target.sources and target.headers. Support include+exclude and create target.files[]
+        Expand resources, sources and headers. Support include+exclude and create target.files[]
      */
     function expandWildcards() {
         let index
@@ -1574,6 +1577,26 @@ public class Bit {
                     bit.targets[header] = { name: header, enable: true, path: header, type: 'header', files: [ file ] }
                     target.depends ||= []
                     target.depends.push(header)
+                }
+            }
+            if (target.resources) {
+                target.files ||= []
+                let files = buildFileList(target.resources, target.exclude)
+                for each (file in files) {
+                    /*
+                        Create a target for each resource file
+                     */
+                    let res = bit.dir.obj.join(file.replaceExt(bit.ext.res).basename)
+                    let resTarget = { name : res, enable: true, path: res, type: 'resource', files: [ file ], 
+                        includes: target.includes }
+                    if (bit.targets[res]) {
+                        resTarget = blend(bit.targets[resTarget.name], resTarget, {combined: true})
+                    } else {
+                        bit.targets[resTarget.name] = resTarget
+                    }
+                    target.files.push(res)
+                    target.depends ||= []
+                    target.depends.push(res)
                 }
             }
             if (target.sources) {
@@ -1767,6 +1790,8 @@ public class Bit {
             buildFile(target)
         } else if (target.type == 'header') {
             buildFile(target)
+        } else if (target.type == 'resource') {
+            buildResource(target)
         } else if (target.type == 'script') {
             buildScript(target)
         } else if (target.scripts && target.scripts['build']) {
@@ -1917,6 +1942,60 @@ public class Bit {
                 }
             }
             setRuleVars(target, 'obj', file)
+            bit.PREPROCESS = ''
+            bit.OUT = target.path.relative
+            bit.IN = file.relative
+            bit.CFLAGS = (target.compiler) ? target.compiler.join(' ') : ''
+            bit.DEFINES = (target.defines) ? target.defines.join(' ') : ''
+            bit.INCLUDES = (target.includes) ? target.includes.map(function(path) '-I' + path.relative) : ''
+            bit.ARCH = bit.platform.arch
+
+            let command = rule.expand(bit, {fill: ''})
+//  MOB - just to allow tokens in target.defines
+command = command.expand(bit, {fill: ''})
+
+            if (generating == 'sh') {
+                command = repcmd(command)
+                genout.writeLine(command + '\n')
+
+            } else if (generating == 'make') {
+                command = repcmd(command)
+                genout.writeLine(reppath(target.path) + ': \\\n        ' + 
+                    file.relative + repvar(getTargetDeps(target)) + '\n\t' + command + '\n')
+
+            } else if (generating == 'nmake') {
+                command = repcmd(command)
+                genout.writeLine(reppath(target.path) + ': \\\n        ' + 
+                    file.relative.windows + repvar(getTargetDeps(target)) + '\n\t' + command + '\n')
+
+            } else {
+                trace('Compile', file.relativeTo('.'))
+                run(command)
+            }
+        }
+    }
+
+    function buildResource(target) {
+        if (!stale(target)) {
+            return
+        }
+        if (options.diagnose) {
+            App.log.debug(3, "Target => " + serialize(target, {pretty: true, commas: true, indent: 4, quotes: false}))
+        }
+        runScript(target.scripts, 'prebuild')
+
+        let ext = target.path.extension
+        for each (file in target.files) {
+            let transition = file.extension + '->' + target.path.extension
+            let rule = target.rule || bit.rules[transition]
+            if (!rule) {
+                rule = bit.rules[target.path.extension]
+                if (!rule) {
+                    throw 'No rule to build target ' + target.path + ' for transition ' + transition
+                    return
+                }
+            }
+            setRuleVars(target, 'res', file)
             bit.PREPROCESS = ''
             bit.OUT = target.path.relative
             bit.IN = file.relative
@@ -2239,6 +2318,8 @@ command = command.expand(bit, {fill: ''})
             bit.CFLAGS = (target.compiler) ? target.compiler.join(' ') : ''
             bit.DEFINES = (target.defines) ? target.defines.join(' ') : ''
             bit.INCLUDES = (target.includes) ? target.includes.map(function(e) '-I' + e) : ''
+        } else if (kind == 'res') {
+            bit.IN = file.relative
         }
     }
 

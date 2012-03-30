@@ -6,11 +6,12 @@ Bit.load({
         'gcc.bit',
     ],
     ext: {
+        exe:   'out',
         lib:   'a',
+        res:   'res',
+        obj:   'o',
         shlib: 'out',
         shobj: 'out',
-        obj:   'o',
-        exe:   'out',
     },
     prefixes: {
         config:     '.',

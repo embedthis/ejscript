@@ -5,11 +5,12 @@
 Bit.load({
 
     ext: {
+        exe:   '',
         lib:   'a',
+        obj:   'o',
+        res:   'res',
         shlib: 'so',
         shobj: 'so',
-        obj:   'o',
-        exe:   '',
     },
 
     prefixes: {

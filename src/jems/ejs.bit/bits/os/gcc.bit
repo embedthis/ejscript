@@ -63,5 +63,6 @@ Bit.load({
         'lib':  '${packs.compiler.path} -shared -o ${OUT} ${target.linker} ${LIBPATHS} ${IN} ${LIBS}'
         'exe':  '${packs.compiler.path} -o ${OUT} ${target.linker} ${LIBPATHS} ${IN} ${LIBS} ${target.linker}'
         'gui':  '${packs.compiler.path} -o ${OUT} ${target.linker} ${LIBPATHS} ${IN} ${LIBS} ${target.linker}'
+        'res':  '${packs.rc.path} -o ${OUT} ${IN}',
     },
 })

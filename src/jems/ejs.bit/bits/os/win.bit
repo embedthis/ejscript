@@ -11,6 +11,7 @@ Bit.load({
         exe:   'exe',
         lib:   'a',
         obj:   'obj',
+        res:   'res',
         shlib: 'lib',
         shobj: 'dll',
     },
@@ -29,7 +30,7 @@ Bit.load({
         web:     '${prefixes.product}/web',
     },
 
-    '+required': [ 'winsdk', 'compiler', 'link', 'dumpbin' ],
+    '+required': [ 'winsdk', 'compiler', 'link', 'dumpbin', 'rc' ],
     '+optional': [ 'inno' ],
 
     defaults: {
@@ -67,5 +68,6 @@ Bit.load({
         'exe':  '"${packs.link.path}" -out:${OUT} -entry:mainCRTStartup -subsystem:console ${target.linker} ${LIBPATHS} ${IN} ${LIBS}',
         'gui':  '"${packs.link.path}" -out:${OUT} -entry:WinMainCRTStartup -subsystem:Windows ${target.linker} ${LIBPATHS} ${IN} ${LIBS}',
         'sym':   '"${packs.dumpbin.path}" /symbols ${IN}',
+        'res':   '"${packs.rc.path}" -Fo ${OUT} ${IN}',
     },
 })
