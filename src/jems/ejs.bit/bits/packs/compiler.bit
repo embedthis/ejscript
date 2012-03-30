@@ -38,17 +38,17 @@ if (platform.like == 'posix') {
     Bit.load({packs: { compiler: { path: cc, dir: vsdir }}})
 
     bit.env.PATH += [
-        vv.join('VC/Bin'),
-        vv.join('Common7/IDE'),
-        vv.join('Common7/Tools'),
-        vv.join('SDK/v3.5/bin'),
-        vv.join('VC/VCPackages'),
+        vsdir.join('VC/Bin'),
+        vsdir.join('Common7/IDE'),
+        vsdir.join('Common7/Tools'),
+        vsdir.join('SDK/v3.5/bin'),
+        vsdir.join('VC/VCPackages'),
     ]
     bit.env.INCLUDE += [
-        vv.join('VC/INCLUDE')
+        vsdir.join('VC/INCLUDE')
     ]
     bit.env.LIB += [
-        Path(vv.join('VC/lib').toString().replace(/x86_amd64/, 'amd64'))
+        Path(vsdir.join('VC/lib').toString().replace(/x86_amd64/, 'amd64'))
     ]
 
 } else if (platform.os == 'vxworks') {

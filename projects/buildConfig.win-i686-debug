@@ -78,9 +78,8 @@
 #define BLD_DUMPBIN "undefined"
 #define BLD_FEATURE_PCRE 1
 #define BLD_PCRE "src/deps/pcre"
-#define BLD_FEATURE_HTTP 1
-#define BLD_HTTP "macosx-x86_64-debug/bin/http"
-#define BLD_FEATURE_INNO 0
+#define BLD_FEATURE_INNO 1
+#define BLD_INNO "../../../../Program Files/Inno Setup 5/iscc.exe"
 #define BLD_FEATURE_OPENSSL 0
 #define BLD_FEATURE_MATRIXSSL 0
 #define BLD_FEATURE_SQLITE 1

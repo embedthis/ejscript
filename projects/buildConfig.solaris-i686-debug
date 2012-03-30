@@ -24,7 +24,7 @@
 #define BLD_CPU "i686"
 #define BIT_CPU_ARCH MPR_CPU_IX86
 #define BLD_OS "SOLARIS"
-#define BLD_CONFIG_CMD "bit -emulate solaris-i686 -without all configure -gen sh,make"
+#define BLD_CONFIG_CMD "bit -emulate solaris-i686 -d -without all configure -gen sh,make"
 #define BLD_LIB_NAME "lib"
 #define BLD_CFG_PREFIX "/etc/ejs"
 #define BLD_BIN_PREFIX "/usr/lib/ejs/2.0.0/bin"
@@ -74,8 +74,6 @@
 #define BLD_LINK "undefined"
 #define BLD_FEATURE_PCRE 1
 #define BLD_PCRE "src/deps/pcre"
-#define BLD_FEATURE_HTTP 1
-#define BLD_HTTP "macosx-x86_64-debug/bin/http"
 #define BLD_FEATURE_OPENSSL 0
 #define BLD_FEATURE_MATRIXSSL 0
 #define BLD_FEATURE_SQLITE 1

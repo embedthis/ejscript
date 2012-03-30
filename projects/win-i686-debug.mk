@@ -2,15 +2,15 @@
 #   win-i686-debug.mk -- Build It Makefile to build Embedthis Ejscript for win on i686
 #
 
-export VS      := $(PROGRAMFILES)\Microsoft Visual Studio 10.0
-export SDK     := $(PROGRAMFILES)\Microsoft SDKs\Windows\v7.0A
+export VS      := $(VS)
+export SDK     := $(SDK)
 export PATH    := $(SDK)/Bin;$(VS)/VC/Bin;$(VS)/Common7/IDE;$(VS)/Common7/Tools;$(VS)/SDK/v3.5/bin;$(VS)/VC/VCPackages;$(PATH)
 export INCLUDE := $(INCLUDE);$(SDK)/INCLUDE;$(VS)/VC/INCLUDE
 export LIB     := $(LIB);$(SDK)/lib;$(VS)/VC/lib
 
 PLATFORM       := win-i686-debug
-CC             := C:/Program Files/Microsoft Visual Studio 10.0/VC/bin/cl.exe
-LD             := C:/Program Files/Microsoft Visual Studio 10.0/VC/bin/link.exe
+CC             := cl.exe
+LD             := link.exe
 CFLAGS         := -nologo -GR- -W3 -Zi -Od -MDd
 DFLAGS         := -D_REENTRANT -D_MT
 IFLAGS         := -I$(PLATFORM)/inc

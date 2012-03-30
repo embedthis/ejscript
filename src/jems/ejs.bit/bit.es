@@ -767,7 +767,7 @@ public class Bit {
                 }
                 search += control.search
             }
-            App.log.debug(2,"Probe for " + file + ' in search path: ' + search)
+            App.log.debug(2, "Probe for " + file + ' in search path: ' + search)
             for each (let s: Path in search) {
                 App.log.debug(2, "Probe for " + s.join(file) + ' exists: ' + s.join(file).exists)
                 if (s.join(file).exists) {
@@ -1193,10 +1193,10 @@ public class Bit {
     function genEnv() {
         let found
         if (bit.platform.os == 'win') {
-            let winsdk = (bit.packs.winsdk && bit.packs.winsdk.path) ? 
+            var winsdk = (bit.packs.winsdk && bit.packs.winsdk.path) ? 
                 bit.packs.winsdk.path.windows.name.replace(/.*Program Files.*Microsoft/, '$$(PROGRAMFILES)\\Microsoft') :
                 '$(PROGRAMFILES)\\Microsoft SDKs\\Windows\\v6.1'
-            let vs = (bit.packs.compiler && bit.packs.compiler.dir) ? 
+            var vs = (bit.packs.compiler && bit.packs.compiler.dir) ? 
                 bit.packs.compiler.dir.windows.name.replace(/.*Program Files.*Microsoft/, '$$(PROGRAMFILES)\\Microsoft') :
                 '$(PROGRAMFILES)\\Microsoft Visual Studio 9.0'
             if (generating == 'nmake') {
@@ -1211,6 +1211,11 @@ public class Bit {
             }
         }
         for (let [key,value] in bit.env) {
+            if (bit.platform.os == 'win') {
+                value = value.map(function(item)
+                    item.replace(bit.packs.compiler.dir, '$(VS)').replace(bit.packs.winsdk.path, '$(SDK)')
+                )
+            }
             if (value is Array) {
                 value = value.join(App.SearchSeparator)
             }
@@ -1747,9 +1752,8 @@ public class Bit {
             whySkip(target.path, 'is up to date')
             return
         }
-        // diagnose('Building:\n' + target.path + ' = ' + serialize(target, {pretty: true}))
         if (options.diagnose) {
-            dump('TARGET', target)
+            App.log.debug(3, "Target => " + serialize(target, {pretty: true, commas: true, indent: 4, quotes: false}))
         }
         runScript(target.scripts, 'prebuild')
 
@@ -1794,7 +1798,7 @@ public class Bit {
             return
         }
         if (options.diagnose) {
-            dump('TARGET', target)
+            App.log.debug(3, "Target => " + serialize(target, {pretty: true, commas: true, indent: 4, quotes: false}))
         }
         runScript(target.scripts, 'prebuild')
 
@@ -1861,7 +1865,7 @@ public class Bit {
             return
         }
         if (options.diagnose) {
-            dump('TARGET', target)
+            App.log.debug(3, "Target => " + serialize(target, {pretty: true, commas: true, indent: 4, quotes: false}))
         }
         runScript(target.scripts, 'prebuild')
 
@@ -1962,7 +1966,7 @@ command = command.expand(bit, {fill: ''})
             return
         }
         if (options.diagnose) {
-            dump('TARGET', target)
+            App.log.debug(3, "Target => " + serialize(target, {pretty: true, commas: true, indent: 4, quotes: false}))
         }
         bit.ARCH = bit.platform.arch
         setRuleVars(target, 'file')
@@ -2089,9 +2093,8 @@ command = command.expand(bit, {fill: ''})
         return repvar(path)
     }
 
-    //  MOB - rename (only used in one place)
     function repstr(str: String)
-        bit.platform.like == 'windows' ? str.replace(/\//g, '\\\\') : str
+        bit.platform.like == 'windows' ? str.replace(/\//g, '\\') : str
 
     function natural(path: Path): Path
         bit.platform.like == 'windows' ? path.windows : path
@@ -2164,6 +2167,7 @@ command = command.expand(bit, {fill: ''})
         Set essential bit variables for build rules
      */
     function setRuleVars(target, kind, file = null) {
+        //  MOB refactor and cleanup
         bit.TARGET = target
         bit.HOME = target.home
         //  MOB - can we do this universally?
@@ -2457,8 +2461,11 @@ command = command.expand(bit, {fill: ''})
                     value = value.join(App.SearchSeparator)
                 }
                 if (bit.platform.os == 'win') {
-                    value = value.replace(/\$\(VS\)/g, bit.packs.compiler.dir)
-                    value = value.replace(/\$\(SDK\)/g, bit.packs.winsdk.path)
+                    /* Replacement may contain $(VS) if emulating */
+                    if (!bit.packs.compiler.dir.contains('$'))
+                        value = value.replace(/\$\(VS\)/g, bit.packs.compiler.dir)
+                    if (!bit.packs.winsdk.path.contains('$'))
+                        value = value.replace(/\$\(SDK\)/g, bit.packs.winsdk.path)
                 }
                 env[key] = value
             }
@@ -2577,7 +2584,7 @@ command = command.expand(bit, {fill: ''})
     }
 
     function programFiles(): Path {
-        let programs = Config.OS == 'WIN' ? Path(App.getenv('PROGRAMFILES')) : '.'
+        let programs = Path((Config.OS == 'WIN') ? App.getenv('PROGRAMFILES') : '.')
         if (!programs) {
             for each (drive in (FileSystem.drives() - ['A', 'B'])) {
                 let pf = Path(drive + ':\\').glob('Program Files*')

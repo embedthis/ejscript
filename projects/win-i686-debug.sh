@@ -3,7 +3,7 @@
 #
 
 export VS="$(PROGRAMFILES)\Microsoft Visual Studio 10.0"
-export SDK="$(PROGRAMFILES)\Microsoft SDKs\Windows\v7.0A"
+export SDK="$(PROGRAMFILES)\Microsoft SDKs\Windows\v7.1"
 export PATH="$(SDK)/Bin;$(VS)/VC/Bin;$(VS)/Common7/IDE;$(VS)/Common7/Tools;$(VS)/SDK/v3.5/bin;$(VS)/VC/VCPackages;$(PATH)"
 export INCLUDE="$(INCLUDE);$(SDK)/INCLUDE;$(VS)/VC/INCLUDE"
 export LIB="$(LIB);$(SDK)/lib;$(VS)/VC/lib"
@@ -31,6 +31,10 @@ cp -r src/deps/mpr/mprSsl.h win-i686-debug/inc/mprSsl.h
 
 "${LD}" -dll -out:${PLATFORM}/bin/libmpr.dll -entry:_DllMainCRTStartup@12 -def:${PLATFORM}/bin/libmpr.def ${LDFLAGS} ${LIBPATHS} ${PLATFORM}/obj/mprLib.obj ${LIBS}
 
+"${CC}" -c -Fo${PLATFORM}/obj/mprSsl.obj -Fd${PLATFORM}/obj ${CFLAGS} ${DFLAGS} -I${PLATFORM}/inc -I../packages-win-i686/openssl/openssl-1.0.0d/inc32 src/deps/mpr/mprSsl.c
+
+"${LD}" -dll -out:${PLATFORM}/bin/libmprssl.dll -entry:_DllMainCRTStartup@12 -def:${PLATFORM}/bin/libmprssl.def ${LDFLAGS} -libpath:C:/cygwin/home/mob/packages-win-i686/openssl/openssl-1.0.0d/out32dll ${LIBPATHS} ${PLATFORM}/obj/mprSsl.obj ${LIBS} libmpr.lib libeay32.lib ssleay32.lib
+
 "${CC}" -c -Fo${PLATFORM}/obj/manager.obj -Fd${PLATFORM}/obj ${CFLAGS} ${DFLAGS} -I${PLATFORM}/inc src/deps/mpr/manager.c
 
 "${LD}" -out:${PLATFORM}/bin/ejsman -entry:WinMainCRTStartup -subsystem:Windows ${LDFLAGS} ${LIBPATHS} ${PLATFORM}/obj/manager.obj ${LIBS} libmpr.lib
@@ -51,11 +55,11 @@ cp -r src/deps/http/http.h win-i686-debug/inc/http.h
 
 "${CC}" -c -Fo${PLATFORM}/obj/httpLib.obj -Fd${PLATFORM}/obj ${CFLAGS} ${DFLAGS} -I${PLATFORM}/inc src/deps/http/httpLib.c
 
-"${LD}" -dll -out:${PLATFORM}/bin/libhttp.dll -entry:_DllMainCRTStartup@12 -def:${PLATFORM}/bin/libhttp.def ${LDFLAGS} ${LIBPATHS} ${PLATFORM}/obj/httpLib.obj ${LIBS} libmpr.lib libpcre.lib
+"${LD}" -dll -out:${PLATFORM}/bin/libhttp.dll -entry:_DllMainCRTStartup@12 -def:${PLATFORM}/bin/libhttp.def ${LDFLAGS} -libpath:C:/cygwin/home/mob/packages-win-i686/openssl/openssl-1.0.0d/out32dll ${LIBPATHS} ${PLATFORM}/obj/httpLib.obj ${LIBS} libmpr.lib libpcre.lib libmprssl.lib libeay32.lib ssleay32.lib
 
 "${CC}" -c -Fo${PLATFORM}/obj/http.obj -Fd${PLATFORM}/obj ${CFLAGS} ${DFLAGS} -I${PLATFORM}/inc src/deps/http/http.c
 
-"${LD}" -out:${PLATFORM}/bin/http.exe -entry:mainCRTStartup -subsystem:console ${LDFLAGS} ${LIBPATHS} ${PLATFORM}/obj/http.obj ${LIBS} libhttp.lib libmpr.lib libpcre.lib
+"${LD}" -out:${PLATFORM}/bin/http.exe -entry:mainCRTStartup -subsystem:console ${LDFLAGS} -libpath:C:/cygwin/home/mob/packages-win-i686/openssl/openssl-1.0.0d/out32dll ${LIBPATHS} ${PLATFORM}/obj/http.obj ${LIBS} libhttp.lib libmpr.lib libpcre.lib libmprssl.lib libeay32.lib ssleay32.lib
 
 rm -rf win-i686-debug/inc/sqlite3.h
 cp -r src/deps/sqlite/sqlite3.h win-i686-debug/inc/sqlite3.h
@@ -208,15 +212,15 @@ cp -r src/ejsCustomize.h win-i686-debug/inc/ejsCustomize.h
 
 "${CC}" -c -Fo${PLATFORM}/obj/ejsService.obj -Fd${PLATFORM}/obj ${CFLAGS} ${DFLAGS} -I${PLATFORM}/inc src/vm/ejsService.c
 
-"${LD}" -dll -out:${PLATFORM}/bin/libejs.dll -entry:_DllMainCRTStartup@12 -def:${PLATFORM}/bin/libejs.def ${LDFLAGS} ${LIBPATHS} ${PLATFORM}/obj/ecAst.obj ${PLATFORM}/obj/ecCodeGen.obj ${PLATFORM}/obj/ecCompiler.obj ${PLATFORM}/obj/ecLex.obj ${PLATFORM}/obj/ecModuleWrite.obj ${PLATFORM}/obj/ecParser.obj ${PLATFORM}/obj/ecState.obj ${PLATFORM}/obj/ejsApp.obj ${PLATFORM}/obj/ejsArray.obj ${PLATFORM}/obj/ejsBlock.obj ${PLATFORM}/obj/ejsBoolean.obj ${PLATFORM}/obj/ejsByteArray.obj ${PLATFORM}/obj/ejsCache.obj ${PLATFORM}/obj/ejsCmd.obj ${PLATFORM}/obj/ejsConfig.obj ${PLATFORM}/obj/ejsDate.obj ${PLATFORM}/obj/ejsDebug.obj ${PLATFORM}/obj/ejsError.obj ${PLATFORM}/obj/ejsFile.obj ${PLATFORM}/obj/ejsFileSystem.obj ${PLATFORM}/obj/ejsFrame.obj ${PLATFORM}/obj/ejsFunction.obj ${PLATFORM}/obj/ejsGC.obj ${PLATFORM}/obj/ejsGlobal.obj ${PLATFORM}/obj/ejsHttp.obj ${PLATFORM}/obj/ejsIterator.obj ${PLATFORM}/obj/ejsJSON.obj ${PLATFORM}/obj/ejsLocalCache.obj ${PLATFORM}/obj/ejsMath.obj ${PLATFORM}/obj/ejsMemory.obj ${PLATFORM}/obj/ejsMprLog.obj ${PLATFORM}/obj/ejsNamespace.obj ${PLATFORM}/obj/ejsNull.obj ${PLATFORM}/obj/ejsNumber.obj ${PLATFORM}/obj/ejsObject.obj ${PLATFORM}/obj/ejsPath.obj ${PLATFORM}/obj/ejsPot.obj ${PLATFORM}/obj/ejsRegExp.obj ${PLATFORM}/obj/ejsSocket.obj ${PLATFORM}/obj/ejsString.obj ${PLATFORM}/obj/ejsSystem.obj ${PLATFORM}/obj/ejsTimer.obj ${PLATFORM}/obj/ejsType.obj ${PLATFORM}/obj/ejsUri.obj ${PLATFORM}/obj/ejsVoid.obj ${PLATFORM}/obj/ejsWorker.obj ${PLATFORM}/obj/ejsXML.obj ${PLATFORM}/obj/ejsXMLList.obj ${PLATFORM}/obj/ejsXMLLoader.obj ${PLATFORM}/obj/ejsByteCode.obj ${PLATFORM}/obj/ejsException.obj ${PLATFORM}/obj/ejsHelper.obj ${PLATFORM}/obj/ejsInterp.obj ${PLATFORM}/obj/ejsLoader.obj ${PLATFORM}/obj/ejsModule.obj ${PLATFORM}/obj/ejsScope.obj ${PLATFORM}/obj/ejsService.obj ${LIBS} libmpr.lib libpcre.lib libhttp.lib
+"${LD}" -dll -out:${PLATFORM}/bin/libejs.dll -entry:_DllMainCRTStartup@12 -def:${PLATFORM}/bin/libejs.def ${LDFLAGS} -libpath:C:/cygwin/home/mob/packages-win-i686/openssl/openssl-1.0.0d/out32dll ${LIBPATHS} ${PLATFORM}/obj/ecAst.obj ${PLATFORM}/obj/ecCodeGen.obj ${PLATFORM}/obj/ecCompiler.obj ${PLATFORM}/obj/ecLex.obj ${PLATFORM}/obj/ecModuleWrite.obj ${PLATFORM}/obj/ecParser.obj ${PLATFORM}/obj/ecState.obj ${PLATFORM}/obj/ejsApp.obj ${PLATFORM}/obj/ejsArray.obj ${PLATFORM}/obj/ejsBlock.obj ${PLATFORM}/obj/ejsBoolean.obj ${PLATFORM}/obj/ejsByteArray.obj ${PLATFORM}/obj/ejsCache.obj ${PLATFORM}/obj/ejsCmd.obj ${PLATFORM}/obj/ejsConfig.obj ${PLATFORM}/obj/ejsDate.obj ${PLATFORM}/obj/ejsDebug.obj ${PLATFORM}/obj/ejsError.obj ${PLATFORM}/obj/ejsFile.obj ${PLATFORM}/obj/ejsFileSystem.obj ${PLATFORM}/obj/ejsFrame.obj ${PLATFORM}/obj/ejsFunction.obj ${PLATFORM}/obj/ejsGC.obj ${PLATFORM}/obj/ejsGlobal.obj ${PLATFORM}/obj/ejsHttp.obj ${PLATFORM}/obj/ejsIterator.obj ${PLATFORM}/obj/ejsJSON.obj ${PLATFORM}/obj/ejsLocalCache.obj ${PLATFORM}/obj/ejsMath.obj ${PLATFORM}/obj/ejsMemory.obj ${PLATFORM}/obj/ejsMprLog.obj ${PLATFORM}/obj/ejsNamespace.obj ${PLATFORM}/obj/ejsNull.obj ${PLATFORM}/obj/ejsNumber.obj ${PLATFORM}/obj/ejsObject.obj ${PLATFORM}/obj/ejsPath.obj ${PLATFORM}/obj/ejsPot.obj ${PLATFORM}/obj/ejsRegExp.obj ${PLATFORM}/obj/ejsSocket.obj ${PLATFORM}/obj/ejsString.obj ${PLATFORM}/obj/ejsSystem.obj ${PLATFORM}/obj/ejsTimer.obj ${PLATFORM}/obj/ejsType.obj ${PLATFORM}/obj/ejsUri.obj ${PLATFORM}/obj/ejsVoid.obj ${PLATFORM}/obj/ejsWorker.obj ${PLATFORM}/obj/ejsXML.obj ${PLATFORM}/obj/ejsXMLList.obj ${PLATFORM}/obj/ejsXMLLoader.obj ${PLATFORM}/obj/ejsByteCode.obj ${PLATFORM}/obj/ejsException.obj ${PLATFORM}/obj/ejsHelper.obj ${PLATFORM}/obj/ejsInterp.obj ${PLATFORM}/obj/ejsLoader.obj ${PLATFORM}/obj/ejsModule.obj ${PLATFORM}/obj/ejsScope.obj ${PLATFORM}/obj/ejsService.obj ${LIBS} libmpr.lib libpcre.lib libhttp.lib libmprssl.lib libeay32.lib ssleay32.lib
 
 "${CC}" -c -Fo${PLATFORM}/obj/ejs.obj -Fd${PLATFORM}/obj ${CFLAGS} ${DFLAGS} -I${PLATFORM}/inc src/cmd/ejs.c
 
-"${LD}" -out:${PLATFORM}/bin/ejs.exe -entry:mainCRTStartup -subsystem:console ${LDFLAGS} ${LIBPATHS} ${PLATFORM}/obj/ejs.obj ${LIBS} libejs.lib libmpr.lib libpcre.lib libhttp.lib
+"${LD}" -out:${PLATFORM}/bin/ejs.exe -entry:mainCRTStartup -subsystem:console ${LDFLAGS} -libpath:C:/cygwin/home/mob/packages-win-i686/openssl/openssl-1.0.0d/out32dll ${LIBPATHS} ${PLATFORM}/obj/ejs.obj ${LIBS} libejs.lib libmpr.lib libpcre.lib libhttp.lib libmprssl.lib libeay32.lib ssleay32.lib
 
 "${CC}" -c -Fo${PLATFORM}/obj/ejsc.obj -Fd${PLATFORM}/obj ${CFLAGS} ${DFLAGS} -I${PLATFORM}/inc src/cmd/ejsc.c
 
-"${LD}" -out:${PLATFORM}/bin/ejsc.exe -entry:mainCRTStartup -subsystem:console ${LDFLAGS} ${LIBPATHS} ${PLATFORM}/obj/ejsc.obj ${LIBS} libejs.lib libmpr.lib libpcre.lib libhttp.lib
+"${LD}" -out:${PLATFORM}/bin/ejsc.exe -entry:mainCRTStartup -subsystem:console ${LDFLAGS} -libpath:C:/cygwin/home/mob/packages-win-i686/openssl/openssl-1.0.0d/out32dll ${LIBPATHS} ${PLATFORM}/obj/ejsc.obj ${LIBS} libejs.lib libmpr.lib libpcre.lib libhttp.lib libmprssl.lib libeay32.lib ssleay32.lib
 
 "${CC}" -c -Fo${PLATFORM}/obj/ejsmod.obj -Fd${PLATFORM}/obj ${CFLAGS} ${DFLAGS} -I${PLATFORM}/inc -Isrc/cmd src/cmd/ejsmod.c
 
@@ -228,11 +232,11 @@ cp -r src/ejsCustomize.h win-i686-debug/inc/ejsCustomize.h
 
 "${CC}" -c -Fo${PLATFORM}/obj/slotGen.obj -Fd${PLATFORM}/obj ${CFLAGS} ${DFLAGS} -I${PLATFORM}/inc -Isrc/cmd src/cmd/slotGen.c
 
-"${LD}" -out:${PLATFORM}/bin/ejsmod.exe -entry:mainCRTStartup -subsystem:console ${LDFLAGS} ${LIBPATHS} ${PLATFORM}/obj/ejsmod.obj ${PLATFORM}/obj/doc.obj ${PLATFORM}/obj/docFiles.obj ${PLATFORM}/obj/listing.obj ${PLATFORM}/obj/slotGen.obj ${LIBS} libejs.lib libmpr.lib libpcre.lib libhttp.lib
+"${LD}" -out:${PLATFORM}/bin/ejsmod.exe -entry:mainCRTStartup -subsystem:console ${LDFLAGS} -libpath:C:/cygwin/home/mob/packages-win-i686/openssl/openssl-1.0.0d/out32dll ${LIBPATHS} ${PLATFORM}/obj/ejsmod.obj ${PLATFORM}/obj/doc.obj ${PLATFORM}/obj/docFiles.obj ${PLATFORM}/obj/listing.obj ${PLATFORM}/obj/slotGen.obj ${LIBS} libejs.lib libmpr.lib libpcre.lib libhttp.lib libmprssl.lib libeay32.lib ssleay32.lib
 
 "${CC}" -c -Fo${PLATFORM}/obj/ejsrun.obj -Fd${PLATFORM}/obj ${CFLAGS} ${DFLAGS} -I${PLATFORM}/inc src/cmd/ejsrun.c
 
-"${LD}" -out:${PLATFORM}/bin/ejsrun.exe -entry:mainCRTStartup -subsystem:console ${LDFLAGS} ${LIBPATHS} ${PLATFORM}/obj/ejsrun.obj ${LIBS} libejs.lib libmpr.lib libpcre.lib libhttp.lib
+"${LD}" -out:${PLATFORM}/bin/ejsrun.exe -entry:mainCRTStartup -subsystem:console ${LDFLAGS} -libpath:C:/cygwin/home/mob/packages-win-i686/openssl/openssl-1.0.0d/out32dll ${LIBPATHS} ${PLATFORM}/obj/ejsrun.obj ${LIBS} libejs.lib libmpr.lib libpcre.lib libhttp.lib libmprssl.lib libeay32.lib ssleay32.lib
 
 ejsc --out ${PLATFORM}/bin/ejs.mod --debug --optimize 9 --bind --require null src/core/*.es 
 ejsmod --require null --cslots ${PLATFORM}/bin/ejs.mod
@@ -258,7 +262,7 @@ ejsc --out ${PLATFORM}/bin/ejs.db.mapper.mod --debug --optimize 9 src/jems/ejs.d
 ejsc --out ${PLATFORM}/bin/ejs.db.sqlite.mod --debug --optimize 9 src/jems/ejs.db.sqlite/*.es
 "${CC}" -c -Fo${PLATFORM}/obj/ejsSqlite.obj -Fd${PLATFORM}/obj ${CFLAGS} ${DFLAGS} -I${PLATFORM}/inc src/jems/ejs.db.sqlite/src/ejsSqlite.c
 
-"${LD}" -dll -out:${PLATFORM}/bin/ejs.db.sqlite.dll -entry:_DllMainCRTStartup@12 -def:${PLATFORM}/bin/ejs.db.sqlite.def ${LDFLAGS} ${LIBPATHS} ${PLATFORM}/obj/ejsSqlite.obj ${LIBS} libmpr.lib libejs.lib libpcre.lib libhttp.lib libsqlite3.lib
+"${LD}" -dll -out:${PLATFORM}/bin/ejs.db.sqlite.dll -entry:_DllMainCRTStartup@12 -def:${PLATFORM}/bin/ejs.db.sqlite.def ${LDFLAGS} -libpath:C:/cygwin/home/mob/packages-win-i686/openssl/openssl-1.0.0d/out32dll ${LIBPATHS} ${PLATFORM}/obj/ejsSqlite.obj ${LIBS} libmpr.lib libejs.lib libpcre.lib libhttp.lib libmprssl.lib libeay32.lib ssleay32.lib libsqlite3.lib
 
 ejsc --out ${PLATFORM}/bin/ejs.web.mod --debug --optimize 9 src/jems/ejs.web/*.es
 ejsmod --cslots ${PLATFORM}/bin/ejs.web.mod
@@ -272,12 +276,17 @@ rm -f ejs.web.slots.h
 
 "${CC}" -c -Fo${PLATFORM}/obj/ejsWeb.obj -Fd${PLATFORM}/obj ${CFLAGS} ${DFLAGS} -I${PLATFORM}/inc -Isrc/jems/ejs.web/src src/jems/ejs.web/src/ejsWeb.c
 
-"${LD}" -dll -out:${PLATFORM}/bin/ejs.web.dll -entry:_DllMainCRTStartup@12 -def:${PLATFORM}/bin/ejs.web.def ${LDFLAGS} ${LIBPATHS} ${PLATFORM}/obj/ejsHttpServer.obj ${PLATFORM}/obj/ejsRequest.obj ${PLATFORM}/obj/ejsSession.obj ${PLATFORM}/obj/ejsWeb.obj ${LIBS} libmpr.lib libhttp.lib libpcre.lib libpcre.lib libejs.lib
+"${LD}" -dll -out:${PLATFORM}/bin/ejs.web.dll -entry:_DllMainCRTStartup@12 -def:${PLATFORM}/bin/ejs.web.def ${LDFLAGS} -libpath:C:/cygwin/home/mob/packages-win-i686/openssl/openssl-1.0.0d/out32dll ${LIBPATHS} ${PLATFORM}/obj/ejsHttpServer.obj ${PLATFORM}/obj/ejsRequest.obj ${PLATFORM}/obj/ejsSession.obj ${PLATFORM}/obj/ejsWeb.obj ${LIBS} libmpr.lib libhttp.lib libpcre.lib libmprssl.lib libeay32.lib ssleay32.lib libpcre.lib libejs.lib
 
 rm -fr ${PLATFORM}/bin/www
 cp -r src/jems/ejs.web/www ${PLATFORM}/bin
 ejsc --out ${PLATFORM}/bin/ejs.template.mod --debug --optimize 9 src/jems/ejs.template/TemplateParser.es
 ejsc --out ${PLATFORM}/bin/ejs.tar.mod --debug --optimize 9 src/jems/ejs.tar/*.es
+ejsc --out ${PLATFORM}/bin/ejs.zlib.mod/ --debug --optimize 9 src/jems/ejs.zlib/*.es
+"${CC}" -c -Fo${PLATFORM}/obj/ejsZlib.obj -Fd${PLATFORM}/obj ${CFLAGS} ${DFLAGS} -I${PLATFORM}/inc -I../packages-win-i686/zlib/zlib-1.2.6 src/jems/ejs.zlib/src/ejsZlib.c
+
+"${LD}" -dll -out:${PLATFORM}/bin/ejs.zlib.dll -entry:_DllMainCRTStartup@12 -def:${PLATFORM}/bin/ejs.zlib.def ${LDFLAGS} -libpath:C:/cygwin/home/mob/packages-win-i686/openssl/openssl-1.0.0d/out32dll -libpath:C:/cygwin/home/mob/packages-win-i686/zlib/zlib-1.2.6 ${LIBPATHS} ${PLATFORM}/obj/ejsZlib.obj ${LIBS} libmpr.lib libejs.lib libpcre.lib libhttp.lib libmprssl.lib libeay32.lib ssleay32.lib libz.lib
+
 cp src/jems/ejs.mvc/mvc.es ${PLATFORM}/bin
 rm -rf win-i686-debug/bin/mvc.exe
 cp -r win-i686-debug/bin/ejsrun.exe win-i686-debug/bin/mvc.exe

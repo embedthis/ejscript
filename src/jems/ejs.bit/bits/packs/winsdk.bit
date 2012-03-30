@@ -13,10 +13,10 @@ if (!bit.emulating) {
     winsdk = winsdk.dirname.dirname
 }
 Bit.load({packs: { winsdk: { path: winsdk }}})
-bit.env.PATH = [ wvar.join('Bin').portable ]
-bit.env.INCLUDE = [ wvar.join('INCLUDE').portable ]
+bit.env.PATH = [ winsdk.join('Bin').portable ]
+bit.env.INCLUDE = [ winsdk.join('INCLUDE').portable ]
 if (bit.platform.arch == 'x86_64') {
-    bit.env.LIB = [ wvar.join('lib/x64').portable ]
+    bit.env.LIB = [ winsdk.join('lib/x64').portable ]
 } else {
-    bit.env.LIB = [ wvar.join('lib').portable ]
+    bit.env.LIB = [ winsdk.join('lib').portable ]
 }
