@@ -1311,9 +1311,6 @@ public class Bit {
         for (let [tname, target] in bit.targets) {
             if (target.enable) {
                 if (!(target.enable is Boolean)) {
-/* MOB
-                    let script = target.enable.expand(bit, {fill: ''}).replace(/\\/g, '\\\\')
- */
 //ZZZ2 - remove replace()
                     let script = target.enable.expand(bit, {fill: ''}).replace(/\\/g, '\\\\')
                     if (!eval(script)) {
@@ -1412,7 +1409,7 @@ public class Bit {
         let libs = []
         for each (dname in target.depends) {
             let dep = bit.targets[dname]
-            if (dep && dep.type == 'lib') {
+            if (dep && dep.type == 'lib' && dep.enable) {
                 libs += getDepends(dep)
                 libs.push(dname)
             }
@@ -1429,7 +1426,7 @@ public class Bit {
                 let resolved = []
                 for each (dname in getDepends(target).unique()) {
                     let dep = bit.targets[dname]
-                    if (dep && dep.type == 'lib') {
+                    if (dep && dep.type == 'lib' && dep.enable) {
                         target.files += dep.files
                         resolved.push(dname.replace('lib', ''))
                     }

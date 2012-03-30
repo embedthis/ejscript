@@ -30,7 +30,7 @@
 </ItemGroup>
 
 <PropertyGroup Label="Globals">
-  <ProjectGuid>{194a8924-a31f-4c8a-b823-0865266b045b}</ProjectGuid>
+  <ProjectGuid>{0c413351-e0e4-4abd-94b2-4a1db1db1719}</ProjectGuid>
   <RootNamespace />
   <Keyword>Win32Proj</Keyword>
 </PropertyGroup>
@@ -66,28 +66,28 @@
     </ItemDefinitionGroup>
 <ItemDefinitionGroup>
 <Link>
-  <AdditionalDependencies>C:/cygwin/home/mob/ejs/win-i686-debug/bin/libmpr.lib;C:/cygwin/home/mob/ejs/win-i686-debug/bin/libejs.lib;C:/cygwin/home/mob/ejs/win-i686-debug/bin/libpcre.lib;C:/cygwin/home/mob/ejs/win-i686-debug/bin/libhttp.lib;C:/cygwin/home/mob/ejs/win-i686-debug/bin/libmprssl.lib;libeay32.lib;ssleay32.lib;C:/cygwin/home/mob/ejs/win-i686-debug/bin/libsqlite3.lib;%(AdditionalDependencies)</AdditionalDependencies>
-  <AdditionalLibraryDirectories>$(OutDir);C:/cygwin/home/mob/packages-win-i686/openssl/openssl-1.0.0d/out32dll;%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
+  <AdditionalDependencies>C:/cygwin/home/mob/ejs/win-i686-debug/bin/libmpr.lib;C:/cygwin/home/mob/ejs/win-i686-debug/bin/libejs.lib;C:/cygwin/home/mob/ejs/win-i686-debug/bin/libpcre.lib;C:/cygwin/home/mob/ejs/win-i686-debug/bin/libhttp.lib;C:/cygwin/home/mob/ejs/win-i686-debug/bin/libsqlite3.lib;%(AdditionalDependencies)</AdditionalDependencies>
+  <AdditionalLibraryDirectories>$(OutDir);;%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
 </Link>
 </ItemDefinitionGroup>
 
 <ItemGroup>
   <ProjectReference Include="libmpr.vcxproj">
-  <Project>36e935e3-adb1-4fc8-9fff-3474d9c2d309</Project>
+  <Project>67a97020-0d71-4f33-a391-0edf1bc7663f</Project>
   <ReferenceOutputAssembly>false</ReferenceOutputAssembly>
   </ProjectReference>
 </ItemGroup>
 
 <ItemGroup>
   <ProjectReference Include="libejs.vcxproj">
-  <Project>6afbfeb1-34c5-44bf-9a07-3a62a4a98666</Project>
+  <Project>a2bf8712-8a05-4699-b7ed-c4156518dffd</Project>
   <ReferenceOutputAssembly>false</ReferenceOutputAssembly>
   </ProjectReference>
 </ItemGroup>
 
 <ItemGroup>
   <ProjectReference Include="libsqlite3.vcxproj">
-  <Project>5b96f031-91c4-43a7-a1de-444e35f54327</Project>
+  <Project>1d2d243e-8527-484e-80d1-dab91eb56e31</Project>
   <ReferenceOutputAssembly>false</ReferenceOutputAssembly>
   </ProjectReference>
 </ItemGroup>
