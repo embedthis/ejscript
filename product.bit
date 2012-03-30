@@ -34,10 +34,10 @@ Bit.load({
         company: 'Embedthis',
 		version: '2.0.0',
 		buildNumber: 'B2',
-        minimal: ['doxygen', 'dsi', 'man', 'man2html', 'ssl', 'zlib'],
         sync: ['http', 'mpr', 'pcre', 'sqlite'],
         manager: 'ejsman',
         packs: [ 'bits/packs' ],
+        without: ['doxygen', 'dsi', 'man', 'man2html', 'ssl', 'zlib'],
     },
 
     usage: {

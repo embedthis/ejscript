@@ -2,15 +2,19 @@
 #   win-i686-debug.mk -- Build It Makefile to build Embedthis Ejscript for win on i686
 #
 
-export VS      := $(VS)
-export SDK     := $(SDK)
+VS             := $(VSINSTALLDIR)
+VS             ?= $(PROGRAMFILES)\Microsoft Visual Studio 10.0
+SDK            := $(WindowsSDKDir)
+SDK            ?= $(PROGRAMFILES)\Microsoft SDKs\Windows\v7.1
+
+export         SDK VS
 export PATH    := $(SDK)/Bin;$(VS)/VC/Bin;$(VS)/Common7/IDE;$(VS)/Common7/Tools;$(VS)/SDK/v3.5/bin;$(VS)/VC/VCPackages;$(PATH)
 export INCLUDE := $(INCLUDE);$(SDK)/INCLUDE;$(VS)/VC/INCLUDE
 export LIB     := $(LIB);$(SDK)/lib;$(VS)/VC/lib
 
 PLATFORM       := win-i686-debug
-CC             := cl.exe
-LD             := link.exe
+CC             := C:/Program Files/Microsoft Visual Studio 10.0/VC/bin/cl.exe
+LD             := C:/Program Files/Microsoft Visual Studio 10.0/VC/bin/link.exe
 CFLAGS         := -nologo -GR- -W3 -Zi -Od -MDd
 DFLAGS         := -D_REENTRANT -D_MT
 IFLAGS         := -I$(PLATFORM)/inc
@@ -811,7 +815,7 @@ $(PLATFORM)/obj/ejsrun.obj: \
 $(PLATFORM)/bin/ejsrun.exe:  \
         $(PLATFORM)/bin/libejs.dll \
         $(PLATFORM)/obj/ejsrun.obj
-	"$(LD)" -out:$(PLATFORM)/bin/ejsrun.exe -entry:mainCRTStartup -subsystem:console $(LDFLAGS) $(LIBPATHS) $(PLATFORM)/obj/ejsrun.obj $(LIBS) libejs.lib libmpr.lib libpcre.lib libhttp.lib
+	"$(LD)" -out:$(PLATFORM)/bin/ejsrun.exe -entry:mainCRTStartup -subsystem:console $(LDFLAGS) $(LIBPATHS) $(PLATFORM)/obj/ejsrun.obj $(PLATFORM)/obj/mprLib.obj $(PLATFORM)/obj/pcre.obj $(PLATFORM)/obj/httpLib.obj $(PLATFORM)/obj/ecAst.obj $(PLATFORM)/obj/ecCodeGen.obj $(PLATFORM)/obj/ecCompiler.obj $(PLATFORM)/obj/ecLex.obj $(PLATFORM)/obj/ecModuleWrite.obj $(PLATFORM)/obj/ecParser.obj $(PLATFORM)/obj/ecState.obj $(PLATFORM)/obj/ejsApp.obj $(PLATFORM)/obj/ejsArray.obj $(PLATFORM)/obj/ejsBlock.obj $(PLATFORM)/obj/ejsBoolean.obj $(PLATFORM)/obj/ejsByteArray.obj $(PLATFORM)/obj/ejsCache.obj $(PLATFORM)/obj/ejsCmd.obj $(PLATFORM)/obj/ejsConfig.obj $(PLATFORM)/obj/ejsDate.obj $(PLATFORM)/obj/ejsDebug.obj $(PLATFORM)/obj/ejsError.obj $(PLATFORM)/obj/ejsFile.obj $(PLATFORM)/obj/ejsFileSystem.obj $(PLATFORM)/obj/ejsFrame.obj $(PLATFORM)/obj/ejsFunction.obj $(PLATFORM)/obj/ejsGC.obj $(PLATFORM)/obj/ejsGlobal.obj $(PLATFORM)/obj/ejsHttp.obj $(PLATFORM)/obj/ejsIterator.obj $(PLATFORM)/obj/ejsJSON.obj $(PLATFORM)/obj/ejsLocalCache.obj $(PLATFORM)/obj/ejsMath.obj $(PLATFORM)/obj/ejsMemory.obj $(PLATFORM)/obj/ejsMprLog.obj $(PLATFORM)/obj/ejsNamespace.obj $(PLATFORM)/obj/ejsNull.obj $(PLATFORM)/obj/ejsNumber.obj $(PLATFORM)/obj/ejsObject.obj $(PLATFORM)/obj/ejsPath.obj $(PLATFORM)/obj/ejsPot.obj $(PLATFORM)/obj/ejsRegExp.obj $(PLATFORM)/obj/ejsSocket.obj $(PLATFORM)/obj/ejsString.obj $(PLATFORM)/obj/ejsSystem.obj $(PLATFORM)/obj/ejsTimer.obj $(PLATFORM)/obj/ejsType.obj $(PLATFORM)/obj/ejsUri.obj $(PLATFORM)/obj/ejsVoid.obj $(PLATFORM)/obj/ejsWorker.obj $(PLATFORM)/obj/ejsXML.obj $(PLATFORM)/obj/ejsXMLList.obj $(PLATFORM)/obj/ejsXMLLoader.obj $(PLATFORM)/obj/ejsByteCode.obj $(PLATFORM)/obj/ejsException.obj $(PLATFORM)/obj/ejsHelper.obj $(PLATFORM)/obj/ejsInterp.obj $(PLATFORM)/obj/ejsLoader.obj $(PLATFORM)/obj/ejsModule.obj $(PLATFORM)/obj/ejsScope.obj $(PLATFORM)/obj/ejsService.obj $(LIBS)
 
 $(PLATFORM)/bin/ejs.mod:  \
         $(PLATFORM)/bin/ejsc.exe \

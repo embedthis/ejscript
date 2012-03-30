@@ -621,8 +621,8 @@ public class Bit {
             }
         }
         for each (field in poptions['without']) {
-            if (field == 'all' && bit.settings.minimal) {
-                for each (f in bit.settings.minimal) {
+            if (field == 'all' && bit.settings.without) {
+                for each (f in bit.settings.without) {
                     bit.packs[f] = { enable: false, diagnostic: 'configured --without ' + f }
                 }
                 continue

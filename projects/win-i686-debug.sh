@@ -2,8 +2,12 @@
 #   win-i686-debug.sh -- Build It Shell Script to build Embedthis Ejscript
 #
 
-export VS="$(PROGRAMFILES)\Microsoft Visual Studio 10.0"
-export SDK="$(PROGRAMFILES)\Microsoft SDKs\Windows\v7.1"
+VS="${VSINSTALLDIR}"
+: ${VS:="$(PROGRAMFILES)\Microsoft Visual Studio 10.0"}
+SDK="${WindowsSDKDir}"
+: ${SDK:="$(PROGRAMFILES)\Microsoft SDKs\Windows\v7.1"}
+
+export SDK VS
 export PATH="$(SDK)/Bin;$(VS)/VC/Bin;$(VS)/Common7/IDE;$(VS)/Common7/Tools;$(VS)/SDK/v3.5/bin;$(VS)/VC/VCPackages;$(PATH)"
 export INCLUDE="$(INCLUDE);$(SDK)/INCLUDE;$(VS)/VC/INCLUDE"
 export LIB="$(LIB);$(SDK)/lib;$(VS)/VC/lib"
