@@ -197,7 +197,7 @@ public class Bit {
         }
         if (args.rest.contains('generate')) {
             if (local.like == 'windows') {
-                options.gen = ['sh', 'nmake', 'vs']
+                options.gen = ['sh', 'make', 'nmake', 'vs']
             } else {
                 options.gen = ['sh', 'make']
             }
@@ -1200,14 +1200,23 @@ public class Bit {
                 bit.packs.compiler.dir.windows.name.replace(/.*Program Files.*Microsoft/, '$$(PROGRAMFILES)\\Microsoft') :
                 '$(PROGRAMFILES)\\Microsoft Visual Studio 9.0'
             if (generating == 'nmake') {
-                genout.writeLine('VS        = ' + vs)
-                genout.writeLine('SDK       = ' + winsdk)
+                genout.writeLine('!IFDEF VSINSTALLDIR\nVS        = $(VSINSTALLDIR)\n!ELSE')
+                genout.writeLine('VS        = ' + vs + '\n!ENDIF\n')
+                genout.writeLine('!IFDEF WindowsSDKDir\nSDK       = $(WindowsSDKDir)\n!ELSE')
+                genout.writeLine('SDK       = ' + winsdk + '\n!ENDIF\n')
             } else if (generating == 'make') {
-                genout.writeLine('export VS      := ' + vs)
-                genout.writeLine('export SDK     := ' + winsdk)
+                genout.writeLine('VS             := ' + '$(VSINSTALLDIR)')
+                genout.writeLine('VS             ?= ' + vs)
+                genout.writeLine('SDK            := ' + '$(WindowsSDKDir)')
+                genout.writeLine('SDK            ?= ' + winsdk)
+                genout.writeLine('\nexport         SDK VS')
+
             } else {
-                genout.writeLine('export VS="' + vs + '"')
-                genout.writeLine('export SDK="' + winsdk + '"')
+                genout.writeLine('VS="${VSINSTALLDIR}"')
+                genout.writeLine(': ${VS:="' + vs + '"}')
+                genout.writeLine('SDK="${WindowsSDKDir}"')
+                genout.writeLine(': ${SDK:="' + winsdk + '"}')
+                genout.writeLine('\nexport SDK VS')
             }
         }
         for (let [key,value] in bit.env) {
