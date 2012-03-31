@@ -17,11 +17,15 @@ Bit.load({
         },
 
         'bit.exe': {
-            type: 'file',
+            type: 'exe',
             path: '${BIN}/bit${EXE}',
-            files: [ '${BIN}/ejsrun${EXE}' ],
+            sources: [ 
+                '${SRC}/src/cmd/ejsrun.c',
+                '${SRC}/src/jems/ejs.zlib/src/*.c' 
+            ],
+            static: true,
             active: true,
-            depends: ['ejsrun'],
+            depends: ['libejs',  'zlib'],
         },
 
         'utest.es': {
