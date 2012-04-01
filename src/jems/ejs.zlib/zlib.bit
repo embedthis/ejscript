@@ -9,6 +9,7 @@ Bit.load({
             enable: 'bit.packs.zlib.enable',
             path: '${LIB}/ejs.zlib.mod',
             files: [ '*.es' ],
+            precious: true,
             build: "
                 trace('Compile', 'ejs.zlib.mod')
                 run('ejsc --out ${LIB}/ejs.zlib.mod ${settings.esflags} --optimize 9 ' + Path('.').glob('*.es').sort().join(' '))

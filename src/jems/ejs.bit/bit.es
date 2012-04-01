@@ -73,6 +73,7 @@ public class Bit {
             platform: { range: String, separator: Array },
             prefix: { range: String, separator: Array },
             profile: { range: String },
+            rebuild: { alias: 'r'},
             release: {},
             quiet: { alias: 'q' },
             save: { range: Path },
@@ -110,6 +111,7 @@ public class Bit {
             '    --save path                        # Save blended bit file\n' +
             '    --set [feature=value]              # Enable and a feature\n' +
             '    --show                             # Show commands executed\n' +
+            '    --rebuild                          # Rebuild all specified targets\n' +
             '    --release                          # Same as --profile release\n' +
             '    --unset feature                    # Unset a feature\n' +
             '    --version                          # Dispay the bit version\n' +
@@ -1100,8 +1102,7 @@ public class Bit {
         genout.writeLine('LIBS="' + gen.libraries + '"\n')
         genout.writeLine('[ ! -x ${PLATFORM}/inc ] && ' + 
             'mkdir -p ${PLATFORM}/inc ${PLATFORM}/obj ${PLATFORM}/lib ${PLATFORM}/bin')
-        genout.writeLine('[ ! -f ${PLATFORM}/inc/buildConfig.h ] && ' + 
-            'cp projects/buildConfig.${PLATFORM} ${PLATFORM}/inc/buildConfig.h\n')
+        genout.writeLine('cp projects/buildConfig.${PLATFORM} ${PLATFORM}/inc/buildConfig.h\n')
         build()
         genout.close()
         path.setAttributes({permissions: 0755})
@@ -1133,7 +1134,11 @@ public class Bit {
         genout.writeLine('\t@[ ! -x $(PLATFORM)/inc ] && ' + 
             'mkdir -p $(PLATFORM)/inc $(PLATFORM)/obj $(PLATFORM)/lib $(PLATFORM)/bin ; true')
         genout.writeLine('\t@[ ! -f $(PLATFORM)/inc/buildConfig.h ] && ' + 
-            'cp projects/buildConfig.$(PLATFORM) $(PLATFORM)/inc/buildConfig.h ; true\n')
+            'cp projects/buildConfig.$(PLATFORM) $(PLATFORM)/inc/buildConfig.h ; true')
+        genout.writeLine('\t@if ! diff $(PLATFORM)/inc/buildConfig.h projects/buildConfig.$(PLATFORM) >/dev/null ; then\\')
+        genout.writeLine('\t\techo cp projects/buildConfig.$(PLATFORM) $(PLATFORM)/inc/buildConfig.h  ; \\')
+        genout.writeLine('\t\tcp projects/buildConfig.$(PLATFORM) $(PLATFORM)/inc/buildConfig.h  ; \\')
+        genout.writeLine('\tfi; true\n')
         genout.writeLine('clean:')
         action('cleanTargets')
         genout.writeLine('\nclobber: clean\n\trm -fr ./$(PLATFORM)\n')
@@ -1370,9 +1375,6 @@ public class Bit {
                 }
                 selectedTargets.splice(index, 1, ...names)
             }
-        }
-        if (!options.config) {
-            selectedTargets = selectedTargets.sort()
         }
         for (let [index, name] in selectedTargets) {
             /* Select target by target type */
@@ -2460,7 +2462,7 @@ command = command.expand(bit, {fill: ''})
         if (target.built) {
             return false
         }
-        if (generating) {
+        if (generating || options.rebuild) {
             return true
         }
         if (!target.path) {

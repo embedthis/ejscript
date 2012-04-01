@@ -8,6 +8,7 @@ Bit.load({
         'bit.es': {
             path: '${BIN}/bit.es',
             files: [ 'bit.es' ],
+            precious: true,
             build: "
                 trace('Export', bit.target.files)
                 cp('bit.es', bit.dir.bin)
@@ -25,6 +26,7 @@ Bit.load({
             ],
             static: true,
             active: true,
+            precious: true,
             depends: ['libejs',  'zlib'],
         },
 
@@ -49,6 +51,7 @@ Bit.load({
         bits: {
             path: '${LIB}/bits',
             files: [ 'bits/**' ],
+            precious: true,
             build: "
                 trace('Copy', 'Bit bits')
                 rmdir(bit.dir.lib.join('bits'))

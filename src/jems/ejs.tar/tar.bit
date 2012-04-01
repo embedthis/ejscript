@@ -8,6 +8,7 @@ Bit.load({
         'ejs.tar.mod': {
             path: '${LIB}/ejs.tar.mod',
             files: [ '*.es' ],
+            precious: true,
             build: "
                 trace('Compile', 'ejs.tar.mod')
                 run('ejsc --out ${LIB}/ejs.tar.mod ${settings.esflags} --optimize 9 ' + Path('.').glob('*.es').sort().join(' '))

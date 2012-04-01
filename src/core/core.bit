@@ -18,6 +18,7 @@ Bit.load({
         'ejs.mod': {
             path: '${LIB}/ejs.mod',
             files: [ '*.es' ],
+            precious: true,
             build: "
                 trace('Compile', 'Core EJS classes')
                 run('ejsc --out ${LIB}/ejs.mod ${settings.esflags} --optimize 9 --bind --require null ' + 
