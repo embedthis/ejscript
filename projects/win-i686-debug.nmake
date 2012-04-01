@@ -783,7 +783,7 @@ $(PLATFORM)\bin\ejs.unix.mod:  \
         $(PLATFORM)\bin\ejsc.exe \
         $(PLATFORM)\bin\ejsmod.exe \
         $(PLATFORM)\bin\ejs.mod
-	ejsc --out $(PLATFORM)\bin\ejs.unix.mod --debug --optimize 9 src\jems\ejs.unix\Unix.es
+	ejsc --out $(PLATFORM)/bin/ejs.unix.mod --debug --optimize 9 src/jems/ejs.unix/Unix.es
 
 $(PLATFORM)\bin\jem.es: 
 	copy src\jems\ejs.jem\jem.es $(PLATFORM)\bin
@@ -797,20 +797,20 @@ $(PLATFORM)\bin\ejs.db.mod:  \
         $(PLATFORM)\bin\ejsc.exe \
         $(PLATFORM)\bin\ejsmod.exe \
         $(PLATFORM)\bin\ejs.mod
-	ejsc --out $(PLATFORM)\bin\ejs.db.mod --debug --optimize 9 src\jems\ejs.db\*.es
+	ejsc --out $(PLATFORM)/bin/ejs.db.mod --debug --optimize 9 src/jems/ejs.db/*.es
 
 $(PLATFORM)\bin\ejs.db.mapper.mod:  \
         $(PLATFORM)\bin\ejsc.exe \
         $(PLATFORM)\bin\ejsmod.exe \
         $(PLATFORM)\bin\ejs.mod \
         $(PLATFORM)\bin\ejs.db.mod
-	ejsc --out $(PLATFORM)\bin\ejs.db.mapper.mod --debug --optimize 9 src\jems\ejs.db.mapper\*.es
+	ejsc --out $(PLATFORM)/bin/ejs.db.mapper.mod --debug --optimize 9 src/jems/ejs.db.mapper/*.es
 
 $(PLATFORM)\bin\ejs.db.sqlite.mod:  \
         $(PLATFORM)\bin\ejsc.exe \
         $(PLATFORM)\bin\ejsmod.exe \
         $(PLATFORM)\bin\ejs.mod
-	ejsc --out $(PLATFORM)\bin\ejs.db.sqlite.mod --debug --optimize 9 src\jems\ejs.db.sqlite\*.es
+	ejsc --out $(PLATFORM)/bin/ejs.db.sqlite.mod --debug --optimize 9 src/jems/ejs.db.sqlite/*.es
 
 $(PLATFORM)\obj\ejsSqlite.obj: \
         src\jems\ejs.db.sqlite\src\ejsSqlite.c \
@@ -880,13 +880,13 @@ $(PLATFORM)\bin\ejs.template.mod:  \
         $(PLATFORM)\bin\ejsc.exe \
         $(PLATFORM)\bin\ejsmod.exe \
         $(PLATFORM)\bin\ejs.mod
-	ejsc --out $(PLATFORM)\bin\ejs.template.mod --debug --optimize 9 src\jems\ejs.template\TemplateParser.es
+	ejsc --out $(PLATFORM)/bin/ejs.template.mod --debug --optimize 9 src/jems/ejs.template/TemplateParser.es
 
 $(PLATFORM)\bin\ejs.tar.mod:  \
         $(PLATFORM)\bin\ejsc.exe \
         $(PLATFORM)\bin\ejsmod.exe \
         $(PLATFORM)\bin\ejs.mod
-	ejsc --out $(PLATFORM)\bin\ejs.tar.mod --debug --optimize 9 src\jems\ejs.tar\*.es
+	ejsc --out $(PLATFORM)/bin/ejs.tar.mod --debug --optimize 9 src/jems/ejs.tar/*.es
 
 $(PLATFORM)\bin\mvc.es: 
 	copy src\jems\ejs.mvc\mvc.es $(PLATFORM)\bin
@@ -903,7 +903,7 @@ $(PLATFORM)\bin\ejs.mvc.mod:  \
         $(PLATFORM)\bin\ejs.web.mod \
         $(PLATFORM)\bin\ejs.template.mod \
         $(PLATFORM)\bin\ejs.unix.mod
-	ejsc --out $(PLATFORM)\bin\ejs.mvc.mod --debug --optimize 9 src\jems\ejs.mvc\*.es
+	ejsc --out $(PLATFORM)/bin/ejs.mvc.mod --debug --optimize 9 src/jems/ejs.mvc/*.es
 
 $(PLATFORM)\bin\utest.worker: 
 	copy src\jems\ejs.utest\utest.worker $(PLATFORM)\bin

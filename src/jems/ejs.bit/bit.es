@@ -1165,9 +1165,7 @@ public class Bit {
         genout.writeLine('DFLAGS    = ' + gen.defines)
         genout.writeLine('IFLAGS    = ' + 
             repvar(bit.defaults.includes.map(function(path) '-I' + reppath(path)).join(' ')))
-
-//MOB ZZZ - should not be necessary
-        genout.writeLine('LDFLAGS   = ' + repvar(gen.linker).replace(/\//g, '\\'))
+        genout.writeLine('LDFLAGS   = ' + repvar(gen.linker))
         genout.writeLine('LIBPATHS  = ' + repvar(gen.libpaths).replace(/\//g, '\\'))
         genout.writeLine('LIBS      = ' + gen.libraries + '\n')
         genout.writeLine('all: prep \\\n        ' + genAll())
@@ -1329,8 +1327,7 @@ public class Bit {
         for (let [tname, target] in bit.targets) {
             if (target.enable) {
                 if (!(target.enable is Boolean)) {
-//ZZZ2 - remove replace()
-                    let script = target.enable.expand(bit, {fill: ''}).replace(/\\/g, '\\\\')
+                    let script = target.enable.expand(bit, {fill: ''})
                     if (!eval(script)) {
                         vtrace('Skip', 'Target ' + tname + ' is disabled on this platform') 
                         target.enable = false
@@ -2146,10 +2143,11 @@ command = command.expand(bit, {fill: ''})
                 command = command.expand(bit)
                 // command = command.replace(RegExp(gen.platform, 'g'), '$$(PLATFORM)')
                 command = repvar(command)
+            /*
                 if (!target['generate-nmake']) {
-//MOB ZZ2 - should be only for generate-nmake ! is wrong
                     command = command.replace(/\//g, '\\')
                 }
+             */
                 genout.writeLine('\t' + command + '\n')
             } else {
                 genout.writeLine('#  Omit build script ' + target.path + '\n')
