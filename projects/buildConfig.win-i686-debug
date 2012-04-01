@@ -10,7 +10,7 @@
 #define BLD_PRODUCT "ejs"
 #define BLD_NAME "Embedthis Ejscript"
 #define BLD_COMPANY "Embedthis"
-#define BLD_EJSPRODUCT 1
+#define BLD_EJS_PRODUCT 1
 #define BLD_VERSION "2.0.0"
 #define BLD_NUMBER "B2"
 #define BLD_DEBUG 1
@@ -73,11 +73,11 @@
 #define BLD_FEATURE_CC 1
 #define BLD_CC "cl.exe"
 #define BLD_FEATURE_LINK 1
-#define BLD_LINK "undefined"
+#define BLD_LINK "link.exe"
 #define BLD_FEATURE_DUMPBIN 1
-#define BLD_DUMPBIN "undefined"
+#define BLD_DUMPBIN "dumpbin"
 #define BLD_FEATURE_RC 1
-#define BLD_RC "undefined"
+#define BLD_RC "rc"
 #define BLD_FEATURE_PCRE 1
 #define BLD_PCRE "src/deps/pcre"
 #define BLD_FEATURE_INNO 0

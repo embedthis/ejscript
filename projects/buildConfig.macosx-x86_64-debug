@@ -10,7 +10,7 @@
 #define BLD_PRODUCT "ejs"
 #define BLD_NAME "Embedthis Ejscript"
 #define BLD_COMPANY "Embedthis"
-#define BLD_EJSPRODUCT 1
+#define BLD_EJS_PRODUCT 1
 #define BLD_VERSION "2.0.0"
 #define BLD_NUMBER "B2"
 #define BLD_DEBUG 1
