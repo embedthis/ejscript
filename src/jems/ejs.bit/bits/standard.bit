@@ -53,6 +53,10 @@ Bit.load({
             type: 'generate',
         },
 
+        rebuild: {
+            type: 'rebuild',
+        },
+
         init: {
             type: 'init',
         },

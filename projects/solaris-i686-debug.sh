@@ -13,7 +13,7 @@ LIBPATHS="-L${PLATFORM}/lib"
 LIBS="-llxnet -lrt -lsocket -lpthread -lm"
 
 [ ! -x ${PLATFORM}/inc ] && mkdir -p ${PLATFORM}/inc ${PLATFORM}/obj ${PLATFORM}/lib ${PLATFORM}/bin
-[ ! -f ${PLATFORM}/inc/buildConfig.h ] && cp projects/buildConfig.${PLATFORM} ${PLATFORM}/inc/buildConfig.h
+cp projects/buildConfig.${PLATFORM} ${PLATFORM}/inc/buildConfig.h
 
 rm -rf solaris-i686-debug/inc/mpr.h
 cp -r src/deps/mpr/mpr.h solaris-i686-debug/inc/mpr.h
@@ -233,8 +233,9 @@ ejsmod --require null --cslots ${PLATFORM}/lib/ejs.mod
 if ! diff ejs.slots.h ${PLATFORM}/inc/ejs.slots.h >/dev/null; then cp ejs.slots.h ${PLATFORM}/inc; fi
 rm -f ejs.slots.h
 cp src/jems/ejs.bit/bit.es ${PLATFORM}/bin
-rm -rf solaris-i686-debug/bin/bit
-cp -r solaris-i686-debug/bin/ejsrun solaris-i686-debug/bin/bit
+${CC} -c -o ${PLATFORM}/obj/ejsZlib.o -Wall -fPIC ${LDFLAGS} -mcpu=i686 ${DFLAGS} -I${PLATFORM}/inc src/jems/ejs.zlib/src/ejsZlib.c
+
+${CC} -o ${PLATFORM}/bin/bit ${LDFLAGS} ${LIBPATHS} ${PLATFORM}/obj/ejsrun.o ${PLATFORM}/obj/ejsZlib.o ${PLATFORM}/obj/mprLib.o ${PLATFORM}/obj/pcre.o ${PLATFORM}/obj/httpLib.o ${PLATFORM}/obj/ecAst.o ${PLATFORM}/obj/ecCodeGen.o ${PLATFORM}/obj/ecCompiler.o ${PLATFORM}/obj/ecLex.o ${PLATFORM}/obj/ecModuleWrite.o ${PLATFORM}/obj/ecParser.o ${PLATFORM}/obj/ecState.o ${PLATFORM}/obj/ejsApp.o ${PLATFORM}/obj/ejsArray.o ${PLATFORM}/obj/ejsBlock.o ${PLATFORM}/obj/ejsBoolean.o ${PLATFORM}/obj/ejsByteArray.o ${PLATFORM}/obj/ejsCache.o ${PLATFORM}/obj/ejsCmd.o ${PLATFORM}/obj/ejsConfig.o ${PLATFORM}/obj/ejsDate.o ${PLATFORM}/obj/ejsDebug.o ${PLATFORM}/obj/ejsError.o ${PLATFORM}/obj/ejsFile.o ${PLATFORM}/obj/ejsFileSystem.o ${PLATFORM}/obj/ejsFrame.o ${PLATFORM}/obj/ejsFunction.o ${PLATFORM}/obj/ejsGC.o ${PLATFORM}/obj/ejsGlobal.o ${PLATFORM}/obj/ejsHttp.o ${PLATFORM}/obj/ejsIterator.o ${PLATFORM}/obj/ejsJSON.o ${PLATFORM}/obj/ejsLocalCache.o ${PLATFORM}/obj/ejsMath.o ${PLATFORM}/obj/ejsMemory.o ${PLATFORM}/obj/ejsMprLog.o ${PLATFORM}/obj/ejsNamespace.o ${PLATFORM}/obj/ejsNull.o ${PLATFORM}/obj/ejsNumber.o ${PLATFORM}/obj/ejsObject.o ${PLATFORM}/obj/ejsPath.o ${PLATFORM}/obj/ejsPot.o ${PLATFORM}/obj/ejsRegExp.o ${PLATFORM}/obj/ejsSocket.o ${PLATFORM}/obj/ejsString.o ${PLATFORM}/obj/ejsSystem.o ${PLATFORM}/obj/ejsTimer.o ${PLATFORM}/obj/ejsType.o ${PLATFORM}/obj/ejsUri.o ${PLATFORM}/obj/ejsVoid.o ${PLATFORM}/obj/ejsWorker.o ${PLATFORM}/obj/ejsXML.o ${PLATFORM}/obj/ejsXMLList.o ${PLATFORM}/obj/ejsXMLLoader.o ${PLATFORM}/obj/ejsByteCode.o ${PLATFORM}/obj/ejsException.o ${PLATFORM}/obj/ejsHelper.o ${PLATFORM}/obj/ejsInterp.o ${PLATFORM}/obj/ejsLoader.o ${PLATFORM}/obj/ejsModule.o ${PLATFORM}/obj/ejsScope.o ${PLATFORM}/obj/ejsService.o ${LIBS} ${LDFLAGS}
 
 cp src/jems/ejs.utest/utest.es ${PLATFORM}/bin
 rm -rf solaris-i686-debug/bin/utest

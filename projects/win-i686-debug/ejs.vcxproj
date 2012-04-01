@@ -30,7 +30,7 @@
 </ItemGroup>
 
 <PropertyGroup Label="Globals">
-  <ProjectGuid>{87776467-92cb-4d3a-9c48-0d484550d2d1}</ProjectGuid>
+  <ProjectGuid>{a948ddd4-ef9a-4d92-91dc-050a7849d5e3}</ProjectGuid>
   <RootNamespace />
   <Keyword>Win32Proj</Keyword>
 </PropertyGroup>
@@ -60,14 +60,14 @@
 </ItemGroup>
 <ItemDefinitionGroup>
 <Link>
-  <AdditionalDependencies>C:/cygwin/home/mob/ejs/win-i686-debug/bin/libejs.lib;C:/cygwin/home/mob/ejs/win-i686-debug/bin/libmpr.lib;C:/cygwin/home/mob/ejs/win-i686-debug/bin/libpcre.lib;C:/cygwin/home/mob/ejs/win-i686-debug/bin/libhttp.lib;%(AdditionalDependencies)</AdditionalDependencies>
+  <AdditionalDependencies>ejs.lib;mpr.lib;pcre.lib;http.lib;%(AdditionalDependencies)</AdditionalDependencies>
   <AdditionalLibraryDirectories>$(OutDir);;%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
 </Link>
 </ItemDefinitionGroup>
 
 <ItemGroup>
   <ProjectReference Include="libejs.vcxproj">
-  <Project>0c7b1f5b-8b4c-4d39-98ea-ca461f9ff883</Project>
+  <Project>7e288a13-c389-4445-af7f-e05cb1db14d8</Project>
   <ReferenceOutputAssembly>false</ReferenceOutputAssembly>
   </ProjectReference>
 </ItemGroup>

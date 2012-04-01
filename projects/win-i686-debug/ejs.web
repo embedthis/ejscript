@@ -30,7 +30,7 @@
 </ItemGroup>
 
 <PropertyGroup Label="Globals">
-  <ProjectGuid>{d3c90f4e-c1d8-485b-a3ee-4678a78ef5d1}</ProjectGuid>
+  <ProjectGuid>{f5688bbf-a4e4-443e-97a4-bbd100731203}</ProjectGuid>
   <RootNamespace />
   <Keyword>Win32Proj</Keyword>
 </PropertyGroup>
@@ -69,35 +69,35 @@
     </ItemDefinitionGroup>
 <ItemDefinitionGroup>
 <Link>
-  <AdditionalDependencies>C:/cygwin/home/mob/ejs/win-i686-debug/bin/libmpr.lib;C:/cygwin/home/mob/ejs/win-i686-debug/bin/libhttp.lib;C:/cygwin/home/mob/ejs/win-i686-debug/bin/libpcre.lib;C:/cygwin/home/mob/ejs/win-i686-debug/bin/libpcre.lib;C:/cygwin/home/mob/ejs/win-i686-debug/bin/libejs.lib;%(AdditionalDependencies)</AdditionalDependencies>
+  <AdditionalDependencies>mpr.lib;http.lib;pcre.lib;pcre.lib;ejs.lib;%(AdditionalDependencies)</AdditionalDependencies>
   <AdditionalLibraryDirectories>$(OutDir);;%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
 </Link>
 </ItemDefinitionGroup>
 
 <ItemGroup>
   <ProjectReference Include="libmpr.vcxproj">
-  <Project>4a3a0738-3bc4-4561-8500-f9ea2cc08a18</Project>
+  <Project>0943f533-c7bb-4f1d-8f27-c99f48dab2dd</Project>
   <ReferenceOutputAssembly>false</ReferenceOutputAssembly>
   </ProjectReference>
 </ItemGroup>
 
 <ItemGroup>
   <ProjectReference Include="libhttp.vcxproj">
-  <Project>279fedb9-be62-46f3-ae64-c2a5d89a819c</Project>
+  <Project>49bb8086-05f1-437e-823b-bad05afc20e8</Project>
   <ReferenceOutputAssembly>false</ReferenceOutputAssembly>
   </ProjectReference>
 </ItemGroup>
 
 <ItemGroup>
   <ProjectReference Include="libpcre.vcxproj">
-  <Project>1ad80512-b140-436c-98cd-332780242e25</Project>
+  <Project>5a8aa621-edc5-4419-a405-fabf2a798e69</Project>
   <ReferenceOutputAssembly>false</ReferenceOutputAssembly>
   </ProjectReference>
 </ItemGroup>
 
 <ItemGroup>
   <ProjectReference Include="libejs.vcxproj">
-  <Project>0c7b1f5b-8b4c-4d39-98ea-ca461f9ff883</Project>
+  <Project>7e288a13-c389-4445-af7f-e05cb1db14d8</Project>
   <ReferenceOutputAssembly>false</ReferenceOutputAssembly>
   </ProjectReference>
 </ItemGroup>

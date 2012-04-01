@@ -24,7 +24,7 @@
 #define BLD_CPU "i686"
 #define BIT_CPU_ARCH MPR_CPU_IX86
 #define BLD_OS "WIN"
-#define BLD_CONFIG_CMD "bit -emulate win-i686 -without all configure -gen sh,make,nmake,vs"
+#define BLD_CONFIG_CMD "bit -emulate win-i686 -d -without all configure -gen sh,make,nmake,vs"
 #define BLD_LIB_NAME "bin"
 #define BLD_CFG_PREFIX "C:/Program Files/Embedthis Ejscript"
 #define BLD_BIN_PREFIX "C:/Program Files/Embedthis Ejscript/bin"
@@ -76,10 +76,11 @@
 #define BLD_LINK "undefined"
 #define BLD_FEATURE_DUMPBIN 1
 #define BLD_DUMPBIN "undefined"
+#define BLD_FEATURE_RC 1
+#define BLD_RC "undefined"
 #define BLD_FEATURE_PCRE 1
 #define BLD_PCRE "src/deps/pcre"
-#define BLD_FEATURE_INNO 1
-#define BLD_INNO "../../../../Program Files/Inno Setup 5/iscc.exe"
+#define BLD_FEATURE_INNO 0
 #define BLD_FEATURE_OPENSSL 0
 #define BLD_FEATURE_MATRIXSSL 0
 #define BLD_FEATURE_SQLITE 1

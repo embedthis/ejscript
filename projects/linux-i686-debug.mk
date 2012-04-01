@@ -53,6 +53,10 @@ all: prep \
 prep:
 	@[ ! -x $(PLATFORM)/inc ] && mkdir -p $(PLATFORM)/inc $(PLATFORM)/obj $(PLATFORM)/lib $(PLATFORM)/bin ; true
 	@[ ! -f $(PLATFORM)/inc/buildConfig.h ] && cp projects/buildConfig.$(PLATFORM) $(PLATFORM)/inc/buildConfig.h ; true
+	@if ! diff $(PLATFORM)/inc/buildConfig.h projects/buildConfig.$(PLATFORM) >/dev/null ; then\
+		echo cp projects/buildConfig.$(PLATFORM) $(PLATFORM)/inc/buildConfig.h  ; \
+		cp projects/buildConfig.$(PLATFORM) $(PLATFORM)/inc/buildConfig.h  ; \
+	fi; true
 
 clean:
 	rm -rf $(PLATFORM)/lib/libmpr.so
@@ -68,13 +72,8 @@ clean:
 	rm -rf $(PLATFORM)/bin/ejsc
 	rm -rf $(PLATFORM)/bin/ejsmod
 	rm -rf $(PLATFORM)/bin/ejsrun
-	rm -rf $(PLATFORM)/lib/ejs.mod
-	rm -rf $(PLATFORM)/bin/bit.es
-	rm -rf $(PLATFORM)/bin/bit
 	rm -rf $(PLATFORM)/bin/utest.es
 	rm -rf $(PLATFORM)/bin/utest
-	rm -rf $(PLATFORM)/lib/bits
-	rm -rf $(PLATFORM)/lib/ejs.unix.mod
 	rm -rf $(PLATFORM)/bin/jem.es
 	rm -rf $(PLATFORM)/bin/jem
 	rm -rf $(PLATFORM)/lib/ejs.db.mod
@@ -85,8 +84,6 @@ clean:
 	rm -rf $(PLATFORM)/lib/ejs.web.so
 	rm -rf $(PLATFORM)/lib/www
 	rm -rf $(PLATFORM)/lib/ejs.template.mod
-	rm -rf $(PLATFORM)/lib/ejs.tar.mod
-	rm -rf $(PLATFORM)/lib/ejs.zlib.mod
 	rm -rf $(PLATFORM)/lib/ejs.zlib.so
 	rm -rf $(PLATFORM)/bin/mvc.es
 	rm -rf $(PLATFORM)/bin/mvc
@@ -165,12 +162,12 @@ clean:
 	rm -rf $(PLATFORM)/obj/listing.o
 	rm -rf $(PLATFORM)/obj/slotGen.o
 	rm -rf $(PLATFORM)/obj/ejsrun.o
+	rm -rf $(PLATFORM)/obj/ejsZlib.o
 	rm -rf $(PLATFORM)/obj/ejsSqlite.o
 	rm -rf $(PLATFORM)/obj/ejsHttpServer.o
 	rm -rf $(PLATFORM)/obj/ejsRequest.o
 	rm -rf $(PLATFORM)/obj/ejsSession.o
 	rm -rf $(PLATFORM)/obj/ejsWeb.o
-	rm -rf $(PLATFORM)/obj/ejsZlib.o
 
 clobber: clean
 	rm -fr ./$(PLATFORM)
@@ -746,10 +743,16 @@ $(PLATFORM)/lib/ejs.mod:  \
 $(PLATFORM)/bin/bit.es: 
 	cp src/jems/ejs.bit/bit.es $(PLATFORM)/bin
 
+$(PLATFORM)/obj/ejsZlib.o: \
+        src/jems/ejs.zlib/src/ejsZlib.c \
+        $(PLATFORM)/inc/buildConfig.h
+	$(CC) -c -o $(PLATFORM)/obj/ejsZlib.o $(CFLAGS) $(DFLAGS) -I$(PLATFORM)/inc src/jems/ejs.zlib/src/ejsZlib.c
+
 $(PLATFORM)/bin/bit:  \
-        $(PLATFORM)/bin/ejsrun
-	rm -fr linux-i686-debug/bin/bit
-	cp -r linux-i686-debug/bin/ejsrun linux-i686-debug/bin/bit
+        $(PLATFORM)/lib/libejs.so \
+        $(PLATFORM)/obj/ejsrun.o \
+        $(PLATFORM)/obj/ejsZlib.o
+	$(CC) -o $(PLATFORM)/bin/bit $(LDFLAGS) $(LIBPATHS) $(PLATFORM)/obj/ejsrun.o $(PLATFORM)/obj/ejsZlib.o $(PLATFORM)/obj/mprLib.o $(PLATFORM)/obj/pcre.o $(PLATFORM)/obj/httpLib.o $(PLATFORM)/obj/ecAst.o $(PLATFORM)/obj/ecCodeGen.o $(PLATFORM)/obj/ecCompiler.o $(PLATFORM)/obj/ecLex.o $(PLATFORM)/obj/ecModuleWrite.o $(PLATFORM)/obj/ecParser.o $(PLATFORM)/obj/ecState.o $(PLATFORM)/obj/ejsApp.o $(PLATFORM)/obj/ejsArray.o $(PLATFORM)/obj/ejsBlock.o $(PLATFORM)/obj/ejsBoolean.o $(PLATFORM)/obj/ejsByteArray.o $(PLATFORM)/obj/ejsCache.o $(PLATFORM)/obj/ejsCmd.o $(PLATFORM)/obj/ejsConfig.o $(PLATFORM)/obj/ejsDate.o $(PLATFORM)/obj/ejsDebug.o $(PLATFORM)/obj/ejsError.o $(PLATFORM)/obj/ejsFile.o $(PLATFORM)/obj/ejsFileSystem.o $(PLATFORM)/obj/ejsFrame.o $(PLATFORM)/obj/ejsFunction.o $(PLATFORM)/obj/ejsGC.o $(PLATFORM)/obj/ejsGlobal.o $(PLATFORM)/obj/ejsHttp.o $(PLATFORM)/obj/ejsIterator.o $(PLATFORM)/obj/ejsJSON.o $(PLATFORM)/obj/ejsLocalCache.o $(PLATFORM)/obj/ejsMath.o $(PLATFORM)/obj/ejsMemory.o $(PLATFORM)/obj/ejsMprLog.o $(PLATFORM)/obj/ejsNamespace.o $(PLATFORM)/obj/ejsNull.o $(PLATFORM)/obj/ejsNumber.o $(PLATFORM)/obj/ejsObject.o $(PLATFORM)/obj/ejsPath.o $(PLATFORM)/obj/ejsPot.o $(PLATFORM)/obj/ejsRegExp.o $(PLATFORM)/obj/ejsSocket.o $(PLATFORM)/obj/ejsString.o $(PLATFORM)/obj/ejsSystem.o $(PLATFORM)/obj/ejsTimer.o $(PLATFORM)/obj/ejsType.o $(PLATFORM)/obj/ejsUri.o $(PLATFORM)/obj/ejsVoid.o $(PLATFORM)/obj/ejsWorker.o $(PLATFORM)/obj/ejsXML.o $(PLATFORM)/obj/ejsXMLList.o $(PLATFORM)/obj/ejsXMLLoader.o $(PLATFORM)/obj/ejsByteCode.o $(PLATFORM)/obj/ejsException.o $(PLATFORM)/obj/ejsHelper.o $(PLATFORM)/obj/ejsInterp.o $(PLATFORM)/obj/ejsLoader.o $(PLATFORM)/obj/ejsModule.o $(PLATFORM)/obj/ejsScope.o $(PLATFORM)/obj/ejsService.o $(LIBS) $(LDFLAGS)
 
 $(PLATFORM)/bin/utest.es: 
 	cp src/jems/ejs.utest/utest.es $(PLATFORM)/bin

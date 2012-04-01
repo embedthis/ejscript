@@ -206,6 +206,9 @@ public class Bit {
         } else if (options.gen) {
             args.rest.push('generate')
         }
+        if (args.rest.contains('rebuild')) {
+            options.rebuild = true
+        }
         if (args.rest.contains('import')) {
             options.import = true
         }
@@ -1366,6 +1369,9 @@ public class Bit {
         } else {
             /* Targets specified. If "build" is one of the targets|actions, expand it to explicit target names */
             let index = selectedTargets.indexOf('build')
+            if (index < 0) {
+                index = selectedTargets.indexOf('rebuild')
+            }
             if (index >= 0) {
                 let names = []
                 for (let [tname,target] in bit.targets) {
@@ -1800,10 +1806,8 @@ public class Bit {
             buildScript(target)
         } else if (target.type == 'generate') {
             generate()
-        } else {
-            if (target.scripts && target.scripts.build) {
-                buildScript(target)
-            }
+        } else if (target.scripts && target.scripts.build) {
+            buildScript(target)
         }
         target.building = false
         target.built = true
@@ -1833,7 +1837,6 @@ public class Bit {
         /* Double expand so rules tokens can use ${OUT} */
         let command = rule.expand(bit, {fill: ''})
         command = command.expand(bit, {fill: ''})
-        diagnose(2, command)
         if (generating == 'sh') {
             command = repcmd(command)
             genout.writeLine(command + '\n')

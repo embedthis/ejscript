@@ -3,18 +3,18 @@
 #
 
 VS="${VSINSTALLDIR}"
-: ${VS:="$(PROGRAMFILES)\Microsoft Visual Studio 10.0"}
+: ${VS:="$(VS)"}
 SDK="${WindowsSDKDir}"
-: ${SDK:="$(PROGRAMFILES)\Microsoft SDKs\Windows\v7.1"}
+: ${SDK:="$(SDK)"}
 
 export SDK VS
-export PATH="$(SDK)/Bin;$(VS)/VC/Bin;$(VS)/Common7/IDE;$(VS)/Common7/Tools;$(VS)/SDK/v3.5/bin;$(VS)/VC/VCPackages;$(PATH)"
-export INCLUDE="$(INCLUDE);$(SDK)/INCLUDE;$(VS)/VC/INCLUDE"
-export LIB="$(LIB);$(SDK)/lib;$(VS)/VC/lib"
+export PATH="$(SDK)/Bin:$(VS)/VC/Bin:$(VS)/Common7/IDE:$(VS)/Common7/Tools:$(VS)/SDK/v3.5/bin:$(VS)/VC/VCPackages;$(PATH)"
+export INCLUDE="$(INCLUDE);$(SDK)/INCLUDE:$(VS)/VC/INCLUDE"
+export LIB="$(LIB);$(SDK)/lib:$(VS)/VC/lib"
 
 PLATFORM="win-i686-debug"
-CC="C:/Program Files/Microsoft Visual Studio 10.0/VC/bin/cl.exe"
-LD="C:/Program Files/Microsoft Visual Studio 10.0/VC/bin/link.exe"
+CC="cl.exe"
+LD="link.exe"
 CFLAGS="-nologo -GR- -W3 -Zi -Od -MDd"
 DFLAGS="-D_REENTRANT -D_MT"
 IFLAGS="-Iwin-i686-debug/inc"
@@ -23,7 +23,7 @@ LIBPATHS="-libpath:${PLATFORM}/bin"
 LIBS="ws2_32.lib advapi32.lib user32.lib kernel32.lib oldnames.lib msvcrt.lib shell32.lib"
 
 [ ! -x ${PLATFORM}/inc ] && mkdir -p ${PLATFORM}/inc ${PLATFORM}/obj ${PLATFORM}/lib ${PLATFORM}/bin
-[ ! -f ${PLATFORM}/inc/buildConfig.h ] && cp projects/buildConfig.${PLATFORM} ${PLATFORM}/inc/buildConfig.h
+cp projects/buildConfig.${PLATFORM} ${PLATFORM}/inc/buildConfig.h
 
 rm -rf win-i686-debug/inc/mpr.h
 cp -r src/deps/mpr/mpr.h win-i686-debug/inc/mpr.h
@@ -236,15 +236,16 @@ cp -r src/ejsCustomize.h win-i686-debug/inc/ejsCustomize.h
 
 "${CC}" -c -Fo${PLATFORM}/obj/ejsrun.obj -Fd${PLATFORM}/obj ${CFLAGS} ${DFLAGS} -I${PLATFORM}/inc src/cmd/ejsrun.c
 
-"${LD}" -out:${PLATFORM}/bin/ejsrun.exe -entry:mainCRTStartup -subsystem:console ${LDFLAGS} ${LIBPATHS} ${PLATFORM}/obj/ejsrun.obj ${PLATFORM}/obj/mprLib.obj ${PLATFORM}/obj/pcre.obj ${PLATFORM}/obj/httpLib.obj ${PLATFORM}/obj/ecAst.obj ${PLATFORM}/obj/ecCodeGen.obj ${PLATFORM}/obj/ecCompiler.obj ${PLATFORM}/obj/ecLex.obj ${PLATFORM}/obj/ecModuleWrite.obj ${PLATFORM}/obj/ecParser.obj ${PLATFORM}/obj/ecState.obj ${PLATFORM}/obj/ejsApp.obj ${PLATFORM}/obj/ejsArray.obj ${PLATFORM}/obj/ejsBlock.obj ${PLATFORM}/obj/ejsBoolean.obj ${PLATFORM}/obj/ejsByteArray.obj ${PLATFORM}/obj/ejsCache.obj ${PLATFORM}/obj/ejsCmd.obj ${PLATFORM}/obj/ejsConfig.obj ${PLATFORM}/obj/ejsDate.obj ${PLATFORM}/obj/ejsDebug.obj ${PLATFORM}/obj/ejsError.obj ${PLATFORM}/obj/ejsFile.obj ${PLATFORM}/obj/ejsFileSystem.obj ${PLATFORM}/obj/ejsFrame.obj ${PLATFORM}/obj/ejsFunction.obj ${PLATFORM}/obj/ejsGC.obj ${PLATFORM}/obj/ejsGlobal.obj ${PLATFORM}/obj/ejsHttp.obj ${PLATFORM}/obj/ejsIterator.obj ${PLATFORM}/obj/ejsJSON.obj ${PLATFORM}/obj/ejsLocalCache.obj ${PLATFORM}/obj/ejsMath.obj ${PLATFORM}/obj/ejsMemory.obj ${PLATFORM}/obj/ejsMprLog.obj ${PLATFORM}/obj/ejsNamespace.obj ${PLATFORM}/obj/ejsNull.obj ${PLATFORM}/obj/ejsNumber.obj ${PLATFORM}/obj/ejsObject.obj ${PLATFORM}/obj/ejsPath.obj ${PLATFORM}/obj/ejsPot.obj ${PLATFORM}/obj/ejsRegExp.obj ${PLATFORM}/obj/ejsSocket.obj ${PLATFORM}/obj/ejsString.obj ${PLATFORM}/obj/ejsSystem.obj ${PLATFORM}/obj/ejsTimer.obj ${PLATFORM}/obj/ejsType.obj ${PLATFORM}/obj/ejsUri.obj ${PLATFORM}/obj/ejsVoid.obj ${PLATFORM}/obj/ejsWorker.obj ${PLATFORM}/obj/ejsXML.obj ${PLATFORM}/obj/ejsXMLList.obj ${PLATFORM}/obj/ejsXMLLoader.obj ${PLATFORM}/obj/ejsByteCode.obj ${PLATFORM}/obj/ejsException.obj ${PLATFORM}/obj/ejsHelper.obj ${PLATFORM}/obj/ejsInterp.obj ${PLATFORM}/obj/ejsLoader.obj ${PLATFORM}/obj/ejsModule.obj ${PLATFORM}/obj/ejsScope.obj ${PLATFORM}/obj/ejsService.obj ${LIBS}
+"${LD}" -out:${PLATFORM}/bin/ejsrun.exe -entry:mainCRTStartup -subsystem:console ${LDFLAGS} ${LIBPATHS} ${PLATFORM}/obj/ejsrun.obj ${LIBS} libejs.lib libmpr.lib libpcre.lib libhttp.lib
 
 ejsc --out ${PLATFORM}/bin/ejs.mod --debug --optimize 9 --bind --require null src/core/*.es 
 ejsmod --require null --cslots ${PLATFORM}/bin/ejs.mod
 if ! diff ejs.slots.h ${PLATFORM}/inc/ejs.slots.h >/dev/null; then cp ejs.slots.h ${PLATFORM}/inc; fi
 rm -f ejs.slots.h
 cp src/jems/ejs.bit/bit.es ${PLATFORM}/bin
-rm -rf win-i686-debug/bin/bit.exe
-cp -r win-i686-debug/bin/ejsrun.exe win-i686-debug/bin/bit.exe
+"${CC}" -c -Fo${PLATFORM}/obj/ejsZlib.obj -Fd${PLATFORM}/obj ${CFLAGS} ${DFLAGS} -I${PLATFORM}/inc src/jems/ejs.zlib/src/ejsZlib.c
+
+"${LD}" -out:${PLATFORM}/bin/bit.exe -entry:mainCRTStartup -subsystem:console ${LDFLAGS} ${LIBPATHS} ${PLATFORM}/obj/ejsrun.obj ${PLATFORM}/obj/ejsZlib.obj ${PLATFORM}/obj/mprLib.obj ${PLATFORM}/obj/pcre.obj ${PLATFORM}/obj/httpLib.obj ${PLATFORM}/obj/ecAst.obj ${PLATFORM}/obj/ecCodeGen.obj ${PLATFORM}/obj/ecCompiler.obj ${PLATFORM}/obj/ecLex.obj ${PLATFORM}/obj/ecModuleWrite.obj ${PLATFORM}/obj/ecParser.obj ${PLATFORM}/obj/ecState.obj ${PLATFORM}/obj/ejsApp.obj ${PLATFORM}/obj/ejsArray.obj ${PLATFORM}/obj/ejsBlock.obj ${PLATFORM}/obj/ejsBoolean.obj ${PLATFORM}/obj/ejsByteArray.obj ${PLATFORM}/obj/ejsCache.obj ${PLATFORM}/obj/ejsCmd.obj ${PLATFORM}/obj/ejsConfig.obj ${PLATFORM}/obj/ejsDate.obj ${PLATFORM}/obj/ejsDebug.obj ${PLATFORM}/obj/ejsError.obj ${PLATFORM}/obj/ejsFile.obj ${PLATFORM}/obj/ejsFileSystem.obj ${PLATFORM}/obj/ejsFrame.obj ${PLATFORM}/obj/ejsFunction.obj ${PLATFORM}/obj/ejsGC.obj ${PLATFORM}/obj/ejsGlobal.obj ${PLATFORM}/obj/ejsHttp.obj ${PLATFORM}/obj/ejsIterator.obj ${PLATFORM}/obj/ejsJSON.obj ${PLATFORM}/obj/ejsLocalCache.obj ${PLATFORM}/obj/ejsMath.obj ${PLATFORM}/obj/ejsMemory.obj ${PLATFORM}/obj/ejsMprLog.obj ${PLATFORM}/obj/ejsNamespace.obj ${PLATFORM}/obj/ejsNull.obj ${PLATFORM}/obj/ejsNumber.obj ${PLATFORM}/obj/ejsObject.obj ${PLATFORM}/obj/ejsPath.obj ${PLATFORM}/obj/ejsPot.obj ${PLATFORM}/obj/ejsRegExp.obj ${PLATFORM}/obj/ejsSocket.obj ${PLATFORM}/obj/ejsString.obj ${PLATFORM}/obj/ejsSystem.obj ${PLATFORM}/obj/ejsTimer.obj ${PLATFORM}/obj/ejsType.obj ${PLATFORM}/obj/ejsUri.obj ${PLATFORM}/obj/ejsVoid.obj ${PLATFORM}/obj/ejsWorker.obj ${PLATFORM}/obj/ejsXML.obj ${PLATFORM}/obj/ejsXMLList.obj ${PLATFORM}/obj/ejsXMLLoader.obj ${PLATFORM}/obj/ejsByteCode.obj ${PLATFORM}/obj/ejsException.obj ${PLATFORM}/obj/ejsHelper.obj ${PLATFORM}/obj/ejsInterp.obj ${PLATFORM}/obj/ejsLoader.obj ${PLATFORM}/obj/ejsModule.obj ${PLATFORM}/obj/ejsScope.obj ${PLATFORM}/obj/ejsService.obj ${LIBS}
 
 cp src/jems/ejs.utest/utest.es ${PLATFORM}/bin
 rm -rf win-i686-debug/bin/utest.exe
