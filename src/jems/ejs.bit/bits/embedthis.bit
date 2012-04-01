@@ -52,7 +52,7 @@ Bit.load({
                     trace('Generate', name + ' project')
                     let formats = name == 'win-i686' ? 'sh,make,nmake,vs' : 'sh,make'
                     let emulate = name != bit.platform.name ? ' -emulate ' + name : ''
-                    run(bitcmd + emulate + ' -d -without all configure -gen ' + formats, bit.target.runopt)
+                    run(bitcmd + emulate + ' -without all configure -gen ' + formats, bit.target.runopt)
                     if (name != bit.platform.name) {
                         rm(bit.dir.top.join(name + '.bit'))
                         rmdir(bit.dir.top.join(name + '-debug'))

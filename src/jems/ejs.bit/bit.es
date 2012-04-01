@@ -1851,6 +1851,14 @@ public class Bit {
 
         } else {
             trace('Link', target.name)
+            if (target.active && bit.platform.like == 'windows') {
+                let active = target.path.relative.replaceExt('old')
+                trace('Preserve', 'Active target ' + target.path.relative + ' as ' + active)
+                active.remove()
+                target.path.rename(target.path.replaceExt('old'))
+            } else {
+                safeRemove(target.path)
+            }
             run(command)
         }
     }
@@ -1894,6 +1902,14 @@ public class Bit {
 
         } else {
             trace('Link', target.name)
+            if (target.active && bit.platform.like == 'windows') {
+                let active = target.path.relative.replaceExt('old')
+                trace('Preserve', 'Active target ' + target.path.relative + ' as ' + active)
+                active.remove()
+                target.path.rename(target.path.replaceExt('old'))
+            } else {
+                safeRemove(target.path)
+            }
             run(command)
         }
     }
