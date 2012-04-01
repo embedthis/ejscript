@@ -459,7 +459,7 @@ public class Bit {
         f.writeLine('#define BLD_PRODUCT "' + settings.product + '"')
         f.writeLine('#define BLD_NAME "' + settings.title + '"')
         f.writeLine('#define BLD_COMPANY "' + settings.company + '"')
-        f.writeLine('#define BLD_' + settings.product.toUpper() + 'PRODUCT 1')
+        f.writeLine('#define BLD_' + settings.product.toUpper() + '_PRODUCT 1')
         f.writeLine('#define BLD_VERSION "' + settings.version + '"')
         f.writeLine('#define BLD_NUMBER "' + settings.buildNumber + '"')
         if (settings.charlen) {
@@ -753,6 +753,7 @@ public class Bit {
                 }
             }
         }
+        setTypes()
     }
 
     /*
@@ -1246,7 +1247,8 @@ public class Bit {
                 genout.writeLine('export %-7s := %s' % [key, value])
 
             } else if (generating == 'nmake') {
-                genout.writeLine('%-9s = %s' % [key, repstr(value)])
+                value = value.replace(/\//g, '\\')
+                genout.writeLine('%-9s = %s' % [key, value])
 
             } else if (generating == 'sh') {
                 genout.writeLine('export ' + key + '="' + value + '"')
@@ -2144,6 +2146,7 @@ command = command.expand(bit, {fill: ''})
                 // command = command.replace(RegExp(gen.platform, 'g'), '$$(PLATFORM)')
                 command = repvar(command)
             /*
+                ZZZ
                 if (!target['generate-nmake']) {
                     command = command.replace(/\//g, '\\')
                 }
@@ -2189,16 +2192,17 @@ command = command.expand(bit, {fill: ''})
             command = command.replace(bit.packs.compiler.path, '${CC}')
             command = command.replace(bit.packs.link.path, '${LD}')
         }
+/*
         if (bit.platform.like == 'windows') {
 //ZZ2
             let pat = (bit.dir.top + '\\').replace(/\\/g, '\\\\')
             command = command.replace(RegExp(pat, 'g'), '')
         } else {
+*/
             command = command.replace(RegExp(bit.dir.top + '/', 'g'), '')
-        }
+//        }
         command = command.replace(/  */g, ' ')
         if (generating == 'nmake') {
-//ZZ2
             command = command.replace(/\//g, '\\')
         }
         return command
@@ -2210,12 +2214,14 @@ command = command.expand(bit, {fill: ''})
      */
     function repvar(command: String): String {
         command = command.replace(RegExp(bit.dir.top + '/', 'g'), '')
+/*
         if (bit.platform.like == 'windows') {
             //  MOB - is this needed
 //ZZ2
             let pat = (bit.dir.top + '\\').replace(/\\/g, '\\\\')
             command = command.replace(RegExp(pat, 'g'), '')
         }
+*/
         if (generating == 'make') {
             command = command.replace(RegExp(gen.platform, 'g'), '$$(PLATFORM)')
         } else if (generating == 'nmake') {
@@ -2233,12 +2239,6 @@ command = command.expand(bit, {fill: ''})
         }
         return repvar(path)
     }
-
-    function repstr(str: String)
-        bit.platform.like == 'windows' ? str.replace(/\//g, '\\') : str
-
-    function natural(path: Path): Path
-        bit.platform.like == 'windows' ? path.windows : path
 
     /*
         Get the dependencies of a target as a string
