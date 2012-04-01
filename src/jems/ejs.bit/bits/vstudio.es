@@ -144,7 +144,14 @@ function projHeader(base, target) {
 function projConfig(base, target) {
     bit.PTYPE = (target.type == 'exe') ? 'Application' : 'DynamicLibrary'
     bit.VTYPE = 'Win32'
-    bit.GUID = target.guid = Cmd('uuidgen').response.toLower().trim()
+    let guid = bit.dir.projects.join('.' + target.name + '.guid')
+    if (guid.exists) {
+        target.guid = guid.readString().trim()
+    } else {
+        target.guid = Cmd('uuidgen').response.toLower().trim()
+        guid.write(target.guid)
+    }
+    bit.GUID = target.guid
     bit.CTOK = '$(Configuration)'
     bit.PTOK = '$(Platform)'
     bit.STOK = '$(SolutionDir)'
