@@ -238,7 +238,7 @@ module ejs {
             @option missing Set to undefined to report patterns that don't resolve into any files or directories 
                 by throwing an exception. Set to any non-null value to be used in the results when there are no matching
                 files or directories. Set to the empty string to use the patterns in the results and set
-                et to null to do nothing.
+                to null to do nothing.
             @option relative Return paths relative to the Path, otherwise result entries include the Path. Defaults to false.
             @return An Array of Path objects for each file in the directory.
          */

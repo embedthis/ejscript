@@ -82,7 +82,9 @@ function installCallback(src: Path, dest: Path, options = {}): Boolean {
         dest.remove()
         return true
     }
-    let attributes = { 
+    dest.parent.makeDir()
+
+    let attributes = {
         uid: options.uid
         gid: options.gid
         user: options.user
@@ -115,7 +117,6 @@ function installCallback(src: Path, dest: Path, options = {}): Boolean {
         dest.setAttributes(attributes)
     } else {
         vtrace(options.task.toPascal(), dest.relative)
-        dest.parent.makeDir()
         if (src.isDir) {
             dest.makeDir()
             attributes.permissions = 0755
@@ -250,6 +251,7 @@ function packageSimple(pkg: Path, options, fmt) {
 function packageFlat(pkg: Path, options) {
     let s = bit.settings
     let flat: Path = bit.dir.flat
+    options.relativeTo = flat
     safeRemove(flat)
     let vflat = flat.join(options.vname)
     vflat.makeDir()

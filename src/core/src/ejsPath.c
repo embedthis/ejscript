@@ -637,7 +637,7 @@ EjsArray *ejsGlobPath(Ejs *ejs, EjsPath *fp, int argc, EjsObj **argv)
             if (vp == ESV(undefined)) {
                 flags |= FILES_NOMATCH_EXC;
             } else if (vp == ESV(empty)) {
-                fill = ejsToString(ejs, patterns);
+                fill = ejsToPath(ejs, ejsToString(ejs, patterns));
             } else if (vp != ESV(null)) {
                 fill = vp;
             }

@@ -24,7 +24,9 @@ module ejs.tar {
         use default namespace public
 
         /*
-            @param options
+            Create a new Tar object
+            @param path Pathname to the tar archive
+            @param options Configurable options
             @option relativeTo Path
             @option uid
             @option gid

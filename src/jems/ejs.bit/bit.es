@@ -2702,7 +2702,7 @@ command = command.expand(bit, {fill: ''})
 
                         } else if (target.path.exists) {
                             if (options.show) {
-                                trace('Clean', target.path)
+                                trace('Clean', target.path.relative)
                             }
                             safeRemove(target.path)
                         }

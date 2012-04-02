@@ -58,11 +58,13 @@ module ejs.unix {
                  dest = dest.toString().expand(options.expand, options)
             }
             let list = path.glob(patterns, options)
-            if (list.length > 1 && !options.cat) {
-                if (!dest.exists) {
-                    dest.makeDir()
-                } else if (!dest.isDir) {
-                    throw 'Destination "' + dest + '" is not a directory'
+            if (list.length > 1 || (patterns is Array && patterns.length > 1)) {
+                if (!options.cat) {
+                    if (!dest.exists) {
+                        dest.makeDir()
+                    } else if (!dest.isDir) {
+                        throw 'Destination "' + dest + '" is not a directory'
+                    }
                 }
             }
             for each (let file: Path in list) {
