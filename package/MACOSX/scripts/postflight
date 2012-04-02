@@ -7,9 +7,7 @@
 
 PKG_DIR="$1"
 INS_DIR="$2"
-NAME="!!BLD_PREFIX!!"
-BIN="!!ORIG_BLD_BIN_PREFIX!!"
-path="${INS_DIR}${NAME}"
+BIN_DIR="${prefixes.bin}"
 
-${BIN}/linkup Install
+${BIN_DIR}/linkup Install
 exit 0

@@ -1,43 +1,32 @@
+# 
+#	Makefile -- Top level Makefile for Ejscript
 #
-#	Makefile - Makefile to build Ejscript with bit.
+#	Copyright (c) Embedthis Software LLC, 2003-2012. All Rights Reserved.
 #
-#	This Makefile will build a "minimal" Ejscript without external packages.
-#	It is used to build Ejscript the first time before bit is available.
-#	Once built, use bit to configure and rebuild as required:
-#		bit configure build
+#
+#	Standard Make targets supported are:
 #	
+#		make 						# Does a "make compile"
+#		make clean					# Removes generated objects
+#		make compile				# Compiles the source
+#		make depend					# Generates the make dependencies
+#		make deploy					# Deploy binary files to a directory
+#		make install				# Install product
+#		make package				# Creates an installable package
+#		make test 					# Runs unit tests
+#
+#	To remove, use make uninstall-ITEM, where ITEM is a component above.
 
-ARCH 	:= $(shell uname -m)
-PROFILE	:= debug
-UNAME 	:= $(shell uname)
-MAKE	:= make
-EXT 	:= mk
+DEPS		= tools mpr pcre http sqlite
+PRE_DIRS	= build src doc test projects package
 
-ifeq ($(UNAME),Darwin)
-	OS	:= macosx
-endif
-ifeq ($(UNAME),Linux)
-	OS	:= linux
-endif
-ifeq ($(UNAME),Solaris)
-	OS	:= SOLARIS
-endif
-ifeq ($(UNAME),CYGWIN_NT-5.1)
-	OS	:= win
-	MAKE:= nmake
-	EXT := nmake
-endif
+include		build/make/Makefile.top
+include		build/make/Makefile.ejs
 
-all compile:
-	$(MAKE) -f projects/$(OS)-$(ARCH)-$(PROFILE).$(EXT) $@
-	@echo ; echo 'You can now use Ejscript or use "bit" to customize and re-build Ejscript, via:'
-	@echo ; echo '	bit configure build' ; echo
-
-build configure generate test package:
-	@bit $@
-
-clean clobber:
-	$(MAKE) -f projects/$(OS)-$(ARCH)-$(PROFILE).$(EXT) $@
-
-version:
-	@bit -q version
+#
+#   Local variables:
+#   tab-width: 4
+#   c-basic-offset: 4
+#   End:
+#   vim: sw=4 ts=4 noexpandtab
+#
