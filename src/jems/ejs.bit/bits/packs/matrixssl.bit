@@ -28,7 +28,7 @@ if (bit.platform.os == 'win') {
         defines: [ '-DMATRIX_USE_FILE_SYSTEM' ],
         includes: [ incdir ],
         libraries: [ 'libmatrixssl.a' ],
-        linker: [ '-libpath:' + lib.parent ],
+        libpaths: [ lib.parent ],
         imports: [ lib ]
     }
 
@@ -44,7 +44,7 @@ if (bit.platform.os == 'win') {
         defines: [ '-DPOSIX', '-DMATRIX_USE_FILE_SYSTEM' ],
         includes: [ incdir, incdir.parent ],
         libraries: [ 'libmatrixssl.dylib' ],
-        linker: [ '-L' + lib.parent ],
+        libpaths: [ lib.parent ],
         imports: [ lib ]
     }
 
@@ -60,7 +60,7 @@ if (bit.platform.os == 'win') {
         defines: [ '-DPOSIX', '-DMATRIX_USE_FILE_SYSTEM' ],
         includes: [ incdir ],
         libraries: [ 'libmatrixssl.so' ],
-        linker: [ '-L' + lib.parent ],
+        libpaths: [ lib.parent ],
         imports: [ lib],
     }
 }

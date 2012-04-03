@@ -6,8 +6,6 @@
 
 module ejs {
 
-    use strict
-
     /**
         Worker Class. Worker threads are medium-weight thread-based virtual machine instances. They run separate 
         interpreters with tightly controlled data interchange. This class is currently being specified by the

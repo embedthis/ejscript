@@ -23,7 +23,7 @@ if (bit.platform.os == 'win') {
         path: lib,
         includes: [ incdir ],
         libraries: [ 'z' ],
-        linker: [ '-libpath:' + lib.parent ],
+        libpaths: [ lib.parent ],
         imports: [ lib.parent.join('libz.dll'), lib.parent.join('libz.lib') ],
     }
 
@@ -38,7 +38,7 @@ if (bit.platform.os == 'win') {
         path: lib,
         includes: [ incdir ],
         libraries: [ 'z' ],
-        linker: [ '-L' + lib.parent ],
+        libpaths: [ lib.parent ],
         imports: lib.parent.glob('libz*.dylib')
     }
 
@@ -56,7 +56,7 @@ if (bit.platform.os == 'win') {
         path: lib,
         includes: [ incdir ],
         libraries: [ 'z' ],
-        linker: [ '-L' + lib.parent ],
+        libpaths: [ lib.parent ],
         imports: lib.parent.glob('libz*.dylib*'),
     }
 }

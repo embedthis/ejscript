@@ -37,7 +37,8 @@ module ejs.unix {
         @param patterns Pattern to match files to copy. This can be a String, Path or array of String/Paths. 
             The wildcards "*", "**" and "?" are the only wild card patterns supported. The "**" pattern matches
             every directory. The Posix "[]" and "{a,b}" style expressions are not supported.
-            If patterns is an existing directory, then the pattern is converted to 'dir/**' and the tree option is enabled.
+            If patterns is an existing directory, then the pattern is converted to 'dir/ * *' (without spaces) 
+            and the tree option is enabled.
         @param dest Destination file or directory. If multiple files are copied, dest is assumed to be a directory and 
             will be created if required.
         @param options File attributes

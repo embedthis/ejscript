@@ -31,7 +31,7 @@ if (bit.platform.os == 'win') {
         path: lib,
         includes: [ incdir ],
         libraries: [ 'libeay32.lib', 'ssleay32.lib' ],
-        linker: [ '-libpath:' + lib.parent ],
+        libpaths: [ lib.parent ],
         imports: [ lib.parent.join('libeay32.dll'), lib.parent.join('libeay32.lib'),
                    lib.parent.join('ssleay32.dll'), lib.parent.join('ssleay32.lib') ],
     }
@@ -47,7 +47,7 @@ if (bit.platform.os == 'win') {
         path: lib,
         includes: [ incdir ],
         libraries: [ 'ssl', 'crypto' ],
-        linker: [ '-L' + lib.parent ],
+        libpaths: [ lib.parent ],
         imports: lib.parent.glob('libssl*.dylib') + lib.parent.glob('libcrypto*.dylib')
     }
 
@@ -63,7 +63,7 @@ if (bit.platform.os == 'win') {
         path: lib,
         includes: [ incdir ],
         libraries: [ 'ssl', 'crypto' ],
-        linker: [ '-L' + lib.parent ],
+        libpaths: [ lib.parent ],
         imports: lib.parent.glob('libssl.*so*') + lib.parent.glob('libcrypto.*so*'),
     }
 }
