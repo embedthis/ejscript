@@ -90,7 +90,6 @@ noPassPhrase:
 decrypted:
 	openssl rsa -in server.key -out server.key.pem
 
-
 #
 #   Local variables:
 #   tab-width: 4

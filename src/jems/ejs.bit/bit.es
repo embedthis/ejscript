@@ -37,7 +37,14 @@ public class Bit {
     private var src: Path
 
     private var home: Path
-    private var bareBit: Object = { platform: {}, dir: {}, settings: {}, packs: {}, targets: {}, env: {} }
+    private var bareBit: Object = { platform: {}, dir: {}, settings: {
+        product: 'bit',
+        title: 'Bit',
+        company: '',
+        version: '1.0.0',
+        buildNumber: '0',
+    }, packs: {}, targets: {}, env: {} }
+
     private var bit: Object = {}
     private var gen: Object
     private var platform: Object
@@ -261,7 +268,7 @@ public class Bit {
         Configure and initialize for building. This generates platform specific bit files.
      */
     function configure() {
-        this.src = Path(options.config)
+        this.src = options.config ? Path(options.config) : Path('.')
         for each (platform in platforms) {
             vtrace('Init', platform)
             currentPlatform = platform
@@ -293,7 +300,12 @@ public class Bit {
             findPacks()
             makeOutDirs()
             makeBitFile(platform)
-            makeBuildConfig(platform)
+            if (options.config) {
+                makeBuildConfig(platform)
+            } else {
+                loadWrapper(bits.join('standard.bit'))
+                loadWrapper(bits.join('os', os + '.bit'))
+            }
             importPacks()
             cross = true
         }
@@ -338,14 +350,17 @@ public class Bit {
             }
         }
         Object.sortProperties(nbit.settings);
-        let path: Path = Path(platform).joinExt('bit')
-        trace('Generate', path)
+        if (options.config) {
+            let path: Path = Path(platform).joinExt('bit')
+            trace('Generate', path)
 
-        let data = '/*\n    ' + platform + '.bit -- Build ' + nbit.settings.title + ' for ' + platform + 
-            '\n */\n\nBit.load(' + 
-            serialize(nbit, {pretty: true, indent: 4, commas: true, quotes: false}) + ')\n'
-        path.write(data)
-
+            let data = '/*\n    ' + platform + '.bit -- Build ' + nbit.settings.title + ' for ' + platform + 
+                '\n */\n\nBit.load(' + 
+                serialize(nbit, {pretty: true, indent: 4, commas: true, quotes: false}) + ')\n'
+            path.write(data)
+        } else {
+            bit = nbit
+        }
         if (options.show) {
             trace('Configuration', nbit.settings.title + ' for ' + platform + 
                 '\nsettings = ' +
@@ -1034,7 +1049,7 @@ public class Bit {
         expandTokens(bit)
     }
 
-    function findLocalBitFile() {
+    function findLocalBitFile(): Path {
         let name = Path(localPlatform + '.bit').joinExt('bit')
         let base: Path = currentBitFile || '.'
         for (let d: Path = base; d.parent != d; d = d.parent) {
@@ -1043,8 +1058,12 @@ public class Bit {
                 return f
             }
         }
+        configure()
+/*
         throw 'Can\'t find ' + name + '. Run "configure" or "bit configure" first.'
         return null
+*/
+        return Path('product.bit')
     }
 
     /*
