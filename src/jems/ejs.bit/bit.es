@@ -1787,26 +1787,30 @@ public class Bit {
         }
         bit.target = target
 
-        if (target.type == 'lib') {
-            buildLib(target)
-        } else if (target.type == 'exe') {
-            buildExe(target)
-        } else if (target.type == 'obj') {
-            buildObj(target)
-        } else if (target.type == 'file') {
-            buildFile(target)
-        } else if (target.type == 'header') {
-            buildFile(target)
-        } else if (target.type == 'resource') {
-            buildResource(target)
-        } else if (target.type == 'script') {
-            buildScript(target)
-        } else if (target.scripts && target.scripts['build']) {
-            buildScript(target)
-        } else if (target.type == 'generate') {
-            generate()
-        } else if (target.scripts && target.scripts.build) {
-            buildScript(target)
+        try {
+            if (target.type == 'lib') {
+                buildLib(target)
+            } else if (target.type == 'exe') {
+                buildExe(target)
+            } else if (target.type == 'obj') {
+                buildObj(target)
+            } else if (target.type == 'file') {
+                buildFile(target)
+            } else if (target.type == 'header') {
+                buildFile(target)
+            } else if (target.type == 'resource') {
+                buildResource(target)
+            } else if (target.type == 'script') {
+                buildScript(target)
+            } else if (target.scripts && target.scripts['build']) {
+                buildScript(target)
+            } else if (target.type == 'generate') {
+                generate()
+            } else if (target.scripts && target.scripts.build) {
+                buildScript(target)
+            }
+        } catch (e) {
+            throw new Error('Building target ' + target.name + '\n' + e)
         }
         target.building = false
         target.built = true
@@ -2325,11 +2329,17 @@ command = command.expand(bit, {fill: ''})
         }
         bit.LIBPATHS = mapLibPaths(target.libpaths)
         if (kind == 'exe') {
+            if (!target.files) {
+                throw 'Target ' + target.name + ' has no input files or sources'
+            }
             bit.IN = target.files.map(function(p) p.relative).join(' ')
             bit.LIBS = mapLibs(target.libraries)
         } else if (kind == 'lib') {
-            bit.LIBNAME = target.path.basename
+            if (!target.files) {
+                throw 'Target ' + target.name + ' has no input files or sources'
+            }
             bit.IN = target.files.map(function(p) p.relative).join(' ')
+            bit.LIBNAME = target.path.basename
             bit.DEF = Path(target.path.relative.toString().replace(/dll$/, 'def'))
             bit.LIBS = mapLibs(target.libraries)
         } else if (kind == 'obj') {

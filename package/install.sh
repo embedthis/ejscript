@@ -18,28 +18,27 @@ HOME=`pwd`
 FMT=
 
 HOSTNAME=`hostname`
-BLD_PRODUCT="!!BLD_PRODUCT!!"
-BLD_NAME="!!BLD_NAME!!"
-BLD_VERSION="!!BLD_VERSION!!"
-BLD_NUMBER="!!BLD_NUMBER!!"
-BLD_HOST_OS="!!BLD_HOST_OS!!"
-BLD_HOST_CPU="!!BLD_HOST_CPU!!"
-BLD_HOST_DIST="!!BLD_HOST_DIST!!"
+COMPANY="${settings.company}"
+PRODUCT="${settings.product}"
+NAME="${settings.title}"
+VERSION="${settings.version}"
+NUMBER="${settings.buildNumber}"
+OS="${platform.os}"
+CPU="${platform.cpu}"
+DIST="${platform.dist}"
 
-BLD_PREFIX="!!ORIG_BLD_PREFIX!!"
-BLD_BIN_PREFIX="!!ORIG_BLD_BIN_PREFIX!!"
-BLD_CFG_PREFIX="!!ORIG_BLD_CFG_PREFIX!!"
-BLD_DOC_PREFIX="!!ORIG_BLD_DOC_PREFIX!!"
-BLD_INC_PREFIX="!!ORIG_BLD_INC_PREFIX!!"
-BLD_LIB_PREFIX="!!ORIG_BLD_LIB_PREFIX!!"
-BLD_MAN_PREFIX="!!ORIG_BLD_MAN_PREFIX!!"
-BLD_PRD_PREFIX="!!ORIG_BLD_PRD_PREFIX!!"
-BLD_SRC_PREFIX="!!ORIG_BLD_SRC_PREFIX!!"
-BLD_VER_PREFIX="!!ORIG_BLD_VER_PREFIX!!"
-BLD_WEB_PREFIX="!!ORIG_BLD_WEB_PREFIX!!"
+BIN_PREFIX="${prefixes.bin}"
+CFG_PREFIX="${prefixes.config}"
+DOC_PREFIX="${prefixes.lib}/doc"
+INC_PREFIX="${prefixes.include}"
+LIB_PREFIX="${prefixes.lib}"
+MAN_PREFIX="${prefixes.lib}/man"
+PRD_PREFIX="${prefixes.productver}"
+VER_PREFIX="${prefixes.productver}"
+WEB_PREFIX="${prefixes.web}"
 
 installbin=Y
-headless=${!!BLD_PRODUCT!!_HEADLESS:-0}
+headless=${HEADLESS:-0}
 
 PATH=$PATH:/sbin:/usr/sbin
 export CYGWIN=nodosfilewarning
@@ -48,7 +47,7 @@ export CYGWIN=nodosfilewarning
 
 setup() {
     umask 022
-    if [ $BLD_HOST_OS != WIN -a `id -u` != "0" ] ; then
+    if [ $OS != WIN -a `id -u` != "0" ] ; then
         echo "You must be root to install this product."
         exit 255
     fi
@@ -67,7 +66,7 @@ setup() {
         exit 0
     fi
     sleuthPackageFormat
-    [ "$headless" != 1 ] && echo -e "\n$BLD_NAME !!BLD_VERSION!!-!!BLD_NUMBER!! Installation\n"
+    [ "$headless" != 1 ] && echo -e "\n$NAME ${VERSION}-${NUMBER} Installation\n"
 
 }
 
@@ -77,17 +76,21 @@ setup() {
 sleuthPackageFormat() {
     local name
 
-    name=`createPackageName ${BLD_PRODUCT}-bin`
     FMT=
-    for f in deb rpm tgz ; do
-        if [ -f ${name}.${f} ] ; then
-            FMT=${f%.gz}
-            break
-        fi
-    done
+    name=`createPackageName ${PRODUCT}-bin`
+    if [ -x contents ] ; then
+        FMT=tar
+    else
+        for f in deb rpm tgz ; do
+            if [ -f ${name}.${f} ] ; then
+                FMT=${f%.gz}
+                break
+            fi
+        done
+    fi
     if [ "$FMT" = "" ] ; then
         echo -e "\nYou may be be missing a necessary package file. "
-        echo "Check that you have the correct $BLD_NAME package".
+        echo "Check that you have the correct $NAME package".
         exit 255
     fi
 }
@@ -118,7 +121,7 @@ askUser() {
 }
 
 createPackageName() {
-    echo ${1}-${BLD_VERSION}-${BLD_NUMBER}-${BLD_HOST_DIST}-${BLD_HOST_OS}-${BLD_HOST_CPU}
+    echo ${1}-${VERSION}-${NUMBER}-${DIST}-${OS}-${CPU}
 }
 
 # 
@@ -172,61 +175,68 @@ ask() {
 saveSetup() {
     local firstChar
 
-    mkdir -p "$BLD_VER_PREFIX"
-    echo -e "FMT=$FMT\nbinDir=$BLD_VER_PREFIX\ninstallbin=$installbin\n" >"${BLD_VER_PREFIX}/install.conf"
+    mkdir -p "$VER_PREFIX"
+    echo -e "FMT=$FMT\nbinDir=$VER_PREFIX\ninstallbin=$installbin\n" >"${VER_PREFIX}/install.conf"
 }
 
 installFiles() {
-    local dir pkg doins NAME upper
+    local dir pkg doins NAME upper target
 
     [ "$headless" != 1 ] && echo -e "\nExtracting files ...\n"
 
     for pkg in bin ; do
-        
         doins=`eval echo \\$install${pkg}`
         if [ "$doins" = Y ] ; then
+            upper=`echo $pkg | tr '[:lower:]' '[:upper:]'`
             suffix="-${pkg}"
-            #
-            #   RPM doesn't give enough control on error codes. So best to keep going.  
-            #
-            NAME=`createPackageName ${BLD_PRODUCT}${suffix}`.$FMT
+            NAME=`createPackageName ${PRODUCT}${suffix}`.$FMT
+            if [ "$runDaemon" != "Y" ] ; then
+                export APPWEB_DONT_START=1
+            fi
             if [ "$FMT" = "rpm" ] ; then
                 [ "$headless" != 1 ] && echo -e "rpm -Uhv $NAME"
                 rpm -Uhv $HOME/$NAME
             elif [ "$FMT" = "deb" ] ; then
                 [ "$headless" != 1 ] && echo -e "dpkg -i $NAME"
                 dpkg -i $HOME/$NAME >/dev/null
-            else
-                [ "$headless" != 1 ] && echo tar xzf "$HOME/${NAME}" --strip-components 1 -P -C /
-                tar xzf "$HOME/${NAME}" --strip-components 1 -P -C /
+            elif [ "$FMT" = "tar" ] ; then
+                target=/
+                [ $OS = WIN ] && target=`cygpath ${HOMEDRIVE}/`
+                [ "$headless" != 1 ] && echo cp -rp contents/* $target
+                cp -rp contents/* $target
+
+                cd contents >/dev/null
+                find . -type f >$VER_PREFIX/files.log
+                cd - >/dev/null
             fi
         fi
     done
 
     if [ -f /etc/redhat-release -a -x /usr/bin/chcon ] ; then 
-        sestatus | grep enabled >/dev/null 2>&1
-        if [ $? = 0 ] ; then
-            for f in $BLD_LIB_PREFIX/*.so ; do
+        if sestatus | grep enabled >/dev/nulll ; then
+            for f in $LIB_PREFIX/*.so ; do
                 chcon /usr/bin/chcon -t texrel_shlib_t $f 2>&1 >/dev/null
             done
         fi
     fi
 
-    if [ "$BLD_HOST_OS" = "FREEBSD" ] ; then
+    if [ "$OS" = "FREEBSD" ] ; then
         LDCONFIG_OPT=-m
     else
         LDCONFIG_OPT=-n
     fi
     if which ldconfig >/dev/null 2>&1 ; then
-        ldconfig $LDCONFIG_OPT $BLD_LIB_PREFIX
+        ldconfig /usr/lib/lib${PRODUCT}.so.?.?.?
+        ldconfig $LDCONFIG_OPT /usr/lib/${PRODUCT}
+        ldconfig $LDCONFIG_OPT /usr/lib/${PRODUCT}/modules
     fi
-    "$BLD_BIN_PREFIX/linkup" Install /
+    "$BIN_PREFIX/linkup" Install /
 
-    if [ $BLD_HOST_OS = WIN ] ; then
+    if [ $OS = WIN ] ; then
         [ "$headless" != 1 ] && echo -e "\nSetting file permissions ..."
-        find "$BLD_PRD_PREFIX" -type d -exec chmod 755 {} \;
-        find "$BLD_PRD_PREFIX" -type f -exec chmod g+r,o+r {} \;
-        chmod 755 "$BLD_BIN_PREFIX"/*.dll "$BLD_BIN_PREFIX"/*.exe
+        find "$PRD_PREFIX" -type d -exec chmod 755 {} \;
+        find "$PRD_PREFIX" -type f -exec chmod g+r,o+r {} \;
+        chmod 755 "$BIN_PREFIX"/*.dll "$BIN_PREFIX"/*.exe
     fi
     [ "$headless" != 1 ] && echo
 }
@@ -239,7 +249,6 @@ legacyPrep() {
     rm -f /usr/bin/ejs.db.mod
     rm -f /usr/bin/ejs.web.mod
     rm -f /usr/bin/ejsweb.mod
-
     rm -f /usr/bin/egen
     rm -f /usr/bin/ec
     rm -f /usr/bin/ecgi
@@ -250,39 +259,15 @@ legacyPrep() {
     rm -f /usr/bin/ejssql
     rm -f /usr/bin/ejsvm
     rm -f /usr/bin/ejsweb
-
     rm -f /usr/lib/ejs/ejs.mod
     rm -f /usr/lib/ejs/ejs.db.mod
     rm -f /usr/lib/ejs/ejs.web.mod
     rm -f /usr/lib/ejs/ejsweb.mod
 }
 
-startBrowser() {
-    local url
-
-    if [ "$headless" = 1 ] ; then
-        return
-    fi
-    echo -e "\nStarting browser to view the $BLD_NAME Home Page."
-    url=http://ejscript.org/products/ejs/doc/ejs-2/product/index.html
-    if [ $BLD_HOST_OS = WIN ] ; then
-        cygstart --shownormal "$url"
-    elif [ $BLD_HOST_OS = MACOSX ] ; then
-        open $url
-    else
-        for f in /usr/bin/htmlview /usr/bin/firefox /usr/bin/mozilla /usr/bin/konqueror
-        do
-            if [ -x ${f} ] ; then
-                sudo -H -b ${f} "$url" >/dev/null 2>&1 &
-                break
-            fi
-        done
-    fi
-}
-
 removeOld() {
     if [ -x /usr/lib/ejs/bin/uninstall ] ; then
-        ejs_HEADLESS=1 /usr/lib/ejs/bin/uninstall </dev/null 2>&1 >/dev/null
+        HEADLESS=1 /usr/lib/ejs/bin/uninstall </dev/null 2>&1 >/dev/null
     else 
         for v in `ls $prefix 2>/dev/null | egrep -v '[a-zA-Z@!_\-]' | sort -n -r`
         do
@@ -292,7 +277,7 @@ removeOld() {
             fi
         done
         if [ -x /usr/lib/ejs/bin/$version/uninstall ] ; then
-            ejs_HEADLESS=1 /usr/lib/ejs/bin/$version/uninstall </dev/null 2>&1 >/dev/null
+            HEADLESS=1 /usr/lib/ejs/bin/$version/uninstall </dev/null 2>&1 >/dev/null
         fi
     fi
 }
@@ -308,11 +293,7 @@ legacyPrep
 removeOld
 saveSetup
 installFiles $FMT
-#
-#   Don't start browser as doc is not online
-#
-#   startBrowser
 
 [ "$headless" != 1 ] && echo
-echo -e "$BLD_NAME installation successful."
+echo -e "$NAME installation successful."
 exit 0

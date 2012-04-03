@@ -6,11 +6,11 @@
 #
 
 TASK=$1
-ROOT_DIR="${2%/}"
 PRODUCT=ejs
-INC="${ROOT_DIR}/usr/include"
-MAN="${ROOT_DIR}/usr/share/man"
-PROGRAMS="bit ejs ejsc ejsmod sqlite mvc ejspage jem"
+ROOT_DIR="${2%/}"
+INC_DIR="${ROOT_DIR}/usr/include"
+MAN_DIR="${ROOT_DIR}/usr/share/man"
+PROGRAMS="bit ejs ejsc ejsman ejsmod sqlite mvc jem"
 LIBRARIES="libmpr libejs"
 
 if [ -x "${ROOT_DIR}/usr/local/bin" ] ; then
@@ -36,7 +36,7 @@ if [ "$version" = "" ] ; then
     do
         rm -f "${BIN}/$name"
     done
-    rm -fr "${INC}/${PRODUCT}"
+    rm -fr "${INC_DIR}/${PRODUCT}"
 else
 
     latest=${prefix}/$version
@@ -44,7 +44,7 @@ else
     ln -s ${version} ${prefix}/latest
     bin=${latest}/bin
     inc=${latest}/inc
-    man=${latest}/doc/man
+    man=${latest}/doc/man/man1
     lib=${latest}/lib
 
     [ ! -x "${BIN}" ] && mkdir -p "${BIN}"
@@ -65,17 +65,17 @@ else
         fi
     done
     if [ -d "${inc}" ] ; then
-        [ ! -x "${INC}" ] && mkdir -p "${INC}"
-        rm -rf  "${INC}/${PRODUCT}"
-        ln -s "${inc}" "${INC}/${PRODUCT}"
+        [ ! -x "${INC_DIR}" ] && mkdir -p "${INC_DIR}"
+        rm -rf  "${INC_DIR}/${PRODUCT}"
+        ln -s "${inc}" "${INC_DIR}/${PRODUCT}"
     fi
     if [ -d "${man}" ] ; then
-        [ ! -x "${MAN}" ] && mkdir -p "${MAN}/man1"
+        [ ! -x "${MAN_DIR}" ] && mkdir -p "${MAN_DIR}/man1"
         for f in ${man}/*.1.gz
         do
             name=`basename "$f"`
-            rm -f "${MAN}/man1/${name}"
-            ln -s "${f}" "${MAN}/man1/${name}"
+            rm -f "${MAN_DIR}/man1/${name}"
+            ln -s "${f}" "${MAN_DIR}/man1/${name}"
         done
     fi
 fi

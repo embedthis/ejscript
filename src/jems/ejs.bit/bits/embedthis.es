@@ -465,7 +465,6 @@ function packageWin(pkg: Path, options) {
         let dir = src.dirname
         cp.write('Source: "' + src + '"; DestDir: "{app}\\' + dir + '"; ' +
             'DestName: "' + src.basename + '"; Components: bin\n')
-
     }
     cp.close()
     let base = [s.product, s.version, s.buildNumber, bit.platform.dist, OS.toUpper(), ARCH].join('-')

@@ -222,5 +222,20 @@ Bit.load({
                 }
             "
         },
+        checkInstalled: {
+            action: "
+                let present
+                for each (prefix in bit.prefixes) {
+                    if (prefix.exists) {
+                        trace('Exists', prefix)
+                        let files = prefix.glob('**')
+                        if (files.length > 0) {
+                            trace('Exists', files.join(', '))
+                        }
+                        present = true
+                    }
+                }
+            "
+        },
     },
 })

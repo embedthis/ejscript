@@ -28,6 +28,9 @@ public function packageBinaryFiles() {
     let prefixes = bit.prefixes;
     let p = {}
     for (prefix in bit.prefixes) {
+        if (prefix == 'config' || prefix == 'log' || prefix == 'spool' || prefix == 'src' || prefix == 'include' || prefix == 'web') {
+            continue
+        }
         p[prefix] = Path(contents.portable.name + bit.prefixes[prefix].removeDrive().portable)
         p[prefix].makeDir()
     }
@@ -46,8 +49,8 @@ public function packageBinaryFiles() {
         permissions: 0755, 
         exclude: /bits|file-save|www|simple|sample/,
     })
-    install(bit.dir.lib.join('bits/**'), p.lib.join('bits'))
-    install(bit.dir.lib.join('www/**'), p.lib.join('www'))
+    install(bit.dir.lib.join('bits'), p.lib.join('bits'))
+    install(bit.dir.lib.join('www'), p.lib.join('www'), {exclude: /tree-images/})
 
     if (bit.targets.libmprssl.enable && bit.platform.os == 'linux') {
         install(bit.dir.lib.join('*.' + bit.ext.shobj + '*'), p.lib, {strip: strip, permissions: 0755})
@@ -69,6 +72,7 @@ public function packageBinaryFiles() {
     if (bit.platform.like == 'posix') {
         install('doc/man/*.1', p.productver.join('doc/man/man1'), {compress: true})
     }
+    p.productver.join('files.log').write(contents.glob('**', {exclude: /\/$/, relative: true}).join('\n') + '\n')
 }
 
 /*
