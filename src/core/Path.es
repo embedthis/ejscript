@@ -175,7 +175,7 @@ module ejs {
             Get a list of files in a directory or subdirectory.
             Use the $glob method for shell style wild card support.
             @param options If set to true, then files will include sub-directories in the returned list of files.
-            @param basenames Set to true to include only the basename portion of filenames in the results. If selected,
+            @option basenames Set to true to include only the basename portion of filenames in the results. If selected,
                 any "include" or "exclude" patterns will only match the basename and not the full path.
             @option depthFirst Do a depth first traversal. If "dirs" is specified, the directories will be shown after
                 the files in the directory. Otherwise, directories will be listed first.
@@ -333,6 +333,7 @@ module ejs {
 
         //  TODO - make an auto cleanup temporary. ie. remove automatically somehow
         //  MOB - how to create a temp in the standard system temp location
+        //  MOB - option for different extension
         /**
             Create a new temporary file. The temp file is located in the directory specified by the Path object. 
             If the path object is created with an empty path value, the temporary file will be created in the standard

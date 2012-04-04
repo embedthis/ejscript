@@ -812,6 +812,13 @@
       <arglist>(Ejs *ejs, EjsArray *ap, EjsAny *item)</arglist>
     </member>
     <member kind="function">
+      <type>int</type>
+      <name>ejsAppendArray</name>
+      <anchorfile>group___ejs_array.html</anchorfile>
+      <anchor>ga86bd0f050355eee1a5ec88047f0e6cd1</anchor>
+      <arglist>(Ejs *ejs, EjsArray *dest, EjsArray *src)</arglist>
+    </member>
+    <member kind="function">
       <type>void</type>
       <name>ejsClearArray</name>
       <anchorfile>group___ejs_array.html</anchorfile>
@@ -875,11 +882,11 @@
       <arglist>(Ejs *ejs, EjsArray *ap, int index, EjsAny *item)</arglist>
     </member>
     <member kind="function">
-      <type>int</type>
+      <type>EjsString *</type>
       <name>ejsJoinArray</name>
       <anchorfile>group___ejs_array.html</anchorfile>
-      <anchor>ga5984e45a588a7dd4e21255a19203abc7</anchor>
-      <arglist>(Ejs *ejs, EjsArray *dest, EjsArray *src)</arglist>
+      <anchor>ga64db5544fc6c25811c91b9c90f62c55c</anchor>
+      <arglist>(Ejs *ejs, EjsArray *ap, EjsString *join)</arglist>
     </member>
     <member kind="function">
       <type>int</type>
@@ -892,15 +899,15 @@
       <type>int</type>
       <name>ejsRemoveItem</name>
       <anchorfile>group___ejs_array.html</anchorfile>
-      <anchor>gafa32c53900d5d1d59d0435996099fda3</anchor>
-      <arglist>(Ejs *ejs, EjsArray *ap, EjsAny *item)</arglist>
+      <anchor>ga623fd2c2fcf6a5a66b55d670d0dffb57</anchor>
+      <arglist>(Ejs *ejs, EjsArray *ap, EjsAny *item, int compact)</arglist>
     </member>
     <member kind="function">
       <type>int</type>
       <name>ejsRemoveItemAtPos</name>
       <anchorfile>group___ejs_array.html</anchorfile>
-      <anchor>gaa0fc843a2c6e87095be38de598e1f399</anchor>
-      <arglist>(Ejs *ejs, EjsArray *ap, int index)</arglist>
+      <anchor>ga365f933b4d0802d28ab03d094864f2f8</anchor>
+      <arglist>(Ejs *ejs, EjsArray *ap, int index, int compact)</arglist>
     </member>
     <member kind="function">
       <type>int</type>
@@ -1636,8 +1643,8 @@
       <type>EjsSocket *</type>
       <name>ejsCreateSocket</name>
       <anchorfile>group___ejs_socket.html</anchorfile>
-      <anchor>ga4e359dc0db9f78ff9cc2969f12102370</anchor>
-      <arglist>(Ejs *ejs)</arglist>
+      <anchor>ga96fc0527a264a6190f8b9384280a1d3f</anchor>
+      <arglist>(Ejs *ejs, MprSocket *sock, bool async)</arglist>
     </member>
   </compound>
   <compound kind="group">
@@ -1667,8 +1674,8 @@
       <type>EjsUri *</type>
       <name>ejsCreateUriFromParts</name>
       <anchorfile>group___ejs_uri.html</anchorfile>
-      <anchor>ga11e8d088cf6b6e9b738cb5a7b7ccb6c5</anchor>
-      <arglist>(Ejs *ejs, cchar *scheme, cchar *host, int port, cchar *path, cchar *query, cchar *reference, bool complete)</arglist>
+      <anchor>gaeb2760117ebd7fb8f740bb75fd7ec443</anchor>
+      <arglist>(Ejs *ejs, cchar *scheme, cchar *host, int port, cchar *path, cchar *query, cchar *reference, int flags)</arglist>
     </member>
     <member kind="function">
       <type>EjsUri *</type>
@@ -2749,29 +2756,5 @@
       <anchor>a32f313083e2200f3fe69160d10c39b9c</anchor>
       <arglist></arglist>
     </member>
-  </compound>
-  <compound kind="dir">
-    <name>staging/src/deps/</name>
-    <path>/Users/mob/git/ejs/doc/api/ejs/staging/src/deps/</path>
-    <filename>dir_ac3112a4c44ed55a8f44a81c1f023b28.html</filename>
-    <dir>staging/src/deps/ejs/</dir>
-  </compound>
-  <compound kind="dir">
-    <name>staging/src/deps/ejs/</name>
-    <path>/Users/mob/git/ejs/doc/api/ejs/staging/src/deps/ejs/</path>
-    <filename>dir_cf75b5467c564c9344aa1784a51e14a8.html</filename>
-    <file>ejs.h</file>
-  </compound>
-  <compound kind="dir">
-    <name>staging/src/</name>
-    <path>/Users/mob/git/ejs/doc/api/ejs/staging/src/</path>
-    <filename>dir_96444030321bf4fa6715e0c48c392252.html</filename>
-    <dir>staging/src/deps/</dir>
-  </compound>
-  <compound kind="dir">
-    <name>staging/</name>
-    <path>/Users/mob/git/ejs/doc/api/ejs/staging/</path>
-    <filename>dir_6c83ff02c73eb756c5c8cef00ac2258c.html</filename>
-    <dir>staging/src/</dir>
   </compound>
 </tagfile>

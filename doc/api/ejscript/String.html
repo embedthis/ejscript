@@ -77,6 +77,7 @@ for: comparison, concatenation, copying, searching, conversion, matching, replac
    <tr class='apiDef'><td class='apiType'> </td><td><a href='#concat'><b>concat</b></a>(args: <a href='Array.html'>Array</a>): <a href='String.html'>String</a></tr><tr class='apiBrief'><td>&nbsp;</td><td>Concatenate strings and returns a new string.</td></tr>
    <tr class='apiDef'><td class='apiType'> </td><td><a href='#contains'><b>contains</b></a>(pattern: <a href='Object.html'>Object</a>): <a href='Boolean.html'>Boolean</a></tr><tr class='apiBrief'><td>&nbsp;</td><td>Check if a string contains a pattern.</td></tr>
    <tr class='apiDef'><td class='apiType'> </td><td><a href='#endsWith'><b>endsWith</b></a>(test: <a href='String.html'>String</a>): <a href='Boolean.html'>Boolean</a></tr><tr class='apiBrief'><td>&nbsp;</td><td>Determine if this string ends with a given string.</td></tr>
+   <tr class='apiDef'><td class='apiType'> </td><td><a href='#expand'><b>expand</b></a>(obj: <a href='Object.html'>Object</a>, options: <a href='Object.html'>Object</a> = null): <a href='String.html'>String</a></tr><tr class='apiBrief'><td>&nbsp;</td><td>Expand tokens.</td></tr>
    <tr class='apiDef'><td class='apiType'> </td><td><a href='#format'><b>format</b></a>(args: <a href='Array.html'>Array</a>): <a href='String.html'>String</a></tr><tr class='apiBrief'><td>&nbsp;</td><td>Format arguments as a string.</td></tr>
    <tr class='apiDef'><td class='apiType'>iterator override </td><td><a href='#get'><b>get</b></a>(): <a href='iterator-Iterator.html'>Iterator</a></tr><tr class='apiBrief'><td>&nbsp;</td><td>Get an iterator for this array to be used by "for (v in string)".</td></tr>
    <tr class='apiDef'><td class='apiType'>iterator override </td><td><a href='#getValues'><b>getValues</b></a>(): <a href='iterator-Iterator.html'>Iterator</a></tr><tr class='apiBrief'><td>&nbsp;</td><td>Get an iterator for this array to be used by "for each (v in string)".</td></tr>
@@ -87,7 +88,7 @@ for: comparison, concatenation, copying, searching, conversion, matching, replac
    <tr class='apiDef'><td class='apiType'> </td><td><a href='#printable'><b>printable</b></a>(): <a href='String.html'>String</a></tr><tr class='apiBrief'><td>&nbsp;</td><td>Create a new string with all nonprintable characters replaced with unicode hexadecimal equivalents (e.g.</td></tr>
    <tr class='apiDef'><td class='apiType'> </td><td><a href='#quote'><b>quote</b></a>(): <a href='String.html'>String</a></tr><tr class='apiBrief'><td>&nbsp;</td><td>Wrap a string in double quotes.</td></tr>
    <tr class='apiDef'><td class='apiType'> </td><td><a href='#remove'><b>remove</b></a>(start: <a href='Number.html'>Number</a>, end: <a href='Number.html'>Number</a> = -1): <a href='String.html'>String</a></tr><tr class='apiBrief'><td>&nbsp;</td><td>Remove characters from a string.</td></tr>
-   <tr class='apiDef'><td class='apiType'> </td><td><a href='#replace'><b>replace</b></a>(pattern: <a href='Object.html'>Object</a>, replacement: <a href='Object.html'>Object</a>): <a href='String.html'>String</a></tr><tr class='apiBrief'><td>&nbsp;</td><td>Search and replace.</td></tr>
+   <tr class='apiDef'><td class='apiType'> </td><td><a href='#replace'><b>replace</b></a>(pattern: <a href='Object.html'>Object</a>, replacement: <a href='Object.html'>Object</a>, flags: <a href='String.html'>String</a> = null): <a href='String.html'>String</a></tr><tr class='apiBrief'><td>&nbsp;</td><td>Search and replace.</td></tr>
    <tr class='apiDef'><td class='apiType'> </td><td><a href='#reverse'><b>reverse</b></a>(): <a href='String.html'>String</a></tr><tr class='apiBrief'><td>&nbsp;</td><td>Reverse a string.</td></tr>
    <tr class='apiDef'><td class='apiType'> </td><td><a href='#search'><b>search</b></a>(pattern: <a href='Object.html'>Object</a>): <a href='Number.html'>Number</a></tr><tr class='apiBrief'><td>&nbsp;</td><td>Search for a pattern.</td></tr>
    <tr class='apiDef'><td class='apiType'> </td><td><a href='#slice'><b>slice</b></a>(start: <a href='Number.html'>Number</a>, end: <a href='Number.html'>Number</a> = -1, step: <a href='Number.html'>Number</a> = 1): <a href='String.html'>String</a></tr><tr class='apiBrief'><td>&nbsp;</td><td>Extract a substring.</td></tr>
@@ -265,6 +266,25 @@ for: comparison, concatenation, copying, searching, conversion, matching, replac
 </div>
 </div>
 <hr />
+<a name='expand'></a>
+<div class='api'>
+<div class='apiSig'>    expand(obj: <a href='Object.html'>Object</a>, options: <a href='Object.html'>Object</a> = null): <a href='String.html'>String</a>
+</div>
+<div class='apiDetail'>
+<dl><dt>Description</dt></dd><dd>Expand tokens. </dd></dl>
+<dl><dt>Parameters</dt>
+<dd><table class='parameters' summary ='parameters'>
+<tr class='param'><td class='param'>obj: <a href='Object.html'>Object</a> </td><td>Containing tokens to expand.</td></tr><tr class='param'><td class='param'>options: <a href='Object.html'>Object</a> </td><td>Options hash. [default: null]</td></tr></table></dd>
+</dl><dl><dt>Options</dt>
+<dd><table class='parameters' summary ='options'>
+<td class='param'>fill</td><td>Set to a string to use for missing properties. Set to undefined or omit options to  throw an exception for missing properties. Set fill to '<a href='#{}''>{}'</a> to preserve undefined tokens as-is.  This permits multi-pass expansions.</td></tr>
+<td class='param'>join</td><td>Character to use to join array elements. Defaults to space.</td></tr>
+</table></dd>
+</dl><dl><dt>Returns</dt>
+<dd>Expanded string.</dd></dl>
+</div>
+</div>
+<hr />
 <a name='format'></a>
 <div class='api'>
 <div class='apiSig'>    format(args: <a href='Array.html'>Array</a>): <a href='String.html'>String</a>
@@ -422,14 +442,14 @@ the specified element.</dd></dl>
 <hr />
 <a name='replace'></a>
 <div class='api'>
-<div class='apiSig'>    replace(pattern: <a href='Object.html'>Object</a>, replacement: <a href='Object.html'>Object</a>): <a href='String.html'>String</a>
+<div class='apiSig'>    replace(pattern: <a href='Object.html'>Object</a>, replacement: <a href='Object.html'>Object</a>, flags: <a href='String.html'>String</a> = null): <a href='String.html'>String</a>
 </div>
 <div class='apiDetail'>
 <dl><dt>Description</dt></dd><dd>Search and replace. Search for the given pattern which can be either a string or a regular expression 
 and replace it with the replace text. If the pattern is a string, only the first occurrence is replaced.</dd></dl>
 <dl><dt>Parameters</dt>
 <dd><table class='parameters' summary ='parameters'>
-<tr class='param'><td class='param'>pattern: <a href='Object.html'>Object</a> </td><td>The regular expression or string pattern to search for.</td></tr><tr class='param'><td class='param'>replacement: <a href='Object.html'>Object</a> </td><td>The string to replace the match with or a function to generate the replacement text. The replacement string can contain special replacement patterns: "$" inserts a "$", "$&" inserts the matched substring, "$`" inserts the portion that preceeds the matched substring, "$'" inserts the portion that follows the matched substring, and "$N" inserts the Nth parenthesized substring. The replacement parameter can also be a function which will be invoked and the function return value  will be used as the resplacement text. The function will be invoked multiple times for each match to be  replaced if the regular expression is global. The function will be invoked with the signature:  function (matched, submatch_1, submatch_2, ..., matched_offset, original_string).</td></tr></table></dd>
+<tr class='param'><td class='param'>pattern: <a href='Object.html'>Object</a> </td><td>The regular expression or string pattern to search for.</td></tr><tr class='param'><td class='param'>replacement: <a href='Object.html'>Object</a> </td><td>The string to replace the match with or a function to generate the replacement text. The replacement string can contain special replacement patterns: "$" inserts a "$", "$&" inserts the matched substring, "$`" inserts the portion that preceeds the matched substring, "$'" inserts the portion that follows the matched substring, and "$N" inserts the Nth parenthesized substring. The replacement parameter can also be a function which will be invoked and the function return value  will be used as the resplacement text. The function will be invoked multiple times for each match to be  replaced if the regular expression is global. The function will be invoked with the signature:  function (matched, submatch_1, submatch_2, ..., matched_offset, original_string).</td></tr><tr class='param'><td class='param'>flags: <a href='String.html'>String</a> </td><td>null [default: null]</td></tr></table></dd>
 </dl><dl><dt>Returns</dt>
 <dd>Returns a new string.</dd></dl>
 <dl><dt>Specified</dt>

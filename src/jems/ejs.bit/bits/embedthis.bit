@@ -119,40 +119,9 @@ Bit.load({
             depends: ['patch', 'man', 'api', 'clean-doc', 'ssi'],
         },
 
-        /*
-            Generate the API documention in the source tree
-         */
-        api: {
-            depends: ['packageCombo'],
-            action: "
-                rm(['${SRC}/doc/api/html', '${SRC}/doc/api/xml'])
-                for each (dfile in ls('${SRC}/doc/api/*.dox')) {
-                    let name = dfile.basename.trimExt()
-                    let api = Path('${SRC}/doc/api')
-                    let dox = Path('${LIB}/dox.tmp')
-                    let data = Path('${SRC}/doc/api/' + name + '.dox').readString().
-                        replace(/^INPUT .*=.*$/m, 'INPUT = ' + 
-                            bit.dir.flat.join(name + '-' + bit.settings.version + '-' + bit.settings.buildNumber, name + '.h'))
-                    Path(dox).write(data)
-                    trace('Generate', 'API documentation for ' + name)
-                    run('doxygen ' + dox, {dir: api})
-                    trace('Process', 'Post-process ' + name + ' API documentation (may take a while)')
-                    run('ejs ${BITS}/gendoc.es' + 
-                        ' --title \"MPR - Multithreaded Portable Runtime Native API\" --out ' + name + '.html ' + (
-                        ['${SRC}/doc/api/xml/' + name + '_8h.xml'] + 
-                        ls('${SRC}/doc/api/xml/group*') + 
-                        ls('${SRC}/doc/api/xml/struct_*.xml')).join(' '), 
-                        {dir: api})
-                    run('ejs ${BITS}/gendoc.es --bare ' + 
-                        '--title \"MPR - Multithreaded Portable Runtime Native API\" --out ' + name + 'Bare.html ' + (
-                        ['${SRC}/doc/api/xml/' + name + '_8h.xml'] + 
-                        ls('${SRC}/doc/api/xml/group*') + 
-                        ls('${SRC}/doc/api/xml/struct_*.xml')).join(' '), 
-                        {dir: api})
-                    rmdir(['${SRC}/doc/api/html', '${SRC}/doc/api/xml'])
-                }
-            ",
-        },
+        '+patch': {},
+        '+api': {},
+        '+clean-doc': {},
 
         /*
             Generate the man pages in the source tree
@@ -160,7 +129,7 @@ Bit.load({
         man: {
             depends: ['build'],
             action: "
-                for each (file in ls('${SRC}/doc/man/*.1')) {
+                for each (file in ls(['${SRC}/doc/man/*.1', '${SRC}/doc/man/*.3'])) {
                     let name = file.basename
                     trace('Generate', 'Manual page for ' + name)
                     let response = run('man ' + file, {})
@@ -172,15 +141,6 @@ Bit.load({
                 }
             ",
         },
-
-        'clean-doc': {
-            type: 'clean',
-            action: "
-                rmdir(['../doc/api/html', '../doc/api/xml'])
-            "
-        },
-    
-        patch: {},
 
         ssi: {
             action: "

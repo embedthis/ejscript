@@ -90,7 +90,7 @@ from the mapper.</td></tr>
    <tr class='apiDef'><td class='apiType'> </td><td><a href='#splice'><b>splice</b></a>(start: <a href='Number.html'>Number</a>, deleteCount: <a href='Number.html'>Number</a>, values: <a href='Array.html'>Array</a>): <a href='Array.html'>Array</a></tr><tr class='apiBrief'><td>&nbsp;</td><td>Insert, remove or replace array elements.</td></tr>
    <tr class='apiDef'><td class='apiType'> override </td><td><a href='#toString'><b>toString</b></a>(): <a href='String.html'>String</a></tr><tr class='apiBrief'><td>&nbsp;</td><td>Convert the array to a single string each member of the array has toString called on it and the resulting 
 strings are concatenated.</td></tr>
-   <tr class='apiDef'><td class='apiType'> </td><td><a href='#transform'><b>transform</b></a>(mapper: <a href='Function.html'>Function</a>): <a href='Void.html'>Void</a></tr><tr class='apiBrief'><td>&nbsp;</td><td>Transform all elements.</td></tr>
+   <tr class='apiDef'><td class='apiType'> </td><td><a href='#transform'><b>transform</b></a>(mapper: <a href='Function.html'>Function</a>): <a href='Array.html'>Array</a></tr><tr class='apiBrief'><td>&nbsp;</td><td>Transform all elements.</td></tr>
    <tr class='apiDef'><td class='apiType'> </td><td><a href='#unique'><b>unique</b></a>(): <a href='Array.html'>Array</a></tr><tr class='apiBrief'><td>&nbsp;</td><td>Remove duplicate elements and make the array unique.</td></tr>
    <tr class='apiDef'><td class='apiType'> </td><td><a href='#unshift'><b>unshift</b></a>(items: <a href='Array.html'>Array</a>): <a href='Array.html'>Array</a></tr><tr class='apiBrief'><td>&nbsp;</td><td>Insert the items at the front of the array.</td></tr>
 </table>
@@ -184,7 +184,9 @@ array, their elements are concatenated. This is a one level deep copy.</dd></dl>
 </div>
 <div class='apiDetail'>
 <dl><dt>Description</dt></dd><dd>See if the array contains an element using strict equality "===". This call searches from the start of the 
-array for the specified element.</dd></dl>
+array for the specified element. Note that some types are not interned like strings and so contains may
+return false if a different object with the same value is contained in the array. This can happen with Path
+types.</dd></dl>
 <dl><dt>Parameters</dt>
 <dd><table class='parameters' summary ='parameters'>
 <tr class='param'><td class='param'>element: <a href='Object.html'>Object</a> </td><td>The object to search for.</td></tr></table></dd>
@@ -584,7 +586,7 @@ strings are concatenated. </dd></dl>
 <hr />
 <a name='transform'></a>
 <div class='api'>
-<div class='apiSig'>    transform(mapper: <a href='Function.html'>Function</a>): <a href='Void.html'>Void</a>
+<div class='apiSig'>    transform(mapper: <a href='Function.html'>Function</a>): <a href='Array.html'>Array</a>
 </div>
 <div class='apiDetail'>
 <dl><dt>Description</dt></dd><dd>Transform all elements. Iterate over all elements in the object and transform the elements by applying the transform function. 

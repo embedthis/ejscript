@@ -125,6 +125,7 @@ create and install routes into the Router.</dd></dl>
 <dd><table class='parameters' summary ='options'>
 <td class='param'>action</td><td>Action method to service the request. This may be of the form "action", "controller/action" or  "controller/".  If the action portion omitted, the default action (index) will be used.</td></tr>
 <td class='param'>controller</td><td>Controller to service the request.</td></tr>
+<td class='param'>method</td><td>HTTP Method for which the route is valid. Set to "*"" for all methods.</td></tr>
 <td class='param'>name</td><td>Name to give to the route. If absent, the name is created from the controller and action names.</td></tr>
 <td class='param'>outer</td><td>Parent route. The parent's template and parameters are appended to this route.</td></tr>
 <td class='param'>params</td><td>Override parameter to provide to the request in the Request.params.</td></tr>

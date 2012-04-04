@@ -192,6 +192,7 @@ module ejs.unix {
 
     /**
         Find files. Do Posix glob style pattern matching.
+        @param path Base path from which to match patterns. 
         @param pattern String pattern to match with files. The wildcards "*", "**" and "?" are the wild card
             patterns supported. The "**" pattern matches any number of directories.  The Posix "[]" and "{a,b}" style
             expressions are not supported.

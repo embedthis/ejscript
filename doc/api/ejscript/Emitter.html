@@ -59,7 +59,7 @@ registration of observers who want to subscribe to events of interest.</p>
    <tr class='apiDef'><td class='apiType'> </td><td><a href='#fireThis'><b>fireThis</b></a>(name: <a href='String.html'>String</a>, thisObj: <a href='Object.html'>Object</a>, args: <a href='Array.html'>Array</a>): <a href='Void.html'>Void</a></tr><tr class='apiBrief'><td>&nbsp;</td><td>Emit an event to the registered observers using an explict value for the "this" object.</td></tr>
    <tr class='apiDef'><td class='apiType'> </td><td><a href='#getObservers'><b>getObservers</b></a>(name: <a href='String.html'>String</a>): <a href='Array.html'>Array</a></tr><tr class='apiBrief'><td>&nbsp;</td><td>Return the observers for this emitter.</td></tr>
    <tr class='apiDef'><td class='apiType'> </td><td><a href='#hasObservers'><b>hasObservers</b></a>(): <a href='Boolean.html'>Boolean</a></tr><tr class='apiBrief'><td>&nbsp;</td><td>Determine if the emitter has any observers.</td></tr>
-   <tr class='apiDef'><td class='apiType'> </td><td><a href='#off'><b>off</b></a>(name: <a href='Object.html'>Object</a>, callback: <a href='Function.html'>Function</a>): <a href='Void.html'>Void</a></tr><tr class='apiBrief'><td>&nbsp;</td><td>Turn off and Remove a registered observer.</td></tr>
+   <tr class='apiDef'><td class='apiType'> </td><td><a href='#off'><b>off</b></a>(name: <a href='Object.html'>Object</a>, callback: <a href='Function.html'>Function</a>): <a href='Void.html'>Void</a></tr><tr class='apiBrief'><td>&nbsp;</td><td>Turn off and remove a registered observer.</td></tr>
    <tr class='apiDef'><td class='apiType'> </td><td><a href='#on'><b>on</b></a>(name: <a href='Object.html'>Object</a>, callback: <a href='Function.html'>Function</a>): <a href='Void.html'>Void</a></tr><tr class='apiBrief'><td>&nbsp;</td><td>Add an observer for a set of named event.</td></tr>
 </table>
 
@@ -142,10 +142,10 @@ registration of observers who want to subscribe to events of interest.</p>
 <div class='apiSig'>    off(name: <a href='Object.html'>Object</a>, callback: <a href='Function.html'>Function</a>): <a href='Void.html'>Void</a>
 </div>
 <div class='apiDetail'>
-<dl><dt>Description</dt></dd><dd>Turn off and Remove a registered observer. </dd></dl>
+<dl><dt>Description</dt></dd><dd>Turn off and remove a registered observer. </dd></dl>
 <dl><dt>Parameters</dt>
 <dd><table class='parameters' summary ='parameters'>
-<tr class='param'><td class='param'>name: <a href='Object.html'>Object</a> </td><td>Event name used when the observer was added.</td></tr><tr class='param'><td class='param'>callback: <a href='Function.html'>Function</a> </td><td>Callback function used when the observer was added.</td></tr></table></dd>
+<tr class='param'><td class='param'>name: <a href='Object.html'>Object</a> </td><td>Event name used when the observer was added.</td></tr><tr class='param'><td class='param'>callback: <a href='Function.html'>Function</a> </td><td>Callback function used when the observer was added. If null is supplied, all callbacks  will be removed.</td></tr></table></dd>
 </dl></div>
 </div>
 <hr />

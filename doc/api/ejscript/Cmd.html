@@ -64,7 +64,7 @@ This is the number of milliseconds for the call to complete.</td></tr>
    <tr class='apiDef'><td class='apiType'> static </td><td><a href='#exec'><b>exec</b></a>(cmdline: <a href='String.html'>String</a> = null, options: <a href='Object.html'>Object</a> = expression): <a href='Void.html'>Void</a></tr><tr class='apiBrief'><td>&nbsp;</td><td>Execute a new program by the current process.</td></tr>
    <tr class='apiDef'><td class='apiType'> static </td><td><a href='#kill'><b>kill</b></a>(pid: <a href='Number.html'>Number</a>, signal: <a href='Number.html'>Number</a> = 2): <a href='Boolean.html'>Boolean</a></tr><tr class='apiBrief'><td>&nbsp;</td><td>Kill the specified process.</td></tr>
    <tr class='apiDef'><td class='apiType'> static </td><td><a href='#locate'><b>locate</b></a>(program: <a href='Path.html'>Path</a>): <a href='Path.html'>Path</a></tr><tr class='apiBrief'><td>&nbsp;</td><td>Locate a program using the application PATH.</td></tr>
-   <tr class='apiDef'><td class='apiType'> static </td><td><a href='#run'><b>run</b></a>(command: <a href='Object.html'>Object</a>, data: <a href='Object.html'>Object</a> = null): <a href='String.html'>String</a></tr><tr class='apiBrief'><td>&nbsp;</td><td>Execute a command/program.</td></tr>
+   <tr class='apiDef'><td class='apiType'> static </td><td><a href='#run'><b>run</b></a>(command: <a href='Object.html'>Object</a>, data: <a href='Object.html'>Object</a> = null, options = expression): <a href='String.html'>String</a></tr><tr class='apiBrief'><td>&nbsp;</td><td>Execute a command/program.</td></tr>
    <tr class='apiDef'><td class='apiType'> static </td><td><a href='#sh'><b>sh</b></a>(command: <a href='Object.html'>Object</a>, data: <a href='Object.html'>Object</a> = null): <a href='String.html'>String</a></tr><tr class='apiBrief'><td>&nbsp;</td><td>Run a command using the system command shell and wait for completion.</td></tr>
 </table>
 
@@ -108,6 +108,7 @@ This is the number of milliseconds for the call to complete.</td></tr>
 <td class='param'>dir</td><td>Path or String. Directory to set as the current working directory for the command.</td></tr>
 <td class='param'>exception</td><td>Boolean If true, throw exceptions if the command returns a non-zero status code.  Defaults to false.</td></tr>
 <td class='param'>timeout</td><td>Number This is the default number of milliseconds for the command to complete.</td></tr>
+<td class='param'>noio</td><td>Don't capture stdout from the command. If true, the command's standard output will go to the  application's current standard output. Defaults to false.</td></tr>
 </table></dd>
 </dl></div>
 </div>
@@ -286,15 +287,15 @@ In this case a "readable" event will be issued when data is available for readin
 <hr />
 <a name='run'></a>
 <div class='api'>
-<div class='apiSig'>static     run(command: <a href='Object.html'>Object</a>, data: <a href='Object.html'>Object</a> = null): <a href='String.html'>String</a>
+<div class='apiSig'>static     run(command: <a href='Object.html'>Object</a>, data: <a href='Object.html'>Object</a> = null, options = expression): <a href='String.html'>String</a>
 </div>
 <div class='apiDetail'>
 <dl><dt>Description</dt></dd><dd>Execute a command/program. The call blocks while executing the command.</dd></dl>
 <dl><dt>Parameters</dt>
 <dd><table class='parameters' summary ='parameters'>
-<tr class='param'><td class='param'>command: <a href='Object.html'>Object</a> </td><td>Command or program to execute.</td></tr><tr class='param'><td class='param'>data: <a href='Object.html'>Object</a> </td><td>Optional data to write to the command on it's standard input. [default: null]</td></tr></table></dd>
+<tr class='param'><td class='param'>command: <a href='Object.html'>Object</a> </td><td>Command or program to execute.</td></tr><tr class='param'><td class='param'>data: <a href='Object.html'>Object</a> </td><td>Optional data to write to the command on it's standard input. [default: null]</td></tr><tr class='param'><td class='param'>options </td><td>null [default: expression]</td></tr></table></dd>
 </dl><dl><dt>Returns</dt>
-<dd>The command output from it's standard output.</dd></dl>
+<dd>The command output from the standard output.</dd></dl>
 <dl><dt>Throws</dt><dd>
 <a href='IOError.html'>IOError</a>: if the command exits with non-zero status. The exception object will contain the command's standard error output.
 </dd>
@@ -311,6 +312,11 @@ sh.exe is installed (See Cygwin).</dd></dl>
 <dl><dt>Parameters</dt>
 <dd><table class='parameters' summary ='parameters'>
 <tr class='param'><td class='param'>command: <a href='Object.html'>Object</a> </td><td>The (optional) command line to initialize with. The command may be either a string or an array of arguments.</td></tr><tr class='param'><td class='param'>data: <a href='Object.html'>Object</a> </td><td>null [default: null]</td></tr></table></dd>
+</dl><dl><dt>Returns</dt>
+<dd>The command output from the standard output.</dd></dl>
+<dl><dt>Throws</dt><dd>
+<a href='IOError.html'>IOError</a>: if the command exits with non-zero status. The exception object will contain the command's standard error output.
+</dd>
 </dl></div>
 </div>
 <hr />

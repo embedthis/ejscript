@@ -1,0 +1,60 @@
+/*
+    doc.bit -- Ejscript documentation build file
+ */
+
+Bit.load({
+
+    targets: {
+        patch: {
+            action: "
+                trace('Patch', 'Patch version string ${settings.version}')
+                let path = Path('product/version.html')
+                path.write(path.readString().replace(/<p>.*<.p>/, '<p>' + bit.settings.version + '</p>'))
+                path = Path('dsi/head.html')
+                path.write(path.readString().replace(/<title>.*<.title>/, 
+                    '<title>' + bit.settings.title + ' ' + bit.settings.version + ' Documentation</title>'))
+            ",
+        },
+
+        api: {
+            depends: ['scriptApi', 'nativeApi'],
+        },
+
+        nativeApi: {
+            action: "
+                apidoc('api/ejs.dox', [
+                    '${SRC}/src/ejs.h',
+                    '${SRC}/src/jems/ejs.web/src/ejsWeb.h',
+                    '${SRC}/src/ejsCompiler.h',
+                    ], 'Ejscript API', 'api/*.tags')
+                apiwrap(['api/ejs.html', 'api/http.html', 'api/mpr.html'])
+            ",
+        }, 
+
+        scriptApi: {
+            action: "
+                trace('Generate', 'Script library documentation')
+                let src = bit.dir.src.join('src')
+                let files = src.glob('core/*.es')
+                //  FUTURE 'tar', 'zlib'
+                for each (p in ['unix', 'db', 'db.mapper', 'db.sqlite', 'web', 'template']) {
+                    files += src.glob('jems/ejs.' + p + '/*.es')
+                }
+                let docmod = Path('').temp().replaceExt('mod')
+                run('ejsc --doc --bind --out ' + docmod + ' --require null ' + files.join(' '))
+                let edir = bit.dir.src.join('doc/api/ejscript')
+                rmdir([edir.join('*.html'), edir.join('*.css'), edir.join('images/*')])
+                run('ejsmod --warn --html ' + edir + ' --require null ' + docmod)
+                docmod.remove()
+            ",
+        },
+
+        'clean-doc': {
+            type: 'clean',
+            action: "
+                rmdir(['../doc/api/html', '../doc/api/xml'])
+            "
+        },
+    
+    },
+})

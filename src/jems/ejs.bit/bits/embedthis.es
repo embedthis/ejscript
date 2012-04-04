@@ -488,10 +488,10 @@ public function syncup(from: Path, to: Path) {
     for each (item in tar.list()) {
         let path = to.join(item.components.slice(1).join('/'))
         let fromData = tar.readString(item)
-        let toData = path.readString()
+        let toData = path.exists ? path.readString() : undefined
         if (fromData != toData) {
             let modified = tar.info(item)[0].modified
-            if (modified <= path.modified) {
+            if (path.exists && modified <= path.modified) {
                 if (!bit.options.force) {
                     trace('WARNING', path.relative + ' has been modified. Update skipped for this file.')
                     continue
@@ -505,6 +505,51 @@ public function syncup(from: Path, to: Path) {
     }
     if (tartemp) {
         tartemp.remove()
+    }
+}
+
+public function apidoc(dox: Path, headers, title: String, tags) {
+    let name = dox.basename.trimExt().name
+    let api = bit.dir.src.join('doc/api')
+    let output
+    if (headers is Array) {
+        output = api.join(name + '.h')
+        install(headers, output, { cat: true, })
+        headers = output
+    }
+    rmdir([api.join('html'), api.join('xml')])
+    tags = Path('.').glob(tags)
+
+    let doxtmp = Path('').temp().replaceExt('dox')
+    let data = api.join(name + '.dox').readString().replace(/^INPUT .*=.*$/m, 'INPUT = ' + headers)
+    Path(doxtmp).write(data)
+    trace('Generate', 'API documentation for ' + name)
+    run('doxygen ' + doxtmp, {dir: api})
+    if (output) {
+        output.remove()
+    }
+    if (!bit.options.keep) {
+        doxtmp.remove()
+    }
+
+    trace('Process', name.toPascal() + ' API documentation (may take a while)')
+    let files = [api.join('xml/' + name + '_8h.xml')]
+    files += ls(api.join('xml/group*')) + ls(api.join('xml/struct_*.xml'))
+    let tstr = tags ? tags.map(function(i) '--tags ' + Path(i).absolute).join(' ') : ''
+
+    run('ejs ' + bit.dir.bits.join('gendoc.es') + ' --bare ' + '--title \"' + bit.settings.product.toUpper() + 
+        ' - ' + title + ' Native API\" --out ' + name + 'Bare.html ' +  tstr + ' ' + files.join(' '), {dir: api})
+    if (!bit.options.keep) {
+        rmdir([api.join('html'), api.join('xml')])
+    }
+}
+
+public function apiwrap(patterns) {
+    for each (dfile in Path('.').glob(patterns)) {
+        let name = dfile.name.replace('.html', '')
+        let data = Path(name + 'Bare.html').readString()
+        let contents = Path(name + 'Header.tem').readString() + data + Path(name).dirname.join('apiFooter.tem').readString() + '\n'
+        dfile.joinExt('html').write(contents)
     }
 }
 
@@ -524,7 +569,7 @@ public function syncup(from: Path, to: Path) {
     under the terms of the GNU General Public License as published by the
     Free Software Foundation; either version 2 of the License, or (at your
     option) any later version. See the GNU General Public License for more
-    details at: http://www.embedthis.com/downloads/gplLicense.html
+    details at: http://embedthis.com/downloads/gplLicense.html
   
     This program is distributed WITHOUT ANY WARRANTY; without even the
     implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.
@@ -533,7 +578,7 @@ public function syncup(from: Path, to: Path) {
     proprietary programs. If you are unable to comply with the GPL, you must
     acquire a commercial license to use this software. Commercial licenses
     for this software and support services are available from Embedthis
-    Software at http://www.embedthis.com
+    Software at http://embedthis.com
   
     Local variables:
     tab-width: 4

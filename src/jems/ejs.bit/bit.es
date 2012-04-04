@@ -74,6 +74,7 @@ public class Bit {
             force: {},
             gen: { alias: 'g', range: String, separator: Array, commas: true },
             import: { alias: 'init', range: Boolean },
+            keep: { alias: 'k' },
             log: { alias: 'l', range: String },
             out: { range: String },
             pre: { range: String, separator: Array },
@@ -109,6 +110,7 @@ public class Bit {
             '    --force                            # Override warnings\n' +
             '    --gen [make|sh|vs|xcode]           # Generate project file\n' + 
             '    --import                           # Import standard bit configuration\n' + 
+            '    --keep                             # Keep intermediate files\n' + 
             '    --log logSpec                      # Save errors to a log file\n' +
             '    --out path                         # Save output to a file\n' +
             '    --profile [debug|release|...]      # Use the build profile\n' +
