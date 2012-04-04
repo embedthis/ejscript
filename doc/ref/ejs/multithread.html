@@ -93,21 +93,18 @@
             eventually service the I/O event. If the interpreter is currently idle, a thread is assigned from the thread 
             pool for the request, and the thread is resumed to service the interpreter's dispatcher queue. This greatly 
             simplifies Ejscript as all activity for an interpreter is thus serialized via the dispatcher queue.</p>
-
             <a name="multithreaded"></a>
             <h3>Multithreaded Ejscript</h3>
             <p>By using event dispatchers, Ejscript serializes all activity, yet it can support many 
             simultaneous requests due to its multithreaded core. Ejscript efficiently utilizes thread resources by using
             a thread pool and not dedicating threads permanently to requests. Threads are temporarily assigned
             only as required by active requests.</p>
-
             <a name="modules"></a>
             <h3>Modules</h3>
             <p>Ejscript can be extended by writing loadable modules. 
             All module code can rely on the fact that event activity will be serialized and
             no locking is required to serialize I/O activity. Consequently, most module code can be effectively 
             single-threaded.</p>
-
             <a name="locking"></a>
             <h3>Locking</h3>
             <p>If you have a requirement for a data structure that will be accessed and manipulated simultaneously
