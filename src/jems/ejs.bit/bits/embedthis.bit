@@ -148,11 +148,12 @@ Bit.load({
                     if (!bit.dir.src.join('doc/dsi').exists) {
                         trace('Skip', 'No server side includes')
                     } else {
-                        trace('Process', 'HTML SSI')
-                        for each (file in ls('../doc/**.html')) {
-                            file = file.absolute
+                        trace('Process', 'Html server side includes (dsi)')
+                        let doc = bit.dir.src.join('doc')
+                        for each (file in ls('${SRC}/doc/**.html')) {
+                            file = file.relativeTo(doc)
                             vtrace('Patch', file)
-                            run([bit.packs.dsi.path, file], {dir: bit.dir.src.join('doc')})
+                            run([bit.packs.dsi.path, file], {dir: doc})
                         }
                     }
                 } else {
@@ -167,8 +168,10 @@ Bit.load({
             action: "
                 if (bit.packs.dsi.path) {
                     trace('Tidy', 'HTML doc')
-                    for each (file in ls('../doc/**html')) 
+                    let doc = bit.dir.src.join('doc')
+                    for each (file in ls('${SRC}/doc/**html')) 
                         trace('Tidy', file)
+                        file = file.relativeTo(doc)
                         run(bit.packs.tidy.path + ' -q -config tidy.conf ' + file)
                     }
                 } else {

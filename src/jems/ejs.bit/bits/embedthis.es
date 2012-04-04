@@ -523,7 +523,7 @@ public function apidoc(dox: Path, headers, title: String, tags) {
     let doxtmp = Path('').temp().replaceExt('dox')
     let data = api.join(name + '.dox').readString().replace(/^INPUT .*=.*$/m, 'INPUT = ' + headers)
     Path(doxtmp).write(data)
-    trace('Generate', 'API documentation for ' + name)
+    trace('Generate', name.toPascal() + ' 'documentation)
     run('doxygen ' + doxtmp, {dir: api})
     if (output) {
         output.remove()
@@ -532,7 +532,7 @@ public function apidoc(dox: Path, headers, title: String, tags) {
         doxtmp.remove()
     }
 
-    trace('Process', name.toPascal() + ' API documentation (may take a while)')
+    trace('Process', name.toPascal() + ' documentation (may take a while)')
     let files = [api.join('xml/' + name + '_8h.xml')]
     files += ls(api.join('xml/group*')) + ls(api.join('xml/struct_*.xml'))
     let tstr = tags ? tags.map(function(i) '--tags ' + Path(i).absolute).join(' ') : ''
