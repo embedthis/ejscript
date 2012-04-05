@@ -26,8 +26,9 @@ Bit.load({
         web:        '.',
     },
 
-    '+required': [ 'vxworks', 'compiler', 'link' ],
-    '+optional': [ ],
+    settings: {
+        '+required': [ 'vxworks', 'compiler', 'link' ],
+    },
 
     defaults: {
         '+defines': [

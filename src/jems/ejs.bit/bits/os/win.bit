@@ -30,8 +30,10 @@ Bit.load({
         web:     '${prefixes.product}/web',
     },
 
-    '+required': [ 'winsdk', 'compiler', 'link', 'dumpbin', 'rc' ],
-    '+optional': [ 'inno' ],
+    settings: {
+        '+required': [ 'winsdk', 'compiler', 'link', 'dumpbin', 'rc' ],
+        '+optional': [ 'inno' ],
+    },
 
     defaults: {
         '+compiler':  [ '-nologo', '-GR-', '-W3' ],

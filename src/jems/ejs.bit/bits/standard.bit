@@ -4,7 +4,7 @@
 
 Bit.load({
 	dir: {
-		cfg:     	'${platform.os}-${platform.arch}-${settings.profile}',
+		cfg:     	'${platform.configuration}',
 		bin:     	'${dir.cfg}/bin',
         flat:       '${dir.cfg}/flat',
 		inc:     	'${dir.cfg}/inc',

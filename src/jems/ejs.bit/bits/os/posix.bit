@@ -26,6 +26,7 @@ Bit.load({
         web:        '/var/www/${settings.product}-default',
     },
 
-    '+required': [ 'compiler', 'link' ],
-    '+optional': [ ],
+    settings: {
+        '+required': [ 'compiler', 'link' ],
+    }
 })

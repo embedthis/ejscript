@@ -2,7 +2,7 @@
     openssl.bit -- OpenSSL package
  */
 
-if (bit.packs.ssl && bit.packs.ssl.enable == false) {
+if (!bit.packs.ssl || !bit.packs.ssl.enable) {
     throw "SSL has been disabled"
 }
 

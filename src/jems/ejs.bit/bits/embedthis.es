@@ -523,7 +523,7 @@ public function apidoc(dox: Path, headers, title: String, tags) {
     let doxtmp = Path('').temp().replaceExt('dox')
     let data = api.join(name + '.dox').readString().replace(/^INPUT .*=.*$/m, 'INPUT = ' + headers)
     Path(doxtmp).write(data)
-    trace('Generate', name.toPascal() + ' 'documentation)
+    trace('Generate', name.toPascal() + ' documentation')
     run('doxygen ' + doxtmp, {dir: api})
     if (output) {
         output.remove()

@@ -111,7 +111,7 @@ function projHeader(base, target) {
       <AdditionalIncludeDirectories>${INC};%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
     ')
 
-    if (bit.settings.profile == 'debug') {
+    if (bit.platform.profile == 'debug') {
         output('  <PreprocessorDefinitions>WIN32;_DEBUG;_WINDOWS;DEBUG_IDE;_REENTRANT;_MT;%(PreprocessorDefinitions)</PreprocessorDefinitions>
     <Optimization>Disabled</Optimization>
     <BasicRuntimeChecks>EnableFastChecks</BasicRuntimeChecks>
@@ -131,7 +131,7 @@ function projHeader(base, target) {
       <AdditionalLibraryDirectories>$(OutDir);%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
       <SubSystem>${SUBSYSTEM}</SubSystem>')
 
-    if (bit.settings.profile == 'debug') {
+    if (bit.platform.profile == 'debug') {
       output('      <GenerateDebugInformation>true</GenerateDebugInformation>')
     } else {
       output('      <GenerateDebugInformation>false</GenerateDebugInformation>')

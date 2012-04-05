@@ -20,6 +20,11 @@ Bit.load({
         company: 'Example Inc.',
 		version: '0.1.0',
 		buildNumber: 'B0',
+        /*
+            Put required and optional packs here. E.g.: 'doxygen', 'ejs', 'openssl' ...
+         */
+        '+required': [ ],
+        '+optional': [ ],
     },
 
     profiles: {
@@ -32,12 +37,6 @@ Bit.load({
             assert: false,
         } },
     },
-
-    /*
-        Put required and optional packs here. E.g.: 'doxygen', 'ejs', 'openssl' ...
-     */
-    '+required': [ ],
-    '+optional': [ ],
 
     /*
         Define targets to build

@@ -79,7 +79,7 @@ Bit.load({
                     if (uri == '') {
                         throw 'Missing a BUILD_UPLOAD uri'
                     }
-                    for each (file in bit.dir.rel.glob('${settings.product}-${settings.version}-${settings.number}')) {
+                    for each (file in bit.dir.rel.glob('${settings.product}-${settings.version}-${settings.buildNumber}')) {
                         if (file.toString().contains('flat.tgz')) {
                             let latest = file.dirname.join('${settings.product}-latest-flat.tgz')
                             file.rename(latest)
