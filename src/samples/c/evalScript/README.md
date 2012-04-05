@@ -9,11 +9,11 @@ The evalScript sample demonstrates a one line embedding of Ejscript that can eva
 
 ## To build:
 
-    make
+    bit
 
 ## To build and show commands:
 
-    make TRACE=1
+    bit -s
 
 ## To run:
 

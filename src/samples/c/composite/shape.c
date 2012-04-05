@@ -18,7 +18,7 @@
 /*
     Indent so that genDepend won't warn first time when this file doesn't exist
  */
-    #include   "sample.slots.h"
+    #include   "composite.slots.h"
 
 /******************************************************************************/
 /*
@@ -33,10 +33,10 @@ static EjsObj *constructor(Ejs *ejs, EjsObj *sp, int argc, EjsObj **argv)
 
     mprLog(1, "Shape()");
 
-    ejsSetProperty(ejs, sp, ES_sample_Shape_x, ESV(zero));
-    ejsSetProperty(ejs, sp, ES_sample_Shape_y, ESV(zero));
-    ejsSetProperty(ejs, sp, ES_sample_Shape_height, argv[0]);
-    ejsSetProperty(ejs, sp, ES_sample_Shape_width, argv[1]);
+    ejsSetProperty(ejs, sp, ES_composite_Shape_x, ESV(zero));
+    ejsSetProperty(ejs, sp, ES_composite_Shape_y, ESV(zero));
+    ejsSetProperty(ejs, sp, ES_composite_Shape_height, argv[0]);
+    ejsSetProperty(ejs, sp, ES_composite_Shape_width, argv[1]);
     return sp;
 }
 
@@ -54,8 +54,8 @@ static EjsNumber *area(Ejs *ejs, EjsObj *sp, int argc, EjsObj **argv)
 
     mprLog(1, "Shape.area()");
 
-    height = ejsGetInt(ejs, ejsGetProperty(ejs, sp, ES_sample_Shape_height));
-    width = ejsGetInt(ejs, ejsGetProperty(ejs, sp, ES_sample_Shape_width));
+    height = ejsGetInt(ejs, ejsGetProperty(ejs, sp, ES_composite_Shape_height));
+    width = ejsGetInt(ejs, ejsGetProperty(ejs, sp, ES_composite_Shape_width));
 
     return ejsCreateNumber(ejs, height * width);
 }
@@ -73,7 +73,7 @@ static int configureSampleTypes(Ejs *ejs)
     /*
         Get the Shape class object. This will be created from the mod file for us.
      */
-    type = ejsGetTypeByName(ejs, N("sample", "Shape"));
+    type = ejsGetTypeByName(ejs, N("composite", "Shape"));
     if (type == 0) {
         mprError("Can't find type Shape");
         return MPR_ERR;
@@ -84,7 +84,7 @@ static int configureSampleTypes(Ejs *ejs)
      */
     prototype = type->prototype;
     ejsBindConstructor(ejs, type, constructor);
-    ejsBindMethod(ejs, prototype, ES_sample_Shape_area, area);
+    ejsBindMethod(ejs, prototype, ES_composite_Shape_area, area);
     return 0;
 }
 
@@ -97,9 +97,9 @@ static int configureSampleTypes(Ejs *ejs)
     the module with the first letter mapped to lower case and with any "." characters 
     converted to underscores.
  */
-int sample_Init(Ejs *ejs, MprModule *module)
+int composite_Init(Ejs *ejs, MprModule *module)
 {
-    return ejsAddNativeModule(ejs, "sample", configureSampleTypes, _ES_CHECKSUM_sample, EJS_LOADER_ETERNAL);
+    return ejsAddNativeModule(ejs, "composite", configureSampleTypes, _ES_CHECKSUM_composite, EJS_LOADER_ETERNAL);
 }
 
 

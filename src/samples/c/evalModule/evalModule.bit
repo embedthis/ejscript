@@ -1,0 +1,27 @@
+/*
+    evalModule.bit - Bit file for the evalModule sample
+ */
+
+Bit.load({
+    targets: {
+        evalModule : {
+            type: 'exe',
+            path: 'main${EXE}',
+            sources: ['*.c'],
+            depends: ['libejs', 'evalModule.mod'],
+        },
+
+        'evalModule.mod' : {
+            files: ['Test.es'],
+            build: "run('ejsc --out test.mod Test.es')",
+            depends: ['ejsc'],
+        },
+
+        'clean-evalModule': {
+            type: 'clean',
+            action: "
+                // rm(['*.lst', '*.mod', '*.${SHLIB}', '*.${SHOBJ}'])
+            ",
+        }
+    },
+})

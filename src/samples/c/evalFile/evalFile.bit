@@ -1,0 +1,21 @@
+/*
+    evalFile.bit - Bit file for the evalFile sample
+ */
+
+Bit.load({
+    targets: {
+        'evalFile': {
+            type: 'exe',
+            path: 'main${EXE}',
+            sources: ['*.c'],
+            depends: ['libejs'],
+        },
+
+        'clean-evalFile': {
+            type: 'clean',
+            action: "
+                // rm(['*.lst', '*.mod', '*.${SHLIB}', '*.${SHOBJ}'])
+            ",
+        }
+    },
+})

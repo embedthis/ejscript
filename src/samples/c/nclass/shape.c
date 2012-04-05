@@ -1,7 +1,7 @@
 /*
     shape.c - Native class implementation for the Shape class. 
 
-    This sample provides the implementation for the Shape class. It defines the native class itsself and defines storage
+    This smple provides the implementation for the Shape class. It defines the native class itsself and defines storage
     for its properties and methods. It thus uses a native C structure for Shape instance state and native C language types
     for properties. 
 
@@ -22,7 +22,7 @@
 /*
     Indent so that genDepend won't warn first time when this file doesn't exist
  */
- #include   "sample.slots.h"
+ #include   "nclass.slots.h"
 
 /*********************************** Locals ***********************************/
 /*
@@ -89,16 +89,16 @@ static EjsObj *getProperty(Ejs *ejs, Shape *sp, int slotNum)
     mprAssert(sp);
 
     switch (slotNum) {
-    case ES_sample_Shape_x:
+    case ES_nclass_Shape_x:
         return (EjsObj*) ejsCreateNumber(ejs, sp->x);
 
-    case ES_sample_Shape_y:
+    case ES_nclass_Shape_y:
         return (EjsObj*) ejsCreateNumber(ejs, sp->x);
 
-    case ES_sample_Shape_height:
+    case ES_nclass_Shape_height:
         return (EjsObj*) ejsCreateNumber(ejs, sp->height);
 
-    case ES_sample_Shape_width:
+    case ES_nclass_Shape_width:
         return (EjsObj*) ejsCreateNumber(ejs, sp->width);
 
     default:
@@ -119,7 +119,7 @@ static int getPropertyCount(Ejs *ejs, Shape *sp)
     /*
         The slot file computes this for us
      */
-    return ES_sample_Shape_NUM_INSTANCE_PROP;
+    return ES_nclass_Shape_NUM_INSTANCE_PROP;
 }
 
 /*
@@ -136,27 +136,27 @@ static EjsName getPropertyName(Ejs *ejs, Shape *sp, int slotNum)
         To be thread-safe, we must have a different qname structure for each property name.
      */
     switch (slotNum) {
-        case ES_sample_Shape_x: {
+        case ES_nclass_Shape_x: {
             static EjsName qname;
             qname.name = ejsCreateStringFromAsc(ejs, "y");
             qname.space = 0;
             return qname;
         }
 
-        case ES_sample_Shape_y: {
+        case ES_nclass_Shape_y: {
             static EjsName qname;
             qname.space = 0;
             return qname;
         }
 
-        case ES_sample_Shape_height: {
+        case ES_nclass_Shape_height: {
             static EjsName qname;
             qname.name = ejsCreateStringFromAsc(ejs, "height");
             qname.space = 0;
             return qname;
          }
 
-        case ES_sample_Shape_width: {
+        case ES_nclass_Shape_width: {
             static EjsName qname;
             qname.name = ejsCreateStringFromAsc(ejs, "width");
             qname.space = 0;
@@ -188,16 +188,16 @@ static int lookupProperty(Ejs *ejs, Shape *sp, EjsName *qname)
 
     name = qname->name->value;
     if (mcmp(name, "x") == 0) {
-        return ES_sample_Shape_x;
+        return ES_nclass_Shape_x;
 
     } else if (mcmp(name, "y") == 0) {
-        return ES_sample_Shape_y;
+        return ES_nclass_Shape_y;
 
     } else if (mcmp(name, "height") == 0) {
-        return ES_sample_Shape_height;
+        return ES_nclass_Shape_height;
 
     } else if (mcmp(name, "width") == 0) {
-        return ES_sample_Shape_width;
+        return ES_nclass_Shape_width;
 
     } else {
         ejsThrowReferenceError(ejs, "Can't find property %@", qname->name);
@@ -218,19 +218,19 @@ static int setProperty(Ejs *ejs, Shape *sp, int slotNum, EjsObj *value)
     mprAssert(sp);
 
     switch (slotNum) {
-    case ES_sample_Shape_x:
+    case ES_nclass_Shape_x:
         sp->x = ejsGetInt(ejs, value);
         break;
 
-    case ES_sample_Shape_y:
+    case ES_nclass_Shape_y:
         sp->y = ejsGetInt(ejs, value);
         break;
 
-    case ES_sample_Shape_height:
+    case ES_nclass_Shape_height:
         sp->height = ejsGetInt(ejs, value);
         break;
 
-    case ES_sample_Shape_width:
+    case ES_nclass_Shape_width:
         sp->width = ejsGetInt(ejs, value);
         break;
 
@@ -447,7 +447,7 @@ EjsType *ejsDefineShapeType(Ejs *ejs)
         by ejsmod from Shape.es.
      */
     ejsBindConstructor(ejs, type, constructor);
-    ejsBindMethod(ejs, prototype, ES_sample_Shape_area, area);
+    ejsBindMethod(ejs, prototype, ES_nclass_Shape_area, area);
     return type;
 }
 
@@ -469,7 +469,7 @@ int configureSampleTypes(Ejs *ejs)
     /*
         Get the Shape class object. This will be created from the mod file for us.
      */
-    type = ejsGetTypeByName(ejs, N("sample", "Shape"));
+    type = ejsGetTypeByName(ejs, N("nclass", "Shape"));
     if (type == 0) {
         mprError("Can't find type Shape");
         return MPR_ERR_CANT_ACCESS;
@@ -480,14 +480,14 @@ int configureSampleTypes(Ejs *ejs)
         by ejsmod from Shape.es.
      */
     ejsBindConstructor(ejs, type, constructor);
-    ejsBindMethod(ejs, type, ES_sample_Shape_area, area);
+    ejsBindMethod(ejs, type, ES_nclass_Shape_area, area);
     return 0;
 }
 
 
-int sample_Init(Ejs *ejs, MprModule *module)
+int ncalss_Init(Ejs *ejs, MprModule *module)
 {
-    return ejsAddNativeModule(ejs, "sample", configureSampleTypes, _ES_CHECKSUM_sample, EJS_LOADER_ETERNAL);
+    return ejsAddNativeModule(ejs, "nclass", configureSampleTypes, _ES_CHECKSUM_nclass, EJS_LOADER_ETERNAL);
 }
 
 /*

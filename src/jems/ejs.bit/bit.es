@@ -59,9 +59,9 @@ public class Bit {
     private var posix = ['macosx', 'linux', 'unix', 'freebsd', 'solaris']
     private var windows = ['win', 'wince']
     private var start: Date
-    private var targetsToBuildByDefault = { exe: true, file: true, lib: true, obj: true, script: true }
-    private var targetsToBlend = { exe: true, lib: true, obj: true, action: true, script: true, clean: true }
-    private var targetsToClean = { exe: true, file: true, lib: true, obj: true, script: true }
+    private var targetsToBuildByDefault = { exe: true, file: true, lib: true, obj: true, build: true }
+    private var targetsToBlend = { exe: true, lib: true, obj: true, action: true, build: true, clean: true }
+    private var targetsToClean = { exe: true, file: true, lib: true, obj: true, build: true }
 
     private var argTemplate = {
         options: {
@@ -2362,6 +2362,7 @@ command = command.expand(bit, {fill: ''})
     }
 
     /*
+        MOB - cleanup
         Form is:
 
             scripts: {
@@ -2708,8 +2709,7 @@ command = command.expand(bit, {fill: ''})
         case 'cleanTargets':
             for each (target in bit.targets) {
                 if (target.path && targetsToClean[target.type]) {
-                    /* Pre-built targets must be preserved */
-                    if (target.path.startsWith(bit.dir.cfg) && !target.built && !target.precious) {
+                    if (!target.built && !target.precious) {
                         if (generating == 'make') {
                             genWrite('\trm -rf ' + reppath(target.path))
 

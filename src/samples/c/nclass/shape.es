@@ -1,11 +1,11 @@
 /*
- *  Shape.es - Sample module with a Shape class. 
+    Shape.es - Sample module (nclass) with a Shape class. 
  */
 
-module sample
-{
-	class Shape 
-	{
+module nclass {
+
+	class Shape {
+
 		native var x: num
 		native var y: num
 		native var height: num

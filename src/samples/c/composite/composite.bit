@@ -1,0 +1,34 @@
+/*
+    composite.bit - Bit file for the composite sample
+ */
+
+Bit.load({
+    targets: {
+        'composite' : {
+            depends: ['composite-lib', 'composite.mod'],
+        },
+
+        'composite.mod' : {
+            files: ['shape.es'],
+            build: "
+                run('ejsc shape.es')
+                run('ejsmod --cslots composite.mod')
+            ",
+            depends: ['ejsc', 'composite-lib'],
+        },
+
+        'composite-lib': {
+            type: 'lib',
+            path: 'composite${SHOBJ}',
+            sources: ['*.c'],
+            depends: ['libejs'],
+        },
+
+        'clean-composite': {
+            type: 'clean',
+            action: "
+                // rm(['*.lst', '*.mod', '*.${SHLIB}', '*.${SHOBJ}'])
+            ",
+        }
+    },
+})

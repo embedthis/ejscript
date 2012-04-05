@@ -11,11 +11,11 @@ evaluate a single script file.
 
 ## To build:
 
-    make
+    bit
 
 ## To build and show commands:
 
-    make TRACE=1
+    bit -s
 
 ## To run:
 

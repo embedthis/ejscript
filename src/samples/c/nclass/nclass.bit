@@ -1,0 +1,34 @@
+/*
+    native.bit - Bit file for the native sample
+ */
+
+Bit.load({
+    targets: {
+        nclass: {
+            depends: ['native-lib'],
+        },
+
+        'nclass.mod' : {
+            files: ['Test.es'],
+            build: "
+                run('ejsc shape.es')
+                run('ejsmod --cslots nclass.mod')
+            ",
+            depends: ['ejsc'],
+        },
+
+        'native-lib': {
+            type: 'lib',
+            path: 'native${SHOBJ}',
+            sources: ['*.c'],
+            depends: ['libejs', 'nclass.mod'],
+        },
+
+        'clean-evalModule': {
+            type: 'clean',
+            action: "
+                // rm(['*.lst', '*.mod', '*.${SHLIB}', '*.${SHOBJ}'])
+            ",
+        }
+    },
+})

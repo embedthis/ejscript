@@ -1,0 +1,21 @@
+/*
+    evalScript.bit - Bit file for the evalScript sample
+ */
+
+Bit.load({
+    targets: {
+        evalScript : {
+            type: 'exe',
+            path: 'main${EXE}',
+            sources: ['*.c'],
+            depends: ['libejs', 'evalScript.mod'],
+        },
+
+        'clean-evalScript': {
+            type: 'clean',
+            action: "
+                // rm(['*.lst', '*.mod', '*.${SHLIB}', '*.${SHOBJ}'])
+            ",
+        }
+    },
+})

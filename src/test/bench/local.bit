@@ -1,0 +1,30 @@
+/*
+  	local.bit -- Targets for benchmarking ejs
+ */
+
+Bit.load({
+    targets: {
+        benchmark: {
+            action: "
+	            // trace('Prep', 'ejsc --optimize 9 --bind bench.es')
+	            // run('ejsc --optimize 9 --bind bench.es', {detach: true})
+	            trace('Test', 'ejs bench.es')
+                let cmd = Cmd('ejs bench.es', {detach: true})
+	            trace('Waiting', 'Wait for memory usage to settle')
+                App.sleep(25 * 1000)
+                if (Config.OS == 'WIN') {
+                    let response = Path('/proc/' + cmd.pid + '/status')
+                } else if (Config.OS == 'MACOSX') {
+                    let response = run('ps -p ' + cmd.pid + ' -o rss').match(/^.*$/mg)[1]
+                    print(response)
+                } else if (Config.OS == 'LINUX') {
+                    let response = run('ps -p ' + cmd.pid + ' -o rss')
+                    print(response)
+                }
+                trace('Wait', 'For benchmark to complete')
+                cmd.wait()
+                print(cmd.response)
+            ",
+        },
+    },
+})

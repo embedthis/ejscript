@@ -2,7 +2,7 @@
     Shape.es - Sample module with Shape class
  */
 
-module sample {
+module composite {
 
 	class Shape {
 		var x: num
