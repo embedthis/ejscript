@@ -10,6 +10,7 @@ Bit.load({
 
         'composite.mod' : {
             files: ['shape.es'],
+            path: 'composite.mod',
             build: "
                 run('ejsc shape.es')
                 run('ejsmod --cslots composite.mod')
@@ -23,12 +24,5 @@ Bit.load({
             sources: ['*.c'],
             depends: ['libejs'],
         },
-
-        'clean-composite': {
-            type: 'clean',
-            action: "
-                // rm(['*.lst', '*.mod', '*.${SHLIB}', '*.${SHOBJ}'])
-            ",
-        }
     },
 })

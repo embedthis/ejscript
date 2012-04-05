@@ -8,14 +8,7 @@ Bit.load({
             type: 'exe',
             path: 'main${EXE}',
             sources: ['*.c'],
-            depends: ['libejs', 'evalScript.mod'],
+            depends: ['libejs'],
         },
-
-        'clean-evalScript': {
-            type: 'clean',
-            action: "
-                // rm(['*.lst', '*.mod', '*.${SHLIB}', '*.${SHOBJ}'])
-            ",
-        }
     },
 })

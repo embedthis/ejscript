@@ -10,12 +10,5 @@ Bit.load({
             sources: ['*.c'],
             depends: ['libejs'],
         },
-
-        'clean-evalFile': {
-            type: 'clean',
-            action: "
-                // rm(['*.lst', '*.mod', '*.${SHLIB}', '*.${SHOBJ}'])
-            ",
-        }
     },
 })

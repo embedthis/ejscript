@@ -12,16 +12,10 @@ Bit.load({
         },
 
         'evalModule.mod' : {
+            path: 'evalModule.mod',
             files: ['Test.es'],
             build: "run('ejsc --out test.mod Test.es')",
             depends: ['ejsc'],
         },
-
-        'clean-evalModule': {
-            type: 'clean',
-            action: "
-                // rm(['*.lst', '*.mod', '*.${SHLIB}', '*.${SHOBJ}'])
-            ",
-        }
     },
 })
