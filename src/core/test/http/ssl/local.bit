@@ -1,15 +1,11 @@
 /*
-  	local.bit -- Appweb unit test ssl configuration
+  	local.bit -- Bit file for SSL management of certificates and keys
 
  	This provides Some targets to help you get going with SSL (using OpenSSL). 
 	All these certificates are for internal use only.
- 	Use 'bit ServerCertReq' to generate a certificate request to send to a certificate authority like Verisign
- 
- 	To use appweb, you need to do:
- 
- 		bit caCert
- 		bit serverCert
- 
+
+ 	Use 'bit serverSelfCert' to generate a test certificate 
+ 	Use 'bit serverCertReq' to generate a certificate request to send to a certificate authority like Verisign
  */
 
 
@@ -21,9 +17,10 @@ Bit.load({
 		 */
         ca: {
 			shell: "
-				umask 77 
+				set -x
+                umask 77 
 				export OPENSSL_CONF=openssl.ca
-				openssl req -x509 -newkey rsa -passout pass:ca -out ca.crt -outform PEM
+				openssl req -x509 -newkey rsa:1024 -passout pass:ca -out ca.crt -outform PEM
 				openssl rsa -passin pass:ca -in ca.key -out ca.key.pem
 				echo 01 >ca.serial
 				>ca.db
@@ -35,37 +32,40 @@ Bit.load({
 		 */
 		clientCert: {
 			shell: "
-				umask 77 
+				set -x 
+                umask 77 
 				export OPENSSL_CONF=openssl.conf
 				rm -f client.crt client.key client.key.pem client.req
 				openssl req -passout pass:client -newkey rsa:1024 -keyout client.key -out client.req < response.client
 				openssl rsa -passin pass:client -in client.key -out client.key.pem
-				OPENSSL_CONF=openssl.ca openssl ca -in client.req -out client.crt
+				export OPENSSL_CONF=openssl.ca ; openssl ca -batch -in client.req -out client.crt
 			",
 		}
 
 		/*
-			Server certificate to put in Appweb. Necessary.
+            Create a server certificate for Appweb. Uses the certificate database.
 		 */
 		serverCert: {
 			shell: "
-				umask 77 
+				set -x 
+                umask 77 
 				export OPENSSL_CONF=openssl.conf
 				rm -f server.crt server.key server.key.pem server.req
 				openssl req -passout pass:server -newkey rsa:1024 -keyout server.key -out server.req < response.server
 				openssl rsa -passin pass:server -in server.key -out server.key.pem 
-				OPENSSL_CONF=openssl.ca openssl ca -in server.req -out server.crt
+				export OPENSSL_CONF=openssl.ca ; openssl ca -batch -in server.req -out server.crt
 			",
 		}
 
 		/*
-			Server certificate to put in Appweb. Necessary.
+			Create a self signed certificate and server key.
 			Use a self-signed certificate when you just want quick and dirty testing.
 			The browser will say it doesn't recognize this certificate, but that is ok.
 		 */
 		serverSelfSignCert: {
 			shell: "
-				umask 77
+				set -x 
+                umask 77
 				export OPENSSL_CONF=openssl.conf
 				openssl genrsa -des3 -passout pass:server -out server.key 1024
 				openssl req -passin pass:server -new -x509 -days 365 -key server.key -out server.crt < response.server
@@ -78,7 +78,8 @@ Bit.load({
 		 */
 		clientSelfSignCert: {
 			shell: "
-				umask 77
+				set -x 
+                umask 77
 				export OPENSSL_CONF=openssl.conf
 				openssl genrsa -des3 -passout pass:client -out client.key 1024
 				openssl req -passin pass:client -new -x509 -days 365 -key client.key -out client.crt < response.client
@@ -91,7 +92,8 @@ Bit.load({
 		 */
 		ServerCertReq: {
 			shell: "
-				umask 77
+				set -x 
+                umask 77
 				openssl genrsa -des3 -passout pass:server -out server.key 1024
 				openssl req -new -key server.key -out server.csr
 			",
@@ -113,8 +115,14 @@ Bit.load({
 		 */
 		decrypted: {
 			shell: "
-				openssl rsa -in server.key -out server.key.pem
+				openssl rsa -in server.key -out server.key.pem -passin pass:server
 			",
+        },
+
+        clean: {
+            build: "
+                rm(['*.key', '*.pem', 'ca.db*', 'ca.serial*', '*.req', '*.crt'])
+            "
         },
     },
 })
