@@ -80,7 +80,9 @@ module ejs {
         native function endsWith(test: String): Boolean
 
         /**
-            Expand tokens 
+            Replace tokens in the string and return an expanded string.
+            Tokens are represented by '${field}' where field may contain '.'. For example ${user.name}.
+            To preserve an ${token} unmodified, preceed the token with an extra '$'. For example: $${token}.
             @param obj containing tokens to expand
             @param options Options hash
             @option fill Set to a string to use for missing properties. Set to undefined or omit options to 

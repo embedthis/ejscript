@@ -525,13 +525,19 @@ static EjsString *expandString(Ejs *ejs, EjsString *sp, int argc, EjsObj **argv)
     buf = mprCreateBuf(0, 0);
     for (src = (char*) sp->value; src < &sp->value[sp->length]; ) {
         if (*src == '$' && src[1] == '{') {
-            src += 2;
-            for (cp = src; *cp != '}' && cp < &sp->value[sp->length]; cp++) ;
-            tok = snclone(src, cp - src);
-            if (!getTokenValue(ejs, obj, tok, tok, buf, fill, join)) {
-                return 0;
+            if (src > sp->value && src[-1] == '$') {
+                for (++src; *src != '}' && src < &sp->value[sp->length]; ) {
+                    mprPutCharToBuf(buf, *src++);
+                }
+            } else {
+                src += 2;
+                for (cp = src; *cp != '}' && cp < &sp->value[sp->length]; cp++) ;
+                tok = snclone(src, cp - src);
+                if (!getTokenValue(ejs, obj, tok, tok, buf, fill, join)) {
+                    return 0;
+                }
+                src = cp + 1;
             }
-            src = cp + 1;
         } else {
             mprPutCharToBuf(buf, *src++);
         }

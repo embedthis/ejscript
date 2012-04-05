@@ -400,7 +400,7 @@ module ejs {
                         Backquote backslashes and backquote quotes. Then wrap in single quotes. Single quotes are 
                         required because Cmd on Windows must format the entire command as a single string (not argv[])
                      */
-                    let s = command[arg].toString().trimEnd('\n')           // .replace(/\\/g, "\\\\")
+                    let s = command[arg].toString().trimEnd('\n')
                     s = s.replace(/\"/g, '\\\"').replace(/\'/g, '\\\'')
                     command[arg] = "'" + s + "'"
                 }

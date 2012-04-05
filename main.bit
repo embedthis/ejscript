@@ -1,12 +1,11 @@
 /*
-    product.bit -- Product Bit File for Ejscript
+    main.bit -- Main Bit File for Ejscript
  */
 
 Bit.load({
-    '+modules': [
-        'bits/ejs.es',
-    ],
     blend: [
+        '${PLATFORM}.bit',
+        '${BITS}/embedthis.bit',
         'src/deps/mpr/mpr.bit',
         'src/deps/pcre/pcre.bit',
         'src/deps/http/http.bit',
@@ -29,7 +28,10 @@ Bit.load({
         'src/jems/ejs.mvc/mvc.bit',
         'src/jems/ejs.utest/utest.bit',
         'doc/doc.bit',
-        '${BITS}/embedthis.bit',
+    ],
+
+    '+modules': [
+        'bits/ejs.es',
     ],
 
     settings: {
@@ -42,6 +44,8 @@ Bit.load({
         manager: 'ejsman',
         packs: [ 'bits/packs' ],
         without: ['doxygen', 'dsi', 'man', 'man2html', 'ssl', 'zlib'],
+        '+optional': [ 'doxygen', 'dpkg', 'dsi', 'man', 'man2html', 'openssl', 'matrixssl', 'pmaker', 'sqlite', 'zlib' ],
+        '+required': [ 'pcre' ]
     },
 
     usage: {
@@ -61,9 +65,7 @@ Bit.load({
         } },
     },
 
-    '+optional': [ 'doxygen', 'dpkg', 'dsi', 'man', 'man2html', 'openssl', 'matrixssl', 'pmaker', 'sqlite', 'zlib' ],
-    '+required': [ 'pcre' ]
-
+    //  MOB - uniused
     _packs: {
         ejs: {
             path: '${BIN}/ejs'

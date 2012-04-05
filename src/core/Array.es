@@ -71,13 +71,8 @@ module ejs {
             @return True if the element is found. Otherwise false.
             @spec ejs
          */
-        function contains(element: Object): Boolean {
-            if (indexOf(element) >= 0) {
-                return true
-            } else {
-                return false
-            }
-        }
+        function contains(element: Object): Boolean
+            indexOf(element) >= 0
 
         /**
             Determine if all elements match.

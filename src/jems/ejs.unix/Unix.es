@@ -228,6 +228,8 @@ module ejs.unix {
     function mkdir(path: String, permissions: Number = 0755): void
         Path(path).makeDir({permissions: permissions})
     
+    //  MOB - should allow toFile to be a directory
+    //  MOB - both args should be Paths
     /**
         Rename a file. If the new file name exists it is removed before the rename.
         @param fromFile Original file name.

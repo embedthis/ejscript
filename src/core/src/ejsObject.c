@@ -689,6 +689,10 @@ static EjsObj *obj_sortProperties(Ejs *ejs, EjsObj *unused, int argc, EjsObj **a
     EjsPot      *obj;
 
     obj = (EjsPot*) argv[0];
+    if (!ejsIsPot(ejs, obj)) {
+        ejsThrowTypeError(ejs, "Object does not have properties");
+        return 0;
+    }
 #if FUTURE && KEEP
     asc = (argc >= 2 && argv[1] == ESV(true));
 #endif
