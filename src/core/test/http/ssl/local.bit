@@ -11,6 +11,10 @@
 
 Bit.load({
     targets: {
+        all: {
+            depends: ['serverSelfSignCert'],
+        },
+
 		/*
 			Create a test certificate authority. Use this if you will be generating multiple certificates for clients and 
 			servers and want to validate them. The browser will say it doesn't recognize this certificate, but that is ok.
@@ -121,7 +125,7 @@ Bit.load({
 
         clean: {
             build: "
-                rm(['*.key', '*.pem', 'ca.db*', 'ca.serial*', '*.req', '*.crt'])
+                rm(['ca.db*', 'ca.serial*', '*.req', 'client.crt'])
             "
         },
     },
