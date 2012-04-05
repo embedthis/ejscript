@@ -56,6 +56,7 @@ Bit.load({
 
     rules: {
         'c->o': '${packs.compiler.path} -c -o ${OUT} -arch ${ARCH} ${CFLAGS} ${target.defines} ${INCLUDES} ${PREPROCESS} ${IN}',
+        'cpp->o': '${packs.compiler.path} -c -o ${OUT} -arch ${ARCH} ${CFLAGS} ${target.defines} ${INCLUDES} ${PREPROCESS} ${IN}',
         'lib':  '${packs.compiler.path} -dynamiclib -o ${OUT} -arch ${ARCH} ${target.linker} ${LIBPATHS} -install_name @rpath/${LIBNAME} ${IN} ${LIBS}'
         'exe':  '${packs.compiler.path} -o ${OUT} -arch ${ARCH} ${target.linker} ${LIBPATHS} ${IN} ${LIBS}'
         'gui':  '${packs.compiler.path} -o ${OUT} -arch ${ARCH} ${target.linker} ${LIBPATHS} ${IN} ${LIBS}'

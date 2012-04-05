@@ -61,6 +61,7 @@ Bit.load({
     },
     rules: {
         'c->o': '${packs.compiler.path} -c -o ${OUT} ${CFLAGS} ${target.defines} ${INCLUDES} ${PREPROCESS} ${IN}',
+        'cpp->o': '${packs.compiler.path} -c -o ${OUT} ${CFLAGS} ${target.defines} ${INCLUDES} ${PREPROCESS} ${IN}',
         'lib':  '${packs.compiler.path} -r -o ${OUT} ${target.linker} ${LIBPATHS} ${IN} ${LIBS}'
         'exe':  '${packs.compiler.path} -o ${OUT} ${target.linker} ${LIBPATHS} ${IN} ${LIBS} ${target.linker}'
         'gui':  '${packs.compiler.path} -o ${OUT} ${target.linker} ${LIBPATHS} ${IN} ${LIBS} ${target.linker}'

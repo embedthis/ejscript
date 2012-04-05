@@ -66,6 +66,7 @@ Bit.load({
     rules: {
         //  MOB -Fd{DIR} should this be named uniquely per target?
         'c->obj': '"${packs.compiler.path}" -c -Fo${OUT} -Fd${dir.obj} ${CFLAGS} ${target.defines} ${INCLUDES} ${PREPROCESS} ${IN}',
+        'cpp->obj': '"${packs.compiler.path}" -c -Fo${OUT} -Fd${dir.obj} ${CFLAGS} ${target.defines} ${INCLUDES} ${PREPROCESS} ${IN}',
         'lib':  '"${packs.link.path}" -dll -out:${OUT} -entry:_DllMainCRTStartup@12 -def:${DEF} ${target.linker} ${LIBPATHS} ${IN} ${LIBS}',
         'exe':  '"${packs.link.path}" -out:${OUT} -entry:mainCRTStartup -subsystem:console ${target.linker} ${LIBPATHS} ${IN} ${LIBS}',
         'gui':  '"${packs.link.path}" -out:${OUT} -entry:WinMainCRTStartup -subsystem:Windows ${target.linker} ${LIBPATHS} ${IN} ${LIBS}',
