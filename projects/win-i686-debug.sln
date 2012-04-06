@@ -29,6 +29,11 @@ Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "http", "win-i686-debug\http
 EndProject
 Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "libsqlite3", "win-i686-debug\libsqlite3.vcxproj", "{C27BD2E2-1711-4653-9443-2CC380D7A3EF}"
 EndProject
+Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "sqlite", "win-i686-debug\sqlite.vcxproj", "{00C814C7-B535-4B6A-B25E-DA78F4E42305}"
+	ProjectSection(ProjectDependencies) = postProject
+		{C27BD2E2-1711-4653-9443-2CC380D7A3EF} = {C27BD2E2-1711-4653-9443-2CC380D7A3EF}
+	EndProjectSection
+EndProject
 Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "libejs", "win-i686-debug\libejs.vcxproj", "{B097BC45-C299-4DFA-944C-CC5C047CD785}"
 	ProjectSection(ProjectDependencies) = postProject
 		{145E7A7A-CF56-4257-B982-A6BE59F0738A} = {145E7A7A-CF56-4257-B982-A6BE59F0738A}
@@ -90,6 +95,31 @@ Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "ejs.web", "win-i686-debug\e
 		{B097BC45-C299-4DFA-944C-CC5C047CD785} = {B097BC45-C299-4DFA-944C-CC5C047CD785}
 	EndProjectSection
 EndProject
+Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "composite-lib", "win-i686-debug\composite-lib.vcxproj", "{40AB75F2-9AC4-448A-8912-6DEF7765574A}"
+	ProjectSection(ProjectDependencies) = postProject
+		{B097BC45-C299-4DFA-944C-CC5C047CD785} = {B097BC45-C299-4DFA-944C-CC5C047CD785}
+	EndProjectSection
+EndProject
+Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "evalFile", "win-i686-debug\evalFile.vcxproj", "{C3F36235-5D4E-4E95-86EC-E459D944EB8C}"
+	ProjectSection(ProjectDependencies) = postProject
+		{B097BC45-C299-4DFA-944C-CC5C047CD785} = {B097BC45-C299-4DFA-944C-CC5C047CD785}
+	EndProjectSection
+EndProject
+Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "evalModule", "win-i686-debug\evalModule.vcxproj", "{BC474CBA-CF7C-462F-A8ED-CFC78E4332E0}"
+	ProjectSection(ProjectDependencies) = postProject
+		{B097BC45-C299-4DFA-944C-CC5C047CD785} = {B097BC45-C299-4DFA-944C-CC5C047CD785}
+	EndProjectSection
+EndProject
+Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "evalScript", "win-i686-debug\evalScript.vcxproj", "{64022931-768D-49A1-ABC5-F20F51B67605}"
+	ProjectSection(ProjectDependencies) = postProject
+		{B097BC45-C299-4DFA-944C-CC5C047CD785} = {B097BC45-C299-4DFA-944C-CC5C047CD785}
+	EndProjectSection
+EndProject
+Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "native-lib", "win-i686-debug\native-lib.vcxproj", "{39FCBBE0-DFB3-40B1-BA2E-86CA9DDE7A27}"
+	ProjectSection(ProjectDependencies) = postProject
+		{B097BC45-C299-4DFA-944C-CC5C047CD785} = {B097BC45-C299-4DFA-944C-CC5C047CD785}
+	EndProjectSection
+EndProject
 
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -110,6 +140,8 @@ Global
 {F9826CAF-5410-40D6-A9F3-73B49911C07F}.Debug|Win32.Build.0 = Debug|Win32
 {C27BD2E2-1711-4653-9443-2CC380D7A3EF}.Debug|Win32.ActiveCfg = Debug|Win32
 {C27BD2E2-1711-4653-9443-2CC380D7A3EF}.Debug|Win32.Build.0 = Debug|Win32
+{00C814C7-B535-4B6A-B25E-DA78F4E42305}.Debug|Win32.ActiveCfg = Debug|Win32
+{00C814C7-B535-4B6A-B25E-DA78F4E42305}.Debug|Win32.Build.0 = Debug|Win32
 {B097BC45-C299-4DFA-944C-CC5C047CD785}.Debug|Win32.ActiveCfg = Debug|Win32
 {B097BC45-C299-4DFA-944C-CC5C047CD785}.Debug|Win32.Build.0 = Debug|Win32
 {816B723B-45F3-4E8E-94F4-A39CD32CC117}.Debug|Win32.ActiveCfg = Debug|Win32
@@ -126,6 +158,16 @@ Global
 {0C7F9639-FC6F-4B60-9068-965A4BF8BEC7}.Debug|Win32.Build.0 = Debug|Win32
 {02221DAD-6CA1-40AD-8B27-0F9ADF90258C}.Debug|Win32.ActiveCfg = Debug|Win32
 {02221DAD-6CA1-40AD-8B27-0F9ADF90258C}.Debug|Win32.Build.0 = Debug|Win32
+{40AB75F2-9AC4-448A-8912-6DEF7765574A}.Debug|Win32.ActiveCfg = Debug|Win32
+{40AB75F2-9AC4-448A-8912-6DEF7765574A}.Debug|Win32.Build.0 = Debug|Win32
+{C3F36235-5D4E-4E95-86EC-E459D944EB8C}.Debug|Win32.ActiveCfg = Debug|Win32
+{C3F36235-5D4E-4E95-86EC-E459D944EB8C}.Debug|Win32.Build.0 = Debug|Win32
+{BC474CBA-CF7C-462F-A8ED-CFC78E4332E0}.Debug|Win32.ActiveCfg = Debug|Win32
+{BC474CBA-CF7C-462F-A8ED-CFC78E4332E0}.Debug|Win32.Build.0 = Debug|Win32
+{64022931-768D-49A1-ABC5-F20F51B67605}.Debug|Win32.ActiveCfg = Debug|Win32
+{64022931-768D-49A1-ABC5-F20F51B67605}.Debug|Win32.Build.0 = Debug|Win32
+{39FCBBE0-DFB3-40B1-BA2E-86CA9DDE7A27}.Debug|Win32.ActiveCfg = Debug|Win32
+{39FCBBE0-DFB3-40B1-BA2E-86CA9DDE7A27}.Debug|Win32.Build.0 = Debug|Win32
 EndGlobalSection
 
   GlobalSection(SolutionProperties) = preSolution

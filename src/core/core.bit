@@ -7,7 +7,7 @@ Bit.load({
     defaults: {
         scripts: {
             '+preblend': "
-                if (bit.settings.profile == 'debug') {
+                if (bit.platform.profile == 'debug') {
                     bit.settings.esflags = '--debug'
                 }
             ",
@@ -15,9 +15,6 @@ Bit.load({
     },
 
     targets: {
-        xxx: {
-            action: "print(abc)",
-        },
         'ejs.mod': {
             path: '${LIB}/ejs.mod',
             files: [ '*.es' ],
@@ -52,4 +49,4 @@ Bit.load({
             depends: [ 'ejsc', 'ejsmod' ],
         },
 	},
-}, internal)
+})

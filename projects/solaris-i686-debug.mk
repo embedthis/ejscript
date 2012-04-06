@@ -2,895 +2,955 @@
 #   solaris-i686-debug.mk -- Build It Makefile to build Embedthis Ejscript for solaris on i686
 #
 
-PLATFORM       := solaris-i686-debug
-CC             := cc
-LD             := ld
-CFLAGS         := -Wall -fPIC -g -mcpu=i686
-DFLAGS         := -D_REENTRANT -DCPU=i686 -DPIC
-IFLAGS         := -I$(PLATFORM)/inc
-LDFLAGS        := '-g'
-LIBPATHS       := -L$(PLATFORM)/lib
-LIBS           := -llxnet -lrt -lsocket -lpthread -lm
+CONFIG   := solaris-i686-debug
+CC       := cc
+LD       := ld
+CFLAGS   := -Wall -fPIC -O3 -mcpu=i686 -fPIC -O3 -mcpu=i686
+DFLAGS   := -D_REENTRANT -DCPU=${ARCH} -DPIC -DPIC
+IFLAGS   := -I$(CONFIG)/inc -I$(CONFIG)/inc
+LDFLAGS  := 
+LIBPATHS := -L$(CONFIG)/lib -L$(CONFIG)/lib
+LIBS     := -llxnet -lrt -lsocket -lpthread -lm -lpthread -lm
 
 all: prep \
-        $(PLATFORM)/lib/libmpr.so \
-        $(PLATFORM)/bin/ejsman \
-        $(PLATFORM)/bin/makerom \
-        $(PLATFORM)/lib/libpcre.so \
-        $(PLATFORM)/lib/libhttp.so \
-        $(PLATFORM)/bin/http \
-        $(PLATFORM)/lib/libsqlite3.so \
-        $(PLATFORM)/lib/libejs.so \
-        $(PLATFORM)/bin/ejs \
-        $(PLATFORM)/bin/ejsc \
-        $(PLATFORM)/bin/ejsmod \
-        $(PLATFORM)/bin/ejsrun \
-        $(PLATFORM)/lib/ejs.mod \
-        $(PLATFORM)/bin/bit.es \
-        $(PLATFORM)/bin/bit \
-        $(PLATFORM)/bin/utest.es \
-        $(PLATFORM)/bin/utest \
-        $(PLATFORM)/lib/bits \
-        $(PLATFORM)/lib/ejs.unix.mod \
-        $(PLATFORM)/bin/jem.es \
-        $(PLATFORM)/bin/jem \
-        $(PLATFORM)/lib/ejs.db.mod \
-        $(PLATFORM)/lib/ejs.db.mapper.mod \
-        $(PLATFORM)/lib/ejs.db.sqlite.mod \
-        $(PLATFORM)/lib/ejs.db.sqlite.so \
-        $(PLATFORM)/lib/ejs.web.mod \
-        $(PLATFORM)/lib/ejs.web.so \
-        $(PLATFORM)/lib/www \
-        $(PLATFORM)/lib/ejs.template.mod \
-        $(PLATFORM)/lib/ejs.tar.mod \
-        $(PLATFORM)/bin/mvc.es \
-        $(PLATFORM)/bin/mvc \
-        $(PLATFORM)/lib/ejs.mvc.mod \
-        $(PLATFORM)/bin/utest.worker
+        $(CONFIG)/lib/libmpr.so \
+        $(CONFIG)/bin/ejsman \
+        $(CONFIG)/bin/makerom \
+        $(CONFIG)/lib/libpcre.so \
+        $(CONFIG)/lib/libhttp.so \
+        $(CONFIG)/bin/http \
+        $(CONFIG)/lib/libsqlite3.so \
+        $(CONFIG)/bin/sqlite \
+        $(CONFIG)/lib/libejs.so \
+        $(CONFIG)/bin/ejs \
+        $(CONFIG)/bin/ejsc \
+        $(CONFIG)/bin/ejsmod \
+        $(CONFIG)/bin/ejsrun \
+        $(CONFIG)/lib/ejs.mod \
+        $(CONFIG)/bin/bit.es \
+        $(CONFIG)/bin/bit \
+        $(CONFIG)/bin/utest.es \
+        $(CONFIG)/bin/utest \
+        $(CONFIG)/lib/bits \
+        $(CONFIG)/lib/ejs.unix.mod \
+        $(CONFIG)/bin/jem.es \
+        $(CONFIG)/bin/jem \
+        $(CONFIG)/lib/ejs.db.mod \
+        $(CONFIG)/lib/ejs.db.mapper.mod \
+        $(CONFIG)/lib/ejs.db.sqlite.mod \
+        $(CONFIG)/lib/ejs.db.sqlite.so \
+        $(CONFIG)/lib/ejs.web.mod \
+        $(CONFIG)/lib/ejs.web.so \
+        $(CONFIG)/lib/www \
+        $(CONFIG)/lib/ejs.template.mod \
+        $(CONFIG)/lib/ejs.tar.mod \
+        $(CONFIG)/bin/mvc.es \
+        $(CONFIG)/bin/mvc \
+        $(CONFIG)/lib/ejs.mvc.mod \
+        $(CONFIG)/bin/utest.worker \
+        src/samples/c/composite/composite.mod \
+        src/samples/c/composite/composite.so \
+        src/samples/c/evalFile/main \
+        src/samples/c/evalModule/main \
+        src/samples/c/evalModule/evalModule.mod \
+        src/samples/c/evalScript/main \
+        src/samples/c/nclass/nclass.mod \
+        src/samples/c/nclass/native.so
 
 .PHONY: prep
 
 prep:
-	@[ ! -x $(PLATFORM)/inc ] && mkdir -p $(PLATFORM)/inc $(PLATFORM)/obj $(PLATFORM)/lib $(PLATFORM)/bin ; true
-	@[ ! -f $(PLATFORM)/inc/buildConfig.h ] && cp projects/buildConfig.$(PLATFORM) $(PLATFORM)/inc/buildConfig.h ; true
-	@if ! diff $(PLATFORM)/inc/buildConfig.h projects/buildConfig.$(PLATFORM) >/dev/null ; then\
-		echo cp projects/buildConfig.$(PLATFORM) $(PLATFORM)/inc/buildConfig.h  ; \
-		cp projects/buildConfig.$(PLATFORM) $(PLATFORM)/inc/buildConfig.h  ; \
+	@[ ! -x $(CONFIG)/inc ] && mkdir -p $(CONFIG)/inc $(CONFIG)/obj $(CONFIG)/lib $(CONFIG)/bin ; true
+	@[ ! -f $(CONFIG)/inc/buildConfig.h ] && cp projects/buildConfig.$(CONFIG) $(CONFIG)/inc/buildConfig.h ; true
+	@if ! diff $(CONFIG)/inc/buildConfig.h projects/buildConfig.$(CONFIG) >/dev/null ; then\
+		echo cp projects/buildConfig.$(CONFIG) $(CONFIG)/inc/buildConfig.h  ; \
+		cp projects/buildConfig.$(CONFIG) $(CONFIG)/inc/buildConfig.h  ; \
 	fi; true
 
 clean:
-	rm -rf $(PLATFORM)/lib/libmpr.so
-	rm -rf $(PLATFORM)/lib/libmprssl.so
-	rm -rf $(PLATFORM)/bin/ejsman
-	rm -rf $(PLATFORM)/bin/makerom
-	rm -rf $(PLATFORM)/lib/libpcre.so
-	rm -rf $(PLATFORM)/lib/libhttp.so
-	rm -rf $(PLATFORM)/bin/http
-	rm -rf $(PLATFORM)/lib/libsqlite3.so
-	rm -rf $(PLATFORM)/lib/libejs.so
-	rm -rf $(PLATFORM)/bin/ejs
-	rm -rf $(PLATFORM)/bin/ejsc
-	rm -rf $(PLATFORM)/bin/ejsmod
-	rm -rf $(PLATFORM)/bin/ejsrun
-	rm -rf $(PLATFORM)/bin/utest.es
-	rm -rf $(PLATFORM)/bin/utest
-	rm -rf $(PLATFORM)/bin/jem.es
-	rm -rf $(PLATFORM)/bin/jem
-	rm -rf $(PLATFORM)/lib/ejs.db.mod
-	rm -rf $(PLATFORM)/lib/ejs.db.mapper.mod
-	rm -rf $(PLATFORM)/lib/ejs.db.sqlite.mod
-	rm -rf $(PLATFORM)/lib/ejs.db.sqlite.so
-	rm -rf $(PLATFORM)/lib/ejs.web.mod
-	rm -rf $(PLATFORM)/lib/ejs.web.so
-	rm -rf $(PLATFORM)/lib/www
-	rm -rf $(PLATFORM)/lib/ejs.template.mod
-	rm -rf $(PLATFORM)/lib/ejs.zlib.so
-	rm -rf $(PLATFORM)/bin/mvc.es
-	rm -rf $(PLATFORM)/bin/mvc
-	rm -rf $(PLATFORM)/lib/ejs.mvc.mod
-	rm -rf $(PLATFORM)/bin/utest.worker
-	rm -rf $(PLATFORM)/obj/mprLib.o
-	rm -rf $(PLATFORM)/obj/mprSsl.o
-	rm -rf $(PLATFORM)/obj/manager.o
-	rm -rf $(PLATFORM)/obj/makerom.o
-	rm -rf $(PLATFORM)/obj/pcre.o
-	rm -rf $(PLATFORM)/obj/httpLib.o
-	rm -rf $(PLATFORM)/obj/http.o
-	rm -rf $(PLATFORM)/obj/sqlite3.o
-	rm -rf $(PLATFORM)/obj/ecAst.o
-	rm -rf $(PLATFORM)/obj/ecCodeGen.o
-	rm -rf $(PLATFORM)/obj/ecCompiler.o
-	rm -rf $(PLATFORM)/obj/ecLex.o
-	rm -rf $(PLATFORM)/obj/ecModuleWrite.o
-	rm -rf $(PLATFORM)/obj/ecParser.o
-	rm -rf $(PLATFORM)/obj/ecState.o
-	rm -rf $(PLATFORM)/obj/ejsApp.o
-	rm -rf $(PLATFORM)/obj/ejsArray.o
-	rm -rf $(PLATFORM)/obj/ejsBlock.o
-	rm -rf $(PLATFORM)/obj/ejsBoolean.o
-	rm -rf $(PLATFORM)/obj/ejsByteArray.o
-	rm -rf $(PLATFORM)/obj/ejsCache.o
-	rm -rf $(PLATFORM)/obj/ejsCmd.o
-	rm -rf $(PLATFORM)/obj/ejsConfig.o
-	rm -rf $(PLATFORM)/obj/ejsDate.o
-	rm -rf $(PLATFORM)/obj/ejsDebug.o
-	rm -rf $(PLATFORM)/obj/ejsError.o
-	rm -rf $(PLATFORM)/obj/ejsFile.o
-	rm -rf $(PLATFORM)/obj/ejsFileSystem.o
-	rm -rf $(PLATFORM)/obj/ejsFrame.o
-	rm -rf $(PLATFORM)/obj/ejsFunction.o
-	rm -rf $(PLATFORM)/obj/ejsGC.o
-	rm -rf $(PLATFORM)/obj/ejsGlobal.o
-	rm -rf $(PLATFORM)/obj/ejsHttp.o
-	rm -rf $(PLATFORM)/obj/ejsIterator.o
-	rm -rf $(PLATFORM)/obj/ejsJSON.o
-	rm -rf $(PLATFORM)/obj/ejsLocalCache.o
-	rm -rf $(PLATFORM)/obj/ejsMath.o
-	rm -rf $(PLATFORM)/obj/ejsMemory.o
-	rm -rf $(PLATFORM)/obj/ejsMprLog.o
-	rm -rf $(PLATFORM)/obj/ejsNamespace.o
-	rm -rf $(PLATFORM)/obj/ejsNull.o
-	rm -rf $(PLATFORM)/obj/ejsNumber.o
-	rm -rf $(PLATFORM)/obj/ejsObject.o
-	rm -rf $(PLATFORM)/obj/ejsPath.o
-	rm -rf $(PLATFORM)/obj/ejsPot.o
-	rm -rf $(PLATFORM)/obj/ejsRegExp.o
-	rm -rf $(PLATFORM)/obj/ejsSocket.o
-	rm -rf $(PLATFORM)/obj/ejsString.o
-	rm -rf $(PLATFORM)/obj/ejsSystem.o
-	rm -rf $(PLATFORM)/obj/ejsTimer.o
-	rm -rf $(PLATFORM)/obj/ejsType.o
-	rm -rf $(PLATFORM)/obj/ejsUri.o
-	rm -rf $(PLATFORM)/obj/ejsVoid.o
-	rm -rf $(PLATFORM)/obj/ejsWorker.o
-	rm -rf $(PLATFORM)/obj/ejsXML.o
-	rm -rf $(PLATFORM)/obj/ejsXMLList.o
-	rm -rf $(PLATFORM)/obj/ejsXMLLoader.o
-	rm -rf $(PLATFORM)/obj/ejsByteCode.o
-	rm -rf $(PLATFORM)/obj/ejsException.o
-	rm -rf $(PLATFORM)/obj/ejsHelper.o
-	rm -rf $(PLATFORM)/obj/ejsInterp.o
-	rm -rf $(PLATFORM)/obj/ejsLoader.o
-	rm -rf $(PLATFORM)/obj/ejsModule.o
-	rm -rf $(PLATFORM)/obj/ejsScope.o
-	rm -rf $(PLATFORM)/obj/ejsService.o
-	rm -rf $(PLATFORM)/obj/ejs.o
-	rm -rf $(PLATFORM)/obj/ejsc.o
-	rm -rf $(PLATFORM)/obj/ejsmod.o
-	rm -rf $(PLATFORM)/obj/doc.o
-	rm -rf $(PLATFORM)/obj/docFiles.o
-	rm -rf $(PLATFORM)/obj/listing.o
-	rm -rf $(PLATFORM)/obj/slotGen.o
-	rm -rf $(PLATFORM)/obj/ejsrun.o
-	rm -rf $(PLATFORM)/obj/ejsZlib.o
-	rm -rf $(PLATFORM)/obj/ejsSqlite.o
-	rm -rf $(PLATFORM)/obj/ejsHttpServer.o
-	rm -rf $(PLATFORM)/obj/ejsRequest.o
-	rm -rf $(PLATFORM)/obj/ejsSession.o
-	rm -rf $(PLATFORM)/obj/ejsWeb.o
+	rm -rf $(CONFIG)/lib/libmpr.so
+	rm -rf $(CONFIG)/lib/libmprssl.so
+	rm -rf $(CONFIG)/bin/ejsman
+	rm -rf $(CONFIG)/bin/makerom
+	rm -rf $(CONFIG)/lib/libpcre.so
+	rm -rf $(CONFIG)/lib/libhttp.so
+	rm -rf $(CONFIG)/bin/http
+	rm -rf $(CONFIG)/lib/libsqlite3.so
+	rm -rf $(CONFIG)/bin/sqlite
+	rm -rf $(CONFIG)/lib/libejs.so
+	rm -rf $(CONFIG)/bin/ejs
+	rm -rf $(CONFIG)/bin/ejsc
+	rm -rf $(CONFIG)/bin/ejsmod
+	rm -rf $(CONFIG)/bin/ejsrun
+	rm -rf $(CONFIG)/bin/utest.es
+	rm -rf $(CONFIG)/bin/utest
+	rm -rf $(CONFIG)/bin/jem.es
+	rm -rf $(CONFIG)/bin/jem
+	rm -rf $(CONFIG)/lib/ejs.db.mod
+	rm -rf $(CONFIG)/lib/ejs.db.mapper.mod
+	rm -rf $(CONFIG)/lib/ejs.db.sqlite.mod
+	rm -rf $(CONFIG)/lib/ejs.db.sqlite.so
+	rm -rf $(CONFIG)/lib/ejs.web.mod
+	rm -rf $(CONFIG)/lib/ejs.web.so
+	rm -rf $(CONFIG)/lib/www
+	rm -rf $(CONFIG)/lib/ejs.template.mod
+	rm -rf $(CONFIG)/lib/ejs.zlib.so
+	rm -rf $(CONFIG)/bin/mvc.es
+	rm -rf $(CONFIG)/bin/mvc
+	rm -rf $(CONFIG)/lib/ejs.mvc.mod
+	rm -rf $(CONFIG)/bin/utest.worker
+	rm -rf src/samples/c/composite/composite.mod
+	rm -rf src/samples/c/composite/composite.so
+	rm -rf src/samples/c/evalFile/main
+	rm -rf src/samples/c/evalModule/main
+	rm -rf src/samples/c/evalModule/evalModule.mod
+	rm -rf src/samples/c/evalScript/main
+	rm -rf src/samples/c/nclass/nclass.mod
+	rm -rf src/samples/c/nclass/native.so
+	rm -rf $(CONFIG)/obj/mprLib.o
+	rm -rf $(CONFIG)/obj/mprSsl.o
+	rm -rf $(CONFIG)/obj/manager.o
+	rm -rf $(CONFIG)/obj/makerom.o
+	rm -rf $(CONFIG)/obj/pcre.o
+	rm -rf $(CONFIG)/obj/httpLib.o
+	rm -rf $(CONFIG)/obj/http.o
+	rm -rf $(CONFIG)/obj/sqlite3.o
+	rm -rf $(CONFIG)/obj/sqlite.o
+	rm -rf $(CONFIG)/obj/ecAst.o
+	rm -rf $(CONFIG)/obj/ecCodeGen.o
+	rm -rf $(CONFIG)/obj/ecCompiler.o
+	rm -rf $(CONFIG)/obj/ecLex.o
+	rm -rf $(CONFIG)/obj/ecModuleWrite.o
+	rm -rf $(CONFIG)/obj/ecParser.o
+	rm -rf $(CONFIG)/obj/ecState.o
+	rm -rf $(CONFIG)/obj/ejsApp.o
+	rm -rf $(CONFIG)/obj/ejsArray.o
+	rm -rf $(CONFIG)/obj/ejsBlock.o
+	rm -rf $(CONFIG)/obj/ejsBoolean.o
+	rm -rf $(CONFIG)/obj/ejsByteArray.o
+	rm -rf $(CONFIG)/obj/ejsCache.o
+	rm -rf $(CONFIG)/obj/ejsCmd.o
+	rm -rf $(CONFIG)/obj/ejsConfig.o
+	rm -rf $(CONFIG)/obj/ejsDate.o
+	rm -rf $(CONFIG)/obj/ejsDebug.o
+	rm -rf $(CONFIG)/obj/ejsError.o
+	rm -rf $(CONFIG)/obj/ejsFile.o
+	rm -rf $(CONFIG)/obj/ejsFileSystem.o
+	rm -rf $(CONFIG)/obj/ejsFrame.o
+	rm -rf $(CONFIG)/obj/ejsFunction.o
+	rm -rf $(CONFIG)/obj/ejsGC.o
+	rm -rf $(CONFIG)/obj/ejsGlobal.o
+	rm -rf $(CONFIG)/obj/ejsHttp.o
+	rm -rf $(CONFIG)/obj/ejsIterator.o
+	rm -rf $(CONFIG)/obj/ejsJSON.o
+	rm -rf $(CONFIG)/obj/ejsLocalCache.o
+	rm -rf $(CONFIG)/obj/ejsMath.o
+	rm -rf $(CONFIG)/obj/ejsMemory.o
+	rm -rf $(CONFIG)/obj/ejsMprLog.o
+	rm -rf $(CONFIG)/obj/ejsNamespace.o
+	rm -rf $(CONFIG)/obj/ejsNull.o
+	rm -rf $(CONFIG)/obj/ejsNumber.o
+	rm -rf $(CONFIG)/obj/ejsObject.o
+	rm -rf $(CONFIG)/obj/ejsPath.o
+	rm -rf $(CONFIG)/obj/ejsPot.o
+	rm -rf $(CONFIG)/obj/ejsRegExp.o
+	rm -rf $(CONFIG)/obj/ejsSocket.o
+	rm -rf $(CONFIG)/obj/ejsString.o
+	rm -rf $(CONFIG)/obj/ejsSystem.o
+	rm -rf $(CONFIG)/obj/ejsTimer.o
+	rm -rf $(CONFIG)/obj/ejsType.o
+	rm -rf $(CONFIG)/obj/ejsUri.o
+	rm -rf $(CONFIG)/obj/ejsVoid.o
+	rm -rf $(CONFIG)/obj/ejsWorker.o
+	rm -rf $(CONFIG)/obj/ejsXML.o
+	rm -rf $(CONFIG)/obj/ejsXMLList.o
+	rm -rf $(CONFIG)/obj/ejsXMLLoader.o
+	rm -rf $(CONFIG)/obj/ejsByteCode.o
+	rm -rf $(CONFIG)/obj/ejsException.o
+	rm -rf $(CONFIG)/obj/ejsHelper.o
+	rm -rf $(CONFIG)/obj/ejsInterp.o
+	rm -rf $(CONFIG)/obj/ejsLoader.o
+	rm -rf $(CONFIG)/obj/ejsModule.o
+	rm -rf $(CONFIG)/obj/ejsScope.o
+	rm -rf $(CONFIG)/obj/ejsService.o
+	rm -rf $(CONFIG)/obj/ejs.o
+	rm -rf $(CONFIG)/obj/ejsc.o
+	rm -rf $(CONFIG)/obj/ejsmod.o
+	rm -rf $(CONFIG)/obj/doc.o
+	rm -rf $(CONFIG)/obj/docFiles.o
+	rm -rf $(CONFIG)/obj/listing.o
+	rm -rf $(CONFIG)/obj/slotGen.o
+	rm -rf $(CONFIG)/obj/ejsrun.o
+	rm -rf $(CONFIG)/obj/ejsZlib.o
+	rm -rf $(CONFIG)/obj/ejsSqlite.o
+	rm -rf $(CONFIG)/obj/ejsHttpServer.o
+	rm -rf $(CONFIG)/obj/ejsRequest.o
+	rm -rf $(CONFIG)/obj/ejsSession.o
+	rm -rf $(CONFIG)/obj/ejsWeb.o
+	rm -rf $(CONFIG)/obj/shape.o
+	rm -rf $(CONFIG)/obj/main.o
 
 clobber: clean
-	rm -fr ./$(PLATFORM)
+	rm -fr ./$(CONFIG)
 
-$(PLATFORM)/inc/mpr.h: 
+$(CONFIG)/inc/mpr.h: 
 	rm -fr solaris-i686-debug/inc/mpr.h
 	cp -r src/deps/mpr/mpr.h solaris-i686-debug/inc/mpr.h
 
-$(PLATFORM)/inc/mprSsl.h: 
+$(CONFIG)/inc/mprSsl.h: 
 	rm -fr solaris-i686-debug/inc/mprSsl.h
 	cp -r src/deps/mpr/mprSsl.h solaris-i686-debug/inc/mprSsl.h
 
-$(PLATFORM)/obj/mprLib.o: \
+$(CONFIG)/obj/mprLib.o: \
         src/deps/mpr/mprLib.c \
-        $(PLATFORM)/inc/buildConfig.h
-	$(CC) -c -o $(PLATFORM)/obj/mprLib.o -Wall -fPIC $(LDFLAGS) -mcpu=i686 $(DFLAGS) -I$(PLATFORM)/inc src/deps/mpr/mprLib.c
+        $(CONFIG)/inc/buildConfig.h
+	$(LDFLAGS)$(LDFLAGS)$(CC) -c -o $(CONFIG)/obj/mprLib.o $(CFLAGS) -D_REENTRANT -DCPU=i686 -DPIC -DPIC -I$(CONFIG)/inc -I$(CONFIG)/inc src/deps/mpr/mprLib.c
 
-$(PLATFORM)/lib/libmpr.so:  \
-        $(PLATFORM)/inc/mpr.h \
-        $(PLATFORM)/inc/mprSsl.h \
-        $(PLATFORM)/obj/mprLib.o
-	$(CC) -shared -o $(PLATFORM)/lib/libmpr.so $(LDFLAGS) $(LIBPATHS) $(PLATFORM)/obj/mprLib.o $(LIBS)
+$(CONFIG)/lib/libmpr.so:  \
+        $(CONFIG)/inc/mpr.h \
+        $(CONFIG)/inc/mprSsl.h \
+        $(CONFIG)/obj/mprLib.o
+	$(LDFLAGS)$(LDFLAGS)$(CC) -shared -o $(CONFIG)/lib/libmpr.so $(LIBPATHS) $(CONFIG)/obj/mprLib.o $(LIBS)
 
-$(PLATFORM)/obj/manager.o: \
+$(CONFIG)/obj/manager.o: \
         src/deps/mpr/manager.c \
-        $(PLATFORM)/inc/buildConfig.h
-	$(CC) -c -o $(PLATFORM)/obj/manager.o -Wall -fPIC $(LDFLAGS) -mcpu=i686 $(DFLAGS) -I$(PLATFORM)/inc src/deps/mpr/manager.c
+        $(CONFIG)/inc/buildConfig.h
+	$(LDFLAGS)$(LDFLAGS)$(CC) -c -o $(CONFIG)/obj/manager.o $(CFLAGS) -D_REENTRANT -DCPU=i686 -DPIC -DPIC -I$(CONFIG)/inc -I$(CONFIG)/inc src/deps/mpr/manager.c
 
-$(PLATFORM)/bin/ejsman:  \
-        $(PLATFORM)/lib/libmpr.so \
-        $(PLATFORM)/obj/manager.o
-	$(CC) -o $(PLATFORM)/bin/ejsman $(LDFLAGS) $(LIBPATHS) $(PLATFORM)/obj/manager.o $(LIBS) -lmpr $(LDFLAGS)
+$(CONFIG)/bin/ejsman:  \
+        $(CONFIG)/lib/libmpr.so \
+        $(CONFIG)/obj/manager.o
+	$(LDFLAGS)$(LDFLAGS)$(CC) -o $(CONFIG)/bin/ejsman $(LIBPATHS) $(CONFIG)/obj/manager.o $(LIBS) -lmpr 
 
-$(PLATFORM)/obj/makerom.o: \
+$(CONFIG)/obj/makerom.o: \
         src/deps/mpr/makerom.c \
-        $(PLATFORM)/inc/buildConfig.h
-	$(CC) -c -o $(PLATFORM)/obj/makerom.o -Wall -fPIC $(LDFLAGS) -mcpu=i686 $(DFLAGS) -I$(PLATFORM)/inc src/deps/mpr/makerom.c
+        $(CONFIG)/inc/buildConfig.h
+	$(LDFLAGS)$(LDFLAGS)$(CC) -c -o $(CONFIG)/obj/makerom.o $(CFLAGS) -D_REENTRANT -DCPU=i686 -DPIC -DPIC -I$(CONFIG)/inc -I$(CONFIG)/inc src/deps/mpr/makerom.c
 
-$(PLATFORM)/bin/makerom:  \
-        $(PLATFORM)/lib/libmpr.so \
-        $(PLATFORM)/obj/makerom.o
-	$(CC) -o $(PLATFORM)/bin/makerom $(LDFLAGS) $(LIBPATHS) $(PLATFORM)/obj/makerom.o $(LIBS) -lmpr $(LDFLAGS)
+$(CONFIG)/bin/makerom:  \
+        $(CONFIG)/lib/libmpr.so \
+        $(CONFIG)/obj/makerom.o
+	$(LDFLAGS)$(LDFLAGS)$(CC) -o $(CONFIG)/bin/makerom $(LIBPATHS) $(CONFIG)/obj/makerom.o $(LIBS) -lmpr 
 
-$(PLATFORM)/inc/pcre.h: 
+$(CONFIG)/inc/pcre.h: 
 	rm -fr solaris-i686-debug/inc/pcre.h
 	cp -r src/deps/pcre/pcre.h solaris-i686-debug/inc/pcre.h
 
-$(PLATFORM)/obj/pcre.o: \
+$(CONFIG)/obj/pcre.o: \
         src/deps/pcre/pcre.c \
-        $(PLATFORM)/inc/buildConfig.h
-	$(CC) -c -o $(PLATFORM)/obj/pcre.o -Wall -fPIC $(LDFLAGS) -mcpu=i686 $(DFLAGS) -I$(PLATFORM)/inc src/deps/pcre/pcre.c
+        $(CONFIG)/inc/buildConfig.h
+	$(LDFLAGS)$(LDFLAGS)$(CC) -c -o $(CONFIG)/obj/pcre.o $(CFLAGS) -D_REENTRANT -DCPU=i686 -DPIC -DPIC -I$(CONFIG)/inc -I$(CONFIG)/inc src/deps/pcre/pcre.c
 
-$(PLATFORM)/lib/libpcre.so:  \
-        $(PLATFORM)/inc/pcre.h \
-        $(PLATFORM)/obj/pcre.o
-	$(CC) -shared -o $(PLATFORM)/lib/libpcre.so $(LDFLAGS) $(LIBPATHS) $(PLATFORM)/obj/pcre.o $(LIBS)
+$(CONFIG)/lib/libpcre.so:  \
+        $(CONFIG)/inc/pcre.h \
+        $(CONFIG)/obj/pcre.o
+	$(LDFLAGS)$(LDFLAGS)$(CC) -shared -o $(CONFIG)/lib/libpcre.so $(LIBPATHS) $(CONFIG)/obj/pcre.o $(LIBS)
 
-$(PLATFORM)/inc/http.h: 
+$(CONFIG)/inc/http.h: 
 	rm -fr solaris-i686-debug/inc/http.h
 	cp -r src/deps/http/http.h solaris-i686-debug/inc/http.h
 
-$(PLATFORM)/obj/httpLib.o: \
+$(CONFIG)/obj/httpLib.o: \
         src/deps/http/httpLib.c \
-        $(PLATFORM)/inc/buildConfig.h
-	$(CC) -c -o $(PLATFORM)/obj/httpLib.o -Wall -fPIC $(LDFLAGS) -mcpu=i686 $(DFLAGS) -I$(PLATFORM)/inc src/deps/http/httpLib.c
+        $(CONFIG)/inc/buildConfig.h
+	$(LDFLAGS)$(LDFLAGS)$(CC) -c -o $(CONFIG)/obj/httpLib.o $(CFLAGS) -D_REENTRANT -DCPU=i686 -DPIC -DPIC -I$(CONFIG)/inc -I$(CONFIG)/inc src/deps/http/httpLib.c
 
-$(PLATFORM)/lib/libhttp.so:  \
-        $(PLATFORM)/lib/libmpr.so \
-        $(PLATFORM)/lib/libpcre.so \
-        $(PLATFORM)/inc/http.h \
-        $(PLATFORM)/obj/httpLib.o
-	$(CC) -shared -o $(PLATFORM)/lib/libhttp.so $(LDFLAGS) $(LIBPATHS) $(PLATFORM)/obj/httpLib.o $(LIBS) -lmpr -lpcre
+$(CONFIG)/lib/libhttp.so:  \
+        $(CONFIG)/lib/libmpr.so \
+        $(CONFIG)/lib/libpcre.so \
+        $(CONFIG)/inc/http.h \
+        $(CONFIG)/obj/httpLib.o
+	$(LDFLAGS)$(LDFLAGS)$(CC) -shared -o $(CONFIG)/lib/libhttp.so $(LIBPATHS) $(CONFIG)/obj/httpLib.o $(LIBS) -lmpr -lpcre
 
-$(PLATFORM)/obj/http.o: \
+$(CONFIG)/obj/http.o: \
         src/deps/http/http.c \
-        $(PLATFORM)/inc/buildConfig.h
-	$(CC) -c -o $(PLATFORM)/obj/http.o -Wall -fPIC $(LDFLAGS) -mcpu=i686 $(DFLAGS) -I$(PLATFORM)/inc src/deps/http/http.c
+        $(CONFIG)/inc/buildConfig.h
+	$(LDFLAGS)$(LDFLAGS)$(CC) -c -o $(CONFIG)/obj/http.o $(CFLAGS) -D_REENTRANT -DCPU=i686 -DPIC -DPIC -I$(CONFIG)/inc -I$(CONFIG)/inc src/deps/http/http.c
 
-$(PLATFORM)/bin/http:  \
-        $(PLATFORM)/lib/libhttp.so \
-        $(PLATFORM)/obj/http.o
-	$(CC) -o $(PLATFORM)/bin/http $(LDFLAGS) $(LIBPATHS) $(PLATFORM)/obj/http.o $(LIBS) -lhttp -lmpr -lpcre $(LDFLAGS)
+$(CONFIG)/bin/http:  \
+        $(CONFIG)/lib/libhttp.so \
+        $(CONFIG)/obj/http.o
+	$(LDFLAGS)$(LDFLAGS)$(CC) -o $(CONFIG)/bin/http $(LIBPATHS) $(CONFIG)/obj/http.o $(LIBS) -lhttp -lmpr -lpcre 
 
-$(PLATFORM)/inc/sqlite3.h: 
+$(CONFIG)/inc/sqlite3.h: 
 	rm -fr solaris-i686-debug/inc/sqlite3.h
 	cp -r src/deps/sqlite/sqlite3.h solaris-i686-debug/inc/sqlite3.h
 
-$(PLATFORM)/obj/sqlite3.o: \
+$(CONFIG)/obj/sqlite3.o: \
         src/deps/sqlite/sqlite3.c \
-        $(PLATFORM)/inc/buildConfig.h
-	$(CC) -c -o $(PLATFORM)/obj/sqlite3.o -fPIC $(LDFLAGS) -mcpu=i686 $(DFLAGS) -I$(PLATFORM)/inc src/deps/sqlite/sqlite3.c
+        $(CONFIG)/inc/buildConfig.h
+	$(LDFLAGS)$(LDFLAGS)$(CC) -c -o $(CONFIG)/obj/sqlite3.o -fPIC -O3 -mcpu=i686 -fPIC -O3 -mcpu=i686 -D_REENTRANT -DCPU=i686 -DPIC -DPIC -I$(CONFIG)/inc -I$(CONFIG)/inc src/deps/sqlite/sqlite3.c
 
-$(PLATFORM)/lib/libsqlite3.so:  \
-        $(PLATFORM)/inc/sqlite3.h \
-        $(PLATFORM)/obj/sqlite3.o
-	$(CC) -shared -o $(PLATFORM)/lib/libsqlite3.so $(LDFLAGS) $(LIBPATHS) $(PLATFORM)/obj/sqlite3.o $(LIBS)
+$(CONFIG)/lib/libsqlite3.so:  \
+        $(CONFIG)/inc/sqlite3.h \
+        $(CONFIG)/obj/sqlite3.o
+	$(LDFLAGS)$(LDFLAGS)$(CC) -shared -o $(CONFIG)/lib/libsqlite3.so $(LIBPATHS) $(CONFIG)/obj/sqlite3.o $(LIBS)
 
-$(PLATFORM)/inc/ejs.cache.local.slots.h: 
+$(CONFIG)/obj/sqlite.o: \
+        src/deps/sqlite/sqlite.c \
+        $(CONFIG)/inc/buildConfig.h
+	$(LDFLAGS)$(LDFLAGS)$(CC) -c -o $(CONFIG)/obj/sqlite.o $(CFLAGS) -D_REENTRANT -DCPU=i686 -DPIC -DPIC -I$(CONFIG)/inc -I$(CONFIG)/inc src/deps/sqlite/sqlite.c
+
+$(CONFIG)/bin/sqlite:  \
+        $(CONFIG)/lib/libsqlite3.so \
+        $(CONFIG)/obj/sqlite.o
+	$(LDFLAGS)$(LDFLAGS)$(CC) -o $(CONFIG)/bin/sqlite $(LIBPATHS) $(CONFIG)/obj/sqlite.o $(LIBS) -lsqlite3 
+
+$(CONFIG)/inc/ejs.cache.local.slots.h: 
 	rm -fr solaris-i686-debug/inc/ejs.cache.local.slots.h
 	cp -r src/slots/ejs.cache.local.slots.h solaris-i686-debug/inc/ejs.cache.local.slots.h
 
-$(PLATFORM)/inc/ejs.db.sqlite.slots.h: 
+$(CONFIG)/inc/ejs.db.sqlite.slots.h: 
 	rm -fr solaris-i686-debug/inc/ejs.db.sqlite.slots.h
 	cp -r src/slots/ejs.db.sqlite.slots.h solaris-i686-debug/inc/ejs.db.sqlite.slots.h
 
-$(PLATFORM)/inc/ejs.slots.h: 
+$(CONFIG)/inc/ejs.slots.h: 
 	rm -fr solaris-i686-debug/inc/ejs.slots.h
 	cp -r src/slots/ejs.slots.h solaris-i686-debug/inc/ejs.slots.h
 
-$(PLATFORM)/inc/ejs.web.slots.h: 
+$(CONFIG)/inc/ejs.web.slots.h: 
 	rm -fr solaris-i686-debug/inc/ejs.web.slots.h
 	cp -r src/slots/ejs.web.slots.h solaris-i686-debug/inc/ejs.web.slots.h
 
-$(PLATFORM)/inc/ejs.zlib.slots.h: 
+$(CONFIG)/inc/ejs.zlib.slots.h: 
 	rm -fr solaris-i686-debug/inc/ejs.zlib.slots.h
 	cp -r src/slots/ejs.zlib.slots.h solaris-i686-debug/inc/ejs.zlib.slots.h
 
-$(PLATFORM)/inc/ejs.h: 
+$(CONFIG)/inc/ejs.h: 
 	rm -fr solaris-i686-debug/inc/ejs.h
 	cp -r src/ejs.h solaris-i686-debug/inc/ejs.h
 
-$(PLATFORM)/inc/ejsByteCode.h: 
+$(CONFIG)/inc/ejsByteCode.h: 
 	rm -fr solaris-i686-debug/inc/ejsByteCode.h
 	cp -r src/ejsByteCode.h solaris-i686-debug/inc/ejsByteCode.h
 
-$(PLATFORM)/inc/ejsByteCodeTable.h: 
+$(CONFIG)/inc/ejsByteCodeTable.h: 
 	rm -fr solaris-i686-debug/inc/ejsByteCodeTable.h
 	cp -r src/ejsByteCodeTable.h solaris-i686-debug/inc/ejsByteCodeTable.h
 
-$(PLATFORM)/inc/ejsCompiler.h: 
+$(CONFIG)/inc/ejsCompiler.h: 
 	rm -fr solaris-i686-debug/inc/ejsCompiler.h
 	cp -r src/ejsCompiler.h solaris-i686-debug/inc/ejsCompiler.h
 
-$(PLATFORM)/inc/ejsCustomize.h: 
+$(CONFIG)/inc/ejsCustomize.h: 
 	rm -fr solaris-i686-debug/inc/ejsCustomize.h
 	cp -r src/ejsCustomize.h solaris-i686-debug/inc/ejsCustomize.h
 
-$(PLATFORM)/obj/ecAst.o: \
+$(CONFIG)/obj/ecAst.o: \
         src/compiler/ecAst.c \
-        $(PLATFORM)/inc/buildConfig.h
-	$(CC) -c -o $(PLATFORM)/obj/ecAst.o -Wall -fPIC $(LDFLAGS) -mcpu=i686 $(DFLAGS) -I$(PLATFORM)/inc src/compiler/ecAst.c
+        $(CONFIG)/inc/buildConfig.h
+	$(LDFLAGS)$(LDFLAGS)$(CC) -c -o $(CONFIG)/obj/ecAst.o $(CFLAGS) -D_REENTRANT -DCPU=i686 -DPIC -DPIC -I$(CONFIG)/inc -I$(CONFIG)/inc src/compiler/ecAst.c
 
-$(PLATFORM)/obj/ecCodeGen.o: \
+$(CONFIG)/obj/ecCodeGen.o: \
         src/compiler/ecCodeGen.c \
-        $(PLATFORM)/inc/buildConfig.h
-	$(CC) -c -o $(PLATFORM)/obj/ecCodeGen.o -Wall -fPIC $(LDFLAGS) -mcpu=i686 $(DFLAGS) -I$(PLATFORM)/inc src/compiler/ecCodeGen.c
+        $(CONFIG)/inc/buildConfig.h
+	$(LDFLAGS)$(LDFLAGS)$(CC) -c -o $(CONFIG)/obj/ecCodeGen.o $(CFLAGS) -D_REENTRANT -DCPU=i686 -DPIC -DPIC -I$(CONFIG)/inc -I$(CONFIG)/inc src/compiler/ecCodeGen.c
 
-$(PLATFORM)/obj/ecCompiler.o: \
+$(CONFIG)/obj/ecCompiler.o: \
         src/compiler/ecCompiler.c \
-        $(PLATFORM)/inc/buildConfig.h
-	$(CC) -c -o $(PLATFORM)/obj/ecCompiler.o -Wall -fPIC $(LDFLAGS) -mcpu=i686 $(DFLAGS) -I$(PLATFORM)/inc src/compiler/ecCompiler.c
+        $(CONFIG)/inc/buildConfig.h
+	$(LDFLAGS)$(LDFLAGS)$(CC) -c -o $(CONFIG)/obj/ecCompiler.o $(CFLAGS) -D_REENTRANT -DCPU=i686 -DPIC -DPIC -I$(CONFIG)/inc -I$(CONFIG)/inc src/compiler/ecCompiler.c
 
-$(PLATFORM)/obj/ecLex.o: \
+$(CONFIG)/obj/ecLex.o: \
         src/compiler/ecLex.c \
-        $(PLATFORM)/inc/buildConfig.h
-	$(CC) -c -o $(PLATFORM)/obj/ecLex.o -Wall -fPIC $(LDFLAGS) -mcpu=i686 $(DFLAGS) -I$(PLATFORM)/inc src/compiler/ecLex.c
+        $(CONFIG)/inc/buildConfig.h
+	$(LDFLAGS)$(LDFLAGS)$(CC) -c -o $(CONFIG)/obj/ecLex.o $(CFLAGS) -D_REENTRANT -DCPU=i686 -DPIC -DPIC -I$(CONFIG)/inc -I$(CONFIG)/inc src/compiler/ecLex.c
 
-$(PLATFORM)/obj/ecModuleWrite.o: \
+$(CONFIG)/obj/ecModuleWrite.o: \
         src/compiler/ecModuleWrite.c \
-        $(PLATFORM)/inc/buildConfig.h
-	$(CC) -c -o $(PLATFORM)/obj/ecModuleWrite.o -Wall -fPIC $(LDFLAGS) -mcpu=i686 $(DFLAGS) -I$(PLATFORM)/inc src/compiler/ecModuleWrite.c
+        $(CONFIG)/inc/buildConfig.h
+	$(LDFLAGS)$(LDFLAGS)$(CC) -c -o $(CONFIG)/obj/ecModuleWrite.o $(CFLAGS) -D_REENTRANT -DCPU=i686 -DPIC -DPIC -I$(CONFIG)/inc -I$(CONFIG)/inc src/compiler/ecModuleWrite.c
 
-$(PLATFORM)/obj/ecParser.o: \
+$(CONFIG)/obj/ecParser.o: \
         src/compiler/ecParser.c \
-        $(PLATFORM)/inc/buildConfig.h
-	$(CC) -c -o $(PLATFORM)/obj/ecParser.o -Wall -fPIC $(LDFLAGS) -mcpu=i686 $(DFLAGS) -I$(PLATFORM)/inc src/compiler/ecParser.c
+        $(CONFIG)/inc/buildConfig.h
+	$(LDFLAGS)$(LDFLAGS)$(CC) -c -o $(CONFIG)/obj/ecParser.o $(CFLAGS) -D_REENTRANT -DCPU=i686 -DPIC -DPIC -I$(CONFIG)/inc -I$(CONFIG)/inc src/compiler/ecParser.c
 
-$(PLATFORM)/obj/ecState.o: \
+$(CONFIG)/obj/ecState.o: \
         src/compiler/ecState.c \
-        $(PLATFORM)/inc/buildConfig.h
-	$(CC) -c -o $(PLATFORM)/obj/ecState.o -Wall -fPIC $(LDFLAGS) -mcpu=i686 $(DFLAGS) -I$(PLATFORM)/inc src/compiler/ecState.c
+        $(CONFIG)/inc/buildConfig.h
+	$(LDFLAGS)$(LDFLAGS)$(CC) -c -o $(CONFIG)/obj/ecState.o $(CFLAGS) -D_REENTRANT -DCPU=i686 -DPIC -DPIC -I$(CONFIG)/inc -I$(CONFIG)/inc src/compiler/ecState.c
 
-$(PLATFORM)/obj/ejsApp.o: \
+$(CONFIG)/obj/ejsApp.o: \
         src/core/src/ejsApp.c \
-        $(PLATFORM)/inc/buildConfig.h
-	$(CC) -c -o $(PLATFORM)/obj/ejsApp.o -Wall -fPIC $(LDFLAGS) -mcpu=i686 $(DFLAGS) -I$(PLATFORM)/inc src/core/src/ejsApp.c
+        $(CONFIG)/inc/buildConfig.h
+	$(LDFLAGS)$(LDFLAGS)$(CC) -c -o $(CONFIG)/obj/ejsApp.o $(CFLAGS) -D_REENTRANT -DCPU=i686 -DPIC -DPIC -I$(CONFIG)/inc -I$(CONFIG)/inc src/core/src/ejsApp.c
 
-$(PLATFORM)/obj/ejsArray.o: \
+$(CONFIG)/obj/ejsArray.o: \
         src/core/src/ejsArray.c \
-        $(PLATFORM)/inc/buildConfig.h
-	$(CC) -c -o $(PLATFORM)/obj/ejsArray.o -Wall -fPIC $(LDFLAGS) -mcpu=i686 $(DFLAGS) -I$(PLATFORM)/inc src/core/src/ejsArray.c
+        $(CONFIG)/inc/buildConfig.h
+	$(LDFLAGS)$(LDFLAGS)$(CC) -c -o $(CONFIG)/obj/ejsArray.o $(CFLAGS) -D_REENTRANT -DCPU=i686 -DPIC -DPIC -I$(CONFIG)/inc -I$(CONFIG)/inc src/core/src/ejsArray.c
 
-$(PLATFORM)/obj/ejsBlock.o: \
+$(CONFIG)/obj/ejsBlock.o: \
         src/core/src/ejsBlock.c \
-        $(PLATFORM)/inc/buildConfig.h
-	$(CC) -c -o $(PLATFORM)/obj/ejsBlock.o -Wall -fPIC $(LDFLAGS) -mcpu=i686 $(DFLAGS) -I$(PLATFORM)/inc src/core/src/ejsBlock.c
+        $(CONFIG)/inc/buildConfig.h
+	$(LDFLAGS)$(LDFLAGS)$(CC) -c -o $(CONFIG)/obj/ejsBlock.o $(CFLAGS) -D_REENTRANT -DCPU=i686 -DPIC -DPIC -I$(CONFIG)/inc -I$(CONFIG)/inc src/core/src/ejsBlock.c
 
-$(PLATFORM)/obj/ejsBoolean.o: \
+$(CONFIG)/obj/ejsBoolean.o: \
         src/core/src/ejsBoolean.c \
-        $(PLATFORM)/inc/buildConfig.h
-	$(CC) -c -o $(PLATFORM)/obj/ejsBoolean.o -Wall -fPIC $(LDFLAGS) -mcpu=i686 $(DFLAGS) -I$(PLATFORM)/inc src/core/src/ejsBoolean.c
+        $(CONFIG)/inc/buildConfig.h
+	$(LDFLAGS)$(LDFLAGS)$(CC) -c -o $(CONFIG)/obj/ejsBoolean.o $(CFLAGS) -D_REENTRANT -DCPU=i686 -DPIC -DPIC -I$(CONFIG)/inc -I$(CONFIG)/inc src/core/src/ejsBoolean.c
 
-$(PLATFORM)/obj/ejsByteArray.o: \
+$(CONFIG)/obj/ejsByteArray.o: \
         src/core/src/ejsByteArray.c \
-        $(PLATFORM)/inc/buildConfig.h
-	$(CC) -c -o $(PLATFORM)/obj/ejsByteArray.o -Wall -fPIC $(LDFLAGS) -mcpu=i686 $(DFLAGS) -I$(PLATFORM)/inc src/core/src/ejsByteArray.c
+        $(CONFIG)/inc/buildConfig.h
+	$(LDFLAGS)$(LDFLAGS)$(CC) -c -o $(CONFIG)/obj/ejsByteArray.o $(CFLAGS) -D_REENTRANT -DCPU=i686 -DPIC -DPIC -I$(CONFIG)/inc -I$(CONFIG)/inc src/core/src/ejsByteArray.c
 
-$(PLATFORM)/obj/ejsCache.o: \
+$(CONFIG)/obj/ejsCache.o: \
         src/core/src/ejsCache.c \
-        $(PLATFORM)/inc/buildConfig.h
-	$(CC) -c -o $(PLATFORM)/obj/ejsCache.o -Wall -fPIC $(LDFLAGS) -mcpu=i686 $(DFLAGS) -I$(PLATFORM)/inc src/core/src/ejsCache.c
+        $(CONFIG)/inc/buildConfig.h
+	$(LDFLAGS)$(LDFLAGS)$(CC) -c -o $(CONFIG)/obj/ejsCache.o $(CFLAGS) -D_REENTRANT -DCPU=i686 -DPIC -DPIC -I$(CONFIG)/inc -I$(CONFIG)/inc src/core/src/ejsCache.c
 
-$(PLATFORM)/obj/ejsCmd.o: \
+$(CONFIG)/obj/ejsCmd.o: \
         src/core/src/ejsCmd.c \
-        $(PLATFORM)/inc/buildConfig.h
-	$(CC) -c -o $(PLATFORM)/obj/ejsCmd.o -Wall -fPIC $(LDFLAGS) -mcpu=i686 $(DFLAGS) -I$(PLATFORM)/inc src/core/src/ejsCmd.c
+        $(CONFIG)/inc/buildConfig.h
+	$(LDFLAGS)$(LDFLAGS)$(CC) -c -o $(CONFIG)/obj/ejsCmd.o $(CFLAGS) -D_REENTRANT -DCPU=i686 -DPIC -DPIC -I$(CONFIG)/inc -I$(CONFIG)/inc src/core/src/ejsCmd.c
 
-$(PLATFORM)/obj/ejsConfig.o: \
+$(CONFIG)/obj/ejsConfig.o: \
         src/core/src/ejsConfig.c \
-        $(PLATFORM)/inc/buildConfig.h
-	$(CC) -c -o $(PLATFORM)/obj/ejsConfig.o -Wall -fPIC $(LDFLAGS) -mcpu=i686 $(DFLAGS) -I$(PLATFORM)/inc src/core/src/ejsConfig.c
+        $(CONFIG)/inc/buildConfig.h
+	$(LDFLAGS)$(LDFLAGS)$(CC) -c -o $(CONFIG)/obj/ejsConfig.o $(CFLAGS) -D_REENTRANT -DCPU=i686 -DPIC -DPIC -I$(CONFIG)/inc -I$(CONFIG)/inc src/core/src/ejsConfig.c
 
-$(PLATFORM)/obj/ejsDate.o: \
+$(CONFIG)/obj/ejsDate.o: \
         src/core/src/ejsDate.c \
-        $(PLATFORM)/inc/buildConfig.h
-	$(CC) -c -o $(PLATFORM)/obj/ejsDate.o -Wall -fPIC $(LDFLAGS) -mcpu=i686 $(DFLAGS) -I$(PLATFORM)/inc src/core/src/ejsDate.c
+        $(CONFIG)/inc/buildConfig.h
+	$(LDFLAGS)$(LDFLAGS)$(CC) -c -o $(CONFIG)/obj/ejsDate.o $(CFLAGS) -D_REENTRANT -DCPU=i686 -DPIC -DPIC -I$(CONFIG)/inc -I$(CONFIG)/inc src/core/src/ejsDate.c
 
-$(PLATFORM)/obj/ejsDebug.o: \
+$(CONFIG)/obj/ejsDebug.o: \
         src/core/src/ejsDebug.c \
-        $(PLATFORM)/inc/buildConfig.h
-	$(CC) -c -o $(PLATFORM)/obj/ejsDebug.o -Wall -fPIC $(LDFLAGS) -mcpu=i686 $(DFLAGS) -I$(PLATFORM)/inc src/core/src/ejsDebug.c
+        $(CONFIG)/inc/buildConfig.h
+	$(LDFLAGS)$(LDFLAGS)$(CC) -c -o $(CONFIG)/obj/ejsDebug.o $(CFLAGS) -D_REENTRANT -DCPU=i686 -DPIC -DPIC -I$(CONFIG)/inc -I$(CONFIG)/inc src/core/src/ejsDebug.c
 
-$(PLATFORM)/obj/ejsError.o: \
+$(CONFIG)/obj/ejsError.o: \
         src/core/src/ejsError.c \
-        $(PLATFORM)/inc/buildConfig.h
-	$(CC) -c -o $(PLATFORM)/obj/ejsError.o -Wall -fPIC $(LDFLAGS) -mcpu=i686 $(DFLAGS) -I$(PLATFORM)/inc src/core/src/ejsError.c
+        $(CONFIG)/inc/buildConfig.h
+	$(LDFLAGS)$(LDFLAGS)$(CC) -c -o $(CONFIG)/obj/ejsError.o $(CFLAGS) -D_REENTRANT -DCPU=i686 -DPIC -DPIC -I$(CONFIG)/inc -I$(CONFIG)/inc src/core/src/ejsError.c
 
-$(PLATFORM)/obj/ejsFile.o: \
+$(CONFIG)/obj/ejsFile.o: \
         src/core/src/ejsFile.c \
-        $(PLATFORM)/inc/buildConfig.h
-	$(CC) -c -o $(PLATFORM)/obj/ejsFile.o -Wall -fPIC $(LDFLAGS) -mcpu=i686 $(DFLAGS) -I$(PLATFORM)/inc src/core/src/ejsFile.c
+        $(CONFIG)/inc/buildConfig.h
+	$(LDFLAGS)$(LDFLAGS)$(CC) -c -o $(CONFIG)/obj/ejsFile.o $(CFLAGS) -D_REENTRANT -DCPU=i686 -DPIC -DPIC -I$(CONFIG)/inc -I$(CONFIG)/inc src/core/src/ejsFile.c
 
-$(PLATFORM)/obj/ejsFileSystem.o: \
+$(CONFIG)/obj/ejsFileSystem.o: \
         src/core/src/ejsFileSystem.c \
-        $(PLATFORM)/inc/buildConfig.h
-	$(CC) -c -o $(PLATFORM)/obj/ejsFileSystem.o -Wall -fPIC $(LDFLAGS) -mcpu=i686 $(DFLAGS) -I$(PLATFORM)/inc src/core/src/ejsFileSystem.c
+        $(CONFIG)/inc/buildConfig.h
+	$(LDFLAGS)$(LDFLAGS)$(CC) -c -o $(CONFIG)/obj/ejsFileSystem.o $(CFLAGS) -D_REENTRANT -DCPU=i686 -DPIC -DPIC -I$(CONFIG)/inc -I$(CONFIG)/inc src/core/src/ejsFileSystem.c
 
-$(PLATFORM)/obj/ejsFrame.o: \
+$(CONFIG)/obj/ejsFrame.o: \
         src/core/src/ejsFrame.c \
-        $(PLATFORM)/inc/buildConfig.h
-	$(CC) -c -o $(PLATFORM)/obj/ejsFrame.o -Wall -fPIC $(LDFLAGS) -mcpu=i686 $(DFLAGS) -I$(PLATFORM)/inc src/core/src/ejsFrame.c
+        $(CONFIG)/inc/buildConfig.h
+	$(LDFLAGS)$(LDFLAGS)$(CC) -c -o $(CONFIG)/obj/ejsFrame.o $(CFLAGS) -D_REENTRANT -DCPU=i686 -DPIC -DPIC -I$(CONFIG)/inc -I$(CONFIG)/inc src/core/src/ejsFrame.c
 
-$(PLATFORM)/obj/ejsFunction.o: \
+$(CONFIG)/obj/ejsFunction.o: \
         src/core/src/ejsFunction.c \
-        $(PLATFORM)/inc/buildConfig.h
-	$(CC) -c -o $(PLATFORM)/obj/ejsFunction.o -Wall -fPIC $(LDFLAGS) -mcpu=i686 $(DFLAGS) -I$(PLATFORM)/inc src/core/src/ejsFunction.c
+        $(CONFIG)/inc/buildConfig.h
+	$(LDFLAGS)$(LDFLAGS)$(CC) -c -o $(CONFIG)/obj/ejsFunction.o $(CFLAGS) -D_REENTRANT -DCPU=i686 -DPIC -DPIC -I$(CONFIG)/inc -I$(CONFIG)/inc src/core/src/ejsFunction.c
 
-$(PLATFORM)/obj/ejsGC.o: \
+$(CONFIG)/obj/ejsGC.o: \
         src/core/src/ejsGC.c \
-        $(PLATFORM)/inc/buildConfig.h
-	$(CC) -c -o $(PLATFORM)/obj/ejsGC.o -Wall -fPIC $(LDFLAGS) -mcpu=i686 $(DFLAGS) -I$(PLATFORM)/inc src/core/src/ejsGC.c
+        $(CONFIG)/inc/buildConfig.h
+	$(LDFLAGS)$(LDFLAGS)$(CC) -c -o $(CONFIG)/obj/ejsGC.o $(CFLAGS) -D_REENTRANT -DCPU=i686 -DPIC -DPIC -I$(CONFIG)/inc -I$(CONFIG)/inc src/core/src/ejsGC.c
 
-$(PLATFORM)/obj/ejsGlobal.o: \
+$(CONFIG)/obj/ejsGlobal.o: \
         src/core/src/ejsGlobal.c \
-        $(PLATFORM)/inc/buildConfig.h
-	$(CC) -c -o $(PLATFORM)/obj/ejsGlobal.o -Wall -fPIC $(LDFLAGS) -mcpu=i686 $(DFLAGS) -I$(PLATFORM)/inc src/core/src/ejsGlobal.c
+        $(CONFIG)/inc/buildConfig.h
+	$(LDFLAGS)$(LDFLAGS)$(CC) -c -o $(CONFIG)/obj/ejsGlobal.o $(CFLAGS) -D_REENTRANT -DCPU=i686 -DPIC -DPIC -I$(CONFIG)/inc -I$(CONFIG)/inc src/core/src/ejsGlobal.c
 
-$(PLATFORM)/obj/ejsHttp.o: \
+$(CONFIG)/obj/ejsHttp.o: \
         src/core/src/ejsHttp.c \
-        $(PLATFORM)/inc/buildConfig.h
-	$(CC) -c -o $(PLATFORM)/obj/ejsHttp.o -Wall -fPIC $(LDFLAGS) -mcpu=i686 $(DFLAGS) -I$(PLATFORM)/inc src/core/src/ejsHttp.c
+        $(CONFIG)/inc/buildConfig.h
+	$(LDFLAGS)$(LDFLAGS)$(CC) -c -o $(CONFIG)/obj/ejsHttp.o $(CFLAGS) -D_REENTRANT -DCPU=i686 -DPIC -DPIC -I$(CONFIG)/inc -I$(CONFIG)/inc src/core/src/ejsHttp.c
 
-$(PLATFORM)/obj/ejsIterator.o: \
+$(CONFIG)/obj/ejsIterator.o: \
         src/core/src/ejsIterator.c \
-        $(PLATFORM)/inc/buildConfig.h
-	$(CC) -c -o $(PLATFORM)/obj/ejsIterator.o -Wall -fPIC $(LDFLAGS) -mcpu=i686 $(DFLAGS) -I$(PLATFORM)/inc src/core/src/ejsIterator.c
+        $(CONFIG)/inc/buildConfig.h
+	$(LDFLAGS)$(LDFLAGS)$(CC) -c -o $(CONFIG)/obj/ejsIterator.o $(CFLAGS) -D_REENTRANT -DCPU=i686 -DPIC -DPIC -I$(CONFIG)/inc -I$(CONFIG)/inc src/core/src/ejsIterator.c
 
-$(PLATFORM)/obj/ejsJSON.o: \
+$(CONFIG)/obj/ejsJSON.o: \
         src/core/src/ejsJSON.c \
-        $(PLATFORM)/inc/buildConfig.h
-	$(CC) -c -o $(PLATFORM)/obj/ejsJSON.o -Wall -fPIC $(LDFLAGS) -mcpu=i686 $(DFLAGS) -I$(PLATFORM)/inc src/core/src/ejsJSON.c
+        $(CONFIG)/inc/buildConfig.h
+	$(LDFLAGS)$(LDFLAGS)$(CC) -c -o $(CONFIG)/obj/ejsJSON.o $(CFLAGS) -D_REENTRANT -DCPU=i686 -DPIC -DPIC -I$(CONFIG)/inc -I$(CONFIG)/inc src/core/src/ejsJSON.c
 
-$(PLATFORM)/obj/ejsLocalCache.o: \
+$(CONFIG)/obj/ejsLocalCache.o: \
         src/core/src/ejsLocalCache.c \
-        $(PLATFORM)/inc/buildConfig.h
-	$(CC) -c -o $(PLATFORM)/obj/ejsLocalCache.o -Wall -fPIC $(LDFLAGS) -mcpu=i686 $(DFLAGS) -I$(PLATFORM)/inc src/core/src/ejsLocalCache.c
+        $(CONFIG)/inc/buildConfig.h
+	$(LDFLAGS)$(LDFLAGS)$(CC) -c -o $(CONFIG)/obj/ejsLocalCache.o $(CFLAGS) -D_REENTRANT -DCPU=i686 -DPIC -DPIC -I$(CONFIG)/inc -I$(CONFIG)/inc src/core/src/ejsLocalCache.c
 
-$(PLATFORM)/obj/ejsMath.o: \
+$(CONFIG)/obj/ejsMath.o: \
         src/core/src/ejsMath.c \
-        $(PLATFORM)/inc/buildConfig.h
-	$(CC) -c -o $(PLATFORM)/obj/ejsMath.o -Wall -fPIC $(LDFLAGS) -mcpu=i686 $(DFLAGS) -I$(PLATFORM)/inc src/core/src/ejsMath.c
+        $(CONFIG)/inc/buildConfig.h
+	$(LDFLAGS)$(LDFLAGS)$(CC) -c -o $(CONFIG)/obj/ejsMath.o $(CFLAGS) -D_REENTRANT -DCPU=i686 -DPIC -DPIC -I$(CONFIG)/inc -I$(CONFIG)/inc src/core/src/ejsMath.c
 
-$(PLATFORM)/obj/ejsMemory.o: \
+$(CONFIG)/obj/ejsMemory.o: \
         src/core/src/ejsMemory.c \
-        $(PLATFORM)/inc/buildConfig.h
-	$(CC) -c -o $(PLATFORM)/obj/ejsMemory.o -Wall -fPIC $(LDFLAGS) -mcpu=i686 $(DFLAGS) -I$(PLATFORM)/inc src/core/src/ejsMemory.c
+        $(CONFIG)/inc/buildConfig.h
+	$(LDFLAGS)$(LDFLAGS)$(CC) -c -o $(CONFIG)/obj/ejsMemory.o $(CFLAGS) -D_REENTRANT -DCPU=i686 -DPIC -DPIC -I$(CONFIG)/inc -I$(CONFIG)/inc src/core/src/ejsMemory.c
 
-$(PLATFORM)/obj/ejsMprLog.o: \
+$(CONFIG)/obj/ejsMprLog.o: \
         src/core/src/ejsMprLog.c \
-        $(PLATFORM)/inc/buildConfig.h
-	$(CC) -c -o $(PLATFORM)/obj/ejsMprLog.o -Wall -fPIC $(LDFLAGS) -mcpu=i686 $(DFLAGS) -I$(PLATFORM)/inc src/core/src/ejsMprLog.c
+        $(CONFIG)/inc/buildConfig.h
+	$(LDFLAGS)$(LDFLAGS)$(CC) -c -o $(CONFIG)/obj/ejsMprLog.o $(CFLAGS) -D_REENTRANT -DCPU=i686 -DPIC -DPIC -I$(CONFIG)/inc -I$(CONFIG)/inc src/core/src/ejsMprLog.c
 
-$(PLATFORM)/obj/ejsNamespace.o: \
+$(CONFIG)/obj/ejsNamespace.o: \
         src/core/src/ejsNamespace.c \
-        $(PLATFORM)/inc/buildConfig.h
-	$(CC) -c -o $(PLATFORM)/obj/ejsNamespace.o -Wall -fPIC $(LDFLAGS) -mcpu=i686 $(DFLAGS) -I$(PLATFORM)/inc src/core/src/ejsNamespace.c
+        $(CONFIG)/inc/buildConfig.h
+	$(LDFLAGS)$(LDFLAGS)$(CC) -c -o $(CONFIG)/obj/ejsNamespace.o $(CFLAGS) -D_REENTRANT -DCPU=i686 -DPIC -DPIC -I$(CONFIG)/inc -I$(CONFIG)/inc src/core/src/ejsNamespace.c
 
-$(PLATFORM)/obj/ejsNull.o: \
+$(CONFIG)/obj/ejsNull.o: \
         src/core/src/ejsNull.c \
-        $(PLATFORM)/inc/buildConfig.h
-	$(CC) -c -o $(PLATFORM)/obj/ejsNull.o -Wall -fPIC $(LDFLAGS) -mcpu=i686 $(DFLAGS) -I$(PLATFORM)/inc src/core/src/ejsNull.c
+        $(CONFIG)/inc/buildConfig.h
+	$(LDFLAGS)$(LDFLAGS)$(CC) -c -o $(CONFIG)/obj/ejsNull.o $(CFLAGS) -D_REENTRANT -DCPU=i686 -DPIC -DPIC -I$(CONFIG)/inc -I$(CONFIG)/inc src/core/src/ejsNull.c
 
-$(PLATFORM)/obj/ejsNumber.o: \
+$(CONFIG)/obj/ejsNumber.o: \
         src/core/src/ejsNumber.c \
-        $(PLATFORM)/inc/buildConfig.h
-	$(CC) -c -o $(PLATFORM)/obj/ejsNumber.o -Wall -fPIC $(LDFLAGS) -mcpu=i686 $(DFLAGS) -I$(PLATFORM)/inc src/core/src/ejsNumber.c
+        $(CONFIG)/inc/buildConfig.h
+	$(LDFLAGS)$(LDFLAGS)$(CC) -c -o $(CONFIG)/obj/ejsNumber.o $(CFLAGS) -D_REENTRANT -DCPU=i686 -DPIC -DPIC -I$(CONFIG)/inc -I$(CONFIG)/inc src/core/src/ejsNumber.c
 
-$(PLATFORM)/obj/ejsObject.o: \
+$(CONFIG)/obj/ejsObject.o: \
         src/core/src/ejsObject.c \
-        $(PLATFORM)/inc/buildConfig.h
-	$(CC) -c -o $(PLATFORM)/obj/ejsObject.o -Wall -fPIC $(LDFLAGS) -mcpu=i686 $(DFLAGS) -I$(PLATFORM)/inc src/core/src/ejsObject.c
+        $(CONFIG)/inc/buildConfig.h
+	$(LDFLAGS)$(LDFLAGS)$(CC) -c -o $(CONFIG)/obj/ejsObject.o $(CFLAGS) -D_REENTRANT -DCPU=i686 -DPIC -DPIC -I$(CONFIG)/inc -I$(CONFIG)/inc src/core/src/ejsObject.c
 
-$(PLATFORM)/obj/ejsPath.o: \
+$(CONFIG)/obj/ejsPath.o: \
         src/core/src/ejsPath.c \
-        $(PLATFORM)/inc/buildConfig.h
-	$(CC) -c -o $(PLATFORM)/obj/ejsPath.o -Wall -fPIC $(LDFLAGS) -mcpu=i686 $(DFLAGS) -I$(PLATFORM)/inc src/core/src/ejsPath.c
+        $(CONFIG)/inc/buildConfig.h
+	$(LDFLAGS)$(LDFLAGS)$(CC) -c -o $(CONFIG)/obj/ejsPath.o $(CFLAGS) -D_REENTRANT -DCPU=i686 -DPIC -DPIC -I$(CONFIG)/inc -I$(CONFIG)/inc src/core/src/ejsPath.c
 
-$(PLATFORM)/obj/ejsPot.o: \
+$(CONFIG)/obj/ejsPot.o: \
         src/core/src/ejsPot.c \
-        $(PLATFORM)/inc/buildConfig.h
-	$(CC) -c -o $(PLATFORM)/obj/ejsPot.o -Wall -fPIC $(LDFLAGS) -mcpu=i686 $(DFLAGS) -I$(PLATFORM)/inc src/core/src/ejsPot.c
+        $(CONFIG)/inc/buildConfig.h
+	$(LDFLAGS)$(LDFLAGS)$(CC) -c -o $(CONFIG)/obj/ejsPot.o $(CFLAGS) -D_REENTRANT -DCPU=i686 -DPIC -DPIC -I$(CONFIG)/inc -I$(CONFIG)/inc src/core/src/ejsPot.c
 
-$(PLATFORM)/obj/ejsRegExp.o: \
+$(CONFIG)/obj/ejsRegExp.o: \
         src/core/src/ejsRegExp.c \
-        $(PLATFORM)/inc/buildConfig.h
-	$(CC) -c -o $(PLATFORM)/obj/ejsRegExp.o -Wall -fPIC $(LDFLAGS) -mcpu=i686 $(DFLAGS) -I$(PLATFORM)/inc src/core/src/ejsRegExp.c
+        $(CONFIG)/inc/buildConfig.h
+	$(LDFLAGS)$(LDFLAGS)$(CC) -c -o $(CONFIG)/obj/ejsRegExp.o $(CFLAGS) -D_REENTRANT -DCPU=i686 -DPIC -DPIC -I$(CONFIG)/inc -I$(CONFIG)/inc src/core/src/ejsRegExp.c
 
-$(PLATFORM)/obj/ejsSocket.o: \
+$(CONFIG)/obj/ejsSocket.o: \
         src/core/src/ejsSocket.c \
-        $(PLATFORM)/inc/buildConfig.h
-	$(CC) -c -o $(PLATFORM)/obj/ejsSocket.o -Wall -fPIC $(LDFLAGS) -mcpu=i686 $(DFLAGS) -I$(PLATFORM)/inc src/core/src/ejsSocket.c
+        $(CONFIG)/inc/buildConfig.h
+	$(LDFLAGS)$(LDFLAGS)$(CC) -c -o $(CONFIG)/obj/ejsSocket.o $(CFLAGS) -D_REENTRANT -DCPU=i686 -DPIC -DPIC -I$(CONFIG)/inc -I$(CONFIG)/inc src/core/src/ejsSocket.c
 
-$(PLATFORM)/obj/ejsString.o: \
+$(CONFIG)/obj/ejsString.o: \
         src/core/src/ejsString.c \
-        $(PLATFORM)/inc/buildConfig.h
-	$(CC) -c -o $(PLATFORM)/obj/ejsString.o -Wall -fPIC $(LDFLAGS) -mcpu=i686 $(DFLAGS) -I$(PLATFORM)/inc src/core/src/ejsString.c
+        $(CONFIG)/inc/buildConfig.h
+	$(LDFLAGS)$(LDFLAGS)$(CC) -c -o $(CONFIG)/obj/ejsString.o $(CFLAGS) -D_REENTRANT -DCPU=i686 -DPIC -DPIC -I$(CONFIG)/inc -I$(CONFIG)/inc src/core/src/ejsString.c
 
-$(PLATFORM)/obj/ejsSystem.o: \
+$(CONFIG)/obj/ejsSystem.o: \
         src/core/src/ejsSystem.c \
-        $(PLATFORM)/inc/buildConfig.h
-	$(CC) -c -o $(PLATFORM)/obj/ejsSystem.o -Wall -fPIC $(LDFLAGS) -mcpu=i686 $(DFLAGS) -I$(PLATFORM)/inc src/core/src/ejsSystem.c
+        $(CONFIG)/inc/buildConfig.h
+	$(LDFLAGS)$(LDFLAGS)$(CC) -c -o $(CONFIG)/obj/ejsSystem.o $(CFLAGS) -D_REENTRANT -DCPU=i686 -DPIC -DPIC -I$(CONFIG)/inc -I$(CONFIG)/inc src/core/src/ejsSystem.c
 
-$(PLATFORM)/obj/ejsTimer.o: \
+$(CONFIG)/obj/ejsTimer.o: \
         src/core/src/ejsTimer.c \
-        $(PLATFORM)/inc/buildConfig.h
-	$(CC) -c -o $(PLATFORM)/obj/ejsTimer.o -Wall -fPIC $(LDFLAGS) -mcpu=i686 $(DFLAGS) -I$(PLATFORM)/inc src/core/src/ejsTimer.c
+        $(CONFIG)/inc/buildConfig.h
+	$(LDFLAGS)$(LDFLAGS)$(CC) -c -o $(CONFIG)/obj/ejsTimer.o $(CFLAGS) -D_REENTRANT -DCPU=i686 -DPIC -DPIC -I$(CONFIG)/inc -I$(CONFIG)/inc src/core/src/ejsTimer.c
 
-$(PLATFORM)/obj/ejsType.o: \
+$(CONFIG)/obj/ejsType.o: \
         src/core/src/ejsType.c \
-        $(PLATFORM)/inc/buildConfig.h
-	$(CC) -c -o $(PLATFORM)/obj/ejsType.o -Wall -fPIC $(LDFLAGS) -mcpu=i686 $(DFLAGS) -I$(PLATFORM)/inc src/core/src/ejsType.c
+        $(CONFIG)/inc/buildConfig.h
+	$(LDFLAGS)$(LDFLAGS)$(CC) -c -o $(CONFIG)/obj/ejsType.o $(CFLAGS) -D_REENTRANT -DCPU=i686 -DPIC -DPIC -I$(CONFIG)/inc -I$(CONFIG)/inc src/core/src/ejsType.c
 
-$(PLATFORM)/obj/ejsUri.o: \
+$(CONFIG)/obj/ejsUri.o: \
         src/core/src/ejsUri.c \
-        $(PLATFORM)/inc/buildConfig.h
-	$(CC) -c -o $(PLATFORM)/obj/ejsUri.o -Wall -fPIC $(LDFLAGS) -mcpu=i686 $(DFLAGS) -I$(PLATFORM)/inc src/core/src/ejsUri.c
+        $(CONFIG)/inc/buildConfig.h
+	$(LDFLAGS)$(LDFLAGS)$(CC) -c -o $(CONFIG)/obj/ejsUri.o $(CFLAGS) -D_REENTRANT -DCPU=i686 -DPIC -DPIC -I$(CONFIG)/inc -I$(CONFIG)/inc src/core/src/ejsUri.c
 
-$(PLATFORM)/obj/ejsVoid.o: \
+$(CONFIG)/obj/ejsVoid.o: \
         src/core/src/ejsVoid.c \
-        $(PLATFORM)/inc/buildConfig.h
-	$(CC) -c -o $(PLATFORM)/obj/ejsVoid.o -Wall -fPIC $(LDFLAGS) -mcpu=i686 $(DFLAGS) -I$(PLATFORM)/inc src/core/src/ejsVoid.c
+        $(CONFIG)/inc/buildConfig.h
+	$(LDFLAGS)$(LDFLAGS)$(CC) -c -o $(CONFIG)/obj/ejsVoid.o $(CFLAGS) -D_REENTRANT -DCPU=i686 -DPIC -DPIC -I$(CONFIG)/inc -I$(CONFIG)/inc src/core/src/ejsVoid.c
 
-$(PLATFORM)/obj/ejsWorker.o: \
+$(CONFIG)/obj/ejsWorker.o: \
         src/core/src/ejsWorker.c \
-        $(PLATFORM)/inc/buildConfig.h
-	$(CC) -c -o $(PLATFORM)/obj/ejsWorker.o -Wall -fPIC $(LDFLAGS) -mcpu=i686 $(DFLAGS) -I$(PLATFORM)/inc src/core/src/ejsWorker.c
+        $(CONFIG)/inc/buildConfig.h
+	$(LDFLAGS)$(LDFLAGS)$(CC) -c -o $(CONFIG)/obj/ejsWorker.o $(CFLAGS) -D_REENTRANT -DCPU=i686 -DPIC -DPIC -I$(CONFIG)/inc -I$(CONFIG)/inc src/core/src/ejsWorker.c
 
-$(PLATFORM)/obj/ejsXML.o: \
+$(CONFIG)/obj/ejsXML.o: \
         src/core/src/ejsXML.c \
-        $(PLATFORM)/inc/buildConfig.h
-	$(CC) -c -o $(PLATFORM)/obj/ejsXML.o -Wall -fPIC $(LDFLAGS) -mcpu=i686 $(DFLAGS) -I$(PLATFORM)/inc src/core/src/ejsXML.c
+        $(CONFIG)/inc/buildConfig.h
+	$(LDFLAGS)$(LDFLAGS)$(CC) -c -o $(CONFIG)/obj/ejsXML.o $(CFLAGS) -D_REENTRANT -DCPU=i686 -DPIC -DPIC -I$(CONFIG)/inc -I$(CONFIG)/inc src/core/src/ejsXML.c
 
-$(PLATFORM)/obj/ejsXMLList.o: \
+$(CONFIG)/obj/ejsXMLList.o: \
         src/core/src/ejsXMLList.c \
-        $(PLATFORM)/inc/buildConfig.h
-	$(CC) -c -o $(PLATFORM)/obj/ejsXMLList.o -Wall -fPIC $(LDFLAGS) -mcpu=i686 $(DFLAGS) -I$(PLATFORM)/inc src/core/src/ejsXMLList.c
+        $(CONFIG)/inc/buildConfig.h
+	$(LDFLAGS)$(LDFLAGS)$(CC) -c -o $(CONFIG)/obj/ejsXMLList.o $(CFLAGS) -D_REENTRANT -DCPU=i686 -DPIC -DPIC -I$(CONFIG)/inc -I$(CONFIG)/inc src/core/src/ejsXMLList.c
 
-$(PLATFORM)/obj/ejsXMLLoader.o: \
+$(CONFIG)/obj/ejsXMLLoader.o: \
         src/core/src/ejsXMLLoader.c \
-        $(PLATFORM)/inc/buildConfig.h
-	$(CC) -c -o $(PLATFORM)/obj/ejsXMLLoader.o -Wall -fPIC $(LDFLAGS) -mcpu=i686 $(DFLAGS) -I$(PLATFORM)/inc src/core/src/ejsXMLLoader.c
+        $(CONFIG)/inc/buildConfig.h
+	$(LDFLAGS)$(LDFLAGS)$(CC) -c -o $(CONFIG)/obj/ejsXMLLoader.o $(CFLAGS) -D_REENTRANT -DCPU=i686 -DPIC -DPIC -I$(CONFIG)/inc -I$(CONFIG)/inc src/core/src/ejsXMLLoader.c
 
-$(PLATFORM)/obj/ejsByteCode.o: \
+$(CONFIG)/obj/ejsByteCode.o: \
         src/vm/ejsByteCode.c \
-        $(PLATFORM)/inc/buildConfig.h
-	$(CC) -c -o $(PLATFORM)/obj/ejsByteCode.o -Wall -fPIC $(LDFLAGS) -mcpu=i686 $(DFLAGS) -I$(PLATFORM)/inc src/vm/ejsByteCode.c
+        $(CONFIG)/inc/buildConfig.h
+	$(LDFLAGS)$(LDFLAGS)$(CC) -c -o $(CONFIG)/obj/ejsByteCode.o $(CFLAGS) -D_REENTRANT -DCPU=i686 -DPIC -DPIC -I$(CONFIG)/inc -I$(CONFIG)/inc src/vm/ejsByteCode.c
 
-$(PLATFORM)/obj/ejsException.o: \
+$(CONFIG)/obj/ejsException.o: \
         src/vm/ejsException.c \
-        $(PLATFORM)/inc/buildConfig.h
-	$(CC) -c -o $(PLATFORM)/obj/ejsException.o -Wall -fPIC $(LDFLAGS) -mcpu=i686 $(DFLAGS) -I$(PLATFORM)/inc src/vm/ejsException.c
+        $(CONFIG)/inc/buildConfig.h
+	$(LDFLAGS)$(LDFLAGS)$(CC) -c -o $(CONFIG)/obj/ejsException.o $(CFLAGS) -D_REENTRANT -DCPU=i686 -DPIC -DPIC -I$(CONFIG)/inc -I$(CONFIG)/inc src/vm/ejsException.c
 
-$(PLATFORM)/obj/ejsHelper.o: \
+$(CONFIG)/obj/ejsHelper.o: \
         src/vm/ejsHelper.c \
-        $(PLATFORM)/inc/buildConfig.h
-	$(CC) -c -o $(PLATFORM)/obj/ejsHelper.o -Wall -fPIC $(LDFLAGS) -mcpu=i686 $(DFLAGS) -I$(PLATFORM)/inc src/vm/ejsHelper.c
+        $(CONFIG)/inc/buildConfig.h
+	$(LDFLAGS)$(LDFLAGS)$(CC) -c -o $(CONFIG)/obj/ejsHelper.o $(CFLAGS) -D_REENTRANT -DCPU=i686 -DPIC -DPIC -I$(CONFIG)/inc -I$(CONFIG)/inc src/vm/ejsHelper.c
 
-$(PLATFORM)/obj/ejsInterp.o: \
+$(CONFIG)/obj/ejsInterp.o: \
         src/vm/ejsInterp.c \
-        $(PLATFORM)/inc/buildConfig.h
-	$(CC) -c -o $(PLATFORM)/obj/ejsInterp.o -Wall -fPIC $(LDFLAGS) -mcpu=i686 $(DFLAGS) -I$(PLATFORM)/inc src/vm/ejsInterp.c
+        $(CONFIG)/inc/buildConfig.h
+	$(LDFLAGS)$(LDFLAGS)$(CC) -c -o $(CONFIG)/obj/ejsInterp.o $(CFLAGS) -D_REENTRANT -DCPU=i686 -DPIC -DPIC -I$(CONFIG)/inc -I$(CONFIG)/inc src/vm/ejsInterp.c
 
-$(PLATFORM)/obj/ejsLoader.o: \
+$(CONFIG)/obj/ejsLoader.o: \
         src/vm/ejsLoader.c \
-        $(PLATFORM)/inc/buildConfig.h
-	$(CC) -c -o $(PLATFORM)/obj/ejsLoader.o -Wall -fPIC $(LDFLAGS) -mcpu=i686 $(DFLAGS) -I$(PLATFORM)/inc src/vm/ejsLoader.c
+        $(CONFIG)/inc/buildConfig.h
+	$(LDFLAGS)$(LDFLAGS)$(CC) -c -o $(CONFIG)/obj/ejsLoader.o $(CFLAGS) -D_REENTRANT -DCPU=i686 -DPIC -DPIC -I$(CONFIG)/inc -I$(CONFIG)/inc src/vm/ejsLoader.c
 
-$(PLATFORM)/obj/ejsModule.o: \
+$(CONFIG)/obj/ejsModule.o: \
         src/vm/ejsModule.c \
-        $(PLATFORM)/inc/buildConfig.h
-	$(CC) -c -o $(PLATFORM)/obj/ejsModule.o -Wall -fPIC $(LDFLAGS) -mcpu=i686 $(DFLAGS) -I$(PLATFORM)/inc src/vm/ejsModule.c
+        $(CONFIG)/inc/buildConfig.h
+	$(LDFLAGS)$(LDFLAGS)$(CC) -c -o $(CONFIG)/obj/ejsModule.o $(CFLAGS) -D_REENTRANT -DCPU=i686 -DPIC -DPIC -I$(CONFIG)/inc -I$(CONFIG)/inc src/vm/ejsModule.c
 
-$(PLATFORM)/obj/ejsScope.o: \
+$(CONFIG)/obj/ejsScope.o: \
         src/vm/ejsScope.c \
-        $(PLATFORM)/inc/buildConfig.h
-	$(CC) -c -o $(PLATFORM)/obj/ejsScope.o -Wall -fPIC $(LDFLAGS) -mcpu=i686 $(DFLAGS) -I$(PLATFORM)/inc src/vm/ejsScope.c
+        $(CONFIG)/inc/buildConfig.h
+	$(LDFLAGS)$(LDFLAGS)$(CC) -c -o $(CONFIG)/obj/ejsScope.o $(CFLAGS) -D_REENTRANT -DCPU=i686 -DPIC -DPIC -I$(CONFIG)/inc -I$(CONFIG)/inc src/vm/ejsScope.c
 
-$(PLATFORM)/obj/ejsService.o: \
+$(CONFIG)/obj/ejsService.o: \
         src/vm/ejsService.c \
-        $(PLATFORM)/inc/buildConfig.h
-	$(CC) -c -o $(PLATFORM)/obj/ejsService.o -Wall -fPIC $(LDFLAGS) -mcpu=i686 $(DFLAGS) -I$(PLATFORM)/inc src/vm/ejsService.c
+        $(CONFIG)/inc/buildConfig.h
+	$(LDFLAGS)$(LDFLAGS)$(CC) -c -o $(CONFIG)/obj/ejsService.o $(CFLAGS) -D_REENTRANT -DCPU=i686 -DPIC -DPIC -I$(CONFIG)/inc -I$(CONFIG)/inc src/vm/ejsService.c
 
-$(PLATFORM)/lib/libejs.so:  \
-        $(PLATFORM)/lib/libmpr.so \
-        $(PLATFORM)/lib/libpcre.so \
-        $(PLATFORM)/lib/libhttp.so \
-        $(PLATFORM)/inc/ejs.cache.local.slots.h \
-        $(PLATFORM)/inc/ejs.db.sqlite.slots.h \
-        $(PLATFORM)/inc/ejs.slots.h \
-        $(PLATFORM)/inc/ejs.web.slots.h \
-        $(PLATFORM)/inc/ejs.zlib.slots.h \
-        $(PLATFORM)/inc/ejs.h \
-        $(PLATFORM)/inc/ejsByteCode.h \
-        $(PLATFORM)/inc/ejsByteCodeTable.h \
-        $(PLATFORM)/inc/ejsCompiler.h \
-        $(PLATFORM)/inc/ejsCustomize.h \
-        $(PLATFORM)/obj/ecAst.o \
-        $(PLATFORM)/obj/ecCodeGen.o \
-        $(PLATFORM)/obj/ecCompiler.o \
-        $(PLATFORM)/obj/ecLex.o \
-        $(PLATFORM)/obj/ecModuleWrite.o \
-        $(PLATFORM)/obj/ecParser.o \
-        $(PLATFORM)/obj/ecState.o \
-        $(PLATFORM)/obj/ejsApp.o \
-        $(PLATFORM)/obj/ejsArray.o \
-        $(PLATFORM)/obj/ejsBlock.o \
-        $(PLATFORM)/obj/ejsBoolean.o \
-        $(PLATFORM)/obj/ejsByteArray.o \
-        $(PLATFORM)/obj/ejsCache.o \
-        $(PLATFORM)/obj/ejsCmd.o \
-        $(PLATFORM)/obj/ejsConfig.o \
-        $(PLATFORM)/obj/ejsDate.o \
-        $(PLATFORM)/obj/ejsDebug.o \
-        $(PLATFORM)/obj/ejsError.o \
-        $(PLATFORM)/obj/ejsFile.o \
-        $(PLATFORM)/obj/ejsFileSystem.o \
-        $(PLATFORM)/obj/ejsFrame.o \
-        $(PLATFORM)/obj/ejsFunction.o \
-        $(PLATFORM)/obj/ejsGC.o \
-        $(PLATFORM)/obj/ejsGlobal.o \
-        $(PLATFORM)/obj/ejsHttp.o \
-        $(PLATFORM)/obj/ejsIterator.o \
-        $(PLATFORM)/obj/ejsJSON.o \
-        $(PLATFORM)/obj/ejsLocalCache.o \
-        $(PLATFORM)/obj/ejsMath.o \
-        $(PLATFORM)/obj/ejsMemory.o \
-        $(PLATFORM)/obj/ejsMprLog.o \
-        $(PLATFORM)/obj/ejsNamespace.o \
-        $(PLATFORM)/obj/ejsNull.o \
-        $(PLATFORM)/obj/ejsNumber.o \
-        $(PLATFORM)/obj/ejsObject.o \
-        $(PLATFORM)/obj/ejsPath.o \
-        $(PLATFORM)/obj/ejsPot.o \
-        $(PLATFORM)/obj/ejsRegExp.o \
-        $(PLATFORM)/obj/ejsSocket.o \
-        $(PLATFORM)/obj/ejsString.o \
-        $(PLATFORM)/obj/ejsSystem.o \
-        $(PLATFORM)/obj/ejsTimer.o \
-        $(PLATFORM)/obj/ejsType.o \
-        $(PLATFORM)/obj/ejsUri.o \
-        $(PLATFORM)/obj/ejsVoid.o \
-        $(PLATFORM)/obj/ejsWorker.o \
-        $(PLATFORM)/obj/ejsXML.o \
-        $(PLATFORM)/obj/ejsXMLList.o \
-        $(PLATFORM)/obj/ejsXMLLoader.o \
-        $(PLATFORM)/obj/ejsByteCode.o \
-        $(PLATFORM)/obj/ejsException.o \
-        $(PLATFORM)/obj/ejsHelper.o \
-        $(PLATFORM)/obj/ejsInterp.o \
-        $(PLATFORM)/obj/ejsLoader.o \
-        $(PLATFORM)/obj/ejsModule.o \
-        $(PLATFORM)/obj/ejsScope.o \
-        $(PLATFORM)/obj/ejsService.o
-	$(CC) -shared -o $(PLATFORM)/lib/libejs.so $(LDFLAGS) $(LIBPATHS) $(PLATFORM)/obj/ecAst.o $(PLATFORM)/obj/ecCodeGen.o $(PLATFORM)/obj/ecCompiler.o $(PLATFORM)/obj/ecLex.o $(PLATFORM)/obj/ecModuleWrite.o $(PLATFORM)/obj/ecParser.o $(PLATFORM)/obj/ecState.o $(PLATFORM)/obj/ejsApp.o $(PLATFORM)/obj/ejsArray.o $(PLATFORM)/obj/ejsBlock.o $(PLATFORM)/obj/ejsBoolean.o $(PLATFORM)/obj/ejsByteArray.o $(PLATFORM)/obj/ejsCache.o $(PLATFORM)/obj/ejsCmd.o $(PLATFORM)/obj/ejsConfig.o $(PLATFORM)/obj/ejsDate.o $(PLATFORM)/obj/ejsDebug.o $(PLATFORM)/obj/ejsError.o $(PLATFORM)/obj/ejsFile.o $(PLATFORM)/obj/ejsFileSystem.o $(PLATFORM)/obj/ejsFrame.o $(PLATFORM)/obj/ejsFunction.o $(PLATFORM)/obj/ejsGC.o $(PLATFORM)/obj/ejsGlobal.o $(PLATFORM)/obj/ejsHttp.o $(PLATFORM)/obj/ejsIterator.o $(PLATFORM)/obj/ejsJSON.o $(PLATFORM)/obj/ejsLocalCache.o $(PLATFORM)/obj/ejsMath.o $(PLATFORM)/obj/ejsMemory.o $(PLATFORM)/obj/ejsMprLog.o $(PLATFORM)/obj/ejsNamespace.o $(PLATFORM)/obj/ejsNull.o $(PLATFORM)/obj/ejsNumber.o $(PLATFORM)/obj/ejsObject.o $(PLATFORM)/obj/ejsPath.o $(PLATFORM)/obj/ejsPot.o $(PLATFORM)/obj/ejsRegExp.o $(PLATFORM)/obj/ejsSocket.o $(PLATFORM)/obj/ejsString.o $(PLATFORM)/obj/ejsSystem.o $(PLATFORM)/obj/ejsTimer.o $(PLATFORM)/obj/ejsType.o $(PLATFORM)/obj/ejsUri.o $(PLATFORM)/obj/ejsVoid.o $(PLATFORM)/obj/ejsWorker.o $(PLATFORM)/obj/ejsXML.o $(PLATFORM)/obj/ejsXMLList.o $(PLATFORM)/obj/ejsXMLLoader.o $(PLATFORM)/obj/ejsByteCode.o $(PLATFORM)/obj/ejsException.o $(PLATFORM)/obj/ejsHelper.o $(PLATFORM)/obj/ejsInterp.o $(PLATFORM)/obj/ejsLoader.o $(PLATFORM)/obj/ejsModule.o $(PLATFORM)/obj/ejsScope.o $(PLATFORM)/obj/ejsService.o $(LIBS) -lmpr -lpcre -lhttp
+$(CONFIG)/lib/libejs.so:  \
+        $(CONFIG)/lib/libmpr.so \
+        $(CONFIG)/lib/libpcre.so \
+        $(CONFIG)/lib/libhttp.so \
+        $(CONFIG)/inc/ejs.cache.local.slots.h \
+        $(CONFIG)/inc/ejs.db.sqlite.slots.h \
+        $(CONFIG)/inc/ejs.slots.h \
+        $(CONFIG)/inc/ejs.web.slots.h \
+        $(CONFIG)/inc/ejs.zlib.slots.h \
+        $(CONFIG)/inc/ejs.h \
+        $(CONFIG)/inc/ejsByteCode.h \
+        $(CONFIG)/inc/ejsByteCodeTable.h \
+        $(CONFIG)/inc/ejsCompiler.h \
+        $(CONFIG)/inc/ejsCustomize.h \
+        $(CONFIG)/obj/ecAst.o \
+        $(CONFIG)/obj/ecCodeGen.o \
+        $(CONFIG)/obj/ecCompiler.o \
+        $(CONFIG)/obj/ecLex.o \
+        $(CONFIG)/obj/ecModuleWrite.o \
+        $(CONFIG)/obj/ecParser.o \
+        $(CONFIG)/obj/ecState.o \
+        $(CONFIG)/obj/ejsApp.o \
+        $(CONFIG)/obj/ejsArray.o \
+        $(CONFIG)/obj/ejsBlock.o \
+        $(CONFIG)/obj/ejsBoolean.o \
+        $(CONFIG)/obj/ejsByteArray.o \
+        $(CONFIG)/obj/ejsCache.o \
+        $(CONFIG)/obj/ejsCmd.o \
+        $(CONFIG)/obj/ejsConfig.o \
+        $(CONFIG)/obj/ejsDate.o \
+        $(CONFIG)/obj/ejsDebug.o \
+        $(CONFIG)/obj/ejsError.o \
+        $(CONFIG)/obj/ejsFile.o \
+        $(CONFIG)/obj/ejsFileSystem.o \
+        $(CONFIG)/obj/ejsFrame.o \
+        $(CONFIG)/obj/ejsFunction.o \
+        $(CONFIG)/obj/ejsGC.o \
+        $(CONFIG)/obj/ejsGlobal.o \
+        $(CONFIG)/obj/ejsHttp.o \
+        $(CONFIG)/obj/ejsIterator.o \
+        $(CONFIG)/obj/ejsJSON.o \
+        $(CONFIG)/obj/ejsLocalCache.o \
+        $(CONFIG)/obj/ejsMath.o \
+        $(CONFIG)/obj/ejsMemory.o \
+        $(CONFIG)/obj/ejsMprLog.o \
+        $(CONFIG)/obj/ejsNamespace.o \
+        $(CONFIG)/obj/ejsNull.o \
+        $(CONFIG)/obj/ejsNumber.o \
+        $(CONFIG)/obj/ejsObject.o \
+        $(CONFIG)/obj/ejsPath.o \
+        $(CONFIG)/obj/ejsPot.o \
+        $(CONFIG)/obj/ejsRegExp.o \
+        $(CONFIG)/obj/ejsSocket.o \
+        $(CONFIG)/obj/ejsString.o \
+        $(CONFIG)/obj/ejsSystem.o \
+        $(CONFIG)/obj/ejsTimer.o \
+        $(CONFIG)/obj/ejsType.o \
+        $(CONFIG)/obj/ejsUri.o \
+        $(CONFIG)/obj/ejsVoid.o \
+        $(CONFIG)/obj/ejsWorker.o \
+        $(CONFIG)/obj/ejsXML.o \
+        $(CONFIG)/obj/ejsXMLList.o \
+        $(CONFIG)/obj/ejsXMLLoader.o \
+        $(CONFIG)/obj/ejsByteCode.o \
+        $(CONFIG)/obj/ejsException.o \
+        $(CONFIG)/obj/ejsHelper.o \
+        $(CONFIG)/obj/ejsInterp.o \
+        $(CONFIG)/obj/ejsLoader.o \
+        $(CONFIG)/obj/ejsModule.o \
+        $(CONFIG)/obj/ejsScope.o \
+        $(CONFIG)/obj/ejsService.o
+	$(LDFLAGS)$(LDFLAGS)$(CC) -shared -o $(CONFIG)/lib/libejs.so $(LIBPATHS) $(CONFIG)/obj/ecAst.o $(CONFIG)/obj/ecCodeGen.o $(CONFIG)/obj/ecCompiler.o $(CONFIG)/obj/ecLex.o $(CONFIG)/obj/ecModuleWrite.o $(CONFIG)/obj/ecParser.o $(CONFIG)/obj/ecState.o $(CONFIG)/obj/ejsApp.o $(CONFIG)/obj/ejsArray.o $(CONFIG)/obj/ejsBlock.o $(CONFIG)/obj/ejsBoolean.o $(CONFIG)/obj/ejsByteArray.o $(CONFIG)/obj/ejsCache.o $(CONFIG)/obj/ejsCmd.o $(CONFIG)/obj/ejsConfig.o $(CONFIG)/obj/ejsDate.o $(CONFIG)/obj/ejsDebug.o $(CONFIG)/obj/ejsError.o $(CONFIG)/obj/ejsFile.o $(CONFIG)/obj/ejsFileSystem.o $(CONFIG)/obj/ejsFrame.o $(CONFIG)/obj/ejsFunction.o $(CONFIG)/obj/ejsGC.o $(CONFIG)/obj/ejsGlobal.o $(CONFIG)/obj/ejsHttp.o $(CONFIG)/obj/ejsIterator.o $(CONFIG)/obj/ejsJSON.o $(CONFIG)/obj/ejsLocalCache.o $(CONFIG)/obj/ejsMath.o $(CONFIG)/obj/ejsMemory.o $(CONFIG)/obj/ejsMprLog.o $(CONFIG)/obj/ejsNamespace.o $(CONFIG)/obj/ejsNull.o $(CONFIG)/obj/ejsNumber.o $(CONFIG)/obj/ejsObject.o $(CONFIG)/obj/ejsPath.o $(CONFIG)/obj/ejsPot.o $(CONFIG)/obj/ejsRegExp.o $(CONFIG)/obj/ejsSocket.o $(CONFIG)/obj/ejsString.o $(CONFIG)/obj/ejsSystem.o $(CONFIG)/obj/ejsTimer.o $(CONFIG)/obj/ejsType.o $(CONFIG)/obj/ejsUri.o $(CONFIG)/obj/ejsVoid.o $(CONFIG)/obj/ejsWorker.o $(CONFIG)/obj/ejsXML.o $(CONFIG)/obj/ejsXMLList.o $(CONFIG)/obj/ejsXMLLoader.o $(CONFIG)/obj/ejsByteCode.o $(CONFIG)/obj/ejsException.o $(CONFIG)/obj/ejsHelper.o $(CONFIG)/obj/ejsInterp.o $(CONFIG)/obj/ejsLoader.o $(CONFIG)/obj/ejsModule.o $(CONFIG)/obj/ejsScope.o $(CONFIG)/obj/ejsService.o $(LIBS) -lmpr -lpcre -lhttp
 
-$(PLATFORM)/obj/ejs.o: \
+$(CONFIG)/obj/ejs.o: \
         src/cmd/ejs.c \
-        $(PLATFORM)/inc/buildConfig.h
-	$(CC) -c -o $(PLATFORM)/obj/ejs.o -Wall -fPIC $(LDFLAGS) -mcpu=i686 $(DFLAGS) -I$(PLATFORM)/inc src/cmd/ejs.c
+        $(CONFIG)/inc/buildConfig.h
+	$(LDFLAGS)$(LDFLAGS)$(CC) -c -o $(CONFIG)/obj/ejs.o $(CFLAGS) -D_REENTRANT -DCPU=i686 -DPIC -DPIC -I$(CONFIG)/inc -I$(CONFIG)/inc src/cmd/ejs.c
 
-$(PLATFORM)/bin/ejs:  \
-        $(PLATFORM)/lib/libejs.so \
-        $(PLATFORM)/obj/ejs.o
-	$(CC) -o $(PLATFORM)/bin/ejs $(LDFLAGS) $(LIBPATHS) $(PLATFORM)/obj/ejs.o $(LIBS) -lejs -lmpr -lpcre -lhttp $(LDFLAGS)
+$(CONFIG)/bin/ejs:  \
+        $(CONFIG)/lib/libejs.so \
+        $(CONFIG)/obj/ejs.o
+	$(LDFLAGS)$(LDFLAGS)$(CC) -o $(CONFIG)/bin/ejs $(LIBPATHS) $(CONFIG)/obj/ejs.o $(LIBS) -lejs -lmpr -lpcre -lhttp 
 
-$(PLATFORM)/obj/ejsc.o: \
+$(CONFIG)/obj/ejsc.o: \
         src/cmd/ejsc.c \
-        $(PLATFORM)/inc/buildConfig.h
-	$(CC) -c -o $(PLATFORM)/obj/ejsc.o -Wall -fPIC $(LDFLAGS) -mcpu=i686 $(DFLAGS) -I$(PLATFORM)/inc src/cmd/ejsc.c
+        $(CONFIG)/inc/buildConfig.h
+	$(LDFLAGS)$(LDFLAGS)$(CC) -c -o $(CONFIG)/obj/ejsc.o $(CFLAGS) -D_REENTRANT -DCPU=i686 -DPIC -DPIC -I$(CONFIG)/inc -I$(CONFIG)/inc src/cmd/ejsc.c
 
-$(PLATFORM)/bin/ejsc:  \
-        $(PLATFORM)/lib/libejs.so \
-        $(PLATFORM)/obj/ejsc.o
-	$(CC) -o $(PLATFORM)/bin/ejsc $(LDFLAGS) $(LIBPATHS) $(PLATFORM)/obj/ejsc.o $(LIBS) -lejs -lmpr -lpcre -lhttp $(LDFLAGS)
+$(CONFIG)/bin/ejsc:  \
+        $(CONFIG)/lib/libejs.so \
+        $(CONFIG)/obj/ejsc.o
+	$(LDFLAGS)$(LDFLAGS)$(CC) -o $(CONFIG)/bin/ejsc $(LIBPATHS) $(CONFIG)/obj/ejsc.o $(LIBS) -lejs -lmpr -lpcre -lhttp 
 
-$(PLATFORM)/obj/ejsmod.o: \
+$(CONFIG)/obj/ejsmod.o: \
         src/cmd/ejsmod.c \
-        $(PLATFORM)/inc/buildConfig.h \
+        $(CONFIG)/inc/buildConfig.h \
         src/cmd/ejsmod.h
-	$(CC) -c -o $(PLATFORM)/obj/ejsmod.o -Wall -fPIC $(LDFLAGS) -mcpu=i686 $(DFLAGS) -I$(PLATFORM)/inc -Isrc/cmd src/cmd/ejsmod.c
+	$(LDFLAGS)$(LDFLAGS)$(CC) -c -o $(CONFIG)/obj/ejsmod.o $(CFLAGS) -D_REENTRANT -DCPU=i686 -DPIC -DPIC -I$(CONFIG)/inc -I$(CONFIG)/inc -Isrc/cmd src/cmd/ejsmod.c
 
-$(PLATFORM)/obj/doc.o: \
+$(CONFIG)/obj/doc.o: \
         src/cmd/doc.c \
-        $(PLATFORM)/inc/buildConfig.h \
+        $(CONFIG)/inc/buildConfig.h \
         src/cmd/ejsmod.h
-	$(CC) -c -o $(PLATFORM)/obj/doc.o -Wall -fPIC $(LDFLAGS) -mcpu=i686 $(DFLAGS) -I$(PLATFORM)/inc -Isrc/cmd src/cmd/doc.c
+	$(LDFLAGS)$(LDFLAGS)$(CC) -c -o $(CONFIG)/obj/doc.o $(CFLAGS) -D_REENTRANT -DCPU=i686 -DPIC -DPIC -I$(CONFIG)/inc -I$(CONFIG)/inc -Isrc/cmd src/cmd/doc.c
 
-$(PLATFORM)/obj/docFiles.o: \
+$(CONFIG)/obj/docFiles.o: \
         src/cmd/docFiles.c \
-        $(PLATFORM)/inc/buildConfig.h \
+        $(CONFIG)/inc/buildConfig.h \
         src/cmd/ejsmod.h
-	$(CC) -c -o $(PLATFORM)/obj/docFiles.o -Wall -fPIC $(LDFLAGS) -mcpu=i686 $(DFLAGS) -I$(PLATFORM)/inc -Isrc/cmd src/cmd/docFiles.c
+	$(LDFLAGS)$(LDFLAGS)$(CC) -c -o $(CONFIG)/obj/docFiles.o $(CFLAGS) -D_REENTRANT -DCPU=i686 -DPIC -DPIC -I$(CONFIG)/inc -I$(CONFIG)/inc -Isrc/cmd src/cmd/docFiles.c
 
-$(PLATFORM)/obj/listing.o: \
+$(CONFIG)/obj/listing.o: \
         src/cmd/listing.c \
-        $(PLATFORM)/inc/buildConfig.h \
+        $(CONFIG)/inc/buildConfig.h \
         src/cmd/ejsmod.h
-	$(CC) -c -o $(PLATFORM)/obj/listing.o -Wall -fPIC $(LDFLAGS) -mcpu=i686 $(DFLAGS) -I$(PLATFORM)/inc -Isrc/cmd src/cmd/listing.c
+	$(LDFLAGS)$(LDFLAGS)$(CC) -c -o $(CONFIG)/obj/listing.o $(CFLAGS) -D_REENTRANT -DCPU=i686 -DPIC -DPIC -I$(CONFIG)/inc -I$(CONFIG)/inc -Isrc/cmd src/cmd/listing.c
 
-$(PLATFORM)/obj/slotGen.o: \
+$(CONFIG)/obj/slotGen.o: \
         src/cmd/slotGen.c \
-        $(PLATFORM)/inc/buildConfig.h \
+        $(CONFIG)/inc/buildConfig.h \
         src/cmd/ejsmod.h
-	$(CC) -c -o $(PLATFORM)/obj/slotGen.o -Wall -fPIC $(LDFLAGS) -mcpu=i686 $(DFLAGS) -I$(PLATFORM)/inc -Isrc/cmd src/cmd/slotGen.c
+	$(LDFLAGS)$(LDFLAGS)$(CC) -c -o $(CONFIG)/obj/slotGen.o $(CFLAGS) -D_REENTRANT -DCPU=i686 -DPIC -DPIC -I$(CONFIG)/inc -I$(CONFIG)/inc -Isrc/cmd src/cmd/slotGen.c
 
-$(PLATFORM)/bin/ejsmod:  \
-        $(PLATFORM)/lib/libejs.so \
-        $(PLATFORM)/obj/ejsmod.o \
-        $(PLATFORM)/obj/doc.o \
-        $(PLATFORM)/obj/docFiles.o \
-        $(PLATFORM)/obj/listing.o \
-        $(PLATFORM)/obj/slotGen.o
-	$(CC) -o $(PLATFORM)/bin/ejsmod $(LDFLAGS) $(LIBPATHS) $(PLATFORM)/obj/ejsmod.o $(PLATFORM)/obj/doc.o $(PLATFORM)/obj/docFiles.o $(PLATFORM)/obj/listing.o $(PLATFORM)/obj/slotGen.o $(LIBS) -lejs -lmpr -lpcre -lhttp $(LDFLAGS)
+$(CONFIG)/bin/ejsmod:  \
+        $(CONFIG)/lib/libejs.so \
+        $(CONFIG)/obj/ejsmod.o \
+        $(CONFIG)/obj/doc.o \
+        $(CONFIG)/obj/docFiles.o \
+        $(CONFIG)/obj/listing.o \
+        $(CONFIG)/obj/slotGen.o
+	$(LDFLAGS)$(LDFLAGS)$(CC) -o $(CONFIG)/bin/ejsmod $(LIBPATHS) $(CONFIG)/obj/ejsmod.o $(CONFIG)/obj/doc.o $(CONFIG)/obj/docFiles.o $(CONFIG)/obj/listing.o $(CONFIG)/obj/slotGen.o $(LIBS) -lejs -lmpr -lpcre -lhttp 
 
-$(PLATFORM)/obj/ejsrun.o: \
+$(CONFIG)/obj/ejsrun.o: \
         src/cmd/ejsrun.c \
-        $(PLATFORM)/inc/buildConfig.h
-	$(CC) -c -o $(PLATFORM)/obj/ejsrun.o -Wall -fPIC $(LDFLAGS) -mcpu=i686 $(DFLAGS) -I$(PLATFORM)/inc src/cmd/ejsrun.c
+        $(CONFIG)/inc/buildConfig.h
+	$(LDFLAGS)$(LDFLAGS)$(CC) -c -o $(CONFIG)/obj/ejsrun.o $(CFLAGS) -D_REENTRANT -DCPU=i686 -DPIC -DPIC -I$(CONFIG)/inc -I$(CONFIG)/inc src/cmd/ejsrun.c
 
-$(PLATFORM)/bin/ejsrun:  \
-        $(PLATFORM)/lib/libejs.so \
-        $(PLATFORM)/obj/ejsrun.o
-	$(CC) -o $(PLATFORM)/bin/ejsrun $(LDFLAGS) $(LIBPATHS) $(PLATFORM)/obj/ejsrun.o $(LIBS) -lejs -lmpr -lpcre -lhttp $(LDFLAGS)
+$(CONFIG)/bin/ejsrun:  \
+        $(CONFIG)/lib/libejs.so \
+        $(CONFIG)/obj/ejsrun.o
+	$(LDFLAGS)$(LDFLAGS)$(CC) -o $(CONFIG)/bin/ejsrun $(LIBPATHS) $(CONFIG)/obj/ejsrun.o $(LIBS) -lejs -lmpr -lpcre -lhttp 
 
-$(PLATFORM)/lib/ejs.mod:  \
-        $(PLATFORM)/bin/ejsc \
-        $(PLATFORM)/bin/ejsmod
-	ejsc --out $(PLATFORM)/lib/ejs.mod --debug --optimize 9 --bind --require null src/core/*.es 
-	ejsmod --require null --cslots $(PLATFORM)/lib/ejs.mod
-	if ! diff ejs.slots.h $(PLATFORM)/inc/ejs.slots.h >/dev/null; then cp ejs.slots.h $(PLATFORM)/inc; fi
+$(CONFIG)/lib/ejs.mod:  \
+        $(CONFIG)/bin/ejsc \
+        $(CONFIG)/bin/ejsmod
+	ejsc --out $(CONFIG)/lib/ejs.mod --debug --optimize 9 --bind --require null src/core/*.es 
+	ejsmod --require null --cslots $(CONFIG)/lib/ejs.mod
+	if ! diff ejs.slots.h $(CONFIG)/inc/ejs.slots.h >/dev/null; then cp ejs.slots.h $(CONFIG)/inc; fi
 	rm -f ejs.slots.h
 
-$(PLATFORM)/bin/bit.es: 
-	cp src/jems/ejs.bit/bit.es $(PLATFORM)/bin
+$(CONFIG)/bin/bit.es: 
+	cp src/jems/ejs.bit/bit.es $(CONFIG)/bin
 
-$(PLATFORM)/obj/ejsZlib.o: \
+$(CONFIG)/obj/ejsZlib.o: \
         src/jems/ejs.zlib/src/ejsZlib.c \
-        $(PLATFORM)/inc/buildConfig.h
-	$(CC) -c -o $(PLATFORM)/obj/ejsZlib.o -Wall -fPIC $(LDFLAGS) -mcpu=i686 $(DFLAGS) -I$(PLATFORM)/inc src/jems/ejs.zlib/src/ejsZlib.c
+        $(CONFIG)/inc/buildConfig.h
+	$(LDFLAGS)$(LDFLAGS)$(CC) -c -o $(CONFIG)/obj/ejsZlib.o $(CFLAGS) -D_REENTRANT -DCPU=i686 -DPIC -DPIC -I$(CONFIG)/inc -I$(CONFIG)/inc src/jems/ejs.zlib/src/ejsZlib.c
 
-$(PLATFORM)/bin/bit:  \
-        $(PLATFORM)/lib/libejs.so \
-        $(PLATFORM)/obj/ejsrun.o \
-        $(PLATFORM)/obj/ejsZlib.o
-	$(CC) -o $(PLATFORM)/bin/bit $(LDFLAGS) $(LIBPATHS) $(PLATFORM)/obj/ejsrun.o $(PLATFORM)/obj/ejsZlib.o $(PLATFORM)/obj/mprLib.o $(PLATFORM)/obj/pcre.o $(PLATFORM)/obj/httpLib.o $(PLATFORM)/obj/ecAst.o $(PLATFORM)/obj/ecCodeGen.o $(PLATFORM)/obj/ecCompiler.o $(PLATFORM)/obj/ecLex.o $(PLATFORM)/obj/ecModuleWrite.o $(PLATFORM)/obj/ecParser.o $(PLATFORM)/obj/ecState.o $(PLATFORM)/obj/ejsApp.o $(PLATFORM)/obj/ejsArray.o $(PLATFORM)/obj/ejsBlock.o $(PLATFORM)/obj/ejsBoolean.o $(PLATFORM)/obj/ejsByteArray.o $(PLATFORM)/obj/ejsCache.o $(PLATFORM)/obj/ejsCmd.o $(PLATFORM)/obj/ejsConfig.o $(PLATFORM)/obj/ejsDate.o $(PLATFORM)/obj/ejsDebug.o $(PLATFORM)/obj/ejsError.o $(PLATFORM)/obj/ejsFile.o $(PLATFORM)/obj/ejsFileSystem.o $(PLATFORM)/obj/ejsFrame.o $(PLATFORM)/obj/ejsFunction.o $(PLATFORM)/obj/ejsGC.o $(PLATFORM)/obj/ejsGlobal.o $(PLATFORM)/obj/ejsHttp.o $(PLATFORM)/obj/ejsIterator.o $(PLATFORM)/obj/ejsJSON.o $(PLATFORM)/obj/ejsLocalCache.o $(PLATFORM)/obj/ejsMath.o $(PLATFORM)/obj/ejsMemory.o $(PLATFORM)/obj/ejsMprLog.o $(PLATFORM)/obj/ejsNamespace.o $(PLATFORM)/obj/ejsNull.o $(PLATFORM)/obj/ejsNumber.o $(PLATFORM)/obj/ejsObject.o $(PLATFORM)/obj/ejsPath.o $(PLATFORM)/obj/ejsPot.o $(PLATFORM)/obj/ejsRegExp.o $(PLATFORM)/obj/ejsSocket.o $(PLATFORM)/obj/ejsString.o $(PLATFORM)/obj/ejsSystem.o $(PLATFORM)/obj/ejsTimer.o $(PLATFORM)/obj/ejsType.o $(PLATFORM)/obj/ejsUri.o $(PLATFORM)/obj/ejsVoid.o $(PLATFORM)/obj/ejsWorker.o $(PLATFORM)/obj/ejsXML.o $(PLATFORM)/obj/ejsXMLList.o $(PLATFORM)/obj/ejsXMLLoader.o $(PLATFORM)/obj/ejsByteCode.o $(PLATFORM)/obj/ejsException.o $(PLATFORM)/obj/ejsHelper.o $(PLATFORM)/obj/ejsInterp.o $(PLATFORM)/obj/ejsLoader.o $(PLATFORM)/obj/ejsModule.o $(PLATFORM)/obj/ejsScope.o $(PLATFORM)/obj/ejsService.o $(LIBS) $(LDFLAGS)
+$(CONFIG)/bin/bit:  \
+        $(CONFIG)/lib/libejs.so \
+        $(CONFIG)/obj/ejsrun.o \
+        $(CONFIG)/obj/ejsZlib.o
+	$(LDFLAGS)$(LDFLAGS)$(CC) -o $(CONFIG)/bin/bit $(LIBPATHS) $(CONFIG)/obj/ejsrun.o $(CONFIG)/obj/ejsZlib.o $(CONFIG)/obj/mprLib.o $(CONFIG)/obj/pcre.o $(CONFIG)/obj/httpLib.o $(CONFIG)/obj/ecAst.o $(CONFIG)/obj/ecCodeGen.o $(CONFIG)/obj/ecCompiler.o $(CONFIG)/obj/ecLex.o $(CONFIG)/obj/ecModuleWrite.o $(CONFIG)/obj/ecParser.o $(CONFIG)/obj/ecState.o $(CONFIG)/obj/ejsApp.o $(CONFIG)/obj/ejsArray.o $(CONFIG)/obj/ejsBlock.o $(CONFIG)/obj/ejsBoolean.o $(CONFIG)/obj/ejsByteArray.o $(CONFIG)/obj/ejsCache.o $(CONFIG)/obj/ejsCmd.o $(CONFIG)/obj/ejsConfig.o $(CONFIG)/obj/ejsDate.o $(CONFIG)/obj/ejsDebug.o $(CONFIG)/obj/ejsError.o $(CONFIG)/obj/ejsFile.o $(CONFIG)/obj/ejsFileSystem.o $(CONFIG)/obj/ejsFrame.o $(CONFIG)/obj/ejsFunction.o $(CONFIG)/obj/ejsGC.o $(CONFIG)/obj/ejsGlobal.o $(CONFIG)/obj/ejsHttp.o $(CONFIG)/obj/ejsIterator.o $(CONFIG)/obj/ejsJSON.o $(CONFIG)/obj/ejsLocalCache.o $(CONFIG)/obj/ejsMath.o $(CONFIG)/obj/ejsMemory.o $(CONFIG)/obj/ejsMprLog.o $(CONFIG)/obj/ejsNamespace.o $(CONFIG)/obj/ejsNull.o $(CONFIG)/obj/ejsNumber.o $(CONFIG)/obj/ejsObject.o $(CONFIG)/obj/ejsPath.o $(CONFIG)/obj/ejsPot.o $(CONFIG)/obj/ejsRegExp.o $(CONFIG)/obj/ejsSocket.o $(CONFIG)/obj/ejsString.o $(CONFIG)/obj/ejsSystem.o $(CONFIG)/obj/ejsTimer.o $(CONFIG)/obj/ejsType.o $(CONFIG)/obj/ejsUri.o $(CONFIG)/obj/ejsVoid.o $(CONFIG)/obj/ejsWorker.o $(CONFIG)/obj/ejsXML.o $(CONFIG)/obj/ejsXMLList.o $(CONFIG)/obj/ejsXMLLoader.o $(CONFIG)/obj/ejsByteCode.o $(CONFIG)/obj/ejsException.o $(CONFIG)/obj/ejsHelper.o $(CONFIG)/obj/ejsInterp.o $(CONFIG)/obj/ejsLoader.o $(CONFIG)/obj/ejsModule.o $(CONFIG)/obj/ejsScope.o $(CONFIG)/obj/ejsService.o $(LIBS) 
 
-$(PLATFORM)/bin/utest.es: 
-	cp src/jems/ejs.utest/utest.es $(PLATFORM)/bin
+$(CONFIG)/bin/utest.es: 
+	cp src/jems/ejs.utest/utest.es $(CONFIG)/bin
 
-$(PLATFORM)/bin/utest:  \
-        $(PLATFORM)/bin/ejsrun
-	rm -fr solaris-i686-debug/bin/utest
-	cp -r solaris-i686-debug/bin/ejsrun solaris-i686-debug/bin/utest
+$(CONFIG)/lib/bits: 
+	rm -fr $(CONFIG)/lib/bits
+	cp -r src/jems/ejs.bit/bits $(CONFIG)/lib
 
-$(PLATFORM)/lib/bits: 
-	rm -fr $(PLATFORM)/lib/bits
-	cp -r src/jems/ejs.bit/bits $(PLATFORM)/lib
+$(CONFIG)/lib/ejs.unix.mod:  \
+        $(CONFIG)/bin/ejsc \
+        $(CONFIG)/bin/ejsmod \
+        $(CONFIG)/lib/ejs.mod
+	ejsc --out $(CONFIG)/lib/ejs.unix.mod --debug --optimize 9 src/jems/ejs.unix/Unix.es
 
-$(PLATFORM)/lib/ejs.unix.mod:  \
-        $(PLATFORM)/bin/ejsc \
-        $(PLATFORM)/bin/ejsmod \
-        $(PLATFORM)/lib/ejs.mod
-	ejsc --out $(PLATFORM)/lib/ejs.unix.mod --debug --optimize 9 src/jems/ejs.unix/Unix.es
+$(CONFIG)/bin/jem.es: 
+	cp src/jems/ejs.jem/jem.es $(CONFIG)/bin
 
-$(PLATFORM)/bin/jem.es: 
-	cp src/jems/ejs.jem/jem.es $(PLATFORM)/bin
+$(CONFIG)/lib/ejs.db.mod:  \
+        $(CONFIG)/bin/ejsc \
+        $(CONFIG)/bin/ejsmod \
+        $(CONFIG)/lib/ejs.mod
+	ejsc --out $(CONFIG)/lib/ejs.db.mod --debug --optimize 9 src/jems/ejs.db/*.es
 
-$(PLATFORM)/bin/jem:  \
-        $(PLATFORM)/bin/ejsrun
-	rm -fr solaris-i686-debug/bin/jem
-	cp -r solaris-i686-debug/bin/ejsrun solaris-i686-debug/bin/jem
+$(CONFIG)/lib/ejs.db.mapper.mod:  \
+        $(CONFIG)/bin/ejsc \
+        $(CONFIG)/bin/ejsmod \
+        $(CONFIG)/lib/ejs.mod \
+        $(CONFIG)/lib/ejs.db.mod
+	ejsc --out $(CONFIG)/lib/ejs.db.mapper.mod --debug --optimize 9 src/jems/ejs.db.mapper/*.es
 
-$(PLATFORM)/lib/ejs.db.mod:  \
-        $(PLATFORM)/bin/ejsc \
-        $(PLATFORM)/bin/ejsmod \
-        $(PLATFORM)/lib/ejs.mod
-	ejsc --out $(PLATFORM)/lib/ejs.db.mod --debug --optimize 9 src/jems/ejs.db/*.es
+$(CONFIG)/lib/ejs.db.sqlite.mod:  \
+        $(CONFIG)/bin/ejsc \
+        $(CONFIG)/bin/ejsmod \
+        $(CONFIG)/lib/ejs.mod
+	ejsc --out $(CONFIG)/lib/ejs.db.sqlite.mod --debug --optimize 9 src/jems/ejs.db.sqlite/*.es
 
-$(PLATFORM)/lib/ejs.db.mapper.mod:  \
-        $(PLATFORM)/bin/ejsc \
-        $(PLATFORM)/bin/ejsmod \
-        $(PLATFORM)/lib/ejs.mod \
-        $(PLATFORM)/lib/ejs.db.mod
-	ejsc --out $(PLATFORM)/lib/ejs.db.mapper.mod --debug --optimize 9 src/jems/ejs.db.mapper/*.es
-
-$(PLATFORM)/lib/ejs.db.sqlite.mod:  \
-        $(PLATFORM)/bin/ejsc \
-        $(PLATFORM)/bin/ejsmod \
-        $(PLATFORM)/lib/ejs.mod
-	ejsc --out $(PLATFORM)/lib/ejs.db.sqlite.mod --debug --optimize 9 src/jems/ejs.db.sqlite/*.es
-
-$(PLATFORM)/obj/ejsSqlite.o: \
+$(CONFIG)/obj/ejsSqlite.o: \
         src/jems/ejs.db.sqlite/src/ejsSqlite.c \
-        $(PLATFORM)/inc/buildConfig.h
-	$(CC) -c -o $(PLATFORM)/obj/ejsSqlite.o -Wall -fPIC $(LDFLAGS) -mcpu=i686 $(DFLAGS) -I$(PLATFORM)/inc src/jems/ejs.db.sqlite/src/ejsSqlite.c
+        $(CONFIG)/inc/buildConfig.h
+	$(LDFLAGS)$(LDFLAGS)$(CC) -c -o $(CONFIG)/obj/ejsSqlite.o $(CFLAGS) -D_REENTRANT -DCPU=i686 -DPIC -DPIC -I$(CONFIG)/inc -I$(CONFIG)/inc src/jems/ejs.db.sqlite/src/ejsSqlite.c
 
-$(PLATFORM)/lib/ejs.db.sqlite.so:  \
-        $(PLATFORM)/lib/libmpr.so \
-        $(PLATFORM)/lib/libejs.so \
-        $(PLATFORM)/lib/ejs.mod \
-        $(PLATFORM)/lib/ejs.db.sqlite.mod \
-        $(PLATFORM)/lib/libsqlite3.so \
-        $(PLATFORM)/obj/ejsSqlite.o
-	$(CC) -shared -o $(PLATFORM)/lib/ejs.db.sqlite.so $(LDFLAGS) $(LIBPATHS) $(PLATFORM)/obj/ejsSqlite.o $(LIBS) -lmpr -lejs -lpcre -lhttp -lsqlite3
+$(CONFIG)/lib/ejs.db.sqlite.so:  \
+        $(CONFIG)/lib/libmpr.so \
+        $(CONFIG)/lib/libejs.so \
+        $(CONFIG)/lib/ejs.mod \
+        $(CONFIG)/lib/ejs.db.sqlite.mod \
+        $(CONFIG)/lib/libsqlite3.so \
+        $(CONFIG)/obj/ejsSqlite.o
+	$(LDFLAGS)$(LDFLAGS)$(CC) -shared -o $(CONFIG)/lib/ejs.db.sqlite.so $(LIBPATHS) $(CONFIG)/obj/ejsSqlite.o $(LIBS) -lmpr -lejs -lpcre -lhttp -lsqlite3
 
-$(PLATFORM)/lib/ejs.web.mod:  \
-        $(PLATFORM)/bin/ejsc \
-        $(PLATFORM)/bin/ejsmod \
-        $(PLATFORM)/lib/ejs.mod
-	ejsc --out $(PLATFORM)/lib/ejs.web.mod --debug --optimize 9 src/jems/ejs.web/*.es
-	ejsmod --cslots $(PLATFORM)/lib/ejs.web.mod
-	if ! diff ejs.web.slots.h $(PLATFORM)/inc/ejs.web.slots.h >/dev/null; then cp ejs.web.slots.h $(PLATFORM)/inc; fi
+$(CONFIG)/lib/ejs.web.mod:  \
+        $(CONFIG)/bin/ejsc \
+        $(CONFIG)/bin/ejsmod \
+        $(CONFIG)/lib/ejs.mod
+	ejsc --out $(CONFIG)/lib/ejs.web.mod --debug --optimize 9 src/jems/ejs.web/*.es
+	ejsmod --cslots $(CONFIG)/lib/ejs.web.mod
+	if ! diff ejs.web.slots.h $(CONFIG)/inc/ejs.web.slots.h >/dev/null; then cp ejs.web.slots.h $(CONFIG)/inc; fi
 	rm -f ejs.web.slots.h
 
-$(PLATFORM)/obj/ejsHttpServer.o: \
+$(CONFIG)/obj/ejsHttpServer.o: \
         src/jems/ejs.web/src/ejsHttpServer.c \
-        $(PLATFORM)/inc/buildConfig.h \
+        $(CONFIG)/inc/buildConfig.h \
         src/jems/ejs.web/src/ejsWeb.h
-	$(CC) -c -o $(PLATFORM)/obj/ejsHttpServer.o -Wall -fPIC $(LDFLAGS) -mcpu=i686 $(DFLAGS) -I$(PLATFORM)/inc -Isrc/jems/ejs.web/src src/jems/ejs.web/src/ejsHttpServer.c
+	$(LDFLAGS)$(LDFLAGS)$(CC) -c -o $(CONFIG)/obj/ejsHttpServer.o $(CFLAGS) -D_REENTRANT -DCPU=i686 -DPIC -DPIC -I$(CONFIG)/inc -I$(CONFIG)/inc -Isrc/jems/ejs.web/src src/jems/ejs.web/src/ejsHttpServer.c
 
-$(PLATFORM)/obj/ejsRequest.o: \
+$(CONFIG)/obj/ejsRequest.o: \
         src/jems/ejs.web/src/ejsRequest.c \
-        $(PLATFORM)/inc/buildConfig.h \
+        $(CONFIG)/inc/buildConfig.h \
         src/jems/ejs.web/src/ejsWeb.h
-	$(CC) -c -o $(PLATFORM)/obj/ejsRequest.o -Wall -fPIC $(LDFLAGS) -mcpu=i686 $(DFLAGS) -I$(PLATFORM)/inc -Isrc/jems/ejs.web/src src/jems/ejs.web/src/ejsRequest.c
+	$(LDFLAGS)$(LDFLAGS)$(CC) -c -o $(CONFIG)/obj/ejsRequest.o $(CFLAGS) -D_REENTRANT -DCPU=i686 -DPIC -DPIC -I$(CONFIG)/inc -I$(CONFIG)/inc -Isrc/jems/ejs.web/src src/jems/ejs.web/src/ejsRequest.c
 
-$(PLATFORM)/obj/ejsSession.o: \
+$(CONFIG)/obj/ejsSession.o: \
         src/jems/ejs.web/src/ejsSession.c \
-        $(PLATFORM)/inc/buildConfig.h \
+        $(CONFIG)/inc/buildConfig.h \
         src/jems/ejs.web/src/ejsWeb.h
-	$(CC) -c -o $(PLATFORM)/obj/ejsSession.o -Wall -fPIC $(LDFLAGS) -mcpu=i686 $(DFLAGS) -I$(PLATFORM)/inc -Isrc/jems/ejs.web/src src/jems/ejs.web/src/ejsSession.c
+	$(LDFLAGS)$(LDFLAGS)$(CC) -c -o $(CONFIG)/obj/ejsSession.o $(CFLAGS) -D_REENTRANT -DCPU=i686 -DPIC -DPIC -I$(CONFIG)/inc -I$(CONFIG)/inc -Isrc/jems/ejs.web/src src/jems/ejs.web/src/ejsSession.c
 
-$(PLATFORM)/obj/ejsWeb.o: \
+$(CONFIG)/obj/ejsWeb.o: \
         src/jems/ejs.web/src/ejsWeb.c \
-        $(PLATFORM)/inc/buildConfig.h \
+        $(CONFIG)/inc/buildConfig.h \
         src/jems/ejs.web/src/ejsWeb.h
-	$(CC) -c -o $(PLATFORM)/obj/ejsWeb.o -Wall -fPIC $(LDFLAGS) -mcpu=i686 $(DFLAGS) -I$(PLATFORM)/inc -Isrc/jems/ejs.web/src src/jems/ejs.web/src/ejsWeb.c
+	$(LDFLAGS)$(LDFLAGS)$(CC) -c -o $(CONFIG)/obj/ejsWeb.o $(CFLAGS) -D_REENTRANT -DCPU=i686 -DPIC -DPIC -I$(CONFIG)/inc -I$(CONFIG)/inc -Isrc/jems/ejs.web/src src/jems/ejs.web/src/ejsWeb.c
 
-$(PLATFORM)/lib/ejs.web.so:  \
-        $(PLATFORM)/lib/libmpr.so \
-        $(PLATFORM)/lib/libhttp.so \
-        $(PLATFORM)/lib/libpcre.so \
-        $(PLATFORM)/lib/libejs.so \
-        $(PLATFORM)/lib/ejs.mod \
-        $(PLATFORM)/obj/ejsHttpServer.o \
-        $(PLATFORM)/obj/ejsRequest.o \
-        $(PLATFORM)/obj/ejsSession.o \
-        $(PLATFORM)/obj/ejsWeb.o
-	$(CC) -shared -o $(PLATFORM)/lib/ejs.web.so $(LDFLAGS) $(LIBPATHS) $(PLATFORM)/obj/ejsHttpServer.o $(PLATFORM)/obj/ejsRequest.o $(PLATFORM)/obj/ejsSession.o $(PLATFORM)/obj/ejsWeb.o $(LIBS) -lmpr -lhttp -lpcre -lpcre -lejs
+$(CONFIG)/lib/ejs.web.so:  \
+        $(CONFIG)/lib/libmpr.so \
+        $(CONFIG)/lib/libhttp.so \
+        $(CONFIG)/lib/libpcre.so \
+        $(CONFIG)/lib/libejs.so \
+        $(CONFIG)/lib/ejs.mod \
+        $(CONFIG)/obj/ejsHttpServer.o \
+        $(CONFIG)/obj/ejsRequest.o \
+        $(CONFIG)/obj/ejsSession.o \
+        $(CONFIG)/obj/ejsWeb.o
+	$(LDFLAGS)$(LDFLAGS)$(CC) -shared -o $(CONFIG)/lib/ejs.web.so $(LIBPATHS) $(CONFIG)/obj/ejsHttpServer.o $(CONFIG)/obj/ejsRequest.o $(CONFIG)/obj/ejsSession.o $(CONFIG)/obj/ejsWeb.o $(LIBS) -lmpr -lhttp -lpcre -lpcre -lejs
 
-$(PLATFORM)/lib/www: 
-	rm -fr $(PLATFORM)/lib/www
-	cp -r src/jems/ejs.web/www $(PLATFORM)/lib
+$(CONFIG)/lib/www: 
+	rm -fr $(CONFIG)/lib/www
+	cp -r src/jems/ejs.web/www $(CONFIG)/lib
 
-$(PLATFORM)/lib/ejs.template.mod:  \
-        $(PLATFORM)/bin/ejsc \
-        $(PLATFORM)/bin/ejsmod \
-        $(PLATFORM)/lib/ejs.mod
-	ejsc --out $(PLATFORM)/lib/ejs.template.mod --debug --optimize 9 src/jems/ejs.template/TemplateParser.es
+$(CONFIG)/lib/ejs.template.mod:  \
+        $(CONFIG)/bin/ejsc \
+        $(CONFIG)/bin/ejsmod \
+        $(CONFIG)/lib/ejs.mod
+	ejsc --out $(CONFIG)/lib/ejs.template.mod --debug --optimize 9 src/jems/ejs.template/TemplateParser.es
 
-$(PLATFORM)/lib/ejs.tar.mod:  \
-        $(PLATFORM)/bin/ejsc \
-        $(PLATFORM)/bin/ejsmod \
-        $(PLATFORM)/lib/ejs.mod
-	ejsc --out $(PLATFORM)/lib/ejs.tar.mod --debug --optimize 9 src/jems/ejs.tar/*.es
+$(CONFIG)/lib/ejs.tar.mod:  \
+        $(CONFIG)/bin/ejsc \
+        $(CONFIG)/bin/ejsmod \
+        $(CONFIG)/lib/ejs.mod
+	ejsc --out $(CONFIG)/lib/ejs.tar.mod --debug --optimize 9 src/jems/ejs.tar/*.es
 
-$(PLATFORM)/bin/mvc.es: 
-	cp src/jems/ejs.mvc/mvc.es $(PLATFORM)/bin
+$(CONFIG)/bin/mvc.es: 
+	cp src/jems/ejs.mvc/mvc.es $(CONFIG)/bin
 
-$(PLATFORM)/bin/mvc:  \
-        $(PLATFORM)/bin/ejsrun
-	rm -fr solaris-i686-debug/bin/mvc
-	cp -r solaris-i686-debug/bin/ejsrun solaris-i686-debug/bin/mvc
+$(CONFIG)/lib/ejs.mvc.mod:  \
+        $(CONFIG)/bin/ejsc \
+        $(CONFIG)/bin/ejsmod \
+        $(CONFIG)/lib/ejs.mod \
+        $(CONFIG)/lib/ejs.web.mod \
+        $(CONFIG)/lib/ejs.template.mod \
+        $(CONFIG)/lib/ejs.unix.mod
+	ejsc --out $(CONFIG)/lib/ejs.mvc.mod --debug --optimize 9 src/jems/ejs.mvc/*.es
 
-$(PLATFORM)/lib/ejs.mvc.mod:  \
-        $(PLATFORM)/bin/ejsc \
-        $(PLATFORM)/bin/ejsmod \
-        $(PLATFORM)/lib/ejs.mod \
-        $(PLATFORM)/lib/ejs.web.mod \
-        $(PLATFORM)/lib/ejs.template.mod \
-        $(PLATFORM)/lib/ejs.unix.mod
-	ejsc --out $(PLATFORM)/lib/ejs.mvc.mod --debug --optimize 9 src/jems/ejs.mvc/*.es
+$(CONFIG)/bin/utest.worker: 
+	cp src/jems/ejs.utest/utest.worker $(CONFIG)/bin
 
-$(PLATFORM)/bin/utest.worker: 
-	cp src/jems/ejs.utest/utest.worker $(PLATFORM)/bin
+$(CONFIG)/obj/shape.o: \
+        src/samples/c/nclass/shape.c \
+        $(CONFIG)/inc/buildConfig.h
+	$(LDFLAGS)$(LDFLAGS)$(CC) -c -o $(CONFIG)/obj/shape.o $(CFLAGS) -D_REENTRANT -DCPU=i686 -DPIC -DPIC -I$(CONFIG)/inc -I$(CONFIG)/inc src/samples/c/nclass/shape.c
+
+src/samples/c/composite/composite.so:  \
+        $(CONFIG)/lib/libejs.so \
+        $(CONFIG)/obj/shape.o
+	$(LDFLAGS)$(LDFLAGS)$(CC) -shared -o src/samples/c/composite/composite.so $(LIBPATHS) $(CONFIG)/obj/shape.o $(LIBS) -lejs -lmpr -lpcre -lhttp
+
+src/samples/c/composite/composite.mod:  \
+        $(CONFIG)/bin/ejsc \
+        src/samples/c/composite/composite.so
+$(CONFIG)/obj/main.o: \
+        src/samples/c/evalScript/main.c \
+        $(CONFIG)/inc/buildConfig.h
+	$(LDFLAGS)$(LDFLAGS)$(CC) -c -o $(CONFIG)/obj/main.o $(CFLAGS) -D_REENTRANT -DCPU=i686 -DPIC -DPIC -I$(CONFIG)/inc -I$(CONFIG)/inc src/samples/c/evalScript/main.c
+
+src/samples/c/evalFile/main:  \
+        $(CONFIG)/lib/libejs.so \
+        $(CONFIG)/obj/main.o
+	$(LDFLAGS)$(LDFLAGS)$(CC) -o src/samples/c/evalFile/main $(LIBPATHS) $(CONFIG)/obj/main.o $(LIBS) -lejs -lmpr -lpcre -lhttp 
+
+src/samples/c/evalModule/evalModule.mod:  \
+        $(CONFIG)/bin/ejsc
+src/samples/c/evalModule/main:  \
+        $(CONFIG)/lib/libejs.so \
+        src/samples/c/evalModule/evalModule.mod \
+        $(CONFIG)/obj/main.o
+	$(LDFLAGS)$(LDFLAGS)$(CC) -o src/samples/c/evalModule/main $(LIBPATHS) $(CONFIG)/obj/main.o $(LIBS) -lejs -lmpr -lpcre -lhttp 
+
+src/samples/c/evalScript/main:  \
+        $(CONFIG)/lib/libejs.so \
+        $(CONFIG)/obj/main.o
+	$(LDFLAGS)$(LDFLAGS)$(CC) -o src/samples/c/evalScript/main $(LIBPATHS) $(CONFIG)/obj/main.o $(LIBS) -lejs -lmpr -lpcre -lhttp 
+
+src/samples/c/nclass/nclass.mod:  \
+        $(CONFIG)/bin/ejsc
+src/samples/c/nclass/native.so:  \
+        $(CONFIG)/lib/libejs.so \
+        src/samples/c/nclass/nclass.mod \
+        $(CONFIG)/obj/shape.o
+	$(LDFLAGS)$(LDFLAGS)$(CC) -shared -o src/samples/c/nclass/native.so $(LIBPATHS) $(CONFIG)/obj/shape.o $(LIBS) -lejs -lmpr -lpcre -lhttp
 

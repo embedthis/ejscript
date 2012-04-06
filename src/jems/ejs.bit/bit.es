@@ -584,9 +584,11 @@ public class Bit {
             if (pname == 'compiler') {
                 pname = 'cc'
             }
-            if (pack.path) {
+            if (pack.enable) {
                 f.writeLine('#define BLD_FEATURE_' + pname.toUpper() + ' 1')
-                f.writeLine('#define BLD_' + pname.toUpper() + ' \"' + pack.path.relative + '\"')
+                if (pack.path) {
+                    f.writeLine('#define BLD_' + pname.toUpper() + ' \"' + pack.path.relative + '\"')
+                }
             } else {
                 f.writeLine('#define BLD_FEATURE_' + pname.toUpper() + ' 0')
             }
@@ -1069,7 +1071,7 @@ public class Bit {
         genout.writeLine('#\n#   ' + bit.platform.configuration + 
             '.sh -- Build It Shell Script to build ' + bit.settings.title + '\n#\n')
         genEnv()
-        genout.writeLine('PLATFORM="' + bit.platform.name + '-' + bit.platform.profile + '"')
+        genout.writeLine('CONFIG="' + bit.platform.name + '-' + bit.platform.profile + '"')
         genout.writeLine('CC="' + bit.packs.compiler.path + '"')
         if (bit.packs.link) {
             genout.writeLine('LD="' + bit.packs.link.path + '"')
@@ -1080,9 +1082,9 @@ public class Bit {
         genout.writeLine('LDFLAGS="' + repvar(gen.linker).replace(/\$ORIGIN/g, '\\$$ORIGIN') + '"')
         genout.writeLine('LIBPATHS="' + repvar(gen.libpaths) + '"')
         genout.writeLine('LIBS="' + gen.libraries + '"\n')
-        genout.writeLine('[ ! -x ${PLATFORM}/inc ] && ' + 
-            'mkdir -p ${PLATFORM}/inc ${PLATFORM}/obj ${PLATFORM}/lib ${PLATFORM}/bin')
-        genout.writeLine('cp projects/buildConfig.${PLATFORM} ${PLATFORM}/inc/buildConfig.h\n')
+        genout.writeLine('[ ! -x ${CONFIG}/inc ] && ' + 
+            'mkdir -p ${CONFIG}/inc ${CONFIG}/obj ${CONFIG}/lib ${CONFIG}/bin')
+        genout.writeLine('cp projects/buildConfig.${CONFIG} ${CONFIG}/inc/buildConfig.h\n')
         build()
         genout.close()
         path.setAttributes({permissions: 0755})
@@ -1095,32 +1097,32 @@ public class Bit {
         genout.writeLine('#\n#   ' + bit.platform.configuration + '.mk -- Build It Makefile to build ' + 
             bit.settings.title + ' for ' + bit.platform.os + ' on ' + bit.platform.arch + '\n#\n')
         genEnv()
-        genout.writeLine('PLATFORM       := ' + bit.platform.name + '-' + bit.platform.profile)
-        genout.writeLine('CC             := ' + bit.packs.compiler.path)
+        genout.writeLine('CONFIG   := ' + bit.platform.name + '-' + bit.platform.profile)
+        genout.writeLine('CC       := ' + bit.packs.compiler.path)
         if (bit.packs.link) {
-            genout.writeLine('LD             := ' + bit.packs.link.path)
+            genout.writeLine('LD       := ' + bit.packs.link.path)
         }
-        genout.writeLine('CFLAGS         := ' + gen.compiler)
-        genout.writeLine('DFLAGS         := ' + gen.defines)
-        genout.writeLine('IFLAGS         := ' + 
+        genout.writeLine('CFLAGS   := ' + gen.compiler)
+        genout.writeLine('DFLAGS   := ' + gen.defines)
+        genout.writeLine('IFLAGS   := ' + 
             repvar(bit.defaults.includes.map(function(path) '-I' + path.relative).join(' ')))
         let linker = defaults.linker.map(function(s) "'" + s + "'").join(' ')
-        genout.writeLine('LDFLAGS        := ' + repvar(linker).replace(/\$ORIGIN/g, '$$$$ORIGIN'))
-        genout.writeLine('LIBPATHS       := ' + repvar(gen.libpaths))
-        genout.writeLine('LIBS           := ' + gen.libraries + '\n')
+        genout.writeLine('LDFLAGS  := ' + repvar(linker).replace(/\$ORIGIN/g, '$$$$ORIGIN'))
+        genout.writeLine('LIBPATHS := ' + repvar(gen.libpaths))
+        genout.writeLine('LIBS     := ' + gen.libraries + '\n')
         genout.writeLine('all: prep \\\n        ' + genAll())
         genout.writeLine('.PHONY: prep\n\nprep:')
-        genout.writeLine('\t@[ ! -x $(PLATFORM)/inc ] && ' + 
-            'mkdir -p $(PLATFORM)/inc $(PLATFORM)/obj $(PLATFORM)/lib $(PLATFORM)/bin ; true')
-        genout.writeLine('\t@[ ! -f $(PLATFORM)/inc/buildConfig.h ] && ' + 
-            'cp projects/buildConfig.$(PLATFORM) $(PLATFORM)/inc/buildConfig.h ; true')
-        genout.writeLine('\t@if ! diff $(PLATFORM)/inc/buildConfig.h projects/buildConfig.$(PLATFORM) >/dev/null ; then\\')
-        genout.writeLine('\t\techo cp projects/buildConfig.$(PLATFORM) $(PLATFORM)/inc/buildConfig.h  ; \\')
-        genout.writeLine('\t\tcp projects/buildConfig.$(PLATFORM) $(PLATFORM)/inc/buildConfig.h  ; \\')
+        genout.writeLine('\t@[ ! -x $(CONFIG)/inc ] && ' + 
+            'mkdir -p $(CONFIG)/inc $(CONFIG)/obj $(CONFIG)/lib $(CONFIG)/bin ; true')
+        genout.writeLine('\t@[ ! -f $(CONFIG)/inc/buildConfig.h ] && ' + 
+            'cp projects/buildConfig.$(CONFIG) $(CONFIG)/inc/buildConfig.h ; true')
+        genout.writeLine('\t@if ! diff $(CONFIG)/inc/buildConfig.h projects/buildConfig.$(CONFIG) >/dev/null ; then\\')
+        genout.writeLine('\t\techo cp projects/buildConfig.$(CONFIG) $(CONFIG)/inc/buildConfig.h  ; \\')
+        genout.writeLine('\t\tcp projects/buildConfig.$(CONFIG) $(CONFIG)/inc/buildConfig.h  ; \\')
         genout.writeLine('\tfi; true\n')
         genout.writeLine('clean:')
         action('cleanTargets')
-        genout.writeLine('\nclobber: clean\n\trm -fr ./$(PLATFORM)\n')
+        genout.writeLine('\nclobber: clean\n\trm -fr ./$(CONFIG)\n')
         build()
         genout.close()
     }
@@ -1132,28 +1134,26 @@ public class Bit {
         let pname = bit.platform.configuration
         genout.writeLine('#\n#   ' + pname + '.nmake -- Build It Makefile to build ' + bit.settings.title + 
             ' for ' + bit.platform.os + ' on ' + bit.platform.arch + '\n#\n')
-
         genEnv()
-        //  MOB - rename this from PLATFORM to CONFIG
-        genout.writeLine('PLATFORM  = ' + pname)
-        genout.writeLine('CC        = cl')
-        genout.writeLine('LD        = link')
-        genout.writeLine('CFLAGS    = ' + gen.compiler)
-        genout.writeLine('DFLAGS    = ' + gen.defines)
-        genout.writeLine('IFLAGS    = ' + 
+        genout.writeLine('CONFIG   = ' + pname)
+        genout.writeLine('CC       = cl')
+        genout.writeLine('LD       = link')
+        genout.writeLine('CFLAGS   = ' + gen.compiler)
+        genout.writeLine('DFLAGS   = ' + gen.defines)
+        genout.writeLine('IFLAGS   = ' + 
             repvar(bit.defaults.includes.map(function(path) '-I' + reppath(path)).join(' ')))
-        genout.writeLine('LDFLAGS   = ' + repvar(gen.linker))
-        genout.writeLine('LIBPATHS  = ' + repvar(gen.libpaths).replace(/\//g, '\\'))
-        genout.writeLine('LIBS      = ' + gen.libraries + '\n')
+        genout.writeLine('LDFLAGS  = ' + repvar(gen.linker))
+        genout.writeLine('LIBPATHS = ' + repvar(gen.libpaths).replace(/\//g, '\\'))
+        genout.writeLine('LIBS     = ' + gen.libraries + '\n')
         genout.writeLine('all: prep \\\n        ' + genAll())
         genout.writeLine('.PHONY: prep\n\nprep:')
-        genout.writeLine('\t@if not exist $(PLATFORM)\\inc md $(PLATFORM)\\inc')
-        genout.writeLine('\t@if not exist $(PLATFORM)\\obj md $(PLATFORM)\\obj')
-        genout.writeLine('\t@if not exist $(PLATFORM)\\bin md $(PLATFORM)\\bin')
-        genout.writeLine('\t@if not exist $(PLATFORM)\\inc\\buildConfig.h ' +
-            'copy projects\\buildConfig.$(PLATFORM) $(PLATFORM)\\inc\\buildConfig.h')
-        genout.writeLine('\t@if not exist $(PLATFORM)\\bin\\libmpr.def ' +
-            'xcopy /Y /S projects\\$(PLATFORM)\\*.def $(PLATFORM)\\bin\n')
+        genout.writeLine('\t@if not exist $(CONFIG)\\inc md $(CONFIG)\\inc')
+        genout.writeLine('\t@if not exist $(CONFIG)\\obj md $(CONFIG)\\obj')
+        genout.writeLine('\t@if not exist $(CONFIG)\\bin md $(CONFIG)\\bin')
+        genout.writeLine('\t@if not exist $(CONFIG)\\inc\\buildConfig.h ' +
+            'copy projects\\buildConfig.$(CONFIG) $(CONFIG)\\inc\\buildConfig.h')
+        genout.writeLine('\t@if not exist $(CONFIG)\\bin\\libmpr.def ' +
+            'xcopy /Y /S projects\\$(CONFIG)\\*.def $(CONFIG)\\bin\n')
         genout.writeLine('clean:')
         action('cleanTargets')
         genout.writeLine('')
@@ -2145,7 +2145,7 @@ command = command.expand(bit, {fill: ''})
             command = command.replace(gen.defines, '$(DFLAGS)')
             command = command.replace(gen.includes, '$(IFLAGS)')
             command = command.replace(gen.libraries, '$(LIBS)')
-            command = command.replace(RegExp(gen.configuration, 'g'), '$$(PLATFORM)')
+            command = command.replace(RegExp(gen.configuration, 'g'), '$$(CONFIG)')
             command = command.replace(bit.packs.compiler.path, '$(CC)')
             command = command.replace(bit.packs.link.path, '$(LD)')
         } else if (generating == 'sh') {
@@ -2156,19 +2156,11 @@ command = command.expand(bit, {fill: ''})
             command = command.replace(gen.defines, '${DFLAGS}')
             command = command.replace(gen.includes, '${IFLAGS}')
             command = command.replace(gen.libraries, '${LIBS}')
-            command = command.replace(RegExp(gen.configuration, 'g'), '$${PLATFORM}')
+            command = command.replace(RegExp(gen.configuration, 'g'), '$${CONFIG}')
             command = command.replace(bit.packs.compiler.path, '${CC}')
             command = command.replace(bit.packs.link.path, '${LD}')
         }
-/*
-        if (bit.platform.like == 'windows') {
-//ZZ2
-            let pat = (bit.dir.top + '\\').replace(/\\/g, '\\\\')
-            command = command.replace(RegExp(pat, 'g'), '')
-        } else {
-*/
-            command = command.replace(RegExp(bit.dir.top + '/', 'g'), '')
-//        }
+        command = command.replace(RegExp(bit.dir.top + '/', 'g'), '')
         command = command.replace(/  */g, ' ')
         if (generating == 'nmake') {
             command = command.replace(/\//g, '\\')
@@ -2178,24 +2170,16 @@ command = command.expand(bit, {fill: ''})
 
     /*
         Replace with variables where possible.
-        Replaces the top directory and the PLATFORM
+        Replaces the top directory and the CONFIGURATION
      */
     function repvar(command: String): String {
         command = command.replace(RegExp(bit.dir.top + '/', 'g'), '')
-/*
-        if (bit.platform.like == 'windows') {
-            //  MOB - is this needed
-//ZZ2
-            let pat = (bit.dir.top + '\\').replace(/\\/g, '\\\\')
-            command = command.replace(RegExp(pat, 'g'), '')
-        }
-*/
         if (generating == 'make') {
-            command = command.replace(RegExp(gen.configuration, 'g'), '$$(PLATFORM)')
+            command = command.replace(RegExp(gen.configuration, 'g'), '$$(CONFIG)')
         } else if (generating == 'nmake') {
-            command = command.replace(RegExp(gen.configuration, 'g'), '$$(PLATFORM)')
+            command = command.replace(RegExp(gen.configuration, 'g'), '$$(CONFIG)')
         } else if (generating == 'sh') {
-            command = command.replace(RegExp(gen.configuration, 'g'), '$${PLATFORM}')
+            command = command.replace(RegExp(gen.configuration, 'g'), '$${CONFIG}')
         }
         return command
     }
@@ -2240,6 +2224,7 @@ command = command.expand(bit, {fill: ''})
         bit.SHOBJ = '.' + bit.ext.shobj
         bit.SHLIB = '.' + bit.ext.shlib
 
+        //  MOB - rename
         bit.CFG = bit.dir.cfg
         bit.BIN = bit.dir.bin
         bit.BITS = bit.dir.bits
@@ -2255,6 +2240,7 @@ command = command.expand(bit, {fill: ''})
         bit.OS = bit.platform.os
         bit.ARCH = bit.platform.arch
         bit.PLATFORM = bit.platform.name
+        bit.CONFIG = bit.platform.configuration
         bit.LIKE = bit.platform.like
 
         if (bit.platform.like == 'windows') {
