@@ -2,7 +2,7 @@
     matrixssl.bit -- OpenSSL package search
  */
 
-if (!bit.packs.ssl || !bit.packs.ssl.enable) {
+if (bit.packs.ssl && bit.packs.ssl.enable == false) {
     throw "SSL has been disabled"
 }
 

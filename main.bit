@@ -43,10 +43,11 @@ Bit.load({
 		buildNumber: 'B2',
         sync: ['http', 'mpr', 'pcre', 'sqlite'],
         manager: 'ejsman',
+        '+optional': [ 'doxygen', 'dpkg', 'dsi', 'man', 'man2html', 'openssl', 'matrixssl', 'pmaker', 
+            'sqlite', 'ssl', 'zlib' ],
         packs: [ 'bits/packs' ],
-        without: ['doxygen', 'dsi', 'man', 'man2html', 'ssl', 'zlib'],
-        '+optional': [ 'doxygen', 'dpkg', 'dsi', 'man', 'man2html', 'openssl', 'matrixssl', 'pmaker', 'sqlite', 'zlib' ],
         '+required': [ 'pcre' ]
+        'without-all': ['doxygen', 'dsi', 'man', 'man2html', 'ssl', 'zlib'],
     },
 
     usage: {
