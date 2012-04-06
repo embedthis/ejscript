@@ -197,7 +197,7 @@ public function installBinary() {
 
 public function uninstallBinary() {
     if (App.uid != 0) {
-        throw 'Must run as root. Use \"sudo bit install\"'
+        throw 'Must run as root. Use \"sudo bit uninstall\"'
     }
     trace('Uninstall', bit.settings.title)                                                     
     let fileslog = bit.prefixes.productver.join('files.log')
