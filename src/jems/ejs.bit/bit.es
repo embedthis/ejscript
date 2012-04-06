@@ -12,9 +12,9 @@ require ejs.unix
 public class Bit {
     public var simpleLoad: Boolean
 
-    private const VERSION: Number = 0.2
-    private const MAIN: Path = Path('main.bit')
-    private const LOCAL: Path = Path('local.bit')
+    private static const VERSION: Number = 0.2
+    private static const MAIN: Path = Path('main.bit')
+    private static const LOCAL: Path = Path('local.bit')
 
     /*
         Filter for files that look like temp files and should not be installed
@@ -39,11 +39,13 @@ public class Bit {
 
     private var home: Path
     private var bareBit: Object = { platform: {}, dir: {}, settings: {
+/*
         product: 'bit',
         title: 'Bit',
         company: '',
         version: '1.0.0',
         buildNumber: '0',
+*/
         required: [], optional: [],
     }, packs: {}, targets: {}, env: {} }
 
@@ -865,7 +867,7 @@ public class Bit {
     /*
         Change paths in a bit file to be relative to the bit file
      */
-    function fixup(o) {
+    function fixup(o, ns) {
         let home = currentBitFile.dirname
         for (i in o.modules) {
             o.modules[i] = home.join(o.modules[i])
@@ -944,7 +946,7 @@ public class Bit {
                 target.type ||= 'action'
                 target.scripts ||= {}
                 target.scripts['build'] ||= []
-                target.scripts['build'] += [{ home: home, shell: 'ejs', script: target.action }]
+                target.scripts['build'] += [{ home: home, shell: 'ejs', script: target.action, ns: ns }]
                 delete target.action
             }
             if (target.shell) {
@@ -969,13 +971,13 @@ public class Bit {
     /*
         Load a bit file object
      */
-    public function loadBitObject(o) {
+    public function loadBitObject(o, ns = null) {
         if (simpleLoad) {
             blend(bit, o)
             return
         }
         let home = currentBitFile.dirname
-        fixup(o)
+        fixup(o, ns)
         /* 
             Blending is depth-first. Blend this bit object after loading blend references.
             Save the blend[] property for the current bit object
@@ -2402,6 +2404,12 @@ command = command.expand(bit, {fill: ''})
                     runShell(target, item.script)
                 } else {
                     let script = item.script.expand(bit, {fill: ''})
+/*
+print('ITEM.NS', typeOf(item.ns))
+print('ITEM.NS', item.ns)
+dump(item)
+global.NN = item.ns
+*/
                     script = 'require ejs.unix\n' + script
                     eval(script)
                 }
@@ -2805,8 +2813,8 @@ command = command.expand(bit, {fill: ''})
         return 'MPR_CPU_UNKNOWN'
     }
 
-    public static function load(o: Object) {
-        b.loadBitObject(o)
+    public static function load(o: Object, ns = null) {
+        b.loadBitObject(o, ns)
     }
 
     public static function loadFile(path: Path) {

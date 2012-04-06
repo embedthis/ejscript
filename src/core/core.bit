@@ -15,6 +15,9 @@ Bit.load({
     },
 
     targets: {
+        xxx: {
+            action: "print(abc)",
+        },
         'ejs.mod': {
             path: '${LIB}/ejs.mod',
             files: [ '*.es' ],
@@ -49,4 +52,4 @@ Bit.load({
             depends: [ 'ejsc', 'ejsmod' ],
         },
 	},
-})
+}, internal)

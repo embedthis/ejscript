@@ -396,6 +396,14 @@ module ejs {
         override native function toString(): String
 
         /**
+            Convert the string to a path
+            @return Returns an equivalent Path object
+            @spec ejs
+         */
+        function toPath(): Path
+            this cast Path
+
+        /**
             Convert the string to upper case.
             @return Returns a new upper case version of the string.
             @spec ejs

@@ -1992,15 +1992,16 @@
 #define ES_String_toJSON                                               36
 #define ES_String_toLowerCase                                          37
 #define ES_String_toString                                             38
-#define ES_String_toUpperCase                                          39
-#define ES_String_trim                                                 40
-#define ES_String_trimStart                                            41
-#define ES_String_trimEnd                                              42
-#define ES_String_MINUS                                                43
-#define ES_String_MOD                                                  44
-#define ES_String_toLower                                              45
-#define ES_String_toUpper                                              46
-#define ES_String_NUM_INSTANCE_PROP                                    47
+#define ES_String_toPath                                               39
+#define ES_String_toUpperCase                                          40
+#define ES_String_trim                                                 41
+#define ES_String_trimStart                                            42
+#define ES_String_trimEnd                                              43
+#define ES_String_MINUS                                                44
+#define ES_String_MOD                                                  45
+#define ES_String_toLower                                              46
+#define ES_String_toUpper                                              47
+#define ES_String_NUM_INSTANCE_PROP                                    48
 #define ES_String_NUM_INHERITED_PROP                                   0
 
 /*
@@ -2353,6 +2354,6 @@
 #define ES_XMLList_NUM_INSTANCE_PROP                                   20
 #define ES_XMLList_NUM_INHERITED_PROP                                  0
 
-#define _ES_CHECKSUM_ejs   1463785
+#define _ES_CHECKSUM_ejs   1465153
 
 #endif

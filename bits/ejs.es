@@ -11,7 +11,7 @@ require ejs.unix
 /*
     Copy binary files to package staging area
  */
-public function packageBinaryFiles() {
+public function packageBinaryFiles(formats = ['tar', 'native']) {
     let settings = bit.settings
     let bin = bit.dir.pkg.join('bin')
     safeRemove(bit.dir.pkg)
@@ -34,7 +34,7 @@ public function packageBinaryFiles() {
         p[prefix] = Path(contents.portable.name + bit.prefixes[prefix].removeDrive().portable)
         p[prefix].makeDir()
     }
-    let strip = settings.profile == 'debug'
+    let strip = bit.platform.profile == 'debug'
 
     install('LICENSE.md', p.product, {fold: true, expand: true})
     install('doc/product/README.TXT', p.product, {fold: true, expand: true})
@@ -73,6 +73,152 @@ public function packageBinaryFiles() {
         install('doc/man/*.1', p.productver.join('doc/man/man1'), {compress: true})
     }
     p.productver.join('files.log').write(contents.glob('**', {exclude: /\/$/, relative: true}).join('\n') + '\n')
+    if (formats) {
+        package(bit.dir.pkg.join('bin'), formats)
+    }
+}
+
+public function packageSourceFiles() {
+    let s = bit.settings
+    let src = bit.dir.pkg.join('src')
+    let pkg = src.join(s.product + '-' + s.version)
+    safeRemove(pkg)
+    pkg.makeDir()
+    install(['Makefile', 'product.bit'], pkg)
+    install('bits', pkg)
+    install('*.md', pkg, {fold: true, expand: true})
+    install('configure', pkg, {permissions: 0755})
+    install('src', pkg, {
+        exclude: /\.log$|\.lst$|ejs.zip|\.stackdump$|\/cache|huge.txt|\.swp$|\.tmp/,
+    })
+    install('doc', pkg, {
+        exclude: /\/xml\/|\/html\/|Archive|\.mod$|\.so$|\.dylib$|\.o$/,
+    })
+    install('projects', pkg, {
+        exclude: /\/Debug\/|\/Release\/|\.ncb|\.mode1v3|\.pbxuser/,
+    })
+    package(src, 'src')
+}
+
+public function packageComboFiles() {
+    let s = bit.settings
+    let src = bit.dir.pkg.join('src')
+    let pkg = src.join(s.product + '-' + s.version)
+    safeRemove(pkg)
+    pkg.makeDir()
+    install('projects/buildConfig.' + bit.platform.configuration, pkg.join('src/deps/ejs/buildConfig.h'))
+    install('package/ejs.bit', pkg.join('src/deps/ejs/product.bit'))
+    install('package/Makefile.flat', pkg.join('src/deps/ejs/Makefile'))
+    let filter = /^#inc.*ejs.*$|^#inc.*mpr.*$|^#inc.*ec.*$|^#inc.*http.*$|^#inc.*customize.*$/mg
+
+    install([
+        'src/deps/mpr/mpr.h', 
+        'src/deps/http/http.h', 
+        'src/ejsByteCode.h', 
+        'src/ejsByteCodeTable.h',
+        'src/ejs.h', 
+        'src/jems/ejs.web/src/ejsWeb.h', 
+        'src/ejsCompiler.h', 
+        'src/deps/pcre/pcre.h'
+        ], pkg.join('src/deps/ejs/ejs.h'), {
+        cat: true, filter: filter,
+        header: '#include \"ejs.slots.h\"',
+        title: bit.settings.title + ' Library Source',
+    })
+    install('src/vm/ejsByteGoto.h', pkg.join('src/deps/ejs/ejsByteGoto.h'))
+    install(bit.dir.inc.join('ejs*.slots.h'), pkg.join('src/deps/ejs/ejs.slots.h'), {
+        cat: true, filter: filter,
+        title: bit.settings.title + ' Object Slot Definitions',
+    })
+
+    install(['src/deps/**.c'], pkg.join('src/deps/ejs/deps.c'), {
+        cat: true,
+        filter: filter,
+        exclude: /pcre|makerom|http\.c|sqlite|manager/,
+        header: '#include \"ejs.h\"',
+        title: bit.settings.title + ' Library Source',
+    })
+
+    install(['src/deps/pcre/pcre.c', 'src/deps/pcre/pcre.h'], pkg.join('src/deps/appweb'))
+    install(['src/deps/sqlite/sqlite3.c', 'src/deps/sqlite/sqlite3.h'], pkg.join('src/deps/sqlite'))
+
+    install(['src/**.c'], pkg.join('src/deps/ejs/ejsLib.c'), {
+        cat: true,
+        filter: filter,
+        exclude: /doc\.c|listing\.c|ejsmod\.c|slotGen\.c|docFiles\.c|ejs\.c$|ejsc\.c$|deps|ejs.debugger|samples|utils/,
+        header: '#define EJS_DEFINE_OPTABLE 1\n#include \"ejs.h\"',
+        title: bit.settings.title + ' Library Source',
+    })
+    install(['src/**.es'], pkg.join('src/deps/ejs/ejs.es'), {
+        cat: true,
+        filter: filter,
+        exclude: /ejs.bit|ejs.debugger|test|sample|ejs.jem|ejs.mvc/,
+        title: bit.settings.title + ' Script Library',
+    })
+    install('src/cmd/ejs.c', pkg.join('src/deps/ejs/ejs.c'), {
+        cat: true,
+        filter: filter,
+        header: '#include \"ejs.h\"',
+        title: bit.settings.title + ' Shell Command',
+    })
+    install('src/cmd/ejsc.c', pkg.join('src/deps/ejs/ejsc.c'), {
+        cat: true,
+        filter: filter,
+        header: '#include \"ejs.h\"',
+        title: bit.settings.title + ' Compiler',
+    })
+    install([
+        'src/cmd/ejsmod.h', 
+        'src/cmd/doc.c', 
+        'src/cmd/docFiles.c', 
+        'src/cmd/ejsmod.c', 
+        'src/cmd/listing.c', 
+        'src/cmd/slotGen.c'
+        ], pkg.join('src/deps/ejs/ejsmod.c'), {
+        cat: true,
+        filter: filter,
+        header: '#include \"ejs.h\"',
+        title: bit.settings.title + ' Manager',
+    })
+    package(pkg, ['combo', 'flat'])
+}
+
+
+public function installBinary() {
+    if (App.uid != 0) {
+        throw 'Must run as root. Use \"sudo bit install\"'
+    }
+    packageBinaryFiles(null)
+    package(bit.dir.pkg.join('bin'), 'install')
+    createLinks()                                                                                          
+    bit.dir.pkg.join('bin').removeAll()
+    trace('Complete', bit.settings.title + ' installed')
+}
+
+public function uninstallBinary() {
+    if (App.uid != 0) {
+        throw 'Must run as root. Use \"sudo bit install\"'
+    }
+    trace('Uninstall', bit.settings.title)                                                     
+    let fileslog = bit.prefixes.productver.join('files.log')
+    if (fileslog.exists) {
+        for each (let file: Path in fileslog.readLines()) {
+            vtrace('Remove', file)
+            file.remove()
+        }
+    }
+    fileslog.remove()
+    for each (file in bit.prefixes.log.glob('*.log*')) {
+        file.remove()
+    }
+    for each (prefix in bit.prefixes) {
+        for each (dir in prefix.glob('**', {include: /\/$/}).sort().reverse()) {
+            vtrace('Remove', dir)
+            dir.remove()
+        }
+        vtrace('Remove', prefix)
+        prefix.remove()
+    }
 }
 
 /*

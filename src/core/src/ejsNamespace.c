@@ -20,7 +20,7 @@ static EjsAny *castNamespace(Ejs *ejs, EjsNamespace *vp, EjsType *type)
         return ejsCreateBoolean(ejs, 1);
 
     case S_String:
-        return ejsCreateStringFromAsc(ejs, "[object Namespace]");
+        return vp->value;
 
     default:
         ejsThrowTypeError(ejs, "Can't cast to this type");
@@ -107,7 +107,7 @@ EjsString *ejsFormatReservedNamespace(Ejs *ejs, EjsName *typeName, EjsString *sp
 
 /*********************************** Factory **********************************/
 /*
-    Create a namespace with the given Uri as its definition qualifying value.
+    Create a namespace with the given name as its definition value.
  */
 EjsNamespace *ejsCreateNamespace(Ejs *ejs, EjsString *name)
 {

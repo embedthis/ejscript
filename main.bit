@@ -66,139 +66,33 @@ Bit.load({
         } },
     },
 
-    //  MOB - uniused
-    _packs: {
-        ejs: {
-            path: '${BIN}/ejs'
-        },
-        utest: {
-            path: '${BIN}/utest'
-        },
-    },
-
     targets: {
+        install: {
+            depends: ['build'],
+            action: "installBinary()",
+        },
+
         package: {
             depends: ['packageBinary', 'packageSource', 'packageCombo'],
         },
 
         packageBinary: {
             depends: ['build'],
-            action: "
-                packageBinaryFiles()
-                package(bit.dir.pkg.join('bin'), ['tar', 'native'])
-            ",
+            action: "packageBinaryFiles()",
         },
 
         packageSource: {
             depends: ['build'],
-            action: "
-                let s = bit.settings
-                let src = bit.dir.pkg.join('src')
-                let pkg = src.join(s.product + '-' + s.version)
-                safeRemove(pkg)
-                pkg.makeDir()
-                install(['Makefile', 'product.bit'], pkg)
-                install('bits', pkg)
-                install('*.md', pkg, {fold: true, expand: true})
-                install('configure', pkg, {permissions: 0755})
-                install('src', pkg, {
-                    exclude: /\\.log$|\\.lst$|ejs.zip|\\.stackdump$|\\/cache|huge.txt|\\.swp$|\\.tmp/,
-                })
-                install('doc', pkg, {
-                    exclude: /\\/xml\\/|\\/html\\/|Archive|\\.mod$|\\.so$|\\.dylib$|\\.o$/,
-                })
-                install('projects', pkg, {
-                    exclude: /\\/Debug\\/|\\/Release\\/|\\.ncb|\\.mode1v3|\\.pbxuser/,
-                })
-                package(src, 'src')
-            ",                                                                                             
+            action: "packageSourceFiles()",
         },
 
         packageCombo: {
             depends: ['build'],
-            action: "
-                let s = bit.settings
-                let src = bit.dir.pkg.join('src')
-                let pkg = src.join(s.product + '-' + s.version)
-                safeRemove(pkg)
-                pkg.makeDir()
-                install('projects/buildConfig.' + bit.platform.name + '-' + bit.settings.profile,
-pkg.join('src/deps/ejs/buildConfig.h'))
-                install('package/ejs.bit', pkg.join('src/deps/ejs/product.bit'))
-                install('package/Makefile.flat', pkg.join('src/deps/ejs/Makefile'))
-                let filter = /^#inc.*ejs.*$|^#inc.*mpr.*$|^#inc.*ec.*$|^#inc.*http.*$|^#inc.*customize.*$/mg
+            action: "packageComboFiles()",
+        },
 
-                install([
-                    'src/deps/mpr/mpr.h', 
-                    'src/deps/http/http.h', 
-                    'src/ejsByteCode.h', 
-                    'src/ejsByteCodeTable.h',
-                    'src/ejs.h', 
-                    'src/jems/ejs.web/src/ejsWeb.h', 
-                    'src/ejsCompiler.h', 
-                    'src/deps/pcre/pcre.h'
-                    ], pkg.join('src/deps/ejs/ejs.h'), {
-                    cat: true, filter: filter,
-                    header: '#include \"ejs.slots.h\"',
-                    title: bit.settings.title + ' Library Source',
-                })
-                install('src/vm/ejsByteGoto.h', pkg.join('src/deps/ejs/ejsByteGoto.h'))
-                install(['${INC}/ejs*.slots.h'], pkg.join('src/deps/ejs/ejs.slots.h'), {
-                    cat: true, filter: filter,
-                    title: bit.settings.title + ' Object Slot Definitions',
-                })
-
-                install(['src/deps/**.c'], pkg.join('src/deps/ejs/deps.c'), {
-                    cat: true,
-                    filter: filter,
-                    exclude: /pcre|makerom|http\.c|sqlite|manager/,
-                    header: '#include \"ejs.h\"',
-                    title: bit.settings.title + ' Library Source',
-                })
-
-                install(['src/deps/pcre/pcre.c', 'src/deps/pcre/pcre.h'], pkg.join('src/deps/appweb'))
-                install(['src/deps/sqlite/sqlite3.c', 'src/deps/sqlite/sqlite3.h'], pkg.join('src/deps/sqlite'))
-
-                install(['src/**.c'], pkg.join('src/deps/ejs/ejsLib.c'), {
-                    cat: true,
-                    filter: filter,
-                    exclude: /doc\.c|listing\.c|ejsmod\.c|slotGen\.c|docFiles\.c|ejs\.c$|ejsc\.c$|deps|ejs.debugger|samples|utils/,
-                    header: '#define EJS_DEFINE_OPTABLE 1\n#include \"ejs.h\"',
-                    title: bit.settings.title + ' Library Source',
-                })
-                install(['src/**.es'], pkg.join('src/deps/ejs/ejs.es'), {
-                    cat: true,
-                    filter: filter,
-                    exclude: /ejs.bit|ejs.debugger|test|sample|ejs.jem|ejs.mvc/,
-                    title: bit.settings.title + ' Script Library',
-                })
-                install('src/cmd/ejs.c', pkg.join('src/deps/ejs/ejs.c'), {
-                    cat: true,
-                    filter: filter,
-                    header: '#include \"ejs.h\"',
-                    title: bit.settings.title + ' Shell Command',
-                })
-                install('src/cmd/ejsc.c', pkg.join('src/deps/ejs/ejsc.c'), {
-                    cat: true,
-                    filter: filter,
-                    header: '#include \"ejs.h\"',
-                    title: bit.settings.title + ' Compiler',
-                })
-                install([
-                    'src/cmd/ejsmod.h', 
-                    'src/cmd/doc.c', 
-                    'src/cmd/docFiles.c', 
-                    'src/cmd/ejsmod.c', 
-                    'src/cmd/listing.c', 
-                    'src/cmd/slotGen.c'
-                    ], pkg.join('src/deps/ejs/ejsmod.c'), {
-                    cat: true,
-                    filter: filter,
-                    header: '#include \"ejs.h\"',
-                    title: bit.settings.title + ' Manager',
-                })
-                package(pkg, ['combo', 'flat'])
-            ",
+        uninstall: {
+            action: "uninstallBinary()"
         },
     },
 })
