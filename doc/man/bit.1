@@ -1,0 +1,210 @@
+.TH BIT "1" "March 2012" "bit" "User Commands"
+.SH NAME
+bit \- Build It! Utility to build and manage programs
+.SH SYNOPSIS
+.B bit [\fI--benchmark\fR]
+[\fI--config path-to-source\fR]
+[\fI--continue\fR]
+[\fI--debug\fR]
+[\fI--diagnose\fR]
+[\fI--emulate os-arch\fR]
+[\fI--file file.bit\fR]
+[\fI--force\fR]
+[\fI--gen [make|sh|vs|xcode]\fR]
+[\fI--import\fR]
+[\fI--keep\fR]
+[\fI--log logSpec\fR]
+[\fI--out path\fR]
+[\fI--profile [debug|release|...]\fR]
+[\fI--pre sourcefile\fR]
+[\fI--platform os-arch\fR]
+[\fI--quiet\fR]
+[\fI--save path\fR]
+[\fI--set [feature=value]\fR]
+[\fI--show\fR]
+[\fI--rebuild\fR]
+[\fI--release\fR]
+[\fI--unset feature\fR]
+[\fI--version\fR]
+[\fI--verbose\fR]
+[\fI--with PACK[-platform][=PATH]\fR]
+[\fI--without PACK[-platform]\fR]
+[\fI--class className\fR] 
+[\fI--cmd literalScript\fR] 
+[\fI--debug\fR]
+[\fI--files "files..."\fR]
+[\fI--log logSpec\fR]
+[\fI--method methodName\fR]
+[\fI--nodebug\fR]
+[\fI--optimize level\fR]
+[\fI--search ejsPath\fR]
+[\fI--standard\fR]
+[\fI--stats\fR]
+[\fI--strict\fR]
+[\fI--use 'module, ...'\fR]
+[\fI--version\fR]
+[\fI--warn level\fR]
+[options] [targets|actions] ...
+.SH DESCRIPTION
+The \fBbit\fR command is modern replacement for the autoconf and venerable make utilities and serves a similar role. 
+Bit manages the building of products or programs by effectively determining which pieces have been updated and 
+thus which components need to be rebuilt. It easily handles direct compilation, generation of projects such as XCode or
+Visual Studio and supports cross compilation.
+.PP
+In the past, projects have relied on autoconf to configure products and make to build. Bit replaces both with a single
+utility.  
+Bit 
+
+.SH INVOCATION
+A bit file is a javascript file with a '.bit' extension that invokes Bit.load to process a set of build instructions. 
+The build instructions are expressed as a JavaScript object literal that Bit.load integrates into the master set of 
+build instructions.
+.PP
+A stand-alone bit file is called 'local.bit'. A stand-alone bit file may be used to express simple build targets 
+without requiring any prior configuration step. Here is a stand-alone bit file to build a single executable.
+.PP
+.RS 5
+Bit({
+    targets: {
+        rocket: {
+            type: 'exe',
+            sources: ['*.c'],
+        },
+    },
+})
+.RE
+.PP
+To build the rocket, enter:
+.PP
+.RS 5
+\fBbit\fR
+.RE
+
+.SH EXAMPLE BITFILE
+
+.SH FEATURES
+- Project Configuration (replaces autoconf)
+- Compiler capability sleuthing
+- Discovery of external packages
+- Bit configuration can be comprised by multiple bit files
+- cross compilation
+- generate projects: make, shell, Visual Studio, XCode
+- Unified project view. No make style recursion required.
+- Intelligent inheritance of project properties
+- Bit file paths and scripts relative to residing directory
+- JavaScript for scripting
+- Cross platform. Easily handles Windows, Linux and Mac builds
+
+.SH NICE BITS
+- Target names are different to the target path name
+- Ejscript provides powerful path name manipulation and wildcard routines
+
+.SH WHY BIT
+Bit was initiated after evaluating Make, CMake and GYP for use by Appweb and Ejscript in an embedded, cross-compilation
+environment. While all three can be made to work, we were expending a large percentage of time on the build system and
+less on the actual product. Our design goals were:
+- Easily manage cross-compilation using cross-compilers
+- Support the discovery, configuration and integration of external third-party packages. 
+- Generate native projects for Visual Studio, XCode, Make, NMake and simple shell scripts to build projects
+- Build quickly on windows 
+- Provide support for the entire build cycle including: C source dependencies, compilation, test and packaging
+- Be hackable and extendable.
+.PP
+
+.SH DIFFENCES VS MAKE
+
+
+.PP
+
+.SH OPTIONS
+.TP
+\fB\--benchmark\fR
+Measure the elapsed time to run bit.
+.TP
+
+\fB\--config path-to-source\fR
+Configure the project to prepare for building. This configures Bit for building the project based on the instructions
+specified in a 'main.bit' located in the top directory of the specified path source tree. When Bit is run with this 
+switch, bit will create a configuration bit file, a output directory and buildConfig.h header. The configuration
+directory is of the form: OS-ARCH-PROFILE where OS may be win, linux, macosx, ARCH is x86_64, i386, ppc etc., while
+PROFILE is typically set to debug or release. For example: 'macosx-x86_64-debug'. The configuration bit file omits the
+PROFILE. For example: 'linux-i386'.
+.PP
+Bit will the settings.required and settings.optional properties in the main.bit for a list of packages to use. 
+When configuring, bit will search for these packages and will create definitions in the configuration bit file for
+later use.
+
+.TP
+\fB\--continue\fR
+Continue to build despite any build errors. Normal operation is to stop building if any build errors are encountered.
+
+.TP
+\fB\--debug\fR
+Run in debug mode and generate symbolic stack backtraces if required.
+
+.TP
+\fB\--files "files ..."\fR
+Specifies an extra set of files to be compiled. The \fBejs\fR command normally takes just one script file on the command line.
+The --files switch allows extra script to be compiled after the primary script, but before the scripts are run.
+.TP
+\fB\--log logName[:logLevel]\fR
+Specify a file to log internal execution messages. Ejs will log execution related trace to the log file. The log level
+specifies the desired verbosity of output. Level 0 is the least verbose and level 9 is the most. Level 2 will include
+trace of each source statement and assembler instruction executed (provided --nodebug is not specifiec).
+.TP
+\fB\---method methodName\fR
+Set the startup method name. Defaults to "main" if a --className is specified and --method is not.
+.TP
+\fB\--nodebug\fR
+Run the script without debug information. This will result in exceptions not having symbolic stack backtraces.
+.TP
+\fB\--optimize level\fR
+Set the code optimization level. Level values must be between 0 (least) and 9 (most). Default is level 9.
+.TP
+\fB\--search ejsPath\fR
+Set the module search path. The module search path is a set of directories that the \fBejs\fR command will use
+when locating and loading Ejscript modules.  The search path will always have some system directories appended 
+to the end. These include paths specified via the \fB\ EJSPATH\fR environment variable and key system directories
+such as the Ejscript system module directory and the directory containing the ejs command.
+.IP
+The search path value is similar in format to the system PATH variable format. 
+On windows, path segments are separated by ";" and on Linux, Unix, FreeBSD and MAC, the path segments are separated 
+by ":" delimiters.
+.IP
+Given a module named "a.b.c" in a script, \fBejs\fR will use the following search strategy to locate the module:
+.IP
+1. Search for a module file named "a.b.c.mod"
+.IP
+2. Search for a module file named "a/b/c.mod"
+.IP
+3. Search for a module file named "a.b.c.mod" in the search path
+.IP
+4. Search for a module file named c.mod in the search path
+.TP
+\fB\--standard\fR
+Run scripts in standard mode. Ejscript supports two parsing modes: strict and standard. Standard mode does not require 
+variables be declared and typed before use.
+.TP
+\fB\--stats\fR
+Print various statistics on exit.
+.TP
+\fB\--strict\fR
+Run scripts in standard mode. Ejscript supports two parsing modes: strict and standard. Strict mode requires that 
+all variables be declared and typed.
+.TP
+\fB\--use 'module, ...'\fR
+List of modules to preload before compiling input files.
+.TP
+\fB\--warn level \fR
+Set the compiler warning verbosity level. Level values must be between 0 (least verbose) and 9 (most). Default is 0.
+.TP
+\fB\--version\fR
+Print the \fBejs\fR command version and exit.
+.PP
+.SH "REPORTING BUGS"
+Report bugs to dev@embedthis.com.
+.SH COPYRIGHT
+Copyright \(co 2004-2012 Embedthis Software.  Ejscript is a trademark of Embedthis Software.
+.br
+.SH "SEE ALSO"
+ejs

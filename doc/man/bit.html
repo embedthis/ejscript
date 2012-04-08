@@ -1,0 +1,174 @@
+<BODY><PRE>
+BIT(1)                           User Commands                          BIT(1)
+
+<B>NAME</B>
+       bit - Build It! Utility to build and manage programs
+
+<B>SYNOPSIS</B>
+       <B>bit  [options]  [targets|actions] ...  </B>[<I>--benchmark</I>] [<I>--config path-to-</I>
+       <I>source</I>] [<I>--continue</I>] [<I>--debug</I>] [<I>--diagnose</I>] [<I>--emulate os-arch</I>] [<I>--file</I>
+       <I>file.bit</I>]  [<I>--force</I>]  [<I>--gen  [make|sh|vs|xcode]</I>]  [<I>--import</I>]  [<I>--keep</I>]
+       [<I>--log logSpec</I>] [<I>--out path</I>]  [<I>--profile  [debug|release|...]</I>]   [<I>--pre</I>
+       <I>sourcefile</I>]  [<I>--platform  os-arch</I>] [<I>--quiet</I>] [<I>--save path</I>] [<I>--set [fea-</I>
+       <I>ture=value]</I>] [<I>--show</I>] [<I>--rebuild</I>] [<I>--release</I>] [<I>--unset feature</I>] [<I>--ver-</I>
+       <I>sion</I>]    [<I>--verbose</I>]    [<I>--with    PACK[-platform][=PATH]</I>]   [<I>--without</I>
+       <I>PACK[-platform]</I>] [<I>--class className</I>]  [<I>--cmd  literalScript</I>]  [<I>--debug</I>]
+       [<I>--files "files..."</I>]  [<I>--log logSpec</I>] [<I>--method methodName</I>] [<I>--nodebug</I>]
+       [<I>--optimize level</I>] [<I>--search ejsPath</I>] [<I>--standard</I>] [<I>--stats</I>] [<I>--strict</I>]
+       [<I>--use  'module, ...'</I>]  [<I>--version</I>] [<I>--warn level</I>] file [arguments ...]
+
+<B>DESCRIPTION</B>
+       The <B>ejs </B>command is an Ejscript command shell that can interpret and run
+       JavaScript programs.
+
+       Ejscript  is  an enhanced implementation of the JavaScript language for
+       use in embedded applications such as web servers, embedded devices  and
+       mobile  phones. It is especially well suited for Server-Side JavaScript
+       web applications.
+
+<B>INVOCATION</B>
+       The <B>ejs </B>command can be used as a shell to interactively interpret  com-
+       mands typed at the console or to run script files. When invoked with no
+       files on the command line, <B>ejs </B>runs in interactive mode.   In  interac-
+       tive  mode,  <B>ejs  </B>reads  input from the console and parses and executes
+       script code as it is entered. In this mode, <B>ejs </B>command will read input
+       until  it has a complete block of code and will then execute the block.
+       The last result value computed will be echoed to the console. For exam-
+       ple:
+
+       ejs-0&gt if (true) {
+       ejs-2&gt     print("Hello World");
+       ejs-2&gt }
+       Hello World
+
+       ejs-0&gt
+
+       Note:  the  input prompt includes a level of nest indicator starting at
+       zero and increasing upward as commands nest. This is a hint as to  when
+       you  have  closed sufficient braces for <B>ejs </B>to execute your command. As
+       this is an internal compiler nest value, it  will  sometimes  increment
+       more than 1 for each brace.
+
+       If  <B>ejs </B>is invoked with a file name on the command line, that file will
+       be read and its statements executed. One file may be supplied  and  the
+       arguments after it will be passed into the script as command line argu-
+       ments. For example:
+
+               ejs myscript.es arg1 arg2 arg3
+
+       The given file may be either a script file or it may  be  a  previously
+       compiled Ejscript module with a <B>.mod </B>extension.
+
+       If  you  require more script files to be parsed, use the --files "files
+       ..." switch to supply extra scripts. These will be parsed in order, but
+       after the primary script on the command line.
+
+       The  <B>ejs  </B>command  can also invoke a specific static method on startup.
+       If either the --class or --method switches are supplied, then <B>ejs  </B>will
+       run  the requested static method after the input file script statements
+       have been executed.
+
+<B>COMPLIANCE</B>
+       Ejscript is fully compliant with the JavaScript  (ECMA-262  3.X)  stan-
+       dards,  but  it also offers a set of enhancements and fixes designed to
+       improve the language and correct some  longstanding  JavaScript  design
+       issues.
+
+<B>OPTIONS</B>
+       <B>--class className</B>
+              Use  the  given  className when searching for the startup method
+              specified via --method or "main" by default.
+
+       <B>--cmd literalCommand</B>
+              Evaluate a literal command string.
+
+       <B>--debug</B>
+              Run in debug mode and  generate  symbolic  stack  backtraces  if
+              required.
+
+       <B>--files "files ..."</B>
+              Specifies  an extra set of files to be compiled. The <B>ejs </B>command
+              normally takes just one script file on the  command  line.   The
+              --files switch allows extra script to be compiled after the pri-
+              mary script, but before the scripts are run.
+
+       <B>--log logName[:logLevel]</B>
+              Specify a file to log internal execution messages. Ejs will  log
+              execution related trace to the log file. The log level specifies
+              the desired verbosity of output. Level 0 is  the  least  verbose
+              and  level  9  is  the  most. Level 2 will include trace of each
+              source statement and assembler  instruction  executed  (provided
+              --nodebug is not specifiec).
+
+       <B>---method methodName</B>
+              Set the startup method name. Defaults to "main" if a --className
+              is specified and --method is not.
+
+       <B>--nodebug</B>
+              Run the script without debug information. This  will  result  in
+              exceptions not having symbolic stack backtraces.
+
+       <B>--optimize level</B>
+              Set  the code optimization level. Level values must be between 0
+              (least) and 9 (most). Default is level 9.
+
+       <B>--search ejsPath</B>
+              Set the module search path. The module search path is a  set  of
+              directories  that  the  <B>ejs  </B>command  will use when locating and
+              loading Ejscript modules.  The search path will always have some
+              system  directories  appended  to  the  end. These include paths
+              specified via the  <B>EJSPATH </B>environment variable and  key  system
+              directories such as the Ejscript system module directory and the
+              directory containing the ejs command.
+
+              The search path value is similar in format to  the  system  PATH
+              variable format.  On windows, path segments are separated by ";"
+              and on Linux, Unix, FreeBSD and MAC, the path segments are sepa-
+              rated by ":" delimiters.
+
+              Given  a module named "a.b.c" in a script, <B>ejs </B>will use the fol-
+              lowing search strategy to locate the module:
+
+              1. Search for a module file named "a.b.c.mod"
+
+              2. Search for a module file named "a/b/c.mod"
+
+              3. Search for a module file named "a.b.c.mod" in the search path
+
+              4. Search for a module file named c.mod in the search path
+
+       <B>--standard</B>
+              Run  scripts  in  standard  mode.  Ejscript supports two parsing
+              modes: strict and standard. Standard mode does not require vari-
+              ables be declared and typed before use.
+
+       <B>--stats</B>
+              Print various statistics on exit.
+
+       <B>--strict</B>
+              Run  scripts  in  standard  mode.  Ejscript supports two parsing
+              modes: strict and standard. Strict mode requires that all  vari-
+              ables be declared and typed.
+
+       <B>--use 'module, ...'</B>
+              List of modules to preload before compiling input files.
+
+       <B>--warn level</B>
+              Set  the  compiler warning verbosity level. Level values must be
+              between 0 (least verbose) and 9 (most). Default is 0.
+
+       <B>--version</B>
+              Print the <B>ejs </B>command version and exit.
+
+<B>REPORTING BUGS</B>
+       Report bugs to dev@embedthis.com.
+
+<B>COPYRIGHT</B>
+       Copyright (C) 2004-2012 Embedthis Software.  Ejscript is a trademark of
+       Embedthis Software.
+
+<B>SEE ALSO</B>
+       ejs
+
+bit                               March 2012                            BIT(1)
+</PRE></BODY>
