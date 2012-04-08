@@ -135,18 +135,13 @@ MAIN(ejsMain, int argc, char **argv, char **envp)
         }
     }
 #endif
-print("AT %d\n", __LINE__);
     if (!err) {
         err = mpr->exitStatus;
     }
     app->ejs = 0;
-print("AT %d\n", __LINE__);
     mprTerminate(MPR_EXIT_DEFAULT, err);
-print("AT %d\n", __LINE__);
     ejsDestroyVM(ejs);
-print("AT %d\n", __LINE__);
     mprDestroy(MPR_EXIT_DEFAULT);
-print("AT %d\n", __LINE__);
     return err;
 }
 

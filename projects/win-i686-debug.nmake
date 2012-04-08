@@ -800,6 +800,11 @@ $(CONFIG)\bin\bit.exe:  \
 $(CONFIG)\bin\utest.es: 
 	copy src\jems\ejs.utest\utest.es $(CONFIG)\bin
 
+$(CONFIG)\bin\utest.exe:  \
+        $(CONFIG)\bin\ejsrun.exe
+	-if exist win-i686-debug\bin\utest.exe del /Q win-i686-debug\bin\utest.exe
+	copy /Y win-i686-debug\bin\ejsrun.exe win-i686-debug\bin\utest.exe
+
 $(CONFIG)\bin\bits: 
 	-rd /Q /S $(CONFIG)\bin\bits
 	-md $(CONFIG)\bin\bits
@@ -813,6 +818,11 @@ $(CONFIG)\bin\ejs.unix.mod:  \
 
 $(CONFIG)\bin\jem.es: 
 	copy src\jems\ejs.jem\jem.es $(CONFIG)\bin
+
+$(CONFIG)\bin\jem.exe:  \
+        $(CONFIG)\bin\ejsrun.exe
+	-if exist win-i686-debug\bin\jem.exe del /Q win-i686-debug\bin\jem.exe
+	copy /Y win-i686-debug\bin\ejsrun.exe win-i686-debug\bin\jem.exe
 
 $(CONFIG)\bin\ejs.db.mod:  \
         $(CONFIG)\bin\ejsc.exe \
@@ -911,6 +921,11 @@ $(CONFIG)\bin\ejs.tar.mod:  \
 
 $(CONFIG)\bin\mvc.es: 
 	copy src\jems\ejs.mvc\mvc.es $(CONFIG)\bin
+
+$(CONFIG)\bin\mvc.exe:  \
+        $(CONFIG)\bin\ejsrun.exe
+	-if exist win-i686-debug\bin\mvc.exe del /Q win-i686-debug\bin\mvc.exe
+	copy /Y win-i686-debug\bin\ejsrun.exe win-i686-debug\bin\mvc.exe
 
 $(CONFIG)\bin\ejs.mvc.mod:  \
         $(CONFIG)\bin\ejsc.exe \

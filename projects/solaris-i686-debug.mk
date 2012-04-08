@@ -788,6 +788,11 @@ $(CONFIG)/bin/bit:  \
 $(CONFIG)/bin/utest.es: 
 	cp src/jems/ejs.utest/utest.es $(CONFIG)/bin
 
+$(CONFIG)/bin/utest:  \
+        $(CONFIG)/bin/ejsrun
+	rm -fr solaris-i686-debug/bin/utest
+	cp -r solaris-i686-debug/bin/ejsrun solaris-i686-debug/bin/utest
+
 $(CONFIG)/lib/bits: 
 	rm -fr $(CONFIG)/lib/bits
 	cp -r src/jems/ejs.bit/bits $(CONFIG)/lib
@@ -800,6 +805,11 @@ $(CONFIG)/lib/ejs.unix.mod:  \
 
 $(CONFIG)/bin/jem.es: 
 	cp src/jems/ejs.jem/jem.es $(CONFIG)/bin
+
+$(CONFIG)/bin/jem:  \
+        $(CONFIG)/bin/ejsrun
+	rm -fr solaris-i686-debug/bin/jem
+	cp -r solaris-i686-debug/bin/ejsrun solaris-i686-debug/bin/jem
 
 $(CONFIG)/lib/ejs.db.mod:  \
         $(CONFIG)/bin/ejsc \
@@ -897,6 +907,11 @@ $(CONFIG)/lib/ejs.tar.mod:  \
 
 $(CONFIG)/bin/mvc.es: 
 	cp src/jems/ejs.mvc/mvc.es $(CONFIG)/bin
+
+$(CONFIG)/bin/mvc:  \
+        $(CONFIG)/bin/ejsrun
+	rm -fr solaris-i686-debug/bin/mvc
+	cp -r solaris-i686-debug/bin/ejsrun solaris-i686-debug/bin/mvc
 
 $(CONFIG)/lib/ejs.mvc.mod:  \
         $(CONFIG)/bin/ejsc \
