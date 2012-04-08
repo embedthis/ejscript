@@ -29,17 +29,15 @@ Bit.load({
                 if (bit.settings.preprocess) {
                     defaults.compiler.push('-E')
                 }
-                if (bit.settings.profile == 'debug') {
+                if (bit.platform.profile == 'debug') {
                     defaults.compiler += ['-g']
+                    defaults.linker.push('-g')
                 } else if (bit.settings.tune == 'size') {
                     defaults.compiler += ['-Os']
                 } else {
                     defaults.compiler += ['-fast']
                 }
                 defaults.libpaths.push(bit.dir.lib)
-                if (bit.settings.profile == 'debug') {
-                    defaults.linker.push('-g')
-                }
                 if (bit.settings.warnUnused) {
                     defaults.compiler.push('-Wno-unused-result')
                 }

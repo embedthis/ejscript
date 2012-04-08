@@ -2295,7 +2295,7 @@
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 			shellPath = /bin/sh;
-			shellScript = "\nexport BLD_TOP=$TOP\nexport BLD_TOOLS_DIR=$BLD_TOP/build/bin\nexport BLD_OUT_DIR=$BLD_TOP/out\n\n. `${BLD_TOOLS_DIR}/cacheConfig ${BLD_OUT_DIR}/inc/buildConfig.h`\n\nif [ \"$SKIP_INSTALL\" != YES ] ; then\n    echo \"Installing to $INSTALL_DIR\"\n    mkdir -p $INSTALL_DIR\n    cp $BUILT_PRODUCTS_DIR/*.mod $INSTALL_DIR\nfi";
+			shellScript = "\nexport BLD_TOP=$TOP\nexport BLD_TOOLS_DIR=$BLD_TOP/build/bin\nexport BLD_OUT_DIR=$BLD_TOP/out\n\n# . `${BLD_TOOLS_DIR}/cacheConfig ${BLD_OUT_DIR}/inc/buildConfig.h`\n\nif [ \"$SKIP_INSTALL\" != YES ] ; then\n    echo \"Installing to $INSTALL_DIR\"\n    mkdir -p $INSTALL_DIR\n    cp $BUILT_PRODUCTS_DIR/*.mod $INSTALL_DIR\nfi";
 			showEnvVarsInLog = 0;
 		};
 		C97A5EC511E81E9B00BB0981 /* Initialize */ = {
@@ -2354,7 +2354,7 @@
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 			shellPath = /bin/sh;
-			shellScript = "export BLD_TOP=$TOP\n. `${TOP}/build/bin/cacheConfig ${OUT}/inc/buildConfig.h`\n\n$TOP/build/bin/getImports $BUILT_PRODUCTS_DIR $BLD_MPR_IMPORTS";
+			shellScript = "";
 			showEnvVarsInLog = 0;
 		};
 		C9EA7DAD13D491620035EB46 /* Import Libraries and Headers */ = {
@@ -2369,7 +2369,7 @@
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 			shellPath = /bin/sh;
-			shellScript = "export BLD_TOP=$TOP\n. `${TOP}/build/bin/cacheConfig ${OUT}/inc/buildConfig.h`\n\n$TOP/build/bin/getImports $BUILT_PRODUCTS_DIR $BLD_PCRE_IMPORTS";
+			shellScript = "";
 			showEnvVarsInLog = 0;
 		};
 		C9EA7DAE13D491830035EB46 /* Import Libraries and Headers */ = {
@@ -2384,7 +2384,7 @@
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 			shellPath = /bin/sh;
-			shellScript = "export BLD_TOP=$TOP\n. `${TOP}/build/bin/cacheConfig ${OUT}/inc/buildConfig.h`\n\n$TOP/build/bin/getImports $BUILT_PRODUCTS_DIR $BLD_HTTP_IMPORTS";
+			shellScript = "";
 			showEnvVarsInLog = 0;
 		};
 		C9EA7DAF13D491AC0035EB46 /* Export Headers */ = {

@@ -29,7 +29,7 @@ Bit.load({
                     defaults.compiler.push('-E')
                 }
                 defaults.libpaths.push(bit.dir.lib)
-                if (bit.settings.profile == 'debug') {
+                if (bit.platform.profile == 'debug') {
                     defaults.compiler.push('-g')
                     defaults.linker.push('-g')
                 } else if (bit.settings.tune == 'size') {
