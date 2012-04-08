@@ -200,7 +200,6 @@ enumerable class Test {
         }
         _top = path.dirname.absolute
 
-/*
         let out: Path out = _top.join('out')
         if (!out.join('inc/buildConfig.h').exists) {
             out = Path(_top).glob(Config.OS.toLower() + '-' + Config.CPU + '-*').sort()[0]
@@ -208,9 +207,10 @@ enumerable class Test {
         if (!out) {
             throw 'Can\'t locate configure files, run configure'
         }
- */
+/*
         let out: Path = App.exeDir.parent
         parseBuildConfig(out.join('inc/buildConfig.h'))
+*/
 
         //  MOB - these are currently being set to the ejs bin and lib
         _bin = App.exeDir

@@ -77,7 +77,7 @@ for: comparison, concatenation, copying, searching, conversion, matching, replac
    <tr class='apiDef'><td class='apiType'> </td><td><a href='#concat'><b>concat</b></a>(args: <a href='Array.html'>Array</a>): <a href='String.html'>String</a></tr><tr class='apiBrief'><td>&nbsp;</td><td>Concatenate strings and returns a new string.</td></tr>
    <tr class='apiDef'><td class='apiType'> </td><td><a href='#contains'><b>contains</b></a>(pattern: <a href='Object.html'>Object</a>): <a href='Boolean.html'>Boolean</a></tr><tr class='apiBrief'><td>&nbsp;</td><td>Check if a string contains a pattern.</td></tr>
    <tr class='apiDef'><td class='apiType'> </td><td><a href='#endsWith'><b>endsWith</b></a>(test: <a href='String.html'>String</a>): <a href='Boolean.html'>Boolean</a></tr><tr class='apiBrief'><td>&nbsp;</td><td>Determine if this string ends with a given string.</td></tr>
-   <tr class='apiDef'><td class='apiType'> </td><td><a href='#expand'><b>expand</b></a>(obj: <a href='Object.html'>Object</a>, options: <a href='Object.html'>Object</a> = null): <a href='String.html'>String</a></tr><tr class='apiBrief'><td>&nbsp;</td><td>Expand tokens.</td></tr>
+   <tr class='apiDef'><td class='apiType'> </td><td><a href='#expand'><b>expand</b></a>(obj: <a href='Object.html'>Object</a>, options: <a href='Object.html'>Object</a> = null): <a href='String.html'>String</a></tr><tr class='apiBrief'><td>&nbsp;</td><td>Replace tokens in the string and return an expanded string.</td></tr>
    <tr class='apiDef'><td class='apiType'> </td><td><a href='#format'><b>format</b></a>(args: <a href='Array.html'>Array</a>): <a href='String.html'>String</a></tr><tr class='apiBrief'><td>&nbsp;</td><td>Format arguments as a string.</td></tr>
    <tr class='apiDef'><td class='apiType'>iterator override </td><td><a href='#get'><b>get</b></a>(): <a href='iterator-Iterator.html'>Iterator</a></tr><tr class='apiBrief'><td>&nbsp;</td><td>Get an iterator for this array to be used by "for (v in string)".</td></tr>
    <tr class='apiDef'><td class='apiType'>iterator override </td><td><a href='#getValues'><b>getValues</b></a>(): <a href='iterator-Iterator.html'>Iterator</a></tr><tr class='apiBrief'><td>&nbsp;</td><td>Get an iterator for this array to be used by "for each (v in string)".</td></tr>
@@ -100,6 +100,7 @@ for: comparison, concatenation, copying, searching, conversion, matching, replac
    <tr class='apiDef'><td class='apiType'> override </td><td><a href='#toJSON'><b>toJSON</b></a>(): <a href='String.html'>String</a></tr><tr class='apiBrief'><td>&nbsp;</td><td>Convert the string to an equivalent JSON encoding.</td></tr>
    <tr class='apiDef'><td class='apiType'> </td><td><a href='#toLowerCase'><b>toLowerCase</b></a>(): <a href='String.html'>String</a></tr><tr class='apiBrief'><td>&nbsp;</td><td>Convert the string to lower case.</td></tr>
    <tr class='apiDef'><td class='apiType'> </td><td><a href='#toPascal'><b>toPascal</b></a>(): <a href='String.html'>String</a></tr><tr class='apiBrief'><td>&nbsp;</td><td>Copy the string into a new string and capitalize the first character if there is one.</td></tr>
+   <tr class='apiDef'><td class='apiType'> </td><td><a href='#toPath'><b>toPath</b></a>(): <a href='Path.html'>Path</a></tr><tr class='apiBrief'><td>&nbsp;</td><td>Convert the string to a path.</td></tr>
    <tr class='apiDef'><td class='apiType'> override </td><td><a href='#toString'><b>toString</b></a>(): <a href='String.html'>String</a></tr><tr class='apiBrief'><td>&nbsp;</td><td>This function converts an object to a string representation.</td></tr>
    <tr class='apiDef'><td class='apiType'> </td><td><a href='#toUpperCase'><b>toUpperCase</b></a>(): <a href='String.html'>String</a></tr><tr class='apiBrief'><td>&nbsp;</td><td>Convert the string to upper case.</td></tr>
    <tr class='apiDef'><td class='apiType'> </td><td><a href='#tokenize'><b>tokenize</b></a>(format: <a href='String.html'>String</a>): <a href='Array.html'>Array</a></tr><tr class='apiBrief'><td>&nbsp;</td><td>Scan the input and tokenize according to a string format specifier.</td></tr>
@@ -271,7 +272,8 @@ for: comparison, concatenation, copying, searching, conversion, matching, replac
 <div class='apiSig'>    expand(obj: <a href='Object.html'>Object</a>, options: <a href='Object.html'>Object</a> = null): <a href='String.html'>String</a>
 </div>
 <div class='apiDetail'>
-<dl><dt>Description</dt></dd><dd>Expand tokens. </dd></dl>
+<dl><dt>Description</dt></dd><dd>Replace tokens in the string and return an expanded string. Tokens are represented by '<a href='#{field}''>{field}'</a> where field may contain '.'. For example {user.name}.
+ To preserve an <a href='#{token}'>{token}</a> unmodified, preceed the token with an extra ''. For example: ${token}.</dd></dl>
 <dl><dt>Parameters</dt>
 <dd><table class='parameters' summary ='parameters'>
 <tr class='param'><td class='param'>obj: <a href='Object.html'>Object</a> </td><td>Containing tokens to expand.</td></tr><tr class='param'><td class='param'>options: <a href='Object.html'>Object</a> </td><td>Options hash. [default: null]</td></tr></table></dd>
@@ -607,6 +609,19 @@ character is not a character or if it is already lower there is no change.</dd><
 character is not a character or if it is already capitalized there is no change.</dd></dl>
 <dl><dt>Returns</dt>
 <dd>A new String.</dd></dl>
+<dl><dt>Specified</dt>
+<dd>ejscript-2.0</dd></dl>
+</div>
+</div>
+<hr />
+<a name='toPath'></a>
+<div class='api'>
+<div class='apiSig'>    toPath(): <a href='Path.html'>Path</a>
+</div>
+<div class='apiDetail'>
+<dl><dt>Description</dt></dd><dd>Convert the string to a path. </dd></dl>
+<dl><dt>Returns</dt>
+<dd>Returns an equivalent Path object.</dd></dl>
 <dl><dt>Specified</dt>
 <dd>ejscript-2.0</dd></dl>
 </div>

@@ -42,7 +42,7 @@ public function packageBinaryFiles(formats = ['tar', 'native']) {
     install('package/linkup', p.bin, {permissions: 0755})
 
     install(bit.dir.bin + '/*', p.bin, {
-        include: /bit|ejs|ejsc|ejsman|ejspage|http|jem|mvc|sqlite/,
+        include: /bit|ejs|ejsc|ejsman|ejspage|http|jem|mvc|sqlite|utest/,
         permissions: 0755, 
     })
     install(bit.dir.lib.join('*'), p.lib, {
@@ -225,7 +225,7 @@ public function uninstallBinary() {
     Create symlinks for binaries and man pages
  */
 public function createLinks() {
-    let programs = ['bit', 'ejs', 'ejsc', 'ejsmod', 'ejsman', 'ejspage', 'http', 'jem', 'mvc', 'sqlite' ]
+    let programs = ['bit', 'ejs', 'ejsc', 'ejsmod', 'ejsman', 'ejspage', 'http', 'jem', 'mvc', 'sqlite', 'utest' ]
     let localbin = Path('/usr/local/bin')
     let bin = bit.prefixes.bin
     let target: Path
