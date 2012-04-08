@@ -4,7 +4,7 @@
 #	This Makefile will build a "minimal" Ejscript without external packages.
 #	It is used to build Ejscript the first time before bit is available.
 #	Once built, use bit to configure and rebuild as required:
-#		bit configure build
+#		$(OS)-$(ARCH)-$(PROFILE)/bin/bit configure build
 #	
 
 ARCH 	:= $(shell uname -m)
@@ -31,7 +31,7 @@ endif
 all compile:
 	$(MAKE) -f projects/$(OS)-$(ARCH)-$(PROFILE).$(EXT) $@
 	@echo ; echo 'You can now use Ejscript or use "bit" to customize and re-build Ejscript, via:'
-	@echo ; echo '	bit configure build' ; echo
+	@echo ; echo '	$(OS)-$(ARCH)-$(PROFILE)/bin/bit configure build' ; echo
 
 build configure generate test package:
 	@bit $@
