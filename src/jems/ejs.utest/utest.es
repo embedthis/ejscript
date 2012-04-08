@@ -209,8 +209,8 @@ enumerable class Test {
         }
 /*
         let out: Path = App.exeDir.parent
-        parseBuildConfig(out.join('inc/buildConfig.h'))
 */
+        parseBuildConfig(out.join('inc/buildConfig.h'))
 
         //  MOB - these are currently being set to the ejs bin and lib
         _bin = App.exeDir

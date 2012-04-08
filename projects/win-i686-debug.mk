@@ -776,8 +776,8 @@ $(CONFIG)/bin/ejsrun.exe:  \
 $(CONFIG)/bin/ejs.mod:  \
         $(CONFIG)/bin/ejsc.exe \
         $(CONFIG)/bin/ejsmod.exe
-	ejsc --out $(CONFIG)/bin/ejs.mod --debug --optimize 9 --bind --require null src/core/*.es 
-	ejsmod --require null --cslots $(CONFIG)/bin/ejs.mod
+	$(CONFIG)/bin/ejsc --out $(CONFIG)/bin/ejs.mod --debug --optimize 9 --bind --require null src/core/*.es 
+	$(CONFIG)/bin/ejsmod --require null --cslots $(CONFIG)/bin/ejs.mod
 	if ! diff ejs.slots.h $(CONFIG)/inc/ejs.slots.h >/dev/null; then cp ejs.slots.h $(CONFIG)/inc; fi
 	rm -f ejs.slots.h
 
@@ -806,7 +806,7 @@ $(CONFIG)/bin/ejs.unix.mod:  \
         $(CONFIG)/bin/ejsc.exe \
         $(CONFIG)/bin/ejsmod.exe \
         $(CONFIG)/bin/ejs.mod
-	ejsc --out $(CONFIG)/bin/ejs.unix.mod --debug --optimize 9 src/jems/ejs.unix/Unix.es
+	$(CONFIG)/bin/ejsc --out $(CONFIG)/bin/ejs.unix.mod --debug --optimize 9 src/jems/ejs.unix/Unix.es
 
 $(CONFIG)/bin/jem.es: 
 	cp src/jems/ejs.jem/jem.es $(CONFIG)/bin
@@ -815,20 +815,20 @@ $(CONFIG)/bin/ejs.db.mod:  \
         $(CONFIG)/bin/ejsc.exe \
         $(CONFIG)/bin/ejsmod.exe \
         $(CONFIG)/bin/ejs.mod
-	ejsc --out $(CONFIG)/bin/ejs.db.mod --debug --optimize 9 src/jems/ejs.db/*.es
+	$(CONFIG)/bin/ejsc --out $(CONFIG)/bin/ejs.db.mod --debug --optimize 9 src/jems/ejs.db/*.es
 
 $(CONFIG)/bin/ejs.db.mapper.mod:  \
         $(CONFIG)/bin/ejsc.exe \
         $(CONFIG)/bin/ejsmod.exe \
         $(CONFIG)/bin/ejs.mod \
         $(CONFIG)/bin/ejs.db.mod
-	ejsc --out $(CONFIG)/bin/ejs.db.mapper.mod --debug --optimize 9 src/jems/ejs.db.mapper/*.es
+	$(CONFIG)/bin/ejsc --out $(CONFIG)/bin/ejs.db.mapper.mod --debug --optimize 9 src/jems/ejs.db.mapper/*.es
 
 $(CONFIG)/bin/ejs.db.sqlite.mod:  \
         $(CONFIG)/bin/ejsc.exe \
         $(CONFIG)/bin/ejsmod.exe \
         $(CONFIG)/bin/ejs.mod
-	ejsc --out $(CONFIG)/bin/ejs.db.sqlite.mod --debug --optimize 9 src/jems/ejs.db.sqlite/*.es
+	$(CONFIG)/bin/ejsc --out $(CONFIG)/bin/ejs.db.sqlite.mod --debug --optimize 9 src/jems/ejs.db.sqlite/*.es
 
 $(CONFIG)/obj/ejsSqlite.obj: \
         src/jems/ejs.db.sqlite/src/ejsSqlite.c \
@@ -848,8 +848,8 @@ $(CONFIG)/bin/ejs.web.mod:  \
         $(CONFIG)/bin/ejsc.exe \
         $(CONFIG)/bin/ejsmod.exe \
         $(CONFIG)/bin/ejs.mod
-	ejsc --out $(CONFIG)/bin/ejs.web.mod --debug --optimize 9 src/jems/ejs.web/*.es
-	ejsmod --cslots $(CONFIG)/bin/ejs.web.mod
+	$(CONFIG)/bin/ejsc --out $(CONFIG)/bin/ejs.web.mod --debug --optimize 9 src/jems/ejs.web/*.es
+	$(CONFIG)/bin/ejsmod --cslots $(CONFIG)/bin/ejs.web.mod
 	if ! diff ejs.web.slots.h $(CONFIG)/inc/ejs.web.slots.h >/dev/null; then cp ejs.web.slots.h $(CONFIG)/inc; fi
 	rm -f ejs.web.slots.h
 
@@ -897,13 +897,13 @@ $(CONFIG)/bin/ejs.template.mod:  \
         $(CONFIG)/bin/ejsc.exe \
         $(CONFIG)/bin/ejsmod.exe \
         $(CONFIG)/bin/ejs.mod
-	ejsc --out $(CONFIG)/bin/ejs.template.mod --debug --optimize 9 src/jems/ejs.template/TemplateParser.es
+	$(CONFIG)/bin/ejsc --out $(CONFIG)/bin/ejs.template.mod --debug --optimize 9 src/jems/ejs.template/TemplateParser.es
 
 $(CONFIG)/bin/ejs.tar.mod:  \
         $(CONFIG)/bin/ejsc.exe \
         $(CONFIG)/bin/ejsmod.exe \
         $(CONFIG)/bin/ejs.mod
-	ejsc --out $(CONFIG)/bin/ejs.tar.mod --debug --optimize 9 src/jems/ejs.tar/*.es
+	$(CONFIG)/bin/ejsc --out $(CONFIG)/bin/ejs.tar.mod --debug --optimize 9 src/jems/ejs.tar/*.es
 
 $(CONFIG)/bin/mvc.es: 
 	cp src/jems/ejs.mvc/mvc.es $(CONFIG)/bin
@@ -915,7 +915,7 @@ $(CONFIG)/bin/ejs.mvc.mod:  \
         $(CONFIG)/bin/ejs.web.mod \
         $(CONFIG)/bin/ejs.template.mod \
         $(CONFIG)/bin/ejs.unix.mod
-	ejsc --out $(CONFIG)/bin/ejs.mvc.mod --debug --optimize 9 src/jems/ejs.mvc/*.es
+	$(CONFIG)/bin/ejsc --out $(CONFIG)/bin/ejs.mvc.mod --debug --optimize 9 src/jems/ejs.mvc/*.es
 
 $(CONFIG)/bin/utest.worker: 
 	cp src/jems/ejs.utest/utest.worker $(CONFIG)/bin

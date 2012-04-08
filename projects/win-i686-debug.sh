@@ -242,8 +242,8 @@ cp -r src/ejsCustomize.h win-i686-debug/inc/ejsCustomize.h
 
 "${LD}" -out:${CONFIG}/bin/ejsrun.exe -entry:mainCRTStartup -subsystem:console ${LDFLAGS} ${LIBPATHS} ${CONFIG}/obj/ejsrun.obj ${LIBS} libejs.lib libmpr.lib libpcre.lib libhttp.lib
 
-ejsc --out ${CONFIG}/bin/ejs.mod --debug --optimize 9 --bind --require null src/core/*.es 
-ejsmod --require null --cslots ${CONFIG}/bin/ejs.mod
+${CONFIG}/bin/ejsc --out ${CONFIG}/bin/ejs.mod --debug --optimize 9 --bind --require null src/core/*.es 
+${CONFIG}/bin/ejsmod --require null --cslots ${CONFIG}/bin/ejs.mod
 if ! diff ejs.slots.h ${CONFIG}/inc/ejs.slots.h >/dev/null; then cp ejs.slots.h ${CONFIG}/inc; fi
 rm -f ejs.slots.h
 cp src/jems/ejs.bit/bit.es ${CONFIG}/bin
@@ -254,17 +254,17 @@ cp src/jems/ejs.bit/bit.es ${CONFIG}/bin
 cp src/jems/ejs.utest/utest.es ${CONFIG}/bin
 rm -fr ${CONFIG}/bin/bits
 cp -r src/jems/ejs.bit/bits ${CONFIG}/bin
-ejsc --out ${CONFIG}/bin/ejs.unix.mod --debug --optimize 9 src/jems/ejs.unix/Unix.es
+${CONFIG}/bin/ejsc --out ${CONFIG}/bin/ejs.unix.mod --debug --optimize 9 src/jems/ejs.unix/Unix.es
 cp src/jems/ejs.jem/jem.es ${CONFIG}/bin
-ejsc --out ${CONFIG}/bin/ejs.db.mod --debug --optimize 9 src/jems/ejs.db/*.es
-ejsc --out ${CONFIG}/bin/ejs.db.mapper.mod --debug --optimize 9 src/jems/ejs.db.mapper/*.es
-ejsc --out ${CONFIG}/bin/ejs.db.sqlite.mod --debug --optimize 9 src/jems/ejs.db.sqlite/*.es
+${CONFIG}/bin/ejsc --out ${CONFIG}/bin/ejs.db.mod --debug --optimize 9 src/jems/ejs.db/*.es
+${CONFIG}/bin/ejsc --out ${CONFIG}/bin/ejs.db.mapper.mod --debug --optimize 9 src/jems/ejs.db.mapper/*.es
+${CONFIG}/bin/ejsc --out ${CONFIG}/bin/ejs.db.sqlite.mod --debug --optimize 9 src/jems/ejs.db.sqlite/*.es
 "${CC}" -c -Fo${CONFIG}/obj/ejsSqlite.obj -Fd${CONFIG}/obj ${CFLAGS} ${DFLAGS} -I${CONFIG}/inc -I${CONFIG}/inc src/jems/ejs.db.sqlite/src/ejsSqlite.c
 
 "${LD}" -dll -out:${CONFIG}/bin/ejs.db.sqlite.dll -entry:_DllMainCRTStartup@12 -def:${CONFIG}/bin/ejs.db.sqlite.def ${LDFLAGS} ${LIBPATHS} ${CONFIG}/obj/ejsSqlite.obj ${LIBS} libmpr.lib libejs.lib libpcre.lib libhttp.lib libsqlite3.lib
 
-ejsc --out ${CONFIG}/bin/ejs.web.mod --debug --optimize 9 src/jems/ejs.web/*.es
-ejsmod --cslots ${CONFIG}/bin/ejs.web.mod
+${CONFIG}/bin/ejsc --out ${CONFIG}/bin/ejs.web.mod --debug --optimize 9 src/jems/ejs.web/*.es
+${CONFIG}/bin/ejsmod --cslots ${CONFIG}/bin/ejs.web.mod
 if ! diff ejs.web.slots.h ${CONFIG}/inc/ejs.web.slots.h >/dev/null; then cp ejs.web.slots.h ${CONFIG}/inc; fi
 rm -f ejs.web.slots.h
 "${CC}" -c -Fo${CONFIG}/obj/ejsHttpServer.obj -Fd${CONFIG}/obj ${CFLAGS} ${DFLAGS} -I${CONFIG}/inc -I${CONFIG}/inc -Isrc/jems/ejs.web/src src/jems/ejs.web/src/ejsHttpServer.c
@@ -279,10 +279,10 @@ rm -f ejs.web.slots.h
 
 rm -fr ${CONFIG}/bin/www
 cp -r src/jems/ejs.web/www ${CONFIG}/bin
-ejsc --out ${CONFIG}/bin/ejs.template.mod --debug --optimize 9 src/jems/ejs.template/TemplateParser.es
-ejsc --out ${CONFIG}/bin/ejs.tar.mod --debug --optimize 9 src/jems/ejs.tar/*.es
+${CONFIG}/bin/ejsc --out ${CONFIG}/bin/ejs.template.mod --debug --optimize 9 src/jems/ejs.template/TemplateParser.es
+${CONFIG}/bin/ejsc --out ${CONFIG}/bin/ejs.tar.mod --debug --optimize 9 src/jems/ejs.tar/*.es
 cp src/jems/ejs.mvc/mvc.es ${CONFIG}/bin
-ejsc --out ${CONFIG}/bin/ejs.mvc.mod --debug --optimize 9 src/jems/ejs.mvc/*.es
+${CONFIG}/bin/ejsc --out ${CONFIG}/bin/ejs.mvc.mod --debug --optimize 9 src/jems/ejs.mvc/*.es
 cp src/jems/ejs.utest/utest.worker ${CONFIG}/bin
 "${CC}" -c -Fo${CONFIG}/obj/shape.obj -Fd${CONFIG}/obj ${CFLAGS} ${DFLAGS} -I${CONFIG}/inc -I${CONFIG}/inc src/samples/c/nclass/shape.c
 

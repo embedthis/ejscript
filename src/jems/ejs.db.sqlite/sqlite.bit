@@ -20,7 +20,7 @@ Bit.load({
                 }
             ",
             'generate-sh': "\
-                ejsc --out ${OUT} ${settings.esflags} --optimize 9 ${HOME}/*.es
+                ${BIN}/ejsc --out ${OUT} ${settings.esflags} --optimize 9 ${HOME}/*.es
             ",
             depends: [ 'ejsc', 'ejsmod', 'ejs.mod' ],
         },

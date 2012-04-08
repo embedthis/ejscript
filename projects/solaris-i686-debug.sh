@@ -232,8 +232,8 @@ ${LDFLAGS}${LDFLAGS}${CC} -c -o ${CONFIG}/obj/ejsrun.o ${CFLAGS} -D_REENTRANT -D
 
 ${LDFLAGS}${LDFLAGS}${CC} -o ${CONFIG}/bin/ejsrun ${LIBPATHS} ${CONFIG}/obj/ejsrun.o ${LIBS} -lejs -lmpr -lpcre -lhttp 
 
-ejsc --out ${CONFIG}/lib/ejs.mod --debug --optimize 9 --bind --require null src/core/*.es 
-ejsmod --require null --cslots ${CONFIG}/lib/ejs.mod
+${CONFIG}/bin/ejsc --out ${CONFIG}/lib/ejs.mod --debug --optimize 9 --bind --require null src/core/*.es 
+${CONFIG}/bin/ejsmod --require null --cslots ${CONFIG}/lib/ejs.mod
 if ! diff ejs.slots.h ${CONFIG}/inc/ejs.slots.h >/dev/null; then cp ejs.slots.h ${CONFIG}/inc; fi
 rm -f ejs.slots.h
 cp src/jems/ejs.bit/bit.es ${CONFIG}/bin
@@ -244,17 +244,17 @@ ${LDFLAGS}${LDFLAGS}${CC} -o ${CONFIG}/bin/bit ${LIBPATHS} ${CONFIG}/obj/ejsrun.
 cp src/jems/ejs.utest/utest.es ${CONFIG}/bin
 rm -fr ${CONFIG}/lib/bits
 cp -r src/jems/ejs.bit/bits ${CONFIG}/lib
-ejsc --out ${CONFIG}/lib/ejs.unix.mod --debug --optimize 9 src/jems/ejs.unix/Unix.es
+${CONFIG}/bin/ejsc --out ${CONFIG}/lib/ejs.unix.mod --debug --optimize 9 src/jems/ejs.unix/Unix.es
 cp src/jems/ejs.jem/jem.es ${CONFIG}/bin
-ejsc --out ${CONFIG}/lib/ejs.db.mod --debug --optimize 9 src/jems/ejs.db/*.es
-ejsc --out ${CONFIG}/lib/ejs.db.mapper.mod --debug --optimize 9 src/jems/ejs.db.mapper/*.es
-ejsc --out ${CONFIG}/lib/ejs.db.sqlite.mod --debug --optimize 9 src/jems/ejs.db.sqlite/*.es
+${CONFIG}/bin/ejsc --out ${CONFIG}/lib/ejs.db.mod --debug --optimize 9 src/jems/ejs.db/*.es
+${CONFIG}/bin/ejsc --out ${CONFIG}/lib/ejs.db.mapper.mod --debug --optimize 9 src/jems/ejs.db.mapper/*.es
+${CONFIG}/bin/ejsc --out ${CONFIG}/lib/ejs.db.sqlite.mod --debug --optimize 9 src/jems/ejs.db.sqlite/*.es
 ${LDFLAGS}${LDFLAGS}${CC} -c -o ${CONFIG}/obj/ejsSqlite.o ${CFLAGS} -D_REENTRANT -DCPU=i686 -DPIC -DPIC -I${CONFIG}/inc -I${CONFIG}/inc src/jems/ejs.db.sqlite/src/ejsSqlite.c
 
 ${LDFLAGS}${LDFLAGS}${CC} -shared -o ${CONFIG}/lib/ejs.db.sqlite.so ${LIBPATHS} ${CONFIG}/obj/ejsSqlite.o ${LIBS} -lmpr -lejs -lpcre -lhttp -lsqlite3
 
-ejsc --out ${CONFIG}/lib/ejs.web.mod --debug --optimize 9 src/jems/ejs.web/*.es
-ejsmod --cslots ${CONFIG}/lib/ejs.web.mod
+${CONFIG}/bin/ejsc --out ${CONFIG}/lib/ejs.web.mod --debug --optimize 9 src/jems/ejs.web/*.es
+${CONFIG}/bin/ejsmod --cslots ${CONFIG}/lib/ejs.web.mod
 if ! diff ejs.web.slots.h ${CONFIG}/inc/ejs.web.slots.h >/dev/null; then cp ejs.web.slots.h ${CONFIG}/inc; fi
 rm -f ejs.web.slots.h
 ${LDFLAGS}${LDFLAGS}${CC} -c -o ${CONFIG}/obj/ejsHttpServer.o ${CFLAGS} -D_REENTRANT -DCPU=i686 -DPIC -DPIC -I${CONFIG}/inc -I${CONFIG}/inc -Isrc/jems/ejs.web/src src/jems/ejs.web/src/ejsHttpServer.c
@@ -269,10 +269,10 @@ ${LDFLAGS}${LDFLAGS}${CC} -shared -o ${CONFIG}/lib/ejs.web.so ${LIBPATHS} ${CONF
 
 rm -fr ${CONFIG}/lib/www
 cp -r src/jems/ejs.web/www ${CONFIG}/lib
-ejsc --out ${CONFIG}/lib/ejs.template.mod --debug --optimize 9 src/jems/ejs.template/TemplateParser.es
-ejsc --out ${CONFIG}/lib/ejs.tar.mod --debug --optimize 9 src/jems/ejs.tar/*.es
+${CONFIG}/bin/ejsc --out ${CONFIG}/lib/ejs.template.mod --debug --optimize 9 src/jems/ejs.template/TemplateParser.es
+${CONFIG}/bin/ejsc --out ${CONFIG}/lib/ejs.tar.mod --debug --optimize 9 src/jems/ejs.tar/*.es
 cp src/jems/ejs.mvc/mvc.es ${CONFIG}/bin
-ejsc --out ${CONFIG}/lib/ejs.mvc.mod --debug --optimize 9 src/jems/ejs.mvc/*.es
+${CONFIG}/bin/ejsc --out ${CONFIG}/lib/ejs.mvc.mod --debug --optimize 9 src/jems/ejs.mvc/*.es
 cp src/jems/ejs.utest/utest.worker ${CONFIG}/bin
 ${LDFLAGS}${LDFLAGS}${CC} -c -o ${CONFIG}/obj/shape.o ${CFLAGS} -D_REENTRANT -DCPU=i686 -DPIC -DPIC -I${CONFIG}/inc -I${CONFIG}/inc src/samples/c/nclass/shape.c
 

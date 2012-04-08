@@ -13,7 +13,7 @@ Bit.load({
                 run('ejsc --out ${OUT} ${settings.esflags} --optimize 9 ' + Path('.').glob('*.es').sort().join(' '))
             ",
             'generate-sh': "\
-                ejsc --out ${OUT} ${settings.esflags} --optimize 9 ${HOME}/*.es
+                ${BIN}/ejsc --out ${OUT} ${settings.esflags} --optimize 9 ${HOME}/*.es
             ",
             depends: [ 'ejsc', 'ejsmod', 'ejs.mod', 'ejs.db.mod' ],
         },

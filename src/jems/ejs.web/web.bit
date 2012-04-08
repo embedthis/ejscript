@@ -21,14 +21,14 @@ Bit.load({
                 }
             ",
             'generate-nmake': "\
-                ejsc --out ${OUT} ${settings.esflags} --optimize 9 ${HOME}/*.es
-                ejsmod --cslots ${OUT}
+                ${BIN}/ejsc --out ${OUT} ${settings.esflags} --optimize 9 ${HOME}/*.es
+                ${BIN}/ejsmod --cslots ${OUT}
                 copy ejs.web.slots.h ${WIN_INC}\\ejs.web.slots.h
                 del ejs.web.slots.h
             ",
             'generate-sh': "\
-                ejsc --out ${OUT} ${settings.esflags} --optimize 9 ${HOME}/*.es
-                ejsmod --cslots ${OUT}
+                ${BIN}/ejsc --out ${OUT} ${settings.esflags} --optimize 9 ${HOME}/*.es
+                ${BIN}/ejsmod --cslots ${OUT}
                 if ! diff ejs.web.slots.h ${INC}/ejs.web.slots.h >/dev/null; then cp ejs.web.slots.h ${INC}; fi
                 rm -f ejs.web.slots.h
             ",

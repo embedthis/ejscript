@@ -14,7 +14,7 @@ Bit.load({
                     Path('.').glob('TemplateParser.es').sort().join(' '))
             ",
             'generate-sh': "\
-                ejsc --out ${OUT} ${settings.esflags} --optimize 9 ${HOME}/TemplateParser.es
+                ${BIN}/ejsc --out ${OUT} ${settings.esflags} --optimize 9 ${HOME}/TemplateParser.es
             ",
             depends: [ 'ejsc', 'ejsmod', 'ejs.mod' ],
         },

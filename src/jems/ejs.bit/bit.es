@@ -1267,17 +1267,11 @@ public class Bit {
             vtrace('Targets', bit.platform.configuration + ': ' + 
                     ((selectedTargets != '') ? selectedTargets: 'nothing to do'))
         }
-/*
-    MOB
-        if (!bit.dir.inc.join('buildConfig.h').exists && args.rest[0] != 'clobber') {
-            throw 'Can\'t load buildConfig.h. Run configure or "bit configure".'
-        }
-*/
         /* 
             When cross generating, certain wild cards can't be resolved.
             Setting missing to empty will cause missing glob patterns to be replaced with the pattern itself 
          */
-        if (generating || options.config) {
+        if (options.gen || options.config) {
             missing = ''
         }
         setConstVars()
