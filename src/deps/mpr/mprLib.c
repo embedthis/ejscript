@@ -31803,6 +31803,9 @@ int mprLoadNativeModule(MprModule *mp)
     mprAssert(mp);
 
     handle = (HANDLE) MPR->appInstance;
+    if ((handle = (HANDLE) MPR->appInstance) == 0) {
+        handle = GetModuleHandle(NULL);
+    }
     if (!handle || !mp->entry || !GetProcAddress((HINSTANCE) MPR->appInstance, mp->entry)) {
         if ((at = mprSearchForModule(mp->path)) == 0) {
             mprError("Can't find module \"%s\", cwd: \"%s\", search path \"%s\"", mp->path, mprGetCurrentPath(),
