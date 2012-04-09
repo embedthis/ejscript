@@ -300,5 +300,5 @@ ${CC} -o src/samples/c/evalScript/main ${LDFLAGS} ${LIBPATHS} ${CONFIG}/obj/main
 #  Omit build script /Users/mob/git/ejs/src/samples/c/nclass/nclass.mod
 ${CC} -c -o ${CONFIG}/obj/shape.o ${CFLAGS} -D_REENTRANT -DCPU=i686 -DPIC -DPIC -I${CONFIG}/inc -I${CONFIG}/inc src/samples/c/nclass/shape.c
 
-${CC} -shared -o src/samples/c/nclass/native.so ${LDFLAGS} ${LIBPATHS} ${CONFIG}/obj/shape.o ${LIBS} -lejs -lmpr -lpcre -lhttp
+${CC} -shared -o src/samples/c/nclass/nclass.so ${LDFLAGS} ${LIBPATHS} ${CONFIG}/obj/shape.o ${LIBS} -lejs -lmpr -lpcre -lhttp
 

@@ -30,7 +30,7 @@
 </ItemGroup>
 
 <PropertyGroup Label="Globals">
-  <ProjectGuid>{39fcbbe0-dfb3-40b1-ba2e-86ca9dde7a27}</ProjectGuid>
+  <ProjectGuid>{c2510ccb-9684-4bc4-890a-8b59c12eb97d}</ProjectGuid>
   <RootNamespace />
   <Keyword>Win32Proj</Keyword>
 </PropertyGroup>
@@ -52,12 +52,18 @@
 <PropertyGroup>
   <_ProjectFileVersion>10</_ProjectFileVersion>
   <OutDir Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">..\..\win-i686-debug\bin\</OutDir>
-  <IntDir Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">..\..\win-i686-debug\obj\native-lib\</IntDir>
+  <IntDir Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">..\..\win-i686-debug\obj\nclass-lib\</IntDir>
 </PropertyGroup>
     
 <ItemGroup>
   <ClCompile Include="..\..\src\samples\c\nclass\shape.c" />
 </ItemGroup>
+
+    <ItemDefinitionGroup>
+    <Link>
+      <ModuleDefinitionFile>nclass.def</ModuleDefinitionFile>
+    </Link>
+    </ItemDefinitionGroup>
 <ItemDefinitionGroup>
 <Link>
   <AdditionalDependencies>ejs.lib;mpr.lib;pcre.lib;http.lib;%(AdditionalDependencies)</AdditionalDependencies>

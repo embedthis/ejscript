@@ -310,5 +310,5 @@ cp src/jems/ejs.utest/utest.worker ${CONFIG}/bin
 #  Omit build script /Users/mob/git/ejs/src/samples/c/nclass/nclass.mod
 "${CC}" -c -Fo${CONFIG}/obj/shape.obj -Fd${CONFIG}/obj ${CFLAGS} ${DFLAGS} -I${CONFIG}/inc -I${CONFIG}/inc src/samples/c/nclass/shape.c
 
-"${LD}" -dll -out:src/samples/c/nclass/native.dll -entry:_DllMainCRTStartup@12 -def:src/samples/c/nclass/native.def ${LDFLAGS} ${LIBPATHS} ${CONFIG}/obj/shape.obj ${LIBS} libejs.lib libmpr.lib libpcre.lib libhttp.lib
+"${LD}" -dll -out:src/samples/c/nclass/nclass.dll -entry:_DllMainCRTStartup@12 -def:src/samples/c/nclass/nclass.def ${LDFLAGS} ${LIBPATHS} ${CONFIG}/obj/shape.obj ${LIBS} libejs.lib libmpr.lib libpcre.lib libhttp.lib
 

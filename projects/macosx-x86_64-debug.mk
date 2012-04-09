@@ -55,7 +55,7 @@ all: prep \
         src/samples/c/evalModule/evalModule.mod \
         src/samples/c/evalScript/main \
         src/samples/c/nclass/nclass.mod \
-        src/samples/c/nclass/native.dylib
+        src/samples/c/nclass/nclass.dylib
 
 .PHONY: prep
 
@@ -106,7 +106,7 @@ clean:
 	rm -rf src/samples/c/evalModule/evalModule.mod
 	rm -rf src/samples/c/evalScript/main
 	rm -rf src/samples/c/nclass/nclass.mod
-	rm -rf src/samples/c/nclass/native.dylib
+	rm -rf src/samples/c/nclass/nclass.dylib
 	rm -rf $(CONFIG)/obj/mprLib.o
 	rm -rf $(CONFIG)/obj/mprSsl.o
 	rm -rf $(CONFIG)/obj/manager.o
@@ -1059,9 +1059,9 @@ $(CONFIG)/obj/shape.o: \
         $(CONFIG)/inc/ejs.h
 	$(CC) -c -o $(CONFIG)/obj/shape.o -arch x86_64 $(CFLAGS) $(DFLAGS) -I$(CONFIG)/inc -I$(CONFIG)/inc src/samples/c/nclass/shape.c
 
-src/samples/c/nclass/native.dylib:  \
+src/samples/c/nclass/nclass.dylib:  \
         $(CONFIG)/lib/libejs.dylib \
         src/samples/c/nclass/nclass.mod \
         $(CONFIG)/obj/shape.o
-	$(CC) -dynamiclib -o src/samples/c/nclass/native.dylib -arch x86_64 $(LDFLAGS) $(LIBPATHS) -install_name @rpath/native.dylib $(CONFIG)/obj/shape.o $(LIBS) -lejs -lmpr -lpcre -lhttp
+	$(CC) -dynamiclib -o src/samples/c/nclass/nclass.dylib -arch x86_64 $(LDFLAGS) $(LIBPATHS) -install_name @rpath/nclass.dylib $(CONFIG)/obj/shape.o $(LIBS) -lejs -lmpr -lpcre -lhttp
 

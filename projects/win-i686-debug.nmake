@@ -71,7 +71,7 @@ all: prep \
         src\samples\c\evalModule\evalModule.mod \
         src\samples\c\evalScript\main.exe \
         src\samples\c\nclass\nclass.mod \
-        src\samples\c\nclass\native.dll
+        src\samples\c\nclass\nclass.dll
 
 .PHONY: prep
 
@@ -121,7 +121,7 @@ clean:
 	-if exist src\samples\c\evalModule\evalModule.mod del /Q src\samples\c\evalModule\evalModule.mod
 	-if exist src\samples\c\evalScript\main.exe del /Q src\samples\c\evalScript\main.exe
 	-if exist src\samples\c\nclass\nclass.mod del /Q src\samples\c\nclass\nclass.mod
-	-if exist src\samples\c\nclass\native.dll del /Q src\samples\c\nclass\native.dll
+	-if exist src\samples\c\nclass\nclass.dll del /Q src\samples\c\nclass\nclass.dll
 	-if exist $(CONFIG)\obj\mprLib.obj del /Q $(CONFIG)\obj\mprLib.obj
 	-if exist $(CONFIG)\obj\mprSsl.obj del /Q $(CONFIG)\obj\mprSsl.obj
 	-if exist $(CONFIG)\obj\manager.obj del /Q $(CONFIG)\obj\manager.obj
@@ -989,9 +989,9 @@ $(CONFIG)\obj\shape.obj: \
         $(CONFIG)\inc\buildConfig.h
 	"$(CC)" -c -Fo$(CONFIG)\obj\shape.obj -Fd$(CONFIG)\obj $(CFLAGS) $(DFLAGS) -I$(CONFIG)\inc -I$(CONFIG)\inc src\samples\c\nclass\shape.c
 
-src\samples\c\nclass\native.dll:  \
+src\samples\c\nclass\nclass.dll:  \
         $(CONFIG)\bin\libejs.dll \
         src\samples\c\nclass\nclass.mod \
         $(CONFIG)\obj\shape.obj
-	"$(LD)" -dll -out:src\samples\c\nclass\native.dll -entry:_DllMainCRTStartup@12 -def:src\samples\c\nclass\native.def $(LDFLAGS) $(LIBPATHS) $(CONFIG)\obj\shape.obj $(LIBS) libejs.lib libmpr.lib libpcre.lib libhttp.lib
+	"$(LD)" -dll -out:src\samples\c\nclass\nclass.dll -entry:_DllMainCRTStartup@12 -def:src\samples\c\nclass\nclass.def $(LDFLAGS) $(LIBPATHS) $(CONFIG)\obj\shape.obj $(LIBS) libejs.lib libmpr.lib libpcre.lib libhttp.lib
 

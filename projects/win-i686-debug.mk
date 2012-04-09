@@ -65,7 +65,7 @@ all: prep \
         src/samples/c/evalModule/evalModule.mod \
         src/samples/c/evalScript/main.exe \
         src/samples/c/nclass/nclass.mod \
-        src/samples/c/nclass/native.dll
+        src/samples/c/nclass/nclass.dll
 
 .PHONY: prep
 
@@ -116,7 +116,7 @@ clean:
 	rm -rf src/samples/c/evalModule/evalModule.mod
 	rm -rf src/samples/c/evalScript/main.exe
 	rm -rf src/samples/c/nclass/nclass.mod
-	rm -rf src/samples/c/nclass/native.dll
+	rm -rf src/samples/c/nclass/nclass.dll
 	rm -rf $(CONFIG)/obj/mprLib.obj
 	rm -rf $(CONFIG)/obj/mprSsl.obj
 	rm -rf $(CONFIG)/obj/manager.obj
@@ -979,9 +979,9 @@ $(CONFIG)/obj/shape.obj: \
         $(CONFIG)/inc/buildConfig.h
 	"$(CC)" -c -Fo$(CONFIG)/obj/shape.obj -Fd$(CONFIG)/obj $(CFLAGS) $(DFLAGS) -I$(CONFIG)/inc -I$(CONFIG)/inc src/samples/c/nclass/shape.c
 
-src/samples/c/nclass/native.dll:  \
+src/samples/c/nclass/nclass.dll:  \
         $(CONFIG)/bin/libejs.dll \
         src/samples/c/nclass/nclass.mod \
         $(CONFIG)/obj/shape.obj
-	"$(LD)" -dll -out:src/samples/c/nclass/native.dll -entry:_DllMainCRTStartup@12 -def:src/samples/c/nclass/native.def $(LDFLAGS) $(LIBPATHS) $(CONFIG)/obj/shape.obj $(LIBS) libejs.lib libmpr.lib libpcre.lib libhttp.lib
+	"$(LD)" -dll -out:src/samples/c/nclass/nclass.dll -entry:_DllMainCRTStartup@12 -def:src/samples/c/nclass/nclass.def $(LDFLAGS) $(LIBPATHS) $(CONFIG)/obj/shape.obj $(LIBS) libejs.lib libmpr.lib libpcre.lib libhttp.lib
 

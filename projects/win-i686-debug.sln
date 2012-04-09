@@ -115,7 +115,7 @@ Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "evalScript", "win-i686-debu
 		{B097BC45-C299-4DFA-944C-CC5C047CD785} = {B097BC45-C299-4DFA-944C-CC5C047CD785}
 	EndProjectSection
 EndProject
-Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "native-lib", "win-i686-debug\native-lib.vcxproj", "{39FCBBE0-DFB3-40B1-BA2E-86CA9DDE7A27}"
+Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "nclass-lib", "win-i686-debug\nclass-lib.vcxproj", "{C2510CCB-9684-4BC4-890A-8B59C12EB97D}"
 	ProjectSection(ProjectDependencies) = postProject
 		{B097BC45-C299-4DFA-944C-CC5C047CD785} = {B097BC45-C299-4DFA-944C-CC5C047CD785}
 	EndProjectSection
@@ -166,8 +166,8 @@ Global
 {BC474CBA-CF7C-462F-A8ED-CFC78E4332E0}.Debug|Win32.Build.0 = Debug|Win32
 {64022931-768D-49A1-ABC5-F20F51B67605}.Debug|Win32.ActiveCfg = Debug|Win32
 {64022931-768D-49A1-ABC5-F20F51B67605}.Debug|Win32.Build.0 = Debug|Win32
-{39FCBBE0-DFB3-40B1-BA2E-86CA9DDE7A27}.Debug|Win32.ActiveCfg = Debug|Win32
-{39FCBBE0-DFB3-40B1-BA2E-86CA9DDE7A27}.Debug|Win32.Build.0 = Debug|Win32
+{C2510CCB-9684-4BC4-890A-8B59C12EB97D}.Debug|Win32.ActiveCfg = Debug|Win32
+{C2510CCB-9684-4BC4-890A-8B59C12EB97D}.Debug|Win32.Build.0 = Debug|Win32
 EndGlobalSection
 
   GlobalSection(SolutionProperties) = preSolution

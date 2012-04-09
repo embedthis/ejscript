@@ -1,11 +1,11 @@
 /*
-    native.bit - Bit file for the native sample
+    nclass.bit - Bit file for the nclass sample
  */
 
 Bit.load({
     targets: {
         nclass: {
-            depends: ['native-lib'],
+            depends: ['nclass-lib'],
         },
 
         'nclass.mod' : {
@@ -18,9 +18,9 @@ Bit.load({
             depends: ['ejsc'],
         },
 
-        'native-lib': {
+        'nclass-lib': {
             type: 'lib',
-            path: 'native${SHOBJ}',
+            path: 'nclass${SHOBJ}',
             sources: ['*.c'],
             depends: ['libejs', 'nclass.mod'],
         },

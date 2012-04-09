@@ -55,7 +55,7 @@ all: prep \
         src/samples/c/evalModule/evalModule.mod \
         src/samples/c/evalScript/main \
         src/samples/c/nclass/nclass.mod \
-        src/samples/c/nclass/native.so
+        src/samples/c/nclass/nclass.so
 
 .PHONY: prep
 
@@ -106,7 +106,7 @@ clean:
 	rm -rf src/samples/c/evalModule/evalModule.mod
 	rm -rf src/samples/c/evalScript/main
 	rm -rf src/samples/c/nclass/nclass.mod
-	rm -rf src/samples/c/nclass/native.so
+	rm -rf src/samples/c/nclass/nclass.so
 	rm -rf $(CONFIG)/obj/mprLib.o
 	rm -rf $(CONFIG)/obj/mprSsl.o
 	rm -rf $(CONFIG)/obj/manager.o
@@ -969,9 +969,9 @@ $(CONFIG)/obj/shape.o: \
         $(CONFIG)/inc/buildConfig.h
 	$(CC) -c -o $(CONFIG)/obj/shape.o $(CFLAGS) -D_REENTRANT -DCPU=i686 -DPIC -DPIC -I$(CONFIG)/inc -I$(CONFIG)/inc src/samples/c/nclass/shape.c
 
-src/samples/c/nclass/native.so:  \
+src/samples/c/nclass/nclass.so:  \
         $(CONFIG)/lib/libejs.so \
         src/samples/c/nclass/nclass.mod \
         $(CONFIG)/obj/shape.o
-	$(CC) -shared -o src/samples/c/nclass/native.so $(LDFLAGS) $(LIBPATHS) $(CONFIG)/obj/shape.o $(LIBS) -lejs -lmpr -lpcre -lhttp
+	$(CC) -shared -o src/samples/c/nclass/nclass.so $(LDFLAGS) $(LIBPATHS) $(CONFIG)/obj/shape.o $(LIBS) -lejs -lmpr -lpcre -lhttp
 
