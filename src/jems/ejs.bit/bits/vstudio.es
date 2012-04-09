@@ -246,6 +246,8 @@ function projLink(base, target) {
       <ModuleDefinitionFile>${DEF}</ModuleDefinitionFile>
     </Link>
     </ItemDefinitionGroup>')
+        } else {
+            trace('Warn', 'Missing ' + def)
         }
     }
 

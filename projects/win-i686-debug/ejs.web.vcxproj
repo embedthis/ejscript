@@ -6,7 +6,7 @@
   <ItemDefinitionGroup>
     <ClCompile>
       <WarningLevel>Level3</WarningLevel>
-      <AdditionalIncludeDirectories>..\..\win-i686-debug\inc;..\..\win-i686-debug\inc;..\..\src\jems\ejs.web\src;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>..\..\win-i686-debug\inc;..\..\src\jems\ejs.web\src;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
     
   <PreprocessorDefinitions>WIN32;_DEBUG;_WINDOWS;DEBUG_IDE;_REENTRANT;_MT;%(PreprocessorDefinitions)</PreprocessorDefinitions>
     <Optimization>Disabled</Optimization>
@@ -70,7 +70,7 @@
 <ItemDefinitionGroup>
 <Link>
   <AdditionalDependencies>libmpr.lib;libhttp.lib;libpcre.lib;libpcre.lib;libejs.lib;%(AdditionalDependencies)</AdditionalDependencies>
-  <AdditionalLibraryDirectories>$(OutDir);win-i686-debug\bin;win-i686-debug\bin;%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
+  <AdditionalLibraryDirectories>$(OutDir);win-i686-debug\bin;%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
 </Link>
 </ItemDefinitionGroup>
 

@@ -73,6 +73,7 @@
 #define BLD_FEATURE_DPKG 1
 #define BLD_FEATURE_OPENSSL 0
 #define BLD_FEATURE_MATRIXSSL 0
-#define BLD_FEATURE_PMAKER 0
+#define BLD_FEATURE_PMAKER 1
+#define BLD_PMAKER "../../../../Applications/PackageMaker.app/Contents/MacOS/PackageMaker"
 #define BLD_FEATURE_SQLITE 1
 #define BLD_SQLITE "src/deps/sqlite"
