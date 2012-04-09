@@ -2812,6 +2812,10 @@ global.NN = item.ns
         //  MOB - refactor currentPlatform and use bit.platform.name
         bit.PLATFORM = currentPlatform = platform
         if (bitfile) {
+            let platformBitfile = Path(bit.PLATFORM).joinExt('bit')
+            if (!options.config && bitfile == MAIN && !platformBitfile.exists) {
+                throw 'Can\'t find ' + platformBitfile + '. Run "configure" or "bit configure" first.'
+            }
             loadWrapper(bitfile)
         }
         loadModules()
