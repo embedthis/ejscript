@@ -58,6 +58,12 @@
 <ItemGroup>
   <ClCompile Include="..\..\src\deps\mpr\mprLib.c" />
 </ItemGroup>
+
+    <ItemDefinitionGroup>
+    <Link>
+      <ModuleDefinitionFile>libmpr.def</ModuleDefinitionFile>
+    </Link>
+    </ItemDefinitionGroup>
 <ItemDefinitionGroup>
 <Link>
   <AdditionalDependencies>;%(AdditionalDependencies)</AdditionalDependencies>

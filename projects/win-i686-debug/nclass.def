@@ -1,3 +1,6 @@
-LIBRARY nclass.dll
+LIBRARY nclass-lib.dll
 EXPORTS
+  configureSampleTypes
+  create
+  ejsDefineShapeType
   nclass_Init

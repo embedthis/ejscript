@@ -61,6 +61,12 @@
   <ClCompile Include="..\..\src\jems\ejs.web\src\ejsSession.c" />
   <ClCompile Include="..\..\src\jems\ejs.web\src\ejsWeb.c" />
 </ItemGroup>
+
+    <ItemDefinitionGroup>
+    <Link>
+      <ModuleDefinitionFile>ejs.web.def</ModuleDefinitionFile>
+    </Link>
+    </ItemDefinitionGroup>
 <ItemDefinitionGroup>
 <Link>
   <AdditionalDependencies>mpr.lib;http.lib;pcre.lib;pcre.lib;ejs.lib;%(AdditionalDependencies)</AdditionalDependencies>

@@ -58,6 +58,12 @@
 <ItemGroup>
   <ClCompile Include="..\..\src\jems\ejs.db.sqlite\src\ejsSqlite.c" />
 </ItemGroup>
+
+    <ItemDefinitionGroup>
+    <Link>
+      <ModuleDefinitionFile>ejs.db.sqlite.def</ModuleDefinitionFile>
+    </Link>
+    </ItemDefinitionGroup>
 <ItemDefinitionGroup>
 <Link>
   <AdditionalDependencies>mpr.lib;ejs.lib;pcre.lib;http.lib;sqlite3.lib;%(AdditionalDependencies)</AdditionalDependencies>
