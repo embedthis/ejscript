@@ -15,10 +15,11 @@ const PROJECT_FILE_VERSION = 10.0.30319.1
 const SOL_VERSION = '11.00'
 const XID = '{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}'
 const PREP = '
-    if not exist ${OUTDIR}\\obj md ${OUTDIR}\\obj
-    if not exist ${OUTDIR}\\bin md ${OUTDIR}\\bin
-    if not exist ${OUTDIR}\\inc\\buildConfig.h copy projects\\buildConfig.${OUTDIR} ${OUTDIR}\\inc\\buildConfig.h
-    if not exist ${OUTDIR}\\bin\\libmpr.def xcopy /Y /S projects\\${OUTDIR}\\*.def ${OUTDIR}\\bin
+    if not exist ${OUTDIR}\\obj md ${OUTDIR}\\obj\r
+    if not exist ${OUTDIR}\\bin md ${OUTDIR}\\bin\r
+    if not exist ${OUTDIR}\\inc md ${OUTDIR}\\inc\r
+    if not exist ${OUTDIR}\\inc\\buildConfig.h copy ..\\buildConfig.${bit.platform.configuration} ${OUTDIR}\\inc\\buildConfig.h\r
+    if not exist ${OUTDIR}\\bin\\libmpr.def xcopy /Y /S *.def ${OUTDIR}\\bin\r
 '
 var prepTarget
 

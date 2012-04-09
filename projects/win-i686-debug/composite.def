@@ -1,0 +1,3 @@
+LIBRARY composite.dll
+EXPORTS
+  composite_Init
