@@ -14,11 +14,24 @@ const TOOLS_VERSION = '4.0'
 const PROJECT_FILE_VERSION = 10.0.30319.1
 const SOL_VERSION = '11.00'
 const XID = '{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}'
+const PREP = '
+    if not exist ${OUTDIR}\\obj md ${OUTDIR}\\obj
+    if not exist ${OUTDIR}\\bin md ${OUTDIR}\\bin
+    if not exist ${OUTDIR}\\inc\\buildConfig.h copy projects\\buildConfig.${OUTDIR} ${OUTDIR}\\inc\\buildConfig.h
+    if not exist ${OUTDIR}\\bin\\libmpr.def xcopy /Y /S projects\\${OUTDIR}\\*.def ${OUTDIR}\\bin
+'
 
 public function vstudio(base: Path) {
     bit.TOOLS_VERSION = TOOLS_VERSION
     bit.PROJECT_FILE_VERSION = PROJECT_FILE_VERSION
     let projects = []
+    projBuild(projects, base, {
+        type: 'vsprep',
+        name: 'prep',
+        enable: true,
+        scripts: { custom: [ { script: PREP } ] }
+        includes: [], libraries: [], libpaths: [],
+    })
     for each (target in bit.targets) {
         projBuild(projects, base, target)
     }
@@ -73,7 +86,7 @@ function projBuild(projects: Array, base: Path, target) {
     if (target.built || !target.enable) {
         return
     }
-    if (target.type != 'exe' && target.type != 'lib') {
+    if (target.type != 'exe' && target.type != 'lib' && target.type != 'vsprep') {
         return
     }
     for each (dname in target.depends) {
@@ -253,6 +266,9 @@ function projLink(base, target) {
     }
 
     bit.LIBS = mapLibs(target.libraries - bit.defaults.libraries).join(';')
+    if (target.type != 'vsprep') {
+        bit.LIBS = 'prep;' + bit.LIBS
+    }
     bit.LIBPATHS = target.libpaths.map(function(p) wpath(p)).join(';')
     output('<ItemDefinitionGroup>
 <Link>
@@ -263,12 +279,13 @@ function projLink(base, target) {
 }
 
 function projCustom(base, target) {
-    if (target.custom) {
-        output('
-    <CustomBuildStep>
-    <Command>' + target.custom + '
-    </Command>
-    </CustomBuildStep>')
+    if (target.scripts && target.scripts.custom) {
+        bit.OUTDIR = wpath(bit.dir.cfg.relativeTo(base))
+        for each (item in target.scripts.custom) {
+            output('<CustomBuildStep>
+        <Command>' + item.script + '</Command>
+        </CustomBuildStep>')
+        }
     }
 }
 

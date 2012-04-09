@@ -69,7 +69,7 @@
     </ItemDefinitionGroup>
 <ItemDefinitionGroup>
 <Link>
-  <AdditionalDependencies>libmpr.lib;libhttp.lib;libpcre.lib;libpcre.lib;libejs.lib;%(AdditionalDependencies)</AdditionalDependencies>
+  <AdditionalDependencies>prep;libmpr.lib;libhttp.lib;libpcre.lib;libpcre.lib;libejs.lib;%(AdditionalDependencies)</AdditionalDependencies>
   <AdditionalLibraryDirectories>$(OutDir);win-i686-debug\bin;%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
 </Link>
 </ItemDefinitionGroup>
