@@ -20,22 +20,22 @@
 
 
 /*
-    Class property slots for the "Shape" type 
+    Class property slots for the "Square" type 
  */
-#define ES_composite_Shape_NUM_CLASS_PROP                              0
+#define ES_composite_Square_NUM_CLASS_PROP                             0
 
 /*
-   Prototype (instance) slots for "Shape" type 
+   Prototype (instance) slots for "Square" type 
  */
-#define ES_composite_Shape_x                                           0
-#define ES_composite_Shape_y                                           1
-#define ES_composite_Shape_height                                      2
-#define ES_composite_Shape_width                                       3
-#define ES_composite_Shape_area                                        4
-#define ES_composite_Shape_moveTo                                      5
-#define ES_composite_Shape_NUM_INSTANCE_PROP                           6
-#define ES_composite_Shape_NUM_INHERITED_PROP                          0
+#define ES_composite_Square_x                                          0
+#define ES_composite_Square_y                                          1
+#define ES_composite_Square_height                                     2
+#define ES_composite_Square_width                                      3
+#define ES_composite_Square_area                                       4
+#define ES_composite_Square_moveTo                                     5
+#define ES_composite_Square_NUM_INSTANCE_PROP                          6
+#define ES_composite_Square_NUM_INHERITED_PROP                         0
 
-#define _ES_CHECKSUM_composite   7753
+#define _ES_CHECKSUM_composite   8009
 
 #endif

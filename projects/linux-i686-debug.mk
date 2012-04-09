@@ -5,10 +5,10 @@
 CONFIG   := linux-i686-debug
 CC       := cc
 LD       := ld
-CFLAGS   := -Wall -fPIC -O3 -Wno-unused-result -mtune=i686 -fPIC -O3 -Wno-unused-result -mtune=i686
+CFLAGS   := -Wall -fPIC -g -Wno-unused-result -mtune=i686 -fPIC -g -Wno-unused-result -mtune=i686
 DFLAGS   := -D_REENTRANT -DCPU=${ARCH} -DPIC -DPIC
 IFLAGS   := -I$(CONFIG)/inc -I$(CONFIG)/inc
-LDFLAGS  := '-Wl,--enable-new-dtags' '-Wl,-rpath,$$ORIGIN/' '-Wl,-rpath,$$ORIGIN/../lib'
+LDFLAGS  := '-Wl,--enable-new-dtags' '-Wl,-rpath,$$ORIGIN/' '-Wl,-rpath,$$ORIGIN/../lib' '-g' '-g'
 LIBPATHS := -L$(CONFIG)/lib -L$(CONFIG)/lib
 LIBS     := -lpthread -lm -ldl -lpthread -lm -ldl
 
@@ -279,7 +279,7 @@ $(CONFIG)/inc/sqlite3.h:
 $(CONFIG)/obj/sqlite3.o: \
         src/deps/sqlite/sqlite3.c \
         $(CONFIG)/inc/buildConfig.h
-	$(CC) -c -o $(CONFIG)/obj/sqlite3.o -fPIC -O3 -Wno-unused-result -mtune=i686 -fPIC -O3 -Wno-unused-result -mtune=i686 -D_REENTRANT -DCPU=i686 -DPIC -DPIC -I$(CONFIG)/inc -I$(CONFIG)/inc src/deps/sqlite/sqlite3.c
+	$(CC) -c -o $(CONFIG)/obj/sqlite3.o -fPIC -g -Wno-unused-result -mtune=i686 -fPIC -g -Wno-unused-result -mtune=i686 -D_REENTRANT -DCPU=i686 -DPIC -DPIC -I$(CONFIG)/inc -I$(CONFIG)/inc src/deps/sqlite/sqlite3.c
 
 $(CONFIG)/lib/libsqlite3.so:  \
         $(CONFIG)/inc/sqlite3.h \

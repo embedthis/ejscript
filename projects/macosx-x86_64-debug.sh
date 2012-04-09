@@ -5,10 +5,10 @@
 CONFIG="macosx-x86_64-debug"
 CC="/usr/bin/cc"
 LD="/usr/bin/ld"
-CFLAGS="-fPIC -Wall -fast -Wshorten-64-to-32"
+CFLAGS="-fPIC -Wall -g -Wno-unused-result -Wshorten-64-to-32"
 DFLAGS="-DPIC -DCPU=X86_64"
 IFLAGS="-Imacosx-x86_64-debug/inc -Imacosx-x86_64-debug/inc"
-LDFLAGS="-Wl,-rpath,@executable_path/../lib -Wl,-rpath,@executable_path/ -Wl,-rpath,@loader_path/"
+LDFLAGS="-Wl,-rpath,@executable_path/../lib -Wl,-rpath,@executable_path/ -Wl,-rpath,@loader_path/ -g"
 LIBPATHS="-L${CONFIG}/lib"
 LIBS="-lpthread -lm -ldl"
 
@@ -54,7 +54,7 @@ ${CC} -o ${CONFIG}/bin/http -arch x86_64 ${LDFLAGS} ${LIBPATHS} ${CONFIG}/obj/ht
 rm -rf macosx-x86_64-debug/inc/sqlite3.h
 cp -r src/deps/sqlite/sqlite3.h macosx-x86_64-debug/inc/sqlite3.h
 
-${CC} -c -o ${CONFIG}/obj/sqlite3.o -arch x86_64 -fPIC -fast ${DFLAGS} -I${CONFIG}/inc -I${CONFIG}/inc src/deps/sqlite/sqlite3.c
+${CC} -c -o ${CONFIG}/obj/sqlite3.o -arch x86_64 -fPIC -g -Wno-unused-result ${DFLAGS} -I${CONFIG}/inc -I${CONFIG}/inc src/deps/sqlite/sqlite3.c
 
 ${CC} -dynamiclib -o ${CONFIG}/lib/libsqlite3.dylib -arch x86_64 ${LDFLAGS} ${LIBPATHS} -install_name @rpath/libsqlite3.dylib ${CONFIG}/obj/sqlite3.o ${LIBS}
 

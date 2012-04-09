@@ -1,11 +1,11 @@
 /*
-    Shape.c - Implementation for the Shape class. Includes the loadable entry point for the Sample module.
+    Square.c - Implementation for the Square class. Includes the loadable entry point for the Sample module.
   
-    This sample provides the implementation for the Shape class native. It defines the native C functions which
-    are bound to the JavaScript methods for the Shape class. The Shape class is created by the runtime as are
+    This sample provides the implementation for the Square class native. It defines the native C functions which
+    are bound to the JavaScript methods for the Square class. The Square class is created by the runtime as are
     the scripted properties.
   
-    The properties in the Shape class are real JavaScript properties and are accessible as discrete JavaScript
+    The properties in the Square class are real JavaScript properties and are accessible as discrete JavaScript
     objects. See the composite class if you need a more compact representation for properties.
   
     Copyright (c) All Rights Reserved. See details at the end of the file.
@@ -31,18 +31,18 @@ static EjsObj *constructor(Ejs *ejs, EjsObj *sp, int argc, EjsObj **argv)
     mprAssert(sp);
     mprAssert(argc == 2);
 
-    mprLog(1, "Shape()");
+    mprLog(1, "Square()");
 
-    ejsSetProperty(ejs, sp, ES_composite_Shape_x, ESV(zero));
-    ejsSetProperty(ejs, sp, ES_composite_Shape_y, ESV(zero));
-    ejsSetProperty(ejs, sp, ES_composite_Shape_height, argv[0]);
-    ejsSetProperty(ejs, sp, ES_composite_Shape_width, argv[1]);
+    ejsSetProperty(ejs, sp, ES_composite_Square_x, ESV(zero));
+    ejsSetProperty(ejs, sp, ES_composite_Square_y, ESV(zero));
+    ejsSetProperty(ejs, sp, ES_composite_Square_height, argv[0]);
+    ejsSetProperty(ejs, sp, ES_composite_Square_width, argv[1]);
     return sp;
 }
 
 
 /*
-    Compute the area of the shape
+    Compute the area of the square
   
     function area(): Number
  */
@@ -52,10 +52,10 @@ static EjsNumber *area(Ejs *ejs, EjsObj *sp, int argc, EjsObj **argv)
 
     mprAssert(argc == 0);
 
-    mprLog(1, "Shape.area()");
+    mprLog(1, "Square.area()");
 
-    height = ejsGetInt(ejs, ejsGetProperty(ejs, sp, ES_composite_Shape_height));
-    width = ejsGetInt(ejs, ejsGetProperty(ejs, sp, ES_composite_Shape_width));
+    height = ejsGetInt(ejs, ejsGetProperty(ejs, sp, ES_composite_Square_height));
+    width = ejsGetInt(ejs, ejsGetProperty(ejs, sp, ES_composite_Square_width));
 
     return ejsCreateNumber(ejs, height * width);
 }
@@ -71,27 +71,27 @@ static int configureSampleTypes(Ejs *ejs)
     mprLog(1, "Loading Sample module\n");
 
     /*
-        Get the Shape class object. This will be created from the mod file for us.
+        Get the Square class object. This will be created from the mod file for us.
      */
-    type = ejsGetTypeByName(ejs, N("composite", "Shape"));
+    type = ejsGetTypeByName(ejs, N("composite", "Square"));
     if (type == 0) {
-        mprError("Can't find type Shape");
+        mprError("Can't find type Square");
         return MPR_ERR;
     }
     /*
         Bind the C functions to the JavaScript functions. We use the slot definitions generated
-        by ejsmod from Shape.es.
+        by ejsmod from Square.es.
      */
     prototype = type->prototype;
     ejsBindConstructor(ejs, type, constructor);
-    ejsBindMethod(ejs, prototype, ES_composite_Shape_area, area);
+    ejsBindMethod(ejs, prototype, ES_composite_Square_area, area);
     return 0;
 }
 
 
 /*
-    Shape loadable module entry point. This will be called by the Ejscript loader 
-    after the Shape.mod file is loaded and before Shape initializers are run. 
+    Square loadable module entry point. This will be called by the Ejscript loader 
+    after the Square.mod file is loaded and before Square initializers are run. 
   
     Module entry points be named [NAME]ModuleInit where "[NAME]" is the name of 
     the module with the first letter mapped to lower case and with any "." characters 

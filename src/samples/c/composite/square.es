@@ -1,10 +1,10 @@
 /*
-    Shape.es - Sample module with Shape class
+    Square.es - Composite module with Square class
  */
 
 module composite {
 
-	class Shape {
+	class Square {
 		var x: num
 		var y: num
 		var height: num
@@ -13,7 +13,7 @@ module composite {
         /*
             Native constructor function must have its actual implementation be supplied by a C function
          */
-		native function Shape(height: num, width: num)
+		native function Square(height: num, width: num)
 
         /*
             Native function must have its actual implementation be supplied by a C function

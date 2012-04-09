@@ -13,9 +13,8 @@ Bit.load({
                 trace('Compile', 'ejs.tar.mod')
                 run('ejsc --out ${LIB}/ejs.tar.mod ${settings.esflags} --optimize 9 ' + Path('.').glob('*.es').sort().join(' '))
             ",
-            'generate-sh': "\
-                ${BIN}/ejsc --out ${OUT} ${settings.esflags} --optimize 9 ${HOME}/*.es
-            ",
+            'generate-nmake': "${WIN_BIN}\\ejsc --out ${OUT} ${settings.esflags} --optimize 9 ${HOME}/*.es",
+            'generate-sh': "${BIN}/ejsc --out ${OUT} ${settings.esflags} --optimize 9 ${HOME}/*.es",
             depends: [ 'ejsc', 'ejsmod', 'ejs.mod' ],
         },
 	},

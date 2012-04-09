@@ -39,13 +39,6 @@ public class Bit {
 
     private var home: Path
     private var bareBit: Object = { platform: {}, dir: {}, settings: {
-/*
-        product: 'bit',
-        title: 'Bit',
-        company: '',
-        version: '1.0.0',
-        buildNumber: '0',
-*/
         required: [], optional: [],
     }, packs: {}, targets: {}, env: {} }
 
@@ -1283,7 +1276,6 @@ public class Bit {
         setTargetPaths()
         inlineStatic()
         setTypes()
-        // makeOutDirs()
         Object.sortProperties(bit);
 
         if (options.save) {
@@ -1950,8 +1942,7 @@ public class Bit {
             bit.ARCH = bit.platform.arch
 
             let command = rule.expand(bit, {fill: ''})
-//  MOB - just to allow tokens in target.defines
-command = command.expand(bit, {fill: ''})
+            command = command.expand(bit, {fill: ''})
 
             if (generating == 'sh') {
                 command = repcmd(command)
@@ -2004,8 +1995,7 @@ command = command.expand(bit, {fill: ''})
             bit.ARCH = bit.platform.arch
 
             let command = rule.expand(bit, {fill: ''})
-//  MOB - just to allow tokens in target.defines
-command = command.expand(bit, {fill: ''})
+            command = command.expand(bit, {fill: ''})
 
             if (generating == 'sh') {
                 command = repcmd(command)
@@ -2124,7 +2114,6 @@ command = command.expand(bit, {fill: ''})
         }
     }
 
-    //  MOB - rename
     /*
         Replace default defines, includes, libraries etc with token equivalents. This allows
         Makefiles and script to be use variables to control various flag settings.
@@ -2217,8 +2206,6 @@ command = command.expand(bit, {fill: ''})
         bit.OBJ = '.' + bit.ext.obj
         bit.SHOBJ = '.' + bit.ext.shobj
         bit.SHLIB = '.' + bit.ext.shlib
-
-        //  MOB - rename
         bit.CFG = bit.dir.cfg
         bit.BIN = bit.dir.bin
         bit.BITS = bit.dir.bits
@@ -2431,26 +2418,9 @@ global.NN = item.ns
             libs = libs.clone()
             for (let [i,name] in libs) {
                 let libname = Path('lib' + name).joinExt(bit.ext.shlib)
-/*
-   MOB - lookup O/S libs
-                if (bit.defaults.libraries.contains(name)) {
-                    libs[i] = Path(name)
-                } else {
-                    libs[i] = libname
-                }
-*/
                 if (bit.targets['lib' + name] || bit.dir.lib.join(libname).exists) {
                     libs[i] = libname
                 }
-/*
-   MOB - original
-                let llib = bit.dir.lib.join(libname)
-                } else if (llib.exists) {
-                    libs[i] = libname
-                } else {
-                    libs[i] = Path(libs[i]).replaceExt(bit.ext.shlib).relative
-                }
-*/
             }
         } else if (bit.platform.os == 'vxworks') {
             libs = libs.clone()
@@ -2481,7 +2451,10 @@ global.NN = item.ns
         if (target.built) {
             return false
         }
-        if (generating || options.rebuild) {
+        if (generating) {
+            return target.nogen != true
+        }
+        if (options.rebuild) {
             return true
         }
         if (!target.path) {

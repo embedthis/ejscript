@@ -9,10 +9,10 @@ Bit.load({
         },
 
         'composite.mod' : {
-            files: ['shape.es'],
+            files: ['square.es'],
             path: 'composite.mod',
             build: "
-                run('ejsc shape.es')
+                run('ejsc square.es')
                 run('ejsmod --cslots composite.mod')
             ",
             depends: ['ejsc', 'composite-lib'],
