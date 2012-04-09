@@ -20,18 +20,21 @@ const PREP = '
     if not exist ${OUTDIR}\\inc\\buildConfig.h copy projects\\buildConfig.${OUTDIR} ${OUTDIR}\\inc\\buildConfig.h
     if not exist ${OUTDIR}\\bin\\libmpr.def xcopy /Y /S projects\\${OUTDIR}\\*.def ${OUTDIR}\\bin
 '
+var prepTarget
 
 public function vstudio(base: Path) {
     bit.TOOLS_VERSION = TOOLS_VERSION
     bit.PROJECT_FILE_VERSION = PROJECT_FILE_VERSION
     let projects = []
-    projBuild(projects, base, {
+    /* Create a temporary prep target as the first target */
+    prepTarget = {
         type: 'vsprep',
         name: 'prep',
         enable: true,
         custom: PREP,
         includes: [], libraries: [], libpaths: [],
-    })
+    }
+    projBuild(projects, base, prepTarget)
     for each (target in bit.targets) {
         projBuild(projects, base, target)
     }
@@ -50,6 +53,14 @@ function solBuild(projects, base: Path) {
         output('Project("' + XID + '") = "' + target.name + '", "' + 
             wpath(base.basename.join(target.name).joinExt('vcxproj', true)) + 
             '", "{' + target.guid + '}"')
+        /* Everything depends on prep */
+        if (target != prepTarget) {
+            let dep = prepTarget
+            dep.guid = dep.guid.toUpper()
+            output('\tProjectSection(ProjectDependencies) = postProject')
+            output('\t\t{' + dep.guid + '} = {' + dep.guid + '}')
+            output('\tEndProjectSection')
+        }
         for each (dname in target.depends) {
             let dep = bit.targets[dname]
             if (!dep || !dep.guid) {
@@ -173,8 +184,6 @@ function projConfig(base, target) {
     bit.VTOK = '$(VCTargetsPath)'
     bit.NAME = target.name
     bit.OUTDIR = wpath(bit.dir.cfg.relativeTo(base))
-
-    // <Import Project="product.props" />
 
     output('
 <ItemGroup Label="ProjectConfigurations">

@@ -3,20 +3,35 @@ Microsoft Visual Studio Solution File, Format Version 11.00
 Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "prep", "win-i686-debug\prep.vcxproj", "{C5EFD5E2-B473-4A01-8CC1-7253E3551311}"
 EndProject
 Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "libmpr", "win-i686-debug\libmpr.vcxproj", "{145E7A7A-CF56-4257-B982-A6BE59F0738A}"
+	ProjectSection(ProjectDependencies) = postProject
+		{C5EFD5E2-B473-4A01-8CC1-7253E3551311} = {C5EFD5E2-B473-4A01-8CC1-7253E3551311}
+	EndProjectSection
 EndProject
 Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "manager", "win-i686-debug\manager.vcxproj", "{8A23990F-F747-4E57-9D73-ABA65DDEFBF2}"
+	ProjectSection(ProjectDependencies) = postProject
+		{C5EFD5E2-B473-4A01-8CC1-7253E3551311} = {C5EFD5E2-B473-4A01-8CC1-7253E3551311}
+	EndProjectSection
 	ProjectSection(ProjectDependencies) = postProject
 		{145E7A7A-CF56-4257-B982-A6BE59F0738A} = {145E7A7A-CF56-4257-B982-A6BE59F0738A}
 	EndProjectSection
 EndProject
 Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "makerom", "win-i686-debug\makerom.vcxproj", "{AA95748A-58FF-4481-8E0F-B873E2E9624D}"
 	ProjectSection(ProjectDependencies) = postProject
+		{C5EFD5E2-B473-4A01-8CC1-7253E3551311} = {C5EFD5E2-B473-4A01-8CC1-7253E3551311}
+	EndProjectSection
+	ProjectSection(ProjectDependencies) = postProject
 		{145E7A7A-CF56-4257-B982-A6BE59F0738A} = {145E7A7A-CF56-4257-B982-A6BE59F0738A}
 	EndProjectSection
 EndProject
 Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "libpcre", "win-i686-debug\libpcre.vcxproj", "{41931549-CFAD-493E-961B-694074A6FA11}"
+	ProjectSection(ProjectDependencies) = postProject
+		{C5EFD5E2-B473-4A01-8CC1-7253E3551311} = {C5EFD5E2-B473-4A01-8CC1-7253E3551311}
+	EndProjectSection
 EndProject
 Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "libhttp", "win-i686-debug\libhttp.vcxproj", "{236A87B9-87D7-430D-B73F-D139F8471900}"
+	ProjectSection(ProjectDependencies) = postProject
+		{C5EFD5E2-B473-4A01-8CC1-7253E3551311} = {C5EFD5E2-B473-4A01-8CC1-7253E3551311}
+	EndProjectSection
 	ProjectSection(ProjectDependencies) = postProject
 		{145E7A7A-CF56-4257-B982-A6BE59F0738A} = {145E7A7A-CF56-4257-B982-A6BE59F0738A}
 	EndProjectSection
@@ -26,17 +41,29 @@ Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "libhttp", "win-i686-debug\l
 EndProject
 Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "http", "win-i686-debug\http.vcxproj", "{F9826CAF-5410-40D6-A9F3-73B49911C07F}"
 	ProjectSection(ProjectDependencies) = postProject
+		{C5EFD5E2-B473-4A01-8CC1-7253E3551311} = {C5EFD5E2-B473-4A01-8CC1-7253E3551311}
+	EndProjectSection
+	ProjectSection(ProjectDependencies) = postProject
 		{236A87B9-87D7-430D-B73F-D139F8471900} = {236A87B9-87D7-430D-B73F-D139F8471900}
 	EndProjectSection
 EndProject
 Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "libsqlite3", "win-i686-debug\libsqlite3.vcxproj", "{C27BD2E2-1711-4653-9443-2CC380D7A3EF}"
+	ProjectSection(ProjectDependencies) = postProject
+		{C5EFD5E2-B473-4A01-8CC1-7253E3551311} = {C5EFD5E2-B473-4A01-8CC1-7253E3551311}
+	EndProjectSection
 EndProject
 Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "sqlite", "win-i686-debug\sqlite.vcxproj", "{00C814C7-B535-4B6A-B25E-DA78F4E42305}"
+	ProjectSection(ProjectDependencies) = postProject
+		{C5EFD5E2-B473-4A01-8CC1-7253E3551311} = {C5EFD5E2-B473-4A01-8CC1-7253E3551311}
+	EndProjectSection
 	ProjectSection(ProjectDependencies) = postProject
 		{C27BD2E2-1711-4653-9443-2CC380D7A3EF} = {C27BD2E2-1711-4653-9443-2CC380D7A3EF}
 	EndProjectSection
 EndProject
 Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "libejs", "win-i686-debug\libejs.vcxproj", "{B097BC45-C299-4DFA-944C-CC5C047CD785}"
+	ProjectSection(ProjectDependencies) = postProject
+		{C5EFD5E2-B473-4A01-8CC1-7253E3551311} = {C5EFD5E2-B473-4A01-8CC1-7253E3551311}
+	EndProjectSection
 	ProjectSection(ProjectDependencies) = postProject
 		{145E7A7A-CF56-4257-B982-A6BE59F0738A} = {145E7A7A-CF56-4257-B982-A6BE59F0738A}
 	EndProjectSection
@@ -49,30 +76,48 @@ Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "libejs", "win-i686-debug\li
 EndProject
 Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "ejs", "win-i686-debug\ejs.vcxproj", "{816B723B-45F3-4E8E-94F4-A39CD32CC117}"
 	ProjectSection(ProjectDependencies) = postProject
+		{C5EFD5E2-B473-4A01-8CC1-7253E3551311} = {C5EFD5E2-B473-4A01-8CC1-7253E3551311}
+	EndProjectSection
+	ProjectSection(ProjectDependencies) = postProject
 		{B097BC45-C299-4DFA-944C-CC5C047CD785} = {B097BC45-C299-4DFA-944C-CC5C047CD785}
 	EndProjectSection
 EndProject
 Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "ejsc", "win-i686-debug\ejsc.vcxproj", "{D5245843-770A-44AA-9AA8-2A834BE6411E}"
+	ProjectSection(ProjectDependencies) = postProject
+		{C5EFD5E2-B473-4A01-8CC1-7253E3551311} = {C5EFD5E2-B473-4A01-8CC1-7253E3551311}
+	EndProjectSection
 	ProjectSection(ProjectDependencies) = postProject
 		{B097BC45-C299-4DFA-944C-CC5C047CD785} = {B097BC45-C299-4DFA-944C-CC5C047CD785}
 	EndProjectSection
 EndProject
 Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "ejsmod", "win-i686-debug\ejsmod.vcxproj", "{75E07B9B-A28E-4738-ABE0-779930CC67C1}"
 	ProjectSection(ProjectDependencies) = postProject
+		{C5EFD5E2-B473-4A01-8CC1-7253E3551311} = {C5EFD5E2-B473-4A01-8CC1-7253E3551311}
+	EndProjectSection
+	ProjectSection(ProjectDependencies) = postProject
 		{B097BC45-C299-4DFA-944C-CC5C047CD785} = {B097BC45-C299-4DFA-944C-CC5C047CD785}
 	EndProjectSection
 EndProject
 Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "ejsrun", "win-i686-debug\ejsrun.vcxproj", "{E0086D0A-61C4-48C8-9C65-8381E18304A7}"
+	ProjectSection(ProjectDependencies) = postProject
+		{C5EFD5E2-B473-4A01-8CC1-7253E3551311} = {C5EFD5E2-B473-4A01-8CC1-7253E3551311}
+	EndProjectSection
 	ProjectSection(ProjectDependencies) = postProject
 		{B097BC45-C299-4DFA-944C-CC5C047CD785} = {B097BC45-C299-4DFA-944C-CC5C047CD785}
 	EndProjectSection
 EndProject
 Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "bit", "win-i686-debug\bit.vcxproj", "{B10963E6-4115-4D13-A34E-01DF1E20AC30}"
 	ProjectSection(ProjectDependencies) = postProject
+		{C5EFD5E2-B473-4A01-8CC1-7253E3551311} = {C5EFD5E2-B473-4A01-8CC1-7253E3551311}
+	EndProjectSection
+	ProjectSection(ProjectDependencies) = postProject
 		{B097BC45-C299-4DFA-944C-CC5C047CD785} = {B097BC45-C299-4DFA-944C-CC5C047CD785}
 	EndProjectSection
 EndProject
 Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "ejs.db.sqlite", "win-i686-debug\ejs.db.sqlite.vcxproj", "{0C7F9639-FC6F-4B60-9068-965A4BF8BEC7}"
+	ProjectSection(ProjectDependencies) = postProject
+		{C5EFD5E2-B473-4A01-8CC1-7253E3551311} = {C5EFD5E2-B473-4A01-8CC1-7253E3551311}
+	EndProjectSection
 	ProjectSection(ProjectDependencies) = postProject
 		{145E7A7A-CF56-4257-B982-A6BE59F0738A} = {145E7A7A-CF56-4257-B982-A6BE59F0738A}
 	EndProjectSection
@@ -84,6 +129,9 @@ Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "ejs.db.sqlite", "win-i686-d
 	EndProjectSection
 EndProject
 Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "ejs.web", "win-i686-debug\ejs.web.vcxproj", "{02221DAD-6CA1-40AD-8B27-0F9ADF90258C}"
+	ProjectSection(ProjectDependencies) = postProject
+		{C5EFD5E2-B473-4A01-8CC1-7253E3551311} = {C5EFD5E2-B473-4A01-8CC1-7253E3551311}
+	EndProjectSection
 	ProjectSection(ProjectDependencies) = postProject
 		{145E7A7A-CF56-4257-B982-A6BE59F0738A} = {145E7A7A-CF56-4257-B982-A6BE59F0738A}
 	EndProjectSection
@@ -99,25 +147,40 @@ Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "ejs.web", "win-i686-debug\e
 EndProject
 Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "composite-lib", "win-i686-debug\composite-lib.vcxproj", "{40AB75F2-9AC4-448A-8912-6DEF7765574A}"
 	ProjectSection(ProjectDependencies) = postProject
+		{C5EFD5E2-B473-4A01-8CC1-7253E3551311} = {C5EFD5E2-B473-4A01-8CC1-7253E3551311}
+	EndProjectSection
+	ProjectSection(ProjectDependencies) = postProject
 		{B097BC45-C299-4DFA-944C-CC5C047CD785} = {B097BC45-C299-4DFA-944C-CC5C047CD785}
 	EndProjectSection
 EndProject
 Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "evalFile", "win-i686-debug\evalFile.vcxproj", "{C3F36235-5D4E-4E95-86EC-E459D944EB8C}"
+	ProjectSection(ProjectDependencies) = postProject
+		{C5EFD5E2-B473-4A01-8CC1-7253E3551311} = {C5EFD5E2-B473-4A01-8CC1-7253E3551311}
+	EndProjectSection
 	ProjectSection(ProjectDependencies) = postProject
 		{B097BC45-C299-4DFA-944C-CC5C047CD785} = {B097BC45-C299-4DFA-944C-CC5C047CD785}
 	EndProjectSection
 EndProject
 Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "evalModule", "win-i686-debug\evalModule.vcxproj", "{BC474CBA-CF7C-462F-A8ED-CFC78E4332E0}"
 	ProjectSection(ProjectDependencies) = postProject
+		{C5EFD5E2-B473-4A01-8CC1-7253E3551311} = {C5EFD5E2-B473-4A01-8CC1-7253E3551311}
+	EndProjectSection
+	ProjectSection(ProjectDependencies) = postProject
 		{B097BC45-C299-4DFA-944C-CC5C047CD785} = {B097BC45-C299-4DFA-944C-CC5C047CD785}
 	EndProjectSection
 EndProject
 Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "evalScript", "win-i686-debug\evalScript.vcxproj", "{64022931-768D-49A1-ABC5-F20F51B67605}"
 	ProjectSection(ProjectDependencies) = postProject
+		{C5EFD5E2-B473-4A01-8CC1-7253E3551311} = {C5EFD5E2-B473-4A01-8CC1-7253E3551311}
+	EndProjectSection
+	ProjectSection(ProjectDependencies) = postProject
 		{B097BC45-C299-4DFA-944C-CC5C047CD785} = {B097BC45-C299-4DFA-944C-CC5C047CD785}
 	EndProjectSection
 EndProject
 Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "nclass-lib", "win-i686-debug\nclass-lib.vcxproj", "{C2510CCB-9684-4BC4-890A-8B59C12EB97D}"
+	ProjectSection(ProjectDependencies) = postProject
+		{C5EFD5E2-B473-4A01-8CC1-7253E3551311} = {C5EFD5E2-B473-4A01-8CC1-7253E3551311}
+	EndProjectSection
 	ProjectSection(ProjectDependencies) = postProject
 		{B097BC45-C299-4DFA-944C-CC5C047CD785} = {B097BC45-C299-4DFA-944C-CC5C047CD785}
 	EndProjectSection
