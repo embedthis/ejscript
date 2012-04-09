@@ -57,7 +57,7 @@ if (bit.platform.os == 'win') {
         includes: [ incdir ],
         libraries: [ 'z' ],
         libpaths: [ lib.parent ],
-        imports: lib.parent.glob('libz*.dylib*'),
+        imports: lib.parent.glob('libz*.so*'),
     }
 }
 
