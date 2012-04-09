@@ -91,6 +91,7 @@ function projBuild(projects: Array, base: Path, target) {
     projConfig(base, target)
     projSources(base, target)
     projLink(base, target)
+    projCustom(base, target)
     projDeps(base, target)
     projFooter(base, target)
     out.close()
@@ -259,6 +260,16 @@ function projLink(base, target) {
   <AdditionalLibraryDirectories>$(OutDir);${LIBPATHS};%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
 </Link>
 </ItemDefinitionGroup>')
+}
+
+function projCustom(base, target) {
+    if (target.custom) {
+        output('
+    <CustomBuildStep>
+    <Command>' + target.custom + '
+    </Command>
+    </CustomBuildStep>')
+    }
 }
 
 function projDeps(base, target) {
