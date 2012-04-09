@@ -114,6 +114,12 @@
   <ClCompile Include="..\..\src\vm\ejsScope.c" />
   <ClCompile Include="..\..\src\vm\ejsService.c" />
 </ItemGroup>
+
+    <ItemDefinitionGroup>
+    <Link>
+      <ModuleDefinitionFile>libejs.def</ModuleDefinitionFile>
+    </Link>
+    </ItemDefinitionGroup>
 <ItemDefinitionGroup>
 <Link>
   <AdditionalDependencies>libmpr.lib;libpcre.lib;libhttp.lib;%(AdditionalDependencies)</AdditionalDependencies>

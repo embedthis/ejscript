@@ -18,7 +18,7 @@ const PREP = '
     if not exist ${OUTDIR}\\obj md ${OUTDIR}\\obj\r
     if not exist ${OUTDIR}\\bin md ${OUTDIR}\\bin\r
     if not exist ${OUTDIR}\\inc md ${OUTDIR}\\inc\r
-    if not exist ${OUTDIR}\\inc\\buildConfig.h copy ..\\buildConfig.${bit.platform.configuration} ${OUTDIR}\\inc\\buildConfig.h\r
+    if not exist ${OUTDIR}\\inc\\buildConfig.h copy ..\\buildConfig.${platform.configuration} ${OUTDIR}\\inc\\buildConfig.h\r
     if not exist ${OUTDIR}\\bin\\libmpr.def xcopy /Y /S *.def ${OUTDIR}\\bin\r
 '
 var prepTarget

@@ -58,6 +58,12 @@
 <ItemGroup>
   <ClCompile Include="..\..\src\deps\http\httpLib.c" />
 </ItemGroup>
+
+    <ItemDefinitionGroup>
+    <Link>
+      <ModuleDefinitionFile>libhttp.def</ModuleDefinitionFile>
+    </Link>
+    </ItemDefinitionGroup>
 <ItemDefinitionGroup>
 <Link>
   <AdditionalDependencies>libmpr.lib;libpcre.lib;%(AdditionalDependencies)</AdditionalDependencies>
