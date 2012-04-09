@@ -249,25 +249,8 @@ function projLink(base, target) {
         }
     }
 
-    let libs = []
-    for each (libname in (target.libraries - bit.defaults.libraries)) {
-        let path = bit.dir.lib.join('lib' + libname).joinExt(bit.ext.shlib)
-        if (path.exists) {
-            libs.push(path)
-        } else {
-            libs.push(Path(libname).joinExt(bit.ext.shlib))
-        }
-    }
-    //  MOB - convert when target.libpaths exists
-    bit.LIBS = libs.join(';')
-    let libpaths = []
-    for each (flag in target.linker) {
-        if (flag.contains('-libpath:')) {
-            libpaths.push(flag.replace('-libpath:', ''))
-        }
-    }
-    bit.LIBPATHS = libpaths.join(';')
-    //MOB bit.LIBS = (target.libraries - bit.defaults.libraries).map(function(l) 'lib' + l + '.lib').join(';')
+    bit.LIBS = mapLibs(target.libraries - bit.defaults.libraries).join(';')
+    bit.LIBPATHS = target.libpaths.map(function(p) wpath(p)).join(';')
     output('<ItemDefinitionGroup>
 <Link>
   <AdditionalDependencies>${LIBS};%(AdditionalDependencies)</AdditionalDependencies>

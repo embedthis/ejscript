@@ -2413,7 +2413,7 @@ global.NN = item.ns
     /*
         Map libraries into the appropriate O/S dependant format
      */
-    function mapLibs(libs: Array): Array {
+    public function mapLibs(libs: Array): Array {
         if (bit.platform.os == 'win') {
             libs = libs.clone()
             for (let [i,name] in libs) {
@@ -2865,6 +2865,9 @@ public function run(command, options = {})
 
 public function safeRemove(dir: Path)
     b.safeRemove(dir)
+
+public function mapLibs(libs: Array)
+    b.mapLibs(libs)
 
 function whyRebuild(path, tag, msg)
     b.whyRebuild(path, tag, msg)
