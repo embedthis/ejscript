@@ -62,15 +62,15 @@
   <AdditionalDependencies>;%(AdditionalDependencies)</AdditionalDependencies>
   <AdditionalLibraryDirectories>$(OutDir);;%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
 </Link>
-</ItemDefinitionGroup>
 <CustomBuildStep>
-        <Command>
+    <Command>
     if not exist ..\..\win-i686-debug\obj md ..\..\win-i686-debug\obj
     if not exist ..\..\win-i686-debug\bin md ..\..\win-i686-debug\bin
     if not exist ..\..\win-i686-debug\inc\buildConfig.h copy projects\buildConfig...\..\win-i686-debug ..\..\win-i686-debug\inc\buildConfig.h
     if not exist ..\..\win-i686-debug\bin\libmpr.def xcopy /Y /S projects\..\..\win-i686-debug\*.def ..\..\win-i686-debug\bin
 </Command>
-        </CustomBuildStep>
+    </CustomBuildStep>
+</ItemDefinitionGroup>
 
 <Import Project="$(VCTargetsPath)Microsoft.Cpp.targets" />
 <ImportGroup Label="ExtensionTargets">

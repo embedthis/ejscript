@@ -29,7 +29,7 @@ public function vstudio(base: Path) {
         type: 'vsprep',
         name: 'prep',
         enable: true,
-        scripts: { custom: [ { script: PREP } ] }
+        custom: PREP,
         includes: [], libraries: [], libpaths: [],
     })
     for each (target in bit.targets) {
@@ -104,7 +104,6 @@ function projBuild(projects: Array, base: Path, target) {
     projConfig(base, target)
     projSources(base, target)
     projLink(base, target)
-    projCustom(base, target)
     projDeps(base, target)
     projFooter(base, target)
     out.close()
@@ -264,7 +263,6 @@ function projLink(base, target) {
             trace('Warn', 'Missing ' + def)
         }
     }
-
     bit.LIBS = mapLibs(target.libraries - bit.defaults.libraries).join(';')
     if (target.type != 'vsprep') {
         bit.LIBS = 'prep;' + bit.LIBS
@@ -274,19 +272,18 @@ function projLink(base, target) {
 <Link>
   <AdditionalDependencies>${LIBS};%(AdditionalDependencies)</AdditionalDependencies>
   <AdditionalLibraryDirectories>$(OutDir);${LIBPATHS};%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
-</Link>
-</ItemDefinitionGroup>')
+</Link>')
+    if (target.custom) {
+        projCustom(base, target)
+    }
+    output('</ItemDefinitionGroup>')
 }
 
 function projCustom(base, target) {
-    if (target.scripts && target.scripts.custom) {
-        bit.OUTDIR = wpath(bit.dir.cfg.relativeTo(base))
-        for each (item in target.scripts.custom) {
-            output('<CustomBuildStep>
-        <Command>' + item.script + '</Command>
-        </CustomBuildStep>')
-        }
-    }
+    bit.OUTDIR = wpath(bit.dir.cfg.relativeTo(base))
+        output('<CustomBuildStep>
+    <Command>' + target.custom + '</Command>
+    </CustomBuildStep>')
 }
 
 function projDeps(base, target) {
