@@ -196,6 +196,7 @@ public function package(pkg: Path, formats) {
      */
     global.load('ejs.zlib.mod')
     bit.dir.pkg.makeDir()
+    bit.dir.rel.makeDir()
     if (!(formats is Array)) formats = [formats]
 
     let options = {relativeTo: pkg, user: 'root', group: 'root', uid: 0, gid: 0}

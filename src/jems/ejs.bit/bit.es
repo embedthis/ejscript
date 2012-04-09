@@ -153,15 +153,15 @@ public class Bit {
                 import()
                 App.exit()
             } 
-            if (options.config) {
-                configure()
-            }
             if (!options.file) {
                 let file = findBitfile()
                 App.log.debug(1, 'Change directory to ' + file.dirname)
                 App.chdir(file.dirname)
                 home = App.dir
                 options.file = file.basename
+            }
+            if (options.config) {
+                configure()
             }
             process(options.file, localPlatform)
         } catch (e) {
@@ -296,11 +296,14 @@ public class Bit {
         if (platforms.length > 1 && platform == platforms[0]) {
             nbit.cross = platforms.slice(1)
         }
-        blend(nbit, {
+        /*
+            UNUSED
             blend : [
                 Path(bit.dir.bits.join('standard.bit')).absolute.portable,
                 Path(bit.dir.bits.join('os/' + bit.platform.os + '.bit')).absolute.portable,
             ],
+         */
+        blend(nbit, {
             platform: bit.platform,
             dir: { 
                 src: bit.dir.src.absolute.portable,
