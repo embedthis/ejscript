@@ -6,6 +6,7 @@ Bit.load({
     targets: {
         'composite' : {
             depends: ['composite-lib', 'composite.mod'],
+            nogen: true,
         },
 
         'composite.mod' : {
@@ -16,6 +17,7 @@ Bit.load({
                 run('ejsmod --cslots composite.mod')
             ",
             depends: ['ejsc', 'composite-lib'],
+            nogen: true,
         },
 
         'composite-lib': {
@@ -23,6 +25,7 @@ Bit.load({
             path: 'composite${SHOBJ}',
             sources: ['*.c'],
             depends: ['libejs'],
+            nogen: true,
         },
     },
 })

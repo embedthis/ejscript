@@ -63,15 +63,7 @@ all: prep \
         $(CONFIG)\bin\mvc.es \
         $(CONFIG)\bin\mvc.exe \
         $(CONFIG)\bin\ejs.mvc.mod \
-        $(CONFIG)\bin\utest.worker \
-        src\samples\c\composite\composite.mod \
-        src\samples\c\composite\composite.dll \
-        src\samples\c\evalFile\main.exe \
-        src\samples\c\evalModule\main.exe \
-        src\samples\c\evalModule\evalModule.mod \
-        src\samples\c\evalScript\main.exe \
-        src\samples\c\nclass\nclass.mod \
-        src\samples\c\nclass\nclass.dll
+        $(CONFIG)\bin\utest.worker
 
 .PHONY: prep
 
@@ -114,14 +106,6 @@ clean:
 	-if exist $(CONFIG)\bin\mvc.exe del /Q $(CONFIG)\bin\mvc.exe
 	-if exist $(CONFIG)\bin\ejs.mvc.mod del /Q $(CONFIG)\bin\ejs.mvc.mod
 	-if exist $(CONFIG)\bin\utest.worker del /Q $(CONFIG)\bin\utest.worker
-	-if exist src\samples\c\composite\composite.mod del /Q src\samples\c\composite\composite.mod
-	-if exist src\samples\c\composite\composite.dll del /Q src\samples\c\composite\composite.dll
-	-if exist src\samples\c\evalFile\main.exe del /Q src\samples\c\evalFile\main.exe
-	-if exist src\samples\c\evalModule\main.exe del /Q src\samples\c\evalModule\main.exe
-	-if exist src\samples\c\evalModule\evalModule.mod del /Q src\samples\c\evalModule\evalModule.mod
-	-if exist src\samples\c\evalScript\main.exe del /Q src\samples\c\evalScript\main.exe
-	-if exist src\samples\c\nclass\nclass.mod del /Q src\samples\c\nclass\nclass.mod
-	-if exist src\samples\c\nclass\nclass.dll del /Q src\samples\c\nclass\nclass.dll
 	-if exist $(CONFIG)\obj\mprLib.obj del /Q $(CONFIG)\obj\mprLib.obj
 	-if exist $(CONFIG)\obj\mprSsl.obj del /Q $(CONFIG)\obj\mprSsl.obj
 	-if exist $(CONFIG)\obj\manager.obj del /Q $(CONFIG)\obj\manager.obj
@@ -945,53 +929,13 @@ $(CONFIG)\obj\square.obj: \
         $(CONFIG)\inc\buildConfig.h
 	"$(CC)" -c -Fo$(CONFIG)\obj\square.obj -Fd$(CONFIG)\obj $(CFLAGS) $(DFLAGS) -I$(CONFIG)\inc src\samples\c\composite\square.c
 
-src\samples\c\composite\composite.dll:  \
-        $(CONFIG)\bin\libejs.dll \
-        $(CONFIG)\obj\square.obj
-	"$(LD)" -dll -out:src\samples\c\composite\composite.dll -entry:_DllMainCRTStartup@12 -def:src\samples\c\composite\composite.def $(LDFLAGS) $(LIBPATHS) $(CONFIG)\obj\square.obj $(LIBS) libejs.lib libmpr.lib libpcre.lib libhttp.lib
-
-src\samples\c\composite\composite.mod:  \
-        $(CONFIG)\bin\ejsc.exe \
-        src\samples\c\composite\composite.dll
-#  Omit build script /Users/mob/git/ejs/src/samples/c/composite/composite.mod
-
 $(CONFIG)\obj\main.obj: \
         src\samples\c\evalScript\main.c \
         $(CONFIG)\inc\buildConfig.h
 	"$(CC)" -c -Fo$(CONFIG)\obj\main.obj -Fd$(CONFIG)\obj $(CFLAGS) $(DFLAGS) -I$(CONFIG)\inc src\samples\c\evalScript\main.c
 
-src\samples\c\evalFile\main.exe:  \
-        $(CONFIG)\bin\libejs.dll \
-        $(CONFIG)\obj\main.obj
-	"$(LD)" -out:src\samples\c\evalFile\main.exe -entry:mainCRTStartup -subsystem:console $(LDFLAGS) $(LIBPATHS) $(CONFIG)\obj\main.obj $(LIBS) libejs.lib libmpr.lib libpcre.lib libhttp.lib
-
-src\samples\c\evalModule\evalModule.mod:  \
-        $(CONFIG)\bin\ejsc.exe
-#  Omit build script /Users/mob/git/ejs/src/samples/c/evalModule/evalModule.mod
-
-src\samples\c\evalModule\main.exe:  \
-        $(CONFIG)\bin\libejs.dll \
-        src\samples\c\evalModule\evalModule.mod \
-        $(CONFIG)\obj\main.obj
-	"$(LD)" -out:src\samples\c\evalModule\main.exe -entry:mainCRTStartup -subsystem:console $(LDFLAGS) $(LIBPATHS) $(CONFIG)\obj\main.obj $(LIBS) libejs.lib libmpr.lib libpcre.lib libhttp.lib
-
-src\samples\c\evalScript\main.exe:  \
-        $(CONFIG)\bin\libejs.dll \
-        $(CONFIG)\obj\main.obj
-	"$(LD)" -out:src\samples\c\evalScript\main.exe -entry:mainCRTStartup -subsystem:console $(LDFLAGS) $(LIBPATHS) $(CONFIG)\obj\main.obj $(LIBS) libejs.lib libmpr.lib libpcre.lib libhttp.lib
-
-src\samples\c\nclass\nclass.mod:  \
-        $(CONFIG)\bin\ejsc.exe
-#  Omit build script /Users/mob/git/ejs/src/samples/c/nclass/nclass.mod
-
 $(CONFIG)\obj\shape.obj: \
         src\samples\c\nclass\shape.c \
         $(CONFIG)\inc\buildConfig.h
 	"$(CC)" -c -Fo$(CONFIG)\obj\shape.obj -Fd$(CONFIG)\obj $(CFLAGS) $(DFLAGS) -I$(CONFIG)\inc src\samples\c\nclass\shape.c
-
-src\samples\c\nclass\nclass.dll:  \
-        $(CONFIG)\bin\libejs.dll \
-        src\samples\c\nclass\nclass.mod \
-        $(CONFIG)\obj\shape.obj
-	"$(LD)" -dll -out:src\samples\c\nclass\nclass.dll -entry:_DllMainCRTStartup@12 -def:src\samples\c\nclass\nclass.def $(LDFLAGS) $(LIBPATHS) $(CONFIG)\obj\shape.obj $(LIBS) libejs.lib libmpr.lib libpcre.lib libhttp.lib
 

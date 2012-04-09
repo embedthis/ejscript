@@ -285,20 +285,7 @@ ${CONFIG}/bin/ejsc --out ${CONFIG}/lib/ejs.mvc.mod --debug --optimize 9 src/jems
 cp src/jems/ejs.utest/utest.worker ${CONFIG}/bin
 ${CC} -c -o ${CONFIG}/obj/square.o ${CFLAGS} -D_REENTRANT -DCPU=i686 -DPIC -I${CONFIG}/inc src/samples/c/composite/square.c
 
-${CC} -shared -o src/samples/c/composite/composite.so ${LDFLAGS} ${LIBPATHS} ${CONFIG}/obj/square.o ${LIBS} -lejs -lmpr -lpcre -lhttp
-
-#  Omit build script /Users/mob/git/ejs/src/samples/c/composite/composite.mod
 ${CC} -c -o ${CONFIG}/obj/main.o ${CFLAGS} -D_REENTRANT -DCPU=i686 -DPIC -I${CONFIG}/inc src/samples/c/evalScript/main.c
 
-${CC} -o src/samples/c/evalFile/main ${LDFLAGS} ${LIBPATHS} ${CONFIG}/obj/main.o ${LIBS} -lejs -lmpr -lpcre -lhttp ${LDFLAGS}
-
-#  Omit build script /Users/mob/git/ejs/src/samples/c/evalModule/evalModule.mod
-${CC} -o src/samples/c/evalModule/main ${LDFLAGS} ${LIBPATHS} ${CONFIG}/obj/main.o ${LIBS} -lejs -lmpr -lpcre -lhttp ${LDFLAGS}
-
-${CC} -o src/samples/c/evalScript/main ${LDFLAGS} ${LIBPATHS} ${CONFIG}/obj/main.o ${LIBS} -lejs -lmpr -lpcre -lhttp ${LDFLAGS}
-
-#  Omit build script /Users/mob/git/ejs/src/samples/c/nclass/nclass.mod
 ${CC} -c -o ${CONFIG}/obj/shape.o ${CFLAGS} -D_REENTRANT -DCPU=i686 -DPIC -I${CONFIG}/inc src/samples/c/nclass/shape.c
-
-${CC} -shared -o src/samples/c/nclass/nclass.so ${LDFLAGS} ${LIBPATHS} ${CONFIG}/obj/shape.o ${LIBS} -lejs -lmpr -lpcre -lhttp
 

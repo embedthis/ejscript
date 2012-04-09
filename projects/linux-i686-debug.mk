@@ -47,15 +47,7 @@ all: prep \
         $(CONFIG)/bin/mvc.es \
         $(CONFIG)/bin/mvc \
         $(CONFIG)/lib/ejs.mvc.mod \
-        $(CONFIG)/bin/utest.worker \
-        src/samples/c/composite/composite.mod \
-        src/samples/c/composite/composite.so \
-        src/samples/c/evalFile/main \
-        src/samples/c/evalModule/main \
-        src/samples/c/evalModule/evalModule.mod \
-        src/samples/c/evalScript/main \
-        src/samples/c/nclass/nclass.mod \
-        src/samples/c/nclass/nclass.so
+        $(CONFIG)/bin/utest.worker
 
 .PHONY: prep
 
@@ -99,14 +91,6 @@ clean:
 	rm -rf $(CONFIG)/bin/mvc
 	rm -rf $(CONFIG)/lib/ejs.mvc.mod
 	rm -rf $(CONFIG)/bin/utest.worker
-	rm -rf src/samples/c/composite/composite.mod
-	rm -rf src/samples/c/composite/composite.so
-	rm -rf src/samples/c/evalFile/main
-	rm -rf src/samples/c/evalModule/main
-	rm -rf src/samples/c/evalModule/evalModule.mod
-	rm -rf src/samples/c/evalScript/main
-	rm -rf src/samples/c/nclass/nclass.mod
-	rm -rf src/samples/c/nclass/nclass.so
 	rm -rf $(CONFIG)/obj/mprLib.o
 	rm -rf $(CONFIG)/obj/mprSsl.o
 	rm -rf $(CONFIG)/obj/manager.o
@@ -931,47 +915,13 @@ $(CONFIG)/obj/square.o: \
         $(CONFIG)/inc/buildConfig.h
 	$(CC) -c -o $(CONFIG)/obj/square.o $(CFLAGS) -D_REENTRANT -DCPU=i686 -DPIC -I$(CONFIG)/inc src/samples/c/composite/square.c
 
-src/samples/c/composite/composite.so:  \
-        $(CONFIG)/lib/libejs.so \
-        $(CONFIG)/obj/square.o
-	$(CC) -shared -o src/samples/c/composite/composite.so $(LDFLAGS) $(LIBPATHS) $(CONFIG)/obj/square.o $(LIBS) -lejs -lmpr -lpcre -lhttp
-
-src/samples/c/composite/composite.mod:  \
-        $(CONFIG)/bin/ejsc \
-        src/samples/c/composite/composite.so
 $(CONFIG)/obj/main.o: \
         src/samples/c/evalScript/main.c \
         $(CONFIG)/inc/buildConfig.h
 	$(CC) -c -o $(CONFIG)/obj/main.o $(CFLAGS) -D_REENTRANT -DCPU=i686 -DPIC -I$(CONFIG)/inc src/samples/c/evalScript/main.c
 
-src/samples/c/evalFile/main:  \
-        $(CONFIG)/lib/libejs.so \
-        $(CONFIG)/obj/main.o
-	$(CC) -o src/samples/c/evalFile/main $(LDFLAGS) $(LIBPATHS) $(CONFIG)/obj/main.o $(LIBS) -lejs -lmpr -lpcre -lhttp $(LDFLAGS)
-
-src/samples/c/evalModule/evalModule.mod:  \
-        $(CONFIG)/bin/ejsc
-src/samples/c/evalModule/main:  \
-        $(CONFIG)/lib/libejs.so \
-        src/samples/c/evalModule/evalModule.mod \
-        $(CONFIG)/obj/main.o
-	$(CC) -o src/samples/c/evalModule/main $(LDFLAGS) $(LIBPATHS) $(CONFIG)/obj/main.o $(LIBS) -lejs -lmpr -lpcre -lhttp $(LDFLAGS)
-
-src/samples/c/evalScript/main:  \
-        $(CONFIG)/lib/libejs.so \
-        $(CONFIG)/obj/main.o
-	$(CC) -o src/samples/c/evalScript/main $(LDFLAGS) $(LIBPATHS) $(CONFIG)/obj/main.o $(LIBS) -lejs -lmpr -lpcre -lhttp $(LDFLAGS)
-
-src/samples/c/nclass/nclass.mod:  \
-        $(CONFIG)/bin/ejsc
 $(CONFIG)/obj/shape.o: \
         src/samples/c/nclass/shape.c \
         $(CONFIG)/inc/buildConfig.h
 	$(CC) -c -o $(CONFIG)/obj/shape.o $(CFLAGS) -D_REENTRANT -DCPU=i686 -DPIC -I$(CONFIG)/inc src/samples/c/nclass/shape.c
-
-src/samples/c/nclass/nclass.so:  \
-        $(CONFIG)/lib/libejs.so \
-        src/samples/c/nclass/nclass.mod \
-        $(CONFIG)/obj/shape.o
-	$(CC) -shared -o src/samples/c/nclass/nclass.so $(LDFLAGS) $(LIBPATHS) $(CONFIG)/obj/shape.o $(LIBS) -lejs -lmpr -lpcre -lhttp
 

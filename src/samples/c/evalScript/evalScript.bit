@@ -9,6 +9,7 @@ Bit.load({
             path: 'main${EXE}',
             sources: ['*.c'],
             depends: ['libejs'],
+            nogen: true,
         },
     },
 })

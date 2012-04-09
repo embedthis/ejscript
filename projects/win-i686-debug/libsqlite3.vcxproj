@@ -58,12 +58,6 @@
 <ItemGroup>
   <ClCompile Include="..\..\src\deps\sqlite\sqlite3.c" />
 </ItemGroup>
-
-    <ItemDefinitionGroup>
-    <Link>
-      <ModuleDefinitionFile>libsqlite3.def</ModuleDefinitionFile>
-    </Link>
-    </ItemDefinitionGroup>
 <ItemDefinitionGroup>
 <Link>
   <AdditionalDependencies>prep;;%(AdditionalDependencies)</AdditionalDependencies>

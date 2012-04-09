@@ -58,12 +58,6 @@
 <ItemGroup>
   <ClCompile Include="..\..\src\deps\pcre\pcre.c" />
 </ItemGroup>
-
-    <ItemDefinitionGroup>
-    <Link>
-      <ModuleDefinitionFile>libpcre.def</ModuleDefinitionFile>
-    </Link>
-    </ItemDefinitionGroup>
 <ItemDefinitionGroup>
 <Link>
   <AdditionalDependencies>prep;;%(AdditionalDependencies)</AdditionalDependencies>

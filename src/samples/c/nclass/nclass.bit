@@ -16,6 +16,7 @@ Bit.load({
                 run('ejsmod --cslots nclass.mod')
             ",
             depends: ['ejsc'],
+            nogen: true,
         },
 
         'nclass-lib': {
@@ -23,6 +24,7 @@ Bit.load({
             path: 'nclass${SHOBJ}',
             sources: ['*.c'],
             depends: ['libejs', 'nclass.mod'],
+            nogen: true,
         },
     },
 })

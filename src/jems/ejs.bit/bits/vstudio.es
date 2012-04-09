@@ -94,7 +94,7 @@ EndGlobal')
 }
 
 function projBuild(projects: Array, base: Path, target) {
-    if (target.built || !target.enable) {
+    if (target.built || !target.enable || target.nogen) {
         return
     }
     if (target.type != 'exe' && target.type != 'lib' && target.type != 'vsprep') {

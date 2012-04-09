@@ -1,3 +1,0 @@
-LIBRARY composite-lib.dll
-EXPORTS
-  composite_Init

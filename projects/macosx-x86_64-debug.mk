@@ -47,15 +47,7 @@ all: prep \
         $(CONFIG)/bin/mvc.es \
         $(CONFIG)/bin/mvc \
         $(CONFIG)/lib/ejs.mvc.mod \
-        $(CONFIG)/bin/utest.worker \
-        src/samples/c/composite/composite.mod \
-        src/samples/c/composite/composite.dylib \
-        src/samples/c/evalFile/main \
-        src/samples/c/evalModule/main \
-        src/samples/c/evalModule/evalModule.mod \
-        src/samples/c/evalScript/main \
-        src/samples/c/nclass/nclass.mod \
-        src/samples/c/nclass/nclass.dylib
+        $(CONFIG)/bin/utest.worker
 
 .PHONY: prep
 
@@ -99,14 +91,6 @@ clean:
 	rm -rf $(CONFIG)/bin/mvc
 	rm -rf $(CONFIG)/lib/ejs.mvc.mod
 	rm -rf $(CONFIG)/bin/utest.worker
-	rm -rf src/samples/c/composite/composite.mod
-	rm -rf src/samples/c/composite/composite.dylib
-	rm -rf src/samples/c/evalFile/main
-	rm -rf src/samples/c/evalModule/main
-	rm -rf src/samples/c/evalModule/evalModule.mod
-	rm -rf src/samples/c/evalScript/main
-	rm -rf src/samples/c/nclass/nclass.mod
-	rm -rf src/samples/c/nclass/nclass.dylib
 	rm -rf $(CONFIG)/obj/mprLib.o
 	rm -rf $(CONFIG)/obj/mprSsl.o
 	rm -rf $(CONFIG)/obj/manager.o
@@ -1019,49 +1003,15 @@ $(CONFIG)/obj/square.o: \
         $(CONFIG)/inc/ejs.h
 	$(CC) -c -o $(CONFIG)/obj/square.o -arch x86_64 $(CFLAGS) $(DFLAGS) -I$(CONFIG)/inc src/samples/c/composite/square.c
 
-src/samples/c/composite/composite.dylib:  \
-        $(CONFIG)/lib/libejs.dylib \
-        $(CONFIG)/obj/square.o
-	$(CC) -dynamiclib -o src/samples/c/composite/composite.dylib -arch x86_64 $(LDFLAGS) $(LIBPATHS) -install_name @rpath/composite.dylib $(CONFIG)/obj/square.o $(LIBS) -lejs -lmpr -lpcre -lhttp
-
-src/samples/c/composite/composite.mod:  \
-        $(CONFIG)/bin/ejsc \
-        src/samples/c/composite/composite.dylib
 $(CONFIG)/obj/main.o: \
         src/samples/c/evalScript/main.c \
         $(CONFIG)/inc/buildConfig.h \
         $(CONFIG)/inc/ejs.h
 	$(CC) -c -o $(CONFIG)/obj/main.o -arch x86_64 $(CFLAGS) $(DFLAGS) -I$(CONFIG)/inc src/samples/c/evalScript/main.c
 
-src/samples/c/evalFile/main:  \
-        $(CONFIG)/lib/libejs.dylib \
-        $(CONFIG)/obj/main.o
-	$(CC) -o src/samples/c/evalFile/main -arch x86_64 $(LDFLAGS) $(LIBPATHS) $(CONFIG)/obj/main.o $(LIBS) -lejs -lmpr -lpcre -lhttp
-
-src/samples/c/evalModule/evalModule.mod:  \
-        $(CONFIG)/bin/ejsc
-src/samples/c/evalModule/main:  \
-        $(CONFIG)/lib/libejs.dylib \
-        src/samples/c/evalModule/evalModule.mod \
-        $(CONFIG)/obj/main.o
-	$(CC) -o src/samples/c/evalModule/main -arch x86_64 $(LDFLAGS) $(LIBPATHS) $(CONFIG)/obj/main.o $(LIBS) -lejs -lmpr -lpcre -lhttp
-
-src/samples/c/evalScript/main:  \
-        $(CONFIG)/lib/libejs.dylib \
-        $(CONFIG)/obj/main.o
-	$(CC) -o src/samples/c/evalScript/main -arch x86_64 $(LDFLAGS) $(LIBPATHS) $(CONFIG)/obj/main.o $(LIBS) -lejs -lmpr -lpcre -lhttp
-
-src/samples/c/nclass/nclass.mod:  \
-        $(CONFIG)/bin/ejsc
 $(CONFIG)/obj/shape.o: \
         src/samples/c/nclass/shape.c \
         $(CONFIG)/inc/buildConfig.h \
         $(CONFIG)/inc/ejs.h
 	$(CC) -c -o $(CONFIG)/obj/shape.o -arch x86_64 $(CFLAGS) $(DFLAGS) -I$(CONFIG)/inc src/samples/c/nclass/shape.c
-
-src/samples/c/nclass/nclass.dylib:  \
-        $(CONFIG)/lib/libejs.dylib \
-        src/samples/c/nclass/nclass.mod \
-        $(CONFIG)/obj/shape.o
-	$(CC) -dynamiclib -o src/samples/c/nclass/nclass.dylib -arch x86_64 $(LDFLAGS) $(LIBPATHS) -install_name @rpath/nclass.dylib $(CONFIG)/obj/shape.o $(LIBS) -lejs -lmpr -lpcre -lhttp
 

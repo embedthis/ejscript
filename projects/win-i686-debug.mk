@@ -57,15 +57,7 @@ all: prep \
         $(CONFIG)/bin/mvc.es \
         $(CONFIG)/bin/mvc.exe \
         $(CONFIG)/bin/ejs.mvc.mod \
-        $(CONFIG)/bin/utest.worker \
-        src/samples/c/composite/composite.mod \
-        src/samples/c/composite/composite.dll \
-        src/samples/c/evalFile/main.exe \
-        src/samples/c/evalModule/main.exe \
-        src/samples/c/evalModule/evalModule.mod \
-        src/samples/c/evalScript/main.exe \
-        src/samples/c/nclass/nclass.mod \
-        src/samples/c/nclass/nclass.dll
+        $(CONFIG)/bin/utest.worker
 
 .PHONY: prep
 
@@ -109,14 +101,6 @@ clean:
 	rm -rf $(CONFIG)/bin/mvc.exe
 	rm -rf $(CONFIG)/bin/ejs.mvc.mod
 	rm -rf $(CONFIG)/bin/utest.worker
-	rm -rf src/samples/c/composite/composite.mod
-	rm -rf src/samples/c/composite/composite.dll
-	rm -rf src/samples/c/evalFile/main.exe
-	rm -rf src/samples/c/evalModule/main.exe
-	rm -rf src/samples/c/evalModule/evalModule.mod
-	rm -rf src/samples/c/evalScript/main.exe
-	rm -rf src/samples/c/nclass/nclass.mod
-	rm -rf src/samples/c/nclass/nclass.dll
 	rm -rf $(CONFIG)/obj/mprLib.obj
 	rm -rf $(CONFIG)/obj/mprSsl.obj
 	rm -rf $(CONFIG)/obj/manager.obj
@@ -941,47 +925,13 @@ $(CONFIG)/obj/square.obj: \
         $(CONFIG)/inc/buildConfig.h
 	"$(CC)" -c -Fo$(CONFIG)/obj/square.obj -Fd$(CONFIG)/obj $(CFLAGS) $(DFLAGS) -I$(CONFIG)/inc src/samples/c/composite/square.c
 
-src/samples/c/composite/composite.dll:  \
-        $(CONFIG)/bin/libejs.dll \
-        $(CONFIG)/obj/square.obj
-	"$(LD)" -dll -out:src/samples/c/composite/composite.dll -entry:_DllMainCRTStartup@12 -def:src/samples/c/composite/composite.def $(LDFLAGS) $(LIBPATHS) $(CONFIG)/obj/square.obj $(LIBS) libejs.lib libmpr.lib libpcre.lib libhttp.lib
-
-src/samples/c/composite/composite.mod:  \
-        $(CONFIG)/bin/ejsc.exe \
-        src/samples/c/composite/composite.dll
 $(CONFIG)/obj/main.obj: \
         src/samples/c/evalScript/main.c \
         $(CONFIG)/inc/buildConfig.h
 	"$(CC)" -c -Fo$(CONFIG)/obj/main.obj -Fd$(CONFIG)/obj $(CFLAGS) $(DFLAGS) -I$(CONFIG)/inc src/samples/c/evalScript/main.c
 
-src/samples/c/evalFile/main.exe:  \
-        $(CONFIG)/bin/libejs.dll \
-        $(CONFIG)/obj/main.obj
-	"$(LD)" -out:src/samples/c/evalFile/main.exe -entry:mainCRTStartup -subsystem:console $(LDFLAGS) $(LIBPATHS) $(CONFIG)/obj/main.obj $(LIBS) libejs.lib libmpr.lib libpcre.lib libhttp.lib
-
-src/samples/c/evalModule/evalModule.mod:  \
-        $(CONFIG)/bin/ejsc.exe
-src/samples/c/evalModule/main.exe:  \
-        $(CONFIG)/bin/libejs.dll \
-        src/samples/c/evalModule/evalModule.mod \
-        $(CONFIG)/obj/main.obj
-	"$(LD)" -out:src/samples/c/evalModule/main.exe -entry:mainCRTStartup -subsystem:console $(LDFLAGS) $(LIBPATHS) $(CONFIG)/obj/main.obj $(LIBS) libejs.lib libmpr.lib libpcre.lib libhttp.lib
-
-src/samples/c/evalScript/main.exe:  \
-        $(CONFIG)/bin/libejs.dll \
-        $(CONFIG)/obj/main.obj
-	"$(LD)" -out:src/samples/c/evalScript/main.exe -entry:mainCRTStartup -subsystem:console $(LDFLAGS) $(LIBPATHS) $(CONFIG)/obj/main.obj $(LIBS) libejs.lib libmpr.lib libpcre.lib libhttp.lib
-
-src/samples/c/nclass/nclass.mod:  \
-        $(CONFIG)/bin/ejsc.exe
 $(CONFIG)/obj/shape.obj: \
         src/samples/c/nclass/shape.c \
         $(CONFIG)/inc/buildConfig.h
 	"$(CC)" -c -Fo$(CONFIG)/obj/shape.obj -Fd$(CONFIG)/obj $(CFLAGS) $(DFLAGS) -I$(CONFIG)/inc src/samples/c/nclass/shape.c
-
-src/samples/c/nclass/nclass.dll:  \
-        $(CONFIG)/bin/libejs.dll \
-        src/samples/c/nclass/nclass.mod \
-        $(CONFIG)/obj/shape.obj
-	"$(LD)" -dll -out:src/samples/c/nclass/nclass.dll -entry:_DllMainCRTStartup@12 -def:src/samples/c/nclass/nclass.def $(LDFLAGS) $(LIBPATHS) $(CONFIG)/obj/shape.obj $(LIBS) libejs.lib libmpr.lib libpcre.lib libhttp.lib
 

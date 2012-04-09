@@ -9,6 +9,7 @@ Bit.load({
             path: 'main${EXE}',
             sources: ['*.c'],
             depends: ['libejs', 'evalModule.mod'],
+            nogen: true,
         },
 
         'evalModule.mod' : {
@@ -16,6 +17,7 @@ Bit.load({
             files: ['Test.es'],
             build: "run('ejsc --out test.mod Test.es')",
             depends: ['ejsc'],
+            nogen: true,
         },
     },
 })

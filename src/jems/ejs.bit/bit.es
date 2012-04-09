@@ -1236,7 +1236,7 @@ public class Bit {
         let all = []
         for each (tname in selectedTargets) {
             let target = bit.targets[tname]
-            if (target.path && target.enable) {
+            if (target.path && target.enable && !target.nogen) {
                 all.push(reppath(target.path))
             }
         }
@@ -2455,7 +2455,7 @@ global.NN = item.ns
             return false
         }
         if (generating) {
-            return target.nogen != true
+            return !target.nogen
         }
         if (options.rebuild) {
             return true
@@ -2673,7 +2673,7 @@ global.NN = item.ns
         case 'cleanTargets':
             for each (target in bit.targets) {
                 if (target.path && targetsToClean[target.type]) {
-                    if (!target.built && !target.precious) {
+                    if (!target.built && !target.precious && !target.nogen) {
                         if (generating == 'make') {
                             genWrite('\trm -rf ' + reppath(target.path))
 
