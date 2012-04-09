@@ -1,12 +1,12 @@
 #!/bin/sh
-# 	postrm -- Post removal script for !!BLD_NAME!!
+# 	postrm -- Post removal script for Ejscript
 #
 #	Copyright (c) Embedthis Software LLC, 2003-2012. All Rights Reserved.
 #
 
-BLD_PRODUCT=!!BLD_PRODUCT!!
-BLD_NAME="!!BLD_NAME!!"
-BLD_CFG_PREFIX=!!ORIG_BLD_CFG_PREFIX!!
+BLD_PRODUCT=${settings.product}
+BLD_NAME="${settings.title}"
+BLD_CFG_PREFIX="${prefixes.config}"
 
 ###############################################################################
 
@@ -21,6 +21,13 @@ remove() {
 		cd $cdir 
 		rmdir $BLD_CFG_PREFIX 2>/dev/null || true
 	fi
+    if [ -x $BLD_LIB_PREFIX ] ; then
+        cd $BLD_LIB_PREFIX
+        removeIntermediateFiles access.log error.log '*.log.old' .dummy $BLD_PRODUCT.conf .*.log make.log
+        cleanDir
+        cd $cdir
+        rmdir $BLD_LIB_PREFIX 2>/dev/null || true
+    fi
 }
 
 purge() {

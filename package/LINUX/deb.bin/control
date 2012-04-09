@@ -1,8 +1,8 @@
-Package: !!BLD_PRODUCT!!
-Version: !!BLD_VERSION!!
+Package: ${settings.product}
+Version: ${settings.version}
 Section: devel
 Priority: optional
-Architecture: !!BLD_HOST_CPU_MAPPED!!
+Architecture: ${settings.mappedCpu}
 Depends: libc6
 Provides: ejs
 Replaces: ejs, ejs-dev, ejs-bin
@@ -12,6 +12,6 @@ Maintainer: Embedthis Development <dev@embedthis.com>
 Description: Embedthis Ejscript
  Ejscript is a powerful server-side JavaScript language and web framework suitable for dynamic web applications.
  .
- more information about !!BLD_NAME!! can be found at:
+ more information about Ejscript can be found at:
  <URL:http://ejscript.org>
  <URL:http://embedthis.com>
