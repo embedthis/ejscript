@@ -220,6 +220,9 @@ function projConfig(base, target) {
   <IntDir Condition="\'${CTOK}|${PTOK}\'==\'Debug|${VTYPE}\'">${OUTDIR}\\obj\\${NAME}\\</IntDir>
 </PropertyGroup>
     ')
+    if (target.custom) {
+        output('<CustomBuildBeforeTargets Condition="\'${CTOK}|${PTOK}\'==\'Debug|${VTYPE}\'">PreBuildEvent</CustomBuildBeforeTargets>')
+    }
 }
 
 //  MOB - should emit headers for all source that depends on headers
