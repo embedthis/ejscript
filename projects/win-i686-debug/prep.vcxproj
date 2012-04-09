@@ -1,4 +1,4 @@
-<?xml version="1.0" encoding="utf-8"?>
+﻿<?xml version="1.0" encoding="utf-8"?>
 <Project DefaultTargets="Build" ToolsVersion="4.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
   <ImportGroup Label="PropertySheets" />
   <PropertyGroup Label="UserMacros" />
@@ -7,11 +7,10 @@
     <ClCompile>
       <WarningLevel>Level3</WarningLevel>
       <AdditionalIncludeDirectories>;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
-    
-  <PreprocessorDefinitions>WIN32;_DEBUG;_WINDOWS;DEBUG_IDE;_REENTRANT;_MT;%(PreprocessorDefinitions)</PreprocessorDefinitions>
-    <Optimization>Disabled</Optimization>
-    <BasicRuntimeChecks>EnableFastChecks</BasicRuntimeChecks>
-    <RuntimeLibrary>MultiThreadedDebugDLL</RuntimeLibrary>
+      <PreprocessorDefinitions>WIN32;_DEBUG;_WINDOWS;DEBUG_IDE;_REENTRANT;_MT;%(PreprocessorDefinitions)</PreprocessorDefinitions>
+      <Optimization>Disabled</Optimization>
+      <BasicRuntimeChecks>EnableFastChecks</BasicRuntimeChecks>
+      <RuntimeLibrary>MultiThreadedDebugDLL</RuntimeLibrary>
     </ClCompile>
     <Link>
       <AdditionalDependencies>ws2_32.lib;%(AdditionalDependencies)</AdditionalDependencies>
@@ -21,59 +20,59 @@
     </Link>
   </ItemDefinitionGroup>
   <ItemGroup />
-
-<ItemGroup Label="ProjectConfigurations">
-  <ProjectConfiguration Include="Debug|Win32">
-    <Configuration>Debug</Configuration>
-    <Platform>Win32</Platform>
-  </ProjectConfiguration>
-</ItemGroup>
-
-<PropertyGroup Label="Globals">
-  <ProjectGuid>{c5efd5e2-b473-4a01-8cc1-7253e3551311}</ProjectGuid>
-  <RootNamespace />
-  <Keyword>Win32Proj</Keyword>
-</PropertyGroup>
-
-<Import Project="$(VCTargetsPath)Microsoft.Cpp.Default.props" />
-
-<PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'" Label="Configuration">
-  <ConfigurationType>DynamicLibrary</ConfigurationType>
-  <CharacterSet>NotSet</CharacterSet>
-</PropertyGroup>
-
-<Import Project="$(VCTargetsPath)Microsoft.Cpp.props" />
-
-<ImportGroup Label="ExtensionSettings">
-</ImportGroup>
-
-<PropertyGroup Label="UserMacros" />
-
-<PropertyGroup>
-  <_ProjectFileVersion>10</_ProjectFileVersion>
-  <OutDir Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">..\..\win-i686-debug\bin\</OutDir>
-  <IntDir Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">..\..\win-i686-debug\obj\prep\</IntDir>
-</PropertyGroup>
-    
-<ItemGroup>
-</ItemGroup>
-<ItemDefinitionGroup>
-<Link>
-  <AdditionalDependencies>;%(AdditionalDependencies)</AdditionalDependencies>
-  <AdditionalLibraryDirectories>$(OutDir);;%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
-</Link>
-<CustomBuildStep>
-    <Command>
-    if not exist ..\..\win-i686-debug\obj md ..\..\win-i686-debug\obj
-    if not exist ..\..\win-i686-debug\bin md ..\..\win-i686-debug\bin
-    if not exist ..\..\win-i686-debug\inc\buildConfig.h copy projects\buildConfig...\..\win-i686-debug ..\..\win-i686-debug\inc\buildConfig.h
-    if not exist ..\..\win-i686-debug\bin\libmpr.def xcopy /Y /S projects\..\..\win-i686-debug\*.def ..\..\win-i686-debug\bin
+  <ItemGroup Label="ProjectConfigurations">
+    <ProjectConfiguration Include="Debug|Win32">
+      <Configuration>Debug</Configuration>
+      <Platform>Win32</Platform>
+    </ProjectConfiguration>
+  </ItemGroup>
+  <PropertyGroup Label="Globals">
+    <ProjectGuid>{c5efd5e2-b473-4a01-8cc1-7253e3551311}</ProjectGuid>
+    <RootNamespace />
+    <Keyword>Win32Proj</Keyword>
+  </PropertyGroup>
+  <Import Project="$(VCTargetsPath)Microsoft.Cpp.Default.props" />
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'" Label="Configuration">
+    <ConfigurationType>Utility</ConfigurationType>
+    <CharacterSet>NotSet</CharacterSet>
+  </PropertyGroup>
+  <Import Project="$(VCTargetsPath)Microsoft.Cpp.props" />
+  <ImportGroup Label="ExtensionSettings">
+  </ImportGroup>
+  <PropertyGroup Label="UserMacros" />
+  <PropertyGroup>
+    <_ProjectFileVersion>10</_ProjectFileVersion>
+    <OutDir Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">..\..\win-i686-debug\bin\</OutDir>
+    <IntDir Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">..\..\win-i686-debug\obj\prep\</IntDir>
+    <CustomBuildBeforeTargets Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">PreBuildEvent</CustomBuildBeforeTargets>
+  </PropertyGroup>
+  <ItemGroup>
+  </ItemGroup>
+  <ItemDefinitionGroup>
+    <Link>
+      <AdditionalDependencies>;%(AdditionalDependencies)</AdditionalDependencies>
+      <AdditionalLibraryDirectories>$(OutDir);%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
+    </Link>
+    <CustomBuildStep>
+      <Command>
+set
+echo on
+echo start
+cd
+if not exist ..\..\win-i686-debug\obj md ..\..\win-i686-debug\obj
+if not exist ..\..\win-i686-debug\bin md ..\..\win-i686-debug\bin
+if not exist ..\..\win-i686-debug\inc md ..\..\win-i686-debug\inc
+echo if not exist ..\..\win-i686-debug\inc\buildConfig.h copy ..\buildConfig.win-i686-debug ..\..\win-i686-debug\inc\buildConfig.
+if not exist ..\..\win-i686-debug\inc\buildConfig.h copy ..\buildConfig.win-i686-debug ..\..\win-i686-debug\inc\buildConfig.
+echo before copy def
+echo if not exist ..\..\win-i686-debug\bin\libmpr.def xcopy /Y /S *.def ..\..\win-i686-debug\bin
+if not exist ..\..\win-i686-debug\bin\libmpr.def xcopy /Y /S *.def ..\..\win-i686-debug\bin
+echo done
 </Command>
+      <Outputs Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">$(IntDir)xx</Outputs>
     </CustomBuildStep>
-</ItemDefinitionGroup>
-
-<Import Project="$(VCTargetsPath)Microsoft.Cpp.targets" />
-<ImportGroup Label="ExtensionTargets">
-</ImportGroup>
-
+  </ItemDefinitionGroup>
+  <Import Project="$(VCTargetsPath)Microsoft.Cpp.targets" />
+  <ImportGroup Label="ExtensionTargets">
+  </ImportGroup>
 </Project>
