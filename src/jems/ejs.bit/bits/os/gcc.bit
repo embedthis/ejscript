@@ -6,9 +6,9 @@ Bit.load({
     defaults: {
         '+compiler': [ '-Wall', ],
         '+defines':  [ '-D_REENTRANT', '-DCPU=' + '${ARCH}'.toUpper() ],
-        '+libraries':[ ],
-        '+libpaths':[ ],
-        '+linker':[ ],
+        '+libraries':[],
+        '+libpaths':[],
+        '+linker':[],
 
         scripts: {
             '+preblend': "
@@ -17,6 +17,9 @@ Bit.load({
                 blend(defaults, {
                     '+compiler': [], '+defines': [], '+libraries': [], '+libpaths': [], '+linker': []}, {combine: true}
                 )
+                if (bit.platform.os == 'linux') {
+                    defaults.linker.push('-rdynamic')
+                }
                 if (bit.platform.os != 'vxworks') {
                     defaults.compiler.push('-fPIC')
                     defaults.defines.push('-DPIC')
