@@ -292,6 +292,7 @@ function projCustom(base, target) {
     bit.OUTDIR = wpath(bit.dir.cfg.relativeTo(base))
         output('<CustomBuildStep>
     <Command>' + target.custom + '</Command>
+    <Outputs Condition="\'${CTOK}|${PTOK}\'==\'Debug|${VTYPE}\'">always</Outputs>
     </CustomBuildStep>')
 }
 
