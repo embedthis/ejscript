@@ -187,8 +187,9 @@ clean:
 	rm -rf $(CONFIG)/obj/ejsRequest.o
 	rm -rf $(CONFIG)/obj/ejsSession.o
 	rm -rf $(CONFIG)/obj/ejsWeb.o
-	rm -rf $(CONFIG)/obj/shape.o
+	rm -rf $(CONFIG)/obj/square.o
 	rm -rf $(CONFIG)/obj/main.o
+	rm -rf $(CONFIG)/obj/shape.o
 
 clobber: clean
 	rm -fr ./$(CONFIG)
@@ -1012,16 +1013,16 @@ $(CONFIG)/lib/ejs.mvc.mod:  \
 $(CONFIG)/bin/utest.worker: 
 	cp src/jems/ejs.utest/utest.worker $(CONFIG)/bin
 
-$(CONFIG)/obj/shape.o: \
-        src/samples/c/nclass/shape.c \
+$(CONFIG)/obj/square.o: \
+        src/samples/c/composite/square.c \
         $(CONFIG)/inc/buildConfig.h \
         $(CONFIG)/inc/ejs.h
-	$(CC) -c -o $(CONFIG)/obj/shape.o -arch x86_64 $(CFLAGS) $(DFLAGS) -I$(CONFIG)/inc -I$(CONFIG)/inc src/samples/c/nclass/shape.c
+	$(CC) -c -o $(CONFIG)/obj/square.o -arch x86_64 $(CFLAGS) $(DFLAGS) -I$(CONFIG)/inc -I$(CONFIG)/inc src/samples/c/composite/square.c
 
 src/samples/c/composite/composite.dylib:  \
         $(CONFIG)/lib/libejs.dylib \
-        $(CONFIG)/obj/shape.o
-	$(CC) -dynamiclib -o src/samples/c/composite/composite.dylib -arch x86_64 $(LDFLAGS) $(LIBPATHS) -install_name @rpath/composite.dylib $(CONFIG)/obj/shape.o $(LIBS) -lejs -lmpr -lpcre -lhttp
+        $(CONFIG)/obj/square.o
+	$(CC) -dynamiclib -o src/samples/c/composite/composite.dylib -arch x86_64 $(LDFLAGS) $(LIBPATHS) -install_name @rpath/composite.dylib $(CONFIG)/obj/square.o $(LIBS) -lejs -lmpr -lpcre -lhttp
 
 src/samples/c/composite/composite.mod:  \
         $(CONFIG)/bin/ejsc \
@@ -1052,6 +1053,12 @@ src/samples/c/evalScript/main:  \
 
 src/samples/c/nclass/nclass.mod:  \
         $(CONFIG)/bin/ejsc
+$(CONFIG)/obj/shape.o: \
+        src/samples/c/nclass/shape.c \
+        $(CONFIG)/inc/buildConfig.h \
+        $(CONFIG)/inc/ejs.h
+	$(CC) -c -o $(CONFIG)/obj/shape.o -arch x86_64 $(CFLAGS) $(DFLAGS) -I$(CONFIG)/inc -I$(CONFIG)/inc src/samples/c/nclass/shape.c
+
 src/samples/c/nclass/native.dylib:  \
         $(CONFIG)/lib/libejs.dylib \
         src/samples/c/nclass/nclass.mod \

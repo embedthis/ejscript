@@ -293,9 +293,9 @@ cp -r win-i686-debug/bin/ejsrun.exe win-i686-debug/bin/mvc.exe
 
 ${CONFIG}/bin/ejsc --out ${CONFIG}/bin/ejs.mvc.mod --debug --optimize 9 src/jems/ejs.mvc/*.es
 cp src/jems/ejs.utest/utest.worker ${CONFIG}/bin
-"${CC}" -c -Fo${CONFIG}/obj/shape.obj -Fd${CONFIG}/obj ${CFLAGS} ${DFLAGS} -I${CONFIG}/inc -I${CONFIG}/inc src/samples/c/nclass/shape.c
+"${CC}" -c -Fo${CONFIG}/obj/square.obj -Fd${CONFIG}/obj ${CFLAGS} ${DFLAGS} -I${CONFIG}/inc -I${CONFIG}/inc src/samples/c/composite/square.c
 
-"${LD}" -dll -out:src/samples/c/composite/composite.dll -entry:_DllMainCRTStartup@12 -def:src/samples/c/composite/composite.def ${LDFLAGS} ${LIBPATHS} ${CONFIG}/obj/shape.obj ${LIBS} libejs.lib libmpr.lib libpcre.lib libhttp.lib
+"${LD}" -dll -out:src/samples/c/composite/composite.dll -entry:_DllMainCRTStartup@12 -def:src/samples/c/composite/composite.def ${LDFLAGS} ${LIBPATHS} ${CONFIG}/obj/square.obj ${LIBS} libejs.lib libmpr.lib libpcre.lib libhttp.lib
 
 #  Omit build script /Users/mob/git/ejs/src/samples/c/composite/composite.mod
 "${CC}" -c -Fo${CONFIG}/obj/main.obj -Fd${CONFIG}/obj ${CFLAGS} ${DFLAGS} -I${CONFIG}/inc -I${CONFIG}/inc src/samples/c/evalScript/main.c
@@ -308,5 +308,7 @@ cp src/jems/ejs.utest/utest.worker ${CONFIG}/bin
 "${LD}" -out:src/samples/c/evalScript/main.exe -entry:mainCRTStartup -subsystem:console ${LDFLAGS} ${LIBPATHS} ${CONFIG}/obj/main.obj ${LIBS} libejs.lib libmpr.lib libpcre.lib libhttp.lib
 
 #  Omit build script /Users/mob/git/ejs/src/samples/c/nclass/nclass.mod
+"${CC}" -c -Fo${CONFIG}/obj/shape.obj -Fd${CONFIG}/obj ${CFLAGS} ${DFLAGS} -I${CONFIG}/inc -I${CONFIG}/inc src/samples/c/nclass/shape.c
+
 "${LD}" -dll -out:src/samples/c/nclass/native.dll -entry:_DllMainCRTStartup@12 -def:src/samples/c/nclass/native.def ${LDFLAGS} ${LIBPATHS} ${CONFIG}/obj/shape.obj ${LIBS} libejs.lib libmpr.lib libpcre.lib libhttp.lib
 

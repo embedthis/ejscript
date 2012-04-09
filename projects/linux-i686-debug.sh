@@ -8,7 +8,7 @@ LD="ld"
 CFLAGS="-Wall -fPIC -g -Wno-unused-result -mtune=i686 -fPIC -g -Wno-unused-result -mtune=i686"
 DFLAGS="-D_REENTRANT -DCPU=${ARCH} -DPIC -DPIC"
 IFLAGS="-Ilinux-i686-debug/inc -Ilinux-i686-debug/inc"
-LDFLAGS="-Wl,--enable-new-dtags -Wl,-rpath,\$ORIGIN/ -Wl,-rpath,\$ORIGIN/../lib -g -g"
+LDFLAGS="-Wl,--enable-new-dtags -Wl,-rpath,\$ORIGIN/ -Wl,-rpath,\$ORIGIN/../lib -rdynamic -g -rdynamic -g"
 LIBPATHS="-L${CONFIG}/lib -L${CONFIG}/lib"
 LIBS="-lpthread -lm -ldl -lpthread -lm -ldl"
 
@@ -283,9 +283,9 @@ cp -r linux-i686-debug/bin/ejsrun linux-i686-debug/bin/mvc
 
 ${CONFIG}/bin/ejsc --out ${CONFIG}/lib/ejs.mvc.mod --debug --optimize 9 src/jems/ejs.mvc/*.es
 cp src/jems/ejs.utest/utest.worker ${CONFIG}/bin
-${CC} -c -o ${CONFIG}/obj/shape.o ${CFLAGS} -D_REENTRANT -DCPU=i686 -DPIC -DPIC -I${CONFIG}/inc -I${CONFIG}/inc src/samples/c/nclass/shape.c
+${CC} -c -o ${CONFIG}/obj/square.o ${CFLAGS} -D_REENTRANT -DCPU=i686 -DPIC -DPIC -I${CONFIG}/inc -I${CONFIG}/inc src/samples/c/composite/square.c
 
-${CC} -shared -o src/samples/c/composite/composite.so ${LDFLAGS} ${LIBPATHS} ${CONFIG}/obj/shape.o ${LIBS} -lejs -lmpr -lpcre -lhttp
+${CC} -shared -o src/samples/c/composite/composite.so ${LDFLAGS} ${LIBPATHS} ${CONFIG}/obj/square.o ${LIBS} -lejs -lmpr -lpcre -lhttp
 
 #  Omit build script /Users/mob/git/ejs/src/samples/c/composite/composite.mod
 ${CC} -c -o ${CONFIG}/obj/main.o ${CFLAGS} -D_REENTRANT -DCPU=i686 -DPIC -DPIC -I${CONFIG}/inc -I${CONFIG}/inc src/samples/c/evalScript/main.c
@@ -298,5 +298,7 @@ ${CC} -o src/samples/c/evalModule/main ${LDFLAGS} ${LIBPATHS} ${CONFIG}/obj/main
 ${CC} -o src/samples/c/evalScript/main ${LDFLAGS} ${LIBPATHS} ${CONFIG}/obj/main.o ${LIBS} -lejs -lmpr -lpcre -lhttp ${LDFLAGS}
 
 #  Omit build script /Users/mob/git/ejs/src/samples/c/nclass/nclass.mod
+${CC} -c -o ${CONFIG}/obj/shape.o ${CFLAGS} -D_REENTRANT -DCPU=i686 -DPIC -DPIC -I${CONFIG}/inc -I${CONFIG}/inc src/samples/c/nclass/shape.c
+
 ${CC} -shared -o src/samples/c/nclass/native.so ${LDFLAGS} ${LIBPATHS} ${CONFIG}/obj/shape.o ${LIBS} -lejs -lmpr -lpcre -lhttp
 

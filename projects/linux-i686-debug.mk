@@ -8,7 +8,7 @@ LD       := ld
 CFLAGS   := -Wall -fPIC -g -Wno-unused-result -mtune=i686 -fPIC -g -Wno-unused-result -mtune=i686
 DFLAGS   := -D_REENTRANT -DCPU=${ARCH} -DPIC -DPIC
 IFLAGS   := -I$(CONFIG)/inc -I$(CONFIG)/inc
-LDFLAGS  := '-Wl,--enable-new-dtags' '-Wl,-rpath,$$ORIGIN/' '-Wl,-rpath,$$ORIGIN/../lib' '-g' '-g'
+LDFLAGS  := '-Wl,--enable-new-dtags' '-Wl,-rpath,$$ORIGIN/' '-Wl,-rpath,$$ORIGIN/../lib' '-rdynamic' '-g' '-rdynamic' '-g'
 LIBPATHS := -L$(CONFIG)/lib -L$(CONFIG)/lib
 LIBS     := -lpthread -lm -ldl -lpthread -lm -ldl
 
@@ -187,8 +187,9 @@ clean:
 	rm -rf $(CONFIG)/obj/ejsRequest.o
 	rm -rf $(CONFIG)/obj/ejsSession.o
 	rm -rf $(CONFIG)/obj/ejsWeb.o
-	rm -rf $(CONFIG)/obj/shape.o
+	rm -rf $(CONFIG)/obj/square.o
 	rm -rf $(CONFIG)/obj/main.o
+	rm -rf $(CONFIG)/obj/shape.o
 
 clobber: clean
 	rm -fr ./$(CONFIG)
@@ -925,15 +926,15 @@ $(CONFIG)/lib/ejs.mvc.mod:  \
 $(CONFIG)/bin/utest.worker: 
 	cp src/jems/ejs.utest/utest.worker $(CONFIG)/bin
 
-$(CONFIG)/obj/shape.o: \
-        src/samples/c/nclass/shape.c \
+$(CONFIG)/obj/square.o: \
+        src/samples/c/composite/square.c \
         $(CONFIG)/inc/buildConfig.h
-	$(CC) -c -o $(CONFIG)/obj/shape.o $(CFLAGS) -D_REENTRANT -DCPU=i686 -DPIC -DPIC -I$(CONFIG)/inc -I$(CONFIG)/inc src/samples/c/nclass/shape.c
+	$(CC) -c -o $(CONFIG)/obj/square.o $(CFLAGS) -D_REENTRANT -DCPU=i686 -DPIC -DPIC -I$(CONFIG)/inc -I$(CONFIG)/inc src/samples/c/composite/square.c
 
 src/samples/c/composite/composite.so:  \
         $(CONFIG)/lib/libejs.so \
-        $(CONFIG)/obj/shape.o
-	$(CC) -shared -o src/samples/c/composite/composite.so $(LDFLAGS) $(LIBPATHS) $(CONFIG)/obj/shape.o $(LIBS) -lejs -lmpr -lpcre -lhttp
+        $(CONFIG)/obj/square.o
+	$(CC) -shared -o src/samples/c/composite/composite.so $(LDFLAGS) $(LIBPATHS) $(CONFIG)/obj/square.o $(LIBS) -lejs -lmpr -lpcre -lhttp
 
 src/samples/c/composite/composite.mod:  \
         $(CONFIG)/bin/ejsc \
@@ -963,6 +964,11 @@ src/samples/c/evalScript/main:  \
 
 src/samples/c/nclass/nclass.mod:  \
         $(CONFIG)/bin/ejsc
+$(CONFIG)/obj/shape.o: \
+        src/samples/c/nclass/shape.c \
+        $(CONFIG)/inc/buildConfig.h
+	$(CC) -c -o $(CONFIG)/obj/shape.o $(CFLAGS) -D_REENTRANT -DCPU=i686 -DPIC -DPIC -I$(CONFIG)/inc -I$(CONFIG)/inc src/samples/c/nclass/shape.c
+
 src/samples/c/nclass/native.so:  \
         $(CONFIG)/lib/libejs.so \
         src/samples/c/nclass/nclass.mod \

@@ -283,9 +283,9 @@ cp -r macosx-x86_64-debug/bin/ejsrun macosx-x86_64-debug/bin/mvc
 
 ${CONFIG}/bin/ejsc --out ${CONFIG}/lib/ejs.mvc.mod --debug --optimize 9 src/jems/ejs.mvc/*.es
 cp src/jems/ejs.utest/utest.worker ${CONFIG}/bin
-${CC} -c -o ${CONFIG}/obj/shape.o -arch x86_64 ${CFLAGS} ${DFLAGS} -I${CONFIG}/inc -I${CONFIG}/inc src/samples/c/nclass/shape.c
+${CC} -c -o ${CONFIG}/obj/square.o -arch x86_64 ${CFLAGS} ${DFLAGS} -I${CONFIG}/inc -I${CONFIG}/inc src/samples/c/composite/square.c
 
-${CC} -dynamiclib -o src/samples/c/composite/composite.dylib -arch x86_64 ${LDFLAGS} ${LIBPATHS} -install_name @rpath/composite.dylib ${CONFIG}/obj/shape.o ${LIBS} -lejs -lmpr -lpcre -lhttp
+${CC} -dynamiclib -o src/samples/c/composite/composite.dylib -arch x86_64 ${LDFLAGS} ${LIBPATHS} -install_name @rpath/composite.dylib ${CONFIG}/obj/square.o ${LIBS} -lejs -lmpr -lpcre -lhttp
 
 #  Omit build script /Users/mob/git/ejs/src/samples/c/composite/composite.mod
 ${CC} -c -o ${CONFIG}/obj/main.o -arch x86_64 ${CFLAGS} ${DFLAGS} -I${CONFIG}/inc -I${CONFIG}/inc src/samples/c/evalScript/main.c
@@ -298,5 +298,7 @@ ${CC} -o src/samples/c/evalModule/main -arch x86_64 ${LDFLAGS} ${LIBPATHS} ${CON
 ${CC} -o src/samples/c/evalScript/main -arch x86_64 ${LDFLAGS} ${LIBPATHS} ${CONFIG}/obj/main.o ${LIBS} -lejs -lmpr -lpcre -lhttp
 
 #  Omit build script /Users/mob/git/ejs/src/samples/c/nclass/nclass.mod
+${CC} -c -o ${CONFIG}/obj/shape.o -arch x86_64 ${CFLAGS} ${DFLAGS} -I${CONFIG}/inc -I${CONFIG}/inc src/samples/c/nclass/shape.c
+
 ${CC} -dynamiclib -o src/samples/c/nclass/native.dylib -arch x86_64 ${LDFLAGS} ${LIBPATHS} -install_name @rpath/native.dylib ${CONFIG}/obj/shape.o ${LIBS} -lejs -lmpr -lpcre -lhttp
 

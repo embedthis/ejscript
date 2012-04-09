@@ -197,8 +197,9 @@ clean:
 	rm -rf $(CONFIG)/obj/ejsRequest.obj
 	rm -rf $(CONFIG)/obj/ejsSession.obj
 	rm -rf $(CONFIG)/obj/ejsWeb.obj
-	rm -rf $(CONFIG)/obj/shape.obj
+	rm -rf $(CONFIG)/obj/square.obj
 	rm -rf $(CONFIG)/obj/main.obj
+	rm -rf $(CONFIG)/obj/shape.obj
 
 clobber: clean
 	rm -fr ./$(CONFIG)
@@ -935,15 +936,15 @@ $(CONFIG)/bin/ejs.mvc.mod:  \
 $(CONFIG)/bin/utest.worker: 
 	cp src/jems/ejs.utest/utest.worker $(CONFIG)/bin
 
-$(CONFIG)/obj/shape.obj: \
-        src/samples/c/nclass/shape.c \
+$(CONFIG)/obj/square.obj: \
+        src/samples/c/composite/square.c \
         $(CONFIG)/inc/buildConfig.h
-	"$(CC)" -c -Fo$(CONFIG)/obj/shape.obj -Fd$(CONFIG)/obj $(CFLAGS) $(DFLAGS) -I$(CONFIG)/inc -I$(CONFIG)/inc src/samples/c/nclass/shape.c
+	"$(CC)" -c -Fo$(CONFIG)/obj/square.obj -Fd$(CONFIG)/obj $(CFLAGS) $(DFLAGS) -I$(CONFIG)/inc -I$(CONFIG)/inc src/samples/c/composite/square.c
 
 src/samples/c/composite/composite.dll:  \
         $(CONFIG)/bin/libejs.dll \
-        $(CONFIG)/obj/shape.obj
-	"$(LD)" -dll -out:src/samples/c/composite/composite.dll -entry:_DllMainCRTStartup@12 -def:src/samples/c/composite/composite.def $(LDFLAGS) $(LIBPATHS) $(CONFIG)/obj/shape.obj $(LIBS) libejs.lib libmpr.lib libpcre.lib libhttp.lib
+        $(CONFIG)/obj/square.obj
+	"$(LD)" -dll -out:src/samples/c/composite/composite.dll -entry:_DllMainCRTStartup@12 -def:src/samples/c/composite/composite.def $(LDFLAGS) $(LIBPATHS) $(CONFIG)/obj/square.obj $(LIBS) libejs.lib libmpr.lib libpcre.lib libhttp.lib
 
 src/samples/c/composite/composite.mod:  \
         $(CONFIG)/bin/ejsc.exe \
@@ -973,6 +974,11 @@ src/samples/c/evalScript/main.exe:  \
 
 src/samples/c/nclass/nclass.mod:  \
         $(CONFIG)/bin/ejsc.exe
+$(CONFIG)/obj/shape.obj: \
+        src/samples/c/nclass/shape.c \
+        $(CONFIG)/inc/buildConfig.h
+	"$(CC)" -c -Fo$(CONFIG)/obj/shape.obj -Fd$(CONFIG)/obj $(CFLAGS) $(DFLAGS) -I$(CONFIG)/inc -I$(CONFIG)/inc src/samples/c/nclass/shape.c
+
 src/samples/c/nclass/native.dll:  \
         $(CONFIG)/bin/libejs.dll \
         src/samples/c/nclass/nclass.mod \
