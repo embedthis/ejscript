@@ -27,13 +27,6 @@ native class is called Shape.
 
     ejs main.es
 
-## Requirements:
-
-    This samples requires that Ejscript be configured and built with configure --shared. 
-    However, the sample could be adapted for use in static programs if you manually
-    invoke the ejsControlModuleInit() function from your main program. See the
-    embed sample for how to embed Ejscript in an application.
-
 ## See Also:
 
     The composite sample for how to create a composite native class in which the class is

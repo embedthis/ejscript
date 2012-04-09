@@ -485,7 +485,7 @@ int configureSampleTypes(Ejs *ejs)
 }
 
 
-int ncalss_Init(Ejs *ejs, MprModule *module)
+int nclass_Init(Ejs *ejs, MprModule *module)
 {
     return ejsAddNativeModule(ejs, "nclass", configureSampleTypes, _ES_CHECKSUM_nclass, EJS_LOADER_ETERNAL);
 }

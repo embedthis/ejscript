@@ -30,9 +30,5 @@ called Square.
 
     ejs main.es
 
-## Requirements:
-    The sample could be adapted for use in static programs if you manually
-    invoke the ejsControlModuleInit() function from your main program.
-
 ## See Also:
     The native sample for how to create a native class.
