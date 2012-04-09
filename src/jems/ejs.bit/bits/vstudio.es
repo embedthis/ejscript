@@ -35,7 +35,7 @@ function solBuild(projects, base: Path) {
     for each (target in projects) {
         target.guid = target.guid.toUpper()
         output('Project("' + XID + '") = "' + target.name + '", "' + 
-            wpath(base.basename.join(target.name).joinExt('vcxproj')) + 
+            wpath(base.basename.join(target.name).joinExt('vcxproj', true)) + 
             '", "{' + target.guid + '}"')
         for each (dname in target.depends) {
             let dep = bit.targets[dname]
@@ -82,7 +82,7 @@ function projBuild(projects: Array, base: Path, target) {
             projBuild(projects, base, dep)
         }
     }
-    let path = base.join(target.name).joinExt('vcxproj').relative
+    let path = base.join(target.name).joinExt('vcxproj', true).relative
     target.project = path
     projects.push(target)
     trace('Generate', path)

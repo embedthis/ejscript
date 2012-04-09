@@ -17,7 +17,7 @@ Bit.load({
             'generate-sh': "cp ${HOME}/bit.es ${BIN}",
         },
 
-        'bit.exe': {
+        'bit': {
             type: 'exe',
             path: '${BIN}/bit${EXE}',
             sources: [ 
