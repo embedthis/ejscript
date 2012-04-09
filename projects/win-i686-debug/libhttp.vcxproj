@@ -54,7 +54,6 @@
   <OutDir Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">..\..\win-i686-debug\bin\</OutDir>
   <IntDir Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">..\..\win-i686-debug\obj\libhttp\</IntDir>
 </PropertyGroup>
-    
 <ItemGroup>
   <ClCompile Include="..\..\src\deps\http\httpLib.c" />
 </ItemGroup>

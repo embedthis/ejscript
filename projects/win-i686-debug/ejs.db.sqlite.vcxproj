@@ -54,7 +54,6 @@
   <OutDir Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">..\..\win-i686-debug\bin\</OutDir>
   <IntDir Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">..\..\win-i686-debug\obj\ejs.db.sqlite\</IntDir>
 </PropertyGroup>
-    
 <ItemGroup>
   <ClCompile Include="..\..\src\jems\ejs.db.sqlite\src\ejsSqlite.c" />
 </ItemGroup>

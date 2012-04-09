@@ -54,7 +54,6 @@
   <OutDir Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">..\..\win-i686-debug\bin\</OutDir>
   <IntDir Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">..\..\win-i686-debug\obj\ejs\</IntDir>
 </PropertyGroup>
-    
 <ItemGroup>
   <ClCompile Include="..\..\src\cmd\ejs.c" />
 </ItemGroup>
