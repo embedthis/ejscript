@@ -273,9 +273,6 @@ function projLink(base, target) {
         }
     }
     bit.LIBS = mapLibs(target.libraries - bit.defaults.libraries).join(';')
-    if (target.type != 'vsprep') {
-        bit.LIBS = 'prep;' + bit.LIBS
-    }
     bit.LIBPATHS = target.libpaths.map(function(p) wpath(p)).join(';')
     output('<ItemDefinitionGroup>
 <Link>

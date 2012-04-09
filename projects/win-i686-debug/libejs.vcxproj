@@ -116,7 +116,7 @@
 </ItemGroup>
 <ItemDefinitionGroup>
 <Link>
-  <AdditionalDependencies>prep;libmpr.lib;libpcre.lib;libhttp.lib;%(AdditionalDependencies)</AdditionalDependencies>
+  <AdditionalDependencies>libmpr.lib;libpcre.lib;libhttp.lib;%(AdditionalDependencies)</AdditionalDependencies>
   <AdditionalLibraryDirectories>$(OutDir);win-i686-debug\bin;%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
 </Link>
 </ItemDefinitionGroup>
