@@ -12,7 +12,7 @@
 </ItemGroup>
 
 <PropertyGroup Label="Globals">
-  <ProjectGuid>{51dee4c4-0362-4a13-a5c3-d39acc398bb3}</ProjectGuid>
+  <ProjectGuid>{c6086a2d-5ae0-4c31-b8ea-2c84e2981730}</ProjectGuid>
   <RootNamespace />
   <Keyword>Win32Proj</Keyword>
 </PropertyGroup>
@@ -53,14 +53,14 @@ del ejs.web.slots.h</Command>
 
 <ItemGroup>
   <ProjectReference Include="ejsc.vcxproj">
-  <Project>3b5194ed-fd3c-4eae-be81-67c70c54c31c</Project>
+  <Project>d5245843-770a-44aa-9aa8-2a834be6411e</Project>
   <ReferenceOutputAssembly>false</ReferenceOutputAssembly>
   </ProjectReference>
 </ItemGroup>
 
 <ItemGroup>
   <ProjectReference Include="ejsmod.vcxproj">
-  <Project>50ccd249-2c54-483b-869a-73ce4416ac8f</Project>
+  <Project>75e07b9b-a28e-4738-abe0-779930cc67c1</Project>
   <ReferenceOutputAssembly>false</ReferenceOutputAssembly>
   </ProjectReference>
 </ItemGroup>

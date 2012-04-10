@@ -30,7 +30,7 @@
 </ItemGroup>
 
 <PropertyGroup Label="Globals">
-  <ProjectGuid>{b566fed2-0952-4867-a621-f91c28b47a1d}</ProjectGuid>
+  <ProjectGuid>{b097bc45-c299-4dfa-944c-cc5c047cd785}</ProjectGuid>
   <RootNamespace />
   <Keyword>Win32Proj</Keyword>
 </PropertyGroup>
@@ -156,15 +156,15 @@
   <AdditionalLibraryDirectories>$(OutDir);win-i686-debug\bin;%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
 </Link>
 <CustomBuildStep>
-  <Command>xcopy /Y /S /D ..\..\src\slots\ejs.cache.local.slots.h ..\..\win-i686-debug\inc
-xcopy /Y /S /D ..\..\src\slots\ejs.db.sqlite.slots.h ..\..\win-i686-debug\inc
-xcopy /Y /S /D ..\..\src\slots\ejs.slots.h ..\..\win-i686-debug\inc
-xcopy /Y /S /D ..\..\src\slots\ejs.web.slots.h ..\..\win-i686-debug\inc
-xcopy /Y /S /D ..\..\src\slots\ejs.zlib.slots.h ..\..\win-i686-debug\inc
-xcopy /Y /S /D ..\..\src\ejs.h ..\..\win-i686-debug\inc
-xcopy /Y /S /D ..\..\src\ejsByteCode.h ..\..\win-i686-debug\inc
-xcopy /Y /S /D ..\..\src\ejsByteCodeTable.h ..\..\win-i686-debug\inc
-xcopy /Y /S /D ..\..\src\ejsCompiler.h ..\..\win-i686-debug\inc
+  <Command>xcopy /Y /S /D ..\..\src\slots\ejs.cache.local.slots.h ..\..\win-i686-debug\inc
+xcopy /Y /S /D ..\..\src\slots\ejs.db.sqlite.slots.h ..\..\win-i686-debug\inc
+xcopy /Y /S /D ..\..\src\slots\ejs.slots.h ..\..\win-i686-debug\inc
+xcopy /Y /S /D ..\..\src\slots\ejs.web.slots.h ..\..\win-i686-debug\inc
+xcopy /Y /S /D ..\..\src\slots\ejs.zlib.slots.h ..\..\win-i686-debug\inc
+xcopy /Y /S /D ..\..\src\ejs.h ..\..\win-i686-debug\inc
+xcopy /Y /S /D ..\..\src\ejsByteCode.h ..\..\win-i686-debug\inc
+xcopy /Y /S /D ..\..\src\ejsByteCodeTable.h ..\..\win-i686-debug\inc
+xcopy /Y /S /D ..\..\src\ejsCompiler.h ..\..\win-i686-debug\inc
 xcopy /Y /S /D ..\..\src\ejsCustomize.h ..\..\win-i686-debug\inc</Command>
   <Outputs Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">..\..\win-i686-debug\bin\libejs.dll</Outputs>
   </CustomBuildStep>
@@ -172,21 +172,21 @@ xcopy /Y /S /D ..\..\src\ejsCustomize.h ..\..\win-i686-debug\inc</Command>
 
 <ItemGroup>
   <ProjectReference Include="libmpr.vcxproj">
-  <Project>6e8e5cea-ee71-4f75-9165-c34a52726958</Project>
+  <Project>145e7a7a-cf56-4257-b982-a6be59f0738a</Project>
   <ReferenceOutputAssembly>false</ReferenceOutputAssembly>
   </ProjectReference>
 </ItemGroup>
 
 <ItemGroup>
   <ProjectReference Include="libpcre.vcxproj">
-  <Project>f26e7ce5-e34e-41a7-9c97-29bb8a9f3e6e</Project>
+  <Project>41931549-cfad-493e-961b-694074a6fa11</Project>
   <ReferenceOutputAssembly>false</ReferenceOutputAssembly>
   </ProjectReference>
 </ItemGroup>
 
 <ItemGroup>
   <ProjectReference Include="libhttp.vcxproj">
-  <Project>5e72be25-008b-460d-91dc-a14e9e524f8d</Project>
+  <Project>236a87b9-87d7-430d-b73f-d139f8471900</Project>
   <ReferenceOutputAssembly>false</ReferenceOutputAssembly>
   </ProjectReference>
 </ItemGroup>

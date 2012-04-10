@@ -247,6 +247,8 @@ ${CONFIG}/bin/ejsmod --require null --cslots ${CONFIG}/bin/ejs.mod
 if ! diff ejs.slots.h ${CONFIG}/inc/ejs.slots.h >/dev/null; then cp ejs.slots.h ${CONFIG}/inc; fi
 rm -f ejs.slots.h
 cp src/jems/ejs.bit/bit.es ${CONFIG}/bin
+rm -fr ${CONFIG}/bin/bits
+cp -r src/jems/ejs.bit/bits ${CONFIG}/bin
 "${CC}" -c -Fo${CONFIG}/obj/ejsZlib.obj -Fd${CONFIG}/obj ${CFLAGS} ${DFLAGS} -I${CONFIG}/inc src/jems/ejs.zlib/src/ejsZlib.c
 
 "${LD}" -out:${CONFIG}/bin/bit.exe -entry:mainCRTStartup -subsystem:console ${LDFLAGS} ${LIBPATHS} ${CONFIG}/obj/ejsrun.obj ${CONFIG}/obj/ejsZlib.obj ${CONFIG}/obj/mprLib.obj ${CONFIG}/obj/pcre.obj ${CONFIG}/obj/httpLib.obj ${CONFIG}/obj/ecAst.obj ${CONFIG}/obj/ecCodeGen.obj ${CONFIG}/obj/ecCompiler.obj ${CONFIG}/obj/ecLex.obj ${CONFIG}/obj/ecModuleWrite.obj ${CONFIG}/obj/ecParser.obj ${CONFIG}/obj/ecState.obj ${CONFIG}/obj/ejsApp.obj ${CONFIG}/obj/ejsArray.obj ${CONFIG}/obj/ejsBlock.obj ${CONFIG}/obj/ejsBoolean.obj ${CONFIG}/obj/ejsByteArray.obj ${CONFIG}/obj/ejsCache.obj ${CONFIG}/obj/ejsCmd.obj ${CONFIG}/obj/ejsConfig.obj ${CONFIG}/obj/ejsDate.obj ${CONFIG}/obj/ejsDebug.obj ${CONFIG}/obj/ejsError.obj ${CONFIG}/obj/ejsFile.obj ${CONFIG}/obj/ejsFileSystem.obj ${CONFIG}/obj/ejsFrame.obj ${CONFIG}/obj/ejsFunction.obj ${CONFIG}/obj/ejsGC.obj ${CONFIG}/obj/ejsGlobal.obj ${CONFIG}/obj/ejsHttp.obj ${CONFIG}/obj/ejsIterator.obj ${CONFIG}/obj/ejsJSON.obj ${CONFIG}/obj/ejsLocalCache.obj ${CONFIG}/obj/ejsMath.obj ${CONFIG}/obj/ejsMemory.obj ${CONFIG}/obj/ejsMprLog.obj ${CONFIG}/obj/ejsNamespace.obj ${CONFIG}/obj/ejsNull.obj ${CONFIG}/obj/ejsNumber.obj ${CONFIG}/obj/ejsObject.obj ${CONFIG}/obj/ejsPath.obj ${CONFIG}/obj/ejsPot.obj ${CONFIG}/obj/ejsRegExp.obj ${CONFIG}/obj/ejsSocket.obj ${CONFIG}/obj/ejsString.obj ${CONFIG}/obj/ejsSystem.obj ${CONFIG}/obj/ejsTimer.obj ${CONFIG}/obj/ejsType.obj ${CONFIG}/obj/ejsUri.obj ${CONFIG}/obj/ejsVoid.obj ${CONFIG}/obj/ejsWorker.obj ${CONFIG}/obj/ejsXML.obj ${CONFIG}/obj/ejsXMLList.obj ${CONFIG}/obj/ejsXMLLoader.obj ${CONFIG}/obj/ejsByteCode.obj ${CONFIG}/obj/ejsException.obj ${CONFIG}/obj/ejsHelper.obj ${CONFIG}/obj/ejsInterp.obj ${CONFIG}/obj/ejsLoader.obj ${CONFIG}/obj/ejsModule.obj ${CONFIG}/obj/ejsScope.obj ${CONFIG}/obj/ejsService.obj ${LIBS}
@@ -255,8 +257,6 @@ cp src/jems/ejs.utest/utest.es ${CONFIG}/bin
 rm -rf win-i686-debug/bin/utest.exe
 cp -r win-i686-debug/bin/ejsrun.exe win-i686-debug/bin/utest.exe
 
-rm -fr ${CONFIG}/bin/bits
-cp -r src/jems/ejs.bit/bits ${CONFIG}/bin
 ${CONFIG}/bin/ejsc --out ${CONFIG}/bin/ejs.unix.mod --debug --optimize 9 src/jems/ejs.unix/Unix.es
 cp src/jems/ejs.jem/jem.es ${CONFIG}/bin
 rm -rf win-i686-debug/bin/jem.exe

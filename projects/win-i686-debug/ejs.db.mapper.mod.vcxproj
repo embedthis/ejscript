@@ -12,7 +12,7 @@
 </ItemGroup>
 
 <PropertyGroup Label="Globals">
-  <ProjectGuid>{1c249d0b-5d8b-47f7-9b68-3485219542e1}</ProjectGuid>
+  <ProjectGuid>{e0fde1d8-4a03-42d8-bd93-8139246b6a38}</ProjectGuid>
   <RootNamespace />
   <Keyword>Win32Proj</Keyword>
 </PropertyGroup>
@@ -50,14 +50,14 @@
 
 <ItemGroup>
   <ProjectReference Include="ejsc.vcxproj">
-  <Project>3b5194ed-fd3c-4eae-be81-67c70c54c31c</Project>
+  <Project>d5245843-770a-44aa-9aa8-2a834be6411e</Project>
   <ReferenceOutputAssembly>false</ReferenceOutputAssembly>
   </ProjectReference>
 </ItemGroup>
 
 <ItemGroup>
   <ProjectReference Include="ejsmod.vcxproj">
-  <Project>50ccd249-2c54-483b-869a-73ce4416ac8f</Project>
+  <Project>75e07b9b-a28e-4738-abe0-779930cc67c1</Project>
   <ReferenceOutputAssembly>false</ReferenceOutputAssembly>
   </ProjectReference>
 </ItemGroup>

@@ -12,7 +12,7 @@
 </ItemGroup>
 
 <PropertyGroup Label="Globals">
-  <ProjectGuid>{af3b891e-4d98-448b-be48-08d16f0fd337}</ProjectGuid>
+  <ProjectGuid>{c5efd5e2-b473-4a01-8cc1-7253e3551311}</ProjectGuid>
   <RootNamespace />
   <Keyword>Win32Proj</Keyword>
 </PropertyGroup>
@@ -43,10 +43,10 @@
   <AdditionalLibraryDirectories>$(OutDir);;%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
 </Link>
 <CustomBuildStep>
-  <Command>if not exist ..\..\win-i686-debug\obj md ..\..\win-i686-debug\obj
-if not exist ..\..\win-i686-debug\bin md ..\..\win-i686-debug\bin
-if not exist ..\..\win-i686-debug\inc md ..\..\win-i686-debug\inc
-if not exist ..\..\win-i686-debug\inc\buildConfig.h copy ..\buildConfig.win-i686-debug ..\..\win-i686-debug\inc\buildConfig.h
+  <Command>if not exist ..\..\win-i686-debug\obj md ..\..\win-i686-debug\obj
+if not exist ..\..\win-i686-debug\bin md ..\..\win-i686-debug\bin
+if not exist ..\..\win-i686-debug\inc md ..\..\win-i686-debug\inc
+if not exist ..\..\win-i686-debug\inc\buildConfig.h copy ..\buildConfig.win-i686-debug ..\..\win-i686-debug\inc\buildConfig.h
 if not exist ..\..\win-i686-debug\bin\libmpr.def xcopy /Y /S *.def ..\..\win-i686-debug\bin</Command>
   <Outputs Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">..\..\always</Outputs>
   </CustomBuildStep>

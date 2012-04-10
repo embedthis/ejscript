@@ -30,7 +30,7 @@
 </ItemGroup>
 
 <PropertyGroup Label="Globals">
-  <ProjectGuid>{6e8e5cea-ee71-4f75-9165-c34a52726958}</ProjectGuid>
+  <ProjectGuid>{145e7a7a-cf56-4257-b982-a6be59f0738a}</ProjectGuid>
   <RootNamespace />
   <Keyword>Win32Proj</Keyword>
 </PropertyGroup>
@@ -76,7 +76,7 @@
   <AdditionalLibraryDirectories>$(OutDir);win-i686-debug\bin;%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
 </Link>
 <CustomBuildStep>
-  <Command>xcopy /Y /S /D ..\..\src\deps\mpr\mpr.h ..\..\win-i686-debug\inc
+  <Command>xcopy /Y /S /D ..\..\src\deps\mpr\mpr.h ..\..\win-i686-debug\inc
 xcopy /Y /S /D ..\..\src\deps\mpr\mprSsl.h ..\..\win-i686-debug\inc</Command>
   <Outputs Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">..\..\win-i686-debug\bin\libmpr.dll</Outputs>
   </CustomBuildStep>
