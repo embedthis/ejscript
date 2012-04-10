@@ -1,6 +1,6 @@
 /*
     rc.bit - Resource compiler package for Bit
  */
-let search = bit.dir.programs.glob('Microsoft SDKs/Windows/*')
+let search = bit.dir.programs.glob('Microsoft SDKs/Windows/*/bin')
 let rc = bit.emulating ? 'rc' : probe('rc.exe', {fullpath: true, search: search.sort().reverse()})
 Bit.load({packs: { rc: { path: rc }}})
