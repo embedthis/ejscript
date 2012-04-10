@@ -40,7 +40,7 @@ COMPANY="${settings.company}"
 NAME="${settings.title}"
 VERSION="${settings.version}"
 NUMBER="${settings.buildNumber}"
-OS="${platform.os}"
+OS="${platform.OS}"
 CPU="${platform.arch}"
 
 BIN_PREFIX="${prefixes.bin}"

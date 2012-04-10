@@ -57,7 +57,7 @@ module ejs.tar {
         }
 
         function create(...args): Void {
-            var archive: File  = File(path, 'w')
+            var archive: File  = File(path, {mode: 'w', permissions: 0644})
             for each (file in flatten(args)) {
                 if (!file.exists) {
                     throw 'File does not exist: ' + file

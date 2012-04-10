@@ -67,7 +67,7 @@ public function packageBinaryFiles(formats = ['tar', 'native']) {
         /*
             install(bit.packs.compiler.path.join('../../lib/msvcrt.lib'), p.bin)
          */
-        install(bit.dir.bin.join('removeFiles*'), bin)
+        install(bit.dir.bin.join('removeFiles*'), p.bin)
     }
     if (bit.platform.like == 'posix') {
         install('doc/man/*.1', p.productver.join('doc/man/man1'), {compress: true})

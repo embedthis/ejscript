@@ -186,15 +186,17 @@ public class Bit {
             print(version)
             App.exit(0)
         }
+        let OS = Config.OS
         if (options.emulate) {
             localPlatform = options.emulate
         } else {
-            localPlatform =  Config.OS.toLower() + '-' + Config.CPU
+            localPlatform =  OS.toLower() + '-' + Config.CPU
         }
         let [os, arch] = localPlatform.split('-') 
         local = {
             name: localPlatform,
             os: os,
+            OS: OS,
             arch: arch,
             like: like(os),
         }
@@ -296,13 +298,6 @@ public class Bit {
         if (platforms.length > 1 && platform == platforms[0]) {
             nbit.cross = platforms.slice(1)
         }
-        /*
-            UNUSED
-            blend : [
-                Path(bit.dir.bits.join('standard.bit')).absolute.portable,
-                Path(bit.dir.bits.join('os/' + bit.platform.os + '.bit')).absolute.portable,
-            ],
-         */
         blend(nbit, {
             platform: bit.platform,
             dir: { 
@@ -2797,6 +2792,7 @@ global.NN = item.ns
         bit.platform = { 
             name: platform, 
             os: os, 
+            OS: os.toUpper(),
             arch: arch, 
             like: kind, 
             dist: dist(os),
