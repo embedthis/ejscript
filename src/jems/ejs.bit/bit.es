@@ -2025,7 +2025,6 @@ public class Bit {
         Copy files[] to path
      */
     function buildFile(target) {
-        //  MOB - if target.path is a directory, then stale should check path.join(file)
         if (!stale(target)) {
             whySkip(target.path, 'is up to date')
             return

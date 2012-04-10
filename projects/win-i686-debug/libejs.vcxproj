@@ -113,6 +113,36 @@
   <ClCompile Include="..\..\src\vm\ejsScope.c" />
   <ClCompile Include="..\..\src\vm\ejsService.c" />
 </ItemGroup>
+<ItemGroup>
+  <ClInclude Include="win-i686-debug\inc\ejs.cache.local.slots.h" />
+</ItemGroup>
+<ItemGroup>
+  <ClInclude Include="win-i686-debug\inc\ejs.db.sqlite.slots.h" />
+</ItemGroup>
+<ItemGroup>
+  <ClInclude Include="win-i686-debug\inc\ejs.slots.h" />
+</ItemGroup>
+<ItemGroup>
+  <ClInclude Include="win-i686-debug\inc\ejs.web.slots.h" />
+</ItemGroup>
+<ItemGroup>
+  <ClInclude Include="win-i686-debug\inc\ejs.zlib.slots.h" />
+</ItemGroup>
+<ItemGroup>
+  <ClInclude Include="win-i686-debug\inc\ejs.h" />
+</ItemGroup>
+<ItemGroup>
+  <ClInclude Include="win-i686-debug\inc\ejsByteCode.h" />
+</ItemGroup>
+<ItemGroup>
+  <ClInclude Include="win-i686-debug\inc\ejsByteCodeTable.h" />
+</ItemGroup>
+<ItemGroup>
+  <ClInclude Include="win-i686-debug\inc\ejsCompiler.h" />
+</ItemGroup>
+<ItemGroup>
+  <ClInclude Include="win-i686-debug\inc\ejsCustomize.h" />
+</ItemGroup>
 
     <ItemDefinitionGroup>
     <Link>
@@ -124,6 +154,20 @@
   <AdditionalDependencies>libmpr.lib;libpcre.lib;libhttp.lib;%(AdditionalDependencies)</AdditionalDependencies>
   <AdditionalLibraryDirectories>$(OutDir);win-i686-debug\bin;%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
 </Link>
+<CustomBuildStep>
+  <Command>xcopy /Y /S /D ..\..\src\slots\ejs.cache.local.slots.h ..\..\win-i686-debug\inc\ejs.cache.local.slots.h
+xcopy /Y /S /D ..\..\src\slots\ejs.db.sqlite.slots.h ..\..\win-i686-debug\inc\ejs.db.sqlite.slots.h
+xcopy /Y /S /D ..\..\src\slots\ejs.slots.h ..\..\win-i686-debug\inc\ejs.slots.h
+xcopy /Y /S /D ..\..\src\slots\ejs.web.slots.h ..\..\win-i686-debug\inc\ejs.web.slots.h
+xcopy /Y /S /D ..\..\src\slots\ejs.zlib.slots.h ..\..\win-i686-debug\inc\ejs.zlib.slots.h
+xcopy /Y /S /D ..\..\src\ejs.h ..\..\win-i686-debug\inc\ejs.h
+xcopy /Y /S /D ..\..\src\ejsByteCode.h ..\..\win-i686-debug\inc\ejsByteCode.h
+xcopy /Y /S /D ..\..\src\ejsByteCodeTable.h ..\..\win-i686-debug\inc\ejsByteCodeTable.h
+xcopy /Y /S /D ..\..\src\ejsCompiler.h ..\..\win-i686-debug\inc\ejsCompiler.h
+xcopy /Y /S /D ..\..\src\ejsCustomize.h ..\..\win-i686-debug\inc\ejsCustomize.h
+</Command>
+  <Outputs Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">..\..\win-i686-debug\bin\libejs.dll</Outputs>
+  </CustomBuildStep>
 </ItemDefinitionGroup>
 
 <ItemGroup>

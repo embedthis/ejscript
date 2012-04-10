@@ -57,6 +57,12 @@
 <ItemGroup>
   <ClCompile Include="..\..\src\deps\mpr\mprLib.c" />
 </ItemGroup>
+<ItemGroup>
+  <ClInclude Include="win-i686-debug\inc\mpr.h" />
+</ItemGroup>
+<ItemGroup>
+  <ClInclude Include="win-i686-debug\inc\mprSsl.h" />
+</ItemGroup>
 
     <ItemDefinitionGroup>
     <Link>
@@ -68,6 +74,12 @@
   <AdditionalDependencies>;%(AdditionalDependencies)</AdditionalDependencies>
   <AdditionalLibraryDirectories>$(OutDir);win-i686-debug\bin;%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
 </Link>
+<CustomBuildStep>
+  <Command>xcopy /Y /S /D ..\..\src\deps\mpr\mpr.h ..\..\win-i686-debug\inc\mpr.h
+xcopy /Y /S /D ..\..\src\deps\mpr\mprSsl.h ..\..\win-i686-debug\inc\mprSsl.h
+</Command>
+  <Outputs Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">..\..\win-i686-debug\bin\libmpr.dll</Outputs>
+  </CustomBuildStep>
 </ItemDefinitionGroup>
 
 <Import Project="$(VCTargetsPath)Microsoft.Cpp.targets" />

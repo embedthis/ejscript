@@ -30,6 +30,7 @@ public function vstudio(base: Path) {
     /* Create a temporary prep target as the first target */
     prepTarget = {
         type: 'vsprep',
+        path: Path('always'),
         name: 'prep',
         enable: true,
         custom: PREP,
@@ -115,6 +116,7 @@ function projBuild(projects: Array, base: Path, target) {
     projHeader(base, target)
     projConfig(base, target)
     projSources(base, target)
+    projSourceHeaders(base, target)
     projLink(base, target)
     projDeps(base, target)
     projFooter(base, target)
@@ -224,15 +226,14 @@ function projConfig(base, target) {
     output('</PropertyGroup>')
 }
 
-//  MOB - should emit headers for all source that depends on headers
 function projSourceHeaders(base, target) {
-    /*
-    if (target.type == 'header') {
-    output('<ItemGroup>')
-        output('  <ClInclude Include="' + wpath(target.path) + '" />')
+    for each (dname in target.depends) {
+        let dep = bit.targets[dname]
+        if (!dep || dep.type != 'header') continue
+        output('<ItemGroup>')
+        output('  <ClInclude Include="' + wpath(dep.path) + '" />')
+        output('</ItemGroup>')
     }
-    output('</ItemGroup>')
-    */
 }
 
 function projSources(base, target) {
@@ -282,18 +283,37 @@ function projLink(base, target) {
   <AdditionalDependencies>${LIBS};%(AdditionalDependencies)</AdditionalDependencies>
   <AdditionalLibraryDirectories>$(OutDir);${LIBPATHS};%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
 </Link>')
-    if (target.custom) {
-        projCustom(base, target)
-    }
+    projCustomBuildStep(base, target)
     output('</ItemDefinitionGroup>')
 }
 
-function projCustom(base, target) {
-    bit.OUTDIR = wpath(bit.dir.cfg.relativeTo(base))
+/*
+    Emit a custom build step for exporting headers and the prep build step
+ */
+function projCustomBuildStep(base, target) {
+    let outfile = wpath(target.path.relativeTo(base))
+    let cmd = target.custom || ''
+    if (target.depends) {
+        cmd += exportHeaders(base, target)
+    }
+    if (cmd != '') {
         output('<CustomBuildStep>
-    <Command>' + target.custom + '</Command>
-    <Outputs Condition="\'${CTOK}|${PTOK}\'==\'Debug|${VTYPE}\'">always</Outputs>
-    </CustomBuildStep>')
+  <Command>' + cmd + '</Command>
+  <Outputs Condition="\'${CTOK}|${PTOK}\'==\'Debug|${VTYPE}\'">' + wpath(outfile) + '</Outputs>
+  </CustomBuildStep>')
+    }
+}
+
+function exportHeaders(base, target) {
+    let cmd = ''
+    for each (dname in target.depends) {
+        let dep = bit.targets[dname]
+        if (!dep || dep.type != 'header') continue
+        for each (file in dep.files) {
+            cmd += 'xcopy /Y /S /D ' + wpath(file.relativeTo(base)) + ' ' + wpath(dep.path.relativeTo(base)) + '\r\n'
+        }
+    }
+    return cmd
 }
 
 function projDeps(base, target) {
@@ -336,6 +356,7 @@ function output(line: String) {
     out.writeLine(line.expand(bit))
 }
 
+//  Should wpath automatically do path.relativeTo(base)
 function wpath(path: Path)
     Path(path.relative.toString().replace(/\//g, '\\'))
 
