@@ -98,9 +98,9 @@ Bit.load({
         utest: {
             type: 'test',
             action: "
-                let utest = Cmd.locate('utest')
-                if (utest) {
-                    run(utest + ' -v -d ' + bit.settings.depth,
+                let utest = bit.packs.utest
+                if (utest && utest.path) {
+                    run(utest.path + ' -v -d ' + bit.settings.depth,
                         {noio: true, dir: bit.dir.src.join('src')})
                 } else {
                     trace('Test', 'The utest program cannot be located')
