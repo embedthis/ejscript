@@ -7,5 +7,5 @@ require ejs.tar
 let name = Path('').temp().joinExt('tar')
 tar = new Tar(name)
 tar.create(Path('.').glob('**.dat'))
-assert(tar.list().length == 3)
+assert(tar.list().length == 2)
 // name.remove()
