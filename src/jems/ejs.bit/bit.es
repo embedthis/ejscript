@@ -1909,7 +1909,7 @@ public class Bit {
             result.push(sym)
         }
         let def = Path(target.path.toString().replace(/dll$/, 'def'))
-        def.write('LIBRARY ' + target.name + '.dll\nEXPORTS\n  ' + result.sort().join('\n  '))
+        def.write('LIBRARY ' + target.path.basename + '\nEXPORTS\n  ' + result.sort().join('\n  '))
     }
 
     /*
@@ -1938,6 +1938,7 @@ public class Bit {
             setRuleVars(target, 'obj', file)
             bit.PREPROCESS = ''
             bit.OUT = target.path.relative
+            bit.PDB = bit.OUT.replaceExt('pdb')
             bit.IN = file.relative
             bit.CFLAGS = (target.compiler) ? target.compiler.join(' ') : ''
             bit.DEFINES = (target.defines) ? target.defines.join(' ') : ''

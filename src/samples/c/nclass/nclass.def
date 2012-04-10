@@ -1,4 +1,4 @@
-LIBRARY nclass-lib.dll
+LIBRARY nclass.dll
 EXPORTS
   configureSampleTypes
   create
