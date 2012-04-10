@@ -96,23 +96,24 @@ EndGlobal')
 }
 
 function projBuild(projects: Array, base: Path, target) {
-    if (target.built || !target.enable || target.nogen) {
+    if (target.vsbuilt || !target.enable || target.nogen) {
         return
     }
     if (target.type != 'exe' && target.type != 'lib' && target.type != 'vsprep') {
-        return
+        if (!(target.type == 'build')) {
+            return
+        }
     }
     for each (dname in target.depends) {
         let dep = bit.targets[dname]
-        if (dep && dep.enable && !dep.built) {
+        if (dep && dep.enable && !dep.vsbuilt) {
             projBuild(projects, base, dep)
         }
     }
-    let path = base.join(target.name).joinExt('vcxproj', true).relative
-    target.project = path
+    target.project = base.join(target.name).joinExt('vcxproj', true).relative
+    trace('Generate', target.project)
     projects.push(target)
-    trace('Generate', path)
-    out = TextStream(File(path, 'wt'))
+    out = TextStream(File(target.project, 'wt'))
     projHeader(base, target)
     projConfig(base, target)
     projSources(base, target)
@@ -121,12 +122,13 @@ function projBuild(projects: Array, base: Path, target) {
     projDeps(base, target)
     projFooter(base, target)
     out.close()
-    target.built = true
+    target.vsbuilt = true
 }
 
 function projHeader(base, target) {
     bit.SUBSYSTEM = (target.rule == 'gui') ? 'Windows' : 'Console'
-    bit.INC = target.includes.map(function(path) wpath(path.relativeTo(base))).join(';')
+    bit.INC = target.includes ? target.includes.map(function(path) wpath(path.relativeTo(base))).join(';') : ''
+
     output('<?xml version="1.0" encoding="utf-8"?>
 <Project DefaultTargets="Build" ToolsVersion="${TOOLS_VERSION}" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
   <ImportGroup Label="PropertySheets" />
@@ -238,16 +240,18 @@ function projSources(base, target) {
     output('<ItemGroup>')
     for each (file in target.files) {
         let obj = bit.targets[file]
-        for each (src in obj.files) {
-            let path = src.relativeTo(base)
-            output('  <ClCompile Include="' + wpath(path) + '" />')
+        if (obj) {
+            for each (src in obj.files) {
+                let path = src.relativeTo(base)
+                output('  <ClCompile Include="' + wpath(path) + '" />')
+            }
         }
     }
     output('</ItemGroup>')
 }
 
 //  MOB - TODO
-function vsresources(base, target) {
+function projResources(base, target) {
     output('<ItemGroup>')
     for each (file in target.files) {
         output('  <ClCompile Include="' + wpath(file) + '" />')
@@ -274,8 +278,8 @@ function projLink(base, target) {
             trace('Warn', 'Missing ' + def)
         }
     }
-    bit.LIBS = mapLibs(target.libraries - bit.defaults.libraries).join(';')
-    bit.LIBPATHS = target.libpaths.map(function(p) wpath(p)).join(';')
+    bit.LIBS = target.libraries ? mapLibs(target.libraries - bit.defaults.libraries).join(';') : ''
+    bit.LIBPATHS = target.libpaths ? target.libpaths.map(function(p) wpath(p)).join(';') : ''
     output('<ItemDefinitionGroup>
 <Link>
   <AdditionalDependencies>${LIBS};%(AdditionalDependencies)</AdditionalDependencies>
@@ -289,7 +293,12 @@ function projLink(base, target) {
     Emit a custom build step for exporting headers and the prep build step
  */
 function projCustomBuildStep(base, target) {
-    let outfile = wpath(target.path.relativeTo(base))
+    let outfile
+    if (target.path) {
+        outfile = wpath(target.path.relativeTo(base))
+    } else {
+        outfile = 'always'
+    }
     let cmd = target.custom || ''
     if (target.depends) {
         cmd += exportHeaders(base, target)
@@ -320,12 +329,11 @@ function projDeps(base, target) {
     for each (dname in target.depends) {
         let dep = bit.targets[dname]
         if (!dep) {
-            if (bit.packs[dname]) {
+            if (bit.packs[dname] || dname == 'build') {
                 continue
             }
             throw 'Missing dependency ' + dname + ' for target ' + target.name
         }
-        //  MOB - should do something with objects, headers
         if (dep.type != 'exe' && dep.type != 'lib') {
             continue
         }
@@ -356,7 +364,6 @@ function output(line: String) {
     out.writeLine(line.expand(bit))
 }
 
-//  Should wpath automatically do path.relativeTo(base)
 function wpath(path: Path)
     Path(path.relative.toString().replace(/\//g, '\\'))
 
