@@ -4,24 +4,6 @@
   <PropertyGroup Label="UserMacros" />
   <PropertyGroup />
 
-  <ItemDefinitionGroup>
-    <ClCompile>
-      <WarningLevel>Level3</WarningLevel>
-      <AdditionalIncludeDirectories>..\..\win-i686-debug\inc;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
-    
-  <PreprocessorDefinitions>WIN32;_DEBUG;_WINDOWS;DEBUG_IDE;_REENTRANT;_MT;%(PreprocessorDefinitions)</PreprocessorDefinitions>
-    <Optimization>Disabled</Optimization>
-    <BasicRuntimeChecks>EnableFastChecks</BasicRuntimeChecks>
-    <RuntimeLibrary>MultiThreadedDebugDLL</RuntimeLibrary>
-    </ClCompile>
- <Link>
-      <AdditionalDependencies>ws2_32.lib;%(AdditionalDependencies)</AdditionalDependencies>
-      <AdditionalLibraryDirectories>$(OutDir);%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
-      <SubSystem>Console</SubSystem>
-      <GenerateDebugInformation>true</GenerateDebugInformation>
-    </Link>
-  </ItemDefinitionGroup>
-
 <ItemGroup Label="ProjectConfigurations">
   <ProjectConfiguration Include="Debug|Win32">
     <Configuration>Debug</Configuration>
@@ -30,7 +12,7 @@
 </ItemGroup>
 
 <PropertyGroup Label="Globals">
-  <ProjectGuid>{5e72be25-008b-460d-91dc-a14e9e524f8d}</ProjectGuid>
+  <ProjectGuid>{16128288-c4bd-4bd9-a01b-7cb908a5a0ee}</ProjectGuid>
   <RootNamespace />
   <Keyword>Win32Proj</Keyword>
 </PropertyGroup>
@@ -52,42 +34,33 @@
 <PropertyGroup>
   <_ProjectFileVersion>10</_ProjectFileVersion>
   <OutDir Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">..\..\win-i686-debug\bin\</OutDir>
-  <IntDir Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">..\..\win-i686-debug\obj\libhttp\</IntDir>
+  <IntDir Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">..\..\win-i686-debug\obj\ejs.mod\</IntDir>
   <CustomBuildBeforeTargets Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">PreBuildEvent</CustomBuildBeforeTargets>
   </PropertyGroup>
-<ItemGroup>
-  <ClCompile Include="..\..\src\deps\http\httpLib.c" />
-</ItemGroup>
-<ItemGroup>
-  <ClInclude Include="win-i686-debug\inc\http.h" />
-</ItemGroup>
-
-    <ItemDefinitionGroup>
-    <Link>
-      <ModuleDefinitionFile>libhttp.def</ModuleDefinitionFile>
-    </Link>
-    </ItemDefinitionGroup>
 <ItemDefinitionGroup>
 <Link>
-  <AdditionalDependencies>libmpr.lib;libpcre.lib;%(AdditionalDependencies)</AdditionalDependencies>
+  <AdditionalDependencies>;%(AdditionalDependencies)</AdditionalDependencies>
   <AdditionalLibraryDirectories>$(OutDir);win-i686-debug\bin;%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
 </Link>
 <CustomBuildStep>
-  <Command>xcopy /Y /S /D ..\..\src\deps\http\http.h ..\..\win-i686-debug\inc</Command>
-  <Outputs Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">..\..\win-i686-debug\bin\libhttp.dll</Outputs>
+  <Command>..\..\win-i686-debug\bin\ejsc --out ../../win-i686-debug/bin/ejs.mod --debug --optimize 9 --bind --require null ../../src/core/*.es 
+..\..\win-i686-debug\bin\ejsmod --require null --cslots ../../win-i686-debug/bin/ejs.mod
+copy ejs.slots.h ..\..\win-i686-debug\inc\ejs.slots.h
+del ejs.slots.h</Command>
+  <Outputs Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">..\..\win-i686-debug\bin\ejs.mod</Outputs>
   </CustomBuildStep>
 </ItemDefinitionGroup>
 
 <ItemGroup>
-  <ProjectReference Include="libmpr.vcxproj">
-  <Project>6e8e5cea-ee71-4f75-9165-c34a52726958</Project>
+  <ProjectReference Include="ejsc.vcxproj">
+  <Project>3b5194ed-fd3c-4eae-be81-67c70c54c31c</Project>
   <ReferenceOutputAssembly>false</ReferenceOutputAssembly>
   </ProjectReference>
 </ItemGroup>
 
 <ItemGroup>
-  <ProjectReference Include="libpcre.vcxproj">
-  <Project>f26e7ce5-e34e-41a7-9c97-29bb8a9f3e6e</Project>
+  <ProjectReference Include="ejsmod.vcxproj">
+  <Project>50ccd249-2c54-483b-869a-73ce4416ac8f</Project>
   <ReferenceOutputAssembly>false</ReferenceOutputAssembly>
   </ProjectReference>
 </ItemGroup>

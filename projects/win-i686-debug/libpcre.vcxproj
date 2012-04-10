@@ -3,6 +3,7 @@
   <ImportGroup Label="PropertySheets" />
   <PropertyGroup Label="UserMacros" />
   <PropertyGroup />
+
   <ItemDefinitionGroup>
     <ClCompile>
       <WarningLevel>Level3</WarningLevel>
@@ -13,14 +14,13 @@
     <BasicRuntimeChecks>EnableFastChecks</BasicRuntimeChecks>
     <RuntimeLibrary>MultiThreadedDebugDLL</RuntimeLibrary>
     </ClCompile>
-    <Link>
+ <Link>
       <AdditionalDependencies>ws2_32.lib;%(AdditionalDependencies)</AdditionalDependencies>
       <AdditionalLibraryDirectories>$(OutDir);%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
       <SubSystem>Console</SubSystem>
       <GenerateDebugInformation>true</GenerateDebugInformation>
     </Link>
   </ItemDefinitionGroup>
-  <ItemGroup />
 
 <ItemGroup Label="ProjectConfigurations">
   <ProjectConfiguration Include="Debug|Win32">
@@ -30,7 +30,7 @@
 </ItemGroup>
 
 <PropertyGroup Label="Globals">
-  <ProjectGuid>{41931549-cfad-493e-961b-694074a6fa11}</ProjectGuid>
+  <ProjectGuid>{f26e7ce5-e34e-41a7-9c97-29bb8a9f3e6e}</ProjectGuid>
   <RootNamespace />
   <Keyword>Win32Proj</Keyword>
 </PropertyGroup>
@@ -73,8 +73,7 @@
   <AdditionalLibraryDirectories>$(OutDir);win-i686-debug\bin;%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
 </Link>
 <CustomBuildStep>
-  <Command>xcopy /Y /S /D ..\..\src\deps\pcre\pcre.h ..\..\win-i686-debug\inc
-</Command>
+  <Command>xcopy /Y /S /D ..\..\src\deps\pcre\pcre.h ..\..\win-i686-debug\inc</Command>
   <Outputs Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">..\..\win-i686-debug\bin\libpcre.dll</Outputs>
   </CustomBuildStep>
 </ItemDefinitionGroup>

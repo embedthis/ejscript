@@ -4,24 +4,6 @@
   <PropertyGroup Label="UserMacros" />
   <PropertyGroup />
 
-  <ItemDefinitionGroup>
-    <ClCompile>
-      <WarningLevel>Level3</WarningLevel>
-      <AdditionalIncludeDirectories>..\..\win-i686-debug\inc;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
-    
-  <PreprocessorDefinitions>WIN32;_DEBUG;_WINDOWS;DEBUG_IDE;_REENTRANT;_MT;%(PreprocessorDefinitions)</PreprocessorDefinitions>
-    <Optimization>Disabled</Optimization>
-    <BasicRuntimeChecks>EnableFastChecks</BasicRuntimeChecks>
-    <RuntimeLibrary>MultiThreadedDebugDLL</RuntimeLibrary>
-    </ClCompile>
- <Link>
-      <AdditionalDependencies>ws2_32.lib;%(AdditionalDependencies)</AdditionalDependencies>
-      <AdditionalLibraryDirectories>$(OutDir);%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
-      <SubSystem>Console</SubSystem>
-      <GenerateDebugInformation>true</GenerateDebugInformation>
-    </Link>
-  </ItemDefinitionGroup>
-
 <ItemGroup Label="ProjectConfigurations">
   <ProjectConfiguration Include="Debug|Win32">
     <Configuration>Debug</Configuration>
@@ -30,7 +12,7 @@
 </ItemGroup>
 
 <PropertyGroup Label="Globals">
-  <ProjectGuid>{6e8e5cea-ee71-4f75-9165-c34a52726958}</ProjectGuid>
+  <ProjectGuid>{396a2cd6-dd4b-4aaf-a231-e74c4cf9df26}</ProjectGuid>
   <RootNamespace />
   <Keyword>Win32Proj</Keyword>
 </PropertyGroup>
@@ -52,33 +34,19 @@
 <PropertyGroup>
   <_ProjectFileVersion>10</_ProjectFileVersion>
   <OutDir Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">..\..\win-i686-debug\bin\</OutDir>
-  <IntDir Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">..\..\win-i686-debug\obj\libmpr\</IntDir>
+  <IntDir Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">..\..\win-i686-debug\obj\bits\</IntDir>
   <CustomBuildBeforeTargets Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">PreBuildEvent</CustomBuildBeforeTargets>
   </PropertyGroup>
-<ItemGroup>
-  <ClCompile Include="..\..\src\deps\mpr\mprLib.c" />
-</ItemGroup>
-<ItemGroup>
-  <ClInclude Include="win-i686-debug\inc\mpr.h" />
-</ItemGroup>
-<ItemGroup>
-  <ClInclude Include="win-i686-debug\inc\mprSsl.h" />
-</ItemGroup>
-
-    <ItemDefinitionGroup>
-    <Link>
-      <ModuleDefinitionFile>libmpr.def</ModuleDefinitionFile>
-    </Link>
-    </ItemDefinitionGroup>
 <ItemDefinitionGroup>
 <Link>
   <AdditionalDependencies>;%(AdditionalDependencies)</AdditionalDependencies>
   <AdditionalLibraryDirectories>$(OutDir);win-i686-debug\bin;%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
 </Link>
 <CustomBuildStep>
-  <Command>xcopy /Y /S /D ..\..\src\deps\mpr\mpr.h ..\..\win-i686-debug\inc
-xcopy /Y /S /D ..\..\src\deps\mpr\mprSsl.h ..\..\win-i686-debug\inc</Command>
-  <Outputs Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">..\..\win-i686-debug\bin\libmpr.dll</Outputs>
+  <Command>rd /Q /S ..\..\win-i686-debug\bin\bits
+md ..\..\win-i686-debug\bin\bits
+xcopy /S /Y ..\..\src\jems\ejs.bit\bits ..\..\win-i686-debug\bin\bits</Command>
+  <Outputs Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">..\..\win-i686-debug\bin\bits</Outputs>
   </CustomBuildStep>
 </ItemDefinitionGroup>
 

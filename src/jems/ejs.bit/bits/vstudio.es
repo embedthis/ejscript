@@ -14,18 +14,24 @@ const TOOLS_VERSION = '4.0'
 const PROJECT_FILE_VERSION = 10.0.30319.1
 const SOL_VERSION = '11.00'
 const XID = '{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}'
-const PREP = '
-    if not exist ${OUTDIR}\\obj md ${OUTDIR}\\obj\r
-    if not exist ${OUTDIR}\\bin md ${OUTDIR}\\bin\r
-    if not exist ${OUTDIR}\\inc md ${OUTDIR}\\inc\r
-    if not exist ${OUTDIR}\\inc\\buildConfig.h copy ..\\buildConfig.${platform.configuration} ${OUTDIR}\\inc\\buildConfig.h\r
-    if not exist ${OUTDIR}\\bin\\libmpr.def xcopy /Y /S *.def ${OUTDIR}\\bin\r
+const PREP = 'if not exist ${OUTDIR}\\obj md ${OUTDIR}\\obj\r
+if not exist ${OUTDIR}\\bin md ${OUTDIR}\\bin\r
+if not exist ${OUTDIR}\\inc md ${OUTDIR}\\inc\r
+if not exist ${OUTDIR}\\inc\\buildConfig.h copy ..\\buildConfig.${platform.configuration} ${OUTDIR}\\inc\\buildConfig.h\r
+if not exist ${OUTDIR}\\bin\\libmpr.def xcopy /Y /S *.def ${OUTDIR}\\bin\r
 '
 var prepTarget
 
 public function vstudio(base: Path) {
     bit.TOOLS_VERSION = TOOLS_VERSION
     bit.PROJECT_FILE_VERSION = PROJECT_FILE_VERSION
+    for each (n in ['WIN_CFG', 'WIN_BIN', 'WIN_BITS', 'WIN_FLAT', 'WIN_INC', 'WIN_LIB', 'WIN_OBJ', 'WIN_PACKS', 
+            'WIN_PKG', 'WIN_REL', 'WIN_SRC', 'WIN_TOP']) {
+        bit[n] = wpath(bit[n].relativeTo(base))
+    }
+    for each (n in ["BIN", "CFG", "FLAT", "INC", "LIB", "OBJ", "PACKS", "PKG", "REL", "SRC", "TOP"]) {
+        bit[n] = bit[n].relativeTo(base)
+    }
     let projects = []
     /* Create a temporary prep target as the first target */
     prepTarget = {
@@ -133,41 +139,45 @@ function projHeader(base, target) {
 <Project DefaultTargets="Build" ToolsVersion="${TOOLS_VERSION}" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
   <ImportGroup Label="PropertySheets" />
   <PropertyGroup Label="UserMacros" />
-  <PropertyGroup />
+  <PropertyGroup />')
+
+    if (target.type == 'lib' || target.type == 'exe') {
+        output('
   <ItemDefinitionGroup>
     <ClCompile>
       <WarningLevel>Level3</WarningLevel>
       <AdditionalIncludeDirectories>${INC};%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
     ')
 
-    if (bit.platform.profile == 'debug') {
-        output('  <PreprocessorDefinitions>WIN32;_DEBUG;_WINDOWS;DEBUG_IDE;_REENTRANT;_MT;%(PreprocessorDefinitions)</PreprocessorDefinitions>
+        if (bit.platform.profile == 'debug') {
+            output('  <PreprocessorDefinitions>WIN32;_DEBUG;_WINDOWS;DEBUG_IDE;_REENTRANT;_MT;%(PreprocessorDefinitions)</PreprocessorDefinitions>
     <Optimization>Disabled</Optimization>
     <BasicRuntimeChecks>EnableFastChecks</BasicRuntimeChecks>
     <RuntimeLibrary>MultiThreadedDebugDLL</RuntimeLibrary>')
-    } else {
-        output('  <PreprocessorDefinitions>WIN32;_WINDOWS;_REENTRANT;_MT;%(PreprocessorDefinitions)</PreprocessorDefinitions>
+        } else {
+            output('  <PreprocessorDefinitions>WIN32;_WINDOWS;_REENTRANT;_MT;%(PreprocessorDefinitions)</PreprocessorDefinitions>
     <FavorSizeOrSpeed>Size</FavorSizeOrSpeed>
     <RuntimeLibrary>MultiThreadedDLL</RuntimeLibrary>
     <Optimization>MinSpace</Optimization>
     <IntrinsicFunctions>true</IntrinsicFunctions>
     <FunctionLevelLinking>true</FunctionLevelLinking>')
     }
+        output('    </ClCompile>')
 
-    output('    </ClCompile>
-    <Link>
+        output(' <Link>
       <AdditionalDependencies>ws2_32.lib;%(AdditionalDependencies)</AdditionalDependencies>
       <AdditionalLibraryDirectories>$(OutDir);%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
       <SubSystem>${SUBSYSTEM}</SubSystem>')
 
-    if (bit.platform.profile == 'debug') {
-      output('      <GenerateDebugInformation>true</GenerateDebugInformation>')
-    } else {
-      output('      <GenerateDebugInformation>false</GenerateDebugInformation>')
+        if (bit.platform.profile == 'debug') {
+          output('      <GenerateDebugInformation>true</GenerateDebugInformation>')
+        } else {
+          output('      <GenerateDebugInformation>false</GenerateDebugInformation>')
+        }
+        output('    </Link>
+  </ItemDefinitionGroup>')
     }
-    output('    </Link>
-  </ItemDefinitionGroup>
-  <ItemGroup />')
+  //MOB <ItemGroup />')
 }
 
 function projConfig(base, target) {
@@ -237,26 +247,29 @@ function projSourceHeaders(base, target) {
 }
 
 function projSources(base, target) {
-    output('<ItemGroup>')
-    for each (file in target.files) {
-        let obj = bit.targets[file]
-        if (obj) {
-            for each (src in obj.files) {
-                let path = src.relativeTo(base)
-                output('  <ClCompile Include="' + wpath(path) + '" />')
+    if (target.sources) {
+        output('<ItemGroup>')
+        for each (file in target.files) {
+            let obj = bit.targets[file]
+            if (obj) {
+                for each (src in obj.files) {
+                    let path = src.relativeTo(base)
+                    output('  <ClCompile Include="' + wpath(path) + '" />')
+                }
             }
         }
+        output('</ItemGroup>')
     }
-    output('</ItemGroup>')
 }
 
-//  MOB - TODO
 function projResources(base, target) {
-    output('<ItemGroup>')
-    for each (file in target.files) {
-        output('  <ClCompile Include="' + wpath(file) + '" />')
+    if (target.resources) {
+        output('<ItemGroup>')
+        for each (resource in target.resources) {
+            output('  <ResourceCompile Include="' + wpath(resource) + '" />')
+        }
+        output('</ItemGroup>')
     }
-    output('</ItemGroup>')
 }
 
 function projLink(base, target) {
@@ -295,19 +308,36 @@ function projLink(base, target) {
 function projCustomBuildStep(base, target) {
     let outfile
     if (target.path) {
-        outfile = wpath(target.path.relativeTo(base))
+        bit.OUT = outfile = wpath(target.path.relativeTo(base))
     } else {
         outfile = 'always'
     }
-    let cmd = target.custom || ''
-    if (target.depends) {
-        cmd += exportHeaders(base, target)
+    if (target.home) {
+        bit.WIN_HOME = wpath(target.home.relativeTo(base))
+        bit.HOME = target.home.relativeTo(base)
     }
-    if (cmd != '') {
+    let command = target.custom || ''
+    if (target.depends) {
+        command += exportHeaders(base, target)
+    }
+    if (target['generate-vs']) {
+        command += target['generate-vs']
+    } else if (target['generate-nmake']) {
+        let ncmd = target['generate-nmake']
+        ncmd = ncmd.replace(/^[ \t]*/mg, '').trim().replace(/^-md /m, 'md ').replace(/^-rd /m, 'rd ')
+        command += ncmd
+    }
+    command = command.replace(/^[ \t]*/mg, '').trim()
+    if (command != '') {
+try {
         output('<CustomBuildStep>
-  <Command>' + cmd + '</Command>
+  <Command>' + command + '</Command>
   <Outputs Condition="\'${CTOK}|${PTOK}\'==\'Debug|${VTYPE}\'">' + wpath(outfile) + '</Outputs>
   </CustomBuildStep>')
+} catch (e) {
+    print(e + '\n' + 'in ' + target.name + ' ' + cmd)
+    throw e
+}
     }
 }
 

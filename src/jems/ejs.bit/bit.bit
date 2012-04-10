@@ -27,7 +27,7 @@ Bit.load({
             static: true,
             active: true,
             precious: true,
-            depends: ['libejs',  'zlib'],
+            depends: ['libejs',  'zlib', 'bits', 'bit.es'],
         },
 
         'utest.es': {

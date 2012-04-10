@@ -24,7 +24,7 @@
 #define BLD_CPU "i686"
 #define BIT_CPU_ARCH MPR_CPU_IX86
 #define BLD_OS "WIN"
-#define BLD_CONFIG_CMD "bit -emulate win-i686 -without all configure -gen vs"
+#define BLD_CONFIG_CMD "bit -without all configure -gen vs"
 #define BLD_LIB_NAME "bin"
 #define BLD_CFG_PREFIX "C:/Program Files/Embedthis Ejscript"
 #define BLD_BIN_PREFIX "C:/Program Files/Embedthis Ejscript/bin"
@@ -65,18 +65,19 @@
 #define BLD_FEATURE_SSL 0
 #define BLD_FEATURE_ZLIB 0
 #define BLD_FEATURE_WINSDK 1
-#define BLD_WINSDK "$(SDK)"
+#define BLD_WINSDK "../../../../Program Files/Microsoft SDKs/Windows/v7.1"
 #define BLD_FEATURE_CC 1
-#define BLD_CC "cl.exe"
+#define BLD_CC "../../../../Program Files/Microsoft Visual Studio 10.0/VC/bin/cl.exe"
 #define BLD_FEATURE_LINK 1
-#define BLD_LINK "link.exe"
+#define BLD_LINK "../../../../Program Files/Microsoft Visual Studio 10.0/VC/bin/link.exe"
 #define BLD_FEATURE_DUMPBIN 1
-#define BLD_DUMPBIN "dumpbin"
+#define BLD_DUMPBIN "../../../../Program Files/Microsoft Visual Studio 10.0/VC/bin/dumpbin.exe"
 #define BLD_FEATURE_RC 1
-#define BLD_RC "rc"
+#define BLD_RC "../../../bin/rc.exe"
 #define BLD_FEATURE_PCRE 1
 #define BLD_PCRE "src/deps/pcre"
-#define BLD_FEATURE_INNO 0
+#define BLD_FEATURE_INNO 1
+#define BLD_INNO "../../../../Program Files/Inno Setup 5/iscc.exe"
 #define BLD_FEATURE_DPKG 1
 #define BLD_FEATURE_OPENSSL 0
 #define BLD_FEATURE_MATRIXSSL 0

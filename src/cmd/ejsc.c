@@ -321,7 +321,8 @@ static MprList *expandWild(Ejs *ejs, int argc, char **argv)
 {
     MprList     *list;
     EjsArray    *files;
-    EjsPath     *path, *dot;
+    EjsPath     *path, *dir;
+    cchar       *arg;
     int         i, j;
 
     if ((list = mprCreateList(-1, 0)) == 0) {
@@ -329,9 +330,10 @@ static MprList *expandWild(Ejs *ejs, int argc, char **argv)
     }
     for (i = 0; i < argc; i++) {
         if (schr(argv[i], '*')) {
-            dot = ejsCreatePathFromAsc(ejs, ".");
-            path = ejsCreatePathFromAsc(ejs, mprNormalizePath(argv[i]));
-            if ((files = ejsGlobPath(ejs, dot, 1, (EjsObj**) &path)) == 0) {
+            arg = mprNormalizePath(argv[i]);
+            dir = ejsCreatePathFromAsc(ejs, mprGetPathDir(arg));
+            path = ejsCreatePathFromAsc(ejs, mprGetPathBase(arg));
+            if ((files = ejsGlobPath(ejs, dir, 1, (EjsObj**) &path)) == 0) {
                 ejsClearException(ejs);
                 mprAddItem(list, sclone(argv[i]));
             } else {
