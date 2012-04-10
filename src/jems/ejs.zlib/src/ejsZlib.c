@@ -341,7 +341,7 @@ static int configureZlibTypes(Ejs *ejs)
 /*
     Module load entry point. This must be idempotent as it will be called for each new interpreter created.
  */
-int ejs_zlib_Init(Ejs *ejs, MprModule *mp)
+MPR_EXPORT int ejs_zlib_Init(Ejs *ejs, MprModule *mp)
 {
     return ejsAddNativeModule(ejs, "ejs.zlib", configureZlibTypes, _ES_CHECKSUM_ejs_zlib, EJS_LOADER_ETERNAL);
 }
