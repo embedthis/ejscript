@@ -28,6 +28,7 @@ Bit.load({
         'src/jems/ejs.mvc/mvc.bit',
         'src/jems/ejs.utest/utest.bit',
         'src/samples/samples.bit',
+        'package/package.bit',
         'doc/doc.bit',
     ],
 

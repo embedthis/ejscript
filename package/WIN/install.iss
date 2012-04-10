@@ -5,17 +5,17 @@
 ;
 
 [Setup]
-AppName=!!BLD_NAME!!
-AppVerName=!!BLD_NAME!! !!BLD_VERSION!!-!!BLD_NUMBER!!
-DefaultDirName={pf}\!!BLD_NAME!!
-DefaultGroupName=!!BLD_NAME!!
-UninstallDisplayIcon={app}/!!BLD_PRODUCT!!.exe
-LicenseFile=!!ORIG_BLD_PREFIX!!/LICENSE.TXT
+AppName=${settings.title}
+AppVerName=${settings.title} ${settings.version}-${settings.buildNumber}
+DefaultDirName={pf}\${settings.title}
+DefaultGroupName=${settings.title}
+UninstallDisplayIcon={app}/${settings.product}.exe
+LicenseFile=LICENSE.TXT
 ChangesEnvironment=yes
 
 [Icons]
-Name: "{group}\!!BLD_NAME!! shell"; Filename: "{app}/bin/!!BLD_PRODUCT!!.exe"; Parameters: ""
-Name: "{group}\!!BLD_NAME!! documentation"; Filename: "{app}/doc/product/index.html"; Parameters: ""
+Name: "{group}\${settings.title} shell"; Filename: "{app}/bin/${settings.product}.exe"; Parameters: ""
+Name: "{group}\${settings.title} documentation"; Filename: "{app}/doc/product/index.html"; Parameters: ""
 Name: "{group}\ReadMe"; Filename: "{app}/README.TXT"
 
 [Types]
@@ -35,7 +35,7 @@ Name: "{app}/bin"
 [UninstallDelete]
 
 [Tasks]
-Name: addpath; Description: Add !!BLD_NAME!! to the system PATH variable;
+Name: addpath; Description: Add ${settings.title} to the system PATH variable;
 
 [Code]
 function IsPresent(const file: String): Boolean;
