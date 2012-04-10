@@ -91,6 +91,7 @@ clean:
 	rm -rf $(CONFIG)/bin/mvc
 	rm -rf $(CONFIG)/lib/ejs.mvc.mod
 	rm -rf $(CONFIG)/bin/utest.worker
+	rm -rf $(CONFIG)/bin/removeFiles
 	rm -rf $(CONFIG)/obj/mprLib.o
 	rm -rf $(CONFIG)/obj/mprSsl.o
 	rm -rf $(CONFIG)/obj/manager.o
@@ -174,6 +175,7 @@ clean:
 	rm -rf $(CONFIG)/obj/square.o
 	rm -rf $(CONFIG)/obj/main.o
 	rm -rf $(CONFIG)/obj/shape.o
+	rm -rf $(CONFIG)/obj/removeFiles.o
 
 clobber: clean
 	rm -fr ./$(CONFIG)

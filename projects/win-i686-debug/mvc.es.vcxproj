@@ -43,7 +43,7 @@
   <AdditionalLibraryDirectories>$(OutDir);win-i686-debug\bin;%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
 </Link>
 <CustomBuildStep>
-  <Command>copy ..\..\src\jems\ejs.mvc\mvc.es ..\..\win-i686-debug\bin</Command>
+  <Command>copy "..\..\src\jems\ejs.mvc\mvc.es" "..\..\win-i686-debug\bin"</Command>
   <Outputs Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">..\..\win-i686-debug\bin\mvc.es</Outputs>
   </CustomBuildStep>
 </ItemDefinitionGroup>

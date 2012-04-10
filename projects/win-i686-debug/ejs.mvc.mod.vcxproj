@@ -43,7 +43,7 @@
   <AdditionalLibraryDirectories>$(OutDir);win-i686-debug\bin;%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
 </Link>
 <CustomBuildStep>
-  <Command>..\..\win-i686-debug\bin\ejsc --out ..\..\win-i686-debug\bin\ejs.mvc.mod --debug --optimize 9 ../../src/jems/ejs.mvc/*.es</Command>
+  <Command>"..\..\win-i686-debug\bin\ejsc" --out "..\..\win-i686-debug\bin\ejs.mvc.mod" --debug --optimize 9 "../../src/jems/ejs.mvc/*.es"</Command>
   <Outputs Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">..\..\win-i686-debug\bin\ejs.mvc.mod</Outputs>
   </CustomBuildStep>
 </ItemDefinitionGroup>

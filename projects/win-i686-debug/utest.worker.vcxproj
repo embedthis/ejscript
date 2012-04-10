@@ -43,7 +43,7 @@
   <AdditionalLibraryDirectories>$(OutDir);win-i686-debug\bin;%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
 </Link>
 <CustomBuildStep>
-  <Command>copy ..\..\src\jems\ejs.utest\utest.worker ..\..\win-i686-debug\bin</Command>
+  <Command>copy "..\..\src\jems\ejs.utest\utest.worker" "..\..\win-i686-debug\bin"</Command>
   <Outputs Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">..\..\win-i686-debug\bin\utest.worker</Outputs>
   </CustomBuildStep>
 </ItemDefinitionGroup>

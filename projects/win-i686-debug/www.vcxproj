@@ -43,9 +43,9 @@
   <AdditionalLibraryDirectories>$(OutDir);win-i686-debug\bin;%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
 </Link>
 <CustomBuildStep>
-  <Command>rd /Q /S ..\..\win-i686-debug\bin\www
-md ..\..\win-i686-debug\bin\www
-xcopy /S /Y ..\..\src\jems\ejs.web\www ..\..\win-i686-debug\bin\www</Command>
+  <Command>if exist "..\..\win-i686-debug\bin\www" rd /Q /S "..\..\win-i686-debug\bin\www"
+if not exist "..\..\win-i686-debug\bin\www md "..\..\win-i686-debug\bin\www"
+xcopy /S /Y "..\..\src\jems\ejs.web\www" "..\..\win-i686-debug\bin\www"</Command>
   <Outputs Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">..\..\win-i686-debug\bin\www</Outputs>
   </CustomBuildStep>
 </ItemDefinitionGroup>

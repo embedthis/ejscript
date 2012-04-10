@@ -43,9 +43,9 @@
   <AdditionalLibraryDirectories>$(OutDir);win-i686-debug\bin;%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
 </Link>
 <CustomBuildStep>
-  <Command>..\..\win-i686-debug\bin\ejsc --out ../../win-i686-debug/bin/ejs.mod --debug --optimize 9 --bind --require null ../../src/core/*.es 
-..\..\win-i686-debug\bin\ejsmod --require null --cslots ../../win-i686-debug/bin/ejs.mod
-copy ejs.slots.h ..\..\win-i686-debug\inc\ejs.slots.h
+  <Command>"..\..\win-i686-debug\bin\ejsc" --out "../../win-i686-debug/bin/ejs.mod" --debug --optimize 9 --bind --require null "../../src/core/*.es"
+"..\..\win-i686-debug\bin\ejsmod" --require null --cslots "../../win-i686-debug/bin/ejs.mod"
+copy ejs.slots.h "..\..\win-i686-debug\inc\ejs.slots.h"
 del ejs.slots.h</Command>
   <Outputs Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">..\..\win-i686-debug\bin\ejs.mod</Outputs>
   </CustomBuildStep>

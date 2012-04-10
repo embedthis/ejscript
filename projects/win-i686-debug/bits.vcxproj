@@ -43,9 +43,9 @@
   <AdditionalLibraryDirectories>$(OutDir);win-i686-debug\bin;%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
 </Link>
 <CustomBuildStep>
-  <Command>rd /Q /S ..\..\win-i686-debug\bin\bits
-md ..\..\win-i686-debug\bin\bits
-xcopy /S /Y ..\..\src\jems\ejs.bit\bits ..\..\win-i686-debug\bin\bits</Command>
+  <Command>if exist "..\..\win-i686-debug\bin\bits rd /Q /S "..\..\win-i686-debug\bin\bits"
+if not exist "..\..\win-i686-debug\bin\bits" md "..\..\win-i686-debug\bin\bits"
+xcopy /S /Y "..\..\src\jems\ejs.bit\bits" "..\..\win-i686-debug\bin\bits"</Command>
   <Outputs Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">..\..\win-i686-debug\bin\bits</Outputs>
   </CustomBuildStep>
 </ItemDefinitionGroup>

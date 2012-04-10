@@ -13,7 +13,7 @@ Bit.load({
                 trace('Compile', 'ejs.unix.mod')
                 run('ejsc --out ${LIB}/ejs.unix.mod ${settings.esflags} --optimize 9 ' + Path('.').glob('*.es').sort().join(' '))
             ",
-            'generate-nmake': "${WIN_BIN}\\ejsc --out ${OUT} ${settings.esflags} --optimize 9 ${HOME}/Unix.es",
+            'generate-nmake': '"${WIN_BIN}\\ejsc" --out "${OUT}" ${settings.esflags} --optimize 9 "${HOME}/Unix.es"',
             'generate-sh': "${BIN}/ejsc --out ${OUT} ${settings.esflags} --optimize 9 ${HOME}/Unix.es",
             depends: [ 'ejsc', 'ejsmod', 'ejs.mod' ],
         },
