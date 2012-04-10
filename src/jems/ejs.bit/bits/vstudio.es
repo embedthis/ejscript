@@ -219,11 +219,9 @@ function projConfig(base, target) {
 <PropertyGroup>
   <_ProjectFileVersion>${PROJECT_FILE_VERSION}</_ProjectFileVersion>
   <OutDir Condition="\'${CTOK}|${PTOK}\'==\'Debug|${VTYPE}\'">${OUTDIR}\\bin\\</OutDir>
-  <IntDir Condition="\'${CTOK}|${PTOK}\'==\'Debug|${VTYPE}\'">${OUTDIR}\\obj\\${NAME}\\</IntDir>')
-    if (target.custom) {
-        output('  <CustomBuildBeforeTargets Condition="\'${CTOK}|${PTOK}\'==\'Debug|${VTYPE}\'">PreBuildEvent</CustomBuildBeforeTargets>')
-    }
-    output('</PropertyGroup>')
+  <IntDir Condition="\'${CTOK}|${PTOK}\'==\'Debug|${VTYPE}\'">${OUTDIR}\\obj\\${NAME}\\</IntDir>
+  <CustomBuildBeforeTargets Condition="\'${CTOK}|${PTOK}\'==\'Debug|${VTYPE}\'">PreBuildEvent</CustomBuildBeforeTargets>
+  </PropertyGroup>')
 }
 
 function projSourceHeaders(base, target) {
@@ -310,7 +308,9 @@ function exportHeaders(base, target) {
         let dep = bit.targets[dname]
         if (!dep || dep.type != 'header') continue
         for each (file in dep.files) {
-            cmd += 'xcopy /Y /S /D ' + wpath(file.relativeTo(base)) + ' ' + wpath(dep.path.relativeTo(base)) + '\r\n'
+            /* Use the directory in the destination so Xcopy won't ask if file or directory */
+            cmd += 'xcopy /Y /S /D ' + wpath(file.relativeTo(base)) + ' ' + 
+                wpath(dep.path.relativeTo(base).parent) + '\r\n'
         }
     }
     return cmd

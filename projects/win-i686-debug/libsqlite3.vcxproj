@@ -53,7 +53,8 @@
   <_ProjectFileVersion>10</_ProjectFileVersion>
   <OutDir Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">..\..\win-i686-debug\bin\</OutDir>
   <IntDir Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">..\..\win-i686-debug\obj\libsqlite3\</IntDir>
-</PropertyGroup>
+  <CustomBuildBeforeTargets Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">PreBuildEvent</CustomBuildBeforeTargets>
+  </PropertyGroup>
 <ItemGroup>
   <ClCompile Include="..\..\src\deps\sqlite\sqlite3.c" />
 </ItemGroup>
@@ -72,7 +73,7 @@
   <AdditionalLibraryDirectories>$(OutDir);win-i686-debug\bin;%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
 </Link>
 <CustomBuildStep>
-  <Command>xcopy /Y /S /D ..\..\src\deps\sqlite\sqlite3.h ..\..\win-i686-debug\inc\sqlite3.h
+  <Command>xcopy /Y /S /D ..\..\src\deps\sqlite\sqlite3.h ..\..\win-i686-debug\inc
 </Command>
   <Outputs Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">..\..\win-i686-debug\bin\libsqlite3.dll</Outputs>
   </CustomBuildStep>

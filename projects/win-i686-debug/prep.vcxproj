@@ -54,7 +54,7 @@
   <OutDir Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">..\..\win-i686-debug\bin\</OutDir>
   <IntDir Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">..\..\win-i686-debug\obj\prep\</IntDir>
   <CustomBuildBeforeTargets Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">PreBuildEvent</CustomBuildBeforeTargets>
-</PropertyGroup>
+  </PropertyGroup>
 <ItemGroup>
 </ItemGroup>
 <ItemDefinitionGroup>

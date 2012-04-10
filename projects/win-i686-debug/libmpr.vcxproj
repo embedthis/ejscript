@@ -53,7 +53,8 @@
   <_ProjectFileVersion>10</_ProjectFileVersion>
   <OutDir Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">..\..\win-i686-debug\bin\</OutDir>
   <IntDir Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">..\..\win-i686-debug\obj\libmpr\</IntDir>
-</PropertyGroup>
+  <CustomBuildBeforeTargets Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">PreBuildEvent</CustomBuildBeforeTargets>
+  </PropertyGroup>
 <ItemGroup>
   <ClCompile Include="..\..\src\deps\mpr\mprLib.c" />
 </ItemGroup>
@@ -75,8 +76,8 @@
   <AdditionalLibraryDirectories>$(OutDir);win-i686-debug\bin;%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
 </Link>
 <CustomBuildStep>
-  <Command>xcopy /Y /S /D ..\..\src\deps\mpr\mpr.h ..\..\win-i686-debug\inc\mpr.h
-xcopy /Y /S /D ..\..\src\deps\mpr\mprSsl.h ..\..\win-i686-debug\inc\mprSsl.h
+  <Command>xcopy /Y /S /D ..\..\src\deps\mpr\mpr.h ..\..\win-i686-debug\inc
+xcopy /Y /S /D ..\..\src\deps\mpr\mprSsl.h ..\..\win-i686-debug\inc
 </Command>
   <Outputs Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">..\..\win-i686-debug\bin\libmpr.dll</Outputs>
   </CustomBuildStep>

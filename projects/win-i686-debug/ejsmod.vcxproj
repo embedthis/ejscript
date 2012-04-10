@@ -53,7 +53,8 @@
   <_ProjectFileVersion>10</_ProjectFileVersion>
   <OutDir Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">..\..\win-i686-debug\bin\</OutDir>
   <IntDir Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">..\..\win-i686-debug\obj\ejsmod\</IntDir>
-</PropertyGroup>
+  <CustomBuildBeforeTargets Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">PreBuildEvent</CustomBuildBeforeTargets>
+  </PropertyGroup>
 <ItemGroup>
   <ClCompile Include="..\..\src\cmd\ejsmod.c" />
   <ClCompile Include="..\..\src\cmd\doc.c" />
