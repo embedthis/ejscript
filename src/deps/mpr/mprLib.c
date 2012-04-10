@@ -31803,7 +31803,7 @@ int mprLoadNativeModule(MprModule *mp)
     mprAssert(mp);
 
     if ((handle = (HANDLE) MPR->appInstance) == 0) {
-        handle = GetHandle(NULL);
+        handle = GetModuleHandle(NULL);
     }
     if (!handle || !mp->entry || !GetProcAddress(handle, mp->entry)) {
         if ((at = mprSearchForModule(mp->path)) == 0) {
