@@ -459,13 +459,19 @@ function packageWin(pkg: Path, options) {
     let iss = pkg.join('install.iss')
     install(opak.join('install.iss'), iss, {expand: true})
     let cp: File = iss.open('atw')
-    let files = pkg.glob('**', {exclude: /\/$/, missing: undefined})
+    let contents = pkg.join(s.product + '-' + s.version + '-' + s.buildNumber, 'contents')
+    let files = contents.glob('**', {exclude: /\/$/, missing: undefined})
+
+    let productPrefix = bit.prefixes.product.removeDrive().portable
+    let top = Path(contents.name + productPrefix)
+
+    let destTop = Path(top.portable.name + bit.prefixes.product.removeDrive().portable).windows
     for each (file in files) {
         let src = file.relativeTo(pkg)
-        let dest = bit.prefixes.product.join(file)
-        let dir = src.dirname
-        cp.write('Source: "' + src + '"; DestDir: "{app}\\' + dir + '"; ' +
-            'DestName: "' + src.basename + '"; Components: bin\n')
+        let dest = file.relativeTo(top).windows
+        cp.write('Source: "' + src + '"; DestDir: "{app}\\' + dest.dirname + '"; ' +
+            'DestName: "' + dest.basename + '";\n')
+        // Components: bin
     }
     cp.close()
     let base = [s.product, s.version, s.buildNumber, bit.platform.dist, OS.toUpper(), ARCH].join('-')

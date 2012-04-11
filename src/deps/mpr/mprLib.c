@@ -12118,6 +12118,9 @@ static int getPathInfo(MprDiskFileSystem *fs, cchar *path, MprPath *info)
     info->isReg = (s.st_mode & S_IFREG) != 0;
     info->isLink = 0;
     ext = mprGetPathExt(path);
+    if (ext && strcmp(ext, "dll") == 0) {
+        info->perms |= 0111;
+    }
     if (ext && strcmp(ext, "lnk") == 0) {
         info->isLink = 1;
     }

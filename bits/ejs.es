@@ -42,14 +42,17 @@ public function packageBinaryFiles(formats = ['tar', 'native']) {
     install('package/linkup', p.bin, {permissions: 0755})
 
     install(bit.dir.bin + '/*', p.bin, {
-        include: /bit|ejs|ejsc|ejsman|ejspage|http|jem|mvc|sqlite|utest/,
+        include: /bit|ejs|ejsc|ejsman|ejspage|http|jem|mvc|sqlite|utest|\.dll/,
+        exclude: /\.pdb|\.exp|\.lib|\.def|\.suo|\.old/,
         permissions: 0755, 
     })
-    install(bit.dir.lib.join('*'), p.lib, {
-        permissions: 0755, 
-        exclude: /bits|file-save|www|simple|sample/,
-    })
-    install(bit.dir.lib.join('bits'), p.lib.join('bits'))
+    if (OS != 'win') {
+        install(bit.dir.lib.join('*'), p.lib, {
+            permissions: 0755, 
+            exclude: /bits|file-save|www|simple|sample/,
+        })
+    }
+    install(bit.dir.lib.join('bits'), p.lib)
     install(bit.dir.lib.join('www'), p.lib.join('www'), {exclude: /tree-images/})
 
     if (bit.targets.libmprssl.enable && bit.platform.os == 'linux') {

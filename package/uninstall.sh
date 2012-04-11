@@ -135,7 +135,7 @@ preClean() {
 	local f
 	local cdir=`pwd`
 
-    cp $BIN_PREFIX/linkup /tmp/linkup$$
+    cp "$BIN_PREFIX/linkup" /tmp/linkup$$
 
 	if [ $OS != WIN ] ; then
         rm -f /var/lock/subsys/$PRODUCT /var/lock/$PRODUCT
@@ -170,9 +170,15 @@ postClean() {
 
     rm -f "${VER_PREFIX}/install.conf"
 
-    for p in MAN INC DOC PRD CFG LIB WEB SPL ; do
-        eval cleanDir "\$${p}_PREFIX"
-    done
+    cleanDir "${BIN_PREFIX}"
+    cleanDir "${MAN_PREFIX}"
+    cleanDir "${INC_PREFIX}"
+    cleanDir "${DOC_PREFIX}"
+    cleanDir "${PRD_PREFIX}"
+    cleanDir "${CFG_PREFIX}"
+    cleanDir "${LIB_PREFIX}"
+    cleanDir "${WEB_PREFIX}"
+    cleanDir "${SPL_PREFIX}"
 
     if [ $OS != WIN ] ; then
         if [ -x /usr/share/$PRODUCT ] ; then
@@ -186,9 +192,9 @@ postClean() {
             eval rmdir "\$${p}_PREFIX" >/dev/null 2>&1
         done
     fi
-    cleanDir ${VER_PREFIX}
-    rm -f ${PRD_PREFIX}/latest
-    cleanDir ${PRD_PREFIX}
+    cleanDir "${VER_PREFIX}"
+    rm -f "${PRD_PREFIX}/latest"
+    cleanDir "${PRD_PREFIX}"
     if [ -x /tmp/linkup$$ ] ; then
         /tmp/linkup$$ Remove /
         rm -f /tmp/linkup$$
@@ -226,8 +232,8 @@ cleanDir() {
         count=`ls "$d" 2>/dev/null | wc -l | sed -e 's/ *//'`
         [ "$count" = "0" ] && rmdir "$d" >/dev/null 2>&1
     done 
-    if [ -d $cdir ] ; then
-        cd $cdir
+    if [ -d "$cdir" ] ; then
+        cd "$cdir"
         count=`ls "$dir" 2>/dev/null | wc -l | sed -e 's/ *//'`
         [ "$count" = "0" ] && rmdir "$dir" >/dev/null 2>&1
         rmdir "$dir" 2>/dev/null
