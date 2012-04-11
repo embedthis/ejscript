@@ -189,7 +189,7 @@ public function packageComboFiles() {
 
 
 public function installBinary() {
-    if (App.uid != 0) {
+    if (Config.OS != 'WIN' && App.uid != 0) {
         throw 'Must run as root. Use \"sudo bit install\"'
     }
     packageBinaryFiles(null)
@@ -200,7 +200,7 @@ public function installBinary() {
 }
 
 public function uninstallBinary() {
-    if (App.uid != 0) {
+    if (Config.OS != 'WIN' && App.uid != 0) {
         throw 'Must run as root. Use \"sudo bit uninstall\"'
     }
     trace('Uninstall', bit.settings.title)                                                     
