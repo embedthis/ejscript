@@ -1,5 +1,5 @@
 /*
-    evalScript.bit - Bit file for the evalScript sample
+    local.bit - Bit file for the evalScript sample
  */
 
 Bit.load({
@@ -8,8 +8,7 @@ Bit.load({
             type: 'exe',
             path: 'main${EXE}',
             sources: ['*.c'],
-            depends: ['libejs'],
-            nogen: true,
+            '+libraries': [ 'ejs', 'mpr', 'mprssl' ],
         },
     },
 })

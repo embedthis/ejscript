@@ -13,11 +13,11 @@ Bit.load({
     },
 
     defaults: {
-        'compiler': [ '-fPIC', '-Wall' ],
-        'defines':  [ '-DPIC' ],
-        'libraries':[ 'pthread', 'm' ],
-        'libpaths':[ ],
-        'linker':   [
+        '+compiler': [ '-fPIC', '-Wall' ],
+        '+defines':  [ '-DPIC' ],
+        '+libraries':[ 'pthread', 'm' ],
+        '+libpaths': [ ],
+        'linker':    [
             '-Wl,-rpath,@executable_path/../lib',
             '-Wl,-rpath,@executable_path/',
             '-Wl,-rpath,@loader_path/',

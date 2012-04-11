@@ -1,5 +1,5 @@
 /*
-    nclass.bit - Bit file for the nclass sample
+    local.bit - Bit file for the nclass sample
  */
 
 Bit.load({
@@ -15,16 +15,14 @@ Bit.load({
                 run('ejsc shape.es')
                 run('ejsmod --cslots nclass.mod')
             ",
-            depends: ['ejsc'],
-            nogen: true,
         },
 
         'nclass-lib': {
             type: 'lib',
             path: 'nclass${SHOBJ}',
             sources: ['*.c'],
-            depends: ['libejs', 'nclass.mod'],
-            nogen: true,
+            depends: ['nclass.mod'],
+            '+libraries': [ 'ejs', 'mpr', 'mprssl' ],
         },
     },
 })

@@ -1,12 +1,11 @@
 /*
-    composite.bit - Bit file for the composite sample
+    local.bit - Bit file for the composite sample
  */
 
 Bit.load({
     targets: {
         'composite' : {
             depends: ['composite-lib', 'composite.mod'],
-            nogen: true,
         },
 
         'composite.mod' : {
@@ -16,16 +15,13 @@ Bit.load({
                 run('ejsc square.es')
                 run('ejsmod --cslots composite.mod')
             ",
-            depends: ['ejsc', 'composite-lib'],
-            nogen: true,
         },
 
         'composite-lib': {
             type: 'lib',
             path: 'composite${SHOBJ}',
             sources: ['*.c'],
-            depends: ['libejs'],
-            nogen: true,
+            '+libraries': [ 'ejs', 'mpr', 'mprssl' ],
         },
     },
 })

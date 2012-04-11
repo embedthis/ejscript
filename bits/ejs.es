@@ -28,8 +28,7 @@ public function packageBinaryFiles(formats = ['tar', 'native']) {
     let prefixes = bit.prefixes;
     let p = {}
     for (prefix in bit.prefixes) {
-        if (prefix == 'config' || prefix == 'log' || prefix == 'spool' || prefix == 'src' || 
-                prefix == 'include' || prefix == 'web') {
+        if (prefix == 'config' || prefix == 'log' || prefix == 'spool' || prefix == 'src' || prefix == 'web') {
             continue
         }
         p[prefix] = Path(contents.portable.name + bit.prefixes[prefix].removeDrive().portable)
@@ -55,6 +54,7 @@ public function packageBinaryFiles(formats = ['tar', 'native']) {
     }
     install(bit.dir.lib.join('bits'), p.lib)
     install(bit.dir.lib.join('www'), p.lib.join('www'), {exclude: /tree-images/})
+    install(bit.dir.inc.join('*.h'), p.include)
 
     if (bit.targets.libmprssl.enable && bit.platform.os == 'linux') {
         install(bit.dir.lib.join('*.' + bit.ext.shobj + '*'), p.lib, {strip: strip, permissions: 0755})

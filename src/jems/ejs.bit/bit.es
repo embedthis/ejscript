@@ -1937,7 +1937,13 @@ public class Bit {
             bit.IN = file.relative
             bit.CFLAGS = (target.compiler) ? target.compiler.join(' ') : ''
             bit.DEFINES = (target.defines) ? target.defines.join(' ') : ''
-            bit.INCLUDES = (target.includes) ? target.includes.map(function(path) '-I' + path.relative) : ''
+
+            //  MOB - only making relative for generating. Should keep abs otherwise.
+            if (generating) {
+                bit.INCLUDES = (target.includes) ? target.includes.map(function(path) '-I' + path.relative) : ''
+            } else {
+                bit.INCLUDES = (target.includes) ? target.includes.map(function(path) '-I' + path) : ''
+            }
             bit.ARCH = bit.platform.arch
 
             let command = rule.expand(bit, {fill: ''})
@@ -2801,7 +2807,11 @@ global.NN = item.ns
         }
         bit.emulating = options.emulate
 
-        loadWrapper(bit.dir.bits.join('standard.bit'))
+        if (bitfile == MAIN) {
+            loadWrapper(bit.dir.bits.join('standard.bit'))
+        } else {
+            loadWrapper(bit.dir.bits.join('standalone.bit'))
+        }
         setTypes()
         loadWrapper(bit.dir.bits.join('os/' + bit.platform.os + '.bit'))
 

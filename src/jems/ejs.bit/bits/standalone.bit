@@ -1,0 +1,39 @@
+/*
+    standalone.bit -- Stand-alone build Settings and Targets
+ */
+
+Bit.load({
+	dir: {
+		cfg:   '.',
+		bin:   '.',
+		inc:   '.',
+		lib:   '.',
+		obj:   '.',
+	},
+
+    defaults: {
+        '+includes': [ Config.IncDir ],
+        '+libpaths': [ Config.LibDir ],
+    },
+
+    targets: {
+        clean: {
+            action: "action('cleanTargets')",
+        },
+
+        compile: {
+            depends: ['build'],
+        },
+
+        rebuild: {
+            type: 'rebuild',
+        },
+    },
+
+    packs: {
+        compiler: {
+            enable: true,
+            path: "cc",
+        },
+    },
+})
