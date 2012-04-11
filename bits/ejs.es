@@ -246,6 +246,7 @@ public function createLinks() {
         log.push(link)
     }
     bit.prefixes.productver.join('files.log').append(log.join('\n') + '\n')
+    bit.prefixes.product.join('latest').symlink(bit.settings.version)
 }
 
 /*
