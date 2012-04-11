@@ -195,6 +195,7 @@ public function installBinary() {
     packageBinaryFiles(null)
     package(bit.dir.pkg.join('bin'), 'install')
     createLinks()                                                                                          
+    updateLatestLink()                                                                                          
     bit.dir.pkg.join('bin').removeAll()
     trace('Complete', bit.settings.title + ' installed')
 }
@@ -223,6 +224,7 @@ public function uninstallBinary() {
         vtrace('Remove', prefix)
         prefix.remove()
     }
+    updateLatestLink()
 }
 
 /*
@@ -246,7 +248,16 @@ public function createLinks() {
         log.push(link)
     }
     bit.prefixes.productver.join('files.log').append(log.join('\n') + '\n')
-    bit.prefixes.product.join('latest').symlink(bit.settings.version)
+}
+
+function updateLatestLink() {
+    let latest = bit.prefixes.product.join('latest')
+    let version = Path('.').glob('*', {include: /\d+\.\d+\.\d+/}).sort().pop()
+    if (version) {
+        latest.symlink(version)
+    } else {
+        latest.remove()
+    }
 }
 
 /*
