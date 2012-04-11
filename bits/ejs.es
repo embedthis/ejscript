@@ -28,7 +28,8 @@ public function packageBinaryFiles(formats = ['tar', 'native']) {
     let prefixes = bit.prefixes;
     let p = {}
     for (prefix in bit.prefixes) {
-        if (prefix == 'config' || prefix == 'log' || prefix == 'spool' || prefix == 'src' || prefix == 'include' || prefix == 'web') {
+        if (prefix == 'config' || prefix == 'log' || prefix == 'spool' || prefix == 'src' || 
+                prefix == 'include' || prefix == 'web') {
             continue
         }
         p[prefix] = Path(contents.portable.name + bit.prefixes[prefix].removeDrive().portable)
@@ -70,7 +71,7 @@ public function packageBinaryFiles(formats = ['tar', 'native']) {
         /*
             install(bit.packs.compiler.path.join('../../lib/msvcrt.lib'), p.bin)
          */
-        install(bit.dir.bin.join('removeFiles*'), p.bin)
+        install(bit.dir.bin.join('removeFiles' + bit.EXE), p.bin)
     }
     if (bit.platform.like == 'posix') {
         install('doc/man/*.1', p.productver.join('doc/man/man1'), {compress: true})

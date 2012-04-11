@@ -292,7 +292,7 @@ function packageTar(pkg: Path, options) {
 }
 
 function packageInstall(pkg: Path, options) {
-    if (App.uid != 0) {
+    if (Config.OS != 'WIN' && App.uid != 0) {
         throw 'Must run as root. Use "sudo bit install"'
     }
     let s = bit.settings
