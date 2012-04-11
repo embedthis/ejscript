@@ -213,7 +213,7 @@ public class Bit {
         }
         if (args.rest.contains('generate')) {
             if (local.like == 'windows') {
-                options.gen = ['sh', 'make', 'nmake', 'vs']
+                options.gen = ['sh', 'nmake', 'vs']
             } else {
                 options.gen = ['sh', 'make']
             }
