@@ -231,23 +231,24 @@ public function uninstallBinary() {
     Create symlinks for binaries and man pages
  */
 public function createLinks() {
-    let programs = ['bit', 'ejs', 'ejsc', 'ejsmod', 'ejsman', 'ejspage', 'http', 'jem', 'mvc', 'sqlite', 'utest' ]
     let localbin = Path('/usr/local/bin')
-    let bin = bit.prefixes.bin
-    let target: Path
-    let log = []
-
-    for each (program in programs) {
-        let link = Path(localbin.join(program))
-        link.symlink(bin.join(program))
-        log.push(link)
+    if (localbin.exists) {
+        let programs = ['bit', 'ejs', 'ejsc', 'ejsmod', 'ejsman', 'ejspage', 'http', 'jem', 'mvc', 'sqlite', 'utest' ]
+        let bin = bit.prefixes.bin
+        let target: Path
+        let log = []
+        for each (program in programs) {
+            let link = Path(localbin.join(program))
+            link.symlink(bin.join(program))
+            log.push(link)
+        }
+        for each (page in bit.prefixes.productver.join('doc/man').glob('**/*.1.gz')) {
+            let link = Path('/usr/share/man/man1/' + page.basename)
+            link.symlink(page)
+            log.push(link)
+        }
+        bit.prefixes.productver.join('files.log').append(log.join('\n') + '\n')
     }
-    for each (page in bit.prefixes.productver.join('doc/man').glob('**/*.1.gz')) {
-        let link = Path('/usr/share/man/man1/' + page.basename)
-        link.symlink(page)
-        log.push(link)
-    }
-    bit.prefixes.productver.join('files.log').append(log.join('\n') + '\n')
 }
 
 function updateLatestLink() {
