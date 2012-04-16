@@ -27,26 +27,28 @@ public function xcode(base: Path) {
     // bit.ARCH_VERSION = ARCH_VERSION
     // bit.OBJ_VERSION = OBJ_VERSION
 
-    print('BASE', base)
-    init(base)
+    let name = base.basename
+    base = base.dirname
+    init(base, name)
     projHeader(base)
-    // allTarget(base)
+    allTargets(base)
     sources(base)
+    proxies(base)
     files(base)
     frameworks(base)
     groups(base)
     targets(base)
     project(base)
     sourcesBuildPhase(base)
-    projectConfigSection()
+    targetDependencies(base)
+    projectConfigSection(base)
     targetConfigSection()
     term()
-dump(ids)
+    // dump(ids)
 }
 
-function init(base) {
-    let name = base.basename
-    let dir = base.joinExt('xcodeproj').relative
+function init(base, name) {
+    let dir = base.join(name).joinExt('xcodeproj').relative
     trace('Generate', dir)
     dir.makeDir()
     let proj = dir.join('project.pbxproj')
@@ -60,18 +62,16 @@ function init(base) {
         guidpath.write(gbase)
     }
     
-    makeid('ID_All')
     makeid('ID_Products')
-    makeid('ID_Sources')
-    makeid('ID_Frameworks')
 
     //  MOB - do we want debug & release?
     makeid('ID_Project')
     makeid('ID_ProjectConfigList')
     makeid('ID_ProjectDebug')
     makeid('ID_ProjectRelease')
-
+    /*
     makeid('ID_TargetGroupProduct')
+    */
 
     let targets = []
     for each (target in bit.targets) {
@@ -79,15 +79,22 @@ function init(base) {
             targets.push(target.name)
         }
     }
-    bit.targets.ProductsGroup = {
-        type: 'group',
-        name: 'Products',
-        depends: targets,
+    //  MOB - should have "_" prefix and suffix
+    bit.targets.ProductsGroup = { type: 'group', name: 'Products', depends: targets }
+
+    targets = []
+    for each (target in bit.targets) {
+        if (target.type == 'exe') {
+            targets.push(target.name)
+        }
     }
+    //  MOB - should have "_" prefix and suffix
+    bit.targets.All = { type: 'all', name: 'All', depends: targets }
 }
 
 function term() {
     delete bit.targets.ProductsGroup
+    delete bit.targets.All
 }
 
 function projHeader(base: Path) {
@@ -100,28 +107,33 @@ function projHeader(base: Path) {
     objects = {')
 }
 
-function allTarget(base: Path) {
-    let section = '    ${ID_All} /* All */ = {
-        isa = PBXAggregateTarget;
-        buildConfigurationList = AA0A1A0E0FD6DD14006A9E86 /* Build configuration list for PBXAggregateTarget "All" */;
-        buildPhases = (
-            /* MOB - replace with UID, for shell scripts */
-        );
-        dependencies = ('
-    output(section.expand())
+function allTargets(base: Path) {
+    output('\n/* Begin PBXAggregateTarget section */')
 
-    section = '       ${TARGET_ID} /* PBXTargetDependency ' + target.name + ' */,'
+    let section = '\t\t${TID} /* All */ = {
+			isa = PBXAggregateTarget;
+			buildConfigurationList = ${BCL} /* Build configuration list for PBXAggregateTarget "All" */;
+			buildPhases = (
+				/* MOB - replace with UID, for shell scripts */
+			);
+			dependencies = ('
+    let bcl = makeid('ID_BuildConfigList:All')
+    let tid = makeid('ID_NativeTarget:All')
+    output(section.expand(ids, eo).expand({TID: tid, BCL: bcl}))
+
+    section = '\t\t\t\t${DID} /* PBXTargetDependency ${TNAME} */,'
     for each (target in bit.targets) {
         if (target.type != 'exe' && target.type != 'lib') {
             continue
         }
-        target.uid ||= uid()
-        output(section.expand())
+        let did = makeid('ID_TargetDependency:' + target.name)
+        output(section.expand({DID: did, TNAME: target.name}))
     }
-    output('        );
-    name = All;
-    productName = All;
-    };')
+    output('\t\t\t);
+			name = All;
+			productName = All;
+    	};
+/* End PBXAggregateTarget section */')
 }
 
 function sources(base: Path) {
@@ -129,7 +141,7 @@ function sources(base: Path) {
 /* Begin PBXBuildFile section */'
 
     output(section)
-    section = '        ${BID} /* ${PATH} in Sources */ = { isa = PBXBuildFile; fileRef = ${REF} /* ${NAME} */; };'
+    section = '\t\t${BID} /* ${PATH} in Sources */ = {isa = PBXBuildFile; fileRef = ${REF} /* ${NAME} */; };'
 
     for each (target in bit.targets) {
         if (target.type != 'exe' && target.type != 'lib') {
@@ -141,19 +153,58 @@ function sources(base: Path) {
                 let bid = makeid('ID_BuildFile:' + obj.name)
                 for each (src in obj.files) {
                     let ref = makeid('ID_TargetSrc:' + src)
-                    output(section.expand({BID: bid, REF: ref, PATH: src, NAME: src}))
+                    output(section.expand({BID: bid, REF: ref, PATH: src.basename, NAME: src.basename}))
                 }
+            }
+        }
+    }
+    /*
+        Emit a framework reference for library targets that are depended upon. See PBXFrameworksBuildPhase.
+     */
+    section = '\t\t${BID} /* ${PATH} for ${TNAME} */ = {isa = PBXBuildFile; fileRef = ${REF} /* ${NAME} */; };'
+    for each (target in bit.targets) {
+        if (target.type != 'exe' && target.type != 'lib' && target.type != 'group') {
+           continue
+        } 
+        for each (item in target.libraries) {
+            let dep = bit.targets['lib' + item]
+            if (dep && dep.type == 'lib') {
+                let bid = makeid('ID_TargetFramework:' + target.name + '-on-' + dep.name)
+                let path = dep.path.relativeTo(base)
+                let ref = getmakeid('ID_TargetRef:' + path)
+                output(section.expand({BID: bid, REF: ref, PATH: dep.path.basename, 
+                    TNAME: target.name, NAME: dep.name}))
             }
         }
     }
     output('/* End PBXBuildFile section */')
 }
 
+function proxies(base: Path) {
+    output('\n/* Begin PBXContainerItemProxy section */')
+    let section = '\t\t${PID} /* PBXContainerItemProxy ${TNAME} */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = ${ID_Project} /* Project object */;
+			proxyType = 1;
+			remoteGlobalIDString = ${TID};
+			remoteInfo = ${TNAME};
+		};'
+    for each (target in bit.targets) {
+        if (target.type != 'exe' && target.type != 'lib') {
+            continue
+        }
+        let pid = makeid('ID_TargetProxy:' + target.name)
+        let tid = makeid('ID_NativeTarget:' + target.name)
+        output(section.expand(ids, eo).expand({PID: pid, TID: tid, TNAME: target.name}))
+    }
+    output('/* End PBXContainerItemProxy section */')
+}
+
 function files(base: Path) {
     output('\n/* Begin PBXFileReference section */')
-    let lib = '        ${REF} /* ${NAME} */ = { isa = PBXBuildFileReference; explicitFileType = compiled.mach-o.dylib; includeInIndex = 0; path = ${PATH}; sourceTree = "<group>"; };'
-    let exe = '        ${REF} /* ${NAME} */ = { isa = PBXBuildFileReference; explicitFileType = compiled.mach-o.executable; includeInIndex = 0; path = ${PATH}; sourceTree = "<group>"; };'
-    let source = '        ${REF} /* ${NAME} */ = { isa = PBXBuildFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; name = ${NAME}; path = ${PATH}; sourceTree = "<group>"; };'
+    let lib = '\t\t${REF} /* ${NAME} */ = {isa = PBXFileReference; explicitFileType = "compiled.mach-o.dylib"; includeInIndex = 0; path = ${PATH}; sourceTree = BUILT_PRODUCTS_DIR; };'
+    let exe = '\t\t${REF} /* ${NAME} */ = {isa = PBXFileReference; explicitFileType = "compiled.mach-o.executable"; includeInIndex = 0; path = ${PATH}; sourceTree = BUILT_PRODUCTS_DIR; };'
+    let source = '\t\t${REF} /* ${NAME} */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; name = ${NAME}; path = ${PATH}; sourceTree = "<group>"; };'
 
     for each (target in bit.targets) {
         if (target.type != 'exe' && target.type != 'lib') {
@@ -173,55 +224,75 @@ function files(base: Path) {
             }
         }
         let path = target.path.relativeTo(base)
-        let ref = makeid('ID_TargetRef:' + path)
+        let ref = getmakeid('ID_TargetRef:' + path)
         if (target.type == 'lib') {
-            output(lib.expand({REF: ref, NAME: target.name, PATH: path}))
+            //  MOB - may need full path if not using built products
+            output(lib.expand({REF: ref, NAME: target.name, PATH: path.basename.joinExt(bit.ext.shobj)}))
         } else if (target.type == 'exe') {
+            //  MOB - may need full path if not using built products
             //  MOB _ can use sourceTree = BUILT_PRODUCTS_DIR and then path is path.basename
-            output(exe.expand({REF: ref, NAME: target.name, PATH: path}))
+            output(exe.expand({REF: ref, NAME: target.name, PATH: path.basename.joinExt(bit.ext.exe)}))
         }
     }
     output('/* End PBXFileReference section */')
 }
 
+/*
+    This is for frameworks and libraries used by targets
+ */
 function frameworks(base: Path) {
-    let section = '
-/* Begin PBXFrameworksBuildPhase section */
-        ${ID_Frameworks} /* Frameworks */ = {
+    output('\n/* Begin PBXFrameworksBuildPhase section */')
+    let section = '\t\t${FID} /* Frameworks and Libraries for ${TNAME} */ = {
             isa = PBXFrameworksBuildPhase;
             buildActionMask = 2147483647;
             files = (
+${LIBS}
             );
             runOnlyForDeploymentPostprocessing = 0;
-        };
-/* End PBXFrameworksBuildPhase section */'
-    output(section.expand(ids))
+        };'
+    for each (target in bit.targets) {
+        if (target.type != 'exe' && target.type != 'lib' && target.type != 'group') {
+           continue
+        } 
+        let fid = makeid('ID_Frameworks:' + target.name)
+        let libs = []
+        for each (item in target.libraries) {
+            let dep = bit.targets['lib' + item]
+            if (dep && dep.type == 'lib') {
+                let id = getid('ID_TargetFramework:' + target.name + '-on-' + dep.name)
+                libs.push('\t\t\t\t' + id + ' /* ' + dep.name + ' */,')
+            }
+        }
+        output(section.expand(ids, eo).expand({FID: fid, LIBS: libs.join('\n') + '\t\t\t\t', TNAME: target.name}))
+    }
+    output('/* End PBXFrameworksBuildPhase section */')
 }
 
 
 function groups(base: Path) {
     output('\n/* Begin PBXGroup section */')
-    let section = '        ${GID} /* ${NAME} */ = {
+    let section = '\t\t${GID} /* ${NAME} */ = {
             isa = PBXGroup;
             children = ('
     output(section.expand({GID: makeid('ID_Group'), NAME: 'Top'}))
 
-    let groupItem = '                ${REF} /* ${NAME} */,'
+    let groupItem = '\t\t\t\t${REF} /* ${NAME} */,'
     for each (target in bit.targets) {
         if (target.type != 'exe' && target.type != 'lib' && target.type != 'group') {
            continue
         } 
         let ref = makeid('ID_TargetGroup:' + target.name)
-        output(groupItem.expand({REF: ref, NAME: target.name}))
+        let name = target.name != 'Products' ? (target.name + '-source') : target.name
+        output(groupItem.expand({REF: ref, NAME: name}))
     }
-    output('            );
+    output('\t\t\t);
             sourceTree = "<group>";
         };')
 
-    //  MOB - removed path = ${PATH};
-    let groupFooter = '            );
-            name = ${NAME};
-            sourceTree = "<group>";
+    let groupFooter = '\t\t\t);
+            name = "${NAME}";
+            path = ${PATH};
+            sourceTree = "<absolute>";
         };'
 
     for each (target in bit.targets) {
@@ -229,57 +300,76 @@ function groups(base: Path) {
            continue
         } 
         let gid = getid('ID_TargetGroup:' + target.name)
-        output(section.expand({GID: gid, NAME: target.name}))
+        let name = target.name != 'Products' ? (target.name + '-source') : target.name
+        output(section.expand({GID: gid, NAME: name}))
         for each (item in target.depends) {
             let dep = bit.targets[item]
             if (dep) {
                 if (dep.type == 'obj') {
                     for each (src in dep.files) {
                         let ref = getid('ID_TargetSrc:' + src)
-                        output(groupItem.expand({REF: ref, NAME: src}))
+                        output(groupItem.expand({REF: ref, NAME: src.basename}))
                     }
-                } else {
+                } else if ((dep.type == 'exe' || dep.type == 'lib') && target.name == 'Products') {
                     let path = dep.path.relativeTo(base)
                     let ref = getid('ID_TargetRef:' + path)
                     output(groupItem.expand({REF: ref, NAME: dep.name}))
                 }
             }
         }
-        output(groupFooter.expand({NAME: target.name, PATH: target.path ? target.path.relativeTo(base) : '' }))
+        output(groupFooter.expand({NAME: name, PATH: bit.dir.src}))
     }
     output('/* End PBXGroup section */')
 }
 
 function targets(base) {
     output('\n/* Begin PBXNativeTarget section */')
-    let section = '        ${TID} /* ${TNAME} */ = {
+    let section = '\t\t${TID} /* ${TNAME} */ = {
 			isa = PBXNativeTarget;
 			buildConfigurationList = ${BCL} /* Build configuration list for PBXNativeTarget "${TNAME}" */;
 			buildPhases = (
-				${ID_Sources} /* Sources */,
-				${ID_Frameworks} /* Frameworks */,
+				${SID} /* Sources */,
+				${FID} /* Frameworks */,
 			);
 			buildRules = (
 			);
 			dependencies = (
+${DEPS}
 			);
 			name = ${TNAME};
 			productName = ${settings.product};
 			productReference = ${REF} /* ${TNAME} */;
-			productType = "com.apple.product-type.tool";
-		};
-/* End PBXNativeTarget section */'
+			productType = "${PTYPE}";
+		};'
 
     for each (target in bit.targets) {
         if (target.type != 'exe' && target.type != 'lib') {
            continue
         } 
-        let tid = makeid('ID_NativeTarget:' + target.name)
+        let sid = makeid('ID_NativeSources:' + target.name)
+        let fid = getid('ID_Frameworks:' + target.name)
+        let tid = getid('ID_NativeTarget:' + target.name)
         let bcl = makeid('ID_BuildConfigList:' + target.name)
         let path = target.path.relativeTo(base)
         let ref = getid('ID_TargetRef:' + path)
-        output(section.expand(bit, eo).expand(ids, eo).expand({TNAME: target.name, TID: tid, BCL: bcl, REF: ref}))
+        let ptype = (target.type == 'exe') ? 'com.apple.product-type.tool' : 'com.apple.product-type.library.dynamic';
+
+        let deplist = []
+        for each (item in target.depends) {
+            let dep = bit.targets[item]
+            if (dep) {
+                if (dep.type == 'exe' || dep.type == 'lib') {
+                    deplist.push(dep)
+                }
+            }
+        }
+        let deps = deplist.map(function(dep) '\t\t\t\t' + getmakeid('ID_TargetDependency:' + dep.name) + 
+            + ' /* ' + dep.name + ' */,').join('\n') + '\t\t\t\t'
+        output(section.expand(bit, eo).expand(ids, eo).expand({
+            TNAME: target.name, TID: tid, BCL: bcl, REF: ref, SID: sid, FID: fid, PTYPE: ptype, DEPS: deps,
+        }))
     }
+    output('/* End PBXNativeTarget section */')
 }
 
 function project(base) {
@@ -306,31 +396,29 @@ function project(base) {
 
     output(section.expand(bit, eo).expand(ids))
 
-    section = '                ${TID} /* ${TNAME} */,'
+    section = '\t\t\t\t${TID} /* ${TNAME} */,'
     for each (target in bit.targets) {
-        if (target.type != 'exe' && target.type != 'lib') {
+        if (target.type != 'exe' && target.type != 'lib' && target.name != 'All') {
            continue
         }
         let tid = getid('ID_NativeTarget:' + target.name)
         output(section.expand({TID: tid, TNAME: target.name}))
     }
-    output('            );
+    output('\t\t\t);
 		};
 /* End PBXProject section */')
 }
 
 function sourcesBuildPhase(base: Path) {
-    let section = '
-/* Begin PBXSourcesBuildPhase section */
-		${ID_Sources} /* Sources */ = {
+    output('\n/* Begin PBXSourcesBuildPhase section */')
+    let section = '\t\t${SID} /* ${NAME} Sources */ = {
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
 ${FILES}
 			);
 			runOnlyForDeploymentPostprocessing = 0;
-		};
-/* End PBXSourcesBuildPhase section */'
+		};'
 
     for each (target in bit.targets) {
         if (target.type != 'exe' && target.type != 'lib') {
@@ -342,17 +430,40 @@ ${FILES}
             for each (src in obj.files) {
                 let bid = getid('ID_BuildFile:' + obj.name)
                 let fid = getid('ID_TargetSrc:' + src)
-                let section = '                ${BID} /* ${NAME} in Sources */,'
-                lines.push(section.expand({BID: bid, NAME: src}))
+                let srcSection = '\t\t\t\t${BID} /* ${NAME} in Sources */,'
+                lines.push(srcSection.expand({BID: bid, NAME: src.basename}))
             }
         }
         let files = lines.join('\n')
-        output(section.expand({FILES: files}, eo).expand(ids))
+        let sid = getid('ID_NativeSources:' + target.name)
+        output(section.expand({FILES: files, NAME: target.name, SID: sid}, eo).expand(ids))
     }
+    output('/* End PBXSourcesBuildPhase section */')
 }
 
-function projectConfigSection() {
-//  MOB - where should these come from - from bit.settings ?
+function targetDependencies(base: Path) {
+    output('\n/* Begin PBXTargetDependency section */')
+    let section = '\t\t${DID} /* PBXTargetDependency ${TNAME} */ = {
+			isa = PBXTargetDependency;
+			target = ${TID} /* ${TNAME} */;
+			targetProxy = ${PID} /* PBXContainerItemProxy */;
+		};'
+    for each (target in bit.targets) {
+        if (target.type != 'exe' && target.type != 'lib') {
+           continue
+        }
+        if (!ids['ID_TargetDependency:' + target.name]) {
+            continue
+        }
+        let did = getid('ID_TargetDependency:' + target.name)
+        let tid = getid('ID_NativeTarget:' + target.name)
+        let pid = getid('ID_TargetProxy:' + target.name)
+        output(section.expand({DID: did, TID: tid, TNAME: target.name, PID: pid}))
+    }
+    output('/* End PBXTargetDependency section */')
+}
+
+function projectConfigSection(base) {
     let section = '
 /* Begin XCBuildConfiguration section */
 		${ID_ProjectDebug} /* Debug */ = {
@@ -362,19 +473,17 @@ function projectConfigSection() {
 				ARCHS = "$(ARCHS_STANDARD_64_BIT)";
 				COPY_PHASE_STRIP = NO;
 				GCC_C_LANGUAGE_STANDARD = gnu99;
-				GCC_DYNAMIC_NO_PIC = NO;
-				GCC_ENABLE_OBJC_EXCEPTIONS = YES;
+GCC_ENABLE_OBJC_EXCEPTIONS = YES;
 				GCC_OPTIMIZATION_LEVEL = 0;
-				GCC_PREPROCESSOR_DEFINITIONS = (
-					"DEBUG=1",
-					"$(inherited)",
-				);
 				GCC_SYMBOLS_PRIVATE_EXTERN = NO;
 				GCC_VERSION = com.apple.compilers.llvm.clang.1_0;
-				GCC_WARN_64_TO_32_BIT_CONVERSION = YES;
+				GCC_WARN_64_TO_32_BIT_CONVERSION = ${WARN_64_TO_32};
 				GCC_WARN_ABOUT_RETURN_TYPE = YES;
 				GCC_WARN_UNINITIALIZED_AUTOS = YES;
-				GCC_WARN_UNUSED_VARIABLE = YES;
+				GCC_WARN_UNUSED_VARIABLE = ${WARN_UNUSED};
+                GCC_DYNAMIC_NO_PIC = ${NO_PIC};
+${SETTINGS}
+${DEBUG_SETTINGS}
 				MACOSX_DEPLOYMENT_TARGET = 10.7;
 				ONLY_ACTIVE_ARCH = YES;
 				SDKROOT = macosx;
@@ -389,20 +498,61 @@ function projectConfigSection() {
 				COPY_PHASE_STRIP = YES;
 				DEBUG_INFORMATION_FORMAT = "dwarf-with-dsym";
 				GCC_C_LANGUAGE_STANDARD = gnu99;
-				GCC_ENABLE_OBJC_EXCEPTIONS = YES;
+/* MOB - remove */
+GCC_ENABLE_OBJC_EXCEPTIONS = YES;
 				GCC_VERSION = com.apple.compilers.llvm.clang.1_0;
-				GCC_WARN_64_TO_32_BIT_CONVERSION = YES;
+				GCC_WARN_64_TO_32_BIT_CONVERSION = ${WARN_64_TO_32};
 				GCC_WARN_ABOUT_RETURN_TYPE = YES;
 				GCC_WARN_UNINITIALIZED_AUTOS = YES;
-				GCC_WARN_UNUSED_VARIABLE = YES;
+				GCC_WARN_UNUSED_VARIABLE = ${WARN_UNUSED};
+                GCC_DYNAMIC_NO_PIC = ${NO_PIC};
+${SETTINGS}
+${RELEASE_SETTINGS}
 				MACOSX_DEPLOYMENT_TARGET = 10.7;
 				SDKROOT = macosx;
+                /* MOB OUT = "$(TOP)/out"; */
 			};
 			name = Release;
 		};'
-    output(section.expand(ids))
+        let defaults = bit.defaults
+        let flags = []
+        for each (flag in defaults.linker) {
+            if (flag == '-g') continue
+            flags.push(flag)
+        }
+        for each (lib in defaults.libraries) {
+            flags.push('-l' + lib)
+        }
+        let settings = '\t\t\t\tOTHER_LDFLAGS = (\n' + 
+            flags.map(function(f) '\t\t\t\t\t"' + f + '",').join('\n') + '\n\t\t\t\t);\n'
+        settings += '\t\t\t\tHEADER_SEARCH_PATHS = (\n' + 
+            defaults.includes.map(function(f) '\t\t\t\t\t"' + f.relativeTo(base) + '",').join('\n') + '\n\t\t\t\t);\n'
+        settings += '\t\t\t\tLIBRARY_SEARCH_PATHS = (\n' + 
+            defaults.libpaths.map(function(f) '\t\t\t\t\t"' + f.relativeTo(base) + '",').join('\n') + '\n\t\t\t\t);'
 
-    section = '        ${TARGET_DEBUG} /* Debug */ = {
+        //  MOB - should define BLD_DEBUG and have buildConfig.h have debug/release sections
+
+        let debug_settings = '\t\t\t\tGCC_PREPROCESSOR_DEFINITIONS = (\n' + 
+            defaults.defines.map(function(f) '\t\t\t\t\t"' + f.replace('-D', '') + '",').join('\n') + 
+            '\n\t\t\t\t\t"$(inherited)",\n\t\t\t\t);'
+        let release_settings = '\t\t\t\tGCC_PREPROCESSOR_DEFINITIONS = (\n' +
+            defaults.defines.map(function(f) '\t\t\t\t\t"' + f.replace('-D', '') + '",').join('\n') + 
+            '\n\t\t\t\t\t"$(inherited)",\n\t\t\t\t);'
+
+        NO_PIC = defaults.compiler.contains('-fPIC') ? 'NO' : 'YES'
+        WARN_UNUSED = defaults.compiler['-Wno-unused-result'] ? 'NO' : 'YES'
+        WARN_64_TO_32 = defaults.compiler['-Wshorten-64-to-32'] ? 'NO' : 'YES'
+
+    output(section.expand(ids, eo).expand({
+        NO_PIC: NO_PIC,
+        WARN_UNUSED: WARN_UNUSED,
+        WARN_64_TO_32: WARN_64_TO_32,
+        SETTINGS: settings,
+        DEBUG_SETTINGS: debug_settings,
+        RELEASE_SETTINGS: release_settings,
+    }))
+
+    section = '\t\t${TARGET_DEBUG} /* Debug */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
 				PRODUCT_NAME = ${TNAME};
@@ -417,7 +567,7 @@ function projectConfigSection() {
 			name = Release;
 		};'
     for each (target in bit.targets) {
-        if (target.type != 'exe' && target.type != 'lib') {
+        if (target.type != 'exe' && target.type != 'lib' && target.name != 'All') {
            continue
         }
         let tdid = makeid('ID_TargetDebugConfig:' + target.name)
@@ -441,7 +591,7 @@ function targetConfigSection() {
 		};'
     output(section.expand(ids))
 
-    section = '        ${BCL} /* Build configuration list for PBXNativeTarget "demo" */ = {
+    section = '\t\t${BCL} /* Build configuration list for PBXNativeTarget "demo" */ = {
 			isa = XCConfigurationList;
 			buildConfigurations = (
 				${TARGET_DEBUG} /* Debug */,
@@ -452,7 +602,7 @@ function targetConfigSection() {
 		};'
 
     for each (target in bit.targets) {
-        if (target.type != 'exe' && target.type != 'lib') {
+        if (target.type != 'exe' && target.type != 'lib' && target.name != 'All') {
            continue
         }
         let bcl = getid('ID_BuildConfigList:' + target.name)
@@ -465,7 +615,8 @@ function targetConfigSection() {
 
     section = '/* End XCConfigurationList section */
 	};
-	rootObject = ${ID_Project} /* Project object */;'
+	rootObject = ${ID_Project} /* Project object */;
+}'
     output(section.expand(ids))
 }
 
@@ -474,8 +625,8 @@ function output(line: String) {
     out.writeLine(line)
 }
 
-function uid() 
-    gbase + ("%08x" % [gnext++]).toUpper()
+function uid()
+    (gbase + ("%08x" % [gnext++]).toUpper())
 
 function getid(src) {
     if (!ids[src]) {
@@ -491,7 +642,7 @@ function makeid(src) {
     return ids[src] = uid()
 }
 
-function remaekid(src) {
+function getmakeid(src) {
     let id = ids[src] || uid()
     return ids[src] = id
 }
