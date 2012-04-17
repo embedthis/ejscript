@@ -214,6 +214,8 @@ public class Bit {
         if (args.rest.contains('generate')) {
             if (local.like == 'windows') {
                 options.gen = ['sh', 'nmake', 'vs']
+            } else if (local.os == 'macosx') {
+                options.gen = ['sh', 'make', 'xcode']
             } else {
                 options.gen = ['sh', 'make']
             }
@@ -358,11 +360,14 @@ public class Bit {
                 '    time configuration is performed.\n */\n')
         writeOldDefinitions(f, platform)
         f.close()
+
+    /*UNUSED
         if (options.gen) {
-            let hfile = bit.dir.src.join('projects', 'buildConfig').joinExt(bit.platform.configuration)
+            let hfile = bit.dir.src.join('projects', 'buildConfig').joinExt(bit.platform.configuration + '.h')
             path.copy(hfile)
             trace('Generate', 'project header: ' + hfile.relative)
         }
+     */
 
         /*
             FUTURE - transition to bit.h
@@ -377,7 +382,7 @@ public class Bit {
             writeDefinitions(f, platform)
             f.close()
             if (options.gen) {
-                path.copy(bit.dir.src.join('projects', cfg, 'buildConfig').joinExt(platform.name))
+                path.copy(bit.dir.src.join('projects', cfg, 'buildConfig').joinExt(platform.name + '.h'))
             }
         }
     }
@@ -403,17 +408,19 @@ public class Bit {
         f.writeLine('#define BIT_PATCH_VERSION ' + ver[2])
         f.writeLine('#define BIT_VNUM ' + ((((ver[0] * 1000) + ver[1]) * 1000) + ver[2]))
 
+    /*
         f.writeLine('#define BIT_OS "' + platform.os.toUpper() + '"')
         f.writeLine('#define BIT_CPU "' + platform.arch + '"')
         f.writeLine('#define BIT_CPU_ARCH ' + getMprArch(platform.arch))
-        // f.writeLine('#define BIT_PROFILE "' + bit.platform.profile + '"')
-        f.writeLine('#define BIT_CMD "' + App.args.join(' ') + '"')
-
+        f.writeLine('#define BIT_PROFILE "' + bit.platform.profile + '"')
         if (platform.like == "posix") {
             f.writeLine('#define BIT_UNIX_LIKE 1')
         } else if (platform.like == "windows") {
             f.writeLine('#define BIT_WIN_LIKE 1')
         }
+    */
+
+        f.writeLine('#define BIT_CMD "' + App.args.join(' ') + '"')
         for (let [pname, prefix] in bit.prefixes) {
             f.writeLine('#define BIT_PREFIX_' + pname.toUpper() + ' "' + prefix + '"')
         }
@@ -446,7 +453,7 @@ public class Bit {
         let settings = bit.settings
 
         //  Xcode work-around
-        f.writeLine('#undef BLD_LIB_PREFIX')
+        // f.writeLine('#undef BLD_LIB_PREFIX')
         f.writeLine('#define BLD_PRODUCT "' + settings.product + '"')
         f.writeLine('#define BLD_NAME "' + settings.title + '"')
         f.writeLine('#define BLD_COMPANY "' + settings.company + '"')
@@ -463,12 +470,13 @@ public class Bit {
         } else if (settings.charlen == 4) {
             f.writeLine('#define BLD_CHAR int')
         }
-        f.writeLine('#define BLD_DEBUG ' + (bit.platform.profile == 'debug' ? 1 : 0))
+        // f.writeLine('#define BLD_DEBUG ' + (bit.platform.profile == 'debug' ? 1 : 0))
         let ver = settings.version.split('.')
         f.writeLine('#define BLD_MAJOR_VERSION ' + ver[0])
         f.writeLine('#define BLD_MINOR_VERSION ' + ver[1])
         f.writeLine('#define BLD_PATCH_VERSION ' + ver[2])
         f.writeLine('#define BLD_VNUM ' + ((((ver[0] * 1000) + ver[1]) * 1000) + ver[2]))
+    /*
         f.writeLine('#define ' + bit.platform.os.toUpper() + ' 1')
         if (bit.platform.like == "posix") {
             f.writeLine('#define BLD_UNIX_LIKE 1')
@@ -479,6 +487,7 @@ public class Bit {
         f.writeLine('#define BLD_CPU "' + bit.platform.arch + '"')
         f.writeLine('#define BIT_CPU_ARCH ' + getMprArch(bit.platform.arch))
         f.writeLine('#define BLD_OS "' + bit.platform.os.toUpper() + '"')
+    */
 
         let args = 'bit ' + App.args.slice(1).join(' ')
         f.writeLine('#define BLD_CONFIG_CMD "' + args + '"')
@@ -1031,8 +1040,13 @@ public class Bit {
             libpaths:       mapLibPaths(bit.defaults.libpaths)
             libraries:      mapLibs(bit.defaults.libraries).join(' ')
         }
-        let base = bit.dir.projects.join(gen.configuration)
 
+        let path = bit.dir.inc.join('buildConfig.h')
+        let hfile = bit.dir.src.join('projects', bit.settings.product + '-' + bit.platform.os + '-buildConfig.h')
+        path.copy(hfile)
+        trace('Generate', 'project header: ' + hfile.relative)
+
+        let base = bit.dir.projects.join(bit.settings.product + '-' + bit.platform.os + '-' + bit.platform.arch)
         for each (item in options.gen) {
             generating = item
             if (generating == 'sh') {
@@ -1040,10 +1054,13 @@ public class Bit {
             } else if (generating == 'make') {
                 generateMake(base)
             } else if (generating == 'nmake') {
+                // base = bit.dir.projects.join(bit.settings.product)
                 generateNmake(base)
             } else if (generating == 'vstudio' || generating == 'vs') {
+                // base = bit.dir.projects.join('vstudio-' + bit.settings.product)
                 generateVstudio(base)
             } else if (generating == 'xcode') {
+                // base = bit.dir.projects.join(bit.settings.product)
                 generateXcode(base)
             } else {
                 throw 'Unknown generation format: ' + generating
@@ -1062,20 +1079,29 @@ public class Bit {
         genout.writeLine('#\n#   ' + bit.platform.configuration + 
             '.sh -- Build It Shell Script to build ' + bit.settings.title + '\n#\n')
         genEnv()
-        genout.writeLine('CONFIG="' + bit.platform.name + '-' + bit.platform.profile + '"')
+        genout.writeLine('OS="' + bit.platform.os + '"')
+        genout.writeLine('CONFIG="${OS}-' + bit.platform.arch + '-' + bit.platform.profile + '"')
         genout.writeLine('CC="' + bit.packs.compiler.path + '"')
         if (bit.packs.link) {
             genout.writeLine('LD="' + bit.packs.link.path + '"')
         }
         genout.writeLine('CFLAGS="' + gen.compiler + '"')
         genout.writeLine('DFLAGS="' + gen.defines + '"')
-        genout.writeLine('IFLAGS="' + bit.defaults.includes.map(function(path) '-I' + path.relative).join(' ') + '"')
+        genout.writeLine('IFLAGS="' + 
+            repvar(bit.defaults.includes.map(function(path) '-I' + path.relative).join(' ')) + '"')
         genout.writeLine('LDFLAGS="' + repvar(gen.linker).replace(/\$ORIGIN/g, '\\$$ORIGIN') + '"')
         genout.writeLine('LIBPATHS="' + repvar(gen.libpaths) + '"')
         genout.writeLine('LIBS="' + gen.libraries + '"\n')
         genout.writeLine('[ ! -x ${CONFIG}/inc ] && ' + 
-            'mkdir -p ${CONFIG}/inc ${CONFIG}/obj ${CONFIG}/lib ${CONFIG}/bin')
-        genout.writeLine('cp projects/buildConfig.${CONFIG} ${CONFIG}/inc/buildConfig.h\n')
+            'mkdir -p ${CONFIG}/inc ${CONFIG}/obj ${CONFIG}/lib ${CONFIG}/bin\n')
+
+        // genout.writeLine('cp projects/' + bit.settings.product + '-${OS}-buildConfig.h ${CONFIG}/inc/buildConfig.h\n')
+        genout.writeLine('[ ! -f ${CONFIG}/inc/buildConfig.h ] && ' + 
+            'cp projects/' + bit.settings.product + '-${OS}-buildConfig.h ${CONFIG}/inc/buildConfig.h')
+        genout.writeLine('if ! diff ${CONFIG}/inc/buildConfig.h projects/' + bit.settings.product + 
+            '-${OS}-buildConfig.h >/dev/null ; then')
+        genout.writeLine('\tcp projects/' + bit.settings.product + '-${OS}-buildConfig.h ${CONFIG}/inc/buildConfig.h')
+        genout.writeLine('fi\n')
         build()
         genout.close()
         path.setAttributes({permissions: 0755})
@@ -1088,7 +1114,8 @@ public class Bit {
         genout.writeLine('#\n#   ' + bit.platform.configuration + '.mk -- Build It Makefile to build ' + 
             bit.settings.title + ' for ' + bit.platform.os + ' on ' + bit.platform.arch + '\n#\n')
         genEnv()
-        genout.writeLine('CONFIG   := ' + bit.platform.name + '-' + bit.platform.profile)
+        genout.writeLine('OS       := ' + bit.platform.os)
+        genout.writeLine('CONFIG   := $(OS)-' + bit.platform.arch + '-' + bit.platform.profile)
         genout.writeLine('CC       := ' + bit.packs.compiler.path)
         if (bit.packs.link) {
             genout.writeLine('LD       := ' + bit.packs.link.path)
@@ -1106,10 +1133,13 @@ public class Bit {
         genout.writeLine('\t@[ ! -x $(CONFIG)/inc ] && ' + 
             'mkdir -p $(CONFIG)/inc $(CONFIG)/obj $(CONFIG)/lib $(CONFIG)/bin ; true')
         genout.writeLine('\t@[ ! -f $(CONFIG)/inc/buildConfig.h ] && ' + 
-            'cp projects/buildConfig.$(CONFIG) $(CONFIG)/inc/buildConfig.h ; true')
-        genout.writeLine('\t@if ! diff $(CONFIG)/inc/buildConfig.h projects/buildConfig.$(CONFIG) >/dev/null ; then\\')
-        genout.writeLine('\t\techo cp projects/buildConfig.$(CONFIG) $(CONFIG)/inc/buildConfig.h  ; \\')
-        genout.writeLine('\t\tcp projects/buildConfig.$(CONFIG) $(CONFIG)/inc/buildConfig.h  ; \\')
+            'cp projects/' + bit.settings.product + '-$(OS)-buildConfig.h $(CONFIG)/inc/buildConfig.h ; true')
+        genout.writeLine('\t@if ! diff $(CONFIG)/inc/buildConfig.h projects/' + bit.settings.product + 
+            '-$(OS)-buildConfig.h >/dev/null ; then\\')
+        genout.writeLine('\t\techo cp projects/' + bit.settings.product + 
+            '-$(OS)-buildConfig.h $(CONFIG)/inc/buildConfig.h  ; \\')
+        genout.writeLine('\t\tcp projects/' + bit.settings.product + 
+            '-$(OS)-buildConfig.h $(CONFIG)/inc/buildConfig.h  ; \\')
         genout.writeLine('\tfi; true\n')
         genout.writeLine('clean:')
         action('cleanTargets')
@@ -1126,7 +1156,8 @@ public class Bit {
         genout.writeLine('#\n#   ' + pname + '.nmake -- Build It Makefile to build ' + bit.settings.title + 
             ' for ' + bit.platform.os + ' on ' + bit.platform.arch + '\n#\n')
         genEnv()
-        genout.writeLine('CONFIG   = ' + pname)
+        genout.writeLine('OS       = ' + bit.platform.os)
+        genout.writeLine('CONFIG   = $(OS)-' + bit.platform.arch + '-' + bit.platform.profile)
         genout.writeLine('CC       = cl')
         genout.writeLine('LD       = link')
         genout.writeLine('CFLAGS   = ' + gen.compiler)
@@ -1142,7 +1173,7 @@ public class Bit {
         genout.writeLine('\t@if not exist $(CONFIG)\\obj md $(CONFIG)\\obj')
         genout.writeLine('\t@if not exist $(CONFIG)\\bin md $(CONFIG)\\bin')
         genout.writeLine('\t@if not exist $(CONFIG)\\inc\\buildConfig.h ' +
-            'copy projects\\buildConfig.$(CONFIG) $(CONFIG)\\inc\\buildConfig.h')
+            'copy projects\\' + bit.settings.product + '-$(OS)-buildConfig.h $(CONFIG)\\inc\\buildConfig.h')
         genout.writeLine('\t@if not exist $(CONFIG)\\bin\\libmpr.def ' +
             'xcopy /Y /S projects\\$(CONFIG)\\*.def $(CONFIG)\\bin\n')
         genout.writeLine('clean:')
@@ -2039,13 +2070,13 @@ public class Bit {
                 continue
             }
             if (generating == 'sh') {
-                genout.writeLine('rm -rf ' + target.path.relative)
-                genout.writeLine('cp -r ' + file.relative + ' ' + target.path.relative + '\n')
+                genout.writeLine('rm -rf ' + reppath(target.path.relative))
+                genout.writeLine('cp -r ' + reppath(file.relative) + ' ' + reppath(target.path.relative) + '\n')
 
             } else if (generating == 'make') {
                 genout.writeLine(reppath(target.path) + ': ' + repvar(getTargetDeps(target)))
-                genout.writeLine('\trm -fr ' + target.path.relative)
-                genout.writeLine('\tcp -r ' + file.relative + ' ' + target.path.relative + '\n')
+                genout.writeLine('\trm -fr ' + reppath(target.path.relative))
+                genout.writeLine('\tcp -r ' + file.relative + ' ' + reppath(target.path.relative) + '\n')
 
             } else if (generating == 'nmake') {
                 genout.writeLine(reppath(target.path) + ': ' + repvar(getTargetDeps(target)))

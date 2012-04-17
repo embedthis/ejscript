@@ -5,7 +5,8 @@
 Bit.load({
     defaults: {
         '+compiler': [ '-Wall', ],
-        '+defines':  [ '-D_REENTRANT', '-DCPU=' + '${ARCH}'.toUpper() ],
+        /* '+defines':  [ '-D_REENTRANT', '-DCPU=' + '${ARCH}'.toUpper() ], */
+        '+defines':  [ '-D_REENTRANT' ],
         '+libraries':[],
         '+libpaths':[],
         '+linker':[],

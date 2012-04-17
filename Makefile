@@ -4,11 +4,10 @@
 #	This Makefile will build a "minimal" Ejscript without external packages.
 #	It is used to build Ejscript the first time before bit is available.
 #	Once built, use bit to configure and rebuild as required:
-#		$(OS)-$(ARCH)-$(PROFILE)/bin/bit configure build
+#		$(OS)-$(ARCH)/bin/bit configure build
 #	
 
 ARCH 	:= $(shell uname -m)
-PROFILE	:= debug
 UNAME 	:= $(shell uname)
 MAKE	:= make
 EXT 	:= mk
@@ -29,15 +28,15 @@ ifeq ($(UNAME),CYGWIN_NT-5.1)
 endif
 
 all compile:
-	$(MAKE) -f projects/$(OS)-$(ARCH)-$(PROFILE).$(EXT) $@
+	$(MAKE) -f projects/$(OS)-$(ARCH).$(EXT) $@
 	@echo ; echo 'You can now use Ejscript or use "bit" to customize and re-build Ejscript, via:'
-	@echo ; echo '	$(OS)-$(ARCH)-$(PROFILE)/bin/bit configure build' ; echo
+	@echo ; echo '	$(OS)-$(ARCH)/bin/bit configure build' ; echo
 
 build configure generate test package:
 	@bit $@
 
 clean clobber:
-	$(MAKE) -f projects/$(OS)-$(ARCH)-$(PROFILE).$(EXT) $@
+	$(MAKE) -f projects/$(OS)-$(ARCH).$(EXT) $@
 
 version:
 	@bit -q version

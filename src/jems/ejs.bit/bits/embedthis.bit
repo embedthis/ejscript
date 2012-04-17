@@ -32,7 +32,14 @@ Bit.load({
                 let bitcmd = Cmd.locate('bit')
                 for each (name in ['linux-i686', 'macosx-x86_64', 'solaris-i686', 'win-i686']) {
                     trace('Generate', name + ' project')
-                    let formats = name == 'win-i686' ? 'sh,make,nmake,vs' : 'sh,make'
+                    let formats
+                    if (name == 'win-i686') {
+                        formats = 'sh,make,nmake,vs'
+                    } else if (name == 'macosx-x86_64') {
+                        formats = 'sh,make,xcode'
+                    } else {
+                        formats = 'sh,make'
+                    }
                     let emulate = name != bit.platform.name ? ' -emulate ' + name : ''
                     run(bitcmd + emulate + ' -without all configure -gen ' + formats, bit.target.runopt)
                     if (name != bit.platform.name) {

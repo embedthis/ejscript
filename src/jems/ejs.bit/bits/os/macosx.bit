@@ -47,7 +47,7 @@ Bit.load({
                 if (bit.settings.hasDynLoad) {
                     defaults.libraries.push('dl')
                 }
-                defaults.defines.push('-DCPU=' + bit.platform.arch.toUpper())
+                // defaults.defines.push('-DCPU=' + bit.platform.arch.toUpper())
             ",
         },
     },
