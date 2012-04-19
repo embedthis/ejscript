@@ -13,8 +13,8 @@ Bit.load({
     },
 
     defaults: {
-        '+compiler': [ '-fPIC', '-Wall' ],
-        '+defines':  [ '-DPIC' ],
+        '+compiler': [ '-Wall' ],
+        '+defines':  [ ],
         '+libraries':[ 'pthread', 'm' ],
         '+libpaths': [ ],
         'linker':    [
@@ -32,6 +32,7 @@ Bit.load({
                 if (bit.platform.profile == 'debug') {
                     defaults.compiler += ['-g']
                     defaults.linker.push('-g')
+                    defaults.defines.push('-DDEBUG')
                 } else if (bit.settings.tune == 'size') {
                     defaults.compiler += ['-Os']
                 } else {

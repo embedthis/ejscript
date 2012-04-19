@@ -1418,6 +1418,8 @@ public class Bit {
                     target.path = bit.dir.lib.join(target.name)
                 } else if (target.type == 'res') {
                     target.path = bit.dir.res.join(target.name).joinExt(bit.ext.res, true)
+                } else if (target.type == 'build') {
+                    target.path = target.name
                 }
             }
             if (target.path) {
@@ -2281,16 +2283,11 @@ public class Bit {
         //  MOB refactor and cleanup
         bit.TARGET = target
         bit.HOME = target.home
-        //  MOB - can we do this universally?
-        if (generating) {
-            if (bit.HOME) {
-                bit.HOME = bit.HOME.relative
-            }
-            bit.OUT = target.path.relative
-        } else {
-            bit.OUT = target.path
+        if (target.path) {
+            bit.OUT = generating ? target.path.relative : target.path
         }
-        if (bit.HOME) {
+        if (bit.HOME && generating) {
+            bit.HOME = bit.HOME.relative
             bit.WIN_HOME = bit.HOME.relative.windows
         }
         bit.LIBPATHS = mapLibPaths(target.libpaths)
