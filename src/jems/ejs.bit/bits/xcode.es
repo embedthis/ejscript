@@ -8,25 +8,21 @@
     
 require ejs.unix
     
-var out: Stream
+var out: Stream             //  Project output file stream
 
-const ARCH_VERSION = '1'
-const OBJ_VERSION = 46
+const PREP_CODE = 
+"[ ! -x ${INC_DIR} ] && mkdir -p ${INC_DIR} ${OBJ_DIR} ${LIB_DIR} ${BIN_DIR}
+[ ! -f ${INC_DIR}/bit.h ] && cp ${settings.product}-macosx-bit.h ${INC_DIR}/bit.h
+if ! diff ${INC_DIR}/bit.h ${settings.product}-macosx-bit.h >/dev/null ; then
+    cp ${settings.product}-macosx-bit.h ${INC_DIR}/bit.h
+fi"
 
-/*
-    Keys:
- */
-var ids = {}
-var eo = {fill: '${}'}
-var gbase
-var gnext = 0
-
-//  MOB - move all templates out here
+var ids = {}                //  IDs stores the set of unique IDs used by generated Xcode projects. 
+var eo = {fill: '${}'}      //  Property for expand() that preserves unresolved tokens
+var ibase                   //  Base ID string
+var inext = 0               //  Next sequential ID
 
 public function xcode(base: Path) {
-    // bit.ARCH_VERSION = ARCH_VERSION
-    // bit.OBJ_VERSION = OBJ_VERSION
-
     let name = base.basename
     base = base.dirname
     init(base, name)
@@ -45,7 +41,36 @@ public function xcode(base: Path) {
     projectConfigSection(base)
     targetConfigSection()
     term()
-    // dump(ids)
+}
+
+function sortTargets(array: Array, first: Number, second: Number): Number {
+    let i = 0, j = 0
+    if (array[first].name == 'All')
+        i = -20000000
+    if (array[second].name == 'All')
+        j = -20000000
+    if (array[first].name == 'Prep')
+        i = -10000000
+    if (array[second].name == 'Prep')
+        j = -10000000
+    if (array[first].type == 'lib')
+        i = -1000000
+    if (array[second].type == 'lib')
+        j = -1000000
+    if (array[first].type == 'exe')
+        i = -1000
+    if (array[second].type == 'exe')
+        j = -1000
+    if (array[first].name < array[second].name)
+        i--
+    else if (array[first].name > array[second].name)
+        j--
+    if (i < j) {
+        return -1
+    } else if (i == j) {
+        return 0
+    }
+    return 1
 }
 
 function init(base, name) {
@@ -55,12 +80,15 @@ function init(base, name) {
     let proj = dir.join('project.pbxproj')
     out = TextStream(File(proj, 'wt'))
 
+    /*
+        Set the XCode ID hash
+     */
     let guidpath = dir.join('project.guid')
     if (guidpath.exists) {
-        gbase = guidpath.readString().trim()
+        ibase = guidpath.readString().trim()
     } else {
-        gbase = ('%08x%08x' % [Date().ticks, Date().ticks]).toUpper()
-        guidpath.write(gbase)
+        ibase = ('%08x%08x' % [Date().ticks, Date().ticks]).toUpper()
+        guidpath.write(ibase)
     }
     makeid('ID_Products')
     makeid('ID_Project')
@@ -68,61 +96,74 @@ function init(base, name) {
     makeid('ID_ProjectDebug')
     makeid('ID_ProjectRelease')
 
-    let targets = []
-    for each (target in bit.targets) {
-        if (!target.enable) continue
-        if (target.type == 'exe' || target.type == 'lib') {
-            targets.push(target.name)
-        }
-    }
-    //  MOB - need "_"
-    bit.targets.Products = { enable: true, type: 'xcode-products', xcode: true, name: 'Products', depends: targets }
+    /*
+        Create the pseudo targets:
+        Products - collection of all executables and libraries. Required by xcode.
+        All      - Target depending on all executables to build (not libraries). Makes it easy to build everything.
+        Prep     - Target to run prepare script. Creates build output directories.
+     */
+    bit.targets._Products_ = { enable: true, home: base, type: 'group', xgroup: true, name: 'Products' }
+    bit.targets._All_ =      { enable: true, home: base, type: 'build', xtarget: true, name: 'All' }
+    bit.targets._Prep_ =     { enable: true, home: base, type: 'build', xtarget: true, name: 'Prep', 
+                               'generate-xcode': PREP_CODE } 
 
-/*
-    name == 'All' || 'Prep' || 'Products'
-    type == 'All' || 'Prep' || 'Products'
-    type
-        group - unused
-        xcode - unused
-        xcode-products
-
-    MOB - review 
-        type: xtarget, build
-        xcode: true
-        Names: All, Products, Prep
- */
-    bit.targets.All = { enable: true, type: 'build', xcode: true, name: 'All' }
-    bit.targets.Prep = { enable: true, type: 'build', xcode: true, name: 'Prep', 'generate-xcode': "
-[ ! -x ${INC_DIR} ] && mkdir -p ${INC_DIR} ${OBJ_DIR} ${LIB_DIR} ${BIN_DIR}
-[ ! -f ${INC_DIR}/buildConfig.h ] && cp mpr-macosx-buildConfig.h ${INC_DIR}/buildConfig.h
-if ! diff ${INC_DIR}/buildConfig.h mpr-macosx-buildConfig.h >/dev/null ; then
-cp mpr-macosx-buildConfig.h ${INC_DIR}/buildConfig.h
-fi
-        "
-    }
-    etargets = []
-    bit.targets.All.depends = etargets
-
+    /*
+        Create groups of targets for the xcode project
+     */
+    bit.xtargets = []
+    bit.xgroups = []
+    bit.xbinaries = []
+    bit.xscripts = []
     for each (target in bit.targets) {
         if (!target.enable) continue
         let type = target.type
-        if (type == 'lib' || type == 'exe' || type == 'build') {
-            target.xtype = 'xtarget'
+        if (type == 'lib' || type == 'exe') {
+            target.xbinary = true
+            bit.xbinaries.push(target)
+        } else if (type == 'build' || type == 'file') {
+            target.xscript = true
+            bit.xscripts.push(target)
         }
-        if (target.type == 'exe') {
-            etargets.push(target.name)
+        if (type == 'lib' || type == 'exe' || target.name == 'Products') {
+            target.xgroup = true
+            bit.xgroups.push(target)
+        }
+        if (type == 'lib' || type == 'exe' || type == 'build' || type == 'file') {
+            target.xtarget = true
+            bit.xtargets.push(target)
+        }
+    }
+    bit.xtargets.sort(sortTargets)
+    bit.xgroups.sort(sortTargets)
+
+    let targets = []
+    for each (target in bit.targets) {
+        if (target.xbinary) {
+            targets.push(target.name)
         }
         target.depends ||= []
         if (target.name != 'Prep') {
-            target.depends.push('Prep')
+            target.depends.push('_Prep_')
+        }
+        bit.target = target
+        if (target.type == 'lib' || target.type == 'exe') {
+            runScript(target, 'prebuild')
+        } else if (target.type == 'obj') {
+            runScript(target, 'precompile')
         }
     }
+    bit.targets._All_.depends = targets
+    bit.targets._Products_.depends = targets
 }
 
 function term() {
-    delete bit.targets.Products
-    delete bit.targets.All
-    delete bit.targets.Prep
+    delete bit.targets._Products_
+    delete bit.targets._All_
+    delete bit.targets._Prep_
+    delete bit.xtargets
+    delete bit.xgroups
+    delete bit.xbinaries
+    makeDirGlobals()
 }
 
 function projHeader(base: Path) {
@@ -145,13 +186,12 @@ function aggregates(base: Path) {
 			);
 			dependencies = ('
     for each (target in bit.targets) {
-        if (!target.enable) continue
-        if (target.type != 'build') {
+        if (!target.xscript) {
             continue
         }
         let bcl = makeid('ID_BuildConfigList:' + target.name)
         let tid = makeid('ID_NativeTarget:' + target.name)
-        let sid = target.type == 'build' ? (makeid('ID_ShellScript:' + target.name) + ',') : ''
+        let sid = (target.name == 'All') ? '' : (makeid('ID_ShellScript:' + target.name) + ',')
         output(section.expand(ids, eo).expand({TID: tid, BCL: bcl, TNAME: target.name, SID: sid}))
 
         let depSection = '\t\t\t\t${DID} /* PBXTargetDependency ${DNAME} */,'
@@ -160,11 +200,10 @@ function aggregates(base: Path) {
             if (!dep) {
                 continue
             }
-            if (dep.type != 'exe' && dep.type != 'lib' && dep.type != 'build') {
+            if (!dep.xtarget) {
                 continue
             }
             let did = makeid('ID_TargetDependency:' + target.name + '-on-' + dep.name)
-print(did, target.name, 'on', dep.name)
             output(depSection.expand({DID: did, DNAME: dep.name}))
         }
         let footer = '\t\t\t);
@@ -177,23 +216,19 @@ print(did, target.name, 'on', dep.name)
 }
 
 function sources(base: Path) {
-    let section = '
-/* Begin PBXBuildFile section */'
-
-    output(section)
+    output('\n/* Begin PBXBuildFile section */')
     section = '\t\t${BID} /* ${PATH} in Sources */ = {isa = PBXBuildFile; fileRef = ${REF} /* ${NAME} */; };'
 
     for each (target in bit.targets) {
-        if (!target.enable) continue
-        if (target.type != 'exe' && target.type != 'lib') {
+        if (!target.xbinary) {
             continue
         } 
         for each (file in target.files) {
             let obj = bit.targets[file]
             if (obj) {
-                let bid = makeid('ID_BuildFile:' + obj.name)
+                let bid = getmakeid('ID_BuildFile:' + obj.name)
                 for each (src in obj.files) {
-                    let ref = makeid('ID_TargetSrc:' + src)
+                    let ref = getmakeid('ID_TargetSrc:' + src)
                     output(section.expand({BID: bid, REF: ref, PATH: src.basename, NAME: src.basename}))
                 }
             }
@@ -201,18 +236,16 @@ function sources(base: Path) {
     }
     /*
         Emit a framework reference for library targets that are depended upon. See PBXFrameworksBuildPhase.
-        Must do this for Products
      */
-    section = '\t\t${BID} /* ${PATH} for ${TNAME} */ = {isa = PBXBuildFile; fileRef = ${REF} /* ${NAME} */; };'
+    section = '\t\t${BID} /* ${PATH} for ${TNAME} */ = {isa = PBXBuildFile; fileRef = ${REF}; };'
     for each (target in bit.targets) {
-        if (!target.enable) continue
-        if (target.type != 'exe' && target.type != 'lib' && target.type != 'xcode-products') {
+        if (!target.xbinary) {
            continue
         } 
         for each (item in target.libraries) {
             let dep = bit.targets['lib' + item]
             if (dep && dep.type == 'lib') {
-                let bid = makeid('ID_TargetFramework:' + target.name + '-on-' + dep.name)
+                let bid = getmakeid('ID_TargetFramework:' + target.name + '-on-' + dep.name)
                 let path = dep.path.relativeTo(base)
                 let ref = getmakeid('ID_TargetRef:' + path)
                 output(section.expand({BID: bid, REF: ref, PATH: dep.path.basename, 
@@ -233,13 +266,12 @@ function proxies(base: Path) {
 			remoteInfo = ${DNAME};
 		};'
     for each (target in bit.targets) {
-        if (!target.enable) continue
-        if (target.type != 'exe' && target.type != 'lib' && target.type != 'build') {
+        if (!target.xtarget) {
             continue
         }
         for each (item in target.depends) {
             let dep = bit.targets[item]
-            if (!dep || (dep.type != 'lib' && dep.type != 'exe' && dep.type != 'build')) continue
+            if (!dep || !dep.xtarget) continue
             let pid = makeid('ID_TargetProxy:' + target.name + '-on-' + dep.name)
             let did = getmakeid('ID_NativeTarget:' + dep.name)
             output(section.expand(ids, eo).expand({PID: pid, DID: did, TNAME: target.name, DNAME: dep.name}))
@@ -253,33 +285,41 @@ function files(base: Path) {
     let lib = '\t\t${REF} /* ${NAME} */ = {isa = PBXFileReference; explicitFileType = "compiled.mach-o.dylib"; includeInIndex = 0; path = ${PATH}; sourceTree = BUILT_PRODUCTS_DIR; };'
     let exe = '\t\t${REF} /* ${NAME} */ = {isa = PBXFileReference; explicitFileType = "compiled.mach-o.executable"; includeInIndex = 0; path = ${PATH}; sourceTree = BUILT_PRODUCTS_DIR; };'
     let source = '\t\t${REF} /* ${NAME} */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; name = ${NAME}; path = ${PATH}; sourceTree = "<group>"; };'
+    let header = '\t\t${REF} /* ${NAME} */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = ${NAME}; path = ${PATH}; sourceTree = "<group>"; };'
 
     for each (target in bit.targets) {
-        if (!target.enable) continue
-        if (target.type != 'exe' && target.type != 'lib') {
+        if (!target.xbinary) {
             continue
         } 
         for each (file in target.files) {
             let obj = bit.targets[file]
             /*
-                Emit all sources
+                Emit all sources and headers
              */
-            if (obj) {
+            if (obj && obj.type == 'obj') {
                 for each (src in obj.files) {
-                    let path = src.relativeTo(base)
+                    //  MOB - can this emit duplicates?
+                    let path = src.relativeTo(bit.dir.src)
                     let ref = getid('ID_TargetSrc:' + src)
-                    output(source.expand({REF: ref, NAME: src.basename, PATH: src}))
+//  MOB - is this right using src?
+                    output(source.expand({REF: ref, NAME: src.basename, PATH: path}))
+                }
+                for each (hdr in obj.depends) {
+                    if (hdr is Path && hdr.extension == 'h') {
+                        let path = Path(hdr).relativeTo(bit.dir.src)
+                        if (!ids['ID_TargetHdr:' + hdr]) {
+                            let ref = makeid('ID_TargetHdr:' + hdr)
+                            output(header.expand({REF: ref, NAME: hdr.basename, PATH: path}))
+                        }
+                    }
                 }
             }
         }
         let path = target.path.relativeTo(base)
         let ref = getmakeid('ID_TargetRef:' + path)
         if (target.type == 'lib') {
-            //  MOB - may need full path if not using built products
             output(lib.expand({REF: ref, NAME: target.name, PATH: path.basename.joinExt(bit.ext.shobj)}))
         } else if (target.type == 'exe') {
-            //  MOB - may need full path if not using built products
-            //  MOB _ can use sourceTree = BUILT_PRODUCTS_DIR and then path is path.basename
             output(exe.expand({REF: ref, NAME: target.name, PATH: path.basename.joinExt(bit.ext.exe)}))
         }
     }
@@ -287,7 +327,7 @@ function files(base: Path) {
 }
 
 /*
-    This is for frameworks and libraries used by targets. Also used by Products.
+    This is for frameworks and libraries used by targets
  */
 function frameworks(base: Path) {
     output('\n/* Begin PBXFrameworksBuildPhase section */')
@@ -300,8 +340,7 @@ ${LIBS}
             runOnlyForDeploymentPostprocessing = 0;
         };'
     for each (target in bit.targets) {
-        if (!target.enable) continue
-        if (target.type != 'exe' && target.type != 'lib' && target.type != 'xcode-products') {
+        if (!target.xbinary) {
            continue
         } 
         let fid = makeid('ID_Frameworks:' + target.name)
@@ -319,19 +358,19 @@ ${LIBS}
 }
 
 
+/*
+    Groups are listed in the explorer pane for each executable and library and for the 
+    Products group (which is required by xcode).
+ */
 function groups(base: Path) {
     output('\n/* Begin PBXGroup section */')
     let section = '\t\t${GID} /* ${NAME} */ = {
             isa = PBXGroup;
             children = ('
-    output(section.expand({GID: makeid('ID_Group'), NAME: 'Top'}))
+    output(section.expand({GID: makeid('ID_Group'), NAME: 'Top Group'}))
 
     let groupItem = '\t\t\t\t${REF} /* ${NAME} */,'
-    for each (target in bit.targets) {
-        if (!target.enable) continue
-        if (target.type != 'exe' && target.type != 'lib' && target.type != 'xcode-products') {
-           continue
-        } 
+    for each (target in bit.xgroups) {
         let ref = makeid('ID_TargetGroup:' + target.name)
         let name = target.name != 'Products' ? (target.name) : target.name
         output(groupItem.expand({REF: ref, NAME: name}))
@@ -343,17 +382,30 @@ function groups(base: Path) {
     let groupFooter = '\t\t\t);
             name = "${NAME}";
             path = ${PATH};
-            sourceTree = "<absolute>";
+            sourceTree = SOURCE_ROOT;
         };'
 
     for each (target in bit.targets) {
-        if (!target.enable) continue
-        if (target.type != 'exe' && target.type != 'lib' && target.type != 'xcode-products') {
-           continue
-        } 
+        if (!target.xgroup) {
+            continue
+        }
         let gid = getid('ID_TargetGroup:' + target.name)
         let name = target.name != 'Products' ? (target.name) : target.name
         output(section.expand({GID: gid, NAME: name}))
+        let headers = {}
+        for each (item in target.depends) {
+            let dep = bit.targets[item]
+            if (dep && dep.type == 'obj') {
+                for each (hdr in dep.depends) {
+                    if (headers[hdr]) continue
+                    if (hdr is Path && hdr.extension == 'h') {
+                        let ref = getid('ID_TargetHdr:' + hdr)
+                        output(groupItem.expand({REF: ref, NAME: hdr.basename}))
+                    }
+                    headers[hdr] = true
+                }
+            }
+        }
         for each (item in target.depends) {
             let dep = bit.targets[item]
             if (dep) {
@@ -362,14 +414,14 @@ function groups(base: Path) {
                         let ref = getid('ID_TargetSrc:' + src)
                         output(groupItem.expand({REF: ref, NAME: src.basename}))
                     }
-                } else if ((dep.type == 'exe' || dep.type == 'lib') && target.name == 'Products') {
+                } else if (dep.xbinary && target.name == 'Products') {
                     let path = dep.path.relativeTo(base)
                     let ref = getid('ID_TargetRef:' + path)
                     output(groupItem.expand({REF: ref, NAME: dep.name}))
                 }
             }
         }
-        output(groupFooter.expand({NAME: name, PATH: bit.dir.src}))
+        output(groupFooter.expand({NAME: name, PATH: bit.dir.src.relativeTo(base)}))
     }
     output('/* End PBXGroup section */')
 }
@@ -395,10 +447,9 @@ ${DEPS}
 		};'
 
     for each (target in bit.targets) {
-        if (!target.enable) continue
-        if (target.type != 'exe' && target.type != 'lib') {
-           continue
-        } 
+        if (!target.xbinary) {
+            continue
+        }
         let sid = makeid('ID_NativeSources:' + target.name)
         let fid = getid('ID_Frameworks:' + target.name)
         let tid = getid('ID_NativeTarget:' + target.name)
@@ -410,10 +461,8 @@ ${DEPS}
         let deplist = []
         for each (item in target.depends) {
             let dep = bit.targets[item]
-            if (dep) {
-                if (dep.type == 'exe' || dep.type == 'lib' || dep.type == 'build') {
-                    deplist.push(dep)
-                }
+            if (dep && dep.xtarget) {
+                deplist.push(dep)
             }
         }
         let deps = deplist.map(function(dep) '\t\t\t\t' + 
@@ -444,28 +493,53 @@ ${OUTPUTS}
 			shellScript = ${CMD};
 		};'
     for each (target in bit.targets) {
-        if (!target.enable) continue
-        if (target.type != 'build') {
+        if (!target.xscript || target.name == 'All') {
             continue
         }
-        //  Inputs: target.files, target.depends
-        let inputs = ''
-        //  Outputs: target.path
-        let outputs = ''
         let shell = '/bin/bash'
-        let cmd = target['generate-xcode'] || target['generate-sh']
-        if (!cmd) {
-            if (target.scripts && target.scripts.build) {
-                shell = '"/usr/bin/env ' + target.scripts.build[0].shell + '"'
-                cmd = target.scripts.build[0].script
-            } else {
-                cmd = 'true'
+        let inputs = ''
+        let outputs = ''
+        let cmd = ''
+
+        if (!target.home.same(base)) {
+            cmd += 'cd ' + target.home.relativeTo(base) + '\n'
+            makeDirGlobals(target.home)
+            /*
+            for each (n in ['BIN', 'CFG', 'INC', 'LIB', 'OBJ', 'SRC']) {
+                //  MOB - ${BIN_DIR} is relative to projects. Not right for a script.
+                global[n] = bit[n] = '${' + n + '_DIR}'
             }
+            */
+        }
+        if (target.type == 'file') {
+            for each (let file: Path in target.files) {
+                cmd += 'rm -rf ' + target.path.relativeTo(base) + '\n' +
+                       'cp -r ' + file.relativeTo(base) + ' ' + target.path.relativeTo(base) + '\n'
+            }
+        } else {
+            cmd += target['generate-xcode'] || target['generate-sh']
+            if (!cmd) {
+                if (target.scripts && target.scripts.build) {
+                    shell = '"/usr/bin/env ' + target.scripts.build[0].shell + '"'
+                    cmd = target.scripts.build[0].script
+                }
+            }
+            cmd = cmd.replace(/^[ \t]*[\r\n]+/m, '')
+            cmd = cmd.replace(/^[ \t]*/mg, '').trim()
+        }
+        cmd = cmd.replace(RegExp(bit.dir.cfg.relativeTo(base), 'g'), '$$(CFG_DIR)')
+
+        if (target.files && target.files.length > 0) {
+            inputs = target.files.map(function(f) f.relativeTo(base)).join(',\n')
+        }
+        if (target.path) {
+            outputs = target.path.relativeTo(base)
         }
         let sid = getid('ID_ShellScript:' + target.name)
-        cmd = cmd.toJSON()
+        cmd = cmd.toJSON().expand(bit, eo)
         output(section.expand({SID: sid, CMD: cmd, INPUTS: inputs, OUTPUTS: outputs, TNAME: target.name, SHELL: shell}))
     }
+    makeDirGlobals()
     output('/* End PBXShellScriptBuildPhase section */')
 }
 
@@ -494,11 +568,7 @@ function project(base) {
     output(section.expand(bit, eo).expand(ids))
 
     section = '\t\t\t\t${TID} /* ${TNAME} */,'
-    for each (target in bit.targets) {
-        if (!target.enable) continue
-        if (target.type != 'exe' && target.type != 'lib' && target.type != 'build' && target.name != 'All') {
-           continue
-        }
+    for each (target in bit.xtargets) {
         let tid = getid('ID_NativeTarget:' + target.name)
         output(section.expand({TID: tid, TNAME: target.name}))
     }
@@ -519,8 +589,7 @@ ${FILES}
 		};'
 
     for each (target in bit.targets) {
-        if (!target.enable) continue
-        if (target.type != 'exe' && target.type != 'lib') {
+        if (!target.xbinary) {
            continue
         }
         let lines = []
@@ -551,13 +620,14 @@ function targetDependencies(base: Path) {
 			targetProxy = ${PID} /* PBXContainerItemProxy */;
 		};'
     for each (target in bit.targets) {
-        if (!target.enable) continue
-        if (target.type != 'exe' && target.type != 'lib' && target.type != 'build') {
+        if (!target.xtarget) {
            continue
         }
         for each (item in target.depends) {
             let dep = bit.targets[item]
-            if (!dep || (dep.type != 'lib' && dep.type != 'exe' && dep.type != 'build')) continue
+            if (!dep || !dep.xtarget) {
+                continue
+            }
             let tdid = getmakeid('ID_TargetDependency:' + target.name + '-on-' + dep.name)
             let pid = getid('ID_TargetProxy:' + target.name + '-on-' + dep.name)
             let did = getid('ID_NativeTarget:' + dep.name)
@@ -581,24 +651,33 @@ function prepareSettings(base, o, debug: Boolean) {
         }
         libs.push(lname)
     }
-    let flags = o.linker.filter(function(e) e != '-g') + libs.map(function(lib) '-l' + lib)
+    if (o.linker) {
+        o.linker = o.linker.clone()
+        for (let [key,value] in o.linker) {
+            if (value.contains('-compatibility_version') || value.contains('-current_version')) {
+                delete o.linker[key]
+            }
+        }
+        o.linker.compact()
+    }
+    let flags = o.linker.filter(function(e) e != '-g') + 
+        libs.map(function(lib) '-l' + Path(lib).trimExt().toString().replace(/^lib/, ''))
     if (flags.length > 0) {
         options.linker = '\n\t\t\t\tOTHER_LDFLAGS = (\n' + 
-            flags.map(function(f) '\t\t\t\t\t"' + f + '",').join('\n') + '\n\t\t\t\t);\n'
+            flags.map(function(f) '\t\t\t\t\t"' + f + '",').join('\n') + '\n\t\t\t\t\t"$(inherited)"\n\t\t\t\t);\n'
     }
     if (o.includes.length > 0) {
         options.includes = '\n\t\t\t\tHEADER_SEARCH_PATHS = (\n' + 
-            o.includes.map(function(f) '\t\t\t\t\t"' + f.relativeTo(base) + '",').join('\n') + '\n\t\t\t\t);\n'
+            o.includes.map(function(f) '\t\t\t\t\t"' + f.relativeTo(base) + '",').join('\n') + '\n\t\t\t\t\t"$(inherited)"\n\t\t\t\t);\n'
     }
     if (o.libpaths.length > 0) {
         options.libpaths = '\n\t\t\t\tLIBRARY_SEARCH_PATHS = (\n' + 
-            o.libpaths.map(function(f) '\t\t\t\t\t"' + f.relativeTo(base) + '",').join('\n') + '\n\t\t\t\t);'
+            o.libpaths.map(function(f) '\t\t\t\t\t"' + f.relativeTo(base) + '",').join('\n') + '\n\t\t\t\t\t"$(inherited)"\n\t\t\t\t);'
     }
     let defines = debug ? o.defines : o.defines.clone().removeElements('-DDEBUG')
     if (defines.length > 0) {
         options.defines = '\n\t\t\t\tGCC_PREPROCESSOR_DEFINITIONS = (\n' + 
-            defines.map(function(f) '\t\t\t\t\t"' + f.replace('-D', '') + '",').join('\n') + 
-            '\n\t\t\t\t\t"$(inherited)",\n\t\t\t\t);'
+            defines.map(function(f) '\t\t\t\t\t"' + f.replace('-D', '') + '",').join('\n') + '\n\t\t\t\t\t\t"$(inherited)"\n\t\t\t\t);'
     }
     let result = ''
     if (options.includes) result += options.includes
@@ -607,6 +686,31 @@ function prepareSettings(base, o, debug: Boolean) {
     if (options.linker) result += options.linker
     return result.trimStart('\n')
 }
+
+function yesno(o, value) {
+    if (value == '-w') {
+        return o.contains(value) ? 'YES' : null
+    } else {
+        if (o.contains('-Wno-' + value)) {
+            return 'NO'
+        } else if (o.contains('-W' + value)) {
+            return 'YES'
+        }
+    }
+    return null
+}
+
+function appendSetting(result, o, keys, option) {
+    if (!(keys is Array)) keys = [keys]
+    for each (key in keys) {
+        let value = yesno(o, option)
+        if (value) {
+            result = result +  '\t\t\t\t' + key + ' = ' + value + ';\n'
+        }
+    }
+    return result
+}
+
 
 function projectConfigSection(base) {
     let common_settings = '
@@ -617,31 +721,26 @@ function projectConfigSection(base) {
                 DYLIB_COMPATIBILITY_VERSION = "$(CURRENT_PROJECT_VERSION)";
                 DYLIB_CURRENT_VERSION = "$(CURRENT_PROJECT_VERSION)";
 				GCC_C_LANGUAGE_STANDARD = gnu99;
-				GCC_VERSION = com.apple.compilers.llvm.clang.1_0;
+				GCC_VERSION = ${COMPILER};
 				GCC_WARN_ABOUT_RETURN_TYPE = YES;
-				GCC_WARN_64_TO_32_BIT_CONVERSION = ${WARN_64_TO_32};
-				GCC_WARN_UNINITIALIZED_AUTOS = ${WARN_UNUSED};
-				GCC_WARN_UNUSED_VARIABLE = ${WARN_UNUSED};
-                GCC_WARN_UNUSED_FUNCTION = ${WARN_UNUSED};
-                GCC_WARN_UNUSED_LABEL = ${WARN_UNUSED};
                 LD_DYLIB_INSTALL_NAME = "@rpath/$(EXECUTABLE_PATH)";
 				MACOSX_DEPLOYMENT_TARGET = 10.7;
 				SDKROOT = macosx;
 
-                CFG_DIR = "${CFG_DIR}";
-                BIN_DIR = "${BIN_DIR}";
-                LIB_DIR = "${LIB_DIR}";
-                INC_DIR = "${INC_DIR}";
-                OBJ_DIR = "${OBJ_DIR}";
-                SRC_DIR = "${SRC_DIR}";
+                CFG_DIR = "${CFG}";
+                BIN_DIR = "${BIN}";
+                LIB_DIR = "${LIB}";
+                INC_DIR = "${INC}";
+                OBJ_DIR = "${OBJ}";
+                SRC_DIR = "${SRC}";
 
                 CONFIGURATION_TEMP_DIR = "$(OBJ_DIR)/tmp/$(CONFIGURATION)";
                 CONFIGURATION_BUILD_DIR = "$(BIN_DIR)";
                 INSTALL_PATH = "/usr/lib/${settings.product}";
                 DSTROOT = "/tmp/${settings.product}.dst";
                 OBJROOT = "$(OBJ_DIR)";
-                SYMROOT = "$(BIN_DIR)";
-    '
+                SYMROOT = "$(BIN_DIR)";'
+
 
     let section = '
 /* Begin XCBuildConfiguration section */
@@ -649,6 +748,7 @@ function projectConfigSection(base) {
 			isa = XCBuildConfiguration;
 			buildSettings = {
 ${COMMON_SETTINGS}
+${OVERRIDABLE_SETTINGS}
                 /* Debug Settings */
 				COPY_PHASE_STRIP = NO;
 				GCC_OPTIMIZATION_LEVEL = 0;
@@ -661,40 +761,44 @@ ${DEBUG_SETTINGS}
 			isa = XCBuildConfiguration;
 			buildSettings = {
 ${COMMON_SETTINGS}
+${OVERRIDABLE_SETTINGS}
                 /* Release Settings */
 				COPY_PHASE_STRIP = YES;
 				DEBUG_INFORMATION_FORMAT = "dwarf-with-dsym";
+				GCC_OPTIMIZATION_LEVEL = s;
+                GCC_WARN_UNINITIALIZED_AUTOS = ${WARN_UNUSED};
 ${RELEASE_SETTINGS}
 			};
 			name = Release;
 		};'
 
-    let WARN_UNUSED = defaults.compiler['-Wno-unused-result'] ? 'NO' : 'YES'
-    let WARN_64_TO_32 = defaults.compiler['-Wshorten-64-to-32'] ? 'NO' : 'YES'
+    let compiler = bit.packs.compiler.path.basename == 'gcc' ? 
+                  'com.apple.compilers.llvmgcc42' : 'com.apple.compilers.llvm.clang.1_0'
+    let overridable = appendSetting('', defaults.compiler, 
+            ['GCC_WARN_64_TO_32_BIT_CONVERSION'], 'shorten-64-to-32')
+    overridable += appendSetting(overridable, defaults.compiler, 
+            ['GCC_WARN_UNUSED_VARIABLE', 'GCC_WARN_UNUSED_FUNCTION', 'GCC_WARN_UNUSED_LABEL'], 'unused-result')
+    overridable += appendSetting(overridable, defaults.compiler, ['GCC_WARN_INHIBIT_ALL_WARNINGS'], '-w')
 
-    common_settings = common_settings.expand(bit, eo).expand(ids, eo).expand({
-        CFG_DIR: bit.dir.cfg.relativeTo(base),
-        BIN_DIR: bit.dir.bin.relativeTo(base),
-        INC_DIR: bit.dir.inc.relativeTo(base),
-        LIB_DIR: bit.dir.lib.relativeTo(base),
-        OBJ_DIR: bit.dir.obj.relativeTo(base),
-        SRC_DIR: bit.dir.src.relativeTo(base),
-        WARN_UNUSED: WARN_UNUSED,
-        WARN_64_TO_32: WARN_64_TO_32,
-    })
-    let debug_settings = prepareSettings(base, bit.defaults, true)
-    let release_settings = prepareSettings(base, bit.defaults, false)
-
+    makeDirGlobals(base)
     output(section.expand(ids, eo).expand({
-        COMMON_SETTINGS: common_settings,
-        DEBUG_SETTINGS: debug_settings,
-        RELEASE_SETTINGS: release_settings,
+        COMMON_SETTINGS: common_settings.expand(bit, eo).expand(ids, eo).expand({
+            COMPILER: compiler,
+        }),
+        OVERRIDABLE_SETTINGS: overridable,
+        DEBUG_SETTINGS: prepareSettings(base, bit.defaults, true),
+        RELEASE_SETTINGS: prepareSettings(base, bit.defaults, false),
+        WARN_UNUSED: yesno(defaults.compiler, 'unused-result'),
     }))
 
+    /*
+        Now the per-target settings
+     */
     section = '\t\t${TARGET_DEBUG} /* Debug */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
 				PRODUCT_NAME = ${TNAME};
+${OVERRIDABLE_SETTINGS}
 ${DEBUG_SETTINGS}
 			};
 			name = Debug;
@@ -703,19 +807,22 @@ ${DEBUG_SETTINGS}
 			isa = XCBuildConfiguration;
 			buildSettings = {
 				PRODUCT_NAME = ${TNAME};
+${OVERRIDABLE_SETTINGS}
 ${RELEASE_SETTINGS}
 			};
 			name = Release;
 		};'
     for each (target in bit.targets) {
-        if (!target.enable) continue
-        if (target.type != 'exe' && target.type != 'lib' && target.type != 'build' && target.name != 'All') {
+        if (!target.xtarget) {
            continue
         }
         let tdid = makeid('ID_TargetDebugConfig:' + target.name)
         let trid = makeid('ID_TargetReleaseConfig:' + target.name)
 
-        let targetSettings = {
+        for each (n in ['compiler', 'defines', 'includes', 'libpaths', 'linker', 'libraries']) {
+            target[n] ||= []
+        }
+        let ts = {
             compiler: target.compiler - bit.defaults.compiler,
             defines: target.defines - bit.defaults.defines,
             includes: target.includes - bit.defaults.includes,
@@ -723,12 +830,22 @@ ${RELEASE_SETTINGS}
             linker: target.linker - bit.defaults.linker,
             libraries: target.libraries - bit.defaults.libraries,
         }
-        debug_settings = prepareSettings(base, targetSettings, true)
-        release_settings = prepareSettings(base, targetSettings, false)
+        let overridable = appendSetting('', ts.compiler, 
+            ['GCC_WARN_64_TO_32_BIT_CONVERSION'], 'shorten-64-to-32')
+        overridable += appendSetting(overridable, ts.compiler, 
+            ['GCC_WARN_UNUSED_VARIABLE', 'GCC_WARN_UNUSED_FUNCTION', 'GCC_WARN_UNUSED_LABEL'], 'unused-result')
+        overridable += appendSetting(overridable, ts.compiler, ['GCC_WARN_INHIBIT_ALL_WARNINGS'], '-w')
+
         output(section.expand({TNAME: target.name, TARGET_DEBUG: tdid, TARGET_RELEASE: trid, 
-            DEBUG_SETTINGS: debug_settings, RELEASE_SETTINGS: release_settings}))
+            OVERRIDABLE_SETTINGS: overridable,
+            DEBUG_SETTINGS: prepareSettings(base, ts, true),
+            RELEASE_SETTINGS: prepareSettings(base, ts, false),
+            WARN_UNUSED: yesno(ts.compiler, 'unused-result'),
+            WARN_64_TO_32: yesno(ts.compiler, 'shorten-64-to-32'),
+        }))
     }
     output('/* End XCBuildConfiguration section */')
+    makeDirGlobals()
 }
 
 function targetConfigSection() {
@@ -756,9 +873,8 @@ function targetConfigSection() {
 		};'
 
     for each (target in bit.targets) {
-        if (!target.enable) continue
-        if (target.type != 'exe' && target.type != 'lib' && target.type != 'build' && target.name != 'All') {
-           continue
+        if (!target.xtarget) {
+            continue
         }
         let bcl = getid('ID_BuildConfigList:' + target.name)
         let tid = getid('ID_NativeTarget:' + target.name)
@@ -780,8 +896,11 @@ function output(line: String) {
     out.writeLine(line)
 }
 
+/*
+    Generate the next available ID
+ */
 function uid()
-    (gbase + ("%08x" % [gnext++]).toUpper())
+    (ibase + ("%08x" % [inext++]).toUpper())
 
 function getid(src) {
     if (!ids[src]) {

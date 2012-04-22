@@ -41,7 +41,7 @@ Bit.load({
                 'src/*.c',
             ],
             '+includes': [ 'src' ],
-            depends: [ 'libmpr', 'libhttp', 'libpcre', 'libejs', 'ejs.mod' ],
+            depends: [ 'libejs', 'ejs.mod' ],
         },
 
         www: {

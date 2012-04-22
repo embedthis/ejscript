@@ -44,12 +44,14 @@ module ejs {
         /**
             Clone the array and all its elements.
             @param deep If true, do a deep copy where all object references are also copied, and so on, recursively.
+            @return A new array
             @spec ejs
          */
         override native function clone(deep: Boolean = true) : Array
 
         /**
             Compact an array. Remove all null elements.
+            @return Modified original array
             @spec ejs
          */
         native function compact() : Array

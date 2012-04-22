@@ -17,7 +17,7 @@ const XID = '{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}'
 const PREP = 'if not exist ${OUTDIR}\\obj md ${OUTDIR}\\obj\r
 if not exist ${OUTDIR}\\bin md ${OUTDIR}\\bin\r
 if not exist ${OUTDIR}\\inc md ${OUTDIR}\\inc\r
-if not exist ${OUTDIR}\\inc\\buildConfig.h copy ..\\${platform.os}-buildConfig.h ${OUTDIR}\\inc\\buildConfig.h\r
+if not exist ${OUTDIR}\\inc\\bit.h copy ..\\${platform.os}-bit.h ${OUTDIR}\\inc\\bit.h\r
 if not exist ${OUTDIR}\\bin\\libmpr.def xcopy /Y /S *.def ${OUTDIR}\\bin\r
 '
 var prepTarget

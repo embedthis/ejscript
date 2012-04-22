@@ -58,8 +58,7 @@ void ejsDefineConfigProperties(Ejs *ejs)
         ejsDefineProperty(ejs, type, -1, N("public", "LibDir"), 0, att, ejsCreatePathFromAsc(ejs, BLD_LIB_PREFIX));
         ejsDefineProperty(ejs, type, -1, N("public", "IncDir"), 0, att, ejsCreatePathFromAsc(ejs, BLD_INC_PREFIX));
     } else {
-        ejsDefineProperty(ejs, type, -1, N("public", "BinDir"), 0, att, 
-            ejsCreatePathFromAsc(ejs, mprGetAppDir()));
+        ejsDefineProperty(ejs, type, -1, N("public", "BinDir"), 0, att, ejsCreatePathFromAsc(ejs, mprGetAppDir()));
         ejsDefineProperty(ejs, type, -1, N("public", "IncDir"), 0, att, 
             ejsCreatePathFromAsc(ejs, mprNormalizePath(mprJoinPath(mprGetAppDir(), "../inc"))));
         ejsDefineProperty(ejs, type, -1, N("public", "LibDir"), 0, att, 

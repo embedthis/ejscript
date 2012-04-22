@@ -4,11 +4,15 @@
 var cc: Path
 let platform = bit.platform
 
+//  MOB - fix and fully listen to existing path setting
+let path: Path = bit.packs.compiler.path
+
 if (platform.like == 'posix') {
+    let name = path ? path.basename : (platform.os == 'macosx' ? 'clang' : 'gcc')
     if (bit.emulating) {
-        cc = 'cc'
+        cc = name
     } else {
-        cc = probe('cc', {fullpath: true})
+        cc = probe(name, {fullpath: true})
     }
     Bit.load({packs: { compiler: { path: cc }}})
 

@@ -13,7 +13,7 @@ Bit.load({
                 'core/src/*.c',
                 'vm/*.c'
             ],
-            depends: [ 'libmpr', 'libpcre', 'libhttp' ],
+            depends: [ 'libhttp' ],
         },
 
         importSlots: {

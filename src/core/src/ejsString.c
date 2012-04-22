@@ -1206,10 +1206,8 @@ static EjsString *replace(Ejs *ejs, EjsString *sp, int argc, EjsObj **argv)
                             cp--;
                             if (submatch < count) {
                                 submatch *= 2;
-                                result = buildString(ejs, result, &sp->value[matches[submatch]], 
-                                    matches[submatch + 1] - matches[submatch]);
+                                result = buildString(ejs, result, &sp->value[matches[submatch]], matches[submatch + 1] - matches[submatch]);
                             }
-
                         } else {
                             ejsThrowArgError(ejs, "Bad replacement $ specification");
                             return 0;

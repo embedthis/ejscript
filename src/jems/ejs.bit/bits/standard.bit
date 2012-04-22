@@ -8,7 +8,7 @@ Bit.load({
 		bin:     	'${dir.cfg}/bin',
         flat:       '${dir.cfg}/flat',
 		inc:     	'${dir.cfg}/inc',
-		lib:    	'${dir.cfg}/lib',
+		lib:    	'${dir.cfg}/bin',
 		obj:    	'${dir.cfg}/obj',
         packs:      '../packages-${platform.name}',
         pkg:        '${dir.cfg}/pkg',

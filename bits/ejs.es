@@ -110,7 +110,7 @@ public function packageComboFiles() {
     let pkg = src.join(s.product + '-' + s.version)
     safeRemove(pkg)
     pkg.makeDir()
-    install('projects/buildConfig.' + bit.platform.configuration, pkg.join('src/deps/ejs/buildConfig.h'))
+    install('projects/ejs-' + bit.platform.os + '-bit.h', pkg.join('src/deps/ejs/bit.h'))
     install('package/ejs.bit', pkg.join('src/deps/ejs/product.bit'))
     install('package/Makefile.flat', pkg.join('src/deps/ejs/Makefile'))
     let filter = /^#inc.*ejs.*$|^#inc.*mpr.*$|^#inc.*ec.*$|^#inc.*http.*$|^#inc.*customize.*$/mg

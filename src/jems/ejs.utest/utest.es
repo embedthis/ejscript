@@ -38,8 +38,8 @@ enumerable class Test {
     var echo: Boolean = false               // Echo the command line 
     var errorMsg: String                    // Worker callback error msg
     var failed: Boolean                     // Did the test pass
-    var env: Object                         // buildConfig.h exports
-    var features: Object                    // buildConfig.h features
+    var env: Object                         // bit.h exports
+    var features: Object                    // bit.h features
     var filters: Array = []                 // Filter tests by pattern x.y.z... 
     var finish: Boolean                     // Set to true when time to exit 
     var iterations: Number = 1              // Number of iterations to run the test 
@@ -201,16 +201,13 @@ enumerable class Test {
         _top = path.dirname.absolute
 
         let out: Path out = _top.join('out')
-        if (!out.join('inc/buildConfig.h').exists) {
+        if (!out.join('inc/bit.h').exists) {
             out = Path(_top).glob(Config.OS.toLower() + '-' + Config.CPU + '-*').sort()[0]
         }
         if (!out) {
             throw 'Can\'t locate configure files, run configure'
         }
-/*
-        let out: Path = App.exeDir.parent
-*/
-        parseBuildConfig(out.join('inc/buildConfig.h'))
+        parseBuildConfig(out.join('inc/bit.h'))
 
         //  MOB - these are currently being set to the ejs bin and lib
         _bin = App.exeDir

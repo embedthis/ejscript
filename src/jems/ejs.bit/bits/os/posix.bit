@@ -7,7 +7,7 @@ Bit.load({
     ext: {
         exe:   '',
         lib:   'a',
-        obj:   'o',
+        o:      'o',
         res:   'res',
         shlib: 'so',
         shobj: 'so',
@@ -19,7 +19,7 @@ Bit.load({
         productver: '${prefixes.product}/${settings.version}',
         bin:        '${prefixes.productver}/bin',
         include:    '${prefixes.productver}/inc',
-        lib:        '${prefixes.productver}/lib',
+        lib:        '${prefixes.productver}/bin',
         log:        '/var/log/${settings.product}',
         spool:      '/var/spool/${settings.product}',
         src:        '/usr/src/${settings.product}-${settings.version}',

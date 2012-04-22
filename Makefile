@@ -28,7 +28,7 @@ ifeq ($(UNAME),CYGWIN_NT-5.1)
 endif
 
 all compile:
-	$(MAKE) -f projects/$(OS)-$(ARCH).$(EXT) $@
+	$(MAKE) -f projects/ejs-$(OS)-$(ARCH).$(EXT) $@
 	@echo ; echo 'You can now use Ejscript or use "bit" to customize and re-build Ejscript, via:'
 	@echo ; echo '	$(OS)-$(ARCH)/bin/bit configure build' ; echo
 
@@ -36,7 +36,7 @@ build configure generate test package:
 	@bit $@
 
 clean clobber:
-	$(MAKE) -f projects/$(OS)-$(ARCH).$(EXT) $@
+	$(MAKE) -f projects/ejs-$(OS)-$(ARCH).$(EXT) $@
 
 version:
 	@bit -q version
