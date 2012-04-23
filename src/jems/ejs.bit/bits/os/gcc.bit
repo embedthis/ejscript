@@ -34,9 +34,9 @@ Bit.load({
                 }
                 defaults.libpaths.push(bit.dir.lib)
                 if (bit.platform.profile == 'debug') {
+                    defaults.defines.push('-DBLD_DEBUG')
                     defaults.compiler.push('-g')
                     defaults.linker.push('-g')
-                    defaults.defines.push('-DBLD_DEBUG')
                 } else if (bit.settings.tune == 'size') {
                     defaults.compiler.push('-Os')
                 } else {
