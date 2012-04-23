@@ -60,10 +60,10 @@ Bit.load({
         },
     },
     rules: {
-        'c->o': '${packs.compiler.path} -c -o ${OUT} ${CFLAGS} ${TARGET.defines} ${INCLUDES} ${PREPROCESS} ${IN}',
-        'cpp->o': '${packs.compiler.path} -c -o ${OUT} ${CFLAGS} ${TARGET.defines} ${INCLUDES} ${PREPROCESS} ${IN}',
-        'lib':  '${packs.compiler.path} -r -o ${OUT} ${TARGET.linker} ${LIBPATHS} ${IN} ${LIBS}'
-        'exe':  '${packs.compiler.path} -o ${OUT} ${TARGET.linker} ${LIBPATHS} ${IN} ${LIBS} ${TARGET.linker}'
-        'gui':  '${packs.compiler.path} -o ${OUT} ${TARGET.linker} ${LIBPATHS} ${IN} ${LIBS} ${TARGET.linker}'
+        'c->o': '${packs.compiler.path} -c -o ${OUT} ${CFLAGS} ${DEFINES} ${INCLUDES} ${PREPROCESS} ${IN}',
+        'cpp->o': '${packs.compiler.path} -c -o ${OUT} ${CFLAGS} ${DEFINES} ${INCLUDES} ${PREPROCESS} ${IN}',
+        'lib':  '${packs.compiler.path} -r -o ${OUT} ${LDFLAGS} ${LIBPATHS} ${IN} ${LIBS}'
+        'exe':  '${packs.compiler.path} -o ${OUT} ${LDFLAGS} ${LIBPATHS} ${IN} ${LIBS} ${LDFLAGS}'
+        'gui':  '${packs.compiler.path} -o ${OUT} ${LDFLAGS} ${LIBPATHS} ${IN} ${LIBS} ${LDFLAGS}'
     },
 })
