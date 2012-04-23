@@ -983,7 +983,6 @@ public class Bit {
     }
 
     function generateShell(base: Path) {
-//  MOB - should be relativeTo(base)
         trace('Generate', 'project file: ' + base.relative + '.sh')
         let path = base.joinExt('sh')
         genout = TextStream(File(path, 'w'))
@@ -998,7 +997,6 @@ public class Bit {
         }
         genout.writeLine('CFLAGS="' + gen.compiler + '"')
         genout.writeLine('DFLAGS="' + gen.defines + '"')
-//  MOB - should be relativeTo(base)
         genout.writeLine('IFLAGS="' + 
             repvar(bit.defaults.includes.map(function(path) '-I' + path.relative).join(' ')) + '"')
         genout.writeLine('LDFLAGS="' + repvar(gen.linker).replace(/\$ORIGIN/g, '\\$$ORIGIN') + '"')
@@ -1006,8 +1004,6 @@ public class Bit {
         genout.writeLine('LIBS="' + gen.libraries + '"\n')
         genout.writeLine('[ ! -x ${CONFIG}/inc ] && ' + 
             'mkdir -p ${CONFIG}/inc ${CONFIG}/obj ${CONFIG}/lib ${CONFIG}/bin\n')
-
-        // genout.writeLine('cp projects/' + bit.settings.product + '-${OS}-bit.h ${CONFIG}/inc/bit.h\n')
         genout.writeLine('[ ! -f ${CONFIG}/inc/bit.h ] && ' + 
             'cp projects/' + bit.settings.product + '-${OS}-bit.h ${CONFIG}/inc/bit.h')
         genout.writeLine('if ! diff ${CONFIG}/inc/bit.h projects/' + bit.settings.product + 
@@ -1034,7 +1030,6 @@ public class Bit {
         }
         genout.writeLine('CFLAGS   := ' + gen.compiler)
         genout.writeLine('DFLAGS   := ' + gen.defines)
-//  MOB - should be relativeTo(base)
         genout.writeLine('IFLAGS   := ' + 
             repvar(bit.defaults.includes.map(function(path) '-I' + path.relative).join(' ')))
         let linker = defaults.linker.map(function(s) "'" + s + "'").join(' ')
@@ -2060,7 +2055,7 @@ public class Bit {
             genWrite(target.path.relative.windows + ': ' + getTargetDeps(target))
             let cmd = target['generate-nmake'] || target['generate-make'] || target['generate-sh']
             if (cmd) {
-                cmd = (prefix + cmd.trim()).replace(/^[ \t]*/mg, '')
+                cmd = (prefix + cmd.trim()).replace(/^[ \t]*/mg, '\t')
                 cmd = cmd.replace(/$/mg, ';\\').replace(/;\\;\\/g, ' ;\\').trim(';\\').expand(bit)
                 cmd = repvar2(cmd, target.home)
                 genWrite(cmd + '\n')
