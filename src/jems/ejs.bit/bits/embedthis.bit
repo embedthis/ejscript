@@ -34,7 +34,7 @@ Bit.load({
                     trace('Generate', name + ' project')
                     let formats
                     if (name == 'win-i686') {
-                        formats = 'sh,make,nmake,vs'
+                        formats = 'sh,nmake,vs'
                     } else if (name == 'macosx-x86_64') {
                         formats = 'sh,make,xcode'
                     } else {
