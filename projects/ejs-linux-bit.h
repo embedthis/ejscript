@@ -17,7 +17,7 @@
 #define BLD_PATCH_VERSION 0
 #define BLD_VNUM 200000000
 #define BLD_CONFIG_CMD "bit -emulate linux-i686 -without all configure -gen sh,make"
-#define BLD_LIB_NAME "lib"
+#define BLD_LIB_NAME "bin"
 #define BLD_CFG_PREFIX "/etc/ejs"
 #define BLD_BIN_PREFIX "/usr/lib/ejs/2.0.0/bin"
 #define BLD_DOC_PREFIX "/usr/lib/ejs/doc"
