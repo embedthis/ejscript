@@ -2029,8 +2029,8 @@ public class Bit {
             prefix = 'cd ' + target.home.relative + ' >/dev/null\n'
             suffix = '\ncd - >/dev/null'
         } else if (generating == 'nmake') {
-            prefix = 'cd\ncd ' + target.home.relative + '\n'
-            suffix = ''
+            prefix = 'cd ' + target.home.relative.windows + '\n'
+            suffix = 'cd ' + bit.dir.src.relativeTo(target.home).windows
         } else {
             prefix = suffix = ''
         }
