@@ -779,16 +779,19 @@ $(CONFIG)\bin\ejs.mod:  \
 	"$(CONFIG)\bin\ejsmod" --require null --cslots "../../$(CONFIG)/bin/ejs.mod"
 	copy ejs.slots.h "$(CONFIG)\inc\ejs.slots.h"
 	del ejs.slots.h
+		cd ..\..
 
 $(CONFIG)\bin\bit.es: 
 	cd src\jems\ejs.bit
 		copy "bit.es" "$(CONFIG)\bin"
+		cd ..\..\..
 
 $(CONFIG)\bin\bits: 
 	cd src\jems\ejs.bit
 		if exist "$(CONFIG)\bin\bits rd /Q /S "$(CONFIG)\bin\bits"
 	if not exist "$(CONFIG)\bin\bits" md "$(CONFIG)\bin\bits"
 	xcopy /S /Y "bits" "$(CONFIG)\bin\bits"
+		cd ..\..\..
 
 $(CONFIG)\obj\ejsZlib.obj: \
         src\jems\ejs.zlib\src\ejsZlib.c \
@@ -806,6 +809,7 @@ $(CONFIG)\bin\bit.exe:  \
 $(CONFIG)\bin\utest.es: 
 	cd src\jems\ejs.utest
 		copy ".\utest.es" "$(CONFIG)\bin"
+		cd ..\..\..
 
 $(CONFIG)\bin\utest.exe:  \
         $(CONFIG)\bin\ejsrun.exe
@@ -818,10 +822,12 @@ $(CONFIG)\bin\ejs.unix.mod:  \
         $(CONFIG)\bin\ejs.mod
 	cd src\jems\ejs.unix
 		"$(CONFIG)\bin\ejsc" --out "../../../$(CONFIG)/bin/ejs.unix.mod" --debug --optimize 9 "./Unix.es"
+		cd ..\..\..
 
 $(CONFIG)\bin\jem.es: 
 	cd src\jems\ejs.jem
 		copy ".\jem.es" "$(CONFIG)\bin"
+		cd ..\..\..
 
 $(CONFIG)\bin\jem.exe:  \
         $(CONFIG)\bin\ejsrun.exe
@@ -834,6 +840,7 @@ $(CONFIG)\bin\ejs.db.mod:  \
         $(CONFIG)\bin\ejs.mod
 	cd src\jems\ejs.db
 		"$(CONFIG)\bin\ejsc" --out ../../../$(CONFIG)/bin/ejs.db.mod --debug --optimize 9 "./*.es"
+		cd ..\..\..
 
 $(CONFIG)\bin\ejs.db.mapper.mod:  \
         $(CONFIG)\bin\ejsc.exe \
@@ -842,6 +849,7 @@ $(CONFIG)\bin\ejs.db.mapper.mod:  \
         $(CONFIG)\bin\ejs.db.mod
 	cd src\jems\ejs.db.mapper
 		"$(CONFIG)\bin\ejsc" --out "../../../$(CONFIG)/bin/ejs.db.mapper.mod" --debug --optimize 9 "./*.es"
+		cd ..\..\..
 
 $(CONFIG)\bin\ejs.db.sqlite.mod:  \
         $(CONFIG)\bin\ejsc.exe \
@@ -849,6 +857,7 @@ $(CONFIG)\bin\ejs.db.sqlite.mod:  \
         $(CONFIG)\bin\ejs.mod
 	cd src\jems\ejs.db.sqlite
 		"$(CONFIG)\bin\ejsc" --out ../../../$(CONFIG)/bin/ejs.db.sqlite.mod --debug --optimize 9 "*.es"
+		cd ..\..\..
 
 $(CONFIG)\obj\ejsSqlite.obj: \
         src\jems\ejs.db.sqlite\src\ejsSqlite.c \
@@ -873,6 +882,7 @@ $(CONFIG)\bin\ejs.web.mod:  \
 	"$(CONFIG)\bin\ejsmod" --cslots "../../../$(CONFIG)/bin/ejs.web.mod"
 	copy ejs.web.slots.h $(CONFIG)\inc\ejs.web.slots.h
 	del ejs.web.slots.h
+		cd ..\..\..
 
 $(CONFIG)\obj\ejsHttpServer.obj: \
         src\jems\ejs.web\src\ejsHttpServer.c \
@@ -912,6 +922,7 @@ $(CONFIG)\bin\www:
 		if exist "$(CONFIG)\bin\www" rd /Q /S "$(CONFIG)\bin\www"
 	if not exist "$(CONFIG)\bin\www md "$(CONFIG)\bin\www"
 	xcopy /S /Y ".\www" "$(CONFIG)\bin\www"
+		cd ..\..\..
 
 $(CONFIG)\bin\ejs.template.mod:  \
         $(CONFIG)\bin\ejsc.exe \
@@ -919,6 +930,7 @@ $(CONFIG)\bin\ejs.template.mod:  \
         $(CONFIG)\bin\ejs.mod
 	cd src\jems\ejs.template
 		"$(CONFIG)\bin\ejsc" --out "../../../$(CONFIG)/bin/ejs.template.mod" --debug --optimize 9 "./TemplateParser.es"
+		cd ..\..\..
 
 $(CONFIG)\bin\ejs.tar.mod:  \
         $(CONFIG)\bin\ejsc.exe \
@@ -926,10 +938,12 @@ $(CONFIG)\bin\ejs.tar.mod:  \
         $(CONFIG)\bin\ejs.mod
 	cd src\jems\ejs.tar
 		"$(CONFIG)\bin\ejsc" --out "../../../$(CONFIG)/bin/ejs.tar.mod" --debug --optimize 9 "./*.es"
+		cd ..\..\..
 
 $(CONFIG)\bin\mvc.es: 
 	cd src\jems\ejs.mvc
 		copy ".\mvc.es" "$(CONFIG)\bin"
+		cd ..\..\..
 
 $(CONFIG)\bin\mvc.exe:  \
         $(CONFIG)\bin\ejsrun.exe
@@ -945,10 +959,12 @@ $(CONFIG)\bin\ejs.mvc.mod:  \
         $(CONFIG)\bin\ejs.unix.mod
 	cd src\jems\ejs.mvc
 		"$(CONFIG)\bin\ejsc" --out "../../../$(CONFIG)/bin/ejs.mvc.mod" --debug --optimize 9 "./*.es"
+		cd ..\..\..
 
 $(CONFIG)\bin\utest.worker: 
 	cd src\jems\ejs.utest
 		copy ".\utest.worker" "$(CONFIG)\bin"
+		cd ..\..\..
 
 $(CONFIG)\obj\removeFiles.obj: \
         package\WIN\removeFiles.c \
