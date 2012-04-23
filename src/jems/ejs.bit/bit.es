@@ -2028,10 +2028,11 @@ public class Bit {
         if (generating == 'sh' || generating == 'make') {
             prefix = 'cd ' + target.home.relative + ' >/dev/null\n'
             suffix = '\ncd - >/dev/null'
-        } else if (generating == 'sh' || generating == 'make') {
-            prefix = suffix = ''
-            prefix = 'cd ' + target.home.relative + '\n'
+        } else if (generating == 'nmake') {
+            prefix = 'cd\ncd ' + target.home.relative + '\n'
             suffix = ''
+        } else {
+            prefix = suffix = ''
         }
 
 //  MOB - refactor and eliminate repetition
