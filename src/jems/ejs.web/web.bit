@@ -55,7 +55,7 @@ Bit.load({
             "
             'generate-nmake': '\
                 if exist "${WIN_LIB}\\www" rd /Q /S "${WIN_LIB}\\www"
-                if not exist "${WIN_LIB}\\www md "${WIN_LIB}\\www"
+                if not exist "${WIN_LIB}\\www" md "${WIN_LIB}\\www"
                 xcopy /S /Y "${WIN_HOME}\\www" "${WIN_LIB}\\www"
             ',
             'generate-sh': '\

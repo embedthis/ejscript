@@ -44,7 +44,7 @@ Bit.load({
             type: 'configure',
             build: "
                 rm('${SRC}/*.o')
-                rm('${SRC}/buildConfig.h')
+                rm('${SRC}/bit.h')
             ",
         },
     },

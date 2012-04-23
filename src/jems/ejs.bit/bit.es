@@ -2023,7 +2023,6 @@ public class Bit {
         }
         runScript(target, 'prebuild')
         setRuleVars(target, target.home)
-print('TNAME', target.name, bit.BIN, bit.WIN_BIN)
 
         let prefix, suffix
         if (generating == 'sh' || generating == 'make') {

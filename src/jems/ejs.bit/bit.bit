@@ -59,7 +59,7 @@ Bit.load({
                 cp('bits', bit.dir.lib)
             "
             'generate-nmake': '\
-                if exist "${WIN_LIB}\\bits rd /Q /S "${WIN_LIB}\\bits"
+                if exist "${WIN_LIB}\\bits" rd /Q /S "${WIN_LIB}\\bits"
                 if not exist "${WIN_LIB}\\bits" md "${WIN_LIB}\\bits"
                 xcopy /S /Y "bits" "${WIN_LIB}\\bits"
             ',
