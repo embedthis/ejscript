@@ -2024,8 +2024,13 @@ public class Bit {
         runScript(target, 'prebuild')
         setRuleVars(target, target.home)
 
-        let prefix = 'cd ' + target.home.relative + ' >/dev/null\n'
-        let suffix = '\ncd - >/dev/null'
+        let prefix, suffix
+        if (generating == 'sh' || generating == 'make') {
+            prefix = 'cd ' + target.home.relative + ' >/dev/null\n'
+            suffix = '\ncd - >/dev/null'
+        } else {
+            prefix = suffix = ''
+        }
 
 //  MOB - refactor and eliminate repetition
         if (generating == 'sh') {
@@ -2056,7 +2061,7 @@ public class Bit {
             let cmd = target['generate-nmake'] || target['generate-make'] || target['generate-sh']
             if (cmd) {
                 cmd = (prefix + cmd.trim()).replace(/^[ \t]*/mg, '\t')
-                cmd = cmd.replace(/$/mg, ';\\').replace(/;\\;\\/g, ' ;\\').trim(';\\').expand(bit)
+                cmd = cmd.expand(bit)
                 cmd = repvar2(cmd, target.home)
                 genWrite(cmd + '\n')
             } else {

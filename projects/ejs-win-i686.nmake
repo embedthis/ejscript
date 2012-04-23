@@ -774,21 +774,18 @@ $(CONFIG)\bin\ejsrun.exe:  \
 $(CONFIG)\bin\ejs.mod:  \
         $(CONFIG)\bin\ejsc.exe \
         $(CONFIG)\bin\ejsmod.exe
-	cd src/core >/dev/null ;\
-		"$(CONFIG)\bin\ejsc" --out "../../$(CONFIG)/bin/ejs.mod" --debug --optimize 9 --bind --require null "*.es" ;\
-	"$(CONFIG)\bin\ejsmod" --require null --cslots "../../$(CONFIG)/bin/ejs.mod" ;\
-	copy ejs.slots.h "$(CONFIG)\inc\ejs.slots.h" ;\
-	del ejs.slots.h 
+	"$(CONFIG)\bin\ejsc" --out "../../$(CONFIG)/bin/ejs.mod" --debug --optimize 9 --bind --require null "*.es"
+	"$(CONFIG)\bin\ejsmod" --require null --cslots "../../$(CONFIG)/bin/ejs.mod"
+	copy ejs.slots.h "$(CONFIG)\inc\ejs.slots.h"
+	del ejs.slots.h
 
 $(CONFIG)\bin\bit.es: 
-	cd src/jems/ejs.bit >/dev/null ;\
-		copy "bit.es" "$(CONFIG)\bin" 
+	copy "bit.es" "$(CONFIG)\bin"
 
 $(CONFIG)\bin\bits: 
-	cd src/jems/ejs.bit >/dev/null ;\
-		if exist "$(CONFIG)\bin\bits rd /Q /S "$(CONFIG)\bin\bits" ;\
-	if not exist "$(CONFIG)\bin\bits" md "$(CONFIG)\bin\bits" ;\
-	xcopy /S /Y "bits" "$(CONFIG)\bin\bits" 
+	if exist "$(CONFIG)\bin\bits rd /Q /S "$(CONFIG)\bin\bits"
+	if not exist "$(CONFIG)\bin\bits" md "$(CONFIG)\bin\bits"
+	xcopy /S /Y "bits" "$(CONFIG)\bin\bits"
 
 $(CONFIG)\obj\ejsZlib.obj: \
         src\jems\ejs.zlib\src\ejsZlib.c \
@@ -804,8 +801,7 @@ $(CONFIG)\bin\bit.exe:  \
 	"$(LD)" -out:$(CONFIG)\bin\bit.exe -entry:mainCRTStartup -subsystem:console $(LDFLAGS) $(LIBPATHS) $(CONFIG)\obj\ejsrun.obj $(CONFIG)\obj\ejsZlib.obj $(CONFIG)\obj\mprLib.obj $(CONFIG)\obj\pcre.obj $(CONFIG)\obj\mprSsl.obj $(CONFIG)\obj\httpLib.obj $(CONFIG)\obj\ecAst.obj $(CONFIG)\obj\ecCodeGen.obj $(CONFIG)\obj\ecCompiler.obj $(CONFIG)\obj\ecLex.obj $(CONFIG)\obj\ecModuleWrite.obj $(CONFIG)\obj\ecParser.obj $(CONFIG)\obj\ecState.obj $(CONFIG)\obj\ejsApp.obj $(CONFIG)\obj\ejsArray.obj $(CONFIG)\obj\ejsBlock.obj $(CONFIG)\obj\ejsBoolean.obj $(CONFIG)\obj\ejsByteArray.obj $(CONFIG)\obj\ejsCache.obj $(CONFIG)\obj\ejsCmd.obj $(CONFIG)\obj\ejsConfig.obj $(CONFIG)\obj\ejsDate.obj $(CONFIG)\obj\ejsDebug.obj $(CONFIG)\obj\ejsError.obj $(CONFIG)\obj\ejsFile.obj $(CONFIG)\obj\ejsFileSystem.obj $(CONFIG)\obj\ejsFrame.obj $(CONFIG)\obj\ejsFunction.obj $(CONFIG)\obj\ejsGC.obj $(CONFIG)\obj\ejsGlobal.obj $(CONFIG)\obj\ejsHttp.obj $(CONFIG)\obj\ejsIterator.obj $(CONFIG)\obj\ejsJSON.obj $(CONFIG)\obj\ejsLocalCache.obj $(CONFIG)\obj\ejsMath.obj $(CONFIG)\obj\ejsMemory.obj $(CONFIG)\obj\ejsMprLog.obj $(CONFIG)\obj\ejsNamespace.obj $(CONFIG)\obj\ejsNull.obj $(CONFIG)\obj\ejsNumber.obj $(CONFIG)\obj\ejsObject.obj $(CONFIG)\obj\ejsPath.obj $(CONFIG)\obj\ejsPot.obj $(CONFIG)\obj\ejsRegExp.obj $(CONFIG)\obj\ejsSocket.obj $(CONFIG)\obj\ejsString.obj $(CONFIG)\obj\ejsSystem.obj $(CONFIG)\obj\ejsTimer.obj $(CONFIG)\obj\ejsType.obj $(CONFIG)\obj\ejsUri.obj $(CONFIG)\obj\ejsVoid.obj $(CONFIG)\obj\ejsWorker.obj $(CONFIG)\obj\ejsXML.obj $(CONFIG)\obj\ejsXMLList.obj $(CONFIG)\obj\ejsXMLLoader.obj $(CONFIG)\obj\ejsByteCode.obj $(CONFIG)\obj\ejsException.obj $(CONFIG)\obj\ejsHelper.obj $(CONFIG)\obj\ejsInterp.obj $(CONFIG)\obj\ejsLoader.obj $(CONFIG)\obj\ejsModule.obj $(CONFIG)\obj\ejsScope.obj $(CONFIG)\obj\ejsService.obj $(LIBS)
 
 $(CONFIG)\bin\utest.es: 
-	cd src/jems/ejs.utest >/dev/null ;\
-		copy ".\utest.es" "$(CONFIG)\bin" 
+	copy ".\utest.es" "$(CONFIG)\bin"
 
 $(CONFIG)\bin\utest.exe:  \
         $(CONFIG)\bin\ejsrun.exe
@@ -816,12 +812,10 @@ $(CONFIG)\bin\ejs.unix.mod:  \
         $(CONFIG)\bin\ejsc.exe \
         $(CONFIG)\bin\ejsmod.exe \
         $(CONFIG)\bin\ejs.mod
-	cd src/jems/ejs.unix >/dev/null ;\
-		"$(CONFIG)\bin\ejsc" --out "../../../$(CONFIG)/bin/ejs.unix.mod" --debug --optimize 9 "./Unix.es" 
+	"$(CONFIG)\bin\ejsc" --out "../../../$(CONFIG)/bin/ejs.unix.mod" --debug --optimize 9 "./Unix.es"
 
 $(CONFIG)\bin\jem.es: 
-	cd src/jems/ejs.jem >/dev/null ;\
-		copy ".\jem.es" "$(CONFIG)\bin" 
+	copy ".\jem.es" "$(CONFIG)\bin"
 
 $(CONFIG)\bin\jem.exe:  \
         $(CONFIG)\bin\ejsrun.exe
@@ -832,23 +826,20 @@ $(CONFIG)\bin\ejs.db.mod:  \
         $(CONFIG)\bin\ejsc.exe \
         $(CONFIG)\bin\ejsmod.exe \
         $(CONFIG)\bin\ejs.mod
-	cd src/jems/ejs.db >/dev/null ;\
-		"$(CONFIG)\bin\ejsc" --out ../../../$(CONFIG)/bin/ejs.db.mod --debug --optimize 9 "./*.es" 
+	"$(CONFIG)\bin\ejsc" --out ../../../$(CONFIG)/bin/ejs.db.mod --debug --optimize 9 "./*.es"
 
 $(CONFIG)\bin\ejs.db.mapper.mod:  \
         $(CONFIG)\bin\ejsc.exe \
         $(CONFIG)\bin\ejsmod.exe \
         $(CONFIG)\bin\ejs.mod \
         $(CONFIG)\bin\ejs.db.mod
-	cd src/jems/ejs.db.mapper >/dev/null ;\
-		"$(CONFIG)\bin\ejsc" --out "../../../$(CONFIG)/bin/ejs.db.mapper.mod" --debug --optimize 9 "./*.es" 
+	"$(CONFIG)\bin\ejsc" --out "../../../$(CONFIG)/bin/ejs.db.mapper.mod" --debug --optimize 9 "./*.es"
 
 $(CONFIG)\bin\ejs.db.sqlite.mod:  \
         $(CONFIG)\bin\ejsc.exe \
         $(CONFIG)\bin\ejsmod.exe \
         $(CONFIG)\bin\ejs.mod
-	cd src/jems/ejs.db.sqlite >/dev/null ;\
-		"$(CONFIG)\bin\ejsc" --out ../../../$(CONFIG)/bin/ejs.db.sqlite.mod --debug --optimize 9 "*.es" 
+	"$(CONFIG)\bin\ejsc" --out ../../../$(CONFIG)/bin/ejs.db.sqlite.mod --debug --optimize 9 "*.es"
 
 $(CONFIG)\obj\ejsSqlite.obj: \
         src\jems\ejs.db.sqlite\src\ejsSqlite.c \
@@ -868,11 +859,10 @@ $(CONFIG)\bin\ejs.web.mod:  \
         $(CONFIG)\bin\ejsc.exe \
         $(CONFIG)\bin\ejsmod.exe \
         $(CONFIG)\bin\ejs.mod
-	cd src/jems/ejs.web >/dev/null ;\
-		"$(CONFIG)\bin\ejsc" --out "../../../$(CONFIG)/bin/ejs.web.mod" --debug --optimize 9 "./*.es" ;\
-	"$(CONFIG)\bin\ejsmod" --cslots "../../../$(CONFIG)/bin/ejs.web.mod" ;\
-	copy ejs.web.slots.h $(CONFIG)\inc\ejs.web.slots.h ;\
-	del ejs.web.slots.h 
+	"$(CONFIG)\bin\ejsc" --out "../../../$(CONFIG)/bin/ejs.web.mod" --debug --optimize 9 "./*.es"
+	"$(CONFIG)\bin\ejsmod" --cslots "../../../$(CONFIG)/bin/ejs.web.mod"
+	copy ejs.web.slots.h $(CONFIG)\inc\ejs.web.slots.h
+	del ejs.web.slots.h
 
 $(CONFIG)\obj\ejsHttpServer.obj: \
         src\jems\ejs.web\src\ejsHttpServer.c \
@@ -908,28 +898,24 @@ $(CONFIG)\bin\ejs.web.dll:  \
 	"$(LD)" -dll -out:$(CONFIG)\bin\ejs.web.dll -entry:_DllMainCRTStartup@12 -def:$(CONFIG)\bin\ejs.web.def $(LDFLAGS) $(LIBPATHS) $(CONFIG)\obj\ejsHttpServer.obj $(CONFIG)\obj\ejsRequest.obj $(CONFIG)\obj\ejsSession.obj $(CONFIG)\obj\ejsWeb.obj $(LIBS) libejs.lib libhttp.lib libmpr.lib libpcre.lib libmprssl.lib
 
 $(CONFIG)\bin\www: 
-	cd src/jems/ejs.web >/dev/null ;\
-		if exist "$(CONFIG)\bin\www" rd /Q /S "$(CONFIG)\bin\www" ;\
-	if not exist "$(CONFIG)\bin\www md "$(CONFIG)\bin\www" ;\
-	xcopy /S /Y ".\www" "$(CONFIG)\bin\www" 
+	if exist "$(CONFIG)\bin\www" rd /Q /S "$(CONFIG)\bin\www"
+	if not exist "$(CONFIG)\bin\www md "$(CONFIG)\bin\www"
+	xcopy /S /Y ".\www" "$(CONFIG)\bin\www"
 
 $(CONFIG)\bin\ejs.template.mod:  \
         $(CONFIG)\bin\ejsc.exe \
         $(CONFIG)\bin\ejsmod.exe \
         $(CONFIG)\bin\ejs.mod
-	cd src/jems/ejs.template >/dev/null ;\
-		"$(CONFIG)\bin\ejsc" --out "../../../$(CONFIG)/bin/ejs.template.mod" --debug --optimize 9 "./TemplateParser.es" 
+	"$(CONFIG)\bin\ejsc" --out "../../../$(CONFIG)/bin/ejs.template.mod" --debug --optimize 9 "./TemplateParser.es"
 
 $(CONFIG)\bin\ejs.tar.mod:  \
         $(CONFIG)\bin\ejsc.exe \
         $(CONFIG)\bin\ejsmod.exe \
         $(CONFIG)\bin\ejs.mod
-	cd src/jems/ejs.tar >/dev/null ;\
-		"$(CONFIG)\bin\ejsc" --out "../../../$(CONFIG)/bin/ejs.tar.mod" --debug --optimize 9 "./*.es" 
+	"$(CONFIG)\bin\ejsc" --out "../../../$(CONFIG)/bin/ejs.tar.mod" --debug --optimize 9 "./*.es"
 
 $(CONFIG)\bin\mvc.es: 
-	cd src/jems/ejs.mvc >/dev/null ;\
-		copy ".\mvc.es" "$(CONFIG)\bin" 
+	copy ".\mvc.es" "$(CONFIG)\bin"
 
 $(CONFIG)\bin\mvc.exe:  \
         $(CONFIG)\bin\ejsrun.exe
@@ -943,12 +929,10 @@ $(CONFIG)\bin\ejs.mvc.mod:  \
         $(CONFIG)\bin\ejs.web.mod \
         $(CONFIG)\bin\ejs.template.mod \
         $(CONFIG)\bin\ejs.unix.mod
-	cd src/jems/ejs.mvc >/dev/null ;\
-		"$(CONFIG)\bin\ejsc" --out "../../../$(CONFIG)/bin/ejs.mvc.mod" --debug --optimize 9 "./*.es" 
+	"$(CONFIG)\bin\ejsc" --out "../../../$(CONFIG)/bin/ejs.mvc.mod" --debug --optimize 9 "./*.es"
 
 $(CONFIG)\bin\utest.worker: 
-	cd src/jems/ejs.utest >/dev/null ;\
-		copy ".\utest.worker" "$(CONFIG)\bin" 
+	copy ".\utest.worker" "$(CONFIG)\bin"
 
 $(CONFIG)\obj\removeFiles.obj: \
         package\WIN\removeFiles.c \
