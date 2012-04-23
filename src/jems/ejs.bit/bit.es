@@ -2023,6 +2023,7 @@ public class Bit {
         }
         runScript(target, 'prebuild')
         setRuleVars(target, target.home)
+print('TNAME', target.name, bit.BIN, bit.WIN_BIN)
 
         let prefix, suffix
         if (generating == 'sh' || generating == 'make') {
@@ -2132,6 +2133,10 @@ public class Bit {
 
     function repvar2(command: String, home: Path): String {
         command = command.replace(RegExp(bit.dir.top, 'g'), bit.dir.top.relativeTo(home))
+        if (bit.platform.like == 'windows' && generating == 'nmake') {
+            let re = RegExp(bit.dir.top.windows.name.replace(/\\/g, '\\\\'), 'g')
+            command = command.replace(re, bit.dir.top.relativeTo(home).windows)
+        }
         if (generating == 'make') {
             command = command.replace(RegExp(gen.configuration, 'g'), '$$(CONFIG)')
         } else if (generating == 'nmake') {
@@ -2198,7 +2203,11 @@ public class Bit {
             }
             global[n] = bit[n] = dir
             if (bit.platform.like == 'windows') {
-                bit['WIN_' + n] = bit[n].relative.windows
+                if (base) {
+                    bit['WIN_' + n] = dir.relativeTo(base).windows
+                } else {
+                    bit['WIN_' + n] = dir.windows
+                }
             }
         }
     }
