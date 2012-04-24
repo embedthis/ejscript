@@ -7,7 +7,7 @@ OS       := linux
 CONFIG   := $(OS)-$(ARCH)-debug
 CC       := gcc
 LD       := ld
-CFLAGS   := -Wall -fPIC -g -Wno-unused-result -mtune=x86
+CFLAGS   := -Wall -fPIC -g -Wno-unused-result -mtune=generic
 DFLAGS   := -D_REENTRANT -DPIC -DBLD_DEBUG
 IFLAGS   := -I$(CONFIG)/inc
 LDFLAGS  := '-Wl,--enable-new-dtags' '-Wl,-rpath,$$ORIGIN/' '-Wl,-rpath,$$ORIGIN/../bin' '-rdynamic' '-g'
@@ -277,7 +277,7 @@ $(CONFIG)/inc/sqlite3.h:
 $(CONFIG)/obj/sqlite3.o: \
         src/deps/sqlite/sqlite3.c \
         $(CONFIG)/inc/bit.h
-	$(CC) -c -o $(CONFIG)/obj/sqlite3.o -fPIC -g -Wno-unused-result -mtune=x86 -w -w $(DFLAGS) -I$(CONFIG)/inc src/deps/sqlite/sqlite3.c
+	$(CC) -c -o $(CONFIG)/obj/sqlite3.o -fPIC -g -Wno-unused-result -mtune=generic -w -w $(DFLAGS) -I$(CONFIG)/inc src/deps/sqlite/sqlite3.c
 
 $(CONFIG)/bin/libsqlite3.so:  \
         $(CONFIG)/inc/sqlite3.h \

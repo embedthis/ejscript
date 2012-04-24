@@ -6,7 +6,7 @@ OS="linux"
 CONFIG="${OS}-x86-debug"
 CC="gcc"
 LD="ld"
-CFLAGS="-Wall -fPIC -g -Wno-unused-result -mtune=x86"
+CFLAGS="-Wall -fPIC -g -Wno-unused-result -mtune=generic"
 DFLAGS="-D_REENTRANT -DPIC -DBLD_DEBUG"
 IFLAGS="-I${CONFIG}/inc"
 LDFLAGS="-Wl,--enable-new-dtags -Wl,-rpath,\$ORIGIN/ -Wl,-rpath,\$ORIGIN/../bin -rdynamic -g"
@@ -63,7 +63,7 @@ ${CC} -o ${CONFIG}/bin/http ${LDFLAGS} ${LIBPATHS} ${CONFIG}/obj/http.o ${LIBS} 
 rm -rf ${CONFIG}/inc/sqlite3.h
 cp -r src/deps/sqlite/sqlite3.h ${CONFIG}/inc/sqlite3.h
 
-${CC} -c -o ${CONFIG}/obj/sqlite3.o -fPIC -g -Wno-unused-result -mtune=x86 -w ${DFLAGS} -I${CONFIG}/inc src/deps/sqlite/sqlite3.c
+${CC} -c -o ${CONFIG}/obj/sqlite3.o -fPIC -g -Wno-unused-result -mtune=generic -w ${DFLAGS} -I${CONFIG}/inc src/deps/sqlite/sqlite3.c
 
 ${CC} -shared -o ${CONFIG}/bin/libsqlite3.so ${LDFLAGS} ${LIBPATHS} ${CONFIG}/obj/sqlite3.o ${LIBS}
 
