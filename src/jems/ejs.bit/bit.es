@@ -2269,46 +2269,47 @@ public class Bit {
      */
     function setPathEnvVar(bit) {
         let outbin = Path('.').join(bit.platform.configuration, 'bin').absolute
-        let bitbin = bit.dir.bits.join('bin')
         let sep = App.SearchSeparator
         if (generating) {
             outbin = outbin.relative
-            bitbin = bitbin.relative
         }
+/* UNUSED
         if (generating == 'make') {
             if (local.os == 'WIN') sep = ';'
-            genout.writeLine('export PATH := ' + outbin + sep + bitbin + sep + '${PATH}')
+            genout.writeLine('export PATH := ' + outbin + sep + '${PATH}')
             if (Config.OS == 'MACOSX') {
-                genout.writeLine('export DYLD_LIBRARY_PATH := ' + outbin + sep + bitbin + sep + '${DYLD_LIBRARY_PATH}')
+                genout.writeLine('export DYLD_LIBRARY_PATH := ' + outbin + sep + '${DYLD_LIBRARY_PATH}')
             } else {
-                genout.writeLine('export LD_LIBRARY_PATH := ' + outbin + sep + bitbin + sep + '${LD_LIBRARY_PATH}')
+                genout.writeLine('export LD_LIBRARY_PATH := ' + outbin + sep + '${LD_LIBRARY_PATH}')
             }
             genout.writeLine('')
 
         } else if (generating == 'nmake') {
             if (local.os == 'WIN') sep = ';'
-            genout.writeLine('PATH = ' + outbin + sep + bitbin + sep + '${PATH}')
+            genout.writeLine('PATH = ' + outbin + sep + '${PATH}')
             genout.writeLine('')
 
         } else if (generating == 'sh') {
             if (local.os == 'WIN') sep = ';'
-            genout.writeLine('export PATH="' + outbin + sep + bitbin + sep + '${PATH}' + '"')
+            genout.writeLine('export PATH="' + outbin + sep + '${PATH}' + '"')
             if (Config.OS == 'MACOSX') {
-                genout.writeLine('export DYLD_LIBRARY_PATH="' + outbin + sep + bitbin + sep + '${DYLD_LIBRARY_PATH}' + '"')
+                genout.writeLine('export DYLD_LIBRARY_PATH="' + outbin + sep + '${DYLD_LIBRARY_PATH}' + '"')
             } else {
-                genout.writeLine('export LD_LIBRARY_PATH="' + outbin + sep + bitbin + sep + '${LD_LIBRARY_PATH}' + '"')
+                genout.writeLine('export LD_LIBRARY_PATH="' + outbin + sep + '${LD_LIBRARY_PATH}' + '"')
             }
             genout.writeLine('')
 
         } else {
-            App.putenv('PATH', outbin + sep + bitbin + sep + App.getenv('PATH'))
-            App.log.debug(2, "PATH=" + App.getenv('PATH'))
-            if (Config.OS == 'MACOSX') {
-                App.putenv('DYLD_LIBRARY_PATH', outbin + sep + bitbin + sep + App.getenv('DYLD_LIBRARY_PATH'))
-            } else {
-                App.putenv('LD_LIBRARY_PATH', outbin + sep + bitbin + sep + App.getenv('LD_LIBRARY_PATH'))
-            }
+ */
+        App.putenv('PATH', outbin + sep + App.getenv('PATH'))
+        App.log.debug(2, "PATH=" + App.getenv('PATH'))
+/* UNUSED
+        if (Config.OS == 'MACOSX') {
+            App.putenv('DYLD_LIBRARY_PATH', outbin + sep + App.getenv('DYLD_LIBRARY_PATH'))
+        } else {
+            App.putenv('LD_LIBRARY_PATH', outbin + sep + App.getenv('LD_LIBRARY_PATH'))
         }
+ */
     }
 
     /*
@@ -2812,7 +2813,7 @@ global.NN = item.ns
         applyProfile()
         applyCommandLineOptions(platform)
         applyEnv()
-        //MOB setPathEnvVar(bit)
+        setPathEnvVar(bit)
         castDirTypes()
     }
 }
