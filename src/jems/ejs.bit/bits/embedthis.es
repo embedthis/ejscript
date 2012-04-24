@@ -427,8 +427,8 @@ function packageUbuntu(pkg: Path, options) {
     let s = bit.settings
     let rel = bit.dir.rel
     let cpu = bit.platform.arch
-    if (cpu == 'i686') {
-        cpu = 'i386'
+    if (cpu.match(/^i.86$/)) {
+        cpu = 'x86'
     } else if (cpu == 'x86_64') {
         cpu = 'amd64'
     }
