@@ -163,3 +163,4 @@ xcode
 src/core/ejs.slots.h
 .*.guid
 releases
+xcuserdata
