@@ -1032,7 +1032,7 @@ public class Bit {
         genout.writeLine('CFLAGS   := ' + gen.compiler)
         genout.writeLine('DFLAGS   := ' + gen.defines)
         genout.writeLine('IFLAGS   := ' + 
-            repvar(bit.defaults.includes.map(function(path) '-I' + path.relative).join(' ')))
+            repvar(bit.defaults.includes.map(function(path) '-I' + reppath(path.relative)).join(' ')))
         let linker = defaults.linker.map(function(s) "'" + s + "'").join(' ')
         genout.writeLine('LDFLAGS  := ' + repvar(linker).replace(/\$ORIGIN/g, '$$$$ORIGIN'))
         genout.writeLine('LIBPATHS := ' + repvar(gen.libpaths))
@@ -1988,7 +1988,7 @@ public class Bit {
             } else if (generating == 'make') {
                 genout.writeLine(reppath(target.path) + ': ' + repvar(getTargetDeps(target)))
                 genout.writeLine('\trm -fr ' + reppath(target.path.relative))
-                genout.writeLine('\tcp -r ' + file.relative + ' ' + reppath(target.path.relative) + '\n')
+                genout.writeLine('\tcp -r ' + reppath(file.relative) + ' ' + reppath(target.path.relative) + '\n')
 
             } else if (generating == 'nmake') {
                 genout.writeLine(reppath(target.path) + ': ' + repvar(getTargetDeps(target)))
@@ -2152,8 +2152,10 @@ public class Bit {
 
     function reppath(path: Path): String {
         path = path.relative
-        if (bit.platform.like == 'windows' && generating == 'nmake') {
-            path = path.windows
+        if (bit.platform.like == 'windows') {
+            path = (generating == 'nmake') ? path.windows : path.portable
+        } else if (Config.OS == 'WIN' && generating && generating != 'nmake')  {
+            path = path.portable 
         }
         return repvar(path)
     }
