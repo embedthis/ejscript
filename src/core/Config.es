@@ -21,7 +21,7 @@ module ejs {
         native static const Debug: Boolean
 
         /**
-            CPU type (eg. i386, ppc, arm)
+            CPU type (eg. x86, x86_64, ppc, arm)
          */
         native static const CPU: String
 

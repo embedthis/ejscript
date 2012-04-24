@@ -126,9 +126,9 @@ Measure the elapsed time to run bit.
 Configure the project to prepare for building. This configures Bit for building the project based on the instructions
 specified in a 'main.bit' located in the top directory of the specified path source tree. When Bit is run with this 
 switch, bit will create a configuration bit file, a output directory and buildConfig.h header. The configuration
-directory is of the form: OS-ARCH-PROFILE where OS may be win, linux, macosx, ARCH is x86_64, i386, ppc etc., while
+directory is of the form: OS-ARCH-PROFILE where OS may be win, linux, macosx, ARCH is x86_64, x86, ppc etc., while
 PROFILE is typically set to debug or release. For example: 'macosx-x86_64-debug'. The configuration bit file omits the
-PROFILE. For example: 'linux-i386'.
+PROFILE. For example: 'linux-x86'.
 .PP
 Bit will the settings.required and settings.optional properties in the main.bit for a list of packages to use. 
 When configuring, bit will search for these packages and will create definitions in the configuration bit file for
