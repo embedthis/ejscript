@@ -2196,7 +2196,11 @@ public class Bit {
 
     public function makeDirGlobals(base: Path = null) {
         for each (n in ['BIN', 'CFG', 'BITS', 'FLAT', 'INC', 'LIB', 'OBJ', 'PACKS', 'PKG', 'REL', 'SRC', 'TOP']) {
-            let dir = bit.dir[n.toLower()]
+            /* 
+                These globals are always in portable format so they can be used in build scripts. Windows back-slashes
+                require quoting! 
+             */ 
+            let dir = bit.dir[n.toLower()].portable
             if (base) {
                 dir = dir.relativeTo(base)
             }
