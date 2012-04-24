@@ -10,7 +10,7 @@ Bit.load({
             files: [ 'TemplateParser.es' ],
             build: "
                 trace('Compile', 'ejs.template.mod')
-                run('ejsc --out ${LIB}/ejs.template.mod ${settings.esflags} --optimize 9 ' + 
+                run('${BIN}/ejsc --out ${LIB}/ejs.template.mod ${settings.esflags} --optimize 9 ' + 
                     Path('.').glob('TemplateParser.es').sort().join(' '))
             ",
             'generate-nmake': '"${WIN_BIN}\\ejsc" --out "${OUT}" ${settings.esflags} --optimize 9 "${HOME}/TemplateParser.es"',

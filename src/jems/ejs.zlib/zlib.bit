@@ -12,7 +12,7 @@ Bit.load({
             precious: true,
             build: "
                 trace('Compile', 'ejs.zlib.mod')
-                run('ejsc --out ${LIB}/ejs.zlib.mod ${settings.esflags} --optimize 9 ' + Path('.').glob('*.es').sort().join(' '))
+                run('${BIN}/ejsc --out ${LIB}/ejs.zlib.mod ${settings.esflags} --optimize 9 ' + Path('.').glob('*.es').sort().join(' '))
             ",
             'generate-nmake': '"${WIN_BIN}\\ejsc" --out "${OUT}" ${settings.esflags} --optimize 9 "${HOME}/*.es"',
             'generate-sh': '${BIN}/ejsc --out ${OUT} ${settings.esflags} --optimize 9 ${HOME}/*.es',

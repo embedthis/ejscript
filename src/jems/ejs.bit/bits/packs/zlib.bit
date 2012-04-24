@@ -8,6 +8,7 @@ if (!path) {
     let vers = bit.dir.packs.join('zlib').glob('zlib-*').sort().reverse()
     path = vers[0]
 }
+path ||= Path('.')
 
 if (bit.platform.os == 'win') {
     if (!path) {

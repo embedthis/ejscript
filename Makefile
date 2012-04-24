@@ -12,6 +12,12 @@ UNAME 	:= $(shell uname)
 MAKE	:= make
 EXT 	:= mk
 
+ifeq ($(ARCH),i386)
+	ARCH:= x86
+endif
+ifeq ($(ARCH),i686)
+	ARCH:= x86
+endif
 ifeq ($(UNAME),Darwin)
 	OS	:= macosx
 endif
@@ -30,7 +36,7 @@ endif
 all compile:
 	$(MAKE) -f projects/ejs-$(OS)-$(ARCH).$(EXT) $@
 	@echo ; echo 'You can now use Ejscript or use "bit" to customize and re-build Ejscript, via:'
-	@echo ; echo '	$(OS)-$(ARCH)/bin/bit configure build' ; echo
+	@echo ; echo '	$(OS)-$(ARCH)-debug/bin/bit configure build' ; echo
 
 build configure generate test package:
 	@bit $@
