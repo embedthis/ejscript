@@ -66,6 +66,7 @@ public class Bit {
             'continue': {},
             debug: {},
             diagnose: { alias: 'd' },
+            dump: { range: Path },
             emulate: { range: String },
             file: { range: String, separator: Array },
             force: {},
@@ -81,7 +82,6 @@ public class Bit {
             rebuild: { alias: 'r'},
             release: {},
             quiet: { alias: 'q' },
-            save: { range: Path },
             'set': { range: String, separator: Array },
             show: { alias: 's'},
             unset: { range: String, separator: Array },
@@ -102,6 +102,7 @@ public class Bit {
             '    --continue                         # Continue on errors\n' +
             '    --debug                            # Same as --profile debug\n' +
             '    --diagnose                         # Emit diagnostic trace \n' +
+            '    --dump path                        # Dump the full project bit file\n' +
             '    --emulate os-arch                  # Emulate platform\n' +
             '    --file file.bit                    # Use the specified bit file\n' +
             '    --force                            # Override warnings\n' +
@@ -114,7 +115,6 @@ public class Bit {
             '    --pre sourcefile                   # Pre-process a sourcefile\n' +
             '    --platform os-arch                 # Add platform for cross-compilation\n' +
             '    --quiet                            # Quiet operation. Suppress trace \n' +
-            '    --save path                        # Save blended bit file\n' +
             '    --set [feature=value]              # Enable and a feature\n' +
             '    --show                             # Show commands executed\n' +
             '    --rebuild                          # Rebuild all specified targets\n' +
@@ -1217,10 +1217,10 @@ public class Bit {
         inlineStatic()
         Object.sortProperties(bit)
 
-        if (options.save) {
+        if (options.dump) {
             delete bit.blend
-            options.save.write(serialize(bit, {pretty: true, commas: true, indent: 4, quotes: false}))
-            trace('Save', 'Combined Bit files to: ' + options.save)
+            options.dump.write(serialize(bit, {pretty: true, commas: true, indent: 4, quotes: false}))
+            trace('Save', 'Combined Bit files to: ' + options.dump)
             App.exit()
         }
     }
