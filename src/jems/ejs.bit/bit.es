@@ -1067,7 +1067,7 @@ public class Bit {
         genEnv()
         genout.writeLine('ARCH     = ' + bit.platform.arch)
         genout.writeLine('OS       = ' + bit.platform.os)
-        genout.writeLine('CONFIG   = $(OS)-$(ARCH)' + bit.platform.profile)
+        genout.writeLine('CONFIG   = $(OS)-$(ARCH)-' + bit.platform.profile)
         genout.writeLine('CC       = cl')
         genout.writeLine('LD       = link')
         genout.writeLine('CFLAGS   = ' + gen.compiler)
@@ -1085,7 +1085,7 @@ public class Bit {
         genout.writeLine('\t@if not exist $(CONFIG)\\inc\\bit.h ' +
             'copy projects\\' + bit.settings.product + '-$(OS)-bit.h $(CONFIG)\\inc\\bit.h')
         genout.writeLine('\t@if not exist $(CONFIG)\\bin\\libmpr.def ' +
-            'xcopy /Y /S projects\\' + bit.settings.product + 'win--$(ARCH)\\*.def $(CONFIG)\\bin\n')
+            'xcopy /Y /S projects\\' + bit.settings.product + '-win-$(ARCH)\\*.def $(CONFIG)\\bin\n')
         genout.writeLine('clean:')
         action('cleanTargets')
         genout.writeLine('')
