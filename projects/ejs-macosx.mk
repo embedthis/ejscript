@@ -1,10 +1,11 @@
 #
-#   macosx-x86_64-debug.mk -- Build It Makefile to build Embedthis Ejscript for macosx on x86_64
+#   macosx-x86_64-debug.mk -- Build It Makefile to build Embedthis Ejscript for macosx
 #
 
-ARCH     := x86_64
+ARCH     := $(shell uname -m | sed 's/i.86/x86/')
 OS       := macosx
-CONFIG   := $(OS)-$(ARCH)-debug
+PROFILE  := debug
+CONFIG   := $(OS)-$(ARCH)-$(PROFILE)
 CC       := /usr/bin/clang
 LD       := /usr/bin/ld
 CFLAGS   := -Wall -g -Wno-unused-result -Wshorten-64-to-32
@@ -876,11 +877,10 @@ $(CONFIG)/bin/utest.es:
 $(CONFIG)/bin/utest:  \
         $(CONFIG)/bin/ejsrun
 	rm -fr $(CONFIG)/bin/utest
-	cp -r macosx-x86_64-debug/bin/ejsrun $(CONFIG)/bin/utest
+	cp -r $(CONFIG)/bin/ejsrun $(CONFIG)/bin/utest
 
 $(CONFIG)/bin/ejs.unix.mod:  \
         $(CONFIG)/bin/ejsc \
-        $(CONFIG)/bin/ejsmod \
         $(CONFIG)/bin/ejs.mod
 	cd src/jems/ejs.unix >/dev/null ;\
 		../../../$(CONFIG)/bin/ejsc --out ../../../$(CONFIG)/bin/ejs.unix.mod --debug --optimize 9 ./Unix.es ;\
@@ -894,11 +894,10 @@ $(CONFIG)/bin/jem.es:
 $(CONFIG)/bin/jem:  \
         $(CONFIG)/bin/ejsrun
 	rm -fr $(CONFIG)/bin/jem
-	cp -r macosx-x86_64-debug/bin/ejsrun $(CONFIG)/bin/jem
+	cp -r $(CONFIG)/bin/ejsrun $(CONFIG)/bin/jem
 
 $(CONFIG)/bin/ejs.db.mod:  \
         $(CONFIG)/bin/ejsc \
-        $(CONFIG)/bin/ejsmod \
         $(CONFIG)/bin/ejs.mod
 	cd src/jems/ejs.db >/dev/null ;\
 		../../../$(CONFIG)/bin/ejsc --out ../../../$(CONFIG)/bin/ejs.db.mod --debug --optimize 9 ./*.es ;\
@@ -906,7 +905,6 @@ $(CONFIG)/bin/ejs.db.mod:  \
 
 $(CONFIG)/bin/ejs.db.mapper.mod:  \
         $(CONFIG)/bin/ejsc \
-        $(CONFIG)/bin/ejsmod \
         $(CONFIG)/bin/ejs.mod \
         $(CONFIG)/bin/ejs.db.mod
 	cd src/jems/ejs.db.mapper >/dev/null ;\
@@ -1000,7 +998,6 @@ $(CONFIG)/bin/www:
 
 $(CONFIG)/bin/ejs.template.mod:  \
         $(CONFIG)/bin/ejsc \
-        $(CONFIG)/bin/ejsmod \
         $(CONFIG)/bin/ejs.mod
 	cd src/jems/ejs.template >/dev/null ;\
 		../../../$(CONFIG)/bin/ejsc --out ../../../$(CONFIG)/bin/ejs.template.mod --debug --optimize 9 ./TemplateParser.es ;\
@@ -1008,7 +1005,6 @@ $(CONFIG)/bin/ejs.template.mod:  \
 
 $(CONFIG)/bin/ejs.tar.mod:  \
         $(CONFIG)/bin/ejsc \
-        $(CONFIG)/bin/ejsmod \
         $(CONFIG)/bin/ejs.mod
 	cd src/jems/ejs.tar >/dev/null ;\
 		../../../$(CONFIG)/bin/ejsc --out ../../../$(CONFIG)/bin/ejs.tar.mod --debug --optimize 9 ./*.es ;\
@@ -1022,11 +1018,10 @@ $(CONFIG)/bin/mvc.es:
 $(CONFIG)/bin/mvc:  \
         $(CONFIG)/bin/ejsrun
 	rm -fr $(CONFIG)/bin/mvc
-	cp -r macosx-x86_64-debug/bin/ejsrun $(CONFIG)/bin/mvc
+	cp -r $(CONFIG)/bin/ejsrun $(CONFIG)/bin/mvc
 
 $(CONFIG)/bin/ejs.mvc.mod:  \
         $(CONFIG)/bin/ejsc \
-        $(CONFIG)/bin/ejsmod \
         $(CONFIG)/bin/ejs.mod \
         $(CONFIG)/bin/ejs.web.mod \
         $(CONFIG)/bin/ejs.template.mod \

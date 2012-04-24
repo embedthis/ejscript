@@ -956,7 +956,7 @@ public class Bit {
         path.copy(hfile)
         trace('Generate', 'project header: ' + hfile.relative)
 
-        let base = bit.dir.projects.join(bit.settings.product + '-' + bit.platform.os + '-' + bit.platform.arch)
+        let base = bit.dir.projects.join(bit.settings.product + '-' + bit.platform.os)
         for each (item in options.gen) {
             generating = item
             if (generating == 'sh') {
@@ -989,8 +989,11 @@ public class Bit {
         genout.writeLine('#\n#   ' + bit.platform.configuration + 
             '.sh -- Build It Shell Script to build ' + bit.settings.title + '\n#\n')
         genEnv()
+        genout.writeLine('ARCH="' + bit.platform.arch + '"')
+        genout.writeLine('ARCH="$(shell uname -m | sed \'s/i.86/x86/\')"')
         genout.writeLine('OS="' + bit.platform.os + '"')
-        genout.writeLine('CONFIG="${OS}-' + bit.platform.arch + '-' + bit.platform.profile + '"')
+        genout.writeLine('PROFILE="' + bit.platform.profile + '"')
+        genout.writeLine('CONFIG="${OS}-${ARCH}-${PROFILE}' + '"')
         genout.writeLine('CC="' + bit.packs.compiler.path + '"')
         if (bit.packs.link) {
             genout.writeLine('LD="' + bit.packs.link.path + '"')
@@ -1020,11 +1023,12 @@ public class Bit {
         let path = base.joinExt('mk')
         genout = TextStream(File(path, 'w'))
         genout.writeLine('#\n#   ' + bit.platform.configuration + '.mk -- Build It Makefile to build ' + 
-            bit.settings.title + ' for ' + bit.platform.os + ' on ' + bit.platform.arch + '\n#\n')
+            bit.settings.title + ' for ' + bit.platform.os + '\n#\n')
         genEnv()
-        genout.writeLine('ARCH     := ' + bit.platform.arch)
+        genout.writeLine('ARCH     := $(shell uname -m | sed \'s/i.86/x86/\')')
         genout.writeLine('OS       := ' + bit.platform.os)
-        genout.writeLine('CONFIG   := $(OS)-$(ARCH)-' + bit.platform.profile)
+        genout.writeLine('PROFILE  := ' + bit.platform.profile)
+        genout.writeLine('CONFIG   := $(OS)-$(ARCH)-$(PROFILE)')
         genout.writeLine('CC       := ' + bit.packs.compiler.path)
         if (bit.packs.link) {
             genout.writeLine('LD       := ' + bit.packs.link.path)
@@ -1063,11 +1067,12 @@ public class Bit {
         genout = TextStream(File(path, 'w'))
         let pname = bit.platform.configuration
         genout.writeLine('#\n#   ' + pname + '.nmake -- Build It Makefile to build ' + bit.settings.title + 
-            ' for ' + bit.platform.os + ' on ' + bit.platform.arch + '\n#\n')
+            ' for ' + bit.platform.os + '\n#\n')
         genEnv()
-        genout.writeLine('ARCH     = ' + bit.platform.arch)
+        genout.writeLine('ARCH     = $(PROCESSOR_ARCHITECTURE)')
         genout.writeLine('OS       = ' + bit.platform.os)
-        genout.writeLine('CONFIG   = $(OS)-$(ARCH)-' + bit.platform.profile)
+        genout.writeLine('PROFILE  = ' + bit.platform.profile)
+        genout.writeLine('CONFIG   = $(OS)-$(ARCH)-$(PROFILE)')
         genout.writeLine('CC       = cl')
         genout.writeLine('LD       = link')
         genout.writeLine('CFLAGS   = ' + gen.compiler)

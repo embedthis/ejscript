@@ -12,7 +12,7 @@
 </ItemGroup>
 
 <PropertyGroup Label="Globals">
-  <ProjectGuid>{c47d54bd-1cba-4d2c-8a8b-d9393ec0fdc8}</ProjectGuid>
+  <ProjectGuid>{20dece1f-c953-4717-984a-b25c3256d8e4}</ProjectGuid>
   <RootNamespace />
   <Keyword>Win32Proj</Keyword>
 </PropertyGroup>
@@ -34,7 +34,7 @@
 <PropertyGroup>
   <_ProjectFileVersion>10</_ProjectFileVersion>
   <OutDir Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">..\..\win-x86-debug\bin\</OutDir>
-  <IntDir Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">..\..\win-x86-debug\obj\ejs.unix.mod\</IntDir>
+  <IntDir Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">..\..\win-x86-debug\obj\ejs.tar.mod\</IntDir>
   <CustomBuildBeforeTargets Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">PreBuildEvent</CustomBuildBeforeTargets>
   </PropertyGroup>
 <ItemDefinitionGroup>
@@ -43,21 +43,14 @@
   <AdditionalLibraryDirectories>$(OutDir);win-x86-debug\bin;%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
 </Link>
 <CustomBuildStep>
-  <Command>"..\..\\Users\mob\git\ejs\win-x86-debug\bin\ejsc" --out "..\..\win-x86-debug\bin\ejs.unix.mod" --debug --optimize 9 "../../src/jems/ejs.unix/Unix.es"</Command>
-  <Outputs Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">..\..\win-x86-debug\bin\ejs.unix.mod</Outputs>
+  <Command>"..\..\\Users\mob\git\ejs\win-x86-debug\bin\ejsc" --out "..\..\win-x86-debug\bin\ejs.tar.mod" --debug --optimize 9 "../../src/jems/ejs.tar/*.es"</Command>
+  <Outputs Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">..\..\win-x86-debug\bin\ejs.tar.mod</Outputs>
   </CustomBuildStep>
 </ItemDefinitionGroup>
 
 <ItemGroup>
   <ProjectReference Include="ejsc.vcxproj">
   <Project>d5245843-770a-44aa-9aa8-2a834be6411e</Project>
-  <ReferenceOutputAssembly>false</ReferenceOutputAssembly>
-  </ProjectReference>
-</ItemGroup>
-
-<ItemGroup>
-  <ProjectReference Include="ejsmod.vcxproj">
-  <Project>75e07b9b-a28e-4738-abe0-779930cc67c1</Project>
   <ReferenceOutputAssembly>false</ReferenceOutputAssembly>
   </ProjectReference>
 </ItemGroup>

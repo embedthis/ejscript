@@ -1,5 +1,5 @@
 #
-#   win-x86-debug.nmake -- Build It Makefile to build Embedthis Ejscript for win on x86
+#   win-x86-debug.nmake -- Build It Makefile to build Embedthis Ejscript for win
 #
 
 !IFDEF VSINSTALLDIR
@@ -18,9 +18,10 @@ PATH      = $(SDK)\Bin:$(VS)\VC\Bin:$(VS)\Common7\IDE:$(VS)\Common7\Tools:$(VS)\
 INCLUDE   = $(INCLUDE);$(SDK)\INCLUDE:$(VS)\VC\INCLUDE
 LIB       = $(LIB);$(SDK)\lib:$(VS)\VC\lib
 
-ARCH     = x86
+ARCH     = $(PROCESSOR_ARCHITECTURE)
 OS       = win
-CONFIG   = $(OS)-$(ARCH)-debug
+PROFILE  = debug
+CONFIG   = $(OS)-$(ARCH)-$(PROFILE)
 CC       = cl
 LD       = link
 CFLAGS   = -nologo -GR- -W3 -Zi -Od -MDd
@@ -819,7 +820,6 @@ $(CONFIG)\bin\utest.exe:  \
 
 $(CONFIG)\bin\ejs.unix.mod:  \
         $(CONFIG)\bin\ejsc.exe \
-        $(CONFIG)\bin\ejsmod.exe \
         $(CONFIG)\bin\ejs.mod
 	cd src\jems\ejs.unix
 		"..\..\..\$(CONFIG)\bin\ejsc" --out "../../../$(CONFIG)/bin/ejs.unix.mod" --debug --optimize 9 "./Unix.es"
@@ -837,7 +837,6 @@ $(CONFIG)\bin\jem.exe:  \
 
 $(CONFIG)\bin\ejs.db.mod:  \
         $(CONFIG)\bin\ejsc.exe \
-        $(CONFIG)\bin\ejsmod.exe \
         $(CONFIG)\bin\ejs.mod
 	cd src\jems\ejs.db
 		"..\..\..\$(CONFIG)\bin\ejsc" --out ../../../$(CONFIG)/bin/ejs.db.mod --debug --optimize 9 "./*.es"
@@ -845,7 +844,6 @@ $(CONFIG)\bin\ejs.db.mod:  \
 
 $(CONFIG)\bin\ejs.db.mapper.mod:  \
         $(CONFIG)\bin\ejsc.exe \
-        $(CONFIG)\bin\ejsmod.exe \
         $(CONFIG)\bin\ejs.mod \
         $(CONFIG)\bin\ejs.db.mod
 	cd src\jems\ejs.db.mapper
@@ -927,7 +925,6 @@ $(CONFIG)\bin\www:
 
 $(CONFIG)\bin\ejs.template.mod:  \
         $(CONFIG)\bin\ejsc.exe \
-        $(CONFIG)\bin\ejsmod.exe \
         $(CONFIG)\bin\ejs.mod
 	cd src\jems\ejs.template
 		"..\..\..\$(CONFIG)\bin\ejsc" --out "../../../$(CONFIG)/bin/ejs.template.mod" --debug --optimize 9 "./TemplateParser.es"
@@ -935,7 +932,6 @@ $(CONFIG)\bin\ejs.template.mod:  \
 
 $(CONFIG)\bin\ejs.tar.mod:  \
         $(CONFIG)\bin\ejsc.exe \
-        $(CONFIG)\bin\ejsmod.exe \
         $(CONFIG)\bin\ejs.mod
 	cd src\jems\ejs.tar
 		"..\..\..\$(CONFIG)\bin\ejsc" --out "../../../$(CONFIG)/bin/ejs.tar.mod" --debug --optimize 9 "./*.es"
@@ -953,7 +949,6 @@ $(CONFIG)\bin\mvc.exe:  \
 
 $(CONFIG)\bin\ejs.mvc.mod:  \
         $(CONFIG)\bin\ejsc.exe \
-        $(CONFIG)\bin\ejsmod.exe \
         $(CONFIG)\bin\ejs.mod \
         $(CONFIG)\bin\ejs.web.mod \
         $(CONFIG)\bin\ejs.template.mod \

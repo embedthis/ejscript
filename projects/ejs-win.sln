@@ -1,21 +1,13 @@
 Microsoft Visual Studio Solution File, Format Version 11.00
 # Visual Studio 2010
-Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "prep", "ejs-win-x86\prep.vcxproj", "{C5EFD5E2-B473-4A01-8CC1-7253E3551311}"
+Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "prep", "ejs-win\prep.vcxproj", "{C5EFD5E2-B473-4A01-8CC1-7253E3551311}"
 EndProject
-Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "libmpr", "ejs-win-x86\libmpr.vcxproj", "{145E7A7A-CF56-4257-B982-A6BE59F0738A}"
+Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "libmpr", "ejs-win\libmpr.vcxproj", "{145E7A7A-CF56-4257-B982-A6BE59F0738A}"
 	ProjectSection(ProjectDependencies) = postProject
 		{C5EFD5E2-B473-4A01-8CC1-7253E3551311} = {C5EFD5E2-B473-4A01-8CC1-7253E3551311}
 	EndProjectSection
 EndProject
-Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "libmprssl", "ejs-win-x86\libmprssl.vcxproj", "{0DD11A58-06E5-45D8-8838-94CC6276F785}"
-	ProjectSection(ProjectDependencies) = postProject
-		{C5EFD5E2-B473-4A01-8CC1-7253E3551311} = {C5EFD5E2-B473-4A01-8CC1-7253E3551311}
-	EndProjectSection
-	ProjectSection(ProjectDependencies) = postProject
-		{145E7A7A-CF56-4257-B982-A6BE59F0738A} = {145E7A7A-CF56-4257-B982-A6BE59F0738A}
-	EndProjectSection
-EndProject
-Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "manager", "ejs-win-x86\manager.vcxproj", "{8A23990F-F747-4E57-9D73-ABA65DDEFBF2}"
+Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "libmprssl", "ejs-win\libmprssl.vcxproj", "{0DD11A58-06E5-45D8-8838-94CC6276F785}"
 	ProjectSection(ProjectDependencies) = postProject
 		{C5EFD5E2-B473-4A01-8CC1-7253E3551311} = {C5EFD5E2-B473-4A01-8CC1-7253E3551311}
 	EndProjectSection
@@ -23,7 +15,7 @@ Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "manager", "ejs-win-x86\mana
 		{145E7A7A-CF56-4257-B982-A6BE59F0738A} = {145E7A7A-CF56-4257-B982-A6BE59F0738A}
 	EndProjectSection
 EndProject
-Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "makerom", "ejs-win-x86\makerom.vcxproj", "{AA95748A-58FF-4481-8E0F-B873E2E9624D}"
+Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "manager", "ejs-win\manager.vcxproj", "{8A23990F-F747-4E57-9D73-ABA65DDEFBF2}"
 	ProjectSection(ProjectDependencies) = postProject
 		{C5EFD5E2-B473-4A01-8CC1-7253E3551311} = {C5EFD5E2-B473-4A01-8CC1-7253E3551311}
 	EndProjectSection
@@ -31,12 +23,20 @@ Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "makerom", "ejs-win-x86\make
 		{145E7A7A-CF56-4257-B982-A6BE59F0738A} = {145E7A7A-CF56-4257-B982-A6BE59F0738A}
 	EndProjectSection
 EndProject
-Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "libpcre", "ejs-win-x86\libpcre.vcxproj", "{41931549-CFAD-493E-961B-694074A6FA11}"
+Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "makerom", "ejs-win\makerom.vcxproj", "{AA95748A-58FF-4481-8E0F-B873E2E9624D}"
+	ProjectSection(ProjectDependencies) = postProject
+		{C5EFD5E2-B473-4A01-8CC1-7253E3551311} = {C5EFD5E2-B473-4A01-8CC1-7253E3551311}
+	EndProjectSection
+	ProjectSection(ProjectDependencies) = postProject
+		{145E7A7A-CF56-4257-B982-A6BE59F0738A} = {145E7A7A-CF56-4257-B982-A6BE59F0738A}
+	EndProjectSection
+EndProject
+Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "libpcre", "ejs-win\libpcre.vcxproj", "{41931549-CFAD-493E-961B-694074A6FA11}"
 	ProjectSection(ProjectDependencies) = postProject
 		{C5EFD5E2-B473-4A01-8CC1-7253E3551311} = {C5EFD5E2-B473-4A01-8CC1-7253E3551311}
 	EndProjectSection
 EndProject
-Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "libhttp", "ejs-win-x86\libhttp.vcxproj", "{236A87B9-87D7-430D-B73F-D139F8471900}"
+Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "libhttp", "ejs-win\libhttp.vcxproj", "{236A87B9-87D7-430D-B73F-D139F8471900}"
 	ProjectSection(ProjectDependencies) = postProject
 		{C5EFD5E2-B473-4A01-8CC1-7253E3551311} = {C5EFD5E2-B473-4A01-8CC1-7253E3551311}
 	EndProjectSection
@@ -50,7 +50,7 @@ Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "libhttp", "ejs-win-x86\libh
 		{0DD11A58-06E5-45D8-8838-94CC6276F785} = {0DD11A58-06E5-45D8-8838-94CC6276F785}
 	EndProjectSection
 EndProject
-Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "http", "ejs-win-x86\http.vcxproj", "{F9826CAF-5410-40D6-A9F3-73B49911C07F}"
+Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "http", "ejs-win\http.vcxproj", "{F9826CAF-5410-40D6-A9F3-73B49911C07F}"
 	ProjectSection(ProjectDependencies) = postProject
 		{C5EFD5E2-B473-4A01-8CC1-7253E3551311} = {C5EFD5E2-B473-4A01-8CC1-7253E3551311}
 	EndProjectSection
@@ -58,12 +58,12 @@ Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "http", "ejs-win-x86\http.vc
 		{236A87B9-87D7-430D-B73F-D139F8471900} = {236A87B9-87D7-430D-B73F-D139F8471900}
 	EndProjectSection
 EndProject
-Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "libsqlite3", "ejs-win-x86\libsqlite3.vcxproj", "{C27BD2E2-1711-4653-9443-2CC380D7A3EF}"
+Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "libsqlite3", "ejs-win\libsqlite3.vcxproj", "{C27BD2E2-1711-4653-9443-2CC380D7A3EF}"
 	ProjectSection(ProjectDependencies) = postProject
 		{C5EFD5E2-B473-4A01-8CC1-7253E3551311} = {C5EFD5E2-B473-4A01-8CC1-7253E3551311}
 	EndProjectSection
 EndProject
-Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "sqlite", "ejs-win-x86\sqlite.vcxproj", "{00C814C7-B535-4B6A-B25E-DA78F4E42305}"
+Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "sqlite", "ejs-win\sqlite.vcxproj", "{00C814C7-B535-4B6A-B25E-DA78F4E42305}"
 	ProjectSection(ProjectDependencies) = postProject
 		{C5EFD5E2-B473-4A01-8CC1-7253E3551311} = {C5EFD5E2-B473-4A01-8CC1-7253E3551311}
 	EndProjectSection
@@ -71,7 +71,7 @@ Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "sqlite", "ejs-win-x86\sqlit
 		{C27BD2E2-1711-4653-9443-2CC380D7A3EF} = {C27BD2E2-1711-4653-9443-2CC380D7A3EF}
 	EndProjectSection
 EndProject
-Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "libejs", "ejs-win-x86\libejs.vcxproj", "{B097BC45-C299-4DFA-944C-CC5C047CD785}"
+Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "libejs", "ejs-win\libejs.vcxproj", "{B097BC45-C299-4DFA-944C-CC5C047CD785}"
 	ProjectSection(ProjectDependencies) = postProject
 		{C5EFD5E2-B473-4A01-8CC1-7253E3551311} = {C5EFD5E2-B473-4A01-8CC1-7253E3551311}
 	EndProjectSection
@@ -79,7 +79,7 @@ Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "libejs", "ejs-win-x86\libej
 		{236A87B9-87D7-430D-B73F-D139F8471900} = {236A87B9-87D7-430D-B73F-D139F8471900}
 	EndProjectSection
 EndProject
-Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "ejs", "ejs-win-x86\ejs.vcxproj", "{816B723B-45F3-4E8E-94F4-A39CD32CC117}"
+Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "ejs", "ejs-win\ejs.vcxproj", "{816B723B-45F3-4E8E-94F4-A39CD32CC117}"
 	ProjectSection(ProjectDependencies) = postProject
 		{C5EFD5E2-B473-4A01-8CC1-7253E3551311} = {C5EFD5E2-B473-4A01-8CC1-7253E3551311}
 	EndProjectSection
@@ -87,7 +87,7 @@ Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "ejs", "ejs-win-x86\ejs.vcxp
 		{B097BC45-C299-4DFA-944C-CC5C047CD785} = {B097BC45-C299-4DFA-944C-CC5C047CD785}
 	EndProjectSection
 EndProject
-Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "ejsc", "ejs-win-x86\ejsc.vcxproj", "{D5245843-770A-44AA-9AA8-2A834BE6411E}"
+Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "ejsc", "ejs-win\ejsc.vcxproj", "{D5245843-770A-44AA-9AA8-2A834BE6411E}"
 	ProjectSection(ProjectDependencies) = postProject
 		{C5EFD5E2-B473-4A01-8CC1-7253E3551311} = {C5EFD5E2-B473-4A01-8CC1-7253E3551311}
 	EndProjectSection
@@ -95,7 +95,7 @@ Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "ejsc", "ejs-win-x86\ejsc.vc
 		{B097BC45-C299-4DFA-944C-CC5C047CD785} = {B097BC45-C299-4DFA-944C-CC5C047CD785}
 	EndProjectSection
 EndProject
-Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "ejsmod", "ejs-win-x86\ejsmod.vcxproj", "{75E07B9B-A28E-4738-ABE0-779930CC67C1}"
+Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "ejsmod", "ejs-win\ejsmod.vcxproj", "{75E07B9B-A28E-4738-ABE0-779930CC67C1}"
 	ProjectSection(ProjectDependencies) = postProject
 		{C5EFD5E2-B473-4A01-8CC1-7253E3551311} = {C5EFD5E2-B473-4A01-8CC1-7253E3551311}
 	EndProjectSection
@@ -103,7 +103,7 @@ Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "ejsmod", "ejs-win-x86\ejsmo
 		{B097BC45-C299-4DFA-944C-CC5C047CD785} = {B097BC45-C299-4DFA-944C-CC5C047CD785}
 	EndProjectSection
 EndProject
-Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "ejsrun", "ejs-win-x86\ejsrun.vcxproj", "{E0086D0A-61C4-48C8-9C65-8381E18304A7}"
+Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "ejsrun", "ejs-win\ejsrun.vcxproj", "{E0086D0A-61C4-48C8-9C65-8381E18304A7}"
 	ProjectSection(ProjectDependencies) = postProject
 		{C5EFD5E2-B473-4A01-8CC1-7253E3551311} = {C5EFD5E2-B473-4A01-8CC1-7253E3551311}
 	EndProjectSection
@@ -111,7 +111,7 @@ Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "ejsrun", "ejs-win-x86\ejsru
 		{B097BC45-C299-4DFA-944C-CC5C047CD785} = {B097BC45-C299-4DFA-944C-CC5C047CD785}
 	EndProjectSection
 EndProject
-Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "ejs.mod", "ejs-win-x86\ejs.mod.vcxproj", "{B37395E2-0424-4759-B24F-623416DC7BA6}"
+Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "ejs.mod", "ejs-win\ejs.mod.vcxproj", "{B37395E2-0424-4759-B24F-623416DC7BA6}"
 	ProjectSection(ProjectDependencies) = postProject
 		{C5EFD5E2-B473-4A01-8CC1-7253E3551311} = {C5EFD5E2-B473-4A01-8CC1-7253E3551311}
 	EndProjectSection
@@ -122,17 +122,17 @@ Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "ejs.mod", "ejs-win-x86\ejs.
 		{75E07B9B-A28E-4738-ABE0-779930CC67C1} = {75E07B9B-A28E-4738-ABE0-779930CC67C1}
 	EndProjectSection
 EndProject
-Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "bit.es", "ejs-win-x86\bit.es.vcxproj", "{B5732DBA-4664-4021-B39C-32F5E7552CE2}"
+Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "bit.es", "ejs-win\bit.es.vcxproj", "{B5732DBA-4664-4021-B39C-32F5E7552CE2}"
 	ProjectSection(ProjectDependencies) = postProject
 		{C5EFD5E2-B473-4A01-8CC1-7253E3551311} = {C5EFD5E2-B473-4A01-8CC1-7253E3551311}
 	EndProjectSection
 EndProject
-Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "bits", "ejs-win-x86\bits.vcxproj", "{186232B5-13E6-4176-80E7-2ACAD47144F1}"
+Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "bits", "ejs-win\bits.vcxproj", "{186232B5-13E6-4176-80E7-2ACAD47144F1}"
 	ProjectSection(ProjectDependencies) = postProject
 		{C5EFD5E2-B473-4A01-8CC1-7253E3551311} = {C5EFD5E2-B473-4A01-8CC1-7253E3551311}
 	EndProjectSection
 EndProject
-Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "bit", "ejs-win-x86\bit.vcxproj", "{B10963E6-4115-4D13-A34E-01DF1E20AC30}"
+Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "bit", "ejs-win\bit.vcxproj", "{B10963E6-4115-4D13-A34E-01DF1E20AC30}"
 	ProjectSection(ProjectDependencies) = postProject
 		{C5EFD5E2-B473-4A01-8CC1-7253E3551311} = {C5EFD5E2-B473-4A01-8CC1-7253E3551311}
 	EndProjectSection
@@ -146,53 +146,44 @@ Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "bit", "ejs-win-x86\bit.vcxp
 		{B5732DBA-4664-4021-B39C-32F5E7552CE2} = {B5732DBA-4664-4021-B39C-32F5E7552CE2}
 	EndProjectSection
 EndProject
-Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "utest.es", "ejs-win-x86\utest.es.vcxproj", "{538876F2-D9A0-4030-BFE1-3D9E1D042FAF}"
+Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "utest.es", "ejs-win\utest.es.vcxproj", "{538876F2-D9A0-4030-BFE1-3D9E1D042FAF}"
 	ProjectSection(ProjectDependencies) = postProject
 		{C5EFD5E2-B473-4A01-8CC1-7253E3551311} = {C5EFD5E2-B473-4A01-8CC1-7253E3551311}
 	EndProjectSection
 EndProject
-Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "ejs.unix.mod", "ejs-win-x86\ejs.unix.mod.vcxproj", "{C47D54BD-1CBA-4D2C-8A8B-D9393EC0FDC8}"
+Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "ejs.unix.mod", "ejs-win\ejs.unix.mod.vcxproj", "{C47D54BD-1CBA-4D2C-8A8B-D9393EC0FDC8}"
 	ProjectSection(ProjectDependencies) = postProject
 		{C5EFD5E2-B473-4A01-8CC1-7253E3551311} = {C5EFD5E2-B473-4A01-8CC1-7253E3551311}
 	EndProjectSection
 	ProjectSection(ProjectDependencies) = postProject
 		{D5245843-770A-44AA-9AA8-2A834BE6411E} = {D5245843-770A-44AA-9AA8-2A834BE6411E}
-	EndProjectSection
-	ProjectSection(ProjectDependencies) = postProject
-		{75E07B9B-A28E-4738-ABE0-779930CC67C1} = {75E07B9B-A28E-4738-ABE0-779930CC67C1}
 	EndProjectSection
 	ProjectSection(ProjectDependencies) = postProject
 		{B37395E2-0424-4759-B24F-623416DC7BA6} = {B37395E2-0424-4759-B24F-623416DC7BA6}
 	EndProjectSection
 EndProject
-Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "jem.es", "ejs-win-x86\jem.es.vcxproj", "{CB2B9B0D-46FF-4FC0-A10B-B95A760E43E8}"
+Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "jem.es", "ejs-win\jem.es.vcxproj", "{CB2B9B0D-46FF-4FC0-A10B-B95A760E43E8}"
 	ProjectSection(ProjectDependencies) = postProject
 		{C5EFD5E2-B473-4A01-8CC1-7253E3551311} = {C5EFD5E2-B473-4A01-8CC1-7253E3551311}
 	EndProjectSection
 EndProject
-Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "ejs.db.mod", "ejs-win-x86\ejs.db.mod.vcxproj", "{9A35ADAC-189C-4DB1-B14B-98DC7203DE1F}"
+Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "ejs.db.mod", "ejs-win\ejs.db.mod.vcxproj", "{9A35ADAC-189C-4DB1-B14B-98DC7203DE1F}"
 	ProjectSection(ProjectDependencies) = postProject
 		{C5EFD5E2-B473-4A01-8CC1-7253E3551311} = {C5EFD5E2-B473-4A01-8CC1-7253E3551311}
 	EndProjectSection
 	ProjectSection(ProjectDependencies) = postProject
 		{D5245843-770A-44AA-9AA8-2A834BE6411E} = {D5245843-770A-44AA-9AA8-2A834BE6411E}
-	EndProjectSection
-	ProjectSection(ProjectDependencies) = postProject
-		{75E07B9B-A28E-4738-ABE0-779930CC67C1} = {75E07B9B-A28E-4738-ABE0-779930CC67C1}
 	EndProjectSection
 	ProjectSection(ProjectDependencies) = postProject
 		{B37395E2-0424-4759-B24F-623416DC7BA6} = {B37395E2-0424-4759-B24F-623416DC7BA6}
 	EndProjectSection
 EndProject
-Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "ejs.db.mapper.mod", "ejs-win-x86\ejs.db.mapper.mod.vcxproj", "{E0FDE1D8-4A03-42D8-BD93-8139246B6A38}"
+Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "ejs.db.mapper.mod", "ejs-win\ejs.db.mapper.mod.vcxproj", "{E0FDE1D8-4A03-42D8-BD93-8139246B6A38}"
 	ProjectSection(ProjectDependencies) = postProject
 		{C5EFD5E2-B473-4A01-8CC1-7253E3551311} = {C5EFD5E2-B473-4A01-8CC1-7253E3551311}
 	EndProjectSection
 	ProjectSection(ProjectDependencies) = postProject
 		{D5245843-770A-44AA-9AA8-2A834BE6411E} = {D5245843-770A-44AA-9AA8-2A834BE6411E}
-	EndProjectSection
-	ProjectSection(ProjectDependencies) = postProject
-		{75E07B9B-A28E-4738-ABE0-779930CC67C1} = {75E07B9B-A28E-4738-ABE0-779930CC67C1}
 	EndProjectSection
 	ProjectSection(ProjectDependencies) = postProject
 		{B37395E2-0424-4759-B24F-623416DC7BA6} = {B37395E2-0424-4759-B24F-623416DC7BA6}
@@ -201,7 +192,7 @@ Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "ejs.db.mapper.mod", "ejs-wi
 		{9A35ADAC-189C-4DB1-B14B-98DC7203DE1F} = {9A35ADAC-189C-4DB1-B14B-98DC7203DE1F}
 	EndProjectSection
 EndProject
-Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "ejs.db.sqlite.mod", "ejs-win-x86\ejs.db.sqlite.mod.vcxproj", "{8072726A-7264-46F4-9BB3-F1A8EAD8D1DE}"
+Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "ejs.db.sqlite.mod", "ejs-win\ejs.db.sqlite.mod.vcxproj", "{8072726A-7264-46F4-9BB3-F1A8EAD8D1DE}"
 	ProjectSection(ProjectDependencies) = postProject
 		{C5EFD5E2-B473-4A01-8CC1-7253E3551311} = {C5EFD5E2-B473-4A01-8CC1-7253E3551311}
 	EndProjectSection
@@ -215,7 +206,7 @@ Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "ejs.db.sqlite.mod", "ejs-wi
 		{B37395E2-0424-4759-B24F-623416DC7BA6} = {B37395E2-0424-4759-B24F-623416DC7BA6}
 	EndProjectSection
 EndProject
-Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "ejs.db.sqlite", "ejs-win-x86\ejs.db.sqlite.vcxproj", "{0C7F9639-FC6F-4B60-9068-965A4BF8BEC7}"
+Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "ejs.db.sqlite", "ejs-win\ejs.db.sqlite.vcxproj", "{0C7F9639-FC6F-4B60-9068-965A4BF8BEC7}"
 	ProjectSection(ProjectDependencies) = postProject
 		{C5EFD5E2-B473-4A01-8CC1-7253E3551311} = {C5EFD5E2-B473-4A01-8CC1-7253E3551311}
 	EndProjectSection
@@ -235,7 +226,7 @@ Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "ejs.db.sqlite", "ejs-win-x8
 		{C27BD2E2-1711-4653-9443-2CC380D7A3EF} = {C27BD2E2-1711-4653-9443-2CC380D7A3EF}
 	EndProjectSection
 EndProject
-Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "ejs.web.mod", "ejs-win-x86\ejs.web.mod.vcxproj", "{C6086A2D-5AE0-4C31-B8EA-2C84E2981730}"
+Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "ejs.web.mod", "ejs-win\ejs.web.mod.vcxproj", "{C6086A2D-5AE0-4C31-B8EA-2C84E2981730}"
 	ProjectSection(ProjectDependencies) = postProject
 		{C5EFD5E2-B473-4A01-8CC1-7253E3551311} = {C5EFD5E2-B473-4A01-8CC1-7253E3551311}
 	EndProjectSection
@@ -249,7 +240,7 @@ Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "ejs.web.mod", "ejs-win-x86\
 		{B37395E2-0424-4759-B24F-623416DC7BA6} = {B37395E2-0424-4759-B24F-623416DC7BA6}
 	EndProjectSection
 EndProject
-Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "ejs.web", "ejs-win-x86\ejs.web.vcxproj", "{02221DAD-6CA1-40AD-8B27-0F9ADF90258C}"
+Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "ejs.web", "ejs-win\ejs.web.vcxproj", "{02221DAD-6CA1-40AD-8B27-0F9ADF90258C}"
 	ProjectSection(ProjectDependencies) = postProject
 		{C5EFD5E2-B473-4A01-8CC1-7253E3551311} = {C5EFD5E2-B473-4A01-8CC1-7253E3551311}
 	EndProjectSection
@@ -260,53 +251,44 @@ Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "ejs.web", "ejs-win-x86\ejs.
 		{B37395E2-0424-4759-B24F-623416DC7BA6} = {B37395E2-0424-4759-B24F-623416DC7BA6}
 	EndProjectSection
 EndProject
-Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "www", "ejs-win-x86\www.vcxproj", "{A59C28EB-9D3F-4AC2-A48F-5ABB011152DA}"
+Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "www", "ejs-win\www.vcxproj", "{A59C28EB-9D3F-4AC2-A48F-5ABB011152DA}"
 	ProjectSection(ProjectDependencies) = postProject
 		{C5EFD5E2-B473-4A01-8CC1-7253E3551311} = {C5EFD5E2-B473-4A01-8CC1-7253E3551311}
 	EndProjectSection
 EndProject
-Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "ejs.template.mod", "ejs-win-x86\ejs.template.mod.vcxproj", "{4270031E-06DD-4411-B5DC-AC423AB7D144}"
+Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "ejs.template.mod", "ejs-win\ejs.template.mod.vcxproj", "{4270031E-06DD-4411-B5DC-AC423AB7D144}"
 	ProjectSection(ProjectDependencies) = postProject
 		{C5EFD5E2-B473-4A01-8CC1-7253E3551311} = {C5EFD5E2-B473-4A01-8CC1-7253E3551311}
 	EndProjectSection
 	ProjectSection(ProjectDependencies) = postProject
 		{D5245843-770A-44AA-9AA8-2A834BE6411E} = {D5245843-770A-44AA-9AA8-2A834BE6411E}
-	EndProjectSection
-	ProjectSection(ProjectDependencies) = postProject
-		{75E07B9B-A28E-4738-ABE0-779930CC67C1} = {75E07B9B-A28E-4738-ABE0-779930CC67C1}
 	EndProjectSection
 	ProjectSection(ProjectDependencies) = postProject
 		{B37395E2-0424-4759-B24F-623416DC7BA6} = {B37395E2-0424-4759-B24F-623416DC7BA6}
 	EndProjectSection
 EndProject
-Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "ejs.tar.mod", "ejs-win-x86\ejs.tar.mod.vcxproj", "{20DECE1F-C953-4717-984A-B25C3256D8E4}"
+Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "ejs.tar.mod", "ejs-win\ejs.tar.mod.vcxproj", "{20DECE1F-C953-4717-984A-B25C3256D8E4}"
 	ProjectSection(ProjectDependencies) = postProject
 		{C5EFD5E2-B473-4A01-8CC1-7253E3551311} = {C5EFD5E2-B473-4A01-8CC1-7253E3551311}
 	EndProjectSection
 	ProjectSection(ProjectDependencies) = postProject
 		{D5245843-770A-44AA-9AA8-2A834BE6411E} = {D5245843-770A-44AA-9AA8-2A834BE6411E}
-	EndProjectSection
-	ProjectSection(ProjectDependencies) = postProject
-		{75E07B9B-A28E-4738-ABE0-779930CC67C1} = {75E07B9B-A28E-4738-ABE0-779930CC67C1}
 	EndProjectSection
 	ProjectSection(ProjectDependencies) = postProject
 		{B37395E2-0424-4759-B24F-623416DC7BA6} = {B37395E2-0424-4759-B24F-623416DC7BA6}
 	EndProjectSection
 EndProject
-Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "mvc.es", "ejs-win-x86\mvc.es.vcxproj", "{022847D0-111D-4281-A2C1-6EBD8DF3C03A}"
+Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "mvc.es", "ejs-win\mvc.es.vcxproj", "{022847D0-111D-4281-A2C1-6EBD8DF3C03A}"
 	ProjectSection(ProjectDependencies) = postProject
 		{C5EFD5E2-B473-4A01-8CC1-7253E3551311} = {C5EFD5E2-B473-4A01-8CC1-7253E3551311}
 	EndProjectSection
 EndProject
-Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "ejs.mvc.mod", "ejs-win-x86\ejs.mvc.mod.vcxproj", "{FCD90F10-57E9-42EA-982A-B550BCA8A587}"
+Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "ejs.mvc.mod", "ejs-win\ejs.mvc.mod.vcxproj", "{FCD90F10-57E9-42EA-982A-B550BCA8A587}"
 	ProjectSection(ProjectDependencies) = postProject
 		{C5EFD5E2-B473-4A01-8CC1-7253E3551311} = {C5EFD5E2-B473-4A01-8CC1-7253E3551311}
 	EndProjectSection
 	ProjectSection(ProjectDependencies) = postProject
 		{D5245843-770A-44AA-9AA8-2A834BE6411E} = {D5245843-770A-44AA-9AA8-2A834BE6411E}
-	EndProjectSection
-	ProjectSection(ProjectDependencies) = postProject
-		{75E07B9B-A28E-4738-ABE0-779930CC67C1} = {75E07B9B-A28E-4738-ABE0-779930CC67C1}
 	EndProjectSection
 	ProjectSection(ProjectDependencies) = postProject
 		{B37395E2-0424-4759-B24F-623416DC7BA6} = {B37395E2-0424-4759-B24F-623416DC7BA6}
@@ -321,12 +303,12 @@ Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "ejs.mvc.mod", "ejs-win-x86\
 		{C47D54BD-1CBA-4D2C-8A8B-D9393EC0FDC8} = {C47D54BD-1CBA-4D2C-8A8B-D9393EC0FDC8}
 	EndProjectSection
 EndProject
-Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "utest.worker", "ejs-win-x86\utest.worker.vcxproj", "{63B4E131-717E-4BC4-9271-2DAE72109F65}"
+Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "utest.worker", "ejs-win\utest.worker.vcxproj", "{63B4E131-717E-4BC4-9271-2DAE72109F65}"
 	ProjectSection(ProjectDependencies) = postProject
 		{C5EFD5E2-B473-4A01-8CC1-7253E3551311} = {C5EFD5E2-B473-4A01-8CC1-7253E3551311}
 	EndProjectSection
 EndProject
-Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "removeFiles", "ejs-win-x86\removeFiles.vcxproj", "{CA1152DA-3B72-4321-B561-5F8EA40EDE5B}"
+Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "removeFiles", "ejs-win\removeFiles.vcxproj", "{CA1152DA-3B72-4321-B561-5F8EA40EDE5B}"
 	ProjectSection(ProjectDependencies) = postProject
 		{C5EFD5E2-B473-4A01-8CC1-7253E3551311} = {C5EFD5E2-B473-4A01-8CC1-7253E3551311}
 	EndProjectSection

@@ -1,10 +1,11 @@
 #
-#   solaris-x86-debug.mk -- Build It Makefile to build Embedthis Ejscript for solaris on x86
+#   solaris-x86-debug.mk -- Build It Makefile to build Embedthis Ejscript for solaris
 #
 
-ARCH     := x86
+ARCH     := $(shell uname -m | sed 's/i.86/x86/')
 OS       := solaris
-CONFIG   := $(OS)-$(ARCH)-debug
+PROFILE  := debug
+CONFIG   := $(OS)-$(ARCH)-$(PROFILE)
 CC       := gcc
 LD       := ld
 CFLAGS   := -Wall -fPIC -g -mcpu=generic
@@ -801,11 +802,10 @@ $(CONFIG)/bin/utest.es:
 $(CONFIG)/bin/utest:  \
         $(CONFIG)/bin/ejsrun
 	rm -fr $(CONFIG)/bin/utest
-	cp -r solaris-x86-debug/bin/ejsrun $(CONFIG)/bin/utest
+	cp -r $(CONFIG)/bin/ejsrun $(CONFIG)/bin/utest
 
 $(CONFIG)/bin/ejs.unix.mod:  \
         $(CONFIG)/bin/ejsc \
-        $(CONFIG)/bin/ejsmod \
         $(CONFIG)/bin/ejs.mod
 	cd src/jems/ejs.unix >/dev/null ;\
 		../../../$(CONFIG)/bin/ejsc --out ../../../$(CONFIG)/bin/ejs.unix.mod --debug --optimize 9 ./Unix.es ;\
@@ -819,11 +819,10 @@ $(CONFIG)/bin/jem.es:
 $(CONFIG)/bin/jem:  \
         $(CONFIG)/bin/ejsrun
 	rm -fr $(CONFIG)/bin/jem
-	cp -r solaris-x86-debug/bin/ejsrun $(CONFIG)/bin/jem
+	cp -r $(CONFIG)/bin/ejsrun $(CONFIG)/bin/jem
 
 $(CONFIG)/bin/ejs.db.mod:  \
         $(CONFIG)/bin/ejsc \
-        $(CONFIG)/bin/ejsmod \
         $(CONFIG)/bin/ejs.mod
 	cd src/jems/ejs.db >/dev/null ;\
 		../../../$(CONFIG)/bin/ejsc --out ../../../$(CONFIG)/bin/ejs.db.mod --debug --optimize 9 ./*.es ;\
@@ -831,7 +830,6 @@ $(CONFIG)/bin/ejs.db.mod:  \
 
 $(CONFIG)/bin/ejs.db.mapper.mod:  \
         $(CONFIG)/bin/ejsc \
-        $(CONFIG)/bin/ejsmod \
         $(CONFIG)/bin/ejs.mod \
         $(CONFIG)/bin/ejs.db.mod
 	cd src/jems/ejs.db.mapper >/dev/null ;\
@@ -912,7 +910,6 @@ $(CONFIG)/bin/www:
 
 $(CONFIG)/bin/ejs.template.mod:  \
         $(CONFIG)/bin/ejsc \
-        $(CONFIG)/bin/ejsmod \
         $(CONFIG)/bin/ejs.mod
 	cd src/jems/ejs.template >/dev/null ;\
 		../../../$(CONFIG)/bin/ejsc --out ../../../$(CONFIG)/bin/ejs.template.mod --debug --optimize 9 ./TemplateParser.es ;\
@@ -920,7 +917,6 @@ $(CONFIG)/bin/ejs.template.mod:  \
 
 $(CONFIG)/bin/ejs.tar.mod:  \
         $(CONFIG)/bin/ejsc \
-        $(CONFIG)/bin/ejsmod \
         $(CONFIG)/bin/ejs.mod
 	cd src/jems/ejs.tar >/dev/null ;\
 		../../../$(CONFIG)/bin/ejsc --out ../../../$(CONFIG)/bin/ejs.tar.mod --debug --optimize 9 ./*.es ;\
@@ -934,11 +930,10 @@ $(CONFIG)/bin/mvc.es:
 $(CONFIG)/bin/mvc:  \
         $(CONFIG)/bin/ejsrun
 	rm -fr $(CONFIG)/bin/mvc
-	cp -r solaris-x86-debug/bin/ejsrun $(CONFIG)/bin/mvc
+	cp -r $(CONFIG)/bin/ejsrun $(CONFIG)/bin/mvc
 
 $(CONFIG)/bin/ejs.mvc.mod:  \
         $(CONFIG)/bin/ejsc \
-        $(CONFIG)/bin/ejsmod \
         $(CONFIG)/bin/ejs.mod \
         $(CONFIG)/bin/ejs.web.mod \
         $(CONFIG)/bin/ejs.template.mod \
