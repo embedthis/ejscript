@@ -1995,6 +1995,8 @@ public class Bit {
                 genout.writeLine('\t-if exist ' + target.path.relative.windows + ' del /Q ' + target.path.relative.windows)
                 if (file.isDir) {
                     //  MOB - all nmake paths will need .windows
+                    genout.writeLine('\tif not exist ' + target.path.relative.windows + 
+                        ' md ' + target.path.relative.windows)
                     genout.writeLine('\txcopy /S /Y ' + file.relative.windows + ' ' + target.path.relative.windows + '\n')
                 } else {
                     genout.writeLine('\tcopy /Y ' + file.relative.windows + ' ' + target.path.relative.windows + '\n')
