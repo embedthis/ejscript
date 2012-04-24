@@ -2554,7 +2554,7 @@ global.NN = item.ns
         }
         let cmd = new Cmd
         if (bit.env) {
-            let env = {}
+            let env = App.env.clone()
             for (let [key,value] in bit.env) {
                 if (value is Array) {
                     value = value.join(App.SearchSeparator)
@@ -2566,7 +2566,11 @@ global.NN = item.ns
                     if (!bit.packs.winsdk.path.contains('$'))
                         value = value.replace(/\$\(SDK\)/g, bit.packs.winsdk.path)
                 }
-                env[key] = value
+                if (env[key] && (key == 'PATH' || key == 'INCLUDE' || key == 'LIB')) {
+                    env[key] = value + App.SearchSeparator + env[key]
+                } else {
+                    env[key] = value
+                }
             }
             cmd.env = env
         }
