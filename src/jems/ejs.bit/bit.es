@@ -1022,8 +1022,9 @@ public class Bit {
         genout.writeLine('#\n#   ' + bit.platform.configuration + '.mk -- Build It Makefile to build ' + 
             bit.settings.title + ' for ' + bit.platform.os + ' on ' + bit.platform.arch + '\n#\n')
         genEnv()
+        genout.writeLine('ARCH     := ' + bit.platform.arch)
         genout.writeLine('OS       := ' + bit.platform.os)
-        genout.writeLine('CONFIG   := $(OS)-' + bit.platform.arch + '-' + bit.platform.profile)
+        genout.writeLine('CONFIG   := $(OS)-$(ARCH)-' + bit.platform.profile)
         genout.writeLine('CC       := ' + bit.packs.compiler.path)
         if (bit.packs.link) {
             genout.writeLine('LD       := ' + bit.packs.link.path)
@@ -1064,8 +1065,9 @@ public class Bit {
         genout.writeLine('#\n#   ' + pname + '.nmake -- Build It Makefile to build ' + bit.settings.title + 
             ' for ' + bit.platform.os + ' on ' + bit.platform.arch + '\n#\n')
         genEnv()
+        genout.writeLine('ARCH     = ' + bit.platform.arch)
         genout.writeLine('OS       = ' + bit.platform.os)
-        genout.writeLine('CONFIG   = $(OS)-' + bit.platform.arch + '-' + bit.platform.profile)
+        genout.writeLine('CONFIG   = $(OS)-$(ARCH)' + bit.platform.profile)
         genout.writeLine('CC       = cl')
         genout.writeLine('LD       = link')
         genout.writeLine('CFLAGS   = ' + gen.compiler)
@@ -1083,7 +1085,7 @@ public class Bit {
         genout.writeLine('\t@if not exist $(CONFIG)\\inc\\bit.h ' +
             'copy projects\\' + bit.settings.product + '-$(OS)-bit.h $(CONFIG)\\inc\\bit.h')
         genout.writeLine('\t@if not exist $(CONFIG)\\bin\\libmpr.def ' +
-            'xcopy /Y /S projects\\$(CONFIG)\\*.def $(CONFIG)\\bin\n')
+            'xcopy /Y /S projects\\' + bit.settings.product + 'win--$(ARCH)\\*.def $(CONFIG)\\bin\n')
         genout.writeLine('clean:')
         action('cleanTargets')
         genout.writeLine('')
