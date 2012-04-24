@@ -1,0 +1,72 @@
+<?xml version="1.0" encoding="utf-8"?>
+<Project DefaultTargets="Build" ToolsVersion="4.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <ImportGroup Label="PropertySheets" />
+  <PropertyGroup Label="UserMacros" />
+  <PropertyGroup />
+
+<ItemGroup Label="ProjectConfigurations">
+  <ProjectConfiguration Include="Debug|Win32">
+    <Configuration>Debug</Configuration>
+    <Platform>Win32</Platform>
+  </ProjectConfiguration>
+</ItemGroup>
+
+<PropertyGroup Label="Globals">
+  <ProjectGuid>{b37395e2-0424-4759-b24f-623416dc7ba6}</ProjectGuid>
+  <RootNamespace />
+  <Keyword>Win32Proj</Keyword>
+</PropertyGroup>
+
+<Import Project="$(VCTargetsPath)Microsoft.Cpp.Default.props" />
+
+<PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'" Label="Configuration">
+  <ConfigurationType>DynamicLibrary</ConfigurationType>
+  <CharacterSet>NotSet</CharacterSet>
+</PropertyGroup>
+
+<Import Project="$(VCTargetsPath)Microsoft.Cpp.props" />
+
+<ImportGroup Label="ExtensionSettings">
+</ImportGroup>
+
+<PropertyGroup Label="UserMacros" />
+
+<PropertyGroup>
+  <_ProjectFileVersion>10</_ProjectFileVersion>
+  <OutDir Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">..\..\win-x86-debug\bin\</OutDir>
+  <IntDir Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">..\..\win-x86-debug\obj\ejs.mod\</IntDir>
+  <CustomBuildBeforeTargets Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">PreBuildEvent</CustomBuildBeforeTargets>
+  </PropertyGroup>
+<ItemDefinitionGroup>
+<Link>
+  <AdditionalDependencies>;%(AdditionalDependencies)</AdditionalDependencies>
+  <AdditionalLibraryDirectories>$(OutDir);win-x86-debug\bin;%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
+</Link>
+<CustomBuildStep>
+  <Command>"..\..\\Users\mob\git\ejs\win-x86-debug\bin\ejsc" --out "../../win-x86-debug/bin/ejs.mod" --debug --optimize 9 --bind --require null "*.es"
+"..\..\\Users\mob\git\ejs\win-x86-debug\bin\ejsmod" --require null --cslots "../../win-x86-debug/bin/ejs.mod"
+copy ejs.slots.h "..\..\\Users\mob\git\ejs\win-x86-debug\inc\ejs.slots.h"
+del ejs.slots.h</Command>
+  <Outputs Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">..\..\win-x86-debug\bin\ejs.mod</Outputs>
+  </CustomBuildStep>
+</ItemDefinitionGroup>
+
+<ItemGroup>
+  <ProjectReference Include="ejsc.vcxproj">
+  <Project>d5245843-770a-44aa-9aa8-2a834be6411e</Project>
+  <ReferenceOutputAssembly>false</ReferenceOutputAssembly>
+  </ProjectReference>
+</ItemGroup>
+
+<ItemGroup>
+  <ProjectReference Include="ejsmod.vcxproj">
+  <Project>75e07b9b-a28e-4738-abe0-779930cc67c1</Project>
+  <ReferenceOutputAssembly>false</ReferenceOutputAssembly>
+  </ProjectReference>
+</ItemGroup>
+
+<Import Project="$(VCTargetsPath)Microsoft.Cpp.targets" />
+<ImportGroup Label="ExtensionTargets">
+</ImportGroup>
+
+</Project>
