@@ -32,7 +32,7 @@ Bit.load({
             ",
             'generate-nmake': '"${WIN_BIN}\\ejsc" --out "${OUT}" ${settings.esflags} --optimize 9 "${HOME}/*.es"',
             'generate-sh': '${BIN}/ejsc --out ${OUT} ${settings.esflags} --optimize 9 ${HOME}/*.es',
-            depends: [ 'ejsc', 'ejsmod', 'ejs.mod', 'ejs.web.mod', 'ejs.template.mod', 'ejs.unix.mod' ],
+            depends: [ 'ejsc', 'ejs.mod', 'ejs.web.mod', 'ejs.template.mod', 'ejs.unix.mod' ],
         },
 	},
 })

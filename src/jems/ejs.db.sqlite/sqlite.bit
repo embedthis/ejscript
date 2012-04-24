@@ -11,7 +11,7 @@ Bit.load({
             build: "
                 trace('Compile', 'ejs.db.sqlite.mod')
                 run('${BIN}/ejsc --out ${LIB}/ejs.db.sqlite.mod ${settings.esflags} --optimize 9 ' + Path('.').glob('*.es').sort().join(' '))
-                run('ejsmod --cslots ${LIB}/ejs.db.sqlite.mod')
+                run('${BIN}/ejsmod --cslots ${LIB}/ejs.db.sqlite.mod')
                 let header = Path('ejs.db.sqlite.slots.h')
                 let dest = bit.dir.inc.join(header)
                 if (!dest.exists || header.readString() != dest.readString()) {
