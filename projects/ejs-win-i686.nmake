@@ -788,7 +788,7 @@ $(CONFIG)\bin\bit.es:
 
 $(CONFIG)\bin\bits: 
 	cd src\jems\ejs.bit
-    if exist "..\..\..\$(CONFIG)\bin\bits" rd /Q /S "..\..\..\$(CONFIG)\bin\bits"
+		if exist "..\..\..\$(CONFIG)\bin\bits" rd /Q /S "..\..\..\$(CONFIG)\bin\bits"
 	if not exist "..\..\..\$(CONFIG)\bin\bits" md "..\..\..\$(CONFIG)\bin\bits"
 	xcopy /S /Y "bits" "..\..\..\$(CONFIG)\bin\bits"
 		cd ..\..\..
