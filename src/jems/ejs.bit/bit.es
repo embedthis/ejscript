@@ -742,7 +742,7 @@ public class Bit {
         for each (platform in bit.cross) {
             if (platform == startPlatform) continue
             cross = true
-            process(bitfile, platform)
+            process(bitfile.dirname.join(platform).joinExt('bit'), platform)
         }
     }
 
