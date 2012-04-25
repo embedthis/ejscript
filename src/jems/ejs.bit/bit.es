@@ -734,7 +734,7 @@ public class Bit {
         for each (platform in bit.cross) {
             if (platform == startPlatform) continue
             cross = true
-            process(Path(platform).joinExt('bit'), platform)
+            process(bitfile, platform)
         }
     }
 
@@ -2795,10 +2795,10 @@ global.NN = item.ns
         }
         bit.emulating = options.emulate
 
-        if (bitfile == MAIN) {
-            loadWrapper(bit.dir.bits.join('standard.bit'))
-        } else {
+        if (bitfile == LOCAL) {
             loadWrapper(bit.dir.bits.join('standalone.bit'))
+        } else {
+            loadWrapper(bit.dir.bits.join('standard.bit'))
         }
         loadWrapper(bit.dir.bits.join('os/' + bit.platform.os + '.bit'))
 

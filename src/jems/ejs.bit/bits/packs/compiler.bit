@@ -59,7 +59,7 @@ if (platform.like == 'posix') {
     let name
     if (platform.arch.match(/^i386$|^i486$/)) {
         name = 'cc386'
-    } else if (platform.arch.match(/^i[56]86$/)) {
+    } else if (platform.arch.match(/^i[56]86$|^pentium$/)) {
         name = 'ccpentium'
     } else if (platform.arch.match(/^ppc/)) {
         name = 'ccppc'
