@@ -32,10 +32,14 @@ Bit.load({
 
     defaults: {
         '+defines': [
-            '-DRW_MULTI_THREAD'
+            '-DVXWORKS',
+            '-DRW_MULTI_THREAD',
+            '-D_GNU_TOOL',
         ],
         '+compiler': [
-            '-fno-builtin -fno-defer-pop -fvolatile'
+            '-fno-builtin',
+             '-fno-defer-pop',
+             '-fvolatile',
         ],
         '+libraries': [ 'gcc' ],
         '+libpaths': [ ],
@@ -50,8 +54,14 @@ Bit.load({
                     cpu = 'I80386'
                 } else if (arch == 'i486') {
                     cpu = 'I80486'
-                } else {
+                } else if (arch.match(/^i.86$/)) {
                     cpu = 'PENTIUM'
+                } else {
+                    cpu = arch.toUpper()
+                }
+                if (arch.match(/mips/)) {
+                    /* Don't use mips global pointer */
+                    defaults.compiler.push('-G 0')
                 }
                 defaults.defines.push('-DCPU=' + cpu)
                 defaults.includes += bit.packs.vxworks.includes

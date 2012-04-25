@@ -193,6 +193,13 @@ public function installBinary() {
         throw 'Must run as root. Use \"sudo bit install\"'
     }
     packageBinaryFiles(null)
+    /* Preserve bit */
+    let path = App.exePath
+    if (path.same(bit.prefixes.bin.join('bit'))) {
+        active = path.replaceExt('old')
+        active.remove()
+        path.rename(active)
+    }
     package(bit.dir.pkg.join('bin'), 'install')
     createLinks()                                                                                          
     updateLatestLink()                                                                                          
