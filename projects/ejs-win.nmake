@@ -3,15 +3,15 @@
 #
 
 !IFDEF VSINSTALLDIR
-VS        = $(VSINSTALLDIR)
+    VS    = $(VSINSTALLDIR)
 !ELSE
-VS        = \Users\mob\git\ejs\$(VS)
+    VS    = \Users\mob\git\ejs\$(VS)
 !ENDIF
 
 !IFDEF WindowsSDKDir
-SDK       = $(WindowsSDKDir)
+    SDK   = $(WindowsSDKDir)
 !ELSE
-SDK       = $(SDK)
+    SDK   = $(SDK)
 !ENDIF
 
 PATH      = $(SDK)\Bin:$(VS)\VC\Bin:$(VS)\Common7\IDE:$(VS)\Common7\Tools:$(VS)\SDK\v3.5\bin:$(VS)\VC\VCPackages;$(PATH)
@@ -19,6 +19,10 @@ INCLUDE   = $(INCLUDE);$(SDK)\INCLUDE:$(VS)\VC\INCLUDE
 LIB       = $(LIB);$(SDK)\lib:$(VS)\VC\lib
 
 ARCH     = $(PROCESSOR_ARCHITECTURE)
+!IF "$(ARCH)" == "AMD64"
+    ARCH = x86_64
+!ENDIF
+
 OS       = win
 PROFILE  = debug
 CONFIG   = $(OS)-$(ARCH)-$(PROFILE)
@@ -73,6 +77,7 @@ all: prep \
 .PHONY: prep
 
 prep:
+	echo ARCH $(ARCH)
 	@if not exist $(CONFIG)\inc md $(CONFIG)\inc
 	@if not exist $(CONFIG)\obj md $(CONFIG)\obj
 	@if not exist $(CONFIG)\bin md $(CONFIG)\bin

@@ -1070,6 +1070,9 @@ public class Bit {
             ' for ' + bit.platform.os + '\n#\n')
         genEnv()
         genout.writeLine('ARCH     = $(PROCESSOR_ARCHITECTURE)')
+        genout.writeLine('!IF "$(ARCH)" == "AMD64"')
+            genout.writeLine('    ARCH = x86_64')
+        genout.writeLine('!ENDIF')
         genout.writeLine('OS       = ' + bit.platform.os)
         genout.writeLine('PROFILE  = ' + bit.platform.profile)
         genout.writeLine('CONFIG   = $(OS)-$(ARCH)-$(PROFILE)')
@@ -1121,10 +1124,10 @@ public class Bit {
                 bit.packs.compiler.dir.windows.name.replace(/.*Program Files.*Microsoft/, '$$(PROGRAMFILES)\\Microsoft') :
                 '$(PROGRAMFILES)\\Microsoft Visual Studio 9.0'
             if (generating == 'nmake') {
-                genout.writeLine('!IFDEF VSINSTALLDIR\nVS        = $(VSINSTALLDIR)\n!ELSE')
-                genout.writeLine('VS        = ' + vs + '\n!ENDIF\n')
-                genout.writeLine('!IFDEF WindowsSDKDir\nSDK       = $(WindowsSDKDir)\n!ELSE')
-                genout.writeLine('SDK       = ' + winsdk + '\n!ENDIF\n')
+                genout.writeLine('!IFDEF VSINSTALLDIR\n    VS    = $(VSINSTALLDIR)\n!ELSE')
+                genout.writeLine('    VS    = ' + vs + '\n!ENDIF\n')
+                genout.writeLine('!IFDEF WindowsSDKDir\n    SDK   = $(WindowsSDKDir)\n!ELSE')
+                genout.writeLine('    SDK   = ' + winsdk + '\n!ENDIF\n')
             } else if (generating == 'make') {
                 genout.writeLine('VS             := ' + '$(VSINSTALLDIR)')
                 genout.writeLine('VS             ?= ' + vs)
