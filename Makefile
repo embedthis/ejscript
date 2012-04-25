@@ -6,12 +6,11 @@
 #	Once built, use bit to configure and rebuild as required.
 #	
 
-UNAME 	:= $(shell uname | sed 's/CYGWIN.*/CYGWIN/' | tr '[A-Z]' '[a-z]')
+OS 		:= $(shell uname | sed 's/CYGWIN.*/win/;s/Darwin/macosx/' | tr '[A-Z]' '[a-z]')
 MAKE	:= make
 EXT 	:= mk
 
-ifeq ($(UNAME),cygwin)
-	OS	:= win
+ifeq ($(OS),win)
 	MAKE:= nmake
 	EXT := nmake
 endif

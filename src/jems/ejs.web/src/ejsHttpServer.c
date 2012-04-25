@@ -780,12 +780,11 @@ static void startEjsHandler(HttpQueue *q)
 }
 
 
-static void processEjsHandler(HttpQueue *q)
+static void readyEjsHandler(HttpQueue *q)
 {
     HttpConn        *conn;
     
     conn = q->conn;
-
     if (conn->readq->count > 0) {
         HTTP_NOTIFY(conn, 0, HTTP_NOTIFY_READABLE);
     }
@@ -809,7 +808,7 @@ HttpStage *ejsAddWebHandler(Http *http, MprModule *module)
     handler->close = closeEjsHandler;
     handler->incomingData = incomingEjsData;
     handler->start = startEjsHandler;
-    handler->process = processEjsHandler;
+    handler->ready = readyEjsHandler;
     return handler;
 }
 

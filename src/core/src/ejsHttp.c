@@ -466,8 +466,7 @@ static EjsObj *http_on(Ejs *ejs, EjsHttp *hp, int argc, EjsObj **argv)
         ejsSendEvent(ejs, hp->emitter, "readable", NULL, hp);
     }
     if (!conn->connectorComplete && 
-            !conn->error && HTTP_STATE_CONNECTED <= conn->state && 
-            conn->state < HTTP_STATE_COMPLETE &&
+            !conn->error && HTTP_STATE_CONNECTED <= conn->state && conn->state < HTTP_STATE_COMPLETE &&
             conn->writeq->ioCount == 0) {
         ejsSendEvent(ejs, hp->emitter, "writable", NULL, hp);
     }
@@ -945,6 +944,7 @@ static void httpNotify(HttpConn *conn, int state, int notifyFlags)
         break;
 
     case HTTP_STATE_CONTENT:
+    case HTTP_STATE_READY:
     case HTTP_STATE_RUNNING:
         break;
 
