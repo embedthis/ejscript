@@ -2,8 +2,10 @@
     ssl.bit - SSL package for Bit
  */
 
-if ((bit.packs.openssl && bit.packs.openssl.enable) || (bit.packs.matrixssl && bit.packs.matrixssl.enable)) {
-    Bit.load({packs: { ssl: { }}})
+if (bit.packs.openssl && bit.packs.openssl.enable) {
+    Bit.load({packs: { ssl: { path: bit.packs.openssl.path}}})
+} else if (bit.packs.matrixssl && bit.packs.matrixssl.enable) {
+    Bit.load({packs: { ssl: { path: bit.packs.matrixssl.path}}})
 } else {
     throw 'No SSL provider defined'
 }

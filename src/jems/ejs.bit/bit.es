@@ -670,12 +670,10 @@ public class Bit {
             } else {
                 throw "Unknown package " + path
             }
-            if (options.verbose) {
-                if (bit.packs[pack] && bit.packs[pack].enable && bit.packs[pack].path) {
-                    trace('Probe', pack + ' found at ' + bit.packs[pack].path)
-                } else {
-                    trace('Probe', pack + ' not found')
-                }
+            if (bit.packs[pack] && bit.packs[pack].enable && bit.packs[pack].path) {
+                trace('Located', pack + ' at ' + bit.packs[pack].path)
+            } else {
+                trace('Info', pack + ' not found')
             }
         }
         castDirTypes()
