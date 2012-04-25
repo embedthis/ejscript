@@ -1,5 +1,5 @@
 #
-#   solaris-x86-debug.sh -- Build It Shell Script to build Embedthis Ejscript
+#   ejs-solaris.sh -- Build It Shell Script to build Embedthis Ejscript
 #
 
 ARCH="x86"

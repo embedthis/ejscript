@@ -1,5 +1,5 @@
 #
-#   solaris-x86-debug.mk -- Build It Makefile to build Embedthis Ejscript for solaris
+#   ejs-solaris.mk -- Build It Makefile to build Embedthis Ejscript for solaris
 #
 
 ARCH     := $(shell uname -m | sed 's/i.86/x86/')

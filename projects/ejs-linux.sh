@@ -1,5 +1,5 @@
 #
-#   linux-x86-debug.sh -- Build It Shell Script to build Embedthis Ejscript
+#   ejs-linux.sh -- Build It Shell Script to build Embedthis Ejscript
 #
 
 ARCH="x86"

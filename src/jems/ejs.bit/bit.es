@@ -964,13 +964,10 @@ public class Bit {
             } else if (generating == 'make') {
                 generateMake(base)
             } else if (generating == 'nmake') {
-                // base = bit.dir.projects.join(bit.settings.product)
                 generateNmake(base)
             } else if (generating == 'vstudio' || generating == 'vs') {
-                // base = bit.dir.projects.join('vstudio-' + bit.settings.product)
                 generateVstudio(base)
             } else if (generating == 'xcode') {
-                // base = bit.dir.projects.join(bit.settings.product)
                 generateXcode(base)
             } else {
                 throw 'Unknown generation format: ' + generating
@@ -986,8 +983,7 @@ public class Bit {
         trace('Generate', 'project file: ' + base.relative + '.sh')
         let path = base.joinExt('sh')
         genout = TextStream(File(path, 'w'))
-        genout.writeLine('#\n#   ' + bit.platform.configuration + 
-            '.sh -- Build It Shell Script to build ' + bit.settings.title + '\n#\n')
+        genout.writeLine('#\n#   ' + path.basename + ' -- Build It Shell Script to build ' + bit.settings.title + '\n#\n')
         genEnv()
         genout.writeLine('ARCH="' + bit.platform.arch + '"')
         genout.writeLine('ARCH="$(shell uname -m | sed \'s/i.86/x86/\')"')
@@ -1022,7 +1018,7 @@ public class Bit {
         trace('Generate', 'project file: ' + base.relative + '.mk')
         let path = base.joinExt('mk')
         genout = TextStream(File(path, 'w'))
-        genout.writeLine('#\n#   ' + bit.platform.configuration + '.mk -- Build It Makefile to build ' + 
+        genout.writeLine('#\n#   ' + path.basename + ' -- Build It Makefile to build ' + 
             bit.settings.title + ' for ' + bit.platform.os + '\n#\n')
         genEnv()
         genout.writeLine('ARCH     := $(shell uname -m | sed \'s/i.86/x86/\')')
@@ -1065,8 +1061,7 @@ public class Bit {
         trace('Generate', 'project file: ' + base.relative + '.nmake')
         let path = base.joinExt('nmake')
         genout = TextStream(File(path, 'w'))
-        let pname = bit.platform.configuration
-        genout.writeLine('#\n#   ' + pname + '.nmake -- Build It Makefile to build ' + bit.settings.title + 
+        genout.writeLine('#\n#   ' + path.basename + ' -- Build It Makefile to build ' + bit.settings.title + 
             ' for ' + bit.platform.os + '\n#\n')
         genEnv()
         genout.writeLine('ARCH     = $(PROCESSOR_ARCHITECTURE)')
@@ -2000,14 +1995,13 @@ public class Bit {
 
             } else if (generating == 'nmake') {
                 genout.writeLine(reppath(target.path) + ': ' + repvar(getTargetDeps(target)))
-                genout.writeLine('\t-if exist ' + target.path.relative.windows + ' del /Q ' + target.path.relative.windows)
+                genout.writeLine('\t-if exist ' + reppath(target.path) + ' del /Q ' + reppath(target.path))
                 if (file.isDir) {
                     //  MOB - all nmake paths will need .windows
-                    genout.writeLine('\tif not exist ' + target.path.relative.windows + 
-                        ' md ' + target.path.relative.windows)
-                    genout.writeLine('\txcopy /S /Y ' + file.relative.windows + ' ' + target.path.relative.windows + '\n')
+                    genout.writeLine('\tif not exist ' + reppath(target.path) + ' md ' + reppath(target.path))
+                    genout.writeLine('\txcopy /S /Y ' + reppath(file) + ' ' + reppath(target.path) + '\n')
                 } else {
-                    genout.writeLine('\tcopy /Y ' + file.relative.windows + ' ' + target.path.relative.windows + '\n')
+                    genout.writeLine('\tcopy /Y ' + reppath(file) + ' ' + reppath(target.path) + '\n')
                 }
 
             } else {

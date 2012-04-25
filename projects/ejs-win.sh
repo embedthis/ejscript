@@ -1,5 +1,5 @@
 #
-#   win-x86-debug.sh -- Build It Shell Script to build Embedthis Ejscript
+#   ejs-win.sh -- Build It Shell Script to build Embedthis Ejscript
 #
 
 VS="${VSINSTALLDIR}"

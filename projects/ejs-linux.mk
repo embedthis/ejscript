@@ -1,5 +1,5 @@
 #
-#   linux-x86-debug.mk -- Build It Makefile to build Embedthis Ejscript for linux
+#   ejs-linux.mk -- Build It Makefile to build Embedthis Ejscript for linux
 #
 
 ARCH     := $(shell uname -m | sed 's/i.86/x86/')

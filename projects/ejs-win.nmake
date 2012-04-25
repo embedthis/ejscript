@@ -1,17 +1,17 @@
 #
-#   win-x86-debug.nmake -- Build It Makefile to build Embedthis Ejscript for win
+#   ejs-win.nmake -- Build It Makefile to build Embedthis Ejscript for win
 #
 
 !IFDEF VSINSTALLDIR
-VS    = $(VSINSTALLDIR)
+VS        = $(VSINSTALLDIR)
 !ELSE
-VS    = \Users\mob\git\ejs\$(VS)
+VS        = \Users\mob\git\ejs\$(VS)
 !ENDIF
 
 !IFDEF WindowsSDKDir
-SDK   = $(WindowsSDKDir)
+SDK       = $(WindowsSDKDir)
 !ELSE
-SDK   = $(SDK)
+SDK       = $(SDK)
 !ENDIF
 
 PATH      = $(SDK)\Bin:$(VS)\VC\Bin:$(VS)\Common7\IDE:$(VS)\Common7\Tools:$(VS)\SDK\v3.5\bin:$(VS)\VC\VCPackages;$(PATH)
@@ -22,7 +22,6 @@ ARCH     = $(PROCESSOR_ARCHITECTURE)
 !IF "$(ARCH)" == "AMD64"
 ARCH     = x86_64
 !ENDIF
-
 OS       = win
 PROFILE  = debug
 CONFIG   = $(OS)-$(ARCH)-$(PROFILE)
@@ -77,12 +76,11 @@ all: prep \
 .PHONY: prep
 
 prep:
-	echo ARCH $(ARCH)
 	@if not exist $(CONFIG)\inc md $(CONFIG)\inc
 	@if not exist $(CONFIG)\obj md $(CONFIG)\obj
 	@if not exist $(CONFIG)\bin md $(CONFIG)\bin
 	@if not exist $(CONFIG)\inc\bit.h copy projects\ejs-$(OS)-bit.h $(CONFIG)\inc\bit.h
-	@if not exist $(CONFIG)\bin\libmpr.def xcopy /Y /S projects\ejs-win-$(ARCH)\*.def $(CONFIG)\bin
+	@if not exist $(CONFIG)\bin\libmpr.def xcopy /Y /S projects\ejs-win\*.def $(CONFIG)\bin
 
 clean:
 	-if exist $(CONFIG)\bin\libmpr.dll del /Q $(CONFIG)\bin\libmpr.dll
@@ -200,12 +198,12 @@ clean:
 	-if exist $(CONFIG)\obj\removeFiles.obj del /Q $(CONFIG)\obj\removeFiles.obj
 
 $(CONFIG)\inc\mpr.h: 
-	-if exist win-x86-debug\inc\mpr.h del /Q win-x86-debug\inc\mpr.h
-	copy /Y src\deps\mpr\mpr.h win-x86-debug\inc\mpr.h
+	-if exist $(CONFIG)\inc\mpr.h del /Q $(CONFIG)\inc\mpr.h
+	copy /Y src\deps\mpr\mpr.h $(CONFIG)\inc\mpr.h
 
 $(CONFIG)\inc\mprSsl.h: 
-	-if exist win-x86-debug\inc\mprSsl.h del /Q win-x86-debug\inc\mprSsl.h
-	copy /Y src\deps\mpr\mprSsl.h win-x86-debug\inc\mprSsl.h
+	-if exist $(CONFIG)\inc\mprSsl.h del /Q $(CONFIG)\inc\mprSsl.h
+	copy /Y src\deps\mpr\mprSsl.h $(CONFIG)\inc\mprSsl.h
 
 $(CONFIG)\obj\mprLib.obj: \
         src\deps\mpr\mprLib.c \
@@ -249,8 +247,8 @@ $(CONFIG)\bin\makerom.exe:  \
 	"$(LD)" -out:$(CONFIG)\bin\makerom.exe -entry:mainCRTStartup -subsystem:console $(LDFLAGS) $(LIBPATHS) $(CONFIG)\obj\makerom.obj $(LIBS) libmpr.lib
 
 $(CONFIG)\inc\pcre.h: 
-	-if exist win-x86-debug\inc\pcre.h del /Q win-x86-debug\inc\pcre.h
-	copy /Y src\deps\pcre\pcre.h win-x86-debug\inc\pcre.h
+	-if exist $(CONFIG)\inc\pcre.h del /Q $(CONFIG)\inc\pcre.h
+	copy /Y src\deps\pcre\pcre.h $(CONFIG)\inc\pcre.h
 
 $(CONFIG)\obj\pcre.obj: \
         src\deps\pcre\pcre.c \
@@ -263,8 +261,8 @@ $(CONFIG)\bin\libpcre.dll:  \
 	"$(LD)" -dll -out:$(CONFIG)\bin\libpcre.dll -entry:_DllMainCRTStartup@12 -def:$(CONFIG)\bin\libpcre.def $(LDFLAGS) $(LIBPATHS) $(CONFIG)\obj\pcre.obj $(LIBS)
 
 $(CONFIG)\inc\http.h: 
-	-if exist win-x86-debug\inc\http.h del /Q win-x86-debug\inc\http.h
-	copy /Y src\deps\http\http.h win-x86-debug\inc\http.h
+	-if exist $(CONFIG)\inc\http.h del /Q $(CONFIG)\inc\http.h
+	copy /Y src\deps\http\http.h $(CONFIG)\inc\http.h
 
 $(CONFIG)\obj\httpLib.obj: \
         src\deps\http\httpLib.c \
@@ -290,8 +288,8 @@ $(CONFIG)\bin\http.exe:  \
 	"$(LD)" -out:$(CONFIG)\bin\http.exe -entry:mainCRTStartup -subsystem:console $(LDFLAGS) $(LIBPATHS) $(CONFIG)\obj\http.obj $(LIBS) libhttp.lib libmpr.lib libpcre.lib libmprssl.lib
 
 $(CONFIG)\inc\sqlite3.h: 
-	-if exist win-x86-debug\inc\sqlite3.h del /Q win-x86-debug\inc\sqlite3.h
-	copy /Y src\deps\sqlite\sqlite3.h win-x86-debug\inc\sqlite3.h
+	-if exist $(CONFIG)\inc\sqlite3.h del /Q $(CONFIG)\inc\sqlite3.h
+	copy /Y src\deps\sqlite\sqlite3.h $(CONFIG)\inc\sqlite3.h
 
 $(CONFIG)\obj\sqlite3.obj: \
         src\deps\sqlite\sqlite3.c \
@@ -314,44 +312,44 @@ $(CONFIG)\bin\sqlite.exe:  \
 	"$(LD)" -out:$(CONFIG)\bin\sqlite.exe -entry:mainCRTStartup -subsystem:console $(LDFLAGS) $(LIBPATHS) $(CONFIG)\obj\sqlite.obj $(LIBS) libsqlite3.lib
 
 $(CONFIG)\inc\ejs.cache.local.slots.h: 
-	-if exist win-x86-debug\inc\ejs.cache.local.slots.h del /Q win-x86-debug\inc\ejs.cache.local.slots.h
-	copy /Y src\slots\ejs.cache.local.slots.h win-x86-debug\inc\ejs.cache.local.slots.h
+	-if exist $(CONFIG)\inc\ejs.cache.local.slots.h del /Q $(CONFIG)\inc\ejs.cache.local.slots.h
+	copy /Y src\slots\ejs.cache.local.slots.h $(CONFIG)\inc\ejs.cache.local.slots.h
 
 $(CONFIG)\inc\ejs.db.sqlite.slots.h: 
-	-if exist win-x86-debug\inc\ejs.db.sqlite.slots.h del /Q win-x86-debug\inc\ejs.db.sqlite.slots.h
-	copy /Y src\slots\ejs.db.sqlite.slots.h win-x86-debug\inc\ejs.db.sqlite.slots.h
+	-if exist $(CONFIG)\inc\ejs.db.sqlite.slots.h del /Q $(CONFIG)\inc\ejs.db.sqlite.slots.h
+	copy /Y src\slots\ejs.db.sqlite.slots.h $(CONFIG)\inc\ejs.db.sqlite.slots.h
 
 $(CONFIG)\inc\ejs.slots.h: 
-	-if exist win-x86-debug\inc\ejs.slots.h del /Q win-x86-debug\inc\ejs.slots.h
-	copy /Y src\slots\ejs.slots.h win-x86-debug\inc\ejs.slots.h
+	-if exist $(CONFIG)\inc\ejs.slots.h del /Q $(CONFIG)\inc\ejs.slots.h
+	copy /Y src\slots\ejs.slots.h $(CONFIG)\inc\ejs.slots.h
 
 $(CONFIG)\inc\ejs.web.slots.h: 
-	-if exist win-x86-debug\inc\ejs.web.slots.h del /Q win-x86-debug\inc\ejs.web.slots.h
-	copy /Y src\slots\ejs.web.slots.h win-x86-debug\inc\ejs.web.slots.h
+	-if exist $(CONFIG)\inc\ejs.web.slots.h del /Q $(CONFIG)\inc\ejs.web.slots.h
+	copy /Y src\slots\ejs.web.slots.h $(CONFIG)\inc\ejs.web.slots.h
 
 $(CONFIG)\inc\ejs.zlib.slots.h: 
-	-if exist win-x86-debug\inc\ejs.zlib.slots.h del /Q win-x86-debug\inc\ejs.zlib.slots.h
-	copy /Y src\slots\ejs.zlib.slots.h win-x86-debug\inc\ejs.zlib.slots.h
+	-if exist $(CONFIG)\inc\ejs.zlib.slots.h del /Q $(CONFIG)\inc\ejs.zlib.slots.h
+	copy /Y src\slots\ejs.zlib.slots.h $(CONFIG)\inc\ejs.zlib.slots.h
 
 $(CONFIG)\inc\ejs.h: 
-	-if exist win-x86-debug\inc\ejs.h del /Q win-x86-debug\inc\ejs.h
-	copy /Y src\ejs.h win-x86-debug\inc\ejs.h
+	-if exist $(CONFIG)\inc\ejs.h del /Q $(CONFIG)\inc\ejs.h
+	copy /Y src\ejs.h $(CONFIG)\inc\ejs.h
 
 $(CONFIG)\inc\ejsByteCode.h: 
-	-if exist win-x86-debug\inc\ejsByteCode.h del /Q win-x86-debug\inc\ejsByteCode.h
-	copy /Y src\ejsByteCode.h win-x86-debug\inc\ejsByteCode.h
+	-if exist $(CONFIG)\inc\ejsByteCode.h del /Q $(CONFIG)\inc\ejsByteCode.h
+	copy /Y src\ejsByteCode.h $(CONFIG)\inc\ejsByteCode.h
 
 $(CONFIG)\inc\ejsByteCodeTable.h: 
-	-if exist win-x86-debug\inc\ejsByteCodeTable.h del /Q win-x86-debug\inc\ejsByteCodeTable.h
-	copy /Y src\ejsByteCodeTable.h win-x86-debug\inc\ejsByteCodeTable.h
+	-if exist $(CONFIG)\inc\ejsByteCodeTable.h del /Q $(CONFIG)\inc\ejsByteCodeTable.h
+	copy /Y src\ejsByteCodeTable.h $(CONFIG)\inc\ejsByteCodeTable.h
 
 $(CONFIG)\inc\ejsCompiler.h: 
-	-if exist win-x86-debug\inc\ejsCompiler.h del /Q win-x86-debug\inc\ejsCompiler.h
-	copy /Y src\ejsCompiler.h win-x86-debug\inc\ejsCompiler.h
+	-if exist $(CONFIG)\inc\ejsCompiler.h del /Q $(CONFIG)\inc\ejsCompiler.h
+	copy /Y src\ejsCompiler.h $(CONFIG)\inc\ejsCompiler.h
 
 $(CONFIG)\inc\ejsCustomize.h: 
-	-if exist win-x86-debug\inc\ejsCustomize.h del /Q win-x86-debug\inc\ejsCustomize.h
-	copy /Y src\ejsCustomize.h win-x86-debug\inc\ejsCustomize.h
+	-if exist $(CONFIG)\inc\ejsCustomize.h del /Q $(CONFIG)\inc\ejsCustomize.h
+	copy /Y src\ejsCustomize.h $(CONFIG)\inc\ejsCustomize.h
 
 $(CONFIG)\obj\ecAst.obj: \
         src\compiler\ecAst.c \
@@ -820,8 +818,8 @@ $(CONFIG)\bin\utest.es:
 
 $(CONFIG)\bin\utest.exe:  \
         $(CONFIG)\bin\ejsrun.exe
-	-if exist win-x86-debug\bin\utest.exe del /Q win-x86-debug\bin\utest.exe
-	copy /Y win-x86-debug\bin\ejsrun.exe win-x86-debug\bin\utest.exe
+	-if exist $(CONFIG)\bin\utest.exe del /Q $(CONFIG)\bin\utest.exe
+	copy /Y $(CONFIG)\bin\ejsrun.exe $(CONFIG)\bin\utest.exe
 
 $(CONFIG)\bin\ejs.unix.mod:  \
         $(CONFIG)\bin\ejsc.exe \
@@ -837,8 +835,8 @@ $(CONFIG)\bin\jem.es:
 
 $(CONFIG)\bin\jem.exe:  \
         $(CONFIG)\bin\ejsrun.exe
-	-if exist win-x86-debug\bin\jem.exe del /Q win-x86-debug\bin\jem.exe
-	copy /Y win-x86-debug\bin\ejsrun.exe win-x86-debug\bin\jem.exe
+	-if exist $(CONFIG)\bin\jem.exe del /Q $(CONFIG)\bin\jem.exe
+	copy /Y $(CONFIG)\bin\ejsrun.exe $(CONFIG)\bin\jem.exe
 
 $(CONFIG)\bin\ejs.db.mod:  \
         $(CONFIG)\bin\ejsc.exe \
@@ -949,8 +947,8 @@ $(CONFIG)\bin\mvc.es:
 
 $(CONFIG)\bin\mvc.exe:  \
         $(CONFIG)\bin\ejsrun.exe
-	-if exist win-x86-debug\bin\mvc.exe del /Q win-x86-debug\bin\mvc.exe
-	copy /Y win-x86-debug\bin\ejsrun.exe win-x86-debug\bin\mvc.exe
+	-if exist $(CONFIG)\bin\mvc.exe del /Q $(CONFIG)\bin\mvc.exe
+	copy /Y $(CONFIG)\bin\ejsrun.exe $(CONFIG)\bin\mvc.exe
 
 $(CONFIG)\bin\ejs.mvc.mod:  \
         $(CONFIG)\bin\ejsc.exe \

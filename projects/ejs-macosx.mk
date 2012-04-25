@@ -1,5 +1,5 @@
 #
-#   macosx-x86_64-debug.mk -- Build It Makefile to build Embedthis Ejscript for macosx
+#   ejs-macosx.mk -- Build It Makefile to build Embedthis Ejscript for macosx
 #
 
 ARCH     := $(shell uname -m | sed 's/i.86/x86/')
@@ -8,7 +8,7 @@ PROFILE  := debug
 CONFIG   := $(OS)-$(ARCH)-$(PROFILE)
 CC       := /usr/bin/clang
 LD       := /usr/bin/ld
-CFLAGS   := -w -g
+CFLAGS   := -Wall -g -Wno-unused-result -Wshorten-64-to-32
 DFLAGS   := -DBLD_DEBUG
 IFLAGS   := -I$(CONFIG)/inc
 LDFLAGS  := '-Wl,-rpath,@executable_path/../lib' '-Wl,-rpath,@executable_path/' '-Wl,-rpath,@loader_path/' '-g'
