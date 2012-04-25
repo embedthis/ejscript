@@ -322,7 +322,6 @@ public class Bit {
                 nbit.settings[key] = value
             }
         }
-dump("GEN BIT FILE BLEND", envSettings)
         if (envSettings) {
             blend(nbit, envSettings, {combine: true})
         }
