@@ -68,7 +68,7 @@ public class Bit {
             diagnose: { alias: 'd' },
             dump: { range: Path },
             emulate: { range: String },
-            file: { range: String, separator: Array },
+            file: { range: String },
             force: {},
             gen: { alias: 'g', range: String, separator: Array, commas: true },
             import: { alias: 'init', range: Boolean },
@@ -153,15 +153,15 @@ public class Bit {
                 import()
                 App.exit()
             } 
+            if (options.config) {
+                configure()
+            }
             if (!options.file) {
                 let file = findBitfile()
                 App.log.debug(1, 'Change directory to ' + file.dirname)
                 App.chdir(file.dirname)
                 home = App.dir
                 options.file = file.basename
-            }
-            if (options.config) {
-                configure()
             }
             process(options.file, localPlatform)
         } catch (e) {
@@ -207,9 +207,10 @@ public class Bit {
             options.profile = 'release'
         }
         if (args.rest.contains('configure')) {
-            options.config = '.'
+            options.config = MAIN
         } else if (options.config) {
             args.rest.push('configure')
+            options.config = Path(options.config).join(MAIN)
         }
         if (args.rest.contains('generate')) {
             if (local.like == 'windows') {
@@ -280,7 +281,7 @@ public class Bit {
         for each (platform in platforms) {
             currentPlatform = platform
             vtrace('Init', platform)
-            makeBit(MAIN, platform)
+            makeBit(options.config, platform)
             bit.userSettings = bit.settings.clone(true)
             findPacks()
             genBitFile(platform)
@@ -301,6 +302,11 @@ public class Bit {
             nbit.cross = platforms.slice(1)
         }
         blend(nbit, {
+            blend: [ 
+                '${BITS}/standard.bit',
+                '${BITS}/os/' + bit.platform.os + '.bit',
+                '${SRC}/main.bit',
+            ],
             platform: bit.platform,
             dir: { 
                 src: bit.dir.src.absolute.portable,
@@ -892,22 +898,22 @@ public class Bit {
         let home = currentBitFile.dirname
         fixup(o, ns)
         /* 
-            Blending is depth-first. Blend this bit object after loading blend references.
+            Blending is depth-first -- blend this bit object after loading bit files referenced in blend[].
             Save the blend[] property for the current bit object
             Special case for the local plaform bit file to provide early definition of platform and dir properties
          */
-        if (bit.dir && !bit.dir.top) {
-            if (o.dir) {
-                blend(bit.dir, o.dir, {combine: true})
-            }
-            if (o.platform) {
-                blend(bit.platform, o.platform, {combine: true})
-            }
-            applyCommandLineOptions(localPlatform)
+        if (o.dir) {
+            blend(bit.dir, o.dir, {combine: true})
         }
+        if (o.platform) {
+            blend(bit.platform, o.platform, {combine: true})
+        }
+/* UNUSED
         let toBlend = blend({}, o, {combine: true})
-        for each (path in toBlend.blend) {
+ */
+        for each (path in o.blend) {
             bit.BITS = bit.dir.bits
+            bit.SRC = bit.dir.src
             path = path.expand(bit, {fill: '.'})
             if (!(options.config && path == (bit.platform.name + '.bit'))) {
                 loadWrapper(home.join(path))
@@ -921,18 +927,27 @@ public class Bit {
         expandTokens(bit)
     }
 
+    /*
+        Preference order: [ 'local.bit', 'OS-ARCH.bit', '../OS-ARCH.bit' ]
+     */
     function findBitfile(): Path {
         if (LOCAL.exists) {
             return LOCAL
         }
-        let base: Path = currentBitFile || '.'
+        let lp = Path(localPlatform + '.bit')
+        if (lp.exists) {
+            return lp
+        }
+        let base: Path = (options.config) ? options.config : '.'
         for (let d: Path = base; d.parent != d; d = d.parent) {
-            let f: Path = d.join(MAIN)
+            let f: Path = d.join(lp)
             if (f.exists) {
+                vtrace('Info', 'Using bit file ' + f)
                 return f
             }
         }
-        throw 'Can\'t find ' + MAIN + '. Run "configure" or "bit configure" first.'
+        throw 'Can\'t find suitable ' + LOCAL + ' or ' + lp + '.\n'
+              'Run "configure" or "bit configure" first.'
         return null
     }
 
@@ -1588,20 +1603,6 @@ public class Bit {
         }
     }
 
-    /*UNUSED
-        Make directories absolute. This allows them to be used by any other bit file.
-    function makeDirsAbsolute() {
-        for (let [key,value] in bit.dir) {
-            bit.dir[key] = Path(value).absolute.portable
-        }
-        if (bit.defaults) {
-            for (let [key,value] in bit.defaults.includes) {
-                bit.defaults.includes[key] = Path(value).absolute.portable
-            }
-        }
-    }
-     */
-
     function castDirTypes() {
         for (let [key,value] in bit.blend) {
             bit.blend[key] = Path(value).absolute.portable
@@ -1610,11 +1611,13 @@ public class Bit {
             bit.dir[key] = Path(value).absolute
         }
         let defaults = bit.defaults
-        for (let [key,value] in defaults.includes) {
-            defaults.includes[key] = Path(value).absolute
-        }
-        for (let [key,value] in defaults.libpaths) {
-            defaults.libpaths[key] = Path(value).absolute
+        if (defaults) {
+            for (let [key,value] in defaults.includes) {
+                defaults.includes[key] = Path(value).absolute
+            }
+            for (let [key,value] in defaults.libpaths) {
+                defaults.libpaths[key] = Path(value).absolute
+            }
         }
         for (let [pname, prefix] in bit.prefixes) {
             bit.prefixes[pname] = Path(prefix).absolute
@@ -2208,7 +2211,9 @@ public class Bit {
                 These globals are always in portable format so they can be used in build scripts. Windows back-slashes
                 require quoting! 
              */ 
-            let dir = bit.dir[n.toLower()].portable
+            let dir = bit.dir[n.toLower()]
+            if (!dir) continue
+            dir = dir.portable
             if (base) {
                 dir = dir.relativeTo(base)
             }
@@ -2777,7 +2782,7 @@ global.NN = item.ns
         let [os, arch] = platform.split('-') 
         let kind = like(os)
         global.bit = bit = bareBit.clone(true)
-        bit.dir.src = options.config ? Path(options.config) : Path('.')
+        bit.dir.src = options.config ? options.config.dirname : Path('.')
         bit.dir.bits = bit.dir.src.join('bits/standard.bit').exists ? 
             bit.dir.src.join('bits') : Config.LibDir.join('bits').portable
         bit.dir.top = '.'
@@ -2795,20 +2800,19 @@ global.NN = item.ns
         }
         bit.emulating = options.emulate
 
-        if (bitfile == LOCAL) {
+        if (bitfile.basename == LOCAL) {
             loadWrapper(bit.dir.bits.join('standalone.bit'))
-        } else {
+            loadWrapper(bit.dir.bits.join('os/' + bit.platform.os + '.bit'))
+        } else if (options.config) {
             loadWrapper(bit.dir.bits.join('standard.bit'))
+            loadWrapper(bit.dir.bits.join('os/' + bit.platform.os + '.bit'))
         }
-        loadWrapper(bit.dir.bits.join('os/' + bit.platform.os + '.bit'))
 
-        //  MOB - refactor currentPlatform and use bit.platform.name
-        bit.PLATFORM = currentPlatform = platform
+        /* UNUSED
+            //  MOB - refactor currentPlatform and use bit.platform.name ... MOB - not needed here anymore
+            bit.PLATFORM = currentPlatform = platform
+         */
         if (bitfile) {
-            let platformBitfile = Path(bit.PLATFORM).joinExt('bit')
-            if (!options.config && bitfile == MAIN && !platformBitfile.exists) {
-                throw 'Can\'t find ' + platformBitfile + '. Run "configure" or "bit configure" first.'
-            }
             loadWrapper(bitfile)
         }
         loadModules()
