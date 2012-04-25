@@ -2809,11 +2809,7 @@ global.NN = item.ns
             loadWrapper(bit.dir.bits.join('standard.bit'))
             loadWrapper(bit.dir.bits.join('os/' + bit.platform.os + '.bit'))
         }
-
-        /* UNUSED
-            //  MOB - refactor currentPlatform and use bit.platform.name ... MOB - not needed here anymore
-            bit.PLATFORM = currentPlatform = platform
-         */
+        bit.PLATFORM = currentPlatform = platform
         if (bitfile) {
             loadWrapper(bitfile)
         }
