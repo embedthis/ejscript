@@ -290,6 +290,7 @@ public class Bit {
             importPacks()
             cross = true
         }
+        cross = false
         options.config = false
     }
 
@@ -321,6 +322,7 @@ public class Bit {
                 nbit.settings[key] = value
             }
         }
+dump("GEN BIT FILE BLEND", envSettings)
         if (envSettings) {
             blend(nbit, envSettings, {combine: true})
         }
@@ -578,9 +580,12 @@ public class Bit {
 
     /*
         Examine environment for flags and apply
+        NOTE: this is for cross platforms ONLY
      */
     function applyEnv() {
-        if (!cross) return
+        if (!cross) {
+            return
+        }
         envSettings = { packs: {}, defaults: {} }
         for (let [key, tool] in envTools) {
             let path = App.getenv(key)
