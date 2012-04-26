@@ -2831,7 +2831,7 @@ global.NN = item.ns
         castDirTypes()
         if (platform == localPlatform) {
             let lbin = bit.dir.bin
-            global.LBIN = bit.LBIN = lbin
+            global.LBIN = bit.LBIN = lbin.portable
             bit.WIN_LBIN = lbin.windows
         }
     }
