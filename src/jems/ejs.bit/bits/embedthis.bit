@@ -110,8 +110,7 @@ Bit.load({
                     utest = Cmd.locate('utest')
                 }
                 if (utest) {
-                    run(utest + ' -v -d ' + bit.settings.depth,
-                        {noio: true, dir: bit.dir.src.join('src')})
+                    run([utest, '-v', '-d', bit.settings.depth], {noio: true, dir: bit.dir.src.join('src')})
                 } else {
                     trace('Test', 'The utest program cannot be located')
                 }
