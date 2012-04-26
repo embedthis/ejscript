@@ -2784,11 +2784,16 @@ global.NN = item.ns
     }
 
     public function safeRemove(dir: Path) {
+/* UNUSED
         if (dir.isAbsolute)  {
+            //  Comparison with top doesn't handle C: vs c:
             if (bit.dir.top.same('/') || !dir.startsWith(bit.dir.top)) {
-                throw new Error('Unsafe attempt to remove ' + dir + ' expected parent ' + bit.dir.top)
+                if (!options.force) {
+                    throw new Error('Unsafe attempt to remove ' + dir + ' expected parent ' + bit.dir.top)
+                }
             }
         }
+*/
         dir.removeAll()
     }
 
