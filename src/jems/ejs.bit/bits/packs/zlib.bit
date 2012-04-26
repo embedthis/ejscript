@@ -10,56 +10,39 @@ if (!path) {
 }
 path ||= Path('.')
 
+let lib, isearch
+
 if (bit.platform.os == 'win') {
     if (!path) {
         throw 'Can\'t find zlib source distribution'
     }
-    let search = [path]
-    let lib = probe('libz.dll', {fullpath: true, search: search}).absolute
-    let dir = lib.parent
-    search = [path]
-    let incdir = probe('zlib.h', {search: search}).absolute
-    cfg = {
-        dir: dir,
-        path: lib,
-        includes: [ incdir ],
-        libraries: [ 'z' ],
-        libpaths: [ lib.parent ],
-        imports: [ lib.parent.join('libz.dll'), lib.parent.join('libz.lib') ],
-    }
+    lib = probe('libz.dll', {fullpath: true, search: [path]}).absolute
+    imports = [ lib.parent.join('libz.dll'), lib.parent.join('libz.lib') ]
+    isearch = [path]
 
 } else if (bit.platform.os == 'macosx') {
-    let search = [path, '/usr/lib']
-    let lib = probe('libz.dylib', {fullpath: true, search: search}).absolute
-    let dir = lib.parent
-    search = [path, '/usr/include']
-    let incdir = probe('zlib.h', {search: search}).absolute
-    cfg = {
-        dir: dir,
-        path: lib,
-        includes: [ incdir ],
-        libraries: [ 'z' ],
-        libpaths: [ lib.parent ],
-        imports: lib.parent.glob('libz*.dylib')
-    }
+    lib = probe('libz.dylib', {fullpath: true, search: [path, '/usr/lib']}).absolute
+    imports = lib.parent.glob('libz*.dylib')
+    isearch = [path, '/usr/include']
 
 } else {
     let arch = bit.platform.arch.match(/^i.86$/) ? 'x86' : bit.platform.arch
-    let search = [path, '/usr/lib', '/lib' ] + 
-        Path('/usr/lib').glob(arch + '-linux-gnu') +
-        Path('/lib').glob(arch + '-linux-gnu')
-    let lib = probe('libz.so', {fullpath: true, search: search}).absolute
-    let dir = lib.parent
-    search = [path.join('include'), '/usr/include']
-    let incdir = probe('zlib.h', {search: search}).absolute
-    cfg = {
-        dir: dir,
-        path: lib,
-        includes: [ incdir ],
-        libraries: [ 'z' ],
-        libpaths: [ lib.parent ],
-        imports: lib.parent.glob('libz*.so*'),
-    }
+    let search = [path, '/usr/lib', '/lib' ] + Path('/usr/lib').glob(arch + '-linux-gnu') + Path('/lib').glob(arch + '-linux-gnu')
+    lib = probe('libz.so', {fullpath: true, search: search}).absolute
+    imports = lib.parent.glob('libz*.so*')
+    isearch = [path.join('include'), '/usr/include']
+}
+
+let cfg = {
+    path: lib,
+    dir: lib.parent,
+    libpaths: [ lib.parent ],
+    libraries: [ 'z' ],
+    imports: imports,
+}
+let incdir = probe('zlib.h', {search: isearch}).absolute
+if (!incdir.same('/usr/include')) {
+    cfg.includes = [incdir]
 }
 
 let template = {packs: { zlib: cfg}}

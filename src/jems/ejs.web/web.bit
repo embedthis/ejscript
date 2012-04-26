@@ -10,9 +10,9 @@ Bit.load({
             files: [ '*.es' ],
             build: "
                 trace('Compile', 'ejs.web.mod')
-                run('${BIN}/ejsc --out ${LIB}/ejs.web.mod ${settings.esflags} --optimize 9 ' + 
+                run('${LBIN}/ejsc --out ${LIB}/ejs.web.mod ${settings.esflags} --optimize 9 ' + 
                     Path('.').glob('*.es').sort().join(' '))
-                run('${BIN}/ejsmod --cslots ${LIB}/ejs.web.mod')
+                run('${LBIN}/ejsmod --cslots ${LIB}/ejs.web.mod')
                 let header = Path('ejs.web.slots.h')
                 let dest = bit.dir.inc.join(header)
                 if (!dest.exists || header.readString() != dest.readString()) {

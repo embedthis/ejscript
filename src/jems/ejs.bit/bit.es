@@ -66,7 +66,7 @@ public class Bit {
             'continue': {},
             debug: {},
             diagnose: { alias: 'd' },
-            dump: { range: Path },
+            dump: { },
             emulate: { range: String },
             file: { range: String },
             force: {},
@@ -102,7 +102,7 @@ public class Bit {
             '    --continue                         # Continue on errors\n' +
             '    --debug                            # Same as --profile debug\n' +
             '    --diagnose                         # Emit diagnostic trace \n' +
-            '    --dump path                        # Dump the full project bit file\n' +
+            '    --dump                             # Dump the full project bit file\n' +
             '    --emulate os-arch                  # Emulate platform\n' +
             '    --file file.bit                    # Use the specified bit file\n' +
             '    --force                            # Override warnings\n' +
@@ -211,6 +211,12 @@ public class Bit {
         } else if (options.config) {
             args.rest.push('configure')
             options.config = Path(options.config).join(MAIN)
+        }
+        if (args.rest.contains('dump')) {
+            options.dump = true
+        } else if (options.dump) {
+            args.rest.push('dump')
+            options.dump = true
         }
         if (args.rest.contains('generate')) {
             if (local.like == 'windows') {
@@ -735,7 +741,7 @@ public class Bit {
         makeBit(bitfile, platform)
         prepBuild()
         build()
-        if (bit.cross && !generating) {
+        if ((bit.cross || cross) && !generating) {
             trace('Complete', bit.platform.configuration)
         }
         let startPlatform = bit.platform.name
@@ -1214,7 +1220,7 @@ public class Bit {
 
     function prepBuild() {
         vtrace('Prepare', 'For building')
-        if (bit.cross) {
+        if (bit.cross || cross) {
             trace('Build', bit.platform.configuration)
             vtrace('Targets', bit.platform.configuration + ': ' + 
                    ((selectedTargets != '') ? selectedTargets: 'nothing to do'))
@@ -1226,7 +1232,6 @@ public class Bit {
         if (options.gen || options.config) {
             missing = ''
         }
-        //  MOB - merge
         makeConstGlobals()
         makeDirGlobals()
         enableTargets()
@@ -1240,10 +1245,11 @@ public class Bit {
         Object.sortProperties(bit)
 
         if (options.dump) {
-            delete bit.blend
-            options.dump.write(serialize(bit, {pretty: true, commas: true, indent: 4, quotes: false}))
-            trace('Save', 'Combined Bit files to: ' + options.dump)
-            App.exit()
+            let o = bit.clone()
+            delete o.blend
+            let path = Path(currentPlatform + '.dmp')
+            path.write(serialize(o, {pretty: true, commas: true, indent: 4, quotes: false}))
+            trace('Dump', 'Combined Bit files to: ' + path)
         }
     }
 
@@ -2207,6 +2213,9 @@ public class Bit {
         }
     }
 
+    /*
+        Called in this file and in xcode.es during project generation
+     */
     public function makeDirGlobals(base: Path = null) {
         for each (n in ['BIN', 'CFG', 'BITS', 'FLAT', 'INC', 'LIB', 'OBJ', 'PACKS', 'PKG', 'REL', 'SRC', 'TOP']) {
             /* 
@@ -2228,6 +2237,7 @@ public class Bit {
                 }
             }
         }
+        bit.LBIN = global.LBIN
     }
 
     public function setRuleVars(target, base: Path = App.dir) {
@@ -2819,6 +2829,11 @@ global.NN = item.ns
         applyEnv()
         setPathEnvVar(bit)
         castDirTypes()
+        if (platform == localPlatform) {
+            let lbin = bit.dir.bin
+            global.LBIN = bit.LBIN = lbin
+            bit.WIN_LBIN = lbin.windows
+        }
     }
 }
 

@@ -179,7 +179,7 @@ Bit.load({
                 if (bit.packs.dsi.path) {
                     trace('Tidy', 'HTML doc')
                     let doc = bit.dir.src.join('doc')
-                    for each (file in ls('${SRC}/doc/**html')) 
+                    for each (file in ls('${SRC}/doc/**html')) {
                         trace('Tidy', file)
                         file = file.relativeTo(doc)
                         run(bit.packs.tidy.path + ' -q -config tidy.conf ' + file)

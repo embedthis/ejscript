@@ -21,8 +21,6 @@ if (!path) {
     path = probe('target/h/vxWorks.h', {search: search.sort().reverse()})
 }
 
-// if (bit.platform.os == 'macosx')
-
 let cfg = {
     dir: path,
     path: path,

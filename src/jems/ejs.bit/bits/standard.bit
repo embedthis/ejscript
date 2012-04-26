@@ -49,17 +49,20 @@ Bit.load({
             type: 'configure',
         },
 
-        generate: {
-            type: 'generate',
+        dump: {
+            type: 'dump',
         },
 
-        rebuild: {
-            type: 'rebuild',
+        generate: {
+            type: 'generate',
         },
 
         init: {
             type: 'init',
         },
 
+        rebuild: {
+            type: 'rebuild',
+        },
     },
 })

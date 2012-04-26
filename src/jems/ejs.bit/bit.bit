@@ -10,7 +10,7 @@ Bit.load({
             files: [ 'bit.es' ],
             precious: true,
             build: "
-                trace('Export', bit.target.files)
+                trace('Export', 'bit.es')
                 cp('bit.es', bit.dir.bin)
             ",
             'generate-nmake': 'copy "bit.es" "${WIN_BIN}"',
