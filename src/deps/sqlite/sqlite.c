@@ -6,11 +6,6 @@
 
 #if EMBEDTHIS_MODIFICATION
 #include "bit.h"
-#if VXWORKS
-    #ifndef _VSB_CONFIG_FILE
-        #define _VSB_CONFIG_FILE "vsbConfig.h"
-    #endif
-#endif
 #endif
 
 #if BLD_FEATURE_SQLITE || BLD_SQLITE_PRODUCT
