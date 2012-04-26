@@ -49,6 +49,7 @@ public class Bit {
     private var generating: String
 
     private var defaultTargets: Array
+    private var originalTargets: Array
     private var selectedTargets: Array
 
     private var posix = ['macosx', 'linux', 'unix', 'freebsd', 'solaris']
@@ -276,7 +277,7 @@ public class Bit {
                 poptions.disable.push(App.args[++i])
             }
         }
-        selectedTargets = args.rest
+        originalTargets = selectedTargets = args.rest
         bareBit.options = options
     }
 
@@ -1292,6 +1293,7 @@ public class Bit {
         Select the targets to build 
      */
     function selectTargets() {
+        selectedTargets = originalTargets
         defaultTargets = []
         for (let [tname,target] in bit.targets) {
             if (targetsToBuildByDefault[target.type]) {
