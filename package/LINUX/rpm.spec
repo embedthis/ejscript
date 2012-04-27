@@ -7,7 +7,7 @@ Version: ${settings.version}
 Release: ${settings.buildNumber}
 License: Dual GPL/commercial
 Group: Development/Other
-URL: http://www.ejscript.com
+URL: http://ejscript.com
 Distribution: Embedthis
 Vendor: Embedthis Software
 BuildRoot: ${dir.rpm}/BUILDROOT/${settings.product}-${settings.version}-${settings.buildNumber}.${platform.mappedCpu}
@@ -22,7 +22,7 @@ Embedthis Ejscript is an enhanced, embeddable implementation of JavaScript
 
 %install
     mkdir -p ${dir.rpm}/BUILDROOT/${settings.product}-${settings.version}-${settings.buildNumber}.${platform.mappedCpu}
-    cp -r ${dir.contents}/*  ${dir.rpm}/BUILDROOT/${settings.product}-${settings.version}-${settings.buildNumber}.${platform.mappedCpu}
+    cp -r ${dir.contents}/* ${dir.rpm}/BUILDROOT/${settings.product}-${settings.version}-${settings.buildNumber}.${platform.mappedCpu}
 
 %clean
 
