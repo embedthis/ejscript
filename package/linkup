@@ -11,7 +11,7 @@ ROOT_DIR="${2%/}"
 EXE=
 INC_DIR="${ROOT_DIR}/usr/include"
 MAN_DIR="${ROOT_DIR}/usr/share/man"
-PROGRAMS="bit ejs ejsc ejsman ejsmod sqlite mvc jem utest"
+PROGRAMS="bit ejs ejsc ejsmod sqlite mvc jem utest"
 LIBRARIES="libmpr libejs"
 
 if [ -x "${ROOT_DIR}/usr/local/bin" ] ; then
