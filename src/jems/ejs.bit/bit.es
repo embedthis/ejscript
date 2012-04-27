@@ -678,8 +678,6 @@ public class Bit {
                         throw e
                     }
                 }
-            } else {
-                throw "Unknown package " + path
             }
             if (bit.packs[pack] && bit.packs[pack].enable && bit.packs[pack].path) {
                 trace('Located', pack + ' at ' + bit.packs[pack].path)
