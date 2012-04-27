@@ -437,7 +437,8 @@ function packageUbuntu(pkg: Path, options) {
     let DEBIAN = contents.join('DEBIAN')
     let opak = Path('package/' + OS.toUpper())
 
-    install(opak.join('deb.bin/c*'), DEBIAN, {expand: true, permissions: 0644})
+    install(opak.join('deb.bin/conffiles'), DEBIAN.join('conffiles'), {expand: true, permissions: 0644})
+    install(opak.join('deb.bin/control'), DEBIAN, {expand: true, permissions: 0755})
     install(opak.join('deb.bin/p*'), DEBIAN, {expand: true, permissions: 0755})
 
     let base = [s.product, s.version, s.buildNumber, bit.platform.dist, OS.toUpper(), ARCH].join('-')
