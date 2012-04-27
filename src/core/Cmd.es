@@ -234,8 +234,7 @@ module ejs {
         static function daemon(cmdline: Object, options: Object = null): Number {
             let cmd = new Cmd
             options ||= {}
-            blend(options, {detach: true})
-            cmd.start(cmdline, options)
+            cmd.start(cmdline, blend({detach: true}, options))
             cmd.finalize()
             return cmd.pid
         }
@@ -352,19 +351,27 @@ module ejs {
             return result
         }
 
-        //  MOB - should this take options as an arg?
         /**
             Execute a command/program and return the output as a result. 
             The call blocks while executing the command.
             @param command Command or program to execute
+            @param options Command options hash. Supported options are:
+            @options detach Boolean If true, run the command and return immediately. If detached, finalize() must be
+                called to signify the end of data being written to the command's stdin.
+            @options dir Path or String. Directory to set as the current working directory for the command.
+            @options exception Boolean If true, throw exceptions if the command returns a non-zero status code. 
+                Defaults to false.
+            @options timeout Number This is the default number of milliseconds for the command to complete.
+            @options noio Don't capture stdout from the command. If true, the command's standard output will go to the 
+                application's current standard output. Defaults to false.
             @param data Optional data to write to the command on it's standard input.
             @returns The command output from the standard output.
             @throws IOError if the command exits with non-zero status. The exception object will contain the command's
                 standard error output. 
          */
-        static function run(command: Object, data: Object = null, options = {}): String {
+        static function run(command: Object, options: Object = {}, data: Object = null): String {
             let cmd = new Cmd
-            cmd.start(command, {detach: true})
+            cmd.start(command, blend({detach: true}, options))
             if (data) {
                 cmd.write(data)
             }
@@ -376,13 +383,11 @@ module ejs {
             return cmd.readString()
         }
 
-        //  MOB - should this take options as an arg? YES
         /**
             Run a command using the system command shell and wait for completion. On Windows, this requires that
             sh.exe is installed (See Cygwin). 
             @param command The (optional) command line to initialize with. The command may be either a string or
                 an array of arguments. 
-            @param data Optional data to write to the command on it's standard input.
             @param options Command options hash. Supported options are:
             @options detach Boolean If true, run the command and return immediately. If detached, finalize() must be
                 called to signify the end of data being written to the command's stdin.
@@ -392,11 +397,12 @@ module ejs {
             @options timeout Number This is the default number of milliseconds for the command to complete.
             @options noio Don't capture stdout from the command. If true, the command's standard output will go to the 
                 application's current standard output. Defaults to false.
+            @param data Optional data to write to the command on it's standard input.
             @return The command output from the standard output.
             @throws IOError if the command exits with non-zero status. The exception object will contain the command's
                 standard error output. 
          */
-        static function sh(command: Object, data: Object = null, options: Object = null): String {
+        static function sh(command: Object, options: Object = null, data: Object = null): String {
             /*
                 The form is:  sh -c "command args"
                 The args must be wrapped in single quotes if they contain spaces. 
@@ -415,7 +421,7 @@ module ejs {
                     s = s.replace(/\"/g, '\\\"').replace(/\'/g, '\\\'')
                     command[arg] = "'" + s + "'"
                 }
-                return run([shell, "-c"] + [command.join(" ")], data, options).trimEnd()
+                return run([shell, "-c"] + [command.join(" ")], options, data).trimEnd()
             }
             /*
                 Must quote single and double quotes as the comand will be wrapped in quotes on Windows.
@@ -426,7 +432,7 @@ module ejs {
                     Cygwin will parse as  argv[1] == c:/path \a \b
                     Windows will parse as argv[1] == c:/path "a b"
              */
-            return run([shell, "-c", command.toString().trimEnd('\n')], data, options).trimEnd()
+            return run([shell, "-c", command.toString().trimEnd('\n')], options, data).trimEnd()
         }
     }
 }

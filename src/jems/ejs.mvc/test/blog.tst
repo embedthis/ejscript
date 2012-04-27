@@ -16,7 +16,7 @@ assert(!exists("junk"))
 //  Generate app and scaffold
 Cmd.run([mvc, '--listen', HTTP, 'generate', 'app', 'junk'])
 
-Cmd.run([mvc + 'generate', 'scaffold', 'post', 'title:string', 'body:text'], {dir: 'junk'})
+Cmd.run([mvc, 'generate', 'scaffold', 'post', 'title:string', 'body:text'], {dir: 'junk'})
 Cmd.run([mvc, 'compile'], {dir: 'junk'})
 
 //  Start web server
