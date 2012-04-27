@@ -28,6 +28,7 @@ static EjsString *system_ipaddr(Ejs *ejs, EjsObj *unused, int argc, EjsObj **arg
     struct addrinfo *res, *reslist, hints;
     cchar           *ip;
     char            ipaddr[MPR_MAX_STRING], service[MPR_MAX_STRING];
+    int             rc;
 
     if ((ip = mprGetIpAddr(ejs)) != 0) {
         return ejsCreateStringFromAsc(ejs, mprGetIpAddr(ejs));
@@ -35,7 +36,7 @@ static EjsString *system_ipaddr(Ejs *ejs, EjsObj *unused, int argc, EjsObj **arg
     memset((char*) &hints, 0, sizeof(hints));
     hints.ai_socktype = SOCK_STREAM;
     hints.ai_family = AF_INET;
-    if (getaddrinfo(mprGetHostName(ejs), NULL, &hints, &reslist) == 0) {
+    if ((rc = getaddrinfo(mprGetHostName(ejs), NULL, &hints, &reslist)) == 0) {
         ip = 0;
         //  TODO - support IPv6
         for (res = reslist; res; res = res->ai_next) {
@@ -55,7 +56,7 @@ static EjsString *system_ipaddr(Ejs *ejs, EjsObj *unused, int argc, EjsObj **arg
         }
         return ejsCreateStringFromAsc(ejs, ip ? ip : "127.0.0.1");
     } else {
-        mprLog(1, "Can't get IP address. Getaddrinfo failed %d\n", errno);
+        mprLog(0, "Can't get IP address (%d). Check system hostname\n", rc);
     }
 #endif
     return ESV(null);
