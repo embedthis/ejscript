@@ -14,10 +14,10 @@ rmdir("junk")
 assert(!exists("junk"))
 
 //  Generate app and scaffold
-Cmd.sh(mvc + " --listen " + HTTP + " generate app junk")
+Cmd.run([mvc, '--listen', HTTP, 'generate', 'app', 'junk'])
 
-Cmd.sh("cd junk ; " + mvc + " generate scaffold post title:string body:text")
-Cmd.sh("cd junk ; " + mvc + " compile")
+Cmd.run([mvc + 'generate', 'scaffold', 'post', 'title:string', 'body:text'], {dir: 'junk'})
+Cmd.run([mvc, 'compile'], {dir: 'junk'})
 
 //  Start web server
 let pid
