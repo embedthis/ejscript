@@ -165,3 +165,4 @@ src/core/ejs.slots.h
 releases
 xcuserdata
 *.dmp
+project.xcworkspace
