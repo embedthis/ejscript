@@ -1,5 +1,5 @@
 /*
-    dpkg.bit - PackageMaker on dpkg for Bit
+    dpkg.bit - Debian package maker for Bit
  */
 
 if (bit.platform.os == 'linux' && bit.platform.dist == 'ubuntu') {

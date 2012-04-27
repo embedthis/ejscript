@@ -43,7 +43,7 @@ Bit.load({
         sync: ['http', 'mpr', 'pcre', 'sqlite'],
         manager: 'ejsman',
         '+optional': [ 'doxygen', 'dpkg', 'dsi', 'man', 'man2html', 'openssl', 'matrixssl', 'pmaker', 
-            'sqlite', 'ssl', 'zlib' ],
+            'rpmbuild', 'sqlite', 'ssl', 'zlib' ],
         packs: [ 'bits/packs' ],
         '+required': [ 'pcre' ]
         'without-all': ['doxygen', 'dsi', 'man', 'man2html', 'ssl', 'zlib'],

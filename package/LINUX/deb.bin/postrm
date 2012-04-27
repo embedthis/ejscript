@@ -11,7 +11,6 @@ BLD_CFG_PREFIX="${prefixes.config}"
 ###############################################################################
 
 remove() {
-
 	local cdir=`pwd`
 
     if [ -x $BLD_CFG_PREFIX ] ; then
@@ -41,22 +40,6 @@ purge() {
 		cd $cdir 
 		rmdir $BLD_CFG_PREFIX 2>/dev/null || true
 	fi
-}
-
-#
-#	Clean a directory. Usage: removeFiles fileList
-#
-removeFiles() {
-	local f
-
-    if [ ! -f $1 ] ; then
-		echo "Can't find file list: $1, continuing ..."
-	fi
-	echo "Removing files using the file list: $1 ..."
-	cat $1 | while read f
-	do
-		echo rm -f "$f"
-	done
 }
 
 #

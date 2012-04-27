@@ -226,7 +226,7 @@ public function package(pkg: Path, formats) {
             packageTar(pkg, options)
             break
         default:
-            throw 'Unknown package format: ' + pkg
+            throw 'Unknown package format: ' + fmt
         }
     }
 }
@@ -334,8 +334,10 @@ function packageNative(pkg: Path, options) {
     case 'linux':
         if (bit.platform.dist == 'ubuntu') {
             packageUbuntu(pkg, options)
+        } else if (bit.platform.dist == 'fedora') {
+            packageFedora(pkg, options)
         } else {
-            throw 'Can\'t package for linux distribution ' + bit.platform.dist
+            throw 'Can\'t package for ' + bit.platform.dist + ' linux distribution'
         }
         break
     case 'macosx':
@@ -420,9 +422,63 @@ function packageMacosx(pkg: Path, options) {
     bit.dir.rel.join('md5-' + base).joinExt('pkg.txt', true).write(md5(outfile.readString()))
 }
 
+function packageFedora(pkg: Path, options) {
+    if (!bit.packs.rpmbuild || !bit.packs.rpmbuild.path) {
+        throw 'Configured without packaging tool: rpmbuild'
+    }
+    let home = App.getenv('HOME')
+    App.putenv('HOME', bit.dir.cfg)
+
+    let s = bit.settings
+    let rel = bit.dir.rel
+    let cpu = bit.platform.arch
+    if (cpu.match(/^i.86$/)) {
+        cpu = 'i386'
+    }
+    bit.platform.mappedCpu = cpu
+    let base = [s.product, s.version, s.buildNumber, bit.platform.dist, OS.toUpper(), ARCH].join('-')
+    let contents = pkg.join(options.vname, 'contents')
+    let RPM = pkg.join(options.vname, 'RPM')
+    for each (d in ['SOURCES', 'SPECS', 'BUILD', 'RPMS', 'SRPMS']) {
+        RPM.join(d).makeDir()
+    }
+    RPM.join('RPMS', bit.platform.arch).makeDir()
+    bit.dir.rpm = RPM
+    bit.dir.contents = contents
+
+    let opak = Path('package/' + OS.toUpper())
+    let spec = RPM.join('SPECS', base).joinExt('spec', true)
+    install(opak.join('rpm.spec'), spec, {expand: true, permissions: 0644})
+
+    let files = contents.glob('**')
+    let fileList = RPM.join('BUILD/binFiles.txt')
+    let cp: File = fileList.open('atw')
+    cp.write('%defattr(-,root,root)\n')
+
+    for each (file in contents.glob('**/')) {
+        cp.write('%dir /' + file.relativeTo(contents) + '\n')
+    }
+    for each (file in contents.glob('**', {exclude: /\/$/})) {
+        cp.write('"/' + file.relativeTo(contents) + '"\n')
+    }
+    cp.close()
+
+    let macros = bit.dir.cfg.join('.rpmmacros')
+    macros.write('%_topdir ' + RPM + '
+
+%__os_install_post /usr/lib/rpm/redhat/brp-compress %{!?__debug_package:/usr/lib/rpm/redhat/brp-strip %{__strip}} /usr/lib/rpm/redhat/brp-strip-static-archive %{__strip} /usr/lib/rpm/redhat/brp-strip-comment-note %{__strip} %{__objdump} %{nil}')
+    let outfile = bit.dir.rel.join(base).joinExt('rpm', true)
+    trace('Package', outfile)
+    run(bit.packs.rpmbuild.path + ' -ba --target ' + cpu + ' ' + spec.basename, {dir: RPM.join('SPECS'), noshow: true})
+    let rpmfile = RPM.join('RPMS', cpu, [s.product, s.version, s.buildNumber].join('-')).joinExt(cpu + '.rpm', true)
+    rpmfile.rename(outfile)
+    bit.dir.rel.join('md5-' + base).joinExt('rpm.txt', true).write(md5(outfile.readString()))
+    App.putenv('HOME', home)
+}
+
 function packageUbuntu(pkg: Path, options) {
     if (!bit.packs.dpkg || !bit.packs.dpkg.path) {
-        throw 'Configured without dpkg'
+        throw 'Configured without packaging tool: dpkg'
     }
     let s = bit.settings
     let rel = bit.dir.rel
@@ -459,7 +515,6 @@ function packageWin(pkg: Path, options) {
     install(opak.join('LICENSE.TXT'), pkg)
     let iss = pkg.join('install.iss')
     install(opak.join('install.iss'), iss, {expand: true})
-    let cp: File = iss.open('atw')
     let contents = pkg.join(s.product + '-' + s.version + '-' + s.buildNumber, 'contents')
     let files = contents.glob('**', {exclude: /\/$/, missing: undefined})
 
@@ -467,12 +522,12 @@ function packageWin(pkg: Path, options) {
     let top = Path(contents.name + productPrefix)
 
     let destTop = Path(top.portable.name + bit.prefixes.product.removeDrive().portable).windows
+    let cp: File = iss.open('atw')
     for each (file in files) {
         let src = file.relativeTo(pkg)
         let dest = file.relativeTo(top).windows
         cp.write('Source: "' + src + '"; DestDir: "{app}\\' + dest.dirname + '"; ' +
             'DestName: "' + dest.basename + '";\n')
-        // Components: bin
     }
     cp.close()
     let base = [s.product, s.version, s.buildNumber, bit.platform.dist, OS.toUpper(), ARCH].join('-')
