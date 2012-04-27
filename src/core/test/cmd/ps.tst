@@ -13,8 +13,8 @@ if (!Path("/bin").exists) {
         re = /launchd/
     } else {
         /* On linux, may run from init and bash may not be running */
-        program = "init"
-        re = /init/
+        program = "rsyslogd"
+        re = /rsyslogd/
     }
 
     //  Test with RE match
