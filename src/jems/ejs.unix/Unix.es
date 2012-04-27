@@ -48,7 +48,8 @@ module ejs.unix {
         @options permissions Number File Posix permissions mask
         @options process Optional callback function to process the copied file. This function must do the actual copy 
             and any required post-processing. Signature is function process(src: Path, dest: Path, options)
-        @options tree Copy the entire subtree identified by the patterns by prepending the entire subtree path.
+        @options subtree If copying a directory, copy the subtree below the patterns.
+        @options tree If copying a directory, copy the subtree including the pattern path.
         @return Number of files copied
     */
     function cp(patterns, dest: Path, options = {}): Number {
@@ -75,7 +76,6 @@ module ejs.unix {
                 }
                 let target
                 if (options.tree) {
-                    //  Don't use join to allow for file to be absolute
                     target = Path(dest + "/" + file).normalize
                 } else if (dest.isDir) {
                     target = dest.join(file.basename)
@@ -103,7 +103,7 @@ module ejs.unix {
         if (Path(patterns).isDir) {
             path = Path(patterns)
             patterns = '**'
-            if (dest.isDir) {
+            if (dest.isDir && !options.subtree) {
                 dest = dest.join(path.basename)
             }
             options = blend({tree: true, relative: true}, options)

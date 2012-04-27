@@ -177,6 +177,7 @@ function installCallback(src: Path, dest: Path, options = {}): Boolean {
     @option user Set file file user
     @option perms Set file perms
     @option strip Strip object or executable
+    @options tree Copy the entire subtree identified by the patterns by prepending the entire pattern path.
  */
 public function install(src, dest: Path, options = {}) {
     if (!(src is Array)) src = [src]
@@ -455,11 +456,15 @@ function packageFedora(pkg: Path, options) {
     let cp: File = fileList.open('atw')
     cp.write('%defattr(-,root,root)\n')
 
-    for each (file in contents.glob('**/')) {
-        cp.write('%dir /' + file.relativeTo(contents) + '\n')
+    let owndirs = RegExp(bit.settings.product)
+    for each (file in contents.glob('**/', {relative: true, include: owndirs})) {
+        cp.write('%dir /' + file + '\n')
     }
     for each (file in contents.glob('**', {exclude: /\/$/})) {
         cp.write('"/' + file.relativeTo(contents) + '"\n')
+    }
+    for each (file in contents.glob('**/.*', {hidden: true})) {
+        file.remove()
     }
     cp.close()
 
