@@ -42,7 +42,7 @@ ldconfig -n ${prefixes.lib}
 
 %preun
 rm -f ${prefixes.product}/latest
+${prefixes.bin}/linkup Remove /
 
 %postun
-${prefixes.bin}/linkup Remove /
 
