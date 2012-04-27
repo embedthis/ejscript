@@ -8,60 +8,62 @@
 TASK=$1
 PRODUCT=ejs
 ROOT_DIR="${2%/}"
+EXE=
 INC_DIR="${ROOT_DIR}/usr/include"
 MAN_DIR="${ROOT_DIR}/usr/share/man"
 PROGRAMS="bit ejs ejsc ejsman ejsmod sqlite mvc jem utest"
 LIBRARIES="libmpr libejs"
 
 if [ -x "${ROOT_DIR}/usr/local/bin" ] ; then
-    BIN="${ROOT_DIR}/usr/local/bin"
+    BIN_DIR="${ROOT_DIR}/usr/local/bin"
 else 
-    BIN="${ROOT_DIR}/usr/bin"
+    BIN_DIR="${ROOT_DIR}/usr/bin"
 fi
-LIB="${ROOT_DIR}/usr/lib"
+LIB_DIR="${ROOT_DIR}/usr/lib"
 
 prefix="${ROOT_DIR}/usr/lib/${PRODUCT}"
 version=
 
-for v in `ls $prefix 2>/dev/null | egrep -v '[a-zA-Z@!_\-]' | sort -n -r`
-do
-    if [ -x "$prefix/$v/bin/ejs" ] ; then
-        version=$v
-        break
-    fi
-done
-
-if [ "$version" = "" ] ; then
-    for name in $PROGRAMS
-    do
-        rm -f "${BIN}/$name"
+if [ "$TASK" = "Remove" ] ; then
+    for name in $PROGRAMS ; do
+        rm -f "${BIN_DIR}/$name"
     done
-    rm -fr "${INC_DIR}/${PRODUCT}"
 else
+    for v in `ls $prefix 2>/dev/null | egrep -v '[a-zA-Z@!_\-]' | sort -n -r`
+    do
+        if [ -x "$prefix/$v/bin/ejs" ] ; then
+            version=$v
+            break
+        fi
+    done
 
-    latest=${prefix}/$version
-    rm -f ${prefix}/latest
-    ln -s ${version} ${prefix}/latest
-    bin=${latest}/bin
-    inc=${latest}/inc
-    man=${latest}/doc/man/man1
-    lib=${latest}/lib
+    if [ "$version" = "" ] ; then
+        latest=${prefix}
+    else
+        latest=${prefix}/$version
+    fi  
+    rm -f "${prefix}/latest"
+    ln -s "${version} ${prefix}/latest"
+    bin="${latest}/bin"
+    inc="${latest}/inc"
+    man="${latest}/doc/man/man1"
+    lib="${latest}/lib"
 
-    [ ! -x "${BIN}" ] && mkdir -p "${BIN}"
+    [ ! -x "${BIN_DIR}" ] && mkdir -p "${BIN_DIR}"
 
     home=`pwd`
     for name in $PROGRAMS ; do
-        name=${name}
-        rm -f "${BIN}/${name}"
+        name=${name}${EXE}
+        rm -f "${BIN_DIR}/${name}"
         if [ -f "${bin}/${name}" ] ; then
-            ln -s "${bin}/${name}" "${BIN}/${name}"
+            ln -s "${bin}/${name}" "${BIN_DIR}/${name}"
         fi
     done
     for name in $LIBRARIES ; do
         name=${name}
-        rm -f "${LIB}/${name}*"
+        rm -f "${LIB_DIR}/${name}*"
         if [ -f "${lib}/${name}*" ] ; then
-            ln -s "${lib}/${name}*" "${LIB}/${name}"
+            ln -s "${lib}/${name}*" "${LIB_DIR}/${name}"
         fi
     done
     if [ -d "${inc}" ] ; then
