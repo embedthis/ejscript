@@ -1591,6 +1591,7 @@ static EjsVoid *path_symlink(Ejs *ejs, EjsPath *fp, int argc, EjsObj **argv)
         return 0;
     }
 #else
+    //  MOB - does not work for directories
     if (mprCopyPath(target, fp->value, 0644) < 0) {
         ejsThrowIOError(ejs, "Can't copy %s to %s, error %d", target, fp->value, errno);
         return 0;

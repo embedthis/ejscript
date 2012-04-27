@@ -256,9 +256,11 @@ public function createLinks() {
         }
     }
     let link = Path('/usr/include').join(bit.settings.product)
-    link.symlink(bit.prefixes.include)
-    log.push(link)
-    bit.prefixes.productver.join('files.log').append(log.join('\n') + '\n')
+    if (Config.OS != 'WIN') {
+        link.symlink(bit.prefixes.include)
+        log.push(link)
+        bit.prefixes.productver.join('files.log').append(log.join('\n') + '\n')
+    }
 }
 
 function updateLatestLink() {
