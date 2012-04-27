@@ -54,6 +54,8 @@ static EjsString *system_ipaddr(Ejs *ejs, EjsObj *unused, int argc, EjsObj **arg
             }
         }
         return ejsCreateStringFromAsc(ejs, ip ? ip : "127.0.0.1");
+    } else {
+        mprLog(1, "Can't get IP address. Getaddrinfo failed %d\n", errno);
     }
 #endif
     return ESV(null);

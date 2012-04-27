@@ -325,7 +325,7 @@ function packageInstallConfigure() {
         Cmd.run(ldconfig + ' ' + ldconfigSwitch + ' /usr/lib/' + bit.settings.product + '/modules')
     }
     if (bit.platform.dist == 'fedora') {
-        Cmd.run('chcon /usr/bin/chcon -t texrel_shlib_t ' + bit.prefixes.lib + '/*.so')
+        Cmd.run('chcon /usr/bin/chcon -t texrel_shlib_t ' + bit.prefixes.bin.glob('*.so').join(' '))
     }
 }
 
