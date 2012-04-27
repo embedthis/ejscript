@@ -27,7 +27,8 @@ if (bit.platform.os == 'win') {
 
 } else {
     let arch = bit.platform.arch.match(/^i.86$/) ? 'x86' : bit.platform.arch
-    let search = [path, '/usr/lib', '/lib' ] + Path('/usr/lib').glob(arch + '-linux-gnu') + Path('/lib').glob(arch + '-linux-gnu')
+    let search = [path, '/usr/lib', '/lib', '/usr/lib64', '/lib64' ] + 
+        Path('/usr/lib').glob(arch + '-linux-gnu') + Path('/lib').glob(arch + '-linux-gnu')
     lib = probe('libz.so', {fullpath: true, search: search}).absolute
     imports = lib.parent.glob('libz*.so*')
     isearch = [path.join('include'), '/usr/include']
