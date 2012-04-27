@@ -23,10 +23,8 @@ Cmd.run([mvc, 'compile'], {dir: 'junk'})
 let pid
 
 try {
-    chdir("junk")
-    pid = Cmd.daemon(ejs + " start.es")
+    pid = Cmd.daemon([ejs, 'start.es'], {dir: 'junk'})
     assert(pid)
-    chdir("..")
 
     sleep(2000)
     let http = new Http

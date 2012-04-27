@@ -15,14 +15,12 @@ rmdir("junk")
 assert(!exists("junk"))
 
 //  Generate app and scaffold
-Cmd.sh(mvc + " --listen " + HTTP + " generate app junk")
-Cmd.sh("cd junk ; " + mvc + " compile")
+Cmd.sh([mvc, '--listen', HTTP, 'generate', 'app', 'junk'])
+Cmd.sh([mvc, 'compile'], {dir: 'junk'})
 
 //  Start web server. Use ejs start.es so we can kill it. Change to mvc run when Cmd supports kill group
-chdir("junk")
-let pid = Cmd.daemon(ejs + " start.es")
+let pid = Cmd.daemon([ejs, 'start.es'], {dir: 'junk'})
 assert(pid)
-chdir("..")
 sleep(2000)
 
 try {

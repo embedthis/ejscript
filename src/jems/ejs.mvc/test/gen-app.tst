@@ -10,7 +10,7 @@ rmdir("junk")
 assert(!exists("junk"))
 
 //  Generate app
-Cmd.sh(mvc + " generate app junk")
+Cmd.sh([mvc, 'generate', 'app', 'junk'])
 assert(exists("junk") && isDir("junk"))
 assert(exists("junk/README"))
 assert(exists("junk/cache") && isDir("junk/cache"))
