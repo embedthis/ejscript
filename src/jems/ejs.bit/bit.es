@@ -107,14 +107,13 @@ public class Bit {
             '    --emulate os-arch                  # Emulate platform\n' +
             '    --file file.bit                    # Use the specified bit file\n' +
             '    --force                            # Override warnings\n' +
-            '    --gen [make|sh|vs|xcode]           # Generate project file\n' + 
+            '    --gen [make|nmake|sh|vs|xcode]     # Generate project file\n' + 
             '    --import                           # Import standard bit configuration\n' + 
             '    --keep                             # Keep intermediate files\n' + 
             '    --log logSpec                      # Save errors to a log file\n' +
             '    --out path                         # Save output to a file\n' +
-            '    --profile [debug|release|...]      # Use the build profile\n' +
-            '    --pre sourcefile                   # Pre-process a sourcefile\n' +
             '    --platform os-arch                 # Add platform for cross-compilation\n' +
+            '    --profile [debug|release|...]      # Use the build profile\n' +
             '    --quiet                            # Quiet operation. Suppress trace \n' +
             '    --set [feature=value]              # Enable and a feature\n' +
             '    --show                             # Show commands executed\n' +
@@ -123,8 +122,8 @@ public class Bit {
             '    --unset feature                    # Unset a feature\n' +
             '    --version                          # Dispay the bit version\n' +
             '    --verbose                          # Trace operations\n' +
-            '    --with PACK[-platform][=PATH]      # Build with package at PATH\n' +
-            '    --without PACK[-platform]          # Build without a package\n' +
+            '    --with PACK[=PATH]                 # Build with package at PATH\n' +
+            '    --without PACK                     # Build without a package\n' +
             '')
         if (MAIN.exists) {
             try {
@@ -563,6 +562,7 @@ public class Bit {
             }
             bit.packs[field] = { enable: false, diagnostic: 'configured --without ' + field }
         }
+        //  MOB - is this used
         for each (field in poptions['prefix']) {
             let [field,value] = field.split('=')
             if (value) {
