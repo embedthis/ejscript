@@ -1050,7 +1050,9 @@ public class Bit {
         if (bit.packs.link) {
             genout.writeLine('LD       := ' + bit.packs.link.path)
         }
-        genout.writeLine('CFLAGS   := ' + gen.compiler)
+        let cflags = gen.compiler.replace(/ *-Wall| *-Wno-unused-result| *-Wshorten-64-to-32/g, '')
+        cflags += ' -w'
+        genout.writeLine('CFLAGS   := ' + cflags.trim())
         genout.writeLine('DFLAGS   := ' + gen.defines)
         genout.writeLine('IFLAGS   := ' + 
             repvar(bit.defaults.includes.map(function(path) '-I' + reppath(path.relative)).join(' ')))
