@@ -54,8 +54,8 @@ Bit.load({
 
         'projects-clobber': {
             action: "
-                rm(['${dir.projects}/*.mk', '${dir.projects}/*.sh'])
-                rmdir(['${dir.projects}/*-*-debug', '${dir.projects}/*-*-release'])
+                rm(['${dir.proj}/*.mk', '${dir.proj}/*.sh'])
+                rmdir(['${dir.proj}/*-*-debug', '${dir.proj}/*-*-release'])
             "
         },
 

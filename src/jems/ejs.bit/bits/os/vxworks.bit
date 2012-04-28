@@ -20,7 +20,7 @@ Bit.load({
         bin:        '.',
         lib:        '.',
         log:        '.',
-        include:    '.',
+        inc:        '.',
         spool:      '.',
         src:        '.',
         web:        '.',

@@ -54,7 +54,7 @@ public function packageBinaryFiles(formats = ['tar', 'native']) {
     }
     install(bit.dir.lib.join('bits'), p.lib)
     install(bit.dir.lib.join('www'), p.lib.join('www'), {exclude: /tree-images/})
-    install(bit.dir.inc.join('*.h'), p.include)
+    install(bit.dir.inc.join('*.h'), p.inc)
 
     if (bit.targets.libmprssl.enable && bit.platform.os == 'linux') {
         install(bit.dir.lib.join('*.' + bit.ext.shobj + '*'), p.lib, {strip: strip, permissions: 0755})
@@ -257,7 +257,7 @@ public function createLinks() {
     }
     let link = Path('/usr/include').join(bit.settings.product)
     if (Config.OS != 'WIN') {
-        link.symlink(bit.prefixes.include)
+        link.symlink(bit.prefixes.inc)
         log.push(link)
         bit.prefixes.productver.join('files.log').append(log.join('\n') + '\n')
     }

@@ -415,7 +415,7 @@ public class Bit {
         f.writeLine('#define BLD_CFG_PREFIX "' + bit.prefixes.config + '"')
         f.writeLine('#define BLD_BIN_PREFIX "' + bit.prefixes.bin + '"')
         f.writeLine('#define BLD_DOC_PREFIX "' + base.join('doc') + '"')
-        f.writeLine('#define BLD_INC_PREFIX "' + bit.prefixes.include + '"')
+        f.writeLine('#define BLD_INC_PREFIX "' + bit.prefixes.inc + '"')
         f.writeLine('#define BLD_JEM_PREFIX "' + bit.prefixes.product.join('jems') + '"')
         f.writeLine('#define BLD_LIB_PREFIX "' + bit.prefixes.lib + '"')
         f.writeLine('#define BLD_LOG_PREFIX "' + bit.prefixes.log + '"')
@@ -977,7 +977,7 @@ public class Bit {
         path.copy(hfile)
         trace('Generate', 'project header: ' + hfile.relative)
 
-        let base = bit.dir.projects.join(bit.settings.product + '-' + bit.platform.os)
+        let base = bit.dir.proj.join(bit.settings.product + '-' + bit.platform.os)
         for each (item in options.gen) {
             generating = item
             if (generating == 'sh') {

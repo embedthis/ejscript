@@ -183,7 +183,7 @@ function projHeader(base, target) {
 function projConfig(base, target) {
     bit.PTYPE = (target.type == 'exe') ? 'Application' : 'DynamicLibrary'
     bit.VTYPE = 'Win32'
-    let guid = bit.dir.projects.join('.' + target.name + '.guid')
+    let guid = bit.dir.proj.join('.' + target.name + '.guid')
     if (guid.exists) {
         target.guid = guid.readString().trim()
     } else {

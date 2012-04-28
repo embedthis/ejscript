@@ -4,16 +4,16 @@
 
 Bit.load({
 	dir: {
-		cfg:     	'${platform.configuration}',
-		bin:     	'${dir.cfg}/bin',
-        flat:       '${dir.cfg}/flat',
-		inc:     	'${dir.cfg}/inc',
-		lib:    	'${dir.cfg}/bin',
-		obj:    	'${dir.cfg}/obj',
-        packs:      '../packages-${platform.name}',
-        pkg:        '${dir.cfg}/pkg',
-		projects: 	'${dir.top}/projects',
-        rel:        '${dir.top}/releases',
+		cfg:    '${platform.configuration}',
+		bin:    '${dir.cfg}/bin',
+        flat:   '${dir.cfg}/flat',
+		inc:    '${dir.cfg}/inc',
+		lib:    '${dir.cfg}/bin',
+		obj:    '${dir.cfg}/obj',
+        packs:  '../packages-${platform.name}',
+        pkg:    '${dir.cfg}/pkg',
+		proj: 	'${dir.top}/projects',
+        rel:    '${dir.top}/releases',
 	},
 
     defaults: {
