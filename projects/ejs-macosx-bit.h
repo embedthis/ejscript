@@ -16,7 +16,7 @@
 #define BLD_MINOR_VERSION 0
 #define BLD_PATCH_VERSION 0
 #define BLD_VNUM 200000000
-#define BLD_CONFIG_CMD "bit -d -without all configure -gen sh,make,xcode"
+#define BLD_CONFIG_CMD "bit -q -d -without all configure -gen sh,make,xcode"
 #define BLD_LIB_NAME "bin"
 #define BLD_CFG_PREFIX "/etc/ejs"
 #define BLD_BIN_PREFIX "/usr/lib/ejs/2.0.0/bin"
@@ -67,5 +67,6 @@
 #define BLD_FEATURE_MATRIXSSL 0
 #define BLD_FEATURE_PMAKER 1
 #define BLD_PMAKER "/Applications/PackageMaker.app/Contents/MacOS/PackageMaker"
+#define BLD_FEATURE_RPMBUILD 1
 #define BLD_FEATURE_SQLITE 1
 #define BLD_SQLITE "/Users/mob/git/ejs/src/deps/sqlite"

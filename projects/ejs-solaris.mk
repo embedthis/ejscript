@@ -18,7 +18,7 @@ LIBS     := -llxnet -lrt -lsocket -lpthread -lm
 all: prep \
         $(CONFIG)/bin/libmpr.so \
         $(CONFIG)/bin/libmprssl.so \
-        $(CONFIG)/bin/manager \
+        $(CONFIG)/bin/ejsman \
         $(CONFIG)/bin/makerom \
         $(CONFIG)/bin/libpcre.so \
         $(CONFIG)/bin/libhttp.so \
@@ -66,7 +66,7 @@ prep:
 clean:
 	rm -rf $(CONFIG)/bin/libmpr.so
 	rm -rf $(CONFIG)/bin/libmprssl.so
-	rm -rf $(CONFIG)/bin/manager
+	rm -rf $(CONFIG)/bin/ejsman
 	rm -rf $(CONFIG)/bin/makerom
 	rm -rf $(CONFIG)/bin/libpcre.so
 	rm -rf $(CONFIG)/bin/libhttp.so
@@ -215,10 +215,10 @@ $(CONFIG)/obj/manager.o: \
         $(CONFIG)/inc/bit.h
 	$(CC) -c -o $(CONFIG)/obj/manager.o -Wall -fPIC $(LDFLAGS) -mcpu=generic $(DFLAGS) -I$(CONFIG)/inc src/deps/mpr/manager.c
 
-$(CONFIG)/bin/manager:  \
+$(CONFIG)/bin/ejsman:  \
         $(CONFIG)/bin/libmpr.so \
         $(CONFIG)/obj/manager.o
-	$(CC) -o $(CONFIG)/bin/manager $(LDFLAGS) $(LIBPATHS) $(CONFIG)/obj/manager.o $(LIBS) -lmpr $(LDFLAGS)
+	$(CC) -o $(CONFIG)/bin/ejsman $(LDFLAGS) $(LIBPATHS) $(CONFIG)/obj/manager.o $(LIBS) -lmpr $(LDFLAGS)
 
 $(CONFIG)/obj/makerom.o: \
         src/deps/mpr/makerom.c \

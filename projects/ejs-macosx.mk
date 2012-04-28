@@ -18,7 +18,7 @@ LIBS     := -lpthread -lm -ldl
 all: prep \
         $(CONFIG)/bin/libmpr.dylib \
         $(CONFIG)/bin/libmprssl.dylib \
-        $(CONFIG)/bin/manager \
+        $(CONFIG)/bin/ejsman \
         $(CONFIG)/bin/makerom \
         $(CONFIG)/bin/libpcre.dylib \
         $(CONFIG)/bin/libhttp.dylib \
@@ -66,7 +66,7 @@ prep:
 clean:
 	rm -rf $(CONFIG)/bin/libmpr.dylib
 	rm -rf $(CONFIG)/bin/libmprssl.dylib
-	rm -rf $(CONFIG)/bin/manager
+	rm -rf $(CONFIG)/bin/ejsman
 	rm -rf $(CONFIG)/bin/makerom
 	rm -rf $(CONFIG)/bin/libpcre.dylib
 	rm -rf $(CONFIG)/bin/libhttp.dylib
@@ -218,10 +218,10 @@ $(CONFIG)/obj/manager.o: \
         $(CONFIG)/inc/mpr.h
 	$(CC) -c -o $(CONFIG)/obj/manager.o -arch x86_64 $(CFLAGS) $(DFLAGS) -I$(CONFIG)/inc src/deps/mpr/manager.c
 
-$(CONFIG)/bin/manager:  \
+$(CONFIG)/bin/ejsman:  \
         $(CONFIG)/bin/libmpr.dylib \
         $(CONFIG)/obj/manager.o
-	$(CC) -o $(CONFIG)/bin/manager -arch x86_64 $(LDFLAGS) $(LIBPATHS) $(CONFIG)/obj/manager.o $(LIBS) -lmpr
+	$(CC) -o $(CONFIG)/bin/ejsman -arch x86_64 $(LDFLAGS) $(LIBPATHS) $(CONFIG)/obj/manager.o $(LIBS) -lmpr
 
 $(CONFIG)/obj/makerom.o: \
         src/deps/mpr/makerom.c \

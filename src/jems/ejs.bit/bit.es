@@ -288,7 +288,6 @@ public class Bit {
             currentPlatform = platform
             vtrace('Init', platform)
             makeBit(options.config, platform)
-            bit.userSettings = bit.settings.clone(true)
             findPacks()
             genBitFile(platform)
             makeOutDirs()
@@ -2830,6 +2829,7 @@ global.NN = item.ns
         }
         loadModules()
         applyProfile()
+        bit.userSettings = bit.settings.clone(true)
         applyCommandLineOptions(platform)
         applyEnv()
         setPathEnvVar(bit)
