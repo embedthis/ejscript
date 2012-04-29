@@ -2568,7 +2568,7 @@ global.NN = item.ns
         Run a command and trace output if cmdOptions.true or options.show
      */
     public function run(command, cmdOptions = {}): String {
-        if (options.show) {
+        if (options.show || cmdOptions.show) {
             if (command is Array) {
                 trace('Run', command.join(' '))
             } else {
