@@ -13,7 +13,7 @@ Bit.load({
     },
 
     settings: {
-        depth: 1,
+        depth: App.getenv('BUILD_DEPTH') || 1,
     },
 
     targets: {
