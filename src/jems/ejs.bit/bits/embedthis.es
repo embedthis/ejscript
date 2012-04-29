@@ -338,7 +338,7 @@ function packageNative(pkg: Path, options) {
         } else if (bit.platform.dist == 'fedora') {
             packageFedora(pkg, options)
         } else {
-            throw 'Can\'t package for ' + bit.platform.dist + ' linux distribution'
+            trace('Info', 'Can\'t package for ' + bit.platform.dist + ' linux distribution')
         }
         break
     case 'macosx':
@@ -348,7 +348,7 @@ function packageNative(pkg: Path, options) {
         packageWin(pkg, options)
         break
     default:
-        throw 'Can\'t package for ' + bit.platform.os
+        trace('Info', 'Can\'t package for ' + bit.platform.os)
     }
 }
 
