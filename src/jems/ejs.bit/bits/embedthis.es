@@ -447,7 +447,7 @@ function packageFedora(pkg: Path, options) {
     let s = bit.settings
     let rel = bit.dir.rel
     let cpu = bit.platform.arch
-    if (cpu.match(/^i.86$/)) {
+    if (cpu.match(/^i.86$|x86/)) {
         cpu = 'i386'
     }
     bit.platform.mappedCpu = cpu
