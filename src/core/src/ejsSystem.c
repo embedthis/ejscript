@@ -14,7 +14,7 @@
  */
 static EjsString *system_hostname(Ejs *ejs, EjsObj *unused, int argc, EjsObj **argv)
 {
-    return ejsCreateStringFromAsc(ejs, mprGetHostName(ejs));
+    return ejsCreateStringFromAsc(ejs, mprGetHostName());
 }
 
 
@@ -36,7 +36,8 @@ static EjsString *system_ipaddr(Ejs *ejs, EjsObj *unused, int argc, EjsObj **arg
     memset((char*) &hints, 0, sizeof(hints));
     hints.ai_socktype = SOCK_STREAM;
     hints.ai_family = AF_INET;
-    if ((rc = getaddrinfo(mprGetHostName(ejs), NULL, &hints, &reslist)) == 0) {
+    hints.ai_flags = AI_PASSIVE;
+    if ((rc = getaddrinfo(mprGetHostName(), NULL, &hints, &reslist)) == 0) {
         ip = 0;
         //  TODO - support IPv6
         for (res = reslist; res; res = res->ai_next) {
