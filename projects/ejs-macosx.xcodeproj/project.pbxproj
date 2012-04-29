@@ -1226,7 +1226,7 @@
 		A0DCDA71A0DD09BD00000085 /* mprSsl.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; name = mprSsl.c; path = src/deps/mpr/mprSsl.c; sourceTree = "<group>"; };
 		A0DCDA71A0DD09BD0000012A /* libmprssl */ = {isa = PBXFileReference; explicitFileType = "compiled.mach-o.dylib"; includeInIndex = 0; path = libmprssl.dylib; sourceTree = BUILT_PRODUCTS_DIR; };
 		A0DCDA71A0DD09BD00000087 /* manager.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; name = manager.c; path = src/deps/mpr/manager.c; sourceTree = "<group>"; };
-		A0DCDA71A0DD09BD000001D0 /* manager */ = {isa = PBXFileReference; explicitFileType = "compiled.mach-o.executable"; includeInIndex = 0; path = manager; sourceTree = BUILT_PRODUCTS_DIR; };
+		A0DCDA71A0DD09BD000001D0 /* manager */ = {isa = PBXFileReference; explicitFileType = "compiled.mach-o.executable"; includeInIndex = 0; path = ejsman; sourceTree = BUILT_PRODUCTS_DIR; };
 		A0DCDA71A0DD09BD00000089 /* makerom.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; name = makerom.c; path = src/deps/mpr/makerom.c; sourceTree = "<group>"; };
 		A0DCDA71A0DD09BD000001D1 /* makerom */ = {isa = PBXFileReference; explicitFileType = "compiled.mach-o.executable"; includeInIndex = 0; path = makerom; sourceTree = BUILT_PRODUCTS_DIR; };
 		A0DCDA71A0DD09BD0000008B /* pcre.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; name = pcre.c; path = src/deps/pcre/pcre.c; sourceTree = "<group>"; };
@@ -2320,7 +2320,6 @@ cp -r $(CFG_DIR)/bin/ejsrun $(CFG_DIR)/bin/utest
 			files = (
 			);
 			inputPaths = (
-../src/jems/ejs.bit/bits,
 ../src/jems/ejs.bit/bits/embedthis.bit,
 ../src/jems/ejs.bit/bits/embedthis.es,
 ../src/jems/ejs.bit/bits/gendoc.es,
@@ -2355,6 +2354,7 @@ cp -r $(CFG_DIR)/bin/ejsrun $(CFG_DIR)/bin/utest
 ../src/jems/ejs.bit/bits/packs/pmaker.bit,
 ../src/jems/ejs.bit/bits/packs/ranlib.bit,
 ../src/jems/ejs.bit/bits/packs/rc.bit,
+../src/jems/ejs.bit/bits/packs/rpmbuild.bit,
 ../src/jems/ejs.bit/bits/packs/sqlite.bit,
 ../src/jems/ejs.bit/bits/packs/ssl.bit,
 ../src/jems/ejs.bit/bits/packs/strip.bit,

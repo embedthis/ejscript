@@ -18,7 +18,7 @@ Bit.load({
         product:    '/usr/lib/${settings.product}',
         productver: '${prefixes.product}/${settings.version}',
         bin:        '${prefixes.productver}/bin',
-        include:    '${prefixes.productver}/inc',
+        inc:        '${prefixes.productver}/inc',
         lib:        '${prefixes.productver}/bin',
         log:        '/var/log/${settings.product}',
         spool:      '/var/spool/${settings.product}',

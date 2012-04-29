@@ -107,14 +107,13 @@ public class Bit {
             '    --emulate os-arch                  # Emulate platform\n' +
             '    --file file.bit                    # Use the specified bit file\n' +
             '    --force                            # Override warnings\n' +
-            '    --gen [make|sh|vs|xcode]           # Generate project file\n' + 
+            '    --gen [make|nmake|sh|vs|xcode]     # Generate project file\n' + 
             '    --import                           # Import standard bit configuration\n' + 
             '    --keep                             # Keep intermediate files\n' + 
             '    --log logSpec                      # Save errors to a log file\n' +
             '    --out path                         # Save output to a file\n' +
-            '    --profile [debug|release|...]      # Use the build profile\n' +
-            '    --pre sourcefile                   # Pre-process a sourcefile\n' +
             '    --platform os-arch                 # Add platform for cross-compilation\n' +
+            '    --profile [debug|release|...]      # Use the build profile\n' +
             '    --quiet                            # Quiet operation. Suppress trace \n' +
             '    --set [feature=value]              # Enable and a feature\n' +
             '    --show                             # Show commands executed\n' +
@@ -123,8 +122,8 @@ public class Bit {
             '    --unset feature                    # Unset a feature\n' +
             '    --version                          # Dispay the bit version\n' +
             '    --verbose                          # Trace operations\n' +
-            '    --with PACK[-platform][=PATH]      # Build with package at PATH\n' +
-            '    --without PACK[-platform]          # Build without a package\n' +
+            '    --with PACK[=PATH]                 # Build with package at PATH\n' +
+            '    --without PACK                     # Build without a package\n' +
             '')
         if (MAIN.exists) {
             try {
@@ -289,7 +288,6 @@ public class Bit {
             currentPlatform = platform
             vtrace('Init', platform)
             makeBit(options.config, platform)
-            bit.userSettings = bit.settings.clone(true)
             findPacks()
             genBitFile(platform)
             makeOutDirs()
@@ -417,7 +415,7 @@ public class Bit {
         f.writeLine('#define BLD_CFG_PREFIX "' + bit.prefixes.config + '"')
         f.writeLine('#define BLD_BIN_PREFIX "' + bit.prefixes.bin + '"')
         f.writeLine('#define BLD_DOC_PREFIX "' + base.join('doc') + '"')
-        f.writeLine('#define BLD_INC_PREFIX "' + bit.prefixes.include + '"')
+        f.writeLine('#define BLD_INC_PREFIX "' + bit.prefixes.inc + '"')
         f.writeLine('#define BLD_JEM_PREFIX "' + bit.prefixes.product.join('jems') + '"')
         f.writeLine('#define BLD_LIB_PREFIX "' + bit.prefixes.lib + '"')
         f.writeLine('#define BLD_LOG_PREFIX "' + bit.prefixes.log + '"')
@@ -563,6 +561,7 @@ public class Bit {
             }
             bit.packs[field] = { enable: false, diagnostic: 'configured --without ' + field }
         }
+        //  MOB - is this used
         for each (field in poptions['prefix']) {
             let [field,value] = field.split('=')
             if (value) {
@@ -978,7 +977,7 @@ public class Bit {
         path.copy(hfile)
         trace('Generate', 'project header: ' + hfile.relative)
 
-        let base = bit.dir.projects.join(bit.settings.product + '-' + bit.platform.os)
+        let base = bit.dir.proj.join(bit.settings.product + '-' + bit.platform.os)
         for each (item in options.gen) {
             generating = item
             if (generating == 'sh') {
@@ -1051,7 +1050,9 @@ public class Bit {
         if (bit.packs.link) {
             genout.writeLine('LD       := ' + bit.packs.link.path)
         }
-        genout.writeLine('CFLAGS   := ' + gen.compiler)
+        let cflags = gen.compiler.replace(/ *-Wall| *-Wno-unused-result| *-Wshorten-64-to-32/g, '')
+        cflags += ' -w'
+        genout.writeLine('CFLAGS   := ' + cflags.trim())
         genout.writeLine('DFLAGS   := ' + gen.defines)
         genout.writeLine('IFLAGS   := ' + 
             repvar(bit.defaults.includes.map(function(path) '-I' + reppath(path.relative)).join(' ')))
@@ -2830,6 +2831,7 @@ global.NN = item.ns
         }
         loadModules()
         applyProfile()
+        bit.userSettings = bit.settings.clone(true)
         applyCommandLineOptions(platform)
         applyEnv()
         setPathEnvVar(bit)

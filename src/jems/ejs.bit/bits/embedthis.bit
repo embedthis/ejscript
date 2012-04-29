@@ -31,7 +31,6 @@ Bit.load({
             action: "
                 let bitcmd = Cmd.locate('bit')
                 for each (name in ['linux-x86', 'macosx-x86_64', 'solaris-x86', 'win-x86']) {
-                    trace('Generate', name + ' project')
                     let formats
                     if (name == 'win-x86') {
                         formats = 'sh,nmake,vs'
@@ -40,22 +39,23 @@ Bit.load({
                     } else {
                         formats = 'sh,make'
                     }
+                    trace('Generate', bit.settings.product + '-' + name.replace(/-.*/, '') + ' projects')
                     let emulate = name != bit.platform.name ? ' -emulate ' + name : ''
-                    run(bitcmd + emulate + ' -d -without all configure -gen ' + formats, bit.target.runopt)
+                    run(bitcmd + emulate + ' -q -d -without all configure -gen ' + formats, bit.target.runopt)
                     if (name != bit.platform.name) {
                         rm(bit.dir.top.join(name + '.bit'))
                         rmdir(bit.dir.top.join(name + '-debug'))
                     }
                 }
                 /* Leave a normal configuration */ 
-                run(bitcmd + ' configure', bit.target.runopt)
+                run(bitcmd + ' -q configure', bit.target.runopt)
             ",
         },
 
         'projects-clobber': {
             action: "
-                rm(['${dir.projects}/*.mk', '${dir.projects}/*.sh'])
-                rmdir(['${dir.projects}/*-*-debug', '${dir.projects}/*-*-release'])
+                rm(['${dir.proj}/*.mk', '${dir.proj}/*.sh'])
+                rmdir(['${dir.proj}/*-*-debug', '${dir.proj}/*-*-release'])
             "
         },
 
