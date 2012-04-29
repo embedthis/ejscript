@@ -206,33 +206,47 @@ public function package(pkg: Path, formats) {
     }
     options.vname = bit.settings.product + '-' + bit.settings.version + '-' + bit.settings.buildNumber
 
-    for each (fmt in formats) {
-        switch (fmt) {
-        case 'combo':
-            packageCombo(pkg, options)
-            break
-        case 'flat':
-            packageFlat(pkg, options)
-            break
-        case 'install':
-            packageInstall(pkg, options)
-            break
-        case 'native':
-            packageNative(pkg, options)
-            break
-        case 'src':
-            packageSrc(pkg, options)
-            break
-        case 'tar':
-            packageTar(pkg, options)
-            break
-        default:
-            throw 'Unknown package format: ' + fmt
+    if (bit.cross) {
+        trace('Info', 'Skip packaging for ' + formats + ' when cross-compiling')
+        return
+    }
+    switch (bit.platform.os) {
+    case 'linux': case 'win': case 'macosx':
+        for each (fmt in formats) {
+            switch (fmt) {
+            case 'combo':
+                packageCombo(pkg, options)
+                break
+            case 'flat':
+                packageFlat(pkg, options)
+                break
+            case 'install':
+                packageInstall(pkg, options)
+                break
+            case 'native':
+                packageNative(pkg, options)
+                break
+            case 'src':
+                packageSrc(pkg, options)
+                break
+            case 'tar':
+                packageTar(pkg, options)
+                break
+            default:
+                throw 'Unknown package format: ' + fmt
+            }
         }
+        break
+    default:
+        trace('Info', 'Skip packaging for ' + bit.platform.os)
     }
 }
 
 function packageSimple(pkg: Path, options, fmt) {
+    if (bit.platform.os != 'linux' && bit.platform.os != 'macosx' && bit.platform.os != 'win') {
+        trace('Info', 'Skip packaging for ' + bit.platform.os)
+        return
+    }
     let s = bit.settings
     let rel = bit.dir.rel
     let name = rel.join(options.vname + '-' + fmt + '.tar')
