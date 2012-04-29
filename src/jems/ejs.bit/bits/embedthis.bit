@@ -76,30 +76,29 @@ Bit.load({
                 if (bit.settings.depth < 2) {
                     trace('Info', 'Upload skipped at build depth ' + bit.settings.depth)
                 } else {
-                    let img = $(BLD_PRODUCT)-$(BLD_VERSION)-$(BLD_NUMBER)
-                    let src = $(BLD_PRODUCT)-src-$(BLD_VERSION)-$(BLD_NUMBER)
-                    let uri = App.getenv('BUILD_UPLOAD')
-                    let key = App.getenv('BUILD_KEY')
-                    if (key == '') {
-                        throw 'Missing a BUILD_KEY authorization key'
+                    let s = bit.settings
+                    let uri = s.farmUri || App.getenv('BUILD_UPLOAD')
+                    let key = s.farmKey || App.getenv('BUILD_KEY')
+                    if (!key) {
+                        throw 'Missing a farm authorization key'
                     }
-                    if (uri == '') {
-                        throw 'Missing a BUILD_UPLOAD uri'
+                    if (!uri) {
+                        throw 'Missing a farm upload URI'
                     }
-                    for each (file in bit.dir.rel.glob('${settings.product}-${settings.version}-${settings.buildNumber}')) {
-                        if (file.toString().contains('flat.tgz')) {
-                            let latest = file.dirname.join('${settings.product}-latest-flat.tgz')
-                            file.rename(latest)
-                            file = latest
-                        }
+                    let base = s.product + '-' + s.version + '-' + s.buildNumber
+                    let files = bit.dir.rel.glob('*' + base + '*')
+                    files += bit.dir.rel.glob(s.product + '-flat.tgz')
+                    for each (file in files) {
                         let http = new Http
-                        http.upload(uri, {server: System.hostname, key: key}, file)
+                        trace('Upload', file.relativeTo(bit.dir.rel) + 
+                            ' size ' + (file.size / 1024 / 1024).toFixed(2) + ' MB')
+                        http.upload(uri, file, {server: System.hostname, key: key})
                         if (http.status != 200) {
-                            throw 'Can\'t upload ' + file
+                            throw 'Cant upload ' + file
                         }
                     }
                 }
-            "
+            ",
         },
 
         utest: {

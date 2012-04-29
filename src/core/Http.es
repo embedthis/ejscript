@@ -671,6 +671,16 @@ FUTURE & KEEP
                     write(Uri.encode(value) + "\r\n")
                 }
             }
+            if (files is String || files is Path) {
+                files = {file0: files}
+            }
+            if (files is Array) {
+                let o = {}
+                for (let [key,value] in files) {
+                    o['file' + key] = value
+                }
+                files = o
+            }
             for (let [key,file] in files) {
                 write('--' + boundary + "\r\n")
                 write('Content-Disposition: form-data; name=' + key + '; filename=' + Path(file).basename + "\r\n")

@@ -539,7 +539,7 @@ public class Bit {
             } else if (value == 'false') {
                 value = false
             } else if (value.isDigit) {
-                value = 0 + value
+                value = value cast Number
             }
             if (value == undefined) {
                 value = true
