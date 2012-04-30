@@ -688,10 +688,10 @@ public class Bit {
                         trace('Found', desc)
                     }
                 } else {
-                    trace('Not Found', desc)
+                    trace('Not Found', 'Optional package: ' + desc)
                 }
             } else {
-                trace('Not Found', pack)
+                trace('Not Found', 'Optional package: ' + desc)
             }
         }
         castDirTypes()
