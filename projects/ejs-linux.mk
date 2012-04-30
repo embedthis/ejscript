@@ -782,9 +782,9 @@ $(CONFIG)/bin/bits:
 		cd - >/dev/null 
 
 $(CONFIG)/obj/ejsZlib.o: \
-        src/jems/ejs.zlib/src/ejsZlib.c \
+        src/jems/ejs.zlib/ejsZlib.c \
         $(CONFIG)/inc/bit.h
-	$(CC) -c -o $(CONFIG)/obj/ejsZlib.o $(CFLAGS) $(DFLAGS) -I$(CONFIG)/inc src/jems/ejs.zlib/src/ejsZlib.c
+	$(CC) -c -o $(CONFIG)/obj/ejsZlib.o $(CFLAGS) $(DFLAGS) -I$(CONFIG)/inc src/jems/ejs.zlib/ejsZlib.c
 
 $(CONFIG)/bin/bit:  \
         $(CONFIG)/bin/libejs.so \
@@ -845,9 +845,9 @@ $(CONFIG)/bin/ejs.db.sqlite.mod:  \
 		cd - >/dev/null 
 
 $(CONFIG)/obj/ejsSqlite.o: \
-        src/jems/ejs.db.sqlite/src/ejsSqlite.c \
+        src/jems/ejs.db.sqlite/ejsSqlite.c \
         $(CONFIG)/inc/bit.h
-	$(CC) -c -o $(CONFIG)/obj/ejsSqlite.o $(CFLAGS) $(DFLAGS) -I$(CONFIG)/inc src/jems/ejs.db.sqlite/src/ejsSqlite.c
+	$(CC) -c -o $(CONFIG)/obj/ejsSqlite.o $(CFLAGS) $(DFLAGS) -I$(CONFIG)/inc src/jems/ejs.db.sqlite/ejsSqlite.c
 
 $(CONFIG)/bin/ejs.db.sqlite.so:  \
         $(CONFIG)/bin/libmpr.so \
@@ -870,28 +870,24 @@ $(CONFIG)/bin/ejs.web.mod:  \
 		cd - >/dev/null 
 
 $(CONFIG)/obj/ejsHttpServer.o: \
-        src/jems/ejs.web/src/ejsHttpServer.c \
-        $(CONFIG)/inc/bit.h \
-        src/jems/ejs.web/src/ejsWeb.h
-	$(CC) -c -o $(CONFIG)/obj/ejsHttpServer.o $(CFLAGS) $(DFLAGS) -I$(CONFIG)/inc -Isrc/jems/ejs.web/src src/jems/ejs.web/src/ejsHttpServer.c
+        src/jems/ejs.web/ejsHttpServer.c \
+        $(CONFIG)/inc/bit.h
+	$(CC) -c -o $(CONFIG)/obj/ejsHttpServer.o $(CFLAGS) $(DFLAGS) -I$(CONFIG)/inc -Isrc/jems/ejs.web/src src/jems/ejs.web/ejsHttpServer.c
 
 $(CONFIG)/obj/ejsRequest.o: \
-        src/jems/ejs.web/src/ejsRequest.c \
-        $(CONFIG)/inc/bit.h \
-        src/jems/ejs.web/src/ejsWeb.h
-	$(CC) -c -o $(CONFIG)/obj/ejsRequest.o $(CFLAGS) $(DFLAGS) -I$(CONFIG)/inc -Isrc/jems/ejs.web/src src/jems/ejs.web/src/ejsRequest.c
+        src/jems/ejs.web/ejsRequest.c \
+        $(CONFIG)/inc/bit.h
+	$(CC) -c -o $(CONFIG)/obj/ejsRequest.o $(CFLAGS) $(DFLAGS) -I$(CONFIG)/inc -Isrc/jems/ejs.web/src src/jems/ejs.web/ejsRequest.c
 
 $(CONFIG)/obj/ejsSession.o: \
-        src/jems/ejs.web/src/ejsSession.c \
-        $(CONFIG)/inc/bit.h \
-        src/jems/ejs.web/src/ejsWeb.h
-	$(CC) -c -o $(CONFIG)/obj/ejsSession.o $(CFLAGS) $(DFLAGS) -I$(CONFIG)/inc -Isrc/jems/ejs.web/src src/jems/ejs.web/src/ejsSession.c
+        src/jems/ejs.web/ejsSession.c \
+        $(CONFIG)/inc/bit.h
+	$(CC) -c -o $(CONFIG)/obj/ejsSession.o $(CFLAGS) $(DFLAGS) -I$(CONFIG)/inc -Isrc/jems/ejs.web/src src/jems/ejs.web/ejsSession.c
 
 $(CONFIG)/obj/ejsWeb.o: \
-        src/jems/ejs.web/src/ejsWeb.c \
-        $(CONFIG)/inc/bit.h \
-        src/jems/ejs.web/src/ejsWeb.h
-	$(CC) -c -o $(CONFIG)/obj/ejsWeb.o $(CFLAGS) $(DFLAGS) -I$(CONFIG)/inc -Isrc/jems/ejs.web/src src/jems/ejs.web/src/ejsWeb.c
+        src/jems/ejs.web/ejsWeb.c \
+        $(CONFIG)/inc/bit.h
+	$(CC) -c -o $(CONFIG)/obj/ejsWeb.o $(CFLAGS) $(DFLAGS) -I$(CONFIG)/inc -Isrc/jems/ejs.web/src src/jems/ejs.web/ejsWeb.c
 
 $(CONFIG)/bin/ejs.web.so:  \
         $(CONFIG)/bin/libejs.so \

@@ -56,7 +56,7 @@
   <CustomBuildBeforeTargets Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">PreBuildEvent</CustomBuildBeforeTargets>
   </PropertyGroup>
 <ItemGroup>
-  <ClCompile Include="..\..\src\jems\ejs.db.sqlite\src\ejsSqlite.c" />
+  <ClCompile Include="..\..\src\jems\ejs.db.sqlite\ejsSqlite.c" />
 </ItemGroup>
 
     <ItemDefinitionGroup>

@@ -2,6 +2,7 @@
     zlib.bit - Bit package for zlib
  */
 
+pack('zlib', 'Zlib Compression Library')
 let cfg
 let path: Path = bit.packs.zlib.path
 if (!path) {
@@ -35,7 +36,6 @@ if (bit.platform.os == 'win') {
 }
 
 let cfg = {
-    description: 'ZLib Compression Library',
     path: lib,
     dir: lib.parent,
     libpaths: [ lib.parent ],

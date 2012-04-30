@@ -278,6 +278,7 @@ module ejs {
          */
         native static function putenv(name: String, value: String): Void
 
+        //  MOB - should this be renamed App.pump()
         /** 
             Run the application event loop. 
             A script may call run() to service events. Calling run() will cause the ejs shell to wait and service 

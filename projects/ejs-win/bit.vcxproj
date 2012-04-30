@@ -57,7 +57,7 @@
   </PropertyGroup>
 <ItemGroup>
   <ClCompile Include="..\..\src\cmd\ejsrun.c" />
-  <ClCompile Include="..\..\src\jems\ejs.zlib\src\ejsZlib.c" />
+  <ClCompile Include="..\..\src\jems\ejs.zlib\ejsZlib.c" />
   <ClCompile Include="..\..\src\deps\mpr\mprLib.c" />
   <ClCompile Include="..\..\src\deps\pcre\pcre.c" />
   <ClCompile Include="..\..\src\deps\mpr\mprSsl.c" />

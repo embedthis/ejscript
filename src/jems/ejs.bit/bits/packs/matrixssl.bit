@@ -2,7 +2,7 @@
     matrixssl.bit -- OpenSSL package search
  */
 
-let description = "MatrixSSL SSL/TLS Security"
+pack('matrixssl', 'MatrixSSL SSL/TLS Security')
 
 if (bit.packs.ssl && bit.packs.ssl.enable == false) {
     throw "SSL has been disabled"
@@ -25,7 +25,6 @@ if (bit.platform.os == 'win') {
     search = [path]
     let incdir = probe('matrixSsl.h', {search: search}).absolute
     cfg = {
-        description: description,
         dir: dir,
         path: lib,
         defines: [ '-DMATRIX_USE_FILE_SYSTEM' ],
@@ -42,7 +41,6 @@ if (bit.platform.os == 'win') {
     let search = [path.join('matrixssl')]
     let incdir = probe('matrixsslApi.h', {search: search}).absolute
     cfg = {
-        description: description,
         dir: dir,
         path: lib,
         defines: [ '-DPOSIX', '-DMATRIX_USE_FILE_SYSTEM' ],
@@ -59,7 +57,6 @@ if (bit.platform.os == 'win') {
     search = [path.join('matrixssl')]
     let incdir = probe('matrixsslApi.h', {search: search}).absolute
     cfg = {
-        description: description,
         dir: dir,
         path: lib,
         defines: [ '-DPOSIX', '-DMATRIX_USE_FILE_SYSTEM' ],

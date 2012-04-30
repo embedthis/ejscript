@@ -27,7 +27,7 @@ Bit.load({
         'ejs.db.sqlite': {
             type: 'lib',
             sources: [ 
-                'src/*.c',
+                '*.c',
             ],
             depends: [ 'libmpr', 'libejs', 'ejs.mod', 'ejs.db.sqlite.mod', 'libsqlite3' ],
         },

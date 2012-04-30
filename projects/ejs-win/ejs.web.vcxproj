@@ -56,10 +56,10 @@
   <CustomBuildBeforeTargets Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">PreBuildEvent</CustomBuildBeforeTargets>
   </PropertyGroup>
 <ItemGroup>
-  <ClCompile Include="..\..\src\jems\ejs.web\src\ejsHttpServer.c" />
-  <ClCompile Include="..\..\src\jems\ejs.web\src\ejsRequest.c" />
-  <ClCompile Include="..\..\src\jems\ejs.web\src\ejsSession.c" />
-  <ClCompile Include="..\..\src\jems\ejs.web\src\ejsWeb.c" />
+  <ClCompile Include="..\..\src\jems\ejs.web\ejsHttpServer.c" />
+  <ClCompile Include="..\..\src\jems\ejs.web\ejsRequest.c" />
+  <ClCompile Include="..\..\src\jems\ejs.web\ejsSession.c" />
+  <ClCompile Include="..\..\src\jems\ejs.web\ejsWeb.c" />
 </ItemGroup>
 
     <ItemDefinitionGroup>

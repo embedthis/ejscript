@@ -18,20 +18,20 @@
 #define BLD_VNUM 200000000
 #define BLD_CONFIG_CMD "bit -emulate win-x86 -q -d -without all configure -gen sh,nmake,vs"
 #define BLD_LIB_NAME "bin"
-#define BLD_CFG_PREFIX "/Users/mob/git/ejs/C:/Program Files/Embedthis Ejscript"
-#define BLD_BIN_PREFIX "/Users/mob/git/ejs/C:/Program Files/Embedthis Ejscript/bin"
-#define BLD_DOC_PREFIX "/Users/mob/git/ejs/C:/Program Files/Embedthis Ejscript/doc"
-#define BLD_INC_PREFIX "/Users/mob/git/ejs/C:/Program Files/Embedthis Ejscript/inc"
-#define BLD_JEM_PREFIX "/Users/mob/git/ejs/C:/Program Files/Embedthis Ejscript/jems"
-#define BLD_LIB_PREFIX "/Users/mob/git/ejs/C:/Program Files/Embedthis Ejscript/bin"
-#define BLD_LOG_PREFIX "/Users/mob/git/ejs/C:/Program Files/Embedthis Ejscript/logs"
-#define BLD_MAN_PREFIX "/Users/mob/git/ejs/C:/Program Files/Embedthis Ejscript/man"
-#define BLD_PRD_PREFIX "/Users/mob/git/ejs/C:/Program Files/Embedthis Ejscript"
-#define BLD_SAM_PREFIX "/Users/mob/git/ejs/C:/Program Files/Embedthis Ejscript/samples"
-#define BLD_SPL_PREFIX "/Users/mob/git/ejs/C:/Program Files/Embedthis Ejscript/tmp"
-#define BLD_SRC_PREFIX "/Users/mob/git/ejs/C:/Program Files/Embedthis Ejscript/src"
-#define BLD_VER_PREFIX "/Users/mob/git/ejs/C:/Program Files/Embedthis Ejscript"
-#define BLD_WEB_PREFIX "/Users/mob/git/ejs/C:/Program Files/Embedthis Ejscript/web"
+#define BLD_CFG_PREFIX "C:/Program Files/Embedthis Ejscript"
+#define BLD_BIN_PREFIX "C:/Program Files/Embedthis Ejscript/bin"
+#define BLD_DOC_PREFIX "C:/Program Files/Embedthis Ejscript/doc"
+#define BLD_INC_PREFIX "C:/Program Files/Embedthis Ejscript/inc"
+#define BLD_JEM_PREFIX "C:/Program Files/Embedthis Ejscript/jems"
+#define BLD_LIB_PREFIX "C:/Program Files/Embedthis Ejscript/bin"
+#define BLD_LOG_PREFIX "C:/Program Files/Embedthis Ejscript/logs"
+#define BLD_MAN_PREFIX "C:/Program Files/Embedthis Ejscript/man"
+#define BLD_PRD_PREFIX "C:/Program Files/Embedthis Ejscript"
+#define BLD_SAM_PREFIX "C:/Program Files/Embedthis Ejscript/samples"
+#define BLD_SPL_PREFIX "C:/Program Files/Embedthis Ejscript/tmp"
+#define BLD_SRC_PREFIX "C:/Program Files/Embedthis Ejscript/src"
+#define BLD_VER_PREFIX "C:/Program Files/Embedthis Ejscript"
+#define BLD_WEB_PREFIX "C:/Program Files/Embedthis Ejscript/web"
 #define BLD_EXE ".exe"
 #define BLD_SHLIB ".lib"
 #define BLD_SHOBJ ".dll"
@@ -57,22 +57,12 @@
 #define BLD_FEATURE_SSL 0
 #define BLD_FEATURE_ZLIB 0
 #define BLD_FEATURE_WINSDK 1
-#define BLD_WINSDK "$(SDK)"
 #define BLD_FEATURE_CC 1
-#define BLD_CC "cl.exe"
 #define BLD_FEATURE_LINK 1
-#define BLD_LINK "link.exe"
 #define BLD_FEATURE_DUMPBIN 1
-#define BLD_DUMPBIN "dumpbin"
 #define BLD_FEATURE_RC 1
-#define BLD_RC "rc"
 #define BLD_FEATURE_PCRE 1
-#define BLD_PCRE "/Users/mob/git/ejs/src/deps/pcre"
-#define BLD_FEATURE_INNO 0
-#define BLD_FEATURE_DPKG 1
 #define BLD_FEATURE_OPENSSL 0
 #define BLD_FEATURE_MATRIXSSL 0
-#define BLD_FEATURE_PMAKER 1
-#define BLD_FEATURE_RPMBUILD 1
+#define BLD_FEATURE_PMAKER 0
 #define BLD_FEATURE_SQLITE 1
-#define BLD_SQLITE "/Users/mob/git/ejs/src/deps/sqlite"

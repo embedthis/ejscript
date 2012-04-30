@@ -1,18 +1,32 @@
 /*
-    pmaker.bit - PackageMaker on macosx for Bit
+    pmaker.bit - Utilities to make distribution packages 
  */
 
-if (bit.platform.os == 'macosx') {
+pack('pmaker', 'Package Maker Tool')
+
+let path
+
+switch (bit.platform.os) {
+case 'macosx':
     let search = ['/Applications', '/Developer/Applications/Utilities' ]
-    let pmaker = probe('PackageMaker.app', {fullpath: true, search: search})
-    Bit.load({
-        packs: {
-            pmaker: {
-                path: pmaker.join('Contents/MacOS/PackageMaker'), 
-                description: 'Mac OS X Package Maker Tool',
-            },
-        },
-    })
+    path = probe('PackageMaker.app', {fullpath: true, search: search})
+    path = path.join('Contents/MacOS/PackageMaker')
+    break
+
+case 'win':
+    let search = bit.dir.programs.glob('Inno Setup*')
+    path = probe('iscc.exe', {fullpath: true, search: search.sort().reverse()})
+    break
+
+case 'linux':
+    if (bit.platform.dist == 'ubuntu') {
+        path = probe('dpkg', {fullpath: true})
+    } else if (bit.platform.dist == 'fedora') {
+        path = probe('rpmbuild', {fullpath: true})
+    }
+    break
 }
 
-
+if (path) {
+    Bit.load({packs: { pmaker: {path: path}}})
+}

@@ -57,15 +57,9 @@
 #define BLD_FEATURE_SSL 0
 #define BLD_FEATURE_ZLIB 0
 #define BLD_FEATURE_CC 1
-#define BLD_CC "gcc"
 #define BLD_FEATURE_LINK 1
-#define BLD_LINK "ld"
 #define BLD_FEATURE_PCRE 1
-#define BLD_PCRE "/Users/mob/git/ejs/src/deps/pcre"
-#define BLD_FEATURE_DPKG 1
 #define BLD_FEATURE_OPENSSL 0
 #define BLD_FEATURE_MATRIXSSL 0
 #define BLD_FEATURE_PMAKER 1
-#define BLD_FEATURE_RPMBUILD 1
 #define BLD_FEATURE_SQLITE 1
-#define BLD_SQLITE "/Users/mob/git/ejs/src/deps/sqlite"
