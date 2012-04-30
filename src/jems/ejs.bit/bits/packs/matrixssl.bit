@@ -16,6 +16,7 @@ if (!path) {
     }
     path = vers[0]
 }
+print("PATH", path)
 
 let cfg = {}
 if (bit.platform.os == 'win') {
@@ -53,11 +54,11 @@ if (bit.platform.os == 'win') {
     }
 
 } else {
-    let search = [path.join('src')]
+    let search = [path]
     let lib = probe('libmatrixssl.so', {fullpath: true, search: search}).absolute
     let dir = lib.parent.parent
-    search = [path]
-    let incdir = probe('matrixSsl.h', {search: search}).absolute
+    search = [path.join('matrixssl')]
+    let incdir = probe('matrixsslApi.h', {search: search}).absolute
     cfg = {
         description: description,
         dir: dir,
