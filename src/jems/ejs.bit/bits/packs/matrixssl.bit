@@ -16,7 +16,6 @@ if (!path) {
     }
     path = vers[0]
 }
-print("PATH", path)
 
 let cfg = {}
 if (bit.platform.os == 'win') {
@@ -64,7 +63,7 @@ if (bit.platform.os == 'win') {
         dir: dir,
         path: lib,
         defines: [ '-DPOSIX', '-DMATRIX_USE_FILE_SYSTEM' ],
-        includes: [ incdir ],
+        includes: [ incdir, incdir.parent ],
         libraries: [ 'libmatrixssl.so' ],
         libpaths: [ lib.parent ],
         imports: [ lib ],
