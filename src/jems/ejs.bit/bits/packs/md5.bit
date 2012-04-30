@@ -8,5 +8,5 @@ if (!md5) {
     /* This will throw */
     probe('md5sum')
 }
-Bit.load({packs: { md5: {path: md5}}})
+Bit.load({packs: { md5: {path: md5, description: 'Message Digest Summary Tool'}}})
 

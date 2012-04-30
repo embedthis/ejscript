@@ -4,7 +4,7 @@
 
 if (bit.platform.os == 'linux' && bit.platform.dist == 'ubuntu') {
     let dpkg = probe('dpkg', {fullpath: true})
-    Bit.load({packs: { dpkg: {path: dpkg}}})
+    Bit.load({packs: { dpkg: {path: dpkg, description: 'Debian Package Maker Tool'}}})
 }
 
 

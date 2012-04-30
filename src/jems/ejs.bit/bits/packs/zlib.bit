@@ -35,6 +35,7 @@ if (bit.platform.os == 'win') {
 }
 
 let cfg = {
+    description: 'ZLib Compression Library',
     path: lib,
     dir: lib.parent,
     libpaths: [ lib.parent ],

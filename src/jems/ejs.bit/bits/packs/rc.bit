@@ -3,4 +3,4 @@
  */
 let search = bit.dir.programs.glob('Microsoft SDKs/Windows/*/bin')
 let rc = bit.emulating ? 'rc' : probe('rc.exe', {fullpath: true, search: search.sort().reverse()})
-Bit.load({packs: { rc: { path: rc }}})
+Bit.load({packs: { rc: { path: rc, description: 'Windows Resource Compiler'}}})

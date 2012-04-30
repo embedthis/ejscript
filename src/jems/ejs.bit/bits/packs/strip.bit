@@ -2,5 +2,5 @@
     strip.bit - Strip package for Bit
  */
 
-program('strip')
+program('strip', 'Strip Symbols Tool')
 

@@ -6,5 +6,5 @@ let path: Path = bit.packs.sqlite.path
 let search = []
 search = [(path) ? path : bit.dir.src.join('src/deps/sqlite')]
 let sqlite = probe('sqlite3.c', {search: search})
-Bit.load({packs: { sqlite: { path: sqlite }}})
+Bit.load({packs: { sqlite: { path: sqlite, description: 'SQLite Package'}}})
 

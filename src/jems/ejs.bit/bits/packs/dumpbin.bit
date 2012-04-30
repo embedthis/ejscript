@@ -3,5 +3,5 @@
  */
 let search = bit.dir.programs.glob('Microsoft Visual Studio*/VC/Bin')
 let dumpbin = bit.emulating ? 'dumpbin' : probe('dumpbin.exe', {fullpath: true, search: search.sort().reverse()})
-Bit.load({packs: { dumpbin: { path: dumpbin }}})
+Bit.load({packs: { dumpbin: { path: dumpbin, 'Windows Dump Binary Symbols Tool' }}})
 

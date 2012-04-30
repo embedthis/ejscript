@@ -2,8 +2,9 @@
     openssl.bit -- OpenSSL package
  */
 
+let description = 'OpenSSL SSL/TLS Security'
 if (bit.packs.ssl && bit.packs.ssl.enable == false) {
-    throw "SSL has been disabled"
+    throw 'SSL has been disabled'
 }
 
 let cfg
@@ -27,6 +28,7 @@ if (bit.platform.os == 'win') {
     search = [path.join('inc32')]
     let incdir = probe('openssl/ssl.h', {search: search}).absolute
     cfg = {
+        description: description,
         dir: dir,
         path: lib,
         includes: [ incdir ],
@@ -43,6 +45,7 @@ if (bit.platform.os == 'win') {
     search = [path.join('include'), '/usr/include']
     let incdir = probe('openssl/ssl.h', {search: search}).absolute
     cfg = {
+        description: description,
         dir: dir,
         path: lib,
         includes: [ incdir ],
@@ -59,6 +62,7 @@ if (bit.platform.os == 'win') {
     search = [path.join('include'), '/usr/include']
     let incdir = probe('openssl/ssl.h', {search: search}).absolute
     cfg = {
+        description: description,
         dir: dir,
         path: lib,
         includes: [ incdir ],

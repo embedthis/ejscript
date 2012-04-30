@@ -22,6 +22,7 @@ if (!path) {
 }
 
 let cfg = {
+    description: 'VxWorks SDK',
     dir: path,
     path: path,
     includes: [ path.join('target/h'), path.join('target/h/wrn/coreip') ],

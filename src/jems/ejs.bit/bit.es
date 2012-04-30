@@ -642,6 +642,7 @@ public class Bit {
         if (!settings.required && !settings.optional) {
             return
         }
+        trace('Search', 'For tools and extension packages')
         vtrace('Search', 'Packages: ' + [settings.required + settings.optional].join(' '))
         let packs = (settings.required + settings.optional).sort().unique()
         for each (pack in settings.required + settings.optional) {
@@ -652,7 +653,6 @@ public class Bit {
                 continue
             }
             let path = bit.dir.bits.join('packs', pack + '.bit')
-            vtrace('Search', 'Pack ' + pack)
             if (!path.exists) {
                 for each (d in settings.packs) {
                     path = bit.dir.src.join(d, pack + '.bit')
@@ -678,10 +678,20 @@ public class Bit {
                     }
                 }
             }
-            if (bit.packs[pack] && bit.packs[pack].enable && bit.packs[pack].path) {
-                trace('Located', pack + ' at ' + bit.packs[pack].path)
+            let p = bit.packs[pack]
+            if (p) {
+                let desc = p.description || pack
+                if (p && p.enable && p.path) {
+                    if (options.verbose) {
+                        vtrace('Found', desc + ' at ' + p.path)
+                    } else {
+                        trace('Found', desc)
+                    }
+                } else {
+                    trace('Not Found', desc)
+                }
             } else {
-                trace('Info', pack + ' not found')
+                trace('Not Found', pack)
             }
         }
         castDirTypes()
@@ -2859,9 +2869,9 @@ public function probe(file: Path, options = {}): Path {
     return b.probe(file, options)
 }
 
-public function program(name) {
+public function program(name, description = null) {
     let packs = {}
-    packs[name] = { path: probe(name, {fullpath: true})}
+    packs[name] = { path: probe(name, {fullpath: true}), description: description}
     Bit.load({packs: packs})
 }
 

@@ -2,4 +2,4 @@
     ejs.bit - Ejs package for Bit
  */
 
-program('ejs')
+program('ejs', 'Ejscript Shell')

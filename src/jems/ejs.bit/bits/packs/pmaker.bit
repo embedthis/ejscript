@@ -5,7 +5,14 @@
 if (bit.platform.os == 'macosx') {
     let search = ['/Applications', '/Developer/Applications/Utilities' ]
     let pmaker = probe('PackageMaker.app', {fullpath: true, search: search})
-    Bit.load({packs: {pmaker: {path: pmaker.join('Contents/MacOS/PackageMaker')}}})
+    Bit.load({
+        packs: {
+            pmaker: {
+                path: pmaker.join('Contents/MacOS/PackageMaker'), 
+                description: 'Mac OS X Package Maker Tool',
+            },
+        },
+    })
 }
 
 

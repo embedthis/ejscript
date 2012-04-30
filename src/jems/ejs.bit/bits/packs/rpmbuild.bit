@@ -4,7 +4,5 @@
 
 if (bit.platform.os == 'linux' && bit.platform.dist == 'fedora') {
     let rpmbuild = probe('rpmbuild', {fullpath: true})
-    Bit.load({packs: { rpmbuild: {path: rpmbuild}}})
+    Bit.load({packs: { rpmbuild: {path: rpmbuild, description: 'Linux RPM Package Maker Tool'}}})
 }
-
-

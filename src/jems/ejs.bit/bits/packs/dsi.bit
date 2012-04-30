@@ -2,5 +2,5 @@
     dsi.bit - dsi package for Bit
  */
 
-program('dsi')
+program('dsi', 'Developer Server Side Include Tool')
 

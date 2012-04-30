@@ -3,4 +3,11 @@
  */
 
 let search = bit.dir.programs.glob('Inno Setup*')
-Bit.load({packs: { inno: { path: probe('iscc.exe', {fullpath: true, search: search.sort().reverse()})}}})
+Bit.load({
+    packs: { 
+        inno: { 
+            path: probe('iscc.exe', {fullpath: true, search: search.sort().reverse()}), 
+            description: 'Windows InnoSetup Package Tool',
+        },
+    }
+})

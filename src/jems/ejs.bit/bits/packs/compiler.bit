@@ -3,6 +3,7 @@
  */
 var cc: Path
 let platform = bit.platform
+let description = "C/C++ Compiler"
 
 //  MOB - fix and fully listen to existing path setting
 let path: Path = bit.packs.compiler.path
@@ -14,7 +15,7 @@ if (platform.like == 'posix') {
     } else {
         cc = probe(name, {fullpath: true})
     }
-    Bit.load({packs: { compiler: { path: cc }}})
+    Bit.load({packs: { compiler: { path: cc, description: description }}})
 
 } else if (platform.like == 'windows') {
     let search = bit.dir.programs.glob('Microsoft Visual Studio*/VC/Bin')
@@ -39,7 +40,7 @@ if (platform.like == 'posix') {
         cc = probe('cl.exe', {fullpath: true, search: search.sort().reverse()})
         vsdir = cc.dirname.dirname.dirname
     }
-    Bit.load({packs: { compiler: { path: cc, dir: vsdir }}})
+    Bit.load({packs: { compiler: { path: cc, dir: vsdir, description: description }}})
 
     bit.env.PATH += [
         vsdir.join('VC/Bin'),
@@ -75,7 +76,7 @@ if (platform.like == 'posix') {
         throw 'Unsupported CPU architecture: ' + platform.arch
     }
     cc = probe(name, {fullpath: true, search: bit.packs.vxworks.search})
-    Bit.load({packs: { compiler: { path: cc }}})
+    Bit.load({packs: { compiler: { path: cc, description: description}}})
 }
 
 let settings = {}

@@ -12,7 +12,7 @@ if (!bit.emulating) {
     winsdk = probe('Include/WinBase.h', {fullpath: true, search: search.sort().reverse()})
     winsdk = winsdk.dirname.dirname
 }
-Bit.load({packs: { winsdk: { path: winsdk }}})
+Bit.load({packs: { winsdk: { path: winsdk, description: 'Windows SDK' }}})
 bit.env.PATH = [ winsdk.join('Bin').portable ]
 bit.env.INCLUDE = [ winsdk.join('INCLUDE').portable ]
 if (bit.platform.arch == 'x86_64') {

@@ -3,5 +3,5 @@
  */
 
 let name = (bit.platform.os == 'win') ? 'lib' : 'ar'
-Bit.load({packs: { lib: { path: probe(name, {fullpath: true})}}})
+Bit.load({packs: { lib: { path: probe(name, {fullpath: true}), description: 'Library Archive Tool'}}})
 

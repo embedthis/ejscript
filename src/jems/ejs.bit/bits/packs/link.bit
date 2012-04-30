@@ -5,9 +5,9 @@
 if (bit.platform.like == 'windows') {
     let search = bit.dir.programs.glob('Microsoft Visual Studio*/VC/Bin')
     let link = bit.emulating ? 'link.exe' : probe('link.exe', {fullpath: true, search: search.sort().reverse()})
-    Bit.load({packs: { link: { path: link }}})
+    Bit.load({packs: { link: { path: link, description: 'Link Editor Program' }}})
 } else {
     let link = bit.emulating ? 'ld' : probe('ld', {fullpath: true})
-    Bit.load({packs: { link: { path: link }}})
+    Bit.load({packs: { link: { path: link, description: 'Link Editor Program' }}})
 }
 
