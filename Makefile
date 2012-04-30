@@ -11,7 +11,7 @@ MAKE	:= make
 EXT 	:= mk
 
 ifeq ($(OS),win)
-	MAKE:= projects/win.bat $(PROCESSOR_ARCHITECTURE)
+	MAKE:= projects/win.bat $(PROCESSOR_ARCHITEW6432)
 	EXT := nmake
 endif
 
