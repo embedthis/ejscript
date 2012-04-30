@@ -121,7 +121,7 @@ public function packageComboFiles() {
         'src/ejsByteCode.h', 
         'src/ejsByteCodeTable.h',
         'src/ejs.h', 
-        'src/jems/ejs.web/src/ejsWeb.h', 
+        'src/jems/ejs.web/ejsWeb.h', 
         'src/ejsCompiler.h', 
         'src/deps/pcre/pcre.h'
         ], pkg.join('src/deps/ejs/ejs.h'), {
