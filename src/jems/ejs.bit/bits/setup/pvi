@@ -1,0 +1,8 @@
+pattern=$1
+shift
+files=$*
+if [ -z "${files}" ]
+then
+	files='*.c *.cpp *.h Makefile *.html *.aspx *.cs *.tst *.es *.java *.ejs'
+fi
+vi -c "/${pattern}" $(grep -l "${pattern}" ${files})

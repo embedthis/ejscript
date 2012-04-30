@@ -1,0 +1,61 @@
+#!/bin/bash
+
+### BEGIN INIT INFO
+# Provides:          vxnet
+# Required-Start:    $local_fs $remote_fs $network $syslog
+# Required-Stop:
+# Default-Start:     2 3 4 5
+# Default-Stop:
+# Short-Description: Embedthis VxWorks daemons
+# Description:       Embedthis VxWorks daemons
+### END INIT INFO
+
+#
+#   chkconfig: - 81 15
+#   description: Embedthis VxWorks daemons
+#   processname: lmgrd
+#
+
+#   Installing:
+#       update-rc.d vxnet defaults 90 10
+#   Removing:
+#       update-rc.d -f vxnet remove
+
+test -f /lib/lsb/init-functions || exit 1
+. /lib/lsb/init-functions
+
+case "$1" in
+    start)
+        cd /WindRiver/licadmintools-1.2/license/x86-linux2/bin
+        ./lmgrd -c /WindRiver/license/WRSLicense.lic -l /WindRiver/license/debug.log
+        cd /WindRiver/vxworks-6.8/host/resource/vxsim
+        /WindRiver/vxworks-6.8/host/x86-linux2/bin/vxsimnetd -force -f *.conf &
+        ;;
+    stop)
+        log_begin_msg "Disabling vxnet ..."
+        killall vxsimnetd 2>/dev/null
+        killall lmgrd 2>/dev/null
+        killall wrsd 2>/dev/null
+        killall wtxregd.ex 2>/dev/null
+        log_end_msg 0
+        ;;
+    install)
+        if which chkconfig >/dev/null 2>&1 ; then
+            chkconfig --add $BLD_PRODUCT >/dev/null
+            chkconfig --level 5 $BLD_PRODUCT on >/dev/null
+        else
+            update-rc.d vxnet defaults 90 10
+        fi
+        ;;
+    uninstall)
+        if which chkconfig >/dev/null 2>&1 ; then
+            chkconfig --del vxnet >/dev/null
+        else
+            update-rc.d -f vxnet remove
+        fi
+        ;;
+  *)
+    ;;
+esac
+        
+
