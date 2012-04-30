@@ -2,6 +2,7 @@
     winsdk.bit - WinSDK tools
  */
 
+pack('winsdk', 'Windows SDK')
 let search = bit.dir.programs.glob('Microsoft SDKs/Windows/*')
 let wvar: Path = '$(SDK)'
 let winsdk: Path = wvar
@@ -12,7 +13,7 @@ if (!bit.emulating) {
     winsdk = probe('Include/WinBase.h', {fullpath: true, search: search.sort().reverse()})
     winsdk = winsdk.dirname.dirname
 }
-Bit.load({packs: { winsdk: { path: winsdk, description: 'Windows SDK' }}})
+Bit.load({packs: { winsdk: { path: winsdk }}})
 bit.env.PATH = [ winsdk.join('Bin').portable ]
 bit.env.INCLUDE = [ winsdk.join('INCLUDE').portable ]
 if (bit.platform.arch == 'x86_64') {

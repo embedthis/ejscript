@@ -402,13 +402,6 @@ public class Bit {
 
         //  MOB - this is used in mprModule which does a basename anyway. Also used by ejsConfig
         f.writeLine('#define BLD_LIB_NAME "' + 'bin' + '"')
-    /*
-        if (bit.platform.like == 'windows' || bit.platform.os == 'macosx') {
-            f.writeLine('#define BLD_LIB_NAME "' + 'bin' + '"')
-        } else {
-            f.writeLine('#define BLD_LIB_NAME "' + 'lib' + '"')
-        }
-     */
 
         /* Prefixes */
         let base = (settings.name == 'ejs') ? bit.prefixes.productver : bit.prefixes.product
@@ -509,9 +502,11 @@ public class Bit {
             }
             if (pack.enable) {
                 f.writeLine('#define BLD_FEATURE_' + pname.toUpper() + ' 1')
+/*
                 if (pack.path) {
                     f.writeLine('#define BLD_' + pname.toUpper() + ' \"' + pack.path + '\"')
                 }
+*/
             } else {
                 f.writeLine('#define BLD_FEATURE_' + pname.toUpper() + ' 0')
             }
@@ -672,7 +667,9 @@ public class Bit {
                     }
                     let kind = settings.required.contains(pack) ? 'Required' : 'Optional'
                     whyMissing(kind + ' package "' + pack + '" ' + e)
-                    bit.packs[pack] = { enable: false, diagnostic: "" + e }
+                    let p = bit.packs[pack] ||= {}
+                    p.enable = false
+                    p.diagnostic = "" + e
                     if (kind == 'Required') {
                         throw e
                     }
@@ -688,10 +685,10 @@ public class Bit {
                         trace('Found', desc)
                     }
                 } else {
-                    trace('Not Found', 'Optional package: ' + desc)
+                    trace('Not Found', 'Optional: ' + desc)
                 }
             } else {
-                trace('Not Found', 'Optional package: ' + desc)
+                trace('Not Found', 'Optional: ' + pack)
             }
         }
         castDirTypes()
@@ -1639,7 +1636,10 @@ public class Bit {
             }
         }
         for (let [pname, prefix] in bit.prefixes) {
-            bit.prefixes[pname] = Path(prefix).absolute
+            bit.prefixes[pname] = Path(prefix)
+            if (!(bit.emulating && bit.platform.os == 'win')) {
+                bit.prefixes[pname] = bit.prefixes[pname].absolute
+            }
         }
         for each (pack in bit.packs) {
             if (pack.dir) {
@@ -2865,13 +2865,25 @@ require embedthis.bit
 public var b: Bit = new Bit
 b.main()
 
+public function pack(name: String, description: String) {
+    let packs = {}
+    packs[name] = {description: description}
+    Bit.load({packs: packs})
+}
+
 public function probe(file: Path, options = {}): Path {
     return b.probe(file, options)
 }
 
 public function program(name, description = null) {
     let packs = {}
-    packs[name] = { path: probe(name, {fullpath: true}), description: description}
+    let cfg = {description: description}
+    packs[name] = cfg
+    try {
+        cfg.path = probe(name, {fullpath: true})
+    } catch (e) {
+        throw e
+    }
     Bit.load({packs: packs})
 }
 

@@ -28,7 +28,6 @@ Bit.load({
 
     settings: {
         '+required': [ 'winsdk', 'compiler', 'link', 'dumpbin', 'rc' ],
-        '+optional': [ 'inno' ],
     },
 
     defaults: {

@@ -2,12 +2,14 @@
     link.bit - Linker package for Bit
  */
 
+pack('link', 'Link Editor Program')
+
 if (bit.platform.like == 'windows') {
     let search = bit.dir.programs.glob('Microsoft Visual Studio*/VC/Bin')
     let link = bit.emulating ? 'link.exe' : probe('link.exe', {fullpath: true, search: search.sort().reverse()})
-    Bit.load({packs: { link: { path: link, description: 'Link Editor Program' }}})
+    Bit.load({packs: { link: { path: link }}})
 } else {
     let link = bit.emulating ? 'ld' : probe('ld', {fullpath: true})
-    Bit.load({packs: { link: { path: link, description: 'Link Editor Program' }}})
+    Bit.load({packs: { link: { path: link }}})
 }
 

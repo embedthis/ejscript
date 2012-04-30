@@ -23,7 +23,7 @@ Bit.load({
             enable: 'bit.packs.zlib.enable',
             type: 'lib',
             sources: [ 
-                'src/*.c',
+                '*.c',
             ],
             depends: [ 'libmpr', 'libejs', 'ejs.mod', 'ejs.zlib.mod', 'zlib' ],
         },

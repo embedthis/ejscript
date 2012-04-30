@@ -2,6 +2,7 @@
     vxworks.bit - VxWorks tools
  */
 
+pack('vxworks', 'VxWorks SDK')
 let path: Path = bit.packs.vxworks.path
 if (!path) {
     /*
@@ -22,7 +23,6 @@ if (!path) {
 }
 
 let cfg = {
-    description: 'VxWorks SDK',
     dir: path,
     path: path,
     includes: [ path.join('target/h'), path.join('target/h/wrn/coreip') ],
