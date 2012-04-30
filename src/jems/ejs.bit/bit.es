@@ -1093,11 +1093,15 @@ public class Bit {
         genout = TextStream(File(path, 'w'))
         genout.writeLine('#\n#   ' + path.basename + ' -- Build It Makefile to build ' + bit.settings.title + 
             ' for ' + bit.platform.os + '\n#\n')
-        genEnv()
         genout.writeLine('ARCH     = $(PROCESSOR_ARCHITECTURE)')
         genout.writeLine('!IF "$(ARCH)" == "AMD64"')
             genout.writeLine('ARCH     = x86_64')
-        genout.writeLine('!ENDIF')
+            genout.writeLine('MACHINE  = x64')
+            genout.writeLine('ENTRY    = _DllMainCRTStartup')
+        genout.writeLine('!ELSE')
+            genout.writeLine('MACHINE  = x86')
+            genout.writeLine('ENTRY    = _DllMainCRTStartup@12')
+        genout.writeLine('!ENDIF\n')
         genout.writeLine('OS       = ' + bit.platform.os)
         genout.writeLine('PROFILE  = ' + bit.platform.profile)
         genout.writeLine('CONFIG   = $(OS)-$(ARCH)-$(PROFILE)')
@@ -1107,11 +1111,12 @@ public class Bit {
         genout.writeLine('DFLAGS   = ' + gen.defines)
         genout.writeLine('IFLAGS   = ' + 
             repvar(bit.defaults.includes.map(function(path) '-I' + reppath(path)).join(' ')))
-        genout.writeLine('LDFLAGS  = ' + repvar(gen.linker))
+        genout.writeLine('LDFLAGS  = ' + repvar(gen.linker).replace(/-machine:x86/, '-machine:$$(MACHINE)'))
         genout.writeLine('LIBPATHS = ' + repvar(gen.libpaths).replace(/\//g, '\\'))
         genout.writeLine('LIBS     = ' + gen.libraries + '\n')
         genout.writeLine('all: prep \\\n        ' + genAll())
         genout.writeLine('.PHONY: prep\n\nprep:')
+        genout.writeLine('!IF "$(VSINSTALLDIR)" == ""\n\techo "Visual Studio vars not set. Run vcvars.bat."\n\texit 255\n!ENDIF')
         genout.writeLine('\t@if not exist $(CONFIG)\\inc md $(CONFIG)\\inc')
         genout.writeLine('\t@if not exist $(CONFIG)\\obj md $(CONFIG)\\obj')
         genout.writeLine('\t@if not exist $(CONFIG)\\bin md $(CONFIG)\\bin')
@@ -1148,24 +1153,12 @@ public class Bit {
             var vs = (bit.packs.compiler && bit.packs.compiler.dir) ? 
                 bit.packs.compiler.dir.windows.name.replace(/.*Program Files.*Microsoft/, '$$(PROGRAMFILES)\\Microsoft') :
                 '$(PROGRAMFILES)\\Microsoft Visual Studio 9.0'
-            if (generating == 'nmake') {
-                genout.writeLine('!IFDEF VSINSTALLDIR\nVS        = $(VSINSTALLDIR)\n!ELSE')
-                genout.writeLine('VS        = ' + vs + '\n!ENDIF\n')
-                genout.writeLine('!IFDEF WindowsSDKDir\nSDK       = $(WindowsSDKDir)\n!ELSE')
-                genout.writeLine('SDK       = ' + winsdk + '\n!ENDIF\n')
-            } else if (generating == 'make') {
+            if (generating == 'make') {
                 genout.writeLine('VS             := ' + '$(VSINSTALLDIR)')
                 genout.writeLine('VS             ?= ' + vs)
                 genout.writeLine('SDK            := ' + '$(WindowsSDKDir)')
                 genout.writeLine('SDK            ?= ' + winsdk)
                 genout.writeLine('\nexport         SDK VS')
-
-            } else {
-                genout.writeLine('VS="${VSINSTALLDIR}"')
-                genout.writeLine(': ${VS:="' + vs + '"}')
-                genout.writeLine('SDK="${WindowsSDKDir}"')
-                genout.writeLine(': ${SDK:="' + winsdk + '"}')
-                genout.writeLine('\nexport SDK VS')
             }
         }
         for (let [key,value] in bit.env) {
@@ -2133,6 +2126,9 @@ public class Bit {
             command = command.replace(RegExp(gen.configuration, 'g'), '$${CONFIG}')
             command = command.replace(bit.packs.compiler.path, '${CC}')
             command = command.replace(bit.packs.link.path, '${LD}')
+        }
+        if (generating == 'nmake') {
+            command = command.replace('_DllMainCRTStartup@12', '$(ENTRY)')
         }
         command = command.replace(RegExp(bit.dir.top + '/', 'g'), '')
         command = command.replace(/  */g, ' ')
