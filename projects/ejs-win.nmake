@@ -67,7 +67,7 @@ all: prep \
 
 prep:
 !IF "$(VSINSTALLDIR)" == ""
-	echo "Visual Studio vars not set. Run vcvars.bat"
+	echo "Visual Studio vars not set. Run vcvars.bat."
 	exit 255
 !ENDIF
 	@if not exist $(CONFIG)\inc md $(CONFIG)\inc
