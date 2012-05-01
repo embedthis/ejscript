@@ -18,32 +18,39 @@ if (platform.like == 'posix') {
     Bit.load({packs: { compiler: { path: cc }}})
 
 } else if (platform.like == 'windows') {
-    let search = bit.dir.programs.glob('Microsoft Visual Studio*/VC/Bin')
-
-/*
-    if (platform.arch == 'x86_64') {
-        if (CROSS) {
-            search.map(function(e) Path(e).join('x86_64'))
-        } else {
-            search.map(function(e) Path(e).join('amd64'))
-        }
-    } else {
-        search.map(function(e) Path(e).join('amd64'))
+    let search = bit.dir.programs.glob('Microsoft Visual Studio*/VC/Bin').sort().reverse()
+    if (!search || search.length == 0) {
+        throw 'Can\'t find Visual Studio'
     }
-*/
+    let vsdir: Path = search[0]
+    if (platform.arch == 'x86_64') {
+        if (App.getenv('PROCESSOR_ARCHITEW6432')) {
+            search = search.map(function(e) Path(e).join('amd64'))
+        } else {
+            /* Cross compile for 64 bits on 32 bits */
+            search = search.map(function(e) Path(e).join('x86_64'))
+        }
+    }
     let vv: Path = Path('$(VS)')
-    let vsdir: Path
-    if (bit.emulating) {
+    let vsbin, vslib
+    if (Config.OS != 'WIN') {
         cc = 'cl.exe'
         vsdir = vv
+        vsbin = vsdir.join('VC/Bin'),
+        vslib = vsdir.join('VC/lib')
     } else {
-        cc = probe('cl.exe', {fullpath: true, search: search.sort().reverse()})
-        vsdir = cc.dirname.dirname.dirname
+        cc = probe('cl.exe', {fullpath: true, search: search})
+        vsbin = cc.dirname
+        if (bit.platform.arch == 'x86_64') {
+            vslib = vsbin.join('../lib/amd64').normalize
+        } else {
+            vslib = vsbin.join('../lib').normalize
+        }
     }
-    Bit.load({packs: { compiler: { path: cc, dir: vsdir }}})
+    Bit.load({packs: { compiler: { path: cc, dir: vsdir, search: search }}})
 
     bit.env.PATH += [
-        vsdir.join('VC/Bin'),
+        vsbin,
         vsdir.join('Common7/IDE'),
         vsdir.join('Common7/Tools'),
         vsdir.join('SDK/v3.5/bin'),
@@ -52,9 +59,7 @@ if (platform.like == 'posix') {
     bit.env.INCLUDE += [
         vsdir.join('VC/INCLUDE')
     ]
-    bit.env.LIB += [
-        Path(vsdir.join('VC/lib').toString().replace(/x86_amd64/, 'amd64'))
-    ]
+    bit.env.LIB += [ vslib ]
 
 } else if (platform.os == 'vxworks') {
     let name
@@ -154,9 +159,9 @@ Bit.load({ settings: settings })
     Test compile to determine supported compiler switches
  */
 function compile(cc: Path, command: String, contents: String = null): Boolean {
-    //  MOB - what dir for temp file
     let file
     if (contents) {
+        //  MOB - refactor dir for temp file
         file = Path('/tmp/bit-' + App.pid + '.c')
         if (bit.platform.os == 'VXWORKS') {
             contents = '#define _VSB_CONFIG_FILE "vsbConfig.h\n' + contents
