@@ -42,7 +42,7 @@ if (platform.like == 'posix') {
         cc = probe('cl.exe', {fullpath: true, search: search})
         vsbin = cc.dirname
         if (bit.platform.arch == 'x86_64') {
-            vslib = vsbin.join('../lib/amd64').normalize
+            vslib = vsbin.join('../../lib/amd64').normalize
         } else {
             vslib = vsbin.join('../lib').normalize
         }

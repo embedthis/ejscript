@@ -27,8 +27,8 @@ if (bit.platform.os == 'win') {
     cfg = {
         dir: dir,
         path: lib,
-        defines: [ '-DMATRIX_USE_FILE_SYSTEM' ],
-        includes: [ incdir ],
+        defines: [ '-DWIN32', '-DMATRIX_USE_FILE_SYSTEM' ],
+        includes: [ incdir, incdir.parent ],
         libraries: [ 'libmatrixssl.a' ],
         libpaths: [ lib.parent ],
         imports: [ lib ]
