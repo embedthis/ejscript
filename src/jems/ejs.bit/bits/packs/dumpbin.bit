@@ -3,7 +3,6 @@
  */
 pack('dumpbin', 'Windows Symbols Tool')
 
-let search = bit.dir.programs.glob('Microsoft Visual Studio*/VC/Bin')
-let dumpbin = bit.emulating ? 'dumpbin' : probe('dumpbin.exe', {fullpath: true, search: search.sort().reverse()})
+let dumpbin = (Config.OS != 'WIN') ? 'dumpbin' : probe('dumpbin.exe', {fullpath: true, search: bit.packs.compiler.search})
 Bit.load({packs: { dumpbin: { path: dumpbin }}})
 

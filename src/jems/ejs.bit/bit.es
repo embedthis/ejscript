@@ -190,7 +190,13 @@ public class Bit {
         if (options.emulate) {
             localPlatform = options.emulate
         } else {
-            localPlatform =  OS.toLower() + '-' + Config.CPU
+            let cpu = Config.CPU
+            if (OS == 'WIN') {
+                if (App.getenv('PROCESSOR_ARCHITEW6432')) {
+                    cpu = 'x86_64'
+                }
+            }
+            localPlatform =  OS.toLower() + '-' + cpu
         }
         let [os, arch] = localPlatform.split('-') 
         local = {
@@ -614,6 +620,13 @@ public class Bit {
                 if (file.extension == 'h') {
                     cp(file, bit.dir.inc)
                 } else {
+                    if (bit.platform.like == 'windows') {
+                        let target = bit.dir.lib.join(file.basename).relative
+                        let old = target.replaceExt('old')
+                        vtrace('Preserve', 'Active library ' + target + ' as ' + old)
+                        old.remove()
+                        target.rename(old)
+                    }
                     cp(file, bit.dir.lib)
                 }
             }
@@ -666,7 +679,7 @@ public class Bit {
                         App.log.debug(0, e)
                     }
                     let kind = settings.required.contains(pack) ? 'Required' : 'Optional'
-                    whyMissing(kind + ' package "' + pack + '" ' + e)
+                    whyMissing(kind + ' package "' + pack + '." ' + e)
                     let p = bit.packs[pack] ||= {}
                     p.enable = false
                     p.diagnostic = "" + e
@@ -1804,10 +1817,10 @@ public class Bit {
         } else {
             trace('Link', target.name)
             if (target.active && bit.platform.like == 'windows') {
-                let active = target.path.relative.replaceExt('old')
-                trace('Preserve', 'Active target ' + target.path.relative + ' as ' + active)
-                active.remove()
-                target.path.rename(target.path.replaceExt('old'))
+                let old = target.path.relative.replaceExt('old')
+                trace('Preserve', 'Active target ' + target.path.relative + ' as ' + old)
+                old.remove()
+                target.path.rename(old)
             } else {
                 safeRemove(target.path)
             }
@@ -1882,7 +1895,14 @@ public class Bit {
         let lines = data.match(/SECT.*External *\| .*/gm)
         for each (l in lines) {
             if (l.contains('__real')) continue
-            let sym = l.replace(/.*\| _/, '').replace(/\r$/,'')
+            let sym
+            if (bit.platform.arch == 'x86_64') {
+                /* Win64 does not have "_" */
+                sym = l.replace(/.*\| */, '').replace(/\r$/,'')
+            } else {
+                sym = l.replace(/.*\| _/, '').replace(/\r$/,'')
+            }
+            if (sym == 'MemoryBarrier' || sym == '_mask@@NegDouble@') continue
             result.push(sym)
         }
         let def = Path(target.path.toString().replace(/dll$/, 'def'))
@@ -2260,6 +2280,9 @@ public class Bit {
         if (target.libpaths) {
             bit.LIBPATHS = mapLibPaths(target.libpaths, base)
         }
+        if (target.entry) {
+            bit.ENTRY = target.entry[target.rule || target.type]
+        }
         if (target.type == 'exe') {
             if (!target.files) {
                 throw 'Target ' + target.name + ' has no input files or sources'
@@ -2606,6 +2629,7 @@ global.NN = item.ns
             cmd.env = env
         }
         App.log.debug(2, "Command " + command)
+        App.log.debug(3, "Env " + serialize(cmd.env, {pretty: true, indent: 4, commas: true, quotes: false}))
         cmd.start(command, cmdOptions)
         if (cmd.status != 0 && !(cmdOptions.continueOnErrors || options['continue'])) {
             if (!cmd.error || cmd.error == '') {
@@ -2668,7 +2692,7 @@ global.NN = item.ns
 
     function whyMissing(msg) {
         if (options.why) {
-            trace('Init', msg)
+            trace('Missing', msg)
         }
     }
 
@@ -2723,7 +2747,15 @@ global.NN = item.ns
     }
 
     function programFiles(): Path {
-        let programs = Path((Config.OS == 'WIN') ? App.getenv('PROGRAMFILES') : '.')
+        /*
+            If we are a 32 bit program, we don't get to see /Program Files (x86)
+         */
+        let programs: Path
+        if (Config.OS == 'WIN') {
+            let pvar = App.getenv('PROGRAMFILES')
+            let pf64 = Path(pvar + ' (x86)')
+            programs = Path(pf64.exists ? pf64 : pvar)
+        }
         if (!programs) {
             for each (drive in (FileSystem.drives() - ['A', 'B'])) {
                 let pf = Path(drive + ':\\').glob('Program Files*')
