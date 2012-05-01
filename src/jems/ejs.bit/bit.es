@@ -1107,6 +1107,7 @@ public class Bit {
         genout.writeLine('CONFIG   = $(OS)-$(ARCH)-$(PROFILE)')
         genout.writeLine('CC       = cl')
         genout.writeLine('LD       = link')
+        genout.writeLine('RC       = rc')
         genout.writeLine('CFLAGS   = ' + gen.compiler)
         genout.writeLine('DFLAGS   = ' + gen.defines)
         genout.writeLine('IFLAGS   = ' + 
@@ -2115,6 +2116,7 @@ public class Bit {
             command = command.replace(RegExp(gen.configuration, 'g'), '$$(CONFIG)')
             command = command.replace(bit.packs.compiler.path, '$(CC)')
             command = command.replace(bit.packs.link.path, '$(LD)')
+            command = command.replace(bit.packs.rc.path, '$(RC)')
         } else if (generating == 'sh') {
             command = command.replace(gen.linker, '${LDFLAGS}')
             command = command.replace(gen.linker, '${LDFLAGS}')
