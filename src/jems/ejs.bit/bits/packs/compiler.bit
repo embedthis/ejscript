@@ -22,7 +22,7 @@ if (platform.like == 'posix') {
     if (!search || search.length == 0) {
         throw 'Can\'t find Visual Studio'
     }
-    let vsdir: Path = search[0]
+    let vsdir: Path = Path(search[0]).parent.parent
     if (platform.arch == 'x86_64') {
         if (App.getenv('PROCESSOR_ARCHITEW6432')) {
             search = search.map(function(e) Path(e).join('amd64'))
