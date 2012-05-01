@@ -19,11 +19,11 @@ if (!path) {
 
 let cfg = {}
 if (bit.platform.os == 'win') {
-    let search = [path.join('src/Release') ]
+    let search = [path.join('Release') ]
     let lib = probe('libmatrixssl.dll', {fullpath: true, search: search}).absolute
     let dir = lib.parent.parent
-    search = [path]
-    let incdir = probe('matrixSsl.h', {search: search}).absolute
+    search = [path.join('matrixssl')]
+    let incdir = probe('matrixsslApi.h', {search: search}).absolute
     cfg = {
         dir: dir,
         path: lib,
