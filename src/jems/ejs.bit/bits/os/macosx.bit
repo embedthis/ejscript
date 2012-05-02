@@ -13,7 +13,10 @@ Bit.load({
     },
 
     defaults: {
-        '+compiler': [ '-Wall' ],
+        '+compiler': [ 
+            '-Wall',
+            '-Wno-deprecated-declarations',
+        ],
         '+defines':  [ ],
         '+libraries':[ 'pthread', 'm' ],
         '+libpaths': [ ],
@@ -59,10 +62,10 @@ Bit.load({
     },
 
     rules: {
-        'c->o': '${packs.compiler.path} -c -o ${OUT} -arch ${ARCH} ${CFLAGS} ${DEFINES} ${INCLUDES} ${PREPROCESS} ${IN}',
-        'cpp->o': '${packs.compiler.path} -c -o ${OUT} -arch ${ARCH} ${CFLAGS} ${DEFINES} ${INCLUDES} ${PREPROCESS} ${IN}',
-        'lib':  '${packs.compiler.path} -dynamiclib -o ${OUT} -arch ${ARCH} ${LDFLAGS} ${LIBPATHS} -install_name @rpath/${LIBNAME} ${IN} ${LIBS}'
-        'exe':  '${packs.compiler.path} -o ${OUT} -arch ${ARCH} ${LDFLAGS} ${LIBPATHS} ${IN} ${LIBS}'
-        'gui':  '${packs.compiler.path} -o ${OUT} -arch ${ARCH} ${LDFLAGS} ${LIBPATHS} ${IN} ${LIBS}'
+        'c->o': '${packs.compiler.path} -c -o ${OUT} -arch ${GCC_ARCH} ${CFLAGS} ${DEFINES} ${INCLUDES} ${PREPROCESS} ${IN}',
+        'cpp->o': '${packs.compiler.path} -c -o ${OUT} -arch ${GCC_ARCH} ${CFLAGS} ${DEFINES} ${INCLUDES} ${PREPROCESS} ${IN}',
+        'lib':  '${packs.compiler.path} -dynamiclib -o ${OUT} -arch ${GCC_ARCH} ${LDFLAGS} ${LIBPATHS} -install_name @rpath/${LIBNAME} ${IN} ${LIBS}'
+        'exe':  '${packs.compiler.path} -o ${OUT} -arch ${GCC_ARCH} ${LDFLAGS} ${LIBPATHS} ${IN} ${LIBS}'
+        'gui':  '${packs.compiler.path} -o ${OUT} -arch ${GCC_ARCH} ${LDFLAGS} ${LIBPATHS} ${IN} ${LIBS}'
     },
 })

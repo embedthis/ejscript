@@ -2225,6 +2225,7 @@ public class Bit {
      */
     public function makeConstGlobals() {
         bit.ARCH = bit.platform.arch
+        bit.GCC_ARCH = gccArch(bit.platform.arch)
         bit.CONFIG = bit.platform.configuration
         bit.EXE = bit.ext.exe ? ('.' + bit.ext.exe) : ''
         bit.LIKE = bit.platform.like
@@ -2432,6 +2433,14 @@ global.NN = item.ns
         cmd.start([shell, "-c", command.toString().trimEnd('\n')], {noio: true})
         if (cmd.status != 0 && !options['continue']) {
             throw 'Command failure: ' + command + '\nError: ' + cmd.error
+        }
+    }
+
+    function gccArch(arch: String) {
+        if (arch == 'x86') {
+            return 'i686'
+        } else {
+            return arch
         }
     }
 
