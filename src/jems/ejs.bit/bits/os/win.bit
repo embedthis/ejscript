@@ -27,6 +27,7 @@ Bit.load({
     },
 
     settings: {
+        /* order matters */
         '+required': [ 'winsdk', 'compiler', 'link', 'dumpbin', 'rc' ],
     },
 
