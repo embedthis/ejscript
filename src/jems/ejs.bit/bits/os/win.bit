@@ -60,7 +60,7 @@ Bit.load({
                 } else {
                     defaults.compiler += [ '-Zi', '-Od', '-MDd' ]
                 }
-                if ('${ARCH}' == 'x86_64') {
+                if ('${ARCH}' == 'x64') {
                     defaults.linker += ['-machine:x64']
                     defaults.entry.lib = '_DllMainCRTStartup'
                 } else {

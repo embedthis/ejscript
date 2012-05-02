@@ -191,10 +191,8 @@ public class Bit {
             localPlatform = options.emulate
         } else {
             let cpu = Config.CPU
-            if (OS == 'WIN') {
-                if (App.getenv('PROCESSOR_ARCHITEW6432')) {
-                    cpu = 'x86_64'
-                }
+            if (OS == 'WIN' && App.getenv('PROCESSOR_ARCHITEW6432')) {
+                cpu = 'x64'
             }
             localPlatform =  OS.toLower() + '-' + cpu
         }
@@ -1106,13 +1104,12 @@ public class Bit {
         genout = TextStream(File(path, 'w'))
         genout.writeLine('#\n#   ' + path.basename + ' -- Build It Makefile to build ' + bit.settings.title + 
             ' for ' + bit.platform.os + '\n#\n')
-        genout.writeLine('ARCH     = $(PROCESSOR_ARCHITECTURE)')
-        genout.writeLine('!IF "$(ARCH)" == "AMD64"')
-            genout.writeLine('ARCH     = x86_64')
-            genout.writeLine('MACHINE  = x64')
+        genout.writeLine('PA        = $(PROCESSOR_ARCHITECTURE)')
+        genout.writeLine('!IF "$(PA)" == "AMD64"')
+            genout.writeLine('ARCH     = x64')
             genout.writeLine('ENTRY    = _DllMainCRTStartup')
         genout.writeLine('!ELSE')
-            genout.writeLine('MACHINE  = x86')
+            genout.writeLine('ARCH  = x86')
             genout.writeLine('ENTRY    = _DllMainCRTStartup@12')
         genout.writeLine('!ENDIF\n')
         genout.writeLine('OS       = ' + bit.platform.os)
@@ -1125,7 +1122,7 @@ public class Bit {
         genout.writeLine('DFLAGS   = ' + gen.defines)
         genout.writeLine('IFLAGS   = ' + 
             repvar(bit.defaults.includes.map(function(path) '-I' + reppath(path)).join(' ')))
-        genout.writeLine('LDFLAGS  = ' + repvar(gen.linker).replace(/-machine:x86/, '-machine:$$(MACHINE)'))
+        genout.writeLine('LDFLAGS  = ' + repvar(gen.linker).replace(/-machine:x86/, '-machine:$$(ARCH)'))
         genout.writeLine('LIBPATHS = ' + repvar(gen.libpaths).replace(/\//g, '\\'))
         genout.writeLine('LIBS     = ' + gen.libraries + '\n')
         genout.writeLine('all: prep \\\n        ' + genAll())
@@ -1896,7 +1893,7 @@ public class Bit {
         for each (l in lines) {
             if (l.contains('__real')) continue
             let sym
-            if (bit.platform.arch == 'x86_64') {
+            if (bit.platform.arch == 'x64') {
                 /* Win64 does not have "_" */
                 sym = l.replace(/.*\| */, '').replace(/\r$/,'')
             } else {
@@ -2136,7 +2133,9 @@ public class Bit {
             command = command.replace(RegExp(gen.configuration, 'g'), '$$(CONFIG)')
             command = command.replace(bit.packs.compiler.path, '$(CC)')
             command = command.replace(bit.packs.link.path, '$(LD)')
-            command = command.replace(bit.packs.rc.path, '$(RC)')
+            if (bit.packs.rc) {
+                command = command.replace(bit.packs.rc.path, '$(RC)')
+            }
         } else if (generating == 'sh') {
             command = command.replace(gen.linker, '${LDFLAGS}')
             command = command.replace(gen.linker, '${LDFLAGS}')
@@ -2439,6 +2438,8 @@ global.NN = item.ns
     function gccArch(arch: String) {
         if (arch == 'x86') {
             return 'i686'
+        } else if (arch == 'x64') {
+            return 'x86_64'
         } else {
             return arch
         }
@@ -2764,14 +2765,16 @@ global.NN = item.ns
             let pvar = App.getenv('PROGRAMFILES')
             let pf64 = Path(pvar + ' (x86)')
             programs = Path(pf64.exists ? pf64 : pvar)
-        }
-        if (!programs) {
-            for each (drive in (FileSystem.drives() - ['A', 'B'])) {
-                let pf = Path(drive + ':\\').glob('Program Files*')
-                if (pf.length > 0) {
-                    return pf[0].portable
+            if (!programs) {
+                for each (drive in (FileSystem.drives() - ['A', 'B'])) {
+                    let pf = Path(drive + ':\\').glob('Program Files*')
+                    if (pf.length > 0) {
+                        return pf[0].portable
+                    }
                 }
             }
+        } else {
+            programs = Path("/usr/local/bin")
         }
         return programs.portable
     }
@@ -2801,11 +2804,11 @@ global.NN = item.ns
     /*
         Map the architecture into an MPR architecture flag
         MOB - move to embedthis.es
-     */
+UNUSED
     function getMprArch(arch) {
         if (arch.match(/^i.86$|^x86$/)) {
             return 'MPR_CPU_IX86'
-        } else if (arch.match(/^x86_64$|^amd64$/)) {
+        } else if (arch.match(/^x64$|^x86_64$|^amd64$/)) {
             return 'MPR_CPU_IX64'
         } else if (arch.match(/^power|^ppc/)) {
             return 'MPR_CPU_PPC'
@@ -2822,6 +2825,7 @@ global.NN = item.ns
         }
         return 'MPR_CPU_UNKNOWN'
     }
+     */
 
     public static function load(o: Object, ns = null) {
         b.loadBitObject(o, ns)

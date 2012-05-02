@@ -19,13 +19,13 @@ if (Config.OS != 'WIN') {
 let bin = winsdk.join('Bin').portable
 Bit.load({packs: { winsdk: { path: winsdk, search: bin }}})
 
-if (bit.platform.arch == 'x86_64') {
+if (bit.platform.arch == 'x64') {
     bit.env.PATH = [ bin.join('x64'), bin ]
 } else {
     bit.env.PATH = [ bin ]
 }
 bit.env.INCLUDE = [ winsdk.join('INCLUDE').portable ]
-if (bit.platform.arch == 'x86_64') {
+if (bit.platform.arch == 'x64') {
     bit.env.LIB = [ winsdk.join('lib/x64').portable ]
 } else {
     bit.env.LIB = [ winsdk.join('lib').portable ]

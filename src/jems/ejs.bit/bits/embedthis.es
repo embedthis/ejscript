@@ -502,9 +502,7 @@ function packageUbuntu(pkg: Path, options) {
     let s = bit.settings
     let rel = bit.dir.rel
     let cpu = bit.platform.arch
-    if (cpu.match(/^i.86$/)) {
-        cpu = 'x86'
-    } else if (cpu == 'x86_64') {
+    if (cpu == 'x64') {
         cpu = 'amd64'
     }
     bit.platform.mappedCpu = cpu

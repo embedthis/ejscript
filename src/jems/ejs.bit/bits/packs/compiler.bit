@@ -18,17 +18,20 @@ if (platform.like == 'posix') {
     Bit.load({packs: { compiler: { path: cc }}})
 
 } else if (platform.like == 'windows') {
-    let search = bit.dir.programs.glob('Microsoft Visual Studio*/VC/Bin').sort().reverse()
-    if (!search || search.length == 0) {
-        throw 'Can\'t find Visual Studio'
-    }
-    let vsdir: Path = Path(search[0]).parent.parent
-    if (platform.arch == 'x86_64') {
-        if (App.getenv('PROCESSOR_ARCHITECTURE')) {
-            search = search.map(function(e) Path(e).join('amd64'))
-        } else {
-            /* Cross compile for 64 bits on 32 bits */
-            search = search.map(function(e) Path(e).join('x86_64'))
+    let search
+    if (Config.OS == 'WIN') {
+        search = bit.dir.programs.glob('Microsoft Visual Studio*/VC/Bin').sort().reverse()
+        if (!search || search.length == 0) {
+            throw 'Can\'t find Visual Studio'
+        }
+        let vsdir: Path = Path(search[0]).parent.parent
+        if (platform.arch == 'x64') {
+            if (App.getenv('PROCESSOR_ARCHITECTURE')) {
+                search = search.map(function(e) Path(e).join('amd64'))
+            } else {
+                /* Cross compile for 64 bits on 32 bits */
+                search = search.map(function(e) Path(e).join('x86_64'))
+            }
         }
     }
     let vv: Path = Path('$(VS)')
@@ -41,7 +44,7 @@ if (platform.like == 'posix') {
     } else {
         cc = probe('cl.exe', {fullpath: true, search: search})
         vsbin = cc.dirname
-        if (bit.platform.arch == 'x86_64') {
+        if (bit.platform.arch == 'x64') {
             vslib = vsbin.join('../../lib/amd64').normalize
         } else {
             vslib = vsbin.join('../lib').normalize
