@@ -29,7 +29,7 @@ if (bit.platform.os == 'win') {
         path: lib,
         defines: [ '-DWIN32', '-DMATRIX_USE_FILE_SYSTEM' ],
         includes: [ incdir, incdir.parent ],
-        libraries: [ 'libmatrixssl.a' ],
+        libraries: [ 'libmatrixssl.lib' ],
         libpaths: [ lib.parent ],
         imports: [ lib ]
     }

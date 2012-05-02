@@ -401,7 +401,7 @@ function createMacContents(pkg: Path, options) {
 
 function packageMacosx(pkg: Path, options) {
     if (!bit.packs.pmaker || !bit.packs.pmaker.path) {
-        throw 'Configured without PackageMaker'
+        throw 'Configured without pmaker: PackageMaker'
     }
     let s = bit.settings
     let rel = bit.dir.rel
@@ -438,8 +438,8 @@ function packageMacosx(pkg: Path, options) {
 }
 
 function packageFedora(pkg: Path, options) {
-    if (!bit.packs.rpmbuild || !bit.packs.rpmbuild.path) {
-        throw 'Configured without packaging tool: rpmbuild'
+    if (!bit.packs.pmaker || !bit.packs.pmaker.path) {
+        throw 'Configured without pmaker: rpmbuild'
     }
     let home = App.getenv('HOME')
     App.putenv('HOME', bit.dir.cfg)
@@ -488,7 +488,7 @@ function packageFedora(pkg: Path, options) {
 %__os_install_post /usr/lib/rpm/brp-compress %{!?__debug_package:/usr/lib/rpm/brp-strip %{__strip}} /usr/lib/rpm/brp-strip-static-archive %{__strip} /usr/lib/rpm/brp-strip-comment-note %{__strip} %{__objdump} %{nil}')
     let outfile = bit.dir.rel.join(base).joinExt('rpm', true)
     trace('Package', outfile)
-    run(bit.packs.rpmbuild.path + ' -ba --target ' + cpu + ' ' + spec.basename, {dir: RPM.join('SPECS'), noshow: true})
+    run(bit.packs.pmaker.path + ' -ba --target ' + cpu + ' ' + spec.basename, {dir: RPM.join('SPECS'), noshow: true})
     let rpmfile = RPM.join('RPMS', cpu, [s.product, s.version, s.buildNumber].join('-')).joinExt(cpu + '.rpm', true)
     rpmfile.rename(outfile)
     bit.dir.rel.join('md5-' + base).joinExt('rpm.txt', true).write(md5(outfile.readString()))
@@ -496,8 +496,8 @@ function packageFedora(pkg: Path, options) {
 }
 
 function packageUbuntu(pkg: Path, options) {
-    if (!bit.packs.dpkg || !bit.packs.dpkg.path) {
-        throw 'Configured without packaging tool: dpkg'
+    if (!bit.packs.pmaker || !bit.packs.pmaker.path) {
+        throw 'Configured without pmaker: dpkg'
     }
     let s = bit.settings
     let rel = bit.dir.rel
@@ -519,13 +519,13 @@ function packageUbuntu(pkg: Path, options) {
     let base = [s.product, s.version, s.buildNumber, bit.platform.dist, OS.toUpper(), ARCH].join('-')
     let outfile = bit.dir.rel.join(base).joinExt('deb', true)
     trace('Package', outfile)
-    run(bit.packs.dpkg.path + ' --build ' + DEBIAN.dirname + ' ' + outfile)
+    run(bit.packs.pmaker.path + ' --build ' + DEBIAN.dirname + ' ' + outfile)
     bit.dir.rel.join('md5-' + base).joinExt('deb.txt', true).write(md5(outfile.readString()))
 }
 
 function packageWin(pkg: Path, options) {
-    if (!bit.packs.inno || !bit.packs.inno.path) {
-        throw 'Configured without Inno Setup'
+    if (!bit.packs.pmaker || !bit.packs.pmaker.path) {
+        throw 'Configured without pmaker: Inno Setup'
     }
     let s = bit.settings
     let rel = bit.dir.rel
@@ -552,7 +552,7 @@ function packageWin(pkg: Path, options) {
     let base = [s.product, s.version, s.buildNumber, bit.platform.dist, OS.toUpper(), ARCH].join('-')
     let outfile = bit.dir.rel.join(base).joinExt('exe', true)
     trace('Package', outfile)
-    run([bit.packs.inno.path, iss])
+    run([bit.packs.pmaker.path, iss])
     pkg.join('Output/setup.exe').copy(outfile)
     bit.dir.rel.join('md5-' + base).joinExt('exe.txt', true).write(md5(outfile.readString()))
 }
