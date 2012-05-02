@@ -19,12 +19,13 @@ if (platform.like == 'posix') {
 
 } else if (platform.like == 'windows') {
     let search
+    let vsdir: Path
     if (Config.OS == 'WIN') {
         search = bit.dir.programs.glob('Microsoft Visual Studio*/VC/Bin').sort().reverse()
         if (!search || search.length == 0) {
             throw 'Can\'t find Visual Studio'
         }
-        let vsdir: Path = Path(search[0]).parent.parent
+        vsdir = Path(search[0]).parent.parent
         if (platform.arch == 'x64') {
             if (App.getenv('PROCESSOR_ARCHITECTURE')) {
                 search = search.map(function(e) Path(e).join('amd64'))
