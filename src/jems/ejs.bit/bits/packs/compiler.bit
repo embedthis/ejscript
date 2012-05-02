@@ -24,7 +24,7 @@ if (platform.like == 'posix') {
     }
     let vsdir: Path = Path(search[0]).parent.parent
     if (platform.arch == 'x86_64') {
-        if (App.getenv('PROCESSOR_ARCHITEW6432')) {
+        if (App.getenv('PROCESSOR_ARCHITECTURE')) {
             search = search.map(function(e) Path(e).join('amd64'))
         } else {
             /* Cross compile for 64 bits on 32 bits */
