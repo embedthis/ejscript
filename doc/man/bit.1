@@ -106,25 +106,25 @@ To build the rocket, enter:
 \fBbit rocket\fR
 .RE
 
-.PP
-There are two kinds of bit files:
-.RS 5
- . Local bit files for stand-alone use
- . Main bit files for more complex programs that require a configuration step 
-.RE
-
-.SH LOCAL BIT FILES
-Local bit files are used to express simple build targets that do not requiring any prior configuration step. 
-Local bit files are called 'local.bit'.
-
-.SH MAIN BIT FILES
-Main bit files require running a 'bit configure' prior to building. The configuration step generates a platform 
-bit file that describes the available build tools and components on the system. The main bit file is called 'main.bit'
-and is loaded and blended by the platform bit file when bit is run.
-
 .SH INVOCATION
-Bit is typically invoked with zero or more targets to build. If invoked with no targets, Bit will build all out-of-date
-targets. If a one or more targets are specified, only those targets will be brought up to date.
+.PP
+When bit is invoked, it searches for a 'start.bit' file in the current directory. If one if not found, it searches
+up the parent directory chain for one. Bit then loads this 'start.bit' file and commences processing its build
+instuctions. A 'start.bit' may in turn load other bit files.
+
+.SH STANDALONE USES
+A standalone start.bit file may be used to express simple build targets that do not requiring any prior
+configuration step. The 'start.bit' file contains targets that specify the recipies to build those targets.
+
+.SH CONFIGURED PRODUCTS
+Some products require a configuration phase prior to building with Bit. Configuration involves discovering 
+the tools and components available on the current system and the available compiler tool chain support.
+For configured products, Bit reads a 'main.bit' bit file which describes the project, and generates a 'start.bit'
+and platform bit file that describes the system.
+
+.SH TARGETS
+Bit is typically invoked with zero or more targets to build. If invoked with zero targets, Bit will build all the
+out-of-date targets. If a one or more targets are specified, only those targets will be brought up to date.
 .RE
 .PP
 To build all targets:
@@ -139,10 +139,112 @@ To build several named targets:
 .PP
 Bit pre-defines several targets:
 
+    . configure - To configure prior to building
     . build - To build all targets
     . compile - Same as 'build'
     . clean - To clean built targets and prepare for rebuilding
     . rebuild - Clean and build
+
+.SH CONFIGURING
+To configure a product before building, run Bit using the 'configure' target or alternatively use the '-config' switch.
+When configuring, Bit will load a 'main.bit' file and use the details from the 'settings' properties to tailor 
+the configuration. The settings provide the product name, title, company, version number and what required and optional
+extension packages should be discovered.
+.PP
+For example, this is a typical 'settings' configuration.
+.PP
+.RS 5
+settings: {
+    product: 'mpr',
+    title: 'Multithreaded Portable Runtime',
+    company: 'Embedthis',
+    version: '4.0.5',
+    buildNumber: '4',
+    '+required': [ 'utest' ],
+    '+optional': [ 'doxygen', 'man', 'man2html', 'md5', 'matrixssl', 'openssl', 'ssl' ],
+.RE
+.RS 5
+},
+.RE
+.PP
+The 'required' property defines the extensions that are required to be present on the system to build. The 
+'optional' property defines those extensions that will be used if present, but are not required. The '+' before
+these properties indicates that these values should be added to pre-defined values. The buildNumber is a build
+patch number.
+
+.SH EMULATING
+Some systems support multiple instruct sets. For example: Windows 64 can run both 32 bit and 64 bit programs. To
+select a non-default instruction set on such systems, Bit is invoked with a '--emulating' switch when configuring. 
+Configuring with this switch will create a 'start.es' that references a configuration bit file for  the emulated
+platform. For example to configure building a 64 bit application on a 32 bit system:
+.PP
+.RS 5
+\fbbit\fR --emulate configure win-x64
+.RE
+This will create a win-x64.bit configuration file and a start.es that references it. The emulate switch does not
+need to be respecified after configuration.
+
+.SH PROJECT GENERATION
+Bit can generate generate complete project files for building using: make, nmake, Visual Studio, Xcode or plain shell
+scripts. Bit uses the '--gen' switch to specify the projects to build. Bit is capable of cross-generating projects
+for non-native platforms. For example: you can generate an Xcode project for Mac OS X on a Windows system.
+.PP
+.RS 5
+\fbbit\fR -emulate macosx-x64 configure -gen xcode,make,sh
+.RE
+
+.PP
+This will generate Xcode, make and shell script projects for a Mac OS X 64-bit.
+
+.SH DEPENDENCIES
+Bit targets can depend on other targets that must be built first. Bit targets have a name which may be depended upon
+by another target. For example:
+.PP
+.RS 5
+targets {
+    first: {
+        build: "print('Build First')",
+    },
+    second: {
+        depends: ['first'],
+        build: "print('Build Second')",
+    },
+}
+.RE
+.PP
+Before Bit begins building, it parses the entire bit file configuration and determines which targets depend on what.
+It then builds the targets in the required build order. It successfully detects and handles dependency loops.
+
+.SH DEFAULTS
+Often targets need very similar configuration. Bit provides a 'defaults' set of properties that are inherited by
+all targets. It also provides an 'internal' set of properties that are inherited by only the targets in the same
+bit file. For example:
+
+.RS 5
+defaults: {
+    '+defines': [ '-DTUNE=SPEED ],
+    '+libraries': [ 'math' ],
+.RE
+.RS 5
+}
+.RE
+
+This will use the 'TUNE=SPEED' compiler define when compiling all source files, and the 'math' library when linking
+executables (and libraries on some systems). 
+
+
+.SH DEBUGGING
+With Make and other build tools, it is difficult to determine why a target is or is not being built. Bit provides a 
+'--why' switch to diagnose problematic build sequences. This switch displays the reason why each target was or was
+not built.
+.PP
+In a complex project containing many Bit files, it can be helpful to see the entire bit configuration in one file. Use
+the '--dump' switch to save a copy of the entire configuration. In the dump, build defaults are fully expanded to each
+target contains the expanded configuration that will be used to build the target.
+.PP
+By default, Bit builds relativley quietly and stops on the first build error. To see the commands Bit is issuing, use
+the '--show' switch. To build totally quietly, use the '--quiet' switch. To continue building despite build errors, use
+the '--continue' switch.
 
 .SH OPTIONS
 .TP

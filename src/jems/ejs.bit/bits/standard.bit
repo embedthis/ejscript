@@ -57,9 +57,11 @@ Bit.load({
             type: 'generate',
         },
 
+/* UNUSED
         init: {
             type: 'init',
         },
+ */
 
         rebuild: {
             type: 'rebuild',

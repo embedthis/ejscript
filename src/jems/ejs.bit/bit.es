@@ -14,7 +14,7 @@ public class Bit {
 
     private static const VERSION: Number = 0.2
     private static const MAIN: Path = Path('main.bit')
-    private static const LOCAL: Path = Path('local.bit')
+    private static const START: Path = Path('start.bit')
     private static const supportedOS = ['freebsd', 'linux', 'macosx', 'solaris', 'vxworks', 'win']
     private static const supportedArch = ['arm', 'i64', 'mips', 'sparc', 'x64', 'x86']
 
@@ -99,6 +99,7 @@ public class Bit {
     }
 
     function usage(): Void {
+print("HERE")
         print('\nUsage: bit [options] [targets|actions] ...\n' +
             '  Options:\n' + 
             '    --benchmark                        # Measure elapsed time\n' +
@@ -128,17 +129,25 @@ public class Bit {
             '    --with PACK[=PATH]                 # Build with package at PATH\n' +
             '    --without PACK                     # Build without a package\n' +
             '')
-        if (MAIN.exists) {
+        if (START.exists) {
             try {
-                b.simpleLoad = true
+                // b.simpleLoad = true
                 global.bit = bit = b.bit
-                b.loadWrapper(MAIN)
+                // b.loadWrapper(START)
+                b.makeBit(START, Config.OS.toLower() + '-' + Config.CPU)
                 if (bit.usage) {
                     print('Feature Selection: ')
                     for (let [item,msg] in bit.usage) {
                         print('  --set %-14s %s' % [item + '=value', msg])
                     }
                 }
+                let targets = []
+                for (let [tname,target] in b.bit.targets) {
+                    targets.push(tname)
+                }
+                print("Targets:\n    ", targets.join(' '))
+                b.selectTargets()
+                print("\nDefault Targets:\n    ", b.selectedTargets.join(' '))
             } catch (e) { print('CATCH: ' + e)}
         }
         App.exit(1)
@@ -160,7 +169,7 @@ public class Bit {
                 configure()
             }
             if (!options.file) {
-                let file = findBitfile()
+                let file = findBitFile()
                 App.log.debug(1, 'Change directory to ' + file.dirname)
                 App.chdir(file.dirname)
                 home = App.dir
@@ -304,7 +313,7 @@ public class Bit {
             vtrace('Init', platform)
             makeBit(options.config, platform)
             findPacks()
-            genBitFile(platform)
+            genPlatformBitFile(platform)
             makeOutDirs()
             makeBitHeader(platform)
             importPacks()
@@ -312,20 +321,33 @@ public class Bit {
         }
         cross = false
         options.config = false
+        genStartBitFile(platforms[0])
     }
 
-    /*
-        Make a platform specific bit file
-     */
-    function genBitFile(platform) {
-        nbit = {}
-        if (platforms.length > 1 && platform == platforms[0]) {
+    function genStartBitFile(platform) {
+        let nbit = {
+            blend: [ 
+                platform + '.bit',
+            ],
+        }
+        if (platforms.length > 1) {
             nbit.cross = platforms.slice(1)
         }
-        blend(nbit, {
-            blend: [ 
+        trace('Generate', START)
+        let data = '/*\n    start.bit -- Startup Bit File for ' + bit.settings.title + 
+            '\n */\n\nBit.load(' + 
+            serialize(nbit, {pretty: true, indent: 4, commas: true, quotes: false}) + ')\n'
+        START.write(data)
+    }
+
+    function genPlatformBitFile(platform) {
+        let nbit = {}
+        /* UNUSED blend: [
                 '${BITS}/standard.bit',
                 '${BITS}/os/' + bit.platform.os + '.bit',
+         */
+        blend(nbit, {
+            blend: [ 
                 '${SRC}/main.bit',
             ],
             platform: bit.platform,
@@ -965,13 +987,10 @@ public class Bit {
     }
 
     /*
-        Preference order: [ 'local.bit', 'OS-ARCH.bit', '../OS-ARCH.bit' ]
+        Preference order: [ 'local.bit', 'start.bit', '../start.bit', 'OS-ARCH.bit', '../OS-ARCH.bit' ]
      */
-    function findBitfile(): Path {
-        if (LOCAL.exists) {
-            return LOCAL
-        }
-        let lp = Path(localPlatform + '.bit')
+    function findBitFile(): Path {
+        let lp = START
         if (lp.exists) {
             return lp
         }
@@ -983,8 +1002,7 @@ public class Bit {
                 return f
             }
         }
-        throw 'Can\'t find suitable ' + LOCAL + ' or ' + lp + '.\n'
-              'Run "configure" or "bit configure" first.'
+        throw 'Can\'t find suitable ' + START + '.\nRun "configure" or "bit configure" first.'
         return null
     }
 
@@ -1316,6 +1334,7 @@ public class Bit {
         Select the targets to build 
      */
     function selectTargets() {
+        originalTargets ||= []
         selectedTargets = originalTargets
         defaultTargets = []
         for (let [tname,target] in bit.targets) {
@@ -2898,13 +2917,9 @@ UNUSED
         }
         bit.emulating = options.emulate
 
-        if (bitfile.basename == LOCAL) {
-            loadWrapper(bit.dir.bits.join('standalone.bit'))
-            loadWrapper(bit.dir.bits.join('os/' + bit.platform.os + '.bit'))
-        } else if (options.config) {
-            loadWrapper(bit.dir.bits.join('standard.bit'))
-            loadWrapper(bit.dir.bits.join('os/' + bit.platform.os + '.bit'))
-        }
+        loadWrapper(bit.dir.bits.join('standard.bit'))
+        loadWrapper(bit.dir.bits.join('os/' + bit.platform.os + '.bit'))
+
         bit.PLATFORM = currentPlatform = platform
         if (bitfile) {
             loadWrapper(bitfile)
