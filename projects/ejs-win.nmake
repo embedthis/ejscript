@@ -103,7 +103,6 @@ clean:
 	-if exist $(CONFIG)\bin\ejs.web.dll del /Q $(CONFIG)\bin\ejs.web.dll
 	-if exist $(CONFIG)\bin\www del /Q $(CONFIG)\bin\www
 	-if exist $(CONFIG)\bin\ejs.template.mod del /Q $(CONFIG)\bin\ejs.template.mod
-	-if exist $(CONFIG)\bin\ejs.zlib.dll del /Q $(CONFIG)\bin\ejs.zlib.dll
 	-if exist $(CONFIG)\bin\mvc.es del /Q $(CONFIG)\bin\mvc.es
 	-if exist $(CONFIG)\bin\mvc.exe del /Q $(CONFIG)\bin\mvc.exe
 	-if exist $(CONFIG)\bin\ejs.mvc.mod del /Q $(CONFIG)\bin\ejs.mvc.mod

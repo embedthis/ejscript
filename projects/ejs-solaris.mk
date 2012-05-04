@@ -90,12 +90,10 @@ clean:
 	rm -rf $(CONFIG)/bin/ejs.web.so
 	rm -rf $(CONFIG)/bin/www
 	rm -rf $(CONFIG)/bin/ejs.template.mod
-	rm -rf $(CONFIG)/bin/ejs.zlib.so
 	rm -rf $(CONFIG)/bin/mvc.es
 	rm -rf $(CONFIG)/bin/mvc
 	rm -rf $(CONFIG)/bin/ejs.mvc.mod
 	rm -rf $(CONFIG)/bin/utest.worker
-	rm -rf $(CONFIG)/bin/removeFiles
 	rm -rf $(CONFIG)/obj/mprLib.o
 	rm -rf $(CONFIG)/obj/mprSsl.o
 	rm -rf $(CONFIG)/obj/manager.o
