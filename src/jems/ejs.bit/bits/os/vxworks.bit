@@ -27,6 +27,7 @@ Bit.load({
     },
 
     settings: {
+        /* Order matters */
         '+required': [ 'vxworks', 'compiler', 'link' ],
     },
 

@@ -191,9 +191,14 @@ public class Bit {
             localPlatform = options.emulate
         } else {
             let cpu = Config.CPU
-            if (OS == 'WIN' && App.getenv('PROCESSOR_ARCHITEW6432')) {
-                cpu = 'x64'
+/* UNUSED
+            if (OS == 'WIN') {
+                // On native 64 bit systems, PA is amd64 for 64 bit apps and is PAW6432 is amd64 for 32 bit apps
+                if (App.getenv('PROCESSOR_ARCHITECTURE') == 'amd64' || App.getenv('PROCESSOR_ARCHITEW6432') == 'amd64') {
+                    cpu = 'x64'
+                }
             }
+*/
             localPlatform =  OS.toLower() + '-' + cpu
         }
         let [os, arch] = localPlatform.split('-') 

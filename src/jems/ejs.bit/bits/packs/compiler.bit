@@ -21,13 +21,23 @@ if (platform.like == 'posix') {
     let search
     let vsdir: Path
     if (Config.OS == 'WIN') {
+        /*
+            The VS bin+lib directories contain 32 bit compilers and libraries
+            The native VS 64 bit versions are under bin/amd64 and lib/x64
+            The cross compile for 64 bit on 32 bit systems is under bin/x86_64 and lib/x64
+            The cross compile for 32 bit on 64 bit systems can use the default 32 bit bin + lib
+
+            See: http://msdn.microsoft.com/en-us/library/x4d2c09s(v=vs.80).aspx
+            Also: http://blogs.msdn.com/b/david.wang/archive/2006/03/26/howto-detect-process-bitness.aspx
+         */
         search = bit.dir.programs.glob('Microsoft Visual Studio*/VC/Bin').sort().reverse()
         if (!search || search.length == 0) {
-            throw 'Can\'t find Visual Studio'
+            throw 'Can\'t find Visual Studio installation'
         }
         vsdir = Path(search[0]).parent.parent
         if (platform.arch == 'x64') {
-            if (App.getenv('PROCESSOR_ARCHITECTURE')) {
+            if (Config.CPU == 'x64') {
+                /* Running on a 64 bit */
                 search = search.map(function(e) Path(e).join('amd64'))
             } else {
                 /* Cross compile for 64 bits on 32 bits */
