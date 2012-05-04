@@ -41,12 +41,16 @@ void ejsDefineConfigProperties(Ejs *ejs)
     ejsDefineProperty(ejs, type, -1, N("public", "Debug"), 0, att, BLD_DEBUG ? ESV(true): ESV(false));
 
 #if WIN
+{
     /* On native 64 bit systems, PA is amd64 for 64 bit apps and is PAW6432 is amd64 for 32 bit apps */
+    cchar   *cpu;
     if (smatch(getenv("PROCESSOR_ARCHITECTURE"), "amd64") || getenv("PROCESSOR_ARCHITEW6432")) {
         cpu = "x64";
     } else {
         cpu = "x86";
     }
+    ejsDefineProperty(ejs, type, -1, N("public", "CPU"), 0, att, ejsCreateStringFromAsc(ejs, cpu));
+}
 #else
     ejsDefineProperty(ejs, type, -1, N("public", "CPU"), 0, att, ejsCreateStringFromAsc(ejs, BLD_CPU));
 #endif
