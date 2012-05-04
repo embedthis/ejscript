@@ -41,7 +41,7 @@ if (platform.like == 'posix') {
                 search = search.map(function(e) Path(e).join('amd64'))
             } else {
                 /* Cross compile for 64 bits on 32 bits */
-                search = search.map(function(e) Path(e).join('x86_64'))
+                search = search.map(function(e) Path(e).join('x86_amd64'))
             }
         }
     }
