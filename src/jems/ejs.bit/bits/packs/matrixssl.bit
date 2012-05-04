@@ -31,7 +31,7 @@ if (bit.platform.os == 'win') {
         includes: [ incdir, incdir.parent ],
         libraries: [ 'libmatrixssl.lib' ],
         libpaths: [ lib.parent ],
-        imports: [ lib ]
+        imports: [ lib, lib.replaceExt('lib') ]
     }
 
 } else if (bit.platform.os == 'macosx') {
