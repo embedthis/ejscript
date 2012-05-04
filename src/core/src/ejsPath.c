@@ -709,7 +709,7 @@ static int globMatch(Ejs *ejs, cchar *s, cchar *pat, int isDir, int flags, cchar
     *nextPartPattern = 0;
 
     while (*s && *pat && *pat != seps[0] && *pat != seps[1]) {
-        match = (flags & FILES_CASELESS) ? (*pat == *s) : (tolower((int) *pat) == tolower((int) *s));
+        match = (flags & FILES_CASELESS) ? (*pat == *s) : (tolower((uchar) *pat) == tolower((uchar) *s));
         if (match || *pat == '?') {
             ++pat; ++s;
         } else if (*pat == '*') {
@@ -841,7 +841,7 @@ static EjsArray *globPath(Ejs *ejs, EjsArray *results, cchar *path, cchar *base,
 static EjsBoolean *pathHasDrive(Ejs *ejs, EjsPath *fp, int argc, EjsObj **argv)
 {
     return ejsCreateBoolean(ejs, 
-        (isalpha((int) fp->value[0]) && fp->value[1] == ':' && (fp->value[2] == '/' || fp->value[2] == '\\')));
+        (isalpha((uchar) fp->value[0]) && fp->value[1] == ':' && (fp->value[2] == '/' || fp->value[2] == '\\')));
 }
 
 

@@ -298,7 +298,7 @@ static EjsString *getSessionKey(Ejs *ejs, EjsRequest *req)
     cookies = httpGetCookies(req->conn);
     for (cookie = cookies; cookie && (value = strstr(cookie, EJS_SESSION)) != 0; cookie = value) {
         value += strlen(EJS_SESSION);
-        while (isspace((int) *value) || *value == '=') {
+        while (isspace((uchar) *value) || *value == '=') {
             value++;
         }
         quoted = 0;
@@ -343,7 +343,7 @@ static EjsSession *getSession(Ejs *ejs, EjsRequest *req, int create)
         req->session = ejsGetSession(ejs, key, conn->limits->sessionTimeout, create);
         if (req->session && !key) {
             //UNICODE
-            httpSetCookie(conn, EJS_SESSION, req->session->key->value, "/", NULL, 0, conn->secure);
+            httpSetCookie(conn, EJS_SESSION, (char*) req->session->key->value, "/", NULL, 0, conn->secure);
         }
         req->probedSession = 1;
     }

@@ -951,7 +951,7 @@ static int loadNativeLibrary(Ejs *ejs, EjsModule *mp, cchar *modPath)
         Typical name: ejs_io_Init or com_acme_rockets_Init
      */
     moduleName = (char*) ejsToMulti(ejs, mp->name);
-    moduleName[0] = tolower((int) moduleName[0]);
+    moduleName[0] = tolower((uchar) moduleName[0]);
     mprSprintf(initName, sizeof(initName), "%s_Init", moduleName);
     for (cp = initName; *cp; cp++) {
         if (*cp == '.') {
@@ -1157,7 +1157,7 @@ static int trimModule(Ejs *ejs, char *name)
         return 0;
     }
     *vp++ = '\0';
-    if (isdigit((int) *vp)) {
+    if (isdigit((uchar) *vp)) {
         return ejsParseModuleVersion(vp);
     }
     return 0;

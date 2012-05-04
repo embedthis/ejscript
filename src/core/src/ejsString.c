@@ -258,7 +258,7 @@ static int lookupStringProperty(Ejs *ejs, EjsString *sp, EjsName qname)
     int     index;
 
     //  TODO UNICODE
-    if (!isdigit((int) qname.name->value[0])) {
+    if (!isdigit((uchar) qname.name->value[0])) {
         return EJS_ERR;
     }
     index = ejsAtoi(ejs, qname.name, 10);
@@ -822,7 +822,7 @@ static EjsBoolean *isAlpha(Ejs *ejs, EjsString *sp, int argc,  EjsObj **argv)
         return ESV(false);
     }
     for (cp = sp->value; cp < &sp->value[sp->length]; cp++) {
-        if (*cp & 0x80 || !isalpha((int) *cp)) {
+        if (*cp & 0x80 || !isalpha((uchar) *cp)) {
             return ESV(false);
         }
     }
@@ -838,7 +838,7 @@ static EjsBoolean *isAlphaNum(Ejs *ejs, EjsString *sp, int argc,  EjsObj **argv)
         return ESV(false);
     }
     for (cp = sp->value; cp < &sp->value[sp->length]; cp++) {
-        if (*cp & 0x80 || !isalnum((int) *cp)) {
+        if (*cp & 0x80 || !isalnum((uchar) *cp)) {
             return ESV(false);
         }
     }
@@ -854,7 +854,7 @@ static EjsBoolean *isDigit(Ejs *ejs, EjsString *sp, int argc,  EjsObj **argv)
         return ESV(false);
     }
     for (cp = sp->value; cp < &sp->value[sp->length]; cp++) {
-        if (*cp & 0x80 || !isdigit((int) *cp)) {
+        if (*cp & 0x80 || !isdigit((uchar) *cp)) {
             return ESV(false);
         }
     }
@@ -886,7 +886,7 @@ static EjsBoolean *isSpace(Ejs *ejs, EjsString *sp, int argc,  EjsObj **argv)
         return ESV(false);
     }
     for (cp = sp->value; cp < &sp->value[sp->length]; cp++) {
-        if (*cp & 0x80 || !isspace((int) *cp)) {
+        if (*cp & 0x80 || !isspace((uchar) *cp)) {
             return ESV(false);
         }
     }
@@ -1199,9 +1199,9 @@ static EjsString *replace(Ejs *ejs, EjsString *sp, int argc, EjsObj **argv)
                         break;
                     default:
                         /* Insert the nth submatch */
-                        if (isdigit((int) *cp)) {
+                        if (isdigit((uchar) *cp)) {
                             submatch = (int) wtoi(cp);
-                            while (isdigit((int) *++cp))
+                            while (isdigit((uchar) *++cp))
                                 ;
                             cp--;
                             if (submatch < count) {
@@ -1514,7 +1514,7 @@ static EjsString *toCamel(Ejs *ejs, EjsString *sp, int argc, EjsObj **argv)
         return 0;
     }
     memcpy(result->value, sp->value, sp->length * sizeof(MprChar));
-    result->value[0] = tolower((int) sp->value[0]);
+    result->value[0] = tolower((uchar) sp->value[0]);
     return ejsInternString(result);
 }
 
@@ -1574,7 +1574,7 @@ static EjsString *toPascal(Ejs *ejs, EjsString *sp, int argc, EjsObj **argv)
         return 0;
     }
     memcpy(result->value, sp->value, sp->length * sizeof(MprChar));
-    result->value[0] = toupper((int) sp->value[0]);
+    result->value[0] = toupper((uchar) sp->value[0]);
     return ejsInternString(result);
 }
 
@@ -1627,7 +1627,7 @@ static EjsArray *tokenize(Ejs *ejs, EjsString *sp, int argc, EjsObj **argv)
         switch (*fmt) {
         case 's':
             for (cp = buf; *cp; cp++) {
-                if (isspace((int) *cp)) {
+                if (isspace((uchar) *cp)) {
                     break;
                 }
             }
@@ -1637,7 +1637,7 @@ static EjsArray *tokenize(Ejs *ejs, EjsString *sp, int argc, EjsObj **argv)
 
         case 'd':
             ejsSetProperty(ejs, result, -1, ejsParse(ejs, buf, S_Number));
-            while (*buf && !isspace((int) *buf)) {
+            while (*buf && !isspace((uchar) *buf)) {
                 buf++;
             }
             break;
@@ -1646,7 +1646,7 @@ static EjsArray *tokenize(Ejs *ejs, EjsString *sp, int argc, EjsObj **argv)
             ejsThrowArgError(ejs, "Bad format specifier");
             return 0;
         }
-        while (*buf && isspace((int) *buf)) {
+        while (*buf && isspace((uchar) *buf)) {
             buf++;
         }
     }
@@ -1663,7 +1663,7 @@ static EjsString *trim(Ejs *ejs, EjsString *sp, EjsString *pattern, int where)
         start = sp->value;
         if (where & MPR_TRIM_START) {
             for (; start < &sp->value[sp->length]; start++) {
-                if (!isspace((int) *start)) {
+                if (!isspace((uchar) *start)) {
                     break;
                 }
             }
@@ -1671,7 +1671,7 @@ static EjsString *trim(Ejs *ejs, EjsString *sp, EjsString *pattern, int where)
         end = &sp->value[sp->length - 1];
         if (where & MPR_TRIM_END) {
             for (end = &sp->value[sp->length - 1]; end >= start; end--) {
-                if (!isspace((int) *end)) {
+                if (!isspace((uchar) *end)) {
                     break;
                 }
             }
@@ -2115,7 +2115,7 @@ int ejsContainsStringAnyCase(Ejs *ejs, EjsString *sp, EjsString *pat)
     for (i = 0; i < sp->length; i++) {
         for (j = 0; j < pat->length; j++) {
             //  TODO UNICODE - tolower only works for ASCII
-            if (tolower(sp->value[i]) != tolower(pat->value[j])) {
+            if (tolower((uchar) sp->value[i]) != tolower((uchar) pat->value[j])) {
                 break;
             }
         }
@@ -2258,7 +2258,7 @@ EjsString *ejsToLower(Ejs *ejs, EjsString *sp)
 
     result = (EjsString*) ejsCreateBareString(ejs, sp->length);
     for (i = 0; i < sp->length; i++) {
-        result->value[i] = tolower((int) sp->value[i]);
+        result->value[i] = tolower((uchar) sp->value[i]);
     }
     return ejsInternString(result);
 }
@@ -2274,7 +2274,7 @@ EjsString *ejsToUpper(Ejs *ejs, EjsString *sp)
 
     result = (EjsString*) ejsCreateBareString(ejs, sp->length);
     for (i = 0; i < sp->length; i++) {
-        result->value[i] = toupper((int) sp->value[i]);
+        result->value[i] = toupper((uchar) sp->value[i]);
     }
     return ejsInternString(result);
 }

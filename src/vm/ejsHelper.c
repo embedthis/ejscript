@@ -797,7 +797,7 @@ EjsAny *ejsParse(Ejs *ejs, MprChar *str, int preferredType)
     sid = preferredType;
 
     //  TODO unicode
-    while (isspace((int) *buf)) {
+    while (isspace((uchar) *buf)) {
         buf++;
     }    
     if (preferredType == S_Void || preferredType < 0) {
@@ -807,7 +807,7 @@ EjsAny *ejsParse(Ejs *ejs, MprChar *str, int preferredType)
         } else if (*buf == '/') {
             sid = S_RegExp;
 
-        } else if (!isdigit((int) *buf) && *buf != '.') {
+        } else if (!isdigit((uchar) *buf) && *buf != '.') {
             if (mcmp(buf, "true") == 0) {
                 return ESV(true);
 
@@ -894,15 +894,15 @@ static MprNumber parseNumber(Ejs *ejs, MprChar *str)
     } else if (*str == '+') {
         str++;
     }
-    if (*str != '.' && !isdigit((int) *str)) {
+    if (*str != '.' && !isdigit((uchar) *str)) {
         return ((EjsNumber*) ESV(nan))->value;
     }
     /*
         Floating format: [DIGITS].[DIGITS][(e|E)[+|-]DIGITS]
      */
-    if (!(*str == '0' && tolower((int) str[1]) == 'x')) {
+    if (!(*str == '0' && tolower((uchar) str[1]) == 'x')) {
         for (cp = str; *cp; cp++) {
-            if (*cp == '.' || tolower((int) *cp) == 'e') {
+            if (*cp == '.' || tolower((uchar) *cp) == 'e') {
                 // OPT
                 for (sp = str, dp = nbuf; *sp && dp < &nbuf[sizeof(nbuf) - 1]; ) {
                     *dp++ = *sp++;
@@ -924,18 +924,18 @@ static MprNumber parseNumber(Ejs *ejs, MprChar *str)
         /*
          *  Normal numbers (Radix 10)
          */
-        while (isdigit((int) *str)) {
+        while (isdigit((uchar) *str)) {
             num = (*str - '0') + (num * 10);
             str++;
         }
     } else {
         str++;
-        if (tolower((int) *str) == 'x') {
+        if (tolower((uchar) *str) == 'x') {
             str++;
             radix = 16;
             while (*str) {
-                c = tolower((int) *str);
-                if (isdigit(c)) {
+                c = tolower((uchar) *str);
+                if (isdigit((uchar) c)) {
                     num = (c - '0') + (num * radix);
                 } else if (c >= 'a' && c <= 'f') {
                     num = (c - 'a' + 10) + (num * radix);
@@ -948,8 +948,8 @@ static MprNumber parseNumber(Ejs *ejs, MprChar *str)
         } else{
             radix = 8;
             while (*str) {
-                c = tolower((int) *str);
-                if (isdigit(c) && c < '8') {
+                c = tolower((uchar) *str);
+                if (isdigit((uchar) c) && c < '8') {
                     num = (c - '0') + (num * radix);
                 } else {
                     break;

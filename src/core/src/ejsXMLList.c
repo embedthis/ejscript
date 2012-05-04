@@ -123,7 +123,7 @@ static int deleteXmlListPropertyByName(Ejs *ejs, EjsXML *list, EjsName qname)
     EjsXML      *elt;
     int         index, next;
 
-    if (isdigit((int) qname.name->value[0]) && allDigitsForXmlList(qname.name)) {
+    if (isdigit((uchar) qname.name->value[0]) && allDigitsForXmlList(qname.name)) {
         index = ejsAtoi(ejs, qname.name, 10);
 
         elt = (EjsXML*) mprGetItem(list->elements, index);
@@ -170,7 +170,7 @@ static EjsObj *getXmlListPropertyByName(Ejs *ejs, EjsXML *list, EjsName qname)
     /*
         Get the n'th item in the list
      */
-    if (isdigit((int) qname.name->value[0]) && allDigitsForXmlList(qname.name)) {
+    if (isdigit((uchar) qname.name->value[0]) && allDigitsForXmlList(qname.name)) {
         return mprGetItem(list->elements, ejsAtoi(ejs, qname.name, 10));
     }
 
@@ -505,7 +505,7 @@ static int setXmlListPropertyByName(Ejs *ejs, EjsXML *list, EjsName qname, EjsOb
     EjsXML      *elt, *targetObject;
     int         index;
 
-    if (!isdigit((int) qname.name->value[0])) {
+    if (!isdigit((uchar) qname.name->value[0])) {
         return setAlphaPropertyByName(ejs, list, qname, value);
     }
 
@@ -557,7 +557,7 @@ static bool allDigitsForXmlList(EjsString *name)
     MprChar     *cp;
 
     for (cp = name->value; *cp; cp++) {
-        if (!isdigit((int) *cp) || *cp == '.') {
+        if (!isdigit((uchar) *cp) || *cp == '.') {
             return 0;
         }
     }

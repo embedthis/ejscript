@@ -198,7 +198,7 @@ int ecGetToken(EcCompiler *cp)
          */
         switch (c) {
         default:
-            if (isdigit(c)) {
+            if (isdigit((uchar) c)) {
                 return makeNumberToken(cp, tp, c);
 
             } else if (c == '\\') {
@@ -209,7 +209,7 @@ int ecGetToken(EcCompiler *cp)
                 putBackChar(stream, c);
                 c = '\n';
             }
-            if (isalpha(c) || c == '_' || c == '\\' || c == '$') {
+            if (isalpha((uchar) c) || c == '_' || c == '\\' || c == '$') {
                 return makeAlphaToken(cp, tp, c);
             }
             return makeToken(tp, 0, T_ERR, 0);
@@ -290,7 +290,7 @@ int ecGetToken(EcCompiler *cp)
 
         case '-':
             c = getNextChar(stream);
-            if (isdigit(c)) {
+            if (isdigit((uchar) c)) {
                 putBackChar(stream, c);
                 return makeToken(tp, '-', T_MINUS, G_OPERATOR);
 
@@ -371,7 +371,7 @@ int ecGetToken(EcCompiler *cp)
                 addCharToToken(tp, '.');
                 return makeToken(tp, c, T_DOT_LESS, 0);
 #endif
-            } else if (isdigit(c)) {
+            } else if (isdigit((uchar) c)) {
                 putBackChar(stream, c);
                 return makeNumberToken(cp, tp, '.');
             }
@@ -638,7 +638,7 @@ static int makeNumberToken(EcCompiler *cp, EcToken *tp, int c)
     stream = cp->stream;
     if (c == '0') {
         c = getNextChar(stream);
-        if (tolower(c) == 'x') {
+        if (tolower((uchar) c) == 'x') {
             /* Hex */
             addCharToToken(tp, '0');
             do {
@@ -669,7 +669,7 @@ static int makeNumberToken(EcCompiler *cp, EcToken *tp, int c)
     /*
         Float
      */
-    while (isdigit(c)) {
+    while (isdigit((uchar) c)) {
         addCharToToken(tp, c);
         c = getNextChar(stream);
     }
@@ -677,18 +677,18 @@ static int makeNumberToken(EcCompiler *cp, EcToken *tp, int c)
         addCharToToken(tp, c);
         c = getNextChar(stream);
     }
-    while (isdigit(c)) {
+    while (isdigit((uchar) c)) {
         addCharToToken(tp, c);
         c = getNextChar(stream);
     }
-    if (tolower(c) == 'e') {
+    if (tolower((uchar) c) == 'e') {
         addCharToToken(tp, c);
         c = getNextChar(stream);
         if (c == '+' || c == '-') {
             addCharToToken(tp, c);
             c = getNextChar(stream);
         }
-        while (isdigit(c)) {
+        while (isdigit((uchar) c)) {
             addCharToToken(tp, c);
             c = getNextChar(stream);
         }
@@ -709,7 +709,7 @@ static int makeAlphaToken(EcCompiler *cp, EcToken *tp, int c)
      */
     stream = cp->stream;
 
-    while (isalnum(c) || c == '_' || c == '$' || c == '\\') {
+    while (isalnum((uchar) c) || c == '_' || c == '$' || c == '\\') {
         if (c == '\\') {
             c = getNextChar(stream);
             if (c == '\n' || c == '\r') {
@@ -827,12 +827,12 @@ static int decodeNumber(EcCompiler *cp, int radix, int length)
             break;
         }
         if (radix <= 10) {
-            if (!isdigit(c)) {
+            if (!isdigit((uchar) c)) {
                 break;
             }
         } else if (radix == 16) {
-            lowerc = tolower(c);
-            if (!isdigit(lowerc) && !('a' <= lowerc && lowerc <= 'f')) {
+            lowerc = tolower((uchar) c);
+            if (!isdigit((uchar) lowerc) && !('a' <= lowerc && lowerc <= 'f')) {
                 break;
             }
         }
@@ -1001,7 +1001,7 @@ static int getNextChar(EcStream *stream)
             stream->loc.column++;
         }
         if (stream->loc.source == 0) {
-            for (start = stream->nextChar - 1; isspace((int) *start); start++) ;
+            for (start = stream->nextChar - 1; isspace((uchar) *start); start++) ;
             for (next = start; *next && *next != '\n'; next++) ;
             stream->loc.source = wsub(start, 0, next - start);
         }

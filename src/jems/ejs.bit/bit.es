@@ -326,6 +326,8 @@ public class Bit {
             packs: bit.packs,
             env: bit.env,
         })
+        nbit.platform.configuration = platform + '-' + '${platform.profile}'
+
         for (let [key, value] in bit.settings) {
             if (!bit.userSettings[key]) {
                 nbit.settings[key] = value
@@ -932,9 +934,6 @@ public class Bit {
         if (o.platform) {
             blend(bit.platform, o.platform, {combine: true})
         }
-/* UNUSED
-        let toBlend = blend({}, o, {combine: true})
- */
         for each (path in o.blend) {
             bit.BITS = bit.dir.bits
             bit.SRC = bit.dir.src
@@ -947,6 +946,9 @@ public class Bit {
         for (let [tname, target] in o.targets) {
             /* Overwrite targets with original unblended target. This delays blending to preserve +/-properties  */  
             bit.targets[tname] = target
+        }
+        if (o.scripts && o.scripts.onload) {
+            runScriptX(o.scripts.onload, home)
         }
         expandTokens(bit)
     }
@@ -2392,6 +2394,7 @@ public class Bit {
         Run an event script in the directory of the bit file
         When values used are: build, prebuild, postblend, preresolve, presource, prebuild, action
      */
+    //  MOB - rename runTargetScript
     public function runScript(target, when) {
         if (!target.scripts) return
         for each (item in target.scripts[when]) {
@@ -2416,6 +2419,19 @@ global.NN = item.ns
             } finally {
                 App.chdir(pwd)
             }
+        }
+    }
+
+    public function runScriptX(script: String, home: Path) {
+        let pwd = App.dir
+        if (home && home != pwd) {
+            App.chdir(home)
+        }
+        try {
+            script = 'require ejs.unix\n' + script.expand(bit, {fill: ''})
+            eval(script)
+        } finally {
+            App.chdir(pwd)
         }
     }
 
@@ -2719,7 +2735,7 @@ global.NN = item.ns
         switch (cmd) {
         case 'cleanTargets':
             for each (target in bit.targets) {
-                if (target.path && targetsToClean[target.type]) {
+                if (target.enable && target.path && targetsToClean[target.type]) {
                     if (!target.built && !target.precious && !target.nogen) {
                         if (generating == 'make') {
                             genWrite('\trm -rf ' + reppath(target.path))

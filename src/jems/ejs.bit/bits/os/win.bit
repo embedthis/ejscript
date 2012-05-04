@@ -13,22 +13,29 @@ Bit.load({
     },
 
     prefixes: {
-        product: 'C:/Program Files/${settings.title}',
-        productver: 'C:/Program Files/${settings.title}',
-
-        config:  '${prefixes.product}',
-        bin:     '${prefixes.product}/bin',
-        inc:     '${prefixes.product}/inc',
-        lib:     '${prefixes.product}/bin',
-        log:     '${prefixes.product}/logs',
-        spool:   '${prefixes.product}/tmp',
-        src:     '${prefixes.product}/src',
-        web:     '${prefixes.product}/web',
+        product:    'C:/Program Files/${settings.title}',
+        productver: '${prefixes.product}',
+        config:     '${prefixes.product}',
+        bin:        '${prefixes.product}/bin',
+        inc:        '${prefixes.product}/inc',
+        lib:        '${prefixes.product}/bin',
+        log:        '${prefixes.product}/logs',
+        spool:      '${prefixes.product}/tmp',
+        src:        '${prefixes.product}/src',
+        web:        '${prefixes.product}/web',
     },
 
     settings: {
         /* order matters */
         '+required': [ 'winsdk', 'compiler', 'link', 'dumpbin', 'rc' ],
+    },
+
+    scripts: {
+        'onload': "
+            if (App.getenv('PROCESSOR_ARCHITEW6432')) {
+                bit.prefixes.product = 'C:/Program Files (x86)'
+            }
+        ",
     },
 
     defaults: {

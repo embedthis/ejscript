@@ -373,10 +373,10 @@ static EjsNumber *g_parseInt(Ejs *ejs, EjsObj *unused, int argc, EjsObj **argv)
 
     str = ejsToMulti(ejs, argv[0]);
     radix = (argc >= 2) ? ejsGetInt(ejs, argv[1]) : 0;
-    while (isspace((int) *str)) {
+    while (isspace((uchar) *str)) {
         str++;
     }
-    if (*str == '-' || *str == '+' || isdigit((int) *str)) {
+    if (*str == '-' || *str == '+' || isdigit((uchar) *str)) {
         n = (MprNumber) stoiradix(str, radix, &err);
         if (err) {
             return ESV(nan);

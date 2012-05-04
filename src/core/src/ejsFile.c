@@ -84,7 +84,7 @@ static int lookupFileProperty(Ejs *ejs, EjsFile *fp, EjsName qname)
 {
     int     index;
 
-    if (qname.name == 0 || !isdigit((int) qname.name->value[0])) {
+    if (qname.name == 0 || !isdigit((uchar) qname.name->value[0])) {
         return EJS_ERR;
     }
     if (!(fp->mode & EJS_FILE_OPEN)) {

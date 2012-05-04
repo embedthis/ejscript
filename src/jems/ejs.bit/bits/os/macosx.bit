@@ -39,7 +39,7 @@ Bit.load({
                 } else if (bit.settings.tune == 'size') {
                     defaults.compiler += ['-Os']
                 } else {
-                    defaults.compiler += ['-O4']
+                    defaults.compiler += ['-O3']
                 }
                 defaults.libpaths.push(bit.dir.lib)
                 if (bit.settings.warnUnused) {

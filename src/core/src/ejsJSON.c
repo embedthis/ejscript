@@ -119,7 +119,7 @@ static MprChar *skipComments(MprChar *cp, MprChar *end)
 {
     int     inComment;
 
-    for (; cp < end && isspace((int) *cp); cp++) {}
+    for (; cp < end && isspace((uchar) *cp); cp++) {}
 
     while (cp < &end[-1]) {
         if (cp < &end[-1] && *cp == '/' && cp[1] == '*') {
@@ -134,7 +134,7 @@ static MprChar *skipComments(MprChar *cp, MprChar *end)
             if (inComment) {
                 return 0;
             }
-            while (cp < end && isspace((int) *cp)) cp++;
+            while (cp < end && isspace((uchar) *cp)) cp++;
 
         } else  if (cp < &end[-1] && *cp == '/' && cp[1] == '/') {
             inComment = 1;
@@ -148,7 +148,7 @@ static MprChar *skipComments(MprChar *cp, MprChar *end)
             if (inComment) {
                 return 0;
             }
-            while (cp < end && isspace((int) *cp)) cp++;
+            while (cp < end && isspace((uchar) *cp)) cp++;
 
         } else {
             break;
@@ -184,7 +184,7 @@ Token getNextJsonToken(MprBuf *buf, MprChar **token, JsonState *js)
 
     } else if (*cp == '}' || *cp == ']') {
         tid = *cp == '}' ? TOK_RBRACE: TOK_RBRACKET;
-        while (*++cp && isspace((int) *cp)) ;
+        while (*++cp && isspace((uchar) *cp)) ;
         if (*cp == ',' || *cp == ':') {
             cp++;
         }
@@ -243,7 +243,7 @@ Token getNextJsonToken(MprBuf *buf, MprChar **token, JsonState *js)
                     continue;
                 }
                 /* Not an allowable character outside quotes */
-                if (!(isalnum((int) *cp) || *cp == '_' || *cp == ' ' || *cp == '-' || *cp == '+' || *cp == '.')) {
+                if (!(isalnum((uchar) *cp) || *cp == '_' || *cp == ' ' || *cp == '-' || *cp == '+' || *cp == '.')) {
                     break;
                 }
             }
@@ -565,7 +565,7 @@ static EjsString *serialize(Ejs *ejs, EjsAny *vp, Json *json)
             if (!quotes) {
                 //  UNICODE
                 for (cp = qname.name->value; cp < &qname.name->value[qname.name->length]; cp++) {
-                    if (!isalnum(*cp) && *cp != '_') {
+                    if (!isalnum((uchar) *cp) && *cp != '_') {
                         quotes = 1;
                         break;
                     }

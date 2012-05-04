@@ -264,7 +264,7 @@ static EjsObj *getXmlPropertyByName(Ejs *ejs, EjsXML *xml, EjsName qname)
     result = 0;
 
     mprAssert(xml->kind < 5);
-    if (isdigit((int) qname.name->value[0]) && allDigitsForXml(qname.name)) {
+    if (isdigit((uchar) qname.name->value[0]) && allDigitsForXml(qname.name)) {
         /*
             Consider xml as a list with only one entry == xml. Then return the 0'th entry
          */
@@ -458,7 +458,7 @@ static int setXmlPropertyByName(Ejs *ejs, EjsXML *xml, EjsName qname, EjsObj *va
 
     mprLog(9, "XMLSet %@.%@ = \"%@\"", xml->qname.name, qname.name, ejsCast(ejs, value, String));
 
-    if (isdigit((int) qname.name->value[0]) && allDigitsForXml(qname.name)) {
+    if (isdigit((uchar) qname.name->value[0]) && allDigitsForXml(qname.name)) {
         ejsThrowTypeError(ejs, "Integer indicies for set are not allowed");
         return EJS_ERR;
     }
@@ -666,7 +666,7 @@ static EjsObj *xmlConstructor(Ejs *ejs, EjsXML *thisObj, int argc, EjsObj **argv
         if (str == 0) {
             return 0;
         }
-        while (isspace((int) *str)) str++;
+        while (isspace((uchar) *str)) str++;
         if (*str == '<') {
             /* XML Literal */
             ejsLoadXMLString(ejs, thisObj, (EjsString*) arg);
@@ -964,7 +964,7 @@ static bool allDigitsForXml(EjsString *name)
     MprChar     *cp;
 
     for (cp = name->value; *cp; cp++) {
-        if (!isdigit((int) *cp) || *cp == '.') {
+        if (!isdigit((uchar) *cp) || *cp == '.') {
             return 0;
         }
     }

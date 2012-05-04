@@ -118,7 +118,7 @@ static int lookupByteArrayProperty(struct Ejs *ejs, EjsByteArray *ap, EjsName qn
 {
     int     index;
 
-    if (qname.name == 0 || ! isdigit((int) qname.name->value[0])) {
+    if (qname.name == 0 || ! isdigit((uchar) qname.name->value[0])) {
         return EJS_ERR;
     }
     index = ejsAtoi(ejs, qname.name, 10);

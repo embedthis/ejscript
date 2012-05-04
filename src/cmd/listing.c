@@ -696,7 +696,7 @@ static void interp(EjsMod *mp, EjsModule *module, EjsFunction *fun)
                 if (*src == '_') {
                     *dest = *++src;
                 } else {
-                    *dest = tolower((int) *src);
+                    *dest = tolower((uchar) *src);
                 }
             }
             *dest++ = '\0';

@@ -124,7 +124,7 @@ static int deleteArrayProperty(Ejs *ejs, EjsArray *ap, int slot)
  */
 static int deleteArrayPropertyByName(Ejs *ejs, EjsArray *ap, EjsName qname)
 {
-    if (isdigit((int) qname.name->value[0])) {
+    if (isdigit((uchar) qname.name->value[0])) {
         return deleteArrayProperty(ejs, ap, (int) wtoi(qname.name->value));
     }
     return (ejs->service->potHelpers.deletePropertyByName)(ejs, ap, qname);
@@ -156,7 +156,7 @@ static EjsObj *getArrayPropertyByName(Ejs *ejs, EjsArray *ap, EjsName qname)
 {
     int     slotNum;
 
-    if (isdigit((int) qname.name->value[0])) { 
+    if (isdigit((uchar) qname.name->value[0])) { 
         slotNum = ejsAtoi(ejs, qname.name, 10);
         if (slotNum < 0 || slotNum >= ap->length) {
             return 0;
@@ -183,7 +183,7 @@ static int lookupArrayProperty(Ejs *ejs, EjsArray *ap, EjsName qname)
 {
     int     index;
 
-    if (qname.name == 0 || !isdigit((int) qname.name->value[0])) {
+    if (qname.name == 0 || !isdigit((uchar) qname.name->value[0])) {
         return EJS_ERR;
     }
     index = ejsAtoi(ejs, qname.name, 10);
@@ -341,7 +341,7 @@ static int setArrayPropertyByName(Ejs *ejs, EjsArray *ap, EjsName qname, EjsObj 
 {
     int     slotNum;
 
-    if (!isdigit((int) qname.name->value[0])) { 
+    if (!isdigit((uchar) qname.name->value[0])) { 
         /* The "length" property is a method getter */
         if (qname.name == ESV(length)) {
             setArrayLength(ejs, ap, 1, &value);

@@ -674,7 +674,7 @@ static EcNode *parseXMLText(EcCompiler *cp, EcNode *np)
         if (getToken(cp) == T_EOF || cp->token->tokenId == T_ERR || cp->token->tokenId == T_NOP) {
             return 0;
         }
-        if (isalnum((int) cp->token->text[0]) && count > 0) {
+        if (isalnum((uchar) cp->token->text[0]) && count > 0) {
             addAscToLiteral(cp, np, " ", 1);
         }
         addTokenToLiteral(cp, np);
@@ -707,7 +707,7 @@ static EcNode *parseXMLName(EcCompiler *cp, EcNode *np)
         return LEAVE(cp, unexpected(cp));
     }
     c = cp->token->text[0];
-    if (isalpha(c) || c == '_' || c == ':') {
+    if (isalpha((uchar) c) || c == '_' || c == ':') {
         addTokenToLiteral(cp, np);
     } else {
         np = parseError(cp, "Not an XML Name \"%@\"", cp->token->text);

@@ -178,7 +178,7 @@ static bool checkTagName(char *name)
     char    *cp;
 
     for (cp = name; *cp; cp++) {
-        if (!isalnum(*cp) && *cp != '_' && *cp != '$' && *cp != '@') {
+        if (!isalnum((uchar) *cp) && *cp != '_' && *cp != '$' && *cp != '@') {
             return 0;
         }
     }

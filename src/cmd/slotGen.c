@@ -57,11 +57,11 @@ static int createSlotFile(EjsMod *bp, EjsModule *mp, MprFile *file)
         }
     }
     mprSprintf(slotsName, sizeof(slotsName), "%@Slots", mp->name);
-    slotsName[0] = toupper((int) slotsName[0]);
+    slotsName[0] = toupper((uchar) slotsName[0]);
     for (dp = sp = slotsName; *sp; sp++) {
         if (*sp == '.') {
             ++sp;
-            *dp++ = toupper((int) *sp);
+            *dp++ = toupper((uchar) *sp);
         } else {
             *dp++ = *sp;
         }

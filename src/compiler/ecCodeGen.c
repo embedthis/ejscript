@@ -2409,7 +2409,9 @@ static void genLiteral(EcCompiler *cp, EcNode *np)
 
     if (TYPE(np->literal.var) == EST(XML)) {
         ecEncodeOpcode(cp, EJS_OP_LOAD_XML);
-        data = ejsCreateString(ejs, mprGetBufStart(np->literal.data), mprGetBufLength(np->literal.data) / sizeof(MprChar));
+        //  UNICODE
+        data = ejsCreateString(ejs, (MprChar*) mprGetBufStart(np->literal.data), 
+                mprGetBufLength(np->literal.data) / sizeof(MprChar));
         ecEncodeConst(cp, data);
         pushStack(cp, 1);
         LEAVE(cp);
@@ -3853,7 +3855,7 @@ static void addDebug(EcCompiler *cp, EcNode *np)
         return;
     }
     offset = (int) mprGetBufLength(code->buf);
-    source = mfmt("%s|%d|%w", np->loc.filename, np->loc.lineNumber, np->loc.source);
+    source = (MprChar*) mfmt("%s|%d|%w", np->loc.filename, np->loc.lineNumber, np->loc.source);
     addDebugLine(cp, code, offset, source);
     code->lastLineNumber = np->loc.lineNumber;
 }

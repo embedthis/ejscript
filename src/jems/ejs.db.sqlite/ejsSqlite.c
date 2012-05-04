@@ -208,7 +208,7 @@ static EjsObj *sqliteSql(Ejs *ejs, EjsSqlite *db, int argc, EjsObj **argv)
                             strcpy(&tableName[len - 1], colName);
                             len--;
                         }
-                        tableName[len] = toupper((int) tableName[len]);
+                        tableName[len] = toupper((uchar) tableName[len]);
                         qname = EN(tableName);
                     }
                     if (ejsLookupProperty(ejs, (EjsObj*) row, qname) < 0) {
@@ -224,7 +224,7 @@ static EjsObj *sqliteSql(Ejs *ejs, EjsSqlite *db, int argc, EjsObj **argv)
                 stmt = 0;
                 if (rc != SQLITE_SCHEMA) {
                     retries = 0;
-                    for (cmd = tail; isspace((int) *cmd); cmd++) {
+                    for (cmd = tail; isspace((uchar) *cmd); cmd++) {
                         ;
                     }
                 }

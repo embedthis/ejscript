@@ -122,7 +122,16 @@ function installCallback(src: Path, dest: Path, options = {}): Boolean {
             attributes.permissions = 0755
             dest.setAttributes(attributes)
         } else {
-            src.copy(dest, attributes)
+            try {
+                src.copy(dest, attributes)
+            } catch {
+                if (options.active) {
+                    let active = dest.replaceExt('old')
+                    active.remove()
+                    dest.rename(active)
+                }
+                src.copy(dest, attributes)
+            }
         }
     }
     if (options.expand) {
@@ -166,6 +175,8 @@ function installCallback(src: Path, dest: Path, options = {}): Boolean {
         of source paths.
     @param dest Destination path
     @param options Process options
+    @option active If destination is an active executable or shared library, rename the active file using a
+        '.old' extension and retry the copy.
     @option compress Compress target file
     @option copytemp Copy files that look like temp files
     @option exclude Exclude files that match the pattern. The pattern should be in portable file format.

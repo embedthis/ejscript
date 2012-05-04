@@ -1077,7 +1077,7 @@ static int generateClassPropertyTableEntries(EjsMod *mp, EjsObj *obj, MprList *p
         if (ejsStartsWithAsc(ejs, qname.space, "internal")  >= 0|| ejsContainsAsc(ejs, qname.space, "private") >= 0) {
             continue;
         }
-        if (isalpha((int) qname.name->value[0])) {
+        if (isalpha((uchar) qname.name->value[0])) {
             out(mp, "<a name='%@'></a>\n", qname.name);
         }
         attributes = trait->attributes;
@@ -1426,7 +1426,7 @@ static void generateMethod(EjsMod *mp, FunRec *fp)
         }
         return;
     }
-    if (isalpha((int) qname.name->value[0])) {
+    if (isalpha((uchar) qname.name->value[0])) {
         out(mp, "<a name='%@'></a>\n", qname.name);
     }
     if (type && qname.space == type->qname.space) {
@@ -1642,11 +1642,11 @@ static MprChar *joinLines(MprChar *str)
     for (cp = str; cp && *cp; cp++) {
         if (*cp == '\n') {
             for (np = &cp[1]; *np; np++) {
-                if (!isspace((int) *np)) {
+                if (!isspace((uchar) *np)) {
                     break;
                 }
             }
-            if (!isspace((int) *np)) {
+            if (!isspace((uchar) *np)) {
                 *cp = ' ';
             }
         }
@@ -1706,13 +1706,13 @@ static void prepText(MprChar *str)
     MprChar     *dp, *cp;
 
     dp = cp = str;
-    while (isspace((int) *cp) || *cp == '*') {
+    while (isspace((uchar) *cp) || *cp == '*') {
         cp++;
     }
     while (*cp) {
         if (cp[0] == '\n') {
             *dp++ = '\n';
-            for (cp++; (isspace((int) *cp) || *cp == '*'); cp++) {
+            for (cp++; (isspace((uchar) *cp) || *cp == '*'); cp++) {
                 if (*cp == '\n') {
                     *dp++ = '\n';
                 }
@@ -1770,7 +1770,7 @@ static EjsDoc *crackDoc(EjsMod *mp, EjsDoc *doc, EjsName qname)
             thisBrief = NULL;
         } else {
             for (cp = thisBrief; *cp; cp++) {
-                if (*cp == '.' && (isspace((int) cp[1]) || *cp == '*')) {
+                if (*cp == '.' && (isspace((uchar) cp[1]) || *cp == '*')) {
                     cp++;
                     *cp++ = '\0';
                     thisDescription = mtrim(cp, " \t\n", MPR_TRIM_BOTH);
@@ -1961,7 +1961,7 @@ static MprChar *fixSentence(MprChar *str)
     }
     wcopy(buf, len, str);
     str = buf;
-    str[0] = toupper((int) str[0]);
+    str[0] = toupper((uchar) str[0]);
 
     /*
         Append a "." if the string does not appear to contain HTML tags
@@ -2002,7 +2002,7 @@ static MprChar *formatExample(Ejs *ejs, EjsString *docString)
 
         buf = mprAlloc(wlen(example) * 4 + 2);
         for (cp = example, dp = buf; *cp && cp < end; ) {
-            for (i = 0; i < indent && *cp && isspace((int) *cp) && *cp != '\n'; i++, cp++) {}
+            for (i = 0; i < indent && *cp && isspace((uchar) *cp) && *cp != '\n'; i++, cp++) {}
             for (; *cp && *cp != '\n'; ) {
                 if (*cp == '<' && cp[1] == '%') {
                     mtow(dp, 5, "&lt;", 4);
@@ -2023,7 +2023,7 @@ static MprChar *formatExample(Ejs *ejs, EjsString *docString)
             }
             *dp = '\0';
         }
-        for (--dp; dp > example && isspace((int) *dp); dp--) {}
+        for (--dp; dp > example && isspace((uchar) *dp); dp--) {}
         *++dp = '\0';
         return buf;
     }
@@ -2069,13 +2069,13 @@ static MprChar *wikiFormat(Ejs *ejs, MprChar *start)
             /* Dollar reference expansion */
             klass = &str[1];
             for (cp = &str[1]; *cp; cp++) {
-                if (isspace((int) *cp)) {
+                if (isspace((uchar) *cp)) {
                     break;
                 }
             }
             len = cp - str;
             str = cp;
-            if (isspace((int) *cp)) {
+            if (isspace((uchar) *cp)) {
                 cp--;
             }
             klass = snclone(klass, len);
@@ -2359,9 +2359,9 @@ static bool match(MprChar *last, cchar *key)
 
 static MprChar *skipAtWord(MprChar *str)
 {
-    while (!isspace((int) *str) && *str)
+    while (!isspace((uchar) *str) && *str)
         str++;
-    while (isspace((int) *str))
+    while (isspace((uchar) *str))
         str++;
     return str;
 }
@@ -2371,7 +2371,7 @@ static void getKeyValue(MprChar *str, MprChar **key, MprChar **value)
 {
     MprChar     *end;
 
-    for (end = str; *end && !isspace((int) *end); end++)
+    for (end = str; *end && !isspace((uchar) *end); end++)
         ;
     if (end) {
         *end = '\0';
@@ -2379,7 +2379,7 @@ static void getKeyValue(MprChar *str, MprChar **key, MprChar **value)
     if (key) {
         *key = mtrim(str, " \t", MPR_TRIM_BOTH);
     }
-    for (str = end + 1; *str && isspace((int) *str); str++) {
+    for (str = end + 1; *str && isspace((uchar) *str); str++) {
         ;
     }
     if (value) {

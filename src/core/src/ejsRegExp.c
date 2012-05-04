@@ -238,7 +238,7 @@ static int parseFlags(EjsRegExp *rp, MprChar *flags)
     }
     options = PCRE_JAVASCRIPT_COMPAT;
     for (cp = flags; *cp; cp++) {
-        switch (tolower((int) *cp)) {
+        switch (tolower((uchar) *cp)) {
         case 'g':
             rp->global = 1;
             break;
