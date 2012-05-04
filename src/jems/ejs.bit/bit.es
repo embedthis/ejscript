@@ -15,6 +15,9 @@ public class Bit {
     private static const VERSION: Number = 0.2
     private static const MAIN: Path = Path('main.bit')
     private static const LOCAL: Path = Path('local.bit')
+    private static const supportedOS = ['freebsd', 'linux', 'macosx', 'solaris', 'vxworks', 'win']
+    private static const supportedArch = ['arm', 'i64', 'mips', 'sparc', 'x64', 'x86']
+
 
     /*
         Filter for files that look like temp files and should not be installed
@@ -186,6 +189,12 @@ public class Bit {
             print(version)
             App.exit(0)
         }
+        if (options.log) {
+            App.log.redirect(options.log)
+            App.mprLog.redirect(options.log)
+        }
+        out = (options.out) ? File(options.out, 'w') : stdout
+
         let OS = Config.OS
         if (options.emulate) {
             localPlatform = options.emulate
@@ -202,6 +211,8 @@ public class Bit {
             localPlatform =  OS.toLower() + '-' + cpu
         }
         let [os, arch] = localPlatform.split('-') 
+        validatePlatform(os, arch)
+
         local = {
             name: localPlatform,
             os: os,
@@ -248,11 +259,6 @@ public class Bit {
             App.log.error('Can only set profile when configuring via --config dir')
             usage()
         }
-        if (options.log) {
-            App.log.redirect(options.log)
-            App.mprLog.redirect(options.log)
-        }
-        out = (options.out) ? File(options.out, 'w') : stdout
         platforms = options.platform || []
         if (platforms[0] != localPlatform) {
             platforms.insert(0, localPlatform)
@@ -2914,6 +2920,15 @@ UNUSED
             let lbin = bit.dir.bin
             global.LBIN = bit.LBIN = lbin.portable
             bit.WIN_LBIN = lbin.windows
+        }
+    }
+
+    function validatePlatform(os, arch) {
+        if (!supportedOS.contains(os)) {
+            trace('WARN', 'Unsupported or unknown operating system: ' + os + '. Select from: ' + supportedOS.join(' '))
+        }
+        if (!supportedArch.contains(arch)) {
+            trace('WARN', 'Unsupported or unknown architecture: ' + arch + '. Select from: ' + supportedArch.join(' '))
         }
     }
 }
