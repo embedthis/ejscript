@@ -957,8 +957,7 @@ print("HERE")
         let home = currentBitFile.dirname
         fixup(o, ns)
         /* 
-            Blending is depth-first -- blend this bit object after loading bit files referenced in blend[].
-            Save the blend[] property for the current bit object
+            Blending is depth-first -- blend this bit object after loading bit files referenced in blend[]
             Special case for the local plaform bit file to provide early definition of platform and dir properties
          */
         if (o.dir) {
@@ -2923,6 +2922,12 @@ UNUSED
         bit.PLATFORM = currentPlatform = platform
         if (bitfile) {
             loadWrapper(bitfile)
+            for each (path in bit.customize) {
+                let path = home.join(path.expand(bit, {fill: '.'}))
+                if (path.exists) {
+                    loadWrapper(path)
+                }
+            }
         }
         loadModules()
         applyProfile()

@@ -7,9 +7,9 @@ Bit.load({
         // Load other bit files
     ],
 
-    dir: {
-        bits: 'bits',
-    },
+    customize: [
+        // Load other bit files if present
+    ],
 
     settings: {
         /* 
