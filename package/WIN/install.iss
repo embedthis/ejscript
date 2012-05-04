@@ -12,6 +12,7 @@ DefaultGroupName=${settings.title}
 UninstallDisplayIcon={app}/${settings.product}.exe
 LicenseFile=LICENSE.TXT
 ChangesEnvironment=yes
+ArchitecturesInstallIn64BitMode=x64
 
 [Icons]
 Name: "{group}\${settings.title} shell"; Filename: "{app}/bin/${settings.product}.exe"; Parameters: ""
