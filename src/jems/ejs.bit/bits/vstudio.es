@@ -150,7 +150,7 @@ function projHeader(base, target) {
     ')
 
         if (bit.platform.profile == 'debug') {
-            output('  <PreprocessorDefinitions>WIN32;_DEBUG;_WINDOWS;DEBUG_IDE;_REENTRANT;_MT;%(PreprocessorDefinitions)</PreprocessorDefinitions>
+            output('  <PreprocessorDefinitions>WIN32;_DEBUG;_WINDOWS;BLD_DEBUG;DEBUG_IDE;_REENTRANT;_MT;%(PreprocessorDefinitions)</PreprocessorDefinitions>
     <Optimization>Disabled</Optimization>
     <BasicRuntimeChecks>EnableFastChecks</BasicRuntimeChecks>
     <RuntimeLibrary>MultiThreadedDebugDLL</RuntimeLibrary>')
