@@ -19,13 +19,6 @@ Name: "{group}\${settings.title} shell"; Filename: "{app}/bin/${settings.product
 Name: "{group}\${settings.title} documentation"; Filename: "{app}/doc/product/index.html"; Parameters: ""
 Name: "{group}\ReadMe"; Filename: "{app}/README.TXT"
 
-; [Types]
-; Name: "full"; Description: "Complete Installation"; 
-; Name: "binary"; Description: "Binary Installation"; 
-
-; [Components]
-; Name: "bin"; Description: "Binary Files"; Types: full;
-
 [Dirs]
 Name: "{app}/bin"
 
@@ -125,8 +118,6 @@ end;
 
 [Run]
 Filename: "file:///{app}/doc/product/index.html"; Description: "View the Documentation"; Flags: skipifsilent waituntilidle shellexec postinstall; Check: IsPresent('{app}/doc/product/index.html');
-
-; Components: bin
 
 [UninstallRun]
 Filename: "{app}/bin/removeFiles.exe"; Parameters: "-r -s 5"; WorkingDir: "{app}"; Flags:

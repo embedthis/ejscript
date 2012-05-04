@@ -205,7 +205,9 @@ public function installBinary() {
         path.rename(active)
     }
     package(bit.dir.pkg.join('bin'), 'install')
-    createLinks()                                                                                          
+    if (Config.OS != 'WIN') {
+        createLinks()                                                                                          
+    }
     updateLatestLink()                                                                                          
     bit.dir.pkg.join('bin').removeAll()
     trace('Complete', bit.settings.title + ' installed')
@@ -245,12 +247,12 @@ public function createLinks() {
     let log = []
     let localbin = Path('/usr/local/bin')
     if (localbin.exists) {
-        let programs = ['bit', 'ejs', 'ejsc', 'ejsmod', 'ejsman', 'ejspage', 'http', 'jem', 'mvc', 'sqlite', 'utest' ]
+        let programs = ['bit', 'ejs', 'ejsc', 'ejsmod', 'ejsman', 'http', 'jem', 'mvc', 'sqlite', 'utest' ]
         let bin = bit.prefixes.bin
         let target: Path
         for each (program in programs) {
             let link = Path(localbin.join(program))
-            link.symlink(bin.join(program))
+            link.symlink(bin.join(program + bit.EXE))
             log.push(link)
         }
         for each (page in bit.prefixes.productver.join('doc/man').glob('**/*.1.gz')) {
