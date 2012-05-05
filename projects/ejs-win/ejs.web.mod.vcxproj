@@ -96,7 +96,7 @@
 
   <CustomBuildStep>
     <Command>cd ..\..\src\jems\ejs.web
-"$(BinDir)\ejsc" --out "$(BinDir)\ejs.web.mod" --debug --optimize 9 "*.es"
+"$(BinDir)\ejsc" --out "$(BinDir)\ejs.web.mod" --debug --optimize 9 *.es
 "$(BinDir)\ejsmod" --cslots "$(BinDir)\ejs.web.mod"
 copy ejs.web.slots.h $(IncDir)\ejs.web.slots.h
 del ejs.web.slots.h

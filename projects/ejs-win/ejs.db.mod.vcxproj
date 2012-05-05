@@ -96,7 +96,7 @@
 
   <CustomBuildStep>
     <Command>cd ..\..\src\jems\ejs.db
-"$(BinDir)\ejsc" --out $(BinDir)\ejs.db.mod --debug --optimize 9 *.es
+$(BinDir)/ejsc --out $(BinDir)\ejs.db.mod --debug --optimize 9 *.es
 cd ..\..\..\projects\ejs-win</Command>
     <Outputs>$(BinDir)\ejs.db.mod</Outputs>
   </CustomBuildStep>

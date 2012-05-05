@@ -21,7 +21,7 @@ Bit.load({
                 }
             ",
             'generate-nmake': '\
-                "${WIN_BIN}\\ejsc" --out "${OUT}" ${settings.esflags} --optimize 9 "*.es"
+                "${WIN_BIN}\\ejsc" --out "${OUT}" ${settings.esflags} --optimize 9 *.es
                 "${WIN_BIN}\\ejsmod" --cslots "${OUT}"
                 copy ejs.web.slots.h ${WIN_INC}\\ejs.web.slots.h
                 del ejs.web.slots.h

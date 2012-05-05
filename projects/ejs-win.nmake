@@ -834,9 +834,7 @@ $(CONFIG)\bin\jem.exe:  \
 $(CONFIG)\bin\ejs.db.mod:  \
         $(CONFIG)\bin\ejsc.exe \
         $(CONFIG)\bin\ejs.mod
-	cd src\jems\ejs.db
-		"..\..\..\$(CONFIG)\bin\ejsc" --out ../../../$(CONFIG)/bin/ejs.db.mod --debug --optimize 9 *.es
-		cd ..\..\..
+#  Omit build script /Users/mob/git/ejs/win-x86-debug/bin/ejs.db.mod
 
 $(CONFIG)\bin\ejs.db.mapper.mod:  \
         $(CONFIG)\bin\ejsc.exe \
@@ -873,7 +871,7 @@ $(CONFIG)\bin\ejs.web.mod:  \
         $(CONFIG)\bin\ejsmod.exe \
         $(CONFIG)\bin\ejs.mod
 	cd src\jems\ejs.web
-		"..\..\..\$(CONFIG)\bin\ejsc" --out "../../../$(CONFIG)/bin/ejs.web.mod" --debug --optimize 9 "*.es"
+		"..\..\..\$(CONFIG)\bin\ejsc" --out "../../../$(CONFIG)/bin/ejs.web.mod" --debug --optimize 9 *.es
 	"..\..\..\$(CONFIG)\bin\ejsmod" --cslots "../../../$(CONFIG)/bin/ejs.web.mod"
 	copy ejs.web.slots.h ..\..\..\$(CONFIG)\inc\ejs.web.slots.h
 	del ejs.web.slots.h

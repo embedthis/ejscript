@@ -509,6 +509,14 @@ function projCustomBuildStep(base, target) {
         let ncmd = target['generate-nmake']
         ncmd = ncmd.replace(/^[ \t]*/mg, '').trim().replace(/^-md /m, 'md ').replace(/^-rd /m, 'rd ')
         command += ncmd
+    } else if (target['generate-sh']) {
+        let ncmd = target['generate-sh']
+        ncmd = ncmd.replace(/^[ \t]*/mg, '').trim()
+        command += ncmd
+    } else if (target['generate']) {
+        let ncmd = target['generate']
+        ncmd = ncmd.replace(/^[ \t]*/mg, '').trim()
+        command += ncmd
     }
     command = command.replace(/^[ \t]*/mg, '').trim()
     if (command != '') {
@@ -516,11 +524,14 @@ try {
         //  MOB UNUSED <Outputs Condition="\'${CTOK}|${PTOK}\'==\'Debug|${VTYPE}\'">' + wpath(outfile) + '</Outputs>
         command = prefix + command + suffix
 
+        let saveBin = bit.BIN
+        bit.BIN = '$(BinDir)'
         output('
   <CustomBuildStep>
     <Command>' + command + '</Command>
     <Outputs>' + wpath(outfile) + '</Outputs>
   </CustomBuildStep>')
+        bit.BIN = saveBin
 } catch (e) {
     print(e + '\n' + 'in ' + target.name + ' ' + cmd)
     throw e

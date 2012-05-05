@@ -286,10 +286,7 @@ cd - >/dev/null
 rm -rf ${CONFIG}/bin/jem.exe
 cp -r ${CONFIG}/bin/ejsrun.exe ${CONFIG}/bin/jem.exe
 
-cd src/jems/ejs.db >/dev/null ;\
-../../../${CONFIG}/bin/ejsc --out ../../../${CONFIG}/bin/ejs.db.mod --debug --optimize 9 *.es ;\
-cd - >/dev/null 
-
+#  Omit build script /Users/mob/git/ejs/win-x86-debug/bin/ejs.db.mod
 cd src/jems/ejs.db.mapper >/dev/null ;\
 ../../../${CONFIG}/bin/ejsc --out ../../../${CONFIG}/bin/ejs.db.mapper.mod --debug --optimize 9 *.es ;\
 cd - >/dev/null 
