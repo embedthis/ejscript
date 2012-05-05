@@ -1,27 +1,5 @@
 <?xml version="1.0" encoding="utf-8"?>
 <Project DefaultTargets="Build" ToolsVersion="4.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
-  <ImportGroup Label="PropertySheets" />
-
-  <ImportGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'" Label="PropertySheets">
-    <Import Project="product.props" />
-    <Import Project="debug.props" />
-    <Import Project="x86.props" />
-  </ImportGroup>
-  <ImportGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'" Label="PropertySheets">
-    <Import Project="product.props" />
-    <Import Project="release.props" />
-    <Import Project="x86.props" />
-  </ImportGroup>
-  <ImportGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x64'" Label="PropertySheets">
-    <Import Project="product.props" />
-    <Import Project="debug.props" />
-    <Import Project="x64.props" />
-  </ImportGroup>
-  <ImportGroup Condition="'$(Configuration)|$(Platform)'=='Release|x64'" Label="PropertySheets">
-    <Import Project="product.props" />
-    <Import Project="release.props" />
-    <Import Project="x64.props" />
-  </ImportGroup>
 
   <PropertyGroup Label="Globals">
     <ProjectGuid>{63b4e131-717e-4bc4-9271-2dae72109f65}</ProjectGuid>
@@ -67,6 +45,28 @@
 
   <Import Project="$(VCTargetsPath)Microsoft.Cpp.Default.props" />
   <Import Project="$(VCTargetsPath)Microsoft.Cpp.props" />
+
+  <ImportGroup Label="PropertySheets" />
+  <ImportGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'" Label="PropertySheets">
+    <Import Project="product.props" />
+    <Import Project="debug.props" />
+    <Import Project="x86.props" />
+  </ImportGroup>
+  <ImportGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'" Label="PropertySheets">
+    <Import Project="product.props" />
+    <Import Project="release.props" />
+    <Import Project="x86.props" />
+  </ImportGroup>
+  <ImportGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x64'" Label="PropertySheets">
+    <Import Project="product.props" />
+    <Import Project="debug.props" />
+    <Import Project="x64.props" />
+  </ImportGroup>
+  <ImportGroup Condition="'$(Configuration)|$(Platform)'=='Release|x64'" Label="PropertySheets">
+    <Import Project="product.props" />
+    <Import Project="release.props" />
+    <Import Project="x64.props" />
+  </ImportGroup>
 
   <PropertyGroup>
     <_ProjectFileVersion>10</_ProjectFileVersion>

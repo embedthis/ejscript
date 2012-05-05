@@ -217,10 +217,9 @@ function archPropBuild(base: Path, arch) {
   <ImportGroup Label="PropertySheets" />
   <PropertyGroup Label="UserMacros">
     <CfgDir>..\\..\\win-' + arch + '-$(Config)</CfgDir>
-    <BinDir>$(CfgDir)\\bin</BinDir>
     <IncDir>$(CfgDir)\\inc</IncDir>
     <ObjDir>$(CfgDir)\\obj</ObjDir>
-    <MobDir>$(CfgDir)\\bin</MobDir>
+    <BinDir>$([System.IO.Path]::GetFullPath($(ProjectDir)\$(CfgDir)\bin))</Value>
   </PropertyGroup>
   <ItemGroup>
     <BuildMacro Include="CfgDir">
@@ -239,12 +238,6 @@ function archPropBuild(base: Path, arch) {
       <Value>$(ObjDir)</Value>
       <EnvironmentVariable>true</EnvironmentVariable>
     </BuildMacro>
-    <BuildMacro Include="MobDir">
-      <Value>$([System.IO.Path]::GetFullPath($(BinDir))</Value>
-      <EnvironmentVariable>true</EnvironmentVariable>
-    </BuildMacro>
-  <PropertyGroup Label="Features">
-  </PropertyGroup>
   </ItemGroup>
 </Project>')
     out.close()
@@ -285,29 +278,8 @@ function projHeader(base, target) {
     bit.INC = target.includes ? target.includes.map(function(path) wpath(path.relativeTo(base))).join(';') : ''
 
     output('<?xml version="1.0" encoding="utf-8"?>
-<Project DefaultTargets="Build" ToolsVersion="${TOOLS_VERSION}" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
-  <ImportGroup Label="PropertySheets" />
+<Project DefaultTargets="Build" ToolsVersion="${TOOLS_VERSION}" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">')
 
-  <ImportGroup Condition="\'$(Configuration)|$(Platform)\'==\'Debug|Win32\'" Label="PropertySheets">
-    <Import Project="product.props" />
-    <Import Project="debug.props" />
-    <Import Project="x86.props" />
-  </ImportGroup>
-  <ImportGroup Condition="\'$(Configuration)|$(Platform)\'==\'Release|Win32\'" Label="PropertySheets">
-    <Import Project="product.props" />
-    <Import Project="release.props" />
-    <Import Project="x86.props" />
-  </ImportGroup>
-  <ImportGroup Condition="\'$(Configuration)|$(Platform)\'==\'Debug|x64\'" Label="PropertySheets">
-    <Import Project="product.props" />
-    <Import Project="debug.props" />
-    <Import Project="x64.props" />
-  </ImportGroup>
-  <ImportGroup Condition="\'$(Configuration)|$(Platform)\'==\'Release|x64\'" Label="PropertySheets">
-    <Import Project="product.props" />
-    <Import Project="release.props" />
-    <Import Project="x64.props" />
-  </ImportGroup>')
 
     if (target.type == 'lib' || target.type == 'exe') {
         output('
@@ -401,6 +373,28 @@ function projConfig(base, target) {
     output('
   <Import Project="${VTOK}\Microsoft.Cpp.Default.props" />
   <Import Project="${VTOK}\Microsoft.Cpp.props" />
+
+  <ImportGroup Label="PropertySheets" />
+  <ImportGroup Condition="\'$(Configuration)|$(Platform)\'==\'Debug|Win32\'" Label="PropertySheets">
+    <Import Project="product.props" />
+    <Import Project="debug.props" />
+    <Import Project="x86.props" />
+  </ImportGroup>
+  <ImportGroup Condition="\'$(Configuration)|$(Platform)\'==\'Release|Win32\'" Label="PropertySheets">
+    <Import Project="product.props" />
+    <Import Project="release.props" />
+    <Import Project="x86.props" />
+  </ImportGroup>
+  <ImportGroup Condition="\'$(Configuration)|$(Platform)\'==\'Debug|x64\'" Label="PropertySheets">
+    <Import Project="product.props" />
+    <Import Project="debug.props" />
+    <Import Project="x64.props" />
+  </ImportGroup>
+  <ImportGroup Condition="\'$(Configuration)|$(Platform)\'==\'Release|x64\'" Label="PropertySheets">
+    <Import Project="product.props" />
+    <Import Project="release.props" />
+    <Import Project="x64.props" />
+  </ImportGroup>
 
   <PropertyGroup>
     <_ProjectFileVersion>${PROJECT_FILE_VERSION}</_ProjectFileVersion>')
