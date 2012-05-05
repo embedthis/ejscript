@@ -549,8 +549,6 @@ function exportHeaders(base, target) {
         if (!dep || dep.type != 'header') continue
         for each (file in dep.files) {
             /* Use the directory in the destination so Xcopy won't ask if file or directory */
-print("DEP", dep.path)
-print("TO", dep.path.relativeTo(target.home))
             cmd += 'xcopy /Y /S /D ' + wpath(file.relativeTo(target.home)) + ' ' + 
                 wpath(dep.path.relativeTo(target.home).parent) + '\r\n'
         }
