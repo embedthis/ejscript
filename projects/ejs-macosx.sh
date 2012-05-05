@@ -251,10 +251,7 @@ if ! diff ejs.slots.h ../../${CONFIG}/inc/ejs.slots.h >/dev/null; then cp ejs.sl
 rm -f ejs.slots.h ;\
 cd - >/dev/null 
 
-cd src/jems/ejs.bit >/dev/null ;\
-cp bit.es ../../../${CONFIG}/bin ;\
-cd - >/dev/null 
-
+#  Omit build script /Users/mob/git/ejs/macosx-x64-debug/bin/bit.es
 cd src/jems/ejs.bit >/dev/null ;\
 rm -fr ../../../${CONFIG}/bin/bits ;\
 cp -r bits ../../../${CONFIG}/bin ;\
@@ -264,42 +261,24 @@ ${CC} -c -o ${CONFIG}/obj/ejsZlib.o -arch x86_64 ${CFLAGS} ${DFLAGS} -I${CONFIG}
 
 ${CC} -o ${CONFIG}/bin/bit -arch x86_64 ${LDFLAGS} ${LIBPATHS} ${CONFIG}/obj/ejsrun.o ${CONFIG}/obj/ejsZlib.o ${CONFIG}/obj/mprLib.o ${CONFIG}/obj/pcre.o ${CONFIG}/obj/mprSsl.o ${CONFIG}/obj/httpLib.o ${CONFIG}/obj/ecAst.o ${CONFIG}/obj/ecCodeGen.o ${CONFIG}/obj/ecCompiler.o ${CONFIG}/obj/ecLex.o ${CONFIG}/obj/ecModuleWrite.o ${CONFIG}/obj/ecParser.o ${CONFIG}/obj/ecState.o ${CONFIG}/obj/ejsApp.o ${CONFIG}/obj/ejsArray.o ${CONFIG}/obj/ejsBlock.o ${CONFIG}/obj/ejsBoolean.o ${CONFIG}/obj/ejsByteArray.o ${CONFIG}/obj/ejsCache.o ${CONFIG}/obj/ejsCmd.o ${CONFIG}/obj/ejsConfig.o ${CONFIG}/obj/ejsDate.o ${CONFIG}/obj/ejsDebug.o ${CONFIG}/obj/ejsError.o ${CONFIG}/obj/ejsFile.o ${CONFIG}/obj/ejsFileSystem.o ${CONFIG}/obj/ejsFrame.o ${CONFIG}/obj/ejsFunction.o ${CONFIG}/obj/ejsGC.o ${CONFIG}/obj/ejsGlobal.o ${CONFIG}/obj/ejsHttp.o ${CONFIG}/obj/ejsIterator.o ${CONFIG}/obj/ejsJSON.o ${CONFIG}/obj/ejsLocalCache.o ${CONFIG}/obj/ejsMath.o ${CONFIG}/obj/ejsMemory.o ${CONFIG}/obj/ejsMprLog.o ${CONFIG}/obj/ejsNamespace.o ${CONFIG}/obj/ejsNull.o ${CONFIG}/obj/ejsNumber.o ${CONFIG}/obj/ejsObject.o ${CONFIG}/obj/ejsPath.o ${CONFIG}/obj/ejsPot.o ${CONFIG}/obj/ejsRegExp.o ${CONFIG}/obj/ejsSocket.o ${CONFIG}/obj/ejsString.o ${CONFIG}/obj/ejsSystem.o ${CONFIG}/obj/ejsTimer.o ${CONFIG}/obj/ejsType.o ${CONFIG}/obj/ejsUri.o ${CONFIG}/obj/ejsVoid.o ${CONFIG}/obj/ejsWorker.o ${CONFIG}/obj/ejsXML.o ${CONFIG}/obj/ejsXMLList.o ${CONFIG}/obj/ejsXMLLoader.o ${CONFIG}/obj/ejsByteCode.o ${CONFIG}/obj/ejsException.o ${CONFIG}/obj/ejsHelper.o ${CONFIG}/obj/ejsInterp.o ${CONFIG}/obj/ejsLoader.o ${CONFIG}/obj/ejsModule.o ${CONFIG}/obj/ejsScope.o ${CONFIG}/obj/ejsService.o ${LIBS}
 
-cd src/jems/ejs.utest >/dev/null ;\
-cp ./utest.es ../../../${CONFIG}/bin ;\
-cd - >/dev/null 
-
+#  Omit build script /Users/mob/git/ejs/macosx-x64-debug/bin/utest.es
 rm -rf ${CONFIG}/bin/utest
 cp -r ${CONFIG}/bin/ejsrun ${CONFIG}/bin/utest
 
-cd src/jems/ejs.unix >/dev/null ;\
-../../../${CONFIG}/bin/ejsc --out ../../../${CONFIG}/bin/ejs.unix.mod --debug --optimize 9 ./Unix.es ;\
-cd - >/dev/null 
-
-cd src/jems/ejs.jem >/dev/null ;\
-cp ./jem.es ../../../${CONFIG}/bin ;\
-cd - >/dev/null 
-
+#  Omit build script /Users/mob/git/ejs/macosx-x64-debug/bin/ejs.unix.mod
+#  Omit build script /Users/mob/git/ejs/macosx-x64-debug/bin/jem.es
 rm -rf ${CONFIG}/bin/jem
 cp -r ${CONFIG}/bin/ejsrun ${CONFIG}/bin/jem
 
-cd src/jems/ejs.db >/dev/null ;\
-../../../${CONFIG}/bin/ejsc --out ../../../${CONFIG}/bin/ejs.db.mod --debug --optimize 9 ./*.es ;\
-cd - >/dev/null 
-
-cd src/jems/ejs.db.mapper >/dev/null ;\
-../../../${CONFIG}/bin/ejsc --out ../../../${CONFIG}/bin/ejs.db.mapper.mod --debug --optimize 9 ./*.es ;\
-cd - >/dev/null 
-
-cd src/jems/ejs.db.sqlite >/dev/null ;\
-../../../${CONFIG}/bin/ejsc --out ../../../${CONFIG}/bin/ejs.db.sqlite.mod --debug --optimize 9 *.es ;\
-cd - >/dev/null 
-
+#  Omit build script /Users/mob/git/ejs/macosx-x64-debug/bin/ejs.db.mod
+#  Omit build script /Users/mob/git/ejs/macosx-x64-debug/bin/ejs.db.mapper.mod
+#  Omit build script /Users/mob/git/ejs/macosx-x64-debug/bin/ejs.db.sqlite.mod
 ${CC} -c -o ${CONFIG}/obj/ejsSqlite.o -arch x86_64 ${CFLAGS} ${DFLAGS} -I${CONFIG}/inc src/jems/ejs.db.sqlite/ejsSqlite.c
 
 ${CC} -dynamiclib -o ${CONFIG}/bin/ejs.db.sqlite.dylib -arch x86_64 ${LDFLAGS} -compatibility_version 2.0.0 -current_version 2.0.0 ${LIBPATHS} -install_name @rpath/ejs.db.sqlite.dylib ${CONFIG}/obj/ejsSqlite.o ${LIBS} -lmpr -lejs -lhttp -lpcre -lmprssl -lsqlite3
 
 cd src/jems/ejs.web >/dev/null ;\
-../../../${CONFIG}/bin/ejsc --out ../../../${CONFIG}/bin/ejs.web.mod --debug --optimize 9 ./*.es ;\
+../../../${CONFIG}/bin/ejsc --out ../../../${CONFIG}/bin/ejs.web.mod --debug --optimize 9 *.es ;\
 ../../../${CONFIG}/bin/ejsmod --cslots ../../../${CONFIG}/bin/ejs.web.mod ;\
 if ! diff ejs.web.slots.h ../../../${CONFIG}/inc/ejs.web.slots.h >/dev/null; then cp ejs.web.slots.h ../../../${CONFIG}/inc; fi ;\
 rm -f ejs.web.slots.h ;\
@@ -317,29 +296,14 @@ ${CC} -dynamiclib -o ${CONFIG}/bin/ejs.web.dylib -arch x86_64 ${LDFLAGS} -compat
 
 cd src/jems/ejs.web >/dev/null ;\
 rm -fr ../../../${CONFIG}/bin/www ;\
-cp -r ./www ../../../${CONFIG}/bin ;\
+cp -r www ../../../${CONFIG}/bin ;\
 cd - >/dev/null 
 
-cd src/jems/ejs.template >/dev/null ;\
-../../../${CONFIG}/bin/ejsc --out ../../../${CONFIG}/bin/ejs.template.mod --debug --optimize 9 ./TemplateParser.es ;\
-cd - >/dev/null 
-
-cd src/jems/ejs.tar >/dev/null ;\
-../../../${CONFIG}/bin/ejsc --out ../../../${CONFIG}/bin/ejs.tar.mod --debug --optimize 9 ./*.es ;\
-cd - >/dev/null 
-
-cd src/jems/ejs.mvc >/dev/null ;\
-cp ./mvc.es ../../../${CONFIG}/bin ;\
-cd - >/dev/null 
-
+#  Omit build script /Users/mob/git/ejs/macosx-x64-debug/bin/ejs.template.mod
+#  Omit build script /Users/mob/git/ejs/macosx-x64-debug/bin/ejs.tar.mod
+#  Omit build script /Users/mob/git/ejs/macosx-x64-debug/bin/mvc.es
 rm -rf ${CONFIG}/bin/mvc
 cp -r ${CONFIG}/bin/ejsrun ${CONFIG}/bin/mvc
 
-cd src/jems/ejs.mvc >/dev/null ;\
-../../../${CONFIG}/bin/ejsc --out ../../../${CONFIG}/bin/ejs.mvc.mod --debug --optimize 9 ./*.es ;\
-cd - >/dev/null 
-
-cd src/jems/ejs.utest >/dev/null ;\
-cp ./utest.worker ../../../${CONFIG}/bin ;\
-cd - >/dev/null 
-
+#  Omit build script /Users/mob/git/ejs/macosx-x64-debug/bin/ejs.mvc.mod
+#  Omit build script /Users/mob/git/ejs/macosx-x64-debug/bin/utest.worker
