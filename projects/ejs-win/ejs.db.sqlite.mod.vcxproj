@@ -1,32 +1,56 @@
-﻿<?xml version="1.0" encoding="utf-8"?>
+<?xml version="1.0" encoding="utf-8"?>
 <Project DefaultTargets="Build" ToolsVersion="4.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
   <ImportGroup Label="PropertySheets" />
-  <PropertyGroup Label="UserMacros" />
-  <PropertyGroup />
+
+  <ImportGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'" Label="PropertySheets">
+    <Import Project="product.props" />
+    <Import Project="debug.props" />
+    <Import Project="x86.props" />
+  </ImportGroup>
+  <ImportGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'" Label="PropertySheets">
+    <Import Project="product.props" />
+    <Import Project="release.props" />
+    <Import Project="x86.props" />
+  </ImportGroup>
+  <ImportGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x64'" Label="PropertySheets">
+    <Import Project="product.props" />
+    <Import Project="debug.props" />
+    <Import Project="x64.props" />
+  </ImportGroup>
+  <ImportGroup Condition="'$(Configuration)|$(Platform)'=='Release|x64'" Label="PropertySheets">
+    <Import Project="product.props" />
+    <Import Project="release.props" />
+    <Import Project="x64.props" />
+  </ImportGroup>
+
+  <PropertyGroup Label="Globals">
+    <ProjectGuid>{8072726a-7264-46f4-9bb3-f1a8ead8d1de}</ProjectGuid>
+    <RootNamespace />
+    <Keyword>Win32Proj</Keyword>
+  </PropertyGroup>
+
+  <Import Project="$(VCTargetsPath)Microsoft.Cpp.Default.props" />
+  <Import Project="$(VCTargetsPath)Microsoft.Cpp.props" />
+
   <ItemGroup Label="ProjectConfigurations">
     <ProjectConfiguration Include="Debug|Win32">
       <Configuration>Debug</Configuration>
+      <Platform>Win32</Platform>
+    </ProjectConfiguration>
+    <ProjectConfiguration Include="Release|Win32">
+      <Configuration>Release</Configuration>
       <Platform>Win32</Platform>
     </ProjectConfiguration>
     <ProjectConfiguration Include="Debug|x64">
       <Configuration>Debug</Configuration>
       <Platform>x64</Platform>
     </ProjectConfiguration>
-    <ProjectConfiguration Include="Release|Win32">
-      <Configuration>Release</Configuration>
-      <Platform>Win32</Platform>
-    </ProjectConfiguration>
     <ProjectConfiguration Include="Release|x64">
       <Configuration>Release</Configuration>
       <Platform>x64</Platform>
     </ProjectConfiguration>
   </ItemGroup>
-  <PropertyGroup Label="Globals">
-    <ProjectGuid>{8072726a-7264-46f4-9bb3-f1a8ead8d1de}</ProjectGuid>
-    <RootNamespace />
-    <Keyword>Win32Proj</Keyword>
-  </PropertyGroup>
-  <Import Project="$(VCTargetsPath)Microsoft.Cpp.Default.props" />
+
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'" Label="Configuration">
     <ConfigurationType>DynamicLibrary</ConfigurationType>
     <CharacterSet>NotSet</CharacterSet>
@@ -43,51 +67,55 @@
     <ConfigurationType>DynamicLibrary</ConfigurationType>
     <CharacterSet>NotSet</CharacterSet>
   </PropertyGroup>
-  <Import Project="$(VCTargetsPath)Microsoft.Cpp.props" />
-  <ImportGroup Label="ExtensionSettings">
-  </ImportGroup>
-  <PropertyGroup Label="UserMacros" />
+
   <PropertyGroup>
     <_ProjectFileVersion>10</_ProjectFileVersion>
-    <OutDir Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">..\..\win-x86-debug\bin\</OutDir>
-    <OutDir Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">..\..\win-x86-debug\bin\</OutDir>
-    <OutDir Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">..\..\win-x86-debug\bin\</OutDir>
-    <OutDir Condition="'$(Configuration)|$(Platform)'=='Release|x64'">..\..\win-x86-debug\bin\</OutDir>
-    <IntDir Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">..\..\win-x86-debug\obj\ejs.db.sqlite.mod\</IntDir>
-    <IntDir Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">..\..\win-x86-debug\obj\ejs.db.sqlite.mod\</IntDir>
-    <IntDir Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">..\..\win-x86-debug\obj\ejs.db.sqlite.mod\</IntDir>
-    <IntDir Condition="'$(Configuration)|$(Platform)'=='Release|x64'">..\..\win-x86-debug\obj\ejs.db.sqlite.mod\</IntDir>
+
+    <OutDir Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">$(BinDir)\</OutDir>
+    <IntDir Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">$(ObjDir)\ejs.db.sqlite.mod\</IntDir>
     <CustomBuildBeforeTargets Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">PreBuildEvent</CustomBuildBeforeTargets>
+
+    <OutDir Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">$(BinDir)\</OutDir>
+    <IntDir Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">$(ObjDir)\ejs.db.sqlite.mod\</IntDir>
     <CustomBuildBeforeTargets Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">PreBuildEvent</CustomBuildBeforeTargets>
+
+    <OutDir Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">$(BinDir)\</OutDir>
+    <IntDir Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">$(ObjDir)\ejs.db.sqlite.mod\</IntDir>
     <CustomBuildBeforeTargets Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">PreBuildEvent</CustomBuildBeforeTargets>
+
+    <OutDir Condition="'$(Configuration)|$(Platform)'=='Release|x64'">$(BinDir)\</OutDir>
+    <IntDir Condition="'$(Configuration)|$(Platform)'=='Release|x64'">$(ObjDir)\ejs.db.sqlite.mod\</IntDir>
     <CustomBuildBeforeTargets Condition="'$(Configuration)|$(Platform)'=='Release|x64'">PreBuildEvent</CustomBuildBeforeTargets>
   </PropertyGroup>
+
   <ItemDefinitionGroup>
-    <Link>
-      <AdditionalDependencies>;%(AdditionalDependencies)</AdditionalDependencies>
-      <AdditionalLibraryDirectories>$(OutDir);win-x86-debug\bin;%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
-    </Link>
-    <CustomBuildStep>
-      <Command>"..\..\win-x86-debug\bin\ejsc" --out ..\..\win-x86-debug\bin\ejs.db.sqlite.mod --debug --optimize 9 "*.es"</Command>
-      <Outputs Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">..\..\win-x86-debug\bin\ejs.db.sqlite.mod</Outputs>
-      <Outputs Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">..\..\win-x86-debug\bin\ejs.db.sqlite.mod</Outputs>
-      <Outputs Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">..\..\win-x86-debug\bin\ejs.db.sqlite.mod</Outputs>
-      <Outputs Condition="'$(Configuration)|$(Platform)'=='Release|x64'">..\..\win-x86-debug\bin\ejs.db.sqlite.mod</Outputs>
-    </CustomBuildStep>
+  <Link>
+    <AdditionalDependencies>;%(AdditionalDependencies)</AdditionalDependencies>
+    <AdditionalLibraryDirectories>$(OutDir);win-x86-debug\bin;%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
+  </Link>
+
+  <CustomBuildStep>
+    <Command>"$(BinDir)\ejsc" --out $(BinDir)\ejs.db.sqlite.mod --debug --optimize 9 "*.es"</Command>
+    <Outputs>$(BinDir)\ejs.db.sqlite.mod</Outputs>
+  </CustomBuildStep>
   </ItemDefinitionGroup>
-  <ItemGroup>
-    <ProjectReference Include="ejsc.vcxproj">
-      <Project>d5245843-770a-44aa-9aa8-2a834be6411e</Project>
-      <ReferenceOutputAssembly>false</ReferenceOutputAssembly>
-    </ProjectReference>
-  </ItemGroup>
-  <ItemGroup>
-    <ProjectReference Include="ejsmod.vcxproj">
-      <Project>75e07b9b-a28e-4738-abe0-779930cc67c1</Project>
-      <ReferenceOutputAssembly>false</ReferenceOutputAssembly>
-    </ProjectReference>
-  </ItemGroup>
+
+<ItemGroup>
+  <ProjectReference Include="ejsc.vcxproj">
+  <Project>d5245843-770a-44aa-9aa8-2a834be6411e</Project>
+  <ReferenceOutputAssembly>false</ReferenceOutputAssembly>
+  </ProjectReference>
+</ItemGroup>
+
+<ItemGroup>
+  <ProjectReference Include="ejsmod.vcxproj">
+  <Project>75e07b9b-a28e-4738-abe0-779930cc67c1</Project>
+  <ReferenceOutputAssembly>false</ReferenceOutputAssembly>
+  </ProjectReference>
+</ItemGroup>
+
   <Import Project="$(VCTargetsPath)Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">
   </ImportGroup>
+
 </Project>

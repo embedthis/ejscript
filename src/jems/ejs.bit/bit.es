@@ -2290,19 +2290,11 @@ print("HERE")
             }
             global[n] = bit[n] = dir
             if (bit.platform.like == 'windows') {
-if (n == 'BIN') {
-    print('BASE', base)
-    print('BEFORE', dir)
-}
-
                 if (base) {
                     bit['WIN_' + n] = dir.relativeTo(base).windows
                 } else {
                     bit['WIN_' + n] = dir.windows
                 }
-if (n == 'BIN') {
-    print('AFTER', dir.relativeTo(base).windows)
-}
             }
         }
         bit.LBIN = global.LBIN

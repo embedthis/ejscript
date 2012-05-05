@@ -21,16 +21,16 @@ if not exist ${OUTDIR}\\inc\\bit.h copy ..\\${settings.product}-${platform.os}-b
 if not exist ${OUTDIR}\\bin\\libmpr.def xcopy /Y /S *.def ${OUTDIR}\\bin\r
 '
 var prepTarget
+var Base 
 
 public function vstudio(base: Path) {
+    //  MOB refactor
+    Base = base
     bit.TOOLS_VERSION = TOOLS_VERSION
     bit.PROJECT_FILE_VERSION = PROJECT_FILE_VERSION
-print("BASE", base)
     for each (n in ['WIN_CFG', 'WIN_BIN', 'WIN_BITS', 'WIN_FLAT', 'WIN_INC', 'WIN_LIB', 'WIN_OBJ', 'WIN_PACKS', 
             'WIN_PKG', 'WIN_REL', 'WIN_SRC', 'WIN_TOP']) {
-print("WAS " + bit[n])
         bit[n] = wpath(bit[n].portable.relativeTo(base))
-print("SET DIR " + n + " to " + bit[n])
     }
     for each (n in ["BIN", "CFG", "FLAT", "INC", "LIB", "OBJ", "PACKS", "PKG", "REL", "SRC", "TOP"]) {
         bit[n] = bit[n].relativeTo(base)
@@ -49,6 +49,7 @@ print("SET DIR " + n + " to " + bit[n])
     for each (target in bit.targets) {
         projBuild(projects, base, target)
     }
+    propBuild(base)
     solBuild(projects, base)
 }
 
@@ -62,8 +63,7 @@ function solBuild(projects, base: Path) {
     for each (target in projects) {
         target.guid = target.guid.toUpper()
         output('Project("' + XID + '") = "' + target.name + '", "' + 
-            wpath(base.basename.join(target.name).joinExt('vcxproj', true)) + 
-            '", "{' + target.guid + '}"')
+            wpath(base.basename.join(target.name).joinExt('vcxproj', true)) + '", "{' + target.guid + '}"')
         /* Everything depends on prep */
         if (target != prepTarget) {
             let dep = prepTarget
@@ -94,6 +94,12 @@ Global
     for each (target in projects) {
 		output('{' + target.guid + '}.Debug|Win32.ActiveCfg = Debug|Win32')
 		output('{' + target.guid + '}.Debug|Win32.Build.0 = Debug|Win32')
+		output('{' + target.guid + '}.Debug|x64.ActiveCfg = Debug|x64')
+		output('{' + target.guid + '}.Debug|x64.Build.0 = Debug|x64')
+		output('{' + target.guid + '}.Release|Win32.ActiveCfg = Release|Win32')
+		output('{' + target.guid + '}.Release|Win32.Build.0 = Release|Win32')
+		output('{' + target.guid + '}.Release|x64.ActiveCfg = Release|x64')
+		output('{' + target.guid + '}.Release|x64.Build.0 = Release|x64')
     }
 	output('EndGlobalSection
 
@@ -101,6 +107,141 @@ Global
     HideSolutionNode = FALSE
   EndGlobalSection
 EndGlobal')
+    out.close()
+}
+
+function propBuild(base: Path) {
+    productPropBuild(base)
+    debugPropBuild(base)
+    releasePropBuild(base)
+    archPropBuild(base, 'x86')
+    archPropBuild(base, 'x64')
+}
+
+function productPropBuild(base: Path) {
+    let path = base.join('debug.props').relative
+    trace('Generate', path)
+    out = TextStream(File(path, 'wt'))
+    output('<?xml version="1.0" encoding="utf-8"?>
+<Project ToolsVersion="4.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <ImportGroup Label="PropertySheets" />
+  <ItemDefinitionGroup>
+    <ClCompile>
+      <AdditionalIncludeDirectories>$(IncDir);%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <PreprocessorDefinitions>WIN32;_WINDOWS;_REENTRANT;_MT;%(PreprocessorDefinitions)</PreprocessorDefinitions>
+    </ClCompile>
+    <Link>
+      <AdditionalDependencies>ws2_32.lib;%(AdditionalDependencies)</AdditionalDependencies>
+      <AdditionalLibraryDirectories>$(OutDir);%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
+    </Link>
+  </ItemDefinitionGroup>
+</Project>')
+    out.close()
+}
+
+function debugPropBuild(base: Path) {
+    let path = base.join('debug.props').relative
+    trace('Generate', path)
+    out = TextStream(File(path, 'wt'))
+
+    //  MOB - remove MultiThreadedDebugDll
+    output('<?xml version="1.0" encoding="utf-8"?>
+<Project ToolsVersion="4.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <ImportGroup Label="PropertySheets" />
+  <PropertyGroup Label="UserMacros">
+    <Config>debug</Config>
+  </PropertyGroup>
+  <ItemDefinitionGroup>
+    <ClCompile>
+      <PreprocessorDefinitions>_DEBUG;BLD_DEBUG;DEBUG_IDE;%(PreprocessorDefinitions)</PreprocessorDefinitions>
+      <Optimization>Disabled</Optimization>
+      <BasicRuntimeChecks>EnableFastChecks</BasicRuntimeChecks>
+      <RuntimeLibrary>MultiThreadedDebugDLL</RuntimeLibrary>
+    </ClCompile>
+    <Link>
+      <GenerateDebugInformation>true</GenerateDebugInformation>
+    </Link>
+  </ItemDefinitionGroup>
+  <ItemGroup>
+    <BuildMacro Include="Config">
+    <Value>$(Config)</Value>
+    <EnvironmentVariable>true</EnvironmentVariable>
+  </BuildMacro>
+  </ItemGroup>
+</Project>')
+    out.close()
+}
+
+function releasePropBuild(base: Path) {
+    let path = base.join('release.props').relative
+    trace('Generate', path)
+    out = TextStream(File(path, 'wt'))
+    //  MOB - remove MultiThreadedDebugDll
+    output('<?xml version="1.0" encoding="utf-8"?>
+<Project ToolsVersion="4.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <ImportGroup Label="PropertySheets" />
+  <PropertyGroup Label="UserMacros">
+    <Config>release</Config>
+  </PropertyGroup>
+  <ItemDefinitionGroup>
+    <ClCompile>
+      <Optimization>MinSpace</Optimization>
+      <RuntimeLibrary>MultiThreadedDLL</RuntimeLibrary>
+      <IntrinsicFunctions>true</IntrinsicFunctions>
+      <FunctionLevelLinking>true</FunctionLevelLinking>
+    </ClCompile>
+    <Link>
+      <GenerateDebugInformation>false</GenerateDebugInformation>
+    </Link>
+  </ItemDefinitionGroup>
+  <ItemGroup>
+    <BuildMacro Include="Config">
+      <Value>$(Config)</Value>
+      <EnvironmentVariable>true</EnvironmentVariable>
+    </BuildMacro>
+  </ItemGroup>
+</Project>')
+    out.close()
+}
+
+function archPropBuild(base: Path, arch) {
+    let path = base.join(arch + '.props').relative
+    trace('Generate', path)
+    out = TextStream(File(path, 'wt'))
+
+    output('<?xml version="1.0" encoding="utf-8"?>
+<Project ToolsVersion="4.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <ImportGroup Label="PropertySheets" />
+  <PropertyGroup Label="UserMacros">
+    <CfgDir>..\\..\\win-' + arch + '-$(Config)</CfgDir>
+    <BinDir>$(CfgDir)\\bin</BinDir>
+    <IncDir>$(CfgDir)\\inc</IncDir>
+    <ObjDir>$(CfgDir)\\obj</ObjDir>
+  </PropertyGroup>
+  <ItemGroup>
+    <BuildMacro Include="CfgDir">
+      <Value>$(CfgDir)</Value>
+      <EnvironmentVariable>true</EnvironmentVariable>
+    </BuildMacro>
+    <BuildMacro Include="BinDir">
+      <Value>$(BinDir)</Value>
+      <EnvironmentVariable>true</EnvironmentVariable>
+    </BuildMacro>
+    <BuildMacro Include="IncDir">
+      <Value>$(IncDir)</Value>
+      <EnvironmentVariable>true</EnvironmentVariable>
+    </BuildMacro>
+    <BuildMacro Include="ObjDir">
+      <Value>$(ObjDir)</Value>
+      <EnvironmentVariable>true</EnvironmentVariable>
+    </BuildMacro>
+  </ItemGroup>
+</Project>')
+/* UNUSED
+  <PropertyGroup Label="Features">
+    <Abs_CfgDir>$([System.IO.Path]::GetFullPath($(CfgDir))</Abs_CfgDir>
+  </PropertyGroup>
+ */
     out.close()
 }
 
@@ -141,42 +282,58 @@ function projHeader(base, target) {
     output('<?xml version="1.0" encoding="utf-8"?>
 <Project DefaultTargets="Build" ToolsVersion="${TOOLS_VERSION}" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
   <ImportGroup Label="PropertySheets" />
-  <PropertyGroup Label="UserMacros" />
-  <PropertyGroup />')
+
+  <ImportGroup Condition="\'$(Configuration)|$(Platform)\'==\'Debug|Win32\'" Label="PropertySheets">
+    <Import Project="product.props" />
+    <Import Project="debug.props" />
+    <Import Project="x86.props" />
+  </ImportGroup>
+  <ImportGroup Condition="\'$(Configuration)|$(Platform)\'==\'Release|Win32\'" Label="PropertySheets">
+    <Import Project="product.props" />
+    <Import Project="release.props" />
+    <Import Project="x86.props" />
+  </ImportGroup>
+  <ImportGroup Condition="\'$(Configuration)|$(Platform)\'==\'Debug|x64\'" Label="PropertySheets">
+    <Import Project="product.props" />
+    <Import Project="debug.props" />
+    <Import Project="x64.props" />
+  </ImportGroup>
+  <ImportGroup Condition="\'$(Configuration)|$(Platform)\'==\'Release|x64\'" Label="PropertySheets">
+    <Import Project="product.props" />
+    <Import Project="release.props" />
+    <Import Project="x64.props" />
+  </ImportGroup>')
 
     if (target.type == 'lib' || target.type == 'exe') {
         output('
   <ItemDefinitionGroup>
     <ClCompile>
-      <WarningLevel>Level3</WarningLevel>
-      <AdditionalIncludeDirectories>${INC};%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
-    ')
+      <AdditionalIncludeDirectories>${INC};%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>')
 
+    /* UNUSED
+        //  MOB - remove MultiThreadedDebugDLL below
         if (bit.platform.profile == 'debug') {
             output('  <PreprocessorDefinitions>WIN32;_DEBUG;_WINDOWS;BLD_DEBUG;DEBUG_IDE;_REENTRANT;_MT;%(PreprocessorDefinitions)</PreprocessorDefinitions>
-    <Optimization>Disabled</Optimization>
-    <BasicRuntimeChecks>EnableFastChecks</BasicRuntimeChecks>
     <RuntimeLibrary>MultiThreadedDebugDLL</RuntimeLibrary>')
         } else {
             output('  <PreprocessorDefinitions>WIN32;_WINDOWS;_REENTRANT;_MT;%(PreprocessorDefinitions)</PreprocessorDefinitions>
-    <FavorSizeOrSpeed>Size</FavorSizeOrSpeed>
-    <RuntimeLibrary>MultiThreadedDLL</RuntimeLibrary>
-    <Optimization>MinSpace</Optimization>
-    <IntrinsicFunctions>true</IntrinsicFunctions>
-    <FunctionLevelLinking>true</FunctionLevelLinking>')
+    <RuntimeLibrary>MultiThreadedDLL</RuntimeLibrary>')
     }
+    */
         output('    </ClCompile>')
 
-        output(' <Link>
+        output('    <Link>
       <AdditionalDependencies>ws2_32.lib;%(AdditionalDependencies)</AdditionalDependencies>
       <AdditionalLibraryDirectories>$(OutDir);%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
       <SubSystem>${SUBSYSTEM}</SubSystem>')
 
+        /* UNUSED
         if (bit.platform.profile == 'debug') {
           output('      <GenerateDebugInformation>true</GenerateDebugInformation>')
         } else {
           output('      <GenerateDebugInformation>false</GenerateDebugInformation>')
         }
+        */
         output('    </Link>
   </ItemDefinitionGroup>')
     }
@@ -185,7 +342,6 @@ function projHeader(base, target) {
 
 function projConfig(base, target) {
     bit.PTYPE = (target.type == 'exe') ? 'Application' : 'DynamicLibrary'
-    bit.VTYPE = 'Win32'
     let guid = bit.dir.proj.join('.' + target.name + '.guid')
     if (guid.exists) {
         target.guid = guid.readString().trim()
@@ -204,64 +360,83 @@ function projConfig(base, target) {
     bit.OUTDIR = wpath(bit.dir.cfg.relativeTo(base))
 
     output('
-<ItemGroup Label="ProjectConfigurations">
-  <ProjectConfiguration Include="Debug|${VTYPE}">
-    <Configuration>Debug</Configuration>
-    <Platform>${VTYPE}</Platform>
-  </ProjectConfiguration>
-</ItemGroup>
+  <PropertyGroup Label="Globals">
+    <ProjectGuid>{${GUID}}</ProjectGuid>
+    <RootNamespace />
+    <Keyword>Win32Proj</Keyword>
+  </PropertyGroup>
 
-<PropertyGroup Label="Globals">
-  <ProjectGuid>{${GUID}}</ProjectGuid>
-  <RootNamespace />
-  <Keyword>${VTYPE}Proj</Keyword>
-</PropertyGroup>
+  <Import Project="${VTOK}\Microsoft.Cpp.Default.props" />
+  <Import Project="${VTOK}\Microsoft.Cpp.props" />')
 
-<Import Project="${VTOK}\Microsoft.Cpp.Default.props" />
+    output('
+  <ItemGroup Label="ProjectConfigurations">')
+    for each (vtype in ['Win32', 'x64']) {
+        for each (vcfg in ['Debug', 'Release']) {
+            bit.VTYPE = vtype
+            bit.VCFG = vcfg
 
-<PropertyGroup Condition="\'${CTOK}|${PTOK}\'==\'Debug|${VTYPE}\'" Label="Configuration">
-  <ConfigurationType>${PTYPE}</ConfigurationType>
-  <CharacterSet>NotSet</CharacterSet>
-</PropertyGroup>
+            output('    <ProjectConfiguration Include="${VCFG}|${VTYPE}">
+      <Configuration>${VCFG}</Configuration>
+      <Platform>${VTYPE}</Platform>
+    </ProjectConfiguration>')
+        }
+    }
+    output('  </ItemGroup>
+')
 
-<Import Project="${VTOK}\Microsoft.Cpp.props" />
-
-<ImportGroup Label="ExtensionSettings">
-</ImportGroup>
-
-<PropertyGroup Label="UserMacros" />
-
-<PropertyGroup>
-  <_ProjectFileVersion>${PROJECT_FILE_VERSION}</_ProjectFileVersion>
-  <OutDir Condition="\'${CTOK}|${PTOK}\'==\'Debug|${VTYPE}\'">${OUTDIR}\\bin\\</OutDir>
-  <IntDir Condition="\'${CTOK}|${PTOK}\'==\'Debug|${VTYPE}\'">${OUTDIR}\\obj\\${NAME}\\</IntDir>
-  <CustomBuildBeforeTargets Condition="\'${CTOK}|${PTOK}\'==\'Debug|${VTYPE}\'">PreBuildEvent</CustomBuildBeforeTargets>
+    for each (vtype in ['Win32', 'x64']) {
+        for each (vcfg in ['Debug', 'Release']) {
+            bit.VTYPE = vtype
+            bit.VCFG = vcfg
+            output('  <PropertyGroup Condition="\'${CTOK}|${PTOK}\'==\'${VCFG}|${VTYPE}\'" Label="Configuration">
+    <ConfigurationType>${PTYPE}</ConfigurationType>
+    <CharacterSet>NotSet</CharacterSet>
   </PropertyGroup>')
+        }
+    }
+
+    output('
+  <PropertyGroup>
+    <_ProjectFileVersion>${PROJECT_FILE_VERSION}</_ProjectFileVersion>')
+    for each (vtype in ['Win32', 'x64']) {
+        for each (vcfg in ['Debug', 'Release']) {
+            bit.VTYPE = vtype
+            bit.VCFG = vcfg
+            output('
+    <OutDir Condition="\'${CTOK}|${PTOK}\'==\'${VCFG}|${VTYPE}\'">$(BinDir)\\</OutDir>
+    <IntDir Condition="\'${CTOK}|${PTOK}\'==\'${VCFG}|${VTYPE}\'">$(ObjDir)\\${NAME}\\</IntDir>
+    <CustomBuildBeforeTargets Condition="\'${CTOK}|${PTOK}\'==\'${VCFG}|${VTYPE}\'">PreBuildEvent</CustomBuildBeforeTargets>')
+        }
+    }
+    output('  </PropertyGroup>')
 }
 
 function projSourceHeaders(base, target) {
     for each (dname in target.depends) {
         let dep = bit.targets[dname]
         if (!dep || dep.type != 'header') continue
-        output('<ItemGroup>')
-        output('  <ClInclude Include="' + wpath(dep.path) + '" />')
-        output('</ItemGroup>')
+        output('
+  <ItemGroup>')
+        output('    <ClInclude Include="' + wpath(dep.path) + '" />')
+        output('  </ItemGroup>')
     }
 }
 
 function projSources(base, target) {
     if (target.sources) {
-        output('<ItemGroup>')
+        output('  
+  <ItemGroup>')
         for each (file in target.files) {
             let obj = bit.targets[file]
             if (obj) {
                 for each (src in obj.files) {
                     let path = src.relativeTo(base)
-                    output('  <ClCompile Include="' + wpath(path) + '" />')
+                    output('    <ClCompile Include="' + wpath(path) + '" />')
                 }
             }
         }
-        output('</ItemGroup>')
+        output('  </ItemGroup>')
     }
 }
 
@@ -285,24 +460,25 @@ function projLink(base, target) {
         if (def.exists) {
             bit.DEF = wpath(def.relativeTo(base))
             output('
-    <ItemDefinitionGroup>
+  <ItemDefinitionGroup>
     <Link>
       <ModuleDefinitionFile>${DEF}</ModuleDefinitionFile>
     </Link>
-    </ItemDefinitionGroup>')
+  </ItemDefinitionGroup>')
         } else {
             trace('Warn', 'Missing ' + def)
         }
     }
     bit.LIBS = target.libraries ? mapLibs(target.libraries - bit.defaults.libraries).join(';') : ''
     bit.LIBPATHS = target.libpaths ? target.libpaths.map(function(p) wpath(p)).join(';') : ''
-    output('<ItemDefinitionGroup>
-<Link>
-  <AdditionalDependencies>${LIBS};%(AdditionalDependencies)</AdditionalDependencies>
-  <AdditionalLibraryDirectories>$(OutDir);${LIBPATHS};%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
-</Link>')
+    output('
+  <ItemDefinitionGroup>
+  <Link>
+    <AdditionalDependencies>${LIBS};%(AdditionalDependencies)</AdditionalDependencies>
+    <AdditionalLibraryDirectories>$(OutDir);${LIBPATHS};%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
+  </Link>')
     projCustomBuildStep(base, target)
-    output('</ItemDefinitionGroup>')
+    output('  </ItemDefinitionGroup>')
 }
 
 /*
@@ -327,16 +503,19 @@ function projCustomBuildStep(base, target) {
         command += target['generate-vs']
     } else if (target['generate-nmake']) {
         let ncmd = target['generate-nmake']
-print("NCMD", ncmd)
+// print("NCMD", ncmd)
         ncmd = ncmd.replace(/^[ \t]*/mg, '').trim().replace(/^-md /m, 'md ').replace(/^-rd /m, 'rd ')
         command += ncmd
     }
     command = command.replace(/^[ \t]*/mg, '').trim()
     if (command != '') {
 try {
-        output('<CustomBuildStep>
-  <Command>' + command + '</Command>
-  <Outputs Condition="\'${CTOK}|${PTOK}\'==\'Debug|${VTYPE}\'">' + wpath(outfile) + '</Outputs>
+        //  MOB UNUSED <Outputs Condition="\'${CTOK}|${PTOK}\'==\'Debug|${VTYPE}\'">' + wpath(outfile) + '</Outputs>
+
+        output('
+  <CustomBuildStep>
+    <Command>' + command + '</Command>
+    <Outputs>' + wpath(outfile) + '</Outputs>
   </CustomBuildStep>')
 } catch (e) {
     print(e + '\n' + 'in ' + target.name + ' ' + cmd)
@@ -390,16 +569,21 @@ function projDeps(base, target) {
 }
 
 function projFooter(base, target) {
-    output('\n<Import Project="${VTOK}\Microsoft.Cpp.targets" />')
-    output('<ImportGroup Label="ExtensionTargets">\n</ImportGroup>\n\n</Project>')
+    output('\n  <Import Project="${VTOK}\Microsoft.Cpp.targets" />')
+    output('  <ImportGroup Label="ExtensionTargets">\n  </ImportGroup>\n\n</Project>')
 }
 
 function output(line: String) {
     out.writeLine(line.expand(bit))
 }
 
-function wpath(path: Path)
-    Path(path.relative.toString().replace(/\//g, '\\'))
+function wpath(path): Path {
+    path = path.relative.name
+    path = path.replace(bit.dir.inc.relativeTo(Base), '$(IncDir)')
+    path = path.replace(bit.dir.obj.relativeTo(Base), '$(ObjDir)')
+    path = path.replace(bit.dir.bin.relativeTo(Base), '$(BinDir)')
+    return Path(path.toString().replace(/\//g, '\\'))
+}
 
 /*
     @copy   default
