@@ -2133,7 +2133,8 @@ print("HERE")
             genWrite(target.path.relative.windows + ': ' + getTargetDeps(target))
             let cmd = target['generate-nmake'] || target['generate-make'] || target['generate-sh']
             if (cmd) {
-                cmd = (prefix + cmd.trim() + suffix).replace(/^[ \t]*/mg, '\t')
+                cmd = cmd.trim().replace(/^cp /, 'copy ')
+                cmd = (prefix + cmd + suffix).replace(/^[ \t]*/mg, '\t')
                 cmd = cmd.expand(bit)
                 cmd = repvar2(cmd, target.home)
                 genWrite(cmd + '\n')

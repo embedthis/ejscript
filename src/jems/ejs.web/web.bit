@@ -21,9 +21,9 @@ Bit.load({
                 }
             ",
             'generate-nmake': '\
-                "${WIN_BIN}\\ejsc" --out "${OUT}" ${settings.esflags} --optimize 9 *.es
-                "${WIN_BIN}\\ejsmod" --cslots "${OUT}"
-                copy ejs.web.slots.h ${WIN_INC}\\ejs.web.slots.h
+                "${BIN}\\ejsc" --out "${OUT}" ${settings.esflags} --optimize 9 *.es
+                "${BIN}\\ejsmod" --cslots "${OUT}"
+                copy ejs.web.slots.h ${INC}\\ejs.web.slots.h
                 del ejs.web.slots.h
             ',
             'generate-sh': '\
@@ -54,9 +54,9 @@ Bit.load({
                 cp('www', bit.dir.lib)
             "
             'generate-nmake': '\
-                if exist "${WIN_LIB}\\www" rd /Q /S "${WIN_LIB}\\www"
-                if not exist "${WIN_LIB}\\www" md "${WIN_LIB}\\www"
-                xcopy /S /Y "www" "${WIN_LIB}\\www"
+                if exist "${LIB}\\www" rd /Q /S "${LIB}\\www"
+                if not exist "${LIB}\\www" md "${LIB}\\www"
+                xcopy /S /Y "www" "${LIB}\\www
             ',
             'generate-sh': '\
                 rm -fr ${LIB}/www

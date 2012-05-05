@@ -13,8 +13,7 @@ Bit.load({
                 run('${LBIN}/ejsc --out ${LIB}/ejs.template.mod ${settings.esflags} --optimize 9 ' + 
                     Path('.').glob('TemplateParser.es').sort().join(' '))
             ",
-            'generate-nmake': '"${WIN_BIN}\\ejsc" --out "${OUT}" ${settings.esflags} --optimize 9 TemplateParser.es',
-            'generate-sh': '${BIN}/ejsc --out ${OUT} ${settings.esflags} --optimize 9 TemplateParser.es',
+            'generate': '${BIN}/ejsc --out ${OUT} ${settings.esflags} --optimize 9 TemplateParser.es',
             depends: [ 'ejsc', 'ejs.mod' ],
         },
 	},

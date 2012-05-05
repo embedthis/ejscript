@@ -12,8 +12,7 @@ Bit.load({
                 trace('Export', bit.target.files)
                 cp('jem.es', bit.dir.bin.join('jem.es'))
             ",
-            'generate-nmake': 'copy jem.es "${WIN_BIN}"',
-            'generate-sh': 'cp jem.es ${BIN}',
+            'generate': 'cp jem.es ${BIN}',
         },
 
         'jem.exe': {

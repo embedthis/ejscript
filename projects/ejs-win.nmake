@@ -780,9 +780,7 @@ $(CONFIG)\bin\ejs.mod:  \
 		cd ..\..
 
 $(CONFIG)\bin\bit.es: 
-	cd src\jems\ejs.bit
-		copy "bit.es" "..\..\..\$(CONFIG)\bin"
-		cd ..\..\..
+#  Omit build script /Users/mob/git/ejs/win-x86-debug/bin/bit.es
 
 $(CONFIG)\bin\bits: 
 	cd src\jems\ejs.bit
@@ -805,9 +803,7 @@ $(CONFIG)\bin\bit.exe:  \
 	"$(LD)" -out:$(CONFIG)\bin\bit.exe -entry:mainCRTStartup -subsystem:console $(LDFLAGS) $(LIBPATHS) $(CONFIG)\obj\ejsrun.obj $(CONFIG)\obj\ejsZlib.obj $(CONFIG)\obj\mprLib.obj $(CONFIG)\obj\pcre.obj $(CONFIG)\obj\mprSsl.obj $(CONFIG)\obj\httpLib.obj $(CONFIG)\obj\ecAst.obj $(CONFIG)\obj\ecCodeGen.obj $(CONFIG)\obj\ecCompiler.obj $(CONFIG)\obj\ecLex.obj $(CONFIG)\obj\ecModuleWrite.obj $(CONFIG)\obj\ecParser.obj $(CONFIG)\obj\ecState.obj $(CONFIG)\obj\ejsApp.obj $(CONFIG)\obj\ejsArray.obj $(CONFIG)\obj\ejsBlock.obj $(CONFIG)\obj\ejsBoolean.obj $(CONFIG)\obj\ejsByteArray.obj $(CONFIG)\obj\ejsCache.obj $(CONFIG)\obj\ejsCmd.obj $(CONFIG)\obj\ejsConfig.obj $(CONFIG)\obj\ejsDate.obj $(CONFIG)\obj\ejsDebug.obj $(CONFIG)\obj\ejsError.obj $(CONFIG)\obj\ejsFile.obj $(CONFIG)\obj\ejsFileSystem.obj $(CONFIG)\obj\ejsFrame.obj $(CONFIG)\obj\ejsFunction.obj $(CONFIG)\obj\ejsGC.obj $(CONFIG)\obj\ejsGlobal.obj $(CONFIG)\obj\ejsHttp.obj $(CONFIG)\obj\ejsIterator.obj $(CONFIG)\obj\ejsJSON.obj $(CONFIG)\obj\ejsLocalCache.obj $(CONFIG)\obj\ejsMath.obj $(CONFIG)\obj\ejsMemory.obj $(CONFIG)\obj\ejsMprLog.obj $(CONFIG)\obj\ejsNamespace.obj $(CONFIG)\obj\ejsNull.obj $(CONFIG)\obj\ejsNumber.obj $(CONFIG)\obj\ejsObject.obj $(CONFIG)\obj\ejsPath.obj $(CONFIG)\obj\ejsPot.obj $(CONFIG)\obj\ejsRegExp.obj $(CONFIG)\obj\ejsSocket.obj $(CONFIG)\obj\ejsString.obj $(CONFIG)\obj\ejsSystem.obj $(CONFIG)\obj\ejsTimer.obj $(CONFIG)\obj\ejsType.obj $(CONFIG)\obj\ejsUri.obj $(CONFIG)\obj\ejsVoid.obj $(CONFIG)\obj\ejsWorker.obj $(CONFIG)\obj\ejsXML.obj $(CONFIG)\obj\ejsXMLList.obj $(CONFIG)\obj\ejsXMLLoader.obj $(CONFIG)\obj\ejsByteCode.obj $(CONFIG)\obj\ejsException.obj $(CONFIG)\obj\ejsHelper.obj $(CONFIG)\obj\ejsInterp.obj $(CONFIG)\obj\ejsLoader.obj $(CONFIG)\obj\ejsModule.obj $(CONFIG)\obj\ejsScope.obj $(CONFIG)\obj\ejsService.obj $(LIBS)
 
 $(CONFIG)\bin\utest.es: 
-	cd src\jems\ejs.utest
-		copy utest.es "..\..\..\$(CONFIG)\bin"
-		cd ..\..\..
+#  Omit build script /Users/mob/git/ejs/win-x86-debug/bin/utest.es
 
 $(CONFIG)\bin\utest.exe:  \
         $(CONFIG)\bin\ejsrun.exe
@@ -817,14 +813,10 @@ $(CONFIG)\bin\utest.exe:  \
 $(CONFIG)\bin\ejs.unix.mod:  \
         $(CONFIG)\bin\ejsc.exe \
         $(CONFIG)\bin\ejs.mod
-	cd src\jems\ejs.unix
-		"..\..\..\$(CONFIG)\bin\ejsc" --out "../../../$(CONFIG)/bin/ejs.unix.mod" --debug --optimize 9 Unix.es
-		cd ..\..\..
+#  Omit build script /Users/mob/git/ejs/win-x86-debug/bin/ejs.unix.mod
 
 $(CONFIG)\bin\jem.es: 
-	cd src\jems\ejs.jem
-		copy jem.es "..\..\..\$(CONFIG)\bin"
-		cd ..\..\..
+#  Omit build script /Users/mob/git/ejs/win-x86-debug/bin/jem.es
 
 $(CONFIG)\bin\jem.exe:  \
         $(CONFIG)\bin\ejsrun.exe
@@ -840,17 +832,13 @@ $(CONFIG)\bin\ejs.db.mapper.mod:  \
         $(CONFIG)\bin\ejsc.exe \
         $(CONFIG)\bin\ejs.mod \
         $(CONFIG)\bin\ejs.db.mod
-	cd src\jems\ejs.db.mapper
-		"..\..\..\$(CONFIG)\bin\ejsc" --out "../../../$(CONFIG)/bin/ejs.db.mapper.mod" --debug --optimize 9 *.es
-		cd ..\..\..
+#  Omit build script /Users/mob/git/ejs/win-x86-debug/bin/ejs.db.mapper.mod
 
 $(CONFIG)\bin\ejs.db.sqlite.mod:  \
         $(CONFIG)\bin\ejsc.exe \
         $(CONFIG)\bin\ejsmod.exe \
         $(CONFIG)\bin\ejs.mod
-	cd src\jems\ejs.db.sqlite
-		"..\..\..\$(CONFIG)\bin\ejsc" --out ../../../$(CONFIG)/bin/ejs.db.sqlite.mod --debug --optimize 9 "*.es"
-		cd ..\..\..
+#  Omit build script /Users/mob/git/ejs/win-x86-debug/bin/ejs.db.sqlite.mod
 
 $(CONFIG)\obj\ejsSqlite.obj: \
         src\jems\ejs.db.sqlite\ejsSqlite.c \
@@ -871,9 +859,9 @@ $(CONFIG)\bin\ejs.web.mod:  \
         $(CONFIG)\bin\ejsmod.exe \
         $(CONFIG)\bin\ejs.mod
 	cd src\jems\ejs.web
-		"..\..\..\$(CONFIG)\bin\ejsc" --out "../../../$(CONFIG)/bin/ejs.web.mod" --debug --optimize 9 *.es
-	"..\..\..\$(CONFIG)\bin\ejsmod" --cslots "../../../$(CONFIG)/bin/ejs.web.mod"
-	copy ejs.web.slots.h ..\..\..\$(CONFIG)\inc\ejs.web.slots.h
+		"../../../$(CONFIG)/bin\ejsc" --out "../../../$(CONFIG)/bin/ejs.web.mod" --debug --optimize 9 *.es
+	"../../../$(CONFIG)/bin\ejsmod" --cslots "../../../$(CONFIG)/bin/ejs.web.mod"
+	copy ejs.web.slots.h ../../../$(CONFIG)/inc\ejs.web.slots.h
 	del ejs.web.slots.h
 		cd ..\..\..
 
@@ -908,29 +896,23 @@ $(CONFIG)\bin\ejs.web.dll:  \
 
 $(CONFIG)\bin\www: 
 	cd src\jems\ejs.web
-		if exist "..\..\..\$(CONFIG)\bin\www" rd /Q /S "..\..\..\$(CONFIG)\bin\www"
-	if not exist "..\..\..\$(CONFIG)\bin\www" md "..\..\..\$(CONFIG)\bin\www"
-	xcopy /S /Y "www" "..\..\..\$(CONFIG)\bin\www"
+		if exist "../../../$(CONFIG)/bin\www" rd /Q /S "../../../$(CONFIG)/bin\www"
+	if not exist "../../../$(CONFIG)/bin\www" md "../../../$(CONFIG)/bin\www"
+	xcopy /S /Y "www" "../../../$(CONFIG)/bin\www
 		cd ..\..\..
 
 $(CONFIG)\bin\ejs.template.mod:  \
         $(CONFIG)\bin\ejsc.exe \
         $(CONFIG)\bin\ejs.mod
-	cd src\jems\ejs.template
-		"..\..\..\$(CONFIG)\bin\ejsc" --out "../../../$(CONFIG)/bin/ejs.template.mod" --debug --optimize 9 TemplateParser.es
-		cd ..\..\..
+#  Omit build script /Users/mob/git/ejs/win-x86-debug/bin/ejs.template.mod
 
 $(CONFIG)\bin\ejs.tar.mod:  \
         $(CONFIG)\bin\ejsc.exe \
         $(CONFIG)\bin\ejs.mod
-	cd src\jems\ejs.tar
-		"..\..\..\$(CONFIG)\bin\ejsc" --out "../../../$(CONFIG)/bin/ejs.tar.mod" --debug --optimize 9 es
-		cd ..\..\..
+#  Omit build script /Users/mob/git/ejs/win-x86-debug/bin/ejs.tar.mod
 
 $(CONFIG)\bin\mvc.es: 
-	cd src\jems\ejs.mvc
-		copy mvc.es "..\..\..\$(CONFIG)\bin"
-		cd ..\..\..
+#  Omit build script /Users/mob/git/ejs/win-x86-debug/bin/mvc.es
 
 $(CONFIG)\bin\mvc.exe:  \
         $(CONFIG)\bin\ejsrun.exe
@@ -943,14 +925,10 @@ $(CONFIG)\bin\ejs.mvc.mod:  \
         $(CONFIG)\bin\ejs.web.mod \
         $(CONFIG)\bin\ejs.template.mod \
         $(CONFIG)\bin\ejs.unix.mod
-	cd src\jems\ejs.mvc
-		"..\..\..\$(CONFIG)\bin\ejsc" --out "../../../$(CONFIG)/bin/ejs.mvc.mod" --debug --optimize 9 es
-		cd ..\..\..
+#  Omit build script /Users/mob/git/ejs/win-x86-debug/bin/ejs.mvc.mod
 
 $(CONFIG)\bin\utest.worker: 
-	cd src\jems\ejs.utest
-		copy utest.worker "..\..\..\$(CONFIG)\bin"
-		cd ..\..\..
+#  Omit build script /Users/mob/git/ejs/win-x86-debug/bin/utest.worker
 
 $(CONFIG)\obj\removeFiles.obj: \
         package\WIN\removeFiles.c \

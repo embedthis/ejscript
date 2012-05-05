@@ -96,7 +96,7 @@
 
   <CustomBuildStep>
     <Command>cd ..\..\src\jems\ejs.jem
-copy jem.es "$(BinDir)"
+copy jem.es $(BinDir)
 cd ..\..\..\projects\ejs-win</Command>
     <Outputs>$(BinDir)\jem.es</Outputs>
   </CustomBuildStep>

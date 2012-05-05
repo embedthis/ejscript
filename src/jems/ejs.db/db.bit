@@ -12,7 +12,6 @@ Bit.load({
                 trace('Compile', 'ejs.db.mod')
                 run('${LBIN}/ejsc --out ${LIB}/ejs.db.mod ${settings.esflags} --optimize 9 ' + Path('.').glob('*.es').sort().join(' '))
             ",
-            'xgenerate-nmake': '"${WIN_BIN}\\ejsc" --out ${OUT} ${settings.esflags} --optimize 9 *.es',
             'generate': '${BIN}/ejsc --out ${OUT} ${settings.esflags} --optimize 9 *.es',
             depends: [ 'ejsc', 'ejs.mod' ],
         },

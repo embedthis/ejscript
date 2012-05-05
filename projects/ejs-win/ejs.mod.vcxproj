@@ -96,8 +96,8 @@
 
   <CustomBuildStep>
     <Command>cd ..\..\src\core
-"$(BinDir)\ejsc" --out "../../win-x86-debug/bin/ejs.mod" --debug --optimize 9 --bind --require null "*.es"
-"$(BinDir)\ejsmod" --require null --cslots "../../win-x86-debug/bin/ejs.mod"
+"$(BinDir)\ejsc" --out "$(BinDir)/ejs.mod" --debug --optimize 9 --bind --require null "*.es"
+"$(BinDir)\ejsmod" --require null --cslots "$(BinDir)/ejs.mod"
 copy ejs.slots.h "$(IncDir)\ejs.slots.h"
 del ejs.slots.h
 cd ..\..\projects\ejs-win</Command>

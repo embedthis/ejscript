@@ -12,8 +12,7 @@ Bit.load({
                 trace('Export', bit.target.files)
                 cp('utest.es', bit.dir.bin)
             ",
-            'generate-nmake': 'copy utest.es "${WIN_BIN}"',
-            'generate-sh': 'cp utest.es ${BIN}',
+            'generate': 'cp utest.es ${BIN}',
         },
 
         'utest.worker': {
@@ -23,8 +22,7 @@ Bit.load({
                 trace('Export', bit.target.files)
                 cp('utest.worker', bit.dir.bin)
             ",
-            'generate-nmake': 'copy utest.worker "${WIN_BIN}"',
-            'generate-sh': 'cp utest.worker ${BIN}',
+            'generate': 'cp utest.worker ${BIN}',
         },
 
         'utest.exe': {

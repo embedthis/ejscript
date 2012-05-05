@@ -518,20 +518,23 @@ function projCustomBuildStep(base, target) {
         ncmd = ncmd.replace(/^[ \t]*/mg, '').trim()
         command += ncmd
     }
-    command = command.replace(/^[ \t]*/mg, '').trim()
+    command = command.replace(/^[ \t]*/mg, '')
+    command = command.replace(/^cp /mg, 'copy ').trim()
     if (command != '') {
 try {
         //  MOB UNUSED <Outputs Condition="\'${CTOK}|${PTOK}\'==\'Debug|${VTYPE}\'">' + wpath(outfile) + '</Outputs>
         command = prefix + command + suffix
 
-        let saveBin = bit.BIN
+        let saveBin = bit.BIN, saveLib = bit.LIB
         bit.BIN = '$(BinDir)'
+        bit.LIB = '$(BinDir)'
         output('
   <CustomBuildStep>
     <Command>' + command + '</Command>
     <Outputs>' + wpath(outfile) + '</Outputs>
   </CustomBuildStep>')
         bit.BIN = saveBin
+        bit.LIB = saveLib
 } catch (e) {
     print(e + '\n' + 'in ' + target.name + ' ' + cmd)
     throw e

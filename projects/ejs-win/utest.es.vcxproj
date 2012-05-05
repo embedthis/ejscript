@@ -96,7 +96,7 @@
 
   <CustomBuildStep>
     <Command>cd ..\..\src\jems\ejs.utest
-copy utest.es "$(BinDir)"
+copy utest.es $(BinDir)
 cd ..\..\..\projects\ejs-win</Command>
     <Outputs>$(BinDir)\utest.es</Outputs>
   </CustomBuildStep>

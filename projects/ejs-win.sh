@@ -255,10 +255,7 @@ if ! diff ejs.slots.h ../../${CONFIG}/inc/ejs.slots.h >/dev/null; then cp ejs.sl
 rm -f ejs.slots.h ;\
 cd - >/dev/null 
 
-cd src/jems/ejs.bit >/dev/null ;\
-cp bit.es ../../../${CONFIG}/bin ;\
-cd - >/dev/null 
-
+#  Omit build script /Users/mob/git/ejs/win-x86-debug/bin/bit.es
 cd src/jems/ejs.bit >/dev/null ;\
 rm -fr ../../../${CONFIG}/bin/bits ;\
 cp -r bits ../../../${CONFIG}/bin ;\
@@ -268,33 +265,18 @@ cd - >/dev/null
 
 "${LD}" -out:${CONFIG}/bin/bit.exe -entry:mainCRTStartup -subsystem:console ${LDFLAGS} ${LIBPATHS} ${CONFIG}/obj/ejsrun.obj ${CONFIG}/obj/ejsZlib.obj ${CONFIG}/obj/mprLib.obj ${CONFIG}/obj/pcre.obj ${CONFIG}/obj/mprSsl.obj ${CONFIG}/obj/httpLib.obj ${CONFIG}/obj/ecAst.obj ${CONFIG}/obj/ecCodeGen.obj ${CONFIG}/obj/ecCompiler.obj ${CONFIG}/obj/ecLex.obj ${CONFIG}/obj/ecModuleWrite.obj ${CONFIG}/obj/ecParser.obj ${CONFIG}/obj/ecState.obj ${CONFIG}/obj/ejsApp.obj ${CONFIG}/obj/ejsArray.obj ${CONFIG}/obj/ejsBlock.obj ${CONFIG}/obj/ejsBoolean.obj ${CONFIG}/obj/ejsByteArray.obj ${CONFIG}/obj/ejsCache.obj ${CONFIG}/obj/ejsCmd.obj ${CONFIG}/obj/ejsConfig.obj ${CONFIG}/obj/ejsDate.obj ${CONFIG}/obj/ejsDebug.obj ${CONFIG}/obj/ejsError.obj ${CONFIG}/obj/ejsFile.obj ${CONFIG}/obj/ejsFileSystem.obj ${CONFIG}/obj/ejsFrame.obj ${CONFIG}/obj/ejsFunction.obj ${CONFIG}/obj/ejsGC.obj ${CONFIG}/obj/ejsGlobal.obj ${CONFIG}/obj/ejsHttp.obj ${CONFIG}/obj/ejsIterator.obj ${CONFIG}/obj/ejsJSON.obj ${CONFIG}/obj/ejsLocalCache.obj ${CONFIG}/obj/ejsMath.obj ${CONFIG}/obj/ejsMemory.obj ${CONFIG}/obj/ejsMprLog.obj ${CONFIG}/obj/ejsNamespace.obj ${CONFIG}/obj/ejsNull.obj ${CONFIG}/obj/ejsNumber.obj ${CONFIG}/obj/ejsObject.obj ${CONFIG}/obj/ejsPath.obj ${CONFIG}/obj/ejsPot.obj ${CONFIG}/obj/ejsRegExp.obj ${CONFIG}/obj/ejsSocket.obj ${CONFIG}/obj/ejsString.obj ${CONFIG}/obj/ejsSystem.obj ${CONFIG}/obj/ejsTimer.obj ${CONFIG}/obj/ejsType.obj ${CONFIG}/obj/ejsUri.obj ${CONFIG}/obj/ejsVoid.obj ${CONFIG}/obj/ejsWorker.obj ${CONFIG}/obj/ejsXML.obj ${CONFIG}/obj/ejsXMLList.obj ${CONFIG}/obj/ejsXMLLoader.obj ${CONFIG}/obj/ejsByteCode.obj ${CONFIG}/obj/ejsException.obj ${CONFIG}/obj/ejsHelper.obj ${CONFIG}/obj/ejsInterp.obj ${CONFIG}/obj/ejsLoader.obj ${CONFIG}/obj/ejsModule.obj ${CONFIG}/obj/ejsScope.obj ${CONFIG}/obj/ejsService.obj ${LIBS}
 
-cd src/jems/ejs.utest >/dev/null ;\
-cp utest.es ../../../${CONFIG}/bin ;\
-cd - >/dev/null 
-
+#  Omit build script /Users/mob/git/ejs/win-x86-debug/bin/utest.es
 rm -rf ${CONFIG}/bin/utest.exe
 cp -r ${CONFIG}/bin/ejsrun.exe ${CONFIG}/bin/utest.exe
 
-cd src/jems/ejs.unix >/dev/null ;\
-../../../${CONFIG}/bin/ejsc --out ../../../${CONFIG}/bin/ejs.unix.mod --debug --optimize 9 Unix.es ;\
-cd - >/dev/null 
-
-cd src/jems/ejs.jem >/dev/null ;\
-cp jem.es ../../../${CONFIG}/bin ;\
-cd - >/dev/null 
-
+#  Omit build script /Users/mob/git/ejs/win-x86-debug/bin/ejs.unix.mod
+#  Omit build script /Users/mob/git/ejs/win-x86-debug/bin/jem.es
 rm -rf ${CONFIG}/bin/jem.exe
 cp -r ${CONFIG}/bin/ejsrun.exe ${CONFIG}/bin/jem.exe
 
 #  Omit build script /Users/mob/git/ejs/win-x86-debug/bin/ejs.db.mod
-cd src/jems/ejs.db.mapper >/dev/null ;\
-../../../${CONFIG}/bin/ejsc --out ../../../${CONFIG}/bin/ejs.db.mapper.mod --debug --optimize 9 *.es ;\
-cd - >/dev/null 
-
-cd src/jems/ejs.db.sqlite >/dev/null ;\
-../../../${CONFIG}/bin/ejsc --out ../../../${CONFIG}/bin/ejs.db.sqlite.mod --debug --optimize 9 *.es ;\
-cd - >/dev/null 
-
+#  Omit build script /Users/mob/git/ejs/win-x86-debug/bin/ejs.db.mapper.mod
+#  Omit build script /Users/mob/git/ejs/win-x86-debug/bin/ejs.db.sqlite.mod
 "${CC}" -c -Fo${CONFIG}/obj/ejsSqlite.obj -Fd${CONFIG}/obj/ejsSqlite.pdb ${CFLAGS} ${DFLAGS} -I${CONFIG}/inc src/jems/ejs.db.sqlite/ejsSqlite.c
 
 "${LD}" -dll -out:${CONFIG}/bin/ejs.db.sqlite.dll -entry:_DllMainCRTStartup@12 -def:${CONFIG}/bin/ejs.db.sqlite.def ${LDFLAGS} ${LIBPATHS} ${CONFIG}/obj/ejsSqlite.obj ${LIBS} libmpr.lib libejs.lib libhttp.lib libpcre.lib libmprssl.lib libsqlite3.lib
@@ -321,29 +303,14 @@ rm -fr ../../../${CONFIG}/bin/www ;\
 cp -r www ../../../${CONFIG}/bin ;\
 cd - >/dev/null 
 
-cd src/jems/ejs.template >/dev/null ;\
-../../../${CONFIG}/bin/ejsc --out ../../../${CONFIG}/bin/ejs.template.mod --debug --optimize 9 TemplateParser.es ;\
-cd - >/dev/null 
-
-cd src/jems/ejs.tar >/dev/null ;\
-../../../${CONFIG}/bin/ejsc --out ../../../${CONFIG}/bin/ejs.tar.mod --debug --optimize 9 *.es ;\
-cd - >/dev/null 
-
-cd src/jems/ejs.mvc >/dev/null ;\
-cp mvc.es ../../../${CONFIG}/bin ;\
-cd - >/dev/null 
-
+#  Omit build script /Users/mob/git/ejs/win-x86-debug/bin/ejs.template.mod
+#  Omit build script /Users/mob/git/ejs/win-x86-debug/bin/ejs.tar.mod
+#  Omit build script /Users/mob/git/ejs/win-x86-debug/bin/mvc.es
 rm -rf ${CONFIG}/bin/mvc.exe
 cp -r ${CONFIG}/bin/ejsrun.exe ${CONFIG}/bin/mvc.exe
 
-cd src/jems/ejs.mvc >/dev/null ;\
-../../../${CONFIG}/bin/ejsc --out ../../../${CONFIG}/bin/ejs.mvc.mod --debug --optimize 9 *.es ;\
-cd - >/dev/null 
-
-cd src/jems/ejs.utest >/dev/null ;\
-cp utest.worker ../../../${CONFIG}/bin ;\
-cd - >/dev/null 
-
+#  Omit build script /Users/mob/git/ejs/win-x86-debug/bin/ejs.mvc.mod
+#  Omit build script /Users/mob/git/ejs/win-x86-debug/bin/utest.worker
 "${CC}" -c -Fo${CONFIG}/obj/removeFiles.obj -Fd${CONFIG}/obj/removeFiles.pdb ${CFLAGS} ${DFLAGS} -I${CONFIG}/inc package/WIN/removeFiles.c
 
 "${LD}" -out:${CONFIG}/bin/removeFiles.exe -entry:WinMainCRTStartup -subsystem:Windows ${LDFLAGS} ${LIBPATHS} ${CONFIG}/obj/removeFiles.obj ${LIBS} libmpr.lib
