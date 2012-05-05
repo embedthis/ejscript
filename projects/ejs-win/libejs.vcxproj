@@ -1,162 +1,184 @@
-<?xml version="1.0" encoding="utf-8"?>
+﻿<?xml version="1.0" encoding="utf-8"?>
 <Project DefaultTargets="Build" ToolsVersion="4.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
   <ImportGroup Label="PropertySheets" />
   <PropertyGroup Label="UserMacros" />
   <PropertyGroup />
-
   <ItemDefinitionGroup>
     <ClCompile>
       <WarningLevel>Level3</WarningLevel>
       <AdditionalIncludeDirectories>..\..\win-x86-debug\inc;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
-    
-  <PreprocessorDefinitions>WIN32;_DEBUG;_WINDOWS;BLD_DEBUG;DEBUG_IDE;_REENTRANT;_MT;%(PreprocessorDefinitions)</PreprocessorDefinitions>
-    <Optimization>Disabled</Optimization>
-    <BasicRuntimeChecks>EnableFastChecks</BasicRuntimeChecks>
-    <RuntimeLibrary>MultiThreadedDebugDLL</RuntimeLibrary>
+      <PreprocessorDefinitions>WIN32;_DEBUG;_WINDOWS;BLD_DEBUG;DEBUG_IDE;_REENTRANT;_MT;%(PreprocessorDefinitions)</PreprocessorDefinitions>
+      <Optimization>Disabled</Optimization>
+      <BasicRuntimeChecks>EnableFastChecks</BasicRuntimeChecks>
+      <RuntimeLibrary>MultiThreadedDebugDLL</RuntimeLibrary>
     </ClCompile>
- <Link>
+    <Link>
       <AdditionalDependencies>ws2_32.lib;%(AdditionalDependencies)</AdditionalDependencies>
       <AdditionalLibraryDirectories>$(OutDir);%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
       <SubSystem>Console</SubSystem>
       <GenerateDebugInformation>true</GenerateDebugInformation>
     </Link>
   </ItemDefinitionGroup>
-
-<ItemGroup Label="ProjectConfigurations">
-  <ProjectConfiguration Include="Debug|Win32">
-    <Configuration>Debug</Configuration>
-    <Platform>Win32</Platform>
-  </ProjectConfiguration>
-</ItemGroup>
-
-<PropertyGroup Label="Globals">
-  <ProjectGuid>{b097bc45-c299-4dfa-944c-cc5c047cd785}</ProjectGuid>
-  <RootNamespace />
-  <Keyword>Win32Proj</Keyword>
-</PropertyGroup>
-
-<Import Project="$(VCTargetsPath)Microsoft.Cpp.Default.props" />
-
-<PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'" Label="Configuration">
-  <ConfigurationType>DynamicLibrary</ConfigurationType>
-  <CharacterSet>NotSet</CharacterSet>
-</PropertyGroup>
-
-<Import Project="$(VCTargetsPath)Microsoft.Cpp.props" />
-
-<ImportGroup Label="ExtensionSettings">
-</ImportGroup>
-
-<PropertyGroup Label="UserMacros" />
-
-<PropertyGroup>
-  <_ProjectFileVersion>10</_ProjectFileVersion>
-  <OutDir Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">..\..\win-x86-debug\bin\</OutDir>
-  <IntDir Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">..\..\win-x86-debug\obj\libejs\</IntDir>
-  <CustomBuildBeforeTargets Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">PreBuildEvent</CustomBuildBeforeTargets>
+  <ItemGroup Label="ProjectConfigurations">
+    <ProjectConfiguration Include="Debug|Win32">
+      <Configuration>Debug</Configuration>
+      <Platform>Win32</Platform>
+    </ProjectConfiguration>
+    <ProjectConfiguration Include="Debug|x64">
+      <Configuration>Debug</Configuration>
+      <Platform>x64</Platform>
+    </ProjectConfiguration>
+    <ProjectConfiguration Include="Release|Win32">
+      <Configuration>Release</Configuration>
+      <Platform>Win32</Platform>
+    </ProjectConfiguration>
+    <ProjectConfiguration Include="Release|x64">
+      <Configuration>Release</Configuration>
+      <Platform>x64</Platform>
+    </ProjectConfiguration>
+  </ItemGroup>
+  <PropertyGroup Label="Globals">
+    <ProjectGuid>{b097bc45-c299-4dfa-944c-cc5c047cd785}</ProjectGuid>
+    <RootNamespace />
+    <Keyword>Win32Proj</Keyword>
   </PropertyGroup>
-<ItemGroup>
-  <ClCompile Include="..\..\src\compiler\ecAst.c" />
-  <ClCompile Include="..\..\src\compiler\ecCodeGen.c" />
-  <ClCompile Include="..\..\src\compiler\ecCompiler.c" />
-  <ClCompile Include="..\..\src\compiler\ecLex.c" />
-  <ClCompile Include="..\..\src\compiler\ecModuleWrite.c" />
-  <ClCompile Include="..\..\src\compiler\ecParser.c" />
-  <ClCompile Include="..\..\src\compiler\ecState.c" />
-  <ClCompile Include="..\..\src\core\src\ejsApp.c" />
-  <ClCompile Include="..\..\src\core\src\ejsArray.c" />
-  <ClCompile Include="..\..\src\core\src\ejsBlock.c" />
-  <ClCompile Include="..\..\src\core\src\ejsBoolean.c" />
-  <ClCompile Include="..\..\src\core\src\ejsByteArray.c" />
-  <ClCompile Include="..\..\src\core\src\ejsCache.c" />
-  <ClCompile Include="..\..\src\core\src\ejsCmd.c" />
-  <ClCompile Include="..\..\src\core\src\ejsConfig.c" />
-  <ClCompile Include="..\..\src\core\src\ejsDate.c" />
-  <ClCompile Include="..\..\src\core\src\ejsDebug.c" />
-  <ClCompile Include="..\..\src\core\src\ejsError.c" />
-  <ClCompile Include="..\..\src\core\src\ejsFile.c" />
-  <ClCompile Include="..\..\src\core\src\ejsFileSystem.c" />
-  <ClCompile Include="..\..\src\core\src\ejsFrame.c" />
-  <ClCompile Include="..\..\src\core\src\ejsFunction.c" />
-  <ClCompile Include="..\..\src\core\src\ejsGC.c" />
-  <ClCompile Include="..\..\src\core\src\ejsGlobal.c" />
-  <ClCompile Include="..\..\src\core\src\ejsHttp.c" />
-  <ClCompile Include="..\..\src\core\src\ejsIterator.c" />
-  <ClCompile Include="..\..\src\core\src\ejsJSON.c" />
-  <ClCompile Include="..\..\src\core\src\ejsLocalCache.c" />
-  <ClCompile Include="..\..\src\core\src\ejsMath.c" />
-  <ClCompile Include="..\..\src\core\src\ejsMemory.c" />
-  <ClCompile Include="..\..\src\core\src\ejsMprLog.c" />
-  <ClCompile Include="..\..\src\core\src\ejsNamespace.c" />
-  <ClCompile Include="..\..\src\core\src\ejsNull.c" />
-  <ClCompile Include="..\..\src\core\src\ejsNumber.c" />
-  <ClCompile Include="..\..\src\core\src\ejsObject.c" />
-  <ClCompile Include="..\..\src\core\src\ejsPath.c" />
-  <ClCompile Include="..\..\src\core\src\ejsPot.c" />
-  <ClCompile Include="..\..\src\core\src\ejsRegExp.c" />
-  <ClCompile Include="..\..\src\core\src\ejsSocket.c" />
-  <ClCompile Include="..\..\src\core\src\ejsString.c" />
-  <ClCompile Include="..\..\src\core\src\ejsSystem.c" />
-  <ClCompile Include="..\..\src\core\src\ejsTimer.c" />
-  <ClCompile Include="..\..\src\core\src\ejsType.c" />
-  <ClCompile Include="..\..\src\core\src\ejsUri.c" />
-  <ClCompile Include="..\..\src\core\src\ejsVoid.c" />
-  <ClCompile Include="..\..\src\core\src\ejsWorker.c" />
-  <ClCompile Include="..\..\src\core\src\ejsXML.c" />
-  <ClCompile Include="..\..\src\core\src\ejsXMLList.c" />
-  <ClCompile Include="..\..\src\core\src\ejsXMLLoader.c" />
-  <ClCompile Include="..\..\src\vm\ejsByteCode.c" />
-  <ClCompile Include="..\..\src\vm\ejsException.c" />
-  <ClCompile Include="..\..\src\vm\ejsHelper.c" />
-  <ClCompile Include="..\..\src\vm\ejsInterp.c" />
-  <ClCompile Include="..\..\src\vm\ejsLoader.c" />
-  <ClCompile Include="..\..\src\vm\ejsModule.c" />
-  <ClCompile Include="..\..\src\vm\ejsScope.c" />
-  <ClCompile Include="..\..\src\vm\ejsService.c" />
-</ItemGroup>
-<ItemGroup>
-  <ClInclude Include="win-x86-debug\inc\ejs.cache.local.slots.h" />
-</ItemGroup>
-<ItemGroup>
-  <ClInclude Include="win-x86-debug\inc\ejs.db.sqlite.slots.h" />
-</ItemGroup>
-<ItemGroup>
-  <ClInclude Include="win-x86-debug\inc\ejs.slots.h" />
-</ItemGroup>
-<ItemGroup>
-  <ClInclude Include="win-x86-debug\inc\ejs.web.slots.h" />
-</ItemGroup>
-<ItemGroup>
-  <ClInclude Include="win-x86-debug\inc\ejs.zlib.slots.h" />
-</ItemGroup>
-<ItemGroup>
-  <ClInclude Include="win-x86-debug\inc\ejs.h" />
-</ItemGroup>
-<ItemGroup>
-  <ClInclude Include="win-x86-debug\inc\ejsByteCode.h" />
-</ItemGroup>
-<ItemGroup>
-  <ClInclude Include="win-x86-debug\inc\ejsByteCodeTable.h" />
-</ItemGroup>
-<ItemGroup>
-  <ClInclude Include="win-x86-debug\inc\ejsCompiler.h" />
-</ItemGroup>
-<ItemGroup>
-  <ClInclude Include="win-x86-debug\inc\ejsCustomize.h" />
-</ItemGroup>
-
-    <ItemDefinitionGroup>
+  <Import Project="$(VCTargetsPath)Microsoft.Cpp.Default.props" />
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'" Label="Configuration">
+    <ConfigurationType>DynamicLibrary</ConfigurationType>
+    <CharacterSet>NotSet</CharacterSet>
+  </PropertyGroup>
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'" Label="Configuration">
+    <ConfigurationType>DynamicLibrary</ConfigurationType>
+    <CharacterSet>NotSet</CharacterSet>
+  </PropertyGroup>
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x64'" Label="Configuration">
+    <ConfigurationType>DynamicLibrary</ConfigurationType>
+    <CharacterSet>NotSet</CharacterSet>
+  </PropertyGroup>
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|x64'" Label="Configuration">
+    <ConfigurationType>DynamicLibrary</ConfigurationType>
+    <CharacterSet>NotSet</CharacterSet>
+  </PropertyGroup>
+  <Import Project="$(VCTargetsPath)Microsoft.Cpp.props" />
+  <ImportGroup Label="ExtensionSettings">
+  </ImportGroup>
+  <PropertyGroup Label="UserMacros" />
+  <PropertyGroup>
+    <_ProjectFileVersion>10</_ProjectFileVersion>
+    <OutDir Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">..\..\win-x86-debug\bin\</OutDir>
+    <OutDir Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">..\..\win-x86-debug\bin\</OutDir>
+    <OutDir Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">..\..\win-x86-debug\bin\</OutDir>
+    <OutDir Condition="'$(Configuration)|$(Platform)'=='Release|x64'">..\..\win-x86-debug\bin\</OutDir>
+    <IntDir Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">..\..\win-x86-debug\obj\libejs\</IntDir>
+    <IntDir Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">..\..\win-x86-debug\obj\libejs\</IntDir>
+    <IntDir Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">..\..\win-x86-debug\obj\libejs\</IntDir>
+    <IntDir Condition="'$(Configuration)|$(Platform)'=='Release|x64'">..\..\win-x86-debug\obj\libejs\</IntDir>
+    <CustomBuildBeforeTargets Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">PreBuildEvent</CustomBuildBeforeTargets>
+    <CustomBuildBeforeTargets Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">PreBuildEvent</CustomBuildBeforeTargets>
+    <CustomBuildBeforeTargets Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">PreBuildEvent</CustomBuildBeforeTargets>
+    <CustomBuildBeforeTargets Condition="'$(Configuration)|$(Platform)'=='Release|x64'">PreBuildEvent</CustomBuildBeforeTargets>
+  </PropertyGroup>
+  <ItemGroup>
+    <ClCompile Include="..\..\src\compiler\ecAst.c" />
+    <ClCompile Include="..\..\src\compiler\ecCodeGen.c" />
+    <ClCompile Include="..\..\src\compiler\ecCompiler.c" />
+    <ClCompile Include="..\..\src\compiler\ecLex.c" />
+    <ClCompile Include="..\..\src\compiler\ecModuleWrite.c" />
+    <ClCompile Include="..\..\src\compiler\ecParser.c" />
+    <ClCompile Include="..\..\src\compiler\ecState.c" />
+    <ClCompile Include="..\..\src\core\src\ejsApp.c" />
+    <ClCompile Include="..\..\src\core\src\ejsArray.c" />
+    <ClCompile Include="..\..\src\core\src\ejsBlock.c" />
+    <ClCompile Include="..\..\src\core\src\ejsBoolean.c" />
+    <ClCompile Include="..\..\src\core\src\ejsByteArray.c" />
+    <ClCompile Include="..\..\src\core\src\ejsCache.c" />
+    <ClCompile Include="..\..\src\core\src\ejsCmd.c" />
+    <ClCompile Include="..\..\src\core\src\ejsConfig.c" />
+    <ClCompile Include="..\..\src\core\src\ejsDate.c" />
+    <ClCompile Include="..\..\src\core\src\ejsDebug.c" />
+    <ClCompile Include="..\..\src\core\src\ejsError.c" />
+    <ClCompile Include="..\..\src\core\src\ejsFile.c" />
+    <ClCompile Include="..\..\src\core\src\ejsFileSystem.c" />
+    <ClCompile Include="..\..\src\core\src\ejsFrame.c" />
+    <ClCompile Include="..\..\src\core\src\ejsFunction.c" />
+    <ClCompile Include="..\..\src\core\src\ejsGC.c" />
+    <ClCompile Include="..\..\src\core\src\ejsGlobal.c" />
+    <ClCompile Include="..\..\src\core\src\ejsHttp.c" />
+    <ClCompile Include="..\..\src\core\src\ejsIterator.c" />
+    <ClCompile Include="..\..\src\core\src\ejsJSON.c" />
+    <ClCompile Include="..\..\src\core\src\ejsLocalCache.c" />
+    <ClCompile Include="..\..\src\core\src\ejsMath.c" />
+    <ClCompile Include="..\..\src\core\src\ejsMemory.c" />
+    <ClCompile Include="..\..\src\core\src\ejsMprLog.c" />
+    <ClCompile Include="..\..\src\core\src\ejsNamespace.c" />
+    <ClCompile Include="..\..\src\core\src\ejsNull.c" />
+    <ClCompile Include="..\..\src\core\src\ejsNumber.c" />
+    <ClCompile Include="..\..\src\core\src\ejsObject.c" />
+    <ClCompile Include="..\..\src\core\src\ejsPath.c" />
+    <ClCompile Include="..\..\src\core\src\ejsPot.c" />
+    <ClCompile Include="..\..\src\core\src\ejsRegExp.c" />
+    <ClCompile Include="..\..\src\core\src\ejsSocket.c" />
+    <ClCompile Include="..\..\src\core\src\ejsString.c" />
+    <ClCompile Include="..\..\src\core\src\ejsSystem.c" />
+    <ClCompile Include="..\..\src\core\src\ejsTimer.c" />
+    <ClCompile Include="..\..\src\core\src\ejsType.c" />
+    <ClCompile Include="..\..\src\core\src\ejsUri.c" />
+    <ClCompile Include="..\..\src\core\src\ejsVoid.c" />
+    <ClCompile Include="..\..\src\core\src\ejsWorker.c" />
+    <ClCompile Include="..\..\src\core\src\ejsXML.c" />
+    <ClCompile Include="..\..\src\core\src\ejsXMLList.c" />
+    <ClCompile Include="..\..\src\core\src\ejsXMLLoader.c" />
+    <ClCompile Include="..\..\src\vm\ejsByteCode.c" />
+    <ClCompile Include="..\..\src\vm\ejsException.c" />
+    <ClCompile Include="..\..\src\vm\ejsHelper.c" />
+    <ClCompile Include="..\..\src\vm\ejsInterp.c" />
+    <ClCompile Include="..\..\src\vm\ejsLoader.c" />
+    <ClCompile Include="..\..\src\vm\ejsModule.c" />
+    <ClCompile Include="..\..\src\vm\ejsScope.c" />
+    <ClCompile Include="..\..\src\vm\ejsService.c" />
+  </ItemGroup>
+  <ItemGroup>
+    <ClInclude Include="win-x86-debug\inc\ejs.cache.local.slots.h" />
+  </ItemGroup>
+  <ItemGroup>
+    <ClInclude Include="win-x86-debug\inc\ejs.db.sqlite.slots.h" />
+  </ItemGroup>
+  <ItemGroup>
+    <ClInclude Include="win-x86-debug\inc\ejs.slots.h" />
+  </ItemGroup>
+  <ItemGroup>
+    <ClInclude Include="win-x86-debug\inc\ejs.web.slots.h" />
+  </ItemGroup>
+  <ItemGroup>
+    <ClInclude Include="win-x86-debug\inc\ejs.zlib.slots.h" />
+  </ItemGroup>
+  <ItemGroup>
+    <ClInclude Include="win-x86-debug\inc\ejs.h" />
+  </ItemGroup>
+  <ItemGroup>
+    <ClInclude Include="win-x86-debug\inc\ejsByteCode.h" />
+  </ItemGroup>
+  <ItemGroup>
+    <ClInclude Include="win-x86-debug\inc\ejsByteCodeTable.h" />
+  </ItemGroup>
+  <ItemGroup>
+    <ClInclude Include="win-x86-debug\inc\ejsCompiler.h" />
+  </ItemGroup>
+  <ItemGroup>
+    <ClInclude Include="win-x86-debug\inc\ejsCustomize.h" />
+  </ItemGroup>
+  <ItemDefinitionGroup>
     <Link>
       <ModuleDefinitionFile>libejs.def</ModuleDefinitionFile>
     </Link>
-    </ItemDefinitionGroup>
-<ItemDefinitionGroup>
-<Link>
-  <AdditionalDependencies>libhttp.lib;libmpr.lib;libpcre.lib;libmprssl.lib;%(AdditionalDependencies)</AdditionalDependencies>
-  <AdditionalLibraryDirectories>$(OutDir);win-x86-debug\bin;%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
-</Link>
-<CustomBuildStep>
-  <Command>xcopy /Y /S /D ..\..\src\slots\ejs.cache.local.slots.h ..\..\win-x86-debug\inc
+  </ItemDefinitionGroup>
+  <ItemDefinitionGroup>
+    <Link>
+      <AdditionalDependencies>libhttp.lib;libmpr.lib;libpcre.lib;libmprssl.lib;%(AdditionalDependencies)</AdditionalDependencies>
+      <AdditionalLibraryDirectories>$(OutDir);win-x86-debug\bin;%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
+    </Link>
+    <CustomBuildStep>
+      <Command>xcopy /Y /S /D ..\..\src\slots\ejs.cache.local.slots.h ..\..\win-x86-debug\inc
 xcopy /Y /S /D ..\..\src\slots\ejs.db.sqlite.slots.h ..\..\win-x86-debug\inc
 xcopy /Y /S /D ..\..\src\slots\ejs.slots.h ..\..\win-x86-debug\inc
 xcopy /Y /S /D ..\..\src\slots\ejs.web.slots.h ..\..\win-x86-debug\inc
@@ -166,19 +188,19 @@ xcopy /Y /S /D ..\..\src\ejsByteCode.h ..\..\win-x86-debug\inc
 xcopy /Y /S /D ..\..\src\ejsByteCodeTable.h ..\..\win-x86-debug\inc
 xcopy /Y /S /D ..\..\src\ejsCompiler.h ..\..\win-x86-debug\inc
 xcopy /Y /S /D ..\..\src\ejsCustomize.h ..\..\win-x86-debug\inc</Command>
-  <Outputs Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">..\..\win-x86-debug\bin\libejs.dll</Outputs>
-  </CustomBuildStep>
-</ItemDefinitionGroup>
-
-<ItemGroup>
-  <ProjectReference Include="libhttp.vcxproj">
-  <Project>236a87b9-87d7-430d-b73f-d139f8471900</Project>
-  <ReferenceOutputAssembly>false</ReferenceOutputAssembly>
-  </ProjectReference>
-</ItemGroup>
-
-<Import Project="$(VCTargetsPath)Microsoft.Cpp.targets" />
-<ImportGroup Label="ExtensionTargets">
-</ImportGroup>
-
+      <Outputs Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">..\..\win-x86-debug\bin\libejs.dll</Outputs>
+      <Outputs Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">..\..\win-x86-debug\bin\libejs.dll</Outputs>
+      <Outputs Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">..\..\win-x86-debug\bin\libejs.dll</Outputs>
+      <Outputs Condition="'$(Configuration)|$(Platform)'=='Release|x64'">..\..\win-x86-debug\bin\libejs.dll</Outputs>
+    </CustomBuildStep>
+  </ItemDefinitionGroup>
+  <ItemGroup>
+    <ProjectReference Include="libhttp.vcxproj">
+      <Project>236a87b9-87d7-430d-b73f-d139f8471900</Project>
+      <ReferenceOutputAssembly>false</ReferenceOutputAssembly>
+    </ProjectReference>
+  </ItemGroup>
+  <Import Project="$(VCTargetsPath)Microsoft.Cpp.targets" />
+  <ImportGroup Label="ExtensionTargets">
+  </ImportGroup>
 </Project>

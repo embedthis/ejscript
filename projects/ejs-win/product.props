@@ -1,15 +1,6 @@
 ﻿<?xml version="1.0" encoding="utf-8"?>
 <Project ToolsVersion="4.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
   <ImportGroup Label="PropertySheets" />
-  <PropertyGroup Label="UserMacros">
-    <CfgDir>..\..\win-x86-debug</CfgDir>
-    <BinDir>$(CfgDir)\bin</BinDir>
-    <IncDir>$(CfgDir)\inc</IncDir>
-    <ObjDir>$(CfgDir)\obj</ObjDir>
-  </PropertyGroup>
-  <PropertyGroup Label="Features">
-    <ABS_CfgDir>$([System.IO.Path]::GetFullPath($(CfgDir))</ABS_CfgDir>
-  </PropertyGroup>
   <ItemDefinitionGroup>
     <ClCompile>
       <AdditionalIncludeDirectories>$(IncDir);%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
@@ -20,22 +11,4 @@
       <AdditionalLibraryDirectories>$(OutDir);%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
     </Link>
   </ItemDefinitionGroup>
-  <ItemGroup>
-    <BuildMacro Include="CfgDir">
-      <Value>$(CfgDir)</Value>
-      <EnvironmentVariable>true</EnvironmentVariable>
-    </BuildMacro>
-    <BuildMacro Include="BinDir">
-      <Value>$(BinDir)</Value>
-      <EnvironmentVariable>true</EnvironmentVariable>
-    </BuildMacro>
-    <BuildMacro Include="IncDir">
-      <Value>$(IncDir)</Value>
-      <EnvironmentVariable>true</EnvironmentVariable>
-    </BuildMacro>
-    <BuildMacro Include="ObjDir">
-      <Value>$(ObjDir)</Value>
-      <EnvironmentVariable>true</EnvironmentVariable>
-    </BuildMacro>
-  </ItemGroup>
 </Project>
