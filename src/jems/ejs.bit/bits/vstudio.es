@@ -367,10 +367,7 @@ function projConfig(base, target) {
     <ProjectGuid>{${GUID}}</ProjectGuid>
     <RootNamespace />
     <Keyword>Win32Proj</Keyword>
-  </PropertyGroup>
-
-  <Import Project="${VTOK}\Microsoft.Cpp.Default.props" />
-  <Import Project="${VTOK}\Microsoft.Cpp.props" />')
+  </PropertyGroup>')
 
     output('
   <ItemGroup Label="ProjectConfigurations">')
@@ -400,6 +397,9 @@ function projConfig(base, target) {
     }
 
     output('
+  <Import Project="${VTOK}\Microsoft.Cpp.Default.props" />
+  <Import Project="${VTOK}\Microsoft.Cpp.props" />
+
   <PropertyGroup>
     <_ProjectFileVersion>${PROJECT_FILE_VERSION}</_ProjectFileVersion>')
     for each (vtype in ['Win32', 'x64']) {
