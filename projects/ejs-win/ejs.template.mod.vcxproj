@@ -29,7 +29,6 @@
     <Keyword>Win32Proj</Keyword>
   </PropertyGroup>
 
-
   <ItemGroup Label="ProjectConfigurations">
     <ProjectConfiguration Include="Debug|Win32">
       <Configuration>Debug</Configuration>
@@ -96,7 +95,9 @@
   </Link>
 
   <CustomBuildStep>
-    <Command>"$(BinDir)\ejsc" --out "$(BinDir)\ejs.template.mod" --debug --optimize 9 "../../src/jems/ejs.template/TemplateParser.es"</Command>
+    <Command>cd ..\..\src\jems\ejs.template
+"$(BinDir)\ejsc" --out "$(BinDir)\ejs.template.mod" --debug --optimize 9 "../../src/jems/ejs.template/TemplateParser.es"
+cd ..\..\..\projects\ejs-win</Command>
     <Outputs>$(BinDir)\ejs.template.mod</Outputs>
   </CustomBuildStep>
   </ItemDefinitionGroup>

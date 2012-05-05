@@ -40,7 +40,6 @@
     <Keyword>Win32Proj</Keyword>
   </PropertyGroup>
 
-
   <ItemGroup Label="ProjectConfigurations">
     <ProjectConfiguration Include="Debug|Win32">
       <Configuration>Debug</Configuration>
@@ -118,6 +117,13 @@
     <AdditionalDependencies>libejs.lib;libhttp.lib;libmpr.lib;libpcre.lib;libmprssl.lib;%(AdditionalDependencies)</AdditionalDependencies>
     <AdditionalLibraryDirectories>$(OutDir);win-x86-debug\bin;%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
   </Link>
+
+  <CustomBuildStep>
+    <Command>cd ..\..\src\jems\ejs.web
+
+cd ..\..\..\projects\ejs-win</Command>
+    <Outputs>$(BinDir)\ejs.web.dll</Outputs>
+  </CustomBuildStep>
   </ItemDefinitionGroup>
 
 <ItemGroup>

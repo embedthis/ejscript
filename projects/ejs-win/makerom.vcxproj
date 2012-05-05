@@ -40,7 +40,6 @@
     <Keyword>Win32Proj</Keyword>
   </PropertyGroup>
 
-
   <ItemGroup Label="ProjectConfigurations">
     <ProjectConfiguration Include="Debug|Win32">
       <Configuration>Debug</Configuration>
@@ -109,6 +108,13 @@
     <AdditionalDependencies>libmpr.lib;%(AdditionalDependencies)</AdditionalDependencies>
     <AdditionalLibraryDirectories>$(OutDir);win-x86-debug\bin;%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
   </Link>
+
+  <CustomBuildStep>
+    <Command>cd ..\..\src\deps\mpr
+
+cd ..\..\..\projects\ejs-win</Command>
+    <Outputs>$(BinDir)\makerom.exe</Outputs>
+  </CustomBuildStep>
   </ItemDefinitionGroup>
 
 <ItemGroup>

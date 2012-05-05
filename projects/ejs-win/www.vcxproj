@@ -29,7 +29,6 @@
     <Keyword>Win32Proj</Keyword>
   </PropertyGroup>
 
-
   <ItemGroup Label="ProjectConfigurations">
     <ProjectConfiguration Include="Debug|Win32">
       <Configuration>Debug</Configuration>
@@ -96,9 +95,11 @@
   </Link>
 
   <CustomBuildStep>
-    <Command>if exist "$(BinDir)\www" rd /Q /S "$(BinDir)\www"
+    <Command>cd ..\..\src\jems\ejs.web
+if exist "$(BinDir)\www" rd /Q /S "$(BinDir)\www"
 if not exist "$(BinDir)\www" md "$(BinDir)\www"
-xcopy /S /Y "..\..\src\jems\ejs.web\www" "$(BinDir)\www"</Command>
+xcopy /S /Y "..\..\src\jems\ejs.web\www" "$(BinDir)\www"
+cd ..\..\..\projects\ejs-win</Command>
     <Outputs>$(BinDir)\www</Outputs>
   </CustomBuildStep>
   </ItemDefinitionGroup>

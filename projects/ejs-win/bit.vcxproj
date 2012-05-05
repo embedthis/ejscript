@@ -40,7 +40,6 @@
     <Keyword>Win32Proj</Keyword>
   </PropertyGroup>
 
-
   <ItemGroup Label="ProjectConfigurations">
     <ProjectConfiguration Include="Debug|Win32">
       <Configuration>Debug</Configuration>
@@ -171,6 +170,13 @@
     <AdditionalDependencies>;%(AdditionalDependencies)</AdditionalDependencies>
     <AdditionalLibraryDirectories>$(OutDir);win-x86-debug\bin;%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
   </Link>
+
+  <CustomBuildStep>
+    <Command>cd ..\..\src\jems\ejs.bit
+
+cd ..\..\..\projects\ejs-win</Command>
+    <Outputs>$(BinDir)\bit.exe</Outputs>
+  </CustomBuildStep>
   </ItemDefinitionGroup>
 
 <ItemGroup>

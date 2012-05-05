@@ -29,7 +29,6 @@
     <Keyword>Win32Proj</Keyword>
   </PropertyGroup>
 
-
   <ItemGroup Label="ProjectConfigurations">
     <ProjectConfiguration Include="Debug|Win32">
       <Configuration>Debug</Configuration>
@@ -96,7 +95,9 @@
   </Link>
 
   <CustomBuildStep>
-    <Command>copy "..\..\src\jems\ejs.utest\utest.es" "$(BinDir)"</Command>
+    <Command>cd ..\..\src\jems\ejs.utest
+copy "..\..\src\jems\ejs.utest\utest.es" "$(BinDir)"
+cd ..\..\..\projects\ejs-win</Command>
     <Outputs>$(BinDir)\utest.es</Outputs>
   </CustomBuildStep>
   </ItemDefinitionGroup>

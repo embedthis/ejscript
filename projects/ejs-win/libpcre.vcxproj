@@ -40,7 +40,6 @@
     <Keyword>Win32Proj</Keyword>
   </PropertyGroup>
 
-
   <ItemGroup Label="ProjectConfigurations">
     <ProjectConfiguration Include="Debug|Win32">
       <Configuration>Debug</Configuration>
@@ -121,7 +120,10 @@
   </Link>
 
   <CustomBuildStep>
-    <Command>xcopy /Y /S /D ..\..\src\deps\pcre\pcre.h $(IncDir)</Command>
+    <Command>cd ..\..\src\deps\pcre
+xcopy /Y /S /D ..\..\src\deps\pcre\pcre.h $(IncDir)
+
+cd ..\..\..\projects\ejs-win</Command>
     <Outputs>$(BinDir)\libpcre.dll</Outputs>
   </CustomBuildStep>
   </ItemDefinitionGroup>

@@ -29,7 +29,6 @@
     <Keyword>Win32Proj</Keyword>
   </PropertyGroup>
 
-
   <ItemGroup Label="ProjectConfigurations">
     <ProjectConfiguration Include="Debug|Win32">
       <Configuration>Debug</Configuration>
@@ -96,7 +95,9 @@
   </Link>
 
   <CustomBuildStep>
-    <Command>"$(BinDir)\ejsc" --out "$(BinDir)\ejs.db.mapper.mod" --debug --optimize 9 "../../src/jems/ejs.db.mapper/*.es"</Command>
+    <Command>cd ..\..\src\jems\ejs.db.mapper
+"$(BinDir)\ejsc" --out "$(BinDir)\ejs.db.mapper.mod" --debug --optimize 9 "../../src/jems/ejs.db.mapper/*.es"
+cd ..\..\..\projects\ejs-win</Command>
     <Outputs>$(BinDir)\ejs.db.mapper.mod</Outputs>
   </CustomBuildStep>
   </ItemDefinitionGroup>

@@ -29,7 +29,6 @@
     <Keyword>Win32Proj</Keyword>
   </PropertyGroup>
 
-
   <ItemGroup Label="ProjectConfigurations">
     <ProjectConfiguration Include="Debug|Win32">
       <Configuration>Debug</Configuration>
@@ -96,7 +95,9 @@
   </Link>
 
   <CustomBuildStep>
-    <Command>"$(BinDir)\ejsc" --out $(BinDir)\ejs.db.sqlite.mod --debug --optimize 9 "*.es"</Command>
+    <Command>cd ..\..\src\jems\ejs.db.sqlite
+"$(BinDir)\ejsc" --out $(BinDir)\ejs.db.sqlite.mod --debug --optimize 9 "*.es"
+cd ..\..\..\projects\ejs-win</Command>
     <Outputs>$(BinDir)\ejs.db.sqlite.mod</Outputs>
   </CustomBuildStep>
   </ItemDefinitionGroup>

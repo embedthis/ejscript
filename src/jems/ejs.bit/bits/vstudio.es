@@ -494,9 +494,14 @@ function projCustomBuildStep(base, target) {
     } else {
         outfile = 'always'
     }
+    let prefix, suffix
     if (target.home) {
         bit.WIN_HOME = wpath(target.home.relativeTo(base))
         bit.HOME = target.home.relativeTo(base)
+        prefix = 'cd ' + target.home.relativeTo(base).windows + '\n'
+        suffix = '\ncd ' + base.relativeTo(target.home).windows
+    } else {
+        prefix = suffix = ''
     }
     let command = target.custom || ''
     if (target.depends) {
@@ -506,10 +511,11 @@ function projCustomBuildStep(base, target) {
         command += target['generate-vs']
     } else if (target['generate-nmake']) {
         let ncmd = target['generate-nmake']
-// print("NCMD", ncmd)
         ncmd = ncmd.replace(/^[ \t]*/mg, '').trim().replace(/^-md /m, 'md ').replace(/^-rd /m, 'rd ')
         command += ncmd
     }
+    command = prefix + command + suffix
+// print("NCMD", ncmd)
     command = command.replace(/^[ \t]*/mg, '').trim()
     if (command != '') {
 try {

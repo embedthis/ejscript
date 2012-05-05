@@ -29,7 +29,6 @@
     <Keyword>Win32Proj</Keyword>
   </PropertyGroup>
 
-
   <ItemGroup Label="ProjectConfigurations">
     <ProjectConfiguration Include="Debug|Win32">
       <Configuration>Debug</Configuration>
@@ -96,7 +95,9 @@
   </Link>
 
   <CustomBuildStep>
-    <Command>copy "bit.es" "$(BinDir)"</Command>
+    <Command>cd ..\..\src\jems\ejs.bit
+copy "bit.es" "$(BinDir)"
+cd ..\..\..\projects\ejs-win</Command>
     <Outputs>$(BinDir)\bit.es</Outputs>
   </CustomBuildStep>
   </ItemDefinitionGroup>

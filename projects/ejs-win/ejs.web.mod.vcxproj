@@ -29,7 +29,6 @@
     <Keyword>Win32Proj</Keyword>
   </PropertyGroup>
 
-
   <ItemGroup Label="ProjectConfigurations">
     <ProjectConfiguration Include="Debug|Win32">
       <Configuration>Debug</Configuration>
@@ -96,10 +95,12 @@
   </Link>
 
   <CustomBuildStep>
-    <Command>"$(BinDir)\ejsc" --out "$(BinDir)\ejs.web.mod" --debug --optimize 9 "../../src/jems/ejs.web/*.es"
+    <Command>cd ..\..\src\jems\ejs.web
+"$(BinDir)\ejsc" --out "$(BinDir)\ejs.web.mod" --debug --optimize 9 "../../src/jems/ejs.web/*.es"
 "$(BinDir)\ejsmod" --cslots "$(BinDir)\ejs.web.mod"
 copy ejs.web.slots.h $(IncDir)\ejs.web.slots.h
-del ejs.web.slots.h</Command>
+del ejs.web.slots.h
+cd ..\..\..\projects\ejs-win</Command>
     <Outputs>$(BinDir)\ejs.web.mod</Outputs>
   </CustomBuildStep>
   </ItemDefinitionGroup>

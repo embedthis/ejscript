@@ -40,7 +40,6 @@
     <Keyword>Win32Proj</Keyword>
   </PropertyGroup>
 
-
   <ItemGroup Label="ProjectConfigurations">
     <ProjectConfiguration Include="Debug|Win32">
       <Configuration>Debug</Configuration>
@@ -213,7 +212,8 @@
   </Link>
 
   <CustomBuildStep>
-    <Command>xcopy /Y /S /D ..\..\src\slots\ejs.cache.local.slots.h $(IncDir)
+    <Command>cd ..\..\src
+xcopy /Y /S /D ..\..\src\slots\ejs.cache.local.slots.h $(IncDir)
 xcopy /Y /S /D ..\..\src\slots\ejs.db.sqlite.slots.h $(IncDir)
 xcopy /Y /S /D ..\..\src\slots\ejs.slots.h $(IncDir)
 xcopy /Y /S /D ..\..\src\slots\ejs.web.slots.h $(IncDir)
@@ -222,7 +222,9 @@ xcopy /Y /S /D ..\..\src\ejs.h $(IncDir)
 xcopy /Y /S /D ..\..\src\ejsByteCode.h $(IncDir)
 xcopy /Y /S /D ..\..\src\ejsByteCodeTable.h $(IncDir)
 xcopy /Y /S /D ..\..\src\ejsCompiler.h $(IncDir)
-xcopy /Y /S /D ..\..\src\ejsCustomize.h $(IncDir)</Command>
+xcopy /Y /S /D ..\..\src\ejsCustomize.h $(IncDir)
+
+cd ..\projects\ejs-win</Command>
     <Outputs>$(BinDir)\libejs.dll</Outputs>
   </CustomBuildStep>
   </ItemDefinitionGroup>

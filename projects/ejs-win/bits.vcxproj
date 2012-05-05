@@ -29,7 +29,6 @@
     <Keyword>Win32Proj</Keyword>
   </PropertyGroup>
 
-
   <ItemGroup Label="ProjectConfigurations">
     <ProjectConfiguration Include="Debug|Win32">
       <Configuration>Debug</Configuration>
@@ -96,9 +95,11 @@
   </Link>
 
   <CustomBuildStep>
-    <Command>if exist "$(BinDir)\bits" rd /Q /S "$(BinDir)\bits"
+    <Command>cd ..\..\src\jems\ejs.bit
+if exist "$(BinDir)\bits" rd /Q /S "$(BinDir)\bits"
 if not exist "$(BinDir)\bits" md "$(BinDir)\bits"
-xcopy /S /Y "bits" "$(BinDir)\bits"</Command>
+xcopy /S /Y "bits" "$(BinDir)\bits"
+cd ..\..\..\projects\ejs-win</Command>
     <Outputs>$(BinDir)\bits</Outputs>
   </CustomBuildStep>
   </ItemDefinitionGroup>
