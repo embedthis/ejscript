@@ -108,13 +108,6 @@
     <AdditionalDependencies>libsqlite3.lib;%(AdditionalDependencies)</AdditionalDependencies>
     <AdditionalLibraryDirectories>$(OutDir);win-x86-debug\bin;%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
   </Link>
-
-  <CustomBuildStep>
-    <Command>cd ..\..\src\deps\sqlite
-
-cd ..\..\..\projects\ejs-win</Command>
-    <Outputs>$(BinDir)\sqlite.exe</Outputs>
-  </CustomBuildStep>
   </ItemDefinitionGroup>
 
 <ItemGroup>

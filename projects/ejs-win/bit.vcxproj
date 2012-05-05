@@ -170,13 +170,6 @@
     <AdditionalDependencies>;%(AdditionalDependencies)</AdditionalDependencies>
     <AdditionalLibraryDirectories>$(OutDir);win-x86-debug\bin;%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
   </Link>
-
-  <CustomBuildStep>
-    <Command>cd ..\..\src\jems\ejs.bit
-
-cd ..\..\..\projects\ejs-win</Command>
-    <Outputs>$(BinDir)\bit.exe</Outputs>
-  </CustomBuildStep>
   </ItemDefinitionGroup>
 
 <ItemGroup>

@@ -114,13 +114,6 @@
     <AdditionalDependencies>libmpr.lib;libejs.lib;libhttp.lib;libpcre.lib;libmprssl.lib;libsqlite3.lib;%(AdditionalDependencies)</AdditionalDependencies>
     <AdditionalLibraryDirectories>$(OutDir);win-x86-debug\bin;%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
   </Link>
-
-  <CustomBuildStep>
-    <Command>cd ..\..\src\jems\ejs.db.sqlite
-
-cd ..\..\..\projects\ejs-win</Command>
-    <Outputs>$(BinDir)\ejs.db.sqlite.dll</Outputs>
-  </CustomBuildStep>
   </ItemDefinitionGroup>
 
 <ItemGroup>

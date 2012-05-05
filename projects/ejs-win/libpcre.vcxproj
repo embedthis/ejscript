@@ -122,7 +122,6 @@
   <CustomBuildStep>
     <Command>cd ..\..\src\deps\pcre
 xcopy /Y /S /D ..\..\src\deps\pcre\pcre.h $(IncDir)
-
 cd ..\..\..\projects\ejs-win</Command>
     <Outputs>$(BinDir)\libpcre.dll</Outputs>
   </CustomBuildStep>

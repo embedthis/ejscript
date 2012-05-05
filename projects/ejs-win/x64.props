@@ -6,6 +6,7 @@
     <BinDir>$(CfgDir)\bin</BinDir>
     <IncDir>$(CfgDir)\inc</IncDir>
     <ObjDir>$(CfgDir)\obj</ObjDir>
+    <MobDir>$(CfgDir)\bin</MobDir>
   </PropertyGroup>
   <ItemGroup>
     <BuildMacro Include="CfgDir">
@@ -24,5 +25,11 @@
       <Value>$(ObjDir)</Value>
       <EnvironmentVariable>true</EnvironmentVariable>
     </BuildMacro>
+    <BuildMacro Include="MobDir">
+      <Value>$([System.IO.Path]::GetFullPath($(BinDir))</Value>
+      <EnvironmentVariable>true</EnvironmentVariable>
+    </BuildMacro>
+  <PropertyGroup Label="Features">
+  </PropertyGroup>
   </ItemGroup>
 </Project>

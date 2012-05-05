@@ -223,7 +223,6 @@ xcopy /Y /S /D ..\..\src\ejsByteCode.h $(IncDir)
 xcopy /Y /S /D ..\..\src\ejsByteCodeTable.h $(IncDir)
 xcopy /Y /S /D ..\..\src\ejsCompiler.h $(IncDir)
 xcopy /Y /S /D ..\..\src\ejsCustomize.h $(IncDir)
-
 cd ..\projects\ejs-win</Command>
     <Outputs>$(BinDir)\libejs.dll</Outputs>
   </CustomBuildStep>

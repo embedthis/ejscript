@@ -220,6 +220,7 @@ function archPropBuild(base: Path, arch) {
     <BinDir>$(CfgDir)\\bin</BinDir>
     <IncDir>$(CfgDir)\\inc</IncDir>
     <ObjDir>$(CfgDir)\\obj</ObjDir>
+    <MobDir>$(CfgDir)\\bin</MobDir>
   </PropertyGroup>
   <ItemGroup>
     <BuildMacro Include="CfgDir">
@@ -238,13 +239,14 @@ function archPropBuild(base: Path, arch) {
       <Value>$(ObjDir)</Value>
       <EnvironmentVariable>true</EnvironmentVariable>
     </BuildMacro>
+    <BuildMacro Include="MobDir">
+      <Value>$([System.IO.Path]::GetFullPath($(BinDir))</Value>
+      <EnvironmentVariable>true</EnvironmentVariable>
+    </BuildMacro>
+  <PropertyGroup Label="Features">
+  </PropertyGroup>
   </ItemGroup>
 </Project>')
-/* UNUSED
-  <PropertyGroup Label="Features">
-    <Abs_CfgDir>$([System.IO.Path]::GetFullPath($(CfgDir))</Abs_CfgDir>
-  </PropertyGroup>
- */
     out.close()
 }
 
@@ -514,12 +516,11 @@ function projCustomBuildStep(base, target) {
         ncmd = ncmd.replace(/^[ \t]*/mg, '').trim().replace(/^-md /m, 'md ').replace(/^-rd /m, 'rd ')
         command += ncmd
     }
-    command = prefix + command + suffix
-// print("NCMD", ncmd)
     command = command.replace(/^[ \t]*/mg, '').trim()
     if (command != '') {
 try {
         //  MOB UNUSED <Outputs Condition="\'${CTOK}|${PTOK}\'==\'Debug|${VTYPE}\'">' + wpath(outfile) + '</Outputs>
+        command = prefix + command + suffix
 
         output('
   <CustomBuildStep>

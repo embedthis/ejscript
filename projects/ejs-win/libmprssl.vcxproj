@@ -114,13 +114,6 @@
     <AdditionalDependencies>libmpr.lib;%(AdditionalDependencies)</AdditionalDependencies>
     <AdditionalLibraryDirectories>$(OutDir);win-x86-debug\bin;%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
   </Link>
-
-  <CustomBuildStep>
-    <Command>cd ..\..\src\deps\mpr
-
-cd ..\..\..\projects\ejs-win</Command>
-    <Outputs>$(BinDir)\libmprssl.dll</Outputs>
-  </CustomBuildStep>
   </ItemDefinitionGroup>
 
 <ItemGroup>
