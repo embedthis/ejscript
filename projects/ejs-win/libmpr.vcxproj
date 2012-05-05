@@ -4,6 +4,23 @@
   <PropertyGroup Label="UserMacros" />
   <PropertyGroup />
 
+<ImportGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'" Label="PropertySheets">
+  <Import Project="product.props" />
+  <Import Project="debug.props" />
+</ImportGroup>
+<ImportGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'" Label="PropertySheets">
+  <Import Project="product.props" />
+  <Import Project="release.props" />
+</ImportGroup>
+<ImportGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x64'" Label="PropertySheets">
+  <Import Project="product.props" />
+  <Import Project="debug.props" />
+</ImportGroup>
+<ImportGroup Condition="'$(Configuration)|$(Platform)'=='Release|x64'" Label="PropertySheets">
+  <Import Project="product.props" />
+  <Import Project="release.props" />
+</ImportGroup>
+
   <ItemDefinitionGroup>
     <ClCompile>
       <WarningLevel>Level3</WarningLevel>
@@ -18,13 +35,6 @@
     </Link>
   </ItemDefinitionGroup>
 
-<ItemGroup Label="ProjectConfigurations">
-  <ProjectConfiguration Include="Debug|Win32">
-    <Configuration>Debug</Configuration>
-    <Platform>Win32</Platform>
-  </ProjectConfiguration>
-</ItemGroup>
-
 <PropertyGroup Label="Globals">
   <ProjectGuid>{145e7a7a-cf56-4257-b982-a6be59f0738a}</ProjectGuid>
   <RootNamespace />
@@ -32,31 +42,58 @@
 </PropertyGroup>
 
 <Import Project="$(VCTargetsPath)Microsoft.Cpp.Default.props" />
+<Import Project="$(VCTargetsPath)Microsoft.Cpp.props" />
+
+<ItemGroup Label="ProjectConfigurations">
+  <ProjectConfiguration Include="Debug|Win32">
+    <Configuration>Debug</Configuration>
+    <Platform>Win32</Platform>
+  </ProjectConfiguration>
+  <ProjectConfiguration Include="Release|Win32">
+    <Configuration>Release</Configuration>
+    <Platform>Win32</Platform>
+  </ProjectConfiguration>
+  <ProjectConfiguration Include="Debug|x64">
+    <Configuration>Debug</Configuration>
+    <Platform>x64</Platform>
+  </ProjectConfiguration>
+  <ProjectConfiguration Include="Release|x64">
+    <Configuration>Release</Configuration>
+    <Platform>x64</Platform>
+  </ProjectConfiguration>
+</ItemGroup>
 
 <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'" Label="Configuration">
   <ConfigurationType>DynamicLibrary</ConfigurationType>
   <CharacterSet>NotSet</CharacterSet>
 </PropertyGroup>
-
-<Import Project="$(VCTargetsPath)Microsoft.Cpp.props" />
-
-
-<ImportGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'" Label="PropertySheets">
-  <Import Project="product.props" />
-  <Import Project="debug.props" />
-</ImportGroup>
-
-
-<ImportGroup Label="ExtensionSettings">
-</ImportGroup>
-
-<PropertyGroup Label="UserMacros" />
+<PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'" Label="Configuration">
+  <ConfigurationType>DynamicLibrary</ConfigurationType>
+  <CharacterSet>NotSet</CharacterSet>
+</PropertyGroup>
+<PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x64'" Label="Configuration">
+  <ConfigurationType>DynamicLibrary</ConfigurationType>
+  <CharacterSet>NotSet</CharacterSet>
+</PropertyGroup>
+<PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|x64'" Label="Configuration">
+  <ConfigurationType>DynamicLibrary</ConfigurationType>
+  <CharacterSet>NotSet</CharacterSet>
+</PropertyGroup>
 
 <PropertyGroup>
   <_ProjectFileVersion>10</_ProjectFileVersion>
   <OutDir Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">$(BinDir)</OutDir>
   <IntDir Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">$(ObjDir)\libmpr\</IntDir>
   <CustomBuildBeforeTargets Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">PreBuildEvent</CustomBuildBeforeTargets>
+  <OutDir Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">$(BinDir)</OutDir>
+  <IntDir Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">$(ObjDir)\libmpr\</IntDir>
+  <CustomBuildBeforeTargets Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">PreBuildEvent</CustomBuildBeforeTargets>
+  <OutDir Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">$(BinDir)</OutDir>
+  <IntDir Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">$(ObjDir)\libmpr\</IntDir>
+  <CustomBuildBeforeTargets Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">PreBuildEvent</CustomBuildBeforeTargets>
+  <OutDir Condition="'$(Configuration)|$(Platform)'=='Release|x64'">$(BinDir)</OutDir>
+  <IntDir Condition="'$(Configuration)|$(Platform)'=='Release|x64'">$(ObjDir)\libmpr\</IntDir>
+  <CustomBuildBeforeTargets Condition="'$(Configuration)|$(Platform)'=='Release|x64'">PreBuildEvent</CustomBuildBeforeTargets>
   </PropertyGroup>
 <ItemGroup>
   <ClCompile Include="..\..\src\deps\mpr\mprLib.c" />
@@ -79,6 +116,9 @@
   <Command>xcopy /Y /S /D ..\..\src\deps\mpr\mpr.h $(IncDir)
 xcopy /Y /S /D ..\..\src\deps\mpr\mprSsl.h $(IncDir)</Command>
   <Outputs Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">$(OutDir)\libmpr.dll</Outputs>
+  <Outputs Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">$(OutDir)\libmpr.dll</Outputs>
+  <Outputs Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">$(OutDir)\libmpr.dll</Outputs>
+  <Outputs Condition="'$(Configuration)|$(Platform)'=='Release|x64'">$(OutDir)\libmpr.dll</Outputs>
   </CustomBuildStep>
 </ItemDefinitionGroup>
 
