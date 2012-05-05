@@ -1,6 +1,5 @@
 LIBRARY libmprssl.dll
 EXPORTS
-  CAcertSrvBuf
   mprConfigureSsl
   mprCreateMatrixSslModule
   mprCreateOpenSslModule
