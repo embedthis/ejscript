@@ -7,16 +7,12 @@
   <ItemDefinitionGroup>
     <ClCompile>
       <WarningLevel>Level3</WarningLevel>
-      <AdditionalIncludeDirectories>..\..\win-x86-debug\inc;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
     
-  <PreprocessorDefinitions>WIN32;_DEBUG;_WINDOWS;BLD_DEBUG;DEBUG_IDE;_REENTRANT;_MT;%(PreprocessorDefinitions)</PreprocessorDefinitions>
     <Optimization>Disabled</Optimization>
     <BasicRuntimeChecks>EnableFastChecks</BasicRuntimeChecks>
     <RuntimeLibrary>MultiThreadedDebugDLL</RuntimeLibrary>
     </ClCompile>
  <Link>
-      <AdditionalDependencies>ws2_32.lib;%(AdditionalDependencies)</AdditionalDependencies>
-      <AdditionalLibraryDirectories>$(OutDir);%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
       <SubSystem>Console</SubSystem>
       <GenerateDebugInformation>true</GenerateDebugInformation>
     </Link>
@@ -44,6 +40,13 @@
 
 <Import Project="$(VCTargetsPath)Microsoft.Cpp.props" />
 
+
+<ImportGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'" Label="PropertySheets">
+  <Import Project="product.props" />
+  <Import Project="debug.props" />
+</ImportGroup>
+
+
 <ImportGroup Label="ExtensionSettings">
 </ImportGroup>
 
@@ -51,18 +54,18 @@
 
 <PropertyGroup>
   <_ProjectFileVersion>10</_ProjectFileVersion>
-  <OutDir Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">..\..\win-x86-debug\bin\</OutDir>
-  <IntDir Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">..\..\win-x86-debug\obj\libmpr\</IntDir>
+  <OutDir Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">$(BinDir)</OutDir>
+  <IntDir Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">$(ObjDir)\libmpr\</IntDir>
   <CustomBuildBeforeTargets Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">PreBuildEvent</CustomBuildBeforeTargets>
   </PropertyGroup>
 <ItemGroup>
   <ClCompile Include="..\..\src\deps\mpr\mprLib.c" />
 </ItemGroup>
 <ItemGroup>
-  <ClInclude Include="win-x86-debug\inc\mpr.h" />
+  <ClInclude Include="$(IncDir)\mpr.h" />
 </ItemGroup>
 <ItemGroup>
-  <ClInclude Include="win-x86-debug\inc\mprSsl.h" />
+  <ClInclude Include="$(IncDir)\mprSsl.h" />
 </ItemGroup>
 
     <ItemDefinitionGroup>
@@ -70,15 +73,12 @@
       <ModuleDefinitionFile>libmpr.def</ModuleDefinitionFile>
     </Link>
     </ItemDefinitionGroup>
+
 <ItemDefinitionGroup>
-<Link>
-  <AdditionalDependencies>;%(AdditionalDependencies)</AdditionalDependencies>
-  <AdditionalLibraryDirectories>$(OutDir);win-x86-debug\bin;%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
-</Link>
 <CustomBuildStep>
-  <Command>xcopy /Y /S /D ..\..\src\deps\mpr\mpr.h ..\..\win-x86-debug\inc
-xcopy /Y /S /D ..\..\src\deps\mpr\mprSsl.h ..\..\win-x86-debug\inc</Command>
-  <Outputs Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">..\..\win-x86-debug\bin\libmpr.dll</Outputs>
+  <Command>xcopy /Y /S /D ..\..\src\deps\mpr\mpr.h $(IncDir)
+xcopy /Y /S /D ..\..\src\deps\mpr\mprSsl.h $(IncDir)</Command>
+  <Outputs Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">$(OutDir)\libmpr.dll</Outputs>
   </CustomBuildStep>
 </ItemDefinitionGroup>
 
