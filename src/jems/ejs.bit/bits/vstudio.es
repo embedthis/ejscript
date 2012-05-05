@@ -25,9 +25,12 @@ var prepTarget
 public function vstudio(base: Path) {
     bit.TOOLS_VERSION = TOOLS_VERSION
     bit.PROJECT_FILE_VERSION = PROJECT_FILE_VERSION
+print("BASE", base)
     for each (n in ['WIN_CFG', 'WIN_BIN', 'WIN_BITS', 'WIN_FLAT', 'WIN_INC', 'WIN_LIB', 'WIN_OBJ', 'WIN_PACKS', 
             'WIN_PKG', 'WIN_REL', 'WIN_SRC', 'WIN_TOP']) {
-        bit[n] = wpath(bit[n].relativeTo(base))
+print("WAS " + bit[n])
+        bit[n] = wpath(bit[n].portable.relativeTo(base))
+print("SET DIR " + n + " to " + bit[n])
     }
     for each (n in ["BIN", "CFG", "FLAT", "INC", "LIB", "OBJ", "PACKS", "PKG", "REL", "SRC", "TOP"]) {
         bit[n] = bit[n].relativeTo(base)
@@ -324,6 +327,7 @@ function projCustomBuildStep(base, target) {
         command += target['generate-vs']
     } else if (target['generate-nmake']) {
         let ncmd = target['generate-nmake']
+print("NCMD", ncmd)
         ncmd = ncmd.replace(/^[ \t]*/mg, '').trim().replace(/^-md /m, 'md ').replace(/^-rd /m, 'rd ')
         command += ncmd
     }

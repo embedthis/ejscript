@@ -43,9 +43,9 @@
   <AdditionalLibraryDirectories>$(OutDir);win-x86-debug\bin;%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
 </Link>
 <CustomBuildStep>
-  <Command>"..\..\\Users\mob\git\ejs\win-x86-debug\bin\ejsc" --out "../../win-x86-debug/bin/ejs.mod" --debug --optimize 9 --bind --require null "*.es"
-"..\..\\Users\mob\git\ejs\win-x86-debug\bin\ejsmod" --require null --cslots "../../win-x86-debug/bin/ejs.mod"
-copy ejs.slots.h "..\..\\Users\mob\git\ejs\win-x86-debug\inc\ejs.slots.h"
+  <Command>"..\..\win-x86-debug\bin\ejsc" --out "../../win-x86-debug/bin/ejs.mod" --debug --optimize 9 --bind --require null "*.es"
+"..\..\win-x86-debug\bin\ejsmod" --require null --cslots "../../win-x86-debug/bin/ejs.mod"
+copy ejs.slots.h "..\..\win-x86-debug\inc\ejs.slots.h"
 del ejs.slots.h</Command>
   <Outputs Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">..\..\win-x86-debug\bin\ejs.mod</Outputs>
   </CustomBuildStep>

@@ -43,7 +43,7 @@
   <AdditionalLibraryDirectories>$(OutDir);win-x86-debug\bin;%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
 </Link>
 <CustomBuildStep>
-  <Command>copy "..\..\src\jems\ejs.utest\utest.es" "..\..\\Users\mob\git\ejs\win-x86-debug\bin"</Command>
+  <Command>copy "..\..\src\jems\ejs.utest\utest.es" "..\..\win-x86-debug\bin"</Command>
   <Outputs Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">..\..\win-x86-debug\bin\utest.es</Outputs>
   </CustomBuildStep>
 </ItemDefinitionGroup>

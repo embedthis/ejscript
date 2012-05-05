@@ -43,9 +43,9 @@
   <AdditionalLibraryDirectories>$(OutDir);win-x86-debug\bin;%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
 </Link>
 <CustomBuildStep>
-  <Command>if exist "..\..\\Users\mob\git\ejs\win-x86-debug\bin\www" rd /Q /S "..\..\\Users\mob\git\ejs\win-x86-debug\bin\www"
-if not exist "..\..\\Users\mob\git\ejs\win-x86-debug\bin\www" md "..\..\\Users\mob\git\ejs\win-x86-debug\bin\www"
-xcopy /S /Y "..\..\src\jems\ejs.web\www" "..\..\\Users\mob\git\ejs\win-x86-debug\bin\www"</Command>
+  <Command>if exist "..\..\win-x86-debug\bin\www" rd /Q /S "..\..\win-x86-debug\bin\www"
+if not exist "..\..\win-x86-debug\bin\www" md "..\..\win-x86-debug\bin\www"
+xcopy /S /Y "..\..\src\jems\ejs.web\www" "..\..\win-x86-debug\bin\www"</Command>
   <Outputs Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">..\..\win-x86-debug\bin\www</Outputs>
   </CustomBuildStep>
 </ItemDefinitionGroup>

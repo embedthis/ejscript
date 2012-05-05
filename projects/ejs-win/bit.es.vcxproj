@@ -43,7 +43,7 @@
   <AdditionalLibraryDirectories>$(OutDir);win-x86-debug\bin;%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
 </Link>
 <CustomBuildStep>
-  <Command>copy "bit.es" "..\..\\Users\mob\git\ejs\win-x86-debug\bin"</Command>
+  <Command>copy "bit.es" "..\..\win-x86-debug\bin"</Command>
   <Outputs Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">..\..\win-x86-debug\bin\bit.es</Outputs>
   </CustomBuildStep>
 </ItemDefinitionGroup>

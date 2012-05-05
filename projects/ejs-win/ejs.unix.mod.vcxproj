@@ -43,7 +43,7 @@
   <AdditionalLibraryDirectories>$(OutDir);win-x86-debug\bin;%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
 </Link>
 <CustomBuildStep>
-  <Command>"..\..\\Users\mob\git\ejs\win-x86-debug\bin\ejsc" --out "..\..\win-x86-debug\bin\ejs.unix.mod" --debug --optimize 9 "../../src/jems/ejs.unix/Unix.es"</Command>
+  <Command>"..\..\win-x86-debug\bin\ejsc" --out "..\..\win-x86-debug\bin\ejs.unix.mod" --debug --optimize 9 "../../src/jems/ejs.unix/Unix.es"</Command>
   <Outputs Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">..\..\win-x86-debug\bin\ejs.unix.mod</Outputs>
   </CustomBuildStep>
 </ItemDefinitionGroup>
