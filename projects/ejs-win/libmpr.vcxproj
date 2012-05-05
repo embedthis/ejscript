@@ -125,8 +125,8 @@
 
   <CustomBuildStep>
     <Command>cd ..\..\src\deps\mpr
-xcopy /Y /S /D ..\..\src\deps\mpr\mpr.h $(IncDir)
-xcopy /Y /S /D ..\..\src\deps\mpr\mprSsl.h $(IncDir)
+xcopy /Y /S /D mpr.h ..\$(IncDir)
+xcopy /Y /S /D mprSsl.h ..\$(IncDir)
 cd ..\..\..\projects\ejs-win</Command>
     <Outputs>$(BinDir)\libmpr.dll</Outputs>
   </CustomBuildStep>

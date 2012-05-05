@@ -121,7 +121,7 @@
 
   <CustomBuildStep>
     <Command>cd ..\..\src\deps\http
-xcopy /Y /S /D ..\..\src\deps\http\http.h $(IncDir)
+xcopy /Y /S /D http.h ..\$(IncDir)
 cd ..\..\..\projects\ejs-win</Command>
     <Outputs>$(BinDir)\libhttp.dll</Outputs>
   </CustomBuildStep>

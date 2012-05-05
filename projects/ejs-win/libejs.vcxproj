@@ -213,16 +213,16 @@
 
   <CustomBuildStep>
     <Command>cd ..\..\src
-xcopy /Y /S /D ..\..\src\slots\ejs.cache.local.slots.h $(IncDir)
-xcopy /Y /S /D ..\..\src\slots\ejs.db.sqlite.slots.h $(IncDir)
-xcopy /Y /S /D ..\..\src\slots\ejs.slots.h $(IncDir)
-xcopy /Y /S /D ..\..\src\slots\ejs.web.slots.h $(IncDir)
-xcopy /Y /S /D ..\..\src\slots\ejs.zlib.slots.h $(IncDir)
-xcopy /Y /S /D ..\..\src\ejs.h $(IncDir)
-xcopy /Y /S /D ..\..\src\ejsByteCode.h $(IncDir)
-xcopy /Y /S /D ..\..\src\ejsByteCodeTable.h $(IncDir)
-xcopy /Y /S /D ..\..\src\ejsCompiler.h $(IncDir)
-xcopy /Y /S /D ..\..\src\ejsCustomize.h $(IncDir)
+xcopy /Y /S /D slots\ejs.cache.local.slots.h ..\win-x86-debug\inc
+xcopy /Y /S /D slots\ejs.db.sqlite.slots.h ..\win-x86-debug\inc
+xcopy /Y /S /D slots\ejs.slots.h ..\win-x86-debug\inc
+xcopy /Y /S /D slots\ejs.web.slots.h ..\win-x86-debug\inc
+xcopy /Y /S /D slots\ejs.zlib.slots.h ..\win-x86-debug\inc
+xcopy /Y /S /D ejs.h ..\win-x86-debug\inc
+xcopy /Y /S /D ejsByteCode.h ..\win-x86-debug\inc
+xcopy /Y /S /D ejsByteCodeTable.h ..\win-x86-debug\inc
+xcopy /Y /S /D ejsCompiler.h ..\win-x86-debug\inc
+xcopy /Y /S /D ejsCustomize.h ..\win-x86-debug\inc
 cd ..\projects\ejs-win</Command>
     <Outputs>$(BinDir)\libejs.dll</Outputs>
   </CustomBuildStep>
