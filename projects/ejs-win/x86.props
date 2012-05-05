@@ -5,7 +5,7 @@
     <CfgDir>..\..\win-x86-$(Config)</CfgDir>
     <IncDir>$(CfgDir)\inc</IncDir>
     <ObjDir>$(CfgDir)\obj</ObjDir>
-    <BinDir>$([System.IO.Path]::GetFullPath($(ProjectDir)$(CfgDir)in))</Value>
+    <BinDir>$([System.IO.Path]::GetFullPath($(ProjectDir)\$(CfgDir)\bin))</BinDir>
   </PropertyGroup>
   <ItemGroup>
     <BuildMacro Include="CfgDir">

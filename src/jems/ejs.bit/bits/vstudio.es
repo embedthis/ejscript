@@ -219,7 +219,7 @@ function archPropBuild(base: Path, arch) {
     <CfgDir>..\\..\\win-' + arch + '-$(Config)</CfgDir>
     <IncDir>$(CfgDir)\\inc</IncDir>
     <ObjDir>$(CfgDir)\\obj</ObjDir>
-    <BinDir>$([System.IO.Path]::GetFullPath($(ProjectDir)\$(CfgDir)\bin))</Value>
+    <BinDir>$([System.IO.Path]::GetFullPath($(ProjectDir)\\$(CfgDir)\\bin))</BinDir>
   </PropertyGroup>
   <ItemGroup>
     <BuildMacro Include="CfgDir">

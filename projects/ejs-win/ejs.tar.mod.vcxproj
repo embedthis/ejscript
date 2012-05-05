@@ -96,7 +96,7 @@
 
   <CustomBuildStep>
     <Command>cd ..\..\src\jems\ejs.tar
-"$(BinDir)\ejsc" --out "$(BinDir)\ejs.tar.mod" --debug --optimize 9 "../../src/jems/ejs.tar/*.es"
+"$(BinDir)\ejsc" --out "$(BinDir)\ejs.tar.mod" --debug --optimize 9 es
 cd ..\..\..\projects\ejs-win</Command>
     <Outputs>$(BinDir)\ejs.tar.mod</Outputs>
   </CustomBuildStep>
