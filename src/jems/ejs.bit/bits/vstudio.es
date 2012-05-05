@@ -122,7 +122,7 @@ function propBuild(base: Path) {
 }
 
 function productPropBuild(base: Path) {
-    let path = base.join('debug.props').relative
+    let path = base.join('product.props').relative
     trace('Generate', path)
     out = TextStream(File(path, 'wt'))
     output('<?xml version="1.0" encoding="utf-8"?>
