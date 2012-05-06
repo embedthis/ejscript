@@ -160,43 +160,43 @@
   </ItemGroup>
 
   <ItemGroup>
-    <ClInclude Include="win-x86-debug\inc\ejs.cache.local.slots.h" />
+    <ClInclude Include="$(IncDir)\ejs.cache.local.slots.h" />
   </ItemGroup>
 
   <ItemGroup>
-    <ClInclude Include="win-x86-debug\inc\ejs.db.sqlite.slots.h" />
+    <ClInclude Include="$(IncDir)\ejs.db.sqlite.slots.h" />
   </ItemGroup>
 
   <ItemGroup>
-    <ClInclude Include="win-x86-debug\inc\ejs.slots.h" />
+    <ClInclude Include="$(IncDir)\ejs.slots.h" />
   </ItemGroup>
 
   <ItemGroup>
-    <ClInclude Include="win-x86-debug\inc\ejs.web.slots.h" />
+    <ClInclude Include="$(IncDir)\ejs.web.slots.h" />
   </ItemGroup>
 
   <ItemGroup>
-    <ClInclude Include="win-x86-debug\inc\ejs.zlib.slots.h" />
+    <ClInclude Include="$(IncDir)\ejs.zlib.slots.h" />
   </ItemGroup>
 
   <ItemGroup>
-    <ClInclude Include="win-x86-debug\inc\ejs.h" />
+    <ClInclude Include="$(IncDir)\ejs.h" />
   </ItemGroup>
 
   <ItemGroup>
-    <ClInclude Include="win-x86-debug\inc\ejsByteCode.h" />
+    <ClInclude Include="$(IncDir)\ejsByteCode.h" />
   </ItemGroup>
 
   <ItemGroup>
-    <ClInclude Include="win-x86-debug\inc\ejsByteCodeTable.h" />
+    <ClInclude Include="$(IncDir)\ejsByteCodeTable.h" />
   </ItemGroup>
 
   <ItemGroup>
-    <ClInclude Include="win-x86-debug\inc\ejsCompiler.h" />
+    <ClInclude Include="$(IncDir)\ejsCompiler.h" />
   </ItemGroup>
 
   <ItemGroup>
-    <ClInclude Include="win-x86-debug\inc\ejsCustomize.h" />
+    <ClInclude Include="$(IncDir)\ejsCustomize.h" />
   </ItemGroup>
 
   <ItemDefinitionGroup>
@@ -208,21 +208,21 @@
   <ItemDefinitionGroup>
   <Link>
     <AdditionalDependencies>libhttp.lib;libmpr.lib;libpcre.lib;libmprssl.lib;%(AdditionalDependencies)</AdditionalDependencies>
-    <AdditionalLibraryDirectories>$(OutDir);win-x86-debug\bin;%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
+    <AdditionalLibraryDirectories>$(OutDir);$(Cfg)\bin;%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
   </Link>
 
   <CustomBuildStep>
     <Command>cd ..\..\src
-xcopy /Y /S /D slots\ejs.cache.local.slots.h ..\win-x86-debug\inc
-xcopy /Y /S /D slots\ejs.db.sqlite.slots.h ..\win-x86-debug\inc
-xcopy /Y /S /D slots\ejs.slots.h ..\win-x86-debug\inc
-xcopy /Y /S /D slots\ejs.web.slots.h ..\win-x86-debug\inc
-xcopy /Y /S /D slots\ejs.zlib.slots.h ..\win-x86-debug\inc
-xcopy /Y /S /D ejs.h ..\win-x86-debug\inc
-xcopy /Y /S /D ejsByteCode.h ..\win-x86-debug\inc
-xcopy /Y /S /D ejsByteCodeTable.h ..\win-x86-debug\inc
-xcopy /Y /S /D ejsCompiler.h ..\win-x86-debug\inc
-xcopy /Y /S /D ejsCustomize.h ..\win-x86-debug\inc
+xcopy /Y /S /D slots\ejs.cache.local.slots.h $(IncDir)
+xcopy /Y /S /D slots\ejs.db.sqlite.slots.h $(IncDir)
+xcopy /Y /S /D slots\ejs.slots.h $(IncDir)
+xcopy /Y /S /D slots\ejs.web.slots.h $(IncDir)
+xcopy /Y /S /D slots\ejs.zlib.slots.h $(IncDir)
+xcopy /Y /S /D ejs.h $(IncDir)
+xcopy /Y /S /D ejsByteCode.h $(IncDir)
+xcopy /Y /S /D ejsByteCodeTable.h $(IncDir)
+xcopy /Y /S /D ejsCompiler.h $(IncDir)
+xcopy /Y /S /D ejsCustomize.h $(IncDir)
 cd ..\projects\ejs-win</Command>
     <Outputs>$(BinDir)\libejs.dll</Outputs>
   </CustomBuildStep>

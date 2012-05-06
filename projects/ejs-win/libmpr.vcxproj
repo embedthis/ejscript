@@ -104,11 +104,11 @@
   </ItemGroup>
 
   <ItemGroup>
-    <ClInclude Include="win-x86-debug\inc\mpr.h" />
+    <ClInclude Include="$(IncDir)\mpr.h" />
   </ItemGroup>
 
   <ItemGroup>
-    <ClInclude Include="win-x86-debug\inc\mprSsl.h" />
+    <ClInclude Include="$(IncDir)\mprSsl.h" />
   </ItemGroup>
 
   <ItemDefinitionGroup>
@@ -120,13 +120,13 @@
   <ItemDefinitionGroup>
   <Link>
     <AdditionalDependencies>;%(AdditionalDependencies)</AdditionalDependencies>
-    <AdditionalLibraryDirectories>$(OutDir);win-x86-debug\bin;%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
+    <AdditionalLibraryDirectories>$(OutDir);$(Cfg)\bin;%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
   </Link>
 
   <CustomBuildStep>
     <Command>cd ..\..\src\deps\mpr
-xcopy /Y /S /D mpr.h ..\$(IncDir)
-xcopy /Y /S /D mprSsl.h ..\$(IncDir)
+xcopy /Y /S /D mpr.h $(IncDir)
+xcopy /Y /S /D mprSsl.h $(IncDir)
 cd ..\..\..\projects\ejs-win</Command>
     <Outputs>$(BinDir)\libmpr.dll</Outputs>
   </CustomBuildStep>

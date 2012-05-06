@@ -14,11 +14,11 @@ const TOOLS_VERSION = '4.0'
 const PROJECT_FILE_VERSION = 10.0.30319.1
 const SOL_VERSION = '11.00'
 const XID = '{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}'
-const PREP = 'if not exist ${OUTDIR}\\obj md ${OUTDIR}\\obj\r
-if not exist ${OUTDIR}\\bin md ${OUTDIR}\\bin\r
-if not exist ${OUTDIR}\\inc md ${OUTDIR}\\inc\r
-if not exist ${OUTDIR}\\inc\\bit.h copy ..\\${settings.product}-${platform.os}-bit.h ${OUTDIR}\\inc\\bit.h\r
-if not exist ${OUTDIR}\\bin\\libmpr.def xcopy /Y /S *.def ${OUTDIR}\\bin\r
+const PREP = 'if not exist "$(ObjDir)" md "$(ObjDir)"\r
+if not exist "$(BinDir)" md "$(BinDir)"\r
+if not exist "$(IncDir)" md "$(IncDir)"\r
+if not exist "$(IncDir)\\bit.h" copy "..\\${settings.product}-${platform.os}-bit.h" "$(IncDir)\\bit.h"\r
+if not exist "$(BinDir)\\libmpr.def" xcopy /Y /S *.def "$(BinDir)"\r
 '
 var prepTarget
 var Base 
@@ -152,7 +152,7 @@ function debugPropBuild(base: Path) {
 <Project ToolsVersion="4.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
   <ImportGroup Label="PropertySheets" />
   <PropertyGroup Label="UserMacros">
-    <Config>debug</Config>
+    <Cfg>debug</Cfg>
   </PropertyGroup>
   <ItemDefinitionGroup>
     <ClCompile>
@@ -166,8 +166,8 @@ function debugPropBuild(base: Path) {
     </Link>
   </ItemDefinitionGroup>
   <ItemGroup>
-    <BuildMacro Include="Config">
-    <Value>$(Config)</Value>
+    <BuildMacro Include="Cfg">
+    <Value>$(Cfg)</Value>
     <EnvironmentVariable>true</EnvironmentVariable>
   </BuildMacro>
   </ItemGroup>
@@ -184,7 +184,7 @@ function releasePropBuild(base: Path) {
 <Project ToolsVersion="4.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
   <ImportGroup Label="PropertySheets" />
   <PropertyGroup Label="UserMacros">
-    <Config>release</Config>
+    <Cfg>release</Cfg>
   </PropertyGroup>
   <ItemDefinitionGroup>
     <ClCompile>
@@ -198,8 +198,8 @@ function releasePropBuild(base: Path) {
     </Link>
   </ItemDefinitionGroup>
   <ItemGroup>
-    <BuildMacro Include="Config">
-      <Value>$(Config)</Value>
+    <BuildMacro Include="Cfg">
+      <Value>$(Cfg)</Value>
       <EnvironmentVariable>true</EnvironmentVariable>
     </BuildMacro>
   </ItemGroup>
@@ -216,9 +216,9 @@ function archPropBuild(base: Path, arch) {
 <Project ToolsVersion="4.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
   <ImportGroup Label="PropertySheets" />
   <PropertyGroup Label="UserMacros">
-    <CfgDir>..\\..\\win-' + arch + '-$(Config)</CfgDir>
-    <IncDir>$(CfgDir)\\inc</IncDir>
-    <ObjDir>$(CfgDir)\\obj</ObjDir>
+    <CfgDir>..\\..\\win-' + arch + '-$(Cfg)</CfgDir>
+    <IncDir>$([System.IO.Path]::GetFullPath($(ProjectDir)\\$(CfgDir)\\inc))</IncDir>
+    <ObjDir>$([System.IO.Path]::GetFullPath($(ProjectDir)\\$(CfgDir)\\obj))</ObjDir>
     <BinDir>$([System.IO.Path]::GetFullPath($(ProjectDir)\\$(CfgDir)\\bin))</BinDir>
   </PropertyGroup>
   <ItemGroup>
@@ -266,6 +266,7 @@ function projBuild(projects: Array, base: Path, target) {
     projConfig(base, target)
     projSources(base, target)
     projSourceHeaders(base, target)
+    projResources(base, target)
     projLink(base, target)
     projDeps(base, target)
     projFooter(base, target)
@@ -286,17 +287,6 @@ function projHeader(base, target) {
   <ItemDefinitionGroup>
     <ClCompile>
       <AdditionalIncludeDirectories>${INC};%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>')
-
-    /* UNUSED
-        //  MOB - remove MultiThreadedDebugDLL below
-        if (bit.platform.profile == 'debug') {
-            output('  <PreprocessorDefinitions>WIN32;_DEBUG;_WINDOWS;BLD_DEBUG;DEBUG_IDE;_REENTRANT;_MT;%(PreprocessorDefinitions)</PreprocessorDefinitions>
-    <RuntimeLibrary>MultiThreadedDebugDLL</RuntimeLibrary>')
-        } else {
-            output('  <PreprocessorDefinitions>WIN32;_WINDOWS;_REENTRANT;_MT;%(PreprocessorDefinitions)</PreprocessorDefinitions>
-    <RuntimeLibrary>MultiThreadedDLL</RuntimeLibrary>')
-    }
-    */
         output('    </ClCompile>')
 
         output('    <Link>
@@ -314,7 +304,6 @@ function projHeader(base, target) {
         output('    </Link>
   </ItemDefinitionGroup>')
     }
-  //MOB <ItemGroup />')
 }
 
 function projConfig(base, target) {
@@ -417,7 +406,7 @@ function projSourceHeaders(base, target) {
         if (!dep || dep.type != 'header') continue
         output('
   <ItemGroup>')
-        output('    <ClInclude Include="' + wpath(dep.path) + '" />')
+        output('    <ClInclude Include="' + wpath(dep.path.relativeTo(base)) + '" />')
         output('  </ItemGroup>')
     }
 }
@@ -428,7 +417,7 @@ function projSources(base, target) {
   <ItemGroup>')
         for each (file in target.files) {
             let obj = bit.targets[file]
-            if (obj) {
+            if (obj && obj.type == 'obj') {
                 for each (src in obj.files) {
                     let path = src.relativeTo(base)
                     output('    <ClCompile Include="' + wpath(path) + '" />')
@@ -441,11 +430,13 @@ function projSources(base, target) {
 
 function projResources(base, target) {
     if (target.resources) {
-        output('<ItemGroup>')
+        output('  
+  <ItemGroup>')
         for each (resource in target.resources) {
-            output('  <ResourceCompile Include="' + wpath(resource) + '" />')
+            let path = resource.relativeTo(base)
+            output('    <ResourceCompile Include="' + wpath(path) + '" />')
         }
-        output('</ItemGroup>')
+        output('  </ItemGroup>')
     }
 }
 
@@ -509,10 +500,6 @@ function projCustomBuildStep(base, target) {
         let ncmd = target['generate-nmake']
         ncmd = ncmd.replace(/^[ \t]*/mg, '').trim().replace(/^-md /m, 'md ').replace(/^-rd /m, 'rd ')
         command += ncmd
-    } else if (target['generate-sh']) {
-        let ncmd = target['generate-sh']
-        ncmd = ncmd.replace(/^[ \t]*/mg, '').trim()
-        command += ncmd
     } else if (target['generate']) {
         let ncmd = target['generate']
         ncmd = ncmd.replace(/^[ \t]*/mg, '').trim()
@@ -521,10 +508,7 @@ function projCustomBuildStep(base, target) {
     command = command.replace(/^[ \t]*/mg, '')
     command = command.replace(/^cp /mg, 'copy ').trim()
     if (command != '') {
-try {
-        //  MOB UNUSED <Outputs Condition="\'${CTOK}|${PTOK}\'==\'Debug|${VTYPE}\'">' + wpath(outfile) + '</Outputs>
         command = prefix + command + suffix
-
         let saveBin = bit.BIN, saveLib = bit.LIB
         bit.BIN = '$(BinDir)'
         bit.LIB = '$(BinDir)'
@@ -535,10 +519,6 @@ try {
   </CustomBuildStep>')
         bit.BIN = saveBin
         bit.LIB = saveLib
-} catch (e) {
-    print(e + '\n' + 'in ' + target.name + ' ' + cmd)
-    throw e
-}
     }
 }
 
@@ -550,7 +530,7 @@ function exportHeaders(base, target) {
         for each (file in dep.files) {
             /* Use the directory in the destination so Xcopy won't ask if file or directory */
             cmd += 'xcopy /Y /S /D ' + wpath(file.relativeTo(target.home)) + ' ' + 
-                wpath(dep.path.relativeTo(target.home).parent) + '\r\n'
+                wpath(dep.path.relativeTo(base).parent) + '\r\n'
         }
     }
     return cmd
@@ -600,6 +580,7 @@ function wpath(path): Path {
     path = path.replace(bit.dir.inc.relativeTo(Base), '$(IncDir)')
     path = path.replace(bit.dir.obj.relativeTo(Base), '$(ObjDir)')
     path = path.replace(bit.dir.bin.relativeTo(Base), '$(BinDir)')
+    path = path.replace(bit.platform.configuration, '$(Cfg)')
     return Path(path.toString().replace(/\//g, '\\'))
 }
 

@@ -112,7 +112,7 @@
   <ItemDefinitionGroup>
   <Link>
     <AdditionalDependencies>libmpr.lib;libejs.lib;libhttp.lib;libpcre.lib;libmprssl.lib;libsqlite3.lib;%(AdditionalDependencies)</AdditionalDependencies>
-    <AdditionalLibraryDirectories>$(OutDir);win-x86-debug\bin;%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
+    <AdditionalLibraryDirectories>$(OutDir);$(Cfg)\bin;%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
   </Link>
   </ItemDefinitionGroup>
 
