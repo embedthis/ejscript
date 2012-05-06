@@ -517,7 +517,7 @@ ${OUTPUTS}
                        'cp -r ' + file.relativeTo(base) + ' ' + target.path.relativeTo(base) + '\n'
             }
         } else {
-            cmd += target['generate-xcode'] || target['generate-sh']
+            cmd += target['generate-xcode'] || target['generate-sh'] || target['generate']
             if (!cmd) {
                 if (target.scripts && target.scripts.build) {
                     shell = '"/usr/bin/env ' + target.scripts.build[0].shell + '"'

@@ -2276,7 +2276,7 @@ rm -f ejs.slots.h";
 			runOnlyForDeploymentPostprocessing = 0;
 			shellPath = /bin/bash;
 			shellScript = "cd ../src/jems/ejs.bit
-undefined";
+cp bit.es ../../../macosx-x64-debug/bin";
 		};
 		A0DCDA71A0DD09BD00000011 /* ShellScript for utest.es */ = {
 			isa = PBXShellScriptBuildPhase;
@@ -2292,7 +2292,7 @@ undefined";
 			runOnlyForDeploymentPostprocessing = 0;
 			shellPath = /bin/bash;
 			shellScript = "cd ../src/jems/ejs.utest
-undefined";
+cp utest.es ../../../macosx-x64-debug/bin";
 		};
 		A0DCDA71A0DD09BD00000015 /* ShellScript for utest.exe */ = {
 			isa = PBXShellScriptBuildPhase;
@@ -2385,7 +2385,7 @@ cp -r bits ../../../macosx-x64-debug/bin";
 			runOnlyForDeploymentPostprocessing = 0;
 			shellPath = /bin/bash;
 			shellScript = "cd ../src/jems/ejs.unix
-undefined";
+../../../macosx-x64-debug/bin/ejsc --out ${OUT} --debug --optimize 9 Unix.es";
 		};
 		A0DCDA71A0DD09BD00000024 /* ShellScript for jem.es */ = {
 			isa = PBXShellScriptBuildPhase;
@@ -2401,7 +2401,7 @@ undefined";
 			runOnlyForDeploymentPostprocessing = 0;
 			shellPath = /bin/bash;
 			shellScript = "cd ../src/jems/ejs.jem
-undefined";
+cp jem.es ../../../macosx-x64-debug/bin";
 		};
 		A0DCDA71A0DD09BD00000028 /* ShellScript for jem.exe */ = {
 			isa = PBXShellScriptBuildPhase;
@@ -2436,7 +2436,7 @@ cp -r $(CFG_DIR)/bin/ejsrun $(CFG_DIR)/bin/jem
 			runOnlyForDeploymentPostprocessing = 0;
 			shellPath = /bin/bash;
 			shellScript = "cd ../src/jems/ejs.db
-undefined";
+../../../macosx-x64-debug/bin/ejsc --out ${OUT} --debug --optimize 9 *.es";
 		};
 		A0DCDA71A0DD09BD00000033 /* ShellScript for ejs.db.mapper.mod */ = {
 			isa = PBXShellScriptBuildPhase;
@@ -2452,7 +2452,7 @@ undefined";
 			runOnlyForDeploymentPostprocessing = 0;
 			shellPath = /bin/bash;
 			shellScript = "cd ../src/jems/ejs.db.mapper
-undefined";
+../../../macosx-x64-debug/bin/ejsc --out ${OUT} --debug --optimize 9 *.es";
 		};
 		A0DCDA71A0DD09BD0000003A /* ShellScript for ejs.db.sqlite.mod */ = {
 			isa = PBXShellScriptBuildPhase;
@@ -2468,7 +2468,7 @@ undefined";
 			runOnlyForDeploymentPostprocessing = 0;
 			shellPath = /bin/bash;
 			shellScript = "cd ../src/jems/ejs.db.sqlite
-undefined";
+../../../macosx-x64-debug/bin/ejsc --out ${OUT} --debug --optimize 9 *.es";
 		};
 		A0DCDA71A0DD09BD00000041 /* ShellScript for ejs.web.mod */ = {
 			isa = PBXShellScriptBuildPhase;
@@ -2506,8 +2506,8 @@ undefined";
 			runOnlyForDeploymentPostprocessing = 0;
 			shellPath = /bin/bash;
 			shellScript = "cd ../src/jems/ejs.web
-../../../macosx-x64-debug/bin/ejsc --out ../../../macosx-x64-debug/bin/utest.worker --debug --optimize 9 *.es
-../../../macosx-x64-debug/bin/ejsmod --cslots ../../../macosx-x64-debug/bin/utest.worker
+../../../macosx-x64-debug/bin/ejsc --out ${OUT} --debug --optimize 9 *.es
+../../../macosx-x64-debug/bin/ejsmod --cslots ${OUT}
 if ! diff ejs.web.slots.h ../../../macosx-x64-debug/inc/ejs.web.slots.h >/dev/null; then cp ejs.web.slots.h ../../../macosx-x64-debug/inc; fi
 rm -f ejs.web.slots.h";
 		};
@@ -2542,7 +2542,7 @@ cp -r www ../../../macosx-x64-debug/bin";
 			runOnlyForDeploymentPostprocessing = 0;
 			shellPath = /bin/bash;
 			shellScript = "cd ../src/jems/ejs.template
-undefined";
+../../../macosx-x64-debug/bin/ejsc --out ${OUT} --debug --optimize 9 TemplateParser.es";
 		};
 		A0DCDA71A0DD09BD00000052 /* ShellScript for ejs.tar.mod */ = {
 			isa = PBXShellScriptBuildPhase;
@@ -2558,7 +2558,7 @@ undefined";
 			runOnlyForDeploymentPostprocessing = 0;
 			shellPath = /bin/bash;
 			shellScript = "cd ../src/jems/ejs.tar
-undefined";
+../../../macosx-x64-debug/bin/ejsc --out ${OUT} --debug --optimize 9 *.es";
 		};
 		A0DCDA71A0DD09BD00000058 /* ShellScript for mvc.es */ = {
 			isa = PBXShellScriptBuildPhase;
@@ -2574,7 +2574,7 @@ undefined";
 			runOnlyForDeploymentPostprocessing = 0;
 			shellPath = /bin/bash;
 			shellScript = "cd ../src/jems/ejs.mvc
-undefined";
+cp mvc.es ../../../macosx-x64-debug/bin";
 		};
 		A0DCDA71A0DD09BD0000005C /* ShellScript for mvc.exe */ = {
 			isa = PBXShellScriptBuildPhase;
@@ -2608,7 +2608,7 @@ cp -r $(CFG_DIR)/bin/ejsrun $(CFG_DIR)/bin/mvc
 			runOnlyForDeploymentPostprocessing = 0;
 			shellPath = /bin/bash;
 			shellScript = "cd ../src/jems/ejs.mvc
-undefined";
+../../../macosx-x64-debug/bin/ejsc --out ${OUT} --debug --optimize 9 *.es";
 		};
 		A0DCDA71A0DD09BD0000006A /* ShellScript for utest.worker */ = {
 			isa = PBXShellScriptBuildPhase;
@@ -2624,7 +2624,7 @@ undefined";
 			runOnlyForDeploymentPostprocessing = 0;
 			shellPath = /bin/bash;
 			shellScript = "cd ../src/jems/ejs.utest
-undefined";
+cp utest.worker ../../../macosx-x64-debug/bin";
 		};
 		A0DCDA71A0DD09BD00000081 /* ShellScript for Prep */ = {
 			isa = PBXShellScriptBuildPhase;
@@ -3829,8 +3829,6 @@ fi";
 
 				OTHER_LDFLAGS = (
 					"-ledit",
-					"-ledit",
-					"-ledit",
 					"$(inherited)"
 				);
 
@@ -3843,8 +3841,6 @@ fi";
 				PRODUCT_NAME = ejs;
 
 				OTHER_LDFLAGS = (
-					"-ledit",
-					"-ledit",
 					"-ledit",
 					"$(inherited)"
 				);
