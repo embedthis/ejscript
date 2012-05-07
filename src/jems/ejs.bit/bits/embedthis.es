@@ -460,6 +460,8 @@ function packageFedora(pkg: Path, options) {
     let cpu = bit.platform.arch
     if (cpu.match(/^i.86$|x86/)) {
         cpu = 'i386'
+    } else if (cpu == 'x64') {
+        cpu = 'x86_64'
     }
     bit.platform.mappedCpu = cpu
     let base = [s.product, s.version, s.buildNumber, bit.platform.dist, OS.toUpper(), ARCH].join('-')
