@@ -69,6 +69,7 @@ public class Bit {
             config: { alias: 'c', range: String },
             'continue': {},
             debug: {},
+            depth: { range: Number},
             diagnose: { alias: 'd' },
             dump: { },
             emulate: { range: String },
@@ -105,6 +106,7 @@ public class Bit {
             '    --config path-to-source            # Configure for building\n' +
             '    --continue                         # Continue on errors\n' +
             '    --debug                            # Same as --profile debug\n' +
+            '    --depth                            # Set utest depth\n' +
             '    --diagnose                         # Emit diagnostic trace \n' +
             '    --dump                             # Dump the full project bit file\n' +
             '    --emulate os-arch                  # Emulate platform\n' +
@@ -206,14 +208,6 @@ public class Bit {
             localPlatform = options.emulate
         } else {
             let cpu = Config.CPU
-/* UNUSED
-            if (OS == 'WIN') {
-                // On native 64 bit systems, PA is amd64 for 64 bit apps and is PAW6432 is amd64 for 32 bit apps
-                if (App.getenv('PROCESSOR_ARCHITECTURE') == 'amd64' || App.getenv('PROCESSOR_ARCHITEW6432') == 'amd64') {
-                    cpu = 'x64'
-                }
-            }
-*/
             localPlatform =  OS.toLower() + '-' + cpu
         }
         let [os, arch] = localPlatform.split('-') 
@@ -296,6 +290,10 @@ public class Bit {
                 poptions.disable ||= []
                 poptions.disable.push(App.args[++i])
             }
+        }
+        if (options.depth) {
+            poptions.enable ||= []
+            poptions.enable.push('depth=' + options.depth)
         }
         originalTargets = selectedTargets = args.rest
         bareBit.options = options
