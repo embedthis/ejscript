@@ -2132,7 +2132,25 @@ public class Bit {
             if (cmd) {
                 cmd = cmd.trim().replace(/^cp /, 'copy ')
                 cmd = (prefix + cmd + suffix).replace(/^[ \t]*/mg, '\t')
-                cmd = cmd.expand(bit)
+                    let saveDir = []
+                if (bit.platform.os == 'win') {
+                    for each (n in ["BIN", "CFG", "FLAT", "INC", "LIB", "OBJ", "PACKS", "PKG", "REL", "SRC", "TOP"]) {
+                        saveDir[n] = bit[n]
+                        bit[n] = bit[n].windows
+                    }
+                }
+                try {
+                    cmd = cmd.expand(bit)
+                } catch (e) {
+                    print('Target', target.name)
+                    print('Script:', cmd)
+                    throw e
+                }
+                if (bit.platform.os == 'win') {
+                    for each (n in ["BIN", "CFG", "FLAT", "INC", "LIB", "OBJ", "PACKS", "PKG", "REL", "SRC", "TOP"]) {
+                        bit[n] = saveDir[n]
+                    }
+                }
                 cmd = repvar2(cmd, target.home)
                 genWrite(cmd + '\n')
             } else {
@@ -2287,6 +2305,7 @@ public class Bit {
                 dir = dir.relativeTo(base)
             }
             global[n] = bit[n] = dir
+/* UNUSED
             if (bit.platform.like == 'windows') {
                 if (base) {
                     bit['WIN_' + n] = dir.relativeTo(base).windows
@@ -2294,6 +2313,7 @@ public class Bit {
                     bit['WIN_' + n] = dir.windows
                 }
             }
+*/
         }
         bit.LBIN = global.LBIN
     }
@@ -2301,7 +2321,7 @@ public class Bit {
     public function setRuleVars(target, base: Path = App.dir) {
         if (target.home) {
             bit.HOME = target.home.relativeTo(base)
-            bit.WIN_HOME = bit.HOME.windows
+// UNUSED bit.WIN_HOME = bit.HOME.windows
         }
         if (target.path) {
             bit.OUT = target.path.relativeTo(base)
@@ -2940,7 +2960,7 @@ UNUSED
         if (platform == localPlatform) {
             let lbin = bit.dir.bin
             global.LBIN = bit.LBIN = lbin.portable
-            bit.WIN_LBIN = lbin.windows
+            // UNUSED bit.WIN_LBIN = lbin.windows
         }
     }
 

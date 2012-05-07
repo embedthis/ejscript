@@ -35,9 +35,9 @@ Bit.load({
                 }
             ",
             'generate-nmake': '\
-                "${WIN_BIN}\\ejsc" --out "${LIB}/ejs.mod" ${settings.esflags} --optimize 9 --bind --require null "*.es"
-                "${WIN_BIN}\\ejsmod" --require null --cslots "${LIB}/ejs.mod"
-                copy ejs.slots.h "${WIN_INC}\\ejs.slots.h"
+                "${BIN}\\ejsc" --out "${LIB}/ejs.mod" ${settings.esflags} --optimize 9 --bind --require null "*.es"
+                "${BIN}\\ejsmod" --require null --cslots "${LIB}/ejs.mod"
+                copy ejs.slots.h "${INC}\\ejs.slots.h"
                 del ejs.slots.h
             ',
             'generate-sh': '\

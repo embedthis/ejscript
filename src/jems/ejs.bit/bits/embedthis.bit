@@ -48,7 +48,7 @@ Bit.load({
                     }
                 }
                 /* Leave a normal configuration */ 
-                run(bitcmd + ' -q configure', bit.target.runopt)
+                run(bitcmd + ' -q configure --' + bit.platform.profile, bit.target.runopt)
             ",
         },
 
