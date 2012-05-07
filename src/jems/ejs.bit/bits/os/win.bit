@@ -67,7 +67,7 @@ Bit.load({
                     defaults.compiler += [ '-Zi', '-Od', '-MDd' ]
                     defaults.linker += [ '-debug' ]
                 } else {
-                    defaults.compiler += [ '-Zi', '-Od', '-MDd' ]
+                    defaults.compiler += [ '-O2', '-MD' ]
                 }
                 if ('${ARCH}' == 'x64') {
                     defaults.linker += ['-machine:x64']
