@@ -80,6 +80,7 @@ public class Bit {
             keep: { alias: 'k' },
             log: { alias: 'l', range: String },
             out: { range: String },
+            nostart: {},
             pre: { range: String, separator: Array },
             platform: { range: String, separator: Array },
             prefix: { range: String, separator: Array },
@@ -2231,6 +2232,8 @@ public class Bit {
         if (generating == 'make') {
             command = command.replace(RegExp(gen.configuration, 'g'), '$$(CONFIG)')
         } else if (generating == 'nmake') {
+            //  MOB - generalize. This changes ${BIN}/ejsc => ${BIN}\\ejsc
+            command = command.replace(RegExp(gen.configuration + '\\\\bin/', 'g'), '$$(CONFIG)\\bin\\')
             command = command.replace(RegExp(gen.configuration, 'g'), '$$(CONFIG)')
         } else if (generating == 'sh') {
             command = command.replace(RegExp(gen.configuration, 'g'), '$${CONFIG}')

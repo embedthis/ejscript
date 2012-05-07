@@ -108,12 +108,6 @@
   </ItemGroup>
 
   <ItemDefinitionGroup>
-    <Link>
-      <ModuleDefinitionFile>libsqlite3.def</ModuleDefinitionFile>
-    </Link>
-  </ItemDefinitionGroup>
-
-  <ItemDefinitionGroup>
   <Link>
     <AdditionalDependencies>;%(AdditionalDependencies)</AdditionalDependencies>
     <AdditionalLibraryDirectories>$(OutDir);$(Cfg)\bin;%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
@@ -123,7 +117,7 @@
     <Command>cd ..\..\src\deps\sqlite
 xcopy /Y /S /D sqlite3.h $(IncDir)
 cd ..\..\..\projects\ejs-win</Command>
-    <Outputs>$(BinDir)\libsqlite3.dll</Outputs>
+    <Outputs>$(BinDir)\libsqlite3.dylib</Outputs>
   </CustomBuildStep>
   </ItemDefinitionGroup>
 

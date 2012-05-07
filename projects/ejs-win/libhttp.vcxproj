@@ -108,14 +108,8 @@
   </ItemGroup>
 
   <ItemDefinitionGroup>
-    <Link>
-      <ModuleDefinitionFile>libhttp.def</ModuleDefinitionFile>
-    </Link>
-  </ItemDefinitionGroup>
-
-  <ItemDefinitionGroup>
   <Link>
-    <AdditionalDependencies>libmpr.lib;libpcre.lib;libmprssl.lib;%(AdditionalDependencies)</AdditionalDependencies>
+    <AdditionalDependencies>libmpr.dylib;libpcre.dylib;libmprssl.dylib;%(AdditionalDependencies)</AdditionalDependencies>
     <AdditionalLibraryDirectories>$(OutDir);$(Cfg)\bin;%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
   </Link>
 
@@ -123,7 +117,7 @@
     <Command>cd ..\..\src\deps\http
 xcopy /Y /S /D http.h $(IncDir)
 cd ..\..\..\projects\ejs-win</Command>
-    <Outputs>$(BinDir)\libhttp.dll</Outputs>
+    <Outputs>$(BinDir)\libhttp.dylib</Outputs>
   </CustomBuildStep>
   </ItemDefinitionGroup>
 

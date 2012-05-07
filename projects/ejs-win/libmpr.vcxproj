@@ -112,12 +112,6 @@
   </ItemGroup>
 
   <ItemDefinitionGroup>
-    <Link>
-      <ModuleDefinitionFile>libmpr.def</ModuleDefinitionFile>
-    </Link>
-  </ItemDefinitionGroup>
-
-  <ItemDefinitionGroup>
   <Link>
     <AdditionalDependencies>;%(AdditionalDependencies)</AdditionalDependencies>
     <AdditionalLibraryDirectories>$(OutDir);$(Cfg)\bin;%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
@@ -128,7 +122,7 @@
 xcopy /Y /S /D mpr.h $(IncDir)
 xcopy /Y /S /D mprSsl.h $(IncDir)
 cd ..\..\..\projects\ejs-win</Command>
-    <Outputs>$(BinDir)\libmpr.dll</Outputs>
+    <Outputs>$(BinDir)\libmpr.dylib</Outputs>
   </CustomBuildStep>
   </ItemDefinitionGroup>
 

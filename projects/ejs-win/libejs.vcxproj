@@ -200,14 +200,8 @@
   </ItemGroup>
 
   <ItemDefinitionGroup>
-    <Link>
-      <ModuleDefinitionFile>libejs.def</ModuleDefinitionFile>
-    </Link>
-  </ItemDefinitionGroup>
-
-  <ItemDefinitionGroup>
   <Link>
-    <AdditionalDependencies>libhttp.lib;libmpr.lib;libpcre.lib;libmprssl.lib;%(AdditionalDependencies)</AdditionalDependencies>
+    <AdditionalDependencies>libhttp.dylib;libmpr.dylib;libpcre.dylib;libmprssl.dylib;%(AdditionalDependencies)</AdditionalDependencies>
     <AdditionalLibraryDirectories>$(OutDir);$(Cfg)\bin;%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
   </Link>
 
@@ -224,7 +218,7 @@ xcopy /Y /S /D ejsByteCodeTable.h $(IncDir)
 xcopy /Y /S /D ejsCompiler.h $(IncDir)
 xcopy /Y /S /D ejsCustomize.h $(IncDir)
 cd ..\projects\ejs-win</Command>
-    <Outputs>$(BinDir)\libejs.dll</Outputs>
+    <Outputs>$(BinDir)\libejs.dylib</Outputs>
   </CustomBuildStep>
   </ItemDefinitionGroup>
 

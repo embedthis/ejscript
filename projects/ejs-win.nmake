@@ -17,51 +17,51 @@ CONFIG   = $(OS)-$(ARCH)-$(PROFILE)
 CC       = cl
 LD       = link
 RC       = rc
-CFLAGS   = -nologo -GR- -W3 -Zi -Od -MDd
-DFLAGS   = -D_REENTRANT -D_MT -DBLD_DEBUG
+CFLAGS   = -Wall -Wno-deprecated-declarations -g
+DFLAGS   = -DBLD_DEBUG
 IFLAGS   = -I$(CONFIG)\inc
-LDFLAGS  = -nologo -nodefaultlib -incremental:no -debug -machine:$(ARCH)
+LDFLAGS  = -Wl,-rpath,@executable_path/../lib -Wl,-rpath,@executable_path/ -Wl,-rpath,@loader_path/ -g
 LIBPATHS = -libpath:$(CONFIG)\bin
-LIBS     = ws2_32.lib advapi32.lib user32.lib kernel32.lib oldnames.lib msvcrt.lib shell32.lib
+LIBS     = pthread m dl
 
 all: prep \
-        $(CONFIG)\bin\libmpr.dll \
-        $(CONFIG)\bin\libmprssl.dll \
-        $(CONFIG)\bin\ejsman.exe \
-        $(CONFIG)\bin\makerom.exe \
-        $(CONFIG)\bin\libpcre.dll \
-        $(CONFIG)\bin\libhttp.dll \
-        $(CONFIG)\bin\http.exe \
-        $(CONFIG)\bin\libsqlite3.dll \
-        $(CONFIG)\bin\sqlite.exe \
-        $(CONFIG)\bin\libejs.dll \
-        $(CONFIG)\bin\ejs.exe \
-        $(CONFIG)\bin\ejsc.exe \
-        $(CONFIG)\bin\ejsmod.exe \
-        $(CONFIG)\bin\ejsrun.exe \
+        $(CONFIG)\bin\libmpr.dylib \
+        $(CONFIG)\bin\libmprssl.dylib \
+        $(CONFIG)\bin\ejsman \
+        $(CONFIG)\bin\makerom \
+        $(CONFIG)\bin\libpcre.dylib \
+        $(CONFIG)\bin\libhttp.dylib \
+        $(CONFIG)\bin\http \
+        $(CONFIG)\bin\libsqlite3.dylib \
+        $(CONFIG)\bin\sqlite \
+        $(CONFIG)\bin\libejs.dylib \
+        $(CONFIG)\bin\ejs \
+        $(CONFIG)\bin\ejsc \
+        $(CONFIG)\bin\ejsmod \
+        $(CONFIG)\bin\ejsrun \
         $(CONFIG)\bin\ejs.mod \
         $(CONFIG)\bin\bit.es \
-        $(CONFIG)\bin\bit.exe \
+        $(CONFIG)\bin\bit \
         $(CONFIG)\bin\utest.es \
-        $(CONFIG)\bin\utest.exe \
+        $(CONFIG)\bin\utest \
         $(CONFIG)\bin\bits \
         $(CONFIG)\bin\ejs.unix.mod \
         $(CONFIG)\bin\jem.es \
-        $(CONFIG)\bin\jem.exe \
+        $(CONFIG)\bin\jem \
         $(CONFIG)\bin\ejs.db.mod \
         $(CONFIG)\bin\ejs.db.mapper.mod \
         $(CONFIG)\bin\ejs.db.sqlite.mod \
-        $(CONFIG)\bin\ejs.db.sqlite.dll \
+        $(CONFIG)\bin\ejs.db.sqlite.dylib \
         $(CONFIG)\bin\ejs.web.mod \
-        $(CONFIG)\bin\ejs.web.dll \
+        $(CONFIG)\bin\ejs.web.dylib \
         $(CONFIG)\bin\www \
         $(CONFIG)\bin\ejs.template.mod \
         $(CONFIG)\bin\ejs.tar.mod \
         $(CONFIG)\bin\mvc.es \
-        $(CONFIG)\bin\mvc.exe \
+        $(CONFIG)\bin\mvc \
         $(CONFIG)\bin\ejs.mvc.mod \
         $(CONFIG)\bin\utest.worker \
-        $(CONFIG)\bin\removeFiles.exe
+        $(CONFIG)\bin\removeFiles
 
 .PHONY: prep
 
@@ -77,118 +77,118 @@ prep:
 	@if not exist $(CONFIG)\bin\libmpr.def xcopy /Y /S projects\ejs-win\*.def $(CONFIG)\bin
 
 clean:
-	-if exist $(CONFIG)\bin\libmpr.dll del /Q $(CONFIG)\bin\libmpr.dll
-	-if exist $(CONFIG)\bin\libmprssl.dll del /Q $(CONFIG)\bin\libmprssl.dll
-	-if exist $(CONFIG)\bin\ejsman.exe del /Q $(CONFIG)\bin\ejsman.exe
-	-if exist $(CONFIG)\bin\makerom.exe del /Q $(CONFIG)\bin\makerom.exe
-	-if exist $(CONFIG)\bin\libpcre.dll del /Q $(CONFIG)\bin\libpcre.dll
-	-if exist $(CONFIG)\bin\libhttp.dll del /Q $(CONFIG)\bin\libhttp.dll
-	-if exist $(CONFIG)\bin\http.exe del /Q $(CONFIG)\bin\http.exe
-	-if exist $(CONFIG)\bin\libsqlite3.dll del /Q $(CONFIG)\bin\libsqlite3.dll
-	-if exist $(CONFIG)\bin\sqlite.exe del /Q $(CONFIG)\bin\sqlite.exe
-	-if exist $(CONFIG)\bin\libejs.dll del /Q $(CONFIG)\bin\libejs.dll
-	-if exist $(CONFIG)\bin\ejs.exe del /Q $(CONFIG)\bin\ejs.exe
-	-if exist $(CONFIG)\bin\ejsc.exe del /Q $(CONFIG)\bin\ejsc.exe
-	-if exist $(CONFIG)\bin\ejsmod.exe del /Q $(CONFIG)\bin\ejsmod.exe
-	-if exist $(CONFIG)\bin\ejsrun.exe del /Q $(CONFIG)\bin\ejsrun.exe
+	-if exist $(CONFIG)\bin\libmpr.dylib del /Q $(CONFIG)\bin\libmpr.dylib
+	-if exist $(CONFIG)\bin\libmprssl.dylib del /Q $(CONFIG)\bin\libmprssl.dylib
+	-if exist $(CONFIG)\bin\ejsman del /Q $(CONFIG)\bin\ejsman
+	-if exist $(CONFIG)\bin\makerom del /Q $(CONFIG)\bin\makerom
+	-if exist $(CONFIG)\bin\libpcre.dylib del /Q $(CONFIG)\bin\libpcre.dylib
+	-if exist $(CONFIG)\bin\libhttp.dylib del /Q $(CONFIG)\bin\libhttp.dylib
+	-if exist $(CONFIG)\bin\http del /Q $(CONFIG)\bin\http
+	-if exist $(CONFIG)\bin\libsqlite3.dylib del /Q $(CONFIG)\bin\libsqlite3.dylib
+	-if exist $(CONFIG)\bin\sqlite del /Q $(CONFIG)\bin\sqlite
+	-if exist $(CONFIG)\bin\libejs.dylib del /Q $(CONFIG)\bin\libejs.dylib
+	-if exist $(CONFIG)\bin\ejs del /Q $(CONFIG)\bin\ejs
+	-if exist $(CONFIG)\bin\ejsc del /Q $(CONFIG)\bin\ejsc
+	-if exist $(CONFIG)\bin\ejsmod del /Q $(CONFIG)\bin\ejsmod
+	-if exist $(CONFIG)\bin\ejsrun del /Q $(CONFIG)\bin\ejsrun
 	-if exist $(CONFIG)\bin\utest.es del /Q $(CONFIG)\bin\utest.es
-	-if exist $(CONFIG)\bin\utest.exe del /Q $(CONFIG)\bin\utest.exe
+	-if exist $(CONFIG)\bin\utest del /Q $(CONFIG)\bin\utest
 	-if exist $(CONFIG)\bin\jem.es del /Q $(CONFIG)\bin\jem.es
-	-if exist $(CONFIG)\bin\jem.exe del /Q $(CONFIG)\bin\jem.exe
+	-if exist $(CONFIG)\bin\jem del /Q $(CONFIG)\bin\jem
 	-if exist $(CONFIG)\bin\ejs.db.mod del /Q $(CONFIG)\bin\ejs.db.mod
 	-if exist $(CONFIG)\bin\ejs.db.mapper.mod del /Q $(CONFIG)\bin\ejs.db.mapper.mod
 	-if exist $(CONFIG)\bin\ejs.db.sqlite.mod del /Q $(CONFIG)\bin\ejs.db.sqlite.mod
-	-if exist $(CONFIG)\bin\ejs.db.sqlite.dll del /Q $(CONFIG)\bin\ejs.db.sqlite.dll
+	-if exist $(CONFIG)\bin\ejs.db.sqlite.dylib del /Q $(CONFIG)\bin\ejs.db.sqlite.dylib
 	-if exist $(CONFIG)\bin\ejs.web.mod del /Q $(CONFIG)\bin\ejs.web.mod
-	-if exist $(CONFIG)\bin\ejs.web.dll del /Q $(CONFIG)\bin\ejs.web.dll
+	-if exist $(CONFIG)\bin\ejs.web.dylib del /Q $(CONFIG)\bin\ejs.web.dylib
 	-if exist $(CONFIG)\bin\www del /Q $(CONFIG)\bin\www
 	-if exist $(CONFIG)\bin\ejs.template.mod del /Q $(CONFIG)\bin\ejs.template.mod
 	-if exist $(CONFIG)\bin\mvc.es del /Q $(CONFIG)\bin\mvc.es
-	-if exist $(CONFIG)\bin\mvc.exe del /Q $(CONFIG)\bin\mvc.exe
+	-if exist $(CONFIG)\bin\mvc del /Q $(CONFIG)\bin\mvc
 	-if exist $(CONFIG)\bin\ejs.mvc.mod del /Q $(CONFIG)\bin\ejs.mvc.mod
 	-if exist $(CONFIG)\bin\utest.worker del /Q $(CONFIG)\bin\utest.worker
-	-if exist $(CONFIG)\bin\removeFiles.exe del /Q $(CONFIG)\bin\removeFiles.exe
-	-if exist $(CONFIG)\obj\mprLib.obj del /Q $(CONFIG)\obj\mprLib.obj
-	-if exist $(CONFIG)\obj\mprSsl.obj del /Q $(CONFIG)\obj\mprSsl.obj
-	-if exist $(CONFIG)\obj\manager.obj del /Q $(CONFIG)\obj\manager.obj
-	-if exist $(CONFIG)\obj\makerom.obj del /Q $(CONFIG)\obj\makerom.obj
-	-if exist $(CONFIG)\obj\pcre.obj del /Q $(CONFIG)\obj\pcre.obj
-	-if exist $(CONFIG)\obj\httpLib.obj del /Q $(CONFIG)\obj\httpLib.obj
-	-if exist $(CONFIG)\obj\http.obj del /Q $(CONFIG)\obj\http.obj
-	-if exist $(CONFIG)\obj\sqlite3.obj del /Q $(CONFIG)\obj\sqlite3.obj
-	-if exist $(CONFIG)\obj\sqlite.obj del /Q $(CONFIG)\obj\sqlite.obj
-	-if exist $(CONFIG)\obj\ecAst.obj del /Q $(CONFIG)\obj\ecAst.obj
-	-if exist $(CONFIG)\obj\ecCodeGen.obj del /Q $(CONFIG)\obj\ecCodeGen.obj
-	-if exist $(CONFIG)\obj\ecCompiler.obj del /Q $(CONFIG)\obj\ecCompiler.obj
-	-if exist $(CONFIG)\obj\ecLex.obj del /Q $(CONFIG)\obj\ecLex.obj
-	-if exist $(CONFIG)\obj\ecModuleWrite.obj del /Q $(CONFIG)\obj\ecModuleWrite.obj
-	-if exist $(CONFIG)\obj\ecParser.obj del /Q $(CONFIG)\obj\ecParser.obj
-	-if exist $(CONFIG)\obj\ecState.obj del /Q $(CONFIG)\obj\ecState.obj
-	-if exist $(CONFIG)\obj\ejsApp.obj del /Q $(CONFIG)\obj\ejsApp.obj
-	-if exist $(CONFIG)\obj\ejsArray.obj del /Q $(CONFIG)\obj\ejsArray.obj
-	-if exist $(CONFIG)\obj\ejsBlock.obj del /Q $(CONFIG)\obj\ejsBlock.obj
-	-if exist $(CONFIG)\obj\ejsBoolean.obj del /Q $(CONFIG)\obj\ejsBoolean.obj
-	-if exist $(CONFIG)\obj\ejsByteArray.obj del /Q $(CONFIG)\obj\ejsByteArray.obj
-	-if exist $(CONFIG)\obj\ejsCache.obj del /Q $(CONFIG)\obj\ejsCache.obj
-	-if exist $(CONFIG)\obj\ejsCmd.obj del /Q $(CONFIG)\obj\ejsCmd.obj
-	-if exist $(CONFIG)\obj\ejsConfig.obj del /Q $(CONFIG)\obj\ejsConfig.obj
-	-if exist $(CONFIG)\obj\ejsDate.obj del /Q $(CONFIG)\obj\ejsDate.obj
-	-if exist $(CONFIG)\obj\ejsDebug.obj del /Q $(CONFIG)\obj\ejsDebug.obj
-	-if exist $(CONFIG)\obj\ejsError.obj del /Q $(CONFIG)\obj\ejsError.obj
-	-if exist $(CONFIG)\obj\ejsFile.obj del /Q $(CONFIG)\obj\ejsFile.obj
-	-if exist $(CONFIG)\obj\ejsFileSystem.obj del /Q $(CONFIG)\obj\ejsFileSystem.obj
-	-if exist $(CONFIG)\obj\ejsFrame.obj del /Q $(CONFIG)\obj\ejsFrame.obj
-	-if exist $(CONFIG)\obj\ejsFunction.obj del /Q $(CONFIG)\obj\ejsFunction.obj
-	-if exist $(CONFIG)\obj\ejsGC.obj del /Q $(CONFIG)\obj\ejsGC.obj
-	-if exist $(CONFIG)\obj\ejsGlobal.obj del /Q $(CONFIG)\obj\ejsGlobal.obj
-	-if exist $(CONFIG)\obj\ejsHttp.obj del /Q $(CONFIG)\obj\ejsHttp.obj
-	-if exist $(CONFIG)\obj\ejsIterator.obj del /Q $(CONFIG)\obj\ejsIterator.obj
-	-if exist $(CONFIG)\obj\ejsJSON.obj del /Q $(CONFIG)\obj\ejsJSON.obj
-	-if exist $(CONFIG)\obj\ejsLocalCache.obj del /Q $(CONFIG)\obj\ejsLocalCache.obj
-	-if exist $(CONFIG)\obj\ejsMath.obj del /Q $(CONFIG)\obj\ejsMath.obj
-	-if exist $(CONFIG)\obj\ejsMemory.obj del /Q $(CONFIG)\obj\ejsMemory.obj
-	-if exist $(CONFIG)\obj\ejsMprLog.obj del /Q $(CONFIG)\obj\ejsMprLog.obj
-	-if exist $(CONFIG)\obj\ejsNamespace.obj del /Q $(CONFIG)\obj\ejsNamespace.obj
-	-if exist $(CONFIG)\obj\ejsNull.obj del /Q $(CONFIG)\obj\ejsNull.obj
-	-if exist $(CONFIG)\obj\ejsNumber.obj del /Q $(CONFIG)\obj\ejsNumber.obj
-	-if exist $(CONFIG)\obj\ejsObject.obj del /Q $(CONFIG)\obj\ejsObject.obj
-	-if exist $(CONFIG)\obj\ejsPath.obj del /Q $(CONFIG)\obj\ejsPath.obj
-	-if exist $(CONFIG)\obj\ejsPot.obj del /Q $(CONFIG)\obj\ejsPot.obj
-	-if exist $(CONFIG)\obj\ejsRegExp.obj del /Q $(CONFIG)\obj\ejsRegExp.obj
-	-if exist $(CONFIG)\obj\ejsSocket.obj del /Q $(CONFIG)\obj\ejsSocket.obj
-	-if exist $(CONFIG)\obj\ejsString.obj del /Q $(CONFIG)\obj\ejsString.obj
-	-if exist $(CONFIG)\obj\ejsSystem.obj del /Q $(CONFIG)\obj\ejsSystem.obj
-	-if exist $(CONFIG)\obj\ejsTimer.obj del /Q $(CONFIG)\obj\ejsTimer.obj
-	-if exist $(CONFIG)\obj\ejsType.obj del /Q $(CONFIG)\obj\ejsType.obj
-	-if exist $(CONFIG)\obj\ejsUri.obj del /Q $(CONFIG)\obj\ejsUri.obj
-	-if exist $(CONFIG)\obj\ejsVoid.obj del /Q $(CONFIG)\obj\ejsVoid.obj
-	-if exist $(CONFIG)\obj\ejsWorker.obj del /Q $(CONFIG)\obj\ejsWorker.obj
-	-if exist $(CONFIG)\obj\ejsXML.obj del /Q $(CONFIG)\obj\ejsXML.obj
-	-if exist $(CONFIG)\obj\ejsXMLList.obj del /Q $(CONFIG)\obj\ejsXMLList.obj
-	-if exist $(CONFIG)\obj\ejsXMLLoader.obj del /Q $(CONFIG)\obj\ejsXMLLoader.obj
-	-if exist $(CONFIG)\obj\ejsByteCode.obj del /Q $(CONFIG)\obj\ejsByteCode.obj
-	-if exist $(CONFIG)\obj\ejsException.obj del /Q $(CONFIG)\obj\ejsException.obj
-	-if exist $(CONFIG)\obj\ejsHelper.obj del /Q $(CONFIG)\obj\ejsHelper.obj
-	-if exist $(CONFIG)\obj\ejsInterp.obj del /Q $(CONFIG)\obj\ejsInterp.obj
-	-if exist $(CONFIG)\obj\ejsLoader.obj del /Q $(CONFIG)\obj\ejsLoader.obj
-	-if exist $(CONFIG)\obj\ejsModule.obj del /Q $(CONFIG)\obj\ejsModule.obj
-	-if exist $(CONFIG)\obj\ejsScope.obj del /Q $(CONFIG)\obj\ejsScope.obj
-	-if exist $(CONFIG)\obj\ejsService.obj del /Q $(CONFIG)\obj\ejsService.obj
-	-if exist $(CONFIG)\obj\ejs.obj del /Q $(CONFIG)\obj\ejs.obj
-	-if exist $(CONFIG)\obj\ejsc.obj del /Q $(CONFIG)\obj\ejsc.obj
-	-if exist $(CONFIG)\obj\ejsmod.obj del /Q $(CONFIG)\obj\ejsmod.obj
-	-if exist $(CONFIG)\obj\doc.obj del /Q $(CONFIG)\obj\doc.obj
-	-if exist $(CONFIG)\obj\docFiles.obj del /Q $(CONFIG)\obj\docFiles.obj
-	-if exist $(CONFIG)\obj\listing.obj del /Q $(CONFIG)\obj\listing.obj
-	-if exist $(CONFIG)\obj\slotGen.obj del /Q $(CONFIG)\obj\slotGen.obj
-	-if exist $(CONFIG)\obj\ejsrun.obj del /Q $(CONFIG)\obj\ejsrun.obj
-	-if exist $(CONFIG)\obj\ejsZlib.obj del /Q $(CONFIG)\obj\ejsZlib.obj
-	-if exist $(CONFIG)\obj\ejsSqlite.obj del /Q $(CONFIG)\obj\ejsSqlite.obj
-	-if exist $(CONFIG)\obj\ejsHttpServer.obj del /Q $(CONFIG)\obj\ejsHttpServer.obj
-	-if exist $(CONFIG)\obj\ejsRequest.obj del /Q $(CONFIG)\obj\ejsRequest.obj
-	-if exist $(CONFIG)\obj\ejsSession.obj del /Q $(CONFIG)\obj\ejsSession.obj
-	-if exist $(CONFIG)\obj\ejsWeb.obj del /Q $(CONFIG)\obj\ejsWeb.obj
-	-if exist $(CONFIG)\obj\removeFiles.obj del /Q $(CONFIG)\obj\removeFiles.obj
+	-if exist $(CONFIG)\bin\removeFiles del /Q $(CONFIG)\bin\removeFiles
+	-if exist $(CONFIG)\obj\mprLib.o del /Q $(CONFIG)\obj\mprLib.o
+	-if exist $(CONFIG)\obj\mprSsl.o del /Q $(CONFIG)\obj\mprSsl.o
+	-if exist $(CONFIG)\obj\manager.o del /Q $(CONFIG)\obj\manager.o
+	-if exist $(CONFIG)\obj\makerom.o del /Q $(CONFIG)\obj\makerom.o
+	-if exist $(CONFIG)\obj\pcre.o del /Q $(CONFIG)\obj\pcre.o
+	-if exist $(CONFIG)\obj\httpLib.o del /Q $(CONFIG)\obj\httpLib.o
+	-if exist $(CONFIG)\obj\http.o del /Q $(CONFIG)\obj\http.o
+	-if exist $(CONFIG)\obj\sqlite3.o del /Q $(CONFIG)\obj\sqlite3.o
+	-if exist $(CONFIG)\obj\sqlite.o del /Q $(CONFIG)\obj\sqlite.o
+	-if exist $(CONFIG)\obj\ecAst.o del /Q $(CONFIG)\obj\ecAst.o
+	-if exist $(CONFIG)\obj\ecCodeGen.o del /Q $(CONFIG)\obj\ecCodeGen.o
+	-if exist $(CONFIG)\obj\ecCompiler.o del /Q $(CONFIG)\obj\ecCompiler.o
+	-if exist $(CONFIG)\obj\ecLex.o del /Q $(CONFIG)\obj\ecLex.o
+	-if exist $(CONFIG)\obj\ecModuleWrite.o del /Q $(CONFIG)\obj\ecModuleWrite.o
+	-if exist $(CONFIG)\obj\ecParser.o del /Q $(CONFIG)\obj\ecParser.o
+	-if exist $(CONFIG)\obj\ecState.o del /Q $(CONFIG)\obj\ecState.o
+	-if exist $(CONFIG)\obj\ejsApp.o del /Q $(CONFIG)\obj\ejsApp.o
+	-if exist $(CONFIG)\obj\ejsArray.o del /Q $(CONFIG)\obj\ejsArray.o
+	-if exist $(CONFIG)\obj\ejsBlock.o del /Q $(CONFIG)\obj\ejsBlock.o
+	-if exist $(CONFIG)\obj\ejsBoolean.o del /Q $(CONFIG)\obj\ejsBoolean.o
+	-if exist $(CONFIG)\obj\ejsByteArray.o del /Q $(CONFIG)\obj\ejsByteArray.o
+	-if exist $(CONFIG)\obj\ejsCache.o del /Q $(CONFIG)\obj\ejsCache.o
+	-if exist $(CONFIG)\obj\ejsCmd.o del /Q $(CONFIG)\obj\ejsCmd.o
+	-if exist $(CONFIG)\obj\ejsConfig.o del /Q $(CONFIG)\obj\ejsConfig.o
+	-if exist $(CONFIG)\obj\ejsDate.o del /Q $(CONFIG)\obj\ejsDate.o
+	-if exist $(CONFIG)\obj\ejsDebug.o del /Q $(CONFIG)\obj\ejsDebug.o
+	-if exist $(CONFIG)\obj\ejsError.o del /Q $(CONFIG)\obj\ejsError.o
+	-if exist $(CONFIG)\obj\ejsFile.o del /Q $(CONFIG)\obj\ejsFile.o
+	-if exist $(CONFIG)\obj\ejsFileSystem.o del /Q $(CONFIG)\obj\ejsFileSystem.o
+	-if exist $(CONFIG)\obj\ejsFrame.o del /Q $(CONFIG)\obj\ejsFrame.o
+	-if exist $(CONFIG)\obj\ejsFunction.o del /Q $(CONFIG)\obj\ejsFunction.o
+	-if exist $(CONFIG)\obj\ejsGC.o del /Q $(CONFIG)\obj\ejsGC.o
+	-if exist $(CONFIG)\obj\ejsGlobal.o del /Q $(CONFIG)\obj\ejsGlobal.o
+	-if exist $(CONFIG)\obj\ejsHttp.o del /Q $(CONFIG)\obj\ejsHttp.o
+	-if exist $(CONFIG)\obj\ejsIterator.o del /Q $(CONFIG)\obj\ejsIterator.o
+	-if exist $(CONFIG)\obj\ejsJSON.o del /Q $(CONFIG)\obj\ejsJSON.o
+	-if exist $(CONFIG)\obj\ejsLocalCache.o del /Q $(CONFIG)\obj\ejsLocalCache.o
+	-if exist $(CONFIG)\obj\ejsMath.o del /Q $(CONFIG)\obj\ejsMath.o
+	-if exist $(CONFIG)\obj\ejsMemory.o del /Q $(CONFIG)\obj\ejsMemory.o
+	-if exist $(CONFIG)\obj\ejsMprLog.o del /Q $(CONFIG)\obj\ejsMprLog.o
+	-if exist $(CONFIG)\obj\ejsNamespace.o del /Q $(CONFIG)\obj\ejsNamespace.o
+	-if exist $(CONFIG)\obj\ejsNull.o del /Q $(CONFIG)\obj\ejsNull.o
+	-if exist $(CONFIG)\obj\ejsNumber.o del /Q $(CONFIG)\obj\ejsNumber.o
+	-if exist $(CONFIG)\obj\ejsObject.o del /Q $(CONFIG)\obj\ejsObject.o
+	-if exist $(CONFIG)\obj\ejsPath.o del /Q $(CONFIG)\obj\ejsPath.o
+	-if exist $(CONFIG)\obj\ejsPot.o del /Q $(CONFIG)\obj\ejsPot.o
+	-if exist $(CONFIG)\obj\ejsRegExp.o del /Q $(CONFIG)\obj\ejsRegExp.o
+	-if exist $(CONFIG)\obj\ejsSocket.o del /Q $(CONFIG)\obj\ejsSocket.o
+	-if exist $(CONFIG)\obj\ejsString.o del /Q $(CONFIG)\obj\ejsString.o
+	-if exist $(CONFIG)\obj\ejsSystem.o del /Q $(CONFIG)\obj\ejsSystem.o
+	-if exist $(CONFIG)\obj\ejsTimer.o del /Q $(CONFIG)\obj\ejsTimer.o
+	-if exist $(CONFIG)\obj\ejsType.o del /Q $(CONFIG)\obj\ejsType.o
+	-if exist $(CONFIG)\obj\ejsUri.o del /Q $(CONFIG)\obj\ejsUri.o
+	-if exist $(CONFIG)\obj\ejsVoid.o del /Q $(CONFIG)\obj\ejsVoid.o
+	-if exist $(CONFIG)\obj\ejsWorker.o del /Q $(CONFIG)\obj\ejsWorker.o
+	-if exist $(CONFIG)\obj\ejsXML.o del /Q $(CONFIG)\obj\ejsXML.o
+	-if exist $(CONFIG)\obj\ejsXMLList.o del /Q $(CONFIG)\obj\ejsXMLList.o
+	-if exist $(CONFIG)\obj\ejsXMLLoader.o del /Q $(CONFIG)\obj\ejsXMLLoader.o
+	-if exist $(CONFIG)\obj\ejsByteCode.o del /Q $(CONFIG)\obj\ejsByteCode.o
+	-if exist $(CONFIG)\obj\ejsException.o del /Q $(CONFIG)\obj\ejsException.o
+	-if exist $(CONFIG)\obj\ejsHelper.o del /Q $(CONFIG)\obj\ejsHelper.o
+	-if exist $(CONFIG)\obj\ejsInterp.o del /Q $(CONFIG)\obj\ejsInterp.o
+	-if exist $(CONFIG)\obj\ejsLoader.o del /Q $(CONFIG)\obj\ejsLoader.o
+	-if exist $(CONFIG)\obj\ejsModule.o del /Q $(CONFIG)\obj\ejsModule.o
+	-if exist $(CONFIG)\obj\ejsScope.o del /Q $(CONFIG)\obj\ejsScope.o
+	-if exist $(CONFIG)\obj\ejsService.o del /Q $(CONFIG)\obj\ejsService.o
+	-if exist $(CONFIG)\obj\ejs.o del /Q $(CONFIG)\obj\ejs.o
+	-if exist $(CONFIG)\obj\ejsc.o del /Q $(CONFIG)\obj\ejsc.o
+	-if exist $(CONFIG)\obj\ejsmod.o del /Q $(CONFIG)\obj\ejsmod.o
+	-if exist $(CONFIG)\obj\doc.o del /Q $(CONFIG)\obj\doc.o
+	-if exist $(CONFIG)\obj\docFiles.o del /Q $(CONFIG)\obj\docFiles.o
+	-if exist $(CONFIG)\obj\listing.o del /Q $(CONFIG)\obj\listing.o
+	-if exist $(CONFIG)\obj\slotGen.o del /Q $(CONFIG)\obj\slotGen.o
+	-if exist $(CONFIG)\obj\ejsrun.o del /Q $(CONFIG)\obj\ejsrun.o
+	-if exist $(CONFIG)\obj\ejsZlib.o del /Q $(CONFIG)\obj\ejsZlib.o
+	-if exist $(CONFIG)\obj\ejsSqlite.o del /Q $(CONFIG)\obj\ejsSqlite.o
+	-if exist $(CONFIG)\obj\ejsHttpServer.o del /Q $(CONFIG)\obj\ejsHttpServer.o
+	-if exist $(CONFIG)\obj\ejsRequest.o del /Q $(CONFIG)\obj\ejsRequest.o
+	-if exist $(CONFIG)\obj\ejsSession.o del /Q $(CONFIG)\obj\ejsSession.o
+	-if exist $(CONFIG)\obj\ejsWeb.o del /Q $(CONFIG)\obj\ejsWeb.o
+	-if exist $(CONFIG)\obj\removeFiles.o del /Q $(CONFIG)\obj\removeFiles.o
 
 $(CONFIG)\inc\mpr.h: 
 	-if exist $(CONFIG)\inc\mpr.h del /Q $(CONFIG)\inc\mpr.h
@@ -198,111 +198,111 @@ $(CONFIG)\inc\mprSsl.h:
 	-if exist $(CONFIG)\inc\mprSsl.h del /Q $(CONFIG)\inc\mprSsl.h
 	copy /Y src\deps\mpr\mprSsl.h $(CONFIG)\inc\mprSsl.h
 
-$(CONFIG)\obj\mprLib.obj: \
+$(CONFIG)\obj\mprLib.o: \
         src\deps\mpr\mprLib.c \
         $(CONFIG)\inc\bit.h
-	"$(CC)" -c -Fo$(CONFIG)\obj\mprLib.obj -Fd$(CONFIG)\obj\mprLib.pdb $(CFLAGS) $(DFLAGS) -I$(CONFIG)\inc s$(RC)\deps\mpr\mprLib.c
+	$(CC) -c -o $(CONFIG)\obj\mprLib.o -a$(RC)h i686 $(CFLAGS) $(DFLAGS) -I$(CONFIG)\inc src\deps\mpr\mprLib.c
 
-$(CONFIG)\bin\libmpr.dll:  \
+$(CONFIG)\bin\libmpr.dylib:  \
         $(CONFIG)\inc\mpr.h \
         $(CONFIG)\inc\mprSsl.h \
-        $(CONFIG)\obj\mprLib.obj
-	"$(LD)" -dll -out:$(CONFIG)\bin\libmpr.dll -entry:$(ENTRY) -def:$(CONFIG)\bin\libmpr.def $(LDFLAGS) $(LIBPATHS) $(CONFIG)\obj\mprLib.obj $(LIBS)
+        $(CONFIG)\obj\mprLib.o
+	$(CC) -dynamiclib -o $(CONFIG)\bin\libmpr.dylib -a$(RC)h i686 $(LDFLAGS) -compatibility_version 2.0.0 -current_version 2.0.0 -compatibility_version 2.0.0 -current_version 2.0.0 $(LIBPATHS) -install_name @rpath\libmpr.dylib $(CONFIG)\obj\mprLib.o $(LIBS)
 
-$(CONFIG)\obj\mprSsl.obj: \
+$(CONFIG)\obj\mprSsl.o: \
         src\deps\mpr\mprSsl.c \
         $(CONFIG)\inc\bit.h
-	"$(CC)" -c -Fo$(CONFIG)\obj\mprSsl.obj -Fd$(CONFIG)\obj\mprSsl.pdb $(CFLAGS) $(DFLAGS) -I$(CONFIG)\inc s$(RC)\deps\mpr\mprSsl.c
+	$(CC) -c -o $(CONFIG)\obj\mprSsl.o -a$(RC)h i686 $(CFLAGS) $(DFLAGS) -I$(CONFIG)\inc src\deps\mpr\mprSsl.c
 
-$(CONFIG)\bin\libmprssl.dll:  \
-        $(CONFIG)\bin\libmpr.dll \
-        $(CONFIG)\obj\mprSsl.obj
-	"$(LD)" -dll -out:$(CONFIG)\bin\libmprssl.dll -entry:$(ENTRY) -def:$(CONFIG)\bin\libmprssl.def $(LDFLAGS) $(LIBPATHS) $(CONFIG)\obj\mprSsl.obj $(LIBS) libmpr.lib
+$(CONFIG)\bin\libmprssl.dylib:  \
+        $(CONFIG)\bin\libmpr.dylib \
+        $(CONFIG)\obj\mprSsl.o
+	$(CC) -dynamiclib -o $(CONFIG)\bin\libmprssl.dylib -a$(RC)h i686 $(LDFLAGS) -compatibility_version 2.0.0 -current_version 2.0.0 -compatibility_version 2.0.0 -current_version 2.0.0 $(LIBPATHS) -install_name @rpath\libmprssl.dylib $(CONFIG)\obj\mprSsl.o $(LIBS) libmpr.dylib
 
-$(CONFIG)\obj\manager.obj: \
+$(CONFIG)\obj\manager.o: \
         src\deps\mpr\manager.c \
         $(CONFIG)\inc\bit.h
-	"$(CC)" -c -Fo$(CONFIG)\obj\manager.obj -Fd$(CONFIG)\obj\manager.pdb $(CFLAGS) $(DFLAGS) -I$(CONFIG)\inc s$(RC)\deps\mpr\manager.c
+	$(CC) -c -o $(CONFIG)\obj\manager.o -a$(RC)h i686 $(CFLAGS) $(DFLAGS) -I$(CONFIG)\inc src\deps\mpr\manager.c
 
-$(CONFIG)\bin\ejsman.exe:  \
-        $(CONFIG)\bin\libmpr.dll \
-        $(CONFIG)\obj\manager.obj
-	"$(LD)" -out:$(CONFIG)\bin\ejsman.exe -entry:WinMainCRTStartup -subsystem:Windows $(LDFLAGS) $(LIBPATHS) $(CONFIG)\obj\manager.obj $(LIBS) libmpr.lib
+$(CONFIG)\bin\ejsman:  \
+        $(CONFIG)\bin\libmpr.dylib \
+        $(CONFIG)\obj\manager.o
+	$(CC) -o $(CONFIG)\bin\ejsman -a$(RC)h i686 $(LDFLAGS) $(LIBPATHS) $(CONFIG)\obj\manager.o $(LIBS) libmpr.dylib
 
-$(CONFIG)\obj\makerom.obj: \
+$(CONFIG)\obj\makerom.o: \
         src\deps\mpr\makerom.c \
         $(CONFIG)\inc\bit.h
-	"$(CC)" -c -Fo$(CONFIG)\obj\makerom.obj -Fd$(CONFIG)\obj\makerom.pdb $(CFLAGS) $(DFLAGS) -I$(CONFIG)\inc s$(RC)\deps\mpr\makerom.c
+	$(CC) -c -o $(CONFIG)\obj\makerom.o -a$(RC)h i686 $(CFLAGS) $(DFLAGS) -I$(CONFIG)\inc src\deps\mpr\makerom.c
 
-$(CONFIG)\bin\makerom.exe:  \
-        $(CONFIG)\bin\libmpr.dll \
-        $(CONFIG)\obj\makerom.obj
-	"$(LD)" -out:$(CONFIG)\bin\makerom.exe -entry:mainCRTStartup -subsystem:console $(LDFLAGS) $(LIBPATHS) $(CONFIG)\obj\makerom.obj $(LIBS) libmpr.lib
+$(CONFIG)\bin\makerom:  \
+        $(CONFIG)\bin\libmpr.dylib \
+        $(CONFIG)\obj\makerom.o
+	$(CC) -o $(CONFIG)\bin\makerom -a$(RC)h i686 $(LDFLAGS) $(LIBPATHS) $(CONFIG)\obj\makerom.o $(LIBS) libmpr.dylib
 
 $(CONFIG)\inc\pcre.h: 
 	-if exist $(CONFIG)\inc\pcre.h del /Q $(CONFIG)\inc\pcre.h
 	copy /Y src\deps\pcre\pcre.h $(CONFIG)\inc\pcre.h
 
-$(CONFIG)\obj\pcre.obj: \
+$(CONFIG)\obj\pcre.o: \
         src\deps\pcre\pcre.c \
         $(CONFIG)\inc\bit.h
-	"$(CC)" -c -Fo$(CONFIG)\obj\pcre.obj -Fd$(CONFIG)\obj\pcre.pdb $(CFLAGS) $(DFLAGS) -I$(CONFIG)\inc s$(RC)\deps\pcre\pcre.c
+	$(CC) -c -o $(CONFIG)\obj\pcre.o -a$(RC)h i686 $(CFLAGS) $(DFLAGS) -I$(CONFIG)\inc src\deps\pcre\pcre.c
 
-$(CONFIG)\bin\libpcre.dll:  \
+$(CONFIG)\bin\libpcre.dylib:  \
         $(CONFIG)\inc\pcre.h \
-        $(CONFIG)\obj\pcre.obj
-	"$(LD)" -dll -out:$(CONFIG)\bin\libpcre.dll -entry:$(ENTRY) -def:$(CONFIG)\bin\libpcre.def $(LDFLAGS) $(LIBPATHS) $(CONFIG)\obj\pcre.obj $(LIBS)
+        $(CONFIG)\obj\pcre.o
+	$(CC) -dynamiclib -o $(CONFIG)\bin\libpcre.dylib -a$(RC)h i686 $(LDFLAGS) $(LIBPATHS) -install_name @rpath\libpcre.dylib $(CONFIG)\obj\pcre.o $(LIBS)
 
 $(CONFIG)\inc\http.h: 
 	-if exist $(CONFIG)\inc\http.h del /Q $(CONFIG)\inc\http.h
 	copy /Y src\deps\http\http.h $(CONFIG)\inc\http.h
 
-$(CONFIG)\obj\httpLib.obj: \
+$(CONFIG)\obj\httpLib.o: \
         src\deps\http\httpLib.c \
         $(CONFIG)\inc\bit.h
-	"$(CC)" -c -Fo$(CONFIG)\obj\httpLib.obj -Fd$(CONFIG)\obj\httpLib.pdb $(CFLAGS) $(DFLAGS) -I$(CONFIG)\inc s$(RC)\deps\http\httpLib.c
+	$(CC) -c -o $(CONFIG)\obj\httpLib.o -a$(RC)h i686 $(CFLAGS) $(DFLAGS) -I$(CONFIG)\inc src\deps\http\httpLib.c
 
-$(CONFIG)\bin\libhttp.dll:  \
-        $(CONFIG)\bin\libmpr.dll \
-        $(CONFIG)\bin\libpcre.dll \
-        $(CONFIG)\bin\libmprssl.dll \
+$(CONFIG)\bin\libhttp.dylib:  \
+        $(CONFIG)\bin\libmpr.dylib \
+        $(CONFIG)\bin\libpcre.dylib \
+        $(CONFIG)\bin\libmprssl.dylib \
         $(CONFIG)\inc\http.h \
-        $(CONFIG)\obj\httpLib.obj
-	"$(LD)" -dll -out:$(CONFIG)\bin\libhttp.dll -entry:$(ENTRY) -def:$(CONFIG)\bin\libhttp.def $(LDFLAGS) $(LIBPATHS) $(CONFIG)\obj\httpLib.obj $(LIBS) libmpr.lib libpcre.lib libmprssl.lib
+        $(CONFIG)\obj\httpLib.o
+	$(CC) -dynamiclib -o $(CONFIG)\bin\libhttp.dylib -a$(RC)h i686 $(LDFLAGS) -compatibility_version 2.0.0 -current_version 2.0.0 -compatibility_version 2.0.0 -current_version 2.0.0 $(LIBPATHS) -install_name @rpath\libhttp.dylib $(CONFIG)\obj\httpLib.o $(LIBS) libmpr.dylib libpcre.dylib libmprssl.dylib
 
-$(CONFIG)\obj\http.obj: \
+$(CONFIG)\obj\http.o: \
         src\deps\http\http.c \
         $(CONFIG)\inc\bit.h
-	"$(CC)" -c -Fo$(CONFIG)\obj\http.obj -Fd$(CONFIG)\obj\http.pdb $(CFLAGS) $(DFLAGS) -I$(CONFIG)\inc s$(RC)\deps\http\http.c
+	$(CC) -c -o $(CONFIG)\obj\http.o -a$(RC)h i686 $(CFLAGS) $(DFLAGS) -I$(CONFIG)\inc src\deps\http\http.c
 
-$(CONFIG)\bin\http.exe:  \
-        $(CONFIG)\bin\libhttp.dll \
-        $(CONFIG)\obj\http.obj
-	"$(LD)" -out:$(CONFIG)\bin\http.exe -entry:mainCRTStartup -subsystem:console $(LDFLAGS) $(LIBPATHS) $(CONFIG)\obj\http.obj $(LIBS) libhttp.lib libmpr.lib libpcre.lib libmprssl.lib
+$(CONFIG)\bin\http:  \
+        $(CONFIG)\bin\libhttp.dylib \
+        $(CONFIG)\obj\http.o
+	$(CC) -o $(CONFIG)\bin\http -a$(RC)h i686 $(LDFLAGS) $(LIBPATHS) $(CONFIG)\obj\http.o $(LIBS) libhttp.dylib libmpr.dylib libpcre.dylib libmprssl.dylib
 
 $(CONFIG)\inc\sqlite3.h: 
 	-if exist $(CONFIG)\inc\sqlite3.h del /Q $(CONFIG)\inc\sqlite3.h
 	copy /Y src\deps\sqlite\sqlite3.h $(CONFIG)\inc\sqlite3.h
 
-$(CONFIG)\obj\sqlite3.obj: \
+$(CONFIG)\obj\sqlite3.o: \
         src\deps\sqlite\sqlite3.c \
         $(CONFIG)\inc\bit.h
-	"$(CC)" -c -Fo$(CONFIG)\obj\sqlite3.obj -Fd$(CONFIG)\obj\sqlite3.pdb $(CFLAGS) $(DFLAGS) -I$(CONFIG)\inc s$(RC)\deps\sqlite\sqlite3.c
+	$(CC) -c -o $(CONFIG)\obj\sqlite3.o -a$(RC)h i686 -Wno-deprecated-declarations -g $(DFLAGS) -I$(CONFIG)\inc src\deps\sqlite\sqlite3.c
 
-$(CONFIG)\bin\libsqlite3.dll:  \
+$(CONFIG)\bin\libsqlite3.dylib:  \
         $(CONFIG)\inc\sqlite3.h \
-        $(CONFIG)\obj\sqlite3.obj
-	"$(LD)" -dll -out:$(CONFIG)\bin\libsqlite3.dll -entry:$(ENTRY) -def:$(CONFIG)\bin\libsqlite3.def $(LDFLAGS) $(LIBPATHS) $(CONFIG)\obj\sqlite3.obj $(LIBS)
+        $(CONFIG)\obj\sqlite3.o
+	$(CC) -dynamiclib -o $(CONFIG)\bin\libsqlite3.dylib -a$(RC)h i686 $(LDFLAGS) -compatibility_version 2.0.0 -current_version 2.0.0 -compatibility_version 2.0.0 -current_version 2.0.0 $(LIBPATHS) -install_name @rpath\libsqlite3.dylib $(CONFIG)\obj\sqlite3.o $(LIBS)
 
-$(CONFIG)\obj\sqlite.obj: \
+$(CONFIG)\obj\sqlite.o: \
         src\deps\sqlite\sqlite.c \
         $(CONFIG)\inc\bit.h
-	"$(CC)" -c -Fo$(CONFIG)\obj\sqlite.obj -Fd$(CONFIG)\obj\sqlite.pdb $(CFLAGS) $(DFLAGS) -I$(CONFIG)\inc s$(RC)\deps\sqlite\sqlite.c
+	$(CC) -c -o $(CONFIG)\obj\sqlite.o -a$(RC)h i686 $(CFLAGS) $(DFLAGS) -I$(CONFIG)\inc src\deps\sqlite\sqlite.c
 
-$(CONFIG)\bin\sqlite.exe:  \
-        $(CONFIG)\bin\libsqlite3.dll \
-        $(CONFIG)\obj\sqlite.obj
-	"$(LD)" -out:$(CONFIG)\bin\sqlite.exe -entry:mainCRTStartup -subsystem:console $(LDFLAGS) $(LIBPATHS) $(CONFIG)\obj\sqlite.obj $(LIBS) libsqlite3.lib
+$(CONFIG)\bin\sqlite:  \
+        $(CONFIG)\bin\libsqlite3.dylib \
+        $(CONFIG)\obj\sqlite.o
+	$(CC) -o $(CONFIG)\bin\sqlite -a$(RC)h i686 $(LDFLAGS) $(LIBPATHS) $(CONFIG)\obj\sqlite.o $(LIBS) libsqlite3.dylib
 
 $(CONFIG)\inc\ejs.cache.local.slots.h: 
 	-if exist $(CONFIG)\inc\ejs.cache.local.slots.h del /Q $(CONFIG)\inc\ejs.cache.local.slots.h
@@ -344,293 +344,293 @@ $(CONFIG)\inc\ejsCustomize.h:
 	-if exist $(CONFIG)\inc\ejsCustomize.h del /Q $(CONFIG)\inc\ejsCustomize.h
 	copy /Y src\ejsCustomize.h $(CONFIG)\inc\ejsCustomize.h
 
-$(CONFIG)\obj\ecAst.obj: \
+$(CONFIG)\obj\ecAst.o: \
         src\compiler\ecAst.c \
         $(CONFIG)\inc\bit.h
-	"$(CC)" -c -Fo$(CONFIG)\obj\ecAst.obj -Fd$(CONFIG)\obj\ecAst.pdb $(CFLAGS) $(DFLAGS) -I$(CONFIG)\inc s$(RC)\compiler\ecAst.c
+	$(CC) -c -o $(CONFIG)\obj\ecAst.o -a$(RC)h i686 $(CFLAGS) $(DFLAGS) -I$(CONFIG)\inc src\compiler\ecAst.c
 
-$(CONFIG)\obj\ecCodeGen.obj: \
+$(CONFIG)\obj\ecCodeGen.o: \
         src\compiler\ecCodeGen.c \
         $(CONFIG)\inc\bit.h
-	"$(CC)" -c -Fo$(CONFIG)\obj\ecCodeGen.obj -Fd$(CONFIG)\obj\ecCodeGen.pdb $(CFLAGS) $(DFLAGS) -I$(CONFIG)\inc s$(RC)\compiler\ecCodeGen.c
+	$(CC) -c -o $(CONFIG)\obj\ecCodeGen.o -a$(RC)h i686 $(CFLAGS) $(DFLAGS) -I$(CONFIG)\inc src\compiler\ecCodeGen.c
 
-$(CONFIG)\obj\ecCompiler.obj: \
+$(CONFIG)\obj\ecCompiler.o: \
         src\compiler\ecCompiler.c \
         $(CONFIG)\inc\bit.h
-	"$(CC)" -c -Fo$(CONFIG)\obj\ecCompiler.obj -Fd$(CONFIG)\obj\ecCompiler.pdb $(CFLAGS) $(DFLAGS) -I$(CONFIG)\inc s$(RC)\compiler\ecCompiler.c
+	$(CC) -c -o $(CONFIG)\obj\ecCompiler.o -a$(RC)h i686 $(CFLAGS) $(DFLAGS) -I$(CONFIG)\inc src\compiler\ecCompiler.c
 
-$(CONFIG)\obj\ecLex.obj: \
+$(CONFIG)\obj\ecLex.o: \
         src\compiler\ecLex.c \
         $(CONFIG)\inc\bit.h
-	"$(CC)" -c -Fo$(CONFIG)\obj\ecLex.obj -Fd$(CONFIG)\obj\ecLex.pdb $(CFLAGS) $(DFLAGS) -I$(CONFIG)\inc s$(RC)\compiler\ecLex.c
+	$(CC) -c -o $(CONFIG)\obj\ecLex.o -a$(RC)h i686 $(CFLAGS) $(DFLAGS) -I$(CONFIG)\inc src\compiler\ecLex.c
 
-$(CONFIG)\obj\ecModuleWrite.obj: \
+$(CONFIG)\obj\ecModuleWrite.o: \
         src\compiler\ecModuleWrite.c \
         $(CONFIG)\inc\bit.h
-	"$(CC)" -c -Fo$(CONFIG)\obj\ecModuleWrite.obj -Fd$(CONFIG)\obj\ecModuleWrite.pdb $(CFLAGS) $(DFLAGS) -I$(CONFIG)\inc s$(RC)\compiler\ecModuleWrite.c
+	$(CC) -c -o $(CONFIG)\obj\ecModuleWrite.o -a$(RC)h i686 $(CFLAGS) $(DFLAGS) -I$(CONFIG)\inc src\compiler\ecModuleWrite.c
 
-$(CONFIG)\obj\ecParser.obj: \
+$(CONFIG)\obj\ecParser.o: \
         src\compiler\ecParser.c \
         $(CONFIG)\inc\bit.h
-	"$(CC)" -c -Fo$(CONFIG)\obj\ecParser.obj -Fd$(CONFIG)\obj\ecParser.pdb $(CFLAGS) $(DFLAGS) -I$(CONFIG)\inc s$(RC)\compiler\ecParser.c
+	$(CC) -c -o $(CONFIG)\obj\ecParser.o -a$(RC)h i686 $(CFLAGS) $(DFLAGS) -I$(CONFIG)\inc src\compiler\ecParser.c
 
-$(CONFIG)\obj\ecState.obj: \
+$(CONFIG)\obj\ecState.o: \
         src\compiler\ecState.c \
         $(CONFIG)\inc\bit.h
-	"$(CC)" -c -Fo$(CONFIG)\obj\ecState.obj -Fd$(CONFIG)\obj\ecState.pdb $(CFLAGS) $(DFLAGS) -I$(CONFIG)\inc s$(RC)\compiler\ecState.c
+	$(CC) -c -o $(CONFIG)\obj\ecState.o -a$(RC)h i686 $(CFLAGS) $(DFLAGS) -I$(CONFIG)\inc src\compiler\ecState.c
 
-$(CONFIG)\obj\ejsApp.obj: \
+$(CONFIG)\obj\ejsApp.o: \
         src\core\src\ejsApp.c \
         $(CONFIG)\inc\bit.h
-	"$(CC)" -c -Fo$(CONFIG)\obj\ejsApp.obj -Fd$(CONFIG)\obj\ejsApp.pdb $(CFLAGS) $(DFLAGS) -I$(CONFIG)\inc s$(RC)\core\src\ejsApp.c
+	$(CC) -c -o $(CONFIG)\obj\ejsApp.o -a$(RC)h i686 $(CFLAGS) $(DFLAGS) -I$(CONFIG)\inc src\core\src\ejsApp.c
 
-$(CONFIG)\obj\ejsArray.obj: \
+$(CONFIG)\obj\ejsArray.o: \
         src\core\src\ejsArray.c \
         $(CONFIG)\inc\bit.h
-	"$(CC)" -c -Fo$(CONFIG)\obj\ejsArray.obj -Fd$(CONFIG)\obj\ejsArray.pdb $(CFLAGS) $(DFLAGS) -I$(CONFIG)\inc s$(RC)\core\src\ejsArray.c
+	$(CC) -c -o $(CONFIG)\obj\ejsArray.o -a$(RC)h i686 $(CFLAGS) $(DFLAGS) -I$(CONFIG)\inc src\core\src\ejsArray.c
 
-$(CONFIG)\obj\ejsBlock.obj: \
+$(CONFIG)\obj\ejsBlock.o: \
         src\core\src\ejsBlock.c \
         $(CONFIG)\inc\bit.h
-	"$(CC)" -c -Fo$(CONFIG)\obj\ejsBlock.obj -Fd$(CONFIG)\obj\ejsBlock.pdb $(CFLAGS) $(DFLAGS) -I$(CONFIG)\inc s$(RC)\core\src\ejsBlock.c
+	$(CC) -c -o $(CONFIG)\obj\ejsBlock.o -a$(RC)h i686 $(CFLAGS) $(DFLAGS) -I$(CONFIG)\inc src\core\src\ejsBlock.c
 
-$(CONFIG)\obj\ejsBoolean.obj: \
+$(CONFIG)\obj\ejsBoolean.o: \
         src\core\src\ejsBoolean.c \
         $(CONFIG)\inc\bit.h
-	"$(CC)" -c -Fo$(CONFIG)\obj\ejsBoolean.obj -Fd$(CONFIG)\obj\ejsBoolean.pdb $(CFLAGS) $(DFLAGS) -I$(CONFIG)\inc s$(RC)\core\src\ejsBoolean.c
+	$(CC) -c -o $(CONFIG)\obj\ejsBoolean.o -a$(RC)h i686 $(CFLAGS) $(DFLAGS) -I$(CONFIG)\inc src\core\src\ejsBoolean.c
 
-$(CONFIG)\obj\ejsByteArray.obj: \
+$(CONFIG)\obj\ejsByteArray.o: \
         src\core\src\ejsByteArray.c \
         $(CONFIG)\inc\bit.h
-	"$(CC)" -c -Fo$(CONFIG)\obj\ejsByteArray.obj -Fd$(CONFIG)\obj\ejsByteArray.pdb $(CFLAGS) $(DFLAGS) -I$(CONFIG)\inc s$(RC)\core\src\ejsByteArray.c
+	$(CC) -c -o $(CONFIG)\obj\ejsByteArray.o -a$(RC)h i686 $(CFLAGS) $(DFLAGS) -I$(CONFIG)\inc src\core\src\ejsByteArray.c
 
-$(CONFIG)\obj\ejsCache.obj: \
+$(CONFIG)\obj\ejsCache.o: \
         src\core\src\ejsCache.c \
         $(CONFIG)\inc\bit.h
-	"$(CC)" -c -Fo$(CONFIG)\obj\ejsCache.obj -Fd$(CONFIG)\obj\ejsCache.pdb $(CFLAGS) $(DFLAGS) -I$(CONFIG)\inc s$(RC)\core\src\ejsCache.c
+	$(CC) -c -o $(CONFIG)\obj\ejsCache.o -a$(RC)h i686 $(CFLAGS) $(DFLAGS) -I$(CONFIG)\inc src\core\src\ejsCache.c
 
-$(CONFIG)\obj\ejsCmd.obj: \
+$(CONFIG)\obj\ejsCmd.o: \
         src\core\src\ejsCmd.c \
         $(CONFIG)\inc\bit.h
-	"$(CC)" -c -Fo$(CONFIG)\obj\ejsCmd.obj -Fd$(CONFIG)\obj\ejsCmd.pdb $(CFLAGS) $(DFLAGS) -I$(CONFIG)\inc s$(RC)\core\src\ejsCmd.c
+	$(CC) -c -o $(CONFIG)\obj\ejsCmd.o -a$(RC)h i686 $(CFLAGS) $(DFLAGS) -I$(CONFIG)\inc src\core\src\ejsCmd.c
 
-$(CONFIG)\obj\ejsConfig.obj: \
+$(CONFIG)\obj\ejsConfig.o: \
         src\core\src\ejsConfig.c \
         $(CONFIG)\inc\bit.h
-	"$(CC)" -c -Fo$(CONFIG)\obj\ejsConfig.obj -Fd$(CONFIG)\obj\ejsConfig.pdb $(CFLAGS) $(DFLAGS) -I$(CONFIG)\inc s$(RC)\core\src\ejsConfig.c
+	$(CC) -c -o $(CONFIG)\obj\ejsConfig.o -a$(RC)h i686 $(CFLAGS) $(DFLAGS) -I$(CONFIG)\inc src\core\src\ejsConfig.c
 
-$(CONFIG)\obj\ejsDate.obj: \
+$(CONFIG)\obj\ejsDate.o: \
         src\core\src\ejsDate.c \
         $(CONFIG)\inc\bit.h
-	"$(CC)" -c -Fo$(CONFIG)\obj\ejsDate.obj -Fd$(CONFIG)\obj\ejsDate.pdb $(CFLAGS) $(DFLAGS) -I$(CONFIG)\inc s$(RC)\core\src\ejsDate.c
+	$(CC) -c -o $(CONFIG)\obj\ejsDate.o -a$(RC)h i686 $(CFLAGS) $(DFLAGS) -I$(CONFIG)\inc src\core\src\ejsDate.c
 
-$(CONFIG)\obj\ejsDebug.obj: \
+$(CONFIG)\obj\ejsDebug.o: \
         src\core\src\ejsDebug.c \
         $(CONFIG)\inc\bit.h
-	"$(CC)" -c -Fo$(CONFIG)\obj\ejsDebug.obj -Fd$(CONFIG)\obj\ejsDebug.pdb $(CFLAGS) $(DFLAGS) -I$(CONFIG)\inc s$(RC)\core\src\ejsDebug.c
+	$(CC) -c -o $(CONFIG)\obj\ejsDebug.o -a$(RC)h i686 $(CFLAGS) $(DFLAGS) -I$(CONFIG)\inc src\core\src\ejsDebug.c
 
-$(CONFIG)\obj\ejsError.obj: \
+$(CONFIG)\obj\ejsError.o: \
         src\core\src\ejsError.c \
         $(CONFIG)\inc\bit.h
-	"$(CC)" -c -Fo$(CONFIG)\obj\ejsError.obj -Fd$(CONFIG)\obj\ejsError.pdb $(CFLAGS) $(DFLAGS) -I$(CONFIG)\inc s$(RC)\core\src\ejsError.c
+	$(CC) -c -o $(CONFIG)\obj\ejsError.o -a$(RC)h i686 $(CFLAGS) $(DFLAGS) -I$(CONFIG)\inc src\core\src\ejsError.c
 
-$(CONFIG)\obj\ejsFile.obj: \
+$(CONFIG)\obj\ejsFile.o: \
         src\core\src\ejsFile.c \
         $(CONFIG)\inc\bit.h
-	"$(CC)" -c -Fo$(CONFIG)\obj\ejsFile.obj -Fd$(CONFIG)\obj\ejsFile.pdb $(CFLAGS) $(DFLAGS) -I$(CONFIG)\inc s$(RC)\core\src\ejsFile.c
+	$(CC) -c -o $(CONFIG)\obj\ejsFile.o -a$(RC)h i686 $(CFLAGS) $(DFLAGS) -I$(CONFIG)\inc src\core\src\ejsFile.c
 
-$(CONFIG)\obj\ejsFileSystem.obj: \
+$(CONFIG)\obj\ejsFileSystem.o: \
         src\core\src\ejsFileSystem.c \
         $(CONFIG)\inc\bit.h
-	"$(CC)" -c -Fo$(CONFIG)\obj\ejsFileSystem.obj -Fd$(CONFIG)\obj\ejsFileSystem.pdb $(CFLAGS) $(DFLAGS) -I$(CONFIG)\inc s$(RC)\core\src\ejsFileSystem.c
+	$(CC) -c -o $(CONFIG)\obj\ejsFileSystem.o -a$(RC)h i686 $(CFLAGS) $(DFLAGS) -I$(CONFIG)\inc src\core\src\ejsFileSystem.c
 
-$(CONFIG)\obj\ejsFrame.obj: \
+$(CONFIG)\obj\ejsFrame.o: \
         src\core\src\ejsFrame.c \
         $(CONFIG)\inc\bit.h
-	"$(CC)" -c -Fo$(CONFIG)\obj\ejsFrame.obj -Fd$(CONFIG)\obj\ejsFrame.pdb $(CFLAGS) $(DFLAGS) -I$(CONFIG)\inc s$(RC)\core\src\ejsFrame.c
+	$(CC) -c -o $(CONFIG)\obj\ejsFrame.o -a$(RC)h i686 $(CFLAGS) $(DFLAGS) -I$(CONFIG)\inc src\core\src\ejsFrame.c
 
-$(CONFIG)\obj\ejsFunction.obj: \
+$(CONFIG)\obj\ejsFunction.o: \
         src\core\src\ejsFunction.c \
         $(CONFIG)\inc\bit.h
-	"$(CC)" -c -Fo$(CONFIG)\obj\ejsFunction.obj -Fd$(CONFIG)\obj\ejsFunction.pdb $(CFLAGS) $(DFLAGS) -I$(CONFIG)\inc s$(RC)\core\src\ejsFunction.c
+	$(CC) -c -o $(CONFIG)\obj\ejsFunction.o -a$(RC)h i686 $(CFLAGS) $(DFLAGS) -I$(CONFIG)\inc src\core\src\ejsFunction.c
 
-$(CONFIG)\obj\ejsGC.obj: \
+$(CONFIG)\obj\ejsGC.o: \
         src\core\src\ejsGC.c \
         $(CONFIG)\inc\bit.h
-	"$(CC)" -c -Fo$(CONFIG)\obj\ejsGC.obj -Fd$(CONFIG)\obj\ejsGC.pdb $(CFLAGS) $(DFLAGS) -I$(CONFIG)\inc s$(RC)\core\src\ejsGC.c
+	$(CC) -c -o $(CONFIG)\obj\ejsGC.o -a$(RC)h i686 $(CFLAGS) $(DFLAGS) -I$(CONFIG)\inc src\core\src\ejsGC.c
 
-$(CONFIG)\obj\ejsGlobal.obj: \
+$(CONFIG)\obj\ejsGlobal.o: \
         src\core\src\ejsGlobal.c \
         $(CONFIG)\inc\bit.h
-	"$(CC)" -c -Fo$(CONFIG)\obj\ejsGlobal.obj -Fd$(CONFIG)\obj\ejsGlobal.pdb $(CFLAGS) $(DFLAGS) -I$(CONFIG)\inc s$(RC)\core\src\ejsGlobal.c
+	$(CC) -c -o $(CONFIG)\obj\ejsGlobal.o -a$(RC)h i686 $(CFLAGS) $(DFLAGS) -I$(CONFIG)\inc src\core\src\ejsGlobal.c
 
-$(CONFIG)\obj\ejsHttp.obj: \
+$(CONFIG)\obj\ejsHttp.o: \
         src\core\src\ejsHttp.c \
         $(CONFIG)\inc\bit.h
-	"$(CC)" -c -Fo$(CONFIG)\obj\ejsHttp.obj -Fd$(CONFIG)\obj\ejsHttp.pdb $(CFLAGS) $(DFLAGS) -I$(CONFIG)\inc s$(RC)\core\src\ejsHttp.c
+	$(CC) -c -o $(CONFIG)\obj\ejsHttp.o -a$(RC)h i686 $(CFLAGS) $(DFLAGS) -I$(CONFIG)\inc src\core\src\ejsHttp.c
 
-$(CONFIG)\obj\ejsIterator.obj: \
+$(CONFIG)\obj\ejsIterator.o: \
         src\core\src\ejsIterator.c \
         $(CONFIG)\inc\bit.h
-	"$(CC)" -c -Fo$(CONFIG)\obj\ejsIterator.obj -Fd$(CONFIG)\obj\ejsIterator.pdb $(CFLAGS) $(DFLAGS) -I$(CONFIG)\inc s$(RC)\core\src\ejsIterator.c
+	$(CC) -c -o $(CONFIG)\obj\ejsIterator.o -a$(RC)h i686 $(CFLAGS) $(DFLAGS) -I$(CONFIG)\inc src\core\src\ejsIterator.c
 
-$(CONFIG)\obj\ejsJSON.obj: \
+$(CONFIG)\obj\ejsJSON.o: \
         src\core\src\ejsJSON.c \
         $(CONFIG)\inc\bit.h
-	"$(CC)" -c -Fo$(CONFIG)\obj\ejsJSON.obj -Fd$(CONFIG)\obj\ejsJSON.pdb $(CFLAGS) $(DFLAGS) -I$(CONFIG)\inc s$(RC)\core\src\ejsJSON.c
+	$(CC) -c -o $(CONFIG)\obj\ejsJSON.o -a$(RC)h i686 $(CFLAGS) $(DFLAGS) -I$(CONFIG)\inc src\core\src\ejsJSON.c
 
-$(CONFIG)\obj\ejsLocalCache.obj: \
+$(CONFIG)\obj\ejsLocalCache.o: \
         src\core\src\ejsLocalCache.c \
         $(CONFIG)\inc\bit.h
-	"$(CC)" -c -Fo$(CONFIG)\obj\ejsLocalCache.obj -Fd$(CONFIG)\obj\ejsLocalCache.pdb $(CFLAGS) $(DFLAGS) -I$(CONFIG)\inc s$(RC)\core\src\ejsLocalCache.c
+	$(CC) -c -o $(CONFIG)\obj\ejsLocalCache.o -a$(RC)h i686 $(CFLAGS) $(DFLAGS) -I$(CONFIG)\inc src\core\src\ejsLocalCache.c
 
-$(CONFIG)\obj\ejsMath.obj: \
+$(CONFIG)\obj\ejsMath.o: \
         src\core\src\ejsMath.c \
         $(CONFIG)\inc\bit.h
-	"$(CC)" -c -Fo$(CONFIG)\obj\ejsMath.obj -Fd$(CONFIG)\obj\ejsMath.pdb $(CFLAGS) $(DFLAGS) -I$(CONFIG)\inc s$(RC)\core\src\ejsMath.c
+	$(CC) -c -o $(CONFIG)\obj\ejsMath.o -a$(RC)h i686 $(CFLAGS) $(DFLAGS) -I$(CONFIG)\inc src\core\src\ejsMath.c
 
-$(CONFIG)\obj\ejsMemory.obj: \
+$(CONFIG)\obj\ejsMemory.o: \
         src\core\src\ejsMemory.c \
         $(CONFIG)\inc\bit.h
-	"$(CC)" -c -Fo$(CONFIG)\obj\ejsMemory.obj -Fd$(CONFIG)\obj\ejsMemory.pdb $(CFLAGS) $(DFLAGS) -I$(CONFIG)\inc s$(RC)\core\src\ejsMemory.c
+	$(CC) -c -o $(CONFIG)\obj\ejsMemory.o -a$(RC)h i686 $(CFLAGS) $(DFLAGS) -I$(CONFIG)\inc src\core\src\ejsMemory.c
 
-$(CONFIG)\obj\ejsMprLog.obj: \
+$(CONFIG)\obj\ejsMprLog.o: \
         src\core\src\ejsMprLog.c \
         $(CONFIG)\inc\bit.h
-	"$(CC)" -c -Fo$(CONFIG)\obj\ejsMprLog.obj -Fd$(CONFIG)\obj\ejsMprLog.pdb $(CFLAGS) $(DFLAGS) -I$(CONFIG)\inc s$(RC)\core\src\ejsMprLog.c
+	$(CC) -c -o $(CONFIG)\obj\ejsMprLog.o -a$(RC)h i686 $(CFLAGS) $(DFLAGS) -I$(CONFIG)\inc src\core\src\ejsMprLog.c
 
-$(CONFIG)\obj\ejsNamespace.obj: \
+$(CONFIG)\obj\ejsNamespace.o: \
         src\core\src\ejsNamespace.c \
         $(CONFIG)\inc\bit.h
-	"$(CC)" -c -Fo$(CONFIG)\obj\ejsNamespace.obj -Fd$(CONFIG)\obj\ejsNamespace.pdb $(CFLAGS) $(DFLAGS) -I$(CONFIG)\inc s$(RC)\core\src\ejsNamespace.c
+	$(CC) -c -o $(CONFIG)\obj\ejsNamespace.o -a$(RC)h i686 $(CFLAGS) $(DFLAGS) -I$(CONFIG)\inc src\core\src\ejsNamespace.c
 
-$(CONFIG)\obj\ejsNull.obj: \
+$(CONFIG)\obj\ejsNull.o: \
         src\core\src\ejsNull.c \
         $(CONFIG)\inc\bit.h
-	"$(CC)" -c -Fo$(CONFIG)\obj\ejsNull.obj -Fd$(CONFIG)\obj\ejsNull.pdb $(CFLAGS) $(DFLAGS) -I$(CONFIG)\inc s$(RC)\core\src\ejsNull.c
+	$(CC) -c -o $(CONFIG)\obj\ejsNull.o -a$(RC)h i686 $(CFLAGS) $(DFLAGS) -I$(CONFIG)\inc src\core\src\ejsNull.c
 
-$(CONFIG)\obj\ejsNumber.obj: \
+$(CONFIG)\obj\ejsNumber.o: \
         src\core\src\ejsNumber.c \
         $(CONFIG)\inc\bit.h
-	"$(CC)" -c -Fo$(CONFIG)\obj\ejsNumber.obj -Fd$(CONFIG)\obj\ejsNumber.pdb $(CFLAGS) $(DFLAGS) -I$(CONFIG)\inc s$(RC)\core\src\ejsNumber.c
+	$(CC) -c -o $(CONFIG)\obj\ejsNumber.o -a$(RC)h i686 $(CFLAGS) $(DFLAGS) -I$(CONFIG)\inc src\core\src\ejsNumber.c
 
-$(CONFIG)\obj\ejsObject.obj: \
+$(CONFIG)\obj\ejsObject.o: \
         src\core\src\ejsObject.c \
         $(CONFIG)\inc\bit.h
-	"$(CC)" -c -Fo$(CONFIG)\obj\ejsObject.obj -Fd$(CONFIG)\obj\ejsObject.pdb $(CFLAGS) $(DFLAGS) -I$(CONFIG)\inc s$(RC)\core\src\ejsObject.c
+	$(CC) -c -o $(CONFIG)\obj\ejsObject.o -a$(RC)h i686 $(CFLAGS) $(DFLAGS) -I$(CONFIG)\inc src\core\src\ejsObject.c
 
-$(CONFIG)\obj\ejsPath.obj: \
+$(CONFIG)\obj\ejsPath.o: \
         src\core\src\ejsPath.c \
         $(CONFIG)\inc\bit.h
-	"$(CC)" -c -Fo$(CONFIG)\obj\ejsPath.obj -Fd$(CONFIG)\obj\ejsPath.pdb $(CFLAGS) $(DFLAGS) -I$(CONFIG)\inc s$(RC)\core\src\ejsPath.c
+	$(CC) -c -o $(CONFIG)\obj\ejsPath.o -a$(RC)h i686 $(CFLAGS) $(DFLAGS) -I$(CONFIG)\inc src\core\src\ejsPath.c
 
-$(CONFIG)\obj\ejsPot.obj: \
+$(CONFIG)\obj\ejsPot.o: \
         src\core\src\ejsPot.c \
         $(CONFIG)\inc\bit.h
-	"$(CC)" -c -Fo$(CONFIG)\obj\ejsPot.obj -Fd$(CONFIG)\obj\ejsPot.pdb $(CFLAGS) $(DFLAGS) -I$(CONFIG)\inc s$(RC)\core\src\ejsPot.c
+	$(CC) -c -o $(CONFIG)\obj\ejsPot.o -a$(RC)h i686 $(CFLAGS) $(DFLAGS) -I$(CONFIG)\inc src\core\src\ejsPot.c
 
-$(CONFIG)\obj\ejsRegExp.obj: \
+$(CONFIG)\obj\ejsRegExp.o: \
         src\core\src\ejsRegExp.c \
         $(CONFIG)\inc\bit.h
-	"$(CC)" -c -Fo$(CONFIG)\obj\ejsRegExp.obj -Fd$(CONFIG)\obj\ejsRegExp.pdb $(CFLAGS) $(DFLAGS) -I$(CONFIG)\inc s$(RC)\core\src\ejsRegExp.c
+	$(CC) -c -o $(CONFIG)\obj\ejsRegExp.o -a$(RC)h i686 $(CFLAGS) $(DFLAGS) -I$(CONFIG)\inc src\core\src\ejsRegExp.c
 
-$(CONFIG)\obj\ejsSocket.obj: \
+$(CONFIG)\obj\ejsSocket.o: \
         src\core\src\ejsSocket.c \
         $(CONFIG)\inc\bit.h
-	"$(CC)" -c -Fo$(CONFIG)\obj\ejsSocket.obj -Fd$(CONFIG)\obj\ejsSocket.pdb $(CFLAGS) $(DFLAGS) -I$(CONFIG)\inc s$(RC)\core\src\ejsSocket.c
+	$(CC) -c -o $(CONFIG)\obj\ejsSocket.o -a$(RC)h i686 $(CFLAGS) $(DFLAGS) -I$(CONFIG)\inc src\core\src\ejsSocket.c
 
-$(CONFIG)\obj\ejsString.obj: \
+$(CONFIG)\obj\ejsString.o: \
         src\core\src\ejsString.c \
         $(CONFIG)\inc\bit.h
-	"$(CC)" -c -Fo$(CONFIG)\obj\ejsString.obj -Fd$(CONFIG)\obj\ejsString.pdb $(CFLAGS) $(DFLAGS) -I$(CONFIG)\inc s$(RC)\core\src\ejsString.c
+	$(CC) -c -o $(CONFIG)\obj\ejsString.o -a$(RC)h i686 $(CFLAGS) $(DFLAGS) -I$(CONFIG)\inc src\core\src\ejsString.c
 
-$(CONFIG)\obj\ejsSystem.obj: \
+$(CONFIG)\obj\ejsSystem.o: \
         src\core\src\ejsSystem.c \
         $(CONFIG)\inc\bit.h
-	"$(CC)" -c -Fo$(CONFIG)\obj\ejsSystem.obj -Fd$(CONFIG)\obj\ejsSystem.pdb $(CFLAGS) $(DFLAGS) -I$(CONFIG)\inc s$(RC)\core\src\ejsSystem.c
+	$(CC) -c -o $(CONFIG)\obj\ejsSystem.o -a$(RC)h i686 $(CFLAGS) $(DFLAGS) -I$(CONFIG)\inc src\core\src\ejsSystem.c
 
-$(CONFIG)\obj\ejsTimer.obj: \
+$(CONFIG)\obj\ejsTimer.o: \
         src\core\src\ejsTimer.c \
         $(CONFIG)\inc\bit.h
-	"$(CC)" -c -Fo$(CONFIG)\obj\ejsTimer.obj -Fd$(CONFIG)\obj\ejsTimer.pdb $(CFLAGS) $(DFLAGS) -I$(CONFIG)\inc s$(RC)\core\src\ejsTimer.c
+	$(CC) -c -o $(CONFIG)\obj\ejsTimer.o -a$(RC)h i686 $(CFLAGS) $(DFLAGS) -I$(CONFIG)\inc src\core\src\ejsTimer.c
 
-$(CONFIG)\obj\ejsType.obj: \
+$(CONFIG)\obj\ejsType.o: \
         src\core\src\ejsType.c \
         $(CONFIG)\inc\bit.h
-	"$(CC)" -c -Fo$(CONFIG)\obj\ejsType.obj -Fd$(CONFIG)\obj\ejsType.pdb $(CFLAGS) $(DFLAGS) -I$(CONFIG)\inc s$(RC)\core\src\ejsType.c
+	$(CC) -c -o $(CONFIG)\obj\ejsType.o -a$(RC)h i686 $(CFLAGS) $(DFLAGS) -I$(CONFIG)\inc src\core\src\ejsType.c
 
-$(CONFIG)\obj\ejsUri.obj: \
+$(CONFIG)\obj\ejsUri.o: \
         src\core\src\ejsUri.c \
         $(CONFIG)\inc\bit.h
-	"$(CC)" -c -Fo$(CONFIG)\obj\ejsUri.obj -Fd$(CONFIG)\obj\ejsUri.pdb $(CFLAGS) $(DFLAGS) -I$(CONFIG)\inc s$(RC)\core\src\ejsUri.c
+	$(CC) -c -o $(CONFIG)\obj\ejsUri.o -a$(RC)h i686 $(CFLAGS) $(DFLAGS) -I$(CONFIG)\inc src\core\src\ejsUri.c
 
-$(CONFIG)\obj\ejsVoid.obj: \
+$(CONFIG)\obj\ejsVoid.o: \
         src\core\src\ejsVoid.c \
         $(CONFIG)\inc\bit.h
-	"$(CC)" -c -Fo$(CONFIG)\obj\ejsVoid.obj -Fd$(CONFIG)\obj\ejsVoid.pdb $(CFLAGS) $(DFLAGS) -I$(CONFIG)\inc s$(RC)\core\src\ejsVoid.c
+	$(CC) -c -o $(CONFIG)\obj\ejsVoid.o -a$(RC)h i686 $(CFLAGS) $(DFLAGS) -I$(CONFIG)\inc src\core\src\ejsVoid.c
 
-$(CONFIG)\obj\ejsWorker.obj: \
+$(CONFIG)\obj\ejsWorker.o: \
         src\core\src\ejsWorker.c \
         $(CONFIG)\inc\bit.h
-	"$(CC)" -c -Fo$(CONFIG)\obj\ejsWorker.obj -Fd$(CONFIG)\obj\ejsWorker.pdb $(CFLAGS) $(DFLAGS) -I$(CONFIG)\inc s$(RC)\core\src\ejsWorker.c
+	$(CC) -c -o $(CONFIG)\obj\ejsWorker.o -a$(RC)h i686 $(CFLAGS) $(DFLAGS) -I$(CONFIG)\inc src\core\src\ejsWorker.c
 
-$(CONFIG)\obj\ejsXML.obj: \
+$(CONFIG)\obj\ejsXML.o: \
         src\core\src\ejsXML.c \
         $(CONFIG)\inc\bit.h
-	"$(CC)" -c -Fo$(CONFIG)\obj\ejsXML.obj -Fd$(CONFIG)\obj\ejsXML.pdb $(CFLAGS) $(DFLAGS) -I$(CONFIG)\inc s$(RC)\core\src\ejsXML.c
+	$(CC) -c -o $(CONFIG)\obj\ejsXML.o -a$(RC)h i686 $(CFLAGS) $(DFLAGS) -I$(CONFIG)\inc src\core\src\ejsXML.c
 
-$(CONFIG)\obj\ejsXMLList.obj: \
+$(CONFIG)\obj\ejsXMLList.o: \
         src\core\src\ejsXMLList.c \
         $(CONFIG)\inc\bit.h
-	"$(CC)" -c -Fo$(CONFIG)\obj\ejsXMLList.obj -Fd$(CONFIG)\obj\ejsXMLList.pdb $(CFLAGS) $(DFLAGS) -I$(CONFIG)\inc s$(RC)\core\src\ejsXMLList.c
+	$(CC) -c -o $(CONFIG)\obj\ejsXMLList.o -a$(RC)h i686 $(CFLAGS) $(DFLAGS) -I$(CONFIG)\inc src\core\src\ejsXMLList.c
 
-$(CONFIG)\obj\ejsXMLLoader.obj: \
+$(CONFIG)\obj\ejsXMLLoader.o: \
         src\core\src\ejsXMLLoader.c \
         $(CONFIG)\inc\bit.h
-	"$(CC)" -c -Fo$(CONFIG)\obj\ejsXMLLoader.obj -Fd$(CONFIG)\obj\ejsXMLLoader.pdb $(CFLAGS) $(DFLAGS) -I$(CONFIG)\inc s$(RC)\core\src\ejsXMLLoader.c
+	$(CC) -c -o $(CONFIG)\obj\ejsXMLLoader.o -a$(RC)h i686 $(CFLAGS) $(DFLAGS) -I$(CONFIG)\inc src\core\src\ejsXMLLoader.c
 
-$(CONFIG)\obj\ejsByteCode.obj: \
+$(CONFIG)\obj\ejsByteCode.o: \
         src\vm\ejsByteCode.c \
         $(CONFIG)\inc\bit.h
-	"$(CC)" -c -Fo$(CONFIG)\obj\ejsByteCode.obj -Fd$(CONFIG)\obj\ejsByteCode.pdb $(CFLAGS) $(DFLAGS) -I$(CONFIG)\inc s$(RC)\vm\ejsByteCode.c
+	$(CC) -c -o $(CONFIG)\obj\ejsByteCode.o -a$(RC)h i686 $(CFLAGS) $(DFLAGS) -I$(CONFIG)\inc src\vm\ejsByteCode.c
 
-$(CONFIG)\obj\ejsException.obj: \
+$(CONFIG)\obj\ejsException.o: \
         src\vm\ejsException.c \
         $(CONFIG)\inc\bit.h
-	"$(CC)" -c -Fo$(CONFIG)\obj\ejsException.obj -Fd$(CONFIG)\obj\ejsException.pdb $(CFLAGS) $(DFLAGS) -I$(CONFIG)\inc s$(RC)\vm\ejsException.c
+	$(CC) -c -o $(CONFIG)\obj\ejsException.o -a$(RC)h i686 $(CFLAGS) $(DFLAGS) -I$(CONFIG)\inc src\vm\ejsException.c
 
-$(CONFIG)\obj\ejsHelper.obj: \
+$(CONFIG)\obj\ejsHelper.o: \
         src\vm\ejsHelper.c \
         $(CONFIG)\inc\bit.h
-	"$(CC)" -c -Fo$(CONFIG)\obj\ejsHelper.obj -Fd$(CONFIG)\obj\ejsHelper.pdb $(CFLAGS) $(DFLAGS) -I$(CONFIG)\inc s$(RC)\vm\ejsHelper.c
+	$(CC) -c -o $(CONFIG)\obj\ejsHelper.o -a$(RC)h i686 $(CFLAGS) $(DFLAGS) -I$(CONFIG)\inc src\vm\ejsHelper.c
 
-$(CONFIG)\obj\ejsInterp.obj: \
+$(CONFIG)\obj\ejsInterp.o: \
         src\vm\ejsInterp.c \
         $(CONFIG)\inc\bit.h
-	"$(CC)" -c -Fo$(CONFIG)\obj\ejsInterp.obj -Fd$(CONFIG)\obj\ejsInterp.pdb $(CFLAGS) $(DFLAGS) -I$(CONFIG)\inc s$(RC)\vm\ejsInterp.c
+	$(CC) -c -o $(CONFIG)\obj\ejsInterp.o -a$(RC)h i686 $(CFLAGS) $(DFLAGS) -I$(CONFIG)\inc src\vm\ejsInterp.c
 
-$(CONFIG)\obj\ejsLoader.obj: \
+$(CONFIG)\obj\ejsLoader.o: \
         src\vm\ejsLoader.c \
         $(CONFIG)\inc\bit.h
-	"$(CC)" -c -Fo$(CONFIG)\obj\ejsLoader.obj -Fd$(CONFIG)\obj\ejsLoader.pdb $(CFLAGS) $(DFLAGS) -I$(CONFIG)\inc s$(RC)\vm\ejsLoader.c
+	$(CC) -c -o $(CONFIG)\obj\ejsLoader.o -a$(RC)h i686 $(CFLAGS) $(DFLAGS) -I$(CONFIG)\inc src\vm\ejsLoader.c
 
-$(CONFIG)\obj\ejsModule.obj: \
+$(CONFIG)\obj\ejsModule.o: \
         src\vm\ejsModule.c \
         $(CONFIG)\inc\bit.h
-	"$(CC)" -c -Fo$(CONFIG)\obj\ejsModule.obj -Fd$(CONFIG)\obj\ejsModule.pdb $(CFLAGS) $(DFLAGS) -I$(CONFIG)\inc s$(RC)\vm\ejsModule.c
+	$(CC) -c -o $(CONFIG)\obj\ejsModule.o -a$(RC)h i686 $(CFLAGS) $(DFLAGS) -I$(CONFIG)\inc src\vm\ejsModule.c
 
-$(CONFIG)\obj\ejsScope.obj: \
+$(CONFIG)\obj\ejsScope.o: \
         src\vm\ejsScope.c \
         $(CONFIG)\inc\bit.h
-	"$(CC)" -c -Fo$(CONFIG)\obj\ejsScope.obj -Fd$(CONFIG)\obj\ejsScope.pdb $(CFLAGS) $(DFLAGS) -I$(CONFIG)\inc s$(RC)\vm\ejsScope.c
+	$(CC) -c -o $(CONFIG)\obj\ejsScope.o -a$(RC)h i686 $(CFLAGS) $(DFLAGS) -I$(CONFIG)\inc src\vm\ejsScope.c
 
-$(CONFIG)\obj\ejsService.obj: \
+$(CONFIG)\obj\ejsService.o: \
         src\vm\ejsService.c \
         $(CONFIG)\inc\bit.h
-	"$(CC)" -c -Fo$(CONFIG)\obj\ejsService.obj -Fd$(CONFIG)\obj\ejsService.pdb $(CFLAGS) $(DFLAGS) -I$(CONFIG)\inc s$(RC)\vm\ejsService.c
+	$(CC) -c -o $(CONFIG)\obj\ejsService.o -a$(RC)h i686 $(CFLAGS) $(DFLAGS) -I$(CONFIG)\inc src\vm\ejsService.c
 
-$(CONFIG)\bin\libejs.dll:  \
-        $(CONFIG)\bin\libhttp.dll \
+$(CONFIG)\bin\libejs.dylib:  \
+        $(CONFIG)\bin\libhttp.dylib \
         $(CONFIG)\inc\ejs.cache.local.slots.h \
         $(CONFIG)\inc\ejs.db.sqlite.slots.h \
         $(CONFIG)\inc\ejs.slots.h \
@@ -641,140 +641,140 @@ $(CONFIG)\bin\libejs.dll:  \
         $(CONFIG)\inc\ejsByteCodeTable.h \
         $(CONFIG)\inc\ejsCompiler.h \
         $(CONFIG)\inc\ejsCustomize.h \
-        $(CONFIG)\obj\ecAst.obj \
-        $(CONFIG)\obj\ecCodeGen.obj \
-        $(CONFIG)\obj\ecCompiler.obj \
-        $(CONFIG)\obj\ecLex.obj \
-        $(CONFIG)\obj\ecModuleWrite.obj \
-        $(CONFIG)\obj\ecParser.obj \
-        $(CONFIG)\obj\ecState.obj \
-        $(CONFIG)\obj\ejsApp.obj \
-        $(CONFIG)\obj\ejsArray.obj \
-        $(CONFIG)\obj\ejsBlock.obj \
-        $(CONFIG)\obj\ejsBoolean.obj \
-        $(CONFIG)\obj\ejsByteArray.obj \
-        $(CONFIG)\obj\ejsCache.obj \
-        $(CONFIG)\obj\ejsCmd.obj \
-        $(CONFIG)\obj\ejsConfig.obj \
-        $(CONFIG)\obj\ejsDate.obj \
-        $(CONFIG)\obj\ejsDebug.obj \
-        $(CONFIG)\obj\ejsError.obj \
-        $(CONFIG)\obj\ejsFile.obj \
-        $(CONFIG)\obj\ejsFileSystem.obj \
-        $(CONFIG)\obj\ejsFrame.obj \
-        $(CONFIG)\obj\ejsFunction.obj \
-        $(CONFIG)\obj\ejsGC.obj \
-        $(CONFIG)\obj\ejsGlobal.obj \
-        $(CONFIG)\obj\ejsHttp.obj \
-        $(CONFIG)\obj\ejsIterator.obj \
-        $(CONFIG)\obj\ejsJSON.obj \
-        $(CONFIG)\obj\ejsLocalCache.obj \
-        $(CONFIG)\obj\ejsMath.obj \
-        $(CONFIG)\obj\ejsMemory.obj \
-        $(CONFIG)\obj\ejsMprLog.obj \
-        $(CONFIG)\obj\ejsNamespace.obj \
-        $(CONFIG)\obj\ejsNull.obj \
-        $(CONFIG)\obj\ejsNumber.obj \
-        $(CONFIG)\obj\ejsObject.obj \
-        $(CONFIG)\obj\ejsPath.obj \
-        $(CONFIG)\obj\ejsPot.obj \
-        $(CONFIG)\obj\ejsRegExp.obj \
-        $(CONFIG)\obj\ejsSocket.obj \
-        $(CONFIG)\obj\ejsString.obj \
-        $(CONFIG)\obj\ejsSystem.obj \
-        $(CONFIG)\obj\ejsTimer.obj \
-        $(CONFIG)\obj\ejsType.obj \
-        $(CONFIG)\obj\ejsUri.obj \
-        $(CONFIG)\obj\ejsVoid.obj \
-        $(CONFIG)\obj\ejsWorker.obj \
-        $(CONFIG)\obj\ejsXML.obj \
-        $(CONFIG)\obj\ejsXMLList.obj \
-        $(CONFIG)\obj\ejsXMLLoader.obj \
-        $(CONFIG)\obj\ejsByteCode.obj \
-        $(CONFIG)\obj\ejsException.obj \
-        $(CONFIG)\obj\ejsHelper.obj \
-        $(CONFIG)\obj\ejsInterp.obj \
-        $(CONFIG)\obj\ejsLoader.obj \
-        $(CONFIG)\obj\ejsModule.obj \
-        $(CONFIG)\obj\ejsScope.obj \
-        $(CONFIG)\obj\ejsService.obj
-	"$(LD)" -dll -out:$(CONFIG)\bin\libejs.dll -entry:$(ENTRY) -def:$(CONFIG)\bin\libejs.def $(LDFLAGS) $(LIBPATHS) $(CONFIG)\obj\ecAst.obj $(CONFIG)\obj\ecCodeGen.obj $(CONFIG)\obj\ecCompiler.obj $(CONFIG)\obj\ecLex.obj $(CONFIG)\obj\ecModuleWrite.obj $(CONFIG)\obj\ecParser.obj $(CONFIG)\obj\ecState.obj $(CONFIG)\obj\ejsApp.obj $(CONFIG)\obj\ejsArray.obj $(CONFIG)\obj\ejsBlock.obj $(CONFIG)\obj\ejsBoolean.obj $(CONFIG)\obj\ejsByteArray.obj $(CONFIG)\obj\ejsCache.obj $(CONFIG)\obj\ejsCmd.obj $(CONFIG)\obj\ejsConfig.obj $(CONFIG)\obj\ejsDate.obj $(CONFIG)\obj\ejsDebug.obj $(CONFIG)\obj\ejsError.obj $(CONFIG)\obj\ejsFile.obj $(CONFIG)\obj\ejsFileSystem.obj $(CONFIG)\obj\ejsFrame.obj $(CONFIG)\obj\ejsFunction.obj $(CONFIG)\obj\ejsGC.obj $(CONFIG)\obj\ejsGlobal.obj $(CONFIG)\obj\ejsHttp.obj $(CONFIG)\obj\ejsIterator.obj $(CONFIG)\obj\ejsJSON.obj $(CONFIG)\obj\ejsLocalCache.obj $(CONFIG)\obj\ejsMath.obj $(CONFIG)\obj\ejsMemory.obj $(CONFIG)\obj\ejsMprLog.obj $(CONFIG)\obj\ejsNamespace.obj $(CONFIG)\obj\ejsNull.obj $(CONFIG)\obj\ejsNumber.obj $(CONFIG)\obj\ejsObject.obj $(CONFIG)\obj\ejsPath.obj $(CONFIG)\obj\ejsPot.obj $(CONFIG)\obj\ejsRegExp.obj $(CONFIG)\obj\ejsSocket.obj $(CONFIG)\obj\ejsString.obj $(CONFIG)\obj\ejsSystem.obj $(CONFIG)\obj\ejsTimer.obj $(CONFIG)\obj\ejsType.obj $(CONFIG)\obj\ejsUri.obj $(CONFIG)\obj\ejsVoid.obj $(CONFIG)\obj\ejsWorker.obj $(CONFIG)\obj\ejsXML.obj $(CONFIG)\obj\ejsXMLList.obj $(CONFIG)\obj\ejsXMLLoader.obj $(CONFIG)\obj\ejsByteCode.obj $(CONFIG)\obj\ejsException.obj $(CONFIG)\obj\ejsHelper.obj $(CONFIG)\obj\ejsInterp.obj $(CONFIG)\obj\ejsLoader.obj $(CONFIG)\obj\ejsModule.obj $(CONFIG)\obj\ejsScope.obj $(CONFIG)\obj\ejsService.obj $(LIBS) libhttp.lib libmpr.lib libpcre.lib libmprssl.lib
+        $(CONFIG)\obj\ecAst.o \
+        $(CONFIG)\obj\ecCodeGen.o \
+        $(CONFIG)\obj\ecCompiler.o \
+        $(CONFIG)\obj\ecLex.o \
+        $(CONFIG)\obj\ecModuleWrite.o \
+        $(CONFIG)\obj\ecParser.o \
+        $(CONFIG)\obj\ecState.o \
+        $(CONFIG)\obj\ejsApp.o \
+        $(CONFIG)\obj\ejsArray.o \
+        $(CONFIG)\obj\ejsBlock.o \
+        $(CONFIG)\obj\ejsBoolean.o \
+        $(CONFIG)\obj\ejsByteArray.o \
+        $(CONFIG)\obj\ejsCache.o \
+        $(CONFIG)\obj\ejsCmd.o \
+        $(CONFIG)\obj\ejsConfig.o \
+        $(CONFIG)\obj\ejsDate.o \
+        $(CONFIG)\obj\ejsDebug.o \
+        $(CONFIG)\obj\ejsError.o \
+        $(CONFIG)\obj\ejsFile.o \
+        $(CONFIG)\obj\ejsFileSystem.o \
+        $(CONFIG)\obj\ejsFrame.o \
+        $(CONFIG)\obj\ejsFunction.o \
+        $(CONFIG)\obj\ejsGC.o \
+        $(CONFIG)\obj\ejsGlobal.o \
+        $(CONFIG)\obj\ejsHttp.o \
+        $(CONFIG)\obj\ejsIterator.o \
+        $(CONFIG)\obj\ejsJSON.o \
+        $(CONFIG)\obj\ejsLocalCache.o \
+        $(CONFIG)\obj\ejsMath.o \
+        $(CONFIG)\obj\ejsMemory.o \
+        $(CONFIG)\obj\ejsMprLog.o \
+        $(CONFIG)\obj\ejsNamespace.o \
+        $(CONFIG)\obj\ejsNull.o \
+        $(CONFIG)\obj\ejsNumber.o \
+        $(CONFIG)\obj\ejsObject.o \
+        $(CONFIG)\obj\ejsPath.o \
+        $(CONFIG)\obj\ejsPot.o \
+        $(CONFIG)\obj\ejsRegExp.o \
+        $(CONFIG)\obj\ejsSocket.o \
+        $(CONFIG)\obj\ejsString.o \
+        $(CONFIG)\obj\ejsSystem.o \
+        $(CONFIG)\obj\ejsTimer.o \
+        $(CONFIG)\obj\ejsType.o \
+        $(CONFIG)\obj\ejsUri.o \
+        $(CONFIG)\obj\ejsVoid.o \
+        $(CONFIG)\obj\ejsWorker.o \
+        $(CONFIG)\obj\ejsXML.o \
+        $(CONFIG)\obj\ejsXMLList.o \
+        $(CONFIG)\obj\ejsXMLLoader.o \
+        $(CONFIG)\obj\ejsByteCode.o \
+        $(CONFIG)\obj\ejsException.o \
+        $(CONFIG)\obj\ejsHelper.o \
+        $(CONFIG)\obj\ejsInterp.o \
+        $(CONFIG)\obj\ejsLoader.o \
+        $(CONFIG)\obj\ejsModule.o \
+        $(CONFIG)\obj\ejsScope.o \
+        $(CONFIG)\obj\ejsService.o
+	$(CC) -dynamiclib -o $(CONFIG)\bin\libejs.dylib -a$(RC)h i686 $(LDFLAGS) -compatibility_version 2.0.0 -current_version 2.0.0 -compatibility_version 2.0.0 -current_version 2.0.0 $(LIBPATHS) -install_name @rpath\libejs.dylib $(CONFIG)\obj\ecAst.o $(CONFIG)\obj\ecCodeGen.o $(CONFIG)\obj\ecCompiler.o $(CONFIG)\obj\ecLex.o $(CONFIG)\obj\ecModuleWrite.o $(CONFIG)\obj\ecParser.o $(CONFIG)\obj\ecState.o $(CONFIG)\obj\ejsApp.o $(CONFIG)\obj\ejsArray.o $(CONFIG)\obj\ejsBlock.o $(CONFIG)\obj\ejsBoolean.o $(CONFIG)\obj\ejsByteArray.o $(CONFIG)\obj\ejsCache.o $(CONFIG)\obj\ejsCmd.o $(CONFIG)\obj\ejsConfig.o $(CONFIG)\obj\ejsDate.o $(CONFIG)\obj\ejsDebug.o $(CONFIG)\obj\ejsError.o $(CONFIG)\obj\ejsFile.o $(CONFIG)\obj\ejsFileSystem.o $(CONFIG)\obj\ejsFrame.o $(CONFIG)\obj\ejsFunction.o $(CONFIG)\obj\ejsGC.o $(CONFIG)\obj\ejsGlobal.o $(CONFIG)\obj\ejsHttp.o $(CONFIG)\obj\ejsIterator.o $(CONFIG)\obj\ejsJSON.o $(CONFIG)\obj\ejsLocalCache.o $(CONFIG)\obj\ejsMath.o $(CONFIG)\obj\ejsMemory.o $(CONFIG)\obj\ejsMprLog.o $(CONFIG)\obj\ejsNamespace.o $(CONFIG)\obj\ejsNull.o $(CONFIG)\obj\ejsNumber.o $(CONFIG)\obj\ejsObject.o $(CONFIG)\obj\ejsPath.o $(CONFIG)\obj\ejsPot.o $(CONFIG)\obj\ejsRegExp.o $(CONFIG)\obj\ejsSocket.o $(CONFIG)\obj\ejsString.o $(CONFIG)\obj\ejsSystem.o $(CONFIG)\obj\ejsTimer.o $(CONFIG)\obj\ejsType.o $(CONFIG)\obj\ejsUri.o $(CONFIG)\obj\ejsVoid.o $(CONFIG)\obj\ejsWorker.o $(CONFIG)\obj\ejsXML.o $(CONFIG)\obj\ejsXMLList.o $(CONFIG)\obj\ejsXMLLoader.o $(CONFIG)\obj\ejsByteCode.o $(CONFIG)\obj\ejsException.o $(CONFIG)\obj\ejsHelper.o $(CONFIG)\obj\ejsInterp.o $(CONFIG)\obj\ejsLoader.o $(CONFIG)\obj\ejsModule.o $(CONFIG)\obj\ejsScope.o $(CONFIG)\obj\ejsService.o $(LIBS) libhttp.dylib libmpr.dylib libpcre.dylib libmprssl.dylib
 
-$(CONFIG)\obj\ejs.obj: \
+$(CONFIG)\obj\ejs.o: \
         src\cmd\ejs.c \
         $(CONFIG)\inc\bit.h
-	"$(CC)" -c -Fo$(CONFIG)\obj\ejs.obj -Fd$(CONFIG)\obj\ejs.pdb $(CFLAGS) $(DFLAGS) -I$(CONFIG)\inc s$(RC)\cmd\ejs.c
+	$(CC) -c -o $(CONFIG)\obj\ejs.o -a$(RC)h i686 $(CFLAGS) $(DFLAGS) -I$(CONFIG)\inc src\cmd\ejs.c
 
-$(CONFIG)\bin\ejs.exe:  \
-        $(CONFIG)\bin\libejs.dll \
-        $(CONFIG)\obj\ejs.obj
-	"$(LD)" -out:$(CONFIG)\bin\ejs.exe -entry:mainCRTStartup -subsystem:console $(LDFLAGS) $(LIBPATHS) $(CONFIG)\obj\ejs.obj $(LIBS) libejs.lib libhttp.lib libmpr.lib libpcre.lib libmprssl.lib
+$(CONFIG)\bin\ejs:  \
+        $(CONFIG)\bin\libejs.dylib \
+        $(CONFIG)\obj\ejs.o
+	$(CC) -o $(CONFIG)\bin\ejs -a$(RC)h i686 $(LDFLAGS) $(LIBPATHS) $(CONFIG)\obj\ejs.o $(LIBS) libejs.dylib libhttp.dylib libmpr.dylib libpcre.dylib libmprssl.dylib
 
-$(CONFIG)\obj\ejsc.obj: \
+$(CONFIG)\obj\ejsc.o: \
         src\cmd\ejsc.c \
         $(CONFIG)\inc\bit.h
-	"$(CC)" -c -Fo$(CONFIG)\obj\ejsc.obj -Fd$(CONFIG)\obj\ejsc.pdb $(CFLAGS) $(DFLAGS) -I$(CONFIG)\inc s$(RC)\cmd\ejsc.c
+	$(CC) -c -o $(CONFIG)\obj\ejsc.o -a$(RC)h i686 $(CFLAGS) $(DFLAGS) -I$(CONFIG)\inc src\cmd\ejsc.c
 
-$(CONFIG)\bin\ejsc.exe:  \
-        $(CONFIG)\bin\libejs.dll \
-        $(CONFIG)\obj\ejsc.obj
-	"$(LD)" -out:$(CONFIG)\bin\ejsc.exe -entry:mainCRTStartup -subsystem:console $(LDFLAGS) $(LIBPATHS) $(CONFIG)\obj\ejsc.obj $(LIBS) libejs.lib libhttp.lib libmpr.lib libpcre.lib libmprssl.lib
+$(CONFIG)\bin\ejsc:  \
+        $(CONFIG)\bin\libejs.dylib \
+        $(CONFIG)\obj\ejsc.o
+	$(CC) -o $(CONFIG)\bin\ejsc -a$(RC)h i686 $(LDFLAGS) $(LIBPATHS) $(CONFIG)\obj\ejsc.o $(LIBS) libejs.dylib libhttp.dylib libmpr.dylib libpcre.dylib libmprssl.dylib
 
-$(CONFIG)\obj\ejsmod.obj: \
+$(CONFIG)\obj\ejsmod.o: \
         src\cmd\ejsmod.c \
         $(CONFIG)\inc\bit.h \
         src\cmd\ejsmod.h
-	"$(CC)" -c -Fo$(CONFIG)\obj\ejsmod.obj -Fd$(CONFIG)\obj\ejsmod.pdb $(CFLAGS) $(DFLAGS) -I$(CONFIG)\inc -Is$(RC)\cmd src\cmd\ejsmod.c
+	$(CC) -c -o $(CONFIG)\obj\ejsmod.o -a$(RC)h i686 $(CFLAGS) $(DFLAGS) -I$(CONFIG)\inc -Isrc\cmd src\cmd\ejsmod.c
 
-$(CONFIG)\obj\doc.obj: \
+$(CONFIG)\obj\doc.o: \
         src\cmd\doc.c \
         $(CONFIG)\inc\bit.h \
         src\cmd\ejsmod.h
-	"$(CC)" -c -Fo$(CONFIG)\obj\doc.obj -Fd$(CONFIG)\obj\doc.pdb $(CFLAGS) $(DFLAGS) -I$(CONFIG)\inc -Is$(RC)\cmd src\cmd\doc.c
+	$(CC) -c -o $(CONFIG)\obj\doc.o -a$(RC)h i686 $(CFLAGS) $(DFLAGS) -I$(CONFIG)\inc -Isrc\cmd src\cmd\doc.c
 
-$(CONFIG)\obj\docFiles.obj: \
+$(CONFIG)\obj\docFiles.o: \
         src\cmd\docFiles.c \
         $(CONFIG)\inc\bit.h \
         src\cmd\ejsmod.h
-	"$(CC)" -c -Fo$(CONFIG)\obj\docFiles.obj -Fd$(CONFIG)\obj\docFiles.pdb $(CFLAGS) $(DFLAGS) -I$(CONFIG)\inc -Is$(RC)\cmd src\cmd\docFiles.c
+	$(CC) -c -o $(CONFIG)\obj\docFiles.o -a$(RC)h i686 $(CFLAGS) $(DFLAGS) -I$(CONFIG)\inc -Isrc\cmd src\cmd\docFiles.c
 
-$(CONFIG)\obj\listing.obj: \
+$(CONFIG)\obj\listing.o: \
         src\cmd\listing.c \
         $(CONFIG)\inc\bit.h \
         src\cmd\ejsmod.h
-	"$(CC)" -c -Fo$(CONFIG)\obj\listing.obj -Fd$(CONFIG)\obj\listing.pdb $(CFLAGS) $(DFLAGS) -I$(CONFIG)\inc -Is$(RC)\cmd src\cmd\listing.c
+	$(CC) -c -o $(CONFIG)\obj\listing.o -a$(RC)h i686 $(CFLAGS) $(DFLAGS) -I$(CONFIG)\inc -Isrc\cmd src\cmd\listing.c
 
-$(CONFIG)\obj\slotGen.obj: \
+$(CONFIG)\obj\slotGen.o: \
         src\cmd\slotGen.c \
         $(CONFIG)\inc\bit.h \
         src\cmd\ejsmod.h
-	"$(CC)" -c -Fo$(CONFIG)\obj\slotGen.obj -Fd$(CONFIG)\obj\slotGen.pdb $(CFLAGS) $(DFLAGS) -I$(CONFIG)\inc -Is$(RC)\cmd src\cmd\slotGen.c
+	$(CC) -c -o $(CONFIG)\obj\slotGen.o -a$(RC)h i686 $(CFLAGS) $(DFLAGS) -I$(CONFIG)\inc -Isrc\cmd src\cmd\slotGen.c
 
-$(CONFIG)\bin\ejsmod.exe:  \
-        $(CONFIG)\bin\libejs.dll \
-        $(CONFIG)\obj\ejsmod.obj \
-        $(CONFIG)\obj\doc.obj \
-        $(CONFIG)\obj\docFiles.obj \
-        $(CONFIG)\obj\listing.obj \
-        $(CONFIG)\obj\slotGen.obj
-	"$(LD)" -out:$(CONFIG)\bin\ejsmod.exe -entry:mainCRTStartup -subsystem:console $(LDFLAGS) $(LIBPATHS) $(CONFIG)\obj\ejsmod.obj $(CONFIG)\obj\doc.obj $(CONFIG)\obj\docFiles.obj $(CONFIG)\obj\listing.obj $(CONFIG)\obj\slotGen.obj $(LIBS) libejs.lib libhttp.lib libmpr.lib libpcre.lib libmprssl.lib
+$(CONFIG)\bin\ejsmod:  \
+        $(CONFIG)\bin\libejs.dylib \
+        $(CONFIG)\obj\ejsmod.o \
+        $(CONFIG)\obj\doc.o \
+        $(CONFIG)\obj\docFiles.o \
+        $(CONFIG)\obj\listing.o \
+        $(CONFIG)\obj\slotGen.o
+	$(CC) -o $(CONFIG)\bin\ejsmod -a$(RC)h i686 $(LDFLAGS) $(LIBPATHS) $(CONFIG)\obj\ejsmod.o $(CONFIG)\obj\doc.o $(CONFIG)\obj\docFiles.o $(CONFIG)\obj\listing.o $(CONFIG)\obj\slotGen.o $(LIBS) libejs.dylib libhttp.dylib libmpr.dylib libpcre.dylib libmprssl.dylib
 
-$(CONFIG)\obj\ejsrun.obj: \
+$(CONFIG)\obj\ejsrun.o: \
         src\cmd\ejsrun.c \
         $(CONFIG)\inc\bit.h
-	"$(CC)" -c -Fo$(CONFIG)\obj\ejsrun.obj -Fd$(CONFIG)\obj\ejsrun.pdb $(CFLAGS) $(DFLAGS) -I$(CONFIG)\inc s$(RC)\cmd\ejsrun.c
+	$(CC) -c -o $(CONFIG)\obj\ejsrun.o -a$(RC)h i686 $(CFLAGS) $(DFLAGS) -I$(CONFIG)\inc src\cmd\ejsrun.c
 
-$(CONFIG)\bin\ejsrun.exe:  \
-        $(CONFIG)\bin\libejs.dll \
-        $(CONFIG)\obj\ejsrun.obj
-	"$(LD)" -out:$(CONFIG)\bin\ejsrun.exe -entry:mainCRTStartup -subsystem:console $(LDFLAGS) $(LIBPATHS) $(CONFIG)\obj\ejsrun.obj $(LIBS) libejs.lib libhttp.lib libmpr.lib libpcre.lib libmprssl.lib
+$(CONFIG)\bin\ejsrun:  \
+        $(CONFIG)\bin\libejs.dylib \
+        $(CONFIG)\obj\ejsrun.o
+	$(CC) -o $(CONFIG)\bin\ejsrun -a$(RC)h i686 $(LDFLAGS) $(LIBPATHS) $(CONFIG)\obj\ejsrun.o $(LIBS) libejs.dylib libhttp.dylib libmpr.dylib libpcre.dylib libmprssl.dylib
 
 $(CONFIG)\bin\ejs.mod:  \
-        $(CONFIG)\bin\ejsc.exe \
-        $(CONFIG)\bin\ejsmod.exe
+        $(CONFIG)\bin\ejsc \
+        $(CONFIG)\bin\ejsmod
 	cd src\core
-		"..\..\$(CONFIG)\bin\ejsc" --out "..\..\$(CONFIG)\bin/ejs.mod" --debug --optimize 9 --bind --require null "*.es"
-	"..\..\$(CONFIG)\bin\ejsmod" --require null --cslots "..\..\$(CONFIG)\bin/ejs.mod"
+		"..\..\$(CONFIG)\bin\ejsc" --out "..\..\$(CONFIG)\bin\ejs.mod" --debug --optimize 9 --bind --require null "*.es"
+	"..\..\$(CONFIG)\bin\ejsmod" --require null --cslots "..\..\$(CONFIG)\bin\ejs.mod"
 	copy ejs.slots.h "..\..\$(CONFIG)\inc\ejs.slots.h"
 	del ejs.slots.h
 		cd ..\..
@@ -791,34 +791,34 @@ $(CONFIG)\bin\bits:
 	xcopy /S /Y "bits" "..\..\..\$(CONFIG)\bin\bits"
 		cd ..\..\..
 
-$(CONFIG)\obj\ejsZlib.obj: \
+$(CONFIG)\obj\ejsZlib.o: \
         src\jems\ejs.zlib\ejsZlib.c \
         $(CONFIG)\inc\bit.h
-	"$(CC)" -c -Fo$(CONFIG)\obj\ejsZlib.obj -Fd$(CONFIG)\obj\ejsZlib.pdb $(CFLAGS) $(DFLAGS) -I$(CONFIG)\inc s$(RC)\jems\ejs.zlib\ejsZlib.c
+	$(CC) -c -o $(CONFIG)\obj\ejsZlib.o -a$(RC)h i686 $(CFLAGS) $(DFLAGS) -I$(CONFIG)\inc src\jems\ejs.zlib\ejsZlib.c
 
-$(CONFIG)\bin\bit.exe:  \
-        $(CONFIG)\bin\libejs.dll \
+$(CONFIG)\bin\bit:  \
+        $(CONFIG)\bin\libejs.dylib \
         $(CONFIG)\bin\bits \
         $(CONFIG)\bin\bit.es \
-        $(CONFIG)\obj\ejsrun.obj \
-        $(CONFIG)\obj\ejsZlib.obj
-	"$(LD)" -out:$(CONFIG)\bin\bit.exe -entry:mainCRTStartup -subsystem:console $(LDFLAGS) $(LIBPATHS) $(CONFIG)\obj\ejsrun.obj $(CONFIG)\obj\ejsZlib.obj $(CONFIG)\obj\mprLib.obj $(CONFIG)\obj\pcre.obj $(CONFIG)\obj\mprSsl.obj $(CONFIG)\obj\httpLib.obj $(CONFIG)\obj\ecAst.obj $(CONFIG)\obj\ecCodeGen.obj $(CONFIG)\obj\ecCompiler.obj $(CONFIG)\obj\ecLex.obj $(CONFIG)\obj\ecModuleWrite.obj $(CONFIG)\obj\ecParser.obj $(CONFIG)\obj\ecState.obj $(CONFIG)\obj\ejsApp.obj $(CONFIG)\obj\ejsArray.obj $(CONFIG)\obj\ejsBlock.obj $(CONFIG)\obj\ejsBoolean.obj $(CONFIG)\obj\ejsByteArray.obj $(CONFIG)\obj\ejsCache.obj $(CONFIG)\obj\ejsCmd.obj $(CONFIG)\obj\ejsConfig.obj $(CONFIG)\obj\ejsDate.obj $(CONFIG)\obj\ejsDebug.obj $(CONFIG)\obj\ejsError.obj $(CONFIG)\obj\ejsFile.obj $(CONFIG)\obj\ejsFileSystem.obj $(CONFIG)\obj\ejsFrame.obj $(CONFIG)\obj\ejsFunction.obj $(CONFIG)\obj\ejsGC.obj $(CONFIG)\obj\ejsGlobal.obj $(CONFIG)\obj\ejsHttp.obj $(CONFIG)\obj\ejsIterator.obj $(CONFIG)\obj\ejsJSON.obj $(CONFIG)\obj\ejsLocalCache.obj $(CONFIG)\obj\ejsMath.obj $(CONFIG)\obj\ejsMemory.obj $(CONFIG)\obj\ejsMprLog.obj $(CONFIG)\obj\ejsNamespace.obj $(CONFIG)\obj\ejsNull.obj $(CONFIG)\obj\ejsNumber.obj $(CONFIG)\obj\ejsObject.obj $(CONFIG)\obj\ejsPath.obj $(CONFIG)\obj\ejsPot.obj $(CONFIG)\obj\ejsRegExp.obj $(CONFIG)\obj\ejsSocket.obj $(CONFIG)\obj\ejsString.obj $(CONFIG)\obj\ejsSystem.obj $(CONFIG)\obj\ejsTimer.obj $(CONFIG)\obj\ejsType.obj $(CONFIG)\obj\ejsUri.obj $(CONFIG)\obj\ejsVoid.obj $(CONFIG)\obj\ejsWorker.obj $(CONFIG)\obj\ejsXML.obj $(CONFIG)\obj\ejsXMLList.obj $(CONFIG)\obj\ejsXMLLoader.obj $(CONFIG)\obj\ejsByteCode.obj $(CONFIG)\obj\ejsException.obj $(CONFIG)\obj\ejsHelper.obj $(CONFIG)\obj\ejsInterp.obj $(CONFIG)\obj\ejsLoader.obj $(CONFIG)\obj\ejsModule.obj $(CONFIG)\obj\ejsScope.obj $(CONFIG)\obj\ejsService.obj $(LIBS)
+        $(CONFIG)\obj\ejsrun.o \
+        $(CONFIG)\obj\ejsZlib.o
+	$(CC) -o $(CONFIG)\bin\bit -a$(RC)h i686 $(LDFLAGS) $(LIBPATHS) $(CONFIG)\obj\ejsrun.o $(CONFIG)\obj\ejsZlib.o $(CONFIG)\obj\mprLib.o $(CONFIG)\obj\pcre.o $(CONFIG)\obj\mprSsl.o $(CONFIG)\obj\httpLib.o $(CONFIG)\obj\ecAst.o $(CONFIG)\obj\ecCodeGen.o $(CONFIG)\obj\ecCompiler.o $(CONFIG)\obj\ecLex.o $(CONFIG)\obj\ecModuleWrite.o $(CONFIG)\obj\ecParser.o $(CONFIG)\obj\ecState.o $(CONFIG)\obj\ejsApp.o $(CONFIG)\obj\ejsArray.o $(CONFIG)\obj\ejsBlock.o $(CONFIG)\obj\ejsBoolean.o $(CONFIG)\obj\ejsByteArray.o $(CONFIG)\obj\ejsCache.o $(CONFIG)\obj\ejsCmd.o $(CONFIG)\obj\ejsConfig.o $(CONFIG)\obj\ejsDate.o $(CONFIG)\obj\ejsDebug.o $(CONFIG)\obj\ejsError.o $(CONFIG)\obj\ejsFile.o $(CONFIG)\obj\ejsFileSystem.o $(CONFIG)\obj\ejsFrame.o $(CONFIG)\obj\ejsFunction.o $(CONFIG)\obj\ejsGC.o $(CONFIG)\obj\ejsGlobal.o $(CONFIG)\obj\ejsHttp.o $(CONFIG)\obj\ejsIterator.o $(CONFIG)\obj\ejsJSON.o $(CONFIG)\obj\ejsLocalCache.o $(CONFIG)\obj\ejsMath.o $(CONFIG)\obj\ejsMemory.o $(CONFIG)\obj\ejsMprLog.o $(CONFIG)\obj\ejsNamespace.o $(CONFIG)\obj\ejsNull.o $(CONFIG)\obj\ejsNumber.o $(CONFIG)\obj\ejsObject.o $(CONFIG)\obj\ejsPath.o $(CONFIG)\obj\ejsPot.o $(CONFIG)\obj\ejsRegExp.o $(CONFIG)\obj\ejsSocket.o $(CONFIG)\obj\ejsString.o $(CONFIG)\obj\ejsSystem.o $(CONFIG)\obj\ejsTimer.o $(CONFIG)\obj\ejsType.o $(CONFIG)\obj\ejsUri.o $(CONFIG)\obj\ejsVoid.o $(CONFIG)\obj\ejsWorker.o $(CONFIG)\obj\ejsXML.o $(CONFIG)\obj\ejsXMLList.o $(CONFIG)\obj\ejsXMLLoader.o $(CONFIG)\obj\ejsByteCode.o $(CONFIG)\obj\ejsException.o $(CONFIG)\obj\ejsHelper.o $(CONFIG)\obj\ejsInterp.o $(CONFIG)\obj\ejsLoader.o $(CONFIG)\obj\ejsModule.o $(CONFIG)\obj\ejsScope.o $(CONFIG)\obj\ejsService.o $(LIBS)
 
 $(CONFIG)\bin\utest.es: 
 	cd src\jems\ejs.utest
 		copy utest.es ..\..\..\$(CONFIG)\bin
 		cd ..\..\..
 
-$(CONFIG)\bin\utest.exe:  \
-        $(CONFIG)\bin\ejsrun.exe
-	-if exist $(CONFIG)\bin\utest.exe del /Q $(CONFIG)\bin\utest.exe
-	copy /Y $(CONFIG)\bin\ejsrun.exe $(CONFIG)\bin\utest.exe
+$(CONFIG)\bin\utest:  \
+        $(CONFIG)\bin\ejsrun
+	-if exist $(CONFIG)\bin\utest del /Q $(CONFIG)\bin\utest
+	copy /Y $(CONFIG)\bin\ejsrun $(CONFIG)\bin\utest
 
 $(CONFIG)\bin\ejs.unix.mod:  \
-        $(CONFIG)\bin\ejsc.exe \
+        $(CONFIG)\bin\ejsc \
         $(CONFIG)\bin\ejs.mod
 	cd src\jems\ejs.unix
-		..\..\..\$(CONFIG)\bin/ejsc --out ../../../$(CONFIG)/bin/ejs.unix.mod --debug --optimize 9 Unix.es
+		..\..\..\$(CONFIG)\bin\ejsc --out ../../../$(CONFIG)/bin/ejs.unix.mod --debug --optimize 9 Unix.es
 		cd ..\..\..
 
 $(CONFIG)\bin\jem.es: 
@@ -826,51 +826,51 @@ $(CONFIG)\bin\jem.es:
 		copy jem.es ..\..\..\$(CONFIG)\bin
 		cd ..\..\..
 
-$(CONFIG)\bin\jem.exe:  \
-        $(CONFIG)\bin\ejsrun.exe
-	-if exist $(CONFIG)\bin\jem.exe del /Q $(CONFIG)\bin\jem.exe
-	copy /Y $(CONFIG)\bin\ejsrun.exe $(CONFIG)\bin\jem.exe
+$(CONFIG)\bin\jem:  \
+        $(CONFIG)\bin\ejsrun
+	-if exist $(CONFIG)\bin\jem del /Q $(CONFIG)\bin\jem
+	copy /Y $(CONFIG)\bin\ejsrun $(CONFIG)\bin\jem
 
 $(CONFIG)\bin\ejs.db.mod:  \
-        $(CONFIG)\bin\ejsc.exe \
+        $(CONFIG)\bin\ejsc \
         $(CONFIG)\bin\ejs.mod
 	cd src\jems\ejs.db
-		..\..\..\$(CONFIG)\bin/ejsc --out ../../../$(CONFIG)/bin/ejs.db.mod --debug --optimize 9 *.es
+		..\..\..\$(CONFIG)\bin\ejsc --out ../../../$(CONFIG)/bin/ejs.db.mod --debug --optimize 9 *.es
 		cd ..\..\..
 
 $(CONFIG)\bin\ejs.db.mapper.mod:  \
-        $(CONFIG)\bin\ejsc.exe \
+        $(CONFIG)\bin\ejsc \
         $(CONFIG)\bin\ejs.mod \
         $(CONFIG)\bin\ejs.db.mod
 	cd src\jems\ejs.db.mapper
-		..\..\..\$(CONFIG)\bin/ejsc --out ../../../$(CONFIG)/bin/ejs.db.mapper.mod --debug --optimize 9 *.es
+		..\..\..\$(CONFIG)\bin\ejsc --out ../../../$(CONFIG)/bin/ejs.db.mapper.mod --debug --optimize 9 *.es
 		cd ..\..\..
 
 $(CONFIG)\bin\ejs.db.sqlite.mod:  \
-        $(CONFIG)\bin\ejsc.exe \
-        $(CONFIG)\bin\ejsmod.exe \
+        $(CONFIG)\bin\ejsc \
+        $(CONFIG)\bin\ejsmod \
         $(CONFIG)\bin\ejs.mod
 	cd src\jems\ejs.db.sqlite
-		..\..\..\$(CONFIG)\bin/ejsc --out ../../../$(CONFIG)/bin/ejs.db.sqlite.mod --debug --optimize 9 *.es
+		..\..\..\$(CONFIG)\bin\ejsc --out ../../../$(CONFIG)/bin/ejs.db.sqlite.mod --debug --optimize 9 *.es
 		cd ..\..\..
 
-$(CONFIG)\obj\ejsSqlite.obj: \
+$(CONFIG)\obj\ejsSqlite.o: \
         src\jems\ejs.db.sqlite\ejsSqlite.c \
         $(CONFIG)\inc\bit.h
-	"$(CC)" -c -Fo$(CONFIG)\obj\ejsSqlite.obj -Fd$(CONFIG)\obj\ejsSqlite.pdb $(CFLAGS) $(DFLAGS) -I$(CONFIG)\inc s$(RC)\jems\ejs.db.sqlite\ejsSqlite.c
+	$(CC) -c -o $(CONFIG)\obj\ejsSqlite.o -a$(RC)h i686 $(CFLAGS) $(DFLAGS) -I$(CONFIG)\inc src\jems\ejs.db.sqlite\ejsSqlite.c
 
-$(CONFIG)\bin\ejs.db.sqlite.dll:  \
-        $(CONFIG)\bin\libmpr.dll \
-        $(CONFIG)\bin\libejs.dll \
+$(CONFIG)\bin\ejs.db.sqlite.dylib:  \
+        $(CONFIG)\bin\libmpr.dylib \
+        $(CONFIG)\bin\libejs.dylib \
         $(CONFIG)\bin\ejs.mod \
         $(CONFIG)\bin\ejs.db.sqlite.mod \
-        $(CONFIG)\bin\libsqlite3.dll \
-        $(CONFIG)\obj\ejsSqlite.obj
-	"$(LD)" -dll -out:$(CONFIG)\bin\ejs.db.sqlite.dll -entry:$(ENTRY) -def:$(CONFIG)\bin\ejs.db.sqlite.def $(LDFLAGS) $(LIBPATHS) $(CONFIG)\obj\ejsSqlite.obj $(LIBS) libmpr.lib libejs.lib libhttp.lib libpcre.lib libmprssl.lib libsqlite3.lib
+        $(CONFIG)\bin\libsqlite3.dylib \
+        $(CONFIG)\obj\ejsSqlite.o
+	$(CC) -dynamiclib -o $(CONFIG)\bin\ejs.db.sqlite.dylib -a$(RC)h i686 $(LDFLAGS) -compatibility_version 2.0.0 -current_version 2.0.0 -compatibility_version 2.0.0 -current_version 2.0.0 $(LIBPATHS) -install_name @rpath\ejs.db.sqlite.dylib $(CONFIG)\obj\ejsSqlite.o $(LIBS) libmpr.dylib libejs.dylib libhttp.dylib libpcre.dylib libmprssl.dylib libsqlite3.dylib
 
 $(CONFIG)\bin\ejs.web.mod:  \
-        $(CONFIG)\bin\ejsc.exe \
-        $(CONFIG)\bin\ejsmod.exe \
+        $(CONFIG)\bin\ejsc \
+        $(CONFIG)\bin\ejsmod \
         $(CONFIG)\bin\ejs.mod
 	cd src\jems\ejs.web
 		"..\..\..\$(CONFIG)\bin\ejsc" --out "../../../$(CONFIG)/bin/ejs.web.mod" --debug --optimize 9 *.es
@@ -879,34 +879,34 @@ $(CONFIG)\bin\ejs.web.mod:  \
 	del ejs.web.slots.h
 		cd ..\..\..
 
-$(CONFIG)\obj\ejsHttpServer.obj: \
+$(CONFIG)\obj\ejsHttpServer.o: \
         src\jems\ejs.web\ejsHttpServer.c \
         $(CONFIG)\inc\bit.h
-	"$(CC)" -c -Fo$(CONFIG)\obj\ejsHttpServer.obj -Fd$(CONFIG)\obj\ejsHttpServer.pdb $(CFLAGS) $(DFLAGS) -I$(CONFIG)\inc -Is$(RC)\jems\ejs.web\src src\jems\ejs.web\ejsHttpServer.c
+	$(CC) -c -o $(CONFIG)\obj\ejsHttpServer.o -a$(RC)h i686 $(CFLAGS) $(DFLAGS) -I$(CONFIG)\inc -Isrc\jems\ejs.web\src src\jems\ejs.web\ejsHttpServer.c
 
-$(CONFIG)\obj\ejsRequest.obj: \
+$(CONFIG)\obj\ejsRequest.o: \
         src\jems\ejs.web\ejsRequest.c \
         $(CONFIG)\inc\bit.h
-	"$(CC)" -c -Fo$(CONFIG)\obj\ejsRequest.obj -Fd$(CONFIG)\obj\ejsRequest.pdb $(CFLAGS) $(DFLAGS) -I$(CONFIG)\inc -Is$(RC)\jems\ejs.web\src src\jems\ejs.web\ejsRequest.c
+	$(CC) -c -o $(CONFIG)\obj\ejsRequest.o -a$(RC)h i686 $(CFLAGS) $(DFLAGS) -I$(CONFIG)\inc -Isrc\jems\ejs.web\src src\jems\ejs.web\ejsRequest.c
 
-$(CONFIG)\obj\ejsSession.obj: \
+$(CONFIG)\obj\ejsSession.o: \
         src\jems\ejs.web\ejsSession.c \
         $(CONFIG)\inc\bit.h
-	"$(CC)" -c -Fo$(CONFIG)\obj\ejsSession.obj -Fd$(CONFIG)\obj\ejsSession.pdb $(CFLAGS) $(DFLAGS) -I$(CONFIG)\inc -Is$(RC)\jems\ejs.web\src src\jems\ejs.web\ejsSession.c
+	$(CC) -c -o $(CONFIG)\obj\ejsSession.o -a$(RC)h i686 $(CFLAGS) $(DFLAGS) -I$(CONFIG)\inc -Isrc\jems\ejs.web\src src\jems\ejs.web\ejsSession.c
 
-$(CONFIG)\obj\ejsWeb.obj: \
+$(CONFIG)\obj\ejsWeb.o: \
         src\jems\ejs.web\ejsWeb.c \
         $(CONFIG)\inc\bit.h
-	"$(CC)" -c -Fo$(CONFIG)\obj\ejsWeb.obj -Fd$(CONFIG)\obj\ejsWeb.pdb $(CFLAGS) $(DFLAGS) -I$(CONFIG)\inc -Is$(RC)\jems\ejs.web\src src\jems\ejs.web\ejsWeb.c
+	$(CC) -c -o $(CONFIG)\obj\ejsWeb.o -a$(RC)h i686 $(CFLAGS) $(DFLAGS) -I$(CONFIG)\inc -Isrc\jems\ejs.web\src src\jems\ejs.web\ejsWeb.c
 
-$(CONFIG)\bin\ejs.web.dll:  \
-        $(CONFIG)\bin\libejs.dll \
+$(CONFIG)\bin\ejs.web.dylib:  \
+        $(CONFIG)\bin\libejs.dylib \
         $(CONFIG)\bin\ejs.mod \
-        $(CONFIG)\obj\ejsHttpServer.obj \
-        $(CONFIG)\obj\ejsRequest.obj \
-        $(CONFIG)\obj\ejsSession.obj \
-        $(CONFIG)\obj\ejsWeb.obj
-	"$(LD)" -dll -out:$(CONFIG)\bin\ejs.web.dll -entry:$(ENTRY) -def:$(CONFIG)\bin\ejs.web.def $(LDFLAGS) $(LIBPATHS) $(CONFIG)\obj\ejsHttpServer.obj $(CONFIG)\obj\ejsRequest.obj $(CONFIG)\obj\ejsSession.obj $(CONFIG)\obj\ejsWeb.obj $(LIBS) libejs.lib libhttp.lib libmpr.lib libpcre.lib libmprssl.lib
+        $(CONFIG)\obj\ejsHttpServer.o \
+        $(CONFIG)\obj\ejsRequest.o \
+        $(CONFIG)\obj\ejsSession.o \
+        $(CONFIG)\obj\ejsWeb.o
+	$(CC) -dynamiclib -o $(CONFIG)\bin\ejs.web.dylib -a$(RC)h i686 $(LDFLAGS) -compatibility_version 2.0.0 -current_version 2.0.0 -compatibility_version 2.0.0 -current_version 2.0.0 $(LIBPATHS) -install_name @rpath\ejs.web.dylib $(CONFIG)\obj\ejsHttpServer.o $(CONFIG)\obj\ejsRequest.o $(CONFIG)\obj\ejsSession.o $(CONFIG)\obj\ejsWeb.o $(LIBS) libejs.dylib libhttp.dylib libmpr.dylib libpcre.dylib libmprssl.dylib
 
 $(CONFIG)\bin\www: 
 	cd src\jems\ejs.web
@@ -916,17 +916,17 @@ $(CONFIG)\bin\www:
 		cd ..\..\..
 
 $(CONFIG)\bin\ejs.template.mod:  \
-        $(CONFIG)\bin\ejsc.exe \
+        $(CONFIG)\bin\ejsc \
         $(CONFIG)\bin\ejs.mod
 	cd src\jems\ejs.template
-		..\..\..\$(CONFIG)\bin/ejsc --out ../../../$(CONFIG)/bin/ejs.template.mod --debug --optimize 9 TemplateParser.es
+		..\..\..\$(CONFIG)\bin\ejsc --out ../../../$(CONFIG)/bin/ejs.template.mod --debug --optimize 9 TemplateParser.es
 		cd ..\..\..
 
 $(CONFIG)\bin\ejs.tar.mod:  \
-        $(CONFIG)\bin\ejsc.exe \
+        $(CONFIG)\bin\ejsc \
         $(CONFIG)\bin\ejs.mod
 	cd src\jems\ejs.tar
-		..\..\..\$(CONFIG)\bin/ejsc --out ../../../$(CONFIG)/bin/ejs.tar.mod --debug --optimize 9 *.es
+		..\..\..\$(CONFIG)\bin\ejsc --out ../../../$(CONFIG)/bin/ejs.tar.mod --debug --optimize 9 *.es
 		cd ..\..\..
 
 $(CONFIG)\bin\mvc.es: 
@@ -934,19 +934,19 @@ $(CONFIG)\bin\mvc.es:
 		copy mvc.es ..\..\..\$(CONFIG)\bin
 		cd ..\..\..
 
-$(CONFIG)\bin\mvc.exe:  \
-        $(CONFIG)\bin\ejsrun.exe
-	-if exist $(CONFIG)\bin\mvc.exe del /Q $(CONFIG)\bin\mvc.exe
-	copy /Y $(CONFIG)\bin\ejsrun.exe $(CONFIG)\bin\mvc.exe
+$(CONFIG)\bin\mvc:  \
+        $(CONFIG)\bin\ejsrun
+	-if exist $(CONFIG)\bin\mvc del /Q $(CONFIG)\bin\mvc
+	copy /Y $(CONFIG)\bin\ejsrun $(CONFIG)\bin\mvc
 
 $(CONFIG)\bin\ejs.mvc.mod:  \
-        $(CONFIG)\bin\ejsc.exe \
+        $(CONFIG)\bin\ejsc \
         $(CONFIG)\bin\ejs.mod \
         $(CONFIG)\bin\ejs.web.mod \
         $(CONFIG)\bin\ejs.template.mod \
         $(CONFIG)\bin\ejs.unix.mod
 	cd src\jems\ejs.mvc
-		..\..\..\$(CONFIG)\bin/ejsc --out ../../../$(CONFIG)/bin/ejs.mvc.mod --debug --optimize 9 *.es
+		..\..\..\$(CONFIG)\bin\ejsc --out ../../../$(CONFIG)/bin/ejs.mvc.mod --debug --optimize 9 *.es
 		cd ..\..\..
 
 $(CONFIG)\bin\utest.worker: 
@@ -954,13 +954,13 @@ $(CONFIG)\bin\utest.worker:
 		copy utest.worker ..\..\..\$(CONFIG)\bin
 		cd ..\..\..
 
-$(CONFIG)\obj\removeFiles.obj: \
+$(CONFIG)\obj\removeFiles.o: \
         package\WIN\removeFiles.c \
         $(CONFIG)\inc\bit.h
-	"$(CC)" -c -Fo$(CONFIG)\obj\removeFiles.obj -Fd$(CONFIG)\obj\removeFiles.pdb $(CFLAGS) $(DFLAGS) -I$(CONFIG)\inc package\WIN\removeFiles.c
+	$(CC) -c -o $(CONFIG)\obj\removeFiles.o -a$(RC)h i686 $(CFLAGS) $(DFLAGS) -I$(CONFIG)\inc package\WIN\removeFiles.c
 
-$(CONFIG)\bin\removeFiles.exe:  \
-        $(CONFIG)\bin\libmpr.dll \
-        $(CONFIG)\obj\removeFiles.obj
-	"$(LD)" -out:$(CONFIG)\bin\removeFiles.exe -entry:WinMainCRTStartup -subsystem:Windows $(LDFLAGS) $(LIBPATHS) $(CONFIG)\obj\removeFiles.obj $(LIBS) libmpr.lib
+$(CONFIG)\bin\removeFiles:  \
+        $(CONFIG)\bin\libmpr.dylib \
+        $(CONFIG)\obj\removeFiles.o
+	$(CC) -o $(CONFIG)\bin\removeFiles -a$(RC)h i686 $(LDFLAGS) $(LIBPATHS) $(CONFIG)\obj\removeFiles.o $(LIBS) libmpr.dylib
 

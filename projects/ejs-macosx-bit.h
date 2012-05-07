@@ -16,7 +16,7 @@
 #define BLD_MINOR_VERSION 0
 #define BLD_PATCH_VERSION 0
 #define BLD_VNUM 200000000
-#define BLD_CONFIG_CMD "bit -q -d -without all configure -gen sh,make,xcode"
+#define BLD_CONFIG_CMD "bit -q configure --debug"
 #define BLD_LIB_NAME "bin"
 #define BLD_CFG_PREFIX "/etc/ejs"
 #define BLD_BIN_PREFIX "/usr/lib/ejs/2.0.0/bin"
@@ -37,6 +37,7 @@
 #define BLD_SHOBJ ".dylib"
 #define BLD_LIB ".a"
 #define BLD_OBJ ".o"
+#define BLD_FEATURE_ASSERT 1
 #define BLD_MANAGER "ejsman"
 #define BLD_CC_DOUBLE_BRACES 1
 #define BLD_CC_DYN_LOAD 1
@@ -50,16 +51,16 @@
 #define BLD_CC_UNNAMED_UNIONS 1
 #define BLD_CC_WARN_64TO32 1
 #define BLD_CC_WARN_UNUSED 1
-#define BLD_FEATURE_DOXYGEN 0
-#define BLD_FEATURE_DSI 0
-#define BLD_FEATURE_MAN 0
-#define BLD_FEATURE_MAN2HTML 0
-#define BLD_FEATURE_SSL 0
-#define BLD_FEATURE_ZLIB 0
 #define BLD_FEATURE_CC 1
 #define BLD_FEATURE_LINK 1
 #define BLD_FEATURE_PCRE 1
-#define BLD_FEATURE_OPENSSL 0
-#define BLD_FEATURE_MATRIXSSL 0
+#define BLD_FEATURE_DOXYGEN 1
+#define BLD_FEATURE_DSI 1
+#define BLD_FEATURE_MAN 1
+#define BLD_FEATURE_MAN2HTML 1
+#define BLD_FEATURE_OPENSSL 1
+#define BLD_FEATURE_MATRIXSSL 1
 #define BLD_FEATURE_PMAKER 1
 #define BLD_FEATURE_SQLITE 1
+#define BLD_FEATURE_SSL 1
+#define BLD_FEATURE_ZLIB 1

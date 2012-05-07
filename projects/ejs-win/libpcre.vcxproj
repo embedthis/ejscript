@@ -108,12 +108,6 @@
   </ItemGroup>
 
   <ItemDefinitionGroup>
-    <Link>
-      <ModuleDefinitionFile>libpcre.def</ModuleDefinitionFile>
-    </Link>
-  </ItemDefinitionGroup>
-
-  <ItemDefinitionGroup>
   <Link>
     <AdditionalDependencies>;%(AdditionalDependencies)</AdditionalDependencies>
     <AdditionalLibraryDirectories>$(OutDir);$(Cfg)\bin;%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
@@ -123,7 +117,7 @@
     <Command>cd ..\..\src\deps\pcre
 xcopy /Y /S /D pcre.h $(IncDir)
 cd ..\..\..\projects\ejs-win</Command>
-    <Outputs>$(BinDir)\libpcre.dll</Outputs>
+    <Outputs>$(BinDir)\libpcre.dylib</Outputs>
   </CustomBuildStep>
   </ItemDefinitionGroup>
 
