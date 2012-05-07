@@ -56,7 +56,7 @@ Bit.load({
             'generate-nmake': '\
                 if exist "${LIB}\\www" rd /Q /S "${LIB}\\www"
                 if not exist "${LIB}\\www" md "${LIB}\\www"
-                xcopy /S /Y "www" "${LIB}\\www
+                xcopy /S /Y "www" "${LIB}\\www"
             ',
             'generate-sh': '\
                 rm -fr ${LIB}/www
