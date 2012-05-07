@@ -99,7 +99,6 @@ public class Bit {
     }
 
     function usage(): Void {
-print("HERE")
         print('\nUsage: bit [options] [targets|actions] ...\n' +
             '  Options:\n' + 
             '    --benchmark                        # Measure elapsed time\n' +
@@ -131,9 +130,7 @@ print("HERE")
             '')
         if (START.exists) {
             try {
-                // b.simpleLoad = true
                 global.bit = bit = b.bit
-                // b.loadWrapper(START)
                 b.makeBit(START, Config.OS.toLower() + '-' + Config.CPU)
                 if (bit.usage) {
                     print('Feature Selection: ')
@@ -156,9 +153,9 @@ print("HERE")
     function main() {
         let start = new Date
         global._b = this
+        home = App.dir
         args = Args(argTemplate)
         options = args.options
-        home = App.dir
         try {
             setup(args)
             if (options.import) {
