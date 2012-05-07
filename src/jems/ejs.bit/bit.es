@@ -1921,6 +1921,7 @@ public class Bit {
         let lines = data.match(/SECT.*External *\| .*/gm)
         for each (l in lines) {
             if (l.contains('__real')) continue
+            if (l.contains('??')) continue
             let sym
             if (bit.platform.arch == 'x64') {
                 /* Win64 does not have "_" */
