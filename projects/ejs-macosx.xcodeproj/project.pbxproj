@@ -2242,7 +2242,9 @@ rm -f ejs.slots.h";
 			runOnlyForDeploymentPostprocessing = 0;
 			shellPath = /bin/bash;
 			shellScript = "cd ../src/jems/ejs.bit
-cp bit.es ../../../macosx-x64-debug/bin";
+rm -rf $(CFG_DIR)/bin/bit.es
+cp -r ../src/jems/ejs.bit/bit.es $(CFG_DIR)/bin/bit.es
+";
 		};
 		A0DCDA71A0DD09BD00000011 /* ShellScript for utest.es */ = {
 			isa = PBXShellScriptBuildPhase;

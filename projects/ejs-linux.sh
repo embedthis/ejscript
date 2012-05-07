@@ -251,7 +251,9 @@ if ! diff ejs.slots.h ../../${CONFIG}/inc/ejs.slots.h >/dev/null; then cp ejs.sl
 rm -f ejs.slots.h ;\
 cd - >/dev/null 
 
-#  Omit build script /Users/mob/git/ejs/linux-x86-debug/bin/bit.es
+rm -rf ${CONFIG}/bin/bit.es
+cp -r src/jems/ejs.bit/bit.es ${CONFIG}/bin/bit.es
+
 cd src/jems/ejs.bit >/dev/null ;\
 rm -fr ../../../${CONFIG}/bin/bits ;\
 cp -r bits ../../../${CONFIG}/bin ;\

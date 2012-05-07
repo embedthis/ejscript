@@ -769,6 +769,9 @@ $(CONFIG)/bin/ejs.mod:  \
 		cd - >/dev/null 
 
 $(CONFIG)/bin/bit.es: 
+	rm -fr $(CONFIG)/bin/bit.es
+	cp -r src/jems/ejs.bit/bit.es $(CONFIG)/bin/bit.es
+
 $(CONFIG)/bin/bits: 
 	cd src/jems/ejs.bit >/dev/null ;\
 		rm -fr ../../../$(CONFIG)/bin/bits ;\

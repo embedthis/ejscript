@@ -5,6 +5,7 @@
 Bit.load({
 
     targets: {
+/*
         'bit.es': {
             path: '${BIN}/bit.es',
             files: [ 'bit.es' ],
@@ -14,6 +15,12 @@ Bit.load({
                 cp('bit.es', bit.dir.bin)
             ",
             'generate': "cp bit.es ${BIN}",
+        },
+*/
+        'bit.es': {
+            type: 'file',
+            precious: true,
+            files: [ 'bit.es' ],
         },
 
         'bit': {

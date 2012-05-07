@@ -200,7 +200,8 @@ $(CONFIG)\inc\mprSsl.h:
 
 $(CONFIG)\obj\mprLib.obj: \
         src\deps\mpr\mprLib.c \
-        $(CONFIG)\inc\bit.h
+        $(CONFIG)\inc\bit.h \
+        $(CONFIG)\inc\mpr.h
 	"$(CC)" -c -Fo$(CONFIG)\obj\mprLib.obj -Fd$(CONFIG)\obj\mprLib.pdb $(CFLAGS) $(DFLAGS) -I$(CONFIG)\inc s$(RC)\deps\mpr\mprLib.c
 
 $(CONFIG)\bin\libmpr.dll:  \
@@ -211,7 +212,8 @@ $(CONFIG)\bin\libmpr.dll:  \
 
 $(CONFIG)\obj\mprSsl.obj: \
         src\deps\mpr\mprSsl.c \
-        $(CONFIG)\inc\bit.h
+        $(CONFIG)\inc\bit.h \
+        $(CONFIG)\inc\mpr.h
 	"$(CC)" -c -Fo$(CONFIG)\obj\mprSsl.obj -Fd$(CONFIG)\obj\mprSsl.pdb $(CFLAGS) $(DFLAGS) -I$(CONFIG)\inc s$(RC)\deps\mpr\mprSsl.c
 
 $(CONFIG)\bin\libmprssl.dll:  \
@@ -221,7 +223,8 @@ $(CONFIG)\bin\libmprssl.dll:  \
 
 $(CONFIG)\obj\manager.obj: \
         src\deps\mpr\manager.c \
-        $(CONFIG)\inc\bit.h
+        $(CONFIG)\inc\bit.h \
+        $(CONFIG)\inc\mpr.h
 	"$(CC)" -c -Fo$(CONFIG)\obj\manager.obj -Fd$(CONFIG)\obj\manager.pdb $(CFLAGS) $(DFLAGS) -I$(CONFIG)\inc s$(RC)\deps\mpr\manager.c
 
 $(CONFIG)\bin\ejsman.exe:  \
@@ -231,7 +234,8 @@ $(CONFIG)\bin\ejsman.exe:  \
 
 $(CONFIG)\obj\makerom.obj: \
         src\deps\mpr\makerom.c \
-        $(CONFIG)\inc\bit.h
+        $(CONFIG)\inc\bit.h \
+        $(CONFIG)\inc\mpr.h
 	"$(CC)" -c -Fo$(CONFIG)\obj\makerom.obj -Fd$(CONFIG)\obj\makerom.pdb $(CFLAGS) $(DFLAGS) -I$(CONFIG)\inc s$(RC)\deps\mpr\makerom.c
 
 $(CONFIG)\bin\makerom.exe:  \
@@ -780,9 +784,8 @@ $(CONFIG)\bin\ejs.mod:  \
 		cd ..\..
 
 $(CONFIG)\bin\bit.es: 
-	cd src\jems\ejs.bit
-		copy bit.es ..\..\..\$(CONFIG)\bin
-		cd ..\..\..
+	-if exist $(CONFIG)\bin\bit.es del /Q $(CONFIG)\bin\bit.es
+	copy /Y src\jems\ejs.bit\bit.es $(CONFIG)\bin\bit.es
 
 $(CONFIG)\bin\bits: 
 	cd src\jems\ejs.bit

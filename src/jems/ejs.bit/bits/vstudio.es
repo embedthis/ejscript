@@ -254,8 +254,9 @@ function projBuild(projects: Array, base: Path, target) {
     if (target.vsbuilt || !target.enable || target.nogen) {
         return
     }
+    //  MOB - refactor
     if (target.type != 'exe' && target.type != 'lib' && target.type != 'vsprep') {
-        if (!(target.type == 'build')) {
+        if (!(target.type == 'build' || target.type == 'file')) {
             return
         }
     }
@@ -447,6 +448,7 @@ function projResources(base, target) {
     }
 }
 
+//  MOB - rename. Does more than just link. Also does 'files' and 'scripts'
 function projLink(base, target) {
     if (target.type == 'lib') {
         let def = base.join(target.path.basename.toString().replace(/dll$/, 'def'))
@@ -501,7 +503,18 @@ function projCustomBuildStep(base, target) {
     if (target.depends) {
         command += exportHeaders(base, target)
     }
-    if (target['generate-vs']) {
+    if (target.type == 'file') {
+        for each (let file: Path in target.files) {
+            let path = target.path.relativeTo(Base)
+            command += '-if exist ' + wpath(path) + ' del /Q ' + wpath(path) + '\n'
+            if (file.isDir) {
+                command += '\tif not exist ' + wpath(path) + ' md ' + wpath(path) + '\n'
+                command += '\txcopy /S /Y ' + wpath(file.relativeTo(target.home)) + ' ' + wpath(path) + '\n'
+            } else {
+                command += '\tcopy /Y ' + wpath(file.relativeTo(target.home)) + ' ' + wpath(path) + '\n'
+            }
+        }
+    } else if (target['generate-vs']) {
         command += target['generate-vs']
     } else if (target['generate-nmake']) {
         let ncmd = target['generate-nmake']
