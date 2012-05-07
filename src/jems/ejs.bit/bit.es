@@ -977,7 +977,9 @@ public class Bit {
         if (o.scripts && o.scripts.onload) {
             runScriptX(o.scripts.onload, home)
         }
+/* UNUSED
         expandTokens(bit)
+ */
     }
 
     /*
@@ -2872,7 +2874,9 @@ UNUSED
         b.loadBitObject(o, ns)
     }
 
+    //  MOB - who uses this?
     public static function loadFile(path: Path) {
+        print("XXXXXXXXXXXX")
         b.loadWrapper(path)
     }
 
@@ -2925,6 +2929,7 @@ UNUSED
                 }
             }
         }
+        expandTokens(bit)
         loadModules()
         applyProfile()
         bit.userSettings = bit.settings.clone(true)
