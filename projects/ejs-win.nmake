@@ -912,7 +912,7 @@ $(CONFIG)\bin\www:
 	cd src\jems\ejs.web
 		if exist "..\..\..\$(CONFIG)\bin\www" rd /Q /S "..\..\..\$(CONFIG)\bin\www"
 	if not exist "..\..\..\$(CONFIG)\bin\www" md "..\..\..\$(CONFIG)\bin\www"
-	xcopy /S /Y "www" "..\..\..\$(CONFIG)\bin\www
+	xcopy /S /Y "www" "..\..\..\$(CONFIG)\bin\www"
 		cd ..\..\..
 
 $(CONFIG)\bin\ejs.template.mod:  \

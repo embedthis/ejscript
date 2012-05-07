@@ -98,7 +98,7 @@
     <Command>cd ..\..\src\jems\ejs.web
 if exist "$(BinDir)\www" rd /Q /S "$(BinDir)\www"
 if not exist "$(BinDir)\www" md "$(BinDir)\www"
-xcopy /S /Y "www" "$(BinDir)\www
+xcopy /S /Y "www" "$(BinDir)\www"
 cd ..\..\..\projects\ejs-win</Command>
     <Outputs>$(BinDir)\www</Outputs>
   </CustomBuildStep>
