@@ -2128,7 +2128,7 @@ public class Bit {
 
         } else if (generating == 'nmake') {
             genWrite(target.path.relative.windows + ': ' + getTargetDeps(target))
-            let cmd = target['generate-nmake'] || target['generate-make'] || target['generate-sh']
+            let cmd = target['generate-nmake'] || target['generate-make'] || target['generate']
             if (cmd) {
                 cmd = cmd.trim().replace(/^cp /, 'copy ')
                 cmd = (prefix + cmd + suffix).replace(/^[ \t]*/mg, '\t')

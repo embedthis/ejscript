@@ -2,7 +2,7 @@
     helpers.tst
  */
 
-let ejs = Cmd.locate('ejs')
+let ejs = Cmd.locate('ejs').portable
 
 if (!Path("/bin").exists) {
     test.skip("Only run on unix systems")
