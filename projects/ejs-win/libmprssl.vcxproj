@@ -104,8 +104,14 @@
   </ItemGroup>
 
   <ItemDefinitionGroup>
+    <Link>
+      <ModuleDefinitionFile>libmprssl.def</ModuleDefinitionFile>
+    </Link>
+  </ItemDefinitionGroup>
+
+  <ItemDefinitionGroup>
   <Link>
-    <AdditionalDependencies>libmpr.dylib;%(AdditionalDependencies)</AdditionalDependencies>
+    <AdditionalDependencies>libmpr.lib;%(AdditionalDependencies)</AdditionalDependencies>
     <AdditionalLibraryDirectories>$(OutDir);$(Cfg)\bin;%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
   </Link>
   </ItemDefinitionGroup>
