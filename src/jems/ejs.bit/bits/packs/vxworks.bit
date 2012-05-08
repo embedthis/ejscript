@@ -33,7 +33,6 @@ Bit.load({packs: { vxworks: cfg}})
 bit.env.WIND_BASE = path
 bit.env.WIND_HOME = path.dirname
 bit.env.WIND_PLATFORM = path.basename
-bit.env.DIST = 'WindRiver'
 
 if (Config.OS == 'WIN') {
     bit.env.WIND_HOST_TYPE = 'x86-win32'
@@ -56,8 +55,6 @@ if (Config.OS == 'WIN') {
 
 let version: String = path.basename.toString().split('-')[1]
 let major: Number = version.split('.')[0] cast Number
-bit.env.DIST_VER = version
-// bit.env.DIST_MAJOR = major
 
 let env = bit.env
 if (major >= 6) {
@@ -79,3 +76,6 @@ if (major >= 6) {
         env.WIND_HOME.glob('workbench*/foundation/' + env.WIND_HOST_TYPE + '/bin').sort().reverse()[0],
     ]
 }
+bit.env.DIST = 'WindRiver'
+bit.env.DIST_VER = version
+// bit.env.DIST_MAJOR = major
