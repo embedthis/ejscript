@@ -18,11 +18,11 @@ if (!Path("/bin").exists) {
     }
 
     //  Test with RE match
-print('re', re)
-dump(Cmd.ps())
+// print('re', re)
+// dump(Cmd.ps())
     let cmds = Cmd.ps(re)
     assert(cmds)
-dump(cmds)
+// dump(cmds)
     assert(cmds.length > 0)
     assert(cmds[0].pid > 0)
     assert(cmds[0].command.contains(program))
