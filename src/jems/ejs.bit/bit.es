@@ -10,7 +10,7 @@ module embedthis.bit {
 require ejs.unix
 
 public class Bit {
-    public var simpleLoad: Boolean
+    public var initialized: Boolean
 
     private static const VERSION: Number = 0.2
     private static const MAIN: Path = Path('main.bit')
@@ -27,7 +27,6 @@ public class Bit {
     //  MOB - organize
     private var appName: String = 'bit'
     private var args: Args
-    private var cross: Boolean
     private var currentBitFile: Path
     private var currentPack: String
     private var currentPlatform: String
@@ -41,7 +40,7 @@ public class Bit {
     private var rest: Array
 
     private var home: Path
-    private var bareBit: Object = { platform: {}, dir: {}, settings: {
+    private var bareBit: Object = { platforms: [], platform: {}, dir: {}, settings: {
         required: [], optional: [],
     }, packs: {}, targets: {}, env: {} }
 
@@ -134,7 +133,7 @@ public class Bit {
         if (START.exists) {
             try {
                 global.bit = bit = b.bit
-                b.makeBit(START, Config.OS.toLower() + '-' + Config.CPU)
+                b.makeBit(Config.OS.toLower() + '-' + Config.CPU, START)
                 if (bit.usage) {
                     print('Feature Selection: ')
                     for (let [item,msg] in bit.usage) {
@@ -169,13 +168,13 @@ public class Bit {
                 configure()
             }
             if (!options.file) {
-                let file = findBitFile()
+                let file = findStart()
                 App.log.debug(1, 'Change directory to ' + file.dirname)
                 App.chdir(file.dirname)
                 home = App.dir
                 options.file = file.basename
             }
-            process(options.file, localPlatform)
+            process(options.file)
         } catch (e) {
             let msg: String
             if (e is String) {
@@ -307,28 +306,33 @@ public class Bit {
         for each (platform in platforms) {
             currentPlatform = platform
             vtrace('Init', platform)
-            makeBit(options.config, platform)
+            makeBit(platform, options.config)
             findPacks()
             genPlatformBitFile(platform)
             makeOutDirs()
             makeBitHeader(platform)
             importPacks()
-            cross = true
+            bit.cross = true
         }
-        cross = false
+        bit.cross = false
         options.config = false
         genStartBitFile(platforms[0])
     }
 
     function genStartBitFile(platform) {
         let nbit = {
+/*
             blend: [ 
                 platform + '.bit',
             ],
+ */
         }
+        nbit.platforms = platforms
+/*
         if (platforms.length > 1) {
-            nbit.cross = platforms.slice(1)
+            nbit.platforms = platforms.slice(1)
         }
+ */
         trace('Generate', START)
         let data = '/*\n    start.bit -- Startup Bit File for ' + bit.settings.title + 
             '\n */\n\nBit.load(' + 
@@ -338,10 +342,6 @@ public class Bit {
 
     function genPlatformBitFile(platform) {
         let nbit = {}
-        /* UNUSED blend: [
-                '${BITS}/standard.bit',
-                '${BITS}/os/' + bit.platform.os + '.bit',
-         */
         blend(nbit, {
             blend: [ 
                 '${SRC}/main.bit',
@@ -619,7 +619,7 @@ public class Bit {
         NOTE: this is for cross platforms ONLY
      */
     function applyEnv() {
-        if (!cross) {
+        if (!bit.cross) {
             return
         }
         envSettings = { packs: {}, defaults: {} }
@@ -703,7 +703,7 @@ public class Bit {
                 try {
                     bit.packs[pack] ||= {enable: true}
                     currentPack = pack
-                    loadWrapper(path)
+                    loadBitFile(path)
                 } catch (e) {
                     if (!(e is String)) {
                         App.log.debug(0, e)
@@ -782,21 +782,25 @@ public class Bit {
         return path.portable.name.replace(pat, '')
     }
 
-    function process(bitfile: Path, platform: String) {
+    function process(bitfile: Path) {
         if (!bitfile.exists) {
             throw 'Can\'t find ' + bitfile
         }
-        makeBit(bitfile, platform)
-        prepBuild()
-        build()
-        if ((bit.cross || cross) && !generating) {
-            trace('Complete', bit.platform.configuration)
-        }
-        let startPlatform = bit.platform.name
-        for each (platform in bit.cross) {
-            if (platform == startPlatform) continue
-            cross = true
-            process(bitfile.dirname.join(platform).joinExt('bit'), platform)
+        loadBitFile(bitfile)
+        bit.platforms ||= [localPlatform]
+
+        for (let [index,platform] in bit.platforms) {
+            bitfile = bitfile.dirname.join(platform).joinExt('bit')
+            makeBit(platform, bitfile)
+            if (index == (bit.platforms.length - 1)) {
+                bit.platform.last = true
+            }
+            prepBuild()
+            build()
+            if ((bit.platforms.length > 1 || bit.cross) && !generating) {
+                trace('Complete', bit.platform.configuration)
+            }
+            bit.cross = true
         }
     }
 
@@ -812,11 +816,7 @@ public class Bit {
         }
     }
 
-    /*
-        Load a bit file
-        MOB - rename
-     */
-    public function loadWrapper(path) {
+    public function loadBitFile(path) {
         let saveCurrent = currentBitFile
         try {
             currentBitFile = path.portable
@@ -947,10 +947,13 @@ public class Bit {
         Load a bit file object
      */
     public function loadBitObject(o, ns = null) {
-        if (simpleLoad) {
+/* UNUSED
+        if (!initialized) {
             blend(bit, o)
+            initialized = false
             return
         }
+*/
         let home = currentBitFile.dirname
         fixup(o, ns)
         /* 
@@ -967,10 +970,18 @@ public class Bit {
             bit.BITS = bit.dir.bits
             bit.SRC = bit.dir.src
             path = path.expand(bit, {fill: '.'})
+
+                loadBitFile(home.join(path))
+/* UNUSED KEEP
             if (!(options.config && path == (bit.platform.name + '.bit'))) {
-                loadWrapper(home.join(path))
             }
+*/
         }
+/* UNUSED
+        for each (platform in o.platforms) {
+            loadBitFile(home.join(path).joinExt('bit'))
+        }
+*/
         bit = blend(bit, o, {combine: true})
         for (let [tname, target] in o.targets) {
             /* Overwrite targets with original unblended target. This delays blending to preserve +/-properties  */  
@@ -979,15 +990,9 @@ public class Bit {
         if (o.scripts && o.scripts.onload) {
             runScriptX(o.scripts.onload, home)
         }
-/* UNUSED
-        expandTokens(bit)
- */
     }
 
-    /*
-        Preference order: [ 'local.bit', 'start.bit', '../start.bit', 'OS-ARCH.bit', '../OS-ARCH.bit' ]
-     */
-    function findBitFile(): Path {
+    function findStart(): Path {
         let lp = START
         if (lp.exists) {
             return lp
@@ -1260,7 +1265,7 @@ public class Bit {
 
     function prepBuild() {
         vtrace('Prepare', 'For building')
-        if (bit.cross || cross) {
+        if (bit.platforms.length > 1 || bit.cross) {
             trace('Build', bit.platform.configuration)
             vtrace('Targets', bit.platform.configuration + ': ' + 
                    ((selectedTargets != '') ? selectedTargets: 'nothing to do'))
@@ -2310,15 +2315,6 @@ public class Bit {
                 dir = dir.relativeTo(base)
             }
             global[n] = bit[n] = dir
-/* UNUSED
-            if (bit.platform.like == 'windows') {
-                if (base) {
-                    bit['WIN_' + n] = dir.relativeTo(base).windows
-                } else {
-                    bit['WIN_' + n] = dir.windows
-                }
-            }
-*/
         }
         bit.LBIN = global.LBIN
     }
@@ -2326,7 +2322,6 @@ public class Bit {
     public function setRuleVars(target, base: Path = App.dir) {
         if (target.home) {
             bit.HOME = target.home.relativeTo(base)
-// UNUSED bit.WIN_HOME = bit.HOME.windows
         }
         if (target.path) {
             bit.OUT = target.path.relativeTo(base)
@@ -2848,7 +2843,7 @@ global.NN = item.ns
     }
 
     function dist(os) {
-        let dist = { macosx: 'apple', win: 'ms', 'linux': 'ubuntu' }[os]
+        let dist = { macosx: 'apple', win: 'ms', 'linux': 'ubuntu', 'vxworks': 'WindRiver' }[os]
         if (os == 'linux') {
             let relfile = Path('/etc/redhat-release')
             if (relfile.exists) {
@@ -2899,11 +2894,12 @@ UNUSED
         b.loadBitObject(o, ns)
     }
 
-    //  MOB - who uses this?
+    /* UNUSED
     public static function loadFile(path: Path) {
         print("XXXXXXXXXXXX")
-        b.loadWrapper(path)
+        b.loadBitFile(path)
     }
+*/
 
     public function safeRemove(dir: Path) {
 /* UNUSED
@@ -2919,10 +2915,14 @@ UNUSED
         dir.removeAll()
     }
 
-    function makeBit(bitfile: Path, platform: String) {
+    /*
+        Make a bit object. This may optionally load a bit file over the initialized object
+        MOB - reverse args
+     */
+    function makeBit(platform: String, bitfile: Path) {
         let [os, arch] = platform.split('-') 
         let kind = like(os)
-        global.bit = bit = bareBit.clone(true)
+        global.bit = bit = makeBareBit()
         bit.dir.src = options.config ? options.config.dirname : Path('.')
         bit.dir.bits = bit.dir.src.join('bits/standard.bit').exists ? 
             bit.dir.src.join('bits') : Config.LibDir.join('bits').portable
@@ -2938,19 +2938,20 @@ UNUSED
             dist: dist(os),
             profile: profile,
             configuration: platform + '-' + profile,
+            dev: localPlatform,
         }
         bit.emulating = options.emulate
 
-        loadWrapper(bit.dir.bits.join('standard.bit'))
-        loadWrapper(bit.dir.bits.join('os/' + bit.platform.os + '.bit'))
+        loadBitFile(bit.dir.bits.join('standard.bit'))
+        loadBitFile(bit.dir.bits.join('os/' + bit.platform.os + '.bit'))
 
         bit.PLATFORM = currentPlatform = platform
         if (bitfile) {
-            loadWrapper(bitfile)
+            loadBitFile(bitfile)
             for each (path in bit.customize) {
                 let path = home.join(path.expand(bit, {fill: '.'}))
                 if (path.exists) {
-                    loadWrapper(path)
+                    loadBitFile(path)
                 }
             }
         }
@@ -2965,7 +2966,6 @@ UNUSED
         if (platform == localPlatform) {
             let lbin = bit.dir.bin
             global.LBIN = bit.LBIN = lbin.portable
-            // UNUSED bit.WIN_LBIN = lbin.windows
         }
     }
 
@@ -2976,6 +2976,14 @@ UNUSED
         if (!supportedArch.contains(arch)) {
             trace('WARN', 'Unsupported or unknown architecture: ' + arch + '. Select from: ' + supportedArch.join(' '))
         }
+    }
+
+    function makeBareBit() {
+        let old = bit
+        bit = bareBit.clone(true)
+        bit.platforms = old.platforms
+        bit.cross = old.cross
+        return bit
     }
 }
 

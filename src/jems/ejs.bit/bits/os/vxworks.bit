@@ -13,17 +13,18 @@ Bit.load({
         shlib: 'out',
         shobj: 'out',
     },
+
     prefixes: {
-        config:     '.',
-        product:    '.',
-        productver: '.',
-        bin:        '.',
-        lib:        '.',
-        log:        '.',
-        inc:        '.',
-        spool:      '.',
-        src:        '.',
-        web:        '.',
+        config:     '/etc/${settings.product}',
+        product:    '/usr/lib/${settings.product}',
+        productver: '${prefixes.product}/${settings.version}',
+        bin:        '${prefixes.productver}/${platform.configuration}/bin',
+        inc:        '${prefixes.productver}/${platform.configuration}/inc',
+        lib:        '${prefixes.productver}/${platform.configuration}/bin',
+        log:        '/var/log/${settings.product}',
+        spool:      '/var/spool/${settings.product}',
+        src:        '/usr/src/${settings.product}-${settings.version}',
+        web:        '/var/www/${settings.product}-default',
     },
 
     settings: {

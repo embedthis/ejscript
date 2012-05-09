@@ -271,9 +271,9 @@ public function createLinks() {
 
 function updateLatestLink() {
     let latest = bit.prefixes.product.join('latest')
-    let version = Path('.').glob('*', {include: /\d+\.\d+\.\d+/}).sort().pop()
+    let version = bit.prefixes.product.glob('*', {include: /\d+\.\d+\.\d+/}).sort().pop()
     if (version) {
-        latest.symlink(version)
+        latest.symlink(version.basename)
     } else {
         latest.remove()
     }

@@ -217,39 +217,35 @@ public function package(pkg: Path, formats) {
     }
     options.vname = bit.settings.product + '-' + bit.settings.version + '-' + bit.settings.buildNumber
 
-    if (bit.cross) {
+/* UNUSED
+    if (bit.platforms.length > 1) {
         trace('Info', 'Skip packaging for ' + formats + ' when cross-compiling')
         return
     }
-    switch (bit.platform.os) {
-    case 'linux': case 'win': case 'macosx':
-        for each (fmt in formats) {
-            switch (fmt) {
-            case 'combo':
-                packageCombo(pkg, options)
-                break
-            case 'flat':
-                packageFlat(pkg, options)
-                break
-            case 'install':
-                packageInstall(pkg, options)
-                break
-            case 'native':
-                packageNative(pkg, options)
-                break
-            case 'src':
-                packageSrc(pkg, options)
-                break
-            case 'tar':
-                packageTar(pkg, options)
-                break
-            default:
-                throw 'Unknown package format: ' + fmt
-            }
+*/
+    for each (fmt in formats) {
+        switch (fmt) {
+        case 'combo':
+            packageCombo(pkg, options)
+            break
+        case 'flat':
+            packageFlat(pkg, options)
+            break
+        case 'install':
+            packageInstall(pkg, options)
+            break
+        case 'native':
+            packageNative(pkg, options)
+            break
+        case 'src':
+            packageSrc(pkg, options)
+            break
+        case 'tar':
+            packageTar(pkg, options)
+            break
+        default:
+            throw 'Unknown package format: ' + fmt
         }
-        break
-    default:
-        trace('Info', 'Skip packaging for ' + bit.platform.os)
     }
 }
 
@@ -324,22 +320,34 @@ function packageInstall(pkg: Path, options) {
     let s = bit.settings
     let rel = bit.dir.rel
     let base = [s.product, s.version, s.buildNumber, bit.platform.dist, OS.toUpper(), ARCH].join('-')
-    let name = rel.join(base).joinExt('tar', true)
+    //  UNUSED let name = rel.join(base).joinExt('tar', true)
     let contents = pkg.join(options.vname, 'contents')
     let files = contents.glob('**', {missing: undefined})
-    let log = []
+    let log = bit.prefixes.productver.join('files.log'), prior
+    if (log.exists) {
+        if (bit.cross) {
+            prior = log.dirname.join('files.prior')
+            log.rename(prior)
+        } else {
+            log.remove()
+        }
+    }
     for each (file in files) {
         let target = Path('/' + file.relativeTo(contents))
         if (file.isDir) {
             target.makeDir()
         } else {
             file.copy(target)
-            log.push(target)
         }
     }
-    name.remove()
-    bit.prefixes.productver.join('files.log').write(log.join('\n') + '\n')
+    /* UNUSED
+        name.remove()
+    */
     packageInstallConfigure()
+    if (prior) {
+        log.append(prior.readString())
+        prior.remove()
+    }
 }
 
 function packageInstallConfigure() {
@@ -356,6 +364,7 @@ function packageInstallConfigure() {
 }
 
 function packageNative(pkg: Path, options) {
+    let os = (bit.cross) ? bit.platform.dev : bit.platform.os
     switch (bit.platform.os) {
     case 'linux':
         if (bit.platform.dist == 'ubuntu') {
