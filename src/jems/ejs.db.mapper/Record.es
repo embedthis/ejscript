@@ -402,6 +402,7 @@ var before = Memory.resident
             return null
         }
 
+        //  MOB - should not throw when a record is not found. 
         /**
             Find a record. Find and return a record identified by its primary key if supplied or by the specified options. 
             If more than one record matches, return the first matching record.

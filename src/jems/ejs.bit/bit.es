@@ -437,7 +437,7 @@ public class Bit {
 
         //  MOB - this is used in mprModule which does a basename anyway. Also used by ejsConfig
         f.writeLine('#define BLD_LIB_NAME "' + 'bin' + '"')
-        f.writeLine('#define BLD_CFG "' + bit.platform.configuration + '"')
+        f.writeLine('#define BLD_PROFILE "' + bit.platform.profile + '"')
 
         /* Prefixes */
         let base = (settings.name == 'ejs') ? bit.prefixes.productver : bit.prefixes.product
