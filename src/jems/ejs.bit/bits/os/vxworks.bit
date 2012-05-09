@@ -55,7 +55,7 @@ Bit.load({
                     cpu = 'I80386'
                 } else if (arch == 'i486') {
                     cpu = 'I80486'
-                } else if (arch.match(/^i.86$/)) {
+                } else if (arch.match(/^i.86$|^x86$/)) {
                     cpu = 'PENTIUM'
                 } else {
                     cpu = arch.toUpper()

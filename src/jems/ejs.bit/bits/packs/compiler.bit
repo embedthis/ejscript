@@ -77,9 +77,9 @@ if (platform.like == 'posix') {
 
 } else if (platform.os == 'vxworks') {
     let name
-    if (platform.arch.match(/^i386$|^i486$/)) {
+    if (platform.arch.match(/^i386$|^i486$$/)) {
         name = 'cc386'
-    } else if (platform.arch.match(/^i[56]86$|^pentium$/)) {
+    } else if (platform.arch.match(/^i[56]86$|^pentium$|^x86$/)) {
         name = 'ccpentium'
     } else if (platform.arch.match(/^ppc/)) {
         name = 'ccppc'
@@ -95,7 +95,8 @@ if (platform.like == 'posix') {
         throw 'Unsupported CPU architecture: ' + platform.arch
     }
     cc = probe(name, {fullpath: true, search: bit.packs.vxworks.search})
-    Bit.load({packs: { compiler: { path: cc }}})
+    bit.env.WIND_CCNAME = name
+    Bit.load({packs: { compiler: { path: cc, name: name }}})
 }
 
 let settings = {}
