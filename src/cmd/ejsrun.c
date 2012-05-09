@@ -45,7 +45,7 @@ MAIN(ejsMain, int argc, char **argv, char **envp)
     err = 0;
     searchPath = 0;
     argc = mpr->argc;
-    argv = mpr->argv;
+    argv = (char**) mpr->argv;
 
     for (nextArg = 1; nextArg < argc; nextArg++) {
         argp = argv[nextArg];

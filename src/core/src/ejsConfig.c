@@ -42,7 +42,10 @@ void ejsDefineConfigProperties(Ejs *ejs)
 
 #if WIN
 {
-    /* On native 64 bit systems, PA is amd64 for 64 bit apps and is PAW6432 is amd64 for 32 bit apps */
+    /* 
+        Get the real system architecture, not whether this app is 32 or 64 bit.
+        On native 64 bit systems, PA is amd64 for 64 bit apps and is PAW6432 is amd64 for 32 bit apps 
+     */
     cchar   *cpu;
     if (smatch(getenv("PROCESSOR_ARCHITECTURE"), "AMD64") || getenv("PROCESSOR_ARCHITEW6432")) {
         cpu = "x64";

@@ -42,6 +42,7 @@ Bit.load({
 
     defaults: {
         '+compiler':  [ '-nologo', '-GR-', '-W3' ],
+        //  MOB - remove _MT as -MDd and -MD define this
         '+defines':   [ '-D_REENTRANT', '-D_MT' ],
         '+entry':   {
             lib: '_DllMainCRTStartup@12',

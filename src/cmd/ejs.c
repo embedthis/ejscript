@@ -79,7 +79,7 @@ MAIN(ejsMain, int argc, char **argv, char **envp)
     app->files = mprCreateList(-1, 0);
     app->iterations = 1;
     argc = mpr->argc;
-    argv = mpr->argv;
+    argv = (char**) mpr->argv;
 
     for (nextArg = 1; nextArg < argc; nextArg++) {
         argp = argv[nextArg];

@@ -2813,7 +2813,7 @@ typedef struct EjsCmd {
     EjsAny          *env;               /**< Optional environment */
     EjsAny          *options;           /**< Command options object */
     struct EjsByteArray *error;         /**< Error stream */
-    char            **argv;             /**< Actual argv when invoking the command */
+    cchar           **argv;             /**< Actual argv when invoking the command */
     int             argc;               /**< Length of argv */
     int             async;              /**< Async mode */
     int             throw;              /**< Set to true if the command should throw exceptions for failures */
