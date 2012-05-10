@@ -119,8 +119,8 @@ configuration step. The 'start.bit' file contains targets that specify the recip
 .SH CONFIGURED PRODUCTS
 Some products require a configuration phase prior to building with Bit. Configuration involves discovering 
 the tools and components available on the current system and the available compiler tool chain support.
-For configured products, Bit reads a 'main.bit' bit file which describes the project, and generates a 'start.bit'
-and platform bit file that describes the system.
+For configured products, bit is first invoked with a "configure" target. Bit then reads a 'main.bit' file which
+describes the project, and generates a 'start.bit' and platform bit file that describes the system.
 
 .SH TARGETS
 Bit is typically invoked with zero or more targets to build. If invoked with zero targets, Bit will build all the
