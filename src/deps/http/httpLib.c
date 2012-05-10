@@ -2993,7 +2993,7 @@ void httpConnTimeout(HttpConn *conn)
         }
     }
     httpDisconnect(conn);
-    httpDiscardData(conn->writeq, 1);
+    httpDiscardQueueData(conn->writeq, 1);
     httpEnableConnEvents(conn);
     conn->timeoutEvent = 0;
 }
@@ -3117,15 +3117,10 @@ void httpEvent(HttpConn *conn, MprEvent *event)
     if (event->mask & MPR_READABLE) {
         readEvent(conn);
     }
-    mprAssert(conn->sock);
-
     if (conn->endpoint) {
-        if (conn->error) {
-            httpDestroyConn(conn);
-
-        } else if (conn->keepAliveCount < 0 && conn->state <= HTTP_STATE_CONNECTED) {
+        if (conn->error || (conn->keepAliveCount < 0 && conn->state <= HTTP_STATE_CONNECTED)) {
             /*  
-                Idle connection.
+                Either an unhandled error or an Idle connection.
                 NOTE: compare keepAliveCount with "< 0" so that the client can have one more keep alive request. 
                 It should respond to the "Connection: close" and thus initiate a client-led close. This reduces 
                 TIME_WAIT states on the server. NOTE: after httpDestroyConn, conn structure and memory is still 
@@ -3133,12 +3128,13 @@ void httpEvent(HttpConn *conn, MprEvent *event)
              */
             httpDestroyConn(conn);
 
-        } else if (mprIsSocketEof(conn->sock)) {
-            httpDestroyConn(conn);
-
-        } else {
-            mprAssert(conn->state < HTTP_STATE_COMPLETE);
-            httpEnableConnEvents(conn);
+        } else if (conn->sock) {
+            if (mprIsSocketEof(conn->sock)) {
+                httpDestroyConn(conn);
+            } else {
+                mprAssert(conn->state < HTTP_STATE_COMPLETE);
+                httpEnableConnEvents(conn);
+            }
         }
     } else if (conn->state < HTTP_STATE_COMPLETE) {
         httpEnableConnEvents(conn);
@@ -3230,23 +3226,31 @@ void httpUsePrimary(HttpConn *conn)
 }
 
 
-void httpStealConn(HttpConn *conn)
+/*
+    Steal a connection with open socket from Http.
+    This flushes all buffered data and completes the request as far as Http is concerned.
+    It is the callers responsibility to call mprCloseSocket when required.
+ */
+MprSocket *httpStealConn(HttpConn *conn)
 {
+    MprSocket   *sock;
+
+    sock = conn->sock;
+    conn->sock = 0;
+
     if (conn->waitHandler) {
         mprRemoveWaitHandler(conn->waitHandler);
         conn->waitHandler = 0;
     }
     if (conn->http) {
         lock(conn->http);
-        if (conn->endpoint) {
-            if (conn->state >= HTTP_STATE_PARSED) {
-                httpValidateLimits(conn->endpoint, HTTP_VALIDATE_CLOSE_REQUEST, conn);
-            }
-            httpValidateLimits(conn->endpoint, HTTP_VALIDATE_CLOSE_CONN, conn);
-        }
         httpRemoveConn(conn->http, conn);
+        httpDiscardData(conn, HTTP_QUEUE_TX);
+        httpDiscardData(conn, HTTP_QUEUE_RX);
+        httpSetState(conn, HTTP_STATE_COMPLETE);
         unlock(conn->http);
     }
+    return sock;
 }
 
 
@@ -3471,7 +3475,7 @@ void httpSetRetries(HttpConn *conn, int count)
 
 
 static char *notifyState[] = {
-    "IO_EVENT", "BEGIN", "STARTED", "FIRST", "PARSED", "CONTENT", "READY", "RUNNING", "COMPLETE",
+    "IO_EVENT", "BEGIN", "STARTED", "FIRST", "PARSED", "CONTENT", "READY", "RUNNING", "COMPLETE", 
 };
 
 
@@ -5118,7 +5122,7 @@ static void httpTimer(Http *http, MprEvent *event)
             } else {
                 mprLog(6, "Idle connection timed out");
                 httpDisconnect(conn);
-                httpDiscardData(conn->writeq, 1);
+                httpDiscardQueueData(conn->writeq, 1);
                 httpEnableConnEvents(conn);
                 conn->lastActivity = conn->started = http->now;
             }
@@ -5751,7 +5755,7 @@ static void netOutgoingService(HttpQueue *q)
         return;
     }
     if (tx->flags & HTTP_TX_NO_BODY) {
-        httpDiscardData(q, 1);
+        httpDiscardQueueData(q, 1);
     }
     if ((tx->bytesWritten + q->count) > conn->limits->transmissionBodySize) {
         httpError(conn, HTTP_CODE_REQUEST_TOO_LARGE | ((tx->bytesWritten) ? HTTP_ABORT : 0),
@@ -6936,7 +6940,7 @@ bool httpServiceQueues(HttpConn *conn)
 }
 
 
-void httpDiscardTransmitData(HttpConn *conn)
+void httpDiscardData(HttpConn *conn, int dir)
 {
     HttpTx      *tx;
     HttpQueue   *q, *qhead;
@@ -6945,9 +6949,9 @@ void httpDiscardTransmitData(HttpConn *conn)
     if (tx == 0) {
         return;
     }
-    qhead = tx->queue[HTTP_QUEUE_TX];
+    qhead = tx->queue[dir];
     for (q = qhead->nextQ; q != qhead; q = q->nextQ) {
-        httpDiscardData(q, 1);
+        httpDiscardQueueData(q, 1);
     }
 }
 
@@ -7143,7 +7147,7 @@ void httpSuspendQueue(HttpQueue *q)
     Remove all data in the queue. If removePackets is true, actually remove the packet too.
     This preserves the header and EOT packets.
  */
-void httpDiscardData(HttpQueue *q, bool removePackets)
+void httpDiscardQueueData(HttpQueue *q, bool removePackets)
 {
     HttpPacket  *packet, *prev, *next;
     ssize       len;
@@ -9748,6 +9752,7 @@ char *httpTemplate(HttpConn *conn, cchar *tplate, MprHash *options)
 }
 
 
+//  MOB - rename SetRouteVar
 void httpSetRoutePathVar(HttpRoute *route, cchar *key, cchar *value)
 {
     mprAssert(route);
@@ -11163,6 +11168,7 @@ void httpProcess(HttpConn *conn, HttpPacket *packet)
         }
         packet = conn->input;
     }
+done:
     conn->inHttpProcess = 0;
 }
 
@@ -12150,7 +12156,9 @@ static bool processCompletion(HttpConn *conn)
         packet = conn->input;
         more = packet && !conn->connError && (httpGetPacketLength(packet) > 0);
         httpValidateLimits(conn->endpoint, HTTP_VALIDATE_CLOSE_REQUEST, conn);
-        httpPrepServerConn(conn);
+        if (conn->sock) {
+            httpPrepServerConn(conn);
+        }
         return more;
     }
     return 0;
@@ -12903,7 +12911,7 @@ void httpSendOutgoingService(HttpQueue *q)
         return;
     }
     if (tx->flags & HTTP_TX_NO_BODY) {
-        httpDiscardData(q, 1);
+        httpDiscardQueueData(q, 1);
     }
     if ((tx->bytesWritten + q->ioCount) > conn->limits->transmissionBodySize) {
         httpError(conn, HTTP_ABORT | HTTP_CODE_REQUEST_TOO_LARGE | ((tx->bytesWritten) ? HTTP_ABORT : 0),
@@ -14038,7 +14046,7 @@ void httpOmitBody(HttpConn *conn)
         mprError("Can't set response body if headers have already been created");
         /* Connectors will detect this also and disconnect */
     } else {
-        httpDiscardTransmitData(conn);
+        httpDiscardData(conn, HTTP_QUEUE_TX);
     }
 }
 
@@ -14376,7 +14384,7 @@ void httpWriteHeaders(HttpConn *conn, HttpPacket *packet)
     }
     if (tx->altBody) {
         mprPutStringToBuf(buf, tx->altBody);
-        httpDiscardData(tx->queue[HTTP_QUEUE_TX]->nextQ, 0);
+        httpDiscardQueueData(tx->queue[HTTP_QUEUE_TX]->nextQ, 0);
     }
     tx->headerSize = mprGetBufLength(buf);
     tx->flags |= HTTP_TX_HEADERS_CREATED;
