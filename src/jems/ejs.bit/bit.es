@@ -787,20 +787,26 @@ public class Bit {
             throw 'Can\'t find ' + bitfile
         }
         loadBitFile(bitfile)
-        bit.platforms ||= [localPlatform]
-
-        for (let [index,platform] in bit.platforms) {
-            bitfile = bitfile.dirname.join(platform).joinExt('bit')
-            makeBit(platform, bitfile)
-            if (index == (bit.platforms.length - 1)) {
-                bit.platform.last = true
+        if (bit.platforms) {
+            for (let [index,platform] in bit.platforms) {
+                bitfile = bitfile.dirname.join(platform).joinExt('bit')
+                makeBit(platform, bitfile)
+                if (index == (bit.platforms.length - 1)) {
+                    bit.platform.last = true
+                }
+                prepBuild()
+                build()
+                if ((bit.platforms.length > 1 || bit.cross) && !generating) {
+                    trace('Complete', bit.platform.configuration)
+                }
+                bit.cross = true
             }
+        } else {
+            bit.platforms = [localPlatform]
+            makeBit(localPlatform, bitfile)
+            bit.platform.last = true
             prepBuild()
             build()
-            if ((bit.platforms.length > 1 || bit.cross) && !generating) {
-                trace('Complete', bit.platform.configuration)
-            }
-            bit.cross = true
         }
     }
 
