@@ -404,6 +404,9 @@ public class Bit {
                 '    time configuration is performed.\n */\n')
         writeDefinitions(f, platform)
         f.close()
+        for (let [tname, target] in bit.targets) {
+            runScript(target, 'postconfig')
+        }
     }
 
     //  MOB - rename BIT_
@@ -1352,11 +1355,11 @@ public class Bit {
             }
         }
         if (selectedTargets.length == 0) {
-            /* No targets specified, so do a default "build" */
+            /* No targets specified, so do a default 'build' */
             selectedTargets = defaultTargets
 
         } else {
-            /* Targets specified. If "build" is one of the targets|actions, expand it to explicit target names */
+            /* Targets specified. If 'build' is one of the targets|actions, expand it to explicit target names */
             let index = selectedTargets.indexOf('build')
             if (index < 0) {
                 index = selectedTargets.indexOf('rebuild')
