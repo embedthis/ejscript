@@ -582,6 +582,9 @@ public function syncup(from: Path, to: Path) {
     if (from.name.endsWith('.tgz') || from.name.endsWith('.gz')) {
         use namespace 'ejs.zlib'
         global.load('ejs.zlib.mod')
+        if (!from.exists) {
+            throw 'Can\'t find package: ' + from
+        }
         global.Zlib.uncompress(from, from.replaceExt('tartemp'))
         from = from.replaceExt('tartemp')
         tartemp = from
