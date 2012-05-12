@@ -138,7 +138,7 @@ function init(base, name) {
 
     let targets = []
     for each (target in bit.targets) {
-        if (target.xbinary) {
+        if (target.xbinary || target.xscript) {
             targets.push(target.name)
         }
         target.depends ||= []
@@ -146,7 +146,7 @@ function init(base, name) {
             target.depends.push('_Prep_')
         }
         bit.target = target
-        if (target.type == 'lib' || target.type == 'exe') {
+        if (target.type == 'lib' || target.type == 'exe' || target.type == 'file') {
             runScript(target, 'prebuild')
         } else if (target.type == 'obj') {
             runScript(target, 'precompile')
@@ -513,8 +513,8 @@ ${OUTPUTS}
         }
         if (target.type == 'file') {
             for each (let file: Path in target.files) {
-                cmd += 'rm -rf ' + target.path.relativeTo(base) + '\n' +
-                       'cp -r ' + file.relativeTo(base) + ' ' + target.path.relativeTo(base) + '\n'
+                cmd += 'rm -rf ' + target.path.relativeTo(target.home) + '\n' +
+                       'cp -r ' + file.relativeTo(target.home) + ' ' + target.path.relativeTo(target.home) + '\n'
             }
         } else {
             cmd += target['generate-xcode'] || target['generate-sh'] || target['generate']
@@ -527,7 +527,7 @@ ${OUTPUTS}
             cmd = cmd.replace(/^[ \t]*[\r\n]+/m, '')
             cmd = cmd.replace(/^[ \t]*/mg, '').trim()
         }
-        cmd = cmd.replace(RegExp(bit.dir.cfg.relativeTo(base), 'g'), '$$(CFG_DIR)')
+        cmd = cmd.replace(RegExp(bit.dir.cfg.relativeTo(base), 'g'), '$${CFG_DIR}')
 
         if (target.files && target.files.length > 0) {
             inputs = target.files.map(function(f) f.relativeTo(base)).join(',\n')

@@ -45,7 +45,7 @@ int ecEnterState(EcCompiler *cp)
     if ((state = mprAllocBlock(sizeof(EcState), MPR_ALLOC_ZERO | MPR_ALLOC_MANAGER)) == 0) {
         return MPR_ERR_MEMORY;
     }
-    mprSetManager(state, manageState);
+    mprSetManager(state, (MprManager) manageState);
     if (cp->state) {
         *state = *cp->state;
     }

@@ -1068,7 +1068,7 @@ public class Bit {
         genout.writeLine('#\n#   ' + path.basename + ' -- Build It Shell Script to build ' + bit.settings.title + '\n#\n')
         genEnv()
         genout.writeLine('ARCH="' + bit.platform.arch + '"')
-        genout.writeLine('ARCH="$(shell uname -m | sed \'s/i.86/x86/\')"')
+        genout.writeLine('ARCH="$(shell uname -m | sed \'s/i.86/x86/;s/x86_64/x64/\')"')
         genout.writeLine('OS="' + bit.platform.os + '"')
         genout.writeLine('PROFILE="' + bit.platform.profile + '"')
         genout.writeLine('CONFIG="${OS}-${ARCH}-${PROFILE}' + '"')

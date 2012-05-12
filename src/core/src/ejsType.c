@@ -939,7 +939,7 @@ static EjsType *createTypeVar(Ejs *ejs, EjsType *typeType, int numProp)
         ejsThrowMemoryError(ejs);
         return 0;
     }
-    mprSetManager(type, manageType);
+    mprSetManager(type, (MprManager) manageType);
     mprInitList(&type->constructor.block.namespaces);
     obj = (EjsPot*) type;
     SET_TYPE(obj, typeType);

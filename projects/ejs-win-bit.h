@@ -18,6 +18,7 @@
 #define BLD_VNUM 200000000
 #define BLD_CONFIG_CMD "bit -emulate win-x86 -q -d -without all configure -gen sh,nmake,vs"
 #define BLD_LIB_NAME "bin"
+#define BLD_PROFILE "debug"
 #define BLD_CFG_PREFIX "C:/Program Files (x86)/Embedthis Ejscript"
 #define BLD_BIN_PREFIX "C:/Program Files (x86)/Embedthis Ejscript/bin"
 #define BLD_DOC_PREFIX "C:/Program Files (x86)/Embedthis Ejscript/doc"

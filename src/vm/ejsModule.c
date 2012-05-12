@@ -339,7 +339,7 @@ EjsDebug *ejsCreateDebug(Ejs *ejs, int length)
     if ((debug = mprAllocBlock(size, MPR_ALLOC_MANAGER)) == 0) {
         return NULL;
     }
-    mprSetManager(debug, manageDebug);
+    mprSetManager(debug, (MprManager) manageDebug);
     debug->size = count;
     debug->numLines = length;
     debug->magic = EJS_DEBUG_MAGIC;

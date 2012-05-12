@@ -36,7 +36,7 @@ static EjsFrame *allocFrame(Ejs *ejs, int numProp)
         ejsThrowMemoryError(ejs);
         return 0;
     }
-    mprSetManager(obj, manageFrame);
+    mprSetManager(obj, (MprManager) manageFrame);
     SET_TYPE(obj, ESV(Frame));
     ejsSetMemRef(obj);
     return (EjsFrame*) obj;

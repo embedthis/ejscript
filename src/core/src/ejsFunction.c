@@ -394,7 +394,7 @@ EjsCode *ejsCreateCode(Ejs *ejs, EjsFunction *fun, EjsModule *module, cuchar *by
     if ((code = mprAllocBlock(sizeof(EjsCode) + len, MPR_ALLOC_ZERO | MPR_ALLOC_MANAGER)) == 0) {
         return NULL;
     }
-    mprSetManager(code, manageCode);
+    mprSetManager(code, (MprManager) manageCode);
     code->codeLen = (int) len;
     code->module = module;
     code->debug = debug;
