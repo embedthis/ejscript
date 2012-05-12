@@ -1944,7 +1944,7 @@ public class Bit {
             } else {
                 sym = l.replace(/.*\| _/, '').replace(/\r$/,'')
             }
-            if (sym == 'MemoryBarrier' || sym == '_mask@@NegDouble@') continue
+            if (sym == 'MemoryBarrier' || sym.contains('_mask@@NegDouble@')) continue
             result.push(sym)
         }
         let def = Path(target.path.toString().replace(/dll$/, 'def'))
