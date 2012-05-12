@@ -120,7 +120,7 @@ function init(base, name) {
         if (type == 'lib' || type == 'exe') {
             target.xbinary = true
             bit.xbinaries.push(target)
-        } else if (type == 'build' || type == 'file') {
+        } else if (type == 'build' || type == 'file' && (type == 'lib' && target.headers)) {
             target.xscript = true
             bit.xscripts.push(target)
         }
