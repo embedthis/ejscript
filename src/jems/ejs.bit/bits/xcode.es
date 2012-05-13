@@ -43,6 +43,9 @@ public function xcode(base: Path) {
     term()
 }
 
+/*
+    Want targets to be sorted in the UI
+ */
 function sortTargets(array: Array, first: Number, second: Number): Number {
     let i = 0, j = 0
     if (array[first].name == 'All')
@@ -109,6 +112,7 @@ function init(base, name) {
 
     /*
         Create groups of targets for the xcode project
+        NOTE: not yet using the x[] arrays. Should use these instead of iterating through targets[] all the time
      */
     bit.xtargets = []
     bit.xgroups = []
@@ -120,7 +124,13 @@ function init(base, name) {
         if (type == 'lib' || type == 'exe') {
             target.xbinary = true
             bit.xbinaries.push(target)
-        } else if (type == 'build' || type == 'file' && (type == 'lib' && target.headers)) {
+/*UNUSED
+            if (type == 'lib' && target.headers) {
+                target.xscript = true
+                bit.xscripts.push(target)
+            }
+*/
+        } else if (type == 'build' || type == 'file') {
             target.xscript = true
             bit.xscripts.push(target)
         }
@@ -154,6 +164,26 @@ function init(base, name) {
     }
     bit.targets._All_.depends = targets
     bit.targets._Products_.depends = targets
+
+    /*
+        Add header export to the prep code. Unfortunately can't use target scripts because they run after building the
+        target.
+     */
+    let code = PREP_CODE
+    for each (target in bit.targets) {
+        if (target.type == 'lib') {
+            for each (let hdr in target.depends) {
+                let dep = bit.targets[hdr]
+                if (dep && dep.type == 'header') {
+                    for each (let file: Path in dep.files) {
+                        code += '\nif [ ' + file.relativeTo(base) + ' -nt ' + dep.path.relativeTo(base) + ' ] ; then\n' +
+                               '    cp ' + file.relativeTo(base) + ' ' + dep.path.relativeTo(base) + '\nfi'
+                    }
+                }
+            }
+        }
+    }
+    bit.targets._Prep_['generate-xcode'] = code
 }
 
 function term() {
@@ -176,6 +206,9 @@ function projHeader(base: Path) {
     objects = {')
 }
 
+/*
+    Aggregates are for scripts, and prep
+ */
 function aggregates(base: Path) {
     output('\n/* Begin PBXAggregateTarget section */')
     let section = '\t\t${TID} /* ${TNAME} */ = {
@@ -215,6 +248,9 @@ function aggregates(base: Path) {
     output('/* End PBXAggregateTarget section */')
 }
 
+/*
+    Emit all source files
+ */
 function sources(base: Path) {
     output('\n/* Begin PBXBuildFile section */')
     section = '\t\t${BID} /* ${PATH} in Sources */ = {isa = PBXBuildFile; fileRef = ${REF} /* ${NAME} */; };'
@@ -256,6 +292,9 @@ function sources(base: Path) {
     output('/* End PBXBuildFile section */')
 }
 
+/*
+    There is a proxy for each script, All and prep
+ */
 function proxies(base: Path) {
     output('\n/* Begin PBXContainerItemProxy section */')
     let section = '\t\t${PID} /* PBXContainerItemProxy ${DNAME} from ${TNAME} */ = {
@@ -280,6 +319,9 @@ function proxies(base: Path) {
     output('/* End PBXContainerItemProxy section */')
 }
 
+/*
+    Emit all files for all targets
+ */
 function files(base: Path) {
     output('\n/* Begin PBXFileReference section */')
     let lib = '\t\t${REF} /* ${NAME} */ = {isa = PBXFileReference; explicitFileType = "compiled.mach-o.dylib"; includeInIndex = 0; path = ${PATH}; sourceTree = BUILT_PRODUCTS_DIR; };'
@@ -301,7 +343,6 @@ function files(base: Path) {
                     //  MOB - can this emit duplicates?
                     let path = src.relativeTo(bit.dir.src)
                     let ref = getid('ID_TargetSrc:' + src)
-//  MOB - is this right using src?
                     output(source.expand({REF: ref, NAME: src.basename, PATH: path}))
                 }
                 for each (hdr in obj.depends) {
@@ -426,6 +467,9 @@ function groups(base: Path) {
     output('/* End PBXGroup section */')
 }
 
+/*
+    Emit native targets for each binary to build
+ */
 function targets(base) {
     output('\n/* Begin PBXNativeTarget section */')
     let section = '\t\t${TID} /* ${TNAME} */ = {
@@ -453,7 +497,7 @@ ${DEPS}
         let sid = makeid('ID_NativeSources:' + target.name)
         let fid = getid('ID_Frameworks:' + target.name)
         let tid = getid('ID_NativeTarget:' + target.name)
-        let bcl = makeid('ID_BuildConfigList:' + target.name)
+        let bcl = getmakeid('ID_BuildConfigList:' + target.name)
         let path = target.path.relativeTo(base)
         let ref = getid('ID_TargetRef:' + path)
         let ptype = (target.type == 'exe') ? 'com.apple.product-type.tool' : 'com.apple.product-type.library.dynamic';
@@ -475,6 +519,9 @@ ${DEPS}
     output('/* End PBXNativeTarget section */')
 }
 
+/*
+    Emit all scripts
+ */
 function scripts(base) {
     output('\n/* Begin PBXShellScriptBuildPhase section */')
     let section = '\t\t${SID} /* ShellScript for ${TNAME} */ = {
@@ -543,6 +590,9 @@ ${OUTPUTS}
     output('/* End PBXShellScriptBuildPhase section */')
 }
 
+/*
+    Emit the top level project
+ */
 function project(base) {
     let section = '
 /* Begin PBXProject section */
