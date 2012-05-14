@@ -2462,7 +2462,7 @@ global.NN = item.ns
             App.chdir(home)
         }
         try {
-            script = 'require ejs.unix\n' + expand(script).expand(target.vars, {fill: ''})
+            script = 'require ejs.unix\n' + expand(script)
             eval(script)
         } finally {
             App.chdir(pwd)
