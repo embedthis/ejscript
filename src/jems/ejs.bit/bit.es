@@ -2129,7 +2129,7 @@ public class Bit {
                     }
                 }
                 try {
-                    cmd = expand(cmd, {fill: null})
+                    cmd = expand(cmd, {fill: null}).expand(target.vars, {fill: ''})
                 } catch (e) {
                     print('Target', target.name)
                     print('Script:', cmd)
