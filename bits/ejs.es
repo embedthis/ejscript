@@ -79,7 +79,7 @@ public function packageBinaryFiles(formats = ['tar', 'native']) {
             /*
                 install(bit.packs.compiler.path.join('../../lib/msvcrt.lib'), p.bin)
              */
-            install(bit.dir.bin.join('removeFiles' + bit.EXE), p.bin)
+            install(bit.dir.bin.join('removeFiles' + bit.globals.EXE), p.bin)
         }
         if (bit.platform.like == 'posix') {
             install('doc/man/*.1', p.productver.join('doc/man/man1'), {compress: true})
@@ -266,7 +266,7 @@ public function createLinks() {
         let target: Path
         for each (program in programs) {
             let link = Path(localbin.join(program))
-            link.symlink(bin.join(program + bit.EXE))
+            link.symlink(bin.join(program + bit.globals.EXE))
             log.push(link)
         }
         for each (page in bit.prefixes.productver.join('doc/man').glob('**/*.1.gz')) {

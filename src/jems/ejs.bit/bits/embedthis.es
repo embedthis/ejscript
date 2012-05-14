@@ -353,7 +353,7 @@ function packageInstall(pkg: Path, options) {
 }
 
 function packageInstallConfigure() {
-    let ldconfigSwitch = (OS == 'freebsd') ? '-m' : '-n'
+    let ldconfigSwitch = (bit.platform.os == 'freebsd') ? '-m' : '-n'
     let ldconfig = Cmd.locate('ldconfig')
     if (ldconfig) {
         // Cmd.run(ldconfig + ' /usr/lib/lib${PRODUCT}.so.?.?.?

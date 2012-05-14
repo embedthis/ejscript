@@ -2439,7 +2439,7 @@ public class Bit {
                 if (item.shell == 'bash') {
                     runShell(target, item.script)
                 } else {
-                    let script = expand(item.script)
+                    let script = expand(item.script).expand(target.vars, {fill: ''})
 /*
 print('ITEM.NS', typeOf(item.ns))
 print('ITEM.NS', item.ns)
@@ -2462,7 +2462,7 @@ global.NN = item.ns
             App.chdir(home)
         }
         try {
-            script = 'require ejs.unix\n' + expand(script)
+            script = 'require ejs.unix\n' + expand(script).expand(target.vars, {fill: ''})
             eval(script)
         } finally {
             App.chdir(pwd)
