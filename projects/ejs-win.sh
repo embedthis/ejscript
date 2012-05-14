@@ -284,8 +284,8 @@ cp -r ${CONFIG}/bin/ejsrun.exe ${CONFIG}/bin/jem.exe
 "${LD}" -dll -out:${CONFIG}/bin/ejs.db.sqlite.dll -entry:_DllMainCRTStartup@12 -def:${CONFIG}/bin/ejs.db.sqlite.def ${LDFLAGS} ${LIBPATHS} ${CONFIG}/obj/ejsSqlite.obj ${LIBS} libmpr.lib libejs.lib libhttp.lib libpcre.lib libmprssl.lib libsqlite3.lib
 
 cd src/jems/ejs.web >/dev/null ;\
-../../../${CONFIG}/bin/ejsc --out ../../../${CONFIG}/bin/ejs.web.mod --debug --optimize 9 *.es ;\
-../../../${CONFIG}/bin/ejsmod --cslots ../../../${CONFIG}/bin/ejs.web.mod ;\
+../../../${CONFIG}/bin/ejsc --out ${OUT} --debug --optimize 9 *.es ;\
+../../../${CONFIG}/bin/ejsmod --cslots ${OUT} ;\
 if ! diff ejs.web.slots.h ../../../${CONFIG}/inc/ejs.web.slots.h >/dev/null; then cp ejs.web.slots.h ../../../${CONFIG}/inc; fi ;\
 rm -f ejs.web.slots.h ;\
 cd - >/dev/null 

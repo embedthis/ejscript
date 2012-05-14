@@ -280,8 +280,8 @@ ${CC} -c -o ${CONFIG}/obj/ejsSqlite.o -Wall -fPIC ${LDFLAGS} -mcpu=generic ${DFL
 ${CC} -shared -o ${CONFIG}/bin/ejs.db.sqlite.so ${LDFLAGS} ${LIBPATHS} ${CONFIG}/obj/ejsSqlite.o ${LIBS} -lmpr -lejs -lhttp -lpcre -lmprssl -lsqlite3
 
 cd src/jems/ejs.web >/dev/null ;\
-../../../${CONFIG}/bin/ejsc --out ../../../${CONFIG}/bin/ejs.web.mod --debug --optimize 9 *.es ;\
-../../../${CONFIG}/bin/ejsmod --cslots ../../../${CONFIG}/bin/ejs.web.mod ;\
+../../../${CONFIG}/bin/ejsc --out ${OUT} --debug --optimize 9 *.es ;\
+../../../${CONFIG}/bin/ejsmod --cslots ${OUT} ;\
 if ! diff ejs.web.slots.h ../../../${CONFIG}/inc/ejs.web.slots.h >/dev/null; then cp ejs.web.slots.h ../../../${CONFIG}/inc; fi ;\
 rm -f ejs.web.slots.h ;\
 cd - >/dev/null 

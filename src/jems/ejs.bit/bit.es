@@ -18,7 +18,6 @@ public class Bit {
     private static const supportedOS = ['freebsd', 'linux', 'macosx', 'solaris', 'vxworks', 'win']
     private static const supportedArch = ['arm', 'i64', 'mips', 'sparc', 'x64', 'x86']
 
-
     /*
         Filter for files that look like temp files and should not be installed
      */
@@ -42,7 +41,7 @@ public class Bit {
     private var home: Path
     private var bareBit: Object = { platforms: [], platform: {}, dir: {}, settings: {
         required: [], optional: [],
-    }, packs: {}, targets: {}, env: {} }
+    }, packs: {}, targets: {}, env: {}, globals: {}, }
 
     private var bit: Object = {}
     private var gen: Object
@@ -438,7 +437,7 @@ public class Bit {
         let args = 'bit ' + App.args.slice(1).join(' ')
         f.writeLine('#define BLD_CONFIG_CMD "' + args + '"')
 
-        //  MOB - this is used in mprModule which does a basename anyway. Also used by ejsConfig
+        //  MOB - REMOVE this is used in mprModule which does a basename anyway. Also used by ejsConfig
         f.writeLine('#define BLD_LIB_NAME "' + 'bin' + '"')
         f.writeLine('#define BLD_PROFILE "' + bit.platform.profile + '"')
 
@@ -885,6 +884,7 @@ public class Bit {
         for (let [tname,target] in o.targets) {
             target.name ||= tname
             target.home ||= home
+            target.vars ||= {}
             if (target.path) {
                 if (!target.path.startsWith('${')) {
                     target.path = target.home.join(target.path)
@@ -956,13 +956,6 @@ public class Bit {
         Load a bit file object
      */
     public function loadBitObject(o, ns = null) {
-/* UNUSED
-        if (!initialized) {
-            blend(bit, o)
-            initialized = false
-            return
-        }
-*/
         let home = currentBitFile.dirname
         fixup(o, ns)
         /* 
@@ -976,21 +969,10 @@ public class Bit {
             blend(bit.platform, o.platform, {combine: true})
         }
         for each (path in o.blend) {
-            bit.BITS = bit.dir.bits
-            bit.SRC = bit.dir.src
-            path = path.expand(bit, {fill: '.'})
-
-                loadBitFile(home.join(path))
-/* UNUSED KEEP
-            if (!(options.config && path == (bit.platform.name + '.bit'))) {
-            }
-*/
+            bit.globals.BITS = bit.dir.bits
+            bit.globals.SRC = bit.dir.src
+            loadBitFile(home.join(expand(path, {fill: null})))
         }
-/* UNUSED
-        for each (platform in o.platforms) {
-            loadBitFile(home.join(path).joinExt('bit'))
-        }
-*/
         bit = blend(bit, o, {combine: true})
         for (let [tname, target] in o.targets) {
             /* Overwrite targets with original unblended target. This delays blending to preserve +/-properties  */  
@@ -1103,7 +1085,7 @@ public class Bit {
         genout.writeLine('#\n#   ' + path.basename + ' -- Build It Makefile to build ' + 
             bit.settings.title + ' for ' + bit.platform.os + '\n#\n')
         genEnv()
-        genout.writeLine('ARCH     := $(shell uname -m | sed \'s/i.86/x86/\')')
+        genout.writeLine('ARCH     := $(shell uname -m | sed \'s/i.86/x86/;s/x86_64/x64/\')')
         genout.writeLine('OS       := ' + bit.platform.os)
         genout.writeLine('PROFILE  := ' + bit.platform.profile)
         genout.writeLine('CONFIG   := $(OS)-$(ARCH)-$(PROFILE)')
@@ -1314,7 +1296,7 @@ public class Bit {
         for (let [tname, target] in bit.targets) {
             if (target.enable) {
                 if (!(target.enable is Boolean)) {
-                    let script = target.enable.expand(bit, {fill: ''})
+                    let script = expand(target.enable)
                     try {
 //  MOB - what about changing dir?  Should use runScript?
                         if (!eval(script)) {
@@ -1418,7 +1400,7 @@ public class Bit {
                 }
             }
             if (target.path) {
-                target.path = Path(target.path.toString().expand(bit, {fill: '${}'}))
+                target.path = Path(expand(target.path, {fill: '${}'}))
             }
         }
     }
@@ -1468,7 +1450,7 @@ public class Bit {
             }
             files = []
             for each (pattern in include) {
-                pattern = pattern.toString().expand(bit, {fill: ''})
+                pattern = expand(pattern)
                 files += Path('.').glob(pattern, {missing: missing})
             }
         }
@@ -1581,7 +1563,8 @@ public class Bit {
                 for each (file in files) {
                     let header = bit.dir.inc.join(file.basename)
                     /* Always overwrite dynamically created targets created via makeDepends */
-                    bit.targets[header] = { name: header, enable: true, path: header, type: 'header', files: [ file ] }
+                    bit.targets[header] = { name: header, enable: true, path: header, type: 'header', files: [ file ],
+                        vars: {} }
                     target.depends ||= []
                     target.depends.push(header)
                 }
@@ -1595,7 +1578,7 @@ public class Bit {
                      */
                     let res = bit.dir.obj.join(file.replaceExt(bit.ext.res).basename)
                     let resTarget = { name : res, enable: true, path: res, type: 'resource', files: [ file ], 
-                        includes: target.includes }
+                        includes: target.includes, vars: {} }
                     if (bit.targets[res]) {
                         resTarget = blend(bit.targets[resTarget.name], resTarget, {combined: true})
                     } else {
@@ -1618,7 +1601,7 @@ public class Bit {
                         target.scripts.precompile : null
                     let objTarget = { name : obj, enable: true, path: obj, type: 'obj', files: [ file ], 
                         compiler: target.compiler, defines: target.defines, includes: target.includes,
-                        scripts: { precompile: precompile }}
+                        scripts: { precompile: precompile }, vars: {}}
                     if (bit.targets[obj]) {
                         objTarget = blend(bit.targets[objTarget.name], objTarget, {combined: true})
                     } else {
@@ -1635,7 +1618,7 @@ public class Bit {
                     for each (header in objTarget.depends) {
                         if (!bit.targets[header]) {
                             bit.targets[header] = { name: header, enable: true, path: header, 
-                                type: 'header', files: [ header ] }
+                                type: 'header', files: [ header ], vars: {} }
                         }
                     }
                 }
@@ -1839,10 +1822,7 @@ public class Bit {
             throw 'No rule to build target ' + target.path + ' for transition ' + transition
             return
         }
-        setRuleVars(target)
-
-        /* Double expand so rules tokens can use ${OUT} */
-        let command = rule.expand(bit, {fill: ''}).expand(bit, {fill: ''})
+        let command = expandRule(target, rule)
         if (generating == 'sh') {
             command = repcmd(command)
             genout.writeLine(command + '\n')
@@ -1888,11 +1868,7 @@ public class Bit {
             throw 'No rule to build target ' + target.path + ' for transition ' + transition
             return
         }
-        setRuleVars(target)
-
-        /* Double expand so rules tokens can use ${OUT} */
-        let command = rule.expand(bit, {fill: ''})
-        command = command.expand(bit, {fill: ''})
+        let command = expandRule(target, rule)
         if (generating == 'sh') {
             command = repcmd(command)
             genout.writeLine(command + '\n')
@@ -1927,10 +1903,8 @@ public class Bit {
         if (!rule || generating) {
             return
         }
-        bit.IN = target.files.join(' ')
-        /* Double expand so rules tokens can use ${OUT} */
-        let command = rule.expand(bit, {fill: ''})
-        command = command.expand(bit, {fill: ''})
+        target.vars.IN = target.files.join(' ')
+        let command = expandRule(target, rule)
         let data = run(command, {noshow: true})
         let result = []
         let lines = data.match(/SECT.*External *\| .*/gm)
@@ -1965,7 +1939,7 @@ public class Bit {
 
         let ext = target.path.extension
         for each (file in target.files) {
-            bit.IN = file.relative
+            target.vars.IN = file.relative
             let transition = file.extension + '->' + target.path.extension
             let rule = target.rule || bit.rules[transition]
             if (!rule) {
@@ -1975,9 +1949,7 @@ public class Bit {
                     return
                 }
             }
-            setRuleVars(target)
-            let command = rule.expand(bit, {fill: ''})
-
+            let command = expandRule(target, rule)
             if (generating == 'sh') {
                 command = repcmd(command)
                 genout.writeLine(command + '\n')
@@ -2010,7 +1982,7 @@ public class Bit {
 
         let ext = target.path.extension
         for each (file in target.files) {
-            bit.IN = file.relative
+            target.vars.IN = file.relative
             let transition = file.extension + '->' + target.path.extension
             let rule = target.rule || bit.rules[transition]
             if (!rule) {
@@ -2020,11 +1992,7 @@ public class Bit {
                     return
                 }
             }
-            setRuleVars(target)
-
-            let command = rule.expand(bit, {fill: ''})
-            command = command.expand(bit, {fill: ''})
-
+            let command = expandRule(target, rule)
             if (generating == 'sh') {
                 command = repcmd(command)
                 genout.writeLine(command + '\n')
@@ -2061,7 +2029,7 @@ public class Bit {
             if (file == target.path) {
                 continue
             }
-            bit.IN = file.relative
+            target.vars.IN = file.relative
             if (generating == 'sh') {
                 genout.writeLine('rm -rf ' + reppath(target.path.relative))
                 genout.writeLine('cp -r ' + reppath(file.relative) + ' ' + reppath(target.path.relative) + '\n')
@@ -2124,7 +2092,8 @@ public class Bit {
             let cmd = target['generate-sh'] || target.shell
             if (cmd) {
                 cmd = (prefix + cmd.trim() + suffix).replace(/^[ \t]*/mg, '')
-                cmd = cmd.replace(/$/mg, ';\\').replace(/;\\;\\/g, ' ;\\').trim(';\\').expand(bit)
+                cmd = cmd.replace(/$/mg, ';\\').replace(/;\\;\\/g, ' ;\\').trim(';\\')
+                cmd = expand(cmd, {fill: null})
                 cmd = repvar2(cmd, target.home)
                 genWrite(cmd + '\n')
             } else {
@@ -2133,12 +2102,13 @@ public class Bit {
 
         } else if (generating == 'make') {
             genWrite(target.path.relative + ': ' + getTargetDeps(target))
-            let cmd = target['generate-make'] || target['generate-sh']
+            let cmd = target['generate-make'] || target['generate-sh'] || target.generate
             if (cmd) {
                 //MOB - bug doing multiple tabs
                 cmd = (prefix + cmd.trim() + suffix).replace(/^[ \t]*/mg, '\t')
                 //MOB - bug doing multiple ;\\
-                cmd = cmd.replace(/$/mg, ';\\').replace(/;\\;\\/g, ' ;\\').trim(';\\').expand(bit)
+                cmd = cmd.replace(/$/mg, ';\\').replace(/;\\;\\/g, ' ;\\').trim(';\\')
+                cmd = expand(cmd, {fill: null})
                 cmd = repvar2(cmd, target.home)
                 genWrite(cmd + '\n')
             }
@@ -2151,21 +2121,23 @@ public class Bit {
                 cmd = (prefix + cmd + suffix).replace(/^[ \t]*/mg, '\t')
                     let saveDir = []
                 if (bit.platform.os == 'win') {
-                    for each (n in ["BIN", "CFG", "FLAT", "INC", "LIB", "OBJ", "PACKS", "PKG", "REL", "SRC", "TOP"]) {
-                        saveDir[n] = bit[n]
-                        bit[n] = bit[n].windows
+                    for (n in bit.globals) {
+                        if (bit.globals[n] is Path) {
+                            saveDir[n] = bit.globals[n]
+                            bit[n] = bit.globals[n].windows
+                        }
                     }
                 }
                 try {
-                    cmd = cmd.expand(bit)
+                    cmd = expand(cmd, {fill: null})
                 } catch (e) {
                     print('Target', target.name)
                     print('Script:', cmd)
                     throw e
                 }
                 if (bit.platform.os == 'win') {
-                    for each (n in ["BIN", "CFG", "FLAT", "INC", "LIB", "OBJ", "PACKS", "PKG", "REL", "SRC", "TOP"]) {
-                        bit[n] = saveDir[n]
+                    for (n in saveDir) {
+                        bit.globals[n] = saveDir[n]
                     }
                 }
                 cmd = repvar2(cmd, target.home)
@@ -2289,22 +2261,23 @@ public class Bit {
         Set top level constant variables. This enables them to be used in token expansion
      */
     public function makeConstGlobals() {
-        bit.ARCH = bit.platform.arch
-        bit.GCC_ARCH = gccArch(bit.platform.arch)
-        bit.CONFIG = bit.platform.configuration
-        bit.EXE = bit.ext.exe ? ('.' + bit.ext.exe) : ''
-        bit.LIKE = bit.platform.like
-        bit.O = '.' + bit.ext.o
-        bit.OS = bit.platform.os
-        bit.PLATFORM = bit.platform.name
-        bit.SHOBJ = '.' + bit.ext.shobj
-        bit.SHLIB = '.' + bit.ext.shlib
+        let g = bit.globals
+        g.ARCH = bit.platform.arch
+        g.GCC_ARCH = gccArch(bit.platform.arch)
+        g.CONFIG = bit.platform.configuration
+        g.EXE = bit.ext.exe ? ('.' + bit.ext.exe) : ''
+        g.LIKE = bit.platform.like
+        g.O = '.' + bit.ext.o
+        g.OS = bit.platform.os
+        g.PLATFORM = bit.platform.name
+        g.SHOBJ = '.' + bit.ext.shobj
+        g.SHLIB = '.' + bit.ext.shlib
 
         /*
             Make meta-globals
          */
-        for each (name in ['ARCH', 'CONFIG', 'EXE', 'LIKE', 'O', 'OS', 'PLATFORM', 'SHLIB', 'SHOBJ']) {
-            global[name] = bit[name]
+        for each (name in bit.globals) {
+            global[name] = bit.globals[name]
         }
     }
 
@@ -2323,54 +2296,58 @@ public class Bit {
             if (base) {
                 dir = dir.relativeTo(base)
             }
-            global[n] = bit[n] = dir
+            //  MOB ZZ remove global[n]
+            global[n] = bit.globals[n] = dir
         }
-        bit.LBIN = global.LBIN
+        //  MOB ZZ remove global[n]
+        // bit.globals.LBIN = global.LBIN
     }
 
     public function setRuleVars(target, base: Path = App.dir) {
+        let tv = target.vars || {}
         if (target.home) {
-            bit.HOME = target.home.relativeTo(base)
+            tv.HOME = target.home.relativeTo(base)
         }
         if (target.path) {
-            bit.OUT = target.path.relativeTo(base)
+            tv.OUT = target.path.relativeTo(base)
         }
         if (target.libpaths) {
-            bit.LIBPATHS = mapLibPaths(target.libpaths, base)
+            tv.LIBPATHS = mapLibPaths(target.libpaths, base)
         }
         if (target.entry) {
-            bit.ENTRY = target.entry[target.rule || target.type]
+            tv.ENTRY = target.entry[target.rule || target.type]
         }
         if (target.type == 'exe') {
             if (!target.files) {
                 throw 'Target ' + target.name + ' has no input files or sources'
             }
-            bit.IN = target.files.map(function(p) p.relativeTo(base)).join(' ')
-            bit.LIBS = mapLibs(target.libraries)
-            bit.LDFLAGS = (target.linker) ? target.linker.join(' ') : ''
+            tv.IN = target.files.map(function(p) p.relativeTo(base)).join(' ')
+            tv.LIBS = mapLibs(target.libraries)
+            tv.LDFLAGS = (target.linker) ? target.linker.join(' ') : ''
 
         } else if (target.type == 'lib') {
             if (!target.files) {
                 throw 'Target ' + target.name + ' has no input files or sources'
             }
-            bit.IN = target.files.map(function(p) p.relativeTo(base)).join(' ')
-            bit.LIBNAME = target.path.basename
-            bit.DEF = Path(target.path.relativeTo(base).toString().replace(/dll$/, 'def'))
-            bit.LIBS = mapLibs(target.libraries)
-            bit.LDFLAGS = (target.linker) ? target.linker.join(' ') : ''
+            tv.IN = target.files.map(function(p) p.relativeTo(base)).join(' ')
+            tv.LIBNAME = target.path.basename
+            tv.DEF = Path(target.path.relativeTo(base).toString().replace(/dll$/, 'def'))
+            tv.LIBS = mapLibs(target.libraries)
+            tv.LDFLAGS = (target.linker) ? target.linker.join(' ') : ''
 
         } else if (target.type == 'obj') {
-            bit.CFLAGS = (target.compiler) ? target.compiler.join(' ') : ''
-            bit.DEFINES = (target.defines) ? target.defines.join(' ') : ''
-            bit.INCLUDES = (target.includes) ? target.includes.map(function(p) '-I' + p.relativeTo(base)) : ''
-            bit.PDB = bit.OUT.replaceExt('pdb')
+            tv.CFLAGS = (target.compiler) ? target.compiler.join(' ') : ''
+            tv.DEFINES = (target.defines) ? target.defines.join(' ') : ''
+            tv.INCLUDES = (target.includes) ? target.includes.map(function(p) '-I' + p.relativeTo(base)) : ''
+            tv.PDB = tv.OUT.replaceExt('pdb')
 
         } else if (target.type == 'resource') {
-            bit.OUT = target.path.relative
-            bit.CFLAGS = (target.compiler) ? target.compiler.join(' ') : ''
-            bit.DEFINES = (target.defines) ? target.defines.join(' ') : ''
-            bit.INCLUDES = (target.includes) ? target.includes.map(function(path) '-I' + path.relative) : ''
+            tv.OUT = target.path.relative
+            tv.CFLAGS = (target.compiler) ? target.compiler.join(' ') : ''
+            tv.DEFINES = (target.defines) ? target.defines.join(' ') : ''
+            tv.INCLUDES = (target.includes) ? target.includes.map(function(path) '-I' + path.relative) : ''
         }
+        target.vars = tv
     }
 
     /*
@@ -2462,7 +2439,7 @@ public class Bit {
                 if (item.shell == 'bash') {
                     runShell(target, item.script)
                 } else {
-                    let script = item.script.expand(bit, {fill: ''})
+                    let script = expand(item.script)
 /*
 print('ITEM.NS', typeOf(item.ns))
 print('ITEM.NS', item.ns)
@@ -2478,13 +2455,14 @@ global.NN = item.ns
         }
     }
 
+    //  MOB - rename
     public function runScriptX(script: String, home: Path) {
         let pwd = App.dir
         if (home && home != pwd) {
             App.chdir(home)
         }
         try {
-            script = 'require ejs.unix\n' + script.expand(bit, {fill: ''})
+            script = 'require ejs.unix\n' + expand(script)
             eval(script)
         } finally {
             App.chdir(pwd)
@@ -2666,10 +2644,10 @@ global.NN = item.ns
     function expandTokens(o) {
         for (let [key,value] in o) {
             if (value is String) {
-                o[key] = value.expand(bit, {fill: '${}'})
+                o[key] = expand(value, {fill: '${}'})
             } else if (value is Path) {
 
-                o[key] = Path(value.toString().expand(bit, {fill: '${}'}))
+                o[key] = Path(expand(value, {fill: '${}'}))
             } else if (Object.getOwnPropertyCount(value) > 0) {
                 o[key] = expandTokens(value)
             }
@@ -2949,16 +2927,16 @@ UNUSED
             configuration: platform + '-' + profile,
             dev: localPlatform,
         }
-        bit.emulating = options.emulate
+        bit.emulating = options.emulate || false
 
         loadBitFile(bit.dir.bits.join('standard.bit'))
         loadBitFile(bit.dir.bits.join('os/' + bit.platform.os + '.bit'))
 
-        bit.PLATFORM = currentPlatform = platform
+        bit.globals.PLATFORM = currentPlatform = platform
         if (bitfile) {
             loadBitFile(bitfile)
             for each (path in bit.customize) {
-                let path = home.join(path.expand(bit, {fill: '.'}))
+                let path = home.join(expand(path, {fill: '.'}))
                 if (path.exists) {
                     loadBitFile(path)
                 }
@@ -2974,7 +2952,8 @@ UNUSED
         castDirTypes()
         if (platform == localPlatform) {
             let lbin = bit.dir.bin
-            global.LBIN = bit.LBIN = lbin.portable
+            //  MOB ZZ
+            bit.globals.LBIN = lbin.portable
         }
     }
 
@@ -2991,8 +2970,26 @@ UNUSED
         let old = bit
         bit = bareBit.clone(true)
         bit.platforms = old.platforms
-        bit.cross = old.cross
+        bit.cross = old.cross || false
         return bit
+    }
+
+    public function expand(s: String, options = {fill: ''}) : String {
+        /* 
+            Do twice to allow tokens to use ${vars} 
+         */
+        let eo = {fill: '${}'}
+        s = s.expand(bit, eo)
+        s = s.expand(bit.globals, eo)
+        s = s.expand(bit, eo)
+        return s.expand(bit.globals, eo)
+    }
+
+    function expandRule(target, rule) {
+        setRuleVars(target)
+        let result = expand(rule).expand(target.vars, {fill: ''})
+        target.vars = {}
+        return result
     }
 }
 
@@ -3062,8 +3059,11 @@ public function makeDirGlobals(base: Path = null)
 public function runScript(target, when)
     b.runScript(target, when)
 
-function whyRebuild(path, tag, msg)
+public function whyRebuild(path, tag, msg)
     b.whyRebuild(path, tag, msg)
+
+public function expand(rule)
+    b.expand(rule)
 
 /*
     @copy   default

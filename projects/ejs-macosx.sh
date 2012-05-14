@@ -280,8 +280,8 @@ ${CC} -c -o ${CONFIG}/obj/ejsSqlite.o -arch x86_64 ${CFLAGS} ${DFLAGS} -I${CONFI
 ${CC} -dynamiclib -o ${CONFIG}/bin/ejs.db.sqlite.dylib -arch x86_64 ${LDFLAGS} -compatibility_version 2.0.0 -current_version 2.0.0 ${LIBPATHS} -install_name @rpath/ejs.db.sqlite.dylib ${CONFIG}/obj/ejsSqlite.o ${LIBS} -lmpr -lejs -lhttp -lpcre -lmprssl -lsqlite3
 
 cd src/jems/ejs.web >/dev/null ;\
-../../../${CONFIG}/bin/ejsc --out ../../../${CONFIG}/bin/ejs.web.mod --debug --optimize 9 *.es ;\
-../../../${CONFIG}/bin/ejsmod --cslots ../../../${CONFIG}/bin/ejs.web.mod ;\
+../../../${CONFIG}/bin/ejsc --out ${OUT} --debug --optimize 9 *.es ;\
+../../../${CONFIG}/bin/ejsmod --cslots ${OUT} ;\
 if ! diff ejs.web.slots.h ../../../${CONFIG}/inc/ejs.web.slots.h >/dev/null; then cp ejs.web.slots.h ../../../${CONFIG}/inc; fi ;\
 rm -f ejs.web.slots.h ;\
 cd - >/dev/null 

@@ -295,7 +295,8 @@ function packageSrc(pkg: Path, options) {
 function packageTar(pkg: Path, options) {
     let s = bit.settings
     let rel = bit.dir.rel
-    let base = [s.product, s.version, s.buildNumber, bit.platform.dist, OS.toUpper(), ARCH].join('-')
+    let base = [s.product, s.version, s.buildNumber, bit.platform.dist, bit.platform.os.toUpper(), 
+        bit.platform.arch].join('-')
     let name = rel.join(base).joinExt('tar', true)
     let zname = name.replaceExt('tgz')
     let files = pkg.glob('**', {exclude: /\/$/, missing: undefined})
@@ -319,7 +320,8 @@ function packageInstall(pkg: Path, options) {
     }
     let s = bit.settings
     let rel = bit.dir.rel
-    let base = [s.product, s.version, s.buildNumber, bit.platform.dist, OS.toUpper(), ARCH].join('-')
+    let base = [s.product, s.version, s.buildNumber, bit.platform.dist, bit.platform.os.toUpper(), 
+        bit.platform.arch].join('-')
     //  UNUSED let name = rel.join(base).joinExt('tar', true)
     let contents = pkg.join(options.vname, 'contents')
     let files = contents.glob('**', {missing: undefined})
@@ -425,7 +427,8 @@ function packageMacosx(pkg: Path, options) {
     }
     let s = bit.settings
     let rel = bit.dir.rel
-    let base = [s.product, s.version, s.buildNumber, bit.platform.dist, OS.toUpper(), ARCH].join('-')
+    let base = [s.product, s.version, s.buildNumber, bit.platform.dist, bit.platform.os.toUpper(), 
+        bit.platform.arch].join('-')
     let name = rel.join(base).joinExt('tar', true)
     let files = pkg.glob('**', {exclude: /\/$/, missing: undefined})
     let size = 20
@@ -435,14 +438,14 @@ function packageMacosx(pkg: Path, options) {
     bit.PACKAGE_SIZE = size
     let pm = s.product + '.pmdoc'
     let pmdoc = pkg.join(pm)
-    let opak = Path('package/' + OS.toUpper())
+    let opak = Path('package/' + bit.platform.os.toUpper())
     install(opak.join('background.png'), pkg)
     install(opak.join('license.rtf'), pkg)
     install(opak.join('readme.rtf'), pkg)
     install(opak.join(pm + '/*'), pmdoc, {expand: true, hidden: true})
     let scripts = pkg.join('scripts')
     scripts.makeDir()
-    install('package/' + OS.toUpper() + '/scripts/*', scripts, {expand: true})
+    install('package/' + bit.platform.os.toUpper() + '/scripts/*', scripts, {expand: true})
     createMacContents(pkg, options)
 
     /* Remove extended attributes */
@@ -473,7 +476,8 @@ function packageFedora(pkg: Path, options) {
         cpu = 'x86_64'
     }
     bit.platform.mappedCpu = cpu
-    let base = [s.product, s.version, s.buildNumber, bit.platform.dist, OS.toUpper(), ARCH].join('-')
+    let base = [s.product, s.version, s.buildNumber, bit.platform.dist, bit.platform.os.toUpper(), 
+        bit.platform.arch].join('-')
     let contents = pkg.join(options.vname, 'contents')
     let RPM = pkg.join(options.vname, 'RPM')
     for each (d in ['SOURCES', 'SPECS', 'BUILD', 'RPMS', 'SRPMS']) {
@@ -483,7 +487,7 @@ function packageFedora(pkg: Path, options) {
     bit.dir.rpm = RPM
     bit.dir.contents = contents
 
-    let opak = Path('package/' + OS.toUpper())
+    let opak = Path('package/' + bit.platform.os.toUpper())
     let spec = RPM.join('SPECS', base).joinExt('spec', true)
     install(opak.join('rpm.spec'), spec, {expand: true, permissions: 0644})
 
@@ -530,13 +534,14 @@ function packageUbuntu(pkg: Path, options) {
     bit.platform.mappedCpu = cpu
     let contents = pkg.join(options.vname, 'contents')
     let DEBIAN = contents.join('DEBIAN')
-    let opak = Path('package/' + OS.toUpper())
+    let opak = Path('package/' + bit.platform.os.toUpper())
 
     install(opak.join('deb.bin/conffiles'), DEBIAN.join('conffiles'), {expand: true, permissions: 0644})
     install(opak.join('deb.bin/control'), DEBIAN, {expand: true, permissions: 0755})
     install(opak.join('deb.bin/p*'), DEBIAN, {expand: true, permissions: 0755})
 
-    let base = [s.product, s.version, s.buildNumber, bit.platform.dist, OS.toUpper(), ARCH].join('-')
+    let base = [s.product, s.version, s.buildNumber, bit.platform.dist, bit.platform.os.toUpper(), 
+        bit.platform.arch].join('-')
     let outfile = bit.dir.rel.join(base).joinExt('deb', true)
     trace('Package', outfile)
     run(bit.packs.pmaker.path + ' --build ' + DEBIAN.dirname + ' ' + outfile)
@@ -549,7 +554,7 @@ function packageWin(pkg: Path, options) {
     }
     let s = bit.settings
     let rel = bit.dir.rel
-    let opak = Path('package/' + OS.toUpper())
+    let opak = Path('package/' + bit.platform.os.toUpper())
 
     install(opak.join('LICENSE.TXT'), pkg)
     let iss = pkg.join('install.iss')
@@ -569,7 +574,8 @@ function packageWin(pkg: Path, options) {
             'DestName: "' + dest.basename + '";\n')
     }
     cp.close()
-    let base = [s.product, s.version, s.buildNumber, bit.platform.dist, OS.toUpper(), ARCH].join('-')
+    let base = [s.product, s.version, s.buildNumber, bit.platform.dist, bit.platform.os.toUpper(), 
+        bit.platform.arch].join('-')
     let outfile = bit.dir.rel.join(base).joinExt('exe', true)
     trace('Package', outfile)
     run([bit.packs.pmaker.path, iss])

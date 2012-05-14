@@ -2,7 +2,7 @@
 #   ejs-macosx.mk -- Build It Makefile to build Embedthis Ejscript for macosx
 #
 
-ARCH     := $(shell uname -m | sed 's/i.86/x86/')
+ARCH     := $(shell uname -m | sed 's/i.86/x86/;s/x86_64/x64/')
 OS       := macosx
 PROFILE  := debug
 CONFIG   := $(OS)-$(ARCH)-$(PROFILE)
@@ -48,8 +48,6 @@ all: prep \
         $(CONFIG)/bin/www \
         $(CONFIG)/bin/ejs.template.mod \
         $(CONFIG)/bin/ejs.tar.mod \
-        $(CONFIG)/bin/ejs.zlib.mod \
-        $(CONFIG)/bin/ejs.zlib.dylib \
         $(CONFIG)/bin/mvc.es \
         $(CONFIG)/bin/mvc \
         $(CONFIG)/bin/ejs.mvc.mod \
@@ -92,12 +90,10 @@ clean:
 	rm -rf $(CONFIG)/bin/ejs.web.dylib
 	rm -rf $(CONFIG)/bin/www
 	rm -rf $(CONFIG)/bin/ejs.template.mod
-	rm -rf $(CONFIG)/bin/ejs.zlib.dylib
 	rm -rf $(CONFIG)/bin/mvc.es
 	rm -rf $(CONFIG)/bin/mvc
 	rm -rf $(CONFIG)/bin/ejs.mvc.mod
 	rm -rf $(CONFIG)/bin/utest.worker
-	rm -rf $(CONFIG)/bin/removeFiles
 	rm -rf $(CONFIG)/obj/mprLib.o
 	rm -rf $(CONFIG)/obj/mprSsl.o
 	rm -rf $(CONFIG)/obj/manager.o
@@ -207,12 +203,12 @@ $(CONFIG)/obj/mprSsl.o: \
         src/deps/mpr/mprSsl.c \
         $(CONFIG)/inc/bit.h \
         $(CONFIG)/inc/mpr.h
-	$(CC) -c -o $(CONFIG)/obj/mprSsl.o -arch x86_64 $(CFLAGS) $(DFLAGS) -I$(CONFIG)/inc -I../packages-macosx-x64/openssl/openssl-1.0.1b/include src/deps/mpr/mprSsl.c
+	$(CC) -c -o $(CONFIG)/obj/mprSsl.o -arch x86_64 $(CFLAGS) $(DFLAGS) -I$(CONFIG)/inc src/deps/mpr/mprSsl.c
 
 $(CONFIG)/bin/libmprssl.dylib:  \
         $(CONFIG)/bin/libmpr.dylib \
         $(CONFIG)/obj/mprSsl.o
-	$(CC) -dynamiclib -o $(CONFIG)/bin/libmprssl.dylib -arch x86_64 $(LDFLAGS) -compatibility_version 2.0.0 -current_version 2.0.0 -compatibility_version 2.0.0 -current_version 2.0.0 $(LIBPATHS) -L../packages-macosx-x64/openssl/openssl-1.0.1b -install_name @rpath/libmprssl.dylib $(CONFIG)/obj/mprSsl.o $(LIBS) -lmpr -lssl -lcrypto
+	$(CC) -dynamiclib -o $(CONFIG)/bin/libmprssl.dylib -arch x86_64 $(LDFLAGS) -compatibility_version 2.0.0 -current_version 2.0.0 -compatibility_version 2.0.0 -current_version 2.0.0 $(LIBPATHS) -install_name @rpath/libmprssl.dylib $(CONFIG)/obj/mprSsl.o $(LIBS) -lmpr
 
 $(CONFIG)/obj/manager.o: \
         src/deps/mpr/manager.c \
@@ -268,7 +264,7 @@ $(CONFIG)/bin/libhttp.dylib:  \
         $(CONFIG)/bin/libmprssl.dylib \
         $(CONFIG)/inc/http.h \
         $(CONFIG)/obj/httpLib.o
-	$(CC) -dynamiclib -o $(CONFIG)/bin/libhttp.dylib -arch x86_64 $(LDFLAGS) -compatibility_version 2.0.0 -current_version 2.0.0 -compatibility_version 2.0.0 -current_version 2.0.0 $(LIBPATHS) -L../packages-macosx-x64/openssl/openssl-1.0.1b -install_name @rpath/libhttp.dylib $(CONFIG)/obj/httpLib.o $(LIBS) -lmpr -lpcre -lmprssl -lssl -lcrypto
+	$(CC) -dynamiclib -o $(CONFIG)/bin/libhttp.dylib -arch x86_64 $(LDFLAGS) -compatibility_version 2.0.0 -current_version 2.0.0 -compatibility_version 2.0.0 -current_version 2.0.0 $(LIBPATHS) -install_name @rpath/libhttp.dylib $(CONFIG)/obj/httpLib.o $(LIBS) -lmpr -lpcre -lmprssl
 
 $(CONFIG)/obj/http.o: \
         src/deps/http/http.c \
@@ -279,7 +275,7 @@ $(CONFIG)/obj/http.o: \
 $(CONFIG)/bin/http:  \
         $(CONFIG)/bin/libhttp.dylib \
         $(CONFIG)/obj/http.o
-	$(CC) -o $(CONFIG)/bin/http -arch x86_64 $(LDFLAGS) $(LIBPATHS) -L../packages-macosx-x64/openssl/openssl-1.0.1b $(CONFIG)/obj/http.o $(LIBS) -lhttp -lmpr -lpcre -lmprssl -lssl -lcrypto
+	$(CC) -o $(CONFIG)/bin/http -arch x86_64 $(LDFLAGS) $(LIBPATHS) $(CONFIG)/obj/http.o $(LIBS) -lhttp -lmpr -lpcre -lmprssl
 
 $(CONFIG)/inc/sqlite3.h: 
 	rm -fr $(CONFIG)/inc/sqlite3.h
@@ -761,7 +757,7 @@ $(CONFIG)/bin/libejs.dylib:  \
         $(CONFIG)/obj/ejsModule.o \
         $(CONFIG)/obj/ejsScope.o \
         $(CONFIG)/obj/ejsService.o
-	$(CC) -dynamiclib -o $(CONFIG)/bin/libejs.dylib -arch x86_64 $(LDFLAGS) -compatibility_version 2.0.0 -current_version 2.0.0 -compatibility_version 2.0.0 -current_version 2.0.0 $(LIBPATHS) -L../packages-macosx-x64/openssl/openssl-1.0.1b -install_name @rpath/libejs.dylib $(CONFIG)/obj/ecAst.o $(CONFIG)/obj/ecCodeGen.o $(CONFIG)/obj/ecCompiler.o $(CONFIG)/obj/ecLex.o $(CONFIG)/obj/ecModuleWrite.o $(CONFIG)/obj/ecParser.o $(CONFIG)/obj/ecState.o $(CONFIG)/obj/ejsApp.o $(CONFIG)/obj/ejsArray.o $(CONFIG)/obj/ejsBlock.o $(CONFIG)/obj/ejsBoolean.o $(CONFIG)/obj/ejsByteArray.o $(CONFIG)/obj/ejsCache.o $(CONFIG)/obj/ejsCmd.o $(CONFIG)/obj/ejsConfig.o $(CONFIG)/obj/ejsDate.o $(CONFIG)/obj/ejsDebug.o $(CONFIG)/obj/ejsError.o $(CONFIG)/obj/ejsFile.o $(CONFIG)/obj/ejsFileSystem.o $(CONFIG)/obj/ejsFrame.o $(CONFIG)/obj/ejsFunction.o $(CONFIG)/obj/ejsGC.o $(CONFIG)/obj/ejsGlobal.o $(CONFIG)/obj/ejsHttp.o $(CONFIG)/obj/ejsIterator.o $(CONFIG)/obj/ejsJSON.o $(CONFIG)/obj/ejsLocalCache.o $(CONFIG)/obj/ejsMath.o $(CONFIG)/obj/ejsMemory.o $(CONFIG)/obj/ejsMprLog.o $(CONFIG)/obj/ejsNamespace.o $(CONFIG)/obj/ejsNull.o $(CONFIG)/obj/ejsNumber.o $(CONFIG)/obj/ejsObject.o $(CONFIG)/obj/ejsPath.o $(CONFIG)/obj/ejsPot.o $(CONFIG)/obj/ejsRegExp.o $(CONFIG)/obj/ejsSocket.o $(CONFIG)/obj/ejsString.o $(CONFIG)/obj/ejsSystem.o $(CONFIG)/obj/ejsTimer.o $(CONFIG)/obj/ejsType.o $(CONFIG)/obj/ejsUri.o $(CONFIG)/obj/ejsVoid.o $(CONFIG)/obj/ejsWorker.o $(CONFIG)/obj/ejsXML.o $(CONFIG)/obj/ejsXMLList.o $(CONFIG)/obj/ejsXMLLoader.o $(CONFIG)/obj/ejsByteCode.o $(CONFIG)/obj/ejsException.o $(CONFIG)/obj/ejsHelper.o $(CONFIG)/obj/ejsInterp.o $(CONFIG)/obj/ejsLoader.o $(CONFIG)/obj/ejsModule.o $(CONFIG)/obj/ejsScope.o $(CONFIG)/obj/ejsService.o $(LIBS) -lhttp -lmpr -lpcre -lmprssl -lssl -lcrypto
+	$(CC) -dynamiclib -o $(CONFIG)/bin/libejs.dylib -arch x86_64 $(LDFLAGS) -compatibility_version 2.0.0 -current_version 2.0.0 -compatibility_version 2.0.0 -current_version 2.0.0 $(LIBPATHS) -install_name @rpath/libejs.dylib $(CONFIG)/obj/ecAst.o $(CONFIG)/obj/ecCodeGen.o $(CONFIG)/obj/ecCompiler.o $(CONFIG)/obj/ecLex.o $(CONFIG)/obj/ecModuleWrite.o $(CONFIG)/obj/ecParser.o $(CONFIG)/obj/ecState.o $(CONFIG)/obj/ejsApp.o $(CONFIG)/obj/ejsArray.o $(CONFIG)/obj/ejsBlock.o $(CONFIG)/obj/ejsBoolean.o $(CONFIG)/obj/ejsByteArray.o $(CONFIG)/obj/ejsCache.o $(CONFIG)/obj/ejsCmd.o $(CONFIG)/obj/ejsConfig.o $(CONFIG)/obj/ejsDate.o $(CONFIG)/obj/ejsDebug.o $(CONFIG)/obj/ejsError.o $(CONFIG)/obj/ejsFile.o $(CONFIG)/obj/ejsFileSystem.o $(CONFIG)/obj/ejsFrame.o $(CONFIG)/obj/ejsFunction.o $(CONFIG)/obj/ejsGC.o $(CONFIG)/obj/ejsGlobal.o $(CONFIG)/obj/ejsHttp.o $(CONFIG)/obj/ejsIterator.o $(CONFIG)/obj/ejsJSON.o $(CONFIG)/obj/ejsLocalCache.o $(CONFIG)/obj/ejsMath.o $(CONFIG)/obj/ejsMemory.o $(CONFIG)/obj/ejsMprLog.o $(CONFIG)/obj/ejsNamespace.o $(CONFIG)/obj/ejsNull.o $(CONFIG)/obj/ejsNumber.o $(CONFIG)/obj/ejsObject.o $(CONFIG)/obj/ejsPath.o $(CONFIG)/obj/ejsPot.o $(CONFIG)/obj/ejsRegExp.o $(CONFIG)/obj/ejsSocket.o $(CONFIG)/obj/ejsString.o $(CONFIG)/obj/ejsSystem.o $(CONFIG)/obj/ejsTimer.o $(CONFIG)/obj/ejsType.o $(CONFIG)/obj/ejsUri.o $(CONFIG)/obj/ejsVoid.o $(CONFIG)/obj/ejsWorker.o $(CONFIG)/obj/ejsXML.o $(CONFIG)/obj/ejsXMLList.o $(CONFIG)/obj/ejsXMLLoader.o $(CONFIG)/obj/ejsByteCode.o $(CONFIG)/obj/ejsException.o $(CONFIG)/obj/ejsHelper.o $(CONFIG)/obj/ejsInterp.o $(CONFIG)/obj/ejsLoader.o $(CONFIG)/obj/ejsModule.o $(CONFIG)/obj/ejsScope.o $(CONFIG)/obj/ejsService.o $(LIBS) -lhttp -lmpr -lpcre -lmprssl
 
 $(CONFIG)/obj/ejs.o: \
         src/cmd/ejs.c \
@@ -772,7 +768,7 @@ $(CONFIG)/obj/ejs.o: \
 $(CONFIG)/bin/ejs:  \
         $(CONFIG)/bin/libejs.dylib \
         $(CONFIG)/obj/ejs.o
-	$(CC) -o $(CONFIG)/bin/ejs -arch x86_64 $(LDFLAGS) $(LIBPATHS) -L../packages-macosx-x64/openssl/openssl-1.0.1b $(CONFIG)/obj/ejs.o $(LIBS) -lejs -lhttp -lmpr -lpcre -lmprssl -lssl -lcrypto -ledit -ledit
+	$(CC) -o $(CONFIG)/bin/ejs -arch x86_64 $(LDFLAGS) $(LIBPATHS) $(CONFIG)/obj/ejs.o $(LIBS) -lejs -lhttp -lmpr -lpcre -lmprssl -ledit -ledit
 
 $(CONFIG)/obj/ejsc.o: \
         src/cmd/ejsc.c \
@@ -783,7 +779,7 @@ $(CONFIG)/obj/ejsc.o: \
 $(CONFIG)/bin/ejsc:  \
         $(CONFIG)/bin/libejs.dylib \
         $(CONFIG)/obj/ejsc.o
-	$(CC) -o $(CONFIG)/bin/ejsc -arch x86_64 $(LDFLAGS) $(LIBPATHS) -L../packages-macosx-x64/openssl/openssl-1.0.1b $(CONFIG)/obj/ejsc.o $(LIBS) -lejs -lhttp -lmpr -lpcre -lmprssl -lssl -lcrypto
+	$(CC) -o $(CONFIG)/bin/ejsc -arch x86_64 $(LDFLAGS) $(LIBPATHS) $(CONFIG)/obj/ejsc.o $(LIBS) -lejs -lhttp -lmpr -lpcre -lmprssl
 
 $(CONFIG)/obj/ejsmod.o: \
         src/cmd/ejsmod.c \
@@ -823,18 +819,18 @@ $(CONFIG)/bin/ejsmod:  \
         $(CONFIG)/obj/docFiles.o \
         $(CONFIG)/obj/listing.o \
         $(CONFIG)/obj/slotGen.o
-	$(CC) -o $(CONFIG)/bin/ejsmod -arch x86_64 $(LDFLAGS) $(LIBPATHS) -L../packages-macosx-x64/openssl/openssl-1.0.1b $(CONFIG)/obj/ejsmod.o $(CONFIG)/obj/doc.o $(CONFIG)/obj/docFiles.o $(CONFIG)/obj/listing.o $(CONFIG)/obj/slotGen.o $(LIBS) -lejs -lhttp -lmpr -lpcre -lmprssl -lssl -lcrypto
+	$(CC) -o $(CONFIG)/bin/ejsmod -arch x86_64 $(LDFLAGS) $(LIBPATHS) $(CONFIG)/obj/ejsmod.o $(CONFIG)/obj/doc.o $(CONFIG)/obj/docFiles.o $(CONFIG)/obj/listing.o $(CONFIG)/obj/slotGen.o $(LIBS) -lejs -lhttp -lmpr -lpcre -lmprssl
 
 $(CONFIG)/obj/ejsrun.o: \
         src/cmd/ejsrun.c \
         $(CONFIG)/inc/bit.h \
         $(CONFIG)/inc/ejsCompiler.h
-	$(CC) -c -o $(CONFIG)/obj/ejsrun.o -arch x86_64 $(CFLAGS) $(DFLAGS) -I$(CONFIG)/inc -I../packages-macosx-x64/zlib/zlib-1.2.6 src/cmd/ejsrun.c
+	$(CC) -c -o $(CONFIG)/obj/ejsrun.o -arch x86_64 $(CFLAGS) $(DFLAGS) -I$(CONFIG)/inc src/cmd/ejsrun.c
 
 $(CONFIG)/bin/ejsrun:  \
         $(CONFIG)/bin/libejs.dylib \
         $(CONFIG)/obj/ejsrun.o
-	$(CC) -o $(CONFIG)/bin/ejsrun -arch x86_64 $(LDFLAGS) $(LIBPATHS) -L../packages-macosx-x64/openssl/openssl-1.0.1b $(CONFIG)/obj/ejsrun.o $(LIBS) -lejs -lhttp -lmpr -lpcre -lmprssl -lssl -lcrypto
+	$(CC) -o $(CONFIG)/bin/ejsrun -arch x86_64 $(LDFLAGS) $(LIBPATHS) $(CONFIG)/obj/ejsrun.o $(LIBS) -lejs -lhttp -lmpr -lpcre -lmprssl
 
 $(CONFIG)/bin/ejs.mod:  \
         $(CONFIG)/bin/ejsc \
@@ -847,9 +843,8 @@ $(CONFIG)/bin/ejs.mod:  \
 		cd - >/dev/null 
 
 $(CONFIG)/bin/bit.es: 
-	cd src/jems/ejs.bit >/dev/null ;\
-		cp bit.es ../../../$(CONFIG)/bin ;\
-		cd - >/dev/null 
+	rm -fr $(CONFIG)/bin/bit.es
+	cp -r src/jems/ejs.bit/bit.es $(CONFIG)/bin/bit.es
 
 $(CONFIG)/bin/bits: 
 	cd src/jems/ejs.bit >/dev/null ;\
@@ -861,7 +856,7 @@ $(CONFIG)/obj/ejsZlib.o: \
         src/jems/ejs.zlib/ejsZlib.c \
         $(CONFIG)/inc/bit.h \
         $(CONFIG)/inc/ejs.h
-	$(CC) -c -o $(CONFIG)/obj/ejsZlib.o -arch x86_64 $(CFLAGS) $(DFLAGS) -I$(CONFIG)/inc -I../packages-macosx-x64/zlib/zlib-1.2.6 src/jems/ejs.zlib/ejsZlib.c
+	$(CC) -c -o $(CONFIG)/obj/ejsZlib.o -arch x86_64 $(CFLAGS) $(DFLAGS) -I$(CONFIG)/inc src/jems/ejs.zlib/ejsZlib.c
 
 $(CONFIG)/bin/bit:  \
         $(CONFIG)/bin/libejs.dylib \
@@ -869,11 +864,11 @@ $(CONFIG)/bin/bit:  \
         $(CONFIG)/bin/bit.es \
         $(CONFIG)/obj/ejsrun.o \
         $(CONFIG)/obj/ejsZlib.o
-	$(CC) -o $(CONFIG)/bin/bit -arch x86_64 $(LDFLAGS) $(LIBPATHS) -L../packages-macosx-x64/openssl/openssl-1.0.1b -L../packages-macosx-x64/zlib/zlib-1.2.6 $(CONFIG)/obj/ejsrun.o $(CONFIG)/obj/ejsZlib.o $(CONFIG)/obj/mprLib.o $(CONFIG)/obj/pcre.o $(CONFIG)/obj/mprSsl.o $(CONFIG)/obj/httpLib.o $(CONFIG)/obj/ecAst.o $(CONFIG)/obj/ecCodeGen.o $(CONFIG)/obj/ecCompiler.o $(CONFIG)/obj/ecLex.o $(CONFIG)/obj/ecModuleWrite.o $(CONFIG)/obj/ecParser.o $(CONFIG)/obj/ecState.o $(CONFIG)/obj/ejsApp.o $(CONFIG)/obj/ejsArray.o $(CONFIG)/obj/ejsBlock.o $(CONFIG)/obj/ejsBoolean.o $(CONFIG)/obj/ejsByteArray.o $(CONFIG)/obj/ejsCache.o $(CONFIG)/obj/ejsCmd.o $(CONFIG)/obj/ejsConfig.o $(CONFIG)/obj/ejsDate.o $(CONFIG)/obj/ejsDebug.o $(CONFIG)/obj/ejsError.o $(CONFIG)/obj/ejsFile.o $(CONFIG)/obj/ejsFileSystem.o $(CONFIG)/obj/ejsFrame.o $(CONFIG)/obj/ejsFunction.o $(CONFIG)/obj/ejsGC.o $(CONFIG)/obj/ejsGlobal.o $(CONFIG)/obj/ejsHttp.o $(CONFIG)/obj/ejsIterator.o $(CONFIG)/obj/ejsJSON.o $(CONFIG)/obj/ejsLocalCache.o $(CONFIG)/obj/ejsMath.o $(CONFIG)/obj/ejsMemory.o $(CONFIG)/obj/ejsMprLog.o $(CONFIG)/obj/ejsNamespace.o $(CONFIG)/obj/ejsNull.o $(CONFIG)/obj/ejsNumber.o $(CONFIG)/obj/ejsObject.o $(CONFIG)/obj/ejsPath.o $(CONFIG)/obj/ejsPot.o $(CONFIG)/obj/ejsRegExp.o $(CONFIG)/obj/ejsSocket.o $(CONFIG)/obj/ejsString.o $(CONFIG)/obj/ejsSystem.o $(CONFIG)/obj/ejsTimer.o $(CONFIG)/obj/ejsType.o $(CONFIG)/obj/ejsUri.o $(CONFIG)/obj/ejsVoid.o $(CONFIG)/obj/ejsWorker.o $(CONFIG)/obj/ejsXML.o $(CONFIG)/obj/ejsXMLList.o $(CONFIG)/obj/ejsXMLLoader.o $(CONFIG)/obj/ejsByteCode.o $(CONFIG)/obj/ejsException.o $(CONFIG)/obj/ejsHelper.o $(CONFIG)/obj/ejsInterp.o $(CONFIG)/obj/ejsLoader.o $(CONFIG)/obj/ejsModule.o $(CONFIG)/obj/ejsScope.o $(CONFIG)/obj/ejsService.o $(LIBS) -lssl -lcrypto -lz
+	$(CC) -o $(CONFIG)/bin/bit -arch x86_64 $(LDFLAGS) $(LIBPATHS) $(CONFIG)/obj/ejsrun.o $(CONFIG)/obj/ejsZlib.o $(CONFIG)/obj/mprLib.o $(CONFIG)/obj/pcre.o $(CONFIG)/obj/mprSsl.o $(CONFIG)/obj/httpLib.o $(CONFIG)/obj/ecAst.o $(CONFIG)/obj/ecCodeGen.o $(CONFIG)/obj/ecCompiler.o $(CONFIG)/obj/ecLex.o $(CONFIG)/obj/ecModuleWrite.o $(CONFIG)/obj/ecParser.o $(CONFIG)/obj/ecState.o $(CONFIG)/obj/ejsApp.o $(CONFIG)/obj/ejsArray.o $(CONFIG)/obj/ejsBlock.o $(CONFIG)/obj/ejsBoolean.o $(CONFIG)/obj/ejsByteArray.o $(CONFIG)/obj/ejsCache.o $(CONFIG)/obj/ejsCmd.o $(CONFIG)/obj/ejsConfig.o $(CONFIG)/obj/ejsDate.o $(CONFIG)/obj/ejsDebug.o $(CONFIG)/obj/ejsError.o $(CONFIG)/obj/ejsFile.o $(CONFIG)/obj/ejsFileSystem.o $(CONFIG)/obj/ejsFrame.o $(CONFIG)/obj/ejsFunction.o $(CONFIG)/obj/ejsGC.o $(CONFIG)/obj/ejsGlobal.o $(CONFIG)/obj/ejsHttp.o $(CONFIG)/obj/ejsIterator.o $(CONFIG)/obj/ejsJSON.o $(CONFIG)/obj/ejsLocalCache.o $(CONFIG)/obj/ejsMath.o $(CONFIG)/obj/ejsMemory.o $(CONFIG)/obj/ejsMprLog.o $(CONFIG)/obj/ejsNamespace.o $(CONFIG)/obj/ejsNull.o $(CONFIG)/obj/ejsNumber.o $(CONFIG)/obj/ejsObject.o $(CONFIG)/obj/ejsPath.o $(CONFIG)/obj/ejsPot.o $(CONFIG)/obj/ejsRegExp.o $(CONFIG)/obj/ejsSocket.o $(CONFIG)/obj/ejsString.o $(CONFIG)/obj/ejsSystem.o $(CONFIG)/obj/ejsTimer.o $(CONFIG)/obj/ejsType.o $(CONFIG)/obj/ejsUri.o $(CONFIG)/obj/ejsVoid.o $(CONFIG)/obj/ejsWorker.o $(CONFIG)/obj/ejsXML.o $(CONFIG)/obj/ejsXMLList.o $(CONFIG)/obj/ejsXMLLoader.o $(CONFIG)/obj/ejsByteCode.o $(CONFIG)/obj/ejsException.o $(CONFIG)/obj/ejsHelper.o $(CONFIG)/obj/ejsInterp.o $(CONFIG)/obj/ejsLoader.o $(CONFIG)/obj/ejsModule.o $(CONFIG)/obj/ejsScope.o $(CONFIG)/obj/ejsService.o $(LIBS)
 
 $(CONFIG)/bin/utest.es: 
 	cd src/jems/ejs.utest >/dev/null ;\
-		cp ./utest.es ../../../$(CONFIG)/bin ;\
+		cp utest.es ../../../$(CONFIG)/bin ;\
 		cd - >/dev/null 
 
 $(CONFIG)/bin/utest:  \
@@ -885,12 +880,12 @@ $(CONFIG)/bin/ejs.unix.mod:  \
         $(CONFIG)/bin/ejsc \
         $(CONFIG)/bin/ejs.mod
 	cd src/jems/ejs.unix >/dev/null ;\
-		../../../$(CONFIG)/bin/ejsc --out ../../../$(CONFIG)/bin/ejs.unix.mod --debug --optimize 9 ./Unix.es ;\
+		../../../$(CONFIG)/bin/ejsc --out ${OUT} --debug --optimize 9 Unix.es ;\
 		cd - >/dev/null 
 
 $(CONFIG)/bin/jem.es: 
 	cd src/jems/ejs.jem >/dev/null ;\
-		cp ./jem.es ../../../$(CONFIG)/bin ;\
+		cp jem.es ../../../$(CONFIG)/bin ;\
 		cd - >/dev/null 
 
 $(CONFIG)/bin/jem:  \
@@ -902,7 +897,7 @@ $(CONFIG)/bin/ejs.db.mod:  \
         $(CONFIG)/bin/ejsc \
         $(CONFIG)/bin/ejs.mod
 	cd src/jems/ejs.db >/dev/null ;\
-		../../../$(CONFIG)/bin/ejsc --out ../../../$(CONFIG)/bin/ejs.db.mod --debug --optimize 9 ./*.es ;\
+		../../../$(CONFIG)/bin/ejsc --out ${OUT} --debug --optimize 9 *.es ;\
 		cd - >/dev/null 
 
 $(CONFIG)/bin/ejs.db.mapper.mod:  \
@@ -910,7 +905,7 @@ $(CONFIG)/bin/ejs.db.mapper.mod:  \
         $(CONFIG)/bin/ejs.mod \
         $(CONFIG)/bin/ejs.db.mod
 	cd src/jems/ejs.db.mapper >/dev/null ;\
-		../../../$(CONFIG)/bin/ejsc --out ../../../$(CONFIG)/bin/ejs.db.mapper.mod --debug --optimize 9 ./*.es ;\
+		../../../$(CONFIG)/bin/ejsc --out ${OUT} --debug --optimize 9 *.es ;\
 		cd - >/dev/null 
 
 $(CONFIG)/bin/ejs.db.sqlite.mod:  \
@@ -918,7 +913,7 @@ $(CONFIG)/bin/ejs.db.sqlite.mod:  \
         $(CONFIG)/bin/ejsmod \
         $(CONFIG)/bin/ejs.mod
 	cd src/jems/ejs.db.sqlite >/dev/null ;\
-		../../../$(CONFIG)/bin/ejsc --out ../../../$(CONFIG)/bin/ejs.db.sqlite.mod --debug --optimize 9 *.es ;\
+		../../../$(CONFIG)/bin/ejsc --out ${OUT} --debug --optimize 9 *.es ;\
 		cd - >/dev/null 
 
 $(CONFIG)/obj/ejsSqlite.o: \
@@ -936,15 +931,15 @@ $(CONFIG)/bin/ejs.db.sqlite.dylib:  \
         $(CONFIG)/bin/ejs.db.sqlite.mod \
         $(CONFIG)/bin/libsqlite3.dylib \
         $(CONFIG)/obj/ejsSqlite.o
-	$(CC) -dynamiclib -o $(CONFIG)/bin/ejs.db.sqlite.dylib -arch x86_64 $(LDFLAGS) -compatibility_version 2.0.0 -current_version 2.0.0 -compatibility_version 2.0.0 -current_version 2.0.0 $(LIBPATHS) -L../packages-macosx-x64/openssl/openssl-1.0.1b -install_name @rpath/ejs.db.sqlite.dylib $(CONFIG)/obj/ejsSqlite.o $(LIBS) -lmpr -lejs -lhttp -lpcre -lmprssl -lssl -lcrypto -lsqlite3
+	$(CC) -dynamiclib -o $(CONFIG)/bin/ejs.db.sqlite.dylib -arch x86_64 $(LDFLAGS) -compatibility_version 2.0.0 -current_version 2.0.0 -compatibility_version 2.0.0 -current_version 2.0.0 $(LIBPATHS) -install_name @rpath/ejs.db.sqlite.dylib $(CONFIG)/obj/ejsSqlite.o $(LIBS) -lmpr -lejs -lhttp -lpcre -lmprssl -lsqlite3
 
 $(CONFIG)/bin/ejs.web.mod:  \
         $(CONFIG)/bin/ejsc \
         $(CONFIG)/bin/ejsmod \
         $(CONFIG)/bin/ejs.mod
 	cd src/jems/ejs.web >/dev/null ;\
-		../../../$(CONFIG)/bin/ejsc --out ../../../$(CONFIG)/bin/ejs.web.mod --debug --optimize 9 ./*.es ;\
-	../../../$(CONFIG)/bin/ejsmod --cslots ../../../$(CONFIG)/bin/ejs.web.mod ;\
+		../../../$(CONFIG)/bin/ejsc --out ${OUT} --debug --optimize 9 *.es ;\
+	../../../$(CONFIG)/bin/ejsmod --cslots ${OUT} ;\
 	if ! diff ejs.web.slots.h ../../../$(CONFIG)/inc/ejs.web.slots.h >/dev/null; then cp ejs.web.slots.h ../../../$(CONFIG)/inc; fi ;\
 	rm -f ejs.web.slots.h ;\
 		cd - >/dev/null 
@@ -986,46 +981,31 @@ $(CONFIG)/bin/ejs.web.dylib:  \
         $(CONFIG)/obj/ejsRequest.o \
         $(CONFIG)/obj/ejsSession.o \
         $(CONFIG)/obj/ejsWeb.o
-	$(CC) -dynamiclib -o $(CONFIG)/bin/ejs.web.dylib -arch x86_64 $(LDFLAGS) -compatibility_version 2.0.0 -current_version 2.0.0 -compatibility_version 2.0.0 -current_version 2.0.0 $(LIBPATHS) -L../packages-macosx-x64/openssl/openssl-1.0.1b -install_name @rpath/ejs.web.dylib $(CONFIG)/obj/ejsHttpServer.o $(CONFIG)/obj/ejsRequest.o $(CONFIG)/obj/ejsSession.o $(CONFIG)/obj/ejsWeb.o $(LIBS) -lejs -lhttp -lmpr -lpcre -lmprssl -lssl -lcrypto
+	$(CC) -dynamiclib -o $(CONFIG)/bin/ejs.web.dylib -arch x86_64 $(LDFLAGS) -compatibility_version 2.0.0 -current_version 2.0.0 -compatibility_version 2.0.0 -current_version 2.0.0 $(LIBPATHS) -install_name @rpath/ejs.web.dylib $(CONFIG)/obj/ejsHttpServer.o $(CONFIG)/obj/ejsRequest.o $(CONFIG)/obj/ejsSession.o $(CONFIG)/obj/ejsWeb.o $(LIBS) -lejs -lhttp -lmpr -lpcre -lmprssl
 
 $(CONFIG)/bin/www: 
 	cd src/jems/ejs.web >/dev/null ;\
 		rm -fr ../../../$(CONFIG)/bin/www ;\
-	cp -r ./www ../../../$(CONFIG)/bin ;\
+	cp -r www ../../../$(CONFIG)/bin ;\
 		cd - >/dev/null 
 
 $(CONFIG)/bin/ejs.template.mod:  \
         $(CONFIG)/bin/ejsc \
         $(CONFIG)/bin/ejs.mod
 	cd src/jems/ejs.template >/dev/null ;\
-		../../../$(CONFIG)/bin/ejsc --out ../../../$(CONFIG)/bin/ejs.template.mod --debug --optimize 9 ./TemplateParser.es ;\
+		../../../$(CONFIG)/bin/ejsc --out ${OUT} --debug --optimize 9 TemplateParser.es ;\
 		cd - >/dev/null 
 
 $(CONFIG)/bin/ejs.tar.mod:  \
         $(CONFIG)/bin/ejsc \
         $(CONFIG)/bin/ejs.mod
 	cd src/jems/ejs.tar >/dev/null ;\
-		../../../$(CONFIG)/bin/ejsc --out ../../../$(CONFIG)/bin/ejs.tar.mod --debug --optimize 9 ./*.es ;\
+		../../../$(CONFIG)/bin/ejsc --out ${OUT} --debug --optimize 9 *.es ;\
 		cd - >/dev/null 
-
-$(CONFIG)/bin/ejs.zlib.mod:  \
-        $(CONFIG)/bin/ejsc \
-        $(CONFIG)/bin/ejs.mod
-	cd src/jems/ejs.zlib >/dev/null ;\
-		../../../$(CONFIG)/bin/ejsc --out ../../../$(CONFIG)/bin/ejs.zlib.mod --debug --optimize 9 ./*.es ;\
-		cd - >/dev/null 
-
-$(CONFIG)/bin/ejs.zlib.dylib:  \
-        $(CONFIG)/bin/libmpr.dylib \
-        $(CONFIG)/bin/libejs.dylib \
-        $(CONFIG)/bin/ejs.mod \
-        $(CONFIG)/bin/ejs.zlib.mod \
-        $(CONFIG)/obj/ejsZlib.o
-	$(CC) -dynamiclib -o $(CONFIG)/bin/ejs.zlib.dylib -arch x86_64 $(LDFLAGS) -compatibility_version 2.0.0 -current_version 2.0.0 -compatibility_version 2.0.0 -current_version 2.0.0 $(LIBPATHS) -L../packages-macosx-x64/openssl/openssl-1.0.1b -L../packages-macosx-x64/zlib/zlib-1.2.6 -install_name @rpath/ejs.zlib.dylib $(CONFIG)/obj/ejsZlib.o $(LIBS) -lmpr -lejs -lhttp -lpcre -lmprssl -lssl -lcrypto -lz
 
 $(CONFIG)/bin/mvc.es: 
 	cd src/jems/ejs.mvc >/dev/null ;\
-		cp ./mvc.es ../../../$(CONFIG)/bin ;\
+		cp mvc.es ../../../$(CONFIG)/bin ;\
 		cd - >/dev/null 
 
 $(CONFIG)/bin/mvc:  \
@@ -1040,11 +1020,11 @@ $(CONFIG)/bin/ejs.mvc.mod:  \
         $(CONFIG)/bin/ejs.template.mod \
         $(CONFIG)/bin/ejs.unix.mod
 	cd src/jems/ejs.mvc >/dev/null ;\
-		../../../$(CONFIG)/bin/ejsc --out ../../../$(CONFIG)/bin/ejs.mvc.mod --debug --optimize 9 ./*.es ;\
+		../../../$(CONFIG)/bin/ejsc --out ${OUT} --debug --optimize 9 *.es ;\
 		cd - >/dev/null 
 
 $(CONFIG)/bin/utest.worker: 
 	cd src/jems/ejs.utest >/dev/null ;\
-		cp ./utest.worker ../../../$(CONFIG)/bin ;\
+		cp utest.worker ../../../$(CONFIG)/bin ;\
 		cd - >/dev/null 
 

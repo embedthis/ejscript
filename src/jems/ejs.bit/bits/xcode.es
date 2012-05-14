@@ -551,12 +551,6 @@ ${OUTPUTS}
         if (!target.home.same(base)) {
             cmd += 'cd ' + target.home.relativeTo(base) + '\n'
             makeDirGlobals(target.home)
-            /*
-            for each (n in ['BIN', 'CFG', 'INC', 'LIB', 'OBJ', 'SRC']) {
-                //  MOB - ${BIN_DIR} is relative to projects. Not right for a script.
-                global[n] = bit[n] = '${' + n + '_DIR}'
-            }
-            */
         }
         if (target.type == 'file') {
             for each (let file: Path in target.files) {
@@ -581,9 +575,12 @@ ${OUTPUTS}
         }
         if (target.path) {
             outputs = target.path.relativeTo(base)
+            target.vars.OUT = outputs
         }
         let sid = getid('ID_ShellScript:' + target.name)
-        cmd = cmd.toJSON().expand(bit, eo)
+        // MOB cmd = cmd.toJSON().expand(bit, eo).expand(bit.globals, eo).expand(target.vars, eo)
+        cmd = expand(cmd.toJSON())
+        cmd = cmd.expand(target.vars, eo)
         output(section.expand({SID: sid, CMD: cmd, INPUTS: inputs, OUTPUTS: outputs, TNAME: target.name, SHELL: shell}))
     }
     makeDirGlobals()
@@ -615,7 +612,7 @@ function project(base) {
 			projectRoot = "";
 			targets = ('
 
-    output(section.expand(bit, eo).expand(ids))
+    output(section.expand(bit, eo).expand(bit.globals, eo).expand(ids))
 
     section = '\t\t\t\t${TID} /* ${TNAME} */,'
     for each (target in bit.xtargets) {
@@ -832,7 +829,7 @@ ${RELEASE_SETTINGS}
 
     makeDirGlobals(base)
     output(section.expand(ids, eo).expand({
-        COMMON_SETTINGS: common_settings.expand(bit, eo).expand(ids, eo).expand({
+        COMMON_SETTINGS: common_settings.expand(bit, eo).expand(bit.globals, eo).expand(ids, eo).expand({
             COMPILER: compiler,
         }),
         OVERRIDABLE_SETTINGS: overridable,
@@ -910,7 +907,7 @@ function targetConfigSection() {
 			defaultConfigurationIsVisible = 0;
 			defaultConfigurationName = Release;
 		};'
-    output(section.expand(bit, eo).expand(ids))
+    output(section.expand(bit, eo).expand(bit.globals, eo).expand(ids))
 
     section = '\t\t${BCL} /* Build configuration list for PBXNativeTarget "${TNAME}" */ = {
 			isa = XCConfigurationList;
@@ -930,8 +927,8 @@ function targetConfigSection() {
         let tid = getid('ID_NativeTarget:' + target.name)
         let tdid = getid('ID_TargetDebugConfig:' + target.name)
         let trid = getid('ID_TargetReleaseConfig:' + target.name)
-        output(section.expand(bit, eo).expand(ids, eo).expand({BCL: bcl, TNAME: target.name, TID: tid, 
-            TARGET_DEBUG: tdid, TARGET_RELEASE: trid}))
+        output(section.expand(bit, eo).expand(bit.globals, eo).expand(ids, eo).
+                expand({BCL: bcl, TNAME: target.name, TID: tid, TARGET_DEBUG: tdid, TARGET_RELEASE: trid}))
     }
 
     section = '/* End XCConfigurationList section */

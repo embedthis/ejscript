@@ -49,7 +49,7 @@ public function packageBinaryFiles(formats = ['tar', 'native']) {
         exclude: /\.pdb|\.exp|\.lib|\.def|\.suo|\.old/,
         permissions: 0755, 
     })
-    if (OS != 'win') {
+    if (bit.platform.os != 'win') {
         install(bit.dir.lib.join('*'), p.lib, {
             permissions: 0755, 
             exclude: /bits|file-save|www|simple|sample/,
@@ -70,7 +70,7 @@ public function packageBinaryFiles(formats = ['tar', 'native']) {
         }
     }
     if (!bit.cross) {
-        if (OS == 'win') {
+        if (bit.platform.os == 'win') {
             if (bit.platform.arch == 'x86_64') {
                 install(bit.packs.compiler.dir.join('VC/redist/x64/Microsoft.VC100.CRT/msvcr100.dll'), p.bin)
             } else {
