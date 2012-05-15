@@ -62,6 +62,7 @@ Bit.load({
                 rm -fr ${LIB}/www
                 cp -r www ${LIB}                                                                  
             ',
+            platforms: [ 'local' ],
         },
 	},
 })

@@ -22,6 +22,7 @@ Bit.load({
             type: 'exe',
             sources: [ 'ejsc.c', ],
             depends: [ 'libejs' ],
+            platforms: [ 'local' ],
         },
 
         ejsmod: {
@@ -29,12 +30,14 @@ Bit.load({
             sources: [ 'ejsmod.c', 'doc.c', 'docFiles.c', 'listing.c', 'slotGen.c' ],
             '+includes': [ '.' ],
             depends: [ 'libejs' ],
+            platforms: [ 'local' ],
         },
 
         ejsrun: {
             type: 'exe',
             sources: [ 'ejsrun.c', ],
             depends: [ 'libejs' ],
+            platforms: [ 'local' ],
         },
 
 	},

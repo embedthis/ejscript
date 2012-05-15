@@ -12,7 +12,8 @@ Bit.load({
                 trace('Export', bit.target.files)
                 cp('jem.es', bit.dir.bin.join('jem.es'))
             ",
-            'generate': 'cp jem.es ${BIN}',
+            generate: 'cp jem.es ${BIN}',
+            platforms: [ 'local' ],
         },
 
         'jem.exe': {
@@ -20,6 +21,7 @@ Bit.load({
             path: '${BIN}/jem${EXE}',
             files: [ '${BIN}/ejsrun${EXE}' ],
             depends: ['ejsrun'],
+            platforms: [ 'local' ],
         },
 	},
 })

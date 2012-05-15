@@ -12,7 +12,8 @@ Bit.load({
                 trace('Export', bit.target.files)
                 cp('utest.es', bit.dir.bin)
             ",
-            'generate': 'cp utest.es ${BIN}',
+            generate: 'cp utest.es ${BIN}',
+            platforms: [ 'local' ],
         },
 
         'utest.worker': {
@@ -22,7 +23,8 @@ Bit.load({
                 trace('Export', bit.target.files)
                 cp('utest.worker', bit.dir.bin)
             ",
-            'generate': 'cp utest.worker ${BIN}',
+            generate: 'cp utest.worker ${BIN}',
+            platforms: [ 'local' ],
         },
 
         'utest.exe': {
@@ -30,6 +32,7 @@ Bit.load({
             path: '${BIN}/utest${EXE}',
             files: [ '${BIN}/ejsrun${EXE}' ],
             depends: ['ejsrun'],
+            platforms: [ 'local' ],
         },
 	},
 })

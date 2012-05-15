@@ -13,6 +13,7 @@ Bit.load({
                 cp('mvc.es', bit.dir.bin.join('mvc.es'))
             "
             'generate': 'cp mvc.es ${BIN}',
+            platforms: [ 'local' ],
         },
 
         'mvc.exe': {
@@ -20,6 +21,7 @@ Bit.load({
             path: '${BIN}/mvc${EXE}',
             files: [ '${BIN}/ejsrun${EXE}' ],
             depends: ['ejsrun'],
+            platforms: [ 'local' ],
         },
 
         'ejs.mvc.mod': {

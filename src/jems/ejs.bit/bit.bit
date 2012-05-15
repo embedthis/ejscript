@@ -5,22 +5,11 @@
 Bit.load({
 
     targets: {
-/*
-        'bit.es': {
-            path: '${BIN}/bit.es',
-            files: [ 'bit.es' ],
-            precious: true,
-            build: "
-                trace('Export', 'bit.es')
-                cp('bit.es', bit.dir.bin)
-            ",
-            'generate': "cp bit.es ${BIN}",
-        },
-*/
         'bit.es': {
             type: 'file',
             precious: true,
             files: [ 'bit.es' ],
+            platforms: [ 'local' ],
         },
 
         'bit': {
@@ -34,6 +23,7 @@ Bit.load({
             active: true,
             precious: true,
             depends: ['libejs',  'zlib', 'bits', 'bit.es'],
+            platforms: [ 'local' ],
         },
 
         'utest.es': {
@@ -44,6 +34,7 @@ Bit.load({
                 cp('utest.es', bit.dir.bin)
             ",
             'generate': "cp bit.es ${BIN}",
+            platforms: [ 'local' ],
         },
 
         'utest.exe': {
@@ -51,6 +42,7 @@ Bit.load({
             path: '${BIN}/utest${EXE}',
             files: [ '${BIN}/ejsrun${EXE}' ],
             depends: ['ejsrun'],
+            platforms: [ 'local' ],
         },
 
         bits: {
@@ -72,6 +64,7 @@ Bit.load({
                 rm -fr ${LIB}/bits
                 cp -r bits ${LIB}
             ",
+            platforms: [ 'local' ],
         },
 	},
 })
