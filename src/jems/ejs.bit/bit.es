@@ -1171,7 +1171,7 @@ public class Bit {
 
     function genEnv() {
         let found
-        if (bit.platform.os == 'win') {
+        if (bit.platform.os == 'windows') {
             var winsdk = (bit.packs.winsdk && bit.packs.winsdk.path) ? 
                 bit.packs.winsdk.path.windows.name.replace(/.*Program Files.*Microsoft/, '$$(PROGRAMFILES)\\Microsoft') :
                 '$(PROGRAMFILES)\\Microsoft SDKs\\Windows\\v6.1'
@@ -1187,7 +1187,7 @@ public class Bit {
             }
         }
         for (let [key,value] in bit.env) {
-            if (bit.platform.os == 'win') {
+            if (bit.platform.os == 'windows') {
                 value = value.map(function(item)
                     item.replace(bit.packs.compiler.dir, '$(VS)').replace(bit.packs.winsdk.path, '$(SDK)')
                 )
@@ -1195,7 +1195,7 @@ public class Bit {
             if (value is Array) {
                 value = value.join(App.SearchSeparator)
             }
-            if (bit.platform.os == 'win') {
+            if (bit.platform.os == 'windows') {
                 if (key == 'INCLUDE' || key == 'LIB') {
                     value = '$(' + key + ');' + value
                 } else if (key == 'PATH') {
@@ -1657,7 +1657,7 @@ public class Bit {
         }
         for (let [pname, prefix] in bit.prefixes) {
             bit.prefixes[pname] = Path(prefix)
-            if (!(bit.emulating && bit.platform.os == 'win')) {
+            if (!(bit.emulating && bit.platform.os == 'windows')) {
                 bit.prefixes[pname] = bit.prefixes[pname].absolute
             }
         }
@@ -2109,7 +2109,7 @@ public class Bit {
                 cmd = cmd.trim().replace(/^cp /, 'copy ')
                 cmd = (prefix + cmd + suffix).replace(/^[ \t]*/mg, '\t')
                     let saveDir = []
-                if (bit.platform.os == 'win') {
+                if (bit.platform.os == 'windows') {
                     for (n in bit.globals) {
                         if (bit.globals[n] is Path) {
                             saveDir[n] = bit.globals[n]
@@ -2124,7 +2124,7 @@ public class Bit {
                     print('Script:', cmd)
                     throw e
                 }
-                if (bit.platform.os == 'win') {
+                if (bit.platform.os == 'windows') {
                     for (n in saveDir) {
                         bit.globals[n] = saveDir[n]
                     }
@@ -2483,7 +2483,7 @@ global.NN = item.ns
     }
 
     function mapLibPaths(libpaths: Array, base: Path = App.dir): String {
-        if (bit.platform.os == 'win') {
+        if (bit.platform.os == 'windows') {
             return libpaths.map(function(p) '-libpath:' + p.relativeTo(base)).join(' ')
         } else {
             return libpaths.map(function(p) '-L' + p.relativeTo(base)).join(' ')
@@ -2494,7 +2494,7 @@ global.NN = item.ns
         Map libraries into the appropriate O/S dependant format
      */
     public function mapLibs(libs: Array): Array {
-        if (bit.platform.os == 'win') {
+        if (bit.platform.os == 'windows') {
             libs = libs.clone()
             for (let [i,name] in libs) {
                 let libname = Path('lib' + name).joinExt(bit.ext.shlib)
@@ -2660,7 +2660,7 @@ global.NN = item.ns
                 if (value is Array) {
                     value = value.join(App.SearchSeparator)
                 }
-                if (bit.platform.os == 'win') {
+                if (bit.platform.os == 'windows') {
                     /* Replacement may contain $(VS) if emulating */
                     if (!bit.packs.compiler.dir.contains('$'))
                         value = value.replace(/\$\(VS\)/g, bit.packs.compiler.dir)

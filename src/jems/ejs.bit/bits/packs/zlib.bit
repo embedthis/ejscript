@@ -13,7 +13,7 @@ path ||= Path('.')
 
 let lib, isearch
 
-if (bit.platform.os == 'win') {
+if (bit.platform.os == 'windows') {
     if (!path) {
         throw 'Can\'t find zlib source distribution'
     }

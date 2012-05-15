@@ -13,7 +13,7 @@ if (!path) {
     let vers = bit.dir.packs.join('openssl').glob('openssl-*').sort().reverse()
     path = vers[0]
     if (!path) {
-        if (bit.platform.os == 'win') {
+        if (bit.platform.os == 'windows') {
             throw 'Can\'t find openssl source distribution'
         } else {
             path = '/usr'
@@ -21,7 +21,7 @@ if (!path) {
     }
 }
 
-if (bit.platform.os == 'win') {
+if (bit.platform.os == 'windows') {
     let search = [path.join('out32dll')]
     let lib = probe('libeay32.dll', {fullpath: true, search: search}).absolute
     let dir = lib.parent.parent

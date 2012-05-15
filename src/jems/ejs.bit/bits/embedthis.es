@@ -250,7 +250,7 @@ public function package(pkg: Path, formats) {
 }
 
 function packageSimple(pkg: Path, options, fmt) {
-    if (bit.platform.os != 'linux' && bit.platform.os != 'macosx' && bit.platform.os != 'win') {
+    if (bit.platform.os != 'linux' && bit.platform.os != 'macosx' && bit.platform.os != 'windows') {
         trace('Info', 'Skip packaging for ' + bit.platform.os)
         return
     }

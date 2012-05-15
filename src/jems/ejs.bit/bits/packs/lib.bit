@@ -3,6 +3,6 @@
  */
 
 pack('lib', 'Library Archive Tool')
-let name = (bit.platform.os == 'win') ? 'lib' : 'ar'
+let name = (bit.platform.os == 'windows') ? 'lib' : 'ar'
 Bit.load({packs: { lib: { path: probe(bit.packs.lib.path || name, {fullpath: true})}}})
 
