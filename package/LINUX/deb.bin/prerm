@@ -4,10 +4,10 @@
 #	Copyright (c) Embedthis Software LLC, 2003-2012. All Rights Reserved.
 #
 
-BLD_PRODUCT=${settings.product}
-BLD_NAME="${settings.title}"
-BLD_BIN_PREFIX="${prefixes.bin}"
-BLD_CFG_PREFIX="${prefixes.config}"
+BIT_PRODUCT=${settings.product}
+BIT_NAME="${settings.title}"
+BIT_BIN_PREFIX="${prefixes.bin}"
+BIT_CFG_PREFIX="${prefixes.config}"
 
 ###############################################################################
 #
@@ -17,10 +17,10 @@ cd /
 action=$1
 case $action in
 	remove)					# when new
-        "$BLD_BIN_PREFIX/linkup" Remove /
+        "$BIT_BIN_PREFIX/linkup" Remove /
 		;;
 	upgrade)				# when old
-        "$BLD_BIN_PREFIX/linkup" Remove /
+        "$BIT_BIN_PREFIX/linkup" Remove /
 		;;
 	failed-upgrade)			# when new
 		oldVersion=$2

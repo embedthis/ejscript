@@ -11,7 +11,7 @@
 
 #include    "ejs.h"
 
-#if BLD_FEATURE_SQLITE
+#if BIT_FEATURE_SQLITE
 
 #include    "sqlite3.h"
 #include    "ejs.db.sqlite.slots.h"
@@ -458,7 +458,7 @@ int ejs_db_sqlite_Init(Ejs *ejs, MprModule *mp)
     return ejsAddNativeModule(ejs, "ejs.db.sqlite", configureSqliteTypes, _ES_CHECKSUM_ejs_db_sqlite, EJS_LOADER_ETERNAL);
 }
 
-#endif /* BLD_FEATURE_SQLITE */
+#endif /* BIT_FEATURE_SQLITE */
 /*
     @copy   default
 

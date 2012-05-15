@@ -15,7 +15,7 @@ public class Bit {
     private static const VERSION: Number = 0.2
     private static const MAIN: Path = Path('main.bit')
     private static const START: Path = Path('start.bit')
-    private static const supportedOS = ['freebsd', 'linux', 'macosx', 'solaris', 'vxworks', 'win']
+    private static const supportedOS = ['freebsd', 'linux', 'macosx', 'solaris', 'vxworks', 'windows']
     private static const supportedArch = ['arm', 'i64', 'mips', 'sparc', 'x64', 'x86']
 
     /*
@@ -357,12 +357,16 @@ public class Bit {
         if (bit.dir.bits != Config.LibDir.join('bits')) {
             nbit.dir.bits = bit.dir.bits
         }
+/*
+   MOB - WHY
+    This messes up appweb "bit projects". The cross bit files get entries for libmpr when then doesn't build correctly
         for (let [tname,target] in bit.targets) {
             if (target.built) {
                 nbit.targets ||= {}
                 nbit.targets[tname] = { built: true}
             }
         }
+ */
         if (nbit.settings) {
             Object.sortProperties(nbit.settings);
         }
@@ -398,62 +402,63 @@ public class Bit {
         }
     }
 
-    //  MOB - rename BIT_
     function writeDefinitions(f: TextStream, platform) {
         let settings = bit.settings
-
-        f.writeLine('#define BLD_PRODUCT "' + settings.product + '"')
-        f.writeLine('#define BLD_NAME "' + settings.title + '"')
-        f.writeLine('#define BLD_COMPANY "' + settings.company + '"')
-        f.writeLine('#define BLD_' + settings.product.toUpper() + '_PRODUCT 1')
-        f.writeLine('#define BLD_VERSION "' + settings.version + '"')
-        f.writeLine('#define BLD_NUMBER "' + settings.buildNumber + '"')
+        f.writeLine('#define BIT_PRODUCT "' + settings.product + '"')
+        f.writeLine('#define BIT_NAME "' + settings.title + '"')
+        f.writeLine('#define BIT_COMPANY "' + settings.company + '"')
+        f.writeLine('#define BIT_' + settings.product.toUpper() + '_PRODUCT 1')
+        f.writeLine('#define BIT_VERSION "' + settings.version + '"')
+        f.writeLine('#define BIT_NUMBER "' + settings.buildNumber + '"')
         if (settings.charlen) {
-            f.writeLine('#define BLD_CHAR_LEN ' + settings.charlen)
+            f.writeLine('#define BIT_CHAR_LEN ' + settings.charlen)
             if (settings.charlen == 1) {
-                f.writeLine('#define BLD_CHAR char')
+                f.writeLine('#define BIT_CHAR char')
             } else if (settings.charlen == 2) {
-                f.writeLine('#define BLD_CHAR short')
+                f.writeLine('#define BIT_CHAR short')
             } else if (settings.charlen == 4) {
-                f.writeLine('#define BLD_CHAR int')
+                f.writeLine('#define BIT_CHAR int')
             }
         }
         let ver = settings.version.split('.')
-        f.writeLine('#define BLD_MAJOR_VERSION ' + ver[0])
-        f.writeLine('#define BLD_MINOR_VERSION ' + ver[1])
-        f.writeLine('#define BLD_PATCH_VERSION ' + ver[2])
-        f.writeLine('#define BLD_VNUM ' + ((((ver[0] * 1000) + ver[1]) * 1000) + ver[2]))
+        f.writeLine('#define BIT_MAJOR_VERSION ' + ver[0])
+        f.writeLine('#define BIT_MINOR_VERSION ' + ver[1])
+        f.writeLine('#define BIT_PATCH_VERSION ' + ver[2])
+        f.writeLine('#define BIT_VNUM ' + ((((ver[0] * 1000) + ver[1]) * 1000) + ver[2]))
 
         let args = 'bit ' + App.args.slice(1).join(' ')
-        f.writeLine('#define BLD_CONFIG_CMD "' + args + '"')
+        f.writeLine('#define BIT_CONFIG_CMD "' + args + '"')
 
         //  MOB - REMOVE this is used in mprModule which does a basename anyway. Also used by ejsConfig
-        f.writeLine('#define BLD_LIB_NAME "' + 'bin' + '"')
-        f.writeLine('#define BLD_PROFILE "' + bit.platform.profile + '"')
+        f.writeLine('#define BIT_LIB_NAME "' + 'bin' + '"')
+        f.writeLine('#define BIT_PROFILE "' + bit.platform.profile + '"')
 
         /* Prefixes */
         let base = (settings.name == 'ejs') ? bit.prefixes.productver : bit.prefixes.product
-        f.writeLine('#define BLD_CFG_PREFIX "' + bit.prefixes.config + '"')
-        f.writeLine('#define BLD_BIN_PREFIX "' + bit.prefixes.bin + '"')
-        f.writeLine('#define BLD_DOC_PREFIX "' + base.join('doc') + '"')
-        f.writeLine('#define BLD_INC_PREFIX "' + bit.prefixes.inc + '"')
-        f.writeLine('#define BLD_JEM_PREFIX "' + bit.prefixes.product.join('jems') + '"')
-        f.writeLine('#define BLD_LIB_PREFIX "' + bit.prefixes.lib + '"')
-        f.writeLine('#define BLD_LOG_PREFIX "' + bit.prefixes.log + '"')
-        f.writeLine('#define BLD_MAN_PREFIX "' + base.join('man') + '"')
-        f.writeLine('#define BLD_PRD_PREFIX "' + bit.prefixes.product + '"')
-        f.writeLine('#define BLD_SAM_PREFIX "' + base.join('samples') + '"')
-        f.writeLine('#define BLD_SPL_PREFIX "' + bit.prefixes.spool + '"')
-        f.writeLine('#define BLD_SRC_PREFIX "' + bit.prefixes.src + '"')
-        f.writeLine('#define BLD_VER_PREFIX "' + bit.prefixes.productver + '"')
-        f.writeLine('#define BLD_WEB_PREFIX "' + bit.prefixes.web + '"')
+        f.writeLine('#define BIT_CFG_PREFIX "' + bit.prefixes.config + '"')
+        f.writeLine('#define BIT_BIN_PREFIX "' + bit.prefixes.bin + '"')
+        f.writeLine('#define BIT_INC_PREFIX "' + bit.prefixes.inc + '"')
+        f.writeLine('#define BIT_LIB_PREFIX "' + bit.prefixes.lib + '"')
+        f.writeLine('#define BIT_LOG_PREFIX "' + bit.prefixes.log + '"')
+        f.writeLine('#define BIT_PRD_PREFIX "' + bit.prefixes.product + '"')
+        f.writeLine('#define BIT_SPL_PREFIX "' + bit.prefixes.spool + '"')
+        f.writeLine('#define BIT_SRC_PREFIX "' + bit.prefixes.src + '"')
+        f.writeLine('#define BIT_VER_PREFIX "' + bit.prefixes.productver + '"')
+        f.writeLine('#define BIT_WEB_PREFIX "' + bit.prefixes.web + '"')
+
+        /* UNUSED
+        f.writeLine('#define BIT_DOC_PREFIX "' + base.join('doc') + '"')
+        f.writeLine('#define BIT_MAN_PREFIX "' + base.join('man') + '"')
+        f.writeLine('#define BIT_JEM_PREFIX "' + bit.prefixes.product.join('jems') + '"')
+        f.writeLine('#define BIT_SAM_PREFIX "' + base.join('samples') + '"')
+        */
 
         /* Suffixes */
-        f.writeLine('#define BLD_EXE "' + bit.ext.dotexe + '"')
-        f.writeLine('#define BLD_SHLIB "' + bit.ext.dotshlib + '"')
-        f.writeLine('#define BLD_SHOBJ "' + bit.ext.dotshobj + '"')
-        f.writeLine('#define BLD_LIB "' + bit.ext.dotlib + '"')
-        f.writeLine('#define BLD_OBJ "' + bit.ext.doto + '"')
+        f.writeLine('#define BIT_EXE "' + bit.ext.dotexe + '"')
+        f.writeLine('#define BIT_SHLIB "' + bit.ext.dotshlib + '"')
+        f.writeLine('#define BIT_SHOBJ "' + bit.ext.dotshobj + '"')
+        f.writeLine('#define BIT_LIB "' + bit.ext.dotlib + '"')
+        f.writeLine('#define BIT_OBJ "' + bit.ext.doto + '"')
 
         /* Features */
 /*
@@ -469,54 +474,54 @@ public class Bit {
         }
  */
         if (settings.assert != undefined) {
-            f.writeLine('#define BLD_FEATURE_ASSERT ' + (settings.assert ? 1 : 0))
+            f.writeLine('#define BIT_FEATURE_ASSERT ' + (settings.assert ? 1 : 0))
         }
         if (settings.float != undefined) {
-            f.writeLine('#define BLD_FEATURE_FLOAT ' + (settings.float ? 1 : 0))
+            f.writeLine('#define BIT_FEATURE_FLOAT ' + (settings.float ? 1 : 0))
         }
         if (settings.rom != undefined) {
-            f.writeLine('#define BLD_FEATURE_ROMFS ' + (settings.rom ? 1 : 0))
+            f.writeLine('#define BIT_FEATURE_ROMFS ' + (settings.rom ? 1 : 0))
         }
 
         if (settings.auth) {
             if (settings.auth == 'file') {
-                f.writeLine('#define BLD_FEATURE_AUTH_FILE 1')
+                f.writeLine('#define BIT_FEATURE_AUTH_FILE 1')
             } else {
-                f.writeLine('#define BLD_FEATURE_AUTH_FILE 0')
+                f.writeLine('#define BIT_FEATURE_AUTH_FILE 0')
             }
             if (settings.auth == 'pam' && bit.platform.like == 'posix') {
-                f.writeLine('#define BLD_FEATURE_AUTH_PAM 1')
+                f.writeLine('#define BIT_FEATURE_AUTH_PAM 1')
             } else {
-                f.writeLine('#define BLD_FEATURE_AUTH_PAM 0')
+                f.writeLine('#define BIT_FEATURE_AUTH_PAM 0')
             }
         }
         if (settings.mdb != undefined) {
-            f.writeLine('#define BLD_FEATURE_MDB ' + (settings.mdb ? '1' : '0'))
+            f.writeLine('#define BIT_FEATURE_MDB ' + (settings.mdb ? '1' : '0'))
         }
         if (settings.sdb != undefined) {
-            f.writeLine('#define BLD_FEATURE_SDB ' + (settings.sdb ? '1' : '0'))
+            f.writeLine('#define BIT_FEATURE_SDB ' + (settings.sdb ? '1' : '0'))
         }
         if (settings.manager != undefined) {
-            f.writeLine('#define BLD_MANAGER "' + settings.manager + '"')
+            f.writeLine('#define BIT_MANAGER "' + settings.manager + '"')
         }
         if (settings.httpPort) {
-            f.writeLine('#define BLD_HTTP_PORT ' + settings.httpPort)
+            f.writeLine('#define BIT_HTTP_PORT ' + settings.httpPort)
         }
         if (settings.sslPort) {
-            f.writeLine('#define BLD_SSL_PORT ' + settings.sslPort)
+            f.writeLine('#define BIT_SSL_PORT ' + settings.sslPort)
         }
-        f.writeLine('#define BLD_CC_DOUBLE_BRACES ' + (settings.hasDoubleBraces ? '1' : '0'))
-        f.writeLine('#define BLD_CC_DYN_LOAD ' + (settings.hasDynLoad ? '1' : '0'))
-        f.writeLine('#define BLD_CC_EDITLINE ' + (settings.hasLibEdit ? '1' : '0'))
-        f.writeLine('#define BLD_CC_MMU ' + (settings.hasMmu ? '1' : '0'))
-        f.writeLine('#define BLD_CC_MTUNE ' + (settings.hasMtune ? '1' : '0'))
-        f.writeLine('#define BLD_CC_PAM ' + (settings.hasPam ? '1' : '0'))
-        f.writeLine('#define BLD_CC_STACK_PROTECTOR ' + (settings.hasStackProtector ? '1' : '0'))
-        f.writeLine('#define BLD_CC_SYNC ' + (settings.hasSync ? '1' : '0'))
-        f.writeLine('#define BLD_CC_SYNC_CAS ' + (settings.hasSyncCas ? '1' : '0'))
-        f.writeLine('#define BLD_CC_UNNAMED_UNIONS ' + (settings.hasUnnamedUnions ? '1' : '0'))
-        f.writeLine('#define BLD_CC_WARN_64TO32 ' + (settings.warn64to32 ? '1' : '0'))
-        f.writeLine('#define BLD_CC_WARN_UNUSED ' + (settings.warnUnused ? '1' : '0'))
+        f.writeLine('#define BIT_CC_DOUBLE_BRACES ' + (settings.hasDoubleBraces ? '1' : '0'))
+        f.writeLine('#define BIT_CC_DYN_LOAD ' + (settings.hasDynLoad ? '1' : '0'))
+        f.writeLine('#define BIT_CC_EDITLINE ' + (settings.hasLibEdit ? '1' : '0'))
+        f.writeLine('#define BIT_CC_MMU ' + (settings.hasMmu ? '1' : '0'))
+        f.writeLine('#define BIT_CC_MTUNE ' + (settings.hasMtune ? '1' : '0'))
+        f.writeLine('#define BIT_CC_PAM ' + (settings.hasPam ? '1' : '0'))
+        f.writeLine('#define BIT_CC_STACK_PROTECTOR ' + (settings.hasStackProtector ? '1' : '0'))
+        f.writeLine('#define BIT_CC_SYNC ' + (settings.hasSync ? '1' : '0'))
+        f.writeLine('#define BIT_CC_SYNC_CAS ' + (settings.hasSyncCas ? '1' : '0'))
+        f.writeLine('#define BIT_CC_UNNAMED_UNIONS ' + (settings.hasUnnamedUnions ? '1' : '0'))
+        f.writeLine('#define BIT_CC_WARN_64TO32 ' + (settings.warn64to32 ? '1' : '0'))
+        f.writeLine('#define BIT_CC_WARN_UNUSED ' + (settings.warnUnused ? '1' : '0'))
 
         /* Packs */
         for (let [pname, pack] in bit.packs) {
@@ -524,18 +529,11 @@ public class Bit {
                 pname = 'cc'
             }
             if (pack.enable) {
-                f.writeLine('#define BLD_FEATURE_' + pname.toUpper() + ' 1')
-/*
-                if (pack.path) {
-                    f.writeLine('#define BLD_' + pname.toUpper() + ' \"' + pack.path + '\"')
-                }
-*/
+                f.writeLine('#define BIT_FEATURE_' + pname.toUpper() + ' 1')
             } else {
-                f.writeLine('#define BLD_FEATURE_' + pname.toUpper() + ' 0')
+                f.writeLine('#define BIT_FEATURE_' + pname.toUpper() + ' 0')
             }
         }
-        // f.write('\n/*\n    Composite Bit Configuration\n */\n#if INFORMATIVE_ONLY\n' +                                    
-        //     serialize(bit, {pretty: true, commas: true, indent: 4, quotes: false}) + '\n#endif\n')
     }
 
     /*

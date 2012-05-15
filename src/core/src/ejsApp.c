@@ -55,7 +55,7 @@ static EjsObj *app_chdir(Ejs *ejs, EjsObj *unused, int argc, EjsObj **argv)
         ejsThrowIOError(ejs, "Bad path");
         return NULL;
     }
-#if WIN
+#if WINDOWS
 {
     MprFileSystem   *fs;
     fs = mprLookupFileSystem(path);
@@ -168,7 +168,7 @@ static EjsAny *app_getenv(Ejs *ejs, EjsObj *app, int argc, EjsObj **argv)
  */
 static EjsNumber *app_gid(Ejs *ejs, EjsObj *unused, int argc, EjsObj **argv)
 {
-#if BLD_UNIX_LIKE
+#if BIT_UNIX_LIKE
     return ejsCreateNumber(ejs, getgid());
 #else
     return ESV(null);
@@ -291,7 +291,7 @@ static EjsObj *app_sleep(Ejs *ejs, EjsObj *unused, int argc, EjsObj **argv)
  */
 static EjsNumber *app_uid(Ejs *ejs, EjsObj *unused, int argc, EjsObj **argv)
 {
-#if BLD_UNIX_LIKE
+#if BIT_UNIX_LIKE
     return ejsCreateNumber(ejs, getuid());
 #else
     return ESV(null);

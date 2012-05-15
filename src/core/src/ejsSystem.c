@@ -24,7 +24,7 @@ static EjsString *system_hostname(Ejs *ejs, EjsObj *unused, int argc, EjsObj **a
 static EjsString *system_ipaddr(Ejs *ejs, EjsObj *unused, int argc, EjsObj **argv)
 {
     //  MOB - move this into MPR and call mprSetIpAddr
-#if BLD_UNIX_LIKE || BLD_WIN_LIKE
+#if BIT_UNIX_LIKE || BIT_WIN_LIKE
     struct addrinfo *res, *reslist, hints;
     cchar           *ip;
     char            ipaddr[MPR_MAX_STRING], service[MPR_MAX_STRING];

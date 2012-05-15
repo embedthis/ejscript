@@ -8,7 +8,7 @@
 
 #include    "ejs.h"
 
-#if BLD_FEATURE_ZLIB
+#if BIT_FEATURE_ZLIB
 
     #include    "zlib.h"
     #include    "ejs.zlib.slots.h"
@@ -346,7 +346,7 @@ MPR_EXPORT int ejs_zlib_Init(Ejs *ejs, MprModule *mp)
     return ejsAddNativeModule(ejs, "ejs.zlib", configureZlibTypes, _ES_CHECKSUM_ejs_zlib, EJS_LOADER_ETERNAL);
 }
 
-#endif /* BLD_FEATURE_ZLIB */
+#endif /* BIT_FEATURE_ZLIB */
 /*
     @copy   default
 

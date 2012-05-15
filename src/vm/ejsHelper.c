@@ -322,7 +322,7 @@ int ejsSetPropertyByName(Ejs *ejs, EjsAny *vp, EjsName qname, EjsAny *value)
             return EJS_ERR;
         }
         //  UNICODE
-#if BLD_DEBUG
+#if BIT_DEBUG
         if (((EjsObj*) value)->mem == 0) {
             mprSetName(value, qname.name->value);
         }
@@ -839,7 +839,7 @@ EjsAny *ejsParse(Ejs *ejs, MprChar *str, int preferredType)
     case S_Boolean:
         return ejsCreateBoolean(ejs, parseBoolean(ejs, buf));
 
-#if BLD_FEATURE_PCRE
+#if BIT_FEATURE_PCRE
     case S_RegExp:
         return ejsCreateRegExp(ejs, ejsCreateStringFromAsc(ejs, buf));
 #endif

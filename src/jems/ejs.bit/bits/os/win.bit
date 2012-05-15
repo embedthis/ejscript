@@ -64,7 +64,7 @@ Bit.load({
                 if (settings.preprocess) defaults.compiler += [ '-E' ]
                 defaults.libpaths.push(bit.dir.lib)
                 if (bit.platform.profile == 'debug') {
-                    defaults.defines.push('-DBLD_DEBUG')
+                    defaults.defines.push('-DBIT_DEBUG')
                     defaults.compiler += [ '-Zi', '-Od', '-MDd' ]
                     defaults.linker += [ '-debug' ]
                 } else {

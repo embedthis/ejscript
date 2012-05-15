@@ -939,7 +939,7 @@ static int loadNativeLibrary(Ejs *ejs, EjsModule *mp, cchar *modPath)
     if ((cp = strrchr(bare, '.')) != 0 && strcmp(cp, EJS_MODULE_EXT) == 0) {
         *cp = '\0';
     }
-    path = sjoin(bare, BLD_SHOBJ, NULL);
+    path = sjoin(bare, BIT_SHOBJ, NULL);
 
     if (! mprPathExists(path, R_OK)) {
         mprError("Native module not found %s", path);
@@ -1344,7 +1344,7 @@ static char *searchForModule(Ejs *ejs, cchar *moduleName, int minVersion, int ma
 
         } else {
             /* Search bin/../lib */
-            dp = mprJoinPath(mprGetPathParent(mprGetAppDir()), BLD_LIB_NAME);
+            dp = mprJoinPath(mprGetPathParent(mprGetAppDir()), BIT_LIB_NAME);
             filename = mprJoinPath(dp, basename);
             if ((path = probe(ejs, filename, minVersion, maxVersion)) != 0) {
                 return path;

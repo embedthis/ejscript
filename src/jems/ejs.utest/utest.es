@@ -516,17 +516,17 @@ enumerable class Test {
 
     function parseBuildConfig(path: Path) {
         let data = Path(path).readString()
-        _os = getKey(data, "BLD_BUILD_OS")
-        _cross = getKey(data, "BLD_CROSS") == "1"
-        _hostOs = getKey(data, "BLD_HOST_OS")
-        _hostSystem = getKey(data, "BLD_HOST_SYSTEM")
+        _os = getKey(data, "BIT_BUILD_OS")
+        _cross = getKey(data, "BIT_CROSS") == "1"
+        _hostOs = getKey(data, "BIT_HOST_OS")
+        _hostSystem = getKey(data, "BIT_HOST_SYSTEM")
         features = {}
-        features["bld_debug"] = getKey(data, "BLD_DEBUG")
-        let str = data.match(/BLD_FEATURE.*|BLD_HTTP_PORT.*|BLD_SSL_PORT.*/g)
+        features["bld_debug"] = getKey(data, "BIT_DEBUG")
+        let str = data.match(/BIT_FEATURE.*|BIT_HTTP_PORT.*|BIT_SSL_PORT.*/g)
         for each (item in str) {
             let [key, value] = item.split(" ")
-            key = key.replace(/BLD_FEATURE_/, "")
-            key = key.replace(/BLD_/, "").toLowerCase()
+            key = key.replace(/BIT_FEATURE_/, "")
+            key = key.replace(/BIT_/, "").toLowerCase()
             if (value == "1" || value == "0") {
                 value = value cast Number
             }

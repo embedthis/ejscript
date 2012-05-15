@@ -16,7 +16,7 @@
  */
 #define fixed(n) ((int64) (floor(n)))
 
-#if BLD_WIN_LIKE
+#if BIT_WIN_LIKE
 #pragma warning (disable:4244)
 #endif
 

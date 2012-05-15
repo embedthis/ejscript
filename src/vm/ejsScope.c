@@ -299,7 +299,7 @@ EjsAny *ejsGetVarByName(Ejs *ejs, EjsAny *obj, EjsName name, EjsLookup *lookup)
 
 void ejsShowBlockScope(Ejs *ejs, EjsBlock *block)
 {
-#if BLD_DEBUG
+#if BIT_DEBUG
     EjsNamespace    *nsp;
     MprList         *namespaces;
     int             nextNsp;
@@ -320,7 +320,7 @@ void ejsShowBlockScope(Ejs *ejs, EjsBlock *block)
 
 void ejsShowCurrentScope(Ejs *ejs)
 {
-#if BLD_DEBUG
+#if BIT_DEBUG
     EjsNamespace    *nsp;
     MprList         *namespaces;
     EjsBlock        *block;

@@ -6,64 +6,60 @@
     time configuration is performed.
  */
 
-#define BLD_PRODUCT "ejs"
-#define BLD_NAME "Embedthis Ejscript"
-#define BLD_COMPANY "Embedthis"
-#define BLD_EJS_PRODUCT 1
-#define BLD_VERSION "2.0.0"
-#define BLD_NUMBER "B2"
-#define BLD_MAJOR_VERSION 2
-#define BLD_MINOR_VERSION 0
-#define BLD_PATCH_VERSION 0
-#define BLD_VNUM 200000000
-#define BLD_CONFIG_CMD "bit -emulate win-x86 -q -d -without all configure -gen sh,nmake,vs"
-#define BLD_LIB_NAME "bin"
-#define BLD_PROFILE "debug"
-#define BLD_CFG_PREFIX "C:/Program Files (x86)/Embedthis Ejscript"
-#define BLD_BIN_PREFIX "C:/Program Files (x86)/Embedthis Ejscript/bin"
-#define BLD_DOC_PREFIX "C:/Program Files (x86)/Embedthis Ejscript/doc"
-#define BLD_INC_PREFIX "C:/Program Files (x86)/Embedthis Ejscript/inc"
-#define BLD_JEM_PREFIX "C:/Program Files (x86)/Embedthis Ejscript/jems"
-#define BLD_LIB_PREFIX "C:/Program Files (x86)/Embedthis Ejscript/bin"
-#define BLD_LOG_PREFIX "C:/Program Files (x86)/Embedthis Ejscript/logs"
-#define BLD_MAN_PREFIX "C:/Program Files (x86)/Embedthis Ejscript/man"
-#define BLD_PRD_PREFIX "C:/Program Files (x86)/Embedthis Ejscript"
-#define BLD_SAM_PREFIX "C:/Program Files (x86)/Embedthis Ejscript/samples"
-#define BLD_SPL_PREFIX "C:/Program Files (x86)/Embedthis Ejscript/tmp"
-#define BLD_SRC_PREFIX "C:/Program Files (x86)/Embedthis Ejscript/src"
-#define BLD_VER_PREFIX "C:/Program Files (x86)/Embedthis Ejscript"
-#define BLD_WEB_PREFIX "C:/Program Files (x86)/Embedthis Ejscript/web"
-#define BLD_EXE ".exe"
-#define BLD_SHLIB ".lib"
-#define BLD_SHOBJ ".dll"
-#define BLD_LIB ".a"
-#define BLD_OBJ ".obj"
-#define BLD_MANAGER "ejsman"
-#define BLD_CC_DOUBLE_BRACES 0
-#define BLD_CC_DYN_LOAD 1
-#define BLD_CC_EDITLINE 0
-#define BLD_CC_MMU 1
-#define BLD_CC_MTUNE 0
-#define BLD_CC_PAM 0
-#define BLD_CC_STACK_PROTECTOR 0
-#define BLD_CC_SYNC 0
-#define BLD_CC_SYNC_CAS 0
-#define BLD_CC_UNNAMED_UNIONS 1
-#define BLD_CC_WARN_64TO32 0
-#define BLD_CC_WARN_UNUSED 0
-#define BLD_FEATURE_DOXYGEN 0
-#define BLD_FEATURE_DSI 0
-#define BLD_FEATURE_MAN 0
-#define BLD_FEATURE_MAN2HTML 0
-#define BLD_FEATURE_SSL 0
-#define BLD_FEATURE_ZLIB 0
-#define BLD_FEATURE_WINSDK 1
-#define BLD_FEATURE_CC 1
-#define BLD_FEATURE_LINK 1
-#define BLD_FEATURE_DUMPBIN 1
-#define BLD_FEATURE_RC 1
-#define BLD_FEATURE_PCRE 1
-#define BLD_FEATURE_OPENSSL 0
-#define BLD_FEATURE_MATRIXSSL 0
-#define BLD_FEATURE_PMAKER 0
-#define BLD_FEATURE_SQLITE 1
+#define BIT_PRODUCT "ejs"
+#define BIT_NAME "Embedthis Ejscript"
+#define BIT_COMPANY "Embedthis"
+#define BIT_EJS_PRODUCT 1
+#define BIT_VERSION "2.0.0"
+#define BIT_NUMBER "B2"
+#define BIT_MAJOR_VERSION 2
+#define BIT_MINOR_VERSION 0
+#define BIT_PATCH_VERSION 0
+#define BIT_VNUM 200000000
+#define BIT_CONFIG_CMD "bit -emulate win-x86 -q -d -without all configure -gen sh,nmake,vs"
+#define BIT_LIB_NAME "bin"
+#define BIT_PROFILE "debug"
+#define BIT_CFG_PREFIX "C:/Program Files (x86)/Embedthis Ejscript"
+#define BIT_BIN_PREFIX "C:/Program Files (x86)/Embedthis Ejscript/bin"
+#define BIT_INC_PREFIX "C:/Program Files (x86)/Embedthis Ejscript/inc"
+#define BIT_LIB_PREFIX "C:/Program Files (x86)/Embedthis Ejscript/bin"
+#define BIT_LOG_PREFIX "C:/Program Files (x86)/Embedthis Ejscript/logs"
+#define BIT_PRD_PREFIX "C:/Program Files (x86)/Embedthis Ejscript"
+#define BIT_SPL_PREFIX "C:/Program Files (x86)/Embedthis Ejscript/tmp"
+#define BIT_SRC_PREFIX "C:/Program Files (x86)/Embedthis Ejscript/src"
+#define BIT_VER_PREFIX "C:/Program Files (x86)/Embedthis Ejscript"
+#define BIT_WEB_PREFIX "C:/Program Files (x86)/Embedthis Ejscript/web"
+#define BIT_EXE ".exe"
+#define BIT_SHLIB ".lib"
+#define BIT_SHOBJ ".dll"
+#define BIT_LIB ".a"
+#define BIT_OBJ ".obj"
+#define BIT_MANAGER "ejsman"
+#define BIT_CC_DOUBLE_BRACES 0
+#define BIT_CC_DYN_LOAD 1
+#define BIT_CC_EDITLINE 0
+#define BIT_CC_MMU 1
+#define BIT_CC_MTUNE 0
+#define BIT_CC_PAM 0
+#define BIT_CC_STACK_PROTECTOR 0
+#define BIT_CC_SYNC 0
+#define BIT_CC_SYNC_CAS 0
+#define BIT_CC_UNNAMED_UNIONS 1
+#define BIT_CC_WARN_64TO32 0
+#define BIT_CC_WARN_UNUSED 0
+#define BIT_FEATURE_DOXYGEN 0
+#define BIT_FEATURE_DSI 0
+#define BIT_FEATURE_MAN 0
+#define BIT_FEATURE_MAN2HTML 0
+#define BIT_FEATURE_SSL 0
+#define BIT_FEATURE_ZLIB 0
+#define BIT_FEATURE_WINSDK 1
+#define BIT_FEATURE_CC 1
+#define BIT_FEATURE_LINK 1
+#define BIT_FEATURE_DUMPBIN 1
+#define BIT_FEATURE_RC 1
+#define BIT_FEATURE_PCRE 1
+#define BIT_FEATURE_OPENSSL 0
+#define BIT_FEATURE_MATRIXSSL 0
+#define BIT_FEATURE_PMAKER 1
+#define BIT_FEATURE_SQLITE 1

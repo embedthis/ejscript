@@ -474,8 +474,8 @@ static void defineSharedTypes(Ejs *ejs)
     ejsAddNativeModule(ejs, "ejs", configureEjs, _ES_CHECKSUM_ejs, 0);
 
 #if UNUSED
-#if BLD_FEATURE_EJSRIPT_ALL_IN_ONE
-#if BLD_FEATURE_SQLITE
+#if BIT_FEATURE_EJSRIPT_ALL_IN_ONE
+#if BIT_FEATURE_SQLITE
     ejs_db_sqlite_Init(ejs, NULL);
 #endif
     ejs_web_Init(ejs, NULL);
@@ -671,10 +671,10 @@ EjsArray *ejsCreateSearchPath(Ejs *ejs, cchar *search)
      */
     ejsSetProperty(ejs, ap, -1, ejsCreatePathFromAsc(ejs, "."));
     ejsSetProperty(ejs, ap, -1, ejsCreatePathFromAsc(ejs, mprGetAppDir()));
-    relModDir = mprNormalizePath(sfmt("%s/../%s", mprGetAppDir(), BLD_LIB_NAME));
+    relModDir = mprNormalizePath(sfmt("%s/../%s", mprGetAppDir(), BIT_LIB_NAME));
     ejsSetProperty(ejs, ap, -1, ejsCreatePathFromAsc(ejs, mprGetAbsPath(relModDir)));
 #if !VXWORKS
-    ejsSetProperty(ejs, ap, -1, ejsCreatePathFromAsc(ejs, BLD_LIB_PREFIX));
+    ejsSetProperty(ejs, ap, -1, ejsCreatePathFromAsc(ejs, BIT_LIB_PREFIX));
 #endif
     return (EjsArray*) ap;
 }

@@ -117,7 +117,7 @@ MAIN(ejsmodMain, int argc, char **argv, char **envp)
             }
 
         } else if (strcmp(argp, "--version") == 0 || strcmp(argp, "-V") == 0) {
-            mprPrintfError("%s %s-%s\n", BLD_NAME, BLD_VERSION, BLD_NUMBER);  
+            mprPrintfError("%s %s-%s\n", BIT_NAME, BIT_VERSION, BIT_NUMBER);  
             return 0;
 
         } else if (strcmp(argp, "--require") == 0) {

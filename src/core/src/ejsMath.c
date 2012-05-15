@@ -176,7 +176,7 @@ static EjsNumber *math_random(Ejs *ejs, EjsObj *unused, int argc, EjsObj **argv)
     static int  initialized = 0;
     
     if (!initialized) {
-#if WIN
+#if WINDOWS
         uint seed = (uint) time(0);
         srand(seed);
 #elif !MACOSX && !VXWORKS
@@ -185,7 +185,7 @@ static EjsNumber *math_random(Ejs *ejs, EjsObj *unused, int argc, EjsObj **argv)
         initialized = 1;
     }
     
-#if WIN
+#if WINDOWS
 {
     errno_t rand_s(uint *value);
     rand_s(&uvalue);

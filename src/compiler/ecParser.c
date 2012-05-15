@@ -183,13 +183,13 @@ static EcNode   *removeNode(EcNode *np, EcNode *child);
 static void     setNodeDoc(EcCompiler *cp, EcNode *np);
 static EcNode   *unexpected(EcCompiler *cp);
 
-#if BLD_DEBUG
+#if BIT_DEBUG
 static void     updateDebug(EcCompiler *cp);
 #else
 #define         updateDebug(cp)
 #endif
 
-#if BLD_DEBUG
+#if BIT_DEBUG
 /*
     Just for debugging. Generated via tokens.ksh
  */
@@ -415,7 +415,7 @@ char *nodes[] = {
     0,
 };
 
-#endif  /* BLD_DEBUG */
+#endif  /* BIT_DEBUG */
 
 /************************************ Code ************************************/
 /*
@@ -9443,7 +9443,7 @@ static char *detab(EcCompiler *cp, char *src)
 #endif
 
 
-#if BLD_DEBUG
+#if BIT_DEBUG
 static void updateDebug(EcCompiler *cp)
 {
     mprAssert(cp);
@@ -10314,7 +10314,7 @@ static EcNode *createNode(EcCompiler *cp, int kind, EjsString *name)
     if (token && token->loc.source) {
         np->loc = token->loc;
     }
-#if BLD_DEBUG
+#if BIT_DEBUG
     np->kindName = nodes[kind];
     if (token && token->tokenId >= 0) {
         np->tokenName = tokenNames[token->tokenId];

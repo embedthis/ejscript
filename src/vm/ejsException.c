@@ -20,7 +20,7 @@ static EjsAny *createException(Ejs *ejs, EjsType *type, cchar* fmt, va_list fmtA
 
     mprAssert(type);
     
-#if BLD_DEBUG
+#if BIT_DEBUG
     /* Breakpoint opportunity */
     if (!ejs->empty) {
         mprNop(0);

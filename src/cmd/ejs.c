@@ -10,7 +10,7 @@
 
 #include    "ejsCompiler.h"
 
-#if BLD_CC_EDITLINE
+#if BIT_CC_EDITLINE
   #include  <histedit.h>
 #endif
 
@@ -27,7 +27,7 @@ typedef struct App {
 
 static App *app;
 
-#if BLD_CC_EDITLINE
+#if BIT_CC_EDITLINE
 static History  *cmdHistory;
 static EditLine *eh; 
 static cchar    *prompt;
@@ -106,7 +106,7 @@ MAIN(ejsMain, int argc, char **argv, char **envp)
                 }
             }
 
-#if BLD_UNIX_LIKE
+#if BIT_UNIX_LIKE
         } else if (smatch(argp, "--chroot")) {
             /* Not documented or supported */
             if (nextArg >= argc) {
@@ -132,7 +132,7 @@ MAIN(ejsMain, int argc, char **argv, char **envp)
                 cmd = argv[++nextArg];
             }
 
-#if BLD_WIN_LIKE
+#if BIT_WIN_LIKE
         } else if (smatch(argp, "--cygroot")) {
             if (nextArg >= argc) {
                 err++;
@@ -237,7 +237,7 @@ MAIN(ejsMain, int argc, char **argv, char **envp)
             mprSetCmdlineLogging(1);
 
         } else if (smatch(argp, "--version") || smatch(argp, "-V")) {
-            mprPrintfError("%s %s-%s\n", BLD_NAME, BLD_VERSION, BLD_NUMBER);
+            mprPrintfError("%s %s-%s\n", BIT_NAME, BIT_VERSION, BIT_NUMBER);
             return 0;
 
         } else if (smatch(argp, "--warn")) {
@@ -342,7 +342,7 @@ MAIN(ejsMain, int argc, char **argv, char **envp)
         }
     }
     if (stats) {
-#if BLD_DEBUG
+#if BIT_DEBUG
         mprSetLogLevel(1);
         mprPrintMem("Memory Usage", 1);
 #endif
@@ -452,7 +452,7 @@ static int interpretCommands(EcCompiler *cp, cchar *cmd)
 
 
 /************************************************* Command line History **************************************/
-#if BLD_CC_EDITLINE
+#if BIT_CC_EDITLINE
 
 static cchar *issuePrompt(EditLine *e) 
 {
@@ -505,7 +505,7 @@ static char *readline(cchar *msg)
     return NULL; 
 } 
 
-#else /* BLD_CC_EDITLINE */
+#else /* BIT_CC_EDITLINE */
 
 static char *readline(cchar *msg)
 {
@@ -517,7 +517,7 @@ static char *readline(cchar *msg)
     }
     return strdup(buf);
 }
-#endif /* BLD_CC_EDITLINE */
+#endif /* BIT_CC_EDITLINE */
 
 
 /*  

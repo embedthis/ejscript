@@ -71,7 +71,7 @@ EjsAny *ejsClonePot(Ejs *ejs, EjsAny *obj, bool deep)
                 ;
             } else if ((ejsIsType(ejs, vp) && ((EjsType*) vp)->mutable) || 
                       (!ejsIsType(ejs, vp) && TYPE(vp)->mutableInstances)) {
-#if BLD_DEBUG
+#if BIT_DEBUG
                 EjsName qname = ejsGetPropertyName(ejs, src, i);
                 mprSetName(dp->value.ref, qname.name->value);
                 // mprLog(0, "CLONE %N", qname);

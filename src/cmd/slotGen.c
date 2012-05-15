@@ -28,7 +28,7 @@ int emCreateSlotFiles(EjsMod *bp, EjsModule *mp, MprFile *outfile)
     int     rc;
 
     rc = 0;
-    defaultVersion = sfmt("-%d", ejsParseModuleVersion(BLD_VERSION));
+    defaultVersion = sfmt("-%d", ejsParseModuleVersion(BIT_VERSION));
     if (bp->cslots) {
         rc += createSlotFile(bp, mp, outfile);
     }
@@ -89,7 +89,7 @@ static int createSlotFile(EjsMod *bp, EjsModule *mp, MprFile *file)
         "  \n"
         "   Slot definitions. Version %s.\n"
         " */\n"
-        "\n", path, mp->name, BLD_VERSION);
+        "\n", path, mp->name, BIT_VERSION);
 
     mprFprintf(file,
         "#ifndef _h_SLOTS_%s\n"

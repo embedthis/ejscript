@@ -141,7 +141,7 @@ void ecInitLexer(EcCompiler *cp)
         return;
     }
     for (rp = keywords; rp->name; rp++) {
-#if BLD_CHAR_LEN > 1
+#if BIT_CHAR_LEN > 1
         rp->name = amtow(cp->keywords, rp->name, NULL);
 #endif
         mprAddKey(cp->keywords, rp->name, rp);
@@ -1063,7 +1063,7 @@ void ecSetStreamBuf(EcStream *sp, cchar *contents, ssize len)
     MprChar     *buf;
 
     if (contents) {
-#if BLD_CHAR_LEN > 1
+#if BIT_CHAR_LEN > 1
         buf = amtow(cp, contents, &len);
 #else
         buf = (MprChar*) contents;

@@ -19,7 +19,7 @@ static EjsArray *fs_drives(Ejs *ejs, EjsFileSystem *unused, int argc, EjsObj **a
     if ((ap = ejsCreateArray(ejs, 0)) == 0) {
         return 0;
     }
-#if BLD_WIN_LIKE
+#if BIT_WIN_LIKE
 {
     char        dbuf[2];
     int         i, mask;

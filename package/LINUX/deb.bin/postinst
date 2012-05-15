@@ -4,9 +4,9 @@
 #	Copyright (c) Embedthis Software LLC, 2003-2012. All Rights Reserved.
 #
 
-BLD_PRODUCT=${settings.product}
-BLD_NAME="${settings.title}
-BLD_BIN_PREFIX="${prefixes.bin}"
+BIT_PRODUCT=${settings.product}
+BIT_NAME="${settings.title}
+BIT_BIN_PREFIX="${prefixes.bin}"
 
 ###############################################################################
 #
@@ -18,9 +18,9 @@ action=$1
 
 case $action in
 	configure)							# when new
-        "$BLD_BIN_PREFIX/linkup" Install /
+        "$BIT_BIN_PREFIX/linkup" Install /
         echo
-		echo "$BLD_NAME installation successful."
+		echo "$BIT_NAME installation successful."
 		;;
 	abort-upgrade)						# when old
 		;;

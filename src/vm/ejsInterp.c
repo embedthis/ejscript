@@ -139,7 +139,7 @@ static MPR_INLINE void checkGetter(Ejs *ejs, EjsAny *value, EjsAny *thisObj, Ejs
     #define traceCode(ejs, opcode) opcode
 #endif
 
-#if BLD_UNIX_LIKE || (VXWORKS && !BLD_CC_DIAB)
+#if BIT_UNIX_LIKE || (VXWORKS && !BIT_CC_DIAB)
     #define CASE(opcode) opcode
     #define BREAK goto *opcodeJump[opcode = traceCode(ejs, GET_BYTE())]
 #else
@@ -197,7 +197,7 @@ static void VM(Ejs *ejs, EjsFunction *fun, EjsAny *otherThis, int argc, int stac
     EjsString   *str;
     int         i, offset, count, opcode, attributes, paused;
 
-#if BLD_UNIX_LIKE || (VXWORKS && !BLD_CC_DIAB)
+#if BIT_UNIX_LIKE || (VXWORKS && !BIT_CC_DIAB)
     /*
         Direct threading computed goto processing. Include computed goto jump table.
      */
@@ -224,7 +224,7 @@ static void VM(Ejs *ejs, EjsFunction *fun, EjsAny *otherThis, int argc, int stac
     mprAssert(state->fp);
     FRAME->caller = 0;
 
-#if BLD_UNIX_LIKE || (VXWORKS && !BLD_CC_DIAB)
+#if BIT_UNIX_LIKE || (VXWORKS && !BIT_CC_DIAB)
     /*
         Direct threading computed goto processing. Include computed goto jump table.
      */
@@ -441,7 +441,7 @@ static void VM(Ejs *ejs, EjsFunction *fun, EjsAny *otherThis, int argc, int stac
                 Stack after         [RegExp]
          */
         CASE (EJS_OP_LOAD_REGEXP):
-#if BLD_FEATURE_PCRE
+#if BIT_FEATURE_PCRE
             str = GET_STRING();
             v1 = (EjsObj*) ejsCreateRegExp(ejs, str);
             push(v1);
@@ -2400,13 +2400,13 @@ static void VM(Ejs *ejs, EjsFunction *fun, EjsAny *otherThis, int argc, int stac
             mprAssert(0);
             BREAK;
 
-#if !BLD_UNIX_LIKE && !(VXWORKS && !BLD_CC_DIAB)
+#if !BIT_UNIX_LIKE && !(VXWORKS && !BIT_CC_DIAB)
         }
     }
 #endif
     
 done:
-#if BLD_DEBUG && FUTURE
+#if BIT_DEBUG && FUTURE
     if (ejs->initialized) {
         ejsShowOpFrequency(ejs);
     }
@@ -3608,7 +3608,7 @@ void ejsLog(Ejs *ejs, cchar *fmt, ...)
 
 
 #if FUTURE
-#if BLD_CC_EDITLINE
+#if BIT_CC_EDITLINE
 static History  *cmdHistory;
 static EditLine *eh; 
 static cchar    *prompt;
@@ -3781,7 +3781,7 @@ void ejsShowOpFrequency(Ejs *ejs)
 }
 #endif
 
-#endif /* BLD_DEBUG */
+#endif /* BIT_DEBUG */
 
 
 /*

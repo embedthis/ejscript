@@ -104,7 +104,7 @@ static EjsObj *cmd_kill(Ejs *ejs, EjsAny *unused, int argc, EjsObj **argv)
 {
     int     rc, pid, signal;
 
-#if BLD_UNIX_LIKE
+#if BIT_UNIX_LIKE
     signal = SIGINT;
 #else
     signal = 2;
@@ -117,7 +117,7 @@ static EjsObj *cmd_kill(Ejs *ejs, EjsAny *unused, int argc, EjsObj **argv)
         ejsThrowStateError(ejs, "No process to kill");
         return 0;
     }
-#if BLD_WIN_LIKE
+#if BIT_WIN_LIKE
 {
     HANDLE	handle;
 	handle = OpenProcess(PROCESS_TERMINATE, 0, pid);
@@ -613,7 +613,7 @@ static EjsNumber *cmd_write(Ejs *ejs, EjsCmd *cmd, int argc, EjsObj **argv)
  */
 static EjsObj *cmd_exec(Ejs *ejs, EjsObj *unused, int argc, EjsObj **argv)
 {
-#if BLD_UNIX_LIKE
+#if BIT_UNIX_LIKE
     cchar   **argVector, *path;
 
 #if FUTURE

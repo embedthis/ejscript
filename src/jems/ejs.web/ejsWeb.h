@@ -22,7 +22,7 @@ extern "C" {
 /*********************************** Types ************************************/
 
 #ifndef EJS_HTTPSERVER_NAME
-#define EJS_HTTPSERVER_NAME "ejs-http/" BLD_VERSION
+#define EJS_HTTPSERVER_NAME "ejs-http/" BIT_VERSION
 #endif
 
 /** 

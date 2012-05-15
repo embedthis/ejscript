@@ -210,7 +210,7 @@ static EjsObj *getAttributes(Ejs *ejs, EjsPath *fp, int argc, EjsObj **argv)
     ejsSetPropertyByName(ejs, attributes, EN("uid"), ejsCreateNumber(ejs, info.owner));
     ejsSetPropertyByName(ejs, attributes, EN("gid"), ejsCreateNumber(ejs, info.group));
 
-#if BLD_UNIX_LIKE
+#if BIT_UNIX_LIKE
     struct passwd   *pw;
     struct group    *gp;
     if ((pw = getpwuid(info.owner)) != 0) {
@@ -292,7 +292,7 @@ int ejsSetPathAttributes(Ejs *ejs, cchar *path, EjsObj *attributes)
     if (attributes == 0) {
         return 0;
     }
-#if BLD_UNIX_LIKE
+#if BIT_UNIX_LIKE
 {
     int     uid, gid;
     getUserGroup(ejs, attributes, &uid, &gid);
@@ -984,7 +984,7 @@ static EjsPath *pathLinkTarget(Ejs *ejs, EjsPath *fp, int argc, EjsObj **argv)
  */
 static void getUserGroup(Ejs *ejs, EjsObj *attributes, int *uid, int *gid)
 {
-#if BLD_UNIX_LIKE
+#if BIT_UNIX_LIKE
     EjsAny          *vp;
     struct passwd   *pp;
     struct group    *gp;
@@ -1585,7 +1585,7 @@ static EjsVoid *path_symlink(Ejs *ejs, EjsPath *fp, int argc, EjsObj **argv)
         return 0;
     }
     unlink(fp->value);
-#if BLD_UNIX_LIKE
+#if BIT_UNIX_LIKE
     if (symlink(target, fp->value) < 0) {
         ejsThrowIOError(ejs, "Can't create symlink %s to refer to %s, error %d", fp->value, target, errno);
         return 0;

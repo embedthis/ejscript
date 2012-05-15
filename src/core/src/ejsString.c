@@ -2192,7 +2192,7 @@ char *ejsToMulti(Ejs *ejs, EjsAny *ev)
     }
     mprAssert(ejsIs(ejs, ev, String));
     //  UNICODE
-#if BLD_CHAR_LEN == 1
+#if BIT_CHAR_LEN == 1
 {
     EjsString   *s = (EjsString*) ev;
     char        *ptr;
@@ -2491,7 +2491,7 @@ EjsString *ejsInternAsc(Ejs *ejs, cchar *value, ssize len)
         }
     }
     if ((sp = ejsAlloc(ejs, ESV(String), (len + 1) * sizeof(MprChar))) != NULL) {
-#if BLD_CHAR_LEN > 1
+#if BIT_CHAR_LEN > 1
         for (i = 0; i < len; i++) {
             sp->value[i] = value[i];
         }
@@ -2514,13 +2514,13 @@ EjsString *ejsInternAsc(Ejs *ejs, cchar *value, ssize len)
 }
 
 
-#if BLD_CHAR_LEN == 1
+#if BIT_CHAR_LEN == 1
 EjsString *ejsInternMulti(Ejs *ejs, cchar *value, ssize len)
 {
     return ejsInternAsc(ejs, value, len);
 }
 
-#else /* BLD_CHAR_LEN > 1 */
+#else /* BIT_CHAR_LEN > 1 */
 
 EjsString *ejsInternMulti(Ejs *ejs, cchar *value, ssize len)
 {
@@ -2573,7 +2573,7 @@ EjsString *ejsInternMulti(Ejs *ejs, cchar *value, ssize len)
     unlock(ip);
     return sp;
 }
-#endif /* BLD_CHAR_LEN > 1 */
+#endif /* BIT_CHAR_LEN > 1 */
 
 
 static int getInternHashSize(int size)
