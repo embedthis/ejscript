@@ -361,7 +361,7 @@ function files(base: Path) {
         if (target.type == 'lib') {
             output(lib.expand({REF: ref, NAME: target.name, PATH: path.basename.joinExt(bit.ext.shobj)}))
         } else if (target.type == 'exe') {
-            output(exe.expand({REF: ref, NAME: target.name, PATH: path.basename.joinExt(bit.ext.exe)}))
+            output(exe.expand({REF: ref, NAME: target.name, PATH: path.basename}))
         }
     }
     output('/* End PBXFileReference section */')

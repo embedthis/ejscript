@@ -460,16 +460,11 @@ public class Bit {
         f.writeLine('#define BLD_WEB_PREFIX "' + bit.prefixes.web + '"')
 
         /* Suffixes */
-        //  MOB - migrate to not use "." prefix
-        if (bit.ext.exe != '') {
-            f.writeLine('#define BLD_EXE ".' + bit.ext.exe + '"')
-        } else {
-            f.writeLine('#define BLD_EXE ""')
-        }
-        f.writeLine('#define BLD_SHLIB ".' + bit.ext.shlib + '"')
-        f.writeLine('#define BLD_SHOBJ ".' + bit.ext.shobj + '"')
-        f.writeLine('#define BLD_LIB ".' + bit.ext.lib + '"')
-        f.writeLine('#define BLD_OBJ ".' + bit.ext.o + '"')
+        f.writeLine('#define BLD_EXE "' + bit.ext.dotexe + '"')
+        f.writeLine('#define BLD_SHLIB "' + bit.ext.dotshlib + '"')
+        f.writeLine('#define BLD_SHOBJ "' + bit.ext.dotshobj + '"')
+        f.writeLine('#define BLD_LIB "' + bit.ext.dotlib + '"')
+        f.writeLine('#define BLD_OBJ "' + bit.ext.doto + '"')
 
         /* Features */
 /*
@@ -2266,20 +2261,20 @@ public class Bit {
         g.ARCH = bit.platform.arch
         g.GCC_ARCH = gccArch(bit.platform.arch)
         g.CONFIG = bit.platform.configuration
-        g.EXE = bit.ext.exe ? ('.' + bit.ext.exe) : ''
+        g.EXE = bit.ext.dotexe
         g.LIKE = bit.platform.like
-        g.O = '.' + bit.ext.o
+        g.O = bit.ext.doto
         g.OS = bit.platform.os
         g.PLATFORM = bit.platform.name
-        g.SHOBJ = '.' + bit.ext.shobj
-        g.SHLIB = '.' + bit.ext.shlib
+        g.SHOBJ = bit.ext.dotshobj
+        g.SHLIB = bit.ext.dotshlib
 
-        /*
+        /* UNUSED
             Make meta-globals
-         */
         for each (name in bit.globals) {
             global[name] = bit.globals[name]
         }
+         */
     }
 
     /*
@@ -2932,6 +2927,13 @@ UNUSED
                 if (path.exists) {
                     loadBitFile(path)
                 }
+            }
+        }
+        for (let [key,value] in bit.ext.clone()) {
+            if (value) {
+                bit.ext['dot' + key] = '.' + value
+            } else {
+                bit.ext['dot' + key] = value
             }
         }
         expandTokens(bit)
