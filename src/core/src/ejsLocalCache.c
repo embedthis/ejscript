@@ -174,10 +174,12 @@ static EjsPot *sl_limits(Ejs *ejs, EjsLocalCache *cache, int argc, EjsObj **argv
         mprAssert(cache == shared);
     }
     result = ejsCreateEmptyPot(ejs);
-    ejsSetPropertyByName(ejs, result, EN("keys"), ejsCreateNumber(ejs, cache->maxKeys == MAXSSIZE ? 0 : cache->maxKeys));
+    ejsSetPropertyByName(ejs, result, EN("keys"), 
+        ejsCreateNumber(ejs, (MprNumber) (cache->maxKeys == MAXSSIZE ? 0 : cache->maxKeys)));
     ejsSetPropertyByName(ejs, result, EN("lifespan"), 
         ejsCreateNumber(ejs, (MprNumber) (cache->lifespan / MPR_TICKS_PER_SEC)));
-    ejsSetPropertyByName(ejs, result, EN("memory"), ejsCreateNumber(ejs, cache->maxMem == MAXSSIZE ? 0 : cache->maxMem));
+    ejsSetPropertyByName(ejs, result, EN("memory"), 
+        ejsCreateNumber(ejs, (MprNumber) (cache->maxMem == MAXSSIZE ? 0 : cache->maxMem)));
     return result;
 }
 
