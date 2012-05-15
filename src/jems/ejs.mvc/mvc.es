@@ -604,7 +604,7 @@ class EjsMvc {
         let exe = ""
         let lib = ""
         switch (Config.OS) {
-        case "WIN":
+        case "WINDOWS":
             exe = ".exe"
             lib = ".dll"
             break

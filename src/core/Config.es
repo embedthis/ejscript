@@ -27,7 +27,7 @@ module ejs {
         native static const CPU: String
 
         /**
-            Operating system version. One of: WIN, LINUX, MACOSX, FREEBSD, SOLARIS, CYGWIN, VXWORKS
+            Operating system version. One of: WINDOWS, LINUX, MACOSX, FREEBSD, SOLARIS, CYGWIN, VXWORKS
          */
         native static const OS: String
 

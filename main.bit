@@ -77,7 +77,7 @@ Bit.load({
         },
 
         package: {
-            enable: "'${OS}' == 'linux' || '${OS}' == 'macosx' || '${OS}' == 'win'",
+            enable: "'${OS}' == 'linux' || '${OS}' == 'macosx' || '${OS}' == 'windows'",
             depends: ['packageBinary', 'packageSource', 'packageCombo'],
         },
 

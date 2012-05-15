@@ -176,7 +176,7 @@ class JemCmd
         // TODO - should be in Config
         if (Config.OS == "MACOSX") {
             ext.lib = ".dylib"
-        } else if (Config.OS == "WIN") {
+        } else if (Config.OS == "WINDOWS") {
             ext.lib = ".dll"
         } else {
             ext.lib = ".so"
