@@ -12,7 +12,7 @@ Bit.load({
                 let cmd = Cmd('ejs bench.es', {detach: true})
 	            trace('Waiting', 'Wait for memory usage to settle')
                 App.sleep(25 * 1000)
-                if (Config.OS == 'WIN') {
+                if (Config.OS == 'WINDOWS') {
                     let response = Path('/proc/' + cmd.pid + '/status')
                 } else if (Config.OS == 'MACOSX') {
                     let response = run('ps -p ' + cmd.pid + ' -o rss').match(/^.*$/mg)[1]

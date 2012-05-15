@@ -34,7 +34,7 @@ bit.env.WIND_BASE = path
 bit.env.WIND_HOME = path.dirname
 bit.env.WIND_PLATFORM = path.basename
 
-if (Config.OS == 'WIN') {
+if (Config.OS == 'WINDOWS') {
     bit.env.WIND_HOST_TYPE = 'x86-win32'
 
 } else if (Config.OS == 'LINUX') {

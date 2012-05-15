@@ -2222,7 +2222,7 @@ public class Bit {
         path = path.relative
         if (bit.platform.like == 'windows') {
             path = (generating == 'nmake') ? path.windows : path.portable
-        } else if (Config.OS == 'WIN' && generating && generating != 'nmake')  {
+        } else if (Config.OS == 'WINDOWS' && generating && generating != 'nmake')  {
             path = path.portable 
         }
         return repvar(path)
@@ -2348,7 +2348,7 @@ public class Bit {
         }
 /* UNUSED
         if (generating == 'make') {
-            if (local.os == 'WIN') sep = ';'
+            if (local.os == 'WINDOWS') sep = ';'
             genout.writeLine('export PATH := ' + outbin + sep + '${PATH}')
             if (Config.OS == 'MACOSX') {
                 genout.writeLine('export DYLD_LIBRARY_PATH := ' + outbin + sep + '${DYLD_LIBRARY_PATH}')
@@ -2358,12 +2358,12 @@ public class Bit {
             genout.writeLine('')
 
         } else if (generating == 'nmake') {
-            if (local.os == 'WIN') sep = ';'
+            if (local.os == 'WINDOWS') sep = ';'
             genout.writeLine('PATH = ' + outbin + sep + '${PATH}')
             genout.writeLine('')
 
         } else if (generating == 'sh') {
-            if (local.os == 'WIN') sep = ';'
+            if (local.os == 'WINDOWS') sep = ';'
             genout.writeLine('export PATH="' + outbin + sep + '${PATH}' + '"')
             if (Config.OS == 'MACOSX') {
                 genout.writeLine('export DYLD_LIBRARY_PATH="' + outbin + sep + '${DYLD_LIBRARY_PATH}' + '"')
@@ -2798,7 +2798,7 @@ global.NN = item.ns
             If we are a 32 bit program, we don't get to see /Program Files (x86)
          */
         let programs: Path
-        if (Config.OS == 'WIN') {
+        if (Config.OS == 'WINDOWS') {
             let pvar = App.getenv('PROGRAMFILES')
             let pf64 = Path(pvar + ' (x86)')
             programs = Path(pf64.exists ? pf64 : pvar)
