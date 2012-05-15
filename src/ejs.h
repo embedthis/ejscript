@@ -3509,7 +3509,7 @@ extern bool ejsIsInfinite(MprNumber n);
         @ingroup EjsNumber
      */
     extern bool ejsIsNan(MprNumber n);
-#elif WIN
+#elif WINDOWS
     #define ejsIsNan(f) (_isnan(f))
 #elif MACOSX || LINUX || VXWORKS
     #define ejsIsNan(f) isnan(f)
