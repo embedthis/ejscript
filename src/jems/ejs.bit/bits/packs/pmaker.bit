@@ -12,7 +12,7 @@ case 'macosx':
     path = path.join('Contents/MacOS/PackageMaker')
     break
 
-case 'win':
+case 'windows':
     let search = bit.dir.programs.glob('Inno Setup*').sort().reverse()
     path = probe(bit.packs.pmaker.path || 'iscc.exe', {fullpath: true, search: search})
     break
