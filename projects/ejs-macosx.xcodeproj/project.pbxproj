@@ -2483,7 +2483,7 @@ cp -r ../../${CFG_DIR}/bin/ejsrun ../../${CFG_DIR}/bin/utest
 ../src/jems/ejs.bit/bits/os/posix.bit,
 ../src/jems/ejs.bit/bits/os/solaris.bit,
 ../src/jems/ejs.bit/bits/os/vxworks.bit,
-../src/jems/ejs.bit/bits/os/win.bit,
+../src/jems/ejs.bit/bits/os/windows.bit,
 ../src/jems/ejs.bit/bits/packs,
 ../src/jems/ejs.bit/bits/packs/compiler.bit,
 ../src/jems/ejs.bit/bits/packs/doxygen.bit,
@@ -2800,9 +2800,6 @@ cp ejs-macosx-bit.h ${INC_DIR}/bit.h
 fi
 if [ ../src/deps/mpr/mpr.h -nt ${CFG_DIR}/inc/mpr.h ] ; then
 cp ../src/deps/mpr/mpr.h ${CFG_DIR}/inc/mpr.h
-fi
-if [ ../src/deps/mpr/mprSsl.h -nt ${CFG_DIR}/inc/mprSsl.h ] ; then
-cp ../src/deps/mpr/mprSsl.h ${CFG_DIR}/inc/mprSsl.h
 fi
 if [ ../src/deps/pcre/pcre.h -nt ${CFG_DIR}/inc/pcre.h ] ; then
 cp ../src/deps/pcre/pcre.h ${CFG_DIR}/inc/pcre.h

@@ -380,7 +380,7 @@ function packageNative(pkg: Path, options) {
     case 'macosx':
         packageMacosx(pkg, options)
         break
-    case 'win':
+    case 'windows':
         packageWin(pkg, options)
         break
     default:

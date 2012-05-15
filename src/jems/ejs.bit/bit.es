@@ -55,7 +55,7 @@ public class Bit {
     private var selectedTargets: Array
 
     private var posix = ['macosx', 'linux', 'unix', 'freebsd', 'solaris']
-    private var windows = ['win', 'wince']
+    private var windows = ['windows', 'wince']
     private var start: Date
     private var targetsToBuildByDefault = { exe: true, file: true, lib: true, obj: true, build: true }
     private var targetsToBlend = { exe: true, lib: true, obj: true, action: true, build: true, clean: true }
