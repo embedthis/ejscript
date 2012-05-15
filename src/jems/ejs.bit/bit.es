@@ -32,6 +32,7 @@ public class Bit {
     private var envSettings: Object
     private var local: Object
     private var localPlatform: String
+    private var localBin: Path
     private var missing = null
     private var options: Object = { control: {}}
     private var out: Stream
@@ -2296,11 +2297,9 @@ public class Bit {
             if (base) {
                 dir = dir.relativeTo(base)
             }
-            //  MOB ZZ remove global[n]
             global[n] = bit.globals[n] = dir
         }
-        //  MOB ZZ remove global[n]
-        // bit.globals.LBIN = global.LBIN
+        bit.globals.LBIN = localBin
     }
 
     public function setRuleVars(target, base: Path = App.dir) {
@@ -2881,13 +2880,6 @@ UNUSED
         b.loadBitObject(o, ns)
     }
 
-    /* UNUSED
-    public static function loadFile(path: Path) {
-        print("XXXXXXXXXXXX")
-        b.loadBitFile(path)
-    }
-*/
-
     public function safeRemove(dir: Path) {
 /* UNUSED
         if (dir.isAbsolute)  {
@@ -2951,9 +2943,7 @@ UNUSED
         setPathEnvVar(bit)
         castDirTypes()
         if (platform == localPlatform) {
-            let lbin = bit.dir.bin
-            //  MOB ZZ
-            bit.globals.LBIN = lbin.portable
+            bit.globals.LBIN = localBin = bit.dir.bin.portable
         }
     }
 
