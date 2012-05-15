@@ -1,20 +1,15 @@
 /*
     compiler.bit - Compile package for Bit
  */
-var cc: Path
+let cc: Path
 let platform = bit.platform
 pack('compiler', "C/C++ Compiler")
 
-//  MOB - fix and fully listen to existing path setting
 let path: Path = bit.packs.compiler.path
 
 if (platform.like == 'posix') {
-    let name = path ? path.basename : (platform.os == 'macosx' ? 'clang' : 'gcc')
-    if (bit.emulating) {
-        cc = name
-    } else {
-        cc = probe(name, {fullpath: true})
-    }
+    path ||= (platform.os == 'macosx') ? 'clang' : 'gcc'
+    cc = probe(path, {fullpath: true})
     Bit.load({packs: { compiler: { path: cc }}})
 
 } else if (platform.like == 'windows') {
@@ -53,7 +48,8 @@ if (platform.like == 'posix') {
         vsbin = vsdir.join('VC/Bin'),
         vslib = vsdir.join('VC/lib')
     } else {
-        cc = probe('cl.exe', {fullpath: true, search: search})
+        path ||= 'cl.exe'
+        cc = probe(path, {fullpath: true, search: search})
         vsbin = cc.dirname
         if (bit.platform.arch == 'x64') {
             vslib = vsbin.join('../../lib/amd64').normalize
@@ -76,27 +72,28 @@ if (platform.like == 'posix') {
     bit.env.LIB += [ vslib ]
 
 } else if (platform.os == 'vxworks') {
-    let name
-    if (platform.arch.match(/^i386$|^i486$$/)) {
-        name = 'cc386'
-    } else if (platform.arch.match(/^i[56]86$|^pentium$|^x86$/)) {
-        name = 'ccpentium'
-    } else if (platform.arch.match(/^ppc/)) {
-        name = 'ccppc'
-    } else if (platform.arch.match(/^xscale|^arm/)) {
-        name = 'ccarm'
-    } else if (platform.arch.match(/^68/)) {
-        name = 'cc68k'
-    } else if (platform.arch.match(/^sh/)) {
-        name = 'ccsh'
-    } else if (platform.arch.match(/^mips$/)) {
-        name = 'ccmips'
-    } else {
-        throw 'Unsupported CPU architecture: ' + platform.arch
+    if (!path) {
+        if (platform.arch.match(/^i386$|^i486$$/)) {
+            path = 'cc386'
+        } else if (platform.arch.match(/^i[56]86$|^pentium$|^x86$/)) {
+            path = 'ccpentium'
+        } else if (platform.arch.match(/^ppc/)) {
+            path = 'ccppc'
+        } else if (platform.arch.match(/^xscale|^arm/)) {
+            path = 'ccarm'
+        } else if (platform.arch.match(/^68/)) {
+            path = 'cc68k'
+        } else if (platform.arch.match(/^sh/)) {
+            path = 'ccsh'
+        } else if (platform.arch.match(/^mips$/)) {
+            path = 'ccmips'
+        } else {
+            throw 'Unsupported CPU architecture: ' + platform.arch
+        }
     }
-    cc = probe(name, {fullpath: true, search: bit.packs.vxworks.search})
-    bit.env.WIND_CCNAME = name
-    Bit.load({packs: { compiler: { path: cc, name: name }}})
+    cc = probe(path, {fullpath: true, search: bit.packs.vxworks.search})
+    bit.env.WIND_CCNAME = path.basename
+    Bit.load({packs: { compiler: { path: cc, name: path.basename }}})
 }
 
 let settings = {}

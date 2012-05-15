@@ -3,9 +3,8 @@
  */
 
 pack('pcre', 'Regular Expression Package')
-let path: Path = bit.packs.pcre.path
-let search = []
-search = [(path) ? path : bit.dir.src.join('src/deps/pcre')]
+let path: Path = bit.packs.pcre.path || bit.dir.src.join('src/deps/pcre')
+let search = [path]
 let pcre = probe('pcre.c', {search: search})
 Bit.load({packs: { pcre: { path: pcre }}})
 

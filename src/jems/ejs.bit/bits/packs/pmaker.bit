@@ -5,24 +5,23 @@
 pack('pmaker', 'Package Maker Tool')
 
 let path
-
 switch (bit.platform.os) {
 case 'macosx':
     let search = ['/Applications', '/Developer/Applications/Utilities' ]
-    path = probe('PackageMaker.app', {fullpath: true, search: search})
+    path = probe(bit.packs.pmaker.path || 'PackageMaker.app', {fullpath: true, search: search})
     path = path.join('Contents/MacOS/PackageMaker')
     break
 
 case 'win':
-    let search = bit.dir.programs.glob('Inno Setup*')
-    path = probe('iscc.exe', {fullpath: true, search: search.sort().reverse()})
+    let search = bit.dir.programs.glob('Inno Setup*').sort().reverse()
+    path = probe(bit.packs.pmaker.path || 'iscc.exe', {fullpath: true, search: search})
     break
 
 case 'linux':
     if (bit.platform.dist == 'ubuntu') {
-        path = probe('dpkg', {fullpath: true})
+        path = probe(bit.packs.pmaker.path || 'dpkg', {fullpath: true})
     } else if (bit.platform.dist == 'fedora') {
-        path = probe('rpmbuild', {fullpath: true})
+        path = probe(bit.packs.pmaker.path || 'rpmbuild', {fullpath: true})
     }
     break
 }

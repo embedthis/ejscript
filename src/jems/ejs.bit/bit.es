@@ -320,19 +320,8 @@ public class Bit {
     }
 
     function genStartBitFile(platform) {
-        let nbit = {
-/*
-            blend: [ 
-                platform + '.bit',
-            ],
- */
-        }
+        let nbit = { }
         nbit.platforms = platforms
-/*
-        if (platforms.length > 1) {
-            nbit.platforms = platforms.slice(1)
-        }
- */
         trace('Generate', START)
         let data = '/*\n    start.bit -- Startup Bit File for ' + bit.settings.title + 
             '\n */\n\nBit.load(' + 
@@ -386,7 +375,7 @@ public class Bit {
                 serialize(nbit, {pretty: true, indent: 4, commas: true, quotes: false}) + ')\n'
             path.write(data)
         }
-        if (options.show) {
+        if (options.show && options.verbose) {
             trace('Configuration', bit.settings.title + ' for ' + platform + 
                 '\nsettings = ' +
                 serialize(bit.settings, {pretty: true, indent: 4, commas: true, quotes: false}) +
@@ -722,6 +711,8 @@ public class Bit {
                 if (p && p.enable && p.path) {
                     if (options.verbose) {
                         vtrace('Found', desc + ' at ' + p.path)
+                    } else if (options.show) {
+                        trace('Found', desc + ' at:\n                 ' + p.path)
                     } else {
                         trace('Found', desc)
                     }
@@ -740,9 +731,13 @@ public class Bit {
      */
     public function probe(file: Path, control = {}): Path {
         let path: Path
-        if (!file.exists) {
-            let search = []
-            let dir
+        if (bit.emulating) {
+            return file.basename
+        }
+        if (file.exists) {
+            path = file
+        } else {
+            let search = [], dir
             if (dir = bit.packs[currentPack].path) {
                 search.push(dir)
             }
@@ -3006,7 +3001,11 @@ public function probe(file: Path, options = {}): Path {
     return b.probe(file, options)
 }
 
-public function program(name, description = null) {
+/*
+    Resolve a program. Name can be either a path or a basename with optional extension
+ */
+public function program(name: Path, description = null) {
+    let path = bit.packs[name.trimExt()].path || name
     let packs = {}
     let cfg = {description: description}
     packs[name] = cfg

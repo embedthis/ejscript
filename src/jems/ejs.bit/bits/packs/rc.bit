@@ -3,5 +3,5 @@
  */
 pack('rc', 'Windows Resource Compiler')
 
-let rc = (Config.OS != 'WIN') ? 'rc' : probe('rc.exe', {fullpath: true, search: bit.packs.winsdk.search})
+let rc = probe(bit.packs.rc.path || 'rc.exe', {fullpath: true, search: bit.packs.winsdk.search})
 Bit.load({packs: { rc: { path: rc }}})

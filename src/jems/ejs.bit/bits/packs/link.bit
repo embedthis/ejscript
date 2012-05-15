@@ -5,10 +5,10 @@
 pack('link', 'Link Editor Program')
 
 if (bit.platform.like == 'windows') {
-    let link = (Config.OS != 'WIN') ? 'link' : probe('link.exe', {fullpath: true, search: bit.packs.compiler.search})
+    let link = probe('link.exe', {fullpath: true, search: bit.packs.compiler.search})
     Bit.load({packs: { link: { path: link }}})
 } else {
-    let link = bit.emulating ? 'ld' : probe('ld', {fullpath: true})
+    let link = probe('ld', {fullpath: true})
     Bit.load({packs: { link: { path: link }}})
 }
 

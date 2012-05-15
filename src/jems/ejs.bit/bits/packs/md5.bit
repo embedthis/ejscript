@@ -3,7 +3,9 @@
  */
 
 pack('md5', 'Message Digest Tool')
-let md5 = probe('md5', {nothrow: true, fullpath: true})
+
+let path = bit.packs.md5.path || 'md5'
+let md5 = probe(path, {nothrow: true, fullpath: true})
 if (!md5) md5 = probe('md5sum', {nothrow: true, fullpath: true})
 if (!md5) {
     /* This will throw */
