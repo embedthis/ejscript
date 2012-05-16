@@ -357,16 +357,6 @@ public class Bit {
         if (bit.dir.bits != Config.LibDir.join('bits')) {
             nbit.dir.bits = bit.dir.bits
         }
-/*
-   MOB - WHY
-    This messes up appweb "bit projects". The cross bit files get entries for libmpr when then doesn't build correctly
-        for (let [tname,target] in bit.targets) {
-            if (target.built) {
-                nbit.targets ||= {}
-                nbit.targets[tname] = { built: true}
-            }
-        }
- */
         if (nbit.settings) {
             Object.sortProperties(nbit.settings);
         }
@@ -1731,7 +1721,6 @@ public class Bit {
             throw 'Possible recursive dependancy: target ' + target.name + ' is already building'
         }
         target.building = true
-        //MOB bit.target = target
         target.linker ||= []
         target.libpaths ||= []
         target.includes ||= []
@@ -2346,70 +2335,10 @@ public class Bit {
         if (generating) {
             outbin = outbin.relative
         }
-/* UNUSED
-        if (generating == 'make') {
-            if (local.os == 'WINDOWS') sep = ';'
-            genout.writeLine('export PATH := ' + outbin + sep + '${PATH}')
-            if (Config.OS == 'MACOSX') {
-                genout.writeLine('export DYLD_LIBRARY_PATH := ' + outbin + sep + '${DYLD_LIBRARY_PATH}')
-            } else {
-                genout.writeLine('export LD_LIBRARY_PATH := ' + outbin + sep + '${LD_LIBRARY_PATH}')
-            }
-            genout.writeLine('')
-
-        } else if (generating == 'nmake') {
-            if (local.os == 'WINDOWS') sep = ';'
-            genout.writeLine('PATH = ' + outbin + sep + '${PATH}')
-            genout.writeLine('')
-
-        } else if (generating == 'sh') {
-            if (local.os == 'WINDOWS') sep = ';'
-            genout.writeLine('export PATH="' + outbin + sep + '${PATH}' + '"')
-            if (Config.OS == 'MACOSX') {
-                genout.writeLine('export DYLD_LIBRARY_PATH="' + outbin + sep + '${DYLD_LIBRARY_PATH}' + '"')
-            } else {
-                genout.writeLine('export LD_LIBRARY_PATH="' + outbin + sep + '${LD_LIBRARY_PATH}' + '"')
-            }
-            genout.writeLine('')
-
-        } else {
- */
         App.putenv('PATH', outbin + sep + App.getenv('PATH'))
         App.log.debug(2, "PATH=" + App.getenv('PATH'))
-/* UNUSED
-        if (Config.OS == 'MACOSX') {
-            App.putenv('DYLD_LIBRARY_PATH', outbin + sep + App.getenv('DYLD_LIBRARY_PATH'))
-        } else {
-            App.putenv('LD_LIBRARY_PATH', outbin + sep + App.getenv('LD_LIBRARY_PATH'))
-        }
- */
     }
 
-    /*
-        MOB - cleanup
-        Form is:
-
-            scripts: {
-                when: [
-                    { home: Path, shell: 'bash|ejs', script: 'command', },
-                ]
-
-                when: "string"      // Gets converted to above
-            }
-            When: action, build, prebuild, postblend, preresolve, presource, prebuild, *
-
-        Inputs:
-
-            action: ""          -- run with an explicit target action on the command line (type == action)
-            build: ""           -- run for a 'build' (type == build)
-            shell: ""           -- Action, run with an explicit target action on the command line
-
-            type: 'xxx', action: '': 
-            type: 'build|clean' etc.
-
-        Types:
-            lib, obj, exe, file, res
-     */
     /*
         Run an event script in the directory of the bit file
         When values used are: build, prebuild, postblend, preresolve, presource, prebuild, action
@@ -2837,32 +2766,6 @@ global.NN = item.ns
         }
         return dist
     }
-
-    /*
-        Map the architecture into an MPR architecture flag
-        MOB - move to embedthis.es
-UNUSED
-    function getMprArch(arch) {
-        if (arch.match(/^i.86$|^x86$/)) {
-            return 'MPR_CPU_IX86'
-        } else if (arch.match(/^x64$|^x86_64$|^amd64$/)) {
-            return 'MPR_CPU_IX64'
-        } else if (arch.match(/^power|^ppc/)) {
-            return 'MPR_CPU_PPC'
-        } else if (arch.match(/^sparc$/)) {
-            return 'MPR_CPU_SPARC'
-        } else if (arch.match(/^xscale$/)) {
-            return 'MPR_CPU_XSCALE'
-        } else if (arch.match(/^arm$|^strongarm$|^xscale$/)) {
-            return 'MPR_CPU_ARM'
-        } else if (arch.match(/^mips$/)) {
-            return 'MPR_CPU_MIPS'
-        } else if (arch.match(/^sh/)) {
-            return 'MPR_CPU_SH4'
-        }
-        return 'MPR_CPU_UNKNOWN'
-    }
-     */
 
     public static function load(o: Object, ns = null) {
         b.loadBitObject(o, ns)
