@@ -211,7 +211,8 @@ enumerable class Test {
 
         //  MOB - these are currently being set to the ejs bin and lib
         _bin = App.exeDir
-        _lib = _bin.join("../lib")
+        // _lib = _bin.join("../lib")
+        _lib = _bin
         if (!_lib.exists) {
             _lib = _bin
         }

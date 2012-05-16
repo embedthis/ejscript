@@ -16,7 +16,7 @@ assert(FileSystem("/a/b/c").root == Path("/").absolute)
 
 //  separator
 
-if (Config.OS == "WIN") {
+if (Config.OS == "WINDOWS") {
     assert(fs.separators == "\\/")
 } else if (Config.OS == "CYGWIN") {
     assert(fs.separators == "/\\")

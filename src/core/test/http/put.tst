@@ -11,7 +11,7 @@ data = path.readString()
 http.put(HTTP + "/file.dat", data)
 http.finalize()
 assert(http.status == 201 || http.status == 204)
-if (Config.OS != "WIN") {
+if (Config.OS != "WINDOWS") {
     assert(path.size == Path("web/file.dat").size)
 }
 try {Path("web/file.dat").remove()} catch {}
@@ -31,7 +31,7 @@ while (file.read(buf)) {
 http.finalize()
 assert(http.status == 201 || http.status == 204)
 http.close()
-if (Config.OS != "WIN") {
+if (Config.OS != "WINDOWS") {
     assert(path.size == Path("web/file.dat").size)
 }
 assert(path.size == Path("web/file.dat").size)
