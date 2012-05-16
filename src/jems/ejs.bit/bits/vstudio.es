@@ -217,7 +217,7 @@ function archPropBuild(base: Path, arch) {
 <Project ToolsVersion="4.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
   <ImportGroup Label="PropertySheets" />
   <PropertyGroup Label="UserMacros">
-    <CfgDir>..\\..\\win-' + arch + '-$(Cfg)</CfgDir>
+    <CfgDir>..\\..\\windows-' + arch + '-$(Cfg)</CfgDir>
     <IncDir>$([System.IO.Path]::GetFullPath($(ProjectDir)\\$(CfgDir)\\inc))</IncDir>
     <ObjDir>$([System.IO.Path]::GetFullPath($(ProjectDir)\\$(CfgDir)\\obj))</ObjDir>
     <BinDir>$([System.IO.Path]::GetFullPath($(ProjectDir)\\$(CfgDir)\\bin))</BinDir>
