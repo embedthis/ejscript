@@ -200,6 +200,12 @@
   </ItemGroup>
 
   <ItemDefinitionGroup>
+    <Link>
+      <ModuleDefinitionFile>libejs.def</ModuleDefinitionFile>
+    </Link>
+  </ItemDefinitionGroup>
+
+  <ItemDefinitionGroup>
   <Link>
     <AdditionalDependencies>libhttp.lib;libmpr.lib;libpcre.lib;libmprssl.lib;%(AdditionalDependencies)</AdditionalDependencies>
     <AdditionalLibraryDirectories>$(OutDir);$(Cfg)\bin;%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
