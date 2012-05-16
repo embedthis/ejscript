@@ -1138,7 +1138,7 @@ public class Bit {
         genout.writeLine('\t@if not exist $(CONFIG)\\inc\\bit.h ' +
             'copy projects\\' + bit.settings.product + '-$(OS)-bit.h $(CONFIG)\\inc\\bit.h')
         genout.writeLine('\t@if not exist $(CONFIG)\\bin\\libmpr.def ' +
-            'xcopy /Y /S projects\\' + bit.settings.product + '-win\\*.def $(CONFIG)\\bin\n')
+            'xcopy /Y /S projects\\' + bit.settings.product + '-windows\\*.def $(CONFIG)\\bin\n')
         genout.writeLine('clean:')
         action('cleanTargets')
         genout.writeLine('')
