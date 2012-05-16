@@ -216,13 +216,6 @@ public function package(pkg: Path, formats) {
         options.group = 'wheel'
     }
     options.vname = bit.settings.product + '-' + bit.settings.version + '-' + bit.settings.buildNumber
-
-/* UNUSED
-    if (bit.platforms.length > 1) {
-        trace('Info', 'Skip packaging for ' + formats + ' when cross-compiling')
-        return
-    }
-*/
     for each (fmt in formats) {
         switch (fmt) {
         case 'combo':
@@ -342,9 +335,6 @@ function packageInstall(pkg: Path, options) {
             file.copy(target)
         }
     }
-    /* UNUSED
-        name.remove()
-    */
     packageInstallConfigure()
     if (prior) {
         log.append(prior.readString())
@@ -381,7 +371,7 @@ function packageNative(pkg: Path, options) {
         packageMacosx(pkg, options)
         break
     case 'windows':
-        packageWin(pkg, options)
+        packageWindows(pkg, options)
         break
     default:
         trace('Info', 'Can\'t package for ' + bit.platform.os)
@@ -548,7 +538,7 @@ function packageUbuntu(pkg: Path, options) {
     bit.dir.rel.join('md5-' + base).joinExt('deb.txt', true).write(md5(outfile.readString()))
 }
 
-function packageWin(pkg: Path, options) {
+function packageWindows(pkg: Path, options) {
     if (!bit.packs.pmaker || !bit.packs.pmaker.path) {
         throw 'Configured without pmaker: Inno Setup'
     }
