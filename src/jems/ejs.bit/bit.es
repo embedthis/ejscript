@@ -75,6 +75,7 @@ public class Bit {
             file: { range: String },
             force: {},
             gen: { alias: 'g', range: String, separator: Array, commas: true },
+            help: { alias: 'h' },
             import: { alias: 'init', range: Boolean },
             keep: { alias: 'k' },
             log: { alias: 'l', range: String },
@@ -113,6 +114,7 @@ public class Bit {
             '    --file file.bit                    # Use the specified bit file\n' +
             '    --force                            # Override warnings\n' +
             '    --gen [make|nmake|sh|vs|xcode]     # Generate project file\n' + 
+            '    --help                             # Print help message\n' + 
             '    --import                           # Import standard bit configuration\n' + 
             '    --keep                             # Keep intermediate files\n' + 
             '    --log logSpec                      # Save errors to a log file\n' +
@@ -132,21 +134,34 @@ public class Bit {
             '')
         if (START.exists) {
             try {
-                global.bit = bit = b.bit
+                // global.bit = bit = b.bit
                 b.makeBit(Config.OS.toLower() + '-' + Config.CPU, START)
+                global.bit = bit = b.bit
+                let bitfile: Path = START
+                for (let [index,platform] in bit.platforms) {
+                    bitfile = bitfile.dirname.join(platform).joinExt('bit')
+                    if (bitfile.exists) {
+                        b.makeBit(platform, bitfile)
+                        b.prepBuild()
+                    }
+                    break
+                }
                 if (bit.usage) {
                     print('Feature Selection: ')
                     for (let [item,msg] in bit.usage) {
                         print('  --set %-14s %s' % [item + '=value', msg])
                     }
+                    print('')
                 }
-                let targets = []
-                for (let [tname,target] in b.bit.targets) {
-                    targets.push(tname)
-                }
-                print("Targets:\n    ", targets.join(' '))
-                b.selectTargets()
-                print("\nDefault Targets:\n    ", b.selectedTargets.join(' '))
+                /* UNUSED && KEEP (too long) 
+                    let targets = []
+                    for (let [tname,target] in b.bit.targets) {
+                        targets.push(tname)
+                    }
+                    print("Targets:\n    ", targets.join(' '))
+                    b.selectTargets()
+                    print("\nDefault Targets:\n    ", b.selectedTargets.join(' '))
+                 */
             } catch (e) { print('CATCH: ' + e)}
         }
         App.exit(1)
@@ -193,8 +208,13 @@ public class Bit {
         Parse arguments
      */
     function setup(args: Args) {
+        options.control = {}
         if (options.version) {
             print(version)
+            App.exit(0)
+        }
+        if (options.help) {
+            usage()
             App.exit(0)
         }
         if (options.log) {
@@ -268,7 +288,6 @@ public class Bit {
             The --set|unset|with|without switches apply to the previous --platform switch
          */
         let platform = localPlatform
-        options.control = {}
         let poptions = options.control[platform] = {}
         for (i = 1; i < App.args.length; i++) {
             let arg = App.args[i]
@@ -357,13 +376,22 @@ public class Bit {
         if (bit.dir.bits != Config.LibDir.join('bits')) {
             nbit.dir.bits = bit.dir.bits
         }
+
+        /*
+            Ejscript in appweb uses this to mark tagets as being prebuilt. See packs/ejscript.bit
+         */
+        for (let [tname,target] in bit.targets) {
+            if (target.built) {
+                nbit.targets ||= {}
+                nbit.targets[tname] = { built: true}
+            }
+        }
         if (nbit.settings) {
             Object.sortProperties(nbit.settings);
         }
         if (options.config) {
             let path: Path = Path(platform).joinExt('bit')
             trace('Generate', path)
-
             let data = '/*\n    ' + platform + '.bit -- Build ' + bit.settings.title + ' for ' + platform + 
                 '\n */\n\nBit.load(' + 
                 serialize(nbit, {pretty: true, indent: 4, commas: true, quotes: false}) + ')\n'
@@ -684,7 +712,7 @@ public class Bit {
                         App.log.debug(0, e)
                     }
                     let kind = settings.required.contains(pack) ? 'Required' : 'Optional'
-                    whyMissing(kind + ' package "' + pack + '." ' + e)
+                    whyMissing(kind + ' package "' + pack + '". ' + e)
                     let p = bit.packs[pack] ||= {}
                     p.enable = false
                     p.diagnostic = "" + e
@@ -719,13 +747,13 @@ public class Bit {
      */
     public function probe(file: Path, control = {}): Path {
         let path: Path
+        let search = [], dir
         if (bit.emulating) {
             return file.basename
         }
         if (file.exists) {
             path = file
         } else {
-            let search = [], dir
             if (dir = bit.packs[currentPack].path) {
                 search.push(dir)
             }
@@ -747,7 +775,11 @@ public class Bit {
         }
         if (!path) {
             if (!control.nothrow) {
-                throw 'File ' + file + ' not found for package ' + currentPack
+                if (options.why) {
+                    trace('Probe', 'File ' + file)
+                    trace('Search', search.join(' '))
+                }
+                throw 'File ' + file + ' not found for package ' + currentPack + '.'
             }
             return null
         }
@@ -953,9 +985,16 @@ public class Bit {
             loadBitFile(home.join(expand(path, {fill: null})))
         }
         bit = blend(bit, o, {combine: true})
+
+        /*
+            Preserve +/-properties until blendDefaults
+         */
         for (let [tname, target] in o.targets) {
-            /* Overwrite targets with original unblended target. This delays blending to preserve +/-properties  */  
-            bit.targets[tname] = target
+            for (let [key,value] in target) {
+                if (key.toString().match(/^[-+]/)) {
+                    bit.targets[tname][key] = value
+                }
+            }
         }
         if (o.scripts && o.scripts.onload) {
             runScriptX(o.scripts.onload, home)
@@ -1560,9 +1599,8 @@ public class Bit {
                         includes: target.includes, vars: {} }
                     if (bit.targets[res]) {
                         resTarget = blend(bit.targets[resTarget.name], resTarget, {combined: true})
-                    } else {
-                        bit.targets[resTarget.name] = resTarget
                     }
+                    bit.targets[resTarget.name] = resTarget
                     target.files.push(res)
                     target.depends ||= []
                     target.depends.push(res)
@@ -1583,9 +1621,8 @@ public class Bit {
                         scripts: { precompile: precompile }, vars: {}}
                     if (bit.targets[obj]) {
                         objTarget = blend(bit.targets[objTarget.name], objTarget, {combined: true})
-                    } else {
-                        bit.targets[objTarget.name] = objTarget
                     }
+                    bit.targets[objTarget.name] = objTarget
                     target.files.push(obj)
                     target.depends ||= []
                     target.depends.push(obj)

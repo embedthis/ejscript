@@ -2487,7 +2487,7 @@ extern int httpCheckAuth(HttpConn *conn);
 extern HttpAuth *httpCreateInheritedAuth(HttpAuth *parent);
 
 
-#if BIT_FEATURE_AUTH_FILE
+#if BIT_FEATURE_AUTH_FILE || 1 || MOB
 /** 
     User Authorization
     File-based authorization backend

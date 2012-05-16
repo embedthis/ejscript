@@ -730,7 +730,7 @@ static int calcDigest(char **digest, cchar *userName, cchar *password, cchar *re
 
 
 
-#if BIT_FEATURE_AUTH_FILE
+#if BIT_FEATURE_AUTH_FILE || 1 || MOB
 /********************************** Forwards **********************************/
 
 static bool isUserValid(HttpAuth *auth, cchar *realm, cchar *user);
