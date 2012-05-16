@@ -96,7 +96,7 @@
 
   <CustomBuildStep>
     <Command>cd ..\..\src\jems\ejs.bit
--if exist $(BinDir)\bit.es del /Q $(BinDir)\bit.es
+if exist $(BinDir)\bit.es del /Q $(BinDir)\bit.es
 copy /Y bit.es $(BinDir)\bit.es
 cd ..\..\..\projects\ejs-windows</Command>
     <Outputs>$(BinDir)\bit.es</Outputs>

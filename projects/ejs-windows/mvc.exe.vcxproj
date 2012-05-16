@@ -96,7 +96,7 @@
 
   <CustomBuildStep>
     <Command>cd ..\..\src\jems\ejs.mvc
--if exist $(BinDir)\mvc.exe del /Q $(BinDir)\mvc.exe
+if exist $(BinDir)\mvc.exe del /Q $(BinDir)\mvc.exe
 copy /Y ..\$(BinDir)\ejsrun.exe $(BinDir)\mvc.exe
 cd ..\..\..\projects\ejs-windows</Command>
     <Outputs>$(BinDir)\mvc.exe</Outputs>

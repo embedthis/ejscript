@@ -96,7 +96,7 @@
 
   <CustomBuildStep>
     <Command>cd ..\..\src\jems\ejs.jem
--if exist $(BinDir)\jem.exe del /Q $(BinDir)\jem.exe
+if exist $(BinDir)\jem.exe del /Q $(BinDir)\jem.exe
 copy /Y ..\$(BinDir)\ejsrun.exe $(BinDir)\jem.exe
 cd ..\..\..\projects\ejs-windows</Command>
     <Outputs>$(BinDir)\jem.exe</Outputs>

@@ -96,7 +96,7 @@
 
   <CustomBuildStep>
     <Command>cd ..\..\src\jems\ejs.utest
--if exist $(BinDir)\utest.exe del /Q $(BinDir)\utest.exe
+if exist $(BinDir)\utest.exe del /Q $(BinDir)\utest.exe
 copy /Y ..\$(BinDir)\ejsrun.exe $(BinDir)\utest.exe
 cd ..\..\..\projects\ejs-windows</Command>
     <Outputs>$(BinDir)\utest.exe</Outputs>
