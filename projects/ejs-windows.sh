@@ -310,7 +310,7 @@ cp -r ${CONFIG}/bin/ejsrun.exe ${CONFIG}/bin/mvc.exe
 
 #  Omit build script /Users/mob/git/ejs/windows-x86-debug/bin/ejs.mvc.mod
 #  Omit build script /Users/mob/git/ejs/windows-x86-debug/bin/utest.worker
-"${CC}" -c -Fo${CONFIG}/obj/removeFiles.obj -Fd${CONFIG}/obj/removeFiles.pdb ${CFLAGS} ${DFLAGS} -I${CONFIG}/inc package/WIN/removeFiles.c
+"${CC}" -c -Fo${CONFIG}/obj/removeFiles.obj -Fd${CONFIG}/obj/removeFiles.pdb ${CFLAGS} ${DFLAGS} -I${CONFIG}/inc package/WINDOWS/removeFiles.c
 
 "${LD}" -out:${CONFIG}/bin/removeFiles.exe -entry:WinMainCRTStartup -subsystem:Windows ${LDFLAGS} ${LIBPATHS} ${CONFIG}/obj/removeFiles.obj ${LIBS} libmpr.lib
 

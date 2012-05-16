@@ -949,9 +949,9 @@ $(CONFIG)\bin\utest.worker:
 		cd ..\..\..
 
 $(CONFIG)\obj\removeFiles.obj: \
-        package\WIN\removeFiles.c \
+        package\WINDOWS\removeFiles.c \
         $(CONFIG)\inc\bit.h
-	"$(CC)" -c -Fo$(CONFIG)\obj\removeFiles.obj -Fd$(CONFIG)\obj\removeFiles.pdb $(CFLAGS) $(DFLAGS) -I$(CONFIG)\inc package\WIN\removeFiles.c
+	"$(CC)" -c -Fo$(CONFIG)\obj\removeFiles.obj -Fd$(CONFIG)\obj\removeFiles.pdb $(CFLAGS) $(DFLAGS) -I$(CONFIG)\inc package\WINDOWS\removeFiles.c
 
 $(CONFIG)\bin\removeFiles.exe:  \
         $(CONFIG)\bin\libmpr.dll \
