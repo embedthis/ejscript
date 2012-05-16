@@ -94,6 +94,7 @@ class EjsMvc {
             full: {},
             keep: { alias: 'k' },
             layout: { range: String },
+            log: { alias: 'l', range: String },
             listen: { range: String },
             min: {},
             overwrite: {},
@@ -106,13 +107,14 @@ class EjsMvc {
     }
 
     function usage(): Void {
-        error("\nUsage: " + mvc + " [options] [commands] ...\n" +
+        stderr.writeLine("\nUsage: mvc [options] [commands] ...\n" +
             "  Options:\n" + 
             "    --apply                      # Apply migrations\n" + 
             "    --database [sqlite | mysql]  # Sqlite only currently supported adapter\n" + 
             "    --full                       # Generate all directories\n" + 
             "    --keep                       # Keep intermediate source in cache\n" + 
             "    --layout layoutPage          # Specify a default layout page\n" + 
+            '    --log logSpec                # Save errors to a log file\n' +
             "    --listen port                # Port on which to listen for Http\n" + 
             "    --min                        # Generate mininally\n" + 
             "    --reverse                    # Reverse generated migrations\n" + 
@@ -121,8 +123,8 @@ class EjsMvc {
             "    --search searchPath          # Specify a module search path\n" + 
             "    --verbose                    # Increase trace verbosity\n")
 
-        let pre = "    " + mvc + " "
-        error("  Commands:\n" +
+        let pre = "    mvc "
+        stderr.writeLine("  Commands:\n" +
             pre + "clean\n" +
             pre + "compile [flat | app | controller_names | view_names]\n" +
             pre + "compile path/name.ejs ...\n" +
@@ -175,6 +177,10 @@ class EjsMvc {
         options = args.options
         if (options.search) {
             App.search = options.search.split(App.SearchSeparator)
+        }
+        if (options.log) {
+            App.log.redirect(options.log)
+            App.mprLog.redirect(options.log)
         }
         if (options.quiet) {
             options.verbose = 0
