@@ -2746,7 +2746,7 @@ global.NN = item.ns
     }
 
     function dist(os) {
-        let dist = { macosx: 'apple', win: 'ms', 'linux': 'ubuntu', 'vxworks': 'WindRiver' }[os]
+        let dist = { macosx: 'apple', windows: 'ms', 'linux': 'ubuntu', 'vxworks': 'WindRiver' }[os]
         if (os == 'linux') {
             let relfile = Path('/etc/redhat-release')
             if (relfile.exists) {
