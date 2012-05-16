@@ -288,8 +288,7 @@ function packageSrc(pkg: Path, options) {
 function packageTar(pkg: Path, options) {
     let s = bit.settings
     let rel = bit.dir.rel
-    let base = [s.product, s.version, s.buildNumber, bit.platform.dist, bit.platform.os.toUpper(), 
-        bit.platform.arch].join('-')
+    let base = [s.product, s.version, s.buildNumber, bit.platform.dist, bit.platform.os, bit.platform.arch].join('-')
     let name = rel.join(base).joinExt('tar', true)
     let zname = name.replaceExt('tgz')
     let files = pkg.glob('**', {exclude: /\/$/, missing: undefined})
@@ -313,8 +312,7 @@ function packageInstall(pkg: Path, options) {
     }
     let s = bit.settings
     let rel = bit.dir.rel
-    let base = [s.product, s.version, s.buildNumber, bit.platform.dist, bit.platform.os.toUpper(), 
-        bit.platform.arch].join('-')
+    let base = [s.product, s.version, s.buildNumber, bit.platform.dist, bit.platform.os, bit.platform.arch].join('-')
     //  UNUSED let name = rel.join(base).joinExt('tar', true)
     let contents = pkg.join(options.vname, 'contents')
     let files = contents.glob('**', {missing: undefined})
@@ -417,8 +415,7 @@ function packageMacosx(pkg: Path, options) {
     }
     let s = bit.settings
     let rel = bit.dir.rel
-    let base = [s.product, s.version, s.buildNumber, bit.platform.dist, bit.platform.os.toUpper(), 
-        bit.platform.arch].join('-')
+    let base = [s.product, s.version, s.buildNumber, bit.platform.dist, bit.platform.os, bit.platform.arch].join('-')
     let name = rel.join(base).joinExt('tar', true)
     let files = pkg.glob('**', {exclude: /\/$/, missing: undefined})
     let size = 20
@@ -466,8 +463,7 @@ function packageFedora(pkg: Path, options) {
         cpu = 'x86_64'
     }
     bit.platform.mappedCpu = cpu
-    let base = [s.product, s.version, s.buildNumber, bit.platform.dist, bit.platform.os.toUpper(), 
-        bit.platform.arch].join('-')
+    let base = [s.product, s.version, s.buildNumber, bit.platform.dist, bit.platform.os, bit.platform.arch].join('-')
     let contents = pkg.join(options.vname, 'contents')
     let RPM = pkg.join(options.vname, 'RPM')
     for each (d in ['SOURCES', 'SPECS', 'BUILD', 'RPMS', 'SRPMS']) {
@@ -530,8 +526,7 @@ function packageUbuntu(pkg: Path, options) {
     install(opak.join('deb.bin/control'), DEBIAN, {expand: true, permissions: 0755})
     install(opak.join('deb.bin/p*'), DEBIAN, {expand: true, permissions: 0755})
 
-    let base = [s.product, s.version, s.buildNumber, bit.platform.dist, bit.platform.os.toUpper(), 
-        bit.platform.arch].join('-')
+    let base = [s.product, s.version, s.buildNumber, bit.platform.dist, bit.platform.os, bit.platform.arch].join('-')
     let outfile = bit.dir.rel.join(base).joinExt('deb', true)
     trace('Package', outfile)
     run(bit.packs.pmaker.path + ' --build ' + DEBIAN.dirname + ' ' + outfile)
@@ -564,8 +559,7 @@ function packageWindows(pkg: Path, options) {
             'DestName: "' + dest.basename + '";\n')
     }
     cp.close()
-    let base = [s.product, s.version, s.buildNumber, bit.platform.dist, bit.platform.os.toUpper(), 
-        bit.platform.arch].join('-')
+    let base = [s.product, s.version, s.buildNumber, bit.platform.dist, bit.platform.os, bit.platform.arch].join('-')
     let outfile = bit.dir.rel.join(base).joinExt('exe', true)
     trace('Package', outfile)
     run([bit.packs.pmaker.path, iss])
