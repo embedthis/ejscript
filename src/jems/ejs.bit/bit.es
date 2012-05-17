@@ -983,10 +983,20 @@ public class Bit {
         for each (path in o.blend) {
             bit.globals.BITS = bit.dir.bits
             bit.globals.SRC = bit.dir.src
-            loadBitFile(home.join(expand(path, {fill: null})))
+            if (path.startsWith('?')) {
+                path = home.join(expand(path.slice(1), {fill: null}))
+                if (path.exists) {
+                    loadBitFile(path)
+                } else {
+                    vtrace('SKIP', 'Skip blending optional ' + path.relative)
+                }
+            } else {
+                path = home.join(expand(path, {fill: null}))
+                loadBitFile(path)
+            }
         }
         /*
-            Delay combining targets until blendDefaults. This is because "combine: true" erases the +/- property prefixes.
+            Delay combining targets until blendDefaults. This is because 'combine: true' erases the +/- property prefixes.
             These must be preserved until blendDefaults.
          */
         if (o.targets) {

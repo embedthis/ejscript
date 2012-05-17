@@ -257,7 +257,9 @@ function packageSimple(pkg: Path, options, fmt) {
     tar.create(pkg.glob('**', {exclude: /\/$/, missing: undefined}))
     use namespace 'ejs.zlib'
     global.Zlib.compress(tar.name, zname)
-    name.remove()
+    if (!bit.options.keep) {
+        name.remove()
+    }
     let generic = rel.join(s.product + '-' + fmt + '.tgz')
     generic.remove()
     Path(generic).symlink(zname)
