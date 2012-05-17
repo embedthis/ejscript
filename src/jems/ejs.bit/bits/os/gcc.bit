@@ -29,6 +29,9 @@ Bit.load({
                 if (bit.settings.hasDynLoad) {
                     defaults.libraries += ['dl']
                 }
+                if (bit.settings.hasPam) {
+                    defaults.libraries += ['pam']
+                }
                 if (bit.settings.preprocess) {
                     defaults.compiler.push('-E')
                 }

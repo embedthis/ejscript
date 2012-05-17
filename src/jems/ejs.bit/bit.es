@@ -528,6 +528,7 @@ public class Bit {
         if (settings.sslPort) {
             f.writeLine('#define BIT_SSL_PORT ' + settings.sslPort)
         }
+        //  MOB - need an emitter in compiler.bit
         f.writeLine('#define BIT_CC_DOUBLE_BRACES ' + (settings.hasDoubleBraces ? '1' : '0'))
         f.writeLine('#define BIT_CC_DYN_LOAD ' + (settings.hasDynLoad ? '1' : '0'))
         f.writeLine('#define BIT_CC_EDITLINE ' + (settings.hasLibEdit ? '1' : '0'))
@@ -984,11 +985,15 @@ public class Bit {
             bit.globals.SRC = bit.dir.src
             loadBitFile(home.join(expand(path, {fill: null})))
         }
+        /*
+            Delay combining targets until blendDefaults. This is because "combine: true" erases the +/- property prefixes.
+            These must be preserved until blendDefaults.
+         */
+        bit.targets = blend(bit.targets, o.targets)
+        delete o.targets
         bit = blend(bit, o, {combine: true})
 
-        /*
-            Preserve +/-properties until blendDefaults
-         */
+/*
         for (let [tname, target] in o.targets) {
             for (let [key,value] in target) {
                 if (key.toString().match(/^[-+]/)) {
@@ -996,6 +1001,7 @@ public class Bit {
                 }
             }
         }
+*/
         if (o.scripts && o.scripts.onload) {
             runScriptX(o.scripts.onload, home)
         }

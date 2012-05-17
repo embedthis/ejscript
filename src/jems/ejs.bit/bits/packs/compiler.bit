@@ -152,9 +152,9 @@ if (bit.emulating) {
         settings.hasMmu = compile(cc, '',
             '#include <stdio.h>\n#include <unistd.h>\nint main() { fork(); return 0; }')
         settings.hasPam = compile(cc, '',
-            'extern pam_start(); \nint main() { void *x = pam_start; return 0; }')
+            '#include <security/pam_appl.h>\nint main() { void *x = pam_start; return x != 0; }')
         settings.hasSyncCas = compile(cc, '',
-            '#include <stdio.h>\nint main() { void *ptr; __sync_bool_compare_and_swap(&ptr, ptr, ptr); return 0; }')
+            '#include <stdio.h>\nint main() { void *ptr = 0; __sync_bool_compare_and_swap(&ptr, ptr, ptr); return 0; }')
         settings.hasUnnamedUnions = compile(cc, '', 
             '#include <stdio.h>\nint main() { struct test { union { int x; int y; };}; return 0; }')
     }
