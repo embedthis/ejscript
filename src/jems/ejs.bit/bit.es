@@ -694,10 +694,10 @@ public class Bit {
                 }
                 continue
             }
-            let path = bit.dir.bits.join('packs', pack + '.bit')
+            let path = bit.dir.bits.join('packs', pack + '.pak')
             if (!path.exists) {
                 for each (d in settings.packs) {
-                    path = bit.dir.src.join(d, pack + '.bit')
+                    path = bit.dir.src.join(d, pack + '.pak')
                     if (path.exists) {
                         break
                     }
@@ -996,7 +996,7 @@ public class Bit {
         }
         bit = blend(bit, o, {combine: true})
 
-/*
+/* UNUSED
         for (let [tname, target] in o.targets) {
             for (let [key,value] in target) {
                 if (key.toString().match(/^[-+]/)) {
