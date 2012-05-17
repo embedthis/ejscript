@@ -95,12 +95,12 @@ module ejs.tar {
         function operate(files: Array, operation) {
             let archive = File(path, 'r')
             let home = App.dir
+            let result = []
             try {
                 if (options.chdir) {
                     App.chdir(options.chdir)
                 }
                 let data: ByteArray
-                let list = []
                 while ((data = archive.readBytes(BlockSize)) != null && data[0]) {
                     let header = new TarHeader(options)
                     header.parse(data)
@@ -121,10 +121,11 @@ module ejs.tar {
                             if (App.uid == 0) {
                                 path.setAttributes(header.attributes)
                             } else {
+//  MOB
                             }
 
                         } else if (operation == Info) {
-                            list.push({
+                            result.push({
                                 path: header.path,
                                 mode: header.mode,
                                 uid: header.uid,
@@ -137,7 +138,7 @@ module ejs.tar {
                             archive.position += header.size
 
                         } else if (operation == List) {
-                            list.push(path)
+                            result.push(path)
                             archive.position += header.size
 
                         } else if (operation == Read) {
@@ -157,7 +158,7 @@ module ejs.tar {
                 App.chdir(home)
             }
             archive.close()
-            return list
+            return result
         }
 
         function extract(...args): Void
