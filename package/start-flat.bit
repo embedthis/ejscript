@@ -1,27 +1,21 @@
 /*
-    main.bit -- Bit File to build the combo Ejscript release
+    start.bit -- Start Bit File to build the combo Ejscript release
  */
 
 Bit.load({
-    blend: [
-        "${BITS}/embedthis.bit",
-    ],
-
     settings: {
-		product: 'appweb',
+		product: 'ejs',
 		title: 'Embedthis Ejscript',
         company: 'Embedthis',
 		version: '2.0.0',
 		buildNumber: 'B2',
-        manager: 'ejsman',
     },
 
     targets: {
         libejs: {
             type: 'lib',
-            sources: [ 'appwebLib.c', 'deps.c', 'pcre.c', 'sqlite3.c' ],
+            sources: [ 'ejsLib.c', 'deps.c', 'pcre.c', 'sqlite3.c' ],
             headers: [ '*.h' ],
-            depends: [ ],
             '-compiler': [
                 /* SQLite needs these */
                 '-Wall',
@@ -30,15 +24,13 @@ Bit.load({
         },
         ejs: {
             type: 'exe',
+            sources: [ 'ejs.c' ],
             depends: [ 'libejs' ],
-            sources: [ 'appweb.c' ],
-            headers: [ '*.h' ],
         },
         ejsc: {
             type: 'exe',
+            sources: [ 'ejsc.c' ],
             depends: [ 'libejs' ],
-            sources: [ 'appweb.c' ],
-            headers: [ '*.h' ],
         },
         prep: {
             type: 'configure',

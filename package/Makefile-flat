@@ -1,5 +1,5 @@
 #
-#   macosx-x86_64-debug.mk -- Build It Makefile to build Embedthis Ejscript for macosx on x86_64
+#   macosx-x64-debug.mk -- Build It Makefile to build Embedthis Ejscript for macosx on x64
 #
 
 CFLAGS      := -g

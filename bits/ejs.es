@@ -103,7 +103,7 @@ public function packageSourceFiles() {
     let pkg = src.join(s.product + '-' + s.version)
     safeRemove(pkg)
     pkg.makeDir()
-    install(['Makefile', 'product.bit'], pkg)
+    install(['Makefile', 'start.bit', 'main.bit'], pkg)
     install('bits', pkg)
     install('*.md', pkg, {fold: true, expand: true})
     install('configure', pkg, {permissions: 0755})
@@ -129,8 +129,9 @@ public function packageComboFiles() {
     safeRemove(pkg)
     pkg.makeDir()
     install('projects/ejs-' + bit.platform.os + '-bit.h', pkg.join('src/deps/ejs/bit.h'))
-    install('package/ejs.bit', pkg.join('src/deps/ejs/product.bit'))
-    install('package/Makefile.flat', pkg.join('src/deps/ejs/Makefile'))
+    install('package/ejs-flat.bit', pkg.join('src/deps/ejs/ejs.bit'))
+    install('package/Makefile-flat', pkg.join('src/deps/ejs/Makefile'))
+    install('package/start-flat.bit', pkg.join('src/deps/ejs/start.bit'))
     let filter = /^#inc.*ejs.*$|^#inc.*mpr.*$|^#inc.*ec.*$|^#inc.*http.*$|^#inc.*customize.*$/mg
 
     install([
