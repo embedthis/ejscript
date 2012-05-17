@@ -359,7 +359,7 @@ public class Bit {
                 src: bit.dir.src.absolute.portable,
                 top: bit.dir.top.portable,
             },
-            settings: {},
+            settings: { configured: true },
             packs: bit.packs,
             env: bit.env,
         })
@@ -2892,7 +2892,7 @@ global.NN = item.ns
                 bit.ext['dot' + key] = value
             }
         }
-        if (!options.config && Object.getOwnPropertyCount(bit.packs) == 0) {
+        if (!bit.settings.configured && !options.config) {
             loadBitFile(bit.dir.bits.join('simple.bit'))
         }
         expandTokens(bit)
