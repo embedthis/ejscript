@@ -989,8 +989,11 @@ public class Bit {
             Delay combining targets until blendDefaults. This is because "combine: true" erases the +/- property prefixes.
             These must be preserved until blendDefaults.
          */
-        bit.targets = blend(bit.targets, o.targets)
-        delete o.targets
+        if (o.targets) {
+            bit.targets ||= {}
+            bit.targets = blend(bit.targets, o.targets)
+            delete o.targets
+        }
         bit = blend(bit, o, {combine: true})
 
 /*
