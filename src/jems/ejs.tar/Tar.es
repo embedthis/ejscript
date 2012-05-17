@@ -27,11 +27,14 @@ module ejs.tar {
             Create a new Tar object
             @param path Pathname to the tar archive
             @param options Configurable options
+            @option chdir Directory to change to before executing the desired operation. In create mode,
+                the archive is created, then the directory is changed before adding files. In extract mode,
+                the archive is opened, then the directory is changed before extracting files.
             @option relativeTo Path
-            @option uid
-            @option gid
-            @option user
-            @option group
+            @option uid User id to use instead of the file user id
+            @option gid Group id to use instead of the file group id
+            @option user User name to use instead of the file user name
+            @option group Group name to use instead of the file group name
          */
         function Tar(path: Path, options: Object = {}) {
             this.path = path
@@ -58,80 +61,100 @@ module ejs.tar {
 
         function create(...args): Void {
             var archive: File  = File(path, {mode: 'w', permissions: 0644})
-            for each (file in flatten(args)) {
-                if (!file.exists) {
-                    throw 'File does not exist: ' + file
+            let home = App.dir
+            try {
+                if (options.chdir) {
+                    App.chdir(options.chdir)
                 }
-                let header = new TarHeader(options)
-                header.createHeader(file)
-                header.write(archive)
-                let fp = File(file, 'r')
-                let data = new ByteArray
-                while (fp.read(data)) {
-                    archive.write(data)
+                for each (file in flatten(args)) {
+                    if (!file.exists) {
+                        throw 'File does not exist: ' + file
+                    }
+                    let header = new TarHeader(options)
+                    header.createHeader(file)
+                    header.write(archive)
+                    let fp = File(file, 'r')
+                    let data = new ByteArray
+                    while (fp.read(data)) {
+                        archive.write(data)
+                    }
+                    data.flush()
+                    let remainder = 512 - (file.size % 512)
+                    if (remainder < 512) {
+                        data.writePosition = remainder;
+                        archive.write(data)
+                    }
+                    fp.close()
                 }
-                data.flush()
-                let remainder = 512 - (file.size % 512)
-                if (remainder < 512) {
-                    data.writePosition = remainder;
-                    archive.write(data)
-                }
-                fp.close()
+            } finally {
+                App.chdir(home)
             }
             archive.close()
         }
 
         function operate(files: Array, operation) {
             let archive = File(path, 'r')
-            let data: ByteArray
-            let list = []
-            while ((data = archive.readBytes(BlockSize)) != null && data[0]) {
-                let header = new TarHeader(options)
-                header.parse(data)
-                let path = header.path
-                if (files.contains(path) || files.length == 0) {
+            let home = App.dir
+            try {
+                if (options.chdir) {
+                    App.chdir(options.chdir)
+                }
+                let data: ByteArray
+                let list = []
+                while ((data = archive.readBytes(BlockSize)) != null && data[0]) {
+                    let header = new TarHeader(options)
+                    header.parse(data)
+                    let path = header.path
+                    if (files.contains(path) || files.length == 0) {
 
-                    if (operation == Extract) {
-                        let fp = new File(header.name, 'w')
-                        let len = header.size
-                        while (len > 0) {
-                            count = len.min(data.length)
-                            bytes = archive.read(data, 0, count)
-                            fp.write(data)
-                            len -= count
+                        if (operation == Extract) {
+                            Path(header.name).dirname.makeDir()
+                            let fp = new File(header.name, 'w')
+                            let len = header.size
+                            while (len > 0) {
+                                count = len.min(data.length)
+                                bytes = archive.read(data, 0, count)
+                                fp.write(data)
+                                len -= count
+                            }
+                            fp.close()
+                            if (App.uid == 0) {
+                                path.setAttributes(header.attributes)
+                            } else {
+                            }
+
+                        } else if (operation == Info) {
+                            list.push({
+                                path: header.path,
+                                mode: header.mode,
+                                uid: header.uid,
+                                gid: header.gid,
+                                size: header.size,
+                                modified: header.modified,
+                                user: header.user,
+                                group: header.group,
+                            })
+                            archive.position += header.size
+
+                        } else if (operation == List) {
+                            list.push(path)
+                            archive.position += header.size
+
+                        } else if (operation == Read) {
+                            let result = new ByteArray(header.size)
+                            archive.read(result, 0, header.size)
+                            return result
                         }
-                        fp.close()
-                        path.setAttributes(header.attributes)
-
-                    } else if (operation == Info) {
-                        list.push({
-                            path: header.path,
-                            mode: header.mode,
-                            uid: header.uid,
-                            gid: header.gid,
-                            size: header.size,
-                            modified: header.modified,
-                            uname: header.uname,
-                            gname: header.gname,
-                        })
+                    } else {
                         archive.position += header.size
-
-                    } else if (operation == List) {
-                        list.push(path)
-                        archive.position += header.size
-
-                    } else if (operation == Read) {
-                        let result = new ByteArray(header.size)
-                        archive.read(result, 0, header.size)
-                        return result
                     }
-                } else {
-                    archive.position += header.size
+                    let remainder = 512 - (header.size % 512)
+                    if (remainder < 512) {
+                        archive.position += remainder;
+                    }
                 }
-                let remainder = 512 - (header.size % 512)
-                if (remainder < 512) {
-                    archive.position += remainder;
-                }
+            } finally {
+                App.chdir(home)
             }
             archive.close()
             return list
@@ -163,8 +186,8 @@ module ejs.tar {
         var type: Number            /* Type flag */
         var linkName: String        /* Link target name. Up to 100 characters. Null terminate if room */
         var magic: String           /* Set to 'ustar' null terminated */
-        var uname: String           /* User name. Up to 32 chars, null terminated */
-        var gname: String           /* Group name. Up to 32 chars, null terminated */
+        var user: String            /* User name. Up to 32 chars, null terminated */
+        var group: String           /* Group name. Up to 32 chars, null terminated */
         var major: Number           /* Device major (octal) */
         var magic: String           /* Magic string */
         var minor: Number           /* Device minor (octal) */
@@ -185,8 +208,8 @@ module ejs.tar {
             mode = attributes.permissions
             uid = options.uid || attributes.uid
             gid = options.gid || attributes.gid
-            uname = options.user || attributes.user
-            gname = options.group || attributes.group
+            user = options.user || attributes.user
+            group = options.group || attributes.group
             size = path.size
             modified = path.modified
             link = 0
@@ -271,9 +294,9 @@ module ejs.tar {
             ba.writePosition = 263
             ba.write('00')
             ba.writePosition = 265
-            ba.write('%s' % [uname])
+            ba.write('%s' % [user])
             ba.writePosition = 297
-            ba.write('%s' % [gname])
+            ba.write('%s' % [group])
             if (prefix) {
                 ba.writePosition = 345
                 ba.write(prefix)
