@@ -157,9 +157,9 @@ function init(base, name) {
         }
         bit.target = target
         if (target.type == 'lib' || target.type == 'exe' || target.type == 'file') {
-            runScript(target, 'prebuild')
+            runTargetScript(target, 'prebuild')
         } else if (target.type == 'obj') {
-            runScript(target, 'precompile')
+            runTargetScript(target, 'precompile')
         }
     }
     bit.targets._All_.depends = targets

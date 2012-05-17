@@ -416,7 +416,7 @@ public class Bit {
         writeDefinitions(f, platform)
         f.close()
         for (let [tname, target] in bit.targets) {
-            runScript(target, 'postconfig')
+            runTargetScript(target, 'postconfig')
         }
     }
 
@@ -800,6 +800,7 @@ public class Bit {
         if (!bitfile.exists) {
             throw 'Can\'t find ' + bitfile
         }
+        global.bit = bit = makeBareBit()
         loadBitFile(bitfile)
         if (bit.platforms) {
             for (let [index,platform] in bit.platforms) {
@@ -1016,7 +1017,7 @@ public class Bit {
         }
 */
         if (o.scripts && o.scripts.onload) {
-            runScriptX(o.scripts.onload, home)
+            runScript(o.scripts.onload, home)
         }
     }
 
@@ -1569,7 +1570,7 @@ public class Bit {
                 }
             }
         }
-        runScript(target, 'preresolve')
+        runTargetScript(target, 'preresolve')
     }
 
     function resolveDependencies() {
@@ -1587,7 +1588,7 @@ public class Bit {
     function expandWildcards() {
         let index
         for each (target in bit.targets) {
-            runScript(target, 'presource')
+            runTargetScript(target, 'presource')
             if (target.files) {
                 target.files = buildFileList(target.files)
             }
@@ -1666,13 +1667,13 @@ public class Bit {
      */
     function blendDefaults() {
         if (bit.defaults) {
-            runScript({scripts: bit.defaults.scripts}, 'preblend')
+            runTargetScript({scripts: bit.defaults.scripts}, 'preblend')
         }
         for (let [tname, target] in bit.targets) {
             if (targetsToBlend[target.type]) {
                 let def = blend({}, bit.defaults, {combine: true})
                 target = bit.targets[tname] = blend(def, target, {combine: true})
-                runScript(target, 'postblend')
+                runTargetScript(target, 'postblend')
                 if (target.scripts && target.scripts.preblend) {
                     delete target.scripts.preblend
                 }
@@ -1782,7 +1783,7 @@ public class Bit {
         target.includes ||= []
         target.libraries ||= []
 
-        runScript(target, 'predependencies')
+        runTargetScript(target, 'predependencies')
         for each (dname in target.depends) {
             let dep = bit.targets[dname]
             if (!dep) {
@@ -1810,7 +1811,9 @@ public class Bit {
         if (target.message) {
             trace('Info', target.message)
         }
+    /*
         global.TARGET = bit.target = target
+     */
 
         try {
             if (target.type == 'lib') {
@@ -1848,7 +1851,7 @@ public class Bit {
         if (options.diagnose) {
             App.log.debug(3, "Target => " + serialize(target, {pretty: true, commas: true, indent: 4, quotes: false}))
         }
-        runScript(target, 'prebuild')
+        runTargetScript(target, 'prebuild')
 
         let transition = target.rule || 'exe'
         let rule = bit.rules[transition]
@@ -1894,7 +1897,7 @@ public class Bit {
         if (options.diagnose) {
             App.log.debug(3, "Target => " + serialize(target, {pretty: true, commas: true, indent: 4, quotes: false}))
         }
-        runScript(target, 'prebuild')
+        runTargetScript(target, 'prebuild')
         buildSym(target)
         let transition = target.rule || 'lib'
         let rule = bit.rules[transition]
@@ -1969,7 +1972,7 @@ public class Bit {
         if (options.diagnose) {
             App.log.debug(3, "Target => " + serialize(target, {pretty: true, commas: true, indent: 4, quotes: false}))
         }
-        runScript(target, 'precompile')
+        runTargetScript(target, 'precompile')
 
         let ext = target.path.extension
         for each (file in target.files) {
@@ -2012,7 +2015,7 @@ public class Bit {
         if (options.diagnose) {
             App.log.debug(3, "Target => " + serialize(target, {pretty: true, commas: true, indent: 4, quotes: false}))
         }
-        runScript(target, 'prebuild')
+        runTargetScript(target, 'prebuild')
 
         let ext = target.path.extension
         for each (file in target.files) {
@@ -2056,7 +2059,7 @@ public class Bit {
             whySkip(target.path, 'is up to date')
             return
         }
-        runScript(target, 'prebuild')
+        runTargetScript(target, 'prebuild')
 
         for each (let file: Path in target.files) {
             /* Auto-generated headers targets for includes have file == target.path */
@@ -2107,7 +2110,7 @@ public class Bit {
         if (options.diagnose) {
             App.log.debug(3, "Target => " + serialize(target, {pretty: true, commas: true, indent: 4, quotes: false}))
         }
-        runScript(target, 'prebuild')
+        runTargetScript(target, 'prebuild')
         setRuleVars(target, target.home)
 
         let prefix, suffix
@@ -2182,7 +2185,7 @@ public class Bit {
 
         } else if (target.scripts) {
             vtrace(target.type.toPascal(), target.name)
-            runScript(target, 'build')
+            runTargetScript(target, 'build')
         }
     }
 
@@ -2399,14 +2402,14 @@ public class Bit {
         Run an event script in the directory of the bit file
         When values used are: build, prebuild, postblend, preresolve, presource, prebuild, action
      */
-    //  MOB - rename runTargetScript
-    public function runScript(target, when) {
+    public function runTargetScript(target, when) {
         if (!target.scripts) return
         for each (item in target.scripts[when]) {
             let pwd = App.dir
             if (item.home && item.home != pwd) {
                 App.chdir(item.home)
             }
+            global.TARGET = bit.target = target
             try {
                 if (item.shell == 'bash') {
                     runShell(target, item.script)
@@ -2423,12 +2426,13 @@ global.NN = item.ns
                 }
             } finally {
                 App.chdir(pwd)
+                global.TARGET = null
+                delete bit.target
             }
         }
     }
 
-    //  MOB - rename
-    public function runScriptX(script: String, home: Path) {
+    public function runScript(script: String, home: Path) {
         let pwd = App.dir
         if (home && home != pwd) {
             App.chdir(home)
@@ -2888,6 +2892,9 @@ global.NN = item.ns
                 bit.ext['dot' + key] = value
             }
         }
+        if (!options.config && Object.getOwnPropertyCount(bit.packs) == 0) {
+            loadBitFile(bit.dir.bits.join('simple.bit'))
+        }
         expandTokens(bit)
         loadModules()
         applyProfile()
@@ -3004,8 +3011,8 @@ public function setRuleVars(target, dir = App.dir)
 public function makeDirGlobals(base: Path = null)
     b.makeDirGlobals(base)
 
-public function runScript(target, when)
-    b.runScript(target, when)
+public function runTargetScript(target, when)
+    b.runTargetScript(target, when)
 
 public function whyRebuild(path, tag, msg)
     b.whyRebuild(path, tag, msg)

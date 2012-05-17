@@ -51,9 +51,6 @@ Bit.load({
                 if (bit.settings.hasDynLoad) {
                     defaults.libraries.push('dl')
                 }
-                if (bit.settings.hasPam) {
-                    defaults.libraries += ['pam']
-                }
             ",
             'prebuild': "
                 if (bit.target.type == 'lib') {

@@ -109,6 +109,7 @@ if (bit.emulating) {
         settings = {
             hasDoubleBraces: false,
             hasDynLoad: true,
+            hasLibEdit: true,
             hasMmu: true,
             hasMtune: true,
             hasPam: true,
@@ -122,10 +123,11 @@ if (bit.emulating) {
     } else if (platform.os == 'macosx') {
         settings = {
             hasDoubleBraces: true,
+            hasLibEdit: true,
             hasDynLoad: true,
             hasMmu: true,
             hasMtune: true,
-            hasPam: false,
+            hasPam: true,
             hasStackProtector: true,
             hasSync: true,
             hasSyncCas: true,
