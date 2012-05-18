@@ -48,7 +48,7 @@ Bit.load({
                 settings = {
                     hasDoubleBraces: false,
                     hasDynLoad: true,
-                    hasLibEdit: true,
+                    hasLibEdit: false,
                     hasMmu: true,
                     hasMtune: true,
                     hasPam: false,
