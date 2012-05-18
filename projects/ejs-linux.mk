@@ -13,7 +13,7 @@ DFLAGS   := -D_REENTRANT -DPIC -DBIT_DEBUG
 IFLAGS   := -I$(CONFIG)/inc
 LDFLAGS  := '-Wl,--enable-new-dtags' '-Wl,-rpath,$$ORIGIN/' '-Wl,-rpath,$$ORIGIN/../bin' '-rdynamic' '-g'
 LIBPATHS := -L$(CONFIG)/bin
-LIBS     := -lpthread -lm -ldl -lpam
+LIBS     := -lpthread -lm -ldl
 
 all: prep \
         $(CONFIG)/bin/libmpr.so \
@@ -692,7 +692,7 @@ $(CONFIG)/obj/ejs.o: \
 $(CONFIG)/bin/ejs:  \
         $(CONFIG)/bin/libejs.so \
         $(CONFIG)/obj/ejs.o
-	$(CC) -o $(CONFIG)/bin/ejs $(LDFLAGS) $(LIBPATHS) $(CONFIG)/obj/ejs.o $(LIBS) -lejs -lhttp -lmpr -lpcre -lmprssl $(LDFLAGS)
+	$(CC) -o $(CONFIG)/bin/ejs $(LDFLAGS) $(LIBPATHS) $(CONFIG)/obj/ejs.o $(LIBS) -lejs -lhttp -lmpr -lpcre -lmprssl -ledit -ledit $(LDFLAGS)
 
 $(CONFIG)/obj/ejsc.o: \
         src/cmd/ejsc.c \
