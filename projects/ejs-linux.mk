@@ -692,7 +692,7 @@ $(CONFIG)/obj/ejs.o: \
 $(CONFIG)/bin/ejs:  \
         $(CONFIG)/bin/libejs.so \
         $(CONFIG)/obj/ejs.o
-	$(CC) -o $(CONFIG)/bin/ejs $(LDFLAGS) $(LIBPATHS) $(CONFIG)/obj/ejs.o $(LIBS) -lejs -lhttp -lmpr -lpcre -lmprssl -ledit -ledit $(LDFLAGS)
+	$(CC) -o $(CONFIG)/bin/ejs $(LDFLAGS) $(LIBPATHS) $(CONFIG)/obj/ejs.o $(LIBS) -lejs -lhttp -lmpr -lpcre -lmprssl $(LDFLAGS)
 
 $(CONFIG)/obj/ejsc.o: \
         src/cmd/ejsc.c \
