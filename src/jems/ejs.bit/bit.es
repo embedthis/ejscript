@@ -500,19 +500,6 @@ public class Bit {
         if (settings.rom != undefined) {
             f.writeLine('#define BIT_FEATURE_ROMFS ' + (settings.rom ? 1 : 0))
         }
-
-        if (settings.auth) {
-            if (settings.auth == 'file') {
-                f.writeLine('#define BIT_FEATURE_AUTH_FILE 1')
-            } else {
-                f.writeLine('#define BIT_FEATURE_AUTH_FILE 0')
-            }
-            if (settings.auth == 'pam' && bit.platform.like == 'posix') {
-                f.writeLine('#define BIT_FEATURE_AUTH_PAM 1')
-            } else {
-                f.writeLine('#define BIT_FEATURE_AUTH_PAM 0')
-            }
-        }
         if (settings.mdb != undefined) {
             f.writeLine('#define BIT_FEATURE_MDB ' + (settings.mdb ? '1' : '0'))
         }

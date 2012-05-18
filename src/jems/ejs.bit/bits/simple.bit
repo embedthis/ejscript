@@ -38,6 +38,7 @@ Bit.load({
             if (bit.platform.like == 'windows') {
                 settings = {
                     hasMmu: true,
+                    hasPam: false,
                     hasDynLoad: true,
                     hasUnnamedUnions: true,
                 }
@@ -50,7 +51,7 @@ Bit.load({
                     hasLibEdit: true,
                     hasMmu: true,
                     hasMtune: true,
-                    hasPam: true,
+                    hasPam: false,
                     hasStackProtector: true,
                     hasSync: true,
                     hasSyncCas: true,

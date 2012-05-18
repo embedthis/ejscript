@@ -112,7 +112,7 @@ if (bit.emulating) {
             hasLibEdit: true,
             hasMmu: true,
             hasMtune: true,
-            hasPam: true,
+            hasPam: false,
             hasStackProtector: true,
             hasSync: true,
             hasSyncCas: true,
