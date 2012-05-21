@@ -562,10 +562,11 @@
 #define ES_Cmd_killall_preserve                                        2
 #define ES_Cmd_ps_pattern                                              0
 #define ES_Cmd_run_command                                             0
-#define ES_Cmd_run_data                                                1
-#define ES_Cmd_run_options                                             2
+#define ES_Cmd_run_options                                             1
+#define ES_Cmd_run_data                                                2
 #define ES_Cmd_sh_command                                              0
-#define ES_Cmd_sh_data                                                 1
+#define ES_Cmd_sh_options                                              1
+#define ES_Cmd_sh_data                                                 2
 
 
 /*
@@ -2017,19 +2018,13 @@
 #define ES_System_Bufsize                                              1
 #define ES_System_hostname                                             2
 #define ES_System_ipaddr                                               3
-#define ES_System_exec                                                 4
-#define ES_System_NUM_CLASS_PROP                                       5
+#define ES_System_NUM_CLASS_PROP                                       4
 
 /*
    Prototype (instance) slots for "System" type 
  */
 #define ES_System_NUM_INSTANCE_PROP                                    0
 #define ES_System_NUM_INHERITED_PROP                                   0
-
-/*
-    Local slots for methods in type "System" 
- */
-#define ES_System_exec_args                                            0
 
 
 /*
@@ -2354,6 +2349,6 @@
 #define ES_XMLList_NUM_INSTANCE_PROP                                   20
 #define ES_XMLList_NUM_INHERITED_PROP                                  0
 
-#define _ES_CHECKSUM_ejs   1465153
+#define _ES_CHECKSUM_ejs   1466065
 
 #endif
