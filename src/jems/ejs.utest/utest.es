@@ -24,6 +24,7 @@ enumerable class Test {
         Parsed args
         MOB - don't need to store separate to options.
      */
+    var _cfg: Path                          // Path to configuration outputs directory
     var _bin: Path                          // Path to bin directory
     var _cross: Boolean                     // Cross compiling
     var _depth: Number = 1                  // Test level. Higher levels mean deeper testing.
@@ -200,15 +201,17 @@ enumerable class Test {
         }
         _top = path.dirname.absolute
 
-        let out: Path out = _top.join('out')
-        if (!out.join('inc/bit.h').exists) {
-            out = Path(_top).glob(Config.OS.toLower() + '-' + Config.CPU + '-*').sort()[0]
+        _cfg = _top.join('out')
+        if (!_cfg.join('inc/bit.h').exists) {
+            _cfg = Path(_top).glob(Config.OS.toLower() + '-' + Config.CPU + '-*').sort()[0]
         }
-        if (!out) {
+        if (!_cfg) {
             throw 'Can\'t locate configure files, run configure'
         }
-        parseBuildConfig(out.join('inc/bit.h'))
+        parseBuildConfig(_cfg.join('inc/bit.h'))
 
+        _bin = _lib = _cfg.join('bin')
+/* UNUSED
         //  MOB - these are currently being set to the ejs bin and lib
         _bin = App.exeDir
         // _lib = _bin.join("../lib")
@@ -216,6 +219,7 @@ enumerable class Test {
         if (!_lib.exists) {
             _lib = _bin
         }
+*/
     }
 
     /*
@@ -353,6 +357,7 @@ enumerable class Test {
             public var test: Test = new Test
             App.test = test
             test.depth = data.depth
+            test.cfg = Path(data.cfg)
             test.bin = Path(data.bin)
             test.dir = Path(data.dir)
             test.lib = Path(data.lib)
@@ -375,6 +380,7 @@ enumerable class Test {
 
     function startWorker(file: Path, phase: String = null): Worker {
         let export = { 
+            cfg: _cfg, 
             bin: _bin, 
             cross: _cross,
             depth: _depth, 
