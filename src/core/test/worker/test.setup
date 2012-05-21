@@ -1,3 +1,6 @@
 if (test.phase == 'init') {
+dump(test)
+dump(Config)
+print("App.exePath", app.exePath)
     Cmd.run(test.bin.join('ejsc') + ' --out module.mod module.es')
 }
