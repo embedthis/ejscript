@@ -50,9 +50,10 @@ a.logo {
  */
 div.topRight {
     position: relative;
-    width: 210px;
     top: 4px;
     left: 680px;
+    width: 210px;
+    height: 62px;
 	font-size: 90%;
 	text-align: right;
 	color: #000000; 
@@ -92,7 +93,7 @@ div.search form #q:hover, div.search form #q:focus {
 }
 
 div.version {
-    padding: 20px 10px 0 0;
+    padding: 10px 10px 0 0;
     color: #FFFFFF;
 }
 
@@ -546,8 +547,11 @@ td.gsc-input, .gsc-search-button {
     display: none;
 }
 
-.cse-search-form {
+#cse-search-form {
     width: auto;
+    height: 180px;
+    min-height: 180px;
+    background-color: #FF0000;
 }
 
 input.gsc-input {
