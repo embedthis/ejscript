@@ -1,5 +1,5 @@
 /*
-    rc.bit - Resource compiler package for Bit
+    rc.pak - Resource compiler package for Bit
  */
 pack('rc', 'Windows Resource Compiler')
 

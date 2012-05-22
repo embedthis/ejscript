@@ -65,17 +65,16 @@ public class Bit {
         options: {
             benchmark: { alias: 'b' },
             bit: { range: String },
-            config: { alias: 'c', range: String },
-            'continue': {},
+            configure: { range: String },
+            'continue': { alias: 'c' },
             debug: {},
             depth: { range: Number},
             diagnose: { alias: 'd' },
             dump: { },
-            emulate: { range: String },
             file: { range: String },
             force: {},
-            gen: { alias: 'g', range: String, separator: Array, commas: true },
-            help: { alias: 'h' },
+            gen: { range: String, separator: Array, commas: true },
+            help: { },
             import: { alias: 'init', range: Boolean },
             keep: { alias: 'k' },
             log: { alias: 'l', range: String },
@@ -104,13 +103,12 @@ public class Bit {
         print('\nUsage: bit [options] [targets|actions] ...\n' +
             '  Options:\n' + 
             '    --benchmark                        # Measure elapsed time\n' +
-            '    --config path-to-source            # Configure for building\n' +
+            '    --configure path-to-source         # Configure for building\n' +
             '    --continue                         # Continue on errors\n' +
             '    --debug                            # Same as --profile debug\n' +
             '    --depth                            # Set utest depth\n' +
             '    --diagnose                         # Emit diagnostic trace \n' +
             '    --dump                             # Dump the full project bit file\n' +
-            '    --emulate os-arch                  # Emulate platform\n' +
             '    --file file.bit                    # Use the specified bit file\n' +
             '    --force                            # Override warnings\n' +
             '    --gen [make|nmake|sh|vs|xcode]     # Generate project file\n' + 
@@ -119,7 +117,7 @@ public class Bit {
             '    --keep                             # Keep intermediate files\n' + 
             '    --log logSpec                      # Save errors to a log file\n' +
             '    --out path                         # Save output to a file\n' +
-            '    --platform os-arch                 # Add platform for cross-compilation\n' +
+            '    --platform os-arch                 # Build for specified platform\n' +
             '    --profile [debug|release|...]      # Use the build profile\n' +
             '    --quiet                            # Quiet operation. Suppress trace \n' +
             '    --set [feature=value]              # Enable and a feature\n' +
@@ -134,7 +132,6 @@ public class Bit {
             '')
         if (START.exists) {
             try {
-                // global.bit = bit = b.bit
                 b.makeBit(Config.OS.toLower() + '-' + Config.CPU, START)
                 global.bit = bit = b.bit
                 let bitfile: Path = START
@@ -179,7 +176,7 @@ public class Bit {
                 import()
                 App.exit()
             } 
-            if (options.config) {
+            if (options.configure) {
                 configure()
             }
             if (!options.file) {
@@ -224,12 +221,7 @@ public class Bit {
         out = (options.out) ? File(options.out, 'w') : stdout
 
         let OS = Config.OS
-        if (options.emulate) {
-            localPlatform = options.emulate
-        } else {
-            let cpu = Config.CPU
-            localPlatform =  OS.toLower() + '-' + cpu
-        }
+        localPlatform =  OS.toLower() + '-' + Config.CPU
         let [os, arch] = localPlatform.split('-') 
         validatePlatform(os, arch)
 
@@ -247,10 +239,10 @@ public class Bit {
             options.profile = 'release'
         }
         if (args.rest.contains('configure')) {
-            options.config = MAIN
-        } else if (options.config) {
+            options.configure = Path('.')
+        } else if (options.configure) {
             args.rest.push('configure')
-            options.config = Path(options.config).join(MAIN)
+            options.configure = Path(options.configure)
         }
         if (args.rest.contains('dump')) {
             options.dump = true
@@ -275,14 +267,15 @@ public class Bit {
         if (args.rest.contains('import')) {
             options.import = true
         }
-        if (options.profile && !options.config) {
-            App.log.error('Can only set profile when configuring via --config dir')
+        if (options.profile && !options.configure) {
+            App.log.error('Can only set profile when configuring via --configure dir')
             usage()
         }
         platforms = options.platform || []
-        if (platforms[0] != localPlatform) {
+        if (platforms.length == 0) {
             platforms.insert(0, localPlatform)
         }
+        platforms.transform(function(e) e == 'local' ? localPlatform : e).unique()
 
         /*
             The --set|unset|with|without switches apply to the previous --platform switch
@@ -322,10 +315,20 @@ public class Bit {
         Configure and initialize for building. This generates platform specific bit files.
      */
     function configure() {
+        makeBit(localPlatform, options.configure.join(MAIN))
+        let settings = bit.settings
+        if (settings.platforms) {
+            if (!(settings.platforms is Array)) {
+                settings.platforms = [settings.platforms]
+            }
+            settings.platforms = settings.platforms.transform(function(e) e == 'local' ? localPlatform : e)
+            // trace('Add', 'Required platforms to build for this product: ' + settings.platforms.join(' '))
+            platforms = (settings.platforms + platforms).unique()
+        }
         for each (platform in platforms) {
             currentPlatform = platform
-            vtrace('Init', platform)
-            makeBit(platform, options.config)
+            trace('Configure', platform)
+            makeBit(platform, options.configure.join(MAIN))
             findPacks()
             genPlatformBitFile(platform)
             makeOutDirs()
@@ -334,7 +337,7 @@ public class Bit {
             bit.cross = true
         }
         bit.cross = false
-        options.config = false
+        options.configure = undefined
         genStartBitFile(platforms[0])
     }
 
@@ -389,7 +392,7 @@ public class Bit {
         if (nbit.settings) {
             Object.sortProperties(nbit.settings);
         }
-        if (options.config) {
+        if (options.configure) {
             let path: Path = Path(platform).joinExt('bit')
             trace('Generate', path)
             let data = '/*\n    ' + platform + '.bit -- Build ' + bit.settings.title + ' for ' + platform + 
@@ -704,7 +707,7 @@ public class Bit {
                     let p = bit.packs[pack] ||= {}
                     p.enable = false
                     p.diagnostic = "" + e
-                    if (kind == 'Required') {
+                    if (kind == 'Required' && !options['continue']) {
                         throw e
                     }
                 }
@@ -736,9 +739,11 @@ public class Bit {
     public function probe(file: Path, control = {}): Path {
         let path: Path
         let search = [], dir
+/* UNUSED
         if (bit.emulating) {
             return file.basename
         }
+ */
         if (file.exists) {
             path = file
         } else {
@@ -762,14 +767,15 @@ public class Bit {
             path ||= Cmd.locate(file)
         }
         if (!path) {
-            if (!control.nothrow) {
-                if (options.why) {
-                    trace('Probe', 'File ' + file)
-                    trace('Search', search.join(' '))
-                }
-                throw 'File ' + file + ' not found for package ' + currentPack + '.'
+            if (options.why) {
+                trace('Probe', 'File ' + file)
+                trace('Search', search.join(' '))
             }
-            return null
+            if (!control['continue']) {
+                throw 'File ' + file + ' not found for package ' + currentPack + '.'
+            } else {
+                return control.default
+            }
         }
         App.log.debug(2, 'Probe for ' + file + ' found at ' + path)
         if (control.fullpath) {
@@ -1013,7 +1019,7 @@ public class Bit {
         if (lp.exists) {
             return lp
         }
-        let base: Path = (options.config) ? options.config : '.'
+        let base: Path = options.configure || '.'
         for (let d: Path = base; d.parent != d; d = d.parent) {
             let f: Path = d.join(lp)
             if (f.exists) {
@@ -1290,7 +1296,7 @@ public class Bit {
             When cross generating, certain wild cards can't be resolved.
             Setting missing to empty will cause missing glob patterns to be replaced with the pattern itself 
          */
-        if (options.gen || options.config) {
+        if (options.gen || options.configure) {
             missing = ''
         }
         makeConstGlobals()
@@ -1691,7 +1697,7 @@ public class Bit {
         }
         for (let [pname, prefix] in bit.prefixes) {
             bit.prefixes[pname] = Path(prefix)
-            if (!(bit.emulating && bit.platform.os == 'windows')) {
+            if (bit.platform.os == 'windows' && Config.OS == 'WINDOWS') {
                 bit.prefixes[pname] = bit.prefixes[pname].absolute
             }
         }
@@ -2637,7 +2643,7 @@ global.NN = item.ns
                     value = value.join(App.SearchSeparator)
                 }
                 if (bit.platform.os == 'windows') {
-                    /* Replacement may contain $(VS) if emulating */
+                    /* Replacement may contain $(VS) */
                     if (!bit.packs.compiler.dir.contains('$'))
                         value = value.replace(/\$\(VS\)/g, bit.packs.compiler.dir)
                     if (!bit.packs.winsdk.path.contains('$'))
@@ -2654,11 +2660,17 @@ global.NN = item.ns
         App.log.debug(2, "Command " + command)
         App.log.debug(3, "Env " + serialize(cmd.env, {pretty: true, indent: 4, commas: true, quotes: false}))
         cmd.start(command, cmdOptions)
-        if (cmd.status != 0 && !(cmdOptions.continueOnErrors || options['continue'])) {
+        if (cmd.status != 0) {
+            let msg
             if (!cmd.error || cmd.error == '') {
-                throw 'Command failure: ' + cmd.response + '\nCommand: ' + command
+                msg = 'Command failure: ' + cmd.response + '\nCommand: ' + command
             } else {
-                throw 'Command failure: ' + cmd.error + '\nCommand: ' + command
+                msg = 'Command failure: ' + cmd.error + '\nCommand: ' + command
+            }
+            if (cmdOptions.continueOnErrors || options['continue']) {
+                trace('Error', msg)
+            } else {
+                throw msg
             }
         }
         if (options.show || cmdOptions.show) {
@@ -2840,7 +2852,7 @@ global.NN = item.ns
         let [os, arch] = platform.split('-') 
         let kind = like(os)
         global.bit = bit = makeBareBit()
-        bit.dir.src = options.config ? options.config.dirname : Path('.')
+        bit.dir.src = options.configure || Path('.')
         bit.dir.bits = bit.dir.src.join('bits/standard.bit').exists ? 
             bit.dir.src.join('bits') : Config.LibDir.join('bits').portable
         bit.dir.top = '.'
@@ -2857,11 +2869,8 @@ global.NN = item.ns
             configuration: platform + '-' + profile,
             dev: localPlatform,
         }
-        bit.emulating = options.emulate || false
-
         loadBitFile(bit.dir.bits.join('standard.bit'))
         loadBitFile(bit.dir.bits.join('os/' + bit.platform.os + '.bit'))
-
         bit.globals.PLATFORM = currentPlatform = platform
         if (bitfile) {
             loadBitFile(bitfile)
@@ -2879,7 +2888,7 @@ global.NN = item.ns
                 bit.ext['dot' + key] = value
             }
         }
-        if (!bit.settings.configured && !options.config) {
+        if (!bit.settings.configured && !options.configure) {
             loadBitFile(bit.dir.bits.join('simple.bit'))
         }
         expandTokens(bit)

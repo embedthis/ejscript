@@ -1,5 +1,5 @@
 /*
-    dumpbin.bit - Dumpbin package for Bit
+    dumpbin.pak - Dumpbin package for Bit
  */
 
 pack('dumpbin', 'Windows Symbols Tool')

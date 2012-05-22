@@ -1,5 +1,5 @@
 /*
-    doxygen.bit - Doxygen package for Bit
+    doxygen.pak - Doxygen package for Bit
  */
 
 program('doxygen', 'Doxygen Documentation Generator')

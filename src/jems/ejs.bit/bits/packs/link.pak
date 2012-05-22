@@ -1,14 +1,9 @@
 /*
-    link.bit - Linker package for Bit
+    link.pak - Linker package for Bit
  */
 
 pack('link', 'Link Editor Program')
 
-if (bit.platform.like == 'windows') {
-    let link = probe('link.exe', {fullpath: true, search: bit.packs.compiler.search})
-    Bit.load({packs: { link: { path: link }}})
-} else {
-    let link = probe('ld', {fullpath: true})
-    Bit.load({packs: { link: { path: link }}})
-}
-
+let name = (bit.platform.like == 'windows') ? 'link.exe' : 'ld'
+let link = probe(name, {fullpath: true, search: bit.packs.compiler.search, default: name})
+Bit.load({packs: { link: { path: link }}})

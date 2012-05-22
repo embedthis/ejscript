@@ -1,5 +1,5 @@
 /*
-    man.bit - Man package for Bit
+    man.pak - Man package for Bit
  */
 
 program('man', 'Manual Page Formatting Tool')

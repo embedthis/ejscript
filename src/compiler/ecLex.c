@@ -35,7 +35,7 @@ static ReservedWord keywords[] =
   { "class",            G_RESERVED,         T_CLASS,                    0, },
   { "const",            G_CONREV,           T_CONST,                    0, },
   { "continue",         G_RESERVED,         T_CONTINUE,                 0, },
-  { "default",          G_RESERVED,         T_DEFAULT,                  0, },
+  { "default",          G_CONREV,           T_DEFAULT,                  0, },
   { "delete",           G_RESERVED,         T_DELETE,                   0, },
   { "do",               G_RESERVED,         T_DO,                       0, },
   { "dynamic",          G_CONREV,           T_ATTRIBUTE,                T_DYNAMIC, },

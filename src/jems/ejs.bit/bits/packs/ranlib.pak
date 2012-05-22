@@ -1,5 +1,5 @@
 /*
-    ranlib.bit - Ranlib package for Bit
+    ranlib.pak - Ranlib package for Bit
  */
 
 program('ranlib', 'Library Index Tool')

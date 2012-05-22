@@ -1,5 +1,5 @@
 /*
-    sqlite.bit - Bit package for SQLite
+    sqlite.pak - Bit package for SQLite
  */
 
 pack('sqlite', 'SQLite Database')

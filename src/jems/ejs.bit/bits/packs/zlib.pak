@@ -1,5 +1,5 @@
 /*
-    zlib.bit - Bit package for zlib
+    zlib.pak - Bit package for zlib
  */
 
 pack('zlib', 'Zlib Compression Library')

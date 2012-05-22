@@ -17,16 +17,6 @@ Bit.load({
     },
 
     targets: {
-        deploy: {
-            action: "
-                stdout.write('Enter deployment directory: ')
-                let got = stdin.readLine()
-                let parts = bit.settings.package || 'binary dev'
-                run('priv makeInstall --install --bare --root=' + bit.dir.out.join('pkg') + 
-                    ' pre ' + parts + ' post', bit.target.runopt)
-            ",
-        },
-
         projects: {
             action: "
                 let bitcmd = Cmd.locate('bit')
@@ -40,15 +30,15 @@ Bit.load({
                         formats = 'sh,make'
                     }
                     trace('Generate', bit.settings.product + '-' + name.replace(/-.*/, '') + ' projects')
-                    let emulate = name != bit.platform.name ? ' -emulate ' + name : ''
-                    run(bitcmd + emulate + ' -q -d -without all configure -gen ' + formats, bit.target.runopt)
+                    run(bitcmd + ' -d -q -c -platform ' + name + ' -without all -configure . -gen ' + 
+                        formats, bit.target.runopt)
                     if (name != bit.platform.name) {
                         rm(bit.dir.top.join(name + '.bit'))
                         rmdir(bit.dir.top.join(name + '-debug'))
                     }
                 }
                 /* Leave a normal configuration */ 
-                run(bitcmd + ' -q configure --' + bit.platform.profile, bit.target.runopt)
+                run(bitcmd + ' -q -configure .  -' + bit.platform.profile, bit.target.runopt)
             ",
         },
 

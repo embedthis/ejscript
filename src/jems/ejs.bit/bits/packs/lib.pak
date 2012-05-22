@@ -1,5 +1,5 @@
 /*
-    lib.bit - Library package for Bit
+    lib.pak - Library package for Bit
  */
 
 pack('lib', 'Library Archive Tool')

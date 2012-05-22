@@ -1,5 +1,5 @@
 /*
-    ssl.bit - SSL package for Bit
+    ssl.pak - SSL package for Bit
  */
 
 pack('ssl', 'SSL/TLS Security Library')

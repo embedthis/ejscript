@@ -1,5 +1,5 @@
 /*
-    winsdk.bit - WinSDK tools
+    winsdk.pak - Windows SDK
  */
 
 pack('winsdk', 'Windows SDK')

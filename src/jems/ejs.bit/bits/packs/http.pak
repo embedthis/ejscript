@@ -1,5 +1,5 @@
 /*
-    http.bit - Http package for Bit
+    http.pak - Http package for Bit
  */
 
 program('http', 'Http Exerciser Program')

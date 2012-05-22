@@ -1,5 +1,5 @@
 /*
-    vxworks.bit - VxWorks tools
+    vxworks.pak - VxWorks tools
  */
 
 pack('vxworks', 'VxWorks SDK')

@@ -1,5 +1,5 @@
 /*
-    pcre.bit - Bit package for PCRE
+    pcre.pak - Bit package for PCRE
  */
 
 pack('pcre', 'Regular Expression Package')

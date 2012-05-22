@@ -3,23 +3,27 @@
 bit \- Build It! -- Utility to build and manage programs
 .SH SYNOPSIS
 .B bit [\fI--benchmark\fR]
-[\fI--config path-to-source\fR]
+[\fI--configure path-to-source\fR]
 [\fI--continue\fR]
 [\fI--debug\fR]
 [\fI--diagnose\fR]
 [\fI--dump\fR]
-[\fI--emulate os-arch\fR]
+.RS 4
 [\fI--file file.bit\fR]
 [\fI--force\fR]
 [\fI--gen [make|sh|vs|xcode]\fR]
 [\fI--import\fR]
 [\fI--keep\fR]
 [\fI--log logSpec\fR]
+.RE
+.RS 4
 [\fI--out path\fR]
 [\fI--profile [debug|release|...]\fR]
 [\fI--pre sourcefile\fR]
 [\fI--platform os-arch\fR]
 [\fI--quiet\fR]
+.RE
+.RS 4
 [\fI--set [feature=value]\fR]
 [\fI--show\fR]
 [\fI--rebuild\fR]
@@ -27,23 +31,28 @@ bit \- Build It! -- Utility to build and manage programs
 [\fI--unset feature\fR]
 [\fI--version\fR]
 [\fI--verbose\fR]
-[\fI--with PACK[-platform][=PATH]\fR]
-[\fI--without PACK[-platform]\fR]
-[options] [targets|actions] ...
+.RE
+.RS 4
+[\fI--with PACK[=PATH]\fR]
+[\fI--without PACK\fR]
+[targets|actions]
 .SH DESCRIPTION
 The \fBbit\fR command is modern replacement for the venerable make and not so popular autoconf utilities.
 Bit manages the building of programs and products by effectively determining which pieces have been updated and 
 thus which components need to be rebuilt. It easily handles direct compilation and generation of projects. 
 .PP
 .SH WHY BIT?
-Many projects rely on autoconf to configure products and make to build. But neither of these tools work well on Windows.
-Further, creating portable Makefiles and autoconf scripts that will work on a variety of platforms and also support 
-cross-compilation is an exercise in patience. Often the result is slow builds, especially on Windows.
+Many projects rely on autoconf to configure products and make to build. But autoconf is a baroque maze of scripts and
+make is provides too little support easily building executable and libraries in a cross platform manner.
+Further, neither of these tools work well on or for Windows and embedded platforms like VxWorks or Windows CE. 
+As such, creating portable Makefiles and autoconf scripts that will work on a variety of platforms and support 
+cross-compilation is an exercise in patience. Often the result is slow, fragile build systems, especially on Windows.
 .PP 
 Bit replaces both autoconf and make with a single utility: 'bit'.
-Bit provides a higher level of abstraction to simply specify the targets (libraries and executables) to build. 
-It can build directly on Linux, Mac or Windows and will also generate native projects for Visual Studio and XCode. Bit
-builds fast without needing Makefile nesting or recursion to handle complex projects.
+Bit provides a higher level of abstraction to easily specify the targets to build (libraries and executables). 
+It can build directly on Linux, Mac or Windows and cross compile for other platforms. It will generate native projects
+for Visual Studio, XCode, Make, Nmake and shell scripts if required . Bit builds fast without the complexity of autoconf
+and make.
 .PP
 Bit was initiated after evaluating Make, CMake and GYP for use by Appweb and Ejscript in an embedded, cross-compilation
 environment. While all three can be made to work, we were expending a large percentage of time on the build system and
@@ -74,12 +83,13 @@ It has the following major features:
 .SH NICE BITS
 While Bit has a strong feature set, there are some characteristics that make building with Bit especially nice:
 
-    . Unified project view. No make style recursion required.
+    . Unified project view. No "make" style recursion required.
     . Bit configuration may be comprised by multiple bit files
     . Bit file targets and scripts are relative to their own directory
     . Targets can be named symbolicly not just by the target path.
-    . Why option (bit -w) to display why a target was or was not rebuilt
+    . Bit provides a "why" option (bit -why) to display why a target was or was not rebuilt
     . Bit files and targets intelligently inherit of outer project properties
+    . Bit scripts run using the working directory of the bit file
 
 .PP
 
@@ -172,16 +182,25 @@ The 'required' property defines the extensions that are required to be present o
 these properties indicates that these values should be added to pre-defined values. The buildNumber is a build
 patch number.
 
-.SH EMULATING
-Some systems support multiple instruct sets. For example: Windows 64 can run both 32 bit and 64 bit programs. To
-select a non-default instruction set on such systems, Bit is invoked with a '--emulating' switch when configuring. 
-Configuring with this switch will create a 'start.es' that references a configuration bit file for  the emulated
-platform. For example to configure building a 64 bit application on a 32 bit system:
+.SH CROSS COMPILING
+To build a product for platform different to that of the local system is called cross compiling. Sometimes this
+cross compiling is just for a different instruction set (say x64 instead of x86). Other times it is for a completely
+different operating system and/or CPU architecture. In such cases a cross-compiler may be required to build for the
+target platform.
+.PP
+Bit supports cross compiling via the "bit configure \fB-platform OS-ARCH\fR" switch. This adds a platform to the list of
+platforms to be made when building. Multiple platforms may be specified and the 'local' platform alias may be used for the 
+local development platform.
+.PP
+Some products require local building to make tools that are required to build for any platform. These products add
+a "platforms: ['local']" property to their settings collection in the main.bit file. This automatically adds the local
+platform to the platforms list and is the same as adding '-platform local' on the command line when configuring.
 .PP
 .RS 5
-\fbbit\fR --emulate configure win-x64
+\fBbit\fR --platform windows-x64 -configure .
 .RE
-This will create a win-x64.bit configuration file and a start.es that references it. The emulate switch does not
+.PP
+This will create a windows-x64.bit configuration file and a start.es that references it. The platform switch does not
 need to be respecified after configuration.
 
 .SH PROJECT GENERATION
@@ -190,11 +209,12 @@ scripts. Bit uses the '--gen' switch to specify the projects to build. Bit is ca
 for non-native platforms. For example: you can generate an Xcode project for Mac OS X on a Windows system.
 .PP
 .RS 5
-\fbbit\fR -emulate macosx-x64 configure -gen xcode,make,sh
+\fBbit\fR -continue -platform macosx-x64 configure -gen xcode,make,sh
 .RE
 
 .PP
-This will generate Xcode, make and shell script projects for a Mac OS X 64-bit.
+This will generate Xcode, make and shell script projects for a Mac OS X 64-bit. The continue switch indicates that 
+generation should continue even if the required compilers and build tools are not present on the development system.
 
 .SH DEPENDENCIES
 Bit targets can depend on other targets that must be built first. Bit targets have a name which may be depended upon
@@ -252,14 +272,15 @@ the '--continue' switch.
 Measure the elapsed time to run bit.
 .TP
 
-\fB\--config path-to-source\fR
+\fB\--configure path-to-source\fR
 Configure the project to prepare for building. This configures Bit for building the project based on the instructions
 specified in a 'main.bit' located in the specified path source tree. When run, bit will create a platform configuration 
 bit file, a build output directory and bit.h header. The configuration
-directory is of the form: OS-ARCH-PROFILE where OS may be win, linux, macosx, ARCH is x86_64, x86, ppc etc., while
-PROFILE is typically set to debug or release. For example: 'macosx-x86_64-debug'. The configuration bit file omits the
+directory is of the form: OS-ARCH-PROFILE where OS may be freebsd, linux, macosx, solaris, vxworks, windows and ARCH is
+arm, mips, ppc, x64 or x86. PROFILE is typically set to debug or release. For example: 'macosx-x86_64-debug'. The
+configuration bit file omits the
 PROFILE. For example: 'linux-x86.bit'.
-.PP
+
 Bit will use the settings.required and settings.optional properties in the main.bit for a list of packages to use. 
 When configuring, bit will search for these packages and will create definitions in the configuration bit file for
 later use.
@@ -281,16 +302,12 @@ Run bit with stack backtrace display on errors.
 Dump the aggregate bit configuration into a single dump bit file.
 
 .TP
-\fB\--emulate os-arch\fR
-Emulate the given platform instead of using the local platform.
-
-.TP
 \fB\--file bitfile\fR
 Use the alternate named bit file instead of local.bit or main.bit.
 
 .TP
 \fB\--force\fR
-Override warnings and proceed.
+Override warnings and proceed with the operation.
 
 .TP
 \fB\--gen [make|nmake|sh|vs|xcode] \fR
@@ -313,7 +330,8 @@ Save Bit trace output to a file instead of displaying to the console.
 
 .TP
 \fB\--platform os-arch\fR
-Add a platform to build for cross-compilation. 
+Add a platform to build for cross-compilation. Multiple platforms can be added. You may use 'local' for the local
+platform. 
 
 .TP
 \fB\--profile [debug|release|...]\fR

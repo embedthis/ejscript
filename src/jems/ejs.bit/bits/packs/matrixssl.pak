@@ -1,5 +1,5 @@
 /*
-    matrixssl.bit -- OpenSSL package search
+    matrixssl.pak -- OpenSSL package search
  */
 
 pack('matrixssl', 'MatrixSSL SSL/TLS Security')

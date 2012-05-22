@@ -1,5 +1,5 @@
 /*
-    pmaker.bit - Utilities to make distribution packages 
+    pmaker.pak - Utilities to make distribution packages 
  */
 
 pack('pmaker', 'Package Maker Tool')
