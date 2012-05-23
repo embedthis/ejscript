@@ -6,7 +6,7 @@ pack('compiler', "C/C++ Compiler")
 let cc: Path
 let platform = bit.platform
 let path: Path = bit.packs.compiler.path
-let settings = {}
+let settings = getDefaultSettings(platform)
 
 try {
     if (platform.like == 'posix') {
@@ -121,60 +121,8 @@ try {
             settings.hasUnnamedUnions = compile(cc, '', 
                 '#include <stdio.h>\nint main() { struct test { union { int x; int y; };}; return 0; }')
         }
-    } else if (platform.like == 'windows') {
-        settings = {
-            hasDynLoad: true,
-            hasLibEdit: false,
-            hasMmu: true,
-            hasUnnamedUnions: true,
-        }
-    } else {
-        settings = {
-            hasDynLoad: true,
-            hasLibEdit: false,
-            hasMmu: true,
-            hasUnnamedUnions: true,
-        }
     }
-} catch (e) {
-    if (platform.like == 'windows') {
-        settings = {
-            hasMmu: true,
-            hasDynLoad: true,
-            hasUnnamedUnions: true,
-        }
-    } else if (platform.os == 'linux') {
-        settings = {
-            hasDoubleBraces: false,
-            hasDynLoad: true,
-            hasLibEdit: false,
-            hasMmu: true,
-            hasMtune: true,
-            hasPam: true,
-            hasStackProtector: true,
-            hasSync: true,
-            hasSyncCas: true,
-            hasUnnamedUnions: true,
-            warn64to32: false,
-            warnUnused: true,
-        }
-    } else if (platform.os == 'macosx') {
-        settings = {
-            hasDoubleBraces: true,
-            hasLibEdit: true,
-            hasDynLoad: true,
-            hasMmu: true,
-            hasMtune: true,
-            hasPam: true,
-            hasStackProtector: true,
-            hasSync: true,
-            hasSyncCas: true,
-            hasUnnamedUnions: true,
-            warn64to32: false,
-            warnUnused: false,
-        }
-    }
-}
+} catch {}
 
 Bit.load({ settings: settings })
 
@@ -209,4 +157,48 @@ function compile(cc: Path, command: String, contents: String = null): Boolean {
         }
     }
     return cmd.status == 0
+}
+
+
+function getDefaultSettings(platform) {
+    let settings
+    if (platform.like == 'windows') {
+        settings = {
+            hasDynLoad: true,
+            hasLibEdit: false,
+            hasMmu: true,
+            hasUnnamedUnions: true,
+        }
+    } else if (platform.os == 'linux') {
+        settings = {
+            hasDoubleBraces: false,
+            hasDynLoad: true,
+            hasLibEdit: false,
+            hasMmu: true,
+            hasMtune: true,
+            hasPam: true,
+            hasStackProtector: true,
+            hasSync: true,
+            hasSyncCas: true,
+            hasUnnamedUnions: true,
+            warn64to32: false,
+            warnUnused: true,
+        }
+    } else if (platform.os == 'macosx') {
+        settings = {
+            hasDoubleBraces: true,
+            hasLibEdit: true,
+            hasDynLoad: true,
+            hasMmu: true,
+            hasMtune: true,
+            hasPam: true,
+            hasStackProtector: true,
+            hasSync: true,
+            hasSyncCas: true,
+            hasUnnamedUnions: true,
+            warn64to32: false,
+            warnUnused: false,
+        }
+    }
+    return settings
 }
