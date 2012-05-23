@@ -102,13 +102,6 @@ cd ..\..\..\projects\ejs-windows</Command>
   </CustomBuildStep>
   </ItemDefinitionGroup>
 
-<ItemGroup>
-  <ProjectReference Include="ejsc.vcxproj">
-  <Project>d5245843-770a-44aa-9aa8-2a834be6411e</Project>
-  <ReferenceOutputAssembly>false</ReferenceOutputAssembly>
-  </ProjectReference>
-</ItemGroup>
-
   <Import Project="$(VCTargetsPath)Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">
   </ImportGroup>

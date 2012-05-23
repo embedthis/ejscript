@@ -194,7 +194,7 @@ local development platform.
 .PP
 Some products require local building to make tools that are required to build for any platform. These products add
 a "platforms: ['local']" property to their settings collection in the main.bit file. This automatically adds the local
-platform to the platforms list and is the same as adding '-platform local' on the command line when configuring.
+platform to the platforms list and is the same as adding '-platform local' on the command line when configuring. 
 .PP
 .RS 5
 \fBbit\fR --platform windows-x64 -configure .
@@ -312,7 +312,8 @@ Override warnings and proceed with the operation.
 .TP
 \fB\--gen [make|nmake|sh|vs|xcode] \fR
 Generate project files for the current platform. This will generate project files under the 'projects' directory.
-The projects are based on the current configuration. 
+The projects are based on the current configuration. If cross-generating projects, you will typically need to
+also use -configure.
 
 .TP
 \fB\--keep\fR

@@ -261,6 +261,10 @@ public class Bit {
         } else if (options.gen) {
             args.rest.push('generate')
         }
+        if (options.gen) {
+            /* Must continue if cross-generating */
+            options['continue'] = true
+        }
         if (args.rest.contains('rebuild')) {
             options.rebuild = true
         }
@@ -317,12 +321,11 @@ public class Bit {
     function configure() {
         makeBit(localPlatform, options.configure.join(MAIN))
         let settings = bit.settings
-        if (settings.platforms) {
+        if (settings.platforms && !options.gen) {
             if (!(settings.platforms is Array)) {
                 settings.platforms = [settings.platforms]
             }
             settings.platforms = settings.platforms.transform(function(e) e == 'local' ? localPlatform : e)
-            // trace('Add', 'Required platforms to build for this product: ' + settings.platforms.join(' '))
             platforms = (settings.platforms + platforms).unique()
         }
         for each (platform in platforms) {
@@ -735,15 +738,11 @@ public class Bit {
 
     /*
         Probe for a file and locate
+        Will throw an exception if the file is not found, unless {continue, default} specified in control options
      */
     public function probe(file: Path, control = {}): Path {
         let path: Path
         let search = [], dir
-/* UNUSED
-        if (bit.emulating) {
-            return file.basename
-        }
- */
         if (file.exists) {
             path = file
         } else {
@@ -771,11 +770,10 @@ public class Bit {
                 trace('Probe', 'File ' + file)
                 trace('Search', search.join(' '))
             }
-            if (!control['continue']) {
-                throw 'File ' + file + ' not found for package ' + currentPack + '.'
-            } else {
+            if (options['continue'] && control.default) {
                 return control.default
             }
+            throw 'File ' + file + ' not found for package ' + currentPack + '.'
         }
         App.log.debug(2, 'Probe for ' + file + ' found at ' + path)
         if (control.fullpath) {
@@ -1804,10 +1802,6 @@ public class Bit {
         if (target.message) {
             trace('Info', target.message)
         }
-    /*
-        global.TARGET = bit.target = target
-     */
-
         try {
             if (target.type == 'lib') {
                 buildLib(target)
