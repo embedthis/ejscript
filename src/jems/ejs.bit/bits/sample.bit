@@ -1,14 +1,10 @@
 /*
-    product.bit -- Sample Product Bit File for Bit
+    main.bit -- Sample Main Bit File
  */
 
 Bit.load({
     blend: [
         // Load other bit files
-    ],
-
-    customize: [
-        // Load other bit files if present
     ],
 
     settings: {
@@ -25,17 +21,6 @@ Bit.load({
          */
         '+required': [ ],
         '+optional': [ ],
-    },
-
-    profiles: {
-        debug: { settings: {
-            debug: true,
-            assert: true,
-        }, },
-        release: { settings: {
-            debug: false,
-            assert: false,
-        } },
     },
 
     /*

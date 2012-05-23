@@ -75,7 +75,7 @@ public class Bit {
             force: {},
             gen: { range: String, separator: Array, commas: true },
             help: { },
-            import: { alias: 'init', range: Boolean },
+            import: { alias: 'init' },
             keep: { alias: 'k' },
             log: { alias: 'l', range: String },
             out: { range: String },
@@ -336,7 +336,7 @@ public class Bit {
             genPlatformBitFile(platform)
             makeOutDirs()
             makeBitHeader(platform)
-            importPacks()
+            importPackFiles()
             bit.cross = true
         }
         bit.cross = false
@@ -640,7 +640,7 @@ public class Bit {
     /*
         Import pack files
      */
-    function importPacks() {
+    function importPackFiles() {
         for (let [pname, pack] in bit.packs) {
             for each (file in pack.imports) {
                 vtrace('Import', file)
@@ -2868,6 +2868,10 @@ global.NN = item.ns
         bit.globals.PLATFORM = currentPlatform = platform
         if (bitfile) {
             loadBitFile(bitfile)
+            /*
+                Customize bit files must be applied after the enclosing bit file is fully loaded so they
+                can override anything.
+             */
             for each (path in bit.customize) {
                 let path = home.join(expand(path, {fill: '.'}))
                 if (path.exists) {
