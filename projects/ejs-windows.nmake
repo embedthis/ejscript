@@ -28,22 +28,40 @@ all: prep \
         $(CONFIG)\bin\libmpr.dll \
         $(CONFIG)\bin\libmprssl.dll \
         $(CONFIG)\bin\ejsman.exe \
+        $(CONFIG)\bin\makerom.exe \
         $(CONFIG)\bin\libpcre.dll \
         $(CONFIG)\bin\libhttp.dll \
+        $(CONFIG)\bin\http.exe \
         $(CONFIG)\bin\libsqlite3.dll \
+        $(CONFIG)\bin\sqlite.exe \
         $(CONFIG)\bin\libejs.dll \
         $(CONFIG)\bin\ejs.exe \
+        $(CONFIG)\bin\ejsc.exe \
+        $(CONFIG)\bin\ejsmod.exe \
+        $(CONFIG)\bin\ejsrun.exe \
         $(CONFIG)\bin\ejs.mod \
+        $(CONFIG)\bin\bit.es \
+        $(CONFIG)\bin\bit.exe \
+        $(CONFIG)\bin\utest.es \
+        $(CONFIG)\bin\utest.exe \
+        $(CONFIG)\bin\bits \
         $(CONFIG)\bin\ejs.unix.mod \
+        $(CONFIG)\bin\jem.es \
+        $(CONFIG)\bin\jem.exe \
         $(CONFIG)\bin\ejs.db.mod \
         $(CONFIG)\bin\ejs.db.mapper.mod \
         $(CONFIG)\bin\ejs.db.sqlite.mod \
         $(CONFIG)\bin\ejs.db.sqlite.dll \
         $(CONFIG)\bin\ejs.web.mod \
         $(CONFIG)\bin\ejs.web.dll \
+        $(CONFIG)\bin\www \
         $(CONFIG)\bin\ejs.template.mod \
         $(CONFIG)\bin\ejs.tar.mod \
-        $(CONFIG)\bin\ejs.mvc.mod
+        $(CONFIG)\bin\mvc.es \
+        $(CONFIG)\bin\mvc.exe \
+        $(CONFIG)\bin\ejs.mvc.mod \
+        $(CONFIG)\bin\utest.worker \
+        $(CONFIG)\bin\removeFiles.exe
 
 .PHONY: prep
 
@@ -62,19 +80,34 @@ clean:
 	-if exist $(CONFIG)\bin\libmpr.dll del /Q $(CONFIG)\bin\libmpr.dll
 	-if exist $(CONFIG)\bin\libmprssl.dll del /Q $(CONFIG)\bin\libmprssl.dll
 	-if exist $(CONFIG)\bin\ejsman.exe del /Q $(CONFIG)\bin\ejsman.exe
+	-if exist $(CONFIG)\bin\makerom.exe del /Q $(CONFIG)\bin\makerom.exe
 	-if exist $(CONFIG)\bin\libpcre.dll del /Q $(CONFIG)\bin\libpcre.dll
 	-if exist $(CONFIG)\bin\libhttp.dll del /Q $(CONFIG)\bin\libhttp.dll
+	-if exist $(CONFIG)\bin\http.exe del /Q $(CONFIG)\bin\http.exe
 	-if exist $(CONFIG)\bin\libsqlite3.dll del /Q $(CONFIG)\bin\libsqlite3.dll
+	-if exist $(CONFIG)\bin\sqlite.exe del /Q $(CONFIG)\bin\sqlite.exe
 	-if exist $(CONFIG)\bin\libejs.dll del /Q $(CONFIG)\bin\libejs.dll
 	-if exist $(CONFIG)\bin\ejs.exe del /Q $(CONFIG)\bin\ejs.exe
+	-if exist $(CONFIG)\bin\ejsc.exe del /Q $(CONFIG)\bin\ejsc.exe
+	-if exist $(CONFIG)\bin\ejsmod.exe del /Q $(CONFIG)\bin\ejsmod.exe
+	-if exist $(CONFIG)\bin\ejsrun.exe del /Q $(CONFIG)\bin\ejsrun.exe
+	-if exist $(CONFIG)\bin\utest.es del /Q $(CONFIG)\bin\utest.es
+	-if exist $(CONFIG)\bin\utest.exe del /Q $(CONFIG)\bin\utest.exe
+	-if exist $(CONFIG)\bin\jem.es del /Q $(CONFIG)\bin\jem.es
+	-if exist $(CONFIG)\bin\jem.exe del /Q $(CONFIG)\bin\jem.exe
 	-if exist $(CONFIG)\bin\ejs.db.mod del /Q $(CONFIG)\bin\ejs.db.mod
 	-if exist $(CONFIG)\bin\ejs.db.mapper.mod del /Q $(CONFIG)\bin\ejs.db.mapper.mod
 	-if exist $(CONFIG)\bin\ejs.db.sqlite.mod del /Q $(CONFIG)\bin\ejs.db.sqlite.mod
 	-if exist $(CONFIG)\bin\ejs.db.sqlite.dll del /Q $(CONFIG)\bin\ejs.db.sqlite.dll
 	-if exist $(CONFIG)\bin\ejs.web.mod del /Q $(CONFIG)\bin\ejs.web.mod
 	-if exist $(CONFIG)\bin\ejs.web.dll del /Q $(CONFIG)\bin\ejs.web.dll
+	-if exist $(CONFIG)\bin\www del /Q $(CONFIG)\bin\www
 	-if exist $(CONFIG)\bin\ejs.template.mod del /Q $(CONFIG)\bin\ejs.template.mod
+	-if exist $(CONFIG)\bin\mvc.es del /Q $(CONFIG)\bin\mvc.es
+	-if exist $(CONFIG)\bin\mvc.exe del /Q $(CONFIG)\bin\mvc.exe
 	-if exist $(CONFIG)\bin\ejs.mvc.mod del /Q $(CONFIG)\bin\ejs.mvc.mod
+	-if exist $(CONFIG)\bin\utest.worker del /Q $(CONFIG)\bin\utest.worker
+	-if exist $(CONFIG)\bin\removeFiles.exe del /Q $(CONFIG)\bin\removeFiles.exe
 	-if exist $(CONFIG)\obj\mprLib.obj del /Q $(CONFIG)\obj\mprLib.obj
 	-if exist $(CONFIG)\obj\mprSsl.obj del /Q $(CONFIG)\obj\mprSsl.obj
 	-if exist $(CONFIG)\obj\manager.obj del /Q $(CONFIG)\obj\manager.obj
@@ -191,6 +224,16 @@ $(CONFIG)\bin\ejsman.exe:  \
         $(CONFIG)\obj\manager.obj
 	"$(LD)" -out:$(CONFIG)\bin\ejsman.exe -entry:WinMainCRTStartup -subsystem:Windows $(LDFLAGS) $(LIBPATHS) $(CONFIG)\obj\manager.obj $(LIBS) libmpr.lib
 
+$(CONFIG)\obj\makerom.obj: \
+        src\deps\mpr\makerom.c \
+        $(CONFIG)\inc\bit.h
+	"$(CC)" -c -Fo$(CONFIG)\obj\makerom.obj -Fd$(CONFIG)\obj\makerom.pdb $(CFLAGS) $(DFLAGS) -I$(CONFIG)\inc src\deps\mpr\makerom.c
+
+$(CONFIG)\bin\makerom.exe:  \
+        $(CONFIG)\bin\libmpr.dll \
+        $(CONFIG)\obj\makerom.obj
+	"$(LD)" -out:$(CONFIG)\bin\makerom.exe -entry:mainCRTStartup -subsystem:console $(LDFLAGS) $(LIBPATHS) $(CONFIG)\obj\makerom.obj $(LIBS) libmpr.lib
+
 $(CONFIG)\inc\pcre.h: 
 	-if exist $(CONFIG)\inc\pcre.h del /Q $(CONFIG)\inc\pcre.h
 	copy /Y src\deps\pcre\pcre.h $(CONFIG)\inc\pcre.h
@@ -222,6 +265,16 @@ $(CONFIG)\bin\libhttp.dll:  \
         $(CONFIG)\obj\httpLib.obj
 	"$(LD)" -dll -out:$(CONFIG)\bin\libhttp.dll -entry:$(ENTRY) -def:$(CONFIG)\bin\libhttp.def $(LDFLAGS) $(LIBPATHS) $(CONFIG)\obj\httpLib.obj $(LIBS) libmpr.lib libpcre.lib libmprssl.lib
 
+$(CONFIG)\obj\http.obj: \
+        src\deps\http\http.c \
+        $(CONFIG)\inc\bit.h
+	"$(CC)" -c -Fo$(CONFIG)\obj\http.obj -Fd$(CONFIG)\obj\http.pdb $(CFLAGS) $(DFLAGS) -I$(CONFIG)\inc src\deps\http\http.c
+
+$(CONFIG)\bin\http.exe:  \
+        $(CONFIG)\bin\libhttp.dll \
+        $(CONFIG)\obj\http.obj
+	"$(LD)" -out:$(CONFIG)\bin\http.exe -entry:mainCRTStartup -subsystem:console $(LDFLAGS) $(LIBPATHS) $(CONFIG)\obj\http.obj $(LIBS) libhttp.lib libmpr.lib libpcre.lib libmprssl.lib
+
 $(CONFIG)\inc\sqlite3.h: 
 	-if exist $(CONFIG)\inc\sqlite3.h del /Q $(CONFIG)\inc\sqlite3.h
 	copy /Y src\deps\sqlite\sqlite3.h $(CONFIG)\inc\sqlite3.h
@@ -235,6 +288,16 @@ $(CONFIG)\bin\libsqlite3.dll:  \
         $(CONFIG)\inc\sqlite3.h \
         $(CONFIG)\obj\sqlite3.obj
 	"$(LD)" -dll -out:$(CONFIG)\bin\libsqlite3.dll -entry:$(ENTRY) -def:$(CONFIG)\bin\libsqlite3.def $(LDFLAGS) $(LIBPATHS) $(CONFIG)\obj\sqlite3.obj $(LIBS)
+
+$(CONFIG)\obj\sqlite.obj: \
+        src\deps\sqlite\sqlite.c \
+        $(CONFIG)\inc\bit.h
+	"$(CC)" -c -Fo$(CONFIG)\obj\sqlite.obj -Fd$(CONFIG)\obj\sqlite.pdb $(CFLAGS) $(DFLAGS) -I$(CONFIG)\inc src\deps\sqlite\sqlite.c
+
+$(CONFIG)\bin\sqlite.exe:  \
+        $(CONFIG)\bin\libsqlite3.dll \
+        $(CONFIG)\obj\sqlite.obj
+	"$(LD)" -out:$(CONFIG)\bin\sqlite.exe -entry:mainCRTStartup -subsystem:console $(LDFLAGS) $(LIBPATHS) $(CONFIG)\obj\sqlite.obj $(LIBS) libsqlite3.lib
 
 $(CONFIG)\inc\ejs.cache.local.slots.h: 
 	-if exist $(CONFIG)\inc\ejs.cache.local.slots.h del /Q $(CONFIG)\inc\ejs.cache.local.slots.h
@@ -642,8 +705,68 @@ $(CONFIG)\bin\ejs.exe:  \
         $(CONFIG)\obj\ejs.obj
 	"$(LD)" -out:$(CONFIG)\bin\ejs.exe -entry:mainCRTStartup -subsystem:console $(LDFLAGS) $(LIBPATHS) $(CONFIG)\obj\ejs.obj $(LIBS) libejs.lib libhttp.lib libmpr.lib libpcre.lib libmprssl.lib
 
+$(CONFIG)\obj\ejsc.obj: \
+        src\cmd\ejsc.c \
+        $(CONFIG)\inc\bit.h
+	"$(CC)" -c -Fo$(CONFIG)\obj\ejsc.obj -Fd$(CONFIG)\obj\ejsc.pdb $(CFLAGS) $(DFLAGS) -I$(CONFIG)\inc src\cmd\ejsc.c
+
+$(CONFIG)\bin\ejsc.exe:  \
+        $(CONFIG)\bin\libejs.dll \
+        $(CONFIG)\obj\ejsc.obj
+	"$(LD)" -out:$(CONFIG)\bin\ejsc.exe -entry:mainCRTStartup -subsystem:console $(LDFLAGS) $(LIBPATHS) $(CONFIG)\obj\ejsc.obj $(LIBS) libejs.lib libhttp.lib libmpr.lib libpcre.lib libmprssl.lib
+
+$(CONFIG)\obj\ejsmod.obj: \
+        src\cmd\ejsmod.c \
+        $(CONFIG)\inc\bit.h \
+        src\cmd\ejsmod.h
+	"$(CC)" -c -Fo$(CONFIG)\obj\ejsmod.obj -Fd$(CONFIG)\obj\ejsmod.pdb $(CFLAGS) $(DFLAGS) -I$(CONFIG)\inc -Isrc\cmd src\cmd\ejsmod.c
+
+$(CONFIG)\obj\doc.obj: \
+        src\cmd\doc.c \
+        $(CONFIG)\inc\bit.h \
+        src\cmd\ejsmod.h
+	"$(CC)" -c -Fo$(CONFIG)\obj\doc.obj -Fd$(CONFIG)\obj\doc.pdb $(CFLAGS) $(DFLAGS) -I$(CONFIG)\inc -Isrc\cmd src\cmd\doc.c
+
+$(CONFIG)\obj\docFiles.obj: \
+        src\cmd\docFiles.c \
+        $(CONFIG)\inc\bit.h \
+        src\cmd\ejsmod.h
+	"$(CC)" -c -Fo$(CONFIG)\obj\docFiles.obj -Fd$(CONFIG)\obj\docFiles.pdb $(CFLAGS) $(DFLAGS) -I$(CONFIG)\inc -Isrc\cmd src\cmd\docFiles.c
+
+$(CONFIG)\obj\listing.obj: \
+        src\cmd\listing.c \
+        $(CONFIG)\inc\bit.h \
+        src\cmd\ejsmod.h
+	"$(CC)" -c -Fo$(CONFIG)\obj\listing.obj -Fd$(CONFIG)\obj\listing.pdb $(CFLAGS) $(DFLAGS) -I$(CONFIG)\inc -Isrc\cmd src\cmd\listing.c
+
+$(CONFIG)\obj\slotGen.obj: \
+        src\cmd\slotGen.c \
+        $(CONFIG)\inc\bit.h \
+        src\cmd\ejsmod.h
+	"$(CC)" -c -Fo$(CONFIG)\obj\slotGen.obj -Fd$(CONFIG)\obj\slotGen.pdb $(CFLAGS) $(DFLAGS) -I$(CONFIG)\inc -Isrc\cmd src\cmd\slotGen.c
+
+$(CONFIG)\bin\ejsmod.exe:  \
+        $(CONFIG)\bin\libejs.dll \
+        $(CONFIG)\obj\ejsmod.obj \
+        $(CONFIG)\obj\doc.obj \
+        $(CONFIG)\obj\docFiles.obj \
+        $(CONFIG)\obj\listing.obj \
+        $(CONFIG)\obj\slotGen.obj
+	"$(LD)" -out:$(CONFIG)\bin\ejsmod.exe -entry:mainCRTStartup -subsystem:console $(LDFLAGS) $(LIBPATHS) $(CONFIG)\obj\ejsmod.obj $(CONFIG)\obj\doc.obj $(CONFIG)\obj\docFiles.obj $(CONFIG)\obj\listing.obj $(CONFIG)\obj\slotGen.obj $(LIBS) libejs.lib libhttp.lib libmpr.lib libpcre.lib libmprssl.lib
+
+$(CONFIG)\obj\ejsrun.obj: \
+        src\cmd\ejsrun.c \
+        $(CONFIG)\inc\bit.h
+	"$(CC)" -c -Fo$(CONFIG)\obj\ejsrun.obj -Fd$(CONFIG)\obj\ejsrun.pdb $(CFLAGS) $(DFLAGS) -I$(CONFIG)\inc src\cmd\ejsrun.c
+
+$(CONFIG)\bin\ejsrun.exe:  \
+        $(CONFIG)\bin\libejs.dll \
+        $(CONFIG)\obj\ejsrun.obj
+	"$(LD)" -out:$(CONFIG)\bin\ejsrun.exe -entry:mainCRTStartup -subsystem:console $(LDFLAGS) $(LIBPATHS) $(CONFIG)\obj\ejsrun.obj $(LIBS) libejs.lib libhttp.lib libmpr.lib libpcre.lib libmprssl.lib
+
 $(CONFIG)\bin\ejs.mod:  \
-        
+        $(CONFIG)\bin\ejsc.exe \
+        $(CONFIG)\bin\ejsmod.exe
 	cd src\core
 		"..\..\$(CONFIG)\bin\ejsc" --out "..\..\$(CONFIG)\bin\ejs.mod" --debug --optimize 9 --bind --require null "*.es"
 	"..\..\$(CONFIG)\bin\ejsmod" --require null --cslots "..\..\$(CONFIG)\bin\ejs.mod"
@@ -651,19 +774,66 @@ $(CONFIG)\bin\ejs.mod:  \
 	del ejs.slots.h
 		cd ..\..
 
+$(CONFIG)\bin\bit.es: 
+	-if exist $(CONFIG)\bin\bit.es del /Q $(CONFIG)\bin\bit.es
+	copy /Y src\jems\ejs.bit\bit.es $(CONFIG)\bin\bit.es
+
+$(CONFIG)\bin\bits: 
+	cd src\jems\ejs.bit
+		if exist "..\..\..\$(CONFIG)\bin\bits" rd /Q /S "..\..\..\$(CONFIG)\bin\bits"
+	if not exist "..\..\..\$(CONFIG)\bin\bits" md "..\..\..\$(CONFIG)\bin\bits"
+	xcopy /S /Y "bits" "..\..\..\$(CONFIG)\bin\bits"
+		cd ..\..\..
+
+$(CONFIG)\obj\ejsZlib.obj: \
+        src\jems\ejs.zlib\ejsZlib.c \
+        $(CONFIG)\inc\bit.h
+	"$(CC)" -c -Fo$(CONFIG)\obj\ejsZlib.obj -Fd$(CONFIG)\obj\ejsZlib.pdb $(CFLAGS) $(DFLAGS) -I$(CONFIG)\inc src\jems\ejs.zlib\ejsZlib.c
+
+$(CONFIG)\bin\bit.exe:  \
+        $(CONFIG)\bin\libejs.dll \
+        $(CONFIG)\bin\bits \
+        $(CONFIG)\bin\bit.es \
+        $(CONFIG)\obj\ejsrun.obj \
+        $(CONFIG)\obj\ejsZlib.obj
+	"$(LD)" -out:$(CONFIG)\bin\bit.exe -entry:mainCRTStartup -subsystem:console $(LDFLAGS) $(LIBPATHS) $(CONFIG)\obj\ejsrun.obj $(CONFIG)\obj\ejsZlib.obj $(CONFIG)\obj\mprLib.obj $(CONFIG)\obj\pcre.obj $(CONFIG)\obj\mprSsl.obj $(CONFIG)\obj\httpLib.obj $(CONFIG)\obj\ecAst.obj $(CONFIG)\obj\ecCodeGen.obj $(CONFIG)\obj\ecCompiler.obj $(CONFIG)\obj\ecLex.obj $(CONFIG)\obj\ecModuleWrite.obj $(CONFIG)\obj\ecParser.obj $(CONFIG)\obj\ecState.obj $(CONFIG)\obj\ejsApp.obj $(CONFIG)\obj\ejsArray.obj $(CONFIG)\obj\ejsBlock.obj $(CONFIG)\obj\ejsBoolean.obj $(CONFIG)\obj\ejsByteArray.obj $(CONFIG)\obj\ejsCache.obj $(CONFIG)\obj\ejsCmd.obj $(CONFIG)\obj\ejsConfig.obj $(CONFIG)\obj\ejsDate.obj $(CONFIG)\obj\ejsDebug.obj $(CONFIG)\obj\ejsError.obj $(CONFIG)\obj\ejsFile.obj $(CONFIG)\obj\ejsFileSystem.obj $(CONFIG)\obj\ejsFrame.obj $(CONFIG)\obj\ejsFunction.obj $(CONFIG)\obj\ejsGC.obj $(CONFIG)\obj\ejsGlobal.obj $(CONFIG)\obj\ejsHttp.obj $(CONFIG)\obj\ejsIterator.obj $(CONFIG)\obj\ejsJSON.obj $(CONFIG)\obj\ejsLocalCache.obj $(CONFIG)\obj\ejsMath.obj $(CONFIG)\obj\ejsMemory.obj $(CONFIG)\obj\ejsMprLog.obj $(CONFIG)\obj\ejsNamespace.obj $(CONFIG)\obj\ejsNull.obj $(CONFIG)\obj\ejsNumber.obj $(CONFIG)\obj\ejsObject.obj $(CONFIG)\obj\ejsPath.obj $(CONFIG)\obj\ejsPot.obj $(CONFIG)\obj\ejsRegExp.obj $(CONFIG)\obj\ejsSocket.obj $(CONFIG)\obj\ejsString.obj $(CONFIG)\obj\ejsSystem.obj $(CONFIG)\obj\ejsTimer.obj $(CONFIG)\obj\ejsType.obj $(CONFIG)\obj\ejsUri.obj $(CONFIG)\obj\ejsVoid.obj $(CONFIG)\obj\ejsWorker.obj $(CONFIG)\obj\ejsXML.obj $(CONFIG)\obj\ejsXMLList.obj $(CONFIG)\obj\ejsXMLLoader.obj $(CONFIG)\obj\ejsByteCode.obj $(CONFIG)\obj\ejsException.obj $(CONFIG)\obj\ejsHelper.obj $(CONFIG)\obj\ejsInterp.obj $(CONFIG)\obj\ejsLoader.obj $(CONFIG)\obj\ejsModule.obj $(CONFIG)\obj\ejsScope.obj $(CONFIG)\obj\ejsService.obj $(LIBS)
+
+$(CONFIG)\bin\utest.es: 
+	cd src\jems\ejs.utest
+		copy utest.es ..\..\..\$(CONFIG)\bin
+		cd ..\..\..
+
+$(CONFIG)\bin\utest.exe:  \
+        $(CONFIG)\bin\ejsrun.exe
+	-if exist $(CONFIG)\bin\utest.exe del /Q $(CONFIG)\bin\utest.exe
+	copy /Y $(CONFIG)\bin\ejsrun.exe $(CONFIG)\bin\utest.exe
+
 $(CONFIG)\bin\ejs.unix.mod:  \
+        $(CONFIG)\bin\ejsc.exe \
         $(CONFIG)\bin\ejs.mod
 	cd src\jems\ejs.unix
 		..\..\..\$(CONFIG)\bin\ejsc --out ../../../$(CONFIG)/bin/ejs.unix.mod --debug --optimize 9 Unix.es
 		cd ..\..\..
 
+$(CONFIG)\bin\jem.es: 
+	cd src\jems\ejs.jem
+		copy jem.es ..\..\..\$(CONFIG)\bin
+		cd ..\..\..
+
+$(CONFIG)\bin\jem.exe:  \
+        $(CONFIG)\bin\ejsrun.exe
+	-if exist $(CONFIG)\bin\jem.exe del /Q $(CONFIG)\bin\jem.exe
+	copy /Y $(CONFIG)\bin\ejsrun.exe $(CONFIG)\bin\jem.exe
+
 $(CONFIG)\bin\ejs.db.mod:  \
+        $(CONFIG)\bin\ejsc.exe \
         $(CONFIG)\bin\ejs.mod
 	cd src\jems\ejs.db
 		..\..\..\$(CONFIG)\bin\ejsc --out ../../../$(CONFIG)/bin/ejs.db.mod --debug --optimize 9 *.es
 		cd ..\..\..
 
 $(CONFIG)\bin\ejs.db.mapper.mod:  \
+        $(CONFIG)\bin\ejsc.exe \
         $(CONFIG)\bin\ejs.mod \
         $(CONFIG)\bin\ejs.db.mod
 	cd src\jems\ejs.db.mapper
@@ -671,6 +841,8 @@ $(CONFIG)\bin\ejs.db.mapper.mod:  \
 		cd ..\..\..
 
 $(CONFIG)\bin\ejs.db.sqlite.mod:  \
+        $(CONFIG)\bin\ejsc.exe \
+        $(CONFIG)\bin\ejsmod.exe \
         $(CONFIG)\bin\ejs.mod
 	cd src\jems\ejs.db.sqlite
 		..\..\..\$(CONFIG)\bin\ejsc --out ../../../$(CONFIG)/bin/ejs.db.sqlite.mod --debug --optimize 9 *.es
@@ -691,6 +863,8 @@ $(CONFIG)\bin\ejs.db.sqlite.dll:  \
 	"$(LD)" -dll -out:$(CONFIG)\bin\ejs.db.sqlite.dll -entry:$(ENTRY) -def:$(CONFIG)\bin\ejs.db.sqlite.def $(LDFLAGS) $(LIBPATHS) $(CONFIG)\obj\ejsSqlite.obj $(LIBS) libmpr.lib libejs.lib libhttp.lib libpcre.lib libmprssl.lib libsqlite3.lib
 
 $(CONFIG)\bin\ejs.web.mod:  \
+        $(CONFIG)\bin\ejsc.exe \
+        $(CONFIG)\bin\ejsmod.exe \
         $(CONFIG)\bin\ejs.mod
 	cd src\jems\ejs.web
 		"..\..\..\$(CONFIG)\bin\ejsc" --out "../../../$(CONFIG)/bin/ejs.web.mod" --debug --optimize 9 *.es
@@ -728,19 +902,39 @@ $(CONFIG)\bin\ejs.web.dll:  \
         $(CONFIG)\obj\ejsWeb.obj
 	"$(LD)" -dll -out:$(CONFIG)\bin\ejs.web.dll -entry:$(ENTRY) -def:$(CONFIG)\bin\ejs.web.def $(LDFLAGS) $(LIBPATHS) $(CONFIG)\obj\ejsHttpServer.obj $(CONFIG)\obj\ejsRequest.obj $(CONFIG)\obj\ejsSession.obj $(CONFIG)\obj\ejsWeb.obj $(LIBS) libejs.lib libhttp.lib libmpr.lib libpcre.lib libmprssl.lib
 
+$(CONFIG)\bin\www: 
+	cd src\jems\ejs.web
+		if exist "..\..\..\$(CONFIG)\bin\www" rd /Q /S "..\..\..\$(CONFIG)\bin\www"
+	if not exist "..\..\..\$(CONFIG)\bin\www" md "..\..\..\$(CONFIG)\bin\www"
+	xcopy /S /Y "www" "..\..\..\$(CONFIG)\bin\www"
+		cd ..\..\..
+
 $(CONFIG)\bin\ejs.template.mod:  \
+        $(CONFIG)\bin\ejsc.exe \
         $(CONFIG)\bin\ejs.mod
 	cd src\jems\ejs.template
 		..\..\..\$(CONFIG)\bin\ejsc --out ../../../$(CONFIG)/bin/ejs.template.mod --debug --optimize 9 TemplateParser.es
 		cd ..\..\..
 
 $(CONFIG)\bin\ejs.tar.mod:  \
+        $(CONFIG)\bin\ejsc.exe \
         $(CONFIG)\bin\ejs.mod
 	cd src\jems\ejs.tar
 		..\..\..\$(CONFIG)\bin\ejsc --out ../../../$(CONFIG)/bin/ejs.tar.mod --debug --optimize 9 *.es
 		cd ..\..\..
 
+$(CONFIG)\bin\mvc.es: 
+	cd src\jems\ejs.mvc
+		copy mvc.es ..\..\..\$(CONFIG)\bin
+		cd ..\..\..
+
+$(CONFIG)\bin\mvc.exe:  \
+        $(CONFIG)\bin\ejsrun.exe
+	-if exist $(CONFIG)\bin\mvc.exe del /Q $(CONFIG)\bin\mvc.exe
+	copy /Y $(CONFIG)\bin\ejsrun.exe $(CONFIG)\bin\mvc.exe
+
 $(CONFIG)\bin\ejs.mvc.mod:  \
+        $(CONFIG)\bin\ejsc.exe \
         $(CONFIG)\bin\ejs.mod \
         $(CONFIG)\bin\ejs.web.mod \
         $(CONFIG)\bin\ejs.template.mod \
@@ -748,4 +942,19 @@ $(CONFIG)\bin\ejs.mvc.mod:  \
 	cd src\jems\ejs.mvc
 		..\..\..\$(CONFIG)\bin\ejsc --out ../../../$(CONFIG)/bin/ejs.mvc.mod --debug --optimize 9 *.es
 		cd ..\..\..
+
+$(CONFIG)\bin\utest.worker: 
+	cd src\jems\ejs.utest
+		copy utest.worker ..\..\..\$(CONFIG)\bin
+		cd ..\..\..
+
+$(CONFIG)\obj\removeFiles.obj: \
+        package\WINDOWS\removeFiles.c \
+        $(CONFIG)\inc\bit.h
+	"$(CC)" -c -Fo$(CONFIG)\obj\removeFiles.obj -Fd$(CONFIG)\obj\removeFiles.pdb $(CFLAGS) $(DFLAGS) -I$(CONFIG)\inc package\WINDOWS\removeFiles.c
+
+$(CONFIG)\bin\removeFiles.exe:  \
+        $(CONFIG)\bin\libmpr.dll \
+        $(CONFIG)\obj\removeFiles.obj
+	"$(LD)" -out:$(CONFIG)\bin\removeFiles.exe -entry:WinMainCRTStartup -subsystem:Windows $(LDFLAGS) $(LIBPATHS) $(CONFIG)\obj\removeFiles.obj $(LIBS) libmpr.lib
 

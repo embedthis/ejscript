@@ -42,6 +42,10 @@ cp -r src/deps/mpr/mpr.h ${CONFIG}/inc/mpr.h
 
 "${LD}" -out:${CONFIG}/bin/ejsman.exe -entry:WinMainCRTStartup -subsystem:Windows ${LDFLAGS} ${LIBPATHS} ${CONFIG}/obj/manager.obj ${LIBS} libmpr.lib
 
+"${CC}" -c -Fo${CONFIG}/obj/makerom.obj -Fd${CONFIG}/obj/makerom.pdb ${CFLAGS} ${DFLAGS} -I${CONFIG}/inc src/deps/mpr/makerom.c
+
+"${LD}" -out:${CONFIG}/bin/makerom.exe -entry:mainCRTStartup -subsystem:console ${LDFLAGS} ${LIBPATHS} ${CONFIG}/obj/makerom.obj ${LIBS} libmpr.lib
+
 rm -rf ${CONFIG}/inc/pcre.h
 cp -r src/deps/pcre/pcre.h ${CONFIG}/inc/pcre.h
 
@@ -56,12 +60,20 @@ cp -r src/deps/http/http.h ${CONFIG}/inc/http.h
 
 "${LD}" -dll -out:${CONFIG}/bin/libhttp.dll -entry:_DllMainCRTStartup@12 -def:${CONFIG}/bin/libhttp.def ${LDFLAGS} ${LIBPATHS} ${CONFIG}/obj/httpLib.obj ${LIBS} libmpr.lib libpcre.lib libmprssl.lib
 
+"${CC}" -c -Fo${CONFIG}/obj/http.obj -Fd${CONFIG}/obj/http.pdb ${CFLAGS} ${DFLAGS} -I${CONFIG}/inc src/deps/http/http.c
+
+"${LD}" -out:${CONFIG}/bin/http.exe -entry:mainCRTStartup -subsystem:console ${LDFLAGS} ${LIBPATHS} ${CONFIG}/obj/http.obj ${LIBS} libhttp.lib libmpr.lib libpcre.lib libmprssl.lib
+
 rm -rf ${CONFIG}/inc/sqlite3.h
 cp -r src/deps/sqlite/sqlite3.h ${CONFIG}/inc/sqlite3.h
 
 "${CC}" -c -Fo${CONFIG}/obj/sqlite3.obj -Fd${CONFIG}/obj/sqlite3.pdb ${CFLAGS} ${DFLAGS} -I${CONFIG}/inc src/deps/sqlite/sqlite3.c
 
 "${LD}" -dll -out:${CONFIG}/bin/libsqlite3.dll -entry:_DllMainCRTStartup@12 -def:${CONFIG}/bin/libsqlite3.def ${LDFLAGS} ${LIBPATHS} ${CONFIG}/obj/sqlite3.obj ${LIBS}
+
+"${CC}" -c -Fo${CONFIG}/obj/sqlite.obj -Fd${CONFIG}/obj/sqlite.pdb ${CFLAGS} ${DFLAGS} -I${CONFIG}/inc src/deps/sqlite/sqlite.c
+
+"${LD}" -out:${CONFIG}/bin/sqlite.exe -entry:mainCRTStartup -subsystem:console ${LDFLAGS} ${LIBPATHS} ${CONFIG}/obj/sqlite.obj ${LIBS} libsqlite3.lib
 
 rm -rf ${CONFIG}/inc/ejs.cache.local.slots.h
 cp -r src/slots/ejs.cache.local.slots.h ${CONFIG}/inc/ejs.cache.local.slots.h
@@ -213,6 +225,26 @@ cp -r src/ejsCustomize.h ${CONFIG}/inc/ejsCustomize.h
 
 "${LD}" -out:${CONFIG}/bin/ejs.exe -entry:mainCRTStartup -subsystem:console ${LDFLAGS} ${LIBPATHS} ${CONFIG}/obj/ejs.obj ${LIBS} libejs.lib libhttp.lib libmpr.lib libpcre.lib libmprssl.lib
 
+"${CC}" -c -Fo${CONFIG}/obj/ejsc.obj -Fd${CONFIG}/obj/ejsc.pdb ${CFLAGS} ${DFLAGS} -I${CONFIG}/inc src/cmd/ejsc.c
+
+"${LD}" -out:${CONFIG}/bin/ejsc.exe -entry:mainCRTStartup -subsystem:console ${LDFLAGS} ${LIBPATHS} ${CONFIG}/obj/ejsc.obj ${LIBS} libejs.lib libhttp.lib libmpr.lib libpcre.lib libmprssl.lib
+
+"${CC}" -c -Fo${CONFIG}/obj/ejsmod.obj -Fd${CONFIG}/obj/ejsmod.pdb ${CFLAGS} ${DFLAGS} -I${CONFIG}/inc -Isrc/cmd src/cmd/ejsmod.c
+
+"${CC}" -c -Fo${CONFIG}/obj/doc.obj -Fd${CONFIG}/obj/doc.pdb ${CFLAGS} ${DFLAGS} -I${CONFIG}/inc -Isrc/cmd src/cmd/doc.c
+
+"${CC}" -c -Fo${CONFIG}/obj/docFiles.obj -Fd${CONFIG}/obj/docFiles.pdb ${CFLAGS} ${DFLAGS} -I${CONFIG}/inc -Isrc/cmd src/cmd/docFiles.c
+
+"${CC}" -c -Fo${CONFIG}/obj/listing.obj -Fd${CONFIG}/obj/listing.pdb ${CFLAGS} ${DFLAGS} -I${CONFIG}/inc -Isrc/cmd src/cmd/listing.c
+
+"${CC}" -c -Fo${CONFIG}/obj/slotGen.obj -Fd${CONFIG}/obj/slotGen.pdb ${CFLAGS} ${DFLAGS} -I${CONFIG}/inc -Isrc/cmd src/cmd/slotGen.c
+
+"${LD}" -out:${CONFIG}/bin/ejsmod.exe -entry:mainCRTStartup -subsystem:console ${LDFLAGS} ${LIBPATHS} ${CONFIG}/obj/ejsmod.obj ${CONFIG}/obj/doc.obj ${CONFIG}/obj/docFiles.obj ${CONFIG}/obj/listing.obj ${CONFIG}/obj/slotGen.obj ${LIBS} libejs.lib libhttp.lib libmpr.lib libpcre.lib libmprssl.lib
+
+"${CC}" -c -Fo${CONFIG}/obj/ejsrun.obj -Fd${CONFIG}/obj/ejsrun.pdb ${CFLAGS} ${DFLAGS} -I${CONFIG}/inc src/cmd/ejsrun.c
+
+"${LD}" -out:${CONFIG}/bin/ejsrun.exe -entry:mainCRTStartup -subsystem:console ${LDFLAGS} ${LIBPATHS} ${CONFIG}/obj/ejsrun.obj ${LIBS} libejs.lib libhttp.lib libmpr.lib libpcre.lib libmprssl.lib
+
 cd src/core >/dev/null ;\
 ../../${CONFIG}/bin/ejsc --out ../../${CONFIG}/bin/ejs.mod --debug --optimize 9 --bind --require null *.es  ;\
 ../../${CONFIG}/bin/ejsmod --require null --cslots ../../${CONFIG}/bin/ejs.mod ;\
@@ -220,7 +252,27 @@ if ! diff ejs.slots.h ../../${CONFIG}/inc/ejs.slots.h >/dev/null; then cp ejs.sl
 rm -f ejs.slots.h ;\
 cd - >/dev/null 
 
+rm -rf ${CONFIG}/bin/bit.es
+cp -r src/jems/ejs.bit/bit.es ${CONFIG}/bin/bit.es
+
+cd src/jems/ejs.bit >/dev/null ;\
+rm -fr ../../../${CONFIG}/bin/bits ;\
+cp -r bits ../../../${CONFIG}/bin ;\
+cd - >/dev/null 
+
+"${CC}" -c -Fo${CONFIG}/obj/ejsZlib.obj -Fd${CONFIG}/obj/ejsZlib.pdb ${CFLAGS} ${DFLAGS} -I${CONFIG}/inc src/jems/ejs.zlib/ejsZlib.c
+
+"${LD}" -out:${CONFIG}/bin/bit.exe -entry:mainCRTStartup -subsystem:console ${LDFLAGS} ${LIBPATHS} ${CONFIG}/obj/ejsrun.obj ${CONFIG}/obj/ejsZlib.obj ${CONFIG}/obj/mprLib.obj ${CONFIG}/obj/pcre.obj ${CONFIG}/obj/mprSsl.obj ${CONFIG}/obj/httpLib.obj ${CONFIG}/obj/ecAst.obj ${CONFIG}/obj/ecCodeGen.obj ${CONFIG}/obj/ecCompiler.obj ${CONFIG}/obj/ecLex.obj ${CONFIG}/obj/ecModuleWrite.obj ${CONFIG}/obj/ecParser.obj ${CONFIG}/obj/ecState.obj ${CONFIG}/obj/ejsApp.obj ${CONFIG}/obj/ejsArray.obj ${CONFIG}/obj/ejsBlock.obj ${CONFIG}/obj/ejsBoolean.obj ${CONFIG}/obj/ejsByteArray.obj ${CONFIG}/obj/ejsCache.obj ${CONFIG}/obj/ejsCmd.obj ${CONFIG}/obj/ejsConfig.obj ${CONFIG}/obj/ejsDate.obj ${CONFIG}/obj/ejsDebug.obj ${CONFIG}/obj/ejsError.obj ${CONFIG}/obj/ejsFile.obj ${CONFIG}/obj/ejsFileSystem.obj ${CONFIG}/obj/ejsFrame.obj ${CONFIG}/obj/ejsFunction.obj ${CONFIG}/obj/ejsGC.obj ${CONFIG}/obj/ejsGlobal.obj ${CONFIG}/obj/ejsHttp.obj ${CONFIG}/obj/ejsIterator.obj ${CONFIG}/obj/ejsJSON.obj ${CONFIG}/obj/ejsLocalCache.obj ${CONFIG}/obj/ejsMath.obj ${CONFIG}/obj/ejsMemory.obj ${CONFIG}/obj/ejsMprLog.obj ${CONFIG}/obj/ejsNamespace.obj ${CONFIG}/obj/ejsNull.obj ${CONFIG}/obj/ejsNumber.obj ${CONFIG}/obj/ejsObject.obj ${CONFIG}/obj/ejsPath.obj ${CONFIG}/obj/ejsPot.obj ${CONFIG}/obj/ejsRegExp.obj ${CONFIG}/obj/ejsSocket.obj ${CONFIG}/obj/ejsString.obj ${CONFIG}/obj/ejsSystem.obj ${CONFIG}/obj/ejsTimer.obj ${CONFIG}/obj/ejsType.obj ${CONFIG}/obj/ejsUri.obj ${CONFIG}/obj/ejsVoid.obj ${CONFIG}/obj/ejsWorker.obj ${CONFIG}/obj/ejsXML.obj ${CONFIG}/obj/ejsXMLList.obj ${CONFIG}/obj/ejsXMLLoader.obj ${CONFIG}/obj/ejsByteCode.obj ${CONFIG}/obj/ejsException.obj ${CONFIG}/obj/ejsHelper.obj ${CONFIG}/obj/ejsInterp.obj ${CONFIG}/obj/ejsLoader.obj ${CONFIG}/obj/ejsModule.obj ${CONFIG}/obj/ejsScope.obj ${CONFIG}/obj/ejsService.obj ${LIBS}
+
+#  Omit build script /Users/mob/git/ejs/windows-x86-debug/bin/utest.es
+rm -rf ${CONFIG}/bin/utest.exe
+cp -r ${CONFIG}/bin/ejsrun.exe ${CONFIG}/bin/utest.exe
+
 #  Omit build script /Users/mob/git/ejs/windows-x86-debug/bin/ejs.unix.mod
+#  Omit build script /Users/mob/git/ejs/windows-x86-debug/bin/jem.es
+rm -rf ${CONFIG}/bin/jem.exe
+cp -r ${CONFIG}/bin/ejsrun.exe ${CONFIG}/bin/jem.exe
+
 #  Omit build script /Users/mob/git/ejs/windows-x86-debug/bin/ejs.db.mod
 #  Omit build script /Users/mob/git/ejs/windows-x86-debug/bin/ejs.db.mapper.mod
 #  Omit build script /Users/mob/git/ejs/windows-x86-debug/bin/ejs.db.sqlite.mod
@@ -229,8 +281,8 @@ cd - >/dev/null
 "${LD}" -dll -out:${CONFIG}/bin/ejs.db.sqlite.dll -entry:_DllMainCRTStartup@12 -def:${CONFIG}/bin/ejs.db.sqlite.def ${LDFLAGS} ${LIBPATHS} ${CONFIG}/obj/ejsSqlite.obj ${LIBS} libmpr.lib libejs.lib libhttp.lib libpcre.lib libmprssl.lib libsqlite3.lib
 
 cd src/jems/ejs.web >/dev/null ;\
-../../../${CONFIG}/bin/ejsc --out ${OUT} --debug --optimize 9 *.es ;\
-../../../${CONFIG}/bin/ejsmod --cslots ${OUT} ;\
+../../../${CONFIG}/bin/ejsc --out ../../../${CONFIG}/bin/ejs.web.mod --debug --optimize 9 *.es ;\
+../../../${CONFIG}/bin/ejsmod --cslots ../../../${CONFIG}/bin/ejs.web.mod ;\
 if ! diff ejs.web.slots.h ../../../${CONFIG}/inc/ejs.web.slots.h >/dev/null; then cp ejs.web.slots.h ../../../${CONFIG}/inc; fi ;\
 rm -f ejs.web.slots.h ;\
 cd - >/dev/null 
@@ -245,6 +297,20 @@ cd - >/dev/null
 
 "${LD}" -dll -out:${CONFIG}/bin/ejs.web.dll -entry:_DllMainCRTStartup@12 -def:${CONFIG}/bin/ejs.web.def ${LDFLAGS} ${LIBPATHS} ${CONFIG}/obj/ejsHttpServer.obj ${CONFIG}/obj/ejsRequest.obj ${CONFIG}/obj/ejsSession.obj ${CONFIG}/obj/ejsWeb.obj ${LIBS} libejs.lib libhttp.lib libmpr.lib libpcre.lib libmprssl.lib
 
+cd src/jems/ejs.web >/dev/null ;\
+rm -fr ../../../${CONFIG}/bin/www ;\
+cp -r www ../../../${CONFIG}/bin ;\
+cd - >/dev/null 
+
 #  Omit build script /Users/mob/git/ejs/windows-x86-debug/bin/ejs.template.mod
 #  Omit build script /Users/mob/git/ejs/windows-x86-debug/bin/ejs.tar.mod
+#  Omit build script /Users/mob/git/ejs/windows-x86-debug/bin/mvc.es
+rm -rf ${CONFIG}/bin/mvc.exe
+cp -r ${CONFIG}/bin/ejsrun.exe ${CONFIG}/bin/mvc.exe
+
 #  Omit build script /Users/mob/git/ejs/windows-x86-debug/bin/ejs.mvc.mod
+#  Omit build script /Users/mob/git/ejs/windows-x86-debug/bin/utest.worker
+"${CC}" -c -Fo${CONFIG}/obj/removeFiles.obj -Fd${CONFIG}/obj/removeFiles.pdb ${CFLAGS} ${DFLAGS} -I${CONFIG}/inc package/WINDOWS/removeFiles.c
+
+"${LD}" -out:${CONFIG}/bin/removeFiles.exe -entry:WinMainCRTStartup -subsystem:Windows ${LDFLAGS} ${LIBPATHS} ${CONFIG}/obj/removeFiles.obj ${LIBS} libmpr.lib
+

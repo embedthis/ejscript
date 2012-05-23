@@ -180,9 +180,11 @@ public class Bit {
             if (options.configure) {
                 configure()
             }
+            if (options.gen) {
+                generate()
+            }
             if (!options.file) {
                 let file = findStart()
-                App.log.debug(1, 'Change directory to ' + file.dirname)
                 App.chdir(file.dirname)
                 home = App.dir
                 options.file = file.basename
@@ -227,8 +229,13 @@ public class Bit {
         if (options.release) {
             options.profile = 'release'
         }
+        if (args.rest.contains('configure')) {
+            options.configure = Path('.')
+        } else if (options.configure) {
+            args.rest.push('configure')
+            options.configure = Path(options.configure)
+        }
         if (args.rest.contains('generate')) {
-            /* Must be before testing options.configure below */
             if (Config.OS == 'windows') {
                 options.gen = ['sh', 'nmake', 'vs']
             } else if (Config.OS == 'macosx') {
@@ -236,20 +243,8 @@ public class Bit {
             } else {
                 options.gen = ['sh', 'make']
             }
-            if (!options.configure) {
-                options.configure ||= '.'
-                options.without ||= []
-                options.without.push('all')
-            }
         } else if (options.gen) {
             args.rest.push('generate')
-            options.configure ||= '.'
-        }
-        if (args.rest.contains('configure')) {
-            options.configure = Path('.')
-        } else if (options.configure) {
-            args.rest.push('configure')
-            options.configure = Path(options.configure)
         }
         if (args.rest.contains('dump')) {
             options.dump = true
@@ -280,6 +275,15 @@ public class Bit {
                 usage()
             }
             localPlatform = platforms[0]
+            if (!Path(localPlatform + '.bit').exists) {
+                trace('Generate', 'Create platform bit file: ' + localPlatform + '.bit')
+                if (!options.configure) {
+                    App.args.push('-without')
+                    App.args.push('all')
+                    options.configure = Path('.')
+                }
+            }
+            /* Must continue if probe can't locate tools, but does know a default */
             options['continue'] = true
         }
         let [os, arch] = localPlatform.split('-') 
@@ -329,7 +333,8 @@ public class Bit {
         Configure and initialize for building. This generates platform specific bit files.
      */
     function configure() {
-        makeBit(localPlatform, options.configure.join(MAIN))
+        vtrace('Load', 'Preload main.bit to determine required platforms')
+        quickLoad(options.configure.join(MAIN))
         let settings = bit.settings
         if (settings.platforms && !options.gen && !options.nocross) {
             if (!(settings.platforms is Array)) {
@@ -350,8 +355,10 @@ public class Bit {
             bit.cross = true
         }
         bit.cross = false
-        options.configure = undefined
-        genStartBitFile(platforms[0])
+        // options.configure = undefined
+        if (!options.gen) {
+            genStartBitFile(platforms[0])
+        }
     }
 
     function genStartBitFile(platform) {
@@ -599,13 +606,14 @@ public class Bit {
             }
             bit.packs[field] = { enable: false, diagnostic: 'configured --without ' + field }
         }
-        //  MOB - is this used
+        /* UNUSED
         for each (field in poptions['prefix']) {
             let [field,value] = field.split('=')
             if (value) {
                 bit.prefixes[field] = Path(value)
             }
         }
+        */
     }
 
     let envTools = {
@@ -801,9 +809,10 @@ public class Bit {
         if (!bitfile.exists) {
             throw 'Can\'t find ' + bitfile
         }
-        global.bit = bit = makeBareBit()
-        loadBitFile(bitfile)
+        quickLoad(bitfile)
+
         if (bit.platforms) {
+            platforms = bit.platforms
             for (let [index,platform] in bit.platforms) {
                 bitfile = bitfile.dirname.join(platform).joinExt('bit')
                 makeBit(platform, bitfile)
@@ -812,13 +821,13 @@ public class Bit {
                 }
                 prepBuild()
                 build()
-                if ((bit.platforms.length > 1 || bit.cross) && !generating) {
+                if (bit.platforms.length > 1 || bit.cross) {
                     trace('Complete', bit.platform.configuration)
                 }
                 bit.cross = true
             }
         } else {
-            bit.platforms = [localPlatform]
+            platforms = bit.platforms = [localPlatform]
             makeBit(localPlatform, bitfile)
             bit.platform.last = true
             prepBuild()
@@ -982,19 +991,21 @@ public class Bit {
         if (o.platform) {
             blend(bit.platform, o.platform, {combine: true})
         }
-        for each (path in o.blend) {
-            bit.globals.BITS = bit.dir.bits
-            bit.globals.SRC = bit.dir.src
-            if (path.startsWith('?')) {
-                path = home.join(expand(path.slice(1), {fill: null}))
-                if (path.exists) {
-                    loadBitFile(path)
+        if (!bit.quickLoad) {
+            for each (path in o.blend) {
+                bit.globals.BITS = bit.dir.bits
+                bit.globals.SRC = bit.dir.src
+                if (path.startsWith('?')) {
+                    path = home.join(expand(path.slice(1), {fill: null}))
+                    if (path.exists) {
+                        loadBitFile(path)
+                    } else {
+                        vtrace('SKIP', 'Skip blending optional ' + path.relative)
+                    }
                 } else {
-                    vtrace('SKIP', 'Skip blending optional ' + path.relative)
+                    path = home.join(expand(path, {fill: null}))
+                    loadBitFile(path)
                 }
-            } else {
-                path = home.join(expand(path, {fill: null}))
-                loadBitFile(path)
             }
         }
         /*
@@ -1008,16 +1019,7 @@ public class Bit {
         }
         bit = blend(bit, o, {combine: true})
 
-/* UNUSED
-        for (let [tname, target] in o.targets) {
-            for (let [key,value] in target) {
-                if (key.toString().match(/^[-+]/)) {
-                    bit.targets[tname][key] = value
-                }
-            }
-        }
-*/
-        if (o.scripts && o.scripts.onload) {
+        if (o.scripts && o.scripts.onload && !bit.quickLoad) {
             runScript(o.scripts.onload, home)
         }
     }
@@ -1039,10 +1041,15 @@ public class Bit {
         return null
     }
 
-    /*
-        Generate projects
-     */
     function generate() {
+        platforms = bit.platforms = [localPlatform]
+        makeBit(localPlatform, localPlatform + '.bit')
+        bit.platform.last = true
+        prepBuild()
+        generateProjects()
+    }
+
+    function generateProjects() {
         selectedTargets = defaultTargets
         if (generating) return
         gen = {
@@ -1754,10 +1761,14 @@ public class Bit {
      */
     function build() {
         for each (name in selectedTargets) {
+            /* Build named targets */
             let target = bit.targets[name]
             if (target && target.enable) {
                 buildTarget(target)
             }
+            if (name == 'generate') break
+
+            /* Build targets with the same type as the action */
             for each (t in bit.targets) {
                 if (t.type == name) {
                     if (t.enable) {
@@ -1803,8 +1814,8 @@ public class Bit {
                     continue
                 }
                 if (dep.building) {
-                    throw 'Possible recursive dependancy in target ' + target.name + 
-                        ', dependancy ' + dep.name + ' is already building.'
+                    throw new Error('Possible recursive dependancy in target ' + target.name + 
+                        ', dependancy ' + dep.name + ' is already building.')
                 }
                 buildTarget(dep)
             }
@@ -1827,8 +1838,10 @@ public class Bit {
                 buildResource(target)
             } else if (target.type == 'build' || (target.scripts && target.scripts['build'])) {
                 buildScript(target)
+/* UNUSED
             } else if (target.type == 'generate') {
-                generate()
+                generateProjects()
+ */
             }
         } catch (e) {
             throw new Error('Building target ' + target.name + '\n' + e)
@@ -2909,6 +2922,13 @@ global.NN = item.ns
         if (platform == localPlatform) {
             bit.globals.LBIN = localBin = bit.dir.bin.portable
         }
+    }
+
+
+    function quickLoad(bitfile: Path) {
+        global.bit = bit = makeBareBit()
+        bit.quickLoad = true
+        loadBitFile(bitfile)
     }
 
     function validatePlatform(os, arch) {

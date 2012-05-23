@@ -339,7 +339,9 @@ Save Bit trace output to a file instead of displaying to the console.
 .TP
 \fB\--platform os-arch\fR
 Add a platform to build for cross-compilation. Multiple platforms can be added. You may use 'local' for the local
-platform. 
+platform. Options specified after the platform apply to the prior platform. For example: 
+
+    bit --platform linux-x86 --without all --platform linux-arm --with ejscript configure
 
 .TP
 \fB\--profile [debug|release|...]\fR

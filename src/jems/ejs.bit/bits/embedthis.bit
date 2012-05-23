@@ -30,7 +30,7 @@ Bit.load({
                         formats = 'sh,make'
                     }
                     trace('Generate', bit.settings.product + '-' + name.replace(/-.*/, '') + ' projects')
-                    run(bitcmd + ' -d -q -platform ' + name + ' -gen ' + 
+                    run(bitcmd + ' -d -q -platform ' + name + ' -without all -configure . -gen ' + 
                         formats, bit.target.runopt)
                     if (name != bit.platform.name) {
                         rm(bit.dir.top.join(name + '.bit'))
@@ -38,7 +38,7 @@ Bit.load({
                     }
                 }
                 /* Leave a normal configuration */ 
-                run(bitcmd + ' -q -configure .  -' + bit.platform.profile, bit.target.runopt)
+                run(bitcmd + ' -q -configure . -' + bit.platform.profile, bit.target.runopt)
             ",
         },
 
