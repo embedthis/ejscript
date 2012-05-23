@@ -58,14 +58,14 @@ assert(Path("/tmp/a.b").relative.isRelative)
 assert(Path("/tmp/a.b").absolute.isAbsolute)
 assert(!Path(".").absolute.endsWith("/"))
 
-if (Config.OS == "CYGWIN") {
+if (Config.OS == "cygwin") {
     assert(Path("/a/b").absolute == "/a/b")
     assert(Path("/a/b").windows == "C:\\cygwin\\a\\b")
     assert(Path("c:/a/b").absolute == "/cygdrive/c/a/b")
     assert(Path("c:/a/b").windows == "C:\\a\\b")
     assert(Path("c:/cygwin/a/b").absolute == "/a/b")
     assert(Path("c:/cygwin/a/b").windows == "C:\\cygwin\\a\\b")
-} else if (Config.OS == "WINDOWS") {
+} else if (Config.OS == "windows") {
     assert(Path("/a/b").absolute.name.match(/[a-zA-Z]:\\a\\b/))
     assert(Path("/a/b").windows == "\\a\\b")
 } else {
@@ -79,7 +79,7 @@ if (Config.OS == "CYGWIN") {
 assert(p.portable == "file.dat")
 p = Path("\\dir\\ABCdef.txt")
 assert(p.portable.toLowerCase() == "/dir/abcdef.txt")
-if (Config.OS == "WINDOWS") {
+if (Config.OS == "windows") {
     assert(Path("c:\\a\\b\\c").portable == "c:/a/b/c")
     assert(Path("\\a\\b\\c").portable == "/a/b/c")
     p = Path("/a/b/c").natural
@@ -290,7 +290,7 @@ rm(filename)
 
 //  Test links
 
-if (Config.OS != "WINDOWS" && Config.OS != "VXWORKS") {
+if (Config.OS != "windows" && Config.OS != "vxworks") {
     p = Path("sym.tmp")
     p.remove()
     p.makeLink("file.dat")

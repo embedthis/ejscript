@@ -2,7 +2,7 @@
     Stress test
  */
 
-if (Config.OS != 'WINDOWS') {
+if (Config.OS != 'windows') {
     cmd = Cmd("sh ./ls-to-stderr")
     assert(cmd.status == 0)
     assert(cmd.response == "")

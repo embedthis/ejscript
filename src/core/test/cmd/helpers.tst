@@ -9,7 +9,7 @@ if (!Path("/bin").exists) {
 } else {
 
     //  Cmd.run
-    if (Config.OS != "WINDOWS") {
+    if (Config.OS != "windows") {
         //  Windows with cygwin paths can't handle this
         assert(App.dir.same(Cmd.run("pwd").trim()))
         //  Cmd.sh

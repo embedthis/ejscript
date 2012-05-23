@@ -4,7 +4,7 @@
 
 assert(Path("/a/b/c").separator == "/")
 
-if (Config.OS == "WINDOWS") {
+if (Config.OS == "windows") {
     assert(Path("/a\\b/c").join("d/e/f") == "/a/b/c/d/e/f")
     assert(Path("\\a\\b/c").join("d/e/f") == "\\a\\b\\c\\d\\e\\f")
     assert(Path("\\a/b/c").separator == "\\")

@@ -94,7 +94,7 @@ module ejs {
                     return path
                 }
             }
-            if (Config.OS == 'WINDOWS' || Config.OS == 'CYGWIN') {
+            if (Config.OS == 'windows' || Config.OS == 'cygwin') {
                 if (program.extension == '') {
                     for each (ext in ['exe', 'bat', 'cmd']) {
                         let path = locate(program.joinExt('.exe'))
@@ -275,7 +275,7 @@ module ejs {
                 signal = 15
             }
             let cmd = new Cmd
-            if (Config.OS == "WINDOWS" || Config.OS == "CYGWIN") {
+            if (Config.OS == "windows" || Config.OS == "cygwin") {
                 cmd.start('cmd /A /C "WMIC PROCESS get Processid,Commandline /format:csv"')
                 for each (line in cmd.readLines()) {
                     let fields = line.trim().split(",")
@@ -323,7 +323,7 @@ module ejs {
         static function ps(pattern: Object = ""): Array {
             let result = []
             let cmd = new Cmd
-            if (Config.OS == "WINDOWS" || Config.OS == "CYGWIN") {
+            if (Config.OS == "windows" || Config.OS == "cygwin") {
                 cmd.start('cmd /A /C "WMIC PROCESS get Processid,Commandline /format:csv"')
                 for each (line in cmd.readLines()) {
                     let fields = line.split(",")

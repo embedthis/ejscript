@@ -34,10 +34,10 @@ bit.env.WIND_BASE = path
 bit.env.WIND_HOME = path.dirname
 bit.env.WIND_PLATFORM = path.basename
 
-if (Config.OS == 'WINDOWS') {
+if (Config.OS == 'windows') {
     bit.env.WIND_HOST_TYPE = 'x86-win32'
 
-} else if (Config.OS == 'LINUX') {
+} else if (Config.OS == 'windows') {
     if (path.join('host/x86-linux').exists) {
         bit.env.WIND_HOST_TYPE = 'x86-linux'
     } else if (path.join('host/x86-linux2').exists) {
@@ -46,7 +46,7 @@ if (Config.OS == 'WINDOWS') {
         throw 'Can\'t determine the WIND_HOST_TYPE'
     }
 
-} else if (Config.OS == 'SOLARIS') {
+} else if (Config.OS == 'solaris') {
     bit.env.WIND_HOST_TYPE = 'solaris2'
 
 } else {

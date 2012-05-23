@@ -12,7 +12,7 @@ if (!Path("/bin").exists) {
     cmd = new Cmd
     let parent = App.dir.parent
     cmd.start("pwd", {dir: parent})
-    if (Config.OS != "WINDOWS") {
+    if (Config.OS != "windows") {
         //  Windows with CYGWIN paths can't handle this
         assert(parent.same(cmd.response.trim()))
     }

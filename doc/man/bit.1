@@ -17,22 +17,23 @@ bit \- Build It! -- Utility to build and manage programs
 [\fI--log logSpec\fR]
 .RE
 .RS 4
+[\fI--nocross\fR]
 [\fI--out path\fR]
 [\fI--profile [debug|release|...]\fR]
 [\fI--pre sourcefile\fR]
 [\fI--platform os-arch\fR]
-[\fI--quiet\fR]
 .RE
 .RS 4
+[\fI--quiet\fR]
 [\fI--set [feature=value]\fR]
 [\fI--show\fR]
 [\fI--rebuild\fR]
 [\fI--release\fR]
 [\fI--unset feature\fR]
 [\fI--version\fR]
-[\fI--verbose\fR]
 .RE
 .RS 4
+[\fI--verbose\fR]
 [\fI--with PACK[=PATH]\fR]
 [\fI--without PACK\fR]
 [targets|actions]
@@ -324,6 +325,12 @@ Keep some intermediate build files. This is currently used by some documentation
 Specify a file to log internal execution messages. Bit will log execution related trace to the log file. The log level
 specifies the desired verbosity of output. Level 0 is the least verbose and level 9 is the most. The '-v' switch is
 an alias for '--log stderr:2'.
+
+.TP
+\fB\--nocross\fR
+Don't cross-build, rather build natively for the development system. This is useful when configuring for a platform
+that can build and run natively on the development system. For example: Linux 64-bit systems can run 32-bit applications, 
+so 'bit --nocross --platform linux-x86 configure' can directly target the 32-bit platform without cross-building.
 
 .TP
 \fB\--out path\fR

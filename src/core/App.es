@@ -45,7 +45,7 @@ module ejs {
         /**
             Separator string to use when constructing PATH style search strings
          */
-        static var SearchSeparator: String = (Config.OS == 'WINDOWS') ? ';' : ':'
+        static var SearchSeparator: String = (Config.OS == 'windows') ? ';' : ':'
 
         /*  
             Standard I/O streams. These can be any kind of stream.
@@ -314,7 +314,7 @@ module ejs {
          */
         # Config.Legacy
         static function get searchPath(): String {
-            if (Config.OS == 'WINDOWS') {
+            if (Config.OS == 'windows') {
                 return search.join(';')
             } else {
                 return search.join(':')
@@ -323,7 +323,7 @@ module ejs {
 
         # Config.Legacy
         static function set searchPath(path: String): Void {
-            if (Config.OS == 'WINDOWS') {
+            if (Config.OS == 'windows') {
                 search = path.split(';')
             } else {
                 search = path.split(':')

@@ -17,7 +17,7 @@ try {
     } else if (platform.like == 'windows') {
         let search
         let vsdir: Path
-        if (Config.OS == 'WINDOWS') {
+        if (Config.OS == 'windows') {
             /*
                 The VS bin+lib directories contain 32 bit compilers and libraries
                 The native VS 64 bit versions are under bin/amd64 and lib/x64
@@ -44,7 +44,7 @@ try {
         }
         let vv: Path = Path('$(VS)')
         let vsbin, vslib
-        if (Config.OS != 'WINDOWS') {
+        if (Config.OS != 'windows') {
             cc = 'cl.exe'
             vsdir = vv
             vsbin = vsdir.join('VC/Bin'),

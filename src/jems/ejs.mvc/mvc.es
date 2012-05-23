@@ -610,11 +610,11 @@ class EjsMvc {
         let exe = ""
         let lib = ""
         switch (Config.OS) {
-        case "WINDOWS":
+        case "windows":
             exe = ".exe"
             lib = ".dll"
             break
-        case "MACOSX":
+        case "macosx":
             lib = ".dylib"
             break
         default:

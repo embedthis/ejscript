@@ -3,7 +3,7 @@
  *  Test the Memory class
  */
 
-if (Config.OS == "MACOSX" || Config.OS == "LINUX") {
+if (Config.OS == "macosx" || Config.OS == "linux") {
     allocated = Memory.allocated
     assert(allocated > 0) 
     assert(allocated < Memory.system) 

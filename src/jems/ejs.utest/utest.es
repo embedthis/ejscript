@@ -203,7 +203,7 @@ enumerable class Test {
 
         _cfg = _top.join('out')
         if (!_cfg.join('inc/bit.h').exists) {
-            _cfg = Path(_top).glob(Config.OS.toLower() + '-' + Config.CPU + '-*').sort()[0]
+            _cfg = Path(_top).glob(Config.OS + '-' + Config.CPU + '-*').sort()[0]
         }
         if (!_cfg) {
             throw 'Can\'t locate configure files, run configure'

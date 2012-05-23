@@ -79,7 +79,7 @@ public class Bit {
             keep: { alias: 'k' },
             log: { alias: 'l', range: String },
             out: { range: String },
-            nostart: {},
+            nocross: {},
             pre: { range: String, separator: Array },
             platform: { range: String, separator: Array },
             prefix: { range: String, separator: Array },
@@ -116,6 +116,7 @@ public class Bit {
             '    --import                           # Import standard bit configuration\n' + 
             '    --keep                             # Keep intermediate files\n' + 
             '    --log logSpec                      # Save errors to a log file\n' +
+            '    --nocross                          # Build natively\n' +
             '    --out path                         # Save output to a file\n' +
             '    --platform os-arch                 # Build for specified platform\n' +
             '    --profile [debug|release|...]      # Use the build profile\n' +
@@ -132,7 +133,7 @@ public class Bit {
             '')
         if (START.exists) {
             try {
-                b.makeBit(Config.OS.toLower() + '-' + Config.CPU, START)
+                b.makeBit(Config.OS + '-' + Config.CPU, START)
                 global.bit = bit = b.bit
                 let bitfile: Path = START
                 for (let [index,platform] in bit.platforms) {
@@ -220,15 +221,13 @@ public class Bit {
         }
         out = (options.out) ? File(options.out, 'w') : stdout
 
-        let OS = Config.OS
-        localPlatform =  OS.toLower() + '-' + Config.CPU
+        localPlatform =  Config.OS + '-' + Config.CPU
         let [os, arch] = localPlatform.split('-') 
         validatePlatform(os, arch)
 
         local = {
             name: localPlatform,
             os: os,
-            OS: OS,
             arch: arch,
             like: like(os),
         }
@@ -321,7 +320,7 @@ public class Bit {
     function configure() {
         makeBit(localPlatform, options.configure.join(MAIN))
         let settings = bit.settings
-        if (settings.platforms && !options.gen) {
+        if (settings.platforms && !options.gen && !options.nocross) {
             if (!(settings.platforms is Array)) {
                 settings.platforms = [settings.platforms]
             }
@@ -1695,7 +1694,7 @@ public class Bit {
         }
         for (let [pname, prefix] in bit.prefixes) {
             bit.prefixes[pname] = Path(prefix)
-            if (bit.platform.os == 'windows' && Config.OS == 'WINDOWS') {
+            if (bit.platform.os == 'windows' && Config.OS == 'windows') {
                 bit.prefixes[pname] = bit.prefixes[pname].absolute
             }
         }
@@ -2257,7 +2256,7 @@ public class Bit {
         path = path.relative
         if (bit.platform.like == 'windows') {
             path = (generating == 'nmake') ? path.windows : path.portable
-        } else if (Config.OS == 'WINDOWS' && generating && generating != 'nmake')  {
+        } else if (Config.OS == 'windows' && generating && generating != 'nmake')  {
             path = path.portable 
         }
         return repvar(path)
@@ -2780,7 +2779,7 @@ global.NN = item.ns
             If we are a 32 bit program, we don't get to see /Program Files (x86)
          */
         let programs: Path
-        if (Config.OS == 'WINDOWS') {
+        if (Config.OS == 'windows') {
             let pvar = App.getenv('PROGRAMFILES')
             let pf64 = Path(pvar + ' (x86)')
             programs = Path(pf64.exists ? pf64 : pvar)
@@ -2855,7 +2854,6 @@ global.NN = item.ns
         bit.platform = { 
             name: platform, 
             os: os, 
-            OS: os.toUpper(),
             arch: arch, 
             like: kind, 
             dist: dist(os),

@@ -5,10 +5,10 @@
 if (!Path("/bin").exists) {
     test.skip("Only run on unix like systems, including cygwin")
 } else {
-    if (Config.OS == "WINDOWS" || Config.OS == "CYGWIN") {
+    if (Config.OS == "windows" || Config.OS == "cygwin") {
         program = "bash"
         re = /bash/
-    } else if (Config.OS == "MACOSX") {
+    } else if (Config.OS == "macosx") {
         program = "launchd"
         re = /launchd/
     } else {

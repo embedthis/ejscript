@@ -161,7 +161,7 @@ function installCallback(src: Path, dest: Path, options = {}): Boolean {
         global.Zlib.compress(dest.name, zname)
         dest.remove()
     }
-    if (App.uid == 0 && dest.extension == 'so' && Config.OS == 'LINUX' && options.task == 'install') {
+    if (App.uid == 0 && dest.extension == 'so' && Config.OS == 'linux' && options.task == 'install') {
         Cmd.run('ldconfig ' + dest)
     }
     return true
@@ -309,7 +309,7 @@ function packageTar(pkg: Path, options) {
 }
 
 function packageInstall(pkg: Path, options) {
-    if (Config.OS != 'WINDOWS' && App.uid != 0) {
+    if (Config.OS != 'windows' && App.uid != 0) {
         throw 'Must run as root. Use "sudo bit install"'
     }
     let s = bit.settings
