@@ -37,7 +37,7 @@ bit.env.WIND_PLATFORM = path.basename
 if (Config.OS == 'windows') {
     bit.env.WIND_HOST_TYPE = 'x86-win32'
 
-} else if (Config.OS == 'windows') {
+} else if (Config.OS == 'linux') {
     if (path.join('host/x86-linux').exists) {
         bit.env.WIND_HOST_TYPE = 'x86-linux'
     } else if (path.join('host/x86-linux2').exists) {
@@ -50,7 +50,7 @@ if (Config.OS == 'windows') {
     bit.env.WIND_HOST_TYPE = 'solaris2'
 
 } else {
-    throw bit.platform.os + ' is an not a supported O/S for VxWorks cross compilation'
+    throw bit.platform.os + ' is not a supported O/S for VxWorks cross compilation'
 }
 
 let version: String = path.basename.toString().split('-')[1]

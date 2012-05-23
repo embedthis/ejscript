@@ -199,6 +199,21 @@ function getDefaultSettings(platform) {
             warn64to32: false,
             warnUnused: false,
         }
+    } else {
+        settings = {
+            hasDoubleBraces: true,
+            hasLibEdit: false,
+            hasDynLoad: true,
+            hasMmu: true,
+            hasMtune: true,
+            hasPam: false,
+            hasStackProtector: true,
+            hasSync: false,
+            hasSyncCas: false,
+            hasUnnamedUnions: true,
+            warn64to32: false,
+            warnUnused: false,
+        }
     }
     return settings
 }

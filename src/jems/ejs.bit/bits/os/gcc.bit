@@ -55,6 +55,7 @@ Bit.load({
                     defaults.defines.push('-D_GNU_TOOL')
                 }
                 let tunesw = bit.settings.hasMtune ? '-mtune' : '-mcpu'
+print('TT', tunesw)
                 let targ = arch
                 if (arch == 'x86' || arch == 'x64') {
                     targ = 'generic'
