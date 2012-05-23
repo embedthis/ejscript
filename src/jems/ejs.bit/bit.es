@@ -221,21 +221,29 @@ public class Bit {
         }
         out = (options.out) ? File(options.out, 'w') : stdout
 
-        localPlatform =  Config.OS + '-' + Config.CPU
-        let [os, arch] = localPlatform.split('-') 
-        validatePlatform(os, arch)
-
-        local = {
-            name: localPlatform,
-            os: os,
-            arch: arch,
-            like: like(os),
-        }
         if (options.debug) {
             options.profile = 'debug'
         }
         if (options.release) {
             options.profile = 'release'
+        }
+        if (args.rest.contains('generate')) {
+            /* Must be before testing options.configure below */
+            if (Config.OS == 'windows') {
+                options.gen = ['sh', 'nmake', 'vs']
+            } else if (Config.OS == 'macosx') {
+                options.gen = ['sh', 'make', 'xcode']
+            } else {
+                options.gen = ['sh', 'make']
+            }
+            if (!options.configure) {
+                options.configure ||= '.'
+                options.without ||= []
+                options.without.push('all')
+            }
+        } else if (options.gen) {
+            args.rest.push('generate')
+            options.configure ||= '.'
         }
         if (args.rest.contains('configure')) {
             options.configure = Path('.')
@@ -249,21 +257,6 @@ public class Bit {
             args.rest.push('dump')
             options.dump = true
         }
-        if (args.rest.contains('generate')) {
-            if (local.like == 'windows') {
-                options.gen = ['sh', 'nmake', 'vs']
-            } else if (local.os == 'macosx') {
-                options.gen = ['sh', 'make', 'xcode']
-            } else {
-                options.gen = ['sh', 'make']
-            }
-        } else if (options.gen) {
-            args.rest.push('generate')
-        }
-        if (options.gen) {
-            /* Must continue if cross-generating */
-            options['continue'] = true
-        }
         if (args.rest.contains('rebuild')) {
             options.rebuild = true
         }
@@ -274,11 +267,29 @@ public class Bit {
             App.log.error('Can only set profile when configuring via --configure dir')
             usage()
         }
+        localPlatform =  Config.OS + '-' + Config.CPU
         platforms = options.platform || []
         if (platforms.length == 0) {
             platforms.insert(0, localPlatform)
         }
         platforms.transform(function(e) e == 'local' ? localPlatform : e).unique()
+
+        if (options.gen) {
+            if (platforms.length != 1) {
+                App.log.error('Can only generate for one platform at a time')
+                usage()
+            }
+            localPlatform = platforms[0]
+            options['continue'] = true
+        }
+        let [os, arch] = localPlatform.split('-') 
+        validatePlatform(os, arch)
+        local = {
+            name: localPlatform,
+            os: os,
+            arch: arch,
+            like: like(os),
+        }
 
         /*
             The --set|unset|with|without switches apply to the previous --platform switch
@@ -2116,7 +2127,7 @@ public class Bit {
             if (cmd) {
                 cmd = (prefix + cmd.trim() + suffix).replace(/^[ \t]*/mg, '')
                 cmd = cmd.replace(/$/mg, ';\\').replace(/;\\;\\/g, ' ;\\').trim(';\\')
-                cmd = expand(cmd, {fill: null})
+                cmd = expand(cmd, {fill: null}).expand(target.vars, {fill: ''})
                 cmd = repvar2(cmd, target.home)
                 genWrite(cmd + '\n')
             } else {
@@ -2131,7 +2142,7 @@ public class Bit {
                 cmd = (prefix + cmd.trim() + suffix).replace(/^[ \t]*/mg, '\t')
                 //MOB - bug doing multiple ;\\
                 cmd = cmd.replace(/$/mg, ';\\').replace(/;\\;\\/g, ' ;\\').trim(';\\')
-                cmd = expand(cmd, {fill: null})
+                cmd = expand(cmd, {fill: null}).expand(target.vars, {fill: ''})
                 cmd = repvar2(cmd, target.home)
                 genWrite(cmd + '\n')
             }

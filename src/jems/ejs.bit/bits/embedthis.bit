@@ -25,12 +25,12 @@ Bit.load({
                     if (name == 'windows-x86') {
                         formats = 'sh,nmake,vs'
                     } else if (name == 'macosx-x64') {
-                        formats = 'sh,make,xcode'
+                        formats = 'sh,make'
                     } else {
                         formats = 'sh,make'
                     }
                     trace('Generate', bit.settings.product + '-' + name.replace(/-.*/, '') + ' projects')
-                    run(bitcmd + ' -d -q -platform ' + name + ' -without all -configure . -gen ' + 
+                    run(bitcmd + ' -d -q -platform ' + name + ' -gen ' + 
                         formats, bit.target.runopt)
                     if (name != bit.platform.name) {
                         rm(bit.dir.top.join(name + '.bit'))
