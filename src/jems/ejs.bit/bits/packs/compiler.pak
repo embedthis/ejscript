@@ -98,7 +98,7 @@ try {
         Bit.load({packs: { compiler: { path: cc, name: path.basename }}})
     }
 
-    if (platform.like == 'posix' || platform.os == 'vxworks') {
+    if (platform.os == Config.OS && (platform.like == 'posix' || platform.os == 'vxworks')) {
         settings.hasDoubleBraces = compile(cc, '', '#include <stdarg.h>\nva_list d = {{0}};')
         settings.hasMtune = compile(cc, '-mtune=generic', 'int main() { return 0;}')
         settings.hasStackProtector = compile(cc, '-fno-stack-protector', 'int main() { return 0;}')
@@ -123,14 +123,16 @@ try {
         }
     } else if (platform.like == 'windows') {
         settings = {
-            hasMmu: true,
             hasDynLoad: true,
+            hasLibEdit: false,
+            hasMmu: true,
             hasUnnamedUnions: true,
         }
     } else {
         settings = {
-            hasMmu: true,
             hasDynLoad: true,
+            hasLibEdit: false,
+            hasMmu: true,
             hasUnnamedUnions: true,
         }
     }
