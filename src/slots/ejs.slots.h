@@ -579,13 +579,12 @@
 #define ES_Config_Product                                              4
 #define ES_Config_Title                                                5
 #define ES_Config_Version                                              6
-#define ES_Config_LibDir                                               7
-#define ES_Config_BinDir                                               8
-#define ES_Config_IncDir                                               9
-#define ES_Config_Legacy                                               10
-#define ES_Config_SSL                                                  11
-#define ES_Config_SQLITE                                               12
-#define ES_Config_NUM_CLASS_PROP                                       13
+#define ES_Config_Bin                                                  7
+#define ES_Config_Inc                                                  8
+#define ES_Config_Legacy                                               9
+#define ES_Config_SSL                                                  10
+#define ES_Config_SQLITE                                               11
+#define ES_Config_NUM_CLASS_PROP                                       12
 
 /*
    Prototype (instance) slots for "Config" type 
@@ -2349,6 +2348,6 @@
 #define ES_XMLList_NUM_INSTANCE_PROP                                   20
 #define ES_XMLList_NUM_INHERITED_PROP                                  0
 
-#define _ES_CHECKSUM_ejs   1466065
+#define _ES_CHECKSUM_ejs   1464924
 
 #endif

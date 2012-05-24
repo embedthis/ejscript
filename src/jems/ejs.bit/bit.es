@@ -396,7 +396,7 @@ public class Bit {
         if (envSettings) {
             blend(nbit, envSettings, {combine: true})
         }
-        if (bit.dir.bits != Config.LibDir.join('bits')) {
+        if (bit.dir.bits != Config.Bin.join('bits')) {
             nbit.dir.bits = bit.dir.bits
         }
 
@@ -1291,7 +1291,7 @@ public class Bit {
         if (Path('bits').exists) {
             throw 'Current directory already contains a bits directory'
         }
-        cp(Config.LibDir.join('bits'), 'bits')
+        cp(Config.Bin.join('bits'), 'bits')
         if (!MAIN.exits) {
             mv('bits/sample.bit', MAIN)
         }
@@ -2871,7 +2871,7 @@ global.NN = item.ns
         global.bit = bit = makeBareBit()
         bit.dir.src = options.configure || Path('.')
         bit.dir.bits = bit.dir.src.join('bits/standard.bit').exists ? 
-            bit.dir.src.join('bits') : Config.LibDir.join('bits').portable
+            bit.dir.src.join('bits') : Config.Bin.join('bits').portable
         bit.dir.top = '.'
         bit.dir.programs = (kind == 'windows') ? programFiles() : Path('/usr/local/bin')
         let profile = options.profile || 'debug'

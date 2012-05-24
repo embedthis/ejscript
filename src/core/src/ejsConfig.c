@@ -64,22 +64,16 @@ void ejsDefineConfigProperties(Ejs *ejs)
     mprSprintf(version, sizeof(version), "%s-%s", BIT_VERSION, BIT_NUMBER);
     ejsDefineProperty(ejs, type, -1, N("public", "Version"), 0, att, ejsCreateStringFromAsc(ejs, version));
 
-#if UNUSED
-    ejsDefineProperty(ejs, type, -1, N("public", "Legacy"), 0, att, ejsCreateBoolean(ejs, BIT_FEATURE_LEGACY_API));
-#endif
     ejsDefineProperty(ejs, type, -1, N("public", "SSL"), 0, att, ejsCreateBoolean(ejs, BIT_FEATURE_SSL));
     ejsDefineProperty(ejs, type, -1, N("public", "SQLITE"), 0, att, ejsCreateBoolean(ejs, BIT_FEATURE_SQLITE));
 
     if (mprSamePath(mprGetAppDir(), BIT_BIN_PREFIX)) {
-        ejsDefineProperty(ejs, type, -1, N("public", "BinDir"), 0, att, ejsCreatePathFromAsc(ejs, BIT_BIN_PREFIX));
-        ejsDefineProperty(ejs, type, -1, N("public", "LibDir"), 0, att, ejsCreatePathFromAsc(ejs, BIT_LIB_PREFIX));
-        ejsDefineProperty(ejs, type, -1, N("public", "IncDir"), 0, att, ejsCreatePathFromAsc(ejs, BIT_INC_PREFIX));
+        ejsDefineProperty(ejs, type, -1, N("public", "Bin"), 0, att, ejsCreatePathFromAsc(ejs, BIT_BIN_PREFIX));
+        ejsDefineProperty(ejs, type, -1, N("public", "Inc"), 0, att, ejsCreatePathFromAsc(ejs, BIT_INC_PREFIX));
     } else {
-        ejsDefineProperty(ejs, type, -1, N("public", "BinDir"), 0, att, ejsCreatePathFromAsc(ejs, mprGetAppDir()));
-        ejsDefineProperty(ejs, type, -1, N("public", "IncDir"), 0, att, 
+        ejsDefineProperty(ejs, type, -1, N("public", "Bin"), 0, att, ejsCreatePathFromAsc(ejs, mprGetAppDir()));
+        ejsDefineProperty(ejs, type, -1, N("public", "Inc"), 0, att, 
             ejsCreatePathFromAsc(ejs, mprNormalizePath(mprJoinPath(mprGetAppDir(), "../inc"))));
-        ejsDefineProperty(ejs, type, -1, N("public", "LibDir"), 0, att, 
-            ejsCreatePathFromAsc(ejs, mprNormalizePath(mprJoinPath(mprGetAppDir(), "../" BIT_LIB_NAME))));
     }
 }
 
