@@ -76,8 +76,8 @@ class EjsMvc {
         dirs = config.dirs
         dirs.home = App.dir
         //  TODO -- should these come from ejsrc
-        dirs.lib = Config.LibDir
-        dirs.mod = Config.LibDir
+        dirs.lib = Config.Bin
+        dirs.mod = Config.Bin
         for (d in dirs) {
             dirs[d] = Path(dirs[d])
         }
