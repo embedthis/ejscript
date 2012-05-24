@@ -7,7 +7,12 @@ pack('pmaker', 'Package Maker Tool')
 let path
 switch (bit.platform.os) {
 case 'macosx':
-    let search = ['/Applications', '/Developer/Applications/Utilities' ]
+    let search = [
+        '/Applications', 
+        '/Applications/Utilities', 
+        '/Xcode4/Applications/Utilities', 
+        '/Developer/Applications/Utilities' 
+    ]
     path = probe(bit.packs.pmaker.path || 'PackageMaker.app', {fullpath: true, search: search})
     path = path.join('Contents/MacOS/PackageMaker')
     break
