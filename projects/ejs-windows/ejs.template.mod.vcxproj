@@ -2,7 +2,7 @@
 <Project DefaultTargets="Build" ToolsVersion="4.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
 
   <PropertyGroup Label="Globals">
-    <ProjectGuid>{4270031e-06dd-4411-b5dc-ac423ab7d144}</ProjectGuid>
+    <ProjectGuid>{9db8bd03-2d52-4cfb-8bcf-e3fdd1a0de4e}</ProjectGuid>
     <RootNamespace />
     <Keyword>Win32Proj</Keyword>
   </PropertyGroup>
@@ -96,7 +96,7 @@
 
   <CustomBuildStep>
     <Command>cd ..\..\src\jems\ejs.template
-$(BinDir)/ejsc --out $(BinDir)\ejs.template.mod --debug --optimize 9 TemplateParser.es
+$(BinDir)/ejsc --out $(BinDir)/ejs.template.mod --debug --optimize 9 TemplateParser.es
 cd ..\..\..\projects\ejs-windows</Command>
     <Outputs>$(BinDir)\ejs.template.mod</Outputs>
   </CustomBuildStep>
@@ -104,7 +104,7 @@ cd ..\..\..\projects\ejs-windows</Command>
 
 <ItemGroup>
   <ProjectReference Include="ejsc.vcxproj">
-  <Project>d5245843-770a-44aa-9aa8-2a834be6411e</Project>
+  <Project>833ca139-6d61-48a2-a5b9-db93c9f80d98</Project>
   <ReferenceOutputAssembly>false</ReferenceOutputAssembly>
   </ProjectReference>
 </ItemGroup>

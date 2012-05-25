@@ -2,7 +2,7 @@
 <Project DefaultTargets="Build" ToolsVersion="4.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
 
   <PropertyGroup Label="Globals">
-    <ProjectGuid>{ccf27790-c32e-4dfb-8d6d-e36301999a42}</ProjectGuid>
+    <ProjectGuid>{d4803852-a969-4189-9a36-d0efdea16c1c}</ProjectGuid>
     <RootNamespace />
     <Keyword>Win32Proj</Keyword>
   </PropertyGroup>
@@ -105,7 +105,7 @@ cd ..\..\..\projects\ejs-windows</Command>
 
 <ItemGroup>
   <ProjectReference Include="ejsrun.vcxproj">
-  <Project>e0086d0a-61c4-48c8-9c65-8381e18304a7</Project>
+  <Project>c287a52a-bccf-4d9b-923f-578763ef2281</Project>
   <ReferenceOutputAssembly>false</ReferenceOutputAssembly>
   </ProjectReference>
 </ItemGroup>

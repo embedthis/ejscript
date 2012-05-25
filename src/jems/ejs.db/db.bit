@@ -12,7 +12,7 @@ Bit.load({
                 trace('Compile', 'ejs.db.mod')
                 run('${LBIN}/ejsc --out ${LIB}/ejs.db.mod ${settings.esflags} --optimize 9 ' + Path('.').glob('*.es').sort().join(' '))
             ",
-            'generate': '${BIN}/ejsc --out ${OUT} ${settings.esflags} --optimize 9 *.es',
+            'generate': '${BIN}/ejsc --out ${BIN}/ejs.db.mod ${settings.esflags} --optimize 9 *.es',
             depends: [ 'ejsc', 'ejs.mod' ],
         },
 	},

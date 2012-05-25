@@ -19,7 +19,7 @@ Bit.load({
                     cp(header, dest)
                 }
             ",
-            'generate': "${BIN}/ejsc --out ${OUT} ${settings.esflags} --optimize 9 *.es",
+            'generate': "${BIN}/ejsc --out ${BIN}/ejs.db.sqlite.mod ${settings.esflags} --optimize 9 *.es",
             depends: [ 'ejsc', 'ejsmod', 'ejs.mod' ],
         },
 

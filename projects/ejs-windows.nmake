@@ -812,7 +812,7 @@ $(CONFIG)\bin\ejs.unix.mod:  \
         $(CONFIG)\bin\ejsc.exe \
         $(CONFIG)\bin\ejs.mod
 	cd src\jems\ejs.unix
-		..\..\..\$(CONFIG)\bin\ejsc --out ../../../$(CONFIG)/bin/ejs.unix.mod --debug --optimize 9 Unix.es
+		..\..\..\$(CONFIG)\bin\ejsc --out ..\..\..\$(CONFIG)\bin\ejs.unix.mod --debug --optimize 9 Unix.es
 		cd ..\..\..
 
 $(CONFIG)\bin\jem.es: 
@@ -829,7 +829,7 @@ $(CONFIG)\bin\ejs.db.mod:  \
         $(CONFIG)\bin\ejsc.exe \
         $(CONFIG)\bin\ejs.mod
 	cd src\jems\ejs.db
-		..\..\..\$(CONFIG)\bin\ejsc --out ../../../$(CONFIG)/bin/ejs.db.mod --debug --optimize 9 *.es
+		..\..\..\$(CONFIG)\bin\ejsc --out ..\..\..\$(CONFIG)\bin\ejs.db.mod --debug --optimize 9 *.es
 		cd ..\..\..
 
 $(CONFIG)\bin\ejs.db.mapper.mod:  \
@@ -837,7 +837,7 @@ $(CONFIG)\bin\ejs.db.mapper.mod:  \
         $(CONFIG)\bin\ejs.mod \
         $(CONFIG)\bin\ejs.db.mod
 	cd src\jems\ejs.db.mapper
-		..\..\..\$(CONFIG)\bin\ejsc --out ../../../$(CONFIG)/bin/ejs.db.mapper.mod --debug --optimize 9 *.es
+		..\..\..\$(CONFIG)\bin\ejsc --out ..\..\..\$(CONFIG)\bin\ejs.db.mapper.mod --debug --optimize 9 *.es
 		cd ..\..\..
 
 $(CONFIG)\bin\ejs.db.sqlite.mod:  \
@@ -845,7 +845,7 @@ $(CONFIG)\bin\ejs.db.sqlite.mod:  \
         $(CONFIG)\bin\ejsmod.exe \
         $(CONFIG)\bin\ejs.mod
 	cd src\jems\ejs.db.sqlite
-		..\..\..\$(CONFIG)\bin\ejsc --out ../../../$(CONFIG)/bin/ejs.db.sqlite.mod --debug --optimize 9 *.es
+		..\..\..\$(CONFIG)\bin\ejsc --out ..\..\..\$(CONFIG)\bin\ejs.db.sqlite.mod --debug --optimize 9 *.es
 		cd ..\..\..
 
 $(CONFIG)\obj\ejsSqlite.obj: \
@@ -867,8 +867,8 @@ $(CONFIG)\bin\ejs.web.mod:  \
         $(CONFIG)\bin\ejsmod.exe \
         $(CONFIG)\bin\ejs.mod
 	cd src\jems\ejs.web
-		"..\..\..\$(CONFIG)\bin\ejsc" --out "../../../$(CONFIG)/bin/ejs.web.mod" --debug --optimize 9 *.es
-	"..\..\..\$(CONFIG)\bin\ejsmod" --cslots "../../../$(CONFIG)/bin/ejs.web.mod"
+		"..\..\..\$(CONFIG)\bin\ejsc" --out "..\..\..\$(CONFIG)\bin\ejs.web.mod" --debug --optimize 9 *.es
+	"..\..\..\$(CONFIG)\bin\ejsmod" --cslots "..\..\..\$(CONFIG)\bin\ejs.web.mod"
 	copy ejs.web.slots.h ..\..\..\$(CONFIG)\inc\ejs.web.slots.h
 	del ejs.web.slots.h
 		cd ..\..\..
@@ -913,14 +913,14 @@ $(CONFIG)\bin\ejs.template.mod:  \
         $(CONFIG)\bin\ejsc.exe \
         $(CONFIG)\bin\ejs.mod
 	cd src\jems\ejs.template
-		..\..\..\$(CONFIG)\bin\ejsc --out ../../../$(CONFIG)/bin/ejs.template.mod --debug --optimize 9 TemplateParser.es
+		..\..\..\$(CONFIG)\bin\ejsc --out ..\..\..\$(CONFIG)\bin\ejs.template.mod --debug --optimize 9 TemplateParser.es
 		cd ..\..\..
 
 $(CONFIG)\bin\ejs.tar.mod:  \
         $(CONFIG)\bin\ejsc.exe \
         $(CONFIG)\bin\ejs.mod
 	cd src\jems\ejs.tar
-		..\..\..\$(CONFIG)\bin\ejsc --out ../../../$(CONFIG)/bin/ejs.tar.mod --debug --optimize 9 *.es
+		..\..\..\$(CONFIG)\bin\ejsc --out ..\..\..\$(CONFIG)\bin\ejs.tar.mod --debug --optimize 9 *.es
 		cd ..\..\..
 
 $(CONFIG)\bin\mvc.es: 
@@ -940,7 +940,7 @@ $(CONFIG)\bin\ejs.mvc.mod:  \
         $(CONFIG)\bin\ejs.template.mod \
         $(CONFIG)\bin\ejs.unix.mod
 	cd src\jems\ejs.mvc
-		..\..\..\$(CONFIG)\bin\ejsc --out ../../../$(CONFIG)/bin/ejs.mvc.mod --debug --optimize 9 *.es
+		..\..\..\$(CONFIG)\bin\ejsc --out ..\..\..\$(CONFIG)\bin\ejs.mvc.mod --debug --optimize 9 *.es
 		cd ..\..\..
 
 $(CONFIG)\bin\utest.worker: 
