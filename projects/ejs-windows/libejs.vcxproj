@@ -13,7 +13,7 @@
   </ItemDefinitionGroup>
 
   <PropertyGroup Label="Globals">
-    <ProjectGuid>{006b9c39-a291-4aa4-b372-18ad7141592e}</ProjectGuid>
+    <ProjectGuid>{b097bc45-c299-4dfa-944c-cc5c047cd785}</ProjectGuid>
     <RootNamespace />
     <Keyword>Win32Proj</Keyword>
   </PropertyGroup>
@@ -230,7 +230,7 @@ cd ..\projects\ejs-windows</Command>
 
 <ItemGroup>
   <ProjectReference Include="libhttp.vcxproj">
-  <Project>28924c0e-c0e2-4bc2-89ee-c5f6b7816557</Project>
+  <Project>236a87b9-87d7-430d-b73f-d139f8471900</Project>
   <ReferenceOutputAssembly>false</ReferenceOutputAssembly>
   </ProjectReference>
 </ItemGroup>

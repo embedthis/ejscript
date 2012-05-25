@@ -34,7 +34,7 @@
         <div class="contentRight">
             <h1>Quick Nav</h1>
             <ul>
-                <li><a href="#dmg">Installing the DMG Image</a></li>
+                <li><a href="#dmg">Installing the PKG Image</a></li>
                 <li><a href="#self">Installing the Self-Install Image</a></li>
                 <li><a href="#removing">Removing Ejscript</a></li>
                 <li><a href="#running">Running Ejscript</a></li>
@@ -51,28 +51,29 @@
         </div>
         <div class="contentLeft">
             <h1>Installing on MAC OS X</h1>
-            <p>The Embedthis Ejscript install distribution for MACOSX is published in two formats:</p>
+            <p>The Embedthis Ejscript install distribution for Mac OS X is published in two formats:</p>
             <ul>
-                <li>Native DMG/PKG format</li>
+                <li>Native PKG format</li>
                 <li>Tar format for custom/self installs</li>
             </ul>
-            <p>It is recommended that you use the native DMG/PKG package as it will register the software with the
+            <p>It is recommended that you use the native PKG package as it will register the software with the
             system's software package manager. The self-install format consists of tar archives that you can manually
             extract for maximum control over the placement of the product files.</p>
             <p>Both distribution images contain a binary distribution, documentation and development headers and
             libraries in the one package. During installation you will have the option of installing the full
             distribution or just portions.</p><a name="dmg" id="dmg"></a>
-            <h2 class="section">Installing the DMG Image</h2>
+            <h2 class="section">Installing the Image</h2>
             <ol>
-                <li>Double click on the DMG image.</li>
-                <li>Double click on the <b>ejs.mpkg</b> file icon.</li>
-            </ol><a name="self" id="self"></a>
+                <li>Double click on the PKG image.</li>
+            </ol>
+            
+            <a name="self" id="self"></a>
             <h2 class="section">Installing the Self-Install Image</h2>
             <ol>
                 <li>Run the Terminal application</li>
                 <li>Uncompress and extract the files:
                     <pre>
-tar xvfz ejs-VERSION-Apple-MACOSX-CPU.tgz
+tar xvfz ejs-VERSION-apple-macosx-CPU.tgz
 </pre>
                 </li>
                 <li>Start the installation with administrator privilege:</li>
@@ -145,18 +146,18 @@ ejs-0&gt;
 		</p>
 	</div>
 </body>
-    <script src="http://www.google.com/jsapi" type="text/javascript"></script>
-    <script type="text/javascript"> 
-      google.load('search', '1', {language : 'en'});
-      google.setOnLoadCallback(function() {
-        var customSearchControl = new google.search.CustomSearchControl(
-          'partner-pub-9935546676162772:ysvxxv4n9rx');
+<script src="http://www.google.com/jsapi" type="text/javascript"></script>
+<script type="text/javascript"> 
+  google.load('search', '1', {language : 'en'});
+  google.setOnLoadCallback(function() {
+    var customSearchControl = new google.search.CustomSearchControl(
+      'partner-pub-9935546676162772:ysvxxv4n9rx');
 
-        customSearchControl.setResultSetSize(google.search.Search.FILTERED_CSE_RESULTSET);
-        var options = new google.search.DrawOptions();
-        options.enableSearchboxOnly("http://ejscript.org/search.html");
-        customSearchControl.draw('cse-search-form', options);
-      }, true);
-    </script>
+    customSearchControl.setResultSetSize(google.search.Search.FILTERED_CSE_RESULTSET);
+    var options = new google.search.DrawOptions();
+    options.enableSearchboxOnly("http://ejscript.org/search.html");
+    customSearchControl.draw('cse-search-form', options);
+  }, true);
+</script>
 </html>
 <!-- EndDsi -->

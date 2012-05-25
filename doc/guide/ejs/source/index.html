@@ -36,8 +36,7 @@
             <ul>
                 <li><a href="#get">Getting the Source</a></li>
                 <li><a href="#repository">Repository</a></li>
-                <li><a href="#building">Building</a></li>
-                <li><a href="#testing">Testing</a></li>
+                <li><a href="#building">Building from Source</a></li>
                 <li><a href="#porting">Porting</a></li>
             </ul>
             <h1>See Also</h1>
@@ -61,12 +60,12 @@
                 <li>You can modify the core number type to be double, int-32 or int-64</li>
             </ul><a name="get" id="get"></a>
             <h2>Getting the Source Code</h2>
-            <p>With each Ejscript release, a complete source code snapshot is provided. You can get the latest source
-            code from the <a href="http://ejscript.org/downloads/ejs/download.ejs">download</a> site or you can
-            access the <a href="https://github.com/embedthis/ejs-2">source code repository</a>.</p><a name="repository" id=
-            "repository"></a>
-            <h3>Source Repository</h3>
-            <p>Go to <a href="https://github.com/embedthis/ejs-2">https://github.com/embedthis/ejs-2</a> to get the latest source
+            <a name="repository" id="repository"></a>
+            <p>With each Ejscript release, a complete source code snapshot is provided. You can get the latest source code
+            from the <a href="http://ejscript.org/downloads/ejs/download.ejs">download</a> site or you can access
+            the <a href="https://github.com/embedthis/ejs-2">source code repository</a>.</p>
+<h3>Source Repository</h3>
+<p>Go to <a href="https://github.com/embedthis/ejs-2">https://github.com/embedthis/ejs-2</a> to get the latest source
             code. The repository source code will contain the latest features and fixes, but it will also contain bugs
             and issues that have not been resolved. Use of the repository source code is not recommended for
             production or development use.</p>
@@ -75,15 +74,27 @@
             <pre>
 $ git clone http://github.com/embedthis/ejs-2
 </pre>
+            <p>You can also view the repository at 
+            <a href="https://github.com/embedthis/ejs-2">https://github.com/embedthis/ejs-2</a>.  This is also a
+            convenient way to get the source code. </p>
+            <h3>Repository Branches</h3>
+            The repository has three branches for various phases of development and release: Master, Dev and Stable. 
+            <h4>Master Branch</h4>
+            The Master branch in the repository source code is the code base for the next minor and major release. It 
+            will contain the latest features and fixes, but it will also contain bugs and issues that have not been 
+            resolved. For this reason use of the repository source code is not recommended for production or development use.  
+            <h4>Dev Branch</h4>
+            <p>The Dev branch is updated when the Master branch is relatively steady and usable, but prior to release.
+            The Dev branch is used to create Beta releases. It is not as bug-free as the Stable branch and yet has most
+            of the features in the master branch.</p>
+            <h4>Stable Branch</h4>
+            <p>The stable branch is for ongoing maintenance of the current stable release.</p>
             <a name="building" id="building"></a>
             <h2>Building Ejscript from Source</h2>
             <p>The Ejscript source distribution contains all the required source files, headers, tools and test
             framework to reconfigure, build and verify Ejscript. See also the detailed <a href="building.html">building
             from source</a> instructions.</p><a name="testing" id="testing"></a>
-            <h2>Running Unit Tests</h2>
-            <p>The Ejscript source code uses a large test suite to verify correct operation and trap regression errors.
-            See the <a href="testing.html">Unit Test</a> documentation for details.</p><a name="porting" id=
-            "porting"></a>
+            <a name="porting" id="porting"></a>
             <h2>Porting the Source to a New Platform</h2>
             <p>Ejscript currently runs on a wide variety of operating platforms including: FreeBSD, Linux, MAC OS X and
             Windows. If your system is not one of these, you may like to try porting Ejscript to your system. See the
@@ -99,18 +110,18 @@ $ git clone http://github.com/embedthis/ejs-2
 		</p>
 	</div>
 </body>
-    <script src="http://www.google.com/jsapi" type="text/javascript"></script>
-    <script type="text/javascript"> 
-      google.load('search', '1', {language : 'en'});
-      google.setOnLoadCallback(function() {
-        var customSearchControl = new google.search.CustomSearchControl(
-          'partner-pub-9935546676162772:ysvxxv4n9rx');
+<script src="http://www.google.com/jsapi" type="text/javascript"></script>
+<script type="text/javascript"> 
+  google.load('search', '1', {language : 'en'});
+  google.setOnLoadCallback(function() {
+    var customSearchControl = new google.search.CustomSearchControl(
+      'partner-pub-9935546676162772:ysvxxv4n9rx');
 
-        customSearchControl.setResultSetSize(google.search.Search.FILTERED_CSE_RESULTSET);
-        var options = new google.search.DrawOptions();
-        options.enableSearchboxOnly("http://ejscript.org/search.html");
-        customSearchControl.draw('cse-search-form', options);
-      }, true);
-    </script>
+    customSearchControl.setResultSetSize(google.search.Search.FILTERED_CSE_RESULTSET);
+    var options = new google.search.DrawOptions();
+    options.enableSearchboxOnly("http://ejscript.org/search.html");
+    customSearchControl.draw('cse-search-form', options);
+  }, true);
+</script>
 </html>
 <!-- EndDsi -->
