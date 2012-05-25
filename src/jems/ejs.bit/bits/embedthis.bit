@@ -25,7 +25,7 @@ Bit.load({
                     if (name == 'windows-x86') {
                         formats = 'sh,nmake,vs'
                     } else if (name == 'macosx-x64') {
-                        formats = 'sh,make'
+                        formats = 'sh,make,xcode'
                     } else {
                         formats = 'sh,make'
                     }
