@@ -263,7 +263,7 @@ function packageSimple(pkg: Path, options, fmt) {
     let generic = rel.join(s.product + '-' + fmt + '.tgz')
     generic.remove()
     Path(generic).symlink(zname)
-    rel.join('md5-' + options.vname + '-' + fmt + '.tar.txt').write(md5(zname.readString()))
+    rel.join('md5-' + options.vname + '-' + fmt + '.tgz.txt').write(md5(zname.readString()))
 }
 
 function packageFlat(pkg: Path, options) {
@@ -302,7 +302,7 @@ function packageTar(pkg: Path, options) {
     use namespace 'ejs.zlib'
     global.Zlib.compress(name, zname)
     name.remove()
-    rel.join('md5-' + base).joinExt('tar.txt', true).write(md5(zname.readString()))
+    rel.join('md5-' + base).joinExt('tgz.txt', true).write(md5(zname.readString()))
     let generic = rel.join(s.product + '-tar' + '.tgz')
     generic.remove()
     Path(generic).symlink(zname)
