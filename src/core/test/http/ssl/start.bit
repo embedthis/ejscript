@@ -1,5 +1,5 @@
 /*
-  	local.bit -- Bit file for SSL management of certificates and keys
+  	start.bit -- Bit file for SSL management of certificates and keys
 
  	This provides Some targets to help you get going with SSL (using OpenSSL). 
 	All these certificates are for internal use only.

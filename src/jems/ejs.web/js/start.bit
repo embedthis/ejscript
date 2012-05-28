@@ -1,5 +1,5 @@
 /*
-	local.bit - Bit file to minify client javascripts
+	start.bit - Bit file to minify client javascripts
  */
 
 Bit.load({
