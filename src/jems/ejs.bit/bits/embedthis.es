@@ -566,7 +566,11 @@ function packageWindows(pkg: Path, options) {
     trace('Package', outfile)
     run([bit.packs.pmaker.path, iss])
     pkg.join('Output/setup.exe').copy(outfile)
-    bit.dir.rel.join('md5-' + base).joinExt('exe.txt', true).write(md5(outfile.readString()))
+
+    /* Wrap in a zip archive */
+    let zip = outfile.joinExt('zip', true)
+    run([bit.packs.zip.path, '-q', zip, outfile)
+    bit.dir.rel.join('md5-' + base).joinExt('exe.zip.txt', true).write(md5(zip.readString()))
 }
 
 public function syncup(from: Path, to: Path) {

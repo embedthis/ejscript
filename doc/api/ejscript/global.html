@@ -1357,7 +1357,7 @@ If the overwrite option is false, the property will only be copied if it does no
 <tr class='param'><td class='param'>dest: <a href='Object.html'>Object</a> </td><td>Destination object.</td></tr><tr class='param'><td class='param'>src: <a href='Object.html'>Object</a> </td><td>Source object.</td></tr><tr class='param'><td class='param'>options </td><td>Control options. [default: null]</td></tr></table></dd>
 </dl><dl><dt>Options</dt>
 <dd><table class='parameters' summary ='options'>
-<td class='param'>combine</td><td>Boolean. If true, then support key prefixes "+", "=", "-" to add, assign and subtract key values. When combining string properties, values will be appended using a space separator. Extra spaces will not  be removed on subtraction. Arrays with string values may also be combined using the key prefixes.</td></tr>
+<td class='param'>combine</td><td>Boolean. If true, then support key prefixes "+", "=", "-" to add, assign and subtract key values. When adding string properties, values will be appended using a space separator. Extra spaces will not  be removed on subtraction. Arrays with string values may also be combined using the key prefixes.</td></tr>
 <td class='param'>overwrite</td><td>Boolean. If true, then overwrite existing properties in the destination object. Defaults to true.</td></tr>
 <td class='param'>deep</td><td>Boolean. If true, then recursively copy the properties of any objects referenced in the source object. Otherwise, the copy is only one level deep. Defaults to true.</td></tr>
 <td class='param'>functions</td><td>Boolean. If true, then copy functions. Defaults to false.</td></tr>
@@ -1446,7 +1446,8 @@ If the overwrite option is false, the property will only be copied if it does no
 <td class='param'>group</td><td>String representing the file group.</td></tr>
 <td class='param'>permissions</td><td>Number File Posix permissions mask.</td></tr>
 <td class='param'>process</td><td>Optional callback function to process the copied file. This function must do the actual copy  and any required post-processing. Signature is function process(src: Path, dest: Path, options).</td></tr>
-<td class='param'>tree</td><td>Copy the entire subtree identified by the patterns by prepending the entire subtree path.</td></tr>
+<td class='param'>subtree</td><td>If copying a directory, copy the subtree below the patterns.</td></tr>
+<td class='param'>tree</td><td>If copying a directory, copy the subtree including the pattern path.</td></tr>
 </table></dd>
 </dl><dl><dt>Returns</dt>
 <dd>Number of files copied.</dd></dl>

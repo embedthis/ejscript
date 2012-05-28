@@ -36,15 +36,14 @@
     <div class="content">
         <div class="contentRight">
             
-            
-<!-- BeginDsi "dsi/see.html" -->
-				<h1>See Also</h1>
-				<ul>
-					<li><a href="../ref/ejs/index.html">Programmers Reference</a></li>
-					<li><a href="../api/ejscript/index.html" target="new">Script Library</a></li>
-					<li><a href="../api/native.html">Native APIs</a></li>
-				</ul>
-<!-- EndDsi -->
+            <!-- BeginDsi "dsi/see.html" -->
+            <h2>See Also</h2>
+            <ul>
+                <li><a href="../ref/ejs/index.html">Programmers Reference</a></li>
+                <li><a href="../api/ejscript/index.html" target="new">Script Library</a></li>
+                <li><a href="../api/native.html">Native APIs</a></li>
+            </ul>
+            <!-- EndDsi -->
             <h2>Quick Nav</h2>
             <ul>
                 <li><a href="#Components">Components</a></li>
@@ -239,7 +238,7 @@
 <tr class="apiDef"><td class="apiType"><a href="#group___ejs_iterator" class="ref">EjsIterator*</a></td><td><a href="#group___ejs_iterator_1ga410d4f75152c02c82d2b65ae7247662b" class="nameRef">ejsCreateIterator</a>(<a href="#group___ejs" class="ref">Ejs</a> *ejs, <a href="#ejs_8h_1a6b33ea7ff8884b09e08ff69d698eb4e9" class="ref">EjsAny</a> *target, void *next, <a href="mprBare.html#mpr_8h_1ad5c9d4ba3dc37783a528b0925dc981a0" class="ref">bool</a> deep, <a href="#group___ejs_array" class="ref">EjsArray</a> *namespaces)</td></tr><tr class="apiBrief"><td>&nbsp;</td><td>Create an iterator object.</td></tr>
 <tr class="apiDef"><td class="apiType"><a href="#group___ejs_namespace" class="ref">EjsNamespace*</a></td><td><a href="#group___ejs_namespace_1ga970be270f8abe248d46bedcfbc022698" class="nameRef">ejsCreateNamespace</a>(<a href="#group___ejs" class="ref">Ejs</a> *ejs, <a href="#group___ejs_string" class="ref">EjsString</a> *name)</td></tr><tr class="apiBrief"><td>&nbsp;</td><td>Create a namespace object.</td></tr>
 <tr class="apiDef"><td class="apiType"><a href="#group___ejs_null" class="ref">EjsNull*</a></td><td><a href="#group___ejs_null_1ga3bf82a2a5c4511feb4776b1a0388f156" class="nameRef">ejsCreateNull</a>(<a href="#group___ejs" class="ref">Ejs</a> *ejs)</td></tr><tr class="apiBrief"><td>&nbsp;</td><td>Create the null object.</td></tr>
-<tr class="apiDef"><td class="apiType"><a href="#group___ejs_number" class="ref">EjsNumber*</a></td><td><a href="#group___ejs_number_1gabbc997d13a55ae22b87abb9d3b1df9ec" class="nameRef">ejsCreateNumber</a>(<a href="#group___ejs" class="ref">Ejs</a> *ejs, <a href="#ejs_8h_1aefb40e15c552f1286f8e00ec8fb6d9c4" class="ref">MprNumber</a> value)</td></tr><tr class="apiBrief"><td>&nbsp;</td><td>Create a number object.</td></tr>
+<tr class="apiDef"><td class="apiType"><a href="#group___ejs_number" class="ref">EjsNumber*</a></td><td><a href="#group___ejs_number_1gabbc997d13a55ae22b87abb9d3b1df9ec" class="nameRef">ejsCreateNumber</a>(<a href="#group___ejs" class="ref">Ejs</a> *ejs, <a href="#ejs_8h_1a1454f92e827cef175f83a9bb6839afd0" class="ref">MprNumber</a> value)</td></tr><tr class="apiBrief"><td>&nbsp;</td><td>Create a number object.</td></tr>
 <tr class="apiDef"><td class="apiType"><a href="#ejs_8h_1a6b33ea7ff8884b09e08ff69d698eb4e9" class="ref">EjsAny*</a></td><td><a href="#group___ejs_obj_1ga6fef857b0036bffaacef456cb47eff3b" class="nameRef">ejsCreateObj</a>(<a href="#group___ejs" class="ref">Ejs</a> *ejs, struct EjsType *type, int numSlots)</td></tr><tr class="apiBrief"><td>&nbsp;</td><td>Create a variable.</td></tr>
 <tr class="apiDef"><td class="apiType"><a href="#group___ejs_path" class="ref">EjsPath*</a></td><td><a href="#group___ejs_path_1ga89c88658e009637fe471fef151e9b599" class="nameRef">ejsCreatePath</a>(<a href="#group___ejs" class="ref">Ejs</a> *ejs, <a href="#group___ejs_string" class="ref">EjsString</a> *path)</td></tr><tr class="apiBrief"><td>&nbsp;</td><td>Create a Path object.</td></tr>
 <tr class="apiDef"><td class="apiType"><a href="#group___ejs_path" class="ref">EjsPath*</a></td><td><a href="#group___ejs_path_1gacb5b025bc35d864fc937fe4ad6a24224" class="nameRef">ejsCreatePathFromAsc</a>(<a href="#group___ejs" class="ref">Ejs</a> *ejs, <a href="mprBare.html#mpr_8h_1a0f128c3e0c83721af0220c00554e9c4e" class="ref">cchar</a> *path)</td></tr><tr class="apiBrief"><td>&nbsp;</td><td>Create a Path object.</td></tr>
@@ -304,7 +303,7 @@
 <tr class="apiDef"><td class="apiType"><a href="#ejs_8h_1a6b33ea7ff8884b09e08ff69d698eb4e9" class="ref">EjsAny*</a></td><td><a href="#group___ejs_array_1gaaa818bc25cfa75a0da2872985cc764db" class="nameRef">ejsGetLastItem</a>(<a href="#group___ejs" class="ref">Ejs</a> *ejs, <a href="#group___ejs_array" class="ref">EjsArray</a> *ap)</td></tr><tr class="apiBrief"><td>&nbsp;</td><td>Get the last item from an array.</td></tr>
 <tr class="apiDef"><td class="apiType">int</td><td><a href="#group___ejs_obj_1ga54e1605894366dc559915afb024dc0b7" class="nameRef">ejsGetLength</a>(<a href="#group___ejs" class="ref">Ejs</a> *ejs, <a href="#ejs_8h_1a6b33ea7ff8884b09e08ff69d698eb4e9" class="ref">EjsAny</a> *obj)</td></tr><tr class="apiBrief"><td>&nbsp;</td><td>Get a count of properties in a variable.</td></tr>
 <tr class="apiDef"><td class="apiType"><a href="#ejs_8h_1a6b33ea7ff8884b09e08ff69d698eb4e9" class="ref">EjsAny*</a></td><td><a href="#group___ejs_array_1ga3a823345abdbbe6043de660356d163cc" class="nameRef">ejsGetNextItem</a>(<a href="#group___ejs" class="ref">Ejs</a> *ejs, <a href="#group___ejs_array" class="ref">EjsArray</a> *ap, int *next)</td></tr><tr class="apiBrief"><td>&nbsp;</td><td>Get the next item from an array.</td></tr>
-<tr class="apiDef"><td class="apiType"><a href="#ejs_8h_1aefb40e15c552f1286f8e00ec8fb6d9c4" class="ref">MprNumber</a></td><td><a href="#group___ejs_number_1ga45311f2f0ea79363270b212e9690546f" class="nameRef">ejsGetNumber</a>(<a href="#group___ejs" class="ref">Ejs</a> *ejs, <a href="#ejs_8h_1a6b33ea7ff8884b09e08ff69d698eb4e9" class="ref">EjsAny</a> *obj)</td></tr><tr class="apiBrief"><td>&nbsp;</td><td>Get the numeric value stored in a EjsNumber object.</td></tr>
+<tr class="apiDef"><td class="apiType"><a href="#ejs_8h_1a1454f92e827cef175f83a9bb6839afd0" class="ref">MprNumber</a></td><td><a href="#group___ejs_number_1ga45311f2f0ea79363270b212e9690546f" class="nameRef">ejsGetNumber</a>(<a href="#group___ejs" class="ref">Ejs</a> *ejs, <a href="#ejs_8h_1a6b33ea7ff8884b09e08ff69d698eb4e9" class="ref">EjsAny</a> *obj)</td></tr><tr class="apiBrief"><td>&nbsp;</td><td>Get the numeric value stored in a EjsNumber object.</td></tr>
 <tr class="apiDef"><td class="apiType"><a href="#group___ejs_name" class="ref">EjsName</a></td><td><a href="#group___ejs_pot_1gadf32714883ba4e6593eeded82e832b8d" class="nameRef">ejsGetPotPropertyName</a>(<a href="#group___ejs" class="ref">Ejs</a> *ejs, <a href="#group___ejs_pot" class="ref">EjsPot</a> *obj, int slotNum)</td></tr><tr class="apiBrief"><td>&nbsp;</td><td>Get a property name.</td></tr>
 <tr class="apiDef"><td class="apiType"><a href="#ejs_8h_1a6b33ea7ff8884b09e08ff69d698eb4e9" class="ref">EjsAny*</a></td><td><a href="#group___ejs_array_1ga29dd01855d3fc312ccadee7003544144" class="nameRef">ejsGetPrevItem</a>(<a href="#group___ejs" class="ref">Ejs</a> *ejs, <a href="#group___ejs_array" class="ref">EjsArray</a> *ap, int *prev)</td></tr><tr class="apiBrief"><td>&nbsp;</td><td>Get the previous item from an array.</td></tr>
 <tr class="apiDef"><td class="apiType"><a href="#ejs_8h_1a6b33ea7ff8884b09e08ff69d698eb4e9" class="ref">EjsAny*</a></td><td><a href="#group___ejs_obj_1ga1ed91c82c9413c3954a2bb8b23e100a0" class="nameRef">ejsGetProperty</a>(<a href="#group___ejs" class="ref">Ejs</a> *ejs, <a href="#ejs_8h_1a6b33ea7ff8884b09e08ff69d698eb4e9" class="ref">EjsAny</a> *obj, int slotNum)</td></tr><tr class="apiBrief"><td>&nbsp;</td><td>Get a property.</td></tr>
@@ -340,9 +339,9 @@
 <tr class="apiDef"><td class="apiType"><a href="mprBare.html#mpr_8h_1ad5c9d4ba3dc37783a528b0925dc981a0" class="ref">bool</a></td><td><a href="#group___ejs_error_1ga2995783427c88b112c971bbefd54ef2f" class="nameRef">ejsIsError</a>(<a href="#group___ejs" class="ref">Ejs</a> *ejs, <a href="#ejs_8h_1a6b33ea7ff8884b09e08ff69d698eb4e9" class="ref">EjsAny</a> *obj)</td></tr><tr class="apiBrief"><td>&nbsp;</td><td>Test if the given object is an error instance.</td></tr>
 <tr class="apiDef"><td class="apiType"><a href="mprBare.html#mpr_8h_1ad5c9d4ba3dc37783a528b0925dc981a0" class="ref">bool</a></td><td><a href="#group___ejs_frame_1gadedcb4d617bcaae8cb975249a763b36c" class="nameRef">ejsIsFrame</a>(<a href="#group___ejs" class="ref">Ejs</a> *ejs, <a href="#ejs_8h_1a6b33ea7ff8884b09e08ff69d698eb4e9" class="ref">EjsAny</a> *obj)</td></tr><tr class="apiBrief"><td>&nbsp;</td><td>Determine if a variable is a frame.</td></tr>
 <tr class="apiDef"><td class="apiType"><a href="mprBare.html#mpr_8h_1ad5c9d4ba3dc37783a528b0925dc981a0" class="ref">bool</a></td><td><a href="#group___ejs_function_1ga7127ecf0788bd034597366ea9e8eb215" class="nameRef">ejsIsFunction</a>(<a href="#group___ejs" class="ref">Ejs</a> *ejs, <a href="#ejs_8h_1a6b33ea7ff8884b09e08ff69d698eb4e9" class="ref">EjsAny</a> *obj)</td></tr><tr class="apiBrief"><td>&nbsp;</td><td>Determine if a variable is a function.</td></tr>
-<tr class="apiDef"><td class="apiType"><a href="mprBare.html#mpr_8h_1ad5c9d4ba3dc37783a528b0925dc981a0" class="ref">bool</a></td><td><a href="#group___ejs_number_1ga3d7f96bd70092c005bc9b37f9c1d0b15" class="nameRef">ejsIsInfinite</a>(<a href="#ejs_8h_1aefb40e15c552f1286f8e00ec8fb6d9c4" class="ref">MprNumber</a> n)</td></tr><tr class="apiBrief"><td>&nbsp;</td><td>Test if a number is infinite.</td></tr>
+<tr class="apiDef"><td class="apiType"><a href="mprBare.html#mpr_8h_1ad5c9d4ba3dc37783a528b0925dc981a0" class="ref">bool</a></td><td><a href="#group___ejs_number_1ga3d7f96bd70092c005bc9b37f9c1d0b15" class="nameRef">ejsIsInfinite</a>(<a href="#ejs_8h_1a1454f92e827cef175f83a9bb6839afd0" class="ref">MprNumber</a> n)</td></tr><tr class="apiBrief"><td>&nbsp;</td><td>Test if a number is infinite.</td></tr>
 <tr class="apiDef"><td class="apiType"><a href="mprBare.html#mpr_8h_1ad5c9d4ba3dc37783a528b0925dc981a0" class="ref">bool</a></td><td><a href="#group___ejs_function_1gafe317233b001bbca1b86cedf96c3b5a7" class="nameRef">ejsIsInitializer</a>(<a href="#group___ejs" class="ref">Ejs</a> *ejs, <a href="#ejs_8h_1a6b33ea7ff8884b09e08ff69d698eb4e9" class="ref">EjsAny</a> *obj)</td></tr><tr class="apiBrief"><td>&nbsp;</td><td>Determine if the function is an initializer.</td></tr>
-<tr class="apiDef"><td class="apiType"><a href="mprBare.html#mpr_8h_1ad5c9d4ba3dc37783a528b0925dc981a0" class="ref">bool</a></td><td><a href="#group___ejs_number_1gac6b70d868e0c30bb47399363a99eb7b1" class="nameRef">ejsIsNan</a>(<a href="#ejs_8h_1aefb40e15c552f1286f8e00ec8fb6d9c4" class="ref">MprNumber</a> n)</td></tr><tr class="apiBrief"><td>&nbsp;</td><td>Test if a value is not-a-number.</td></tr>
+<tr class="apiDef"><td class="apiType"><a href="mprBare.html#mpr_8h_1ad5c9d4ba3dc37783a528b0925dc981a0" class="ref">bool</a></td><td><a href="#group___ejs_number_1gac6b70d868e0c30bb47399363a99eb7b1" class="nameRef">ejsIsNan</a>(<a href="#ejs_8h_1a1454f92e827cef175f83a9bb6839afd0" class="ref">MprNumber</a> n)</td></tr><tr class="apiBrief"><td>&nbsp;</td><td>Test if a value is not-a-number.</td></tr>
 <tr class="apiDef"><td class="apiType"><a href="mprBare.html#mpr_8h_1ad5c9d4ba3dc37783a528b0925dc981a0" class="ref">bool</a></td><td><a href="#group___ejs_function_1gab8d9707a7fb66beea580dab3f897a65d" class="nameRef">ejsIsNativeFunction</a>(<a href="#group___ejs" class="ref">Ejs</a> *ejs, <a href="#ejs_8h_1a6b33ea7ff8884b09e08ff69d698eb4e9" class="ref">EjsAny</a> *obj)</td></tr><tr class="apiBrief"><td>&nbsp;</td><td>Determine if the function is a native function.</td></tr>
 <tr class="apiDef"><td class="apiType"><a href="mprBare.html#mpr_8h_1ad5c9d4ba3dc37783a528b0925dc981a0" class="ref">bool</a></td><td><a href="#group___ejs_pot_1ga2bf4d8cac958a8e198be9c698e74f082" class="nameRef">ejsIsPot</a>(<a href="#group___ejs" class="ref">Ejs</a> *ejs, <a href="#ejs_8h_1a6b33ea7ff8884b09e08ff69d698eb4e9" class="ref">EjsAny</a> *obj)</td></tr><tr class="apiBrief"><td>&nbsp;</td><td>Determine if a variable is a Pot.</td></tr>
 <tr class="apiDef"><td class="apiType"><a href="mprBare.html#mpr_8h_1ad5c9d4ba3dc37783a528b0925dc981a0" class="ref">bool</a></td><td><a href="#group___ejs_type_1ga2f1e87fc744789876dbac6f8a01383f1" class="nameRef">ejsIsPrototype</a>(<a href="#group___ejs" class="ref">Ejs</a> *ejs, <a href="#ejs_8h_1a6b33ea7ff8884b09e08ff69d698eb4e9" class="ref">EjsAny</a> *obj)</td></tr><tr class="apiBrief"><td>&nbsp;</td><td>Determine if a variable is a prototype object.</td></tr>
@@ -468,7 +467,7 @@
 <a name="Defines"></a><h1>Defines</h1>
 <table class="apiIndex" title="Defines">
 <tr class="apiDef">
-<td>#define</td><td><a href="#ejs_8h_1aa5e4eb568664a0778fac57b07116918c" class="nameRef">BLD_FEATURE_NUM_TYPE</a>&nbsp;&nbsp;&nbsp;double</td>
+<td>#define</td><td><a href="#ejs_8h_1ae2904ed0167ee398db771a709dbb99f1" class="nameRef">BIT_FEATURE_NUM_TYPE</a>&nbsp;&nbsp;&nbsp;double</td>
 </tr>
 <tr class="apiBrief"><td>&nbsp;</td><td>Configured numeric type.</td></tr>
 <tr class="apiDef">
@@ -2509,7 +2508,7 @@ It is most useful for other types to implement a write to byte array capability
     <tr><td class="param">int</td><td><td>argc</td><td>
 Length of argv.
 </td>
-    <tr><td class="param">char **</td><td><td>argv</td><td>
+    <tr><td class="param"><a class="ref" BBB href="#mpr_8h_1a0f128c3e0c83721af0220c00554e9c4e" external="mpr.dtags">cchar</a> **</td><td><td>argv</td><td>
 Actual argv when invoking the command.
 </td>
     <tr><td class="param">int</td><td><td>async</td><td>
@@ -4420,7 +4419,7 @@ Numeric value.
   <div class="prototype">
     <a href="#group___ejs_number" class="ref">EjsNumber</a> *
     ejsCreateNumber
-(<a href="#group___ejs" class="ref">Ejs</a> *ejs, <a href="#ejs_8h_1aefb40e15c552f1286f8e00ec8fb6d9c4" class="ref">MprNumber</a> value)
+(<a href="#group___ejs" class="ref">Ejs</a> *ejs, <a href="#ejs_8h_1a1454f92e827cef175f83a9bb6839afd0" class="ref">MprNumber</a> value)
   </div>
   <div class="apiDetail">
 <p>Create a number object.</p>
@@ -4494,7 +4493,7 @@ Numeric value.
 <a name="group___ejs_number_1ga45311f2f0ea79363270b212e9690546f"></a>
 <div class="api">
   <div class="prototype">
-    <a href="#ejs_8h_1aefb40e15c552f1286f8e00ec8fb6d9c4" class="ref">MprNumber</a>
+    <a href="#ejs_8h_1a1454f92e827cef175f83a9bb6839afd0" class="ref">MprNumber</a>
     ejsGetNumber
 (<a href="#group___ejs" class="ref">Ejs</a> *ejs, <a href="#ejs_8h_1a6b33ea7ff8884b09e08ff69d698eb4e9" class="ref">EjsAny</a> *obj)
   </div>
@@ -4515,7 +4514,7 @@ Numeric value.
   <div class="prototype">
     <a href="mprBare.html#mpr_8h_1ad5c9d4ba3dc37783a528b0925dc981a0" class="ref">bool</a>
     ejsIsInfinite
-(<a href="#ejs_8h_1aefb40e15c552f1286f8e00ec8fb6d9c4" class="ref">MprNumber</a> n)
+(<a href="#ejs_8h_1a1454f92e827cef175f83a9bb6839afd0" class="ref">MprNumber</a> n)
   </div>
   <div class="apiDetail">
 <p>Test if a number is infinite.</p>
@@ -4533,7 +4532,7 @@ Numeric value.
   <div class="prototype">
     <a href="mprBare.html#mpr_8h_1ad5c9d4ba3dc37783a528b0925dc981a0" class="ref">bool</a>
     ejsIsNan
-(<a href="#ejs_8h_1aefb40e15c552f1286f8e00ec8fb6d9c4" class="ref">MprNumber</a> n)
+(<a href="#ejs_8h_1a1454f92e827cef175f83a9bb6839afd0" class="ref">MprNumber</a> n)
   </div>
   <div class="apiDetail">
 <p>Test if a value is not-a-number.</p>
@@ -8708,29 +8707,13 @@ Current object.
 </div>
             </div>
         </div>
-    
-<!-- BeginDsi "dsi/bottom.html" -->
+    <!-- BeginDsi "dsi/bottom.html" -->
+    </div>
 	<div class="bottom">
-		<p class="footnote"> 
-            <a href="../product/copyright.html" >&copy; Embedthis Software LLC, 2003-2012. 
+		<p class="footnote"><a href="../product/copyright.html" >&copy; Embedthis Software LLC, 2003-2012. 
             All rights reserved. Embedthis, Ejscript and Appweb are trademarks of Embedthis Software LLC.</a>
-		</p>
+        </p>
 	</div>
-</body>
-<script src="http://www.google.com/jsapi" type="text/javascript"></script>
-<script type="text/javascript"> 
-  google.load('search', '1', {language : 'en'});
-  google.setOnLoadCallback(function() {
-    var customSearchControl = new google.search.CustomSearchControl(
-      'partner-pub-9935546676162772:ysvxxv4n9rx');
-
-    customSearchControl.setResultSetSize(google.search.Search.FILTERED_CSE_RESULTSET);
-    var options = new google.search.DrawOptions();
-    options.enableSearchboxOnly("http://ejscript.org/search.html");
-    customSearchControl.draw('cse-search-form', options);
-  }, true);
-</script>
-</html>
 <!-- EndDsi -->
 </body>
     <script src="http://www.google.com/jsapi" type="text/javascript"></script>
@@ -8739,6 +8722,7 @@ Current object.
       google.setOnLoadCallback(function() {
         var customSearchControl = new google.search.CustomSearchControl(
           'partner-pub-9935546676162772:ysvxxv4n9rx');
+
         customSearchControl.setResultSetSize(google.search.Search.FILTERED_CSE_RESULTSET);
         var options = new google.search.DrawOptions();
         options.enableSearchboxOnly("http://ejscript.org/search.html");
@@ -8746,3 +8730,4 @@ Current object.
       }, true);
     </script>
 </html>
+

@@ -30,7 +30,7 @@ Bit.load({
             action: "
                 apidoc('api/ejs.dox', [
                     '${SRC}/src/ejs.h',
-                    '${SRC}/src/jems/ejs.web/src/ejsWeb.h',
+                    '${SRC}/src/jems/ejs.web/ejsWeb.h',
                     '${SRC}/src/ejsCompiler.h',
                     ], 'Ejscript API', 'api/*.tags')
                 apiwrap(['api/ejs.html', 'api/http.html', 'api/mpr.html'])
