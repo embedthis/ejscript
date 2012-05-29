@@ -76,12 +76,12 @@ Bit.load({
                         throw 'Missing a farm upload URI'
                     }
                     let base = s.product + '-' + s.version + '-' + s.buildNumber
-                    let files = bit.dir.rel.glob('*' + base + '*')
+                    let files = bit.dir.rel.glob('*' + base + '*.pkg*')
+                    let files = bit.dir.rel.glob('*' + base + '*.zip*')
                     files += bit.dir.rel.glob(s.product + '-flat.tgz')
                     for each (file in files) {
                         let http = new Http
-                        trace('Upload', file.relativeTo(bit.dir.rel) + 
-                            ' size ' + (file.size / 1024 / 1024).toFixed(2) + ' MB')
+                        trace('Upload', file.relativeTo(bit.dir.rel) + ' size ' + (file.size / 1024 / 1024).toFixed(2) + ' MB')
                         http.upload(uri, file, {server: System.hostname, key: key})
                         if (http.status != 200) {
                             throw 'Cant upload ' + file

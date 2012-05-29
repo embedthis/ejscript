@@ -21,7 +21,6 @@ Bit.load({
         '+libraries':[ 'pthread', 'm' ],
         '+libpaths': [ ],
         'linker':    [
-            '-Wl,-rpath,@executable_path/../lib',
             '-Wl,-rpath,@executable_path/',
             '-Wl,-rpath,@loader_path/',
         ],
@@ -41,7 +40,7 @@ Bit.load({
                 } else {
                     defaults.compiler += ['-O3']
                 }
-                defaults.libpaths.push(bit.dir.lib)
+                defaults.libpaths.push(bit.dir.bin)
                 if (bit.settings.warnUnused) {
                     defaults.compiler.push('-Wno-unused-result')
                 }
