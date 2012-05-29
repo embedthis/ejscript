@@ -255,9 +255,9 @@ executables (and libraries on some systems).
 
 
 .SH DEBUGGING
-With Make and other build tools, it is difficult to determine why a target is or is not being built. Bit provides a 
-'--why' switch to diagnose problematic build sequences. This switch displays the reason why each target was or was
-not built.
+With Make and other build tools, it is difficult to determine why a target is or is not being built. Bit 
+provides a '--why' switch to diagnose problematic build sequences. This switch displays the reason why each target was
+or was not built.
 .PP
 In a complex project containing many Bit files, it can be helpful to see the entire bit configuration in one file. Use
 the '--dump' switch to save a copy of the entire configuration. In the dump, build defaults are fully expanded to each
@@ -304,7 +304,7 @@ Dump the aggregate bit configuration into a single dump bit file.
 
 .TP
 \fB\--file bitfile\fR
-Use the alternate named bit file instead of local.bit or main.bit.
+Use the alternate named bit file instead of start.bit or main.bit.
 
 .TP
 \fB\--force\fR
@@ -346,7 +346,7 @@ platform. Options specified after the platform apply to the prior platform. For 
 .TP
 \fB\--profile [debug|release|...]\fR
 Use the specified profile when building. This options is provided once when configuring and the result is saved in
-the platform.profile property in the configuration bit file. Custom profiles can be added to the main.bit or local.bit
+the platform.profile property in the configuration bit file. Custom profiles can be added to the main.bit or start.bit
 files.
 
 .TP
