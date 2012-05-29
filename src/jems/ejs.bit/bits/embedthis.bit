@@ -83,7 +83,8 @@ Bit.load({
                     files += bit.dir.rel.glob(s.product + '-flat.tgz')
                     for each (file in files) {
                         let http = new Http
-                        trace('Upload', file.relativeTo(bit.dir.rel) + ' size ' + (file.size / 1024 / 1024).toFixed(2) + ' MB')
+                        trace('Upload', file.relativeTo(bit.dir.rel) + ' size ' + 
+                            (file.size / 1024 / 1024).toFixed(2) + ' MB')
                         http.upload(uri, file, {server: System.hostname, key: key})
                         if (http.status != 200) {
                             throw 'Cant upload ' + file
