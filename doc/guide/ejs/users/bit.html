@@ -143,7 +143,7 @@
         instructions. The build instructions are expressed as a JavaScript object literal that is supplied via
         the Bit.load() call.</p>
         <pre>
-Bit({
+Bit.load({
     targets: {
         /* Build the rocket executable */
         rocket: {
@@ -285,6 +285,45 @@ defaults: {
         <p>This will use the <em>TUNE=SPEED</em> compiler definition when compiling all source files, and the
         <em>math</em> library when
         linking executables (and libraries on some systems).</p>
+
+        <h2>Bit Files</h2>
+        <p>A bit file is a JavaScript file that invokes <em>Bit.load</em> to supply build instructions. The argument to
+        Bit.load is a bit object literal. Typically this is expressed as a JavaScript object literal, but it could be
+        constructed in otherways via JavaScript code. A typicaly project may load many bit files that are blended
+        together into a single, unified view of project.</p>
+
+        <h3>Blending Bit Files</h3>
+        <p>When a bit literal is loaded, it is blended with existing bit configuration. 
+        <p>Here is a non-exhaustive description of the important top-level Bit property collections:</p>
+
+        <h3>
+        Loading order
+        Inheritance
+        Token expansion
+        Top Level Property Collections
+
+        <p>The bit object literal describes targets to build, but it can also supply other information to control the
+        build. 
+        
+        dir
+        ext
+        globals
+        internal
+        options
+        platform
+        prefixes
+        rules
+        defaults
+        packs
+        blend
+        customize
+        settings
+        usage
+        modules
+        profiles
+        targets
+
+- source file lists, wild cards **
 
         <h2>Debugging</h2>
         <p>With Make and other build tools, it is difficult to determine why a target is or is not being built. Bit
