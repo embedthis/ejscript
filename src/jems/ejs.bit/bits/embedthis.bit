@@ -79,7 +79,7 @@ Bit.load({
                     let files = bit.dir.rel.glob('*' + base + '*.pkg*')
                     files += bit.dir.rel.glob('*' + base + '*x86.exe.zip*')
                     files += bit.dir.rel.glob('*' + base + '-src*')
-                    files += bit.dir.rel.glob('*' + base + '-src*')
+                    files += bit.dir.rel.glob('*' + base + '-flat*')
                     files += bit.dir.rel.glob(s.product + '-flat.tgz')
                     for each (file in files) {
                         let http = new Http
