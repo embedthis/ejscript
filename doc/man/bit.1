@@ -44,15 +44,15 @@ thus which components need to be rebuilt. It easily handles direct compilation a
 .PP
 .SH WHY BIT?
 Many projects rely on autoconf to configure products and make to build. But autoconf is a baroque maze of scripts and
-make is provides too little support easily building executable and libraries in a cross platform manner.
-Further, neither of these tools work well on or for Windows and embedded platforms like VxWorks or Windows CE. 
-As such, creating portable Makefiles and autoconf scripts that will work on a variety of platforms and support 
+make is provides too little support for easily building executable and libraries in a cross platform manner.
+Further, neither of these tools work well for Windows and embedded platforms like VxWorks.
+Consequently, creating portable Makefiles and autoconf scripts that will work on a variety of platforms and support 
 cross-compilation is an exercise in patience. Often the result is slow, fragile build systems, especially on Windows.
 .PP 
 Bit replaces both autoconf and make with a single utility: 'bit'.
 Bit provides a higher level of abstraction to easily specify the targets to build (libraries and executables). 
 It can build directly on Linux, Mac or Windows and cross compile for other platforms. It will generate native projects
-for Visual Studio, XCode, Make, Nmake and shell scripts if required . Bit builds fast without the complexity of autoconf
+for Visual Studio, XCode, Make, Nmake and shell scripts. Bit builds fast without the complexity of autoconf
 and make.
 .PP
 Bit was initiated after evaluating Make, CMake and GYP for use by Appweb and Ejscript in an embedded, cross-compilation
@@ -71,7 +71,7 @@ It has the following major features:
 
     . Configuration and component discovery (replaces autoconf)
     . Compiler capability sleuthing
-    . Generation of a configuration source configuration header (bit.h)
+    . Generation of a configuration source header (bit.h)
     . Generation of Xcode, Visual Studio, Make, Nmake and shell script projects
     . Automatic C/C++ source code dependencies
     . Projects can aggregate multiple bit files without using recursion
@@ -80,14 +80,14 @@ It has the following major features:
     . Building outside source tree for read-only file systems
     . Bit files are JavaScript source and are easily modified and extened
     . Multiple build profiles (debug, release, ...)
-    . FAST configuration and building, even on windows
+    . Very fast configuration and building, even on windows
 .SH NICE BITS
 While Bit has a strong feature set, there are some characteristics that make building with Bit especially nice:
 
     . Unified project view. No "make" style recursion required.
     . Bit configuration may be comprised by multiple bit files
     . Bit file targets and scripts are relative to their own directory
-    . Targets can be named symbolicly not just by the target path.
+    . Targets can be named symbolically not just by the target path.
     . Bit provides a "why" option (bit -why) to display why a target was or was not rebuilt
     . Bit files and targets intelligently inherit of outer project properties
     . Bit scripts run using the working directory of the bit file
@@ -160,7 +160,7 @@ Bit pre-defines several targets:
 To configure a product before building, run Bit using the 'configure' target or alternatively use the '-config' switch.
 When configuring, Bit will load a 'main.bit' file and use the details from the 'settings' properties to tailor 
 the configuration. The settings provide the product name, title, company, version number and what required and optional
-extension packages should be discovered.
+extension packages that should be discovered.
 .PP
 For example, this is a typical 'settings' configuration.
 .PP
@@ -179,7 +179,7 @@ settings: {
 .RE
 .PP
 The 'required' property defines the extensions that are required to be present on the system to build. The 
-'optional' property defines those extensions that will be used if present, but are not required. The '+' before
+'optional' property defines those extensions that will be used if present, but are not required. The plus symbol before
 these properties indicates that these values should be added to pre-defined values. The buildNumber is a build
 patch number.
 

@@ -60,24 +60,24 @@
         </div>
         <div class="contentLeft">
             <h1>Building with Bit</h1>
-            <p>Bit stands for Build It! and is modern replacement for the venerable 
+            <p>Bit means for <em>Build It</em>, and it is a modern replacement for the venerable 
             <a href="http://en.wikipedia.org/wiki/Make_(software)">make</a> and not so popular 
             <a href="http://en.wikipedia.org/wiki/Autoconf">autoconf</a> utilities. Bit manages the building of
-            programs and products by effectively determining which pieces have been updated and thus which components
-            need to be rebuilt. It easily handles direct compilation and generation of projects.</p>
+            programs and products by simply and efficiently determining which pieces have been updated and thus which components
+            need to be rebuilt. It easily handles the direct compilation and generation of projects.</p>
 
         <h2>Why Bit?</h2>
         <p>Many projects rely on autoconf to configure products and make to build. But autoconf is a baroque maze of
-        scripts and make is provides too little support easily building executable and libraries in a cross platform
-        manner. Further, neither of these tools work well on or for Windows and embedded platforms like VxWorks or
-        Windows CE. As such, creating portable Makefiles and autoconf scripts that will work on a variety of platforms
+        scripts and make is provides too little support for easily building executable and libraries in a cross platform
+        manner. Further, neither of these tools work well for Windows and embedded platforms like VxWorks. 
+        Consequently, creating portable Makefiles and autoconf scripts that will work on a variety of platforms
         and support cross compilation is an exercise in patience. Often the result is slow, fragile build
         systems, especially on Windows.</p>
 
         <p>Bit replaces both autoconf and make with a single utility: <em>bit</em>. Bit provides a higher level of
         abstraction to easily specify the targets to build (libraries and executables). It can build directly on Linux,
         Mac or Windows and cross compile for other platforms. It will generate native projects for Visual Studio,
-        XCode, Make, Nmake and shell scripts if required. Bit builds fast without the complexity of autoconf and
+        XCode, Make, Nmake and shell scripts. Bit builds fast without the complexity of autoconf and
         make.</p>
 
         <p>Bit was initiated after evaluating Make, CMake and GYP for use by Appweb and Ejscript in an embedded,
@@ -98,16 +98,15 @@
         <ul>
             <li>Configuration and component discovery (replaces autoconf)</li>
             <li>Compiler capability sleuthing</li>
-            <li>Generation of a configuration source configuration header (bit.h)</li>
+            <li>Generation of a configuration source header (bit.h)</li>
             <li>Generation of Xcode, Visual Studio, Make, Nmake and shell script projects</li>
             <li>Automatic C/C++ source code dependencies</li>
-            <li>Projects can aggregate multiple bit files without using recursion</li>
             <li>Cross platform. Easily handles Windows, Linux and Mac builds</li>
             <li>Easy cross-compilation</li>
             <li>Building outside source tree for read-only file systems</li>
             <li>Bit files are JavaScript source and are easily modified and extened</li>
             <li>Multiple build profiles (debug, release, ...)</li>
-            <li>FAST configuration and building, even on windows</li>
+            <li>Very fast configuration and building times, even on windows</li>
        </ul>
 
        <h2>Nice Bits</h2>
@@ -117,7 +116,7 @@
            <li>Unified project view. No "make" style recursion required.</li>
            <li>Bit configuration may be comprised by multiple bit files</li>
            <li>Bit file targets and scripts are relative to their own directory</li>
-           <li>Targets can be named symbolicly not just by the target path.</li>
+           <li>Targets can be named symbolically not just by the target path.</li>
            <li>Bit provides a "why" option (bit --why) to display why a target was or was not rebuilt</li>
            <li>Bit files and targets intelligently inherit of outer project properties</li>
            <li>Bit scripts run using the working directory of the bit file</li>
@@ -135,38 +134,47 @@ Bit({
             type: 'exe',
             sources: ['*.c'],
         },
-    }, })
+    }, 
+})
 </pre>
 
         <p>To build the rocket, enter:</p>
         <pre>bit rocket</pre>
 
         <h2>Invocation</h2>
-        <p>When bit is invoked, it searches for a 'start.bit' file in the current directory. If one if not found, it
-        searches up the parent directory chain for one. Bit then loads this 'start.bit' file and commences processing
-        its build instuctions. A 'start.bit' may in turn load other bit files.</p>
+        <p>When bit is invoked, it searches for a <em>start.bit</em> file in the current directory. If one if not found, it
+        searches up the parent directory chain for one. Bit then loads this start.bit file and commences processing
+        its build instuctions. A start.bit file may in turn load other bit files.</p>
 
-        <h2>Standalone Use</h2>
+        <h2>Styles of Use</h2>
+        <p>There are two styles of use for Bit:</p>
+        <ul>
+            <li>Standalone Use</li>
+            <li>Configured Use</li>
+        </ul>
+
+        <h3>Standalone Use</h3>
         <p>A standalone start.bit file may be used to express simple build targets that do not requiring any prior
-        configuration step. The 'start.bit' file contains targets that specify the recipies to build those targets.</p>
+        configuration step. The start.bit file contains targets that specify the recipies to build those targets.</p>
 
-        <h2>Configured Products</h2>
-        <p>Some products require a configuration phase prior to building with Bit. Configuration involves discovering
+        <h3>Configured Use</h3>
+        <p>Some products/projects require a configuration phase prior to building with Bit. Configuration involves discovering
         the tools and components available on the current system and the available compiler tool chain support. For
-        configured products, bit is first invoked with a "configure" target. Bit then reads a 'main.bit' file which
-        describes the project, and generates a 'start.bit' and platform bit file that describes the system.</p>
+        configured products, Bit is first invoked with a <em>configure</em> target. Bit then reads a <em>main.bit</em> file which
+        describes the project, and generates a start.bit and platform bit file that describes the system.  Configured
+        use also supports cross-compilation and project file generation for use in IDEs.</p>
 
         <h2>Targets</h2>
-        <p>Bit is typically invoked with zero or more targets to build. If invoked with zero targets, Bit will build all
-        the out-of-date targets. If a one or more targets are specified, only those targets will be brought up to
-        date.</p>
+        <p>Bit is typically invoked with zero or more targets on the command line to build. If invoked with zero
+        targets, Bit will build all the out-of-date targets. If a one or more targets are specified, only those targets
+        will be brought up to date.</p>
         <p>To build all targets: </p>
             <pre>bit</pre>
 
         <p>To build several named targets:</p>
         <pre>bit libengine librocket space-program</pre>
 
-        <p>Bit pre-defines several targets:</p>
+        <p>Bit pre-defines several special targets:</p>
         <ul>
             <li>configure &mdash; To configure prior to building</li>
             <li>build &mdash; To build all targets</li>
@@ -176,10 +184,10 @@ Bit({
         </ul>
 
         <h2>Configuring</h2>
-        <p>To configure a product before building, run Bit using the 'configure' target or alternatively use the
-        '--config' switch.  When configuring, Bit will load a 'main.bit' file and use the details from the 'settings'
-        properties to tailor the configuration. The settings provide the product name, title, company, version number
-        and what required and optional extension packages should be discovered.</p>
+        <p>To configure a product before building, run Bit using the <em>configure</em> target or alternatively use the
+        <em>--config</em> switch. When configuring, Bit will load a <em>main.bit</em> file and use the details from the
+        <em>settings</em> properties in main.bit to tailor the configuration. The settings provide the product name,
+        title, company, version number and a list of required and optional extension packages that should be discovered.</p>
 
         <p>For example, this is a typical 'settings' configuration:</p>
 <pre>
@@ -190,12 +198,12 @@ settings: {
     version: '4.0.5',
     buildNumber: '4',
     '+required': [ 'utest' ],
-    '+optional':  [ 'doxygen', 'man', 'man2html', 'md5', 'matrixssl', 'openssl', 'ssl' ],
+    '+optional':  [ 'doxygen', 'man', 'man2html', 'md5', 'openssl', 'ssl' ],
 },
 </pre>
 
-        <p>The 'required' property defines the extensions that are required to be present on the system to build. The
-        these properties indicates that these values should be added to pre-defined values. The buildNumber is a
+        <p>The <em>required</em> property defines the extensions that are required to be present on the system to build. The
+        plus symbol (+) before these properties indicates that these values should be added to pre-defined values. The buildNumber is a
         build patch number.</p>
 
         <h2>Cross-Compiling</h2>
@@ -437,6 +445,45 @@ defaults: {
 <pre>
 Examples
 Properties
+- Bit.html
+    - Need a commented main.bit
+    - Need a commented *.dmp
+
+    - See GYP doc and how it is 
+    - Inheritance of properties
+        +, -, 
+    - Current directory is that of the bit file
+    - Don't have to be in the directory
+        - Just say bit in any directory
+    - See NI emails general Bit tips
+    - document properties in bit files
+    - Env vars are only for cross compilation configuration
+    - order of platform and -without
+    - Can use '--' or '-'
+    - Properties
+        - customize
+        - defaults
+        - internal
+    - Token expansion
+    - Blending
+    - Scripts
+        - when to invoke
+    - Generation
+        - sh, nmake, name, xcode
+    - Cross compilation
+        start.bit - platforms
+    - Configuration
+        - platform bit file
+        - Platform output directory
+    - globals
+    - Standard types
+        - lib, exe, obj
+            - compiler, libraries, libpaths, defines, includes
+        - Sources expansion
+    - Dependency generation
+    - rules
+    - Settings
+        - product, title, version, buildNumber, optional, required, without-all
 </pre>
         </div>
     </div>
