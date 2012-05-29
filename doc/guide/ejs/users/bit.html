@@ -66,6 +66,22 @@
             programs and products by simply and efficiently determining which pieces have been updated and thus which components
             need to be rebuilt. It easily handles the direct compilation and generation of projects.</p>
 
+        <h2>Overview</h2>
+        <p>Bit parses bit files that have a <em>.bit</em> extension. Bit files are  are JavaScript files that 
+            load a JavaScript literal that describes what to build. Arbitrary JavaScript is permitted in bit files, but 
+            typically little script code is needed.</p>
+        <p>Bit files specify targets to build. These can be libraries, executables or other actions to be run. Bit has
+        built-in rules to compile source code, build libraries, executables, copy files, build packages and generate IDE
+        projects. So you need to type very little to do the common tasks of building.</p>
+
+        <p>Bit files can intelligently inherit global settings for a project and can override or augment values
+        locally. Bit files run with a current directory set to that of the bit file itself, so it can reference
+        easily reference local resources. Bit projects are fully relocatable and avoid absolute directory
+        references.</p>
+        <p>Bit searches for required and optional tools and supports a "configure" phase for building. Bit supports
+        cross-platform building by determining the required compiler switches, file extensions and installation
+        directories.</p>
+
         <h2>Why Bit?</h2>
         <p>Many projects rely on autoconf to configure products and make to build. But autoconf is a baroque maze of
         scripts and make is provides too little support for easily building executable and libraries in a cross platform
@@ -122,10 +138,10 @@
            <li>Bit scripts run using the working directory of the bit file</li>
         </ul>
 
-        <h2>Overview</h2>
-        <p>A bit file is a JavaScript file with a '.bit' extension that invokes Bit.load() to process a set of build
-        instructions. The build instructions are expressed as a JavaScript object literal that Bit.load()
-        integrates into the master set of build instructions.</p>
+        <h2>Simple Bit File</h2>
+        <p>A bit file is a JavaScript file with a <em>.bit</em> extension that invokes Bit.load() to process a set of build
+        instructions. The build instructions are expressed as a JavaScript object literal that is supplied via
+        the Bit.load() call.</p>
         <pre>
 Bit({
     targets: {
@@ -189,7 +205,7 @@ Bit({
         <em>settings</em> properties in main.bit to tailor the configuration. The settings provide the product name,
         title, company, version number and a list of required and optional extension packages that should be discovered.</p>
 
-        <p>For example, this is a typical 'settings' configuration:</p>
+        <p>For example, this is a typical <em>settings</em> configuration:</p>
 <pre>
 settings: {
     product: 'mpr',
@@ -212,13 +228,13 @@ settings: {
         it is for a completely different operating system and/or CPU architecture. In such cases a cross-compiler
         may be required to build for the target platform.</p>
 
-        <p>Bit supports cross compiling via the "bit configure --platform OS-ARCH" switch. This adds a platform to the
-        list of platforms to be made when building. Multiple platforms may be specified and the 'local' platform alias
+        <p>Bit supports cross compiling via the <em>bit --platform OS-ARCH configure</em> switch. This adds a platform to the
+        list of platforms to be made when building. Multiple platforms may be specified and the <em>local</em> platform alias
         may be used for the local development platform.</p>
 
        <p>Some products require local building to make tools that are required to build for any platform. These
        products add a "platforms: ['local']" property to their settings collection in the main.bit file. This
-       automatically adds the local platform to the platforms list and is the same as adding '--platform local' on the
+       automatically adds the local platform to the platforms list and is the same as adding <em>--platform local</em> on the
        command line when configuring.</p>
 
             <pre>bit --platform windows-x64 -configure .</pre>
@@ -228,28 +244,27 @@ settings: {
 
         <h2>Project Generation</h2>
         <p>Bit can generate generate complete project files for building using: make, nmake, Visual Studio, Xcode or
-        plain shell scripts. Bit uses the '--gen' switch to specify the projects to build. Bit is capable of
+        plain shell scripts. Bit uses the <em>--gen</em> command line switch to specify the projects to build. Bit is capable of
         cross-generating projects for non-native platforms. For example: you can generate an Xcode project for Mac OS
         X on a Windows system.</p>
 
             <pre>bit --continue --platform macosx-x64 configure -gen xcode,make,sh</pre>
 
-        <p>This will generate Xcode, make and shell script projects for a Mac OS X 64-bit. The continue switch indicates
-        that generation should continue even if the required compilers and build tools are not present on the
-        development system.</p>
+        <p>This will generate Xcode, make and shell script projects for a Mac OS X 64-bit. The <em>--continue</em> switch indicates
+        that generation should continue even if the required compilers and build tools are not present on the development system.</p>
 
         <h2>Dependencies</h2>
         <p>Bit targets can depend on other targets that must be built first. Bit targets have a name which may be
         depended upon by another target. For example:</p>
 <pre>
 targets {
-        first: {
-            build: "print('Build First')",
-        },
-        second: {
-            depends: ['first'],
-            build: "print('Build Second')",
-        }, 
+    first: {
+        build: "print('Build First')",
+    },
+    second: {
+        depends: ['first'],
+        build: "print('Build Second')",
+    }, 
 }
 </pre>
 
@@ -258,8 +273,8 @@ targets {
         loops.</p>
 
         <h2>Defaults</h2>
-        <p>Often targets need very similar configuration. Bit provides a 'defaults' set of properties that are inherited
-        by all targets. It also provides an 'internal' set of properties that are inherited by only the targets in the
+        <p>Often targets need very similar configuration. Bit provides a <em>defaults</em> collection of properties that are inherited
+        by all targets. It also provides an <em>internal</em> collection of properties that are inherited by only the targets in the
         same bit file. For example:</p>
 <pre>
 defaults: {
@@ -267,21 +282,22 @@ defaults: {
     '+libraries': [ 'math' ],
 }
 </pre>
-        <p>This will use the 'TUNE=SPEED' compiler define when compiling all source files, and the 'math' library when
+        <p>This will use the <em>TUNE=SPEED</em> compiler definition when compiling all source files, and the
+        <em>math</em> library when
         linking executables (and libraries on some systems).</p>
 
         <h2>Debugging</h2>
         <p>With Make and other build tools, it is difficult to determine why a target is or is not being built. Bit
-        provides a '--why' switch to diagnose problematic build sequences. This switch displays the reason why each
+        provides a <em>--why</em> command line switch to diagnose problematic build sequences. This switch displays the reason why each
         target was or was not built.</p>
 
         <p>In a complex project containing many Bit files, it can be helpful to see the entire bit configuration in one
-        file. Use the '--dump' switch to save a copy of the entire configuration. In the dump, build defaults are fully
+        file. Use the <em>--dump</em> switch to save a copy of the entire configuration. In the dump, build defaults are fully
         expanded to each target contains the expanded configuration that will be used to build the target.</p>
 
         <p>By default, Bit builds relativley quietly and stops on the first build error. To see the commands Bit is
-        issuing, use the '--show' switch. To build totally quietly, use the '--quiet' switch. To continue building
-        despite build errors, use the '--continue' switch.</p>
+        issuing, use the <em>--show</em> switch. To build totally quietly, use the <em>--quiet</em> switch. To continue building
+        despite build errors, use the <em>--continue</em> switch.</p>
 
         <h2>Options</h2>
         <table>
@@ -297,12 +313,12 @@ defaults: {
                 <tr>
                     <td>--configure path-to-source</td>
                     <td><p>Configure the project to prepare for building. This configures Bit for building the project
-                        based on the instructions specified in a 'main.bit' located in the specified path source tree.
+                        based on the instructions specified in a <em>'main.bit</em> located in the specified path source tree.
                         When run, bit will create a platform configuration bit file, a build output directory and
                         bit.h header. The configuration directory is of the form: OS-ARCH-PROFILE where OS may be
                         freebsd, linux, macosx, solaris, vxworks, windows and ARCH is arm, mips, ppc, x64 or x86.
-                        PROFILE is typically set to debug or release. For example: 'macosx-x86_64-debug'. The
-                        configuration bit file omits the PROFILE. For example: 'linux-x86.bit'.</p>
+                        PROFILE is typically set to debug or release. For example: <em>macosx-x86_64-debug</em> The
+                        configuration bit file omits the PROFILE. For example: <em>linux-x86.bit</em>.</p>
 
                         <p>Bit will use the settings.required and settings.optional properties in the main.bit for a
                         list of packages to use. When configuring, bit will search for these packages and will
@@ -341,7 +357,7 @@ defaults: {
                 <tr>
                     <td nowrap="nowrap">--gen [make|nmake|sh|vs|xcode]</td>
                     <td>Generate project files for the current platform. This will generate project files under
-                        the 'projects' directory. The projects are based on the current configuration. If
+                        the <em>projects</em> directory. The projects are based on the current configuration. If
                         cross-generating projects, you will typically need to also use -configure.</td>
                 </tr>
 
@@ -354,15 +370,16 @@ defaults: {
                     <td>--log logName[:logLevel]</td>
                     <td>Specify a file to log internal execution messages. Bit will log execution related trace to the
                         log file. The log level specifies the desired verbosity of output. Level 0 is the least verbose
-                        and level 9 is the most. The '-v' switch is an alias for '--log stderr:2'.</td>
+                        and level 9 is the most. The <em>-v</em> switch is an alias for <em>--log stderr:2</em>.</td>
                 </tr>
 
                 <tr>
                     <td>--nocross</td>
                     <td>Don't cross-build, rather build natively for the development system. This is useful when
                         configuring for a platform that can build and run natively on the development system. For
-                        example: Linux 64-bit systems can run 32-bit applications, so 'bit --nocross --platform
-                        linux-x86 configure' can directly target the 32-bit platform without cross-building.</td>
+                        example: Linux 64-bit systems can run 32-bit applications, so <br/>
+                        <em>bit --nocross --platform linux-x86 configure</em> <br/>
+                        can directly target the 32-bit platform without cross-building.</td>
                 </tr>
 
                 <tr>
@@ -373,7 +390,7 @@ defaults: {
                 <tr>
                     <td>--platform os-arch</td>
                     <td>Add a platform to build for cross-compilation. Multiple platforms can be added. You may use
-                        'local' for the local platform. Options specified after the platform apply to the prior
+                        <em>local</em> for the local platform. Options specified after the platform apply to the prior
                         platform. For example:</p>
 
                         <p>bit --platform linux-x86 --without all --platform linux-arm --with ejscript configure</p></td>
@@ -393,8 +410,8 @@ defaults: {
 
                 <tr>
                     <td>--set key=value</td>
-                    <td>Set a settings property to a given value. For example: 'bit -set version=1.0' will update the
-                        settings.version property. Use this when running 'bit configure' to persist your changes in the
+                    <td>Set a settings property to a given value. For example: <em>bit -set version=1.0</em> will update the
+                        settings.version property. Use this when running <em>bit configure</em> to persist your changes in the
                         configuration bit file.</td>
                 </tr>
 
@@ -404,7 +421,7 @@ defaults: {
                 </tr>
                 <tr>
                     <td>--rebuild</td>
-                    <td>Rebuild the specified targets. Can also use 'bit rebuild'.</td>
+                    <td>Rebuild the specified targets. Can also use <em>bit rebuild</em>.</td>
                 </tr>
 
                 <tr>
@@ -414,7 +431,7 @@ defaults: {
 
                 <tr>
                     <td>--unset key=value</td>
-                    <td>Clear a settings property. Use this when running 'bit configure' to persist your changes in the
+                    <td>Clear a settings property. Use this when running <em>bit configure</em> to persist your changes in the
                         configuration bit file.</td> 
                 </tr>
 
@@ -432,7 +449,7 @@ defaults: {
                     <td>--with PACK[=path]</td>
                     <td>Build with the named pack located at the optional path. If the path is ommitted, a search is
                         performed for the pack at default locations. Packs must have a pack description file installed
-                        under 'bits/packs' in the bit installation.</td>
+                        under <em>bits/packs</em> in the bit installation.</td>
                 </tr>
 
                 <tr>
