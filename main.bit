@@ -40,11 +40,11 @@ Bit.load({
     ],
 
     settings: {
-		product: 'ejs',
-		title: 'Embedthis Ejscript',
+        product: 'ejs',
+        title: 'Embedthis Ejscript',
         company: 'Embedthis',
-		version: '2.0.0',
-		buildNumber: 'B2',
+        version: '2.0.0',
+        buildNumber: 'B2',
         sync: ['http', 'mpr', 'pcre', 'sqlite'],
         packs: [ 'bits/packs' ],
         /* Must build locally to build tools */
