@@ -5,11 +5,11 @@
     <title>Embedthis Ejscript 2.0.0 Documentation</title>
     <meta name="keywords" content="Ejscript, JavaScript, ECMAScript, Server-Side JavaScript, Dynamic languages, 
         Embedded, AJAX, language"/>
-    <meta name="description" content="Ejscript -- Embedded Server-Side JavaScript Language."/>
-    <meta name="robots" content="index,follow" />
+	<meta name="description" content="Ejscript -- Embedded Server-Side JavaScript Language."/>
+	<meta name="robots" content="index,follow" />
     <link href="http://www.google.com/cse/style/look/default.css" type="text/css" rel="stylesheet" />
-    <link href="../../../doc.css" rel="stylesheet" type="text/css" />
-    <link href="../../../print.css" rel="stylesheet" type="text/css" media="print"/>
+	<link href="../../../doc.css" rel="stylesheet" type="text/css" />
+	<link href="../../../print.css" rel="stylesheet" type="text/css" media="print"/>
     <!--[if IE]>
     <link href="../../../iehacks.css" rel="stylesheet" type="text/css" />
     </![endif]-->
@@ -77,7 +77,6 @@
             <a href="http://en.wikipedia.org/wiki/Autoconf">autoconf</a> utilities. Bit manages the building of
             programs and products by simply and efficiently determining which pieces have been updated and thus which
             components need to be rebuilt. It easily handles the direct compilation and generation of projects.</p>
-
         <a name="overview"></a>
         <h2>Overview</h2>
         <p>Bit parses bit files that have a <em>.bit</em> extension. Bit files are  are JavaScript files that 
@@ -86,7 +85,6 @@
         <p>Bit files specify targets to build. These can be libraries, executables or other actions to be run. Bit has
         built-in rules to compile source code, build libraries, executables, copy files, build packages and generate IDE
         projects. So you need to type very little to do the common tasks of building.</p>
-
         <p>Bit files can intelligently inherit global settings for a project and can override or augment values
         locally. Bit files run with a current directory set to that of the bit file itself, so it can reference
         easily reference local resources. Bit projects are fully relocatable and avoid absolute directory
@@ -94,7 +92,6 @@
         <p>Bit searches for required and optional tools and supports a "configure" phase for building. Bit supports
         cross-platform building by determining the required compiler switches, file extensions and installation
         directories.</p>
-
         <a name="whyBit"></a>
         <h2>Why Bit?</h2>
         <p>Many projects rely on autoconf to configure products and make to build. But autoconf is a baroque maze of
@@ -103,13 +100,11 @@
         Consequently, creating portable Makefiles and autoconf scripts that will work on a variety of platforms
         and support cross compilation is an exercise in patience. Often the result is slow, fragile build
         systems, especially on Windows.</p>
-
         <p>Bit replaces both autoconf and make with a single utility: <em>bit</em>. Bit provides a higher level of
         abstraction to easily specify the targets to build (libraries and executables). It can build directly on Linux,
         Mac or Windows and cross compile for other platforms. It will generate native projects for Visual Studio,
         XCode, Make, Nmake and shell scripts. Bit builds fast without the complexity of autoconf and
         make.</p>
-
         <p>Bit was initiated after evaluating Make, CMake and GYP for use by Appweb and Ejscript in an embedded,
         cross compilation environment. While all three can be made to work, we were expending a large percentage of
         time on the build system and less on the actual product. Our design goals were:</p>
@@ -121,7 +116,6 @@
             <li>Support for the entire build cycle: C dependencies, compilation, test and packaging</li>
             <li>Be hackable and extendable</li>
         </ul>
-
         <a name="features"></a>
         <h2>Features</h2>
         <p>Bit is implemented primarily as a single Ejscript of some 3K lines and is very hackable. It has the
@@ -139,7 +133,6 @@
             <li>Multiple build profiles (debug, release, ...)</li>
             <li>Very fast configuration and building times, even on windows</li>
        </ul>
-
        <a name="niceBits"></a>
        <h2>Nice Bits</h2>
        <p>While Bit has a strong feature set, there are some characteristics that make building with Bit especially
@@ -153,7 +146,6 @@
            <li>Bit files and targets intelligently inherit of outer project properties</li>
            <li>Bit scripts run using the working directory of the bit file</li>
         </ul>
-
         <a name="simpleBitFile"></a>
         <h2>Simple Bit File</h2>
         <p>A bit file is a JavaScript file with a <em>.bit</em> extension that invokes Bit.load() to process a set of build
@@ -170,16 +162,13 @@ Bit.load({
     }, 
 })
 </pre>
-
         <p>To build the rocket, enter:</p>
         <pre>bit rocket</pre>
-
         <a name="invocation"></a>
         <h2>Invocation</h2>
         <p>When bit is invoked, it searches for a <em>start.bit</em> file in the current directory. If one if not found, it
         searches up the parent directory chain for one. Bit then loads this start.bit file and commences processing
         its build instuctions. A start.bit file may in turn load other bit files.</p>
-
         <a name="stylesOfUse"></a>
         <h2>Styles of Use</h2>
         <p>There are two styles of use for Bit:</p>
@@ -187,18 +176,15 @@ Bit.load({
             <li>Standalone Use</li>
             <li>Configured Use</li>
         </ul>
-
         <h3>Standalone Use</h3>
         <p>A standalone start.bit file may be used to express simple build targets that do not requiring any prior
         configuration step. The start.bit file contains targets that specify the recipies to build those targets.</p>
-
         <h3>Configured Use</h3>
         <p>Some products/projects require a configuration phase prior to building with Bit. Configuration involves discovering
         the tools and components available on the current system and the available compiler tool chain support. For
         configured products, Bit is first invoked with a <em>configure</em> target. Bit then reads a <em>main.bit</em> file which
         describes the project, and generates a start.bit and platform bit file that describes the system.  Configured
         use also supports cross-compilation and project file generation for use in IDEs.</p>
-
         <a name="targets"></a>
         <h2>Targets</h2>
         <p>Bit is typically invoked with zero or more targets on the command line to build. If invoked with zero
@@ -206,10 +192,8 @@ Bit.load({
         will be brought up to date.</p>
         <p>To build all targets: </p>
             <pre>bit</pre>
-
         <p>To build several named targets:</p>
         <pre>bit libengine librocket space-program</pre>
-
         <p>Bit pre-defines several special targets:</p>
         <ul>
             <li>configure &mdash; To configure prior to building</li>
@@ -218,7 +202,6 @@ Bit.load({
             <li>clean &mdash; To clean built targets and prepare for rebuilding</li>
             <li>rebuild &mdash; Clean and build</li>
         </ul>
-
         <a name="configuring"></a>
         <h2>Configuring</h2>
         <p>To configure a product before building, run Bit using the <em>configure</em> target or alternatively use the
@@ -243,38 +226,30 @@ settings: {
     '+optional':  [ 'doxygen', 'man', 'man2html', 'md5', 'openssl', 'ssl' ],
 },
 </pre>
-
         <p>The <em>required</em> property defines the packages that are required to be present on the system to build. The
         plus symbol (+) before these properties indicates that these values should be added to pre-defined values. 
         Bit will define the required tools of <em>compiler</em> and <em>linker</em> as part of its standard definitions.</p>
-
         <h3>Out-of-source Tree Builds</h3>
         <p>Bit supports building from read-only source trees. To do this, use <em>bit -config path</em> when
         configuring. Run this from a writable directory and reference the read-only source tree via the
         <em>-config</em> switch. Bit will create the start.bit, platform bit file and <output build directory in the
         writable (current) directory. Thereafter run <em>bit</em> from the writable directory for all operations.</p>
-
         <a name="crossCompiling"></a>
         <h2>Cross-Compiling</h2>
         <p>To build a product for platform different to that of the local system is called cross compiling.
         Sometimes this cross compiling is just for a different instruction set (say x64 instead of x86). Other times
         it is for a completely different operating system and/or CPU architecture. In such cases a cross-compiler
         may be required to build for the target platform.</p>
-
         <p>Bit supports cross compiling via the <em>bit --platform OS-ARCH configure</em> switch. This adds a platform to the
         list of platforms to be made when building. Multiple platforms may be specified and the <em>local</em> platform alias
         may be used for the local development platform.</p>
-
        <p>Some products require local building to make tools that are required to build for any platform. These
        products add a "platforms: ['local']" property to their settings collection in the main.bit file. This
        automatically adds the local platform to the platforms list and is the same as adding <em>--platform local</em> on the
        command line when configuring.</p>
-
             <pre>bit --platform windows-x64 -configure .</pre>
-
        <p>This will create a windows-x64.bit configuration file and a start.es that references it. The platform
        switch does not need to be respecified after configuration.</p>
-
         <h3>Environment Variables</h3>
         <p>When cross-compiling, it is sometimes required to pass compiler and linker paths and flags via the
         environment. Bit detects certain environment variables and saves their values when configuring. Subsequently
@@ -282,19 +257,15 @@ settings: {
             <pre>CC=/path/to/compiler CFLAGS=-w bit configure</pre>
         <p>The following variables are eligible: CFLAGS, DFLAGS, IFLAGS, LDFLAGS, CC and LD. Note: these are only
         processed when configuring for cross compilation.</p>
-
         <a name="projectGeneration"></a>
         <h2>Project Generation</h2>
         <p>Bit can generate generate complete project files for building using: make, nmake, Visual Studio, Xcode or
         plain shell scripts. Bit uses the <em>--gen</em> command line switch to specify the projects to build. Bit is capable of
         cross-generating projects for non-native platforms. For example: you can generate an Xcode project for Mac OS
         X on a Windows system.</p>
-
             <pre>bit --continue --platform macosx-x64 configure -gen xcode,make,sh</pre>
-
         <p>This will generate Xcode, make and shell script projects for a Mac OS X 64-bit. The <em>--continue</em> switch indicates
         that generation should continue even if the required compilers and build tools are not present on the development system.</p>
-
         <a name="dependencies"></a>
         <h2>Dependencies</h2>
         <p>Bit targets can depend on other targets that must be built first. Bit targets have a name which may be
@@ -310,11 +281,9 @@ targets {
     }, 
 }
 </pre>
-
         <p>Before Bit begins building, it parses the entire bit file configuration and determines which targets depend
         on what. It then builds the targets in the required build order. It successfully detects and handles dependency
         loops.</p>
-
         <a name="defaultProperties"></a>
         <h2>Default Properties</h2>
         <p>Often targets need very similar configuration. Bit provides a <em>defaults</em> collection of properties that are inherited
@@ -329,7 +298,6 @@ defaults: {
         <p>This will use the <em>TUNE=SPEED</em> compiler definition when compiling all source files, and the
         <em>math</em> library when
         linking executables (and libraries on some systems).</p>
-
         <a name="bitFiles"></a>
         <h2>Bit Files</h2>
         <p>A bit file is a JavaScript file that invokes <em>Bit.load</em> to supply build instructions. The argument to
@@ -338,7 +306,6 @@ defaults: {
         together into a single, unified view of project. This view is held in a global object called <em>bit</em>. Note
         this is lower case. Use the 'bit --dump' command line option to save the unified project view in a dump file
         that can be viewed in any source editor.</p>
-
         <h3>Blending Bit Files</h3>
         <p>Before Bit loads a bit file, it loads some standard definitions for the current operating system. These are
         loaded from the bit installation directory or from the <em>bits</em> directory if the bit configuration has been
@@ -356,13 +323,11 @@ Bit.load({
         <p>Bit files are loaded depth-first. This means that bit files specified in the blend[] collection will be
         loaded first before the contents of the bit file that referenced them.  Run bit with the --verbose switch to see
         what bit files are loaded and in what order.</p>
-
         <a name="propertyBlending"></a>
         <h3>Property Blending and Inheritance</h3>
         <p>When a user bit literal is loaded, it is blended with existing bit configuration from previously loaded bit
         files by overwriting or augmenting prior definitions. Bit facilitates this by extending the standard JSON syntax 
         with blend prefixes: <em>+</em>, <em>-</em> and <em>=</em>. For example:
-
         <pre>
 Bit.load({
     defaults: {
@@ -379,7 +344,6 @@ Bit.load({
         prefix will overwrite an existing property defintion. The default is to overwrite property defintions. </p>
         <p>The property prefixes are used for simple property key/value pairs. Objects and arrays always have their properties
         blended (added).</p> 
-
         <a name="tokenExpansion"></a>
         <h3>Property Token Expansion</h3>
         <p>To make it easy to dynamically compute file paths, strings have tokens automatically expanded. Tokens take
@@ -467,7 +431,6 @@ myTarget: {
                 <tr><td>profile</td><td>Build profile selected: 'debug', 'release', ...</td></tr>
             </tbody>
         </table>
-
         <h3>Packs Collection</h3>
         <p>The packs collection defines a collection for each extension pack that bit examined when configuring. Each
         pack will have properties for: 
@@ -489,7 +452,6 @@ myTarget: {
                 <tr><td>imports</td><td>Files to import from this pack before building</td></tr>
             </tbody>
         </table>
-
         <h3>Settings Collection</h3>
         <p>The settings collection specifies the top level project/product names. It is required in the main.bit file.</p>
         <table>
@@ -507,7 +469,6 @@ myTarget: {
                 <tr><td>without-all</td><td>List of packs to disable when doing '--without all configure'</td></tr>
             </tbody>
         </table>
-
         <h3>Targets Collection</h3>
         <table>
             <thead>
@@ -541,7 +502,6 @@ myTarget: {
                 <tr><td>platformsw</td><td>Platforms for which this target should be built. Set to OS-ARCH or 'local'</td></tr>
             </tbody>
         </table>
-
         <a name="buildingTargets"></a>
         <h3>Building Targets</h3>
         <p>Bit builds targets according to a defined lifecycle.
@@ -567,7 +527,6 @@ myTarget: {
             <li>The target is built. If the target is an executable, library, or object, it is built using the
                 transition rules specified in bit.rules. If the target has a <em>build</em> event script, it is run.</li>
         </ul>
-
         <a name="selectingTargets"></a>
         <h3>Selecting Targets</h3>
         <p>Bit follows a simple process when selecting the targets to build.</p>
@@ -587,8 +546,6 @@ myTarget: {
         </ul> 
         <p>When specifying a name that is a target, these must match the target name property. When specifying an action,
         these must match a target type property.</p>
-
-
         <a name="buildEvents"></a>
         <h3>Build Events</h3>
         <p>When building, Bit will fire events that may trigger scripts to run. Here is a list of events:</p>
@@ -629,7 +586,6 @@ targets: {
 </pre>
         <p>When <em>bit</em> is invoked, the script for the <em>cleanJunk</em> target will be run. Note that in
         Ejsscript, quoted literals can span multiple lines. No backquoting at the end of the line is requried.</p>
-
         <h4>Action Scripts</h4>
         <p>Action scripts do not run by default. Rather, they are run when they are explicitly invoked on the command
         line or another target is invoked that references them as a dependency. 
@@ -644,7 +600,6 @@ targets: {
 }
 </pre>
         <p>When <em>bit generate-doc</em> is run, this generate-documentation script will be run. </p>
-
         <h4>Long-hand Scripts</h4>
         <p>A target can specify multiple scripts that are run at various stages of the building lifecycle. These are
         specified via the scripts collection of a target.
@@ -674,26 +629,21 @@ targets: {
         <p>Note that the <em>build</em> and <em>action</em> scripts translate under-the-hood into the same long form.
         The action script becomes a target with a type of <em>action</em> and an event of <em>build</em>. A build script
         becomes a target with a type of <em>build</em> and an event of <em>build</em>.</p>
-
         <a name="debugging"></a>
         <h2>Debugging</h2>
         <p>With Make and other build tools, it is difficult to determine why a target is or is not being built. Bit
         provides a <em>--why</em> command line switch to diagnose problematic build sequences. This switch displays the reason why each
         target was or was not built.</p>
-
         <p>In a complex project containing many Bit files, it can be helpful to see the entire bit configuration in one
         file. Use the <em>--dump</em> switch to save a copy of the entire configuration. In the dump, build defaults are fully
         expanded to each target contains the expanded configuration that will be used to build the target.</p>
-
         <p>By default, Bit builds relativley quietly and stops on the first build error. To see the commands Bit is
         issuing, use the <em>--show</em> switch. To build totally quietly, use the <em>--quiet</em> switch. To continue building
         despite build errors, use the <em>--continue</em> switch.</p>
-
         <a name="commandOptions"></a>
         <h2>Command Options</h2>
         <p>Bit command line options can be prefixed with either a single or double minus. ie. <em>-switch</em> or
         <em>--switch</em></p>
-
         <table>
             <thead>
             <tr><th>Option</th><th>Description</th></tr>
@@ -703,7 +653,6 @@ targets: {
                     <td>--benchmark</td>
                     <td>Measure the elapsed time to run bit.</td>
                 </tr>
-
                 <tr>
                     <td>--configure path-to-source</td>
                     <td><p>Configure the project to prepare for building. This configures Bit for building the project
@@ -713,7 +662,6 @@ targets: {
                         freebsd, linux, macosx, solaris, vxworks, windows and ARCH is arm, mips, ppc, x64 or x86.
                         PROFILE is typically set to debug or release. For example: <em>macosx-x86_64-debug</em> The
                         configuration bit file omits the PROFILE. For example: <em>linux-x86.bit</em>.</p>
-
                         <p>Bit will use the settings.required and settings.optional properties in the main.bit for a
                         list of packages to use. When configuring, bit will search for these packages and will
                         create definitions in the configuration bit file for later use.</p></td>
@@ -722,51 +670,42 @@ targets: {
                         <td>Continue to build despite any build errors. Normal operation is to stop building if any
                             build errors are encountered.</td>
                 </tr>
-
                 <tr>
                     <td>--debug</td>
                     <td>Same as --profile debug</td>
                 </tr>
-
                 <tr>
                     <td>--diagnose</td>
                     <td>Run bit with stack backtrace display on errors.</td>
                 </tr>
-
                 <tr>
                     <td>--dump </td>
                     <td>Dump the aggregate bit configuration into a single dump bit file.</td>
                 </tr>
-
                 <tr>
                     <td>--file bitfile</td>
                     <td>Use the alternate named bit file instead of start.bit or main.bit.</td>
                 </tr>
-
                 <tr>
                     <td>--force</td>
                     <td>Override warnings and proceed with the operation.</td>
                 </tr>
-
                 <tr>
                     <td nowrap="nowrap">--gen [make|nmake|sh|vs|xcode]</td>
                     <td>Generate project files for the current platform. This will generate project files under
                         the <em>projects</em> directory. The projects are based on the current configuration. If
                         cross-generating projects, you will typically need to also use -configure.</td>
                 </tr>
-
                 <tr>
                     <td>--keep </td>
                     <td>Keep some intermediate build files. This is currently used by some documentation generation
                         targets.</td> </tr>
-
                 <tr>
                     <td>--log logName[:logLevel]</td>
                     <td>Specify a file to log internal execution messages. Bit will log execution related trace to the
                         log file. The log level specifies the desired verbosity of output. Level 0 is the least verbose
                         and level 9 is the most. The <em>-v</em> switch is an alias for <em>--log stderr:2</em>.</td>
                 </tr>
-
                 <tr>
                     <td>--nocross</td>
                     <td>Don't cross-build, rather build natively for the development system. This is useful when
@@ -775,40 +714,33 @@ targets: {
                         <em>bit --nocross --platform linux-x86 configure</em> <br/>
                         can directly target the 32-bit platform without cross-building.</td>
                 </tr>
-
                 <tr>
                     <td>--out path</td>
                     <td>Save Bit trace output to a file instead of displaying to the console.</td>
                 </tr>
-
                 <tr>
                     <td>--platform os-arch</td>
                     <td>Add a platform to build for cross-compilation. Multiple platforms can be added. You may use
                         <em>local</em> for the local platform. Options specified after the platform apply to the prior
                         platform. For example:</p>
-
                         <p>bit --platform linux-x86 --without all --platform linux-arm --with ejscript configure</p></td>
                 </tr>
-
                 <tr>
                     <td nowrap="nowrap">--profile [debug|release|...]</td>
                     <td>Use the specified profile when building. This options is provided once when configuring and the
                         result is saved in the plat- form.profile property in the configuration bit file. Custom
                         profiles can be added to the main.bit or start.bit files.</td> 
                 </tr>
-
                 <tr>
                     <td>--quiet</td>
                     <td>Quiet operation. Suppresses output trace.</td>
                 </tr>
-
                 <tr>
                     <td>--set key=value</td>
                     <td>Set a settings property to a given value. For example: <em>bit -set version=1.0</em> will update the
                         settings.version property. Use this when running <em>bit configure</em> to persist your changes in the
                         configuration bit file.</td>
                 </tr>
-
                 <tr>
                     <td>--show </td>
                     <td>Show the actual commands executed by bit.</td>
@@ -817,46 +749,37 @@ targets: {
                     <td>--rebuild</td>
                     <td>Rebuild the specified targets. Can also use <em>bit rebuild</em>.</td>
                 </tr>
-
                 <tr>
                     <td>--release</td>
                     <td>Select the release profile. Same as --profile release.</td>
                 </tr>
-
                 <tr>
                     <td>--unset key=value</td>
                     <td>Clear a settings property. Use this when running <em>bit configure</em> to persist your changes in the
                         configuration bit file.</td> 
                 </tr>
-
                 <tr>
                     <td>--version</td>
                     <td>Print the ejs command version and exit.</td>
                 </tr>
-
                 <tr>
                     <td>--verbose</td>
                     <td>Run in verbose mode with more trace about Bit activities.</td>
                 </tr>
-
                 <tr>
                     <td>--with PACK[=path]</td>
                     <td>Build with the named pack located at the optional path. If the path is ommitted, a search is
                         performed for the pack at default locations. Packs must have a pack description file installed
                         under <em>bits/packs</em> in the bit installation.</td>
                 </tr>
-
                 <tr>
                     <td>--without PACK</td>
                     <td>Build without the named pack.</td>
                 </tr>
-
             </tbody>
         </table>
-
         <a name="learnMore"></a>
         <h2>To Learn More</h2>
-
         <p>Here are some example bit files in the Appweb and Ejscript products:p>
         <ul>
             <li><a
@@ -870,20 +793,17 @@ targets: {
                 src/modules/modules.bit &mdash; bit file to build appweb modules</a></li>
             <li><a href="https://github.com/embedthis/appweb-4/blob/master/src/test/test.bit">Appweb
                 src/test/test.bit &mdash; bit file to unit test appweb</a></li>
-
             <li><a href="https://github.com/embedthis/ejs-2/blob/master/src/core/core.bit">Ejscript
                 src/core/core.bit &mdash; bit file to build the ejscript module</a></li>
             <li><a href="https://github.com/embedthis/ejs-2/blob/master/src/cmd/cmd.bit">Ejscript
                 src/cmd/cmd.bit &mdash; bit file to build the ejscript executables</a></li>
         </ul>
-
         <a name="example"></a>
         <p>Here is a sample main.bit file:</p>
 <pre>
 /*
     main.bit -- Main Bit File
  */
-
 Bit.load({
     blend: [
         /* Blend these bit files. Loaded before this file is processed */
@@ -897,7 +817,6 @@ Bit.load({
         /* Can put scripts or compiled mod file shere */
         'bits/company.es',
     ],
-
     /*
         Core settings
      */
@@ -908,7 +827,6 @@ Bit.load({
         version: '1.0.0',
         buildNumber: '0',
     },
-
     targets: {
         librocket: {
             /* Target to build a library */
@@ -921,27 +839,21 @@ Bit.load({
             ],
             /* Exclude any files with gemini or mercury in the name */
             exclude: /mercury|gemini/,
-
             /* Export these headers to the 'platform/inc' directory */
             headers:     [ 'rocket/rocket.h' ],
-
             /* Use these defines */
             '+defines':  [ '-DION_DRIVE', ],
-
             /* Search this directory for includes */
             '+includes': [ 'rocket', ],
-
             /* Add these compiler switches */
             '+compiler': [ '-Wall', ],
         },
-
         saturn: {
             /* Target to build an executable */
             type: 'exe',
             sources: [ 'saturn.c' ],
             depends: [ 'librocket'],
         },
-
         'saturn-gui': {
             /* Target to build an executable only on windows */
             enable: bit.platform.os == 'windows',
@@ -955,12 +867,12 @@ Bit.load({
         </div>
     </div>
 <!-- BeginDsi "dsi/bottom.html" -->
-    <div class="bottom">
-        <p class="footnote"> 
+	<div class="bottom">
+		<p class="footnote"> 
             <a href="../../../product/copyright.html" >&copy; Embedthis Software LLC, 2003-2012. 
             All rights reserved. Embedthis, Ejscript and Appweb are trademarks of Embedthis Software LLC.</a>
-        </p>
-    </div>
+		</p>
+	</div>
 </body>
 <script src="http://www.google.com/jsapi" type="text/javascript"></script>
 <script type="text/javascript"> 
