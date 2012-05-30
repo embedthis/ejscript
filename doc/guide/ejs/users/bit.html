@@ -53,6 +53,7 @@
 <li><a href="#propertyBlending">Property Blending</a></li>
 <li><a href="#tokenExpansion">Token Expansion</a></li>
 <li><a href="#propertyCollections">Property Collections</a></li>
+<li><a href="#targetTypes">Target Types</a></li>
 <li><a href="#buildingTargets">Building Targets</a></li>
 <li><a href="#selectingTargets">Selecting Targets</a></li>
 <li><a href="#buildEvents">Build Events</a></li>
@@ -502,6 +503,49 @@ myTarget: {
                 <tr><td>platformsw</td><td>Platforms for which this target should be built. Set to OS-ARCH or 'local'</td></tr>
             </tbody>
         </table>
+
+        <a name="targetTypes"></a>
+        <h3>Target Types</h3>
+        <p>There are several standard target types for which Bit has in-built knowledge of how to build:</p>
+        <ul>
+            <li>Compiled Objects</li>
+            <li>Shared Libraries</li>
+            <li>Executables Libraries</li>
+            <li>Copy Files</li>
+        </ul>
+        <h4>Shared Libraries</h4>
+        <p>To build a shared library, set the <em>type</em> property to 'lib', define the source files to compile via the
+        <em>sources</em> property. For example:
+<pre>
+libname: {
+    type: 'lib',
+    sources: '*.c',
+},
+</pre>
+        <p>The targets for the compiled objects are created automatically as are the source header dependencies.
+            Update a header, and the library will be rebuilt when bit is next invoked.</p>
+            <h4>Executables</h4>
+            <p>To build an executable, set the <em>type</em> property to 'exe', define the source files to compile via the
+            <em>sources</em> property (if any). Define required libraries via the <em>depends property</em>. For example:
+<pre>
+bingo: {
+    type: 'exe',
+    sources: [ 'bingo.c' ],
+    depends: [ 'libgame'],
+},
+</pre>
+        <h4>Copy Files</h4>
+        <p>A copy target specifies a set of input files and an output destination. It uses the Ejscript Path.copy
+        method to copy the files.</p>
+<pre>
+setup: {
+    path: '${CFG}/web',
+    files: [ 'web/readme.html' ],
+},
+</pre>
+        <p>This example will copy the specified readme file to the web directory under the platform output
+        directory.</p>
+
         <a name="buildingTargets"></a>
         <h3>Building Targets</h3>
         <p>Bit builds targets according to a defined lifecycle.
@@ -522,8 +566,8 @@ myTarget: {
                 properties</li>
             <li>The target dependencies are resolved and added to the target list</li>
             <li>The target sources have wild-cards expanded. Targets are dynamically created for all objects to be
-            built. The C/C++ source files are parsed and header targets are built for non-system include directives that have no
-            leading spaces. i.e. #include "filename" starting in column 0.</li>
+            built. The C/C++ source files are parsed and header targets are built for non-system include directives that
+            have no leading spaces. i.e. #include "filename" starting in column 0.</li>
             <li>The target is built. If the target is an executable, library, or object, it is built using the
                 transition rules specified in bit.rules. If the target has a <em>build</em> event script, it is run.</li>
         </ul>

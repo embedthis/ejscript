@@ -654,7 +654,7 @@ static void closeEjsHandler(HttpQueue *q)
 }
 
 
-static void incomingEjsData(HttpQueue *q, HttpPacket *packet)
+static void incomingEjs(HttpQueue *q, HttpPacket *packet)
 {
     HttpConn        *conn;
     HttpRx          *rx;
@@ -806,7 +806,7 @@ HttpStage *ejsAddWebHandler(Http *http, MprModule *module)
     }
     http->ejsHandler = handler;
     handler->close = closeEjsHandler;
-    handler->incomingData = incomingEjsData;
+    handler->incoming = incomingEjs;
     handler->start = startEjsHandler;
     handler->ready = readyEjsHandler;
     return handler;
