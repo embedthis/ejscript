@@ -5,11 +5,11 @@
     <title>Embedthis Ejscript 2.0.0 Documentation</title>
     <meta name="keywords" content="Ejscript, JavaScript, ECMAScript, Server-Side JavaScript, Dynamic languages, 
         Embedded, AJAX, language"/>
-	<meta name="description" content="Ejscript -- Embedded Server-Side JavaScript Language."/>
-	<meta name="robots" content="index,follow" />
+    <meta name="description" content="Ejscript -- Embedded Server-Side JavaScript Language."/>
+    <meta name="robots" content="index,follow" />
     <link href="http://www.google.com/cse/style/look/default.css" type="text/css" rel="stylesheet" />
-	<link href="../../../doc.css" rel="stylesheet" type="text/css" />
-	<link href="../../../print.css" rel="stylesheet" type="text/css" media="print"/>
+    <link href="../../../doc.css" rel="stylesheet" type="text/css" />
+    <link href="../../../print.css" rel="stylesheet" type="text/css" media="print"/>
     <!--[if IE]>
     <link href="../../../iehacks.css" rel="stylesheet" type="text/css" />
     </![endif]-->
@@ -34,28 +34,28 @@
         <div class="contentRight">
             
 <!-- BeginDsi "dsi/ejsLanguageSeeAlso.html" -->
-		        <h1>See Also</h1>
-		        <ul>
-		          <li><a href="../../../guide/ejs/overview.html">Overview</a></li>
-		          <li><a href="../../../guide/ejs/features.html">Language Features</a></li>
-		          <li><a href="../../../guide/ejs/language/modes.html">Language Modes</a></li>
-		          <li><a href="../../../guide/ejs/language/syntax.html">Language Syntax</a></li>
-		          <li><a href="../../../guide/ejs/language/statements.html">Statements</a></li>
-		          <li><a href="../../../guide/ejs/language/expressions.html">Expressions</a></li>
-		          <li><a href="../../../guide/ejs/language/objects.html">Objects and Arrays</a></li>
-		          <li><a href="../../../guide/ejs/language/functions.html">Functions and Methods</a></li>
-		          <li><a href="../../../guide/ejs/language/core.html">Core Language Types</a></li>
-		          <li><a href="../../../guide/ejs/language/types.html">Types and Declarations</a></li>
-		          <li><a href="../../../guide/ejs/language/classes.html">Classes</a></li>
-		          <li><a href="../../../guide/ejs/language/modules.html">Modules</a></li>
-		          <li><a href="../../../guide/ejs/language/library.html">System Library</a></li>
-		          <li><a href="../../../guide/ejs/language/events.html">Events and Timers</a></li>
-		          <li><a href="../../../guide/ejs/language/globals.html">Globals</a></li>
+                <h1>See Also</h1>
+                <ul>
+                  <li><a href="../../../guide/ejs/overview.html">Overview</a></li>
+                  <li><a href="../../../guide/ejs/features.html">Language Features</a></li>
+                  <li><a href="../../../guide/ejs/language/modes.html">Language Modes</a></li>
+                  <li><a href="../../../guide/ejs/language/syntax.html">Language Syntax</a></li>
+                  <li><a href="../../../guide/ejs/language/statements.html">Statements</a></li>
+                  <li><a href="../../../guide/ejs/language/expressions.html">Expressions</a></li>
+                  <li><a href="../../../guide/ejs/language/objects.html">Objects and Arrays</a></li>
+                  <li><a href="../../../guide/ejs/language/functions.html">Functions and Methods</a></li>
+                  <li><a href="../../../guide/ejs/language/core.html">Core Language Types</a></li>
+                  <li><a href="../../../guide/ejs/language/types.html">Types and Declarations</a></li>
+                  <li><a href="../../../guide/ejs/language/classes.html">Classes</a></li>
+                  <li><a href="../../../guide/ejs/language/modules.html">Modules</a></li>
+                  <li><a href="../../../guide/ejs/language/library.html">System Library</a></li>
+                  <li><a href="../../../guide/ejs/language/events.html">Events and Timers</a></li>
+                  <li><a href="../../../guide/ejs/language/globals.html">Globals</a></li>
 
-		          <li><a href="../../../guide/ejs/users/compiler.html">Using the Compiler</a></li>
-		          <li><a href="../../../guide/ejs/users/compiler.html">Using the Compiler</a></li>
-		          <li><a href="../../../guide/ejs/users/shell.html">Command Shell</a></li>
-		        </ul>
+                  <li><a href="../../../guide/ejs/users/compiler.html">Using the Compiler</a></li>
+                  <li><a href="../../../guide/ejs/users/compiler.html">Using the Compiler</a></li>
+                  <li><a href="../../../guide/ejs/users/shell.html">Command Shell</a></li>
+                </ul>
 <!-- EndDsi -->
         </div>
         <div class="contentLeft">
@@ -201,10 +201,15 @@ Bit.load({
 
         <h2>Configuring</h2>
         <p>To configure a product before building, run Bit using the <em>configure</em> target or alternatively use the
-        <em>--config</em> switch. When configuring, Bit will load a <em>main.bit</em> file and use the details from the
-        <em>settings</em> properties in main.bit to tailor the configuration. The settings provide the product name,
-        title, company, version number and a list of required and optional extension packages that should be discovered.</p>
-
+        <em>--config</em> switch. When configuring, Bit will determine the capabilities of the current system and search
+        for extension packs. It will then create will create a platform configuration bit file that documents the
+        current system.  The build output directory is of the form: OS-ARCH-PROFILE.
+        It will also create a build output directory and a bit.h header. </p>
+        <p>When configuring, Bit will load the <em>main.bit</em> file to determine how to configure the build. It will
+        use the settings.required and settings.optional properties in the main.bit file for the list of required tools and
+        extension packages to locate. Bit will search for these packages and will create definitions in the platform bit
+        file for each package/tool.</p>
+        
         <p>For example, this is a typical <em>settings</em> configuration:</p>
 <pre>
 settings: {
@@ -218,9 +223,15 @@ settings: {
 },
 </pre>
 
-        <p>The <em>required</em> property defines the extensions that are required to be present on the system to build. The
-        plus symbol (+) before these properties indicates that these values should be added to pre-defined values. The buildNumber is a
-        build patch number.</p>
+        <p>The <em>required</em> property defines the packages that are required to be present on the system to build. The
+        plus symbol (+) before these properties indicates that these values should be added to pre-defined values. 
+        Bit will define the required tools of <em>compiler</em> and <em>linker</em> as part of its standard definitions.</p>
+
+        <h3>Out-of-source Tree Builds</h3>
+        <p>Bit supports building from read-only source trees. To do this, use <em>bit -config path</em> when
+        configuring. Run this from a writable directory and reference the read-only source tree via the
+        <em>-config</em> switch. Bit will create the start.bit, platform bit file and <output build directory in the
+        writable (current) directory. Thereafter run <em>bit</em> from the writable directory for all operations.</p>
 
         <h2>Cross-Compiling</h2>
         <p>To build a product for platform different to that of the local system is called cross compiling.
@@ -241,6 +252,14 @@ settings: {
 
        <p>This will create a windows-x64.bit configuration file and a start.es that references it. The platform
        switch does not need to be respecified after configuration.</p>
+
+        <h3>Environment Variables</h3>
+        <p>When cross-compiling, it is sometimes required to pass compiler and linker paths and flags via the
+        environment. Bit detects certain environment variables and saves their values when configuring. Subsequently
+        when building, these values are used. For example:
+            <pre>CC=/path/to/compiler CFLAGS=-w bit configure</pre>
+        <p>The following variables are eligible: CFLAGS, DFLAGS, IFLAGS, LDFLAGS, CC and LD. Note: these are only
+        processed when configuring for cross compilation.</p>
 
         <h2>Project Generation</h2>
         <p>Bit can generate generate complete project files for building using: make, nmake, Visual Studio, Xcode or
@@ -333,7 +352,7 @@ Bit.load({
         <p>The property prefixes are used for simple property key/value pairs. Objects and arrays always have their properties
         blended (added).</p> 
 
-        <h3>Token Expansion</h3>
+        <h3>Property Token Expansion</h3>
         <p>To make it easy to dynamically compute file paths, strings have tokens automatically expanded. Tokens take
 the form: "${TOKEN}". For example:
 <pre>
@@ -346,60 +365,281 @@ myTarget: {
         <p>Tokens are expanded using values from the <em>bit</em> global object. For example: OS is expanded using the
         value of the bit.globals.OS property. Token expansion uses three sets of values:</p>
         <ul>
-            <p>Top level bit.* properties</p>
-            <p>bit.globals.* properties</p>
-            <p>Rule specific tokens when compiling or linking</p>
+            <li>Top level bit.* properties</li>
+            <li>bit.globals.* properties</li>
+            <li>Rule specific tokens when compiling or linking</li>
         </ul>
-        <p>The following globals are defined:</p>
+        <p>The following bit.globals.* are defined for use by tokens:</p>
         <table>
             <thead>
                 <tr><th>Name</th><th>Description</th>
             </thead>
             <tbody>
-            <tr><td></td><td></td></tr>
+            <tr><td>ARCH</td><td>CPU architecture: x86, x64, ppc, ...</td></tr>
+            <tr><td>CONFIG</td><td>Platform configuration: OS-ARCH-PROFILE</td></tr>
+            <tr><td>EXE</td><td>Executable extension: .exe</td></tr>
+            <tr><td>GCC_ARCH</td><td>CPU architecture mapped to a GCC architecture: x86_64, i686, ...</td></tr>
+            <tr><td>LIKE</td><td>Set to windows or posix if relevant</td></tr>
+            <tr><td>O</td><td>Compiled object file extension: .o, .obj</td></tr>
+            <tr><td>OS</td><td>Operating system: linux, windows, ...</td></tr>
+            <tr><td>PLATFORM</td><td>Platform string: OS-ARCH</td></tr>
+            <tr><td>SHOBJ</td><td>Shared object extension: .so, .dll</td></tr>
+            <tr><td>SHLIB</td><td>Shared object library extension: .so, .lib</td></tr>
+            <tr><td>BIN</td><td>Binary outputs directory: OS-ARCH-PROFILE/bin</td></tr>
+            <tr><td>CFG</td><td>Configuration outputs directory: OS-ARCH-PROFILE</td></tr>
+            <tr><td>BITS</td><td>Directory holding standard bit files</td></tr>
+            <tr><td>INC</td><td>Standard include directory</td></tr>
+            <tr><td>OBJ</td><td>Directory holding compiled files: OS-ARCH-PROFILE/obj</td></tr>
+            <tr><td>PACKS</td><td>Directory holding bit package extension files</td></tr>
+            <tr><td>SRC</td><td>Directory of the source tree to be built</td></tr>
+            <tr><td>TOP</td><td>Top directory where the project is being built</td></tr>
             </tbody>
         </table>
         
-        ARCH = bit.platform.arch
-        GCC_ARCH = gccArch(bit.platform.arch)
-        CONFIG = bit.platform.configuration
-        EXE = bit.ext.dotexe
-        LIKE = bit.platform.like
-        O = bit.ext.doto
-        OS = bit.platform.os
-        PLATFORM = bit.platform.name
-        SHOBJ = bit.ext.dotshobj
-        SHLIB = bit.ext.dotshlib
-        BIN CFG BITS FLAT INC LIB OBJ PACKS PKG REL SRC TOP
-
-        Loading order
-        Token expansion
-        Top Level Property Collections
-
-        <p>The bit object literal describes targets to build, but it can also supply other information to control the
-        build. 
+        <h3>Top Level Collections</h3>
         <p>Here is a non-exhaustive description of the important top-level Bit property collections:</p>
         
-        dir
-        ext
-        globals
-        internal
-        options
-        platform
-        prefixes
-        rules
-        defaults
-        packs
-        blend
-        customize
-        settings
-        usage
-        modules
-        profiles
-        targets
+        <table>
+            <thead>
+                <tr><th>Name</th><th>Description</th>
+            </thead>
+            <tbody>
+                <tr><td>defaults</td><td>Default properties to be inherited by all targets</td></tr>
+                <tr><td>dir</td><td>Directories</td></tr>
+                <tr><td>ext</td><td>File extensions</td></tr>
+                <tr><td>globals</td><td>Global values to use in property token expansion</td></tr>
+                <tr><td>internal</td><td>Default properties to be inherited by only the targets in the same bit file</td></tr>
+                <tr><td>options</td><td>Supplied command line options</td></tr>
+                <tr><td>platform</td><td>Description of the current platform. Has properties for operating system
+                        and CPU architecture.</td></tr>
+                <tr><td>prefixes</td><td>Installation directory prefixes</td></tr>
+                <tr><td>rules</td><td>Command rules for compiling, building libraries and executables</td></tr>
+                <tr><td>packs</td><td>Discovered extension packs</td></tr>
+                <tr><td>blend</td><td>Bit files to blend</td></tr>
+                <tr><td>customize</td><td>Optional bit file to load after fully loading all blended bit files</td></tr>
+                <tr><td>settings</td><td>Project top-level settings. This includes name, version, description etc.</td></tr>
+                <tr><td>usage</td><td>Additional usage message to emit for bit command line errors</td></tr>
+                <tr><td>modules</td><td>Ejscript modules to load</td></tr>
+                <tr><td>profiles</td><td>Build profiles. Standard profiles are: debug and release</td></tr>
+                <tr><td>targets</td><td>Targets to build. Each target is its own collection of properties</td></tr>
+            </tbody>
+        </table>
+        <h3>Platform Collection</h3>
+        <p>The platform collection defines properties for:
+        <table>
+            <thead>
+                <tr><th>Name</th><th>Description</th>
+            </thead>
+            <tbody>
+                <tr><td>os</td><td>Operating system: linux, windows, vxworks, ...</td></tr>
+                <tr><td>arch</td><td>CPU architecture: arm, ppc, x64, x86, ...</td></tr>
+                <tr><td>like</td><td>Set to 'windows' or 'posix' if true</td></tr>
+                <tr><td>profile</td><td>Build profile selected: 'debug', 'release', ...</td></tr>
+            </tbody>
+        </table>
 
-- source file lists, wild cards **
-        </pre>
+        <h3>Packs Collection</h3>
+        <p>The packs collection defines a collection for each extension pack that bit examined when configuring. Each
+        pack will have properties for: 
+        <table>
+            <thead>
+                <tr><th>Name</th><th>Description</th>
+            </thead>
+            <tbody>
+                <tr><td>enable</td><td>Set to true if the pack was found on the system</td></tr>
+                <tr><td>description</td><td>Descriptive name of the pack</td></tr>
+                <tr><td>path</td><td>If found, the path to the pack directory or binary</td></tr>
+                <tr><td>compiler</td><td>Compiler options when building targets that depend on this pack</td></tr>
+                <tr><td>defines</td><td>Compiler definitions when building targets that depend on this pack</td></tr>
+                <tr><td>includes</td><td>Compiler include directories to use when building targets that depend on this
+                        pack</td></tr>
+                <tr><td>libraries</td><td>Libraries to link with when building targets that depend on this pack</td></tr>
+                <tr><td>libpaths</td><td>Library search paths to use when building targets that depend on this pack</td></tr>
+                <tr><td>linker</td><td>Linker options to use when building targets that depend on this pack</td></tr>
+                <tr><td>imports</td><td>Files to import from this pack before building</td></tr>
+            </tbody>
+        </table>
+
+        <h3>Settings Collection</h3>
+        <p>The settings collection specifies the top level project/product names. It is required in the main.bit file.</p>
+        <table>
+            <thead>
+                <tr><th>Name</th><th>Description</th>
+            </thead>
+            <tbody>
+                <tr><td>company</td><td>Company name</td></tr>
+                <tr><td>product</td><td>Product or project name. Should be one word, lower case without spaces</td></tr>
+                <tr><td>title</td><td>Descriptive one sentance title for the product</td></tr>
+                <tr><td>version</td><td>Product version string. Should be of the form: MAJOR.MINOR.PATCH </td></tr>
+                <tr><td>buildNumber</td><td>Build number string</td></tr>
+                <tr><td>optional</td><td>List of optional packs to discover when configuring </td></tr>
+                <tr><td>required</td><td>List of required packs to discover when configuring </td></tr>
+                <tr><td>without-all</td><td>List of packs to disable when doing '--without all configure'</td></tr>
+            </tbody>
+        </table>
+
+        <h3>Targets Collection</h3>
+        <table>
+            <thead>
+                <tr><th>Name</th><th>Description</th>
+            </thead>
+            <tbody>
+                <tr><td>name</td><td>Target name. This name is used rather than the collection name</td></tr>
+                <tr><td>home</td><td>Home directory to use when resolving paths for this target</td></tr>
+                <tr><td>type</td><td>Type of target: exe, lib, action, obj, header, ...</td></tr>
+                <tr><td>enable</td><td>Set to true if the pack was found on the system</td></tr>
+                <tr><td>compiler</td><td>Compiler options</td></tr>
+                <tr><td>defines</td><td>Compiler definitions</td></tr>
+                <tr><td>includes</td><td>Compiler include directories</td></tr>
+                <tr><td>libraries</td><td>Libraries to link</td></tr>
+                <tr><td>libpaths</td><td>Library search paths</td></tr>
+                <tr><td>linker</td><td>Linker options</td></tr>
+                <tr><td>path</td><td>Path to the result of building the target. If set, this is used for dependency
+                        calculations. If updated, all targets that depend on this target will be rebuilt.</td></tr>
+                <tr><td>scripts</td><td>Scripts for the target. See <a href="#scripts">scripts</a> for details</td></tr>
+                <tr><td>sources</td><td>Array of source file patterns to compile for the target. Use normal * as a
+                        wild-card, ** as a wild-card that descends directories. Use the exclude property to exclude </td></tr>
+                <tr><td>headers</td><td>Linker options</td></tr>
+                <tr><td>include</td><td>Regular expression of file patterns to include from the sources list. 
+                    This is a filter that is applied to the sources list after expanding the sources wildcards</td></tr>
+                <tr><td>depends</td><td>Linker options</td></tr>
+                <tr><td>exclude</td><td>Regular expression of file patterns to exclude from the sources list
+                    This is a filter that is applied to the sources list after expanding the sources wildcards</td></tr>
+                <tr><td>rule</td><td>Build command template to use when invoking compiler and linker. Typically not
+                        explicitly set unless overriding for some reason. Set to: 'c->o', 'cpp->o', 'lib', 'exe', 'gui'.
+                        Rules are automatically selected for 'lib' and 'exe' targets. </td>
+                <tr><td>platformsw</td><td>Platforms for which this target should be built. Set to OS-ARCH or 'local'</td></tr>
+            </tbody>
+        </table>
+
+        <h3>Building Targets</h3>
+        <p>Bit builds targets according to a defined lifecycle.
+        <ul>
+            <li>A bit object is created an initialized with the standard and per-O/S definitions</li>
+            <li>The start.bit file is loaded</li>
+            <li>All bit files referenced in the start.bit blend[] collection are loaded. This continues recursively,
+                depth first.</li>
+            <li>The next bit files referenced in the start.bit platform[] collection is selected. Each of the steps below
+                are applied for each platform to build.</li>
+            <li>The platform bit file is loaded and all referenced bit files in blend[] are loaded depth-first. After
+                loading each script.</li>
+            <li>The <em>dir</em> and <em>bit.global</em> properties are initialized</li>
+            <li>Targets are enabled or disabled depending on their <em>enable</em> property expression</li>
+            <li>A list of top-level targets to build is created based on the bit commandline and target dependencies.
+            See below <a href="#selecting">Selecting Targets</a> for more details.</li>
+            <li>Those targets to build are processed and their properties are blended with the defaults/internal
+                properties</li>
+            <li>The target dependencies are resolved and added to the target list</li>
+            <li>The target sources have wild-cards expanded. Targets are dynamically created for all objects to be
+            built. The C/C++ source files are parsed and header targets are built for non-system include directives that have no
+            leading spaces. i.e. #include "filename" starting in column 0.</li>
+            <li>The target is built. If the target is an executable, library, or object, it is built using the
+                transition rules specified in bit.rules. If the target has a <em>build</em> event script, it is run.</li>
+        </ul>
+
+        <h3>Selecting Targets</h3>
+        <p>Bit follows a simple process when selecting the targets to build.</p>
+        <ol>
+            <li>The set of names specified on the bit command line is used as a starting target list. If the name 
+                does not match a target name, the list of targets is search to see if the name matches any targets with
+            a type of that name. All matching targets are added to the list. For example: this allows targets of type
+            <em>clean</em> to be run when <em>bit clean</em> is invoked.</li>
+            <li>Targets that are disabled (<em>enable</em> property evalutes to false) are removed from the list</li>
+            <li>Targets referenced in the <em>depends</em> property are added to the list (recursively)</li>
+            <li>Additional targets are created dynamically for source items to be compiled and include headers</li>
+        </ol>
+        <p>To reiterate, there are thus two paradigms when invoking bit:</p>
+        <ul> 
+            <li><em>bit target ...</em></li>
+            <li><em>bit action ...</em></li>
+        </ul> 
+        <p>When specifying a name that is a target, these must match the target name property. When specifying an action,
+        these must match a target type property.</p>
+
+
+        <h3>Lifecycle Events</h3>
+        <p>When building, Bit will fire events that may trigger scripts to run. Here is a list of events:</p>
+        <table>
+            <thead>
+                <tr><th>Name</th><th>Description</th>
+            </thead>
+            <tbody>
+                <tr><td>postresolve</td><td>Fired after resolving dependencies for a target</td></tr>
+                <tr><td>presource</td><td>Fired before expanding source wildcards and creating object targets</td></tr>
+                <tr><td>postblend</td><td>Fired after blending defaults for a target</td></tr>
+                <tr><td>prebuild</td><td>Fired before building a target</td></tr>
+                <tr><td>precompile</td><td>Fired before compiling a source file used by a target</td></tr>
+                <tr><td>postconfig</td><td>Fired after creating bit.h when configuring</td></tr>
+            </tbody>
+        </table>
+        
+        <h3>Scripts</h3>
+        <p>Target scripts may be specified three ways:</p>
+        <ul>
+            <li>Build target scripts</li>
+            <li>Action target scripts</li>
+            <li>Long-hand scripts</li>
+        </ul>
+        <h4>Build Target Scripts</h4>
+        <p>Build target scripts run when a default build (bit build) is run. These scripts use the
+        <em>build</em> property. For example:
+<pre>
+targets: {
+    cleanJunk: {
+        build: "
+            trace('Clean', 'Cleaning junk')
+            rm('file.junk')
+        ",
+    }
+}
+</pre>
+        <p>When <em>bit</em> is invoked, the script for the <em>cleanJunk</em> target will be run. Note that in
+        Ejsscript, quoted literals can span multiple lines. No backquoting at the end of the line is requried.</p>
+
+        <h4>Action Scripts</h4>
+        <p>Action scripts do not run by default. Rather, they are run when they are explicitly invoked on the command
+        line or another target is invoked that references them as a dependency. 
+        These scripts use the <em>action</em> property. For example:
+<pre>
+targets: {
+    'generate-doc': {
+        build: "
+            run('bash ./generate-documentation')
+        ",
+    }
+}
+</pre>
+        <p>When <em>bit generate-doc</em> is run, this generate-documentation script will be run. </p>
+
+        <h4>Long-hand Scripts</h4>
+        <p>A target can specify multiple scripts that are run at various stages of the building lifecycle. These are
+        specified via the scripts collection of a target.
+<pre>
+targets: {
+    libglow: {
+        type: 'lib',
+        sources: '*.c',
+        <b>scripts: {
+            prebuild: [
+                {
+                    home: '.',
+                    shell: 'bash',
+                    script: '
+                        ./build-prep
+                    ',
+                }
+            ],
+        },</b>
+    },
+}
+</pre>
+        <p>The scripts collection is an object hash with properties for lifecycle events. When the specific event is
+        triggered, the script is run. For each event, there can be multiple scripts which are run in-order. Each script
+        has a home directory which becomes the current directory for the script, a shell interpreter to execute the
+        script and the script contents. </p>
+        <p>Note that the <em>build</em> and <em>action</em> scripts translate under-the-hood into the same long form.
+        The action script becomes a target with a type of <em>action</em> and an event of <em>build</em>. A build script
+        becomes a target with a type of <em>build</em> and an event of <em>build</em>.</p>
 
         <h2>Debugging</h2>
         <p>With Make and other build tools, it is difficult to determine why a target is or is not being built. Bit
@@ -415,6 +655,9 @@ myTarget: {
         despite build errors, use the <em>--continue</em> switch.</p>
 
         <h2>Options</h2>
+        <p>Bit command line options can be prefixed with either a single or double minus. ie. <em>-switch</em> or
+        <em>--switch</em></p>
+
         <table>
             <thead>
             <tr><th>Option</th><th>Description</th></tr>
@@ -574,63 +817,171 @@ myTarget: {
 
             </tbody>
         </table>
+
+        <h2>To Learn More</h2>
+
+        <p>Here are some example bit files in the Appweb and Ejscript products:p>
+        <ul>
+            <li><a
+                href="https://github.com/embedthis/appweb-4/blob/master/main.bit">Appweb main.bit &mdash; product level
+                bit file</a></li>
+            <li><a href="https://github.com/embedthis/appweb-4/blob/master/src/server/server.bit">Appweb
+                src/server/server.bit &mdash; bit file to build appweb binary</a></li>
+            <li><a href="https://github.com/embedthis/appweb-4/blob/master/src/libappweb.bit">Appweb
+                src/libappweb.bit &mdash; bit file to build appweb library</a></li>
+            <li><a href="https://github.com/embedthis/appweb-4/blob/master/src/modules/modules.bit">Appweb
+                src/modules/modules.bit &mdash; bit file to build appweb modules</a></li>
+            <li><a href="https://github.com/embedthis/appweb-4/blob/master/src/test/test.bit">Appweb
+                src/test/test.bit &mdash; bit file to unit test appweb</a></li>
+
+            <li><a href="https://github.com/embedthis/ejs-2/blob/master/src/core/core.bit">Ejscript
+                src/core/core.bit &mdash; bit file to build the ejscript module</a></li>
+            <li><a href="https://github.com/embedthis/ejs-2/blob/master/src/cmd/cmd.bit">Ejscript
+                src/cmd/cmd.bit &mdash; bit file to build the ejscript executables</a></li>
+        </ul>
+
+        <p>Here is a commented main.bit file from Ejscript</p>
 <pre>
-Samples in github
+/*
+    main.bit -- Main Bit File for Ejscript:
+ */
 
-Examples
-Properties
+Bit.load({
+    blend: [
+        /* Blend these bit files. Loaded before this file is processed */
+        '${BITS}/embedthis.bit',
+        'src/deps/mpr/mpr.bit',
+        'src/deps/pcre/pcre.bit',
+        'src/deps/http/http.bit',
+        'src/deps/sqlite/sqlite.bit',
+
+        'src/libejs.bit',
+        'src/cmd/cmd.bit',
+        'src/core/core.bit',
+
+        'src/jems/ejs.bit/bit.bit',
+        'src/jems/ejs.unix/unix.bit',
+        'src/jems/ejs.jem/jem.bit',
+        'src/jems/ejs.db/db.bit',
+        'src/jems/ejs.db.mapper/mapper.bit',
+        'src/jems/ejs.db.sqlite/sqlite.bit',
+        'src/jems/ejs.web/web.bit',
+        'src/jems/ejs.template/template.bit',
+        'src/jems/ejs.tar/tar.bit',
+        'src/jems/ejs.zlib/zlib.bit',
+        'src/jems/ejs.mvc/mvc.bit',
+        'src/jems/ejs.utest/utest.bit',
+        'package/package.bit',
+        'doc/doc.bit',
+    ],
+
+    customize: [
+        /* Optionally load this if present. Feel free to create and customize */
+        'custom.bit',
+    ],
+
+    '+modules': [
+        /* Can put scripts or compiled mod file shere */
+        'bits/ejs.es',
+    ],
+
+    /*
+        Core settings
+     */
+    settings: {
+        product: 'ejs',
+        title: 'Embedthis Ejscript',
+        company: 'Embedthis',
+        version: '2.0.0',
+        buildNumber: 'B2',
+    
+        /* Extra extension packs under this directory */
+        packs: [ 'bits/packs' ],
+
+        /* Build locally to build tools even if doing a cross-build*/
+        platforms: [ 'local' ],
+
+        /* Optional and required extension packs */
+        '+optional': [ 'doxygen', 'dsi', 'man', 'man2html', 'openssl', 
+            'matrixssl', 'pmaker', 'sqlite', 'ssl', 'zlib', 'zip' ],
+        '+required': [ 'pcre' ]
+
+        /* Disable these if doing -without all */
+        'without-all': ['doxygen', 'dsi', 'man', 'man2html', 'ssl', 'zlib'],
+    },
+
+    /* Emit these messages if doing bit -help */
+    usage: {
+        assert: 'Enable program assertions (true|false)',
+        tune: 'Optimize (size|speed|balanced)',
+    },
+
+    /* Build profiles. Contents added to bit.* when profile selected */
+    profiles: {
+        debug: { settings: { 
+            debug: true, 
+            assert: true,
+        }, },
+        release: { settings: { 
+            debug: false, 
+            assert: false,
+        } },
+    },
+
+    targets: {
+        install: {
+            /* Build must be up-to-date before installing */
+            depends: ['build'],
+            action: "installBinary()",
+        },
+
+        package: {
+            /* Only package for linux, macosx or windows */
+            enable: "'${OS}' == 'linux' || '${OS}' == 'macosx' || 
+                '${OS}' == 'windows'",
+            depends: ['packageBinary', 'packageSource', 'packageCombo'],
+        },
+
+        packageBinary: {
+            depends: ['build'],
+            action: "packageBinaryFiles()",
+        },
+
+        packageSource: {
+            depends: ['build'],
+            action: "packageSourceFiles()",
+        },
+
+        packageCombo: {
+            depends: ['build'],
+            action: "packageComboFiles()",
+        },
+
+        uninstall: {
+            action: "uninstallBinary()"
+        },
+    },
+})
+</pre>
+
+<pre>
 - Bit.html
-    - Need a commented main.bit
-    - Need a commented *.dmp
-
     - See GYP doc and how it is 
-    - Inheritance of properties
-        +, -, 
-    - Current directory is that of the bit file
-    - Don't have to be in the directory
-        - Just say bit in any directory
     - See NI emails general Bit tips
-    - document properties in bit files
-    - Env vars are only for cross compilation configuration
-    - order of platform and -without
-    - Can use '--' or '-'
-    - Properties
-        - customize
-        - defaults
-        - internal
-    - Token expansion
-    - Blending
-    - Scripts
-        - when to invoke
-    - Generation
-        - sh, nmake, name, xcode
-    - Cross compilation
-        start.bit - platforms
-    - Configuration
-        - platform bit file
-        - Platform output directory
-    - globals
-    - Standard types
-        - lib, exe, obj
-            - compiler, libraries, libpaths, defines, includes
-        - Sources expansion
-    - Dependency generation
-    - rules
-    - Settings
-        - product, title, version, buildNumber, optional, required, without-all
+    - out of source building
 </pre>
         </div>
     </div>
 <!-- BeginDsi "dsi/bottom.html" -->
-	<div class="bottom">
-		<p class="footnote"> 
+    <div class="bottom">
+        <p class="footnote"> 
             <a href="../../../product/copyright.html" >&copy; Embedthis Software LLC, 2003-2012. 
             All rights reserved. Embedthis, Ejscript and Appweb are trademarks of Embedthis Software LLC.</a>
-		</p>
-	</div>
+        </p>
+    </div>
 </body>
-<cript src="http://www.google.com/jsapi" type="text/javascript"></script>
-<cript type="text/javascript"> 
+<script src="http://www.google.com/jsapi" type="text/javascript"></script>
+<script type="text/javascript"> 
   google.load('search', '1', {language : 'en'});
   google.setOnLoadCallback(function() {
     var customSearchControl = new google.search.CustomSearchControl(
