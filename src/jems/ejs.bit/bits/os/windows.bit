@@ -42,7 +42,7 @@ Bit.load({
 
     defaults: {
         '+compiler':  [ '-nologo', '-GR-', '-W3' ],
-        //  MOB - remove _MT as -MDd and -MD define this
+        //  TODO - remove _MT as -MDd and -MD define this
         '+defines':   [ '-D_REENTRANT', '-D_MT' ],
         '+entry':   {
             lib: '_DllMainCRTStartup@12',
@@ -81,7 +81,6 @@ Bit.load({
     },
 
     rules: {
-        //  MOB -Fd{DIR} should this be named uniquely per target?
         'c->obj': '"${packs.compiler.path}" -c -Fo${OUT} -Fd${PDB} ${CFLAGS} ${DEFINES} ${INCLUDES} ${PREPROCESS} ${IN}',
         'cpp->obj': '"${packs.compiler.path}" -c -Fo${OUT} -Fd${PDB} ${CFLAGS} ${DEFINES} ${INCLUDES} ${PREPROCESS} ${IN}',
         'lib':  '"${packs.link.path}" -dll -out:${OUT} -entry:${ENTRY} -def:${DEF} ${LDFLAGS} ${LIBPATHS} ${IN} ${LIBS}',

@@ -340,7 +340,7 @@ function files(base: Path) {
              */
             if (obj && obj.type == 'obj') {
                 for each (src in obj.files) {
-                    //  MOB - can this emit duplicates?
+                    //  TODO - can this emit duplicates?
                     let path = src.relativeTo(bit.dir.src)
                     let ref = getid('ID_TargetSrc:' + src)
                     output(source.expand({REF: ref, NAME: src.basename, PATH: path}))
@@ -578,7 +578,7 @@ ${OUTPUTS}
             target.vars.OUT = outputs
         }
         let sid = getid('ID_ShellScript:' + target.name)
-        // MOB cmd = cmd.toJSON().expand(bit, eo).expand(bit.globals, eo).expand(target.vars, eo)
+        // TODO cmd = cmd.toJSON().expand(bit, eo).expand(bit.globals, eo).expand(target.vars, eo)
         cmd = expand(cmd.toJSON())
         cmd = cmd.expand(target.vars, eo)
         output(section.expand({SID: sid, CMD: cmd, INPUTS: inputs, OUTPUTS: outputs, TNAME: target.name, SHELL: shell}))

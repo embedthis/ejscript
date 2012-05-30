@@ -48,7 +48,7 @@ Bit.load({
         '+linker': [ '-Wl,-r' ],
         scripts: {
             '+preblend': "
-                //  MOB - move to pack
+                //  TODO - move to pack
                 let defaults = bit.defaults
                 let arch = bit.platform.arch
                 let cpu

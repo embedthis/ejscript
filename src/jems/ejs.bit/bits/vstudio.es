@@ -24,7 +24,7 @@ var prepTarget
 var Base 
 
 public function vstudio(base: Path) {
-    //  MOB refactor
+    //  TODO refactor
     Base = base
     bit.TOOLS_VERSION = TOOLS_VERSION
     bit.PROJECT_FILE_VERSION = PROJECT_FILE_VERSION
@@ -148,7 +148,7 @@ function debugPropBuild(base: Path) {
     trace('Generate', path)
     out = TextStream(File(path, 'wt'))
 
-    //  MOB - remove MultiThreadedDebugDll
+    //  TODO - remove MultiThreadedDebugDll
     output('<?xml version="1.0" encoding="utf-8"?>
 <Project ToolsVersion="4.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
   <ImportGroup Label="PropertySheets" />
@@ -180,7 +180,7 @@ function releasePropBuild(base: Path) {
     let path = base.join('release.props').relative
     trace('Generate', path)
     out = TextStream(File(path, 'wt'))
-    //  MOB - remove MultiThreadedDebugDll
+    //  TODO - remove MultiThreadedDebugDll
     output('<?xml version="1.0" encoding="utf-8"?>
 <Project ToolsVersion="4.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
   <ImportGroup Label="PropertySheets" />
@@ -248,7 +248,7 @@ function projBuild(projects: Array, base: Path, target) {
     if (target.vsbuilt || !target.enable || target.nogen) {
         return
     }
-    //  MOB - refactor
+    //  TODO - refactor
     if (target.type != 'exe' && target.type != 'lib' && target.type != 'vsprep') {
         if (!(target.type == 'build' || target.type == 'file')) {
             return
@@ -442,7 +442,7 @@ function projResources(base, target) {
     }
 }
 
-//  MOB - rename. Does more than just link. Also does 'files' and 'scripts'
+//  TODO - rename. Does more than just link. Also does 'files' and 'scripts'
 function projLink(base, target) {
     if (target.type == 'lib') {
         let def = base.join(target.path.basename.toString().replace(/dll$/, 'def'))

@@ -23,7 +23,6 @@ public class Bit {
      */
     private const TempFilter = /\.makedep$|\.o$|\.pdb$|\.tmp$|\.save$|\.sav$|OLD|\/Archive\/|\/sav\/|\/save\/|oldFiles|\.libs\/|\.nc|\.orig|\.svn|\.git|^\.[a-zA-Z_]|\.swp$|\.new$|\.nc$|.DS_Store/
 
-    //  MOB - organize
     private var appName: String = 'bit'
     private var args: Args
     private var currentBitFile: Path
@@ -470,7 +469,6 @@ public class Bit {
         let args = 'bit ' + App.args.slice(1).join(' ')
         f.writeLine('#define BIT_CONFIG_CMD "' + args + '"')
 
-        //  MOB - REMOVE this is used in mprModule which does a basename anyway. Also used by ejsConfig
         f.writeLine('#define BIT_LIB_NAME "' + 'bin' + '"')
         f.writeLine('#define BIT_PROFILE "' + bit.platform.profile + '"')
 
@@ -503,7 +501,7 @@ public class Bit {
 
         /* Features */
 /*
-   MOB - USE
+   TODO - USE
         for (let [key,value] in bit.settings) {
             if (value is Number) {
                 f.writeLine('#define BIT_' + key.toUpper() + ' ' + value)
@@ -538,7 +536,7 @@ public class Bit {
         if (settings.sslPort) {
             f.writeLine('#define BIT_SSL_PORT ' + settings.sslPort)
         }
-        //  MOB - need an emitter in compiler.bit
+        //  TODO - need an emitter in compiler.bit
         f.writeLine('#define BIT_CC_DOUBLE_BRACES ' + (settings.hasDoubleBraces ? '1' : '0'))
         f.writeLine('#define BIT_CC_DYN_LOAD ' + (settings.hasDynLoad ? '1' : '0'))
         f.writeLine('#define BIT_CC_EDITLINE ' + (settings.hasLibEdit ? '1' : '0'))
@@ -880,8 +878,8 @@ public class Bit {
         for (i in o['+modules']) {
             o['+modules'][i] = home.join(o['+modules'][i])
         }
-        //  MOB Functionalize
-        //  MOB add support for shell
+        //  TODO Functionalize
+        //  TODO add support for shell
         if (o.defaults) {
             rebase(home, o.defaults, 'includes')
             rebase(home, o.defaults, '+includes')
@@ -913,7 +911,7 @@ public class Bit {
                     target.path = target.home.join(target.path)
                 }
             }
-            //  MOB - what about other +fields
+            //  TODO - what about other +fields
             rebase(home, target, 'includes')
             rebase(home, target, '+includes')
             rebase(home, target, 'headers')
@@ -922,7 +920,7 @@ public class Bit {
             rebase(home, target, 'files')
 
             /* Convert strings scripts into an array of scripts structures */
-            //  MOB - functionalize
+            //  TODO - functionalize
             for (let [when,item] in target.scripts) {
                 if (item is String) {
                     item = { shell: 'ejs', script: item  }
@@ -938,7 +936,6 @@ public class Bit {
                 /*
                     Build scripts always run if doing a 'build'. Set the type to 'build'
                  */
-                //  MOB - was 'script'
                 target.type ||= 'build'
                 target.scripts ||= {}
                 target.scripts['build'] ||= []
@@ -1344,7 +1341,6 @@ public class Bit {
                 if (!(target.enable is Boolean)) {
                     let script = expand(target.enable)
                     try {
-//  MOB - what about changing dir?  Should use runScript?
                         if (!eval(script)) {
                             vtrace('Skip', 'Target ' + tname + ' is disabled on this platform') 
                             target.enable = false
@@ -1488,7 +1484,6 @@ public class Bit {
     function buildFileList(include, exclude = null) {
         let files
         if (include is RegExp) {
-            //  MOB - should be relative to the bit file that created this: target.home
             files = Path(bit.dir.src).glob('*', {include: include, missing: missing})
         } else {
             if (!(include is Array)) {
@@ -2090,7 +2085,6 @@ public class Bit {
                 genout.writeLine(reppath(target.path) + ': ' + repvar(getTargetDeps(target)))
                 genout.writeLine('\t-if exist ' + reppath(target.path) + ' del /Q ' + reppath(target.path))
                 if (file.isDir) {
-                    //  MOB - all nmake paths will need .windows
                     genout.writeLine('\tif not exist ' + reppath(target.path) + ' md ' + reppath(target.path))
                     genout.writeLine('\txcopy /S /Y ' + reppath(file) + ' ' + reppath(target.path) + '\n')
                 } else {
@@ -2133,8 +2127,6 @@ public class Bit {
         } else {
             prefix = suffix = ''
         }
-
-//  MOB - refactor and eliminate repetition
         if (generating == 'sh') {
             let cmd = target['generate-sh'] || target.shell
             if (cmd) {
@@ -2151,9 +2143,7 @@ public class Bit {
             genWrite(target.path.relative + ': ' + getTargetDeps(target))
             let cmd = target['generate-make'] || target['generate-sh'] || target.generate
             if (cmd) {
-                //MOB - bug doing multiple tabs
                 cmd = (prefix + cmd.trim() + suffix).replace(/^[ \t]*/mg, '\t')
-                //MOB - bug doing multiple ;\\
                 cmd = cmd.replace(/$/mg, ';\\').replace(/;\\;\\/g, ' ;\\').trim(';\\')
                 cmd = expand(cmd, {fill: null}).expand(target.vars, {fill: ''})
                 cmd = repvar2(cmd, target.home)
@@ -2267,7 +2257,6 @@ public class Bit {
         if (generating == 'make') {
             command = command.replace(RegExp(gen.configuration, 'g'), '$$(CONFIG)')
         } else if (generating == 'nmake') {
-            //  MOB - generalize. This changes ${BIN}/ejsc => ${BIN}\\ejsc
             command = command.replace(RegExp(gen.configuration + '\\\\bin/', 'g'), '$$(CONFIG)\\bin\\')
             command = command.replace(RegExp(gen.configuration, 'g'), '$$(CONFIG)')
         } else if (generating == 'sh') {
@@ -2593,7 +2582,6 @@ global.NN = item.ns
         let includes: Array = []
         for each (path in target.files) {
             let str = path.readString()
-            //  MOB - refactor when array += null is a NOP
             let more = str.match(/^#include.*"$/gm)
             if (more) {
                 includes += more
@@ -2863,7 +2851,6 @@ global.NN = item.ns
 
     /*
         Make a bit object. This may optionally load a bit file over the initialized object
-        MOB - reverse args
      */
     function makeBit(platform: String, bitfile: Path) {
         let [os, arch] = platform.split('-') 

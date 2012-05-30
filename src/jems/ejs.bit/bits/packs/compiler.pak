@@ -132,7 +132,7 @@ Bit.load({ settings: settings })
 function compile(cc: Path, command: String, contents: String = null): Boolean {
     let file
     if (contents) {
-        //  MOB - refactor dir for temp file
+        //  TODO - refactor dir for temp file
         file = Path('/tmp/bit-' + App.pid + '.c')
         if (bit.platform.os == 'VXWORKS') {
             contents = '#define _VSB_CONFIG_FILE "vsbConfig.h\n' + contents
