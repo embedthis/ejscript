@@ -200,7 +200,7 @@ module embedthis.doc {
         }
         str = str.replace(/<para>|<emphasis>|<title>|<type>|<\/para>|<\/emphasis>|<\/title>|<\/type>/g, "")
         str = str.replace(/<ref refid="([^"]*#[^"]*)"/g, '<a class="ref" AAA href="$1"')
-        str = str.replace(/<ref refid="/g, '<a class="ref" BBB href="#')
+        str = str.replace(/<ref refid="/g, '<a class="ref" href="#')
         str = str.replace(/<\/ref>/g, '</a>')
         str = str.replace(/ kindref="[^"]*"/g, "")
         str = str.replace(/itemizedlist>/g, 'ul>')
