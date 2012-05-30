@@ -1578,7 +1578,7 @@ public class Bit {
                 }
             }
         }
-        runTargetScript(target, 'preresolve')
+        runTargetScript(target, 'postresolve')
     }
 
     function resolveDependencies() {
@@ -2410,7 +2410,7 @@ public class Bit {
 
     /*
         Run an event script in the directory of the bit file
-        When values used are: build, prebuild, postblend, preresolve, presource, prebuild, action
+        When values used are: build, postblend, postresolve, presource, prebuild, action
      */
     public function runTargetScript(target, when) {
         if (!target.scripts) return
@@ -2421,8 +2421,8 @@ public class Bit {
             }
             global.TARGET = bit.target = target
             try {
-                if (item.shell == 'bash') {
-                    runShell(target, item.script)
+                if (item.shell != 'ejs') {
+                    runShell(target, item.shell, item.script)
                 } else {
                     let script = expand(item.script).expand(target.vars, {fill: ''})
 /*
@@ -2458,11 +2458,11 @@ global.NN = item.ns
     function setShellEnv(target, script) {
     }
 
-    function runShell(target, script) {
+    function runShell(target, shell, script) {
         let lines = script.match(/^.*$/mg).filter(function(l) l.length)
         let command = lines.join(';')
         strace('Run', command)
-        let shell = Cmd.locate("sh")
+        let shell = Cmd.locate(shell)
         let cmd = new Cmd
         setShellEnv(target, cmd)
         cmd.start([shell, "-c", command.toString().trimEnd('\n')], {noio: true})
