@@ -101,7 +101,10 @@ Bit.load({
             action: "
                 let utest = bit.packs.utest ? bit.packs.utest.path : null
                 if (!utest) {
-                    utest = Cmd.locate('utest')
+                    utest = App.exeDir.join('utest')
+                    if (!utest.exists) {
+                        utest = Cmd.locate('utest')
+                    }
                 }
                 if (utest) {
                     run([utest, '-v', '-d', bit.settings.depth], {noio: true, dir: bit.dir.src.join('src')})
