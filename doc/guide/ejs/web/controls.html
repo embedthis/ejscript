@@ -7,12 +7,12 @@
         Embedded, AJAX, language"/>
 	<meta name="description" content="Ejscript -- Embedded Server-Side JavaScript Language."/>
 	<meta name="robots" content="index,follow" />
-    <link href="http://www.google.com/cse/style/look/default.css" type="text/css" rel="stylesheet" />
 	<link href="../../../doc.css" rel="stylesheet" type="text/css" />
 	<link href="../../../print.css" rel="stylesheet" type="text/css" media="print"/>
     <!--[if IE]>
     <link href="../../../iehacks.css" rel="stylesheet" type="text/css" />
     </![endif]-->
+    <link href="http://www.google.com/cse/style/look/default.css" type="text/css" rel="stylesheet" />
 </head>
 
 <body>
@@ -63,15 +63,14 @@
             <p>Ajax translates as "Asynchronous JavaScript and XML", but what it typically means is doing background
             HTTP requests to get data and update the user interface without doing a complete browser refresh. This
             gives a more immediate and natural feel to a web application. Ejscript supports Ajax and Ajax frameworks
-            via its ViewConnector which provides a plugable interface for Ajax libraries.</p><a name="interface" id=
-            "interface"></a>
+            via its ViewConnector which provides a plugable interface for Ajax libraries.</p><a id="interface"></a>
             <h2>ViewConnector Interface</h2>
             <p>The ViewConnector interface defines methods for common user interface controls such as: button and
             checkbox, but it also provides high level controls such as chart and table. Application <a href=
             "views.html">Views</a> can use these methods to render UI components with very little code or effort.</p>
             <p>However the ViewConnector is just an interface. It contains no implementation. The actual implementation
             is provided by the Ajax Framework libraries.</p><img src="../../../images/viewConnector.jpg" alt="" />
-            <a name="libraries" id="libraries"></a>
+            <a id="libraries"></a>
             <h3>Ajax Libraries</h3>
             <p>The purpose of the ViewConnector is to provide a modular way to add Ajax Framework libraries and to give
             you choice which library you use. Individual Ejscript Views can select different libraries for each view
@@ -81,8 +80,7 @@
             ViewConnector adaptors transform the interface for the server-side of each Ajax library to be compatible
             with the View Connector Interface.</p>
             <p>Ejscript currently supports the Ejscript Ajax library and portions of the Google Visualization library.
-            Support for other frameworks will be available soon in future releases.</p><a name="dynamic" id=
-            "dynamic"></a>
+            Support for other frameworks will be available soon in future releases.</p><a id="dynamic"></a>
             <h3>Dynamic Controls</h3>
             <p>The View Control Interface is designed to support controls that can dynamically retrieve data from
             databases and refresh their contents automatically.</p>
@@ -105,7 +103,7 @@
                <h2 class="section">Table Control</h2>
                <h2 class="section">Chart Control</h2>
            -->
-            <a name="viewConnector" id="viewConnector"></a>
+            <a id="viewConnector"></a>
             <h2>ViewConnector Methods</h2>
             <p>The ViewConnector interface defines the following methods:</p>
             <table title="methods">
@@ -219,18 +217,18 @@
             All rights reserved. Embedthis, Ejscript and Appweb are trademarks of Embedthis Software LLC.</a>
 		</p>
 	</div>
-</body>
-<script src="http://www.google.com/jsapi" type="text/javascript"></script>
-<script type="text/javascript"> 
-  google.load('search', '1', {language : 'en'});
-  google.setOnLoadCallback(function() {
-    var customSearchControl = new google.search.CustomSearchControl(
-      'partner-pub-9935546676162772:ysvxxv4n9rx');
+    <script src="http://www.google.com/jsapi" type="text/javascript"></script>
+    <script type="text/javascript"> 
+      google.load('search', '1', {language : 'en'});
+      google.setOnLoadCallback(function() {
+        var customSearchControl = new google.search.CustomSearchControl(
+          'partner-pub-9935546676162772:ysvxxv4n9rx');
 
-    customSearchControl.setResultSetSize(google.search.Search.FILTERED_CSE_RESULTSET);
-    var options = new google.search.DrawOptions();
-    options.enableSearchboxOnly("http://ejscript.org/search.html");
-    customSearchControl.draw('cse-search-form', options);
-  }, true);
-</script>
+        customSearchControl.setResultSetSize(google.search.Search.FILTERED_CSE_RESULTSET);
+        var options = new google.search.DrawOptions();
+        options.enableSearchboxOnly("http://ejscript.org/search.html");
+        customSearchControl.draw('cse-search-form', options);
+      }, true);
+    </script>
+</body>
 </html>

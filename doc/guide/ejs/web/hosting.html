@@ -7,12 +7,12 @@
         Embedded, AJAX, language"/>
 	<meta name="description" content="Ejscript -- Embedded Server-Side JavaScript Language."/>
 	<meta name="robots" content="index,follow" />
-    <link href="http://www.google.com/cse/style/look/default.css" type="text/css" rel="stylesheet" />
 	<link href="../../../doc.css" rel="stylesheet" type="text/css" />
 	<link href="../../../print.css" rel="stylesheet" type="text/css" media="print"/>
     <!--[if IE]>
     <link href="../../../iehacks.css" rel="stylesheet" type="text/css" />
     </![endif]-->
+    <link href="http://www.google.com/cse/style/look/default.css" type="text/css" rel="stylesheet" />
 </head>
 
 <body>
@@ -35,14 +35,6 @@
             <h1>Quick Nav</h1>
             <ul>
                 <li><a href="#builtin">Built-in Web Server</a></li>
-                <li><a href="#hosted">Hosted Web Server</a></li>
-                <li><a href="#cgi">CGI</a></li>
-                <li><a href="#fastcgi">FastCGI</a></li>
-                <li><a href="#modules">In-memory Modules</a></li>
-                <li><a href="#supported">Supported Web Servers</a></li>
-                <li><a href="#apache">Configuring Apache</a></li>
-                <li><a href="#appweb">Configuring Appweb</a></li>
-                <li><a href="#lighttpd">Configuring Lighttpd</a></li>
             </ul>
 <!-- BeginDsi "dsi/ejsWebSeeAlso.html" -->
 		        <h1>See Also</h1>
@@ -66,7 +58,7 @@
             <ul>
                 <li><a href="#builtin">Using the Built-in Web Server</a></li>
                 <li><a href="#hosted">Hosting in a Web Server</a></li>
-            </ul><a name="builtin" id="builtin"></a>
+            </ul><a id="builtin"></a>
             <h2 class="section">Built-in Web Server</h2>
             <p>The easiest way to run Ejscript applications is to use the builtin web-server.</p>
             <pre>
@@ -96,18 +88,18 @@ http://localhost:4000
             All rights reserved. Embedthis, Ejscript and Appweb are trademarks of Embedthis Software LLC.</a>
 		</p>
 	</div>
-</body>
-<script src="http://www.google.com/jsapi" type="text/javascript"></script>
-<script type="text/javascript"> 
-  google.load('search', '1', {language : 'en'});
-  google.setOnLoadCallback(function() {
-    var customSearchControl = new google.search.CustomSearchControl(
-      'partner-pub-9935546676162772:ysvxxv4n9rx');
+    <script src="http://www.google.com/jsapi" type="text/javascript"></script>
+    <script type="text/javascript"> 
+      google.load('search', '1', {language : 'en'});
+      google.setOnLoadCallback(function() {
+        var customSearchControl = new google.search.CustomSearchControl(
+          'partner-pub-9935546676162772:ysvxxv4n9rx');
 
-    customSearchControl.setResultSetSize(google.search.Search.FILTERED_CSE_RESULTSET);
-    var options = new google.search.DrawOptions();
-    options.enableSearchboxOnly("http://ejscript.org/search.html");
-    customSearchControl.draw('cse-search-form', options);
-  }, true);
-</script>
+        customSearchControl.setResultSetSize(google.search.Search.FILTERED_CSE_RESULTSET);
+        var options = new google.search.DrawOptions();
+        options.enableSearchboxOnly("http://ejscript.org/search.html");
+        customSearchControl.draw('cse-search-form', options);
+      }, true);
+    </script>
+</body>
 </html>

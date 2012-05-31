@@ -7,12 +7,12 @@
         Embedded, AJAX, language"/>
 	<meta name="description" content="Ejscript -- Embedded Server-Side JavaScript Language."/>
 	<meta name="robots" content="index,follow" />
-    <link href="http://www.google.com/cse/style/look/default.css" type="text/css" rel="stylesheet" />
 	<link href="../../../doc.css" rel="stylesheet" type="text/css" />
 	<link href="../../../print.css" rel="stylesheet" type="text/css" media="print"/>
     <!--[if IE]>
     <link href="../../../iehacks.css" rel="stylesheet" type="text/css" />
     </![endif]-->
+    <link href="http://www.google.com/cse/style/look/default.css" type="text/css" rel="stylesheet" />
 </head>
 
 <body>
@@ -34,10 +34,8 @@
         <div class="contentRight">
             <h1>Quick Nav</h1>
             <ul>
-                <li><a href="#modes">Operational Modes</a></li>
-                <li><a href="#library">System Library</a></li>
-                <li><a href="#declarations">Variable Declarations</a></li>
-                <li><a href="#visibility">Variable Visibility</a></li>
+                <li><a href="#declarations">Declarations</a></li>
+                <li><a href="#visibility"></a>Variable Visibility</li>
                 <li><a href="#undeclared">Undeclared Variables</a></li>
                 <li><a href="#typeAnnotations">Type Annotations</a></li>
             </ul>
@@ -72,13 +70,15 @@ TODO type annotations, strict / standard mode, casting
 => put this in modules
 class level code, global code, order of initialization
 -->
-            <h1>Types and Variable Declarations</h1><a name="modes" id="modes"></a>
+            <h1>Types and Variable Declarations</h1>
+            
+            <a id="modes"></a>
             <p>This document describes how types and declarations work in Ejscript. This is largely governed by the
             <a href="http://www.ecma-international.org/publications/standards/Ecma-262.htm">ECMAScript</a> standard,
             but depending on the Ejscript <a href="modes.html">Language Compliance Mode</a>, variable declarations,
             scope and visibility may operate slightly differently. The differences are documented below.</p>
             
-            <a name= "library" id="library"></a>
+            <a " id="library"></a>
             <h2 class="section">System Type Library</h2>
             <p>Ejscript defines a set of <a href="core.html">core system types</a> to provide a powerful and flexible
             system library. The types provide a large selection of methods to manage and operate on the types. The
@@ -102,7 +102,9 @@ class level code, global code, order of initialization
             reflection.</p>
             <p>The Ejscript web framework provides a Model/View/Controller framework and adds these types: Application,
             Controller, Cookie, Database, GoogleConnector, Host, HtmlConnector, Record, Request, Session, UploadFile,
-            View and ViewConnector.</p><a name="declarations" id="declarations"></a>
+            View and ViewConnector.</p>
+
+            <a id="declarations"></a>
             <h2 class="section">Variable Declarations</h2>
             <p>Variables are declared by the <b>var</b> or <b>let</b> keyword. The var keyword will define a variable
             in the top level of the current scope whereas a <b>let</b> variable declaration will define a variable in
@@ -158,8 +160,9 @@ because <b>var</b> declarations hoist to the top of the function. Whereas, the <
             <p>Variables declared using <b>var</b> inside functions, are local variables. They will be re-created each
             time the function is executed and are declared at the top-most block of the function.</p>
             <h3>Block Variables</h3>
-            <p>Variables declared with <b>let</b> are local to the block enclosing the declaration.</p><a name=
-            "visibility" id="visibility"></a>
+            <p>Variables declared with <b>let</b> are local to the block enclosing the declaration.</p>
+            
+            <a id="visibility"></a>
             <h2 class="section">Controlling Variable Visibility</h2>
             <p>Standard JavaScript provides little control over variable visibility and this is a problem as programs
             grow, or as source code from multiple sources is integrated or combined. Ejscript addresses these issues in
@@ -210,8 +213,9 @@ BlastOff()
             <p>The <b>require</b> directive adds the "acme.rockets" module to the set of open modules and makes
             visible the declarations defined in the module.</p>
             <p>When creating modules, multiple source files can contribute code into the same module. The Ejscript
-            compiler will aggregate the code and combine it into a single module.</p><a name="undeclared" id=
-            "undeclared"></a>
+            compiler will aggregate the code and combine it into a single module.</p>
+            
+            <a id="undeclared"></a>
             <h2 class="section">Undeclared Variables</h2>
             <p>It is is not essential to declare variables before using them. If you assign a value to an undeclared
             variable, the Ejscript virtual machine will dynamically create the variable when it is first assigned. In
@@ -227,7 +231,7 @@ global.name = 7
             <p>This will create a new global variable called <b>globalVar</b> not matter where and what scope this code
             is executed in.</p>
             
-            <a name="typeAnnotations" id="typeAnnotations"></a>
+            <a id="typeAnnotations"></a>
             <h2 class="section">Optional Type Annotations</h2>
             <p>In JavaScript, variables are not explicitly typed. The type of a variable is defined by the value of the
             data assigned to the variable. Consequently, variables can change their type at run-time. One minute, they
@@ -265,18 +269,18 @@ z = "Not allowed"  // The will be prevented this because <b>z</b> is typed as a 
             All rights reserved. Embedthis, Ejscript and Appweb are trademarks of Embedthis Software LLC.</a>
 		</p>
 	</div>
-</body>
-<script src="http://www.google.com/jsapi" type="text/javascript"></script>
-<script type="text/javascript"> 
-  google.load('search', '1', {language : 'en'});
-  google.setOnLoadCallback(function() {
-    var customSearchControl = new google.search.CustomSearchControl(
-      'partner-pub-9935546676162772:ysvxxv4n9rx');
+    <script src="http://www.google.com/jsapi" type="text/javascript"></script>
+    <script type="text/javascript"> 
+      google.load('search', '1', {language : 'en'});
+      google.setOnLoadCallback(function() {
+        var customSearchControl = new google.search.CustomSearchControl(
+          'partner-pub-9935546676162772:ysvxxv4n9rx');
 
-    customSearchControl.setResultSetSize(google.search.Search.FILTERED_CSE_RESULTSET);
-    var options = new google.search.DrawOptions();
-    options.enableSearchboxOnly("http://ejscript.org/search.html");
-    customSearchControl.draw('cse-search-form', options);
-  }, true);
-</script>
+        customSearchControl.setResultSetSize(google.search.Search.FILTERED_CSE_RESULTSET);
+        var options = new google.search.DrawOptions();
+        options.enableSearchboxOnly("http://ejscript.org/search.html");
+        customSearchControl.draw('cse-search-form', options);
+      }, true);
+    </script>
+</body>
 </html>

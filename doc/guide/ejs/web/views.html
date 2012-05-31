@@ -7,12 +7,12 @@
         Embedded, AJAX, language"/>
 	<meta name="description" content="Ejscript -- Embedded Server-Side JavaScript Language."/>
 	<meta name="robots" content="index,follow" />
-    <link href="http://www.google.com/cse/style/look/default.css" type="text/css" rel="stylesheet" />
 	<link href="../../../doc.css" rel="stylesheet" type="text/css" />
 	<link href="../../../print.css" rel="stylesheet" type="text/css" media="print"/>
     <!--[if IE]>
     <link href="../../../iehacks.css" rel="stylesheet" type="text/css" />
     </![endif]-->
+    <link href="http://www.google.com/cse/style/look/default.css" type="text/css" rel="stylesheet" />
 </head>
 
 <body>
@@ -86,7 +86,7 @@
             <p>A web application typically consists of many web pages that share a common look and feel. Usable
             applications have a consistent structure, menus and appearance so the user can easily navigate that
             application. However, designing and maintaining that consistent look and feel is frequently quite
-            difficult.</p><a name="layoutPages" id="layoutPages"></a>
+            difficult.</p><a id="layoutPages"></a>
             <h3>Layout Pages</h3>
             <p>The Ejscript web framework provides a templating layout engine so that each page can reuse a common
             layout page and not have to repeat the common application UI elements in each page. Ejscript does this by
@@ -106,8 +106,7 @@
 &lt;/body&gt;
 &lt;/html&gt;
 </pre>
-            <p>Modifications to this page, will be reflected automatically in all content pages.</p><a name="content"
-            id="content"></a>
+            <p>Modifications to this page, will be reflected automatically in all content pages.</p><a id="content"></a>
             <h3>Content Pages</h3>
             <p>A content page defines only the HTML and code that is different for a specific page. It is merged with a
             layout page by inserting the content and replacing the <b>&lt;%@ content %&gt;</b> tag in the master
@@ -130,7 +129,7 @@
     &lt;/div&gt;
 &lt;/body&gt;
 &lt;/html&gt;
-</pre><a name="alternateLayout" id="alternateLayout"></a>
+</pre><a id="alternateLayout"></a>
             <h3>Alternate Layout Pages</h3>
             <p>A content page can request a specific layout page by using the <b>&lt;%@ layout "file"&gt;</b>
             directive.</p>
@@ -140,18 +139,17 @@
 &lt;p&gt;Hello World&lt;/p&gt;
 </pre>
             <p>This instructs the templating engine to use the "alternateLayout.ejs" file rather than the default
-            layout. The default layout page is called "views/layouts/default.ejs". <a name="multiple" id=
-            "multiple"></a></p>
+            layout. The default layout page is called "views/layouts/default.ejs". <a id="multiple"></a></p>
             <h3>Multiple Layout Pages</h3>
             <p>You are not restricted to a simple two level layout and content page scheme. A layout page can itself
             refer to another layout page to gradually build up the application's look and feel. To do this, the layout
-            page needs to include an explicit <b>&lt;%@ layout "file"&gt;</b> directive.</p><a name="dev" id="dev"></a>
+            page needs to include an explicit <b>&lt;%@ layout "file"&gt;</b> directive.</p><a id="dev"></a>
             <h3>Development Time</h3>
             <p>The combining of layout and contents pages occurs at development time, as does the compilation of the
             composite page into byte code. At run-time, all that remains to be done is actually execute the byte code
             and substitute dynamic data into the page. This results in the fastest run-time execution because the
             layout processing and page compilation occur only once and at development time.</p><img src=
-            "../../../images/webView.jpg" alt="" /> <a name="dir" id="dir"></a>
+            "../../../images/webView.jpg" alt="" /> <a id="dir"></a>
             <h2 class="section">Directory Structure</h2>
             <p>Ejscript follows the <a href="http://en.wikipedia.org/wiki/Convention_over_Configuration">Convention
             over Configuration</a> design paradigm where developers only need to specify the unusual parts of their
@@ -174,14 +172,13 @@ mvc generate appName
 </pre>
             <p>After creating the application, you should place all content views for a controller under the
             "views/ControllerName" directory. The "ControllerName" directories should by convention begin with an upper
-            case letter. The "views" and "views/layouts" directories are lower case. <a name="static" id=
-            "static"></a></p>
+            case letter. The "views" and "views/layouts" directories are lower case. <a id="static"></a></p>
             <h2 class="section">Static Web Content</h2>
             <p>Static web page content such as images, CSS pages and other similar content should be placed under the
             <b>web</b> directory. While this content can be served by the Ejscript handler, it should ideally and
             optimally be processed directly by the web server. The Ejscript module for Apache and Appweb will enable
             this automatically. If you are using the CGI or FastCGI for hosting Ejscript, you may wish to configure
-            your web server to serve these pages directly.</p><a name="stand-alone" id="stand-alone"></a>
+            your web server to serve these pages directly.</p><a alone" id="stand-alone"></a>
             <h3>Stand-Alone Ejscript Web Pages</h3>
             <p>Not all Ejscript web pages are views. You can create stand-alone Ejscript web pages. These do not use
             layout pages and do not have access to Models, Controllers or View objects. Why create stand-alone Ejscript
@@ -201,7 +198,7 @@ mvc generate appName
     <b>&lt;p&gt;Created on &lt;%= new Date %&gt;&lt;/p&gt;</b>
 &lt;/body&gt;
 &lt;/html&gt;
-</pre><a name="dynamic" id="dynamic"></a>
+</pre><a id="dynamic"></a>
             <h2 class="section">Dynamic Content</h2>
             <p>One of the primary reasons for views is to make it easier to create web pages with dynamic data.</p>
             <p>Ejscript provides a set of directives to easily embed JavaScript code in your web page.</p>
@@ -278,7 +275,7 @@ mvc generate appName
             <p>See the <a href="../../../api/ejscript/index.html">Ejscript Library</a> for a full list of all the
             properties and methods available to use in the various embedded Ejscript directives. Of particular
             relevance are the classes in the ejs.web namespace which include the Application, Controller, Host,
-            Request, Response, Session and View classes.</p><a name="form" id="form"></a>
+            Request, Response, Session and View classes.</p><a id="form"></a>
             <h2 class="section">Accessing Form Data</h2>
             <p>HTTP Form data is marshalled by Ejscript into the <b>params</b> object which is accessible in views and
             controllers. Each HTML input element posted by the client will become a property of <b>params</b> and can
@@ -292,8 +289,8 @@ mvc generate appName
 &lt;/form&gt;
 </pre>
             <p>This view creates three HTML form inputs and will populate the <b>params</b> object when posted back to
-            the server with the properties: <b>params.name</b>, <b>params.address</b> and <b>params.ok</b>.</p><a name=
-            "structured" id="structured"></a>
+            the server with the properties: <b>params.name</b>, <b>params.address</b> and 
+            <b>params.ok</b>.</p><a id="structured"></a>
             <h3>Structured Form Data</h3>
             <p>This simple mapping of input element names to params properties works fine for simple forms, but what
             about more complex forms? Ejscript can organize form data into nested objects. If an input element name
@@ -308,19 +305,18 @@ mvc generate appName
 </pre>
             <p>This will create a <b>user</b> object in the params object. The user object will have properties
             <b>user.name</b> and <b>user.address</b>. This form of structured form data makes handling form data much
-            simpler.</p><a name="database" id="database"></a>
+            simpler.</p><a id="database"></a>
             <h3>Accessing Database Data</h3>
             <p>Ejscript provides an Object Relational Mapping (ORM) layer for accessing database data via convenient
             JavaScript objects. The ORM layer is represented by a collection of database Model classes for the
             application. Views can read the database by using Model classes. A more typical paradigm is for controller
             action routines to read a database record and store the record in a controller property. The view can then
             simply access the database data by referencing that property.</p>
-            <p>For more details, see <a href="models.html">Database Models</a>.</p><a name="sessions" id=
-            "sessions"></a>
+            <p>For more details, see <a href="models.html">Database Models</a>.</p><a id="sessions"></a>
             <h2 class="section">Session Data</h2>
             <p>Data can be persistently stored between HTTP requests in the <b>sessions</b> object. Data stored to the
             sessions object is serialized, so you cannot store object references. However, the session object is ideal
-            to store a request cookie or session key.</p><a name="themes" id="themes"></a>
+            to store a request cookie or session key.</p><a id="themes"></a>
             <h2 class="section">Themes and CSS</h2>
             <p>Well structured web applications divide HTML data and presentation style into two separate documents.
             Namely: HTML pages and cascading style sheets. In this way, a style sheet can be reused and shared by all
@@ -331,7 +327,7 @@ mvc generate appName
             colors.</p>
             <p>Ejscript supports this organization by providing a providing a directory for theme style sheet. The
             <b>mvc</b> application will also generate a default theme style sheet for scaffolds and
-            views.</p><a name="compilation" id="compilation"></a>
+            views.</p><a id="compilation"></a>
             <h2 class="section">Compilation</h2>
             <p>When developing, Ejscript will automatically detect changes made to the applications code and will
             intelligently recompile the necessary portions of the application. You can manually force a recompilation
@@ -348,13 +344,13 @@ mvc compile
                 <h3>Setting the HTTP Resposne Code</h3>
                 <h3>Adding a HTTP Header</h3>
         -->
-            <a name="debugging" id="debugging"></a>
+            <a id="debugging"></a>
             <h2 class="section">Debugging</h2>
             <p>You can inject debugging code into your views to trace data to the browser or to the console.</p>
             <p>The <b>print</b> method will print its arguments to the console or web server log file. The <b>dump</b>
             method will serialize objects and then send to the console or log.</p>
             <p>To send trace to the browser, use the <b>write</b> method to write data back to the browser. The
-            <b>d()</b> method will serialize and dump objects to the browser.</p><a name="viewClass" id="viewClass"></a>
+            <b>d()</b> method will serialize and dump objects to the browser.</p><a id="viewClass"></a>
             <h2 class="section">View Class</h2>
             <p>The View class has a large set of utility methods to assist you in creating your web views. See the
             <a href="../../../api/ejscript/index.html">Ejscript Library</a> for details. Some of the important methods
@@ -474,18 +470,18 @@ mvc compile
             All rights reserved. Embedthis, Ejscript and Appweb are trademarks of Embedthis Software LLC.</a>
 		</p>
 	</div>
-</body>
-<script src="http://www.google.com/jsapi" type="text/javascript"></script>
-<script type="text/javascript"> 
-  google.load('search', '1', {language : 'en'});
-  google.setOnLoadCallback(function() {
-    var customSearchControl = new google.search.CustomSearchControl(
-      'partner-pub-9935546676162772:ysvxxv4n9rx');
+    <script src="http://www.google.com/jsapi" type="text/javascript"></script>
+    <script type="text/javascript"> 
+      google.load('search', '1', {language : 'en'});
+      google.setOnLoadCallback(function() {
+        var customSearchControl = new google.search.CustomSearchControl(
+          'partner-pub-9935546676162772:ysvxxv4n9rx');
 
-    customSearchControl.setResultSetSize(google.search.Search.FILTERED_CSE_RESULTSET);
-    var options = new google.search.DrawOptions();
-    options.enableSearchboxOnly("http://ejscript.org/search.html");
-    customSearchControl.draw('cse-search-form', options);
-  }, true);
-</script>
+        customSearchControl.setResultSetSize(google.search.Search.FILTERED_CSE_RESULTSET);
+        var options = new google.search.DrawOptions();
+        options.enableSearchboxOnly("http://ejscript.org/search.html");
+        customSearchControl.draw('cse-search-form', options);
+      }, true);
+    </script>
+</body>
 </html>

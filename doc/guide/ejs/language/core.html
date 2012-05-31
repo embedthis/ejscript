@@ -7,12 +7,12 @@
         Embedded, AJAX, language"/>
 	<meta name="description" content="Ejscript -- Embedded Server-Side JavaScript Language."/>
 	<meta name="robots" content="index,follow" />
-    <link href="http://www.google.com/cse/style/look/default.css" type="text/css" rel="stylesheet" />
 	<link href="../../../doc.css" rel="stylesheet" type="text/css" />
 	<link href="../../../print.css" rel="stylesheet" type="text/css" media="print"/>
     <!--[if IE]>
     <link href="../../../iehacks.css" rel="stylesheet" type="text/css" />
     </![endif]-->
+    <link href="http://www.google.com/cse/style/look/default.css" type="text/css" rel="stylesheet" />
 </head>
 
 <body>
@@ -108,7 +108,7 @@
             <p>Ejscript enhances the standard types with some extension methods and an extensive <a href=
             "library.html">system library</a> of classes and types. The Ejscript <a href="../web/index.html">Web
             Framework</a> provides additional classes to implement a Model / View / Controller framework for web
-            applications.</p><a name="number" id="number"></a>
+            applications.</p><a id="number"></a>
             <h2 class="section">Numbers</h2>
             <p>Standard JavaScript numbers are stored and manipulated as double floating point quantities, but for
             embedded applications, this is often less than ideal. Consequently, Ejscript allows the default numeric
@@ -137,7 +137,7 @@ pi = 314.0e-2
                 <li>Number.Nan or Nan</li>
                 <li>Number.POSITIVE_INFINITY or Infinity</li>
                 <li>Number.NEGATIVE_INFINITY</li>
-            </ul><a name="boolean" id="boolean"></a>
+            </ul><a id="boolean"></a>
             <h2 class="section">Booleans</h2>
             <p>A boolean value can be either true or false. Assigning either true or false to a variable or the result
             of a conditional expression will set the type of a variable to boolean. The following example will set x to
@@ -147,7 +147,7 @@ var y = 1
 var x = (y == 1)
 </pre>
             <p>Ejscript defines two immutable global variables <b>true</b> and <b>false</b> with the appropriate
-            boolean values.</p><a name="string" id="string"></a>
+            boolean values.</p><a id="string"></a>
             <h2 class="section">Strings</h2>
             <p>Strings are immutable sequences of Unicode letters or escaped literals. String literals may be enclosed
             in either single or double quotes.</p>
@@ -215,7 +215,7 @@ var greek = "&amp;lambda expression"
                         <td>Literal backslash</td>
                     </tr>
                 </tbody>
-            </table><a name="function" id="function"></a>
+            </table><a id="function"></a>
             <h2 class="section">Functions</h2>
             <p>A function is a script that can be executed by name with supplied arguments. Functions are declared via
             the <b>function</b> keyword followed by optional arguments and a function body contained within braces. For
@@ -250,8 +250,7 @@ var x = myPoint(1, y + 7)
             <h2 class="section">Null and Undefined</h2>
             <p>JavaScript defines two special values: <b>null</b> and <b>undefined</b>. The null value means the
             property exists but either has not any assigned value or the null value has been assigned explicitly. The
-            undefined value means the requested property does not exist.</p><a name="typeConversions" id=
-            "typeConversions"></a>
+            undefined value means the requested property does not exist.</p><a id="typeConversions"></a>
             <h2 class="section">Type Conversions</h2>
             <p>JavaScript supports a set of idioms that greatly eases the conversion of types from one type to
             another.</p>
@@ -522,18 +521,18 @@ var str = 1234 cast String
             All rights reserved. Embedthis, Ejscript and Appweb are trademarks of Embedthis Software LLC.</a>
 		</p>
 	</div>
-</body>
-<script src="http://www.google.com/jsapi" type="text/javascript"></script>
-<script type="text/javascript"> 
-  google.load('search', '1', {language : 'en'});
-  google.setOnLoadCallback(function() {
-    var customSearchControl = new google.search.CustomSearchControl(
-      'partner-pub-9935546676162772:ysvxxv4n9rx');
+    <script src="http://www.google.com/jsapi" type="text/javascript"></script>
+    <script type="text/javascript"> 
+      google.load('search', '1', {language : 'en'});
+      google.setOnLoadCallback(function() {
+        var customSearchControl = new google.search.CustomSearchControl(
+          'partner-pub-9935546676162772:ysvxxv4n9rx');
 
-    customSearchControl.setResultSetSize(google.search.Search.FILTERED_CSE_RESULTSET);
-    var options = new google.search.DrawOptions();
-    options.enableSearchboxOnly("http://ejscript.org/search.html");
-    customSearchControl.draw('cse-search-form', options);
-  }, true);
-</script>
+        customSearchControl.setResultSetSize(google.search.Search.FILTERED_CSE_RESULTSET);
+        var options = new google.search.DrawOptions();
+        options.enableSearchboxOnly("http://ejscript.org/search.html");
+        customSearchControl.draw('cse-search-form', options);
+      }, true);
+    </script>
+</body>
 </html>

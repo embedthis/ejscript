@@ -7,12 +7,12 @@
         Embedded, AJAX, language"/>
 	<meta name="description" content="Ejscript -- Embedded Server-Side JavaScript Language."/>
 	<meta name="robots" content="index,follow" />
-    <link href="http://www.google.com/cse/style/look/default.css" type="text/css" rel="stylesheet" />
 	<link href="../../../doc.css" rel="stylesheet" type="text/css" />
 	<link href="../../../print.css" rel="stylesheet" type="text/css" media="print"/>
     <!--[if IE]>
     <link href="../../../iehacks.css" rel="stylesheet" type="text/css" />
     </![endif]-->
+    <link href="http://www.google.com/cse/style/look/default.css" type="text/css" rel="stylesheet" />
 </head>
 
 <body>
@@ -81,7 +81,7 @@ function add(x, y) {
             <p>When invoking the function, you provide the actual parameters.</p>
             <pre>
 add(10, 5)
-</pre><a name="literals" id="literals"></a>
+</pre><a id="literals"></a>
             <h2>Function Literals</h2>
             <p>Unlike many other languages, JavaScript functions are values like any other JavaScript type and they can
             be assigned and stored in variables. Function literals are just like normal function declarations except
@@ -96,11 +96,10 @@ subtractByAnotherName(7, 3)
 </pre>
             <p>The above function expression creates a function and assigns it to a variable named <b>subtract</b>.
             Invoking function expressions is indistinguishable from invoking regular functions. And so, you can use
-            either form for declaring function expressions. It is your choice.</p><a name="return" id="return"></a>
+            either form for declaring function expressions. It is your choice.</p><a id="return"></a>
             <h2>Return Statement</h2>
             <p>The <b>return</b> statement instructs the function to cease executing the function and return
-            immediately to its caller. The return may take an optional result expression.</p><a name="locals" id=
-            "locals"></a>
+            immediately to its caller. The return may take an optional result expression.</p><a id="locals"></a>
             <h2>Local Variables</h2>
             <p>Variables declared inside functions are visible only within the function and are called local variables.
             You can declare variables using either the <b>var</b> or <b>let</b> keywords. Declarations made with var,
@@ -121,7 +120,7 @@ fun()
 Inner: blue
 Outer: red
 </b>
-</pre><a name="nesting" id="nesting"></a>
+</pre><a id="nesting"></a>
             <h2>Nested Functions</h2>
             <p>Function declarations nest inside other functions. When the inner function executes, it has access to
             all the variables defined in the outer blocks.</p>
@@ -132,7 +131,7 @@ function fun() {
         print(color)
     }
 }
-</pre><a name="enhancemens" id="enhancemens"></a>
+</pre><a id="enhancemens"></a>
             <h2 class="section">Ejscript Enhancements</h2>
             <p>Ejscript adds several enhancements to standard JavaScript functions. 
             <ul>
@@ -154,18 +153,18 @@ function fun() {
             All rights reserved. Embedthis, Ejscript and Appweb are trademarks of Embedthis Software LLC.</a>
 		</p>
 	</div>
-</body>
-<script src="http://www.google.com/jsapi" type="text/javascript"></script>
-<script type="text/javascript"> 
-  google.load('search', '1', {language : 'en'});
-  google.setOnLoadCallback(function() {
-    var customSearchControl = new google.search.CustomSearchControl(
-      'partner-pub-9935546676162772:ysvxxv4n9rx');
+    <script src="http://www.google.com/jsapi" type="text/javascript"></script>
+    <script type="text/javascript"> 
+      google.load('search', '1', {language : 'en'});
+      google.setOnLoadCallback(function() {
+        var customSearchControl = new google.search.CustomSearchControl(
+          'partner-pub-9935546676162772:ysvxxv4n9rx');
 
-    customSearchControl.setResultSetSize(google.search.Search.FILTERED_CSE_RESULTSET);
-    var options = new google.search.DrawOptions();
-    options.enableSearchboxOnly("http://ejscript.org/search.html");
-    customSearchControl.draw('cse-search-form', options);
-  }, true);
-</script>
+        customSearchControl.setResultSetSize(google.search.Search.FILTERED_CSE_RESULTSET);
+        var options = new google.search.DrawOptions();
+        options.enableSearchboxOnly("http://ejscript.org/search.html");
+        customSearchControl.draw('cse-search-form', options);
+      }, true);
+    </script>
+</body>
 </html>

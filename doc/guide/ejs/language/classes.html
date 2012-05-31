@@ -7,12 +7,12 @@
         Embedded, AJAX, language"/>
 	<meta name="description" content="Ejscript -- Embedded Server-Side JavaScript Language."/>
 	<meta name="robots" content="index,follow" />
-    <link href="http://www.google.com/cse/style/look/default.css" type="text/css" rel="stylesheet" />
 	<link href="../../../doc.css" rel="stylesheet" type="text/css" />
 	<link href="../../../print.css" rel="stylesheet" type="text/css" media="print"/>
     <!--[if IE]>
     <link href="../../../iehacks.css" rel="stylesheet" type="text/css" />
     </![endif]-->
+    <link href="http://www.google.com/cse/style/look/default.css" type="text/css" rel="stylesheet" />
 </head>
 
 <body>
@@ -77,7 +77,7 @@
             standard prototype based inheritance. It is your choice which mechanism you choose to use, you can even mix
             and match techniques. If you prefer traditional <a href="#prototype">prototype-based</a> inheritance, then
             use that. If you prefer the simpler, more classical <a href="#class">class-based</a> inheritance, go for
-            it.</p><a name="prototype" id="prototype"></a>
+            it.</p><a id="prototype"></a>
             <h2 class="section">Prototype Inheritance</h2>
             <p>Prototype Inheritance uses constructor functions to create and initialize instances. The object instance
             is created via the <b>new</b> operator. Given a constructor called <b>Rectangle</b>, the following
@@ -186,7 +186,7 @@ print(square.getArea())
 </pre>
             <p>Yes I know this is not pretty, this is why we added <a href="#class">class-based</a> inheritance to
             Ejscript. It is much easier and more intuitive. There are also other <a href="#alternate">alternative
-            approaches</a> &mdash; all with their strengths and weaknesses.</p><a name="alternate" id="alternate"></a>
+            approaches</a> &mdash; all with their strengths and weaknesses.</p><a id="alternate"></a>
             <h3>Alternate Approaches</h3>
             <p>There are many patterns for creating classes and doing inheritances. JavaScript is amazingly flexible.
             Here are a some links to alternative approaches.</p>
@@ -199,7 +199,7 @@ print(square.getArea())
                 Prototype JavaScript Framework</a></li>
                 <li><a href="http://javascript.crockford.com/prototypal.html">Prototypal Inheritance in JavaScript -
                 Doug Crockford</a></li>
-            </ul><a name="class" id="class"></a>
+            </ul><a id="class"></a>
             <h2 class="section">Class Inheritance</h2>
             <p>Because the standard JavaScript Prototypal Inheritance mechanism is a little tedious to work with,
             Ejscript adds a classical class based inheritance facility. It is syntactic sugar over the prototype
@@ -298,7 +298,7 @@ class Square <b>extends Rectangle</b> {
             <p>The Ejscript compiler performs early-binding. This means it searches for properties and resolves whether
             they reside in the object instance, class or sub-classes. Once found, the compiler generates direct
             references to the property and avoids the run-time scanning of the prototype chain. This is typically
-            dramatically faster than runtime property lookup.</p><a name="reflection" id="reflection"></a>
+            dramatically faster than runtime property lookup.</p><a id="reflection"></a>
             <h2 class="section">Reflection</h2>
             <p>Ejscript provides a set of operators and classes to enable you to determine the type of an object and
             reflect upon its members.</p>
@@ -335,7 +335,7 @@ examine = Reflect(rect)
 print(examine.typeName)
 /* Emits */
 <b>Shape</b>
-</pre><a name="interface" id="interface"></a>
+</pre><a id="interface"></a>
             <h2 class="section">Interfaces</h2>
             <p>Interfaces are used to create contracts for classes. They specify the required methods (or contract) the
             class must implement to validly support a given interface. These are very similar to ActionScript or Java
@@ -355,18 +355,18 @@ interface Shape {
             All rights reserved. Embedthis, Ejscript and Appweb are trademarks of Embedthis Software LLC.</a>
 		</p>
 	</div>
-</body>
-<script src="http://www.google.com/jsapi" type="text/javascript"></script>
-<script type="text/javascript"> 
-  google.load('search', '1', {language : 'en'});
-  google.setOnLoadCallback(function() {
-    var customSearchControl = new google.search.CustomSearchControl(
-      'partner-pub-9935546676162772:ysvxxv4n9rx');
+    <script src="http://www.google.com/jsapi" type="text/javascript"></script>
+    <script type="text/javascript"> 
+      google.load('search', '1', {language : 'en'});
+      google.setOnLoadCallback(function() {
+        var customSearchControl = new google.search.CustomSearchControl(
+          'partner-pub-9935546676162772:ysvxxv4n9rx');
 
-    customSearchControl.setResultSetSize(google.search.Search.FILTERED_CSE_RESULTSET);
-    var options = new google.search.DrawOptions();
-    options.enableSearchboxOnly("http://ejscript.org/search.html");
-    customSearchControl.draw('cse-search-form', options);
-  }, true);
-</script>
+        customSearchControl.setResultSetSize(google.search.Search.FILTERED_CSE_RESULTSET);
+        var options = new google.search.DrawOptions();
+        options.enableSearchboxOnly("http://ejscript.org/search.html");
+        customSearchControl.draw('cse-search-form', options);
+      }, true);
+    </script>
+</body>
 </html>

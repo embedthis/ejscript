@@ -7,12 +7,12 @@
         Embedded, AJAX, language"/>
 	<meta name="description" content="Ejscript -- Embedded Server-Side JavaScript Language."/>
 	<meta name="robots" content="index,follow" />
-    <link href="http://www.google.com/cse/style/look/default.css" type="text/css" rel="stylesheet" />
 	<link href="../../../doc.css" rel="stylesheet" type="text/css" />
 	<link href="../../../print.css" rel="stylesheet" type="text/css" media="print"/>
     <!--[if IE]>
     <link href="../../../iehacks.css" rel="stylesheet" type="text/css" />
     </![endif]-->
+    <link href="http://www.google.com/cse/style/look/default.css" type="text/css" rel="stylesheet" />
 </head>
 
 <body>
@@ -78,7 +78,7 @@
             <a href="http://en.wikipedia.org/wiki/Autoconf">autoconf</a> utilities. Bit manages the building of
             programs and products by simply and efficiently determining which pieces have been updated and thus which
             components need to be rebuilt. It easily handles the direct compilation and generation of projects.</p>
-        <a name="overview"></a>
+        <a id="overview"></a>
         <h2>Overview</h2>
         <p>Bit parses bit files that have a <em>.bit</em> extension. Bit files are  are JavaScript files that 
             load a JavaScript literal that describes what to build. Arbitrary JavaScript is permitted in bit files, but 
@@ -93,7 +93,7 @@
         <p>Bit searches for required and optional tools and supports a "configure" phase for building. Bit supports
         cross-platform building by determining the required compiler switches, file extensions and installation
         directories.</p>
-        <a name="whyBit"></a>
+        <a id="whyBit"></a>
         <h2>Why Bit?</h2>
         <p>Many projects rely on autoconf to configure products and make to build. But autoconf is a baroque maze of
         scripts and make is provides too little support for easily building executable and libraries in a cross platform
@@ -117,7 +117,7 @@
             <li>Support for the entire build cycle: C dependencies, compilation, test and packaging</li>
             <li>Be hackable and extendable</li>
         </ul>
-        <a name="features"></a>
+        <a id="features"></a>
         <h2>Features</h2>
         <p>Bit is implemented primarily as a single Ejscript of some 3K lines and is very hackable. It has the
         following major features:</p>
@@ -130,11 +130,11 @@
             <li>Cross platform. Easily handles Windows, Linux and Mac builds</li>
             <li>Easy cross-compilation</li>
             <li>Building outside source tree for read-only file systems</li>
-            <li>Bit files are JavaScript source and are easily modified and extened</li>
+            <li>Bit files are JavaScript source and are easily modified and extended</li>
             <li>Multiple build profiles (debug, release, ...)</li>
             <li>Very fast configuration and building times, even on windows</li>
        </ul>
-       <a name="niceBits"></a>
+       <a id="niceBits"></a>
        <h2>Nice Bits</h2>
        <p>While Bit has a strong feature set, there are some characteristics that make building with Bit especially
        nice:</p>
@@ -147,7 +147,7 @@
            <li>Bit files and targets intelligently inherit of outer project properties</li>
            <li>Bit scripts run using the working directory of the bit file</li>
         </ul>
-        <a name="simpleBitFile"></a>
+        <a id="simpleBitFile"></a>
         <h2>Simple Bit File</h2>
         <p>A bit file is a JavaScript file with a <em>.bit</em> extension that invokes Bit.load() to process a set of build
         instructions. The build instructions are expressed as a JavaScript object literal that is supplied via
@@ -165,12 +165,12 @@ Bit.load({
 </pre>
         <p>To build the rocket, enter:</p>
         <pre>bit rocket</pre>
-        <a name="invocation"></a>
+        <a id="invocation"></a>
         <h2>Invocation</h2>
         <p>When bit is invoked, it searches for a <em>start.bit</em> file in the current directory. If one if not found, it
         searches up the parent directory chain for one. Bit then loads this start.bit file and commences processing
-        its build instuctions. A start.bit file may in turn load other bit files.</p>
-        <a name="stylesOfUse"></a>
+        its build instructions. A start.bit file may in turn load other bit files.</p>
+        <a id="stylesOfUse"></a>
         <h2>Styles of Use</h2>
         <p>There are two styles of use for Bit:</p>
         <ul>
@@ -179,14 +179,14 @@ Bit.load({
         </ul>
         <h3>Standalone Use</h3>
         <p>A standalone start.bit file may be used to express simple build targets that do not requiring any prior
-        configuration step. The start.bit file contains targets that specify the recipies to build those targets.</p>
+        configuration step. The start.bit file contains targets that specify the recipes to build those targets.</p>
         <h3>Configured Use</h3>
         <p>Some products/projects require a configuration phase prior to building with Bit. Configuration involves discovering
         the tools and components available on the current system and the available compiler tool chain support. For
         configured products, Bit is first invoked with a <em>configure</em> target. Bit then reads a <em>main.bit</em> file which
         describes the project, and generates a start.bit and platform bit file that describes the system.  Configured
         use also supports cross-compilation and project file generation for use in IDEs.</p>
-        <a name="targets"></a>
+        <a id="targets"></a>
         <h2>Targets</h2>
         <p>Bit is typically invoked with zero or more targets on the command line to build. If invoked with zero
         targets, Bit will build all the out-of-date targets. If a one or more targets are specified, only those targets
@@ -203,7 +203,7 @@ Bit.load({
             <li>clean &mdash; To clean built targets and prepare for rebuilding</li>
             <li>rebuild &mdash; Clean and build</li>
         </ul>
-        <a name="configuring"></a>
+        <a id="configuring"></a>
         <h2>Configuring</h2>
         <p>To configure a product before building, run Bit using the <em>configure</em> target or alternatively use the
         <em>--config</em> switch. When configuring, Bit will determine the capabilities of the current system and search
@@ -233,9 +233,9 @@ settings: {
         <h3>Out-of-source Tree Builds</h3>
         <p>Bit supports building from read-only source trees. To do this, use <em>bit -config path</em> when
         configuring. Run this from a writable directory and reference the read-only source tree via the
-        <em>-config</em> switch. Bit will create the start.bit, platform bit file and <output build directory in the
+        <em>-config</em> switch. Bit will create the start.bit, platform bit file and platform output build directory in the
         writable (current) directory. Thereafter run <em>bit</em> from the writable directory for all operations.</p>
-        <a name="crossCompiling"></a>
+        <a id="crossCompiling"></a>
         <h2>Cross-Compiling</h2>
         <p>To build a product for platform different to that of the local system is called cross compiling.
         Sometimes this cross compiling is just for a different instruction set (say x64 instead of x86). Other times
@@ -250,7 +250,7 @@ settings: {
        command line when configuring.</p>
             <pre>bit --platform windows-x64 -configure .</pre>
        <p>This will create a windows-x64.bit configuration file and a start.es that references it. The platform
-       switch does not need to be respecified after configuration.</p>
+       switch does not need to be restated after configuration.</p>
         <h3>Environment Variables</h3>
         <p>When cross-compiling, it is sometimes required to pass compiler and linker paths and flags via the
         environment. Bit detects certain environment variables and saves their values when configuring. Subsequently
@@ -258,7 +258,7 @@ settings: {
             <pre>CC=/path/to/compiler CFLAGS=-w bit configure</pre>
         <p>The following variables are eligible: CFLAGS, DFLAGS, IFLAGS, LDFLAGS, CC and LD. Note: these are only
         processed when configuring for cross compilation.</p>
-        <a name="projectGeneration"></a>
+        <a id="projectGeneration"></a>
         <h2>Project Generation</h2>
         <p>Bit can generate generate complete project files for building using: make, nmake, Visual Studio, Xcode or
         plain shell scripts. Bit uses the <em>--gen</em> command line switch to specify the projects to build. Bit is capable of
@@ -267,7 +267,7 @@ settings: {
             <pre>bit --continue --platform macosx-x64 configure -gen xcode,make,sh</pre>
         <p>This will generate Xcode, make and shell script projects for a Mac OS X 64-bit. The <em>--continue</em> switch indicates
         that generation should continue even if the required compilers and build tools are not present on the development system.</p>
-        <a name="dependencies"></a>
+        <a id="dependencies"></a>
         <h2>Dependencies</h2>
         <p>Bit targets can depend on other targets that must be built first. Bit targets have a name which may be
         depended upon by another target. For example:</p>
@@ -285,7 +285,7 @@ targets {
         <p>Before Bit begins building, it parses the entire bit file configuration and determines which targets depend
         on what. It then builds the targets in the required build order. It successfully detects and handles dependency
         loops.</p>
-        <a name="defaultProperties"></a>
+        <a id="defaultProperties"></a>
         <h2>Default Properties</h2>
         <p>Often targets need very similar configuration. Bit provides a <em>defaults</em> collection of properties that are inherited
         by all targets. It also provides an <em>internal</em> collection of properties that are inherited by only the targets in the
@@ -299,11 +299,11 @@ defaults: {
         <p>This will use the <em>TUNE=SPEED</em> compiler definition when compiling all source files, and the
         <em>math</em> library when
         linking executables (and libraries on some systems).</p>
-        <a name="bitFiles"></a>
+        <a id="bitFiles"></a>
         <h2>Bit Files</h2>
         <p>A bit file is a JavaScript file that invokes <em>Bit.load</em> to supply build instructions. The argument to
         Bit.load is a bit object literal. Typically this is expressed as a JavaScript object literal, but it could be
-        constructed in otherways via JavaScript code. A typicaly project may load many bit files that are blended
+        constructed in other ways via JavaScript code. A typically project may load many bit files that are blended
         together into a single, unified view of project. This view is held in a global object called <em>bit</em>. Note
         this is lower case. Use the 'bit --dump' command line option to save the unified project view in a dump file
         that can be viewed in any source editor.</p>
@@ -319,12 +319,12 @@ Bit.load({
     ],
 })
 </pre>
-        <a name="loadOrder"></a>
+        <a id="loadOrder"></a>
         <h3>Load Order</h3>
         <p>Bit files are loaded depth-first. This means that bit files specified in the blend[] collection will be
         loaded first before the contents of the bit file that referenced them.  Run bit with the --verbose switch to see
         what bit files are loaded and in what order.</p>
-        <a name="propertyBlending"></a>
+        <a id="propertyBlending"></a>
         <h3>Property Blending and Inheritance</h3>
         <p>When a user bit literal is loaded, it is blended with existing bit configuration from previously loaded bit
         files by overwriting or augmenting prior definitions. Bit facilitates this by extending the standard JSON syntax 
@@ -341,11 +341,11 @@ Bit.load({
 })
 </pre>
         <p>The <em>+defines</em> property will add <em>-DMY_FEATURE=1</em> to the list of compiler definitions. the
-        <em>-compiler</em> property will subtrace <em>-Wall</em> from the list of compiler switches. Using a <em>=</em>
-        prefix will overwrite an existing property defintion. The default is to overwrite property defintions. </p>
+        <em>-compiler</em> property will subtract <em>-Wall</em> from the list of compiler switches. Using a <em>=</em>
+        prefix will overwrite an existing property definition. The default is to overwrite property definitions. </p>
         <p>The property prefixes are used for simple property key/value pairs. Objects and arrays always have their properties
         blended (added).</p> 
-        <a name="tokenExpansion"></a>
+        <a id="tokenExpansion"></a>
         <h3>Property Token Expansion</h3>
         <p>To make it easy to dynamically compute file paths, strings have tokens automatically expanded. Tokens take
 the form: "${TOKEN}". For example:
@@ -364,7 +364,7 @@ myTarget: {
             <li>Rule specific tokens when compiling or linking</li>
         </ul>
         <p>The following bit.globals.* are defined for use by tokens:</p>
-        <table>
+        <table title="globals">
             <thead>
                 <tr><th>Name</th><th>Description</th>
             </thead>
@@ -390,11 +390,11 @@ myTarget: {
             </tbody>
         </table>
         
-        <a name="propertyCollections"></a>
+        <a id="propertyCollections"></a>
         <h3>Top Level Property Collections</h3>
         <p>Here is a non-exhaustive description of the important top-level Bit property collections:</p>
         
-        <table>
+        <table title="top-level collections">
             <thead>
                 <tr><th>Name</th><th>Description</th>
             </thead>
@@ -421,7 +421,7 @@ myTarget: {
         </table>
         <h3>Platform Collection</h3>
         <p>The platform collection defines properties for:
-        <table>
+        <table title="platform collection">
             <thead>
                 <tr><th>Name</th><th>Description</th>
             </thead>
@@ -435,7 +435,7 @@ myTarget: {
         <h3>Packs Collection</h3>
         <p>The packs collection defines a collection for each extension pack that bit examined when configuring. Each
         pack will have properties for: 
-        <table>
+        <table title="packs collection">
             <thead>
                 <tr><th>Name</th><th>Description</th>
             </thead>
@@ -455,14 +455,14 @@ myTarget: {
         </table>
         <h3>Settings Collection</h3>
         <p>The settings collection specifies the top level project/product names. It is required in the main.bit file.</p>
-        <table>
+        <table title="settings">
             <thead>
                 <tr><th>Name</th><th>Description</th>
             </thead>
             <tbody>
                 <tr><td>company</td><td>Company name</td></tr>
                 <tr><td>product</td><td>Product or project name. Should be one word, lower case without spaces</td></tr>
-                <tr><td>title</td><td>Descriptive one sentance title for the product</td></tr>
+                <tr><td>title</td><td>Descriptive one sentence title for the product</td></tr>
                 <tr><td>version</td><td>Product version string. Should be of the form: MAJOR.MINOR.PATCH </td></tr>
                 <tr><td>buildNumber</td><td>Build number string</td></tr>
                 <tr><td>optional</td><td>List of optional packs to discover when configuring </td></tr>
@@ -471,7 +471,7 @@ myTarget: {
             </tbody>
         </table>
         <h3>Targets Collection</h3>
-        <table>
+        <table title="targets">
             <thead>
                 <tr><th>Name</th><th>Description</th>
             </thead>
@@ -498,13 +498,12 @@ myTarget: {
                 <tr><td>exclude</td><td>Regular expression of file patterns to exclude from the sources list
                     This is a filter that is applied to the sources list after expanding the sources wildcards</td></tr>
                 <tr><td>rule</td><td>Build command template to use when invoking compiler and linker. Typically not
-                        explicitly set unless overriding for some reason. Set to: 'c->o', 'cpp->o', 'lib', 'exe', 'gui'.
+                        explicitly set unless overriding for some reason. Set to: 'c-&gt;o', 'cpp-&gt;o', 'lib', 'exe', 'gui'.
                         Rules are automatically selected for 'lib' and 'exe' targets. </td>
-                <tr><td>platformsw</td><td>Platforms for which this target should be built. Set to OS-ARCH or 'local'</td></tr>
+                <tr><td>platforms</td><td>Platforms for which this target should be built. Set to OS-ARCH or 'local'</td></tr>
             </tbody>
         </table>
-
-        <a name="targetTypes"></a>
+        <a id="targetTypes"></a>
         <h3>Target Types</h3>
         <p>There are several standard target types for which Bit has in-built knowledge of how to build:</p>
         <ul>
@@ -545,10 +544,9 @@ setup: {
 </pre>
         <p>This example will copy the specified readme file to the web directory under the platform output
         directory.</p>
-
-        <a name="buildingTargets"></a>
+        <a id="buildingTargets"></a>
         <h3>Building Targets</h3>
-        <p>Bit builds targets according to a defined lifecycle.
+        <p>Bit builds targets according to a defined life cycle.
         <ul>
             <li>A bit object is created an initialized with the standard and per-O/S definitions</li>
             <li>The start.bit file is loaded</li>
@@ -561,7 +559,7 @@ setup: {
             <li>The <em>dir</em> and <em>bit.global</em> properties are initialized</li>
             <li>Targets are enabled or disabled depending on their <em>enable</em> property expression</li>
             <li>A list of top-level targets to build is created based on the bit commandline and target dependencies.
-            See below <a href="#selecting">Selecting Targets</a> for more details.</li>
+            See below <a href="#selectingTargets">Selecting Targets</a> for more details.</li>
             <li>Those targets to build are processed and their properties are blended with the defaults/internal
                 properties</li>
             <li>The target dependencies are resolved and added to the target list</li>
@@ -571,7 +569,7 @@ setup: {
             <li>The target is built. If the target is an executable, library, or object, it is built using the
                 transition rules specified in bit.rules. If the target has a <em>build</em> event script, it is run.</li>
         </ul>
-        <a name="selectingTargets"></a>
+        <a id="selectingTargets"></a>
         <h3>Selecting Targets</h3>
         <p>Bit follows a simple process when selecting the targets to build.</p>
         <ol>
@@ -579,7 +577,7 @@ setup: {
                 does not match a target name, the list of targets is search to see if the name matches any targets with
             a type of that name. All matching targets are added to the list. For example: this allows targets of type
             <em>clean</em> to be run when <em>bit clean</em> is invoked.</li>
-            <li>Targets that are disabled (<em>enable</em> property evalutes to false) are removed from the list</li>
+            <li>Targets that are disabled (<em>enable</em> property evaluates to false) are removed from the list</li>
             <li>Targets referenced in the <em>depends</em> property are added to the list (recursively)</li>
             <li>Additional targets are created dynamically for source items to be compiled and include headers</li>
         </ol>
@@ -590,10 +588,10 @@ setup: {
         </ul> 
         <p>When specifying a name that is a target, these must match the target name property. When specifying an action,
         these must match a target type property.</p>
-        <a name="buildEvents"></a>
+        <a id="buildEvents"></a>
         <h3>Build Events</h3>
         <p>When building, Bit will fire events that may trigger scripts to run. Here is a list of events:</p>
-        <table>
+        <table title="events">
             <thead>
                 <tr><th>Name</th><th>Description</th>
             </thead>
@@ -607,7 +605,7 @@ setup: {
             </tbody>
         </table>
         
-        <a name="scripts"></a>
+        <a id="scripts"></a>
         <h3>Scripts</h3>
         <p>Target scripts may be specified three ways:</p>
         <ul>
@@ -629,7 +627,7 @@ targets: {
 }
 </pre>
         <p>When <em>bit</em> is invoked, the script for the <em>cleanJunk</em> target will be run. Note that in
-        Ejsscript, quoted literals can span multiple lines. No backquoting at the end of the line is requried.</p>
+        Ejscript, quoted literals can span multiple lines. No backquoting at the end of the line is requried.</p>
         <h4>Action Scripts</h4>
         <p>Action scripts do not run by default. Rather, they are run when they are explicitly invoked on the command
         line or another target is invoked that references them as a dependency. 
@@ -645,8 +643,8 @@ targets: {
 </pre>
         <p>When <em>bit generate-doc</em> is run, this generate-documentation script will be run. </p>
         <h4>Long-hand Scripts</h4>
-        <p>A target can specify multiple scripts that are run at various stages of the building lifecycle. These are
-        specified via the scripts collection of a target.
+        <p>A target can specify multiple scripts that are run at various stages of the building life cycle. These are
+        specified via the scripts collection of a target.</p>
 <pre>
 targets: {
     libglow: {
@@ -666,14 +664,16 @@ targets: {
     },
 }
 </pre>
-        <p>The scripts collection is an object hash with properties for lifecycle events. When the specific event is
+        <p>The scripts collection is an object hash with properties for life cycle events. When the specific event is
         triggered, the script is run. For each event, there can be multiple scripts which are run in-order. Each script
         has a home directory which becomes the current directory for the script, a shell interpreter to execute the
-        script and the script contents. </p>
+        script and the script contents.</p>
+
         <p>Note that the <em>build</em> and <em>action</em> scripts translate under-the-hood into the same long form.
         The action script becomes a target with a type of <em>action</em> and an event of <em>build</em>. A build script
         becomes a target with a type of <em>build</em> and an event of <em>build</em>.</p>
-        <a name="debugging"></a>
+
+        <a id="debugging"></a>
         <h2>Debugging</h2>
         <p>With Make and other build tools, it is difficult to determine why a target is or is not being built. Bit
         provides a <em>--why</em> command line switch to diagnose problematic build sequences. This switch displays the reason why each
@@ -684,11 +684,11 @@ targets: {
         <p>By default, Bit builds relativley quietly and stops on the first build error. To see the commands Bit is
         issuing, use the <em>--show</em> switch. To build totally quietly, use the <em>--quiet</em> switch. To continue building
         despite build errors, use the <em>--continue</em> switch.</p>
-        <a name="commandOptions"></a>
+        <a id="commandOptions"></a>
         <h2>Command Options</h2>
         <p>Bit command line options can be prefixed with either a single or double minus. ie. <em>-switch</em> or
         <em>--switch</em></p>
-        <table>
+        <table title="options">
             <thead>
             <tr><th>Option</th><th>Description</th></tr>
             </thead>
@@ -822,7 +822,7 @@ targets: {
                 </tr>
             </tbody>
         </table>
-        <a name="learnMore"></a>
+        <a id="learnMore"></a>
         <h2>To Learn More</h2>
         <p>Here are some example bit files in the Appweb and Ejscript products:p>
         <ul>
@@ -842,7 +842,7 @@ targets: {
             <li><a href="https://github.com/embedthis/ejs-2/blob/master/src/cmd/cmd.bit">Ejscript
                 src/cmd/cmd.bit &mdash; bit file to build the ejscript executables</a></li>
         </ul>
-        <a name="example"></a>
+        <a id="example"></a>
         <p>Here is a sample main.bit file:</p>
 <pre>
 /*
@@ -917,18 +917,18 @@ Bit.load({
             All rights reserved. Embedthis, Ejscript and Appweb are trademarks of Embedthis Software LLC.</a>
 		</p>
 	</div>
-</body>
-<script src="http://www.google.com/jsapi" type="text/javascript"></script>
-<script type="text/javascript"> 
-  google.load('search', '1', {language : 'en'});
-  google.setOnLoadCallback(function() {
-    var customSearchControl = new google.search.CustomSearchControl(
-      'partner-pub-9935546676162772:ysvxxv4n9rx');
+    <script src="http://www.google.com/jsapi" type="text/javascript"></script>
+    <script type="text/javascript"> 
+      google.load('search', '1', {language : 'en'});
+      google.setOnLoadCallback(function() {
+        var customSearchControl = new google.search.CustomSearchControl(
+          'partner-pub-9935546676162772:ysvxxv4n9rx');
 
-    customSearchControl.setResultSetSize(google.search.Search.FILTERED_CSE_RESULTSET);
-    var options = new google.search.DrawOptions();
-    options.enableSearchboxOnly("http://ejscript.org/search.html");
-    customSearchControl.draw('cse-search-form', options);
-  }, true);
-</script>
+        customSearchControl.setResultSetSize(google.search.Search.FILTERED_CSE_RESULTSET);
+        var options = new google.search.DrawOptions();
+        options.enableSearchboxOnly("http://ejscript.org/search.html");
+        customSearchControl.draw('cse-search-form', options);
+      }, true);
+    </script>
+</body>
 </html>

@@ -7,12 +7,12 @@
         Embedded, AJAX, language"/>
 	<meta name="description" content="Ejscript -- Embedded Server-Side JavaScript Language."/>
 	<meta name="robots" content="index,follow" />
-    <link href="http://www.google.com/cse/style/look/default.css" type="text/css" rel="stylesheet" />
 	<link href="../../../doc.css" rel="stylesheet" type="text/css" />
 	<link href="../../../print.css" rel="stylesheet" type="text/css" media="print"/>
     <!--[if IE]>
     <link href="../../../iehacks.css" rel="stylesheet" type="text/css" />
     </![endif]-->
+    <link href="http://www.google.com/cse/style/look/default.css" type="text/css" rel="stylesheet" />
 </head>
 
 <body>
@@ -69,19 +69,18 @@
             <h1>Language Syntax</h1>
             <p>This is a quick summary of the Ejscript syntax. For a more detailed specification, see the official
             <a href="http://www.ecma-international.org/publications/standards/Ecma-262.htm">ECMAScript-262</a> Language
-            Specification document.</p><a name="tokens" id="tokens"></a>
+            Specification document.</p><a id="tokens"></a>
             <h2 class="section">Language Tokens</h2>
             <p>Ejscript is case sensitive and uses UTF-8 as its input character stream. White space between tokens is
             ignored with the exception that statements that omit trailing semicolons must be on a line by
-            themselves.</p><a name="comments" id="comments"></a>
+            themselves.</p><a id="comments"></a>
             <h3>Comments</h3>
             <p>Comments can use either the C commenting style with text between /* */ delimiters, or the C++ style may
-            be used where text from // to the end of the line is regarded as a comment.</p><a name="identifiers" id=
-            "identifiers"></a>
+            be used where text from // to the end of the line is regarded as a comment.</p><a id="identifiers"></a>
             <h3>Identifiers</h3>
             <p>Identifiers are names used for variables and functions. Identifiers must begin with either a letter, an
             underscore '_', dollar sign '$' or an '@'. Identifiers must not be a reserved word from the table
-            below:</p><a name="reserved" id="reserved"></a>
+            below:</p><a id="reserved"></a>
             <h3>Reserved Words</h3>
             <p>Ejscript regards all these words as reserved:</p>
             <blockquote>
@@ -96,7 +95,7 @@
             them in future:</p>
             <blockquote>
                 <p>abstract, boolean, byte, char, double, export, float, long, package, short and transient.</p>
-            </blockquote><a name="declarations" id="declarations"></a> <a name="references" id="references"></a>
+            </blockquote><a id="declarations"></a> <a id="references"></a>
             <!--
             <h3>References</h3>
             <p>See also the following references:</p>
@@ -113,18 +112,18 @@
             All rights reserved. Embedthis, Ejscript and Appweb are trademarks of Embedthis Software LLC.</a>
 		</p>
 	</div>
-</body>
-<script src="http://www.google.com/jsapi" type="text/javascript"></script>
-<script type="text/javascript"> 
-  google.load('search', '1', {language : 'en'});
-  google.setOnLoadCallback(function() {
-    var customSearchControl = new google.search.CustomSearchControl(
-      'partner-pub-9935546676162772:ysvxxv4n9rx');
+    <script src="http://www.google.com/jsapi" type="text/javascript"></script>
+    <script type="text/javascript"> 
+      google.load('search', '1', {language : 'en'});
+      google.setOnLoadCallback(function() {
+        var customSearchControl = new google.search.CustomSearchControl(
+          'partner-pub-9935546676162772:ysvxxv4n9rx');
 
-    customSearchControl.setResultSetSize(google.search.Search.FILTERED_CSE_RESULTSET);
-    var options = new google.search.DrawOptions();
-    options.enableSearchboxOnly("http://ejscript.org/search.html");
-    customSearchControl.draw('cse-search-form', options);
-  }, true);
-</script>
+        customSearchControl.setResultSetSize(google.search.Search.FILTERED_CSE_RESULTSET);
+        var options = new google.search.DrawOptions();
+        options.enableSearchboxOnly("http://ejscript.org/search.html");
+        customSearchControl.draw('cse-search-form', options);
+      }, true);
+    </script>
+</body>
 </html>

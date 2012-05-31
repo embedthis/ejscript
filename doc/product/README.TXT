@@ -172,5 +172,5 @@ Embedthis Software, LLC.
 4616 25th Ave NE, #733
 Seattle, WA 98105.
 +1 (425) 329-3490
-embedthis.com.com
+embedthis.com
 info@embedthis.com

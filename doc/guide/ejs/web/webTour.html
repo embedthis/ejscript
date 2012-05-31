@@ -7,12 +7,12 @@
         Embedded, AJAX, language"/>
 	<meta name="description" content="Ejscript -- Embedded Server-Side JavaScript Language."/>
 	<meta name="robots" content="index,follow" />
-    <link href="http://www.google.com/cse/style/look/default.css" type="text/css" rel="stylesheet" />
 	<link href="../../../doc.css" rel="stylesheet" type="text/css" />
 	<link href="../../../print.css" rel="stylesheet" type="text/css" media="print"/>
     <!--[if IE]>
     <link href="../../../iehacks.css" rel="stylesheet" type="text/css" />
     </![endif]-->
+    <link href="http://www.google.com/cse/style/look/default.css" type="text/css" rel="stylesheet" />
 </head>
 
 <body>
@@ -68,11 +68,11 @@
             <a href="../users/tour.html">Language Tour</a>, and that you have Ejscript installed on your system so you
             can type along as you go. This web framework tour will work with the Ejscript <a href=
             "../users/shell.html">Command Shell</a> and the web framework <a href="generator.html">mvc</a> application
-            generator to run scripts.</p><a name="blog" id="blog"></a>
+            generator to run scripts.</p><a id="blog"></a>
             <h2 class="section">A Demonstration Blog Application</h2>
             <p>Command sessions are presented in blue boxes. Output from the system is highlighted in yellow. Bold
             yellow is used to highlight some output of specific interest.</p>
-            <h2 class="section"><a name="create" id="create"></a>Creating a New Application</h2>
+            <h2 class="section"><a id="create"></a>Creating a New Application</h2>
             <p>To create a new Ejscript application, you will use <b>mvc</b>, the Ejscript application generator
             program. Type the following mvc command in a command terminal window:</p>
             <pre>
@@ -166,7 +166,7 @@ and point your browser at: http://localhost::4000/ to view your app.</b>
             <p>See the <a href="generator.html">mvc</a> command documentation for an explanation of the other generated
             directories.</p>
             
-            <a name="run" id="run"></a>
+            <a id="run"></a>
             <h2 class="section">Running your Application</h2>
             <p>You can immediately run your application after generation. Ejscript includes a built-in web server so
             you can run your application without needing to deploy to an external web server. The Ejscript built-in web
@@ -183,7 +183,7 @@ appweb: 1: HTTP services are ready (single-threaded)</b>
 </pre>
             <p>Then enter <b>localhost:4000</b> in your browser. You should see your first application home
             page.</p><img class="bare-screen" src="../../../images/webtour-home.png" alt="" />
-            <a name="hello" id="hello"></a>
+            <a id="hello"></a>
             <h2 class="section">Hello World</h2>
             <p>The next step is to create a simple "Hello World" web page. Ejscript web pages have an <b>.ejs</b>
             extension. Create a file called <em>hello.ejs</em> under the <b>web</b> directory with the following
@@ -196,7 +196,7 @@ appweb: 1: HTTP services are ready (single-threaded)</b>
 </pre>
             <p>To view the "Hello" web page in your browser, type in the following url:
             http://localhost:4000/web/hello.ejs.</p><img src="../../../images/webtour-hello.png" alt="hello" class=
-            "bare-screen" /> <a name="dynamic" id="dynamic"></a>
+            "bare-screen" /> <a id="dynamic"></a>
             <h2 class="section">Dynamic Content</h2>
             <p>While that was fun, the output is static and boring, so let's add some dynamic content. You can embed
             Ejscript expressions by including them inside a special Ejscript web page directive that will be executed
@@ -232,8 +232,8 @@ appweb: 1: HTTP services are ready (single-threaded)</b>
             <p>By using the Ejscript statement directive <b>&lt;% code %&gt;</b>, you can embed arbitrary Ejscript
             statements in your web page. The <b>write</b> function allows you to write arbitrary data which is patched
             back where the directive was defined in the page. See the <a href="views.html">Views and Layouts</a>
-            document for full details about all the Ejscript web page directives.</p><a name="views" id="views"></a>
-            <a name="scaffolds" id="scaffolds"></a>
+            document for full details about all the Ejscript web page directives.</p><a id="views"></a>
+            <a id="scaffolds"></a>
             <h2 class="scaffolds">Scaffolds</h2>
             <p>Scaffolding is a quick way to generate major pieces of your application. The mvc command can generate
             database migrations, models, views and controllers for you. The command below will create a "Post" model
@@ -254,8 +254,7 @@ mvc generate scaffold Post title:string body:text
             <em>list</em> and <em>edit</em> views. It also created a database migration script to update the database
             and create a Post table with <em>title</em> and <em>body</em> columns.</p>
             <p>Now if you set your browser to the URL for the post controller, you will see your post listing screen.
-            <img src="../../../images/webtour-postList.png" alt="postList" class="bare-screen" /> <a name="newPosts" id=
-            "newPosts"></a></p>
+            <img src="../../../images/webtour-postList.png" alt="postList" class="bare-screen" /> <a id="newPosts"></a></p>
             <h2 class="section">Create New Posts</h2>
             <p>The new post button directs your browser to the <em>/Post/list</em> URL. Behind the scenes, Ejscript
             parses this URL and identifies "Post" as the name of the controller and "list" as the name of an action to
@@ -285,7 +284,7 @@ public class PostController extends BaseController {
             Ejscript will automatically invoke a view of the same name. In the case of the <em>list</em> action, the
             <em>views/Post/list.ejs</em> will be used to generate the response.</p><img src=
             "../../../images/webtour-createPost.png" alt="createPost" class="bare-screen" />
-            <p>Click OK to add the new blog post.</p><a name="homePage" id="homePage"></a>
+            <p>Click OK to add the new blog post.</p><a id="homePage"></a>
             <h2>Edit the Home Page</h2>
             <p>You can edit the application's home page to add a link to your post listing page. Change
             <em>web/index.ejs</em> to contain just the following:</p>
@@ -294,7 +293,7 @@ public class PostController extends BaseController {
 &lt;h2&gt;&lt;% link("Go to My Blog", "/post") %&gt;&lt;/h2&gt;
 </pre>
             <p>Then reload the page and you will see:</p><img src="../../../images/webtour-homeLink.png" alt="homeLink"
-            class="bare-screen" /> <a name="layout" id="layout"></a>
+            class="bare-screen" /> <a id="layout"></a>
             <h2>Changing the Layout</h2>
             <p>Alternatively, you may wish to add some tabs to navigate your blog app. Ejscript provides a layout
             template engine that is used by all views to provide a common look and feel to your application. View pages
@@ -318,7 +317,7 @@ public class PostController extends BaseController {
             recompile the app. This is easy to do via the mvc command.</p>
             <pre>
 mvc compile
-</pre><img src="../../../images/webtour-tabs.png" alt="tabs" class="bare-screen" /> <a name="validations" id="validations">
+</pre><img src="../../../images/webtour-tabs.png" alt="tabs" class="bare-screen" /> <a id="validations">
             </a>
             <h2 class="section">Validations</h2>
             <p>Ejscript provides flexible validation methods to help ensure the data you save is correct.</p>
@@ -344,7 +343,7 @@ public function validate() {
         error("body", "Body is too long")
     }
 }
-</pre><a name="learn" id="learn"></a>
+</pre><a id="learn"></a>
             <h2 class="section">Learn More ...</h2>
             <p>That concludes the a quick tour through some of the capabilities of the Ejscript web framework.</p>
             <p>To learn more, please read the rest of the <a href="../../../index.html">Ejscript Documentation</a> and
@@ -359,18 +358,18 @@ public function validate() {
             All rights reserved. Embedthis, Ejscript and Appweb are trademarks of Embedthis Software LLC.</a>
 		</p>
 	</div>
-</body>
-<script src="http://www.google.com/jsapi" type="text/javascript"></script>
-<script type="text/javascript"> 
-  google.load('search', '1', {language : 'en'});
-  google.setOnLoadCallback(function() {
-    var customSearchControl = new google.search.CustomSearchControl(
-      'partner-pub-9935546676162772:ysvxxv4n9rx');
+    <script src="http://www.google.com/jsapi" type="text/javascript"></script>
+    <script type="text/javascript"> 
+      google.load('search', '1', {language : 'en'});
+      google.setOnLoadCallback(function() {
+        var customSearchControl = new google.search.CustomSearchControl(
+          'partner-pub-9935546676162772:ysvxxv4n9rx');
 
-    customSearchControl.setResultSetSize(google.search.Search.FILTERED_CSE_RESULTSET);
-    var options = new google.search.DrawOptions();
-    options.enableSearchboxOnly("http://ejscript.org/search.html");
-    customSearchControl.draw('cse-search-form', options);
-  }, true);
-</script>
+        customSearchControl.setResultSetSize(google.search.Search.FILTERED_CSE_RESULTSET);
+        var options = new google.search.DrawOptions();
+        options.enableSearchboxOnly("http://ejscript.org/search.html");
+        customSearchControl.draw('cse-search-form', options);
+      }, true);
+    </script>
+</body>
 </html>

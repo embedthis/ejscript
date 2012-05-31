@@ -7,12 +7,12 @@
         Embedded, AJAX, language"/>
 	<meta name="description" content="Ejscript -- Embedded Server-Side JavaScript Language."/>
 	<meta name="robots" content="index,follow" />
-    <link href="http://www.google.com/cse/style/look/default.css" type="text/css" rel="stylesheet" />
 	<link href="../../../doc.css" rel="stylesheet" type="text/css" />
 	<link href="../../../print.css" rel="stylesheet" type="text/css" media="print"/>
     <!--[if IE]>
     <link href="../../../iehacks.css" rel="stylesheet" type="text/css" />
     </![endif]-->
+    <link href="http://www.google.com/cse/style/look/default.css" type="text/css" rel="stylesheet" />
 </head>
 
 <body>
@@ -34,18 +34,13 @@
         <div class="contentRight">
             <h1>Quick Nav</h1>
             <ul>
-                <li><a href="#flow">Processing Flow</a></li>
-                <li><a href="#routing">Routing Requests</a></li>
-                <li><a href="#anatomy">Anatomy of a Controller</a></li>
-                <li><a href="#actions">Actions</a></li>
-                <li><a href="#context">Controller Context</a></li>
-                <li><a href="#processing">Processing Requests</a></li>
-                <li><a href="#models">Model Data</a></li>
-                <li><a href="#forms">Form Data</a></li>
-                <li><a href="#views">Rendering Views</a></li>
-                <li><a href="#generating">Generating Controllers</a></li>
-                <li><a href="#controller">Controller Class</a></li>
-                <!-- <li><a href="#tips">Tips and Tricks</a></li> -->
+                <li><a href="#overview">Overview</a>
+                <li><a href="#configuration">Configuration</a>
+                <li><a href="#step-pattern">Pattern Matching</a>
+                <li><a href="#step-method">Method Matching</a>
+                <li><a id="#step-header">Header Matching</a>
+                <li><a href="#step-form">Form Value Matching</a>
+                <li><a href="#step-param">Param Definition</a>
             </ul>
 <!-- BeginDsi "dsi/ejsWebSeeAlso.html" -->
 		        <h1>See Also</h1>
@@ -67,7 +62,8 @@
         </div>
         <div class="contentLeft">
             <h1>Request Routing</h1>
-            <a name="overview"></a>
+
+            <a id="overview"></a>
             <p>Ejscript includes a powerful request routing engine that processes client HTTP requests. The engine
             is configured with a set of routes and when a request is received, it tests various routes and selects
             the best route to handle the request.  In the process, routes may redirect or rewrite the request 
@@ -80,7 +76,7 @@
             is always a catch-all route that will process the request if all prior routes fail to qualify.</p>
             <p>A route may modify the request during processing by changing the request URI or request data. The
             route may also run commands as a side-effect during processing.</p>
-            <a name="configuration"></a>
+            <a id="configuration"></a>
             <h2 class="section">Route Configuration</h2>
             <p>Routes are defined using the Router class and the <em>add</em>method. 
             Here is an example of a simple web server with route configuration.</p>
@@ -117,7 +113,8 @@ router.show()
             <em>application/x-www-form-urlencoded</em>. Requests with a <em>Content-Type</em> set to 
             <em>multipart/form-data</em> which indicates form based file upload, will also delay routing until the uploaded
             file has been fully received.</p>
-            <a name="step-pattern"></a>
+
+            <a id="step-pattern"></a>
             <h3>Pattern Matching</h3>
             <p>A route pattern is a specially prepared regular expression that can be quickly matched against the 
             request URI. The route pattern may match the entire request URI, just a subset at the start of the URI
@@ -163,7 +160,8 @@ will match any of the URIs:
 <pre>
 ^/{controller}/{action}$
 </pre>
-            <a name="step-method"></a>
+
+            <a id="step-method"></a>
             <h3>Method Matching</h3>
             <p>Method matching is an optional step. Routes can be configured to only match certain HTTP methods. 
             Method matching tests the supported route methods against the actual request HTTP method. 
@@ -171,7 +169,8 @@ will match any of the URIs:
 router.add("/Dash/product/buy", {method: "POST"})
 </pre>
             By default a route supports all methods</p>
-            <a name="step-header"></a>
+
+            <a id="step-header"></a>
             <h3>Header Matching</h3>
             <p>Header matching is an optional step. Routes can be configured to require that the request has HTTP
             headers with or without defined values. For example: a route may wish to only be relevant for a 
@@ -182,7 +181,8 @@ r.add(function (request) request.header("user-agent").contains("Chrome"))
 </pre>
             <p>This defines a route with a custom matching function. The function is invoked to test the request. If
             it returns true, the route is selected.</p>
-            <a name="step-form"></a>
+
+            <a id="step-form"></a>
             <h3>Form Value Matching</h3>
             <p>Form value matching is an optional step. Routes can be configured to require that the request has 
             form data with or without defined values. Form data is sourced from the request URI query string and from
@@ -196,7 +196,8 @@ r.add(function (request) request.params("name").match(/(Mary)|(John)))
 /info/file.html?name=Mary
 /info/file.html?name=John
 </pre>
-            <a name="step-param"></a>
+
+            <a id="step-param"></a>
             <h3>Param Definition</h3>
             <p>After a route fully qualifies, request <a href="#params">params</a>
             are created for route pattern tokens. This provides an
@@ -211,18 +212,18 @@ r.add(function (request) request.params("name").match(/(Mary)|(John)))
             All rights reserved. Embedthis, Ejscript and Appweb are trademarks of Embedthis Software LLC.</a>
 		</p>
 	</div>
-</body>
-<script src="http://www.google.com/jsapi" type="text/javascript"></script>
-<script type="text/javascript"> 
-  google.load('search', '1', {language : 'en'});
-  google.setOnLoadCallback(function() {
-    var customSearchControl = new google.search.CustomSearchControl(
-      'partner-pub-9935546676162772:ysvxxv4n9rx');
+    <script src="http://www.google.com/jsapi" type="text/javascript"></script>
+    <script type="text/javascript"> 
+      google.load('search', '1', {language : 'en'});
+      google.setOnLoadCallback(function() {
+        var customSearchControl = new google.search.CustomSearchControl(
+          'partner-pub-9935546676162772:ysvxxv4n9rx');
 
-    customSearchControl.setResultSetSize(google.search.Search.FILTERED_CSE_RESULTSET);
-    var options = new google.search.DrawOptions();
-    options.enableSearchboxOnly("http://ejscript.org/search.html");
-    customSearchControl.draw('cse-search-form', options);
-  }, true);
-</script>
+        customSearchControl.setResultSetSize(google.search.Search.FILTERED_CSE_RESULTSET);
+        var options = new google.search.DrawOptions();
+        options.enableSearchboxOnly("http://ejscript.org/search.html");
+        customSearchControl.draw('cse-search-form', options);
+      }, true);
+    </script>
+</body>
 </html>

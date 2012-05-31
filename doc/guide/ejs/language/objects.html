@@ -7,12 +7,12 @@
         Embedded, AJAX, language"/>
 	<meta name="description" content="Ejscript -- Embedded Server-Side JavaScript Language."/>
 	<meta name="robots" content="index,follow" />
-    <link href="http://www.google.com/cse/style/look/default.css" type="text/css" rel="stylesheet" />
 	<link href="../../../doc.css" rel="stylesheet" type="text/css" />
 	<link href="../../../print.css" rel="stylesheet" type="text/css" media="print"/>
     <!--[if IE]>
     <link href="../../../iehacks.css" rel="stylesheet" type="text/css" />
     </![endif]-->
+    <link href="http://www.google.com/cse/style/look/default.css" type="text/css" rel="stylesheet" />
 </head>
 
 <body>
@@ -75,8 +75,9 @@
             <p>JavaScript has powerful and flexible object-oriented capabilities with strong support for objects,
             arrays, hashes and classes. Objects are the foundation of the object-oriented capabilities of JavaScript.
             They may be dynamically created and are automatically garbage collected. Unlike strongly typed languages
-            such as C++ and Java, object definitions and classes may also be easily created at run-time.</p><a name=
-            "objects" id="objects"></a>
+            such as C++ and Java, object definitions and classes may also be easily created at run-time.</p>
+            
+            <a id="objects"></a>
             <h2 class="section">Objects</h2>
             <p>An object is a collection of zero or more named properties. They are dynamic in that they can add
             properties at run-time and do not have any fixed contents.</p>
@@ -103,7 +104,7 @@ o.color = "blue"
 o.print = function () {
     print("Color is " + this.color)
 }
-</pre><a name="creatingObjects" id="creatingObjects"></a>
+</pre><a id="creatingObjects"></a>
             <h2>Creating Objects</h2>
             <p>Objects are created via the <b>new</b> operator which returns a reference to the object. Objects are not
             created in a local or global variable store. Rather, they are created in the memory heap. When the result
@@ -120,7 +121,7 @@ var o2 = o;
             we assign null to the variable "o", then the object created will have only one reference. Assigning null to
             o2 will remove the final reference and the object will be garbage collected.</p>
             <p>When objects are passed to functions, they are passed by reference. The object itself is not
-            copied.</p><a name="objectLiterals" id="objectLiterals"></a>
+            copied.</p><a id="objectLiterals"></a>
             <h3>Object Literals</h3>
             <p>Objects can be created and initialized by using an object literal syntax. This consists of a comma
             separated set of key,value pairs.</p>
@@ -134,11 +135,11 @@ var user = {
             <p>You can also use an empty literal as a convenient short-hand to create an empty object.</p>
             <pre>
 var empty = {}
-</pre><a name="objectMethods" id="objectMethods"></a>
+</pre><a id="objectMethods"></a>
             <h3>Object Methods</h3>
             <p>When functions are stored as object property values, they become object methods. When an object method
             is invoked, the <b>this</b> pseudo-property is set to the object reference when code inside the function is
-            executing.</p><a name="standardtMethods" id="standardtMethods"></a>
+            executing.</p><a id="standardtMethods"></a>
             <h3>Standard Methods</h3>
             <p>The Object type defines the <b>toString</b> method which converts the object representation into a
             string. Because all data types, objects and classes inherit from Object, values always have a toString
@@ -149,7 +150,7 @@ var empty = {}
             <p>Classes may be created by using a combination of Objects, constructor functions and prototype objects.
             This technique of creating classes and objects is called Prototype Inheritance. For information about
             creating classes and Prototype Inheritance, see the <a href="classes.html">Classes and Interfaces</a>
-            document.</p><a name="arrays" id="arrays"></a>
+            document.</p><a id="arrays"></a>
             <h2 class="section">Arrays</h2>
             <p>A JavaScript array is an ordered collection of values. Arrays can store arbitrary values with numerical
             indices that begin at zero. Like objects, new arrays are created using the <b>new</b> operator. Values are
@@ -160,7 +161,7 @@ colors[1] = "red"
 colors[0] = "blue"
 </pre>
             
-            <a name="arrayConstructor" id="arrayConstructor"></a>
+            <a id="arrayConstructor"></a>
             <h3>Array Constructor</h3>
             <p>There are several ways to use the Array constructor. You can create an empty array, an empty array of a
             specific size, and an initialized array.</p>
@@ -171,7 +172,7 @@ var products = new Array("milk", "eggs", "bread")   // three elements
 </pre>
             <p>When an array is created, the <b>length</b> property is set to the current length of the array. When an
             array is created with a single size parameter, it's length will be set to the requested size and all the
-            elements in the array will be set to undefined.</p><a name="associative" id="associative"></a>
+            elements in the array will be set to undefined.</p><a id="associative"></a>
             <h3>Associative Arrays</h3>
             <p>But JavaScript arrays have hidden depth. They build upon the object class and also allow non-numerical
             properties.</p>
@@ -182,8 +183,7 @@ colors["Favorite Color"] = "red"
             it behaves more like a classical array. In both cases, arrays will grow on demand as new elements are
             stored in the array and may be garbage collected when the array is no longer referenced.</p>
             <p>Ejscript compacts and optimizes the storage of Array elements and stores the elements with numerical
-            indices separately from those with alphabetical indices.</p><a name="arrayLiterals" id=
-            "arrayLiterals"></a>
+            indices separately from those with alphabetical indices.</p><a id="arrayLiterals"></a>
             <h3>Array Literals</h3>
             <p>Arrays can also be created and initialized by using an array literal syntax. This consists of a comma
             separated set of values.</p>
@@ -192,7 +192,7 @@ var colors = [ "red", "white", "blue" ]
 var emptyArray = []
 </pre>
             <p>Similarly to object literals, You can use an empty literal as a short-hand to create an empty
-            array.</p><a name="multi" id="multi"></a>
+            array.</p><a id="multi"></a>
             <h3>Multi-Dimensional Arrays</h3>
             <p>By storing arrays as elements of arrays, multi-dimensional arrays can be created. You can use the
             literal syntax to create these.</p>
@@ -205,7 +205,7 @@ var element = grid[2][2]
 print(element)
 /* Emits */
 <b>300</b>
-</pre><a name="iteration" id="iteration"></a>
+</pre><a id="iteration"></a>
             <h2 class="section">Iteration and Enumeration</h2>
             <p>There are two different approaches to walking array or object elements: Iteration and Enumeration.
             Iteration is where you step through the array indices or object property names. Enumeration is where you
@@ -241,18 +241,18 @@ for each (let color in colors) {
             All rights reserved. Embedthis, Ejscript and Appweb are trademarks of Embedthis Software LLC.</a>
 		</p>
 	</div>
-</body>
-<script src="http://www.google.com/jsapi" type="text/javascript"></script>
-<script type="text/javascript"> 
-  google.load('search', '1', {language : 'en'});
-  google.setOnLoadCallback(function() {
-    var customSearchControl = new google.search.CustomSearchControl(
-      'partner-pub-9935546676162772:ysvxxv4n9rx');
+    <script src="http://www.google.com/jsapi" type="text/javascript"></script>
+    <script type="text/javascript"> 
+      google.load('search', '1', {language : 'en'});
+      google.setOnLoadCallback(function() {
+        var customSearchControl = new google.search.CustomSearchControl(
+          'partner-pub-9935546676162772:ysvxxv4n9rx');
 
-    customSearchControl.setResultSetSize(google.search.Search.FILTERED_CSE_RESULTSET);
-    var options = new google.search.DrawOptions();
-    options.enableSearchboxOnly("http://ejscript.org/search.html");
-    customSearchControl.draw('cse-search-form', options);
-  }, true);
-</script>
+        customSearchControl.setResultSetSize(google.search.Search.FILTERED_CSE_RESULTSET);
+        var options = new google.search.DrawOptions();
+        options.enableSearchboxOnly("http://ejscript.org/search.html");
+        customSearchControl.draw('cse-search-form', options);
+      }, true);
+    </script>
+</body>
 </html>

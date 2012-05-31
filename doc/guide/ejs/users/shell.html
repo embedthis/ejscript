@@ -7,12 +7,12 @@
         Embedded, AJAX, language"/>
 	<meta name="description" content="Ejscript -- Embedded Server-Side JavaScript Language."/>
 	<meta name="robots" content="index,follow" />
-    <link href="http://www.google.com/cse/style/look/default.css" type="text/css" rel="stylesheet" />
 	<link href="../../../doc.css" rel="stylesheet" type="text/css" />
 	<link href="../../../print.css" rel="stylesheet" type="text/css" media="print"/>
     <!--[if IE]>
     <link href="../../../iehacks.css" rel="stylesheet" type="text/css" />
     </![endif]-->
+    <link href="http://www.google.com/cse/style/look/default.css" type="text/css" rel="stylesheet" />
 </head>
 
 <body>
@@ -69,12 +69,12 @@
             <p>In interactive mode, ejs will read input until it has a complete block of code and then will execute the
             block. The last result value computed will be echoed to the console. For example:</p>
             <pre>
-<font color="#FFFF00">ejs</font>
-<font color="#FFFF00">ejs-0&gt;</font>  if (true) { 
-<font color="#FFFF00">ejs-2&gt;</font>     print("Hello World"); 
-<font color="#FFFF00">ejs-2&gt;</font> }
-<font color="#FFFF00"><strong>Hello World</strong></font>
-<font color="#FFFF00">ejs-0&gt;</font>
+<b>ejs</b>
+<b>ejs-0&gt;</b>  if (true) { 
+<b>ejs-2&gt;</b>     print("Hello World"); 
+<b>ejs-2&gt;</b> }
+<b><strong>Hello World</strong></b>
+<b>ejs-0&gt;</b>
 </pre>
             <p>Note: the input prompt includes a level of nest indicator starting at zero and increasing upward as
             commands nest. This is a hint as to when you have closed sufficient braces for <b>ejs</b> to execute your
@@ -93,7 +93,7 @@ print(App.args)
 </pre>
             <p>the following would be output:</p>
             <pre>
-<strong><font color="#FFFF00">myscript.es,arg1,arg2,arg3</font></strong>
+<strong><b>myscript.es,arg1,arg2,arg3</b></strong>
 </pre>
             <p>The script file may be either a script file or an Ejscript module with a ".mod" extension that has been
             previously compiled with the <a href="compiler.html"><strong>ejsc</strong></a> command.</p>
@@ -231,18 +231,18 @@ the App.args property.
             All rights reserved. Embedthis, Ejscript and Appweb are trademarks of Embedthis Software LLC.</a>
 		</p>
 	</div>
-</body>
-<script src="http://www.google.com/jsapi" type="text/javascript"></script>
-<script type="text/javascript"> 
-  google.load('search', '1', {language : 'en'});
-  google.setOnLoadCallback(function() {
-    var customSearchControl = new google.search.CustomSearchControl(
-      'partner-pub-9935546676162772:ysvxxv4n9rx');
+    <script src="http://www.google.com/jsapi" type="text/javascript"></script>
+    <script type="text/javascript"> 
+      google.load('search', '1', {language : 'en'});
+      google.setOnLoadCallback(function() {
+        var customSearchControl = new google.search.CustomSearchControl(
+          'partner-pub-9935546676162772:ysvxxv4n9rx');
 
-    customSearchControl.setResultSetSize(google.search.Search.FILTERED_CSE_RESULTSET);
-    var options = new google.search.DrawOptions();
-    options.enableSearchboxOnly("http://ejscript.org/search.html");
-    customSearchControl.draw('cse-search-form', options);
-  }, true);
-</script>
+        customSearchControl.setResultSetSize(google.search.Search.FILTERED_CSE_RESULTSET);
+        var options = new google.search.DrawOptions();
+        options.enableSearchboxOnly("http://ejscript.org/search.html");
+        customSearchControl.draw('cse-search-form', options);
+      }, true);
+    </script>
+</body>
 </html>

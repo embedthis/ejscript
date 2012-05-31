@@ -7,12 +7,12 @@
         Embedded, AJAX, language"/>
 	<meta name="description" content="Ejscript -- Embedded Server-Side JavaScript Language."/>
 	<meta name="robots" content="index,follow" />
-    <link href="http://www.google.com/cse/style/look/default.css" type="text/css" rel="stylesheet" />
 	<link href="../../../doc.css" rel="stylesheet" type="text/css" />
 	<link href="../../../print.css" rel="stylesheet" type="text/css" media="print"/>
     <!--[if IE]>
     <link href="../../../iehacks.css" rel="stylesheet" type="text/css" />
     </![endif]-->
+    <link href="http://www.google.com/cse/style/look/default.css" type="text/css" rel="stylesheet" />
 </head>
 
 <body>
@@ -70,7 +70,7 @@
             be used as the right hand side of an assignment, as function arguments, and in return
             statements.</p>
             
-            <a name="summary" id="summary"></a>
+            <a id="summary"></a>
             <h2 class="section">Operator Summary</h2>
             <p>The following table summarizes the operators available in Ejscript. For a complete specification, please
             consult the <a href="http://www.ecma-international.org/publications/files/ECMA-ST/Ecma-262.pdf">ECMA-262
@@ -209,8 +209,7 @@
 x += 2
 </pre>
             <p>Ejscript uses a type-less VM where the types themselves implement the operators. Users can define new
-            native types which implement any of the operators on their native type.</p><a name="precedence" id=
-            "precedence"></a>
+            native types which implement any of the operators on their native type.</p><a id="precedence"></a>
             <h2>Operator Precedence</h2>
             <p>When expressions are evaluated, the operands bind to the operators depending on the precedence of the
             operators.</p>
@@ -257,7 +256,7 @@ x += 2
                         <td>,</td>
                     </tr>
                 </tbody>
-            </table><a name="operators" id="operators"></a>
+            </table><a id="operators"></a>
             <p>For example, the expression: a = x + y * z is equivalent to a = x + (y * z).</p>
         </div>
     </div>
@@ -268,18 +267,18 @@ x += 2
             All rights reserved. Embedthis, Ejscript and Appweb are trademarks of Embedthis Software LLC.</a>
 		</p>
 	</div>
-</body>
-<script src="http://www.google.com/jsapi" type="text/javascript"></script>
-<script type="text/javascript"> 
-  google.load('search', '1', {language : 'en'});
-  google.setOnLoadCallback(function() {
-    var customSearchControl = new google.search.CustomSearchControl(
-      'partner-pub-9935546676162772:ysvxxv4n9rx');
+    <script src="http://www.google.com/jsapi" type="text/javascript"></script>
+    <script type="text/javascript"> 
+      google.load('search', '1', {language : 'en'});
+      google.setOnLoadCallback(function() {
+        var customSearchControl = new google.search.CustomSearchControl(
+          'partner-pub-9935546676162772:ysvxxv4n9rx');
 
-    customSearchControl.setResultSetSize(google.search.Search.FILTERED_CSE_RESULTSET);
-    var options = new google.search.DrawOptions();
-    options.enableSearchboxOnly("http://ejscript.org/search.html");
-    customSearchControl.draw('cse-search-form', options);
-  }, true);
-</script>
+        customSearchControl.setResultSetSize(google.search.Search.FILTERED_CSE_RESULTSET);
+        var options = new google.search.DrawOptions();
+        options.enableSearchboxOnly("http://ejscript.org/search.html");
+        customSearchControl.draw('cse-search-form', options);
+      }, true);
+    </script>
+</body>
 </html>

@@ -7,12 +7,12 @@
         Embedded, AJAX, language"/>
 	<meta name="description" content="Ejscript -- Embedded Server-Side JavaScript Language."/>
 	<meta name="robots" content="index,follow" />
-    <link href="http://www.google.com/cse/style/look/default.css" type="text/css" rel="stylesheet" />
 	<link href="../../../doc.css" rel="stylesheet" type="text/css" />
 	<link href="../../../print.css" rel="stylesheet" type="text/css" media="print"/>
     <!--[if IE]>
     <link href="../../../iehacks.css" rel="stylesheet" type="text/css" />
     </![endif]-->
+    <link href="http://www.google.com/cse/style/look/default.css" type="text/css" rel="stylesheet" />
 </head>
 
 <body>
@@ -68,7 +68,7 @@
             <p><b>NOTE:</b> Please read <a href="building.html">Building from Source</a> before your read this
             document. It provides valuable background about building from source.</p>
             
-            <a name="newOs" id="newOs"></a>
+            <a id="newOs"></a>
             <h2>Steps in Porting to a New Operating System</h2>
             <ol>
                 <li>
@@ -83,7 +83,7 @@
                     Ejscript software already supports and use it as a base to modify. For example, if you are porting to
                     QNX, you may want to use the Linux port as a base.</p>
                     <p>Run configure for this "closest" O/S. You should specify '--without all' to select the minimal
-                    Ejscript feature set. This allows you to first focus on the porting essentails.</p>
+                    Ejscript feature set. This allows you to first focus on the porting essentials.</p>
                     <p>Next, copy the output products directory. For example:
                     if copying Linux on a 32 bit system, configure will create a linux-x32-debug directory. Copy this to
                     qnx-32-debug.</p>
@@ -160,7 +160,7 @@ ejs
                 </li>
             </ol>
             
-            <a name="workingWithTheTeam" id="workingWithTheTeam"></a>
+            <a id="workingWithTheTeam"></a>
             <h2 class="section">Working with the Ejscript Development Team</h2>
             <p>Once you have a basic port running, you should send it back for the team to look over. They can provide
             advice and suggestions. At the first opportunity, your changes may be merged back into the development tree
@@ -176,18 +176,18 @@ ejs
             All rights reserved. Embedthis, Ejscript and Appweb are trademarks of Embedthis Software LLC.</a>
 		</p>
 	</div>
-</body>
-<script src="http://www.google.com/jsapi" type="text/javascript"></script>
-<script type="text/javascript"> 
-  google.load('search', '1', {language : 'en'});
-  google.setOnLoadCallback(function() {
-    var customSearchControl = new google.search.CustomSearchControl(
-      'partner-pub-9935546676162772:ysvxxv4n9rx');
+    <script src="http://www.google.com/jsapi" type="text/javascript"></script>
+    <script type="text/javascript"> 
+      google.load('search', '1', {language : 'en'});
+      google.setOnLoadCallback(function() {
+        var customSearchControl = new google.search.CustomSearchControl(
+          'partner-pub-9935546676162772:ysvxxv4n9rx');
 
-    customSearchControl.setResultSetSize(google.search.Search.FILTERED_CSE_RESULTSET);
-    var options = new google.search.DrawOptions();
-    options.enableSearchboxOnly("http://ejscript.org/search.html");
-    customSearchControl.draw('cse-search-form', options);
-  }, true);
-</script>
+        customSearchControl.setResultSetSize(google.search.Search.FILTERED_CSE_RESULTSET);
+        var options = new google.search.DrawOptions();
+        options.enableSearchboxOnly("http://ejscript.org/search.html");
+        customSearchControl.draw('cse-search-form', options);
+      }, true);
+    </script>
+</body>
 </html>

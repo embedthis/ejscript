@@ -7,12 +7,12 @@
         Embedded, AJAX, language"/>
 	<meta name="description" content="Ejscript -- Embedded Server-Side JavaScript Language."/>
 	<meta name="robots" content="index,follow" />
-    <link href="http://www.google.com/cse/style/look/default.css" type="text/css" rel="stylesheet" />
 	<link href="../../../doc.css" rel="stylesheet" type="text/css" />
 	<link href="../../../print.css" rel="stylesheet" type="text/css" media="print"/>
     <!--[if IE]>
     <link href="../../../iehacks.css" rel="stylesheet" type="text/css" />
     </![endif]-->
+    <link href="http://www.google.com/cse/style/look/default.css" type="text/css" rel="stylesheet" />
 </head>
 
 <body>
@@ -35,8 +35,6 @@
             <h1>Quick Nav</h1>
             <ul>
                 <li><a href="#modes">Mode Controls</a></li>
-                <li><a href="#setLang">Setting Language Mode</a></li>
-                <li><a href="#compiler">Compiler Checking Mode</a></li>
                 <li><a href="#standard">Standard Mode</a></li>
                 <li><a href="#strict">Strict Mode</a></li>
                 <li><a href="#setCompiler">Setting Language</a></li>
@@ -75,7 +73,7 @@
             configuration and script pragma directives. Language modes can be selected on a source file-by-file basis.
             So you can mix and match ECMA-262 pure JavaScript with enhanced Ejscript code if you wish.</p>
             
-            <a name= "modes" id="modes"></a>
+            <a id="modes"></a>
             <h2 class="section">Compiler Checking Mode</h2>
             <p>The Compiler checking mode controls how aggressively the compiler warns about potential program
             errors.</p>
@@ -92,16 +90,18 @@
             checking. The checking mode only impacts the module source code itself and not the users of the module.</p>
             <p>The compiler checking mode can be controlled by a <b>use standard</b> or <b>use strict</b> pragma
             directive in your scripts. Like the Language Compliance pragma, this pragma takes effect on a file by file
-            basis.</p><a name="standard" id="standard"></a>
+            basis.</p><a id="standard"></a>
             <h2>Standard Mode</h2>
             <p>Standard mode is the traditional JavaScript compilation behavior. Variables do not have to be declared
             ahead of time and no warnings are issued for incompatible type usage. Issues are resolved at run-time, by
-            dynamic casting or by issuing exceptions.</p><a name="strict" id="strict"></a>
+            dynamic casting or by issuing exceptions.</p><a id="strict"></a>
             <h2>Strict Mode</h2>
             <p>Strict mode applies compile time static checking and type conversions to try to handle and catch errors
             before run-time. In strict mode, variables must be declared before they are used. If the script code is not
             using <b>ecma</b> language compliance, variables must also be typed. Functions must define a return type
-            and must type their parameters.</p><a name="setCompiler" id="setCompiler"></a>
+            and must type their parameters.</p>
+            
+            <a id="setCompiler"></a>
             <h2 class="section">Setting the Compiler Checking Mode</h2>
             <p>The compiler mode control is set to a default value by command line switches to the <b>ejs</b> shell or
             <b>ec</b> compiler. This can be overridden by an Ejscript pragma directive in your script files on a
@@ -134,18 +134,18 @@ use standard
             All rights reserved. Embedthis, Ejscript and Appweb are trademarks of Embedthis Software LLC.</a>
 		</p>
 	</div>
-</body>
-<script src="http://www.google.com/jsapi" type="text/javascript"></script>
-<script type="text/javascript"> 
-  google.load('search', '1', {language : 'en'});
-  google.setOnLoadCallback(function() {
-    var customSearchControl = new google.search.CustomSearchControl(
-      'partner-pub-9935546676162772:ysvxxv4n9rx');
+    <script src="http://www.google.com/jsapi" type="text/javascript"></script>
+    <script type="text/javascript"> 
+      google.load('search', '1', {language : 'en'});
+      google.setOnLoadCallback(function() {
+        var customSearchControl = new google.search.CustomSearchControl(
+          'partner-pub-9935546676162772:ysvxxv4n9rx');
 
-    customSearchControl.setResultSetSize(google.search.Search.FILTERED_CSE_RESULTSET);
-    var options = new google.search.DrawOptions();
-    options.enableSearchboxOnly("http://ejscript.org/search.html");
-    customSearchControl.draw('cse-search-form', options);
-  }, true);
-</script>
+        customSearchControl.setResultSetSize(google.search.Search.FILTERED_CSE_RESULTSET);
+        var options = new google.search.DrawOptions();
+        options.enableSearchboxOnly("http://ejscript.org/search.html");
+        customSearchControl.draw('cse-search-form', options);
+      }, true);
+    </script>
+</body>
 </html>

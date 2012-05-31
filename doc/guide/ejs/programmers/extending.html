@@ -7,12 +7,12 @@
         Embedded, AJAX, language"/>
 	<meta name="description" content="Ejscript -- Embedded Server-Side JavaScript Language."/>
 	<meta name="robots" content="index,follow" />
-    <link href="http://www.google.com/cse/style/look/default.css" type="text/css" rel="stylesheet" />
 	<link href="../../../doc.css" rel="stylesheet" type="text/css" />
 	<link href="../../../print.css" rel="stylesheet" type="text/css" media="print"/>
     <!--[if IE]>
     <link href="../../../iehacks.css" rel="stylesheet" type="text/css" />
     </![endif]-->
+    <link href="http://www.google.com/cse/style/look/default.css" type="text/css" rel="stylesheet" />
 </head>
 
 <body>
@@ -57,8 +57,7 @@
                 <li>Creating <a href="#native">native modules</a> &mdash; C Language loadable type modules</li>
             </ul>
             <p>Scripting is certainly quicker, easier and more secure than creating native C modules. However, Native C
-            coding may run faster and gives you access to the full Ejscript Virtual Machine.</p><a name="script" id=
-            "script"></a>
+            coding may run faster and gives you access to the full Ejscript Virtual Machine.</p><a id="script"></a>
             <h2 class="section">Script Library Modules</h2>
             <p>Script code can be compiled and the byte code saved for use by other users as a module file. When script
             code is compiled, the Ejscript <b>ejsc</b> compiler saves the output in a module file with a <b>.mod</b>
@@ -95,7 +94,7 @@ module mytools {
             <pre>
 ejsc anyname.es
 ls -l mytools*
-<b>-rw-r--r--  1 bethr  wheel  78 Feb 19 19:38 mytools.mod</b>
+<b>-rw-r--r--  1 john  wheel  78 Feb 19 19:38 mytools.mod</b>
 </pre>
             <p>If the compiler is invoked without the --out switch, it will automatically create module files
             corresponding to each module directive. Note that module blocks may span several files and that the ejsc
@@ -130,8 +129,7 @@ ejs program.es
             module. Users of such a module will need to explicitly load the module. A solution is to create a dummy
             module directive purely to give the module a name. </p>
            
-            <a name="native"
-            id="native"></a>
+            <a id="native"></a>
             <h2 class="section">Native Modules</h2>
             <p>Native modules are Ejscript modules that have their implementation provided by native C code rather than
             by compiled byte code. Native modules have full access to the Ejscript Virtual Machine. If you need maximum
@@ -229,7 +227,7 @@ int acmeModuleInit(Ejs *ejs, MprModule *module)
     type = ejsGetTypeByName(ejs, ejsName(ejs, "acme", "Shape"));
     /* Bind the C functions to the JavaScript functions */
     ejsBindConstructor(ejs, type, constructor);
-    ejsBindMethod(ejs, type->prototype, ES_acme_Rocket_blastOff, blastOff);
+    ejsBindMethod(ejs, type-&gt;prototype, ES_acme_Rocket_blastOff, blastOff);
     return module;
 }
 </pre>
@@ -262,7 +260,7 @@ static EjsObj *blastOff(Ejs *ejs, EjsObj *rocket, int argc, EjsObj **argv)
             <p>For each function, think if it should be created in script code or in native code. You can often code
             functions that are not executed as frequently in script code without impacting performance. It is a good
             strategy to prototype the module in script first and then convert the prototype to native code on a
-            function-by-function basis.</p><a name="api" id="api"></a>
+            function-by-function basis.</p><a id="api"></a>
             <h2 class="section">Native API</h2>
             <p>Ejscript has an extensive native API for interacting with the Ejscript virtual machine. Because types
             are themselves objects, the API offers a consistent way to access properties from objects or classes. Some
@@ -450,18 +448,18 @@ static EjsObj *blastOff(Ejs *ejs, EjsObj *rocket, int argc, EjsObj **argv)
             All rights reserved. Embedthis, Ejscript and Appweb are trademarks of Embedthis Software LLC.</a>
 		</p>
 	</div>
-</body>
-<script src="http://www.google.com/jsapi" type="text/javascript"></script>
-<script type="text/javascript"> 
-  google.load('search', '1', {language : 'en'});
-  google.setOnLoadCallback(function() {
-    var customSearchControl = new google.search.CustomSearchControl(
-      'partner-pub-9935546676162772:ysvxxv4n9rx');
+    <script src="http://www.google.com/jsapi" type="text/javascript"></script>
+    <script type="text/javascript"> 
+      google.load('search', '1', {language : 'en'});
+      google.setOnLoadCallback(function() {
+        var customSearchControl = new google.search.CustomSearchControl(
+          'partner-pub-9935546676162772:ysvxxv4n9rx');
 
-    customSearchControl.setResultSetSize(google.search.Search.FILTERED_CSE_RESULTSET);
-    var options = new google.search.DrawOptions();
-    options.enableSearchboxOnly("http://ejscript.org/search.html");
-    customSearchControl.draw('cse-search-form', options);
-  }, true);
-</script>
+        customSearchControl.setResultSetSize(google.search.Search.FILTERED_CSE_RESULTSET);
+        var options = new google.search.DrawOptions();
+        options.enableSearchboxOnly("http://ejscript.org/search.html");
+        customSearchControl.draw('cse-search-form', options);
+      }, true);
+    </script>
+</body>
 </html>

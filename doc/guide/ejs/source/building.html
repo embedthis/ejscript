@@ -7,12 +7,12 @@
         Embedded, AJAX, language"/>
 	<meta name="description" content="Ejscript -- Embedded Server-Side JavaScript Language."/>
 	<meta name="robots" content="index,follow" />
-    <link href="http://www.google.com/cse/style/look/default.css" type="text/css" rel="stylesheet" />
 	<link href="../../../doc.css" rel="stylesheet" type="text/css" />
 	<link href="../../../print.css" rel="stylesheet" type="text/css" media="print"/>
     <!--[if IE]>
     <link href="../../../iehacks.css" rel="stylesheet" type="text/css" />
     </![endif]-->
+    <link href="http://www.google.com/cse/style/look/default.css" type="text/css" rel="stylesheet" />
 </head>
 
 <body>
@@ -40,11 +40,9 @@
                 <li><a href="#configuring">Configuring the Build</a></li>
                 <li><a href="#cross">Cross Compilation</a></li>
                 <li><a href="#building">Building</a></li>
-                <li><a href="#customizing">Customizing</a></li>
                 <li><a href="#installing">Installing</a></li>
                 <li><a href="#repository">Source Repository</a></li>
                 <li><a href="#keyFiles">Key File and Directories</a></li>
-            </ul>
             </ul>
 <!-- BeginDsi "dsi/sourceSeeAlso.html" -->
             <h1>See Also</h1>
@@ -65,7 +63,7 @@
             The source distribution contains all the necessary source files, headers and tools to
             reconfigure, build and verify the software. </p>
             
-            <a name="platforms" id="platforms"></a>
+            <a id="platforms"></a>
             <p>Several build environments are supported:</p>
             <ul>
                 <li><b>Linux</b> &mdash; Linux 2.6 with GNU C/C++</li>
@@ -81,7 +79,7 @@
             the <a href="porting.html">Porting Guide</a> for more details. </p>
             <p>If you want to build using source from the source code repository, please read these <a href=
                 "#repository">additional instructions</a>.</p>
-            <a name="overview" id="overview"></a>
+            <a id="overview"></a>
             <h2 class="section">Build Overview</h2>
             <p>The software supports several methods of building from source:
             <ol>
@@ -96,6 +94,8 @@
             <p>Building with make or nmake is useful for a minimal build, but you do not have the flexibility to configure
             the product for your system. Similarly, IDE builds are convenient, but are somewhat fixed in the software
             configuration they build. We recommend building with Bit. It is fast, flexible and configurable.</p>
+
+            <a id="env"></a>
             <h3>Preparing the Environment</h3>
             <p>Before building, you may need to install required tools such as cross-compilers, SDKs, and system
             libraries. If you wish to build Ejscript with the support of third-party packages such as 
@@ -113,7 +113,8 @@
             variables.</p>
             <h4>Unix / Linux</h4>
             <p>To build on Linux, you may need to install the libpam and zlib libraries.</p>
-            <a name="make" id="make"></a>
+
+            <a id="make"></a>
             <h3>Building with Make/Nmake</h3>
             <p>Ejscript provides a suite of Makefiles under the projects directory for common platforms. These are 
             single, simple Makefiles that build a generic configuration of Ejscript. You may need to edit the Makefile
@@ -125,34 +126,34 @@
             <pre>make -f projects/ejs-macosx.mk</pre>
             <p>To build on Windows with nmake, type:
             <pre>nmake -f projects\ejs-windows.nmake</pre>
-            <a name="sh" id="sh"></a>
+            <a id="sh"></a>
             <h3>Building with Shell Scripts</h3>
             <p>Ejscript provides simple shell scripts to build Ejscript. Unlike building with make, bit or and IDE, these
             scripts will always completely rebuild the product from source. For example:</p>
             <pre>bash projects/linux-x86.sh</pre>
             
-            <a name="ide" id="ide"></a>
+            <a id="ide"></a>
             <h3>Building with an IDE</h3>
             <p>Ejscript provides Visual Studio and Xcode projects. To build Ejscript with the Visual Studio project, 
             run Visual Studio 2010 or later (The Express editions are fine to use). Then open the
             projects/ejs-windows.sln Solution project. Select Build Solution to build. Select Ejscript as the start up
             project to debug.</p>
             <p>To build Ejscript with the Xcode on Mac OS X, run Xcode and open the
-            <em>projects/ejs-macosx.xcodeproj</em> project.  Then select Product->Build to build. To debug, you will need to
-            create use Product->Edit Scheme to set the executable to run under the Info tab, and define the working
+            <em>projects/ejs-macosx.xcodeproj</em> project.  Then select Product-&gt;Build to build. To debug, you will need to
+            create use Product-&gt;Edit Scheme to set the executable to run under the Info tab, and define the working
             directory under the Options tab. Set the working directory to the "test" directory of the source tree. </p>
             <p>If you have built first with bit, make, nmake or shell scripts, you should remove the generated platform
             output directory and all its contents before building with the IDE.</p>
             <pre>bash projects/linux-x86.sh</pre>
             
-            <a name="bit" id="bit"></a>
+            <a id="bit"></a>
             <h3>Building with Bit</h3>
             <p>The procedure for building with Bit is the same for all supported platforms. The <a
-            href="../bit/index.html">bit</a> tool is used to configure and to build Ejscript. Bit is part of
+            href="../users/bit.html">bit</a> tool is used to configure and to build Ejscript. Bit is part of
             Ejscript but it must be built before it can be used. This means, the first time build of Ejscript must be a
             bootstrap build using make/nmake.
             
-            <a name="configuring" id="configuring"></a>
+            <a id="configuring"></a>
             <h2 class="section">Configure Ejscript</h2>
             <p>Ejscript may be customized for your local system by running <em>bit configure</em>. This is used to select
             features, options, and integrate third-party packages. </p>
@@ -186,7 +187,7 @@
             <p>The <em>--release</em> switch instructs bit to build an optimized production release. This will disable
             non-essential debugging code and logging. The <em>--without all</em> switch will disable non-essential
             features to create a minimal build.</p>
-            <a name="options" id="options"></a>
+            <a id="options"></a>
             <h2 class="section">Configure Options</h2>
             <p>The tables below describe the configuration options.
             <h3>Basic Configure Options</h3>
@@ -207,7 +208,7 @@
                     <td>Display the bit program usage help.</td>
                 </tr>
                 <tr>
-                    <td nowrap="nowrap">--set KEY=VALUE</td>
+                    <td class="nowrap">--set KEY=VALUE</td>
                     <td>Set the value of a property in the bit settings collection. For example: "--set
                         product=myProduct".</td>
                 </tr>
@@ -256,7 +257,7 @@
                 </thead>
                 <tbody>
                 <tr>
-                    <td nowrap="nowrap">--without all</td>
+                    <td class="nowrap">--without all</td>
                     <td></td>
                     <td>Disable all non-essential possible packages.</td>
                 </tr>
@@ -266,7 +267,7 @@
                     <td>Build with debug assert checking on.</td>
                 </tr>
                 <tr>
-                    <td nowrap="nowrap">--set tune=MODE</td>
+                    <td class="nowrap">--set tune=MODE</td>
                     <td>size</td>
                     <td>Tune the build to optimize for "size", "speed". You can also select "balanced" for a balance
                     between speed and size.</td>
@@ -355,10 +356,10 @@ CC=/opt/bin/ccarm configure
             <pre>configure --with php=/path/to/php-source</pre>
             <p>To configure to build for 32-bit X86 (when on a 64-bit system):</p>
             <pre>configure --emulate x86</pre>
-            <p>Use the "--help" switch to see the available options or see the <a href="bit.html">Bit</a> document for
-            more details.</p> 
+            <p>Use the "--help" switch to see the available options or see the <a href="../users/bit.html">Bit</a>
+            document for more details.</p> 
             
-            <a name="packages" id="packages"></a>
+            <a id="packages"></a>
             <h2 class="section">Building with Third-Party Packages</h2>
             <p>The configuration process supports the resolution of external packages that extend and enhance Ejscript, 
                 such as MatrixSSL and OpenSSL. By default, Ejscript can locate these packages if the source
@@ -376,7 +377,7 @@ bit
             </ol>
             <p>During configuration, the required Matrixssl libraries and headers will be copied into
             the Ejscript source tree. </p>
-            <a name="cross" id="cross"></a>
+            <a id="cross"></a>
             <h2 class="section">Cross Compilation</h2>
             <p>To build a product for platform different to that of the local system is called <em>cross compiling</em>.
             Sometimes this cross compiling is just for a different instruction set (say x64 instead of x86). Other
@@ -387,7 +388,7 @@ bit
             specified and the 'local' platform alias may be used for the local development platform.</p>
             <pre>bit -platform linux-arm -configure . </pre>
             <p>This will create a windows-x64.bit configuration file and a start.es that references it. The
-            platform switch does not need to be respecified after configuration.</p>
+            platform switch does not need to be restated after configuration.</p>
             <p>Some products require local building to make tools that are required to build for any platform. These
             products add a "platforms: ['local']" property to their settings collection in the main.bit file. This
             automatically adds the local platform to the platforms list and is the same as adding '-platform local' on
@@ -411,7 +412,7 @@ CFLAGS=-I/opt/include \
 ./configure --debug --platform linux-arm
 </pre>
             
-            <a name="building" id="building"></a>
+            <a id="building"></a>
             <h2 class="section">Building Bit</h2>
             <p>Once the build configuration is complete, you may proceed to build the source code by typing:</p>
             <pre>
@@ -430,7 +431,7 @@ bit rebuild    # Rebuild all targets
 bit install    # Install the built software locally
 bit --help     # Show bit usage</pre>
             
-            <a name="installing" id="installing"></a>
+            <a id="installing"></a>
             <h2 class="section">Installing</h2>
             <p>You can install the newly built software via:</p>
             <pre>
@@ -448,13 +449,14 @@ sudo bit uninstall
             you can extract the required Ejscript files from this release archive and include them with your application.
             Alternatively, you can extract them from the staging directory
             under the <em>OS-ARCH-PROFILE/pkg/bin/ejs-VERSION/contents</em> directory. </p>
+
+            <a id="repository"></a>
             <h2 class="section">Building from the Source Code Repository</h2>
             <p>You can checkout a copy of the product source code via:</p>
             <pre>
  git clone <a href="http://github.com/embedthis/ejs-2">http://github.com/embedthis/ejs-2</a>
 </pre>
-            <p>Once checked out, the normal instructions for building from source apply.</p><a name="keyFiles" id=
-            "keyFiles"></a>
+            <p>Once checked out, the normal instructions for building from source apply.</p><a id="keyFiles"></a>
             <h2 class="section">Key Files and Directories</h2>
             <p>Source trees contain the following key directories under the top directory.</p>
             <table title="dirs">
@@ -478,7 +480,7 @@ sudo bit uninstall
                 </tr>
                 <tr>
                     <td></td>
-                    <td nowrap="nowrap">OS-ARCH-PROFILE</td>
+                    <td class="nowrap">OS-ARCH-PROFILE</td>
                     <td>Build output directory.</td>
                 </tr>
                 <tr>
@@ -542,7 +544,7 @@ sudo bit uninstall
                     <td>Build configuration script. This invokes Bit to configure Ejscript on the development system.</td>
                 </tr>
                 <tr>
-                    <td nowrap="nowrap">OS-ARCH.bit</td>
+                    <td class="nowrap">OS-ARCH.bit</td>
                     <td>Platform specific Bit file. There will be one platform bit file for each target platform.</td>
                 </tr>
                 <tr>
@@ -568,18 +570,18 @@ sudo bit uninstall
             All rights reserved. Embedthis, Ejscript and Appweb are trademarks of Embedthis Software LLC.</a>
 		</p>
 	</div>
-</body>
-<script src="http://www.google.com/jsapi" type="text/javascript"></script>
-<script type="text/javascript"> 
-  google.load('search', '1', {language : 'en'});
-  google.setOnLoadCallback(function() {
-    var customSearchControl = new google.search.CustomSearchControl(
-      'partner-pub-9935546676162772:ysvxxv4n9rx');
+    <script src="http://www.google.com/jsapi" type="text/javascript"></script>
+    <script type="text/javascript"> 
+      google.load('search', '1', {language : 'en'});
+      google.setOnLoadCallback(function() {
+        var customSearchControl = new google.search.CustomSearchControl(
+          'partner-pub-9935546676162772:ysvxxv4n9rx');
 
-    customSearchControl.setResultSetSize(google.search.Search.FILTERED_CSE_RESULTSET);
-    var options = new google.search.DrawOptions();
-    options.enableSearchboxOnly("http://ejscript.org/search.html");
-    customSearchControl.draw('cse-search-form', options);
-  }, true);
-</script>
+        customSearchControl.setResultSetSize(google.search.Search.FILTERED_CSE_RESULTSET);
+        var options = new google.search.DrawOptions();
+        options.enableSearchboxOnly("http://ejscript.org/search.html");
+        customSearchControl.draw('cse-search-form', options);
+      }, true);
+    </script>
+</body>
 </html>

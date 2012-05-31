@@ -7,12 +7,12 @@
         Embedded, AJAX, language"/>
 	<meta name="description" content="Ejscript -- Embedded Server-Side JavaScript Language."/>
 	<meta name="robots" content="index,follow" />
-    <link href="http://www.google.com/cse/style/look/default.css" type="text/css" rel="stylesheet" />
 	<link href="../../../doc.css" rel="stylesheet" type="text/css" />
 	<link href="../../../print.css" rel="stylesheet" type="text/css" media="print"/>
     <!--[if IE]>
     <link href="../../../iehacks.css" rel="stylesheet" type="text/css" />
     </![endif]-->
+    <link href="http://www.google.com/cse/style/look/default.css" type="text/css" rel="stylesheet" />
 </head>
 
 <body>
@@ -35,17 +35,16 @@
             <h1>Quick Nav</h1>
             <ul>
                 <li><a href="#flow">Processing Flow</a></li>
-                <li><a href="#routing">Routing Requests</a></li>
-                <li><a href="#anatomy">Anatomy of a Controller</a></li>
+                <li><a href="#anatomy">Controller Anatomy</a></li>
                 <li><a href="#actions">Actions</a></li>
                 <li><a href="#context">Controller Context</a></li>
-                <li><a href="#processing">Processing Requests</a></li>
+                <li><a href="#processing">Request Processing</a></li>
                 <li><a href="#models">Model Data</a></li>
                 <li><a href="#forms">Form Data</a></li>
                 <li><a href="#views">Rendering Views</a></li>
                 <li><a href="#generating">Generating Controllers</a></li>
                 <li><a href="#controller">Controller Class</a></li>
-                <!-- <li><a href="#tips">Tips and Tricks</a></li> -->
+                <li><a href="#filters">Filters</a></li>
             </ul>
 <!-- BeginDsi "dsi/ejsWebSeeAlso.html" -->
 		        <h1>See Also</h1>
@@ -68,7 +67,8 @@
         <div class="contentLeft">
             <h1>Controllers and Actions</h1>
             <p>Ejscript controllers manage the application and respond to client requests. They are the conductors of
-            the application and orchestrate the application's activities. <a name="flow" id="flow"></a></p>
+            the application and orchestrate the application's activities. </p>
+            <a id="flow"></a>
             <h2>Processing Flow</h2>
             <p>Ejscript controllers process requests in stages:</p>
             <ol>
@@ -82,9 +82,9 @@
             <p>When a request is received, Ejscript will parse and decode the request before routing to the appropriate
             Controller where it will create an instance of the controller class and invoke the requested
             action method.</p>
-            <a name="anatomy" id="anatomy"></a>
+            <a id="anatomy"></a>
             <h2 class="section">Anatomy of a Controller</h2>
-            <p>So what does a controller look like?</p><a name="example" id="example"></a>
+            <p>So what does a controller look like?</p>
             <pre>
 public class CartController extends ApplicationController {
     public var product: Product
@@ -120,7 +120,8 @@ public class CartController extends ApplicationController {
 http://embedthis.com/myApp/cart/create
 </pre>
             <p>The <em>create</em> action will be invoked. It will create a new product and then render the
-            <em>edit.ejs</em> view back to the client.</p><a name="actions" id="actions"></a>
+            <em>edit.ejs</em> view back to the client.</p>
+            <a id="actions"></a>
             <h2 class="section">Actions</h2>
             <p>Actions are where the controller does its work. In Ejscript, actions are simple JavaScript functions
             prefixed with an <em>action</em> qualifier. They don't need to be registered or otherwise configured before
@@ -128,7 +129,8 @@ http://embedthis.com/myApp/cart/create
             action specified in the URL.</p>
             <p>When a request is received, the controller framework looks for an action method of the required name. If
             one is not found, it invokes the <em>missing</em> action method which renders a default error message back
-            to the client.</p><a name="context" id="context"></a>
+            to the client.</p>
+            <a id="context"></a>
             <h3>Controller Context</h3>
             <p>Ejscript establishes a request context for the controller before invoking the action. This consists of
             the following objects which are visible to actions:</p>
@@ -143,33 +145,37 @@ http://embedthis.com/myApp/cart/create
             </ul>
             <p>The controller can add to this context by declaring public variables in the controller class or the
             ApplicationController which is the base class for all controllers. Views can automatically access any such
-            public controller variables.</p><a name="processing" id="processing"></a>
+            public controller variables.</p>
+            <a id="processing"></a>
             <h3>Processing the Request</h3>
             <p>The action method can perform any processing it desires. There are no real restrictions except you don't
             want to block for too long without giving the client some feedback.</p>
             <p>Actions often retrieve a database record via the Model and store an object representing the model in a
             public variable for easy access by the view. NOTE: the controller is not persistent across client
-            requests.</p><a name="models" id="models"></a>
+            requests.</p>
+            <a id="models"></a>
             <h2 class="section">Model Data</h2>
             <p>Ejscript provides an Object Relational Mapping (ORM) layer for accessing database data via convenient
             JavaScript objects. The ORM layer is a collection of database Model classes for the application.
             controllers use this layer to access the database via these Model classes. A typical paradigm is for action
             methods to read a database record and store the record in a public controller property. The view can then
             simply access the database data via this property.</p>
-            <p>For more details, please see <a href="models.html">Database Models</a>.</p><a name="forms" id=
-            "forms"></a>
+            <p>For more details, please see <a href="models.html">Database Models</a>.</p>
+            <a id="forms"></a>
             <h2 class="section">Form Data</h2>
             <p>HTTP Form data is marshalled by Ejscript into the <em>params</em> object which is accessible to actions.
             Each HTML input element posted by the client will become a property of <em>params</em>. Ejscript can also
             organize form data into nested objects. If an input element name contains a period, then Ejscript will
-            create nested objects to match the input element name.</p><a name="views" id="views"></a>
+            create nested objects to match the input element name.</p>
+            <a id="views"></a>
             <h3>Rendering Views</h3>
             <p>After processing the request, the controller is responsible for rendering a view back to the client. If
             the action method does not explicitly render a view, Ejscript will look for a view with the same name as
             the action method.</p>
             <p>In the prior <a href="#example">example</a>, the <em>edit</em> action did not call any <em>render</em>
             function, so the framework will look for, and if found, run a view
-            <em>views/cart/edit.ejs</em>.</p><a name="generating" id="generating"></a>
+            <em>views/cart/edit.ejs</em>.</p>
+            <a id="generating"></a>
             <h2 class="section">Generating Controllers and Actions</h2>
             <p>Ejscript includes an an application generator, called <em>mvc</em> to make it quick and easy to
             create controllers, actions and controller scaffolds. To generate a new controller, run:</p>
@@ -200,8 +206,9 @@ mvc generate scaffold MODEL [field:type ...]
             specified field of the requested type. The valid database types are: <em>binary, boolean, date, datetime,
             decimal, float, integer, number, string, text, time, timestamp</em>.</p>The scaffold will include an
             <em>edit</em> action and view that provides <em>add</em> and <em>edit</em> capability. The <em>list</em>
-            action and view, provides the ability to list the database table rows and select an entry to edit. <a name=
-            "controller" id="controller"></a>
+            action and view, provides the ability to list the database table rows and select an entry 
+            to edit.</p>
+            <a id="controller"></a>
             <h2 class="section">Controller Class</h2>
             <p>The Controller class has a large set of methods and properties. See the <a href=
             "../../../api/ejscript/index.html">Ejscript Library</a> for full details. Some of the more important
@@ -343,6 +350,8 @@ mvc generate scaffold MODEL [field:type ...]
                     </tr>
                 </tbody>
             </table>
+
+            <a id="filters"></a>
             <h2 class="section">Filters</h2>
             <p>Filters enable a controller to perform processing before and after actions are run. Filters are useful
             to do authentication and logging. Filters run in the same context as an action method and can access the
@@ -372,8 +381,10 @@ public class TaskController extends BaseController {
                 <li><b>only</b> &mdash; Run filter only for the specified actions.</li>
             </ul>
             <p>When specifying the argument to <em>except</em> and <em>only</em>, you can provide either a single
-            action name as a string or an array of action names.</p><!--
-        <a name="tips"></a>
+            action name as a string or an array of action names.</p>
+            
+        <!--
+        <a id="tips"></a>
         <h2 class="section">Tips and Tricks</h2>
         <p>The following hits provide solutions for common tasks:</p>
         <h3>Redirect the Client</h3>
@@ -396,18 +407,18 @@ public class TaskController extends BaseController {
             All rights reserved. Embedthis, Ejscript and Appweb are trademarks of Embedthis Software LLC.</a>
 		</p>
 	</div>
-</body>
-<script src="http://www.google.com/jsapi" type="text/javascript"></script>
-<script type="text/javascript"> 
-  google.load('search', '1', {language : 'en'});
-  google.setOnLoadCallback(function() {
-    var customSearchControl = new google.search.CustomSearchControl(
-      'partner-pub-9935546676162772:ysvxxv4n9rx');
+    <script src="http://www.google.com/jsapi" type="text/javascript"></script>
+    <script type="text/javascript"> 
+      google.load('search', '1', {language : 'en'});
+      google.setOnLoadCallback(function() {
+        var customSearchControl = new google.search.CustomSearchControl(
+          'partner-pub-9935546676162772:ysvxxv4n9rx');
 
-    customSearchControl.setResultSetSize(google.search.Search.FILTERED_CSE_RESULTSET);
-    var options = new google.search.DrawOptions();
-    options.enableSearchboxOnly("http://ejscript.org/search.html");
-    customSearchControl.draw('cse-search-form', options);
-  }, true);
-</script>
+        customSearchControl.setResultSetSize(google.search.Search.FILTERED_CSE_RESULTSET);
+        var options = new google.search.DrawOptions();
+        options.enableSearchboxOnly("http://ejscript.org/search.html");
+        customSearchControl.draw('cse-search-form', options);
+      }, true);
+    </script>
+</body>
 </html>

@@ -7,12 +7,12 @@
         Embedded, AJAX, language"/>
 	<meta name="description" content="Ejscript -- Embedded Server-Side JavaScript Language."/>
 	<meta name="robots" content="index,follow" />
-    <link href="http://www.google.com/cse/style/look/default.css" type="text/css" rel="stylesheet" />
 	<link href="../../../doc.css" rel="stylesheet" type="text/css" />
 	<link href="../../../print.css" rel="stylesheet" type="text/css" media="print"/>
     <!--[if IE]>
     <link href="../../../iehacks.css" rel="stylesheet" type="text/css" />
     </![endif]-->
+    <link href="http://www.google.com/cse/style/look/default.css" type="text/css" rel="stylesheet" />
 </head>
 
 <body>
@@ -54,18 +54,18 @@
             Ejscript from source. For the product release notes and a detailed description of the installation
             procedure, please consult the <a href="../../../product/releaseNotes.html">Release Notes</a> supplied with
             this release.</p>
-            <p>TODO - Update</p><a name="overview" id="overview"></a>
+            <p>TODO - Update</p><a id="overview"></a>
             <h2>Overview</h2>
             <p>The Ejscript source distribution contains all the necessary source files, headers and tools to build the
             samples. These samples are installed by default at &lt;InstallDir&gt;/samples and at
             /usr/share/Ejscript-VERSION for Unix like systems.&nbsp;</p>
             <p>Each sample is a stand-alone directory that may be relocated or copied to any directory. For Unix a
             pre-supplied Makefile will be used to build the sample. For Windows, a Visual Studio project is supplied.
-            <br /></p><a name="configurations" id="configurations"></a>
+            <br /></p><a id="configurations"></a>
             <h2>Ejscript Configurations&nbsp;</h2>
             <p>The samples can only use features that have been built into the installed version of Ejscript. If you
             have recompiled Ejscript from source and have tailored the selected features, some of the samples may not
-            run.</p><a name="building" id="building"></a>
+            run.</p><a id="building"></a>
             <h2>Building</h2>
             <h3>Building on Windows</h3>
             <p>TODO</p>
@@ -81,18 +81,18 @@
             All rights reserved. Embedthis, Ejscript and Appweb are trademarks of Embedthis Software LLC.</a>
 		</p>
 	</div>
-</body>
-<script src="http://www.google.com/jsapi" type="text/javascript"></script>
-<script type="text/javascript"> 
-  google.load('search', '1', {language : 'en'});
-  google.setOnLoadCallback(function() {
-    var customSearchControl = new google.search.CustomSearchControl(
-      'partner-pub-9935546676162772:ysvxxv4n9rx');
+    <script src="http://www.google.com/jsapi" type="text/javascript"></script>
+    <script type="text/javascript"> 
+      google.load('search', '1', {language : 'en'});
+      google.setOnLoadCallback(function() {
+        var customSearchControl = new google.search.CustomSearchControl(
+          'partner-pub-9935546676162772:ysvxxv4n9rx');
 
-    customSearchControl.setResultSetSize(google.search.Search.FILTERED_CSE_RESULTSET);
-    var options = new google.search.DrawOptions();
-    options.enableSearchboxOnly("http://ejscript.org/search.html");
-    customSearchControl.draw('cse-search-form', options);
-  }, true);
-</script>
+        customSearchControl.setResultSetSize(google.search.Search.FILTERED_CSE_RESULTSET);
+        var options = new google.search.DrawOptions();
+        options.enableSearchboxOnly("http://ejscript.org/search.html");
+        customSearchControl.draw('cse-search-form', options);
+      }, true);
+    </script>
+</body>
 </html>
