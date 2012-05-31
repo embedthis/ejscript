@@ -1492,7 +1492,8 @@ public class Bit {
             files = []
             for each (pattern in include) {
                 pattern = expand(pattern)
-                files += Path('.').glob(pattern, {missing: missing})
+                /* If missing, use pattern */
+                files += Path('.').glob(pattern, {missing: ''})
             }
         }
         if (exclude) {
