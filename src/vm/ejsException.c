@@ -337,9 +337,6 @@ cchar *ejsGetErrorMsg(Ejs *ejs, int withStack)
                 ejsClearException(ejs);
                 stack = ejsRunFunctionBySlot(ejs, error, ES_Error_formatStack, 0, NULL);
                 ejsThrowException(ejs, saveException);
-#if UNUSED
-                ejs->exception = saveException;
-#endif
             }
 
         } else if (ejsIs(ejs, error, String)) {
