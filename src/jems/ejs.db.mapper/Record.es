@@ -219,20 +219,20 @@ module ejs.db.mapper {
 
         private static function checkFormat(thisObj: Record, field: String, value, options: Object): Void {
             if (! RegExp(options.format).test(value)) {
-                thisObj._errors[field] = options.message ? options.message : ErrorMessages.wrongFormat
+                thisObj._errors[field] = (options && options.message) ? options.message : ErrorMessages.wrongFormat
             }
         }
 
         private static function checkNumber(thisObj: Record, field: String, value, options): Void {
             //  MOB - what about decimal, +-
             if (! RegExp(/^[0-9]+$/).test(value)) {
-                thisObj._errors[field] = options.message ? options.message : ErrorMessages.notNumber
+                thisObj._errors[field] = (options && options.message) ? options.message : ErrorMessages.notNumber
             }
         }
 
         private static function checkPresent(thisObj: Record, field: String, value, options): Void {
             if (value == undefined) {
-                thisObj._errors[field] = options.message ? options.message : ErrorMessages.missing
+                thisObj._errors[field] = (options && options.message) ? options.message : ErrorMessages.missing
             } else if (value.length == 0 || value.trim() == "" && thisObj._errors[field] == undefined) {
                 thisObj._errors[field] = ErrorMessages.blank
             }
@@ -246,7 +246,7 @@ module ejs.db.mapper {
                 grid = findWhere(field + ' = "' + value + '"')
             }
             if (grid.length > 0) {
-                thisObj._errors[field] = options.message ? options.message : ErrorMessages.notUnique
+                thisObj._errors[field] = (options && options.message) ? options.message : ErrorMessages.notUnique
             }
         }
 
