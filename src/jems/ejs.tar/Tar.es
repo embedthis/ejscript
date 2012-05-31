@@ -218,13 +218,13 @@ module ejs.tar {
                 path = path.relativeTo(options.relativeTo)
             }
             if (path.length > 100) {
-                name = path.basename
-                prefix = path.dirname
+                name = path.basename.portable
+                prefix = path.dirname.portable
                 if (name.length > 100 || prefix.length > 155) {
                     throw 'Path name ' + path + ' is too long'
                 }
             } else {
-                name = path
+                name = path.portable
             }
         }
 
