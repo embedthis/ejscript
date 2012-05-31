@@ -78,9 +78,11 @@ Bit.load({
                     let base = s.product + '-' + s.version + '-' + s.buildNumber
                     let files = bit.dir.rel.glob('*' + base + '*.pkg*')
                     files += bit.dir.rel.glob('*' + base + '*x86.exe.zip*')
-                    files += bit.dir.rel.glob('*' + base + '-src*')
-                    files += bit.dir.rel.glob('*' + base + '-flat*')
-                    files += bit.dir.rel.glob(s.product + '-flat.tgz')
+                    if (App.getenv('BUILD_UPLOAD_SOURCE')) {
+                        files += bit.dir.rel.glob('*' + base + '-src*')
+                        files += bit.dir.rel.glob('*' + base + '-flat*')
+                        files += bit.dir.rel.glob(s.product + '-flat.tgz')
+                    }
                     for each (file in files) {
                         let http = new Http
                         trace('Upload', file.relativeTo(bit.dir.rel) + ' size ' + 
