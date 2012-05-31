@@ -1,1 +1,4 @@
+if (!App.getenv("NOSERVER")) {
+    Cmd.killall('ejs start.es')
+}
 httpService("start.es", {address: App.config.uris.http})
