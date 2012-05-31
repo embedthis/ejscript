@@ -17,4 +17,4 @@ server.on("accept", function(event, listenSock) {
     })
 })
 server.listen(ADDRESS)
-App.run()
+App.run(30000)
