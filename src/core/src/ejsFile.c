@@ -705,7 +705,12 @@ EjsObj *writeFile(Ejs *ejs, EjsFile *fp, int argc, EjsObj **argv)
             break;
 
         case S_String: // UNICODE
+#if UNICODE && FUTURE
             buf = awtom(((EjsString*) vp)->value, &len);
+#else
+            buf = ((EjsString*) vp)->value;
+            len = ((EjsString*) vp)->length;
+#endif
             break;
 
         default:
