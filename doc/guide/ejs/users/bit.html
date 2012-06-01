@@ -525,7 +525,8 @@ libname: {
             Update a header, and the library will be rebuilt when bit is next invoked.</p>
             <h4>Executables</h4>
             <p>To build an executable, set the <em>type</em> property to 'exe', define the source files to compile via the
-            <em>sources</em> property (if any). Define required libraries via the <em>depends property</em>. For example:
+            <em>sources</em> property (if any). Define required libraries via the <em>depends property</em>. 
+            For example:</p>
 <pre>
 bingo: {
     type: 'exe',
@@ -615,7 +616,7 @@ setup: {
         </ul>
         <h4>Build Target Scripts</h4>
         <p>Build target scripts run when a default build (bit build) is run. These scripts use the
-        <em>build</em> property. For example:
+        <em>build</em> property. For example:</p>
 <pre>
 targets: {
     cleanJunk: {
@@ -627,7 +628,7 @@ targets: {
 }
 </pre>
         <p>When <em>bit</em> is invoked, the script for the <em>cleanJunk</em> target will be run. Note that in
-        Ejscript, quoted literals can span multiple lines. No backquoting at the end of the line is requried.</p>
+        Ejscript, quoted literals can span multiple lines. No backquoting at the end of the line is required.</p>
         <h4>Action Scripts</h4>
         <p>Action scripts do not run by default. Rather, they are run when they are explicitly invoked on the command
         line or another target is invoked that references them as a dependency. 
@@ -679,16 +680,17 @@ targets: {
         <p>In a complex project containing many Bit files, it can be helpful to see the entire bit configuration in one
         file. Use the <em>--dump</em> switch to save a copy of the entire configuration. In the dump, build defaults are fully
         expanded to each target contains the expanded configuration that will be used to build the target.</p>
-        <p>By default, Bit builds relativley quietly and stops on the first build error. To see the commands Bit is
+        <p>By default, Bit builds relatively quietly and stops on the first build error. To see the commands Bit is
         issuing, use the <em>--show</em> switch. To build totally quietly, use the <em>--quiet</em> switch. To continue building
         despite build errors, use the <em>--continue</em> switch.</p>
         <a id="commandOptions"></a>
         <h2>Command Options</h2>
-        <p>Bit command line options can be prefixed with either a single or double minus. ie. <em>-switch</em> or
-        <em>--switch</em></p>
+        <p>Bit command line options can be prefixed with either a single or double minus, i.e. <em>-switch</em> or
+        <em>--switch</em>.</p>
+
         <table title="options">
             <thead>
-            <tr><th>Option</th><th>Description</th></tr>
+                <tr><th>Option</th><th>Description</th></tr>
             </thead>
             <tbody>
                 <tr>
@@ -698,15 +700,16 @@ targets: {
                 <tr>
                     <td>--configure path-to-source</td>
                     <td><p>Configure the project to prepare for building. This configures Bit for building the project
-                        based on the instructions specified in a <em>'main.bit</em> located in the specified path source tree.
-                        When run, bit will create a platform configuration bit file, a build output directory and
+                        based on the instructions specified in a <em>'main.bit</em> located in the specified path source
+                        tree.  When run, bit will create a platform configuration bit file, a build output directory and
                         bit.h header. The configuration directory is of the form: OS-ARCH-PROFILE where OS may be
                         freebsd, linux, macosx, solaris, vxworks, windows and ARCH is arm, mips, ppc, x64 or x86.
                         PROFILE is typically set to debug or release. For example: <em>macosx-x86_64-debug</em> The
                         configuration bit file omits the PROFILE. For example: <em>linux-x86.bit</em>.</p>
                         <p>Bit will use the settings.required and settings.optional properties in the main.bit for a
                         list of packages to use. When configuring, bit will search for these packages and will
-                        create definitions in the configuration bit file for later use.</p></td>
+                        create definitions in the configuration bit file for later use.</p>
+                    </td>
                 </tr>
                     <tr><td>--continue</td>
                         <td>Continue to build despite any build errors. Normal operation is to stop building if any
@@ -733,7 +736,7 @@ targets: {
                     <td>Override warnings and proceed with the operation.</td>
                 </tr>
                 <tr>
-                    <td nowrap="nowrap">--gen [make|nmake|sh|vs|xcode]</td>
+                    <td class="nowrap">--gen [make|nmake|sh|vs|xcode]</td>
                     <td>Generate project files for the current platform. This will generate project files under
                         the <em>projects</em> directory. The projects are based on the current configuration. If
                         cross-generating projects, you will typically need to also use -configure.</td>
@@ -762,13 +765,13 @@ targets: {
                 </tr>
                 <tr>
                     <td>--platform os-arch</td>
-                    <td>Add a platform to build for cross-compilation. Multiple platforms can be added. You may use
+                    <td><p>Add a platform to build for cross-compilation. Multiple platforms can be added. You may use
                         <em>local</em> for the local platform. Options specified after the platform apply to the prior
                         platform. For example:</p>
                         <p>bit --platform linux-x86 --without all --platform linux-arm --with ejscript configure</p></td>
                 </tr>
                 <tr>
-                    <td nowrap="nowrap">--profile [debug|release|...]</td>
+                    <td class="nowrap">--profile [debug|release|...]</td>
                     <td>Use the specified profile when building. This options is provided once when configuring and the
                         result is saved in the plat- form.profile property in the configuration bit file. Custom
                         profiles can be added to the main.bit or start.bit files.</td> 
@@ -810,7 +813,7 @@ targets: {
                 </tr>
                 <tr>
                     <td>--with PACK[=path]</td>
-                    <td>Build with the named pack located at the optional path. If the path is ommitted, a search is
+                    <td>Build with the named pack located at the optional path. If the path is omitted, a search is
                         performed for the pack at default locations. Packs must have a pack description file installed
                         under <em>bits/packs</em> in the bit installation.</td>
                 </tr>
@@ -820,9 +823,10 @@ targets: {
                 </tr>
             </tbody>
         </table>
+
         <a id="learnMore"></a>
         <h2>To Learn More</h2>
-        <p>Here are some example bit files in the Appweb and Ejscript products:p>
+        <p>Here are some example bit files in the Appweb and Ejscript products:</p>
         <ul>
             <li><a
                 href="https://github.com/embedthis/appweb-4/blob/master/main.bit">Appweb main.bit &mdash; product level
@@ -833,8 +837,8 @@ targets: {
                 src/libappweb.bit &mdash; bit file to build appweb library</a></li>
             <li><a href="https://github.com/embedthis/appweb-4/blob/master/src/modules/modules.bit">Appweb
                 src/modules/modules.bit &mdash; bit file to build appweb modules</a></li>
-            <li><a href="https://github.com/embedthis/appweb-4/blob/master/src/test/test.bit">Appweb
-                src/test/test.bit &mdash; bit file to unit test appweb</a></li>
+            <li><a href="https://github.com/embedthis/appweb-4/blob/master/test/test.bit">Appweb
+                test/test.bit &mdash; bit file to unit test appweb</a></li>
             <li><a href="https://github.com/embedthis/ejs-2/blob/master/src/core/core.bit">Ejscript
                 src/core/core.bit &mdash; bit file to build the ejscript module</a></li>
             <li><a href="https://github.com/embedthis/ejs-2/blob/master/src/cmd/cmd.bit">Ejscript
