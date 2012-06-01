@@ -25,9 +25,9 @@
             </div>
         </div>
         <div class="crumbs">
-            <a href="../../../product/index.html">Home</a>
+            <a href="../../../index.html">Home</a>
 <!-- EndDsi -->
-             &gt;<a href="index.html">Web Framework Guide</a>&gt; <b>Controllers and Actions</b>
+             &gt;<a href="index.html">Web Framework Guide</a>&gt; <b>Request Routing</b>
         </div>
     </div>
     <div class="content">
@@ -62,7 +62,6 @@
         </div>
         <div class="contentLeft">
             <h1>Request Routing</h1>
-
             <a id="overview"></a>
             <p>Ejscript includes a powerful request routing engine that processes client HTTP requests. The engine
             is configured with a set of routes and when a request is received, it tests various routes and selects
@@ -78,7 +77,7 @@
             route may also run commands as a side-effect during processing.</p>
             <a id="configuration"></a>
             <h2 class="section">Route Configuration</h2>
-            <p>Routes are defined using the Router class and the <em>add</em>method. 
+            <p>Routes are defined using the Router class and the <em>add</em> method. 
             Here is an example of a simple web server with route configuration.</p>
 <pre>
 require ejs.web
@@ -113,7 +112,6 @@ router.show()
             <em>application/x-www-form-urlencoded</em>. Requests with a <em>Content-Type</em> set to 
             <em>multipart/form-data</em> which indicates form based file upload, will also delay routing until the uploaded
             file has been fully received.</p>
-
             <a id="step-pattern"></a>
             <h3>Pattern Matching</h3>
             <p>A route pattern is a specially prepared regular expression that can be quickly matched against the 
@@ -123,7 +121,7 @@ router.show()
             <h4>URI Tokens</h4>
             <p>Often the request URI will not only provide a path to a resource, but it will contain tokens of 
             information that must be isolated and extracted from the URI. Ejscript route patterns provide an easy and
-            efficient means to extract such tokens and define them as request <a href="#params">params</a>.
+            efficient means to extract such tokens and define them as request params.
             To do this, Ejscript route patterns extend the standard regular expression syntax via embedded tokens.</p>
             
             <p>A token is a 
@@ -160,16 +158,14 @@ will match any of the URIs:
 <pre>
 ^/{controller}/{action}$
 </pre>
-
             <a id="step-method"></a>
             <h3>Method Matching</h3>
             <p>Method matching is an optional step. Routes can be configured to only match certain HTTP methods. 
-            Method matching tests the supported route methods against the actual request HTTP method. 
+            Method matching tests the supported route methods against the actual request HTTP method. </p>
 <pre>
 router.add("/Dash/product/buy", {method: "POST"})
 </pre>
             By default a route supports all methods</p>
-
             <a id="step-header"></a>
             <h3>Header Matching</h3>
             <p>Header matching is an optional step. Routes can be configured to require that the request has HTTP
@@ -181,7 +177,6 @@ r.add(function (request) request.header("user-agent").contains("Chrome"))
 </pre>
             <p>This defines a route with a custom matching function. The function is invoked to test the request. If
             it returns true, the route is selected.</p>
-
             <a id="step-form"></a>
             <h3>Form Value Matching</h3>
             <p>Form value matching is an optional step. Routes can be configured to require that the request has 
@@ -196,11 +191,9 @@ r.add(function (request) request.params("name").match(/(Mary)|(John)))
 /info/file.html?name=Mary
 /info/file.html?name=John
 </pre>
-
             <a id="step-param"></a>
             <h3>Param Definition</h3>
-            <p>After a route fully qualifies, request <a href="#params">params</a>
-            are created for route pattern tokens. This provides an
+            <p>After a route fully qualifies, request params are created for route pattern tokens. This provides an
             easy mechanism for extracting useful information from the request URI and passing it to the web page or
             controller for processing.</p>
         </div>

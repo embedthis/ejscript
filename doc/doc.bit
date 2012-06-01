@@ -26,6 +26,23 @@ Bit.load({
             depends: ['scriptApi', 'nativeApi'],
         },
 
+        'validate-doc': {
+            action: "
+                let vdir = bit.dir.cfg.join('validate')
+                vdir.removeAll()
+                for each (file in Path('.').glob('**', { exclude: /\\/$|dsi|Base|Bare/ })) {
+                    let out = vdir.join(file)
+                    out.dirname.makeDir()
+                    if (file.extension == 'html') {
+                        out.write(file.readString().replace(/<pre>((?!pre>)(?:.|\\s))*pre>/mg, '<pre>DELETED</pre>'))
+                    } else {
+                        out.write(file.readString())
+                    }
+                }
+                trace('Prepare', vdir)
+            ",
+        },
+
         nativeApi: {
             action: "
                 apidoc('api/ejs.dox', [

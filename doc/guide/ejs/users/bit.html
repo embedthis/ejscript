@@ -25,7 +25,7 @@
             </div>
         </div>
         <div class="crumbs">
-            <a href="../../../product/index.html">Home</a>
+            <a href="../../../index.html">Home</a>
 <!-- EndDsi -->
              &gt;<a href="index.html">User Guide</a>&gt; <b>Bit</b>
         </div>
@@ -631,7 +631,7 @@ targets: {
         <h4>Action Scripts</h4>
         <p>Action scripts do not run by default. Rather, they are run when they are explicitly invoked on the command
         line or another target is invoked that references them as a dependency. 
-        These scripts use the <em>action</em> property. For example:
+        These scripts use the <em>action</em> property. For example:</p>
 <pre>
 targets: {
     'generate-doc': {
@@ -668,11 +668,9 @@ targets: {
         triggered, the script is run. For each event, there can be multiple scripts which are run in-order. Each script
         has a home directory which becomes the current directory for the script, a shell interpreter to execute the
         script and the script contents.</p>
-
         <p>Note that the <em>build</em> and <em>action</em> scripts translate under-the-hood into the same long form.
         The action script becomes a target with a type of <em>action</em> and an event of <em>build</em>. A build script
         becomes a target with a type of <em>build</em> and an event of <em>build</em>.</p>
-
         <a id="debugging"></a>
         <h2>Debugging</h2>
         <p>With Make and other build tools, it is difficult to determine why a target is or is not being built. Bit

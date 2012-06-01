@@ -25,7 +25,7 @@
             </div>
         </div>
         <div class="crumbs">
-            <a href="../../../product/index.html">Home</a>
+            <a href="../../../index.html">Home</a>
 <!-- EndDsi -->
              &gt;<a href="index.html">Web Framework Guide</a>&gt; <b>Controllers and Actions</b>
         </div>
@@ -172,9 +172,8 @@ http://embedthis.com/myApp/cart/create
             <p>After processing the request, the controller is responsible for rendering a view back to the client. If
             the action method does not explicitly render a view, Ejscript will look for a view with the same name as
             the action method.</p>
-            <p>In the prior <a href="#example">example</a>, the <em>edit</em> action did not call any <em>render</em>
-            function, so the framework will look for, and if found, run a view
-            <em>views/cart/edit.ejs</em>.</p>
+            <p>In the prior example, the <em>edit</em> action did not call any <em>render</em> function, so the
+            framework will look for, and if found, run a view <em>views/cart/edit.ejs</em>.</p>
             <a id="generating"></a>
             <h2 class="section">Generating Controllers and Actions</h2>
             <p>Ejscript includes an an application generator, called <em>mvc</em> to make it quick and easy to
@@ -204,7 +203,8 @@ mvc generate scaffold MODEL [field:type ...]
             migration, controller and edit and list view pages.</p>
             <p>If field:type pairs are supplied, the database migration will include code to create a column for each
             specified field of the requested type. The valid database types are: <em>binary, boolean, date, datetime,
-            decimal, float, integer, number, string, text, time, timestamp</em>.</p>The scaffold will include an
+                decimal, float, integer, number, string, text, time, timestamp</em>.</p>
+            <p>The scaffold will include an
             <em>edit</em> action and view that provides <em>add</em> and <em>edit</em> capability. The <em>list</em>
             action and view, provides the ability to list the database table rows and select an entry 
             to edit.</p>
@@ -350,7 +350,6 @@ mvc generate scaffold MODEL [field:type ...]
                     </tr>
                 </tbody>
             </table>
-
             <a id="filters"></a>
             <h2 class="section">Filters</h2>
             <p>Filters enable a controller to perform processing before and after actions are run. Filters are useful
