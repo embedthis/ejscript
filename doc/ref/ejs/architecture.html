@@ -71,7 +71,7 @@
                 <li><a href="#compiler">Compiler</a> - Integrated or stand-alone compiler</li>
                 <li><a href="#modules">Modules</a> - Cached, pre-compiled Ejscript programs</li>
                 <li><a href="#library">Core Class Library</a> - Foundation core types and classes</li>
-            </ul><a name="tools" id="tools"></a>
+            </ul><a id="tools"></a>
             <h2 class="section">Command Tools</h2>
             <p>Ejscript provides a set of commands to interpret, compile and manage ejscript programs and
             documentation. These commands are invoked from the command line and are used manually and also
@@ -84,7 +84,7 @@
                 <li>mvc - Web framework generator</li>
             </ul>
             <p>For full details about the command line options, please see the <a href=
-            "../../guide/ejs/programmers/man.html">Manual Pages</a> for these commands. <a name="vm" id="vm"></a></p>
+            "../../guide/ejs/programmers/man.html">Manual Pages</a> for these commands. <a id="vm"></a></p>
             <h2 class="section">Virtual Machine</h2>
             <p>The Ejscript virtual machine is a portable, cross-platform virtual machine optimized for embedded use
             outside browsers. It has a compact byte code that minimizes memory use and supports cached compilation of
@@ -165,7 +165,7 @@
             <p>This VM is a good platform for future enhancements. The byte code was designed to support inline native
             code interleaving where the compiler can selectively generate native code blocks. The compiler will be able
             to generate this native code either when pre-compiling for maximum speed or on-the-fly as a just-in-time
-            compiler.</p><a name="compiler" id="compiler"></a>
+            compiler.</p><a id="compiler"></a>
             <h2 class="section">Compiler</h2>
             <p>The Ejscript compiler is an optimizing script compiler that generates optimized byte code. It has up to
             4 passes depending on the mode of compilation:</p>
@@ -196,7 +196,7 @@
             expected to run many, many times - spending some development cycles to produce the best code possible is
             well worth the effort. The code may also be more secure as the source code for the program is not being
             supplied &mdash; only the byte code.</p>
-            <p><a name="modules" id="modules"></a></p>
+            <p><a id="modules"></a></p>
             <h2 class="section">Modules</h2>
             <p>Ejscript provides a <b>module</b> language directive and module loading mechanism that permits like
             sections of a program to be grouped into a single loadable module.</p>
@@ -240,7 +240,7 @@
             <p>Because modules load in dedicated and isolated namespaces, a module is guaranteed not to clash with
             other names. Module writers can version packages by adding a version namespace in addition to the module
             namespace. The user of the module can then put a "use namespace" directive in their code to request a
-            specific version of the module.</p><a name="library" id="library"></a>
+            specific version of the module.</p><a id="library"></a>
             <h2 class="section">Core Class Library</h2>
             <p>The core Ejscript class library provides an extensive suite of classes that cover common programming
             tasks and requirements. These are divided into the following modules:</p>
