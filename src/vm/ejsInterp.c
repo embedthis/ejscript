@@ -2743,7 +2743,7 @@ static void badArgType(Ejs *ejs, EjsPot *activation, EjsTrait *trait, int index)
     EjsName     qname;
 
     qname = ejsGetPropertyName(ejs, activation, index);
-    ejsThrowTypeError(ejs, "Unacceptable null or undefined value for arg \"%@\" (pos: %d)", qname.name, index);
+    ejsThrowTypeError(ejs, "Unacceptable null or undefined value for argument \"%@\" (index: %d)", qname.name, index);
 }
 
 

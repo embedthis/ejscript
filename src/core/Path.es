@@ -330,9 +330,6 @@ module ejs {
          */
         native function makeLink(target: Path, hard: Boolean = false): Void
 
-        //  TODO - make an auto cleanup temporary. ie. remove automatically somehow
-        //  MOB - how to create a temp in the standard system temp location
-        //  MOB - option for different extension
         /**
             Create a new temporary file. The temp file is located in the directory specified by the Path object. 
             If the path object is created with an empty path value, the temporary file will be created in the standard

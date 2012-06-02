@@ -195,7 +195,7 @@ module ejs {
             read position is set to the specified offset and data is stored at this offset. The write position is set to
             one past the last byte read.
          */
-        native function read(buffer: ByteArray, offset: Number = 0, count: Number = -1): Number
+        native function read(buffer: ByteArray!, offset: Number = 0, count: Number = -1): Number
 
         /** 
             Read a boolean from the array. Data is read from the current read $position pointer.

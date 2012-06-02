@@ -810,7 +810,6 @@ static EjsString *ba_readString(Ejs *ejs, EjsByteArray *ap, int argc, EjsObj **a
     ssize       count;
 
     count = (argc == 1) ? ejsGetInt(ejs, argv[0]) : -1;
-
     if (count < 0) {
         if (getInput(ejs, ap, 1) < 0) {
             return ESV(null);

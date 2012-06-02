@@ -479,7 +479,6 @@ public class Bit {
         f.writeLine('#define BIT_CFG_PREFIX "' + bit.prefixes.config + '"')
         f.writeLine('#define BIT_BIN_PREFIX "' + bit.prefixes.bin + '"')
         f.writeLine('#define BIT_INC_PREFIX "' + bit.prefixes.inc + '"')
-        f.writeLine('#define BIT_LIB_PREFIX "' + bit.prefixes.lib + '"')
         f.writeLine('#define BIT_LOG_PREFIX "' + bit.prefixes.log + '"')
         f.writeLine('#define BIT_PRD_PREFIX "' + bit.prefixes.product + '"')
         f.writeLine('#define BIT_SPL_PREFIX "' + bit.prefixes.spool + '"')
