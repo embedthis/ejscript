@@ -469,7 +469,9 @@ public class Bit {
         let args = 'bit ' + App.args.slice(1).join(' ')
         f.writeLine('#define BIT_CONFIG_CMD "' + args + '"')
 
+        /* UNUSED
         f.writeLine('#define BIT_LIB_NAME "' + 'bin' + '"')
+        */
         f.writeLine('#define BIT_PROFILE "' + bit.platform.profile + '"')
 
         /* Prefixes */

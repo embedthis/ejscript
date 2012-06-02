@@ -651,7 +651,7 @@ void ejsSetSearchPath(Ejs *ejs, EjsArray *paths)
 EjsArray *ejsCreateSearchPath(Ejs *ejs, cchar *search)
 {
     EjsArray    *ap;
-    char        *relModDir, *dir, *next, *tok;
+    char        *dir, *next, *tok;
 
     ap = ejsCreateArray(ejs, 0);
 
@@ -671,8 +671,7 @@ EjsArray *ejsCreateSearchPath(Ejs *ejs, cchar *search)
      */
     ejsSetProperty(ejs, ap, -1, ejsCreatePathFromAsc(ejs, "."));
     ejsSetProperty(ejs, ap, -1, ejsCreatePathFromAsc(ejs, mprGetAppDir()));
-    relModDir = mprNormalizePath(sfmt("%s/../%s", mprGetAppDir(), BIT_LIB_NAME));
-    ejsSetProperty(ejs, ap, -1, ejsCreatePathFromAsc(ejs, mprGetAbsPath(relModDir)));
+    ejsSetProperty(ejs, ap, -1, ejsCreatePathFromAsc(ejs, mprGetAppDir()));
 #if !VXWORKS
     ejsSetProperty(ejs, ap, -1, ejsCreatePathFromAsc(ejs, BIT_LIB_PREFIX));
 #endif

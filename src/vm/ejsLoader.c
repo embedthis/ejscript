@@ -1248,7 +1248,7 @@ static char *probe(Ejs *ejs, cchar *path, int minVersion, int maxVersion)
 static char *searchForModule(Ejs *ejs, cchar *moduleName, int minVersion, int maxVersion)
 {
     EjsPath     *dir;
-    char        *withDotMod, *path, *filename, *basename, *cp, *slash, *name, *bootSearch, *tok, *searchDir, *dp;
+    char        *withDotMod, *path, *filename, *basename, *cp, *slash, *name, *bootSearch, *tok, *searchDir;
     int         i;
 
     mprAssert(moduleName && *moduleName);
@@ -1343,12 +1343,6 @@ static char *searchForModule(Ejs *ejs, cchar *moduleName, int minVersion, int ma
             }
 
         } else {
-            /* Search bin/../lib */
-            dp = mprJoinPath(mprGetPathParent(mprGetAppDir()), BIT_LIB_NAME);
-            filename = mprJoinPath(dp, basename);
-            if ((path = probe(ejs, filename, minVersion, maxVersion)) != 0) {
-                return path;
-            }
             /* Search bin */
             filename = mprJoinPath(mprGetAppDir(), basename);
             if ((path = probe(ejs, filename, minVersion, maxVersion)) != 0) {
