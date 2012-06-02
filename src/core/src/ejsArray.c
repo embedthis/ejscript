@@ -120,7 +120,7 @@ static int deleteArrayProperty(Ejs *ejs, EjsArray *ap, int slot)
 
 
 /*
-    Delete an element by name.
+    Delete an element by name
  */
 static int deleteArrayPropertyByName(Ejs *ejs, EjsArray *ap, EjsName qname)
 {
@@ -678,7 +678,7 @@ static EjsNumber *nextArrayKey(Ejs *ejs, EjsIterator *ip, int argc, EjsObj **arg
     }
     data = ap->data;
 
-    for (; ip->index < ap->length; ip->index++) {
+    for (; ip->index < ip->length; ip->index++) {
         vp = data[ip->index];
         mprAssert(vp);
         if (ejsIs(ejs, vp, Void)) {
@@ -698,7 +698,7 @@ static EjsNumber *nextArrayKey(Ejs *ejs, EjsIterator *ip, int argc, EjsObj **arg
  */
 static EjsIterator *getArrayIterator(Ejs *ejs, EjsArray *ap, int argc, EjsObj **argv)
 {
-    return ejsCreateIterator(ejs, ap, nextArrayKey, 0, NULL);
+    return ejsCreateIterator(ejs, ap, ap->length, nextArrayKey, 0, NULL);
 }
 
 
@@ -718,7 +718,7 @@ static EjsObj *nextArrayValue(Ejs *ejs, EjsIterator *ip, int argc, EjsObj **argv
     }
 
     data = ap->data;
-    for (; ip->index < ap->length; ip->index++) {
+    for (; ip->index < ip->length; ip->index++) {
         vp = data[ip->index];
         mprAssert(vp);
         if (ejsIs(ejs, vp, Void)) {
@@ -739,7 +739,7 @@ static EjsObj *nextArrayValue(Ejs *ejs, EjsIterator *ip, int argc, EjsObj **argv
  */
 static EjsAny *getArrayValues(Ejs *ejs, EjsArray *ap, int argc, EjsObj **argv)
 {
-    return ejsCreateIterator(ejs, ap, nextArrayValue, 0, NULL);
+    return ejsCreateIterator(ejs, ap, ap->length, nextArrayValue, 0, NULL);
 }
 
 

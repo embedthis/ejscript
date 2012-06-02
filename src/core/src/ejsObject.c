@@ -299,11 +299,9 @@ static EjsObj *nextObjectKey(Ejs *ejs, EjsIterator *ip, int argc, EjsObj **argv)
     EjsObj      *obj;
     EjsName     qname;
     EjsTrait    *trait;
-    int         numProp;
 
     obj = ip->target;
-    numProp = ejsGetLength(ejs, obj);
-    for (; ip->index < numProp; ip->index++) {
+    for (; ip->index < ip->length; ip->index++) {
         qname = ejsGetPropertyName(ejs, obj, ip->index);
         if (qname.name == NULL) {
             continue;
@@ -328,7 +326,7 @@ static EjsObj *nextObjectKey(Ejs *ejs, EjsIterator *ip, int argc, EjsObj **argv)
  */
 static EjsIterator *obj_get(Ejs *ejs, EjsObj *obj, int argc, EjsObj **argv)
 {
-    return ejsCreateIterator(ejs, obj, nextObjectKey, 0, NULL);
+    return ejsCreateIterator(ejs, obj, ejsGetLength(ejs, obj), nextObjectKey, 0, NULL);
 }
 
 
@@ -344,7 +342,7 @@ static EjsObj *nextObjectValue(Ejs *ejs, EjsIterator *ip, int argc, EjsObj **arg
 
     obj = ip->target;
     numProp = ejsGetLength(ejs, obj);
-    for (; ip->index < numProp; ip->index++) {
+    for (; ip->index < ip->length; ip->index++) {
         trait = ejsGetPropertyTraits(ejs, obj, ip->index);
         if (trait && trait->attributes & 
                 (EJS_TRAIT_HIDDEN | EJS_TRAIT_DELETED | EJS_FUN_INITIALIZER | EJS_FUN_MODULE_INITIALIZER)) {
@@ -364,7 +362,7 @@ static EjsObj *nextObjectValue(Ejs *ejs, EjsIterator *ip, int argc, EjsObj **arg
  */
 static EjsIterator *obj_getValues(Ejs *ejs, EjsObj *obj, int argc, EjsObj **argv)
 {
-    return ejsCreateIterator(ejs, obj, nextObjectValue, 0, NULL);
+    return ejsCreateIterator(ejs, obj, ejsGetLength(ejs, obj), nextObjectValue, 0, NULL);
 }
 
 

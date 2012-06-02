@@ -480,7 +480,7 @@ static EjsNumber *nextByteArrayKey(Ejs *ejs, EjsIterator *ip, int argc, EjsObj *
  */
 static EjsIterator *ba_get(Ejs *ejs, EjsObj *ap, int argc, EjsObj **argv)
 {
-    return ejsCreateIterator(ejs, ap, nextByteArrayKey, 0, NULL);
+    return ejsCreateIterator(ejs, ap, -1, nextByteArrayKey, 0, NULL);
 }
 
 
@@ -514,7 +514,7 @@ static EjsNumber *nextByteArrayValue(Ejs *ejs, EjsIterator *ip, int argc, EjsObj
  */
 static EjsIterator *ba_getValues(Ejs *ejs, EjsObj *ap, int argc, EjsObj **argv)
 {
-    return ejsCreateIterator(ejs, ap, nextByteArrayValue, 0, NULL);
+    return ejsCreateIterator(ejs, ap, -1, nextByteArrayValue, 0, NULL);
 }
 
 

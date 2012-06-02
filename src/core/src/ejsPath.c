@@ -448,7 +448,7 @@ static EjsAny *nextPathKey(Ejs *ejs, EjsIterator *ip, int argc, EjsObj **argv)
 static EjsAny *getPathIterator(Ejs *ejs, EjsPath *fp, int argc, EjsObj **argv)
 {
     fp->files = mprGetPathFiles(fp->value, 0);
-    return ejsCreateIterator(ejs, fp, nextPathKey, 0, NULL);
+    return ejsCreateIterator(ejs, fp, -1, nextPathKey, 0, NULL);
 }
 
 
@@ -482,7 +482,7 @@ static EjsAny *nextPathValue(Ejs *ejs, EjsIterator *ip, int argc, EjsObj **argv)
 static EjsAny *getPathValues(Ejs *ejs, EjsPath *fp, int argc, EjsObj **argv)
 {
     fp->files = mprGetPathFiles(fp->value, 0);
-    return ejsCreateIterator(ejs, fp, nextPathValue, 0, NULL);
+    return ejsCreateIterator(ejs, fp, -1, nextPathValue, 0, NULL);
 }
 
 

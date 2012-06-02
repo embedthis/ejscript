@@ -729,7 +729,7 @@ static EjsNumber *nextStringKey(Ejs *ejs, EjsIterator *ip, int argc, EjsObj **ar
  */
 static EjsIterator *getStringIterator(Ejs *ejs, EjsObj *sp, int argc, EjsObj **argv)
 {
-    return ejsCreateIterator(ejs, sp, nextStringKey, 0, NULL);
+    return ejsCreateIterator(ejs, sp, -1, nextStringKey, 0, NULL);
 }
 
 
@@ -762,7 +762,7 @@ static EjsString *nextStringValue(Ejs *ejs, EjsIterator *ip, int argc, EjsObj **
  */
 static EjsIterator *getStringValues(Ejs *ejs, EjsObj *sp, int argc, EjsObj **argv)
 {
-    return ejsCreateIterator(ejs, sp, nextStringValue, 0, NULL);
+    return ejsCreateIterator(ejs, sp, -1, nextStringValue, 0, NULL);
 }
 
 

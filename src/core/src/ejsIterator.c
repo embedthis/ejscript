@@ -63,16 +63,16 @@ static EjsObj *iteratorConstructor(Ejs *ejs, EjsIterator *ip, int argc, EjsObj *
 /*
     Create an iterator.
  */
-EjsIterator *ejsCreateIterator(Ejs *ejs, EjsAny *obj, void *nativeNext, bool deep, EjsArray *namespaces)
+EjsIterator *ejsCreateIterator(Ejs *ejs, EjsAny *obj, int length, void *nativeNext, bool deep, EjsArray *namespaces)
 {
     EjsIterator     *ip;
 
-    ip = ejsCreateObj(ejs, ESV(Iterator), 0);
-    if (ip) {
+    if ((ip = ejsCreateObj(ejs, ESV(Iterator), 0)) != 0) {
         ip->index = 0;
         ip->indexVar = 0;
         ip->nativeNext = nativeNext;
         ip->target = obj;
+        ip->length = length;
         ip->deep = deep;
         ip->namespaces = namespaces;
     }

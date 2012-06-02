@@ -3335,6 +3335,7 @@ typedef struct EjsIterator {
     bool            deep;               /**< Iterator deep (recursively over all properties) */
     EjsArray        *namespaces;        /**< Namespaces to consider in iteration */
     int             index;              /**< Current index */
+    int             length;             /**< Collection length prior to iteration */
     EjsObj          *indexVar;          /**< Reference to current item */
 } EjsIterator;
 
@@ -3343,13 +3344,14 @@ typedef struct EjsIterator {
     @description The EjsIterator object is a helper class for native types to implement iteration and enumeration.
     @param ejs Ejs reference returned from #ejsCreateVM
     @param target Target variable to iterate or enumerate 
+    @param length Length of collection prior to iteration.
     @param next Function to invoke to step to the next element
     @param deep Set to true to do a deep iteration/enumeration
     @param namespaces Reserved and not used. Supply NULL.
     @return A new EjsIterator object
     @ingroup EjsIterator
  */
-extern EjsIterator *ejsCreateIterator(Ejs *ejs, EjsAny *target, void *next, bool deep, EjsArray *namespaces);
+extern EjsIterator *ejsCreateIterator(Ejs *ejs, EjsAny *target, int length, void *next, bool deep, EjsArray *namespaces);
 
 /******************************************** Namespace *******************************************/
 /** 

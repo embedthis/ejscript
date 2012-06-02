@@ -160,7 +160,7 @@ static EjsAny *invokeNullOperator(Ejs *ejs, EjsObj *lhs, int opcode, EjsObj *rhs
  */
 static EjsIterator *getNullIterator(Ejs *ejs, EjsObj *np, int argc, EjsObj **argv)
 {
-    return ejsCreateIterator(ejs, np, NULL, 0, NULL);
+    return ejsCreateIterator(ejs, np, -1, NULL, 0, NULL);
 }
 
 

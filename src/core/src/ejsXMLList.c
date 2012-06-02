@@ -236,7 +236,7 @@ static EjsObj *nextXmlListKey(Ejs *ejs, EjsIterator *ip, int argc, EjsObj **argv
  */
 static EjsObj *getXmlListIterator(Ejs *ejs, EjsObj *xml, int argc, EjsObj **argv)
 {
-    return (EjsObj*) ejsCreateIterator(ejs, xml, nextXmlListKey, 0, NULL);
+    return (EjsObj*) ejsCreateIterator(ejs, xml, -1, nextXmlListKey, 0, NULL);
 }
 
 
@@ -274,7 +274,7 @@ static EjsObj *nextXmlListValue(Ejs *ejs, EjsIterator *ip, int argc, EjsObj **ar
  */
 static EjsObj *getXmlListValues(Ejs *ejs, EjsObj *ap, int argc, EjsObj **argv)
 {
-    return (EjsObj*) ejsCreateIterator(ejs, ap, nextXmlListValue, 0, NULL);
+    return (EjsObj*) ejsCreateIterator(ejs, ap, -1, nextXmlListValue, 0, NULL);
 }
 
 

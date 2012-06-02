@@ -158,7 +158,7 @@ static EjsObj *invokeVoidOperator(Ejs *ejs, EjsVoid *lhs, int opcode, EjsVoid *r
  */
 static EjsIterator *getVoidIterator(Ejs *ejs, EjsObj *np, int argc, EjsObj **argv)
 {
-    return ejsCreateIterator(ejs, np, NULL, 0, NULL);
+    return ejsCreateIterator(ejs, np, -1, NULL, 0, NULL);
 }
 
 

@@ -294,7 +294,7 @@ static EjsNumber *nextKey(Ejs *ejs, EjsIterator *ip, int argc, EjsObj **argv)
 static EjsIterator *getFileIterator(Ejs *ejs, EjsFile *fp, int argc, EjsObj **argv)
 {
     mprGetPathInfo(fp->path, &fp->info);
-    return ejsCreateIterator(ejs, fp, nextKey, 0, NULL);
+    return ejsCreateIterator(ejs, fp, -1, nextKey, 0, NULL);
 }
 
 
@@ -345,7 +345,7 @@ static EjsObj *getFileValues(Ejs *ejs, EjsFile *fp, int argc, EjsObj **argv)
 {
     mprGetPathInfo(fp->path, &fp->info);
 
-    return (EjsObj*) ejsCreateIterator(ejs, (EjsObj*) fp, nextValue, 0, NULL);
+    return (EjsObj*) ejsCreateIterator(ejs, fp, -1, nextValue, 0, NULL);
 }
 
 
