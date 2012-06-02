@@ -5101,6 +5101,7 @@ static EcNode *parseSubstatement(EcCompiler *cp)
     case T_AT:
     case T_BREAK:
     case T_CONTINUE:
+    case T_DELETE:
     case T_DO:
     case T_DOT:
     case T_DOT_DOT:
