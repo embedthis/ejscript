@@ -102,9 +102,7 @@ Bit.load({
             action: "
                 let utest = bit.packs.utest ? bit.packs.utest.path : null
                 if (!utest) {
-print('locate', [bit.dir.top.join(bit.platform.configuration, 'bin/utest'), App.exeDir])
                     utest = Cmd.locate('utest', [bit.dir.top.join(bit.platform.configuration, 'bin/utest'), App.exeDir])
-print('utest', utest)
                 }
                 if (utest) {
                     run([utest, '-v', '-d', bit.settings.depth], {noio: true, dir: bit.dir.src.join('src')})
