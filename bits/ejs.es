@@ -50,21 +50,21 @@ public function packageBinaryFiles(formats = ['tar', 'native']) {
         permissions: 0755, 
     })
     if (bit.platform.os != 'windows') {
-        install(bit.dir.lib.join('*'), p.lib, {
+        install(bit.dir.bin.join('*'), p.bin, {
             permissions: 0755, 
             exclude: /bits|file-save|www|simple|sample/,
         })
     }
-    install(bit.dir.lib.join('bits'), p.lib)
-    install(bit.dir.lib.join('www'), p.lib.join('www'), {exclude: /tree-images/})
+    install(bit.dir.bin.join('bits'), p.bin)
+    install(bit.dir.bin.join('www'), p.bin.join('www'), {exclude: /tree-images/})
     install(bit.dir.inc.join('*.h'), p.inc)
 
     if (bit.targets.libmprssl.enable && bit.platform.os == 'linux') {
-        install(bit.dir.lib.join('*.' + bit.ext.shobj + '*'), p.lib, {strip: strip, permissions: 0755})
-        for each (f in p.lib.glob('*.so.*')) {
+        install(bit.dir.bin.join('*.' + bit.ext.shobj + '*'), p.bin, {strip: strip, permissions: 0755})
+        for each (f in p.bin.glob('*.so.*')) {
             let withver = f.basename
             let nover = withver.name.replace(/\.[0-9]*.*/, '.so')
-            let link = p.lib.join(nover)
+            let link = p.bin.join(nover)
             f.remove()
             f.symlink(link.basename)
         }

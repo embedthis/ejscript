@@ -650,7 +650,8 @@ public function apiwrap(patterns) {
     for each (dfile in Path('.').glob(patterns)) {
         let name = dfile.name.replace('.html', '')
         let data = Path(name + 'Bare.html').readString()
-        let contents = Path(name + 'Header.tem').readString() + data + Path(name).dirname.join('apiFooter.tem').readString() + '\n'
+        let contents = Path(name + 'Header.tem').readString() + data + 
+            Path(name).dirname.join('apiFooter.tem').readString() + '\n'
         dfile.joinExt('html').write(contents)
     }
 }

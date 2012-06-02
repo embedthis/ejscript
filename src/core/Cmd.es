@@ -85,9 +85,11 @@ module ejs {
         /**
             Locate a program using the application PATH
             @param program Program to find
+            @param search Optional additional search paths to use before using PATH
+            @return Located path or null
          */
-        static function locate(program: Path): Path {
-            //  MOB - should search all windows cmd extensions: .bat, .com - see MprCmd/CGI
+        static function locate(program: Path, search = []): Path {
+            search += App.getenv("PATH").split(App.SearchSeparator)
             for each (dir in App.getenv("PATH").split(App.SearchSeparator)) {
                 let path = Path(dir).join(program)
                 if (path.exists && !path.isDir) {
