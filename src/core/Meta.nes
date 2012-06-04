@@ -16,8 +16,9 @@ module ejs {
 
     /** 
      */
+    # FUTURE
     native interface IMeta {
-            this.apply(name, args)
+
         meta function call(name, ...args)
 
         /**
