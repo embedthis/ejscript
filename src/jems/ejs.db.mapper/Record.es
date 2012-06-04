@@ -232,7 +232,7 @@ module ejs.db.mapper {
 
         private static function checkPresent(thisObj: Record, field: String, value, options): Void {
             if (value == undefined) {
-                thisObj._errors[field] = (options && options.message) ? options.message : ErrorMessages.missing
+                thisObj._errors[field] = (options && options.message) ? options.message : ErrorMessages.blank
             } else if (value.length == 0 || value.trim() == "" && thisObj._errors[field] == undefined) {
                 thisObj._errors[field] = ErrorMessages.blank
             }
@@ -546,7 +546,7 @@ var before = Memory.resident
             Get the errors for the record. 
             @return The error message collection for the record.  
          */
-        function getErrors(): Array
+        function getErrors(): Object
             _errors
 
         /**
@@ -1092,25 +1092,19 @@ var before = Memory.resident
 
         /** @hide TODO */
         static function validateFormat(fields: Object, options = null) {
-            if (_validations == null) {
-                _validations = []
-            }
+            _validations ||= []
             _validations.append([checkFormat, fields, options])
         }
 
         /** @hide TODO */
         static function validateNumber(fields: Object, options = null) {
-            if (_validations == null) {
-                _validations = []
-            }
+            _validations ||= []
             _validations.append([checkNumber, fields, options])
         }
 
         /** @hide TODO */
         static function validatePresence(fields: Object, options = null) {
-            if (_validations == null) {
-                _validations = []
-            }
+            _validations ||= []
             _validations.append([checkPresent, fields, options])
         }
 
@@ -1123,10 +1117,8 @@ var before = Memory.resident
             if (!_imodel._columns) _imodel.getSchema()
             _errors = {}
             if (_imodel._validations) {
-                for each (let validation: String in _imodel._validations) {
-                    let check = validation[0]
-                    let fields = validation[1]
-                    let options = validation[2]
+                for each (let validation in _imodel._validations) {
+                    let [check, fields, options] = validation
                     if (fields is Array) {
                         for each (let field in fields) {
                             if (_errors[field]) {
@@ -1140,16 +1132,18 @@ var before = Memory.resident
                 }
             }
             let thisType = Object.getType(this)
-            if (thisType["validate"]) {
-                thisType["validate"].call(this)
+            if (this.validate) {
+                this.validate.call(this)
             }
             coerceToEjsTypes()
             return Object.getOwnPropertyCount(_errors) == 0
         }
 
         /** @hide TODO */
-        static function validateUnique(fields: Object, option = null)
+        static function validateUnique(fields: Object, options = null) {
+            _validations ||= []
             _validations.append([checkUnique, fields, options])
+        }
 
         /**
             Run filters before and after saving data

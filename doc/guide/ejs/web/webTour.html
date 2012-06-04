@@ -73,7 +73,7 @@
             <p>Command sessions are presented in blue boxes. Output from the system is highlighted in yellow. Bold
             yellow is used to highlight some output of specific interest.</p>
             <h2 class="section"><a id="create"></a>Creating a New Application</h2>
-            <p>To create a new Ejscript application, you will use <b>mvc</b>, the Ejscript application generator
+            <p>To create a new Ejscript application, you will use <em>mvc</em>, the Ejscript application generator
             program. Type the following mvc command in a command terminal window:</p>
             <pre>
 <b>home&gt;</b> mvc -v generate app blog<b>
@@ -111,7 +111,7 @@ Change directory into your application directory: blog
 Then run the web server via: "mvc run"
 and point your browser at: http://localhost::4000/ to view your app.</b>
 </pre>
-            <p>This simple command accomplished quite a bit. It first created a new directory called <b>blog</b> for
+            <p>This simple command accomplished quite a bit. It first created a new directory called <em>blog</em> for
             the application, and then created subdirectories for various parts of the application. Initially, most of
             these directories are empty. They are used as your application grows.</p>
             <p>The command also created an <em>ejsrc</em> configuration file. This allows you to define a
@@ -181,12 +181,12 @@ mvc run
 appweb: 1: Starting host named: "127.0.0.1:4000"
 appweb: 1: HTTP services are ready (single-threaded)</b>
 </pre>
-            <p>Then enter <b>localhost:4000</b> in your browser. You should see your first application home
+            <p>Then enter <em>localhost:4000</em> in your browser. You should see your first application home
             page.</p><img class="bare-screen" src="../../../images/webtour-home.png" alt="" />
             <a id="hello"></a>
             <h2 class="section">Hello World</h2>
-            <p>The next step is to create a simple "Hello World" web page. Ejscript web pages have an <b>.ejs</b>
-            extension. Create a file called <em>hello.ejs</em> under the <b>web</b> directory with the following
+            <p>The next step is to create a simple "Hello World" web page. Ejscript web pages have an <em>.ejs</em>
+            extension. Create a file called <em>hello.ejs</em> in the top-level directory with the following
             content:</p>
             <pre>
 &lt;html&gt;
@@ -195,13 +195,13 @@ appweb: 1: HTTP services are ready (single-threaded)</b>
 &lt;/body&gt;
 </pre>
             <p>To view the "Hello" web page in your browser, type in the following url:
-            http://localhost:4000/web/hello.ejs.</p><img src="../../../images/webtour-hello.png" alt="hello" class=
+            http://localhost:4000/hello.ejs.</p><img src="../../../images/webtour-hello.png" alt="hello" class=
             "bare-screen" /> <a id="dynamic"></a>
             <h2 class="section">Dynamic Content</h2>
             <p>While that was fun, the output is static and boring, so let's add some dynamic content. You can embed
             Ejscript expressions by including them inside a special Ejscript web page directive that will be executed
             and converted to HTML before being sent to the client. There are a variety of server-side Ejscript web page
-            directives, the one you'll use first is: <b>&lt;%= expression %&gt;</b>.</p>
+            directives, the one you'll use first is: <em>&lt;%= expression %&gt;</em>.</p>
             <p>To add the current date and time, modify the hello.ejs web page and add the highlighted line:</p>
             <pre>
 &lt;html&gt;
@@ -229,8 +229,8 @@ appweb: 1: HTTP services are ready (single-threaded)</b>
 %&gt;
 </b>&lt;/body&gt;
 </pre>
-            <p>By using the Ejscript statement directive <b>&lt;% code %&gt;</b>, you can embed arbitrary Ejscript
-            statements in your web page. The <b>write</b> function allows you to write arbitrary data which is patched
+            <p>By using the Ejscript statement directive <em>&lt;% code %&gt;</em>, you can embed arbitrary Ejscript
+            statements in your web page. The <em>write</em> function allows you to write arbitrary data which is patched
             back where the directive was defined in the page. See the <a href="views.html">Views and Layouts</a>
             document for full details about all the Ejscript web page directives.</p><a id="views"></a>
             <a id="scaffolds"></a>
@@ -256,43 +256,45 @@ mvc generate scaffold Post title:string body:text
             <p>Now if you set your browser to the URL for the post controller, you will see your post listing screen.
             <img src="../../../images/webtour-postList.png" alt="postList" class="bare-screen" /> <a id="newPosts"></a></p>
             <h2 class="section">Create New Posts</h2>
-            <p>The new post button directs your browser to the <em>/Post/list</em> URL. Behind the scenes, Ejscript
-            parses this URL and identifies "Post" as the name of the controller and "list" as the name of an action to
-            invoke. The controller file <em>controllers/Post.es</em> defines the controller class to respond to this
-            request.</p>
+            <p>The <em>new</em> post button directs your browser to the <em>/Post/init</em> URL. Behind the scenes, Ejscript
+            parses this URL and identifies <em>Post</em> as the name of the controller and <em>init</em> as the name of an action to
+            invoke. The controller file <em>controllers/Post.es</em> defines the controller class to respond to this request.</p>
             <p>The controller class defines methods called actions, that are bound to URLs of the same name. Actions
-            are defined using the <b>action</b> namespace qualifier to distinguish them from ordinary functions. When a
+            are defined using the <em>action</em> namespace qualifier to distinguish them from ordinary functions. When a
             request comes for a given action, the corresponding action method is invoked.</p>
+
             <h3>Actions</h3>
             <p>The job of the action is to respond to the request and generate the response via views for the
-            client.</p>
+            client. Here is a snippet from the controller:</p>
             <pre>
 public class PostController extends BaseController {
     public var post: Post
-    use namespace action
-    action function create() {
-<b>        post = new Post
-        renderView("edit")
+    action function init() {
+<b>         post = new Post
+        writeView("edit")
 </b>    }
-    action function list() {}
 }
 </pre>
-            <p>The <em>create</em> action creates a new Post instance and then uses the <em>views/Post/edit.ejs</em>
+            <p>The <em>init</em> action creates a new Post instance and then uses the <em>views/Post/edit.ejs</em>
             view to generate the response. Ejscript <em>edit</em> scaffolds handle the work of both <em>edit</em> and
             <em>create</em> views because they are so similar.</p>
-            <p>If an action does not call any of the <em>render</em> methods (as the <em>list</em> action does not),
-            Ejscript will automatically invoke a view of the same name. In the case of the <em>list</em> action, the
-            <em>views/Post/list.ejs</em> will be used to generate the response.</p><img src=
+            <p>If an action does not call any of the <em>write</em> methods or if the controller action is not defined
+            (as the <em>index</em> action is not),
+            Ejscript will automatically invoke a view of the same name. 
+            
+            <img src=
             "../../../images/webtour-createPost.png" alt="createPost" class="bare-screen" />
             <p>Click OK to add the new blog post.</p><a id="homePage"></a>
             <h2>Edit the Home Page</h2>
-            <p>You can edit the application's home page to add a link to your post listing page. Change
-            <em>web/index.ejs</em> to contain just the following:</p>
+            <p>You can edit the application's home page to add an anchor link to your post listing page. Change
+            <em>views/Base/index.ejs</em> to contain just the following:</p>
             <pre>
 &lt;%@ layout "default" %&gt;
-&lt;h2&gt;&lt;% link("Go to My Blog", "/post") %&gt;&lt;/h2&gt;
+&lt;h2&gt;&lt;% anchor("Go to My Blog", "/post") %&gt;&lt;/h2&gt;
 </pre>
-            <p>Then reload the page and you will see:</p><img src="../../../images/webtour-homeLink.png" alt="homeLink"
+            <p>Then reload the page and you will see:</p>
+            
+            <img src="../../../images/webtour-homeLink.png" alt="homeLink"
             class="bare-screen" /> <a id="layout"></a>
             <h2>Changing the Layout</h2>
             <p>Alternatively, you may wish to add some tabs to navigate your blog app. Ejscript provides a layout
@@ -303,10 +305,10 @@ public class PostController extends BaseController {
             <pre>
 &lt;body&gt;
     &lt;div class="top"&gt;
-        &lt;h1&gt;&lt;a href="@@appUrl/"&gt;Blog Application&lt;/a&gt;&lt;/h1&gt;
+        &lt;h1&gt;&lt;a href="@@request.home"&gt;Blog Application&lt;/a&gt;&lt;/h1&gt;
 <b>        &lt;% tabs([
-           {"Blog Posts":  appUrl + "/post"},
-            {"New Post": appUrl + "/post/create"},
+           {"Blog Posts":  "@Post"},
+            {"New Post": "@post/init"},
         ]) %&gt;
 </b>    &lt;/div&gt;
 </pre>
@@ -317,15 +319,15 @@ public class PostController extends BaseController {
             recompile the app. This is easy to do via the mvc command.</p>
             <pre>
 mvc compile
-</pre><img src="../../../images/webtour-tabs.png" alt="tabs" class="bare-screen" /> <a id="validations">
-            </a>
+</pre>
+            <img src="../../../images/webtour-tabs.png" alt="tabs" class="bare-screen" /> 
+            <a id="validations"></a>
             <h2 class="section">Validations</h2>
             <p>Ejscript provides flexible validation methods to help ensure the data you save is correct.</p>
             <p>You can add calls to validate model data before it is saved to the database. Edit the
             <em>models/Post.es</em> file and add calls to <em>validatePresence</em> and <em>validateUnique</em>.</p>
             <pre>
 public dynamic class Post implements Record {
-    setup()
 <b>    validatePresence(["title", "body"])
     validateUnique("title")</b>
 </pre>
@@ -339,8 +341,8 @@ public dynamic class Post implements Record {
             fully validate your model data and call <em>error</em> for any fields that are invalid. For example:</p>
             <pre>
 public function validate() {
-    if (post.body.length &gt; 140) {
-        error("body", "Body is too long")
+    if (body.length &gt; 140) {
+        error("body", "too long")
     }
 }
 </pre><a id="learn"></a>

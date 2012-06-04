@@ -816,7 +816,6 @@ class EjsMvc {
                 backward = true
             }
         }
-
         if (backward) {
             files = files.reverse()
         }

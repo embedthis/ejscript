@@ -483,9 +483,10 @@ module ejs.web {
             }
             let errors = record.getErrors()
             if (errors) {
-                write('<div class="-ejs-form-error"><h2>The ' + Object.getName(record).toLowerCase() + ' has ' + 
-                    errors.length + (errors.length > 1 ? ' errors' : ' error') + ' that ' +
-                    ((errors.length > 1) ? 'prevent' : 'prevents') + '  it being saved.</h2>\r\n')
+                let count = Object.getOwnPropertyCount(errors)
+                write('<div class="-ejs-form-error"><h2>The ' + typeOf(record).toLowerCase() + ' has ' + 
+                    count + (count > 1 ? ' errors' : ' error') + ' that ' +
+                    ((count > 1) ? 'prevent' : 'prevents') + '  it being saved.</h2>\r\n')
                 write('    <p>There were problems with the following fields:</p>\r\n')
                 write('    <ul>\r\n')
                 for (e in errors) {

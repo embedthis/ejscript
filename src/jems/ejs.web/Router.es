@@ -321,7 +321,7 @@ module ejs.web {
                 break
             case Restful:
                 addHome("@Base/")
-                add("/favicon.ico", { redirect: "/static/favicon.ico" })
+                add("/favicon.ico", { redirect: "/static/images/favicon.ico" })
                 addHandlers()
                 addRestful()
                 addCatchall()
@@ -542,7 +542,6 @@ module ejs.web {
             for each (r in routeSet) {
                 log.debug(5, "Test route \"" + r.name + "\"")
                 if (r.match(request)) {
-                    //  MOB -- inline that code here
                     return secondStageRoute(request, r)
                 }
             }
@@ -550,7 +549,6 @@ module ejs.web {
             for each (r in routeSet) {
                 log.debug(5, "Test route \"" + r.name + "\"")
                 if (r.match(request)) {
-                    //  MOB -- inline that code here
                     return secondStageRoute(request, r)
                 }
             }
