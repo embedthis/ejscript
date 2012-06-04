@@ -1485,7 +1485,7 @@ public class Bit {
     function buildFileList(include, exclude = null) {
         let files
         if (include is RegExp) {
-            files = Path(bit.dir.src).glob('*', {include: include, missing: missing})
+            files = Path(bit.dir.src).files('*', {include: include, missing: missing})
         } else {
             if (!(include is Array)) {
                 include = [ include ]
@@ -1494,7 +1494,7 @@ public class Bit {
             for each (pattern in include) {
                 pattern = expand(pattern)
                 /* If missing, use pattern */
-                files += Path('.').glob(pattern, {missing: ''})
+                files += Path('.').files(pattern, {missing: ''})
             }
         }
         if (exclude) {
@@ -2799,7 +2799,7 @@ global.NN = item.ns
             programs = Path(pf64.exists ? pf64 : pvar)
             if (!programs) {
                 for each (drive in (FileSystem.drives() - ['A', 'B'])) {
-                    let pf = Path(drive + ':\\').glob('Program Files*')
+                    let pf = Path(drive + ':\\').files('Program Files*')
                     if (pf.length > 0) {
                         return pf[0].portable
                     }

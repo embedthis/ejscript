@@ -171,14 +171,14 @@ module ejs {
             return null
         }
 
-        /**
+        /*
+            DEPRECATED UNUSED
             Get a list of files in a directory or subdirectory.
             Use the $glob method for shell style wild card support.
             @param options If set to true, then files will include sub-directories in the returned list of files.
             @option basenames Set to true to include only the basename portion of filenames in the results. If selected,
                 any "include" or "exclude" patterns will only match the basename and not the full path.
-            @option depthFirst Do a depth first traversal. If "dirs" is specified, the directories will be shown after
-                the files in the directory. Otherwise, directories will be listed first.
+            @option depthFirst Do a depth first traversal. Default is in-order traversal.
             @option descend Descend into subdirectories
             @option exclude Regular expression pattern of files to exclude from the results. Matches the entire path unless
                 "basenames" is selected.
@@ -188,34 +188,9 @@ module ejs {
                 unless "basenames" is selected.
             @option missing Report missing directories by throwing an exception.
             @return An Array of Path objects for each file in the directory.
-         */
         native function files(options: Object = null): Array 
+         */
         
-        /**
-            The file system containing this Path 
-            @return The FileSystem object for this path
-         */
-        function get fileSystem(): FileSystem
-            FileSystem(this)
-
-        /**
-            Get iterate over any files contained under this path (assuming it is a directory) "for (v in files)". 
-                This operates the same as getValues on a Path object.
-            @return An iterator object.
-            @example:
-                for (f in Path("."))
-         */
-        override iterator native function get(): Iterator
-
-        /**
-            Get an iterator for this file to be used by "for each (v in obj)". Return 
-                This operates the same as $get on a Path object.
-            @return An iterator object.
-            @example
-                for each (f in Path("."))
-         */
-        override iterator native function getValues(): Iterator
-
         /**
             Do Posix glob style file matching.
             @param patterns Pattern to match files. This can be a String, Path or array of String/Paths. 
@@ -241,7 +216,32 @@ module ejs {
             @option relative Return paths relative to the Path, otherwise result entries include the Path. Defaults to false.
             @return An Array of Path objects for each file in the directory.
          */
-        native function glob(patterns, options: Object = null): Array 
+        native function files(patterns: Object! = '*', options: Object = null): Array 
+
+        /**
+            The file system containing this Path 
+            @return The FileSystem object for this path
+         */
+        function get fileSystem(): FileSystem
+            FileSystem(this)
+
+        /**
+            Get iterate over any files contained under this path (assuming it is a directory) "for (v in files)". 
+                This operates the same as getValues on a Path object.
+            @return An iterator object.
+            @example:
+                for (f in Path("."))
+         */
+        override iterator native function get(): Iterator
+
+        /**
+            Get an iterator for this file to be used by "for each (v in obj)". Return 
+                This operates the same as $get on a Path object.
+            @return An iterator object.
+            @example
+                for each (f in Path("."))
+         */
+        override iterator native function getValues(): Iterator
 
         /**
             Does the file path have a drive spec (C:) in it's name. Only relevant on Windows like systems.
@@ -554,7 +554,7 @@ module ejs {
             if (name == "" || name == "/") {
                 throw new ArgError("Bad path for removeAll")
             }
-            for each (f in files({descend: true, depthFirst: true, hidden: true})) {
+            for each (f in files('**', {depthFirst: true, hidden: true})) {
                 if (!f.remove()) {
                     passed = false
                 }

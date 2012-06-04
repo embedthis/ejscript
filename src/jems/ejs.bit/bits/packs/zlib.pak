@@ -6,7 +6,7 @@ pack('zlib', 'Zlib Compression Library')
 let cfg
 let path: Path = bit.packs.zlib.path
 if (!path) {
-    let vers = bit.dir.packs.join('zlib').glob('zlib-*').sort().reverse()
+    let vers = bit.dir.packs.join('zlib').files('zlib-*').sort().reverse()
     path = vers[0]
 }
 path ||= Path('.')
@@ -23,15 +23,15 @@ if (bit.platform.os == 'windows') {
 
 } else if (bit.platform.os == 'macosx') {
     lib = probe('libz.dylib', {fullpath: true, search: [path, '/usr/lib']}).absolute
-    imports = lib.parent.glob('libz*.dylib')
+    imports = lib.parent.files('libz*.dylib')
     isearch = [path, '/usr/include']
 
 } else {
     let arch = bit.platform.arch.match(/^i.86$/) ? 'x86' : bit.platform.arch
     let search = [path, '/usr/lib', '/lib', '/usr/lib64', '/lib64' ] + 
-        Path('/usr/lib').glob(arch + '-linux-gnu') + Path('/lib').glob(arch + '-linux-gnu')
+        Path('/usr/lib').files(arch + '-linux-gnu') + Path('/lib').files(arch + '-linux-gnu')
     lib = probe('libz.so', {fullpath: true, search: search}).absolute
-    imports = lib.parent.glob('libz*.so*')
+    imports = lib.parent.files('libz*.so*')
     isearch = [path.join('include'), '/usr/include']
 }
 

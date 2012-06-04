@@ -10,7 +10,7 @@ if (bit.packs.ssl && bit.packs.ssl.enable == false) {
 let cfg
 let path: Path = bit.packs.openssl.path
 if (!path) {
-    let vers = bit.dir.packs.join('openssl').glob('openssl-*').sort().reverse()
+    let vers = bit.dir.packs.join('openssl').files('openssl-*').sort().reverse()
     path = vers[0]
     if (!path) {
         if (bit.platform.os == 'windows') {
@@ -49,12 +49,12 @@ if (bit.platform.os == 'windows') {
         includes: [ incdir ],
         libraries: [ 'ssl', 'crypto' ],
         libpaths: [ lib.parent ],
-        imports: lib.parent.glob('libssl*.dylib') + lib.parent.glob('libcrypto*.dylib')
+        imports: lib.parent.files('libssl*.dylib') + lib.parent.files('libcrypto*.dylib')
     }
 
 } else {
     let search = [path, '/usr/lib', '/lib' ]
-    search += Path('/usr/lib').glob('*-linux-gnu') + Path('/lib').glob('*-linux-gnu')
+    search += Path('/usr/lib').files('*-linux-gnu') + Path('/lib').files('*-linux-gnu')
     let lib = probe('libcrypto.so', {fullpath: true, search: search}).absolute
     let dir = lib.parent
     search = [path.join('include'), '/usr/include']
@@ -65,7 +65,7 @@ if (bit.platform.os == 'windows') {
         includes: [ incdir ],
         libraries: [ 'ssl', 'crypto' ],
         libpaths: [ lib.parent ],
-        imports: lib.parent.glob('libssl.*so*') + lib.parent.glob('libcrypto.*so*'),
+        imports: lib.parent.files('libssl.*so*') + lib.parent.files('libcrypto.*so*'),
     }
 }
 

@@ -195,7 +195,7 @@ public function install(src, dest: Path, options = {}) {
     if (options.cat) {
         let files = []
         for each (pat in src) {
-            files += Path('.').glob(pat, {missing: undefined})
+            files += Path('.').files(pat, {missing: undefined})
         }
         src = files.unique()
     }
@@ -254,7 +254,7 @@ function packageSimple(pkg: Path, options, fmt) {
 
     trace('Package', zname)
     let tar = new Tar(name, options)
-    tar.create(pkg.glob('**', {exclude: /\/$/, missing: undefined}))
+    tar.create(pkg.files('**', {exclude: /\/$/, missing: undefined}))
     use namespace 'ejs.zlib'
     global.Zlib.compress(tar.name, zname)
     if (!bit.options.keep) {
@@ -273,7 +273,7 @@ function packageFlat(pkg: Path, options) {
     safeRemove(flat)
     let vflat = flat.join(options.vname)
     vflat.makeDir()
-    for each (f in pkg.glob('**', {exclude: /\/$/, missing: undefined})) {
+    for each (f in pkg.files('**', {exclude: /\/$/, missing: undefined})) {
         f.copy(vflat.join(f.basename))
     }
     packageSimple(flat, options, 'flat')
@@ -293,7 +293,7 @@ function packageTar(pkg: Path, options) {
     let base = [s.product, s.version, s.buildNumber, bit.platform.dist, bit.platform.os, bit.platform.arch].join('-')
     let name = rel.join(base).joinExt('tar', true)
     let zname = name.replaceExt('tgz')
-    let files = pkg.glob('**', {exclude: /\/$/, missing: undefined})
+    let files = pkg.files('**', {exclude: /\/$/, missing: undefined})
     let tar = new Tar(name, options)
 
     trace('Package', zname)
@@ -317,7 +317,7 @@ function packageInstall(pkg: Path, options) {
     let base = [s.product, s.version, s.buildNumber, bit.platform.dist, bit.platform.os, bit.platform.arch].join('-')
     //  UNUSED let name = rel.join(base).joinExt('tar', true)
     let contents = pkg.join(options.vname, 'contents')
-    let files = contents.glob('**', {missing: undefined})
+    let files = contents.files('**', {missing: undefined})
     let log = bit.prefixes.productver.join('files.log'), prior
     if (log.exists) {
         if (bit.cross) {
@@ -351,7 +351,7 @@ function packageInstallConfigure() {
         Cmd.run(ldconfig + ' ' + ldconfigSwitch + ' /usr/lib/' + bit.settings.product + '/modules')
     }
     if (bit.platform.dist == 'fedora') {
-        Cmd.run('chcon /usr/bin/chcon -t texrel_shlib_t ' + bit.prefixes.bin.glob('*.so').join(' '))
+        Cmd.run('chcon /usr/bin/chcon -t texrel_shlib_t ' + bit.prefixes.bin.files('*.so').join(' '))
     }
 }
 
@@ -389,7 +389,7 @@ function createMacContents(pkg: Path, options) {
     cp.write('<pkg-contents spec="1.12">')
     cp.write('<f n="contents" o="root" g="wheel" p="16877" pt="' + contents + '" m="false" t="file">')
     options.staff = staffDir
-    for each (dir in contents.glob('*', {include: /\/$/, missing: undefined})) {
+    for each (dir in contents.files('*', {include: /\/$/, missing: undefined})) {
         inner(pkg, options, cp, dir)
     }
 
@@ -419,9 +419,9 @@ function packageMacosx(pkg: Path, options) {
     let rel = bit.dir.rel
     let base = [s.product, s.version, s.buildNumber, bit.platform.dist, bit.platform.os, bit.platform.arch].join('-')
     let name = rel.join(base).joinExt('tar', true)
-    let files = pkg.glob('**', {exclude: /\/$/, missing: undefined})
+    let files = pkg.files('**', {exclude: /\/$/, missing: undefined})
     let size = 20
-    for each (file in pkg.glob('**', {exclude: /\/$/, missing: undefined})) {
+    for each (file in pkg.files('**', {exclude: /\/$/, missing: undefined})) {
         size += ((file.size + 999) / 1000)
     }
     bit.PACKAGE_SIZE = size
@@ -479,19 +479,19 @@ function packageFedora(pkg: Path, options) {
     let spec = RPM.join('SPECS', base).joinExt('spec', true)
     install(opak.join('rpm.spec'), spec, {expand: true, permissions: 0644})
 
-    let files = contents.glob('**')
+    let files = contents.files('**')
     let fileList = RPM.join('BUILD/binFiles.txt')
     let cp: File = fileList.open('atw')
     cp.write('%defattr(-,root,root)\n')
 
     let owndirs = RegExp(bit.settings.product)
-    for each (file in contents.glob('**/', {relative: true, include: owndirs})) {
+    for each (file in contents.files('**/', {relative: true, include: owndirs})) {
         cp.write('%dir /' + file + '\n')
     }
-    for each (file in contents.glob('**', {exclude: /\/$/})) {
+    for each (file in contents.files('**', {exclude: /\/$/})) {
         cp.write('"/' + file.relativeTo(contents) + '"\n')
     }
-    for each (file in contents.glob('**/.*', {hidden: true})) {
+    for each (file in contents.files('**/.*', {hidden: true})) {
         file.remove()
     }
     cp.close()
@@ -547,7 +547,7 @@ function packageWindows(pkg: Path, options) {
     let iss = pkg.join('install.iss')
     install(opak.join('install.iss'), iss, {expand: true})
     let contents = pkg.join(s.product + '-' + s.version + '-' + s.buildNumber, 'contents')
-    let files = contents.glob('**', {exclude: /\/$/, missing: undefined})
+    let files = contents.files('**', {exclude: /\/$/, missing: undefined})
 
     let productPrefix = bit.prefixes.product.removeDrive().portable
     let top = Path(contents.name + productPrefix)
@@ -620,7 +620,7 @@ public function apidoc(dox: Path, headers, title: String, tags) {
         headers = output
     }
     rmdir([api.join('html'), api.join('xml')])
-    tags = Path('.').glob(tags)
+    tags = Path('.').files(tags)
 
     let doxtmp = Path('').temp().replaceExt('dox')
     let data = api.join(name + '.dox').readString().replace(/^INPUT .*=.*$/m, 'INPUT = ' + headers)
@@ -647,7 +647,7 @@ public function apidoc(dox: Path, headers, title: String, tags) {
 }
 
 public function apiwrap(patterns) {
-    for each (dfile in Path('.').glob(patterns)) {
+    for each (dfile in Path('.').files(patterns)) {
         let name = dfile.name.replace('.html', '')
         let data = Path(name + 'Bare.html').readString()
         let contents = Path(name + 'Header.tem').readString() + data + 

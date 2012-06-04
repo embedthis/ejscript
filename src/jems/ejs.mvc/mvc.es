@@ -76,7 +76,7 @@ class EjsMvc {
         dirs = config.dirs
         dirs.home = App.dir
         //  TODO -- should these come from ejsrc
-        dirs.lib = Config.Bin
+        dirs.bin = Config.Bin
         dirs.mod = Config.Bin
         for (d in dirs) {
             dirs[d] = Path(dirs[d])
@@ -259,7 +259,7 @@ class EjsMvc {
     }
 
     function clean(args: Array): Void {
-        let files: Array = find(".", "*." + ext.mod)
+        let files: Array = find(".", "**." + ext.mod)
         if (files.length > 0) {
             trace("[CLEAN]", verbose > 1 ? files : "module files")
             for each (f in files) {
@@ -287,11 +287,11 @@ class EjsMvc {
             for each (name in find(dirs.controllers, "*." + ext.es)) {
                 buildController(name)
             }
-            files = find(dirs.views, "*." + ext.ejs)
+            files = find(dirs.views, "**." + ext.ejs)
             for each (name in files) {
                 buildView(name, true)
             }
-            files = find(dirs.static, "*." + ext.ejs)
+            files = find(dirs.static, "**." + ext.ejs)
             for each (name in files) {
                 buildWebPage(name, true)
             }
@@ -304,13 +304,13 @@ class EjsMvc {
             buildAll = true
             let saveVerbose = verbose
             let saveKeep = options.keep
-            let pat = "*." + ext.es
+            let pat = "**." + ext.es
             let controllers = find(dirs.controllers, pat)
             for each (c in controllers) {
                 rm(dirs.cache.join(c.basename.replaceExt(ext.mod)))
             }
             files = find("config", pat) + find("src", pat) + controllers + find(dirs.models, pat)
-            let viewFiles = find(dirs.views, "*." + ext.ejs)
+            let viewFiles = find(dirs.views, "**." + ext.ejs)
             let esPages = []
             for each (name in viewFiles) {
                 if (!name.toString().contains(dirs.layouts.toString() + "/")) {
@@ -319,7 +319,7 @@ class EjsMvc {
                     esPages.append(intermediate)
                 }
             }
-            let webFiles = find(dirs.static, "*." + ext.ejs)
+            let webFiles = find(dirs.static, "**." + ext.ejs)
             for each (name in webFiles) {
                 intermediate = buildWebPage(name, false)
                 rm(intermediate.replaceExt(ext.mod))
@@ -357,7 +357,7 @@ class EjsMvc {
              *  Build controllers
              */
             if (rest.length == 0) {
-                for each (name in find(dirs.controllers, "*." + ext.es)) {
+                for each (name in find(dirs.controllers, "**." + ext.es)) {
                     buildController(name)
                 }
             } else {
@@ -375,7 +375,7 @@ class EjsMvc {
         case "view":
         case "views":
             if (rest.length == 0) {
-                for each (view in find(dirs.views, "*." + ext.ejs)) {
+                for each (view in find(dirs.views, "**." + ext.ejs)) {
                     buildView(view, true)
                 }
             } else {
@@ -584,7 +584,7 @@ class EjsMvc {
     }
 
     function buildApp(): Void {
-        let pat = "*." + ext.es
+        let pat = "**." + ext.es
         let files = find("src", pat) + find(dirs.models, pat) + find(dirs.controllers, "Base.es")
         buildFiles(dirs.cache.join(config.mvc.appmod), files)
     }
@@ -662,7 +662,7 @@ class EjsMvc {
         }
         for each (file in libFiles) {
             dest = Path("bin").join(file).joinExt(lib)
-            src = dirs.lib.join(file).joinExt(lib)
+            src = dirs.bin.join(file).joinExt(lib)
             if (!exists(src)) {
                 error("WARNING: Can't find: " + file + " Continuing ...")
             }
@@ -686,11 +686,10 @@ class EjsMvc {
                 chmod(dest, 0755)
             }
         }
-
         overwrite = false
         for each (file in confFiles) {
             dest = Path("bin").join(file)
-            src = dirs.lib.join(file)
+            src = dirs.bin.join(file)
             if (!exists(src)) {
                 error("WARNING: Can't find: " + file + " Continuing ...")
             }
@@ -905,6 +904,8 @@ class EjsMvc {
 
         //  TODO - convert all paths to use dirs.name 
         makeDir(appName)
+
+        //  TODO - should use try/finally around all chdir
         App.chdir(appName)
         if (options.full) {
             makeDir("bin")
@@ -913,7 +914,6 @@ class EjsMvc {
             makeDir("messages")
             makeDir("test")
         }
-
         makeDir(dirs.cache)
         makeDir(dirs.controllers)
         makeDir(dirs.db)
@@ -929,7 +929,6 @@ class EjsMvc {
 
         generateStart()
         generateAppSrc()
-
         generateConfig()
         generateLayouts()
         generateHomePage()
@@ -976,11 +975,11 @@ class EjsMvc {
     }
 
     function generatePages(): Void {
-        let path: Path = dirs.lib.join("www")
+        let path: Path = dirs.bin.join("www")
         if (!exists(path)) {
             throw "Can't find www at " + path
         }
-        for each (f in find(path, "*")) {
+        for each (f in find(path, "**", {exclude: /\/$/})) {
             let name = f.name.slice(path.length + 1)
             copyFile(f, dirs.static.join(name), "Static web page")
         }
@@ -1400,7 +1399,7 @@ class EjsMvc {
 
 
 /*
- *  Templates for various files
+    Templates for various files
  */
 class Templates {
     

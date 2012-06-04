@@ -145,10 +145,9 @@ size determination failed.</td></tr>
    <tr class='apiDef'><td class='apiType'> </td><td><a href='#contains'><b>contains</b></a>(pattern: <a href='String.html'>String</a>): <a href='Boolean.html'>Boolean</a></tr><tr class='apiBrief'><td>&nbsp;</td><td>Test if the path name contains a substring.</td></tr>
    <tr class='apiDef'><td class='apiType'> </td><td><a href='#copy'><b>copy</b></a>(target: <a href='Object.html'>Object</a>, options: <a href='Object.html'>Object</a> = null): <a href='Void.html'>Void</a></tr><tr class='apiBrief'><td>&nbsp;</td><td>Copy a file.</td></tr>
    <tr class='apiDef'><td class='apiType'> </td><td><a href='#endsWith'><b>endsWith</b></a>(suffix: <a href='String.html'>String</a>): <a href='Boolean.html'>Boolean</a></tr><tr class='apiBrief'><td>&nbsp;</td><td>Return true if the path ends with the given suffix.</td></tr>
-   <tr class='apiDef'><td class='apiType'> </td><td><a href='#files'><b>files</b></a>(options: <a href='Object.html'>Object</a> = null): <a href='Array.html'>Array</a></tr><tr class='apiBrief'><td>&nbsp;</td><td>Get a list of files in a directory or subdirectory.</td></tr>
+   <tr class='apiDef'><td class='apiType'> </td><td><a href='#files'><b>files</b></a>(patterns: <a href='Object.html'>Object</a> = *, options: <a href='Object.html'>Object</a> = null): <a href='Array.html'>Array</a></tr><tr class='apiBrief'><td>&nbsp;</td><td>Do Posix glob style file matching.</td></tr>
    <tr class='apiDef'><td class='apiType'>iterator override </td><td><a href='#get'><b>get</b></a>(): <a href='iterator-Iterator.html'>Iterator</a></tr><tr class='apiBrief'><td>&nbsp;</td><td>Get iterate over any files contained under this path (assuming it is a directory) "for (v in files)".</td></tr>
    <tr class='apiDef'><td class='apiType'>iterator override </td><td><a href='#getValues'><b>getValues</b></a>(): <a href='iterator-Iterator.html'>Iterator</a></tr><tr class='apiBrief'><td>&nbsp;</td><td>Get an iterator for this file to be used by "for each (v in obj)".</td></tr>
-   <tr class='apiDef'><td class='apiType'> </td><td><a href='#glob'><b>glob</b></a>(patterns, options: <a href='Object.html'>Object</a> = null): <a href='Array.html'>Array</a></tr><tr class='apiBrief'><td>&nbsp;</td><td>Do Posix glob style file matching.</td></tr>
    <tr class='apiDef'><td class='apiType'> </td><td><a href='#join'><b>join</b></a>(other: <a href='Array.html'>Array</a>): <a href='Path.html'>Path</a></tr><tr class='apiBrief'><td>&nbsp;</td><td>Join paths.</td></tr>
    <tr class='apiDef'><td class='apiType'> </td><td><a href='#joinExt'><b>joinExt</b></a>(ext: <a href='String.html'>String</a>, force: <a href='Boolean.html'>Boolean</a> = false): <a href='Path.html'>Path</a></tr><tr class='apiBrief'><td>&nbsp;</td><td>Join an extension to a path.</td></tr>
    <tr class='apiDef'><td class='apiType'> </td><td><a href='#makeDir'><b>makeDir</b></a>(options: <a href='Object.html'>Object</a> = null): <a href='Boolean.html'>Boolean</a></tr><tr class='apiBrief'><td>&nbsp;</td><td>Make a new directory and all required intervening directories.</td></tr>
@@ -266,23 +265,21 @@ NOTE: this does a case-sensitive match.</td></tr>
 <hr />
 <a name='files'></a>
 <div class='api'>
-<div class='apiSig'>    files(options: <a href='Object.html'>Object</a> = null): <a href='Array.html'>Array</a>
+<div class='apiSig'>    files(patterns: <a href='Object.html'>Object</a> = *, options: <a href='Object.html'>Object</a> = null): <a href='Array.html'>Array</a>
 </div>
 <div class='apiDetail'>
-<dl><dt>Description</dt></dd><dd>Get a list of files in a directory or subdirectory. Use the <a href='#glob'>glob</a> method for shell style wild card support.</dd></dl>
+<dl><dt>Description</dt></dd><dd>Do Posix glob style file matching. </dd></dl>
 <dl><dt>Parameters</dt>
 <dd><table class='parameters' summary ='parameters'>
-<tr class='param'><td class='param'>options: <a href='Object.html'>Object</a> </td><td>If set to true, then files will include sub-directories in the returned list of files. [default: null]</td></tr></table></dd>
+<tr class='param'><td class='param'>patterns: <a href='Object.html'>Object</a> </td><td>Pattern to match files. This can be a String, Path or array of String/Paths.  The wildcard '?' matches any single character, '*'' matches zero or more characters in a filename or  directory, '***  /' matches zero or more files or directories and matches recursively in a directory tree.  If a pattern terminates with "/" it will only match directories.  The pattern '***'' is equivalent to '***  / *'' (ignore spaces).  The Posix "[]" and "{a,b}" style expressions are not supported. [default: *]</td></tr><tr class='param'><td class='param'>options: <a href='Object.html'>Object</a> </td><td>Optional properties to control the matching. [default: null]</td></tr></table></dd>
 </dl><dl><dt>Options</dt>
 <dd><table class='parameters' summary ='options'>
-<td class='param'>basenames</td><td>Set to true to include only the basename portion of filenames in the results. If selected, any "include" or "exclude" patterns will only match the basename and not the full path.</td></tr>
 <td class='param'>depthFirst</td><td>Do a depth first traversal. If "dirs" is specified, the directories will be shown after the files in the directory. Otherwise, directories will be listed first.</td></tr>
-<td class='param'>descend</td><td>Descend into subdirectories.</td></tr>
-<td class='param'>exclude</td><td>Regular expression pattern of files to exclude from the results. Matches the entire path unless "basenames" is selected.</td></tr>
-<td class='param'>files</td><td>Include only files in the results. The default is to include directories.</td></tr>
-<td class='param'>hidden</td><td>Show hidden files starting with ".".</td></tr>
-<td class='param'>include</td><td>Regular expression pattern of files to include in the results. Matches the entire returned path unless "basenames" is selected.</td></tr>
-<td class='param'>missing</td><td>Report missing directories by throwing an exception.</td></tr>
+<td class='param'>exclude</td><td>Regular expression pattern of files to exclude from the results. Matches the entire path. Only for the purpose of this match, directories will have "/" appended. To exclude directories in the results, use {exclude: /\//}. The trailing "/" will not be returned in the results.</td></tr>
+<td class='param'>hidden</td><td>Include hidden files starting with ".".</td></tr>
+<td class='param'>include</td><td>Regular expression pattern of files to include in the results. Matches the entire returned path. Only for the purpose of this match, directories will have "/" appended. To include only directories in the results, use {include: /\/<a href='#/}'>/}</a>. </td></tr>
+<td class='param'>missing</td><td>Set to undefined to report patterns that don't resolve into any files or directories  by throwing an exception. Set to any non-null value to be used in the results when there are no matching files or directories. Set to the empty string to use the patterns in the results and set to null to do nothing.</td></tr>
+<td class='param'>relative</td><td>Return paths relative to the Path, otherwise result entries include the Path. Defaults to false.</td></tr>
 </table></dd>
 </dl><dl><dt>Returns</dt>
 <dd>An Array of Path objects for each file in the directory.</dd></dl>
@@ -313,30 +310,6 @@ This operates the same as <a href='#get'>get</a> on a Path object.</dd></dl>
 <dd>An iterator object.</dd></dl>
 <dl><dt>Example</dt>
 <dd><pre>for each (f in Path("."))</pre></dd></dl>
-</div>
-</div>
-<hr />
-<a name='glob'></a>
-<div class='api'>
-<div class='apiSig'>    glob(patterns, options: <a href='Object.html'>Object</a> = null): <a href='Array.html'>Array</a>
-</div>
-<div class='apiDetail'>
-<dl><dt>Description</dt></dd><dd>Do Posix glob style file matching. </dd></dl>
-<dl><dt>Parameters</dt>
-<dd><table class='parameters' summary ='parameters'>
-<tr class='param'><td class='param'>patterns </td><td>Pattern to match files. This can be a String, Path or array of String/Paths.  The wildcard '?' matches any single character, '*'' matches zero or more characters in a filename or  directory, '***  /' matches zero or more files or directories and matches recursively in a directory tree.  If a pattern terminates with "/" it will only match directories.  The pattern '***'' is equivalent to '***  / *'' (ignore spaces).  The Posix "[]" and "{a,b}" style expressions are not supported.</td></tr><tr class='param'><td class='param'>options: <a href='Object.html'>Object</a> </td><td>Optional properties to control the matching. [default: null]</td></tr></table></dd>
-</dl><dl><dt>Options</dt>
-<dd><table class='parameters' summary ='options'>
-<td class='param'>depthFirst</td><td>Do a depth first traversal. If "dirs" is specified, the directories will be shown after the files in the directory. Otherwise, directories will be listed first.</td></tr>
-<td class='param'>exclude</td><td>Regular expression pattern of files to exclude from the results. Matches the entire path. Only for the purpose of this match, directories will have "/" appended. To exclude directories in the results, use {exclude: /\//}. The trailing "/" will not be returned in the results.</td></tr>
-<td class='param'>files</td><td>Include only files in the results. The default is to include directories.</td></tr>
-<td class='param'>hidden</td><td>Include hidden files starting with ".".</td></tr>
-<td class='param'>include</td><td>Regular expression pattern of files to include in the results. Matches the entire returned path. Only for the purpose of this match, directories will have "/" appended. To include only directories in the results, use {include: /\/<a href='#/}'>/}</a>. </td></tr>
-<td class='param'>missing</td><td>Set to undefined to report patterns that don't resolve into any files or directories  by throwing an exception. Set to any non-null value to be used in the results when there are no matching files or directories. Set to the empty string to use the patterns in the results and set to null to do nothing.</td></tr>
-<td class='param'>relative</td><td>Return paths relative to the Path, otherwise result entries include the Path. Defaults to false.</td></tr>
-</table></dd>
-</dl><dl><dt>Returns</dt>
-<dd>An Array of Path objects for each file in the directory.</dd></dl>
 </div>
 </div>
 <hr />

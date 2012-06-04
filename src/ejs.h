@@ -3190,15 +3190,15 @@ extern EjsPath *ejsToPath(Ejs *ejs, EjsAny *obj);
 extern int ejsSetPathAttributes(Ejs *ejs, cchar *path, EjsObj *options);
 
 /**
-    Expand wild cards in a path
-    @description Function used to implement Path.glob()
+    Get files below a path. 
+    @description Expand wild cards in a path. Function used to implement Path.files().
     @param ejs Ejs reference returned from #ejsCreateVM
     @param path Path to use as the base 
     @param argc Count of args (set to 1)
     @param argv Args array. (Set to an array with a single element)
     @return Array of matching paths
   */
-extern EjsArray *ejsGlobPath(Ejs *ejs, EjsPath *path, int argc, EjsObj **argv);
+extern EjsArray *ejsGetPathFiles(Ejs *ejs, EjsPath *path, int argc, EjsObj **argv);
 
 /******************************************** FileSystem*******************************************/
 /** 

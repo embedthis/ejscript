@@ -18,7 +18,7 @@ Bit.load({
 
         importSlots: {
             action: "
-                for each (file in Path('slots').glob('*.h')) {
+                for each (file in Path('slots').files('*.h')) {
                     let src = bit.dir.inc.join(file.basename)
                     trace('Import', src)
                     src.copy(file)

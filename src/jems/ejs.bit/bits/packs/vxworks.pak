@@ -14,11 +14,11 @@ if (!path) {
         search += [base]
     }
     for each (drive in (FileSystem.drives() - ['A', 'B'])) {
-        search += Path(drive + ':/').glob('WindRiver/vxworks-*')
+        search += Path(drive + ':/').files('WindRiver/vxworks-*')
     }
-    search += Path('/WindRiver').glob('vxworks-*') +
-        Path('/usr/src/WindRiver').glob('vxworks-*') +
-        Path(App.getenv('HOME') + '/WindRiver').glob('vxworks-*')
+    search += Path('/WindRiver').files('vxworks-*') +
+        Path('/usr/src/WindRiver').files('vxworks-*') +
+        Path(App.getenv('HOME') + '/WindRiver').files('vxworks-*')
     path = probe('target/h/vxWorks.h', {search: search.sort().reverse()})
 }
 
@@ -59,13 +59,13 @@ let major: Number = version.split('.')[0] cast Number
 let env = bit.env
 if (major >= 6) {
     env.WIND_HOME = path.dirname
-    env.WIND_GNU_PATH = path.dirname.glob('gnu/*-' + env.WIND_PLATFORM).sort().reverse()[0]
+    env.WIND_GNU_PATH = path.dirname.files('gnu/*-' + env.WIND_PLATFORM).sort().reverse()[0]
     bit.packs.vxworks.search = [
         env.WIND_GNU_PATH.join(env.WIND_HOST_TYPE, 'bin'),
         env.WIND_GNU_PATH.join(env.WIND_HOST_TYPE, bit.platform.arch + '-wrs-vxworks/bin'),
         env.WIND_BASE.join('host', env.WIND_HOST_TYPE, 'bin'),
         env.WIND_BASE.join('/host/resource/hutils/tcl'),
-        env.WIND_HOME.glob('workbench*/foundation/' + env.WIND_HOST_TYPE + '/bin').sort().reverse()[0],
+        env.WIND_HOME.files('workbench*/foundation/' + env.WIND_HOST_TYPE + '/bin').sort().reverse()[0],
     ]
 } else {
     env.WIND_HOME = path
@@ -73,7 +73,7 @@ if (major >= 6) {
     bit.packs.vxworks.search = [
         env.WIND_BASE.join('host', env.WIND_HOST_TYPE, 'bin'),
         env.WIND_BASE.join('/host/resource/hutils/tcl'),
-        env.WIND_HOME.glob('workbench*/foundation/' + env.WIND_HOST_TYPE + '/bin').sort().reverse()[0],
+        env.WIND_HOME.files('workbench*/foundation/' + env.WIND_HOST_TYPE + '/bin').sort().reverse()[0],
     ]
 }
 bit.env.DIST = 'WindRiver'

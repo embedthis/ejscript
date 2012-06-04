@@ -11,7 +11,7 @@ Bit.load({
             build: "
                 trace('Compile', 'ejs.web.mod')
                 run('${LBIN}/ejsc --out ${LIB}/ejs.web.mod ${settings.esflags} --optimize 9 ' + 
-                    Path('.').glob('*.es').sort().join(' '))
+                    Path('.').files('*.es').sort().join(' '))
                 run('${LBIN}/ejsmod --cslots ${LIB}/ejs.web.mod')
                 let header = Path('ejs.web.slots.h')
                 let dest = bit.dir.inc.join(header)

@@ -12,7 +12,7 @@ Bit.load({
             precious: true,
             build: "
                 trace('Compile', 'ejs.zlib.mod')
-                run('${LBIN}/ejsc --out ${LIB}/ejs.zlib.mod ${settings.esflags} --optimize 9 ' + Path('.').glob('*.es').sort().join(' '))
+                run('${LBIN}/ejsc --out ${LIB}/ejs.zlib.mod ${settings.esflags} --optimize 9 ' + Path('.').files('*.es').sort().join(' '))
             ",
             'generate': '${BIN}/ejsc --out ${BIN}/ejs.zlib.mod ${settings.esflags} --optimize 9 *.es',
             depends: [ 'ejsc', 'ejs.mod' ],

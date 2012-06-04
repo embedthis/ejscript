@@ -63,7 +63,7 @@ This is the number of milliseconds for the call to complete.</td></tr>
    <tr class='apiDef'><td class='apiType'> static </td><td><a href='#daemon'><b>daemon</b></a>(cmdline: <a href='Object.html'>Object</a>, options: <a href='Object.html'>Object</a> = null): <a href='Number.html'>Number</a></tr><tr class='apiBrief'><td>&nbsp;</td><td>Start a command in the background as a daemon.</td></tr>
    <tr class='apiDef'><td class='apiType'> static </td><td><a href='#exec'><b>exec</b></a>(cmdline: <a href='String.html'>String</a> = null, options: <a href='Object.html'>Object</a> = expression): <a href='Void.html'>Void</a></tr><tr class='apiBrief'><td>&nbsp;</td><td>Execute a new program by the current process.</td></tr>
    <tr class='apiDef'><td class='apiType'> static </td><td><a href='#kill'><b>kill</b></a>(pid: <a href='Number.html'>Number</a>, signal: <a href='Number.html'>Number</a> = 2): <a href='Boolean.html'>Boolean</a></tr><tr class='apiBrief'><td>&nbsp;</td><td>Kill the specified process.</td></tr>
-   <tr class='apiDef'><td class='apiType'> static </td><td><a href='#locate'><b>locate</b></a>(program: <a href='Path.html'>Path</a>): <a href='Path.html'>Path</a></tr><tr class='apiBrief'><td>&nbsp;</td><td>Locate a program using the application PATH.</td></tr>
+   <tr class='apiDef'><td class='apiType'> static </td><td><a href='#locate'><b>locate</b></a>(program: <a href='Path.html'>Path</a>, search = expression): <a href='Path.html'>Path</a></tr><tr class='apiBrief'><td>&nbsp;</td><td>Locate a program using the application PATH.</td></tr>
    <tr class='apiDef'><td class='apiType'> static </td><td><a href='#run'><b>run</b></a>(command: <a href='Object.html'>Object</a>, options: <a href='Object.html'>Object</a> = expression, data: <a href='Object.html'>Object</a> = null): <a href='String.html'>String</a></tr><tr class='apiBrief'><td>&nbsp;</td><td>Execute a command/program and return the output as a result.</td></tr>
    <tr class='apiDef'><td class='apiType'> static </td><td><a href='#sh'><b>sh</b></a>(command: <a href='Object.html'>Object</a>, options: <a href='Object.html'>Object</a> = null, data: <a href='Object.html'>Object</a> = null): <a href='String.html'>String</a></tr><tr class='apiBrief'><td>&nbsp;</td><td>Run a command using the system command shell and wait for completion.</td></tr>
 </table>
@@ -184,14 +184,16 @@ signify the end of write data.</dd></dl>
 <hr />
 <a name='locate'></a>
 <div class='api'>
-<div class='apiSig'>static     locate(program: <a href='Path.html'>Path</a>): <a href='Path.html'>Path</a>
+<div class='apiSig'>static     locate(program: <a href='Path.html'>Path</a>, search = expression): <a href='Path.html'>Path</a>
 </div>
 <div class='apiDetail'>
 <dl><dt>Description</dt></dd><dd>Locate a program using the application PATH. </dd></dl>
 <dl><dt>Parameters</dt>
 <dd><table class='parameters' summary ='parameters'>
-<tr class='param'><td class='param'>program: <a href='Path.html'>Path</a> </td><td>Program to find.</td></tr></table></dd>
-</dl></div>
+<tr class='param'><td class='param'>program: <a href='Path.html'>Path</a> </td><td>Program to find.</td></tr><tr class='param'><td class='param'>search </td><td>Optional additional search paths to use before using PATH. [default: expression]</td></tr></table></dd>
+</dl><dl><dt>Returns</dt>
+<dd>Located path or null.</dd></dl>
+</div>
 </div>
 <hr />
 <a name='on'></a>

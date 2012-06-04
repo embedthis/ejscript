@@ -11,7 +11,7 @@ Bit.load({
             build: "
                 trace('Compile', 'ejs.template.mod')
                 run('${LBIN}/ejsc --out ${LIB}/ejs.template.mod ${settings.esflags} --optimize 9 ' + 
-                    Path('.').glob('TemplateParser.es').sort().join(' '))
+                    Path('.').files('TemplateParser.es').sort().join(' '))
             ",
             'generate': '${BIN}/ejsc --out ${BIN}/ejs.template.mod ${settings.esflags} --optimize 9 TemplateParser.es',
             depends: [ 'ejsc', 'ejs.mod' ],

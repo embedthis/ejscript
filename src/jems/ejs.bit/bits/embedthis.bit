@@ -76,12 +76,12 @@ Bit.load({
                         throw 'Missing a farm upload URI'
                     }
                     let base = s.product + '-' + s.version + '-' + s.buildNumber
-                    let files = bit.dir.rel.glob('*' + base + '*.pkg*')
-                    files += bit.dir.rel.glob('*' + base + '*x86.exe.zip*')
+                    let files = bit.dir.rel.files('*' + base + '*.pkg*')
+                    files += bit.dir.rel.files('*' + base + '*x86.exe.zip*')
                     if (App.getenv('BUILD_UPLOAD_SOURCE')) {
-                        files += bit.dir.rel.glob('*' + base + '-src*')
-                        files += bit.dir.rel.glob('*' + base + '-flat*')
-                        files += bit.dir.rel.glob(s.product + '-flat.tgz')
+                        files += bit.dir.rel.files('*' + base + '-src*')
+                        files += bit.dir.rel.files('*' + base + '-flat*')
+                        files += bit.dir.rel.files(s.product + '-flat.tgz')
                     }
                     for each (file in files) {
                         let http = new Http
@@ -190,7 +190,7 @@ Bit.load({
                 for each (prefix in bit.prefixes) {
                     if (prefix.exists) {
                         trace('Exists', prefix)
-                        let files = prefix.glob('**')
+                        let files = prefix.files('**')
                         if (files.length > 0) {
                             trace('Exists', files.join(', '))
                         }

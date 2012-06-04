@@ -20,10 +20,10 @@ Bit.load({
             build: "
                 trace('Compile', 'Core EJS classes')
                 run('${LBIN}/ejsc --out ${LIB}/ejs.mod ${settings.esflags} --optimize 9 --bind --require null ' + 
-                    Path('.').glob('*.es').sort().join(' '))
+                    Path('.').files('*.es').sort().join(' '))
                 trace('Generate', 'Core slot files and listings')
                 run('${LBIN}/ejsmod --require null --cslots ${LIB}/ejs.mod')
-                for each (file in Path('.').glob('*.slots.h')) {
+                for each (file in Path('.').files('*.slots.h')) {
                     let dest = bit.dir.inc.join(file.basename)
                     if (!dest.exists || file.readString() != dest.readString()) {
                         trace('Install', dest)

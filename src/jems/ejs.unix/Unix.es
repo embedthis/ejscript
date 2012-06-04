@@ -59,7 +59,7 @@ module ejs.unix {
             if (options.expand) {
                  dest = dest.toString().expand(options.expand, options)
             }
-            let list = path.glob(patterns, options)
+            let list = path.files(patterns, options)
             if (list.length > 1 || (patterns is Array && patterns.length > 1)) {
                 if (!options.cat) {
                     if (!dest.exists) {
@@ -184,36 +184,48 @@ module ejs.unix {
             if (pat.exists && pat.isDir) {
                 pat = pat.join("*")
             }
-            results += Path(".").glob(pat, options)
+            results += Path(".").files(pat, options)
         }
         return results
     }
 
 
     /**
-        Find files. Do Posix glob style pattern matching.
-        @param path Base path from which to match patterns. 
-        @param pattern String pattern to match with files. The wildcards "*", "**" and "?" are the wild card
-            patterns supported. The "**" pattern matches any number of directories.  The Posix "[]" and "{a,b}" style
-            expressions are not supported.
-        @param options If set to true, then files will include sub-directories in the returned list of files.
-        @option dirs Include directories in the file list
+        Find files under a directory.
+        This uses Path.files to implement the functionality.
+        @param path Path or array of paths from which to search
+        @param patterns Pattern to match files. This can be a String, Path or array of String/Paths. 
+        The wildcard '?' matches any single character, '*' matches zero or more characters in a filename or 
+            directory, '** /' matches zero or more files or directories and matches recursively in a directory
+            tree.  If a pattern terminates with "/" it will only match directories. 
+            The pattern '**' is equivalent to '** / *' (ignore spaces). 
+            The Posix "[]" and "{a,b}" style expressions are not supported.
+        @param options Optional properties to control the matching.
         @option depthFirst Do a depth first traversal. If "dirs" is specified, the directories will be shown after
-        the files in the directory. Otherwise, directories will be listed first.
+            the files in the directory. Otherwise, directories will be listed first.
         @option exclude Regular expression pattern of files to exclude from the results. Matches the entire path.
-        @option hidden Show hidden files starting with "."
+            Only for the purpose of this match, directories will have "/" appended. To exclude directories in the
+            results, use {exclude: /\/$/}. The trailing "/" will not be returned in the results.
+        @option hidden Include hidden files starting with "."
         @option include Regular expression pattern of files to include in the results. Matches the entire returned path.
-        @return An Array of Path objects for each matching file.
+            Only for the purpose of this match, directories will have "/" appended. To include only directories in the
+            results, use {include: /\/$/}
+        @option missing Set to undefined to report patterns that don't resolve into any files or directories 
+            by throwing an exception. Set to any non-null value to be used in the results when there are no matching
+            files or directories. Set to the empty string to use the patterns in the results and set
+            to null to do nothing.
+        @option relative Return paths relative to the Path, otherwise result entries include the Path. Defaults to false.
+        @return An Array of Path objects for each file in the directory.
      */
-    function find(path: Object, pattern: String = "*", options = {}): Array {
+    function find(path: Object, patterns: Object! = "*", options = {}): Array {
         let result = []
         if (path is Array) {
             let paths = path
             for each (path in paths) {
-                result += Path(path).glob(pattern, options)
+                result += Path(path).files(patterns, options)
             }
         } else {
-            result += Path(path).glob(pattern, options)
+            result += Path(path).files(patterns, options)
         }
         return result
     }
@@ -293,7 +305,7 @@ module ejs.unix {
             patterns = [patterns]
         }
         for each (let pat:Path in patterns) {
-            for each (let path: Path in Path('.').glob(pat, options)) {
+            for each (let path: Path in Path('.').files(pat, options)) {
                 if (!path.remove()) {
                     success = false
                 }
@@ -320,7 +332,7 @@ module ejs.unix {
             patterns = [patterns]
         }
         for each (let pat:Path in patterns) {
-            for each (let path: Path in Path('.').glob(pat)) {
+            for each (let path: Path in Path('.').files(pat)) {
                 if (path.isDir) {
                     rmdir(path.join('*'), options)
                 }

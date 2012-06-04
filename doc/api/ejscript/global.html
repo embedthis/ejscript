@@ -183,7 +183,7 @@ for a property that has not been defined.</td></tr>
    <tr class='apiDef'><td class='apiType'>ejs.unix </td><td><a href='#exists'><b>exists</b></a>(path: <a href='String.html'>String</a>): <a href='Boolean.html'>Boolean</a></tr><tr class='apiBrief'><td>&nbsp;</td><td>Does a file exist.</td></tr>
    <tr class='apiDef'><td class='apiType'>ejs.worker </td><td><a href='#exit'><b>exit</b></a>(): <a href='Void.html'>Void</a></tr><tr class='apiBrief'><td>&nbsp;</td><td>Exit the worker.</td></tr>
    <tr class='apiDef'><td class='apiType'>ejs.unix </td><td><a href='#extension'><b>extension</b></a>(path: <a href='String.html'>String</a>): <a href='String.html'>String</a></tr><tr class='apiBrief'><td>&nbsp;</td><td>Get the file extension portion of the file name.</td></tr>
-   <tr class='apiDef'><td class='apiType'>ejs.unix </td><td><a href='#find'><b>find</b></a>(path: <a href='Object.html'>Object</a>, pattern: <a href='String.html'>String</a> = *, options = expression): <a href='Array.html'>Array</a></tr><tr class='apiBrief'><td>&nbsp;</td><td>Find files.</td></tr>
+   <tr class='apiDef'><td class='apiType'>ejs.unix </td><td><a href='#find'><b>find</b></a>(path: <a href='Object.html'>Object</a>, patterns: <a href='Object.html'>Object</a> = *, options = expression): <a href='Array.html'>Array</a></tr><tr class='apiBrief'><td>&nbsp;</td><td>Find files under a directory.</td></tr>
    <tr class='apiDef'><td class='apiType'>ejs.unix </td><td><a href='#freeSpace'><b>freeSpace</b></a>(path: <a href='String.html'>String</a> = null): <a href='Number.html'>Number</a></tr><tr class='apiBrief'><td>&nbsp;</td><td>Return the free space in the file system.</td></tr>
    <tr class='apiDef'><td class='apiType'> </td><td><a href='#hashcode'><b>hashcode</b></a>(o: <a href='Object.html'>Object</a>): <a href='Number.html'>Number</a></tr><tr class='apiBrief'><td>&nbsp;</td><td>Get the object's Unique hash id.</td></tr>
    <tr class='apiDef'><td class='apiType'>ejs.web </td><td><a href='#html'><b>html</b></a>(args: <a href='Array.html'>Array</a>): <a href='String.html'>String</a></tr><tr class='apiBrief'><td>&nbsp;</td><td>HTML encode the arguments.</td></tr>
@@ -1652,23 +1652,24 @@ in the path.</dd></dl>
 <hr />
 <a name='find'></a>
 <div class='api'>
-<div class='apiSig'>  ejs.unix  find(path: <a href='Object.html'>Object</a>, pattern: <a href='String.html'>String</a> = *, options = expression): <a href='Array.html'>Array</a>
+<div class='apiSig'>  ejs.unix  find(path: <a href='Object.html'>Object</a>, patterns: <a href='Object.html'>Object</a> = *, options = expression): <a href='Array.html'>Array</a>
 </div>
 <div class='apiDetail'>
-<dl><dt>Description</dt></dd><dd>Find files. Do Posix glob style pattern matching.</dd></dl>
+<dl><dt>Description</dt></dd><dd>Find files under a directory. This uses Path.files to implement the functionality.</dd></dl>
 <dl><dt>Parameters</dt>
 <dd><table class='parameters' summary ='parameters'>
-<tr class='param'><td class='param'>path: <a href='Object.html'>Object</a> </td><td>Base path from which to match patterns.</td></tr><tr class='param'><td class='param'>pattern: <a href='String.html'>String</a> </td><td>String pattern to match with files. The wildcards "*"", "***"" and "?" are the wild card patterns supported. The "***"" pattern matches any number of directories.  The Posix "[]" and "{a,b}" style expressions are not supported. [default: *]</td></tr><tr class='param'><td class='param'>options </td><td>If set to true, then files will include sub-directories in the returned list of files. [default: expression]</td></tr></table></dd>
+<tr class='param'><td class='param'>path: <a href='Object.html'>Object</a> </td><td>Path or array of paths from which to search.</td></tr><tr class='param'><td class='param'>patterns: <a href='Object.html'>Object</a> </td><td>Pattern to match files. This can be a String, Path or array of String/Paths.  The wildcard '?' matches any single character, '*'' matches zero or more characters in a filename or  directory, '***  /' matches zero or more files or directories and matches recursively in a directory tree.  If a pattern terminates with "/" it will only match directories.  The pattern '***'' is equivalent to '***  / *'' (ignore spaces).  The Posix "[]" and "{a,b}" style expressions are not supported. [default: *]</td></tr><tr class='param'><td class='param'>options </td><td>Optional properties to control the matching. [default: expression]</td></tr></table></dd>
 </dl><dl><dt>Options</dt>
 <dd><table class='parameters' summary ='options'>
-<td class='param'>dirs</td><td>Include directories in the file list.</td></tr>
 <td class='param'>depthFirst</td><td>Do a depth first traversal. If "dirs" is specified, the directories will be shown after the files in the directory. Otherwise, directories will be listed first.</td></tr>
-<td class='param'>exclude</td><td>Regular expression pattern of files to exclude from the results. Matches the entire path.</td></tr>
-<td class='param'>hidden</td><td>Show hidden files starting with ".".</td></tr>
-<td class='param'>include</td><td>Regular expression pattern of files to include in the results. Matches the entire returned path.</td></tr>
+<td class='param'>exclude</td><td>Regular expression pattern of files to exclude from the results. Matches the entire path. Only for the purpose of this match, directories will have "/" appended. To exclude directories in the results, use {exclude: /\//}. The trailing "/" will not be returned in the results.</td></tr>
+<td class='param'>hidden</td><td>Include hidden files starting with ".".</td></tr>
+<td class='param'>include</td><td>Regular expression pattern of files to include in the results. Matches the entire returned path. Only for the purpose of this match, directories will have "/" appended. To include only directories in the results, use {include: /\/<a href='#/}'>/}</a>. </td></tr>
+<td class='param'>missing</td><td>Set to undefined to report patterns that don't resolve into any files or directories  by throwing an exception. Set to any non-null value to be used in the results when there are no matching files or directories. Set to the empty string to use the patterns in the results and set to null to do nothing.</td></tr>
+<td class='param'>relative</td><td>Return paths relative to the Path, otherwise result entries include the Path. Defaults to false.</td></tr>
 </table></dd>
 </dl><dl><dt>Returns</dt>
-<dd>An Array of Path objects for each matching file.</dd></dl>
+<dd>An Array of Path objects for each file in the directory.</dd></dl>
 </div>
 </div>
 <hr />

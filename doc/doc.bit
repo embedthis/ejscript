@@ -15,7 +15,7 @@ Bit.load({
                     '<title>' + bit.settings.title + ' ' + bit.settings.version + ' Documentation</title>'))
 
                 trace('Patch', 'Expand DSI')
-                for each (path in Path('.').glob('**.html', {exclude: /Bare.html|dsi/})) {
+                for each (path in Path('.').files('**.html', {exclude: /Bare.html|dsi/})) {
                     vtrace('Patch', path)
                     Cmd('dsi -v -I. ' + path)
                 }
@@ -28,7 +28,7 @@ Bit.load({
 
         tidy: {
             action: "
-                for each (path in Path('.').glob('**.html', { exclude: /\\/$|dsi|Base|Bare/ })) {
+                for each (path in Path('.').files('**.html', { exclude: /\\/$|dsi|Base|Bare/ })) {
                     trace('Tidy', path)
                     Cmd('tidy -q -config tidy.conf ' + path)
                 }
@@ -39,7 +39,7 @@ Bit.load({
             action: "
                 let vdir = bit.dir.cfg.join('validate')
                 vdir.removeAll()
-                for each (file in Path('.').glob('**', { exclude: /\\/$|dsi|Base|Bare/ })) {
+                for each (file in Path('.').files('**', { exclude: /\\/$|dsi|Base|Bare/ })) {
                     let out = vdir.join(file)
                     out.dirname.makeDir()
                     if (file.extension == 'html') {
@@ -74,10 +74,10 @@ Bit.load({
             action: "
                 trace('Generate', 'Script library documentation')
                 let src = bit.dir.src.join('src')
-                let files = src.glob('core/*.es')
+                let files = src.files('core/*.es')
                 //  FUTURE 'tar', 'zlib'
                 for each (p in ['unix', 'db', 'db.mapper', 'db.sqlite', 'web', 'template']) {
-                    files += src.glob('jems/ejs.' + p + '/*.es')
+                    files += src.files('jems/ejs.' + p + '/*.es')
                 }
                 let docmod = Path('').temp().replaceExt('mod')
                 run('ejsc --doc --bind --out ' + docmod + ' --require null ' + files.join(' '))

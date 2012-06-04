@@ -11,7 +11,6 @@
 
 /************************************ Forwards ********************************/
 
-static EjsArray *getPathFiles(Ejs *ejs, EjsArray *results, cchar *dir, int flags, EjsRegExp *exclude, EjsRegExp *include);
 static cchar *getPathString(Ejs *ejs, EjsObj *vp);
 static void getUserGroup(Ejs *ejs, EjsObj *attributes, int *uid, int *gid);
 static EjsArray *globPath(Ejs *ejs, EjsArray *results, cchar *path, cchar *base, cchar *pattern, int flags, 
@@ -486,17 +485,7 @@ static EjsAny *getPathValues(Ejs *ejs, EjsPath *fp, int argc, EjsObj **argv)
 }
 
 
-/*
-    Flags for path_files and getPathFiles
- */
-#define FILES_DESCEND           MPR_PATH_DESCEND
-#define FILES_DEPTH_FIRST       MPR_PATH_DEPTH_FIRST
-#define FILES_HIDDEN            MPR_PATH_INC_HIDDEN
-#define FILES_NODIRS            MPR_PATH_NODIRS
-#define FILES_RELATIVE          MPR_PATH_RELATIVE
-#define FILES_NOMATCH_EXC       0x10000                 /* Throw an exception if no matching files */
-#define FILES_CASELESS          0x20000
-
+#if UNUSED
 /*
     Get the files in a directory and subdirectories
     function files(options: Object = null): Array
@@ -585,13 +574,25 @@ static EjsArray *getPathFiles(Ejs *ejs, EjsArray *results, cchar *dir, int flags
     }
     return results;
 }
+#endif
 
 
 /*
-    Get the files in a directory and subdirectories
-    function glob(patterns: Array|String|Path, options: Object = null): Array
+    Flags for path_files
  */
-EjsArray *ejsGlobPath(Ejs *ejs, EjsPath *fp, int argc, EjsObj **argv)
+#define FILES_DESCEND           MPR_PATH_DESCEND
+#define FILES_DEPTH_FIRST       MPR_PATH_DEPTH_FIRST
+#define FILES_HIDDEN            MPR_PATH_INC_HIDDEN
+#define FILES_NODIRS            MPR_PATH_NODIRS
+#define FILES_RELATIVE          MPR_PATH_RELATIVE
+#define FILES_NOMATCH_EXC       0x10000                 /* Throw an exception if no matching files */
+#define FILES_CASELESS          0x20000
+
+/*
+    Get the files in a directory and subdirectories
+    function files(patterns: Array|String|Path, options: Object = null): Array
+ */
+EjsArray *ejsGetPathFiles(Ejs *ejs, EjsPath *fp, int argc, EjsObj **argv)
 {
     MprFileSystem   *fs;
     EjsAny          *vp, *fill;
@@ -609,7 +610,10 @@ EjsArray *ejsGlobPath(Ejs *ejs, EjsPath *fp, int argc, EjsObj **argv)
     flags = 0;
     fill = 0;
 
-    if (!ejsIs(ejs, argv[0], Array)) {
+    if (argc == 0) {
+        patterns = ejsCreateArray(ejs, 0);
+        ejsAddItem(ejs, patterns, ejsCreateString(ejs, "**", -1));
+    } else if (!ejsIs(ejs, argv[0], Array)) {
         patterns = ejsCreateArray(ejs, 0);
         ejsAddItem(ejs, patterns, ejsToString(ejs, argv[0]));
     } else {
@@ -649,7 +653,7 @@ EjsArray *ejsGlobPath(Ejs *ejs, EjsPath *fp, int argc, EjsObj **argv)
     for (i = 0; i < patterns->length; i++) {
         /* 
             Optimize by converting absolute pattern path prefixes into the base directory.
-            This allows path.glob('/path/ *')
+            This allows path.files('/path/ *')
          */
         pattern = ejsToMulti(ejs, ejsGetItem(ejs, patterns, i));
         path = fp->value;
@@ -1788,8 +1792,10 @@ void ejsConfigurePathType(Ejs *ejs)
     ejsBindMethod(ejs, prototype, ES_Path_dirname, getPathDirname);
     ejsBindMethod(ejs, prototype, ES_Path_exists, getPathExists);
     ejsBindMethod(ejs, prototype, ES_Path_extension, getPathExtension);
+#if UNUSED
     ejsBindMethod(ejs, prototype, ES_Path_files, path_files);
-    ejsBindMethod(ejs, prototype, ES_Path_glob, ejsGlobPath);
+#endif
+    ejsBindMethod(ejs, prototype, ES_Path_files, ejsGetPathFiles);
     ejsBindMethod(ejs, prototype, ES_Path_iterator_get, getPathIterator);
     ejsBindMethod(ejs, prototype, ES_Path_iterator_getValues, getPathValues);
     ejsBindMethod(ejs, prototype, ES_Path_hasDrive, pathHasDrive);

@@ -1506,8 +1506,8 @@
       <type>EjsIterator *</type>
       <name>ejsCreateIterator</name>
       <anchorfile>group___ejs_iterator.html</anchorfile>
-      <anchor>ga410d4f75152c02c82d2b65ae7247662b</anchor>
-      <arglist>(Ejs *ejs, EjsAny *target, void *next, bool deep, EjsArray *namespaces)</arglist>
+      <anchor>gae03a8656c8b4b158cb731db704866370</anchor>
+      <arglist>(Ejs *ejs, EjsAny *target, int length, void *next, bool deep, EjsArray *namespaces)</arglist>
     </member>
   </compound>
   <compound kind="group">
