@@ -6713,6 +6713,7 @@ void httpCreateTxPipeline(HttpConn *conn, HttpRoute *route)
         for (next = 0; (filter = mprGetNextItem(route->outputStages, &next)) != 0; ) {
             if (matchFilter(conn, filter, route, HTTP_STAGE_TX) == HTTP_ROUTE_OK) {
                 mprAddItem(tx->outputPipeline, filter);
+                mprLog(4, "Output filter: \"%s\"", filter->name);
                 hasOutputFilters = 1;
             }
         }
@@ -6728,6 +6729,7 @@ void httpCreateTxPipeline(HttpConn *conn, HttpRoute *route)
         }
     }
     mprAddItem(tx->outputPipeline, tx->connector);
+    mprLog(4, "Connector: \"%s\"", tx->connector->name);
 
     /*  Create the outgoing queue heads and open the queues */
     q = tx->queue[HTTP_QUEUE_TX];
@@ -8366,6 +8368,9 @@ void httpRouteRequest(HttpConn *conn)
         httpError(conn, HTTP_CODE_INTERNAL_SERVER_ERROR, "Can't find suitable route for request");
         return;
     }
+    if (rx->traceLevel >= 0) {
+        mprLog(4, "Select route \"%s\" target \"%s\"", route->name, route->targetRule);
+    }
     rx->route = route;
     conn->limits = route->limits;
 
@@ -8546,9 +8551,6 @@ static int testRoute(HttpConn *conn, HttpRoute *route)
     if ((proc = mprLookupKey(conn->http->routeTargets, route->targetRule)) == 0) {
         httpError(conn, -1, "Can't find route target rule \"%s\"", route->targetRule);
         return HTTP_ROUTE_REJECT;
-    }
-    if (rx->traceLevel >= 0) {
-        mprLog(4, "Select route \"%s\" target \"%s\"", route->name, route->targetRule);
     }
     if ((rc = (*proc)(conn, route, 0)) != HTTP_ROUTE_OK) {
         return rc;
