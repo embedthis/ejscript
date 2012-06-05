@@ -32,7 +32,7 @@ if (bit.platform.os == 'windows') {
         Path('/usr/lib').files(arch + '-linux-gnu') + Path('/lib').files(arch + '-linux-gnu')
     lib = probe('libz.so', {fullpath: true, search: search}).absolute
     imports = lib.parent.files('libz*.so*')
-    isearch = [path.join('include'), '/usr/include']
+    isearch = [path, path.join('include'), '/usr/include']
 }
 
 let cfg = {
