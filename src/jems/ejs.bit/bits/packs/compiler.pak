@@ -176,7 +176,7 @@ function getDefaultSettings(platform) {
             hasLibEdit: false,
             hasMmu: true,
             hasMtune: true,
-            hasPam: true,
+            hasPam: false,
             hasStackProtector: true,
             hasSync: true,
             hasSyncCas: true,
