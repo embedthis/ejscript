@@ -330,7 +330,8 @@ an alias for '--log stderr:2'.
 \fB\--nocross\fR
 Don't cross-build, rather build natively for the development system. This is useful when configuring for a platform
 that can build and run natively on the development system. For example: Linux 64-bit systems can run 32-bit applications, 
-so 'bit --nocross --platform linux-x86 configure' can directly target the 32-bit platform without cross-building.
+so 'bit --nocross --platform linux-x86 configure' may be able to directly target the 32-bit platform without cross-building.
+Note: Products that require the building and execution of local tools MUST be able to run those tools on the development system. 
 
 .TP
 \fB\--out path\fR
