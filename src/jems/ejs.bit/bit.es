@@ -354,7 +354,6 @@ public class Bit {
             bit.cross = true
         }
         bit.cross = false
-        // options.configure = undefined
         if (!options.gen) {
             genStartBitFile(platforms[0])
         }
