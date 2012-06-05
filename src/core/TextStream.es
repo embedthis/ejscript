@@ -264,11 +264,16 @@ module ejs {
          */
         function writeLine(...lines): Number {
             let written = 0
-            for each (let line in lines) {
-                nextStream.write(line)
-                /* If the file is opened in text mode, the lower layers will add "\r" for windows */
+            if (lines.length == 0) {
                 nextStream.write("\n");
-                written += line.length + 1
+                written++
+            } else {
+                for each (let line in lines) {
+                    nextStream.write(line)
+                    /* If the file is opened in text mode, the lower layers will add "\r" for windows */
+                    nextStream.write("\n");
+                    written += line.length + 1
+                }
             }
             return written
         }
