@@ -2485,7 +2485,6 @@ cp -r ../../${CFG_DIR}/bin/ejsrun ../../${CFG_DIR}/bin/utest
 ../src/jems/ejs.bit/bits/os/vxworks.bit,
 ../src/jems/ejs.bit/bits/os/windows.bit,
 ../src/jems/ejs.bit/bits/packs,
-../src/jems/ejs.bit/bits/packs/a.tmp,
 ../src/jems/ejs.bit/bits/packs/compiler.pak,
 ../src/jems/ejs.bit/bits/packs/doxygen.pak,
 ../src/jems/ejs.bit/bits/packs/dsi.pak,
@@ -2510,6 +2509,7 @@ cp -r ../../${CFG_DIR}/bin/ejsrun ../../${CFG_DIR}/bin/utest
 ../src/jems/ejs.bit/bits/packs/utest.pak,
 ../src/jems/ejs.bit/bits/packs/vxworks.pak,
 ../src/jems/ejs.bit/bits/packs/winsdk.pak,
+../src/jems/ejs.bit/bits/packs/zip.pak,
 ../src/jems/ejs.bit/bits/packs/zlib.pak,
 ../src/jems/ejs.bit/bits/sample.bit,
 ../src/jems/ejs.bit/bits/simple.bit,
@@ -3842,7 +3842,6 @@ fi";
 					"$(inherited)"
 				);
 				OTHER_LDFLAGS = (
-					"-Wl,-rpath,@executable_path/../lib",
 					"-Wl,-rpath,@executable_path/",
 					"-Wl,-rpath,@loader_path/",
 					"-lpthread",
@@ -3914,7 +3913,6 @@ fi";
 					"$(inherited)"
 				);
 				OTHER_LDFLAGS = (
-					"-Wl,-rpath,@executable_path/../lib",
 					"-Wl,-rpath,@executable_path/",
 					"-Wl,-rpath,@loader_path/",
 					"-lpthread",

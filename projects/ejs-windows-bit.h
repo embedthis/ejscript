@@ -11,18 +11,16 @@
 #define BIT_COMPANY "Embedthis"
 #define BIT_EJS_PRODUCT 1
 #define BIT_VERSION "2.0.0"
-#define BIT_NUMBER "B2"
+#define BIT_NUMBER "0"
 #define BIT_MAJOR_VERSION 2
 #define BIT_MINOR_VERSION 0
 #define BIT_PATCH_VERSION 0
 #define BIT_VNUM 200000000
 #define BIT_CONFIG_CMD "bit -d -q -platform windows-x86 -without all -configure . -gen sh,nmake,vs"
-#define BIT_LIB_NAME "bin"
 #define BIT_PROFILE "debug"
 #define BIT_CFG_PREFIX "C:/Program Files (x86)/Embedthis Ejscript"
 #define BIT_BIN_PREFIX "C:/Program Files (x86)/Embedthis Ejscript/bin"
 #define BIT_INC_PREFIX "C:/Program Files (x86)/Embedthis Ejscript/inc"
-#define BIT_LIB_PREFIX "C:/Program Files (x86)/Embedthis Ejscript/bin"
 #define BIT_LOG_PREFIX "C:/Program Files (x86)/Embedthis Ejscript/logs"
 #define BIT_PRD_PREFIX "C:/Program Files (x86)/Embedthis Ejscript"
 #define BIT_SPL_PREFIX "C:/Program Files (x86)/Embedthis Ejscript/tmp"
@@ -63,3 +61,4 @@
 #define BIT_FEATURE_MATRIXSSL 0
 #define BIT_FEATURE_PMAKER 0
 #define BIT_FEATURE_SQLITE 1
+#define BIT_FEATURE_ZIP 1
