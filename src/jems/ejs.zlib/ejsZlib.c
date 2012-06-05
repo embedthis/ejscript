@@ -32,7 +32,7 @@ static EjsObj *zlib_compress(Ejs *ejs, EjsObj *unused, int argc, EjsObj **argv)
     if (!dest) {
         dest = sjoin(src, ".gz", NULL);
     }
-    if ((in = mprOpenFile(src, O_RDONLY | O_BINARY, 0)) < 0) {
+    if ((in = mprOpenFile(src, O_RDONLY | O_BINARY, 0)) == 0) {
         ejsThrowIOError(ejs, "Can't open from %s", src);
         return 0;
     }
@@ -78,7 +78,7 @@ static EjsObj *zlib_uncompress(Ejs *ejs, EjsObj *unused, int argc, EjsObj **argv
         ejsThrowIOError(ejs, "Can't open from %s", src);
         return 0;
     }
-    if ((out = mprOpenFile(dest, O_WRONLY | O_CREAT | O_TRUNC | O_BINARY, 0644)) < 0) {
+    if ((out = mprOpenFile(dest, O_WRONLY | O_CREAT | O_TRUNC | O_BINARY, 0644)) == 0) {
         ejsThrowIOError(ejs, "Can't open destination %s", dest);
         return 0;
     }
