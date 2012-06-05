@@ -78,7 +78,7 @@ Bit.load({
                     let base = s.product + '-' + s.version + '-' + s.buildNumber
                     let files = bit.dir.rel.files('*' + base + '*.pkg*')
                     files += bit.dir.rel.files('*' + base + '*x86.exe.zip*')
-                    if (App.getenv('BUILD_UPLOAD_SOURCE')) {
+                    if (App.getenv('BUILD_UPLOAD_SOURCE') == 'true') {
                         files += bit.dir.rel.files('*' + base + '-src*')
                         files += bit.dir.rel.files('*' + base + '-flat*')
                         files += bit.dir.rel.files(s.product + '-flat.tgz')
