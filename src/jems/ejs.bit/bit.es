@@ -1835,10 +1835,6 @@ public class Bit {
                 buildResource(target)
             } else if (target.type == 'build' || (target.scripts && target.scripts['build'])) {
                 buildScript(target)
-/* UNUSED
-            } else if (target.type == 'generate') {
-                generateProjects()
- */
             }
         } catch (e) {
             throw new Error('Building target ' + target.name + '\n' + e)
