@@ -2,7 +2,7 @@
     timeout.tst
  */
 
-let ejs = App.exePath.portable
+let ejs = Cmd.locate('ejs')
 
 if (!Path("/bin").exists) {
     test.skip("Only run on unix systems")
@@ -15,7 +15,7 @@ if (!Path("/bin").exists) {
         cmd = new Cmd
         cmd.timeout = 250
         assert(cmd.timeout == 250)
-        cmd.start("/bin/sleep 5")
+        cmd.start("sleep 5")
     } catch (e) {
         caught = true
     }
@@ -27,7 +27,7 @@ if (!Path("/bin").exists) {
     let mark = new Date
     try {
         cmd = new Cmd
-        cmd.start("/bin/sleep 5", {timeout: 250})
+        cmd.start("sleep 5", {timeout: 250})
     } catch (e) {
         caught = true
     }

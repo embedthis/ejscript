@@ -6,8 +6,7 @@
 
 /********************************** Includes **********************************/
 
-#include    "ejs.h"
-#include    "ecCompiler.h"
+#include    "ejsCompiler.h"
 
 /****************************** Forward Declarations **************************/
 
@@ -473,7 +472,7 @@ static void createFunctionSection(EcCompiler *cp, EjsPot *block, int slotNum, Ej
     if (code && code->numHandlers) {
         mp->checksum += sumNum(code->numHandlers);
     }
-    if (ejsContainsMulti(ejs, qname.name, "--fun_")) {
+    if (ejsContainsAsc(ejs, qname.name, "--fun_") >= 0) {
         /* Don't sum the name for dynamic functions */
     } else {
         mp->checksum += sumString(qname.name);
@@ -766,7 +765,7 @@ int ecAddDocConstant(EcCompiler *cp, cchar *tag, void *vp, int slotNum)
 int ecAddModuleConstant(EcCompiler *cp, EjsModule *mp, cchar *str)
 {
     EjsConstants    *constants;
-    MprHash         *hp;
+    MprKey          *kp;
     int             index;
 
     mprAssert(mp);
@@ -776,8 +775,8 @@ int ecAddModuleConstant(EcCompiler *cp, EjsModule *mp, cchar *str)
         return 0;
     }
     constants = mp->constants;
-    if (constants->table && (hp = mprLookupKeyEntry(constants->table, str)) != 0) {
-        return PTOI(hp->data);
+    if (constants->table && (kp = mprLookupKeyEntry(constants->table, str)) != 0) {
+        return PTOI(kp->data);
     }
     index = ejsAddConstant(cp->ejs, mp, str);
     // mprLog(0, "%6d %s", index, str);
@@ -949,6 +948,7 @@ void ecEncodeWideAsMulti(EcCompiler *cp, MprChar *str)
     mprAssert(cp);
 
     mstr = awtom(str, &len);
+    //  UNICODE - why calculate len again?
     len = strlen(mstr) + 1;
     mprAssert(len > 0);
     ecEncodeNum(cp, (int) len);
@@ -1094,9 +1094,9 @@ static int swapShortField(EcCompiler *cp, int word)
 
 static int swapCodePoint(EcCompiler *cp, int word)
 {
-#if BLD_CHAR_LEN == 4
+#if BIT_CHAR_LEN == 4
     return swapWordField(cp, word);
-#elif BLD_CHAR_LEN == 2
+#elif BIT_CHAR_LEN == 2
     return swapShortField(cp, word);
 #else
     return word;
@@ -1132,8 +1132,8 @@ static int sumString(EjsString *name)
 /*
     @copy   default
 
-    Copyright (c) Embedthis Software LLC, 2003-2011. All Rights Reserved.
-    Copyright (c) Michael O'Brien, 1993-2011. All Rights Reserved.
+    Copyright (c) Embedthis Software LLC, 2003-2012. All Rights Reserved.
+    Copyright (c) Michael O'Brien, 1993-2012. All Rights Reserved.
 
     This software is distributed under commercial and open source licenses.
     You may use the GPL open source license described below or you may acquire
@@ -1145,7 +1145,7 @@ static int sumString(EjsString *name)
     under the terms of the GNU General Public License as published by the
     Free Software Foundation; either version 2 of the License, or (at your
     option) any later version. See the GNU General Public License for more
-    details at: http://www.embedthis.com/downloads/gplLicense.html
+    details at: http://embedthis.com/downloads/gplLicense.html
 
     This program is distributed WITHOUT ANY WARRANTY; without even the
     implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.
@@ -1154,7 +1154,7 @@ static int sumString(EjsString *name)
     proprietary programs. If you are unable to comply with the GPL, you must
     acquire a commercial license to use this software. Commercial licenses
     for this software and support services are available from Embedthis
-    Software at http://www.embedthis.com
+    Software at http://embedthis.com
 
     Local variables:
     tab-width: 4

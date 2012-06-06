@@ -1,7 +1,6 @@
-<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN"
-    "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd">
 <!-- BeginDsi "dsi/head.html" -->
-<html xmlns="http://www.w3.org/1999/xhtml">
+<!DOCTYPE html>
+<html lang="en">
 <head>
     <title>Embedthis Ejscript 2.0.0 Documentation</title>
     <meta name="keywords" content="Ejscript, JavaScript, ECMAScript, Server-Side JavaScript, Dynamic languages, 
@@ -13,34 +12,27 @@
     <!--[if IE]>
     <link href="../../../iehacks.css" rel="stylesheet" type="text/css" />
     </![endif]-->
+    <link href="http://www.google.com/cse/style/look/default.css" type="text/css" rel="stylesheet" />
 </head>
 
 <body>
     <div class="top">
-        <a class="logo"  href="http://www.ejscript.org/">&nbsp;</a>
+        <a class="logo"  href="http://ejscript.org/">&nbsp;</a>
         <div class="topRight">
-             <div class="search">
-                 <form method="get" action="http://www.google.com/search" title="Search www.embedthis.com">
-                     <p>
-                        <label title="Search">Search</label> 
-                        <input type="text" id="q" name="q" size="15" maxlength="255" />
-                        <input type="submit" id="submit" value="Go" /> 
-                        <input type="hidden" name="domains" value="embedthis.com" /> 
-                        <input type="hidden" name="sitesearch" value="embedthis.com" />
-                    </p>
-                 </form>
-              </div>
-            <!--TITLE-->Embedthis Ejscript 2.0.0
+            <div class="search">
+                <div id="cse-search-form">Loading</div>
+                <div class='version'>Embedthis Ejscript 2.0.0</div>
+            </div>
         </div>
         <div class="crumbs">
-            <a href="../../../product/index.html">Home</a>
+            <a href="../../../index.html">Home</a>
 <!-- EndDsi -->
              &gt;<a href="index.html">Web Framework Guide</a>&gt; <b>Views and Layouts</b>
         </div>
     </div>
     <div class="content">
         <div class="contentRight">
-            <h2>Quick Nav</h2>
+            <h1>Quick Nav</h1>
             <ul>
                 <li><a href="#layoutPages">Layout Pages</a></li>
                 <li><a href="#content">Content Pages</a></li>
@@ -61,11 +53,11 @@
                 <li><a href="#viewClass">View Class</a></li>
             </ul>
 <!-- BeginDsi "dsi/ejsWebSeeAlso.html" -->
-		        <h2>See Also</h2>
+		        <h1>See Also</h1>
 		        <ul>
 		          <li><a href="../../../guide/ejs/web/webTour.html">Web Framework Tour</a></li>
 		          <li><a href="../../../guide/ejs/web/mvc.html">Model-View-Controller</a></li>
-		          <li><a href="../../../guide/ejs/web/ejsweb.html">Application Generator</a></li>
+		          <li><a href="../../../guide/ejs/web/generator.html">Application Generator</a></li>
 		          <li><a href="../../../guide/ejs/web/controllers.html">Controllers and Actions</a></li>
 		          <li><a href="../../../guide/ejs/web/views.html">Views and Layouts</a></li>
 		          <li><a href="../../../guide/ejs/web/controls.html">Ajax View Controls</a></li>
@@ -92,9 +84,9 @@
             forms that are Ajax-enabled for a seamless dynamically updating user experience.</p>
             <h2 class="section">Layouts &mdash; Creating a Consistent Look and Feel</h2>
             <p>A web application typically consists of many web pages that share a common look and feel. Usable
-            applications have a consistent structure, menus and appearance so the user can easily navigate tha
+            applications have a consistent structure, menus and appearance so the user can easily navigate that
             application. However, designing and maintaining that consistent look and feel is frequently quite
-            difficult.</p><a name="layoutPages" id="layoutPages"></a>
+            difficult.</p><a id="layoutPages"></a>
             <h3>Layout Pages</h3>
             <p>The Ejscript web framework provides a templating layout engine so that each page can reuse a common
             layout page and not have to repeat the common application UI elements in each page. Ejscript does this by
@@ -114,8 +106,7 @@
 &lt;/body&gt;
 &lt;/html&gt;
 </pre>
-            <p>Modifications to this page, will be reflected automatically in all content pages.</p><a name="content"
-            id="content"></a>
+            <p>Modifications to this page, will be reflected automatically in all content pages.</p><a id="content"></a>
             <h3>Content Pages</h3>
             <p>A content page defines only the HTML and code that is different for a specific page. It is merged with a
             layout page by inserting the content and replacing the <b>&lt;%@ content %&gt;</b> tag in the master
@@ -138,7 +129,7 @@
     &lt;/div&gt;
 &lt;/body&gt;
 &lt;/html&gt;
-</pre><a name="alternateLayout" id="alternateLayout"></a>
+</pre><a id="alternateLayout"></a>
             <h3>Alternate Layout Pages</h3>
             <p>A content page can request a specific layout page by using the <b>&lt;%@ layout "file"&gt;</b>
             directive.</p>
@@ -148,48 +139,46 @@
 &lt;p&gt;Hello World&lt;/p&gt;
 </pre>
             <p>This instructs the templating engine to use the "alternateLayout.ejs" file rather than the default
-            layout. The default layout page is called "views/layouts/default.ejs". <a name="multiple" id=
-            "multiple"></a></p>
+            layout. The default layout page is called "views/layouts/default.ejs". <a id="multiple"></a></p>
             <h3>Multiple Layout Pages</h3>
             <p>You are not restricted to a simple two level layout and content page scheme. A layout page can itself
             refer to another layout page to gradually build up the application's look and feel. To do this, the layout
-            page needs to include an explicit <b>&lt;%@ layout "file"&gt;</b> directive.</p><a name="dev" id="dev"></a>
+            page needs to include an explicit <b>&lt;%@ layout "file"&gt;</b> directive.</p><a id="dev"></a>
             <h3>Development Time</h3>
             <p>The combining of layout and contents pages occurs at development time, as does the compilation of the
             composite page into byte code. At run-time, all that remains to be done is actually execute the byte code
             and substitute dynamic data into the page. This results in the fastest run-time execution because the
             layout processing and page compilation occur only once and at development time.</p><img src=
-            "../../../images/webView.jpg" alt="" /> <a name="dir" id="dir"></a>
+            "../../../images/webView.jpg" alt="" /> <a id="dir"></a>
             <h2 class="section">Directory Structure</h2>
             <p>Ejscript follows the <a href="http://en.wikipedia.org/wiki/Convention_over_Configuration">Convention
             over Configuration</a> design paradigm where developers only need to specify the unusual parts of their
             application. This is exemplified by an expected directory structure for views and layouts.</p>
             <pre>
+layouts
+  |
+  + Layout pages...
 views
   |
-  +-- layouts
-  |      |
-  |   Layout pages...
   |
   + ControllerName
          |
          + View pages...
 </pre>
-            <p>The <a href="ejsweb.html"><b>ejsweb</b></a> application generator program will create these directories
+            <p>The <a href="generator.html"><b>mvc</b></a> application generator program will create these directories
             for you when you run</p>
             <pre>
-ejsweb generate appName
+mvc generate appName
 </pre>
             <p>After creating the application, you should place all content views for a controller under the
             "views/ControllerName" directory. The "ControllerName" directories should by convention begin with an upper
-            case letter. The "views" and "views/layouts" directories are lower case. <a name="static" id=
-            "static"></a></p>
+            case letter. The "views" and "views/layouts" directories are lower case. <a id="static"></a></p>
             <h2 class="section">Static Web Content</h2>
             <p>Static web page content such as images, CSS pages and other similar content should be placed under the
             <b>web</b> directory. While this content can be served by the Ejscript handler, it should ideally and
             optimally be processed directly by the web server. The Ejscript module for Apache and Appweb will enable
             this automatically. If you are using the CGI or FastCGI for hosting Ejscript, you may wish to configure
-            your web server to serve these pages directly.</p><a name="stand-alone" id="stand-alone"></a>
+            your web server to serve these pages directly.</p><a id="stand-alone"></a>
             <h3>Stand-Alone Ejscript Web Pages</h3>
             <p>Not all Ejscript web pages are views. You can create stand-alone Ejscript web pages. These do not use
             layout pages and do not have access to Models, Controllers or View objects. Why create stand-alone Ejscript
@@ -209,16 +198,16 @@ ejsweb generate appName
     <b>&lt;p&gt;Created on &lt;%= new Date %&gt;&lt;/p&gt;</b>
 &lt;/body&gt;
 &lt;/html&gt;
-</pre><a name="dynamic" id="dynamic"></a>
+</pre><a id="dynamic"></a>
             <h2 class="section">Dynamic Content</h2>
             <p>One of the primary reasons for views is to make it easier to create web pages with dynamic data.</p>
             <p>Ejscript provides a set of directives to easily embed JavaScript code in your web page.</p>
             <p>The following directives are provided:</p>
-            <table summary="directives" width="100%">
+            <table title="directives" class="full">
                 <thead>
                     <tr>
-                        <td>Directive</td>
-                        <td>Purpose</td>
+                        <th>Directive</th>
+                        <th>Purpose</th>
                     </tr>
                 </thead>
                 <tbody>
@@ -286,11 +275,11 @@ ejsweb generate appName
             <p>See the <a href="../../../api/ejscript/index.html">Ejscript Library</a> for a full list of all the
             properties and methods available to use in the various embedded Ejscript directives. Of particular
             relevance are the classes in the ejs.web namespace which include the Application, Controller, Host,
-            Request, Response, Session and View classes.</p><a name="form" id="form"></a>
+            Request, Response, Session and View classes.</p><a id="form"></a>
             <h2 class="section">Accessing Form Data</h2>
             <p>HTTP Form data is marshalled by Ejscript into the <b>params</b> object which is accessible in views and
             controllers. Each HTML input element posted by the client will become a property of <b>params</b> and can
-            be accessed by embedded script code.</p><img src="../../../images/form.png" class="screen" alt="" />
+            be accessed by embedded script code.</p><img src="../../../images/form.png" class="bare-screen" alt="" />
             <p>This form was generated by the view code below:</p>
             <pre>
 &lt;form method="POST" action="@@request.uri"&gt;
@@ -300,8 +289,8 @@ ejsweb generate appName
 &lt;/form&gt;
 </pre>
             <p>This view creates three HTML form inputs and will populate the <b>params</b> object when posted back to
-            the server with the properties: <b>params.name</b>, <b>params.address</b> and <b>params.ok</b>.</p><a name=
-            "structured" id="structured"></a>
+            the server with the properties: <b>params.name</b>, <b>params.address</b> and 
+            <b>params.ok</b>.</p><a id="structured"></a>
             <h3>Structured Form Data</h3>
             <p>This simple mapping of input element names to params properties works fine for simple forms, but what
             about more complex forms? Ejscript can organize form data into nested objects. If an input element name
@@ -316,19 +305,18 @@ ejsweb generate appName
 </pre>
             <p>This will create a <b>user</b> object in the params object. The user object will have properties
             <b>user.name</b> and <b>user.address</b>. This form of structured form data makes handling form data much
-            simpler.</p><a name="database" id="database"></a>
+            simpler.</p><a id="database"></a>
             <h3>Accessing Database Data</h3>
             <p>Ejscript provides an Object Relational Mapping (ORM) layer for accessing database data via convenient
             JavaScript objects. The ORM layer is represented by a collection of database Model classes for the
-            application. Views can read the database by using Model classes. A more typical pardigm is for controller
+            application. Views can read the database by using Model classes. A more typical paradigm is for controller
             action routines to read a database record and store the record in a controller property. The view can then
             simply access the database data by referencing that property.</p>
-            <p>For more details, see <a href="models.html">Database Models</a>.</p><a name="sessions" id=
-            "sessions"></a>
+            <p>For more details, see <a href="models.html">Database Models</a>.</p><a id="sessions"></a>
             <h2 class="section">Session Data</h2>
             <p>Data can be persistently stored between HTTP requests in the <b>sessions</b> object. Data stored to the
             sessions object is serialized, so you cannot store object references. However, the session object is ideal
-            to store a request cookie or session key.</p><a name="themes" id="themes"></a>
+            to store a request cookie or session key.</p><a id="themes"></a>
             <h2 class="section">Themes and CSS</h2>
             <p>Well structured web applications divide HTML data and presentation style into two separate documents.
             Namely: HTML pages and cascading style sheets. In this way, a style sheet can be reused and shared by all
@@ -338,16 +326,16 @@ ejsweb generate appName
             page, whereas the theme style sheet specifies the fonts, font sizes, weights and foreground and background
             colors.</p>
             <p>Ejscript supports this organization by providing a providing a directory for theme style sheet. The
-            <b>ejsweb</b> application will also generate a default theme style sheet for scaffolds and
-            views.</p><a name="compilation" id="compilation"></a>
+            <b>mvc</b> application will also generate a default theme style sheet for scaffolds and
+            views.</p><a id="compilation"></a>
             <h2 class="section">Compilation</h2>
             <p>When developing, Ejscript will automatically detect changes made to the applications code and will
             intelligently recompile the necessary portions of the application. You can manually force a recompilation
-            via the <b>ejsweb</b> command.</p>
+            via the <b>mvc</b> command.</p>
             <pre>
-ejsweb compile
+mvc compile
 </pre>
-            <p>See the <a href="ejsweb.html">Application Generator</a> documentation for full details about compiling
+            <p>See the <a href="generator.html">Application Generator</a> documentation for full details about compiling
             views and applications.</p><!--
             <h2 class="section">Common Tasks</h2>
                 <h3>Managing Links</h3>
@@ -356,28 +344,52 @@ ejsweb compile
                 <h3>Setting the HTTP Resposne Code</h3>
                 <h3>Adding a HTTP Header</h3>
         -->
-            <a name="debugging" id="debugging"></a>
+            <a id="debugging"></a>
             <h2 class="section">Debugging</h2>
             <p>You can inject debugging code into your views to trace data to the browser or to the console.</p>
             <p>The <b>print</b> method will print its arguments to the console or web server log file. The <b>dump</b>
             method will serialize objects and then send to the console or log.</p>
             <p>To send trace to the browser, use the <b>write</b> method to write data back to the browser. The
-            <b>d</b> method will serialize and dump objects to the browser.</p><a name="viewClass" id="viewClass"></a>
+            <b>d()</b> method will serialize and dump objects to the browser.</p><a id="viewClass"></a>
             <h2 class="section">View Class</h2>
             <p>The View class has a large set of utility methods to assist you in creating your web views. See the
             <a href="../../../api/ejscript/index.html">Ejscript Library</a> for details. Some of the important methods
             are:</p>
-            <table summary="viewClass" width="100%">
+            <table title="viewClass" class="full">
                 <thead>
                     <tr>
-                        <td>Method Name</td>
-                        <td>Description</td>
+                        <th>Method Name</th>
+                        <th>Description</th>
                     </tr>
                 </thead>
                 <tbody>
                     <tr>
+                        <td>anchor</td>
+                        <td>Emit an anchor label and reference</td>
+                    </tr>
+                    <tr>
+                        <td>button</td>
+                        <td>Emit a form button</td>
+                    </tr>
+                    <tr>
+                        <td>buttonLink</td>
+                        <td>Emit a button for use outside a form</td>
+                    </tr>
+                    <tr>
+                        <td>button</td>
+                        <td>Emit a form button</td>
+                    </tr>
+                    <tr>
                         <td>chart</td>
                         <td>Emit a graphic chart</td>
+                    </tr>
+                    <tr>
+                        <td>checkbox</td>
+                        <td>Emit an input form checkbox</td>
+                    </tr>
+                    <tr>
+                        <td>div</td>
+                        <td>Emit an HTML div</td>
                     </tr>
                     <tr>
                         <td>endform</td>
@@ -392,60 +404,52 @@ ejsweb compile
                         <td>Emit a HTML form</td>
                     </tr>
                     <tr>
-                        <td>format</td>
-                        <td>Format data according to a format renderer function</td>
-                    </tr>
-                    <tr>
                         <td>html</td>
                         <td>HTML encode the arguments</td>
                     </tr>
                     <tr>
-                        <td>makeUrl</td>
-                        <td>Make a URL for an action and controller</td>
+                        <td>icon</td>
+                        <td>Emit an ICON image</td>
+                    </tr>
+                    <tr>
+                        <td>image</td>
+                        <td>Emit an ICON image</td>
                     </tr>
                     <tr>
                         <td>progress</td>
                         <td>Emit a progress bar</td>
                     </tr>
                     <tr>
+                        <td>input</td>
+                        <td>Emit a generic input data-bound field</td>
+                    </tr>
+                    <tr>
+                        <td>label</td>
+                        <td>Emit a text label field</td>
+                    </tr>
+                    <tr>
+                        <td>list</td>
+                        <td>Emit a drop-down input list</td>
+                    </tr>
+                    <tr>
+                        <td>radio</td>
+                        <td>Emit an input radio button</td>
+                    </tr>
+                    <tr>
                         <td>redirect</td>
                         <td>Redirect the client to a new URL</td>
-                    </tr>
-                    <tr>
-                        <td>render</td>
-                        <td>Render a data back to the client</td>
-                    </tr>
-                    <tr>
-                        <td>renderFile</td>
-                        <td>Render a file back to the client</td>
-                    </tr>
-                    <tr>
-                        <td>renderView</td>
-                        <td>Render a specified view to the client</td>
-                    </tr>
-                    <tr>
-                        <td>setCookie</td>
-                        <td>Create a cookie to send to the client</td>
                     </tr>
                     <tr>
                         <td>setHeader</td>
                         <td>Set a HTTP response header</td>
                     </tr>
                     <tr>
-                        <td>setHttpCode</td>
-                        <td>Set the HTTP response code</td>
-                    </tr>
-                    <tr>
-                        <td>setMimeType</td>
-                        <td>Set the response mime type</td>
+                        <td>setStatus</td>
+                        <td>Set the HTTP response status</td>
                     </tr>
                     <tr>
                         <td>table</td>
                         <td>Render a smart table</td>
-                    </tr>
-                    <tr>
-                        <td>textarea</td>
-                        <td>Render a text area</td>
                     </tr>
                     <tr>
                         <td>write</td>
@@ -462,10 +466,22 @@ ejsweb compile
 <!-- BeginDsi "dsi/bottom.html" -->
 	<div class="bottom">
 		<p class="footnote"> 
-            <a href="../../../product/copyright.html" >&copy; Embedthis Software LLC, 2003-2011. 
+            <a href="../../../product/copyright.html" >&copy; Embedthis Software LLC, 2003-2012. 
             All rights reserved. Embedthis, Ejscript and Appweb are trademarks of Embedthis Software LLC.</a>
 		</p>
 	</div>
-<!-- EndDsi -->
+    <script src="http://www.google.com/jsapi" type="text/javascript"></script>
+    <script type="text/javascript"> 
+      google.load('search', '1', {language : 'en'});
+      google.setOnLoadCallback(function() {
+        var customSearchControl = new google.search.CustomSearchControl(
+          'partner-pub-9935546676162772:ysvxxv4n9rx');
+
+        customSearchControl.setResultSetSize(google.search.Search.FILTERED_CSE_RESULTSET);
+        var options = new google.search.DrawOptions();
+        options.enableSearchboxOnly("http://ejscript.org/search.html");
+        customSearchControl.draw('cse-search-form', options);
+      }, true);
+    </script>
 </body>
 </html>

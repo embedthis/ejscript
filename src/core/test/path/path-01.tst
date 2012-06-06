@@ -56,6 +56,22 @@ assert(Path("./a.b").relative == "a.b")
 assert(Path("/tmp/a.b").relative.toString().indexOf("../") >= 0)
 assert(Path("/tmp/a.b").relative.isRelative)
 assert(Path("/tmp/a.b").absolute.isAbsolute)
+assert(!Path(".").absolute.endsWith("/"))
+
+if (Config.OS == "cygwin") {
+    assert(Path("/a/b").absolute == "/a/b")
+    assert(Path("/a/b").windows == "C:\\cygwin\\a\\b")
+    assert(Path("c:/a/b").absolute == "/cygdrive/c/a/b")
+    assert(Path("c:/a/b").windows == "C:\\a\\b")
+    assert(Path("c:/cygwin/a/b").absolute == "/a/b")
+    assert(Path("c:/cygwin/a/b").windows == "C:\\cygwin\\a\\b")
+} else if (Config.OS == "windows") {
+    assert(Path("/a/b").absolute.name.match(/[a-zA-Z]:\\a\\b/))
+    assert(Path("/a/b").windows == "\\a\\b")
+} else {
+    assert(Path("/a/b").absolute == "/a/b")
+    assert(Path("/a/b").windows == "\\a\\b")
+}
 
 
 //  portable, natural
@@ -63,7 +79,7 @@ assert(Path("/tmp/a.b").absolute.isAbsolute)
 assert(p.portable == "file.dat")
 p = Path("\\dir\\ABCdef.txt")
 assert(p.portable.toLowerCase() == "/dir/abcdef.txt")
-if (Config.OS == "WIN") {
+if (Config.OS == "windows") {
     assert(Path("c:\\a\\b\\c").portable == "c:/a/b/c")
     assert(Path("\\a\\b\\c").portable == "/a/b/c")
     p = Path("/a/b/c").natural
@@ -171,14 +187,6 @@ assert(Path(another).isDir)
 Path(another).remove()
 
 
-//  files
-
-files = Path(".").files(true)
-assert(files is Array)
-assert(files.length >= 2)
-assert(files.find(function (e) { return e.same("file.dat"); }) != null)
-
-
 //	makeDir, remove
 
 name = "tempDir-" + hashcode(global) + ".tdat"
@@ -282,7 +290,7 @@ rm(filename)
 
 //  Test links
 
-if (Config.OS != "WIN" && Config.OS != "VXWORKS") {
+if (Config.OS != "windows" && Config.OS != "vxworks") {
     p = Path("sym.tmp")
     p.remove()
     p.makeLink("file.dat")
@@ -307,14 +315,11 @@ assert(count > 2)
 //  accessed, modified, created
 
 assert(Path("unknown").accessed == null)
-
 assert(Path("unknown").created == null)
 assert(Path("unknown").modified == null)
-
 assert(Path("file.dat").accessed is Date)
 assert(Path("file.dat").created is Date)
 assert(Path("file.dat").modified is Date)
-
 
 /*
     -- FUTURE attributes
@@ -336,17 +341,7 @@ assert(Path("file.dat").modified is Date)
     assert(p.size == 20)
     p.remove()
 
-
-    -- FUTURE
-
-    if (Config.OS == "WIN") {
-        p = Path("/a/b/c").absolute
-        p.setRepresentation(Path.NATIVE)
-        assert(p.indexOf("\\") >= 0)
-        assert(p.hasDrive)
-    }
-
-    -- FUTURE - components
+    // components
 
     parts = Path("/a/b/c").components
     assert(parts.length == 4)

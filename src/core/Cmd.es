@@ -34,6 +34,8 @@ module ejs {
             @options exception Boolean If true, throw exceptions if the command returns a non-zero status code. 
                 Defaults to false.
             @options timeout Number This is the default number of milliseconds for the command to complete.
+            @options noio Don't capture stdout from the command. If true, the command's standard output will go to the 
+                application's current standard output. Defaults to false.
          */
         native function Cmd(command: Object = null, options: Object = null)
 
@@ -44,6 +46,7 @@ module ejs {
          */
         native function close(): Void 
 
+        //  MOB - should be a function. Need flags MPR_CMD_EXACT_ENV support.
         /**
             Hash of environment strings to pass to the command.
          */
@@ -78,6 +81,33 @@ module ejs {
             @hide
          */
         native function flush(dir: Number = Stream.BOTH): Void
+
+        /**
+            Locate a program using the application PATH
+            @param program Program to find
+            @param search Optional additional search paths to use before using PATH
+            @return Located path or null
+         */
+        static function locate(program: Path, search = []): Path {
+            search += App.getenv("PATH").split(App.SearchSeparator)
+            for each (dir in App.getenv("PATH").split(App.SearchSeparator)) {
+                let path = Path(dir).join(program)
+                if (path.exists && !path.isDir) {
+                    return path
+                }
+            }
+            if (Config.OS == 'windows' || Config.OS == 'cygwin') {
+                if (program.extension == '') {
+                    for each (ext in ['exe', 'bat', 'cmd']) {
+                        let path = locate(program.joinExt('.exe'))
+                        if (path) {
+                            return path;
+                        }
+                    }
+                }
+            }
+            return null
+        }
 
         /** 
             @duplicate Stream.on
@@ -168,7 +198,7 @@ module ejs {
             Stop the current command. After stopping, the command exit status and any response or error data are
             available for interrogation.
             @param signal Signal to send the the active process.
-            @return True if successful
+            @return True if the command is successfully stopped or the command has completed.
           */
         native function stop(signal: Number = 2): Boolean
 
@@ -182,7 +212,7 @@ module ejs {
 
         /**
             Wait for a command to complete. 
-            @param timeout Time in seconds to wait for the command to complete. If unspecified, the $timeout propoperty
+            @param timeout Time in milliseconds to wait for the command to complete. If unspecified, the $timeout propoperty
                 value is used instead.
             @return True if the request successfully completes.
          */
@@ -202,13 +232,12 @@ module ejs {
             Start a command in the background as a daemon.  The daemon command is detached and the application 
             continues immediately in the foreground. Note: No data can be written to the daemon's stdin.
             @param cmdline Command line to use. The cmdline may be either a string or an array of strings.
-            @return The process ID. This pid can be used with kill().
+            @return The process ID. This PID can be used with kill().
          */
         static function daemon(cmdline: Object, options: Object = null): Number {
             let cmd = new Cmd
             options ||= {}
-            blend(options, {detach: true})
-            cmd.start(cmdline, options)
+            cmd.start(cmdline, blend({detach: true}, options))
             cmd.finalize()
             return cmd.pid
         }
@@ -248,7 +277,7 @@ module ejs {
                 signal = 15
             }
             let cmd = new Cmd
-            if (Config.OS == "WIN") {
+            if (Config.OS == "windows" || Config.OS == "cygwin") {
                 cmd.start('cmd /A /C "WMIC PROCESS get Processid,Commandline /format:csv"')
                 for each (line in cmd.readLines()) {
                     let fields = line.trim().split(",")
@@ -265,7 +294,7 @@ module ejs {
                     }
                 }
             } else {
-               cmd.start(["/bin/sh", "-c", "/bin/ps -e"])
+               cmd.start("/bin/ps -e")
                 for each (line in cmd.readLines()) {
                     let fields = line.split(/ +/g)
                     let pid = fields[0]
@@ -296,7 +325,7 @@ module ejs {
         static function ps(pattern: Object = ""): Array {
             let result = []
             let cmd = new Cmd
-            if (Config.OS == "WIN") {
+            if (Config.OS == "windows" || Config.OS == "cygwin") {
                 cmd.start('cmd /A /C "WMIC PROCESS get Processid,Commandline /format:csv"')
                 for each (line in cmd.readLines()) {
                     let fields = line.split(",")
@@ -310,7 +339,7 @@ module ejs {
                 //  Windows WMIC drops this
                 Path("TempWmicBatchFile.bat").remove()
             } else {
-                cmd.start(["/bin/sh", "-c", "/bin/ps -ef"])
+                cmd.start("/bin/ps -ef")
                 for each (line in cmd.readLines()) {
                     let fields = line.trim().split(/ +/g)
                     let pid = fields[1]
@@ -325,18 +354,27 @@ module ejs {
             return result
         }
 
-        //  MOB - should this take options as an arg?
         /**
-            Execute a command/program. The call blocks while executing the command.
+            Execute a command/program and return the output as a result. 
+            The call blocks while executing the command.
             @param command Command or program to execute
+            @param options Command options hash. Supported options are:
+            @options detach Boolean If true, run the command and return immediately. If detached, finalize() must be
+                called to signify the end of data being written to the command's stdin.
+            @options dir Path or String. Directory to set as the current working directory for the command.
+            @options exception Boolean If true, throw exceptions if the command returns a non-zero status code. 
+                Defaults to false.
+            @options timeout Number This is the default number of milliseconds for the command to complete.
+            @options noio Don't capture stdout from the command. If true, the command's standard output will go to the 
+                application's current standard output. Defaults to false.
             @param data Optional data to write to the command on it's standard input.
-            @returns The command output from it's standard output.
+            @returns The command output from the standard output.
             @throws IOError if the command exits with non-zero status. The exception object will contain the command's
                 standard error output. 
          */
-        static function run(command: Object, data: Object = null): String {
+        static function run(command: Object, options: Object = {}, data: Object = null): String {
             let cmd = new Cmd
-            cmd.start(command, {detach: true})
+            cmd.start(command, blend({detach: true}, options))
             if (data) {
                 cmd.write(data)
             }
@@ -348,32 +386,45 @@ module ejs {
             return cmd.readString()
         }
 
-        //  MOB - should this take options as an arg?
         /**
             Run a command using the system command shell and wait for completion. On Windows, this requires that
-            /bin/sh.exe is installed (See Cygwin). 
+            sh.exe is installed (See Cygwin). 
             @param command The (optional) command line to initialize with. The command may be either a string or
                 an array of arguments. 
+            @param options Command options hash. Supported options are:
+            @options detach Boolean If true, run the command and return immediately. If detached, finalize() must be
+                called to signify the end of data being written to the command's stdin.
+            @options dir Path or String. Directory to set as the current working directory for the command.
+            @options exception Boolean If true, throw exceptions if the command returns a non-zero status code. 
+                Defaults to false.
+            @options timeout Number This is the default number of milliseconds for the command to complete.
+            @options noio Don't capture stdout from the command. If true, the command's standard output will go to the 
+                application's current standard output. Defaults to false.
+            @param data Optional data to write to the command on it's standard input.
+            @return The command output from the standard output.
+            @throws IOError if the command exits with non-zero status. The exception object will contain the command's
+                standard error output. 
          */
-        static function sh(command: Object, data: Object = null): String {
+        static function sh(command: Object, options: Object = null, data: Object = null): String {
             /*
-                The form is:  /bin/sh -c "command args"
+                The form is:  sh -c "command args"
                 The args must be wrapped in single quotes if they contain spaces. 
                 Example:
                     This:       ["showColors", "red", "light blue", "Can't \"render\""]
-                    Becomes:    /bin/sh -c "showColors red 'light blue' 'Can\'t \"render\"'
+                    Becomes:    sh -c "showColors red 'light blue' 'Can\'t \"render\"'
              */
+            let shell = Cmd.locate("sh")
             if (command is Array) {
                 for (let arg in command) {
                     /*  
                         Backquote backslashes and backquote quotes. Then wrap in single quotes. Single quotes are 
                         required because Cmd on Windows must format the entire command as a single string (not argv[])
                      */
-                    let s = command[arg].toString().trimEnd('\n')           // .replace(/\\/g, "\\\\")
+                    let s = command[arg].toString().trimEnd('\n')
                     s = s.replace(/\"/g, '\\\"').replace(/\'/g, '\\\'')
                     command[arg] = "'" + s + "'"
                 }
-                return run(["/bin/sh", "-c"] + [command.join(" ")], data).trimEnd()
+                return run([shell, "-c"] + [command.join(" ")], options, data).trimEnd()
             }
             /*
                 Must quote single and double quotes as the comand will be wrapped in quotes on Windows.
@@ -384,7 +435,7 @@ module ejs {
                     Cygwin will parse as  argv[1] == c:/path \a \b
                     Windows will parse as argv[1] == c:/path "a b"
              */
-            return run(["/bin/sh", "-c", command.toString().trimEnd('\n')], data).trimEnd()
+            return run([shell, "-c", command.toString().trimEnd('\n')], options, data).trimEnd()
         }
     }
 }
@@ -393,8 +444,8 @@ module ejs {
 /*
     @copy   default
     
-    Copyright (c) Embedthis Software LLC, 2003-2011. All Rights Reserved.
-    Copyright (c) Michael O'Brien, 1993-2011. All Rights Reserved.
+    Copyright (c) Embedthis Software LLC, 2003-2012. All Rights Reserved.
+    Copyright (c) Michael O'Brien, 1993-2012. All Rights Reserved.
     
     This software is distributed under commercial and open source licenses.
     You may use the GPL open source license described below or you may acquire 

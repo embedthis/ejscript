@@ -17,7 +17,7 @@ static void require(MprList *list, cchar *name);
 
 /************************************ Code ************************************/
 
-MAIN(ejsmodMain, int argc, char **argv)
+MAIN(ejsmodMain, int argc, char **argv, char **envp)
 {
     Mpr             *mpr;
     EjsMod          *mp;
@@ -46,6 +46,7 @@ MAIN(ejsmodMain, int argc, char **argv)
     mp->lstRecords = mprCreateList(0, 0);
     mp->blocks = mprCreateList(0, 0);
     mp->docDir = sclone(".");
+    mp->outputDir = sclone(".");
     
     for (nextArg = 1; nextArg < argc; nextArg++) {
         argp = argv[nextArg];
@@ -61,6 +62,13 @@ MAIN(ejsmodMain, int argc, char **argv)
 
         } else if (strcmp(argp, "--depends") == 0) {
             mp->depends = 1;
+
+        } else if (strcmp(argp, "--dir") == 0) {
+            if (nextArg >= argc) {
+                err++;
+            } else {
+                mp->outputDir = sclone(argv[++nextArg]);
+            }
             
         } else if (strcmp(argp, "--error") == 0) {
             /*
@@ -88,7 +96,7 @@ MAIN(ejsmodMain, int argc, char **argv)
             if (nextArg >= argc) {
                 err++;
             } else {
-                ejsRedirectLogging(argv[++nextArg]);
+                mprStartLogging(argv[++nextArg], 0);
                 mprSetCmdlineLogging(1);
             }
 
@@ -109,7 +117,7 @@ MAIN(ejsmodMain, int argc, char **argv)
             }
 
         } else if (strcmp(argp, "--version") == 0 || strcmp(argp, "-V") == 0) {
-            mprPrintfError("%s %s-%s\n", BLD_NAME, BLD_VERSION, BLD_NUMBER);  
+            mprPrintfError("%s %s-%s\n", BIT_NAME, BIT_VERSION, BIT_NUMBER);  
             return 0;
 
         } else if (strcmp(argp, "--require") == 0) {
@@ -120,12 +128,10 @@ MAIN(ejsmodMain, int argc, char **argv)
                     requiredModules = mprCreateList(-1, 0);
                 }
                 modules = sclone(argv[++nextArg]);
-#if MACOSX || WIN
                 /*  Fix for Xcode and Visual Studio */
                 if (modules[0] == ' ' || scmp(modules, "null") == 0) {
                     modules[0] = '\0';                    
                 }
-#endif
                 name = stok(modules, " \t", &tok);
                 while (name != NULL) {
                     require(requiredModules, name);
@@ -165,7 +171,7 @@ MAIN(ejsmodMain, int argc, char **argv)
             "  --cslots              # Generate a C slot definitions file\n"
             "  --html dir            # Generate HTML documentation to the specified directory\n"
             "  --listing             # Create assembler listing files (default)\n"
-            "  --out                 # Output file for all C slots (implies --cslots)\n"
+            "  --out file            # Output file for all C slots (implies --cslots)\n"
             "  --require \"modules\"   # List of modules to preload\n"
             "  --search ejsPath      # Module file search path\n"
             "  --version             # Emit the program version information\n"
@@ -311,8 +317,8 @@ static void getDepends(Ejs *ejs, MprList *list, EjsModule *mp)
 /*
     @copy   default
     
-    Copyright (c) Embedthis Software LLC, 2003-2011. All Rights Reserved.
-    Copyright (c) Michael O'Brien, 1993-2011. All Rights Reserved.
+    Copyright (c) Embedthis Software LLC, 2003-2012. All Rights Reserved.
+    Copyright (c) Michael O'Brien, 1993-2012. All Rights Reserved.
     
     This software is distributed under commercial and open source licenses.
     You may use the GPL open source license described below or you may acquire 
@@ -324,7 +330,7 @@ static void getDepends(Ejs *ejs, MprList *list, EjsModule *mp)
     under the terms of the GNU General Public License as published by the 
     Free Software Foundation; either version 2 of the License, or (at your 
     option) any later version. See the GNU General Public License for more 
-    details at: http://www.embedthis.com/downloads/gplLicense.html
+    details at: http://embedthis.com/downloads/gplLicense.html
     
     This program is distributed WITHOUT ANY WARRANTY; without even the 
     implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. 
@@ -333,7 +339,7 @@ static void getDepends(Ejs *ejs, MprList *list, EjsModule *mp)
     proprietary programs. If you are unable to comply with the GPL, you must
     acquire a commercial license to use this software. Commercial licenses 
     for this software and support services are available from Embedthis 
-    Software at http://www.embedthis.com 
+    Software at http://embedthis.com 
     
     Local variables:
     tab-width: 4

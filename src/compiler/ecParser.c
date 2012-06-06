@@ -11,8 +11,7 @@
 
 /********************************** Includes **********************************/
 
-#include    "ejs.h"
-#include    "ecCompiler.h"
+#include    "ejsCompiler.h"
 
 /********************************** Defines ***********************************/
 
@@ -184,13 +183,13 @@ static EcNode   *removeNode(EcNode *np, EcNode *child);
 static void     setNodeDoc(EcCompiler *cp, EcNode *np);
 static EcNode   *unexpected(EcCompiler *cp);
 
-#if BLD_DEBUG
+#if BIT_DEBUG
 static void     updateDebug(EcCompiler *cp);
 #else
 #define         updateDebug(cp)
 #endif
 
-#if BLD_DEBUG
+#if BIT_DEBUG
 /*
     Just for debugging. Generated via tokens.ksh
  */
@@ -416,7 +415,7 @@ char *nodes[] = {
     0,
 };
 
-#endif  /* BLD_DEBUG */
+#endif  /* BIT_DEBUG */
 
 /************************************ Code ************************************/
 /*
@@ -467,7 +466,7 @@ EcNode *ecParseFile(EcCompiler *cp, char *path)
     mprAssert(path);
 
     opened = 0;
-    path = mprGetNormalizedPath(path);
+    path = mprNormalizePath(path);
     if (cp->stream == 0) {
         if (ecOpenFileStream(cp, path) < 0) {
             parseError(cp, "Can't open %s", path);
@@ -675,7 +674,7 @@ static EcNode *parseXMLText(EcCompiler *cp, EcNode *np)
         if (getToken(cp) == T_EOF || cp->token->tokenId == T_ERR || cp->token->tokenId == T_NOP) {
             return 0;
         }
-        if (isalnum((int) cp->token->text[0]) && count > 0) {
+        if (isalnum((uchar) cp->token->text[0]) && count > 0) {
             addAscToLiteral(cp, np, " ", 1);
         }
         addTokenToLiteral(cp, np);
@@ -708,7 +707,7 @@ static EcNode *parseXMLName(EcCompiler *cp, EcNode *np)
         return LEAVE(cp, unexpected(cp));
     }
     c = cp->token->text[0];
-    if (isalpha(c) || c == '_' || c == ':') {
+    if (isalpha((uchar) c) || c == '_' || c == ':') {
         addTokenToLiteral(cp, np);
     } else {
         np = parseError(cp, "Not an XML Name \"%@\"", cp->token->text);
@@ -4413,8 +4412,9 @@ static EcNode *parseTypedPattern(EcCompiler *cp)
         null
         undefined
         TypeExpression
-        TypeExpression ?            # Nullable
-        REMOVE TypeExpression ! # Non-Nullable
+        TypeExpression ?    # Nullable
+        TypeExpression !    # Non-Nullable (throws)
+        TypeExpression ~    # Cast nulls
 
     Input
 
@@ -5102,6 +5102,7 @@ static EcNode *parseSubstatement(EcCompiler *cp)
     case T_AT:
     case T_BREAK:
     case T_CONTINUE:
+    case T_DELETE:
     case T_DO:
     case T_DOT:
     case T_DOT_DOT:
@@ -8763,6 +8764,7 @@ static EcNode *parsePragmas(EcCompiler *cp, EcNode *np)
     }
     return LEAVE(cp, np);
 #else
+    //  MOB - does this allow multiple pragmas?
     return LEAVE(cp, parsePragma(cp, np));
 #endif
 }
@@ -8826,13 +8828,13 @@ static int parseVersion(EcCompiler *cp, int parseMax)
     }
     str = wclone(cp->token->text);
     if ((p = mtok(str, ".", &next)) != 0) {
-        major = (int) wtoi(p, 10, NULL);
+        major = (int) wtoi(p);
     }
     if ((p = mtok(next, ".", &next)) != 0) {
-        minor = (int) wtoi(p, 10, NULL);
+        minor = (int) wtoi(p);
     }
     if ((p = mtok(next, ".", &next)) != 0) {
-        patch = (int) wtoi(p, 10, NULL);
+        patch = (int) wtoi(p);
     }
     return EJS_MAKE_VERSION(major, minor, patch);
 }
@@ -9133,7 +9135,7 @@ static EcNode *parseProgram(EcCompiler *cp, cchar *path)
         np->qname.name = ejs->state->internal->value;
     } else if (path) {
         apath = mprGetAbsPath(path);
-        md5 = mprGetMD5Hash(apath, (int) strlen(apath), NULL);
+        md5 = mprGetMD5(apath);
         np->qname.name = ejsSprintf(cp->ejs, "%s-%s-%d", EJS_INTERNAL_NAMESPACE, md5, cp->uid++);
     } else {
         np->qname.name = ejsCreateStringFromAsc(cp->ejs, EJS_INTERNAL_NAMESPACE);
@@ -9444,7 +9446,7 @@ static char *detab(EcCompiler *cp, char *src)
 #endif
 
 
-#if BLD_DEBUG
+#if BIT_DEBUG
 static void updateDebug(EcCompiler *cp)
 {
     mprAssert(cp);
@@ -9600,11 +9602,11 @@ static void appendDocString(EcCompiler *cp, EcNode *np, EcNode *parameter, EcNod
     if (np->doc) {
         found = 0;
         mprSprintf(arg, sizeof(arg), "@param %@ ", parameter->qname.name);
-        if (ejsContainsMulti(ejs, np->doc, arg) != 0 || ejsContainsMulti(ejs, np->doc, "@duplicate") != 0) {
+        if (ejsContainsAsc(ejs, np->doc, arg) >= 0 || ejsContainsAsc(ejs, np->doc, "@duplicate") >= 0) {
             found++;
         } else {
             mprSprintf(arg, sizeof(arg), "@params %@ ", parameter->qname.name);
-            if (ejsContainsMulti(ejs, np->doc, arg) != 0) {
+            if (ejsContainsAsc(ejs, np->doc, arg) >= 0) {
                 found++;
             }
         }
@@ -9891,16 +9893,16 @@ static void applyAttributes(EcCompiler *cp, EcNode *np, EcNode *attributeNode, E
     if (state->inFunction) {
         ;
     } else if (state->inClass) {
-        if (ejsCompareMulti(cp->ejs, nspace, EJS_INTERNAL_NAMESPACE) == 0) {
+        if (ejsCompareAsc(cp->ejs, nspace, EJS_INTERNAL_NAMESPACE) == 0) {
             nspace = cp->fileState->nspace;
-        } else if (ejsCompareMulti(cp->ejs, nspace, EJS_PRIVATE_NAMESPACE) == 0 || 
-                   ejsCompareMulti(cp->ejs, nspace, EJS_PROTECTED_NAMESPACE) == 0) {
+        } else if (ejsCompareAsc(cp->ejs, nspace, EJS_PRIVATE_NAMESPACE) == 0 || 
+                   ejsCompareAsc(cp->ejs, nspace, EJS_PROTECTED_NAMESPACE) == 0) {
             nspace = ejsFormatReservedNamespace(cp->ejs, &state->currentClassName, nspace);
         }
     } else {
         if (cp->visibleGlobals && !(attributeNode && attributeNode->qname.space)) {
             nspace = ejsCreateStringFromAsc(cp->ejs, EJS_EMPTY_NAMESPACE);
-        } else if (ejsCompareMulti(cp->ejs, nspace, EJS_INTERNAL_NAMESPACE) == 0) {
+        } else if (ejsCompareAsc(cp->ejs, nspace, EJS_INTERNAL_NAMESPACE) == 0) {
             nspace = cp->fileState->nspace;
         }
     }
@@ -10002,6 +10004,15 @@ void ecSetOutputFile(EcCompiler *cp, cchar *outputFile)
     if (outputFile) {
         //  UNICODE
         cp->outputFile = sclone(outputFile);
+    }
+}
+
+
+void ecSetOutputDir(EcCompiler *cp, cchar *outputDir)
+{
+    if (outputDir) {
+        //  UNICODE
+        cp->outputDir = sclone(outputDir);
     }
 }
 
@@ -10306,7 +10317,7 @@ static EcNode *createNode(EcCompiler *cp, int kind, EjsString *name)
     if (token && token->loc.source) {
         np->loc = token->loc;
     }
-#if BLD_DEBUG
+#if BIT_DEBUG
     np->kindName = nodes[kind];
     if (token && token->tokenId >= 0) {
         np->tokenName = tokenNames[token->tokenId];
@@ -10362,8 +10373,8 @@ static void dummy(int junk) { }
 /*
     @copy   default
 
-    Copyright (c) Embedthis Software LLC, 2003-2011. All Rights Reserved.
-    Copyright (c) Michael O'Brien, 1993-2011. All Rights Reserved.
+    Copyright (c) Embedthis Software LLC, 2003-2012. All Rights Reserved.
+    Copyright (c) Michael O'Brien, 1993-2012. All Rights Reserved.
 
     This software is distributed under commercial and open source licenses.
     You may use the GPL open source license described below or you may acquire
@@ -10375,7 +10386,7 @@ static void dummy(int junk) { }
     under the terms of the GNU General Public License as published by the
     Free Software Foundation; either version 2 of the License, or (at your
     option) any later version. See the GNU General Public License for more
-    details at: http://www.embedthis.com/downloads/gplLicense.html
+    details at: http://embedthis.com/downloads/gplLicense.html
 
     This program is distributed WITHOUT ANY WARRANTY; without even the
     implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.
@@ -10384,7 +10395,7 @@ static void dummy(int junk) { }
     proprietary programs. If you are unable to comply with the GPL, you must
     acquire a commercial license to use this software. Commercial licenses
     for this software and support services are available from Embedthis
-    Software at http://www.embedthis.com
+    Software at http://embedthis.com
 
     Local variables:
     tab-width: 4

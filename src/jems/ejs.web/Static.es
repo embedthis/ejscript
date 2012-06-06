@@ -135,6 +135,17 @@ module ejs.web {
             /* Just need the content length */
             headers["Content-Length"] = filename.size
 
+        } else if (request.method == "OPTIONS") {
+            headers["Allow"] = "OPTIONS,GET,HEAD,POST,PUT,DELETE"
+
+        } else if (request.method == "TRACE") {
+            // body = "TRACE " + request.pathInfo + " " + request.protocol + "\r\n"
+            body = "<!DOCTYPE html>\r\n" +
+                "<html><head><title>Trace Request Denied</title></head>\r\n" +
+                "<body>The TRACE method is disabled on this server.</body>\r\n" +
+                "</html>\r\n"
+            status = Http.NotAcceptable
+
         } else {
             status = Http.BadMethod
             body = errorBody("Unsupported method ", "Method " + escapeHtml(request.method) + " is not supported")
@@ -188,8 +199,8 @@ module ejs.web {
 /*
     @copy   default
     
-    Copyright (c) Embedthis Software LLC, 2003-2011. All Rights Reserved.
-    Copyright (c) Michael O'Brien, 1993-2011. All Rights Reserved.
+    Copyright (c) Embedthis Software LLC, 2003-2012. All Rights Reserved.
+    Copyright (c) Michael O'Brien, 1993-2012. All Rights Reserved.
     
     This software is distributed under commercial and open source licenses.
     You may use the GPL open source license described below or you may acquire 

@@ -15,11 +15,18 @@ module ejs {
 
         use default namespace public
 
+        //  MOB - getter
+        /**
+            Get a list of file system drives
+            @return An array of drives. Returns an empty list on systems without drive specifiers in filenames.
+         */
+        native static function drives(): Array 
+
         /** 
             Create a new FileSystem object for the file system that contains the given path.
             @param path String or Path of a file that would reside in the file system.
          */
-        native function FileSystem(path: Object? = null)
+        native function FileSystem(path: Path? = null)
 
         /** 
             Are path names on this file system case sensitive. ie. are uppercase and lowercase path names equivalent
@@ -88,8 +95,8 @@ module ejs {
 /*
     @copy   default
     
-    Copyright (c) Embedthis Software LLC, 2003-2011. All Rights Reserved.
-    Copyright (c) Michael O'Brien, 1993-2011. All Rights Reserved.
+    Copyright (c) Embedthis Software LLC, 2003-2012. All Rights Reserved.
+    Copyright (c) Michael O'Brien, 1993-2012. All Rights Reserved.
     
     This software is distributed under commercial and open source licenses.
     You may use the GPL open source license described below or you may acquire 

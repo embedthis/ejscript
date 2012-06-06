@@ -100,7 +100,7 @@ static EjsObj *xlCast(Ejs *ejs, EjsXML *vp, EjsType *type)
             }
         }
         for (next = 0; (elt = mprGetNextItem(vp->elements, &next)) != 0; ) {
-            if (ejsXMLToString(ejs, buf, elt, -1) < 0) {
+            if (ejsXMLToBuf(ejs, buf, elt, -1) < 0) {
                 return 0;
             }
             if (next < vp->elements->length) {
@@ -123,7 +123,7 @@ static int deleteXmlListPropertyByName(Ejs *ejs, EjsXML *list, EjsName qname)
     EjsXML      *elt;
     int         index, next;
 
-    if (isdigit((int) qname.name->value[0]) && allDigitsForXmlList(qname.name)) {
+    if (isdigit((uchar) qname.name->value[0]) && allDigitsForXmlList(qname.name)) {
         index = ejsAtoi(ejs, qname.name, 10);
 
         elt = (EjsXML*) mprGetItem(list->elements, index);
@@ -170,7 +170,7 @@ static EjsObj *getXmlListPropertyByName(Ejs *ejs, EjsXML *list, EjsName qname)
     /*
         Get the n'th item in the list
      */
-    if (isdigit((int) qname.name->value[0]) && allDigitsForXmlList(qname.name)) {
+    if (isdigit((uchar) qname.name->value[0]) && allDigitsForXmlList(qname.name)) {
         return mprGetItem(list->elements, ejsAtoi(ejs, qname.name, 10));
     }
 
@@ -236,7 +236,7 @@ static EjsObj *nextXmlListKey(Ejs *ejs, EjsIterator *ip, int argc, EjsObj **argv
  */
 static EjsObj *getXmlListIterator(Ejs *ejs, EjsObj *xml, int argc, EjsObj **argv)
 {
-    return (EjsObj*) ejsCreateIterator(ejs, xml, nextXmlListKey, 0, NULL);
+    return (EjsObj*) ejsCreateIterator(ejs, xml, -1, nextXmlListKey, 0, NULL);
 }
 
 
@@ -274,7 +274,7 @@ static EjsObj *nextXmlListValue(Ejs *ejs, EjsIterator *ip, int argc, EjsObj **ar
  */
 static EjsObj *getXmlListValues(Ejs *ejs, EjsObj *ap, int argc, EjsObj **argv)
 {
-    return (EjsObj*) ejsCreateIterator(ejs, ap, nextXmlListValue, 0, NULL);
+    return (EjsObj*) ejsCreateIterator(ejs, ap, -1, nextXmlListValue, 0, NULL);
 }
 
 
@@ -460,7 +460,7 @@ static int updateElement(Ejs *ejs, EjsXML *list, EjsXML *elt, int index, EjsObj 
         mprAssert(ejsIs(ejs, value, String));
         i = mprLookupItem(elt->parent->elements, elt);
         mprAssert(i >= 0);
-        ejsSetXML(ejs, elt->parent, i, elt);
+        ejsSetXMLElement(ejs, elt->parent, i, elt);
         //  TODO - why do this. Doesn't above do this?
         ejsSetPropertyByName(ejs, elt->parent, elt->qname, value);
         elt->value = (EjsString*) value;
@@ -505,7 +505,7 @@ static int setXmlListPropertyByName(Ejs *ejs, EjsXML *list, EjsName qname, EjsOb
     EjsXML      *elt, *targetObject;
     int         index;
 
-    if (!isdigit((int) qname.name->value[0])) {
+    if (!isdigit((uchar) qname.name->value[0])) {
         return setAlphaPropertyByName(ejs, list, qname, value);
     }
 
@@ -557,7 +557,7 @@ static bool allDigitsForXmlList(EjsString *name)
     MprChar     *cp;
 
     for (cp = name->value; *cp; cp++) {
-        if (!isdigit((int) *cp) || *cp == '.') {
+        if (!isdigit((uchar) *cp) || *cp == '.') {
             return 0;
         }
     }
@@ -827,7 +827,7 @@ void ejsConfigureXMLListType(Ejs *ejs)
     ejsBindConstructor(ejs, type, xmlListConstructor);
     ejsBindMethod(ejs, prototype, ES_XMLList_length, xlLength);
     ejsBindMethod(ejs, prototype, ES_XMLList_name, getXmlListNodeName);
-    ejsBindMethod(ejs, prototype, ES_XMLList_parent, (EjsNativeFunction) xl_parent);
+    ejsBindMethod(ejs, prototype, ES_XMLList_parent, (EjsProc) xl_parent);
 #if FUTURE
     ejsBindMethod(ejs, prototype, "name", name, NULL);
     ejsBindMethod(ejs, prototype, "valueOf", valueOf, NULL);
@@ -842,8 +842,8 @@ void ejsConfigureXMLListType(Ejs *ejs)
 /*
     @copy   default
 
-    Copyright (c) Embedthis Software LLC, 2003-2011. All Rights Reserved.
-    Copyright (c) Michael O'Brien, 1993-2011. All Rights Reserved.
+    Copyright (c) Embedthis Software LLC, 2003-2012. All Rights Reserved.
+    Copyright (c) Michael O'Brien, 1993-2012. All Rights Reserved.
 
     This software is distributed under commercial and open source licenses.
     You may use the GPL open source license described below or you may acquire
@@ -855,7 +855,7 @@ void ejsConfigureXMLListType(Ejs *ejs)
     under the terms of the GNU General Public License as published by the
     Free Software Foundation; either version 2 of the License, or (at your
     option) any later version. See the GNU General Public License for more
-    details at: http://www.embedthis.com/downloads/gplLicense.html
+    details at: http://embedthis.com/downloads/gplLicense.html
 
     This program is distributed WITHOUT ANY WARRANTY; without even the
     implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.
@@ -864,7 +864,7 @@ void ejsConfigureXMLListType(Ejs *ejs)
     proprietary programs. If you are unable to comply with the GPL, you must
     acquire a commercial license to use this software. Commercial licenses
     for this software and support services are available from Embedthis
-    Software at http://www.embedthis.com
+    Software at http://embedthis.com
 
     Local variables:
     tab-width: 4

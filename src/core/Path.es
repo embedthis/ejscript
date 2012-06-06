@@ -7,10 +7,9 @@
 /*
     FUTURE
         Path.expand(hash: Object = null)        Expand $VARS or ${vars} in path. Also expand ~user
-        Path.split(): Array                     Return dir + base. Useful if you have destructuring assignment
-        Path.splitDrive(): Array                Return drive + rest
+        Path.split(): Array                     Return dir + base
+        Path.splitRoot(): Array                 Return root + rest
         Path.splitExtension(): Array            Return rest + extension
-        Path.splitUNC(): Array                  Return unc + rest (\\host)
         Path.normalizeCase                      Map to lower case
         Path.canonicalize()                     Resolve symbolic links and return normalized, validated, fully resolved path.
                                                 Error if the path does not exist.
@@ -18,9 +17,7 @@
         Path.md5(): Number                      Calculate an MD5 digest of the file contents
         Path.touch(date: Date = null): Void     Update modified time. Create if non-existant
         Path.perms = NNN                        Permissions getter / setter
-        Path.append(line)                       Append a line to a file (open, write, close)
         Path.isReadable, isWritable, isHidden, isSpecial, is Mount
-        Path.files(/regexp/)                    
         Path.rmtree()                           Recursive removal
         Path.validate                           Validate a path.
  */
@@ -42,11 +39,16 @@ module ejs {
             Create a new Path object and set the path's location.
             @param path Name of the path to associate with this path object. 
          */
-        native function Path(path: String)
+        native function Path(path: String = ".")
 
-//  MOB -- uses default native separator
         /**
-            An equivalent absolute path equivalent for the current path. The path is normalized.
+            An equivalent absolute path equivalent for the current path. The path is normalized and uses the native system
+            directory separator.
+            On Windows, this path with contain a drive specifier and will have back-slash directory separators.
+            On Cygwin, this path will be a Cygwin style path without a drive specifier and with forward-slash 
+            directory separators. If the path is outside the Cygwin filesystem (outside c:/cygwin), the path 
+            will have a /cygdrive/DRIVE prefix. 
+            To get a Windows style path, use the $windows property accessor.
          */
         native function get absolute(): Path
 
@@ -56,22 +58,38 @@ module ejs {
         native function get accessed(): Date 
 
         /**
+            Append data to a file.
+            @param data Data to append to the file
+            @param options File open options. Defaults to "atw"
+         */
+        function append(data, options = "atw"): Void {
+            let file = open(options)
+            file.write(data)
+            file.close()
+        }
+
+        /**
             File security permissions.
             @return the file attributes object hash. Fields include: 
-            @options owner String representing the file owner
-            @options group String representing the file group
+            @options user String representing the file user name
+            @options group String representing the file group name
+            @options uid Number representing the file user id
+            @options gid Number representing the file group id
             @options permissions Number File Posix permissions mask
-            @hide
          */
-        #FUTURE
         native function get attributes(): Object
 
         /**
-            @duplicate Path.attributes
-            @hide
+            Define file security permissions.
+            @options user String representing the file user name
+            If both user and uid are specified, user takes precedence. 
+            @options group String representing the file group name
+            If both group and gid are specified, group takes precedence.
+            @options uid Number representing the file user id
+            @options gid Number representing the file group id
+            @options permissions Number File Posix permissions mask
          */
-        #FUTURE
-        native function set attributes(attributes: Object): Void
+        native function setAttributes(attributes: Object): Void
 
         /**
             The base of portion of the path. The base portion is the trailing portion without any directory elements.
@@ -79,10 +97,10 @@ module ejs {
         native function get basename(): Path
         
         /**
-            Path components. This is the path converted to an absolute path and then broken into components for each
-            directory level. It is set to an array object with an element for each segment of the path. The first 
-                element represents the file system root and will be the empty string or drive spec on a windows 
-                like systems. Array.join("/") can be used to put components back into a complete path.
+            Path components. The path is normalized and then broken into components for each directory level. 
+            The result is an array object with an element for each segment of the path. If the path is an absolute path, 
+            the first element represents the file system root and will be the empty string or drive spec 
+            on a Windows like systems. Array.join("/") can be used to put components back into a complete path.
          */
         native function get components(): Array
   
@@ -99,6 +117,12 @@ module ejs {
             @param target New file location
             @param options Object hash
             @options permissions Set to a numeric Posix permissions mask. Not implemented.
+            @options user String representing the file user name
+                If both user and uid are specified, user takes precedence. 
+            @options group String representing the file group name
+                If both group and gid are specified, group takes precedence.
+            @options uid Number representing the file user id
+            @options gid Number representing the file group id
          */
         native function copy(target: Object, options: Object? = null): Void
 
@@ -120,7 +144,7 @@ module ejs {
             @return true if the path does begin with the suffix
          */
         function endsWith(suffix: String): Boolean
-            name.endsWith(suffix)
+            portable.name.endsWith(Path(suffix).portable)
 
         /**
             Does a file exist for this path.
@@ -133,55 +157,73 @@ module ejs {
         native function get extension(): String 
 
         /**
-            Find matching files. Files are listed in depth first order.
-            @param glob Glob style Pattern that files must match. This is similar to a ls() style pattern.
-            @param recurse Set to true to examine sub-directories. 
-            @return Return a list of matching files and directories
+            TODO - should do pattern matching
+            @hide
          */
-        function find(glob: String = "*", recurse: Boolean = true): Array {
-            function recursiveFind(path: Path, pattern: RegExp, level: Number): Array {
-                let result: Array = []
-                if (path.isDir && (recurse || level == 0)) {
-                    for each (f in path.files(true)) {
-                        let got: Array = recursiveFind(f, pattern, level + 1)
-                        for each (i in got) {
-                            result.append(i)
-                        }
-                    }
+        function findAbove(name: String): Path {
+            let dir: Path = this
+            do {
+                if (dir.join(name).exists) {
+                    return dir.join(name)
                 }
-                if (Config.OS == "WIN") {
-                    if (path.basename.toString().toLowerCase().match(pattern)) {
-                        result.append(path)
-                    }
-                } else {
-                    if (path.basename.toString().match(pattern)) {
-                        result.append(path)
-                    }
-                }
-                return result
-            }
-            if (Config.OS == "WIN") {
-                glob = glob.toLowerCase()
-            }
-            pattern = RegExp("^" + glob.replace(/\./g, "\\.").replace(/\*/g, ".*") + "$")
-            return recursiveFind(this, pattern, recurse, 0)
+                dir = dir.parent
+            } while (dir != dir.parent)
+            return null
         }
 
+        /*
+            DEPRECATED UNUSED
+            Get a list of files in a directory or subdirectory.
+            Use the $glob method for shell style wild card support.
+            @param options If set to true, then files will include sub-directories in the returned list of files.
+            @option basenames Set to true to include only the basename portion of filenames in the results. If selected,
+                any "include" or "exclude" patterns will only match the basename and not the full path.
+            @option depthFirst Do a depth first traversal. Default is in-order traversal.
+            @option descend Descend into subdirectories
+            @option exclude Regular expression pattern of files to exclude from the results. Matches the entire path unless
+                "basenames" is selected.
+            @option files Include only files in the results. The default is to include directories.
+            @option hidden Show hidden files starting with "."
+            @option include Regular expression pattern of files to include in the results. Matches the entire returned path
+                unless "basenames" is selected.
+            @option missing Report missing directories by throwing an exception.
+            @return An Array of Path objects for each file in the directory.
+        native function files(options: Object = null): Array 
+         */
+        
         /**
-            Get a list of files in a directory. The returned array contains the base path portion only, relative to the
-            path itself. This routine does not recurse into sub-directories. To get a list of files in sub-directories,
-            use find().
-            @param enumDirs If set to true, then dirList will include sub-directories in the returned list of files.
+            Do Posix glob style file matching.
+            @param patterns Pattern to match files. This can be a String, Path or array of String/Paths. 
+            The wildcard '?' matches any single character, '*' matches zero or more characters in a filename or 
+                directory, '** /' matches zero or more files or directories and matches recursively in a directory
+                tree.  If a pattern terminates with "/" it will only match directories. 
+                The pattern '**' is equivalent to '** / *' (ignore spaces). 
+                The Posix "[]" and "{a,b}" style expressions are not supported.
+            @param options Optional properties to control the matching.
+            @option depthFirst Do a depth first traversal. If "dirs" is specified, the directories will be shown after
+                the files in the directory. Otherwise, directories will be listed first.
+            @option exclude Regular expression pattern of files to exclude from the results. Matches the entire path.
+                Only for the purpose of this match, directories will have "/" appended. To exclude directories in the
+                results, use {exclude: /\/$/}. The trailing "/" will not be returned in the results.
+            @option hidden Include hidden files starting with "."
+            @option include Regular expression pattern of files to include in the results. Matches the entire returned path.
+                Only for the purpose of this match, directories will have "/" appended. To include only directories in the
+                results, use {include: /\/$/}
+            @option missing Set to undefined to report patterns that don't resolve into any files or directories 
+                by throwing an exception. Set to any non-null value to be used in the results when there are no matching
+                files or directories. Set to the empty string to use the patterns in the results and set
+                to null to do nothing.
+            @option relative Return paths relative to the Path, otherwise result entries include the Path. Defaults to false.
             @return An Array of Path objects for each file in the directory.
          */
-        native function files(enumDirs: Boolean = false): Array 
+        native function files(patterns: Object! = '*', options: Object = null): Array 
 
         /**
             The file system containing this Path 
-            @hide
+            @return The FileSystem object for this path
          */
-        #FUTURE
-        native function get fileSystem(): FileSystem
+        function get fileSystem(): FileSystem
+            FileSystem(this)
 
         /**
             Get iterate over any files contained under this path (assuming it is a directory) "for (v in files)". 
@@ -212,6 +254,7 @@ module ejs {
          */
         native function get isAbsolute(): Boolean
 
+        //  MOB - need isExecutable
         /**
             Is the path a directory. If the path is a symbolic link, the target of the link is tested.
             @return true if the file is a directory
@@ -245,9 +288,12 @@ module ejs {
 
         /**
             Join an extension to a path. If the base name of the path already has an extension, this call does nothing.
+            @param ext Extension to add. The extension may or may not contain a leading period. Best practice is to 
+                not have leading periods on extensions.
+            @param force Set to true to always add the extension.
             @return A new Path object with the given extension if the path did not already have one.
          */
-        native function joinExt(ext: String): Path
+        native function joinExt(ext: String, force: Boolean = false): Path
 
         /**
             The length of the path name in bytes. Note: this is not the file size. For that, use Path.size
@@ -262,14 +308,19 @@ module ejs {
 
         /**
             Make a new directory and all required intervening directories. If the directory already exists, 
-                the function returns without throwing an exception.
+                the function returns without any further action. 
             @param options
-            @options permissions Set to a numeric Posix permissions mask
-            @options owner String representing the file owner (Not implemented)
-            @options group String representing the file group (Not implemented)
-            @throws IOError if the directory cannot be created.
+            @options permissions Directory permissions to use for all created directories. Set to a numeric 
+                Posix permissions mask.
+            @options user String representing the file user for all created directories.
+                If both user and uid are specified, user takes precedence. 
+            @options group String representing the file group for all created directories.
+                If both group and gid are specified, group takes precedence.
+            @options uid Number representing the file user id
+            @options gid Number representing the file group id
+            @return True if the directory can be made or already exists
          */
-        native function makeDir(options: Object? = null): Void
+        native function makeDir(options: Object? = null): Boolean
 
         /**
             Create a link to a file. Not available on some platforms such as Windows and VxWorks.
@@ -279,9 +330,10 @@ module ejs {
          */
         native function makeLink(target: Path, hard: Boolean = false): Void
 
-        //  TODO - make an auto cleanup temporary. ie. remove automatically somehow
         /**
             Create a new temporary file. The temp file is located in the directory specified by the Path object. 
+            If the path object is created with an empty path value, the temporary file will be created in the standard
+            system location for temp files. This is typically /tmp or /temp.
             @returns a new Path object for the temp file.
          */
         native function temp(): Path
@@ -292,6 +344,14 @@ module ejs {
             @return a new Path after mapping separators
          */
         native function map(sep: String = separator): Path
+
+        /**
+            Match the path to a regular expression pattern
+            @param pattern The regular expression pattern to search for
+            @return Returns an array of matching substrings in the path
+         */
+        function match(pattern: RegExp): Array
+            this.toString().match(pattern)
 
         /** 
             Get the mime type for a path or extension string. The path's extension is used to lookup the corresponding
@@ -311,8 +371,9 @@ module ejs {
         native function get name(): String 
 
         /**
-            Natural (native) respresentation of the path. This uses the default O/S file system path separator, 
-            this is "\" on windows and "/" on unix and is normalized. See also $portable for a portable representation.
+            Natural (native) respresentation of the path for the platform. This uses the platform file system path 
+            separator, this is "\" on Windows and "/" on unix and Cygwin. The returned path is normalized. 
+            See also $portable for a portable representation.
          */
         native function get natural(): Path 
 
@@ -329,8 +390,8 @@ module ejs {
             @options mode optional file access mode string. Use "r" for read, "w" for write, "a" for append to existing
                 content, "+" never truncate.
             @options permissions optional Posix permissions number mask. Defaults to 0664.
-            @options owner String representing the file owner (Not implemented)
-            @options group String representing the file group (Not implemented)
+            @options user String representing the file user
+            @options group String representing the file group
             @return a File object which implements the Stream interface.
             @throws IOError if the path or file cannot be created.
          */
@@ -344,8 +405,8 @@ module ejs {
                 content, "+" never truncate.
             @options encoding Text encoding format
             @options permissions optional Posix permissions number mask. Defaults to 0664.
-            @options owner String representing the file owner (Not implemented)
-            @options group String representing the file group (Not implemented)
+            @options user String representing the file user
+            @options group String representing the file group
             @return a TextStream object which implements the Stream interface.
             @throws IOError if the path or file cannot be opened or created.
          */
@@ -358,8 +419,8 @@ module ejs {
             @options mode optional file access mode with values ored from: Read, Write, Append, Create, Open, Truncate. 
                 Defaults to Read.
             @options permissions optional Posix permissions number mask. Defaults to 0664.
-            @options owner String representing the file owner (Not implemented)
-            @options group String representing the file group (Not implemented)
+            @options user String representing the file user
+            @options group String representing the file group
             @return a BinaryStream object which implements the Stream interface.
             @throws IOError if the path or file cannot be opened or created.
          */
@@ -373,6 +434,7 @@ module ejs {
 
         /*  MOB -- different to File.permissions. Should have something that returns an object with full path/file
             attributes including group/user. The perms should be broken down into world:group:user */
+        //  MOB - should not use a setter should be functions
         /**
             The file permissions of a path. This number contains the Posix style permissions value or null if the file 
             does not exist. NOTE: this is not a string representation of an octal posix mask. 
@@ -460,47 +522,75 @@ module ejs {
             return new XML(data)
         }
 
-        //  TODO - should support an optional relativeTo: Path = "/" argument
         /**
             That path in a form relative to the application's current working directory. The value is normalized.
          */
         native function get relative(): Path
 
         /**
+            Get a relative path to an origin
+            @param origin The origin path to use when calculating a relative path to the destination (this path).
+                If origin is null, the current working directory is used as the origin.
+            @return A new relative path
+         */
+        native function relativeTo(origin: Path = null): Path
+
+        /**
             Delete the file associated with the Path object. If this is a directory without contents it will be removed.
-            @return True if the file is sucessfully deleted
+            @return True if the file is sucessfully deleted or does not exist.
          */
         native function remove(): Boolean 
 
+        //  MOB - consider remove({contents: true})
         /**
             Removes a directory and its contents
             If the path is a directory, this call will remove all subdirectories and their contents and finally the
             directory itself. If the directory does not exist, this call does not error and does nothing.
-            @throws IOError if the directory exists and cannot be removed.
+            @return True if all the contents are sucessfully deleted or if the directory does not exist. 
+                Otherwise return false.
          */
-        function removeAll(): Void {
+        function removeAll(): Boolean {
+            let passed = true
             if (name == "" || name == "/") {
                 throw new ArgError("Bad path for removeAll")
             }
-            for each (f in find('*')) {
-                f.remove()
+            for each (f in files('**', {depthFirst: true, hidden: true})) {
+                if (!f.remove()) {
+                    passed = false
+                }
             }
-            remove()
+            if (!remove()) {
+                passed = false
+            }
+            return passed
+        }
+
+        /**
+            Remove the drive specifier from a path
+            @hide
+         */
+        function removeDrive(): Path {
+            let sep = separator
+            return hasDrive ? (sep + components.slice(1).join(sep)) : this
         }
 
         /**
             Rename a file. If the new path exists it is removed before the rename.
-            @param target New name of the path. Can be either a Path or String.
-            @throws IOError if the original file does not exist or cannot be renamed.
+            @param target New name of the path
+            @return True if the file is renamed.
          */
-        native function rename(target: Object): Void
+        native function rename(target: Path): Boolean
         
         /**
             Replace the path extension and return a new path.
             @return A new path with the given extension.
          */
-        function replaceExt(ext: String): Path
-            this.trimExt().joinExt(ext)
+        function replaceExt(ext: String): Path {
+            if (ext && ext[0] != '.') {
+                ext = "." + ext
+            }
+            return this.trimExt() + ext
+        }
 
         /**
             Resolve paths in the neighborhood of this path. Resolve operates like join, except that it joins the 
@@ -521,6 +611,11 @@ module ejs {
         native function resolve(...otherPaths): Path
 
         /**
+            That root directory component of the path. On windows, this includes the drive spec if present in the path.
+          */
+        native function get root(): Path
+
+        /**
             Compare two paths test if they represent the same file
             @param other Other path to compare with
             @return True if the paths represent the same underlying filename
@@ -532,7 +627,7 @@ module ejs {
             or the default file system path separator if the path has no separators. On Windows, a path may contain
             "/" and "\" separators.  This will be set to a string containing the first separator found in the path.
             Will typically be either "/" or "/\\" depending on the path, platform and file system.
-            Use $natural or $portable to create a new path with different path separators.
+            Use $natural, $portable or $windows to create a new path with different path separators.
          */
         native function get separator(): String
 
@@ -548,7 +643,14 @@ module ejs {
             @return true if the path does begin with the prefix
          */
         function startsWith(prefix: String): Boolean
-            this.toString().startsWith(prefix)
+            portable.name.startsWith(Path(prefix).portable)
+
+        /**
+            Create the path as a symbolic link.
+            This will remove any pre-existing path and then create a symbolic link to refer to the target.
+            @param target Target the path will refer to.
+          */
+        native function symlink(target: Path): Void
 
         /**
             Convert the path to a JSON string. 
@@ -576,6 +678,7 @@ module ejs {
             @return a Path containing the trimmed path name
          */
         function trimEnd(pat: String): Path {
+            pat = Path(pat).portable
             if (name.endsWith(pat)) {
                 loc = name.lastIndexOf(pat)
                 if (loc >= 0) {
@@ -612,7 +715,14 @@ module ejs {
          */
         native function truncate(size: Number): Void
 
+        /**
+            An equivalent normalized Windows path equivalent for the current path.
+         */
+        native function get windows(): Path
+
         //  MOB rename? - bit confusing "write". This really does a "save"
+        //  MOB - rename to writecContents or save
+        //  MOB - last arg should be permissions?
         /**
             Write the file contents. This method opens the file, writes the contents and closes the file.
             @param args The data to write to the file. Data is serialized in before writing. Note that numbers will not 
@@ -653,8 +763,8 @@ module ejs {
 /*
     @copy   default
     
-    Copyright (c) Embedthis Software LLC, 2003-2011. All Rights Reserved.
-    Copyright (c) Michael O'Brien, 1993-2011. All Rights Reserved.
+    Copyright (c) Embedthis Software LLC, 2003-2012. All Rights Reserved.
+    Copyright (c) Michael O'Brien, 1993-2012. All Rights Reserved.
     
     This software is distributed under commercial and open source licenses.
     You may use the GPL open source license described below or you may acquire 

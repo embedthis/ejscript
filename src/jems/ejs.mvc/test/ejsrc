@@ -1,0 +1,10 @@
+{
+    app: {
+        cache: false,
+        reload: true,
+    },
+    uris: {
+        http: "http://127.0.0.1:6700",
+        ssl: "https://127.0.0.1:6743",
+    }
+}

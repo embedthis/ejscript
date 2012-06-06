@@ -58,6 +58,7 @@ module ejs.db {
             this.adapter = new global.module::[adapterClass](options)
         }
 
+        //  MOB - inconsistent naming. Add column,index vs create table
         /**
             Add a column to a table.
             @param table Name of the table
@@ -126,6 +127,7 @@ module ejs.db {
         function createDatabase(name: String, options: Object? = null): Void
             adapter.createDatabase(name, options)
 
+        //  MOB - should be addTable for consistency
         /**
             Create a new table
             @param table Name of the table
@@ -162,6 +164,7 @@ module ejs.db {
         function destroyDatabase(name: String): Void
             adapter.destroyDatabase(name)
 
+        //  MOB - should be removeTable for consistency
         /**
             Destroy a table
             @param table Name of the table to destroy
@@ -346,8 +349,8 @@ module ejs.db {
 /*
     @copy   default
     
-    Copyright (c) Embedthis Software LLC, 2003-2011. All Rights Reserved.
-    Copyright (c) Michael O'Brien, 1993-2011. All Rights Reserved.
+    Copyright (c) Embedthis Software LLC, 2003-2012. All Rights Reserved.
+    Copyright (c) Michael O'Brien, 1993-2012. All Rights Reserved.
     
     This software is distributed under commercial and open source licenses.
     You may use the GPL open source license described below or you may acquire 

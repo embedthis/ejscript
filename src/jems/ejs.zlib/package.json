@@ -1,0 +1,32 @@
+{
+  "name": "ejs.zlib",
+  "description": "Ejscript Zlib compression",
+  "version": "2.0.0",
+  "categories": [
+    "ejs",
+    "database"
+  ],
+  "author": "Embedthis (http://www.embedthis.com) <dev@embedthis.com>",
+  "contributors": [
+    "Embedthis (http://www.embedthis.com) <dev@embedthis.com>"
+  ],
+  "bugReports": "dev@embedthis.com",
+  "license": [
+    "GPLv2 (http://www.ejscript.org/products/ejs/doc/licenses/gpl.html)"
+  ],
+  "stability": "prototype",
+  "location": "https://github.com/embedthis/ejs-2",
+  "keywords": [
+    "db"
+  ],
+  "dependencies": [
+    [
+      "ejs",
+      "== 0.0.0"
+    ]
+  ],
+  "os": "*",
+  "cpu": "*",
+  "patchable": false,
+  "builtin": true
+}

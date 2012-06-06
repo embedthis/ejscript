@@ -206,6 +206,7 @@ module ejs {
         function set outStream(stream: Stream): void
             _outStream = stream
 
+        //  MOB - rename from debug as useful for any level zero output
         /** 
             Emit a debug message. The message level will be compared to the logger setting to determine 
             whether it will be output to the devices or not. Also, if the logger has a filter function set that 
@@ -246,10 +247,8 @@ module ejs {
          */
         function activity(tag: String, ...args): Void {
             let msg = args.join(" ")
-            let msg = "%12s %s" % (["[" + tag.toUpperCase() + "]"] + [msg]) + "\n"
-            if (_level > 0) {
-                write(msg)
-            }
+            let msg = "%12s %s" % (["[" + tag + "]"] + [msg]) + "\n"
+            write(msg)
         }
 
         /** 

@@ -1,0 +1,70 @@
+/*
+    bit.bit -- Bit File for ejs.bit
+ */
+
+Bit.load({
+
+    targets: {
+        'bit.es': {
+            type: 'file',
+            precious: true,
+            files: [ 'bit.es' ],
+            platforms: [ 'local' ],
+        },
+
+        'bit': {
+            type: 'exe',
+            path: '${BIN}/bit${EXE}',
+            sources: [ 
+                '${SRC}/src/cmd/ejsrun.c',
+                '${SRC}/src/jems/ejs.zlib/*.c' 
+            ],
+            static: true,
+            active: true,
+            precious: true,
+            depends: ['libejs',  'zlib', 'bits', 'bit.es'],
+            platforms: [ 'local' ],
+        },
+
+        'utest.es': {
+            path: '${BIN}/utest.es',
+            files: [ 'utest.es' ],
+            build: "
+                trace('Export', bit.target.files)
+                cp('utest.es', bit.dir.bin)
+            ",
+            'generate': "cp bit.es ${BIN}",
+            platforms: [ 'local' ],
+        },
+
+        'utest.exe': {
+            type: 'file',
+            path: '${BIN}/utest${EXE}',
+            files: [ '${BIN}/ejsrun${EXE}' ],
+            depends: ['ejsrun'],
+            platforms: [ 'local' ],
+        },
+
+        bits: {
+            path: '${LIB}/bits',
+            files: [ 'bits/**' ],
+            precious: true,
+            build: "
+                trace('Copy', 'Bit bits')
+                rmdir(bit.dir.lib.join('bits'))
+                mkdir(bit.dir.lib.join('bits'))
+                cp('bits', bit.dir.lib)
+            "
+            'generate-nmake': '\
+                if exist "${LIB}\\bits" rd /Q /S "${LIB}\\bits"
+                if not exist "${LIB}\\bits" md "${LIB}\\bits"
+                xcopy /S /Y "bits" "${LIB}\\bits"
+            ',
+            'generate-sh': "\
+                rm -fr ${LIB}/bits
+                cp -r bits ${LIB}
+            ",
+            platforms: [ 'local' ],
+        },
+	},
+})

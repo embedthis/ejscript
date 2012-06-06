@@ -1,0 +1,51 @@
+/*
+    zlib.pak - Bit package for zlib
+ */
+
+pack('zlib', 'Zlib Compression Library')
+let cfg
+let path: Path = bit.packs.zlib.path
+if (!path) {
+    let vers = bit.dir.packs.join('zlib').files('zlib-*').sort().reverse()
+    path = vers[0]
+}
+path ||= Path('.')
+
+let lib, isearch
+
+if (bit.platform.os == 'windows') {
+    if (!path) {
+        throw 'Can\'t find zlib source distribution'
+    }
+    lib = probe('libz.dll', {fullpath: true, search: [path]}).absolute
+    imports = [ lib.parent.join('libz.dll'), lib.parent.join('libz.lib') ]
+    isearch = [path]
+
+} else if (bit.platform.os == 'macosx') {
+    lib = probe('libz.dylib', {fullpath: true, search: [path, '/usr/lib']}).absolute
+    imports = lib.parent.files('libz*.dylib')
+    isearch = [path, '/usr/include']
+
+} else {
+    let arch = bit.platform.arch.match(/^i.86$/) ? 'x86' : bit.platform.arch
+    let search = [path, '/usr/lib', '/lib', '/usr/lib64', '/lib64' ] + 
+        Path('/usr/lib').files(arch + '-linux-gnu') + Path('/lib').files(arch + '-linux-gnu')
+    lib = probe('libz.so', {fullpath: true, search: search}).absolute
+    imports = lib.parent.files('libz*.so*')
+    isearch = [path, path.join('include'), '/usr/include']
+}
+
+let cfg = {
+    path: lib,
+    dir: lib.parent,
+    libpaths: [ lib.parent ],
+    libraries: [ 'z' ],
+    imports: imports,
+}
+let incdir = probe('zlib.h', {search: isearch}).absolute
+if (!incdir.same('/usr/include')) {
+    cfg.includes = [incdir]
+}
+
+let template = {packs: { zlib: cfg}}
+Bit.load(template)

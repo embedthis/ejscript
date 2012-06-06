@@ -14,7 +14,7 @@
  */
 static EjsBoolean *gc_enabled(Ejs *ejs, EjsObj *thisObj, int argc, EjsObj **argv)
 {
-    return ((mprGetMpr()->heap.enabled) ? ESV(true): ESV(false));
+    return ((mprGetMpr()->heap->enabled) ? ESV(true): ESV(false));
 }
 
 
@@ -24,7 +24,7 @@ static EjsBoolean *gc_enabled(Ejs *ejs, EjsObj *thisObj, int argc, EjsObj **argv
 static EjsObj *gc_set_enabled(Ejs *ejs, EjsObj *thisObj, int argc, EjsObj **argv)
 {
     mprAssert(argc == 1 && ejsIs(ejs, argv[0], Boolean));
-    mprGetMpr()->heap.enabled = ejsGetBoolean(ejs, argv[0]);
+    mprGetMpr()->heap->enabled = ejsGetBoolean(ejs, argv[0]);
     return 0;
 }
 
@@ -52,7 +52,7 @@ static EjsObj *gc_run(Ejs *ejs, EjsObj *thisObj, int argc, EjsObj **argv)
  */
 static EjsNumber *gc_newQuota(Ejs *ejs, EjsObj *thisObj, int argc, EjsObj **argv)
 {
-    return ejsCreateNumber(ejs, mprGetMpr()->heap.newQuota);
+    return ejsCreateNumber(ejs, mprGetMpr()->heap->newQuota);
 }
 
 
@@ -70,7 +70,7 @@ static EjsObj *gc_set_newQuota(Ejs *ejs, EjsObj *thisObj, int argc, EjsObj **arg
         ejsThrowArgError(ejs, "Bad work quota");
         return 0;
     }
-    mprGetMpr()->heap.newQuota = quota;
+    mprGetMpr()->heap->newQuota = quota;
     return 0;
 }
 
@@ -101,8 +101,8 @@ void ejsConfigureGCType(Ejs *ejs)
 /*
     @copy   default
     
-    Copyright (c) Embedthis Software LLC, 2003-2011. All Rights Reserved.
-    Copyright (c) Michael O'Brien, 1993-2011. All Rights Reserved.
+    Copyright (c) Embedthis Software LLC, 2003-2012. All Rights Reserved.
+    Copyright (c) Michael O'Brien, 1993-2012. All Rights Reserved.
     
     This software is distributed under commercial and open source licenses.
     You may use the GPL open source license described below or you may acquire 
@@ -114,7 +114,7 @@ void ejsConfigureGCType(Ejs *ejs)
     under the terms of the GNU General Public License as published by the 
     Free Software Foundation; either version 2 of the License, or (at your 
     option) any later version. See the GNU General Public License for more 
-    details at: http://www.embedthis.com/downloads/gplLicense.html
+    details at: http://embedthis.com/downloads/gplLicense.html
     
     This program is distributed WITHOUT ANY WARRANTY; without even the 
     implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. 
@@ -123,7 +123,7 @@ void ejsConfigureGCType(Ejs *ejs)
     proprietary programs. If you are unable to comply with the GPL, you must
     acquire a commercial license to use this software. Commercial licenses 
     for this software and support services are available from Embedthis 
-    Software at http://www.embedthis.com 
+    Software at http://embedthis.com 
     
     Local variables:
     tab-width: 4

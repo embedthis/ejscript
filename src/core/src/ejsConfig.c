@@ -38,47 +38,51 @@ void ejsDefineConfigProperties(Ejs *ejs)
         There will still be a -Config- property in slot[0]
      */
     att = EJS_PROP_STATIC | EJS_PROP_ENUMERABLE;
-    ejsDefineProperty(ejs, type, -1, N("public", "Debug"), 0, att, BLD_DEBUG ? ESV(true): ESV(false));
-    ejsDefineProperty(ejs, type, -1, N("public", "CPU"), 0, att, ejsCreateStringFromAsc(ejs, BLD_HOST_CPU));
-    ejsDefineProperty(ejs, type, -1, N("public", "OS"), 0, att, ejsCreateStringFromAsc(ejs, BLD_OS));
-    ejsDefineProperty(ejs, type, -1, N("public", "Product"), 0, att, 
-        ejsCreateStringFromAsc(ejs, BLD_PRODUCT));
-    ejsDefineProperty(ejs, type, -1, N("public", "Title"), 0, att, ejsCreateStringFromAsc(ejs, BLD_NAME));
-    mprSprintf(version, sizeof(version), "%s-%s", BLD_VERSION, BLD_NUMBER);
-    ejsDefineProperty(ejs, type, -1, N("public", "Version"), 0, att, ejsCreateStringFromAsc(ejs, version));
+    ejsDefineProperty(ejs, type, -1, N("public", "Debug"), 0, att, BIT_DEBUG ? ESV(true): ESV(false));
 
-    ejsDefineProperty(ejs, type, -1, N("public", "Legacy"), 0, att, ejsCreateBoolean(ejs, BLD_FEATURE_LEGACY_API));
-    ejsDefineProperty(ejs, type, -1, N("public", "SSL"), 0, att, ejsCreateBoolean(ejs, BLD_FEATURE_SSL));
-    ejsDefineProperty(ejs, type, -1, N("public", "SQLITE"), 0, att, ejsCreateBoolean(ejs, BLD_FEATURE_SQLITE));
-
-#if BLD_WIN_LIKE
+#if WINDOWS
 {
-    EjsString    *path;
-
-    path = ejsCreateStringFromAsc(ejs, mprGetAppDir(ejs));
-    ejsDefineProperty(ejs, type, -1, N("public", "BinDir"), 0, att, path);
-    ejsDefineProperty(ejs, type, -1, N("public", "ModDir"), 0, att, path);
-    ejsDefineProperty(ejs, type, -1, N("public", "LibDir"), 0, att, path);
+    /* 
+        Get the real system architecture, not whether this app is 32 or 64 bit.
+        On native 64 bit systems, PA is amd64 for 64 bit apps and is PAW6432 is amd64 for 32 bit apps 
+     */
+    cchar   *cpu;
+    if (smatch(getenv("PROCESSOR_ARCHITECTURE"), "AMD64") || getenv("PROCESSOR_ARCHITEW6432")) {
+        cpu = "x64";
+    } else {
+        cpu = "x86";
+    }
+    ejsDefineProperty(ejs, type, -1, N("public", "CPU"), 0, att, ejsCreateStringFromAsc(ejs, cpu));
 }
 #else
-#ifdef BLD_BIN_PREFIX
-    ejsDefineProperty(ejs, type, -1, N("public", "BinDir"), 0, att, ejsCreateStringFromAsc(ejs, BLD_BIN_PREFIX));
+    ejsDefineProperty(ejs, type, -1, N("public", "CPU"), 0, att, ejsCreateStringFromAsc(ejs, BIT_CPU));
 #endif
-#ifdef BLD_MOD_PREFIX
-    ejsDefineProperty(ejs, type, -1, N("public", "ModDir"), 0, att, ejsCreateStringFromAsc(ejs, BLD_MOD_PREFIX));
-#endif
-#ifdef BLD_LIB_PREFIX
-    ejsDefineProperty(ejs, type, -1, N("public", "LibDir"), 0, att, ejsCreateStringFromAsc(ejs, BLD_LIB_PREFIX));
-#endif
-#endif
+    ejsDefineProperty(ejs, type, -1, N("public", "OS"), 0, att, ejsCreateStringFromAsc(ejs, BIT_OS));
+    ejsDefineProperty(ejs, type, -1, N("public", "Product"), 0, att, 
+        ejsCreateStringFromAsc(ejs, BIT_PRODUCT));
+    ejsDefineProperty(ejs, type, -1, N("public", "Title"), 0, att, ejsCreateStringFromAsc(ejs, BIT_NAME));
+    mprSprintf(version, sizeof(version), "%s-%s", BIT_VERSION, BIT_NUMBER);
+    ejsDefineProperty(ejs, type, -1, N("public", "Version"), 0, att, ejsCreateStringFromAsc(ejs, version));
+
+    ejsDefineProperty(ejs, type, -1, N("public", "SSL"), 0, att, ejsCreateBoolean(ejs, BIT_FEATURE_SSL));
+    ejsDefineProperty(ejs, type, -1, N("public", "SQLITE"), 0, att, ejsCreateBoolean(ejs, BIT_FEATURE_SQLITE));
+
+    if (mprSamePath(mprGetAppDir(), BIT_BIN_PREFIX)) {
+        ejsDefineProperty(ejs, type, -1, N("public", "Bin"), 0, att, ejsCreatePathFromAsc(ejs, BIT_BIN_PREFIX));
+        ejsDefineProperty(ejs, type, -1, N("public", "Inc"), 0, att, ejsCreatePathFromAsc(ejs, BIT_INC_PREFIX));
+    } else {
+        ejsDefineProperty(ejs, type, -1, N("public", "Bin"), 0, att, ejsCreatePathFromAsc(ejs, mprGetAppDir()));
+        ejsDefineProperty(ejs, type, -1, N("public", "Inc"), 0, att, 
+            ejsCreatePathFromAsc(ejs, mprNormalizePath(mprJoinPath(mprGetAppDir(), "../inc"))));
+    }
 }
 
 
 /*
     @copy   default
   
-    Copyright (c) Embedthis Software LLC, 2003-2011. All Rights Reserved.
-    Copyright (c) Michael O'Brien, 1993-2011. All Rights Reserved.
+    Copyright (c) Embedthis Software LLC, 2003-2012. All Rights Reserved.
+    Copyright (c) Michael O'Brien, 1993-2012. All Rights Reserved.
   
     This software is distributed under commercial and open source licenses.
     You may use the GPL open source license described below or you may acquire
@@ -90,7 +94,7 @@ void ejsDefineConfigProperties(Ejs *ejs)
     under the terms of the GNU General Public License as published by the
     Free Software Foundation; either version 2 of the License, or (at your
     option) any later version. See the GNU General Public License for more
-    details at: http://www.embedthis.com/downloads/gplLicense.html
+    details at: http://embedthis.com/downloads/gplLicense.html
   
     This program is distributed WITHOUT ANY WARRANTY; without even the
     implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.
@@ -99,7 +103,7 @@ void ejsDefineConfigProperties(Ejs *ejs)
     proprietary programs. If you are unable to comply with the GPL, you must
     acquire a commercial license to use this software. Commercial licenses
     for this software and support services are available from Embedthis
-    Software at http://www.embedthis.com
+    Software at http://embedthis.com
   
     Local variables:
     tab-width: 4

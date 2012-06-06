@@ -219,6 +219,7 @@ static int lstOpen(EjsMod *mp, char *moduleFilename, EjsModuleHdr *hdr)
         *ext = '\0';
     }
     path = sjoin(name, EJS_LISTING_EXT, NULL);
+    path = mprJoinPath(mp->outputDir, path);
     if ((mp->file = mprOpenFile(path,  O_CREAT | O_WRONLY | O_TRUNC | O_BINARY, 0664)) == 0) {
         mprError("Can't create %s", path);
         return EJS_ERR;
@@ -695,7 +696,7 @@ static void interp(EjsMod *mp, EjsModule *module, EjsFunction *fun)
                 if (*src == '_') {
                     *dest = *++src;
                 } else {
-                    *dest = tolower((int) *src);
+                    *dest = tolower((uchar) *src);
                 }
             }
             *dest++ = '\0';
@@ -1129,7 +1130,7 @@ static void leadin(EjsMod *mp, EjsModule *module, int classDec, int inFunction)
 
 static EjsString *mapSpace(Ejs *ejs, EjsString *space)
 {
-    if (ejsContainsMulti(ejs, space, "internal-") != 0) {
+    if (ejsContainsAsc(ejs, space, "internal-") != 0) {
         return ejsCreateStringFromAsc(ejs, "internal");
     }
     return space;
@@ -1139,8 +1140,8 @@ static EjsString *mapSpace(Ejs *ejs, EjsString *space)
 /*
     @copy   default
 
-    Copyright (c) Embedthis Software LLC, 2003-2011. All Rights Reserved.
-    Copyright (c) Michael O'Brien, 1993-2011. All Rights Reserved.
+    Copyright (c) Embedthis Software LLC, 2003-2012. All Rights Reserved.
+    Copyright (c) Michael O'Brien, 1993-2012. All Rights Reserved.
 
     This software is distributed under commercial and open source licenses.
     You may use the GPL open source license described below or you may acquire
@@ -1152,7 +1153,7 @@ static EjsString *mapSpace(Ejs *ejs, EjsString *space)
     under the terms of the GNU General Public License as published by the
     Free Software Foundation; either version 2 of the License, or (at your
     option) any later version. See the GNU General Public License for more
-    details at: http://www.embedthis.com/downloads/gplLicense.html
+    details at: http://embedthis.com/downloads/gplLicense.html
 
     This program is distributed WITHOUT ANY WARRANTY; without even the
     implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.
@@ -1161,7 +1162,7 @@ static EjsString *mapSpace(Ejs *ejs, EjsString *space)
     proprietary programs. If you are unable to comply with the GPL, you must
     acquire a commercial license to use this software. Commercial licenses
     for this software and support services are available from Embedthis
-    Software at http://www.embedthis.com
+    Software at http://embedthis.com
 
     Local variables:
     tab-width: 4

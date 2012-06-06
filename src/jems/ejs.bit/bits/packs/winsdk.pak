@@ -1,0 +1,34 @@
+/*
+    winsdk.pak - Windows SDK
+ */
+
+pack('winsdk', 'Windows SDK')
+let search = bit.packs.winsdk.path ? 
+    bit.packs.winsdk.path : 
+    bit.dir.programs.files('Microsoft SDKs/Windows/*').sort().reverse()
+let wvar: Path = '$(SDK)'
+let winsdk: Path = wvar
+if (Config.OS != 'windows') {
+    winsdk = '$(SDK)'
+} else {
+    if (search.length == 0) {
+        throw 'Can\'t find the Windows SDK. Download from http://msdn.microsoft.com/en-us/windowsserver/bb980924.aspx'
+    }
+    winsdk = probe('Include/WinBase.h', {fullpath: true, search: search})
+    winsdk = winsdk.dirname.dirname
+}
+
+let bin = winsdk.join('Bin').portable
+Bit.load({packs: { winsdk: { path: winsdk, search: bin }}})
+
+if (bit.platform.arch == 'x64') {
+    bit.env.PATH = [ bin.join('x64'), bin ]
+} else {
+    bit.env.PATH = [ bin ]
+}
+bit.env.INCLUDE = [ winsdk.join('INCLUDE').portable ]
+if (bit.platform.arch == 'x64') {
+    bit.env.LIB = [ winsdk.join('lib/x64').portable ]
+} else {
+    bit.env.LIB = [ winsdk.join('lib').portable ]
+}

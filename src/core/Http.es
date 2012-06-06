@@ -388,6 +388,7 @@ FUTURE & KEEP
 
         /** 
             Get the value of a single response header. This is a higher performance API than using response.headers["key"].
+            @param key Header key value to lookup. The lookup is caseless, i.e. the key can be any case of mix of case.
             @return The header field value as a string or null if not known.
          */
         native function header(key: String): String
@@ -526,7 +527,7 @@ FUTURE & KEEP
 
         /**
             Reset the Http object to prepare for a new request. This will discard existing headers and security 
-            credentials. It will not close the connection.
+            credentials. It will not close the connection to TCP/IP Keep-Alive will be maintained.
          */
         native function reset(): Void
 
@@ -669,6 +670,16 @@ FUTURE & KEEP
                     write('Content-Type: application/x-www-form-urlencoded\r\n\r\n')
                     write(Uri.encode(value) + "\r\n")
                 }
+            }
+            if (files is String || files is Path) {
+                files = {file0: files}
+            }
+            if (files is Array) {
+                let o = {}
+                for (let [key,value] in files) {
+                    o['file' + key] = value
+                }
+                files = o
             }
             for (let [key,file] in files) {
                 write('--' + boundary + "\r\n")
@@ -840,14 +851,15 @@ FUTURE & KEEP
         # Config.Legacy
         native function trace_old(uri: Uri? = null): Void
 
+        //  MOB - missing timeout legacy getter/setter method
     }
 }
 
 /*
     @copy   default
     
-    Copyright (c) Embedthis Software LLC, 2003-2011. All Rights Reserved.
-    Copyright (c) Michael O'Brien, 1993-2011. All Rights Reserved.
+    Copyright (c) Embedthis Software LLC, 2003-2012. All Rights Reserved.
+    Copyright (c) Michael O'Brien, 1993-2012. All Rights Reserved.
     
     This software is distributed under commercial and open source licenses.
     You may use the GPL open source license described below or you may acquire 

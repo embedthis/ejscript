@@ -17,10 +17,10 @@
 typedef struct EjsLocalCache
 {
     EjsObj          obj;                /* Object base */
-    MprHashTable    *store;             /* Key/value store */
+    MprHash         *store;             /* Key/value store */
     MprMutex        *mutex;             /* Cache lock*/
     MprEvent        *timer;             /* Pruning timer */
-    MprTime         lifespan;           /* Default lifespan */
+    MprTime         lifespan;           /* Default lifespan (msec) */
     int             resolution;         /* Frequence for pruner */
     ssize           usedMem;            /* Memory in use for keys and data */
     ssize           maxKeys;            /* Max number of keys */
@@ -35,7 +35,7 @@ typedef struct CacheItem
     EjsString   *key;                   /* Original key */
     EjsString   *data;                  /* Cache data */
     MprTime     expires;                /* Fixed expiry date. If zero, key is imortal. */
-    MprTime     lifespan;               /* Lifespan after each access to key */
+    MprTime     lifespan;               /* Lifespan after each access to key (msec) */
     int64       version;
 } CacheItem;
 
@@ -83,7 +83,6 @@ static EjsVoid *sl_destroy(Ejs *ejs, EjsLocalCache *cache, int argc, EjsObj **ar
         mprRemoveEvent(cache->timer);
         cache->timer = 0;
     }
-    //  MOB - race here
     if (cache == shared) {
         shared = 0;
     }
@@ -132,7 +131,6 @@ static EjsAny *sl_inc(Ejs *ejs, EjsLocalCache *cache, int argc, EjsAny **argv)
     EjsString   *key;
     CacheItem   *item;
     int64       amount;
-    char        nbuf[32];
 
     if (cache->shared) {
         cache = cache->shared;
@@ -145,16 +143,17 @@ static EjsAny *sl_inc(Ejs *ejs, EjsLocalCache *cache, int argc, EjsAny **argv)
     //  UNICODE
     if ((item = mprLookupKey(cache->store, key->value)) == 0) {
         if ((item = mprAllocObj(CacheItem, manageCacheItem)) == 0) {
+            unlock(cache);
             ejsThrowMemoryError(ejs);
             return 0;
         }
     } else {
-        amount += stoi(item->data->value, 10, 0);
+        amount += stoi(item->data->value);
     }
     if (item->data) {
         cache->usedMem -= item->data->length;
     }
-    item->data = ejsCreateStringFromAsc(ejs, itos(nbuf, sizeof(nbuf), amount, 10));
+    item->data = ejsCreateStringFromAsc(ejs, itos(amount));
     cache->usedMem += item->data->length;
     item->expires = mprGetTime() + item->lifespan;
     item->version++;
@@ -175,10 +174,12 @@ static EjsPot *sl_limits(Ejs *ejs, EjsLocalCache *cache, int argc, EjsObj **argv
         mprAssert(cache == shared);
     }
     result = ejsCreateEmptyPot(ejs);
-    ejsSetPropertyByName(ejs, result, EN("keys"), ejsCreateNumber(ejs, cache->maxKeys == MAXSSIZE ? 0 : cache->maxKeys));
+    ejsSetPropertyByName(ejs, result, EN("keys"), 
+        ejsCreateNumber(ejs, (MprNumber) (cache->maxKeys == MAXSSIZE ? 0 : cache->maxKeys)));
     ejsSetPropertyByName(ejs, result, EN("lifespan"), 
         ejsCreateNumber(ejs, (MprNumber) (cache->lifespan / MPR_TICKS_PER_SEC)));
-    ejsSetPropertyByName(ejs, result, EN("memory"), ejsCreateNumber(ejs, cache->maxMem == MAXSSIZE ? 0 : cache->maxMem));
+    ejsSetPropertyByName(ejs, result, EN("memory"), 
+        ejsCreateNumber(ejs, (MprNumber) (cache->maxMem == MAXSSIZE ? 0 : cache->maxMem)));
     return result;
 }
 
@@ -328,8 +329,8 @@ static EjsNumber *sl_write(Ejs *ejs, EjsLocalCache *cache, int argc, EjsAny **ar
     EjsString   *key, *value, *sp;
     EjsPot      *options;
     EjsAny      *vp;
+    MprKey      *kp;
     MprTime     expires;
-    MprHash     *hp;
     ssize       len, oldLen;
     int64       lifespan, version;
     int         checkVersion, exists, add, set, prepend, append, throw;
@@ -374,21 +375,21 @@ static EjsNumber *sl_write(Ejs *ejs, EjsLocalCache *cache, int argc, EjsAny **ar
         }
     }
     lock(cache);
-    if ((hp = mprLookupKeyEntry(cache->store, key->value)) != 0) {
+    if ((kp = mprLookupKeyEntry(cache->store, key->value)) != 0) {
         exists++;
-        item = (CacheItem*) hp->data;
+        item = (CacheItem*) kp->data;
         if (checkVersion) {
             if (item->version != version) {
+                unlock(cache);
                 if (throw) {
                     ejsThrowStateError(ejs, "Key version does not match");
-                } else {
-                    return ESV(null);
                 }
-                unlock(cache);
+                return ESV(null);
             }
         }
     } else {
         if ((item = mprAllocObj(CacheItem, manageCacheItem)) == 0) {
+            unlock(cache);
             ejsThrowMemoryError(ejs);
             return 0;
         }
@@ -406,9 +407,9 @@ static EjsNumber *sl_write(Ejs *ejs, EjsLocalCache *cache, int argc, EjsAny **ar
         }
         item->data = value;
     } else if (append) {
-        item->data = ejsCatString(ejs, item->data, value);
+        item->data = ejsJoinString(ejs, item->data, value);
     } else if (prepend) {
-        item->data = ejsCatString(ejs, value, item->data);
+        item->data = ejsJoinString(ejs, value, item->data);
     }
     if (expires) {
         /* Expires takes precedence over lifespan */
@@ -456,18 +457,20 @@ static void removeItem(EjsLocalCache *cache, CacheItem *item)
 static void localPruner(EjsLocalCache *cache, MprEvent *event)
 {
     MprTime         when, factor;
-    MprHash         *hp;
+    MprKey          *kp;
     CacheItem       *item;
     ssize           excessKeys;
 
     if (mprTryLock(cache->mutex)) {
         when = mprGetTime();
-        for (hp = 0; (hp = mprGetNextKey(cache->store, hp)) != 0; ) {
-            item = (CacheItem*) hp->data;
+        for (kp = 0; (kp = mprGetNextKey(cache->store, kp)) != 0; ) {
+            item = (CacheItem*) kp->data;
+#if UNUSED && KEEP
             mprLog(6, "LocalCache: \"%@\" lifespan %d, expires in %d secs", item->key, 
                     item->lifespan / 1000, (item->expires - when) / 1000);
+#endif
             if (item->expires && item->expires <= when) {
-                mprLog(5, "LocalCache prune expired key %s", hp->key);
+                mprLog(5, "LocalCache prune expired key %s", kp->key);
                 removeItem(cache, item);
             }
         }
@@ -480,11 +483,11 @@ static void localPruner(EjsLocalCache *cache, MprEvent *event)
             excessKeys = mprGetHashLength(cache->store) - cache->maxKeys;
             while (excessKeys > 0 || cache->usedMem > cache->maxMem) {
                 for (factor = 3600; excessKeys > 0 && factor < (86400 * 1000); factor *= 4) {
-                    for (hp = 0; (hp = mprGetNextKey(cache->store, hp)) != 0; ) {
-                        item = (CacheItem*) hp->data;
+                    for (kp = 0; (kp = mprGetNextKey(cache->store, kp)) != 0; ) {
+                        item = (CacheItem*) kp->data;
                         if (item->expires && item->expires <= when) {
                             mprLog(5, "LocalCache too big execess keys %Ld, mem %Ld, prune key %s", 
-                                    excessKeys, (cache->maxMem - cache->usedMem), hp->key);
+                                    excessKeys, (cache->maxMem - cache->usedMem), kp->key);
                             removeItem(cache, item);
                         }
                     }
@@ -582,8 +585,8 @@ void ejsConfigureLocalCacheType(Ejs *ejs)
 /*
     @copy   default
 
-    Copyright (c) Embedthis Software LLC, 2003-2011. All Rights Reserved.
-    Copyright (c) Michael O'Brien, 1993-2011. All Rights Reserved.
+    Copyright (c) Embedthis Software LLC, 2003-2012. All Rights Reserved.
+    Copyright (c) Michael O'Brien, 1993-2012. All Rights Reserved.
 
     This software is distributed under commercial and open source licenses.
     You may use the GPL open source license described below or you may acquire
@@ -595,7 +598,7 @@ void ejsConfigureLocalCacheType(Ejs *ejs)
     under the terms of the GNU General Public License as published by the
     Free Software Foundation; either version 2 of the License, or (at your
     option) any later version. See the GNU General Public License for more
-    details at: http://www.embedthis.com/downloads/gplLicense.html
+    details at: http://embedthis.com/downloads/gplLicense.html
 
     This program is distributed WITHOUT ANY WARRANTY; without even the
     implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.
@@ -604,7 +607,7 @@ void ejsConfigureLocalCacheType(Ejs *ejs)
     proprietary programs. If you are unable to comply with the GPL, you must
     acquire a commercial license to use this software. Commercial licenses
     for this software and support services are available from Embedthis
-    Software at http://www.embedthis.com
+    Software at http://embedthis.com
 
     Local variables:
     tab-width: 4

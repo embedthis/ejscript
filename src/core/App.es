@@ -45,7 +45,7 @@ module ejs {
         /**
             Separator string to use when constructing PATH style search strings
          */
-        static var SearchSeparator: String = (Config.OS == "WIN") ? ";" : ":"
+        static var SearchSeparator: String = (Config.OS == 'windows') ? ';' : ':'
 
         /*  
             Standard I/O streams. These can be any kind of stream.
@@ -77,7 +77,7 @@ module ejs {
                 ejsrc: Path("ejsrc"),
             },
             init: { },
-            test: { },
+            uris: { },
         }
 
         /**
@@ -113,6 +113,11 @@ module ejs {
             Application start time
          */
         static var started: Date = new Date
+
+        /**
+            Test object for unit tests when run via utest
+         */
+        static var test 
 
         /** 
             Application title name. Multi-word, Camel Case name for the application suitable for display. This is 
@@ -202,6 +207,11 @@ module ejs {
          */
         native static function getenv(name: String): String
 
+        /**
+            The group ID of the user account running the application. Only supported on Unix.
+         */
+        native static function get gid(): Number
+        
         /** 
             Set the standard input stream. Changing the input stream will close and reopen stdin.
          */
@@ -268,10 +278,12 @@ module ejs {
          */
         native static function putenv(name: String, value: String): Void
 
+        //  MOB - should this be renamed App.pump()
         /** 
             Run the application event loop. 
-            A script may call run() to service events. The ejs shell will exit when it has executed the last statement
-            in the script. Calling run() will cause the ejs shell to wait and service events until instructed to exit.
+            A script may call run() to service events. Calling run() will cause the ejs shell to wait and service 
+            events until instructed to exit via App.exit. If the application is hosted in a web server, this routine will
+            return true immediately without blocking. 
             @param timeout Timeout to block waiting for an event in milliseconds before returning. If an event occurs, the
                 call returns immediately. Set to -1 for no timeout.
             @param oneEvent If true, return immediately after servicing at least one ejs event.
@@ -285,6 +297,7 @@ module ejs {
         native static function get search(): Array
         native static function set search(paths: Array): Void
 
+        //  MOB - sleep should not throw
         /** 
             Sleep the application for the given number of milliseconds. Events will be serviced while asleep.
             An alternative to sleep is $App.run which can be configured to sleep and return early if an event is received.
@@ -301,19 +314,19 @@ module ejs {
          */
         # Config.Legacy
         static function get searchPath(): String {
-            if (Config.OS == "WIN") {
-                return search.join(";")
+            if (Config.OS == 'windows') {
+                return search.join(';')
             } else {
-                return search.join(":")
+                return search.join(':')
             }
         }
 
         # Config.Legacy
         static function set searchPath(path: String): Void {
-            if (Config.OS == "WIN") {
-                search = path.split(";")
+            if (Config.OS == 'windows') {
+                search = path.split(';')
             } else {
-                search = path.split(":")
+                search = path.split(':')
             }
         }
 
@@ -337,12 +350,17 @@ module ejs {
         }
 
         /**
+            The user ID of the user account running the application. Only supported on Unix.
+         */
+        native static function get uid(): Number
+        
+        /**
             Redirect the Application's logger based on the App.config.log setting
             Ignored if app is invoked with --log on the command line.
          */
         static function updateLog(): Void {
             let log = config.log
-            if (log && log.enable && !App.mprLog.cmdline) {
+            if (log && log.enable && !App.mprLog.fixed) {
                 App.log.redirect(log.location, log.level)
                 App.mprLog.redirect(log.location, log.level)
             }
@@ -371,8 +389,8 @@ module ejs {
         @hide
      */
     function appInit(): Void {
-        App.name = App.args[0] || Config.Product
-        App.title = App.args[0] || Config.Title
+        App.name = Path(App.args[0] || Config.Product).basename
+        App.title = App.name
         App.version = Config.Version
         App.mprLog = new MprLog
 
@@ -394,29 +412,16 @@ module ejs {
         let log = config.log
         let stream
         if (log.enable) {
-/* UNUSED
-            if (App.mprLog.cmdline) {
-                // App invoked with a --log switch
-                log.level = App.mprLog.level
-                stream = App.mprLog;
-            } else if (log.location == "stdout") {
-                stream = App.outputStream
-            } else if (log.location == "stderr") {
-                stream = App.errorStream
-            } else {
-                stream = File(log.location, "w")
-            }
-UNUSED */
             let level = log.level
             let location = log.location
-            if (App.mprLog.cmdline) {
+            if (App.mprLog.fixed) {
                 /* App invoked with a --log switch */
                 level = App.mprLog.level
                 location = App.mprLog;
             } else {
                 App.mprLog.redirect(location, level)
             }
-            App.log = new Logger(App.name, location, log.level)
+            App.log = new Logger(App.name, location, level)
             if (log.match) {
                 App.log.match = log.match
             }
@@ -447,8 +452,8 @@ UNUSED */
 /*
     @copy   default
     
-    Copyright (c) Embedthis Software LLC, 2003-2011. All Rights Reserved.
-    Copyright (c) Michael O'Brien, 1993-2011. All Rights Reserved.
+    Copyright (c) Embedthis Software LLC, 2003-2012. All Rights Reserved.
+    Copyright (c) Michael O'Brien, 1993-2012. All Rights Reserved.
     
     This software is distributed under commercial and open source licenses.
     You may use the GPL open source license described below or you may acquire 

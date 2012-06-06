@@ -8,8 +8,7 @@
 
 /********************************** Includes **********************************/
 
-#include    "ejs.h"
-#include    "ecCompiler.h"
+#include    "ejsCompiler.h"
 
 /********************************** Defines ***********************************/
 /*
@@ -114,12 +113,7 @@ static void     setStack(EcCompiler *cp, int count);
  */
 void ecGenConditionalCode(EcCompiler *cp, EcNode *np, EjsModule *mp)
 {
-    EcState         *state;
-
     ENTER(cp);
-
-    state = cp->state;
-    mprAssert(state);
 
     addModule(cp, mp);
     genDirectives(cp, np, 1);
@@ -167,7 +161,7 @@ int ecCodeGen(EcCompiler *cp)
     if (cp->outputFile) {
         for (next = 0; (mp = mprGetNextItem(cp->modules, &next)) != 0; ) {
             if (next <= 1 || mp->globalProperties || mp->hasInitializer || 
-                    ejsCompareMulti(cp->ejs, mp->name, EJS_DEFAULT_MODULE) != 0) {
+                    ejsCompareAsc(cp->ejs, mp->name, EJS_DEFAULT_MODULE) != 0) {
                 break;
             }
         }
@@ -194,7 +188,7 @@ int ecCodeGen(EcCompiler *cp)
             we have more than one module.
          */
         if (mprGetListLength(cp->modules) == 1 || mp->globalProperties || mp->hasInitializer || 
-                ejsCompareMulti(cp->ejs, mp->name, EJS_DEFAULT_MODULE) != 0) {
+                ejsCompareAsc(cp->ejs, mp->name, EJS_DEFAULT_MODULE) != 0) {
             mp->initialized = 0;
             processModule(cp, mp);
         }
@@ -2415,7 +2409,9 @@ static void genLiteral(EcCompiler *cp, EcNode *np)
 
     if (TYPE(np->literal.var) == EST(XML)) {
         ecEncodeOpcode(cp, EJS_OP_LOAD_XML);
-        data = ejsCreateString(ejs, mprGetBufStart(np->literal.data), mprGetBufLength(np->literal.data) / sizeof(MprChar));
+        //  UNICODE
+        data = ejsCreateString(ejs, (MprChar*) mprGetBufStart(np->literal.data), 
+                mprGetBufLength(np->literal.data) / sizeof(MprChar));
         ecEncodeConst(cp, data);
         pushStack(cp, 1);
         LEAVE(cp);
@@ -2995,7 +2991,6 @@ static void genThrow(EcCompiler *cp, EcNode *np)
 static void genTry(EcCompiler *cp, EcNode *np)
 {
     Ejs             *ejs;
-    EjsFunction     *fun;
     EcNode          *child, *arg;
     EcCodeGen       *saveCode;
     EcState         *state;
@@ -3007,8 +3002,6 @@ static void genTry(EcCompiler *cp, EcNode *np)
 
     ejs = cp->ejs;
     state = cp->state;
-    fun = state->currentFunction;
-    mprAssert(fun);
 
     /*
         Switch to a new code buffer for the try block
@@ -3492,6 +3485,7 @@ static MprFile *openModuleFile(EcCompiler *cp, cchar *filename)
     if (cp->noout) {
         return 0;
     }
+    filename = mprJoinPath(cp->outputDir, filename);
     if ((cp->file = mprOpenFile(filename,  O_CREAT | O_WRONLY | O_TRUNC | O_BINARY, 0664)) == 0) {
         genError(cp, 0, "Can't create module file \"%s\"", filename);
         return 0;
@@ -3583,12 +3577,9 @@ static void copyCodeBuffer(EcCompiler *cp, EcCodeGen *dest, EcCodeGen *src)
     EjsEx           *exception;
     EjsDebug        *debug;
     EcJump          *jump;
-    EcState         *state;
     uint            baseOffset;
     int             next, len, i;
 
-    state = cp->state;
-    mprAssert(state);
     mprAssert(dest != src);
 
     len = getCodeLength(cp, src);
@@ -3696,7 +3687,6 @@ static void createInitializer(EcCompiler *cp, EjsModule *mp)
     EjsFunction     *fun;
     EcState         *state;
     EcCodeGen       *code;
-    int             len;
 
     ENTER(cp);
 
@@ -3720,8 +3710,6 @@ static void createInitializer(EcCompiler *cp, EjsModule *mp)
     state->code = mp->code;
     cp->directiveState = state;
     code = cp->state->code;
-    len = (int) mprGetBufLength(code->buf);
-    mprAssert(len > 0);
     ecEncodeOpcode(cp, EJS_OP_END_CODE);
 
     /*
@@ -3867,7 +3855,7 @@ static void addDebug(EcCompiler *cp, EcNode *np)
         return;
     }
     offset = (int) mprGetBufLength(code->buf);
-    source = mfmt("%s|%d|%w", np->loc.filename, np->loc.lineNumber, np->loc.source);
+    source = (MprChar*) mfmt("%s|%d|%w", np->loc.filename, np->loc.lineNumber, np->loc.source);
     addDebugLine(cp, code, offset, source);
     code->lastLineNumber = np->loc.lineNumber;
 }
@@ -4094,10 +4082,10 @@ static void processModule(EcCompiler *cp, EjsModule *mp)
     }
     if (! cp->outputFile) {
         if (mp->version) {
-            path = mprAsprintf("%s-%d.%d.%d%s", mp->name, EJS_MAJOR(mp->version), EJS_MINOR(mp->version), 
+            path = sfmt("%s-%d.%d.%d%s", mp->name, EJS_MAJOR(mp->version), EJS_MINOR(mp->version), 
                 EJS_PATCH(mp->version), EJS_MODULE_EXT);
         } else {
-            path = mprAsprintf("%@%s", mp->name, EJS_MODULE_EXT);
+            path = sfmt("%@%s", mp->name, EJS_MODULE_EXT);
         }
         if ((mp->file = openModuleFile(cp, path)) == 0) {
             LEAVE(cp);
@@ -4389,9 +4377,9 @@ static void genError(EcCompiler *cp, EcNode *np, char *fmt, ...)
     cp->noout = 1;
     if (np) {
         loc = &np->loc;
-        ecError(cp, "Error", loc, fmt, args);
+        ecErrorv(cp, "Error", loc, fmt, args);
     } else {
-        ecError(cp, "Error", NULL, fmt, args);
+        ecErrorv(cp, "Error", NULL, fmt, args);
     }
     va_end(args);
 }
@@ -4408,8 +4396,8 @@ static void badNode(EcCompiler *cp, EcNode *np)
 /*
     @copy   default
   
-    Copyright (c) Embedthis Software LLC, 2003-2011. All Rights Reserved.
-    Copyright (c) Michael O'Brien, 1993-2011. All Rights Reserved.
+    Copyright (c) Embedthis Software LLC, 2003-2012. All Rights Reserved.
+    Copyright (c) Michael O'Brien, 1993-2012. All Rights Reserved.
   
     This software is distributed under commercial and open source licenses.
     You may use the GPL open source license described below or you may acquire
@@ -4421,7 +4409,7 @@ static void badNode(EcCompiler *cp, EcNode *np)
     under the terms of the GNU General Public License as published by the
     Free Software Foundation; either version 2 of the License, or (at your
     option) any later version. See the GNU General Public License for more
-    details at: http://www.embedthis.com/downloads/gplLicense.html
+    details at: http://embedthis.com/downloads/gplLicense.html
   
     This program is distributed WITHOUT ANY WARRANTY; without even the
     implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.
@@ -4430,7 +4418,7 @@ static void badNode(EcCompiler *cp, EcNode *np)
     proprietary programs. If you are unable to comply with the GPL, you must
     acquire a commercial license to use this software. Commercial licenses
     for this software and support services are available from Embedthis
-    Software at http://www.embedthis.com
+    Software at http://embedthis.com
   
     Local variables:
     tab-width: 4

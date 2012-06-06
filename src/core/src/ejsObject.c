@@ -299,11 +299,9 @@ static EjsObj *nextObjectKey(Ejs *ejs, EjsIterator *ip, int argc, EjsObj **argv)
     EjsObj      *obj;
     EjsName     qname;
     EjsTrait    *trait;
-    int         numProp;
 
     obj = ip->target;
-    numProp = ejsGetLength(ejs, obj);
-    for (; ip->index < numProp; ip->index++) {
+    for (; ip->index < ip->length; ip->index++) {
         qname = ejsGetPropertyName(ejs, obj, ip->index);
         if (qname.name == NULL) {
             continue;
@@ -328,7 +326,7 @@ static EjsObj *nextObjectKey(Ejs *ejs, EjsIterator *ip, int argc, EjsObj **argv)
  */
 static EjsIterator *obj_get(Ejs *ejs, EjsObj *obj, int argc, EjsObj **argv)
 {
-    return ejsCreateIterator(ejs, obj, nextObjectKey, 0, NULL);
+    return ejsCreateIterator(ejs, obj, ejsGetLength(ejs, obj), nextObjectKey, 0, NULL);
 }
 
 
@@ -344,7 +342,7 @@ static EjsObj *nextObjectValue(Ejs *ejs, EjsIterator *ip, int argc, EjsObj **arg
 
     obj = ip->target;
     numProp = ejsGetLength(ejs, obj);
-    for (; ip->index < numProp; ip->index++) {
+    for (; ip->index < ip->length; ip->index++) {
         trait = ejsGetPropertyTraits(ejs, obj, ip->index);
         if (trait && trait->attributes & 
                 (EJS_TRAIT_HIDDEN | EJS_TRAIT_DELETED | EJS_FUN_INITIALIZER | EJS_FUN_MODULE_INITIALIZER)) {
@@ -364,7 +362,7 @@ static EjsObj *nextObjectValue(Ejs *ejs, EjsIterator *ip, int argc, EjsObj **arg
  */
 static EjsIterator *obj_getValues(Ejs *ejs, EjsObj *obj, int argc, EjsObj **argv)
 {
-    return ejsCreateIterator(ejs, obj, nextObjectValue, 0, NULL);
+    return ejsCreateIterator(ejs, obj, ejsGetLength(ejs, obj), nextObjectValue, 0, NULL);
 }
 
 
@@ -647,7 +645,7 @@ static EjsObj *obj_preventExtensions(Ejs *ejs, EjsObj *unused, int argc, EjsObj 
 
 /*
     static function seal(obj: Object): Void
-*/
+ */
 static EjsObj *obj_seal(Ejs *ejs, EjsObj *unused, int argc, EjsObj **argv)
 {
     EjsObj      *obj;
@@ -662,6 +660,42 @@ static EjsObj *obj_seal(Ejs *ejs, EjsObj *unused, int argc, EjsObj **argv)
         }
     }
     SET_DYNAMIC(obj, 0);
+    return 0;
+}
+
+
+static int sortSlots(cvoid *a1, cvoid *a2)
+{
+    EjsSlot *s1, *s2;
+
+    s1 = (EjsSlot*) a1;
+    s2 = (EjsSlot*) a2;
+    if (s1->qname.name->value == s2->qname.name->value) {
+        return 0;
+    } else if (scmp(s1->qname.name->value, s2->qname.name->value) < 0) {
+        return -1;
+    } 
+    return 1;
+}
+
+
+/*
+    static function sortProperties(obj: Object): Void
+ */
+static EjsObj *obj_sortProperties(Ejs *ejs, EjsObj *unused, int argc, EjsObj **argv)
+{
+    EjsPot      *obj;
+
+    obj = (EjsPot*) argv[0];
+    if (!ejsIsPot(ejs, obj)) {
+        ejsThrowTypeError(ejs, "Object does not have properties");
+        return 0;
+    }
+#if FUTURE && KEEP
+    asc = (argc >= 2 && argv[1] == ESV(true));
+#endif
+    qsort(obj->properties->slots, obj->numProp, sizeof(EjsSlot), sortSlots);
+    ejsIndexProperties(ejs, obj);
     return 0;
 }
 
@@ -883,6 +917,7 @@ void ejsConfigureObjectType(Ejs *ejs)
         ejsBindMethod(ejs, type, ES_Object_preventExtensions, obj_preventExtensions);
         ejsBindAccess(ejs, type, ES_Object_prototype, obj_prototype, obj_set_prototype);
         ejsBindMethod(ejs, type, ES_Object_seal, obj_seal);
+        ejsBindMethod(ejs, type, ES_Object_sortProperties, obj_sortProperties);
 
         /* Reflection */
         ejsBindMethod(ejs, type, ES_Object_getBaseType, obj_getBaseType);
@@ -918,8 +953,8 @@ void ejsConfigureObjectType(Ejs *ejs)
 /*
     @copy   default
 
-    Copyright (c) Embedthis Software LLC, 2003-2011. All Rights Reserved.
-    Copyright (c) Michael O'Brien, 1993-2011. All Rights Reserved.
+    Copyright (c) Embedthis Software LLC, 2003-2012. All Rights Reserved.
+    Copyright (c) Michael O'Brien, 1993-2012. All Rights Reserved.
 
     This software is distributed under commercial and open source licenses.
     You may use the GPL open source license described below or you may acquire
@@ -931,7 +966,7 @@ void ejsConfigureObjectType(Ejs *ejs)
     under the terms of the GNU General Public License as published by the
     Free Software Foundation; either version 2 of the License, or (at your
     option) any later version. See the GNU General Public License for more
-    details at: http://www.embedthis.com/downloads/gplLicense.html
+    details at: http://embedthis.com/downloads/gplLicense.html
 
     This program is distributed WITHOUT ANY WARRANTY; without even the
     implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.
@@ -940,7 +975,7 @@ void ejsConfigureObjectType(Ejs *ejs)
     proprietary programs. If you are unable to comply with the GPL, you must
     acquire a commercial license to use this software. Commercial licenses
     for this software and support services are available from Embedthis
-    Software at http://www.embedthis.com
+    Software at http://embedthis.com
 
     Local variables:
     tab-width: 4

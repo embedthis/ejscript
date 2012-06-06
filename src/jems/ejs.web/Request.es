@@ -289,7 +289,7 @@ module ejs.web {
             corresponding to the application, but middleware may modify this to be an arbitrary string representing 
             the application.  The script name is often determined by the Router as it parses the request using 
             the routing tables. The scriptName will be set to the empty string if not defined, otherwise is should begin
-            with a "/" character. NOTE: changing script name will not update home or absHome.
+            with a "/" character. NOTE: changing script name will not update the home property.
          */
         native enumerable var scriptName: String
 
@@ -389,7 +389,7 @@ module ejs.web {
             Create a session state object. The session state object can be used to share state between requests.
             If a session has not already been created, this call will create a new session and initialize the 
             $session property with the new session. It will also set the $sessionID property and a cookie containing 
-            a session ID will be sent to the client with the response. Sessions can also be used/created by simply
+            a session ID that will be sent to the client with the response. Sessions can also be used/created by simply
             accessing the session property.  Objects are stored in the session state using JSON serialization.
             @param timeout Optional session state timeout in seconds. Set to zero for no timeout. After the timeout has 
                 expired, the session will be deleted. 
@@ -529,7 +529,7 @@ module ejs.web {
             @option action String Action to invoke. This can be a URI string or a Controller action of the form
                 @Controller/action.
             @option route String Route name to use for the URI template
-            @return A normalized, server-local Uri object.
+            @return A normalized, server-local Uri object. The returned URI will be an absolute URI.
             @example
 Given a current request of http://example.com/samples/demo" and "r" == the current request:
 
@@ -549,23 +549,40 @@ r.link({action: "Admin/logout")
 r.link({action: "\@Admin/logout")
 r.link({uri: "http://example.com/checkout"})
 r.link({route: "default", action: "\@checkout")
-r.link({product: "candy", quantity: "10", template: "/cart/{product}/{quantity}")
+r.link({product: "candy", quantity: "10", template: "/cart/{product}/{quantity}}")
          */
         function link(target: Object): Uri {
+            /*
+                MOB - refactor:
+                Don't update target as the object hash. Don't use target.uri as the intermediate form. 
+                Don't support outside use of target.uri to tunnel a URI
+             */
             if (target is Uri) {
                 target = target.toString()
             }
             if (target is String) {
                 if (target[0] == '@') {
+                    //  MOB - what about a possible controller in the target?
                     target = {action: target}
                 } else {
-                    /* Non-mvc URI string */
-                    target = {uri: (target[0] == '/') ? (scriptName + target) : target}
+                    if (target[0] == '~') {
+                        target = scriptName + target.slice(1)
+                    } else if (target[0] == '/') {
+                        target = scriptName + target
+            /*
+                    } else if (!target.contains("/")) {
+                        return new Uri(target)
+            */
+                    }
+                    target = {uri: target}
                 }
             }
+            //  MOB - remove target.uri tunneling except internally in this routine
             if (!target.uri) {
                 target = target.clone()
                 if (target.action) {
+                    //  MOB - this should be genericized and take request.params to get a default action / controller
+                    //  and all other params
                     if (target.action[0] == '@') {
                         target.action = target.action.slice(1)
                     }
@@ -585,6 +602,7 @@ r.link({product: "candy", quantity: "10", template: "/cart/{product}/{quantity}"
                 }
             }
             if (target.route && target.template) {
+                target.scriptName = scriptName
                 target = Uri.template(target.template, target).path
             }
             return uri.local.resolve(target).normalize
@@ -897,7 +915,7 @@ r.link({product: "candy", quantity: "10", template: "/cart/{product}/{quantity}"
             @param offset Offset in the byte array from which to write. If the offset is -1, then data is
                 written from the buffer read $position which is then updated. 
             @param count Read up to this number of bytes. If -1, write all available data in the buffer. 
-            @returns a count of the bytes actually written. Returns null on eof.
+            @returns a count of the bytes actually written. Returns null on EOF.
             @event writable Issued when the connection can absorb more data.
 
          */
@@ -945,10 +963,10 @@ MOB - DEBUG
                 this.status = status || Http.ServerError
                 let msg = msgs.join(" ").replace(/.*Error Exception: /, "")
                 let title = "Request Error for \"" + pathInfo + "\""
-                if (config.log.showClient) {
+                if (config.log.showErrors) {
                     let text = "<pre>" + escapeHtml(msg) + "</pre>\r\n" +
                         '<p>To prevent errors being displayed in the browser, ' + 
-                        'set <b>log.showClient</b> to false in the ejsrc file.</p>\r\n'
+                        'set <b>log.showErrors</b> to false in the ejsrc file.</p>\r\n'
                     try {
                         setHeader("Content-Type", "text/html")
                         write(errorBody(title, text))
@@ -1002,6 +1020,7 @@ MOB - DEBUG
         native function get written(): Number
 
         /********************************************** JSGI  ********************************************************/
+        //   MOB - Deprecate
         /** 
             JSGI specification configuration object.
             @spec jsgi-0.3
@@ -1170,8 +1189,8 @@ MOB - DEBUG
 /*
     @copy   default
     
-    Copyright (c) Embedthis Software LLC, 2003-2011. All Rights Reserved.
-    Copyright (c) Michael O'Brien, 1993-2011. All Rights Reserved.
+    Copyright (c) Embedthis Software LLC, 2003-2012. All Rights Reserved.
+    Copyright (c) Michael O'Brien, 1993-2012. All Rights Reserved.
     
     This software is distributed under commercial and open source licenses.
     You may use the GPL open source license described below or you may acquire 

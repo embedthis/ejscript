@@ -2,7 +2,7 @@
     big.tst -- Test downloading file bigger than the server pipeline buffers
  */
 
-const HTTP = ":" + (App.config.test.http_port || "6700")
+const HTTP = App.config.uris.http
 
 var http: Http = new Http
 

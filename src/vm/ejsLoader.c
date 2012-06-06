@@ -120,12 +120,12 @@ static int initializeModule(Ejs *ejs, EjsModule *mp)
         }
     }
     mp->configured = 1;
-    paused = ejsPauseGC(ejs);
+    paused = ejsBlockGC(ejs);
     if (ejsRunInitializer(ejs, mp) == 0) {
-        ejsResumeGC(ejs, paused);
+        ejsUnblockGC(ejs, paused);
         return MPR_ERR_CANT_INITIALIZE;
     }
-    ejsResumeGC(ejs, paused);
+    ejsUnblockGC(ejs, paused);
     return 0;
 }
 
@@ -939,7 +939,7 @@ static int loadNativeLibrary(Ejs *ejs, EjsModule *mp, cchar *modPath)
     if ((cp = strrchr(bare, '.')) != 0 && strcmp(cp, EJS_MODULE_EXT) == 0) {
         *cp = '\0';
     }
-    path = sjoin(bare, BLD_SHOBJ, NULL);
+    path = sjoin(bare, BIT_SHOBJ, NULL);
 
     if (! mprPathExists(path, R_OK)) {
         mprError("Native module not found %s", path);
@@ -951,7 +951,7 @@ static int loadNativeLibrary(Ejs *ejs, EjsModule *mp, cchar *modPath)
         Typical name: ejs_io_Init or com_acme_rockets_Init
      */
     moduleName = (char*) ejsToMulti(ejs, mp->name);
-    moduleName[0] = tolower((int) moduleName[0]);
+    moduleName[0] = tolower((uchar) moduleName[0]);
     mprSprintf(initName, sizeof(initName), "%s_Init", moduleName);
     for (cp = initName; *cp; cp++) {
         if (*cp == '.') {
@@ -1126,12 +1126,12 @@ int ejsParseModuleVersion(cchar *name)
     int     major, minor, patch;
 
     minor = patch = 0;
-    major = (int) stoi(name, 10, NULL);
+    major = (int) stoi(name);
     if ((tok = strchr(name, '.')) != 0) {
-        minor = (int) stoi(++tok, 10, NULL);
+        minor = (int) stoi(++tok);
     }
     if (tok && (tok = strchr(tok, '.')) != 0) {
-        patch = (int) stoi(++tok, 10, NULL);
+        patch = (int) stoi(++tok);
     }
     return EJS_MAKE_VERSION(major, minor, patch);
 }
@@ -1157,7 +1157,7 @@ static int trimModule(Ejs *ejs, char *name)
         return 0;
     }
     *vp++ = '\0';
-    if (isdigit(*vp)) {
+    if (isdigit((uchar) *vp)) {
         return ejsParseModuleVersion(vp);
     }
     return 0;
@@ -1204,7 +1204,7 @@ static char *probe(Ejs *ejs, cchar *path, int minVersion, int maxVersion)
     if ((ext = strrchr(base, '.')) != 0) {
         *ext++ = '\0';
     }
-    files = mprGetPathFiles(dir, 0);
+    files = mprGetPathFiles(dir, MPR_PATH_RELATIVE);
     nameLen = (int) strlen(base);
     bestVersion = -1;
     best = 0;
@@ -1248,7 +1248,7 @@ static char *probe(Ejs *ejs, cchar *path, int minVersion, int maxVersion)
 static char *searchForModule(Ejs *ejs, cchar *moduleName, int minVersion, int maxVersion)
 {
     EjsPath     *dir;
-    char        *withDotMod, *path, *filename, *basename, *cp, *slash, *name, *bootSearch, *tok, *searchDir, *dp;
+    char        *withDotMod, *path, *filename, *basename, *cp, *slash, *name, *bootSearch, *tok, *searchDir;
     int         i;
 
     mprAssert(moduleName && *moduleName);
@@ -1258,7 +1258,7 @@ static char *searchForModule(Ejs *ejs, cchar *moduleName, int minVersion, int ma
         maxVersion = MAXINT;
     }
     withDotMod = makeModuleName(moduleName);
-    name = mprGetNormalizedPath(withDotMod);
+    name = mprNormalizePath(withDotMod);
 
     mprLog(7, "Search for module \"%s\"", name);
 
@@ -1343,14 +1343,6 @@ static char *searchForModule(Ejs *ejs, cchar *moduleName, int minVersion, int ma
             }
 
         } else {
-            /* Search bin/../modules */
-            dp = mprGetAppDir();
-            dp = mprGetPathParent(dp);
-            dp = mprJoinPath(dp, BLD_MOD_NAME);
-            filename = mprJoinPath(dp, basename);
-            if ((path = probe(ejs, filename, minVersion, maxVersion)) != 0) {
-                return path;
-            }
             /* Search bin */
             filename = mprJoinPath(mprGetAppDir(), basename);
             if ((path = probe(ejs, filename, minVersion, maxVersion)) != 0) {
@@ -1378,7 +1370,7 @@ char *ejsSearchForModule(Ejs *ejs, cchar *moduleName, int minVersion, int maxVer
         maxVersion = MAXINT;
     }
     withDotMod = makeModuleName(moduleName);
-    name = mprGetNormalizedPath(withDotMod);
+    name = mprNormalizePath(withDotMod);
 
     path = searchForModule(ejs, name, minVersion, maxVersion);
     if (path) {
@@ -1409,7 +1401,7 @@ static int alreadyLoaded(Ejs *ejs, EjsString *name, int minVersion, int maxVersi
     if ((mp = ejsLookupModule(ejs, name, minVersion, maxVersion)) == 0) {
         return 0;
     }
-    if (mp->compiling && ejsCompareMulti(ejs, name, EJS_DEFAULT_MODULE) != 0) {
+    if (mp->compiling && ejsCompareAsc(ejs, name, EJS_DEFAULT_MODULE) != 0) {
         ejsThrowStateError(ejs, "Attempt to load module \"%@\" that is currently being compiled.", name);
         return MPR_ERR_ALREADY_EXISTS;
     }
@@ -1652,8 +1644,8 @@ static void popScope(EjsModule *mp, int keepScope)
 /*
     @copy   default
 
-    Copyright (c) Embedthis Software LLC, 2003-2011. All Rights Reserved.
-    Copyright (c) Michael O'Brien, 1993-2011. All Rights Reserved.
+    Copyright (c) Embedthis Software LLC, 2003-2012. All Rights Reserved.
+    Copyright (c) Michael O'Brien, 1993-2012. All Rights Reserved.
 
     This software is distributed under commercial and open source licenses.
     You may use the GPL open source license described below or you may acquire
@@ -1665,7 +1657,7 @@ static void popScope(EjsModule *mp, int keepScope)
     under the terms of the GNU General Public License as published by the
     Free Software Foundation; either version 2 of the License, or (at your
     option) any later version. See the GNU General Public License for more
-    details at: http://www.embedthis.com/downloads/gplLicense.html
+    details at: http://embedthis.com/downloads/gplLicense.html
 
     This program is distributed WITHOUT ANY WARRANTY; without even the
     implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.
@@ -1674,7 +1666,7 @@ static void popScope(EjsModule *mp, int keepScope)
     proprietary programs. If you are unable to comply with the GPL, you must
     acquire a commercial license to use this software. Commercial licenses
     for this software and support services are available from Embedthis
-    Software at http://www.embedthis.com
+    Software at http://embedthis.com
 
     Local variables:
     tab-width: 4

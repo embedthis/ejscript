@@ -28,7 +28,7 @@ static EjsNumber *lf_emit(Ejs *ejs, EjsObj *unused, int argc, EjsObj **argv)
     args = (EjsArray*) argv[1];
     written = 0;
     msg = 0;
-    paused = ejsPauseGC(ejs);
+    paused = ejsBlockGC(ejs);
 
     for (i = 0; i < args->length; i++) {
         vp = ejsGetProperty(ejs, args, i);
@@ -42,11 +42,13 @@ static EjsNumber *lf_emit(Ejs *ejs, EjsObj *unused, int argc, EjsObj **argv)
             break;
 
         case S_String:
+            //  MOB - use NULL instead of &len
             arg = awtom(((EjsString*) vp)->value, &len);
             break;
 
         default:
             str = ejsToString(ejs, vp);
+            //  MOB - use NULL instead of &len
             arg = awtom(((EjsString*) str)->value, &len);
             break;
         }
@@ -56,24 +58,24 @@ static EjsNumber *lf_emit(Ejs *ejs, EjsObj *unused, int argc, EjsObj **argv)
         mprRawLog(level, "%s", msg);
         written += slen(msg);
     }
-    ejsResumeGC(ejs, paused);
+    ejsUnblockGC(ejs, paused);
     return ejsCreateNumber(ejs, (MprNumber) slen(msg));
 }
 
 
-/*  
-    function get cmdline(): Boolean
+/*
+    function get fixed(): Boolean
  */
-static EjsBoolean *lf_cmdline(Ejs *ejs, EjsObj *unused, int argc, EjsObj **argv)
+static EjsBoolean *lf_fixed(Ejs *ejs, EjsObj *unused, int argc, EjsObj **argv)
 {
-    return ejsCreateBoolean(ejs, mprGetCmdlineLogging());
+    return ejsCreateBoolean(ejs, ejs->hosted || mprGetCmdlineLogging());
 }
 
 
 /*  
-    function set cmdline(yes: Boolean)
+    function set fixed(yes: Boolean)
  */
-static EjsVoid *lf_set_cmdline(Ejs *ejs, EjsObj *unused, int argc, EjsObj **argv)
+static EjsVoid *lf_set_fixed(Ejs *ejs, EjsObj *unused, int argc, EjsObj **argv)
 {
     int     yes;
 
@@ -112,7 +114,7 @@ static EjsFile *lf_redirect(Ejs *ejs, EjsObj *unused, int argc, EjsObj **argv)
 
     logSpec = ejsToMulti(ejs, argv[0]);
     level = (argc >= 2) ? ejsGetInt(ejs, argv[1]) : -1;
-    ejsRedirectLogging(logSpec);
+    mprStartLogging(logSpec, 0);
     if (level >= 0) {
         mprSetLogLevel(level);
     }
@@ -131,8 +133,8 @@ void ejsConfigureMprLogType(Ejs *ejs)
         return;
     }
     prototype = type->prototype;
-    ejsBindAccess(ejs, prototype, ES_MprLog_cmdline, lf_cmdline, lf_set_cmdline);
     ejsBindMethod(ejs, prototype, ES_MprLog_emit, lf_emit);
+    ejsBindAccess(ejs, prototype, ES_MprLog_fixed, lf_fixed, lf_set_fixed);
     ejsBindAccess(ejs, prototype, ES_MprLog_level, lf_level, lf_set_level);
     ejsBindMethod(ejs, prototype, ES_MprLog_redirect, lf_redirect);
 }
@@ -141,8 +143,8 @@ void ejsConfigureMprLogType(Ejs *ejs)
 /*
     @copy   default
 
-    Copyright (c) Embedthis Software LLC, 2003-2011. All Rights Reserved.
-    Copyright (c) Michael O'Brien, 1993-2011. All Rights Reserved.
+    Copyright (c) Embedthis Software LLC, 2003-2012. All Rights Reserved.
+    Copyright (c) Michael O'Brien, 1993-2012. All Rights Reserved.
 
     This software is distributed under commercial and open source licenses.
     You may use the GPL open source license described below or you may acquire
@@ -154,7 +156,7 @@ void ejsConfigureMprLogType(Ejs *ejs)
     under the terms of the GNU General Public License as published by the
     Free Software Foundation; either version 2 of the License, or (at your
     option) any later version. See the GNU General Public License for more
-    details at: http://www.embedthis.com/downloads/gplLicense.html
+    details at: http://embedthis.com/downloads/gplLicense.html
 
     This program is distributed WITHOUT ANY WARRANTY; without even the
     implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.
@@ -163,7 +165,7 @@ void ejsConfigureMprLogType(Ejs *ejs)
     proprietary programs. If you are unable to comply with the GPL, you must
     acquire a commercial license to use this software. Commercial licenses
     for this software and support services are available from Embedthis
-    Software at http://www.embedthis.com
+    Software at http://embedthis.com
 
     Local variables:
     tab-width: 4

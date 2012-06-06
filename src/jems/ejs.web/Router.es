@@ -21,19 +21,23 @@ module ejs.web {
         @example:
         var r = new Router
         
-        //  Match /some/path and run myCustomApp to generate a response. Target is data for myCustomApp.
+        //  Match /some/path and run myCustomApp to generate a response. 
+        //  Target is data for myCustomApp.
         r.add("/some/path", {response: myCustomApp, target: "/other/path"})
 
-        //  Match /User/register and run MvcApp with controller == User and action == "register"
+        //  Match /User/register and run MvcApp with controller == User and 
+        //  action == "register"
         r.add("\@/User/register")
 
-        //  Add route for files with a ".es" extension and use the ScriptApp to generate the response
+        //  Add route for files with a ".es" extension and use the ScriptApp 
+        //  to generate the response
         r.add(/\.es$/i, {response: ScriptApp})
 
         //  Add route for directories and use the DirApp to generate the response
         r.add(Router.isDir, {name: "dir", response: DirApp})
 
-        //  Add routes for RESTful routes for URIs starting with "/User" and respond using MvcApp
+        //  Add routes for RESTful routes for URIs starting with "/User" and 
+        //  respond using MvcApp
         r.addResources("User")
 
         //  Manually create restful routes using the given URI template patterns
@@ -50,12 +54,13 @@ module ejs.web {
         //  Dash contoller, refresh action.
         r.add("/[Dd]ash/refresh", "\@Dash/refresh")
 
-        //  Add route for an "admin" application. This sets the scriptName to "admin" and 
-        //  expects an application to be located at the directory "myApp"
+        //  Add route for an "admin" application. This sets the scriptName to "admin" 
+        //  and expects an application to be located at the directory "myApp"
         r.add("/admin/", {location: { scriptName: "/control", dir: "my"})
 
         //  Rewrite a request for "old.html" to new.html
-        r.add("/web/old.html", {rewrite: function(request) { request.pathInfo = "/web/new.html"}})  
+        r.add("/web/old.html", 
+            {rewrite: function(request) { request.pathInfo = "/web/new.html"}})  
 
         //  Handle a request with a literal response
         r.add("/oldStuff/", {response: {body: "Not found"} })
@@ -316,6 +321,7 @@ module ejs.web {
                 break
             case Restful:
                 addHome("@Base/")
+                add("/favicon.ico", { redirect: "/static/images/favicon.ico" })
                 addHandlers()
                 addRestful()
                 addCatchall()
@@ -344,8 +350,8 @@ module ejs.web {
                 is a string, it may begin with a "\@" and be of the form "\@[controller/]action". In this case, if there
                 is a "/" delimiter, the first portion is a controller and the second is the controller action to invoke.
                 The controller or action may be absent. For example: "\@Controller/", "\@action", "\@controller/action".
-                If the string does not begin with an "\@", it is interpreted as a literal URI. For example: "/web/index.html".
-                If the options is an object hash, it may contain the options below:
+                If the string does not begin with an "\@", it is interpreted as a literal URI. 
+                For example: "/web/index.html". If the options is an object hash, it may contain the options below:
             @option action Action method to service the request if using controllers. This may also be of the form 
                 "controller/action" to set both the action and controller in one property.
             @option constraints Object Object hash of properties whose values are constrained. The property names are
@@ -523,6 +529,8 @@ module ejs.web {
         public function route(request): Route {
             let log = request.log
             log.debug(5, "Routing " + request.pathInfo)
+
+            //  MOB - this is now done by http for "-http-method"
             if (request.method == "POST") {
                 let method = request.params["-ejs-method-"] || request.header("X-HTTP-METHOD-OVERRIDE")
                 if (method && method.toUpperCase() != request.method) {
@@ -534,7 +542,6 @@ module ejs.web {
             for each (r in routeSet) {
                 log.debug(5, "Test route \"" + r.name + "\"")
                 if (r.match(request)) {
-                    //  MOB -- inline that code here
                     return secondStageRoute(request, r)
                 }
             }
@@ -542,7 +549,6 @@ module ejs.web {
             for each (r in routeSet) {
                 log.debug(5, "Test route \"" + r.name + "\"")
                 if (r.match(request)) {
-                    //  MOB -- inline that code here
                     return secondStageRoute(request, r)
                 }
             }
@@ -720,7 +726,7 @@ module ejs.web {
         var target: String
 
         /**
-            Template pattern for URIs. The template is used to match the request pathInfo. The template can be a 
+            Template pattern for creating links. The template is used to match the request pathInfo. The template can be a 
             string, a regular expression or a function. If it is a string, it may contain tokens enclosed in braces 
             "{}" and it is converted to a regular expression for fast matching. At run-time, request tokens 
             are extracted and stored as items in the Request.params collection.
@@ -780,6 +786,7 @@ module ejs.web {
             @option action Action method to service the request. This may be of the form "action", "controller/action" or 
                 "controller/".  If the action portion omitted, the default action (index) will be used.
             @option controller Controller to service the request.
+            @option method HTTP Method for which the route is valid. Set to "*" for all methods.
             @option name Name to give to the route. If absent, the name is created from the controller and action names.
             @option outer Parent route. The parent's template and parameters are appended to this route.
             @option params Override parameter to provide to the request in the Request.params.
@@ -833,6 +840,8 @@ module ejs.web {
             this.originalTemplate = template
         }
 
+        //  MOB - see ESP. It does this a better way
+
         private function compileTemplate(options: Object): Void {
             if (template is String) {
                 let t = template
@@ -857,6 +866,7 @@ module ejs.web {
                         t = t.replace("{" + token + "}", "([^/]*)")
                     }
                 } 
+                //  MOB - is this required?
                 t = t.replace(/\//g, "\\/")
                 pattern = RegExp("^" + t + "$")
                 /*  Splitter ends up looking like "$1:$2:$3:$4" */
@@ -1039,8 +1049,8 @@ module ejs.web {
 /*
     @copy   default
     
-    Copyright (c) Embedthis Software LLC, 2003-2011. All Rights Reserved.
-    Copyright (c) Michael O'Brien, 1993-2011. All Rights Reserved.
+    Copyright (c) Embedthis Software LLC, 2003-2012. All Rights Reserved.
+    Copyright (c) Michael O'Brien, 1993-2012. All Rights Reserved.
     
     This software is distributed under commercial and open source licenses.
     You may use the GPL open source license described below or you may acquire 

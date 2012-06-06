@@ -34,53 +34,6 @@ module ejs {
             @hide
          */
         native static function get ipaddr(): String
-
-        /**
-            Execute a command/program.
-            @param cmd Command or program to execute
-            @return a text stream connected to the programs standard output.
-            @throws IOError if the command exits with non-zero status. 
-            @hide
-            MOB - remove
-         */
-        native static function run(cmd: String): String
-
-        /**
-            Run a program without capturing stdout.
-            @hide
-            MOB - remove
-         */
-        native static function runx(cmd: String): Void
-
-        /** 
-            @hide 
-            MOB - remove
-         */
-        native static function daemon(cmd: String): Number
-
-        /**
-            Run a command using the system command shell. This allows pipelines and also works better cross platform on
-            Windows Cygwin.
-            @hide
-            MOB - remove
-         */
-        static function sh(args): String {
-            return System.run("/bin/sh -c \"" + args + "\"").trim('\n')
-        }
-
-        /**  
-            @hide
-            MOB - remove
-        */
-        static function cmd(args): String
-            sh(args)
-
-        /** 
-            Exec a new program to replace the current program. A new process is not created.
-            NOTE: this call does not return
-            @param args Command arguments. The args may be either a string or an array of strings.
-         */
-        native static function exec(args = null): Void
     }
 }
 
@@ -88,8 +41,8 @@ module ejs {
 /*
     @copy   default
     
-    Copyright (c) Embedthis Software LLC, 2003-2011. All Rights Reserved.
-    Copyright (c) Michael O'Brien, 1993-2011. All Rights Reserved.
+    Copyright (c) Embedthis Software LLC, 2003-2012. All Rights Reserved.
+    Copyright (c) Michael O'Brien, 1993-2012. All Rights Reserved.
     
     This software is distributed under commercial and open source licenses.
     You may use the GPL open source license described below or you may acquire 

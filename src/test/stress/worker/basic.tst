@@ -4,7 +4,7 @@
 var w: Worker
 
 if (test.depth >= 3) {
-    for (i in 1000) {
+    for (i in 100) {
         w = startWorker("basic.es")
         Worker.join(w)
     }

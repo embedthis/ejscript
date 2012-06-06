@@ -219,7 +219,7 @@ static EjsAny *invokeStringOperator(Ejs *ejs, EjsString *lhs, int opcode, EjsStr
         Binary operators
      */
     case EJS_OP_ADD:
-        return ejsCatString(ejs, lhs, rhs);
+        return ejsJoinString(ejs, lhs, rhs);
 
     case EJS_OP_AND: case EJS_OP_DIV: case EJS_OP_OR:
     case EJS_OP_SHL: case EJS_OP_SHR: case EJS_OP_USHR: case EJS_OP_XOR:
@@ -258,7 +258,7 @@ static int lookupStringProperty(Ejs *ejs, EjsString *sp, EjsName qname)
     int     index;
 
     //  TODO UNICODE
-    if (!isdigit((int) qname.name->value[0])) {
+    if (!isdigit((uchar) qname.name->value[0])) {
         return EJS_ERR;
     }
     index = ejsAtoi(ejs, qname.name, 10);
@@ -381,7 +381,7 @@ static EjsString *concatString(Ejs *ejs, EjsString *sp, int argc, EjsObj **argv)
     result = (EjsString*) ejsClone(ejs, sp, 0);
     for (i = 0; i < args->length; i++) {
         str = ejsToString(ejs, ejsGetProperty(ejs, args, i));
-        if ((result = ejsCatString(ejs, result, str)) == NULL) {
+        if ((result = ejsJoinString(ejs, result, str)) == NULL) {
             ejsThrowMemoryError(ejs);
             return 0;
         }
@@ -436,6 +436,114 @@ static EjsBoolean *endsWith(Ejs *ejs, EjsString *sp, int argc, EjsObj **argv)
         return ESV(false);
     }
     return ejsCreateBoolean(ejs, wncmp(&sp->value[sp->length - len], pattern->value, len) == 0);
+}
+
+
+/*
+    Lookup a token value. This will be called recursively for each name portion of a token. i.e. ${part.part.part}
+ */
+static int getTokenValue(Ejs *ejs, EjsObj *obj, cchar *fullToken, cchar *token, MprBuf *buf, cchar *fill, EjsString *join)
+{
+    EjsAny      *vp;
+    EjsString   *svalue;
+    char        *rest, *first;
+
+    rest = (char*) (schr(token, '.') ? sclone(token) : token);
+    first = stok(rest, ".", &rest);
+    
+    if ((vp = ejsGetPropertyByName(ejs, obj, EN(first))) != 0) {
+        if (rest && ejsIsPot(ejs, vp)) {
+            return getTokenValue(ejs, vp, fullToken, rest, buf, fill, join);
+        } else {
+            if (ejsIs(ejs, vp, Array)) {
+                svalue = ejsJoinArray(ejs, vp, join); 
+            } else {
+                svalue = ejsToString(ejs, vp);
+            }
+            mprPutStringToBuf(buf, svalue->value);
+        }
+    } else {
+        if (fill) {
+            if (smatch(fill, "${}")) {
+                mprPutStringToBuf(buf, "${");
+                mprPutStringToBuf(buf, fullToken);
+                mprPutCharToBuf(buf, '}');
+            } else if (*fill) {
+                mprPutStringToBuf(buf, fill);
+            }
+        } else {
+            ejsThrowReferenceError(ejs, "Missing property %s", fullToken);
+            return 0;
+        }
+    }
+    return 1;
+}
+
+
+/*
+    function expand(obj: Object, options: Object): String
+
+    Options:
+        fill: String to use for missing properties. Set to null to throw.
+
+    Expand ${token} references. Tokens are be simple properties that may include "." references.
+ */
+static EjsString *expandString(Ejs *ejs, EjsString *sp, int argc, EjsObj **argv)
+{
+    MprBuf      *buf;
+    EjsAny      *obj, *options, *vp;
+    EjsString   *join;
+    char        *src, *cp, *tok, *fill;
+
+    fill = 0;
+    join = ejsCreateStringFromAsc(ejs, " ");
+    if (argc < 1) {
+        ejsThrowArgError(ejs, "Missing object argument");
+        return 0;
+    }
+    obj = argv[0];
+    options = (argc >= 2) ? argv[1] : 0;
+    if (options) {
+        if ((vp = ejsGetPropertyByName(ejs, options, EN("fill"))) != 0) {
+            if (vp != ESV(null) && vp != ESV(undefined)) {
+                fill = ejsToMulti(ejs, vp);
+            }
+        }
+        if ((vp = ejsGetPropertyByName(ejs, options, EN("join"))) != 0) {
+            if (vp != ESV(null) && vp != ESV(undefined)) {
+                join = ejsToString(ejs, vp);
+            }
+        }
+    }
+    if (sp->length == 0) {
+        return ESV(empty);
+    }
+    //  UNICODE
+    if (schr(sp->value, '$') == 0) {
+        return sp;
+    }
+    buf = mprCreateBuf(0, 0);
+    for (src = (char*) sp->value; src < &sp->value[sp->length]; ) {
+        if (*src == '$' && src[1] == '{') {
+            if (src > sp->value && src[-1] == '$') {
+                for (++src; *src != '}' && src < &sp->value[sp->length]; ) {
+                    mprPutCharToBuf(buf, *src++);
+                }
+            } else {
+                src += 2;
+                for (cp = src; *cp != '}' && cp < &sp->value[sp->length]; cp++) ;
+                tok = snclone(src, cp - src);
+                if (!getTokenValue(ejs, obj, tok, tok, buf, fill, join)) {
+                    return 0;
+                }
+                src = cp + 1;
+            }
+        } else {
+            mprPutCharToBuf(buf, *src++);
+        }
+    }
+    mprAddNullToBuf(buf);
+    return ejsCreateString(ejs, mprGetBufStart(buf), mprGetBufLength(buf));
 }
 
 
@@ -507,7 +615,13 @@ static EjsString *formatString(Ejs *ejs, EjsString *sp, int argc, EjsObj **argv)
             buf = 0;
             //  OPT
             switch (kind) {
-            case 'd': case 'i': case 'o': case 'u':
+            case 'o':
+                value = ejsToNumber(ejs, value);
+                flen = sizeof(fmt) - len + 1;
+                mtow(&fmt[len - 1], flen, "Lo", 2);
+                buf = wfmt(fmt, (int64) ejsGetNumber(ejs, value));
+                break;
+            case 'd': case 'i': case 'u':
                 value = ejsToNumber(ejs, value);
                 flen = sizeof(fmt) - len + 1;
                 mtow(&fmt[len - 1], flen, ".0f", 3);
@@ -530,6 +644,10 @@ static EjsString *formatString(Ejs *ejs, EjsString *sp, int argc, EjsObj **argv)
 
             case 'n':
                 buf = wfmt(fmt, 0);
+                break;
+                    
+            case 'c':
+                buf = wfmt(fmt, (int) ejsGetNumber(ejs, value));
                 break;
 
             default:
@@ -611,7 +729,7 @@ static EjsNumber *nextStringKey(Ejs *ejs, EjsIterator *ip, int argc, EjsObj **ar
  */
 static EjsIterator *getStringIterator(Ejs *ejs, EjsObj *sp, int argc, EjsObj **argv)
 {
-    return ejsCreateIterator(ejs, sp, nextStringKey, 0, NULL);
+    return ejsCreateIterator(ejs, sp, -1, nextStringKey, 0, NULL);
 }
 
 
@@ -644,7 +762,7 @@ static EjsString *nextStringValue(Ejs *ejs, EjsIterator *ip, int argc, EjsObj **
  */
 static EjsIterator *getStringValues(Ejs *ejs, EjsObj *sp, int argc, EjsObj **argv)
 {
-    return ejsCreateIterator(ejs, sp, nextStringValue, 0, NULL);
+    return ejsCreateIterator(ejs, sp, -1, nextStringValue, 0, NULL);
 }
 
 
@@ -704,7 +822,7 @@ static EjsBoolean *isAlpha(Ejs *ejs, EjsString *sp, int argc,  EjsObj **argv)
         return ESV(false);
     }
     for (cp = sp->value; cp < &sp->value[sp->length]; cp++) {
-        if (*cp & 0x80 || !isalpha((int) *cp)) {
+        if (*cp & 0x80 || !isalpha((uchar) *cp)) {
             return ESV(false);
         }
     }
@@ -720,7 +838,7 @@ static EjsBoolean *isAlphaNum(Ejs *ejs, EjsString *sp, int argc,  EjsObj **argv)
         return ESV(false);
     }
     for (cp = sp->value; cp < &sp->value[sp->length]; cp++) {
-        if (*cp & 0x80 || !isalnum((int) *cp)) {
+        if (*cp & 0x80 || !isalnum((uchar) *cp)) {
             return ESV(false);
         }
     }
@@ -736,7 +854,7 @@ static EjsBoolean *isDigit(Ejs *ejs, EjsString *sp, int argc,  EjsObj **argv)
         return ESV(false);
     }
     for (cp = sp->value; cp < &sp->value[sp->length]; cp++) {
-        if (*cp & 0x80 || !isdigit((int) *cp)) {
+        if (*cp & 0x80 || !isdigit((uchar) *cp)) {
             return ESV(false);
         }
     }
@@ -768,7 +886,7 @@ static EjsBoolean *isSpace(Ejs *ejs, EjsString *sp, int argc,  EjsObj **argv)
         return ESV(false);
     }
     for (cp = sp->value; cp < &sp->value[sp->length]; cp++) {
-        if (*cp & 0x80 || !isspace((int) *cp)) {
+        if (*cp & 0x80 || !isspace((uchar) *cp)) {
             return ESV(false);
         }
     }
@@ -845,7 +963,7 @@ static EjsArray *match(Ejs *ejs, EjsString *sp, int argc, EjsObj **argv)
     resultCount = 0;
 
     do {
-        count = (int) pcre_exec(rp->compiled, NULL, sp->value, (int) sp->length, rp->endLastMatch, 0, matches, 
+        count = pcre_exec(rp->compiled, NULL, sp->value, (int) sp->length, rp->endLastMatch, 0, matches, 
             sizeof(matches) / sizeof(int));
         if (count <= 0) {
             break;
@@ -857,8 +975,12 @@ static EjsArray *match(Ejs *ejs, EjsString *sp, int argc, EjsObj **argv)
             len = matches[i + 1] - matches[i];
             match = ejsCreateString(ejs, &sp->value[matches[i]], len);
             ejsSetProperty(ejs, results, resultCount++, match);
-            rp->endLastMatch = matches[i + 1];
             if (rp->global) {
+                if (matches[1] == rp->endLastMatch) {
+                    rp->endLastMatch++;
+                } else {
+                    rp->endLastMatch = matches[1];
+                }
                 break;
             }
         }
@@ -895,7 +1017,7 @@ static EjsString *printable(Ejs *ejs, EjsString *sp, int argc, EjsObj **argv)
         } else {
             result->value[j++] = '\\';
             result->value[j++] = 'u';
-            itow(buf, 4, (uchar) sp->value[i], 16);
+            itosbuf(buf, 4, (uchar) sp->value[i], 16);
             len = wlen(buf);
             for (k = (int) len; k < 4; k++) {
                 result->value[j++] = '0';
@@ -1018,34 +1140,7 @@ static EjsString *replace(Ejs *ejs, EjsString *sp, int argc, EjsObj **argv)
         replacement = (EjsString*) ejsToString(ejs, argv[1]);
         replacementFunction = 0;
     }
-    if (ejsIs(ejs, argv[0], String)) {
-        pattern = (EjsString*) argv[0];
-        patternLength = pattern->length;
-
-        index = indexof(sp->value, sp->length, pattern, patternLength, 1);
-        if (index >= 0) {
-            if ((result = ejsCreateBareString(ejs, MPR_BUFSIZE)) == NULL) {
-                return 0;
-            }
-            result->length = 0;
-            result = buildString(ejs, result, sp->value, index);
-            if (replacementFunction) {
-                matches[0] = matches[2] = (int) index;
-                matches[1] = matches[3] = (int) (index + patternLength);
-                enabled = mprEnableGC(0);
-                replacement = getReplacementText(ejs, replacementFunction, 2, matches, sp);
-                mprEnableGC(enabled);
-            }
-            result = buildString(ejs, result, replacement->value, replacement->length);
-            index += patternLength;
-            if (index < sp->length) {
-                result = buildString(ejs, result, &sp->value[index], sp->length - index);
-            }
-        } else {
-            result = ejsClone(ejs, sp, 0);
-        }
-
-    } else if (ejsIs(ejs, argv[0], RegExp)) {
+    if (ejsIs(ejs, argv[0], RegExp)) {
         EjsRegExp   *rp;
         MprChar     *cp, *lastReplace, *end;
         int         count, endLastMatch, startNextMatch, submatch;
@@ -1104,17 +1199,15 @@ static EjsString *replace(Ejs *ejs, EjsString *sp, int argc, EjsObj **argv)
                         break;
                     default:
                         /* Insert the nth submatch */
-                        if (isdigit((int) *cp)) {
-                            submatch = (int) wtoi(cp, 10, NULL);
-                            while (isdigit((int) *++cp))
+                        if (isdigit((uchar) *cp)) {
+                            submatch = (int) wtoi(cp);
+                            while (isdigit((uchar) *++cp))
                                 ;
                             cp--;
                             if (submatch < count) {
                                 submatch *= 2;
-                                result = buildString(ejs, result, &sp->value[matches[submatch]], 
-                                    matches[submatch + 1] - matches[submatch]);
+                                result = buildString(ejs, result, &sp->value[matches[submatch]], matches[submatch + 1] - matches[submatch]);
                             }
-
                         } else {
                             ejsThrowArgError(ejs, "Bad replacement $ specification");
                             return 0;
@@ -1135,10 +1228,31 @@ static EjsString *replace(Ejs *ejs, EjsString *sp, int argc, EjsObj **argv)
             /* Append remaining string text */
             result = buildString(ejs, result, &sp->value[endLastMatch], sp->length - endLastMatch);
         }
-
     } else {
-        ejsThrowTypeError(ejs, "Wrong argument type");
-        return 0;
+        pattern = ejsToString(ejs, argv[0]);
+        patternLength = pattern->length;
+        index = indexof(sp->value, sp->length, pattern, patternLength, 1);
+        if (index >= 0) {
+            if ((result = ejsCreateBareString(ejs, MPR_BUFSIZE)) == NULL) {
+                return 0;
+            }
+            result->length = 0;
+            result = buildString(ejs, result, sp->value, index);
+            if (replacementFunction) {
+                matches[0] = matches[2] = (int) index;
+                matches[1] = matches[3] = (int) (index + patternLength);
+                enabled = mprEnableGC(0);
+                replacement = getReplacementText(ejs, replacementFunction, 2, matches, sp);
+                mprEnableGC(enabled);
+            }
+            result = buildString(ejs, result, replacement->value, replacement->length);
+            index += patternLength;
+            if (index < sp->length) {
+                result = buildString(ejs, result, &sp->value[index], sp->length - index);
+            }
+        } else {
+            result = ejsClone(ejs, sp, 0);
+        }
     }
     return ejsInternString(result);
 }
@@ -1400,15 +1514,15 @@ static EjsString *toCamel(Ejs *ejs, EjsString *sp, int argc, EjsObj **argv)
         return 0;
     }
     memcpy(result->value, sp->value, sp->length * sizeof(MprChar));
-    result->value[0] = tolower((int) sp->value[0]);
+    result->value[0] = tolower((uchar) sp->value[0]);
     return ejsInternString(result);
 }
 
 
 /*
-    Convert to a JSON string
+    Convert a string to a literal string representation. Wrap in quotes and backquote any quotes or backquotes.
  */
-EjsString *ejsStringToJSON(Ejs *ejs, EjsObj *vp)
+EjsString *ejsToLiteralString(Ejs *ejs, EjsObj *vp)
 {
     EjsString   *sp;
     MprBuf      *buf;
@@ -1460,7 +1574,7 @@ static EjsString *toPascal(Ejs *ejs, EjsString *sp, int argc, EjsObj **argv)
         return 0;
     }
     memcpy(result->value, sp->value, sp->length * sizeof(MprChar));
-    result->value[0] = toupper((int) sp->value[0]);
+    result->value[0] = toupper((uchar) sp->value[0]);
     return ejsInternString(result);
 }
 
@@ -1513,7 +1627,7 @@ static EjsArray *tokenize(Ejs *ejs, EjsString *sp, int argc, EjsObj **argv)
         switch (*fmt) {
         case 's':
             for (cp = buf; *cp; cp++) {
-                if (isspace((int) *cp)) {
+                if (isspace((uchar) *cp)) {
                     break;
                 }
             }
@@ -1523,7 +1637,7 @@ static EjsArray *tokenize(Ejs *ejs, EjsString *sp, int argc, EjsObj **argv)
 
         case 'd':
             ejsSetProperty(ejs, result, -1, ejsParse(ejs, buf, S_Number));
-            while (*buf && !isspace((int) *buf)) {
+            while (*buf && !isspace((uchar) *buf)) {
                 buf++;
             }
             break;
@@ -1532,7 +1646,7 @@ static EjsArray *tokenize(Ejs *ejs, EjsString *sp, int argc, EjsObj **argv)
             ejsThrowArgError(ejs, "Bad format specifier");
             return 0;
         }
-        while (*buf && isspace((int) *buf)) {
+        while (*buf && isspace((uchar) *buf)) {
             buf++;
         }
     }
@@ -1549,7 +1663,7 @@ static EjsString *trim(Ejs *ejs, EjsString *sp, EjsString *pattern, int where)
         start = sp->value;
         if (where & MPR_TRIM_START) {
             for (; start < &sp->value[sp->length]; start++) {
-                if (!isspace((int) *start)) {
+                if (!isspace((uchar) *start)) {
                     break;
                 }
             }
@@ -1557,7 +1671,7 @@ static EjsString *trim(Ejs *ejs, EjsString *sp, EjsString *pattern, int where)
         end = &sp->value[sp->length - 1];
         if (where & MPR_TRIM_END) {
             for (end = &sp->value[sp->length - 1]; end >= start; end--) {
-                if (!isspace((int) *end)) {
+                if (!isspace((uchar) *end)) {
                     break;
                 }
             }
@@ -1778,8 +1892,7 @@ int ejsAtoi(Ejs *ejs, EjsString *sp, int radix)
 }
 
 
-// TODO - rename to join
-EjsString *ejsCatString(Ejs *ejs, EjsString *s1, EjsString *s2)
+EjsString *ejsJoinString(Ejs *ejs, EjsString *s1, EjsString *s2)
 {
     EjsString   *result;
     ssize       len;
@@ -1802,10 +1915,10 @@ EjsString *ejsCatString(Ejs *ejs, EjsString *s1, EjsString *s2)
 
 
 /*
-    Catenate a set of unicode string arguments onto another.
+    Join a set of unicode string arguments onto another.
     TODO - rename to join
  */
-EjsString *ejsCatStrings(Ejs *ejs, EjsString *src, ...)
+EjsString *ejsJoinStrings(Ejs *ejs, EjsString *src, ...)
 {
     EjsString   *sp, *result;
     va_list     args;
@@ -1831,7 +1944,7 @@ EjsString *ejsCatStrings(Ejs *ejs, EjsString *src, ...)
 }
 
 
-int ejsStartsWithMulti(Ejs *ejs, EjsString *sp, cchar *pat)
+int ejsStartsWithAsc(Ejs *ejs, EjsString *sp, cchar *pat)
 {
     ssize   i;
 
@@ -1847,13 +1960,13 @@ int ejsStartsWithMulti(Ejs *ejs, EjsString *sp, cchar *pat)
         }
     }
     if (pat[i]) {
-        return 0;
+        return -1;
     }
-    return 1;
+    return 0;
 }
 
 
-int ejsCompareMulti(Ejs *ejs, EjsString *sp, cchar *str)
+int ejsCompareAsc(Ejs *ejs, EjsString *sp, cchar *str)
 {
     MprChar     *s1;
     cchar       *s2;
@@ -1983,7 +2096,7 @@ int ejsContainsChar(Ejs *ejs, EjsString *sp, int charPat)
             return i;
         }
     }
-    return 0;
+    return -1;
 }
 
 
@@ -2002,7 +2115,7 @@ int ejsContainsStringAnyCase(Ejs *ejs, EjsString *sp, EjsString *pat)
     for (i = 0; i < sp->length; i++) {
         for (j = 0; j < pat->length; j++) {
             //  TODO UNICODE - tolower only works for ASCII
-            if (tolower(sp->value[i]) != tolower(pat->value[j])) {
+            if (tolower((uchar) sp->value[i]) != tolower((uchar) pat->value[j])) {
                 break;
             }
         }
@@ -2015,7 +2128,7 @@ int ejsContainsStringAnyCase(Ejs *ejs, EjsString *sp, EjsString *pat)
 #endif
 
 
-int ejsContainsMulti(Ejs *ejs, EjsString *sp, cchar *pat)
+int ejsContainsAsc(Ejs *ejs, EjsString *sp, cchar *pat)
 {
     ssize   len;
     int     i, j, k;
@@ -2035,10 +2148,10 @@ int ejsContainsMulti(Ejs *ejs, EjsString *sp, cchar *pat)
             }
         }
         if (j == len) {
-            return 1;
+            return i;
         }
     }
-    return 0;
+    return -1;
 }
 
 
@@ -2063,7 +2176,7 @@ int ejsContainsString(Ejs *ejs, EjsString *sp, EjsString *pat)
             return 1;
         }
     }
-    return 0;
+    return -1;
 }
 
 
@@ -2074,11 +2187,23 @@ char *ejsToMulti(Ejs *ejs, EjsAny *ev)
     }
     if (!ejsIs(ejs, ev, String)) {
         if ((ev = ejsCast(ejs, ev, String)) == 0) {
-            return "";
+            return MPR->emptyString;
         }
     }
     mprAssert(ejsIs(ejs, ev, String));
+    //  UNICODE
+#if BIT_CHAR_LEN == 1
+{
+    EjsString   *s = (EjsString*) ev;
+    char        *ptr;
+    ptr = mprMemdupMem(s->value, s->length + 1);
+    ptr[s->length] = '\0';
+    return ptr;
+}
+#else
+    //  MOB - this currently will only copy ascii strings and not binary strings with embedded nulls
     return awtom(((EjsString*) ev)->value, NULL);
+#endif
 }
 
 
@@ -2090,7 +2215,7 @@ EjsString *ejsSprintf(Ejs *ejs, cchar *fmt, ...)
     mprAssert(fmt);
 
     va_start(ap, fmt);
-    result = mprAsprintfv(fmt, ap);
+    result = sfmtv(fmt, ap);
     va_end(ap);
     return ejsCreateStringFromAsc(ejs, result);
 }
@@ -2133,7 +2258,7 @@ EjsString *ejsToLower(Ejs *ejs, EjsString *sp)
 
     result = (EjsString*) ejsCreateBareString(ejs, sp->length);
     for (i = 0; i < sp->length; i++) {
-        result->value[i] = tolower((int) sp->value[i]);
+        result->value[i] = tolower((uchar) sp->value[i]);
     }
     return ejsInternString(result);
 }
@@ -2149,7 +2274,7 @@ EjsString *ejsToUpper(Ejs *ejs, EjsString *sp)
 
     result = (EjsString*) ejsCreateBareString(ejs, sp->length);
     for (i = 0; i < sp->length; i++) {
-        result->value[i] = toupper((int) sp->value[i]);
+        result->value[i] = toupper((uchar) sp->value[i]);
     }
     return ejsInternString(result);
 }
@@ -2231,6 +2356,7 @@ EjsString *ejsInternString(EjsString *str)
     step = 0;
 
     lock(ip);
+    //  MOB - accesses should be debug only
     ip->accesses++;
     index = whash(str->value, str->length) % ip->size;
     if ((head = &ip->buckets[index]) != NULL) {
@@ -2249,6 +2375,7 @@ EjsString *ejsInternString(EjsString *str)
                     }
                 }
                 if (i == sp->length && i == str->length) {
+                    //  MOB - reuse should be debug only
                     ip->reuse++;
                     /* Revive incase almost stale or dead */
                     mprRevive(sp);
@@ -2286,6 +2413,7 @@ EjsString *ejsInternWide(Ejs *ejs, MprChar *value, ssize len)
     step = 0;
 
     lock(ip);
+    //  MOB - accesses should be debug only
     ip->accesses++;
     index = whash(value, len) % ip->size;
     if ((head = &ip->buckets[index]) != NULL) {
@@ -2298,6 +2426,7 @@ EjsString *ejsInternWide(Ejs *ejs, MprChar *value, ssize len)
                     }
                 }
                 if (i == sp->length) {
+                    //  MOB - reuse should be debug only
                     ip->reuse++;
                     /* Revive incase almost stale or dead */
                     mprRevive(sp);
@@ -2337,6 +2466,7 @@ EjsString *ejsInternAsc(Ejs *ejs, cchar *value, ssize len)
     ip = ejs->service->intern;
 
     lock(ip);
+    //  MOB - accesses should be debug only
     ip->accesses++;
     mprAssert(ip->size > 0);
     index = shash(value, len) % ip->size;
@@ -2350,6 +2480,7 @@ EjsString *ejsInternAsc(Ejs *ejs, cchar *value, ssize len)
                     }
                 }
                 if (i == sp->length) {
+                    //  MOB - reuse should be debug only
                     ip->reuse++;
                     /* Revive incase almost stale or dead */
                     mprRevive(sp);
@@ -2360,7 +2491,7 @@ EjsString *ejsInternAsc(Ejs *ejs, cchar *value, ssize len)
         }
     }
     if ((sp = ejsAlloc(ejs, ESV(String), (len + 1) * sizeof(MprChar))) != NULL) {
-#if BLD_CHAR_LEN > 1
+#if BIT_CHAR_LEN > 1
         for (i = 0; i < len; i++) {
             sp->value[i] = value[i];
         }
@@ -2383,13 +2514,13 @@ EjsString *ejsInternAsc(Ejs *ejs, cchar *value, ssize len)
 }
 
 
-#if BLD_CHAR_LEN == 1
+#if BIT_CHAR_LEN == 1
 EjsString *ejsInternMulti(Ejs *ejs, cchar *value, ssize len)
 {
     return ejsInternAsc(ejs, value, len);
 }
 
-#else /* BLD_CHAR_LEN > 1 */
+#else /* BIT_CHAR_LEN > 1 */
 
 EjsString *ejsInternMulti(Ejs *ejs, cchar *value, ssize len)
 {
@@ -2411,6 +2542,7 @@ EjsString *ejsInternMulti(Ejs *ejs, cchar *value, ssize len)
         value = src->value;
     }
     lock(ip);
+    //  MOB - accesses should be debug only
     ip->accesses++;
     index = whash(value, len) % ip->size;
     if ((head = &ip->buckets[index]) != NULL) {
@@ -2422,6 +2554,7 @@ EjsString *ejsInternMulti(Ejs *ejs, cchar *value, ssize len)
                 }
             }
             if (i == sp->length && value[i] == 0) {
+                //  MOB - reuse should be debug only
                 ip->reuse++;
                 /* Revive incase almost stale or dead */
                 mprRevive(sp);
@@ -2440,7 +2573,7 @@ EjsString *ejsInternMulti(Ejs *ejs, cchar *value, ssize len)
     unlock(ip);
     return sp;
 }
-#endif /* BLD_CHAR_LEN > 1 */
+#endif /* BIT_CHAR_LEN > 1 */
 
 
 static int getInternHashSize(int size)
@@ -2537,7 +2670,12 @@ static void unlinkString(EjsString *sp)
 
 EjsString *ejsCreateString(Ejs *ejs, MprChar *value, ssize len)
 {
-    mprAssert(0 <= len && len < MAXINT);
+    if (value == 0) {
+        return ESV(empty);
+    }
+    if (len < 0) {
+        len = slen(value);
+    }
     return ejsInternWide(ejs, value, len);
 }
 
@@ -2553,10 +2691,10 @@ EjsString *ejsCreateStringFromAsc(Ejs *ejs, cchar *value)
 
 EjsString *ejsCreateStringFromMulti(Ejs *ejs, cchar *value, ssize len)
 {
-    if (value == NULL) {
-        value = "";
-    }
     mprAssert(0 <= len && len < MAXINT);
+    if (value == 0 || len < 0) {
+        return ESV(empty);
+    }
     return ejsInternMulti(ejs, value, len);
 }
 
@@ -2585,6 +2723,7 @@ EjsString *ejsCreateBareString(Ejs *ejs, ssize len)
 }
 
 
+#if UNUSED && KEEP
 EjsString *ejsCreateNonInternedString(Ejs *ejs, MprChar *value, ssize len)
 {
     EjsString   *sp;
@@ -2597,6 +2736,7 @@ EjsString *ejsCreateNonInternedString(Ejs *ejs, MprChar *value, ssize len)
     }
     return sp;
 }
+#endif
 
 
 void ejsManageString(EjsString *sp, int flags)
@@ -2690,6 +2830,7 @@ void ejsConfigureStringType(Ejs *ejs)
     ejsBindMethod(ejs, prototype, ES_String_concat, concatString);
     ejsBindMethod(ejs, prototype, ES_String_contains, containsString);
     ejsBindMethod(ejs, prototype, ES_String_endsWith, endsWith);
+    ejsBindMethod(ejs, prototype, ES_String_expand, expandString);
     ejsBindMethod(ejs, prototype, ES_String_format, formatString);
     ejsBindMethod(ejs, prototype, ES_String_iterator_get, getStringIterator);
     ejsBindMethod(ejs, prototype, ES_String_iterator_getValues, getStringValues);
@@ -2714,7 +2855,7 @@ void ejsConfigureStringType(Ejs *ejs)
     ejsBindMethod(ejs, prototype, ES_String_startsWith, startsWith);
     ejsBindMethod(ejs, prototype, ES_String_substring, substring);
     ejsBindMethod(ejs, prototype, ES_String_toCamel, toCamel);
-    ejsBindMethod(ejs, prototype, ES_String_toJSON, ejsStringToJSON);
+    ejsBindMethod(ejs, prototype, ES_String_toJSON, ejsToLiteralString);
     ejsBindMethod(ejs, prototype, ES_String_toLowerCase, toLowerCase);
     ejsBindMethod(ejs, prototype, ES_String_toPascal, toPascal);
     ejsBindMethod(ejs, prototype, ES_String_toString, stringToString);
@@ -2739,8 +2880,8 @@ void ejsConfigureStringType(Ejs *ejs)
 /*
     @copy   default
 
-    Copyright (c) Embedthis Software LLC, 2003-2011. All Rights Reserved.
-    Copyright (c) Michael O'Brien, 1993-2011. All Rights Reserved.
+    Copyright (c) Embedthis Software LLC, 2003-2012. All Rights Reserved.
+    Copyright (c) Michael O'Brien, 1993-2012. All Rights Reserved.
 
     This software is distributed under commercial and open source licenses.
     You may use the GPL open source license described below or you may acquire
@@ -2752,7 +2893,7 @@ void ejsConfigureStringType(Ejs *ejs)
     under the terms of the GNU General Public License as published by the
     Free Software Foundation; either version 2 of the License, or (at your
     option) any later version. See the GNU General Public License for more
-    details at: http://www.embedthis.com/downloads/gplLicense.html
+    details at: http://embedthis.com/downloads/gplLicense.html
 
     This program is distributed WITHOUT ANY WARRANTY; without even the
     implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.
@@ -2761,7 +2902,7 @@ void ejsConfigureStringType(Ejs *ejs)
     proprietary programs. If you are unable to comply with the GPL, you must
     acquire a commercial license to use this software. Commercial licenses
     for this software and support services are available from Embedthis
-    Software at http://www.embedthis.com
+    Software at http://embedthis.com
 
     Local variables:
     tab-width: 4

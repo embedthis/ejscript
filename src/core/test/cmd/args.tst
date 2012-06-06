@@ -2,7 +2,7 @@
     args.tst
  */
 
-let ejs = App.exePath.portable
+let ejs = Cmd.locate('ejs')
 
 //  MOB -- should run on windows too!
 if (!Path("/bin").exists) {
@@ -34,7 +34,7 @@ if (!Path("/bin").exists) {
     assert(response.length == 3)
 
     //  Backquoting to pass in quotes. Won't work on windows as windows command exec strips quotes
-    if (Config.OS != "WIN") {
+    if (Config.OS != "windows") {
         cmd = Cmd(ejs + ' args \\"a\\" b c')
         let response = deserialize(cmd.response)
         assert(response.length == 4)

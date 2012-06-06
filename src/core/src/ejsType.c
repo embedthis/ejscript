@@ -173,7 +173,7 @@ EjsType *ejsCreateCoreType(Ejs *ejs, EjsName qname, int size, int sid, int numTy
 {
     EjsType     *type;
 
-#if BLD_DEBUG
+#if BIT_DEBUG
     if (attributes & EJS_TYPE_POT) {
         if (size > sizeof(EjsPot)) {
             mprAssert(attributes & EJS_TYPE_DYNAMIC_INSTANCES);
@@ -230,7 +230,6 @@ EjsType *ejsFinalizeScriptType(Ejs *ejs, EjsName qname, int size, void *manager,
         ejsAddImmutable(ejs, type->sid, type->qname, type);
     }
     type->manager = manager ? (MprManager) manager : (MprManager) manageDefault;
-
     type->configured = 1;
     return type;
 }
@@ -491,7 +490,7 @@ static int inheritProperties(Ejs *ejs, EjsType *type, EjsPot *obj, int destOffse
             }
         }
     }
-    ejsMakeHash(ejs, obj);
+    ejsIndexProperties(ejs, obj);
     return 0;
 }
 
@@ -940,7 +939,7 @@ static EjsType *createTypeVar(Ejs *ejs, EjsType *typeType, int numProp)
         ejsThrowMemoryError(ejs);
         return 0;
     }
-    mprSetManager(type, manageType);
+    mprSetManager(type, (MprManager) manageType);
     mprInitList(&type->constructor.block.namespaces);
     obj = (EjsPot*) type;
     SET_TYPE(obj, typeType);
@@ -991,7 +990,7 @@ static int setTypeProperty(Ejs *ejs, EjsType *type, int slotNum, EjsObj *value)
  */
 static void manageDefault(EjsObj *ev, int flags)
 {
-#if BLD_DEBUG
+#if BIT_DEBUG
     if (flags & MPR_MANAGE_MARK) {
         mprAssert(!TYPE(ev)->isPot);
     }
@@ -1007,10 +1006,7 @@ static void manageType(EjsType *type, int flags)
         mprMark(type->qname.space);
         mprMark(type->prototype);
         mprMark(type->baseType);
-        if (type->mutex) {
-            mprNop(NULL);
-            mprMark(type->mutex);
-        }
+        mprMark(type->mutex);
         mprMark(type->implements);
         mprMark(type->module);
         mprMark(type->typeData);
@@ -1029,8 +1025,8 @@ void ejsInitTypeType(Ejs *ejs, EjsType *type)
 /*
     @copy   default
 
-    Copyright (c) Embedthis Software LLC, 2003-2011. All Rights Reserved.
-    Copyright (c) Michael O'Brien, 1993-2011. All Rights Reserved.
+    Copyright (c) Embedthis Software LLC, 2003-2012. All Rights Reserved.
+    Copyright (c) Michael O'Brien, 1993-2012. All Rights Reserved.
 
     This software is distributed under commercial and open source licenses.
     You may use the GPL open source license described below or you may acquire
@@ -1042,7 +1038,7 @@ void ejsInitTypeType(Ejs *ejs, EjsType *type)
     under the terms of the GNU General Public License as published by the
     Free Software Foundation; either version 2 of the License, or (at your
     option) any later version. See the GNU General Public License for more
-    details at: http://www.embedthis.com/downloads/gplLicense.html
+    details at: http://embedthis.com/downloads/gplLicense.html
 
     This program is distributed WITHOUT ANY WARRANTY; without even the
     implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.
@@ -1051,7 +1047,7 @@ void ejsInitTypeType(Ejs *ejs, EjsType *type)
     proprietary programs. If you are unable to comply with the GPL, you must
     acquire a commercial license to use this software. Commercial licenses
     for this software and support services are available from Embedthis
-    Software at http://www.embedthis.com
+    Software at http://embedthis.com
 
     Local variables:
     tab-width: 4

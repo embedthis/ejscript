@@ -1,0 +1,3 @@
+if (test.phase == 'init') {
+    Cmd.run(test.bin.join('ejsc') + ' --out module.mod module.es')
+}

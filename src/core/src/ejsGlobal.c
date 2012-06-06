@@ -52,9 +52,12 @@ static EjsObj *g_blend(Ejs *ejs, EjsObj *unused, int argc, EjsObj **argv)
     options = (argc >= 3) ? argv[2] : 0;
     if (options) {
         flags = 0;
+        /* Default to true */
+        flags |= ejsGetPropertyByName(ejs, options, EN("combine")) == ESV(true) ? EJS_BLEND_COMBINE : 0;
         flags |= ejsGetPropertyByName(ejs, options, EN("functions")) == ESV(true) ? EJS_BLEND_FUNCTIONS : 0;
         flags |= ejsGetPropertyByName(ejs, options, EN("trace")) == ESV(true) ? EJS_BLEND_TRACE : 0;
 
+        /* Default to false */
         flags |= ejsGetPropertyByName(ejs, options, EN("overwrite")) == ESV(false) ? 0 : EJS_BLEND_OVERWRITE;
         flags |= ejsGetPropertyByName(ejs, options, EN("subclass")) == ESV(false) ? 0 : EJS_BLEND_SUBCLASSES;
         flags |= ejsGetPropertyByName(ejs, options, EN("deep")) == ESV(false) ? 0 : EJS_BLEND_DEEP;
@@ -63,7 +66,7 @@ static EjsObj *g_blend(Ejs *ejs, EjsObj *unused, int argc, EjsObj **argv)
     }
     dest = argv[0];
     src = argv[1];
-    ejsBlendObject(ejs, dest, src, 0, flags);
+    ejsBlendObject(ejs, dest, src, flags);
     return dest;
 }
 
@@ -98,16 +101,13 @@ static EjsObj *g_eval(Ejs *ejs, EjsObj *unused, int argc, EjsObj **argv)
     } else {
         cache = ejsToMulti(ejs, argv[1]);
     }
-    MPR_VERIFY_MEM();
     if (ejsLoadScriptLiteral(ejs, script, cache, EC_FLAGS_NO_OUT | EC_FLAGS_DEBUG | EC_FLAGS_THROW | EC_FLAGS_VISIBLE) < 0) {
         return 0;
     }
-    MPR_VERIFY_MEM();
     return ejs->result;
 }
 
 
-#if ES_hashcode
 /*  
     Get the hash code for the object.
     function hashcode(o: Object): Number
@@ -117,7 +117,6 @@ static EjsNumber *g_hashcode(Ejs *ejs, EjsObj *vp, int argc, EjsObj **argv)
     mprAssert(argc == 1);
     return ejsCreateNumber(ejs, (MprNumber) PTOL(argv[0]));
 }
-#endif
 
 
 /*  
@@ -167,9 +166,8 @@ static EjsString *g_md5(Ejs *ejs, EjsObj *unused, int argc, EjsObj **argv)
     EjsString   *str;
     char        *hash;
 
-    MPR_VERIFY_MEM();
     str = (EjsString*) argv[0];
-    hash = mprGetMD5Hash(ejsToMulti(ejs, str), str->length, NULL);
+    hash = mprGetMD5WithPrefix(ejsToMulti(ejs, str), str->length, NULL);
     return ejsCreateStringFromAsc(ejs, hash);
 }
 
@@ -179,17 +177,20 @@ static EjsString *g_md5(Ejs *ejs, EjsObj *unused, int argc, EjsObj **argv)
     things). The blending is done at the primitive property level. If overwrite is true, the property is replaced. If
     overwrite is false, the property will be added if it does not already exist
  */
-int ejsBlendObject(Ejs *ejs, EjsObj *dest, EjsObj *src, int xoverwrite, int flags)
+int ejsBlendObject(Ejs *ejs, EjsObj *dest, EjsObj *src, int flags)
 {
     EjsTrait    *trait;
-    EjsObj      *vp, *dp;
-    EjsName     name;
-    int         i, count, start, deep, functions, overwrite, privateProps, trace;
+    EjsObj      *vp, *dp, *item;
+    EjsName     qname, trimmedName;
+    EjsArray    *ap;
+    char        *str;
+    int         i, j, count, start, deep, functions, overwrite, privateProps, trace, kind, combine, cflags;
 
     count = ejsGetLength(ejs, src);
     start = (flags & EJS_BLEND_SUBCLASSES) ? 0 : TYPE(src)->numInherited;
     deep = (flags & EJS_BLEND_DEEP) ? 1 : 0;
     overwrite = (flags & EJS_BLEND_OVERWRITE) ? 1 : 0;
+    combine = (flags & EJS_BLEND_COMBINE) ? 1 : 0;
     functions = (flags & EJS_BLEND_FUNCTIONS) ? 1 : 0;
     privateProps = (flags & EJS_BLEND_PRIVATE) ? 1 : 0;
     trace = (flags & EJS_BLEND_TRACE) ? 1 : 0;
@@ -206,26 +207,130 @@ int ejsBlendObject(Ejs *ejs, EjsObj *dest, EjsObj *src, int xoverwrite, int flag
         if (!functions && ejsIsFunction(ejs, ejsGetProperty(ejs, src, i))) {
             continue;
         }
-        name = ejsGetPropertyName(ejs, src, i);
-        if (!privateProps && ejsContainsMulti(ejs, name.space, ",private")) {
+        qname = ejsGetPropertyName(ejs, src, i);
+        if (!privateProps && ejsContainsAsc(ejs, qname.space, ",private") >= 0) {
             continue;
         }
         if (trace) {
-            mprLog(0, "NAME %N", name);
+            mprLog(0, "Blend name %N", qname);
         }
-        /* NOTE: treats arrays as primitive types */
-        if (deep && !ejsIs(ejs, vp, Array) && !ejsIsXML(ejs, vp) && ejsGetLength(ejs, vp) > 0) {
-            if ((dp = ejsGetPropertyByName(ejs, dest, name)) == 0 || ejsGetLength(ejs, dp) == 0) {
-                ejsSetPropertyByName(ejs, dest, name, ejsClonePot(ejs, vp, deep));
+
+        //  MOB - refactor into a function
+        if (combine) {
+            cflags = flags;
+#if SUFFIX
+            //  MOB - could support suffixes for append and prefixes for prepend?
+            kind = qname.name->value[qname.name->length];
+            trimmedName = qname;
+            if (kind == '+') {
+                cflags |= EJS_BLEND_ADD;
+            } else if (kind == '-') {
+                cflags |= EJS_BLEND_SUB;
+            } else if (kind == '=') {
+                cflags |= EJS_BLEND_ASSIGN;
             } else {
-                ejsBlendObject(ejs, dp, vp, 0, flags);
+                trimmedName = qname;
             }
+            if (cflags & (EJS_BLEND_ADD | EJS_BLEND_SUB | EJS_BLEND_ASSIGN)) {
+                //  MOB - unicode
+                trimmedName.name = ejsInternAsc(ejs, qname.name->value, qname.name->length - 1);
+            }
+#else
+            kind = qname.name->value[0];
+            if (kind == '+') {
+                cflags |= EJS_BLEND_ADD;
+                trimmedName = N(qname.space->value, &qname.name->value[1]);
+            } else if (kind == '-') {
+                cflags |= EJS_BLEND_SUB;
+                trimmedName = N(qname.space->value, &qname.name->value[1]);
+            } else if (kind == '=') {
+                cflags |= EJS_BLEND_ASSIGN;
+                trimmedName = N(qname.space->value, &qname.name->value[1]);
+            } else {
+                cflags |= EJS_BLEND_ASSIGN;
+                trimmedName = qname;
+            }
+#endif
+            if ((dp = ejsGetPropertyByName(ejs, dest, trimmedName)) == 0) {
+                /* Destination property missing */
+                if (cflags & EJS_BLEND_SUB) {
+                    continue;
+                }
+                if (!ejsIsPot(ejs, vp)) {
+                    ejsSetPropertyByName(ejs, dest, trimmedName, ejsClone(ejs, vp, 1));
+                    continue;
+                }
+                dp = ejsCreateObj(ejs, TYPE(vp), 0);
+                ejsSetPropertyByName(ejs, dest, trimmedName, dp);
+            }
+            /* Destination present */
+            if (ejsIs(ejs, dp, Array)) {
+                if (cflags & EJS_BLEND_ADD) {
+                    if (ejsIs(ejs, vp, Array)) {
+                        ap = (EjsArray*) vp;
+                        for (j = 0; j < ap->length; j++) {
+                            item = ejsGetProperty(ejs, ap, j);
+                            if (ejsLookupItem(ejs, (EjsArray*) dp, item) < 0) {
+                                ejsAddItem(ejs, (EjsArray*) dp, ejsGetProperty(ejs, ap, j));
+                            }
+                        }
+                    } else {
+                        ejsAddItem(ejs, (EjsArray*) dp, vp);
+                    }
+                } else if (cflags & EJS_BLEND_SUB) {
+                    if (ejsIs(ejs, vp, Array)) {
+                        ap = (EjsArray*) vp;
+                        for (j = 0; j < ap->length; j++) {
+                            ejsRemoveItem(ejs, (EjsArray*) dp, ejsGetProperty(ejs, ap, j), 1);
+                        }
+                    } else {
+                        ejsRemoveItem(ejs, (EjsArray*) dp, ejsToString(ejs, vp), 1);
+                    }
+                } else {
+                    /* Assign */
+                    ejsSetPropertyByName(ejs, dest, trimmedName, ejsClone(ejs, vp, deep));
+                }
+
+            } else if (ejsIsPot(ejs, dp)) {
+                ejsBlendObject(ejs, dp, vp, flags);
+
+            } else if (ejsIs(ejs, dp, String)) {
+                if (cflags & EJS_BLEND_ADD) {
+                    str = sjoin(((EjsString*) dp)->value, " ", ejsToMulti(ejs, vp), NULL);
+                    ejsSetPropertyByName(ejs, dest, trimmedName, ejsCreateString(ejs, str, -1));
+                    
+                } else if (cflags & EJS_BLEND_SUB) {
+                    str = sreplace(sclone(((EjsString*) dp)->value), ejsToMulti(ejs, vp), "");
+                    ejsSetPropertyByName(ejs, dest, trimmedName, ejsCreateString(ejs, str, -1));
+                    
+                } else {
+                    /* Assign */
+                    ejsSetPropertyByName(ejs, dest, trimmedName, ejsClone(ejs, vp, deep));
+                }
+            } else {
+                /* Assign */
+                ejsSetPropertyByName(ejs, dest, trimmedName, vp);
+                
+            }
+
         } else {
-            /* Primitive type (including arrays) */
-            if (overwrite) {
-                ejsSetPropertyByName(ejs, dest, name, vp);
-            } else if (ejsLookupProperty(ejs, dest, name) < 0) {
-                ejsSetPropertyByName(ejs, dest, name, vp);
+            /* 
+                NOTE: non-combine blend treats arrays as primitive types 
+             */
+            if (deep && !ejsIs(ejs, vp, Array) && !ejsIsXML(ejs, vp) && ejsGetLength(ejs, vp) > 0) {
+                if ((dp = ejsGetPropertyByName(ejs, dest, qname)) == 0 || ejsGetLength(ejs, dp) == 0) {
+                    ejsSetPropertyByName(ejs, dest, qname, ejsClonePot(ejs, vp, deep));
+                } else {
+                    ejsBlendObject(ejs, dp, vp, flags);
+                }
+            } else {
+                /*  Primitive type (including arrays) */
+                //  MOB - rethink this. Should the array be cloned?
+                if (overwrite) {
+                    ejsSetPropertyByName(ejs, dest, qname, vp);
+                } else if (ejsLookupProperty(ejs, dest, qname) < 0) {
+                    ejsSetPropertyByName(ejs, dest, qname, vp);
+                }
             }
         }
     }
@@ -268,11 +373,11 @@ static EjsNumber *g_parseInt(Ejs *ejs, EjsObj *unused, int argc, EjsObj **argv)
 
     str = ejsToMulti(ejs, argv[0]);
     radix = (argc >= 2) ? ejsGetInt(ejs, argv[1]) : 0;
-    while (isspace((int) *str)) {
+    while (isspace((uchar) *str)) {
         str++;
     }
-    if (*str == '-' || *str == '+' || isdigit((int) *str)) {
-        n = (MprNumber) stoi(str, radix, &err);
+    if (*str == '-' || *str == '+' || isdigit((uchar) *str)) {
+        n = (MprNumber) stoiradix(str, radix, &err);
         if (err) {
             return ESV(nan);
         }
@@ -394,8 +499,8 @@ void ejsConfigureGlobalBlock(Ejs *ejs)
 /*
     @copy   default
  
-    Copyright (c) Embedthis Software LLC, 2003-2011. All Rights Reserved.
-    Copyright (c) Michael O'Brien, 1993-2011. All Rights Reserved.
+    Copyright (c) Embedthis Software LLC, 2003-2012. All Rights Reserved.
+    Copyright (c) Michael O'Brien, 1993-2012. All Rights Reserved.
 
     This software is distributed under commercial and open source licenses.
     You may use the GPL open source license described below or you may acquire
@@ -407,7 +512,7 @@ void ejsConfigureGlobalBlock(Ejs *ejs)
     under the terms of the GNU General Public License as published by the
     Free Software Foundation; either version 2 of the License, or (at your
     option) any later version. See the GNU General Public License for more
-    details at: http://www.embedthis.com/downloads/gplLicense.html
+    details at: http://embedthis.com/downloads/gplLicense.html
 
     This program is distributed WITHOUT ANY WARRANTY; without even the
     implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.
@@ -416,7 +521,7 @@ void ejsConfigureGlobalBlock(Ejs *ejs)
     proprietary programs. If you are unable to comply with the GPL, you must
     acquire a commercial license to use this software. Commercial licenses
     for this software and support services are available from Embedthis
-    Software at http://www.embedthis.com
+    Software at http://embedthis.com
 
     Local variables:
     tab-width: 4

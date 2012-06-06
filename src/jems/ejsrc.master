@@ -46,7 +46,7 @@
         location: "stderr",
         level: 2,
         match: null,
-        showClient: true,
+        showErrors: true,
     },
     init: {
         load: [],

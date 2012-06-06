@@ -101,8 +101,7 @@ static MPR_INLINE void checkGetter(Ejs *ejs, EjsAny *value, EjsAny *thisObj, Ejs
 }
 
 #define CHECK_VALUE(value, thisObj, obj, slotNum) checkGetter(ejs, value, thisObj, obj, slotNum)
-
-#define CHECK_GC() if (MPR->heap.mustYield && !(ejs->state->paused)) { mprYield(0); } else 
+#define CHECK_GC() if (MPR->heap->mustYield && !(ejs->state->paused)) { mprYield(0); } else 
 
 /*
     Set a slot value when we don't know if the object is an EjsObj
@@ -140,7 +139,7 @@ static MPR_INLINE void checkGetter(Ejs *ejs, EjsAny *value, EjsAny *thisObj, Ejs
     #define traceCode(ejs, opcode) opcode
 #endif
 
-#if BLD_UNIX_LIKE || (VXWORKS && !BLD_CC_DIAB)
+#if BIT_UNIX_LIKE || (VXWORKS && !BIT_CC_DIAB)
     #define CASE(opcode) opcode
     #define BREAK goto *opcodeJump[opcode = traceCode(ejs, GET_BYTE())]
 #else
@@ -196,12 +195,9 @@ static void VM(Ejs *ejs, EjsFunction *fun, EjsAny *otherThis, int argc, int stac
     EjsFunction *f1, *f2;
     EjsNamespace *nsp;
     EjsString   *str;
-#if UNUSED
-    uchar       *mark;
-#endif
     int         i, offset, count, opcode, attributes, paused;
 
-#if BLD_UNIX_LIKE || (VXWORKS && !BLD_CC_DIAB)
+#if BIT_UNIX_LIKE || (VXWORKS && !BIT_CC_DIAB)
     /*
         Direct threading computed goto processing. Include computed goto jump table.
      */
@@ -228,7 +224,7 @@ static void VM(Ejs *ejs, EjsFunction *fun, EjsAny *otherThis, int argc, int stac
     mprAssert(state->fp);
     FRAME->caller = 0;
 
-#if BLD_UNIX_LIKE || (VXWORKS && !BLD_CC_DIAB)
+#if BIT_UNIX_LIKE || (VXWORKS && !BIT_CC_DIAB)
     /*
         Direct threading computed goto processing. Include computed goto jump table.
      */
@@ -445,7 +441,7 @@ static void VM(Ejs *ejs, EjsFunction *fun, EjsAny *otherThis, int argc, int stac
                 Stack after         [RegExp]
          */
         CASE (EJS_OP_LOAD_REGEXP):
-#if BLD_FEATURE_PCRE
+#if BIT_FEATURE_PCRE
             str = GET_STRING();
             v1 = (EjsObj*) ejsCreateRegExp(ejs, str);
             push(v1);
@@ -675,9 +671,6 @@ static void VM(Ejs *ejs, EjsFunction *fun, EjsAny *otherThis, int argc, int stac
                 Stack after         [value]
          */
         CASE (EJS_OP_GET_SCOPED_NAME):
-#if UNUSED
-            mark = FRAME->pc - 1;
-#endif
             qname = GET_NAME();
             vp = ejsGetVarByName(ejs, NULL, qname, &lookup);
             if (unlikely(vp == 0)) {
@@ -696,9 +689,6 @@ static void VM(Ejs *ejs, EjsFunction *fun, EjsAny *otherThis, int argc, int stac
                 Stack after         [value]
          */
         CASE (EJS_OP_GET_SCOPED_NAME_EXPR):
-#if UNUSED
-            mark = FRAME->pc - 1;
-#endif
             qname.name = ejsToString(ejs, pop(ejs));
             v1 = pop(ejs);
             if (ejsIs(ejs, v1, Namespace)) {
@@ -1393,7 +1383,7 @@ static void VM(Ejs *ejs, EjsFunction *fun, EjsAny *otherThis, int argc, int stac
             str = GET_STRING();
             nsp = ejsCreateNamespace(ejs, str);
             ejsAddNamespaceToBlock(ejs, state->bp, nsp);
-            if (ejsContainsMulti(ejs, str, "internal-")) {
+            if (ejsContainsAsc(ejs, str, "internal-") >= 0) {
                 state->internal = nsp;
             }
             BREAK;
@@ -1580,10 +1570,10 @@ static void VM(Ejs *ejs, EjsFunction *fun, EjsAny *otherThis, int argc, int stac
                 mprResetMemError(ejs);
                 ejsThrowMemoryError(ejs);
             }
-            if (ejs->exiting || mprIsStopping(ejs)) {
+            if (ejs->exception && !processException(ejs)) {
                 goto done;
             }
-            if (ejs->exception && !processException(ejs)) {
+            if (ejs->exiting || mprIsStopping()) {
                 goto done;
             }
             BREAK;
@@ -2194,7 +2184,7 @@ static void VM(Ejs *ejs, EjsFunction *fun, EjsAny *otherThis, int argc, int stac
              Stack after         []
              */
         CASE (EJS_OP_NEW_ARRAY):
-            paused = ejsPauseGC(ejs);
+            paused = ejsBlockGC(ejs);
             type = GET_TYPE();
             argc = GET_INT();
             argc += ejs->spreadArgs;
@@ -2211,7 +2201,7 @@ static void VM(Ejs *ejs, EjsFunction *fun, EjsAny *otherThis, int argc, int stac
             state->stack -= (argc * 2);
             push(vp);
             state->t1 = 0;
-            ejsResumeGC(ejs, paused);
+            ejsUnblockGC(ejs, paused);
             BREAK;
 
         /*
@@ -2222,7 +2212,7 @@ static void VM(Ejs *ejs, EjsFunction *fun, EjsAny *otherThis, int argc, int stac
                 Stack after         []
          */
         CASE (EJS_OP_NEW_OBJECT):
-            paused = ejsPauseGC(ejs);
+            paused = ejsBlockGC(ejs);
             type = GET_TYPE();
             argc = GET_INT();
             argc += ejs->spreadArgs;
@@ -2244,7 +2234,7 @@ static void VM(Ejs *ejs, EjsFunction *fun, EjsAny *otherThis, int argc, int stac
             state->stack -= (argc * 3);
             push(vp);
             state->t1 = 0;
-            ejsResumeGC(ejs, paused);
+            ejsUnblockGC(ejs, paused);
             BREAK;
 
 
@@ -2410,13 +2400,13 @@ static void VM(Ejs *ejs, EjsFunction *fun, EjsAny *otherThis, int argc, int stac
             mprAssert(0);
             BREAK;
 
-#if !BLD_UNIX_LIKE && !(VXWORKS && !BLD_CC_DIAB)
+#if !BIT_UNIX_LIKE && !(VXWORKS && !BIT_CC_DIAB)
         }
     }
 #endif
     
 done:
-#if BLD_DEBUG && FUTURE
+#if BIT_DEBUG && FUTURE
     if (ejs->initialized) {
         ejsShowOpFrequency(ejs);
     }
@@ -2524,7 +2514,7 @@ static void storeProperty(Ejs *ejs, EjsObj *thisObj, EjsAny *vp, EjsName qname, 
                 if (TYPE(vp)->hasInstanceVars) {
                     /* The prototype properties have been inherited */
                     mprAssert(ejsIsPot(ejs, vp));
-                    slotNum = ejsGetSlot(ejs, vp, slotNum);
+                    slotNum = ejsCheckSlot(ejs, vp, slotNum);
                     pot = (EjsPot*) vp;
                     pot->properties->slots[slotNum].trait = ((EjsPot*) lookup.obj)->properties->slots[slotNum].trait;
                     pot->properties->slots[slotNum].value = ((EjsPot*) lookup.obj)->properties->slots[slotNum].value;
@@ -2544,8 +2534,6 @@ static void storeProperty(Ejs *ejs, EjsObj *thisObj, EjsAny *vp, EjsName qname, 
     }
     if (slotNum < 0) {
         slotNum = ejsSetPropertyName(ejs, vp, slotNum, qname);
-        //  UNICODE
-        mprSetName(value, qname.name->value);
     }
     if (!ejs->exception) {
         storePropertyToSlot(ejs, thisObj, vp, slotNum, value);
@@ -2577,7 +2565,7 @@ static void storePropertyToScope(Ejs *ejs, EjsName qname, EjsObj *value)
             } else if (TYPE(vp)->hasInstanceVars && ejsIsPot(ejs, vp)) {
                 /* The prototype properties have been inherited */
                 mprAssert(ejsIsPot(ejs, vp));
-                slotNum = ejsGetSlot(ejs, (EjsPot*) vp, slotNum);
+                slotNum = ejsCheckSlot(ejs, (EjsPot*) vp, slotNum);
                 obj = (EjsPot*) vp;
                 mprAssert(slotNum < obj->numProp);
                 mprAssert(slotNum < ((EjsPot*) lookup.obj)->numProp);
@@ -2593,8 +2581,6 @@ static void storePropertyToScope(Ejs *ejs, EjsName qname, EjsObj *value)
     } else {
         thisObj = vp = fp->function.moduleInitializer ? ejs->global : (EjsObj*) fp;
         slotNum = ejsSetPropertyName(ejs, vp, slotNum, qname);
-        //  UNICODE
-        mprSetName(value, qname.name->value);
     }
     storePropertyToSlot(ejs, thisObj, vp, slotNum, value);
 }
@@ -2638,12 +2624,12 @@ int ejsRun(Ejs *ejs)
     EjsModule   *mp;
     int         next;
 
-    //  MOB OPT - should not examine all modules just to run a script
+    //  OPT - should not examine all modules just to run a script
     for (next = 0; (mp = mprGetNextItem(ejs->modules, &next)) != 0;) {
         if (!mp->initialized) {
             ejs->result = ejsRunInitializer(ejs, mp);
         }
-        if (ejsCompareMulti(ejs, mp->name, EJS_DEFAULT_MODULE) == 0) {
+        if (ejsCompareAsc(ejs, mp->name, EJS_DEFAULT_MODULE) == 0) {
             ejsRemoveModule(ejs, mp);
             next--;
         }
@@ -2694,7 +2680,7 @@ EjsAny *ejsRunFunction(Ejs *ejs, EjsFunction *fun, EjsAny *thisObj, int argc, vo
         }
         VM(ejs, fun, thisObj, argc, 0);
         ejs->state->stack -= argc;
-        if (ejs->exiting || mprIsStopping(ejs)) {
+        if (ejs->exiting || mprIsStopping()) {
             ejsAttention(ejs);
         }
     }
@@ -2723,6 +2709,9 @@ EjsAny *ejsRunFunctionBySlot(Ejs *ejs, EjsAny *thisObj, int slotNum, int argc, v
     return ejsRunFunction(ejs, fun, thisObj, argc, argv);
 }
 
+
+//  MOB - this is inconsistent with ejsRunBySlot. This has a separate container and thisObj, whereas RunBySlot
+//  has only one arg
 
 EjsAny *ejsRunFunctionByName(Ejs *ejs, EjsAny *container, EjsName qname, EjsAny *thisObj, int argc, void *argv)
 {
@@ -2754,7 +2743,7 @@ static void badArgType(Ejs *ejs, EjsPot *activation, EjsTrait *trait, int index)
     EjsName     qname;
 
     qname = ejsGetPropertyName(ejs, activation, index);
-    ejsThrowTypeError(ejs, "Unacceptable null or undefined value for arg \"%@\" (pos: %d)", qname.name, index);
+    ejsThrowTypeError(ejs, "Unacceptable null or undefined value for argument \"%@\" (index: %d)", qname.name, index);
 }
 
 
@@ -3058,7 +3047,6 @@ static void checkExceptionHandlers(Ejs *ejs)
     EjsFrame        *fp;
     EjsCode         *code;
     EjsEx           *ex;
-    uint            pc;
 
     ex = 0;
     fp = ejs->state->fp;
@@ -3067,14 +3055,6 @@ static void checkExceptionHandlers(Ejs *ejs)
     if (code->numHandlers == 0) {
         return;
     }
-
-    /*
-        The PC is always one advanced from the throwing instruction. ie. the PC has advanced past the offending 
-        instruction so reverse by one.
-     */
-    pc = (uint) (fp->pc - code->byteCode - 1);
-    mprAssert(pc >= 0);
-
 rescan:
     if (!fp->function.inException || (ejs->exception == EST(StopIteration))) {
         /*
@@ -3455,7 +3435,7 @@ static void callFunction(Ejs *ejs, EjsFunction *fun, EjsAny *thisObj, int argc, 
         ejs->result = thisObj;
         if (!type->hasConstructor) {
             ejs->state->stack -= (argc + stackAdjust);
-            if (ejs->exiting || mprIsStopping(ejs)) {
+            if (ejs->exiting || mprIsStopping()) {
                 ejsAttention(ejs);
             }
             return;
@@ -3521,6 +3501,9 @@ static void callFunction(Ejs *ejs, EjsFunction *fun, EjsAny *thisObj, int argc, 
         state->stack -= (argc + stackAdjust);
 
     } else {
+        if (fun->body.code && fun->body.code->debug) {
+            mprAssert(fun->body.code->debug->magic == EJS_DEBUG_MAGIC);
+        }
         mprAssert(thisObj);
         if ((fp = ejsCreateFrame(ejs, fun, thisObj, argc, argv)) == 0) {
             return;
@@ -3612,10 +3595,10 @@ static EjsAny *getNthBlock(Ejs *ejs, int nth)
 /*
     Enter a mesage into the log file
  */
-void ejsLog(Ejs *ejs, const char *fmt, ...)
+void ejsLog(Ejs *ejs, cchar *fmt, ...)
 {
     va_list     args;
-    char        buf[MPR_MAX_LOG_STRING];
+    char        buf[MPR_MAX_LOG];
 
     va_start(args, fmt);
     mprSprintfv(buf, sizeof(buf) - 1, fmt, args);
@@ -3625,7 +3608,7 @@ void ejsLog(Ejs *ejs, const char *fmt, ...)
 
 
 #if FUTURE
-#if BLD_CC_EDITLINE
+#if BIT_CC_EDITLINE
 static History  *cmdHistory;
 static EditLine *eh; 
 static cchar    *prompt;
@@ -3730,7 +3713,7 @@ static void bkpt(Ejs *ejs)
             mprGetCurrentThreadName(fp), offset, (int) (state->stack - fp->stackReturn),
             (uchar) opcode, optable[opcode].name, fp->filename, fp->lineNumber, fp->currentLine);
     if (stop && once++ == 0) {
-        mprSleep(ejs, 0);
+        mprNap(0);
     }
     mprAssert(state->stack >= fp->stackReturn);
 }
@@ -3748,31 +3731,33 @@ static EjsOpCode traceCode(Ejs *ejs, EjsOpCode opcode)
 {
     EjsFrame        *fp;
     EjsState        *state;
-    EjsOptable      *optable;
     int             offset;
 #if FUTURE
+    EjsOptable      *optable;
     static int      showFrequency = 1;
 #endif
 
     MPR_VERIFY_MEM();
     mprAssert(!MPR->marking);
     state = ejs->state;
+
     fp = state->fp;
     opcount[opcode]++;
+    mprAssert(ejs->exception || (state->stack >= fp->stackReturn));
 
-    if (1 || ejs->initialized && doDebug) {
+    if (1 || (ejs->initialized && doDebug)) {
         offset = (int) (fp->pc - fp->function.body.code->byteCode) - 1;
         if (offset < 0) {
             offset = 0;
         }
-        optable = ejsGetOptable();
         fp->line = ejsGetDebugLine(ejs, (EjsFunction*) fp, fp->pc);
 #if FUTURE
+        optable = ejsGetOptable();
         if (showFrequency && ((once % 1000) == 999)) {
             ejsShowOpFrequency(ejs);
         }
 #endif
-        mprAssert(state->stack >= fp->stackReturn);
+        mprAssert(ejs->exception || (state->stack >= fp->stackReturn));
     }
     ejsOpCount++;
     return opcode;
@@ -3796,7 +3781,7 @@ void ejsShowOpFrequency(Ejs *ejs)
 }
 #endif
 
-#endif /* BLD_DEBUG */
+#endif /* BIT_DEBUG */
 
 
 /*
@@ -3830,8 +3815,8 @@ void ejsShowOpFrequency(Ejs *ejs)
 /*
     @copy   default
 
-    Copyright (c) Embedthis Software LLC, 2003-2011. All Rights Reserved.
-    Copyright (c) Michael O'Brien, 1993-2011. All Rights Reserved.
+    Copyright (c) Embedthis Software LLC, 2003-2012. All Rights Reserved.
+    Copyright (c) Michael O'Brien, 1993-2012. All Rights Reserved.
 
     This software is distributed under commercial and open source licenses.
     You may use the GPL open source license described below or you may acquire
@@ -3843,7 +3828,7 @@ void ejsShowOpFrequency(Ejs *ejs)
     under the terms of the GNU General Public License as published by the
     Free Software Foundation; either version 2 of the License, or (at your
     option) any later version. See the GNU General Public License for more
-    details at: http://www.embedthis.com/downloads/gplLicense.html
+    details at: http://embedthis.com/downloads/gplLicense.html
 
     This program is distributed WITHOUT ANY WARRANTY; without even the
     implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.
@@ -3852,7 +3837,7 @@ void ejsShowOpFrequency(Ejs *ejs)
     proprietary programs. If you are unable to comply with the GPL, you must
     acquire a commercial license to use this software. Commercial licenses
     for this software and support services are available from Embedthis
-    Software at http://www.embedthis.com
+    Software at http://embedthis.com
 
     Local variables:
     tab-width: 4

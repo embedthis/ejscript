@@ -10,9 +10,6 @@
 /*********************************** Forwards *********************************/
 
 static void enableSocketEvents(EjsSocket *sp, int (*proc)(EjsSocket *sp, MprEvent *event));
-#if UNUSED
-static int socketConnectEvent(EjsSocket *sp, MprEvent *event);
-#endif
 static int socketIOEvent(EjsSocket *sp, MprEvent *event);
 static int socketListenEvent(EjsSocket *listen, MprEvent *event);
 
@@ -22,16 +19,12 @@ static int socketListenEvent(EjsSocket *listen, MprEvent *event);
  */
 static EjsSocket *sock_Socket(Ejs *ejs, EjsSocket *sp, int argc, EjsObj **argv)
 {
-    //  TODO -- ssl?
     sp->ejs = ejs;
     sp->sock = mprCreateSocket(NULL);
     if (sp->sock == 0) {
         ejsThrowMemoryError(ejs);
         return 0;
     }
-#if UNUSED
-    sp->waitHandler.fd = -1;
-#endif
     return sp;
 }
 
@@ -48,14 +41,13 @@ EjsSocket *sock_accept(Ejs *ejs, EjsSocket *listen, int argc, EjsObj **argv)
         ejsThrowIOError(ejs, "Can't accept new socket");
         return 0;
     }
-    sp = ejsCreateSocket(ejs);
-    sp->sock = sock;
-    sp->async = listen->async;
-    if (sp->async) {
-        sp->mask |= MPR_READABLE;
-        enableSocketEvents(sp, socketIOEvent);
-    } else {
-        mprSetSocketBlockingMode(sp->sock, 1);
+    if ((sp = ejsCreateSocket(ejs, sock, listen->async)) != 0) {
+        if (sp->async) {
+            sp->mask |= MPR_READABLE;
+            enableSocketEvents(sp, socketIOEvent);
+        } else {
+            mprSetSocketBlockingMode(sp->sock, 1);
+        }
     }
     return sp;
 }
@@ -91,7 +83,6 @@ EjsObj *sock_set_async(Ejs *ejs, EjsSocket *sp, int argc, EjsObj **argv)
 
 /*
     function close(): Void
-    TODO - should support graceful option
  */
 static EjsObj *sock_close(Ejs *ejs, EjsSocket *sp, int argc, EjsObj **argv)
 {
@@ -110,7 +101,6 @@ static EjsObj *sock_close(Ejs *ejs, EjsSocket *sp, int argc, EjsObj **argv)
 static EjsObj *sock_connect(Ejs *ejs, EjsSocket *sp, int argc, EjsObj **argv)
 {
     EjsString       *address;
-    char            *cp;
 
     address = (EjsString*) argv[0];
     if (ejsIs(ejs, address, Number)) {
@@ -121,10 +111,11 @@ static EjsObj *sock_connect(Ejs *ejs, EjsSocket *sp, int argc, EjsObj **argv)
             address = ejsToString(ejs, address);
         }
         sp->address = ejsToMulti(ejs, address);
-        if ((cp = strchr(sp->address, ':')) != 0) {
-            *cp++ = '\0';
-            sp->port = atoi(cp);
-        } else {
+        mprParseSocketAddress(sp->address, &sp->address, &sp->port, 0);
+        if (sp->address == 0) {
+            sp->address = sclone("127.0.0.1");
+        }
+        if (sp->port == 0) {
             ejsThrowArgError(ejs, "Address must have a port");
             return 0;
         }
@@ -149,13 +140,21 @@ static EjsObj *sock_connect(Ejs *ejs, EjsSocket *sp, int argc, EjsObj **argv)
 
 
 /**
+    function get isEof(): Boolean
+ */
+static EjsObj *sock_isEof(Ejs *ejs, EjsSocket *sp, int argc, EjsObj **argv)
+{
+    return (sp->sock == 0 || mprIsSocketEof(sp->sock)) ? ESV(true) : ESV(false);
+}
+
+
+/**
     function listen(address): Void
     @param address Can be either a "ip", "ip:port" or port
  */
 static EjsObj *sock_listen(Ejs *ejs, EjsSocket *sp, int argc, EjsObj **argv)
 {
     EjsString   *address;
-    char        *cp;
 
     address = (EjsString*) argv[0];
     if (ejsIs(ejs, address, Number)) {
@@ -166,13 +165,7 @@ static EjsObj *sock_listen(Ejs *ejs, EjsSocket *sp, int argc, EjsObj **argv)
             address = ejsToString(ejs, address);
         }
         sp->address = ejsToMulti(ejs, address);
-        if ((cp = strchr(sp->address, ':')) != 0) {
-            *cp++ = '\0';
-            sp->port = atoi(cp);
-        } else {
-            ejsThrowArgError(ejs, "Address must have a port");
-            return 0;
-        }
+        mprParseSocketAddress(sp->address, &sp->address, &sp->port, 80);
     }
     if (!sp->sock) {
         ejsThrowStateError(ejs, "Socket is closed");
@@ -229,9 +222,13 @@ static EjsNumber *sock_read(Ejs *ejs, EjsSocket *sp, int argc, EjsObj **argv)
     EjsByteArray    *ba;
     ssize           nbytes, offset, count;
 
+    if (!sp->sock) {
+        ejsThrowStateError(ejs, "Socket is closed");
+        return 0;
+    }
     ba = (EjsByteArray*) argv[0];
-    offset = (argc >= 1) ? ejsGetInt(ejs, argv[1]) : 0;
-    count = (argc >= 2) ? ejsGetInt(ejs, argv[2]) : -1;
+    offset = (argc >= 2) ? ejsGetInt(ejs, argv[1]) : 0;
+    count = (argc >= 3) ? ejsGetInt(ejs, argv[2]) : -1;
 
     if (offset < 0) {
         offset = ba->writePosition;
@@ -240,20 +237,11 @@ static EjsNumber *sock_read(Ejs *ejs, EjsSocket *sp, int argc, EjsObj **argv)
         count = ba->length - offset;
     }
     if (count < 0) {
-        //  Do something
+        return ESV(zero);
     }
     nbytes = mprReadSocket(sp->sock, &ba->value[offset], count);
-    if (nbytes < 0) {
-        //  TODO -- should not be using EOF event
-        ejsSendEvent(ejs, sp->emitter, "eof", NULL, sp);
-        //  TODO - do we need to set the mask here?
-        return ESV(null);
-    }
-    if (nbytes == 0) {
-        //  TODO - but in async, this does not mean eof. See mpr for how to tell eof
-        //  TODO -- should not be using EOF event
-        ejsSendEvent(ejs, sp->emitter, "eof", NULL, sp);
-        //  TODO - do we need to set the mask here?
+    if (nbytes <= 0) {
+        /* If async, Caller must test "eof" to determine if no data or eof */
         return ESV(null);
     }
     ba->writePosition += nbytes;
@@ -277,10 +265,14 @@ static ssize writeSocketData(Ejs *ejs, EjsSocket *sp)
     EjsByteArray    *ba;
     ssize           nbytes, count;
 
+    if (!sp->sock) {
+        ejsThrowStateError(ejs, "Socket is closed");
+        return 0;
+    }
     ba = sp->data;
     nbytes = 0;
     count = 0;
-    if (ba && (count = ejsGetByteArrayAvailable(ba)) > 0) {
+    if (ba && (count = ejsGetByteArrayAvailableData(ba)) > 0) {
         nbytes = mprWriteSocket(sp->sock, &ba->value[ba->readPosition], count);
         if (nbytes < 0) {
             ejsThrowIOError(ejs, "Can't write to socket");
@@ -288,7 +280,7 @@ static ssize writeSocketData(Ejs *ejs, EjsSocket *sp)
         }
         ba->readPosition += nbytes;
     }
-    if (ejsGetByteArrayAvailable(ba) == 0) {
+    if (ejsGetByteArrayAvailableData(ba) == 0) {
         if (sp->emitter) {
             ejsSendEvent(ejs, sp->emitter, "writable", NULL, sp);
         }
@@ -314,11 +306,11 @@ static EjsNumber *sock_write(Ejs *ejs, EjsSocket *sp, int argc, EjsObj **argv)
     ssize     nbytes;
 
     if (sp->data) {
-        ejsResetByteArray(sp->data);
+        /* Reset pointers if empty */
+        ejsResetByteArray(ejs, sp->data);
     } else {
         sp->data = ejsCreateByteArray(ejs, -1);
     } 
-    //  TODO - OPT. Could not copy and write directly from original source if source is a byte array
     if (ejsWriteToByteArray(ejs, sp->data, 1, &argv[0]) < 0) {
         return 0;
     }
@@ -339,28 +331,14 @@ static void enableSocketEvents(EjsSocket *sp, int (*proc)(EjsSocket *sp, MprEven
     Ejs     *ejs;
 
     ejs = sp->ejs;
+    mprAssert(sp->sock);
+    
     if (sp->sock->handler == 0) {
         mprAddSocketHandler(sp->sock, sp->mask, ejs->dispatcher, (MprEventProc) proc, sp, 0);
     } else {
         mprEnableSocketEvents(sp->sock, sp->mask);
     }
 }
-
-
-#if UNUSED
-static int socketConnectEvent(EjsSocket *sp, MprEvent *event)
-{
-    Ejs     *ejs;
-
-    ejs = sp->ejs;
-    if (sp->emitter) {
-        ejsSendEvent(ejs, sp->emitter, "connect", NULL, sp);
-        ejsSendEvent(ejs, sp->emitter, "writable", NULL, sp);
-    }
-    enableSocketEvents(sp, socketIOEvent);
-    return 0;
-}
-#endif
 
 
 static int socketListenEvent(EjsSocket *listen, MprEvent *event)
@@ -371,7 +349,9 @@ static int socketListenEvent(EjsSocket *listen, MprEvent *event)
     if (listen->emitter) {
         ejsSendEvent(ejs, listen->emitter, "accept", NULL, listen);
     }
-    enableSocketEvents(listen, socketListenEvent);
+    if (listen->sock) {
+        enableSocketEvents(listen, socketListenEvent);
+    }
     return 0;
 }
 
@@ -381,16 +361,20 @@ static int socketIOEvent(EjsSocket *sp, MprEvent *event)
     Ejs     *ejs;
 
     ejs = sp->ejs;
-    if (event->mask & MPR_READABLE) {
-        if (sp->emitter) {
-            ejsSendEvent(ejs, sp->emitter, "readable", NULL, sp);
+    if (sp->sock) {
+        if (event->mask & MPR_READABLE) {
+            if (sp->emitter) {
+                ejsSendEvent(ejs, sp->emitter, "readable", NULL, sp);
+            }
+            sp->mask |= MPR_READABLE;
+        } 
+        if (event->mask & MPR_WRITABLE) {
+            writeSocketData(ejs, sp);
         }
-        sp->mask |= MPR_READABLE;
-    } 
-    if (event->mask & MPR_WRITABLE) {
-        writeSocketData(ejs, sp);
+        if (sp->sock) {
+            enableSocketEvents(sp, socketIOEvent);
+        }
     }
-    enableSocketEvents(sp, socketIOEvent);
     return 0;
 }
 
@@ -406,19 +390,19 @@ static void manageSocket(EjsSocket *sp, int flags)
         mprMark(sp->data);
         mprMark(sp->sock);
         mprMark(sp->address);
+        mprMark(sp->mutex);
     }
 }
 
 
-EjsSocket *ejsCreateSocket(Ejs *ejs)
+EjsSocket *ejsCreateSocket(Ejs *ejs, MprSocket *sock, bool async)
 {
     EjsSocket   *sp;
 
     sp = ejsCreateObj(ejs, ejsGetTypeByName(ejs, N(EJS_EJS_NAMESPACE, "Socket")), 0);
     sp->ejs = ejs;
-#if UNUSED
-    sp->waitHandler.fd = -1;
-#endif
+    sp->sock = sock;
+    sp->async = async;
     return sp;
 }
 
@@ -439,6 +423,7 @@ void ejsConfigureSocketType(Ejs *ejs)
     ejsBindAccess(ejs, prototype, ES_Socket_async, sock_async, sock_set_async);
     ejsBindMethod(ejs, prototype, ES_Socket_close, sock_close);
     ejsBindMethod(ejs, prototype, ES_Socket_connect, sock_connect);
+    ejsBindMethod(ejs, prototype, ES_Socket_isEof, sock_isEof);
     ejsBindMethod(ejs, prototype, ES_Socket_listen, sock_listen);
     ejsBindMethod(ejs, prototype, ES_Socket_off, sock_off);
     ejsBindMethod(ejs, prototype, ES_Socket_on, sock_on);
@@ -451,8 +436,8 @@ void ejsConfigureSocketType(Ejs *ejs)
 /*
     @copy   default
  
-    Copyright (c) Embedthis Software LLC, 2003-2011. All Rights Reserved.
-    Copyright (c) Michael O'Brien, 1993-2011. All Rights Reserved.
+    Copyright (c) Embedthis Software LLC, 2003-2012. All Rights Reserved.
+    Copyright (c) Michael O'Brien, 1993-2012. All Rights Reserved.
 
     This software is distributed under commercial and open source licenses.
     You may use the GPL open source license described below or you may acquire
@@ -464,7 +449,7 @@ void ejsConfigureSocketType(Ejs *ejs)
     under the terms of the GNU General Public License as published by the
     Free Software Foundation; either version 2 of the License, or (at your
     option) any later version. See the GNU General Public License for more
-    details at: http://www.embedthis.com/downloads/gplLicense.html
+    details at: http://embedthis.com/downloads/gplLicense.html
 
     This program is distributed WITHOUT ANY WARRANTY; without even the
     implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.
@@ -473,7 +458,7 @@ void ejsConfigureSocketType(Ejs *ejs)
     proprietary programs. If you are unable to comply with the GPL, you must
     acquire a commercial license to use this software. Commercial licenses
     for this software and support services are available from Embedthis
-    Software at http://www.embedthis.com
+    Software at http://embedthis.com
 
     Local variables:
     tab-width: 4

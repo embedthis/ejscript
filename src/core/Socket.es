@@ -15,17 +15,13 @@ module ejs {
 
         use default namespace public
 
-        //  MOB -- SSL
-
         /** 
             Create a socket object
          */
         native function Socket()
 
-//  MOB - or would it be better to have the accepted socket passed in as a callback parameter?
         /** 
-            Receive a client socket in response to a "connect" event. The accept call must be called after invoking
-            $listen and receiving a client connection.
+            Receive a client socket. Accept must be called after invoking $listen.
             @returns A socket connected to the client endpoint.
          */
         native function accept(): Socket
@@ -42,14 +38,15 @@ module ejs {
         /** @duplicate Stream.close */
         native function close(): Void
 
+        //  MOB - what about ipv6
         /** 
             Establish a connection to a client from this socket to the supplied address. After a successful call to 
             connect() the socket may be used for sending and receiving.
             @param address The endpoint address on which to listen. The address can be either a port number, an IP address
-                string or a composite "IP:PORT" string. If only a port number is provided, the socket will listen on
-                all interfaces.
+                string, a composite "IP:PORT" string or a port number string. If only a port number is provided, 
+                the socket will listen on all interfaces.
             @throws IOError if the connection fails. Reasons may include the socket is already bound or the host is unknown.
-            @events Issues a "connect" event when the connection is complete.
+            @events Issues a "writable" event when the connection is complete.
          */
         native function connect(address: Object): Void
 
@@ -66,23 +63,25 @@ module ejs {
         /** @duplicate Stream.flush */
         function flush(dir: Number = Stream.BOTH): Void {}
 
+        /**
+            Is the socket at end of input. i.e. Is closed or has the other end sent a FIN packet.
+         */
+        native function get isEof(): Boolean
+
         /** 
             Listen on a socket for client connections. This will put the socket into a server role for communcations.
-            If the socket is in sync mode, the listen call will block until a client connection is received and
-            the call will return the client socket. 
+            If the socket is in sync mode, the listen call will block until a client connection is received after which
+            accept() should be called to receive the socket instance for the new connection.
             If a the listening socket is in async mode, the listen call will return immediately and 
             client connections will be notified via "accept" events. 
-            In this case, when a client connection is received, the $accept function must be called to 
-            receive the client socket object for the connection. 
             @param address The endpoint address on which to listen. The address can be either a port number, an IP address
                 string or a composite "IP:PORT" string. If only a port number is provided, the socket will listen on
                 all interfaces.
-            @return A client socket if in sync mode. No return value if in async mode.
             @throws ArgError if the specified listen address is not valid, and IOError for network errors.
             @event Issues a "accept" event when there is a new connection available. In response, the $accept method
                 should be called.
          */
-        native function listen(address): Socket
+        native function listen(address): Void
 
         /** @duplicate Stream.off */
         native function off(name: Object, observer: Function): Void
@@ -102,7 +101,7 @@ module ejs {
         /** @duplicate Stream.read */
         native function read(buffer: ByteArray, offset: Number = 0, count: Number = -1): Number 
 
-        //  MOB - readString, readBytes, readXML
+        //  FUTURE - readString, readBytes, readXML
 
         /** 
             The remote address bound to this socket. Set to the remote address in dot notation or empty string if it 
@@ -121,8 +120,8 @@ module ejs {
 /*
     @copy   default
     
-    Copyright (c) Embedthis Software LLC, 2003-2011. All Rights Reserved.
-    Copyright (c) Michael O'Brien, 1993-2011. All Rights Reserved.
+    Copyright (c) Embedthis Software LLC, 2003-2012. All Rights Reserved.
+    Copyright (c) Michael O'Brien, 1993-2012. All Rights Reserved.
     
     This software is distributed under commercial and open source licenses.
     You may use the GPL open source license described below or you may acquire 

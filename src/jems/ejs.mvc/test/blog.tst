@@ -2,33 +2,29 @@
     blog.tst - Blog mini app
  */
 
-//  TODO -- should use the test http port for this
-const PORT = (App.config.test.http_port || 6700)
-const HTTP = ":" + PORT
-
 require ejs.unix
 
-let mvc = locate("mvc")
-let ejs = locate("ejs")
+const HTTP = App.config.uris.http
+
+let mvc = Cmd.locate("mvc").portable
+let ejs = Cmd.locate("ejs").portable
 
 //  Prepare
-rmdir("junk", true)
+rmdir("junk")
 assert(!exists("junk"))
 
 //  Generate app and scaffold
-sh(mvc + " --listen " + HTTP + " generate app junk")
+Cmd.run([mvc, '--listen', HTTP, 'generate', 'app', 'junk'])
 
-sh("cd junk ; " + mvc + " generate scaffold post title:string body:text")
-sh("cd junk ; " + mvc + " compile")
+Cmd.run([mvc, 'generate', 'scaffold', 'post', 'title:string', 'body:text'], {dir: 'junk'})
+Cmd.run([mvc, 'compile'], {dir: 'junk'})
 
 //  Start web server
 let pid
 
 try {
-    chdir("junk")
-    pid = System.daemon(ejs + " start.es")
+    pid = Cmd.daemon([ejs, 'start.es'], {dir: 'junk'})
     assert(pid)
-    chdir("..")
 
     sleep(2000)
     let http = new Http
@@ -55,7 +51,7 @@ try {
     //  Post the form to create a post
     http.form(HTTP + "/Post", { "post.title": "Test Post 1", "post.body": "The quick brown fox", "commit": "OK" })
     assert(http.status == 302)
-    assert(http.headers["location"].contains("/Post"))
+    assert(http.header("Location").contains("/Post"))
 
     //  Get the post index
     http.get(HTTP + "/Post")
@@ -69,6 +65,6 @@ try {
     if (pid) {
         Cmd.kill(pid, 9)
     }
-    rmdir("junk", true)
+    rmdir("junk")
 }
 

@@ -2,18 +2,19 @@
     helpers.tst
  */
 
-let ejs = App.exePath.portable
+let ejs = Cmd.locate('ejs').portable
 
 if (!Path("/bin").exists) {
     test.skip("Only run on unix systems")
 } else {
 
     //  Cmd.run
-    assert(App.dir.same(Cmd.run("/bin/pwd").trim()))
-    assert(App.dir.same(Cmd.run("pwd").trim()))
-
-    //  Cmd.sh
-    assert(App.dir.same(Cmd.sh("pwd")))
+    if (Config.OS != "windows") {
+        //  Windows with cygwin paths can't handle this
+        assert(App.dir.same(Cmd.run("pwd").trim()))
+        //  Cmd.sh
+        assert(App.dir.same(Cmd.sh("pwd")))
+    }
 
     let response = Cmd.sh([ejs, "./args", "a", "b", "c"])
     assert(deserialize(response) == "./args,a,b,c")

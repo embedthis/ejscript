@@ -1,0 +1,19 @@
+/*
+    mapper.bit -- Bit File for ejs.db.mapper
+ */
+
+Bit.load({
+
+    targets: {
+        'ejs.db.mapper.mod': {
+            path: '${LIB}/ejs.db.mapper.mod',
+            files: [ '*.es' ],
+            build: "
+                trace('Compile', 'ejs.db.mapper.mod')
+                run('${LBIN}/ejsc --out ${OUT} ${settings.esflags} --optimize 9 ' + Path('.').files('*.es').sort().join(' '))
+            ",
+            'generate': "${BIN}/ejsc --out ${BIN}/ejs.db.mapper.mod ${settings.esflags} --optimize 9 *.es",
+            depends: [ 'ejsc', 'ejs.mod', 'ejs.db.mod' ],
+        },
+	},
+})

@@ -32,6 +32,7 @@
    <tr><td nowrap align='center'> const </td><td>NaN</td><td><a href='Number.html'>Number</a></td><td>Invalid numeric value. If the numeric type is set to an integral type, the value is zero.</td></tr>
 <a name='NegativeInfinity'></a>
    <tr><td nowrap align='center'> const </td><td>NegativeInfinity</td><td><a href='Number.html'>Number</a></td><td>Negative infinity value. </td></tr>
+   <tr><td nowrap align='center'>ejs.web </td><td>_initRequest</td><td><a href='ejs.web-Request.html'>Request</a></td><td>Request for which a controller is being constructed. </td></tr>
 <a name='action'></a>
    <tr><td nowrap align='center'>ejs.web </td><td>action</td><td><a href='Namespace.html'>Namespace</a></td><td>Namespace for all action methods. </td></tr>
 <a name='boolean'></a>
@@ -95,6 +96,7 @@ for a property that has not been defined.</td></tr>
 <table class='apiIndex' summary='methods'>
    <tr><th>Qualifiers</th><th width='95%'>Method</th></tr>
    <tr class='apiDef'><td class='apiType'> </td><td><a href='#ArgError'><b>ArgError</b></a>(message: <a href='String.html'>String</a> = null)</tr><tr class='apiBrief'><td>&nbsp;</td><td>ArgError constructor.</td></tr>
+   <tr class='apiDef'><td class='apiType'> </td><td><a href='#Args'><b>Args</b></a>(template: <a href='Object.html'>Object</a>, argv: <a href='Array.html'>Array</a> = expression)</tr><tr class='apiBrief'><td>&nbsp;</td><td>The Args constructor creates a new instance of the Args.</td></tr>
    <tr class='apiDef'><td class='apiType'> </td><td><a href='#ArithmeticError'><b>ArithmeticError</b></a>(message: <a href='String.html'>String</a> = null)</tr><tr class='apiBrief'><td>&nbsp;</td><td>ArithmeticError constructor.</td></tr>
    <tr class='apiDef'><td class='apiType'> </td><td><a href='#Array'><b>Array</b></a>(values: <a href='Array.html'>Array</a>)</tr><tr class='apiBrief'><td>&nbsp;</td><td>Create a new array.</td></tr>
    <tr class='apiDef'><td class='apiType'> </td><td><a href='#AssertError'><b>AssertError</b></a>(message: <a href='String.html'>String</a> = null)</tr><tr class='apiBrief'><td>&nbsp;</td><td>AssertError constructor.</td></tr>
@@ -104,7 +106,6 @@ for a property that has not been defined.</td></tr>
    <tr class='apiDef'><td class='apiType'> </td><td><a href='#Cache'><b>Cache</b></a>(adapter: <a href='String.html'>String</a> = null, options: <a href='Object.html'>Object</a> = expression)</tr><tr class='apiBrief'><td>&nbsp;</td><td>Cache constructor.</td></tr>
    <tr class='apiDef'><td class='apiType'>ejs.web </td><td><a href='#Cascade'><b>Cascade</b></a>(apps: <a href='Array.html'>Array</a>): <a href='Object.html'>Object</a></tr><tr class='apiBrief'><td>&nbsp;</td><td>Cascade middleware script for web apps.</td></tr>
    <tr class='apiDef'><td class='apiType'> </td><td><a href='#Cmd'><b>Cmd</b></a>(command: <a href='Object.html'>Object</a> = null, options: <a href='Object.html'>Object</a> = null)</tr><tr class='apiBrief'><td>&nbsp;</td><td>Create an Cmd object.</td></tr>
-   <tr class='apiDef'><td class='apiType'> </td><td><a href='#CmdArgs'><b>CmdArgs</b></a>(template: <a href='Object.html'>Object</a>, argv: <a href='Array.html'>Array</a> = expression)</tr><tr class='apiBrief'><td>&nbsp;</td><td>The CmdArgs constructor creates a new instance of the CmdArgs.</td></tr>
    <tr class='apiDef'><td class='apiType'>ejs.web </td><td><a href='#CommonLog'><b>CommonLog</b></a>(app, logger: <a href='Stream.html'>Stream</a> = expression): <a href='Object.html'>Object</a></tr><tr class='apiBrief'><td>&nbsp;</td><td>Common Log web server logging.</td></tr>
    <tr class='apiDef'><td class='apiType'>ejs.web </td><td><a href='#CommonLogClass'><b>CommonLogClass</b></a>(app, logger: <a href='Stream.html'>Stream</a> = expression)</tr><tr class='apiBrief'><td>&nbsp;</td><td>Constructor for the CommonLogClass.</td></tr>
    <tr class='apiDef'><td class='apiType'>ejs.web </td><td><a href='#ContentType'><b>ContentType</b></a>(app, options)</tr><tr class='apiBrief'><td>&nbsp;</td><td>ContentType wrapper middleware.</td></tr>
@@ -115,7 +116,7 @@ for a property that has not been defined.</td></tr>
    <tr class='apiDef'><td class='apiType'> </td><td><a href='#Emitter'><b>Emitter</b></a>()</tr><tr class='apiBrief'><td>&nbsp;</td><td>Construct a new event Emitter object.</td></tr>
    <tr class='apiDef'><td class='apiType'> </td><td><a href='#Error'><b>Error</b></a>(message: <a href='String.html'>String</a> = null)</tr><tr class='apiBrief'><td>&nbsp;</td><td>Construct a new Error object.</td></tr>
    <tr class='apiDef'><td class='apiType'> </td><td><a href='#ErrorEvent'><b>ErrorEvent</b></a>()</tr>   <tr class='apiDef'><td class='apiType'> </td><td><a href='#Event'><b>Event</b></a>()</tr>   <tr class='apiDef'><td class='apiType'> </td><td><a href='#File'><b>File</b></a>(path: <a href='Object.html'>Object</a>, options: <a href='Object.html'>Object</a> = null)</tr><tr class='apiBrief'><td>&nbsp;</td><td>Create a File object and open the requested path.</td></tr>
-   <tr class='apiDef'><td class='apiType'> </td><td><a href='#FileSystem'><b>FileSystem</b></a>(path: <a href='Object.html'>Object</a> = null)</tr><tr class='apiBrief'><td>&nbsp;</td><td>Create a new FileSystem object for the file system that contains the given path.</td></tr>
+   <tr class='apiDef'><td class='apiType'> </td><td><a href='#FileSystem'><b>FileSystem</b></a>(path: <a href='Path.html'>Path</a> = null)</tr><tr class='apiBrief'><td>&nbsp;</td><td>Create a new FileSystem object for the file system that contains the given path.</td></tr>
    <tr class='apiDef'><td class='apiType'> </td><td><a href='#Frame'><b>Frame</b></a>()</tr>   <tr class='apiDef'><td class='apiType'> </td><td><a href='#Function'><b>Function</b></a>(args: <a href='Array.html'>Array</a>)</tr><tr class='apiBrief'><td>&nbsp;</td><td>Create a function from the supplied formal parameter names and function body expression.</td></tr>
    <tr class='apiDef'><td class='apiType'>ejs.web </td><td><a href='#Head'><b>Head</b></a>(app: <a href='Function.html'>Function</a>)</tr><tr class='apiBrief'><td>&nbsp;</td><td>Head wrapper middleware.</td></tr>
    <tr class='apiDef'><td class='apiType'> </td><td><a href='#Http'><b>Http</b></a>(uri: <a href='Uri.html'>Uri</a> = null)</tr><tr class='apiBrief'><td>&nbsp;</td><td>Create an Http object.</td></tr>
@@ -127,11 +128,11 @@ for a property that has not been defined.</td></tr>
    <tr class='apiDef'><td class='apiType'> </td><td><a href='#MemoryError'><b>MemoryError</b></a>(message: <a href='String.html'>String</a> = null)</tr><tr class='apiBrief'><td>&nbsp;</td><td>MemoryError constructor.</td></tr>
    <tr class='apiDef'><td class='apiType'>ejs.web </td><td><a href='#MethodOverride'><b>MethodOverride</b></a>(app: <a href='Function.html'>Function</a>): <a href='Function.html'>Function</a></tr><tr class='apiBrief'><td>&nbsp;</td><td>Method override wrapper middleware.</td></tr>
    <tr class='apiDef'><td class='apiType'>ejs.web </td><td><a href='#Middleware'><b>Middleware</b></a>(app: <a href='Function.html'>Function</a>, middleware: <a href='Array.html'>Array</a> = null): <a href='Function.html'>Function</a></tr><tr class='apiBrief'><td>&nbsp;</td><td>Define middleware for a web app.</td></tr>
-   <tr class='apiDef'><td class='apiType'>ejs.web </td><td><a href='#Mvc'><b>Mvc</b></a>(request: <a href='ejs.web-Request.html'>Request</a>)</tr><tr class='apiBrief'><td>&nbsp;</td><td>Load an MVC application and the optional application specific ejsrc file.</td></tr>
+   <tr class='apiDef'><td class='apiType'>ejs.web </td><td><a href='#Mvc'><b>Mvc</b></a>(home: <a href='Path.html'>Path</a>, config = expression)</tr><tr class='apiBrief'><td>&nbsp;</td><td>Load an MVC application and the optional application specific ejsrc file.</td></tr>
    <tr class='apiDef'><td class='apiType'>ejs.web </td><td><a href='#MvcApp'><b>MvcApp</b></a>(request: <a href='ejs.web-Request.html'>Request</a>): <a href='Object.html'>Object</a></tr><tr class='apiBrief'><td>&nbsp;</td><td>MVC request handler.</td></tr>
    <tr class='apiDef'><td class='apiType'>ejs.web </td><td><a href='#MvcBuilder'><b>MvcBuilder</b></a>(request: <a href='ejs.web-Request.html'>Request</a>): <a href='Function.html'>Function</a></tr><tr class='apiBrief'><td>&nbsp;</td><td>MVC builder for use in routing tables.</td></tr>
    <tr class='apiDef'><td class='apiType'> </td><td><a href='#Number'><b>Number</b></a>(value: <a href='Object.html'>Object</a> = null)</tr><tr class='apiBrief'><td>&nbsp;</td><td>Number constructor.</td></tr>
-   <tr class='apiDef'><td class='apiType'> </td><td><a href='#Path'><b>Path</b></a>(path: <a href='String.html'>String</a>)</tr><tr class='apiBrief'><td>&nbsp;</td><td>Create a new Path object and set the path's location.</td></tr>
+   <tr class='apiDef'><td class='apiType'> </td><td><a href='#Path'><b>Path</b></a>(path: <a href='String.html'>String</a> = .)</tr><tr class='apiBrief'><td>&nbsp;</td><td>Create a new Path object and set the path's location.</td></tr>
    <tr class='apiDef'><td class='apiType'> </td><td><a href='#Record'><b>Record</b></a>(fields: <a href='Object.html'>Object</a> = null)</tr><tr class='apiBrief'><td>&nbsp;</td><td>Constructor for use when instantiating directly from Record.</td></tr>
    <tr class='apiDef'><td class='apiType'> </td><td><a href='#ReferenceError'><b>ReferenceError</b></a>(message: <a href='String.html'>String</a> = null)</tr><tr class='apiBrief'><td>&nbsp;</td><td>ReferenceError constructor.</td></tr>
    <tr class='apiDef'><td class='apiType'> </td><td><a href='#RegExp'><b>RegExp</b></a>(pattern: <a href='String.html'>String</a>, flags: <a href='String.html'>String</a> = null)</tr><tr class='apiBrief'><td>&nbsp;</td><td>Create a regular expression object that can be used to process strings.</td></tr>
@@ -156,19 +157,20 @@ for a property that has not been defined.</td></tr>
    <tr class='apiDef'><td class='apiType'> </td><td><a href='#TemplateParser'><b>TemplateParser</b></a>()</tr>   <tr class='apiDef'><td class='apiType'> </td><td><a href='#TextStream'><b>TextStream</b></a>(stream: <a href='Stream.html'>Stream</a>)</tr><tr class='apiBrief'><td>&nbsp;</td><td>Create a text filter stream.</td></tr>
    <tr class='apiDef'><td class='apiType'> </td><td><a href='#Timer'><b>Timer</b></a>(period: <a href='Number.html'>Number</a>, callback: <a href='Function.html'>Function</a>, args: <a href='Array.html'>Array</a>)</tr><tr class='apiBrief'><td>&nbsp;</td><td>Constructor for Timer.</td></tr>
    <tr class='apiDef'><td class='apiType'> </td><td><a href='#TypeError'><b>TypeError</b></a>(message: <a href='String.html'>String</a> = null)</tr><tr class='apiBrief'><td>&nbsp;</td><td>TypeError constructor.</td></tr>
-   <tr class='apiDef'><td class='apiType'> </td><td><a href='#Uri'><b>Uri</b></a>(uri: <a href='Object.html'>Object</a>)</tr><tr class='apiBrief'><td>&nbsp;</td><td>Create and parse a Uri object.</td></tr>
+   <tr class='apiDef'><td class='apiType'>ejs.web </td><td><a href='#UploadFile'><b>UploadFile</b></a>()</tr>   <tr class='apiDef'><td class='apiType'> </td><td><a href='#Uri'><b>Uri</b></a>(uri: <a href='Object.html'>Object</a>)</tr><tr class='apiBrief'><td>&nbsp;</td><td>Create and parse a Uri object.</td></tr>
    <tr class='apiDef'><td class='apiType'>ejs.web </td><td><a href='#UrlMap'><b>UrlMap</b></a>(map, options): <a href='Object.html'>Object</a></tr><tr class='apiBrief'><td>&nbsp;</td><td>Directory content handler.</td></tr>
    <tr class='apiDef'><td class='apiType'>ejs.web </td><td><a href='#View'><b>View</b></a>(request: <a href='Object.html'>Object</a>)</tr><tr class='apiBrief'><td>&nbsp;</td><td>Constructor method to initialize a new View.</td></tr>
    <tr class='apiDef'><td class='apiType'> </td><td><a href='#Worker'><b>Worker</b></a>(script: <a href='Path.html'>Path</a> = null, options: <a href='Object.html'>Object</a> = null)</tr><tr class='apiBrief'><td>&nbsp;</td><td>Create a new Worker instance.</td></tr>
    <tr class='apiDef'><td class='apiType'> </td><td><a href='#XML'><b>XML</b></a>(value: <a href='Object.html'>Object</a> = null)</tr><tr class='apiBrief'><td>&nbsp;</td><td>XML Constructor.</td></tr>
    <tr class='apiDef'><td class='apiType'> </td><td><a href='#assert'><b>assert</b></a>(condition: <a href='Boolean.html'>Boolean</a>): <a href='Void.html'>Void</a></tr><tr class='apiBrief'><td>&nbsp;</td><td>Assert a condition is true.</td></tr>
    <tr class='apiDef'><td class='apiType'>ejs.unix </td><td><a href='#basename'><b>basename</b></a>(path: <a href='String.html'>String</a>): <a href='Path.html'>Path</a></tr><tr class='apiBrief'><td>&nbsp;</td><td>Get the base name of a file.</td></tr>
+   <tr class='apiDef'><td class='apiType'> </td><td><a href='#blend'><b>blend</b></a>(dest: <a href='Object.html'>Object</a>, src: <a href='Object.html'>Object</a>, options = null): <a href='Object.html'>Object</a></tr><tr class='apiBrief'><td>&nbsp;</td><td>Blend the contents of one object into another.</td></tr>
    <tr class='apiDef'><td class='apiType'> </td><td><a href='#breakpoint'><b>breakpoint</b></a>(): <a href='Void.html'>Void</a></tr><tr class='apiBrief'><td>&nbsp;</td><td>Convenient way to trap to the debugger.</td></tr>
    <tr class='apiDef'><td class='apiType'>ejs.unix </td><td><a href='#chdir'><b>chdir</b></a>(dir: <a href='Object.html'>Object</a>): <a href='Void.html'>Void</a></tr><tr class='apiBrief'><td>&nbsp;</td><td>Change the current working directory.</td></tr>
    <tr class='apiDef'><td class='apiType'>ejs.unix </td><td><a href='#chmod'><b>chmod</b></a>(path: <a href='String.html'>String</a>, perms: <a href='Number.html'>Number</a>): <a href='Void.html'>Void</a></tr><tr class='apiBrief'><td>&nbsp;</td><td>Set the permissions of a file or directory.</td></tr>
    <tr class='apiDef'><td class='apiType'> </td><td><a href='#clearInterval'><b>clearInterval</b></a>(timer: <a href='Timer.html'>Timer</a>): <a href='Void.html'>Void</a></tr><tr class='apiBrief'><td>&nbsp;</td><td>Clear and dispose of an interval timer.</td></tr>
    <tr class='apiDef'><td class='apiType'> </td><td><a href='#clearTimeout'><b>clearTimeout</b></a>(timer: <a href='Timer.html'>Timer</a>): <a href='Void.html'>Void</a></tr><tr class='apiBrief'><td>&nbsp;</td><td>Clear and dispose of a timeout.</td></tr>
-   <tr class='apiDef'><td class='apiType'>ejs.unix </td><td><a href='#cp'><b>cp</b></a>(fromPath: <a href='String.html'>String</a>, toPath: <a href='String.html'>String</a>): <a href='Void.html'>Void</a></tr><tr class='apiBrief'><td>&nbsp;</td><td>Copy a file.</td></tr>
+   <tr class='apiDef'><td class='apiType'>ejs.unix </td><td><a href='#cp'><b>cp</b></a>(patterns, dest: <a href='Path.html'>Path</a>, options = expression): <a href='Number.html'>Number</a></tr><tr class='apiBrief'><td>&nbsp;</td><td>Copy files.</td></tr>
    <tr class='apiDef'><td class='apiType'> </td><td><a href='#decodeURI'><b>decodeURI</b></a>(str: <a href='String.html'>String</a>): <a href='String.html'>String</a></tr><tr class='apiBrief'><td>&nbsp;</td><td>Decode an encoded URI using www-url encoding.</td></tr>
    <tr class='apiDef'><td class='apiType'> </td><td><a href='#decodeURIComponent'><b>decodeURIComponent</b></a>(str: <a href='String.html'>String</a>): <a href='String.html'>String</a></tr><tr class='apiBrief'><td>&nbsp;</td><td>Decode an encoded URI component.</td></tr>
    <tr class='apiDef'><td class='apiType'> </td><td><a href='#deserialize'><b>deserialize</b></a>(str: <a href='String.html'>String</a>): <a href='Object.html'>Object</a></tr><tr class='apiBrief'><td>&nbsp;</td><td>Convert a string into an object.</td></tr>
@@ -181,7 +183,7 @@ for a property that has not been defined.</td></tr>
    <tr class='apiDef'><td class='apiType'>ejs.unix </td><td><a href='#exists'><b>exists</b></a>(path: <a href='String.html'>String</a>): <a href='Boolean.html'>Boolean</a></tr><tr class='apiBrief'><td>&nbsp;</td><td>Does a file exist.</td></tr>
    <tr class='apiDef'><td class='apiType'>ejs.worker </td><td><a href='#exit'><b>exit</b></a>(): <a href='Void.html'>Void</a></tr><tr class='apiBrief'><td>&nbsp;</td><td>Exit the worker.</td></tr>
    <tr class='apiDef'><td class='apiType'>ejs.unix </td><td><a href='#extension'><b>extension</b></a>(path: <a href='String.html'>String</a>): <a href='String.html'>String</a></tr><tr class='apiBrief'><td>&nbsp;</td><td>Get the file extension portion of the file name.</td></tr>
-   <tr class='apiDef'><td class='apiType'>ejs.unix </td><td><a href='#find'><b>find</b></a>(path: <a href='Object.html'>Object</a>, glob: <a href='String.html'>String</a> = *, recurse: <a href='Boolean.html'>Boolean</a> = true): <a href='Array.html'>Array</a></tr><tr class='apiBrief'><td>&nbsp;</td><td>Find matching files.</td></tr>
+   <tr class='apiDef'><td class='apiType'>ejs.unix </td><td><a href='#find'><b>find</b></a>(path: <a href='Object.html'>Object</a>, patterns: <a href='Object.html'>Object</a> = *, options = expression): <a href='Array.html'>Array</a></tr><tr class='apiBrief'><td>&nbsp;</td><td>Find files under a directory.</td></tr>
    <tr class='apiDef'><td class='apiType'>ejs.unix </td><td><a href='#freeSpace'><b>freeSpace</b></a>(path: <a href='String.html'>String</a> = null): <a href='Number.html'>Number</a></tr><tr class='apiBrief'><td>&nbsp;</td><td>Return the free space in the file system.</td></tr>
    <tr class='apiDef'><td class='apiType'> </td><td><a href='#hashcode'><b>hashcode</b></a>(o: <a href='Object.html'>Object</a>): <a href='Number.html'>Number</a></tr><tr class='apiBrief'><td>&nbsp;</td><td>Get the object's Unique hash id.</td></tr>
    <tr class='apiDef'><td class='apiType'>ejs.web </td><td><a href='#html'><b>html</b></a>(args: <a href='Array.html'>Array</a>): <a href='String.html'>String</a></tr><tr class='apiBrief'><td>&nbsp;</td><td>HTML encode the arguments.</td></tr>
@@ -189,7 +191,7 @@ for a property that has not been defined.</td></tr>
    <tr class='apiDef'><td class='apiType'> </td><td><a href='#isFinite'><b>isFinite</b></a>(arg: <a href='Number.html'>Number</a>): <a href='Boolean.html'>Boolean</a></tr><tr class='apiBrief'><td>&nbsp;</td><td>Evaluate an argument to determine if it is a finite number.</td></tr>
    <tr class='apiDef'><td class='apiType'> </td><td><a href='#isNaN'><b>isNaN</b></a>(arg: <a href='Number.html'>Number</a>): <a href='Boolean.html'>Boolean</a></tr><tr class='apiBrief'><td>&nbsp;</td><td>Evaluate an argument to determine if it is a number.</td></tr>
    <tr class='apiDef'><td class='apiType'> </td><td><a href='#load'><b>load</b></a>(file: <a href='String.html'>String</a>, options: <a href='Object.html'>Object</a> = null): <a href='Object.html'>Object</a></tr><tr class='apiBrief'><td>&nbsp;</td><td>Load a script or module.</td></tr>
-   <tr class='apiDef'><td class='apiType'>ejs.unix </td><td><a href='#ls'><b>ls</b></a>(path: <a href='String.html'>String</a> = ., enumDirs: <a href='Boolean.html'>Boolean</a> = false): <a href='Array.html'>Array</a></tr><tr class='apiBrief'><td>&nbsp;</td><td>Get a list of files in a directory.</td></tr>
+   <tr class='apiDef'><td class='apiType'>ejs.unix </td><td><a href='#ls'><b>ls</b></a>(patterns = *, options: <a href='Object.html'>Object</a> = null): <a href='Array.html'>Array</a></tr><tr class='apiBrief'><td>&nbsp;</td><td>Get a list of files in a directory.</td></tr>
    <tr class='apiDef'><td class='apiType'> </td><td><a href='#md5'><b>md5</b></a>(str: <a href='String.html'>String</a>): <a href='String.html'>String</a></tr><tr class='apiBrief'><td>&nbsp;</td><td>Computed an MD5 sum of a string
 This function is prototype and may be renamed in a future release.</td></tr>
    <tr class='apiDef'><td class='apiType'>ejs.unix </td><td><a href='#mkdir'><b>mkdir</b></a>(path: <a href='String.html'>String</a>, permissions: <a href='Number.html'>Number</a> = 493): <a href='Void.html'>Void</a></tr><tr class='apiBrief'><td>&nbsp;</td><td>Make a new directory.</td></tr>
@@ -200,10 +202,10 @@ This function is prototype and may be renamed in a future release.</td></tr>
    <tr class='apiDef'><td class='apiType'> </td><td><a href='#parseInt'><b>parseInt</b></a>(str: <a href='String.html'>String</a>, radix: <a href='Number.html'>Number</a> = 10): <a href='Number.html'>Number</a></tr><tr class='apiBrief'><td>&nbsp;</td><td>Parse a string and convert to an integral number using the specified radix.</td></tr>
    <tr class='apiDef'><td class='apiType'>ejs.worker </td><td><a href='#postMessage'><b>postMessage</b></a>(data: <a href='Object.html'>Object</a>, ports: <a href='Array.html'>Array</a> = null): <a href='Void.html'>Void</a></tr><tr class='apiBrief'><td>&nbsp;</td><td>Post a message to the Worker's parent.</td></tr>
    <tr class='apiDef'><td class='apiType'> </td><td><a href='#print'><b>print</b></a>(args: <a href='Array.html'>Array</a>): <a href='Void.html'>Void</a></tr><tr class='apiBrief'><td>&nbsp;</td><td>Print the arguments to the standard output with a new line appended.</td></tr>
-   <tr class='apiDef'><td class='apiType'> </td><td><a href='#printf'><b>printf</b></a>(fmt, args: <a href='Array.html'>Array</a>): <a href='Void.html'>Void</a></tr><tr class='apiBrief'><td>&nbsp;</td><td>Print the arguments using a printf style format string.</td></tr>
+   <tr class='apiDef'><td class='apiType'> </td><td><a href='#printf'><b>printf</b></a>(fmt: <a href='String.html'>String</a>, args: <a href='Array.html'>Array</a>): <a href='Void.html'>Void</a></tr><tr class='apiBrief'><td>&nbsp;</td><td>Print the arguments to the standard output using the supplied format template.</td></tr>
    <tr class='apiDef'><td class='apiType'>ejs.unix </td><td><a href='#pwd'><b>pwd</b></a>(): <a href='Path.html'>Path</a></tr><tr class='apiBrief'><td>&nbsp;</td><td>Get the current working directory.</td></tr>
-   <tr class='apiDef'><td class='apiType'>ejs.unix </td><td><a href='#rm'><b>rm</b></a>(path: <a href='Path.html'>Path</a>): <a href='Void.html'>Void</a></tr><tr class='apiBrief'><td>&nbsp;</td><td>Remove a file from the file system.</td></tr>
-   <tr class='apiDef'><td class='apiType'>ejs.unix </td><td><a href='#rmdir'><b>rmdir</b></a>(path: <a href='Path.html'>Path</a>, contents: <a href='Boolean.html'>Boolean</a> = false): <a href='Void.html'>Void</a></tr><tr class='apiBrief'><td>&nbsp;</td><td>Removes a directory.</td></tr>
+   <tr class='apiDef'><td class='apiType'>ejs.unix </td><td><a href='#rm'><b>rm</b></a>(patterns, options = expression): <a href='Boolean.html'>Boolean</a></tr><tr class='apiBrief'><td>&nbsp;</td><td>Remove files from the file system.</td></tr>
+   <tr class='apiDef'><td class='apiType'>ejs.unix </td><td><a href='#rmdir'><b>rmdir</b></a>(patterns, options = expression): <a href='Boolean.html'>Boolean</a></tr><tr class='apiBrief'><td>&nbsp;</td><td>Removes a directory and contents.</td></tr>
    <tr class='apiDef'><td class='apiType'> </td><td><a href='#serialize'><b>serialize</b></a>(obj: <a href='Object.html'>Object</a>, options: <a href='Object.html'>Object</a> = null): <a href='String.html'>String</a></tr><tr class='apiBrief'><td>&nbsp;</td><td>Encode an object as a string.</td></tr>
    <tr class='apiDef'><td class='apiType'> </td><td><a href='#setInterval'><b>setInterval</b></a>(callback: <a href='Function.html'>Function</a>, delay: <a href='Number.html'>Number</a>, args: <a href='Array.html'>Array</a>): <a href='Timer.html'>Timer</a></tr><tr class='apiBrief'><td>&nbsp;</td><td>Create an interval timer.</td></tr>
    <tr class='apiDef'><td class='apiType'> </td><td><a href='#setTimeout'><b>setTimeout</b></a>(callback: <a href='Function.html'>Function</a>, delay: <a href='Number.html'>Number</a>, args: <a href='Array.html'>Array</a>): <a href='Number.html'>Number</a></tr><tr class='apiBrief'><td>&nbsp;</td><td>Run a function after a delay.</td></tr>
@@ -228,6 +230,47 @@ This function is prototype and may be renamed in a future release.</td></tr>
 <dd><table class='parameters' summary ='parameters'>
 <tr class='param'><td class='param'>message: <a href='String.html'>String</a> </td><td>Message to use when defining the Error.message property. [default: null]</td></tr></table></dd>
 </dl></div>
+</div>
+<hr />
+<a name='Args'></a>
+<div class='api'>
+<div class='apiSig'>    Args(template: <a href='Object.html'>Object</a>, argv: <a href='Array.html'>Array</a> = expression)
+</div>
+<div class='apiDetail'>
+<dl><dt>Description</dt></dd><dd>The Args constructor creates a new instance of the Args. It parses the command line 
+and stores the parsed options in the <a href='#options'>options</a> and <a href='#args'>args</a> properties. 
+Args supports command options that begin with "-" or "--" and parses option arguments of the forms: 
+"-flag x" and "-flag=x".</dd></dl>
+<dl><dt>Parameters</dt>
+<dd><table class='parameters' summary ='parameters'>
+<tr class='param'><td class='param'>template: <a href='Object.html'>Object</a> </td><td>Command argument template. The template is an object with option properties for: options, usage, onerror ad silent.</td></tr><tr class='param'><td class='param'>argv: <a href='Array.html'>Array</a> </td><td>Array of command arguments to parse. Defaults to App.args. [default: expression]</td></tr></table></dd>
+</dl><dl><dt>Options</dt>
+<dd><table class='parameters' summary ='options'>
+<td class='param'>options</td><td>This is an object with properties for each command line option. The value of each property is an object with properties: 'alias', 'range', 'value' and 'separator'. The 'alias' property defines a String alias for the option. This is typically used to define a single character alias for the full command line option name. The 'range' property defines what permissible values an option parameter may take. It may be set to either an Ejscript type, a Regular Expression or it may be set to an array of values.  The 'value' property may define a default value for the option if it is not defined. This is the value that args.options[OPTION] will be set to when the command line option is absent.  If an option without an argument is specified by the user, its value in options[NAME] will be set to true.    If the 'separator' property is defined, multiple command line options of this name are permitted. If 'separator' is set to a string, then the multiple command line option values are catenated using the 'separator'. If set to array, the option values are stored in an array.</td></tr>
+<td class='param'>usage</td><td>Function to invoke for argument parse errors.</td></tr>
+<td class='param'>onerror</td><td>If set to 'throw', an exception will be thrown for argument parse errors. The usage function will not be  called and no message will be written to the application log. If set to 'exit', a message will be written to the console for argument parse errors and any usage function will be invoked before exiting the application with a non-zero exit status.</td></tr>
+<td class='param'>silent</td><td>Don't emit any message on argument parse errors.</td></tr>
+</table></dd>
+</dl><dl><dt>Example</dt>
+<dd><pre>let args = Args({
+    options: {
+        depth: { range: Number },
+        quiet: { },
+        verbose: { alias: 'v', value: true, },
+        log: { range: /\w+(:\d)/, value: 'stderr:4' },
+        mode: { range: ['low', 'medium', 'high'], value: 'high' },
+        with: { range: String, separator: ',' },
+    },
+    usage: usage,
+    onerror: 'exit|throw',
+}, [])
+
+let options = args.options
+if (options.verbose) { }
+for each (file in args.rest) {
+    ...
+}</pre></dd></dl>
+</div>
 </div>
 <hr />
 <a name='ArithmeticError'></a>
@@ -314,7 +357,7 @@ immutable, this constructor will return a reference to either the "true" or "fal
 <tr class='param'><td class='param'>adapter: <a href='String.html'>String</a> </td><td>Adapter for the cache cache. E.g. "local". The Local cache is the only currently supported cache backend. [default: null]</td></tr><tr class='param'><td class='param'>options: <a href='Object.html'>Object</a> </td><td>Adapter options. The common options are described below, other options are passed through to the relevant caching backend. [default: expression]</td></tr></table></dd>
 </dl><dl><dt>Options</dt>
 <dd><table class='parameters' summary ='options'>
-<td class='param'>lifespan</td><td>Default lifespan for key values.</td></tr>
+<td class='param'>lifespan</td><td>Default lifespan for key values in seconds.</td></tr>
 <td class='param'>resolution</td><td>Time in milliseconds to check for expired expired keys.</td></tr>
 <td class='param'>timeout</td><td>Timeout on cache I/O operations.</td></tr>
 <td class='param'>trace</td><td>Trace I/O operations for debug.</td></tr>
@@ -355,31 +398,9 @@ immutable, this constructor will return a reference to either the "true" or "fal
 <td class='param'>dir</td><td>Path or String. Directory to set as the current working directory for the command.</td></tr>
 <td class='param'>exception</td><td>Boolean If true, throw exceptions if the command returns a non-zero status code.  Defaults to false.</td></tr>
 <td class='param'>timeout</td><td>Number This is the default number of milliseconds for the command to complete.</td></tr>
+<td class='param'>noio</td><td>Don't capture stdout from the command. If true, the command's standard output will go to the  application's current standard output. Defaults to false.</td></tr>
 </table></dd>
 </dl></div>
-</div>
-<hr />
-<a name='CmdArgs'></a>
-<div class='api'>
-<div class='apiSig'>    CmdArgs(template: <a href='Object.html'>Object</a>, argv: <a href='Array.html'>Array</a> = expression)
-</div>
-<div class='apiDetail'>
-<dl><dt>Description</dt></dd><dd>The CmdArgs constructor creates a new instance of the CmdArgs. It parses the command line options and 
-arguments and stores the parsed options in the <a href='#options'>options</a> and <a href='#args'>args</a> properties. 
-CmdArgs supports command options that begin with "-" or "--" and parses option arguments of the forms: 
-"-flag x" and "-flag=x".</dd></dl>
-<dl><dt>Parameters</dt>
-<dd><table class='parameters' summary ='parameters'>
-<tr class='param'><td class='param'>template: <a href='Object.html'>Object</a> </td><td>Array of permissible command option patterns. Each template element corresponds to a command option. Each template element is tuple (array) whose first item is the option text.  The second item specifies the set of permissible values for the option argument. If the option does not take an argument, set this to null. If this argument is set to a regular expression, the option argument is validated against it. If set to a Type, the option must have a value of this type. The third item is  an optional default value. This is the value that options[NAME] will be set to when the option is absent. If an option without an argument is specified by the user, its value in options[NAME] will be set to true.  To support options with aliases (such as --verbose and -v), the option text item can be an array of  option text names.</td></tr><tr class='param'><td class='param'>argv: <a href='Array.html'>Array</a> </td><td>Array of command arguments to parse. Defaults to App.args. [default: expression]</td></tr></table></dd>
-</dl><dl><dt>Example</dt>
-<dd><pre>cmd = CmdArgs([
-    [ "quiet", null, false ]
-    [ [ "verbose", "v", ] ]
-    [ "log", /\w+(:\d)/, "stdout:4" ],
-    [ "mode", [ "low", "medium", "high" ], "high" ]
-    [ "speed", Number, 60 ]
-])</pre></dd></dl>
-</div>
 </div>
 <hr />
 <a name='CommonLog'></a>
@@ -544,13 +565,13 @@ the client is redirected to a URL equal to the pathInfo with a "/" appended.</dd
 <hr />
 <a name='FileSystem'></a>
 <div class='api'>
-<div class='apiSig'>    FileSystem(path: <a href='Object.html'>Object</a> = null)
+<div class='apiSig'>    FileSystem(path: <a href='Path.html'>Path</a> = null)
 </div>
 <div class='apiDetail'>
 <dl><dt>Description</dt></dd><dd>Create a new FileSystem object for the file system that contains the given path. </dd></dl>
 <dl><dt>Parameters</dt>
 <dd><table class='parameters' summary ='parameters'>
-<tr class='param'><td class='param'>path: <a href='Object.html'>Object</a> </td><td>String or Path of a file that would reside in the file system. [default: null]</td></tr></table></dd>
+<tr class='param'><td class='param'>path: <a href='Path.html'>Path</a> </td><td>String or Path of a file that would reside in the file system. [default: null]</td></tr></table></dd>
 </dl></div>
 </div>
 <hr />
@@ -604,8 +625,8 @@ This version is limited, in that it will only define a Content-Length if the res
 <div class='apiSig'>  ejs.web  HttpServer(options: <a href='Object.html'>Object</a> = expression)
 </div>
 <div class='apiDetail'>
-<dl><dt>Description</dt></dd><dd>Create a HttpServer object. The server is created in async mode by default.
-If an "ejsrc" file exists in the server root, it will be loaded and update the "<a href='#config"'>config"</a> properties.</dd></dl>
+<dl><dt>Description</dt></dd><dd>Create a HttpServer object. The server is set to async mode by default.
+If an "ejsrc" file exists in the server root, it will be loaded.</dd></dl>
 <dl><dt>Parameters</dt>
 <dd><table class='parameters' summary ='parameters'>
 <tr class='param'><td class='param'>options: <a href='Object.html'>Object</a> </td><td>Set of options to configure the server. [default: expression]</td></tr><tr class='param'><td class='param'>options: <a href='Object.html'>Object</a> </td><td>null [default: expression]</td></tr></table></dd>
@@ -615,7 +636,7 @@ If an "ejsrc" file exists in the server root, it will be loaded and update the "
 <td class='param'>home</td><td>Base directory for the server and the "ejsrc" configuration file. If unset and the HttpServer is  hosted, the <a href='#home'>home</a> property will be defined by the web server.</td></tr>
 <td class='param'>ejsrc</td><td>Alternate path to the "ejsrc" configuration file.</td></tr>
 <td class='param'>config</td><td>Alternate App.config settings.</td></tr>
-<td class='param'>own</td><td>If hosted inside a web server, set to true to bypass any web server listening endpoints and  create a new stand-alone listening connection.</td></tr>
+<td class='param'>unhosted</td><td>If hosted inside a web server, set to true to bypass any web server listening endpoints and  create a new stand-alone (unhosted) listening connection.</td></tr>
 </table></dd>
 </dl><dl><dt>Specified</dt>
 <dd>ejscript-2.0</dd></dl>
@@ -681,7 +702,7 @@ can use the local cache to reliably share information.</dd></dl>
 </dl><dl><dt>Options</dt>
 <dd><table class='parameters' summary ='options'>
 <td class='param'>shared</td><td>Create or connect to a single, shared cache. If multiple interpreters in a single process create shared LocalCache instances they will be able to share key/value data.</td></tr>
-<td class='param'>lifespan</td><td>Default lifespan for key values. Set to zero for a default unlimited timeout.</td></tr>
+<td class='param'>lifespan</td><td>Default lifespan for key values in seconds. Set to zero for a default unlimited timeout.</td></tr>
 <td class='param'>resolution</td><td>Time in milliseconds to check for expired expired keys.</td></tr>
 <td class='param'>memory</td><td>Maximum memory to use for keys and data.</td></tr>
 <td class='param'>trace</td><td>Trace I/O operations for debug.</td></tr>
@@ -754,13 +775,13 @@ a X-HTTP-METHOD-OVERRIDE Http header.</dd></dl>
 <hr />
 <a name='Mvc'></a>
 <div class='api'>
-<div class='apiSig'>  ejs.web  Mvc(request: <a href='ejs.web-Request.html'>Request</a>)
+<div class='apiSig'>  ejs.web  Mvc(home: <a href='Path.html'>Path</a>, config = expression)
 </div>
 <div class='apiDetail'>
 <dl><dt>Description</dt></dd><dd>Load an MVC application and the optional application specific ejsrc file. </dd></dl>
 <dl><dt>Parameters</dt>
 <dd><table class='parameters' summary ='parameters'>
-<tr class='param'><td class='param'>request: <a href='ejs.web-Request.html'>Request</a> </td><td>Request object.</td></tr></table></dd>
+<tr class='param'><td class='param'>home: <a href='Path.html'>Path</a> </td><td>Base directory for the MVC app.</td></tr><tr class='param'><td class='param'>config </td><td>Configuration object. [default: expression]</td></tr></table></dd>
 </dl></div>
 </div>
 <hr />
@@ -814,13 +835,13 @@ a X-HTTP-METHOD-OVERRIDE Http header.</dd></dl>
 <hr />
 <a name='Path'></a>
 <div class='api'>
-<div class='apiSig'>    Path(path: <a href='String.html'>String</a>)
+<div class='apiSig'>    Path(path: <a href='String.html'>String</a> = .)
 </div>
 <div class='apiDetail'>
 <dl><dt>Description</dt></dd><dd>Create a new Path object and set the path's location. </dd></dl>
 <dl><dt>Parameters</dt>
 <dd><table class='parameters' summary ='parameters'>
-<tr class='param'><td class='param'>path: <a href='String.html'>String</a> </td><td>Name of the path to associate with this path object.</td></tr></table></dd>
+<tr class='param'><td class='param'>path: <a href='String.html'>String</a> </td><td>Name of the path to associate with this path object. [default: .]</td></tr></table></dd>
 </dl></div>
 </div>
 <hr />
@@ -898,8 +919,9 @@ create and install routes into the Router.</dd></dl>
 <tr class='param'><td class='param'>template: <a href='Object.html'>Object</a> </td><td>String or Regular Expression defining the form of a matching URI (Request.pathInfo).</td></tr><tr class='param'><td class='param'>options: <a href='Object.html'>Object</a> </td><td>Route options representing the URI and options to use when servicing the request. If it is a string, it may begin with an " @" and be of the form " @[controller/]action". In this case, if there is a "/" delimiter, the first portion is a controller and the second is the controller action to invoke. The controller or action may be absent. For example: " @Controller/", " @action", " @controller/action". If the string does not begin with an " @", it is interpreted as a literal URI.  For example: "/web/index.html". If the options is an object hash, it may contain the options below:.</td></tr><tr class='param'><td class='param'>router: <a href='ejs.web-Router.html'>Router</a> </td><td>Owning router object.</td></tr></table></dd>
 </dl><dl><dt>Options</dt>
 <dd><table class='parameters' summary ='options'>
-<td class='param'>action</td><td>Action method to service the request. This may be of the form "controller/action" or "controller/".</td></tr>
+<td class='param'>action</td><td>Action method to service the request. This may be of the form "action", "controller/action" or  "controller/".  If the action portion omitted, the default action (index) will be used.</td></tr>
 <td class='param'>controller</td><td>Controller to service the request.</td></tr>
+<td class='param'>method</td><td>HTTP Method for which the route is valid. Set to "*"" for all methods.</td></tr>
 <td class='param'>name</td><td>Name to give to the route. If absent, the name is created from the controller and action names.</td></tr>
 <td class='param'>outer</td><td>Parent route. The parent's template and parameters are appended to this route.</td></tr>
 <td class='param'>params</td><td>Override parameter to provide to the request in the Request.params.</td></tr>
@@ -921,7 +943,7 @@ Route("/User/login", {name: "login" })</pre></dd></dl>
 <tr class='param'><td class='param'>routeSet: <a href='String.html'>String</a> </td><td>Optional name of the route set to add. Supports sets include: Router.Top and Router.Restful. The Top routes provide top level routes for pages with extensions ".ejs",  and ".es" as well as for static content (see <a href='#addHandlers'>addHandlers</a> addCatchall). The Restful routes provide  default Controller/Action routes according to a RESTful paradigm (see addRestful). The routeSet can also be set to null to add not routes. This is useful for creating a bare Router instance. Defaults  to Top. [default: Top]</td></tr><tr class='param'><td class='param'>options: <a href='Object.html'>Object</a> </td><td>Options to apply to all routes. [default: expression]</td></tr></table></dd>
 </dl><dl><dt>Options</dt>
 <dd><table class='parameters' summary ='options'>
-<td class='param'>threaded</td><td>Boolean If true, the request should be execute in a worker thread if possible. This thread  will not be dedicated, but will be assigned as the request requires CPU resources.</td></tr>
+<td class='param'>workers</td><td>Boolean If true, requests should be execute in a worker thread if possible. The worker thread  will be pooled when the request completes and will be available for subsequent requests.</td></tr>
 </table></dd>
 </dl><dl><dt>Throws</dt><dd>
 <a href='Error.html'>Error</a>: for an unknown route set.
@@ -1041,7 +1063,8 @@ Route("/User/login", {name: "login" })</pre></dd></dl>
 </div>
 <div class='apiDetail'>
 <dl><dt>Description</dt></dd><dd>Static content handler. This supports DELETE, GET, POST and PUT methods. It handles directory redirection
-and will use X-SendFile for efficient transmission of static content.</dd></dl>
+and will use X-SendFile for efficient transmission of static content. The If-Match, If-None-Match,
+If-Modified-Since and If-Unmodified-Since headers are supported.</dd></dl>
 <dl><dt>Parameters</dt>
 <dd><table class='parameters' summary ='parameters'>
 <tr class='param'><td class='param'>request: <a href='ejs.web-Request.html'>Request</a> </td><td>Request objects.</td></tr></table></dd>
@@ -1320,6 +1343,36 @@ trailing portion without any directory elements.</dd></dl>
 </div>
 </div>
 <hr />
+<a name='blend'></a>
+<div class='api'>
+<div class='apiSig'>    blend(dest: <a href='Object.html'>Object</a>, src: <a href='Object.html'>Object</a>, options = null): <a href='Object.html'>Object</a>
+</div>
+<div class='apiDetail'>
+<dl><dt>Description</dt></dd><dd>Blend the contents of one object into another. This routine copies the properites of one object into another.
+If a property is an object reference and the "deep" option is set, the object is cloned using a deep clone. 
+Otherwise the object reference is copied.
+If the overwrite option is false, the property will only be copied if it does not already exist in the destination.</dd></dl>
+<dl><dt>Parameters</dt>
+<dd><table class='parameters' summary ='parameters'>
+<tr class='param'><td class='param'>dest: <a href='Object.html'>Object</a> </td><td>Destination object.</td></tr><tr class='param'><td class='param'>src: <a href='Object.html'>Object</a> </td><td>Source object.</td></tr><tr class='param'><td class='param'>options </td><td>Control options. [default: null]</td></tr></table></dd>
+</dl><dl><dt>Options</dt>
+<dd><table class='parameters' summary ='options'>
+<td class='param'>combine</td><td>Boolean. If true, then support key prefixes "+", "=", "-" to add, assign and subtract key values. When adding string properties, values will be appended using a space separator. Extra spaces will not  be removed on subtraction. Arrays with string values may also be combined using the key prefixes.</td></tr>
+<td class='param'>overwrite</td><td>Boolean. If true, then overwrite existing properties in the destination object. Defaults to true.</td></tr>
+<td class='param'>deep</td><td>Boolean. If true, then recursively copy the properties of any objects referenced in the source object. Otherwise, the copy is only one level deep. Defaults to true.</td></tr>
+<td class='param'>functions</td><td>Boolean. If true, then copy functions. Defaults to false.</td></tr>
+<td class='param'>subclasses</td><td>Boolean. If true, then copy subclass properties. Defaults to true.</td></tr>
+<td class='param'>trace</td><td>Boolean. If true, then trace to the App.log the copied property names.</td></tr>
+</table></dd>
+</dl><dl><dt>Returns</dt>
+<dd>An the destination object.</dd></dl>
+<dl><dt>Specified</dt>
+<dd>ejscript-2.0</dd></dl>
+<dl><dt>Example</dt>
+<dd><pre></pre></dd></dl>
+</div>
+</div>
+<hr />
 <a name='breakpoint'></a>
 <div class='api'>
 <div class='apiSig'>    breakpoint(): <a href='Void.html'>Void</a>
@@ -1379,18 +1432,26 @@ trailing portion without any directory elements.</dd></dl>
 <hr />
 <a name='cp'></a>
 <div class='api'>
-<div class='apiSig'>  ejs.unix  cp(fromPath: <a href='String.html'>String</a>, toPath: <a href='String.html'>String</a>): <a href='Void.html'>Void</a>
+<div class='apiSig'>  ejs.unix  cp(patterns, dest: <a href='Path.html'>Path</a>, options = expression): <a href='Number.html'>Number</a>
 </div>
 <div class='apiDetail'>
-<dl><dt>Description</dt></dd><dd>Copy a file. If the destination file already exists, the old copy will be overwritten as part of the 
-copy operation.</dd></dl>
+<dl><dt>Description</dt></dd><dd>Copy files. </dd></dl>
 <dl><dt>Parameters</dt>
 <dd><table class='parameters' summary ='parameters'>
-<tr class='param'><td class='param'>fromPath: <a href='String.html'>String</a> </td><td>Original file to copy.</td></tr><tr class='param'><td class='param'>toPath: <a href='String.html'>String</a> </td><td>New destination file path name.</td></tr></table></dd>
-</dl><dl><dt>Throws</dt><dd>
-<a href='IOError.html'>IOError</a>: if the copy is not successful.
-</dd>
-</dl></div>
+<tr class='param'><td class='param'>patterns </td><td>Pattern to match files to copy. This can be a String, Path or array of String/Paths.  The wildcards "*"", "***"" and "?" are the only wild card patterns supported. The "***"" pattern matches every directory. The Posix "[]" and "{a,b}" style expressions are not supported. If patterns is an existing directory, then the pattern is converted to 'dir/ *  *'' (without spaces)  and the tree option is enabled.</td></tr><tr class='param'><td class='param'>dest: <a href='Path.html'>Path</a> </td><td>Destination file or directory. If multiple files are copied, dest is assumed to be a directory and  will be created if required.</td></tr><tr class='param'><td class='param'>options </td><td>File attributes. [default: expression]</td></tr></table></dd>
+</dl><dl><dt>Options</dt>
+<dd><table class='parameters' summary ='options'>
+<td class='param'>expand</td><td>Set to hash of properties to use when expanding '<a href='#{token}''>{token}'</a> tokens in src or dest filenames.</td></tr>
+<td class='param'>owner</td><td>String representing the file owner.</td></tr>
+<td class='param'>group</td><td>String representing the file group.</td></tr>
+<td class='param'>permissions</td><td>Number File Posix permissions mask.</td></tr>
+<td class='param'>process</td><td>Optional callback function to process the copied file. This function must do the actual copy  and any required post-processing. Signature is function process(src: Path, dest: Path, options).</td></tr>
+<td class='param'>subtree</td><td>If copying a directory, copy the subtree below the patterns.</td></tr>
+<td class='param'>tree</td><td>If copying a directory, copy the subtree including the pattern path.</td></tr>
+</table></dd>
+</dl><dl><dt>Returns</dt>
+<dd>Number of files copied.</dd></dl>
+</div>
 </div>
 <hr />
 <a name='decodeURI'></a>
@@ -1591,15 +1652,24 @@ in the path.</dd></dl>
 <hr />
 <a name='find'></a>
 <div class='api'>
-<div class='apiSig'>  ejs.unix  find(path: <a href='Object.html'>Object</a>, glob: <a href='String.html'>String</a> = *, recurse: <a href='Boolean.html'>Boolean</a> = true): <a href='Array.html'>Array</a>
+<div class='apiSig'>  ejs.unix  find(path: <a href='Object.html'>Object</a>, patterns: <a href='Object.html'>Object</a> = *, options = expression): <a href='Array.html'>Array</a>
 </div>
 <div class='apiDetail'>
-<dl><dt>Description</dt></dd><dd>Find matching files. Files are listed in a depth first order.</dd></dl>
+<dl><dt>Description</dt></dd><dd>Find files under a directory. This uses Path.files to implement the functionality.</dd></dl>
 <dl><dt>Parameters</dt>
 <dd><table class='parameters' summary ='parameters'>
-<tr class='param'><td class='param'>path: <a href='Object.html'>Object</a> </td><td>Starting path from which to find matching files.</td></tr><tr class='param'><td class='param'>glob: <a href='String.html'>String</a> </td><td>Glob style Pattern that files must match. This is similar to a ls() style pattern. [default: *]</td></tr><tr class='param'><td class='param'>recurse: <a href='Boolean.html'>Boolean</a> </td><td>Set to true to examine sub-directories. [default: true]</td></tr></table></dd>
+<tr class='param'><td class='param'>path: <a href='Object.html'>Object</a> </td><td>Path or array of paths from which to search.</td></tr><tr class='param'><td class='param'>patterns: <a href='Object.html'>Object</a> </td><td>Pattern to match files. This can be a String, Path or array of String/Paths.  The wildcard '?' matches any single character, '*'' matches zero or more characters in a filename or  directory, '***  /' matches zero or more files or directories and matches recursively in a directory tree.  If a pattern terminates with "/" it will only match directories.  The pattern '***'' is equivalent to '***  / *'' (ignore spaces).  The Posix "[]" and "{a,b}" style expressions are not supported. [default: *]</td></tr><tr class='param'><td class='param'>options </td><td>Optional properties to control the matching. [default: expression]</td></tr></table></dd>
+</dl><dl><dt>Options</dt>
+<dd><table class='parameters' summary ='options'>
+<td class='param'>depthFirst</td><td>Do a depth first traversal. If "dirs" is specified, the directories will be shown after the files in the directory. Otherwise, directories will be listed first.</td></tr>
+<td class='param'>exclude</td><td>Regular expression pattern of files to exclude from the results. Matches the entire path. Only for the purpose of this match, directories will have "/" appended. To exclude directories in the results, use {exclude: /\//}. The trailing "/" will not be returned in the results.</td></tr>
+<td class='param'>hidden</td><td>Include hidden files starting with ".".</td></tr>
+<td class='param'>include</td><td>Regular expression pattern of files to include in the results. Matches the entire returned path. Only for the purpose of this match, directories will have "/" appended. To include only directories in the results, use {include: /\/<a href='#/}'>/}</a>. </td></tr>
+<td class='param'>missing</td><td>Set to undefined to report patterns that don't resolve into any files or directories  by throwing an exception. Set to any non-null value to be used in the results when there are no matching files or directories. Set to the empty string to use the patterns in the results and set to null to do nothing.</td></tr>
+<td class='param'>relative</td><td>Return paths relative to the Path, otherwise result entries include the Path. Defaults to false.</td></tr>
+</table></dd>
 </dl><dl><dt>Returns</dt>
-<dd>Return a list of matching files.</dd></dl>
+<dd>An Array of Path objects for each file in the directory.</dd></dl>
 </div>
 </div>
 <hr />
@@ -1709,15 +1779,23 @@ in the path.</dd></dl>
 <hr />
 <a name='ls'></a>
 <div class='api'>
-<div class='apiSig'>  ejs.unix  ls(path: <a href='String.html'>String</a> = ., enumDirs: <a href='Boolean.html'>Boolean</a> = false): <a href='Array.html'>Array</a>
+<div class='apiSig'>  ejs.unix  ls(patterns = *, options: <a href='Object.html'>Object</a> = null): <a href='Array.html'>Array</a>
 </div>
 <div class='apiDetail'>
-<dl><dt>Description</dt></dd><dd>Get a list of files in a directory. The returned array contains the base file name portion only.</dd></dl>
+<dl><dt>Description</dt></dd><dd>Get a list of files in a directory. </dd></dl>
 <dl><dt>Parameters</dt>
 <dd><table class='parameters' summary ='parameters'>
-<tr class='param'><td class='param'>path: <a href='String.html'>String</a> </td><td>Directory path to enumerate. [default: .]</td></tr><tr class='param'><td class='param'>enumDirs: <a href='Boolean.html'>Boolean</a> </td><td>If set to true, then dirList will include sub-directories in the returned list of files. [default: false]</td></tr></table></dd>
+<tr class='param'><td class='param'>patterns </td><td>Pattern to match files. This can be a String, Path or array of String/Paths.  The wildcards "*"", "***"" and "?" are the only wild card patterns supported. The "***"" pattern matches every directory. The Posix "[]" and "{a,b}" style expressions are not supported. [default: *]</td></tr><tr class='param'><td class='param'>options: <a href='Object.html'>Object</a> </td><td>If set to true, then files will include sub-directories in the returned list of files. [default: null]</td></tr></table></dd>
+</dl><dl><dt>Options</dt>
+<dd><table class='parameters' summary ='options'>
+<td class='param'>dirs</td><td>Include directories in the file list.</td></tr>
+<td class='param'>depthFirst</td><td>Do a depth first traversal. If "dirs" is specified, the directories will be shown after the files in the directory. Otherwise, directories will be listed first.</td></tr>
+<td class='param'>exclude</td><td>Regular expression pattern of files to exclude from the results. Matches the entire path.</td></tr>
+<td class='param'>hidden</td><td>Show hidden files starting with ".".</td></tr>
+<td class='param'>include</td><td>Regular expression pattern of files to include in the results. Matches the entire returned path.</td></tr>
+</table></dd>
 </dl><dl><dt>Returns</dt>
-<dd>An Array of strings containing the filenames in the directory.</dd></dl>
+<dd>An Array of Path objects for each matching file.</dd></dl>
 </div>
 </div>
 <hr />
@@ -1855,14 +1933,18 @@ strings by calling their toString method.</dd></dl>
 <hr />
 <a name='printf'></a>
 <div class='api'>
-<div class='apiSig'>    printf(fmt, args: <a href='Array.html'>Array</a>): <a href='Void.html'>Void</a>
+<div class='apiSig'>    printf(fmt: <a href='String.html'>String</a>, args: <a href='Array.html'>Array</a>): <a href='Void.html'>Void</a>
 </div>
 <div class='apiDetail'>
-<dl><dt>Description</dt></dd><dd>Print the arguments using a printf style format string. </dd></dl>
+<dl><dt>Description</dt></dd><dd>Print the arguments to the standard output using the supplied format template. This call evaluates the arguments, 
+converts the result to strings and invokes String.format to format the args. The result is then printed to the
+standard output. Arguments are converted to strings by calling their toString method.</dd></dl>
 <dl><dt>Parameters</dt>
 <dd><table class='parameters' summary ='parameters'>
-<tr class='param'><td class='param'>fmt </td><td>Format string.</td></tr><tr class='param'><td class='param'>args: <a href='Array.html'>Array</a> </td><td>Variables to print.</td></tr></table></dd>
-</dl></div>
+<tr class='param'><td class='param'>fmt: <a href='String.html'>String</a> </td><td>Format specifier.</td></tr><tr class='param'><td class='param'>args: <a href='Array.html'>Array</a> </td><td>Variables to print.</td></tr></table></dd>
+</dl><dl><dt>Specified</dt>
+<dd>ejscript-2.0</dd></dl>
+</div>
 </div>
 <hr />
 <a name='pwd'></a>
@@ -1878,32 +1960,43 @@ strings by calling their toString method.</dd></dl>
 <hr />
 <a name='rm'></a>
 <div class='api'>
-<div class='apiSig'>  ejs.unix  rm(path: <a href='Path.html'>Path</a>): <a href='Void.html'>Void</a>
+<div class='apiSig'>  ejs.unix  rm(patterns, options = expression): <a href='Boolean.html'>Boolean</a>
 </div>
 <div class='apiDetail'>
-<dl><dt>Description</dt></dd><dd>Remove a file from the file system. </dd></dl>
+<dl><dt>Description</dt></dd><dd>Remove files from the file system. </dd></dl>
 <dl><dt>Parameters</dt>
 <dd><table class='parameters' summary ='parameters'>
-<tr class='param'><td class='param'>path: <a href='Path.html'>Path</a> </td><td>Filename path to delete.</td></tr></table></dd>
-</dl><dl><dt>Throws</dt><dd>
-<a href='IOError.html'>IOError</a>: if the file exists and cannot be removed.
-</dd>
-</dl></div>
+<tr class='param'><td class='param'>patterns </td><td>Pattern to match files to remove. This can be a String, Path or array of String/Paths.  The wildcards "*"", "***"" and "?" are the only wild card patterns supported. The "***"" pattern matches every directory. The Posix "[]" and "{a,b}" style expressions are not supported.</td></tr><tr class='param'><td class='param'>options </td><td>Options to modify the removal. [default: expression]</td></tr></table></dd>
+</dl><dl><dt>Options</dt>
+<dd><table class='parameters' summary ='options'>
+<td class='param'>exclude</td><td>Regular expression pattern of files to exclude from removal. Matches the entire path.</td></tr>
+<td class='param'>hidden</td><td>Remove hidden files starting with "." Defaults to true.</td></tr>
+<td class='param'>include</td><td>Regular expression pattern of files to remove. Matches the entire returned path.</td></tr>
+<td class='param'>nodirs</td><td>Exclude directories from removal. The default is to include directories.</td></tr>
+</table></dd>
+</dl><dl><dt>Returns</dt>
+<dd>True if all the contents are sucessfully deleted. Otherwise return false.</dd></dl>
+</div>
 </div>
 <hr />
 <a name='rmdir'></a>
 <div class='api'>
-<div class='apiSig'>  ejs.unix  rmdir(path: <a href='Path.html'>Path</a>, contents: <a href='Boolean.html'>Boolean</a> = false): <a href='Void.html'>Void</a>
+<div class='apiSig'>  ejs.unix  rmdir(patterns, options = expression): <a href='Boolean.html'>Boolean</a>
 </div>
 <div class='apiDetail'>
-<dl><dt>Description</dt></dd><dd>Removes a directory. This can remove a directory and its contents.</dd></dl>
+<dl><dt>Description</dt></dd><dd>Removes a directory and contents. </dd></dl>
 <dl><dt>Parameters</dt>
 <dd><table class='parameters' summary ='parameters'>
-<tr class='param'><td class='param'>path: <a href='Path.html'>Path</a> </td><td>Filename path to remove.</td></tr><tr class='param'><td class='param'>contents: <a href='Boolean.html'>Boolean</a> </td><td>If true, remove the directory contents including files and sub-directories. [default: false]</td></tr></table></dd>
-</dl><dl><dt>Throws</dt><dd>
-<a href='IOError.html'>IOError</a>: if the directory exists and cannot be removed.
-</dd>
-</dl></div>
+<tr class='param'><td class='param'>patterns </td><td>Pattern to match files to delete. This can be a String, Path or array of String/Paths.  The wildcards "*"", "***"" and "?" are the only wild card patterns supported. The "***"" pattern matches every directory. The Posix "[]" and "{a,b}" style expressions are not supported.</td></tr><tr class='param'><td class='param'>options </td><td>Options to modify the removal. [default: expression]</td></tr></table></dd>
+</dl><dl><dt>Options</dt>
+<dd><table class='parameters' summary ='options'>
+<td class='param'>exclude</td><td>Regular expression pattern of files to exclude from removal. Matches the entire path.</td></tr>
+<td class='param'>hidden</td><td>Remove hidden files starting with ".".</td></tr>
+<td class='param'>include</td><td>Regular expression pattern of files to remove. Matches the entire returned path.</td></tr>
+</table></dd>
+</dl><dl><dt>Returns</dt>
+<dd>True if all the contents are sucessfully deleted or if the directory does not exist. Otherwise return false.</dd></dl>
+</div>
 </div>
 <hr />
 <a name='serialize'></a>
@@ -1920,11 +2013,13 @@ until all properties are rendered.  NOTE: the maxDepth, all and base properties 
 </dl><dl><dt>Options</dt>
 <dd><table class='parameters' summary ='options'>
 <td class='param'>baseClasses</td><td>Boolean determining if base class properties will be serialized. Defaults to false.</td></tr>
+<td class='param'>commas</td><td>Boolean Always put commas after the last property in an object. Defaults to false.</td></tr>
 <td class='param'>depth</td><td>Number indiciating the depth to recurse when converting properties to literals. If set to zero,  the depth is infinite. Defaults to zero.</td></tr>
 <td class='param'>indent</td><td>Number|String Indentation of nested structures. If omitted, the result is packed without any whitespace. If a number, it represents the number of spaces to indent at each level. If a string, it is contains the characters to indent. If the <a href='#pretty'>pretty</a> argument is true, it overrides indent.</td></tr>
 <td class='param'>hidden</td><td>Booean determining if hidden properties are serialized. If true, hidden properties will be serialized. Defaults to false.</td></tr>
 <td class='param'>namespaces</td><td>Boolean determining if properties will also display their namespace attributes. Default is false.</td></tr>
 <td class='param'>pretty</td><td>Boolean determining if a human readable output is used with new lines after each property.  Default is false.</td></tr>
+<td class='param'>quotes</td><td>Boolean If false, emit property names without quotes if they do not contain spaces.</td></tr>
 <td class='param'>replacer</td><td>An optional parameter that determines how object values are stringified for objects without a  toJSON method.  The replace has the following signature:  function replacer(key: String, value: String): String.</td></tr>
 </table></dd>
 </dl><dl><dt>Returns</dt>
@@ -2071,7 +2166,7 @@ Ejscript underlying type name. This call is an alias for Object.getTypeName(o).<
 <hr />
 <div class="terms">
    <p class="terms">
-       <a href="http://www.embedthis.com/">       Embedthis Software LLC, 2003-2011. All rights reserved. Embedthis is a trademark of Embedthis Software LLC.</a>
+       <a href="http://embedthis.com/">       Embedthis Software LLC, 2003-2012. All rights reserved. Embedthis is a trademark of Embedthis Software LLC.</a>
    </p>
 </div></div>
 </div>

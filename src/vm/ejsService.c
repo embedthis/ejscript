@@ -10,14 +10,12 @@
 
 /*********************************** Forward **********************************/
 
-static int allocNotifier(int flags, ssize size);
 static void cloneProperties(Ejs *ejs, Ejs *master);
 static int  configureEjs(Ejs *ejs);
 static void defineSharedTypes(Ejs *ejs);
 static void initSearchPath(Ejs *ejs, cchar *search);
 static void initStack(Ejs *ejs);
 static int  loadRequiredModules(Ejs *ejs, MprList *require);
-static void logHandler(int flags, int level, cchar *msg);
 static void manageEjs(Ejs *ejs, int flags);
 static void manageEjsService(EjsService *service, int flags);
 static void poolTimer(EjsPool *pool, MprEvent *event);
@@ -36,12 +34,11 @@ static EjsService *createService()
     if ((sp = mprAllocObj(EjsService, manageEjsService)) == NULL) {
         return 0;
     }
-    mprGlobalUnlock();
+    mprGlobalLock();
     MPR->ejsService = sp;
+#if FUTURE && KEEP
     mprSetMemNotifier((MprMemNotifier) allocNotifier);
-    if (mprUsingDefaultLogHandler()) {
-        ejsRedirectLogging(0);
-    }
+#endif
     sp->nativeModules = mprCreateHash(-1, MPR_HASH_STATIC_KEYS);
     sp->mutex = mprCreateLock();
     sp->vmlist = mprCreateList(-1, MPR_LIST_STATIC_VALUES);
@@ -89,7 +86,7 @@ Ejs *ejsCreateVM(int argc, cchar **argv, int flags)
     ejs->state = mprAllocZeroed(sizeof(EjsState));
     ejs->argc = argc;
     ejs->argv = argv;
-    ejs->name = mprAsprintf("ejs-%d", sp->seqno++);
+    ejs->name = sfmt("ejs-%d", sp->seqno++);
     ejs->dispatcher = mprCreateDispatcher(ejs->name, 1);
     ejs->mutex = mprCreateLock(ejs);
     ejs->dontExit = sp->dontExit;
@@ -116,6 +113,7 @@ Ejs *ejsCreateVM(int argc, cchar **argv, int flags)
         mprError("Can't create VM");
         return 0;
     }
+    mprLog(5, "ejs: create VM");
     return ejs;
 }
 
@@ -127,15 +125,11 @@ Ejs *ejsCloneVM(Ejs *master)
     int         next;
 
     if (master) {
-        //  MOB - cleanup
-        extern int cloneCopy;
         mprAssert(!master->empty);
-        cloneCopy = 0;
         if ((ejs = ejsCreateVM(master->argc, master->argv, master ? master->flags : 0)) == 0) {
             return 0;
         }
         cloneProperties(ejs, master);
-        // printf("CLONE copied %d properties\n", cloneCopy);
         ejsFixTraits(ejs, ejs->global);
         ejs->sqlite = master->sqlite;
         ejs->http = master->http;
@@ -212,6 +206,7 @@ void ejsDestroyVM(Ejs *ejs)
             mprDestroyDispatcher(ejs->dispatcher);
         }
     }
+    mprLog(5, "ejs: destroy VM");
 }
 
 
@@ -223,27 +218,9 @@ static void manageEjs(Ejs *ejs, int flags)
     int         next;
 
     if (flags & MPR_MANAGE_MARK) {
-        mprMark(ejs->global);
         mprMark(ejs->name);
-        mprMark(ejs->doc);
-        mprMark(ejs->errorMsg);
         mprMark(ejs->exception);
-        mprMark(ejs->exceptionArg);
-        mprMark(ejs->mutex);
         mprMark(ejs->result);
-        mprMark(ejs->search);
-        mprMark(ejs->dispatcher);
-        mprMark(ejs->httpServers);
-        mprMark(ejs->workers);
-        mprMark(ejs->hostedHome);
-
-        for (next = 0; (mp = mprGetNextItem(ejs->modules, &next)) != 0;) {
-            if (!mp->initialized) {
-                mprMark(mp);
-            }
-        }
-        mprMark(ejs->modules);
-
         /*
             Mark active call stack
          */
@@ -267,6 +244,26 @@ static void manageEjs(Ejs *ejs, int flags)
                 }
             }
         }
+        mprMark(ejs->service);
+        mprMark(ejs->global);
+        mprMark(ejs->search);
+        mprMark(ejs->className);
+        mprMark(ejs->methodName);
+        mprMark(ejs->errorMsg);
+        mprMark(ejs->hostedHome);
+        mprMark(ejs->exceptionArg);
+        mprMark(ejs->dispatcher);
+        mprMark(ejs->workers);
+        for (next = 0; (mp = mprGetNextItem(ejs->modules, &next)) != 0;) {
+            if (!mp->initialized) {
+                mprMark(mp);
+            }
+        }
+        mprMark(ejs->modules);
+        mprMark(ejs->httpServers);
+        mprMark(ejs->doc);
+        mprMark(ejs->http);
+        mprMark(ejs->mutex);
 
     } else if (flags & MPR_MANAGE_FREE) {
         ejsDestroyVM(ejs);
@@ -278,15 +275,19 @@ static void managePool(EjsPool *pool, int flags)
 {
     if (flags & MPR_MANAGE_MARK) {
         mprMark(pool->list);
+        mprMark(pool->timer);
         mprMark(pool->mutex);
         mprMark(pool->template);
         mprMark(pool->templateScript);
         mprMark(pool->startScript);
         mprMark(pool->startScriptPath);
+        mprMark(pool->hostedHome);
     }
 }
 
-
+/*
+    Create a pool for virtual machines
+ */
 EjsPool *ejsCreatePool(int poolMax, cchar *templateScript, cchar *startScript, cchar *startScriptPath, char *home)
 {
     EjsPool     *pool;
@@ -343,14 +344,14 @@ Ejs *ejsAllocPoolVM(EjsPool *pool, int flags)
             }
             if (pool->templateScript) {
                 script = ejsCreateStringFromAsc(pool->template, pool->templateScript);
-                paused = ejsPauseGC(pool->template);
+                paused = ejsBlockGC(pool->template);
                 if (ejsLoadScriptLiteral(pool->template, script, NULL, EC_FLAGS_NO_OUT | EC_FLAGS_BIND) < 0) {
                     mprError("Can't execute \"%@\"\n%s", script, ejsGetErrorMsg(pool->template, 1));
                     unlock(pool);
-                    ejsResumeGC(pool->template, paused);
+                    ejsUnblockGC(pool->template, paused);
                     return 0;
                 }
-                ejsResumeGC(pool->template, paused);
+                ejsUnblockGC(pool->template, paused);
             }
         }
         unlock(pool);
@@ -372,7 +373,7 @@ Ejs *ejsAllocPoolVM(EjsPool *pool, int flags)
         } else if (pool->startScript) {
             script = ejsCreateStringFromAsc(ejs, pool->startScript);
             if (ejsLoadScriptLiteral(ejs, script, NULL, EC_FLAGS_NO_OUT | EC_FLAGS_BIND) < 0) {
-                mprError("Can't load \"%s\"\n%s", script, ejsGetErrorMsg(ejs, 1));
+                mprError("Can't load \"%@\"\n%s", script, ejsGetErrorMsg(ejs, 1));
                 mprRemoveRoot(ejs);
                 return 0;
             }
@@ -384,8 +385,8 @@ Ejs *ejsAllocPoolVM(EjsPool *pool, int flags)
     mprLog(5, "ejs: Alloc VM active %d, allocated %d, max %d", pool->count - mprGetListLength(pool->list), 
         pool->count, pool->max);
 
-    if (!mprGetDebugMode()) {
-        pool->timer = mprCreateTimerEvent(NULL, "ejsPoolTimer", HTTP_TIMER_PERIOD, poolTimer, pool,
+    if (!pool->timer && !mprGetDebugMode()) {
+        pool->timer = mprCreateTimerEvent(NULL, "ejsPoolTimer", EJS_POOL_INACTIVITY_TIMEOUT, poolTimer, pool,
             MPR_EVENT_CONTINUOUS | MPR_EVENT_QUICK);
     }
     return ejs;
@@ -396,7 +397,9 @@ void ejsFreePoolVM(EjsPool *pool, Ejs *ejs)
 {
     mprAssert(pool);
     mprAssert(ejs);
+    mprAssert(!ejs->exception);
 
+    ejs->exception = 0;
     pool->lastActivity = mprGetTime();
     mprPushItem(pool->list, ejs);
     mprLog(5, "ejs: Free VM, active %d, allocated %d, max %d", pool->count - mprGetListLength(pool->list), pool->count,
@@ -409,6 +412,9 @@ static void poolTimer(EjsPool *pool, MprEvent *event)
     if (mprGetElapsedTime(pool->lastActivity) > EJS_POOL_INACTIVITY_TIMEOUT && !mprGetDebugMode()) {
         pool->template = 0;
         mprClearList(pool->list);
+        pool->count = 0;
+        mprLog(5, "ejs: Release %d VMs in inactive pool. Invoking GC.", pool->count);
+        mprRequestGC(MPR_FORCE_GC);
     }
 }
 
@@ -467,11 +473,13 @@ static void defineSharedTypes(Ejs *ejs)
     ejsCreateGlobalNamespaces(ejs);
     ejsAddNativeModule(ejs, "ejs", configureEjs, _ES_CHECKSUM_ejs, 0);
 
-#if BLD_FEATURE_EJS_ALL_IN_ONE
-#if BLD_FEATURE_SQLITE
+#if UNUSED
+#if BIT_FEATURE_EJSRIPT_ALL_IN_ONE
+#if BIT_FEATURE_SQLITE
     ejs_db_sqlite_Init(ejs, NULL);
 #endif
     ejs_web_Init(ejs, NULL);
+#endif
 #endif
 }
 
@@ -507,13 +515,9 @@ static void cloneProperties(Ejs *ejs, Ejs *master)
             vp = ejs->global;
             immutable = 1;
         }
-        if (immutable) {
-            //  MOB - cleanup
-            // mprLog(0, "REF   %d, %N", i, qname);
-        } else {
+        if (!immutable) {
             mvp = vp;
             vp = ejsClone(ejs, mvp, 1);
-            // mprLog(0, "CLONE %d %N from %p to %p", i, qname, mvp, vp);
         }
         ejsSetProperty(ejs, ejs->global, i, vp);
     }
@@ -607,7 +611,7 @@ static int loadRequiredModules(Ejs *ejs, MprList *require)
     int     rc, next, paused;
 
     rc = 0;
-    paused = ejsPauseGC(ejs);
+    paused = ejsBlockGC(ejs);
     if (require) {
         for (next = 0; rc == 0 && (name = mprGetNextItem(require, &next)) != 0; ) {
             rc += ejsLoadModule(ejs, ejsCreateStringFromAsc(ejs, name), 0, 0, EJS_LOADER_STRICT);
@@ -616,7 +620,7 @@ static int loadRequiredModules(Ejs *ejs, MprList *require)
         rc += ejsLoadModule(ejs, ejsCreateStringFromAsc(ejs, "ejs"), 0, 0, EJS_LOADER_STRICT);
     }
     ejsFreezeGlobal(ejs);
-    ejsResumeGC(ejs, paused);
+    ejsUnblockGC(ejs, paused);
     return rc;
 }
 
@@ -647,7 +651,7 @@ void ejsSetSearchPath(Ejs *ejs, EjsArray *paths)
 EjsArray *ejsCreateSearchPath(Ejs *ejs, cchar *search)
 {
     EjsArray    *ap;
-    char        *relModDir, *dir, *next, *tok;
+    char        *dir, *next, *tok;
 
     ap = ejsCreateArray(ejs, 0);
 
@@ -660,20 +664,16 @@ EjsArray *ejsCreateSearchPath(Ejs *ejs, cchar *search)
         }
         return (EjsArray*) ap;
     }
-    relModDir = 0;
-#if VXWORKS
-    ejsSetProperty(ejs, ap, -1, ejsCreatePathFromAsc(ejs, mprGetCurrentPath(ejs)));
-#else
+
     /*
         Create a default search path
-        "." : APP_EXE_DIR/../modules : /usr/lib/ejs/1.0.0/modules
+        "." : APP_EXE_DIR/../lib : /usr/lib/ejs/1.0.0/lib
      */
     ejsSetProperty(ejs, ap, -1, ejsCreatePathFromAsc(ejs, "."));
-    relModDir = mprAsprintf("%s/../%s", mprGetAppDir(ejs), BLD_MOD_NAME);
-    ejsSetProperty(ejs, ap, -1, ejsCreatePathFromAsc(ejs, mprGetAppDir(ejs)));
-    relModDir = mprAsprintf("%s/../%s", mprGetAppDir(ejs), BLD_MOD_NAME);
-    ejsSetProperty(ejs, ap, -1, ejsCreatePathFromAsc(ejs, mprGetAbsPath(relModDir)));
-    ejsSetProperty(ejs, ap, -1, ejsCreatePathFromAsc(ejs, BLD_MOD_PREFIX));
+    ejsSetProperty(ejs, ap, -1, ejsCreatePathFromAsc(ejs, mprGetAppDir()));
+    ejsSetProperty(ejs, ap, -1, ejsCreatePathFromAsc(ejs, mprGetAppDir()));
+#if !VXWORKS
+    ejsSetProperty(ejs, ap, -1, ejsCreatePathFromAsc(ejs, BIT_BIN_PREFIX));
 #endif
     return (EjsArray*) ap;
 }
@@ -686,8 +686,7 @@ int ejsEvalModule(cchar *path)
     int             status;
 
     status = 0;
-
-    if ((mpr = mprCreate(0, NULL, 0)) != 0) {
+    if ((mpr = mprCreate(0, NULL, 0)) == 0) {
         status = MPR_ERR_MEMORY;
 
     } else if ((ejs = ejsCreateVM(0, 0, 0)) == 0) {
@@ -723,10 +722,14 @@ static int runProgram(Ejs *ejs, MprEvent *event)
 
 int ejsRunProgram(Ejs *ejs, cchar *className, cchar *methodName)
 {
-    mprAssert(ejs->result == 0 || (MPR_GET_GEN(MPR_GET_MEM(ejs->result)) != MPR->heap.dead));
+    mprAssert(ejs->result == 0 || (MPR_GET_GEN(MPR_GET_MEM(ejs->result)) != MPR->heap->dead));
 
-    ejs->className = className;
-    ejs->methodName = methodName;
+    if (className) {
+        ejs->className = sclone(className);
+    }
+    if (methodName) {
+        ejs->methodName = sclone(methodName);
+    }
     mprRelayEvent(ejs->dispatcher, (MprEventProc) runProgram, ejs, NULL);
 
     if (ejs->exception) {
@@ -751,13 +754,17 @@ static int runSpecificMethod(Ejs *ejs, cchar *className, cchar *methodName)
     if (className == 0 && methodName == 0) {
         return 0;
     }
+    if (className) {
+        className = sclone(className);
+    }
     if (methodName == 0) {
         methodName = "main";
     }
+    methodName = sclone(methodName);
     /*  
         Search for the first class with the given name
      */
-    if (className == 0) {
+    if (className == 0 || *className == '\0') {
         if (searchForMethod(ejs, methodName, &type) < 0) {
             return EJS_ERR;
         }
@@ -930,83 +937,6 @@ static int searchForMethod(Ejs *ejs, cchar *methodName, EjsType **typeReturn)
 }
 
 
-static void logHandler(int flags, int level, cchar *msg)
-{
-    char        *prefix, *tag, *amsg, lbuf[16], buf[MPR_MAX_STRING];
-    static int  solo = 0;
-
-    if (solo > 0) {
-        return;
-    }
-    solo = 1;
-    prefix = MPR->name;
-    amsg = NULL;
-
-    if (flags & MPR_WARN_SRC) {
-        tag = "Warning";
-    } else if (flags & MPR_ERROR_SRC) {
-        tag = "Error";
-    } else if (flags & MPR_FATAL_SRC) {
-        tag = "Fatal";
-    } else if (flags & MPR_RAW) {
-        tag = NULL;
-    } else {
-        tag = itos(lbuf, sizeof(lbuf), level, 10);
-    }
-    if (tag) {
-        if (strlen(msg) < (MPR_MAX_STRING - 32)) {
-            /* Avoid allocation if possible */
-            mprSprintf(buf, sizeof(buf), "%s: %s: %s\n", prefix, tag, msg);
-            msg = buf;
-        } else {
-            msg = amsg = mprAsprintf("%s: %s: %s\n", prefix, tag, msg);
-        }
-    }
-    if (MPR->logFile) {
-        mprFprintf(MPR->logFile, "%s", msg);
-    } else {
-        mprPrintfError("%s", msg);
-    }
-    solo = 0;
-}
-
-
-int ejsRedirectLogging(cchar *logSpec)
-{
-    MprFile     *file;
-    char        *spec, *levelSpec;
-    int         level;
-
-    level = 0;
-    if (logSpec == 0) {
-        logSpec = "stderr:1";
-    }
-    spec = sclone(logSpec);
-
-    if ((levelSpec = strchr(spec, ':')) != 0) {
-        *levelSpec++ = '\0';
-        level = atoi(levelSpec);
-    }
-    if (strcmp(spec, "stdout") == 0) {
-        file = MPR->fileSystem->stdOutput;
-
-    } else if (strcmp(spec, "stderr") == 0) {
-        file = MPR->fileSystem->stdError;
-
-    } else {
-        //  TODO - should provide some means to append to the log
-        if ((file = mprOpenFile(spec, O_CREAT | O_WRONLY | O_TRUNC | O_TEXT, 0664)) == 0) {
-            mprPrintfError("Can't open log file %s\n", spec);
-            return EJS_ERR;
-        }
-    }
-    mprSetLogLevel(level);
-    mprSetLogHandler(logHandler);
-    mprSetLogFile(file);
-    return 0;
-}
-
-
 void ejsRedirectLoggingToFile(MprFile *file, int level)
 {
     if (level >= 0) {
@@ -1018,7 +948,7 @@ void ejsRedirectLoggingToFile(MprFile *file, int level)
 }
 
 
-int ejsPauseGC(Ejs *ejs)
+int ejsBlockGC(Ejs *ejs)
 {
     int     paused;
 
@@ -1028,31 +958,12 @@ int ejsPauseGC(Ejs *ejs)
 }
 
 
-void ejsResumeGC(Ejs *ejs, int paused)
+void ejsUnblockGC(Ejs *ejs, int paused)
 {
     mprAssert(paused != -1);
     if (paused != -1) {
         ejs->state->paused = paused;
     }
-}
-
-
-/*  
-    Global memory allocation handler. This is invoked when there is no notifier to handle an allocation failure.
-    The interpreter has an allocNotifier (see ejsService: allocNotifier) and it will handle allocation errors.
- */
-static int allocNotifier(int flags, ssize size)
-{
-    if (flags & MPR_MEM_DEPLETED) {
-        mprPrintfError("Can't allocate memory block of size %d\n", size);
-        mprPrintfError("Total memory used %d\n", (int) mprGetMem());
-        exit(255);
-
-    } else if (flags & MPR_MEM_LOW) {
-        mprPrintfError("Memory request for %d bytes exceeds memory red-line\n", size);
-        mprPrintfError("Total memory used %d\n", (int) mprGetMem());
-    }
-    return 0;
 }
 
 
@@ -1115,7 +1026,7 @@ void ejsReportError(Ejs *ejs, char *fmt, ...)
         msg = (char*) emsg;
         buf = 0;
     } else {
-        msg = buf = mprAsprintfv(fmt, arg);
+        msg = buf = sfmtv(fmt, arg);
     }
     if (ejs->exception) {
         char *name = MPR->name;
@@ -1203,11 +1114,12 @@ void ejsDisableExit(Ejs *ejs)
     }
 }
 
+
 /*
     @copy   default
  
-    Copyright (c) Embedthis Software LLC, 2003-2011. All Rights Reserved.
-    Copyright (c) Michael O'Brien, 1993-2011. All Rights Reserved.
+    Copyright (c) Embedthis Software LLC, 2003-2012. All Rights Reserved.
+    Copyright (c) Michael O'Brien, 1993-2012. All Rights Reserved.
 
     This software is distributed under commercial and open source licenses.
     You may use the GPL open source license described below or you may acquire
@@ -1219,7 +1131,7 @@ void ejsDisableExit(Ejs *ejs)
     under the terms of the GNU General Public License as published by the
     Free Software Foundation; either version 2 of the License, or (at your
     option) any later version. See the GNU General Public License for more
-    details at: http://www.embedthis.com/downloads/gplLicense.html
+    details at: http://embedthis.com/downloads/gplLicense.html
 
     This program is distributed WITHOUT ANY WARRANTY; without even the
     implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.
@@ -1228,7 +1140,7 @@ void ejsDisableExit(Ejs *ejs)
     proprietary programs. If you are unable to comply with the GPL, you must
     acquire a commercial license to use this software. Commercial licenses
     for this software and support services are available from Embedthis
-    Software at http://www.embedthis.com
+    Software at http://embedthis.com
 
     Local variables:
     tab-width: 4

@@ -80,6 +80,20 @@ module ejs {
         native function endsWith(test: String): Boolean
 
         /**
+            Replace tokens in the string and return an expanded string.
+            Tokens are represented by '${field}' where field may contain '.'. For example ${user.name}.
+            To preserve an ${token} unmodified, preceed the token with an extra '$'. For example: $${token}.
+            @param obj containing tokens to expand
+            @param options Options hash
+            @option fill Set to a string to use for missing properties. Set to undefined or omit options to 
+                throw an exception for missing properties. Set fill to '${}' to preserve undefined tokens as-is. 
+                This permits multi-pass expansions.
+            @option join Character to use to join array elements. Defaults to space.
+            @return Expanded string
+         */ 
+        native function expand(obj: Object, options: Object = null): String
+
+        /**
             Format arguments as a string. Use the string as a format specifier. The format specifier has the form:
             %[-+ #,][width][precision][type]. See printf(1) for the meaning of the various fields.
             @param args Array containing the data to format. 
@@ -120,6 +134,7 @@ module ejs {
          */
         native function indexOf(pattern: String, startIndex: Number = 0): Number
 
+        //  MOB - should be isNumber
         /**
             Is there is at least one character in the string and all characters are digits.
             @spec ejs
@@ -245,7 +260,6 @@ module ejs {
          */
         native function remove(start: Number, end: Number = -1): String
 
-//  MOB firefox replace(pattern, replacement, flags)
         /**
             Search and replace. Search for the given pattern which can be either a string or a regular expression 
             and replace it with the replace text. If the pattern is a string, only the first occurrence is replaced.
@@ -262,7 +276,7 @@ module ejs {
             @return Returns a new string.
             @spec ejs
          */
-        native function replace(pattern: Object, replacement: Object): String
+        native function replace(pattern: Object, replacement: Object, flags: String = null): String
 
         /**
             Reverse a string. 
@@ -382,6 +396,14 @@ module ejs {
         override native function toString(): String
 
         /**
+            Convert the string to a path
+            @return Returns an equivalent Path object
+            @spec ejs
+         */
+        function toPath(): Path
+            this cast Path
+
+        /**
             Convert the string to upper case.
             @return Returns a new upper case version of the string.
             @spec ejs
@@ -401,7 +423,7 @@ module ejs {
         //  TODO - great if this could take a regexp
         /**
             Returns a trimmed copy of the string. Normally used to trim white space, but can be used to trim any 
-            substring from the start or end of the string.
+            substring from the start and end of the string.
             @param str May be set to a substring to trim from the string. If not set, it defaults to any white space.
             @return Returns a (possibly) modified copy of the string
          */
@@ -517,8 +539,8 @@ module ejs {
 /*
     @copy   default
     
-    Copyright (c) Embedthis Software LLC, 2003-2011. All Rights Reserved.
-    Copyright (c) Michael O'Brien, 1993-2011. All Rights Reserved.
+    Copyright (c) Embedthis Software LLC, 2003-2012. All Rights Reserved.
+    Copyright (c) Michael O'Brien, 1993-2012. All Rights Reserved.
     
     This software is distributed under commercial and open source licenses.
     You may use the GPL open source license described below or you may acquire 

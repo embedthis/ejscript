@@ -2,14 +2,14 @@
     async.tst
  */
 
-let ejs = App.exePath.portable
+let ejs = Cmd.locate('ejs')
 
 if (!Path("/bin").exists) {
     test.skip("Only run on unix systems")
 } else {
 
     //  Async I/O
-    cmd = Cmd("/bin/echo Hello World", {detach: true})
+    cmd = Cmd("echo Hello World", {detach: true})
     let data = new ByteArray
     cmd.on("readable", function(event, c) {
         assert(event == "readable")

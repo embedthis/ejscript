@@ -10,8 +10,7 @@
 
 /********************************** Includes **********************************/
 
-#include    "ejs.h"
-#include    "ecCompiler.h"
+#include    "ejsCompiler.h"
 
 /*********************************** Locals ***********************************/
 
@@ -36,7 +35,7 @@ static ReservedWord keywords[] =
   { "class",            G_RESERVED,         T_CLASS,                    0, },
   { "const",            G_CONREV,           T_CONST,                    0, },
   { "continue",         G_RESERVED,         T_CONTINUE,                 0, },
-  { "default",          G_RESERVED,         T_DEFAULT,                  0, },
+  { "default",          G_CONREV,           T_DEFAULT,                  0, },
   { "delete",           G_RESERVED,         T_DELETE,                   0, },
   { "do",               G_RESERVED,         T_DO,                       0, },
   { "dynamic",          G_CONREV,           T_ATTRIBUTE,                T_DYNAMIC, },
@@ -54,7 +53,9 @@ static ReservedWord keywords[] =
   { "if",               G_RESERVED,         T_IF,                       0, },
   { "implements",       G_CONREV,           T_IMPLEMENTS,               0, },
   { "in",               G_RESERVED,         T_IN,                       0, },
+#if UNUSED
   { "include",          G_CONREV,           T_INCLUDE,                  0, },
+#endif
   { "instanceof",       G_RESERVED,         T_INSTANCEOF,               0, },
   { "interface",        G_CONREV,           T_INTERFACE,                0, },
   { "internal",         G_CONREV,           T_RESERVED_NAMESPACE,       T_INTERNAL, },
@@ -140,7 +141,7 @@ void ecInitLexer(EcCompiler *cp)
         return;
     }
     for (rp = keywords; rp->name; rp++) {
-#if BLD_CHAR_LEN > 1
+#if BIT_CHAR_LEN > 1
         rp->name = amtow(cp->keywords, rp->name, NULL);
 #endif
         mprAddKey(cp->keywords, rp->name, rp);
@@ -197,7 +198,7 @@ int ecGetToken(EcCompiler *cp)
          */
         switch (c) {
         default:
-            if (isdigit(c)) {
+            if (isdigit((uchar) c)) {
                 return makeNumberToken(cp, tp, c);
 
             } else if (c == '\\') {
@@ -208,7 +209,7 @@ int ecGetToken(EcCompiler *cp)
                 putBackChar(stream, c);
                 c = '\n';
             }
-            if (isalpha(c) || c == '_' || c == '\\' || c == '$') {
+            if (isalpha((uchar) c) || c == '_' || c == '\\' || c == '$') {
                 return makeAlphaToken(cp, tp, c);
             }
             return makeToken(tp, 0, T_ERR, 0);
@@ -289,7 +290,7 @@ int ecGetToken(EcCompiler *cp)
 
         case '-':
             c = getNextChar(stream);
-            if (isdigit(c)) {
+            if (isdigit((uchar) c)) {
                 putBackChar(stream, c);
                 return makeToken(tp, '-', T_MINUS, G_OPERATOR);
 
@@ -370,7 +371,7 @@ int ecGetToken(EcCompiler *cp)
                 addCharToToken(tp, '.');
                 return makeToken(tp, c, T_DOT_LESS, 0);
 #endif
-            } else if (isdigit(c)) {
+            } else if (isdigit((uchar) c)) {
                 putBackChar(stream, c);
                 return makeNumberToken(cp, tp, '.');
             }
@@ -637,7 +638,7 @@ static int makeNumberToken(EcCompiler *cp, EcToken *tp, int c)
     stream = cp->stream;
     if (c == '0') {
         c = getNextChar(stream);
-        if (tolower(c) == 'x') {
+        if (tolower((uchar) c) == 'x') {
             /* Hex */
             addCharToToken(tp, '0');
             do {
@@ -668,7 +669,7 @@ static int makeNumberToken(EcCompiler *cp, EcToken *tp, int c)
     /*
         Float
      */
-    while (isdigit(c)) {
+    while (isdigit((uchar) c)) {
         addCharToToken(tp, c);
         c = getNextChar(stream);
     }
@@ -676,18 +677,18 @@ static int makeNumberToken(EcCompiler *cp, EcToken *tp, int c)
         addCharToToken(tp, c);
         c = getNextChar(stream);
     }
-    while (isdigit(c)) {
+    while (isdigit((uchar) c)) {
         addCharToToken(tp, c);
         c = getNextChar(stream);
     }
-    if (tolower(c) == 'e') {
+    if (tolower((uchar) c) == 'e') {
         addCharToToken(tp, c);
         c = getNextChar(stream);
         if (c == '+' || c == '-') {
             addCharToToken(tp, c);
             c = getNextChar(stream);
         }
-        while (isdigit(c)) {
+        while (isdigit((uchar) c)) {
             addCharToToken(tp, c);
             c = getNextChar(stream);
         }
@@ -708,7 +709,7 @@ static int makeAlphaToken(EcCompiler *cp, EcToken *tp, int c)
      */
     stream = cp->stream;
 
-    while (isalnum(c) || c == '_' || c == '$' || c == '\\') {
+    while (isalnum((uchar) c) || c == '_' || c == '$' || c == '\\') {
         if (c == '\\') {
             c = getNextChar(stream);
             if (c == '\n' || c == '\r') {
@@ -826,12 +827,12 @@ static int decodeNumber(EcCompiler *cp, int radix, int length)
             break;
         }
         if (radix <= 10) {
-            if (!isdigit(c)) {
+            if (!isdigit((uchar) c)) {
                 break;
             }
         } else if (radix == 16) {
-            lowerc = tolower(c);
-            if (!isdigit(lowerc) && !('a' <= lowerc && lowerc <= 'f')) {
+            lowerc = tolower((uchar) c);
+            if (!isdigit((uchar) lowerc) && !('a' <= lowerc && lowerc <= 'f')) {
                 break;
             }
         }
@@ -841,7 +842,7 @@ static int decodeNumber(EcCompiler *cp, int radix, int length)
         putBackChar(cp->stream, c);
     }
     buf[i] = '\0';
-    return (int) stoi(buf, radix, NULL);
+    return (int) stoiradix(buf, radix, NULL);
 }
 
 
@@ -962,7 +963,7 @@ static int addFormattedStringToToken(EcToken *tp, char *fmt, ...)
     char        *buf;
 
     va_start(args, fmt);
-    buf = mprAsprintfv(fmt, args);
+    buf = sfmtv(fmt, args);
     addStringToToken(tp, buf);
     va_end(args);
     return 0;
@@ -1000,7 +1001,7 @@ static int getNextChar(EcStream *stream)
             stream->loc.column++;
         }
         if (stream->loc.source == 0) {
-            for (start = stream->nextChar - 1; isspace((int) *start); start++) ;
+            for (start = stream->nextChar - 1; isspace((uchar) *start); start++) ;
             for (next = start; *next && *next != '\n'; next++) ;
             stream->loc.source = wsub(start, 0, next - start);
         }
@@ -1014,7 +1015,7 @@ static void putBackChar(EcStream *stream, int c)
 {
     if (stream->buf < stream->nextChar && c) {
         stream->nextChar--;
-        mprAssert(c == (uchar) *stream->nextChar);
+        mprAssert(c == (int) *stream->nextChar);
         if (c == '\n') {
             stream->loc = stream->lastLoc;
             stream->loc.column = 0;
@@ -1062,7 +1063,7 @@ void ecSetStreamBuf(EcStream *sp, cchar *contents, ssize len)
     MprChar     *buf;
 
     if (contents) {
-#if BLD_CHAR_LEN > 1
+#if BIT_CHAR_LEN > 1
         buf = amtow(cp, contents, &len);
 #else
         buf = (MprChar*) contents;
@@ -1154,8 +1155,8 @@ void ecCloseStream(EcCompiler *cp)
 /*
     @copy   default
  
-    Copyright (c) Embedthis Software LLC, 2003-2011. All Rights Reserved.
-    Copyright (c) Michael O'Brien, 1993-2011. All Rights Reserved.
+    Copyright (c) Embedthis Software LLC, 2003-2012. All Rights Reserved.
+    Copyright (c) Michael O'Brien, 1993-2012. All Rights Reserved.
 
     This software is distributed under commercial and open source licenses.
     You may use the GPL open source license described below or you may acquire
@@ -1167,7 +1168,7 @@ void ecCloseStream(EcCompiler *cp)
     under the terms of the GNU General Public License as published by the
     Free Software Foundation; either version 2 of the License, or (at your
     option) any later version. See the GNU General Public License for more
-    details at: http://www.embedthis.com/downloads/gplLicense.html
+    details at: http://embedthis.com/downloads/gplLicense.html
 
     This program is distributed WITHOUT ANY WARRANTY; without even the
     implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.
@@ -1176,7 +1177,7 @@ void ecCloseStream(EcCompiler *cp)
     proprietary programs. If you are unable to comply with the GPL, you must
     acquire a commercial license to use this software. Commercial licenses
     for this software and support services are available from Embedthis
-    Software at http://www.embedthis.com
+    Software at http://embedthis.com
 
     Local variables:
     tab-width: 4

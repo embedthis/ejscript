@@ -1,14 +1,12 @@
 #!/bin/sh
 # 	postinst -- Post installation script for Ejscript
 #
-#	Copyright (c) Embedthis Software LLC, 2003-2011. All Rights Reserved.
+#	Copyright (c) Embedthis Software LLC, 2003-2012. All Rights Reserved.
 #
 
-BLD_PRODUCT=!!BLD_PRODUCT!!
-BLD_NAME="!!BLD_NAME!!"
-BLD_BIN_PREFIX="!!ORIG_BLD_BIN_PREFIX!!"
-BLD_LIB_PREFIX="!!ORIG_BLD_LIB_PREFIX!!"
-BLD_MOD_PREFIX="!!ORIG_BLD_MOD_PREFIX!!"
+BIT_PRODUCT=${settings.product}
+BIT_NAME="${settings.title}
+BIT_BIN_PREFIX="${prefixes.bin}"
 
 ###############################################################################
 #
@@ -20,9 +18,9 @@ action=$1
 
 case $action in
 	configure)							# when new
-        "$BLD_BIN_PREFIX/linkup" Install /
+        "$BIT_BIN_PREFIX/linkup" Install /
         echo
-		echo "$BLD_NAME installation successful."
+		echo "$BIT_NAME installation successful."
 		;;
 	abort-upgrade)						# when old
 		;;

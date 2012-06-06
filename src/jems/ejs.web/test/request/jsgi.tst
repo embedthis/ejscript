@@ -3,8 +3,7 @@
  */
 require ejs.web
 
-const PORT = (App.config.test.http_port || 6700)
-const HTTP = ":" + PORT
+const HTTP = App.config.uris.http
 
 server = new HttpServer
 server.listen(HTTP)
@@ -21,7 +20,7 @@ server.on("readable", function (event, request: Request) {
     assert(env)
     assert(env.toJSON() == "{}")
 
-    assert(serverPort == PORT)
+    assert(serverPort == Uri(HTTP).port)
     assert(queryString == "a=b")
     finalize()
 })

@@ -27,7 +27,7 @@ module ejs {
 
         /* 
             Data input and output buffers. The buffers are used to marshall the data for encoding and decoding. The inbuf 
-            also  hold excess input data. The outbuf is only used to encode data -- no buffering occurs.
+            also hold excess input data. The outbuf is only used to encode data -- no buffering occurs.
          */
         private var inbuf: ByteArray
         private var outbuf: ByteArray
@@ -141,7 +141,7 @@ module ejs {
 
         /** 
             Read a boolean from the stream.
-            @returns a boolean. Returns null on eof.
+            @returns a boolean. Returns null on EOF.
             @throws IOError if an I/O error occurs.
          */
         function readBoolean(): Boolean
@@ -149,7 +149,7 @@ module ejs {
 
         /** 
             Read a byte from the stream.
-            @returns a byte. Returns -1 on eof.
+            @returns a byte. Returns -1 on EOF.
             @throws IOError if an I/O error occurs.
          */
         function readByte(): Number
@@ -158,7 +158,7 @@ module ejs {
         /** 
             Read a date from the stream.
             @returns a date
-            @throws IOError if an I/O error occurs or premature eof
+            @throws IOError if an I/O error occurs or premature EOF
          */
         function readDate(): Date
             inbuf.readDate()
@@ -166,7 +166,7 @@ module ejs {
         /** 
             Read a double from the stream. The data will be decoded according to the encoding property.
             @returns a double
-            @throws IOError if an I/O error occurs or premature eof
+            @throws IOError if an I/O error occurs or premature EOF
          */
         function readDouble(): Double
             inbuf.readDouble()
@@ -174,7 +174,7 @@ module ejs {
         /** 
             Read a 32-bit integer from the stream. The data will be decoded according to the encoding property.
             @returns an 32-bitinteger
-            @throws IOError if an I/O error occurs or premature eof
+            @throws IOError if an I/O error occurs or premature EOF
          */
         function readInteger(): Number
             inbuf.readInteger()
@@ -182,7 +182,7 @@ module ejs {
         /** 
             Read a 64-bit long from the stream.The data will be decoded according to the encoding property.
             @returns a 64-bit long number
-            @throws IOError if an I/O error occurs or premature eof
+            @throws IOError if an I/O error occurs or premature EOF
          */
         function readLong(): Number
             inbuf.readInteger()
@@ -191,15 +191,15 @@ module ejs {
             Read a UTF-8 string from the stream. 
             @param count of bytes to read. Returns the entire stream contents if count is -1.
             @returns a string
-            @throws IOError if an I/O error occurs or premature eof.
+            @throws IOError if an I/O error occurs or premature EOF.
          */
         function readString(count: Number = -1): String 
             inbuf.readString(count)
 
         /** 
-            Read an XML document from the stream. This assumes the XML document will be the only data until eof.
+            Read an XML document from the stream. This assumes the XML document will be the only data until EOF.
             @returns an XML document
-            @throws IOError if an I/O error occurs or premature eof
+            @throws IOError if an I/O error occurs or premature EOF
          */
         function readXML(): XML {
             var data: String = ""
@@ -293,8 +293,8 @@ module ejs {
 /*
     @copy   default
     
-    Copyright (c) Embedthis Software LLC, 2003-2011. All Rights Reserved.
-    Copyright (c) Michael O'Brien, 1993-2011. All Rights Reserved.
+    Copyright (c) Embedthis Software LLC, 2003-2012. All Rights Reserved.
+    Copyright (c) Michael O'Brien, 1993-2012. All Rights Reserved.
     
     This software is distributed under commercial and open source licenses.
     You may use the GPL open source license described below or you may acquire 

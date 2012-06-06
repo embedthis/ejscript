@@ -66,12 +66,12 @@ EjsAny *ejsClonePot(Ejs *ejs, EjsAny *obj, bool deep)
         *dp = *sp;
         dp->hashChain = -1;
         vp = sp->value.ref;
-        if (deep) {
+        if (deep && vp) {
             if (ejsIsFunction(ejs, vp) && !ejsIsType(ejs, vp)) {
                 ;
             } else if ((ejsIsType(ejs, vp) && ((EjsType*) vp)->mutable) || 
                       (!ejsIsType(ejs, vp) && TYPE(vp)->mutableInstances)) {
-#if BLD_DEBUG
+#if BIT_DEBUG
                 EjsName qname = ejsGetPropertyName(ejs, src, i);
                 mprSetName(dp->value.ref, qname.name->value);
                 // mprLog(0, "CLONE %N", qname);
@@ -81,7 +81,7 @@ EjsAny *ejsClonePot(Ejs *ejs, EjsAny *obj, bool deep)
         }
     }
     if (dest->numProp > EJS_HASH_MIN_PROP) {
-        ejsMakeHash(ejs, dest);
+        ejsIndexProperties(ejs, dest);
     }
     mprCopyName(dest, src);
     return dest;
@@ -395,7 +395,7 @@ int ejsLookupPotProperty(struct Ejs *ejs, EjsPot *obj, EjsName qname)
     Validate the supplied slot number. If set to -1, then return the next available property slot number.
     Grow the object if required and update numProp
  */
-int ejsGetSlot(Ejs *ejs, EjsPot *obj, int slotNum)
+int ejsCheckSlot(Ejs *ejs, EjsPot *obj, int slotNum)
 {
     mprAssert(ejsIsPot(ejs, obj));
 
@@ -443,7 +443,7 @@ static int setPotProperty(Ejs *ejs, EjsPot *obj, int slotNum, EjsObj *value)
     mprAssert(ejsIsPot(ejs, obj));
     mprAssert(value);
 
-    if ((slotNum = ejsGetSlot(ejs, obj, slotNum)) < 0) {
+    if ((slotNum = ejsCheckSlot(ejs, obj, slotNum)) < 0) {
         return EJS_ERR;
     }
     mprAssert(slotNum < obj->numProp);
@@ -467,7 +467,7 @@ static int setPotPropertyName(Ejs *ejs, EjsPot *obj, int slotNum, EjsName qname)
     mprAssert(qname.name);
     mprAssert(qname.space);
 
-    if ((slotNum = ejsGetSlot(ejs, obj, slotNum)) < 0) {
+    if ((slotNum = ejsCheckSlot(ejs, obj, slotNum)) < 0) {
         return EJS_ERR;
     }
     mprAssert(slotNum < obj->numProp);
@@ -546,7 +546,7 @@ int ejsInsertPotProperties(Ejs *ejs, EjsPot *obj, int incr, int offset)
         slots[i] = *sp;
     }
     ejsZeroSlots(ejs, &slots[offset], incr);
-    if (ejsMakeHash(ejs, obj) < 0) {
+    if (ejsIndexProperties(ejs, obj) < 0) {
         return EJS_ERR;
     }   
     return 0;
@@ -637,7 +637,7 @@ static void removeSlot(Ejs *ejs, EjsPot *obj, int slotNum, int compact)
             i = slotNum;
         }
         ejsZeroSlots(ejs, &slots[i], 1);
-        ejsMakeHash(ejs, obj);
+        ejsIndexProperties(ejs, obj);
     }
 }
 
@@ -724,7 +724,7 @@ static int setPotPropertyTraits(Ejs *ejs, EjsPot *obj, int slotNum, EjsType *typ
     mprAssert(ejsIsPot(ejs, obj));
     mprAssert(slotNum >= 0);
 
-    if ((slotNum = ejsGetSlot(ejs, obj, slotNum)) < 0) {
+    if ((slotNum = ejsCheckSlot(ejs, obj, slotNum)) < 0) {
         return EJS_ERR;
     }
     if (type) {
@@ -772,7 +772,7 @@ static int hashProperty(Ejs *ejs, EjsPot *obj, int slotNum, EjsName qname)
     props = obj->properties;
     if (props == NULL || props->hash == NULL || props->hash->size < obj->numProp) {
         /*  Remake the entire hash */
-        return ejsMakeHash(ejs, obj);
+        return ejsIndexProperties(ejs, obj);
     }
     hash = props->hash;
     slots = props->slots;
@@ -815,8 +815,8 @@ static int hashProperty(Ejs *ejs, EjsPot *obj, int slotNum, EjsName qname)
     If numInstanceProp is < 0, then grow the number of properties by an increment. Otherwise, set the number of properties 
     to numInstanceProp. We currently don't allow reductions.
  */
-//  TODO -- rename
-int ejsMakeHash(Ejs *ejs, EjsPot *obj)
+//  TODO MOB -- rename
+int ejsIndexProperties(Ejs *ejs, EjsPot *obj)
 {
     EjsSlot         *sp;
     EjsHash         *oldHash, *hash;
@@ -825,6 +825,9 @@ int ejsMakeHash(Ejs *ejs, EjsPot *obj)
     mprAssert(obj);
     mprAssert(ejsIsPot(ejs, obj));
 
+    if (obj->properties == 0) {
+        return 0;
+    }
     if (obj->numProp <= EJS_HASH_MIN_PROP && obj->properties->hash == 0) {
         /* Too few properties */
         return 0;
@@ -937,7 +940,7 @@ int ejsCompactPot(Ejs *ejs, EjsPot *obj)
         *dest++ = *src;
     }
     obj->numProp -= removed;
-    ejsMakeHash(ejs, obj);
+    ejsIndexProperties(ejs, obj);
     return obj->numProp;
 }
 
@@ -990,7 +993,7 @@ void *ejsCreatePot(Ejs *ejs, EjsType *type, int numProp)
             }
             ejsZeroSlots(ejs, &obj->properties->slots[prototype->numProp], obj->properties->size - prototype->numProp);
             if (numProp > EJS_HASH_MIN_PROP) {
-                ejsMakeHash(ejs, obj);
+                ejsIndexProperties(ejs, obj);
             }
         } else {
             ejsZeroSlots(ejs, obj->properties->slots, obj->properties->size);
@@ -1064,8 +1067,8 @@ void ejsCreatePotHelpers(Ejs *ejs)
 /*
     @copy   default
 
-    Copyright (c) Embedthis Software LLC, 2003-2011. All Rights Reserved.
-    Copyright (c) Michael O'Brien, 1993-2011. All Rights Reserved.
+    Copyright (c) Embedthis Software LLC, 2003-2012. All Rights Reserved.
+    Copyright (c) Michael O'Brien, 1993-2012. All Rights Reserved.
 
     This software is distributed under commercial and open source licenses.
     You may use the GPL open source license described below or you may acquire
@@ -1077,7 +1080,7 @@ void ejsCreatePotHelpers(Ejs *ejs)
     under the terms of the GNU General Public License as published by the
     Free Software Foundation; either version 2 of the License, or (at your
     option) any later version. See the GNU General Public License for more
-    details at: http://www.embedthis.com/downloads/gplLicense.html
+    details at: http://embedthis.com/downloads/gplLicense.html
 
     This program is distributed WITHOUT ANY WARRANTY; without even the
     implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.
@@ -1086,7 +1089,7 @@ void ejsCreatePotHelpers(Ejs *ejs)
     proprietary programs. If you are unable to comply with the GPL, you must
     acquire a commercial license to use this software. Commercial licenses
     for this software and support services are available from Embedthis
-    Software at http://www.embedthis.com
+    Software at http://embedthis.com
 
     Local variables:
     tab-width: 4

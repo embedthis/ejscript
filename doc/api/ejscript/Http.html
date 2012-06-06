@@ -355,7 +355,10 @@ headers or header(key) to get a single response header.</dd></dl>
 </div>
 <div class='apiDetail'>
 <dl><dt>Description</dt></dd><dd>Get the value of a single response header. This is a higher performance API than using response.headers["key"].</dd></dl>
-<dl><dt>Returns</dt>
+<dl><dt>Parameters</dt>
+<dd><table class='parameters' summary ='parameters'>
+<tr class='param'><td class='param'>key: <a href='String.html'>String</a> </td><td>Header key value to lookup. The lookup is caseless, i.e. the key can be any case of mix of case.</td></tr></table></dd>
+</dl><dl><dt>Returns</dt>
 <dd>The header field value as a string or null if not known.</dd></dl>
 </div>
 </div>
@@ -450,7 +453,7 @@ In this case a "readable" event will be issued when data is available for readin
 <td class='param'>writable</td><td>Issued when the stream becomes empty.</td></tr>
 </table></dd>
 </dl><dl><dt>Returns</dt>
-<dd>A count of the bytes actually read. Returns null on eof.</dd></dl>
+<dd>A count of the bytes actually read. Returns null on EOF.</dd></dl>
 </div>
 </div>
 <hr />
@@ -508,7 +511,7 @@ In this case a "readable" event will be issued when data is available for readin
 </div>
 <div class='apiDetail'>
 <dl><dt>Description</dt></dd><dd>Reset the Http object to prepare for a new request. This will discard existing headers and security 
-credentials. It will not close the connection.</dd></dl>
+credentials. It will not close the connection to TCP/IP Keep-Alive will be maintained.</dd></dl>
 </div>
 </div>
 <hr />
@@ -630,7 +633,7 @@ http.upload(URL, files, fields)</pre></dd></dl>
 finalized.</dd></dl>
 <dl><dt>Parameters</dt>
 <dd><table class='parameters' summary ='parameters'>
-<tr class='param'><td class='param'>timeout: <a href='Number.html'>Number</a> </td><td>Timeout in milliseconds to wait for the request to complete. A timeout of zero means no  timeout, ie. wait forever. A timeout of < 0 (default), means use the default request timeout. [default: -1]</td></tr></table></dd>
+<tr class='param'><td class='param'>timeout: <a href='Number.html'>Number</a> </td><td>Timeout in milliseconds to wait for the request to complete. A timeout of zero means don't block. A timeout of < 0 (default), means use the default request timeout. [default: -1]</td></tr></table></dd>
 </dl><dl><dt>Returns</dt>
 <dd>True if the request successfully completes.</dd></dl>
 </div>
@@ -666,7 +669,7 @@ If the Content-Length header has not been defined, the data will be transferred 
 <hr />
 <div class="terms">
    <p class="terms">
-       <a href="http://www.embedthis.com/">       Embedthis Software LLC, 2003-2011. All rights reserved. Embedthis is a trademark of Embedthis Software LLC.</a>
+       <a href="http://embedthis.com/">       Embedthis Software LLC, 2003-2012. All rights reserved. Embedthis is a trademark of Embedthis Software LLC.</a>
    </p>
 </div></div>
 </div>

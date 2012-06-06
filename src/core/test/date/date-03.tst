@@ -29,7 +29,7 @@ check(d.format('%b'), "Jun")
 check(d.format('%C'), 20)
 
 //  %c    national representation of time and date.
-if (Config.OS == "WIN") {
+if (Config.OS == "windows") {
     check(d.format('%c'), "06/07/05 10:09:00")
 } else {
     check(d.format('%c'), "Tue Jun  7 10:09:00 2005")
@@ -44,7 +44,7 @@ check(d.format('%d'), "07")
 //  %E*   POSIX locale extensions. The sequences %Ec %EC %Ex %EX %Ey %EY are supposed to provide alternate 
 //                      representations. NOTE: these are not available on some platforms (Windows).
 check(d.format('%EC'), 20)
-if (Config.OS == "WIN") {
+if (Config.OS == "windows") {
     check(d.format('%c'), "06/07/05 10:09:00")
 } else {
     check(d.format('%Ec'), "Tue Jun  7 10:09:00 2005")
@@ -119,7 +119,7 @@ check(d.format('%Oy'), "05")
 
 //  %P    Lower case national representation of either "ante meridiem" or "post meridiem" as appropriate.
 //  MOB - BUG on MAC - not present
-if (Config.OS != "MACOSX") {
+if (Config.OS != "macosx") {
     check(d.format('%P'), "am")
 }
 
@@ -180,7 +180,7 @@ check(d.format('%y'), "05")
 
 //  %Z    the time zone name.
 if (Date().format('%z') == "-0700") {
-    if (Config.OS == "WIN") {
+    if (Config.OS == "windows") {
         check(d.format('%Z'), "Pacific Daylight Time")
     } else {
         check(d.format('%Z'), "PDT")

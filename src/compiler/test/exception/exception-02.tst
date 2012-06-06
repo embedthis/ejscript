@@ -6,7 +6,6 @@ state = 0
 
 try {
 	state = 1
-breakpoint()
 	throw 77
 }
 catch (e: String) {

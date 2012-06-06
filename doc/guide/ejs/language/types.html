@@ -1,7 +1,6 @@
-<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN"
-    "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd">
 <!-- BeginDsi "dsi/head.html" -->
-<html xmlns="http://www.w3.org/1999/xhtml">
+<!DOCTYPE html>
+<html lang="en">
 <head>
     <title>Embedthis Ejscript 2.0.0 Documentation</title>
     <meta name="keywords" content="Ejscript, JavaScript, ECMAScript, Server-Side JavaScript, Dynamic languages, 
@@ -13,44 +12,35 @@
     <!--[if IE]>
     <link href="../../../iehacks.css" rel="stylesheet" type="text/css" />
     </![endif]-->
+    <link href="http://www.google.com/cse/style/look/default.css" type="text/css" rel="stylesheet" />
 </head>
 
 <body>
     <div class="top">
-        <a class="logo"  href="http://www.ejscript.org/">&nbsp;</a>
+        <a class="logo"  href="http://ejscript.org/">&nbsp;</a>
         <div class="topRight">
-             <div class="search">
-                 <form method="get" action="http://www.google.com/search" title="Search www.embedthis.com">
-                     <p>
-                        <label title="Search">Search</label> 
-                        <input type="text" id="q" name="q" size="15" maxlength="255" />
-                        <input type="submit" id="submit" value="Go" /> 
-                        <input type="hidden" name="domains" value="embedthis.com" /> 
-                        <input type="hidden" name="sitesearch" value="embedthis.com" />
-                    </p>
-                 </form>
-              </div>
-            <!--TITLE-->Embedthis Ejscript 2.0.0
+            <div class="search">
+                <div id="cse-search-form">Loading</div>
+                <div class='version'>Embedthis Ejscript 2.0.0</div>
+            </div>
         </div>
         <div class="crumbs">
-            <a href="../../../product/index.html">Home</a>
+            <a href="../../../index.html">Home</a>
 <!-- EndDsi -->
              &gt; <a href="../language/index.html">Language Guide</a> &gt; <b>Types and Declarations</b>
         </div>
     </div>
     <div class="content">
         <div class="contentRight">
-            <h2>Quick Nav</h2>
+            <h1>Quick Nav</h1>
             <ul>
-                <li><a href="#modes">Operational Modes</a></li>
-                <li><a href="#library">System Library</a></li>
-                <li><a href="#declarations">Variable Declarations</a></li>
-                <li><a href="#visibility">Variable Visibility</a></li>
+                <li><a href="#declarations">Declarations</a></li>
+                <li><a href="#visibility"></a>Variable Visibility</li>
                 <li><a href="#undeclared">Undeclared Variables</a></li>
                 <li><a href="#typeAnnotations">Type Annotations</a></li>
             </ul>
 <!-- BeginDsi "dsi/ejsLanguageSeeAlso.html" -->
-		        <h2>See Also</h2>
+		        <h1>See Also</h1>
 		        <ul>
 		          <li><a href="../../../guide/ejs/overview.html">Overview</a></li>
 		          <li><a href="../../../guide/ejs/features.html">Language Features</a></li>
@@ -70,7 +60,7 @@
 
 		          <li><a href="../../../guide/ejs/users/compiler.html">Using the Compiler</a></li>
 		          <li><a href="../../../guide/ejs/users/shell.html">Command Shell</a></li>
-		          <li><a href="../../../guide/ejs/users/ejsvm.html">Virtual Machine</a></li>
+		          <li><a href="../../../guide/ejs/users/bit.html">Building with Bit</a></li>
 		        </ul>
 <!-- EndDsi -->
         </div>
@@ -80,12 +70,15 @@ TODO type annotations, strict / standard mode, casting
 => put this in modules
 class level code, global code, order of initialization
 -->
-            <h1>Types and Variable Declarations</h1><a name="modes" id="modes"></a>
-            <p>This document describes how types and declarations work in Ejscript. This is largely govened by the
+            <h1>Types and Variable Declarations</h1>
+            
+            <a id="modes"></a>
+            <p>This document describes how types and declarations work in Ejscript. This is largely governed by the
             <a href="http://www.ecma-international.org/publications/standards/Ecma-262.htm">ECMAScript</a> standard,
             but depending on the Ejscript <a href="modes.html">Language Compliance Mode</a>, variable declarations,
-            scope and visibilty may operate slightly differently. The differences are documented below.</p><a name=
-            "library" id="library"></a>
+            scope and visibility may operate slightly differently. The differences are documented below.</p>
+            
+            <a id="library"></a>
             <h2 class="section">System Type Library</h2>
             <p>Ejscript defines a set of <a href="core.html">core system types</a> to provide a powerful and flexible
             system library. The types provide a large selection of methods to manage and operate on the types. The
@@ -109,7 +102,8 @@ class level code, global code, order of initialization
             reflection.</p>
             <p>The Ejscript web framework provides a Model/View/Controller framework and adds these types: Application,
             Controller, Cookie, Database, GoogleConnector, Host, HtmlConnector, Record, Request, Session, UploadFile,
-            View and ViewConnector.</p><a name="declarations" id="declarations"></a>
+            View and ViewConnector.</p>
+            <a id="declarations"></a>
             <h2 class="section">Variable Declarations</h2>
             <p>Variables are declared by the <b>var</b> or <b>let</b> keyword. The var keyword will define a variable
             in the top level of the current scope whereas a <b>let</b> variable declaration will define a variable in
@@ -147,13 +141,12 @@ because <b>var</b> declarations hoist to the top of the function. Whereas, the <
             <p>All variables declared by using <b>let</b> will be block local and are scoped to the block enclosing its
             declaration.</p>
             <h3>Global Variables</h3>
-            <p>Variables declared with var and outside classes, interfaces and functions are global variables. In
-            <b>ecma</b> mode, global variables are visible to all other global program code whether declared in the
-            same source file or not. In Ejscript <b>plus</b> or <b>fixed</b> mode, global variables are by default
+            <p>Variables declared with var and outside classes, interfaces and functions are global variables. 
+            In Ejscript, global variables are by default
             limited in their visibility to the source file in which they are declared. If the variable is defined with
             a <b>public</b> qualifier, the variable will be visible to code defined in other source files.</p>
             <h3>Class Static Variables</h3>
-            <p>In <b>plus</b> or <b>fixed</b> mode, classes can be defined. Variables declared inside classes and
+            <p>Variables declared inside classes and
             decorated with the <b>static</b> keyword will be class variables and will be shared among all instances of
             the class. The visibility of class variables can be modified by using <a href="#visibility">visibility
             qualifiers</a>.</p>
@@ -166,8 +159,9 @@ because <b>var</b> declarations hoist to the top of the function. Whereas, the <
             <p>Variables declared using <b>var</b> inside functions, are local variables. They will be re-created each
             time the function is executed and are declared at the top-most block of the function.</p>
             <h3>Block Variables</h3>
-            <p>Variables declared with <b>let</b> are local to the block enclosing the declaration.</p><a name=
-            "visibility" id="visibility"></a>
+            <p>Variables declared with <b>let</b> are local to the block enclosing the declaration.</p>
+            
+            <a id="visibility"></a>
             <h2 class="section">Controlling Variable Visibility</h2>
             <p>Standard JavaScript provides little control over variable visibility and this is a problem as programs
             grow, or as source code from multiple sources is integrated or combined. Ejscript addresses these issues in
@@ -218,26 +212,29 @@ BlastOff()
             <p>The <b>require</b> directive adds the "acme.rockets" module to the set of open modules and makes
             visible the declarations defined in the module.</p>
             <p>When creating modules, multiple source files can contribute code into the same module. The Ejscript
-            compiler will aggregate the code and combine it into a single module.</p><a name="undeclared" id=
-            "undeclared"></a>
+            compiler will aggregate the code and combine it into a single module.</p>
+            
+            <a id="undeclared"></a>
             <h2 class="section">Undeclared Variables</h2>
             <p>It is is not essential to declare variables before using them. If you assign a value to an undeclared
             variable, the Ejscript virtual machine will dynamically create the variable when it is first assigned. In
             standard JavaScript, assigning to an such an undeclared variable will create a new global variable. In
             other words, forgetting to declare a variable, even when done in function code, will transparently create
             an unintended global declaration.</p>
-            <p>Ejscript <b>fixed</b> mode treats assignments to undeclared variables differently by creating local
+            <p>Ejscript mode treats assignments to undeclared variables differently by creating local
             variables instead of global variables. This is much safer and more secure. If you really need to create a
             global variable, you can use the <b>global</b> object.</p>
             <pre>
-global.globalVar = 7
+global.name = 7
 </pre>
             <p>This will create a new global variable called <b>globalVar</b> not matter where and what scope this code
-            is executed in.</p><a name="typeAnnotations" id="typeAnnotations"></a>
+            is executed in.</p>
+            
+            <a id="typeAnnotations"></a>
             <h2 class="section">Optional Type Annotations</h2>
             <p>In JavaScript, variables are not explicitly typed. The type of a variable is defined by the value of the
             data assigned to the variable. Consequently, variables can change their type at run-time. One minute, they
-            can contain an integer, and the next, a string. This is not necessarly bad. In fact, it can be very useful.
+            can contain an integer, and the next, a string. This is not necessarily bad. In fact, it can be very useful.
             However, there are times when you want to control the type and prevent such type changes.</p>
             <p>Ejscript optionally allows variables to be defined with an type annotation. You can choose to either
             specify the type of the variable by appending ": TypeName" or leave the declaration untyped &mdash; it is
@@ -267,10 +264,22 @@ z = "Not allowed"  // The will be prevented this because <b>z</b> is typed as a 
 <!-- BeginDsi "dsi/bottom.html" -->
 	<div class="bottom">
 		<p class="footnote"> 
-            <a href="../../../product/copyright.html" >&copy; Embedthis Software LLC, 2003-2011. 
+            <a href="../../../product/copyright.html" >&copy; Embedthis Software LLC, 2003-2012. 
             All rights reserved. Embedthis, Ejscript and Appweb are trademarks of Embedthis Software LLC.</a>
 		</p>
 	</div>
-<!-- EndDsi -->
+    <script src="http://www.google.com/jsapi" type="text/javascript"></script>
+    <script type="text/javascript"> 
+      google.load('search', '1', {language : 'en'});
+      google.setOnLoadCallback(function() {
+        var customSearchControl = new google.search.CustomSearchControl(
+          'partner-pub-9935546676162772:ysvxxv4n9rx');
+
+        customSearchControl.setResultSetSize(google.search.Search.FILTERED_CSE_RESULTSET);
+        var options = new google.search.DrawOptions();
+        options.enableSearchboxOnly("http://ejscript.org/search.html");
+        customSearchControl.draw('cse-search-form', options);
+      }, true);
+    </script>
 </body>
 </html>

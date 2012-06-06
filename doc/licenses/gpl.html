@@ -1,7 +1,6 @@
-<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN"
-    "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd">
 <!-- BeginDsi "dsi/head.html" -->
-<html xmlns="http://www.w3.org/1999/xhtml">
+<!DOCTYPE html>
+<html lang="en">
 <head>
     <title>Embedthis Ejscript 2.0.0 Documentation</title>
     <meta name="keywords" content="Ejscript, JavaScript, ECMAScript, Server-Side JavaScript, Dynamic languages, 
@@ -13,42 +12,34 @@
     <!--[if IE]>
     <link href="../iehacks.css" rel="stylesheet" type="text/css" />
     </![endif]-->
+    <link href="http://www.google.com/cse/style/look/default.css" type="text/css" rel="stylesheet" />
 </head>
 
 <body>
     <div class="top">
-        <a class="logo"  href="http://www.ejscript.org/">&nbsp;</a>
+        <a class="logo"  href="http://ejscript.org/">&nbsp;</a>
         <div class="topRight">
-             <div class="search">
-                 <form method="get" action="http://www.google.com/search" title="Search www.embedthis.com">
-                     <p>
-                        <label title="Search">Search</label> 
-                        <input type="text" id="q" name="q" size="15" maxlength="255" />
-                        <input type="submit" id="submit" value="Go" /> 
-                        <input type="hidden" name="domains" value="embedthis.com" /> 
-                        <input type="hidden" name="sitesearch" value="embedthis.com" />
-                    </p>
-                 </form>
-              </div>
-            <!--TITLE-->Embedthis Ejscript 2.0.0
+            <div class="search">
+                <div id="cse-search-form">Loading</div>
+                <div class='version'>Embedthis Ejscript 2.0.0</div>
+            </div>
         </div>
         <div class="crumbs">
-            <a href="../product/index.html">Home</a>
+            <a href="../index.html">Home</a>
 <!-- EndDsi -->
-             &gt; <a href="../../../../guide/Ejscript/release/index.html">Ejscript Documentation</a> &gt;
-            <b>Licenses</b>
+             &gt; <b>Licenses</b>
         </div>
     </div>
     <div class="content">
         <div class="contentRight">
             <div class="linkSection">
-                <h2>Quick Nav</h2>
+                <h1>Quick Nav</h1>
                 <ul>
                     <li><a href="#gnuLicense">GNU License</a></li>
                     <li><a href="#apacheLicense">Apache License</a></li>
                     <li><a href="#openSslLicense">OpenSSL License</a></li>
                 </ul>
-                <h2>See Also</h2>
+                <h1>See Also</h1>
                 <ul>
                     <li><a href="http://www.matrixssl.org">MatrixSSL License</a></li>
                     <li><a href="../product/copyright.html">Copyright</a></li>
@@ -58,7 +49,7 @@
         <div class="contentLeft">
             <h1>Open Source License Agreement</h1>
             <p>Embedthis Ejscript is licensed according to the provisions of GNU GENERAL PUBLIC LICENSE below.
-            Commercial licenses are also available from <a href="http://www.embedthis.com">Embedthis Software</a> for
+            Commercial licenses are also available from <a href="http://embedthis.com">Embedthis Software</a> for
             those who require them.</p>
             <p>Depending on your configuration, various external modules have specific license requirements. See the
             license terms for:</p>
@@ -66,7 +57,7 @@
                 <li><a href="#apacheLicense">Apache License</a></li>
                 <li><a href="#openSslLicense">OpenSSL License</a></li>
                 <li><a href="http://www.matrixssl.org">MatrixSSL License</a></li>
-            </ul><a name="gnuLicense" id="gnuLicense"></a>
+            </ul><a id="gnuLicense"></a>
             <h2>GNU GENERAL PUBLIC LICENSE. Version 2, June 1991</h2>
             <h3>Preamble</h3>
             <p>The licenses for most software are designed to take away your freedom to share and change it. By
@@ -245,7 +236,7 @@
             <br />
             59 Temple Place, Suite 330, Boston, MA 02111-1307 USA</p>
             <p>Everyone is permitted to copy and distribute verbatim copies of this license document, but changing it
-            is not allowed.</p><a name="apacheLicense" id="apacheLicense"></a>
+            is not allowed.</p><a id="apacheLicense"></a>
             <h2>APACHE SOFTWARE LICENSE</h2>
             <p>To ensure good compatibility with the Apache Web Server, Embedthis Ejscript has used some documentation
             and has relied on the particular interpretation of certain standards as demonstrated in the Apache HTTP web
@@ -274,7 +265,7 @@
             SUBSTITUTE GOODS OR SERVICES; LOSS OF USE, DATA, OR PROFITS; OR BUSINESS INTERRUPTION) HOWEVER CAUSED AND
             ON ANY THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR
             OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH
-            DAMAGE.</p><a name="openSslLicense" id="openSslLicense"></a>
+            DAMAGE.</p><a id="openSslLicense"></a>
             <h2>OpenSSL License</h2>
             <p>The OpenSSL toolkit stays under a dual license, i.e. both the conditions of the OpenSSL License and the
             original SSLeay license apply to the toolkit. See below for the actual license texts. Actually both
@@ -349,10 +340,22 @@
 <!-- BeginDsi "dsi/bottom.html" -->
 	<div class="bottom">
 		<p class="footnote"> 
-            <a href="../product/copyright.html" >&copy; Embedthis Software LLC, 2003-2011. 
+            <a href="../product/copyright.html" >&copy; Embedthis Software LLC, 2003-2012. 
             All rights reserved. Embedthis, Ejscript and Appweb are trademarks of Embedthis Software LLC.</a>
 		</p>
 	</div>
-<!-- EndDsi -->
+    <script src="http://www.google.com/jsapi" type="text/javascript"></script>
+    <script type="text/javascript"> 
+      google.load('search', '1', {language : 'en'});
+      google.setOnLoadCallback(function() {
+        var customSearchControl = new google.search.CustomSearchControl(
+          'partner-pub-9935546676162772:ysvxxv4n9rx');
+
+        customSearchControl.setResultSetSize(google.search.Search.FILTERED_CSE_RESULTSET);
+        var options = new google.search.DrawOptions();
+        options.enableSearchboxOnly("http://ejscript.org/search.html");
+        customSearchControl.draw('cse-search-form', options);
+      }, true);
+    </script>
 </body>
 </html>

@@ -8,10 +8,9 @@
 
 /********************************** Includes **********************************/
 
-#include    "ejs.h"
-#include    "ecCompiler.h"
+#include    "ejsCompiler.h"
 
-#if BLD_CC_EDITLINE
+#if BIT_CC_EDITLINE
   #include  <histedit.h>
 #endif
 
@@ -22,11 +21,13 @@ typedef struct App {
     MprList     *modules;
     Ejs         *ejs;
     EcCompiler  *compiler;
+    char        *cygroot;
+    int         iterations;
 } App;
 
 static App *app;
 
-#if BLD_CC_EDITLINE
+#if BIT_CC_EDITLINE
 static History  *cmdHistory;
 static EditLine *eh; 
 static cchar    *prompt;
@@ -41,14 +42,14 @@ static void require(cchar *name);
 
 /************************************ Code ************************************/
 
-MAIN(ejsMain, int argc, char **argv)
+MAIN(ejsMain, int argc, char **argv, char **envp)
 {
     Mpr             *mpr;
     EcCompiler      *cp;
     Ejs             *ejs;
     cchar           *cmd, *className, *method, *homeDir;
     char            *argp, *searchPath, *modules, *name, *tok, *extraFiles;
-    int             nextArg, err, ecFlags, stats, merge, bind, noout, debug, optimizeLevel, warnLevel, strict;
+    int             nextArg, err, ecFlags, stats, merge, bind, noout, debug, optimizeLevel, warnLevel, strict, i, next;
 
     /*  
         Initialize Multithreaded Portable Runtime (MPR)
@@ -76,24 +77,26 @@ MAIN(ejsMain, int argc, char **argv)
     optimizeLevel = 9;
     strict = 0;
     app->files = mprCreateList(-1, 0);
+    app->iterations = 1;
+    argc = mpr->argc;
+    argv = (char**) mpr->argv;
 
     for (nextArg = 1; nextArg < argc; nextArg++) {
         argp = argv[nextArg];
         if (*argp != '-') {
             break;
         }
-
-        if (strcmp(argp, "--bind") == 0) {
+        if (smatch(argp, "--bind")) {
             bind = 1;
 
-        } else if (strcmp(argp, "--class") == 0) {
+        } else if (smatch(argp, "--class")) {
             if (nextArg >= argc) {
                 err++;
             } else {
                 className = argv[++nextArg];
             }
 
-        } else if (strcmp(argp, "--chdir") == 0) {
+        } else if (smatch(argp, "--chdir") || smatch(argp, "--home") || smatch(argp, "-C")) {
             if (nextArg >= argc) {
                 err++;
             } else {
@@ -103,8 +106,8 @@ MAIN(ejsMain, int argc, char **argv)
                 }
             }
 
-#if BLD_UNIX_LIKE
-        } else if (strcmp(argp, "--chroot") == 0) {
+#if BIT_UNIX_LIKE
+        } else if (smatch(argp, "--chroot")) {
             /* Not documented or supported */
             if (nextArg >= argc) {
                 err++;
@@ -122,20 +125,28 @@ MAIN(ejsMain, int argc, char **argv)
             }
 #endif
 
-        } else if (strcmp(argp, "--cmd") == 0 || strcmp(argp, "-c") == 0) {
+        } else if (smatch(argp, "--cmd") || smatch(argp, "-c")) {
             if (nextArg >= argc) {
                 err++;
             } else {
                 cmd = argv[++nextArg];
             }
 
-        } else if (strcmp(argp, "--debug") == 0) {
+#if BIT_WIN_LIKE
+        } else if (smatch(argp, "--cygroot")) {
+            if (nextArg >= argc) {
+                err++;
+            } else {
+                app->cygroot = sclone(argv[++nextArg]);
+            }
+#endif
+        } else if (smatch(argp, "--debug")) {
             debug = 1;
 
-        } else if (strcmp(argp, "--debugger") == 0 || strcmp(argp, "-D") == 0) {
+        } else if (smatch(argp, "--debugger") || smatch(argp, "-D")) {
             mprSetDebugMode(1);
 
-        } else if (strcmp(argp, "--files") == 0 || strcmp(argp, "-f") == 0) {
+        } else if (smatch(argp, "--files") || smatch(argp, "-f")) {
             /* Compatibility with mozilla shell */
             if (nextArg >= argc) {
                 err++;
@@ -148,58 +159,65 @@ MAIN(ejsMain, int argc, char **argv)
                 }
             }
 
-        } else if (strcmp(argp, "--log") == 0) {
+        } else if (smatch(argp, "--iterations") || smatch(argp, "-i")) {
             if (nextArg >= argc) {
                 err++;
             } else {
-                ejsRedirectLogging(argv[++nextArg]);
+                app->iterations = atoi(argv[++nextArg]);
+            }
+
+        } else if (smatch(argp, "--log")) {
+            if (nextArg >= argc) {
+                err++;
+            } else {
+                mprStartLogging(argv[++nextArg], 0);
                 mprSetCmdlineLogging(1);
             }
 
-        } else if (strcmp(argp, "--method") == 0) {
+        } else if (smatch(argp, "--method")) {
             if (nextArg >= argc) {
                 err++;
             } else {
                 method = argv[++nextArg];
             }
 
-        } else if (strcmp(argp, "--name") == 0) {
+        } else if (smatch(argp, "--name")) {
             /* Just ignore. Used to tag commands with a unique command line */ 
             nextArg++;
 
-        } else if (strcmp(argp, "--nobind") == 0) {
+        } else if (smatch(argp, "--nobind")) {
             bind = 0;
 
-        } else if (strcmp(argp, "--nodebug") == 0) {
+        } else if (smatch(argp, "--nodebug")) {
             debug = 0;
 
-        } else if (strcmp(argp, "--optimize") == 0) {
+        } else if (smatch(argp, "--optimize")) {
             if (nextArg >= argc) {
                 err++;
             } else {
                 optimizeLevel = atoi(argv[++nextArg]);
             }
 
-        } else if (strcmp(argp, "-s") == 0) {
+        } else if (smatch(argp, "-s")) {
             /* Compatibility with mozilla shell. Just ignore */
 
-        } else if (strcmp(argp, "--search") == 0 || strcmp(argp, "--searchpath") == 0) {
+        } else if (smatch(argp, "--search") || smatch(argp, "--searchpath")) {
             if (nextArg >= argc) {
                 err++;
             } else {
                 searchPath = argv[++nextArg];
             }
 
-        } else if (strcmp(argp, "--standard") == 0) {
+        } else if (smatch(argp, "--standard")) {
             strict = 0;
 
-        } else if (strcmp(argp, "--stats") == 0) {
+        } else if (smatch(argp, "--stats")) {
             stats = 1;
 
-        } else if (strcmp(argp, "--strict") == 0) {
+        } else if (smatch(argp, "--strict")) {
             strict = 1;
 
-        } else if (strcmp(argp, "--require") == 0) {
+        } else if (smatch(argp, "--require")) {
             if (nextArg >= argc) {
                 err++;
             } else {
@@ -214,15 +232,15 @@ MAIN(ejsMain, int argc, char **argv)
                 }
             }
 
-        } else if (strcmp(argp, "--verbose") == 0 || strcmp(argp, "-v") == 0) {
-            ejsRedirectLogging("stderr:2");
+        } else if (smatch(argp, "--verbose") || smatch(argp, "-v")) {
+            mprStartLogging("stderr:2", 0);
             mprSetCmdlineLogging(1);
 
-        } else if (strcmp(argp, "--version") == 0 || strcmp(argp, "-V") == 0) {
-            mprPrintfError("%s %s-%s\n", BLD_NAME, BLD_VERSION, BLD_NUMBER);
+        } else if (smatch(argp, "--version") || smatch(argp, "-V")) {
+            mprPrintfError("%s %s-%s\n", BIT_NAME, BIT_VERSION, BIT_NUMBER);
             return 0;
 
-        } else if (strcmp(argp, "--warn") == 0) {
+        } else if (smatch(argp, "--warn")) {
             if (nextArg >= argc) {
                 err++;
             } else {
@@ -249,6 +267,7 @@ MAIN(ejsMain, int argc, char **argv)
             "  Ejscript shell program options:\n"
             "  --class className        # Name of class containing method to run\n"
             "  --cmd ejscriptCode       # Literal ejscript statements to execute\n"
+            "  --cygroot path           # Set cygwin root for resolving script paths\n"
             "  --debug                  # Use symbolic debugging information (default)\n"
             "  --debugger               # Disable timeouts to make using a debugger easier\n"
             "  --files \"files..\"        # Extra source to compile\n"
@@ -256,11 +275,11 @@ MAIN(ejsMain, int argc, char **argv)
             "  --method methodName      # Name of method to run. Defaults to main\n"
             "  --nodebug                # Omit symbolic debugging information\n"
             "  --optimize level         # Set the optimization level (0-9 default is 9)\n"
+            "  --require 'module,...'   # Required list of modules to pre-load\n"
             "  --search ejsPath         # Module search path\n"
             "  --standard               # Default compilation mode to standard (default)\n"
             "  --stats                  # Print memory stats on exit\n"
             "  --strict                 # Default compilation mode to strict\n"
-            "  --require 'module,...'   # Required list of modules to pre-load\n"
             "  --verbose | -v           # Same as --log stderr:2 \n"
             "  --version                # Emit the compiler version information\n"
             "  --warn level             # Set the warning message level (0-9 default is 0)\n\n",
@@ -270,10 +289,10 @@ MAIN(ejsMain, int argc, char **argv)
     if ((ejs = ejsCreateVM(argc - nextArg, (cchar **) &argv[nextArg], 0)) == 0) {
         return MPR_ERR_MEMORY;
     }
+    app->ejs = ejs;
     if (ejsLoadModules(ejs, searchPath, app->modules) < 0) {
         return MPR_ERR_CANT_READ;
     }
-    app->ejs = ejs;
 
     ecFlags = 0;
     ecFlags |= (merge) ? EC_FLAGS_MERGE: 0;
@@ -293,28 +312,41 @@ MAIN(ejsMain, int argc, char **argv)
     if (nextArg < argc) {
         mprAddItem(app->files, sclone(argv[nextArg]));
     }
-    if (cmd) {
-        if (interpretCommands(cp, cmd) < 0) {
-            err++;
-        }
-    } else if (mprGetListLength(app->files) > 0) {
-        if (interpretFiles(cp, app->files, argc - nextArg, &argv[nextArg], className, method) < 0) {
-            err++;
-        }
-    } else {
+    if (app->cygroot) {
         /*  
-            No args - run as an interactive shell
+            When cygwin invokes a script with shebang, it passes a cygwin path to the script
+            The ejs --cygroot option permits ejscript to conver this to a native path
          */
-        if (interpretCommands(cp, NULL) < 0) {
-            err++;
+        for (next = 0; (name = mprGetNextItem(app->files, &next)) != 0; ) {
+            if (*name == '/' || *name == '\\') {
+                mprSetItem(app->files, next - 1, sjoin(app->cygroot, name, NULL));
+            }
         }
     }
-#if BLD_DEBUG
-     if (stats) {
+    for (i = 0; !err && i < app->iterations; i++) {
+        if (cmd) {
+            if (interpretCommands(cp, cmd) < 0) {
+                err++;
+            }
+        } else if (mprGetListLength(app->files) > 0) {
+            if (interpretFiles(cp, app->files, argc - nextArg, &argv[nextArg], className, method) < 0) {
+                err++;
+            }
+        } else {
+            /*  
+                No args - run as an interactive shell
+             */
+            if (interpretCommands(cp, NULL) < 0) {
+                err++;
+            }
+        }
+    }
+    if (stats) {
+#if BIT_DEBUG
         mprSetLogLevel(1);
         mprPrintMem("Memory Usage", 1);
-    }
 #endif
+    }
     if (!err) {
         err = mpr->exitStatus;
     }
@@ -332,6 +364,7 @@ static void manageApp(App *app, int flags)
         mprMark(app->files);
         mprMark(app->ejs);
         mprMark(app->compiler);
+        mprMark(app->cygroot);
         mprMark(app->modules);
     }
 }
@@ -353,7 +386,7 @@ static int interpretFiles(EcCompiler *cp, MprList *files, int argc, char **argv,
         mprRawLog(0, "%s\n", cp->errorMsg);
         return EJS_ERR;
     }
-    mprAssert(ejs->result == 0 || (MPR_GET_GEN(MPR_GET_MEM(ejs->result)) != MPR->heap.dead));
+    mprAssert(ejs->result == 0 || (MPR_GET_GEN(MPR_GET_MEM(ejs->result)) != MPR->heap->dead));
 
     if (cp->errorCount == 0) {
         if (ejsRunProgram(ejs, className, method) < 0) {
@@ -419,7 +452,7 @@ static int interpretCommands(EcCompiler *cp, cchar *cmd)
 
 
 /************************************************* Command line History **************************************/
-#if BLD_CC_EDITLINE
+#if BIT_CC_EDITLINE
 
 static cchar *issuePrompt(EditLine *e) 
 {
@@ -472,7 +505,7 @@ static char *readline(cchar *msg)
     return NULL; 
 } 
 
-#else /* BLD_CC_EDITLINE */
+#else /* BIT_CC_EDITLINE */
 
 static char *readline(cchar *msg)
 {
@@ -484,7 +517,7 @@ static char *readline(cchar *msg)
     }
     return strdup(buf);
 }
-#endif /* BLD_CC_EDITLINE */
+#endif /* BIT_CC_EDITLINE */
 
 
 /*  
@@ -543,8 +576,8 @@ static void require(cchar *name)
 /*
     @copy   default
  
-    Copyright (c) Embedthis Software LLC, 2003-2011. All Rights Reserved.
-    Copyright (c) Michael O'Brien, 1993-2011. All Rights Reserved.
+    Copyright (c) Embedthis Software LLC, 2003-2012. All Rights Reserved.
+    Copyright (c) Michael O'Brien, 1993-2012. All Rights Reserved.
 
     This software is distributed under commercial and open source licenses.
     You may use the GPL open source license described below or you may acquire
@@ -556,7 +589,7 @@ static void require(cchar *name)
     under the terms of the GNU General Public License as published by the
     Free Software Foundation; either version 2 of the License, or (at your
     option) any later version. See the GNU General Public License for more
-    details at: http://www.embedthis.com/downloads/gplLicense.html
+    details at: http://embedthis.com/downloads/gplLicense.html
 
     This program is distributed WITHOUT ANY WARRANTY; without even the
     implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.
@@ -565,7 +598,7 @@ static void require(cchar *name)
     proprietary programs. If you are unable to comply with the GPL, you must
     acquire a commercial license to use this software. Commercial licenses
     for this software and support services are available from Embedthis
-    Software at http://www.embedthis.com
+    Software at http://embedthis.com
 
     Local variables:
     tab-width: 4

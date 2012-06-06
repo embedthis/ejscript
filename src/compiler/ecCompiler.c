@@ -6,8 +6,7 @@
 
 /********************************** Includes **********************************/
 
-#include    "ejs.h"
-#include    "ecCompiler.h"
+#include    "ejsCompiler.h"
 
 /***************************** Forward Declarations ***************************/
 
@@ -33,6 +32,7 @@ EcCompiler *ecCreateCompiler(Ejs *ejs, int flags)
     cp->shbang = 1;
     cp->optimizeLevel = 9;
     cp->warnLevel = 1;
+    cp->outputDir = sclone(".");
 
     if (flags & EC_FLAGS_DOC) {
         cp->doc = 1;
@@ -75,6 +75,7 @@ static void manageCompiler(EcCompiler *cp, int flags)
         mprMark(cp->state);
         mprMark(cp->stream);
         mprMark(cp->token);
+        mprMark(cp->outputDir);
         mprMark(cp->outputFile);
         mprMark(cp->fixups);
         mprMark(cp->require);
@@ -93,9 +94,9 @@ int ecCompile(EcCompiler *cp, int argc, char **argv)
     saveCompiling = ejs->compiling;
     ejs->compiling = 1;
     
-    paused = ejsPauseGC(ejs);
+    paused = ejsBlockGC(ejs);
     rc = compileInner(cp, argc, argv);
-    ejsResumeGC(ejs, paused);
+    ejsUnblockGC(ejs, paused);
     ejs->compiling = saveCompiling;
     return rc;
 }
@@ -142,12 +143,12 @@ static int compileInner(EcCompiler *cp, int argc, char **argv)
         Compile source files and load any module files
      */
     for (i = 0; i < argc && !cp->fatalError; i++) {
-        ext = mprGetPathExtension(argv[i]);
-        if (scasecmp(ext, "mod") == 0 || scasecmp(ext, BLD_SHOBJ) == 0) {
+        ext = mprGetPathExt(argv[i]);
+        if (scasecmp(ext, "mod") == 0 || scasecmp(ext, BIT_SHOBJ) == 0) {
             nextModule = mprGetListLength(ejs->modules);
             lflags = cp->strict ? EJS_LOADER_STRICT : 0;
             if ((rc = ejsLoadModule(cp->ejs, ejsCreateStringFromAsc(ejs, argv[i]), -1, -1, lflags)) < 0) {
-                msg = mprAsprintf("Error initializing module %s\n%s", argv[i], ejsGetErrorMsg(cp->ejs, 1));
+                msg = sfmt("Error initializing module %s\n%s", argv[i], ejsGetErrorMsg(cp->ejs, 1));
                 memset(&loc, 0, sizeof(EcLocation));
                 loc.filename = sclone(argv[i]);
                 if (rc == MPR_ERR_CANT_INITIALIZE) {
@@ -171,13 +172,13 @@ static int compileInner(EcCompiler *cp, int argc, char **argv)
             mprAddItem(nodes, 0);
         } else  {
             mprAssert(!MPR->marking);
-            paused = ejsPauseGC(ejs);
+            paused = ejsBlockGC(ejs);
             mprAddItem(nodes, ecParseFile(cp, argv[i]));
-            ejsResumeGC(ejs, paused);
+            ejsUnblockGC(ejs, paused);
         }
         mprAssert(!MPR->marking);
     }
-    mprAssert(ejs->result == 0 || (MPR_GET_GEN(MPR_GET_MEM(ejs->result)) != MPR->heap.dead));
+    mprAssert(ejs->result == 0 || (MPR_GET_GEN(MPR_GET_MEM(ejs->result)) != MPR->heap->dead));
 
 
     /*
@@ -190,13 +191,13 @@ static int compileInner(EcCompiler *cp, int argc, char **argv)
     /*
         Process the internal representation and generate code
      */
-    paused = ejsPauseGC(ejs);
+    paused = ejsBlockGC(ejs);
     if (!cp->parseOnly && cp->errorCount == 0) {
         ecResetParser(cp);
         if (ecAstProcess(cp) < 0) {
             ejsPopBlock(ejs);
             cp->nodes = NULL;
-            ejsResumeGC(ejs, paused);
+            ejsUnblockGC(ejs, paused);
             return EJS_ERR;
         }
         if (cp->errorCount == 0) {
@@ -204,13 +205,13 @@ static int compileInner(EcCompiler *cp, int argc, char **argv)
             if (ecCodeGen(cp) < 0) {
                 ejsPopBlock(ejs);
                 cp->nodes = NULL;
-                ejsResumeGC(ejs, paused);
+                ejsUnblockGC(ejs, paused);
                 return EJS_ERR;
             }
         }
     }
     ejsPopBlock(ejs);
-    mprAssert(ejs->result == 0 || (MPR_GET_GEN(MPR_GET_MEM(ejs->result)) != MPR->heap.dead));
+    mprAssert(ejs->result == 0 || (MPR_GET_GEN(MPR_GET_MEM(ejs->result)) != MPR->heap->dead));
 
     /*
         Add compiled modules to the interpreter
@@ -219,11 +220,11 @@ static int compileInner(EcCompiler *cp, int argc, char **argv)
         ejsAddModule(cp->ejs, mp);
     }
     cp->nodes = NULL;
-    ejsResumeGC(ejs, paused);
+    ejsUnblockGC(ejs, paused);
     if (!paused) {
         mprYield(0);
     }
-    mprAssert(ejs->result == 0 || (MPR_GET_GEN(MPR_GET_MEM(ejs->result)) != MPR->heap.dead));
+    mprAssert(ejs->result == 0 || (MPR_GET_GEN(MPR_GET_MEM(ejs->result)) != MPR->heap->dead));
     return (cp->errorCount > 0) ? EJS_ERR: 0;
 }
 
@@ -261,9 +262,6 @@ static EjsObj *loadScriptLiteral(Ejs *ejs, EjsString *script, cchar *cache)
 }
 
 
-/*
-    Load and initialize a script file
- */
 int ejsLoadScriptFile(Ejs *ejs, cchar *path, cchar *cache, int flags)
 {
     EcCompiler      *ec;
@@ -279,14 +277,13 @@ int ejsLoadScriptFile(Ejs *ejs, cchar *path, cchar *cache, int flags)
         ec->noout = 1;
     }
     if (ecCompile(ec, 1, (char**) &path) < 0) {
-        if (flags & EC_FLAGS_THROW) {
+        if (flags & EC_FLAGS_THROW && !ejs->exception) {
             ejsThrowSyntaxError(ejs, "%s", ec->errorMsg ? ec->errorMsg : "Can't parse script");
         }
         mprRemoveRoot(ec);
         return EJS_ERR;
     }
     mprRemoveRoot(ec);
-
     if (ejsRun(ejs) < 0) {
         return EJS_ERR;
     }
@@ -354,7 +351,7 @@ int ejsEvalFile(cchar *path)
         mprDestroy(0);
         return MPR_ERR_CANT_READ;
     }
-    if (ejsLoadScriptFile(ejs, path, NULL, EC_FLAGS_NO_OUT | EC_FLAGS_DEBUG) == 0) {
+    if (ejsLoadScriptFile(ejs, path, NULL, EC_FLAGS_NO_OUT | EC_FLAGS_DEBUG) < 0) {
         ejsReportError(ejs, "Error in program");
         mprDestroy(0);
         return MPR_ERR;
@@ -381,7 +378,7 @@ int ejsEvalScript(cchar *script)
         mprDestroy(0);
         return MPR_ERR_CANT_READ;
     }
-    if (ejsLoadScriptLiteral(ejs, ejsCreateStringFromAsc(ejs, script), NULL, EC_FLAGS_NO_OUT | EC_FLAGS_DEBUG) == 0) {
+    if (ejsLoadScriptLiteral(ejs, ejsCreateStringFromAsc(ejs, script), NULL, EC_FLAGS_NO_OUT | EC_FLAGS_DEBUG) < 0) {
         ejsReportError(ejs, "Error in program");
         mprDestroy(0);
         return MPR_ERR;
@@ -468,20 +465,20 @@ void ecErrorv(EcCompiler *cp, cchar *severity, EcLocation *loc, cchar *fmt, va_l
     char    *pointer, *errorMsg, *msg;
 
     appName = mprGetAppName(cp);
-    msg = mprAsprintfv(fmt, args);
+    msg = sfmtv(fmt, args);
 
     if (loc) {
         if (loc->source) {
             pointer = makeHighlight(cp, loc->source, loc->column);
-            errorMsg = mprAsprintf("%s: %s: %s: %d: %s\n  %w  \n  %s", appName, severity, loc->filename, 
+            errorMsg = sfmt("%s: %s: %s: %d: %s\n  %w  \n  %s", appName, severity, loc->filename, 
                 loc->lineNumber, msg, loc->source, pointer);
         } else if (loc->lineNumber >= 0) {
-            errorMsg = mprAsprintf("%s: %s: %s: %d: %s", appName, severity, loc->filename, loc->lineNumber, msg);
+            errorMsg = sfmt("%s: %s: %s: %d: %s", appName, severity, loc->filename, loc->lineNumber, msg);
         } else {
-            errorMsg = mprAsprintf("%s: %s: %s: 0: %s", appName, severity, loc->filename, msg);
+            errorMsg = sfmt("%s: %s: %s: 0: %s", appName, severity, loc->filename, msg);
         }
     } else {
-        errorMsg = mprAsprintf("%s: %s: %s", appName, severity, msg);
+        errorMsg = sfmt("%s: %s: %s", appName, severity, msg);
     }
     cp->errorMsg = srejoin(cp->errorMsg, errorMsg, NULL);
     mprBreakpoint();
@@ -496,8 +493,8 @@ void ecSetRequire(EcCompiler *cp, MprList *modules)
 /*
     @copy   default
 
-    Copyright (c) Embedthis Software LLC, 2003-2011. All Rights Reserved.
-    Copyright (c) Michael O'Brien, 1993-2011. All Rights Reserved.
+    Copyright (c) Embedthis Software LLC, 2003-2012. All Rights Reserved.
+    Copyright (c) Michael O'Brien, 1993-2012. All Rights Reserved.
 
     This software is distributed under commercial and open source licenses.
     You may use the GPL open source license described below or you may acquire
@@ -509,7 +506,7 @@ void ecSetRequire(EcCompiler *cp, MprList *modules)
     under the terms of the GNU General Public License as published by the
     Free Software Foundation; either version 2 of the License, or (at your
     option) any later version. See the GNU General Public License for more
-    details at: http://www.embedthis.com/downloads/gplLicense.html
+    details at: http://embedthis.com/downloads/gplLicense.html
 
     This program is distributed WITHOUT ANY WARRANTY; without even the
     implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.
@@ -518,7 +515,7 @@ void ecSetRequire(EcCompiler *cp, MprList *modules)
     proprietary programs. If you are unable to comply with the GPL, you must
     acquire a commercial license to use this software. Commercial licenses
     for this software and support services are available from Embedthis
-    Software at http://www.embedthis.com
+    Software at http://embedthis.com
 
     Local variables:
     tab-width: 4

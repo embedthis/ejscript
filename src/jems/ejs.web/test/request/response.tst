@@ -3,7 +3,7 @@
  */
 require ejs.web
 
-const HTTP = ":" + (App.config.test.http_port || "6700")
+const HTTP = App.config.uris.http
 
 server = new HttpServer
 server.listen(HTTP)
@@ -47,7 +47,7 @@ server.on("readable", function (event, request: Request) {
 //  writeResponse
 let http = fetch(HTTP + "/writeResponse", 201)
 assert(http.status == 201)
-assert(http.headers["custom"] == 42)
+assert(http.header("Custom") == 42)
 assert(http.response == "hello moon")
 http.close()
 
@@ -63,8 +63,8 @@ http.close()
 let http = fetch(HTTP + "/setCookie")
 assert(http.status == 200)
 assert(http.response == "")
-assert(http.headers["set-cookie"])
-let cookie = http.headers["set-cookie"]
+assert(http.header("Set-Cookie"))
+let cookie = http.header("Set-Cookie")
 assert(cookie.contains("color=red"))
 assert(cookie.contains("; path=/colortest"))
 assert(cookie.contains("; domain=.example.com"))

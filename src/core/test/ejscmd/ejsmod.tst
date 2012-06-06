@@ -13,11 +13,11 @@ let compileFlags = [
     Compile a test stub so we can use the same tests in commands
  */
 rm("default.mod")
-sh(locate("ejsc") + " --out ejs.test.mod test.stub.es")
+Cmd.run(Cmd.locate("ejsc") + " --out ejs.test.mod test.stub.es")
 
 if (test.depth >= 2) {
     for (i = 0; i < test.depth && i < compileFlags.length; i++) {
-        let compile = locate("ejsc") + " --doc " + compileFlags[i]
+        let compile = Cmd.locate("ejsc") + " --doc " + compileFlags[i]
 
         for each (f in find(["lang", "db", "lib", "regress"], "*.tst")) {
             rmdir(".doctmp", true)

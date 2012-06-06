@@ -30,16 +30,49 @@ static EjsXML *createXml(Ejs *ejs, EjsType *type, int size)
 }
 
 
-static EjsXML *cloneXml(Ejs *ejs, EjsXML *xml, bool deep)
+EjsAny *cloneXml(Ejs *ejs, EjsXML *xml, bool deep)
 {
-    EjsXML  *newXML;
+    EjsXML      *root, *elt;
+    int         next;
 
-    newXML = ejsCreateObj(ejs, TYPE(xml), 0);
-    if (newXML == 0) {
-        ejsThrowMemoryError(ejs);
+    if (xml == 0) {
         return 0;
     }
-    return newXML;
+    if (xml->kind == EJS_XML_LIST) {
+        root = ejsCreateXMLList(ejs, xml->targetObject, xml->targetProperty);
+    } else {
+        root = ejsCreateXML(ejs, xml->kind, xml->qname, NULL, xml->value);
+    }
+    if (root == 0) {
+        return 0;
+    }
+    //  TODO - must copy inScopeNamespaces?
+
+    if (xml->attributes) {
+        root->attributes = mprCreateList(-1, 0);
+        for (next = 0; (elt = (EjsXML*) mprGetNextItem(xml->attributes, &next)) != 0; ) {
+            elt = ejsClone(ejs, elt, 1);
+            if (elt) {
+                elt->parent = root;
+                mprAddItem(root->attributes, elt);
+            }
+        }
+    }
+    if (xml->elements) {
+        root->elements = mprCreateList(-1, 0);
+        for (next = 0; (elt = mprGetNextItem(xml->elements, &next)) != 0; ) {
+            mprAssert(ejsIsXML(ejs, elt));
+            elt = ejsClone(ejs, elt, 1);
+            if (elt) {
+                elt->parent = root;
+                mprAddItem(root->elements, elt);
+            }
+        }
+    }
+    if (mprHasMemError(ejs)) {
+        return 0;
+    }
+    return root;
 }
 
 
@@ -82,7 +115,7 @@ static EjsAny *castXml(Ejs *ejs, EjsXML *xml, EjsType *type)
             }
         }
         buf = mprCreateBuf(MPR_BUFSIZE, -1);
-        if (ejsXMLToString(ejs, buf, xml, -1) < 0) {
+        if (ejsXMLToBuf(ejs, buf, xml, -1) < 0) {
             return 0;
         }
         return ejsCreateStringFromAsc(ejs, (char*) buf->start);
@@ -171,7 +204,7 @@ static EjsObj *nextXmlKey(Ejs *ejs, EjsIterator *ip, int argc, EjsObj **argv)
  */
 static EjsObj *getXmlIterator(Ejs *ejs, EjsObj *xml, int argc, EjsObj **argv)
 {
-    return (EjsObj*) ejsCreateIterator(ejs, xml, nextXmlKey, 0, NULL);
+    return (EjsObj*) ejsCreateIterator(ejs, xml, -1, nextXmlKey, 0, NULL);
 }
 
 
@@ -209,7 +242,7 @@ static EjsObj *nextXmlValue(Ejs *ejs, EjsIterator *ip, int argc, EjsObj **argv)
  */
 static EjsObj *getXmlValues(Ejs *ejs, EjsObj *ap, int argc, EjsObj **argv)
 {
-    return (EjsObj*) ejsCreateIterator(ejs, ap, nextXmlValue, 0, NULL);
+    return (EjsObj*) ejsCreateIterator(ejs, ap, -1, nextXmlValue, 0, NULL);
 }
 
 
@@ -231,7 +264,7 @@ static EjsObj *getXmlPropertyByName(Ejs *ejs, EjsXML *xml, EjsName qname)
     result = 0;
 
     mprAssert(xml->kind < 5);
-    if (isdigit((int) qname.name->value[0]) && allDigitsForXml(qname.name)) {
+    if (isdigit((uchar) qname.name->value[0]) && allDigitsForXml(qname.name)) {
         /*
             Consider xml as a list with only one entry == xml. Then return the 0'th entry
          */
@@ -252,7 +285,7 @@ static EjsObj *getXmlPropertyByName(Ejs *ejs, EjsXML *xml, EjsName qname)
 
     } else if (qname.name->value[0] == '.') {
         /* Decenders (do ..@ also) */
-        result = ejsXMLDescendants(ejs, xml, qname);
+        result = ejsGetXMLDescendants(ejs, xml, qname);
 
     } else {
         /* name and * */
@@ -425,7 +458,7 @@ static int setXmlPropertyByName(Ejs *ejs, EjsXML *xml, EjsName qname, EjsObj *va
 
     mprLog(9, "XMLSet %@.%@ = \"%@\"", xml->qname.name, qname.name, ejsCast(ejs, value, String));
 
-    if (isdigit((int) qname.name->value[0]) && allDigitsForXml(qname.name)) {
+    if (isdigit((uchar) qname.name->value[0]) && allDigitsForXml(qname.name)) {
         ejsThrowTypeError(ejs, "Integer indicies for set are not allowed");
         return EJS_ERR;
     }
@@ -443,13 +476,13 @@ static int setXmlPropertyByName(Ejs *ejs, EjsXML *xml, EjsName qname, EjsObj *va
     xvalue = (EjsXML*) value;
     if (ejsIsXML(ejs, xvalue)) {
         if (xvalue->kind == EJS_XML_LIST) {
-            value = (EjsObj*) ejsDeepCopyXML(ejs, xvalue);
+            value = cloneXml(ejs, xvalue, 1);
 
         } else if (xvalue->kind == EJS_XML_TEXT || xvalue->kind == EJS_XML_ATTRIBUTE) {
             value = ejsCast(ejs, originalValue, String);
 
         } else {
-            value = (EjsObj*) ejsDeepCopyXML(ejs, xvalue);
+            value = cloneXml(ejs, xvalue, 1);
         }
     } else {
         value = ejsCast(ejs, value, String);
@@ -504,7 +537,7 @@ static int setXmlPropertyByName(Ejs *ejs, EjsXML *xml, EjsName qname, EjsObj *va
         /*
             Update existing element.
          */
-        xml = ejsSetXML(ejs, xml, index, createValueNode(ejs, elt, value));
+        xml = ejsSetXMLElement(ejs, xml, index, createValueNode(ejs, elt, value));
     }
 
     if (xml == 0) {
@@ -557,9 +590,7 @@ static bool deepCompare(EjsXML *lhs, EjsXML *rhs)
 }
 
 
-//  TODO - rename ejsGetXMLDescendants. Check all other names.
-
-EjsXML *ejsXMLDescendants(Ejs *ejs, EjsXML *xml, EjsName qname)
+EjsXML *ejsGetXMLDescendants(Ejs *ejs, EjsXML *xml, EjsName qname)
 {
     EjsXML          *item, *result;
     int             next;
@@ -578,7 +609,7 @@ EjsXML *ejsXMLDescendants(Ejs *ejs, EjsXML *xml, EjsName qname)
         }
         if (xml->elements) {
             for (next = 0; (item = mprGetNextItem(xml->elements, &next)) != 0; ) {
-                result = ejsAppendToXML(ejs, result, ejsXMLDescendants(ejs, item, qname));
+                result = ejsAppendToXML(ejs, result, ejsGetXMLDescendants(ejs, item, qname));
             }
         }
 
@@ -588,7 +619,7 @@ EjsXML *ejsXMLDescendants(Ejs *ejs, EjsXML *xml, EjsName qname)
                 if (qname.name->value[0] == '*' || wcmp(item->qname.name->value, &qname.name->value[1]) == 0) {
                     result = ejsAppendToXML(ejs, result, item);
                 } else {
-                    result = ejsAppendToXML(ejs, result, ejsXMLDescendants(ejs, item, qname));
+                    result = ejsAppendToXML(ejs, result, ejsGetXMLDescendants(ejs, item, qname));
                 }
             }
         }
@@ -596,51 +627,6 @@ EjsXML *ejsXMLDescendants(Ejs *ejs, EjsXML *xml, EjsName qname)
     return result;
 }
 
-
-EjsXML *ejsDeepCopyXML(Ejs *ejs, EjsXML *xml)
-{
-    EjsXML      *root, *elt;
-    int         next;
-
-    if (xml == 0) {
-        return 0;
-    }
-    if (xml->kind == EJS_XML_LIST) {
-        root = ejsCreateXMLList(ejs, xml->targetObject, xml->targetProperty);
-    } else {
-        root = ejsCreateXML(ejs, xml->kind, xml->qname, NULL, xml->value);
-    }
-    if (root == 0) {
-        return 0;
-    }
-    //  TODO - must copy inScopeNamespaces?
-
-    if (xml->attributes) {
-        root->attributes = mprCreateList(-1, 0);
-        for (next = 0; (elt = (EjsXML*) mprGetNextItem(xml->attributes, &next)) != 0; ) {
-            elt = ejsDeepCopyXML(ejs, elt);
-            if (elt) {
-                elt->parent = root;
-                mprAddItem(root->attributes, elt);
-            }
-        }
-    }
-    if (xml->elements) {
-        root->elements = mprCreateList(-1, 0);
-        for (next = 0; (elt = mprGetNextItem(xml->elements, &next)) != 0; ) {
-            mprAssert(ejsIsXML(ejs, elt));
-            elt = ejsDeepCopyXML(ejs, elt);
-            if (elt) {
-                elt->parent = root;
-                mprAddItem(root->elements, elt);
-            }
-        }
-    }
-    if (mprHasMemError(ejs)) {
-        return 0;
-    }
-    return root;
-}
 
 /************************************ Methods ********************************/
 /*
@@ -680,7 +666,7 @@ static EjsObj *xmlConstructor(Ejs *ejs, EjsXML *thisObj, int argc, EjsObj **argv
         if (str == 0) {
             return 0;
         }
-        while (isspace((int) *str)) str++;
+        while (isspace((uchar) *str)) str++;
         if (*str == '<') {
             /* XML Literal */
             ejsLoadXMLString(ejs, thisObj, (EjsString*) arg);
@@ -752,10 +738,7 @@ static EjsObj *saveXml(Ejs *ejs, EjsXML *xml, int argc, EjsObj **argv)
     buf = mprCreateBuf(MPR_BUFSIZE, -1);
     mprPutStringToBuf(buf, "<?xml version=\"1.0\"?>\n");
 
-    /*
-       Convert XML to a string
-     */
-    if (ejsXMLToString(ejs, buf, xml, 0) < 0) {
+    if (ejsXMLToBuf(ejs, buf, xml, 0) < 0) {
         return 0;
     }
     file = mprOpenFile(filename,  O_CREAT | O_TRUNC | O_WRONLY | O_TEXT, 0664);
@@ -878,7 +861,7 @@ static EjsObj *xml_parent(Ejs *ejs, EjsXML *xml, int argc, EjsObj **argv)
 /*
     Set an indexed element to an XML value
  */
-EjsXML *ejsSetXML(Ejs *ejs, EjsXML *xml, int index, EjsXML *node)
+EjsXML *ejsSetXMLElement(Ejs *ejs, EjsXML *xml, int index, EjsXML *node)
 {
     EjsXML      *old;
 
@@ -981,7 +964,7 @@ static bool allDigitsForXml(EjsString *name)
     MprChar     *cp;
 
     for (cp = name->value; *cp; cp++) {
-        if (!isdigit((int) *cp) || *cp == '.') {
+        if (!isdigit((uchar) *cp) || *cp == '.') {
             return 0;
         }
     }
@@ -1042,7 +1025,7 @@ void ejsLoadXMLString(Ejs *ejs, EjsXML *xml, EjsString *xmlString)
 }
 
 
-void ejsLoadXMLCString(Ejs *ejs, EjsXML *xml, cchar *xmlString)
+void ejsLoadXMLAsc(Ejs *ejs, EjsXML *xml, cchar *xmlString)
 {
     ejsLoadXMLString(ejs, xml, ejsCreateStringFromAsc(ejs, xmlString));
 }
@@ -1100,7 +1083,7 @@ void ejsConfigureXMLType(Ejs *ejs)
     ejsBindMethod(ejs, prototype, ES_XML_load, loadXml);
     ejsBindMethod(ejs, prototype, ES_XML_save, saveXml);
     ejsBindMethod(ejs, prototype, ES_XML_name, getXmlNodeName);
-    ejsBindMethod(ejs, prototype, ES_XML_parent, (EjsNativeFunction) xml_parent);
+    ejsBindMethod(ejs, prototype, ES_XML_parent, (EjsProc) xml_parent);
 
     /*
         Override these methods
@@ -1119,8 +1102,8 @@ void ejsConfigureXMLType(Ejs *ejs)
 /*
     @copy   default
 
-    Copyright (c) Embedthis Software LLC, 2003-2011. All Rights Reserved.
-    Copyright (c) Michael O'Brien, 1993-2011. All Rights Reserved.
+    Copyright (c) Embedthis Software LLC, 2003-2012. All Rights Reserved.
+    Copyright (c) Michael O'Brien, 1993-2012. All Rights Reserved.
 
     This software is distributed under commercial and open source licenses.
     You may use the GPL open source license described below or you may acquire
@@ -1132,7 +1115,7 @@ void ejsConfigureXMLType(Ejs *ejs)
     under the terms of the GNU General Public License as published by the
     Free Software Foundation; either version 2 of the License, or (at your
     option) any later version. See the GNU General Public License for more
-    details at: http://www.embedthis.com/downloads/gplLicense.html
+    details at: http://embedthis.com/downloads/gplLicense.html
 
     This program is distributed WITHOUT ANY WARRANTY; without even the
     implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.
@@ -1141,7 +1124,7 @@ void ejsConfigureXMLType(Ejs *ejs)
     proprietary programs. If you are unable to comply with the GPL, you must
     acquire a commercial license to use this software. Commercial licenses
     for this software and support services are available from Embedthis
-    Software at http://www.embedthis.com
+    Software at http://embedthis.com
 
     Local variables:
     tab-width: 4

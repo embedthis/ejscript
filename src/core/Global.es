@@ -193,6 +193,10 @@ module ejs {
         @param dest Destination object
         @param src Source object
         @param options Control options
+        @option combine Boolean. If true, then support key prefixes "+", "=", "-" to add, assign and subtract key values.
+            When adding string properties, values will be appended using a space separator. Extra spaces will not 
+            be removed on subtraction.
+            Arrays with string values may also be combined using the key prefixes. 
         @option overwrite Boolean. If true, then overwrite existing properties in the destination object. Defaults to true.
         @option deep Boolean. If true, then recursively copy the properties of any objects referenced in the source object.
             Otherwise, the copy is only one level deep. Defaults to true.
@@ -260,6 +264,7 @@ module ejs {
         Print the arguments to the standard output using the supplied format template. This call evaluates the arguments, 
         converts the result to strings and invokes String.format to format the args. The result is then printed to the
         standard output. Arguments are converted to strings by calling their toString method. 
+        @param fmt Format specifier
         @param args Variables to print
         @spec ejs
      */
@@ -303,8 +308,8 @@ module ejs {
 /*
     @copy   default
     
-    Copyright (c) Embedthis Software LLC, 2003-2011. All Rights Reserved.
-    Copyright (c) Michael O'Brien, 1993-2011. All Rights Reserved.
+    Copyright (c) Embedthis Software LLC, 2003-2012. All Rights Reserved.
+    Copyright (c) Michael O'Brien, 1993-2012. All Rights Reserved.
     
     This software is distributed under commercial and open source licenses.
     You may use the GPL open source license described below or you may acquire 

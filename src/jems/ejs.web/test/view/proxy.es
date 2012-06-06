@@ -3,7 +3,7 @@
  */
 require ejs.web
 
-const HTTP = ":" + (App.config.test.http_port || "6700")
+const HTTP = App.config.uris.http
 
 public var proxyData
 
@@ -55,7 +55,6 @@ public function proxy(tag, ...args): Http {
         print("Assertion failure:")
         print("Expected: \"" + expected + "\"\n")
         print("Actual:   \"" + response + "\"\n")
-        // print(response)
         print(response.length, expected.length)
         throw e
     }

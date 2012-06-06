@@ -1,7 +1,6 @@
-<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN"
-    "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd">
 <!-- BeginDsi "dsi/head.html" -->
-<html xmlns="http://www.w3.org/1999/xhtml">
+<!DOCTYPE html>
+<html lang="en">
 <head>
     <title>Embedthis Ejscript 2.0.0 Documentation</title>
     <meta name="keywords" content="Ejscript, JavaScript, ECMAScript, Server-Side JavaScript, Dynamic languages, 
@@ -13,34 +12,27 @@
     <!--[if IE]>
     <link href="../../iehacks.css" rel="stylesheet" type="text/css" />
     </![endif]-->
+    <link href="http://www.google.com/cse/style/look/default.css" type="text/css" rel="stylesheet" />
 </head>
 
 <body>
     <div class="top">
-        <a class="logo"  href="http://www.ejscript.org/">&nbsp;</a>
+        <a class="logo"  href="http://ejscript.org/">&nbsp;</a>
         <div class="topRight">
-             <div class="search">
-                 <form method="get" action="http://www.google.com/search" title="Search www.embedthis.com">
-                     <p>
-                        <label title="Search">Search</label> 
-                        <input type="text" id="q" name="q" size="15" maxlength="255" />
-                        <input type="submit" id="submit" value="Go" /> 
-                        <input type="hidden" name="domains" value="embedthis.com" /> 
-                        <input type="hidden" name="sitesearch" value="embedthis.com" />
-                    </p>
-                 </form>
-              </div>
-            <!--TITLE-->Embedthis Ejscript 2.0.0
+            <div class="search">
+                <div id="cse-search-form">Loading</div>
+                <div class='version'>Embedthis Ejscript 2.0.0</div>
+            </div>
         </div>
         <div class="crumbs">
-            <a href="../../product/index.html">Home</a>
+            <a href="../../index.html">Home</a>
 <!-- EndDsi -->
-             &gt;<a href="index.html">Programmer Reference</a>&gt; Ejscript Language Architecture
+        &gt;<a href="index.html">Programmer Reference</a>&gt; <b>Ejscript Language Architecture</b>
         </div>
     </div>
     <div class="content">
         <div class="contentRight">
-            <h2>Quick Nav</h2>
+            <h1>Quick Nav</h1>
             <ul>
                 <li><a href="#tools">Command Tools</a></li>
                 <li><a href="#vm">Virtual Machine</a></li>
@@ -48,29 +40,29 @@
                 <li><a href="#modules">Modules</a></li>
                 <li><a href="#library">Core Class Library</a></li>
             </ul>
-            <h2>See Also</h2>
+            <h1>See Also</h1>
             <ul>
                 <li><a href="webArchitecture.html">Web Framework</a></li>
-                <li><a href="../../api/ejscript/index.html" target="api">Script Library</a></li>
+                <li><a href="../../api/ejscript/index.html">Script Library</a></li>
                 <li><a href="../../api/native.html">Native APIs</a></li>
                 <li><a href="../../guide/ejs/solutions/index.html">Solution Guide</a></li>
                 <li><a href="../../guide/ejs/programmers/index.html">Programmers Guide</a></li>
                 <li><a href="../../guide/ejs/users/index.html">User Guide</a></li>
-                <li><a href="../../api/ejscript/index.html" target="new">Ejscript Library</a></li>
+                <li><a href="../../api/ejscript/index.html" >Ejscript Library</a></li>
             </ul>
         </div>
         <div class="contentLeft">
             <h1>Ejscript Architecture</h1>
-            <p>This document describes the Ejscript Language Architecutre and how it processes program scripts. It
+            <p>This document describes the Ejscript Language Architecture and how it processes program scripts. It
             describes the flow of execution and the main processing components. Sometimes architectural overviews can
             be a bit dry. To liven it up, you may wish to see the <a href="../../guide/ejs/users/tour.html">Ejscript
             Language Tour</a> first.</p>
             <p>See also the <a href="webArchitecture.html">Ejscript Web Framework architecture</a> which describes the
             Ejscript Web Framework.</p>
-            <h3>Ejscript Language Architecutre</h3>
+            <h2>Ejscript Language Architecture</h2>
             <p>Ejscript consists of an optimizing compiler, an embeddable virtual machine, a system library and a set
             of tools. All were designed and implemented to provide a high performance and compact server-side
-            JavaScript programming environment.</p><img src="../../images/architecture.jpg" alt="" />
+            JavaScript programming environment.</p><img src="../../images/tools.jpg" alt="" />
             <p>The main components of the Ejscript language environment:</p>
             <ul>
                 <li><a href="#tools">Command Tools</a> - Programs to compile, interpret and manage Ejscript
@@ -79,7 +71,7 @@
                 <li><a href="#compiler">Compiler</a> - Integrated or stand-alone compiler</li>
                 <li><a href="#modules">Modules</a> - Cached, pre-compiled Ejscript programs</li>
                 <li><a href="#library">Core Class Library</a> - Foundation core types and classes</li>
-            </ul><a name="tools" id="tools"></a>
+            </ul><a id="tools"></a>
             <h2 class="section">Command Tools</h2>
             <p>Ejscript provides a set of commands to interpret, compile and manage ejscript programs and
             documentation. These commands are invoked from the command line and are used manually and also
@@ -88,39 +80,38 @@
             <ul>
                 <li>ejs - Ejscript command shell</li>
                 <li>ejsc - Ejscript compiler</li>
-                <li>ejsweb - Web framework generator</li>
                 <li>ejsmod - Module manager and documentation generator</li>
-                <li>ejsvm - Ejscript virtual machine</li>
+                <li>mvc - Web framework generator</li>
             </ul>
             <p>For full details about the command line options, please see the <a href=
-            "../../guide/ejs/programmers/man.html">Manual Pages</a> for these commands. <a name="vm" id="vm"></a></p>
+            "../../guide/ejs/programmers/man.html">Manual Pages</a> for these commands. <a id="vm"></a></p>
             <h2 class="section">Virtual Machine</h2>
             <p>The Ejscript virtual machine is a portable, cross-platform virtual machine optimized for embedded use
             outside browsers. It has a compact byte code that minimizes memory use and supports cached compilation of
             scripts for repeated execution.</p>
             <p>It is a direct-threaded, stack-based, early-binding, high-level, type-less byte code, cloning, composite
             native classed VM. Each of these attributes is described below.</p>
-            <h3>Direct Threaded</h3>
+            <h2>Direct Threaded</h2>
             <p>Direct-threaded refers not to multi-threading, but to an approach in VM design where the VM inner loop
             will jump directly from opcode to opcode without a central dispatch loop. Direct threading can sometimes
             have an adverse effect on CPU instruction caching, but this can be offset by having a high level byte code
             that can invoke operations directly on properties without having a fetch-do-store cycle. We aim to further
             mitigate cache depletion by the use of inline native code generation in a future release.</p>
-            <h3>Stack Based</h3>
+            <h2>Stack Based</h2>
             <p>Ejscript uses a stack-based expression stack with bypass opcodes. This is a blend of the stack-based and
             register-based approaches to VM design. By using high-level byte codes that can access, manipulate and call
             properties directly, and bypass the expression stack, Ejscript avoids the overhead of a stack-based VM and
             gains many of the benefits of a register-based approach.</p>
-            <h3>Early Binding</h3>
+            <h2>Early Binding</h2>
             <p>The VM makes extensive use of early binding to resolve property references into direct references and
-            has many dedicated op codes for fast property access. The Ejscript compiler tries wherever possible to bind
+            has many dedicated byte codes for fast property access. The Ejscript compiler tries wherever possible to bind
             property references to property slot offsets and uses these optimized opcodes for such accesses. This
             binding is used not just for load/store operations but also for function calls and object creation.</p>
-            <h3>Object Shaping</h3>
+            <h2>Object Shaping</h2>
             <p>Ejscript optimizes the creation of classes and objects. It detects when objects are being created using
             prototype based inheritance and then transparently creates backing classes. These classes allow very fast
             property access and quick repeat object allocations.</p>
-            <h3>High Level, Type-Less Byte Code</h3>
+            <h2>High Level, Type-Less Byte Code</h2>
             <p>The Ejscript byte code learns from the best of thinking in recent VM byte code design, and has a
             high-level, type-less byte code with out-of-band exception handling.</p>
             <p>What is somewhat unusual about the Ejscript VM design, is the lack of dedicated type byte codes. There
@@ -129,29 +120,28 @@
             <p>The compiler uses the optimized early binding byte codes to streamline data access and the VM ensures
             valid binding at run-time. The net result is a very compact byte code and tiny program footprints. For
             embedded web applications this is ideal and translates to fast loading and response.</p>
-            <h3>Cloning</h3>
+            <h2>Cloning</h2>
             <p>Ejscript supports multiple interpreters with define data interchange mechanisms. This ensures security
             where the data from one interpreter is not visible from another. Ejscript also supports rapid cloning of
             interpreters from a master interpreter. This is used in the Ejscript web framework to quickly create an
             interpreter to service a web request. Memory footprint and garbage collection overhead is minimized by
             read-only sharing of system types and classes between interpreters.</p>
-            <h3>Composite Native Classes</h3>
+            <h2>Composite Native Classes</h2>
             <p>Ejscript supports composite native types and classes that can be created in native C code. A composite
             native class is one where the properties of the class are not represented as discrete Ejscript properties
             that exist in the VM in their own right, but rather as native system types. This can dramatically compress
             native classes down to the minimum storage required to represent the objects state. Composite native
             classes have several benefits:</p>
             <ul>
-                <li>They run much faster because they can access properties natively without going via the VM.</li>
-                <li>The memory footprint requirements are much smaller, typically more than a 10x reduction in
-                size.</li>
+                <li>Native classes can directly access properties without going via the VM.</li>
+                <li>The memory footprint is much smaller, typically more than a 10x reduction in size.</li>
             </ul>
             <p>For example: A video class may have height and width coordinate properties. In a normal scripted or
             native class, these would be discrete Ejscript numeric objects with their own storage. In a composite
             native class, the class will store these internally as packed, native integers.</p>
             <p>Ejscript can support composite native types because the VM and its native type interface delegates
             operations to the native types themselves. This is in keeping with the high-level byte code philosophy.</p>
-            <h3>Garbage Collector</h3>
+            <h2>Garbage Collector</h2>
             <p>The Ejscript garbage collector is a generational, non-compacting, mark and sweep collector. It is
             optimized for use in embedded applications - particularly when it is embedded inside web servers.</p>
             <p>The garbage collector is generational in that it understands the ages of objects and focuses on
@@ -171,11 +161,11 @@
             completion of web requests and thus avoids garbage collection in many cases.</p>
             <p>When objects are collected, they are recycled via type-specific object pools that provide very rapid
             allocation of new object instances.</p>
-            <h3>Future VM Enhancements</h3>
+            <h2>Future VM Enhancements</h2>
             <p>This VM is a good platform for future enhancements. The byte code was designed to support inline native
             code interleaving where the compiler can selectively generate native code blocks. The compiler will be able
             to generate this native code either when pre-compiling for maximum speed or on-the-fly as a just-in-time
-            compiler.</p><a name="compiler" id="compiler"></a>
+            compiler.</p><a id="compiler"></a>
             <h2 class="section">Compiler</h2>
             <p>The Ejscript compiler is an optimizing script compiler that generates optimized byte code. It has up to
             4 passes depending on the mode of compilation:</p>
@@ -188,14 +178,14 @@
             <p>The compiler supports conditional compilation based upon the evaluation of constant time
             expressions.</p>
             <p>The Ejscript compiler can run either stand-alone or be embedded in a shell or other program.</p>
-            <h3>Embedded Compilation</h3>
+            <h2>Embedded Compilation</h2>
             <p>When the Ejscript compiler is embedded into another application, it provides a one-step compile and
             execute cycle. The byte code output of the compiler can optionally be cached as module files or can be
             simply created, executed, and then discarded.</p>
             <p>The <i>ejs</i> command shell uses this approach to provide an interactive Ejscript command shell. The
             Appweb and Apache web servers also use this approach to host the Ejscript web framework for web
             applications.</p>
-            <h3>Stand Alone Compilation</h3>
+            <h2>Stand Alone Compilation</h2>
             <p>The Ejscript compiler can also operate in a stand-alone mode where scripts are compiled into optimized
             byte code in the form of <a href="#modules">module</a> files. These compact module files can be distributed
             and executed by the VM without requiring further use of the compiler. This is often ideal for embedded
@@ -206,7 +196,7 @@
             expected to run many, many times - spending some development cycles to produce the best code possible is
             well worth the effort. The code may also be more secure as the source code for the program is not being
             supplied &mdash; only the byte code.</p>
-            <p><a name="modules" id="modules"></a></p>
+            <p><a id="modules"></a></p>
             <h2 class="section">Modules</h2>
             <p>Ejscript provides a <b>module</b> language directive and module loading mechanism that permits like
             sections of a program to be grouped into a single loadable module.</p>
@@ -218,7 +208,7 @@
                 <li>How to specify and resolve module dependencies.</li>
                 <li>How to version and permit side-by-side execution of different versions of the same module.</li>
             </ul>
-            <h3>Module Packaging</h3>
+            <h2>Module Packaging</h2>
             <p>The Ejscript module format provides a compressed archive of module declarations in a single physical
             file. The module file contains byte code, constant pool, debug code, exception handlers and class and
             method signatures. A single module file may actually contain multiple logical modules. This way, an
@@ -230,70 +220,69 @@
             <p>When debug information is enabled (via the --debug switch) the compiler will store debug information in
             the module file to enable symbolic debugging. Ejscript currently does not (yet) have a symbolic debugger,
             but trace output and C level debugging can inspect script source statements and line numbers.</p>
-            <h3>Module Namespaces</h3>
+            <h2>Module Namespaces</h2>
             <p>Ejscript provides a safe namespace by using namespaces to qualify module names. The namespace for a
             module ensures that two declarations of the same name, but in different modules can be correctly identified
             by the compiler and VM.</p>
             <p>Namespaces are mostly transparent to the user and module writer - except that the user imports the
             module by using a "use module" directive, and the module writer publishes a module by bracketing the code
             in a "module" directive.</p>
-            <h3>Module Dependencies</h3>
+            <h2>Module Dependencies</h2>
             <p>The Ejscript module file format specifies any and all dependent modules that are required by the module.
             A module dependency is specified in the Ejscript source program via the "use module" directive. This
             instructs the compiler to load (or compile) that module and perform various compile time and run time
             checks. The VM module loader will load all dependent modules and initialize them in the appropriate
             order.</p>
             <p>Module names are opaque, but by convention must uniquely qualify a module name. You can use a reverse
-            domain naming convention to ensure uniqueness. It is anticiapted that in the future, some form of module
+            domain naming convention to ensure uniqueness. It is anticipated that in the future, some form of module
             registry will exist to reserve unique names.</p>
-            <h3>Side by Side Execution</h3>
+            <h2>Side by Side Execution</h2>
             <p>Because modules load in dedicated and isolated namespaces, a module is guaranteed not to clash with
             other names. Module writers can version packages by adding a version namespace in addition to the module
-            namespace. The user of the module can then put a "use namesapce" directive in their code to request a
-            specific version of the module.</p><a name="library" id="library"></a>
+            namespace. The user of the module can then put a "use namespace" directive in their code to request a
+            specific version of the module.</p><a id="library"></a>
             <h2 class="section">Core Class Library</h2>
             <p>The core Ejscript class library provides an extensive suite of classes that cover common programming
             tasks and requirements. These are divided into the following modules:</p>
             <ul>
                 <li>intrinsic - Core system types</li>
                 <li>ejs.db - Database</li>
-                <li>ejs.events - Events and Timers</li>
-                <li>ejs.io - File and Network I/O</li>
-                <li>ejs.sys - System Interfacing</li>
                 <li>ejs.web - Web Framework</li>
             </ul>
-            <p>See the <a href="../../api/ejscript/index.html" target="api">API reference</a> for full details
+            <p>See the <a href="../../api/ejscript/index.html">API reference</a> for full details
             regarding the script programming API.</p>
-            <h3>Intrinsic</h3>
-            <p>Some of the classes in the intrinsic module: Array, Boolean, ByteArray, Date, Error, Function, Number,
-            Object, Reflect, RegExp, Stream, String and XML</p>
-            <h3>ejs.db</h3>
+            <h2>Intrinsic</h2>
+            <p>Some of the classes in the intrinsic module: Array, Boolean, ByteArray, Date, Emitter, Error, 
+            Function, Http, Number, Object, Reflect, RegExp, Socket, Stream, String, TextStream and XML</p>
+            <h2>ejs.db</h2>
             <p>The ejs.db module provides the Database and Record classes which provide a low level SQLite access API
             and also a higher level Object Relational Mapping layer that is used by the <a href=
             "webArchitecture.html">Web Framework</a>.</p>
-            <h3>ejs.db</h3>
-            <p>The ejs.events module provides the event dispatching and timer services. It includes the classes:
-            Dispatcher, Event, Timer and TimerEvent.</p>
-            <h3>ejs.io</h3>
-            <p>The ejs.io module provides file and network I/O services. It includes the classes: BinaryStream, File,
-            Http, TextStream, XMLHttp.</p>
-            <h3>ejs.sys</h3>
-            <p>The ejs.sys module provides system interface services. It includes the classes: App for application
-            management, GC for managing the garbage collector, Memory for monitoring memory usage and System for
-            invoking system commands.</p>
-            <h3>ejs.web</h3>
-            <p>The web framework provides a complete web application framework. It includes the classes: Application,
-            Controller, Cookie, GoogleConnector, Host, HtmlConnector, Request, Response, Session, UploadFile, View and
-            ViewConnector.</p>
+            <h2>ejs.db</h2>
+            <h2>ejs.web</h2>
+            <p>The web framework provides a complete web application framework. It includes the classes: 
+            Controller, Cookie, HttpServer, Request, Session, UploadFile, and View.</p>
         </div>
     </div>
 <!-- BeginDsi "dsi/bottom.html" -->
 	<div class="bottom">
 		<p class="footnote"> 
-            <a href="../../product/copyright.html" >&copy; Embedthis Software LLC, 2003-2011. 
+            <a href="../../product/copyright.html" >&copy; Embedthis Software LLC, 2003-2012. 
             All rights reserved. Embedthis, Ejscript and Appweb are trademarks of Embedthis Software LLC.</a>
 		</p>
 	</div>
-<!-- EndDsi -->
+    <script src="http://www.google.com/jsapi" type="text/javascript"></script>
+    <script type="text/javascript"> 
+      google.load('search', '1', {language : 'en'});
+      google.setOnLoadCallback(function() {
+        var customSearchControl = new google.search.CustomSearchControl(
+          'partner-pub-9935546676162772:ysvxxv4n9rx');
+
+        customSearchControl.setResultSetSize(google.search.Search.FILTERED_CSE_RESULTSET);
+        var options = new google.search.DrawOptions();
+        options.enableSearchboxOnly("http://ejscript.org/search.html");
+        customSearchControl.draw('cse-search-form', options);
+      }, true);
+    </script>
 </body>
 </html>

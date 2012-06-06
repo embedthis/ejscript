@@ -2,7 +2,7 @@
     Http.fetch tests
  */
 
-let HTTP = ":" + (App.config.test.http_port || "6700")
+let HTTP = App.config.uris.http
 let http = new Http
 http.fetch("GET", HTTP + "/index.html", null, function() {
     assert(this == http)

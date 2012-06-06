@@ -7,6 +7,9 @@ module ejs {
 
     // use strict
 
+    //  MOB - consider switching length =>  size, available => length
+    //  MOB - add indexOf(byteValue)
+
     /** 
         ByteArrays provide a resizable, integer indexed, in-memory store for bytes. ByteArrays can be used as a simple 
         array type to store and encode data as bytes or they can be used as buffered loop-back Streams.
@@ -31,7 +34,7 @@ module ejs {
         
         When used as loop-back streams, data written to ByteArrays is immediately available for reading. 
         ByteArrays can be run in sync or async mode. ByteArrays will issue events for key state transitions such as 
-        close, eof, readable and writable events. All event observers are called with the following signature:
+        close, EOF, readable and writable events. All event observers are called with the following signature:
             function callback(event: String, ba: ByteArray): Void
         @spec ejs
         @stability evolving
@@ -85,6 +88,12 @@ module ejs {
         # FUTURE
         native function compress(): Void
 
+        /**
+            Test if the buffer contains a pattern
+         */
+        # FUTURE
+        native function contains(pattern): Boolean
+
         /** 
             Copy data into the array. This is a low-level data copy routine that does not update read and write positions.
             Data is written at the destOffset index. This call does not issue events unless required to make room
@@ -105,7 +114,7 @@ module ejs {
             @param dest Destination byte array
             @param destOffset Location in the destination array to copy the data. Defaults to the start.
             @param count Number of bytes to read. Set to -1 to read all available data.
-            @returns the count of bytes read. Returns null on eof.
+            @returns the count of bytes read. Returns null on EOF.
          */
         native function copyOut(srcOffset: Number, dest: ByteArray, destOffset: Number = 0, count: Number = -1): Number
 
@@ -160,7 +169,7 @@ module ejs {
 
         /** 
             Length of the byte array. This is not the amount of read or write data, but is the size of the total 
-            array storage.
+            array storage. Use $available to get the amount of data between the read and write positions.
          */
         native function get length(): Number
 
@@ -186,15 +195,15 @@ module ejs {
             read position is set to the specified offset and data is stored at this offset. The write position is set to
             one past the last byte read.
          */
-        native function read(buffer: ByteArray, offset: Number = 0, count: Number = -1): Number
+        native function read(buffer: ByteArray!, offset: Number = 0, count: Number = -1): Number
 
         /** 
             Read a boolean from the array. Data is read from the current read $position pointer.
             If insufficient data, a "writable" event will be issued indicating that the byte array is writable. This enables 
             observers to write data into the byte array.  If there is no data available, the call 
-            will return return null indicating eof.
-            @returns a boolean or null on eof.
-            @throws IOError if an I/O error occurs or premature eof.
+            will return return null indicating EOF.
+            @returns a boolean or null on EOF.
+            @throws IOError if an I/O error occurs or premature EOF.
          */
         native function readBoolean(): Boolean
 
@@ -202,8 +211,8 @@ module ejs {
             Read a byte from the array. Data is read from the current read $position pointer.
             If insufficient data, a "write" event will be issued indicating that the byte array is 
             writable.  This enables observers to write data into the byte array.  If there is no data available, the call 
-            will return return null indicating eof.
-            @throws IOError if an I/O error occurs or premature eof.
+            will return return null indicating EOF.
+            @throws IOError if an I/O error occurs or premature EOF.
          */
         native function readByte(): Number
 
@@ -211,8 +220,8 @@ module ejs {
             Read a date from the array. Data is read from the current read $position pointer.
             If insufficient data, a "write" event will be issued indicating that the byte array is 
             writable.  This enables observers to write data into the byte array.  If there is no data available, the call 
-            will return return null indicating eof.
-            @throws IOError if an I/O error occurs or premature eof.
+            will return return null indicating EOF.
+            @throws IOError if an I/O error occurs or premature EOF.
          */
         native function readDate(): Date
 
@@ -220,9 +229,9 @@ module ejs {
             Read a double from the array. The data will be decoded according to the endian property. Data is read 
             from the current read $position pointer. If insufficient data, a "write" event will be issued indicating 
             that the byte array is writable. This enables observers to write data into the byte array. If there is 
-            no data available, the call will return return null indicating eof.
-            @returns a double or null on eof.
-            @throws IOError if an I/O error occurs or premature eof.
+            no data available, the call will return return null indicating EOF.
+            @returns a double or null on EOF.
+            @throws IOError if an I/O error occurs or premature EOF.
          */
         native function readDouble(): Number
 
@@ -231,8 +240,8 @@ module ejs {
             Data is read from the current read $position pointer.
             If insufficient data, a "write" event will be issued indicating that the byte array is 
             writable.  This enables observers to write data into the byte array.  If there is no data available, the call 
-            will return return null indicating eof.
-            @throws IOError if an I/O error occurs or premature eof.
+            will return return null indicating EOF.
+            @throws IOError if an I/O error occurs or premature EOF.
          */
         native function readInteger(): Number
 
@@ -241,8 +250,8 @@ module ejs {
             Data is read from the current read $position pointer.
             If insufficient data, a "write" event will be issued indicating that the byte array is 
             writable.  This enables observers to write data into the byte array.  If there is no data available, the call 
-            will return return null indicating eof.
-            @throws IOError if an I/O error occurs or premature eof.
+            will return return null indicating EOF.
+            @throws IOError if an I/O error occurs or premature EOF.
          */
         native function readLong(): Number
 
@@ -262,9 +271,9 @@ module ejs {
             Data is read from the current read $position pointer.
             If insufficient data, a "write" event will be issued indicating that the byte array is 
             writable.  This enables observers to write data into the byte array.  If there is no data available, the call 
-            will return return null indicating eof. If there is insufficient data 
-            @returns a short int or null on eof.
-            @throws IOError if an I/O error occurs or premature eof.
+            will return return null indicating EOF. If there is insufficient data 
+            @returns a short int or null on EOF.
+            @throws IOError if an I/O error occurs or premature EOF.
          */
         native function readShort(): Number
 
@@ -272,10 +281,10 @@ module ejs {
             Read a data from the array as a string. Read data from the $readPosition to a string up to the $writePosition,
             but not more than count characters. If insufficient data, a "writable" event will be issued indicating that 
             the byte array is writable. This enables observers to write data into the byte array.  If there is no data 
-            available, the call will return return null indicating eof. If there is insufficient data @param count of bytes 
+            available, the call will return return null indicating EOF. If there is insufficient data @param count of bytes 
             to read. If -1, convert the data up to the $writePosition.
-            @returns a string or null on eof.
-            @throws IOError if an I/O error occurs or a premature eof.
+            @returns a string or null on EOF.
+            @throws IOError if an I/O error occurs or a premature EOF.
          */
         native function readString(count: Number = -1): String
 
@@ -423,8 +432,8 @@ module ejs {
 /*
     @copy   default
     
-    Copyright (c) Embedthis Software LLC, 2003-2011. All Rights Reserved.
-    Copyright (c) Michael O'Brien, 1993-2011. All Rights Reserved.
+    Copyright (c) Embedthis Software LLC, 2003-2012. All Rights Reserved.
+    Copyright (c) Michael O'Brien, 1993-2012. All Rights Reserved.
     
     This software is distributed under commercial and open source licenses.
     You may use the GPL open source license described below or you may acquire 

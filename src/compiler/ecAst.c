@@ -9,8 +9,7 @@
 
 /********************************** Includes **********************************/
 
-#include    "ejs.h"
-#include    "ecCompiler.h"
+#include    "ejsCompiler.h"
 
 /********************************** Defines ***********************************/
 /*
@@ -279,14 +278,11 @@ static void defineBlock(EcCompiler *cp, EcNode *np)
 static void bindBlock(EcCompiler *cp, EcNode *np)
 {
     Ejs         *ejs;
-    EjsBlock    *block;
     
     mprAssert(cp->phase == EC_PHASE_BIND);
     mprAssert(np->kind == N_BLOCK || np->kind == N_MODULE);
 
     ejs = cp->ejs;
-    block = np->blockRef;
-    mprAssert(block);
 
     resolveName(cp, np, NULL, np->qname);
     if (np->blockCreated) {
@@ -517,7 +513,7 @@ static EjsType *defineClass(EcCompiler *cp, EcNode *np)
             Reserve one slot for the static initializer to ensure it is the first non-inherited slot.
             This slot may be reclaimed during fixup if not required. Instance initializers are prepended to the constructor.
          */
-        qname.name = ejsCreateStringFromAsc(ejs, mprAsprintf("-%@-", type->qname.name));
+        qname.name = ejsCreateStringFromAsc(ejs, sfmt("-%@-", type->qname.name));
         qname.space = ejsCreateStringFromAsc(ejs, EJS_INIT_NAMESPACE);
         fatt = EJS_TRAIT_HIDDEN | EJS_PROP_STATIC;
         ejsDefineProperty(ejs, type, 0, qname, EST(Function), fatt, ESV(null));
@@ -573,7 +569,7 @@ static void validateClass(EcCompiler *cp, EcNode *np)
     }
     if (type->implements) {
         if (mprGetListLength(type->implements) > 1 || 
-                (type->baseType && ejsCompareMulti(ejs, type->baseType->qname.name, "Object") != 0)) {
+                (type->baseType && ejsCompareAsc(ejs, type->baseType->qname.name, "Object") != 0)) {
             astError(cp, np, "Only one implements or one extends supported");
         }
     }        
@@ -2461,7 +2457,7 @@ static void defineVar(EcCompiler *cp, EcNode *np, int varKind, EjsObj *value)
         if (!(np->attributes & EJS_PROP_ENUMERABLE) && !(state->currentClassNode->attributes & EJS_PROP_ENUMERABLE)) {
             np->attributes |= EJS_TRAIT_HIDDEN;
         }
-        if (ejsContainsMulti(ejs, np->qname.space, ",private")) {
+        if (ejsContainsAsc(ejs, np->qname.space, ",private") >= 0) {
             np->attributes |= EJS_TRAIT_HIDDEN;
         }
     }
@@ -2748,7 +2744,7 @@ static void astVar(EcCompiler *cp, EcNode *np, int varKind, EjsObj *value)
             astError(cp, np, "Bad type name");
             return;
         }
-        if (ejsCompareMulti(ejs, np->typeNode->qname.name, "*") != 0) {
+        if (ejsCompareAsc(ejs, np->typeNode->qname.name, "*") != 0) {
             processAstNode(cp, np->typeNode);
         }
     }
@@ -2862,7 +2858,7 @@ static EjsModule *createModule(EcCompiler *cp, EcNode *np)
 
     mprAssert(np->kind == N_MODULE);
 
-    if (np->module.version == 0 && cp->modver && ejsCompareMulti(ejs, np->qname.name, EJS_DEFAULT_MODULE) != 0) {
+    if (np->module.version == 0 && cp->modver && ejsCompareAsc(ejs, np->qname.name, EJS_DEFAULT_MODULE) != 0) {
         np->module.version = cp->modver;
     }
     mp = ecLookupModule(cp, np->qname.name, np->module.version, np->module.version);
@@ -2879,7 +2875,7 @@ static EjsModule *createModule(EcCompiler *cp, EcNode *np)
         /*
             This will prevent the loading of any module that uses this module.
          */
-        if (ejsCompareMulti(ejs, mp->name, EJS_DEFAULT_MODULE) != 0) {
+        if (ejsCompareAsc(ejs, mp->name, EJS_DEFAULT_MODULE) != 0) {
             mp->compiling = 1;
         }
     }
@@ -2891,7 +2887,7 @@ static EjsModule *createModule(EcCompiler *cp, EcNode *np)
     if (cp->outputFile) {
         np->module.filename = cp->outputFile;
     } else {
-        np->module.filename = mprAsprintf("%@%s", np->qname.name, EJS_MODULE_EXT);
+        np->module.filename = mprJoinPath(cp->outputDir, sfmt("%@%s", np->qname.name, EJS_MODULE_EXT));
     }
     return mp;
 }
@@ -3306,7 +3302,7 @@ static void fixupClass(EcCompiler *cp, EjsType *type)
         }
         if (!type->hasConstructor) {
             np->klass.constructor = 0;
-            ejsDisableFunction(ejs, (EjsFunction*) type);
+            ejsRemoveConstructor(ejs, type);
             mprAssert(!(np->attributes & EJS_TYPE_HAS_CONSTRUCTOR));
         }
     }
@@ -3617,9 +3613,9 @@ static void openBlock(EcCompiler *cp, EcNode *np, EjsBlock *block)
         if (block == 0) {
             static int index = 0;
             if (np->loc.filename == 0) {
-                debugName = mprAsprintf("block_%04d", index++);
+                debugName = sfmt("block_%04d", index++);
             } else {
-                debugName = mprAsprintf("block_%04d_%d", np->loc.lineNumber, index++);
+                debugName = sfmt("block_%04d_%d", np->loc.lineNumber, index++);
             }
             block = ejsCreateBlock(cp->ejs, 0);
             np->qname = N(EJS_BLOCK_NAMESPACE, debugName);
@@ -3692,7 +3688,7 @@ static EjsNamespace *createHoistNamespace(EcCompiler *cp, EjsObj *obj)
     char            *spaceName;
 
     ejs = cp->ejs;
-    spaceName = mprAsprintf("-hoisted-%d", ejsGetLength(ejs, obj));
+    spaceName = sfmt("-hoisted-%d", ejsGetLength(ejs, obj));
     namespace = ejsCreateNamespace(ejs, ejsCreateStringFromAsc(ejs, spaceName));
 
     letBlockNode = cp->state->letBlockNode;
@@ -3943,8 +3939,8 @@ static void badAst(EcCompiler *cp, EcNode *np)
 /*
     @copy   default
 
-    Copyright (c) Embedthis Software LLC, 2003-2011. All Rights Reserved.
-    Copyright (c) Michael O'Brien, 1993-2011. All Rights Reserved.
+    Copyright (c) Embedthis Software LLC, 2003-2012. All Rights Reserved.
+    Copyright (c) Michael O'Brien, 1993-2012. All Rights Reserved.
 
     This software is distributed under commercial and open source licenses.
     You may use the GPL open source license described below or you may acquire
@@ -3956,7 +3952,7 @@ static void badAst(EcCompiler *cp, EcNode *np)
     under the terms of the GNU General Public License as published by the
     Free Software Foundation; either version 2 of the License, or (at your
     option) any later version. See the GNU General Public License for more
-    details at: http://www.embedthis.com/downloads/gplLicense.html
+    details at: http://embedthis.com/downloads/gplLicense.html
 
     This program is distributed WITHOUT ANY WARRANTY; without even the
     implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.
@@ -3965,7 +3961,7 @@ static void badAst(EcCompiler *cp, EcNode *np)
     proprietary programs. If you are unable to comply with the GPL, you must
     acquire a commercial license to use this software. Commercial licenses
     for this software and support services are available from Embedthis
-    Software at http://www.embedthis.com
+    Software at http://embedthis.com
 
     Local variables:
     tab-width: 4

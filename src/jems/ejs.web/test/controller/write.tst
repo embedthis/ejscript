@@ -3,8 +3,7 @@
  */
 require ejs.web
 
-const PORT = (App.config.test.http_port || 6700)
-const HTTP = ":" + PORT
+const HTTP = App.config.uris.http
 
 public class TestController extends Controller {
     use namespace action
@@ -37,7 +36,7 @@ server = controllerServer(HTTP)
 
 //  writeError
 let http = fetch(HTTP + "/test/error", 201)
-assert(http.response.contains("log.showClient"))
+assert(http.response.contains("log.showErrors"))
 assert(http.response.contains("error-msg"))
 http.close()
 

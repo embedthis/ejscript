@@ -1,55 +1,91 @@
 /*
-    Test CmdArgs
+    Test Args
 */
-let template = [
-    [ "verbose" ],
-    [ "quiet", null, false ],
-    [ "log", String, "stdout:4" ],
-    [ "mode", [ "low", "med", "high" ], "high" ],
-]
+
+var used
+function usage() { used = true }
+
+let template = {
+    options: {
+        verbose: { alias: 'v' },
+        quiet:   { value: false },
+        log:     { range: String, value: 'stdout:4' },
+        mode:    { range: [ 'low', 'med', 'high' ], value: 'high' },
+    },
+    silent: true,
+}
 let caught
 
-cmd = CmdArgs(template, [])
-assert(cmd.args == "")
-assert(cmd.options.verbose == undefined)
+//  usage and silent
+used = false
+args = Args({usage: usage, silent: true} , ['test', '-xyz'])
 
-assert(cmd.options.quiet == false)
-assert(cmd.options.log == "stdout:4")
-assert(cmd.options.mode == "high")
+assert(used)
+used = false
+assert(args.rest == "")
+assert(serialize(args.options) == '{}')
 
-cmd = CmdArgs(template, ["a", "b", "c"])
-assert(cmd.args == "a,b,c")
+//  onerror
+caught = false
+try {
+    args = Args({onerror: 'throw'} , ['test', '-xyz'])
+} catch(e) {
+    caught = true
+}
+assert(caught)
+caught = false
+assert(args.rest == "")
 
-cmd = CmdArgs(template, ["--quiet", "a", "b", "c"])
-assert(cmd.options.quiet == true)
 
-cmd = CmdArgs(template, ["--verbose", "--log", "trace.out:4", "--quiet", "a", "b", "c"])
-assert(cmd.options.quiet == true)
-assert(cmd.options.verbose == true)
-assert(cmd.options.log == "trace.out:4")
-assert(cmd.options.mode == "high")
+//  Default values
+args = Args(template, ['test'])
+assert(args.rest == "")
+assert(args.options.verbose == undefined)
+assert(args.options.quiet == false)
+assert(args.options.log == "stdout:4")
+assert(args.options.mode == "high")
+
+//  Parse rest
+args = Args(template, ["test", "a", "b", "c"])
+assert(args.rest == "a,b,c")
+
+//  Parse switches and options
+args = Args(template, ["test", "--quiet", "a", "b", "c"])
+assert(args.options.quiet == true)
+
+//  Full command line
+args = Args(template, ["test", "--verbose", "--log", "trace.out:4", "--quiet", "a", "b", "c"])
+assert(args.options.quiet == true)
+assert(args.options.verbose == true)
+assert(args.options.log == "trace.out:4")
+assert(args.options.mode == "high")
+
+//  Alias
+args = Args(template, ["test", "-v", "--mode", "low"])
+assert(args.options.verbose == true)
 
 //  Test with "-" as the option leadin
-cmd = CmdArgs(template, ["-mode", "low"])
-assert(cmd.options.mode == "low")
+args = Args(template, ["test", "-mode", "low"])
+assert(args.options.mode == "low")
 
 //  Test with "=" as the option leadin
-cmd = CmdArgs(template, ["-mode=low", "-verbose"])
-assert(cmd.options.mode == "low")
-assert(cmd.options.verbose)
+args = Args(template, ["test", "-mode=low", "-verbose"])
+assert(args.options.mode == "low")
+assert(args.options.verbose)
 
 //  Test with "-" as the option leadin
-cmd = CmdArgs(template, ["-verbose", "-log", "trace.out:4", "-quiet", "a", "b", "c"])
-assert(cmd.options.quiet == true)
-assert(cmd.options.verbose == true)
-assert(cmd.options.log == "trace.out:4")
+args = Args(template, ["test", "-verbose", "-log", "trace.out:4", "-quiet", "a", "b", "c"])
+assert(args.options.quiet == true)
+assert(args.options.verbose == true)
+assert(args.options.log == "trace.out:4")
 
 //  Test bad arg
 caught = false
-try { CmdArgs(template, ["-badarg"]); } catch { caught = true; }
+let t2 = blend(template, {onerror: 'throw'})
+try { Args(t2, ["test", "-badarg"]); } catch { caught = true; }
 assert(caught)
 
 //  Test bad arg value
 caught = false  
-try { CmdArgs(template, ["-mode", "extreme"]); } catch { caught = true; }
+try { Args(t2, ["test", "-mode", "extreme"]); } catch { caught = true; }
 assert(caught)

@@ -1,0 +1,27 @@
+/*
+    jem.bit -- Bit File for ejs.jem
+ */
+
+Bit.load({
+
+    targets: {
+        'jem.es': {
+            path: '${BIN}/jem.es',
+            files: [ 'jem.es' ],
+            build: "
+                trace('Export', bit.target.files)
+                cp('jem.es', bit.dir.bin.join('jem.es'))
+            ",
+            generate: 'cp jem.es ${BIN}',
+            platforms: [ 'local' ],
+        },
+
+        'jem.exe': {
+            type: 'file',
+            path: '${BIN}/jem${EXE}',
+            files: [ '${BIN}/ejsrun${EXE}' ],
+            depends: ['ejsrun'],
+            platforms: [ 'local' ],
+        },
+	},
+})

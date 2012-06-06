@@ -12,7 +12,7 @@
 
 static EjsUri *completeUri(Ejs *ejs, EjsUri *up, EjsObj *missing, int includeQuery);
 static int same(Ejs *ejs, HttpUri *u1, HttpUri *u2, int exact);
-static HttpUri *createHttpUriFromHash(Ejs *ejs, EjsObj *arg, int complete);
+static HttpUri *createHttpUriFromHash(Ejs *ejs, EjsObj *arg, int flags);
 static HttpUri *toHttpUri(Ejs *ejs, EjsObj *arg, int dup);
 static EjsUri *uri_join(Ejs *ejs, EjsUri *up, int argc, EjsObj **argv);
 
@@ -58,7 +58,7 @@ static EjsUri *cloneUri(Ejs *ejs, EjsUri *src, bool deep)
         return 0;
     }
     /*  NOTE: a deep copy will complete the uri */
-    dest->uri = httpCloneUri(src->uri, deep);
+    dest->uri = httpCloneUri(src->uri, deep ? HTTP_COMPLETE_URI : 0);
     return dest;
 }
 
@@ -389,7 +389,7 @@ static EjsObj *uri_set_extension(Ejs *ejs, EjsUri *up, int argc, EjsObj **argv)
 
     uri = up->uri;
     uri->ext = ejsToMulti(ejs, argv[0]);
-    uri->path = sjoin(mprTrimPathExtension(uri->path), uri->ext, NULL);
+    uri->path = sjoin(mprTrimPathExt(uri->path), uri->ext, NULL);
     return 0;
 }
 
@@ -545,7 +545,7 @@ static EjsUri *uri_joinExt(Ejs *ejs, EjsUri *up, int argc, EjsObj **argv)
         ext++;
     }
     nuri->ext = ext;
-    nuri->path = sjoin(mprTrimPathExtension(nuri->path), ".", nuri->ext, NULL);
+    nuri->path = sjoin(mprTrimPathExt(nuri->path), ".", nuri->ext, NULL);
     return np;
 }
 
@@ -604,7 +604,7 @@ static EjsString *uri_path(Ejs *ejs, EjsUri *up, int argc, EjsObj **argv)
 static EjsObj *uri_set_path(Ejs *ejs, EjsUri *up, int argc, EjsObj **argv)
 {
     up->uri->path = httpNormalizeUriPath(ejsToMulti(ejs, argv[0]));
-    up->uri->ext = mprGetPathExtension(up->uri->path);
+    up->uri->ext = mprGetPathExt(up->uri->path);
     return 0;
 }
 
@@ -655,17 +655,18 @@ static EjsUri *uri_replaceExtension(Ejs *ejs, EjsUri *up, int argc, EjsObj **arg
 
     np = cloneUri(ejs, up, 1);
     nuri = np->uri;
-    nuri->path = mprTrimPathExtension(nuri->path);
+    nuri->path = mprTrimPathExt(nuri->path);
     ext = ejsToMulti(ejs, argv[0]);
     if (ext && *ext == '.') {
         ext++;
     }
     nuri->ext = ext;
-    nuri->path = sjoin(mprTrimPathExtension(nuri->path), ".", nuri->ext, NULL);
+    nuri->path = sjoin(mprTrimPathExt(nuri->path), ".", nuri->ext, NULL);
     return np;
 }
 
 
+//  MOB - Uri should get a cast helper. Then this API and others can be typed.
 /*  
     function resolve(target): Uri
  */
@@ -807,7 +808,20 @@ static EjsUri *uri_template(Ejs *ejs, EjsUri *up, int argc, EjsObj **argv)
 
     buf = mprCreateBuf(-1, -1);
     for (cp = pattern; *cp; cp++) {
-        if (*cp == '{' && (cp == pattern || cp[-1] != '\\')) {
+        if (*cp == '~' && (cp == pattern || cp[-1] != '\\')) {
+            for (i = 0; i < options->length; i++) {
+                obj = options->data[i];
+                if ((value = ejsGetPropertyByName(ejs, obj, N(NULL, "scriptName"))) != 0 && ejsIsDefined(ejs, value)) {
+                    str = ejsToMulti(ejs, value);
+                    if (str && *str) {
+                        mprPutStringToBuf(buf, str);
+                        break;
+                    } else {
+                        value = 0;
+                    }
+                }
+            }
+        } else if (*cp == '{' && (cp == pattern || cp[-1] != '\\')) {
             if ((ep = strchr(++cp, '}')) != 0) {
                 len = (int) (ep - cp);
                 token = mprMemdup(cp, len + 1);
@@ -826,6 +840,7 @@ static EjsUri *uri_template(Ejs *ejs, EjsUri *up, int argc, EjsObj **argv)
                     }
                 }
                 if (!ejsIsDefined(ejs, value)) {
+                    //  MOB - remove this. Should not be erasing the prior "/"
                     if (cp >= &pattern[2] && cp[-2] == '/') {
                         mprAdjustBufEnd(buf, -1);
                     }
@@ -837,7 +852,7 @@ static EjsUri *uri_template(Ejs *ejs, EjsUri *up, int argc, EjsObj **argv)
         }
     }
     mprAddNullToBuf(buf);
-    return ejsCreateUriFromMulti(ejs, mprGetBufStart(buf));
+    return ejsCreateUriFromAsc(ejs, mprGetBufStart(buf));
 }
 
 
@@ -876,7 +891,7 @@ static EjsUri *uri_trimExt(Ejs *ejs, EjsUri *up, int argc, EjsObj **argv)
     np = cloneUri(ejs, up, 1);
     nuri = np->uri;
     nuri->ext = 0;
-    nuri->path = mprTrimPathExtension(nuri->path);
+    nuri->path = mprTrimPathExt(nuri->path);
     return np;
 }
 
@@ -911,7 +926,7 @@ static EjsUri *completeUri(Ejs *ejs, EjsUri *up, EjsObj *missing, int includeQue
         missingUri = 0;
     } else if (ejsGetLength(ejs, missing) > 0) {
         missingUri = ejsCreateObj(ejs, ESV(Uri), 0);
-        missingUri->uri = createHttpUriFromHash(ejs, missing, 1);
+        missingUri->uri = createHttpUriFromHash(ejs, missing, HTTP_COMPLETE_URI);
     } else {
         missingUri = ejsToUri(ejs, missing);
     }
@@ -999,7 +1014,7 @@ static int same(Ejs *ejs, HttpUri *u1, HttpUri *u2, int exact)
 }
 
 
-static HttpUri *createHttpUriFromHash(Ejs *ejs, EjsObj *arg, int complete)
+static HttpUri *createHttpUriFromHash(Ejs *ejs, EjsObj *arg, int flags)
 {
     EjsObj      *schemeObj, *hostObj, *portObj, *pathObj, *referenceObj, *queryObj, *uriObj;
     cchar       *scheme, *host, *path, *reference, *query;
@@ -1023,7 +1038,7 @@ static HttpUri *createHttpUriFromHash(Ejs *ejs, EjsObj *arg, int complete)
         if (ejsIs(ejs, portObj, Number)) {
             port = ejsGetInt(ejs, portObj);
         } else if (ejsIs(ejs, portObj, String)) {
-            port = (int) stoi(ejsToMulti(ejs, portObj), 10, NULL);
+            port = (int) stoi(ejsToMulti(ejs, portObj));
         }
     }
     pathObj = ejsGetPropertyByName(ejs, arg, EN("path"));
@@ -1035,7 +1050,7 @@ static HttpUri *createHttpUriFromHash(Ejs *ejs, EjsObj *arg, int complete)
     queryObj = ejsGetPropertyByName(ejs, arg, EN("query"));
     query = ejsIs(ejs, queryObj, String) ? ejsToMulti(ejs, queryObj) : 0;
 
-    return httpCreateUriFromParts(scheme, host, port, path, reference, query, complete);
+    return httpCreateUriFromParts(scheme, host, port, path, reference, query, flags);
 }
 
 
@@ -1097,7 +1112,7 @@ EjsUri *ejsCreateUri(Ejs *ejs, EjsString *path)
 }
 
 
-EjsUri *ejsCreateUriFromMulti(Ejs *ejs, cchar *path)
+EjsUri *ejsCreateUriFromAsc(Ejs *ejs, cchar *path)
 {
     EjsUri      *up;
     EjsObj      *arg;
@@ -1112,14 +1127,14 @@ EjsUri *ejsCreateUriFromMulti(Ejs *ejs, cchar *path)
 
 
 EjsUri *ejsCreateUriFromParts(Ejs *ejs, cchar *scheme, cchar *host, int port, cchar *path, cchar *query, cchar *reference, 
-    int complete)
+    int flags)
 {
     EjsUri      *up;
 
     if ((up = ejsCreateObj(ejs, ESV(Uri), 0)) == 0) {
         return 0;
     }
-    up->uri = httpCreateUriFromParts(scheme, host, port, path, reference, query, complete);
+    up->uri = httpCreateUriFromParts(scheme, host, port, path, reference, query, flags);
     return up;
 }
 
@@ -1140,6 +1155,7 @@ void ejsConfigureUriType(Ejs *ejs)
     if ((type = ejsFinalizeScriptType(ejs, N("ejs", "Uri"), sizeof(EjsUri), manageUri,
             EJS_TYPE_OBJ | EJS_TYPE_MUTABLE_INSTANCES)) != 0) {
         type->helpers.clone = (EjsCloneHelper) cloneUri;
+        //  MOB - Add cast helper to cast from Strings, Paths etc.
         type->helpers.invokeOperator = (EjsInvokeOperatorHelper) invokeUriOperator;
 
         ejsBindMethod(ejs, type, ES_Uri_decode, uri_decode);
@@ -1193,8 +1209,8 @@ void ejsConfigureUriType(Ejs *ejs)
 /*
     @copy   default
 
-    Copyright (c) Embedthis Software LLC, 2003-2011. All Rights Reserved.
-    Copyright (c) Michael O'Brien, 1993-2011. All Rights Reserved.
+    Copyright (c) Embedthis Software LLC, 2003-2012. All Rights Reserved.
+    Copyright (c) Michael O'Brien, 1993-2012. All Rights Reserved.
 
     This software is distributed under commercial and open source licenses.
     You may use the GPL open source license described below or you may acquire
@@ -1206,7 +1222,7 @@ void ejsConfigureUriType(Ejs *ejs)
     under the terms of the GNU General Public License as published by the
     Free Software Foundation; either version 2 of the License, or (at your
     option) any later version. See the GNU General Public License for more
-    details at: http://www.embedthis.com/downloads/gplLicense.html
+    details at: http://embedthis.com/downloads/gplLicense.html
 
     This program is distributed WITHOUT ANY WARRANTY; without even the
     implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.
@@ -1215,7 +1231,7 @@ void ejsConfigureUriType(Ejs *ejs)
     proprietary programs. If you are unable to comply with the GPL, you must
     acquire a commercial license to use this software. Commercial licenses
     for this software and support services are available from Embedthis
-    Software at http://www.embedthis.com
+    Software at http://embedthis.com
 
     Local variables:
     tab-width: 4

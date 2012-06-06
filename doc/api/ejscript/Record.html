@@ -53,6 +53,7 @@ extend.</p>
    <tr class='apiDef'><td class='apiType'>static </td><td><a href='#afterFilter'><b>afterFilter</b></a>(fn, options: <a href='Object.html'>Object</a> = null): <a href='Void.html'>Void</a></tr><tr class='apiBrief'><td>&nbsp;</td><td>Run filters after saving data.</td></tr>
    <tr class='apiDef'><td class='apiType'>static </td><td><a href='#beforeFilter'><b>beforeFilter</b></a>(fn, options: <a href='Object.html'>Object</a> = null): <a href='Void.html'>Void</a></tr><tr class='apiBrief'><td>&nbsp;</td><td>Run filters before saving data.</td></tr>
    <tr class='apiDef'><td class='apiType'>static </td><td><a href='#belongsTo'><b>belongsTo</b></a>(owner, options: <a href='Object.html'>Object</a> = null): <a href='Void.html'>Void</a></tr><tr class='apiBrief'><td>&nbsp;</td><td>Define a belonging reference to another model class.</td></tr>
+   <tr class='apiDef'><td class='apiType'>static </td><td><a href='#cache'><b>cache</b></a>(model = null, options: <a href='Object.html'>Object</a> = expression): <a href='Void.html'>Void</a></tr><tr class='apiBrief'><td>&nbsp;</td><td>Database query caching.</td></tr>
    <tr class='apiDef'><td class='apiType'>static </td><td><a href='#find'><b>find</b></a>(key: <a href='Object.html'>Object</a>, options: <a href='Object.html'>Object</a> = expression): <a href='Object.html'>Object</a></tr><tr class='apiBrief'><td>&nbsp;</td><td>Find a record.</td></tr>
    <tr class='apiDef'><td class='apiType'>static </td><td><a href='#findAll'><b>findAll</b></a>(options: <a href='Object.html'>Object</a> = expression): <a href='Array.html'>Array</a></tr><tr class='apiBrief'><td>&nbsp;</td><td>Find all the matching records.</td></tr>
    <tr class='apiDef'><td class='apiType'>static </td><td><a href='#findOneWhere'><b>findOneWhere</b></a>(where: <a href='String.html'>String</a>): <a href='Object.html'>Object</a></tr><tr class='apiBrief'><td>&nbsp;</td><td>Find the first record matching a condition.</td></tr>
@@ -153,6 +154,33 @@ reference to another class.</dd></dl>
 </dl></div>
 </div>
 <hr />
+<a name='cache'></a>
+<div class='api'>
+<div class='apiSig'>static  cache(model = null, options: <a href='Object.html'>Object</a> = expression): <a href='Void.html'>Void</a>
+</div>
+<div class='apiDetail'>
+<dl><dt>Description</dt></dd><dd>Database query caching. This caches controls the caching of database records. If enabled, the results
+of queries are cached with a given lifetime. If the lifetime has not expired, subsequent queries will
+be optimized by retrieving cached data. If the record is updated, the cached data will be removed so that
+the next query retrieves fresh data.
+Caching is disabled/enabled via the ejsrc config.cache.database.enable field. It is enabled by default.
+Caching may be used for any Database model, though typically it is most useful for state-less GET requests.</dd></dl>
+<dl><dt>Parameters</dt>
+<dd><table class='parameters' summary ='parameters'>
+<tr class='param'><td class='param'>model </td><td>Model class. This can be a Model class object, "this" or a String model class name. You can specify "this" in static code or can also use "this" in class instance code and this routine will determine the underlying model class name. [default: null]</td></tr><tr class='param'><td class='param'>options: <a href='Object.html'>Object</a> </td><td>Cache control options. Default options for all model caching can also be provided by the  ejsrc config.cache.database field. [default: expression]</td></tr></table></dd>
+</dl><dl><dt>Options</dt>
+<dd><table class='parameters' summary ='options'>
+<td class='param'>lifespan</td><td>Time in seconds for the cached output to persist.</td></tr>
+<td class='param'>query</td><td>SQL query command to further differentiate cached content. If supplied, different cache data can be stored for each query that applies to the given model. If the URI is set to "*"" all  URIs for the specified model will be uniquely cached.</td></tr>
+</table></dd>
+</dl><dl><dt>Example</dt>
+<dd><pre>cache()
+cache("Store", {lifespan: 200})
+cache(this, {query: "SELECT *  from Products"})
+cache(this, {query: "*""})</pre></dd></dl>
+</div>
+</div>
+<hr />
 <a name='error'></a>
 <div class='api'>
 <div class='apiSig'>    error(field: <a href='String.html'>String</a>, msg: <a href='String.html'>String</a>): <a href='Void.html'>Void</a>
@@ -183,7 +211,7 @@ If more than one record matches, return the first matching record.</dd></dl>
 <td class='param'>keys</td><td>[set of matching key values].</td></tr>
 <td class='param'>order</td><td>ORDER BY clause.</td></tr>
 <td class='param'>group</td><td>GROUP BY clause.</td></tr>
-<td class='param'>include</td><td>[Model, ...] Models to join in the query and create associations for. Always preloads.</td></tr>
+<td class='param'>include</td><td>[Model, ...] Models to join in the query and create associations for. Always preloads. The include Model entry may also be an array of [Model, "Join Condition"].</td></tr>
 <td class='param'>joins</td><td>Low level join statement "LEFT JOIN vists on stockId = visits.id". Low level joins do not create association objects (or lazy loaders). The names of the joined columns are prefixed with the appropriate table name using camel case (tableColumn).</td></tr>
 <td class='param'>limit</td><td>LIMIT count.</td></tr>
 <td class='param'>depth</td><td>Specify the depth for which to create associations for belongsTo, hasOne and hasMany relationships. Depth of 1 creates associations only in the immediate fields of the result. Depth == 2 creates in the  next level and so on. Defaults to one.</td></tr>
@@ -556,7 +584,7 @@ one of the <a href='#find'>find</a> methods.</dd></dl>
 <hr />
 <div class="terms">
    <p class="terms">
-       <a href="http://www.embedthis.com/">       Embedthis Software LLC, 2003-2011. All rights reserved. Embedthis is a trademark of Embedthis Software LLC.</a>
+       <a href="http://embedthis.com/">       Embedthis Software LLC, 2003-2012. All rights reserved. Embedthis is a trademark of Embedthis Software LLC.</a>
    </p>
 </div></div>
 </div>

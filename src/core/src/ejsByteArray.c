@@ -118,7 +118,7 @@ static int lookupByteArrayProperty(struct Ejs *ejs, EjsByteArray *ap, EjsName qn
 {
     int     index;
 
-    if (qname.name == 0 || ! isdigit((int) qname.name->value[0])) {
+    if (qname.name == 0 || ! isdigit((uchar) qname.name->value[0])) {
         return EJS_ERR;
     }
     index = ejsAtoi(ejs, qname.name, 10);
@@ -480,7 +480,7 @@ static EjsNumber *nextByteArrayKey(Ejs *ejs, EjsIterator *ip, int argc, EjsObj *
  */
 static EjsIterator *ba_get(Ejs *ejs, EjsObj *ap, int argc, EjsObj **argv)
 {
-    return ejsCreateIterator(ejs, ap, nextByteArrayKey, 0, NULL);
+    return ejsCreateIterator(ejs, ap, -1, nextByteArrayKey, 0, NULL);
 }
 
 
@@ -514,7 +514,7 @@ static EjsNumber *nextByteArrayValue(Ejs *ejs, EjsIterator *ip, int argc, EjsObj
  */
 static EjsIterator *ba_getValues(Ejs *ejs, EjsObj *ap, int argc, EjsObj **argv)
 {
-    return ejsCreateIterator(ejs, ap, nextByteArrayValue, 0, NULL);
+    return ejsCreateIterator(ejs, ap, -1, nextByteArrayValue, 0, NULL);
 }
 
 
@@ -526,6 +526,7 @@ static EjsObj *ba_flush(Ejs *ejs, EjsByteArray *ap, int argc, EjsObj **argv)
 {
     flushByteArray(ejs, ap);
     ap->writePosition = ap->readPosition = 0;
+    memset(ap->value, 0, ap->length);
     return 0;
 }
 
@@ -809,7 +810,6 @@ static EjsString *ba_readString(Ejs *ejs, EjsByteArray *ap, int argc, EjsObj **a
     ssize       count;
 
     count = (argc == 1) ? ejsGetInt(ejs, argv[0]) : -1;
-
     if (count < 0) {
         if (getInput(ejs, ap, 1) < 0) {
             return ESV(null);
@@ -828,23 +828,12 @@ static EjsString *ba_readString(Ejs *ejs, EjsByteArray *ap, int argc, EjsObj **a
 
 
 /*
-    MOB - this is the same as: void ejsResetByteArray(EjsByteArray *ba)
- */
-void ejsResetByteArrayIfEmpty(Ejs *ejs, EjsByteArray *ap)
-{
-    if (ap->writePosition == ap->readPosition) {
-        ap->writePosition = ap->readPosition = 0;
-    }
-}
-
-
-/*
     Reset the read and write position pointers if there is no available data.
     function reset(): Void
  */
 static EjsObj *ba_reset(Ejs *ejs, EjsByteArray *ap, int argc, EjsObj **argv)
 {
-    ejsResetByteArrayIfEmpty(ejs, ap);
+    ejsResetByteArray(ejs, ap);
     return 0;
 }
 
@@ -1125,7 +1114,7 @@ static int flushByteArray(Ejs *ejs, EjsByteArray *ap)
     Grow the byte array up to the given length, but not over the maximum. Return the length or an error code.
     This routine always throws an exception.
  */
-int ejsGrowByteArray(Ejs *ejs, EjsByteArray *ap, ssize len)
+ssize ejsGrowByteArray(Ejs *ejs, EjsByteArray *ap, ssize len)
 {
     if (len > ap->length) {
         if (!ap->resizable) {
@@ -1140,7 +1129,7 @@ int ejsGrowByteArray(Ejs *ejs, EjsByteArray *ap, ssize len)
         ap->growInc = min(ap->growInc * 2, 32 * 1024);
         ap->length = len;
     }
-    return 0;
+    return ap->length;
 }
 
 
@@ -1171,7 +1160,7 @@ bool ejsMakeRoomInByteArray(Ejs *ejs, EjsByteArray *ap, ssize require)
     ssize   newLen;
 
     /*
-        MOB - should this do ejsResetByteArrayIfEmpty
+        MOB - should this do ejsResetByteArray if empty
      */
     if (room(ap) < require) {
         if (ap->emitter && availableBytes(ap)) {
@@ -1304,13 +1293,11 @@ static int putString(EjsByteArray *ap, EjsString *str, ssize len)
 
 /********************************* Public Support API *****************************/
 
-/*
-    MOB this is the same as: void ejsResetByteArrayIfEmpty(Ejs *ejs, EjsByteArray *ap)
- */
-void ejsResetByteArray(EjsByteArray *ba)
+void ejsResetByteArray(Ejs *ejs, EjsByteArray *ba)
 {
     if (ba->writePosition == ba->readPosition) {
         ba->writePosition = ba->readPosition = 0;
+        memset(ba->value, 0, ba->length);
     }
 }
 
@@ -1343,13 +1330,14 @@ ssize ejsCopyToByteArray(Ejs *ejs, EjsByteArray *ba, ssize offset, cchar *data, 
         return EJS_ERR;
     }
     for (i = 0; i < length; i++) {
+        //  MOB OPT - memcpy
         ba->value[offset++] = data[i];
     }
     return length;
 }
 
 
-ssize ejsGetByteArrayAvailable(EjsByteArray *ba)
+ssize ejsGetByteArrayAvailableData(EjsByteArray *ba)
 {
     return availableBytes(ba);
 }
@@ -1459,8 +1447,8 @@ void ejsConfigureByteArrayType(Ejs *ejs)
 /*
     @copy   default
   
-    Copyright (c) Embedthis Software LLC, 2003-2011. All Rights Reserved.
-    Copyright (c) Michael O'Brien, 1993-2011. All Rights Reserved.
+    Copyright (c) Embedthis Software LLC, 2003-2012. All Rights Reserved.
+    Copyright (c) Michael O'Brien, 1993-2012. All Rights Reserved.
   
     This software is distributed under commercial and open source licenses.
     You may use the GPL open source license described below or you may acquire
@@ -1472,7 +1460,7 @@ void ejsConfigureByteArrayType(Ejs *ejs)
     under the terms of the GNU General Public License as published by the
     Free Software Foundation; either version 2 of the License, or (at your
     option) any later version. See the GNU General Public License for more
-    details at: http://www.embedthis.com/downloads/gplLicense.html
+    details at: http://embedthis.com/downloads/gplLicense.html
   
     This program is distributed WITHOUT ANY WARRANTY; without even the
     implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.
@@ -1481,7 +1469,7 @@ void ejsConfigureByteArrayType(Ejs *ejs)
     proprietary programs. If you are unable to comply with the GPL, you must
     acquire a commercial license to use this software. Commercial licenses
     for this software and support services are available from Embedthis
-    Software at http://www.embedthis.com
+    Software at http://embedthis.com
   
     Local variables:
     tab-width: 4

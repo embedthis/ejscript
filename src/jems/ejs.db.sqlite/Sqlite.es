@@ -137,11 +137,8 @@ module ejs.db.sqlite {
 
         /** @duplicate ejs.db::Database.createTable */
         function createTable(table: String, columns: Array? = null): Void {
-            let cmd: String
-
             query("DROP TABLE IF EXISTS " + table + ";")
             query("CREATE TABLE " + table + "(id INTEGER PRIMARY KEY AUTOINCREMENT NOT NULL);")
-
             if (columns) {
                 for each (let colspec: String in columns) {
                     //  TODO - destructuring assignment would be good here
@@ -314,8 +311,8 @@ module ejs.db.sqlite {
 /*
     @copy   default
     
-    Copyright (c) Embedthis Software LLC, 2003-2011. All Rights Reserved.
-    Copyright (c) Michael O'Brien, 1993-2011. All Rights Reserved.
+    Copyright (c) Embedthis Software LLC, 2003-2012. All Rights Reserved.
+    Copyright (c) Michael O'Brien, 1993-2012. All Rights Reserved.
     
     This software is distributed under commercial and open source licenses.
     You may use the GPL open source license described below or you may acquire 

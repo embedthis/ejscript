@@ -178,7 +178,7 @@ static bool checkTagName(char *name)
     char    *cp;
 
     for (cp = name; *cp; cp++) {
-        if (!isalnum(*cp) && *cp != '_' && *cp != '$' && *cp != '@') {
+        if (!isalnum((uchar) *cp) && *cp != '_' && *cp != '$' && *cp != '@') {
             return 0;
         }
     }
@@ -187,7 +187,7 @@ static bool checkTagName(char *name)
 #endif
 
 
-int ejsXMLToString(Ejs *ejs, MprBuf *buf, EjsXML *node, int indentLevel)
+int ejsXMLToBuf(Ejs *ejs, MprBuf *buf, EjsXML *node, int indentLevel)
 {
     EjsXML      *xml, *child, *attribute, *elt;
     int         sawElements, next;
@@ -199,7 +199,7 @@ int ejsXMLToString(Ejs *ejs, MprBuf *buf, EjsXML *node, int indentLevel)
 
     if (node->kind == EJS_XML_LIST) {
         for (next = 0; (elt = mprGetNextItem(node->elements, &next)) != 0; ) {
-            ejsXMLToString(ejs, buf, elt, indentLevel);
+            ejsXMLToBuf(ejs, buf, elt, indentLevel);
         }
         return 0;
     }
@@ -222,7 +222,6 @@ int ejsXMLToString(Ejs *ejs, MprBuf *buf, EjsXML *node, int indentLevel)
                 mprPutFmtToBuf(buf, " %@=\"%@\"",  attribute->qname.name, attribute->value);
             }
         }
-        
         sawElements = 0;
         if (xml->elements) {
             mprPutStringToBuf(buf, ">"); 
@@ -232,7 +231,7 @@ int ejsXMLToString(Ejs *ejs, MprBuf *buf, EjsXML *node, int indentLevel)
                 }
     
                 /* Recurse */
-                if (ejsXMLToString(ejs, buf, child, indentLevel < 0 ? -1 : indentLevel + 1) < 0) {
+                if (ejsXMLToBuf(ejs, buf, child, indentLevel < 0 ? -1 : indentLevel + 1) < 0) {
                     return -1;
                 }
             }
@@ -283,8 +282,8 @@ static void indent(MprBuf *bp, int level)
 /*
     @copy   default
     
-    Copyright (c) Embedthis Software LLC, 2003-2011. All Rights Reserved.
-    Copyright (c) Michael O'Brien, 1993-2011. All Rights Reserved.
+    Copyright (c) Embedthis Software LLC, 2003-2012. All Rights Reserved.
+    Copyright (c) Michael O'Brien, 1993-2012. All Rights Reserved.
     
     This software is distributed under commercial and open source licenses.
     You may use the GPL open source license described below or you may acquire 
@@ -296,7 +295,7 @@ static void indent(MprBuf *bp, int level)
     under the terms of the GNU General Public License as published by the 
     Free Software Foundation; either version 2 of the License, or (at your 
     option) any later version. See the GNU General Public License for more 
-    details at: http://www.embedthis.com/downloads/gplLicense.html
+    details at: http://embedthis.com/downloads/gplLicense.html
     
     This program is distributed WITHOUT ANY WARRANTY; without even the 
     implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. 
@@ -305,7 +304,7 @@ static void indent(MprBuf *bp, int level)
     proprietary programs. If you are unable to comply with the GPL, you must
     acquire a commercial license to use this software. Commercial licenses 
     for this software and support services are available from Embedthis 
-    Software at http://www.embedthis.com 
+    Software at http://embedthis.com 
     
     Local variables:
     tab-width: 4

@@ -2,7 +2,7 @@
     exceptions.tst
  */
 
-let ejs = App.exePath.portable
+let ejs = Cmd.locate('ejs')
 
 if (!Path("/bin").exists) {
     test.skip("Only run on unix systems")
@@ -11,7 +11,7 @@ if (!Path("/bin").exists) {
     //  Throw exceptions on errors
     let caught = false
     try {
-        cmd = Cmd("/bin/ls /asdf", {exception: true})
+        cmd = Cmd("ls /asdf", {exception: true})
     } catch (e) {
         caught = true
         assert(e.toString().contains("asdf: No such file or directory"))
@@ -19,5 +19,5 @@ if (!Path("/bin").exists) {
     assert(caught)
 
     //  Should not throw
-    Cmd("/bin/echo", {exception: true})
+    Cmd("echo", {exception: true})
 }

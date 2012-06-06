@@ -10,6 +10,35 @@
 
 /************************************ Methods *********************************/
 /*
+    static function drives(): Array
+ */
+static EjsArray *fs_drives(Ejs *ejs, EjsFileSystem *unused, int argc, EjsObj **argv)
+{
+    EjsArray    *ap;
+
+    if ((ap = ejsCreateArray(ejs, 0)) == 0) {
+        return 0;
+    }
+#if BIT_WIN_LIKE
+{
+    char        dbuf[2];
+    int         i, mask;
+
+    mask = GetLogicalDrives();
+    for (i = 0; i < 26; i++) {
+        if (mask & (1 << i)) {
+            dbuf[0] = 'A' + i;
+            dbuf[1] = '\0';
+            ejsAddItem(ejs, ap, ejsCreateStringFromAsc(ejs, dbuf));
+        }
+    }
+}
+#endif
+    return ap;
+}
+
+
+/*
     Constructor
 
     function FileSystem(path: String)
@@ -18,10 +47,14 @@ static EjsFileSystem *fileSystemConstructor(Ejs *ejs, EjsFileSystem *fp, int arg
 {
     cchar   *path;
 
+#if UNUSED
     mprAssert(argc == 1 && ejsIs(ejs, argv[0], String));
-
     path = ejsToMulti(ejs, argv[0]);
-    fp->path = mprGetNormalizedPath(path);
+#else
+    mprAssert(argc == 1 && ejsIs(ejs, argv[0], Path));
+    path = ((EjsPath*) argv[0])->value;
+#endif
+    fp->path = mprNormalizePath(path);
     fp->fs = mprLookupFileSystem(path);
     return fp;
 }
@@ -197,6 +230,7 @@ void ejsConfigureFileSystemType(Ejs *ejs)
     }
     prototype = type->prototype;
     ejsBindConstructor(ejs, type, fileSystemConstructor);
+    ejsBindMethod(ejs, type, ES_FileSystem_drives, fs_drives);
 #if ES_space
     ejsBindMethod(ejs, prototype, ES_FileSystem_space, fileSystemSpace);
 #endif
@@ -218,8 +252,8 @@ void ejsConfigureFileSystemType(Ejs *ejs)
 /*
     @copy   default
 
-    Copyright (c) Embedthis Software LLC, 2003-2011. All Rights Reserved.
-    Copyright (c) Michael O'Brien, 1993-2011. All Rights Reserved.
+    Copyright (c) Embedthis Software LLC, 2003-2012. All Rights Reserved.
+    Copyright (c) Michael O'Brien, 1993-2012. All Rights Reserved.
 
     This software is distributed under commercial and open source licenses.
     You may use the GPL open source license described below or you may acquire
@@ -231,7 +265,7 @@ void ejsConfigureFileSystemType(Ejs *ejs)
     under the terms of the GNU General Public License as published by the
     Free Software Foundation; either version 2 of the License, or (at your
     option) any later version. See the GNU General Public License for more
-    details at: http://www.embedthis.com/downloads/gplLicense.html
+    details at: http://embedthis.com/downloads/gplLicense.html
 
     This program is distributed WITHOUT ANY WARRANTY; without even the
     implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.
@@ -240,7 +274,7 @@ void ejsConfigureFileSystemType(Ejs *ejs)
     proprietary programs. If you are unable to comply with the GPL, you must
     acquire a commercial license to use this software. Commercial licenses
     for this software and support services are available from Embedthis
-    Software at http://www.embedthis.com
+    Software at http://embedthis.com
 
     Local variables:
     tab-width: 4

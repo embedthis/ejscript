@@ -28,7 +28,7 @@ int emCreateSlotFiles(EjsMod *bp, EjsModule *mp, MprFile *outfile)
     int     rc;
 
     rc = 0;
-    defaultVersion = mprAsprintf("-%d", ejsParseModuleVersion(BLD_VERSION));
+    defaultVersion = sfmt("-%d", ejsParseModuleVersion(BIT_VERSION));
     if (bp->cslots) {
         rc += createSlotFile(bp, mp, outfile);
     }
@@ -57,11 +57,11 @@ static int createSlotFile(EjsMod *bp, EjsModule *mp, MprFile *file)
         }
     }
     mprSprintf(slotsName, sizeof(slotsName), "%@Slots", mp->name);
-    slotsName[0] = toupper((int) slotsName[0]);
+    slotsName[0] = toupper((uchar) slotsName[0]);
     for (dp = sp = slotsName; *sp; sp++) {
         if (*sp == '.') {
             ++sp;
-            *dp++ = toupper((int) *sp);
+            *dp++ = toupper((uchar) *sp);
         } else {
             *dp++ = *sp;
         }
@@ -70,6 +70,7 @@ static int createSlotFile(EjsMod *bp, EjsModule *mp, MprFile *file)
 
     if (file == 0) {
         path = sjoin(ejsToMulti(ejs, mp->name), ".slots.h", NULL);
+        path = mprJoinPath(bp->outputDir, path);
         localFile = file = mprOpenFile(path, O_CREAT | O_WRONLY | O_TRUNC | O_BINARY, 0664);
     } else {
         path = sclone(file->path);
@@ -88,7 +89,7 @@ static int createSlotFile(EjsMod *bp, EjsModule *mp, MprFile *file)
         "  \n"
         "   Slot definitions. Version %s.\n"
         " */\n"
-        "\n", path, mp->name, BLD_VERSION);
+        "\n", path, mp->name, BIT_VERSION);
 
     mprFprintf(file,
         "#ifndef _h_SLOTS_%s\n"
@@ -194,7 +195,7 @@ static int genType(EjsMod *bp, MprFile *file, EjsModule *mp, EjsType *type, int 
     ejs = bp->ejs;
     lastClassSlot = max(firstClassSlot, lastClassSlot);
 
-    if (!isGlobal || ejsCompareMulti(ejs, mp->name, "ejs") == 0) {
+    if (!isGlobal || ejsCompareAsc(ejs, mp->name, "ejs") == 0) {
         /*
             Only emit global property slots for "ejs"
          */
@@ -237,7 +238,7 @@ static int genType(EjsMod *bp, MprFile *file, EjsModule *mp, EjsType *type, int 
     /*
         For the global type, only emit the count for the "ejs" module
      */
-    if (!isGlobal || ejsCompareMulti(ejs, mp->name, "ejs") == 0) {
+    if (!isGlobal || ejsCompareAsc(ejs, mp->name, "ejs") == 0) {
         defineSlotCount(bp, file, mp, type, "INSTANCE", slotNum);
     }
 
@@ -452,8 +453,8 @@ static char *mapNamespace(cchar *space)
 /*
     @copy   default
   
-    Copyright (c) Embedthis Software LLC, 2003-2011. All Rights Reserved.
-    Copyright (c) Michael O'Brien, 1993-2011. All Rights Reserved.
+    Copyright (c) Embedthis Software LLC, 2003-2012. All Rights Reserved.
+    Copyright (c) Michael O'Brien, 1993-2012. All Rights Reserved.
   
     This software is distributed under commercial and open source licenses.
     You may use the GPL open source license described below or you may acquire
@@ -465,7 +466,7 @@ static char *mapNamespace(cchar *space)
     under the terms of the GNU General Public License as published by the
     Free Software Foundation; either version 2 of the License, or (at your
     option) any later version. See the GNU General Public License for more
-    details at: http://www.embedthis.com/downloads/gplLicense.html
+    details at: http://embedthis.com/downloads/gplLicense.html
   
     This program is distributed WITHOUT ANY WARRANTY; without even the
     implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.
@@ -474,7 +475,7 @@ static char *mapNamespace(cchar *space)
     proprietary programs. If you are unable to comply with the GPL, you must
     acquire a commercial license to use this software. Commercial licenses
     for this software and support services are available from Embedthis
-    Software at http://www.embedthis.com
+    Software at http://embedthis.com
   
     Local variables:
     tab-width: 4

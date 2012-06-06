@@ -3,7 +3,8 @@
  */
 require ejs.web
 
-const PORT = App.config.test.http_port || 6700
+const HTTP = App.config.uris.http
+const PORT = Uri(HTTP).port
 
 server = new HttpServer
 assert(server.address == null)

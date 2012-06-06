@@ -2,7 +2,7 @@
     events.tst - Test I/O events: readable, writable, complete, error
  */
 
-let ejs = App.exePath.portable
+let ejs = Cmd.locate('ejs')
 
 if (!Path("/bin").exists) {
     test.skip("Only run on unix systems")
@@ -15,7 +15,7 @@ if (!Path("/bin").exists) {
     let count = out.available
 
     cmd = new Cmd
-    cmd.start("/bin/cat", {detach: true})
+    cmd.start("cat", {detach: true})
     let input = new ByteArray
     cmd.on("readable", function(event, cmd) {
         cmd.read(input, -1)
@@ -32,13 +32,13 @@ if (!Path("/bin").exists) {
         gotEvent = event
     })
     cmd.wait()
+    assert(input.available > 0)
     assert(input.available == count)
     assert(cmd.status == 0)
     assert(gotEvent == "complete")
 
-
     //  Error event
-    cmd = Cmd("/bin/ls /asdf", {detach: true})
+    cmd = Cmd("ls /asdf", {detach: true})
     let gotEvent = false
     cmd.on("error", function(event, c) {
         gotEvent = event
@@ -46,5 +46,4 @@ if (!Path("/bin").exists) {
     cmd.finalize()
     cmd.wait()
     assert(gotEvent == "error")
-}
 }
