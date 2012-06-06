@@ -63,6 +63,7 @@ typedef struct EjsMod {
     int         warningCount;               /* Count of all warnings */
     int         warnOnError;                /* Warn if module file errors are detected */
 
+    char        *outputDir;                 /* Directory for slots and listings */
     char        *docDir;                    /* Directory to generate HTML doc */
     bool        html;                       /* Generate HTML doc */
     bool        xml;                        /* Generate XML doc */
@@ -99,8 +100,8 @@ extern int  emCreateDoc(EjsMod *mp);
 /*
     @copy   default
     
-    Copyright (c) Embedthis Software LLC, 2003-2011. All Rights Reserved.
-    Copyright (c) Michael O'Brien, 1993-2011. All Rights Reserved.
+    Copyright (c) Embedthis Software LLC, 2003-2012. All Rights Reserved.
+    Copyright (c) Michael O'Brien, 1993-2012. All Rights Reserved.
     
     This software is distributed under commercial and open source licenses.
     You may use the GPL open source license described below or you may acquire 

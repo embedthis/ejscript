@@ -1,7 +1,6 @@
-<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN"
-    "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd">
 <!-- BeginDsi "dsi/head.html" -->
-<html xmlns="http://www.w3.org/1999/xhtml">
+<!DOCTYPE html>
+<html lang="en">
 <head>
     <title>Embedthis Ejscript 2.0.0 Documentation</title>
     <meta name="keywords" content="Ejscript, JavaScript, ECMAScript, Server-Side JavaScript, Dynamic languages, 
@@ -13,34 +12,27 @@
     <!--[if IE]>
     <link href="../../../iehacks.css" rel="stylesheet" type="text/css" />
     </![endif]-->
+    <link href="http://www.google.com/cse/style/look/default.css" type="text/css" rel="stylesheet" />
 </head>
 
 <body>
     <div class="top">
-        <a class="logo"  href="http://www.ejscript.org/">&nbsp;</a>
+        <a class="logo"  href="http://ejscript.org/">&nbsp;</a>
         <div class="topRight">
-             <div class="search">
-                 <form method="get" action="http://www.google.com/search" title="Search www.embedthis.com">
-                     <p>
-                        <label title="Search">Search</label> 
-                        <input type="text" id="q" name="q" size="15" maxlength="255" />
-                        <input type="submit" id="submit" value="Go" /> 
-                        <input type="hidden" name="domains" value="embedthis.com" /> 
-                        <input type="hidden" name="sitesearch" value="embedthis.com" />
-                    </p>
-                 </form>
-              </div>
-            <!--TITLE-->Embedthis Ejscript 2.0.0
+            <div class="search">
+                <div id="cse-search-form">Loading</div>
+                <div class='version'>Embedthis Ejscript 2.0.0</div>
+            </div>
         </div>
         <div class="crumbs">
-            <a href="../../../product/index.html">Home</a>
+            <a href="../../../index.html">Home</a>
 <!-- EndDsi -->
              &gt; <a href="gettingStarted.html">Getting Started</a> &gt; <b>Language Tour</b>
         </div>
     </div>
     <div class="content">
         <div class="contentRight">
-            <h2>Quick Nav</h2>
+            <h1>Quick Nav</h1>
             <ul>
                 <li><a href="#shell">Running the Shell</a></li>
                 <li><a href="#hello">Hello World</a></li>
@@ -61,7 +53,7 @@
                 <li><a href="#library">Script Library</a></li>
             </ul>
 <!-- BeginDsi "dsi/ejsGuideSeeAlso.html" -->
-        <h2>See Also</h2>
+        <h1>See Also</h1>
         <ul>
           <li><a href="../../../guide/ejs/language/index.html">Language Guide</a></li>
           <li><a href="../../../guide/ejs/programmers/index.html">Programmers Guide</a></li>
@@ -74,179 +66,179 @@
             <h1>Ejscript Language Tour</h1>
             <p>This will be a quick tour of Ejscript to give you a feel for the language, its constructs and
             capabilities.</p>
-            <p>First make sure you have read the <a href="quickStart.html">Quick Start</a> and that you have Ejscript
+            <p>First make sure you have completed the <a href="quickStart.html">Quick Start</a> and that you have Ejscript
             installed on your system so you can type along as we go. This tour will work with the Ejscript <a href=
             "shell.html">command shell</a> to run small scripts.</p>
             <p>In this documentation, command sessions are presented in blue boxes. Output from the system is
             highlighted in yellow. Bold yellow is used to highlight some output of specific interest. You can type
             these examples interactively into the shell or you can edit a file and run the file using "ejs
             filename".</p>
-            <h2><a name="shell" id="shell"></a>Running the Shell</h2>
+            <h2><a id="shell"></a>Running the Shell</h2>
             <p>Type <strong>ejs</strong> to run the Ejscript command shell. Once inside the shell, you can type
             Ejscript programs for immediate execution.</p>
             <pre>
-<font color="#FFFF00">home&gt;</font> ejs
-<font color="#FFFF00">ejs-0&gt;</font>
+<b>home&gt;</b> ejs
+<b>ejs-0&gt;</b>
 </pre>
-            <h2><a name="hello" id="hello"></a>Hello World</h2>
+            <h2><a id="hello"></a>Hello World</h2>
             <p>Every tour beings with the obligatory "Hello World" program. To print output, we use the
             <strong>print</strong> function.</p>
             <pre>
-<font color="#FFFF00">ejs-0&gt;</font> print("Hello World")
-<strong><font color="#FFFF00">Hello World
-</font></strong>
+<b>ejs-0&gt;</b> print("Hello World")
+<strong><b>Hello World
+</b></strong>
 </pre>
             <p>The ejs shell will also echo the last result to the console, so when inside the shell, the minimal hello
             world program is just the string "Hello World" itself.</p>
             <pre>
-ejs-0&gt; "Hello World"<strong><font color="#FFFF00">
-Hello World</font></strong>
+ejs-0&gt; "Hello World"<strong><b>
+Hello World</b></strong>
 </pre>
-            <h2><a name="names" id="names"></a>Names</h2>
+            <h2><a id="names"></a>Names</h2>
             <p>In Ejscript, variable and function names must begin with an alphabetic underscore "_" or dollar "$"
             character. The rest of the name may contain any number of alphabetic, underscore, dollar or numeric
             characters. These are all valid names with declarations and assignments.</p>
             <pre>
-<font color="#FFFF00">ejs-0&gt;</font> var x
-<font color="#FFFF00">ejs-0&gt;</font> var $y
-<font color="#FFFF00">ejs-0&gt;</font> var __myColor
-<font color="#FFFF00">ejs-0&gt;</font> function print43() {}
+<b>ejs-0&gt;</b> var x
+<b>ejs-0&gt;</b> var $y
+<b>ejs-0&gt;</b> var __myColor
+<b>ejs-0&gt;</b> function print43() {}
 </pre>
-            <h2><a name="numbers" id="numbers"></a>Numbers and Expressions</h2>
+            <h2><a id="numbers"></a>Numbers and Expressions</h2>
             <p>You can use the ejs shell to calculate simple arithmetic:</p>
             <pre>
-<font color="#FFFF00">ejs-0&gt;</font> 1 + 2
-<font color="#FFFF00"><strong>3</strong></font>
-<font color="#FFFF00">ejs-0&gt;</font> 1.5 * 2.5
-<font color="#FFFF00"><strong>3.75</strong></font>
+<b>ejs-0&gt;</b> 1 + 2
+<b><strong>3</strong></b>
+<b>ejs-0&gt;</b> 1.5 * 2.5
+<b><strong>3.75</strong></b>
 </pre>
             <p>or print as hex:</p>
             <pre>
-<font color="#FFFF00">ejs-0&gt;</font> "%x" % 50000
-<font color="#FFFF00"><strong>c350</strong></font> 
+<b>ejs-0&gt;</b> "%x" % 50000
+<b><strong>c350</strong></b> 
 </pre>
-            <h2><a name="functions" id="functions"></a>Functions</h2>
+            <h2><a id="functions"></a>Functions</h2>
             <p>Typing code into an interpreter is fun, but frequently you want to reuse some code again and again. For
             that we create functions which are reusable procedures.</p>
             <pre>
-<font color="#FFFF00">ejs-0&gt;</font> function add(x, y) {
-<font color="#FFFF00">ejs-2&gt;</font>   return x + y
-<font color="#FFFF00">ejs-2&gt;</font> }
+<b>ejs-0&gt;</b> function add(x, y) {
+<b>ejs-2&gt;</b>   return x + y
+<b>ejs-2&gt;</b> }
                     
 </pre>
             <p>To call a function:</p>
             <pre>
-<font color="#FFFF00">ejs-0&gt;</font> add(1,2)
-<font color="#FFFF00"><strong>3</strong></font>
-<font color="#FFFF00">ejs-0&gt;</font> add(5,5)
-<font color="#FFFF00"><strong>10</strong></font>
+<b>ejs-0&gt;</b> add(1,2)
+<b><strong>3</strong></b>
+<b>ejs-0&gt;</b> add(5,5)
+<b><strong>10</strong></b>
 </pre>
-            <p>Expecially useful, is that functions are objects and you can assign them to variables and pass them as
+            <p>Especially useful, is that functions are objects and you can assign them to variables and pass them as
             arguments to other functions. More on this later.</p>
             <pre>
-<font color="#FFFF00">ejs-0&gt;</font> var math = function (x, y) { return x + y; }
-<font color="#FFFF00">ejs-0&gt;</font> math(100, 200)
-<font color="#FFFF00"><strong>300</strong></font>
+<b>ejs-0&gt;</b> var math = function (x, y) { return x + y; }
+<b>ejs-0&gt;</b> math(100, 200)
+<b><strong>300</strong></b>
 </pre>
-            <h2><a name="classes" id="classes"></a>Classes</h2>
+            <h2><a id="classes"></a>Classes</h2>
             <p>Classes are a new addition to JavaScript that follows a very familiar paradigm. Classes enable us to
             group variables and a set of functions to operate on those variables. More importantly, we can create many
             object instances of a class.</p>
             <pre>
-<font color="#FFFF00">ejs-0&gt;</font> class Shape {
-<font color="#FFFF00">ejs-2&gt;</font>   var height
-<font color="#FFFF00">ejs-2&gt;</font>   var width
-<font color="#FFFF00">ejs-2&gt;</font>   function Shape(length, depth) {
-<font color="#FFFF00">ejs-2&gt;</font>     height = length
-<font color="#FFFF00">ejs-2&gt;</font>     width = depth
-<font color="#FFFF00">ejs-2&gt;</font>   }
-<font color="#FFFF00">ejs-2&gt;</font> }
+<b>ejs-0&gt;</b> class Shape {
+<b>ejs-2&gt;</b>   var height
+<b>ejs-2&gt;</b>   var width
+<b>ejs-2&gt;</b>   function Shape(length, depth) {
+<b>ejs-2&gt;</b>     height = length
+<b>ejs-2&gt;</b>     width = depth
+<b>ejs-2&gt;</b>   }
+<b>ejs-2&gt;</b> }
 </pre>
             <p>This code defines a new class called Shape. It has two property variables called height and width. These
             are created per object instance. We also have a special function called Shape(). This is a constructor and
             is called when we create a new shape object. We can now create as many shapes as we like via the
             <strong>new</strong> keyword. Each time, the constructor is called to initialize the shape.</p>
             <pre>
-<font color="#FFFF00">ejs-2&gt;</font> s = new Shape(5, 10)
-<font color="#FFFF00"><strong>[object Shape]</strong></font>
-<font color="#FFFF00">ejs-2&gt;</font> s2 = new Shape(5, 5)
-<font color="#FFFF00"><strong>[object Shape]</strong></font>
+<b>ejs-2&gt;</b> s = new Shape(5, 10)
+<b><strong>[object Shape]</strong></b>
+<b>ejs-2&gt;</b> s2 = new Shape(5, 5)
+<b><strong>[object Shape]</strong></b>
 </pre>We can also create new derived shape classes using the Shape class as a base.
             <pre>
-<font color="#FFFF00">ejs-0&gt;</font> class Circle extends Shape {
-<font color="#FFFF00">ejs-2&gt;</font>   var radius
-<font color="#FFFF00">ejs-2&gt;</font>   function Circle(radius) {
-<font color="#FFFF00">ejs-2&gt;</font>     super(radius, radius)
-<font color="#FFFF00">ejs-2&gt;</font>   }
-<font color="#FFFF00">ejs-2&gt;</font> }
-<font color="#FFFF00">ejs-0&gt;</font> circle = new Circle(25)
-<font color="#FFFF00"><strong>[object Circle]</strong></font>
+<b>ejs-0&gt;</b> class Circle extends Shape {
+<b>ejs-2&gt;</b>   var radius
+<b>ejs-2&gt;</b>   function Circle(radius) {
+<b>ejs-2&gt;</b>     super(radius, radius)
+<b>ejs-2&gt;</b>   }
+<b>ejs-2&gt;</b> }
+<b>ejs-0&gt;</b> circle = new Circle(25)
+<b><strong>[object Circle]</strong></b>
 </pre>
             <p>Once we've created an instance of an object we can access the properties of that object using dot
             notation.</p>
             <pre>
-<font color="#FFFF00">ejs-0&gt;</font> s = new Shape(100, 200)
-<font color="#FFFF00">ejs-0&gt;</font> print(s.height)
-<font color="#FFFF00"><strong>100</strong></font>
+<b>ejs-0&gt;</b> s = new Shape(100, 200)
+<b>ejs-0&gt;</b> print(s.height)
+<b><strong>100</strong></b>
 </pre>
-            <h2><a name="objects" id="objects"></a>Objects</h2>
+            <h2><a id="objects"></a>Objects</h2>
             <p>You can also create objects without having to create a class. Object literals provide a convenient way
             to create and initialize an object in one step.</p>
             <pre>
-<font color="#FFFF00">ejs-0&gt;</font> s = { height: 500, width: 400 }
-<font color="#FFFF00">ejs-0&gt;</font> print(s.height)
-<font color="#FFFF00"><strong>500</strong></font>
-<font color="#FFFF00">ejs-0&gt;</font> serialize(s)<font color="#FFFF00"><strong>
+<b>ejs-0&gt;</b> s = { height: 500, width: 400 }
+<b>ejs-0&gt;</b> print(s.height)
+<b><strong>500</strong></b>
+<b>ejs-0&gt;</b> serialize(s)<b><strong>
 {
   height: 500,
   width: 400,
-}</strong></font>
+}</strong></b>
 </pre>
             <p>In this example, we also use the <strong>serialize</strong> function to convert the object "s" into a
             string exposing all the properties and their values. Object literals can also be nested.</p>
-            <h2><a name="hashes" id="hashes"></a>Hashes</h2>
+            <h2><a id="hashes"></a>Hashes</h2>
             <p>In Ejscript, objects are frequently used as hashes to store key / value pairs.</p>
             <pre>
-<font color="#FFFF00">ejs-0&gt;</font> hash = new Object
-<font color="#FFFF00">ejs-0&gt;</font> hash["red"] = "Favorite color"
-<font color="#FFFF00">ejs-0&gt;</font> hash["blue"] = "Next favorite"
-<font color="#FFFF00">ejs-0&gt;</font> hash["green"] = "Least likely"
-<font color="#FFFF00">ejs-0&gt;</font> print(hash["red"])
-<strong><font color="#FFFF00">Favorite Color</font></strong>
+<b>ejs-0&gt;</b> hash = new Object
+<b>ejs-0&gt;</b> hash["red"] = "Favorite color"
+<b>ejs-0&gt;</b> hash["blue"] = "Next favorite"
+<b>ejs-0&gt;</b> hash["green"] = "Least likely"
+<b>ejs-0&gt;</b> print(hash["red"])
+<strong><b>Favorite Color</b></strong>
 </pre>
             <p>To access hash elements, use "[]" to lookup by a key string.</p>
-            <p>Classes and Interaces are also objects in their own right. You can store them and assign them. This is
+            <p>Classes and Interfaces are also objects in their own right. You can store them and assign them. This is
             very useful in creating type factories. Continuing the previous example, we can store the Shape and Circle
             class types into a factory hash.</p>
             <pre>
-<font color="#FFFF00">
-ejs-2&gt;</font> factory = {}
-<font color="#FFFF00">ejs-0&gt;</font> factory["shape"] = Shape
-<font color="#FFFF00">ejs-0&gt;</font> factory["circle"] = Circle
-<font color="#FFFF00">ejs-0&gt;</font> kind = "shape"
-<font color="#FFFF00">ejs-0&gt;</font> thing = new factory[kind]
+<b>
+ejs-2&gt;</b> factory = {}
+<b>ejs-0&gt;</b> factory["shape"] = Shape
+<b>ejs-0&gt;</b> factory["circle"] = Circle
+<b>ejs-0&gt;</b> kind = "shape"
+<b>ejs-0&gt;</b> thing = new factory[kind]
 </pre>
-            <p>In this example we used "factory = {}". This is a fequently used shorthand for saying factory = new
+            <p>In this example we used "factory = {}". This is a frequently used shorthand for saying factory = new
             Object.</p>
-            <h2><a name="arrays" id="arrays"></a>Arrays</h2>
+            <h2><a id="arrays"></a>Arrays</h2>
             <p>Arrays are created using the new keyword. There are several forms of constructor usage for Arrays, the
             most common is to specify the size of the array.</p>
             <pre>
-<font color="#FFFF00">ejs-0&gt;</font> a = new Array(10)
-<font color="#FFFF00">ejs-0&gt;</font> print(a.length)
-<font color="#FFFF00"><strong>10</strong></font>
+<b>ejs-0&gt;</b> a = new Array(10)
+<b>ejs-0&gt;</b> print(a.length)
+<b><strong>10</strong></b>
 </pre>You can also create an Array using an Array literal syntax by enclosing the desired array elements inside square
 brackets.
             <pre>
-<font color="#FFFF00">ejs-0&gt;</font> b = [ 0, 1, 2, 3, 4, 5, 6, 7, 8, 9 ]
-<font color="#FFFF00">ejs-0&gt;</font> print(b.length)
-<font color="#FFFF00"><strong>10</strong></font>
-<font color="#FFFF00">ejs-0&gt;</font> print(b)
+<b>ejs-0&gt;</b> b = [ 0, 1, 2, 3, 4, 5, 6, 7, 8, 9 ]
+<b>ejs-0&gt;</b> print(b.length)
+<b><strong>10</strong></b>
+<b>ejs-0&gt;</b> print(b)
 0,1,2,3,4,5,6,7,8,9
 </pre>
             <p>You can print the length of the array using the <b>length</b> getter function. You can also convert the
             array to a string and print it out.</p>
-            <h2><a name="types" id="types"></a>Type Annotations</h2>
+            <h2><a id="types"></a>Type Annotations</h2>
             <p>So far we've just declared variables and not specified their type. At run time, the Ejscript virtual
             machine manages the type of the variables. Sometimes known as Duck-typing, this is certainly easier than
             having to pre-declare the types of all variables. But there are cases where it is highly desirable to
@@ -275,7 +267,7 @@ function add(x: Number, y: Number): Number {
             </ul>
             <p>Another general rule is that when you are creating code that will be used by others and they need to
             have it clearly documented, use type annotations.</p>
-            <h2><a name="statements" id="statements"></a>Statements</h2>
+            <h2><a id="statements"></a>Statements</h2>
             <p>Ejscript statements are C-like and include: break, case, cast, class, continue, catch, class, default,
             delete, do, finally, for, for/in, for each, function, if/else, include, interface, let, new, return, super,
             switch, try, use and var.</p>
@@ -308,76 +300,76 @@ demo.test(0, 10)
             <p>There were a couple of unusual constructs in that snippet to discuss.</p>
             <h3>Let Declarations and Block Scope</h3>
             <p>Variables may be declared with either <strong>var</strong> or <strong>let</strong>. Let will always
-            define variables at the block level in which they are declared. ie. always block scoped. In ECMAScript, var
+            define variables at the block level in which they are declared. i.e. always block scoped. In ECMAScript, var
             declarations always hoist to the nearest enclosing function, class or global space.</p>
             <h3>For ... in</h3>
             <p>The "for (i in 10)" statement seems a little unusual. Isn't 10 a primitive type? The answer is yes, but
             Ejscript treats all numbers as objects. You can invoke methods on numbers and you can iterate through their
-            values. This for/in statement will iterate through all the numbers from 0 up to but not including 10. ie.
-            0-9. Much easier than typing "for (i = 0; i &lt; 10; i++)" eh?</p>
-            <h2><a name="iteration" id="iteration"></a>Iteration</h2>
+            values. This for/in statement will iterate through all the numbers from 0 up to but not including 10. i.e.
+            0-9. Much easier than typing "<em>for (i = 0; i &lt; 10; i++)</em>" eh?</p>
+            <h2><a id="iteration"></a>Iteration</h2>
             <p>Ejscript has powerful iteration capabilities and most types have built-in iterators for common tasks.
             Here are a few examples:</p>
             <p>To loop through the characters in a string:</p>
             <pre>
-<font color="#FFFF00">ejs-0&gt;</font> for each (s in "Hello")
-<font color="#FFFF00">ejs-0&gt;</font>   print(s)
-<strong><font color="#FFFF00">
+<b>ejs-0&gt;</b> for each (s in "Hello")
+<b>ejs-0&gt;</b>   print(s)
+<strong><b>
 H
 e
 l
 l
-o</font></strong>
+o</b></strong>
 </pre>
             <p>To count to 100</p>
             <pre>
-<font color="#FFFF00">ejs-0&gt;</font> for each (i in 100)
-<font color="#FFFF00"><strong>0
+<b>ejs-0&gt;</b> for each (i in 100)
+<b><strong>0
 1
 ...
-99</strong></font>
+99</strong></b>
 </pre>
-            <h2><a name="scope" id="scope"></a>Scope</h2>
+            <h2><a id="scope"></a>Scope</h2>
             <p>Ejscript is a lexically scoped language. This means that variables are visible by default in the block
             in which they are declared and in inner blocks.</p>
             <p>In this example, the variable factor is visible inside the function increment but the variable temp is
             local to the function and not visible outside.</p>
             <pre>
-<font color="#FFFF00">ejs-0&gt; </font>var factor = 10
-<font color="#FFFF00">ejs-0&gt;</font> function increment(x) {
-<font color="#FFFF00">ejs-0&gt; </font>  var temp = x * x
-<font color="#FFFF00">ejs-0&gt; </font>  return temp + factor       // Variable factor is visible
-<font color="#FFFF00">ejs-0&gt; </font>}
-<font color="#FFFF00">ejs-0&gt; </font>// Variable temp is not visible here
+<b>ejs-0&gt; </b>var factor = 10
+<b>ejs-0&gt;</b> function increment(x) {
+<b>ejs-0&gt; </b>  var temp = x * x
+<b>ejs-0&gt; </b>  return temp + factor       // Variable factor is visible
+<b>ejs-0&gt; </b>}
+<b>ejs-0&gt; </b>// Variable temp is not visible here
 </pre>
             <p>But what if we declare another variable called "factor" inside the function. Consider this:</p>
             <pre>
-<font color="#FFFF00">ejs-0&gt; </font>var factor = 10
-<font color="#FFFF00">ejs-0&gt;</font> function increment(x) {
-<font color="#FFFF00">ejs-0&gt;</font>   let factor = 1
-<font color="#FFFF00">ejs-0&gt; </font>  var temp = x * x
-<font color="#FFFF00">ejs-0&gt; </font>  return temp + factor       // factor == 1
-<font color="#FFFF00">ejs-0&gt; </font>}
-<font color="#FFFF00">ejs-0&gt; </font>// Variable temp is not visible here
+<b>ejs-0&gt; </b>var factor = 10
+<b>ejs-0&gt;</b> function increment(x) {
+<b>ejs-0&gt;</b>   let factor = 1
+<b>ejs-0&gt; </b>  var temp = x * x
+<b>ejs-0&gt; </b>  return temp + factor       // factor == 1
+<b>ejs-0&gt; </b>}
+<b>ejs-0&gt; </b>// Variable temp is not visible here
 </pre>
             <p>This second declaration of factor inside the function <em>shadows</em> the first declaration only while
             inside the function. Once outside, the first declaration is visible again.</p>
             <p>These scoping rules apply to functions, classes, and indeed any blocks of code.</p>
-            <h2><a name="namespaces" id="namespaces"></a>Namespaces</h2>
+            <h2><a id="namespaces"></a>Namespaces</h2>
             <p>To help control the visibility of names, they can be given namespace qualifiers. Think of this as a
             two-dimensional variable name space. Instead of just the variable name, the fully qualified variable name
             consists of the name plus the namespace name.</p>
             <p>Namespaces are useful to prevent names from different contexts clashing. In other languages such as
-            Java, packages and imports are used to group and seggregate declarations. In Ejscript, namespaces are also
+            Java, packages and imports are used to group and segregate declarations. In Ejscript, namespaces are also
             used for this purpose.</p>
             <p>With namespaces you can now have two variables named x in the same block.</p>
             <pre>
-<font color="#FFFF00">ejs-0&gt;</font> var x = "first"
-<font color="#FFFF00">ejs-0&gt;</font> var "com.embedthis"::x = "second"
-<font color="#FFFF00">ejs-0&gt;</font> print(x)
-<font color="#FFFF00"><strong>first</strong></font>
-<font color="#FFFF00">ejs-0&gt;</font> print("com.embedthis"::x)
-<font color="#FFFF00"><strong>second</strong></font>
+<b>ejs-0&gt;</b> var x = "first"
+<b>ejs-0&gt;</b> var "com.embedthis"::x = "second"
+<b>ejs-0&gt;</b> print(x)
+<b><strong>first</strong></b>
+<b>ejs-0&gt;</b> print("com.embedthis"::x)
+<b><strong>second</strong></b>
 </pre>
             <p>The second variable declaration is qualified by "com.embedthis" and is a separate declaration to the
             first. The namespace qualifier can either be a literal string or can be a variable of the type Namespace.
@@ -390,19 +382,19 @@ o</font></strong>
             modules &mdash; based on Namespaces. A module directive groups variables, functions and classes into a
             single namespace. A module can be imported via the "require" directive.</p>
             <pre>
-<font color="#FFFF00">ejs-0&gt;</font> module Test {
-<font color="#FFFF00">ejs-0&gt;</font>     var x = "hello"
-<font color="#FFFF00">ejs-0&gt;</font> }
-<font color="#FFFF00">ejs-0&gt;</font> require Test
-<font color="#FFFF00">ejs-0&gt;</font> print(x)
-<strong><font color="#FFFF00">hello</font></strong>
+<b>ejs-0&gt;</b> module Test {
+<b>ejs-0&gt;</b>     var x = "hello"
+<b>ejs-0&gt;</b> }
+<b>ejs-0&gt;</b> require Test
+<b>ejs-0&gt;</b> print(x)
+<strong><b>hello</b></strong>
 </pre>
             <p>This code will create a module Test with a variable X that is actually named: "Test::x". i.e it is
             prefixed with the namespace "Test". A typical paradigm is to create modules patterned after a domain name
             such as "com.embedthis.Test".</p>
             <p>If using the <strong>ec</strong> stand-alone compiler, the Test module will be compiled into a separate
             byte code file called "test.mod".</p>
-            <h2><a name="closures" id="closures"></a>Closures</h2>
+            <h2><a id="closures"></a>Closures</h2>
             <p>To complete the discussion about Scope, Ejscript has an important and very powerful construct called a
             closure. This is where a function can be captured in the context in which it is defined. The capture
             includes its full lexical scope and if the function is a method in a class, then the <strong>this</strong>
@@ -410,51 +402,63 @@ o</font></strong>
             <p>Closures and method capture are most useful when you wish to pass a function with its execution context
             as a parameter to another function.</p>
             <pre>
-<font color="#FFFF00">ejs-0&gt;</font> class Rectangle {
-<font color="#FFFF00">ejs-0&gt;</font>   var color = "red"
-<font color="#FFFF00">ejs-0&gt;</font>   function render() {
-<font color="#FFFF00">ejs-0&gt;</font>     print("In render: color " + color)
-<font color="#FFFF00">ejs-0&gt;</font>   }
-<font color="#FFFF00">ejs-0&gt;</font> }
-<font color="#FFFF00">ejs-0&gt;</font> box = new Rectangle
-<font color="#FFFF00">ejs-0&gt;</font> new Timer(5000, box.render)
+<b>ejs-0&gt;</b> class Rectangle {
+<b>ejs-0&gt;</b>   var color = "red"
+<b>ejs-0&gt;</b>   function render() {
+<b>ejs-0&gt;</b>     print("In render: color " + color)
+<b>ejs-0&gt;</b>   }
+<b>ejs-0&gt;</b> }
+<b>ejs-0&gt;</b> box = new Rectangle
+<b>ejs-0&gt;</b> new Timer(5000, box.render)
 </pre>
             <p>This example creates a class called Rectangle and creates an instance called box. It then creates a
             timer which will invoke the render method of the rectangle in 5 seconds. When <strong>box.render</strong>
             is passed as a parameter, Ejscript captures the value of the box (this) reference and remembers it. When
             the timer later invokes the render method, it invokes it with the right instance of Rectangle.</p>
-            <h2><a name="exceptions" id="exceptions"></a>Exceptions</h2>
+            <h2><a id="exceptions"></a>Exceptions</h2>
             <p>Frequently things go wrong in a program. Exceptions allow you to structure your error handling code
             without obscuring the main logic flow.</p>
             <pre>
-<font color="#FFFF00">ejs-0&gt;</font> try {
-<font color="#FFFF00">ejs-0&gt;</font>   missing()
-<font color="#FFFF00">ejs-0&gt;</font> }
-<font color="#FFFF00">ejs-0&gt;</font> catch (error) {
-<font color="#FFFF00">ejs-0&gt;</font>   print("Caught the error")
-<font color="#FFFF00">ejs-0&gt;</font> }
-<font color="#FFFF00"><strong>Caught the error</strong></font>
+<b>ejs-0&gt;</b> try {
+<b>ejs-0&gt;</b>   missing()
+<b>ejs-0&gt;</b> }
+<b>ejs-0&gt;</b> catch (error) {
+<b>ejs-0&gt;</b>   print("Caught the error")
+<b>ejs-0&gt;</b> }
+<b><strong>Caught the error</strong></b>
 </pre>
             <p>Ejscript exceptions allow us to "try" something and if an error occurred, then we catch the error in a
             dedicated block of code.</p>
-            <h2><a name="library" id="library"></a>Script Library</h2>
+            <h2><a id="library"></a>Script Library</h2>
             <p>Ejscript comes with an extensive class <a href="../../../api/ejscript/index.html">library</a>. It
             includes class for Events, Timers, File I/O, HTTP, Sockets, XML and much more. To give you a feel for the
             library, here is how to read lines from a file.</p>
             <pre>
-<font color="#FFFF00">ejs-0&gt;</font> for each (line in Path("filename").readLines()) {
-<font color="#FFFF00">ejs-0&gt;</font>   print(line)
-<font color="#FFFF00">ejs-0&gt;</font> }
+<b>ejs-0&gt;</b> for each (line in Path("filename").readLines()) {
+<b>ejs-0&gt;</b>   print(line)
+<b>ejs-0&gt;</b> }
 </pre>
         </div>
     </div>
 <!-- BeginDsi "dsi/bottom.html" -->
 	<div class="bottom">
 		<p class="footnote"> 
-            <a href="../../../product/copyright.html" >&copy; Embedthis Software LLC, 2003-2011. 
+            <a href="../../../product/copyright.html" >&copy; Embedthis Software LLC, 2003-2012. 
             All rights reserved. Embedthis, Ejscript and Appweb are trademarks of Embedthis Software LLC.</a>
 		</p>
 	</div>
-<!-- EndDsi -->
+    <script src="http://www.google.com/jsapi" type="text/javascript"></script>
+    <script type="text/javascript"> 
+      google.load('search', '1', {language : 'en'});
+      google.setOnLoadCallback(function() {
+        var customSearchControl = new google.search.CustomSearchControl(
+          'partner-pub-9935546676162772:ysvxxv4n9rx');
+
+        customSearchControl.setResultSetSize(google.search.Search.FILTERED_CSE_RESULTSET);
+        var options = new google.search.DrawOptions();
+        options.enableSearchboxOnly("http://ejscript.org/search.html");
+        customSearchControl.draw('cse-search-form', options);
+      }, true);
+    </script>
 </body>
 </html>

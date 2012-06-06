@@ -1,0 +1,5 @@
+require ejs.unix
+
+if (test.phase == "init") {
+    Cmd.sh(Cmd.locate("sqlite").portable + " test.sdb < test.sql")
+}

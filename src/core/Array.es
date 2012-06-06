@@ -44,12 +44,14 @@ module ejs {
         /**
             Clone the array and all its elements.
             @param deep If true, do a deep copy where all object references are also copied, and so on, recursively.
+            @return A new array
             @spec ejs
          */
         override native function clone(deep: Boolean = true) : Array
 
         /**
             Compact an array. Remove all null elements.
+            @return Modified original array
             @spec ejs
          */
         native function compact() : Array
@@ -64,18 +66,15 @@ module ejs {
 
         /**
             See if the array contains an element using strict equality "===". This call searches from the start of the 
-            array for the specified element.  
+            array for the specified element. Note that some types are not interned like strings and so contains may
+            return false if a different object with the same value is contained in the array. This can happen with Path
+            types.
             @param element The object to search for.
             @return True if the element is found. Otherwise false.
             @spec ejs
          */
-        function contains(element: Object): Boolean {
-            if (indexOf(element) >= 0) {
-                return true
-            } else {
-                return false
-            }
-        }
+        function contains(element: Object): Boolean
+            indexOf(element) >= 0
 
         /**
             Determine if all elements match.
@@ -450,10 +449,11 @@ module ejs {
             @param mapper Transforming function
             @spec ejs
          */
-        function transform(mapper: Function): Void {
+        function transform(mapper: Function): Array {
             for (let i: Number in this) {
                 this[i] = mapper(this[i], i, this);
             }
+            return this
         }
 
         /**
@@ -523,8 +523,8 @@ module ejs {
 /*
     @copy   default
     
-    Copyright (c) Embedthis Software LLC, 2003-2011. All Rights Reserved.
-    Copyright (c) Michael O'Brien, 1993-2011. All Rights Reserved.
+    Copyright (c) Embedthis Software LLC, 2003-2012. All Rights Reserved.
+    Copyright (c) Michael O'Brien, 1993-2012. All Rights Reserved.
     
     This software is distributed under commercial and open source licenses.
     You may use the GPL open source license described below or you may acquire 

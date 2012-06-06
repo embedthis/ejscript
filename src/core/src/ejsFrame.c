@@ -36,7 +36,7 @@ static EjsFrame *allocFrame(Ejs *ejs, int numProp)
         ejsThrowMemoryError(ejs);
         return 0;
     }
-    mprSetManager(obj, manageFrame);
+    mprSetManager(obj, (MprManager) manageFrame);
     SET_TYPE(obj, ESV(Frame));
     ejsSetMemRef(obj);
     return (EjsFrame*) obj;
@@ -84,7 +84,7 @@ EjsFrame *ejsCreateFrame(Ejs *ejs, EjsFunction *fun, EjsObj *thisObj, int argc, 
         //  OPT -- could the function be setup as the prototype and thus avoid doing this?
         //  OPT -- assumes that the function is sealed
         memcpy(obj->properties->slots, activation->properties->slots, numProp * sizeof(EjsSlot));
-        ejsMakeHash(ejs, obj);
+        ejsIndexProperties(ejs, obj);
     }
     ejsZeroSlots(ejs, &obj->properties->slots[numProp], size - numProp);
     //  OPT - should not need to do this
@@ -165,8 +165,8 @@ void ejsConfigureFrameType(Ejs *ejs)
 /*
     @copy   default
 
-    Copyright (c) Embedthis Software LLC, 2003-2011. All Rights Reserved.
-    Copyright (c) Michael O'Brien, 1993-2011. All Rights Reserved.
+    Copyright (c) Embedthis Software LLC, 2003-2012. All Rights Reserved.
+    Copyright (c) Michael O'Brien, 1993-2012. All Rights Reserved.
 
     This software is distributed under commercial and open source licenses.
     You may use the GPL open source license described below or you may acquire
@@ -178,7 +178,7 @@ void ejsConfigureFrameType(Ejs *ejs)
     under the terms of the GNU General Public License as published by the
     Free Software Foundation; either version 2 of the License, or (at your
     option) any later version. See the GNU General Public License for more
-    details at: http://www.embedthis.com/downloads/gplLicense.html
+    details at: http://embedthis.com/downloads/gplLicense.html
 
     This program is distributed WITHOUT ANY WARRANTY; without even the
     implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.
@@ -187,7 +187,7 @@ void ejsConfigureFrameType(Ejs *ejs)
     proprietary programs. If you are unable to comply with the GPL, you must
     acquire a commercial license to use this software. Commercial licenses
     for this software and support services are available from Embedthis
-    Software at http://www.embedthis.com
+    Software at http://embedthis.com
 
     Local variables:
     tab-width: 4

@@ -1,0 +1,73 @@
+/*
+    openssl.pak -- OpenSSL package
+ */
+
+pack('openssl', 'OpenSSL SSL/TLS Security')
+if (bit.packs.ssl && bit.packs.ssl.enable == false) {
+    throw 'SSL has been disabled'
+}
+
+let cfg
+let path: Path = bit.packs.openssl.path
+if (!path) {
+    let vers = bit.dir.packs.join('openssl').files('openssl-*').sort().reverse()
+    path = vers[0]
+    if (!path) {
+        if (bit.platform.os == 'windows') {
+            throw 'Can\'t find openssl source distribution'
+        } else {
+            path = '/usr'
+        }
+    }
+}
+
+if (bit.platform.os == 'windows') {
+    let search = [path.join('out32dll')]
+    let lib = probe('libeay32.dll', {fullpath: true, search: search}).absolute
+    let dir = lib.parent.parent
+    search = [path.join('inc32')]
+    let incdir = probe('openssl/ssl.h', {search: search}).absolute
+    cfg = {
+        dir: dir,
+        path: lib,
+        includes: [ incdir ],
+        libraries: [ 'libeay32.lib', 'ssleay32.lib' ],
+        libpaths: [ lib.parent ],
+        imports: [ lib.parent.join('libeay32.dll'), lib.parent.join('libeay32.lib'),
+                   lib.parent.join('ssleay32.dll'), lib.parent.join('ssleay32.lib') ],
+    }
+
+} else if (bit.platform.os == 'macosx') {
+    let search = [path, '/usr/lib']
+    let lib = probe('libcrypto.dylib', {fullpath: true, search: search}).absolute
+    let dir = lib.parent
+    search = [path.join('include'), '/usr/include']
+    let incdir = probe('openssl/ssl.h', {search: search}).absolute
+    cfg = {
+        dir: dir,
+        path: lib,
+        includes: [ incdir ],
+        libraries: [ 'ssl', 'crypto' ],
+        libpaths: [ lib.parent ],
+        imports: lib.parent.files('libssl*.dylib') + lib.parent.files('libcrypto*.dylib')
+    }
+
+} else {
+    let search = [path, '/usr/lib', '/lib' ]
+    search += Path('/usr/lib').files('*-linux-gnu') + Path('/lib').files('*-linux-gnu')
+    let lib = probe('libcrypto.so', {fullpath: true, search: search}).absolute
+    let dir = lib.parent
+    search = [path.join('include'), '/usr/include']
+    let incdir = probe('openssl/ssl.h', {search: search}).absolute
+    cfg = {
+        dir: dir,
+        path: lib,
+        includes: [ incdir ],
+        libraries: [ 'ssl', 'crypto' ],
+        libpaths: [ lib.parent ],
+        imports: lib.parent.files('libssl.*so*') + lib.parent.files('libcrypto.*so*'),
+    }
+}
+
+let template = {packs: { openssl: cfg}}
+Bit.load(template)

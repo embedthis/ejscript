@@ -56,13 +56,14 @@ module ejs {
         # FUTURE
         native function addNamespace(ns: Namespace): XML
 
+        //  MOB - should be native
         /**
             Append a child to this XML object.
             @param child The child to add.
             @return This object with the added child.
          */
         function appendChild(child: XML): XML {
-            this[child.name()] = child
+            this[name()][length()] = child
             return this
         }
 
@@ -394,8 +395,8 @@ module ejs {
 /*
     @copy   default
     
-    Copyright (c) Embedthis Software LLC, 2003-2011. All Rights Reserved.
-    Copyright (c) Michael O'Brien, 1993-2011. All Rights Reserved.
+    Copyright (c) Embedthis Software LLC, 2003-2012. All Rights Reserved.
+    Copyright (c) Michael O'Brien, 1993-2012. All Rights Reserved.
     
     This software is distributed under commercial and open source licenses.
     You may use the GPL open source license described below or you may acquire 

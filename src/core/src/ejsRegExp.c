@@ -60,9 +60,8 @@ static EjsRegExp *regex_Constructor(Ejs *ejs, EjsRegExp *rp, int argc, EjsObj **
     if (rp->compiled) {
         free(rp->compiled);
     }
-    rp->compiled = (void*) pcre_compile2(rp->pattern, rp->options, &errCode, &errMsg, &column, NULL);
-    if (rp->compiled == NULL) {
-        ejsThrowArgError(ejs, "Can't compile regular expression. Error %s at column %d", errMsg, column);
+    if ((rp->compiled = pcre_compile2(rp->pattern, rp->options, &errCode, &errMsg, &column, NULL)) == 0) {
+        ejsThrowArgError(ejs, "Can't compile regular expression '%s'. Error %s at column %d", rp->pattern, errMsg, column);
         return 0;
     }
     return rp;
@@ -221,7 +220,7 @@ EjsRegExp *ejsCreateRegExp(Ejs *ejs, EjsString *pattern)
         //  TODO - UNICODE is pattern meant to be 
         rp->compiled = pcre_compile2(rp->pattern, rp->options, &errCode, &errMsg, &column, NULL);
         if (rp->compiled == NULL) {
-            ejsThrowArgError(ejs, "Can't compile regular expression. Error %s at column %d", errMsg, column);
+            ejsThrowArgError(ejs, "Can't compile regular expression '%s'. Error %s at column %d", rp->pattern, errMsg, column);
             return 0;
         }
     }
@@ -239,7 +238,7 @@ static int parseFlags(EjsRegExp *rp, MprChar *flags)
     }
     options = PCRE_JAVASCRIPT_COMPAT;
     for (cp = flags; *cp; cp++) {
-        switch (tolower((int) *cp)) {
+        switch (tolower((uchar) *cp)) {
         case 'g':
             rp->global = 1;
             break;
@@ -356,8 +355,8 @@ void ejsConfigureRegExpType(Ejs *ejs)
 /*
     @copy   default
 
-    Copyright (c) Embedthis Software LLC, 2003-2011. All Rights Reserved.
-    Copyright (c) Michael O'Brien, 1993-2011. All Rights Reserved.
+    Copyright (c) Embedthis Software LLC, 2003-2012. All Rights Reserved.
+    Copyright (c) Michael O'Brien, 1993-2012. All Rights Reserved.
 
     This software is distributed under commercial and open source licenses.
     You may use the GPL open source license described below or you may acquire
@@ -369,7 +368,7 @@ void ejsConfigureRegExpType(Ejs *ejs)
     under the terms of the GNU General Public License as published by the
     Free Software Foundation; either version 2 of the License, or (at your
     option) any later version. See the GNU General Public License for more
-    details at: http://www.embedthis.com/downloads/gplLicense.html
+    details at: http://embedthis.com/downloads/gplLicense.html
 
     This program is distributed WITHOUT ANY WARRANTY; without even the
     implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.
@@ -378,7 +377,7 @@ void ejsConfigureRegExpType(Ejs *ejs)
     proprietary programs. If you are unable to comply with the GPL, you must
     acquire a commercial license to use this software. Commercial licenses
     for this software and support services are available from Embedthis
-    Software at http://www.embedthis.com
+    Software at http://embedthis.com
 
     Local variables:
     tab-width: 4

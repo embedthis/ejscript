@@ -6,6 +6,7 @@
 
 module ejs {
 
+    //  MOB - need a simple way to construct a timer and start in one step
     /**
         Timers manage the execution of functions at some point in the future. Timers may run once, or they can be 
         scheduled to run repeatedly, until stopped by calling the $stop() method. Timers are scheduled with a granularity 
@@ -62,7 +63,7 @@ module ejs {
         native function get repeat(): Boolean
         native function set repeat(enable: Boolean): Void
 
-        /*
+        /**
             Reschedule a timer. This will stop the timer if it is currently scheduled, then reschedule the timer.
             If the $when argument is provided, the timer period will be set before starting.
             @param when Time period for when to next run the timer
@@ -137,8 +138,8 @@ module ejs {
 /*
     @copy   default
     
-    Copyright (c) Embedthis Software LLC, 2003-2011. All Rights Reserved.
-    Copyright (c) Michael O'Brien, 1993-2011. All Rights Reserved.
+    Copyright (c) Embedthis Software LLC, 2003-2012. All Rights Reserved.
+    Copyright (c) Michael O'Brien, 1993-2012. All Rights Reserved.
     
     This software is distributed under commercial and open source licenses.
     You may use the GPL open source license described below or you may acquire 

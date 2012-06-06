@@ -41,6 +41,12 @@ module ejs {
           */
         native function absolute(base = null): Uri
 
+        /**
+            Return the TCP/IP address of the URI. This is the IP:PORT portion.
+         */
+        function get address(): String
+            host + ":" + port
+
         /** 
             The base of portion of the URI. The base portion is the trailing portion of the path without any directory 
             elements.
@@ -459,8 +465,8 @@ module ejs {
 /*
     @copy   default
     
-    Copyright (c) Embedthis Software LLC, 2003-2011. All Rights Reserved.
-    Copyright (c) Michael O'Brien, 1993-2011. All Rights Reserved.
+    Copyright (c) Embedthis Software LLC, 2003-2012. All Rights Reserved.
+    Copyright (c) Michael O'Brien, 1993-2012. All Rights Reserved.
     
     This software is distributed under commercial and open source licenses.
     You may use the GPL open source license described below or you may acquire 

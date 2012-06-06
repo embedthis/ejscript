@@ -114,6 +114,3 @@ assert(" a b c ".split(/ +/).toString() == ",a,b,c,")
         re.replace
     re.replace(re, "$2 $1")
  */
-
-
-

@@ -1,4 +1,4 @@
-/** 
+/* 
     ejsc.c - Ejscript Compiler main program
 
     This compiler will compile the files given on the command line.
@@ -8,8 +8,7 @@
 
 /********************************** Includes **********************************/
 
-#include    "ejs.h"
-#include    "ecCompiler.h"
+#include    "ejsCompiler.h"
 
 /********************************** Forwards **********************************/
 
@@ -21,17 +20,19 @@ typedef struct App {
 
 static App *app;
 
+static MprList *expandWild(Ejs *ejs, int argc, char **argv);
 static void manageApp(App *app, int flags);
 static void require(cchar *name);
 
 /************************************ Code ************************************/
 
-MAIN(ejscMain, int argc, char **argv)
+MAIN(ejscMain, int argc, char **argv, char **envp)
 {
     Mpr             *mpr;
+    MprList         *args;
     Ejs             *ejs;
     EcCompiler      *cp;
-    char            *argp, *searchPath, *outputFile, *certFile, *name, *tok, *modules;
+    char            *argp, *searchPath, *outputFile, *outputDir, *certFile, *name, *tok, *modules;
     int             nextArg, err, ejsFlags, ecFlags, bind, debug, doc, merge, modver;
     int             warnLevel, noout, parseOnly, tabWidth, optimizeLevel, strict;
 
@@ -63,6 +64,7 @@ MAIN(ejscMain, int argc, char **argv)
     tabWidth = 4;
     warnLevel = 1;
     outputFile = 0;
+    outputDir = 0;
     optimizeLevel = 9;
 
     for (nextArg = 1; nextArg < argc; nextArg++) {
@@ -79,6 +81,16 @@ MAIN(ejscMain, int argc, char **argv)
         } else if (strcmp(argp, "--debugger") == 0 || strcmp(argp, "-D") == 0) {
             mprSetDebugMode(1);
 
+        } else if (strcmp(argp, "--dir") == 0) {
+            /*
+                Set the output directory for modules
+             */
+            if (nextArg >= argc) {
+                err++;
+            } else {
+                outputDir = argv[++nextArg];
+            }
+
         } else if (strcmp(argp, "--doc") == 0) {
             doc = 1;
 
@@ -89,7 +101,7 @@ MAIN(ejscMain, int argc, char **argv)
             if (nextArg >= argc) {
                 err++;
             } else {
-                ejsRedirectLogging(argv[++nextArg]);
+                mprStartLogging(argv[++nextArg], 0);
                 mprSetCmdlineLogging(1);
             }
 
@@ -150,12 +162,10 @@ MAIN(ejscMain, int argc, char **argv)
                     app->modules = mprCreateList(-1, 0);
                 }
                 modules = sclone(argv[++nextArg]);
-#if MACOSX || WIN
                 /*  Fix for Xcode and Visual Studio */
                 if (modules[0] == ' ' || scmp(modules, "null") == 0) {
                     modules[0] = '\0';                    
                 }
-#endif
                 name = stok(modules, " \t,", &tok);
                 while (name != NULL) {
                     require(name);
@@ -182,7 +192,7 @@ MAIN(ejscMain, int argc, char **argv)
             }
 
         } else if (strcmp(argp, "--version") == 0 || strcmp(argp, "-V") == 0) {
-            mprPrintfError("%s %s-%s\n", BLD_NAME, BLD_VERSION, BLD_NUMBER);
+            mprPrintfError("%s %s-%s\n", BIT_NAME, BIT_VERSION, BIT_NUMBER);
             return 0;
 
         } else if (strcmp(argp, "--warn") == 0) {
@@ -224,18 +234,21 @@ MAIN(ejscMain, int argc, char **argv)
                 ejsc Person.es User.es Customer.es
                 ejsc --out group.mod Person.es User.es Customer.es
                 ejsc --out group.mod Person.es User.es Customer.es
+
+            NOTE: bind is deliberately not documented and is for internal use only.
          */
         mprPrintfError("Usage: %s [options] files...\n"
             "  Ejscript compiler options:\n"
-            "  --bind                 # Bind global properties to slots. Requires --out.\n"
             "  --debug                # Include symbolic debugging information in output\n"
             "  --doc                  # Include documentation strings in output\n"
+            "  --dir directory        # Set the output directory for modules (default: \".\")\n"
             "  --merge                # Merge dependent input modules into the output\n"
             "  --modver version       # Set the default module version\n"
             "  --noout                # Do not generate any output\n"
             "  --optimize level       # Set optimization level (0-9)\n"
             "  --out filename         # Name a single output module (default: \"default.mod\")\n"
             "  --parse                # Just parse source. No output\n"
+            "  --require 'module ...' # List of required modules to pre-load\n"
             "  --search ejsPath       # Module search path\n"
             "  --standard             # Default compilation mode to standard (default)\n"
             "  --strict               # Default compilation mode to strict\n"
@@ -244,7 +257,6 @@ MAIN(ejscMain, int argc, char **argv)
             "  --strip                # Strip all symbolic names (Can't import)\n"
             "  --tabwidth             # Tab width for '^' error reporting\n"
 #endif
-            "  --require 'module ...' # List of required modules to pre-load\n"
             "  --version              # Emit the compiler version information\n"
             "  --warn level           # Set the warning message level (0-9)\n\n",
             mpr->name);
@@ -279,6 +291,7 @@ MAIN(ejscMain, int argc, char **argv)
     ecSetWarnLevel(cp, warnLevel);
     ecSetStrictMode(cp, strict);
     ecSetTabWidth(cp, tabWidth);
+    ecSetOutputDir(cp, outputDir);
     ecSetOutputFile(cp, outputFile);
     ecSetCertFile(cp, certFile);
 
@@ -287,7 +300,9 @@ MAIN(ejscMain, int argc, char **argv)
             Compile the source files supplied on the command line. This will compile in-memory and
             optionally also save to module files.
          */
-        if (ecCompile(cp, argc - nextArg, &argv[nextArg]) < 0) {
+        if ((args = expandWild(ejs, argc - nextArg, &argv[nextArg])) == 0) {
+            err++;
+        } else if (ecCompile(cp, args->length, (char**) args->items) < 0) {
             err++;
         }
         if (cp->warningCount > 0 || cp->errorCount > 0) {
@@ -299,6 +314,38 @@ MAIN(ejscMain, int argc, char **argv)
     }
     mprDestroy(MPR_EXIT_DEFAULT);
     return err;
+}
+
+
+static MprList *expandWild(Ejs *ejs, int argc, char **argv)
+{
+    MprList     *list;
+    EjsArray    *files;
+    EjsPath     *path, *dir;
+    cchar       *arg;
+    int         i, j;
+
+    if ((list = mprCreateList(-1, 0)) == 0) {
+        return 0;
+    }
+    for (i = 0; i < argc; i++) {
+        if (schr(argv[i], '*')) {
+            arg = mprNormalizePath(argv[i]);
+            dir = ejsCreatePathFromAsc(ejs, mprGetPathDir(arg));
+            path = ejsCreatePathFromAsc(ejs, mprGetPathBase(arg));
+            if ((files = ejsGetPathFiles(ejs, dir, 1, (EjsObj**) &path)) == 0) {
+                ejsClearException(ejs);
+                mprAddItem(list, sclone(argv[i]));
+            } else {
+                for (j = 0; j < files->length; j++) {
+                    mprAddItem(list, ((EjsPath*) files->data[j])->value);
+                }
+            }
+        } else {
+            mprAddItem(list, sclone(argv[i]));
+        }
+    }
+    return list;
 }
 
 
@@ -323,8 +370,8 @@ static void require(cchar *name)
 /*
     @copy   default
 
-    Copyright (c) Embedthis Software LLC, 2003-2011. All Rights Reserved.
-    Copyright (c) Michael O'Brien, 1993-2011. All Rights Reserved.
+    Copyright (c) Embedthis Software LLC, 2003-2012. All Rights Reserved.
+    Copyright (c) Michael O'Brien, 1993-2012. All Rights Reserved.
 
     This software is distributed under commercial and open source licenses.
     You may use the GPL open source license described below or you may acquire
@@ -336,7 +383,7 @@ static void require(cchar *name)
     under the terms of the GNU General Public License as published by the
     Free Software Foundation; either version 2 of the License, or (at your
     option) any later version. See the GNU General Public License for more
-    details at: http://www.embedthis.com/downloads/gplLicense.html
+    details at: http://embedthis.com/downloads/gplLicense.html
 
     This program is distributed WITHOUT ANY WARRANTY; without even the
     implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.
@@ -345,7 +392,7 @@ static void require(cchar *name)
     proprietary programs. If you are unable to comply with the GPL, you must
     acquire a commercial license to use this software. Commercial licenses
     for this software and support services are available from Embedthis
-    Software at http://www.embedthis.com
+    Software at http://embedthis.com
 
     Local variables:
     tab-width: 4

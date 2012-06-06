@@ -37,7 +37,7 @@ static EjsWorker *initWorker(Ejs *ejs, EjsWorker *worker, Ejs *baseVM, cchar *na
     EjsName         sname;
     static int      workerSeqno = 0;
 
-    ejsPauseGC(ejs);
+    ejsBlockGC(ejs);
     if (worker == 0) {
         worker = ejsCreateWorker(ejs);
     }
@@ -48,7 +48,7 @@ static EjsWorker *initWorker(Ejs *ejs, EjsWorker *worker, Ejs *baseVM, cchar *na
         worker->name = sclone(name);
     } else {
         lock(ejs);
-        worker->name = mprAsprintf("worker-%d", workerSeqno++);
+        worker->name = sfmt("worker-%d", workerSeqno++);
         unlock(ejs);
     }
 
@@ -114,7 +114,7 @@ static EjsWorker *workerConstructor(Ejs *ejs, EjsWorker *worker, int argc, EjsOb
     EjsObj      *options, *value;
     cchar       *name, *scriptFile;
 
-    ejsPauseGC(ejs);
+    ejsBlockGC(ejs);
 
     scriptFile = (argc >= 1) ? ((EjsPath*) argv[0])->value : 0;
     options = (argc == 2) ? (EjsObj*) argv[1]: NULL;
@@ -362,6 +362,8 @@ static int join(Ejs *ejs, EjsObj *workers, int timeout)
             break;
         }
         mprWaitForEvent(ejs->dispatcher, remaining);
+        mprAssert(ejs->dispatcher->magic == MPR_DISPATCHER_MAGIC);
+
         mprAssert(!MPR->marking);
         remaining = (int) mprGetRemainingTime(mark, timeout);
         mprAssert(!MPR->marking);
@@ -473,7 +475,7 @@ static int doMessage(Message *msg, MprEvent *mprEvent)
     worker->gotMessage = 1;
     ejs = worker->ejs;
     event = 0;
-    ejsPauseGC(ejs);
+    ejsBlockGC(ejs);
 
     callback = ejsGetProperty(ejs, worker, msg->callbackSlot);
 
@@ -641,7 +643,7 @@ static EjsObj *workerPostMessage(Ejs *ejs, EjsWorker *worker, int argc, EjsObj *
     /*
         Create the event with serialized data in the originating interpreter. It owns the data.
      */
-    ejsPauseGC(ejs);
+    ejsBlockGC(ejs);
     if ((data = ejsToJSON(ejs, argv[0], NULL)) == 0) {
         ejsThrowArgError(ejs, "Can't serialize message data");
         return 0;
@@ -701,7 +703,7 @@ static int workerMain(EjsWorker *insideWorker, MprEvent *event)
         handleError(outside, outsideWorker, inside->exception, 0);
         inside->exception = 0;
     }
-    ejsPauseGC(inside);
+    ejsBlockGC(inside);
     if ((msg = createMessage()) == 0) {
         ejsThrowMemoryError(outside);
         return 0;
@@ -789,7 +791,7 @@ static void handleError(Ejs *ejs, EjsWorker *worker, EjsObj *exception, int thro
     mprAssert(exception);
     mprAssert(ejs == worker->ejs);
 
-    ejsPauseGC(ejs);
+    ejsBlockGC(ejs);
     if ((msg = createMessage()) == 0) {
         ejsThrowMemoryError(ejs);
         return;
@@ -835,13 +837,13 @@ EjsWorker *ejsCreateWorker(Ejs *ejs)
 static void manageWorker(EjsWorker *worker, int flags)
 {
     if (flags & MPR_MANAGE_MARK) {
-        mprMark(worker->ejs);
         ejsManagePot(worker, flags);
-        mprMark(worker->event);
         mprMark(worker->name);
+        mprMark(worker->ejs);
+        mprMark(worker->event);
+        mprMark(worker->pair);
         mprMark(worker->scriptFile);
         mprMark(worker->scriptLiteral);
-        mprMark(worker->pair);
 
     } else if (flags & MPR_MANAGE_FREE) {
         if (!worker->inside) {
@@ -888,8 +890,8 @@ void ejsConfigureWorkerType(Ejs *ejs)
 /*
     @copy   default
     
-    Copyright (c) Embedthis Software LLC, 2003-2011. All Rights Reserved.
-    Copyright (c) Michael O'Brien, 1993-2011. All Rights Reserved.
+    Copyright (c) Embedthis Software LLC, 2003-2012. All Rights Reserved.
+    Copyright (c) Michael O'Brien, 1993-2012. All Rights Reserved.
     
     This software is distributed under commercial and open source licenses.
     You may use the GPL open source license described below or you may acquire 
@@ -901,7 +903,7 @@ void ejsConfigureWorkerType(Ejs *ejs)
     under the terms of the GNU General Public License as published by the 
     Free Software Foundation; either version 2 of the License, or (at your 
     option) any later version. See the GNU General Public License for more 
-    details at: http://www.embedthis.com/downloads/gplLicense.html
+    details at: http://embedthis.com/downloads/gplLicense.html
     
     This program is distributed WITHOUT ANY WARRANTY; without even the 
     implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. 
@@ -910,7 +912,7 @@ void ejsConfigureWorkerType(Ejs *ejs)
     proprietary programs. If you are unable to comply with the GPL, you must
     acquire a commercial license to use this software. Commercial licenses 
     for this software and support services are available from Embedthis 
-    Software at http://www.embedthis.com 
+    Software at http://embedthis.com 
     
     Local variables:
     tab-width: 4

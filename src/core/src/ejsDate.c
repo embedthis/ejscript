@@ -16,7 +16,7 @@
  */
 #define fixed(n) ((int64) (floor(n)))
 
-#if BLD_WIN_LIKE
+#if BIT_WIN_LIKE
 #pragma warning (disable:4244)
 #endif
 
@@ -34,8 +34,6 @@
 
 static EjsAny *castDate(Ejs *ejs, EjsDate *dp, EjsType *type)
 {
-    struct tm   tm;
-
     switch (type->sid) {
     case S_Boolean:
         return ESV(true);
@@ -45,10 +43,9 @@ static EjsAny *castDate(Ejs *ejs, EjsDate *dp, EjsType *type)
 
     case S_String:
         /*
-            Format:  Tue Jul 15 2011 10:53:23 GMT-0700 (PDT)
+            Format:  Tue Jul 15 2012 10:53:23 GMT-0700 (PDT)
          */
-        mprDecodeLocalTime(&tm, dp->value);
-        return ejsCreateStringFromAsc(ejs, mprFormatTime("%a %b %d %Y %T GMT%z (%Z)", &tm));
+        return ejsCreateStringFromAsc(ejs, mprFormatLocalTime("%a %b %d %Y %T GMT%z (%Z)", dp->value));
 
     default:
         ejsThrowTypeError(ejs, "Can't cast to this type");
@@ -436,10 +433,7 @@ static EjsNumber *date_elapsed(Ejs *ejs, EjsDate *dp, int argc, EjsObj **argv)
  */
 static EjsString *date_format(Ejs *ejs, EjsDate *dp, int argc, EjsObj **argv)
 {
-    struct tm   tm;
-
-    mprDecodeLocalTime(&tm, dp->value);
-    return ejsCreateStringFromAsc(ejs, mprFormatTime(ejsToMulti(ejs, argv[0]), &tm));
+    return ejsCreateStringFromAsc(ejs, mprFormatLocalTime(ejsToMulti(ejs, argv[0]), dp->value));
 }
 
 
@@ -448,10 +442,7 @@ static EjsString *date_format(Ejs *ejs, EjsDate *dp, int argc, EjsObj **argv)
  */
 static EjsString *date_formatUTC(Ejs *ejs, EjsDate *dp, int argc, EjsObj **argv)
 {
-    struct tm   tm;
-
-    mprDecodeUniversalTime(&tm, dp->value);
-    return ejsCreateStringFromAsc(ejs, mprFormatTime(ejsToMulti(ejs, argv[0]), &tm));
+    return ejsCreateStringFromAsc(ejs, mprFormatUniversalTime(ejsToMulti(ejs, argv[0]), dp->value));
 }
 
 
@@ -708,9 +699,9 @@ static EjsNumber *date_now(Ejs *ejs, EjsDate *unused, int argc, EjsObj **argv)
 
 
 /*
-    static function parse(arg: String): Date
+    static function parse(arg: String): Number
  */
-static EjsDate *date_parse(Ejs *ejs, EjsDate *unused, int argc, EjsObj **argv)
+static EjsNumber *date_parse(Ejs *ejs, EjsDate *unused, int argc, EjsObj **argv)
 {
     MprTime     when;
 
@@ -718,7 +709,7 @@ static EjsDate *date_parse(Ejs *ejs, EjsDate *unused, int argc, EjsObj **argv)
         ejsThrowArgError(ejs, "Can't parse date string: %@", ejsToString(ejs, argv[0]));
         return 0;
     }
-    return ejsCreateDate(ejs, when);
+    return ejsCreateNumber(ejs, (MprNumber) when);
 }
 
 
@@ -930,12 +921,10 @@ static EjsNumber *date_set_time(Ejs *ejs, EjsDate *dp, int argc, EjsObj **argv)
 */
 static EjsString *date_toISOString(Ejs *ejs, EjsDate *dp, int argc, EjsObj **argv)
 {
-    struct tm   tm;
-    char        *base, *str;
+    char    *base, *str;
 
-    mprDecodeUniversalTime(&tm, dp->value);
-    base = mprFormatTime("%Y-%m-%dT%H:%M:%S", &tm);
-    str = mprAsprintf("%s.%03dZ", base, dp->value % MPR_TICKS_PER_SEC);
+    base = mprFormatUniversalTime("%Y-%m-%dT%H:%M:%S", dp->value);
+    str = sfmt("%s.%03dZ", base, dp->value % MPR_TICKS_PER_SEC);
     return ejsCreateStringFromAsc(ejs, str);
 }
 
@@ -947,12 +936,10 @@ static EjsString *date_toISOString(Ejs *ejs, EjsDate *dp, int argc, EjsObj **arg
  */
 static EjsString *date_toJSON(Ejs *ejs, EjsDate *dp, int argc, EjsObj **argv)
 {
-    struct tm   tm;
-    char        *base, *str;
+    char    *base, *str;
 
-    mprDecodeUniversalTime(&tm, dp->value);
-    base = mprFormatTime("%Y-%m-%dT%H:%M:%S", &tm);
-    str = mprAsprintf("\"%sZ\"", base);
+    base = mprFormatUniversalTime("%Y-%m-%dT%H:%M:%S", dp->value);
+    str = sfmt("\"%sZ\"", base);
     return ejsCreateStringFromAsc(ejs, str);
 }
 
@@ -1108,8 +1095,8 @@ void ejsConfigureDateType(Ejs *ejs)
 /*
     @copy   default
 
-    Copyright (c) Embedthis Software LLC, 2003-2011. All Rights Reserved.
-    Copyright (c) Michael O'Brien, 1993-2011. All Rights Reserved.
+    Copyright (c) Embedthis Software LLC, 2003-2012. All Rights Reserved.
+    Copyright (c) Michael O'Brien, 1993-2012. All Rights Reserved.
 
     This software is distributed under commercial and open source licenses.
     You may use the GPL open source license described below or you may acquire
@@ -1121,7 +1108,7 @@ void ejsConfigureDateType(Ejs *ejs)
     under the terms of the GNU General Public License as published by the
     Free Software Foundation; either version 2 of the License, or (at your
     option) any later version. See the GNU General Public License for more
-    details at: http://www.embedthis.com/downloads/gplLicense.html
+    details at: http://embedthis.com/downloads/gplLicense.html
 
     This program is distributed WITHOUT ANY WARRANTY; without even the
     implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.
@@ -1130,7 +1117,7 @@ void ejsConfigureDateType(Ejs *ejs)
     proprietary programs. If you are unable to comply with the GPL, you must
     acquire a commercial license to use this software. Commercial licenses
     for this software and support services are available from Embedthis
-    Software at http://www.embedthis.com
+    Software at http://embedthis.com
 
     Local variables:
     tab-width: 4

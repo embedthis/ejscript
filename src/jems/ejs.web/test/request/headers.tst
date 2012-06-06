@@ -3,7 +3,7 @@
  */
 require ejs.web
 
-const HTTP = ":" + (App.config.test.http_port || "6700")
+const HTTP = App.config.uris.http
 
 server = new HttpServer
 server.listen(HTTP)
@@ -14,7 +14,7 @@ server.on("readable", function (event, request: Request) {
     //  Request headers
     count = Object.getOwnPropertyCount(headers)
     assert(count == 4)
-    assert(headers && headers.host && headers.date && headers.connection && headers["user-agent"])
+    assert(headers && header("Host") && header("Date") && header("Connection") && header("User-Agent"))
     headers["Additional-Header"] = 1234
     assert(headers["Additional-Header"] == 1234)
     assert(Object.getOwnPropertyCount(headers) == count + 1)

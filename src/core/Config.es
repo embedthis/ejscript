@@ -1,7 +1,7 @@
 /*
     Config.es - Configuration settings from ./configure
  
-    Copyright (c) Embedthis Software LLC, 2003-2011. All Rights Reserved.
+    Copyright (c) Embedthis Software LLC, 2003-2012. All Rights Reserved.
  */
 
 module ejs {
@@ -21,12 +21,13 @@ module ejs {
         native static const Debug: Boolean
 
         /**
-            CPU type (eg. i386, ppc, arm)
+            System CPU type (eg. x86, x64, ppc, arm).
+            This is the type of the system CPU and not the application instruction set.
          */
         native static const CPU: String
 
         /**
-            Operating system version. One of: WIN, LINUX, MACOSX, FREEBSD, SOLARIS
+            Operating system version. One of: WINDOWS, LINUX, MACOSX, FREEBSD, SOLARIS, CYGWIN, VXWORKS
          */
         native static const OS: String
 
@@ -46,19 +47,14 @@ module ejs {
         native static const Version: String
 
         /**
-            Installation library directory
-         */
-        native static const LibDir: String
-
-        /**
             Binaries directory
          */
-        native static const BinDir: String
+        native static const Bin: Path
 
         /**
-            Modules directory
+            Include directory
          */
-        native static const ModDir: String
+        native static const Inc: Path
 
         /** @hide */
         native static const Legacy: Boolean

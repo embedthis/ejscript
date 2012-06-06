@@ -1,0 +1,104 @@
+/*
+    main.bit -- Main Bit File for Ejscript
+ */
+
+Bit.load({
+    blend: [
+        '${BITS}/embedthis.bit',
+        'src/deps/mpr/mpr.bit',
+        'src/deps/pcre/pcre.bit',
+        'src/deps/http/http.bit',
+        'src/deps/sqlite/sqlite.bit',
+
+        'src/libejs.bit',
+        'src/cmd/cmd.bit',
+        'src/core/core.bit',
+
+        'src/jems/ejs.bit/bit.bit',
+        'src/jems/ejs.unix/unix.bit',
+        'src/jems/ejs.jem/jem.bit',
+        'src/jems/ejs.db/db.bit',
+        'src/jems/ejs.db.mapper/mapper.bit',
+        'src/jems/ejs.db.sqlite/sqlite.bit',
+        'src/jems/ejs.web/web.bit',
+        'src/jems/ejs.template/template.bit',
+        'src/jems/ejs.tar/tar.bit',
+        'src/jems/ejs.zlib/zlib.bit',
+        'src/jems/ejs.mvc/mvc.bit',
+        'src/jems/ejs.utest/utest.bit',
+        'package/package.bit',
+        'doc/doc.bit',
+    ],
+
+    customize: [
+        /* Optionally load this if present. Feel free to create and customize */
+        'custom.bit',
+    ],
+
+    '+modules': [
+        'bits/ejs.es',
+    ],
+
+    settings: {
+        product: 'ejs',
+        title: 'Embedthis Ejscript',
+        company: 'Embedthis',
+        version: '2.0.0',
+        buildNumber: '0',
+        sync: ['http', 'mpr', 'pcre', 'sqlite'],
+        packs: [ 'bits/packs' ],
+        /* Must build locally to build tools */
+        platforms: [ 'local' ],
+        manager: 'ejsman',
+        '+optional': [ 'doxygen', 'dsi', 'man', 'man2html', 'openssl', 'matrixssl', 'pmaker', 'sqlite', 'ssl', 'zlib', 'zip' ],
+        '+required': [ 'pcre' ]
+        'without-all': ['doxygen', 'dsi', 'man', 'man2html', 'ssl', 'zlib'],
+    },
+
+    usage: {
+        assert: 'Enable program assertions (true|false)',
+        tune: 'Optimize (size|speed|balanced)',
+    },
+
+    profiles: {
+        debug: { settings: { 
+            debug: true, 
+            assert: true,
+        }, },
+        release: { settings: { 
+            debug: false, 
+            assert: false,
+        } },
+    },
+
+    targets: {
+        install: {
+            depends: ['build'],
+            action: "installBinary()",
+        },
+
+        package: {
+            enable: "'${OS}' == 'linux' || '${OS}' == 'macosx' || '${OS}' == 'windows'",
+            depends: ['packageBinary', 'packageSource', 'packageCombo'],
+        },
+
+        packageBinary: {
+            depends: ['build'],
+            action: "packageBinaryFiles()",
+        },
+
+        packageSource: {
+            depends: ['build'],
+            action: "packageSourceFiles()",
+        },
+
+        packageCombo: {
+            depends: ['build'],
+            action: "packageComboFiles()",
+        },
+
+        uninstall: {
+            action: "uninstallBinary()"
+        },
+    },
+})

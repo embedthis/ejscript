@@ -153,7 +153,7 @@ static void generateImages(EjsMod *mp)
 
     for (df = docFiles; df->path; df++) {
         path = mprJoinPath(mp->docDir, df->path);
-        mprMakeDir(mprGetPathDir(path), 0775, 1);
+        mprMakeDir(mprGetPathDir(path), 0775, -1, -1, 1);
         file = mprOpenFile(path, O_WRONLY | O_CREAT | O_TRUNC | O_BINARY, 0644);
         if (file == 0) {
             mprError("Can't create %s", path);
@@ -234,7 +234,7 @@ static void generateHomeTitle(EjsMod *mp)
         "       <input class=\"smallText\" type=\"text\" name=\"search\" align=\"right\" id=\"searchInput\" size=\"15\" \n"
         "           maxlength=\"50\" value=\"Search\"/>\n"
         "   </div>\n"
-        "</div>\n", BLD_NAME, BLD_VERSION);
+        "</div>\n", BIT_NAME, BIT_VERSION);
 
     generateHtmlFooter(mp);
 
@@ -302,7 +302,7 @@ static void generateNamespaceList(EjsMod *mp)
         }
         type = ejsGetProperty(ejs, ejs->global, slotNum);
         qname = ejsGetPropertyName(ejs, ejs->global, slotNum);
-        if (type == 0 || !ejsIsType(ejs, type) || qname.name == 0 || ejsStartsWithMulti(ejs, qname.space, "internal-")) {
+        if (type == 0 || !ejsIsType(ejs, type) || qname.name == 0 || ejsStartsWithAsc(ejs, qname.space, "internal-") >= 0) {
             continue;
         }
         doc = getDoc(ejs, "class", ejs->global, slotNum);
@@ -459,16 +459,16 @@ static MprList *buildClassList(EjsMod *mp, cchar *namespace)
 
         /* Suppress the core language types (should not appear as classes) */
 
-        if (ejsCompareMulti(ejs, qname.space, EJS_EJS_NAMESPACE) == 0) {
-            if (ejsCompareMulti(ejs, qname.name, "int") == 0 || 
-                ejsCompareMulti(ejs, qname.name, "long") == 0 || ejsCompareMulti(ejs, qname.name, "decimal") == 0 ||
-                ejsCompareMulti(ejs, qname.name, "boolean") == 0 || ejsCompareMulti(ejs, qname.name, "double") == 0 || 
-                ejsCompareMulti(ejs, qname.name, "string") == 0) {
+        if (ejsCompareAsc(ejs, qname.space, EJS_EJS_NAMESPACE) == 0) {
+            if (ejsCompareAsc(ejs, qname.name, "int") == 0 || 
+                ejsCompareAsc(ejs, qname.name, "long") == 0 || ejsCompareAsc(ejs, qname.name, "decimal") == 0 ||
+                ejsCompareAsc(ejs, qname.name, "boolean") == 0 || ejsCompareAsc(ejs, qname.name, "double") == 0 || 
+                ejsCompareAsc(ejs, qname.name, "string") == 0) {
                 continue;
             }
         }
         /* Other fixups */
-        if (ejsStartsWithMulti(ejs, qname.space, "internal") || ejsCompareMulti(ejs, qname.space, "private") == 0) {
+        if (ejsStartsWithAsc(ejs, qname.space, "internal")  >= 0|| ejsCompareAsc(ejs, qname.space, "private") == 0) {
             continue;
         }
         crec = mprAlloc(sizeof(ClassRec));
@@ -569,7 +569,7 @@ static void generateOverview(EjsMod *mp)
     }
     generateContentHeader(mp, "Overview");
 
-    out(mp, "<h1>%s %s</h1>", BLD_NAME, BLD_VERSION);
+    out(mp, "<h1>%s %s</h1>", BIT_NAME, BIT_VERSION);
     out(mp, "<p>Embedthis Ejscript is an implementation of the Javascript (ECMA 262) language.</p>");
     out(mp, "<p>See <a href='http://www.ejscript.org' target='new'>http://www.ejscript.org</a> for "
         "product details and downloads.</p>");
@@ -594,7 +594,7 @@ static void generateHtmlHeader(EjsMod *mp, cchar *script, cchar *fmt, ... )
     va_list     args;
 
     va_start(args, fmt);
-    title = mprAsprintfv(fmt, args);
+    title = sfmtv(fmt, args);
     va_end(args);
 
     /*
@@ -619,7 +619,7 @@ static void generateContentHeader(EjsMod *mp, cchar *fmt, ... )
     char        *title;
 
     va_start(args, fmt);
-    title = mprAsprintfv(fmt, args);
+    title = sfmtv(fmt, args);
     va_end(args);
 
     generateHtmlHeader(mp, NULL, title);
@@ -634,8 +634,8 @@ static void generateTerms(EjsMod *mp)
     out(mp,
         "<div class=\"terms\">\n"
         "   <p class=\"terms\">\n"
-        "       <a href=\"http://www.embedthis.com/\">"
-        "       Embedthis Software LLC, 2003-2011. All rights reserved. "
+        "       <a href=\"http://embedthis.com/\">"
+        "       Embedthis Software LLC, 2003-2012. All rights reserved. "
         "Embedthis is a trademark of Embedthis Software LLC.</a>\n"
         "   </p>\n"
         "</div>");
@@ -692,7 +692,7 @@ static void generateClassPages(EjsMod *mp)
     for (slotNum = mp->firstGlobal; slotNum < count; slotNum++) {
         type = ejsGetProperty(ejs, ejs->global, slotNum);
         qname = ejsGetPropertyName(ejs, ejs->global, slotNum);
-        if (type == 0 || !ejsIsType(ejs, type) || qname.name == 0 || ejsStartsWithMulti(ejs, qname.space, "internal-")) {
+        if (type == 0 || !ejsIsType(ejs, type) || qname.name == 0 || ejsStartsWithAsc(ejs, qname.space, "internal-") >= 0) {
             continue;
         }
         /*
@@ -804,7 +804,7 @@ static void prepDocStrings(EjsMod *mp, EjsObj *obj, EjsName qname, EjsTrait *typ
         dp = getDoc(ejs, NULL, obj, slotNum);
         if (dp) {
             pname = ejsGetPropertyName(ejs, obj, slotNum);
-            combined = mprAsprintf("%@.%@", qname.name, pname.name);
+            combined = sfmt("%@.%@", qname.name, pname.name);
             crackDoc(mp, dp, EN(combined)); 
         }
     }
@@ -1034,8 +1034,8 @@ static void buildPropertyList(EjsMod *mp, MprList *list, EjsAny *obj, int numInh
         if (ejsIsFunction(ejs, vp) && !(trait->attributes & (EJS_TRAIT_GETTER | EJS_TRAIT_SETTER))) {
             continue;
         }
-        if (ejsCompareMulti(ejs, qname.space, EJS_PRIVATE_NAMESPACE) == 0 || 
-            ejsContainsMulti(ejs, qname.space, ",private]")) {
+        if (ejsCompareAsc(ejs, qname.space, EJS_PRIVATE_NAMESPACE) == 0 || 
+            ejsContainsAsc(ejs, qname.space, ",private]") >= 0) {
             continue;
         }
         prec = mprAlloc(sizeof(PropRec));
@@ -1074,10 +1074,10 @@ static int generateClassPropertyTableEntries(EjsMod *mp, EjsObj *obj, MprList *p
         vp = prec->vp;
         trait = prec->trait;
         qname = prec->qname;
-        if (ejsStartsWithMulti(ejs, qname.space, "internal") || ejsContainsMulti(ejs, qname.space, "private")) {
+        if (ejsStartsWithAsc(ejs, qname.space, "internal")  >= 0|| ejsContainsAsc(ejs, qname.space, "private") >= 0) {
             continue;
         }
-        if (isalpha((int) qname.name->value[0])) {
+        if (isalpha((uchar) qname.name->value[0])) {
             out(mp, "<a name='%@'></a>\n", qname.name);
         }
         attributes = trait->attributes;
@@ -1181,14 +1181,14 @@ static void buildMethodList(EjsMod *mp, MprList *methods, EjsObj *obj, EjsObj *o
         if (vp == 0 || !ejsIsFunction(ejs, vp) || qname.name == 0 || trait == 0) {
             continue;
         }
-        if (ejsCompareMulti(ejs, qname.space, EJS_INIT_NAMESPACE) == 0) {
+        if (ejsCompareAsc(ejs, qname.space, EJS_INIT_NAMESPACE) == 0) {
             continue;
         }
-        if (ejsCompareMulti(ejs, qname.space, EJS_PRIVATE_NAMESPACE) == 0 || 
-                ejsContainsMulti(ejs, qname.space, ",private]")) {
+        if (ejsCompareAsc(ejs, qname.space, EJS_PRIVATE_NAMESPACE) == 0 || 
+                ejsContainsAsc(ejs, qname.space, ",private]") >= 0) {
             continue;
         }
-        if (ejsStartsWithMulti(ejs, qname.space, "internal")) {
+        if (ejsStartsWithAsc(ejs, qname.space, "internal") >= 0) {
             continue;
         }
         fp = mprAlloc(sizeof(FunRec));
@@ -1244,7 +1244,7 @@ static int generateMethodTable(EjsMod *mp, MprList *methods, EjsObj *obj, int in
             emitTable = 1;
         }
 
-        if (ejsCompareMulti(ejs, qname.space, EJS_INIT_NAMESPACE) == 0) {
+        if (ejsCompareAsc(ejs, qname.space, EJS_INIT_NAMESPACE) == 0) {
             continue;
         }
         if (instanceMethods) {
@@ -1360,7 +1360,7 @@ static int findArg(Ejs *ejs, EjsFunction *fun, cchar *name)
     }
     for (i = 0; i < (int) fun->numArgs; i++) {
         argName = ejsGetPropertyName(ejs, fun->activation, i);
-        if (argName.name && ejsCompareMulti(ejs, argName.name, name) == 0) {
+        if (argName.name && ejsCompareAsc(ejs, argName.name, name) == 0) {
             return i;
         }
     }
@@ -1426,7 +1426,7 @@ static void generateMethod(EjsMod *mp, FunRec *fp)
         }
         return;
     }
-    if (isalpha((int) qname.name->value[0])) {
+    if (isalpha((uchar) qname.name->value[0])) {
         out(mp, "<a name='%@'></a>\n", qname.name);
     }
     if (type && qname.space == type->qname.space) {
@@ -1642,11 +1642,11 @@ static MprChar *joinLines(MprChar *str)
     for (cp = str; cp && *cp; cp++) {
         if (*cp == '\n') {
             for (np = &cp[1]; *np; np++) {
-                if (!isspace((int) *np)) {
+                if (!isspace((uchar) *np)) {
                     break;
                 }
             }
-            if (!isspace((int) *np)) {
+            if (!isspace((uchar) *np)) {
                 *cp = ' ';
             }
         }
@@ -1678,11 +1678,11 @@ static MprChar *mergeDuplicates(Ejs *ejs, EjsMod *mp, EjsName qname, EjsDoc *doc
             mprError("Can't find @duplicate directive %s for %s", duplicate, qname.name);
         } else {
             crackDoc(mp, dup, WEN(duplicate));
-            mprCopyList(doc->params, dup->params);
-            mprCopyList(doc->options, dup->options);
-            mprCopyList(doc->events, dup->events);
-            mprCopyList(doc->see, dup->see);
-            mprCopyList(doc->throws, dup->throws);
+            mprCopyListContents(doc->params, dup->params);
+            mprCopyListContents(doc->options, dup->options);
+            mprCopyListContents(doc->events, dup->events);
+            mprCopyListContents(doc->see, dup->see);
+            mprCopyListContents(doc->throws, dup->throws);
             doc->brief = dup->brief;
             doc->description = dup->description;
             doc->example = dup->example;
@@ -1706,13 +1706,13 @@ static void prepText(MprChar *str)
     MprChar     *dp, *cp;
 
     dp = cp = str;
-    while (isspace((int) *cp) || *cp == '*') {
+    while (isspace((uchar) *cp) || *cp == '*') {
         cp++;
     }
     while (*cp) {
         if (cp[0] == '\n') {
             *dp++ = '\n';
-            for (cp++; (isspace((int) *cp) || *cp == '*'); cp++) {
+            for (cp++; (isspace((uchar) *cp) || *cp == '*'); cp++) {
                 if (*cp == '\n') {
                     *dp++ = '\n';
                 }
@@ -1770,7 +1770,7 @@ static EjsDoc *crackDoc(EjsMod *mp, EjsDoc *doc, EjsName qname)
             thisBrief = NULL;
         } else {
             for (cp = thisBrief; *cp; cp++) {
-                if (*cp == '.' && (isspace((int) cp[1]) || *cp == '*')) {
+                if (*cp == '.' && (isspace((uchar) cp[1]) || *cp == '*')) {
                     cp++;
                     *cp++ = '\0';
                     thisDescription = mtrim(cp, " \t\n", MPR_TRIM_BOTH);
@@ -1831,11 +1831,11 @@ static EjsDoc *crackDoc(EjsMod *mp, EjsDoc *doc, EjsName qname)
                 mprError("Can't find @duplicate directive %s for %@", duplicate, qname.name);
             } else {
                 crackDoc(mp, dup, WEN(duplicate));
-                mprCopyList(doc->params, dup->params);
-                mprCopyList(doc->options, dup->options);
-                mprCopyList(doc->events, dup->events);
-                mprCopyList(doc->see, dup->see);
-                mprCopyList(doc->throws, dup->throws);
+                mprCopyListContents(doc->params, dup->params);
+                mprCopyListContents(doc->options, dup->options);
+                mprCopyListContents(doc->events, dup->events);
+                mprCopyListContents(doc->see, dup->see);
+                mprCopyListContents(doc->throws, dup->throws);
                 doc->brief = mrejoin(doc->brief, " ", dup->brief, NULL);
                 doc->description = mrejoin(doc->description, " ", dup->description, NULL);
                 if (dup->example) {
@@ -1961,7 +1961,7 @@ static MprChar *fixSentence(MprChar *str)
     }
     wcopy(buf, len, str);
     str = buf;
-    str[0] = toupper((int) str[0]);
+    str[0] = toupper((uchar) str[0]);
 
     /*
         Append a "." if the string does not appear to contain HTML tags
@@ -2002,7 +2002,7 @@ static MprChar *formatExample(Ejs *ejs, EjsString *docString)
 
         buf = mprAlloc(wlen(example) * 4 + 2);
         for (cp = example, dp = buf; *cp && cp < end; ) {
-            for (i = 0; i < indent && *cp && isspace((int) *cp) && *cp != '\n'; i++, cp++) {}
+            for (i = 0; i < indent && *cp && isspace((uchar) *cp) && *cp != '\n'; i++, cp++) {}
             for (; *cp && *cp != '\n'; ) {
                 if (*cp == '<' && cp[1] == '%') {
                     mtow(dp, 5, "&lt;", 4);
@@ -2023,7 +2023,7 @@ static MprChar *formatExample(Ejs *ejs, EjsString *docString)
             }
             *dp = '\0';
         }
-        for (--dp; dp > example && isspace((int) *dp); dp--) {}
+        for (--dp; dp > example && isspace((uchar) *dp); dp--) {}
         *++dp = '\0';
         return buf;
     }
@@ -2069,13 +2069,13 @@ static MprChar *wikiFormat(Ejs *ejs, MprChar *start)
             /* Dollar reference expansion */
             klass = &str[1];
             for (cp = &str[1]; *cp; cp++) {
-                if (isspace((int) *cp)) {
+                if (isspace((uchar) *cp)) {
                     break;
                 }
             }
             len = cp - str;
             str = cp;
-            if (isspace((int) *cp)) {
+            if (isspace((uchar) *cp)) {
                 cp--;
             }
             klass = snclone(klass, len);
@@ -2148,7 +2148,7 @@ static void fixupDoc(Ejs *ejs, EjsDoc *doc)
     doc->requires = wikiFormat(ejs, fixSentence(doc->requires));
     if (doc->spec) {
         if (mcmp(doc->spec, "ejs") == 0) {
-            doc->spec = mfmt("ejscript-%d.%d", BLD_MAJOR_VERSION, BLD_MINOR_VERSION);
+            doc->spec = mfmt("ejscript-%d.%d", BIT_MAJOR_VERSION, BIT_MINOR_VERSION);
         }
     } else {
         doc->spec = NULL;
@@ -2185,7 +2185,7 @@ static void out(EjsMod *mp, char *fmt, ...)
         }
     }
     va_start(args, fmt);
-    buf = mprAsprintfv(fmt, args);
+    buf = sfmtv(fmt, args);
     if (mprWriteFileString(mp->file, buf) < 0) {
         mprError("Can't write to buffer");
     }
@@ -2194,7 +2194,7 @@ static void out(EjsMod *mp, char *fmt, ...)
 
 static EjsString *fmtModule(Ejs *ejs, EjsString *name)
 {
-    if (ejsCompareMulti(ejs, name, EJS_DEFAULT_MODULE) == 0) {
+    if (ejsCompareAsc(ejs, name, EJS_DEFAULT_MODULE) == 0) {
         return ESV(empty);
     }
     return name;
@@ -2359,9 +2359,9 @@ static bool match(MprChar *last, cchar *key)
 
 static MprChar *skipAtWord(MprChar *str)
 {
-    while (!isspace((int) *str) && *str)
+    while (!isspace((uchar) *str) && *str)
         str++;
-    while (isspace((int) *str))
+    while (isspace((uchar) *str))
         str++;
     return str;
 }
@@ -2371,7 +2371,7 @@ static void getKeyValue(MprChar *str, MprChar **key, MprChar **value)
 {
     MprChar     *end;
 
-    for (end = str; *end && !isspace((int) *end); end++)
+    for (end = str; *end && !isspace((uchar) *end); end++)
         ;
     if (end) {
         *end = '\0';
@@ -2379,7 +2379,7 @@ static void getKeyValue(MprChar *str, MprChar **key, MprChar **value)
     if (key) {
         *key = mtrim(str, " \t", MPR_TRIM_BOTH);
     }
-    for (str = end + 1; *str && isspace((int) *str); str++) {
+    for (str = end + 1; *str && isspace((uchar) *str); str++) {
         ;
     }
     if (value) {
@@ -2579,8 +2579,8 @@ static MprKeyValue *createKeyPair(MprChar *key, MprChar *value)
 /*
     @copy   default
 
-    Copyright (c) Embedthis Software LLC, 2003-2011. All Rights Reserved.
-    Copyright (c) Michael O'Brien, 1993-2011. All Rights Reserved.
+    Copyright (c) Embedthis Software LLC, 2003-2012. All Rights Reserved.
+    Copyright (c) Michael O'Brien, 1993-2012. All Rights Reserved.
 
     This software is distributed under commercial and open source licenses.
     You may use the GPL open source license described below or you may acquire
@@ -2592,7 +2592,7 @@ static MprKeyValue *createKeyPair(MprChar *key, MprChar *value)
     under the terms of the GNU General Public License as published by the
     Free Software Foundation; either version 2 of the License, or (at your
     option) any later version. See the GNU General Public License for more
-    details at: http://www.embedthis.com/downloads/gplLicense.html
+    details at: http://embedthis.com/downloads/gplLicense.html
 
     This program is distributed WITHOUT ANY WARRANTY; without even the
     implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.
@@ -2601,7 +2601,7 @@ static MprKeyValue *createKeyPair(MprChar *key, MprChar *value)
     proprietary programs. If you are unable to comply with the GPL, you must
     acquire a commercial license to use this software. Commercial licenses
     for this software and support services are available from Embedthis
-    Software at http://www.embedthis.com
+    Software at http://embedthis.com
 
     Local variables:
     tab-width: 4

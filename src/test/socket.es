@@ -26,10 +26,10 @@ while (client.read(data)) {
 //OK  Non-blocking server with events
 server = new Socket
 server.async = true
-server.observe("readable", function(event, listenSock) {
+server.on("readable", function(event, listenSock) {
     //  TODO - or pass in the accepted socket and then no requirement to do accept
     let sock = listenSock.accept()
-    sock.observe("read", function(event, sock) {
+    sock.on("read", function(event, sock) {
         data = new ByteArray
         if (sock.read(data)) {
             print(data)
@@ -46,9 +46,9 @@ server.listen(9999)
 //  Non-blocking client with events
 client = new Socket
 client.connect(9999)
-client.observe("connect", function(event, sock) {
+client.on("connect", function(event, sock) {
     //  TODO - should get write event at the start
-    client.observe("write", function(event, sock) {
+    client.on("write", function(event, sock) {
         print("GOT WRITE EVENT")
     }
     sock.write(Path("data.txt").readString())
@@ -120,7 +120,7 @@ http.async = true
 // http.chunked = true
 // http.contentLength = path.size
 
-http.observe("writable", function (event, http) {
+http.on("writable", function (event, http) {
     p("WRITABLE event")
     let buf = new ByteArray
     if (file.read(buf)) {
@@ -132,25 +132,25 @@ http.observe("writable", function (event, http) {
     }
 })
 
-http.observe("headers", function (event, http) {
+http.on("headers", function (event, http) {
     p("GOT HEADERS status", http.status)
     print("GOT  content length " + http.contentLength)
 })
 
-http.observe("readable", function (event, http) {
+http.on("readable", function (event, http) {
     print("READABLE CODE ")
     let data = new ByteArray
     http.read(data)
     print("GOT " + data)
 })
 
-http.observe("complete", function (event, http) {
+http.on("complete", function (event, http) {
     print("Complete event")
     //  MOB -- should close - close the connection?
     // http.close()
 })
 
-http.observe("error", function (event, http) {
+http.on("error", function (event, http) {
     print("Error event")
 })
 

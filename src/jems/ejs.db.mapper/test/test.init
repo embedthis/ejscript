@@ -1,3 +1,0 @@
-require ejs.unix
-
-sh(locate("ejssql") + " test.sdb < test.sql")

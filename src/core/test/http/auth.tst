@@ -2,7 +2,7 @@
     Authentication tests
  */
 
-const HTTP = ":" + (App.config.test.http_port || "6700")
+const HTTP = App.config.uris.http
 
 /*
     Basic/Digest auth is not supported in Ejscript. Use Appweb for this functionality

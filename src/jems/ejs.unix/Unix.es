@@ -1,6 +1,6 @@
 /*
     Unix.es -- Unix compatibility functions
- *
+
     Copyright (c) All Rights Reserved. See details at the end of the file.
  */
 
@@ -32,23 +32,84 @@ module ejs.unix {
     function chmod(path: String, perms: Number): Void
         Path(path).perms = perms
 
-    /*
-        Close the file and free up all associated resources.
-        @param file Open file object previously opened via $open or $File
-        @hide
-        @deprecated 2.0.0
-    function close(file: File): Void
-     */
-
     /**
-        Copy a file. If the destination file already exists, the old copy will be overwritten as part of the 
-        copy operation.
-        @param fromPath Original file to copy.
-        @param toPath New destination file path name.
-        @throws IOError if the copy is not successful.
-     */
-    function cp(fromPath: String, toPath: String): void
-        Path(fromPath).copy(toPath) 
+        Copy files
+        @param patterns Pattern to match files to copy. This can be a String, Path or array of String/Paths. 
+            The wildcards "*", "**" and "?" are the only wild card patterns supported. The "**" pattern matches
+            every directory. The Posix "[]" and "{a,b}" style expressions are not supported.
+            If patterns is an existing directory, then the pattern is converted to 'dir/ * *' (without spaces) 
+            and the tree option is enabled.
+        @param dest Destination file or directory. If multiple files are copied, dest is assumed to be a directory and 
+            will be created if required.
+        @param options File attributes
+        @options expand Set to hash of properties to use when expanding '${token}' tokens in src or dest filenames.
+        @options owner String representing the file owner                                                     
+        @options group String representing the file group                                                     
+        @options permissions Number File Posix permissions mask
+        @options process Optional callback function to process the copied file. This function must do the actual copy 
+            and any required post-processing. Signature is function process(src: Path, dest: Path, options)
+        @options subtree If copying a directory, copy the subtree below the patterns.
+        @options tree If copying a directory, copy the subtree including the pattern path.
+        @return Number of files copied
+    */
+    function cp(patterns, dest: Path, options = {}): Number {
+        //  MOB - refactor as it doesn't use recursion anyway
+        function inner(path: Path, patterns, dest: Path, options, level: Number): Number {
+            let count = 0
+            if (options.expand) {
+                 dest = dest.toString().expand(options.expand, options)
+            }
+            let list = path.files(patterns, options)
+            if (list.length > 1 || (patterns is Array && patterns.length > 1)) {
+                if (!options.cat) {
+                    if (!dest.exists) {
+                        dest.makeDir()
+                    } else if (!dest.isDir) {
+                        throw 'Destination "' + dest + '" is not a directory'
+                    }
+                }
+            }
+            for each (let file: Path in list) {
+                let from = path.join(file)
+                if (options.expand) {
+                     file = file.toString().expand(options.expand, options)
+                }
+                let target
+                if (options.tree) {
+                    target = Path(dest + "/" + file).normalize
+                } else if (dest.isDir) {
+                    target = dest.join(file.basename)
+                } else {
+                    target = dest
+                }
+                target.dirname.makeDir()
+                if (options.process) {
+                    /* Ensure we get any bound "this" value */
+                    let fn = options.process
+                    fn(from, target, options)
+                } else if (from.isDir) {
+                    target.makeDir()
+                } else {
+                    from.copy(target, options)
+                }
+                count++
+            }
+            if (count == 0 && level == 0 && options.warn) {
+                throw new ArgError('cp: Can\'t find files for "' + patterns + '" to ' + dest)
+            }
+            return count
+        }
+        let path = Path('.')
+        if (Path(patterns).isDir) {
+            path = Path(patterns)
+            patterns = '**'
+            if (dest.isDir && !options.subtree) {
+                dest = dest.join(path.basename)
+            }
+            options = blend({tree: true, relative: true}, options)
+        }
+        return inner(path, patterns, dest, options, 0)
+    }
 
     /**
         Get the directory name portion of a file. The dirname name portion is the leading portion including all 
@@ -100,34 +161,71 @@ module ejs.unix {
     function kill(pid: Number, signal: Number = 2): Void 
         Cmd.kill(pid, signal)
 
-    //  TODO - good to add ability to do a regexp on the path or a filter function
-    //  TODO - good to add ** to go recursively to any depth
     /**
-        Get a list of files in a directory. The returned array contains the base file name portion only.
-        @param path Directory path to enumerate.
-        @param enumDirs If set to true, then dirList will include sub-directories in the returned list of files.
-        @return An Array of strings containing the filenames in the directory.
+        Get a list of files in a directory.
+        @param patterns Pattern to match files. This can be a String, Path or array of String/Paths. 
+            The wildcards "*", "**" and "?" are the only wild card patterns supported. The "**" pattern matches
+            every directory. The Posix "[]" and "{a,b}" style expressions are not supported.
+        @param options If set to true, then files will include sub-directories in the returned list of files.
+        @option dirs Include directories in the file list
+        @option depthFirst Do a depth first traversal. If "dirs" is specified, the directories will be shown after
+        the files in the directory. Otherwise, directories will be listed first.
+        @option exclude Regular expression pattern of files to exclude from the results. Matches the entire path.
+        @option hidden Show hidden files starting with "."
+        @option include Regular expression pattern of files to include in the results. Matches the entire returned path.
+        @return An Array of Path objects for each matching file.
      */
-    function ls(path: String = ".", enumDirs: Boolean = false): Array
-        Path(path).files(enumDirs)
+    function ls(patterns = "*", options: Object = null): Array {
+        if (!(patterns is Array)) {
+            patterns = [patterns]
+        }
+        let results = []
+        for each (let pat: Path in patterns) {
+            if (pat.exists && pat.isDir) {
+                pat = pat.join("*")
+            }
+            results += Path(".").files(pat, options)
+        }
+        return results
+    }
 
-    //  TODO - need option to exclude directories
+
     /**
-        Find matching files. Files are listed in a depth first order.
-        @param path Starting path from which to find matching files.
-        @param glob Glob style Pattern that files must match. This is similar to a ls() style pattern.
-        @param recurse Set to true to examine sub-directories. 
-        @return Return a list of matching files
+        Find files under a directory.
+        This uses Path.files to implement the functionality.
+        @param path Path or array of paths from which to search
+        @param patterns Pattern to match files. This can be a String, Path or array of String/Paths. 
+        The wildcard '?' matches any single character, '*' matches zero or more characters in a filename or 
+            directory, '** /' matches zero or more files or directories and matches recursively in a directory
+            tree.  If a pattern terminates with "/" it will only match directories. 
+            The pattern '**' is equivalent to '** / *' (ignore spaces). 
+            The Posix "[]" and "{a,b}" style expressions are not supported.
+        @param options Optional properties to control the matching.
+        @option depthFirst Do a depth first traversal. If "dirs" is specified, the directories will be shown after
+            the files in the directory. Otherwise, directories will be listed first.
+        @option exclude Regular expression pattern of files to exclude from the results. Matches the entire path.
+            Only for the purpose of this match, directories will have "/" appended. To exclude directories in the
+            results, use {exclude: /\/$/}. The trailing "/" will not be returned in the results.
+        @option hidden Include hidden files starting with "."
+        @option include Regular expression pattern of files to include in the results. Matches the entire returned path.
+            Only for the purpose of this match, directories will have "/" appended. To include only directories in the
+            results, use {include: /\/$/}
+        @option missing Set to undefined to report patterns that don't resolve into any files or directories 
+            by throwing an exception. Set to any non-null value to be used in the results when there are no matching
+            files or directories. Set to the empty string to use the patterns in the results and set
+            to null to do nothing.
+        @option relative Return paths relative to the Path, otherwise result entries include the Path. Defaults to false.
+        @return An Array of Path objects for each file in the directory.
      */
-    function find(path: Object, glob: String = "*", recurse: Boolean = true): Array {
+    function find(path: Object, patterns: Object! = "*", options = {}): Array {
         let result = []
         if (path is Array) {
             let paths = path
             for each (path in paths) {
-                result += Path(path).find(glob, recurse)
+                result += Path(path).files(patterns, options)
             }
         } else {
-            result += Path(path).find(glob, recurse)
+            result += Path(path).files(patterns, options)
         }
         return result
     }
@@ -142,6 +240,8 @@ module ejs.unix {
     function mkdir(path: String, permissions: Number = 0755): void
         Path(path).makeDir({permissions: permissions})
     
+    //  MOB - should allow toFile to be a directory
+    //  MOB - both args should be Paths
     /**
         Rename a file. If the new file name exists it is removed before the rename.
         @param fromFile Original file name.
@@ -186,31 +286,62 @@ module ejs.unix {
     function read(file: File, count: Number): ByteArray
         file.read(count)
 
-    //  TODO - nice to allow wild cards for the path. Also allow ... for more files
     /**
-        Remove a file from the file system.
-        @param path Filename path to delete.
-        @throws IOError if the file exists and cannot be removed.
-     */
-    function rm(path: Path): void {
-        if (path.isDir) {
-            throw new ArgError(path.toString() + " is a directory")
-        } 
-        Path(path).remove()
+        Remove files from the file system.
+        @param patterns Pattern to match files to remove. This can be a String, Path or array of String/Paths. 
+            The wildcards "*", "**" and "?" are the only wild card patterns supported. The "**" pattern matches
+            every directory. The Posix "[]" and "{a,b}" style expressions are not supported.
+        @param options Options to modify the removal
+        @option exclude Regular expression pattern of files to exclude from removal. Matches the entire path.
+        @option hidden Remove hidden files starting with "." Defaults to true.
+        @option include Regular expression pattern of files to remove. Matches the entire returned path.
+        @option nodirs Exclude directories from removal. The default is to include directories.
+        @return True if all the contents are sucessfully deleted. Otherwise return false.
+    */
+    function rm(patterns, options = {}): Boolean {
+        options = blend({depthFirst: true, hidden: true}, options)
+        let success = true
+        if (!(patterns is Array)) {
+            patterns = [patterns]
+        }
+        for each (let pat:Path in patterns) {
+            for each (let path: Path in Path('.').files(pat, options)) {
+                if (!path.remove()) {
+                    success = false
+                }
+            }
+        }
+        return success
     }
 
     /**
-        Removes a directory. This can remove a directory and its contents.  
-        @param path Filename path to remove.
-        @param contents If true, remove the directory contents including files and sub-directories.
-        @throws IOError if the directory exists and cannot be removed.
+        Removes a directory and contents
+        @param patterns Pattern to match files to delete. This can be a String, Path or array of String/Paths. 
+            The wildcards "*", "**" and "?" are the only wild card patterns supported. The "**" pattern matches
+            every directory. The Posix "[]" and "{a,b}" style expressions are not supported.
+        @param options Options to modify the removal
+        @option exclude Regular expression pattern of files to exclude from removal. Matches the entire path.
+        @option hidden Remove hidden files starting with "."
+        @option include Regular expression pattern of files to remove. Matches the entire returned path.
+        @return True if all the contents are sucessfully deleted or if the directory does not exist. Otherwise return false.
      */
-    function rmdir(path: Path, contents: Boolean = false): void {
-        if (contents) {
-            Path(path).removeAll()
-        } else {
-            Path(path).remove()
+    function rmdir(patterns, options = {}): Boolean {
+        options = blend({depthFirst: true, hidden: true}, options)
+        let success = true
+        if (!(patterns is Array)) {
+            patterns = [patterns]
         }
+        for each (let pat:Path in patterns) {
+            for each (let path: Path in Path('.').files(pat)) {
+                if (path.isDir) {
+                    rmdir(path.join('*'), options)
+                }
+                if (!path.remove()) {
+                    success = false
+                }
+            }
+        }
+        return success
     }
 
     /** 
@@ -249,8 +380,8 @@ module ejs.unix {
 /*
     @copy   default
     
-    Copyright (c) Embedthis Software LLC, 2003-2011. All Rights Reserved.
-    Copyright (c) Michael O'Brien, 1993-2011. All Rights Reserved.
+    Copyright (c) Embedthis Software LLC, 2003-2012. All Rights Reserved.
+    Copyright (c) Michael O'Brien, 1993-2012. All Rights Reserved.
     
     This software is distributed under commercial and open source licenses.
     You may use the GPL open source license described below or you may acquire 

@@ -2,7 +2,7 @@
     big.tst - Write big data with writable events
  */
 
-let ejs = App.exePath.portable
+let ejs = Cmd.locate('ejs')
 
 if (!Path("/bin").exists) {
     test.skip("Only run on unix systems")
@@ -16,7 +16,7 @@ if (!Path("/bin").exists) {
     let finalized
     let count = data.available
     cmd = new Cmd
-    cmd.start("/bin/cat", {detach: true})
+    cmd.start("cat", {detach: true})
     cmd.on("writable", function(event, cmd) {
         let len = cmd.write(data)
         data.readPosition += len

@@ -219,19 +219,20 @@ module ejs.db.mapper {
 
         private static function checkFormat(thisObj: Record, field: String, value, options: Object): Void {
             if (! RegExp(options.format).test(value)) {
-                thisObj._errors[field] = options.message ? options.message : ErrorMessages.wrongFormat
+                thisObj._errors[field] = (options && options.message) ? options.message : ErrorMessages.wrongFormat
             }
         }
 
         private static function checkNumber(thisObj: Record, field: String, value, options): Void {
+            //  MOB - what about decimal, +-
             if (! RegExp(/^[0-9]+$/).test(value)) {
-                thisObj._errors[field] = options.message ? options.message : ErrorMessages.notNumber
+                thisObj._errors[field] = (options && options.message) ? options.message : ErrorMessages.notNumber
             }
         }
 
         private static function checkPresent(thisObj: Record, field: String, value, options): Void {
             if (value == undefined) {
-                thisObj._errors[field] = options.message ? options.message : ErrorMessages.missing
+                thisObj._errors[field] = (options && options.message) ? options.message : ErrorMessages.blank
             } else if (value.length == 0 || value.trim() == "" && thisObj._errors[field] == undefined) {
                 thisObj._errors[field] = ErrorMessages.blank
             }
@@ -245,7 +246,7 @@ module ejs.db.mapper {
                 grid = findWhere(field + ' = "' + value + '"')
             }
             if (grid.length > 0) {
-                thisObj._errors[field] = options.message ? options.message : ErrorMessages.notUnique
+                thisObj._errors[field] = (options && options.message) ? options.message : ErrorMessages.notUnique
             }
         }
 
@@ -401,6 +402,7 @@ var before = Memory.resident
             return null
         }
 
+        //  MOB - should not throw when a record is not found. 
         /**
             Find a record. Find and return a record identified by its primary key if supplied or by the specified options. 
             If more than one record matches, return the first matching record.
@@ -544,7 +546,7 @@ var before = Memory.resident
             Get the errors for the record. 
             @return The error message collection for the record.  
          */
-        function getErrors(): Array
+        function getErrors(): Object
             _errors
 
         /**
@@ -1090,25 +1092,19 @@ var before = Memory.resident
 
         /** @hide TODO */
         static function validateFormat(fields: Object, options = null) {
-            if (_validations == null) {
-                _validations = []
-            }
+            _validations ||= []
             _validations.append([checkFormat, fields, options])
         }
 
         /** @hide TODO */
         static function validateNumber(fields: Object, options = null) {
-            if (_validations == null) {
-                _validations = []
-            }
+            _validations ||= []
             _validations.append([checkNumber, fields, options])
         }
 
         /** @hide TODO */
         static function validatePresence(fields: Object, options = null) {
-            if (_validations == null) {
-                _validations = []
-            }
+            _validations ||= []
             _validations.append([checkPresent, fields, options])
         }
 
@@ -1121,10 +1117,8 @@ var before = Memory.resident
             if (!_imodel._columns) _imodel.getSchema()
             _errors = {}
             if (_imodel._validations) {
-                for each (let validation: String in _imodel._validations) {
-                    let check = validation[0]
-                    let fields = validation[1]
-                    let options = validation[2]
+                for each (let validation in _imodel._validations) {
+                    let [check, fields, options] = validation
                     if (fields is Array) {
                         for each (let field in fields) {
                             if (_errors[field]) {
@@ -1138,16 +1132,18 @@ var before = Memory.resident
                 }
             }
             let thisType = Object.getType(this)
-            if (thisType["validate"]) {
-                thisType["validate"].call(this)
+            if (this.validate) {
+                this.validate.call(this)
             }
             coerceToEjsTypes()
             return Object.getOwnPropertyCount(_errors) == 0
         }
 
         /** @hide TODO */
-        static function validateUnique(fields: Object, option = null)
+        static function validateUnique(fields: Object, options = null) {
+            _validations ||= []
             _validations.append([checkUnique, fields, options])
+        }
 
         /**
             Run filters before and after saving data
@@ -1275,8 +1271,8 @@ var before = Memory.resident
 /*
     @copy   default
     
-    Copyright (c) Embedthis Software LLC, 2003-2011. All Rights Reserved.
-    Copyright (c) Michael O'Brien, 1993-2011. All Rights Reserved.
+    Copyright (c) Embedthis Software LLC, 2003-2012. All Rights Reserved.
+    Copyright (c) Michael O'Brien, 1993-2012. All Rights Reserved.
     
     This software is distributed under commercial and open source licenses.
     You may use the GPL open source license described below or you may acquire 

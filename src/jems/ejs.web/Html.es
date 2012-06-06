@@ -150,11 +150,13 @@ module ejs.web {
         }
 
         function icon(uri: String, options: Object): Void {
-            //MOB uri = request.link(uri)
+            //  MOB - what other places should support use request.link
+            uri = request.link(uri)
             write('    <link href="' + uri + '" rel="shortcut icon" />\r\n')
         }
 
         function image(src: String, options: Object): Void {
+            src = request.link(src)
             write('<img src="' + src + '"' + getAttributes(options) + '/>\r\n')
         }
 
@@ -363,6 +365,7 @@ module ejs.web {
                 if (options.styleRows && options.styleRows[row]) {
                     styleRow = ' class="' + options.styleRows[row] + '"'
                 }
+                //  MOB - why not set these above when defining rowOptions
                 rowOptions.record = r
                 rowOptions.field = null
                 rowOptions.values = values
@@ -480,9 +483,10 @@ module ejs.web {
             }
             let errors = record.getErrors()
             if (errors) {
-                write('<div class="-ejs-form-error"><h2>The ' + Object.getName(record).toLowerCase() + ' has ' + 
-                    errors.length + (errors.length > 1 ? ' errors' : ' error') + ' that ' +
-                    ((errors.length > 1) ? 'prevent' : 'prevents') + '  it being saved.</h2>\r\n')
+                let count = Object.getOwnPropertyCount(errors)
+                write('<div class="-ejs-form-error"><h2>The ' + typeOf(record).toLowerCase() + ' has ' + 
+                    count + (count > 1 ? ' errors' : ' error') + ' that ' +
+                    ((count > 1) ? 'prevent' : 'prevents') + '  it being saved.</h2>\r\n')
                 write('    <p>There were problems with the following fields:</p>\r\n')
                 write('    <ul>\r\n')
                 for (e in errors) {
@@ -558,6 +562,7 @@ module ejs.web {
                 setLinkOptions(options.click, options, "data-click")
 
             } else if (options.remote) {
+                //  MOB cleanup - data-remote only ever allow a boolean value.
                 if (options.remote == true && options.action) {
                     options.remote = options.action
                 }
@@ -690,6 +695,7 @@ module ejs.web {
         private function write(str: String): Void
             request.write(str)
 
+        //  TODO OPT
         private function append(str: String, suffix: String): String {
             if (suffix) {
                 return (str) ? (str + " " + suffix) : suffix
@@ -703,8 +709,8 @@ module ejs.web {
 /*
    @copy    default
    
-   Copyright (c) Embedthis Software LLC, 2003-2011. All Rights Reserved.
-   Copyright (c) Michael O'Brien, 1993-2011. All Rights Reserved.
+   Copyright (c) Embedthis Software LLC, 2003-2012. All Rights Reserved.
+   Copyright (c) Michael O'Brien, 1993-2012. All Rights Reserved.
    
    This software is distributed under commercial and open source licenses.
    You may use the GPL open source license described below or you may acquire 

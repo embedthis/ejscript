@@ -33,9 +33,11 @@ int ejsLookupScope(Ejs *ejs, EjsName name, EjsLookup *lookup)
     memset(lookup, 0, sizeof(*lookup));
 
     //  OPT -- remove nthBlock. Not needed if not binding
-    for (lookup->nthBlock = 0, bp = ejs->state->bp; bp; bp = bp->scope, lookup->nthBlock++) {
-        if ((slotNum = lookupVarInBlock(ejs, bp, name, lookup)) >= 0) {
-            return slotNum;
+    if (ejs->state) {
+        for (lookup->nthBlock = 0, bp = ejs->state->bp; bp; bp = bp->scope, lookup->nthBlock++) {
+            if ((slotNum = lookupVarInBlock(ejs, bp, name, lookup)) >= 0) {
+                return slotNum;
+            }
         }
     }
     return lookupVarInBlock(ejs, ejs->global, name, lookup);
@@ -297,7 +299,7 @@ EjsAny *ejsGetVarByName(Ejs *ejs, EjsAny *obj, EjsName name, EjsLookup *lookup)
 
 void ejsShowBlockScope(Ejs *ejs, EjsBlock *block)
 {
-#if BLD_DEBUG
+#if BIT_DEBUG
     EjsNamespace    *nsp;
     MprList         *namespaces;
     int             nextNsp;
@@ -318,7 +320,7 @@ void ejsShowBlockScope(Ejs *ejs, EjsBlock *block)
 
 void ejsShowCurrentScope(Ejs *ejs)
 {
-#if BLD_DEBUG
+#if BIT_DEBUG
     EjsNamespace    *nsp;
     MprList         *namespaces;
     EjsBlock        *block;
@@ -341,8 +343,8 @@ void ejsShowCurrentScope(Ejs *ejs)
 /*
     @copy   default
   
-    Copyright (c) Embedthis Software LLC, 2003-2011. All Rights Reserved.
-    Copyright (c) Michael O'Brien, 1993-2011. All Rights Reserved.
+    Copyright (c) Embedthis Software LLC, 2003-2012. All Rights Reserved.
+    Copyright (c) Michael O'Brien, 1993-2012. All Rights Reserved.
   
     This software is distributed under commercial and open source licenses.
     You may use the GPL open source license described below or you may acquire
@@ -354,7 +356,7 @@ void ejsShowCurrentScope(Ejs *ejs)
     under the terms of the GNU General Public License as published by the
     Free Software Foundation; either version 2 of the License, or (at your
     option) any later version. See the GNU General Public License for more
-    details at: http://www.embedthis.com/downloads/gplLicense.html
+    details at: http://embedthis.com/downloads/gplLicense.html
   
     This program is distributed WITHOUT ANY WARRANTY; without even the
     implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.
@@ -363,7 +365,7 @@ void ejsShowCurrentScope(Ejs *ejs)
     proprietary programs. If you are unable to comply with the GPL, you must
     acquire a commercial license to use this software. Commercial licenses
     for this software and support services are available from Embedthis
-    Software at http://www.embedthis.com
+    Software at http://embedthis.com
   
     Local variables:
     tab-width: 4

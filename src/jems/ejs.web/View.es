@@ -7,6 +7,9 @@ module ejs.web {
     require ejs.web
 
     //  MOB - what does option click Boolean mean below??
+    /*
+        data-remote should only take true. Then data-click=URI data-remote=true. Otherwise can define both click and remote.
+     */
     /**
         Base class for web framework Views. This class provides the core functionality for templated Ejscript view 
         web pages. Ejscript web pages are compiled to create a new View class which extends the View base class.  
@@ -52,7 +55,7 @@ module ejs.web {
             supports using custom key names. NOTE: this option cannot be used if using cell clicks or edits. In that
             case, set click/edit to a callback function and explicitly construct the required URI and parameters.
         @option keyFormat String Define how the keys will be handled for click and edit URIs. 
-            Set to one of the set: ["body", "path", "query"]. Default is "path".
+            Set to one of the set: ["params", "path", "query"]. Default is "path".
             Set to "query" to add the key/value pairs to the request URI. Each pair is separated using "&" and the
                 key and value are formatted as "key=value".
             Set to "params" to add the key/value pair to the request body parameters. 
@@ -73,7 +76,7 @@ module ejs.web {
             milliseconds. If period is undefined or zero, a persistent connection may be used to refresh data.
             The refresh option may use the "\@Controller/action" form.
         @option size (Number|String) Size of the element.
-        @option style String CSS Style to use for the table.
+        @option style String CSS Style to use for the element.
         @option value Object Override value to display if used without a form control record.
         @option width (Number|String) Width of the control. Can be a number of pixels or a percentage string. Defaults to
             unlimited.
@@ -156,6 +159,7 @@ module ejs.web {
 
         /** 
             Emit a status alert area
+MOB - review?
             @param text Initial message text to display. Status messages may be updated by calling the 
                 $Controller.status function.
             @param options Optional extra options. See $View for a list of the standard options.
@@ -171,13 +175,15 @@ module ejs.web {
             getConnector("alert", options).alert(text, options)
         }
 
+        //  MOB - should have a URI argument (ESP)
         /**
-            Emit an anchor. This is lable inside an anchor reference. 
+            Emit an anchor. This is a label inside an anchor reference. 
             @param text Link text to display
             @param options Optional extra options. See $View for a list of the standard options.
          */
         function anchor(text: String, options: Object = {}): Void {
             options = getOptions(options)
+            //  MOB - should got to anchor
             getConnector("label", options).label(text, options)
         }
 
@@ -185,9 +191,7 @@ module ejs.web {
             Render a form button. This creates a button suitable for use inside an input form. When the button is clicked,
             the input form will be submitted.
             @param name Name for the input button. This defines the HTML element name and provides the source of the
-                initial value to display. The field should be a property of the form control record. It can be a simple 
-                property of the record or it can have multiple parts, such as: field.field.field. If this call is used 
-                without a form control record, the actual data value should be supplied via the options.value property.
+                initial value to display.
             @param label Text label to display in the button and value to send when the form is submitted.
             @param options Optional extra options. See $View for a list of the standard options.
             Examples:
@@ -199,16 +203,18 @@ module ejs.web {
             getConnector("button", options).button(name, label, options)
         }
 
+        //  MOB - this really should have a URI parameter instead of relying on options conversion via options.click 
         /**
             Render a link button. This creates a button suitable for use outside an input form. When the button 
             is clicked, the associated URI will be invoked.
             @param text Text to display in the button. The text can contain embedded HTML.
             @param options Options specifying the target URI to invoke. See $View for a list of the standard options.
             @example
-                buttonLink("Cancel" "\@")
+                buttonLink("Cancel", "\@")
          */
         function buttonLink(text: String, options: Object = {}): Void {
             options = getOptions(options)
+            //  MOB - why is this here - inconsistent
             if (currentRecord) {
                 options.id ||= currentRecord.id
             }
@@ -328,7 +334,7 @@ MOB -- much more doc here
             @param record Record to display and optionally update
             @param options Optional extra options. See $View for a list of the standard options.
             @option hideErrors Don't display model errors. Models retain error diagnostics from a failed write. Setting
-                thish option will prevent their display.
+                this option will prevent their display.
             @option modal String Make a form a modal dialog.
             @option nosecurity Don't generate a security token for the form.
             @option securityToken String Override CSRF security token to include when the form is submitted. A default 
@@ -344,6 +350,7 @@ MOB -- much more doc here
             connector.form(record, options)
         }
 
+        //  MOB - is this required if we have image()
         /** 
             Emit an icon link.
             @param src Source name for the icon.
@@ -417,8 +424,6 @@ MOB -- much more doc here
                     throw "input control: Unknown field type: " + datatype + " for field " + name
                 }
             } catch (e) {
-//  MOB
-print("CATCH " + e)
                 text(name, options)
             }
         }
@@ -519,6 +524,10 @@ print("CATCH " + e)
             getConnector("radio", options).radio(name, value, choices, options)
         }
 
+        /**
+            Refresh control
+            @hide
+         */
         function refresh(on: Uri, off: Uri, options: Object = {}): Void {
             let connector = getConnector("refresh", options)
             options = getOptions(options)
@@ -645,12 +654,12 @@ print("CATCH " + e)
 
         /**
             Render a tab control. 
-            The tab control can manage a set of panes and selectively show and hide or invoke the selected panes. 
+            The tab control can manage a set of panes and will selectively show and hide or invoke the selected panes. 
             If the click option is defined (default), the selected pane will be invoked via a foreground click. If the
             remote option is defined, the selected pane will be invoked via a background click. If the toggle option is
             defined the selected pane will be made visible and other panes will be hidden.
             If using show/hide tabs, define the initial visible pane to be of the class "-ejs-pane-visible" and define
-            other panes to be "-ejs-pane-hidden". The Control's client side code will toggle these classes to make panes
+            other panes to be "-ejs-pane-hidden". The control's client side code will toggle these classes to make panes
             visible or hidden.
             @param data Tab data for the control. Tab data can be be a single object where the tab text is the property 
                 key and the target to invoke is the property value. It can also be an an array of objects, one per tab. 
@@ -987,8 +996,8 @@ MOB -- review and rethink this
 /*
     @copy   default
     
-    Copyright (c) Embedthis Software LLC, 2003-2011. All Rights Reserved.
-    Copyright (c) Michael O'Brien, 1993-2011. All Rights Reserved.
+    Copyright (c) Embedthis Software LLC, 2003-2012. All Rights Reserved.
+    Copyright (c) Michael O'Brien, 1993-2012. All Rights Reserved.
     
     This software is distributed under commercial and open source licenses.
     You may use the GPL open source license described below or you may acquire 

@@ -24,6 +24,7 @@ module ejs.web {
                 models: Path("models"),
                 src: Path("src"),
                 static: Path("static"),
+                views: Path("views"),
             },
             mvc: {
                 //  MOB - should be moved to files
@@ -39,30 +40,39 @@ module ejs.web {
         private static var loaded: Object = {}
         private static const EJSRC = "ejsrc"
 
+        /* App.config.dirs should be not be prefixed with any application paths */
         blend(App.config, defaultConfig, {overwrite: false})
 
         /** 
             Load an MVC application and the optional application specific ejsrc file
-            @param request Request object
+            @param home Base directory for the MVC app
+            @param config Configuration object
          */
-        function Mvc(dir: Path, cfg = App.config) {
-            this.config = cfg
-            let path = dir.join(EJSRC)
+        function Mvc(home: Path, config = App.config) {
+            this.config = config
+            let path = home.join(EJSRC)
             if (path.exists) {
-                loadConfig(dir, path)
+                let econfig = path.readJSON()
+                let dirs = econfig.dirs
+                for (let [key,value] in econfig.dirs) {
+                    dirs[key] = home.join(value)
+                }
+                config = blend(config.clone(), econfig)
+                App.updateLog()
             }
             if (config.database) {
-                openDatabase()
+                openDatabase(home)
             }
         }
 
         /**
             Factory to load an MVC application.
+            @param request Request object
             @param dir Base directory containing the MVC application. Defaults to "."
             @param config Default configuration for the application
             @return An Mvc application object
           */
-        public static function load(dir: Path = ".", config = App.config): Mvc {
+        public static function load(request: Request, dir: Path = ".", config = App.config): Mvc {
             if ((mvc = Mvc.apps[dir]) == null) {
                 App.log.debug(2, "Load MVC application from \"" + dir + "\"")
                 mvc = Mvc.apps[dir] = new Mvc(dir, config)
@@ -74,32 +84,16 @@ module ejs.web {
                     let dirs = config.dirs
                     let ext = config.extensions
                     deps = [dir.join(EJSRC)]
-                    files = dirs.models.find("*" + ext.es)
-                    files += dirs.src.find("*" + ext.es)
+                    files = dirs.models.files("*" + ext.es)
+                    files += dirs.src.files("*" + ext.es)
                     files += [dirs.controllers.join("Base").joinExt(ext.es)]
                 }
-                let request = new Request("/")
+                request ||= new Request("/")
                 request.config = config
                 mvc.loadComponent(request, appmod, files, deps)
                 loaded[appmod] = new Date
             }
             return mvc
-        }
-
-        /*
-            Load the app/ejsrc and defaultConfig
-         */
-        private function loadConfig(baseDir: Path, path: Path): Void {
-            let appConfig = path.readJSON()
-            config = blend(config.clone(), appConfig)
-            let dirs = config.dirs
-            for each (key in ["bin", "db", "controllers", "models", "src", "static"]) {
-                dirs[key] = baseDir.join(dirs[key])
-            }
-            for (let [key, value] in dirs) {
-                dirs[key] = Path(value)
-            }
-            App.updateLog()
         }
 
         /*
@@ -109,8 +103,8 @@ module ejs.web {
             request.config = config
             let dirs = config.dirs
             let appmod = dirs.cache.join(config.mvc.appmod)
-            //  MOB - implement flat
             if (config.web.flat) {
+                //  MOB - implement flat
                 if (!global.BaseController) {
                     global.load(appmod)
                 }
@@ -123,8 +117,8 @@ module ejs.web {
                 let files, deps
                 if (config.cache.app.reload) {
                     deps = [dir.join(EJSRC)]
-                    files = dirs.models.find("*" + ext.es)
-                    files += dirs.src.find("*" + ext.es)
+                    files = dirs.models.files("*" + ext.es)
+                    files += dirs.src.files("*" + ext.es)
                     files += [dirs.controllers.join("Base").joinExt(ext.es)]
                 }
                 loadComponent(request, appmod, files, deps)
@@ -182,7 +176,7 @@ module ejs.web {
             }
         }
 
-        /*
+        /**
             Open database. Expects ejsrc configuration:
                 mode: "debug",
                 database: {
@@ -193,10 +187,16 @@ module ejs.web {
                     test: { name: "db/blog.sdb", trace: true },
                     production: { name: "db/blog.sdb", trace: true },
                 }
+            @hide
          */
-        public static function openDatabase() {
+        public static function openDatabase(home: Path) {
             let dbconfig = App.config.database
             if (dbconfig) {
+                for each (kind in ["debug", "test", "production"]) {
+                    if (dbconfig[kind]) {
+                        dbconfig[kind].name = home.join(dbconfig[kind].name)
+                    }
+                }
                 global.load("ejs.db.mod", {reload: false})
                 blend(dbconfig, dbconfig[App.config.mode])
                 new "ejs.db"::["Database"](dbconfig.adapter, dbconfig)
@@ -241,9 +241,8 @@ module ejs.web {
         @stability prototype
      */
     function MvcBuilder(request: Request): Function {
-        let mvc: Mvc = Mvc.load(request.dir, request.config)
+        let mvc: Mvc = Mvc.load(request, request.dir, request.config)
         mvc.loadRequest(request)
-        //  MOB - rename app to be more unique
         return Controller.create(request, request.params.controller + "Controller").app
     }
 }
@@ -252,8 +251,8 @@ module ejs.web {
 /*
     @copy   default
     
-    Copyright (c) Embedthis Software LLC, 2003-2011. All Rights Reserved.
-    Copyright (c) Michael O'Brien, 1993-2011. All Rights Reserved.
+    Copyright (c) Embedthis Software LLC, 2003-2012. All Rights Reserved.
+    Copyright (c) Michael O'Brien, 1993-2012. All Rights Reserved.
     
     This software is distributed under commercial and open source licenses.
     You may use the GPL open source license described below or you may acquire 

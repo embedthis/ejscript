@@ -10,15 +10,15 @@
 
 /********************************** Defines ***********************************/
 
-#if BLD_WIN_LIKE
+#if BIT_WIN_LIKE
 #define isDelim(fp, c)  (c == '/' || c == fp->delimiter)
 #else
 #define isDelim(fp, c)  (c == fp->delimiter)
 #endif
 
-#define FILE_OPEN           0x1
-#define FILE_READ           0x2
-#define FILE_WRITE          0x4
+#define EJS_FILE_OPEN           0x1     /* File is opened */
+#define EJS_FILE_READ           0x2     /* File is opened for reading */
+#define EJS_FILE_WRITE          0x4     /* File is opened for writing */
 
 /**************************** Forward Declarations ****************************/
 
@@ -27,7 +27,7 @@ static int mapMode(cchar *mode);
 static EjsObj *openFile(Ejs *ejs, EjsFile *fp, int argc, EjsObj **argv);
 static ssize readData(Ejs *ejs, EjsFile *fp, EjsByteArray *ap, ssize offset, ssize count);
 
-#if BLD_CC_MMU && FUTURE
+#if BIT_CC_MMU && FUTURE
 static void *mapFile(EjsFile *fp, uint size, int mode);
 static void unmapFile(EjsFile *fp);
 #endif
@@ -41,12 +41,12 @@ static EjsNumber *getFileProperty(Ejs *ejs, EjsFile *fp, int slotNum)
     MprOff  offset;
     int     c;
 
-    if (!(fp->mode & FILE_OPEN)) {
+    if (!(fp->mode & EJS_FILE_OPEN)) {
         ejsThrowIOError(ejs, "File is not open");
         return 0;
     }
 #if KEEP
-    if (fp->mode & FILE_READ) {
+    if (fp->mode & EJS_FILE_READ) {
         if (slotNum >= fp->info.size) {
             ejsThrowOutOfBoundsError(ejs, "Bad file index");
             return 0;
@@ -58,7 +58,7 @@ static EjsNumber *getFileProperty(Ejs *ejs, EjsFile *fp, int slotNum)
     }
 #endif
 
-#if BLD_CC_MMU && FUTURE
+#if BIT_CC_MMU && FUTURE
     //  must check against mapped size here.
     c = fp->mapped[slotNum];
 #else
@@ -84,10 +84,10 @@ static int lookupFileProperty(Ejs *ejs, EjsFile *fp, EjsName qname)
 {
     int     index;
 
-    if (qname.name == 0 || !isdigit((int) qname.name->value[0])) {
+    if (qname.name == 0 || !isdigit((uchar) qname.name->value[0])) {
         return EJS_ERR;
     }
-    if (!(fp->mode & FILE_OPEN)) {
+    if (!(fp->mode & EJS_FILE_OPEN)) {
         ejsThrowIOError(ejs, "File is not open");
         return 0;
     }
@@ -107,11 +107,11 @@ static int setFileProperty(Ejs *ejs, EjsFile *fp, int slotNum, EjsObj *value)
     MprOff  offset;
     int     c;
 
-    if (!(fp->mode & FILE_OPEN)) {
+    if (!(fp->mode & EJS_FILE_OPEN)) {
         ejsThrowIOError(ejs, "File is not open");
         return 0;
     }
-    if (!(fp->mode & FILE_WRITE)) {
+    if (!(fp->mode & EJS_FILE_WRITE)) {
         ejsThrowIOError(ejs, "File is not opened for writing");
         return 0;
     }
@@ -123,7 +123,7 @@ static int setFileProperty(Ejs *ejs, EjsFile *fp, int slotNum, EjsObj *value)
         slotNum = (int) offset;
     }
 
-#if BLD_CC_MMU && FUTURE
+#if BIT_CC_MMU && FUTURE
     fp->mapped[slotNum] = c;
 #else
     if (offset != slotNum && mprSeekFile(fp->file, SEEK_SET, slotNum) != slotNum) {
@@ -192,7 +192,7 @@ static cchar *getStrOption(Ejs *ejs, EjsObj *options, cchar *field, cchar *defau
  */
 static EjsFile *fileConstructor(Ejs *ejs, EjsFile *fp, int argc, EjsObj **argv)
 {
-    EjsObj      *pp;
+    EjsObj      *pp, *options;
     cchar       *path;
 
     if (argc < 1 || argc > 2) {
@@ -208,9 +208,10 @@ static EjsFile *fileConstructor(Ejs *ejs, EjsFile *fp, int argc, EjsObj **argv)
         ejsThrowIOError(ejs, "Bad path");
         return 0;
     }
-    fp->path = mprGetNormalizedPath(path);
+    fp->path = mprNormalizePath(path);
     if (argc == 2) {
-        openFile(ejs, fp, 1, &argv[1]);
+        options = (argc >= 2) ? argv[1] : 0;
+        openFile(ejs, fp, 1, &options);
     }
     return fp;
 }
@@ -221,7 +222,7 @@ static EjsFile *fileConstructor(Ejs *ejs, EjsFile *fp, int argc, EjsObj **argv)
  */
 static EjsBoolean *canReadFile(Ejs *ejs, EjsFile *fp, int argc, EjsObj **argv)
 {
-    return ejsCreateBoolean(ejs, fp->mode & FILE_OPEN && (fp->mode & FILE_READ));
+    return ejsCreateBoolean(ejs, fp->mode & EJS_FILE_OPEN && (fp->mode & EJS_FILE_READ));
 }
 
 
@@ -230,7 +231,7 @@ static EjsBoolean *canReadFile(Ejs *ejs, EjsFile *fp, int argc, EjsObj **argv)
  */
 static EjsBoolean *canWriteFile(Ejs *ejs, EjsFile *fp, int argc, EjsObj **argv)
 {
-    return ejsCreateBoolean(ejs, fp->mode & FILE_OPEN && (fp->mode & FILE_WRITE));
+    return ejsCreateBoolean(ejs, fp->mode & EJS_FILE_OPEN && (fp->mode & EJS_FILE_WRITE));
 }
 
 /*  
@@ -239,7 +240,7 @@ static EjsBoolean *canWriteFile(Ejs *ejs, EjsFile *fp, int argc, EjsObj **argv)
  */
 static EjsObj *closeFile(Ejs *ejs, EjsFile *fp, int argc, EjsObj **argv)
 {
-    if (fp->mode & FILE_OPEN && fp->mode & FILE_WRITE) {
+    if (fp->mode & EJS_FILE_OPEN && fp->mode & EJS_FILE_WRITE) {
         if (mprFlushFile(fp->file) < 0) {
             if (ejs) {
                 ejsThrowIOError(ejs, "Can't flush file data");
@@ -253,7 +254,7 @@ static EjsObj *closeFile(Ejs *ejs, EjsFile *fp, int argc, EjsObj **argv)
         mprCloseFile(fp->file);
         fp->file = 0;
     }
-#if BLD_CC_MMU && FUTURE
+#if BIT_CC_MMU && FUTURE
     if (fp->mapped) {
         unmapFile(fp);
         fp->mapped = 0;
@@ -293,7 +294,7 @@ static EjsNumber *nextKey(Ejs *ejs, EjsIterator *ip, int argc, EjsObj **argv)
 static EjsIterator *getFileIterator(Ejs *ejs, EjsFile *fp, int argc, EjsObj **argv)
 {
     mprGetPathInfo(fp->path, &fp->info);
-    return ejsCreateIterator(ejs, fp, nextKey, 0, NULL);
+    return ejsCreateIterator(ejs, fp, -1, nextKey, 0, NULL);
 }
 
 
@@ -312,7 +313,7 @@ static EjsObj *nextValue(Ejs *ejs, EjsIterator *ip, int argc, EjsObj **argv)
     }
 
     if (ip->index < fp->info.size) {
-#if !BLD_CC_MMU || 1
+#if !BIT_CC_MMU || 1
         if (mprSeekFile(fp->file, SEEK_CUR, 0) != ip->index) {
             if (mprSeekFile(fp->file, SEEK_SET, ip->index) != ip->index) {
                 ejsThrowIOError(ejs, "Can't seek to %d", ip->index);
@@ -326,7 +327,7 @@ static EjsObj *nextValue(Ejs *ejs, EjsIterator *ip, int argc, EjsObj **argv)
 #endif
     }
 
-#if BLD_CC_MMU && FUTURE
+#if BIT_CC_MMU && FUTURE
     unmapFile(fp);
     fp->mapped = 0;
 #endif
@@ -344,7 +345,7 @@ static EjsObj *getFileValues(Ejs *ejs, EjsFile *fp, int argc, EjsObj **argv)
 {
     mprGetPathInfo(fp->path, &fp->info);
 
-    return (EjsObj*) ejsCreateIterator(ejs, (EjsObj*) fp, nextValue, 0, NULL);
+    return (EjsObj*) ejsCreateIterator(ejs, fp, -1, nextValue, 0, NULL);
 }
 
 
@@ -400,7 +401,7 @@ static EjsObj *setFilePosition(Ejs *ejs, EjsFile *fp, int argc, EjsObj **argv)
  */
 static EjsObj *isFileOpen(Ejs *ejs, EjsFile *fp, int argc, EjsObj **argv)
 {
-    return (EjsObj*) ejsCreateBoolean(ejs, fp->mode & FILE_OPEN);
+    return (EjsObj*) ejsCreateBoolean(ejs, fp->mode & EJS_FILE_OPEN);
 }
 
 
@@ -423,7 +424,7 @@ static EjsObj *openFile(Ejs *ejs, EjsFile *fp, int argc, EjsObj **argv)
     if (argc == 0 || !ejsIsDefined(ejs, options)) {
         omode = O_RDONLY | O_BINARY;
         perms = EJS_FILE_PERMS;
-        fp->mode = FILE_READ;
+        fp->mode = EJS_FILE_READ;
         mode = "r";
     } else {
         if (ejsIs(ejs, options, String)) {
@@ -438,10 +439,10 @@ static EjsObj *openFile(Ejs *ejs, EjsFile *fp, int argc, EjsObj **argv)
         }
         omode = mapMode(mode);
         if (!(omode & O_WRONLY)) {
-            fp->mode |= FILE_READ;
+            fp->mode |= EJS_FILE_READ;
         }
         if (omode & (O_WRONLY | O_RDWR)) {
-            fp->mode |= FILE_WRITE;
+            fp->mode |= EJS_FILE_WRITE;
         }
     }
     fp->modeString = sclone(mode);
@@ -455,12 +456,14 @@ static EjsObj *openFile(Ejs *ejs, EjsFile *fp, int argc, EjsObj **argv)
         ejsThrowIOError(ejs, "Can't open %s", fp->path);
         return 0;
     }
-
-#if BLD_CC_MMU && FUTURE
+    if (options) {
+        ejsSetPathAttributes(ejs, fp->path, options);
+    }
+#if BIT_CC_MMU && FUTURE
     mprGetPathInfo(&fp->info);
     fp->mapped = mapFile(fp, fp->info.size, MPR_MAP_READ | MPR_MAP_WRITE);
 #endif
-    fp->mode |= FILE_OPEN;
+    fp->mode |= EJS_FILE_OPEN;
     return (EjsObj*) fp;
 }
 
@@ -499,7 +502,7 @@ static EjsObj *readFileBytes(Ejs *ejs, EjsFile *fp, int argc, EjsObj **argv)
         ejsThrowStateError(ejs, "File not open");
         return 0;
     }
-    if (!(fp->mode & FILE_READ)) {
+    if (!(fp->mode & EJS_FILE_READ)) {
         ejsThrowStateError(ejs, "File not opened for reading");
         return 0;
     }
@@ -555,7 +558,7 @@ static EjsString *readFileString(Ejs *ejs, EjsFile *fp, int argc, EjsObj **argv)
         ejsThrowStateError(ejs, "File not open");
         return 0;
     }
-    if (!(fp->mode & FILE_READ)) {
+    if (!(fp->mode & EJS_FILE_READ)) {
         ejsThrowStateError(ejs, "File not opened for reading");
         return 0;
     }
@@ -602,7 +605,7 @@ static EjsNumber *readFile(Ejs *ejs, EjsFile *fp, int argc, EjsObj **argv)
         ejsThrowStateError(ejs, "File not open");
         return 0;
     }
-    if (!(fp->mode & FILE_READ)) {
+    if (!(fp->mode & EJS_FILE_READ)) {
         ejsThrowStateError(ejs, "File not opened for reading");
         return 0;
     }
@@ -684,7 +687,7 @@ EjsObj *writeFile(Ejs *ejs, EjsFile *fp, int argc, EjsObj **argv)
 
     args = (EjsArray*) argv[0];
 
-    if (!(fp->mode & FILE_WRITE)) {
+    if (!(fp->mode & EJS_FILE_WRITE)) {
         ejsThrowStateError(ejs, "File not opened for writing");
         return 0;
     }
@@ -702,7 +705,12 @@ EjsObj *writeFile(Ejs *ejs, EjsFile *fp, int argc, EjsObj **argv)
             break;
 
         case S_String: // UNICODE
+#if UNICODE && FUTURE
             buf = awtom(((EjsString*) vp)->value, &len);
+#else
+            buf = ((EjsString*) vp)->value;
+            len = ((EjsString*) vp)->length;
+#endif
             break;
 
         default:
@@ -729,19 +737,20 @@ EjsObj *writeFile(Ejs *ejs, EjsFile *fp, int argc, EjsObj **argv)
  */
 static ssize readData(Ejs *ejs, EjsFile *fp, EjsByteArray *ap, ssize offset, ssize count)
 {
-    ssize   len, bytes;
+    ssize   room, bytes;
 
     if (count <= 0) {
         return 0;
     }
-    len = ap->length - offset;
-    if (len < count) {
+    room = ap->length - offset;
+    if (room < count) {
         if (ap->resizable) {
-            ejsGrowByteArray(ejs, ap, ap->length + (count - len));
+            ejsGrowByteArray(ejs, ap, ap->length + (count - room));
+        } else {
+            count = min(room, count);
         }
-        len = ap->length - offset;
     }
-    bytes = mprReadFile(fp->file, &ap->value[offset], len);
+    bytes = mprReadFile(fp->file, &ap->value[offset], count);
     if (bytes < 0) {
         ejsThrowIOError(ejs, "Error reading from %s", fp->path);
     }
@@ -749,7 +758,7 @@ static ssize readData(Ejs *ejs, EjsFile *fp, EjsByteArray *ap, ssize offset, ssi
 }
 
 
-#if BLD_CC_MMU && FUTURE
+#if BIT_CC_MMU && FUTURE
 static void *mapFile(EjsFile *fp, uint size, int mode)
 {
     Mpr         *mpr;
@@ -861,12 +870,12 @@ EjsFile *ejsCreateFileFromFd(Ejs *ejs, int fd, cchar *name, int mode)
         return NULL;
     }
     fp->perms = EJS_FILE_PERMS;
-    fp->mode = FILE_OPEN;
+    fp->mode = EJS_FILE_OPEN;
     if (!(mode & O_WRONLY)) {
-        fp->mode |= FILE_READ;
+        fp->mode |= EJS_FILE_READ;
     }
     if (mode & (O_WRONLY | O_RDWR)) {
-        fp->mode |= FILE_WRITE;
+        fp->mode |= EJS_FILE_WRITE;
     }
     if ((fp->file = mprAttachFileFd(fd, name, mode)) == 0) {
         return 0;
@@ -933,8 +942,8 @@ void ejsConfigureFileType(Ejs *ejs)
 /*
     @copy   default
 
-    Copyright (c) Embedthis Software LLC, 2003-2011. All Rights Reserved.
-    Copyright (c) Michael O'Brien, 1993-2011. All Rights Reserved.
+    Copyright (c) Embedthis Software LLC, 2003-2012. All Rights Reserved.
+    Copyright (c) Michael O'Brien, 1993-2012. All Rights Reserved.
 
     This software is distributed under commercial and open source licenses.
     You may use the GPL open source license described below or you may acquire
@@ -946,7 +955,7 @@ void ejsConfigureFileType(Ejs *ejs)
     under the terms of the GNU General Public License as published by the
     Free Software Foundation; either version 2 of the License, or (at your
     option) any later version. See the GNU General Public License for more
-    details at: http://www.embedthis.com/downloads/gplLicense.html
+    details at: http://embedthis.com/downloads/gplLicense.html
 
     This program is distributed WITHOUT ANY WARRANTY; without even the
     implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.
@@ -955,7 +964,7 @@ void ejsConfigureFileType(Ejs *ejs)
     proprietary programs. If you are unable to comply with the GPL, you must
     acquire a commercial license to use this software. Commercial licenses
     for this software and support services are available from Embedthis
-    Software at http://www.embedthis.com
+    Software at http://embedthis.com
 
     Local variables:
     tab-width: 4

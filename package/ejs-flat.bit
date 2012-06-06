@@ -1,0 +1,31 @@
+/*
+    ejs.bit -- Bit File to build the Ejscript library when embedded in another product
+ */
+
+Bit.load({
+    targets: {
+        libejs: {
+            type: 'lib',
+            sources: [ 'ejsLib.c' ],
+            headers: [ '*.h' ],
+            depends: [ 'libhttp', 'libsqlite3', 'libpcre' ],
+        },
+        ejs: {
+            type: 'exe',
+            sources: [ 'ejs.c' ],
+            depends: [ 'libejs' ],
+            scripts: {
+                prebuild: "
+                    if (bit.settings.hasLibEdit) {
+                        bit.target.libraries.push('edit')
+                    }
+                ",
+            },
+        },
+        ejsc: {
+            type: 'exe',
+            sources: [ 'ejsc.c' ],
+            depends: [ 'libejs' ],
+        },
+    },
+})

@@ -1,0 +1,28 @@
+#
+#   macosx-x64-debug.mk -- Build It Makefile to build Embedthis Ejscript for macosx on x64
+#
+
+CFLAGS      := -g -w
+LDFLAGS     := -L. -Wl,-rpath,@executable_path/../lib -Wl,-rpath,@executable_path/ -Wl,-rpath,@loader_path/
+LIBS        := -lpthread -lm -ldl -ledit -lpam
+
+all: libejs.dylib ejsc ejs ejsmod ejs.mod
+
+libejs.dylib: ejsLib.o deps.o pcre.o sqlite3.o
+	cc -o libejs.dylib -dynamiclib $(CFLAGS) $(DFLAGS) $(LDFLAGS) ejsLib.o deps.o pcre.o sqlite3.o $(LIBS)
+
+ejs: libejs.dylib 
+	cc -o ejs $(LDFLAGS) ejs.c -lejs $(LIBS)
+
+ejsc: libejs.dylib 
+	cc -o ejsc $(LDFLAGS) ejsc.c -lejs $(LIBS)
+
+ejsmod: libejs.dylib 
+	cc -o ejsmod $(LDFLAGS) ejsmod.c -lejs $(LIBS)
+
+ejs.mod: ejsc
+	./ejsc --out ejs.mod --debug --optimize 9 --bind --require null ejs.es
+
+clean: 
+	rm -f ejs ejsc ejsmod libejs.dylib *.o ejs.mod
+	rm -fr *.dSYM

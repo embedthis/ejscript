@@ -1,58 +1,37 @@
 #
-#	Makefile -- Top level Makefile for Ejscript
+#	Makefile - Makefile to build Ejscript with bit.
 #
-#	Copyright (c) Embedthis Software LLC, 2003-2011. All Rights Reserved.
-#
-#
-#	Standard Make targets supported are:
+#	This Makefile will build a "minimal" Ejscript without external packages.
+#	It is used to build Ejscript the first time before bit is available.
+#	Once built, use bit to configure and rebuild as required.
 #	
-#		make 						# Does a "make compile"
-#		make clean					# Removes generated objects
-#		make compile				# Compiles the source
-#		make depend					# Generates the make dependencies
-#		make test 					# Runs unit tests
-#		make package				# Creates an installable package
-#
-#	Installation targets. Use "make ROOT_DIR=myDir" to do a custom local install:
-#
-#		make install				# Call install-binary + install-dev
-#		make install-binary			# Install binary files
-#		make install-dev			# Install development libraries and headers
-#
-#	To remove, use make uninstall-ITEM, where ITEM is a component above.
 
-BUILD_DEPTH	?= 2
+OS 		:= $(shell uname | sed 's/CYGWIN.*/windows/;s/Darwin/macosx/' | tr '[A-Z]' '[a-z]')
+MAKE	:= make
+EXT 	:= mk
 
-include	    build/make/Makefile.top
-include		build/make/Makefile.ejs
-
-ifeq	($(BLD_CROSS),0)
-testExtra: 
-	$(BLD_BIN_DIR)/ejs $(BLD_TOOLS_DIR)/utest -v -d $(BUILD_DEPTH) src
+ifeq ($(OS),windows)
+ifeq ($(ARCH),)
+ifeq ($(PROCESSOR_ARCHITEW6432),AMD64)
+	ARCH:=x64
+else
+	ARCH:=x86
+endif
+endif
+	MAKE:= projects/windows.bat $(ARCH)
+	EXT := nmake
 endif
 
-diff import sync:
-	import.sh --$@ ../tools/out/releases/tools-dist.tgz
-	import.sh --$@ ../mpr/out/releases/mpr-dist.tgz
-	import.sh --$@ ../pcre/out/releases/pcre-dist.tgz
-	import.sh --$@ ../http/out/releases/http-dist.tgz
+all compile:
+	$(MAKE) -f projects/ejs-$(OS).$(EXT) $@
+	@echo ; echo 'You can now use Ejscript or use "bit" to customize and re-build Ejscript, via:'
+	@echo ; echo "   " $(OS)-*-*/bin/bit "configure build" ; echo
 
-testExtra: test-projects
+build configure generate test package:
+	@bit $@
 
-test-projects:
-ifeq    ($(BLD_HOST_OS),WIN)
-	if [ "$(BUILD_DEPTH)" -ge 3 ] ; then \
-		$(BLD_TOOLS_DIR)/nativeBuild ; \
-	fi
-endif
+clean clobber:
+	$(MAKE) -f projects/ejs-$(OS).$(EXT) $@
 
-ext:
-	./configure --with-mpr=../mpr --with-ssl=../mpr --with-http=../http --with-pcre=../pcre
-
-#
-#   Local variables:
-#   tab-width: 4
-#   c-basic-offset: 4
-#   End:
-#   vim: sw=4 ts=4 noexpandtab
-#
+version:
+	@bit -q version

@@ -1,0 +1,30 @@
+/*
+    zlib.bit -- Bit File for ejs.zlib
+ */
+
+Bit.load({
+
+    targets: {
+        'ejs.zlib.mod': {
+            enable: 'bit.packs.zlib.enable',
+            path: '${LIB}/ejs.zlib.mod',
+            files: [ '*.es' ],
+            precious: true,
+            build: "
+                trace('Compile', 'ejs.zlib.mod')
+                run('${LBIN}/ejsc --out ${LIB}/ejs.zlib.mod ${settings.esflags} --optimize 9 ' + Path('.').files('*.es').sort().join(' '))
+            ",
+            'generate': '${BIN}/ejsc --out ${BIN}/ejs.zlib.mod ${settings.esflags} --optimize 9 *.es',
+            depends: [ 'ejsc', 'ejs.mod' ],
+        },
+
+        'ejs.zlib': {
+            enable: 'bit.packs.zlib.enable',
+            type: 'lib',
+            sources: [ 
+                '*.c',
+            ],
+            depends: [ 'libmpr', 'libejs', 'ejs.mod', 'ejs.zlib.mod', 'zlib' ],
+        },
+	},
+})

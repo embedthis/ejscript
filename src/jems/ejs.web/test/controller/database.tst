@@ -3,8 +3,7 @@
  */
 require ejs.web
 
-const PORT = (App.config.test.http_port || 6700)
-const HTTP = ":" + PORT
+const HTTP = App.config.uris.http
 
 let events = {}
 load("../utils.es")

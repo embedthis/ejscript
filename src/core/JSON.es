@@ -70,6 +70,7 @@ module ejs {
         @param obj Object to serialize. If options is null, each option takes the defaults described.
         @param options Serialization options
         @option baseClasses Boolean determining if base class properties will be serialized. Defaults to false.
+        @option commas Boolean Always put commas after the last property in an object. Defaults to false.
         @option depth Number indiciating the depth to recurse when converting properties to literals. If set to zero, 
             the depth is infinite. Defaults to zero.
         @option indent Number|String Indentation of nested structures. If omitted, the result is packed without any
@@ -81,6 +82,7 @@ module ejs {
             Default is false.
         @option pretty Boolean determining if a human readable output is used with new lines after each property. 
             Default is false.
+        @option quotes Boolean If false, emit property names without quotes if they do not contain spaces.
         @option replacer an optional parameter that determines how object values are stringified for objects without a 
             toJSON method.  The replace has the following signature:
 
@@ -96,8 +98,8 @@ module ejs {
 /*
     @copy   default
     
-    Copyright (c) Embedthis Software LLC, 2003-2011. All Rights Reserved.
-    Copyright (c) Michael O'Brien, 1993-2011. All Rights Reserved.
+    Copyright (c) Embedthis Software LLC, 2003-2012. All Rights Reserved.
+    Copyright (c) Michael O'Brien, 1993-2012. All Rights Reserved.
     
     This software is distributed under commercial and open source licenses.
     You may use the GPL open source license described below or you may acquire 

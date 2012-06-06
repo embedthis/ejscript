@@ -141,6 +141,9 @@ module ejs {
          */
         function read(buffer: ByteArray, offset: Number = 0, count: Number = -1): Number {
             let total = 0
+            if (buffer == undefined) {
+                throw new ArgError("Insufficient args")
+            }
             if (count < 0) {
                 count = Number.MaxValue
             }
@@ -174,7 +177,7 @@ module ejs {
 
         /** 
             Read a line from the stream.
-            @returns A string containing the next line without newline characters ("\r", "\n"). Return null on eof.
+            @returns A string containing the next line without newline characters ("\r", "\n"). Return null on EOF.
             @throws IOError if an I/O error occurs.
          */
         function readLine(): String {
@@ -184,9 +187,9 @@ module ejs {
             //  All systems strip both \n and \r\n to normalize text lines
             //  MOB -- this should be a configurable option on a TextStream
             let nl = "\r\n"
+            let nlchar = nl.charCodeAt(nl.length - 1)
+            let nlchar0 = nl.charCodeAt(0)
             while (true) {
-                let nlchar = nl.charCodeAt(nl.length - 1)
-                let nlchar0 = nl.charCodeAt(0)
                 for (let i = inbuf.readPosition; i < inbuf.writePosition; i++) {
                     //  MOB OPT. If ByteArray had indexOf(nl), then this could be MUCH faster
                     if (inbuf[i] == nlchar) {
@@ -214,7 +217,7 @@ module ejs {
             Read a required number of lines of data from the stream.
             @param numLines of lines to read. Defaults to read all lines.
             @returns Array containing the read lines. Lines are stripped of newline characters ("\r", "\n"). 
-            Return null on eof.
+            Return null on EOF.
             @throws IOError if an I/O error occurs.
          */
         function readLines(numLines: Number = -1): Array {
@@ -240,7 +243,7 @@ module ejs {
         /** 
             Read a string from the stream. 
             @param count of bytes to read. Returns the entire stream contents if count is -1.
-            @returns a string or null on eof.
+            @returns a string or null on EOF.
             @throws IOError if an I/O error occurs.
          */
         function readString(count: Number = -1): String
@@ -261,10 +264,16 @@ module ejs {
          */
         function writeLine(...lines): Number {
             let written = 0
-            for each (let line in lines) {
-                nextStream.write(line)
-                nextStream.write(newline)
-                written += line.length + newline.length
+            if (lines.length == 0) {
+                nextStream.write("\n");
+                written++
+            } else {
+                for each (let line in lines) {
+                    nextStream.write(line)
+                    /* If the file is opened in text mode, the lower layers will add "\r" for windows */
+                    nextStream.write("\n");
+                    written += line.length + 1
+                }
             }
             return written
         }
@@ -274,8 +283,8 @@ module ejs {
 /*
     @copy   default
     
-    Copyright (c) Embedthis Software LLC, 2003-2011. All Rights Reserved.
-    Copyright (c) Michael O'Brien, 1993-2011. All Rights Reserved.
+    Copyright (c) Embedthis Software LLC, 2003-2012. All Rights Reserved.
+    Copyright (c) Michael O'Brien, 1993-2012. All Rights Reserved.
     
     This software is distributed under commercial and open source licenses.
     You may use the GPL open source license described below or you may acquire 

@@ -7,10 +7,15 @@
 /********************************** Includes **********************************/
 
 #include    "ejs.h"
+#include    "pcre.h"
 
 /************************************ Forwards ********************************/
 
 static cchar *getPathString(Ejs *ejs, EjsObj *vp);
+static void getUserGroup(Ejs *ejs, EjsObj *attributes, int *uid, int *gid);
+static EjsArray *globPath(Ejs *ejs, EjsArray *results, cchar *path, cchar *base, cchar *pattern, int flags, 
+        EjsRegExp *exclude, EjsRegExp *include);
+static int globMatch(Ejs *ejs, cchar *s, cchar *pat, int isDir, int flags, cchar *seps, int count, cchar **nextPartPattern);
 
 /************************************ Helpers *********************************/
 
@@ -82,7 +87,8 @@ static EjsAny *invokePathOperator(Ejs *ejs, EjsPath *lhs, int opcode,  EjsPath *
         }
     }
 
-    /*  Types now match, both paths
+    /*  
+        Types now match, both paths
      */
     switch (opcode) {
     case EJS_OP_COMPARE_STRICTLY_EQ:
@@ -90,11 +96,11 @@ static EjsAny *invokePathOperator(Ejs *ejs, EjsPath *lhs, int opcode,  EjsPath *
         if (lhs == rhs || (lhs->value == rhs->value)) {
             return ESV(true);
         }
-        return ejsCreateBoolean(ejs,  scmp(lhs->value, rhs->value) == 0);
+        return ejsCreateBoolean(ejs,  mprSamePath(lhs->value, rhs->value));
 
     case EJS_OP_COMPARE_NE:
     case EJS_OP_COMPARE_STRICTLY_NE:
-        return ejsCreateBoolean(ejs,  scmp(lhs->value, rhs->value) != 0);
+        return ejsCreateBoolean(ejs,  !mprSamePath(lhs->value, rhs->value));
 
     case EJS_OP_COMPARE_LT:
         return ejsCreateBoolean(ejs,  scmp(lhs->value, rhs->value) < 0);
@@ -141,17 +147,20 @@ static EjsAny *invokePathOperator(Ejs *ejs, EjsPath *lhs, int opcode,  EjsPath *
 /************************************ Methods *********************************/
 /*
     Constructor
-    function Path(path: String)
+    function Path(path: String = ".")
  */
 static EjsPath *pathConstructor(Ejs *ejs, EjsPath *fp, int argc, EjsObj **argv)
 {
     cchar   *path;
 
-    mprAssert(argc == 1);
-    if ((path = getPathString(ejs, argv[0])) == 0) {
-        return fp;
+    if (argc >= 1) {
+        if ((path = getPathString(ejs, argv[0])) == 0) {
+            return fp;
+        }
+        fp->value = path;
+    } else {
+        fp->value = sclone(".");
     }
-    fp->value = path;
     return fp;
 }
 
@@ -183,6 +192,58 @@ static EjsDate *getAccessedDate(Ejs *ejs, EjsPath *fp, int argc, EjsObj **argv)
 
 
 /*
+    Get file attributes
+    function get attributes(): Object
+ */
+static EjsObj *getAttributes(Ejs *ejs, EjsPath *fp, int argc, EjsObj **argv)
+{
+    MprPath     info;
+    EjsObj      *attributes;
+
+    mprGetPathInfo(fp->value, &info);
+    if (!info.valid) {
+        return ESV(null);
+    }
+    attributes = ejsCreateEmptyPot(ejs);
+    ejsSetPropertyByName(ejs, attributes, EN("permissions"), ejsCreateStringFromAsc(ejs, sfmt("0%0o", info.perms)));
+    ejsSetPropertyByName(ejs, attributes, EN("uid"), ejsCreateNumber(ejs, info.owner));
+    ejsSetPropertyByName(ejs, attributes, EN("gid"), ejsCreateNumber(ejs, info.group));
+
+#if BIT_UNIX_LIKE
+    struct passwd   *pw;
+    struct group    *gp;
+    if ((pw = getpwuid(info.owner)) != 0) {
+        ejsSetPropertyByName(ejs, attributes, EN("user"), ejsCreateStringFromAsc(ejs, pw->pw_name));
+    }
+    if ((gp = getgrgid(info.group)) != 0) {
+        ejsSetPropertyByName(ejs, attributes, EN("group"), ejsCreateStringFromAsc(ejs, gp->gr_name));
+    }
+#endif
+    return attributes;
+}
+
+
+/*
+    Set file attributes
+    function attributes(options: Object)
+ */
+static EjsObj *path_setAttributes(Ejs *ejs, EjsPath *fp, int argc, EjsObj **argv)
+{
+    MprPath     info;
+    EjsObj      *attributes;
+
+    attributes = argv[0];
+    mprGetPathInfo(fp->value, &info);
+    if (!info.valid) {
+        ejsThrowIOError(ejs, "Can't access %s", fp->value);
+        return 0;
+    }
+    ejsSetPathAttributes(ejs, fp->value, attributes);
+    return 0;
+}
+
+
+/*
     Get the base name of a file
     function basename(): Path
  */
@@ -204,9 +265,11 @@ static EjsArray *getPathComponents(Ejs *ejs, EjsPath *fp, int argc, EjsObj **arg
     int             index;
 
     fs = mprLookupFileSystem(fp->value);
-    ap = ejsCreateArray(ejs, 0);
+    if ((ap = ejsCreateArray(ejs, 0)) == 0) {
+        return 0;
+    }
     index = 0;
-    for (last = cp = mprGetAbsPath(fp->value); *cp; cp++) {
+    for (last = cp = mprNormalizePath(fp->value); *cp; cp++) {
         if (*cp == fs->separators[0] || *cp == fs->separators[1]) {
             *cp++ = '\0';
             ejsSetProperty(ejs, ap, index++, ejsCreateStringFromAsc(ejs, last));
@@ -220,34 +283,70 @@ static EjsArray *getPathComponents(Ejs *ejs, EjsPath *fp, int argc, EjsObj **arg
 }
 
 
+int ejsSetPathAttributes(Ejs *ejs, cchar *path, EjsObj *attributes)
+{
+    EjsObj  *permissions;
+    int     perms;
+
+    if (attributes == 0) {
+        return 0;
+    }
+#if BIT_UNIX_LIKE
+{
+    int     uid, gid;
+    getUserGroup(ejs, attributes, &uid, &gid);
+    if (uid >= 0 || gid >= 0) {
+        if (chown(path, uid, gid) < 0) {
+            ejsThrowStateError(ejs, "Can't change group. Error %d", mprGetError());
+        }
+    }
+}
+#endif
+    if ((permissions = ejsGetPropertyByName(ejs, attributes, EN("permissions"))) != 0) {
+        perms = ejsGetInt(ejs, permissions);
+        if (chmod(path, perms) < 0) {
+            ejsThrowIOError(ejs, "Can't change permissions. Error %d", mprGetError());
+        }
+    }
+    return 0;
+}
+
+
 /*
     Copy a file
     function copy(to: Object, options: Object = null): Void
-    TODO - not implementing copy options parameter.
  */
 static EjsObj *copyPath(Ejs *ejs, EjsPath *fp, int argc, EjsObj **argv)
 {
     MprFile     *from, *to;
+    MprPath     info;
+    EjsObj      *options;
     cchar       *toPath;
     ssize       bytes;
     char        *buf;
 
-    mprAssert(argc == 1);
+    mprAssert(argc >= 1);
+    options = (argc >= 2) ? argv[1] : 0;
 
     from = to = 0;
     if ((toPath = getPathString(ejs, argv[0])) == 0) {
         return 0;
     }
-    from = mprOpenFile(fp->value, O_RDONLY | O_BINARY, 0);
-    if (from == 0) {
-        ejsThrowIOError(ejs, "Cant open %s", fp->value);
+    if ((from = mprOpenFile(fp->value, O_RDONLY | O_BINARY, 0)) == 0) {
+        ejsThrowIOError(ejs, "Can't open %s", fp->value);
         return 0;
     }
-    to = mprOpenFile(toPath, O_CREAT | O_WRONLY | O_TRUNC | O_BINARY, EJS_FILE_PERMS);
-    if (to == 0) {
-        ejsThrowIOError(ejs, "Cant create %s", toPath);
+    if ((to = mprOpenFile(toPath, O_CREAT | O_WRONLY | O_TRUNC | O_BINARY, EJS_FILE_PERMS)) == 0) {
+        ejsThrowIOError(ejs, "Can't create %s, errno %d", toPath, errno);
         mprCloseFile(from);
         return 0;
+    }
+    /* Keep perms of original file, don't inherit user/group (may not have permissions to create) */
+    if (mprGetPathInfo(fp->value, &info) >= 0 && info.valid) {
+        chmod(toPath, info.perms);
+    }
+    if (options) {
+        ejsSetPathAttributes(ejs, toPath, options);
     }
     if ((buf = mprAlloc(MPR_BUFSIZE)) == NULL) {
         ejsThrowMemoryError(ejs);
@@ -313,7 +412,7 @@ static EjsString *getPathExtension(Ejs *ejs, EjsPath *fp, int argc, EjsObj **arg
 {
     char    *ext;
 
-    if ((ext = mprGetPathExtension(fp->value)) == 0) {
+    if ((ext = mprGetPathExt(fp->value)) == 0) {
         return ESV(empty);
     }
     return ejsCreateStringFromAsc(ejs, ext);
@@ -348,7 +447,7 @@ static EjsAny *nextPathKey(Ejs *ejs, EjsIterator *ip, int argc, EjsObj **argv)
 static EjsAny *getPathIterator(Ejs *ejs, EjsPath *fp, int argc, EjsObj **argv)
 {
     fp->files = mprGetPathFiles(fp->value, 0);
-    return ejsCreateIterator(ejs, fp, nextPathKey, 0, NULL);
+    return ejsCreateIterator(ejs, fp, -1, nextPathKey, 0, NULL);
 }
 
 
@@ -382,68 +481,361 @@ static EjsAny *nextPathValue(Ejs *ejs, EjsIterator *ip, int argc, EjsObj **argv)
 static EjsAny *getPathValues(Ejs *ejs, EjsPath *fp, int argc, EjsObj **argv)
 {
     fp->files = mprGetPathFiles(fp->value, 0);
-    return ejsCreateIterator(ejs, fp, nextPathValue, 0, NULL);
+    return ejsCreateIterator(ejs, fp, -1, nextPathValue, 0, NULL);
+}
+
+
+#if UNUSED
+/*
+    Get the files in a directory and subdirectories
+    function files(options: Object = null): Array
+ */
+static EjsArray *path_files(Ejs *ejs, EjsPath *fp, int argc, EjsObj **argv)
+{
+    EjsObj      *options;
+    EjsAny      *vp;
+    EjsRegExp   *exclude, *include;
+    int         flags;
+
+    mprAssert(argc == 0 || argc == 1);
+    options = (argc == 1) ? argv[0]: 0;
+    exclude = include = 0;
+    flags = 0;
+
+    if (options) {
+        if (ejsGetPropertyByName(ejs, options, EN("descend")) == ESV(true)) {
+            flags |= FILES_DESCEND;
+        } 
+        if (ejsGetPropertyByName(ejs, options, EN("depthFirst")) == ESV(true)) {
+            flags |= FILES_DEPTH_FIRST;
+        }
+        if (ejsGetPropertyByName(ejs, options, EN("hidden")) == ESV(true)) {
+            flags |= FILES_HIDDEN;
+        }
+        if (ejsGetPropertyByName(ejs, options, EN("files")) == ESV(true)) {
+            flags |= FILES_NODIRS;
+        }
+        exclude = ejsGetPropertyByName(ejs, options, EN("exclude"));
+        if (exclude && !ejsIs(ejs, exclude, RegExp)) {
+            ejsThrowArgError(ejs, "Exclude option must be a regular expression");
+            return 0;
+        }
+        include = ejsGetPropertyByName(ejs, options, EN("include"));
+        if (include && !ejsIs(ejs, include, RegExp)) {
+            ejsThrowArgError(ejs, "Include option must be a regular expression");
+            return 0;
+        }
+        if ((vp = ejsGetPropertyByName(ejs, options, EN("missing"))) != 0) {
+            if (vp == ESV(undefined)) {
+                flags |= FILES_NOMATCH_EXC;
+            } else {
+                ejsThrowArgError(ejs, "Invalid option value for \"missing\" property");
+                return 0;
+            }
+        }
+        if (ejsGetPropertyByName(ejs, options, EN("relative")) == ESV(true)) {
+            flags |= FILES_RELATIVE;
+        } 
+    }
+    return getPathFiles(ejs, ejsCreateArray(ejs, 0), fp->value, flags, exclude, include);
+}
+
+
+static EjsArray *getPathFiles(Ejs *ejs, EjsArray *results, cchar *dir, int flags, EjsRegExp *exclude, EjsRegExp *include)
+{
+    MprDirEntry *dp;
+    MprList     *list;
+    cchar       *path;
+    int         next, included;
+
+    if ((list = mprGetPathFiles(dir, flags)) == 0) {
+        if (flags & FILES_NOMATCH_EXC) {
+            ejsThrowIOError(ejs, "Can't read directory");
+        }
+        return results;
+    }
+    for (next = 0; (dp = mprGetNextItem(list, &next)) != 0; ) {
+        path = dp->name;
+        included = 1;
+        if (include && pcre_exec(include->compiled, NULL, path, (int) slen(path), 0, 0, NULL, 0) < 0) {
+            included = 0;
+        }
+        if (exclude && pcre_exec(exclude->compiled, NULL, path, (int) slen(path), 0, 0, NULL, 0) >= 0) {
+            continue;
+        }
+        if (included) {
+            ejsSetProperty(ejs, results, -1, ejsCreatePathFromAsc(ejs, path));
+        }
+    }
+    if (ejsGetLength(ejs, results) == 0) {
+        if (flags & FILES_NOMATCH_EXC) {
+            ejsThrowIOError(ejs, "Can't find any matching files for directory: %s", dir);
+        }
+    }
+    return results;
+}
+#endif
+
+
+/*
+    Flags for path_files
+ */
+#define FILES_DESCEND           MPR_PATH_DESCEND
+#define FILES_DEPTH_FIRST       MPR_PATH_DEPTH_FIRST
+#define FILES_HIDDEN            MPR_PATH_INC_HIDDEN
+#define FILES_NODIRS            MPR_PATH_NODIRS
+#define FILES_RELATIVE          MPR_PATH_RELATIVE
+#define FILES_NOMATCH_EXC       0x10000                 /* Throw an exception if no matching files */
+#define FILES_CASELESS          0x20000
+
+/*
+    Get the files in a directory and subdirectories
+    function files(patterns: Array|String|Path, options: Object = null): Array
+ */
+EjsArray *ejsGetPathFiles(Ejs *ejs, EjsPath *fp, int argc, EjsObj **argv)
+{
+    MprFileSystem   *fs;
+    EjsAny          *vp, *fill;
+    EjsObj          *options;
+    EjsArray        *result, *patterns;
+    EjsRegExp       *exclude, *include;
+    char            *pattern, *start, *special;
+    cchar           *path, *base;
+    int             flags, i;
+
+    options = (argc >= 2) ? argv[1]: 0;
+    include = exclude = 0;
+    result = ejsCreateArray(ejs, 0);
+    fs = mprLookupFileSystem(fp->value);
+    flags = 0;
+    fill = 0;
+
+    if (argc == 0) {
+        patterns = ejsCreateArray(ejs, 0);
+        ejsAddItem(ejs, patterns, ejsCreateString(ejs, "**", -1));
+    } else if (!ejsIs(ejs, argv[0], Array)) {
+        patterns = ejsCreateArray(ejs, 0);
+        ejsAddItem(ejs, patterns, ejsToString(ejs, argv[0]));
+    } else {
+        patterns = (EjsArray*) argv[0];
+    }
+
+    if (options) {
+        if (ejsGetPropertyByName(ejs, options, EN("depthFirst")) == ESV(true)) {
+            flags |= FILES_DEPTH_FIRST;
+        }
+        if (ejsGetPropertyByName(ejs, options, EN("hidden")) == ESV(true)) {
+            flags |= FILES_HIDDEN;
+        }
+        exclude = ejsGetPropertyByName(ejs, options, EN("exclude"));
+        if (exclude && !ejsIs(ejs, exclude, RegExp)) {
+            ejsThrowArgError(ejs, "Exclude option must be a regular expression");
+            return 0;
+        }
+        include = ejsGetPropertyByName(ejs, options, EN("include"));
+        if (include && !ejsIs(ejs, include, RegExp)) {
+            ejsThrowArgError(ejs, "Include option must be a regular expression");
+            return 0;
+        }
+        if ((vp = ejsGetPropertyByName(ejs, options, EN("missing"))) != 0) {
+            if (vp == ESV(undefined)) {
+                flags |= FILES_NOMATCH_EXC;
+            } else if (vp == ESV(empty)) {
+                fill = ejsToPath(ejs, ejsToString(ejs, patterns));
+            } else if (vp != ESV(null)) {
+                fill = vp;
+            }
+        }
+        if (ejsGetPropertyByName(ejs, options, EN("relative")) == ESV(true)) {
+            flags |= FILES_RELATIVE;
+        } 
+    }
+    for (i = 0; i < patterns->length; i++) {
+        /* 
+            Optimize by converting absolute pattern path prefixes into the base directory.
+            This allows path.files('/path/ *')
+         */
+        pattern = ejsToMulti(ejs, ejsGetItem(ejs, patterns, i));
+        path = fp->value;
+        base = "";
+        if (mprIsPathAbs(pattern)) {
+            start = pattern;
+            if ((special = strpbrk(start, "*?")) != 0) {
+                if (special > start) {
+                    for (pattern = special; pattern > start && !strchr(fs->separators, *pattern); pattern--) { }
+                    if (pattern > start) {
+                        *pattern++ = '\0';
+                        path = mprJoinPath(path, start);
+                        base = start;
+                    }
+                }
+            } else {
+                pattern = (char*) mprGetPathBaseRef(start);
+                if (pattern > start) {
+                    pattern[-1] = '\0';
+                    path = mprJoinPath(path, start);
+                    base = start;
+                }
+            }
+        }
+        if (!globPath(ejs, result, path, base, pattern, flags, exclude, include)) {
+            return 0;
+        }
+    }
+    if (ejsGetLength(ejs, result) == 0) {
+        if (flags & FILES_NOMATCH_EXC) {
+            ejsThrowIOError(ejs, "Can't find any matching files for patterns: %@", ejsToString(ejs, patterns));
+        } else if (fill) {
+            ejsSetProperty(ejs, result, -1, fill);
+        }
+    }
+    return result;
 }
 
 
 /*
-    Get the files in a directory.
-    function getFiles(enumDirs: Boolean = false): Array
+    Match a string against a pattern using glob style matching.
+    Pat may contain a fully path of patterns. Only the first portion up to a file separator is used. The remaining portion
+        is returned in nextPartPattern.
+    seps contains the file system separator characters
 
-    TODO - need pattern to match (what about "." and ".." and ".*")
-    TODO - move this functionality into mprFile (see appweb dirHandler.c)
+    Wildcard Patterns:
+    ?           Matches any single character
+    *           Matches zero or more characters of the file or directory
+    ** /        Matches zero or more directories (spaces introduced to avoid closing comment)
+    **          Matches zero or more files or directories. Equivlane to ** / *
+    trailing/   Trailing slash matches only directory
  */
-static EjsArray *getPathFiles(Ejs *ejs, EjsPath *fp, int argc, EjsObj **argv)
+static int globMatch(Ejs *ejs, cchar *s, cchar *pat, int isDir, int flags, cchar *seps, int count, cchar **nextPartPattern)
 {
-    EjsArray        *array;
-    MprList         *list;
-    MprDirEntry     *dp;
-    char            *path;
-    bool            enumDirs, noPath;
-    int             next;
+    int     match;
+//  MOB - need recursion limits
+    *nextPartPattern = 0;
 
-    mprAssert(argc == 0 || argc == 1);
-    enumDirs = (argc == 1) ? ejsGetBoolean(ejs, argv[0]): 0;
-
-    array = ejsCreateArray(ejs, 0);
-    if (array == 0) {
-        return 0;
-    }
-    list = mprGetPathFiles(fp->value, enumDirs);
-    if (list == 0) {
-        ejsThrowIOError(ejs, "Can't read directory");
-        return 0;
-    }
-    noPath = (fp->value[0] == '.' && fp->value[1] == '\0') || 
-        (fp->value[0] == '.' && fp->value[1] == '/' && fp->value[2] == '\0');
-
-    for (next = 0; (dp = mprGetNextItem(list, &next)) != 0; ) {
-        if (strcmp(dp->name, ".") == 0 || strcmp(dp->name, "..") == 0) {
-            continue;
-        }
-        if (enumDirs || !(dp->isDir)) {
-            if (noPath) {
-                ejsSetProperty(ejs, array, -1, ejsCreatePathFromAsc(ejs, dp->name));
-            } else {
-                /*
-                    Prepend the directory name
-                 */
-                path = mprJoinPath(fp->value, dp->name);
-                ejsSetProperty(ejs, array, -1, ejsCreatePathFromAsc(ejs, path));
+    while (*s && *pat && *pat != seps[0] && *pat != seps[1]) {
+        match = (flags & FILES_CASELESS) ? (*pat == *s) : (tolower((uchar) *pat) == tolower((uchar) *s));
+        if (match || *pat == '?') {
+            ++pat; ++s;
+        } else if (*pat == '*') {
+            if (*++pat == '\0') {
+                /* Terminal star matches files and directories */
+                return 1;
             }
+            if (*pat == '*') {
+                /* Double star - matches zero or more directories */
+                if (isDir) {
+                    *nextPartPattern = pat - 1;
+                    return 1;
+                }
+                if (pat[1] && (pat[1] == seps[0] || pat[1] == seps[1])) {
+                    /* Double star/ */
+                    if (pat[2] == '\0') {
+                        /* Trailing slash and not a directory */
+                        return 0;
+                    }
+                    pat += 2;
+                } else {
+                    /* Plain double star matches all (alias for ** / *) */
+                    if (pat[1] == '\0') {
+                        *nextPartPattern = pat - 1;
+                        return 1;
+                    }
+                }
+            } else {
+                /* Single star */
+                if (count > 2000) {
+                    ejsThrowArgError(ejs, "Glob match is too recursive");
+                    return 0;
+                }
+                if (*pat == seps[0] || *pat == seps[1]) {
+                    s = "";
+                    break;
+                }
+                while (*s) {
+                    if (globMatch(ejs, s++, pat, isDir, flags, seps, count + 1, nextPartPattern)) {
+                        return 1;
+                    }
+                }
+                return 0;
+            }
+        } else {
+            return 0;
         }
     }
-    return array;
-}
-
-
-#if FUTURE
-static EjsObj *fileSystem(Ejs *ejs, EjsPath *fp, int argc, EjsObj **argv)
-{
-    //  TODO
+    if (*pat == '*') {
+        ++pat;
+    }
+    if (*s) {
+        return 0;
+    }
+    if (*pat == '\0') {
+        return 1;
+    }
+    if (*pat && (*pat == seps[0] || *pat == seps[1])) {
+        if (*++pat == '\0') {
+            /* Terminal / matches only directories */
+            return isDir;
+        }
+        *nextPartPattern = pat;
+        return 1;
+    }
     return 0;
 }
-#endif
+
+
+static EjsArray *globPath(Ejs *ejs, EjsArray *results, cchar *path, cchar *base, cchar *pattern, int flags, 
+        EjsRegExp *exclude, EjsRegExp *include)
+{
+    MprFileSystem   *fs;
+    MprDirEntry     *dp;
+    MprList         *list;
+    cchar           *filename, *nextPartPattern, *nextPath, *matchFile;
+    int             next, add;
+
+    if ((list = mprGetPathFiles(path, flags | MPR_PATH_RELATIVE)) == 0) {
+        if (flags & FILES_NOMATCH_EXC) {
+            ejsThrowIOError(ejs, "Can't read directory");
+            return 0;
+        }
+        return results;
+    }
+    fs = mprLookupFileSystem(path);
+
+    for (next = 0; (dp = mprGetNextItem(list, &next)) != 0; ) {
+        if (!globMatch(ejs, dp->name, pattern, dp->isDir, flags, fs->separators, 0, &nextPartPattern)) {
+            continue;
+        }
+        add = 1;
+        //  MOB - OPT
+        if (nextPartPattern && strcmp(nextPartPattern, "**") != 0 && strcmp(nextPartPattern, "**/") != 0
+                   && strcmp(nextPartPattern, "**/*") != 0) {
+            /* Double star matches zero or more */
+            add = 0;
+        }
+        filename = (flags & MPR_PATH_RELATIVE) ? mprJoinPath(base, dp->name) : mprJoinPath(path, dp->name);
+        if (add && (include || exclude)) {
+            matchFile = dp->isDir ? sjoin(filename, "/", NULL) : filename;
+            if (include && pcre_exec(include->compiled, NULL, matchFile, (int) slen(matchFile), 0, 0, NULL, 0) < 0) {
+                add = 0;
+            }
+            if (exclude && pcre_exec(exclude->compiled, NULL, matchFile, (int) slen(matchFile), 0, 0, NULL, 0) >= 0) {
+                add = 0;
+            }
+        }
+        if (!(flags & FILES_DEPTH_FIRST) && add) {
+            /* Exclude mid-pattern directories and terminal directories if only "files" */
+            ejsSetProperty(ejs, results, -1, ejsCreatePathFromAsc(ejs, filename));
+        }
+        if (dp->isDir && nextPartPattern) {
+            nextPath = (flags & MPR_PATH_RELATIVE) ? mprJoinPath(path, dp->name) : filename;
+            globPath(ejs, results, nextPath, filename, nextPartPattern, flags, exclude, include);
+        }
+        if ((flags & FILES_DEPTH_FIRST) && add) {
+            ejsSetProperty(ejs, results, -1, ejsCreatePathFromAsc(ejs, filename));
+        }
+    }
+    return results;
+}
 
 
 /*
@@ -453,7 +845,7 @@ static EjsObj *fileSystem(Ejs *ejs, EjsPath *fp, int argc, EjsObj **argv)
 static EjsBoolean *pathHasDrive(Ejs *ejs, EjsPath *fp, int argc, EjsObj **argv)
 {
     return ejsCreateBoolean(ejs, 
-        (isalpha((int) fp->value[0]) && fp->value[1] == ':' && (fp->value[2] == '/' || fp->value[2] == '\\')));
+        (isalpha((uchar) fp->value[0]) && fp->value[1] == ':' && (fp->value[2] == '/' || fp->value[2] == '\\')));
 }
 
 
@@ -462,7 +854,7 @@ static EjsBoolean *pathHasDrive(Ejs *ejs, EjsPath *fp, int argc, EjsObj **argv)
  */
 static EjsBoolean *isPathAbsolute(Ejs *ejs, EjsPath *fp, int argc, EjsObj **argv)
 {
-    return (mprIsAbsPath(fp->value) ? ESV(true): ESV(false));
+    return (mprIsPathAbs(fp->value) ? ESV(true): ESV(false));
 }
 
 
@@ -486,10 +878,11 @@ static EjsBoolean *isPathDir(Ejs *ejs, EjsPath *fp, int argc, EjsObj **argv)
 static EjsBoolean *isPathLink(Ejs *ejs, EjsPath *fp, int argc, EjsObj **argv)
 {
     MprPath     info;
-    int         rc;
 
-    rc = mprGetPathInfo(fp->value, &info);
-    return ejsCreateBoolean(ejs, rc == 0 && info.isLink);
+    //  MOB -work around. GetPathInfo will return err if the target of the symlink does not exist.
+    info.isLink = 0;
+    mprGetPathInfo(fp->value, &info);
+    return ejsCreateBoolean(ejs, info.isLink);
 }
 
 
@@ -511,7 +904,7 @@ static EjsBoolean *isPathRegular(Ejs *ejs, EjsPath *fp, int argc, EjsObj **argv)
  */
 static EjsBoolean *isPathRelative(Ejs *ejs, EjsPath *fp, int argc, EjsObj **argv)
 {
-    return (mprIsRelPath(fp->value) ? ESV(true): ESV(false));
+    return (mprIsPathRel(fp->value) ? ESV(true): ESV(false));
 }
 
 
@@ -538,22 +931,29 @@ static EjsPath *joinPath(Ejs *ejs, EjsPath *fp, int argc, EjsObj **argv)
 
 
 /*
-    Join extension
+    Join extension. This will add an extension if one does not already exist. 
+    If force is true, the extension will be added. This is for path names that have embedded periods.
   
-    function joinExt(ext: String): Path
+    function joinExt(ext: String, force: Boolean = false): Path
  */
 static EjsPath *joinPathExt(Ejs *ejs, EjsPath *fp, int argc, EjsObj **argv)
 {
     cchar   *ext;
+    int     force;
 
-    if (mprGetPathExtension(fp->value)) {
+    force = (argc >= 2 && argv[1] == ESV(true)) ? 1 : 0;
+    if (mprGetPathExt(fp->value) && !force) {
         return fp;
     }
     ext = ejsToMulti(ejs, argv[0]);
     while (ext && *ext == '.') {
         ext++;
     }
-    return ejsCreatePathFromAsc(ejs, sjoin(fp->value, ".", ext, NULL));
+    if (ext && *ext) {
+        return ejsCreatePathFromAsc(ejs, sjoin(fp->value, ".", ext, NULL));
+    }
+    //  MOB - should this clone?
+    return fp;
 }
 
 
@@ -583,50 +983,83 @@ static EjsPath *pathLinkTarget(Ejs *ejs, EjsPath *fp, int argc, EjsObj **argv)
 
 
 /*
-    function makeDir(options: Object = null): Void
+    Get user/group from an attributes hash. Looks at group, user, gid and uid. If both user and uid are specified,
+    user takes precedence. If both group and gid are specified, then group takes precedence.
+ */
+static void getUserGroup(Ejs *ejs, EjsObj *attributes, int *uid, int *gid)
+{
+#if BIT_UNIX_LIKE
+    EjsAny          *vp;
+    struct passwd   *pp;
+    struct group    *gp;
+
+    *uid = *gid = -1;
+    if ((vp = ejsGetPropertyByName(ejs, attributes, EN("group"))) != 0 && ejsIsDefined(ejs, vp)) {
+        vp = ejsToString(ejs, vp);
+        //  MOB - these are thread-safe on mac, but not on all systems. use getgrnam_r
+        if ((gp = getgrnam(ejsToMulti(ejs, vp))) == 0) {
+            ejsThrowArgError(ejs, "Can't find group %@", vp);
+            return;
+        }
+        *gid = gp->gr_gid;
+
+    } else if ((vp = ejsGetPropertyByName(ejs, attributes, EN("gid"))) != 0 && ejsIsDefined(ejs, vp)) {
+        if (ejsIs(ejs, vp, Number)) {
+            *gid = ejsGetInt(ejs, vp);
+        }
+    }
+    if ((vp = ejsGetPropertyByName(ejs, attributes, EN("user"))) != 0 && ejsIsDefined(ejs, vp)) {
+        if ((pp = getpwnam(ejsToMulti(ejs, vp))) == 0) {
+            ejsThrowArgError(ejs, "Can't find user %@", vp);
+            return;
+        }
+        *uid = pp->pw_uid;
+    } else if ((vp = ejsGetPropertyByName(ejs, attributes, EN("uid"))) != 0 && ejsIsDefined(ejs, vp)) {
+        if (ejsIs(ejs, vp, Number)) {
+            *uid = ejsGetInt(ejs, vp);
+        }
+    }
+#else
+    *uid = *gid = -1;
+#endif
+}
+
+
+/*
+    function makeDir(attributes: Object = null): Void
   
     Options: permissions, owner, group
  */
 static EjsObj *makePathDir(Ejs *ejs, EjsPath *fp, int argc, EjsObj **argv)
 {
     MprPath     info;
-    EjsObj      *options, *permissions;
-#if FUTURE
-    EjsObj      *owner, *group;
-    cchar       *ownerName, *groupName;
-#endif
-    int         perms;
+    EjsObj      *attributes, *permissions;
+    int         rc, perms, uid, gid;
     
+    attributes = (argc >= 1) ? argv[0] : 0;
     perms = 0755;
-
+    gid = uid = -1;
     if (argc == 1) {
-        options = argv[0];
-
-        permissions = ejsGetPropertyByName(ejs, options, N(EJS_PUBLIC_NAMESPACE, "permissions"));
-#if FUTURE
-        owner = ejsGetPropertyByName(ejs, options, N(EJS_PUBLIC_NAMESPACE, "owner"));
-        group = ejsGetPropertyByName(ejs, options, N(EJS_PUBLIC_NAMESPACE, "group"));
-#endif
-        if (permissions) {
+        getUserGroup(ejs, attributes, &uid, &gid);
+        if ((permissions = ejsGetPropertyByName(ejs, attributes, EN("permissions"))) != 0) {
             perms = ejsGetInt(ejs, permissions);
         }
     }
-    if (mprGetPathInfo(fp->value, &info) == 0 && info.isDir) {
-        return 0;
+    if (mprGetPathInfo(fp->value, &info) < 0) {
+        if ((rc = mprMakeDir(fp->value, perms, uid, gid, 1)) < 0) {
+            if (rc == MPR_ERR_CANT_COMPLETE) {
+                ejsThrowStateError(ejs, "Can't set directory permissions. Error %d", mprGetError());
+            } else {
+                ejsThrowStateError(ejs, "Can't make directory. Error %d", mprGetError());
+            }
+            return ESV(false);
+        }
+        ejsSetPathAttributes(ejs, fp->value, attributes);
+    } else if (!info.isDir) {
+        /* Not a directory */
+        return ESV(false);
     }
-    if (mprMakeDir(fp->value, perms, 1) < 0) {
-        ejsThrowIOError(ejs, "Cant create directory %s", fp->value);
-        return 0;
-    }
-#if FUTURE
-    if (owner) {
-        ownerName = ejsToMulti(ejs, owner);
-    }
-    if (group) {
-        groupName = ejsToMulti(ejs, group);
-    }
-#endif
-    return 0;
+    return ESV(true);
 }
 
 
@@ -732,7 +1165,7 @@ static EjsPath *getNaturalPath(Ejs *ejs, EjsPath *fp, int argc, EjsObj **argv)
  */
 static EjsPath *normalizePath(Ejs *ejs, EjsPath *fp, int argc, EjsObj **argv)
 {
-    return ejsCreatePathFromAsc(ejs, mprGetNormalizedPath(fp->value));
+    return ejsCreatePathFromAsc(ejs, mprNormalizePath(fp->value));
 }
 
 
@@ -984,7 +1417,21 @@ static EjsXML *readXML(Ejs *ejs, EjsPath *fp, int argc, EjsObj **argv)
  */
 static EjsPath *relativePath(Ejs *ejs, EjsPath *fp, int argc, EjsObj **argv)
 {
-    return ejsCreatePathFromAsc(ejs, mprGetRelPath(fp->value));
+    return ejsCreatePathFromAsc(ejs, mprGetRelPath(fp->value, 0));
+}
+
+
+/*
+    Return a relative path name for the file from the given origin
+  
+    function relativeTo(origin: Path = null): Path
+ */
+static EjsPath *relativeToPath(Ejs *ejs, EjsPath *fp, int argc, EjsObj **argv)
+{
+    cchar   *origin;
+
+    origin = (argc >= 1) ? ((EjsPath*) argv[0])->value : 0;
+    return ejsCreatePathFromAsc(ejs, mprGetRelPath(fp->value, origin));
 }
 
 
@@ -997,7 +1444,9 @@ static EjsObj *removePath(Ejs *ejs, EjsPath *fp, int argc, EjsObj **argv)
 {
     MprPath     info;
 
-    if (mprGetPathInfo(fp->value, &info) == 0) {
+    //  MOB - workaround for isLink
+    info.isLink = 0;
+    if (mprGetPathInfo(fp->value, &info) == 0 || info.isLink == 1) {
         if (mprDeletePath(fp->value) < 0) {
             return ESV(false);
         }
@@ -1009,20 +1458,19 @@ static EjsObj *removePath(Ejs *ejs, EjsPath *fp, int argc, EjsObj **argv)
 /*
     Rename the file
   
-    function rename(to: String): Void
+    function rename(to: Path): Boolean
  */
 static EjsObj *renamePathFile(Ejs *ejs, EjsPath *fp, int argc, EjsObj **argv)
 {
-    cchar    *to;
+    EjsPath     *to;
 
-    mprAssert(argc == 1 && ejsIs(ejs, argv[0], String));
-    to = ejsToMulti(ejs, argv[0]);
-    unlink((char*) to);
-    if (rename(fp->value, to) < 0) {
-        ejsThrowIOError(ejs, "Cant rename file %s to %s", fp->value, to);
-        return 0;
+    mprAssert(argc == 1 && ejsIs(ejs, argv[0], Path));
+    to = (EjsPath*) argv[0];
+    unlink((char*) to->value);
+    if (rename(fp->value, to->value) < 0) {
+        return ESV(false);
     }
-    return 0;
+    return ESV(true);
 }
 
 
@@ -1051,6 +1499,25 @@ static EjsPath *resolvePath(Ejs *ejs, EjsPath *fp, int argc, EjsObj **argv)
 
 
 /*
+    Return the root directory component
+  
+    function root(other: Object): Boolean
+ */
+static EjsPath *rootPath(Ejs *ejs, EjsPath *fp, int argc, EjsObj **argv)
+{
+    MprFileSystem   *fs;
+    cchar           *cp;
+
+    fs = mprLookupFileSystem(fp->value);
+    fp = ejsCreatePathFromAsc(ejs, mprGetAbsPath(fp->value));
+    if ((cp = strpbrk(fp->value, fs->separators)) != 0) {
+        return ejsCreatePathFromAsc(ejs, snclone(fp->value, cp - fp->value + 1));
+    }
+    return fp;
+}
+
+
+/*
     Return true if the paths refer to the same file.
   
     function same(other: Object): Boolean
@@ -1058,6 +1525,7 @@ static EjsPath *resolvePath(Ejs *ejs, EjsPath *fp, int argc, EjsObj **argv)
 static EjsBoolean *isPathSame(Ejs *ejs, EjsPath *fp, int argc, EjsObj **argv)
 {
     cchar   *other;
+    int     rc;
 
     if (ejsIs(ejs, argv[0], String)) {
         other = ejsToMulti(ejs, argv[0]);
@@ -1066,7 +1534,12 @@ static EjsBoolean *isPathSame(Ejs *ejs, EjsPath *fp, int argc, EjsObj **argv)
     } else {
         return ESV(false);
     }
-    return (mprSamePath(fp->value, other) ? ESV(true) : ESV(false));
+    rc = mprSamePath(fp->value, other);
+    if (rc) {
+        return ESV(true);
+    }
+    return ESV(false);
+    // return (mprSamePath(fp->value, other) ? ESV(true) : ESV(false));
 }
 
 
@@ -1097,6 +1570,38 @@ static EjsNumber *getPathFileSize(Ejs *ejs, EjsPath *fp, int argc, EjsObj **argv
         return ESV(minusOne);
     }
     return ejsCreateNumber(ejs, (MprNumber) fp->info.size);
+}
+
+
+/**
+    function symlink(target: Path): Void
+
+    Create the path as a symbolic link.
+    This will remove any pre-existing path and then create a symbolic link to refer to the target.
+    NOTE: this will copy the target on systems that don't support symlinks
+    NOTE: this will re-create the link if it already exists
+  */
+static EjsVoid *path_symlink(Ejs *ejs, EjsPath *fp, int argc, EjsObj **argv)
+{
+    cchar   *target;
+
+    if ((target = ejsToMulti(ejs, argv[0])) == 0) {
+        return 0;
+    }
+    unlink(fp->value);
+#if BIT_UNIX_LIKE
+    if (symlink(target, fp->value) < 0) {
+        ejsThrowIOError(ejs, "Can't create symlink %s to refer to %s, error %d", fp->value, target, errno);
+        return 0;
+    }
+#else
+    //  MOB - does not work for directories
+    if (mprCopyPath(target, fp->value, 0644) < 0) {
+        ejsThrowIOError(ejs, "Can't copy %s to %s, error %d", target, fp->value, errno);
+        return 0;
+    }
+#endif
+    return 0;
 }
 
 
@@ -1140,7 +1645,7 @@ static EjsString *pathToString(Ejs *ejs, EjsPath *fp, int argc, EjsObj **argv)
  */
 static EjsPath *trimExt(Ejs *ejs, EjsPath *fp, int argc, EjsObj **argv)
 {
-    return ejsCreatePathFromAsc(ejs, mprTrimPathExtension(fp->value));
+    return ejsCreatePathFromAsc(ejs, mprTrimPathExt(fp->value));
 }
 
 
@@ -1153,9 +1658,19 @@ static EjsObj *truncatePath(Ejs *ejs, EjsPath *fp, int argc, EjsObj **argv)
 
     size = ejsGetInt(ejs, argv[0]);
     if (mprTruncateFile(fp->value, size) < 0) {
-        ejsThrowIOError(ejs, "Cant truncate %s", fp->value);
+        ejsThrowIOError(ejs, "Can't truncate %s", fp->value);
     }
     return 0;
+}
+
+
+/*
+    Return a windows path name for the path on Windows|Cygwin systems. Otherwise returns and absolute path.
+    function get absolute(): Path
+ */
+static EjsPath *windowsPath(Ejs *ejs, EjsPath *fp, int argc, EjsObj **argv)
+{
+    return ejsCreatePathFromAsc(ejs, mprGetWinPath(fp->value));
 }
 
 
@@ -1184,7 +1699,7 @@ static EjsObj *writeToFile(Ejs *ejs, EjsPath *fp, int argc, EjsObj **argv)
     mprDeletePath(path);
     file = mprOpenFile(path, O_CREAT | O_WRONLY | O_BINARY, permissions);
     if (file == 0) {
-        ejsThrowIOError(ejs, "Cant create %s", path);
+        ejsThrowIOError(ejs, "Can't create %s", path);
         mprCloseFile(file);
         return 0;
     }
@@ -1269,6 +1784,7 @@ void ejsConfigurePathType(Ejs *ejs)
     ejsBindConstructor(ejs, type, pathConstructor);
     ejsBindMethod(ejs, prototype, ES_Path_absolute, absolutePath);
     ejsBindMethod(ejs, prototype, ES_Path_accessed, getAccessedDate);
+    ejsBindAccess(ejs, prototype, ES_Path_attributes, getAttributes, NULL);
     ejsBindMethod(ejs, prototype, ES_Path_basename, getPathBasename);
     ejsBindMethod(ejs, prototype, ES_Path_components, getPathComponents);
     ejsBindMethod(ejs, prototype, ES_Path_copy, copyPath);
@@ -1276,7 +1792,10 @@ void ejsConfigurePathType(Ejs *ejs)
     ejsBindMethod(ejs, prototype, ES_Path_dirname, getPathDirname);
     ejsBindMethod(ejs, prototype, ES_Path_exists, getPathExists);
     ejsBindMethod(ejs, prototype, ES_Path_extension, getPathExtension);
-    ejsBindMethod(ejs, prototype, ES_Path_files, getPathFiles);
+#if UNUSED
+    ejsBindMethod(ejs, prototype, ES_Path_files, path_files);
+#endif
+    ejsBindMethod(ejs, prototype, ES_Path_files, ejsGetPathFiles);
     ejsBindMethod(ejs, prototype, ES_Path_iterator_get, getPathIterator);
     ejsBindMethod(ejs, prototype, ES_Path_iterator_getValues, getPathValues);
     ejsBindMethod(ejs, prototype, ES_Path_hasDrive, pathHasDrive);
@@ -1302,24 +1821,29 @@ void ejsConfigurePathType(Ejs *ejs)
     ejsBindAccess(ejs, prototype, ES_Path_perms, getPerms, setPerms);
     ejsBindMethod(ejs, prototype, ES_Path_portable, getPortablePath);
     ejsBindMethod(ejs, prototype, ES_Path_relative, relativePath);
+    ejsBindMethod(ejs, prototype, ES_Path_relativeTo, relativeToPath);
     ejsBindMethod(ejs, prototype, ES_Path_remove, removePath);
     ejsBindMethod(ejs, prototype, ES_Path_rename, renamePathFile);
     ejsBindMethod(ejs, prototype, ES_Path_resolve, resolvePath);
+    ejsBindMethod(ejs, prototype, ES_Path_root, rootPath);
     ejsBindMethod(ejs, prototype, ES_Path_same, isPathSame);
     ejsBindMethod(ejs, prototype, ES_Path_separator, pathSeparator);
+    ejsBindMethod(ejs, prototype, ES_Path_setAttributes, path_setAttributes);
     ejsBindMethod(ejs, prototype, ES_Path_size, getPathFileSize);
+    ejsBindMethod(ejs, prototype, ES_Path_symlink, path_symlink);
     ejsBindMethod(ejs, prototype, ES_Path_toJSON, pathToJSON);
     ejsBindMethod(ejs, prototype, ES_Path_toString, pathToString);
     ejsBindMethod(ejs, prototype, ES_Path_trimExt, trimExt);
     ejsBindMethod(ejs, prototype, ES_Path_truncate, truncatePath);
+    ejsBindMethod(ejs, prototype, ES_Path_windows, windowsPath);
 }
 
 
 /*
     @copy   default
 
-    Copyright (c) Embedthis Software LLC, 2003-2011. All Rights Reserved.
-    Copyright (c) Michael O'Brien, 1993-2011. All Rights Reserved.
+    Copyright (c) Embedthis Software LLC, 2003-2012. All Rights Reserved.
+    Copyright (c) Michael O'Brien, 1993-2012. All Rights Reserved.
 
     This software is distributed under commercial and open source licenses.
     You may use the GPL open source license described below or you may acquire
@@ -1331,7 +1855,7 @@ void ejsConfigurePathType(Ejs *ejs)
     under the terms of the GNU General Public License as published by the
     Free Software Foundation; either version 2 of the License, or (at your
     option) any later version. See the GNU General Public License for more
-    details at: http://www.embedthis.com/downloads/gplLicense.html
+    details at: http://embedthis.com/downloads/gplLicense.html
 
     This program is distributed WITHOUT ANY WARRANTY; without even the
     implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.
@@ -1340,7 +1864,7 @@ void ejsConfigurePathType(Ejs *ejs)
     proprietary programs. If you are unable to comply with the GPL, you must
     acquire a commercial license to use this software. Commercial licenses
     for this software and support services are available from Embedthis
-    Software at http://www.embedthis.com
+    Software at http://embedthis.com
 
     Local variables:
     tab-width: 4

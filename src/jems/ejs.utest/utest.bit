@@ -1,0 +1,38 @@
+/*
+    utest.bit -- Bit File for ejs.utest
+ */
+
+Bit.load({
+
+    targets: {
+        'utest.es': {
+            path: '${BIN}/utest.es',
+            files: [ 'utest.es' ],
+            build: "
+                trace('Export', bit.target.files)
+                cp('utest.es', bit.dir.bin)
+            ",
+            generate: 'cp utest.es ${BIN}',
+            platforms: [ 'local' ],
+        },
+
+        'utest.worker': {
+            path: '${BIN}/utest.worker',
+            files: [ 'utest.worker' ],
+            build: "
+                trace('Export', bit.target.files)
+                cp('utest.worker', bit.dir.bin)
+            ",
+            generate: 'cp utest.worker ${BIN}',
+            platforms: [ 'local' ],
+        },
+
+        'utest.exe': {
+            type: 'file',
+            path: '${BIN}/utest${EXE}',
+            files: [ '${BIN}/ejsrun${EXE}' ],
+            depends: ['ejsrun'],
+            platforms: [ 'local' ],
+        },
+	},
+})

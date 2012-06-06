@@ -2,7 +2,7 @@
     form.tst -- Test a form and post-back
  */
 
-const HTTP = ":" + (App.config.test.http_port || "6700")
+const HTTP = App.config.uris.http
 
 var http: Http = new Http
 

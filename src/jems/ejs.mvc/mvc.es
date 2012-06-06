@@ -27,7 +27,7 @@ class EjsMvc {
 
     private var appName: String
     private var buildAll: Boolean
-    private var cmd: CmdArgs
+    private var args: Args
     private var database: String = "sqlite"
     private var dirs: Object
     private var config: Object = {}
@@ -76,13 +76,8 @@ class EjsMvc {
         dirs = config.dirs
         dirs.home = App.dir
         //  TODO -- should these come from ejsrc
-        if (Config.OS == "WIN") {
-            dirs.lib = App.exeDir.join("../bin")
-            dirs.mod = App.exeDir.join("../bin")
-        } else {
-            dirs.lib = App.exeDir.join("../lib")
-            dirs.mod = App.exeDir.join("../modules")
-        }
+        dirs.bin = Config.Bin
+        dirs.mod = Config.Bin
         for (d in dirs) {
             dirs[d] = Path(dirs[d])
         }
@@ -91,41 +86,47 @@ class EjsMvc {
         mvc = Path(App.args[0]).basename
     }
 
-    private var cmdOptions = [
-        [ [ "apply", "a" ] ],
-        [ "database", String ],
-        [ "debug" ],
-        [ "full" ],
-        [ [ "keep", "k" ] ],
-        [ "layout", String ],
-        [ "listen", String ],
-        [ "min" ],
-        [ "overwrite" ],
-        [ [ "quiet", "q" ] ],
-        [ "reverse" ],
-        [ "search", String ],
-        [ [ "verbose", "v" ] ],
-    ]
+    private var argsTemplate = {
+        options: {
+            apply: { alias: 'a' },
+            database: { range: String },
+            debug: {},
+            full: {},
+            keep: { alias: 'k' },
+            layout: { range: String },
+            log: { alias: 'l', range: String },
+            listen: { range: String },
+            min: {},
+            overwrite: {},
+            quiet: { alias: 'q' },
+            reverse: {}
+            search: { range: String },
+            verbose: { alias: 'v' },
+        },
+        usage: usage,
+    }
 
     function usage(): Void {
-        error("\nUsage: " + mvc + " [options] [commands] ...\n" +
+        stderr.writeLine("\nUsage: mvc [options] [commands] ...\n" +
             "  Options:\n" + 
             "    --apply                      # Apply migrations\n" + 
             "    --database [sqlite | mysql]  # Sqlite only currently supported adapter\n" + 
-            "    --full\n" + 
-            "    --keep\n" + 
-            "    --layout layoutPage\n" + 
-            "    --listen port\n" + 
-            "    --min\n" + 
+            "    --full                       # Generate all directories\n" + 
+            "    --keep                       # Keep intermediate source in cache\n" + 
+            "    --layout layoutPage          # Specify a default layout page\n" + 
+            '    --log logSpec                # Save errors to a log file\n' +
+            "    --listen port                # Port on which to listen for Http\n" + 
+            "    --min                        # Generate mininally\n" + 
             "    --reverse                    # Reverse generated migrations\n" + 
-            "    --overwrite\n" + 
-            "    --quiet\n" + 
-            "    --verbose\n")
+            "    --overwrite                  # Overwrite existing files\n" + 
+            "    --quiet                      # Don't trace activity to console\n" + 
+            "    --search searchPath          # Specify a module search path\n" + 
+            "    --verbose                    # Increase trace verbosity\n")
 
-        let pre = "    " + mvc + " "
-        error("  Commands:\n" +
+        let pre = "    mvc "
+        stderr.writeLine("  Commands:\n" +
             pre + "clean\n" +
-            pre + "compile [flat | app | controller names | view names]\n" +
+            pre + "compile [flat | app | controller_names | view_names]\n" +
             pre + "compile path/name.ejs ...\n" +
             pre + "generate app name\n" + 
             pre + "generate controller name [action [, action] ...]\n" + 
@@ -150,15 +151,10 @@ class EjsMvc {
         App.exit(1)
     }
     function main() {
+        args = Args(argsTemplate)
         try {
-            cmd = CmdArgs(cmdOptions)
-        } catch (e) {
-            error(e cast String)
-            usage()
-        }
-        try {
-            processOptions(cmd)
-            if (cmd.args.length == 0) {
+            processOptions(args)
+            if (args.rest.length == 0) {
                 usage()
             }
             process()
@@ -175,15 +171,20 @@ class EjsMvc {
     }
 
     function error(...args): Void
-        App.errorStream.write(args.join(" "))
+        App.errorStream.write(args.join(" ") + "\n")
 
-    function processOptions(cmd: CmdArgs) {
-        options = cmd.options
+    function processOptions(args: Args) {
+        options = args.options
         if (options.search) {
             App.search = options.search.split(App.SearchSeparator)
         }
+        if (options.log) {
+            App.log.redirect(options.log)
+            App.mprLog.redirect(options.log)
+        }
         if (options.quiet) {
             options.verbose = 0
+            verbose = 0;
         }
         if (options.verbose) {
             verbose += (options.verbose cast Number)
@@ -195,8 +196,8 @@ class EjsMvc {
     }
 
     function process() {
-        let task = cmd.args.shift()
-        let rest = cmd.args
+        let task = args.rest.shift()
+        let rest = args.rest
 
         switch (task) {
         case "browse":
@@ -258,7 +259,7 @@ class EjsMvc {
     }
 
     function clean(args: Array): Void {
-        let files: Array = find(".", "*." + ext.mod)
+        let files: Array = find(".", "**." + ext.mod)
         if (files.length > 0) {
             trace("[CLEAN]", verbose > 1 ? files : "module files")
             for each (f in files) {
@@ -286,11 +287,11 @@ class EjsMvc {
             for each (name in find(dirs.controllers, "*." + ext.es)) {
                 buildController(name)
             }
-            files = find(dirs.views, "*." + ext.ejs)
+            files = find(dirs.views, "**." + ext.ejs)
             for each (name in files) {
                 buildView(name, true)
             }
-            files = find(dirs.static, "*." + ext.ejs)
+            files = find(dirs.static, "**." + ext.ejs)
             for each (name in files) {
                 buildWebPage(name, true)
             }
@@ -303,13 +304,13 @@ class EjsMvc {
             buildAll = true
             let saveVerbose = verbose
             let saveKeep = options.keep
-            let pat = "*." + ext.es
+            let pat = "**." + ext.es
             let controllers = find(dirs.controllers, pat)
             for each (c in controllers) {
                 rm(dirs.cache.join(c.basename.replaceExt(ext.mod)))
             }
             files = find("config", pat) + find("src", pat) + controllers + find(dirs.models, pat)
-            let viewFiles = find(dirs.views, "*." + ext.ejs)
+            let viewFiles = find(dirs.views, "**." + ext.ejs)
             let esPages = []
             for each (name in viewFiles) {
                 if (!name.toString().contains(dirs.layouts.toString() + "/")) {
@@ -318,7 +319,7 @@ class EjsMvc {
                     esPages.append(intermediate)
                 }
             }
-            let webFiles = find(dirs.static, "*." + ext.ejs)
+            let webFiles = find(dirs.static, "**." + ext.ejs)
             for each (name in webFiles) {
                 intermediate = buildWebPage(name, false)
                 rm(intermediate.replaceExt(ext.mod))
@@ -356,7 +357,7 @@ class EjsMvc {
              *  Build controllers
              */
             if (rest.length == 0) {
-                for each (name in find(dirs.controllers, "*." + ext.es)) {
+                for each (name in find(dirs.controllers, "**." + ext.es)) {
                     buildController(name)
                 }
             } else {
@@ -374,7 +375,7 @@ class EjsMvc {
         case "view":
         case "views":
             if (rest.length == 0) {
-                for each (view in find(dirs.views, "*." + ext.ejs)) {
+                for each (view in find(dirs.views, "**." + ext.ejs)) {
                     buildView(view, true)
                 }
             } else {
@@ -415,7 +416,7 @@ class EjsMvc {
         // cmd = 'ejs --use "' + appName + '"'
         let cmd = "ejs"
         //  TODO - this won't work without stdin
-        System.run(cmd)
+        Cmd.run(cmd)
     }
 
     function buildController(file: Path) {
@@ -583,7 +584,7 @@ class EjsMvc {
     }
 
     function buildApp(): Void {
-        let pat = "*." + ext.es
+        let pat = "**." + ext.es
         let files = find("src", pat) + find(dirs.models, pat) + find(dirs.controllers, "Base.es")
         buildFiles(dirs.cache.join(config.mvc.appmod), files)
     }
@@ -596,7 +597,7 @@ class EjsMvc {
             cmd = cmd.trim('"').replace(/^[^ ]+/, App.exeDir.join("$&"))
         }
         trace("[RUN]", cmd)
-        System.run(cmd)
+        Cmd.run(cmd)
     }
 
     function deploy(args: Array): Void {
@@ -609,11 +610,11 @@ class EjsMvc {
         let exe = ""
         let lib = ""
         switch (Config.OS) {
-        case "WIN":
+        case "windows":
             exe = ".exe"
             lib = ".dll"
             break
-        case "MACOSX":
+        case "macosx":
             lib = ".dylib"
             break
         default:
@@ -661,7 +662,7 @@ class EjsMvc {
         }
         for each (file in libFiles) {
             dest = Path("bin").join(file).joinExt(lib)
-            src = dirs.lib.join(file).joinExt(lib)
+            src = dirs.bin.join(file).joinExt(lib)
             if (!exists(src)) {
                 error("WARNING: Can't find: " + file + " Continuing ...")
             }
@@ -685,11 +686,10 @@ class EjsMvc {
                 chmod(dest, 0755)
             }
         }
-
         overwrite = false
         for each (file in confFiles) {
             dest = Path("bin").join(file)
-            src = dirs.lib.join(file)
+            src = dirs.bin.join(file)
             if (!exists(src)) {
                 error("WARNING: Can't find: " + file + " Continuing ...")
             }
@@ -816,7 +816,6 @@ class EjsMvc {
                 backward = true
             }
         }
-
         if (backward) {
             files = files.reverse()
         }
@@ -904,6 +903,8 @@ class EjsMvc {
 
         //  TODO - convert all paths to use dirs.name 
         makeDir(appName)
+
+        //  TODO - should use try/finally around all chdir
         App.chdir(appName)
         if (options.full) {
             makeDir("bin")
@@ -912,7 +913,6 @@ class EjsMvc {
             makeDir("messages")
             makeDir("test")
         }
-
         makeDir(dirs.cache)
         makeDir(dirs.controllers)
         makeDir(dirs.db)
@@ -923,13 +923,11 @@ class EjsMvc {
         makeDir(dirs.views.join("Base"))
         makeDir(dirs.layouts)
         makeDir(dirs.static)
-        makeDir(dirs.static.join("default"))
         makeDir(dirs.static.join("images"))
         makeDir(dirs.static.join("themes"))
 
         generateStart()
         generateAppSrc()
-
         generateConfig()
         generateLayouts()
         generateHomePage()
@@ -947,7 +945,7 @@ class EjsMvc {
         if (verbose) {
             print("\nChange directory into your application directory: " + appName)
             print("Then run the web server via: \"" + mvc + " run\"")
-            print("and point your browser at: http://localhost:4000/ to view your app.")
+            print("and point your browser at: http://localhost:" + endpoint + "/ to view your app.")
         }
     }
 
@@ -976,11 +974,11 @@ class EjsMvc {
     }
 
     function generatePages(): Void {
-        let path: Path = dirs.lib.join("www")
+        let path: Path = dirs.bin.join("www")
         if (!exists(path)) {
             throw "Can't find www at " + path
         }
-        for each (f in find(path, "*")) {
+        for each (f in find(path, "**", {exclude: /\/$/})) {
             let name = f.name.slice(path.length + 1)
             copyFile(f, dirs.static.join(name), "Static web page")
         }
@@ -1367,7 +1365,7 @@ class EjsMvc {
     function runCommand(command: String): String {
         let results
         try {
-            results = System.run(command)
+            results = Cmd.run(command)
         } 
         catch (e) {
             msg = "Compilation failure, for " + command + "\n\n" +
@@ -1383,7 +1381,7 @@ class EjsMvc {
     }
 
     function trace(tag: String, ...args): Void {
-        if (verbose) {
+        if (verbose > 0) {
             print("  " + tag + ": " + args.join(" "))
         }
     }
@@ -1400,7 +1398,7 @@ class EjsMvc {
 
 
 /*
- *  Templates for various files
+    Templates for various files
  */
 class Templates {
     
@@ -1415,8 +1413,9 @@ class Templates {
     },
 
     cache : {
+        lifespan: 86400,
         app:     { enable: true, reload: true },
-        actions: { enable: true, lifespan: 1800 },
+        actions: { enable: true, lifespan: 3600 },
         workers: { enable: true, limit: 10},
     },
     database: {
@@ -1447,8 +1446,8 @@ class Templates {
     log: {
         enable: true,
         location: "stderr",
-        level: 1,
-        showClient: true,
+        level: 0,
+        showErrors: true,
     },
 
     mvc: {
@@ -1859,8 +1858,8 @@ EjsMvc().main()
 /*
     @copy   default
   
-    Copyright (c) Embedthis Software LLC, 2003-2011. All Rights Reserved.
-    Copyright (c) Michael O'Brien, 1993-2011. All Rights Reserved.
+    Copyright (c) Embedthis Software LLC, 2003-2012. All Rights Reserved.
+    Copyright (c) Michael O'Brien, 1993-2012. All Rights Reserved.
   
     This software is distributed under commercial and open source licenses.
     You may use the GPL open source license described below or you may acquire

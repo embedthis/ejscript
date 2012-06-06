@@ -4,15 +4,13 @@
 
 require ejs.unix
 
-let mvc = locate("mvc")
-let ejs = locate("ejs")
+let mvc = Cmd.locate("mvc").portable
 
-//  Prepare
-rmdir("junk", true)
+rmdir("junk")
 assert(!exists("junk"))
 
 //  Generate app
-sh(mvc + " generate app junk")
+Cmd.sh([mvc, 'generate', 'app', 'junk'])
 assert(exists("junk") && isDir("junk"))
 assert(exists("junk/README"))
 assert(exists("junk/cache") && isDir("junk/cache"))
@@ -31,5 +29,4 @@ assert(exists("junk/start.es"))
 assert(exists("junk/static") && isDir("junk/static"))
 assert(exists("junk/views") && isDir("junk/views"))
 
-rmdir("junk", true)
-
+rmdir("junk")

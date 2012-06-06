@@ -2,7 +2,7 @@
     session.tst -- Test session creation and management
  */
 
-const HTTP = ":" + (App.config.test.http_port || "6700")
+const HTTP = App.config.uris.http
 
 var http: Http = new Http
 
@@ -20,7 +20,7 @@ let result = http.response
 assert(http.response.contains("Session ID: SET to "))
 let firstSession = http.response.match(/"(.*)"/)[1]
 let cookie = http.header("Set-Cookie").match(/(-ejs-session-=.*);/)[1]
-assert(firstSession == cookie.match(/-ejs-session-=(.*)/)[1])
+assert(firstSession == cookie.match(/-ejs-session-=(.*);/)[1])
 assert(firstSession != "")
 http.close()
 

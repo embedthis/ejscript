@@ -1,0 +1,17 @@
+{
+    app: {
+        cache: false,
+        reload: true,
+    },
+    log: {
+        enable: true,
+        location: "stderr",
+        level: 0,
+        showClient: true,
+    },
+    uris: {
+        http: "http://127.0.0.1:6701",
+        ipv6: "http://[::1]:6701",
+        mob: "1.2.3.4",
+    }
+}

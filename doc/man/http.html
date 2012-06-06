@@ -5,24 +5,29 @@ HTTP(1)                          User Commands                         HTTP(1)
        http - HTTP Client program
 
 <B>SYNOPSIS</B>
-       <B>http [options] urls ...</B>
+       <B>http [options] [files] url</B>
 
-       [<I>--benchmark  </I>]  [<I>--chunk  size  </I>] [<I>--continue</I>] [<I>--cookie cookieString</I>]
-       [<I>--debug</I>] [<I>--delete</I>] [<I>--form string</I>] [<I>--header  'key:  value'</I>]  [<I>--host</I>
-       <I>hostName</I>]   [<I>--http   version</I>]  [<I>--iterations  count</I>]  [<I>--log  logSpec</I>]
-       [<I>--method  HTTP_METHOD</I>]  [<I>--nofollow</I>]   [<I>--noout</I>]   [<I>--password   pass</I>]
-       [<I>--post</I>]  [<I>--printable</I>]  [<I>--put</I>] [<I>--range byteRanges</I>] [<I>--retries count</I>]
-       [<I>--sequence</I>] [<I>--showCode</I>] [<I>--showHeaders</I>]  [<I>--single</I>]  [<I>--timeout  sec-</I>
-       <I>onds</I>] [<I>--threads count</I>] [<I>--upload</I>] [<I>--user name</I>] [<I>--verbose</I>] [<I>--workers</I>
-       <I>count</I>]
+       [<I>--benchmark  </I>]  [<I>--cert  file</I>]  [<I>--chunk size </I>] [<I>--continue</I>] [<I>--cookie</I>
+       <I>cookieString</I>]  [<I>--data</I>]   [<I>--debugger</I>]   [<I>--delete</I>]   [<I>--form   string</I>]
+       [<I>--header  'key:  value'</I>]  [<I>--host hostName</I>] [<I>--insecure</I>] [<I>--iterations</I>
+       <I>count</I>] [<I>--log logSpec</I>] [<I>--method  HTTP_METHOD</I>]  [<I>--nofollow</I>]  [<I>--noout</I>]
+       [<I>--out  file</I>] [<I>--password pass</I>] [<I>--post</I>] [<I>--printable</I>] [<I>--protocol ver-</I>
+       <I>sion</I>]  [<I>--put</I>]  [<I>--range  byteRanges</I>]  [<I>--retries  count</I>]  [<I>--sequence</I>]
+       [<I>--showHeaders</I>]  [<I>--showStatus</I>] [<I>--single</I>] [<I>--threads count</I>] [<I>--timeout</I>
+       <I>seconds</I>]  [<I>--upload</I>]  [<I>--user  name</I>]  [<I>--verbose</I>]   [<I>--workers   count</I>]
+       [<I>--zero</I>]
 
 <B>DESCRIPTION</B>
-       The http command issues HTTP commands to  retrieve  files  from  a  web
-       server.
+       The  http  command  issues  HTTP  commands to retrieve files from a web
+       server. If "files" are provided on the command line these are  included
+       in the request body data.
 
 <B>OPTIONS</B>
        <B>--benchmark</B>
               Output timing results after retrieving URLs.
+
+       <B>--cert file</B>
+              Certificate authority file to validate server certificatess.
 
        <B>--chunk size</B>
               Request  that  web  server  use  use  transfer  encoding for the
@@ -37,10 +42,12 @@ HTTP(1)                          User Commands                         HTTP(1)
               Define a cookie string to send with the request.  Multiple  uses
               okay.
 
-       <B>--debug</B>
+       <B>--debugger</B>
               Run  in debug mode and disable all timeouts. Useful when running
               a server in the debugger to prevent the client from retrying  or
               killing the request.
+
+       <B>--data </B>String of raw body data to send with the request.
 
        <B>--delete</B>
               Issue a DELETE request. This is an alias for --method DELETE.
@@ -59,41 +66,47 @@ HTTP(1)                          User Commands                         HTTP(1)
               www.myHost.com:8888"  were used with the URL "/index.html", then
               http will retrieve http://www.myHost.com:8888.
 
-       <B>--http HTTP_VERSION</B>
-              Use the specified HTTP protocol. httpVersion  should  be  either
-              '0' for HTTP/1.0 or 1 for HTTP/1.1.
+       <B>--insecure</B>
+              Don't validate server certificates when using SSL
 
        <B>--iterations count</B>
-              Retrieve  the  URLs  iterations  times. Useful for load testing.
+              Retrieve the URLs iterations times.  Useful  for  load  testing.
               This switch can also be abbreviated as <B>-i</B>.
 
        <B>--log logSpec</B>
-              Specify a file to log messages.   The  syntax  is:  <B>"--log  log-</B>
-              <B>Name[,moduleName][:logLevel]"</B>.   Level  3 will trace the request
-              and response headers.
+              Specify  a  file  to  log  messages.  The syntax is: <B>"--log log-</B>
+              <B>File[:logLevel]"</B>.  Level 3 will trace the request  and  response
+              headers.
 
        <B>--method method</B>
-              Set the HTTP method. Values  may  be  "GET",  "PUT",  "OPTIONS",
+              Set  the  HTTP  method.  Values  may be "GET", "PUT", "OPTIONS",
               "TRACE".
 
        <B>--nofollow</B>
-              Don't  automatically  follow  redirects.  Normal behaviour is to
-              follow redirects and reissue the request if the server  responds
+              Don't automatically follow redirects.  Normal  behaviour  is  to
+              follow  redirects and reissue the request if the server responds
               with a redirection response (30X response).
 
        <B>--noout</B>
-              Run  in  quiet mode and do no output. Suppress tracing requests.
+              Run in quiet mode and do no output. Suppress  tracing  requests.
               This switch can also be abbreviated as <B>-n </B>or as <B>--quiet </B>or <B>-q</B>.
 
+       <B>--out file</B>
+              Save response output to the given file.
+
        <B>--password passPhrase</B>
-              Specify a password to send with the  request.  Requires  a  user
+              Specify  a  password  to  send with the request. Requires a user
               name to be also specified via --user.
 
        <B>--post </B>Issue a POST request. This is an alias for --method POST.
 
        <B>--printable</B>
-              Make  binary  output  printable  by printing hex digits for each
+              Make binary output printable by printing  hex  digits  for  each
               character.
+
+       <B>--protocol HTTP_VERSION</B>
+              Use  the  specified  HTTP protocol. httpVersion should be either
+              '0' for HTTP/1.0 or 1 for HTTP/1.1.
 
        <B>--put  </B>Issue a PUT request. This is an alias for --method PUT.
 
@@ -112,12 +125,12 @@ HTTP(1)                          User Commands                         HTTP(1)
        <B>--retries retryCount</B>
               Retry failed requests this number of times.
 
-       <B>--showCode</B>
-              Output the HTTP response code. If this switch is used, the  com-
-              mand will always exit with zero status.
-
        <B>--showHeaders</B>
               Output HTTP headers. Useful for debugging.
+
+       <B>--showStatus</B>
+              Output the HTTP response code. If this switch is used, the  com-
+              mand will always exit with zero status.
 
        <B>--single</B>
               Single  step  between  requests by pausing for user input before
@@ -152,11 +165,15 @@ HTTP(1)                          User Commands                         HTTP(1)
               Specify the number of worker threads to use. Worker threads tem-
               porarily assigned to process callbacks.
 
+       <B>--zero </B>Exit  with  a  zero status for any valid HTTP response. Normally
+              returns a non-zero status if the HTTP response code is not a 2XX
+              or 3XX series response code.
+
 <B>REPORTING BUGS</B>
        Report bugs to dev@embedthis.com.
 
 <B>COPYRIGHT</B>
-       Copyright (C) 2003-2010 Embedthis Software.
+       Copyright (C) 2003-2012 Embedthis Software.
 
-http                              March 2010                           HTTP(1)
+http                               July 2012                           HTTP(1)
 </PRE></BODY>

@@ -14,7 +14,7 @@
         enable: true,
         location: "stderr",
         level: 0,
-        showClient: true,
+        showErrors: true,
     },
     web: {
         listen: ":4000",

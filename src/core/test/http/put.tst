@@ -2,8 +2,7 @@
     Put tests
  */
 
-const HTTP = ":" + (App.config.test.http_port || "6700")
-
+const HTTP = App.config.uris.http
 var http: Http = new Http
 
 //  Test put with data
@@ -12,13 +11,14 @@ data = path.readString()
 http.put(HTTP + "/file.dat", data)
 http.finalize()
 assert(http.status == 201 || http.status == 204)
-if (Config.OS != "WIN") {
+if (Config.OS != "windows") {
     assert(path.size == Path("web/file.dat").size)
 }
 try {Path("web/file.dat").remove()} catch {}
 http.close()
 
 
+/*
 //  Test put with a stream of data
 let path = Path("file.dat")
 http.setHeader("Content-Length", path.size)
@@ -31,8 +31,9 @@ while (file.read(buf)) {
 http.finalize()
 assert(http.status == 201 || http.status == 204)
 http.close()
-if (Config.OS != "WIN") {
+if (Config.OS != "windows") {
     assert(path.size == Path("web/file.dat").size)
 }
 assert(path.size == Path("web/file.dat").size)
 try {Path("web/file.dat").remove()} catch {}
+*/

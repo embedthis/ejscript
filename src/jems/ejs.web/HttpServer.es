@@ -27,7 +27,9 @@ module ejs.web {
             dirs: {
                 cache: Path("cache"),
                 layouts: Path("layouts"),
+/*
                 views: Path("views"),
+ */
             },
             extensions: {
                 es:  "es",
@@ -35,7 +37,7 @@ module ejs.web {
                 mod: "mod",
             },
             log: {
-                showClient: true,
+                showErrors: true,
             },
             cache: {
                 adapter: "local",
@@ -245,6 +247,7 @@ server.listen("127.0.0.1:7777")
                 documents = options.documents || "."
                 home = options.home || "."
             }
+            home = home.relative
             config = options.config || App.config
             this.options = options
             let ejsrc = options.ejsrc || config.files.ejsrc
@@ -258,6 +261,7 @@ server.listen("127.0.0.1:7777")
                     App.updateLog()
                 }
             }
+            /* Prefix dirs with the home directory */
             let dirs = config.dirs
             for (let [key, value] in dirs) {
                 dirs[key] = home.join(value)
@@ -396,7 +400,7 @@ server.listen("127.0.0.1:7777")
             @param app Web application function 
          */
         function process(app: Function, request: Request, finalize: Boolean = true): Void {
-let mark = new Date
+// let mark = new Date
             request.config = config
             try {
                 if (request.route && request.route.middleware) {
@@ -460,7 +464,7 @@ let mark = new Date
                 if (body.async) {
                     request.async = true
                     //  Should we wait on request being writable or on the body stream being readable?
-//  MOB Must detect eof and do a finalize()
+//  MOB Must detect EOF and do a finalize()
                     request.on("readable", function(event, request) {
                         let data = new ByteArray
                         if (request.read(data)) {
@@ -686,8 +690,8 @@ let mark = new Date
 /*
     @copy   default
     
-    Copyright (c) Embedthis Software LLC, 2003-2011. All Rights Reserved.
-    Copyright (c) Michael O'Brien, 1993-2011. All Rights Reserved.
+    Copyright (c) Embedthis Software LLC, 2003-2012. All Rights Reserved.
+    Copyright (c) Michael O'Brien, 1993-2012. All Rights Reserved.
     
     This software is distributed under commercial and open source licenses.
     You may use the GPL open source license described below or you may acquire 

@@ -1,4 +1,4 @@
-// test.skip("SKIP HTTP MOB")
-
-App.config.test.http_port ||= "6700"
-httpService("start.es")
+if (!App.getenv("NOSERVER")) {
+    Cmd.killall('ejs start.es')
+}
+httpService("start.es", {address: App.config.uris.http})

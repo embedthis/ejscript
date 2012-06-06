@@ -55,6 +55,15 @@ static EjsObj *app_chdir(Ejs *ejs, EjsObj *unused, int argc, EjsObj **argv)
         ejsThrowIOError(ejs, "Bad path");
         return NULL;
     }
+#if WINDOWS
+{
+    MprFileSystem   *fs;
+    fs = mprLookupFileSystem(path);
+    if (!mprPathExists(path, X_OK) && *path == '/') {
+        path = sjoin(fs->cygwin, path, NULL);
+    }
+}
+#endif
     if (chdir((char*) path) < 0) {
         ejsThrowIOError(ejs, "Can't change the current directory");
     }
@@ -67,7 +76,7 @@ static EjsObj *app_chdir(Ejs *ejs, EjsObj *unused, int argc, EjsObj **argv)
  */
 static EjsPath *app_exeDir(Ejs *ejs, EjsObj *unused, int argc, EjsObj **argv)
 {
-    return ejsCreatePathFromAsc(ejs, mprGetAppDir(ejs));
+    return ejsCreatePathFromAsc(ejs, mprGetAppDir());
 }
 
 
@@ -77,7 +86,7 @@ static EjsPath *app_exeDir(Ejs *ejs, EjsObj *unused, int argc, EjsObj **argv)
  */
 static EjsPath *app_exePath(Ejs *ejs, EjsObj *unused, int argc, EjsObj **argv)
 {
-    return ejsCreatePathFromAsc(ejs, mprGetAppPath(ejs));
+    return ejsCreatePathFromAsc(ejs, mprGetAppPath());
 }
 
 
@@ -154,25 +163,30 @@ static EjsAny *app_getenv(Ejs *ejs, EjsObj *app, int argc, EjsObj **argv)
 }
 
 
+/*
+    static function get gid(): Number
+ */
+static EjsNumber *app_gid(Ejs *ejs, EjsObj *unused, int argc, EjsObj **argv)
+{
+#if BIT_UNIX_LIKE
+    return ejsCreateNumber(ejs, getgid());
+#else
+    return ESV(null);
+#endif
+}
+
+
 /*  
     Put an environment var
     function putenv(key: String, value: String): void
  */
 static EjsObj *app_putenv(Ejs *ejs, EjsObj *app, int argc, EjsObj **argv)
 {
-#if !WINCE
-#if BLD_UNIX_LIKE
     char    *key, *value;
 
     key = sclone(ejsToMulti(ejs, argv[0]));
     value = sclone(ejsToMulti(ejs, argv[1]));
-    setenv(key, value, 1);
-#else
-    //  TODO OPT
-    char *cmd = sjoin(ejsToMulti(ejs, argv[0]), "=", ejsToMulti(ejs, argv[1]), NULL);
-    putenv(cmd);
-#endif
-#endif
+    mprSetEnv(key, value);
     return 0;
 }
 
@@ -211,8 +225,8 @@ static EjsArray *app_createSearch(Ejs *ejs, EjsObj *app, int argc, EjsObj **argv
 }
 
 
-/*  
-    static function get pid (): void
+/*
+    static function get pid (): Number
  */
 static EjsNumber *app_pid(Ejs *ejs, EjsObj *unused, int argc, EjsObj **argv)
 {
@@ -231,6 +245,9 @@ static EjsObj *app_run(Ejs *ejs, EjsObj *unused, int argc, EjsObj **argv)
     timeout = (argc > 0) ? ejsGetInt(ejs, argv[0]) : MAXINT;
     oneEvent = (argc > 1) ? ejsGetInt(ejs, argv[1]) : 0;
 
+    if (ejs->hosted) {
+        return ESV(true);
+    }
     if (timeout < 0) {
         timeout = MAXINT;
     }
@@ -247,6 +264,8 @@ static EjsObj *app_run(Ejs *ejs, EjsObj *unused, int argc, EjsObj **argv)
 /*  
     Pause the application. This services events while asleep.
     static function sleep(delay: Number = -1): void
+    MOB - sleep currently throws if an exception is generated in an event callback (worker).
+    It should not.
  */
 static EjsObj *app_sleep(Ejs *ejs, EjsObj *unused, int argc, EjsObj **argv)
 {
@@ -264,6 +283,19 @@ static EjsObj *app_sleep(Ejs *ejs, EjsObj *unused, int argc, EjsObj **argv)
         remaining = mprGetRemainingTime(mark, timeout);
     } while (!ejs->exiting && remaining > 0 && !mprIsStopping());
     return 0;
+}
+
+
+/*  
+    static function get uid(): Number
+ */
+static EjsNumber *app_uid(Ejs *ejs, EjsObj *unused, int argc, EjsObj **argv)
+{
+#if BIT_UNIX_LIKE
+    return ejsCreateNumber(ejs, getuid());
+#else
+    return ESV(null);
+#endif
 }
 
 
@@ -289,19 +321,25 @@ void ejsConfigureAppType(Ejs *ejs)
     ejsBindMethod(ejs, type, ES_App_env, app_env);
     ejsBindMethod(ejs, type, ES_App_exit, app_exit);
     ejsBindMethod(ejs, type, ES_App_getenv, app_getenv);
+#if ES_App_gid
+    ejsBindMethod(ejs, type, ES_App_gid, app_gid);
+#endif
     ejsBindMethod(ejs, type, ES_App_putenv, app_putenv);
     ejsBindMethod(ejs, type, ES_App_pid, app_pid);
     ejsBindMethod(ejs, type, ES_App_run, app_run);
     ejsBindAccess(ejs, type, ES_App_search, app_search, app_set_search);
     ejsBindMethod(ejs, type, ES_App_sleep, app_sleep);
+#if ES_App_uid
+    ejsBindMethod(ejs, type, ES_App_uid, app_uid);
+#endif
 }
 
 
 /*
     @copy   default
 
-    Copyright (c) Embedthis Software LLC, 2003-2011. All Rights Reserved.
-    Copyright (c) Michael O'Brien, 1993-2011. All Rights Reserved.
+    Copyright (c) Embedthis Software LLC, 2003-2012. All Rights Reserved.
+    Copyright (c) Michael O'Brien, 1993-2012. All Rights Reserved.
 
     This software is distributed under commercial and open source licenses.
     You may use the GPL open source license described below or you may acquire
@@ -313,7 +351,7 @@ void ejsConfigureAppType(Ejs *ejs)
     under the terms of the GNU General Public License as published by the
     Free Software Foundation; either version 2 of the License, or (at your
     option) any later version. See the GNU General Public License for more
-    details at: http://www.embedthis.com/downloads/gplLicense.html
+    details at: http://embedthis.com/downloads/gplLicense.html
 
     This program is distributed WITHOUT ANY WARRANTY; without even the
     implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.
@@ -322,7 +360,7 @@ void ejsConfigureAppType(Ejs *ejs)
     proprietary programs. If you are unable to comply with the GPL, you must
     acquire a commercial license to use this software. Commercial licenses
     for this software and support services are available from Embedthis
-    Software at http://www.embedthis.com
+    Software at http://embedthis.com
 
     Local variables:
     tab-width: 4

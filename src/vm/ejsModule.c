@@ -151,7 +151,7 @@ int ejsAddModule(Ejs *ejs, EjsModule *mp)
 
 void ejsRemoveModule(Ejs *ejs, EjsModule *mp)
 {
-    mprLog(6, "Remove module: %@", mp->name); 
+    mprLog(7, "Remove module: %@", mp->name); 
     mprRemoveItem(mp->vms, ejs);
     mprRemoveItem(ejs->modules, mp);
 }
@@ -163,7 +163,7 @@ void ejsRemoveModuleFromAll(EjsModule *mp)
     int     next;
 
     if (mp->vms) {
-        mprLog(6, "Remove module from all vms: %@", mp->name); 
+        mprLog(7, "Remove module from all vms: %@", mp->name); 
         for (next = 0; (ejs = mprGetNextItem(mp->vms, &next)) != 0; ) {
             if (ejs->modules) {
                 mprRemoveItem(ejs->modules, mp);
@@ -339,7 +339,7 @@ EjsDebug *ejsCreateDebug(Ejs *ejs, int length)
     if ((debug = mprAllocBlock(size, MPR_ALLOC_MANAGER)) == 0) {
         return NULL;
     }
-    mprSetManager(debug, manageDebug);
+    mprSetManager(debug, (MprManager) manageDebug);
     debug->size = count;
     debug->numLines = length;
     debug->magic = EJS_DEBUG_MAGIC;
@@ -394,6 +394,7 @@ static void manageDebug(EjsDebug *debug, int flags)
             mprMark(debug->lines[i].source);
         }
     } else if (flags & MPR_MANAGE_FREE) {
+        /* Value to signify the debug record has been freed */
         debug->magic = 7;
     }
 }
@@ -517,7 +518,7 @@ int ejsGetDebugInfo(Ejs *ejs, EjsFunction *fun, uchar *pc, char **pathp, int *li
         *pathp = wclone(path);
     }
     if (linep) {
-        *linep = (int) wtoi(lineno, 10, NULL);
+        *linep = (int) wtoi(lineno);
     }
     if (sourcep) {
         *sourcep = wclone(source);
@@ -660,7 +661,8 @@ int ejsEncodeInt32(Ejs *ejs, uchar *pos, int number)
     memset(pos, 0, 4);
     len = ejsEncodeNum(ejs, pos, (int64) number);
     mprAssert(len <= 4);
-    return 4;
+    len = 4;
+    return len;
 }
 
 
@@ -905,8 +907,8 @@ double ejsSwapDouble(Ejs *ejs, double a)
 /*
     @copy   default
 
-    Copyright (c) Embedthis Software LLC, 2003-2011. All Rights Reserved.
-    Copyright (c) Michael O'Brien, 1993-2011. All Rights Reserved.
+    Copyright (c) Embedthis Software LLC, 2003-2012. All Rights Reserved.
+    Copyright (c) Michael O'Brien, 1993-2012. All Rights Reserved.
 
     This software is distributed under commercial and open source licenses.
     You may use the GPL open source license described below or you may acquire
@@ -918,7 +920,7 @@ double ejsSwapDouble(Ejs *ejs, double a)
     under the terms of the GNU General Public License as published by the
     Free Software Foundation; either version 2 of the License, or (at your
     option) any later version. See the GNU General Public License for more
-    details at: http://www.embedthis.com/downloads/gplLicense.html
+    details at: http://embedthis.com/downloads/gplLicense.html
 
     This program is distributed WITHOUT ANY WARRANTY; without even the
     implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.
@@ -927,7 +929,7 @@ double ejsSwapDouble(Ejs *ejs, double a)
     proprietary programs. If you are unable to comply with the GPL, you must
     acquire a commercial license to use this software. Commercial licenses
     for this software and support services are available from Embedthis
-    Software at http://www.embedthis.com
+    Software at http://embedthis.com
 
     Local variables:
     tab-width: 4

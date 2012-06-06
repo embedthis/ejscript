@@ -322,7 +322,7 @@ int ejsSetPropertyByName(Ejs *ejs, EjsAny *vp, EjsName qname, EjsAny *value)
             return EJS_ERR;
         }
         //  UNICODE
-#if BLD_DEBUG
+#if BIT_DEBUG
         if (((EjsObj*) value)->mem == 0) {
             mprSetName(value, qname.name->value);
         }
@@ -483,7 +483,7 @@ static EjsAny *castObj(Ejs *ejs, EjsObj *obj, EjsType *type)
         if (!ejsIsType(ejs, obj) && !ejsIsPrototype(ejs, obj)) {
             if (ejsLookupVar(ejs, obj, EN("toString"), &lookup) >= 0 && lookup.obj != EST(Object)->prototype) {
                 fun = ejsGetProperty(ejs, lookup.obj, lookup.slotNum);
-                if (fun && ejsIsFunction(ejs, fun) && fun->body.proc != (EjsFun) ejsObjToString) {
+                if (fun && ejsIsFunction(ejs, fun) && fun->body.proc != (EjsProc) ejsObjToString) {
                     result = ejsRunFunction(ejs, fun, obj, 0, NULL);
                     return result;
                 }
@@ -797,7 +797,7 @@ EjsAny *ejsParse(Ejs *ejs, MprChar *str, int preferredType)
     sid = preferredType;
 
     //  TODO unicode
-    while (isspace((int) *buf)) {
+    while (isspace((uchar) *buf)) {
         buf++;
     }    
     if (preferredType == S_Void || preferredType < 0) {
@@ -807,7 +807,7 @@ EjsAny *ejsParse(Ejs *ejs, MprChar *str, int preferredType)
         } else if (*buf == '/') {
             sid = S_RegExp;
 
-        } else if (!isdigit((int) *buf) && *buf != '.') {
+        } else if (!isdigit((uchar) *buf) && *buf != '.') {
             if (mcmp(buf, "true") == 0) {
                 return ESV(true);
 
@@ -839,9 +839,9 @@ EjsAny *ejsParse(Ejs *ejs, MprChar *str, int preferredType)
     case S_Boolean:
         return ejsCreateBoolean(ejs, parseBoolean(ejs, buf));
 
-#if BLD_FEATURE_PCRE
+#if BIT_FEATURE_PCRE
     case S_RegExp:
-        return ejsCreateRegExp(ejs, ejsCreateString(ejs, buf, -1));
+        return ejsCreateRegExp(ejs, ejsCreateStringFromAsc(ejs, buf));
 #endif
 
     case S_String:
@@ -894,17 +894,17 @@ static MprNumber parseNumber(Ejs *ejs, MprChar *str)
     } else if (*str == '+') {
         str++;
     }
-    if (*str != '.' && !isdigit((int) *str)) {
+    if (*str != '.' && !isdigit((uchar) *str)) {
         return ((EjsNumber*) ESV(nan))->value;
     }
     /*
-        Floatng format: [DIGITS].[DIGITS][(e|E)[+|-]DIGITS]
+        Floating format: [DIGITS].[DIGITS][(e|E)[+|-]DIGITS]
      */
-    if (!(*str == '0' && tolower((int) str[1]) == 'x')) {
+    if (!(*str == '0' && tolower((uchar) str[1]) == 'x')) {
         for (cp = str; *cp; cp++) {
-            if (*cp == '.' || tolower((int) *cp) == 'e') {
+            if (*cp == '.' || tolower((uchar) *cp) == 'e') {
                 // OPT
-                for (sp = str, dp = nbuf; *str && dp < &nbuf[sizeof(nbuf) - 1]; ) {
+                for (sp = str, dp = nbuf; *sp && dp < &nbuf[sizeof(nbuf) - 1]; ) {
                     *dp++ = *sp++;
                 }
                 *dp = '\0';
@@ -924,18 +924,18 @@ static MprNumber parseNumber(Ejs *ejs, MprChar *str)
         /*
          *  Normal numbers (Radix 10)
          */
-        while (isdigit((int) *str)) {
+        while (isdigit((uchar) *str)) {
             num = (*str - '0') + (num * 10);
             str++;
         }
     } else {
         str++;
-        if (tolower((int) *str) == 'x') {
+        if (tolower((uchar) *str) == 'x') {
             str++;
             radix = 16;
             while (*str) {
-                c = tolower((int) *str);
-                if (isdigit(c)) {
+                c = tolower((uchar) *str);
+                if (isdigit((uchar) c)) {
                     num = (c - '0') + (num * radix);
                 } else if (c >= 'a' && c <= 'f') {
                     num = (c - 'a' + 10) + (num * radix);
@@ -948,8 +948,8 @@ static MprNumber parseNumber(Ejs *ejs, MprChar *str)
         } else{
             radix = 8;
             while (*str) {
-                c = tolower((int) *str);
-                if (isdigit(c) && c < '8') {
+                c = tolower((uchar) *str);
+                if (isdigit((uchar) c) && c < '8') {
                     num = (c - '0') + (num * radix);
                 } else {
                     break;
@@ -1041,8 +1041,8 @@ void ejsMarkName(EjsName *qname)
 /*
     @copy   default
 
-    Copyright (c) Embedthis Software LLC, 2003-2011. All Rights Reserved.
-    Copyright (c) Michael O'Brien, 1993-2011. All Rights Reserved.
+    Copyright (c) Embedthis Software LLC, 2003-2012. All Rights Reserved.
+    Copyright (c) Michael O'Brien, 1993-2012. All Rights Reserved.
 
     This software is distributed under commercial and open source licenses.
     You may use the GPL open source license described below or you may acquire
@@ -1054,7 +1054,7 @@ void ejsMarkName(EjsName *qname)
     under the terms of the GNU General Public License as published by the
     Free Software Foundation; either version 2 of the License, or (at your
     option) any later version. See the GNU General Public License for more
-    details at: http://www.embedthis.com/downloads/gplLicense.html
+    details at: http://embedthis.com/downloads/gplLicense.html
 
     This program is distributed WITHOUT ANY WARRANTY; without even the
     implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.
@@ -1063,7 +1063,7 @@ void ejsMarkName(EjsName *qname)
     proprietary programs. If you are unable to comply with the GPL, you must
     acquire a commercial license to use this software. Commercial licenses
     for this software and support services are available from Embedthis
-    Software at http://www.embedthis.com
+    Software at http://embedthis.com
 
     Local variables:
     tab-width: 4

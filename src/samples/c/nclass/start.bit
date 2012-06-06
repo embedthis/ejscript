@@ -1,0 +1,28 @@
+/*
+    local.bit - Bit file for the nclass sample
+ */
+
+Bit.load({
+    targets: {
+        nclass: {
+            depends: ['nclass-lib'],
+        },
+
+        'nclass.mod' : {
+            files: ['Test.es'],
+            path: 'nclass.mod',
+            build: "
+                run('ejsc shape.es')
+                run('ejsmod --cslots nclass.mod')
+            ",
+        },
+
+        'nclass-lib': {
+            type: 'lib',
+            path: 'nclass${SHOBJ}',
+            sources: ['*.c'],
+            depends: ['nclass.mod'],
+            '+libraries': [ 'ejs', 'mpr', 'mprssl' ],
+        },
+    },
+})

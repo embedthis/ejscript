@@ -101,7 +101,7 @@ EjsArray *ejsCloneArray(Ejs *ejs, EjsArray *ap, bool deep)
 
 
 /*
-    Delete a property and update the length
+    Delete a property and update the length. Return the index where the property was deleted.
  */
 static int deleteArrayProperty(Ejs *ejs, EjsArray *ap, int slot)
 {
@@ -115,17 +115,17 @@ static int deleteArrayProperty(Ejs *ejs, EjsArray *ap, int slot)
     if ((slot + 1) == ap->length) {
         ap->length--;
     }
-    return 0;
+    return slot;
 }
 
 
 /*
-    Delete an element by name.
+    Delete an element by name
  */
 static int deleteArrayPropertyByName(Ejs *ejs, EjsArray *ap, EjsName qname)
 {
-    if (isdigit((int) qname.name->value[0])) {
-        return deleteArrayProperty(ejs, ap, (int) wtoi(qname.name->value, 10, NULL));
+    if (isdigit((uchar) qname.name->value[0])) {
+        return deleteArrayProperty(ejs, ap, (int) wtoi(qname.name->value));
     }
     return (ejs->service->potHelpers.deletePropertyByName)(ejs, ap, qname);
 }
@@ -156,7 +156,7 @@ static EjsObj *getArrayPropertyByName(Ejs *ejs, EjsArray *ap, EjsName qname)
 {
     int     slotNum;
 
-    if (isdigit((int) qname.name->value[0])) { 
+    if (isdigit((uchar) qname.name->value[0])) { 
         slotNum = ejsAtoi(ejs, qname.name, 10);
         if (slotNum < 0 || slotNum >= ap->length) {
             return 0;
@@ -183,7 +183,7 @@ static int lookupArrayProperty(Ejs *ejs, EjsArray *ap, EjsName qname)
 {
     int     index;
 
-    if (qname.name == 0 || !isdigit((int) qname.name->value[0])) {
+    if (qname.name == 0 || !isdigit((uchar) qname.name->value[0])) {
         return EJS_ERR;
     }
     index = ejsAtoi(ejs, qname.name, 10);
@@ -341,7 +341,7 @@ static int setArrayPropertyByName(Ejs *ejs, EjsArray *ap, EjsName qname, EjsObj 
 {
     int     slotNum;
 
-    if (!isdigit((int) qname.name->value[0])) { 
+    if (!isdigit((uchar) qname.name->value[0])) { 
         /* The "length" property is a method getter */
         if (qname.name == ESV(length)) {
             setArrayLength(ejs, ap, 1, &value);
@@ -678,7 +678,7 @@ static EjsNumber *nextArrayKey(Ejs *ejs, EjsIterator *ip, int argc, EjsObj **arg
     }
     data = ap->data;
 
-    for (; ip->index < ap->length; ip->index++) {
+    for (; ip->index < ip->length; ip->index++) {
         vp = data[ip->index];
         mprAssert(vp);
         if (ejsIs(ejs, vp, Void)) {
@@ -698,7 +698,7 @@ static EjsNumber *nextArrayKey(Ejs *ejs, EjsIterator *ip, int argc, EjsObj **arg
  */
 static EjsIterator *getArrayIterator(Ejs *ejs, EjsArray *ap, int argc, EjsObj **argv)
 {
-    return ejsCreateIterator(ejs, ap, nextArrayKey, 0, NULL);
+    return ejsCreateIterator(ejs, ap, ap->length, nextArrayKey, 0, NULL);
 }
 
 
@@ -718,7 +718,7 @@ static EjsObj *nextArrayValue(Ejs *ejs, EjsIterator *ip, int argc, EjsObj **argv
     }
 
     data = ap->data;
-    for (; ip->index < ap->length; ip->index++) {
+    for (; ip->index < ip->length; ip->index++) {
         vp = data[ip->index];
         mprAssert(vp);
         if (ejsIs(ejs, vp, Void)) {
@@ -739,7 +739,7 @@ static EjsObj *nextArrayValue(Ejs *ejs, EjsIterator *ip, int argc, EjsObj **argv
  */
 static EjsAny *getArrayValues(Ejs *ejs, EjsArray *ap, int argc, EjsObj **argv)
 {
-    return ejsCreateIterator(ejs, ap, nextArrayValue, 0, NULL);
+    return ejsCreateIterator(ejs, ap, ap->length, nextArrayValue, 0, NULL);
 }
 
 
@@ -801,6 +801,10 @@ static bool compareArrayElement(Ejs *ejs, EjsObj *v1, EjsObj *v2)
     if (ejsIs(ejs, v1, String)) {
         return (EjsString*) v1 == (EjsString*) v2;
     }
+    if (ejsIs(ejs, v1, Path)) {
+        return smatch(((EjsPath*) v1)->value, ((EjsPath*) v2)->value);
+    }
+    //  MOB - should expand for other types 
     return 0;
 }
 
@@ -894,7 +898,7 @@ static EjsArray *insertArray(Ejs *ejs, EjsArray *ap, int argc, EjsObj **argv)
 static EjsString *joinArray(Ejs *ejs, EjsArray *ap, int argc, EjsObj **argv)
 {
     EjsString       *result, *sep;
-    EjsObj              *vp;
+    EjsObj          *vp;
     int             i;
 
     sep = (argc == 1) ? (EjsString*) argv[0] : NULL;
@@ -909,9 +913,9 @@ static EjsString *joinArray(Ejs *ejs, EjsArray *ap, int argc, EjsObj **argv)
             continue;
         }
         if (i > 0 && sep) {
-            result = ejsCatString(ejs, result, sep);
+            result = ejsJoinString(ejs, result, sep);
         }
-        result = ejsCatString(ejs, result, ejsToString(ejs, vp));
+        result = ejsJoinString(ejs, result, ejsToString(ejs, vp));
     }
     return result;
 }
@@ -1248,7 +1252,7 @@ void quickSort(Ejs *ejs, EjsArray *ap, EjsFunction *compare, int direction, int 
     Where compare is defined as:
         function compare(a,b): Number
  */
-static EjsArray *sortArray(Ejs *ejs, EjsArray *ap, int argc, EjsObj **argv)
+EjsArray *ejsSortArray(Ejs *ejs, EjsArray *ap, int argc, EjsObj **argv)
 {
     EjsFunction     *compare;
     int             direction;
@@ -1402,10 +1406,10 @@ static EjsString *arrayToString(Ejs *ejs, EjsArray *ap, int argc, EjsObj **argv)
         vp = ap->data[i];
         rc = 0;
         if (i > 0) {
-            result = ejsCatString(ejs, result, comma);
+            result = ejsJoinString(ejs, result, comma);
         }
         if (ejsIsDefined(ejs, vp)) {
-            result = ejsCatString(ejs, result, ejsToString(ejs, vp));
+            result = ejsJoinString(ejs, result, ejsToString(ejs, vp));
         }
         if (rc < 0) {
             ejsThrowMemoryError(ejs);
@@ -1541,7 +1545,7 @@ int ejsAddItem(Ejs *ejs, EjsArray *ap, EjsAny *item)
     int     index;
 
     index = ap->length;
-    if (setArrayProperty(ejs, ap, index, &item) < 0) {
+    if (setArrayProperty(ejs, ap, index, item) < 0) {
         return MPR_ERR_MEMORY;
     }
     return index;
@@ -1567,23 +1571,13 @@ void ejsClearArray(Ejs *ejs, EjsArray *ap)
 }
 
 
-/*
-    Insert an item to the list at a specified position. We insert before the item at "index".
-    ie. The inserted item will go into the "index" location and the other elements will be moved up.
- */
-int ejsInsertItem(Ejs *ejs, EjsArray *ap, int index, EjsAny *item)
-{
-    return insertArray(ejs, ap, index, item) != 0;
-}
-
-
-void *ejsGetItem(Ejs *ejs, EjsArray *ap, int index)
+EjsAny *ejsGetItem(Ejs *ejs, EjsArray *ap, int index)
 {
     return ejsGetProperty(ejs, ap, index);
 }
 
 
-void *ejsGetFirstItem(Ejs *ejs, EjsArray *ap)
+EjsAny *ejsGetFirstItem(Ejs *ejs, EjsArray *ap)
 {
     mprAssert(ap);
 
@@ -1594,7 +1588,7 @@ void *ejsGetFirstItem(Ejs *ejs, EjsArray *ap)
 }
 
 
-void *ejsGetLastItem(Ejs *ejs, EjsArray *ap)
+EjsAny *ejsGetLastItem(Ejs *ejs, EjsArray *ap)
 {
     mprAssert(ap);
 
@@ -1605,9 +1599,9 @@ void *ejsGetLastItem(Ejs *ejs, EjsArray *ap)
 }
 
 
-void *ejsGetNextItem(Ejs *ejs, EjsArray *ap, int *next)
+EjsAny *ejsGetNextItem(Ejs *ejs, EjsArray *ap, int *next)
 {
-    void    *item;
+    EjsAny  *item;
     int     index;
 
     mprAssert(next);
@@ -1626,7 +1620,7 @@ void *ejsGetNextItem(Ejs *ejs, EjsArray *ap, int *next)
 }
 
 
-void *ejsGetPrevItem(Ejs *ejs, EjsArray *ap, int *next)
+EjsAny *ejsGetPrevItem(Ejs *ejs, EjsArray *ap, int *next)
 {
     int     index;
 
@@ -1648,6 +1642,26 @@ void *ejsGetPrevItem(Ejs *ejs, EjsArray *ap, int *next)
 }
 
 
+/*
+    Insert an item to the list at a specified position. We insert before the item at "index".
+    ie. The inserted item will go into the "index" location and the other elements will be moved up.
+ */
+int ejsInsertItem(Ejs *ejs, EjsArray *ap, int index, EjsAny *item)
+{
+    if (insertArray(ejs, ap, index, item) == 0) {
+        /* Should never fail - only for memory errors */
+        return -1;
+    }
+    return index;
+}
+
+
+EjsString *ejsJoinArray(Ejs *ejs, EjsArray *ap, EjsString *join)
+{
+    return joinArray(ejs, ap, 1, (EjsObj**) &join);
+}
+
+
 int ejsLookupItem(Ejs *ejs, EjsArray *ap, EjsAny *item)
 {
     int     i;
@@ -1663,16 +1677,17 @@ int ejsLookupItem(Ejs *ejs, EjsArray *ap, EjsAny *item)
 }
 
 
-/*
-    Remove an item. The array is not compacted
- */
-int ejsRemoveItem(Ejs *ejs, EjsArray *ap, EjsAny *item)
+int ejsRemoveItem(Ejs *ejs, EjsArray *ap, EjsAny *item, int compact)
 {
     int     i;
 
     for (i = 0; i < ap->length; i++) {
         if (ap->data[i] == item) {
-            return deleteArrayProperty(ejs, ap, i);
+            deleteArrayProperty(ejs, ap, i);
+            if (compact) {
+                compactArray(ejs, ap, 0, NULL);
+            }
+            return i;
         }
     }
     return MPR_ERR_CANT_FIND;
@@ -1690,14 +1705,20 @@ int ejsRemoveLastItem(Ejs *ejs, EjsArray *ap)
 }
 
 
-int ejsRemoveItemAtPos(Ejs *ejs, EjsArray *ap, int index)
+int ejsRemoveItemAtPos(Ejs *ejs, EjsArray *ap, int index, int compact)
 {
+    int     rc;
+
     mprAssert(ap);
 
     if (ap->length <= 0) {
         return MPR_ERR_CANT_FIND;
     }
-    return deleteArrayProperty(ejs, ap, index);
+    rc = deleteArrayProperty(ejs, ap, index);
+    if (compact) {
+        compactArray(ejs, ap, 0, NULL);
+    }
+    return rc;
 }
 
 
@@ -1735,6 +1756,7 @@ static void manageArray(EjsArray *ap, int flags)
             }
         }
         mprMark(data);
+        ejsManagePot((EjsPot*) ap, flags);
     }
 }
 
@@ -1795,7 +1817,7 @@ void ejsConfigureArrayType(Ejs *ejs)
     ejsBindMethod(ejs, prototype, ES_Array_reverse, reverseArray);
     ejsBindMethod(ejs, prototype, ES_Array_shift, shiftArray);
     ejsBindMethod(ejs, prototype, ES_Array_slice, sliceArray);
-    ejsBindMethod(ejs, prototype, ES_Array_sort, sortArray);
+    ejsBindMethod(ejs, prototype, ES_Array_sort, ejsSortArray);
     ejsBindMethod(ejs, prototype, ES_Array_splice, spliceArray);
     ejsBindMethod(ejs, prototype, ES_Array_unique, uniqueArray);
     ejsBindMethod(ejs, prototype, ES_Array_unshift, unshiftArray);
@@ -1819,8 +1841,8 @@ void ejsConfigureArrayType(Ejs *ejs)
 /*
     @copy   default
 
-    Copyright (c) Embedthis Software LLC, 2003-2011. All Rights Reserved.
-    Copyright (c) Michael O'Brien, 1993-2011. All Rights Reserved.
+    Copyright (c) Embedthis Software LLC, 2003-2012. All Rights Reserved.
+    Copyright (c) Michael O'Brien, 1993-2012. All Rights Reserved.
 
     This software is distributed under commercial and open source licenses.
     You may use the GPL open source license described below or you may acquire
@@ -1832,7 +1854,7 @@ void ejsConfigureArrayType(Ejs *ejs)
     under the terms of the GNU General Public License as published by the
     Free Software Foundation; either version 2 of the License, or (at your
     option) any later version. See the GNU General Public License for more
-    details at: http://www.embedthis.com/downloads/gplLicense.html
+    details at: http://embedthis.com/downloads/gplLicense.html
 
     This program is distributed WITHOUT ANY WARRANTY; without even the
     implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.
@@ -1841,7 +1863,7 @@ void ejsConfigureArrayType(Ejs *ejs)
     proprietary programs. If you are unable to comply with the GPL, you must
     acquire a commercial license to use this software. Commercial licenses
     for this software and support services are available from Embedthis
-    Software at http://www.embedthis.com
+    Software at http://embedthis.com
 
     Local variables:
     tab-width: 4

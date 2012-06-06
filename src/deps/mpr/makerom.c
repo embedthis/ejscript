@@ -1,8 +1,8 @@
 /**
     makerom.c - Compile source files into C code suitable for embedding in ROM.
- *
-    Usage: makerom -p prefix -r romName filelist >rom.c
- *
+  
+    Usage: makerom --prefix prefix --name romName files ... >rom.c
+  
     Copyright (c) All Rights Reserved. See copyright notice at the bottom of the file.
  */
 
@@ -39,7 +39,6 @@ int main(int argc, char **argv)
         if (*argp != '-') {
             break;
         }
-
         if (strcmp(argp, "--prefix") == 0) {
             if (nextArg >= argc) {
                 err++;
@@ -96,7 +95,7 @@ static int binToC(MprList *files, char *romName, char *prefix)
     mprPrintf("/*\n    %s -- Compiled Files\n */\n", romName);
 
     mprPrintf("#include \"mpr.h\"\n\n");
-    mprPrintf("#if BLD_FEATURE_ROMFS\n");
+    mprPrintf("#if BIT_FEATURE_ROMFS\n");
 
     /*
         Open each input file and compile
@@ -105,7 +104,7 @@ static int binToC(MprList *files, char *romName, char *prefix)
         if (mprGetPathInfo(filename, &info) == 0 && info.isDir) {
             continue;
         } 
-        if ((file = mprOpenFile(filename, O_RDONLY | O_BINARY, 0666)) < 0) {
+        if ((file = mprOpenFile(filename, O_RDONLY | O_BINARY, 0666)) == 0) {
             mprError("Can't open file %s\n", filename);
             return -1;
         }
@@ -146,7 +145,6 @@ static int binToC(MprList *files, char *romName, char *prefix)
         if (*cp == '/') {
             cp++;
         }
-
         if (*cp == '.' && cp[1] == '\0') {
             cp++;
         }
@@ -159,15 +157,15 @@ static int binToC(MprList *files, char *romName, char *prefix)
     
     mprPrintf("    { 0, 0, 0, 0 },\n");
     mprPrintf("};\n");
-    mprPrintf("#endif /* BLD_FEATURE_ROMFS */\n");
+    mprPrintf("#endif /* BIT_FEATURE_ROMFS */\n");
     return 0;
 }
 
 /*
     @copy   default
     
-    Copyright (c) Embedthis Software LLC, 2003-2011. All Rights Reserved.
-    Copyright (c) Michael O'Brien, 1993-2011. All Rights Reserved.
+    Copyright (c) Embedthis Software LLC, 2003-2012. All Rights Reserved.
+    Copyright (c) Michael O'Brien, 1993-2012. All Rights Reserved.
     
     This software is distributed under commercial and open source licenses.
     You may use the GPL open source license described below or you may acquire 
@@ -179,7 +177,7 @@ static int binToC(MprList *files, char *romName, char *prefix)
     under the terms of the GNU General Public License as published by the 
     Free Software Foundation; either version 2 of the License, or (at your 
     option) any later version. See the GNU General Public License for more 
-    details at: http://www.embedthis.com/downloads/gplLicense.html
+    details at: http://embedthis.com/downloads/gplLicense.html
     
     This program is distributed WITHOUT ANY WARRANTY; without even the 
     implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. 
@@ -188,7 +186,7 @@ static int binToC(MprList *files, char *romName, char *prefix)
     proprietary programs. If you are unable to comply with the GPL, you must
     acquire a commercial license to use this software. Commercial licenses 
     for this software and support services are available from Embedthis 
-    Software at http://www.embedthis.com 
+    Software at http://embedthis.com 
     
     Local variables:
     tab-width: 4

@@ -100,28 +100,24 @@ static EjsObj *cmd_flush(Ejs *ejs, EjsCmd *cmd, int argc, EjsObj **argv)
 /**
     static function kill(pid: Number, signal: Number = 2): Boolean
  */
-static EjsObj *cmd_kill(Ejs *ejs, EjsCmd *cmd, int argc, EjsObj **argv)
+static EjsObj *cmd_kill(Ejs *ejs, EjsAny *unused, int argc, EjsObj **argv)
 {
     int     rc, pid, signal;
 
+#if BIT_UNIX_LIKE
     signal = SIGINT;
-
-    pid = 0;
-    if (argc == 0) {
-        if (cmd->mc && cmd->mc->pid) {
-            pid = cmd->mc->pid;
-        }
-    } else if (argc >= 1) {
-        pid = ejsGetInt(ejs, argv[0]);
-    } 
+#else
+    signal = 2;
+#endif
     if (argc >= 2) {
         signal = ejsGetInt(ejs, argv[1]);
     }
+    pid = ejsGetInt(ejs, argv[0]);
     if (pid == 0) {
         ejsThrowStateError(ejs, "No process to kill");
         return 0;
     }
-#if BLD_WIN_LIKE
+#if BIT_WIN_LIKE
 {
     HANDLE	handle;
 	handle = OpenProcess(PROCESS_TERMINATE, 0, pid);
@@ -132,15 +128,12 @@ static EjsObj *cmd_kill(Ejs *ejs, EjsCmd *cmd, int argc, EjsObj **argv)
     rc = TerminateProcess(handle, signal) == 0;
 }
 #elif VXWORKS
-    // CRASH    rc = taskDelete(cmd->pid);
     rc = taskDelete(pid);
 #else
     rc = kill(pid, signal);
 #endif
     if (rc < 0) {
-        if (cmd->throw) {
-            ejsThrowIOError(ejs, "Can't kill %d with signal %d, errno %d", pid, signal, errno);
-        }
+        ejsThrowIOError(ejs, "Can't kill %d with signal %d, errno %d", pid, signal, errno);
         return ESV(false);
     }
     return ESV(true);
@@ -271,7 +264,7 @@ static EjsString *cmd_readString(Ejs *ejs, EjsCmd *cmd, int argc, EjsObj **argv)
 }
 
 
-static void cmdIOCallback(MprCmd *mc, int channel, void *data)
+static ssize cmdIOCallback(MprCmd *mc, int channel, void *data)
 {
     EjsCmd          *cmd;
     EjsByteArray    *ba;
@@ -283,11 +276,12 @@ static void cmdIOCallback(MprCmd *mc, int channel, void *data)
      */
     cmd = data;
     buf = 0;
+
     switch (channel) {
     case MPR_CMD_STDIN:
         ejsSendEvent(cmd->ejs, cmd->emitter, "writable", NULL, cmd);
         mprEnableCmdEvents(mc, channel);
-        return;
+        return 0;
     case MPR_CMD_STDOUT:
         buf = cmd->stdoutBuf;
         break;
@@ -296,7 +290,7 @@ static void cmdIOCallback(MprCmd *mc, int channel, void *data)
         break;
     default:
         /* Child death */
-        return;
+        return 0;
     }
     /*
         Read and aggregate the result into a single string
@@ -306,10 +300,11 @@ static void cmdIOCallback(MprCmd *mc, int channel, void *data)
     if (space < (MPR_BUFSIZE / 4)) {
         if (mprGrowBuf(buf, MPR_BUFSIZE) < 0) {
             mprCloseCmdFd(mc, channel);
-            return;
+            return 0;
         }
         space = mprGetBufSpace(buf);
     }
+    mprAssert(mc->files[channel].fd >= 0);
     len = mprReadCmd(mc, channel, mprGetBufEnd(buf), space);
     if (len <= 0) {
         if (len == 0 || (len < 0 && !(errno == EAGAIN || errno == EWOULDBLOCK))) {
@@ -320,6 +315,8 @@ static void cmdIOCallback(MprCmd *mc, int channel, void *data)
     }
     if (len > 0) {
         mprEnableCmdEvents(mc, channel);
+    } else if (len < 0) {
+        len = 0;
     }
     if (channel == MPR_CMD_STDERR) {
         if (cmd->error == 0) {
@@ -344,6 +341,7 @@ static void cmdIOCallback(MprCmd *mc, int channel, void *data)
             }
         }
     }
+    return len;
 }
 
 
@@ -356,6 +354,11 @@ static int parseOptions(Ejs *ejs, EjsCmd *cmd)
     cmd->throw = 0;    
     flags = MPR_CMD_IN | MPR_CMD_OUT | MPR_CMD_ERR;
     if (cmd->options) {
+        if ((value = ejsGetPropertyByName(ejs, cmd->options, EN("noio"))) != 0) {
+            if (value == ESV(true)) {
+                flags &= ~(MPR_CMD_OUT | MPR_CMD_ERR);
+            }
+        }
         if ((value = ejsGetPropertyByName(ejs, cmd->options, EN("detach"))) != 0) {
             if (value == ESV(true)) {
                 flags |= MPR_CMD_DETACH;
@@ -399,7 +402,7 @@ static bool setCmdArgs(Ejs *ejs, EjsCmd *cmd, int argc, EjsObj **argv)
 
     } else {
         cmd->command = ejsToMulti(ejs, cmd->command);
-        if (mprMakeArgv(cmd->command, &cmd->argc, &cmd->argv, 0) < 0 || cmd->argv == 0) {
+        if ((cmd->argc = mprMakeArgv(cmd->command, &cmd->argv, 0)) < 0 || cmd->argv == 0) {
             ejsThrowArgError(ejs, "Can't parse command line");
             return 0;
         }
@@ -414,7 +417,8 @@ static bool setCmdArgs(Ejs *ejs, EjsCmd *cmd, int argc, EjsObj **argv)
 static EjsObj *cmd_start(Ejs *ejs, EjsCmd *cmd, int argc, EjsObj **argv)
 {
     EjsName     qname;
-    char        *err, **env;
+    cchar       **env;
+    char        *err;
     int         rc, flags, len, i, status;
 
     cmd->command = argv[0];
@@ -441,7 +445,7 @@ static EjsObj *cmd_start(Ejs *ejs, EjsCmd *cmd, int argc, EjsObj **argv)
         }
         for (i = 0; i < len; i++) {
             qname = ejsGetPropertyName(ejs, cmd->env, i);
-            env[i] = mprAsprintf("%s=%s", qname.name->value, 
+            env[i] = sfmt("%s=%s", qname.name->value, 
                 ejsToMulti(ejs, ejsToString(ejs, ejsGetProperty(ejs, cmd->env, i))));
         }
         env[i] = 0;
@@ -511,8 +515,11 @@ static EjsObj *cmd_stop(Ejs *ejs, EjsCmd *cmd, int argc, EjsObj **argv)
         ejsThrowStateError(ejs, "No active command");
         return 0;
     }
+    mprFinalizeCmd(cmd->mc);
+    if (!mprIsCmdRunning(cmd->mc)) {
+        return ESV(true);
+    }
     if (mprStopCmd(cmd->mc, signal) < 0) {
-        ejsThrowIOError(ejs, "Can't kill %d with signal %d, errno %d", cmd->mc->pid, signal, errno);
         return ESV(false);
     }
     return ESV(true);
@@ -606,12 +613,24 @@ static EjsNumber *cmd_write(Ejs *ejs, EjsCmd *cmd, int argc, EjsObj **argv)
  */
 static EjsObj *cmd_exec(Ejs *ejs, EjsObj *unused, int argc, EjsObj **argv)
 {
-#if BLD_UNIX_LIKE
-    char    **argVector;
-    int     argCount;
+#if BIT_UNIX_LIKE
+    cchar   **argVector, *path;
 
-    mprMakeArgv(ejsToMulti(ejs, argv[0]), &argCount, &argVector, 0);
-    execv(argVector[0], argVector);
+#if FUTURE
+    for (i = 3; i < MPR_MAX_FILE; i++) {
+        close(i);
+    }
+#endif
+    if (argc == 0) {
+        path = MPR->argv[0];
+        if (!mprIsPathAbs(path)) {
+            path = mprGetAppPath();
+        }
+        execv(path, (char**) MPR->argv);
+    } else {
+        mprMakeArgv(ejsToMulti(ejs, argv[0]), &argVector, 0);
+        execv(argVector[0], (char**) argVector);
+    }
 #endif
     ejsThrowStateError(ejs, "Can't exec %@", ejsToString(ejs, argv[0]));
     return 0;
@@ -679,8 +698,8 @@ void ejsConfigureCmdType(Ejs *ejs)
 /*
     @copy   default
 
-    Copyright (c) Embedthis Software LLC, 2003-2011. All Rights Reserved.
-    Copyright (c) Michael O'Brien, 1993-2011. All Rights Reserved.
+    Copyright (c) Embedthis Software LLC, 2003-2012. All Rights Reserved.
+    Copyright (c) Michael O'Brien, 1993-2012. All Rights Reserved.
 
     This software is distributed under commercial and open source licenses.
     You may use the GPL open source license described below or you may acquire
@@ -692,7 +711,7 @@ void ejsConfigureCmdType(Ejs *ejs)
     under the terms of the GNU General Public License as published by the
     Free Software Foundation; either version 2 of the License, or (at your
     option) any later version. See the GNU General Public License for more
-    details at: http://www.embedthis.com/downloads/gplLicense.html
+    details at: http://embedthis.com/downloads/gplLicense.html
 
     This program is distributed WITHOUT ANY WARRANTY; without even the
     implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.
@@ -701,7 +720,7 @@ void ejsConfigureCmdType(Ejs *ejs)
     proprietary programs. If you are unable to comply with the GPL, you must
     acquire a commercial license to use this software. Commercial licenses
     for this software and support services are available from Embedthis
-    Software at http://www.embedthis.com
+    Software at http://embedthis.com
 
     Local variables:
     tab-width: 4

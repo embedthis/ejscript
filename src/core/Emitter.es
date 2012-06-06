@@ -6,8 +6,7 @@
 module ejs {
     /** 
         The emitter class provides a publish/subscribe model of communication via events. It supports the 
-        registration of observers
-        who want to subscribe to events of interest. 
+        registration of observers who want to subscribe to events of interest. 
         @example
             events.on(event, function (event, ...args) {
                 //  Do something
@@ -156,7 +155,7 @@ module ejs {
             var observers: Array? = endpoints[name]
             for (let i in observers) {
                 var e: Endpoint = observers[i]
-                if (e.callback == callback && e.name == name) {
+                if (e.name == name && (callback == null || e.callback == callback)) {
                     fire("off", name, callback)
                     observers.splice(i, 1)
                 }
@@ -164,9 +163,10 @@ module ejs {
         }
 
         /** 
-            Turn off and Remove a registered observer.
+            Turn off and remove a registered observer.
             @param name Event name used when the observer was added.
-            @param callback Callback function used when the observer was added.
+            @param callback Callback function used when the observer was added. If null is supplied, all callbacks 
+                will be removed.
          */
         function off(name: Object!, callback: Function): Void {
             if (name is String) {
@@ -201,8 +201,8 @@ module ejs {
 /*
     @copy   default
     
-    Copyright (c) Embedthis Software LLC, 2003-2011. All Rights Reserved.
-    Copyright (c) Michael O'Brien, 1993-2011. All Rights Reserved.
+    Copyright (c) Embedthis Software LLC, 2003-2012. All Rights Reserved.
+    Copyright (c) Michael O'Brien, 1993-2012. All Rights Reserved.
     
     This software is distributed under commercial and open source licenses.
     You may use the GPL open source license described below or you may acquire 

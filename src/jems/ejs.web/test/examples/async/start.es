@@ -3,7 +3,7 @@
  */
 require ejs.web
 
-let address = ":" + (App.config.test.http_port || "6700")
+const HTTP = App.config.uris.http
 let server: HttpServer = new HttpServer({documents: "../../web"})
 
 server.on("readable", function (event, request) {
@@ -49,6 +49,6 @@ server.on("readable", function (event, request) {
 */
 })
 
-server.listen(address)
-App.log.info("Listen on " + address)
+server.listen(HTTP)
+App.log.info("Listen on " + HTTP)
 App.run()
