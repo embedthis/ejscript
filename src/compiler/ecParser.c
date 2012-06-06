@@ -4412,8 +4412,9 @@ static EcNode *parseTypedPattern(EcCompiler *cp)
         null
         undefined
         TypeExpression
-        TypeExpression ?            # Nullable
-        REMOVE TypeExpression ! # Non-Nullable
+        TypeExpression ?    # Nullable
+        TypeExpression !    # Non-Nullable (throws)
+        TypeExpression ~    # Cast nulls
 
     Input
 
@@ -8763,6 +8764,7 @@ static EcNode *parsePragmas(EcCompiler *cp, EcNode *np)
     }
     return LEAVE(cp, np);
 #else
+    //  MOB - does this allow multiple pragmas?
     return LEAVE(cp, parsePragma(cp, np));
 #endif
 }
