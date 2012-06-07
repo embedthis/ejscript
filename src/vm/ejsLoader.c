@@ -588,10 +588,6 @@ static int loadEndClassSection(Ejs *ejs, EjsModule *mp)
         if (type->dynamicInstances) {
             type->mutableInstances = 1;
         }
-#if UNUSED 
-        mprLog(0, "Type %N is %s and has %s instances", type->qname, (type->mutable) ? "mutable" : "immutable", 
-            type->mutableInstances ? "mutable" : "immutable");
-#endif
     }
     popScope(mp, 0);
     return 0;
@@ -649,7 +645,7 @@ static int loadFunctionSection(Ejs *ejs, EjsModule *mp)
     if ((sn = ejsLookupProperty(ejs, block, qname)) >= 0) {
         fun = ejsGetProperty(ejs, block, sn);
     }
-    if (fun == 0 || (attributes & EJS_TRAIT_SETTER && !fun->setter)) {
+    if (fun == 0 || (attributes & EJS_TRAIT_SETTER && !fun->setter) || (attributes & EJS_FUN_OVERRIDE)) {
         /*
             Read the code
          */
@@ -681,21 +677,6 @@ static int loadFunctionSection(Ejs *ejs, EjsModule *mp)
         if (numProp > 0) {
             fun->activation = ejsCreateActivation(ejs, fun, numProp);
         }
-#if UNUSED
-        if (block == ejs->global && slotNum < 0) {
-            if (attributes & EJS_FUN_OVERRIDE) {
-                mprAssert(0);
-                slotNum = ejsLookupProperty(ejs, block, qname);
-                if (slotNum < 0) {
-                    mprError("Can't find method \"%@\" to override", qname.name);
-                    return MPR_ERR_MEMORY;
-                }
-
-            } else {
-                slotNum = -1;
-            }
-        }
-#endif
         if (!(attributes & EJS_FUN_CONSTRUCTOR)) {
             if (attributes & EJS_FUN_MODULE_INITIALIZER && block == ejs->global) {
                 mp->initializer = fun;
