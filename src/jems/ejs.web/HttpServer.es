@@ -27,9 +27,6 @@ module ejs.web {
             dirs: {
                 cache: Path("cache"),
                 layouts: Path("layouts"),
-/*
-                views: Path("views"),
- */
             },
             extensions: {
                 es:  "es",
