@@ -16,8 +16,8 @@
 #define BIT_MINOR_VERSION 0
 #define BIT_PATCH_VERSION 0
 #define BIT_VNUM 200000000
-#define BIT_CONFIG_CMD "bit -d -q -platform macosx-x64 -without all -configure . -gen sh,make,xcode"
-#define BIT_PROFILE "debug"
+#define BIT_CONFIG_CMD "bit -d -q -platform macosx-x64 -without all -profile xcode -configure . -gen sh,make"
+#define BIT_PROFILE "xcode"
 #define BIT_CFG_PREFIX "/etc/ejs"
 #define BIT_BIN_PREFIX "/usr/lib/ejs/2.0.0/bin"
 #define BIT_INC_PREFIX "/usr/lib/ejs/2.0.0/inc"

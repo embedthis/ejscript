@@ -311,13 +311,13 @@ module ejs.web {
                 will be pooled when the request completes and will be available for subsequent requests.  
            @throws Error for an unknown route set.
          */
-        function Router(routeSet: String = Top, options: Object = {}) {
+        function Router(routeSet: String = Restful, options: Object = {}) {
             routerOptions = options
             switch (routeSet) {
             case Top:
                 addHandlers()
-                //  MOB - should this not be addCatchall()
                 addDefault(StaticApp)
+                addCatchall()
                 break
             case Restful:
                 addHome("@Base/")
