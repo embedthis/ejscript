@@ -167,3 +167,4 @@ xcuserdata
 *.dmp
 project.xcworkspace
 start.bit
+*-xcode
