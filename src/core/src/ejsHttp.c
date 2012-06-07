@@ -89,6 +89,7 @@ static EjsNumber *http_available(Ejs *ejs, EjsHttp *hp, int argc, EjsObj **argv)
     if (len > 0) {
         return ejsCreateNumber(ejs, (MprNumber) len);
     }
+    /* Probably should be returning null here */
     return (EjsNumber*) ESV(minusOne);
 }
 #endif
