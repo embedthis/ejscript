@@ -2201,7 +2201,6 @@ char *ejsToMulti(Ejs *ejs, EjsAny *ev)
     return ptr;
 }
 #else
-    //  MOB - this currently will only copy ascii strings and not binary strings with embedded nulls
     return awtom(((EjsString*) ev)->value, NULL);
 #endif
 }

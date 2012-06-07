@@ -4373,32 +4373,10 @@ static EcNode *parseTypedPattern(EcCompiler *cp)
 
     ENTER(cp);
 
-    switch (peekToken(cp)) {
-#if UNUSED
-    case T_LBRACKET:
-        np = parseArrayPattern(cp);
-        if (peekToken(cp) == T_COLON) {
-            getToken(cp);
-            np->typeNode = linkNode(np, parseTypeExpression(cp));
-        }
-        break;
-
-    case T_LBRACE:
-        np = parseObjectPattern(cp);
-        if (peekToken(cp) == T_COLON) {
-            getToken(cp);
-            np->typeNode = linkNode(np, parseTypeExpression(cp));
-        }
-        break;
-#endif
-
-    default:
-        np = parseSimplePattern(cp);
-        if (peekToken(cp) == T_COLON) {
-            getToken(cp);
-            np->typeNode = linkNode(np, parseNullableTypeExpression(cp));
-        }
-        break;
+    np = parseSimplePattern(cp);
+    if (peekToken(cp) == T_COLON) {
+        getToken(cp);
+        np->typeNode = linkNode(np, parseNullableTypeExpression(cp));
     }
     if (np && np->kind != N_QNAME) {
         return LEAVE(cp, unexpected(cp));
@@ -7144,8 +7122,7 @@ static EcNode *parseVariableBinding(EcCompiler *cp, EcNode *np, EcNode *attribut
         break;
 
     default:
-        var = parseTypedIdentifier(cp);
-        if (var == 0) {
+        if ((var = parseTypedIdentifier(cp)) == 0) {
             return LEAVE(cp, var);
         }
         mprAssert(var->qname.name);
