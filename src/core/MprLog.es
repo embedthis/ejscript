@@ -77,7 +77,7 @@ module ejs {
         }
 
         /** @hide */
-        function read(buffer: ByteArray, offset: Number = 0, count: Number = -1): Number  {
+        function read(buffer: ByteArray, offset: Number = 0, count: Number = -1): Number? {
             throw "Read not supported"
             return null
         }
@@ -87,7 +87,7 @@ module ejs {
             @param location Output location to send messages to.
             @param level Verbosity level for logging. 
          */
-        native function redirect(location: String, level: Number = null): Void
+        native function redirect(location: String, level: Number? = null): Void
 
         /** 
             Write messages to the MprLog stream at level 0

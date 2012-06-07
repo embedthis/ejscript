@@ -82,9 +82,9 @@ module ejs {
             @param codeReader Optional function to provide script code to use instead of reading from the path. 
             @return a hash of exported properties
          */
-        public static function load(id: String, path: Path, config = App.config, codeReader: Function = null): Object {
+        public static function load(id: String, path: Path, config = App.config, codeReader: Function? = null): Object {
             let initializer, code
-            let cache: Path = cached(id, config)
+            let cache: Path? = cached(id, config)
             if (path) {
                 if (cache && cache.exists && (!config.cache.app.reload || cache.modified > path.modified)) {
                     /* Cache mod file exists and is current */
@@ -147,7 +147,7 @@ module ejs {
         }
 
         /** @hide */
-        public static function cached(id: Path, config = App.config, cachedir: Path = null): Path {
+        public static function cached(id: Path, config = App.config, cachedir: Path? = null): Path? {
             config ||= App.config
             if (id && config.cache.app.enable) {
                 let dir = cachedir || Path(config.dirs.cache) || Path("cache")

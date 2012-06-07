@@ -177,6 +177,7 @@ module ejs {
             An MD5 checksum for the buffer contents
          */
         function get MD5(): String {
+            //  OPT - don't close. Just safe read/write position
             let buf: ByteArray = this.clone()
             return md5(buf.readString())
         }
@@ -195,7 +196,7 @@ module ejs {
             read position is set to the specified offset and data is stored at this offset. The write position is set to
             one past the last byte read.
          */
-        native function read(buffer: ByteArray!, offset: Number = 0, count: Number = -1): Number
+        native function read(buffer: ByteArray!, offset: Number = 0, count: Number = -1): Number?
 
         /** 
             Read a boolean from the array. Data is read from the current read $position pointer.
@@ -281,8 +282,8 @@ module ejs {
             Read a data from the array as a string. Read data from the $readPosition to a string up to the $writePosition,
             but not more than count characters. If insufficient data, a "writable" event will be issued indicating that 
             the byte array is writable. This enables observers to write data into the byte array.  If there is no data 
-            available, the call will return return null indicating EOF. If there is insufficient data @param count of bytes 
-            to read. If -1, convert the data up to the $writePosition.
+            available, the call will return return null indicating EOF. If there is insufficient data 
+            @param count of bytes to read. If -1, convert the data up to the $writePosition.
             @returns a string or null on EOF.
             @throws IOError if an I/O error occurs or a premature EOF.
          */

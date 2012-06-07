@@ -11,7 +11,7 @@ module ejs.web {
     /**
         Request for which a controller is being constructed
      */
-    var _initRequest: Request
+    var _initRequest: Request?
 
     //  DOC - need more doc here on controllers
     /** 
@@ -40,8 +40,8 @@ module ejs.web {
          */
         private static var _allOptions: Object = {}
 
-        private var _afterCheckers: Array
-        private var _beforeCheckers: Array
+        private var _afterCheckers: Array?
+        private var _beforeCheckers: Array?
 
         /** Name of the Controller action method being run for this request */
         var actionName: String 
@@ -60,7 +60,7 @@ module ejs.web {
         var params: Object
 
         /** Reference to the current $ejs.web::Request object */
-        var request: Request
+        var request: Request?
 
         var cacheIndex: String
         var cacheOptions: Object
@@ -70,23 +70,23 @@ module ejs.web {
         /***************************************** Convenience Getters  ***************************************/
 
         /** @duplicate ejs.web::Request.absHome */
-        function get absHome(): Uri 
+        function get absHome(): Uri?
             request ? request.absHome : null
 
         /** @duplicate ejs.web::Request.home */
-        function get home(): Uri 
+        function get home(): Uri?
             request ? request.home : null
 
         /** @duplicate ejs.web::Request.pathInfo */
-        function get pathInfo(): String 
+        function get pathInfo(): String?
             request ? request.pathInfo : null
 
         /** @duplicate ejs.web::Request.session */
-        function get session(): Session 
+        function get session(): Session?
             request ? request.session : null
 
         /** @duplicate ejs.web::Request.uri */
-        function get uri(): Uri 
+        function get uri(): Uri?
             request ? request.uri : null
 
         /********************************************* Methods *******************************************/
@@ -99,7 +99,7 @@ module ejs.web {
             @param cname Controller class name. This should be the name of the Controller class without the "Controller"
                 suffix.
          */
-        static function create(request: Request, cname: String = null): Controller {
+        static function create(request: Request, cname: String? = null): Controller {
             request.params.controller = request.params.controller.toPascal()
             cname ||= (request.params.controller + "Controller")
             _initRequest = request
@@ -116,7 +116,7 @@ print("URI " + request.uri)
             Create and initialize a controller. This may be called directly or via the Controller.create factory method.
             @param req Web request object
          */
-        function Controller(req: Request = null) {
+        function Controller(req: Request? = null) {
             /*  _initRequest may be set by create() to allow subclasses to omit constructors */
             controllerName = typeOf(this).trim("Controller") //MOB || "-DefaultController-"
             request = req || _initRequest
@@ -278,7 +278,7 @@ print("URI " + request.uri)
                 "index" is used as the action method name.
             @return A response object hash {status, headers, body} or null if writing directly using the request object.
          */
-        function app(request: Request, aname: String = null): Object {
+        function app(request: Request, aname: String? = null): Object {
             let response, cacheIndex, cacheName
             let ns = params.namespace || "action"
 
@@ -561,7 +561,7 @@ print("URI " + request.uri)
             request.on(name, observer)
 
         /** @duplicate ejs.web::Request.read */
-        function read(buffer: ByteArray, offset: Number = 0, count: Number = -1): Number 
+        function read(buffer: ByteArray, offset: Number = 0, count: Number = -1): Number?
             request.read(buffer, offset, count)
 
         /** 
@@ -712,7 +712,7 @@ print("URI " + request.uri)
         /* 
             Run the before/after checkers. These are typically used to handle authorization and similar tasks
          */
-        private function runCheckers(checkers: Array): Void {
+        private function runCheckers(checkers: Array?): Void {
             for each (checker in checkers) {
                 let [fn, options] = checker
                 if (options) {
@@ -838,7 +838,7 @@ print("URI " + request.uri)
             @deprecated 2.0.0
          */
         # Config.Legacy
-        function makeUrl(action: String, id: String = null, options: Object = {}, query: Object = null): String
+        function makeUrl(action: String, id: String? = null, options: Object = {}, query: Object = null): String
             link({ action, id, query })
 
         /**
@@ -886,7 +886,7 @@ print("URI " + request.uri)
             @deprecated 2.0.0
          */
         # Config.Legacy
-        function renderView(name: String = null): Void
+        function renderView(name: String? = null): Void
             writeView(name)
 
         /**
@@ -918,7 +918,7 @@ print("URI " + request.uri)
             @deprecated 2.0.0
          */
         # Config.Legacy
-        function setCookie(name: String, value: String, path: String = null, domain: String = null,
+        function setCookie(name: String, value: String, path: String? = null, domain: String? = null,
                 lifetime: Number = 0, secure: Boolean = false): Void  {
             request.setCookie(name, 
                 { value: value, path: path, domain: domain, lifetime: Date().future(lifetime * 1000), secure: secure})

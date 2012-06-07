@@ -542,7 +542,7 @@ MOB -- much more doc here
             @option minified If the target is null, a minified option will determine if compressed (minifed) 
                 or uncompressed versions of the scripts will be used.
          */
-        function script(target: Object, options: Object = {}): Void {
+        function script(target: Object?, options: Object = {}): Void {
             let connector = getConnector("script", options)
             if (target is Array) {
                 for each (uri in target) {
@@ -575,7 +575,7 @@ MOB -- much more doc here
                 default set of stylesheets.
             @param options Optional extra options. See $View for a list of the standard options.
          */
-        function stylesheet(target: Object, options: Object = {}): Void {
+        function stylesheet(target: Object?, options: Object = {}): Void {
             let connector = getConnector("stylesheet", options)
             if (target is Array) {
                 for each (uri in target) {

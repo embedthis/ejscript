@@ -1145,7 +1145,7 @@ static EjsObj *req_on(Ejs *ejs, EjsRequest *req, int argc, EjsAny **argv)
 
 
 /*  
-    function read(buffer, offset, count): Number
+    function read(buffer, offset, count): Number?
  */
 static EjsNumber *req_read(Ejs *ejs, EjsRequest *req, int argc, EjsObj **argv)
 {

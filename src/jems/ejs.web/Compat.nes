@@ -88,7 +88,7 @@ NewRequest {
         function mail(nameText: String, address: String, options: Object = {}): Void  
         function progress(initialData: Object, options: Object = {}): Void 
         function radio(field: String, choices: Object, options: Object = {}): Void 
-        function script(url: Object, options: Object = {}): Void 
+        function script(url: Object?, options: Object = {}): Void 
         function status(initialData: Object, options: Object = {}): Void 
         function stylesheet(url: Object, options: Object = {}): Void 
         function table(data, options: Object = {}): Void 

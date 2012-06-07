@@ -18,12 +18,12 @@ module ejs {
         /** 
             Big endian byte order 
          */
-        static const BigEndian: Number = ByteArray.BigEndian
+        static const BigEndian: Number = 0
 
         /** 
             Little endian byte order 
          */
-        static const LittleEndian: Number = ByteArray.LittleEndian
+        static const LittleEndian: Number = 1
 
         /* 
             Data input and output buffers. The buffers are used to marshall the data for encoding and decoding. The inbuf 
@@ -32,6 +32,7 @@ module ejs {
         private var inbuf: ByteArray
         private var outbuf: ByteArray
         private var nextStream: Stream
+        private var emitter: Emitter
 
         /** 
             Create a new BinaryStream
@@ -59,12 +60,15 @@ module ejs {
         /** 
             @duplicate Stream.async 
          */
-        native function get async(): Boolean
+        function get async(): Boolean
+            false
 
         /** 
             @duplicate Stream.async 
          */
-        native function set async(enable: Boolean): Void
+        function set async(enable: Boolean): Void {
+            throw "async mode not implemented for BinaryStreams"
+        }
 
         /** 
             The number of bytes available to read without blocking. This is the number of bytes internally buffered
@@ -131,12 +135,15 @@ module ejs {
         /** 
             @duplicate Stream.on 
          */
-        native function on(name, observer: Function): Void
+        function on(name, observer: Function): Void {
+            emitter ||= new Emitter
+            emitter.on(name, observer)
+        }
 
         /** 
             @duplicate Stream.read
          */
-        function read(buffer: ByteArray, offset: Number = 0, count: Number = -1): Number
+        function read(buffer: ByteArray, offset: Number = 0, count: Number = -1): Number?
             inbuf.read(buffer, offset, count)
 
         /** 
@@ -219,7 +226,9 @@ module ejs {
         /** 
             @duplicate Stream.off 
          */
-        native function off(name, observer: Function): Void
+        function off(name, observer: Function): Void {
+            if (emitter) emitter.off(name, observer)
+        }
 
         /** 
             Return the space available for write data. This call can be used to prevent write from blocking or 

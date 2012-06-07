@@ -56,7 +56,7 @@ module ejs {
             to write all data but will return immediately. Defaults to Stream.WRITE.
             @param dir direction to flush. Set to $READ, $WRITE or $BOTH.
          */
-        function flush(dir: Number): Void 
+        function flush(dir: Number = BOTH): Void 
 
         /** 
             Remove an observer from the stream. 
@@ -93,7 +93,7 @@ module ejs {
             @event readable Issued when there is new read data available.
             @event writable Issued when the stream becomes empty.
          */
-        function read(buffer: ByteArray, offset: Number = 0, count: Number = -1): Number 
+        function read(buffer: ByteArray, offset: Number = 0, count: Number = -1): Number? 
 
         /** 
             Write data to the stream.
@@ -110,6 +110,13 @@ module ejs {
          */
         function write(...data): Number
     }
+
+    /*
+        Workaround for Interface constants
+     */
+    Stream.READ = 0x1
+    Stream.WRITE = 0x2
+    Stream.BOTH = 0x3
 }
 
 

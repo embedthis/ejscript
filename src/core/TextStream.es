@@ -27,7 +27,7 @@ module ejs {
         private var inbuf: ByteArray
 
         /** @hide */
-        private var format: String = Locale.textEncoding
+        private var format: String = "utf-8"
 
         /* 
             Provider Stream
@@ -74,7 +74,7 @@ module ejs {
             @duplicate Stream.close
          */
         function close(): Void {
-            inbuf.flush(Stream.WRITE)
+            inbuf.flush(2 /* MOB Stream.WRITE */)
             nextStream.close()
         }
 
@@ -100,7 +100,7 @@ module ejs {
             Fill the input buffer from upstream
             @returns The number of new characters added to the input bufer
          */
-        function fill(): Number {
+        function fill(): Number? {
             inbuf.compact()
             return nextStream.read(inbuf, -1)
         }
@@ -139,7 +139,7 @@ module ejs {
             @returns a count of characters actually read
             @throws IOError if an I/O error occurs.
          */
-        function read(buffer: ByteArray, offset: Number = 0, count: Number = -1): Number {
+        function read(buffer: ByteArray, offset: Number = 0, count: Number = -1): Number? {
             let total = 0
             if (buffer == undefined) {
                 throw new ArgError("Insufficient args")
@@ -150,7 +150,7 @@ module ejs {
             if (offset < 0) {
                 buffer.reset()
             } else {
-                buffer.flush(Stream.READ)
+                buffer.flush(1 /* MOB Stream.READ */)
             }
             let where = buffer.writePosition
             while (count > 0) {
@@ -180,7 +180,7 @@ module ejs {
             @returns A string containing the next line without newline characters ("\r", "\n"). Return null on EOF.
             @throws IOError if an I/O error occurs.
          */
-        function readLine(): String {
+        function readLine(): String? {
             if (inbuf.available == 0 && fill() <= 0) {
                 return null
             }

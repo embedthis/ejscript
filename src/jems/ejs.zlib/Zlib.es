@@ -14,8 +14,8 @@ module ejs.zlib {
     class Zlib {
         use default namespace public
 
-        static native function compress(src: Path, dest: Path = null)
-        static native function uncompress(src: Path, dest: Path = null)
+        static native function compress(src: Path, dest: Path? = null)
+        static native function uncompress(src: Path, dest: Path? = null)
 
         static native function compressBytes(data: ByteArray): ByteArray
         static native function uncompressBytes(data: ByteArray): ByteArray

@@ -25,9 +25,9 @@ public class Bit {
 
     private var appName: String = 'bit'
     private var args: Args
-    private var currentBitFile: Path
-    private var currentPack: String
-    private var currentPlatform: String
+    private var currentBitFile: Path?
+    private var currentPack: String?
+    private var currentPlatform: String?
     private var envSettings: Object
     private var local: Object
     private var localPlatform: String
@@ -2317,7 +2317,7 @@ public class Bit {
     /*
         Called in this file and in xcode.es during project generation
      */
-    public function makeDirGlobals(base: Path = null) {
+    public function makeDirGlobals(base: Path? = null) {
         for each (n in ['BIN', 'CFG', 'BITS', 'FLAT', 'INC', 'LIB', 'OBJ', 'PACKS', 'PKG', 'REL', 'SRC', 'TOP']) {
             /* 
                 These globals are always in portable format so they can be used in build scripts. Windows back-slashes
@@ -3015,7 +3015,7 @@ public function mapLibs(libs: Array)
 public function setRuleVars(target, dir = App.dir)
     b.setRuleVars(target, dir)
 
-public function makeDirGlobals(base: Path = null)
+public function makeDirGlobals(base: Path? = null)
     b.makeDirGlobals(base)
 
 public function runTargetScript(target, when)

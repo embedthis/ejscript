@@ -42,7 +42,7 @@ module ejs {
             @param path the name of the file to associate with this file object. Can be either a String or a Path.
             @param options If the open options are provided, the file is opened. See $open for the available options.
          */
-        native function File(path: Object, options: Object? = null)
+        native function File(path: Object, options: Object = null)
 
         /** 
             Is the file opened for reading
@@ -77,7 +77,7 @@ module ejs {
             File I/O is currently unbuffered
             @hide
          */
-        function flush(dir: Number = Stream.BOTH): Void {}
+        function flush(dir: Number = Stream.BOTH): Void { }
 
         /** 
             Iterate over the positions in a file. This will get an iterator for this file to be used by 
@@ -129,7 +129,7 @@ module ejs {
             @return the File object. This permits method chaining.
             @throws IOError if the path or file cannot be created.
          */
-        native function open(options: Object? = null): File
+        native function open(options: Object = null): File
 
         /** 
             Current file options set when opening the file.
@@ -166,7 +166,7 @@ module ejs {
             @return A count of the bytes actually read. Returns null on end of file.
             @throws IOError if the file could not be read.
          */
-        native function read(buffer: ByteArray, offset: Number = 0, count: Number = -1): Number
+        native function read(buffer: ByteArray, offset: Number = 0, count: Number = -1): Number?
 
         /** 
             Read data bytes from a file and return a byte array containing the data.

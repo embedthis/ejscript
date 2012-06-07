@@ -74,7 +74,7 @@ module ejs {
                 specified "version == true", return an object with the properties "data" for the key data and 
                 "version" for the CAS version identifier.
          */
-        native function read(key: String~, options: Object = null): String
+        native function read(key: String~, options: Object = null): String?
 
         /**
             Remove the key and associated value from the cache

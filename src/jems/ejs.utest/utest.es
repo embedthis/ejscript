@@ -26,12 +26,15 @@ enumerable class Test {
      */
     var _cfg: Path                          // Path to configuration outputs directory
     var _bin: Path                          // Path to bin directory
-    var _cross: Boolean                     // Cross compiling
     var _depth: Number = 1                  // Test level. Higher levels mean deeper testing.
+
+/* UNUSED
+    var _os: String                         // Operating system
     var _hostOs: String                     // Host operating system
     var _hostSystem: String                 // Host system details
+    var _cross: Boolean                     // Cross compiling
+*/
     var _lib: Path                          // Path to lib directory
-    var _os: String                         // Operating system
     var _top: Path                          // Path to top of source tree
 
     var continueOnErrors: Boolean = false   // Continue on errors 
@@ -49,7 +52,7 @@ enumerable class Test {
     var originalHome: Path                  // Original home directory for utest
     var second: Boolean = false             // Second instance. Bypass some initializations
     var skipTest: Boolean = false           // Skip a test
-    var skippedMsg: String                  // Test skipped message
+    var skippedMsg: String?                 // Test skipped message
     var step: Boolean = false               // Single step tests 
     var testName: String                    // Set test name 
     var testDirs: Array = [ "." ]           // Test directories to run
@@ -164,9 +167,12 @@ enumerable class Test {
         if (options.name) {
             testName = options.name
         }
+/*
+   UNUSED
         if (options.os) {
             _os = options.os
         }
+ */
         if (options.step) {
             step = true
         }
@@ -307,7 +313,7 @@ enumerable class Test {
         }
     }
 
-    function runTest(file: Path, phase: String = null): Void {
+    function runTest(file: Path, phase: String? = null): Void {
         skipTest = false
         let home = App.dir
         try {
@@ -352,6 +358,13 @@ enumerable class Test {
             w.preload(App.exeDir.join("utest.worker"))
         }
         let estr = serialize(export)
+        /* UNUSED
+        Moved from inside preeval
+            test.os = data.os
+            test.hostOs = data.hostOs
+            test.hostSystem = data.hostSystem
+            test.cross = data.cross
+         */
         w.preeval('
             let data = deserialize(\'' + estr.replace(/\\/g, "\\\\") + '\')
             public var test: Test = new Test
@@ -363,11 +376,7 @@ enumerable class Test {
             test.lib = Path(data.lib)
             test.env = data.env
             test.features = data.features
-            test.os = data.os
             test.phase = data.phase
-            test.cross = data.cross
-            test.hostOs = data.hostOs
-            test.hostSystem = data.hostSystem
             test.session = data.session
             test.threads = data.threads
             test.top = Path(data.top)
@@ -378,19 +387,21 @@ enumerable class Test {
         ')
     }
 
-    function startWorker(file: Path, phase: String = null): Worker {
+    function startWorker(file: Path, phase: String? = null): Worker {
         let export = { 
             cfg: _cfg, 
             bin: _bin, 
-            cross: _cross,
             depth: _depth, 
             dir: file.dirname,
+        /* UNUSED
             hostOs: _hostOs, 
+            os: _os, 
             hostSystem: _hostSystem, 
+            cross: _cross,
+         */
             env: env,
             features: features,
             lib: _lib, 
-            os: _os, 
             phase: phase,
             session: session,
             threads: threads, 
@@ -512,7 +523,7 @@ enumerable class Test {
         }
     }
         
-    function getKey(data: String, key: String): String {
+    function getKey(data: String, key: String): String? {
         r = RegExp(key + "=(.*)")
         match = data.match(r)
         if (match) {
@@ -523,10 +534,12 @@ enumerable class Test {
 
     function parseBuildConfig(path: Path) {
         let data = Path(path).readString()
-        _os = getKey(data, "BIT_BUILD_OS")
-        _cross = getKey(data, "BIT_CROSS") == "1"
+/*
+        _os = Config.OS                                 // UNUSED getKey(data, "BIT_BUILD_OS")
         _hostOs = getKey(data, "BIT_HOST_OS")
         _hostSystem = getKey(data, "BIT_HOST_SYSTEM")
+        _cross = getKey(data, "BIT_CROSS") == "1"
+ */
         features = {}
         features["bld_debug"] = getKey(data, "BIT_DEBUG")
         let str = data.match(/BIT_FEATURE.*|BIT_HTTP_PORT.*|BIT_SSL_PORT.*/g)
@@ -551,7 +564,7 @@ enumerable class Test {
         }
     }
 
-    function searchUp(path: Path): Path {
+    function searchUp(path: Path): Path? {
         if (path.exists) {
             return path
         }

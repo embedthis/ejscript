@@ -5,7 +5,7 @@
 /*
   	Test parameter type conversion
  */
-function testWithTypes(a: Number, b: String, c: Boolean) 
+function testWithTypes(a: Number, b: String, c: Boolean?)
 {
 	assert(a is Number)
 	assert(b is String)
@@ -20,7 +20,7 @@ testWithTypes(true, true, undefined)
 /*
     Test passing null
  */
-function fun(s: String = null): String {
+function fun(s: String? = null): String {
     return typeOf(s)
 }
 

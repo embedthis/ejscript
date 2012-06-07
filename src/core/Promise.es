@@ -15,7 +15,7 @@ module ejs {
         @hide
      */
     dynamic class Promise extends Emitter {
-        private var timer: Timer
+        private var timer: Timer?
         private var complete: Boolean
 
         use default namespace public 

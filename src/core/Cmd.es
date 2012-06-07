@@ -138,7 +138,7 @@ module ejs {
             @duplicate Stream.read
             If no observer has been defined via $on(), this call will block if there is no data to be read.
          */
-        native function read(buffer: ByteArray, offset: Number = 0, count: Number = -1): Number
+        native function read(buffer: ByteArray, offset: Number = 0, count: Number = -1): Number?
 
         /**
             Read the data from the command output as a string. This reads from the command's standard output. 
@@ -249,7 +249,7 @@ module ejs {
             @param options Command options. Sames as options in $Cmd
             @throws IOError if the request was cannot be issued to the remote server.
          */
-        native static function exec(cmdline: String = null, options: Object = {}): Void
+        native static function exec(cmdline: String? = null, options: Object = {}): Void
 
         /**
             Kill the specified process.
@@ -267,15 +267,12 @@ module ejs {
             the processes command line. Note: this command does not throw exceptions if a matching process cannot be
             killed. Use kill() for reliable process execution.
             @param pattern of processes to kill. This can be a string name or a regular expression to match with.
-            @param signal Signal number to send to the processes to kill. If the signal is null, then the system default
-                signal is sent (SIGTERM).
+            @param signal Signal number to send to the processes to kill. If the signal is not supplied, then the system
+            default signal is sent (SIGTERM).
             @param preserve Optional set of process IDs to preserve
             @hide 
          */
-        static function killall(pattern: Object, signal: Number, ...preserve): Void {
-            if (!(signal is Number)) {
-                signal = 15
-            }
+        static function killall(pattern: Object, signal: Number = 15, ...preserve): Void {
             let cmd = new Cmd
             if (Config.OS == "windows" || Config.OS == "cygwin") {
                 cmd.start('cmd /A /C "WMIC PROCESS get Processid,Commandline /format:csv"')

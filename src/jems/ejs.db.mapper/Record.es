@@ -24,7 +24,7 @@ module ejs.db.mapper {
         
 
         static var  _assocName: String          //  Name for use in associations. Lower case class name
-        static var  _belongsTo: Array = null    //  List of belonging associations
+        static var  _belongsTo: Array? = null    //  List of belonging associations
 
         /*
             Queries to cache. Indexed by model name and optionally query string. Contains cache options for this model.
@@ -35,8 +35,8 @@ module ejs.db.mapper {
 
         static var  _className: String          //  Model class name
         static var  _columns: Object            //  List of columns in this database table
-        static var  _hasOne: Array = null       //  List of 1-1 containment associations
-        static var  _hasMany: Array = null      //  List of 1-many containment  associations
+        static var  _hasOne: Array? = null       //  List of 1-1 containment associations
+        static var  _hasMany: Array? = null      //  List of 1-many containment  associations
 
         static var  _db: Database               //  Hosting database
         static var  _foreignId: String          //  Camel case class name with "Id". (userCartId))
@@ -44,11 +44,11 @@ module ejs.db.mapper {
         static var  _model: Type                //  Model class
         static var  _tableName: String          //  Name of the database table. Plural, PascalCase
         static var  _trace: Boolean             //  Trace database SQL statements
-        static var  _validations: Array = null
+        static var  _validations: Array? = null
 
-        static var  _beforeFilters: Array = null//  Filters that run before saving data
-        static var  _afterFilters: Array = null //  Filters that run after saving data
-        static var  _wrapFilters: Array = null  //  Filters that run before and after saving data
+        static var  _beforeFilters: Array? = null//  Filters that run before saving data
+        static var  _afterFilters: Array? = null //  Filters that run after saving data
+        static var  _wrapFilters: Array? = null  //  Filters that run before and after saving data
 
         var _keyValue: Object                   //  Record key column value
         var _errors: Object                     //  Error message aggregation
@@ -385,7 +385,7 @@ var before = Memory.resident
             Fetch cached data from the cache if present
             @return a response object
          */
-        private static function fetchCachedResponse(query: String = null): Object {
+        private static function fetchCachedResponse(query: String? = null): Object {
             let cacheIndex = getCacheIndex(_className)
             let options = _cacheOptions[cacheIndex]
             if (options) {
@@ -1019,7 +1019,7 @@ var before = Memory.resident
         /*
             Save the output from a database query for future reuse
          */
-        private static function saveQuery(results, query: String = null): Void {
+        private static function saveQuery(results, query: String? = null): Void {
             let cacheIndex = getCacheIndex(_className)
             let options = _cacheOptions[cacheIndex]
             if (options) {

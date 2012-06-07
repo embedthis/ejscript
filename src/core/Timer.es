@@ -68,7 +68,7 @@ module ejs {
             If the $when argument is provided, the timer period will be set before starting.
             @param when Time period for when to next run the timer
          */
-        function restart(when: Number = null): Void {
+        function restart(when: Number? = null): Void {
             stop()
             if (when) {
                 period = when

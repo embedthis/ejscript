@@ -99,7 +99,7 @@ module ejs {
         native function get port(): Number 
 
         /** @duplicate Stream.read */
-        native function read(buffer: ByteArray, offset: Number = 0, count: Number = -1): Number 
+        native function read(buffer: ByteArray, offset: Number = 0, count: Number = -1): Number?
 
         //  FUTURE - readString, readBytes, readXML
 

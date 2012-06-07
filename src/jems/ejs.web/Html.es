@@ -261,7 +261,7 @@ module ejs.web {
             write('    <img src="' + on + '" data-on="' + on + '" data-off="' + off + '" class="-ejs-refresh" />')
         }
 
-        function script(uri: String, options: Object): Void {
+        function script(uri: String?, options: Object): Void {
             if (uri == null) {
                 if (options.minified == undefined) {
                     options.minified = true
@@ -285,7 +285,7 @@ module ejs.web {
             write('    <meta name="' + Request.SecurityTokenName + '" content="' + request.securityToken + '" />\r\n')
         }
 
-        function stylesheet(uri: String, options: Object): Void {
+        function stylesheet(uri: String?, options: Object): Void {
             if (uri == null) {
                 /* MVC directory */
                 let dirs = request.config.dirs
@@ -696,7 +696,7 @@ module ejs.web {
             request.write(str)
 
         //  TODO OPT
-        private function append(str: String, suffix: String): String {
+        private function append(str: String?, suffix: String): String {
             if (suffix) {
                 return (str) ? (str + " " + suffix) : suffix
             }

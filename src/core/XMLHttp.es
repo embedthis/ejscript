@@ -131,7 +131,7 @@ module ejs {
             @param password Optional password if authentication is required.
          */
         function open(method: String, uri: String, async: Boolean = true, user: String? = null, 
-                password: String = null): Void {
+                password: String? = null): Void {
             responseBuf = new ByteArray(System.Bufsize)
             hp.async = async
             if (user && password) {

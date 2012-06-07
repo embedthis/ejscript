@@ -43,7 +43,7 @@ module ejs {
                 class is derived from the adapter name with "Cache" appended. The first letter of the adapter is converted
                 to uppercase. For example, if the adapter was "mem", the class would be inferred to be "MemCache".
          */
-        function Cache(adapter: String = null, options: Object = {}) {
+        function Cache(adapter: String? = null, options: Object = {}) {
             let adapterClass, modname
             if (adapter == null || adapter == "local") {
                 options = blend({shared: true}, options)
@@ -114,7 +114,7 @@ module ejs {
                 specified "version == true", return an object with the properties "data" for the key data and 
                 "version" for the CAS version identifier.
          */
-        function read(key: String, options: Object = null): String
+        function read(key: String, options: Object = null): String?
             adapter.read(key, options)
 
         /**
@@ -128,7 +128,7 @@ module ejs {
                 an atomic CAS (check and swap) operation.
             @return Null if the key is not present. Otherwise return key data as an object.
          */
-        function readObj(key: String, options: Object = null): Object {
+        function readObj(key: String, options: Object = null): Object? {
             let data = adapter.read(key, options)
             if (data) {
                 return deserialize(data)

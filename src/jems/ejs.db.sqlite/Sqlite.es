@@ -273,7 +273,7 @@ module ejs.db.sqlite {
         //  MOB - why have query and sql
 
         /** @duplicate ejs.db::Database.query */
-        function query(cmd: String, tag: String = "SQL", trace: Boolean = false): Array {
+        function query(cmd: String, tag: String = "SQL", trace: Boolean~ = false): Array {
             //  TODO - need to access Database.traceAll
             let mark, size
             //  MOB - rationalize Sqlite.query with Database.query and Record.innerFind

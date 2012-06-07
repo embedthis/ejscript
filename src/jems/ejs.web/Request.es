@@ -704,7 +704,7 @@ r.link({product: "candy", quantity: "10", template: "/cart/{product}/{quantity}}
                     }
                 })
          */
-        native function read(buffer: ByteArray, offset: Number = 0, count: Number = -1): Number 
+        native function read(buffer: ByteArray, offset: Number = 0, count: Number = -1): Number?
 
         /** 
             Redirect the client to a new URL. This call redirects the client's browser to a new target specified 
@@ -1009,7 +1009,7 @@ MOB - DEBUG
             Write safely. Write HTML escaped data back to the client.
             @param data Objects to HTML encode and write back to the client.
          */
-        function writeSafe(...data): Void
+        function writeSafe(...data): Number
             write(html(...data))
 
         /**

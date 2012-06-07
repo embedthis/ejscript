@@ -350,7 +350,7 @@ module ejs {
             @param pattern The regular expression pattern to search for
             @return Returns an array of matching substrings in the path
          */
-        function match(pattern: RegExp): Array
+        function match(pattern: RegExp): Array?
             this.toString().match(pattern)
 
         /** 
@@ -533,7 +533,7 @@ module ejs {
                 If origin is null, the current working directory is used as the origin.
             @return A new relative path
          */
-        native function relativeTo(origin: Path = null): Path
+        native function relativeTo(origin: Path? = null): Path
 
         /**
             Delete the file associated with the Path object. If this is a directory without contents it will be removed.

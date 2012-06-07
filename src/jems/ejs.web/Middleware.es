@@ -12,7 +12,7 @@ module ejs.web {
         @spec ejs
         @stability prototype
      */
-    function Middleware(app: Function, middleware: Array = null): Function {
+    function Middleware(app: Function, middleware: Array? = null): Function {
         for each (mid in middleware) {
             app = mid[i](app)
         }

@@ -194,7 +194,7 @@ module ejs {
         @param word Word to transform
         @return the plural form of a word
      */
-    function toPlural(word: String, count: Number = null): String {
+    function toPlural(word: String, count: Number? = null): String {
         if (count == null || count > 1) {
             return Inflector.toPlural(word)
         }

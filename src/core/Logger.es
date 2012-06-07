@@ -60,13 +60,13 @@ module ejs {
          */
         static const All: Number = 9
 
-        private var _filter: Function
+        private var _filter: Function?
         private var _level: Number = 0
         private var _location
-        private var _pattern: RegExp
+        private var _pattern: RegExp?
         private var _name: String
 
-        private var _outStream: Stream
+        private var _outStream: Stream?
 
         /** 
             Logger constructor.
@@ -95,7 +95,7 @@ module ejs {
             @param level Optional integer verbosity level. Messages with a message level less than or equal to the defined
                 logger level will be emitted. Range is 0 (least verbose) to 9.
          */
-        function redirect(location, level: Number = null): Void {
+        function redirect(location, level: Number? = null): Void {
             if (location is Stream) {
                 _outStream = location
             } else {
@@ -143,10 +143,10 @@ module ejs {
             function filter(log: Logger, name: String, level: Number, kind: String, msg: String): Boolean
             @param fn The filter function must return true or false.
          */
-        function get filter(): Function
+        function get filter(): Function?
             _filter
 
-        function set filter(fn: Function): void
+        function set filter(fn: Function?): void
             _filter = fn
 
         /**
@@ -182,10 +182,10 @@ module ejs {
             Matching expression to filter log messages. The match regular expression is used to match 
             against the Logger names.
          */
-        function get match(): RegExp
+        function get match(): RegExp?
             _pattern
 
-        function set match(pattern: RegExp): void 
+        function set match(pattern: RegExp?): void 
             _pattern = pattern
 
         /** 
@@ -268,7 +268,7 @@ module ejs {
         /** 
             @hide
          */
-        function read(buffer: ByteArray, offset: Number = 0, count: Number = -1): Number  {
+        function read(buffer: ByteArray, offset: Number = 0, count: Number = -1): Number? {
             throw "Read not supported"
             return null
         }

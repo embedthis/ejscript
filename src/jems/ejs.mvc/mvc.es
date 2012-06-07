@@ -91,6 +91,7 @@ class EjsMvc {
             apply: { alias: 'a' },
             database: { range: String },
             debug: {},
+            diagnose: { alias: 'd'},
             full: {},
             keep: { alias: 'k' },
             layout: { range: String },
@@ -159,7 +160,9 @@ class EjsMvc {
             }
             process()
         } catch (e) {
-            if (e is String) {
+            if (options.diagnose) {
+                error(e)
+            } else if (e is String) {
                 msg = e
                 error("mvc: Error: " + msg + "\n")
             } else {
@@ -442,7 +445,7 @@ class EjsMvc {
         }
     }
 
-    function buildView(file: Path, compile: Boolean = false): Path {
+    function buildView(file: Path, compile: Boolean = false): Path? {
         if (file.toString().startsWith(dirs.layouts + "/")) {
              //  Skip layouts
             return null

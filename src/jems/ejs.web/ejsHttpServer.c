@@ -345,7 +345,7 @@ static EjsVoid *hs_run(Ejs *ejs, EjsHttpServer *sp, int argc, EjsObj **argv)
 
 
 /*  
-    function secure(keyFile: Path, certFile: Path!, protocols: Array = null, ciphers: Array = null): Void
+    function secure(keyFile: Path, certFile: Path!, protocols: Array? = null, ciphers: Array? = null): Void
  */
 static EjsObj *hs_secure(Ejs *ejs, EjsHttpServer *sp, int argc, EjsObj **argv)
 {

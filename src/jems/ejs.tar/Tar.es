@@ -100,7 +100,7 @@ module ejs.tar {
                 if (options.chdir) {
                     App.chdir(options.chdir)
                 }
-                let data: ByteArray
+                let data: ByteArray?
                 while ((data = archive.readBytes(BlockSize)) != null && data[0]) {
                     let header = new TarHeader(options)
                     header.parse(data)

@@ -217,7 +217,7 @@ module ejs.db {
                 column names and values
             @TODO Refactor logging when Log class implemented
          */
-        function query(cmd: String, tag: String = "SQL", trace: Boolean = false): Array {
+        function query(cmd: String, tag: String = "SQL", trace: Boolean~ = false): Array {
             let mark, size
             trace ||= options.trace
             if (trace) {

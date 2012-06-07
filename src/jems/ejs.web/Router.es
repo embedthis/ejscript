@@ -311,7 +311,7 @@ module ejs.web {
                 will be pooled when the request completes and will be available for subsequent requests.  
            @throws Error for an unknown route set.
          */
-        function Router(routeSet: String = Restful, options: Object = {}) {
+        function Router(routeSet: String? = Restful, options: Object = {}) {
             routerOptions = options
             switch (routeSet) {
             case Top:
@@ -403,9 +403,9 @@ module ejs.web {
                 of the form "controller/action". If the options is an object hash, it should have properties
                 controller and action. The controller is used as the index for the route set. The action property is
                 the index for the route name.
-            @return Route object
+            @return Route object or null if the route is not found
          */
-        public function lookup(options: Object): Route {
+        public function lookup(options: Object): Route? {
             if (options is String) {
                 if (options[0] == "@") {
                     options = options.slice(1)
@@ -668,12 +668,12 @@ module ejs.web {
         /**
             Route name. This is local to the route set (controller)
          */
-        var name: String
+        var name: String?
 
         /**
             Name of a required module containing code to serve requests on this route.  
          */
-        var moduleName: String
+        var moduleName: String?
 
         /**
             Original template as supplied by caller
@@ -698,12 +698,12 @@ module ejs.web {
             and other Request properties. Return true to continue serving the request on this route. Otherwise re-route
             after rewriting the request. 
          */
-        var rewrite: Function
+        var rewrite: Function?
 
         /**
             URI to redirect the request toward.
          */
-        var redirect: String
+        var redirect: String?
 
         /**
             Response object hash or function to serve the request
@@ -718,12 +718,12 @@ module ejs.web {
         /**
             Route set owning the route. This is the first component of the template.
          */
-        var routeSetName: String
+        var routeSetName: String?
 
         /**
             Target mapping for the route. The route maps from the template to the target.
          */
-        var target: String
+        var target: String?
 
         /**
             Template pattern for creating links. The template is used to match the request pathInfo. The template can be a 
@@ -744,12 +744,12 @@ module ejs.web {
             If true, requests should execute using a worker thread if possible. The worker thread will be pooled when
             the request completes and be available for use by subsequent requests.
          */
-        var workers: Boolean
+        var workers: Boolean~
 
         /**
             Key tokens in the route template
          */
-        var tokens: Array
+        var tokens: Array?
 
         /**
             Trace options for the request. Note: the route is created after the Request object is created so the tracing 
@@ -816,7 +816,7 @@ module ejs.web {
             @return A template URI string
             @hide
          */
-        public function getTemplate(controller: String, routeName: String): String {
+        public function getTemplate(controller: String~, routeName: String~): String {
             let routes = router.routes
             let routeSet = routes[controller] || routes[""]
             let route = routeSet[routeName] || routeSet["default"] || routes[""]["default"]
@@ -914,7 +914,7 @@ module ejs.web {
         /*
             Match a request using a regular expression without splitter
          */
-        private function matchRegExp(request: Request): Boolean {
+        private function matchRegExp(request: Request): Boolean~ {
             if (method && !request.method.contains(method)) {
                 return false
             }

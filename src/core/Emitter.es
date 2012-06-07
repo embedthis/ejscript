@@ -47,7 +47,7 @@ module ejs {
             @param name Event name to clear. The name can be a string or an array of event strings. If null, observers 
             for all event names are cleared.
          */
-        function clearObservers(name: Object? = null): Void {
+        function clearObservers(name: Object = null): Void {
             if (name == null) {
                 endpoints = new Object
             } else if (name is Array) {
@@ -189,7 +189,7 @@ module ejs {
         public var callback: Function
         public var name: String
         public var active: Boolean
-        public var pending: Array
+        public var pending: Array?
         function Endpoint(callback: Function, name: String) {
             this.callback = callback
             this.name = name

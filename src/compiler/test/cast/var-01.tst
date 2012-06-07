@@ -2,7 +2,7 @@
     Test variable declaration typing
  */
 
-var n: Number
+var n: Number?
 n = 77
 assert(n is Number)
 n = "1234"
@@ -15,7 +15,7 @@ n = {}
 assert(n is Number)
 
 
-var s: String
+var s: String?
 s = "hello"
 assert(s == "hello")
 assert(s is String)

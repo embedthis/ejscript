@@ -554,7 +554,7 @@ server.listen("127.0.0.1:7777")
             @param ciphers Optional array of ciphers to use when negotiating the SSL connection. Not yet supported.
             @throws ArgError for invalid arguments
          */
-        native function secure(keyFile: Path, certFile: Path!, protocols: Array = null, ciphers: Array = null): Void
+        native function secure(keyFile: Path, certFile: Path!, protocols: Array? = null, ciphers: Array? = null): Void
 
         /** 
             Serve a web request. Convenience function to route, load and start a web application. 

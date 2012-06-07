@@ -287,7 +287,7 @@ module ejs {
                 will be finalized. If not set to null, $finalize() must be called after writing all data.
             @param callback Optional function to invoke on completion of the request.
           */
-        function fetch(method: String, uri: Uri, data: *, callback: Function = null) {
+        function fetch(method: String, uri: Uri, data: *, callback: Function? = null) {
             let xh = XMLHttp(this)
             xh.open(method, uri)
             xh.send(data)
@@ -495,7 +495,7 @@ FUTURE & KEEP
         /** 
             @duplicate Stream.read
          */
-        native function read(buffer: ByteArray, offset: Number = 0, count: Number = -1): Number
+        native function read(buffer: ByteArray, offset: Number = 0, count: Number = -1): Number?
 
         /** 
             Read the response as a string. This call will block and should not be used in async mode.
@@ -572,9 +572,9 @@ FUTURE & KEEP
         /** 
             Set the user credentials to use if the request requires authentication.
             @param username String user name to use. If null, then reset the current credentials.
-            @param password Un-encrypted string password to use 
+            @param password Un-encrypted string password to use. Set to null to reset the current credentials.
          */
-        native function setCredentials(username: String, password: String): Void
+        native function setCredentials(username: String?, password: String?): Void
 
         /** 
             Set a request header. Use setHeaders() to set all the headers. Use $getRequestHeaders() to retrieve and examine
@@ -658,7 +658,7 @@ FUTURE & KEEP
                 files = { file1: "a.txt, file2: "b.txt" }
                 http.upload(URL, files, fields)
          */
-        function upload(uri: String, files: Object, fields: Object? = null): Void {
+        function upload(uri: String, files: Object, fields: Object = null): Void {
             reset()
             let boundary = "<<Upload Boundary - " + md5(Date.now()) + ">>"
             setHeader("Content-Type", "multipart/form-data; boundary=" + boundary)
