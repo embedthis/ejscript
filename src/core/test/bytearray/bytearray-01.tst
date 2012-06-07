@@ -11,7 +11,6 @@
         - if insufficient data, throw
 */
 
-/*
 const Size = 200
 var b: ByteArray
 
@@ -152,7 +151,7 @@ assert(b[2] == 110)
 
 b = new ByteArray(Size)
 var saveData
-b.addListener("readable", function(event, ba: ByteArray) {
+b.on("readable", function(event, ba: ByteArray) {
     saveData = ba.readString()
 })
 b.write("Hello World")
@@ -162,7 +161,7 @@ assert(saveData == "Hello World")
 //  Test write events
 
 b = new ByteArray(Size)
-b.addListener("writable", function(event, ba) {
+b.on("writable", function(event, ba) {
     ba.write("Some Data")
 })
 assert(b.readString() == "Some Data")
@@ -183,4 +182,3 @@ source.copyOut(0, dest, 0, 4)
 assert(String.fromCharCode(dest[0], dest[1], dest[2]) == 'Hel')
 dest.writePosition = 4
 assert(dest == "Hell")
-*/
