@@ -32,8 +32,8 @@ Bit.load({
                     trace('Generate', bit.settings.product + '-' + name.replace(/-.*/, '') + ' projects')
                     run(bitcmd + ' -d -q -platform ' + name + ' -without all -configure . ' + formats, bit.target.runopt)
                     if (name == 'macosx-x64') {
-                        run(bitcmd + ' -d -q -platform ' + name + ' -without all -profile xcode -configure . ' + 
-                            formats, bit.target.runopt)
+                        run(bitcmd + ' -d -q -platform ' + name + ' -without all -profile xcode -configure . -gen xcode',
+                            bit.target.runopt)
                         rmdir(bit.dir.top.join(name + '-xcode'))
                     }
                     if (name != bit.platform.name) {
