@@ -25,7 +25,7 @@ endif
 all compile:
 	$(MAKE) -f projects/ejs-$(OS).$(EXT) $@
 	@echo ; echo 'You can now use Ejscript or use "bit" to customize and re-build Ejscript, via:'
-	@echo ; echo "   " $(OS)-*-*/bin/bit "configure build" ; echo
+	@echo ; echo "   " $(OS)-*-debug/bin/bit "configure build" ; echo
 
 build configure generate test package:
 	@bit $@
