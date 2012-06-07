@@ -10,12 +10,12 @@
 #define BIT_NAME "Embedthis Ejscript"
 #define BIT_COMPANY "Embedthis"
 #define BIT_EJS_PRODUCT 1
-#define BIT_VERSION "2.0.0"
-#define BIT_NUMBER "0"
+#define BIT_VERSION "2.0.1"
+#define BIT_NUMBER "repos"
 #define BIT_MAJOR_VERSION 2
 #define BIT_MINOR_VERSION 0
-#define BIT_PATCH_VERSION 0
-#define BIT_VNUM 200000000
+#define BIT_PATCH_VERSION 1
+#define BIT_VNUM 200000001
 #define BIT_CONFIG_CMD "bit -d -q -platform windows-x86 -without all -configure . -gen sh,nmake,vs"
 #define BIT_PROFILE "debug"
 #define BIT_CFG_PREFIX "C:/Program Files (x86)/Embedthis Ejscript"
