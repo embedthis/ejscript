@@ -187,8 +187,8 @@ module ejs.tar {
         var type: Number            /* Type flag */
         var linkName: String        /* Link target name. Up to 100 characters. Null terminate if room */
         var magic: String           /* Set to 'ustar' null terminated */
-        var user: String            /* User name. Up to 32 chars, null terminated */
-        var group: String           /* Group name. Up to 32 chars, null terminated */
+        var user: String?           /* User name. Up to 32 chars, null terminated */
+        var group: String?          /* Group name. Up to 32 chars, null terminated */
         var major: Number           /* Device major (octal) */
         var magic: String           /* Magic string */
         var minor: Number           /* Device minor (octal) */
