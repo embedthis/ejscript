@@ -902,13 +902,12 @@ class EjsMvc {
      */
     function generateApp(args: Array): Void {
         appName = args[0].toLowerCase()
-        // let f: File = new Path(appName)
-
-        //  TODO - convert all paths to use dirs.name 
-        makeDir(appName)
-
-        //  TODO - should use try/finally around all chdir
-        App.chdir(appName)
+        if (appName == '.') {
+            appName = App.dir.basename
+        } else {
+            makeDir(appName)
+            App.chdir(appName)
+        }
         if (options.full) {
             makeDir("bin")
             makeDir("doc")
