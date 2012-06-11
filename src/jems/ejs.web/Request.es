@@ -681,7 +681,7 @@ r.link({product: "candy", quantity: "10", template: "/cart/{product}/{quantity}}
             All events are called with the signature:
             function (event: String, http: Http): Void
          */
-        native function on(name, observer: Function): Void
+        native function on(name, observer: Function): Request
 
 //  MOB - should there be a blocking read option?
         /** 

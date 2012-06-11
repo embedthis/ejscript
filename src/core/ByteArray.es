@@ -186,7 +186,7 @@ module ejs {
         native function off(name: Object, observer: Function): Void
 
         /** @duplicate Stream.on */
-        native function on(name: Object, observer: Function): Void
+        native function on(name: Object, observer: Function): ByteArray
 
         /** 
             @duplicate Stream.read

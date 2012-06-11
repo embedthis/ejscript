@@ -135,9 +135,10 @@ module ejs {
         /** 
             @duplicate Stream.on 
          */
-        function on(name, observer: Function): Void {
+        function on(name, observer: Function): BinaryStream {
             emitter ||= new Emitter
             emitter.on(name, observer)
+            return this
         }
 
         /** 

@@ -10,8 +10,7 @@ module ejs {
         @example
             events.on(event, function (event, ...args) {
                 //  Do something
-            })
-            events.fire("topic", 1, 2, 3)
+            }).fire("topic", 1, 2, 3)
         @stability prototype
      */
     class Emitter {
@@ -139,7 +138,7 @@ module ejs {
             The name can be a string or an array of event strings.
             @param callback Function to call when the event is received.
          */
-        function on(name: Object!, callback: Function!): Void {
+        function on(name: Object!, callback: Function!): Emitter {
             if (name is String) {
                 addOneObserver(name, callback)
             } else if (name is Array) {
@@ -149,6 +148,7 @@ module ejs {
             } else {
                 throw new Error("Bad name type for observe: " + typeOf(name))
             }
+            return this
         }
 
         private function removeOneObserver(name: String!, callback: Function): Void {

@@ -75,7 +75,7 @@ module ejs {
             @event writable Issued when the stream becomes writable.
             @event close Issued when stream is being closed.
          */
-        function on(name, observer: Function): Void
+        function on(name, observer: Function): Stream
 
         /** 
             Read a data from the stream. 

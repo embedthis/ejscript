@@ -1122,9 +1122,9 @@ static EjsObj *req_off(Ejs *ejs, EjsRequest *req, int argc, EjsAny **argv)
 
 
 /*  
-    function on(name: [String|Array], listener: Function): Void
+    function on(name: [String|Array], listener: Function): Request
  */
-static EjsObj *req_on(Ejs *ejs, EjsRequest *req, int argc, EjsAny **argv)
+static EjsRequest *req_on(Ejs *ejs, EjsRequest *req, int argc, EjsAny **argv)
 {
     HttpConn    *conn;
     
@@ -1140,7 +1140,7 @@ static EjsObj *req_on(Ejs *ejs, EjsRequest *req, int argc, EjsAny **argv)
             conn->writeq->ioCount == 0) {
         ejsSendEvent(ejs, req->emitter, "writable", NULL, req);
     }
-    return 0;
+    return req;
 }
 
 

@@ -557,8 +557,10 @@ print("URI " + request.uri)
             request.notify(key, msg)
 
         /** @duplicate ejs.web::Request.on */
-        function on(name, observer: Function): Void
+        function on(name, observer: Function): Controller {
             request.on(name, observer)
+            return this
+        }
 
         /** @duplicate ejs.web::Request.read */
         function read(buffer: ByteArray, offset: Number = 0, count: Number = -1): Number?

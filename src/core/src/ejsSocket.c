@@ -196,12 +196,12 @@ static EjsObj *sock_off(Ejs *ejs, EjsSocket *sp, int argc, EjsAny **argv)
 
 
 /*
-    function on(name: [String|Array], observer: Function): Void
+    function on(name: [String|Array], observer: Function): Socket
  */
-EjsObj *sock_on(Ejs *ejs, EjsSocket *sp, int argc, EjsAny **argv)
+EjsSocket *sock_on(Ejs *ejs, EjsSocket *sp, int argc, EjsAny **argv)
 {
     ejsAddObserver(ejs, &sp->emitter, argv[0], argv[1]);
-    return 0;
+    return sp;
 }
 
 

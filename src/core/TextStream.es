@@ -126,8 +126,9 @@ module ejs {
         /** 
             @duplicate Stream.on 
          */
-        function on(name, observer: Function): Void {
+        function on(name, observer: Function): TextStream {
             throw new ArgError("Observers are not supported")
+            return this
         }
 
         /** 

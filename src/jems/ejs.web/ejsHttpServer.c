@@ -311,13 +311,13 @@ static EjsObj *hs_off(Ejs *ejs, EjsHttpServer *sp, int argc, EjsAny **argv)
 
 
 /*  
-    function on(name: [String|Array], observer: Function): Void
+    function on(name: [String|Array], observer: Function): HttpServer
  */
-static EjsObj *hs_on(Ejs *ejs, EjsHttpServer *sp, int argc, EjsAny **argv)
+static EjsHttpServer *hs_on(Ejs *ejs, EjsHttpServer *sp, int argc, EjsAny **argv)
 {
     //  TODO -- should fire if currently readable / writable (also socket etc)
     ejsAddObserver(ejs, &sp->emitter, argv[0], argv[1]);
-    return 0;
+    return sp;
 }
 
 

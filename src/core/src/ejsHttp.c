@@ -449,9 +449,9 @@ static EjsObj *http_off(Ejs *ejs, EjsHttp *hp, int argc, EjsAny **argv)
 
 
 /*  
-    function on(name, observer: function): Void
+    function on(name, observer: function): Http
  */
-static EjsObj *http_on(Ejs *ejs, EjsHttp *hp, int argc, EjsObj **argv)
+static EjsHttp *http_on(Ejs *ejs, EjsHttp *hp, int argc, EjsObj **argv)
 {
     EjsFunction     *observer;
     HttpConn        *conn;
@@ -471,7 +471,7 @@ static EjsObj *http_on(Ejs *ejs, EjsHttp *hp, int argc, EjsObj **argv)
             conn->writeq->ioCount == 0) {
         ejsSendEvent(ejs, hp->emitter, "writable", NULL, hp);
     }
-    return 0;
+    return hp;
 }
 
 

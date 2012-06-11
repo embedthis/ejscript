@@ -261,8 +261,9 @@ module ejs {
         /** 
             @hide
          */
-        function on(name, observer: Function): Void {
+        function on(name, observer: Function): Logger {
             throw "on is not supported"
+            return this
         }
 
         /** 

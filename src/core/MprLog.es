@@ -72,8 +72,9 @@ module ejs {
         }
 
         /** @hide */
-        function on(name, observer: Function): Void {
+        function on(name, observer: Function): MprLogger {
             throw "on is not supported"
+            return this
         }
 
         /** @hide */

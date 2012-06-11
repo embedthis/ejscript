@@ -119,7 +119,7 @@ module ejs {
             All events are called with the signature:
             function (event: String, cmd: Cmd): Void
          */
-        native function on(name, observer: Function): Void
+        native function on(name, observer: Function): Cmd
 
         /** 
             This call is not supported.

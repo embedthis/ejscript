@@ -381,7 +381,7 @@ server.listen("127.0.0.1:7777")
                 value of "this" to the request regardless of whether the function has a bound "this" value.
             @event close Issued when server is being closed.
          */
-        native function on(name, observer: Function): Void
+        native function on(name, observer: Function): HttpServer
 
         /**
             Pass a request into a worker VM. The onrequest callback receives the request. This routine clones stub 

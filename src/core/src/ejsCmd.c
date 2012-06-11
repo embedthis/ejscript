@@ -141,9 +141,9 @@ static EjsObj *cmd_kill(Ejs *ejs, EjsAny *unused, int argc, EjsObj **argv)
 
 
 /**
-    function get on(name, observer: Function): Void
+    function on(name, observer: Function): Cmd
  */
-static EjsObj *cmd_on(Ejs *ejs, EjsCmd *cmd, int argc, EjsAny **argv)
+static EjsCmd *cmd_on(Ejs *ejs, EjsCmd *cmd, int argc, EjsAny **argv)
 {
     EjsFunction     *observer;
 
@@ -155,7 +155,7 @@ static EjsObj *cmd_on(Ejs *ejs, EjsCmd *cmd, int argc, EjsAny **argv)
     if (!cmd->async) {
         cmd->async = 1;
     }
-    return 0;
+    return cmd;
 }
 
 

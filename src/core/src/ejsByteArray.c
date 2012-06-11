@@ -849,12 +849,12 @@ static EjsObj *ba_off(Ejs *ejs, EjsByteArray *ap, int argc, EjsAny **argv)
 
 
 /**
-    function get on(name, observer: Function): Void
+    function on(name, observer: Function): ByteArray
  */
-static EjsObj *ba_on(Ejs *ejs, EjsByteArray *ap, int argc, EjsAny **argv)
+static EjsByteArray *ba_on(Ejs *ejs, EjsByteArray *ap, int argc, EjsAny **argv)
 {
     ejsAddObserver(ejs, &ap->emitter, argv[0], argv[1]);
-    return 0;
+    return ap;
 }
 
 

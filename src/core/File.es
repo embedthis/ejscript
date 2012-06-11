@@ -109,7 +109,7 @@ module ejs {
             @duplicate Stream.on 
             @hide
          */
-        native function on(name, observer: Function): Void
+        native function on(name, observer: Function): File
 
         //  MOB - would it be better not to throw?
         /**  
