@@ -3093,9 +3093,9 @@ void httpEvent(HttpConn *conn, MprEvent *event)
         readEvent(conn);
     }
     if (conn->endpoint) {
-        if (conn->error || (conn->keepAliveCount < 0 && conn->state <= HTTP_STATE_CONNECTED)) {
+        if (conn->keepAliveCount < 0 && conn->state <= HTTP_STATE_CONNECTED) {
             /*  
-                Either an unhandled error or an Idle connection.
+                Idle connection.
                 NOTE: compare keepAliveCount with "< 0" so that the client can have one more keep alive request. 
                 It should respond to the "Connection: close" and thus initiate a client-led close. This reduces 
                 TIME_WAIT states on the server. NOTE: after httpDestroyConn, conn structure and memory is still 
@@ -4239,6 +4239,9 @@ static void errorv(HttpConn *conn, int flags, cchar *fmt, va_list args)
     }
     if (flags & HTTP_ABORT) {
         conn->connError = 1;
+        if (rx) {
+            rx->eof = 1;
+        }
     }
     if (flags & HTTP_ABORT || (tx && tx->flags & HTTP_TX_HEADERS_CREATED)) {
         /* 
@@ -4254,9 +4257,6 @@ static void errorv(HttpConn *conn, int flags, cchar *fmt, va_list args)
         return;
     }
     conn->error = 1;
-    if (rx) {
-        rx->eof = 1;
-    }
     formatErrorv(conn, status, fmt, args);
 
     if (conn->endpoint && tx && rx) {
@@ -5136,7 +5136,6 @@ static void httpTimer(Http *http, MprEvent *event)
 
     /*
         Check for unloadable modules
-        MOB - move down into MPR and set stage->flags in an unload callback
      */
     if (mprGetListLength(http->connections) == 0) {
         for (next = 0; (module = mprGetNextItem(MPR->moduleService->modules, &next)) != 0; ) {
@@ -6592,14 +6591,6 @@ static void openPass(HttpQueue *q)
 
 static void readyPass(HttpQueue *q)
 {
-#if UNUSED
-    HttpConn    *conn;
-
-    conn = q->conn;
-    if (!conn->finalized) {
-        httpError(conn, HTTP_CODE_NOT_FOUND, "Can't serve request: %s", conn->rx->uri);
-    }
-#endif
     httpFinalize(q->conn);
 }
 
@@ -6884,7 +6875,7 @@ void httpStartPipeline(HttpConn *conn)
     
     tx = conn->tx;
 
-    //  MOB - how can this ever be already true?
+    //  TODO - how can this ever be already true?
     mprAssert(!tx->started);
     if (tx->started) {
         return;
@@ -10412,11 +10403,7 @@ static void definePathVars(HttpRoute *route)
     mprAddKey(route->pathTokens, "PRODUCT", sclone(BIT_PRODUCT));
     mprAddKey(route->pathTokens, "OS", sclone(BIT_OS));
     mprAddKey(route->pathTokens, "VERSION", sclone(BIT_VERSION));
-#if UNUSED
-    mprAddKey(route->pathTokens, "LIBDIR", mprJoinPath(mprGetPathParent(mprGetAppDir()), mprGetPathBase(BIT_LIB_NAME)));
-#else
     mprAddKey(route->pathTokens, "LIBDIR", mprGetAppDir());
-#endif
     if (route->host) {
         defineHostVars(route);
     }
@@ -11338,10 +11325,6 @@ static void parseMethod(HttpConn *conn)
     method = rx->method;
     methodFlags = 0;
 
-#if UNUSED
-    rx->flags &= (HTTP_DELETE | HTTP_GET | HTTP_HEAD | HTTP_POST | HTTP_PUT | HTTP_TRACE | HTTP_UNKNOWN);
-#endif
-
     switch (method[0]) {
     case 'D':
         if (strcmp(method, "DELETE") == 0) {
@@ -11796,6 +11779,7 @@ static bool parseHeaders(HttpConn *conn, HttpPacket *packet)
         Don't stream input if a form or upload. NOTE: Upload needs the Files[] collection.
      */
     rx->streamInput = !(rx->form || rx->upload);
+    rx->eof = (rx->remainingContent == 0);
     if (!keepAlive) {
         conn->keepAliveCount = 0;
     }
@@ -11958,7 +11942,7 @@ static bool processParsed(HttpConn *conn)
     rx = conn->rx;
     if (!rx->form && conn->endpoint) {
         /*
-            Routes need to be able to access form data, so forms route later after all input is received.
+            Routes need to be able to access form data, so forms will route later after all input is received.
          */
         routeRequest(conn);
     }
@@ -11986,47 +11970,42 @@ static bool analyseContent(HttpConn *conn, HttpPacket *packet)
     tx = conn->tx;
     content = packet->content;
     q = tx->queue[HTTP_QUEUE_RX];
-    mprAssert(httpVerifyQueue(q));
 
     LOG(7, "processContent: packet of %d bytes, remaining %d", mprGetBufLength(content), rx->remainingContent);
-    if ((nbytes = httpFilterChunkData(q, packet)) < 0) {
+    if ((nbytes = httpFilterChunkData(q, packet)) <= 0) {
         return 0;
     }
-    mprAssert(nbytes >= 0);
-
-    if (nbytes > 0) {
-        rx->remainingContent -= nbytes;
-        rx->bytesRead += nbytes;
-        if (httpShouldTrace(conn, HTTP_TRACE_RX, HTTP_TRACE_BODY, tx->ext) >= 0) {
-            httpTraceContent(conn, HTTP_TRACE_RX, HTTP_TRACE_BODY, packet, nbytes, rx->bytesRead);
-        }
-        if (rx->bytesRead >= conn->limits->receiveBodySize) {
-            httpError(conn, HTTP_CLOSE | HTTP_CODE_REQUEST_TOO_LARGE, 
-                "Request body of %,Ld bytes is too big. Limit %,Ld", rx->bytesRead, conn->limits->receiveBodySize);
-            return 1;
-        }
-        if (rx->form && rx->length >= conn->limits->receiveFormSize) {
-            httpError(conn, HTTP_CLOSE | HTTP_CODE_REQUEST_TOO_LARGE, 
-                "Request form of %,Ld bytes is too big. Limit %,Ld", rx->bytesRead, conn->limits->receiveFormSize);
-            return 1;
-        }
-        if (packet == rx->headerPacket && nbytes > 0) {
-            packet = httpSplitPacket(packet, 0);
-        }
-        if (httpGetPacketLength(packet) > nbytes) {
-            /*  Split excess data belonging to the next chunk or pipelined request */
-            LOG(7, "processContent: Split packet of %d at %d", httpGetPacketLength(packet), nbytes);
-            conn->input = httpSplitPacket(packet, nbytes);
+    rx->remainingContent -= nbytes;
+    rx->bytesRead += nbytes;
+    if (httpShouldTrace(conn, HTTP_TRACE_RX, HTTP_TRACE_BODY, tx->ext) >= 0) {
+        httpTraceContent(conn, HTTP_TRACE_RX, HTTP_TRACE_BODY, packet, nbytes, rx->bytesRead);
+    }
+    if (rx->bytesRead >= conn->limits->receiveBodySize) {
+        httpError(conn, HTTP_CLOSE | HTTP_CODE_REQUEST_TOO_LARGE, 
+            "Request body of %,Ld bytes is too big. Limit %,Ld", rx->bytesRead, conn->limits->receiveBodySize);
+        return 1;
+    }
+    if (rx->form && rx->length >= conn->limits->receiveFormSize) {
+        httpError(conn, HTTP_CLOSE | HTTP_CODE_REQUEST_TOO_LARGE, 
+            "Request form of %,Ld bytes is too big. Limit %,Ld", rx->bytesRead, conn->limits->receiveFormSize);
+        return 1;
+    }
+    if (packet == rx->headerPacket && nbytes > 0) {
+        packet = httpSplitPacket(packet, 0);
+    }
+    if (httpGetPacketLength(packet) > nbytes) {
+        /*  Split excess data belonging to the next chunk or pipelined request */
+        LOG(7, "processContent: Split packet of %d at %d", httpGetPacketLength(packet), nbytes);
+        conn->input = httpSplitPacket(packet, nbytes);
+    } else {
+        conn->input = 0;
+    }
+    if (!(conn->finalized && conn->endpoint)) {
+        /* If conn->error, then finalized will also be true */
+        if (rx->form) {
+            httpPutForService(q, packet, HTTP_DELAY_SERVICE);
         } else {
-            conn->input = 0;
-        }
-        if (!(conn->finalized && conn->endpoint)) {
-            if (rx->form) {
-                httpPutForService(q, packet, HTTP_DELAY_SERVICE);
-            } else {
-                httpPutPacketToNext(q, packet);
-            }
-            mprAssert(httpVerifyQueue(q));
+            httpPutPacketToNext(q, packet);
         }
     }
     if (rx->remainingContent == 0 && !(rx->flags & HTTP_CHUNKED)) {
@@ -12046,20 +12025,23 @@ static bool processContent(HttpConn *conn, HttpPacket *packet)
 
     rx = conn->rx;
 
-    if (packet == 0 || !analyseContent(conn, packet)) {
+    if (!packet || (!rx->eof && !analyseContent(conn, packet))) {
         return 0;
     }
     if (rx->eof) {
         q = conn->tx->queue[HTTP_QUEUE_RX];
-        if (rx->form && conn->endpoint) {
-            routeRequest(conn);
-            while ((packet = httpGetPacket(q)) != 0) {
-                httpPutPacketToNext(q, packet);
+        if (!conn->finalized) {
+            if (rx->form && conn->endpoint) {
+                /* Forms wait for all data before routing */
+                routeRequest(conn);
+                while ((packet = httpGetPacket(q)) != 0) {
+                    httpPutPacketToNext(q, packet);
+                }
             }
-        }
-        httpPutPacketToNext(q, httpCreateEndPacket());
-        if (!rx->streamInput) {
-            httpStartPipeline(conn);
+            httpPutPacketToNext(q, httpCreateEndPacket());
+            if (!rx->streamInput) {
+                httpStartPipeline(conn);
+            }
         }
         httpSetState(conn, HTTP_STATE_READY);
         return conn->workerEvent ? 0 : 1;
@@ -13919,7 +13901,7 @@ void httpFinalize(HttpConn *conn)
     if (conn->state >= HTTP_STATE_CONNECTED && conn->writeq && conn->sock) {
         httpPutForService(conn->writeq, httpCreateEndPacket(), HTTP_SCHEDULE_QUEUE);
         httpServiceQueues(conn);
-        if (conn->state >= HTTP_STATE_READY /* MOB && conn->connectorComplete */ && !conn->inHttpProcess) {
+        if (conn->state >= HTTP_STATE_READY && !conn->inHttpProcess) {
             httpPump(conn, NULL);
         }
         conn->refinalize = 0;
