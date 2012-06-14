@@ -1520,7 +1520,6 @@ static void VM(Ejs *ejs, EjsFunction *fun, EjsAny *otherThis, int argc, int stac
                 }
                 savePC = FRAME->pc;
                 createExceptionBlock(ejs, ex, EJS_EX_FINALLY);
-                BLOCK->restartInstruction = 1;
                 BLOCK->restartAddress = savePC;
             }
             BREAK;
@@ -1532,11 +1531,9 @@ static void VM(Ejs *ejs, EjsFunction *fun, EjsAny *otherThis, int argc, int stac
          */
         CASE (EJS_OP_GOTO_FINALLY):
             if ((ex = findExceptionHandler(ejs, EJS_EX_FINALLY)) != 0) {
-                uchar   *savePC;
                 if (FRAME->function.inCatch) {
                     popExceptionBlock(ejs);
                 }
-                savePC = FRAME->pc;
                 createExceptionBlock(ejs, ex, EJS_EX_FINALLY);
             }
             BREAK;
@@ -1549,9 +1546,8 @@ static void VM(Ejs *ejs, EjsFunction *fun, EjsAny *otherThis, int argc, int stac
             if (FRAME->function.inException) {
                 FRAME->function.inCatch = 0;
                 FRAME->function.inException = 0;
-                if (BLOCK->restartInstruction) {
-                    uchar   *savePC;
-                    savePC = BLOCK->restartAddress;
+                if (BLOCK->restartAddress) {
+                    uchar *savePC = BLOCK->restartAddress;
                     popExceptionBlock(ejs);
                     SET_PC(FRAME, savePC);
                 } else {

@@ -1939,7 +1939,6 @@ typedef struct EjsBlock {
     EjsObj          *prevException;                 /**< Previous exception if nested exceptions */
     EjsObj          **stackBase;                    /**< Start of stack in this block */
     uchar           *restartAddress;                /**< Restart instruction address */
-    uint            restartInstruction: 1;          /**< Restart instruction after executing finally block */
     uint            nobind: 1;                      /**< Don't bind to properties in this block */
 #if BIT_DEBUG
     struct EjsLine  *line;
