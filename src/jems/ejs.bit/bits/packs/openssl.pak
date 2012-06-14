@@ -8,7 +8,7 @@ if (bit.packs.ssl && bit.packs.ssl.enable == false) {
 }
 
 let cfg
-let path: Path = bit.packs.openssl.path
+let path: Path? = bit.packs.openssl.path
 if (!path) {
     let vers = bit.dir.packs.join('openssl').files('openssl-*').sort().reverse()
     path = vers[0]

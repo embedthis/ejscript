@@ -47,7 +47,7 @@ public class Bit {
     private var gen: Object
     private var platform: Object
     private var genout: TextStream
-    private var generating: String
+    private var generating: String?
 
     private var defaultTargets: Array
     private var originalTargets: Array
@@ -757,7 +757,7 @@ public class Bit {
         Will throw an exception if the file is not found, unless {continue, default} specified in control options
      */
     public function probe(file: Path, control = {}): Path {
-        let path: Path
+        let path: Path?
         let search = [], dir
         if (file.exists) {
             path = file

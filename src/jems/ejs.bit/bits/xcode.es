@@ -721,7 +721,12 @@ function prepareSettings(base, o, debug: Boolean) {
         options.libpaths = '\n\t\t\t\tLIBRARY_SEARCH_PATHS = (\n' + 
             o.libpaths.map(function(f) '\t\t\t\t\t"' + f.relativeTo(base) + '",').join('\n') + '\n\t\t\t\t\t"$(inherited)"\n\t\t\t\t);'
     }
-    let defines = debug ? o.defines : o.defines.clone().removeElements('-DDEBUG')
+    let defines = o.defines.clone()
+    if (debug) {
+        o.defines.push('-DBIT_DEBUG')
+    } else {
+        o.defines.removeElements('-DDEBUG')
+    }
     if (defines.length > 0) {
         options.defines = '\n\t\t\t\tGCC_PREPROCESSOR_DEFINITIONS = (\n' + 
             defines.map(function(f) '\t\t\t\t\t"' + f.replace('-D', '') + '",').join('\n') + '\n\t\t\t\t\t\t"$(inherited)"\n\t\t\t\t);'

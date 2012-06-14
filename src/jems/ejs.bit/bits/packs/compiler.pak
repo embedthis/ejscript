@@ -3,9 +3,9 @@
  */
 pack('compiler', "C/C++ Compiler")
 
-let cc: Path
+let cc: Path?
 let platform = bit.platform
-let path: Path = bit.packs.compiler.path
+let path: Path? = bit.packs.compiler.path
 let settings = getDefaultSettings(platform)
 
 try {
