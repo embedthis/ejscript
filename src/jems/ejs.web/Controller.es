@@ -228,7 +228,7 @@ print("URI " + request.uri)
                 let etag = request.responseHeaders["Etag"] || cacheItem.tag
                 cacheItem.data = request.writeBuffer
                 App.cache.writeObj(cacheName, cacheItem, cacheOptions)
-                App.log.debug(5, "Cache action " + cacheName + ", " + request.writeBuffer.available + " bytes")
+                App.log.debug(5, "Cache action " + cacheName + ", " + request.writeBuffer.length + " bytes")
             }
             let data = request.writeBuffer
             request.writeBuffer = null

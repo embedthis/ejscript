@@ -567,7 +567,7 @@ module ejs.web {
             Show the route table
             @param extra Set to "full" to display extra route information
          */
-        public function show(extra: String = null): Void {
+        public function show(extra: String? = null): Void {
             let lastController
             for each (name in Object.getOwnPropertyNames(routes).sort()) {
                 print("\n" + (name || "Global")+ "/")
@@ -578,7 +578,7 @@ module ejs.web {
             print()
         }
 
-        private function showRoute(r: Route, extra: String = null): Void {
+        private function showRoute(r: Route, extra: String? = null): Void {
             let method = r.method || "*"
             let target
             let tokens = r.tokens

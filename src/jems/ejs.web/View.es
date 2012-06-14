@@ -314,7 +314,7 @@ MOB - review?
             }
             let connector = getConnector("flash", options)
             for (kind in msgs) {
-                let msg: String = msgs[kind]
+                let msg = msgs[kind]
                 if (msg && msg != "") {
                     connector.flash(kind, msg, options.clone())
                 }

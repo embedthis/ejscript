@@ -1166,7 +1166,7 @@ static EjsNumber *req_read(Ejs *ejs, EjsRequest *req, int argc, EjsObj **argv)
         offset = ba->writePosition;
     }
     if (count < 0) {
-        count = ba->length - offset;
+        count = ba->size - offset;
     }
     if (count < 0) {
         ejsThrowStateError(ejs, "Read count is negative");
