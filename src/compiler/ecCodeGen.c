@@ -372,7 +372,7 @@ static void genBreak(EcCompiler *cp, EcNode *np)
     state = cp->state;
     discardBlockItems(cp, state->code->blockMark);
     if (state->captureFinally) {
-        ecEncodeOpcode(cp, EJS_OP_FINALLY);
+        ecEncodeOpcode(cp, EJS_OP_CALL_FINALLY);
     } else if (cp->state->captureBreak) {
         ecEncodeOpcode(cp, EJS_OP_END_EXCEPTION);
     }
@@ -472,7 +472,7 @@ static void genContinue(EcCompiler *cp, EcNode *np)
 
     discardBlockItems(cp, cp->state->code->blockMark);
     if (cp->state->captureFinally) {
-        ecEncodeOpcode(cp, EJS_OP_FINALLY);
+        ecEncodeOpcode(cp, EJS_OP_CALL_FINALLY);
     } else if (cp->state->captureBreak) {
         ecEncodeOpcode(cp, EJS_OP_END_EXCEPTION);
     }
@@ -2706,7 +2706,7 @@ static void genReturn(EcCompiler *cp, EcNode *np)
 
     ejs = cp->ejs;
     if (cp->state->captureFinally) {
-        ecEncodeOpcode(cp, EJS_OP_FINALLY);
+        ecEncodeOpcode(cp, EJS_OP_CALL_FINALLY);
     }
     if (np->left) {
         fun = cp->state->currentFunction;
@@ -3015,7 +3015,9 @@ static void genTry(EcCompiler *cp, EcNode *np)
         Process the try block. Will add a goto into either the finally block or if no finally block,
         to after the last catch.
      */
+    state->captureFinally = np->exception.finallyBlock ? 1 : 0;
     processNode(cp, np->exception.tryBlock);
+    state->captureFinally = 0;
 
     if (np->exception.catchClauses) {
         /*
@@ -3036,7 +3038,6 @@ static void genTry(EcCompiler *cp, EcNode *np)
         state->captureFinally = 0;
         state->captureBreak = 0;
     }
-
     if (np->exception.finallyBlock) {
         state->captureBreak = 1;
         np->exception.finallyBlock->code = state->code = allocCodeBuffer(cp);
@@ -3081,9 +3082,8 @@ static void genTry(EcCompiler *cp, EcNode *np)
     copyCodeBuffer(cp, state->code, np->exception.tryBlock->code);
 
     if (np->exception.finallyBlock) {
-        ecEncodeOpcode(cp, EJS_OP_FINALLY);
-    }
-    if (len < 0x7f && cp->optimizeLevel > 0) {
+        ecEncodeOpcode(cp, EJS_OP_GOTO_FINALLY);
+    } else if (len < 0x7f && cp->optimizeLevel > 0) {
         ecEncodeOpcode(cp, EJS_OP_GOTO_8);
         ecEncodeByte(cp, len);
     } else {
@@ -3091,7 +3091,6 @@ static void genTry(EcCompiler *cp, EcNode *np)
         ecEncodeInt32(cp, len);
     }
     tryEnd = ecGetCodeOffset(cp);
-
 
     /*
         Now the copy the catch blocks and add jumps

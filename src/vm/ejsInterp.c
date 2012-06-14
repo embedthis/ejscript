@@ -19,6 +19,8 @@
     top and decrement top ptr.
  */
 #define top                     (*state->stack)
+
+//  MOB - ejs arg not used
 #define pop(ejs)                (*state->stack--)
 
 #define push(value)             (*(++(state->stack))) = ((EjsObj*) (value))
@@ -1505,22 +1507,37 @@ static void VM(Ejs *ejs, EjsFunction *fun, EjsAny *otherThis, int argc, int stac
         /* Exception Handling -------------------------------------------- */
 
         /*
-            Invoke finally blocks before acting on: return, returnValue and break (goto) opcodes.
-            Injected by the compiler prior to break, continue and return statements. Also at the end of a try block
-            if there is a finally block.
+            Invoke finally blocks before acting on: return, returnValue and break/continue (goto) opcodes.
+            These are injected by the compiler.
         
-                finally
+                call_finally
          */
-        CASE (EJS_OP_FINALLY):
+        CASE (EJS_OP_CALL_FINALLY):
             if ((ex = findExceptionHandler(ejs, EJS_EX_FINALLY)) != 0) {
+                uchar   *savePC;
                 if (FRAME->function.inCatch) {
                     popExceptionBlock(ejs);
-                    push(FRAME->pc);
-                    createExceptionBlock(ejs, ex, EJS_EX_FINALLY);
-                    BLOCK->breakCatch = 1;
-                } else {
-                    createExceptionBlock(ejs, ex, EJS_EX_FINALLY);
                 }
+                savePC = FRAME->pc;
+                createExceptionBlock(ejs, ex, EJS_EX_FINALLY);
+                BLOCK->restartInstruction = 1;
+                BLOCK->restartAddress = savePC;
+            }
+            BREAK;
+
+        /*
+            Invoke finally blocks before leaving try block. These are injected by the compiler.
+        
+                goto_finally
+         */
+        CASE (EJS_OP_GOTO_FINALLY):
+            if ((ex = findExceptionHandler(ejs, EJS_EX_FINALLY)) != 0) {
+                uchar   *savePC;
+                if (FRAME->function.inCatch) {
+                    popExceptionBlock(ejs);
+                }
+                savePC = FRAME->pc;
+                createExceptionBlock(ejs, ex, EJS_EX_FINALLY);
             }
             BREAK;
 
@@ -1532,10 +1549,11 @@ static void VM(Ejs *ejs, EjsFunction *fun, EjsAny *otherThis, int argc, int stac
             if (FRAME->function.inException) {
                 FRAME->function.inCatch = 0;
                 FRAME->function.inException = 0;
-                if (BLOCK->breakCatch) {
-                    /* Restart the original instruction (return, break, continue) */
+                if (BLOCK->restartInstruction) {
+                    uchar   *savePC;
+                    savePC = BLOCK->restartAddress;
                     popExceptionBlock(ejs);
-                    SET_PC(FRAME, pop(ejs));
+                    SET_PC(FRAME, savePC);
                 } else {
                     offset = findEndException(ejs);
                     SET_PC(FRAME, &FRAME->function.body.code->byteCode[offset]);
@@ -2738,12 +2756,12 @@ EjsAny *ejsRunFunctionByName(Ejs *ejs, EjsAny *container, EjsName qname, EjsAny 
 
 
 
-static void badArgType(Ejs *ejs, EjsPot *activation, EjsTrait *trait, int index)
+static void badArgType(Ejs *ejs, EjsFunction *fun, EjsPot *activation, EjsTrait *trait, int index)
 {
     EjsName     qname;
 
     qname = ejsGetPropertyName(ejs, activation, index);
-    ejsThrowTypeError(ejs, "Unacceptable null or undefined value for argument \"%@\" (index: %d)", qname.name, index);
+    ejsThrowTypeError(ejs, "Unacceptable null or undefined value for argument \"%@\" in function \"%@\"", qname.name, fun->name);
 }
 
 
@@ -2821,7 +2839,7 @@ static int validateArgs(Ejs *ejs, EjsFunction *fun, int argc, void *args)
         if (!ejsIsA(ejs, argv[i], type)) {
             if ((argv[i] == ESV(null) || argv[i] == ESV(undefined))) {
                 if (trait->attributes & EJS_TRAIT_THROW_NULLS) {
-                    badArgType(ejs, activation, trait, i);
+                    badArgType(ejs, fun, activation, trait, i);
                     return EJS_ERR;
                 }
                 if (!(trait->attributes & EJS_TRAIT_CAST_NULLS)) {
@@ -2831,7 +2849,7 @@ static int validateArgs(Ejs *ejs, EjsFunction *fun, int argc, void *args)
             newArg = ejsCastType(ejs, argv[i], trait->type);
             if (ejs->exception) {
                 ejsClearException(ejs);
-                badArgType(ejs, activation, trait, i);
+                badArgType(ejs, fun, activation, trait, i);
                 return EJS_ERR;
             }
             argv[i] = newArg;
@@ -2893,7 +2911,7 @@ EjsBlock *ejsPopBlock(Ejs *ejs)
 
 
 /*
-    Pop an exception block.
+    Pop an exception block
  */
 static EjsBlock *popExceptionBlock(Ejs *ejs)
 {
@@ -3127,9 +3145,9 @@ static void createExceptionBlock(Ejs *ejs, EjsEx *ex, int flags)
     }
 
     /*
-        Discard all lexical blocks defined inside the try block
+        Discard all try lexical blocks when running a catch block
      */
-    if (!fp->function.inCatch) {
+    if (flags & EJS_EX_CATCH) {
         for (count = 0, block = state->bp; block != (EjsBlock*) state->fp; block = block->prev) {
             count++;
         }
@@ -3146,8 +3164,7 @@ static void createExceptionBlock(Ejs *ejs, EjsEx *ex, int flags)
     /*
         Allocate a new frame in which to execute the handler
      */
-    block = ejsCreateBlock(ejs, 0);
-    if (block == 0) {
+    if ((block = ejsCreateBlock(ejs, 0)) == 0) {
         /*  Exception will continue to bubble up */
         return;
     }

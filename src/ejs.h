@@ -1938,7 +1938,8 @@ typedef struct EjsBlock {
     //  MOB -- OPT and compress / eliminate some of these fields. Every function has these.
     EjsObj          *prevException;                 /**< Previous exception if nested exceptions */
     EjsObj          **stackBase;                    /**< Start of stack in this block */
-    uint            breakCatch: 1;                  /**< Return, break or continue in a catch block */
+    uchar           *restartAddress;                /**< Restart instruction address */
+    uint            restartInstruction: 1;          /**< Restart instruction after executing finally block */
     uint            nobind: 1;                      /**< Don't bind to properties in this block */
 #if BIT_DEBUG
     struct EjsLine  *line;
@@ -2580,9 +2581,9 @@ typedef struct EjsByteArray {
     int             async;              /**< Async mode */
     int             endian;             /**< Endian encoding */
     int             growInc;            /**< Current read position */
-    ssize           length;             /**< Length property */
     ssize           readPosition;       /**< Current read position */
     ssize           writePosition;      /**< Current write position */
+    ssize           size;               /**< Size property */
     int             swap;               /**< I/O must swap bytes due to endian byte ordering */
     bool            resizable;          /**< Aray is resizable */
 } EjsByteArray;
