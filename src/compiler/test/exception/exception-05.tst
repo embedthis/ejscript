@@ -1,6 +1,5 @@
-
 /*
- *	Exception handling with no finally block
+  	Exception handling with no finally block
  */
 
 state = 0

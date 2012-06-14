@@ -1,6 +1,5 @@
-
 /*
- *	Test finally code is executed when finally throws an exception
+  	Test finally code is executed when finally throws an exception
  */
 
 state = 0

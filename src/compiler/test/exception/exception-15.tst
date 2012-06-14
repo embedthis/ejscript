@@ -1,7 +1,6 @@
-
-//
-//  Test return/break inside a catch block. Finally must still be executed resuming instruction
-//
+/*
+   Test return/break inside a catch block. Finally must still be executed resuming instruction
+ */
 
 var state = 1
 
