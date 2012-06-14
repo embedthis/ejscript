@@ -28,7 +28,7 @@ if (!Path("/bin").exists) {
     })
     cmd.finalize()
     cmd.wait()
-    assert(msg.available > 0)
+    assert(msg.length > 0)
     assert(msg.toString().contains("ls:"))
     assert(msg.toString().contains("/asdf: No such file or directory"))
 }

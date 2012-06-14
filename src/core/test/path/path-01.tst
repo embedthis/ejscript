@@ -208,7 +208,7 @@ if (Config.OS != 'windows') {
 file = Path(TestPath).open({ mode: "r" })
 buf = new ByteArray()
 count = file.read(buf)
-assert(buf.available == TestLength)
+assert(buf.length == TestLength)
 file.close()
 
 

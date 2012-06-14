@@ -18,10 +18,10 @@ var b: ByteArray
 
 b = new ByteArray(Size)
 assert(b != null)
-assert(b.length == 200)
+assert(b.size == 200)
 assert(b.readPosition == 0)
 assert(b.writePosition == 0)
-assert(b.available == 0)
+assert(b.length == 0)
 assert(b.room == Size)
 
 //  Test low level access. Write some bytes and consume one. Should still be able to access via direct indexing[]
@@ -63,14 +63,15 @@ assert(b.readPosition == b.writePosition)
 //	flush
 
 b = new ByteArray(Size)
-assert(b.available == 0)
+assert(b.size == Size)
+assert(b.length == 0)
 b.flush()
-assert(b.available == 0)
+assert(b.length == 0)
 b.write("Hello")
-assert(b.available == 5)
+assert(b.length == 5)
 b.flush()
-assert(b.available == 0)
-assert(b.length == Size)
+assert(b.length == 0)
+assert(b.size == Size)
 
 //	Indexing
 
@@ -115,9 +116,9 @@ b = new ByteArray
 for (i in size) {
 	b.writeByte(i)
 }
-check = new ByteArray(b.available)
+check = new ByteArray(b.length)
 b.read(check)
-assert(check.available == size)
+assert(check.length == size)
 for (i in Size) {
 	assert(check[i] == i);
 	assert(check.readByte() == i);
@@ -174,7 +175,7 @@ dest = new ByteArray(Size)
 count = b.copyIn(0, source)
 assert(count == Size)
 assert(String.fromCharCode(b[0], b[1], b[2]) == 'Hel')
-b.writePosition = source.available
+b.writePosition = source.length
 assert(b == "Hello")
 
 dest = new ByteArray(1024)

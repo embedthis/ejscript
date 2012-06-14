@@ -112,7 +112,7 @@ static EjsObj *zlib_compressBytes(Ejs *ejs, EjsObj *unused, int argc, EjsObj **a
     int             level, flush;
 
     in = (EjsByteArray*) argv[0];
-    if ((out = ejsCreateByteArray(ejs, in->length)) == 0) {
+    if ((out = ejsCreateByteArray(ejs, in->size)) == 0) {
         return 0;
     }
     zs.zalloc = Z_NULL;
@@ -155,7 +155,7 @@ static EjsObj *zlib_uncompressBytes(Ejs *ejs, EjsObj *unused, int argc, EjsObj *
     int             rc;
 
     in = (EjsByteArray*) argv[0];
-    if ((out = ejsCreateByteArray(ejs, in->length)) == 0) {
+    if ((out = ejsCreateByteArray(ejs, in->size)) == 0) {
         return 0;
     }
     if ((size = (int) ejsGetByteArrayAvailableData(in)) == 0) {

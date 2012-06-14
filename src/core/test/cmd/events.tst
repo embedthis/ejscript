@@ -12,7 +12,7 @@ if (!Path("/bin").exists) {
     for (i in 1000) {
         out.write(i + ": aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa")
     }
-    let count = out.available
+    let count = out.length
 
     cmd = new Cmd
     cmd.start("cat", {detach: true})
@@ -23,7 +23,7 @@ if (!Path("/bin").exists) {
     cmd.on("writable", function(event, cmd) {
         let len = cmd.write(out)
         out.readPosition += len
-        if (out.available == 0) {
+        if (out.length == 0) {
             cmd.finalize()
         }
     })
@@ -32,8 +32,8 @@ if (!Path("/bin").exists) {
         gotEvent = event
     })
     cmd.wait()
-    assert(input.available > 0)
-    assert(input.available == count)
+    assert(input.length > 0)
+    assert(input.length == count)
     assert(cmd.status == 0)
     assert(gotEvent == "complete")
 
