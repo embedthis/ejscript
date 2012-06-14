@@ -255,7 +255,7 @@ module ejs.db.mapper {
          */
         private function coerceToEjsTypes(): Void {
             for (let field: String in this) {
-                let col: Column = _imodel._columns[field]
+                let col: Column? = _imodel._columns[field]
                 if (col == undefined) {
                     continue
                 }
@@ -836,7 +836,7 @@ var before = Memory.resident
         /*
             Make a getter function to lazily (on-demand) read associated records (belongsTo)
          */
-        private static function makeLazyReader(rec: Record, field: String, model, key: String, 
+        private static function makeLazyReader(rec: Record, field: String, model, key: String?, 
                 options: Object = {}): Function {
             // print("Make lazy reader for " + _tableName + "[" + field + "] for " + model._tableName + "[" + key + "]")
             var lazyReader: Function = function(): Object {
