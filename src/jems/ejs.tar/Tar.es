@@ -265,7 +265,7 @@ module ejs.tar {
         }
 
         function show(ba) {
-            for (i = 0; i < ba.available; i += 16) {
+            for (i = 0; i < ba.length; i += 16) {
                 stdout.write(['%07o    ' % [i]])
                 for (j in 16) {
                     stdout.write(['%02X  ' % ba[i+j]])
