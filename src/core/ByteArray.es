@@ -6,8 +6,6 @@
 module ejs {
 
     // use strict
-
-    //  MOB - consider switching length =>  size, available => length
     //  MOB - add indexOf(byteValue)
 
     /** 
@@ -18,12 +16,12 @@ module ejs {
         extract bytes. The index operator [] can be used to access individual bytes and the copyIn and copyOut methods 
         can be used to get and put blocks of data. In this mode, the $readPosition and $writePosition properties are ignored.
 
-        Access to the byte array is from index zero up to the size defined by the length property. When constructed, 
+        Access to the byte array is from index zero up to the size defined by the $size property. When constructed, 
         the ByteArray can be designated as resizable, in which case the initial size will grow as required to accomodate 
-        data and the length property will be updated accordingly.
+        data and the $size property will be updated accordingly.
         
         ByteArrays provide additional write methods to store data at the location specified by the $writePosition 
-        property and read methods to read from the $readPosition property. The $available property indicates how much 
+        property and read methods to read from the $readPosition property. The $length property indicates how much 
         data is available between the read and write position pointers. The $reset method can reset the pointers to 
         the start of the array.  When used with for/in, ByteArrays will iterate or enumerate over the available 
         data between the read and write pointers.
@@ -60,12 +58,6 @@ module ejs {
             @param resizable Set to true to automatically grow the array as required to fit written data.
          */
         native function ByteArray(size: Number = -1, resizable: Boolean = true)
-
-        /** 
-            Number of bytes that are currently available for reading. This consists of the bytes available
-            from the current $readPosition up to the current $writePosition.
-         */
-        native function get available(): Number 
 
         /** @duplicate Stream.async */
         native function get async(): Boolean
@@ -168,8 +160,9 @@ module ejs {
         override iterator native function getValues(): Iterator
 
         /** 
-            Length of the byte array. This is not the amount of read or write data, but is the size of the total 
-            array storage. Use $available to get the amount of data between the read and write positions.
+            Number of bytes that are currently available for reading. This consists of the bytes available
+            from the current $readPosition up to the current $writePosition. To get the total size of the ByteArray
+            use $size.
          */
         native function get length(): Number
 
@@ -307,6 +300,12 @@ module ejs {
             Number of data bytes that the array can store from the $writePosition till the end of the array.
          */
         native function get room(): Number 
+
+        /** 
+            Size of the byte array. This is not the amount of read or write data, but is the size of the total 
+            array storage. Use $length to get the amount of data between the read and write positions.
+         */
+        native function get size(): Number 
 
         /** 
             Convert the data in the byte array between the $readPosition and writePosition.

@@ -71,14 +71,6 @@ module ejs {
         }
 
         /** 
-            The number of bytes available to read without blocking. This is the number of bytes internally buffered
-            in the binary stream and does not include any data buffered downstream.
-            @return the number of available bytes
-         */
-        function get available(): Number
-            inbuf.available
-
-        /** 
             @duplicate Stream.close 
          */
         function close(): void
@@ -131,6 +123,14 @@ module ejs {
                 nextStream.flush(dir)
             }
         }
+
+        /** 
+            The number of bytes available to read without blocking. This is the number of bytes internally buffered
+            in the binary stream and does not include any data buffered downstream.
+            @return the number of available bytes
+         */
+        function get length(): Number
+            inbuf.length
 
         /** 
             @duplicate Stream.on 

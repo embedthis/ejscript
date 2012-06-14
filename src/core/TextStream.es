@@ -63,14 +63,6 @@ module ejs {
         }
 
         /** 
-            The number of bytes available to read without blocking. This is the number of bytes buffered internally
-            by this stream. It does not include any data buffered downstream.
-            @return the number of available bytes
-         */
-        function get available(): Number
-            inbuf.available
-
-        /** 
             @duplicate Stream.close
          */
         function close(): Void {
@@ -117,6 +109,14 @@ module ejs {
         }
 
         /** 
+            The number of bytes available to read without blocking. This is the number of bytes buffered internally
+            by this stream. It does not include any data buffered downstream.
+            @return the number of available bytes
+         */
+        function get length(): Number
+            inbuf.length
+
+        /** 
             @duplicate Stream.off
          */
         function off(name, observer: Function): Void {
@@ -155,7 +155,7 @@ module ejs {
             }
             let where = buffer.writePosition
             while (count > 0) {
-                if (inbuf.available == 0) {
+                if (inbuf.length == 0) {
                     if (fill() <= 0) {
                         if (total == 0) {
                             return null
@@ -163,8 +163,8 @@ module ejs {
                         break
                     }
                 }
-                let len = count.min(inbuf.available)
-                len = len.min(buffer.length - where)
+                let len = count.min(inbuf.length)
+                len = len.min(buffer.size - where)
                 if (len == 0) break
                 len = buffer.copyIn(where, inbuf, inbuf.readPosition, len)
                 inbuf.readPosition += len
@@ -182,7 +182,7 @@ module ejs {
             @throws IOError if an I/O error occurs.
          */
         function readLine(): String? {
-            if (inbuf.available == 0 && fill() <= 0) {
+            if (inbuf.length == 0 && fill() <= 0) {
                 return null
             }
             //  All systems strip both \n and \r\n to normalize text lines
@@ -206,8 +206,8 @@ module ejs {
                 }
                 if (fill() <= 0) {
                     /* Missing a line terminator, so return any last portion of text */
-                    if (inbuf.available) {
-                        return inbuf.readString(inbuf.available)
+                    if (inbuf.length) {
+                        return inbuf.readString(inbuf.length)
                     }
                 }
             }

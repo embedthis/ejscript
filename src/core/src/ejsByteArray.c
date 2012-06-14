@@ -29,7 +29,7 @@ static int putNumber(EjsByteArray *ap, MprNumber value);
 static int putDouble(EjsByteArray *ap, double value);
 
 #define availableBytes(ap)  (((EjsByteArray*) ap)->writePosition - ((EjsByteArray*) ap)->readPosition)
-#define room(ap) (ap->length - ap->writePosition)
+#define room(ap) (ap->size - ap->writePosition)
 #define adjustReadPosition(ap, amt) \
     if (1) { \
         ap->readPosition += amt; \
@@ -65,11 +65,11 @@ static EjsByteArray *cloneByteArrayVar(Ejs *ejs, EjsByteArray *ap, bool deep)
 {
     EjsByteArray    *newArray;
 
-    if ((newArray = ejsCreateByteArray(ejs, ap->length)) == 0) {
+    if ((newArray = ejsCreateByteArray(ejs, ap->size)) == 0) {
         ejsThrowMemoryError(ejs);
         return 0;
     }
-    memcpy(newArray->value, ap->value, ap->length * sizeof(uchar));
+    memcpy(newArray->value, ap->value, ap->size * sizeof(uchar));
     newArray->readPosition = ap->readPosition;
     newArray->writePosition = ap->writePosition;
     return newArray;
@@ -78,17 +78,17 @@ static EjsByteArray *cloneByteArrayVar(Ejs *ejs, EjsByteArray *ap, bool deep)
 
 static int deleteByteArrayProperty(struct Ejs *ejs, EjsByteArray *ap, int slot)
 {
-    if (slot >= ap->length) {
+    if (slot >= ap->size) {
         ejsThrowOutOfBoundsError(ejs, "Bad subscript");
         return EJS_ERR;
     }
-    if ((slot + 1) == ap->length) {
-        ap->length--;
-        if (ap->readPosition >= ap->length) {
-            ap->readPosition = ap->length - 1;
+    if ((slot + 1) == ap->size) {
+        ap->size--;
+        if (ap->readPosition >= ap->size) {
+            ap->readPosition = ap->size - 1;
         }
-        if (ap->writePosition >= ap->length) {
-            ap->writePosition = ap->length - 1;
+        if (ap->writePosition >= ap->size) {
+            ap->writePosition = ap->size - 1;
         }
     }
     if (ejsSetProperty(ejs, ap, slot, ESV(undefined)) < 0) {
@@ -100,13 +100,13 @@ static int deleteByteArrayProperty(struct Ejs *ejs, EjsByteArray *ap, int slot)
 
 static ssize getByteArrayPropertyCount(Ejs *ejs, EjsByteArray *ap)
 {
-    return ap->length;
+    return ap->size;
 }
 
 
 static EjsNumber *getByteArrayProperty(Ejs *ejs, EjsByteArray *ap, int slotNum)
 {
-    if (slotNum < 0 || slotNum >= ap->length) {
+    if (slotNum < 0 || slotNum >= ap->size) {
         ejsThrowOutOfBoundsError(ejs, "Bad array subscript");
         return 0;
     }
@@ -122,7 +122,7 @@ static int lookupByteArrayProperty(struct Ejs *ejs, EjsByteArray *ap, EjsName qn
         return EJS_ERR;
     }
     index = ejsAtoi(ejs, qname.name, 10);
-    if (index < ap->length) {
+    if (index < ap->size) {
         return index;
     }
     return EJS_ERR;
@@ -243,7 +243,7 @@ static EjsAny *invokeByteArrayOperator(Ejs *ejs, EjsObj *lhs, int opcode,  EjsOb
  */
 static int setByteArrayProperty(struct Ejs *ejs, EjsByteArray *ap, int slotNum,  EjsObj *value)
 {
-    if (slotNum >= ap->length && ejsGrowByteArray(ejs, ap, slotNum + 1) < 0) {
+    if (slotNum >= ap->size && ejsGrowByteArray(ejs, ap, slotNum + 1) < 0) {
         return EJS_ERR;
     }
     if (ejsIs(ejs, value, Number)) {
@@ -251,8 +251,8 @@ static int setByteArrayProperty(struct Ejs *ejs, EjsByteArray *ap, int slotNum, 
     } else {
         ap->value[slotNum] = ejsGetInt(ejs, ejsToNumber(ejs, value));
     }
-    if (slotNum >= ap->length) {
-        ap->length = slotNum + 1;
+    if (slotNum >= ap->size) {
+        ap->size = slotNum + 1;
     }
     return slotNum;
 }
@@ -307,16 +307,6 @@ static EjsObj *ba_setAsync(Ejs *ejs, EjsByteArray *ap, int argc, EjsObj **argv)
 }
 
 
-/**
-    Get the number of bytes that are currently available on this stream for reading.
-    function get available(): Number
- */
-static EjsNumber *ba_available(Ejs *ejs, EjsByteArray *ap, int argc, EjsObj **argv)
-{
-    return ejsCreateNumber(ejs, (MprNumber) (ap->writePosition - ap->readPosition));
-}
-
-
 /*
     function close(): Void
  */
@@ -364,17 +354,17 @@ static EjsNumber *ba_copyIn(Ejs *ejs, EjsByteArray *ap, int argc, EjsObj **argv)
     srcOffset = (argc > 2) ? ejsGetInt(ejs, argv[2]) : 0;
     count = (argc > 3) ? ejsGetInt(ejs, argv[3]) : MAXINT;
 
-    if (srcOffset >= src->length) {
+    if (srcOffset >= src->size) {
         ejsThrowOutOfBoundsError(ejs, "Bad source offset");
         return 0;
     }
     if (count < 0) {
         count = MAXINT;
     }
-    count = min(src->length - srcOffset, count);
+    count = min(src->size - srcOffset, count);
 
     ejsMakeRoomInByteArray(ejs, ap, destOffset + count);
-    if ((destOffset + count) > src->length) {
+    if ((destOffset + count) > src->size) {
         ejsThrowOutOfBoundsError(ejs, "Insufficient room for data");
         return 0;
     }
@@ -401,13 +391,13 @@ static EjsNumber *ba_copyOut(Ejs *ejs, EjsByteArray *ap, int argc, EjsObj **argv
     destOffset = (argc > 2) ? ejsGetInt(ejs, argv[2]) : 0;
     count = (argc > 3) ? ejsGetInt(ejs, argv[3]) : MAXINT;
 
-    if (srcOffset >= ap->length) {
+    if (srcOffset >= ap->size) {
         ejsThrowOutOfBoundsError(ejs, "Bad source data offset");
         return 0;
     }
-    count = min(ap->length - srcOffset, count);
+    count = min(ap->size - srcOffset, count);
     ejsMakeRoomInByteArray(ejs, dest, destOffset + count);
-    if ((destOffset + count) > dest->length) {
+    if ((destOffset + count) > dest->size) {
         ejsThrowOutOfBoundsError(ejs, "Insufficient room for data");
         return 0;
     }
@@ -526,19 +516,19 @@ static EjsObj *ba_flush(Ejs *ejs, EjsByteArray *ap, int argc, EjsObj **argv)
 {
     flushByteArray(ejs, ap);
     ap->writePosition = ap->readPosition = 0;
-    memset(ap->value, 0, ap->length);
+    memset(ap->value, 0, ap->size);
     return 0;
 }
 
 
 /*
-    Get the length of an array.
+    Get the number of bytes that are currently available on this stream for reading.
     @return Returns the number of items in the array
     override function get length(): Number
  */
 static EjsNumber *ba_getLength(Ejs *ejs, EjsByteArray *ap, int argc, EjsObj **argv)
 {
-    return ejsCreateNumber(ejs, (int) ap->length);
+    return ejsCreateNumber(ejs, (MprNumber) (ap->writePosition - ap->readPosition));
 }
 
 
@@ -552,12 +542,12 @@ static EjsObj *ba_setLength(Ejs *ejs, EjsByteArray *ap, int argc, EjsObj **argv)
     mprAssert(argc == 1 && ejsIs(ejs, argv[0], Number));
     mprAssert(ejsIs(ejs, ap, ByteArray));
 
-    ap->length = ejsGetInt(ejs, argv[0]);
-    if (ap->readPosition >= ap->length) {
-        ap->readPosition = ap->length - 1;
+    ap->size = ejsGetInt(ejs, argv[0]);
+    if (ap->readPosition >= ap->size) {
+        ap->readPosition = ap->size - 1;
     }
-    if (ap->writePosition >= ap->length) {
-        ap->writePosition = ap->length - 1;
+    if (ap->writePosition >= ap->size) {
+        ap->writePosition = ap->size - 1;
     }
 
     return 0;
@@ -592,14 +582,14 @@ static EjsNumber *ba_read(Ejs *ejs, EjsByteArray *ap, int argc, EjsObj **argv)
 
     buffer = (EjsByteArray*) argv[0];
     offset = (argc == 2) ? ejsGetInt(ejs, argv[1]) : 0;
-    count = (argc == 3) ? ejsGetInt(ejs, argv[2]) : (int) buffer->length;
+    count = (argc == 3) ? ejsGetInt(ejs, argv[2]) : (int) buffer->size;
 
     if (count < 0) {
-        count = buffer->length;
+        count = buffer->size;
     }
     if (offset < 0) {
         offset = buffer->writePosition;
-    } else if (offset >= buffer->length) {
+    } else if (offset >= buffer->size) {
         ejsThrowOutOfBoundsError(ejs, "Bad read offset value");
         return 0;
     } else {
@@ -767,7 +757,7 @@ static EjsObj *ba_setReadPosition(Ejs *ejs, EjsByteArray *ap, int argc, EjsObj *
     mprAssert(argc == 1 && ejsIs(ejs, argv[0], Number));
 
     pos = ejsGetInt(ejs, argv[0]);
-    if (pos < 0 || pos > ap->length) {
+    if (pos < 0 || pos > ap->size) {
         ejsThrowOutOfBoundsError(ejs, "Bad position value");
         return 0;
     }
@@ -865,6 +855,17 @@ static EjsByteArray *ba_on(Ejs *ejs, EjsByteArray *ap, int argc, EjsAny **argv)
 static EjsNumber *ba_room(Ejs *ejs, EjsByteArray *ap, int argc, EjsObj **argv)
 {
     return ejsCreateNumber(ejs, (MprNumber) room(ap));
+}
+
+
+/**
+    Get the size of an array.
+    function get size(): Number
+ */
+static EjsNumber *ba_size(Ejs *ejs, EjsByteArray *ap, int argc, EjsObj **argv)
+{
+    return ejsCreateNumber(ejs, (int) ap->size);
+    return ejsCreateNumber(ejs, (MprNumber) (ap->writePosition - ap->readPosition));
 }
 
 
@@ -1080,7 +1081,7 @@ static EjsObj *ba_setWritePosition(Ejs *ejs, EjsByteArray *ap, int argc, EjsObj 
     mprAssert(argc == 1 && ejsIs(ejs, argv[0], Number));
 
     pos = ejsGetInt(ejs, argv[0]);
-    if (pos < 0 || pos > ap->length) {
+    if (pos < 0 || pos > ap->size) {
         ejsThrowStateError(ejs, "Write position is outside bounds of array");
         return 0;
     }
@@ -1116,7 +1117,7 @@ static int flushByteArray(Ejs *ejs, EjsByteArray *ap)
  */
 ssize ejsGrowByteArray(Ejs *ejs, EjsByteArray *ap, ssize len)
 {
-    if (len > ap->length) {
+    if (len > ap->size) {
         if (!ap->resizable) {
             ejsThrowResourceError(ejs, "Byte array is too small. Need room for %d bytes.", len);
             return EJS_ERR;
@@ -1125,11 +1126,11 @@ ssize ejsGrowByteArray(Ejs *ejs, EjsByteArray *ap, ssize len)
             ejsThrowMemoryError(ejs);
             return EJS_ERR;
         }
-        memset(&ap->value[ap->length], 0, len - ap->length);
+        memset(&ap->value[ap->size], 0, len - ap->size);
         ap->growInc = min(ap->growInc * 2, 32 * 1024);
-        ap->length = len;
+        ap->size = len;
     }
-    return ap->length;
+    return ap->size;
 }
 
 
@@ -1167,7 +1168,7 @@ bool ejsMakeRoomInByteArray(Ejs *ejs, EjsByteArray *ap, ssize require)
             ejsSendEvent(ejs, ap->emitter, "readable", NULL, ap);
         }
         if (room(ap) < require) {
-            newLen = max(ap->length + require, ap->length + ap->growInc);
+            newLen = max(ap->size + require, ap->size + ap->growInc);
             if (ejsGrowByteArray(ejs, ap, newLen) < 0) {
                 return 0;
             }
@@ -1297,7 +1298,7 @@ void ejsResetByteArray(Ejs *ejs, EjsByteArray *ba)
 {
     if (ba->writePosition == ba->readPosition) {
         ba->writePosition = ba->readPosition = 0;
-        memset(ba->value, 0, ba->length);
+        memset(ba->value, 0, ba->size);
     }
 }
 
@@ -1326,7 +1327,7 @@ ssize ejsCopyToByteArray(Ejs *ejs, EjsByteArray *ba, ssize offset, cchar *data, 
     if (!ejsMakeRoomInByteArray(ejs, ba, offset + length)) {
         return EJS_ERR;
     }
-    if (ba->length < (offset + length)) {
+    if (ba->size < (offset + length)) {
         return EJS_ERR;
     }
     for (i = 0; i < length; i++) {
@@ -1408,7 +1409,6 @@ void ejsConfigureByteArrayType(Ejs *ejs)
     prototype = type->prototype;
     ejsBindConstructor(ejs, type, ba_ByteArray);
     ejsBindMethod(ejs, prototype, ES_ByteArray_on, ba_on);
-    ejsBindMethod(ejs, prototype, ES_ByteArray_available, ba_available);
     ejsBindAccess(ejs, prototype, ES_ByteArray_async, ba_async, ba_setAsync);
     ejsBindMethod(ejs, prototype, ES_ByteArray_close, ba_close);
     ejsBindMethod(ejs, prototype, ES_ByteArray_compact, ba_compact);
@@ -1433,6 +1433,7 @@ void ejsConfigureByteArrayType(Ejs *ejs)
     ejsBindMethod(ejs, prototype, ES_ByteArray_readString, ba_readString);
     ejsBindMethod(ejs, prototype, ES_ByteArray_reset, ba_reset);
     ejsBindMethod(ejs, prototype, ES_ByteArray_room, ba_room);
+    ejsBindMethod(ejs, prototype, ES_ByteArray_size, ba_size);
     ejsBindMethod(ejs, prototype, ES_ByteArray_toString, ba_toString);
     ejsBindMethod(ejs, prototype, ES_ByteArray_write, ejsWriteToByteArray);
     ejsBindMethod(ejs, prototype, ES_ByteArray_writeByte, ba_writeByte);

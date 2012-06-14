@@ -193,26 +193,26 @@ static EjsNumber *cmd_read(Ejs *ejs, EjsCmd *cmd, int argc, EjsObj **argv)
 
     buffer = (EjsByteArray*) argv[0];
     offset = (argc == 2) ? ejsGetInt(ejs, argv[1]) : 0;
-    count = (argc == 3) ? ejsGetInt(ejs, argv[2]) : (int) buffer->length;
+    count = (argc == 3) ? ejsGetInt(ejs, argv[2]) : (int) buffer->size;
 
     if (count < 0) {
-        count = buffer->length;
+        count = buffer->size;
     }
     if (offset < 0) {
         offset = buffer->writePosition;
-    } else if (offset >= buffer->length) {
+    } else if (offset >= buffer->size) {
         ejsThrowOutOfBoundsError(ejs, "Bad read offset value");
         return 0;
     } else {
         buffer->readPosition = 0;
         buffer->writePosition = 0;
     }
-    count = buffer->length - buffer->writePosition;
+    count = buffer->size - buffer->writePosition;
     if (count <= 0) {
         if (ejsGrowByteArray(ejs, buffer, MPR_BUFSIZE) < 0) {
             return 0;
         }
-        count = buffer->length - buffer->writePosition;
+        count = buffer->size - buffer->writePosition;
     }
     nbytes = mprGetBufLength(cmd->stdoutBuf);
     if (nbytes == 0 && !cmd->async && cmd->mc) {

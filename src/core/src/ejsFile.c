@@ -609,7 +609,7 @@ static EjsNumber *readFile(Ejs *ejs, EjsFile *fp, int argc, EjsObj **argv)
         ejsThrowStateError(ejs, "File not opened for reading");
         return 0;
     }
-    if (offset >= buffer->length) {
+    if (offset >= buffer->size) {
         ejsThrowOutOfBoundsError(ejs, "Bad read offset value");
         return 0;
     }
@@ -742,10 +742,10 @@ static ssize readData(Ejs *ejs, EjsFile *fp, EjsByteArray *ap, ssize offset, ssi
     if (count <= 0) {
         return 0;
     }
-    room = ap->length - offset;
+    room = ap->size - offset;
     if (room < count) {
         if (ap->resizable) {
-            ejsGrowByteArray(ejs, ap, ap->length + (count - room));
+            ejsGrowByteArray(ejs, ap, ap->size + (count - room));
         } else {
             count = min(room, count);
         }

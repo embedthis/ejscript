@@ -97,7 +97,7 @@ EjsFrame *ejsCreateFrame(Ejs *ejs, EjsFunction *fun, EjsObj *thisObj, int argc, 
     frame->function.block.namespaces = fun->block.namespaces;
     frame->function.block.scope = fun->block.scope;
     frame->function.block.prev = fun->block.prev;
-    frame->function.block.breakCatch = fun->block.breakCatch;
+    frame->function.block.restartInstruction = fun->block.restartInstruction;
     frame->function.block.nobind = fun->block.nobind;
 
     //  OPT

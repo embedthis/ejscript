@@ -88,7 +88,7 @@ module ejs {
             @param search Optional additional search paths to use before using PATH
             @return Located path or null
          */
-        static function locate(program: Path, search = []): Path {
+        static function locate(program: Path, search = []): Path? {
             search += App.getenv("PATH").split(App.SearchSeparator)
             for each (dir in App.getenv("PATH").split(App.SearchSeparator)) {
                 let path = Path(dir).join(program)

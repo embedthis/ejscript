@@ -519,7 +519,7 @@ static EjsNumber *http_read(Ejs *ejs, EjsHttp *hp, int argc, EjsObj **argv)
     }
     if (offset < 0) {
         offset = buffer->writePosition;
-    } else if (offset >= buffer->length) {
+    } else if (offset >= buffer->size) {
         ejsThrowOutOfBoundsError(ejs, "Bad read offset value");
         return 0;
     } else {
