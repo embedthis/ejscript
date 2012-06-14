@@ -92,7 +92,7 @@
             layout page and not have to repeat the common application UI elements in each page. Ejscript does this by
             automatically merging <b>layout</b> pages and content pages to create a composite page that matches what
             the user actually will see.</p>
-            <p>For example: this is a layout page called "views/layouts/default.ejs" which defines the top level HTML
+            <p>For example: this is a layout page called "layouts/default.ejs" which defines the top level HTML
             content for all content pages. It has a banner image and division tags that structure the page:</p>
             <pre>
 &lt;html&gt;
@@ -139,7 +139,7 @@
 &lt;p&gt;Hello World&lt;/p&gt;
 </pre>
             <p>This instructs the templating engine to use the "alternateLayout.ejs" file rather than the default
-            layout. The default layout page is called "views/layouts/default.ejs". <a id="multiple"></a></p>
+            layout. The default layout page is called "layouts/default.ejs". <a id="multiple"></a></p>
             <h3>Multiple Layout Pages</h3>
             <p>You are not restricted to a simple two level layout and content page scheme. A layout page can itself
             refer to another layout page to gradually build up the application's look and feel. To do this, the layout
@@ -172,7 +172,7 @@ mvc generate appName
 </pre>
             <p>After creating the application, you should place all content views for a controller under the
             "views/ControllerName" directory. The "ControllerName" directories should by convention begin with an upper
-            case letter. The "views" and "views/layouts" directories are lower case. <a id="static"></a></p>
+            case letter. The "views" and "layouts" directories are lower case. <a id="static"></a></p>
             <h2 class="section">Static Web Content</h2>
             <p>Static web page content such as images, CSS pages and other similar content should be placed under the
             <b>web</b> directory. While this content can be served by the Ejscript handler, it should ideally and
