@@ -4,7 +4,7 @@
 
 pack('zlib', 'Zlib Compression Library')
 let cfg
-let path: Path = bit.packs.zlib.path
+let path: Path? = bit.packs.zlib.path
 if (!path) {
     let vers = bit.dir.packs.join('zlib').files('zlib-*').sort().reverse()
     path = vers[0]
