@@ -723,13 +723,13 @@ function prepareSettings(base, o, debug: Boolean) {
     }
     let defines = o.defines.clone()
     if (debug) {
-        o.defines.push('-DBIT_DEBUG')
+        defines.push('-DBIT_DEBUG')
     } else {
-        o.defines.removeElements('-DDEBUG')
+        defines.removeElements('-DDEBUG')
     }
     if (defines.length > 0) {
-        options.defines = '\n\t\t\t\tGCC_PREPROCESSOR_DEFINITIONS = (\n' + 
-            defines.map(function(f) '\t\t\t\t\t"' + f.replace('-D', '') + '",').join('\n') + '\n\t\t\t\t\t\t"$(inherited)"\n\t\t\t\t);'
+        options.defines = '\t\t\t\tGCC_PREPROCESSOR_DEFINITIONS = (\n' + 
+            defines.map(function(f) '\t\t\t\t\t"' + f.replace('-D', '') + '",').join('\n') + '\n\t\t\t\t\t"$(inherited)"\n\t\t\t\t);'
     }
     let result = ''
     if (options.includes) result += options.includes
