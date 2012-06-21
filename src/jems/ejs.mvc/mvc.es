@@ -23,7 +23,6 @@ class EjsMvc {
     private const DIR_PERMS: Number = 0775
     private const FILE_PERMS: Number = 0666
     private const RC: String = ".ejsrc"
-    private const NextMigration: String = ".ejs/nextMigration"
 
     private var appName: String
     private var buildAll: Boolean
@@ -38,6 +37,7 @@ class EjsMvc {
     private var layoutPage: String
     private var mode: String = "debug"
     private var mvc: String
+    private var nextMigration: Number = 0
     private var options: Object
     private var overwrite: Boolean = false
     private var verbose: Number = 1
@@ -518,7 +518,7 @@ class EjsMvc {
         return intermediate
     }
 
-    function buildWebPage(file: Path, compile: Boolean = true): Path {
+    function buildWebPage(file: Path, compile: Boolean = true): Path? {
         let sansExt: Path = file.trimExt()
         file = file.joinExt(ext.ejs)
         if (file.extension != ext.ejs) {
@@ -777,7 +777,7 @@ class EjsMvc {
         }
 
         /*
-            Each database has a _EjsMigrations table which has a record for each migration applied
+            The database has a _EjsMigrations table which has a record for each migration applied
          */
         let MigrationsTable = getMigrationModel()
         let migrations = MigrationsTable.findAll()
@@ -801,6 +801,7 @@ class EjsMvc {
             targetSeq = command
             let found = false
             for each (f in files) {
+                //  MOB - copy esp code
                 let base = f.basename.toString().toLowerCase()
                 if (Path(targetSeq).basename == base) {
                     targetSeq = base.replace(/^([0-9]*)_.*es/, "$1")
@@ -837,13 +838,16 @@ class EjsMvc {
                 if (appliedMigration["version"] == seq) {
                     found = true
                     id = appliedMigration["id"]
+                    break
                 }
             }
             if (backward) {
-                found = !found
+                /* MOB - cant happen
                 if (targetSeq && targetSeq == seq) {
                     return
                 }
+                */
+                found = !found
             }
             if (!found) {
                 try { delete Migration; } catch {}
@@ -856,6 +860,7 @@ class EjsMvc {
                     new Migration().forward(db)
                 }
                 if (backward) {
+//  MOB - what if id not set
                     MigrationsTable.remove(id)
                 } else {
                     migration = new MigrationsTable
@@ -866,12 +871,15 @@ class EjsMvc {
                     return
                 }
             }
+            //  MOB - don't need to test backward
             if (!backward && targetSeq && targetSeq == seq) {
                 return
             }
         }
+        //  MOB - should this not be !onlyOne
         if (onlyOne) {
             if (backward) {
+//  MOB - what is OMIT?
                 trace("[OMIT]", "All migrations reversed")
             } else {
                 trace("[OMIT]", "All migrations applied")
@@ -1088,7 +1096,7 @@ class EjsMvc {
         data = data.replace(/\${FORWARD}/g, forward)
         data = data.replace(/\${BACKWARD}/g, backward)
 
-        seq = (new Date()).format("%Y%m%d%H%M%S")
+        seq = (new Date()).format("%Y%m%d%H%M%S") + nextMigration++
         fileComment = comment.replace(/[    ]+/g, "_")
         path = Path("db/migrations/" + seq + "_" + fileComment).joinExt(ext.es)
         if (path.exists) {
@@ -1281,7 +1289,7 @@ class EjsMvc {
             }
         }
         appName = App.dir.basename.toString().toLowerCase()
-        if (!dirs.controllers.exists) {
+        if (!config.database) {
             throw new IOError("Not an MVC application directory")
         }
         if (!dirs.cache.exists || !isDir(dirs.cache)) {
