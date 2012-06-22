@@ -2040,11 +2040,11 @@
 #define ES_TextStream_format                                           2
 #define ES_TextStream_nextStream                                       3
 #define ES_TextStream_async                                            4
-#define ES_TextStream_available                                        5
-#define ES_TextStream_close                                            6
-#define ES_TextStream_encoding                                         7
-#define ES_TextStream_fill                                             8
-#define ES_TextStream_flush                                            9
+#define ES_TextStream_close                                            5
+#define ES_TextStream_encoding                                         6
+#define ES_TextStream_fill                                             7
+#define ES_TextStream_flush                                            8
+#define ES_TextStream_length                                           9
 #define ES_TextStream_off                                              10
 #define ES_TextStream_on                                               11
 #define ES_TextStream_read                                             12
@@ -2349,6 +2349,6 @@
 #define ES_XMLList_NUM_INSTANCE_PROP                                   20
 #define ES_XMLList_NUM_INHERITED_PROP                                  0
 
-#define _ES_CHECKSUM_ejs   1464343
+#define _ES_CHECKSUM_ejs   1464056
 
 #endif
