@@ -31,9 +31,6 @@ server.on("readable", function (event, request: Request) {
 
 
     //  Response headers
-    assert(responseHeaders && responseHeaders.Server)
-    assert(Object.getOwnPropertyCount(responseHeaders) == 1)
-    responseHeaders = {}
     assert(Object.getOwnPropertyCount(responseHeaders) == 0)
 
     // setHeader
