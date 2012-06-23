@@ -34,7 +34,8 @@
         <div class="contentRight">
             <h1>Quick Nav</h1>
             <ul>
-                <li><a href="#r102">Release 2.0.0</a></li>
+                <li><a href="#r201">Release 2.0.1</a></li>
+                <li><a href="#r200">Release 2.0.0</a></li>
                 <li><a href="#r113">Release 1.1.3</a></li>
             </ul>
             <h1>See Also</h1>
@@ -50,12 +51,8 @@
             <p>This change log chronicles the features and fixes in each Ejscript release. </p>
             <p>See the Ejscript <a href="http://github.com/embedthis/ejs-2/issues">issue database</a> for full 
                 details of fixes.</p>
-            <!--
-            <a id="r210"></a>
-            <h2 class="section">Changes in 2.1.0</h2>
-            <h3>Major Features</h3>
-            <ul>
-            </ul>
+            <a id="r201"></a>
+            <h2 class="section">Changes in 2.0.1</h2>
             <h3>Minor Features</h3>
             <ul>
                 <li>Changed default for type annotations to not allow nulls. Use Type? to permit nulls</li>
@@ -63,8 +60,14 @@
             <h3>Fixes</h3>
             <ul>
                 <li>Change xcode projects output directory to be unique</li>
+                <li>Xcode debug builds to include BIT_DEBUG</li>
+                <li>Http: HTTP/1.0 connection management</li>
+                <li>Http: PUT method response to include Etag and Location</li>
+                <li>Http: Consuming body of failed requests to preserve keep-alive</li>
+                <li>Http: Remove Content-Length in 304 (NotModified) responses</li>
             </ul>
-            -->
+            </ul>
+
             <a id="r200"></a>
             <h2 class="section">Changes in 2.0.0</h2>
             <h3>Major Features</h3>
