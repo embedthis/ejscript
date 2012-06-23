@@ -983,7 +983,6 @@ static ssize readHttpData(Ejs *ejs, EjsHttp *hp, ssize count)
     ssize       len, space, nbytes;
 
     conn = hp->conn;
-
     buf = hp->responseContent;
     mprResetBufIfEmpty(buf);
     while (count < 0 || mprGetBufLength(buf) < count) {
