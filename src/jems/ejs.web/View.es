@@ -713,10 +713,10 @@ MOB -- much more doc here
             getConnector("tree", options).tree(data, options)
         }
 
+//MOB -- review and rethink this
         /**
             Render a partial view. This creates an HTML element with the required options. It is useful to generate
                 a dynamically refreshing division.
-MOB -- review and rethink this
             @param viewPath (String|Object) If a string, it is a view template name or the name of an action. If an object,
                 it should have properties: controller and action. Action can be the name of a view template.
             @param options Optional extra options. See $View for a list of the standard options.
@@ -731,7 +731,6 @@ MOB -- review and rethink this
                 if (viewPath.controller) {
                     cname = viewPath.controller
                 }
-//MOB - reivew
                 if (viewPath.action) {
                     action = viewPath.action
                 }

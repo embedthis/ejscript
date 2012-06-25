@@ -127,7 +127,7 @@ will generate add column code in the migration script. If the --reverse switch i
 will be generated. To change the type or name of a column, remove then re-add the column. 
 .PP
 .SH APPLYING MIGRATIONS
-Migration scripts can be run via the \fBmvc migrate\fR command. With not other parameters, the command will run
+Migration scripts can be run via the \fBmvc migrate\fR command. With no other parameters, the command will run
 all migrations that have not yet been applied to the database. You can also use \fBmvc migrate forward\fR to apply
 apply the next unapplied migration. Similarly \fBmvc migrate backward\fR will reverse the last applied migration.
 You can also use \fBmvc migrate NNN\fR to migrate forward or backward to a specific migration. NNN is the migration 
