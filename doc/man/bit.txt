@@ -354,27 +354,29 @@ OPTIONS
               system.  This is useful when configuring for a platform that can
               build and run natively on the development system.  For  example:
               Linux  64-bit  systems  can  run  32-bit  applications,  so 'bit
-              --nocross --platform linux-x86 configure'  can  directly  target
-              the 32-bit platform without cross-building.
+              --nocross  --platform  linux-x86  configure'  may  be  able   to
+              directly  target  the  32-bit  platform  without cross-building.
+              Note: Products that require the building and execution of  local
+              tools MUST be able to run those tools on the development system.
 
 
        --out path
-              Save  Bit  trace  output  to a file instead of displaying to the
+              Save Bit trace output to a file instead  of  displaying  to  the
               console.
 
 
        --platform os-arch
-              Add a platform to build for  cross-compilation.  Multiple  plat-
-              forms  can be added. You may use 'local' for the local platform.
-              Options specified after the platform apply to  the  prior  plat-
+              Add  a  platform  to build for cross-compilation. Multiple plat-
+              forms can be added. You may use 'local' for the local  platform.
+              Options  specified  after  the platform apply to the prior plat-
               form. For example:
 
-                  bit  --platform linux-x86 --without all --platform linux-arm
+                  bit --platform linux-x86 --without all --platform  linux-arm
               --with ejscript configure
 
 
        --profile [debug|release|...]
-              Use the specified profile when building. This  options  is  pro-
+              Use  the  specified  profile when building. This options is pro-
               vided once when configuring and the result is saved in the plat-
               form.profile property in the configuration bit file. Custom pro-
               files can be added to the main.bit or start.bit files.
@@ -386,7 +388,7 @@ OPTIONS
 
        --set key=value
               Set a settings property to a given value. For example: 'bit -set
-              version=1.0' will update  the  settings.version  property.   Use
+              version=1.0'  will  update  the  settings.version property.  Use
               this when running 'bit configure' to persist your changes in the
               configuration bit file.
 
@@ -403,7 +405,7 @@ OPTIONS
 
 
        --unset key=value
-              Clear a settings property.  Use this when running  'bit  config-
+              Clear  a  settings property.  Use this when running 'bit config-
               ure' to persist your changes in the configuration bit file.
 
 
@@ -416,9 +418,9 @@ OPTIONS
 
 
        --with PACK[=path]
-              Build  with  the named pack located at the optional path. If the
-              path is ommitted, a search is performed for the pack at  default
-              locations.  Packs  must  have  a pack description file installed
+              Build with the named pack located at the optional path.  If  the
+              path  is ommitted, a search is performed for the pack at default
+              locations. Packs must have a  pack  description  file  installed
               under 'bits/packs' in the bit installation.
 
 
@@ -431,7 +433,7 @@ REPORTING BUGS
        Report bugs to dev@embedthis.com.
 
 COPYRIGHT
-       Copyright (C) 2004-2012 Embedthis Software.  Bit  and  Ejscript  are  a
+       Copyright  (C)  2004-2012  Embedthis  Software.  Bit and Ejscript are a
        trademarks of Embedthis Software.
 
 SEE ALSO

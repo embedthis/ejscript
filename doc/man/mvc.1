@@ -3,7 +3,6 @@
 mvc \- Ejscript Application Generator for Server-Side JavaScript Web Applications.
 .SH SYNOPSIS
 .B mvc
-[\fI--apply]\fR] 
 [\fI--database DB]\fR] 
 [\fI--full\fR]
 [\fI--keep\fR]
@@ -108,8 +107,6 @@ specified field of the requested type. The valid database types are: binary, boo
 float, integer, number, string, text, time, timestamp.
 The scaffold will include an edit action and view that provides add and edit capability. The list action and view, 
 provides the ability to list the database table rows and select an entry to edit.
-.PP
-You can use the --apply switch to apply the database migration to upgrade the database.
 .SH GENERATING MIGRATIONS
 Database migrations are scripts which modify the database schema or content. You can create database migrations 
 by the \fBmvc generate migration\fR command. This command generates a migration

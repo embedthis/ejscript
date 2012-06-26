@@ -88,7 +88,6 @@ class EjsMvc {
 
     private var argsTemplate = {
         options: {
-            apply: { alias: 'a' },
             database: { range: String },
             debug: {},
             diagnose: { alias: 'd'},
@@ -110,7 +109,6 @@ class EjsMvc {
     function usage(): Void {
         stderr.writeLine("\nUsage: mvc [options] [commands] ...\n" +
             "  Options:\n" + 
-            "    --apply                      # Apply migrations\n" + 
             "    --database [sqlite | mysql]  # Sqlite only currently supported adapter\n" + 
             "    --full                       # Generate all directories\n" + 
             "    --keep                       # Keep intermediate source in cache\n" + 
@@ -255,9 +253,6 @@ class EjsMvc {
         default:
             throw "Unknown command: " + task
             break
-        }
-        if (options.apply) {
-            migrate()
         }
     }
 
@@ -1200,9 +1195,7 @@ class EjsMvc {
         generateScaffoldController(controller, model)
         generateScaffoldViews(controller, model)
         buildApp()
-        if (!options.apply) {
-            migrate()
-        }
+        migrate()
     }
 
     /*  
