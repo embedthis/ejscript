@@ -40,7 +40,7 @@ Bit.load({
                 } else if (bit.settings.tune == 'size') {
                     defaults.compiler.push('-Os')
                 } else {
-                    defaults.compiler.push('-O3')
+                    defaults.compiler.push('-O2')
                 }
                 if (bit.settings.warnUnused) {
                     defaults.compiler.push('-Wno-unused-result')
