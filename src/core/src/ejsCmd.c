@@ -455,7 +455,9 @@ static EjsObj *cmd_start(Ejs *ejs, EjsCmd *cmd, int argc, EjsObj **argv)
     flags = parseOptions(ejs, cmd);
 
     if ((rc = mprStartCmd(cmd->mc, cmd->argc, cmd->argv, env, flags)) < 0) {
-        if (rc == MPR_ERR_CANT_ACCESS) {
+        if (rc == MPR_ERR_BAD_ARGS) {
+            err = "Bad command arguments";
+        } else if (rc == MPR_ERR_CANT_ACCESS) {
             err = "Can't access command";
         } else if (MPR_ERR_CANT_OPEN) {
             err = "Can't open standard I/O for command";

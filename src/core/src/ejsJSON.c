@@ -59,6 +59,8 @@ static EjsString *g_serialize(Ejs *ejs, EjsObj *unused, int argc, EjsObj **argv)
 }
 
 
+//  MOB - convert to use MPR json parser
+
 EjsAny *ejsDeserialize(Ejs *ejs, EjsString *str)
 {
     EjsObj      *obj;
