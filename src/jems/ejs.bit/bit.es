@@ -2674,6 +2674,13 @@ global.NN = item.ns
             } else {
                 throw msg
             }
+        } else {
+            if (cmd.error) {
+                print(cmd.error)
+            }
+            if (cmd.response) {
+                print(cmd.response)
+            }
         }
         if (options.show || cmdOptions.show) {
             if (!cmdOptions.noshow) {
