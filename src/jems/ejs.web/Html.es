@@ -164,7 +164,7 @@ module ejs.web {
             write('<span' + getAttributes(options) + '>' +  text + '</span>\r\n')
         }
 
-        function list(name: String, choices: Object, defaultValue: String, options: Object): Void {
+        function list(name: String, choices: Object, defaultValue: String?, options: Object): Void {
             let selected
             write('    <select name="' + name + '" ' + getAttributes(options) + '>\r\n')
             if (choices is Array) {

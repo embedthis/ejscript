@@ -104,7 +104,6 @@ module ejs.web {
             cname ||= (request.params.controller + "Controller")
             _initRequest = request
             if (!global[cname]) {
-print("URI " + request.uri)
                 throw "Can't locate controller: '" + cname + "'"
             }
             let c: Controller = new global[cname](request)
@@ -733,7 +732,7 @@ print("URI " + request.uri)
             }
         }
 
-        private function viewExists(name: String): Boolean {
+        private function viewExists(name: String): Boolean? {
             let viewClass = controllerName + "_" + actionName + "View"
             if (global[viewClass]) {
                 return true
