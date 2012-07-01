@@ -44,7 +44,7 @@ Bit.load({
         title: 'Embedthis Ejscript',
         company: 'Embedthis',
         version: '2.0.1',
-        buildNumber: 'repos',
+        buildNumber: '0',
         sync: ['http', 'mpr', 'pcre', 'sqlite'],
         packs: [ 'bits/packs' ],
         /* Must build locally to build tools */
