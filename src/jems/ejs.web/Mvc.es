@@ -72,7 +72,7 @@ module ejs.web {
             @param config Default configuration for the application
             @return An Mvc application object
           */
-        public static function load(request: Request, dir: Path = ".", config = App.config): Mvc {
+        public static function load(request: Request?, dir: Path = ".", config = App.config): Mvc {
             if ((mvc = Mvc.apps[dir]) == null) {
                 App.log.debug(2, "Load MVC application from \"" + dir + "\"")
                 mvc = Mvc.apps[dir] = new Mvc(dir, config)
