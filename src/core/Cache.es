@@ -76,7 +76,7 @@ module ejs {
             @param when Date at which to expire the data. Set to null to never expire.
             @return True if the key's expiry can be updated. 
          */
-        function expire(key: String, when: Date): Boolean
+        function expire(key: String, when: Date?): Boolean
             adapter.expire(key, when)
 
         /**

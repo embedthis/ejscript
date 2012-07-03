@@ -40,7 +40,7 @@ module ejs {
             @param expires Date at which to expire the data. Set expires to null to cause the key to never expire.
             @return True if the key's expiry can be updated. 
          */
-        native function expire(key: String~, expires: Date): Boolean
+        native function expire(key: String~, expires: Date?): Boolean
 
         /**
             Increment a key's value by a given amount. This operation is atomic.
