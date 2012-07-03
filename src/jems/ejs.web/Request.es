@@ -328,7 +328,7 @@ module ejs.web {
         /**
             Write buffer when capturing output
          */
-        var writeBuffer: ByteArray
+        var writeBuffer: ByteArray?
 
         /*************************************** Methods ******************************************/
         /**
