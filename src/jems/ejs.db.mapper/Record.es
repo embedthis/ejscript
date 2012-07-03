@@ -197,7 +197,7 @@ module ejs.db.mapper {
         private static function getCacheIndex(model: String): String
             "::ejs.db.mapper::" + model
 
-        private static function getCacheName(name: String, options: Object, query: String): String {
+        private static function getCacheName(name: String, options: Object?, query: String?): String {
             if (options && options.query && query) {
                 name += "::" + query
             }
