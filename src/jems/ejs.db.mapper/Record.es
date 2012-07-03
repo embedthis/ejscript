@@ -385,7 +385,7 @@ var before = Memory.resident
             Fetch cached data from the cache if present
             @return a response object
          */
-        private static function fetchCachedResponse(query: String? = null): Object {
+        private static function fetchCachedResponse(query: String? = null): Object? {
             let cacheIndex = getCacheIndex(_className)
             let options = _cacheOptions[cacheIndex]
             if (options) {
