@@ -31,7 +31,7 @@ module ejs.db.mapper {
             Created on demand if cache() is called.
          */
         static var _cacheOptions: Object = {}
-        static var _caching: Boolean
+        static var _caching: Boolean?
 
         static var  _className: String          //  Model class name
         static var  _columns: Object            //  List of columns in this database table
@@ -660,7 +660,7 @@ var before = Memory.resident
             let from: String
             let conditions: String
             let where: Boolean
-            let results: Array
+            let results: Array?
 
             if (!_columns) _model.getSchema()
             if (_caching && (results = fetchCachedResponse())) {
