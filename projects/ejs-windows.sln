@@ -46,9 +46,6 @@ Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "libhttp", "ejs-windows\libh
 	ProjectSection(ProjectDependencies) = postProject
 		{41931549-CFAD-493E-961B-694074A6FA11} = {41931549-CFAD-493E-961B-694074A6FA11}
 	EndProjectSection
-	ProjectSection(ProjectDependencies) = postProject
-		{0DD11A58-06E5-45D8-8838-94CC6276F785} = {0DD11A58-06E5-45D8-8838-94CC6276F785}
-	EndProjectSection
 EndProject
 Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "http", "ejs-windows\http.vcxproj", "{F9826CAF-5410-40D6-A9F3-73B49911C07F}"
 	ProjectSection(ProjectDependencies) = postProject

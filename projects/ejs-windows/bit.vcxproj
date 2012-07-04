@@ -3,7 +3,7 @@
 
   <ItemDefinitionGroup>
     <ClCompile>
-      <AdditionalIncludeDirectories>$(IncDir);%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>$(IncDir);$(IncDir);$(IncDir);$(IncDir);$(IncDir);%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
     </ClCompile>
     <Link>
       <AdditionalDependencies>ws2_32.lib;%(AdditionalDependencies)</AdditionalDependencies>
@@ -104,7 +104,6 @@
     <ClCompile Include="..\..\src\jems\ejs.zlib\ejsZlib.c" />
     <ClCompile Include="..\..\src\deps\mpr\mprLib.c" />
     <ClCompile Include="..\..\src\deps\pcre\pcre.c" />
-    <ClCompile Include="..\..\src\deps\mpr\mprSsl.c" />
     <ClCompile Include="..\..\src\deps\http\httpLib.c" />
     <ClCompile Include="..\..\src\compiler\ecAst.c" />
     <ClCompile Include="..\..\src\compiler\ecCodeGen.c" />
