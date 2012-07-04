@@ -1466,14 +1466,20 @@ public class Bit {
         for each (target in bit.targets) {
             if (target.static && target.type == 'exe') {
                 let resolved = []
+                let includes = []
+                let defines = []
                 for each (dname in getDepends(target).unique()) {
                     let dep = bit.targets[dname]
                     if (dep && dep.type == 'lib' && dep.enable) {
                         target.files += dep.files
                         resolved.push(dname.replace('lib', ''))
+                        includes += dep.includes
+                        defines += dep.defines
                     }
                 }
                 target.libraries -= resolved
+                target.includes += includes
+                target.defines += defines
             }
         }
     }
@@ -2675,19 +2681,23 @@ global.NN = item.ns
                 throw msg
             }
         } else {
-            if (cmd.error) {
-                print(cmd.error)
-            }
-            if (cmd.response) {
-                print(cmd.response)
+            if (!cmdOptions.noshow) {
+                if (cmd.error) {
+                    print(cmd.error)
+                }
+                if (cmd.response) {
+                    print(cmd.response)
+                }
             }
         }
+        /* UNUSED
         if (options.show || cmdOptions.show) {
             if (!cmdOptions.noshow) {
                 out.write(cmd.response)
                 out.write(cmd.error)
             }
         }
+        */
         return cmd.response
     }
 

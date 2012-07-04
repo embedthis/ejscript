@@ -8,7 +8,7 @@ module embedthis.doc {
 
     var all: Boolean
     var bare: Boolean
-    var out: File
+    var out: File?
     var outPath: Path
     var symbols = {}
     var reserved = {"int": true, "char": true, "long": true, "void": true, "...": true, "va_list": true, "struct": true,
@@ -596,7 +596,7 @@ module embedthis.doc {
     }
 
 
-    function emitStructDetail(def: XML, fields: XML) {
+    function emitStructDetail(def: XML, fields: XML?) {
         let name = def.compoundname
         if (!all && def.briefdescription == '' && def.detaileddescription == '') {
             return
