@@ -171,12 +171,10 @@ static int compileInner(EcCompiler *cp, int argc, char **argv)
             }
             mprAddItem(nodes, 0);
         } else  {
-            mprAssert(!MPR->marking);
             paused = ejsBlockGC(ejs);
             mprAddItem(nodes, ecParseFile(cp, argv[i]));
             ejsUnblockGC(ejs, paused);
         }
-        mprAssert(!MPR->marking);
     }
     mprAssert(ejs->result == 0 || (MPR_GET_GEN(MPR_GET_MEM(ejs->result)) != MPR->heap->dead));
 

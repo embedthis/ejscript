@@ -357,10 +357,12 @@ static EjsObj *hs_secure(Ejs *ejs, EjsHttpServer *sp, int argc, EjsObj **argv)
     if (sp->ssl == 0 && ((sp->ssl = mprCreateSsl(sp)) == 0)) {
         return 0;
     }
+#if UNUSED
     if (httpLoadSsl(ejs->http) < 0) {
         ejsThrowStateError(ejs, "Can't load SSL provider");
         return 0;
     }
+#endif
     if (!ejsIs(ejs, argv[0], Null)) {
         mprSetSslKeyFile(sp->ssl, ejsToMulti(ejs, argv[0]));
     }
@@ -401,7 +403,9 @@ static EjsObj *hs_secure(Ejs *ejs, EjsHttpServer *sp, int argc, EjsObj **argv)
     if (argc >= 4 && ejsIs(ejs, argv[3], Array)) {
         mprSetSslCiphers(sp->ssl, ejsToMulti(ejs, argv[3]));
     }
+#if UNUSED
     mprConfigureSsl(sp->ssl);
+#endif
 #else
     ejsThrowReferenceError(ejs, "SSL support was not included in the build");
 #endif

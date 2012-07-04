@@ -310,7 +310,7 @@ static void generateNamespaceList(EjsMod *mp)
             addUniqueItem(namespaces, fmtNamespace(ejs, qname));
         }
     }
-    mprSortList(namespaces, compareNames);
+    mprSortList(namespaces, (MprSortProc) compareNames, 0);
 
     out(mp, "<tr><td><a href='__all-classes.html' target='classes'>All Namespaces</a></td></tr>\n");
 
@@ -491,7 +491,7 @@ static MprList *buildClassList(EjsMod *mp, cchar *namespace)
             addUniqueClass(classes, crec);
         }
     }
-    mprSortList(classes, compareClasses);
+    mprSortList(classes, (MprSortProc) compareClasses, 0);
     return classes;
 }
 
@@ -969,7 +969,7 @@ static void generatePropertyTable(EjsMod *mp, EjsObj *obj)
             buildPropertyList(mp, list, type->prototype, type->numInherited);
         }
     }
-    mprSortList(list, compareProperties);
+    mprSortList(list, (MprSortProc) compareProperties, 0);
 
     out(mp, "<a name='Properties'></a>\n");
     out(mp, "<h2 class='classSection'>Properties</h2>\n");
@@ -1201,7 +1201,7 @@ static void buildMethodList(EjsMod *mp, MprList *methods, EjsObj *obj, EjsObj *o
         fp->trait = trait;
         mprAddItem(methods, fp);
     }
-    mprSortList(methods, compareFunctions);
+    mprSortList(methods, (MprSortProc) compareFunctions, 0);
 }
 
 
