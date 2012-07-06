@@ -3251,6 +3251,7 @@ typedef struct EjsHttp {
     EjsObj          *limits;                    /**< Limits object */
     EjsString       *responseCache;             /**< Cached response (only used if response() is used) */
     HttpConn        *conn;                      /**< Http connection object */
+    MprSsl          *ssl;                       /**< SSL configuration */
     MprBuf          *requestContent;            /**< Request body data supplied */
     MprBuf          *responseContent;           /**< Response data */
     char            *uri;                       /**< Target uri */
@@ -3259,6 +3260,7 @@ typedef struct EjsHttp {
     char            *certFile;                  /**< SSL certificate file */
     int             closed;                     /**< Http is closed and "close" event has been issued */
     int             error;                      /**< Http errored and "error" event has been issued */
+    int             verifyPeer;                 /**< Verify peer certificate (default to true) */
     ssize           readCount;                  /**< Count of body bytes read */
     ssize           requestContentCount;        /**< Count of bytes written from requestContent */
     ssize           writeCount;                 /**< Count of bytes written via write() */

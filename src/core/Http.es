@@ -704,6 +704,12 @@ FUTURE & KEEP
         native function get uri(): Uri
         native function set uri(newUri: Uri): Void
 
+        /**
+            Verify server certificates
+         */
+        native function get verify(): Boolean
+        native function set verify(enable: Boolean): Void
+
         /** 
             Wait for a request to complete. This will call $finalize() if in sync mode and the request is not already 
             finalized.

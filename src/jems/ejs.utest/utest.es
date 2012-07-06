@@ -24,16 +24,9 @@ enumerable class Test {
         Parsed args
         MOB - don't need to store separate to options.
      */
-    var _cfg: Path                          // Path to configuration outputs directory
+    var _cfg: Path?                         // Path to configuration outputs directory
     var _bin: Path                          // Path to bin directory
     var _depth: Number = 1                  // Test level. Higher levels mean deeper testing.
-
-/* UNUSED
-    var _os: String                         // Operating system
-    var _hostOs: String                     // Host operating system
-    var _hostSystem: String                 // Host system details
-    var _cross: Boolean                     // Cross compiling
-*/
     var _lib: Path                          // Path to lib directory
     var _top: Path                          // Path to top of source tree
 
@@ -167,12 +160,6 @@ enumerable class Test {
         if (options.name) {
             testName = options.name
         }
-/*
-   UNUSED
-        if (options.os) {
-            _os = options.os
-        }
- */
         if (options.step) {
             step = true
         }
@@ -209,23 +196,13 @@ enumerable class Test {
 
         _cfg = _top.join('out')
         if (!_cfg.join('inc/bit.h').exists) {
-            _cfg = Path(_top).files(Config.OS + '-' + Config.CPU + '-*').sort()[0]
+            _cfg = _top.files(Config.OS + '-' + Config.CPU + '-*').sort()[0]
         }
         if (!_cfg) {
             throw 'Can\'t locate configure files, run configure'
         }
         parseBuildConfig(_cfg.join('inc/bit.h'))
-
         _bin = _lib = _cfg.join('bin')
-/* UNUSED
-        //  MOB - these are currently being set to the ejs bin and lib
-        _bin = App.exeDir
-        // _lib = _bin.join("../lib")
-        _lib = _bin
-        if (!_lib.exists) {
-            _lib = _bin
-        }
-*/
     }
 
     /*
@@ -358,13 +335,6 @@ enumerable class Test {
             w.preload(App.exeDir.join("utest.worker"))
         }
         let estr = serialize(export)
-        /* UNUSED
-        Moved from inside preeval
-            test.os = data.os
-            test.hostOs = data.hostOs
-            test.hostSystem = data.hostSystem
-            test.cross = data.cross
-         */
         w.preeval('
             let data = deserialize(\'' + estr.replace(/\\/g, "\\\\") + '\')
             public var test: Test = new Test
@@ -393,12 +363,6 @@ enumerable class Test {
             bin: _bin, 
             depth: _depth, 
             dir: file.dirname,
-        /* UNUSED
-            hostOs: _hostOs, 
-            os: _os, 
-            hostSystem: _hostSystem, 
-            cross: _cross,
-         */
             env: env,
             features: features,
             lib: _lib, 
@@ -534,12 +498,6 @@ enumerable class Test {
 
     function parseBuildConfig(path: Path) {
         let data = Path(path).readString()
-/*
-        _os = Config.OS                                 // UNUSED getKey(data, "BIT_BUILD_OS")
-        _hostOs = getKey(data, "BIT_HOST_OS")
-        _hostSystem = getKey(data, "BIT_HOST_SYSTEM")
-        _cross = getKey(data, "BIT_CROSS") == "1"
- */
         features = {}
         features["bld_debug"] = getKey(data, "BIT_DEBUG")
         let str = data.match(/BIT_FEATURE.*|BIT_HTTP_PORT.*|BIT_SSL_PORT.*/g)

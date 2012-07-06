@@ -760,25 +760,6 @@ static EjsObj *http_trace(Ejs *ejs, EjsHttp *hp, int argc, EjsObj **argv)
 
 
 /*  
-    function get uri(): Uri
- */
-static EjsUri *http_uri(Ejs *ejs, EjsHttp *hp, int argc, EjsObj **argv)
-{
-    return ejsCreateUriFromAsc(ejs, hp->uri);
-}
-
-
-/*  
-    function set uri(newUri: Uri): Void
- */
-static EjsObj *http_set_uri(Ejs *ejs, EjsHttp *hp, int argc, EjsObj **argv)
-{
-    hp->uri = httpUriToString(((EjsUri*) argv[0])->uri, HTTP_COMPLETE_URI);
-    return 0;
-}
-
-
-/*  
     function get status(): Number
  */
 static EjsNumber *http_status(Ejs *ejs, EjsHttp *hp, int argc, EjsObj **argv)
@@ -811,6 +792,54 @@ static EjsString *http_statusMessage(Ejs *ejs, EjsHttp *hp, int argc, EjsObj **a
         return ejsCreateStringFromAsc(ejs, conn->errorMsg);
     }
     return ejsCreateStringFromAsc(ejs, httpGetStatusMessage(hp->conn));
+}
+
+
+/*  
+    function get uri(): Uri
+ */
+static EjsUri *http_uri(Ejs *ejs, EjsHttp *hp, int argc, EjsObj **argv)
+{
+    return ejsCreateUriFromAsc(ejs, hp->uri);
+}
+
+
+/*  
+    function set uri(newUri: Uri): Void
+ */
+static EjsObj *http_set_uri(Ejs *ejs, EjsHttp *hp, int argc, EjsObj **argv)
+{
+    hp->uri = httpUriToString(((EjsUri*) argv[0])->uri, HTTP_COMPLETE_URI);
+    return 0;
+}
+
+
+/*  
+    function get verify(): Boolean
+ */
+static EjsBoolean *http_verify(Ejs *ejs, EjsHttp *hp, int argc, EjsObj **argv)
+{
+    if (!hp->ssl) {
+        hp->ssl = mprCreateSsl();
+    }
+    return hp->ssl->verifyPeer ?  ESV(false) : ESV(true);
+}
+
+
+/*  
+    function set verify(on: Boolean): Void
+ */
+static EjsObj *http_set_verify(Ejs *ejs, EjsHttp *hp, int argc, EjsObj **argv)
+{
+    int     verify;
+
+    verify = (argv[0] == ESV(true));
+    if (!hp->ssl) {
+        hp->ssl = mprCreateSsl();
+    }
+    mprVerifySslIssuer(hp->ssl, verify);
+    mprVerifySslPeer(hp->ssl, verify);
+    return 0;
 }
 
 
@@ -902,7 +931,19 @@ static EjsObj *startHttpRequest(Ejs *ejs, EjsHttp *hp, char *method, int argc, E
         ejsThrowArgError(ejs, "HTTP Method is not defined");
         return 0;
     }
-    if (httpConnect(conn, hp->method, hp->uri, NULL) < 0) {
+    if (hp->verifyPeer || hp->certFile) {
+        if (!hp->ssl) {
+            hp->ssl = mprCreateSsl();
+        }
+    }
+    if (hp->ssl) {
+        mprVerifySslPeer(hp->ssl, hp->verifyPeer);
+        mprVerifySslIssuer(hp->ssl, hp->verifyPeer);
+        if (hp->certFile) {
+            mprSetSslCertFile(hp->ssl, hp->certFile);
+        }
+    }
+    if (httpConnect(conn, hp->method, hp->uri, hp->ssl) < 0) {
         ejsThrowIOError(ejs, "Can't issue request for \"%s\"", hp->uri);
         return 0;
     }
@@ -1500,6 +1541,9 @@ void ejsConfigureHttpType(Ejs *ejs)
     ejsBindMethod(ejs, prototype, ES_Http_statusMessage, http_statusMessage);
     ejsBindMethod(ejs, prototype, ES_Http_trace, http_trace);
     ejsBindAccess(ejs, prototype, ES_Http_uri, http_uri, http_set_uri);
+#if ES_Http_verify
+    ejsBindAccess(ejs, prototype, ES_Http_verify, http_verify, http_set_verify);
+#endif
     ejsBindMethod(ejs, prototype, ES_Http_write, http_write);
     ejsBindMethod(ejs, prototype, ES_Http_wait, http_wait);
 }
