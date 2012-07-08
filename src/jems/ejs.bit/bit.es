@@ -2011,7 +2011,7 @@ public class Bit {
 
             } else {
                 trace('Compile', file.relativeTo('.'))
-                run(command)
+                run(command, {filter: /\/cl.exe"/})
             }
         }
     }
@@ -2680,8 +2680,8 @@ global.NN = item.ns
             } else {
                 throw msg
             }
-        } else {
-            if (!cmdOptions.noshow) {
+        } else if (!cmdOptions.noshow) {
+            if (!cmdOptions.filter || !cmdOptions.filter.test(command)) {
                 if (cmd.error) {
                     print(cmd.error)
                 }
@@ -2690,14 +2690,6 @@ global.NN = item.ns
                 }
             }
         }
-        /* UNUSED
-        if (options.show || cmdOptions.show) {
-            if (!cmdOptions.noshow) {
-                out.write(cmd.response)
-                out.write(cmd.error)
-            }
-        }
-        */
         return cmd.response
     }
 
