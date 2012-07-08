@@ -1936,7 +1936,7 @@ public class Bit {
             } else {
                 safeRemove(target.path)
             }
-            run(command)
+            run(command, {filterOutput: /Creating library /})
         }
     }
 
@@ -2686,7 +2686,9 @@ global.NN = item.ns
                     print(cmd.error)
                 }
                 if (cmd.response) {
-                    print(cmd.response)
+                    if (!cmdOptions.filterOutput || !cmdOptions.filterOutput.test(cmd.response)) {
+                        print(cmd.response)
+                    }
                 }
             }
         }
