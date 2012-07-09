@@ -449,6 +449,7 @@ function projLink(base, target) {
         let newdef = Path(target.path.toString().replace(/dll$/, 'def'))
         if (newdef.exists) {
             cp(newdef, def)
+            trace('Copy', def)
         }
         if (def.exists) {
             bit.DEF = wpath(def.relativeTo(base))

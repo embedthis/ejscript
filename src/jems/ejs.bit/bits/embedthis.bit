@@ -41,7 +41,40 @@ Bit.load({
                         rmdir(bit.dir.top.join(name + '-debug'))
                     }
                 }
-                /* Leave a normal configuration */ 
+                trace('Restore', 'Leave a debug configuration')
+                run(bitcmd + ' -q -configure . -' + bit.platform.profile, bit.target.runopt)
+            ",
+        },
+
+        /*
+            Target for just own platform projects
+         */
+        'own-projects': {
+            action: "
+                let bitcmd = Cmd.locate('bit')
+                for each (name in ['linux-x86', 'macosx-x64', 'solaris-x86', 'windows-x86']) {
+                    if (name != bit.platform.name) continue
+                    let formats
+                    if (name == 'windows-x86') {
+                        formats = '-gen sh,nmake,vs'
+                    } else if (name == 'macosx-x64') {
+                        formats = '-gen sh,make'
+                    } else {
+                        formats = '-gen sh,make'
+                    }
+                    trace('Generate', bit.settings.product + '-' + name.replace(/-.*/, '') + ' projects')
+                    run(bitcmd + ' -d -q -platform ' + name + ' -without all -configure . ' + formats, bit.target.runopt)
+                    if (name == 'macosx-x64') {
+                        run(bitcmd + ' -d -q -platform ' + name + ' -without all -profile xcode -configure . -gen xcode',
+                            bit.target.runopt)
+                        rmdir(bit.dir.top.join(name + '-xcode'))
+                    }
+                    if (name != bit.platform.name) {
+                        rm(bit.dir.top.join(name + '.bit'))
+                        rmdir(bit.dir.top.join(name + '-debug'))
+                    }
+                }
+                trace('Restore', 'Leave a debug configuration')
                 run(bitcmd + ' -q -configure . -' + bit.platform.profile, bit.target.runopt)
             ",
         },
