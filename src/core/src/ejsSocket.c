@@ -236,7 +236,7 @@ static EjsNumber *sock_read(Ejs *ejs, EjsSocket *sp, int argc, EjsObj **argv)
     if (count < 0) {
         count = ba->size - offset;
     }
-    if (count < 0) {
+    if (count <= 0) {
         return ESV(zero);
     }
     nbytes = mprReadSocket(sp->sock, &ba->value[offset], count);
