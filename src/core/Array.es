@@ -115,7 +115,7 @@ module ejs {
             @return The matched item
             @spec ejs
          */
-        function find(match: Function): Object {
+        function find(match: Function): Object? {
             for (let i: Number in this) {
                 if (match(this[i], i, this)) {
                     return this[i]

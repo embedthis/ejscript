@@ -643,6 +643,30 @@ static EjsObj *uri_set_port(Ejs *ejs, EjsUri *up, int argc, EjsObj **argv)
 }
 
 
+/*
+    Get the reference portion
+    static function get reference(): String
+ */
+static EjsString *uri_reference(Ejs *ejs, EjsUri *up, int argc, EjsObj **argv)
+{
+    return ejsCreateStringFromAsc(ejs, up->uri->reference);
+}
+
+
+/*  
+    Set the reference portion
+    static function set reference(reference: String): Void
+ */
+static EjsObj *uri_set_reference(Ejs *ejs, EjsUri *up, int argc, EjsObj **argv)
+{
+    cchar    *value;
+
+    value = ejsIs(ejs, argv[0], Null) ? "" : ejsToMulti(ejs, argv[0]);
+    up->uri->reference = sclone(value);
+    return 0;
+}
+
+
 /*  
     Replace the Uri extension
     static function set replaceExt(ext: String): Uri
@@ -746,30 +770,6 @@ static EjsObj *uri_set_query(Ejs *ejs, EjsUri *up, int argc, EjsObj **argv)
 
     value = ejsIs(ejs, argv[0], Null) ? "" : ejsToMulti(ejs, argv[0]);
     up->uri->query = sclone(value);
-    return 0;
-}
-
-
-/*  
-    Get the reference portion
-    static function get reference(): String
- */
-static EjsString *uri_reference(Ejs *ejs, EjsUri *up, int argc, EjsObj **argv)
-{
-    return ejsCreateStringFromAsc(ejs, up->uri->reference);
-}
-
-
-/*  
-    Set the reference portion
-    static function set reference(reference: String): Void
- */
-static EjsObj *uri_set_reference(Ejs *ejs, EjsUri *up, int argc, EjsObj **argv)
-{
-    cchar    *value;
-
-    value = ejsIs(ejs, argv[0], Null) ? "" : ejsToMulti(ejs, argv[0]);
-    up->uri->reference = sclone(value);
     return 0;
 }
 

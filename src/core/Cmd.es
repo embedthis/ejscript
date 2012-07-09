@@ -146,7 +146,7 @@ module ejs {
             @returns a string of $count characters beginning at the start of the output data.
             @throws IOError if an I/O error occurs.
          */
-        native function readString(count: Number = -1): String
+        native function readString(count: Number = -1): String?
 
         /**
             Read the data from the command as an array of lines. This reads from the command's standard output.
@@ -154,7 +154,7 @@ module ejs {
             @returns a string containing count lines of data starting with the first line of output data
             @throws IOError if an I/O error occurs.
          */
-        function readLines(count: Number = -1): Array {
+        function readLines(count: Number = -1): Array? {
             let stream: TextStream = TextStream(this)
             result = stream.readLines()
             return result
@@ -165,14 +165,14 @@ module ejs {
             @returns the output content as an XML object 
             @throws IOError if an I/O error occurs.
          */
-        function readXml(): XML
+        function readXml(): XML?
             XML(readString())
 
         /**
             Command output data as a string. This is an alias for $readString() but it will cache the 
                 output data and may be called multiple times. This reads from the command's standard output.
          */
-        function get response(): String {
+        function get response(): String? {
             if (!_response) {
                 _response = readString()
             }

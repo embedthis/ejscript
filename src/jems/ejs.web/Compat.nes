@@ -6,7 +6,7 @@ NewRequest {
         function finalize(): Void 
         function getResponseHeaders(): Object
         function header(key: String): String
-        function read(buffer: ByteArray, offset: Number = 0, count: Number = -1): Number 
+        function read(buffer: ByteArray, offset: Number = 0, count: Number = -1): Number?
         function redirect(url: String, code: Number = 302): Void 
         function sendResponse(response: Object): Void 
         function setCookie(name: String, options: Object) 

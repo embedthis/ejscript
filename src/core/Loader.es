@@ -138,11 +138,6 @@ module ejs {
             }
             signatures[path] = exports = {}
             initializer(require, exports, {id: id, path: path}, null)
-    /* UNUSED
-            if (exports.app.bound == this) {
-                exports.app.bind(null)
-            }
-    */
             return exports
         }
 

@@ -1021,7 +1021,7 @@ public class Bit {
         }
     }
 
-    function findStart(): Path {
+    function findStart(): Path? {
         let lp = START
         if (lp.exists) {
             return lp

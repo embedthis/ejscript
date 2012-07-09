@@ -55,7 +55,7 @@ module ejs {
         /**
             When the file represented by the path was last accessed. Set to null if the file does not exist.
          */
-        native function get accessed(): Date 
+        native function get accessed(): Date?
 
         /**
             Append data to a file.
@@ -129,7 +129,7 @@ module ejs {
         /**
             When the file represented by the path was created. Set to null if the file does not exist.
          */
-        native function get created(): Date 
+        native function get created(): Date?
 
         /**
             The directory portion of a file. The directory portion is the leading portion including all 
@@ -160,7 +160,7 @@ module ejs {
             TODO - should do pattern matching
             @hide
          */
-        function findAbove(name: String): Path {
+        function findAbove(name: String): Path? {
             let dir: Path = this
             do {
                 if (dir.join(name).exists) {
@@ -188,7 +188,7 @@ module ejs {
                 unless "basenames" is selected.
             @option missing Report missing directories by throwing an exception.
             @return An Array of Path objects for each file in the directory.
-        native function files(options: Object = null): Array 
+        native function files(options: Object? = null): Array 
          */
         
         /**
@@ -216,7 +216,7 @@ module ejs {
             @option relative Return paths relative to the Path, otherwise result entries include the Path. Defaults to false.
             @return An Array of Path objects for each file in the directory.
          */
-        native function files(patterns: Object! = '*', options: Object = null): Array 
+        native function files(patterns: Object! = '*', options: Object? = null): Array 
 
         /**
             The file system containing this Path 
@@ -304,7 +304,7 @@ module ejs {
             The target pointed to if this path is a symbolic link. Not available on some platforms such as Windows and 
             VxWorks. If the path is not a symbolic link, it is set to null.
          */
-        native function get linkTarget(): Path
+        native function get linkTarget(): Path?
 
         /**
             Make a new directory and all required intervening directories. If the directory already exists, 
@@ -363,7 +363,7 @@ module ejs {
         /**
             When the file represented by the path was last modified. Set to null if the file does not exist.
          */
-        native function get modified(): Date 
+        native function get modified(): Date?
 
         /**
             Name of the Path as a string. This is the same as $toString().
@@ -439,7 +439,7 @@ module ejs {
             The file permissions of a path. This number contains the Posix style permissions value or null if the file 
             does not exist. NOTE: this is not a string representation of an octal posix mask. 
          */
-        native function get perms(): Number
+        native function get perms(): Number?
         native function set perms(perms: Number): Void
 
         /**
@@ -456,7 +456,7 @@ module ejs {
             @example:
                 var b: ByteArray = Path("/tmp/a.txt").readBytes()
          */
-        function readBytes(): ByteArray {
+        function readBytes(): ByteArray? {
             let file: File = File(this).open()
             result = file.readBytes()
             file.close()
@@ -471,7 +471,7 @@ module ejs {
             @example:
                 data = Path("/tmp/a.json").readJson()
          */
-        function readJSON(): Object {
+        function readJSON(): Object? {
             let file: File = open(this)
             result = file.readString()
             file.close()
@@ -486,7 +486,7 @@ module ejs {
             @example:
                 for each (line in Path("/tmp/a.txt").readLines())
          */
-        function readLines(): Array {
+        function readLines(): Array? {
             let stream: TextStream = TextStream(open(this))
             result = stream.readLines()
             stream.close()
@@ -500,7 +500,7 @@ module ejs {
             @example:
                 data = Path("/tmp/a.txt").readString()
          */
-        function readString(): String {
+        function readString(): String? {
             let file: File = open(this)
             result = file.readString()
             file.close()
@@ -512,7 +512,7 @@ module ejs {
             @return An XML object
             @throws IOError if the file cannot be read
          */
-        function readXML(): XML {
+        function readXML(): XML? {
             let file: File = open(this)
             let data = file.readString()
             file.close()

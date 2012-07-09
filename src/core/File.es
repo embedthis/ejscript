@@ -42,7 +42,7 @@ module ejs {
             @param path the name of the file to associate with this file object. Can be either a String or a Path.
             @param options If the open options are provided, the file is opened. See $open for the available options.
          */
-        native function File(path: Object, options: Object = null)
+        native function File(path: Object, options: Object? = null)
 
         /** 
             Is the file opened for reading
@@ -129,7 +129,7 @@ module ejs {
             @return the File object. This permits method chaining.
             @throws IOError if the path or file cannot be created.
          */
-        native function open(options: Object = null): File
+        native function open(options: Object? = null): File
 
         /** 
             Current file options set when opening the file.
@@ -139,7 +139,7 @@ module ejs {
         /** 
             The name of the file associated with this File object or null if there is no associated file.
          */
-        native function get path(): Path 
+        native function get path(): Path?
 
         /** 
             The current read/write I/O position in the file.
@@ -170,11 +170,11 @@ module ejs {
 
         /** 
             Read data bytes from a file and return a byte array containing the data.
-            @param count Number of bytes to read. If null, read the entire file.
+            @param count Number of bytes to read. If -1, read the entire file.
             @return A byte array containing the read data. Returns an empty array on end of file.
             @throws IOError if the file could not be read.
          */
-        native function readBytes(count: Number = -1): ByteArray
+        native function readBytes(count: Number = -1): ByteArray?
 
         //  MOB UNICODE encoding. Should this do UTF-8 to Unicode-16?
         /** 
@@ -183,7 +183,7 @@ module ejs {
             @return A string containing the read data. Returns an empty string on end of file.
             @throws IOError if the file could not be read.
          */
-        native function readString(count: Number = -1): String
+        native function readString(count: Number = -1): String?
 
         /** 
             Remove a file

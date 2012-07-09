@@ -65,7 +65,7 @@ module ejs {
             Use $bind() to set the bound "this" object.
             @see bind
          */
-        native function get bound(): Object
+        native function get bound(): Object?
 
         /**
             The name of the function. Function expressions do not have a name and set the name property to the empty string.

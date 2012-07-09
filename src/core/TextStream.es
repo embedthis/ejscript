@@ -38,7 +38,7 @@ module ejs {
             Create a text filter stream. A Text filter stream must be stacked upon a stream source such as a File.
             @param stream stream data source/sink to stack upon.
          */
-        function TextStream(stream: Stream) {
+        function TextStream(stream: Stream?) {
             if (stream == null) {
                 throw new ArgError("Must supply a Stream argument")
             }
@@ -221,7 +221,7 @@ module ejs {
             Return null on EOF.
             @throws IOError if an I/O error occurs.
          */
-        function readLines(numLines: Number = -1): Array {
+        function readLines(numLines: Number = -1): Array? {
             var result: Array
             if (numLines <= 0) {
                 result = new Array
@@ -247,7 +247,7 @@ module ejs {
             @returns a string or null on EOF.
             @throws IOError if an I/O error occurs.
          */
-        function readString(count: Number = -1): String
+        function readString(count: Number = -1): String?
             inbuf.readString(count)
 
         /** 

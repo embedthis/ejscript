@@ -94,7 +94,7 @@ module ejs {
             @param prop Property name
             @return The a property descriptor object. Return null if the property is not found
          */
-        static native function getOwnPropertyDescriptor(obj: Object, prop: String): Object
+        static native function getOwnPropertyDescriptor(obj: Object, prop: String): Object?
 
 //  MOB -- inconsistent with JSON.baseClasses
         /** 

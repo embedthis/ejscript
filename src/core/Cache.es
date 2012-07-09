@@ -25,7 +25,7 @@ module ejs {
     class Cache {
         use default namespace public
 
-        private var adapter: Object
+        private var adapter: Object?
 
         /**
             Cache constructor.
@@ -170,7 +170,7 @@ module ejs {
             @return The number of bytes written, returns null if the write failed due to an updated version identifier for
                 the key.
          */
-        function write(key: String, value: String, options: Object = null): Number
+        function write(key: String, value: String, options: Object = null): Number?
             adapter.write(key, value, options)
 
         /**
@@ -191,7 +191,7 @@ module ejs {
             @return The number of bytes written, returns null if the write failed due to an updated version identifier for
                 the key.
          */
-        function writeObj(key: String, value: Object, options: Object = null): Number
+        function writeObj(key: String, value: Object, options: Object = null): Number?
             adapter.write(key, serialize(value), options)
     }
 

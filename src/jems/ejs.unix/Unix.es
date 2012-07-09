@@ -283,7 +283,7 @@ module ejs.unix {
         @deprecated 2.0.0
      */
     # Config.Legacy
-    function read(file: File, count: Number): ByteArray
+    function read(file: File, count: Number): ByteArray?
         file.read(count)
 
     /**

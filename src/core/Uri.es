@@ -41,12 +41,14 @@ module ejs {
           */
         native function absolute(base = null): Uri
 
+//  MOB - what if host is null or port. Then should use defaults
         /**
             Return the TCP/IP address of the URI. This is the IP:PORT portion.
          */
         function get address(): String
             host + ":" + port
 
+//  MOB - what if path is empty
         /** 
             The base of portion of the URI. The base portion is the trailing portion of the path without any directory 
             elements.
@@ -92,6 +94,7 @@ module ejs {
          */
         native static function decodeComponent(str: String): String
 
+// MOB - what if path is empty
         /** 
             The directory portion of a URI path. The directory portion is the leading portion including all directory 
             elements of the URI path excluding the base name.
@@ -149,12 +152,13 @@ module ejs {
             path.toString().endsWith(suffix.toString())
 
         /** 
-            The URI extension portion of the path. Set to a String containing the URI extension without the "." or set
-            to null if there is no extension.
+            The URI extension portion of the path. Set to a String containing the URI extension without the ".".
+            Set to the empty string if no extension.
          */
-        native function get extension(): String
+        native function get extension(): String?
         native function set extension(value: String): Void
 
+// MOB - DOC
         function get filename(): Path
             Path(path.slice(1))
 
@@ -188,10 +192,11 @@ module ejs {
          */
         native function get hasScheme(): Boolean 
 
+// MOB - inconsistent. scheme, host return null. path, query, reference all return empty. Port returns 80..
         /** 
             The host portion of the URI. Set to null if there is no host component.
          */
-        native function get host(): String
+        native function get host(): String?
         native function set host(value: String): Void
 
         /** 
@@ -242,9 +247,10 @@ module ejs {
           */
         native function get local(): Uri
 
+//  MOB - should return null
         /** 
-            The mime type of the URI. This is set to a mime type string by examining the URI extension. Set to null if
-            the URI has no extension.
+            The mime type of the URI. This is set to a mime type string by examining the URI extension. 
+            Set to the empty string if the URI has no extension.
          */
         native function get mimeType(): String
 
@@ -256,27 +262,29 @@ module ejs {
 
         /** 
             The URI path portion after the hostname
+            Set to the empty string if there is no path.
          */
         native function get path(): String
         native function set path(value: String): Void
 
 //  MOB -- inconsistent - should this return null?
         /** 
-            The port number of the URI. Set ot 80 if the URI does not have an explicit port.
+            The port number of the URI. Set to 80 if the URI does not have an explicit port.
          */
         native function get port(): Number
         native function set port(value: Number): Void
 
-//  MOB -- are all these null or some other default values?
+//  MOB -- inconsistent - should return null
         /** 
             The URI query string. The query string is the fragment after a "?" character in the URI.
+            Set to the empty string if there is no query.
          */
-        native function get query(): String
+        native function get query(): String?
         native function set query(value: String): Void
 
         /** 
             The URI reference portion. The reference portion is sometimes called the "anchor" and is the the fragment 
-            after a "#" character in the URI.
+            after a "#" character in the URI.  Set to the empty string if there is no reference.
          */
         native function get reference(): String
         native function set reference(value: String): Void
@@ -327,6 +335,7 @@ module ejs {
          */
         native function same(other: Object, exact: Boolean = false): Boolean
 
+//  MOB - should return null
         /** 
             The URI protocol scheme. Set to "http" by default.
          */
@@ -403,7 +412,7 @@ module ejs {
         }
 
         /** 
-            The full URI as a string.
+            The full URI as a string
          */
         native function get uri(): String
         native function set uri(value: String): Void
