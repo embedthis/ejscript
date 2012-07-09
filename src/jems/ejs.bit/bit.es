@@ -1967,7 +1967,7 @@ public class Bit {
             result.push(sym)
         }
         let def = Path(target.path.toString().replace(/dll$/, 'def'))
-        def.write('LIBRARY ' + target.path.basename + '\nEXPORTS\n  ' + result.sort().join('\n  '))
+        def.write('LIBRARY ' + target.path.basename + '\nEXPORTS\n  ' + result.sort().join('\n  ') + '\n')
     }
 
     /*
