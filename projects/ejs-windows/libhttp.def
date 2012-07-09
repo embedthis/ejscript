@@ -1,8 +1,6 @@
 LIBRARY libhttp.dll
 EXPORTS
   HttpStatusCodes
-  __nativeAuthFile
-  __pamAuth
   httpAcceptConn
   httpAddCache
   httpAddConn
@@ -100,7 +98,6 @@ EXPORTS
   httpDestroyRx
   httpDestroyTx
   httpDiscardData
-  httpDiscardTransmitData
   httpDisconnect
   httpEaseLimits
   httpEnableConnEvents
@@ -218,7 +215,6 @@ EXPORTS
   httpOpenUploadFilter
   httpPrepClientConn
   httpPrepServerConn
-  httpProcess
   httpProcessHandler
   httpPutBackPacket
   httpPutForService
