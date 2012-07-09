@@ -20,7 +20,7 @@ module ejs.web {
             @param options
             @option lifespan Lifespan in seconds for the session
          */
-        native function Session(key, options: Object = null)
+        native function Session(key, options: Object? = null)
 
         /**
             Get the session ID key for a session. This is a static method so as to not clash with session properties.

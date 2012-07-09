@@ -554,7 +554,7 @@ module ejs.web {
             @returns a string containing the HTML attributes to emit. Will return an empty string or a string with a 
                 leading space (and not trailing space)
          */
-        function getAttributes(options: Object, exclude: Object = null): String {
+        function getAttributes(options: Object, exclude: Object? = null): String {
             if (options.hasError) {
                 options.style = append(options.style, "-ejs-field-error")
             }
@@ -626,7 +626,7 @@ module ejs.web {
         /*
             Map options to an HTML attribute string
          */
-        private function mapAttributes(options: Object, exclude: Object = null): String {
+        private function mapAttributes(options: Object, exclude: Object? = null): String {
             let result: String = ""
             if (options.method) {
                 options.method = options.method.toUpperCase();

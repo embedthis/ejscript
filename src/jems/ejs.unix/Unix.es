@@ -175,7 +175,7 @@ module ejs.unix {
         @option include Regular expression pattern of files to include in the results. Matches the entire returned path.
         @return An Array of Path objects for each matching file.
      */
-    function ls(patterns = "*", options: Object = null): Array {
+    function ls(patterns = "*", options: Object? = null): Array {
         if (!(patterns is Array)) {
             patterns = [patterns]
         }

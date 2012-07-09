@@ -107,7 +107,7 @@ module ejs.web {
         //  TODO - must support Ejs options: columns, kind, onClick, refresh, style, visible
         //  TODO - use @options
 
-        function chart(grid: Array, options: Object): Void {
+        function chart(grid: Array?, options: Object): Void {
             var id: String = "GoogleChart_" + nextId++
 
             if (grid == null || grid.length == 0) {

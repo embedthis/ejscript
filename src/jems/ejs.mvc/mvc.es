@@ -1026,7 +1026,7 @@ class EjsMvc {
             eval("
                 require ejs.db.mapper
                 public dynamic class _EjsMigration implements Record {
-                    function _EjsMigration(fields: Object = null) {
+                    function _EjsMigration(fields: Object? = null) {
                         initialize(fields)
                     }
                 }

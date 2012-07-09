@@ -294,7 +294,7 @@ MOB - review?
                 <% flash() %>
                 <% flash(["error", "warning"]) %>
          */
-        function flash(kinds: Object = null, options: Object = {}): Void {
+        function flash(kinds: Object? = null, options: Object = {}): Void {
             options = getOptions(options)
             let cflash ||= request.flash
             if (cflash == null || cflash.length == 0) {
@@ -978,7 +978,7 @@ MOB -- much more doc here
             @deprecated 2.0.0
          */
         # Config.Legacy
-        function makeUrl(action: String, id: String = null, options: Object = {}, query: Object = null): String 
+        function makeUrl(action: String, id: String? = null, options: Object = {}, query: Object? = null): String
             request.makeUrl(action, id, options, query)
 
         /** 

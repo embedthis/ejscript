@@ -15,7 +15,7 @@ module ejs.web {
         @example:
             export.app = Cascade(app1, app2, app3)
      */
-    function Cascade(...apps): Object {
+    function Cascade(...apps): Object? {
         return function(request) {
             for each (app in apps) {
                 let response = app(request)

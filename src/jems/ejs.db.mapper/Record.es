@@ -35,8 +35,8 @@ module ejs.db.mapper {
 
         static var  _className: String          //  Model class name
         static var  _columns: Object            //  List of columns in this database table
-        static var  _hasOne: Array? = null       //  List of 1-1 containment associations
-        static var  _hasMany: Array? = null      //  List of 1-many containment  associations
+        static var  _hasOne: Array? = null      //  List of 1-1 containment associations
+        static var  _hasMany: Array? = null     //  List of 1-many containment  associations
 
         static var  _db: Database               //  Hosting database
         static var  _foreignId: String          //  Camel case class name with "Id". (userCartId))
@@ -50,7 +50,7 @@ module ejs.db.mapper {
         static var  _afterFilters: Array? = null //  Filters that run after saving data
         static var  _wrapFilters: Array? = null  //  Filters that run before and after saving data
 
-        var _keyValue: Object                   //  Record key column value
+        var _keyValue: Object?                  //  Record key column value
         var _errors: Object                     //  Error message aggregation
         var _cacheAssoc: Object                 //  Cached association data
         var _imodel: Type                       //  Model class
@@ -431,7 +431,7 @@ var before = Memory.resident
             @option readonly
             @option lock
          */
-        static function find(key: Object, options: Object = {}): Object {
+        static function find(key: Object?, options: Object = {}): Object? {
             let grid: Array = innerFind(key, 1, options)
             if (grid.length >= 1) {
                 let results = createRecord(grid[0], options)
@@ -470,7 +470,7 @@ var before = Memory.resident
             @example
                 rec = findOneWhere("cost < 200")
          */
-        static function findOneWhere(where: String): Object {
+        static function findOneWhere(where: String): Object? {
             let grid: Array = innerFind(null, 1, { conditions: [where]})
             if (grid.length >= 1) {
                 return createRecord(grid[0])
@@ -654,7 +654,7 @@ var before = Memory.resident
         /*
             Common find implementation. See find/findAll for doc.
          */
-        static private function innerFind(key: Object, limit: Number? = null, options: Object = {}): Array {
+        static private function innerFind(key: Object?, limit: Number? = null, options: Object? = {}): Array {
             let cmd: String
             let columns: Array
             let from: String
@@ -1214,7 +1214,7 @@ var before = Memory.resident
             @deprecated 1.0.0B2
          */
         # Config.Legacy
-        function constructor(fields: Object = null): Void {
+        function constructor(fields: Object? = null): Void {
             initialize(fields)
         }
     }

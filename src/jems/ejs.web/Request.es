@@ -41,14 +41,14 @@ module ejs.web {
             Authentication method if authorization is being used (basic or digest). Set to null if not using authentication. 
             This field is read-only.
          */
-        native enumerable var authType: String
+        native enumerable var authType: String?
 
         /** 
             Authentication user name. This property is set to the value of the authentication user header. Set to null if
             not yet defined.
             This field is read-only.
          */
-        native enumerable var authUser: String
+        native enumerable var authUser: String?
 
         /** 
             Control whether auto-finalizing will be used for the request. If autoFinalizing is false, a request must
@@ -68,7 +68,7 @@ module ejs.web {
         /** 
             Associated Controller object. Set to null if no associated controller.
          */
-        native enumerable var controller: Controller
+        native enumerable var controller: Controller?
 
         /** 
             Get the request content length. This is the length of body data sent by the client with the request. 
@@ -81,7 +81,7 @@ module ejs.web {
             The request content type as specified by the "Content-Type" Http request header. This is set to null 
             if not defined. This is the content type of the request body content sent with the request.
          */
-        native enumerable var contentType: String
+        native enumerable var contentType: String?
 
         /** 
             Cookie headers. Cookies are sent by the client browser via the Set-Cookie Http header. They are typically 
@@ -127,7 +127,7 @@ module ejs.web {
             error: Negative errors (Warnings and errors), inform: Informational / postitive feedback (note),
             warn: Negative feedback (Warnings and errors), *: Other feedback (reminders, suggestions...)
         */
-        public var flash: Object
+        public var flash: Object?
 
         /** 
             The request form parameters as a string. This parameters are www-url decoded from the POST request body data. 
@@ -200,7 +200,7 @@ module ejs.web {
             the client is stored in this property and the method property reflects the newly defined value. If method is
             not overridden, originalMethod will be null.
          */
-        native enumerable var originalMethod: String
+        native enumerable var originalMethod: String?
 
         /**
             The original request URI supplied by the client. This is the Uri path supplied by the client on the first
@@ -236,18 +236,18 @@ module ejs.web {
         /** 
             Request query string. This is the portion of the Uri after the "?". Set to null if there is no query.
          */
-        native enumerable var query: String
+        native enumerable var query: String?
 
         /** 
             Request reference string. This is the portion of the Uri after the "#". Set to null if there is no reference.
          */
-        native enumerable var reference: String
+        native enumerable var reference: String?
 
         /** 
             Name of the referring URL. This comes from the request "Referrer" Http header. Set to null if there is
             no defined referrer.
          */
-        native enumerable var referrer: String
+        native enumerable var referrer: String?
 
         /** 
             IP address of the client issuing the request. 
@@ -311,7 +311,7 @@ module ejs.web {
         /** 
             Current session ID. Index into the $sessions object. Set to null if no session is defined.
          */
-        native enumerable var sessionID: String
+        native enumerable var sessionID: String?
 
         /** 
             Set to the (proposed) Http response status code.
@@ -920,7 +920,7 @@ r.link({product: "candy", quantity: "10", template: "/cart/{product}/{quantity}}
 
          */
         # FUTURE
-        native function writeBlock(buffer: ByteArray, offset: Number = 0, count: Number = -1): Number 
+        native function writeBlock(buffer: ByteArray, offset: Number = 0, count: Number = -1): Number?
 
         /**
 MOB - DEBUG
@@ -1095,7 +1095,7 @@ MOB - DEBUG
             @deprecated 2.0.0
           */
         # Config.Legacy
-        function get authAcl(): String {
+        function get authAcl(): String? {
             throw new Error("Not supported")
             return null
         }

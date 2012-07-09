@@ -139,7 +139,7 @@ module ejs.web {
             @option except [String|Array] Run the check function for all actions except this name.
                 This can be a string action name or an array of action names.
          */
-        function after(fn, options: Object = null): Void {
+        function after(fn, options: Object? = null): Void {
             _afterCheckers ||= []
             _afterCheckers.append([fn, options])
         }
@@ -151,7 +151,7 @@ module ejs.web {
             Fetch cached data from the cache if present.
             @return a response object
          */
-        private function fetchCachedResponse(): Object {
+        private function fetchCachedResponse(): Object? {
             cacheIndex = getCacheIndex(controllerName, actionName)
             cacheOptions = _allOptions[cacheIndex]
             if (cacheOptions) {
@@ -277,7 +277,7 @@ module ejs.web {
                 "index" is used as the action method name.
             @return A response object hash {status, headers, body} or null if writing directly using the request object.
          */
-        function app(request: Request, aname: String? = null): Object {
+        function app(request: Request, aname: String? = null): Object? {
             let response, cacheIndex, cacheName
             let ns = params.namespace || "action"
 
@@ -336,7 +336,7 @@ module ejs.web {
             @option except [String|Array] Run the checker for all actions except this name
                 This can be a string action name or an array of action names.
          */
-        function before(fn, options: Object = null): Void {
+        function before(fn, options: Object? = null): Void {
             _beforeCheckers ||= []
             _beforeCheckers.append([fn, options])
         }
@@ -444,7 +444,7 @@ module ejs.web {
                 URIs for that action/controller are uniquely cached. If the request has POST data, the URI may include
                 such post data in a query format. E.g. {uri: /buy?item=scarf&quantity=1}
           */
-        static function updateCache(controller, actions: Object, data: Object, options: Object = {}): Void {
+        static function updateCache(controller, actions: Object, data: Object?, options: Object = {}): Void {
             let cname
             if (controller is String) {
                 cname = controller.trim("Controller")
@@ -759,7 +759,7 @@ module ejs.web {
             @deprecated 2.0.0
          */
         # Config.Legacy
-        function afterFilter(fn, options: Object = null): Void
+        function afterFilter(fn, options: Object? = null): Void
             after(fn, options)
 
         /** 
@@ -775,7 +775,7 @@ module ejs.web {
             @deprecated 2.0.0
          */
         # Config.Legacy
-        function beforeFilter(fn, options: Object = null): Void
+        function beforeFilter(fn, options: Object? = null): Void
             before(fn, options)
 
         /**
@@ -839,7 +839,7 @@ module ejs.web {
             @deprecated 2.0.0
          */
         # Config.Legacy
-        function makeUrl(action: String, id: String? = null, options: Object = {}, query: Object = null): String
+        function makeUrl(action: String, id: String? = null, options: Object = {}, query: Object? = null): String
             link({ action, id, query })
 
         /**
@@ -895,7 +895,7 @@ module ejs.web {
             @deprecated 2.0.0
          */
         # Config.Legacy
-        function reportError(status: Number, msg: String, e: Object = null): Void
+        function reportError(status: Number, msg: String, e: Object? = null): Void
             writeError(status, msg + e)
 
         /**

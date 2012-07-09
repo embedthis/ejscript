@@ -108,7 +108,7 @@ class JemCmd
     private var logLevel: Number = 1
     private var out: File = App.outputStream
     private var searchPath: String
-    private var tempFile: Path
+    private var tempFile: Path?
 
     private var requiredKeywords = [ "author", "bugReports", "categories", "cpu", "dependencies", "description", 
         "contributors", "keywords", "license", "name", "os", "patchable", 
@@ -593,7 +593,7 @@ print(e)
         path.join(filenames.package).write(serialize(package, {pretty: true}))
     }
 
-    private function fetchLocal(rep: Path, jem: Jem): Path {
+    private function fetchLocal(rep: Path, jem: Jem): Path? {
         let matches = []
         for each (path in find(rep, jem.vername + "*", false)) {
             if (!path.isDir) {
@@ -615,7 +615,7 @@ print(e)
         Fetch a jem from a remote repository using http
         @options version Qualifying version string
      */
-    private function fetchRemote(rep: String, jem: Jem): Path {
+    private function fetchRemote(rep: String, jem: Jem): Path? {
         let url: String = rep + "/" + jem.name + "?min=" + options.min + "&max=" + options.max
         let http = new Http
         log(2, "FETCH", "Try repository " + url)
@@ -796,9 +796,9 @@ print(e)
     }
 
     /*
-     *  Find the most recent version of a jem
+        Find the most recent version of a jem
      */
-    private function latest(dir: Path, jem: Jem): Jem {
+    private function latest(dir: Path, jem: Jem): Jem? {
         let jems = find(dir, jem.name + "-*", false)
         jems += find(dir, jem.name, false)
         jems = jems.sort()
@@ -1069,7 +1069,7 @@ print(e)
         Search for a jem in local or remote jem repositories
         jem can be a path to a physical jem, a bare jem name or a versioned jem name.
      */
-    private function search(jem: Jem): Path {
+    private function search(jem: Jem): Path? {
         let options = args.options
         log(3, "DEBUG", "Searching repositories: for " + jem)
         for each (rep in dirs.repositories) {
