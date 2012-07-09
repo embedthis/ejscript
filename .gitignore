@@ -166,5 +166,5 @@ releases
 xcuserdata
 *.dmp
 project.xcworkspace
-start.bit
+/start.bit
 *-xcode
