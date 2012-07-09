@@ -13,7 +13,7 @@
   </ItemDefinitionGroup>
 
   <PropertyGroup Label="Globals">
-    <ProjectGuid>{236a87b9-87d7-430d-b73f-d139f8471900}</ProjectGuid>
+    <ProjectGuid>{5e72be25-008b-460d-91dc-a14e9e524f8d}</ProjectGuid>
     <RootNamespace />
     <Keyword>Win32Proj</Keyword>
   </PropertyGroup>
@@ -129,14 +129,14 @@ cd ..\..\..\projects\ejs-windows</Command>
 
 <ItemGroup>
   <ProjectReference Include="libmpr.vcxproj">
-  <Project>145e7a7a-cf56-4257-b982-a6be59f0738a</Project>
+  <Project>6e8e5cea-ee71-4f75-9165-c34a52726958</Project>
   <ReferenceOutputAssembly>false</ReferenceOutputAssembly>
   </ProjectReference>
 </ItemGroup>
 
 <ItemGroup>
   <ProjectReference Include="libpcre.vcxproj">
-  <Project>41931549-cfad-493e-961b-694074a6fa11</Project>
+  <Project>f26e7ce5-e34e-41a7-9c97-29bb8a9f3e6e</Project>
   <ReferenceOutputAssembly>false</ReferenceOutputAssembly>
   </ProjectReference>
 </ItemGroup>

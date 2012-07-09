@@ -49,7 +49,7 @@ Bit.load({
                         rmdir(bit.dir.top.join(name + '-debug'))
                     }
                 }
-                trace('Restore', 'Leave a debug configuration')
+                trace('Restore', 'Restore prior configuration')
                 run(bitcmd + ' -q -configure . -' + bit.platform.profile, bit.target.runopt)
             ",
         },
@@ -90,7 +90,7 @@ Bit.load({
                         rmdir(bit.dir.top.join(name + '-debug'))
                     }
                 }
-                trace('Restore', 'Leave a debug configuration')
+                trace('Restore', 'Restore prior configuration')
                 run(bitcmd + ' -q -configure . -' + bit.platform.profile, bit.target.runopt)
             ",
         },

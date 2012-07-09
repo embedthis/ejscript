@@ -298,6 +298,7 @@ EXPORTS
   ejsGetNextItem
   ejsGetNumber
   ejsGetOptable
+  ejsGetPathFiles
   ejsGetPotPropertyName
   ejsGetPrevItem
   ejsGetProperty
@@ -311,7 +312,6 @@ EXPORTS
   ejsGetTypeOf
   ejsGetVarByName
   ejsGetXMLDescendants
-  ejsGetPathFiles
   ejsGrowByteArray
   ejsGrowConstants
   ejsGrowPot
