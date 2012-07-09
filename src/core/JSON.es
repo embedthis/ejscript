@@ -59,7 +59,7 @@ module ejs {
         @throws IOError If the object could not be reconstructed from the string.
         @spec ejs
      */
-    native function deserialize(str: String): Object
+    native function deserialize(str: String): Object?
 
     //  TODO -- change pretty to format: "pretty" | "compact"
     //  TODO - change to includeBases (deprecated baseClasses)

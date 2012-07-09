@@ -848,7 +848,7 @@ var before = Memory.resident
 
         private static function mapSqlTypeToEjs(sqlType: String): Type {
             sqlType = sqlType.replace(/\(.*/, "")
-            let ejsType: Type = _db.sqlTypeToEjsType(sqlType)
+            let ejsType: Type? = _db.sqlTypeToEjsType(sqlType)
             if (ejsType == undefined) {
                 throw new Error("Unsupported SQL type: \"" + sqlType + "\"")
             }
@@ -858,8 +858,8 @@ var before = Memory.resident
         /*
             Prepare a value to be written to the database
          */
-        private static function prepareValue(field: String, value: Object): String {
-            let col: Column = _columns[field]
+        private static function prepareValue(field: String, value: Object?): String {
+            let col: Column? = _columns[field]
             if (col == undefined) {
                 return undefined
             }

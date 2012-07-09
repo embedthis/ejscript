@@ -98,7 +98,7 @@ module ejs.web {
         private var connectors: Object = {}
 
         /* Current record being used inside a form */
-        private var currentRecord: Object
+        private var currentRecord: Object?
 
         /* Data value presentation formats */
         public var formats: Object
@@ -809,7 +809,7 @@ MOB -- much more doc here
                 data type.
             @return The formatted data.
          */
-        function formatValue(value: Object, options: Object): String {
+        function formatValue(value: Object?, options: Object): String {
             if (value == undefined) {
                 value = ""
             }

@@ -249,7 +249,7 @@ module ejs {
             Remove and return the last value in the array.
             @return The last element in the array. Returns undefined if the array is empty
          */
-        native function pop(): Object 
+        native function pop(): Object?
 
         /**
             Append items to the end of the array.

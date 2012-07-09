@@ -33,7 +33,7 @@ module ejs {
             @param properties Properties for the new object
             @return The created object
          */
-        static native function create(prototype: Object, properties: Object = undefined): Object 
+        static native function create(prototype: Object, properties: Object? = undefined): Object 
 
         /** 
             Define or redefine a property on the given object

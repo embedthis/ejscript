@@ -17,7 +17,7 @@ module ejs {
         const qualifier: Namespace
         const identifier: Namespace
 
-        native function Name(qual: String, id: String = undefined)
+        native function Name(qual: String, id: String? = undefined)
     }
 }
 

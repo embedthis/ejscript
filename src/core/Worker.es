@@ -83,7 +83,7 @@ module ejs {
             @throws an exception if the script can't be compiled or if it thows a run-time exception.
             @spec ejs
          */
-        native function eval(script: String, timeout: Number = -1): Object
+        native function eval(script: String, timeout: Number = -1): Object?
 
         /**
             Exit the worker.
