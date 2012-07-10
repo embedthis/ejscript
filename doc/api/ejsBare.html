@@ -1921,9 +1921,6 @@ Property storage.
     <a href="#group___ejs_type_1gab82b7d4399c850e420a2c5388c836cb5" class="ref">ejsBindFunction</a>, <a href="#group___ejs_block_1ga5534bcfc33909ecb2ee8f95dda0a506c" class="ref">ejsIsBlock</a></dd></dl>
     <dl><dt>Fields:</dt><dd>
     <table class="parameters" title="Parameters">
-    <tr><td class="param"><a class="ref" href="#mpr_8h_1a91ad9478d81a7aaf2593e8d9c3d06a14" external="mpr.dtags">uint</a></td><td><td>breakCatch</td><td>
-Return, break or continue in a catch block.
-</td>
     <tr><td class="param">MprList</td><td><td>namespaces</td><td>
 Current list of namespaces open in this block of properties.
 </td>
@@ -1938,6 +1935,9 @@ Previous block in activation chain.
 </td>
     <tr><td class="param"><a class="ref" href="#struct_ejs_obj">EjsObj</a> *</td><td><td>prevException</td><td>
 Previous exception if nested exceptions.
+</td>
+    <tr><td class="param"><a class="ref" href="#mpr_8h_1a65f85814a8290f9797005d3b28e7e5fc" external="mpr.dtags">uchar</a> *</td><td><td>restartAddress</td><td>
+Restart instruction address.
 </td>
     <tr><td class="param">struct EjsBlock *</td><td><td>scope</td><td>
 Lexical scope chain for this block.
@@ -2075,9 +2075,6 @@ Endian encoding.
     <tr><td class="param">int</td><td><td>growInc</td><td>
 Current read position.
 </td>
-    <tr><td class="param"><a class="ref" href="#mpr_8h_1a7d08ccc1e981eb4d5a238641ac4ccfc1" external="mpr.dtags">ssize</a></td><td><td>length</td><td>
-Length property.
-</td>
     <tr><td class="param"><a class="ref" href="#struct_ejs_obj">EjsObj</a></td><td><td>obj</td><td>
 Base object.
 </td>
@@ -2086,6 +2083,9 @@ Current read position.
 </td>
     <tr><td class="param"><a class="ref" href="#mpr_8h_1ad5c9d4ba3dc37783a528b0925dc981a0" external="mpr.dtags">bool</a></td><td><td>resizable</td><td>
 Aray is resizable.
+</td>
+    <tr><td class="param"><a class="ref" href="#mpr_8h_1a7d08ccc1e981eb4d5a238641ac4ccfc1" external="mpr.dtags">ssize</a></td><td><td>size</td><td>
+Size property.
 </td>
     <tr><td class="param">int</td><td><td>swap</td><td>
 I/O must swap bytes due to endian byte ordering.
@@ -3682,8 +3682,14 @@ Cached response (only used if response() is used).
     <tr><td class="param">MprBuf *</td><td><td>responseContent</td><td>
 Response data.
 </td>
+    <tr><td class="param">MprSsl *</td><td><td>ssl</td><td>
+SSL configuration.
+</td>
     <tr><td class="param">char *</td><td><td>uri</td><td>
 Target uri.
+</td>
+    <tr><td class="param">int</td><td><td>verifyPeer</td><td>
+Verify peer certificate (default to true).
 </td>
     <tr><td class="param"><a class="ref" href="#mpr_8h_1a7d08ccc1e981eb4d5a238641ac4ccfc1" external="mpr.dtags">ssize</a></td><td><td>writeCount</td><td>
 Count of bytes written via write().
