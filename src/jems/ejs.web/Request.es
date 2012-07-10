@@ -978,9 +978,9 @@ MOB - DEBUG
         }
 
         /**
-            Send a static file back to the client. This is a high performance way to send static content to the client.
-            This call must be invoked prior to sending any data or headers to the client, otherwise it will be ignored
-            and the slower netConnector will be used instead.
+            Send a static file back to the client. This is a high performance way to send static content to the client
+            by using the "sendConnector". To be effective, this call must be invoked prior to sending any data or 
+            headers to the client, otherwise it will be ignored and the slower "netConnector" will be used instead.
             @param file Path to the file to send back to the client
             @return True if the Send connector can successfully be used. 
          */

@@ -2683,6 +2683,7 @@ extern int  mprSyncThreads(MprTime timeout);
     @see MprString itos itosradix itosbuf mprPrintf mprPrintfError mprSprintf scamel scasecmp scasematch schr sclone scmp
         scontains scopy sends sfmt sfmtv shash shashlower sjoin sjoinv slen slower smatch sncasecmp snclone sncmp sncopy 
         snumber spascal spbrk srchr srejoin srejoinv sreplace sspn sstarts ssub stemplate stoi stoiradix stok strim supper 
+        sncontains
         mprFprintf mprSprintfv
  */
 typedef struct MprString { void *dummy; } MprString;
@@ -2782,14 +2783,13 @@ extern int scmp(cchar *s1, cchar *s2);
 
 /**
     Find a pattern in a string.
-    @description Locate the first occurrence of pattern in a string, but do not search more than the given character limit. 
+    @description Locate the first occurrence of pattern in a string.
     @param str Pointer to the string to search.
     @param pattern String pattern to search for.
-    @param limit Count of characters in the string to search.
     @return Returns a reference to the start of the pattern in the string. If not found, returns NULL.
     @ingroup MprString
  */
-extern char *scontains(cchar *str, cchar *pattern, ssize limit);
+extern char *scontains(cchar *str, cchar *pattern);
 
 /**
     Copy a string.
@@ -2812,7 +2812,7 @@ extern ssize scopy(char *dest, ssize destMax, cchar *src);
     @return Returns TRUE if the pattern was found. Otherwise returns zero.
     @ingroup MprString
  */
-extern int sends(cchar *str, cchar *suffix);
+extern bool sends(cchar *str, cchar *suffix);
 
 /**
     Format a string. This is a secure verion of printf that can handle null args.
@@ -2942,6 +2942,17 @@ extern char *snclone(cchar *str, ssize len);
     @ingroup MprString
  */
 extern int sncmp(cchar *s1, cchar *s2, ssize len);
+
+/**
+    Find a pattern in a string with a limit.
+    @description Locate the first occurrence of pattern in a string, but do not search more than the given character limit. 
+    @param str Pointer to the string to search.
+    @param pattern String pattern to search for.
+    @param limit Count of characters in the string to search.
+    @return Returns a reference to the start of the pattern in the string. If not found, returns NULL.
+    @ingroup MprString
+ */
+extern char *sncontains(cchar *str, cchar *pattern, ssize limit);
 
 /**
     Copy characters from a string.
@@ -3124,7 +3135,6 @@ extern char *supper(cchar *str);
     Low-level unicode wide string support. Unicode characters are build-time configurable to be 1, 2 or 4 bytes
 
     This API is not yet public
-    TODO - document these routines
  */
 extern MprChar *amtow(cchar *src, ssize *len);
 extern char    *awtom(MprChar *src, ssize *len);
@@ -3175,7 +3185,8 @@ extern MprChar  *wupper(MprChar *s);
 #define wclone(str)                         sclone(str)
 #define wcasecmp(s1, s2)                    scasecmp(s1, s2)
 #define wcmp(s1, s2)                        scmp(s1, s2)
-#define wcontains(str, pattern, limit)      scontains(str, pattern, limit)
+#define wcontains(str, pattern)             scontains(str, pattern)
+#define wncontains(str, pattern, limit)     sncontains(str, pattern, limit)
 #define wcopy(dest, count, src)             scopy(dest, count, src)
 #define wends(str, suffix)                  sends(str, suffix)
 #define wfmt                                sfmt
@@ -3208,12 +3219,12 @@ extern MprChar  *wupper(MprChar *s);
 /*
     These routines operate on wide strings mixed with a multibyte/ascii operand
     This API is not yet public
-    TODO - document these routines
  */
 #if BIT_CHAR_LEN > 1
 extern int      mcasecmp(MprChar *s1, cchar *s2);
 extern int      mcmp(MprChar *s1, cchar *s2);
-extern MprChar *mcontains(MprChar *str, cchar *pattern, ssize limit);
+extern MprChar *mcontains(MprChar *str, cchar *pattern);
+extern MprChar *mncontains(MprChar *str, cchar *pattern, ssize limit);
 extern ssize   mcopy(MprChar *dest, ssize destMax, cchar *src);
 extern int      mends(MprChar *str, cchar *suffix);
 extern MprChar *mfmt(cchar *fmt, ...);
@@ -3234,7 +3245,8 @@ extern MprChar *mtrim(MprChar *str, cchar *set, int where);
 #else
 #define mcasecmp(s1, s2)                scasecmp(s1, s2)
 #define mcmp(s1, s2)                    scmp(s1, s2)
-#define mcontains(str, pattern, limit)  scontains(str, pattern, limit)
+#define mcontains(str, pattern)         scontains(str, pattern)
+#define mncontains(str, pattern, limit) sncontains(str, pattern, limit)
 #define mcopy(dest, count, src)         scopy(dest, count, src)
 #define mends(str, suffix)              sends(str, suffix)
 #define mfmt                            sfmt
@@ -7023,6 +7035,7 @@ extern void mprAddSocketProvider(cchar *name, MprSocketProvider *provider);
         mprSetSocketBlockingMode mprSetSocketCallback mprSetSocketEof mprSetSocketNoDelay mprSetSslCaFile 
         mprSetSslCaPath mprSetSslCertFile mprSetSslCiphers mprSetSslKeyFile mprSetSslSslProtocols 
         mprSetSslVerifySslClients mprWriteSocket mprWriteSocketString mprWriteSocketVector 
+        mprSocketHasPendingData mprUpgradeSocket
     @defgroup MprSocket MprSocket
  */
 typedef struct MprSocket {
@@ -7061,17 +7074,6 @@ typedef struct MprIOVec {
     @ingroup MprSocket
  */
 MprSocket *mprAcceptSocket(MprSocket *listen);
-
-//  MOB - move
-/**
-    Upgrade a socket to use SSL/TLS
-    @param sp Socket to upgrade
-    @param ssl SSL configuration to use. Set to NULL to use the default.
-    @param server Set to one for server-side, set to zero for client side.
-    @returns Zero if successful, otherwise a negative MPR error code.
-    @ingroup MprSocket
- */
-int mprUpgradeSocket(MprSocket *sp, struct MprSsl *ssl, int server);
 
 /**
     Add a wait handler to a socket.
@@ -7348,6 +7350,16 @@ extern int mprSetSocketNoDelay(MprSocket *sp, bool on);
     @ingroup MprSocket
  */
 extern bool mprSocketHasPendingData(MprSocket *sp);
+
+/**
+    Upgrade a socket to use SSL/TLS
+    @param sp Socket to upgrade
+    @param ssl SSL configuration to use. Set to NULL to use the default.
+    @param server Set to one for server-side, set to zero for client side.
+    @returns Zero if successful, otherwise a negative MPR error code.
+    @ingroup MprSocket
+ */
+int mprUpgradeSocket(MprSocket *sp, struct MprSsl *ssl, int server);
 
 /**
     Write to a socket

@@ -1828,7 +1828,7 @@ static bool fetchCachedResponse(HttpConn *conn)
      */
     key = makeCacheKey(conn);
     if ((value = httpGetHeader(conn, "Cache-Control")) != 0 && 
-            (scontains(value, "max-age=0", -1) == 0 || scontains(value, "no-cache", -1) == 0)) {
+            (scontains(value, "max-age=0") == 0 || scontains(value, "no-cache") == 0)) {
         mprLog(3, "Client reload. Cache-control header '%s' rejects use of cached content.", value);
 
     } else if ((tx->cachedContent = mprReadCache(conn->host->responseCache, key, &modified, 0)) != 0) {
@@ -1994,7 +1994,7 @@ void httpAddCache(HttpRoute *route, cchar *methods, cchar *uris, cchar *extensio
     if (uris) {
         cache->uris = mprCreateHash(0, 0);
         for (item = stok(sclone(uris), " \t,", &tok); item; item = stok(0, " \t,", &tok)) {
-            if (flags & HTTP_CACHE_ONLY && route->prefix && !scontains(item, sfmt("prefix=%s", route->prefix), -1)) {
+            if (flags & HTTP_CACHE_ONLY && route->prefix && !scontains(item, sfmt("prefix=%s", route->prefix))) {
                 /*
                     Auto-add ?prefix=ROUTE_NAME if there is no query
                  */
@@ -2467,9 +2467,14 @@ static HttpConn *openConnection(HttpConn *conn, cchar *url, struct MprSsl *ssl)
     }
 #if BIT_FEATURE_SSL
     /* Must be done even if using keep alive for repeat SSL requests */
-    if (uri->secure && mprUpgradeSocket(sp, ssl, 0) < 0) {
-        conn->errorMsg = sp->errorMsg;
-        return 0;
+    if (uri->secure) {
+        if (ssl == 0) {
+            ssl = mprCreateSsl();
+        }
+        if (mprUpgradeSocket(sp, ssl, 0) < 0) {
+            conn->errorMsg = sp->errorMsg;
+            return 0;
+        }
     }
 #endif
     conn->sock = sp;
@@ -4104,7 +4109,7 @@ HttpHost *httpLookupHostOnEndpoint(HttpEndpoint *endpoint, cchar *name)
             if (host->name[1] == '\0') {
                 return host;
             }
-            if (scontains(name, &host->name[1], -1)) {
+            if (scontains(name, &host->name[1])) {
                 return host;
             }
         }
@@ -11223,7 +11228,7 @@ static bool parseIncoming(HttpConn *conn, HttpPacket *packet)
         Don't start processing until all the headers have been received (delimited by two blank lines)
         MOB - should be tolerant and allow '\n\n'
      */
-    if ((end = scontains(start, "\r\n\r\n", len)) == 0) {
+    if ((end = sncontains(start, "\r\n\r\n", len)) == 0) {
         if (len >= conn->limits->headerSize) {
             httpError(conn, HTTP_ABORT | HTTP_CODE_REQUEST_TOO_LARGE, 
                 "Header too big. Length %d vs limit %d", len, conn->limits->headerSize);
@@ -11644,8 +11649,8 @@ static bool parseHeaders(HttpConn *conn, HttpPacket *packet)
             } else if (strcasecmp(key, "content-type") == 0) {
                 rx->mimeType = sclone(value);
                 if (rx->flags & (HTTP_POST | HTTP_PUT)) {
-                    rx->form = scontains(rx->mimeType, "application/x-www-form-urlencoded", -1) != 0;
-                    rx->upload = scontains(rx->mimeType, "multipart/form-data", -1) != 0;
+                    rx->form = scontains(rx->mimeType, "application/x-www-form-urlencoded") != 0;
+                    rx->upload = scontains(rx->mimeType, "multipart/form-data") != 0;
                 } else { 
                     rx->form = rx->upload = 0;
                 }
@@ -11721,7 +11726,7 @@ static bool parseHeaders(HttpConn *conn, HttpPacket *packet)
             /* Keep-Alive: timeout=N, max=1 */
             if (strcasecmp(key, "keep-alive") == 0) {
                 keepAlive = 1;
-                if ((tok = scontains(value, "max=", -1)) != 0) {
+                if ((tok = scontains(value, "max=")) != 0) {
                     conn->keepAliveCount = atoi(&tok[4]);
                     /*  
                         IMPORTANT: Deliberately close the connection one request early. This ensures a client-led 
@@ -12523,7 +12528,7 @@ static char *getToken(HttpConn *conn, cchar *delim)
 
     buf = conn->input->content;
     token = mprGetBufStart(buf);
-    nextToken = scontains(mprGetBufStart(buf), delim, mprGetBufLength(buf));
+    nextToken = sncontains(mprGetBufStart(buf), delim, mprGetBufLength(buf));
     if (nextToken) {
         *nextToken = '\0';
         len = (int) strlen(delim);
@@ -15456,7 +15461,7 @@ char *httpFormatUri(cchar *scheme, cchar *host, int port, cchar *path, cchar *re
         if (mprIsIPv6(host)) {
             if (*host != '[') {
                 host = sfmt("[%s]", host);
-            } else if ((cp = scontains(host, "]:", -1)) != 0) {
+            } else if ((cp = scontains(host, "]:")) != 0) {
                 port = 0;
             }
         } else if (schr(host, ':')) {
