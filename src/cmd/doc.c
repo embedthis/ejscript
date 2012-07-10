@@ -1092,7 +1092,7 @@ static int generateClassPropertyTableEntries(EjsMod *mp, EjsObj *obj, MprList *p
             fun = (EjsFunction*) vp;
             if (fun->resultType) {
                 tname = fmtType(ejs, fun->resultType->qname);
-                if (scasecmp(tname, "intrinsic::Void") == 0) {
+                if (scaselesscmp(tname, "intrinsic::Void") == 0) {
                     out(mp, "<td>&nbsp;</td>");
                 } else {
                     out(mp, "<td>%s</td>", fmtTypeReference(ejs, fun->resultType->qname));
@@ -1499,7 +1499,7 @@ static void generateMethod(EjsMod *mp, FunRec *fp)
                     }
                     out(mp, "</td><td>%s", description);
                     if (defaultValue) {
-                        if (scontains(description, "Not implemented", -1) == NULL) {
+                        if (scontains(description, "Not implemented") == NULL) {
                             out(mp, " [default: %s]", defaultValue);
                         }
                     }
@@ -1663,12 +1663,12 @@ static MprChar *mergeDuplicates(Ejs *ejs, EjsMod *mp, EjsName qname, EjsDoc *doc
     EjsDoc      *dup;
     MprChar     *next, *duplicate, *mark;
 
-    if ((next = mcontains(spec, "@duplicate", -1)) == 0) {
+    if ((next = mcontains(spec, "@duplicate")) == 0) {
         return spec;
     }
     next = spec = wclone(spec);
 
-    while ((next = mcontains(next, "@duplicate", -1)) != 0) {
+    while ((next = mcontains(next, "@duplicate")) != 0) {
         mark = next;
         mtok(next, " \t\n\r", &next);
         if ((duplicate = mtok(next, " \t\n\r", &next)) == 0) {
@@ -1754,9 +1754,9 @@ static EjsDoc *crackDoc(EjsMod *mp, EjsDoc *doc, EjsName qname)
         return doc;
     }
     prepText(str);
-    if (mcontains(str, "@hide", -1) || mcontains(str, "@hidden", -1)) {
+    if (mcontains(str, "@hide") || mcontains(str, "@hidden")) {
         doc->hide = 1;
-    } else if (mcontains(str, "@deprecate", -1) || mcontains(str, "@deprecated", -1)) {
+    } else if (mcontains(str, "@deprecate") || mcontains(str, "@deprecated")) {
         doc->deprecated = 1;
     }
     str = mergeDuplicates(ejs, mp, qname, doc, str);
@@ -1966,7 +1966,7 @@ static MprChar *fixSentence(MprChar *str)
     /*
         Append a "." if the string does not appear to contain HTML tags
      */
-    if (mcontains(str, "</", -1) == 0) {
+    if (mcontains(str, "</") == 0) {
         /* Trim period and re-add */
         str = mtrim(str, " \t\r\n.", MPR_TRIM_BOTH);
         len = wlen(str);
@@ -1986,7 +1986,7 @@ static MprChar *formatExample(Ejs *ejs, EjsString *docString)
     MprChar     *example, *cp, *end, *buf, *dp;
     int         i, indent;
 
-    if ((example = mcontains(docString->value, "@example", -1)) != 0) {
+    if ((example = mcontains(docString->value, "@example")) != 0) {
         example += 8;
         for (cp = example; *cp && *cp != '\n'; cp++) {}
         if (*cp == '\n') {
@@ -2082,7 +2082,7 @@ static MprChar *wikiFormat(Ejs *ejs, MprChar *start)
             sentence = (klass[wlen(klass) - 1] == '.');
             mprAssert(strcmp(klass, "ejs.web::Request") != 0);
 
-            if (scontains(klass, "::", -1)) {
+            if (scontains(klass, "::")) {
                 space = stok(klass, "::", &klass);
             } else {
                 space = "";
@@ -2523,7 +2523,7 @@ static EjsDoc *getDuplicateDoc(Ejs *ejs, MprChar *duplicate)
     int             slotNum;
 
     space = wclone(duplicate);
-    if ((klass = mcontains(space, "::", -1)) != 0) {
+    if ((klass = mcontains(space, "::")) != 0) {
         *klass = '\0';
         klass += 2;
     } else {
