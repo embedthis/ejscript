@@ -153,7 +153,7 @@ function debugPropBuild(base: Path) {
 <Project ToolsVersion="4.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
   <ImportGroup Label="PropertySheets" />
   <PropertyGroup Label="UserMacros">
-    <Cfg>debug</Cfg>
+    <Cfg>vsdebug</Cfg>
   </PropertyGroup>
   <ItemDefinitionGroup>
     <ClCompile>
@@ -185,7 +185,7 @@ function releasePropBuild(base: Path) {
 <Project ToolsVersion="4.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
   <ImportGroup Label="PropertySheets" />
   <PropertyGroup Label="UserMacros">
-    <Cfg>release</Cfg>
+    <Cfg>vsrelease</Cfg>
   </PropertyGroup>
   <ItemDefinitionGroup>
     <ClCompile>

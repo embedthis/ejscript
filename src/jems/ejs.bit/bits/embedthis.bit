@@ -33,8 +33,10 @@ Bit.load({
                     if (name == 'windows-x86') {
                         /* Windows must do a build to get current *.def files */
                         run(bitcmd + ' -d -without all -configure .', bit.target.runopt)
-                        trace('Build', 'Full build to generate def files')
-                        run(bitcmd + ' -d ', bit.target.runopt)
+                        if (Config.OS == 'windows') {
+                            trace('Build', 'Full build to generate def files')
+                            run(bitcmd + ' -d ', bit.target.runopt)
+                        }
                         run(bitcmd + ' -d ' + formats, bit.target.runopt)
                     } else {
                         run(bitcmd + ' -d -q -platform ' + name + ' -without all -configure . ' + formats, bit.target.runopt)
@@ -79,8 +81,10 @@ Bit.load({
                     if (name == 'windows-x86') {
                         /* Windows must do a build to get current *.def files */
                         run(bitcmd + ' -d -without all -configure .', bit.target.runopt)
-                        trace('Build', 'Full build to generate def files')
-                        run(bitcmd + ' -d', bit.target.runopt)
+                        if (Config.OS == 'windows') {
+                            trace('Build', 'Full build to generate def files')
+                            run(bitcmd + ' -d', bit.target.runopt)
+                        }
                         run(bitcmd + ' -d ' + formats, bit.target.runopt)
                     } else {
                         run(bitcmd + ' -d -q -platform ' + name + ' -without all -configure . ' + formats, bit.target.runopt)
