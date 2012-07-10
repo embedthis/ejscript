@@ -307,11 +307,11 @@ int httpCheckAuth(HttpConn *conn)
         formatAuthResponse(conn, auth, HTTP_CODE_UNAUTHORIZED, "Access Denied, Missing authorization details.", 0);
         return HTTP_ROUTE_OK;
     }
-    if (scasecmp(rx->authType, "basic") == 0) {
+    if (scaselesscmp(rx->authType, "basic") == 0) {
         decodeBasicAuth(conn, ad);
         actualAuthType = HTTP_AUTH_BASIC;
 
-    } else if (scasecmp(rx->authType, "digest") == 0) {
+    } else if (scaselesscmp(rx->authType, "digest") == 0) {
         if (decodeDigestDetails(conn, ad) < 0) {
             httpError(conn, 400, "Bad authorization header");
             return HTTP_ROUTE_OK;
@@ -451,63 +451,63 @@ static int decodeDigestDetails(HttpConn *conn, AuthData *ad)
          */
         switch (tolower((uchar) *key)) {
         case 'a':
-            if (scasecmp(key, "algorithm") == 0) {
+            if (scaselesscmp(key, "algorithm") == 0) {
                 break;
-            } else if (scasecmp(key, "auth-param") == 0) {
+            } else if (scaselesscmp(key, "auth-param") == 0) {
                 break;
             }
             break;
 
         case 'c':
-            if (scasecmp(key, "cnonce") == 0) {
+            if (scaselesscmp(key, "cnonce") == 0) {
                 ad->cnonce = sclone(value);
             }
             break;
 
         case 'd':
-            if (scasecmp(key, "domain") == 0) {
+            if (scaselesscmp(key, "domain") == 0) {
                 break;
             }
             break;
 
         case 'n':
-            if (scasecmp(key, "nc") == 0) {
+            if (scaselesscmp(key, "nc") == 0) {
                 ad->nc = sclone(value);
-            } else if (scasecmp(key, "nonce") == 0) {
+            } else if (scaselesscmp(key, "nonce") == 0) {
                 ad->nonce = sclone(value);
             }
             break;
 
         case 'o':
-            if (scasecmp(key, "opaque") == 0) {
+            if (scaselesscmp(key, "opaque") == 0) {
                 ad->opaque = sclone(value);
             }
             break;
 
         case 'q':
-            if (scasecmp(key, "qop") == 0) {
+            if (scaselesscmp(key, "qop") == 0) {
                 ad->qop = sclone(value);
             }
             break;
 
         case 'r':
-            if (scasecmp(key, "realm") == 0) {
+            if (scaselesscmp(key, "realm") == 0) {
                 ad->realm = sclone(value);
-            } else if (scasecmp(key, "response") == 0) {
+            } else if (scaselesscmp(key, "response") == 0) {
                 /* Store the response digest in the password field */
                 ad->password = sclone(value);
             }
             break;
 
         case 's':
-            if (scasecmp(key, "stale") == 0) {
+            if (scaselesscmp(key, "stale") == 0) {
                 break;
             }
         
         case 'u':
-            if (scasecmp(key, "uri") == 0) {
+            if (scaselesscmp(key, "uri") == 0) {
                 ad->uri = sclone(value);
-            } else if (scasecmp(key, "username") == 0 || scasecmp(key, "user") == 0) {
+            } else if (scaselesscmp(key, "username") == 0 || scaselesscmp(key, "user") == 0) {
                 ad->userName = sclone(value);
             }
             break;
@@ -2529,10 +2529,10 @@ static int setClientHeaders(HttpConn *conn)
         qop = (conn->authQop) ? conn->authQop : (char*) "";
 
         conn->authNc++;
-        if (scasecmp(conn->authQop, "auth") == 0) {
+        if (scaselesscmp(conn->authQop, "auth") == 0) {
             mprSprintf(digestBuf, sizeof(digestBuf), "%s:%s:%08x:%s:%s:%s",
                 ha1, conn->authNonce, conn->authNc, conn->authCnonce, conn->authQop, ha2);
-        } else if (scasecmp(conn->authQop, "auth-int") == 0) {
+        } else if (scaselesscmp(conn->authQop, "auth-int") == 0) {
             mprSprintf(digestBuf, sizeof(digestBuf), "%s:%s:%08x:%s:%s:%s",
                 ha1, conn->authNonce, conn->authNc, conn->authCnonce, conn->authQop, ha2);
         } else {
@@ -5003,15 +5003,15 @@ void httpInitLimits(HttpLimits *limits, bool serverSide)
 #if FUTURE
     mprSetMaxSocketClients(endpoint, atoi(value));
 
-    if (scasecmp(key, "LimitClients") == 0) {
+    if (scaselesscmp(key, "LimitClients") == 0) {
         mprSetMaxSocketClients(endpoint, atoi(value));
         return 1;
     }
-    if (scasecmp(key, "LimitMemoryMax") == 0) {
+    if (scaselesscmp(key, "LimitMemoryMax") == 0) {
         mprSetAllocLimits(endpoint, -1, atoi(value));
         return 1;
     }
-    if (scasecmp(key, "LimitMemoryRedline") == 0) {
+    if (scaselesscmp(key, "LimitMemoryRedline") == 0) {
         mprSetAllocLimits(endpoint, atoi(value), -1);
         return 1;
     }
@@ -8645,19 +8645,19 @@ int httpAddRouteCondition(HttpRoute *route, cchar *name, cchar *details, int fla
     if ((op = createRouteOp(name, flags)) == 0) {
         return MPR_ERR_MEMORY;
     }
-    if (scasematch(name, "auth")) {
+    if (scaselessmatch(name, "auth")) {
         /* Nothing to do. Route->auth has it all */
 
-    } else if (scasematch(name, "missing")) {
+    } else if (scaselessmatch(name, "missing")) {
         op->details = finalizeReplacement(route, "${request:filename}");
 
-    } else if (scasematch(name, "directory")) {
+    } else if (scaselessmatch(name, "directory")) {
         op->details = finalizeReplacement(route, details);
 
-    } else if (scasematch(name, "exists")) {
+    } else if (scaselessmatch(name, "exists")) {
         op->details = finalizeReplacement(route, details);
 
-    } else if (scasematch(name, "match")) {
+    } else if (scaselessmatch(name, "match")) {
         /* 
             Condition match string pattern
             String can contain matching ${tokens} from the route->pattern and can contain request ${tokens}
@@ -8869,13 +8869,13 @@ int httpAddRouteUpdate(HttpRoute *route, cchar *rule, cchar *details, int flags)
     if ((op = createRouteOp(rule, flags)) == 0) {
         return MPR_ERR_MEMORY;
     }
-    if (scasematch(rule, "cmd")) {
+    if (scaselessmatch(rule, "cmd")) {
         op->details = sclone(details);
 
-    } else if (scasematch(rule, "lang")) {
+    } else if (scaselessmatch(rule, "lang")) {
         /* Nothing to do */;
 
-    } else if (scasematch(rule, "param")) {
+    } else if (scaselessmatch(rule, "param")) {
         if (!httpTokenize(route, details, "%S %S", &op->var, &value)) {
             return MPR_ERR_BAD_SYNTAX;
         }
@@ -9184,20 +9184,20 @@ int httpSetRouteTarget(HttpRoute *route, cchar *rule, cchar *details)
     route->targetRule = sclone(rule);
     route->target = sclone(details);
 
-    if (scasematch(rule, "close")) {
+    if (scaselessmatch(rule, "close")) {
         route->target = sclone(details);
 
-    } else if (scasematch(rule, "redirect")) {
+    } else if (scaselessmatch(rule, "redirect")) {
         if (!httpTokenize(route, details, "%N ?S", &route->responseStatus, &redirect)) {
             return MPR_ERR_BAD_SYNTAX;
         }
         route->target = finalizeReplacement(route, redirect);
         return 0;
 
-    } else if (scasematch(rule, "run")) {
+    } else if (scaselessmatch(rule, "run")) {
         route->target = finalizeReplacement(route, details);
 
-    } else if (scasematch(rule, "write")) {
+    } else if (scaselessmatch(rule, "write")) {
         /*
             Write [-r] status Message
          */
@@ -9264,7 +9264,7 @@ static void finalizeMethods(HttpRoute *route)
 
     mprAssert(route);
     methods = route->methodSpec;
-    if (methods && *methods && !scasematch(methods, "ALL") && !smatch(methods, "*")) {
+    if (methods && *methods && !scaselessmatch(methods, "ALL") && !smatch(methods, "*")) {
         if ((route->methods = mprCreateHash(-1, 0)) == 0) {
             return;
         }
@@ -10290,21 +10290,21 @@ void httpAddHomeRoute(HttpRoute *parent)
 
 void httpAddRouteSet(HttpRoute *parent, cchar *set)
 {
-    if (scasematch(set, "simple")) {
+    if (scaselessmatch(set, "simple")) {
         httpAddHomeRoute(parent);
 
-    } else if (scasematch(set, "mvc")) {
+    } else if (scaselessmatch(set, "mvc")) {
         httpAddHomeRoute(parent);
         httpAddStaticRoute(parent);
         httpDefineRoute(parent, "default", NULL, "^/{controller}(~/{action}~)", "${controller}-${action}", 
             "${controller}.c");
 
-    } else if (scasematch(set, "restful")) {
+    } else if (scaselessmatch(set, "restful")) {
         httpAddHomeRoute(parent);
         httpAddStaticRoute(parent);
         httpAddResourceGroup(parent, "{controller}");
 
-    } else if (!scasematch(set, "none")) {
+    } else if (!scaselessmatch(set, "none")) {
         mprError("Unknown route set %s", set);
     }
 }
@@ -10505,7 +10505,7 @@ static char *expandRequestTokens(HttpConn *conn, char *str)
             } else if (smatch(value, "filename")) {
                 mprPutStringToBuf(buf, tx->filename);
 
-            } else if (scasematch(value, "language")) {
+            } else if (scaselessmatch(value, "language")) {
                 if (!defaultValue) {
                     defaultValue = route->defaultLanguage;
                 }
@@ -10515,7 +10515,7 @@ static char *expandRequestTokens(HttpConn *conn, char *str)
                     mprPutStringToBuf(buf, defaultValue);
                 }
 
-            } else if (scasematch(value, "languageDir")) {
+            } else if (scaselessmatch(value, "languageDir")) {
                 lang = httpGetLanguage(conn, route->languages, 0);
                 if (!defaultValue) {
                     defaultValue = ".";
@@ -10761,7 +10761,7 @@ bool httpTokenizev(HttpRoute *route, cchar *line, cchar *fmt, va_list args)
                 }
                 break;
             case 'B':
-                if (scasecmp(tok, "on") == 0 || scasecmp(tok, "true") == 0 || scasecmp(tok, "yes") == 0) {
+                if (scaselesscmp(tok, "on") == 0 || scaselesscmp(tok, "true") == 0 || scaselesscmp(tok, "yes") == 0) {
                     *va_arg(args, bool*) = 1;
                 } else {
                     *va_arg(args, bool*) = 0;
@@ -11282,7 +11282,7 @@ static void mapMethod(HttpConn *conn)
     rx = conn->rx;
     if (rx->flags & HTTP_POST) {
         if ((method = httpGetParam(conn, "-http-method-", 0)) != 0) {
-            if (!scasematch(method, rx->method)) {
+            if (!scaselessmatch(method, rx->method)) {
                 mprLog(3, "Change method from %s to %s for %s", rx->method, method, rx->uri);
                 httpSetMethod(conn, method);
             }
@@ -11583,9 +11583,9 @@ static bool parseHeaders(HttpConn *conn, HttpPacket *packet)
         case 'c':
             if (strcasecmp(key, "connection") == 0) {
                 rx->connection = sclone(value);
-                if (scasecmp(value, "KEEP-ALIVE") == 0) {
+                if (scaselesscmp(value, "KEEP-ALIVE") == 0) {
                     keepAlive = 1;
-                } else if (scasecmp(value, "CLOSE") == 0) {
+                } else if (scaselesscmp(value, "CLOSE") == 0) {
                     /*  Not really required, but set to 0 to be sure */
                     conn->keepAliveCount = 0;
                 }
@@ -11764,7 +11764,7 @@ static bool parseHeaders(HttpConn *conn, HttpPacket *packet)
 
         case 't':
             if (strcasecmp(key, "transfer-encoding") == 0) {
-                if (scasecmp(value, "chunked") == 0) {
+                if (scaselesscmp(value, "chunked") == 0) {
                     /*  
                         remainingContent will be revised by the chunk filter as chunks are processed and will 
                         be set to zero when the last chunk has been received.
@@ -11894,46 +11894,46 @@ static bool parseAuthenticate(HttpConn *conn, char *authDetails)
          */
         switch (tolower((uchar) *key)) {
         case 'a':
-            if (scasecmp(key, "algorithm") == 0) {
+            if (scaselesscmp(key, "algorithm") == 0) {
                 rx->authAlgorithm = sclone(value);
                 break;
             }
             break;
 
         case 'd':
-            if (scasecmp(key, "domain") == 0) {
+            if (scaselesscmp(key, "domain") == 0) {
                 conn->authDomain = sclone(value);
                 break;
             }
             break;
 
         case 'n':
-            if (scasecmp(key, "nonce") == 0) {
+            if (scaselesscmp(key, "nonce") == 0) {
                 conn->authNonce = sclone(value);
                 conn->authNc = 0;
             }
             break;
 
         case 'o':
-            if (scasecmp(key, "opaque") == 0) {
+            if (scaselesscmp(key, "opaque") == 0) {
                 conn->authOpaque = sclone(value);
             }
             break;
 
         case 'q':
-            if (scasecmp(key, "qop") == 0) {
+            if (scaselesscmp(key, "qop") == 0) {
                 conn->authQop = sclone(value);
             }
             break;
 
         case 'r':
-            if (scasecmp(key, "realm") == 0) {
+            if (scaselesscmp(key, "realm") == 0) {
                 conn->authRealm = sclone(value);
             }
             break;
 
         case 's':
-            if (scasecmp(key, "stale") == 0) {
+            if (scaselesscmp(key, "stale") == 0) {
                 rx->authStale = sclone(value);
                 break;
             }
@@ -13864,7 +13864,7 @@ void httpAppendHeader(HttpConn *conn, cchar *key, cchar *fmt, ...)
         /*
             Set-Cookie has legacy behavior and some browsers require separate headers
          */
-        if (scasematch(key, "Set-Cookie")) {
+        if (scaselessmatch(key, "Set-Cookie")) {
             mprAddDuplicateKey(conn->tx->headers, key, value);
         } else {
             addHdr(conn, key, sfmt("%s, %s", oldValue, value));
@@ -13888,7 +13888,7 @@ void httpAppendHeaderString(HttpConn *conn, cchar *key, cchar *value)
 
     oldValue = mprLookupKey(conn->tx->headers, key);
     if (oldValue) {
-        if (scasematch(key, "Set-Cookie")) {
+        if (scaselessmatch(key, "Set-Cookie")) {
             mprAddDuplicateKey(conn->tx->headers, key, sclone(value));
         } else {
             addHdr(conn, key, sfmt("%s, %s", oldValue, value));
@@ -14564,7 +14564,7 @@ static int matchUpload(HttpConn *conn, HttpRoute *route, int dir)
     }
     pat = "multipart/form-data";
     len = strlen(pat);
-    if (sncasecmp(rx->mimeType, pat, len) == 0) {
+    if (sncaselesscmp(rx->mimeType, pat, len) == 0) {
         rx->upload = 1;
         mprLog(5, "matchUpload for %s", rx->uri);
         return HTTP_ROUTE_OK;
@@ -14808,7 +14808,7 @@ static int processContentHeader(HttpQueue *q, char *line)
     headerTok = line;
     stok(line, ": ", &rest);
 
-    if (scasecmp(headerTok, "Content-Disposition") == 0) {
+    if (scaselesscmp(headerTok, "Content-Disposition") == 0) {
 
         /*  
             The content disposition header describes either a form
@@ -14833,13 +14833,13 @@ static int processContentHeader(HttpQueue *q, char *line)
             stok(key, "= ", &value);
             value = strim(value, "\"", MPR_TRIM_BOTH);
 
-            if (scasecmp(key, "form-data") == 0) {
+            if (scaselesscmp(key, "form-data") == 0) {
                 /* Nothing to do */
 
-            } else if (scasecmp(key, "name") == 0) {
+            } else if (scaselesscmp(key, "name") == 0) {
                 up->id = sclone(value);
 
-            } else if (scasecmp(key, "filename") == 0) {
+            } else if (scaselesscmp(key, "filename") == 0) {
                 if (up->id == 0) {
                     httpError(conn, HTTP_CODE_BAD_REQUEST, "Bad upload state. Missing name field");
                     return MPR_ERR_BAD_STATE;
@@ -14871,7 +14871,7 @@ static int processContentHeader(HttpQueue *q, char *line)
             key = nextPair;
         }
 
-    } else if (scasecmp(headerTok, "Content-Type") == 0) {
+    } else if (scaselesscmp(headerTok, "Content-Type") == 0) {
         if (up->clientFilename) {
             mprLog(5, "Set files[%s][CONTENT_TYPE] = %s", up->id, rest);
             up->currentFile->contentType = sclone(rest);

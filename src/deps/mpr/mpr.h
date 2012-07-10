@@ -806,10 +806,10 @@ typedef int64 MprTime;
         #define va_copy(d, s) ((d) = (s))
     #endif
     #ifndef strcasecmp
-        #define strcasecmp scasecmp
+        #define strcasecmp scaselesscmp
     #endif
     #ifndef strncasecmp
-        #define strncasecmp sncasecmp
+        #define strncasecmp sncaselesscmp
     #endif
 #endif
 
@@ -907,8 +907,8 @@ typedef int64 MprTime;
     #define unlink      _unlink
     #define write       _write
     #endif
-    #define strcasecmp scasecmp
-    #define strncasecmp sncasecmp
+    #define strcasecmp scaselesscmp
+    #define strncasecmp sncaselesscmp
 #endif /* WIN_LIKE */
 
 #if WINCE
@@ -2680,11 +2680,10 @@ extern int  mprSyncThreads(MprTime timeout);
     @description The MPR provides a suite of safe ascii string manipulation routines to help prevent buffer overflows
         and other potential security traps.
     @defgroup MprString MprString
-    @see MprString itos itosradix itosbuf mprPrintf mprPrintfError mprSprintf scamel scasecmp scasematch schr sclone scmp
-        scontains scopy sends sfmt sfmtv shash shashlower sjoin sjoinv slen slower smatch sncasecmp snclone sncmp sncopy 
-        snumber spascal spbrk srchr srejoin srejoinv sreplace sspn sstarts ssub stemplate stoi stoiradix stok strim supper 
-        sncontains
-        mprFprintf mprSprintfv
+    @see MprString itos itosradix itosbuf mprPrintf mprPrintfError mprSprintf scamel scaselesscmp scaselessmatch schr 
+        sclone scmp scontains scopy sends sfmt sfmtv shash shashlower sjoin sjoinv slen slower smatch sncaselesscmp snclone
+        sncmp sncopy snumber spascal spbrk srchr srejoin srejoinv sreplace sspn sstarts ssub stemplate stoi stoiradix
+        stok strim supper sncontains mprFprintf mprSprintfv
  */
 typedef struct MprString { void *dummy; } MprString;
 
@@ -2729,17 +2728,17 @@ extern char *itosbuf(char *buf, ssize size, int64 value, int radix);
         or > 0 if it sorts higher.
     @ingroup MprString
  */
-extern int scasecmp(cchar *s1, cchar *s2);
+extern int scaselesscmp(cchar *s1, cchar *s2);
 
 /**
-    Compare strings ignoring case. This is similar to scasecmp but it returns a boolean.
+    Compare strings ignoring case. This is similar to scaselesscmp but it returns a boolean.
     @description Compare two strings ignoring case differences.
     @param s1 First string to compare.
     @param s2 Second string to compare. 
     @return Returns true if the strings are equivalent, otherwise false.
     @ingroup MprString
  */
-extern bool scasematch(cchar *s1, cchar *s2);
+extern bool scaselessmatch(cchar *s1, cchar *s2);
 
 /**
     Create a camel case version of the string
@@ -2918,7 +2917,7 @@ extern bool smatch(cchar *s1, cchar *s2);
         or > 0 if it sorts higher.
     @ingroup MprString
  */
-extern int sncasecmp(cchar *s1, cchar *s2, ssize len);
+extern int sncaselesscmp(cchar *s1, cchar *s2, ssize len);
 
 /**
     Clone a substring.
@@ -3160,7 +3159,7 @@ extern MprChar  *wjoinv(MprChar *sep, va_list args);
 extern ssize    wlen(MprChar *s);
 
 extern MprChar  *wlower(MprChar *s);
-extern int      wncasecmp(MprChar *s1, MprChar *s2, ssize len);
+extern int      wncaselesscmp(MprChar *s1, MprChar *s2, ssize len);
 extern int      wncmp(MprChar *s1, MprChar *s2, ssize len);
 extern ssize    wncopy(MprChar *dest, ssize destCount, MprChar *src, ssize len);
 extern MprChar  *wpbrk(MprChar *str, MprChar *set);
@@ -3183,7 +3182,7 @@ extern MprChar  *wupper(MprChar *s);
 #define itowbuf(buf, bufCount, value, radix) itosbuf(buf, bufCount, value, radix)
 #define wchr(str, c)                        schr(str, c)
 #define wclone(str)                         sclone(str)
-#define wcasecmp(s1, s2)                    scasecmp(s1, s2)
+#define wcasecmp(s1, s2)                    scaselesscmp(s1, s2)
 #define wcmp(s1, s2)                        scmp(s1, s2)
 #define wcontains(str, pattern)             scontains(str, pattern)
 #define wncontains(str, pattern, limit)     sncontains(str, pattern, limit)
@@ -3198,7 +3197,7 @@ extern MprChar  *wupper(MprChar *s);
 #define wlen(str)                           slen(str)
 #define wlower(str)                         slower(str)
 #define wncmp(s1, s2, len)                  sncmp(s1, s2, len)
-#define wncasecmp(s1, s2, len)              sncasecmp(s1, s2, len)
+#define wncaselesscmp(s1, s2, len)          sncaselesscmp(s1, s2, len)
 #define wncopy(dest, count, src, len)       sncopy(dest, count, src, len)
 #define wpbrk(str, set)                     spbrk(str, set)
 #define wrchr(str, c)                       srchr(str, c)
@@ -3232,7 +3231,7 @@ extern MprChar *mfmtv(cchar *fmt, va_list arg);
 extern MprChar *mjoin(cchar *sep, ...);
 extern MprChar *mjoinv(cchar *sep, va_list args);
 extern int      mncmp(MprChar *s1, cchar *s2, ssize len);
-extern int      mncasecmp(MprChar *s1, cchar *s2, ssize len);
+extern int      mncaselesscmp(MprChar *s1, cchar *s2, ssize len);
 extern ssize   mncopy(MprChar *dest, ssize destMax, cchar *src, ssize len);
 extern MprChar *mpbrk(MprChar *str, cchar *set);
 extern MprChar *mrejoin(MprChar *buf, cchar *sep, ...);
@@ -3243,7 +3242,7 @@ extern MprChar *mtok(MprChar *str, cchar *delim, MprChar **last);
 extern MprChar *mtrim(MprChar *str, cchar *set, int where);
 
 #else
-#define mcasecmp(s1, s2)                scasecmp(s1, s2)
+#define mcasecmp(s1, s2)                scaselesscmp(s1, s2)
 #define mcmp(s1, s2)                    scmp(s1, s2)
 #define mcontains(str, pattern)         scontains(str, pattern)
 #define mncontains(str, pattern, limit) sncontains(str, pattern, limit)
@@ -3254,7 +3253,7 @@ extern MprChar *mtrim(MprChar *str, cchar *set, int where);
 #define mjoin                           sjoin
 #define mjoinv(sep, args)               sjoinv(sep, args)
 #define mncmp(s1, s2, len)              sncmp(s1, s2, len)
-#define mncasecmp(s1, s2, len)          sncasecmp(s1, s2, len)
+#define mncaselesscmp(s1, s2, len)      sncaselesscmp(s1, s2, len)
 #define mncopy(dest, count, src, len)   sncopy(dest, count, src, len)
 #define mpbrk(str, set)                 spbrk(str, set)
 #define mrejoin                         srejoin

@@ -3306,7 +3306,7 @@ void mprSetEnv(cchar *key, cchar *value)
     putenv(cmd);
 #endif
 #endif
-    if (scasematch(key, "PATH")) {
+    if (scaselessmatch(key, "PATH")) {
         MPR->pathEnv = sclone(value);
     }
 }
@@ -15443,7 +15443,7 @@ static MprKey *lookupHash(int *bucketIndex, MprKey **prevSp, MprHash *hash, cvoi
         } else 
 #endif
         if (hash->flags & MPR_HASH_CASELESS) {
-            rc = scasecmp(sp->key, key);
+            rc = scaselesscmp(sp->key, key);
         } else {
             rc = strcmp(sp->key, key);
         }
@@ -25402,9 +25402,8 @@ char *scamel(cchar *str)
 
 /*
     Case insensitive string comparison. Limited by length
-    MOB rename scaselesscmp
  */
-int scasecmp(cchar *s1, cchar *s2)
+int scaselesscmp(cchar *s1, cchar *s2)
 {
     if (s1 == 0 || s2 == 0) {
         return -1;
@@ -25413,14 +25412,13 @@ int scasecmp(cchar *s1, cchar *s2)
     } else if (s2 == 0) {
         return 1;
     }
-    return sncasecmp(s1, s2, max(slen(s1), slen(s2)));
+    return sncaselesscmp(s1, s2, max(slen(s1), slen(s2)));
 }
 
 
-// MOB rename scaselessmatch
-bool scasematch(cchar *s1, cchar *s2)
+bool scaselessmatch(cchar *s1, cchar *s2)
 {
-    return scasecmp(s1, s2) == 0;
+    return scaselesscmp(s1, s2) == 0;
 }
 
 
@@ -25735,9 +25733,7 @@ bool smatch(cchar *s1, cchar *s2)
 }
 
 
-// MOB rename snacasecmp
-
-int sncasecmp(cchar *s1, cchar *s2, ssize n)
+int sncaselesscmp(cchar *s1, cchar *s2, ssize n)
 {
     int     rc;
 
@@ -27023,7 +27019,7 @@ static bool filterTestGroup(MprTestGroup *gp)
         pattern = mprGetNextItem(testFilter, &next);
         while (pattern) {
             len = min(slen(pattern), slen(gp->fullName));
-            if (sncasecmp(gp->fullName, pattern, len) == 0) {
+            if (sncaselesscmp(gp->fullName, pattern, len) == 0) {
                 break;
             }
             pattern = mprGetNextItem(testFilter, &next);
@@ -27063,7 +27059,7 @@ static bool filterTestCast(MprTestGroup *gp, MprTestCase *tc)
         pattern = mprGetNextItem(testFilter, &next);
         while (pattern) {
             len = min(slen(pattern), slen(fullName));
-            if (sncasecmp(fullName, pattern, len) == 0) {
+            if (sncaselesscmp(fullName, pattern, len) == 0) {
                 break;
             }
             pattern = mprGetNextItem(testFilter, &next);
@@ -32322,13 +32318,13 @@ static cchar *getHive(cchar *keyPath, HKEY *hive)
     if (cp == 0 || *cp == '\0') {
         return 0;
     }
-    if (!scasecmp(key, "HKEY_LOCAL_MACHINE") || !scasecmp(key, "HKLM")) {
+    if (!scaselesscmp(key, "HKEY_LOCAL_MACHINE") || !scaselesscmp(key, "HKLM")) {
         *hive = HKEY_LOCAL_MACHINE;
-    } else if (!scasecmp(key, "HKEY_CURRENT_USER") || !scasecmp(key, "HKCU")) {
+    } else if (!scaselesscmp(key, "HKEY_CURRENT_USER") || !scaselesscmp(key, "HKCU")) {
         *hive = HKEY_CURRENT_USER;
-    } else if (!scasecmp(key, "HKEY_USERS")) {
+    } else if (!scaselesscmp(key, "HKEY_USERS")) {
         *hive = HKEY_USERS;
-    } else if (!scasecmp(key, "HKEY_CLASSES_ROOT")) {
+    } else if (!scaselesscmp(key, "HKEY_CLASSES_ROOT")) {
         *hive = HKEY_CLASSES_ROOT;
     } else {
         return 0;

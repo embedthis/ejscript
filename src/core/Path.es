@@ -171,26 +171,6 @@ module ejs {
             return null
         }
 
-        /*
-            DEPRECATED UNUSED
-            Get a list of files in a directory or subdirectory.
-            Use the $glob method for shell style wild card support.
-            @param options If set to true, then files will include sub-directories in the returned list of files.
-            @option basenames Set to true to include only the basename portion of filenames in the results. If selected,
-                any "include" or "exclude" patterns will only match the basename and not the full path.
-            @option depthFirst Do a depth first traversal. Default is in-order traversal.
-            @option descend Descend into subdirectories
-            @option exclude Regular expression pattern of files to exclude from the results. Matches the entire path unless
-                "basenames" is selected.
-            @option files Include only files in the results. The default is to include directories.
-            @option hidden Show hidden files starting with "."
-            @option include Regular expression pattern of files to include in the results. Matches the entire returned path
-                unless "basenames" is selected.
-            @option missing Report missing directories by throwing an exception.
-            @return An Array of Path objects for each file in the directory.
-        native function files(options: Object? = null): Array 
-         */
-        
         /**
             Do Posix glob style file matching.
             @param patterns Pattern to match files. This can be a String, Path or array of String/Paths. 

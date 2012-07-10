@@ -1204,9 +1204,9 @@ static EjsObj *req_setHeader(Ejs *ejs, EjsRequest *req, int argc, EjsObj **argv)
     value = (EjsString*) argv[1];
     overwrite = argc < 3 || argv[2] == ESV(true);
     createResponseHeaders(ejs, req);
-    if (scasematch(key, "content-length")) {
+    if (scaselessmatch(key, "content-length")) {
         httpSetContentLength(req->conn, ejsGetInt(ejs, value));
-    } else if (scasematch(key, "x-chunk-size")) {
+    } else if (scaselessmatch(key, "x-chunk-size")) {
         /* Just until we have filters - to disable chunk filtering */
         httpSetChunkSize(req->conn, ejsGetInt(ejs, value));
     }
