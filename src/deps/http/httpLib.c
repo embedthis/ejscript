@@ -8612,7 +8612,7 @@ void httpMapFile(HttpConn *conn, HttpRoute *route)
     info = &tx->fileInfo;
     mprGetPathInfo(tx->filename, info);
     if (info->valid) {
-        tx->etag = sfmt("\"%x-%Lx-%Lx\"", info->inode, info->size, info->mtime);
+        tx->etag = sfmt("\"%Lx-%Lx-%Lx\"", (int64) info->inode, (int64) info->size, (int64) info->mtime);
     }
     LOG(7, "mapFile uri \"%s\", filename: \"%s\", extension: \"%s\"", rx->uri, tx->filename, tx->ext);
 }
@@ -10863,7 +10863,7 @@ MprHash *httpGetOptions(cchar *options)
 }
 
 
-cchar *httpGetOption(MprHash *options, cchar *field, cchar *defaultValue)
+void *httpGetOption(MprHash *options, cchar *field, cchar *defaultValue)
 {
     MprKey      *kp;
     cchar       *value;
@@ -10875,7 +10875,7 @@ cchar *httpGetOption(MprHash *options, cchar *field, cchar *defaultValue)
     } else {
         value = kp->data;
     }
-    return value;
+    return (void*) value;
 }
 
 
