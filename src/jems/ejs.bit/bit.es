@@ -2868,7 +2868,12 @@ global.NN = item.ns
         bit.dir.bits = bit.dir.src.join('bits/standard.bit').exists ? 
             bit.dir.src.join('bits') : Config.Bin.join('bits').portable
         bit.dir.top = '.'
-        bit.dir.programs = (kind == 'windows') ? programFiles() : Path('/usr/local/bin')
+        if (kind == 'windows') {
+            bit.dir.programs = programFiles()
+            bit.dir.programFiles = Path(bit.dir.programs.name.replace(' (x86)', ''))
+        } else {
+            bit.dir.programs = Path('/usr/local/bin')
+        }
         let profile = options.profile || 'debug'
         bit.platform = { 
             name: platform, 
