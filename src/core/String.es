@@ -276,7 +276,7 @@ module ejs {
             @return Returns a new string.
             @spec ejs
          */
-        native function replace(pattern: Object, replacement: Object, flags: String? = null): String
+        native function replace(pattern: Object, replacement: Object): String
 
         /**
             Reverse a string. 
