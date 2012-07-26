@@ -573,6 +573,25 @@ module ejs {
         }
 
         /**
+            Search and replace. Search for the given pattern which can be either a string or a regular expression 
+            and replace it with the replace text. If the pattern is a string, only the first occurrence is replaced.
+            @param pattern The regular expression or string pattern to search for.
+            @param replacement The string to replace the match with or a function to generate the replacement text. The
+                replacement string can contain special replacement patterns: "$$" inserts a "\$", "\$&" inserts the
+                matched substring, "\$`" inserts the portion that preceeds the matched substring, "\$'" inserts the
+                portion that follows the matched substring, and "\$N" inserts the Nth parenthesized substring.
+                The replacement parameter can also be a function which will be invoked and the function return value 
+                will be used as the resplacement text. The function will be invoked multiple times for each match to be 
+                replaced if the regular expression is global. The function will be invoked with the signature:
+
+                function (matched, submatch_1, submatch_2, ..., matched_offset, original_string)
+            @return Returns a new string.
+            @spec ejs
+         */
+        function replace(pattern, replacement): Path
+            Path(name.replace(pattern, replacement))
+
+        /**
             Resolve paths in the neighborhood of this path. Resolve operates like join, except that it joins the 
             given paths to the directory portion of the current ("this") path. For example: 
             Path("/usr/bin/ejs/bin").resolve("lib") will return "/usr/lib/ejs/lib". i.e. it will return the
