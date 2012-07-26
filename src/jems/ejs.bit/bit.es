@@ -561,6 +561,18 @@ public class Bit {
                 f.writeLine('#define BIT_FEATURE_' + pname.toUpper() + ' 0')
             }
         }
+        for (let [pname, pack] in bit.packs) {
+            if (pack.enable && pack.definitions) {
+                for each (define in pack.definitions) {
+                    if (define.match(/-D(.*)=(.*)/)) {
+                        let [key,value] = define.match(/-D(.*)=(.*)/).slice(1)
+                        f.writeLine('#define ' + key + ' ' + value)
+                    } else {
+                        f.writeLine('#define ' + define.trimStart('-D'))
+                    }
+                }
+            }
+        }
     }
 
     /*
