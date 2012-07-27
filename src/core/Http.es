@@ -527,7 +527,7 @@ FUTURE & KEEP
 
         /**
             Reset the Http object to prepare for a new request. This will discard existing headers and security 
-            credentials. It will not close the connection to TCP/IP Keep-Alive will be maintained.
+            credentials. It will not close the connection to TCP/IP and thus Keep-Alive will be maintained.
          */
         native function reset(): Void
 
