@@ -875,12 +875,8 @@ static DH       *get_dh1024();
  */
 int mprCreateOpenSslModule()
 {
-    MprSocketService    *ss;
-    RandBuf             randBuf;
-    int                 i;
-
-    ss = MPR->socketService;
-    mprAssert(ss);
+    RandBuf     randBuf;
+    int         i;
 
     /*
         Get some random data
@@ -1214,15 +1210,12 @@ static int listenOss(MprSocket *sp, cchar *host, int port, int flags)
  */
 static int upgradeOss(MprSocket *sp, MprSsl *ssl, int server)
 {
-    MprSocketService    *ss;
-    MprOpenSocket       *osp;
-    MprOpenSsl          *ossl;
-    char                ebuf[MPR_MAX_STRING];
-    ulong               error;
-    int                 rc;
+    MprOpenSocket   *osp;
+    MprOpenSsl      *ossl;
+    char            ebuf[MPR_MAX_STRING];
+    ulong           error;
+    int             rc;
 
-    ss = sp->service;
-    mprAssert(ss);
     mprAssert(sp);
 
     if (ssl == 0) {
@@ -1451,9 +1444,6 @@ static int verifyX509Certificate(int ok, X509_STORE_CTX *xContext)
     if (X509_NAME_oneline(X509_get_subject_name(cert), subject, sizeof(subject) - 1) < 0) {
         ok = 0;
     }
-    /*
-        TODO -- should compare subject name and host name. Need smart compare.
-     */
     if (X509_NAME_oneline(X509_get_issuer_name(xContext->current_cert), issuer, sizeof(issuer) - 1) < 0) {
         ok = 0;
     }

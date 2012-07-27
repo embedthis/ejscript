@@ -1471,6 +1471,7 @@ static void manageHttp(EjsHttp *http, int flags)
         mprMark(http->limits);
         mprMark(http->responseCache);
         mprMark(http->conn);
+        mprMark(http->ssl);
         mprMark(http->requestContent);
         mprMark(http->responseContent);
         mprMark(http->uri);

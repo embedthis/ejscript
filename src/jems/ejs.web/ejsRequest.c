@@ -1204,6 +1204,12 @@ static EjsObj *req_setHeader(Ejs *ejs, EjsRequest *req, int argc, EjsObj **argv)
     value = (EjsString*) argv[1];
     overwrite = argc < 3 || argv[2] == ESV(true);
     createResponseHeaders(ejs, req);
+    if (scaselessmatch(key, "content-length")) {
+        httpSetContentLength(req->conn, ejsGetInt(ejs, value));
+    } else if (scaselessmatch(key, "x-chunk-size")) {
+        /* Just until we have filters - to disable chunk filtering */
+        httpSetChunkSize(req->conn, ejsGetInt(ejs, value));
+    }
     if (!overwrite) {
         if ((old = ejsGetPropertyByName(ejs, req->responseHeaders, EN(key))) != 0) {
             value = ejsSprintf(ejs, "%@, %@", old, value);
@@ -1211,10 +1217,6 @@ static EjsObj *req_setHeader(Ejs *ejs, EjsRequest *req, int argc, EjsObj **argv)
     }
     ejsSetPropertyByName(ejs, req->responseHeaders, EN(key), value);
 
-    /* Just until we have filters - to disable chunk filtering */
-    if (strcmp(key, "x-chunk-size") == 0) {
-        httpSetChunkSize(req->conn, ejsGetInt(ejs, value));
-    }
     return 0;
 }
 

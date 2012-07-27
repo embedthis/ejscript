@@ -357,12 +357,6 @@ static EjsObj *hs_secure(Ejs *ejs, EjsHttpServer *sp, int argc, EjsObj **argv)
     if (sp->ssl == 0 && ((sp->ssl = mprCreateSsl(sp)) == 0)) {
         return 0;
     }
-#if UNUSED
-    if (httpLoadSsl(ejs->http) < 0) {
-        ejsThrowStateError(ejs, "Can't load SSL provider");
-        return 0;
-    }
-#endif
     if (!ejsIs(ejs, argv[0], Null)) {
         mprSetSslKeyFile(sp->ssl, ejsToMulti(ejs, argv[0]));
     }
@@ -381,19 +375,19 @@ static EjsObj *hs_secure(Ejs *ejs, EjsHttpServer *sp, int argc, EjsObj **argv)
             } else if (*token == '+') {
                 token++;
             }
-            if (scasecmp(token, "SSLv2") == 0) {
+            if (scaselesscmp(token, "SSLv2") == 0) {
                 protoMask &= ~(MPR_PROTO_SSLV2 & ~mask);
                 protoMask |= (MPR_PROTO_SSLV2 & mask);
 
-            } else if (scasecmp(token, "SSLv3") == 0) {
+            } else if (scaselesscmp(token, "SSLv3") == 0) {
                 protoMask &= ~(MPR_PROTO_SSLV3 & ~mask);
                 protoMask |= (MPR_PROTO_SSLV3 & mask);
 
-            } else if (scasecmp(token, "TLSv1") == 0) {
+            } else if (scaselesscmp(token, "TLSv1") == 0) {
                 protoMask &= ~(MPR_PROTO_TLSV1 & ~mask);
                 protoMask |= (MPR_PROTO_TLSV1 & mask);
 
-            } else if (scasecmp(token, "ALL") == 0) {
+            } else if (scaselesscmp(token, "ALL") == 0) {
                 protoMask &= ~(MPR_PROTO_ALL & ~mask);
                 protoMask |= (MPR_PROTO_ALL & mask);
             }
@@ -403,9 +397,6 @@ static EjsObj *hs_secure(Ejs *ejs, EjsHttpServer *sp, int argc, EjsObj **argv)
     if (argc >= 4 && ejsIs(ejs, argv[3], Array)) {
         mprSetSslCiphers(sp->ssl, ejsToMulti(ejs, argv[3]));
     }
-#if UNUSED
-    mprConfigureSsl(sp->ssl);
-#endif
 #else
     ejsThrowReferenceError(ejs, "SSL support was not included in the build");
 #endif
@@ -597,12 +588,6 @@ static void stateChangeNotifier(HttpConn *conn, int state, int notifyFlags)
         break;
             
     case HTTP_STATE_FIRST:
-#if UNUSED
-        if (!(conn->rx->flags & (HTTP_OPTIONS | HTTP_TRACE))) {
-            //  MOB - is this required with new routing?
-            conn->tx->handler = (conn->error) ? conn->http->passHandler : conn->http->ejsHandler;
-        }
-#endif
         break;
 
     case HTTP_STATE_COMPLETE:

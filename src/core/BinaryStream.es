@@ -152,7 +152,7 @@ module ejs {
             @returns a boolean. Returns null on EOF.
             @throws IOError if an I/O error occurs.
          */
-        function readBoolean(): Boolean
+        function readBoolean(): Boolean?
             inbuf.readBoolean()
 
         /** 
@@ -160,7 +160,7 @@ module ejs {
             @returns a byte. Returns -1 on EOF.
             @throws IOError if an I/O error occurs.
          */
-        function readByte(): Number
+        function readByte(): Number?
             inbuf.readByte()
 
         /** 
@@ -168,7 +168,7 @@ module ejs {
             @returns a date
             @throws IOError if an I/O error occurs or premature EOF
          */
-        function readDate(): Date
+        function readDate(): Date?
             inbuf.readDate()
 
         /** 
@@ -176,7 +176,7 @@ module ejs {
             @returns a double
             @throws IOError if an I/O error occurs or premature EOF
          */
-        function readDouble(): Double
+        function readDouble(): Double?
             inbuf.readDouble()
 
         /** 
@@ -184,7 +184,7 @@ module ejs {
             @returns an 32-bitinteger
             @throws IOError if an I/O error occurs or premature EOF
          */
-        function readInteger(): Number
+        function readInteger(): Number?
             inbuf.readInteger()
 
         /** 
@@ -192,7 +192,7 @@ module ejs {
             @returns a 64-bit long number
             @throws IOError if an I/O error occurs or premature EOF
          */
-        function readLong(): Number
+        function readLong(): Number?
             inbuf.readInteger()
 
         /** 
@@ -201,7 +201,7 @@ module ejs {
             @returns a string
             @throws IOError if an I/O error occurs or premature EOF.
          */
-        function readString(count: Number = -1): String 
+        function readString(count: Number = -1): String ?
             inbuf.readString(count)
 
         /** 
@@ -209,10 +209,10 @@ module ejs {
             @returns an XML document
             @throws IOError if an I/O error occurs or premature EOF
          */
-        function readXML(): XML {
+        function readXML(): XML? {
             var data: String = ""
             while (1) {
-                var s: String = inbuf.readString()
+                var s: String? = inbuf.readString()
                 if (s == null && data.length == 0) {
                     return null
                 }

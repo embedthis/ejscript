@@ -5,7 +5,7 @@
 pack('winsdk', 'Windows SDK')
 let search = bit.packs.winsdk.path ? 
     bit.packs.winsdk.path : 
-    bit.dir.programs.files('Microsoft SDKs/Windows/*').sort().reverse()
+    bit.dir.programFiles.files('Microsoft SDKs/Windows/*').sort().reverse()
 let wvar: Path = '$(SDK)'
 let winsdk: Path = wvar
 if (Config.OS != 'windows') {

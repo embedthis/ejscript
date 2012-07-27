@@ -212,29 +212,29 @@ module ejs {
         # FUTURE
         native function inScopeNamespaces(): Array
 
+        //  MOB TODO - if marker is null. Insert at beginning or end?
         /**
             Insert a child object into an XML object immediately after a specified marker object. If the marker object 
             is null then the new object is inserted at the end. If the marker object is not found then the insertion 
             is not made.
-            TODO - if marker is null. Insert at beginning or end?
             @param marker Insert the new element before this one.
             @param child Child element to be inserted.
             @return This XML object - modified or not.
          */
         # FUTURE
-        native function insertChildAfter(marker: Object, child: Object): XML
+        native function insertChildAfter(marker: Object?, child: Object): XML
 
+            // MOB - if marker is null. Insert at beginning or end?
         /**
             Insert a child object into an XML object immediately before a specified marker object. If the marker 
             object is null then the new object is inserted at the end. If the marker object is not found then the
             insertion is not made.
-            TODO - if marker is null. Insert at beginning or end?
             @param marker Insert the new element before this one.
             @param child Child element to be inserted.
             @return This XML object - modified or not.
          */
         # FUTURE
-        native function insertChildBefore(marker: Object, child: Object): XML
+        native function insertChildBefore(marker: Object?, child: Object): XML
 
         /**
             Return the length of an XML object in elements. NOTE: this is a method not a property.

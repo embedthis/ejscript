@@ -236,7 +236,7 @@ static EjsUri *uri_basename(Ejs *ejs, EjsUri *up, int argc, EjsObj **argv)
     np = cloneUri(ejs, up, 0);
     path = np->uri->path;
     if (path == 0) {
-        return ESV(empty);
+        return ESV(null);
     }
     len = (int) strlen(path);
     if (path[len - 1] == '/') {
@@ -329,7 +329,7 @@ static EjsUri *uri_dirname(Ejs *ejs, EjsUri *up, int argc, EjsObj **argv)
     np = cloneUri(ejs, up, 0);
     path = np->uri->path;
     if (path == 0) {
-        return ESV(empty);
+        return ESV(null);
     }
     len = (int) strlen(path);
     if (path[len - 1] == '/') {
@@ -371,25 +371,33 @@ static EjsString *uri_encodeComponent(Ejs *ejs, EjsObj *unused, int argc, EjsObj
 
 /*  
     Get the Uri extension
-    static function get extension(): String
+    static function get extension(): String?
  */
 static EjsString *uri_extension(Ejs *ejs, EjsUri *up, int argc, EjsObj **argv)
 {
+    if (up->uri->ext == 0) {
+        return ESV(null);
+    }    
     return ejsCreateStringFromAsc(ejs, up->uri->ext);
 }
 
 
 /*  
     Set the Uri extension
-    static function set extension(ext: String): Void
+    static function set extension(ext: String?): Void
  */
 static EjsObj *uri_set_extension(Ejs *ejs, EjsUri *up, int argc, EjsObj **argv)
 {
     HttpUri     *uri;
 
     uri = up->uri;
-    uri->ext = ejsToMulti(ejs, argv[0]);
-    uri->path = sjoin(mprTrimPathExt(uri->path), uri->ext, NULL);
+    if (argv[0] == ESV(null)) {
+        uri->ext = 0;
+        uri->path = mprTrimPathExt(uri->path);
+    } else {
+        uri->ext = ejsToMulti(ejs, argv[0]);
+        uri->path = sjoin(mprTrimPathExt(uri->path), uri->ext, NULL);
+    }
     return 0;
 }
 
@@ -456,7 +464,7 @@ static EjsBoolean *uri_hasScheme(Ejs *ejs, EjsUri *up, int argc, EjsObj **argv)
 
 /*  
     Get the host portion
-    static function get host(): String
+    static function get host(): String?
  */
 static EjsString *uri_host(Ejs *ejs, EjsUri *up, int argc, EjsObj **argv)
 {
@@ -469,11 +477,11 @@ static EjsString *uri_host(Ejs *ejs, EjsUri *up, int argc, EjsObj **argv)
 
 /*  
     Set the host portion
-    static function set host(name: String): Void
+    static function set host(name: String?): Void
  */
 static EjsObj *uri_set_host(Ejs *ejs, EjsUri *up, int argc, EjsObj **argv)
 {
-    up->uri->host = ejsToMulti(ejs, argv[0]);
+    up->uri->host = (argv[0] == ESV(null)) ? 0 : ejsToMulti(ejs, argv[0]);
     return 0;
 }
 
@@ -566,10 +574,13 @@ static EjsUri *uri_local(Ejs *ejs, EjsUri *up, int argc, EjsObj **argv)
 
 /*  
     Get the mimeType
-    function mimeType(): String
+    function mimeType(): String?
  */
 static EjsString *uri_mimeType(Ejs *ejs, EjsUri *up, int argc, EjsObj **argv)
 {
+    if (up->uri->ext == 0) {
+        return ESV(null);
+    }
     return ejsCreateStringFromAsc(ejs, mprLookupMime(NULL, up->uri->ext));
 }
 
@@ -589,36 +600,46 @@ static EjsUri *uri_normalize(Ejs *ejs, EjsUri *up, int argc, EjsObj **argv)
 
 /*  
     Get the path portion
-    static function get path(): String
+    static function get path(): String?
  */
 static EjsString *uri_path(Ejs *ejs, EjsUri *up, int argc, EjsObj **argv)
 {
+    if (up->uri->path == 0) {
+        return ESV(null);
+    }    
     return ejsCreateStringFromAsc(ejs, up->uri->path);
 }
 
 
 /*  
     Set the path portion
-    static function set path(path: String): Void
+    static function set path(path: String?): Void
  */
 static EjsObj *uri_set_path(Ejs *ejs, EjsUri *up, int argc, EjsObj **argv)
 {
-    up->uri->path = httpNormalizeUriPath(ejsToMulti(ejs, argv[0]));
-    up->uri->ext = mprGetPathExt(up->uri->path);
+    if (argv[0] == ESV(null)) {
+        up->uri->path = 0;
+        up->uri->ext = 0;
+    } else {
+        up->uri->path = httpNormalizeUriPath(ejsToMulti(ejs, argv[0]));
+        up->uri->ext = mprGetPathExt(up->uri->path);
+    }
     return 0;
 }
 
 
 /*  
     Get the port portion
-    static function get port(): Number
+    static function get port(): Number?
  */
 static EjsNumber *uri_port(Ejs *ejs, EjsUri *up, int argc, EjsObj **argv)
 {
     HttpUri     *uri;
     
     uri = up->uri;
-    if (uri->port == 0) {
+    if (uri->port <= 0) {
+        return ESV(null);
+#if UNUSED
         if (uri->host == 0) {
             return ESV(null);
         }
@@ -627,6 +648,7 @@ static EjsNumber *uri_port(Ejs *ejs, EjsUri *up, int argc, EjsObj **argv)
         } else if (uri->scheme && strcmp(uri->scheme, "https") == 0) {
             return ejsCreateNumber(ejs, 443);
         }
+#endif
     }
     return ejsCreateNumber(ejs, up->uri->port);
 }
@@ -634,11 +656,35 @@ static EjsNumber *uri_port(Ejs *ejs, EjsUri *up, int argc, EjsObj **argv)
 
 /*  
     Set the port portion
-    static function set port(port: Number): Void
+    static function set port(port: Number?): Void
  */
 static EjsObj *uri_set_port(Ejs *ejs, EjsUri *up, int argc, EjsObj **argv)
 {
-    up->uri->port = ejsGetInt(ejs, argv[0]);
+    up->uri->port = (argv[0] == ESV(null)) ? 0 : ejsGetInt(ejs, argv[0]);
+    return 0;
+}
+
+
+/*
+    Get the reference portion
+    static function get reference(): String?
+ */
+static EjsString *uri_reference(Ejs *ejs, EjsUri *up, int argc, EjsObj **argv)
+{
+    if (up->uri->reference == 0) {
+        return ESV(null);
+    }    
+    return ejsCreateStringFromAsc(ejs, up->uri->reference);
+}
+
+
+/*  
+    Set the reference portion
+    static function set reference(reference: String?): Void
+ */
+static EjsObj *uri_set_reference(Ejs *ejs, EjsUri *up, int argc, EjsObj **argv)
+{
+    up->uri->reference = (argv[0] == ESV(null)) ? 0 : ejsToMulti(ejs, argv[0]);
     return 0;
 }
 
@@ -704,7 +750,7 @@ static EjsUri *uri_relative(Ejs *ejs, EjsUri *up, int argc, EjsObj **argv)
 
 /*  
     Get the scheme portion
-    static function get scheme(): String
+    static function get scheme(): String?
  */
 static EjsString *uri_scheme(Ejs *ejs, EjsUri *up, int argc, EjsObj **argv)
 {
@@ -717,21 +763,24 @@ static EjsString *uri_scheme(Ejs *ejs, EjsUri *up, int argc, EjsObj **argv)
 
 /*  
     Set the scheme portion
-    static function set scheme(scheme: String): Void
+    static function set scheme(scheme: String?): Void
  */
 static EjsObj *uri_set_scheme(Ejs *ejs, EjsUri *up, int argc, EjsObj **argv)
 {
-    up->uri->scheme = ejsToMulti(ejs, argv[0]);
+    up->uri->scheme = (argv[0] == ESV(null)) ? 0 : ejsToMulti(ejs, argv[0]);
     return 0;
 }
 
 
 /*  
     Get the query portion
-    static function get query(): String
+    static function get query(): String?
  */
 static EjsString *uri_query(Ejs *ejs, EjsUri *up, int argc, EjsObj **argv)
 {
+    if (up->uri->query == 0) {
+        return ESV(null);
+    }    
     return ejsCreateStringFromAsc(ejs, up->uri->query);
 }
 
@@ -742,34 +791,7 @@ static EjsString *uri_query(Ejs *ejs, EjsUri *up, int argc, EjsObj **argv)
  */
 static EjsObj *uri_set_query(Ejs *ejs, EjsUri *up, int argc, EjsObj **argv)
 {
-    cchar    *value;
-
-    value = ejsIs(ejs, argv[0], Null) ? "" : ejsToMulti(ejs, argv[0]);
-    up->uri->query = sclone(value);
-    return 0;
-}
-
-
-/*  
-    Get the reference portion
-    static function get reference(): String
- */
-static EjsString *uri_reference(Ejs *ejs, EjsUri *up, int argc, EjsObj **argv)
-{
-    return ejsCreateStringFromAsc(ejs, up->uri->reference);
-}
-
-
-/*  
-    Set the reference portion
-    static function set reference(reference: String): Void
- */
-static EjsObj *uri_set_reference(Ejs *ejs, EjsUri *up, int argc, EjsObj **argv)
-{
-    cchar    *value;
-
-    value = ejsIs(ejs, argv[0], Null) ? "" : ejsToMulti(ejs, argv[0]);
-    up->uri->reference = sclone(value);
+    up->uri->query = (argv[0] == ESV(null)) ? 0 : ejsToMulti(ejs, argv[0]);
     return 0;
 }
 

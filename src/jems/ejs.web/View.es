@@ -98,7 +98,7 @@ module ejs.web {
         private var connectors: Object = {}
 
         /* Current record being used inside a form */
-        private var currentRecord: Object
+        private var currentRecord: Object?
 
         /* Data value presentation formats */
         public var formats: Object
@@ -294,7 +294,7 @@ MOB - review?
                 <% flash() %>
                 <% flash(["error", "warning"]) %>
          */
-        function flash(kinds: Object = null, options: Object = {}): Void {
+        function flash(kinds: Object? = null, options: Object = {}): Void {
             options = getOptions(options)
             let cflash ||= request.flash
             if (cflash == null || cflash.length == 0) {
@@ -809,7 +809,7 @@ MOB -- much more doc here
                 data type.
             @return The formatted data.
          */
-        function formatValue(value: Object, options: Object): String {
+        function formatValue(value: Object?, options: Object): String {
             if (value == undefined) {
                 value = ""
             }
@@ -978,7 +978,7 @@ MOB -- much more doc here
             @deprecated 2.0.0
          */
         # Config.Legacy
-        function makeUrl(action: String, id: String = null, options: Object = {}, query: Object = null): String 
+        function makeUrl(action: String, id: String? = null, options: Object = {}, query: Object? = null): String
             request.makeUrl(action, id, options, query)
 
         /** 

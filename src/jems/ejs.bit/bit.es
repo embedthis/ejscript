@@ -561,6 +561,18 @@ public class Bit {
                 f.writeLine('#define BIT_FEATURE_' + pname.toUpper() + ' 0')
             }
         }
+        for (let [pname, pack] in bit.packs) {
+            if (pack.enable && pack.definitions) {
+                for each (define in pack.definitions) {
+                    if (define.match(/-D(.*)=(.*)/)) {
+                        let [key,value] = define.match(/-D(.*)=(.*)/).slice(1)
+                        f.writeLine('#define ' + key + ' ' + value)
+                    } else {
+                        f.writeLine('#define ' + define.trimStart('-D'))
+                    }
+                }
+            }
+        }
     }
 
     /*
@@ -1021,7 +1033,7 @@ public class Bit {
         }
     }
 
-    function findStart(): Path {
+    function findStart(): Path? {
         let lp = START
         if (lp.exists) {
             return lp
@@ -2868,7 +2880,12 @@ global.NN = item.ns
         bit.dir.bits = bit.dir.src.join('bits/standard.bit').exists ? 
             bit.dir.src.join('bits') : Config.Bin.join('bits').portable
         bit.dir.top = '.'
-        bit.dir.programs = (kind == 'windows') ? programFiles() : Path('/usr/local/bin')
+        if (kind == 'windows') {
+            bit.dir.programs = programFiles()
+            bit.dir.programFiles = Path(bit.dir.programs.name.replace(' (x86)', ''))
+        } else {
+            bit.dir.programs = Path('/usr/local/bin')
+        }
         let profile = options.profile || 'debug'
         bit.platform = { 
             name: platform, 

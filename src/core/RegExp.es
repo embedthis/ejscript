@@ -111,7 +111,7 @@ module ejs {
             Substring last matched. Set to the matched string or null if there were no matches.
             @spec ejs
          */
-        native function get matched(): String
+        native function get matched(): String?
 
         /**
             Replace all the matches. This call replaces all matching substrings with the corresponding array element.

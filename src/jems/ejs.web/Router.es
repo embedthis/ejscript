@@ -389,7 +389,7 @@ module ejs.web {
             @example:
                 r.add("/User/{action}", {controller: "User"})
          */
-        public function add(template: Object, options: Object = null): Route {
+        public function add(template: Object, options: Object? = null): Route {
             let r = new Route(template, options, this)
             insertRoute(r)
             return r

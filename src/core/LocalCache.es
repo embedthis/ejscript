@@ -26,7 +26,7 @@ module ejs {
             @option memory Maximum memory to use for keys and data
             @option trace Trace I/O operations for debug
          */
-        native function LocalCache(options: Object = null)
+        native function LocalCache(options: Object? = null)
 
         /**
             Destroy the cache
@@ -74,14 +74,14 @@ module ejs {
                 specified "version == true", return an object with the properties "data" for the key data and 
                 "version" for the CAS version identifier.
          */
-        native function read(key: String~, options: Object = null): String?
+        native function read(key: String~, options: Object? = null): String?
 
         /**
             Remove the key and associated value from the cache
             @param key Key value to remove. If key is null, then all keys are removed.
             @return True if the key was removed.
          */
-        native function remove(key: String): Boolean
+        native function remove(key: String?): Boolean
 
         /**
             Update the cache cache resource limits. The supplied limit fields are updated.
@@ -111,7 +111,7 @@ module ejs {
             @return The number of bytes written, returns null if the write failed due to an updated version identifier for
                 the key.
          */
-        native function write(key: String~, value: String~, options: Object = null): Number
+        native function write(key: String~, value: String~, options: Object? = null): Number
     }
 }
 

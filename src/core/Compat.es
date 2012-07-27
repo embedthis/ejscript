@@ -15,7 +15,7 @@ module ejs {
         GC.run 
 
     /** @hide */
-    function readFile(path: String, encoding: String? = null): String
+    function readFile(path: String, encoding: String? = null): String?
         Path(path).readString()
 
 //    //  Rhino

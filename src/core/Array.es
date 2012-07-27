@@ -115,7 +115,7 @@ module ejs {
             @return The matched item
             @spec ejs
          */
-        function find(match: Function): Object {
+        function find(match: Function): Object? {
             for (let i: Number in this) {
                 if (match(this[i], i, this)) {
                     return this[i]
@@ -249,7 +249,7 @@ module ejs {
             Remove and return the last value in the array.
             @return The last element in the array. Returns undefined if the array is empty
          */
-        native function pop(): Object 
+        native function pop(): Object?
 
         /**
             Append items to the end of the array.

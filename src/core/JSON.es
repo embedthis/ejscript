@@ -46,7 +46,7 @@ module ejs {
                 NOTE: The indent argument is not yet implemented.
             @return A JSON string representing the object
          */
-        static function stringify(obj: Object, replacer: Object = null, indent: Object = null): String
+        static function stringify(obj: Object, replacer: Object? = null, indent: Object? = null): String
             serialize(obj, {replacer: replacer, indent: indent})
     }
 
@@ -59,7 +59,7 @@ module ejs {
         @throws IOError If the object could not be reconstructed from the string.
         @spec ejs
      */
-    native function deserialize(str: String): Object
+    native function deserialize(str: String): Object?
 
     //  TODO -- change pretty to format: "pretty" | "compact"
     //  TODO - change to includeBases (deprecated baseClasses)

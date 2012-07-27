@@ -391,7 +391,7 @@ FUTURE & KEEP
             @param key Header key value to lookup. The lookup is caseless, i.e. the key can be any case of mix of case.
             @return The header field value as a string or null if not known.
          */
-        native function header(key: String): String
+        native function header(key: String): String?
 
         /** 
             Response headers. Use $header() to retrieve a single header value.
@@ -418,7 +418,7 @@ FUTURE & KEEP
             When the response content was last modified. Set to the the value of the response Http Last-Modified header.
             Set to null if not known.
          */
-        native function get lastModified(): Date
+        native function get lastModified(): Date?
 
         /**
             Resource limits for requests.
@@ -476,7 +476,7 @@ FUTURE & KEEP
             @param data Data objects to send with the post request. Data is written raw and is not encoded or converted. 
             @throws IOError if the request cannot be issued to the remote server.
          */
-        native function post(uri: Uri, ...data): Void
+        native function post(uri: Uri?, ...data): Void
 
         /** 
             Commence a PUT request for the current uri. See $connect() for connection details.
@@ -490,7 +490,7 @@ FUTURE & KEEP
             @param data Optional object hash of key value pairs to use as the post data.
             @throws IOError if the request cannot be issued to the remote server.
          */
-        native function put(uri: Uri, ...data): Void
+        native function put(uri: Uri?, ...data): Void
 
         /** 
             @duplicate Stream.read
@@ -503,7 +503,7 @@ FUTURE & KEEP
             @returns a string of $count characters beginning at the start of the response data.
             @throws IOError if an I/O error occurs.
          */
-        native function readString(count: Number = -1): String
+        native function readString(count: Number = -1): String?
 
         /** 
             Read the request response as an array of lines. This call will block and should not be used in async mode.
@@ -511,7 +511,7 @@ FUTURE & KEEP
             @returns an array of strings
             @throws IOError if an I/O error occurs.
          */
-        function readLines(count: Number = -1): Array {
+        function readLines(count: Number = -1): Array? {
             let stream: TextStream = TextStream(this)
             result = stream.readLines()
             return result
@@ -522,7 +522,7 @@ FUTURE & KEEP
             @returns the response content as an XML object 
             @throws IOError if an I/O error occurs.
          */
-        function readXml(): XML
+        function readXml(): XML?
             XML(response)
 
         /**
@@ -553,8 +553,9 @@ FUTURE & KEEP
             Ejscript sessions are identified by a client cookie which when transmitted with subsequent requests will 
             permit the server to locate the relevant session state store for the server-side application. 
             Use: setCookie(cookie) to transmit the cookie on subsquent requests.
+            Will be a string or null if there is no session cookie defined.
          */
-        function get sessionCookie() {
+        function get sessionCookie(): String? {
             let cookie = header("Set-Cookie")
             if (cookie) {
                 return cookie.match(/(-ejs-session-=.*);/)[1]
@@ -608,7 +609,7 @@ FUTURE & KEEP
             Http response status code from the Http response status line, e.g. 200. Set to null if unknown.
             This command will block until the request completes.
          */
-        native function get status(): Number
+        native function get status(): Number?
 
         /** 
             Descriptive status message for the Http response. This message may come from either the HTTP response status
@@ -658,7 +659,7 @@ FUTURE & KEEP
                 files = { file1: "a.txt, file2: "b.txt" }
                 http.upload(URL, files, fields)
          */
-        function upload(uri: String, files: Object, fields: Object = null): Void {
+        function upload(uri: String, files: Object, fields: Object? = null): Void {
             reset()
             let boundary = "<<Upload Boundary - " + md5(Date.now()) + ">>"
             setHeader("Content-Type", "multipart/form-data; boundary=" + boundary)
@@ -701,7 +702,7 @@ FUTURE & KEEP
         /** 
             The current Uri for this Http object. The Uri is used for the request URL when making a $connect call.
          */
-        native function get uri(): Uri
+        native function get uri(): Uri?
         native function set uri(newUri: Uri): Void
 
         /**
@@ -793,7 +794,7 @@ FUTURE & KEEP
             @deprecated 1.0.0
          */
         # Config.Legacy
-        function get contentEncoding(): String
+        function get contentEncoding(): String?
             header("content-encoding")
 
         /** 

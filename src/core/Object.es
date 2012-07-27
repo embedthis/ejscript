@@ -33,7 +33,7 @@ module ejs {
             @param properties Properties for the new object
             @return The created object
          */
-        static native function create(prototype: Object, properties: Object = undefined): Object 
+        static native function create(prototype: Object, properties: Object? = undefined): Object 
 
         /** 
             Define or redefine a property on the given object
@@ -94,7 +94,7 @@ module ejs {
             @param prop Property name
             @return The a property descriptor object. Return null if the property is not found
          */
-        static native function getOwnPropertyDescriptor(obj: Object, prop: String): Object
+        static native function getOwnPropertyDescriptor(obj: Object, prop: String): Object?
 
 //  MOB -- inconsistent with JSON.baseClasses
         /** 

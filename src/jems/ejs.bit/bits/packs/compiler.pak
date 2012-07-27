@@ -43,7 +43,7 @@ try {
             }
         }
         let vv: Path = Path('$(VS)')
-        let vsbin, vslib
+        let vsbin, vslib, defs
         if (Config.OS != 'windows') {
             cc = 'cl.exe'
             vsdir = vv
@@ -58,8 +58,10 @@ try {
             } else {
                 vslib = vsbin.join('../lib').normalize
             }
+            version = vsdir.name.match(/\d*\.\d/)[0]
+            defs = [ '-DBIT_VISUAL_STUDIO_VERSION="' + version + '"']
         }
-        Bit.load({packs: { compiler: { path: cc, dir: vsdir, search: search }}})
+        Bit.load({packs: { compiler: { path: cc, dir: vsdir, search: search, definitions: defs, version: version }}})
 
         bit.env.PATH += [
             vsbin,

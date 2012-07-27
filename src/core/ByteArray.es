@@ -199,7 +199,7 @@ module ejs {
             @returns a boolean or null on EOF.
             @throws IOError if an I/O error occurs or premature EOF.
          */
-        native function readBoolean(): Boolean
+        native function readBoolean(): Boolean?
 
         /** 
             Read a byte from the array. Data is read from the current read $position pointer.
@@ -208,7 +208,7 @@ module ejs {
             will return return null indicating EOF.
             @throws IOError if an I/O error occurs or premature EOF.
          */
-        native function readByte(): Number
+        native function readByte(): Number?
 
         /** 
             Read a date from the array. Data is read from the current read $position pointer.
@@ -217,7 +217,7 @@ module ejs {
             will return return null indicating EOF.
             @throws IOError if an I/O error occurs or premature EOF.
          */
-        native function readDate(): Date
+        native function readDate(): Date?
 
         /** 
             Read a double from the array. The data will be decoded according to the endian property. Data is read 
@@ -227,7 +227,7 @@ module ejs {
             @returns a double or null on EOF.
             @throws IOError if an I/O error occurs or premature EOF.
          */
-        native function readDouble(): Number
+        native function readDouble(): Number?
 
         /** 
             Read an 32-bit integer from the array. The data will be decoded according to the endian property.
@@ -237,7 +237,7 @@ module ejs {
             will return return null indicating EOF.
             @throws IOError if an I/O error occurs or premature EOF.
          */
-        native function readInteger(): Number
+        native function readInteger(): Number?
 
         /** 
             Read a 64-bit long from the array.The data will be decoded according to the endian property.
@@ -247,12 +247,12 @@ module ejs {
             will return return null indicating EOF.
             @throws IOError if an I/O error occurs or premature EOF.
          */
-        native function readLong(): Number
+        native function readLong(): Number?
 
         /** 
             Current read position offset
          */
-        native function get readPosition(): Number
+        native function get readPosition(): Number?
 
         /** 
             Set the current read position offset
@@ -269,7 +269,7 @@ module ejs {
             @returns a short int or null on EOF.
             @throws IOError if an I/O error occurs or premature EOF.
          */
-        native function readShort(): Number
+        native function readShort(): Number?
 
         /** 
             Read a data from the array as a string. Read data from the $readPosition to a string up to the $writePosition,
@@ -280,14 +280,14 @@ module ejs {
             @returns a string or null on EOF.
             @throws IOError if an I/O error occurs or a premature EOF.
          */
-        native function readString(count: Number = -1): String
+        native function readString(count: Number = -1): String?
 
         /**
             Read an XML document from the array. Data is read from the current read $position pointer.
             @returns an XML document
             @throws IOError if an I/O error occurs or a premature end of file.
          */
-        function readXML(): XML
+        function readXML(): XML?
             XML(readString())
 
         /** 
@@ -396,7 +396,7 @@ module ejs {
             @deprecated 1.0.0B3
         */
         # Config.Legacy
-        function get input(): Function { return null; }
+        function get input(): Function? { return null; }
 
         /**  
             @hide
@@ -417,7 +417,7 @@ module ejs {
             @deprecated 1.0.0B3
          */
         # Config.Legacy
-        function get output(): Function { return null; } 
+        function get output(): Function? { return null; } 
 
         # Config.Legacy
         function set output(callback: Function): Void {

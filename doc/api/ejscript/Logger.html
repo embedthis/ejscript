@@ -1,0 +1,238 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml">
+<head>
+   <title>Class Logger</title>
+
+   <link rel="stylesheet" type="text/css" href="doc.css" />
+</head>
+
+<body>
+<div class='body'>
+
+<div class="content">
+
+<a name='top'></a>
+<h1 class='className'>Logger</h1>
+<div class='classBlock'>
+<table class='classHead' summary='Logger'>
+   <tr><td><strong>Module</strong></td><td>ejs</td></tr>
+   <tr><td><strong>Definition</strong></td><td> class Logger</td></tr>
+   <tr><td><strong>Inheritance</strong></td><td>Logger <img src='images/inherit.gif' alt='inherit'/> <a href='Object.html'>Object</a><tr><td><strong>Specified</strong></td><td>ejscript-2.0</td></tr>
+<tr><td><strong>Stability</strong></td><td>Prototype.</td></tr>
+       </td></tr>
+</table>
+
+<p class='classBrief'>Logger objects provide a convenient and consistent method to capture and store logging information.</p>
+
+<p class='classDescription'>Loggers can direct output to Streams and may be aggregated in a hierarchical manner. The verbosity of 
+logging can be managed and messages can be filtered.<br/><br/>Hierarchies of loggers can be constructed by specifying a parent logger when creating a logger instance.
+For example, a logger can be created for each class in a package with all such loggers having a single parent. 
+Loggers can send log messages to their parent and inherit their parent's log level. 
+The top level logger for an application is defined by App.log.<br/><br/>Each logger may define a filter function that returns true or false depending on whether a specific message 
+should be logged or not. A matching pattern can alternatively be used to filter messages.<br/><br/>An Application will have a default Logger instance created and stored in App.log at startup. This Logger uses
+the LogFile class to communicate with the Application's native log file. This is typically initialized
+by the "--log" command line switch and otherwise defaults to send messages to the standard error console.</p>
+
+</div>
+
+
+<hr />
+<a name='Properties'></a>
+<h2 class='classSection'>Properties</h2>
+<table class='itemTable' summary='properties'>
+   <tr><th>Qualifiers</th><th>Property</th><th>Type</th><th width='95%'>Description</th></tr>
+<a name='All'></a>
+   <tr><td nowrap align='center'> static const </td><td>All</td><td><a href='Number.html'>Number</a></td><td>Logging level to output all messages. </td></tr>
+<a name='Config'></a>
+   <tr><td nowrap align='center'> static const </td><td>Config</td><td><a href='Number.html'>Number</a></td><td>Logging level for configuration output. </td></tr>
+<a name='Error'></a>
+   <tr><td nowrap align='center'> static const </td><td>Error</td><td><a href='Number.html'>Number</a></td><td>Logging level for most serious errors. </td></tr>
+<a name='Info'></a>
+   <tr><td nowrap align='center'> static const </td><td>Info</td><td><a href='Number.html'>Number</a></td><td>Logging level for informational messages. </td></tr>
+<a name='Off'></a>
+   <tr><td nowrap align='center'> static const </td><td>Off</td><td><a href='Number.html'>Number</a></td><td>Logging level for no logging. </td></tr>
+<a name='Warn'></a>
+   <tr><td nowrap align='center'> static const </td><td>Warn</td><td><a href='Number.html'>Number</a></td><td>Logging level for warnings. </td></tr>
+<a name='filter'></a>
+   <tr><td nowrap align='center'> get set </td><td>filter</td><td><a href='Function.html'>Function</a></td><td>Filter function for this logger. The filter function is called with the following signature:
+with "this" set to the Logger instance. The <a href='#log'>log</a> parameter is set to the original logger that created the
+message.
+function filter(log: Logger, name: String, level: Number, kind: String, msg: String): Boolean.</td></tr>
+<a name='level'></a>
+   <tr><td nowrap align='center'> get set </td><td>level</td><td><a href='Number.html'>Number</a></td><td>The numeric verbosity setting (0-9) of this logger. Zero is least verbose, nine is the most verbose.
+Messages with a lower (or equal) verbosity level than the logger's level are emitted.</td></tr>
+<a name='location'></a>
+   <tr><td nowrap align='center'> get </td><td>location</td><td>&nbsp;</td><td>The logging location parameter specified when constructing or redirecting the logger. </td></tr>
+<a name='match'></a>
+   <tr><td nowrap align='center'> get set </td><td>match</td><td><a href='RegExp.html'>RegExp</a></td><td>Matching expression to filter log messages. The match regular expression is used to match 
+against the Logger names.</td></tr>
+<a name='name'></a>
+   <tr><td nowrap align='center'> get set </td><td>name</td><td><a href='String.html'>String</a></td><td>The name of this logger. </td></tr>
+<a name='outStream'></a>
+   <tr><td nowrap align='center'> get set </td><td>outStream</td><td><a href='Stream.html'>Stream</a></td><td>The output stream used by the logger. </td></tr>
+</table>
+
+<p class='inheritedLink'><a href='Object.html#Properties'><i>Inherited Properties</i></a></p>
+
+<hr />
+<a name='ClassMethods'></a>
+<h2 class='classSection'>Logger Class Methods</h2>
+<table class='apiIndex' summary='methods'>
+   <tr><th>Qualifiers</th><th width='95%'>Method</th></tr>
+   <p>(No own class methods defined)</p></table>
+
+<p class='inheritedLink'><a href='Object.html#InstanceMethods'><i>Inherited Methods</i></a></p>
+
+<hr />
+<a name='InstanceMethods'></a>
+<h2 class='classSection'>Logger Instance Methods</h2>
+<table class='apiIndex' summary='methods'>
+   <tr><th>Qualifiers</th><th width='95%'>Method</th></tr>
+   <tr class='apiDef'><td class='apiType'></td><td><a href='#Logger'><b>Logger</b></a>(name: <a href='String.html'>String</a>, location, level: <a href='Number.html'>Number</a> = 0)</tr><tr class='apiBrief'><td>&nbsp;</td><td>Logger constructor.</td></tr>
+   <tr class='apiDef'><td class='apiType'> </td><td><a href='#close'><b>close</b></a>(): <a href='Void.html'>Void</a></tr><tr class='apiBrief'><td>&nbsp;</td><td>Close the logger.</td></tr>
+   <tr class='apiDef'><td class='apiType'> </td><td><a href='#config'><b>config</b></a>(msgs: <a href='Array.html'>Array</a>): <a href='Void.html'>Void</a></tr><tr class='apiBrief'><td>&nbsp;</td><td>Emit a configuration message.</td></tr>
+   <tr class='apiDef'><td class='apiType'> </td><td><a href='#debug'><b>debug</b></a>(level: <a href='Number.html'>Number</a>, msgs: <a href='Array.html'>Array</a>): <a href='Void.html'>Void</a></tr><tr class='apiBrief'><td>&nbsp;</td><td>Emit a debug message.</td></tr>
+   <tr class='apiDef'><td class='apiType'> </td><td><a href='#error'><b>error</b></a>(msgs: <a href='Array.html'>Array</a>): <a href='Void.html'>Void</a></tr><tr class='apiBrief'><td>&nbsp;</td><td>Emit an error message.</td></tr>
+   <tr class='apiDef'><td class='apiType'> </td><td><a href='#info'><b>info</b></a>(msgs: <a href='Array.html'>Array</a>): <a href='Void.html'>Void</a></tr><tr class='apiBrief'><td>&nbsp;</td><td>Emit an informational message.</td></tr>
+   <tr class='apiDef'><td class='apiType'> </td><td><a href='#redirect'><b>redirect</b></a>(location, level: <a href='Number.html'>Number</a> = null): <a href='Void.html'>Void</a></tr><tr class='apiBrief'><td>&nbsp;</td><td>Redirect log output.</td></tr>
+   <tr class='apiDef'><td class='apiType'> </td><td><a href='#warn'><b>warn</b></a>(msgs: <a href='Array.html'>Array</a>): <a href='Void.html'>Void</a></tr><tr class='apiBrief'><td>&nbsp;</td><td>Emit a warning message.</td></tr>
+   <tr class='apiDef'><td class='apiType'> </td><td><a href='#write'><b>write</b></a>(data: <a href='Array.html'>Array</a>): <a href='Number.html'>Number</a></tr><tr class='apiBrief'><td>&nbsp;</td><td>Write data to the stream.Write messages to the logger stream.</td></tr>
+</table>
+
+<p class='inheritedLink'><a href='Object.html#InstanceMethods'><i>Inherited Methods</i></a></p>
+
+<hr />
+<h2>Method Detail</h2>
+<a name='Logger'></a>
+<div class='api'>
+<div class='apiSig'>    Logger(name: <a href='String.html'>String</a>, location, level: <a href='Number.html'>Number</a> = 0)
+</div>
+<div class='apiDetail'>
+<dl><dt>Description</dt></dd><dd>Logger constructor. The Logger constructor can create different types of loggers based on the three (optional) arguments.</dd></dl>
+<dl><dt>Parameters</dt>
+<dd><table class='parameters' summary ='parameters'>
+<tr class='param'><td class='param'>name: <a href='String.html'>String</a> </td><td>Unique name of the logger. Loggers are typically named after the module, class or subsystem they  are associated with.</td></tr><tr class='param'><td class='param'>location </td><td>Optional output stream or Logger to send messages to. If a parent Logger instance is provided for the output parameter, messages are sent to the parent for rendering.</td></tr><tr class='param'><td class='param'>level: <a href='Number.html'>Number</a> </td><td>Optional integer verbosity level. Messages with a message level less than or equal to the defined logger level will be emitted. Range is 0 (least verbose) to 9. [default: 0]</td></tr></table></dd>
+</dl><dl><dt>Example</dt>
+<dd><pre>var file = File("progress.log", "w")
+var log = new Logger("name", file, 5)
+log.debug(2, "message")</pre></dd></dl>
+</div>
+</div>
+<hr />
+<a name='close'></a>
+<div class='api'>
+<div class='apiSig'>    close(): <a href='Void.html'>Void</a>
+</div>
+<div class='apiDetail'>
+<dl><dt>Description</dt></dd><dd>Close the logger. </dd></dl>
+</div>
+</div>
+<hr />
+<a name='config'></a>
+<div class='api'>
+<div class='apiSig'>    config(msgs: <a href='Array.html'>Array</a>): <a href='Void.html'>Void</a>
+</div>
+<div class='apiDetail'>
+<dl><dt>Description</dt></dd><dd>Emit a configuration message. </dd></dl>
+<dl><dt>Parameters</dt>
+<dd><table class='parameters' summary ='parameters'>
+<tr class='param'><td class='param'>msgs: <a href='Array.html'>Array</a> </td><td>Data to log.</td></tr></table></dd>
+</dl></div>
+</div>
+<hr />
+<a name='debug'></a>
+<div class='api'>
+<div class='apiSig'>    debug(level: <a href='Number.html'>Number</a>, msgs: <a href='Array.html'>Array</a>): <a href='Void.html'>Void</a>
+</div>
+<div class='apiDetail'>
+<dl><dt>Description</dt></dd><dd>Emit a debug message. The message level will be compared to the logger setting to determine 
+whether it will be output to the devices or not. Also, if the logger has a filter function set that 
+may filter the message out before logging.</dd></dl>
+<dl><dt>Parameters</dt>
+<dd><table class='parameters' summary ='parameters'>
+<tr class='param'><td class='param'>level: <a href='Number.html'>Number</a> </td><td>The level of the message.</td></tr><tr class='param'><td class='param'>msgs: <a href='Array.html'>Array</a> </td><td>The string message to log.</td></tr></table></dd>
+</dl></div>
+</div>
+<hr />
+<a name='error'></a>
+<div class='api'>
+<div class='apiSig'>    error(msgs: <a href='Array.html'>Array</a>): <a href='Void.html'>Void</a>
+</div>
+<div class='apiDetail'>
+<dl><dt>Description</dt></dd><dd>Emit an error message. </dd></dl>
+<dl><dt>Parameters</dt>
+<dd><table class='parameters' summary ='parameters'>
+<tr class='param'><td class='param'>msgs: <a href='Array.html'>Array</a> </td><td>Data to log.</td></tr></table></dd>
+</dl></div>
+</div>
+<hr />
+<a name='info'></a>
+<div class='api'>
+<div class='apiSig'>    info(msgs: <a href='Array.html'>Array</a>): <a href='Void.html'>Void</a>
+</div>
+<div class='apiDetail'>
+<dl><dt>Description</dt></dd><dd>Emit an informational message. </dd></dl>
+<dl><dt>Parameters</dt>
+<dd><table class='parameters' summary ='parameters'>
+<tr class='param'><td class='param'>msgs: <a href='Array.html'>Array</a> </td><td>Data to log.</td></tr></table></dd>
+</dl></div>
+</div>
+<hr />
+<a name='redirect'></a>
+<div class='api'>
+<div class='apiSig'>    redirect(location, level: <a href='Number.html'>Number</a> = null): <a href='Void.html'>Void</a>
+</div>
+<div class='apiDetail'>
+<dl><dt>Description</dt></dd><dd>Redirect log output. </dd></dl>
+<dl><dt>Parameters</dt>
+<dd><table class='parameters' summary ='parameters'>
+<tr class='param'><td class='param'>location </td><td>Optional output stream or Logger to send messages to. If a parent Logger instance is  provided for the output parameter, messages are sent to the parent for rendering.</td></tr><tr class='param'><td class='param'>level: <a href='Number.html'>Number</a> </td><td>Optional integer verbosity level. Messages with a message level less than or equal to the defined logger level will be emitted. Range is 0 (least verbose) to 9. [default: null]</td></tr></table></dd>
+</dl></div>
+</div>
+<hr />
+<a name='warn'></a>
+<div class='api'>
+<div class='apiSig'>    warn(msgs: <a href='Array.html'>Array</a>): <a href='Void.html'>Void</a>
+</div>
+<div class='apiDetail'>
+<dl><dt>Description</dt></dd><dd>Emit a warning message. </dd></dl>
+<dl><dt>Parameters</dt>
+<dd><table class='parameters' summary ='parameters'>
+<tr class='param'><td class='param'>msgs: <a href='Array.html'>Array</a> </td><td>The data to log.</td></tr></table></dd>
+</dl></div>
+</div>
+<hr />
+<a name='write'></a>
+<div class='api'>
+<div class='apiSig'>    write(data: <a href='Array.html'>Array</a>): <a href='Number.html'>Number</a>
+</div>
+<div class='apiDetail'>
+<dl><dt>Description</dt></dd><dd>Write data to the stream.Write messages to the logger stream. If the stream can accept all the write data, the call returns immediately with the number of bytes written. 
+If writing more data than the stream can absorb in sync mode, the call will block until the data is written.
+If writing more data than the stream can absorb in async mode, the call will not block and will buffer the
+data and return immediately. Some streams will require a <a href='#flush'>flush()</a> call to actually send the data.
+A "writable" event will be issued when the stream can again absorb more data.NOTE: for the Logger class, I/O errors will not throw exceptions.</dd></dl>
+<dl><dt>Parameters</dt>
+<dd><table class='parameters' summary ='parameters'>
+<tr class='param'><td class='param'>data: <a href='Array.html'>Array</a> </td><td>Data to write.</td></tr></table></dd>
+</dl><dl><dt>Events</dt>
+<dd><table class='parameters' summary ='events'>
+<td class='param'>readable</td><td>Issued when data is written and a consumer can read without blocking.</td></tr>
+<td class='param'>writable</td><td>Issued when the stream becomes empty and it is ready to be written to.</td></tr>
+</table></dd>
+</dl><dl><dt>Returns</dt>
+<dd>A count of the bytes actually written.</dd></dl>
+<dl><dt>Throws</dt><dd>
+<a href='IOError.html'>IOError</a>: if there is an I/O error.
+</dd>
+</dl></div>
+</div>
+<hr />
+<div class="terms">
+   <p class="terms">
+       <a href="http://embedthis.com/">       Embedthis Software LLC, 2003-2012. All rights reserved. Embedthis is a trademark of Embedthis Software LLC.</a>
+   </p>
+</div></div>
+</div>
+</body>
+</html>

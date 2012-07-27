@@ -46,7 +46,7 @@ module ejs {
             @param name Event name to clear. The name can be a string or an array of event strings. If null, observers 
             for all event names are cleared.
          */
-        function clearObservers(name: Object = null): Void {
+        function clearObservers(name: Object? = null): Void {
             if (name == null) {
                 endpoints = new Object
             } else if (name is Array) {
@@ -97,7 +97,7 @@ module ejs {
             @param thisObj Object to use for "this" when running the callback. This overrides any bound values for "this"
             @param args Args to pass to the observer callback
          */
-        function fireThis(name: String, thisObj: Object, ...args): Void {
+        function fireThis(name: String, thisObj: Object?, ...args): Void {
             let observers: Array? = endpoints[name]
             if (observers) {
                 for each (var e: Endpoint in observers) {
@@ -151,7 +151,7 @@ module ejs {
             return this
         }
 
-        private function removeOneObserver(name: String!, callback: Function): Void {
+        private function removeOneObserver(name: String!, callback: Function?): Void {
             var observers: Array? = endpoints[name]
             for (let i in observers) {
                 var e: Endpoint = observers[i]
@@ -168,7 +168,7 @@ module ejs {
             @param callback Callback function used when the observer was added. If null is supplied, all callbacks 
                 will be removed.
          */
-        function off(name: Object!, callback: Function): Void {
+        function off(name: Object!, callback: Function?): Void {
             if (name is String) {
                 removeOneObserver(name, callback)
             } else if (name is Array) {

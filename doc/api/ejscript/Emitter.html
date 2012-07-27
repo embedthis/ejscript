@@ -1,0 +1,173 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml">
+<head>
+   <title>Class Emitter</title>
+
+   <link rel="stylesheet" type="text/css" href="doc.css" />
+</head>
+
+<body>
+<div class='body'>
+
+<div class="content">
+
+<a name='top'></a>
+<h1 class='className'>Emitter</h1>
+<div class='classBlock'>
+<table class='classHead' summary='Emitter'>
+   <tr><td><strong>Module</strong></td><td>ejs</td></tr>
+   <tr><td><strong>Definition</strong></td><td> class Emitter</td></tr>
+   <tr><td><strong>Inheritance</strong></td><td>Emitter <img src='images/inherit.gif' alt='inherit'/> <a href='Object.html'>Object</a><tr><td><strong>Stability</strong></td><td>Prototype.</td></tr>
+<tr><td><strong>Example</strong></td><td><pre>events.on(event, function (event, ...args) {
+    //  Do something
+}).fire("topic", 1, 2, 3)
+@stability prototype</pre></td></tr>
+       </td></tr>
+</table>
+
+<p class='classBrief'>The emitter class provides a publish/subscribe model of communication via events.</p>
+
+<p class='classDescription'>It supports the 
+registration of observers who want to subscribe to events of interest.</p>
+
+</div>
+
+
+<hr />
+<a name='Properties'></a>
+<h2 class='classSection'>Properties</h2>
+   <p>(No own properties defined)</p><p class='inheritedLink'><a href='Object.html#Properties'><i>Inherited Properties</i></a></p>
+
+<hr />
+<a name='ClassMethods'></a>
+<h2 class='classSection'>Emitter Class Methods</h2>
+<table class='apiIndex' summary='methods'>
+   <tr><th>Qualifiers</th><th width='95%'>Method</th></tr>
+   <p>(No own class methods defined)</p></table>
+
+<p class='inheritedLink'><a href='Object.html#InstanceMethods'><i>Inherited Methods</i></a></p>
+
+<hr />
+<a name='InstanceMethods'></a>
+<h2 class='classSection'>Emitter Instance Methods</h2>
+<table class='apiIndex' summary='methods'>
+   <tr><th>Qualifiers</th><th width='95%'>Method</th></tr>
+   <tr class='apiDef'><td class='apiType'></td><td><a href='#Emitter'><b>Emitter</b></a>()</tr><tr class='apiBrief'><td>&nbsp;</td><td>Construct a new event Emitter object.</td></tr>
+   <tr class='apiDef'><td class='apiType'> </td><td><a href='#clearObservers'><b>clearObservers</b></a>(name: <a href='Object.html'>Object</a> = null): <a href='Void.html'>Void</a></tr><tr class='apiBrief'><td>&nbsp;</td><td>Clear observers for a given event name.</td></tr>
+   <tr class='apiDef'><td class='apiType'> </td><td><a href='#fire'><b>fire</b></a>(name: <a href='String.html'>String</a>, args: <a href='Array.html'>Array</a>): <a href='Void.html'>Void</a></tr><tr class='apiBrief'><td>&nbsp;</td><td>Emit an event to the registered observers.</td></tr>
+   <tr class='apiDef'><td class='apiType'> </td><td><a href='#fireThis'><b>fireThis</b></a>(name: <a href='String.html'>String</a>, thisObj: <a href='Object.html'>Object</a>, args: <a href='Array.html'>Array</a>): <a href='Void.html'>Void</a></tr><tr class='apiBrief'><td>&nbsp;</td><td>Emit an event to the registered observers using an explict value for the "this" object.</td></tr>
+   <tr class='apiDef'><td class='apiType'> </td><td><a href='#getObservers'><b>getObservers</b></a>(name: <a href='String.html'>String</a>): <a href='Array.html'>Array</a></tr><tr class='apiBrief'><td>&nbsp;</td><td>Return the observers for this emitter.</td></tr>
+   <tr class='apiDef'><td class='apiType'> </td><td><a href='#hasObservers'><b>hasObservers</b></a>(): <a href='Boolean.html'>Boolean</a></tr><tr class='apiBrief'><td>&nbsp;</td><td>Determine if the emitter has any observers.</td></tr>
+   <tr class='apiDef'><td class='apiType'> </td><td><a href='#off'><b>off</b></a>(name: <a href='Object.html'>Object</a>, callback: <a href='Function.html'>Function</a>): <a href='Void.html'>Void</a></tr><tr class='apiBrief'><td>&nbsp;</td><td>Turn off and remove a registered observer.</td></tr>
+   <tr class='apiDef'><td class='apiType'> </td><td><a href='#on'><b>on</b></a>(name: <a href='Object.html'>Object</a>, callback: <a href='Function.html'>Function</a>): <a href='Emitter.html'>Emitter</a></tr><tr class='apiBrief'><td>&nbsp;</td><td>Add an observer for a set of named event.</td></tr>
+</table>
+
+<p class='inheritedLink'><a href='Object.html#InstanceMethods'><i>Inherited Methods</i></a></p>
+
+<hr />
+<h2>Method Detail</h2>
+<a name='Emitter'></a>
+<div class='api'>
+<div class='apiSig'>    Emitter()
+</div>
+<div class='apiDetail'>
+<dl><dt>Description</dt></dd><dd>Construct a new event Emitter object. </dd></dl>
+</div>
+</div>
+<hr />
+<a name='clearObservers'></a>
+<div class='api'>
+<div class='apiSig'>    clearObservers(name: <a href='Object.html'>Object</a> = null): <a href='Void.html'>Void</a>
+</div>
+<div class='apiDetail'>
+<dl><dt>Description</dt></dd><dd>Clear observers for a given event name. </dd></dl>
+<dl><dt>Parameters</dt>
+<dd><table class='parameters' summary ='parameters'>
+<tr class='param'><td class='param'>name: <a href='Object.html'>Object</a> </td><td>Event name to clear. The name can be a string or an array of event strings. If null, observers  for all event names are cleared. [default: null]</td></tr></table></dd>
+</dl></div>
+</div>
+<hr />
+<a name='fire'></a>
+<div class='api'>
+<div class='apiSig'>    fire(name: <a href='String.html'>String</a>, args: <a href='Array.html'>Array</a>): <a href='Void.html'>Void</a>
+</div>
+<div class='apiDetail'>
+<dl><dt>Description</dt></dd><dd>Emit an event to the registered observers. </dd></dl>
+<dl><dt>Parameters</dt>
+<dd><table class='parameters' summary ='parameters'>
+<tr class='param'><td class='param'>name: <a href='String.html'>String</a> </td><td>Event name to fire to the observers.</td></tr><tr class='param'><td class='param'>args: <a href='Array.html'>Array</a> </td><td>Args to pass to the observer callback.</td></tr></table></dd>
+</dl></div>
+</div>
+<hr />
+<a name='fireThis'></a>
+<div class='api'>
+<div class='apiSig'>    fireThis(name: <a href='String.html'>String</a>, thisObj: <a href='Object.html'>Object</a>, args: <a href='Array.html'>Array</a>): <a href='Void.html'>Void</a>
+</div>
+<div class='apiDetail'>
+<dl><dt>Description</dt></dd><dd>Emit an event to the registered observers using an explict value for the "this" object. </dd></dl>
+<dl><dt>Parameters</dt>
+<dd><table class='parameters' summary ='parameters'>
+<tr class='param'><td class='param'>name: <a href='String.html'>String</a> </td><td>Event name to fire to the observers.</td></tr><tr class='param'><td class='param'>thisObj: <a href='Object.html'>Object</a> </td><td>Object to use for "this" when running the callback. This overrides any bound values for "this".</td></tr><tr class='param'><td class='param'>args: <a href='Array.html'>Array</a> </td><td>Args to pass to the observer callback.</td></tr></table></dd>
+</dl></div>
+</div>
+<hr />
+<a name='getObservers'></a>
+<div class='api'>
+<div class='apiSig'>    getObservers(name: <a href='String.html'>String</a>): <a href='Array.html'>Array</a>
+</div>
+<div class='apiDetail'>
+<dl><dt>Description</dt></dd><dd>Return the observers for this emitter. </dd></dl>
+<dl><dt>Parameters</dt>
+<dd><table class='parameters' summary ='parameters'>
+<tr class='param'><td class='param'>name: <a href='String.html'>String</a> </td><td>Event name to fire to the observers.</td></tr></table></dd>
+</dl><dl><dt>Returns</dt>
+<dd>An array of observer endpoints. These are cloned and not the actual observer objects.</dd></dl>
+</div>
+</div>
+<hr />
+<a name='hasObservers'></a>
+<div class='api'>
+<div class='apiSig'>    hasObservers(): <a href='Boolean.html'>Boolean</a>
+</div>
+<div class='apiDetail'>
+<dl><dt>Description</dt></dd><dd>Determine if the emitter has any observers. </dd></dl>
+<dl><dt>Returns</dt>
+<dd>True if there are currently registered observers.</dd></dl>
+</div>
+</div>
+<hr />
+<a name='off'></a>
+<div class='api'>
+<div class='apiSig'>    off(name: <a href='Object.html'>Object</a>, callback: <a href='Function.html'>Function</a>): <a href='Void.html'>Void</a>
+</div>
+<div class='apiDetail'>
+<dl><dt>Description</dt></dd><dd>Turn off and remove a registered observer. </dd></dl>
+<dl><dt>Parameters</dt>
+<dd><table class='parameters' summary ='parameters'>
+<tr class='param'><td class='param'>name: <a href='Object.html'>Object</a> </td><td>Event name used when the observer was added.</td></tr><tr class='param'><td class='param'>callback: <a href='Function.html'>Function</a> </td><td>Callback function used when the observer was added. If null is supplied, all callbacks  will be removed.</td></tr></table></dd>
+</dl></div>
+</div>
+<hr />
+<a name='on'></a>
+<div class='api'>
+<div class='apiSig'>    on(name: <a href='Object.html'>Object</a>, callback: <a href='Function.html'>Function</a>): <a href='Emitter.html'>Emitter</a>
+</div>
+<div class='apiDetail'>
+<dl><dt>Description</dt></dd><dd>Add an observer for a set of named event. The callback will be invoked when the requested event is fired by calling Emitter.fire. When the callback 
+runs, it will be invoked with the value of "this" relevant to the context of the callback. If the callback
+is a class method, the value of "this" will be the object instance. Global functions will have "this" set to
+the global object. Use Function.bind to override the bound "this" value.</dd></dl>
+<dl><dt>Parameters</dt>
+<dd><table class='parameters' summary ='parameters'>
+<tr class='param'><td class='param'>name: <a href='Object.html'>Object</a> </td><td>Event name to observe. The observer will receive events of this event class or any of its subclasses. The name can be a string or an array of event strings.</td></tr><tr class='param'><td class='param'>callback: <a href='Function.html'>Function</a> </td><td>Function to call when the event is received.</td></tr></table></dd>
+</dl></div>
+</div>
+<hr />
+<div class="terms">
+   <p class="terms">
+       <a href="http://embedthis.com/">       Embedthis Software LLC, 2003-2012. All rights reserved. Embedthis is a trademark of Embedthis Software LLC.</a>
+   </p>
+</div></div>
+</div>
+</body>
+</html>

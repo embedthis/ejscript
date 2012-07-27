@@ -404,7 +404,7 @@ static EjsBoolean *containsString(Ejs *ejs, EjsString *sp, int argc, EjsObj **ar
 
     if (ejsIs(ejs, pat, String)) {
         spat = (EjsString*) pat;
-        return ejsCreateBoolean(ejs, wcontains(sp->value, spat->value, -1) != 0);
+        return ejsCreateBoolean(ejs, wcontains(sp->value, spat->value) != 0);
 
     } else if (ejsIs(ejs, pat, RegExp)) {
         EjsRegExp   *rp;

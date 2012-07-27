@@ -91,7 +91,7 @@ module ejs {
             @option join Character to use to join array elements. Defaults to space.
             @return Expanded string
          */ 
-        native function expand(obj: Object, options: Object = null): String
+        native function expand(obj: Object, options: Object? = null): String
 
         /**
             Format arguments as a string. Use the string as a format specifier. The format specifier has the form:
@@ -276,7 +276,7 @@ module ejs {
             @return Returns a new string.
             @spec ejs
          */
-        native function replace(pattern: Object, replacement: Object, flags: String? = null): String
+        native function replace(pattern: Object, replacement: Object): String
 
         /**
             Reverse a string. 

@@ -192,6 +192,7 @@ module ejs {
     /**
         Convert a singular word to its plural form
         @param word Word to transform
+        @param count Set to a number greater than 1 to force a plural
         @return the plural form of a word
      */
     function toPlural(word: String, count: Number? = null): String {
