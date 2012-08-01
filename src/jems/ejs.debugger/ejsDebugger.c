@@ -92,7 +92,6 @@ int ejs_db_debugger_Init(MprCtx ctx)
         EJS_LOADER_ETERNAL);
 }
 
-#endif /* BIT_FEATURE_SQLITE */
 /*
     @copy   default
 

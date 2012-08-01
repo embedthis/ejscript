@@ -839,7 +839,7 @@ EjsAny *ejsParse(Ejs *ejs, MprChar *str, int preferredType)
     case S_Boolean:
         return ejsCreateBoolean(ejs, parseBoolean(ejs, buf));
 
-#if BIT_FEATURE_PCRE
+#if BIT_PACK_PCRE
     case S_RegExp:
         return ejsCreateRegExp(ejs, ejsCreateStringFromAsc(ejs, buf));
 #endif

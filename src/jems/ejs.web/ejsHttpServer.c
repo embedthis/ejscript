@@ -349,7 +349,7 @@ static EjsVoid *hs_run(Ejs *ejs, EjsHttpServer *sp, int argc, EjsObj **argv)
  */
 static EjsObj *hs_secure(Ejs *ejs, EjsHttpServer *sp, int argc, EjsObj **argv)
 {
-#if BIT_FEATURE_SSL
+#if BIT_PACK_SSL
     EjsArray    *protocols;
     cchar       *token;
     int         mask, protoMask, i;
