@@ -2,7 +2,7 @@
 <Project DefaultTargets="Build" ToolsVersion="4.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
 
   <PropertyGroup Label="Globals">
-    <ProjectGuid>{20194218-5350-4349-a6f7-ff93a136403d}</ProjectGuid>
+    <ProjectGuid>{c47d54bd-1cba-4d2c-8a8b-d9393ec0fdc8}</ProjectGuid>
     <RootNamespace />
     <Keyword>Win32Proj</Keyword>
   </PropertyGroup>
@@ -96,15 +96,15 @@
 
   <CustomBuildStep>
     <Command>cd ..\..\src\jems\ejs.unix
-$(BinDir)/ejsc --out $(BinDir)/ejs.unix.mod --debug --optimize 9 Unix.es
+$(BinDir)/ejsc --out $(BinDir)/ejs.unix.mod  --optimize 9 Unix.es
 cd ..\..\..\projects\ejs-windows</Command>
-    <Outputs>..\..\$(Cfg)\bin\ejs.unix.mod</Outputs>
+    <Outputs>$(BinDir)\ejs.unix.mod</Outputs>
   </CustomBuildStep>
   </ItemDefinitionGroup>
 
 <ItemGroup>
   <ProjectReference Include="ejsc.vcxproj">
-  <Project>3b5194ed-fd3c-4eae-be81-67c70c54c31c</Project>
+  <Project>d5245843-770a-44aa-9aa8-2a834be6411e</Project>
   <ReferenceOutputAssembly>false</ReferenceOutputAssembly>
   </ProjectReference>
 </ItemGroup>
