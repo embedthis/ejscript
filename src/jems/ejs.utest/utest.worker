@@ -114,7 +114,9 @@ public function startService(cmdline: String, options): Void {
     let connected
     for (i in 50) {
         try {
-            Socket().connect(address.host + ":" + address.port)
+            let sock = new Socket
+            sock.connect(address.host + ":" + address.port)
+            sock.close()
             connected = true
             break
         } catch (e) { 

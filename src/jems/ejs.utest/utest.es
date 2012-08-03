@@ -503,7 +503,7 @@ enumerable class Test {
         let str = data.match(/BIT_PACK.*|BIT_HTTP_PORT.*|BIT_SSL_PORT.*/g)
         for each (item in str) {
             let [key, value] = item.split(" ")
-            key = key.replace(/BIT_PACK/, "")
+            key = key.replace(/BIT_PACK_/, "")
             key = key.replace(/BIT_/, "").toLowerCase()
             if (value == "1" || value == "0") {
                 value = value cast Number
