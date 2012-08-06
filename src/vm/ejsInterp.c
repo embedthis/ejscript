@@ -3751,7 +3751,6 @@ static EjsOpCode traceCode(Ejs *ejs, EjsOpCode opcode)
 #endif
 
     MPR_VERIFY_MEM();
-    mprAssert(!MPR->marking);
     state = ejs->state;
 
     fp = state->fp;
