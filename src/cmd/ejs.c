@@ -512,6 +512,7 @@ static char *readline(cchar *msg)
     char    buf[MPR_MAX_STRING];
 
     printf("%s", msg);
+    fflush(stdout);
     if (fgets(buf, sizeof(buf) - 1, stdin) == 0) {
         return NULL;
     }
