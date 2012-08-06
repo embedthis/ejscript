@@ -56,6 +56,7 @@
 /********************************* CPU Families *******************************/
 /*
     CPU Architectures
+    MOB - change to BIT_CPU
  */
 #define MPR_CPU_UNKNOWN     0
 #define MPR_CPU_ARM         1           /* Arm */
@@ -372,6 +373,7 @@
 #endif
 
 #if MACOSX
+    #include    <stdbool.h>
     #include    <mach-o/dyld.h>
     #include    <mach-o/dyld.h>
     #include    <mach/mach_init.h>
@@ -522,9 +524,9 @@
 #endif
 
 #ifdef __USE_FILE_OFFSET64
-    #define HAS_OFF64 1
+    #define BIT_HAS_OFF64 1
 #else
-    #define HAS_OFF64 0
+    #define BIT_HAS_OFF64 0
 #endif
 
 /*
@@ -1185,7 +1187,7 @@ struct  MprXml;
 
 #if BIT_TUNE == MPR_TUNE_SIZE || DOXYGEN
     /*
-        Squeeze mode optimizes to reduce memory usage
+        Reduce size allocations to reduce memory usage
      */
     #define MPR_MAX_FNAME           256           /**< Reasonable filename size */
     #define MPR_MAX_PATH            512           /**< Reasonable path name size */
@@ -7042,7 +7044,7 @@ extern void mprAddSocketProvider(cchar *name, MprSocketProvider *provider);
     by threads from the worker thread pool for scalable, multithreaded applications.
     @stability Evolving
     @see MprSocket MprSocketPrebind MprSocketProc MprSocketProvider MprSocketService mprAddSocketHandler 
-        mprCloseSocket mprConnectSocket mprCreateSocket mprCreateSocketService mprCreateSsl 
+        mprCloseSocket mprConnectSocket mprCreateSocket mprCreateSocketService mprCreateSsl mprCloneSsl
         mprDisconnectSocket mprEnableSocketEvents mprFlushSocket mprGetSocketBlockingMode mprGetSocketError 
         mprGetSocketFd mprGetSocketInfo mprGetSocketPort mprHasSecureSockets mprIsSocketEof mprIsSocketSecure 
         mprListenOnSocket mprLoadSsl mprParseIp mprReadSocket mprSendFileToSocket mprSetSecureProvider 
@@ -7461,6 +7463,13 @@ extern int mprLoadSsl();
     @ingroup MprSocket
  */
 extern struct MprSsl *mprCreateSsl();
+
+/**
+    Create the a new SSL control structure based on an existing structure
+    @param src Structure to clone
+    @ingroup MprSocket
+ */
+extern struct MprSsl *mprCloneSsl(MprSsl *src);
 
 /**
     Set the ciphers to use for SSL

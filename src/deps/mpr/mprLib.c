@@ -11593,10 +11593,6 @@ char *mprGetMD5WithPrefix(cchar *buf, ssize length, cchar *prefix)
 static void initMD5(MD5CONTEXT *context)
 {
     context->count[0] = context->count[1] = 0;
-
-    /*
-        Load constants
-     */
     context->state[0] = 0x67452301;
     context->state[1] = 0xefcdab89;
     context->state[2] = 0x98badcfe;
@@ -11623,7 +11619,6 @@ static void update(MD5CONTEXT *context, uchar *input, uint inputLen)
     if (inputLen >= partLen) {
         memcpy((uchar*) &context->buffer[index], (uchar*) input, partLen);
         transform(context->state, context->buffer);
-
         for (i = partLen; i + 63 < inputLen; i += 64) {
             transform(context->state, &input[i]);
         }
@@ -11870,6 +11865,13 @@ static void decode(uint *output, uchar *input, uint len)
     Open/Delete retries to circumvent windows pending delete problems
  */
 #define RETRIES 40
+
+/*
+    Windows only permits owner bits
+ */
+#define MASK_PERMS(perms)    perms & 0600
+#else
+#define MASK_PERMS(perms)    perms
 #endif
 
 /********************************** Forwards **********************************/
@@ -11887,13 +11889,13 @@ static int cygOpen(MprFileSystem *fs, cchar *path, int omode, int perms)
 {
     int     fd;
 
-    fd = open(path, omode, perms);
+    fd = open(path, omode, MASK_PERMS(perms));
 #if WINDOWS
     if (fd < 0) {
         if (*path == '/') {
             path = sjoin(fs->cygwin, path, NULL);
         }
-        fd = open(path, omode, perms);
+        fd = open(path, omode, MASK_PERMS(perms));
     }
 #endif
     return fd;
@@ -11910,7 +11912,7 @@ static MprFile *openFile(MprFileSystem *fs, cchar *path, int omode, int perms)
         return NULL;
     }
     file->path = sclone(path);
-    file->fd = open(path, omode, perms);
+    file->fd = open(path, omode, MASK_PERMS(perms));
     if (file->fd < 0) {
 #if WINDOWS
         /*
@@ -11919,7 +11921,7 @@ static MprFile *openFile(MprFileSystem *fs, cchar *path, int omode, int perms)
         int i, err = GetLastError();
         if (err == ERROR_ACCESS_DENIED) {
             for (i = 0; i < RETRIES; i++) {
-                file->fd = open(path, omode, perms);
+                file->fd = open(path, omode, MASK_PERMS(perms));
                 if (file->fd >= 0) {
                     break;
                 }
@@ -12007,7 +12009,7 @@ static MprOff seekFile(MprFile *file, int seekType, MprOff distance)
     }
 #if BIT_WIN_LIKE
     return (MprOff) _lseeki64(file->fd, (int64) distance, seekType);
-#elif HAS_OFF64
+#elif BIT_HAS_OFF64
     return (MprOff) lseek64(file->fd, (off64_t) distance, seekType);
 #else
     return (MprOff) lseek(file->fd, (off_t) distance, seekType);
@@ -17795,7 +17797,6 @@ void mprError(cchar *fmt, ...)
     va_start(args, fmt);
     mprSprintfv(buf, sizeof(buf), fmt, args);
     va_end(args);
-    
     logOutput(MPR_ERROR_MSG | MPR_ERROR_SRC, 0, buf);
     mprBreakpoint();
 }
@@ -17809,7 +17810,6 @@ void mprWarn(cchar *fmt, ...)
     va_start(args, fmt);
     mprSprintfv(buf, sizeof(buf), fmt, args);
     va_end(args);
-    
     logOutput(MPR_ERROR_MSG | MPR_WARN_SRC, 0, buf);
     mprBreakpoint();
 }
@@ -17839,7 +17839,6 @@ void mprUserError(cchar *fmt, ...)
     va_start(args, fmt);
     mprSprintfv(buf, sizeof(buf), fmt, args);
     va_end(args);
-    
     logOutput(MPR_USER_MSG | MPR_ERROR_SRC, 0, buf);
 }
 
@@ -17852,7 +17851,6 @@ void mprFatalError(cchar *fmt, ...)
     va_start(args, fmt);
     mprSprintfv(buf, sizeof(buf), fmt, args);
     va_end(args);
-    
     logOutput(MPR_USER_MSG | MPR_FATAL_SRC, 0, buf);
     exit(2);
 }
@@ -23113,6 +23111,7 @@ static void readPipe(MprWaitService *ws)
 {
     char        buf[128];
 
+    //  MOB - refactor
 #if VXWORKS
     int len = sizeof(ws->breakAddress);
     (void) recvfrom(ws->breakSock, buf, (int) sizeof(buf), 0, (struct sockaddr*) &ws->breakAddress, (int*) &len);
@@ -24521,7 +24520,7 @@ MprOff mprSendFileToSocket(MprSocket *sock, MprFile *file, MprOff offset, MprOff
         }
 
         if (!done && toWriteFile > 0 && file->fd >= 0) {
-#if LINUX && !__UCLIBC__ && !HAS_OFF64
+#if LINUX && !__UCLIBC__ && !BIT_HAS_OFF64
             off_t off = (off_t) offset;
 #endif
             while (!done && toWriteFile > 0) {
@@ -24530,7 +24529,7 @@ MprOff mprSendFileToSocket(MprSocket *sock, MprFile *file, MprOff offset, MprOff
                     mprYield(MPR_YIELD_STICKY);
                 }
 #if LINUX && !__UCLIBC__
-    #if HAS_OFF64
+    #if BIT_HAS_OFF64
                 rc = sendfile64(sock->fd, file->fd, &offset, nbytes);
     #else
                 rc = sendfile(sock->fd, file->fd, &off, nbytes);
@@ -24974,33 +24973,36 @@ static int ipv6(cchar *ip)
  */
 int mprParseSocketAddress(cchar *ipAddrPort, char **pip, int *pport, int defaultPort)
 {
-    char    *ip;
-    char    *cp;
+    char    *ip, *cp;
 
     ip = 0;
     if (defaultPort < 0) {
         defaultPort = 80;
     }
-    if ((cp = strstr(ipAddrPort, "://")) != 0) {
-        ipAddrPort = &cp[3];
+    ip = sclone(ipAddrPort);
+    if ((cp = strchr(ip, ' ')) != 0) {
+        *cp++ = '\0';
     }
-    if (ipv6(ipAddrPort)) {
+    if ((cp = strstr(ip, "://")) != 0) {
+        ip = &cp[3];
+    }
+    if (ipv6(ip)) {
         /*  
             IPv6. If port is present, it will follow a closing bracket ']'
          */
-        if ((cp = strchr(ipAddrPort, ']')) != 0) {
+        if ((cp = strchr(ip, ']')) != 0) {
             cp++;
             if ((*cp) && (*cp == ':')) {
                 *pport = (*++cp == '*') ? -1 : atoi(cp);
 
                 /* Set ipAddr to ipv6 address without brackets */
-                ip = sclone(ipAddrPort+1);
+                ip = sclone(ip + 1);
                 cp = strchr(ip, ']');
                 *cp = '\0';
 
             } else {
                 /* Handles [a:b:c:d:e:f:g:h:i] case (no port)- should not occur */
-                ip = sclone(ipAddrPort + 1);
+                ip = sclone(ip + 1);
                 if ((cp = strchr(ip, ']')) != 0) {
                     *cp = '\0';
                 }
@@ -25012,8 +25014,6 @@ int mprParseSocketAddress(cchar *ipAddrPort, char **pip, int *pport, int default
             }
         } else {
             /* Handles a:b:c:d:e:f:g:h:i case (no port) */
-            ip = sclone(ipAddrPort);
-
             /* No port present, use callers default */
             *pport = defaultPort;
         }
@@ -25022,7 +25022,6 @@ int mprParseSocketAddress(cchar *ipAddrPort, char **pip, int *pport, int default
         /*  
             ipv4 
          */
-        ip = sclone(ipAddrPort);
         if ((cp = strchr(ip, ':')) != 0) {
             *cp++ = '\0';
             if (*cp == '*') {
@@ -25033,6 +25032,12 @@ int mprParseSocketAddress(cchar *ipAddrPort, char **pip, int *pport, int default
             if (*ip == '*') {
                 ip = 0;
             }
+
+        } else if (strchr(ip, '.')) {
+            if ((cp = strchr(ip, ' ')) != 0) {
+                *cp++ = '\0';
+            }
+            *pport = defaultPort;
 
         } else {
             if (isdigit((uchar) *ip)) {
@@ -25063,6 +25068,7 @@ bool mprIsSocketV6(MprSocket *sp)
 }
 
 
+//  MOB - inconsistent with mprIsSocketV6
 bool mprIsIPv6(cchar *ip)
 {
     return ip && ipv6(ip);
@@ -25107,6 +25113,23 @@ MprSsl *mprCreateSsl()
     ssl->verifyIssuer = 1;
     ssl->verifyDepth = 1;
     ssl->verifyPeer = -11;
+    return ssl;
+}
+
+
+/*
+    Clone a SSL context object
+ */
+MprSsl *mprCloneSsl(MprSsl *src)
+{
+    MprSsl      *ssl;
+
+    if ((ssl = mprAllocObj(MprSsl, manageSsl)) == 0) {
+        return 0;
+    }
+    if (src) {
+        *ssl = *src;
+    }
     return ssl;
 }
 
