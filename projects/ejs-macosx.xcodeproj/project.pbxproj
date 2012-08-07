@@ -2423,6 +2423,7 @@ cp -r ../../${CFG_DIR}/bin/ejsrun ../../${CFG_DIR}/bin/utest
 ../src/jems/ejs.bit/bits/os/vxworks.bit,
 ../src/jems/ejs.bit/bits/os/windows.bit,
 ../src/jems/ejs.bit/bits/packs,
+../src/jems/ejs.bit/bits/packs/a.tmp,
 ../src/jems/ejs.bit/bits/packs/compiler.pak,
 ../src/jems/ejs.bit/bits/packs/doxygen.pak,
 ../src/jems/ejs.bit/bits/packs/dsi.pak,
