@@ -563,7 +563,7 @@ function packageWindows(pkg: Path, options) {
     cp.close()
     let base = [s.product, s.version, s.buildNumber, bit.platform.dist, bit.platform.os, bit.platform.arch].join('-')
     let outfile = bit.dir.rel.join(base).joinExt('exe', true)
-    run([bit.packs.pmaker.path, iss])
+    run([bit.packs.pmaker.path, iss], {noshow: true})
     pkg.join('Output/setup.exe').copy(outfile)
 
     /* Wrap in a zip archive */
