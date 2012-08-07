@@ -35,11 +35,11 @@ build configure generate test package:
 #   Complete rebuild of a release build
 #
 rebuild:
-	sudo rm -fr $(OS)-*-debug -fr $(OS)-*-release
+	rm -fr $(OS)-*-debug -fr $(OS)-*-release
 	$(MAKE) -f projects/ejs-$(OS).$(EXT)
 	$(OS)-*-debug/bin/bit --release configure build
 	rm -fr $(OS)-*-debug
-	sudo bit install
+	bit install
 
 clean clobber:
 	$(MAKE) -f projects/ejs-$(OS).$(EXT) $@
