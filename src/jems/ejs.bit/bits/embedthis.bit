@@ -57,7 +57,7 @@ Bit.load({
                     }
                 }
                 trace('Restore', 'Restore prior configuration')
-                run(bitcmd + ' -q -configure . -' + bit.platform.profile, bit.target.runopt)
+                run(bitcmd + ' -q -configure . -profile ' + bit.platform.profile, bit.target.runopt)
             ",
         },
 

@@ -78,6 +78,7 @@ module ejs {
             },
             init: { },
             uris: { },
+            test: {},
         }
 
         /**

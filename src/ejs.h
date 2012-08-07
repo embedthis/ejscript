@@ -87,7 +87,7 @@ extern "C" {
 #define EJS_FILE_PERMS              0664            /**< Default file perms */
 #define EJS_DIR_PERMS               0775            /**< Default dir perms */
 
-#if BIT_FEATURE_MMU
+#if BIT_HAS_MMU
     #if BIT_TUNE == MPR_TUNE_SIZE
         #define EJS_STACK_MAX       (1024 * 1024)   /**< Stack size on virtual memory systems */
     #elif BIT_TUNE == MPR_TUNE_BALANCED
@@ -230,8 +230,8 @@ struct EjsVoid;
 /** 
     Configured numeric type
  */
-#define BIT_FEATURE_NUM_TYPE double
-typedef BIT_FEATURE_NUM_TYPE MprNumber;
+#define BIT_NUM_TYPE double
+typedef BIT_NUM_TYPE MprNumber;
 
 /*  
     Sizes (in bytes) of encoded types in a ByteArray
@@ -4450,7 +4450,7 @@ extern void     ejsSetSqliteMemCtx(MprThreadLocal *tls);
 extern void     ejsSetSqliteTls(MprThreadLocal *tls);
 extern void     ejsDefineConfigProperties(Ejs *ejs);
 
-#if BIT_FEATURE_SQLITE
+#if BIT_PACK_SQLITE
     extern int   ejs_db_sqlite_Init(Ejs *ejs, MprModule *mp);
 #endif
 extern int      ejs_cache_local_Init(Ejs *ejs, MprModule *mp);

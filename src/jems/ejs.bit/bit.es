@@ -150,15 +150,6 @@ public class Bit {
                     }
                     print('')
                 }
-                /* UNUSED && KEEP (too long) 
-                    let targets = []
-                    for (let [tname,target] in b.bit.targets) {
-                        targets.push(tname)
-                    }
-                    print("Targets:\n    ", targets.join(' '))
-                    b.selectTargets()
-                    print("\nDefault Targets:\n    ", b.selectedTargets.join(' '))
-                 */
             } catch (e) { print('CATCH: ' + e)}
         }
         App.exit(1)
@@ -442,13 +433,60 @@ public class Bit {
     }
 
     function writeDefinitions(f: TextStream, platform) {
-        let settings = bit.settings
+        let settings = bit.settings.clone()
+        Object.sortProperties(settings)
+
+        f.writeLine('/* Settings */')
+        for (let [key,value] in settings) {
+            if (key.match(/[a-z]/)) {
+                key = 'BIT_' + key.replace(/[A-Z]/g, '_$&').replace(/-/g, '_').toUpper()
+            }
+            if (value is Number) {
+                f.writeLine('#define ' + key + ' ' + value)
+            } else if (value is Boolean) {
+                f.writeLine('#define ' + key + ' ' + (value cast Number))
+            } else {
+                f.writeLine('#define ' + key + ' "' + value + '"')
+            }
+        }
+
+        f.writeLine('\n/* Prefixes */')
+        //  MOB - rename BIT_FULLNAME_PREFIX
+        let base = (settings.name == 'ejs') ? bit.prefixes.productver : bit.prefixes.product
+        f.writeLine('#define BIT_CFG_PREFIX "' + bit.prefixes.config + '"')
+        f.writeLine('#define BIT_BIN_PREFIX "' + bit.prefixes.bin + '"')
+        f.writeLine('#define BIT_INC_PREFIX "' + bit.prefixes.inc + '"')
+        f.writeLine('#define BIT_LOG_PREFIX "' + bit.prefixes.log + '"')
+        f.writeLine('#define BIT_PRD_PREFIX "' + bit.prefixes.product + '"')
+        f.writeLine('#define BIT_SPL_PREFIX "' + bit.prefixes.spool + '"')
+        f.writeLine('#define BIT_SRC_PREFIX "' + bit.prefixes.src + '"')
+        f.writeLine('#define BIT_VER_PREFIX "' + bit.prefixes.productver + '"')
+        f.writeLine('#define BIT_WEB_PREFIX "' + bit.prefixes.web + '"')
+
+        /* Suffixes */
+        f.writeLine('\n/* Suffixes */')
+        f.writeLine('#define BIT_EXE "' + bit.ext.dotexe + '"')
+        f.writeLine('#define BIT_SHLIB "' + bit.ext.dotshlib + '"')
+        f.writeLine('#define BIT_SHOBJ "' + bit.ext.dotshobj + '"')
+        f.writeLine('#define BIT_LIB "' + bit.ext.dotlib + '"')
+        f.writeLine('#define BIT_OBJ "' + bit.ext.doto + '"')
+
+/*
         f.writeLine('#define BIT_PRODUCT "' + settings.product + '"')
         f.writeLine('#define BIT_NAME "' + settings.title + '"')
         f.writeLine('#define BIT_COMPANY "' + settings.company + '"')
-        f.writeLine('#define BIT_' + settings.product.toUpper() + '_PRODUCT 1')
         f.writeLine('#define BIT_VERSION "' + settings.version + '"')
         f.writeLine('#define BIT_NUMBER "' + settings.buildNumber + '"')
+ */
+        /* Build profile */
+        f.writeLine('\n/* Profile */')
+        let args = 'bit ' + App.args.slice(1).join(' ')
+        f.writeLine('#define BIT_' + settings.product.toUpper() + '_PRODUCT 1')
+        f.writeLine('#define BIT_PROFILE "' + bit.platform.profile + '"')
+        f.writeLine('#define BIT_CONFIG_CMD "' + args + '"')
+
+        /* Architecture settings */
+        f.writeLine('\n/* Miscellaneous */')
         if (settings.charlen) {
             f.writeLine('#define BIT_CHAR_LEN ' + settings.charlen)
             if (settings.charlen == 1) {
@@ -465,53 +503,8 @@ public class Bit {
         f.writeLine('#define BIT_PATCH_VERSION ' + ver[2])
         f.writeLine('#define BIT_VNUM ' + ((((ver[0] * 1000) + ver[1]) * 1000) + ver[2]))
 
-        let args = 'bit ' + App.args.slice(1).join(' ')
-        f.writeLine('#define BIT_CONFIG_CMD "' + args + '"')
 
-        /* UNUSED
-        f.writeLine('#define BIT_LIB_NAME "' + 'bin' + '"')
-        */
-        f.writeLine('#define BIT_PROFILE "' + bit.platform.profile + '"')
-
-        /* Prefixes */
-        let base = (settings.name == 'ejs') ? bit.prefixes.productver : bit.prefixes.product
-        f.writeLine('#define BIT_CFG_PREFIX "' + bit.prefixes.config + '"')
-        f.writeLine('#define BIT_BIN_PREFIX "' + bit.prefixes.bin + '"')
-        f.writeLine('#define BIT_INC_PREFIX "' + bit.prefixes.inc + '"')
-        f.writeLine('#define BIT_LOG_PREFIX "' + bit.prefixes.log + '"')
-        f.writeLine('#define BIT_PRD_PREFIX "' + bit.prefixes.product + '"')
-        f.writeLine('#define BIT_SPL_PREFIX "' + bit.prefixes.spool + '"')
-        f.writeLine('#define BIT_SRC_PREFIX "' + bit.prefixes.src + '"')
-        f.writeLine('#define BIT_VER_PREFIX "' + bit.prefixes.productver + '"')
-        f.writeLine('#define BIT_WEB_PREFIX "' + bit.prefixes.web + '"')
-
-        /* UNUSED
-        f.writeLine('#define BIT_DOC_PREFIX "' + base.join('doc') + '"')
-        f.writeLine('#define BIT_MAN_PREFIX "' + base.join('man') + '"')
-        f.writeLine('#define BIT_JEM_PREFIX "' + bit.prefixes.product.join('jems') + '"')
-        f.writeLine('#define BIT_SAM_PREFIX "' + base.join('samples') + '"')
-        */
-
-        /* Suffixes */
-        f.writeLine('#define BIT_EXE "' + bit.ext.dotexe + '"')
-        f.writeLine('#define BIT_SHLIB "' + bit.ext.dotshlib + '"')
-        f.writeLine('#define BIT_SHOBJ "' + bit.ext.dotshobj + '"')
-        f.writeLine('#define BIT_LIB "' + bit.ext.dotlib + '"')
-        f.writeLine('#define BIT_OBJ "' + bit.ext.doto + '"')
-
-        /* Features */
 /*
-   TODO - USE
-        for (let [key,value] in bit.settings) {
-            if (value is Number) {
-                f.writeLine('#define BIT_' + key.toUpper() + ' ' + value)
-            } else if (value is Boolean) {
-                f.writeLine('#define BIT_' + key.toUpper() + ' ' + (value cast Number))
-            } else {
-                f.writeLine('#define BIT_' + key.toUpper() + ' "' + value + '"')
-            }
-        }
- */
         if (settings.assert != undefined) {
             f.writeLine('#define BIT_FEATURE_ASSERT ' + (settings.assert ? 1 : 0))
         }
@@ -549,19 +542,22 @@ public class Bit {
         f.writeLine('#define BIT_CC_UNNAMED_UNIONS ' + (settings.hasUnnamedUnions ? '1' : '0'))
         f.writeLine('#define BIT_CC_WARN_64TO32 ' + (settings.warn64to32 ? '1' : '0'))
         f.writeLine('#define BIT_CC_WARN_UNUSED ' + (settings.warnUnused ? '1' : '0'))
+*/
 
-        /* Packs */
-        for (let [pname, pack] in bit.packs) {
+        f.writeLine('\n/* Packs */')
+        let packs = bit.packs.clone()
+        Object.sortProperties(packs)
+        for (let [pname, pack] in packs) {
             if (pname == 'compiler') {
                 pname = 'cc'
             }
             if (pack.enable) {
-                f.writeLine('#define BIT_FEATURE_' + pname.toUpper() + ' 1')
+                f.writeLine('#define BIT_PACK_' + pname.toUpper() + ' 1')
             } else {
-                f.writeLine('#define BIT_FEATURE_' + pname.toUpper() + ' 0')
+                f.writeLine('#define BIT_PACK_' + pname.toUpper() + ' 0')
             }
         }
-        for (let [pname, pack] in bit.packs) {
+        for (let [pname, pack] in packs) {
             if (pack.enable && pack.definitions) {
                 for each (define in pack.definitions) {
                     if (define.match(/-D(.*)=(.*)/)) {
@@ -608,22 +604,14 @@ public class Bit {
             }
         }
         for each (field in poptions['without']) {
-            if (field == 'all' && bit.settings['without-all']) {
-                for each (f in bit.settings['without-all']) {
+            if (field == 'all' && bit.settings['minimal']) {
+                for each (f in bit.settings['minimal']) {
                     bit.packs[f] = { enable: false, diagnostic: 'configured --without ' + f }
                 }
                 continue
             }
             bit.packs[field] = { enable: false, diagnostic: 'configured --without ' + field }
         }
-        /* UNUSED
-        for each (field in poptions['prefix']) {
-            let [field,value] = field.split('=')
-            if (value) {
-                bit.prefixes[field] = Path(value)
-            }
-        }
-        */
     }
 
     let envTools = {
@@ -2323,13 +2311,6 @@ public class Bit {
         g.PLATFORM = bit.platform.name
         g.SHOBJ = bit.ext.dotshobj
         g.SHLIB = bit.ext.dotshlib
-
-        /* UNUSED
-            Make meta-globals
-        for each (name in bit.globals) {
-            global[name] = bit.globals[name]
-        }
-         */
     }
 
     /*

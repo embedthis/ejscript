@@ -171,7 +171,7 @@ function init(base, name) {
      */
     let code = PREP_CODE
     for each (target in bit.targets) {
-        if (target.type == 'lib') {
+        if (target.type == 'lib' || target.type == 'exe') {
             for each (let hdr in target.depends) {
                 let dep = bit.targets[hdr]
                 if (dep && dep.type == 'header') {

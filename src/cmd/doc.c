@@ -234,7 +234,7 @@ static void generateHomeTitle(EjsMod *mp)
         "       <input class=\"smallText\" type=\"text\" name=\"search\" align=\"right\" id=\"searchInput\" size=\"15\" \n"
         "           maxlength=\"50\" value=\"Search\"/>\n"
         "   </div>\n"
-        "</div>\n", BIT_NAME, BIT_VERSION);
+        "</div>\n", BIT_TITLE, BIT_VERSION);
 
     generateHtmlFooter(mp);
 
@@ -569,7 +569,7 @@ static void generateOverview(EjsMod *mp)
     }
     generateContentHeader(mp, "Overview");
 
-    out(mp, "<h1>%s %s</h1>", BIT_NAME, BIT_VERSION);
+    out(mp, "<h1>%s %s</h1>", BIT_TITLE, BIT_VERSION);
     out(mp, "<p>Embedthis Ejscript is an implementation of the Javascript (ECMA 262) language.</p>");
     out(mp, "<p>See <a href='http://www.ejscript.org' target='new'>http://www.ejscript.org</a> for "
         "product details and downloads.</p>");

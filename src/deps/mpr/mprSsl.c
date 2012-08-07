@@ -8,7 +8,7 @@
 
 /************************************************************************/
 /*
-    Start of file "src/mprMatrixssl.c"
+    Start of file "src/mprMatrixSsl.c"
  */
 /************************************************************************/
 
@@ -22,16 +22,17 @@
 
 #include    "bit.h"
 
-#if BIT_FEATURE_MATRIXSSL
+#if BIT_PACK_MATRIXSSL
+/*
+    Matrixssl defines int32, uint32, int64 and uint64, but does not provide HAS_XXX to disable. 
+    So must include matrixsslApi.h first and then workaround. 
+ */
 #if WIN32
  #include   <winsock2.h>
  #include   <windows.h>
 #endif
  #include    "matrixsslApi.h"
 
-/*
-    Matrixssl defines int32, uint32, int64 and uint64. Disable these in the mpr
- */
 #define     HAS_INT32 1
 #define     HAS_UINT32 1
 #define     HAS_INT64 1
@@ -739,7 +740,7 @@ static ssize flushMss(MprSocket *sp)
 #else
 
 int mprCreateMatrixSslModule() { return -1; }
-#endif /* BIT_FEATURE_MATRIXSSL */
+#endif /* BIT_PACK_MATRIXSSL */
 
 /*
     @copy   default
@@ -793,7 +794,7 @@ int mprCreateMatrixSslModule() { return -1; }
 
 #include    "mpr.h"
 
-#if BIT_FEATURE_OPENSSL
+#if BIT_PACK_OPENSSL
 
 /* Clashes with WinCrypt.h */
 #undef OCSP_RESPONSE
@@ -1682,7 +1683,7 @@ static DH *get_dh1024()
     return dh;
 }
 
-#endif /* BIT_FEATURE_OPENSSL */
+#endif /* BIT_PACK_OPENSSL */
 
 /*
     @copy   default
@@ -1736,7 +1737,7 @@ static DH *get_dh1024()
 
 #include    "mpr.h"
 
-#if BIT_FEATURE_SSL
+#if BIT_PACK_SSL
 /************************************ Code ************************************/
 /*
     Module initialization entry point
@@ -1745,13 +1746,13 @@ int mprSslInit(void *unused, MprModule *module)
 {
     mprAssert(module);
 
-#if BIT_FEATURE_MATRIXSSL
+#if BIT_PACK_MATRIXSSL
     if (mprCreateMatrixSslModule() < 0) {
         return MPR_ERR_CANT_OPEN;
     }
     MPR->socketService->defaultProvider = sclone("matrixssl");
 #endif
-#if BIT_FEATURE_OPENSSL
+#if BIT_PACK_OPENSSL
     if (mprCreateOpenSslModule() < 0) {
         return MPR_ERR_CANT_OPEN;
     }
@@ -1760,7 +1761,7 @@ int mprSslInit(void *unused, MprModule *module)
     return 0;
 }
 
-#endif /* BLD_FEATURE_SSL */
+#endif /* BLD_PACK_SSL */
 
 /*
     @copy   default

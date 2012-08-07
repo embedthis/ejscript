@@ -5,8 +5,7 @@ A complete, integrated JavaScript environment.
 
 Licensing
 ---
-Ejscript is dual-licensed under a GPLv2 license and commercial licenses are offered by Embedthis Software.
-See http://appwebserver.org/downloads/licensing.html for licensing details.
+See LICENSE.md for details.
 
 ### To Read Documentation:
 
@@ -23,7 +22,7 @@ Images are built into */bin. The build configuration is saved in */inc/bit.h.
 
     make test
 
-### To a Script:
+### To run a Script:
 
     ejs script
 

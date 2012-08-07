@@ -1382,7 +1382,7 @@ int httpWriteGroupFile(HttpAuth *auth, char *path)
 
 
 
-#if BIT_CC_PAM
+#if BIT_HAS_PAM
  #include    <security/pam_appl.h>
 
 /********************************* Defines ************************************/
@@ -1476,7 +1476,7 @@ bool httpValidatePamCredentials(HttpAuth *auth, cchar *realm, cchar *user, cchar
 {
     return 0;
 }
-#endif /* BIT_CC_PAM */
+#endif /* BIT_HAS_PAM */
 
 /*
     @copy   default
@@ -2224,7 +2224,7 @@ ssize httpFilterChunkData(HttpQueue *q, HttpPacket *packet)
     switch (rx->chunkState) {
     case HTTP_CHUNK_UNCHUNKED:
         nbytes = mprGetBufLength(buf);
-        if (conn->http10 && nbytes == 0) {
+        if (conn->http10 && nbytes == 0 && mprIsSocketEof(conn->sock)) {
             rx->eof = 1;
         }
         return (ssize) min(rx->remainingContent, nbytes);
@@ -2465,7 +2465,7 @@ static HttpConn *openConnection(HttpConn *conn, cchar *url, struct MprSsl *ssl)
         httpError(conn, HTTP_CODE_COMMS_ERROR, "Can't open socket on %s:%d", ip, port);
         return 0;
     }
-#if BIT_FEATURE_SSL
+#if BIT_PACK_SSL
     /* Must be done even if using keep alive for repeat SSL requests */
     if (uri->secure) {
         if (ssl == 0) {
@@ -2563,6 +2563,7 @@ static int setClientHeaders(HttpConn *conn)
     } else {
         httpAddHeaderString(conn, "Host", conn->ip);
     }
+#if UNUSED
     if (strcmp(conn->protocol, "HTTP/1.1") == 0) {
         /* If zero, we ask the client to close one request early. This helps with client led closes */
         if (conn->keepAliveCount > 0) {
@@ -2570,12 +2571,18 @@ static int setClientHeaders(HttpConn *conn)
         } else {
             httpSetHeaderString(conn, "Connection", "close");
         }
-
     } else {
         /* Set to zero to let the client initiate the close */
         conn->keepAliveCount = 0;
         httpSetHeaderString(conn, "Connection", "close");
     }
+#else
+    if (conn->keepAliveCount > 0) {
+        httpSetHeaderString(conn, "Connection", "Keep-Alive");
+    } else {
+        httpSetHeaderString(conn, "Connection", "close");
+    }
+#endif
     return 0;
 }
 
@@ -3442,9 +3449,11 @@ void httpSetProtocol(HttpConn *conn, cchar *protocol)
 {
     if (conn->state < HTTP_STATE_CONNECTED) {
         conn->protocol = sclone(protocol);
-        if (strcmp(protocol, "HTTP/1.0") == 0) {
+#if UNUSED
+        if (strcmp(conn->protocol, "HTTP/1.0") == 0) {
             conn->keepAliveCount = -1;
         }
+#endif
     }
 }
 
@@ -3890,7 +3899,10 @@ HttpConn *httpAcceptConn(HttpEndpoint *endpoint, MprEvent *event)
         return 0;
     }
     if (endpoint->ssl) {
-        mprUpgradeSocket(sock, endpoint->ssl, 1);
+        if (mprUpgradeSocket(sock, endpoint->ssl, 1) < 0) {
+            mprCloseSocket(sock, 0);
+            return 0;
+        }
     }
     if (endpoint->sock->handler) {
         /* Re-enable events on the listen socket */
@@ -4023,7 +4035,7 @@ void httpSetEndpointNotifier(HttpEndpoint *endpoint, HttpNotifier notifier)
 
 int httpSecureEndpoint(HttpEndpoint *endpoint, struct MprSsl *ssl)
 {
-#if BIT_FEATURE_SSL
+#if BIT_PACK_SSL
     endpoint->ssl = ssl;
     return 0;
 #else
@@ -6565,14 +6577,15 @@ void httpHandleOptionsTrace(HttpConn *conn)
             (flags & HTTP_STAGE_PUT) ? ",PUT" : "",
             (flags & HTTP_STAGE_DELETE) ? ",DELETE" : "");
         httpOmitBody(conn);
+        httpSetContentLength(conn, 0);
         httpFinalize(conn);
     }
 }
 
 
-static void openPass(HttpQueue *q)
+static void startPass(HttpQueue *q)
 {
-    mprLog(5, "Open passHandler");
+    mprLog(5, "Start passHandler");
     if (q->conn->rx->flags & (HTTP_OPTIONS | HTTP_TRACE)) {
         httpHandleOptionsTrace(q->conn);
     }
@@ -6593,7 +6606,7 @@ int httpOpenPassHandler(Http *http)
         return MPR_ERR_CANT_CREATE;
     }
     http->passHandler = stage;
-    stage->open = openPass;
+    stage->start = startPass;
     stage->ready = readyPass;
 
     /*
@@ -6602,7 +6615,7 @@ int httpOpenPassHandler(Http *http)
     if ((stage = httpCreateHandler(http, "errorHandler", HTTP_STAGE_ALL, NULL)) == 0) {
         return MPR_ERR_CANT_CREATE;
     }
-    stage->open = openPass;
+    stage->start = startPass;
     stage->ready = readyPass;
     return 0;
 }
@@ -6824,7 +6837,7 @@ void httpSetPipelineHandler(HttpConn *conn, HttpStage *handler)
 
 void httpSetSendConnector(HttpConn *conn, cchar *path)
 {
-#if !BIT_FEATURE_ROMFS
+#if !BIT_ROM
     HttpTx      *tx;
 
     tx = conn->tx;
@@ -8285,7 +8298,7 @@ HttpRoute *httpCreateAliasRoute(HttpRoute *parent, cchar *pattern, cchar *path, 
 
 int httpStartRoute(HttpRoute *route)
 {
-#if !BIT_FEATURE_ROMFS
+#if !BIT_ROM
     if (!(route->flags & HTTP_ROUTE_STARTED)) {
         route->flags |= HTTP_ROUTE_STARTED;
         if (route->logPath && (!route->parent || route->logPath != route->parent->logPath)) {
@@ -10787,7 +10800,7 @@ bool httpTokenizev(HttpRoute *route, cchar *line, cchar *fmt, va_list args)
             Extra unparsed text
          */
         for (; tok < end && isspace((uchar) *tok); tok++) ;
-        if (*tok) {
+        if (*tok && *tok != '#') {
             mprError("Extra unparsed text: \"%s\"", tok);
             return 0;
         }
@@ -11253,7 +11266,9 @@ static bool parseIncoming(HttpConn *conn, HttpPacket *packet)
         rx->parsedUri->host = rx->hostHeader ? rx->hostHeader : conn->host->name;
 
     } else if (!(100 <= rx->status && rx->status <= 199)) {
-        /* Clients have already created their Tx pipeline */
+        /* 
+            Ignore Expect status responses. NOTE: Clients have already created their Tx pipeline.
+         */
         httpCreateRxPipeline(conn, conn->http->clientRoute);
     }
     httpSetState(conn, HTTP_STATE_PARSED);
@@ -11595,7 +11610,9 @@ static bool parseHeaders(HttpConn *conn, HttpPacket *packet)
                 }
                 rx->contentLength = sclone(value);
                 mprAssert(rx->length >= 0);
-                if (conn->endpoint || strcasecmp(tx->method, "HEAD") != 0) {
+                if (strcasecmp(tx->method, "HEAD") == 0) {
+                    rx->remainingContent = 0;
+                } else if (conn->endpoint) {
                     rx->remainingContent = rx->length;
                     rx->needInputPipeline = 1;
                 }
@@ -12862,7 +12879,7 @@ void httpTrimExtraPath(HttpConn *conn)
 
 
 /**************************** Forward Declarations ****************************/
-#if !BIT_FEATURE_ROMFS
+#if !BIT_ROM
 
 static void addPacketForSend(HttpQueue *q, HttpPacket *packet);
 static void adjustSendVec(HttpQueue *q, MprOff written);
@@ -13195,7 +13212,7 @@ int httpOpenSendConnector(Http *http) { return 0; }
 void httpSendOpen(HttpQueue *q) {}
 void httpSendOutgoingService(HttpQueue *q) {}
 
-#endif /* !BIT_FEATURE_ROMFS */
+#endif /* !BIT_ROM */
 /*
     @copy   default
     
@@ -13972,9 +13989,10 @@ ssize httpFormatResponsev(HttpConn *conn, cchar *fmt, va_list args)
     tx = conn->tx;
     conn->responded = 1;
     body = sfmtv(fmt, args);
-    httpOmitBody(conn);
     tx->altBody = body;
     tx->length = slen(tx->altBody);
+    conn->tx->flags |= HTTP_TX_NO_BODY;
+    httpDiscardData(conn, HTTP_QUEUE_TX);
     return (ssize) tx->length;
 }
 
@@ -14229,6 +14247,7 @@ static void setHeaders(HttpConn *conn, HttpPacket *packet)
     HttpRoute   *route;
     HttpRange   *range;
     cchar       *mimeType;
+    ssize       length;
 
     mprAssert(packet->flags == HTTP_PACKET_HEADER);
 
@@ -14253,13 +14272,16 @@ static void setHeaders(HttpConn *conn, HttpPacket *packet)
     if (tx->etag) {
         httpAddHeader(conn, "ETag", "%s", tx->etag);
     }
-    if (tx->chunkSize > 0) {
-        if (!(rx->flags & HTTP_HEAD)) {
-            httpSetHeaderString(conn, "Transfer-Encoding", "chunked");
-        }
-    } else if (tx->length >= 0) {
-        mprAssert(tx->status != 304 && tx->status != 204 && !(100 <= tx->status && tx->status <= 199));
-        httpAddHeader(conn, "Content-Length", "%Ld", tx->length);
+    length = tx->length > 0 ? tx->length : 0;
+    if (rx->flags & HTTP_HEAD) {
+        conn->tx->flags |= HTTP_TX_NO_BODY;
+        httpDiscardData(conn, HTTP_QUEUE_TX);
+        httpAddHeader(conn, "Content-Length", "%Ld", length);
+    } else if (tx->chunkSize > 0) {
+        httpSetHeaderString(conn, "Transfer-Encoding", "chunked");
+    } else if (conn->endpoint || tx->length > 0) {
+        /* Server or client with body */
+        httpAddHeader(conn, "Content-Length", "%Ld", length);
     }
     if (tx->outputRanges) {
         if (tx->outputRanges->next == 0) {

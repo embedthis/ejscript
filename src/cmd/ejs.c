@@ -10,7 +10,7 @@
 
 #include    "ejsCompiler.h"
 
-#if BIT_CC_EDITLINE
+#if BIT_HAS_LIB_EDIT
   #include  <histedit.h>
 #endif
 
@@ -27,7 +27,7 @@ typedef struct App {
 
 static App *app;
 
-#if BIT_CC_EDITLINE
+#if BIT_HAS_LIB_EDIT
 static History  *cmdHistory;
 static EditLine *eh; 
 static cchar    *prompt;
@@ -237,7 +237,7 @@ MAIN(ejsMain, int argc, char **argv, char **envp)
             mprSetCmdlineLogging(1);
 
         } else if (smatch(argp, "--version") || smatch(argp, "-V")) {
-            mprPrintfError("%s %s-%s\n", BIT_NAME, BIT_VERSION, BIT_NUMBER);
+            mprPrintfError("%s %s-%s\n", BIT_TITLE, BIT_VERSION, BIT_BUILD_NUMBER);
             return 0;
 
         } else if (smatch(argp, "--warn")) {
@@ -452,7 +452,7 @@ static int interpretCommands(EcCompiler *cp, cchar *cmd)
 
 
 /************************************************* Command line History **************************************/
-#if BIT_CC_EDITLINE
+#if BIT_HAS_LIB_EDIT
 
 static cchar *issuePrompt(EditLine *e) 
 {
@@ -505,19 +505,20 @@ static char *readline(cchar *msg)
     return NULL; 
 } 
 
-#else /* BIT_CC_EDITLINE */
+#else /* BIT_HAS_LIB_EDIT */
 
 static char *readline(cchar *msg)
 {
     char    buf[MPR_MAX_STRING];
 
     printf("%s", msg);
+    fflush(stdout);
     if (fgets(buf, sizeof(buf) - 1, stdin) == 0) {
         return NULL;
     }
     return strdup(buf);
 }
-#endif /* BIT_CC_EDITLINE */
+#endif /* BIT_HAS_LIB_EDIT */
 
 
 /*  

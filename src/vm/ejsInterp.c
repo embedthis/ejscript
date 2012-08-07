@@ -141,7 +141,7 @@ static MPR_INLINE void checkGetter(Ejs *ejs, EjsAny *value, EjsAny *thisObj, Ejs
     #define traceCode(ejs, opcode) opcode
 #endif
 
-#if BIT_UNIX_LIKE || (VXWORKS && !BIT_CC_DIAB)
+#if BIT_UNIX_LIKE || (VXWORKS && !BIT_DIAB)
     #define CASE(opcode) opcode
     #define BREAK goto *opcodeJump[opcode = traceCode(ejs, GET_BYTE())]
 #else
@@ -199,7 +199,7 @@ static void VM(Ejs *ejs, EjsFunction *fun, EjsAny *otherThis, int argc, int stac
     EjsString   *str;
     int         i, offset, count, opcode, attributes, paused;
 
-#if BIT_UNIX_LIKE || (VXWORKS && !BIT_CC_DIAB)
+#if BIT_UNIX_LIKE || (VXWORKS && !BIT_DIAB)
     /*
         Direct threading computed goto processing. Include computed goto jump table.
      */
@@ -226,7 +226,7 @@ static void VM(Ejs *ejs, EjsFunction *fun, EjsAny *otherThis, int argc, int stac
     mprAssert(state->fp);
     FRAME->caller = 0;
 
-#if BIT_UNIX_LIKE || (VXWORKS && !BIT_CC_DIAB)
+#if BIT_UNIX_LIKE || (VXWORKS && !BIT_DIAB)
     /*
         Direct threading computed goto processing. Include computed goto jump table.
      */
@@ -443,7 +443,7 @@ static void VM(Ejs *ejs, EjsFunction *fun, EjsAny *otherThis, int argc, int stac
                 Stack after         [RegExp]
          */
         CASE (EJS_OP_LOAD_REGEXP):
-#if BIT_FEATURE_PCRE
+#if BIT_PACK_PCRE
             str = GET_STRING();
             v1 = (EjsObj*) ejsCreateRegExp(ejs, str);
             push(v1);
@@ -2414,7 +2414,7 @@ static void VM(Ejs *ejs, EjsFunction *fun, EjsAny *otherThis, int argc, int stac
             mprAssert(0);
             BREAK;
 
-#if !BIT_UNIX_LIKE && !(VXWORKS && !BIT_CC_DIAB)
+#if !BIT_UNIX_LIKE && !(VXWORKS && !BIT_DIAB)
         }
     }
 #endif
@@ -3621,7 +3621,7 @@ void ejsLog(Ejs *ejs, cchar *fmt, ...)
 
 
 #if FUTURE
-#if BIT_CC_EDITLINE
+#if BIT_HAS_LIB_EDIT
 static History  *cmdHistory;
 static EditLine *eh; 
 static cchar    *prompt;
@@ -3751,7 +3751,6 @@ static EjsOpCode traceCode(Ejs *ejs, EjsOpCode opcode)
 #endif
 
     MPR_VERIFY_MEM();
-    mprAssert(!MPR->marking);
     state = ejs->state;
 
     fp = state->fp;
