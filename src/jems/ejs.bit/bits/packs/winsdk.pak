@@ -3,17 +3,32 @@
  */
 
 pack('winsdk', 'Windows SDK')
-let search = bit.packs.winsdk.path ? 
-    bit.packs.winsdk.path : 
-    bit.dir.programFiles.files('Microsoft SDKs/Windows/*').sort().reverse()
-let wvar: Path = '$(SDK)'
-let winsdk: Path = wvar
+
+let winsdk: Path
+let search = bit.packs.winsdk.path
+let newsdk
+if (!search) {
+    /* Windows SDK 8 is now under /Program Files (x86)/Windows Kits/8.0 */
+    let kits = bit.dir.programs.files('Windows Kits/*').sort().reverse()
+    if (kits.length) {
+        newsdk = true
+    } else {
+        /* Old Windows SDK is now under /Program Files/Microsoft SDKs/Windows */
+        kits = bit.dir.programFiles.files('Microsoft SDKs/Windows/*').sort().reverse()
+    }
+    search = kits
+    if (search.length == 0) {
+        throw 'Can\'t find the Windows SDK. Download from http://msdn.microsoft.com/en-us/windows/desktop/hh852363.aspx'
+    }
+}
+
 if (Config.OS != 'windows') {
     winsdk = '$(SDK)'
+} else if (newsdk) {
+    winsdk = probe('Include/um/WinBase.h', {fullpath: true, search: search})
+    winsdk = winsdk.dirname.dirname.dirname
+print("WS", winsdk)
 } else {
-    if (search.length == 0) {
-        throw 'Can\'t find the Windows SDK. Download from http://msdn.microsoft.com/en-us/windowsserver/bb980924.aspx'
-    }
     winsdk = probe('Include/WinBase.h', {fullpath: true, search: search})
     winsdk = winsdk.dirname.dirname
 }
@@ -21,14 +36,21 @@ if (Config.OS != 'windows') {
 let bin = winsdk.join('Bin').portable
 Bit.load({packs: { winsdk: { path: winsdk, search: bin }}})
 
-if (bit.platform.arch == 'x64') {
-    bit.env.PATH = [ bin.join('x64'), bin ]
+if (newsdk) {
+    bit.env.PATH = [ bin.join(bit.platform.arch) ]
+    bit.env.INCLUDE = [ winsdk.join('Include/um').portable, winsdk.join('Include/shared') ]
+    let winver = winsdk.basename.replace('.0', '')
+    bit.env.LIB = [ winsdk.join('Lib', 'win' + winver, 'um', bit.platform.arch).portable ]
 } else {
-    bit.env.PATH = [ bin ]
-}
-bit.env.INCLUDE = [ winsdk.join('INCLUDE').portable ]
-if (bit.platform.arch == 'x64') {
-    bit.env.LIB = [ winsdk.join('lib/x64').portable ]
-} else {
-    bit.env.LIB = [ winsdk.join('lib').portable ]
+    if (bit.platform.arch == 'x64') {
+        bit.env.PATH = [ bin.join('x64'), bin ]
+    } else {
+        bit.env.PATH = [ bin ]
+    }
+    bit.env.INCLUDE = [ winsdk.join('Include').portable ]
+    if (bit.platform.arch == 'x64') {
+        bit.env.LIB = [ winsdk.join('Lib/x64').portable ]
+    } else {
+        bit.env.LIB = [ winsdk.join('Lib').portable ]
+    }
 }
