@@ -16,13 +16,14 @@ if (!search) {
         /* Old Windows SDK is now under /Program Files/Microsoft SDKs/Windows */
         search = bit.dir.programFiles.files('Microsoft SDKs/Windows/*').sort().reverse()
     }
-    if (search.length == 0) {
+    if (search.length == 0 && Config.OS == 'windows') {
         throw 'Can\'t find the Windows SDK. Download from http://msdn.microsoft.com/en-us/windows/desktop/hh852363.aspx'
     }
 }
 
 if (Config.OS != 'windows') {
-    bin = winsdk = '$(SDK)'
+    winsdk = '$(SDK)'
+    bin = winsdk.join('Bin')
 } else if (newsdk) {
     winsdk = probe('Include/um/WinBase.h', {fullpath: true, search: search})
     winsdk = winsdk.dirname.dirname.dirname
