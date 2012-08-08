@@ -543,7 +543,7 @@ function packageWindows(pkg: Path, options) {
     let rel = bit.dir.rel
     let opak = Path('package/' + bit.platform.os.toUpper())
 
-    install(opak.join('LICENSE.TXT'), pkg)
+    install(opak.join('LICENSE.md'), pkg)
     let iss = pkg.join('install.iss')
     install(opak.join('install.iss'), iss, {expand: true})
     let contents = pkg.join(s.product + '-' + s.version + '-' + s.buildNumber, 'contents')
@@ -665,7 +665,7 @@ public function apiwrap(patterns) {
     This software is distributed under commercial and open source licenses.
     You may use the GPL open source license described below or you may acquire
     a commercial license from Embedthis Software. You agree to be fully bound
-    by the terms of either license. Consult the LICENSE.TXT distributed with
+    by the terms of either license. Consult the LICENSE.md distributed with
     this software for full details.
   
     This software is open source; you can redistribute it and/or modify it

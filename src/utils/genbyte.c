@@ -120,7 +120,7 @@ static void footer(MprFile *file)
  *  This software is distributed under commercial and open source licenses.\n\
  *  You may use the GPL open source license described below or you may acquire\n\
  *  a commercial license from Embedthis Software. You agree to be fully bound\n\
- *  by the terms of either license. Consult the LICENSE.TXT distributed with\n\
+ *  by the terms of either license. Consult the LICENSE.md distributed with\n\
  *  this software for full details.\n\
  *\n\
  *  This software is open source; you can redistribute it and/or modify it\n\
