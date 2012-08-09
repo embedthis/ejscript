@@ -338,10 +338,8 @@ static EjsObj *nextObjectValue(Ejs *ejs, EjsIterator *ip, int argc, EjsObj **arg
 {
     EjsObj      *obj;
     EjsTrait    *trait;
-    int         numProp;
 
     obj = ip->target;
-    numProp = ejsGetLength(ejs, obj);
     for (; ip->index < ip->length; ip->index++) {
         trait = ejsGetPropertyTraits(ejs, obj, ip->index);
         if (trait && trait->attributes & 

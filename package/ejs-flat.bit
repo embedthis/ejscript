@@ -27,5 +27,11 @@ Bit.load({
             sources: [ 'ejsc.c' ],
             depends: [ 'libejs' ],
         },
+
+		'ejs.mod': {
+            files: [ 'ejs.es' ],
+            build: "run('./ejsc --out ejs.mod --optimize 9 --bind --require null ejs.es')",
+            depends: [ 'ejsc' ],
+		},
     },
 })
