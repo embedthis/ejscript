@@ -499,8 +499,7 @@ enumerable class Test {
     function parseBuildConfig(path: Path) {
         let data = Path(path).readString()
         features = {}
-        features["bld_debug"] = getKey(data, "BIT_DEBUG")
-        let str = data.match(/BIT_PACK.*|BIT_HTTP_PORT.*|BIT_SSL_PORT.*/g)
+        let str = data.match(/BIT_.*/g)
         for each (item in str) {
             let [key, value] = item.split(" ")
             key = key.replace(/BIT_PACK_/, "")
@@ -508,7 +507,7 @@ enumerable class Test {
             if (value == "1" || value == "0") {
                 value = value cast Number
             }
-            features["bld_" + key] = value
+            features["bit_" + key] = value
         }
         str = data.match(/export.*/g)
         env = {}
