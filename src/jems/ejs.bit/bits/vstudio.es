@@ -503,12 +503,12 @@ function projCustomBuildStep(base, target) {
     if (target.type == 'file') {
         for each (let file: Path in target.files) {
             let path = target.path.relativeTo(Base)
-            command += 'if exist ' + wpath(path) + ' del /Q ' + wpath(path) + '\n'
+            command += 'if exist ' + wpath(path) + ' del /Q ' + wpath(path) + '\r\n'
             if (file.isDir) {
-                command += '\tif not exist ' + wpath(path) + ' md ' + wpath(path) + '\n'
-                command += '\txcopy /S /Y ' + wpath(file.relativeTo(target.home)) + ' ' + wpath(path) + '\n'
+                command += '\tif not exist ' + wpath(path) + ' md ' + wpath(path) + '\r\n'
+                command += '\txcopy /S /Y ' + wpath(file.relativeTo(target.home)) + ' ' + wpath(path) + '\r\n'
             } else {
-                command += '\tcopy /Y ' + wpath(file.relativeTo(target.home)) + ' ' + wpath(path) + '\n'
+                command += '\tcopy /Y ' + wpath(file.relativeTo(target.home)) + ' ' + wpath(path) + '\r\n'
             }
         }
     } else if (target['generate-vs']) {
@@ -546,8 +546,12 @@ function exportHeaders(base, target) {
         if (!dep || dep.type != 'header') continue
         for each (file in dep.files) {
             /* Use the directory in the destination so Xcopy won't ask if file or directory */
-            cmd += 'xcopy /Y /S /D ' + wpath(file.relativeTo(target.home)) + ' ' + 
-                wpath(dep.path.relativeTo(base).parent) + '\r\n'
+            if (file.isDir) {
+                cmd += 'xcopy /Y /S /D ' + wpath(file.relativeTo(target.home)) + ' ' + 
+                    wpath(dep.path.relativeTo(base).parent) + '\r\n'
+            } else {
+                cmd += '\tcopy /Y ' + wpath(file.relativeTo(target.home)) + ' ' + wpath(path) + '\r\n'
+            }
         }
     }
     return cmd
