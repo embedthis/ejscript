@@ -14,11 +14,10 @@ const TOOLS_VERSION = '4.0'
 const PROJECT_FILE_VERSION = 10.0.30319.1
 const SOL_VERSION = '11.00'
 const XID = '{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}'
-const PREP = 'if not exist "$(ObjDir)" md "$(ObjDir)"\r
+var PREP = 'if not exist "$(ObjDir)" md "$(ObjDir)"\r
 if not exist "$(BinDir)" md "$(BinDir)"\r
 if not exist "$(IncDir)" md "$(IncDir)"\r
 if not exist "$(IncDir)\\bit.h" copy "..\\${settings.product}-${platform.os}-bit.h" "$(IncDir)\\bit.h"\r
-if not exist "$(BinDir)\\libmpr.def" xcopy /Y /S *.def "$(BinDir)"\r
 '
 var prepTarget
 var Base 
@@ -35,6 +34,9 @@ public function vstudio(base: Path) {
     }
     let projects = []
     /* Create a temporary prep target as the first target */
+    if (bit.dir.bin.files('*.def').length > 0) {
+        PREP += 'if not exist "$(BinDir)\\libmpr.def" xcopy /Y /S *.def "$(BinDir)"\r'
+    }
     prepTarget = {
         type: 'vsprep',
         path: Path('always'),
