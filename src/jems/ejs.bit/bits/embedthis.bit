@@ -76,13 +76,12 @@ Bit.load({
                         formats = '-gen sh,make'
                     }
                     trace('Generate', bit.settings.product + '-' + name.replace(/-.*/, '') + ' projects')
-                    if (name == 'windows-x86') {
+
+                    if (name == 'windows-x86' && Config.OS == 'windows') {
                         /* Windows must do a build to get current *.def files */
+                        trace('Build', 'Full build to generate def files')
                         run(bitcmd + ' -d -without all -configure .', bit.target.runopt)
-                        if (Config.OS == 'windows') {
-                            trace('Build', 'Full build to generate def files')
-                            run(bitcmd + ' -d', bit.target.runopt)
-                        }
+                        run(bitcmd + ' -d ', bit.target.runopt)
                         run(bitcmd + ' -d ' + formats, bit.target.runopt)
                     } else {
                         run(bitcmd + ' -d -q -platform ' + name + ' -without all -configure . ' + formats, bit.target.runopt)
@@ -91,6 +90,10 @@ Bit.load({
                         run(bitcmd + ' -d -q -platform ' + name + ' -without all -profile xcode -configure . -gen xcode',
                             bit.target.runopt)
                         rmdir(bit.dir.top.join(name + '-xcode'))
+                    } else if (name == 'windows-x86') {
+                        run(bitcmd + ' -d -q -platform ' + name + ' -without all -profile vs -configure . -gen vs',
+                            bit.target.runopt)
+                        rmdir(bit.dir.top.join(name + '-vs'))
                     }
                     if (name != bit.platform.name) {
                         rm(bit.dir.top.join(name + '.bit'))
