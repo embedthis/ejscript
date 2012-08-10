@@ -69,14 +69,13 @@ Bit.load({
                     if (name != bit.platform.name) continue
                     let formats
                     if (name == 'windows-x86') {
-                        formats = '-gen sh,nmake,vs'
+                        formats = '-gen sh,nmake'
                     } else if (name == 'macosx-x64') {
                         formats = '-gen sh,make'
                     } else {
                         formats = '-gen sh,make'
                     }
                     trace('Generate', bit.settings.product + '-' + name.replace(/-.*/, '') + ' projects')
-
                     if (name == 'windows-x86' && Config.OS == 'windows') {
                         /* Windows must do a build to get current *.def files */
                         trace('Build', 'Full build to generate def files')
@@ -86,6 +85,7 @@ Bit.load({
                     } else {
                         run(bitcmd + ' -d -q -platform ' + name + ' -without all -configure . ' + formats, bit.target.runopt)
                     }
+                    /* Xcode and VS use separate profiles */
                     if (name == 'macosx-x64') {
                         run(bitcmd + ' -d -q -platform ' + name + ' -without all -profile xcode -configure . -gen xcode',
                             bit.target.runopt)
