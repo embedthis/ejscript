@@ -14,10 +14,10 @@ const TOOLS_VERSION = '4.0'
 const PROJECT_FILE_VERSION = 10.0.30319.1
 const SOL_VERSION = '11.00'
 const XID = '{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}'
-var PREP = 'if not exist "$(ObjDir)" md "$(ObjDir)"\r
-if not exist "$(BinDir)" md "$(BinDir)"\r
-if not exist "$(IncDir)" md "$(IncDir)"\r
-if not exist "$(IncDir)\\bit.h" copy "..\\${settings.product}-${platform.os}-bit.h" "$(IncDir)\\bit.h"\r
+var PREP = 'if not exist "$(ObjDir)" md "$(ObjDir)"
+if not exist "$(BinDir)" md "$(BinDir)"
+if not exist "$(IncDir)" md "$(IncDir)"
+if not exist "$(IncDir)\\bit.h" copy "..\\${settings.product}-${platform.os}-bit.h" "$(IncDir)\\bit.h"
 '
 var prepTarget
 var Base 
@@ -35,7 +35,7 @@ public function vstudio(base: Path) {
     let projects = []
     /* Create a temporary prep target as the first target */
     if (bit.dir.bin.files('*.def').length > 0) {
-        PREP += 'if not exist "$(BinDir)\\libmpr.def" xcopy /Y /S *.def "$(BinDir)"\r'
+        PREP += 'if not exist "$(BinDir)\\libmpr.def" xcopy /Y /S *.def "$(BinDir)"'
     }
     prepTarget = {
         type: 'vsprep',
@@ -503,12 +503,12 @@ function projCustomBuildStep(base, target) {
     if (target.type == 'file') {
         for each (let file: Path in target.files) {
             let path = target.path.relativeTo(Base)
-            command += 'if exist ' + wpath(path) + ' del /Q ' + wpath(path) + '\r\n'
+            command += 'if exist ' + wpath(path) + ' del /Q ' + wpath(path) + '\n'
             if (file.isDir) {
-                command += '\tif not exist ' + wpath(path) + ' md ' + wpath(path) + '\r\n'
-                command += '\txcopy /S /Y ' + wpath(file.relativeTo(target.home)) + ' ' + wpath(path) + '\r\n'
+                command += '\tif not exist ' + wpath(path) + ' md ' + wpath(path) + '\n'
+                command += '\txcopy /S /Y ' + wpath(file.relativeTo(target.home)) + ' ' + wpath(path) + '\n'
             } else {
-                command += '\tcopy /Y ' + wpath(file.relativeTo(target.home)) + ' ' + wpath(path) + '\r\n'
+                command += '\tcopy /Y ' + wpath(file.relativeTo(target.home)) + ' ' + wpath(path) + '\n'
             }
         }
     } else if (target['generate-vs']) {
@@ -548,9 +548,10 @@ function exportHeaders(base, target) {
             /* Use the directory in the destination so Xcopy won't ask if file or directory */
             if (file.isDir) {
                 cmd += 'xcopy /Y /S /D ' + wpath(file.relativeTo(target.home)) + ' ' + 
-                    wpath(dep.path.relativeTo(base).parent) + '\r\n'
+                    wpath(dep.path.relativeTo(base).parent) + '\n'
             } else {
-                cmd += '\tcopy /Y ' + wpath(file.relativeTo(target.home)) + ' ' + wpath(path) + '\r\n'
+                cmd += '\tcopy /Y ' + wpath(file.relativeTo(target.home)) + ' ' + 
+                    wpath(dep.path.relativeTo(base).parent) + '\n'
             }
         }
     }
