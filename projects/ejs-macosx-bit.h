@@ -21,7 +21,7 @@
 #define BIT_HAS_SYNC_CAS 1
 #define BIT_HAS_UNNAMED_UNIONS 1
 #define BIT_MANAGER "ejsman"
-#define BIT_MINIMAL "doxygen,dsi,man,man2html,ssl,zlib"
+#define BIT_MINIMAL "doxygen,dsi,man,man2html,zlib"
 #define BIT_OPTIONAL "doxygen,dsi,man,man2html,openssl,matrixssl,pmaker,sqlite,ssl,zlib,zip"
 #define BIT_PACKS "bits/packs"
 #define BIT_PLATFORMS "local"
@@ -69,11 +69,11 @@
 #define BIT_PACK_LINK 1
 #define BIT_PACK_MAN 0
 #define BIT_PACK_MAN2HTML 0
-#define BIT_PACK_MATRIXSSL 0
-#define BIT_PACK_OPENSSL 0
+#define BIT_PACK_MATRIXSSL 1
+#define BIT_PACK_OPENSSL 1
 #define BIT_PACK_PCRE 1
 #define BIT_PACK_PMAKER 1
 #define BIT_PACK_SQLITE 1
-#define BIT_PACK_SSL 0
+#define BIT_PACK_SSL 1
 #define BIT_PACK_ZIP 1
 #define BIT_PACK_ZLIB 0

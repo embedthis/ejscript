@@ -31,6 +31,7 @@ module ejs.web {
          */ 
         native enumerable var absHome: Uri
 
+        //  MOB - update
         /** 
             Authentication group. This property is set to the value of the authentication group header. 
             This field is read-only.

@@ -506,7 +506,7 @@ static EjsAny *getRequestProperty(Ejs *ejs, EjsRequest *req, int slotNum)
         return createString(ejs, conn ? conn->authType : NULL);
 
     case ES_ejs_web_Request_authUser:
-        return createString(ejs, conn ? conn->authUser : NULL);
+        return createString(ejs, conn ? conn->username : NULL);
 
     case ES_ejs_web_Request_autoFinalizing:
         return ejsCreateBoolean(ejs, !req->dontAutoFinalize);

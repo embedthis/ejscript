@@ -558,7 +558,7 @@ FUTURE & KEEP
         function get sessionCookie(): String? {
             let cookie = header("Set-Cookie")
             if (cookie) {
-                return cookie.match(/(-ejs-session-=.*);/)[1]
+                return cookie.match(/(-ejs-session-=[^;]*);/)[1]
             }
             return null
         }
