@@ -194,7 +194,7 @@ function getDefaultSettings(platform) {
             hasDynLoad: true,
             hasMmu: true,
             hasMtune: true,
-            hasPam: true,
+            hasPam: false,
             hasStackProtector: true,
             hasSync: true,
             hasSyncCas: true,

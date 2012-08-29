@@ -1799,6 +1799,7 @@ typedef struct HttpConn {
     void            *authData;              /**< Authorization state data */
     char            *username;              /**< Supplied user name */
     char            *password;              /**< Supplied password (may be encrypted depending on auth protocol) */
+    int             encoded;                /**< True if the password is MD5(username:realm:password) */
     struct HttpUser *user;                  /**< Authorized User record for access checking */
 
     HttpIOCallback  ioCallback;             /**< I/O event callback */
@@ -2339,6 +2340,7 @@ extern int httpAddAuthStore(Http *http, cchar *name, HttpVerifyUser verifyUser);
 typedef struct HttpUser {
     char            *name;                  /**< User name */
     char            *password;              /**< User password */
+    char            *roles;                 /**< Original list of roles */
     MprHash         *abilities;             /**< User abilities */
 } HttpUser;
 
@@ -2583,18 +2585,6 @@ extern int httpSetAuthStore(HttpAuth *auth, cchar *store);
  */
 extern int httpSetAuthType(HttpAuth *auth, cchar *proto, cchar *details);
 
-/**
-    Save the authorization database file
-    AuthFile schema:
-        User name password abilities...
-        Role name abilities...
-    @param auth Auth object allocated by #httpCreateAuth.
-    @param path Path name of file
-    @return "Zero" if successful, otherwise a negative MPR error code
-    @ingroup HttpAuth
-    @internal 
- */
-extern int httpWriteAuthFile(HttpAuth *auth, char *path);
 
 /*
     Internal

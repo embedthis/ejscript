@@ -25,7 +25,7 @@
 
 /********************************* Forwards ***********************************/
 
-static void computeAbilities(HttpAuth *auth, MprHash *abilities, cchar *ability);
+static void computeAbilities(HttpAuth *auth, MprHash *abilities, cchar *role);
 static void manageAuth(HttpAuth *auth, int flags);
 static void manageRole(HttpRole *role, int flags);
 static void manageUser(HttpUser *user, int flags);
@@ -52,7 +52,6 @@ void httpInitAuth(Http *http)
 
 int httpCheckAuth(HttpConn *conn)
 {
-    Http        *http;
     HttpRx      *rx;
     HttpAuth    *auth;
     HttpRoute   *route;
@@ -61,11 +60,11 @@ int httpCheckAuth(HttpConn *conn)
     bool        cached;
 
     rx = conn->rx;
-    http = conn->http;
     route = rx->route;
     auth = route->auth;
 
     mprAssert(auth);
+    mprLog(5, "Checking user authentication user %s on route %s", conn->username, route->name);
 
     if ((auth->flags & HTTP_SECURE) && !conn->secure) {
         httpError(conn, HTTP_CODE_BAD_REQUEST, "Access denied. Secure access required.");
@@ -167,7 +166,8 @@ bool httpLogin(HttpConn *conn, cchar *username, cchar *password)
         return 0;
     }
     conn->username = sclone(username);
-    conn->password = mprGetMD5(sfmt("%s:%s:%s", conn->username, auth->realm, password));
+    conn->password = sclone(password);
+    conn->encoded = 0;
     if (!(auth->store->verifyUser)(conn)) {
         return 0;
     }
@@ -321,6 +321,9 @@ void httpSetAuthAutoLogin(HttpAuth *auth, bool on)
 }
 
 
+/*
+    Can supply a roles or abilities in the "abilities" parameter 
+ */
 void httpSetAuthRequiredAbilities(HttpAuth *auth, cchar *abilities)
 {
     char    *ability, *tok;
@@ -469,7 +472,7 @@ int httpSetAuthStore(HttpAuth *auth, cchar *store)
         return MPR_ERR_CANT_FIND;
     }
 #if BIT_HAS_PAM && BIT_PAM
-    if (smatch(store, "pam") && smatch(auth->type->name, "digest")) {
+    if (smatch(store, "pam") && auth->type && smatch(auth->type->name, "digest")) {
         mprError("Can't use PAM password stores with digest authentication");
         return MPR_ERR_BAD_ARGS;
     }
@@ -570,21 +573,17 @@ int httpRemoveRole(HttpAuth *auth, cchar *role)
 }
 
 
-HttpUser *httpCreateUser(HttpAuth *auth, cchar *name, cchar *password, cchar *abilities)
+HttpUser *httpCreateUser(HttpAuth *auth, cchar *name, cchar *password, cchar *roles)
 {
     HttpUser    *user;
-    char        *ability, *tok;
 
     if ((user = mprAllocObj(HttpUser, manageUser)) == 0) {
         return 0;
     }
     user->name = sclone(name);
     user->password = sclone(password);
-    if (abilities) {
-        user->abilities = mprCreateHash(0, 0);
-        for (ability = stok(sclone(abilities), " \t,", &tok); ability; ability = stok(NULL, " \t,", &tok)) {
-            mprAddKey(user->abilities, ability, user);
-        }
+    if (roles) {
+        user->roles = sclone(roles);
         httpComputeUserAbilities(auth, user);
     }
     return user;
@@ -597,11 +596,12 @@ static void manageUser(HttpUser *user, int flags)
         mprMark(user->password);
         mprMark(user->name);
         mprMark(user->abilities);
+        mprMark(user->roles);
     }
 }
 
 
-int httpAddUser(HttpAuth *auth, cchar *name, cchar *password, cchar *abilities)
+int httpAddUser(HttpAuth *auth, cchar *name, cchar *password, cchar *roles)
 {
     HttpUser    *user;
 
@@ -616,7 +616,7 @@ int httpAddUser(HttpAuth *auth, cchar *name, cchar *password, cchar *abilities)
     if (mprLookupKey(auth->users, name)) {
         return MPR_ERR_ALREADY_EXISTS;
     }
-    if ((user = httpCreateUser(auth, name, password, abilities)) == 0) {
+    if ((user = httpCreateUser(auth, name, password, roles)) == 0) {
         return MPR_ERR_MEMORY;
     }
     if (mprAddKey(auth->users, name, user) == 0) {
@@ -637,43 +637,42 @@ int httpRemoveUser(HttpAuth *auth, cchar *user)
 
 
 /*
-    Compute the set of user abilities. User ability strings can be either roles or abilities. Expand roles into
-    the equivalent set of abilities.
+    Compute the set of user abilities from the user roles. Role strings can be either roles or abilities. 
+    Expand roles into the equivalent set of abilities.
  */
-static void computeAbilities(HttpAuth *auth, MprHash *abilities, cchar *ability)
+static void computeAbilities(HttpAuth *auth, MprHash *abilities, cchar *role)
 {
     MprKey      *ap;
-    HttpRole    *role;
+    HttpRole    *rp;
 
-    if ((role = mprLookupKey(auth->roles, ability)) != 0) {
+    if ((rp = mprLookupKey(auth->roles, role)) != 0) {
         /* Interpret as a role */
-        for (ITERATE_KEYS(role->abilities, ap)) {
+        for (ITERATE_KEYS(rp->abilities, ap)) {
             if (!mprLookupKey(abilities, ap->key)) {
                 mprAddKey(abilities, ap->key, MPR->emptyString);
             }
         }
     } else {
-        /* Not found: Interpret as an ability */
-        mprAddKey(abilities, ability, MPR->emptyString);
+        /* Not found as a role: Interpret role as an ability */
+        mprAddKey(abilities, role, MPR->emptyString);
     }
 }
 
 
 /*
-    Compute the set of user abilities. User ability strings can be either roles or abilities. Expand roles into
-    the equivalent set of abilities.
+    Compute the set of user abilities from the user roles. User ability strings can be either roles or abilities. Expand
+    roles into the equivalent set of abilities.
  */
 void httpComputeUserAbilities(HttpAuth *auth, HttpUser *user)
 {
-    MprHash     *abilities;
     MprKey      *ap;
     MprBuf      *buf;
+    char        *ability, *tok;
 
-    abilities = mprCreateHash(0, 0);
-    for (ITERATE_KEYS(user->abilities, ap)) {
-        computeAbilities(auth, abilities, ap->key);
+    user->abilities = mprCreateHash(0, 0);
+    for (ability = stok(sclone(user->roles), " \t,", &tok); ability; ability = stok(NULL, " \t,", &tok)) {
+        computeAbilities(auth, user->abilities, ability);
     }
-    user->abilities = abilities;
 #if BIT_DEBUG
     buf = mprCreateBuf(0, 0);
     for (ITERATE_KEYS(user->abilities, ap)) {
@@ -707,6 +706,10 @@ static bool verifyUser(HttpConn *conn)
 
     rx = conn->rx;
     auth = rx->route->auth;
+    if (!conn->encoded) {
+        conn->password = mprGetMD5(sfmt("%s:%s:%s", conn->username, auth->realm, conn->password));
+        conn->encoded = 1;
+    }
     if (!conn->user) {
         conn->user = mprLookupKey(auth->users, conn->username);
     }
@@ -719,7 +722,7 @@ static bool verifyUser(HttpConn *conn)
         return smatch(conn->password, rx->passDigest);
     }
     if ((success = smatch(conn->password, conn->user->password)) != 0) {
-        mprLog(5, "verifyUser: User \"%s\" verified for route %s", conn->username, rx->route->name);
+        mprLog(5, "User \"%s\" verified for route %s", conn->username, rx->route->name);
     } else {
         mprLog(5, "Password for user \"%s\" failed to verify for route %s", conn->username, rx->route->name);
     }
@@ -733,38 +736,6 @@ static bool verifyUser(HttpConn *conn)
 static void postLogin(HttpConn *conn)
 {
     httpRedirect(conn, HTTP_CODE_MOVED_TEMPORARILY, conn->rx->route->auth->loginPage);
-}
-
-
-int httpWriteAuthFile(HttpAuth *auth, char *path)
-{
-    MprFile         *file;
-    MprKey          *kp;
-    HttpRole        *role;
-    HttpUser        *user;
-    char            *tempFile;
-
-    tempFile = mprGetTempPath(NULL);
-    if ((file = mprOpenFile(tempFile, O_CREAT | O_TRUNC | O_WRONLY | O_TEXT, 0444)) == 0) {
-        mprError("Can't open %s", tempFile);
-        return MPR_ERR_CANT_OPEN;
-    }
-    mprWriteFileFmt(file, "#\n#   %s - Authorization data\n#\n\n", mprGetPathBase(path));
-
-    for (ITERATE_KEY_DATA(auth->roles, kp, role)) {
-        mprWriteFileFmt(file, "Role %s %s\n", kp->key, role->abilities);
-    }
-    mprPutFileChar(file, '\n');
-    for (ITERATE_KEY_DATA(auth->users, kp, user)) {
-        mprWriteFileFmt(file, "User %s %s\n", user->password, user->abilities);
-    }
-    mprCloseFile(file);
-    unlink(path);
-    if (rename(tempFile, path) < 0) {
-        mprError("Can't create new %s", path);
-        return MPR_ERR_CANT_WRITE;
-    }
-    return 0;
 }
 
 
@@ -822,8 +793,11 @@ int httpBasicParse(HttpConn *conn)
             *cp++ = '\0';
         }
         conn->username = sclone(decoded);
-        //  MOB - should not need realm?
+        conn->password = sclone(cp);
+        conn->encoded = 0;
+#if UNUSED
         conn->password = mprGetMD5(sfmt("%s:%s:%s", conn->username, conn->rx->route->auth->realm, cp));
+#endif
     }
     return 0;
 }
@@ -2262,6 +2236,7 @@ static void commonPrep(HttpConn *conn)
         conn->password = 0;
         conn->user = 0;
         conn->authData = 0;
+        conn->encoded = 0;
     }
     httpSetState(conn, HTTP_STATE_BEGIN);
     httpInitSchedulerQueue(conn->serviceq);
@@ -2940,8 +2915,9 @@ int httpDigestParse(HttpConn *conn)
             if (scaselesscmp(key, "realm") == 0) {
                 dp->realm = sclone(value);
             } else if (scaselesscmp(key, "response") == 0) {
-                /* Store the response digest in the password field */
+                /* Store the response digest in the password field. This is MD5(user:realm:password) */
                 conn->password = sclone(value);
+                conn->encoded = 1;
             }
             break;
 
@@ -6105,6 +6081,12 @@ typedef struct {
     char    *password;
 } UserInfo;
 
+#if MACOSX
+    typedef int Gid;
+#else
+    typedef gid_t Gid;
+#endif
+
 /********************************* Forwards ***********************************/
 
 static int pamChat(int msgCount, const struct pam_message **msg, struct pam_response **resp, void *data);
@@ -6113,37 +6095,55 @@ static int pamChat(int msgCount, const struct pam_message **msg, struct pam_resp
 
 bool httpPamVerifyUser(HttpConn *conn)
 {
+    MprBuf              *abilities;
     pam_handle_t        *pamh;
     UserInfo            info;
     struct pam_conv     conv = { pamChat, &info };
     struct group        *gp;
-    int                 res;
+    int                 res, i;
    
     mprAssert(conn->username);
     mprAssert(conn->password);
+    mprAssert(!conn->encoded);
 
     info.name = (char*) conn->username;
     info.password = (char*) conn->password;
     pamh = NULL;
-        
-    if ((res = pam_start("login", conn->username, &conv, &pamh)) != PAM_SUCCESS) {
+    if ((res = pam_start("login", info.name, &conv, &pamh)) != PAM_SUCCESS) {
         return 0;
     }
-    if ((res = pam_authenticate(pamh, 0)) != PAM_SUCCESS) {
+    if ((res = pam_authenticate(pamh, PAM_DISALLOW_NULL_AUTHTOK)) != PAM_SUCCESS) {
+        pam_end(pamh, PAM_SUCCESS);
+        mprLog(5, "httpPamVerifyUser failed to verify %s", conn->username);
         return 0;
     }
     pam_end(pamh, PAM_SUCCESS);
+    mprLog(5, "httpPamVerifyUser verified %s", conn->username);
 
     if (!conn->user) {
         conn->user = mprLookupKey(conn->rx->route->auth->users, conn->username);
     }
-    if (!conn->user && (gp = getgrgid(getgid())) != 0) {
-        /* Create a temporary user with an ability set to the group */
-        conn->user = httpCreateUser(conn->rx->route->auth, conn->username, 0, gp->gr_name);
+    if (!conn->user) {
+        Gid     groups[32];
+        int     ngroups;
+        /* 
+            Create a temporary user with a abilities set to the groups 
+         */
+        ngroups = sizeof(groups) / sizeof(Gid);
+        if ((i = getgrouplist(conn->username, 99999, groups, &ngroups)) >= 0) {
+            abilities = mprCreateBuf(0, 0);
+            for (i = 0; i < ngroups; i++) {
+                if ((gp = getgrgid(groups[i])) != 0) {
+                    mprPutFmtToBuf(abilities, "%s ", gp->gr_name);
+                }
+            }
+            mprAddNullToBuf(abilities);
+            mprLog(5, "Create temp user \"%s\" with abilities: %s", conn->username, mprGetBufStart(abilities));
+            conn->user = httpCreateUser(conn->rx->route->auth, conn->username, 0, mprGetBufStart(abilities));
+        }
     }
     return 1;
 }
-
 
 /*  
     Callback invoked by the pam_authenticate function
@@ -6161,8 +6161,7 @@ static int pamChat(int msgCount, const struct pam_message **msg, struct pam_resp
     if (resp == 0 || msg == 0 || info == 0) {
         return PAM_CONV_ERR;
     }
-    //  MOB - who frees this?
-    if ((reply = malloc(msgCount * sizeof(struct pam_response))) == 0) {
+    if ((reply = calloc(msgCount, sizeof(struct pam_response))) == 0) {
         return PAM_CONV_ERR;
     }
     for (i = 0; i < msgCount; i++) {
@@ -6175,11 +6174,12 @@ static int pamChat(int msgCount, const struct pam_message **msg, struct pam_resp
             break;
 
         case PAM_PROMPT_ECHO_OFF:
-            //  MOB - what is this doing?
+            /* Retrieve the user password and pass onto pam */
             reply[i].resp = strdup(info->password);
             break;
 
         default:
+            free(reply);
             return PAM_CONV_ERR;
         }
     }
@@ -13950,10 +13950,14 @@ void httpRedirect(HttpConn *conn, int status, cchar *targetUri)
         target = httpCreateUri(targetUri, 0);
         if (!target->host) {
             target->host = rx->parsedUri->host;
-            targetUri = httpUriToString(target, 0);
+        }
+        if (!target->scheme) {
+            target->scheme = rx->parsedUri->scheme;
         }
         if (conn->http->redirectCallback) {
             targetUri = (conn->http->redirectCallback)(conn, &status, target);
+        } else {
+            targetUri = httpUriToString(target, 0);
         }
         if (strstr(targetUri, "://") == 0) {
             prev = rx->parsedUri;
