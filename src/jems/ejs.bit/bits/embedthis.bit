@@ -102,6 +102,15 @@ Bit.load({
                 }
                 trace('Restore', 'Restore prior configuration')
                 run(bitcmd + ' -q -configure . -profile ' + bit.platform.profile, bit.target.runopt)
+                if (bit.platform.os == 'macosx') {
+                    dump(bit.dir)
+                    let top = bit.dir.top
+                    let bin = bit.dir.bin
+                    let xcode = top.join('macosx-' + bit.platform.arch + '-xcode/bin')
+                    mkdir(xcode)
+                    cp([bin.join('libphp5.dylib'), bin.join('*libssl*'), bin.join('*crypto*'), 
+                        bin.join('*libmatrixssl*')], xcode)
+                }
             ",
         },
 
