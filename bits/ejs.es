@@ -135,7 +135,7 @@ public function packageComboFiles() {
     install('package/ejs-flat.bit', pkg.join('src/deps/ejs/ejs.bit'))
     install('package/Makefile-flat', pkg.join('src/deps/ejs/Makefile'))
     install('package/start-flat.bit', pkg.join('src/deps/ejs/start.bit'))
-    let filter = /^#inc.*ejs.*$|^#inc.*mpr.*$|^#inc.*ec.*$|^#inc.*http.*$|^#inc.*customize.*$/mg
+    let filter = /^#inc.*ejs.*$|^#inc.*mpr.*$|^#inc.*ec.*$|^#inc.*http.*$|^#inc.*customize.*$|#inc.*ejs.zlib.slots.h.*/mg
 
     install([
         'src/deps/mpr/mpr.h', 
@@ -178,7 +178,7 @@ public function packageComboFiles() {
     install(['src/**.es'], pkg.join('src/deps/ejs/ejs.es'), {
         cat: true,
         filter: filter,
-        exclude: /ejs.bit|ejs.debugger|test|sample|ejs.jem|ejs.mvc/,
+        exclude: /ejs.bit|ejs.debugger|test|sample|ejspage.es|ejs.jem|ejs.mvc/,
         title: bit.settings.title + ' Script Library',
     })
     install('src/cmd/ejs.c', pkg.join('src/deps/ejs/ejs.c'), {
