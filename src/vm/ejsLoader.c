@@ -97,7 +97,7 @@ static int initializeModule(Ejs *ejs, EjsModule *mp)
             nativeModule = ejsLookupNativeModule(ejs, ejsToMulti(ejs, mp->name));
             if (nativeModule == NULL) {
                 if (ejs->exception == 0) {
-                    ejsThrowIOError(ejs, "Can't load or initialize the native module file \"%s\"", mp->path);
+                    ejsThrowIOError(ejs, "Can't load or initialize the native module %@ in file \"%s\"", mp->name, mp->path);
                 }
                 return MPR_ERR_CANT_INITIALIZE;
             }

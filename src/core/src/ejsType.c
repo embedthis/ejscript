@@ -940,7 +940,7 @@ static EjsType *createTypeVar(Ejs *ejs, EjsType *typeType, int numProp)
         return 0;
     }
     mprSetManager(type, (MprManager) manageType);
-    mprInitList(&type->constructor.block.namespaces);
+    mprInitList(&type->constructor.block.namespaces, MPR_LIST_OWN);
     obj = (EjsPot*) type;
     SET_TYPE(obj, typeType);
     SET_DYNAMIC(obj, dynamic);

@@ -472,6 +472,16 @@ static void defineSharedTypes(Ejs *ejs)
 
     ejsCreateGlobalNamespaces(ejs);
     ejsAddNativeModule(ejs, "ejs", configureEjs, _ES_CHECKSUM_ejs, 0);
+
+#if BIT_EJS_ONE_MODULE
+    #if BIT_PACK_SQLITE
+        ejs_db_sqlite_Init(ejs, NULL);
+    #endif
+    ejs_web_Init(ejs, NULL);
+    #if BIT_PACK_ZLIB
+        ejs_zlib_Init(ejs, NULL);
+    #endif
+#endif
 }
 
 

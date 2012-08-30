@@ -4453,8 +4453,10 @@ extern void     ejsDefineConfigProperties(Ejs *ejs);
 #if BIT_PACK_SQLITE
     extern int   ejs_db_sqlite_Init(Ejs *ejs, MprModule *mp);
 #endif
-extern int      ejs_cache_local_Init(Ejs *ejs, MprModule *mp);
-extern int      ejs_web_Init(Ejs *ejs, MprModule *mp);
+#if BIT_PACK_ZLIB
+    extern int   ejs_zlib_Init(Ejs *ejs, MprModule *mp);
+#endif
+extern int       ejs_web_Init(Ejs *ejs, MprModule *mp);
 
 /* 
     Move some ejsWeb.h declarations here so handlers can just include ejs.h whether they are using the
