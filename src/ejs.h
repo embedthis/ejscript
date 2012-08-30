@@ -4454,7 +4454,7 @@ extern void     ejsDefineConfigProperties(Ejs *ejs);
     extern int   ejs_db_sqlite_Init(Ejs *ejs, MprModule *mp);
 #endif
 #if BIT_PACK_ZLIB
-    extern int   ejs_zlib_Init(Ejs *ejs, MprModule *mp);
+    MPR_EXPORT int   ejs_zlib_Init(Ejs *ejs, MprModule *mp);
 #endif
 extern int       ejs_web_Init(Ejs *ejs, MprModule *mp);
 
