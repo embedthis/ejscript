@@ -118,11 +118,13 @@ module ejs.tar {
                                 len -= count
                             }
                             fp.close()
-                            if (App.uid == 0) {
-                                path.setAttributes(header.attributes)
-                            } else {
-//  MOB
-                            }
+                            try {
+                                if (App.uid == 0) {
+                                    path.setAttributes(header.attributes)
+                                } else {
+    //  MOB
+                                }
+                            } catch {}
 
                         } else if (operation == Info) {
                             result.push({
