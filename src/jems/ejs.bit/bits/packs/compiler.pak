@@ -1,6 +1,8 @@
 /*
     compiler.pak - Compile package for Bit
  */
+
+print('@@@@@@')
 pack('compiler', "C/C++ Compiler")
 
 let cc: Path?
@@ -11,8 +13,12 @@ let settings = getDefaultSettings(platform)
 try {
     if (platform.like == 'posix') {
         path ||= (platform.os == 'macosx') ? 'clang' : 'gcc'
-        cc = probe(path, {fullpath: true})
-        Bit.load({packs: { compiler: { path: cc }}})
+        if (platform.os == Config.OS) {
+            cc = probe(path, {fullpath: true})
+            Bit.load({packs: { compiler: { path: cc }}})
+        } else {
+            Bit.load({packs: { compiler: { path: 'gcc' }}})
+        }
 
     } else if (platform.like == 'windows') {
         let search
