@@ -2,7 +2,6 @@
     compiler.pak - Compile package for Bit
  */
 
-print('@@@@@@')
 pack('compiler', "C/C++ Compiler")
 
 let cc: Path?
