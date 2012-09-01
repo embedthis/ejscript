@@ -213,16 +213,16 @@
 
   <CustomBuildStep>
     <Command>cd ..\..\src
-xcopy /Y /S /D slots\ejs.cache.local.slots.h $(IncDir)
-xcopy /Y /S /D slots\ejs.db.sqlite.slots.h $(IncDir)
-xcopy /Y /S /D slots\ejs.slots.h $(IncDir)
-xcopy /Y /S /D slots\ejs.web.slots.h $(IncDir)
-xcopy /Y /S /D slots\ejs.zlib.slots.h $(IncDir)
-xcopy /Y /S /D ejs.h $(IncDir)
-xcopy /Y /S /D ejsByteCode.h $(IncDir)
-xcopy /Y /S /D ejsByteCodeTable.h $(IncDir)
-xcopy /Y /S /D ejsCompiler.h $(IncDir)
-xcopy /Y /S /D ejsCustomize.h $(IncDir)
+copy /Y slots\ejs.cache.local.slots.h $(IncDir)
+copy /Y slots\ejs.db.sqlite.slots.h $(IncDir)
+copy /Y slots\ejs.slots.h $(IncDir)
+copy /Y slots\ejs.web.slots.h $(IncDir)
+copy /Y slots\ejs.zlib.slots.h $(IncDir)
+copy /Y ejs.h $(IncDir)
+copy /Y ejsByteCode.h $(IncDir)
+copy /Y ejsByteCodeTable.h $(IncDir)
+copy /Y ejsCompiler.h $(IncDir)
+copy /Y ejsCustomize.h $(IncDir)
 cd ..\projects\ejs-windows</Command>
     <Outputs>$(BinDir)\libejs.dll</Outputs>
   </CustomBuildStep>
