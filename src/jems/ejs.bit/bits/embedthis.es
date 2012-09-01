@@ -546,7 +546,7 @@ function packageWindows(pkg: Path, options) {
     let rel = bit.dir.rel
     let opak = Path('package/' + bit.platform.os.toUpper())
 
-    install(opak.join('LICENSE.md'), pkg)
+    install(bit.dir.top.join('LICENSE.md'), pkg)
     let iss = pkg.join('install.iss')
     install(opak.join('install.iss'), iss, {expand: true})
     let contents = pkg.join(s.product + '-' + s.version + '-' + s.buildNumber, 'contents')
