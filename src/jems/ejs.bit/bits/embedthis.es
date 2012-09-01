@@ -162,7 +162,10 @@ function installCallback(src: Path, dest: Path, options = {}): Boolean {
         dest.remove()
     }
     if (App.uid == 0 && dest.extension == 'so' && Config.OS == 'linux' && options.task == 'install') {
-        Cmd.run('ldconfig ' + dest)
+        let ldconfig = Cmd.locate('ldconfig')
+        if (ldconfig) {
+            Cmd.run('ldconfig ' + dest)
+        }
     }
     return true
 }
