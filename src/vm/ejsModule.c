@@ -44,7 +44,6 @@ static void manageModule(EjsModule *mp, int flags)
     if (flags & MPR_MANAGE_MARK) {
         mprMark(mp->name);
         mprMark(mp->vname);
-        mprMark(mp->vms);
         mprMark(mp->mutex);
         mprMark(mp->constants);
         mprMark(mp->initializer);
@@ -141,35 +140,28 @@ EjsModule *ejsLookupModule(Ejs *ejs, EjsString *name, int minVersion, int maxVer
 int ejsAddModule(Ejs *ejs, EjsModule *mp)
 {
     mprAssert(ejs->modules);
-    if (mp->vms == 0) {
-        mp->vms = mprCreateList(-1, 0);
-        mprAddItem(mp->vms, ejs);
-    }
     return mprAddItem(ejs->modules, mp);
 }
 
 
 void ejsRemoveModule(Ejs *ejs, EjsModule *mp)
 {
-    mprLog(7, "Remove module: %@", mp->name); 
-    mprRemoveItem(mp->vms, ejs);
     mprRemoveItem(ejs->modules, mp);
 }
 
 
 void ejsRemoveModuleFromAll(EjsModule *mp)
 {
-    Ejs     *ejs;
-    int     next;
+    Ejs         *ejs;
+    EjsService  *sp;
+    int         next;
 
-    if (mp->vms) {
-        mprLog(7, "Remove module from all vms: %@", mp->name); 
-        for (next = 0; (ejs = mprGetNextItem(mp->vms, &next)) != 0; ) {
-            if (ejs->modules) {
-                mprRemoveItem(ejs->modules, mp);
-            }
-        }
+    sp = MPR->ejsService;
+    lock(sp);
+    for (ITERATE_ITEMS(sp->vmlist, ejs, next)) {
+        mprRemoveItem(ejs->modules, mp);
     }
+    unlock(sp);
 }
 
 

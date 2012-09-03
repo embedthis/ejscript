@@ -5059,7 +5059,9 @@ typedef struct EjsModule {
     EjsString       *name;                  /**< Name of this module - basename of the filename without .mod extension */
     //  MOB - document the version format
     EjsString       *vname;                 /**< Versioned name - name with optional version suffix */
+#if UNUSED
     MprList         *vms;                   /**< List of VMs referencing the module */
+#endif
     MprMutex        *mutex;                 /**< Multithread locking */
     int             version;                /**< Made with EJS_MAKE_VERSION */
     int             minVersion;             /**< Minimum version when used as a dependency */
