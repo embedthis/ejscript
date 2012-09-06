@@ -240,8 +240,8 @@ static EjsNumber *sock_read(Ejs *ejs, EjsSocket *sp, int argc, EjsObj **argv)
         return ESV(zero);
     }
     nbytes = mprReadSocket(sp->sock, &ba->value[offset], count);
-    if (nbytes <= 0) {
-        /* If async, Caller must test "eof" to determine if no data or eof */
+    if (nbytes < 0) {
+        /* If async, Caller must test "isEof" to determine if eof or error */
         return ESV(null);
     }
     ba->writePosition += nbytes;
