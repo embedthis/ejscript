@@ -2,7 +2,7 @@ Package: ${settings.product}
 Version: ${settings.version}
 Section: devel
 Priority: optional
-Architecture: ${settings.mappedCpu}
+Architecture: ${platform.mappedCpu}
 Depends: libc6
 Provides: ejs
 Replaces: ejs, ejs-dev, ejs-bin
