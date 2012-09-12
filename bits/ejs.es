@@ -177,7 +177,7 @@ public function packageComboFiles() {
         header: '#define EJS_DEFINE_OPTABLE 1\n#include \"ejs.h\"',
         title: bit.settings.title + ' Library Source',
     })
-    install(['src/**.es'], pkg.join('src/deps/ejs/ejs.es'), {
+    install(['src/core/**.es', 'src/jems/**.es'], pkg.join('src/deps/ejs/ejs.es'), {
         cat: true,
         filter: filter,
         exclude: /ejs.bit|ejs.debugger|test|sample|ejspage.es|ejs.jem|ejs.mvc/,
