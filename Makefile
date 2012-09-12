@@ -1,48 +1,65 @@
 #
-#	Makefile - Makefile to build Ejscript with bit.
+#   Makefile - Makefile for Ejscript
 #
-#	This Makefile will build a "minimal" Ejscript without external packages.
-#	It is used to build Ejscript the first time before bit is available.
-#	Once built, use bit to configure and rebuild as required.
-#	
+#   You can use this Makefile and build via "make" with a pre-selected configuration. Alternatively,
+#	you can build using the "bit" tool for for a fully configurable build. If you wish to 
+#	cross-compile, you should use "bit".
+#
+#   Modify compiler and linker default definitions here:
+#
+#       export ARCH      = CPU architecture (x86, x64, ppc, ...)
+#       export OS        = Operating system (linux, macosx, windows, vxworks, ...)
+#       export CC        = Compiler to use 
+#       export LD        = Linker to use
+#       export PROFILE   = Debug or release profile. For example: debug
+#       export CONFIG    = Output directory for built items. Defaults to OS-ARCH-PROFILE
+#       export CFLAGS    = Add compiler options. For example: -Wall
+#       export DFLAGS    = Add compiler defines. Overrides bit.h defaults. For example: -DBIT_PACK_SSL=0
+#       export IFLAGS    = Add compiler include directories. For example: -I/extra/includes
+#       export LDFLAGS   = Add linker options
+#       export LIBPATHS  = Add linker library search directories. For example: -L/libraries
+#       export LIBS      = Add linker libraries. For example: -lpthreads
 
-OS 		:= $(shell uname | sed 's/CYGWIN.*/windows/;s/Darwin/macosx/' | tr '[A-Z]' '[a-z]')
-MAKE	:= make
-EXT 	:= mk
+NAME    := ejs
+OS      := $(shell uname | sed 's/CYGWIN.*/windows/;s/Darwin/macosx/' | tr '[A-Z]' '[a-z]')
+MAKE    := $(shell if which gmake ; then echo gmake ; else echo make ; fi)
+EXT     := mk
 
 ifeq ($(OS),windows)
-ifeq ($(ARCH),)
 ifeq ($(PROCESSOR_ARCHITEW6432),AMD64)
-	ARCH:=x64
+    ARCH?=x64
 else
-	ARCH:=x86
+    ARCH?=x86
 endif
-endif
-	MAKE:= projects/windows.bat $(ARCH)
-	EXT := nmake
+    MAKE:= projects/windows.bat $(ARCH)
+    EXT := nmake
 endif
 
 all compile:
-	$(MAKE) -f projects/ejs-$(OS).$(EXT) $@
+	$(MAKE) -f projects/$(NAME)-$(OS).$(EXT) $@
 	@echo ; echo 'You can now use Ejscript or use "bit" to customize and re-build Ejscript, via:'
 	@echo ; echo "   " $(OS)-*-debug/bin/bit "configure build" ; echo
 	@echo "  or for a release build:" ; echo ; echo "   " $(OS)-*-debug/bin/bit "--release configure build" ; echo
 
+clean clobber:
+	$(MAKE) -f projects/$(NAME)-$(OS).$(EXT) $@
+
+#
+#   Convenience targets when building with Bit
+#
 build configure generate test package:
 	@bit $@
 
 #
-#   Complete rebuild of a release build
+#   Complete release rebuild using bit
 #
 rebuild:
-	sudo rm -fr $(OS)-*-debug -fr $(OS)-*-release
-	$(MAKE) -f projects/ejs-$(OS).$(EXT)
+	ku rm -fr $(OS)-*-debug -fr $(OS)-*-release
+	$(MAKE) -f projects/$(NAME)-$(OS).$(EXT)
 	$(OS)-*-debug/bin/bit --release configure build
 	rm -fr $(OS)-*-debug
-	sudo bit install
-
-clean clobber:
-	$(MAKE) -f projects/ejs-$(OS).$(EXT) $@
+	bit install
 
 version:
 	@bit -q version
+

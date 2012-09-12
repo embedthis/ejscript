@@ -1,5 +1,5 @@
 #
-#   ejs-windows.nmake -- Build It Makefile to build Embedthis Ejscript for windows
+#   ejs-windows.nmake -- Makefile to build Embedthis Ejscript for windows
 #
 
 PA        = $(PROCESSOR_ARCHITECTURE)

@@ -1,19 +1,27 @@
 #
-#   ejs-macosx.mk -- Build It Makefile to build Embedthis Ejscript for macosx
+#   ejs-macosx.mk -- Makefile to build Embedthis Ejscript for macosx
 #
 
-ARCH     := $(shell uname -m | sed 's/i.86/x86/;s/x86_64/x64/')
-OS       := macosx
-PROFILE  := debug
-CONFIG   := $(OS)-$(ARCH)-$(PROFILE)
-CC       := /usr/bin/clang
-LD       := /usr/bin/ld
-CFLAGS   := -Wno-deprecated-declarations -g -w
-DFLAGS   := -DBIT_DEBUG
-IFLAGS   := -I$(CONFIG)/inc
-LDFLAGS  := '-Wl,-rpath,@executable_path/' '-Wl,-rpath,@loader_path/' '-g'
-LIBPATHS := -L$(CONFIG)/bin
-LIBS     := -lpthread -lm -ldl
+ARCH     ?= $(shell uname -m | sed 's/i.86/x86/;s/x86_64/x64/')
+OS       ?= macosx
+CC       ?= /usr/bin/clang
+LD       ?= /usr/bin/ld
+PROFILE  ?= debug
+CONFIG   ?= $(OS)-$(ARCH)-$(PROFILE)
+
+CFLAGS   += -Wno-deprecated-declarations -w
+DFLAGS   += 
+IFLAGS   += -I$(CONFIG)/inc
+LDFLAGS  += '-Wl,-rpath,@executable_path/' '-Wl,-rpath,@loader_path/'
+LIBPATHS += -L$(CONFIG)/bin
+LIBS     += -lpthread -lm -ldl
+
+CFLAGS-debug    := -DBIT_DEBUG -g
+CFLAGS-release  := -O2
+LDFLAGS-debug   := -g
+LDFLAGS-release := 
+CFLAGS          += $(CFLAGS-$(PROFILE))
+LDFLAGS         += $(LDFLAGS-$(PROFILE))
 
 all: prep \
         $(CONFIG)/bin/libmpr.dylib \
@@ -56,6 +64,7 @@ all: prep \
 .PHONY: prep
 
 prep:
+	@if [ "$(CONFIG)" = "" ] ; then echo WARNING: CONFIG not set ; exit 255 ; fi
 	@[ ! -x $(CONFIG)/inc ] && mkdir -p $(CONFIG)/inc $(CONFIG)/obj $(CONFIG)/lib $(CONFIG)/bin ; true
 	@[ ! -f $(CONFIG)/inc/bit.h ] && cp projects/ejs-$(OS)-bit.h $(CONFIG)/inc/bit.h ; true
 	@if ! diff $(CONFIG)/inc/bit.h projects/ejs-$(OS)-bit.h >/dev/null ; then\
