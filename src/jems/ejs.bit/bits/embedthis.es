@@ -534,7 +534,7 @@ function packageUbuntu(pkg: Path, options) {
     let base = [s.product, s.version, s.buildNumber, bit.platform.dist, bit.platform.os, bit.platform.arch].join('-')
     let outfile = bit.dir.rel.join(base).joinExt('deb', true)
     trace('Package', outfile)
-    run(bit.packs.pmaker.path + ' --build ' + DEBIAN.dirname + ' ' + outfile)
+    run(bit.packs.pmaker.path + ' --build ' + DEBIAN.dirname + ' ' + outfile, {noshow: true})
     bit.dir.rel.join('md5-' + base).joinExt('deb.txt', true).write(md5(outfile.readString()))
 }
 
