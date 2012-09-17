@@ -99,7 +99,8 @@ function installCallback(src: Path, dest: Path, options = {}): Boolean {
                 dest.write('/*\n' +
                            '    ' + dest.basename + ' -- ' + options.title + '\n\n' +
                            '    This file is a catenation of all the source code. Amalgamating into a\n' +
-                           '    single file makes embedding simpler and the resulting application faster.\n */\n\n')
+                           '    single file makes embedding simpler and the resulting application faster.\n\n' + 
+                           '    Prepared by: ' + System.hostname + '\n */\n\n')
             }
             if (options.header) {
                 dest.append(options.header + '\n')
