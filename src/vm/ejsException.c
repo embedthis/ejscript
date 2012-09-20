@@ -284,7 +284,7 @@ EjsArray *ejsCaptureStack(Ejs *ejs, int uplevels)
     EjsFrame        *fp;
     EjsState        *state;
     EjsArray        *stack;
-    MprChar         *source;
+    wchar           *source;
     EjsObj          *frame;
     char            *filename;
     int             index, lineNumber;

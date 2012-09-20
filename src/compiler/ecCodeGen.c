@@ -32,7 +32,7 @@
 /***************************** Forward Declarations ***************************/
 
 static void     addDebug(EcCompiler *cp, EcNode *np);
-static void     addDebugLine(EcCompiler *cp, EcCodeGen *code, int offset, MprChar *source);
+static void     addDebugLine(EcCompiler *cp, EcCodeGen *code, int offset, wchar *source);
 static void     addException(EcCompiler *cp, uint tryStart, uint tryEnd, EjsType *catchType, uint handlerStart, 
                     uint handlerEnd, int numBlocks, int numStack, int flags);
 static void     addJump(EcCompiler *cp, EcNode *np, int kind);
@@ -2410,8 +2410,8 @@ static void genLiteral(EcCompiler *cp, EcNode *np)
     if (TYPE(np->literal.var) == EST(XML)) {
         ecEncodeOpcode(cp, EJS_OP_LOAD_XML);
         //  UNICODE
-        data = ejsCreateString(ejs, (MprChar*) mprGetBufStart(np->literal.data), 
-                mprGetBufLength(np->literal.data) / sizeof(MprChar));
+        data = ejsCreateString(ejs, (wchar*) mprGetBufStart(np->literal.data), 
+                mprGetBufLength(np->literal.data) / sizeof(wchar));
         ecEncodeConst(cp, data);
         pushStack(cp, 1);
         LEAVE(cp);
@@ -3829,7 +3829,7 @@ static int mapToken(EcCompiler *cp, int tokenId)
 }
 
 
-static void addDebugLine(EcCompiler *cp, EcCodeGen *code, int offset, MprChar *source)
+static void addDebugLine(EcCompiler *cp, EcCodeGen *code, int offset, wchar *source)
 {
     mprAssert(code->debug == 0 || code->debug->magic == EJS_DEBUG_MAGIC);
     if (ejsAddDebugLine(cp->ejs, &code->debug, offset, source) < 0) {
@@ -3842,7 +3842,7 @@ static void addDebugLine(EcCompiler *cp, EcCodeGen *code, int offset, MprChar *s
 static void addDebug(EcCompiler *cp, EcNode *np)
 {
     EcCodeGen   *code;
-    MprChar     *source;
+    wchar       *source;
     int         offset;
 
     code = cp->state->code;
@@ -3854,7 +3854,7 @@ static void addDebug(EcCompiler *cp, EcNode *np)
         return;
     }
     offset = (int) mprGetBufLength(code->buf);
-    source = (MprChar*) mfmt("%s|%d|%w", np->loc.filename, np->loc.lineNumber, np->loc.source);
+    source = (wchar*) mfmt("%s|%d|%w", np->loc.filename, np->loc.lineNumber, np->loc.source);
     addDebugLine(cp, code, offset, source);
     code->lastLineNumber = np->loc.lineNumber;
 }

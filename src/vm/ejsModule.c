@@ -339,7 +339,7 @@ EjsDebug *ejsCreateDebug(Ejs *ejs, int length)
 }
 
 
-int ejsAddDebugLine(Ejs *ejs, EjsDebug **debugp, int offset, MprChar *source)
+int ejsAddDebugLine(Ejs *ejs, EjsDebug **debugp, int offset, wchar *source)
 {
     EjsDebug    *debug;
     EjsLine     *line;
@@ -494,10 +494,10 @@ EjsLine *ejsGetDebugLine(Ejs *ejs, EjsFunction *fun, uchar *pc)
 }
 
 
-int ejsGetDebugInfo(Ejs *ejs, EjsFunction *fun, uchar *pc, char **pathp, int *linep, MprChar **sourcep)
+int ejsGetDebugInfo(Ejs *ejs, EjsFunction *fun, uchar *pc, char **pathp, int *linep, wchar **sourcep)
 {
     EjsLine     *line;
-    MprChar     *str, *tok, *path, *lineno, *source;
+    wchar       *str, *tok, *path, *lineno, *source;
 
     if ((line = ejsGetDebugLine(ejs, fun, pc)) == 0) {
         return MPR_ERR_CANT_FIND;
@@ -766,7 +766,7 @@ char *ejsModuleReadMulti(Ejs *ejs, EjsModule *mp)
 /*
     Read a multibyte string. The length is encoded first, followed by a string of bytes.
  */
-MprChar *ejsModuleReadMultiAsWide(Ejs *ejs, EjsModule *mp)
+wchar *ejsModuleReadMultiAsWide(Ejs *ejs, EjsModule *mp)
 {
     mprAssert(mp);
 

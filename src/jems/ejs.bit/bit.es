@@ -319,7 +319,7 @@ public class Bit {
         }
         if (options.unicode) {
             poptions.enable ||= []
-            poptions.enable.push('charLen=2')
+            poptions.enable.push(Config.OS == 'windows' ? 'charLen=2' : 'charLen=4')
         }
         originalTargets = selectedTargets = args.rest
         bareBit.options = options

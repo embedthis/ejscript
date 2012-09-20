@@ -337,7 +337,7 @@ int ecGetToken(EcCompiler *cp)
                  */
                 if (cp->doc) {
                     if (tp->text && tp->text[0] == '*' && tp->text[1] != '*') {
-                        cp->docToken = mprMemdup(tp->text, tp->length * sizeof(MprChar));;
+                        cp->docToken = mprMemdup(tp->text, tp->length * sizeof(wchar));
                     }
                 }
                 initializeToken(tp, stream);
@@ -529,11 +529,11 @@ int ecGetToken(EcCompiler *cp)
 }
 
 
-int ecGetRegExpToken(EcCompiler *cp, MprChar *prefix)
+int ecGetRegExpToken(EcCompiler *cp, wchar *prefix)
 {
     EcToken     *token, *tp;
     EcStream    *stream;
-    MprChar     *pp;
+    wchar       *pp;
     int         c;
 
     stream = cp->stream;
@@ -909,7 +909,7 @@ static int initializeToken(EcToken *tp, EcStream *stream)
     tp->tokenId = 0;
     if (tp->text == 0) {
         tp->size = EC_TOKEN_INCR;
-        if ((tp->text = mprAlloc(tp->size * sizeof(MprChar))) == 0) {
+        if ((tp->text = mprAlloc(tp->size * sizeof(wchar))) == 0) {
             return MPR_ERR_MEMORY;
         }
         tp->text[0] = '\0';
@@ -931,7 +931,7 @@ static int addCharToToken(EcToken *tp, int c)
 {
     if (tp->length >= (tp->size - 1)) {
         tp->size += EC_TOKEN_INCR;
-        if ((tp->text = mprRealloc(tp->text, tp->size * sizeof(MprChar))) == 0) {
+        if ((tp->text = mprRealloc(tp->text, tp->size * sizeof(wchar))) == 0) {
             return MPR_ERR_MEMORY;
         }
     }
@@ -983,7 +983,7 @@ static int setTokenID(EcToken *tp, int tokenId, int subId, int groupMask)
 
 static int getNextChar(EcStream *stream)
 {
-    MprChar     c, *next, *start;
+    wchar       c, *next, *start;
 
     if (stream->nextChar >= stream->end && stream->getInput) {
         if (stream->getInput(stream) < 0) {
@@ -1060,13 +1060,13 @@ void *ecCreateStream(EcCompiler *cp, ssize size, cchar *path, void *manager)
 
 void ecSetStreamBuf(EcStream *sp, cchar *contents, ssize len)
 {
-    MprChar     *buf;
+    wchar       *buf;
 
     if (contents) {
 #if BIT_CHAR_LEN > 1
         buf = amtow(cp, contents, &len);
 #else
-        buf = (MprChar*) contents;
+        buf = (wchar*) contents;
         if (len <= 0) {
             len = strlen(buf);
         }

@@ -16,7 +16,7 @@
 static EjsBoolean *g_assert(Ejs *ejs, EjsObj *vp, int argc, EjsObj **argv)
 {
     EjsFrame        *fp;
-    MprChar         *source;
+    wchar           *source;
     EjsBoolean      *b;
 
     mprAssert(argc == 1);

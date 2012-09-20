@@ -636,7 +636,7 @@ static void interp(EjsMod *mp, EjsModule *module, EjsFunction *fun)
 {
     EjsOptable  *optable, *opt;
     EjsCode     *code;
-    MprChar     *currentLine;
+    wchar       *currentLine;
     uchar       *start;
     char        argbuf[MPR_MAX_STRING], lineInfo[MPR_MAX_STRING], name[MPR_MAX_STRING];
     char        *currentFile, *src, *dest;

@@ -392,12 +392,12 @@ extern EjsName ejsName(struct Ejs *ejs, cchar *space, cchar *name);
     @return A reference to the qname structure
     @ingroup EjsName
  */
-extern EjsName ejsWideName(struct Ejs *ejs, MprChar *space, MprChar *name);
+extern EjsName ejsWideName(struct Ejs *ejs, wchar *space, wchar *name);
 
 /*
     Internal
  */
-extern EjsName ejsEmptyWideName(struct Ejs *ejs, MprChar *name);
+extern EjsName ejsEmptyWideName(struct Ejs *ejs, wchar *name);
 extern EjsName ejsEmptyName(struct Ejs *ejs, cchar *name);
 
 //  MOB -- NAMING
@@ -950,7 +950,7 @@ extern EjsAny *ejsDeserialize(Ejs *ejs, struct EjsString *str);
     @returns Returns an allocated object. Returns undefined if the input cannot be parsed.
     @ingroup EjsObj
  */
-extern EjsAny *ejsParse(Ejs *ejs, MprChar *str,  int prefType);
+extern EjsAny *ejsParse(Ejs *ejs, wchar *str,  int prefType);
 
 /************************************ EjsPot **********************************/
 /** 
@@ -1345,7 +1345,7 @@ typedef struct EjsString {
     struct EjsString *next;             /**< Next string in hash chain link when interning */
     struct EjsString *prev;             /**< Prev string in hash chain */
     ssize            length;            /**< Length of string */
-    MprChar          value[MPR_FLEX];   /**< String value */
+    wchar            value[MPR_FLEX];   /**< String value */
 } EjsString;
 
 /** 
@@ -1356,7 +1356,7 @@ typedef struct EjsString {
     @return A string object
     @ingroup EjsString
  */
-extern EjsString *ejsCreateString(Ejs *ejs, MprChar *value, ssize len);
+extern EjsString *ejsCreateString(Ejs *ejs, wchar *value, ssize len);
 
 /**
     Create a string from a module string constant
@@ -1450,7 +1450,7 @@ extern EjsString *ejsInternAsc(struct Ejs *ejs, cchar *value, ssize len);
     @return The internalized string object.
     @ingroup EjsString
  */
-extern EjsString *ejsInternWide(struct Ejs *ejs, MprChar *value, ssize len);
+extern EjsString *ejsInternWide(struct Ejs *ejs, wchar *value, ssize len);
 
 /** 
     Destroy the intern string cache
@@ -1572,7 +1572,7 @@ extern int ejsCompareAsc(Ejs *ejs, EjsString *s1, cchar *s2);
     @return Return zero if the strings are identical. Return -1 if s1 is less than s2. Otherwise return 1.
     @ingroup EjsString
  */
-extern int ejsCompareWide(Ejs *ejs, EjsString *s1, MprChar *s2, ssize len);
+extern int ejsCompareWide(Ejs *ejs, EjsString *s1, wchar *s2, ssize len);
 
 /** 
     Test if a string contains a character
@@ -2081,7 +2081,7 @@ typedef struct EjsConstants {
  */
 typedef struct EjsLine {
     int         offset;                     /**< Optional PC offsets of each line in function */
-    MprChar     *source;                    /**< Program source code. Format: path line: code */         
+    wchar       *source;                    /**< Program source code. Format: path line: code */         
 } EjsLine;
 
 #define EJS_DEBUG_INCR      16              /**< Growth increment for EjsDebug */
@@ -2103,9 +2103,9 @@ typedef struct EjsDebug {
     Internal
  */
 extern EjsDebug *ejsCreateDebug(Ejs *ejs, int length);
-extern int ejsAddDebugLine(Ejs *ejs, EjsDebug **debug, int offset, MprChar *source);
+extern int ejsAddDebugLine(Ejs *ejs, EjsDebug **debug, int offset, wchar *source);
 extern EjsLine *ejsGetDebugLine(Ejs *ejs, struct EjsFunction *fun, uchar *pc);
-extern int ejsGetDebugInfo(Ejs *ejs, struct EjsFunction *fun, uchar *pc, char **path, int *lineNumber, MprChar **source);
+extern int ejsGetDebugInfo(Ejs *ejs, struct EjsFunction *fun, uchar *pc, char **path, int *lineNumber, wchar **source);
 
 /** 
     Byte code
@@ -3540,7 +3540,7 @@ extern struct EjsNumber *ejsToNumber(Ejs *ejs, EjsAny *obj);
  */
 typedef struct EjsRegExp {
     EjsObj          obj;                /**< Base object */
-    MprChar         *pattern;           /**< Pattern to match */
+    wchar           *pattern;           /**< Pattern to match */
     void            *compiled;          /**< Compiled pattern (not alloced) */
     bool            global;             /**< Search for pattern globally (multiple times) */
     bool            ignoreCase;         /**< Do case insensitive matching */
@@ -5135,13 +5135,13 @@ typedef struct EjsNativeModule {
  */
 typedef struct EjsDoc {
     EjsString   *docString;                         /* Original doc string */
-    MprChar     *brief;                             /* Element brief */
-    MprChar     *description;                       /* Element description */
-    MprChar     *example;                           /* Element example */
-    MprChar     *requires;                          /* Element requires */
-    MprChar     *returns;                           /* Element returns */
-    MprChar     *stability;                         /* prototype, evolving, stable, mature, deprecated */
-    MprChar     *spec;                              /* Where specified */
+    wchar       *brief;                             /* Element brief */
+    wchar       *description;                       /* Element description */
+    wchar       *example;                           /* Element example */
+    wchar       *requires;                          /* Element requires */
+    wchar       *returns;                           /* Element returns */
+    wchar       *stability;                         /* prototype, evolving, stable, mature, deprecated */
+    wchar       *spec;                              /* Where specified */
     struct EjsDoc *duplicate;                       /* From @duplicate directive */
     MprList     *defaults;                          /* Parameter default values */
     MprList     *params;                            /* Function parameters */
@@ -5267,7 +5267,7 @@ extern int ejsModuleReadInt32(Ejs *ejs, EjsModule *module);
 extern EjsName ejsModuleReadName(Ejs *ejs, EjsModule *module);
 extern int64 ejsModuleReadNum(Ejs *ejs, EjsModule *module);
 extern char *ejsModuleReadMulti(Ejs *ejs, EjsModule *mp);
-extern MprChar *ejsModuleReadMultiAsWide(Ejs *ejs, EjsModule *mp);
+extern wchar *ejsModuleReadMultiAsWide(Ejs *ejs, EjsModule *mp);
 extern int ejsModuleReadType(Ejs *ejs, EjsModule *module, EjsType **typeRef, EjsTypeFixup **fixup, EjsName *typeName, 
         int *slotNum);
 extern void ejsRemoveModule(Ejs *ejs, EjsModule *up);

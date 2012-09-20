@@ -11,7 +11,7 @@
 /***************************** Forward Declarations ***************************/
 
 static char *makeFlags(EjsRegExp *rp);
-static int parseFlags(EjsRegExp *rp, MprChar *flags);
+static int parseFlags(EjsRegExp *rp, wchar *flags);
 
 /******************************************************************************/
 /*
@@ -200,7 +200,7 @@ EjsRegExp *ejsCreateRegExp(Ejs *ejs, EjsString *pattern)
 {
     EjsRegExp   *rp;
     cchar       *errMsg;
-    MprChar     *flags;
+    wchar       *flags;
     int         column, errCode;
 
     if (pattern->length == 0 || pattern->value[0] != '/') {
@@ -228,9 +228,9 @@ EjsRegExp *ejsCreateRegExp(Ejs *ejs, EjsString *pattern)
 }
 
 
-static int parseFlags(EjsRegExp *rp, MprChar *flags)
+static int parseFlags(EjsRegExp *rp, wchar *flags)
 {
-    MprChar     *cp;
+    wchar       *cp;
     int         options;
 
     if (flags == 0 || *flags == '\0') {

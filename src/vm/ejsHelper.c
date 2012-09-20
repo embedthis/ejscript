@@ -10,8 +10,8 @@
 
 /****************************** Forward Declarations **************************/
 
-static MprNumber parseNumber(Ejs *ejs, MprChar *str);
-static bool      parseBoolean(Ejs *ejs, MprChar *s);
+static MprNumber parseNumber(Ejs *ejs, wchar *str);
+static bool      parseBoolean(Ejs *ejs, wchar *s);
 
 /************************************* Code ***********************************/
 
@@ -748,7 +748,7 @@ EjsName ejsEmptyName(Ejs *ejs, cchar *name)
 }
 
 
-EjsName ejsEmptyWideName(Ejs *ejs, MprChar *name)
+EjsName ejsEmptyWideName(Ejs *ejs, wchar *name)
 {
     EjsName     n;
 
@@ -768,7 +768,7 @@ EjsName ejsName(Ejs *ejs, cchar *space, cchar *name)
 }
 
 
-EjsName ejsWideName(Ejs *ejs, MprChar *space, MprChar *name)
+EjsName ejsWideName(Ejs *ejs, wchar *space, wchar *name)
 {
     EjsName     n;
 
@@ -786,9 +786,9 @@ EjsName ejsWideName(Ejs *ejs, MprChar *space, MprChar *name)
         [(+|-)][DIGITS]
         [+|-][DIGITS][.][DIGITS][(e|E)[+|-]DIGITS]
  */
-EjsAny *ejsParse(Ejs *ejs, MprChar *str, int preferredType)
+EjsAny *ejsParse(Ejs *ejs, wchar *str, int preferredType)
 {
-    MprChar     *buf;
+    wchar       *buf;
     int         sid;
 
     mprAssert(str);
@@ -860,7 +860,7 @@ EjsAny *ejsParse(Ejs *ejs, MprChar *str, int preferredType)
 /*
     Convert the variable to a number type. Only works for primitive types.
  */
-static bool parseBoolean(Ejs *ejs, MprChar *s)
+static bool parseBoolean(Ejs *ejs, wchar *s)
 {
     if (s == 0 || *s == '\0') {
         return 0;
@@ -875,10 +875,10 @@ static bool parseBoolean(Ejs *ejs, MprChar *s)
 /*
     Convert the string buffer to a Number.
  */
-static MprNumber parseNumber(Ejs *ejs, MprChar *str)
+static MprNumber parseNumber(Ejs *ejs, wchar *str)
 {
     MprNumber   n;
-    MprChar     *cp, *sp;
+    wchar       *cp, *sp;
     int64       num;
     char        nbuf[32], *dp;
     int         radix, c, negative;

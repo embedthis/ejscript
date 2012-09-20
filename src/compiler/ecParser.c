@@ -29,7 +29,7 @@
 /***************************** Forward Declarations ***************************/
 
 static void     addAscToLiteral(EcCompiler *cp, EcNode *np, cchar *str, ssize len);
-static void     addCharsToLiteral(EcCompiler *cp, EcNode *np, MprChar *str, ssize len);
+static void     addCharsToLiteral(EcCompiler *cp, EcNode *np, wchar *str, ssize len);
 static void     addTokenToLiteral(EcCompiler *cp, EcNode *np);
 static void     appendDocString(EcCompiler *cp, EcNode *np, EcNode *parameter, EcNode *value);
 static EcNode   *appendNode(EcNode *top, EcNode *np);
@@ -652,7 +652,7 @@ static EcNode *parseXMLMarkup(EcCompiler *cp, EcNode *np)
  */
 static EcNode *parseXMLText(EcCompiler *cp, EcNode *np)
 {
-    MprChar *p;
+    wchar   *p;
     int     count;
 
     //  TODO This is discarding text white space. Need a low level getXmlToken routine
@@ -2476,7 +2476,7 @@ static EcNode *parseRegularExpression(EcCompiler *cp)
 {
     EcNode      *np;
     EjsObj      *vp;
-    MprChar     *prefix;
+    wchar       *prefix;
     int         id;
 
     ENTER(cp);
@@ -8798,7 +8798,7 @@ static EcNode *parseRequireItems(EcCompiler *cp, EcNode *np)
  */
 static int parseVersion(EcCompiler *cp, int parseMax)
 {
-    MprChar     *str, *p, *next;
+    wchar       *str, *p, *next;
     int         major, minor, patch;
 
     if (parseMax) {
@@ -9904,19 +9904,19 @@ static void addTokenToLiteral(EcCompiler *cp, EcNode *np)
 
     if (np) {
         buf = np->literal.data;
-        mprPutBlockToBuf(buf, (char*) cp->token->text, cp->token->length * sizeof(MprChar));
+        mprPutBlockToBuf(buf, (char*) cp->token->text, cp->token->length * sizeof(wchar));
         mprAddNullToBuf(buf);
     }
 }
 
 
-static void addCharsToLiteral(EcCompiler *cp, EcNode *np, MprChar *str, ssize count)
+static void addCharsToLiteral(EcCompiler *cp, EcNode *np, wchar *str, ssize count)
 {
     MprBuf      *buf;
 
     if (np) {
         buf = np->literal.data;
-        mprPutBlockToBuf(buf, (char*) str, count * sizeof(MprChar));
+        mprPutBlockToBuf(buf, (char*) str, count * sizeof(wchar));
         mprAddNullToBuf(buf);
     }
 }
@@ -9925,14 +9925,14 @@ static void addCharsToLiteral(EcCompiler *cp, EcNode *np, MprChar *str, ssize co
 static void addAscToLiteral(EcCompiler *cp, EcNode *np, cchar *str, ssize count)
 {
     MprBuf      *buf;
-    MprChar     c;
+    wchar       c;
     int         i;
 
     if (np) {
         buf = np->literal.data;
         for (i = 0; i < count; i++) {
             c = (uchar) str[i];
-            mprPutBlockToBuf(buf, (char*) &c, sizeof(MprChar));
+            mprPutBlockToBuf(buf, (char*) &c, sizeof(wchar));
         }
         mprAddNullToBuf(buf);
     }

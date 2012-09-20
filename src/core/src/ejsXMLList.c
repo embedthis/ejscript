@@ -554,7 +554,7 @@ static EjsObj *xl_parent(Ejs *ejs, EjsXML *xml, int argc, EjsObj **argv)
 
 static bool allDigitsForXmlList(EjsString *name)
 {
-    MprChar     *cp;
+    wchar       *cp;
 
     for (cp = name->value; *cp; cp++) {
         if (!isdigit((uchar) *cp) || *cp == '.') {

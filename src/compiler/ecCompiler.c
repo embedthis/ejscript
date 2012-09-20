@@ -412,9 +412,9 @@ void ecError(EcCompiler *cp, cchar *severity, EcLocation *loc, cchar *fmt, ...)
 /*
     Create a line of spaces with an "^" pointer at the current parse error.
  */
-static char *makeHighlight(EcCompiler *cp, MprChar *source, int col)
+static char *makeHighlight(EcCompiler *cp, wchar *source, int col)
 {
-    MprChar     *up, *sp;
+    wchar       *up, *sp;
     char        *dest, *dp;
     int         tabCount, len, i;
 

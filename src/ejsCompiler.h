@@ -44,7 +44,7 @@ extern "C" {
 #define EC_AST_PHASES           4
 
 typedef struct EcLocation {
-    MprChar     *source;
+    wchar       *source;
     char        *filename;
     int         lineNumber;
     int         column;
@@ -579,9 +579,9 @@ typedef struct EcStream {
     EcLocation  loc;                            /* Source code debug info */
     EcLocation  lastLoc;                        /* Location info for a prior line */
     EcStreamGet getInput;                       /* Get more input callback */
-    MprChar     *buf;                           /* Buffer holding source file */
-    MprChar     *nextChar;                      /* Ptr to next input char */
-    MprChar     *end;                           /* Ptr to one past end of buf */
+    wchar       *buf;                           /* Buffer holding source file */
+    wchar       *nextChar;                      /* Ptr to next input char */
+    wchar       *end;                           /* Ptr to one past end of buf */
     bool        eof;                            /* At end of file */
     int         flags;                          /* Input flags */
 } EcStream;
@@ -620,7 +620,7 @@ typedef struct EcConsoleStream {
  */
 //  MOB DOC
 typedef struct EcToken {
-    MprChar     *text;                  /* Token text */
+    wchar       *text;                  /* Token text */
     int         length;                 /* Length of text in characters */
     int         size;                   /* Size of text in characters */
     int         tokenId;
@@ -809,7 +809,7 @@ extern void         ecFreeToken(EcCompiler *cp, EcToken *token);
 extern char         *ecGetErrorMessage(EcCompiler *cp);
 extern EjsString    *ecGetInputStreamName(EcCompiler *lp);
 extern int          ecGetToken(EcCompiler *cp);
-extern int          ecGetRegExpToken(EcCompiler *cp, MprChar *prefix);
+extern int          ecGetRegExpToken(EcCompiler *cp, wchar *prefix);
 extern EcNode       *ecLinkNode(EcNode *np, EcNode *child);
 
 extern EjsModule    *ecLookupModule(EcCompiler *cp, EjsString *name, int minVersion, int maxVersion);
@@ -875,7 +875,7 @@ extern void      ecEncodeInt32AtPos(EcCompiler *cp, int offset, int value);
 extern void      ecEncodeNum(EcCompiler *cp, int64 number);
 extern void      ecEncodeName(EcCompiler *cp, EjsName qname);
 extern void      ecEncodeMulti(EcCompiler *cp, cchar *str);
-extern void      ecEncodeWideAsMulti(EcCompiler *cp, MprChar *str);
+extern void      ecEncodeWideAsMulti(EcCompiler *cp, wchar *str);
 extern void      ecEncodeOpcode(EcCompiler *cp, int value);
 
 extern void     ecCopyCode(EcCompiler *cp, uchar *pos, int size, int dist);

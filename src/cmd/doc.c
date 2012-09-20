@@ -79,7 +79,7 @@ static int       compareStrings(EjsString **q1, EjsString **q2);
 static int       compareNames(char **q1, char **q2);
 static EjsDoc    *crackDoc(EjsMod *mp, EjsDoc *doc, EjsName qname);
 static MprFile   *createFile(EjsMod *mp, char *name);
-static MprKeyValue *createKeyPair(MprChar *key, MprChar *value);
+static MprKeyValue *createKeyPair(wchar *key, wchar *value);
 static cchar     *demangle(Ejs *ejs, EjsString *name);
 static void      fixupDoc(Ejs *ejs, EjsDoc *doc);
 static char      *fmtAccessors(int attributes);
@@ -91,7 +91,7 @@ static char      *fmtSpace(Ejs *ejs, EjsName qname);
 static char      *fmtType(Ejs *ejs, EjsName qname);
 static char      *fmtTypeReference(Ejs *ejs, EjsName qname);
 static EjsString *fmtModule(Ejs *ejs, EjsString *name);
-static MprChar   *formatExample(Ejs *ejs, EjsString *example);
+static wchar     *formatExample(Ejs *ejs, EjsString *example);
 static int       generateMethodTable(EjsMod *mp, MprList *methods, EjsObj *obj, int instanceMethods);
 static void      generateClassPage(EjsMod *mp, EjsObj *obj, EjsName name, EjsTrait *trait, EjsDoc *doc);
 static void      generateClassPages(EjsMod *mp);
@@ -117,14 +117,14 @@ static void      generateNamespaceList(EjsMod *mp);
 static void      generatePropertyTable(EjsMod *mp, EjsObj *obj);
 static cchar    *getDefault(EjsDoc *doc, cchar *key);
 static EjsDoc   *getDoc(Ejs *ejs, cchar *tag, void *block, int slotNum);
-static EjsDoc   *getDuplicateDoc(Ejs *ejs, MprChar *duplicate);
-static void      getKeyValue(MprChar *str, MprChar **key, MprChar **value);
+static EjsDoc   *getDuplicateDoc(Ejs *ejs, wchar *duplicate);
+static void      getKeyValue(wchar *str, wchar **key, wchar **value);
 static char     *getFilename(cchar *name);
 static int       getPropertyCount(Ejs *ejs, EjsObj *obj);
-static bool      match(MprChar *last, cchar *key);
+static bool      match(wchar *last, cchar *key);
 static void      prepDocStrings(EjsMod *mp, EjsObj *obj, EjsName name, EjsTrait *trait, EjsDoc *doc);
 static void      out(EjsMod *mp, char *fmt, ...);
-static MprChar  *skipAtWord(MprChar *str);
+static wchar    *skipAtWord(wchar *str);
 
 /*********************************** Code *************************************/
 
@@ -1635,9 +1635,9 @@ static char *fmtAccessors(int attributes)
 }
 
 
-static MprChar *joinLines(MprChar *str)
+static wchar *joinLines(wchar *str)
 {
-    MprChar    *cp, *np;
+    wchar      *cp, *np;
 
     for (cp = str; cp && *cp; cp++) {
         if (*cp == '\n') {
@@ -1658,10 +1658,10 @@ static MprChar *joinLines(MprChar *str)
 /*
     Merge in @duplicate entries
  */
-static MprChar *mergeDuplicates(Ejs *ejs, EjsMod *mp, EjsName qname, EjsDoc *doc, MprChar *spec)
+static wchar *mergeDuplicates(Ejs *ejs, EjsMod *mp, EjsName qname, EjsDoc *doc, wchar *spec)
 {
     EjsDoc      *dup;
-    MprChar     *next, *duplicate, *mark;
+    wchar       *next, *duplicate, *mark;
 
     if ((next = mcontains(spec, "@duplicate")) == 0) {
         return spec;
@@ -1701,9 +1701,9 @@ static MprChar *mergeDuplicates(Ejs *ejs, EjsMod *mp, EjsName qname, EjsDoc *doc
 /*
     Cleanup text. Remove leading comments and "*" that are part of the comment and not part of the doc.
  */
-static void prepText(MprChar *str)
+static void prepText(wchar *str)
 {
-    MprChar     *dp, *cp;
+    wchar       *dp, *cp;
 
     dp = cp = str;
     while (isspace((uchar) *cp) || *cp == '*') {
@@ -1733,8 +1733,8 @@ static EjsDoc *crackDoc(EjsMod *mp, EjsDoc *doc, EjsName qname)
     Ejs         *ejs;
     EjsDoc      *dup;
     MprKeyValue *pair;
-    MprChar     *value, *key, *line, *str, *next, *cp, *token, *nextWord, *word, *duplicate;
-    MprChar     *thisBrief, *thisDescription, *start;
+    wchar       *value, *key, *line, *str, *next, *cp, *token, *nextWord, *word, *duplicate;
+    wchar       *thisBrief, *thisDescription, *start;
 
     ejs = mp->ejs;
 
@@ -1943,9 +1943,9 @@ static EjsDoc *crackDoc(EjsMod *mp, EjsDoc *doc, EjsName qname)
 }
 
 
-static MprChar *fixSentence(MprChar *str)
+static wchar *fixSentence(wchar *str)
 {
-    MprChar     *buf;
+    wchar       *buf;
     size_t      len;
 
     if (str == 0 || *str == '\0') {
@@ -1955,7 +1955,7 @@ static MprChar *fixSentence(MprChar *str)
     /*
         Copy the string and grow by 1 byte (plus null) to allow for a trailing period.
      */
-    len = wlen(str) + 2 * sizeof(MprChar);
+    len = wlen(str) + 2 * sizeof(wchar);
     if ((buf = mprAlloc(len)) == 0) {
         return 0;
     }
@@ -1981,9 +1981,9 @@ static MprChar *fixSentence(MprChar *str)
 }
 
 
-static MprChar *formatExample(Ejs *ejs, EjsString *docString)
+static wchar *formatExample(Ejs *ejs, EjsString *docString)
 {
-    MprChar     *example, *cp, *end, *buf, *dp;
+    wchar       *example, *cp, *end, *buf, *dp;
     int         i, indent;
 
     if ((example = mcontains(docString->value, "@example")) != 0) {
@@ -2031,12 +2031,12 @@ static MprChar *formatExample(Ejs *ejs, EjsString *docString)
 }
 
 
-static MprChar *wikiFormat(Ejs *ejs, MprChar *start)
+static wchar *wikiFormat(Ejs *ejs, wchar *start)
 {
     EjsLookup   lookup;
     EjsName     qname;
     MprBuf      *buf;
-    MprChar     *end, *cp, *klass, *property, *str, *pref, *space;
+    wchar       *end, *cp, *klass, *property, *str, *pref, *space;
     ssize       len;
     int         slotNum, sentence;
 
@@ -2062,7 +2062,7 @@ static MprChar *wikiFormat(Ejs *ejs, MprChar *start)
             }
             if ((str > start && (str[-1] == '$' || str[-1] == '\\'))) {
                 /* Remove backquote */
-                mprAdjustBufEnd(buf, - (int) sizeof(MprChar));
+                mprAdjustBufEnd(buf, - (int) sizeof(wchar));
                 mprPutCharToWideBuf(buf, *str);
                 continue;
             }
@@ -2132,7 +2132,7 @@ static MprChar *wikiFormat(Ejs *ejs, MprChar *start)
         }
     }
     mprAddNullToWideBuf(buf);
-    return (MprChar*) mprGetBufStart(buf);
+    return (wchar*) mprGetBufStart(buf);
 }
 
 
@@ -2345,7 +2345,7 @@ static char *fmtDeclaration(Ejs *ejs, EjsName qname)
 }
 
 
-static bool match(MprChar *last, cchar *key)
+static bool match(wchar *last, cchar *key)
 {
     int     len;
 
@@ -2357,7 +2357,7 @@ static bool match(MprChar *last, cchar *key)
 }
 
 
-static MprChar *skipAtWord(MprChar *str)
+static wchar *skipAtWord(wchar *str)
 {
     while (!isspace((uchar) *str) && *str)
         str++;
@@ -2367,9 +2367,9 @@ static MprChar *skipAtWord(MprChar *str)
 }
 
 
-static void getKeyValue(MprChar *str, MprChar **key, MprChar **value)
+static void getKeyValue(wchar *str, wchar **key, wchar **value)
 {
-    MprChar     *end;
+    wchar       *end;
 
     for (end = str; *end && !isspace((uchar) *end); end++)
         ;
@@ -2514,12 +2514,12 @@ static EjsDoc *getDoc(Ejs *ejs, cchar *tag, void *obj, int slotNum)
 }
 
 
-static EjsDoc *getDuplicateDoc(Ejs *ejs, MprChar *duplicate)
+static EjsDoc *getDuplicateDoc(Ejs *ejs, wchar *duplicate)
 {
     EjsDoc          *doc;
     EjsObj          *vp;
     EjsLookup       lookup;
-    MprChar         *space, *klass, *property;
+    wchar           *space, *klass, *property;
     int             slotNum;
 
     space = wclone(duplicate);
@@ -2562,7 +2562,7 @@ static EjsDoc *getDuplicateDoc(Ejs *ejs, MprChar *duplicate)
 }
 
 
-static MprKeyValue *createKeyPair(MprChar *key, MprChar *value)
+static MprKeyValue *createKeyPair(wchar *key, wchar *value)
 {
     MprKeyValue     *pair;
     

@@ -1101,7 +1101,7 @@ static EjsObj *req_header(Ejs *ejs, EjsRequest *req, int argc, EjsObj **argv)
         count = ejsGetLength(ejs, req->headers);
         for (i = 0; i < count; i++) {
             qname = ejsGetPropertyName(ejs, req->headers, i);
-            if (mcasecmp(qname.name->value, key) == 0) {
+            if (mcaselesscmp(qname.name->value, key) == 0) {
                 value = ejsGetProperty(ejs, req->headers, i);
                 break;
             }

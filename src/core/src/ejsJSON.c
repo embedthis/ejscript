@@ -11,10 +11,10 @@
 /*********************************** Locals ***********************************/
 
 typedef struct JsonState {
-    MprChar    *data;
-    MprChar    *end;
-    MprChar    *next;
-    MprChar    *error;
+    wchar      *data;
+    wchar      *end;
+    wchar      *next;
+    wchar      *error;
 } JsonState;
 
 typedef struct Json {
@@ -117,7 +117,7 @@ typedef enum Token {
 } Token;
 
 
-static MprChar *skipComments(MprChar *cp, MprChar *end)
+static wchar *skipComments(wchar *cp, wchar *end)
 {
     int     inComment;
 
@@ -160,10 +160,10 @@ static MprChar *skipComments(MprChar *cp, MprChar *end)
 }
 
 
-Token getNextJsonToken(MprBuf *buf, MprChar **token, JsonState *js)
+Token getNextJsonToken(MprBuf *buf, wchar **token, JsonState *js)
 {
-    MprChar     *start, *cp, *end, *next;
-    MprChar     *src, *dest;
+    wchar       *start, *cp, *end, *next;
+    wchar       *src, *dest;
     int         quote, tid, c;
 
     if (buf) {
@@ -265,7 +265,7 @@ Token getNextJsonToken(MprBuf *buf, MprChar **token, JsonState *js)
         next = cp;
 
         if (buf) {
-            for (dest = src = (MprChar*) buf->start; src < (MprChar*) buf->end; ) {
+            for (dest = src = (wchar*) buf->start; src < (wchar*) buf->end; ) {
                 c = *src++;
                 if (c == '\\') {
                     c = *src++;
@@ -280,7 +280,7 @@ Token getNextJsonToken(MprBuf *buf, MprChar **token, JsonState *js)
                 *dest++ = c;
             }
             *dest = '\0';
-            *token = (MprChar*) mprGetBufStart(buf);
+            *token = (wchar*) mprGetBufStart(buf);
         }
     }
     js->next = next;
@@ -303,7 +303,7 @@ static EjsObj *parseLiteralInner(Ejs *ejs, MprBuf *buf, JsonState *js)
 {
     EjsAny      *obj, *vp;
     MprBuf      *valueBuf;
-    MprChar     *token, *key, *value;
+    wchar       *token, *key, *value;
     int         tid, isArray;
 
     isArray = 0;
@@ -510,7 +510,7 @@ static EjsString *serialize(Ejs *ejs, EjsAny *vp, Json *json)
     EjsString   *result, *sv;
     EjsTrait    *trait;
     EjsObj      *pp, *obj, *replacerArgs[2];
-    MprChar     *cp;
+    wchar       *cp;
     cchar       *key;
     int         c, isArray, i, count, slotNum, quotes;
 
@@ -625,7 +625,7 @@ static EjsString *serialize(Ejs *ejs, EjsAny *vp, Json *json)
                     /* function replacer(key: String, value: String): String */
                     sv = ejsRunFunction(ejs, json->replacer, obj, 2, (EjsObj**) replacerArgs);
                 }
-                mprPutBlockToBuf(json->buf, sv->value, sv->length * sizeof(MprChar));
+                mprPutBlockToBuf(json->buf, sv->value, sv->length * sizeof(wchar));
             }
             if ((slotNum + 1) < count || json->commas) {
                 mprPutCharToWideBuf(json->buf, ',');
@@ -646,7 +646,7 @@ static EjsString *serialize(Ejs *ejs, EjsAny *vp, Json *json)
     mprAddNullToWideBuf(json->buf);
 
     if (--json->nest == 0) {
-        result = ejsCreateString(ejs, mprGetBufStart(json->buf), mprGetBufLength(json->buf) / sizeof(MprChar));
+        result = ejsCreateString(ejs, mprGetBufStart(json->buf), mprGetBufLength(json->buf) / sizeof(wchar));
         mprRemoveRoot(json->buf);
     } else {
         result = 0;

@@ -940,7 +940,7 @@ void ecEncodeMulti(EcCompiler *cp, cchar *str)
 }
 
 
-void ecEncodeWideAsMulti(EcCompiler *cp, MprChar *str)
+void ecEncodeWideAsMulti(EcCompiler *cp, wchar *str)
 {
     char    *mstr;
     ssize   len;
@@ -1116,7 +1116,7 @@ static int sumNum(int value)
 
 static int sumString(EjsString *name)
 {
-    MprChar *cp;
+    wchar   *cp;
     int     checksum;
 
     checksum = 0;

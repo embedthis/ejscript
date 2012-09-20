@@ -342,7 +342,7 @@ static int setXmlPropertyAttributeByName(Ejs *ejs, EjsXML *xml, EjsName qname, E
     EjsXML      *elt, *attribute, *xvalue, *lastElt;
     EjsString   *sv;
     EjsName     qn;
-    MprChar     *str;
+    wchar       *str;
     int         index, last, next;
 
     /*
@@ -635,7 +635,7 @@ EjsXML *ejsGetXMLDescendants(Ejs *ejs, EjsXML *xml, EjsName qname)
 static EjsObj *xmlConstructor(Ejs *ejs, EjsXML *thisObj, int argc, EjsObj **argv)
 {
     EjsObj      *arg, *vp;
-    MprChar     *str;
+    wchar       *str;
 
     //  TODO - should be also able to handle a File object
 
@@ -961,7 +961,7 @@ static ssize readStringData(MprXml *xp, void *data, char *buf, ssize size)
 
 static bool allDigitsForXml(EjsString *name)
 {
-    MprChar     *cp;
+    wchar       *cp;
 
     for (cp = name->value; *cp; cp++) {
         if (!isdigit((uchar) *cp) || *cp == '.') {
