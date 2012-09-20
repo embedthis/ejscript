@@ -88,6 +88,7 @@ public class Bit {
             quiet: { alias: 'q' },
             'set': { range: String, separator: Array },
             show: { alias: 's'},
+            unicode: {},
             unset: { range: String, separator: Array },
             verbose: { alias: 'v' },
             version: { alias: 'V' },
@@ -124,6 +125,7 @@ public class Bit {
             '    --show                             # Show commands executed\n' +
             '    --rebuild                          # Rebuild all specified targets\n' +
             '    --release                          # Same as --profile release\n' +
+            '    --unicode                          # Set char size to wide (unicode)\n' +
             '    --unset feature                    # Unset a feature\n' +
             '    --version                          # Dispay the bit version\n' +
             '    --verbose                          # Trace operations\n' +
@@ -314,6 +316,10 @@ public class Bit {
         if (options.depth) {
             poptions.enable ||= []
             poptions.enable.push('depth=' + options.depth)
+        }
+        if (options.unicode) {
+            poptions.enable ||= []
+            poptions.enable.push('charLen=2')
         }
         originalTargets = selectedTargets = args.rest
         bareBit.options = options
