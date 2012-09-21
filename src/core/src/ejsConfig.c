@@ -61,7 +61,7 @@ void ejsDefineConfigProperties(Ejs *ejs)
     ejsDefineProperty(ejs, type, -1, N("public", "Product"), 0, att, 
         ejsCreateStringFromAsc(ejs, BIT_PRODUCT));
     ejsDefineProperty(ejs, type, -1, N("public", "Title"), 0, att, ejsCreateStringFromAsc(ejs, BIT_TITLE));
-    mprSprintf(version, sizeof(version), "%s-%s", BIT_VERSION, BIT_BUILD_NUMBER);
+    fmt(version, sizeof(version), "%s-%s", BIT_VERSION, BIT_BUILD_NUMBER);
     ejsDefineProperty(ejs, type, -1, N("public", "Version"), 0, att, ejsCreateStringFromAsc(ejs, version));
 
     ejsDefineProperty(ejs, type, -1, N("public", "SSL"), 0, att, ejsCreateBoolean(ejs, BIT_PACK_SSL));

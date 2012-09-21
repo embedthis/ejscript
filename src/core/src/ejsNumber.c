@@ -8,9 +8,36 @@
 
 #include    "ejs.h"
 
+/********************************** Defines ***********************************/
+/*
+   Mode values for nota
+ */
+#define DTOA_ALL_DIGITS         0       /**< Return all digits */
+#define DTOA_N_DIGITS           2       /**< Return total N digits */
+#define DTOA_N_FRACTION_DIGITS  3       /**< Return total fraction digits */
+
+/*
+    Flags for mprDtoa
+ */
+#define DTOA_EXPONENT_FORM      0x10    /**< Result in exponent form (N.NNNNe+NN) */
+#define DTOA_FIXED_FORM         0x20    /**< Emit in fixed form (NNNN.MMMM)*/
+
+/**
+    Convert a double to ascii
+    @param value Value to convert
+    @param ndigits Number of digits to render
+    @param mode Modes are:
+         0   Shortest string,
+         1   Like 0, but with Steele & White stopping rule,
+         2   Return ndigits of result,
+         3   Number of digits applies after the decimal point.
+    @param flags Format flags
+ */
+extern char *mprDtoa(double value, int ndigits, int mode, int flags);
 /**************************** Forward Declarations ****************************/
 
 #define fixed(n) ((int64) (floor(n)))
+static char *ntoa(double value, int ndigits, int mode, int flags);
 
 /******************************************************************************/
 /*
@@ -23,8 +50,8 @@ static EjsAny *castNumber(Ejs *ejs, EjsNumber *vp, EjsType *type)
         return ((vp->value && !ejsIsNan(vp->value)) ? ESV(true) : ESV(false));
 
     case S_String:
-        //  OPT. mprDtoa does a sclone.
-        return ejsCreateStringFromAsc(ejs, mprDtoa(vp->value, 0, 0, 0));
+        //  OPT. ntoa does a clone
+        return ejsCreateStringFromAsc(ejs, ntoa(vp->value, 0, 0, 0));
 
     case S_Number:
         return vp;
@@ -309,7 +336,7 @@ static EjsString *toExponential(Ejs *ejs, EjsNumber *np, int argc, EjsObj **argv
     int     ndigits;
     
     ndigits = (argc > 0) ? ejsGetInt(ejs, argv[0]): 0;
-    result = mprDtoa(np->value, ndigits, MPR_DTOA_N_DIGITS, MPR_DTOA_EXPONENT_FORM);
+    result = ntoa(np->value, ndigits, DTOA_N_DIGITS, DTOA_EXPONENT_FORM);
     return ejsCreateStringFromAsc(ejs, result);
 }
 
@@ -325,7 +352,7 @@ static EjsString *toFixed(Ejs *ejs, EjsNumber *np, int argc, EjsObj **argv)
     int     ndigits;
     
     ndigits = (argc > 0) ? ejsGetInt(ejs, argv[0]) : 0;
-    result = mprDtoa(np->value, ndigits, MPR_DTOA_N_FRACTION_DIGITS, MPR_DTOA_FIXED_FORM);
+    result = ntoa(np->value, ndigits, DTOA_N_FRACTION_DIGITS, DTOA_FIXED_FORM);
     return ejsCreateStringFromAsc(ejs, result);
 }
 
@@ -341,7 +368,7 @@ static EjsString *toPrecision(Ejs *ejs, EjsNumber *np, int argc, EjsObj **argv)
     int     ndigits;
     
     ndigits = (argc > 0) ? ejsGetInt(ejs, argv[0]) : 0;
-    result = mprDtoa(np->value, ndigits, MPR_DTOA_N_DIGITS, 0);
+    result = ntoa(np->value, ndigits, DTOA_N_DIGITS, 0);
     return ejsCreateStringFromAsc(ejs, result);
 }
 
@@ -393,6 +420,163 @@ bool ejsIsInfinite(MprNumber f)
     return (f == FP_INFINITE);
 #endif
 }
+
+
+void ejsLockDtoa(int n)
+{
+    EjsService  *es;
+    
+    es = MPR->ejsService;
+    mprSpinLock(es->dtoaSpin[n]);
+}
+
+
+void ejsUnlockDtoa(int n)
+{
+    EjsService  *es;
+    
+    es = MPR->ejsService;
+    mprSpinUnlock(es->dtoaSpin[n]);
+}
+
+
+/*
+    Convert a double to ascii. Caller must free the result. This uses the JavaScript ECMA-262 spec for formatting rules.
+ */
+static char *ntoa(double value, int ndigits, int mode, int flags)
+{
+    MprBuf  *buf;
+    char    *intermediate, *ip;
+    int     period, sign, len, exponentForm, fixedForm, exponent, count, totalDigits, npad;
+
+    buf = mprCreateBuf(64, -1);
+    intermediate = 0;
+    exponentForm = 0;
+    fixedForm = 0;
+
+    if (mprIsNan(value)) {
+        mprPutStringToBuf(buf, "NaN");
+
+    } else if (mprIsInfinite(value)) {
+        if (value < 0) {
+            mprPutStringToBuf(buf, "-Infinity");
+        } else {
+            mprPutStringToBuf(buf, "Infinity");
+        }
+    } else if (value == 0) {
+        mprPutCharToBuf(buf, '0');
+
+    } else {
+        if (ndigits <= 0) {
+            if (!(flags & DTOA_FIXED_FORM)) {
+                mode = DTOA_ALL_DIGITS;
+            }
+            ndigits = 0;
+
+        } else if (mode == DTOA_ALL_DIGITS) {
+            mode = DTOA_N_DIGITS;
+        }
+        if (flags & DTOA_EXPONENT_FORM) {
+            exponentForm = 1;
+            if (ndigits > 0) {
+                ndigits++;
+            } else {
+                ndigits = 0;
+                mode = DTOA_ALL_DIGITS;
+            }
+        } else if (flags & DTOA_FIXED_FORM) {
+            fixedForm = 1;
+        }
+
+        /*
+            Convert to an intermediate string representation. Period is the offset of the decimal point. NOTE: the
+            intermediate representation may have less digits than period.
+            Note: ndigits < 0 seems to trim N digits from the end with rounding.
+         */
+        ip = intermediate = dtoa(value, mode, ndigits, &period, &sign, NULL);
+        len = (int) slen(intermediate);
+        exponent = period - 1;
+
+        if (mode == DTOA_ALL_DIGITS && ndigits == 0) {
+            ndigits = len;
+        }
+        if (!fixedForm) {
+            if (period <= -6 || period > 21) {
+                exponentForm = 1;
+            }
+        }
+        if (sign) {
+            mprPutCharToBuf(buf, '-');
+        }
+        if (exponentForm) {
+            mprPutCharToBuf(buf, ip[0] ? ip[0] : '0');
+            if (len > 1) {
+                mprPutCharToBuf(buf, '.');
+                mprPutSubStringToBuf(buf, &ip[1], (ndigits == 0) ? len - 1: ndigits);
+            }
+            mprPutCharToBuf(buf, 'e');
+            mprPutCharToBuf(buf, (period < 0) ? '-' : '+');
+            mprPutFmtToBuf(buf, "%d", (exponent < 0) ? -exponent: exponent);
+
+        } else {
+            if (mode == DTOA_N_FRACTION_DIGITS) {
+                /* Count of digits */
+                if (period <= 0) {
+                    /* Leading fractional zeros required */
+                    mprPutStringToBuf(buf, "0.");
+                    mprPutPadToBuf(buf, '0', -period);
+                    mprPutStringToBuf(buf, ip);
+                    npad = ndigits - len + period;
+                    if (npad > 0) {
+                        mprPutPadToBuf(buf, '0', npad);
+                    }
+
+                } else {
+                    count = min(len, period);
+                    /* Leading integral digits */
+                    mprPutSubStringToBuf(buf, ip, count);
+                    /* Trailing zero pad */
+                    if (period > len) {
+                        mprPutPadToBuf(buf, '0', period - len);
+                    }
+                    totalDigits = count + ndigits;
+                    if (period < totalDigits) {
+                        count = totalDigits + sign - (int) mprGetBufLength(buf);
+                        mprPutCharToBuf(buf, '.');
+                        mprPutSubStringToBuf(buf, &ip[period], count);
+                        mprPutPadToBuf(buf, '0', count - slen(&ip[period]));
+                    }
+                }
+
+            } else if (len <= period && period <= 21) {
+                /* data shorter than period */
+                mprPutStringToBuf(buf, ip);
+                mprPutPadToBuf(buf, '0', period - len);
+
+            } else if (0 < period && period <= 21) {
+                /* Period shorter than data */
+                mprPutSubStringToBuf(buf, ip, period);
+                mprPutCharToBuf(buf, '.');
+                mprPutStringToBuf(buf, &ip[period]);
+
+            } else if (-6 < period && period <= 0) {
+                /* Small negative exponent */
+                mprPutStringToBuf(buf, "0.");
+                mprPutPadToBuf(buf, '0', -period);
+                mprPutStringToBuf(buf, ip);
+
+            } else {
+                mprAssert(0);
+            }
+        }
+    }
+    mprAddNullToBuf(buf);
+    if (intermediate) {
+        freedtoa(intermediate);
+    }
+    return sclone(mprGetBufStart(buf));
+}
+
 
 /*********************************** Factory **********************************/
 /*
