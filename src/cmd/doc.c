@@ -518,7 +518,7 @@ static void generateClassList(EjsMod *mp, cchar *namespace)
         Create the header and auto-load a namespace overview. We do this here because the class list is loaded
         when the user selects a namespace.
      */
-    mprSprintf(script, sizeof(script), "parent.parent.content.location = \'%s.html\';", namespace);
+    fmt(script, sizeof(script), "parent.parent.content.location = \'%s.html\';", namespace);
     generateHtmlHeader(mp, script, "%s Class List", namespace);
 
     out(mp, "<body>\n");
@@ -724,7 +724,7 @@ static void generateClassPages(EjsMod *mp)
     doc->returns = doc->example = doc->description = NULL;
     doc->trait = trait;
 
-    mprSprintf(key, sizeof(key), "%Lx %d", PTOL(0), 0);
+    fmt(key, sizeof(key), "%Lx %d", PTOL(0), 0);
     mprAddKey(ejs->doc, key, doc);
 
     slotNum = ejsGetLength(ejs, ejs->global);
@@ -2263,12 +2263,12 @@ static char *fmtType(Ejs *ejs, EjsName qname)
     }
     if (*namespace) {
         if (*namespace) {
-            mprSprintf(buf, sizeof(buf), "%s::%@", namespace, qname.name);
+            fmt(buf, sizeof(buf), "%s::%@", namespace, qname.name);
         } else {
-            mprSprintf(buf, sizeof(buf), "%@", qname.name);
+            fmt(buf, sizeof(buf), "%@", qname.name);
         }
     } else {
-        mprSprintf(buf, sizeof(buf), "%@", qname.name);
+        fmt(buf, sizeof(buf), "%@", qname.name);
     }
     return buf;
 }
@@ -2310,7 +2310,7 @@ static char *fmtTypeReference(Ejs *ejs, EjsName qname)
     char        *typeName;
 
     typeName = fmtType(ejs, qname);
-    mprSprintf(buf, sizeof(buf), "<a href='%s'>%@</a>", getFilename(typeName), qname.name);
+    fmt(buf, sizeof(buf), "<a href='%s'>%@</a>", getFilename(typeName), qname.name);
     return buf;
 }
 
@@ -2322,7 +2322,7 @@ static char *fmtSpace(Ejs *ejs, EjsName qname)
 
     namespace = fmtNamespace(ejs, qname);
     if (namespace[0]) {
-        mprSprintf(buf, sizeof(buf), "%@", qname.space);
+        fmt(buf, sizeof(buf), "%@", qname.space);
     } else {
         buf[0] = '\0';
     }
@@ -2337,9 +2337,9 @@ static char *fmtDeclaration(Ejs *ejs, EjsName qname)
 
     namespace = fmtNamespace(ejs, qname);
     if (namespace[0]) {
-        mprSprintf(buf, sizeof(buf), "%@ %s", qname.space, demangle(ejs, qname.name));
+        fmt(buf, sizeof(buf), "%@ %s", qname.space, demangle(ejs, qname.name));
     } else {
-        mprSprintf(buf, sizeof(buf), "%s", demangle(ejs, qname.name));
+        fmt(buf, sizeof(buf), "%s", demangle(ejs, qname.name));
     }
     return buf;
 }
@@ -2509,7 +2509,7 @@ static EjsDoc *getDoc(Ejs *ejs, cchar *tag, void *obj, int slotNum)
             tag = "var";
         }
     }
-    mprSprintf(key, sizeof(key), "%s %Lx %d", tag, PTOL(obj), slotNum);
+    fmt(key, sizeof(key), "%s %Lx %d", tag, PTOL(obj), slotNum);
     return mprLookupKey(ejs->doc, key);
 }
 

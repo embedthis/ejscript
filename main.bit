@@ -9,6 +9,7 @@ Bit.load({
         'src/deps/pcre/pcre.bit',
         'src/deps/http/http.bit',
         'src/deps/sqlite/sqlite.bit',
+        'src/deps/zlib/zlib.bit',
 
         'src/libejs.bit',
         'src/cmd/cmd.bit',
@@ -45,13 +46,13 @@ Bit.load({
         company: 'Embedthis',
         version: '2.0.1',
         buildNumber: '0',
-        sync: ['http', 'mpr', 'pcre', 'sqlite'],
+        sync: ['http', 'mpr', 'pcre', 'sqlite', 'zlib'],
         packs: [ 'bits/packs' ],
         /* Must build locally to build tools */
         platforms: [ 'local' ],
         manager: 'ejsman',
-        '+optional': [ 'doxygen', 'dsi', 'man', 'man2html', 'openssl', 'matrixssl', 'pmaker', 'sqlite', 'ssl', 'zlib', 'zip' ],
-        '+required': [ 'pcre' ]
+        '+optional': [ 'doxygen', 'dsi', 'man', 'man2html', 'openssl', 'matrixssl', 'pmaker', 'sqlite', 'ssl', 'zip' ],
+        '+required': [ 'pcre', 'zlib' ]
         minimal: ['doxygen', 'dsi', 'man', 'man2html', 'zlib'],
     },
 

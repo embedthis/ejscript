@@ -44,6 +44,8 @@ static EjsService *createService()
     sp->vmlist = mprCreateList(-1, MPR_LIST_STATIC_VALUES);
     sp->vmpool = mprCreateList(-1, MPR_LIST_STATIC_VALUES);
     sp->intern = ejsCreateIntern(sp);
+    sp->dtoaSpin[0] = mprCreateSpinLock();
+    sp->dtoaSpin[1] = mprCreateSpinLock();
     ejsInitCompiler(sp);
     mprGlobalUnlock();
     return sp;
@@ -60,6 +62,8 @@ static void manageEjsService(EjsService *sp, int flags)
         mprMark(sp->nativeModules);
         mprMark(sp->intern);
         mprMark(sp->immutable);
+        mprMark(sp->dtoaSpin[0]);
+        mprMark(sp->dtoaSpin[1]);
 
     } else if (flags & MPR_MANAGE_FREE) {
         ejsDestroyIntern(sp->intern);
@@ -993,13 +997,12 @@ static void allocNotifier(int flags, uint size)
             ejsRunFunction(ejs, ejs->memoryCallback, thisObj, 2, argv);
         }
         if (!ejs->exception) {
-            mprSprintf(msg, sizeof(msg), "Low memory condition. Total mem: %d. Request for %d bytes granted.", 
-                total, size);
+            fmt(msg, sizeof(msg), "Low memory condition. Total mem: %d. Request for %d bytes granted.", total, size);
             ejsCreateException(ejs, ES_MemoryError, msg, dummy);
         }
     } else {
         if (!ejs->exception) {
-            mprSprintf(msg, sizeof(msg), "Memory depleted. Total mem: %d. Request for %d bytes denied.", total, size);
+            fmt(msg, sizeof(msg), "Memory depleted. Total mem: %d. Request for %d bytes denied.", total, size);
             ejsCreateException(ejs, ES_MemoryError, msg, dummy);
         }
     }

@@ -56,7 +56,7 @@ static int createSlotFile(EjsMod *bp, EjsModule *mp, MprFile *file)
             *cp = '_';
         }
     }
-    mprSprintf(slotsName, sizeof(slotsName), "%@Slots", mp->name);
+    fmt(slotsName, sizeof(slotsName), "%@Slots", mp->name);
     slotsName[0] = toupper((uchar) slotsName[0]);
     for (dp = sp = slotsName; *sp; sp++) {
         if (*sp == '.') {
@@ -131,10 +131,10 @@ static void defineSlot(EjsMod *bp, MprFile *file, EjsModule *mp, EjsType *type, 
     if (nameStr[0] != '\0') {
         funSep = (char*) ((*funStr && *typeStr) ? "_" : "");
         if (*typeStr == '\0' && *funStr == '\0') {
-            mprSprintf(nameBuf, sizeof(nameBuf), "#define ES_%s", nameStr);
+            fmt(nameBuf, sizeof(nameBuf), "#define ES_%s", nameStr);
         } else {
             if (!(nameStr[0] == '_' && nameStr[1] == '_')) {
-                mprSprintf(nameBuf, sizeof(nameBuf), "#define ES_%s%s%s_%s", typeStr, funSep, funStr, nameStr);
+                fmt(nameBuf, sizeof(nameBuf), "#define ES_%s%s%s_%s", typeStr, funSep, funStr, nameStr);
             } else {
                 nameBuf[0] = '\0';
             }
@@ -164,10 +164,10 @@ static void defineSlotCount(EjsMod *bp, MprFile *file, EjsModule *mp, EjsType *t
             *sp = '_';
         }
     }
-    mprSprintf(name, sizeof(name), "#define ES_%s_NUM_%s_PROP", typeStr, suffix);
+    fmt(name, sizeof(name), "#define ES_%s_NUM_%s_PROP", typeStr, suffix);
     mprFprintf(file, "%-70s %d\n", name, numProp);
     if (strcmp(suffix, "INSTANCE") == 0) {
-        mprSprintf(name, sizeof(name), "#define ES_%s_NUM_INHERITED_PROP", typeStr);
+        fmt(name, sizeof(name), "#define ES_%s_NUM_INHERITED_PROP", typeStr);
         mprFprintf(file, "%-70s %d\n", name, type->numInherited);
     }
 }

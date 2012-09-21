@@ -4546,6 +4546,7 @@ typedef struct EjsService {
     EjsHelpers      potHelpers;             /**< Default EjsPot helpers */
     EjsHelpers      blockHelpers;           /**< Default EjsBlock helpers */
     MprMutex        *mutex;                 /**< Multithread locking */
+    MprSpin         *dtoaSpin[2];           /**< Dtoa thread synchronization */
 } EjsService;
 
 /*

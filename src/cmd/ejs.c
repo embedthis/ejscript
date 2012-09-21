@@ -533,7 +533,7 @@ static int consoleGets(EcStream *stream)
         return 0;
     }
     level = stream->compiler->state ? stream->compiler->state->blockNestCount : 0;
-    mprSprintf(prompt, sizeof(prompt), "%s-%d> ", EJS_NAME, level);
+    fmt(prompt, sizeof(prompt), "%s-%d> ", EJS_NAME, level);
 
     mprYield(MPR_YIELD_STICKY);
     line = readline(prompt);

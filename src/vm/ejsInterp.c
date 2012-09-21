@@ -3614,7 +3614,7 @@ void ejsLog(Ejs *ejs, cchar *fmt, ...)
     char        buf[MPR_MAX_LOG];
 
     va_start(args, fmt);
-    mprSprintfv(buf, sizeof(buf) - 1, fmt, args);
+    fmtv(buf, sizeof(buf) - 1, fmt, args);
     va_end(args);
     mprLog(0, "%s", buf);
 }
