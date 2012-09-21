@@ -22,7 +22,7 @@ Bit.load({
             static: true,
             active: true,
             precious: true,
-            depends: ['libejs',  'zlib', 'bits', 'bit.es'],
+            depends: ['libejs',  'libzlib', 'bits', 'bit.es'],
             platforms: [ 'local' ],
         },
 
