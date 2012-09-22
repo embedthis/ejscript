@@ -2,7 +2,7 @@
 <Project DefaultTargets="Build" ToolsVersion="4.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
 
   <PropertyGroup Label="Globals">
-    <ProjectGuid>{186232b5-13e6-4176-80e7-2acad47144f1}</ProjectGuid>
+    <ProjectGuid>{396a2cd6-dd4b-4aaf-a231-e74c4cf9df26}</ProjectGuid>
     <RootNamespace />
     <Keyword>Win32Proj</Keyword>
   </PropertyGroup>
@@ -100,7 +100,7 @@ if exist "$(BinDir)\bits" rd /Q /S "$(BinDir)\bits"
 if not exist "$(BinDir)\bits" md "$(BinDir)\bits"
 xcopy /S /Y "bits" "$(BinDir)\bits"
 cd ..\..\..\projects\ejs-windows</Command>
-    <Outputs>$(BinDir)\bits</Outputs>
+    <Outputs>..\..\$(Cfg)\bin\bits</Outputs>
   </CustomBuildStep>
   </ItemDefinitionGroup>
 

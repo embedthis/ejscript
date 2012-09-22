@@ -6,6 +6,8 @@ EXPORTS
   classMap
   dummyWide
   floorDiv
+  fmt
+  fmtv
   gettimeofday
   itos
   itosbuf
@@ -50,6 +52,7 @@ EXPORTS
   mprCloneBuf
   mprCloneHash
   mprCloneList
+  mprCloneSsl
   mprCloseCmdFd
   mprCloseFile
   mprCloseSocket
@@ -465,8 +468,6 @@ EXPORTS
   mprSortList
   mprSpinLock
   mprSpinUnlock
-  fmt
-  fmtv
   mprStart
   mprStartCmd
   mprStartEventsThread

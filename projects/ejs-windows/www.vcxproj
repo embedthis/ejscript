@@ -2,7 +2,7 @@
 <Project DefaultTargets="Build" ToolsVersion="4.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
 
   <PropertyGroup Label="Globals">
-    <ProjectGuid>{a59c28eb-9d3f-4ac2-a48f-5abb011152da}</ProjectGuid>
+    <ProjectGuid>{dbb6a5e4-7b03-4c29-bcd8-08ffba0cf456}</ProjectGuid>
     <RootNamespace />
     <Keyword>Win32Proj</Keyword>
   </PropertyGroup>
@@ -100,7 +100,7 @@ if exist "$(BinDir)\www" rd /Q /S "$(BinDir)\www"
 if not exist "$(BinDir)\www" md "$(BinDir)\www"
 xcopy /S /Y "www" "$(BinDir)\www"
 cd ..\..\..\projects\ejs-windows</Command>
-    <Outputs>$(BinDir)\www</Outputs>
+    <Outputs>..\..\$(Cfg)\bin\www</Outputs>
   </CustomBuildStep>
   </ItemDefinitionGroup>
 

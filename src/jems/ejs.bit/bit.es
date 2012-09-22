@@ -1020,6 +1020,12 @@ public class Bit {
         let hfile = bit.dir.src.join('projects', bit.settings.product + '-' + bit.platform.os + '-bit.h')
         path.copy(hfile)
         trace('Generate', 'project header: ' + hfile.relative)
+        if (Config.OS == 'windows') {
+            trace('Copy', 'Exports definition files')
+            for each (f in bit.dir.bin.files('*.def')) {
+                f.copy(bit.dir.src.join('projects', bit.settings.product + '-windows', f.basename))
+            }
+        }
 
         let base = bit.dir.proj.join(bit.settings.product + '-' + bit.platform.os)
         for each (item in options.gen) {

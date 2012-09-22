@@ -1,8 +1,19 @@
 <?xml version="1.0" encoding="utf-8"?>
 <Project DefaultTargets="Build" ToolsVersion="4.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
 
+  <ItemDefinitionGroup>
+    <ClCompile>
+      <AdditionalIncludeDirectories>$(IncDir);%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+    </ClCompile>
+    <Link>
+      <AdditionalDependencies>ws2_32.lib;%(AdditionalDependencies)</AdditionalDependencies>
+      <AdditionalLibraryDirectories>$(OutDir);%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
+      <SubSystem>Console</SubSystem>
+    </Link>
+  </ItemDefinitionGroup>
+
   <PropertyGroup Label="Globals">
-    <ProjectGuid>{2a1f2aa5-a3dd-4f02-9e02-ab10c32152aa}</ProjectGuid>
+    <ProjectGuid>{b3ca65ee-3935-4b99-8a36-5779da14fad0}</ProjectGuid>
     <RootNamespace />
     <Keyword>Win32Proj</Keyword>
   </PropertyGroup>
@@ -72,21 +83,47 @@
     <_ProjectFileVersion>10</_ProjectFileVersion>
 
     <OutDir Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">$(BinDir)\</OutDir>
-    <IntDir Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">$(ObjDir)\ejs.mvc.mod\</IntDir>
+    <IntDir Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">$(ObjDir)\libzlib\</IntDir>
     <CustomBuildBeforeTargets Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">PreBuildEvent</CustomBuildBeforeTargets>
 
     <OutDir Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">$(BinDir)\</OutDir>
-    <IntDir Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">$(ObjDir)\ejs.mvc.mod\</IntDir>
+    <IntDir Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">$(ObjDir)\libzlib\</IntDir>
     <CustomBuildBeforeTargets Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">PreBuildEvent</CustomBuildBeforeTargets>
 
     <OutDir Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">$(BinDir)\</OutDir>
-    <IntDir Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">$(ObjDir)\ejs.mvc.mod\</IntDir>
+    <IntDir Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">$(ObjDir)\libzlib\</IntDir>
     <CustomBuildBeforeTargets Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">PreBuildEvent</CustomBuildBeforeTargets>
 
     <OutDir Condition="'$(Configuration)|$(Platform)'=='Release|x64'">$(BinDir)\</OutDir>
-    <IntDir Condition="'$(Configuration)|$(Platform)'=='Release|x64'">$(ObjDir)\ejs.mvc.mod\</IntDir>
+    <IntDir Condition="'$(Configuration)|$(Platform)'=='Release|x64'">$(ObjDir)\libzlib\</IntDir>
     <CustomBuildBeforeTargets Condition="'$(Configuration)|$(Platform)'=='Release|x64'">PreBuildEvent</CustomBuildBeforeTargets>
   </PropertyGroup>
+  
+  <ItemGroup>
+    <ClCompile Include="..\..\src\deps\zlib\adler32.c" />
+    <ClCompile Include="..\..\src\deps\zlib\compress.c" />
+    <ClCompile Include="..\..\src\deps\zlib\crc32.c" />
+    <ClCompile Include="..\..\src\deps\zlib\deflate.c" />
+    <ClCompile Include="..\..\src\deps\zlib\gzclose.c" />
+    <ClCompile Include="..\..\src\deps\zlib\gzlib.c" />
+    <ClCompile Include="..\..\src\deps\zlib\gzread.c" />
+    <ClCompile Include="..\..\src\deps\zlib\gzwrite.c" />
+    <ClCompile Include="..\..\src\deps\zlib\infback.c" />
+    <ClCompile Include="..\..\src\deps\zlib\inffast.c" />
+    <ClCompile Include="..\..\src\deps\zlib\inflate.c" />
+    <ClCompile Include="..\..\src\deps\zlib\inftrees.c" />
+    <ClCompile Include="..\..\src\deps\zlib\trees.c" />
+    <ClCompile Include="..\..\src\deps\zlib\uncompr.c" />
+    <ClCompile Include="..\..\src\deps\zlib\zutil.c" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <ClInclude Include="$(IncDir)\zlib.h" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <ClInclude Include="$(IncDir)\zconf.h" />
+  </ItemGroup>
 
   <ItemDefinitionGroup>
   <Link>
@@ -95,19 +132,13 @@
   </Link>
 
   <CustomBuildStep>
-    <Command>cd ..\..\src\jems\ejs.mvc
-$(BinDir)/ejsc --out $(BinDir)/ejs.mvc.mod  --optimize 9 *.es
+    <Command>cd ..\..\src\deps\zlib
+copy /Y zlib.h $(IncDir)
+copy /Y zconf.h $(IncDir)
 cd ..\..\..\projects\ejs-windows</Command>
-    <Outputs>..\..\$(Cfg)\bin\ejs.mvc.mod</Outputs>
+    <Outputs>$(BinDir)\libzlib.dll</Outputs>
   </CustomBuildStep>
   </ItemDefinitionGroup>
-
-<ItemGroup>
-  <ProjectReference Include="ejsc.vcxproj">
-  <Project>3b5194ed-fd3c-4eae-be81-67c70c54c31c</Project>
-  <ReferenceOutputAssembly>false</ReferenceOutputAssembly>
-  </ProjectReference>
-</ItemGroup>
 
   <Import Project="$(VCTargetsPath)Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">

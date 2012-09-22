@@ -13,7 +13,7 @@
   </ItemDefinitionGroup>
 
   <PropertyGroup Label="Globals">
-    <ProjectGuid>{b097bc45-c299-4dfa-944c-cc5c047cd785}</ProjectGuid>
+    <ProjectGuid>{b566fed2-0952-4867-a621-f91c28b47a1d}</ProjectGuid>
     <RootNamespace />
     <Keyword>Win32Proj</Keyword>
   </PropertyGroup>
@@ -107,6 +107,7 @@
     <ClCompile Include="..\..\src\compiler\ecModuleWrite.c" />
     <ClCompile Include="..\..\src\compiler\ecParser.c" />
     <ClCompile Include="..\..\src\compiler\ecState.c" />
+    <ClCompile Include="..\..\src\core\src\dtoa.c" />
     <ClCompile Include="..\..\src\core\src\ejsApp.c" />
     <ClCompile Include="..\..\src\core\src\ejsArray.c" />
     <ClCompile Include="..\..\src\core\src\ejsBlock.c" />
@@ -230,7 +231,7 @@ cd ..\projects\ejs-windows</Command>
 
 <ItemGroup>
   <ProjectReference Include="libhttp.vcxproj">
-  <Project>236a87b9-87d7-430d-b73f-d139f8471900</Project>
+  <Project>5e72be25-008b-460d-91dc-a14e9e524f8d</Project>
   <ReferenceOutputAssembly>false</ReferenceOutputAssembly>
   </ProjectReference>
 </ItemGroup>
