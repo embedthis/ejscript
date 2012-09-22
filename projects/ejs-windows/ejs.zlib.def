@@ -1,3 +1,0 @@
-LIBRARY ejs.zlib.dll
-EXPORTS
-  ejs_zlib_Init
