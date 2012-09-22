@@ -202,7 +202,6 @@
 #else
     typedef char wchar;
     #define T(s) s
-    #define UNICODE 0
 #endif
     #define TSZ(b) (sizeof(b) / sizeof(wchar))
 
