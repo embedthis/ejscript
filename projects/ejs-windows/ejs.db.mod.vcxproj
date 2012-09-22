@@ -2,7 +2,7 @@
 <Project DefaultTargets="Build" ToolsVersion="4.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
 
   <PropertyGroup Label="Globals">
-    <ProjectGuid>{ffdbfea3-04b0-47e0-acef-7e688d592536}</ProjectGuid>
+    <ProjectGuid>{9a35adac-189c-4db1-b14b-98dc7203de1f}</ProjectGuid>
     <RootNamespace />
     <Keyword>Win32Proj</Keyword>
   </PropertyGroup>
@@ -98,13 +98,13 @@
     <Command>cd ..\..\src\jems\ejs.db
 $(BinDir)/ejsc --out $(BinDir)/ejs.db.mod  --optimize 9 *.es
 cd ..\..\..\projects\ejs-windows</Command>
-    <Outputs>..\..\$(Cfg)\bin\ejs.db.mod</Outputs>
+    <Outputs>$(BinDir)\ejs.db.mod</Outputs>
   </CustomBuildStep>
   </ItemDefinitionGroup>
 
 <ItemGroup>
   <ProjectReference Include="ejsc.vcxproj">
-  <Project>3b5194ed-fd3c-4eae-be81-67c70c54c31c</Project>
+  <Project>d5245843-770a-44aa-9aa8-2a834be6411e</Project>
   <ReferenceOutputAssembly>false</ReferenceOutputAssembly>
   </ProjectReference>
 </ItemGroup>

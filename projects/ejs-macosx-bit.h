@@ -31,7 +31,7 @@
     #define BIT_HAS_MTUNE 1
 #endif
 #ifndef BIT_HAS_PAM
-    #define BIT_HAS_PAM 0
+    #define BIT_HAS_PAM 1
 #endif
 #ifndef BIT_HAS_STACK_PROTECTOR
     #define BIT_HAS_STACK_PROTECTOR 1
@@ -76,10 +76,10 @@
     #define BIT_VERSION "2.0.1"
 #endif
 #ifndef BIT_WARN64TO32
-    #define BIT_WARN64TO32 0
+    #define BIT_WARN64TO32 1
 #endif
 #ifndef BIT_WARN_UNUSED
-    #define BIT_WARN_UNUSED 0
+    #define BIT_WARN_UNUSED 1
 #endif
 
 /* Prefixes */
@@ -173,22 +173,22 @@
     #define BIT_PACK_MAN2HTML 0
 #endif
 #ifndef BIT_PACK_MATRIXSSL
-    #define BIT_PACK_MATRIXSSL 0
+    #define BIT_PACK_MATRIXSSL 1
 #endif
 #ifndef BIT_PACK_OPENSSL
-    #define BIT_PACK_OPENSSL 0
+    #define BIT_PACK_OPENSSL 1
 #endif
 #ifndef BIT_PACK_PCRE
     #define BIT_PACK_PCRE 1
 #endif
 #ifndef BIT_PACK_PMAKER
-    #define BIT_PACK_PMAKER 0
+    #define BIT_PACK_PMAKER 1
 #endif
 #ifndef BIT_PACK_SQLITE
     #define BIT_PACK_SQLITE 1
 #endif
 #ifndef BIT_PACK_SSL
-    #define BIT_PACK_SSL 0
+    #define BIT_PACK_SSL 1
 #endif
 #ifndef BIT_PACK_ZIP
     #define BIT_PACK_ZIP 1

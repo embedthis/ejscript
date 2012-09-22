@@ -2,7 +2,7 @@
 <Project DefaultTargets="Build" ToolsVersion="4.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
 
   <PropertyGroup Label="Globals">
-    <ProjectGuid>{5c26a534-3187-42cd-9a63-68fd253d9324}</ProjectGuid>
+    <ProjectGuid>{3d14f456-a814-49e9-bb57-4ff5174903e5}</ProjectGuid>
     <RootNamespace />
     <Keyword>Win32Proj</Keyword>
   </PropertyGroup>
@@ -98,13 +98,13 @@
     <Command>cd ..\..\src\jems\ejs.zlib
 $(BinDir)/ejsc --out $(BinDir)/ejs.zlib.mod  --optimize 9 *.es
 cd ..\..\..\projects\ejs-windows</Command>
-    <Outputs>..\..\$(Cfg)\bin\ejs.zlib.mod</Outputs>
+    <Outputs>$(BinDir)\ejs.zlib.mod</Outputs>
   </CustomBuildStep>
   </ItemDefinitionGroup>
 
 <ItemGroup>
   <ProjectReference Include="ejsc.vcxproj">
-  <Project>3b5194ed-fd3c-4eae-be81-67c70c54c31c</Project>
+  <Project>d5245843-770a-44aa-9aa8-2a834be6411e</Project>
   <ReferenceOutputAssembly>false</ReferenceOutputAssembly>
   </ProjectReference>
 </ItemGroup>

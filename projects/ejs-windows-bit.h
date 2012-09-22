@@ -6,17 +6,11 @@
  */
 
 /* Settings */
-#ifndef BIT_ASSERT
-    #define BIT_ASSERT 1
-#endif
 #ifndef BIT_BUILD_NUMBER
     #define BIT_BUILD_NUMBER "0"
 #endif
 #ifndef BIT_COMPANY
     #define BIT_COMPANY "Embedthis"
-#endif
-#ifndef BIT_DEBUG
-    #define BIT_DEBUG 1
 #endif
 #ifndef BIT_DEPTH
     #define BIT_DEPTH 1
@@ -66,31 +60,31 @@
 
 /* Prefixes */
 #ifndef BIT_CFG_PREFIX
-    #define BIT_CFG_PREFIX "C:/Program Files/Embedthis Ejscript"
+    #define BIT_CFG_PREFIX "C:/Program Files (x86)/Embedthis Ejscript"
 #endif
 #ifndef BIT_BIN_PREFIX
-    #define BIT_BIN_PREFIX "C:/Program Files/Embedthis Ejscript/bin"
+    #define BIT_BIN_PREFIX "C:/Program Files (x86)/Embedthis Ejscript/bin"
 #endif
 #ifndef BIT_INC_PREFIX
-    #define BIT_INC_PREFIX "C:/Program Files/Embedthis Ejscript/inc"
+    #define BIT_INC_PREFIX "C:/Program Files (x86)/Embedthis Ejscript/inc"
 #endif
 #ifndef BIT_LOG_PREFIX
-    #define BIT_LOG_PREFIX "C:/Program Files/Embedthis Ejscript/logs"
+    #define BIT_LOG_PREFIX "C:/Program Files (x86)/Embedthis Ejscript/logs"
 #endif
 #ifndef BIT_PRD_PREFIX
-    #define BIT_PRD_PREFIX "C:/Program Files/Embedthis Ejscript"
+    #define BIT_PRD_PREFIX "C:/Program Files (x86)/Embedthis Ejscript"
 #endif
 #ifndef BIT_SPL_PREFIX
-    #define BIT_SPL_PREFIX "C:/Program Files/Embedthis Ejscript/tmp"
+    #define BIT_SPL_PREFIX "C:/Program Files (x86)/Embedthis Ejscript/tmp"
 #endif
 #ifndef BIT_SRC_PREFIX
-    #define BIT_SRC_PREFIX "C:/Program Files/Embedthis Ejscript/src"
+    #define BIT_SRC_PREFIX "C:/Program Files (x86)/Embedthis Ejscript/src"
 #endif
 #ifndef BIT_VER_PREFIX
-    #define BIT_VER_PREFIX "C:/Program Files/Embedthis Ejscript"
+    #define BIT_VER_PREFIX "C:/Program Files (x86)/Embedthis Ejscript"
 #endif
 #ifndef BIT_WEB_PREFIX
-    #define BIT_WEB_PREFIX "C:/Program Files/Embedthis Ejscript/web"
+    #define BIT_WEB_PREFIX "C:/Program Files (x86)/Embedthis Ejscript/web"
 #endif
 
 /* Suffixes */
@@ -112,13 +106,13 @@
 
 /* Profile */
 #ifndef BIT_CONFIG_CMD
-    #define BIT_CONFIG_CMD "bit -q -configure . -profile debug"
+    #define BIT_CONFIG_CMD "bit -d -q -platform windows-x86 -without all -profile vs -configure . -gen vs"
 #endif
 #ifndef BIT_EJS_PRODUCT
     #define BIT_EJS_PRODUCT 1
 #endif
 #ifndef BIT_PROFILE
-    #define BIT_PROFILE "debug"
+    #define BIT_PROFILE "vs"
 #endif
 
 /* Miscellaneous */
@@ -140,34 +134,34 @@
     #define BIT_PACK_CC 1
 #endif
 #ifndef BIT_PACK_DOXYGEN
-    #define BIT_PACK_DOXYGEN 1
+    #define BIT_PACK_DOXYGEN 0
 #endif
 #ifndef BIT_PACK_DSI
     #define BIT_PACK_DSI 0
 #endif
 #ifndef BIT_PACK_DUMPBIN
-    #define BIT_PACK_DUMPBIN 1
+    #define BIT_PACK_DUMPBIN 0
 #endif
 #ifndef BIT_PACK_LINK
     #define BIT_PACK_LINK 1
 #endif
 #ifndef BIT_PACK_MAN
-    #define BIT_PACK_MAN 1
+    #define BIT_PACK_MAN 0
 #endif
 #ifndef BIT_PACK_MAN2HTML
-    #define BIT_PACK_MAN2HTML 1
+    #define BIT_PACK_MAN2HTML 0
 #endif
 #ifndef BIT_PACK_MATRIXSSL
-    #define BIT_PACK_MATRIXSSL 1
+    #define BIT_PACK_MATRIXSSL 0
 #endif
 #ifndef BIT_PACK_OPENSSL
-    #define BIT_PACK_OPENSSL 1
+    #define BIT_PACK_OPENSSL 0
 #endif
 #ifndef BIT_PACK_PCRE
     #define BIT_PACK_PCRE 1
 #endif
 #ifndef BIT_PACK_PMAKER
-    #define BIT_PACK_PMAKER 1
+    #define BIT_PACK_PMAKER 0
 #endif
 #ifndef BIT_PACK_RC
     #define BIT_PACK_RC 1
@@ -176,7 +170,7 @@
     #define BIT_PACK_SQLITE 1
 #endif
 #ifndef BIT_PACK_SSL
-    #define BIT_PACK_SSL 1
+    #define BIT_PACK_SSL 0
 #endif
 #ifndef BIT_PACK_WINSDK
     #define BIT_PACK_WINSDK 1
@@ -186,7 +180,4 @@
 #endif
 #ifndef BIT_PACK_ZLIB
     #define BIT_PACK_ZLIB 1
-#endif
-#ifndef BIT_VISUAL_STUDIO_VERSION
-    #define BIT_VISUAL_STUDIO_VERSION "10.0"
 #endif
