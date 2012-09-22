@@ -1955,6 +1955,7 @@ static int blockingFileCopy(HttpConn *conn, cchar *path)
 ssize httpWriteUploadData(HttpConn *conn, MprList *fileData, MprList *formData)
 {
     char    *path, *pair, *key, *value, *name;
+    cchar   *type;
     ssize   rc;
     int     next;
 
@@ -1971,7 +1972,10 @@ ssize httpWriteUploadData(HttpConn *conn, MprList *fileData, MprList *formData)
             name = mprGetPathBase(path);
             rc += httpWrite(conn->writeq, "%s\r\nContent-Disposition: form-data; name=\"file%d\"; filename=\"%s\"\r\n", 
                 conn->boundary, next - 1, name);
-            rc += httpWrite(conn->writeq, "Content-Type: %s\r\n\r\n", mprLookupMime(MPR->mimeTypes, path));
+            if ((type = mprLookupMime(MPR->mimeTypes, path)) != 0) {
+                rc += httpWrite(conn->writeq, "Content-Type: %s\r\n", mprLookupMime(MPR->mimeTypes, path));
+            }
+            httpWrite(conn->writeq, "\r\n");
             rc += blockingFileCopy(conn, path);
             rc += httpWrite(conn->writeq, "\r\n");
         }
@@ -11623,9 +11627,7 @@ static bool parseHeaders(HttpConn *conn, HttpPacket *packet)
             Step over "\r\n" after headers. 
             Don't do this if chunked so chunking can parse a single chunk delimiter of "\r\nSIZE ...\r\n"
          */
-        if (httpGetPacketLength(packet) >= 2) {
-            mprAdjustBufStart(content, 2);
-        }
+        mprAdjustBufStart(content, 2);
     }
     return 1;
 }
@@ -11737,7 +11739,8 @@ static bool analyseContent(HttpConn *conn, HttpPacket *packet)
             httpPutPacketToNext(q, packet);
         }
     }
-    if (rx->remainingContent == 0 && !(rx->flags & HTTP_CHUNKED)) {
+    mprAssert(rx->remainingContent >= 0);
+    if (rx->remainingContent <= 0 && !(rx->flags & HTTP_CHUNKED)) {
         rx->eof = 1;
     }
     return 1;
