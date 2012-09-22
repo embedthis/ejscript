@@ -3,7 +3,7 @@
 
   <ItemDefinitionGroup>
     <ClCompile>
-      <AdditionalIncludeDirectories>$(IncDir);$(IncDir);$(IncDir);$(IncDir);$(IncDir);%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>$(IncDir);$(IncDir);$(IncDir);$(IncDir);$(IncDir);$(IncDir);%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
     </ClCompile>
     <Link>
       <AdditionalDependencies>ws2_32.lib;%(AdditionalDependencies)</AdditionalDependencies>
@@ -13,7 +13,7 @@
   </ItemDefinitionGroup>
 
   <PropertyGroup Label="Globals">
-    <ProjectGuid>{b10963e6-4115-4d13-a34e-01df1e20ac30}</ProjectGuid>
+    <ProjectGuid>{51555840-c549-4d18-8579-131b7b0facee}</ProjectGuid>
     <RootNamespace />
     <Keyword>Win32Proj</Keyword>
   </PropertyGroup>
@@ -112,6 +112,7 @@
     <ClCompile Include="..\..\src\compiler\ecModuleWrite.c" />
     <ClCompile Include="..\..\src\compiler\ecParser.c" />
     <ClCompile Include="..\..\src\compiler\ecState.c" />
+    <ClCompile Include="..\..\src\core\src\dtoa.c" />
     <ClCompile Include="..\..\src\core\src\ejsApp.c" />
     <ClCompile Include="..\..\src\core\src\ejsArray.c" />
     <ClCompile Include="..\..\src\core\src\ejsBlock.c" />
@@ -162,6 +163,21 @@
     <ClCompile Include="..\..\src\vm\ejsModule.c" />
     <ClCompile Include="..\..\src\vm\ejsScope.c" />
     <ClCompile Include="..\..\src\vm\ejsService.c" />
+    <ClCompile Include="..\..\src\deps\zlib\adler32.c" />
+    <ClCompile Include="..\..\src\deps\zlib\compress.c" />
+    <ClCompile Include="..\..\src\deps\zlib\crc32.c" />
+    <ClCompile Include="..\..\src\deps\zlib\deflate.c" />
+    <ClCompile Include="..\..\src\deps\zlib\gzclose.c" />
+    <ClCompile Include="..\..\src\deps\zlib\gzlib.c" />
+    <ClCompile Include="..\..\src\deps\zlib\gzread.c" />
+    <ClCompile Include="..\..\src\deps\zlib\gzwrite.c" />
+    <ClCompile Include="..\..\src\deps\zlib\infback.c" />
+    <ClCompile Include="..\..\src\deps\zlib\inffast.c" />
+    <ClCompile Include="..\..\src\deps\zlib\inflate.c" />
+    <ClCompile Include="..\..\src\deps\zlib\inftrees.c" />
+    <ClCompile Include="..\..\src\deps\zlib\trees.c" />
+    <ClCompile Include="..\..\src\deps\zlib\uncompr.c" />
+    <ClCompile Include="..\..\src\deps\zlib\zutil.c" />
   </ItemGroup>
 
   <ItemDefinitionGroup>
@@ -173,7 +189,14 @@
 
 <ItemGroup>
   <ProjectReference Include="libejs.vcxproj">
-  <Project>b097bc45-c299-4dfa-944c-cc5c047cd785</Project>
+  <Project>b566fed2-0952-4867-a621-f91c28b47a1d</Project>
+  <ReferenceOutputAssembly>false</ReferenceOutputAssembly>
+  </ProjectReference>
+</ItemGroup>
+
+<ItemGroup>
+  <ProjectReference Include="libzlib.vcxproj">
+  <Project>b3ca65ee-3935-4b99-8a36-5779da14fad0</Project>
   <ReferenceOutputAssembly>false</ReferenceOutputAssembly>
   </ProjectReference>
 </ItemGroup>

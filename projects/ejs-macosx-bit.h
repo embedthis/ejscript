@@ -31,7 +31,7 @@
     #define BIT_HAS_MTUNE 1
 #endif
 #ifndef BIT_HAS_PAM
-    #define BIT_HAS_PAM 1
+    #define BIT_HAS_PAM 0
 #endif
 #ifndef BIT_HAS_STACK_PROTECTOR
     #define BIT_HAS_STACK_PROTECTOR 1
@@ -49,10 +49,10 @@
     #define BIT_MANAGER "ejsman"
 #endif
 #ifndef BIT_MINIMAL
-    #define BIT_MINIMAL "doxygen,dsi,man,man2html,zlib"
+    #define BIT_MINIMAL "doxygen,dsi,man,man2html"
 #endif
 #ifndef BIT_OPTIONAL
-    #define BIT_OPTIONAL "doxygen,dsi,man,man2html,openssl,matrixssl,pmaker,sqlite,ssl,zlib,zip"
+    #define BIT_OPTIONAL "doxygen,dsi,man,man2html,openssl,matrixssl,pmaker,sqlite,ssl,zip"
 #endif
 #ifndef BIT_PACKS
     #define BIT_PACKS "bits/packs"
@@ -64,10 +64,10 @@
     #define BIT_PRODUCT "ejs"
 #endif
 #ifndef BIT_REQUIRED
-    #define BIT_REQUIRED "compiler,link,pcre"
+    #define BIT_REQUIRED "compiler,link,pcre,zlib"
 #endif
 #ifndef BIT_SYNC
-    #define BIT_SYNC "http,mpr,pcre,sqlite"
+    #define BIT_SYNC "http,mpr,pcre,sqlite,zlib"
 #endif
 #ifndef BIT_TITLE
     #define BIT_TITLE "Embedthis Ejscript"
@@ -76,10 +76,10 @@
     #define BIT_VERSION "2.0.1"
 #endif
 #ifndef BIT_WARN64TO32
-    #define BIT_WARN64TO32 1
+    #define BIT_WARN64TO32 0
 #endif
 #ifndef BIT_WARN_UNUSED
-    #define BIT_WARN_UNUSED 1
+    #define BIT_WARN_UNUSED 0
 #endif
 
 /* Prefixes */
@@ -173,26 +173,26 @@
     #define BIT_PACK_MAN2HTML 0
 #endif
 #ifndef BIT_PACK_MATRIXSSL
-    #define BIT_PACK_MATRIXSSL 1
+    #define BIT_PACK_MATRIXSSL 0
 #endif
 #ifndef BIT_PACK_OPENSSL
-    #define BIT_PACK_OPENSSL 1
+    #define BIT_PACK_OPENSSL 0
 #endif
 #ifndef BIT_PACK_PCRE
     #define BIT_PACK_PCRE 1
 #endif
 #ifndef BIT_PACK_PMAKER
-    #define BIT_PACK_PMAKER 1
+    #define BIT_PACK_PMAKER 0
 #endif
 #ifndef BIT_PACK_SQLITE
     #define BIT_PACK_SQLITE 1
 #endif
 #ifndef BIT_PACK_SSL
-    #define BIT_PACK_SSL 1
+    #define BIT_PACK_SSL 0
 #endif
 #ifndef BIT_PACK_ZIP
     #define BIT_PACK_ZIP 1
 #endif
 #ifndef BIT_PACK_ZLIB
-    #define BIT_PACK_ZLIB 0
+    #define BIT_PACK_ZLIB 1
 #endif

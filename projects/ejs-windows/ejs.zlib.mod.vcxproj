@@ -2,7 +2,7 @@
 <Project DefaultTargets="Build" ToolsVersion="4.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
 
   <PropertyGroup Label="Globals">
-    <ProjectGuid>{2a1f2aa5-a3dd-4f02-9e02-ab10c32152aa}</ProjectGuid>
+    <ProjectGuid>{5c26a534-3187-42cd-9a63-68fd253d9324}</ProjectGuid>
     <RootNamespace />
     <Keyword>Win32Proj</Keyword>
   </PropertyGroup>
@@ -72,19 +72,19 @@
     <_ProjectFileVersion>10</_ProjectFileVersion>
 
     <OutDir Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">$(BinDir)\</OutDir>
-    <IntDir Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">$(ObjDir)\ejs.mvc.mod\</IntDir>
+    <IntDir Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">$(ObjDir)\ejs.zlib.mod\</IntDir>
     <CustomBuildBeforeTargets Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">PreBuildEvent</CustomBuildBeforeTargets>
 
     <OutDir Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">$(BinDir)\</OutDir>
-    <IntDir Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">$(ObjDir)\ejs.mvc.mod\</IntDir>
+    <IntDir Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">$(ObjDir)\ejs.zlib.mod\</IntDir>
     <CustomBuildBeforeTargets Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">PreBuildEvent</CustomBuildBeforeTargets>
 
     <OutDir Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">$(BinDir)\</OutDir>
-    <IntDir Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">$(ObjDir)\ejs.mvc.mod\</IntDir>
+    <IntDir Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">$(ObjDir)\ejs.zlib.mod\</IntDir>
     <CustomBuildBeforeTargets Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">PreBuildEvent</CustomBuildBeforeTargets>
 
     <OutDir Condition="'$(Configuration)|$(Platform)'=='Release|x64'">$(BinDir)\</OutDir>
-    <IntDir Condition="'$(Configuration)|$(Platform)'=='Release|x64'">$(ObjDir)\ejs.mvc.mod\</IntDir>
+    <IntDir Condition="'$(Configuration)|$(Platform)'=='Release|x64'">$(ObjDir)\ejs.zlib.mod\</IntDir>
     <CustomBuildBeforeTargets Condition="'$(Configuration)|$(Platform)'=='Release|x64'">PreBuildEvent</CustomBuildBeforeTargets>
   </PropertyGroup>
 
@@ -95,10 +95,10 @@
   </Link>
 
   <CustomBuildStep>
-    <Command>cd ..\..\src\jems\ejs.mvc
-$(BinDir)/ejsc --out $(BinDir)/ejs.mvc.mod  --optimize 9 *.es
+    <Command>cd ..\..\src\jems\ejs.zlib
+$(BinDir)/ejsc --out $(BinDir)/ejs.zlib.mod  --optimize 9 *.es
 cd ..\..\..\projects\ejs-windows</Command>
-    <Outputs>..\..\$(Cfg)\bin\ejs.mvc.mod</Outputs>
+    <Outputs>..\..\$(Cfg)\bin\ejs.zlib.mod</Outputs>
   </CustomBuildStep>
   </ItemDefinitionGroup>
 

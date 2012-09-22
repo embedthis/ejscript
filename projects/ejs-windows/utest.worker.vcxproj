@@ -2,7 +2,7 @@
 <Project DefaultTargets="Build" ToolsVersion="4.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
 
   <PropertyGroup Label="Globals">
-    <ProjectGuid>{63b4e131-717e-4bc4-9271-2dae72109f65}</ProjectGuid>
+    <ProjectGuid>{0c9c24a7-145b-4ef3-8c20-434bae39a88a}</ProjectGuid>
     <RootNamespace />
     <Keyword>Win32Proj</Keyword>
   </PropertyGroup>
@@ -98,7 +98,7 @@
     <Command>cd ..\..\src\jems\ejs.utest
 copy utest.worker $(BinDir)
 cd ..\..\..\projects\ejs-windows</Command>
-    <Outputs>$(BinDir)\utest.worker</Outputs>
+    <Outputs>..\..\$(Cfg)\bin\utest.worker</Outputs>
   </CustomBuildStep>
   </ItemDefinitionGroup>
 

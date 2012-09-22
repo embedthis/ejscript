@@ -3,6 +3,7 @@ EXPORTS
   cloneCopy
   cloneRef
   cloneXml
+  dtoa
   ecAddCStringConstant
   ecAddConstants
   ecAddDocConstant
@@ -346,6 +347,7 @@ EXPORTS
   ejsLoadScriptLiteral
   ejsLoadXMLAsc
   ejsLoadXMLString
+  ejsLockDtoa
   ejsLockService
   ejsLockVm
   ejsLog
@@ -464,14 +466,17 @@ EXPORTS
   ejsToUri
   ejsTruncateString
   ejsUnblockGC
+  ejsUnlockDtoa
   ejsUnlockService
   ejsUnlockVm
   ejsWideName
   ejsWriteToByteArray
   ejsXMLToBuf
   ejsZeroSlots
+  freedtoa
   g_deserialize
   getNextJsonToken
+  gethex
   manageFileStream
   manageLoadState
   nodes
@@ -491,4 +496,5 @@ EXPORTS
   sock_set_async
   tokenNames
   truncateFile
+  unused_strtod
   writeFile
