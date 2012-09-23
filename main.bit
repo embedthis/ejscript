@@ -53,7 +53,8 @@ Bit.load({
         manager: 'ejsman',
         '+optional': [ 'doxygen', 'dsi', 'man', 'man2html', 'openssl', 'matrixssl', 'pmaker', 'sqlite', 'ssl', 'zip' ],
         '+required': [ 'pcre', 'zlib' ]
-        minimal: ['doxygen', 'dsi', 'man', 'man2html', 'ssl', 'matrixssl', 'openssl'],
+        'without-all': ['doxygen', 'dsi', 'man', 'man2html', 'ssl', 'matrixssl', 'openssl'],
+        'without-own': ['doxygen', 'dsi', 'man', 'man2html', 'matrixssl'],
     },
 
     usage: {
