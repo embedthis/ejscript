@@ -4284,6 +4284,92 @@ dtoa
 }
 #endif
 /* EMBEDTHIS */
+/*
+    Cleanup for combo releases
+ */
+#undef ACQUIRE_DTOA_LOCK
+#undef Avoid_Underflow
+#undef BBias
+#undef BIT_FLOAT
+#undef Bcopy
+#undef Big0
+#undef Big1
+#undef Bletch
+#undef Bndry_mask
+#undef Bndry_mask1
+#undef Bug
+#undef CONST
+#undef Check_FLT_ROUNDS
+#undef DBL_DIG
+#undef DBL_MAX
+#undef DBL_MAX_10_EXP
+#undef DBL_MAX_EXP
+#undef Ebits
+#undef Emax
+#undef Emin
+#undef Exp_1
+#undef Exp_11
+#undef Exp_mask
+#undef Exp_msk1
+#undef Exp_msk11
+#undef Exp_shift
+#undef Exp_shift1
+#undef FFFFFFFF
+#undef FLT_RADIX
+#undef FREE_DTOA_LOCK
+#undef Flt_Rounds
+#undef Frac_mask
+#undef Frac_mask1
+#undef IEEE_8087
+#undef IEEE_Arith
+#undef IEEE_MC68k
+#undef INFNAN_CHECK
+#undef Int_max
+#undef Kmax
+#undef LONG_MAX
+#undef LSB
+#undef Llong
+#undef Log2P
+#undef Long
+#undef MALLOC
+#undef MULTIPLE_THREADS
+#undef NAN_WORD0
+#undef NAN_WORD1
+#undef NO_STRTOD_BIGCOMP
+#undef Nbits
+#undef Need_Hexdig
+#undef P
+#undef PRIVATE_MEM
+#undef PRIVATE_mem
+#undef Pack_32
+#undef Quick_max
+#undef ROUND_BIASED
+#undef Rounding
+#undef STRTOD_DIGLIM
+#undef Scale_Bit
+#undef Sign_bit
+#undef Storeinc
+#undef Sudden_Underflow
+#undef Ten_pmax
+#undef Tiny0
+#undef Tiny1
+#undef ULLong
+#undef ULbits
+#undef ULong
+#undef USC
+#undef d0
+#undef d1
+#undef dval
+#undef iInc
+#undef kmask
+#undef kshift
+#undef n_bigtens
+#undef rounded_product
+#undef rounded_quotient
+#undef strtod
+#undef strtod_diglim
+#undef word0
+#undef word1
 #endif /* BIT_FLOAT */
 
 /*
