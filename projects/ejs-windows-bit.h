@@ -31,7 +31,7 @@
     #define BIT_MANAGER "ejsman"
 #endif
 #ifndef BIT_MINIMAL
-    #define BIT_MINIMAL "doxygen,dsi,man,man2html"
+    #define BIT_MINIMAL "doxygen,dsi,man,man2html,ssl,matrixssl,openssl"
 #endif
 #ifndef BIT_OPTIONAL
     #define BIT_OPTIONAL "doxygen,dsi,man,man2html,openssl,matrixssl,pmaker,sqlite,ssl,zip"

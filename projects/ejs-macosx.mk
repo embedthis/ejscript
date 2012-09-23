@@ -228,12 +228,12 @@ $(CONFIG)/obj/mprSsl.o: \
         src/deps/mpr/mprSsl.c \
         $(CONFIG)/inc/bit.h \
         $(CONFIG)/inc/mpr.h
-	$(CC) -c -o $(CONFIG)/obj/mprSsl.o -arch x86_64 $(CFLAGS) $(DFLAGS) -DPOSIX -DMATRIX_USE_FILE_SYSTEM -I$(CONFIG)/inc -I../packages-macosx-x64/openssl/openssl-1.0.1b/include -I../packages-macosx-x64/matrixssl/matrixssl-3-3-open/matrixssl -I../packages-macosx-x64/matrixssl/matrixssl-3-3-open src/deps/mpr/mprSsl.c
+	$(CC) -c -o $(CONFIG)/obj/mprSsl.o -arch x86_64 $(CFLAGS) $(DFLAGS) -I$(CONFIG)/inc src/deps/mpr/mprSsl.c
 
 $(CONFIG)/bin/libmprssl.dylib:  \
         $(CONFIG)/bin/libmpr.dylib \
         $(CONFIG)/obj/mprSsl.o
-	$(CC) -dynamiclib -o $(CONFIG)/bin/libmprssl.dylib -arch x86_64 $(LDFLAGS) -compatibility_version 2.0.1 -current_version 2.0.1 -compatibility_version 2.0.1 -current_version 2.0.1 $(LIBPATHS) -L../packages-macosx-x64/openssl/openssl-1.0.1b -L../packages-macosx-x64/matrixssl/matrixssl-3-3-open -install_name @rpath/libmprssl.dylib $(CONFIG)/obj/mprSsl.o $(LIBS) -lmpr -lssl -lcrypto -lmatrixssl
+	$(CC) -dynamiclib -o $(CONFIG)/bin/libmprssl.dylib -arch x86_64 $(LDFLAGS) -compatibility_version 2.0.1 -current_version 2.0.1 -compatibility_version 2.0.1 -current_version 2.0.1 $(LIBPATHS) -install_name @rpath/libmprssl.dylib $(CONFIG)/obj/mprSsl.o $(LIBS) -lmpr
 
 $(CONFIG)/obj/manager.o: \
         src/deps/mpr/manager.c \
@@ -342,7 +342,8 @@ $(CONFIG)/obj/adler32.o: \
 
 $(CONFIG)/obj/compress.o: \
         src/deps/zlib/compress.c \
-        $(CONFIG)/inc/bit.h
+        $(CONFIG)/inc/bit.h \
+        $(CONFIG)/inc/zlib.h
 	$(CC) -c -o $(CONFIG)/obj/compress.o -arch x86_64 $(CFLAGS) $(DFLAGS) -I$(CONFIG)/inc src/deps/zlib/compress.c
 
 $(CONFIG)/obj/crc32.o: \
@@ -402,7 +403,8 @@ $(CONFIG)/obj/trees.o: \
 
 $(CONFIG)/obj/uncompr.o: \
         src/deps/zlib/uncompr.c \
-        $(CONFIG)/inc/bit.h
+        $(CONFIG)/inc/bit.h \
+        $(CONFIG)/inc/zlib.h
 	$(CC) -c -o $(CONFIG)/obj/uncompr.o -arch x86_64 $(CFLAGS) $(DFLAGS) -I$(CONFIG)/inc src/deps/zlib/uncompr.c
 
 $(CONFIG)/obj/zutil.o: \

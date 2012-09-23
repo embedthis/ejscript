@@ -49,7 +49,7 @@
     #define BIT_MANAGER "ejsman"
 #endif
 #ifndef BIT_MINIMAL
-    #define BIT_MINIMAL "doxygen,dsi,man,man2html"
+    #define BIT_MINIMAL "doxygen,dsi,man,man2html,ssl,matrixssl,openssl"
 #endif
 #ifndef BIT_OPTIONAL
     #define BIT_OPTIONAL "doxygen,dsi,man,man2html,openssl,matrixssl,pmaker,sqlite,ssl,zip"
@@ -173,10 +173,10 @@
     #define BIT_PACK_MAN2HTML 0
 #endif
 #ifndef BIT_PACK_MATRIXSSL
-    #define BIT_PACK_MATRIXSSL 1
+    #define BIT_PACK_MATRIXSSL 0
 #endif
 #ifndef BIT_PACK_OPENSSL
-    #define BIT_PACK_OPENSSL 1
+    #define BIT_PACK_OPENSSL 0
 #endif
 #ifndef BIT_PACK_PCRE
     #define BIT_PACK_PCRE 1
@@ -188,7 +188,7 @@
     #define BIT_PACK_SQLITE 1
 #endif
 #ifndef BIT_PACK_SSL
-    #define BIT_PACK_SSL 1
+    #define BIT_PACK_SSL 0
 #endif
 #ifndef BIT_PACK_ZIP
     #define BIT_PACK_ZIP 1
