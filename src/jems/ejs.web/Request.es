@@ -246,7 +246,7 @@ module ejs.web {
 
         /** 
             Name of the referring URL. This comes from the request "Referrer" Http header. Set to null if there is
-            no defined referrer.
+            no defined referrer. Note: the HTTP header is misspelt as "referer"
          */
         native enumerable var referrer: String?
 

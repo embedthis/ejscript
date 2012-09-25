@@ -79,19 +79,19 @@ Bit.load({
                     if (name == 'windows-x86' && Config.OS == 'windows') {
                         /* Windows must do a build to get current *.def files */
                         trace('Build', 'Full build to generate def files')
-                        run(bitcmd + ' -d -without all -configure .', bit.target.runopt)
+                        run(bitcmd + ' -d -without own -configure .', bit.target.runopt)
                         run(bitcmd + ' -d ', bit.target.runopt)
                         run(bitcmd + ' -d ' + formats, bit.target.runopt)
                     } else {
-                        run(bitcmd + ' -d -q -platform ' + name + ' -without all -configure . ' + formats, bit.target.runopt)
+                        run(bitcmd + ' -d -q -platform ' + name + ' -without own -configure . ' + formats, bit.target.runopt)
                     }
                     /* Xcode and VS use separate profiles */
                     if (name == 'macosx-x64') {
-                        run(bitcmd + ' -d -q -platform ' + name + ' -without all -profile xcode -configure . -gen xcode',
+                        run(bitcmd + ' -d -q -platform ' + name + ' -without own -profile xcode -configure . -gen xcode',
                             bit.target.runopt)
                         rmdir(bit.dir.top.join(name + '-xcode'))
                     } else if (name == 'windows-x86') {
-                        run(bitcmd + ' -d -q -platform ' + name + ' -without all -profile vs -configure . -gen vs',
+                        run(bitcmd + ' -d -q -platform ' + name + ' -without own -profile vs -configure . -gen vs',
                             bit.target.runopt)
                         rmdir(bit.dir.top.join(name + '-vs'))
                     }
