@@ -2659,7 +2659,6 @@ global.NN = item.ns
                 }
                 if (cmd.response) {
                     if (!cmdOptions.excludeOutput || !cmdOptions.excludeOutput.test(cmd.response)) {
-print("RESPONSE \"" + cmd.response + "\"")
                         print(cmd.response)
                     }
                 }
