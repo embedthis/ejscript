@@ -1911,7 +1911,7 @@ public class Bit {
             } else {
                 safeRemove(target.path)
             }
-            run(command, {filterOutput: /Creating library /})
+            run(command, {excludeOutput: /Creating library /})
         }
     }
 
@@ -1986,7 +1986,11 @@ public class Bit {
 
             } else {
                 trace('Compile', file.relativeTo('.'))
-                run(command, {filter: /\/cl.exe"/})
+                if (bit.platform.os == 'windows') {
+                    run(command, {excludeOutput: /^[a-zA-Z]*.c\s*$/})
+                } else {
+                    run(command)
+                }
             }
         }
     }
@@ -2654,7 +2658,8 @@ global.NN = item.ns
                     print(cmd.error)
                 }
                 if (cmd.response) {
-                    if (!cmdOptions.filterOutput || !cmdOptions.filterOutput.test(cmd.response)) {
+                    if (!cmdOptions.excludeOutput || !cmdOptions.excludeOutput.test(cmd.response)) {
+print("RESPONSE \"" + cmd.response + "\"")
                         print(cmd.response)
                     }
                 }
