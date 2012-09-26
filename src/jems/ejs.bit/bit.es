@@ -2645,7 +2645,7 @@ global.NN = item.ns
             if (!cmd.error || cmd.error == '') {
                 msg = 'Command failure: ' + cmd.response + '\nCommand: ' + command
             } else {
-                msg = 'Command failure: ' + cmd.error + '\nCommand: ' + command
+                msg = 'Command failure: ' + cmd.error + '\n' + cmd.response + '\nCommand: ' + command
             }
             if (cmdOptions.continueOnErrors || options['continue']) {
                 trace('Error', msg)
