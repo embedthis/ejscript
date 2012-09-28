@@ -1284,7 +1284,7 @@ static bool waitForState(EjsHttp *hp, int state, MprTime timeout, int throw)
             if (httpNeedRetry(conn, &url)) {
                 if (url) {
                     uri = httpCreateUri(url, 0);
-                    httpCompleteUri(uri, httpCreateUri(hp->uri, 0));
+                    httpCompleteUri(uri, httpCreateUri(hp->uri, 0), 0);
                     hp->uri = httpUriToString(uri, HTTP_COMPLETE_URI);
                 }
                 count--; 

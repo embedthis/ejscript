@@ -606,6 +606,9 @@ r.link({product: "candy", quantity: "10", template: "/cart/{product}/{quantity}}
                 target.scriptName = scriptName
                 target = Uri.template(target.template, target).path
             }
+            if (!(target is String)) {
+                target.path ||= "/"
+            }
             return uri.local.resolve(target).normalize
         }
 
