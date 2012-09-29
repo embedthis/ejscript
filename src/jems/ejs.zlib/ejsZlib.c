@@ -8,7 +8,7 @@
 
 #include    "ejs.h"
 
-#include    "zlib/zlib.h"
+#include    "zlib.h"
 #include    "ejs.zlib.slots.h"
 
 #define     ZBUFSIZE (16 * 1024)

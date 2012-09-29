@@ -10,6 +10,14 @@
 
 #include "bit.h"
 
+#ifndef ZLIB_INTERNAL
+#if ((__GNUC__-0) * 10 + __GNUC_MINOR__-0 >= 33) && !defined(NO_VIZ)
+#  define ZLIB_INTERNAL __attribute__((visibility ("hidden")))
+#else
+#  define ZLIB_INTERNAL
+#endif
+#endif
+
 #if VXWORKS
     #ifndef _VSB_CONFIG_FILE
         #define _VSB_CONFIG_FILE "vsbConfig.h"

@@ -61,10 +61,10 @@
     #define BIT_PRODUCT "ejs"
 #endif
 #ifndef BIT_REQUIRED
-    #define BIT_REQUIRED "compiler,link,pcre,zlib"
+    #define BIT_REQUIRED "compiler,link,pcre"
 #endif
 #ifndef BIT_SYNC
-    #define BIT_SYNC "http,mpr,pcre,sqlite,zlib"
+    #define BIT_SYNC "http,mpr,pcre,sqlite"
 #endif
 #ifndef BIT_TITLE
     #define BIT_TITLE "Embedthis Ejscript"
@@ -133,7 +133,7 @@
 
 /* Profile */
 #ifndef BIT_CONFIG_CMD
-    #define BIT_CONFIG_CMD "bit -d -q -platform macosx-x64 -without all -profile xcode -configure . -gen xcode"
+    #define BIT_CONFIG_CMD "bit -d -q -platform macosx-x64 -without own -profile xcode -configure . -gen xcode"
 #endif
 #ifndef BIT_EJS_PRODUCT
     #define BIT_EJS_PRODUCT 1
@@ -179,7 +179,7 @@
     #define BIT_PACK_MATRIXSSL 0
 #endif
 #ifndef BIT_PACK_OPENSSL
-    #define BIT_PACK_OPENSSL 0
+    #define BIT_PACK_OPENSSL 1
 #endif
 #ifndef BIT_PACK_PCRE
     #define BIT_PACK_PCRE 1
@@ -191,11 +191,8 @@
     #define BIT_PACK_SQLITE 1
 #endif
 #ifndef BIT_PACK_SSL
-    #define BIT_PACK_SSL 0
+    #define BIT_PACK_SSL 1
 #endif
 #ifndef BIT_PACK_ZIP
     #define BIT_PACK_ZIP 1
-#endif
-#ifndef BIT_PACK_ZLIB
-    #define BIT_PACK_ZLIB 1
 #endif

@@ -30,9 +30,9 @@ ${CC} -c -o ${CONFIG}/obj/mprLib.o -arch x86_64 ${CFLAGS} ${DFLAGS} -I${CONFIG}/
 
 ${CC} -dynamiclib -o ${CONFIG}/bin/libmpr.dylib -arch x86_64 ${LDFLAGS} -compatibility_version 2.0.1 -current_version 2.0.1 ${LIBPATHS} -install_name @rpath/libmpr.dylib ${CONFIG}/obj/mprLib.o ${LIBS}
 
-${CC} -c -o ${CONFIG}/obj/mprSsl.o -arch x86_64 ${CFLAGS} ${DFLAGS} -I${CONFIG}/inc src/deps/mpr/mprSsl.c
+${CC} -c -o ${CONFIG}/obj/mprSsl.o -arch x86_64 ${CFLAGS} ${DFLAGS} -I${CONFIG}/inc -I../packages-macosx-x64/openssl/openssl-1.0.1b/include src/deps/mpr/mprSsl.c
 
-${CC} -dynamiclib -o ${CONFIG}/bin/libmprssl.dylib -arch x86_64 ${LDFLAGS} -compatibility_version 2.0.1 -current_version 2.0.1 ${LIBPATHS} -install_name @rpath/libmprssl.dylib ${CONFIG}/obj/mprSsl.o ${LIBS} -lmpr
+${CC} -dynamiclib -o ${CONFIG}/bin/libmprssl.dylib -arch x86_64 ${LDFLAGS} -compatibility_version 2.0.1 -current_version 2.0.1 ${LIBPATHS} -L../packages-macosx-x64/openssl/openssl-1.0.1b -install_name @rpath/libmprssl.dylib ${CONFIG}/obj/mprSsl.o ${LIBS} -lmpr -lssl -lcrypto
 
 ${CC} -c -o ${CONFIG}/obj/manager.o -arch x86_64 ${CFLAGS} ${DFLAGS} -I${CONFIG}/inc src/deps/mpr/manager.c
 
@@ -70,44 +70,6 @@ ${CC} -dynamiclib -o ${CONFIG}/bin/libsqlite3.dylib -arch x86_64 ${LDFLAGS} -com
 ${CC} -c -o ${CONFIG}/obj/sqlite.o -arch x86_64 ${CFLAGS} ${DFLAGS} -I${CONFIG}/inc src/deps/sqlite/sqlite.c
 
 ${CC} -o ${CONFIG}/bin/sqlite -arch x86_64 ${LDFLAGS} ${LIBPATHS} ${CONFIG}/obj/sqlite.o ${LIBS} -lsqlite3
-
-rm -rf ${CONFIG}/inc/zlib.h
-cp -r src/deps/zlib/zlib.h ${CONFIG}/inc/zlib.h
-
-rm -rf ${CONFIG}/inc/zconf.h
-cp -r src/deps/zlib/zconf.h ${CONFIG}/inc/zconf.h
-
-${CC} -c -o ${CONFIG}/obj/adler32.o -arch x86_64 ${CFLAGS} ${DFLAGS} -I${CONFIG}/inc src/deps/zlib/adler32.c
-
-${CC} -c -o ${CONFIG}/obj/compress.o -arch x86_64 ${CFLAGS} ${DFLAGS} -I${CONFIG}/inc src/deps/zlib/compress.c
-
-${CC} -c -o ${CONFIG}/obj/crc32.o -arch x86_64 ${CFLAGS} ${DFLAGS} -I${CONFIG}/inc src/deps/zlib/crc32.c
-
-${CC} -c -o ${CONFIG}/obj/deflate.o -arch x86_64 ${CFLAGS} ${DFLAGS} -I${CONFIG}/inc src/deps/zlib/deflate.c
-
-${CC} -c -o ${CONFIG}/obj/gzclose.o -arch x86_64 ${CFLAGS} ${DFLAGS} -I${CONFIG}/inc src/deps/zlib/gzclose.c
-
-${CC} -c -o ${CONFIG}/obj/gzlib.o -arch x86_64 ${CFLAGS} ${DFLAGS} -I${CONFIG}/inc src/deps/zlib/gzlib.c
-
-${CC} -c -o ${CONFIG}/obj/gzread.o -arch x86_64 ${CFLAGS} ${DFLAGS} -I${CONFIG}/inc src/deps/zlib/gzread.c
-
-${CC} -c -o ${CONFIG}/obj/gzwrite.o -arch x86_64 ${CFLAGS} ${DFLAGS} -I${CONFIG}/inc src/deps/zlib/gzwrite.c
-
-${CC} -c -o ${CONFIG}/obj/infback.o -arch x86_64 ${CFLAGS} ${DFLAGS} -I${CONFIG}/inc src/deps/zlib/infback.c
-
-${CC} -c -o ${CONFIG}/obj/inffast.o -arch x86_64 ${CFLAGS} ${DFLAGS} -I${CONFIG}/inc src/deps/zlib/inffast.c
-
-${CC} -c -o ${CONFIG}/obj/inflate.o -arch x86_64 ${CFLAGS} ${DFLAGS} -I${CONFIG}/inc src/deps/zlib/inflate.c
-
-${CC} -c -o ${CONFIG}/obj/inftrees.o -arch x86_64 ${CFLAGS} ${DFLAGS} -I${CONFIG}/inc src/deps/zlib/inftrees.c
-
-${CC} -c -o ${CONFIG}/obj/trees.o -arch x86_64 ${CFLAGS} ${DFLAGS} -I${CONFIG}/inc src/deps/zlib/trees.c
-
-${CC} -c -o ${CONFIG}/obj/uncompr.o -arch x86_64 ${CFLAGS} ${DFLAGS} -I${CONFIG}/inc src/deps/zlib/uncompr.c
-
-${CC} -c -o ${CONFIG}/obj/zutil.o -arch x86_64 ${CFLAGS} ${DFLAGS} -I${CONFIG}/inc src/deps/zlib/zutil.c
-
-${CC} -dynamiclib -o ${CONFIG}/bin/libzlib.dylib -arch x86_64 ${LDFLAGS} -compatibility_version 2.0.1 -current_version 2.0.1 ${LIBPATHS} -install_name @rpath/libzlib.dylib ${CONFIG}/obj/adler32.o ${CONFIG}/obj/compress.o ${CONFIG}/obj/crc32.o ${CONFIG}/obj/deflate.o ${CONFIG}/obj/gzclose.o ${CONFIG}/obj/gzlib.o ${CONFIG}/obj/gzread.o ${CONFIG}/obj/gzwrite.o ${CONFIG}/obj/infback.o ${CONFIG}/obj/inffast.o ${CONFIG}/obj/inflate.o ${CONFIG}/obj/inftrees.o ${CONFIG}/obj/trees.o ${CONFIG}/obj/uncompr.o ${CONFIG}/obj/zutil.o ${LIBS}
 
 rm -rf ${CONFIG}/inc/ejs.cache.local.slots.h
 cp -r src/slots/ejs.cache.local.slots.h ${CONFIG}/inc/ejs.cache.local.slots.h
@@ -296,9 +258,7 @@ rm -fr ../../../${CONFIG}/bin/bits ;\
 cp -r bits ../../../${CONFIG}/bin ;\
 cd - >/dev/null 
 
-${CC} -c -o ${CONFIG}/obj/ejsZlib.o -arch x86_64 ${CFLAGS} ${DFLAGS} -I${CONFIG}/inc src/jems/ejs.zlib/ejsZlib.c
-
-${CC} -o ${CONFIG}/bin/bit -arch x86_64 ${LDFLAGS} ${LIBPATHS} ${CONFIG}/obj/ejsrun.o ${CONFIG}/obj/ejsZlib.o ${CONFIG}/obj/mprLib.o ${CONFIG}/obj/pcre.o ${CONFIG}/obj/httpLib.o ${CONFIG}/obj/ecAst.o ${CONFIG}/obj/ecCodeGen.o ${CONFIG}/obj/ecCompiler.o ${CONFIG}/obj/ecLex.o ${CONFIG}/obj/ecModuleWrite.o ${CONFIG}/obj/ecParser.o ${CONFIG}/obj/ecState.o ${CONFIG}/obj/dtoa.o ${CONFIG}/obj/ejsApp.o ${CONFIG}/obj/ejsArray.o ${CONFIG}/obj/ejsBlock.o ${CONFIG}/obj/ejsBoolean.o ${CONFIG}/obj/ejsByteArray.o ${CONFIG}/obj/ejsCache.o ${CONFIG}/obj/ejsCmd.o ${CONFIG}/obj/ejsConfig.o ${CONFIG}/obj/ejsDate.o ${CONFIG}/obj/ejsDebug.o ${CONFIG}/obj/ejsError.o ${CONFIG}/obj/ejsFile.o ${CONFIG}/obj/ejsFileSystem.o ${CONFIG}/obj/ejsFrame.o ${CONFIG}/obj/ejsFunction.o ${CONFIG}/obj/ejsGC.o ${CONFIG}/obj/ejsGlobal.o ${CONFIG}/obj/ejsHttp.o ${CONFIG}/obj/ejsIterator.o ${CONFIG}/obj/ejsJSON.o ${CONFIG}/obj/ejsLocalCache.o ${CONFIG}/obj/ejsMath.o ${CONFIG}/obj/ejsMemory.o ${CONFIG}/obj/ejsMprLog.o ${CONFIG}/obj/ejsNamespace.o ${CONFIG}/obj/ejsNull.o ${CONFIG}/obj/ejsNumber.o ${CONFIG}/obj/ejsObject.o ${CONFIG}/obj/ejsPath.o ${CONFIG}/obj/ejsPot.o ${CONFIG}/obj/ejsRegExp.o ${CONFIG}/obj/ejsSocket.o ${CONFIG}/obj/ejsString.o ${CONFIG}/obj/ejsSystem.o ${CONFIG}/obj/ejsTimer.o ${CONFIG}/obj/ejsType.o ${CONFIG}/obj/ejsUri.o ${CONFIG}/obj/ejsVoid.o ${CONFIG}/obj/ejsWorker.o ${CONFIG}/obj/ejsXML.o ${CONFIG}/obj/ejsXMLList.o ${CONFIG}/obj/ejsXMLLoader.o ${CONFIG}/obj/ejsByteCode.o ${CONFIG}/obj/ejsException.o ${CONFIG}/obj/ejsHelper.o ${CONFIG}/obj/ejsInterp.o ${CONFIG}/obj/ejsLoader.o ${CONFIG}/obj/ejsModule.o ${CONFIG}/obj/ejsScope.o ${CONFIG}/obj/ejsService.o ${CONFIG}/obj/adler32.o ${CONFIG}/obj/compress.o ${CONFIG}/obj/crc32.o ${CONFIG}/obj/deflate.o ${CONFIG}/obj/gzclose.o ${CONFIG}/obj/gzlib.o ${CONFIG}/obj/gzread.o ${CONFIG}/obj/gzwrite.o ${CONFIG}/obj/infback.o ${CONFIG}/obj/inffast.o ${CONFIG}/obj/inflate.o ${CONFIG}/obj/inftrees.o ${CONFIG}/obj/trees.o ${CONFIG}/obj/uncompr.o ${CONFIG}/obj/zutil.o ${LIBS} -lpam
+${CC} -o ${CONFIG}/bin/bit -arch x86_64 ${LDFLAGS} ${LIBPATHS} ${CONFIG}/obj/ejsrun.o ${CONFIG}/obj/mprLib.o ${CONFIG}/obj/pcre.o ${CONFIG}/obj/httpLib.o ${CONFIG}/obj/ecAst.o ${CONFIG}/obj/ecCodeGen.o ${CONFIG}/obj/ecCompiler.o ${CONFIG}/obj/ecLex.o ${CONFIG}/obj/ecModuleWrite.o ${CONFIG}/obj/ecParser.o ${CONFIG}/obj/ecState.o ${CONFIG}/obj/dtoa.o ${CONFIG}/obj/ejsApp.o ${CONFIG}/obj/ejsArray.o ${CONFIG}/obj/ejsBlock.o ${CONFIG}/obj/ejsBoolean.o ${CONFIG}/obj/ejsByteArray.o ${CONFIG}/obj/ejsCache.o ${CONFIG}/obj/ejsCmd.o ${CONFIG}/obj/ejsConfig.o ${CONFIG}/obj/ejsDate.o ${CONFIG}/obj/ejsDebug.o ${CONFIG}/obj/ejsError.o ${CONFIG}/obj/ejsFile.o ${CONFIG}/obj/ejsFileSystem.o ${CONFIG}/obj/ejsFrame.o ${CONFIG}/obj/ejsFunction.o ${CONFIG}/obj/ejsGC.o ${CONFIG}/obj/ejsGlobal.o ${CONFIG}/obj/ejsHttp.o ${CONFIG}/obj/ejsIterator.o ${CONFIG}/obj/ejsJSON.o ${CONFIG}/obj/ejsLocalCache.o ${CONFIG}/obj/ejsMath.o ${CONFIG}/obj/ejsMemory.o ${CONFIG}/obj/ejsMprLog.o ${CONFIG}/obj/ejsNamespace.o ${CONFIG}/obj/ejsNull.o ${CONFIG}/obj/ejsNumber.o ${CONFIG}/obj/ejsObject.o ${CONFIG}/obj/ejsPath.o ${CONFIG}/obj/ejsPot.o ${CONFIG}/obj/ejsRegExp.o ${CONFIG}/obj/ejsSocket.o ${CONFIG}/obj/ejsString.o ${CONFIG}/obj/ejsSystem.o ${CONFIG}/obj/ejsTimer.o ${CONFIG}/obj/ejsType.o ${CONFIG}/obj/ejsUri.o ${CONFIG}/obj/ejsVoid.o ${CONFIG}/obj/ejsWorker.o ${CONFIG}/obj/ejsXML.o ${CONFIG}/obj/ejsXMLList.o ${CONFIG}/obj/ejsXMLLoader.o ${CONFIG}/obj/ejsByteCode.o ${CONFIG}/obj/ejsException.o ${CONFIG}/obj/ejsHelper.o ${CONFIG}/obj/ejsInterp.o ${CONFIG}/obj/ejsLoader.o ${CONFIG}/obj/ejsModule.o ${CONFIG}/obj/ejsScope.o ${CONFIG}/obj/ejsService.o ${LIBS} -lpam
 
 #  Omit build script /Users/mob/git/ejs/macosx-x64-debug/bin/utest.es
 rm -rf ${CONFIG}/bin/utest
@@ -339,10 +299,14 @@ cp -r www ../../../${CONFIG}/bin ;\
 cd - >/dev/null 
 
 #  Omit build script /Users/mob/git/ejs/macosx-x64-debug/bin/ejs.template.mod
-#  Omit build script /Users/mob/git/ejs/macosx-x64-debug/bin/ejs.tar.mod
 #  Omit build script /Users/mob/git/ejs/macosx-x64-debug/bin/ejs.zlib.mod
-${CC} -dynamiclib -o ${CONFIG}/bin/ejs.zlib.dylib -arch x86_64 ${LDFLAGS} -compatibility_version 2.0.1 -current_version 2.0.1 ${LIBPATHS} -install_name @rpath/ejs.zlib.dylib ${CONFIG}/obj/ejsZlib.o ${LIBS} -lmpr -lejs -lhttp -lpam -lpcre -lzlib
+${CC} -c -o ${CONFIG}/obj/ejsZlib.o -arch x86_64 ${CFLAGS} ${DFLAGS} -I${CONFIG}/inc src/jems/ejs.zlib/ejsZlib.c
 
+${CC} -c -o ${CONFIG}/obj/zlib.o -arch x86_64 ${CFLAGS} ${DFLAGS} -I${CONFIG}/inc src/jems/ejs.zlib/zlib.c
+
+${CC} -dynamiclib -o ${CONFIG}/bin/ejs.zlib.dylib -arch x86_64 ${LDFLAGS} -compatibility_version 2.0.1 -current_version 2.0.1 ${LIBPATHS} -install_name @rpath/ejs.zlib.dylib ${CONFIG}/obj/ejsZlib.o ${CONFIG}/obj/zlib.o ${LIBS} -lejs -lhttp -lpam -lmpr -lpcre
+
+#  Omit build script /Users/mob/git/ejs/macosx-x64-debug/bin/ejs.tar.mod
 #  Omit build script /Users/mob/git/ejs/macosx-x64-debug/bin/mvc.es
 rm -rf ${CONFIG}/bin/mvc
 cp -r ${CONFIG}/bin/ejsrun ${CONFIG}/bin/mvc
