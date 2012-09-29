@@ -8622,7 +8622,7 @@ struct inflate_state FAR *state;
     } while (0)
 
 /* Return the low n bits of the bit accumulator (n < 16) */
-#define BITS(n) \
+#define LOWBITS(n) \
     ((unsigned)hold & ((1U << (n)) - 1))
 
 /* Remove n bits from the bit accumulator */
@@ -8732,9 +8732,9 @@ void FAR *out_desc;
                 break;
             }
             NEEDBITS(3);
-            state->last = BITS(1);
+            state->last = LOWBITS(1);
             DROPBITS(1);
-            switch (BITS(2)) {
+            switch (LOWBITS(2)) {
             case 0:                             /* stored block */
                 Tracev((stderr, "inflate:     stored block%s\n",
                         state->last ? " (last)" : ""));
@@ -8793,11 +8793,11 @@ void FAR *out_desc;
         case TABLE:
             /* get dynamic table entries descriptor */
             NEEDBITS(14);
-            state->nlen = BITS(5) + 257;
+            state->nlen = LOWBITS(5) + 257;
             DROPBITS(5);
-            state->ndist = BITS(5) + 1;
+            state->ndist = LOWBITS(5) + 1;
             DROPBITS(5);
-            state->ncode = BITS(4) + 4;
+            state->ncode = LOWBITS(4) + 4;
             DROPBITS(4);
 #ifndef PKZIP_BUG_WORKAROUND
             if (state->nlen > 286 || state->ndist > 30) {
@@ -8812,7 +8812,7 @@ void FAR *out_desc;
             state->have = 0;
             while (state->have < state->ncode) {
                 NEEDBITS(3);
-                state->lens[order[state->have++]] = (unsigned short)BITS(3);
+                state->lens[order[state->have++]] = (unsigned short)LOWBITS(3);
                 DROPBITS(3);
             }
             while (state->have < 19)
@@ -8833,7 +8833,7 @@ void FAR *out_desc;
             state->have = 0;
             while (state->have < state->nlen + state->ndist) {
                 for (;;) {
-                    here = state->lencode[BITS(state->lenbits)];
+                    here = state->lencode[LOWBITS(state->lenbits)];
                     if ((unsigned)(here.bits) <= bits) break;
                     PULLBYTE();
                 }
@@ -8851,21 +8851,21 @@ void FAR *out_desc;
                             break;
                         }
                         len = (unsigned)(state->lens[state->have - 1]);
-                        copy = 3 + BITS(2);
+                        copy = 3 + LOWBITS(2);
                         DROPBITS(2);
                     }
                     else if (here.val == 17) {
                         NEEDBITS(here.bits + 3);
                         DROPBITS(here.bits);
                         len = 0;
-                        copy = 3 + BITS(3);
+                        copy = 3 + LOWBITS(3);
                         DROPBITS(3);
                     }
                     else {
                         NEEDBITS(here.bits + 7);
                         DROPBITS(here.bits);
                         len = 0;
-                        copy = 11 + BITS(7);
+                        copy = 11 + LOWBITS(7);
                         DROPBITS(7);
                     }
                     if (state->have + copy > state->nlen + state->ndist) {
@@ -8926,7 +8926,7 @@ void FAR *out_desc;
 
             /* get a literal, length, or end-of-block code */
             for (;;) {
-                here = state->lencode[BITS(state->lenbits)];
+                here = state->lencode[LOWBITS(state->lenbits)];
                 if ((unsigned)(here.bits) <= bits) break;
                 PULLBYTE();
             }
@@ -8934,7 +8934,7 @@ void FAR *out_desc;
                 last = here;
                 for (;;) {
                     here = state->lencode[last.val +
-                            (BITS(last.bits + last.op) >> last.bits)];
+                            (LOWBITS(last.bits + last.op) >> last.bits)];
                     if ((unsigned)(last.bits + here.bits) <= bits) break;
                     PULLBYTE();
                 }
@@ -8973,14 +8973,14 @@ void FAR *out_desc;
             state->extra = (unsigned)(here.op) & 15;
             if (state->extra != 0) {
                 NEEDBITS(state->extra);
-                state->length += BITS(state->extra);
+                state->length += LOWBITS(state->extra);
                 DROPBITS(state->extra);
             }
             Tracevv((stderr, "inflate:         length %u\n", state->length));
 
             /* get distance code */
             for (;;) {
-                here = state->distcode[BITS(state->distbits)];
+                here = state->distcode[LOWBITS(state->distbits)];
                 if ((unsigned)(here.bits) <= bits) break;
                 PULLBYTE();
             }
@@ -8988,7 +8988,7 @@ void FAR *out_desc;
                 last = here;
                 for (;;) {
                     here = state->distcode[last.val +
-                            (BITS(last.bits + last.op) >> last.bits)];
+                            (LOWBITS(last.bits + last.op) >> last.bits)];
                     if ((unsigned)(last.bits + here.bits) <= bits) break;
                     PULLBYTE();
                 }
@@ -9006,7 +9006,7 @@ void FAR *out_desc;
             state->extra = (unsigned)(here.op) & 15;
             if (state->extra != 0) {
                 NEEDBITS(state->extra);
-                state->offset += BITS(state->extra);
+                state->offset += LOWBITS(state->extra);
                 DROPBITS(state->extra);
             }
             if (state->offset > state->wsize - (state->whave < state->wsize ?
@@ -9937,7 +9937,7 @@ unsigned out;
     } while (0)
 
 /* Return the low n bits of the bit accumulator (n < 16) */
-#define BITS(n) \
+#define LOWBITS(n) \
     ((unsigned)hold & ((1U << (n)) - 1))
 
 /* Remove n bits from the bit accumulator */
@@ -10097,18 +10097,18 @@ int flush;
 #else
             if (
 #endif
-                ((BITS(8) << 8) + (hold >> 8)) % 31) {
+                ((LOWBITS(8) << 8) + (hold >> 8)) % 31) {
                 strm->msg = (char *)"incorrect header check";
                 state->mode = BAD;
                 break;
             }
-            if (BITS(4) != Z_DEFLATED) {
+            if (LOWBITS(4) != Z_DEFLATED) {
                 strm->msg = (char *)"unknown compression method";
                 state->mode = BAD;
                 break;
             }
             DROPBITS(4);
-            len = BITS(4) + 8;
+            len = LOWBITS(4) + 8;
             if (state->wbits == 0)
                 state->wbits = len;
             else if (len > state->wbits) {
@@ -10271,9 +10271,9 @@ int flush;
                 break;
             }
             NEEDBITS(3);
-            state->last = BITS(1);
+            state->last = LOWBITS(1);
             DROPBITS(1);
-            switch (BITS(2)) {
+            switch (LOWBITS(2)) {
             case 0:                             /* stored block */
                 Tracev((stderr, "inflate:     stored block%s\n",
                         state->last ? " (last)" : ""));
@@ -10335,11 +10335,11 @@ int flush;
             break;
         case TABLE:
             NEEDBITS(14);
-            state->nlen = BITS(5) + 257;
+            state->nlen = LOWBITS(5) + 257;
             DROPBITS(5);
-            state->ndist = BITS(5) + 1;
+            state->ndist = LOWBITS(5) + 1;
             DROPBITS(5);
-            state->ncode = BITS(4) + 4;
+            state->ncode = LOWBITS(4) + 4;
             DROPBITS(4);
 #ifndef PKZIP_BUG_WORKAROUND
             if (state->nlen > 286 || state->ndist > 30) {
@@ -10354,7 +10354,7 @@ int flush;
         case LENLENS:
             while (state->have < state->ncode) {
                 NEEDBITS(3);
-                state->lens[order[state->have++]] = (unsigned short)BITS(3);
+                state->lens[order[state->have++]] = (unsigned short)LOWBITS(3);
                 DROPBITS(3);
             }
             while (state->have < 19)
@@ -10375,7 +10375,7 @@ int flush;
         case CODELENS:
             while (state->have < state->nlen + state->ndist) {
                 for (;;) {
-                    here = state->lencode[BITS(state->lenbits)];
+                    here = state->lencode[LOWBITS(state->lenbits)];
                     if ((unsigned)(here.bits) <= bits) break;
                     PULLBYTE();
                 }
@@ -10393,21 +10393,21 @@ int flush;
                             break;
                         }
                         len = state->lens[state->have - 1];
-                        copy = 3 + BITS(2);
+                        copy = 3 + LOWBITS(2);
                         DROPBITS(2);
                     }
                     else if (here.val == 17) {
                         NEEDBITS(here.bits + 3);
                         DROPBITS(here.bits);
                         len = 0;
-                        copy = 3 + BITS(3);
+                        copy = 3 + LOWBITS(3);
                         DROPBITS(3);
                     }
                     else {
                         NEEDBITS(here.bits + 7);
                         DROPBITS(here.bits);
                         len = 0;
-                        copy = 11 + BITS(7);
+                        copy = 11 + LOWBITS(7);
                         DROPBITS(7);
                     }
                     if (state->have + copy > state->nlen + state->ndist) {
@@ -10468,7 +10468,7 @@ int flush;
             }
             state->back = 0;
             for (;;) {
-                here = state->lencode[BITS(state->lenbits)];
+                here = state->lencode[LOWBITS(state->lenbits)];
                 if ((unsigned)(here.bits) <= bits) break;
                 PULLBYTE();
             }
@@ -10476,7 +10476,7 @@ int flush;
                 last = here;
                 for (;;) {
                     here = state->lencode[last.val +
-                            (BITS(last.bits + last.op) >> last.bits)];
+                            (LOWBITS(last.bits + last.op) >> last.bits)];
                     if ((unsigned)(last.bits + here.bits) <= bits) break;
                     PULLBYTE();
                 }
@@ -10509,7 +10509,7 @@ int flush;
         case LENEXT:
             if (state->extra) {
                 NEEDBITS(state->extra);
-                state->length += BITS(state->extra);
+                state->length += LOWBITS(state->extra);
                 DROPBITS(state->extra);
                 state->back += state->extra;
             }
@@ -10518,7 +10518,7 @@ int flush;
             state->mode = DIST;
         case DIST:
             for (;;) {
-                here = state->distcode[BITS(state->distbits)];
+                here = state->distcode[LOWBITS(state->distbits)];
                 if ((unsigned)(here.bits) <= bits) break;
                 PULLBYTE();
             }
@@ -10526,7 +10526,7 @@ int flush;
                 last = here;
                 for (;;) {
                     here = state->distcode[last.val +
-                            (BITS(last.bits + last.op) >> last.bits)];
+                            (LOWBITS(last.bits + last.op) >> last.bits)];
                     if ((unsigned)(last.bits + here.bits) <= bits) break;
                     PULLBYTE();
                 }
@@ -10546,7 +10546,7 @@ int flush;
         case DISTEXT:
             if (state->extra) {
                 NEEDBITS(state->extra);
-                state->offset += BITS(state->extra);
+                state->offset += LOWBITS(state->extra);
                 DROPBITS(state->extra);
                 state->back += state->extra;
             }

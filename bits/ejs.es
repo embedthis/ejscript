@@ -137,7 +137,7 @@ public function packageComboFiles() {
     install('package/ejs-flat.bit', pkg.join('src/deps/ejs/ejs.bit'))
     install('package/Makefile-flat', pkg.join('src/deps/ejs/Makefile'))
     install('package/start-flat.bit', pkg.join('src/deps/ejs/start.bit'))
-    let filter = /^#inc.*ejs.*$|^#inc.*mpr.*$|^#inc.*ec.*$|^#inc.*http.*$|^#inc.*customize.*$|#inc.*ejs.zlib.slots.h.*/mg
+    let filter = /^#inc.*ejs.*$|^#inc.*mpr.*$|^#inc.*ec.*$|^#inc.*http.*$|^#inc.*customize.*$|#include.*zlib.h.*$|#inc.*ejs.zlib.slots.h.*/mg
 
     install([
         'src/deps/mpr/mpr.h', 
@@ -146,6 +146,7 @@ public function packageComboFiles() {
         'src/ejsByteCodeTable.h',
         'src/ejs.h', 
         'src/jems/ejs.web/ejsWeb.h', 
+        'src/jems/ejs.zlib/zlib.h', 
         'src/ejsCompiler.h', 
         'src/deps/pcre/pcre.h'
         ], pkg.join('src/deps/ejs/ejs.h'), {

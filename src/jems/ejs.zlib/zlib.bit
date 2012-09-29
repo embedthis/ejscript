@@ -19,6 +19,7 @@ Bit.load({
 
         'ejs.zlib': {
             type: 'lib',
+            headers: '*.h',
             sources: [ 
                 '*.c',
             ],

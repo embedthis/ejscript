@@ -482,9 +482,7 @@ static void defineSharedTypes(Ejs *ejs)
         ejs_db_sqlite_Init(ejs, NULL);
     #endif
     ejs_web_Init(ejs, NULL);
-    #if BIT_PACK_ZLIB
-        ejs_zlib_Init(ejs, NULL);
-    #endif
+    ejs_zlib_Init(ejs, NULL);
 #endif
 }
 
