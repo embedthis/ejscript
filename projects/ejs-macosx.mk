@@ -212,12 +212,12 @@ $(CONFIG)/obj/mprSsl.o: \
         src/deps/mpr/mprSsl.c \
         $(CONFIG)/inc/bit.h \
         $(CONFIG)/inc/mpr.h
-	$(CC) -c -o $(CONFIG)/obj/mprSsl.o -arch x86_64 $(CFLAGS) $(DFLAGS) -I$(CONFIG)/inc -I../packages-macosx-x64/openssl/openssl-1.0.1b/include src/deps/mpr/mprSsl.c
+	$(CC) -c -o $(CONFIG)/obj/mprSsl.o -arch x86_64 $(CFLAGS) $(DFLAGS) -I$(CONFIG)/inc src/deps/mpr/mprSsl.c
 
 $(CONFIG)/bin/libmprssl.dylib:  \
         $(CONFIG)/bin/libmpr.dylib \
         $(CONFIG)/obj/mprSsl.o
-	$(CC) -dynamiclib -o $(CONFIG)/bin/libmprssl.dylib -arch x86_64 $(LDFLAGS) -compatibility_version 2.0.1 -current_version 2.0.1 -compatibility_version 2.0.1 -current_version 2.0.1 $(LIBPATHS) -L../packages-macosx-x64/openssl/openssl-1.0.1b -install_name @rpath/libmprssl.dylib $(CONFIG)/obj/mprSsl.o $(LIBS) -lmpr -lssl -lcrypto
+	$(CC) -dynamiclib -o $(CONFIG)/bin/libmprssl.dylib -arch x86_64 $(LDFLAGS) -compatibility_version 2.0.1 -current_version 2.0.1 -compatibility_version 2.0.1 -current_version 2.0.1 $(LIBPATHS) -install_name @rpath/libmprssl.dylib $(CONFIG)/obj/mprSsl.o $(LIBS) -lmpr
 
 $(CONFIG)/obj/manager.o: \
         src/deps/mpr/manager.c \
@@ -867,12 +867,46 @@ $(CONFIG)/bin/bits:
 	cp -r bits ../../../$(CONFIG)/bin ;\
 		cd - >/dev/null 
 
+$(CONFIG)/bin/ejs.zlib.mod:  \
+        $(CONFIG)/bin/ejsc \
+        $(CONFIG)/bin/ejs.mod
+	cd src/jems/ejs.zlib >/dev/null ;\
+		../../../$(CONFIG)/bin/ejsc --out ../../../$(CONFIG)/bin/ejs.zlib.mod --debug --optimize 9 *.es ;\
+		cd - >/dev/null 
+
+$(CONFIG)/inc/zlib.h: 
+	rm -fr $(CONFIG)/inc/zlib.h
+	cp -r src/jems/ejs.zlib/zlib.h $(CONFIG)/inc/zlib.h
+
+$(CONFIG)/obj/ejsZlib.o: \
+        src/jems/ejs.zlib/ejsZlib.c \
+        $(CONFIG)/inc/bit.h \
+        $(CONFIG)/inc/ejs.h \
+        $(CONFIG)/inc/zlib.h \
+        $(CONFIG)/inc/ejs.zlib.slots.h
+	$(CC) -c -o $(CONFIG)/obj/ejsZlib.o -arch x86_64 $(CFLAGS) $(DFLAGS) -I$(CONFIG)/inc src/jems/ejs.zlib/ejsZlib.c
+
+$(CONFIG)/obj/zlib.o: \
+        src/jems/ejs.zlib/zlib.c \
+        $(CONFIG)/inc/bit.h
+	$(CC) -c -o $(CONFIG)/obj/zlib.o -arch x86_64 $(CFLAGS) $(DFLAGS) -I$(CONFIG)/inc src/jems/ejs.zlib/zlib.c
+
+$(CONFIG)/bin/ejs.zlib.dylib:  \
+        $(CONFIG)/bin/libejs.dylib \
+        $(CONFIG)/bin/ejs.mod \
+        $(CONFIG)/bin/ejs.zlib.mod \
+        $(CONFIG)/inc/zlib.h \
+        $(CONFIG)/obj/ejsZlib.o \
+        $(CONFIG)/obj/zlib.o
+	$(CC) -dynamiclib -o $(CONFIG)/bin/ejs.zlib.dylib -arch x86_64 $(LDFLAGS) -compatibility_version 2.0.1 -current_version 2.0.1 -compatibility_version 2.0.1 -current_version 2.0.1 $(LIBPATHS) -install_name @rpath/ejs.zlib.dylib $(CONFIG)/obj/ejsZlib.o $(CONFIG)/obj/zlib.o $(LIBS) -lejs -lhttp -lpam -lmpr -lpcre
+
 $(CONFIG)/bin/bit:  \
         $(CONFIG)/bin/libejs.dylib \
         $(CONFIG)/bin/bits \
         $(CONFIG)/bin/bit.es \
+        $(CONFIG)/bin/ejs.zlib.dylib \
         $(CONFIG)/obj/ejsrun.o
-	$(CC) -o $(CONFIG)/bin/bit -arch x86_64 $(LDFLAGS) $(LIBPATHS) $(CONFIG)/obj/ejsrun.o $(CONFIG)/obj/mprLib.o $(CONFIG)/obj/pcre.o $(CONFIG)/obj/httpLib.o $(CONFIG)/obj/ecAst.o $(CONFIG)/obj/ecCodeGen.o $(CONFIG)/obj/ecCompiler.o $(CONFIG)/obj/ecLex.o $(CONFIG)/obj/ecModuleWrite.o $(CONFIG)/obj/ecParser.o $(CONFIG)/obj/ecState.o $(CONFIG)/obj/dtoa.o $(CONFIG)/obj/ejsApp.o $(CONFIG)/obj/ejsArray.o $(CONFIG)/obj/ejsBlock.o $(CONFIG)/obj/ejsBoolean.o $(CONFIG)/obj/ejsByteArray.o $(CONFIG)/obj/ejsCache.o $(CONFIG)/obj/ejsCmd.o $(CONFIG)/obj/ejsConfig.o $(CONFIG)/obj/ejsDate.o $(CONFIG)/obj/ejsDebug.o $(CONFIG)/obj/ejsError.o $(CONFIG)/obj/ejsFile.o $(CONFIG)/obj/ejsFileSystem.o $(CONFIG)/obj/ejsFrame.o $(CONFIG)/obj/ejsFunction.o $(CONFIG)/obj/ejsGC.o $(CONFIG)/obj/ejsGlobal.o $(CONFIG)/obj/ejsHttp.o $(CONFIG)/obj/ejsIterator.o $(CONFIG)/obj/ejsJSON.o $(CONFIG)/obj/ejsLocalCache.o $(CONFIG)/obj/ejsMath.o $(CONFIG)/obj/ejsMemory.o $(CONFIG)/obj/ejsMprLog.o $(CONFIG)/obj/ejsNamespace.o $(CONFIG)/obj/ejsNull.o $(CONFIG)/obj/ejsNumber.o $(CONFIG)/obj/ejsObject.o $(CONFIG)/obj/ejsPath.o $(CONFIG)/obj/ejsPot.o $(CONFIG)/obj/ejsRegExp.o $(CONFIG)/obj/ejsSocket.o $(CONFIG)/obj/ejsString.o $(CONFIG)/obj/ejsSystem.o $(CONFIG)/obj/ejsTimer.o $(CONFIG)/obj/ejsType.o $(CONFIG)/obj/ejsUri.o $(CONFIG)/obj/ejsVoid.o $(CONFIG)/obj/ejsWorker.o $(CONFIG)/obj/ejsXML.o $(CONFIG)/obj/ejsXMLList.o $(CONFIG)/obj/ejsXMLLoader.o $(CONFIG)/obj/ejsByteCode.o $(CONFIG)/obj/ejsException.o $(CONFIG)/obj/ejsHelper.o $(CONFIG)/obj/ejsInterp.o $(CONFIG)/obj/ejsLoader.o $(CONFIG)/obj/ejsModule.o $(CONFIG)/obj/ejsScope.o $(CONFIG)/obj/ejsService.o $(LIBS) -lpam
+	$(CC) -o $(CONFIG)/bin/bit -arch x86_64 $(LDFLAGS) $(LIBPATHS) $(CONFIG)/obj/ejsrun.o $(CONFIG)/obj/mprLib.o $(CONFIG)/obj/pcre.o $(CONFIG)/obj/httpLib.o $(CONFIG)/obj/ecAst.o $(CONFIG)/obj/ecCodeGen.o $(CONFIG)/obj/ecCompiler.o $(CONFIG)/obj/ecLex.o $(CONFIG)/obj/ecModuleWrite.o $(CONFIG)/obj/ecParser.o $(CONFIG)/obj/ecState.o $(CONFIG)/obj/dtoa.o $(CONFIG)/obj/ejsApp.o $(CONFIG)/obj/ejsArray.o $(CONFIG)/obj/ejsBlock.o $(CONFIG)/obj/ejsBoolean.o $(CONFIG)/obj/ejsByteArray.o $(CONFIG)/obj/ejsCache.o $(CONFIG)/obj/ejsCmd.o $(CONFIG)/obj/ejsConfig.o $(CONFIG)/obj/ejsDate.o $(CONFIG)/obj/ejsDebug.o $(CONFIG)/obj/ejsError.o $(CONFIG)/obj/ejsFile.o $(CONFIG)/obj/ejsFileSystem.o $(CONFIG)/obj/ejsFrame.o $(CONFIG)/obj/ejsFunction.o $(CONFIG)/obj/ejsGC.o $(CONFIG)/obj/ejsGlobal.o $(CONFIG)/obj/ejsHttp.o $(CONFIG)/obj/ejsIterator.o $(CONFIG)/obj/ejsJSON.o $(CONFIG)/obj/ejsLocalCache.o $(CONFIG)/obj/ejsMath.o $(CONFIG)/obj/ejsMemory.o $(CONFIG)/obj/ejsMprLog.o $(CONFIG)/obj/ejsNamespace.o $(CONFIG)/obj/ejsNull.o $(CONFIG)/obj/ejsNumber.o $(CONFIG)/obj/ejsObject.o $(CONFIG)/obj/ejsPath.o $(CONFIG)/obj/ejsPot.o $(CONFIG)/obj/ejsRegExp.o $(CONFIG)/obj/ejsSocket.o $(CONFIG)/obj/ejsString.o $(CONFIG)/obj/ejsSystem.o $(CONFIG)/obj/ejsTimer.o $(CONFIG)/obj/ejsType.o $(CONFIG)/obj/ejsUri.o $(CONFIG)/obj/ejsVoid.o $(CONFIG)/obj/ejsWorker.o $(CONFIG)/obj/ejsXML.o $(CONFIG)/obj/ejsXMLList.o $(CONFIG)/obj/ejsXMLLoader.o $(CONFIG)/obj/ejsByteCode.o $(CONFIG)/obj/ejsException.o $(CONFIG)/obj/ejsHelper.o $(CONFIG)/obj/ejsInterp.o $(CONFIG)/obj/ejsLoader.o $(CONFIG)/obj/ejsModule.o $(CONFIG)/obj/ejsScope.o $(CONFIG)/obj/ejsService.o $(CONFIG)/obj/ejsZlib.o $(CONFIG)/obj/zlib.o $(LIBS) -lpam -lejs
 
 $(CONFIG)/bin/utest.es: 
 	cd src/jems/ejs.utest >/dev/null ;\
@@ -1003,33 +1037,6 @@ $(CONFIG)/bin/ejs.template.mod:  \
 	cd src/jems/ejs.template >/dev/null ;\
 		../../../$(CONFIG)/bin/ejsc --out ../../../$(CONFIG)/bin/ejs.template.mod --debug --optimize 9 TemplateParser.es ;\
 		cd - >/dev/null 
-
-$(CONFIG)/bin/ejs.zlib.mod:  \
-        $(CONFIG)/bin/ejsc \
-        $(CONFIG)/bin/ejs.mod
-	cd src/jems/ejs.zlib >/dev/null ;\
-		../../../$(CONFIG)/bin/ejsc --out ../../../$(CONFIG)/bin/ejs.zlib.mod --debug --optimize 9 *.es ;\
-		cd - >/dev/null 
-
-$(CONFIG)/obj/ejsZlib.o: \
-        src/jems/ejs.zlib/ejsZlib.c \
-        $(CONFIG)/inc/bit.h \
-        $(CONFIG)/inc/ejs.h \
-        $(CONFIG)/inc/ejs.zlib.slots.h
-	$(CC) -c -o $(CONFIG)/obj/ejsZlib.o -arch x86_64 $(CFLAGS) $(DFLAGS) -I$(CONFIG)/inc src/jems/ejs.zlib/ejsZlib.c
-
-$(CONFIG)/obj/zlib.o: \
-        src/jems/ejs.zlib/zlib.c \
-        $(CONFIG)/inc/bit.h
-	$(CC) -c -o $(CONFIG)/obj/zlib.o -arch x86_64 $(CFLAGS) $(DFLAGS) -I$(CONFIG)/inc src/jems/ejs.zlib/zlib.c
-
-$(CONFIG)/bin/ejs.zlib.dylib:  \
-        $(CONFIG)/bin/libejs.dylib \
-        $(CONFIG)/bin/ejs.mod \
-        $(CONFIG)/bin/ejs.zlib.mod \
-        $(CONFIG)/obj/ejsZlib.o \
-        $(CONFIG)/obj/zlib.o
-	$(CC) -dynamiclib -o $(CONFIG)/bin/ejs.zlib.dylib -arch x86_64 $(LDFLAGS) -compatibility_version 2.0.1 -current_version 2.0.1 -compatibility_version 2.0.1 -current_version 2.0.1 $(LIBPATHS) -install_name @rpath/ejs.zlib.dylib $(CONFIG)/obj/ejsZlib.o $(CONFIG)/obj/zlib.o $(LIBS) -lejs -lhttp -lpam -lmpr -lpcre
 
 $(CONFIG)/bin/ejs.tar.mod:  \
         $(CONFIG)/bin/ejsc \

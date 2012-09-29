@@ -33,7 +33,6 @@ all: prep \
         $(CONFIG)/bin/http \
         $(CONFIG)/bin/libsqlite3.so \
         $(CONFIG)/bin/sqlite \
-        $(CONFIG)/bin/libzlib.so \
         $(CONFIG)/bin/libejs.so \
         $(CONFIG)/bin/ejs \
         $(CONFIG)/bin/ejsc \
@@ -56,9 +55,9 @@ all: prep \
         $(CONFIG)/bin/ejs.web.so \
         $(CONFIG)/bin/www \
         $(CONFIG)/bin/ejs.template.mod \
-        $(CONFIG)/bin/ejs.tar.mod \
         $(CONFIG)/bin/ejs.zlib.mod \
         $(CONFIG)/bin/ejs.zlib.so \
+        $(CONFIG)/bin/ejs.tar.mod \
         $(CONFIG)/bin/mvc.es \
         $(CONFIG)/bin/mvc \
         $(CONFIG)/bin/ejs.mvc.mod \
@@ -85,7 +84,6 @@ clean:
 	rm -rf $(CONFIG)/bin/http
 	rm -rf $(CONFIG)/bin/libsqlite3.so
 	rm -rf $(CONFIG)/bin/sqlite
-	rm -rf $(CONFIG)/bin/libzlib.so
 	rm -rf $(CONFIG)/bin/libejs.so
 	rm -rf $(CONFIG)/bin/ejs
 	rm -rf $(CONFIG)/bin/ejsc
@@ -117,21 +115,6 @@ clean:
 	rm -rf $(CONFIG)/obj/http.o
 	rm -rf $(CONFIG)/obj/sqlite3.o
 	rm -rf $(CONFIG)/obj/sqlite.o
-	rm -rf $(CONFIG)/obj/adler32.o
-	rm -rf $(CONFIG)/obj/compress.o
-	rm -rf $(CONFIG)/obj/crc32.o
-	rm -rf $(CONFIG)/obj/deflate.o
-	rm -rf $(CONFIG)/obj/gzclose.o
-	rm -rf $(CONFIG)/obj/gzlib.o
-	rm -rf $(CONFIG)/obj/gzread.o
-	rm -rf $(CONFIG)/obj/gzwrite.o
-	rm -rf $(CONFIG)/obj/infback.o
-	rm -rf $(CONFIG)/obj/inffast.o
-	rm -rf $(CONFIG)/obj/inflate.o
-	rm -rf $(CONFIG)/obj/inftrees.o
-	rm -rf $(CONFIG)/obj/trees.o
-	rm -rf $(CONFIG)/obj/uncompr.o
-	rm -rf $(CONFIG)/obj/zutil.o
 	rm -rf $(CONFIG)/obj/ecAst.o
 	rm -rf $(CONFIG)/obj/ecCodeGen.o
 	rm -rf $(CONFIG)/obj/ecCompiler.o
@@ -198,12 +181,13 @@ clean:
 	rm -rf $(CONFIG)/obj/listing.o
 	rm -rf $(CONFIG)/obj/slotGen.o
 	rm -rf $(CONFIG)/obj/ejsrun.o
-	rm -rf $(CONFIG)/obj/ejsZlib.o
 	rm -rf $(CONFIG)/obj/ejsSqlite.o
 	rm -rf $(CONFIG)/obj/ejsHttpServer.o
 	rm -rf $(CONFIG)/obj/ejsRequest.o
 	rm -rf $(CONFIG)/obj/ejsSession.o
 	rm -rf $(CONFIG)/obj/ejsWeb.o
+	rm -rf $(CONFIG)/obj/ejsZlib.o
+	rm -rf $(CONFIG)/obj/zlib.o
 	rm -rf $(CONFIG)/obj/removeFiles.o
 
 clobber: clean
@@ -316,109 +300,6 @@ $(CONFIG)/bin/sqlite:  \
         $(CONFIG)/bin/libsqlite3.so \
         $(CONFIG)/obj/sqlite.o
 	$(CC) -o $(CONFIG)/bin/sqlite $(LDFLAGS) $(LIBPATHS) $(CONFIG)/obj/sqlite.o $(LIBS) -lsqlite3 $(LDFLAGS)
-
-$(CONFIG)/inc/zlib.h: 
-	rm -fr $(CONFIG)/inc/zlib.h
-	cp -r src/deps/zlib/zlib.h $(CONFIG)/inc/zlib.h
-
-$(CONFIG)/inc/zconf.h: 
-	rm -fr $(CONFIG)/inc/zconf.h
-	cp -r src/deps/zlib/zconf.h $(CONFIG)/inc/zconf.h
-
-$(CONFIG)/obj/adler32.o: \
-        src/deps/zlib/adler32.c \
-        $(CONFIG)/inc/bit.h
-	$(CC) -c -o $(CONFIG)/obj/adler32.o -Wall -fPIC $(LDFLAGS) -mtune=generic $(DFLAGS) -I$(CONFIG)/inc src/deps/zlib/adler32.c
-
-$(CONFIG)/obj/compress.o: \
-        src/deps/zlib/compress.c \
-        $(CONFIG)/inc/bit.h
-	$(CC) -c -o $(CONFIG)/obj/compress.o -Wall -fPIC $(LDFLAGS) -mtune=generic $(DFLAGS) -I$(CONFIG)/inc src/deps/zlib/compress.c
-
-$(CONFIG)/obj/crc32.o: \
-        src/deps/zlib/crc32.c \
-        $(CONFIG)/inc/bit.h
-	$(CC) -c -o $(CONFIG)/obj/crc32.o -Wall -fPIC $(LDFLAGS) -mtune=generic $(DFLAGS) -I$(CONFIG)/inc src/deps/zlib/crc32.c
-
-$(CONFIG)/obj/deflate.o: \
-        src/deps/zlib/deflate.c \
-        $(CONFIG)/inc/bit.h
-	$(CC) -c -o $(CONFIG)/obj/deflate.o -Wall -fPIC $(LDFLAGS) -mtune=generic $(DFLAGS) -I$(CONFIG)/inc src/deps/zlib/deflate.c
-
-$(CONFIG)/obj/gzclose.o: \
-        src/deps/zlib/gzclose.c \
-        $(CONFIG)/inc/bit.h
-	$(CC) -c -o $(CONFIG)/obj/gzclose.o -Wall -fPIC $(LDFLAGS) -mtune=generic $(DFLAGS) -I$(CONFIG)/inc src/deps/zlib/gzclose.c
-
-$(CONFIG)/obj/gzlib.o: \
-        src/deps/zlib/gzlib.c \
-        $(CONFIG)/inc/bit.h
-	$(CC) -c -o $(CONFIG)/obj/gzlib.o -Wall -fPIC $(LDFLAGS) -mtune=generic $(DFLAGS) -I$(CONFIG)/inc src/deps/zlib/gzlib.c
-
-$(CONFIG)/obj/gzread.o: \
-        src/deps/zlib/gzread.c \
-        $(CONFIG)/inc/bit.h
-	$(CC) -c -o $(CONFIG)/obj/gzread.o -Wall -fPIC $(LDFLAGS) -mtune=generic $(DFLAGS) -I$(CONFIG)/inc src/deps/zlib/gzread.c
-
-$(CONFIG)/obj/gzwrite.o: \
-        src/deps/zlib/gzwrite.c \
-        $(CONFIG)/inc/bit.h
-	$(CC) -c -o $(CONFIG)/obj/gzwrite.o -Wall -fPIC $(LDFLAGS) -mtune=generic $(DFLAGS) -I$(CONFIG)/inc src/deps/zlib/gzwrite.c
-
-$(CONFIG)/obj/infback.o: \
-        src/deps/zlib/infback.c \
-        $(CONFIG)/inc/bit.h
-	$(CC) -c -o $(CONFIG)/obj/infback.o -Wall -fPIC $(LDFLAGS) -mtune=generic $(DFLAGS) -I$(CONFIG)/inc src/deps/zlib/infback.c
-
-$(CONFIG)/obj/inffast.o: \
-        src/deps/zlib/inffast.c \
-        $(CONFIG)/inc/bit.h
-	$(CC) -c -o $(CONFIG)/obj/inffast.o -Wall -fPIC $(LDFLAGS) -mtune=generic $(DFLAGS) -I$(CONFIG)/inc src/deps/zlib/inffast.c
-
-$(CONFIG)/obj/inflate.o: \
-        src/deps/zlib/inflate.c \
-        $(CONFIG)/inc/bit.h
-	$(CC) -c -o $(CONFIG)/obj/inflate.o -Wall -fPIC $(LDFLAGS) -mtune=generic $(DFLAGS) -I$(CONFIG)/inc src/deps/zlib/inflate.c
-
-$(CONFIG)/obj/inftrees.o: \
-        src/deps/zlib/inftrees.c \
-        $(CONFIG)/inc/bit.h
-	$(CC) -c -o $(CONFIG)/obj/inftrees.o -Wall -fPIC $(LDFLAGS) -mtune=generic $(DFLAGS) -I$(CONFIG)/inc src/deps/zlib/inftrees.c
-
-$(CONFIG)/obj/trees.o: \
-        src/deps/zlib/trees.c \
-        $(CONFIG)/inc/bit.h
-	$(CC) -c -o $(CONFIG)/obj/trees.o -Wall -fPIC $(LDFLAGS) -mtune=generic $(DFLAGS) -I$(CONFIG)/inc src/deps/zlib/trees.c
-
-$(CONFIG)/obj/uncompr.o: \
-        src/deps/zlib/uncompr.c \
-        $(CONFIG)/inc/bit.h
-	$(CC) -c -o $(CONFIG)/obj/uncompr.o -Wall -fPIC $(LDFLAGS) -mtune=generic $(DFLAGS) -I$(CONFIG)/inc src/deps/zlib/uncompr.c
-
-$(CONFIG)/obj/zutil.o: \
-        src/deps/zlib/zutil.c \
-        $(CONFIG)/inc/bit.h
-	$(CC) -c -o $(CONFIG)/obj/zutil.o -Wall -fPIC $(LDFLAGS) -mtune=generic $(DFLAGS) -I$(CONFIG)/inc src/deps/zlib/zutil.c
-
-$(CONFIG)/bin/libzlib.so:  \
-        $(CONFIG)/inc/zlib.h \
-        $(CONFIG)/inc/zconf.h \
-        $(CONFIG)/obj/adler32.o \
-        $(CONFIG)/obj/compress.o \
-        $(CONFIG)/obj/crc32.o \
-        $(CONFIG)/obj/deflate.o \
-        $(CONFIG)/obj/gzclose.o \
-        $(CONFIG)/obj/gzlib.o \
-        $(CONFIG)/obj/gzread.o \
-        $(CONFIG)/obj/gzwrite.o \
-        $(CONFIG)/obj/infback.o \
-        $(CONFIG)/obj/inffast.o \
-        $(CONFIG)/obj/inflate.o \
-        $(CONFIG)/obj/inftrees.o \
-        $(CONFIG)/obj/trees.o \
-        $(CONFIG)/obj/uncompr.o \
-        $(CONFIG)/obj/zutil.o
-	$(CC) -shared -o $(CONFIG)/bin/libzlib.so $(LDFLAGS) $(LIBPATHS) $(CONFIG)/obj/adler32.o $(CONFIG)/obj/compress.o $(CONFIG)/obj/crc32.o $(CONFIG)/obj/deflate.o $(CONFIG)/obj/gzclose.o $(CONFIG)/obj/gzlib.o $(CONFIG)/obj/gzread.o $(CONFIG)/obj/gzwrite.o $(CONFIG)/obj/infback.o $(CONFIG)/obj/inffast.o $(CONFIG)/obj/inflate.o $(CONFIG)/obj/inftrees.o $(CONFIG)/obj/trees.o $(CONFIG)/obj/uncompr.o $(CONFIG)/obj/zutil.o $(LIBS)
 
 $(CONFIG)/inc/ejs.cache.local.slots.h: 
 	rm -fr $(CONFIG)/inc/ejs.cache.local.slots.h
@@ -911,19 +792,43 @@ $(CONFIG)/bin/bits:
 	cp -r bits ../../../$(CONFIG)/bin ;\
 		cd - >/dev/null 
 
+$(CONFIG)/bin/ejs.zlib.mod:  \
+        $(CONFIG)/bin/ejsc \
+        $(CONFIG)/bin/ejs.mod
+	cd src/jems/ejs.zlib >/dev/null ;\
+		../../../$(CONFIG)/bin/ejsc --out ../../../$(CONFIG)/bin/ejs.zlib.mod --debug --optimize 9 *.es ;\
+		cd - >/dev/null 
+
+$(CONFIG)/inc/zlib.h: 
+	rm -fr $(CONFIG)/inc/zlib.h
+	cp -r src/jems/ejs.zlib/zlib.h $(CONFIG)/inc/zlib.h
+
 $(CONFIG)/obj/ejsZlib.o: \
         src/jems/ejs.zlib/ejsZlib.c \
         $(CONFIG)/inc/bit.h
 	$(CC) -c -o $(CONFIG)/obj/ejsZlib.o -Wall -fPIC $(LDFLAGS) -mtune=generic $(DFLAGS) -I$(CONFIG)/inc src/jems/ejs.zlib/ejsZlib.c
 
+$(CONFIG)/obj/zlib.o: \
+        src/jems/ejs.zlib/zlib.c \
+        $(CONFIG)/inc/bit.h
+	$(CC) -c -o $(CONFIG)/obj/zlib.o -Wall -fPIC $(LDFLAGS) -mtune=generic $(DFLAGS) -I$(CONFIG)/inc src/jems/ejs.zlib/zlib.c
+
+$(CONFIG)/bin/ejs.zlib.so:  \
+        $(CONFIG)/bin/libejs.so \
+        $(CONFIG)/bin/ejs.mod \
+        $(CONFIG)/bin/ejs.zlib.mod \
+        $(CONFIG)/inc/zlib.h \
+        $(CONFIG)/obj/ejsZlib.o \
+        $(CONFIG)/obj/zlib.o
+	$(CC) -shared -o $(CONFIG)/bin/ejs.zlib.so $(LDFLAGS) $(LIBPATHS) $(CONFIG)/obj/ejsZlib.o $(CONFIG)/obj/zlib.o $(LIBS) -lejs -lhttp -lmpr -lpcre
+
 $(CONFIG)/bin/bit:  \
         $(CONFIG)/bin/libejs.so \
-        $(CONFIG)/bin/libzlib.so \
         $(CONFIG)/bin/bits \
         $(CONFIG)/bin/bit.es \
-        $(CONFIG)/obj/ejsrun.o \
-        $(CONFIG)/obj/ejsZlib.o
-	$(CC) -o $(CONFIG)/bin/bit $(LDFLAGS) $(LIBPATHS) $(CONFIG)/obj/ejsrun.o $(CONFIG)/obj/ejsZlib.o $(CONFIG)/obj/mprLib.o $(CONFIG)/obj/pcre.o $(CONFIG)/obj/httpLib.o $(CONFIG)/obj/ecAst.o $(CONFIG)/obj/ecCodeGen.o $(CONFIG)/obj/ecCompiler.o $(CONFIG)/obj/ecLex.o $(CONFIG)/obj/ecModuleWrite.o $(CONFIG)/obj/ecParser.o $(CONFIG)/obj/ecState.o $(CONFIG)/obj/dtoa.o $(CONFIG)/obj/ejsApp.o $(CONFIG)/obj/ejsArray.o $(CONFIG)/obj/ejsBlock.o $(CONFIG)/obj/ejsBoolean.o $(CONFIG)/obj/ejsByteArray.o $(CONFIG)/obj/ejsCache.o $(CONFIG)/obj/ejsCmd.o $(CONFIG)/obj/ejsConfig.o $(CONFIG)/obj/ejsDate.o $(CONFIG)/obj/ejsDebug.o $(CONFIG)/obj/ejsError.o $(CONFIG)/obj/ejsFile.o $(CONFIG)/obj/ejsFileSystem.o $(CONFIG)/obj/ejsFrame.o $(CONFIG)/obj/ejsFunction.o $(CONFIG)/obj/ejsGC.o $(CONFIG)/obj/ejsGlobal.o $(CONFIG)/obj/ejsHttp.o $(CONFIG)/obj/ejsIterator.o $(CONFIG)/obj/ejsJSON.o $(CONFIG)/obj/ejsLocalCache.o $(CONFIG)/obj/ejsMath.o $(CONFIG)/obj/ejsMemory.o $(CONFIG)/obj/ejsMprLog.o $(CONFIG)/obj/ejsNamespace.o $(CONFIG)/obj/ejsNull.o $(CONFIG)/obj/ejsNumber.o $(CONFIG)/obj/ejsObject.o $(CONFIG)/obj/ejsPath.o $(CONFIG)/obj/ejsPot.o $(CONFIG)/obj/ejsRegExp.o $(CONFIG)/obj/ejsSocket.o $(CONFIG)/obj/ejsString.o $(CONFIG)/obj/ejsSystem.o $(CONFIG)/obj/ejsTimer.o $(CONFIG)/obj/ejsType.o $(CONFIG)/obj/ejsUri.o $(CONFIG)/obj/ejsVoid.o $(CONFIG)/obj/ejsWorker.o $(CONFIG)/obj/ejsXML.o $(CONFIG)/obj/ejsXMLList.o $(CONFIG)/obj/ejsXMLLoader.o $(CONFIG)/obj/ejsByteCode.o $(CONFIG)/obj/ejsException.o $(CONFIG)/obj/ejsHelper.o $(CONFIG)/obj/ejsInterp.o $(CONFIG)/obj/ejsLoader.o $(CONFIG)/obj/ejsModule.o $(CONFIG)/obj/ejsScope.o $(CONFIG)/obj/ejsService.o $(CONFIG)/obj/adler32.o $(CONFIG)/obj/compress.o $(CONFIG)/obj/crc32.o $(CONFIG)/obj/deflate.o $(CONFIG)/obj/gzclose.o $(CONFIG)/obj/gzlib.o $(CONFIG)/obj/gzread.o $(CONFIG)/obj/gzwrite.o $(CONFIG)/obj/infback.o $(CONFIG)/obj/inffast.o $(CONFIG)/obj/inflate.o $(CONFIG)/obj/inftrees.o $(CONFIG)/obj/trees.o $(CONFIG)/obj/uncompr.o $(CONFIG)/obj/zutil.o $(LIBS) $(LDFLAGS)
+        $(CONFIG)/bin/ejs.zlib.so \
+        $(CONFIG)/obj/ejsrun.o
+	$(CC) -o $(CONFIG)/bin/bit $(LDFLAGS) $(LIBPATHS) $(CONFIG)/obj/ejsrun.o $(CONFIG)/obj/mprLib.o $(CONFIG)/obj/pcre.o $(CONFIG)/obj/httpLib.o $(CONFIG)/obj/ecAst.o $(CONFIG)/obj/ecCodeGen.o $(CONFIG)/obj/ecCompiler.o $(CONFIG)/obj/ecLex.o $(CONFIG)/obj/ecModuleWrite.o $(CONFIG)/obj/ecParser.o $(CONFIG)/obj/ecState.o $(CONFIG)/obj/dtoa.o $(CONFIG)/obj/ejsApp.o $(CONFIG)/obj/ejsArray.o $(CONFIG)/obj/ejsBlock.o $(CONFIG)/obj/ejsBoolean.o $(CONFIG)/obj/ejsByteArray.o $(CONFIG)/obj/ejsCache.o $(CONFIG)/obj/ejsCmd.o $(CONFIG)/obj/ejsConfig.o $(CONFIG)/obj/ejsDate.o $(CONFIG)/obj/ejsDebug.o $(CONFIG)/obj/ejsError.o $(CONFIG)/obj/ejsFile.o $(CONFIG)/obj/ejsFileSystem.o $(CONFIG)/obj/ejsFrame.o $(CONFIG)/obj/ejsFunction.o $(CONFIG)/obj/ejsGC.o $(CONFIG)/obj/ejsGlobal.o $(CONFIG)/obj/ejsHttp.o $(CONFIG)/obj/ejsIterator.o $(CONFIG)/obj/ejsJSON.o $(CONFIG)/obj/ejsLocalCache.o $(CONFIG)/obj/ejsMath.o $(CONFIG)/obj/ejsMemory.o $(CONFIG)/obj/ejsMprLog.o $(CONFIG)/obj/ejsNamespace.o $(CONFIG)/obj/ejsNull.o $(CONFIG)/obj/ejsNumber.o $(CONFIG)/obj/ejsObject.o $(CONFIG)/obj/ejsPath.o $(CONFIG)/obj/ejsPot.o $(CONFIG)/obj/ejsRegExp.o $(CONFIG)/obj/ejsSocket.o $(CONFIG)/obj/ejsString.o $(CONFIG)/obj/ejsSystem.o $(CONFIG)/obj/ejsTimer.o $(CONFIG)/obj/ejsType.o $(CONFIG)/obj/ejsUri.o $(CONFIG)/obj/ejsVoid.o $(CONFIG)/obj/ejsWorker.o $(CONFIG)/obj/ejsXML.o $(CONFIG)/obj/ejsXMLList.o $(CONFIG)/obj/ejsXMLLoader.o $(CONFIG)/obj/ejsByteCode.o $(CONFIG)/obj/ejsException.o $(CONFIG)/obj/ejsHelper.o $(CONFIG)/obj/ejsInterp.o $(CONFIG)/obj/ejsLoader.o $(CONFIG)/obj/ejsModule.o $(CONFIG)/obj/ejsScope.o $(CONFIG)/obj/ejsService.o $(CONFIG)/obj/ejsZlib.o $(CONFIG)/obj/zlib.o $(LIBS) -lejs $(LDFLAGS)
 
 $(CONFIG)/bin/utest.es: 
 	cd src/jems/ejs.utest >/dev/null ;\
@@ -1048,22 +953,6 @@ $(CONFIG)/bin/ejs.tar.mod:  \
 	cd src/jems/ejs.tar >/dev/null ;\
 		../../../$(CONFIG)/bin/ejsc --out ../../../$(CONFIG)/bin/ejs.tar.mod --debug --optimize 9 *.es ;\
 		cd - >/dev/null 
-
-$(CONFIG)/bin/ejs.zlib.mod:  \
-        $(CONFIG)/bin/ejsc \
-        $(CONFIG)/bin/ejs.mod
-	cd src/jems/ejs.zlib >/dev/null ;\
-		../../../$(CONFIG)/bin/ejsc --out ../../../$(CONFIG)/bin/ejs.zlib.mod --debug --optimize 9 *.es ;\
-		cd - >/dev/null 
-
-$(CONFIG)/bin/ejs.zlib.so:  \
-        $(CONFIG)/bin/libmpr.so \
-        $(CONFIG)/bin/libejs.so \
-        $(CONFIG)/bin/ejs.mod \
-        $(CONFIG)/bin/ejs.zlib.mod \
-        $(CONFIG)/bin/libzlib.so \
-        $(CONFIG)/obj/ejsZlib.o
-	$(CC) -shared -o $(CONFIG)/bin/ejs.zlib.so $(LDFLAGS) $(LIBPATHS) $(CONFIG)/obj/ejsZlib.o $(LIBS) -lmpr -lejs -lhttp -lpcre -lzlib
 
 $(CONFIG)/bin/mvc.es: 
 	cd src/jems/ejs.mvc >/dev/null ;\
