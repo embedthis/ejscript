@@ -79,7 +79,7 @@ Bit.load({
                 trace('Generate', 'Script library documentation')
                 let src = bit.dir.src.join('src')
                 let files = src.files('core/*.es')
-                //  FUTURE 'tar', 'zlib'
+                //  FUTURE 'tar'
                 for each (p in ['unix', 'db', 'db.mapper', 'db.sqlite', 'web', 'template']) {
                     files += src.files('jems/ejs.' + p + '/*.es')
                 }

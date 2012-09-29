@@ -121,8 +121,6 @@ module ejs.tar {
                             try {
                                 if (App.uid == 0) {
                                     path.setAttributes(header.attributes)
-                                } else {
-    //  MOB
                                 }
                             } catch {}
 

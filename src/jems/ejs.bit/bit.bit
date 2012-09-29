@@ -17,12 +17,11 @@ Bit.load({
             path: '${BIN}/bit${EXE}',
             sources: [ 
                 '${SRC}/src/cmd/ejsrun.c',
-                '${SRC}/src/jems/ejs.zlib/*.c' 
             ],
             static: true,
             active: true,
             precious: true,
-            depends: ['libejs',  'libzlib', 'bits', 'bit.es'],
+            depends: ['libejs', 'bits', 'bit.es'],
             platforms: [ 'local' ],
         },
 
