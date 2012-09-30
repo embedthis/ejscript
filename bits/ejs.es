@@ -142,11 +142,11 @@ public function packageComboFiles() {
     install([
         'src/deps/mpr/mpr.h', 
         'src/deps/http/http.h', 
+        'src/deps/zlib/zlib.h', 
         'src/ejsByteCode.h', 
         'src/ejsByteCodeTable.h',
         'src/ejs.h', 
         'src/jems/ejs.web/ejsWeb.h', 
-        'src/jems/ejs.zlib/zlib.h', 
         'src/ejsCompiler.h', 
         'src/deps/pcre/pcre.h'
         ], pkg.join('src/deps/ejs/ejs.h'), {
@@ -163,7 +163,7 @@ public function packageComboFiles() {
     install(['src/deps/**.c'], pkg.join('src/deps/ejs/deps.c'), {
         cat: true,
         filter: filter,
-        exclude: /pcre|makerom|http\.c|sqlite|manager/,
+        exclude: /pcre|makerom|http\.c|sqlite|manager|zlib/,
         header: '#include \"ejs.h\"',
         title: bit.settings.title + ' Library Source',
     })
@@ -174,7 +174,8 @@ public function packageComboFiles() {
     install(['src/**.c'], pkg.join('src/deps/ejs/ejsLib.c'), {
         cat: true,
         filter: filter,
-        exclude: /doc\.c|listing\.c|ejsmod\.c|slotGen\.c|docFiles\.c|ejs\.c$|ejsc\.c$|deps|ejs.debugger|samples|utils/,
+        /* Include deps/zlib */
+        exclude: /doc\.c|listing\.c|ejsmod\.c|slotGen\.c|docFiles\.c|ejs\.c$|ejsc\.c$|mpr|http|pcre|\/sqlite|ejs.debugger|samples|utils/,
         header: '#define EJS_DEFINE_OPTABLE 1\n#include \"ejs.h\"',
         title: bit.settings.title + ' Library Source',
     })

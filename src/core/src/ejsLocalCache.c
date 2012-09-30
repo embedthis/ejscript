@@ -437,7 +437,7 @@ static EjsNumber *sl_write(Ejs *ejs, EjsLocalCache *cache, int argc, EjsAny **ar
     }
     unlock(cache);
     //  UNICODE
-    return ejsCreateNumber(ejs, len);
+    return ejsCreateNumber(ejs, (MprNumber) len);
 }
 
 

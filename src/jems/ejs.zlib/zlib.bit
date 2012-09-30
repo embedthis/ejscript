@@ -3,7 +3,6 @@
  */
 
 Bit.load({
-
     targets: {
         'ejs.zlib.mod': {
             path: '${LIB}/ejs.zlib.mod',
@@ -19,11 +18,8 @@ Bit.load({
 
         'ejs.zlib': {
             type: 'lib',
-            headers: '*.h',
-            sources: [ 
-                '*.c',
-            ],
-            depends: [ 'libejs', 'ejs.mod', 'ejs.zlib.mod' ],
+            sources: [ '*.c' ],
+            depends: [ 'libejs', 'ejs.mod', 'ejs.zlib.mod', 'libzlib' ],
         },
 	},
 })
