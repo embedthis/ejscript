@@ -9,6 +9,7 @@
 
 #define local static
 #define NO_DUMMY_DECL
+#undef TIME
 #include "bit.h"
 
 /************************************************************************/
