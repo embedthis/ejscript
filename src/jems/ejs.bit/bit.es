@@ -1447,7 +1447,7 @@ public class Bit {
                     let dep = bit.targets[dname]
                     if (dep && dep.type == 'lib' && dep.enable) {
                         target.files += dep.files
-                        resolved.push(dname.replace('lib', ''))
+                        resolved.push(dname.replace(/^lib/g, ''))
                         includes += dep.includes
                         defines += dep.defines
                     }
