@@ -1338,7 +1338,7 @@ static EjsNumber *req_write(Ejs *ejs, EjsRequest *req, int argc, EjsObj **argv)
             conn->writeq->ioCount == 0) {
         ejsSendEvent(ejs, req->emitter, "writable", NULL, req);
     }
-    return ejsCreateNumber(ejs, total);
+    return ejsCreateNumber(ejs, (MprNumber) total);
 }
 
 
