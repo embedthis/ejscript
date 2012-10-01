@@ -61,10 +61,10 @@
     #define BIT_PRODUCT "ejs"
 #endif
 #ifndef BIT_REQUIRED
-    #define BIT_REQUIRED "compiler,link,pcre"
+    #define BIT_REQUIRED "compiler,lib,link,pcre,zlib"
 #endif
 #ifndef BIT_SYNC
-    #define BIT_SYNC "http,mpr,pcre,sqlite"
+    #define BIT_SYNC "http,mpr,pcre,sqlite,zlib"
 #endif
 #ifndef BIT_TITLE
     #define BIT_TITLE "Embedthis Ejscript"
@@ -166,6 +166,9 @@
 #ifndef BIT_PACK_DSI
     #define BIT_PACK_DSI 0
 #endif
+#ifndef BIT_PACK_LIB
+    #define BIT_PACK_LIB 1
+#endif
 #ifndef BIT_PACK_LINK
     #define BIT_PACK_LINK 1
 #endif
@@ -195,4 +198,7 @@
 #endif
 #ifndef BIT_PACK_ZIP
     #define BIT_PACK_ZIP 1
+#endif
+#ifndef BIT_PACK_ZLIB
+    #define BIT_PACK_ZLIB 1
 #endif

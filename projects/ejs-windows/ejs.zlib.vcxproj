@@ -101,11 +101,6 @@
   
   <ItemGroup>
     <ClCompile Include="..\..\src\jems\ejs.zlib\ejsZlib.c" />
-    <ClCompile Include="..\..\src\jems\ejs.zlib\zlib.c" />
-  </ItemGroup>
-
-  <ItemGroup>
-    <ClInclude Include="$(IncDir)\zlib.h" />
   </ItemGroup>
 
   <ItemDefinitionGroup>
@@ -116,21 +111,21 @@
 
   <ItemDefinitionGroup>
   <Link>
-    <AdditionalDependencies>libejs.lib;libhttp.lib;libmpr.lib;libpcre.lib;%(AdditionalDependencies)</AdditionalDependencies>
+    <AdditionalDependencies>libejs.lib;libhttp.lib;libmpr.lib;libpcre.lib;libzlib.lib;%(AdditionalDependencies)</AdditionalDependencies>
     <AdditionalLibraryDirectories>$(OutDir);$(Cfg)\bin;%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
   </Link>
-
-  <CustomBuildStep>
-    <Command>cd ..\..\src\jems\ejs.zlib
-copy /Y zlib.h $(IncDir)
-cd ..\..\..\projects\ejs-windows</Command>
-    <Outputs>$(BinDir)\ejs.zlib.dll</Outputs>
-  </CustomBuildStep>
   </ItemDefinitionGroup>
 
 <ItemGroup>
   <ProjectReference Include="libejs.vcxproj">
   <Project>b097bc45-c299-4dfa-944c-cc5c047cd785</Project>
+  <ReferenceOutputAssembly>false</ReferenceOutputAssembly>
+  </ProjectReference>
+</ItemGroup>
+
+<ItemGroup>
+  <ProjectReference Include="libzlib.vcxproj">
+  <Project>333a569c-36f1-4909-8e48-c3f816e7f4f4</Project>
   <ReferenceOutputAssembly>false</ReferenceOutputAssembly>
   </ProjectReference>
 </ItemGroup>

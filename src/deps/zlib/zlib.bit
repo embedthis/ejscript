@@ -8,7 +8,7 @@ Bit.load({
         libzlib: {
             type: 'lib',
             sources: [ '*.c' ],
-            headers: [ 'zlib.h', 'zconf.h' ],
+            headers: [ 'zlib.h' ],
         },
 	},
 })

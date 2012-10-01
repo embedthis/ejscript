@@ -26,6 +26,6 @@ Bit.load({
     },
 
     settings: {
-        '+required': [ 'compiler', 'link' ],
+        '+required': [ 'compiler', 'lib', 'link' ],
     }
 })

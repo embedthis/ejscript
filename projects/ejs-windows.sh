@@ -75,6 +75,13 @@ cp -r src/deps/sqlite/sqlite3.h ${CONFIG}/inc/sqlite3.h
 
 "${LD}" -out:${CONFIG}/bin/sqlite.exe -entry:mainCRTStartup -subsystem:console ${LDFLAGS} ${LIBPATHS} ${CONFIG}/obj/sqlite.obj ${LIBS} libsqlite3.lib
 
+rm -rf ${CONFIG}/inc/zlib.h
+cp -r src/deps/zlib/zlib.h ${CONFIG}/inc/zlib.h
+
+"${CC}" -c -Fo${CONFIG}/obj/zlib.obj -Fd${CONFIG}/obj/zlib.pdb ${CFLAGS} ${DFLAGS} -I${CONFIG}/inc src/deps/zlib/zlib.c
+
+"${LD}" -dll -out:${CONFIG}/bin/libzlib.dll -entry:_DllMainCRTStartup@12 -def:${CONFIG}/bin/libzlib.def ${LDFLAGS} ${LIBPATHS} ${CONFIG}/obj/zlib.obj ${LIBS}
+
 rm -rf ${CONFIG}/inc/ejs.cache.local.slots.h
 cp -r src/slots/ejs.cache.local.slots.h ${CONFIG}/inc/ejs.cache.local.slots.h
 
@@ -263,16 +270,11 @@ cp -r bits ../../../${CONFIG}/bin ;\
 cd - >/dev/null 
 
 #  Omit build script /Users/mob/git/ejs/windows-x86-debug/bin/ejs.zlib.mod
-rm -rf ${CONFIG}/inc/zlib.h
-cp -r src/jems/ejs.zlib/zlib.h ${CONFIG}/inc/zlib.h
-
 "${CC}" -c -Fo${CONFIG}/obj/ejsZlib.obj -Fd${CONFIG}/obj/ejsZlib.pdb ${CFLAGS} ${DFLAGS} -I${CONFIG}/inc src/jems/ejs.zlib/ejsZlib.c
 
-"${CC}" -c -Fo${CONFIG}/obj/zlib.obj -Fd${CONFIG}/obj/zlib.pdb ${CFLAGS} ${DFLAGS} -I${CONFIG}/inc src/jems/ejs.zlib/zlib.c
+"${LD}" -dll -out:${CONFIG}/bin/ejs.zlib.dll -entry:_DllMainCRTStartup@12 -def:${CONFIG}/bin/ejs.zlib.def ${LDFLAGS} ${LIBPATHS} ${CONFIG}/obj/ejsZlib.obj ${LIBS} libejs.lib libhttp.lib libmpr.lib libpcre.lib libzlib.lib
 
-"${LD}" -dll -out:${CONFIG}/bin/ejs.zlib.dll -entry:_DllMainCRTStartup@12 -def:${CONFIG}/bin/ejs.zlib.def ${LDFLAGS} ${LIBPATHS} ${CONFIG}/obj/ejsZlib.obj ${CONFIG}/obj/zlib.obj ${LIBS} libejs.lib libhttp.lib libmpr.lib libpcre.lib
-
-"${LD}" -out:${CONFIG}/bin/bit.exe -entry:mainCRTStartup -subsystem:console ${LDFLAGS} ${LIBPATHS} ${CONFIG}/obj/ejsrun.obj ${CONFIG}/obj/mprLib.obj ${CONFIG}/obj/pcre.obj ${CONFIG}/obj/httpLib.obj ${CONFIG}/obj/ecAst.obj ${CONFIG}/obj/ecCodeGen.obj ${CONFIG}/obj/ecCompiler.obj ${CONFIG}/obj/ecLex.obj ${CONFIG}/obj/ecModuleWrite.obj ${CONFIG}/obj/ecParser.obj ${CONFIG}/obj/ecState.obj ${CONFIG}/obj/dtoa.obj ${CONFIG}/obj/ejsApp.obj ${CONFIG}/obj/ejsArray.obj ${CONFIG}/obj/ejsBlock.obj ${CONFIG}/obj/ejsBoolean.obj ${CONFIG}/obj/ejsByteArray.obj ${CONFIG}/obj/ejsCache.obj ${CONFIG}/obj/ejsCmd.obj ${CONFIG}/obj/ejsConfig.obj ${CONFIG}/obj/ejsDate.obj ${CONFIG}/obj/ejsDebug.obj ${CONFIG}/obj/ejsError.obj ${CONFIG}/obj/ejsFile.obj ${CONFIG}/obj/ejsFileSystem.obj ${CONFIG}/obj/ejsFrame.obj ${CONFIG}/obj/ejsFunction.obj ${CONFIG}/obj/ejsGC.obj ${CONFIG}/obj/ejsGlobal.obj ${CONFIG}/obj/ejsHttp.obj ${CONFIG}/obj/ejsIterator.obj ${CONFIG}/obj/ejsJSON.obj ${CONFIG}/obj/ejsLocalCache.obj ${CONFIG}/obj/ejsMath.obj ${CONFIG}/obj/ejsMemory.obj ${CONFIG}/obj/ejsMprLog.obj ${CONFIG}/obj/ejsNamespace.obj ${CONFIG}/obj/ejsNull.obj ${CONFIG}/obj/ejsNumber.obj ${CONFIG}/obj/ejsObject.obj ${CONFIG}/obj/ejsPath.obj ${CONFIG}/obj/ejsPot.obj ${CONFIG}/obj/ejsRegExp.obj ${CONFIG}/obj/ejsSocket.obj ${CONFIG}/obj/ejsString.obj ${CONFIG}/obj/ejsSystem.obj ${CONFIG}/obj/ejsTimer.obj ${CONFIG}/obj/ejsType.obj ${CONFIG}/obj/ejsUri.obj ${CONFIG}/obj/ejsVoid.obj ${CONFIG}/obj/ejsWorker.obj ${CONFIG}/obj/ejsXML.obj ${CONFIG}/obj/ejsXMLList.obj ${CONFIG}/obj/ejsXMLLoader.obj ${CONFIG}/obj/ejsByteCode.obj ${CONFIG}/obj/ejsException.obj ${CONFIG}/obj/ejsHelper.obj ${CONFIG}/obj/ejsInterp.obj ${CONFIG}/obj/ejsLoader.obj ${CONFIG}/obj/ejsModule.obj ${CONFIG}/obj/ejsScope.obj ${CONFIG}/obj/ejsService.obj ${CONFIG}/obj/ejsZlib.obj ${CONFIG}/obj/zlib.obj ${LIBS} ejs.zlib
+"${LD}" -out:${CONFIG}/bin/bit.exe -entry:mainCRTStartup -subsystem:console ${LDFLAGS} ${LIBPATHS} ${CONFIG}/obj/ejsrun.obj ${CONFIG}/obj/mprLib.obj ${CONFIG}/obj/pcre.obj ${CONFIG}/obj/httpLib.obj ${CONFIG}/obj/ecAst.obj ${CONFIG}/obj/ecCodeGen.obj ${CONFIG}/obj/ecCompiler.obj ${CONFIG}/obj/ecLex.obj ${CONFIG}/obj/ecModuleWrite.obj ${CONFIG}/obj/ecParser.obj ${CONFIG}/obj/ecState.obj ${CONFIG}/obj/dtoa.obj ${CONFIG}/obj/ejsApp.obj ${CONFIG}/obj/ejsArray.obj ${CONFIG}/obj/ejsBlock.obj ${CONFIG}/obj/ejsBoolean.obj ${CONFIG}/obj/ejsByteArray.obj ${CONFIG}/obj/ejsCache.obj ${CONFIG}/obj/ejsCmd.obj ${CONFIG}/obj/ejsConfig.obj ${CONFIG}/obj/ejsDate.obj ${CONFIG}/obj/ejsDebug.obj ${CONFIG}/obj/ejsError.obj ${CONFIG}/obj/ejsFile.obj ${CONFIG}/obj/ejsFileSystem.obj ${CONFIG}/obj/ejsFrame.obj ${CONFIG}/obj/ejsFunction.obj ${CONFIG}/obj/ejsGC.obj ${CONFIG}/obj/ejsGlobal.obj ${CONFIG}/obj/ejsHttp.obj ${CONFIG}/obj/ejsIterator.obj ${CONFIG}/obj/ejsJSON.obj ${CONFIG}/obj/ejsLocalCache.obj ${CONFIG}/obj/ejsMath.obj ${CONFIG}/obj/ejsMemory.obj ${CONFIG}/obj/ejsMprLog.obj ${CONFIG}/obj/ejsNamespace.obj ${CONFIG}/obj/ejsNull.obj ${CONFIG}/obj/ejsNumber.obj ${CONFIG}/obj/ejsObject.obj ${CONFIG}/obj/ejsPath.obj ${CONFIG}/obj/ejsPot.obj ${CONFIG}/obj/ejsRegExp.obj ${CONFIG}/obj/ejsSocket.obj ${CONFIG}/obj/ejsString.obj ${CONFIG}/obj/ejsSystem.obj ${CONFIG}/obj/ejsTimer.obj ${CONFIG}/obj/ejsType.obj ${CONFIG}/obj/ejsUri.obj ${CONFIG}/obj/ejsVoid.obj ${CONFIG}/obj/ejsWorker.obj ${CONFIG}/obj/ejsXML.obj ${CONFIG}/obj/ejsXMLList.obj ${CONFIG}/obj/ejsXMLLoader.obj ${CONFIG}/obj/ejsByteCode.obj ${CONFIG}/obj/ejsException.obj ${CONFIG}/obj/ejsHelper.obj ${CONFIG}/obj/ejsInterp.obj ${CONFIG}/obj/ejsLoader.obj ${CONFIG}/obj/ejsModule.obj ${CONFIG}/obj/ejsScope.obj ${CONFIG}/obj/ejsService.obj ${CONFIG}/obj/zlib.obj ${CONFIG}/obj/ejsZlib.obj ${LIBS}
 
 #  Omit build script /Users/mob/git/ejs/windows-x86-debug/bin/utest.es
 rm -rf ${CONFIG}/bin/utest.exe

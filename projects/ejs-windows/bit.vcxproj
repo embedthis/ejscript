@@ -3,7 +3,7 @@
 
   <ItemDefinitionGroup>
     <ClCompile>
-      <AdditionalIncludeDirectories>$(IncDir);$(IncDir);$(IncDir);$(IncDir);$(IncDir);$(IncDir);%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>$(IncDir);$(IncDir);$(IncDir);$(IncDir);$(IncDir);$(IncDir);$(IncDir);%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
     </ClCompile>
     <Link>
       <AdditionalDependencies>ws2_32.lib;%(AdditionalDependencies)</AdditionalDependencies>
@@ -162,13 +162,13 @@
     <ClCompile Include="..\..\src\vm\ejsModule.c" />
     <ClCompile Include="..\..\src\vm\ejsScope.c" />
     <ClCompile Include="..\..\src\vm\ejsService.c" />
+    <ClCompile Include="..\..\src\deps\zlib\zlib.c" />
     <ClCompile Include="..\..\src\jems\ejs.zlib\ejsZlib.c" />
-    <ClCompile Include="..\..\src\jems\ejs.zlib\zlib.c" />
   </ItemGroup>
 
   <ItemDefinitionGroup>
   <Link>
-    <AdditionalDependencies>ejs.zlib;%(AdditionalDependencies)</AdditionalDependencies>
+    <AdditionalDependencies>;%(AdditionalDependencies)</AdditionalDependencies>
     <AdditionalLibraryDirectories>$(OutDir);$(Cfg)\bin;%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
   </Link>
   </ItemDefinitionGroup>

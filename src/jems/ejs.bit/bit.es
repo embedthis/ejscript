@@ -1403,7 +1403,11 @@ public class Bit {
         for each (target in bit.targets) {
             if (!target.path) {
                 if (target.type == 'lib') {
-                    target.path = bit.dir.lib.join(target.name).joinExt(bit.ext.shobj, true)
+                    if (target.static) {
+                        target.path = bit.dir.lib.join(target.name).joinExt(bit.ext.lib, true)
+                    } else {
+                        target.path = bit.dir.lib.join(target.name).joinExt(bit.ext.shobj, true)
+                    }
                 } else if (target.type == 'obj') {
                     target.path = bit.dir.obj.join(target.name).joinExt(bit.ext.o, true)
                 } else if (target.type == 'exe') {
@@ -1439,7 +1443,7 @@ public class Bit {
      */
     function inlineStatic() {
         for each (target in bit.targets) {
-            if (target.static && target.type == 'exe') {
+            if (target.static) {
                 let resolved = []
                 let includes = []
                 let defines = []
@@ -1802,7 +1806,11 @@ public class Bit {
         }
         try {
             if (target.type == 'lib') {
-                buildLib(target)
+                if (target.static) {
+                    buildStaticLib(target)
+                } else {
+                    buildSharedLib(target)
+                }
             } else if (target.type == 'exe') {
                 buildExe(target)
             } else if (target.type == 'obj') {
@@ -1869,10 +1877,7 @@ public class Bit {
         }
     }
 
-    /*
-        Build a library
-     */
-    function buildLib(target) {
+    function buildSharedLib(target) {
         if (!stale(target)) {
             whySkip(target.path, 'is up to date')
             return
@@ -1912,6 +1917,49 @@ public class Bit {
                 safeRemove(target.path)
             }
             run(command, {excludeOutput: /Creating library /})
+        }
+    }
+
+    function buildStaticLib(target) {
+        if (!stale(target)) {
+            whySkip(target.path, 'is up to date')
+            return
+        }
+        if (options.diagnose) {
+            App.log.debug(3, "Target => " + serialize(target, {pretty: true, commas: true, indent: 4, quotes: false}))
+        }
+        runTargetScript(target, 'prebuild')
+        buildSym(target)
+        let transition = target.rule || 'a'
+        let rule = bit.rules[transition]
+        if (!rule) {
+            throw 'No rule to build target ' + target.path + ' for transition ' + transition
+            return
+        }
+        let command = expandRule(target, rule)
+        if (generating == 'sh') {
+            command = repcmd(command)
+            genout.writeLine(command + '\n')
+
+        } else if (generating == 'make') {
+            command = repcmd(command)
+            genout.writeLine(reppath(target.path) + ': ' + repvar(getTargetDeps(target)) + '\n\t' + command + '\n')
+
+        } else if (generating == 'nmake') {
+            command = repcmd(command)
+            genout.writeLine(reppath(target.path) + ': ' + repvar(getTargetDeps(target)) + '\n\t' + command + '\n')
+
+        } else {
+            trace('Link', target.name)
+            if (target.active && bit.platform.like == 'windows') {
+                let active = target.path.relative.replaceExt('old')
+                trace('Preserve', 'Active target ' + target.path.relative + ' as ' + active)
+                active.remove()
+                target.path.rename(target.path.replaceExt('old'))
+            } else {
+                safeRemove(target.path)
+            }
+            run(command, {excludeOutput: /has no symbols/})
         }
     }
 
@@ -2655,7 +2703,9 @@ global.NN = item.ns
         } else if (!cmdOptions.noshow) {
             if (!cmdOptions.filter || !cmdOptions.filter.test(command)) {
                 if (cmd.error) {
-                    print(cmd.error)
+                    if (!cmdOptions.excludeOutput || !cmdOptions.excludeOutput.test(cmd.error)) {
+                        print(cmd.error)
+                    }
                 }
                 if (cmd.response) {
                     if (!cmdOptions.excludeOutput || !cmdOptions.excludeOutput.test(cmd.response)) {
