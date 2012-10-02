@@ -2035,7 +2035,7 @@ public class Bit {
             } else {
                 trace('Compile', file.relativeTo('.'))
                 if (bit.platform.os == 'windows') {
-                    run(command, {excludeOutput: /^[a-zA-Z-]*.c\s*$/})
+                    run(command, {excludeOutput: /^[a-zA-Z0-9-]*.c\s*$/})
                 } else {
                     run(command)
                 }
