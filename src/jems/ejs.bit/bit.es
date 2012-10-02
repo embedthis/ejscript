@@ -1887,7 +1887,7 @@ public class Bit {
         }
         runTargetScript(target, 'prebuild')
         buildSym(target)
-        let transition = target.rule || 'lib'
+        let transition = target.rule || 'shlib'
         let rule = bit.rules[transition]
         if (!rule) {
             throw 'No rule to build target ' + target.path + ' for transition ' + transition
@@ -1930,7 +1930,7 @@ public class Bit {
         }
         runTargetScript(target, 'prebuild')
         //MOB buildSym(target)
-        let transition = target.rule || 'a'
+        let transition = target.rule || 'lib'
         let rule = bit.rules[transition]
         if (!rule) {
             throw 'No rule to build target ' + target.path + ' for transition ' + transition
