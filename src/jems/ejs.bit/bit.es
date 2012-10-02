@@ -1929,7 +1929,7 @@ public class Bit {
             App.log.debug(3, "Target => " + serialize(target, {pretty: true, commas: true, indent: 4, quotes: false}))
         }
         runTargetScript(target, 'prebuild')
-        buildSym(target)
+        //MOB buildSym(target)
         let transition = target.rule || 'a'
         let rule = bit.rules[transition]
         if (!rule) {
