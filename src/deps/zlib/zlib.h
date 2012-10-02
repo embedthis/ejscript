@@ -2471,7 +2471,7 @@ unsigned ZLIB_INTERNAL gz_intmax OF((void));
 #endif
 
 #if _WIN32
-#include "winmap.h"
+
 #endif
 #endif /* GZGUTS_H */
 
