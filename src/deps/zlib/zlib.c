@@ -14,6 +14,56 @@
 
 /************************************************************************/
 /*
+    Start of file "winmap.h"
+ */
+/************************************************************************/
+
+/* winmap.h -- Fixups for windows compilation
+ */
+
+/* @(#) $Id$ */
+
+#ifndef WINMAP_H
+#define WINMAP_H
+
+#if _WIN32
+    #undef      _CRT_SECURE_NO_DEPRECATE
+    #define     _CRT_SECURE_NO_DEPRECATE 1
+    #undef      _CRT_SECURE_NO_WARNINGS
+    #define     _CRT_SECURE_NO_WARNINGS 1
+    #ifndef     _WIN32_WINNT
+        #define _WIN32_WINNT 0x501
+    #endif
+    #define access      _access
+    #define chdir       _chdir
+    #define chmod       _chmod
+    #define close       _close
+    #define fileno      _fileno
+    #define fstat       _fstat
+    #define getch       _getch
+    #define getcwd      _getcwd
+    #define getpid      _getpid
+    #define gettimezone _gettimezone
+    #define lseek       _lseek
+    #define mkdir(a,b)  _mkdir(a)
+    #define open        _open
+    #define putenv      _putenv
+    #define read        _read
+    #define rmdir(a)    _rmdir(a)
+    #define stat        _stat
+    #define strdup      _strdup
+    #define tempnam     _tempnam
+    #define umask       _umask
+    #define unlink      _unlink
+    #define write       _write
+    extern void sleep(int secs);
+    extern int _getpid();
+    extern int _getch();
+#endif
+#endif /* WINMAP_H */
+
+/************************************************************************/
+/*
     Start of file "adler32.c"
  */
 /************************************************************************/

@@ -30,6 +30,16 @@
 
 #include "bit.h"
 
+#if _WIN32
+    #undef      _CRT_SECURE_NO_DEPRECATE
+    #define     _CRT_SECURE_NO_DEPRECATE 1
+    #undef      _CRT_SECURE_NO_WARNINGS
+    #define     _CRT_SECURE_NO_WARNINGS 1
+    #ifndef     _WIN32_WINNT
+        #define _WIN32_WINNT 0x501
+    #endif
+#endif
+
 #ifndef ZLIB_INTERNAL
 #if ((__GNUC__-0) * 10 + __GNUC_MINOR__-0 >= 33) && !defined(NO_VIZ)
 #  define ZLIB_INTERNAL __attribute__((visibility ("hidden")))
@@ -2255,6 +2265,17 @@ ZEXTERN int            ZEXPORT deflateResetKeep OF((z_streamp));
 #ifndef GZGUTS_H 
 #define GZGUTS_H 
 
+#if _WIN32
+    #undef      _CRT_SECURE_NO_DEPRECATE
+    #define     _CRT_SECURE_NO_DEPRECATE 1
+    #undef      _CRT_SECURE_NO_WARNINGS
+    #define     _CRT_SECURE_NO_WARNINGS 1
+    #ifndef     _WIN32_WINNT
+        #define _WIN32_WINNT 0x501
+    #endif
+    #include    <io.h>
+#endif
+
 #if VXWORKS
     #ifndef _VSB_CONFIG_FILE
         #define _VSB_CONFIG_FILE "vsbConfig.h"
@@ -2447,6 +2468,10 @@ char ZLIB_INTERNAL *gz_strwinerror OF((DWORD error));
 #else
 unsigned ZLIB_INTERNAL gz_intmax OF((void));
 #  define GT_OFF(x) (sizeof(int) == sizeof(z_off64_t) && (x) > gz_intmax())
+#endif
+
+#if _WIN32
+#include "winmap.h"
 #endif
 #endif /* GZGUTS_H */
 
