@@ -1513,7 +1513,8 @@ public class Bit {
                 if (dep.type == 'lib') {
                     target.libraries
                     target.libraries ||= []
-                    target.libraries.push(dname.replace(/^lib/, ''))
+                    /* Put dependent libraries first so system libraries are last (matters on linux) */
+                    target.libraries = [dname.replace(/^lib/, '')] + target.libraries
                     for each (lib in dep.libraries) {
                         if (!target.libraries.contains(lib)) {
                             target.libraries.push(lib)
