@@ -111,7 +111,7 @@
 
   <ItemDefinitionGroup>
   <Link>
-    <AdditionalDependencies>libejs.lib;libhttp.lib;libmpr.lib;libpcre.lib;libzlib.lib;%(AdditionalDependencies)</AdditionalDependencies>
+    <AdditionalDependencies>libzlib.lib;libejs.lib;libhttp.lib;libpcre.lib;libmpr.lib;%(AdditionalDependencies)</AdditionalDependencies>
     <AdditionalLibraryDirectories>$(OutDir);$(Cfg)\bin;%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
   </Link>
   </ItemDefinitionGroup>

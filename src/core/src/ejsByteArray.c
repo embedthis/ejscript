@@ -1265,11 +1265,7 @@ static int putDouble(EjsByteArray *ap, double value)
 {
     value = swapDouble(ap, value);
 
-#if OLD
-    *((double*) &ap->value[ap->writePosition]) = value;
-#else
     memcpy((char*) &ap->value[ap->writePosition], &value, sizeof(double));
-#endif
     ap->writePosition += sizeof(double);
     return sizeof(double);
 }

@@ -582,9 +582,9 @@ static int configureEjs(Ejs *ejs)
         ejsConfigureWorkerType(ejs);
         ejsConfigureXMLType(ejs);
         ejsConfigureXMLListType(ejs);
+        ejsConfigureWebSocketType(ejs);
         ejs->service->immutableInitialized = 1;
     }
-
     /*
         These types have global properties that must be initialized for all interpreters
      */
@@ -592,7 +592,6 @@ static int configureEjs(Ejs *ejs)
     ejsConfigureDebugType(ejs);
     ejsConfigureJSONType(ejs);
     ejsConfigureUriType(ejs);
-
     /*
         Configure mutables
      */

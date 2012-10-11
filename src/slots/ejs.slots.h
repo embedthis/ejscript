@@ -152,18 +152,19 @@
 #define ES_encodeURIComponent                                          131
 #define ES_encodeObjects                                               132
 #define ES_Void                                                        133
-#define ES_Worker                                                      134
-#define ES_Event                                                       135
-#define ES_ErrorEvent                                                  136
-#define ES_ejs_worker_self                                             137
-#define ES_ejs_worker_exit                                             138
-#define ES_ejs_worker_postMessage                                      139
-#define ES_ejs_worker_onerror                                          140
-#define ES_ejs_worker_onmessage                                        141
-#define ES_XML                                                         142
-#define ES_XMLHttp                                                     143
-#define ES_XMLList                                                     144
-#define ES_global_NUM_CLASS_PROP                                       145
+#define ES_WebSocket                                                   134
+#define ES_Worker                                                      135
+#define ES_Event                                                       136
+#define ES_ErrorEvent                                                  137
+#define ES_ejs_worker_self                                             138
+#define ES_ejs_worker_exit                                             139
+#define ES_ejs_worker_postMessage                                      140
+#define ES_ejs_worker_onerror                                          141
+#define ES_ejs_worker_onmessage                                        142
+#define ES_XML                                                         143
+#define ES_XMLHttp                                                     144
+#define ES_XMLList                                                     145
+#define ES_global_NUM_CLASS_PROP                                       146
 
 /*
    Prototype (instance) slots for "global" type 
@@ -2174,6 +2175,36 @@
 
 
 /*
+    Class property slots for the "WebSocket" type 
+ */
+#define ES_WebSocket__initializer___WebSocket_                         0
+#define ES_WebSocket_CONNECTING                                        1
+#define ES_WebSocket_OPEN                                              2
+#define ES_WebSocket_CLOSING                                           3
+#define ES_WebSocket_CLOSED                                            4
+#define ES_WebSocket_NUM_CLASS_PROP                                    5
+
+/*
+   Prototype (instance) slots for "WebSocket" type 
+ */
+#define ES_WebSocket_onopen                                            0
+#define ES_WebSocket_onmessage                                         1
+#define ES_WebSocket_onerror                                           2
+#define ES_WebSocket_onclose                                           3
+#define ES_WebSocket_binaryType                                        4
+#define ES_WebSocket_bufferedAmount                                    5
+#define ES_WebSocket_close                                             6
+#define ES_WebSocket_extensions                                        7
+#define ES_WebSocket_off                                               8
+#define ES_WebSocket_on                                                9
+#define ES_WebSocket_protocol                                          10
+#define ES_WebSocket_readyState                                        11
+#define ES_WebSocket_send                                              12
+#define ES_WebSocket_NUM_INSTANCE_PROP                                 13
+#define ES_WebSocket_NUM_INHERITED_PROP                                0
+
+
+/*
     Class property slots for the "Worker" type 
  */
 #define ES_Worker_fork                                                 0
@@ -2351,6 +2382,6 @@
 #define ES_XMLList_NUM_INSTANCE_PROP                                   20
 #define ES_XMLList_NUM_INHERITED_PROP                                  0
 
-#define _ES_CHECKSUM_ejs   1468138
+#define _ES_CHECKSUM_ejs   1495558
 
 #endif

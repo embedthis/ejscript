@@ -3322,6 +3322,81 @@ extern void ejsSetHttpLimits(Ejs *ejs, HttpLimits *limits, EjsObj *obj, bool ser
  */
 extern int ejsSetupHttpTrace(Ejs *ejs, HttpTrace *trace, EjsObj *options);
 
+/******************************************** WebSocket ************************************************/
+/** 
+    WebSocket Class
+    @description Client side WebSocket support
+    @stability Evolving
+    @defgroup EjsWebSocket EjsWebSocket
+    @see EjsWebSocket ejsCreateWebSocket 
+ */
+typedef struct EjsWebSocket {
+    EjsObj          obj;                        /**< Base object */
+    Ejs             *ejs;                       /**< Interp reference */
+    EjsObj          *emitter;                   /**< Event emitter */
+    EjsByteArray    *data;                      /**< Buffered write data */
+    HttpConn        *conn;                      /**< Underlying HttpConn object */
+    MprSsl          *ssl;                       /**< SSL configuration */
+    char            *uri;                       /**< Target URI */
+    char            *protocols;                 /**< Set of supported protocols */
+    char            *protocol;                  /**< Protocol selected by the server */
+    int             dataType;                   /**< Receive data type */
+    int             opened;                     /**< Wss connection is open */
+    int             closed;                     /**< Http is closed and "close" event has been issued */
+    int             error;                      /**< Http errored and "error" event has been issued */
+} EjsWebSocket;
+
+/** 
+    Create a new WebSocket object
+    @param ejs Ejs reference returned from #ejsCreateVM
+    @return a new WebSocket object
+    @ingroup EjsWebSocket
+ */
+extern EjsWebSocket *ejsCreateWebSocket(Ejs *ejs);
+
+#if UNUSED
+/**
+    Get a WebSocket limits 
+    @param ejs Ejs reference returned from #ejsCreateVM
+    @param obj Object to contain the limits properties
+    @param limits The WebSocketLimits object 
+    @param server Set to true if defining server side limits
+    @ingroup EjsWebSocket
+    @internal
+ */
+extern void ejsGetWebSocketLimits(Ejs *ejs, EjsObj *obj, WebSocketLimits *limits, bool server);
+
+/** 
+    Load the WebSocket service
+    @param ejs Ejs reference returned from #ejsCreateVM
+    @ingroup EjsPath
+    @internal
+ */
+extern void ejsLoadWebSocketService(Ejs *ejs);
+
+/**
+    Set a WebSocket limits 
+    @param ejs Ejs reference returned from #ejsCreateVM
+    @param limits The WebSocketLimits object receiving the limit settings
+    @param obj Object containing the limits values
+    @param server Set to true if defining server side limits
+    @ingroup EjsWebSocket
+    @internal
+ */
+extern void ejsSetWebSocketLimits(Ejs *ejs, WebSocketLimits *limits, EjsObj *obj, bool server);
+
+/** 
+    Setup tracing for WebSocket transactions
+    @param ejs Ejs reference returned from #ejsCreateVM
+    @param trace WebSocketTrace object
+    @param options Trace options
+    @return Zero if successful, otherwise a negative MPR error code.
+    @ingroup EjsPath
+    @internal
+ */
+extern int ejsSetupWebSocketTrace(Ejs *ejs, WebSocketTrace *trace, EjsObj *options);
+#endif
+
 /******************************************** Iterator ********************************************/
 /** 
     Iterator Class
@@ -4440,6 +4515,7 @@ extern void     ejsConfigureVoidType(Ejs *ejs);
 extern void     ejsConfigureWorkerType(Ejs *ejs);
 extern void     ejsConfigureXMLType(Ejs *ejs);
 extern void     ejsConfigureXMLListType(Ejs *ejs);
+extern void     ejsConfigureWebSocketType(Ejs *ejs);
 
 extern void     ejsCreateCoreNamespaces(Ejs *ejs);
 extern int      ejsCopyCoreTypes(Ejs *ejs);

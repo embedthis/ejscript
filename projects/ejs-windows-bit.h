@@ -101,7 +101,7 @@
     #define BIT_SHOBJ ".dll"
 #endif
 #ifndef BIT_LIB
-    #define BIT_LIB ".a"
+    #define BIT_LIB ".lib"
 #endif
 #ifndef BIT_OBJ
     #define BIT_OBJ ".obj"
@@ -146,7 +146,7 @@
     #define BIT_PACK_DUMPBIN 0
 #endif
 #ifndef BIT_PACK_LIB
-    #define BIT_PACK_LIB 0
+    #define BIT_PACK_LIB 1
 #endif
 #ifndef BIT_PACK_LINK
     #define BIT_PACK_LINK 1

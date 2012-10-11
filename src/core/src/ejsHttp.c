@@ -438,7 +438,7 @@ static EjsObj *http_set_method(Ejs *ejs, EjsHttp *hp, int argc, EjsObj **argv)
 }
 
 
-/*  
+/*
     function off(name, observer: function): Void
  */
 static EjsObj *http_off(Ejs *ejs, EjsHttp *hp, int argc, EjsAny **argv)

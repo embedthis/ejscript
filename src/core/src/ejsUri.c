@@ -956,9 +956,9 @@ static EjsUri *completeUri(Ejs *ejs, EjsUri *up, EjsObj *missing, int includeQue
         if (!includeQuery) {
             up->uri->query = NULL;
         }
-        httpCompleteUri(up->uri, NULL, includeQuery ? HTTP_COMPLETE_URI_QUERY : 0);
+        httpCompleteUri(up->uri, NULL, /* MOB includeQuery ? HTTP_COMPLETE_URI_QUERY : */ 0);
     } else {
-        httpCompleteUri(up->uri, missingUri->uri, includeQuery ? HTTP_COMPLETE_URI_QUERY : 0);
+        httpCompleteUri(up->uri, missingUri->uri, /* MOB includeQuery ? HTTP_COMPLETE_URI_QUERY : */ 0);
     }
     return up;
 }

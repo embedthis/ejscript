@@ -150,6 +150,7 @@
     <ClCompile Include="..\..\src\core\src\ejsType.c" />
     <ClCompile Include="..\..\src\core\src\ejsUri.c" />
     <ClCompile Include="..\..\src\core\src\ejsVoid.c" />
+    <ClCompile Include="..\..\src\core\src\ejsWebSocket.c" />
     <ClCompile Include="..\..\src\core\src\ejsWorker.c" />
     <ClCompile Include="..\..\src\core\src\ejsXML.c" />
     <ClCompile Include="..\..\src\core\src\ejsXMLList.c" />
