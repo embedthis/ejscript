@@ -1252,6 +1252,7 @@ static bool waitForState(EjsHttp *hp, int state, MprTime timeout, int throw)
     MprTime         mark, remaining;
     HttpConn        *conn;
     HttpUri         *uri;
+    HttpRx          *rx;
     char            *url;
     int             count, redirectCount, success, rc;
 
@@ -1305,9 +1306,10 @@ static bool waitForState(EjsHttp *hp, int state, MprTime timeout, int throw)
             }
             break;
         }
-        if (conn->rx) {
-            if (conn->rx->status == HTTP_CODE_REQUEST_TOO_LARGE || 
-                    conn->rx->status == HTTP_CODE_REQUEST_URL_TOO_LARGE) {
+        rx = conn->rx;
+        if (rx) {
+            if (rx->status == HTTP_CODE_REQUEST_TOO_LARGE || rx->status == HTTP_CODE_REQUEST_URL_TOO_LARGE ||
+                (rx->status == HTTP_CODE_UNAUTHORIZED && conn->username == 0)) {
                 /* No point retrying */
                 break;
             }
@@ -1326,7 +1328,7 @@ static bool waitForState(EjsHttp *hp, int state, MprTime timeout, int throw)
             mprAdjustBufStart(hp->requestContent, -hp->requestContentCount);
         }
         /* Force a new connection */
-        if (conn->rx == 0 || conn->rx->status != HTTP_CODE_UNAUTHORIZED) {
+        if (rx == 0 || rx->status != HTTP_CODE_UNAUTHORIZED) {
             httpSetKeepAliveCount(conn, -1);
         }
         httpPrepClientConn(conn, 1);

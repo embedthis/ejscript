@@ -668,9 +668,12 @@ static void setupConnTrace(HttpConn *conn)
     EjsHttpServer   *sp;
     int             i;
 
-    if ((sp = httpGetEndpointContext(conn->endpoint)) != 0) {
-        for (i = 0; i < HTTP_TRACE_MAX_DIR; i++) {
-            conn->trace[i] = sp->trace[i];
+    assure(conn->endpoint);
+    if (conn->endpoint) {
+        if ((sp = httpGetEndpointContext(conn->endpoint)) != 0) {
+            for (i = 0; i < HTTP_TRACE_MAX_DIR; i++) {
+                conn->trace[i] = sp->trace[i];
+            }
         }
     }
 }
