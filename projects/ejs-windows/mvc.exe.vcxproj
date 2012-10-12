@@ -2,7 +2,7 @@
 <Project DefaultTargets="Build" ToolsVersion="4.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
 
   <PropertyGroup Label="Globals">
-    <ProjectGuid>{ccf27790-c32e-4dfb-8d6d-e36301999a42}</ProjectGuid>
+    <ProjectGuid>{eae71b89-9b61-414c-b1b6-2a82a1442912}</ProjectGuid>
     <RootNamespace />
     <Keyword>Win32Proj</Keyword>
   </PropertyGroup>
@@ -96,16 +96,16 @@
 
   <CustomBuildStep>
     <Command>cd ..\..\src\jems\ejs.mvc
-if exist $(BinDir)\mvc.exe del /Q $(BinDir)\mvc.exe
-copy /Y ..\$(BinDir)\ejsrun.exe $(BinDir)\mvc.exe
+if exist ..\..\$(Cfg)\bin\mvc.exe del /Q ..\..\$(Cfg)\bin\mvc.exe
+copy /Y ..\..\..\$(Cfg)\bin\ejsrun.exe ..\..\$(Cfg)\bin\mvc.exe
 cd ..\..\..\projects\ejs-windows</Command>
-    <Outputs>$(BinDir)\mvc.exe</Outputs>
+    <Outputs>..\..\$(Cfg)\bin\mvc.exe</Outputs>
   </CustomBuildStep>
   </ItemDefinitionGroup>
 
 <ItemGroup>
   <ProjectReference Include="ejsrun.vcxproj">
-  <Project>e0086d0a-61c4-48c8-9c65-8381e18304a7</Project>
+  <Project>2c801c40-52cc-4a3b-8b55-943d7da176d2</Project>
   <ReferenceOutputAssembly>false</ReferenceOutputAssembly>
   </ProjectReference>
 </ItemGroup>

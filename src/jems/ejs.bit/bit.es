@@ -1021,7 +1021,7 @@ public class Bit {
         path.copy(hfile)
         trace('Generate', 'project header: ' + hfile.relative)
         if (Config.OS == 'windows') {
-            trace('Copy', 'Exports definition files')
+            trace('Copy', 'Export *.def files')
             for each (f in bit.dir.bin.files('*.def')) {
                 f.copy(bit.dir.src.join('projects', bit.settings.product + '-windows', f.basename))
             }
