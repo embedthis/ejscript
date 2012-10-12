@@ -31,7 +31,7 @@
     #define BIT_HAS_MTUNE 1
 #endif
 #ifndef BIT_HAS_PAM
-    #define BIT_HAS_PAM 1
+    #define BIT_HAS_PAM 0
 #endif
 #ifndef BIT_HAS_STACK_PROTECTOR
     #define BIT_HAS_STACK_PROTECTOR 1
@@ -73,10 +73,10 @@
     #define BIT_VERSION "2.0.1"
 #endif
 #ifndef BIT_WARN64TO32
-    #define BIT_WARN64TO32 1
+    #define BIT_WARN64TO32 0
 #endif
 #ifndef BIT_WARN_UNUSED
-    #define BIT_WARN_UNUSED 1
+    #define BIT_WARN_UNUSED 0
 #endif
 #ifndef BIT_WITHOUT_ALL
     #define BIT_WITHOUT_ALL "doxygen,dsi,man,man2html,ssl,matrixssl,openssl"
@@ -188,7 +188,7 @@
     #define BIT_PACK_PCRE 1
 #endif
 #ifndef BIT_PACK_PMAKER
-    #define BIT_PACK_PMAKER 1
+    #define BIT_PACK_PMAKER 0
 #endif
 #ifndef BIT_PACK_SQLITE
     #define BIT_PACK_SQLITE 1
