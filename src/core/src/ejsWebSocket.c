@@ -12,7 +12,7 @@
 static void sendCloseEvent(Ejs *ejs, EjsWebSocket *ws);
 static void sendErrorEvent(Ejs *ejs, EjsWebSocket *ws);
 static EjsObj *startWebSocketRequest(Ejs *ejs, EjsWebSocket *ws);
-static bool waitForState(EjsWebSocket *ws, int state, MprTime timeout, int throw);
+static bool waitTillState(EjsWebSocket *ws, int state, MprTime timeout, int throw);
 static void webSocketEvent(HttpConn *conn, int event, int arg);
 static void webSocketNotify(HttpConn *conn, int state, int notifyFlags);
 
@@ -151,9 +151,9 @@ static EjsNumber *ws_readyState(Ejs *ejs, EjsWebSocket *ws, int argc, EjsObj **a
  */
 static EjsString *ws_send(Ejs *ejs, EjsWebSocket *ws, int argc, EjsObj **argv)
 {
-    ssize           nbytes;
+    ssize   nbytes;
 
-    if (ws->conn->state < HTTP_STATE_PARSED && !waitForState(ws, HTTP_STATE_PARSED, -1, 1)) {
+    if (ws->conn->state < HTTP_STATE_PARSED && !waitTillState(ws, HTTP_STATE_PARSED, -1, 1)) {
         return 0;
     }
     //  MOB - is this the best thing to do?
@@ -424,7 +424,7 @@ static void sendErrorEvent(Ejs *ejs, EjsWebSocket *ws)
 }
 
 
-static bool waitForState(EjsWebSocket *ws, int state, MprTime timeout, int throw)
+static bool waitTillState(EjsWebSocket *ws, int state, MprTime timeout, int throw)
 {
     Ejs             *ejs;
     MprTime         mark, remaining;
