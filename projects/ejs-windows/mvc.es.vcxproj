@@ -2,7 +2,7 @@
 <Project DefaultTargets="Build" ToolsVersion="4.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
 
   <PropertyGroup Label="Globals">
-    <ProjectGuid>{537974b6-0428-40d5-859c-e1e765694f43}</ProjectGuid>
+    <ProjectGuid>{022847d0-111d-4281-a2c1-6ebd8df3c03a}</ProjectGuid>
     <RootNamespace />
     <Keyword>Win32Proj</Keyword>
   </PropertyGroup>
@@ -98,7 +98,7 @@
     <Command>cd ..\..\src\jems\ejs.mvc
 copy mvc.es $(BinDir)
 cd ..\..\..\projects\ejs-windows</Command>
-    <Outputs>..\..\$(Cfg)\bin\mvc.es</Outputs>
+    <Outputs>$(BinDir)\mvc.es</Outputs>
   </CustomBuildStep>
   </ItemDefinitionGroup>
 

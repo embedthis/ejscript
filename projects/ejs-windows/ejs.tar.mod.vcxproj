@@ -2,7 +2,7 @@
 <Project DefaultTargets="Build" ToolsVersion="4.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
 
   <PropertyGroup Label="Globals">
-    <ProjectGuid>{96bd6ade-bef3-4d71-b3ec-72c22f656082}</ProjectGuid>
+    <ProjectGuid>{20dece1f-c953-4717-984a-b25c3256d8e4}</ProjectGuid>
     <RootNamespace />
     <Keyword>Win32Proj</Keyword>
   </PropertyGroup>
@@ -98,13 +98,13 @@
     <Command>cd ..\..\src\jems\ejs.tar
 $(BinDir)/ejsc --out $(BinDir)/ejs.tar.mod  --optimize 9 *.es
 cd ..\..\..\projects\ejs-windows</Command>
-    <Outputs>..\..\$(Cfg)\bin\ejs.tar.mod</Outputs>
+    <Outputs>$(BinDir)\ejs.tar.mod</Outputs>
   </CustomBuildStep>
   </ItemDefinitionGroup>
 
 <ItemGroup>
   <ProjectReference Include="ejsc.vcxproj">
-  <Project>3b5194ed-fd3c-4eae-be81-67c70c54c31c</Project>
+  <Project>d5245843-770a-44aa-9aa8-2a834be6411e</Project>
   <ReferenceOutputAssembly>false</ReferenceOutputAssembly>
   </ProjectReference>
 </ItemGroup>
