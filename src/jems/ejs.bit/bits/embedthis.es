@@ -96,20 +96,33 @@ function installCallback(src: Path, dest: Path, options = {}): Boolean {
         vtrace('Combine', dest.relative + ' += ' + src.relative)
         if (!dest.exists) {
             if (options.title) {
-                dest.write('/*\n' +
-                           '    ' + dest.basename + ' -- ' + options.title + '\n\n' +
-                           '    This file is a catenation of all the source code. Amalgamating into a\n' +
-                           '    single file makes embedding simpler and the resulting application faster.\n\n' + 
-                           '    Prepared by: ' + System.hostname + '\n */\n\n')
+                if (options.textfile) {
+                    dest.write('#\n' +
+                       '#   ' + dest.basename + ' -- ' + options.title + '\n' + 
+                       '#\n')
+                } else {
+                    dest.write('/*\n' +
+                       '    ' + dest.basename + ' -- ' + options.title + '\n\n' +
+                       '    This file is a catenation of all the source code. Amalgamating into a\n' +
+                       '    single file makes embedding simpler and the resulting application faster.\n\n' + 
+                       '    Prepared by: ' + System.hostname + '\n */\n\n')
+                }
             }
             if (options.header) {
                 dest.append(options.header + '\n')
             }
         }
-        dest.append('\n' +
-           '/************************************************************************/\n' +
-           '/*\n    Start of file \"' + src.relative + '\"\n */\n' +
-           '/************************************************************************/\n\n')
+        if (options.textfile) {
+            dest.append('\n' +
+               '#\n' +
+               '#   Start of file \"' + src.relative + '\"\n' +
+               '#\n')
+        } else {
+            dest.append('\n' +
+               '/************************************************************************/\n' +
+               '/*\n    Start of file \"' + src.relative + '\"\n */\n' +
+               '/************************************************************************/\n\n')
+        }
         let data = src.readString()
         if (options.filter) {
             data = data.replace(options.filter, '')
@@ -144,7 +157,7 @@ function installCallback(src: Path, dest: Path, options = {}): Boolean {
         dest.write(dest.readString().expand(o, {fill: '${}'}))
         dest.setAttributes(attributes)
     }
-    if (options.fold && bit.platform.like == 'windows') {
+    if (options.fold) {
         vtrace('Fold', dest)
         foldLines(dest, options)
         dest.setAttributes(attributes)
